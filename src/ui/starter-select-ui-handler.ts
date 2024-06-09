@@ -1542,7 +1542,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const instructionTextSize = textSettings.instructionTextSize;
     this.instructionRowX = 0;
     this.instructionRowY = 0;
-    this.instructionsContainer.removeAll();
+    this.instructionsContainer.removeAll(true);
     let gamepadType;
     if (this.scene.inputMethod === "gamepad") {
       gamepadType = this.scene.inputController.getConfig(this.scene.inputController.selectedDevice[Device.GAMEPAD]).padType;
