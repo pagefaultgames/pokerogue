@@ -72,9 +72,9 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     instructionTextSize: "38px",
   },
   "pt_BR":{
-    starterInfoTextSize: "47px",
-    instructionTextSize: "38px",
-    starterInfoXPos: 33,
+    starterInfoTextSize: "56px",
+    instructionTextSize: "35px",
+    starterInfoXPos: 37,
   },
   "zh":{
     starterInfoTextSize: "40px",

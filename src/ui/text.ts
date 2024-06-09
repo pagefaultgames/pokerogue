@@ -130,8 +130,10 @@ function autoSizeText<T extends AutoTextInterface>(obj: T): void {
   if (!obj.originalFontSize) {
     obj.originalFontSize = parseInt(obj.style.fontSize as any);
   }
-  const minFontSize = 40;
-  const fontSize = parseInt(obj.originalFontSize as any);
+  obj.padding.top = 0;
+  obj.setFontSize(obj.originalFontSize);
+  const minFontSize = 20;
+  const fontSize = obj.originalFontSize;
   let f = 1;
   if (obj.limits?.right) {
     const maxWidth = obj.limits.right - obj.x;
@@ -143,9 +145,6 @@ function autoSizeText<T extends AutoTextInterface>(obj: T): void {
     const newFontSize = Math.max(Math.floor(fontSize / f), minFontSize);
     obj.padding.top = (fontSize - newFontSize) / 2;
     obj.setFontSize(newFontSize);
-  } else if (parseInt(obj.style.fontSize as any) !== obj.originalFontSize) {
-    obj.padding.top = 0;
-    obj.setFontSize(obj.originalFontSize);
   }
   obj.blockAutoSize = false;
 }
