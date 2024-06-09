@@ -3326,62 +3326,7 @@ export class FormChangeItemTypeAttr extends VariableMoveTypeAttr {
     if ([user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.ARCEUS) || [user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.SILVALLY)) {
       const form = user.species.speciesId === Species.ARCEUS || user.species.speciesId === Species.SILVALLY ? user.formIndex : user.fusionSpecies.formIndex;
 
-      switch (form) {
-      case 1: // Fist Plate / Fighting Memory
-        move.type = Type.FIGHTING;
-        break;
-      case 2: // Sky Plate / Flying Memory
-        move.type = Type.FLYING;
-        break;
-      case 3: // Toxic Plate / Poison Memory
-        move.type = Type.POISON;
-        break;
-      case 4: // Earth Plate / Ground Memory
-        move.type = Type.GROUND;
-        break;
-      case 5: // Stone Plate / Rock Memory
-        move.type = Type.ROCK;
-        break;
-      case 6: // Insect Plate / Bug Memory
-        move.type = Type.BUG;
-        break;
-      case 7: // Spooky Plate / Ghost Memory
-        move.type = Type.GHOST;
-        break;
-      case 8: // Iron Plate / Steel Memory
-        move.type = Type.STEEL;
-        break;
-      case 9: // Flame Plate / Fire Memory
-        move.type = Type.FIRE;
-        break;
-      case 10: // Splash Plate / Water Memory
-        move.type = Type.WATER;
-        break;
-      case 11: // Meadow Plate / Grass Memory
-        move.type = Type.GRASS;
-        break;
-      case 12: // Zap Plate / Electric Memory
-        move.type = Type.ELECTRIC;
-        break;
-      case 13: // Mind Plate / Psychic Memory
-        move.type = Type.PSYCHIC;
-        break;
-      case 14: // Icicle Plate / Ice Memory
-        move.type = Type.ICE;
-        break;
-      case 15: // Draco Plate / Dragon Memory
-        move.type = Type.DRAGON;
-        break;
-      case 16: // Dread Plate / Dark Memory
-        move.type = Type.DARK;
-        break;
-      case 17: // Pixie Plate / Fairy Memory
-        move.type = Type.FAIRY;
-        break;
-      default:
-        move.type = Type.NORMAL;
-        break;
-      }
+      move.type = Type[Type[form]];
       return true;
     }
 
