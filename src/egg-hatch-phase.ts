@@ -451,7 +451,7 @@ export class EggHatchPhase extends Phase {
       ret = this.egg.generatePlayerPokemon(this.scene);
 
       const baseChance = this.egg.gachaType === GachaType.MOVE ? 3 : 6;
-      this.eggMoveIndex = Utils.randSeedInt(baseChance * Math.pow(2, 3 - this.egg.tier))
+      this.eggMoveIndex = this.egg.overrideRareEggMove ? 3 : Utils.randSeedInt(baseChance * Math.pow(2, 3 - this.egg.tier))
         ? Utils.randSeedInt(3)
         : 3;
 

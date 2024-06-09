@@ -45,6 +45,12 @@ export interface IEggOptions {
   isShiny?: boolean;
   /** Defines the variant of the pokemon that will hatch from this egg. If no variantTier is given the normal variant rates will apply. */
   variantTier?: VariantTier;
+  /** Defines if the egg will hatch with the rare egg move. */
+  overrideRareEggMove?: boolean;
+  /** Defines if the egg will hatch with the hidden ability of this species.
+   *  If no hidden ability exist, a random one will get choosen.
+   */
+  overrideHiddenAbility?: boolean
 }
 
 export class Egg {
@@ -62,6 +68,9 @@ export class Egg {
   private _species: Species;
   private _isShiny: boolean;
   private _variantTier: VariantTier;
+
+  private _overrideRareEggMove: boolean;
+  private _overrideHiddenAbility: boolean;
 
   ////
   // #endregion
@@ -106,6 +115,14 @@ export class Egg {
     return this._variantTier;
   }
 
+  get overrideRareEggMove(): boolean {
+    return this._overrideRareEggMove;
+  }
+
+  get overrideHiddenAbility(): boolean {
+    return this._overrideHiddenAbility;
+  }
+
   ////
   // #endregion
   ////
@@ -128,6 +145,9 @@ export class Egg {
     this._isShiny = eggOptions.isShiny ?? (Overrides.EGG_SHINY_OVERRIDE || this.rollShiny(eggOptions.scene));
     this._variantTier = eggOptions.variantTier ?? (Overrides.EGG_VARIANT_OVERRIDE || this.rollVariant());
     this._species = eggOptions.species ?? this.rollSpecies(eggOptions.scene);
+
+    this._overrideRareEggMove = eggOptions.overrideRareEggMove ?? false;
+    this._overrideHiddenAbility = eggOptions.overrideHiddenAbility ?? false;
 
     // Override egg tier and hatchwaves if species was given
     if (eggOptions.species) {
@@ -165,8 +185,13 @@ export class Egg {
 
     const pokemonSpecies = getPokemonSpecies(this._species);
 
+    let abilityIndex = undefined;
+    if (this._overrideHiddenAbility && pokemonSpecies.abilityHidden) {
+      abilityIndex = pokemonSpecies.ability2 ? 2 : 1;
+    }
+
     // This function has way to many optional parameters
-    const ret: PlayerPokemon = scene.addPlayerPokemon(pokemonSpecies, 1, undefined, undefined, undefined, false);
+    const ret: PlayerPokemon = scene.addPlayerPokemon(pokemonSpecies, 1, abilityIndex, undefined, undefined, false);
     ret.shiny = this._isShiny;
     ret.variant = this._variantTier;
 
