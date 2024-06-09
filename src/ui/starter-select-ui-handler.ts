@@ -31,6 +31,8 @@ import { StatsContainer } from "./stats-container";
 import { TextStyle, addBBCodeTextObject, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
+import {SettingKeyboard} from "#app/system/settings/settings-keyboard";
+import {Device} from "#app/enums/devices";
 import * as Challenge from "../data/challenge";
 import MoveInfoOverlay from "./move-info-overlay";
 
@@ -56,7 +58,7 @@ interface LanguageSetting {
 const languageSettings: { [key: string]: LanguageSetting } = {
   "en":{
     starterInfoTextSize: "56px",
-    instructionTextSize: "42px",
+    instructionTextSize: "38px",
   },
   "de":{
     starterInfoTextSize: "56px",
@@ -189,6 +191,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private pokemonCaughtCountText: Phaser.GameObjects.Text;
   private pokemonHatchedCountText: Phaser.GameObjects.Text;
   private genOptionsText: Phaser.GameObjects.Text;
+  private instructionsContainer: Phaser.GameObjects.Container;
   private instructionsText: Phaser.GameObjects.Text;
   private starterSelectMessageBox: Phaser.GameObjects.NineSlice;
   private starterSelectMessageBoxContainer: Phaser.GameObjects.Container;
@@ -244,6 +247,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private candyUpgradeOverlayIcon: Phaser.GameObjects.Image[];
 
   private iconAnimHandler: PokemonIconAnimHandler;
+
+  //variables to keep track of the dynamically rendered list of instruction prompts for starter select
+  private instructionRowX = 0;
+  private instructionRowY = 0;
+  private instructionRowTextOffset = 12;
 
   private starterSelectCallback: StarterSelectCallback;
 
@@ -646,10 +654,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.starterSelectContainer.add(this.pokemonEggMovesContainer);
 
     // The font size should be set per language
-    const instructionTextSize = textSettings.instructionTextSize;
-
-    this.instructionsText = addTextObject(this.scene, 4, 156, "", TextStyle.PARTY, { fontSize: instructionTextSize });
-    this.starterSelectContainer.add(this.instructionsText);
+    this.instructionsContainer = this.scene.add.container(4, 156);
+    this.instructionsContainer.setVisible(true);
+    this.starterSelectContainer.add(this.instructionsContainer);
 
     this.starterSelectMessageBoxContainer = this.scene.add.container(0, this.scene.game.canvas.height / 6);
     this.starterSelectMessageBoxContainer.setVisible(false);
@@ -1485,45 +1492,84 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, undefined, false);
   }
 
+  createButtonFromIconText(iconSetting, gamepadType, translatedText, instructionTextSize): void {
+    let iconPath;
+    // touch controls cannot be rebound as is, and are just emulating a keyboard event.
+    // Additionally, since keyboard controls can be rebound (and will be displayed when they are), we need to have special handling for the touch controls
+    if (gamepadType === "touch") {
+      gamepadType = "keyboard";
+      switch (iconSetting) {
+      case SettingKeyboard.Button_Cycle_Shiny:
+        iconPath = "R.png";
+        break;
+      case SettingKeyboard.Button_Cycle_Form:
+        iconPath = "F.png";
+        break;
+      case SettingKeyboard.Button_Cycle_Gender:
+        iconPath = "G.png";
+        break;
+      case SettingKeyboard.Button_Cycle_Ability:
+        iconPath = "E.png";
+        break;
+      case SettingKeyboard.Button_Cycle_Nature:
+        iconPath = "N.png";
+        break;
+      case SettingKeyboard.Button_Cycle_Variant:
+        iconPath = "V.png";
+        break;
+      default:
+        break;
+      }
+    } else {
+      iconPath = this.scene.inputController?.getIconForLatestInputRecorded(iconSetting);
+    }
+    const iconElement = this.scene.add.sprite(this.instructionRowX, this.instructionRowY, gamepadType, iconPath);
+    iconElement.setScale(0.675);
+    iconElement.setOrigin(0.0, 0.0);
+    const controlLabel = addTextObject(this.scene, this.instructionRowX + this.instructionRowTextOffset, this.instructionRowY, translatedText, TextStyle.PARTY, { fontSize: instructionTextSize });
+    this.instructionsContainer.add([iconElement, controlLabel]);
+    this.instructionRowY += 8;
+    if (this.instructionRowY >= 24) {
+      this.instructionRowY = 0;
+      this.instructionRowX += 50;
+    }
+  }
+
   updateInstructions(): void {
-    const instructionLines = [ ];
-    const cycleInstructionLines = [];
+    const currentLanguage = i18next.resolvedLanguage;
+    const langSettingKey = Object.keys(languageSettings).find(lang => currentLanguage.includes(lang));
+    const textSettings = languageSettings[langSettingKey];
+    const instructionTextSize = textSettings.instructionTextSize;
+    this.instructionRowX = 0;
+    this.instructionRowY = 0;
+    this.instructionsContainer.removeAll();
+    let gamepadType;
+    if (this.scene.inputMethod === "gamepad") {
+      gamepadType = this.scene.inputController.getConfig(this.scene.inputController.selectedDevice[Device.GAMEPAD]).padType;
+    } else {
+      gamepadType = this.scene.inputMethod;
+    }
+
     if (this.speciesStarterDexEntry?.caughtAttr) {
       if (this.canCycleShiny) {
-        cycleInstructionLines.push(i18next.t("starterSelectUiHandler:cycleShiny"));
+        this.createButtonFromIconText(SettingKeyboard.Button_Cycle_Shiny, gamepadType, i18next.t("starterSelectUiHandler:cycleShiny"), instructionTextSize);
       }
       if (this.canCycleForm) {
-        cycleInstructionLines.push(i18next.t("starterSelectUiHandler:cycleForm"));
+        this.createButtonFromIconText(SettingKeyboard.Button_Cycle_Form, gamepadType, i18next.t("starterSelectUiHandler:cycleForm"), instructionTextSize);
       }
       if (this.canCycleGender) {
-        cycleInstructionLines.push(i18next.t("starterSelectUiHandler:cycleGender"));
+        this.createButtonFromIconText(SettingKeyboard.Button_Cycle_Gender, gamepadType, i18next.t("starterSelectUiHandler:cycleGender"), instructionTextSize);
       }
       if (this.canCycleAbility) {
-        cycleInstructionLines.push(i18next.t("starterSelectUiHandler:cycleAbility"));
+        this.createButtonFromIconText(SettingKeyboard.Button_Cycle_Ability, gamepadType, i18next.t("starterSelectUiHandler:cycleAbility"), instructionTextSize);
       }
       if (this.canCycleNature) {
-        cycleInstructionLines.push(i18next.t("starterSelectUiHandler:cycleNature"));
+        this.createButtonFromIconText(SettingKeyboard.Button_Cycle_Nature, gamepadType, i18next.t("starterSelectUiHandler:cycleNature"), instructionTextSize);
       }
       if (this.canCycleVariant) {
-        cycleInstructionLines.push(i18next.t("starterSelectUiHandler:cycleVariant"));
+        this.createButtonFromIconText(SettingKeyboard.Button_Cycle_Variant, gamepadType, i18next.t("starterSelectUiHandler:cycleVariant"), instructionTextSize);
       }
     }
-
-    if (cycleInstructionLines.length > 2) {
-      cycleInstructionLines[0] += " | " + cycleInstructionLines.splice(1, 1);
-      if (cycleInstructionLines.length > 2) {
-        cycleInstructionLines[1] += " | " + cycleInstructionLines.splice(2, 1);
-      }
-      if (cycleInstructionLines.length > 2) {
-        cycleInstructionLines[2] += " | " + cycleInstructionLines.splice(3, 1);
-      }
-    }
-
-    for (const cil of cycleInstructionLines) {
-      instructionLines.push(cil);
-    }
-
-    this.instructionsText.setText(instructionLines.join("\n"));
   }
 
   getValueLimit(): integer {
