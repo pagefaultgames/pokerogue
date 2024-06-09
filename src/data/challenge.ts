@@ -267,6 +267,12 @@ export class SingleGenerationChallenge extends Challenge {
       return false;
     }
 
+    /**
+     * We have special code below for victini because it is classed as a generation 4 pokemon in the code
+     * despite being a generation 5 pokemon. This is due to UI constraints, the starter select screen has
+     * no more room for pokemon so victini is put in the gen 4 section instead. This code just overrides the
+     * normal generation check to correctly treat victini as gen 5.
+     */
     switch (challengeType) {
     case ChallengeType.STARTER_CHOICE:
       const species = args[0] as PokemonSpecies;
