@@ -23,9 +23,9 @@ export const PGMdialogue: DialogueTranslationEntries = {
       2: "Eu não tive chance, né?",
       3: "Vou te encontrar de novo quando for mais velho e te vencer!",
       4: "Ugh. Não tenho mais Pokémon.",
-      5: "Não acredito… NÃO ACREDITO! Como posso perder de novo…",
+      5: "Não acredito… NÃO ACREDITO! Como posso pude perder de novo…",
       6: "Não! Eu perdi!",
-      7: "Whoa! Você é incrível! Estou surpreso!",
+      7: "Uau! Você é incrível! Estou surpreso!",
       8: "Pode ser… Como… Eu e meus Pokémon somos os mais fortes, porém…",
       9: "Não vou perder da próxima vez! Vamos batalhar de novo algum dia!",
       10: "Aff! Não vê que sou apenas uma criança? Não foi justo você ir com tudo!",
@@ -36,7 +36,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "lass": {
     "encounter": {
-      1: "Vamos ter uma batalha, pode ser?",
+      1: "Vamos batalhar, pode ser?",
       2: "Você parece um treinador novo. Vamos batalhar!",
       3: "Não te reconheço. Que tal uma batalha?",
       4: "Vamos ter uma batalha Pokémon divertida!",
@@ -44,7 +44,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       6: "Uma batalha séria começa com um começo sério! Tem certeza que está pronto?",
       7: "Você só é jovem uma vez. E só tem uma chance em cada batalha. Logo, você será apenas uma memória.",
       8: "Vai com calma comigo, tá? Mas vou lutar sério!",
-      9: "A escola é chata. Não tenho nada para fazer. Yawn. Só estou batalhando para passar o tempo."
+      9: "A escola é chata. Não tenho nada para fazer. Só estou batalhando para passar o tempo."
     },
     "victory": {
       1: "Isso foi impressionante! Tenho muito a aprender.",
@@ -61,7 +61,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   "breeder": {
     "encounter": {
       1: "Pokémon obedientes, Pokémon egoístas… Pokémon têm características únicas.",
-      2: "Embora minha criação e comportamento sejam pobres, criei meus Pokémon bem.",
+      2: "Embora minha criação e comportamento sejam ruins, criei meus Pokémon bem.",
       3: "Hmm, você disciplina seus Pokémon? Mimar demais não é bom."
     },
     "victory": {
@@ -94,14 +94,14 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "fisherman": {
     "encounter": {
-      1: "Aack! Você me fez perder uma fisgada!\nO que vai fazer sobre isso?",
-      2: "Saia daqui! Você está assustando os Pokémon!",
+      1: "Anem! Você me fez perder uma fisgada!\nO que vai fazer sobre isso?",
+      2: "Sai daqui! Você está assustando os Pokémon!",
       3: "Vamos ver se você consegue fisgar uma vitória!",
     },
     "victory": {
       1: "Esqueça isso.",
       2: "Da próxima vez, eu vou pescar a vitória!",
-      3: "Acho que subestimei as correntes dessa vez.",
+      3: "Acho que subestimei a força das correntes dessa vez.",
     },
   },
   "fisherman_female": {
@@ -146,14 +146,14 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "encounter": {
       1: "Você parece bastante confiante.",
       2: "Seus Pokémon… Mostre-os para mim…",
-      3: "Como sou um Treinador Ace, as pessoas acham que sou forte.",
-      4: "Você sabe o que é preciso para ser um Treinador Ace?"
+      3: "Como sou um Treinador Ás, as pessoas acham que sou forte.",
+      4: "Você sabe o que é preciso para ser um Treinador Ás?"
     },
     "victory": {
       1: "Sim… Você tem bons Pokémon…",
       2: "O quê?! Mas sou um gênio das batalhas!",
       3: "Claro, você é o personagem principal!",
-      4: "OK! OK! Você poderia ser um Treinador Ace!"
+      4: "OK! OK! Você poderia ser um Treinador Ás!"
     },
     "defeat": {
       1: "Estou dedicando corpo e alma às batalhas de Pokémon!",
@@ -194,7 +194,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       3: "Pé no pedal, vamos ver se você consegue acompanhar!"
     },
     "victory": {
-      1: "Os raios podem estar parados, mas a determinação continua a pedalar.",
+      1: "As rodas podem estar paradas, mas a determinação continua a pedalar.",
       2: "Fui mais rápido!",
       3: "O caminho para a vitória tem muitas curvas e voltas para explorar."
     },
@@ -251,11 +251,11 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "school_kid": {
     "encounter": {
-      1: "…Heehee. Estou confiante nos meus cálculos e análises.",
+      1: "Heehee. Estou confiante nos meus cálculos e análises.",
       2: "Estou ganhando o máximo de experiência que posso porque quero ser um Líder de Ginásio um dia."
     },
     "victory": {
-      1: "Ohhhh… Cálculo e análise talvez não sejam páreo para o acaso…",
+      1: "Aff… Cálculo e análise talvez não sejam páreo para o acaso…",
       2: "Até experiências difíceis e desafiadoras têm seu propósito, eu acho."
     }
   },
@@ -322,7 +322,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "Oi! Concentre-se!",
     },
     "victory": {
-      1: "Eeeeek!",
+      1: "Perdi minha concentração!",
     },
   },
   "officer": {
@@ -408,7 +408,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     },
     "victory": {
       1: "Você realmente é forte… Vou admitir que você é habilidoso…",
-      2: "Grrr… Você sabe que só teve sorte, certo?!",
+      2: "Hmm… Você sabe que só teve sorte, certo?!",
       3: "Uau, você é demais! Não acredito que me venceu!"
     },
     "defeat": {
@@ -425,7 +425,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     },
     "victory": {
       1: "Whoa! Seu time é de verdade, garoto!",
-      2: "Aaargh, você é forte! Até meus truques elétricos perderam para você.",
+      2: "Uau, você é forte! Até meus truques elétricos perderam para você.",
       3: "Isso foi uma derrota absolutamente chocante!"
     },
     "defeat": {
@@ -466,7 +466,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       3: "Vou me aplicar de verdade e melhorar minhas habilidades."
     },
     "defeat": {
-      1: "Fufufu… o veneno drenou todas as suas forças para lutar.",
+      1: "Hehe… o veneno drenou todas as suas forças para lutar.",
       2: "Ha! Você não teve chance contra minhas habilidades superiores de ninja!",
       3: "A fé do meu pai em mim não foi mal colocada."
     }
@@ -513,7 +513,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     },
     "victory": {
       1: "O QUE! Eu, perder?! Não tenho nada a dizer a você!",
-      2: "Hmph… Você nunca poderia entender o que espero alcançar.",
+      2: "Hmm… Você nunca entenderia o que quero alcançar.",
       3: "Esta derrota está apenas adiando o inevitável.\nVou ressurgir a Equipe Rocket das cinzas a tempo."
     },
     "defeat": {
@@ -546,7 +546,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       3: "Hora de criar uma tempestade!\nVamos!"
     },
     "victory": {
-      1: "Oh woah, você me derrotou!",
+      1: "Uau, você me derrotou!",
       2: "Você surfou minha onda e me derrubou!",
       3: "Sinto-me perdido na Caverna Granito!"
     },
@@ -726,7 +726,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "defeat": {
       1: "A onda furiosa ataca novamente!",
       2: "Hora de surfar na onda da vitória!",
-      3: "Ehehe!"
+      3: "Hehe!"
     }
   },
   "melony": {
@@ -775,7 +775,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       3: "Mesmo com isso, ainda sou uma da Elite dos Quatro!"
     },
     "defeat": {
-      1: "Eheh.",
+      1: "Hehe.",
       2: "Isso me deu um excelente material para meu próximo romance!",
       3: "E assim, outra história termina..."
     }
@@ -816,14 +816,14 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "chili": {
     "encounter": {
-      1: "Yeeeeooow! Hora de brincar com FOGO!! Sou o mais forte dos nossos irmãos!",
+      1: "Ihuuu! Hora de brincar com FOGO!! Sou o mais forte dos nossos irmãos!",
       2: "Ta-da! O incendiário do tipo Fogo Chili—sou eu—será seu oponente!",
       3: "Vou mostrar o que eu e meus tipos de Fogo podemos fazer!"
     },
     "victory": {
       1: "Você me pegou. Estou... queimado...",
       2: "Uau! Você está pegando fogo!",
-      3: "Augh! Você me pegou!"
+      3: "Ai! Você me pegou!"
     },
     "defeat": {
       1: "Estou pegando fogo! Jogue comigo, e você se queimará!",
@@ -905,7 +905,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     },
     "defeat": {
       1: "Ei, espere um segundo. Eu acabei de vencer? Acho que acabei de vencer! Que satisfação!",
-      2: "Uooo! Isso foi incrível!"
+      2: "Uou! Isso foi incrível!"
     }
   },
   "amarys": {
@@ -2286,13 +2286,221 @@ export const PGMdialogue: DialogueTranslationEntries = {
 
 
 // Diálogo dos NPCs no jogo quando o personagem do jogador é feminino. Para idiomas que não possuem pronomes de gênero, isso pode ser definido como PGMdialogue.
-export const PGFdialogue: DialogueTranslationEntries = PGMdialogue;
+export const PGFdialogue: DialogueTranslationEntries = {
+  "youngster": {
+    "encounter": {
+      1: "Eai, quer batalhar?",
+      2: "Você também é um treinador novo?",
+      3: "Eai, nunca te vi antes. Vamos batalhar!",
+      4: "Acabei de perder, então estou tentando encontrar mais Pokémon.\nEspera! Você parece fraco! Vamos batalhar!",
+      5: "A gente já se conheceu antes? Não lembro muito bem. Enfim, prazer te conhecer!",
+      6: "Beleza! Vamos nessa!",
+      7: "Beleza! Lá vou eu! Vou te mostrar meu poder!",
+      8: "Hahaha... Vou te mostrar o quão incríveis são meus Pokémon!",
+      9: "Sem perder tempo com cumprimentos. Vamos logo, quando estiver pronto!",
+      10: "Não baixe a guarda, ou você pode acabar chorando quando uma criança te vencer.",
+      11: "Eu criei meus Pokémon com muito cuidado. Você não tem permissão para machucá-los!",
+      12: "Que bom que você chegou! Não vai ser fácil daqui pra frente.",
+      13: "As batalhas continuam para sempre! Bem-vindo ao mundo sem fim!"
+    },
+    "victory": {
+      1: "Uau! Você é forte!",
+      2: "Eu não tive chance, né?",
+      3: "Vou te encontrar de novo quando for mais velho e te vencer!",
+      4: "Ugh. Não tenho mais Pokémon.",
+      5: "Não acredito… NÃO ACREDITO! Como posso pude de novo…",
+      6: "Não! Eu perdi!",
+      7: "Uau! Você é incrível! Estou surpreso!",
+      8: "Pode ser… Como… Eu e meus Pokémon somos os mais fortes, porém…",
+      9: "Não vou perder da próxima vez! Vamos batalhar de novo algum dia!",
+      10: "Aff! Não vê que sou apenas uma criança? Não foi justo você ir com tudo!",
+      11: "Seus Pokémon são incríveis! Troca comigo!",
+      12: "Me empolguei um pouco antes, mas sobre qual trabalho eu estava falando?",
+      13: "Ahaha! É isso aí! Você já está em casa nesse mundo!"
+    }
+  },
+  "lass": {
+    "encounter": {
+      1: "Vamos batalhar, pode ser?",
+      2: "Você parece um treinador novo. Vamos batalhar!",
+      3: "Não te reconheço. Que tal uma batalha?",
+      4: "Vamos ter uma batalha Pokémon divertida!",
+      5: "Vou te mostrar como realmente usar Pokémon!",
+      6: "Uma batalha séria começa com um começo sério! Tem certeza que está pronto?",
+      7: "Você só é jovem uma vez. E só tem uma chance em cada batalha. Logo, você será apenas uma memória.",
+      8: "Vai com calma comigo, tá? Mas vou lutar sério!",
+      9: "A escola é chata. Não tenho nada para fazer. Só estou batalhando para passar o tempo."
+    },
+    "victory": {
+      1: "Isso foi impressionante! Tenho muito a aprender.",
+      2: "Não pensei que você me venceria tão fácil…",
+      3: "Espero que possamos ter uma revanche um dia.",
+      4: "Isso foi incrivelmente divertido! Você me esgotou totalmente…",
+      5: "Você realmente me ensinou uma lição! Você é incrível!",
+      6: "Sério, eu perdi. Isso é, tipo, seriamente deprimente, mas você foi seriamente legal.",
+      7: "Não preciso de memórias como essa. Deletando memória…",
+      8: "Ei! Eu te disse para pegar leve comigo! Mesmo assim, você é legal quando fica sério.",
+      9: "Estou realmente cansando de batalhar… Deve haver algo novo para fazer…"
+    }
+  },
+  "breeder": {
+    "encounter": {
+      1: "Pokémon obedientes, Pokémon egoístas… Pokémon têm características únicas.",
+      2: "Embora minha criação e comportamento sejam ruins, criei meus Pokémon bem.",
+      3: "Hmm, você disciplina seus Pokémon? Mimar demais não é bom."
+    },
+    "victory": {
+      1: "É importante nutrir e treinar as características de cada Pokémon.",
+      2: "Ao contrário do meu lado diabólico, esses são bons Pokémon.",
+      3: "Muito elogio pode estragar tanto Pokémon quanto pessoas."
+    },
+    "defeat": {
+      1: "Você não deve ficar com raiva dos seus Pokémon, mesmo se perder uma batalha.",
+      2: "Certo? Pokémon bons, né? Eu sou adequado para criar coisas.",
+      3: "Não importa o quanto você ame seus Pokémon, ainda precisa discipliná-los quando se comportam mal."
+    }
+  },
+  "breeder_female": {
+    "encounter": {
+      1: "Pokémon nunca te traem. Eles retribuem todo o amor que você dá a eles.",
+      2: "Quer uma dica para treinar bons Pokémon?",
+      3: "Eu criei esses Pokémon muito especiais usando um método especial."
+    },
+    "victory": {
+      1: "Ugh… Não era para ser assim. Será que administrei a mistura errada?",
+      2: "Como isso aconteceu com meus Pokémon… O que você está dando de comer aos seus Pokémon?",
+      3: "Se eu perder, isso significa que eu estava só matando o tempo. Não machuca meu ego nem um pouco."
+    },
+    "defeat": {
+      1: "Isso prova que meus Pokémon aceitaram meu amor.",
+      2: "O verdadeiro truque para treinar bons Pokémon é capturar bons Pokémon.",
+      3: "Pokémon serão fortes ou fracos dependendo de como você os cria."
+    }
+  },
+  "fisherman": {
+    "encounter": {
+      1: "Anem! Você me fez perder uma fisgada!\nO que vai fazer sobre isso?",
+      2: "Sai daqui! Você está assustando os Pokémon!",
+      3: "Vamos ver se você consegue fisgar uma vitória!",
+    },
+    "victory": {
+      1: "Esqueça isso.",
+      2: "Da próxima vez, eu vou pescar a vitória!",
+      3: "Acho que subestimei a força das correntes dessa vez.",
+    },
+  },
+  "fisherman_female": {
+    "encounter": {
+      1: "Uau! Peguei um grande!",
+      2: "Linha lançada, pronta para pescar o sucesso!",
+      3: "Pronta para fazer ondas!"
+    },
+    "victory": {
+      1: "Vou voltar com um anzol mais forte.",
+      2: "Vou pescar a vitória na próxima vez.",
+      3: "Estou só afiando meus anzóis para a revanche!"
+    },
+  },
+  "swimmer": {
+    "encounter": {
+      1: "Hora de mergulhar!",
+      2: "Vamos surfar nas ondas da vitória!",
+      3: "Pronto para fazer um splash!",
+    },
+    "victory": {
+      1: "Molhado na derrota!",
+      2: "Uma onda de derrota!",
+      3: "De volta à praia, eu acho.",
+    },
+  },
+  "backpacker": {
+    "encounter": {
+      1: "Prepare-se, vamos começar!",
+      2: "Vamos ver se você consegue acompanhar!",
+      3: "Prepare-se, desafiante!",
+      4: "Passei 20 anos tentando me encontrar… Mas onde estou?"
+    },
+    "victory": {
+      1: "Dessa vez tropecei!",
+      2: "Ah, acho que estou perdido.",
+      3: "Caminho sem saída!",
+      4: "Espere um segundo! Ei! Você não sabe quem eu sou?"
+    },
+  },
+  "ace_trainer": {
+    "encounter": {
+      1: "Você parece bastante confiante.",
+      2: "Seus Pokémon… Mostre-os para mim…",
+      3: "Como sou um Treinador Ás, as pessoas acham que sou forte.",
+      4: "Você sabe o que é preciso para ser um Treinador Ás?"
+    },
+    "victory": {
+      1: "Sim… Você tem bons Pokémon…",
+      2: "O quê?! Mas sou um gênio das batalhas!",
+      3: "Claro, você é o personagem principal!",
+      4: "OK! OK! Você poderia ser um Treinador Ás!"
+    },
+    "defeat": {
+      1: "Estou dedicando corpo e alma às batalhas de Pokémon!",
+      2: "Tudo dentro das minhas expectativas… Nada para se surpreender…",
+      3: "Eu achava que cresceria para ser uma pessoa frágil que parecia que quebraria se você apertasse muito.",
+      4: "Claro que sou forte e não perco. É importante ganhar com graça."
+    }
+  },
+  "parasol_lady": {
+    "encounter": {
+      1: "Hora de embelezar o campo de batalha com elegância e postura!",
+    },
+    "victory": {
+      1: "Minha elegância permanece inabalável!",
+    }
+  },
+  "twins": {
+    "encounter": {
+      1: "Prepare-se, porque quando nos unimos, é o dobro do problema!",
+      2: "Dois corações, uma estratégia – vamos ver se você consegue acompanhar nosso poder de gêmeos!",
+      3: "Espero que esteja pronto para o dobro do problema, porque estamos prestes a causar!"
+    },
+    "victory": {
+      1: "Podemos ter perdido essa rodada, mas nosso vínculo permanece inquebrável!",
+      2: "Nosso espírito de gêmeos não será apagado por muito tempo.",
+      3: "Voltaremos mais fortes como uma dupla dinâmica!"
+    },
+    "defeat": {
+      1: "O poder dos gêmeos reina supremo!",
+      2: "Dois corações, um triunfo!",
+      3: "Dobro de sorrisos, dobro da dança da vitória!"
+    }
+  },
+  "cyclist": {
+    "encounter": {
+      1: "Prepare-se para comer poeira!",
+      2: "Prepare-se, desafiante! Estou prestes a te deixar para trás!",
+      3: "Pé no pedal, vamos ver se você consegue acompanhar!"
+    },
+    "victory": {
+      1: "As rodas podem estar paradas, mas a determinação continua a pedalar.",
+      2: "Fui mais rápido!",
+      3: "O caminho para a vitória tem muitas curvas e voltas para explorar."
+    },
+  },
+  "black_belt": {
+    "encounter": {
+      1: "Elogio sua coragem ao me desafiar! Pois eu sou o que tem o chute mais forte!",
+      2: "Oh, entendo. Você gostaria de ser cortada em pedaços? Ou prefere o papel de saco de pancadas?"
+    },
+    "victory": {
+      1: "Oh. Os Pokémon fizeram a luta. Meu chute forte não ajudou em nada.",
+      2: "Hmmm… Se eu ia perder de qualquer maneira, esperava ficar totalmente destruído no processo."
+    },
+  },
+};
 
 // Diálogo do chefe final do jogo quando o personagem do jogador é masculino (ou não definido)
 export const PGMbattleSpecDialogue: SimpleTranslationEntries = {
   "encounter": `Parece que a hora finalmente chegou novamente.\nVocê sabe por que veio aqui, não sabe?
                $Você foi atraído para cá, porque já esteve aqui antes.\nInúmeras vezes.
-               $Embora, talvez isso possa ser contado.\nPara ser preciso, este é de fato o seu 5.643.853º ciclo.
+               $Embora talvez isso possa ser contado.\nPara ser preciso, este é de fato o seu 5.643.853º ciclo.
                $A cada ciclo, sua mente retorna ao seu estado anterior.\nMesmo assim, de alguma forma, vestígios de seus antigos "eus" permanecem.
                $Até agora, você ainda não conseguiu, mas sinto uma presença diferente em você desta vez.\n
                $Você é o único aqui, embora pareça haver... outro.
@@ -2304,7 +2512,19 @@ export const PGMbattleSpecDialogue: SimpleTranslationEntries = {
 };
 
 // Diálogo do chefe final do jogo quando o personagem do jogador é feminino. Para idiomas que não possuem pronomes de gênero, isso pode ser definido como PGMbattleSpecDialogue.
-export const PGFbattleSpecDialogue: SimpleTranslationEntries = PGMbattleSpecDialogue;
+export const PGFbattleSpecDialogue: SimpleTranslationEntries = {
+  "encounter": `Parece que a hora finalmente chegou novamente.\nVocê sabe por que veio aqui, não sabe?
+               $Você foi atraída para cá, porque já esteve aqui antes.\nInúmeras vezes.
+               $Embora talvez isso possa ser contado.\nPara ser preciso, este é de fato o seu 5.643.853º ciclo.
+               $A cada ciclo, sua mente retorna ao seu estado anterior.\nMesmo assim, de alguma forma, vestígios de seus antigos "eus" permanecem.
+               $Até agora, você ainda não conseguiu, mas sinto uma presença diferente em você desta vez.\n
+               $Você é a única aqui, embora pareça haver... outro.
+               $Você finalmente vai se mostrar um desafio formidável para mim?\nO desafio que anseio há milênios?
+               $Vamos começar.`,
+  "firstStageWin": `Entendo. A presença que senti era realmente real.\nParece que não preciso mais me segurar.
+                    $Não me decepcione.`,
+  "secondStageWin": "…Magnífico."
+};
 
 // Diálogo que não se enquadra em nenhuma outra categoria (por exemplo, mensagens de tutorial ou o final do jogo). Para quando o personagem do jogador é masculino
 export const PGMmiscDialogue: SimpleTranslationEntries = {
