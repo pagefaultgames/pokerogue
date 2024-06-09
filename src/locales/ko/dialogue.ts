@@ -229,7 +229,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "ranger": {
     "encounter": {
-      1: "자연에 둘러 둘러싸여 있으면, 다른 건 중요하지 않게 느껴져.",
+      1: "자연에 둘러싸여 있으면, 다른 건 중요하지 않게 느껴져.",
       2: "인생에서 자연을 빼고 살면, 가끔 갑자기 마음이 불안해지지."
     },
     "victory": {
