@@ -122,7 +122,8 @@ export class Egg {
   ////
 
   public isManaphyEgg(): boolean {
-    return this._tier === EggTier.COMMON && !(this._id % 255);
+    return (this._species === Species.PHIONE || this._species === Species.MANAPHY) ||
+       this._tier === EggTier.COMMON && !(this._id % 255);
   }
 
   public getKey(): string {
