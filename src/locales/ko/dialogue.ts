@@ -144,231 +144,243 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "ace_trainer": {
     "encounter": {
-      1: "You seem quite confident.",
-      2: "Your Pokémon… Show them to me…",
-      3: "Because I'm an Ace Trainer, people think I'm strong.",
-      4: "Are you aware of what it takes to be an Ace Trainer?"
+      1: "너는 꽤 자신만만해 보이는구나.",
+      2: "너의 포켓몬들… 나에게 보여줘…",
+      3: "내가 엘리트 트레이너라서, 사람들은 내가 강하다고 생각해.",
+      4: "엘리트 트레이너가 되려면 무엇이 필요한지 알고 있니?"
     },
     "victory": {
-      1: "Yes… You have good Pokémon…",
-      2: "What?! But I'm a battling genius!",
-      3: "Of course, you are the main character!",
-      4: "OK! OK! You could be an Ace Trainer!"
+      1: "그러네… 넌 좋은 포켓몬을 가졌구나…",
+      2: "뭐? 말도 안 돼, 난 배틀 천재라구!",
+      3: "그래도 역시, 네가 주인공이구나!",
+      4: "좋아! 좋아! 너도 엘리트 트레이너가 될 수 있겠어!"
     },
     "defeat": {
-      1: "I am devoting my body and soul to Pokémon battles!",
-      2: "All within my expectations… Nothing to be surprised about…",
-      3: "I thought I'd grow up to be a frail person who looked like they would break if you squeezed them too hard.",
-      4: "Of course I'm strong and don't lose. It's important that I win gracefully."
+      1: "난 내 몸과 마음을 포켓몬 배틀에 바치고 있어!",
+      2: "모두 예상된 일이었어… 이건 놀랄 일이 아니야…",
+      3: "난 내가 강하게 압박하면 무너질 연약한 사람이라고 생각했어.",
+      4: "난 강하고, 지지 않아. 그저 멋지게 이길 수 없었기 때문이야."
     }
   },
   "parasol_lady": {
     "encounter": {
-      1: "Time to grace the battlefield with elegance and poise!",
+      1: "우아함과 침착함으로 승부하겠습니다!",
     },
     "victory": {
-      1: "My elegance remains unbroken!",
+      1: "그래도 제 우아함은 무너지지 않아요!",
     }
   },
   "twins": {
     "encounter": {
-      1: "Get ready, because when we team up, it's double the trouble!",
-      2: "Two hearts, one strategy – let's see if you can keep up with our twin power!",
-      3: "Hope you're ready for double trouble, because we're about to bring the heat!"
+      1: "각오해, 우리가 한 팀이 되면 두 배로 강해진다구!",
+      2: "마음은 두 개지만 우리는 하나 – 네가 쌍둥이의 파워를 따라잡을 수 있는지 보겠어!",
+      3: "두 배로 각오하는 게 좋을 거야. 우리가 곧 화나게 할 거거든!"
     },
     "victory": {
-      1: "We may have lost this round, but our bond remains unbreakable!",
-      2: "Our twin spirit won't be dimmed for long.",
-      3: "We'll come back stronger as a dynamic duo!"
+      1: "비록 우리는 졌지만, 우리의 관계는 깨지지 않아!",
+      2: "그래도 우리의 영혼은 오랫동안 흐려지지 않을 거야.",
+      3: "더 강력한 듀오로 강해져서 돌아오겠어!"
     },
     "defeat": {
-      1: "Twin power reigns supreme!",
-      2: "Two hearts, one triumph!",
-      3: "Double the smiles, double the victory dance!"
+      1: "우리 쌍둥이의 파워는 최고야!",
+      2: "마음은 두 개지만 승리는 하나!",
+      3: "미소도 두 배, 승리의 댄스도 두 배!"
     }
   },
   "cyclist": {
     "encounter": {
-      1: "Get ready to eat my dust!",
-      2: "Gear up, challenger! I'm about to leave you in the dust!",
-      3: "Pedal to the metal, let's see if you can keep pace!"
+      1: "내가 만든 먼지나 마실 준비하시지!",
+      2: "준비하라구! 난 널 먼지 속에 놓고 올 거니까!",
+      3: "전력을 다해야 할 거야, 네가 날 따라올 수 있는지 지켜보겠어!"
     },
     "victory": {
-      1: "Spokes may be still, but determination pedals on.",
-      2: "Outpaced!",
-      3: "The road to victory has many twists and turns yet to explore."
+      1: "바퀴가 움직이지 않더라도, 나의 페달은 그렇지 않아.",
+      2: "이런, 따라잡혔어!",
+      3: "승리로 가는 길에는 아직 만나지 못한 우여곡절이 많이 있구나."
     },
   },
   "black_belt": {
     "encounter": {
-      1: "I praise your courage in challenging me! For I am the one with the strongest kick!",
-      2: "Oh, I see. Would you like to be cut to pieces? Or do you prefer the role of punching bag?"
+      1: "네 용기가 대단하구나! 난 최고의 발차기 실력을 갖추고 있다구!",
+      2: "오, 알겠어. 산산조각이 나고 싶구나? 아니면 샌드백이 되고 싶은 거야?"
     },
     "victory": {
-      1: "Oh. The Pokémon did the fighting. My strong kick didn't help a bit.",
-      2: "Hmmm… If I was going to lose anyway, I was hoping to get totally messed up in the process."
+      1: "이런, 포켓몬이 배틀을 하는 동안 내 발차기는 전혀 도움이 되지 않았어.",
+      2: "음… 어차피 내가 질거라면, 완전 엉망진창이 되길 바랬는데…"
     },
   },
   "battle_girl": {
     "encounter": {
-      1: "You don't have to try to impress me. You can lose against me.",
+      1: "감동을 주려고 노력할 필요는 없어. 네가 질 수도 있으니까.",
     },
     "victory": {
-      1: "It's hard to say good-bye, but we are running out of time…",
+      1: "작별인사는 어렵지만, 우리에겐 시간이 얼마 안 남았네…",
     },
   },
   "hiker": {
     "encounter": {
-      1: "My middle-age spread has given me as much gravitas as the mountains I hike!",
-      2: "I inherited this big-boned body from my parents… I'm like a living mountain range…",
+      1: "중년으로 접어들면서 등산해왔던 산처럼 진중해졌습니다!",
+      2: "살아있는 산같은… 큰 체격을 부모님이 물려주셨죠…",
     },
     "victory": {
-      1: "At least I cannot lose when it comes to BMI!",
-      2: "It's not enough… It's never enough. My bad cholesterol isn't high enough…"
+      1: "적어도 BMI에 대하서는 질 수 없습니다!",
+      2: "부족해… 절대로 충분하지 않아. 저의 콜레스테롤이 부족합니다…"
     },
   },
   "ranger": {
     "encounter": {
-      1: "When I am surrounded by nature, most other things cease to matter.",
-      2: "When I'm living without nature in my life, sometimes I'll suddenly feel an anxiety attack coming on."
+      1: "자연에 둘러싸여 있으면, 다른 건 중요하지 않게 느껴져.",
+      2: "인생에서 자연을 빼고 살면, 가끔 갑자기 마음이 불안해지지."
     },
     "victory": {
-      1: "It doesn't matter to the vastness of nature whether I win or lose…",
-      2: "Something like this is pretty trivial compared to the stifling feelings of city life."
+      1: "광활한 자연 앞에서는 내가 이기든 지든 상관없어…",
+      2: "도시 생활의 답답한 느낌에 비하면 이런 것은 아주 사소한 일지."
     },
     "defeat": {
-      1: "I won the battle. But victory is nothing compared to the vastness of nature…",
-      2: "I'm sure how you feel is not so bad if you compare it to my anxiety attacks…"
+      1: "내가 이겼네. 그러나 승리는 광대한 자연에 비하면 아무것도 아니야…",
+      2: "내 마음속 불안함과 비교하면, 당신 기분은 그렇게 나쁘지 않을텐데…"
     }
   },
   "scientist": {
     "encounter": {
-      1: "My research will lead this world to peace and joy.",
+      1: "제 연구는 이 세상을 평화와 기쁨으로 이끌 겁니다.",
     },
     "victory": {
-      1: "I am a genius… I am not supposed to lose against someone like you…",
+      1: "전 천재니까… 당신 같은 사람에게 질 수 없는데…",
     },
   },
   "school_kid": {
     "encounter": {
-      1: "…Heehee. I'm confident in my calculations and analysis.",
-      2: "I'm gaining as much experience as I can because I want to be a Gym Leader someday."
+      1: "…헤헷. 계산과 분석에는 자신 있어.",
+      2: "언젠가 체육관 관장이 되고 싶어서, 최대한 많은 경험을 쌓고 있어."
     },
     "victory": {
-      1: "Ohhhh… Calculation and analysis are perhaps no match for chance…",
-      2: "Even difficult, trying experiences have their purpose, I suppose."
+      1: "으아아… 이번에는 아마 계산과 분석이 빗나간 것 같아…",
+      2: "내가 보기엔, 어렵고 힘든 경험도 나름의 의미가 있는 것 같아."
     }
   },
   "artist": {
     "encounter": {
-      1: "I used to be popular, but now I am all washed up.",
+      1: "예전엔 인기가 많았지만, 지금은 모두 사라졌다네.",
     },
     "victory": {
-      1: "As times change, values also change. I realized that too late.",
+      1: "시대가 변하면, 가치관도 변하지. 난 그걸 너무 늦게 깨달았어.",
     },
   },
   "guitarist": {
     "encounter": {
-      1: "Get ready to feel the rhythm of defeat as I strum my way to victory!",
+      1: "패배의 리듬을 느낄 준비는 됐겠지? 내가 승리할 거니까!",
     },
     "victory": {
-      1: "Silenced for now, but my melody of resilience will play on.",
+      1: "지금은 조용하지만, 회복의 멜로디를 연주할 거야.",
     },
   },
   "worker": {
     "encounter": {
-      1: "It bothers me that people always misunderstand me. I'm a lot more pure than everyone thinks.",
+      1: "사람들이 저를 오해하는 게 신경 쓰여요. 전 생각보다 훨씬 깨끗하답니다.",
     },
     "victory": {
-      1: "I really don't want my skin to burn, so I want to stay in the shade while I work.",
+      1: "피부가 타는 게 싫어서, 일하는 동안엔 그늘에 머물고 싶어요.",
     },
   },
   "worker_female": {
     "encounter": {
-      1: `It bothers me that people always misunderstand me. 
-                $I'm a lot more pure than everyone thinks.`
+      1: `사람들이 나를 오해하는 게 신경 쓰여.
+                $나는 생각보다 훨씬 깨끗한데.`
     },
     "victory": {
-      1: "I really don't want my skin to burn, so I want to stay in the shade while I work."
+      1: "피부가 타는 게 싫어서, 일하는 동안엔 그늘에 머물고 싶어."
     },
     "defeat": {
-      1: "My body and mind aren't necessarily always in sync."
+      1: "생각처럼 몸이 잘 안따라주네."
     }
   },
   "worker_double": {
     "encounter": {
-      1: "I'll show you we can break you. We've been training in the field!",
+      1: "너를 무너뜨릴 수 있다는 것을 보여줄게. 우리는 실전 경험이 있거든!",
     },
     "victory": {
-      1: "How strange… How could this be… I shouldn't have been outmuscled.",
+      1: "이상하네… 어떻게 이럴 수 있지… 힘으로 압도할 수 없다니.",
     },
   },
   "hex_maniac": {
     "encounter": {
-      1: "I normally only ever listen to classical music, but if I lose, I think I shall try a bit of new age!",
-      2: "I grow stronger with each tear I cry."
+      1: "평소에는 클래식 음악만 들었는데, 지면 뉴에이지도 좀 들어볼까!",
+      2: "눈물을 흘릴 때마다 더 강해지는 것 같아."
     },
     "victory": {
-      1: "Is this the dawning of the age of Aquarius?",
-      2: "Now I can get even stronger. I grow with every grudge."
+      1: "지금이 물병자리 시대의 시작일까?",
+      2: "이제 나는 더 강해지겠지. 모든 원한과 함께 성장하겠어."
     },
     "defeat": {
-      1: "New age simply refers to twentieth century classical composers, right?",
-      2: "Don't get hung up on sadness or frustration. You can use your grudges to motivate yourself."
+      1: "뉴에이지란 단순히 20세기 클래식 작곡가들을 말하는 거, 맞지?",
+      2: "슬픔이나 좌절에 얽매이지 마. 넌 그 원한을 원동력으로 사용할 수 있어."
     }
   },
   "psychic": {
     "encounter": {
-      1: "Hi! Focus!",
+      1: "안녕! 집중해!",
     },
     "victory": {
-      1: "Eeeeek!",
+      1: "에에에에엣!",
     },
   },
   "officer": {
     "encounter": {
-      1: "Brace yourself, because justice is about to be served!",
-      2: "Ready to uphold the law and serve justice on the battlefield!"
+      1: "마음의 준비를 하시죠, 정의가 곧 실행될 거니까요!",
+      2: "법을 지키고 정의를 위해 봉사할 준비가 되었습니다!"
     },
     "victory": {
-      1: "The weight of justice feels heavier than ever…",
-      2: "The shadows of defeat linger in the precinct."
+      1: "정의의 무게가 그 어느 때보다 무겁게 느껴집니다…",
+      2: "패배의 그림자가 관할 경찰서에 남았습니다."
     }
   },
   "beauty": {
     "encounter": {
-      1: "My last ever battle… That's the way I'd like us to view this match…",
+      1: "나의 마지막 배틀… 이 승부를 그렇게 봐주셨으면 좋겠어요…",
     },
     "victory": {
-      1: "It's been fun… Let's have another last battle again someday…",
+      1: "즐거웠어요… 언젠가 또 다른 마지막 승부를 하죠…",
     },
   },
   "baker": {
     "encounter": {
-      1: "Hope you're ready to taste defeat!"
+      1: "패배의 맛을 볼 준비는 됐겠지!"
     },
     "victory": {
-      1: "I'll bake a comeback."
+      1: "실력이든 빵이든, 굽고 나면 단단해지는 법이라네."
     },
   },
   "biker": {
     "encounter": {
-      1: "Time to rev up and leave you in the dust!"
+      1: "힘차게 먼지 속으로 출발할 시간입니다!"
     },
     "victory": {
-      1: "I'll tune up for the next race."
+      1: "다음 경주를 위해 준비해야겠습니다."
     },
   },
   "firebreather": {
     "encounter": {
-      1: "My flames shall devour you!",
-      2: "My soul is on fire. I'll show you how hot it burns!",
-      3: "Step right up and take a look!"
+      1: "내 불꽃이 너를 삼킬 테니까!",
+      2: "내 영혼은 불타고 있다. 얼마나 뜨겁게 타는지 보여주지!",
+      3: "이리 올라와서 보도록!"
     },
     "victory": {
-      1: "I burned down to ashes...",
-      2: "Yow! That's hot!",
-      3: "Ow! I scorched the tip of my nose!"
+      1: "하얗게 불태웠다………",
+      2: "큭! 제법 뜨겁군!",
+      3: "으윽! 코끝에 화상을 입었다!"
+    },
+  },
+  "sailor": {
+    "encounter": {
+      1: "친구여, 진다면 널빤지 행이야!",
+      2: "덤벼! 내 선원으로서 자존심이 위태롭군!",
+      3: "여어 거기! 뱃멀미 하나?"
+    },
+    "victory": {
+      1: "크윽! 꼬맹이한테 지다니!",
+      2: "네 영혼이 나를 침몰시켰어!",
+      3: "내가 뱃멀미가 나는 것 같군…"
     },
   },
   "brock": {
@@ -685,19 +697,19 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "falkner": {
     "encounter": {
-      1: "I'll show you the real power of the magnificent bird Pokémon!",
-      2: "Winds, stay with me!",
-      3: "Dad! I hope you're watching me battle from above!"
+      1: "넓은 하늘을 화려하게 나는 새 포켓몬의 진정한 강함을 알게 해주겠다!",
+      2: "바람이여, 나에게 오라!",
+      3: "아버지, 내 시합을 하늘에서도 봐줘!"
     },
     "victory": {
-      1: "I understand… I'll bow out gracefully.",
-      2: "A defeat is a defeat. You are strong indeed.",
-      3: "…Shoot! Yeah, I lost."
+      1: "알았다… 미련없이 땅에 내려가지.",
+      2: "패배는 패배니까. 넌 정말 강하군.",
+      3: "…큭! 그래, 내가 졌다."
     },
     "defeat": {
-      1: "Dad! I won with your cherished bird Pokémon…",
-      2: "Bird Pokémon are the best after all!",
-      3: "Feels like I'm catching up to my dad!"
+      1: "아버지! 소중히 여기던 새 포켓몬으로 이겼어…",
+      2: "언제나 새 포켓몬이 최강이다!",
+      3: "아버지를 따라 잡은 기분이군!"
     }
   },
   "nessa": {
@@ -842,103 +854,103 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "roark": {
     "encounter": {
-      1: "I need to see your potential as a Trainer. And, I'll need to see the toughness of the Pokémon that battle with you!",
-      2: "Here goes! These are my rocking Pokémon, my pride and joy!",
-      3: "Rock-type Pokémon are simply the best!",
-      4: "I need to see your potential as a Trainer. And, I'll need to see the toughness of the Pokémon that battle with you!"
+      1: "트레이너로서 너의 실력이 어느 정도인지 그리고 함께 싸울 포켓몬이 얼마나 강한지 확인해보겠어!",
+      2: "자 간다! 내 자랑이자 기쁨인 바위타입 포켓몬들이야!",
+      3: "바위타입 포켓몬이야말로 최고지!",
+      4: "트레이너로서 너의 실력이 어느 정도인지 그리고 함께 싸울 포켓몬이 얼마나 강한지 확인해보겠어!"
     },
     "victory": {
-      1: "W-what? That can't be! My buffed-up Pokémon!",
-      2: "…We lost control there. Next time I'd like to challenge you to a Fossil-digging race underground.",
-      3: "With skill like yours, it's natural for you to win.",
-      4: "Wh-what?! It can't be! Even that wasn't enough?",
-      5: "I blew it."
+      1: "이-이럴수가! 열심히 단련시킨 포켓몬들이!",
+      2: "…져버린 건가. 다음엔 지하통로에서 화석캐기 승부를 하고 싶구나.",
+      3: "네 실력이라면 승리는 당연한 결과겠지.",
+      4: "뭐-뭐야?! 이럴 수가! 이것도 부족했단 말인가?",
+      5: "내가 실수했군."
     },
     "defeat": {
-      1: "See? I'm proud of my rocking battle style!",
-      2: "Thanks! The battle gave me confidence that I may be able to beat my dad!",
-      3: "I feel like I just smashed through a really stubborn boulder!"
+      1: "봤지? 이게 바로 내가 자랑하는 바위 스타일 전투야!",
+      2: "고마워! 이번 승부로 아버지를 이길 수 있겠다는 자신감이 생겼어!",
+      3: "정말 단단한 바위를 뚫고 나온 기분인데!"
     }
   },
   "morty": {
     "encounter": {
-      1: `With a little more, I could see a future in which I meet the legendary Pokémon.
-                $You're going to help me reach that level!`,
-      2: `It's said that a rainbow-hued Pokémon will come down to appear before a truly powerful Trainer. 
-                $I believed that tale, so I have secretly trained here all my life. As a result, I can now see what others cannot. 
-                $I see a shadow of the person who will make the Pokémon appear. 
-                $I believe that person is me! You're going to help me reach that level!`,
-      3: "Whether you choose to believe or not, mystic power does exist.",
-      4: "You can bear witness to the fruits of my training.",
-      5: "You must make your soul one with that of Pokémon. Can you do this?",
-      6: "Say, do you want to be part of my training?"
+      1: `조금만 더 노력하면, 내가 전설의 포켓몬을 만나는 미래가 보여.
+                $내가 그 수준에 도달할 수 있게 도와줘!`,
+      2: `커다란 무지개색 포켓몬은 진정한 강함을 가진 트레이너 앞에 나타난다는 이야기가 있어. 
+                $난 그 이야기를 믿고, 줄곧 이 곳에서 몰래 수행하고 있어. 그 결과로, 다른 사람들은 볼 수 없는 것을 볼 수 있게 됐지. 
+                $내겐 그 포켓몬을 나타나게 할 사람의 그림자가 보이거든. 
+                $난 그게 나라고 믿어! 넌 내가 그 수준에 올라갈 수 있도록 도와줘야겠어!`,
+      3: "네가 믿든 믿지 않든, 불가사의한 힘은 존재해.",
+      4: "넌 내 수련의 결실을 보게 될 거야.",
+      5: "포켓몬과 너의 영혼을 하나로 만들어야 해. 가능하겠어?",
+      6: "저기, 너 내 수행의 일부분이 되고 싶은거지?"
     },
     "victory": {
-      1: "I'm not good enough yet…",
-      2: `I see… Your journey has taken you to far-away places and you have witnessed much more than I.
-                $I envy you for that…`,
-      3: "How is this possible…",
-      4: `I don't think our potentials are so different.
-                $But you seem to have something more than that… So be it.`,
-      5: "Guess I need more training.",
-      6: "That's a shame."
+      1: "나는 아직 멀었구나…",
+      2: `그래… 여행으로 먼 곳을 돌아다니면서, 나보다 훨씬 많은 것을 봐왔구나.
+                $네가 조금 부럽네…`,
+      3: "이게 어떻게 가능한 거지…",
+      4: `우리의 잠재력은 그렇게 다르진 않은 것 같아.
+                $그치만 넌 그것과 다른 무언가를 많이 갖고 있는 것 같네… 흐음.`,
+      5: "수련이 더 필요하겠군.",
+      6: "안타깝게 됐네."
     },
     "defeat": {
-      1: "I moved… one step ahead again.",
-      2: "Fufufu…",
-      3: "Wh-what?! It can't be! Even that wasn't enough?",
-      4: "I feel like I just smashed through a really stubborn boulder!",
-      5: "Ahahahah!",
-      6: "I knew I would win!"
+      1: "내가…다시 한 발짝 앞섰어.",
+      2: "후후훗…",
+      3: "뭐-뭐야?! 이럴 수가! 그것도 부족해?",
+      4: "정말 단단한 바위를 뚫고 나온 기분인데!",
+      5: "아하하하하!",
+      6: "내가 이길 줄 알았어!"
     }
   },
   "crispin": {
     "encounter": {
-      1: "I wanna win, so that's exactly what I'll do!",
-      2: "I battle because I wanna battle! And you know what? That's how it should be!"
+      1: "이기고 싶으니까 이기고 말겠어!",
+      2: "싸우고 싶으면 싸운다! 이거면 충분하지 않아!?"
     },
     "victory": {
-      1: "I wanted to win…but I lost!",
-      2: "I lost…'cause I couldn't win!"
+      1: "이기고 싶었는데…졌잖아!",
+      2: "이기지 못해서…지고 말았어!"
     },
     "defeat": {
-      1: "Hey, wait a sec. Did I just win? I think I just won! Talk about satisfying!",
-      2: "Wooo! That was amazing!"
+      1: "잠시만. 나 지금 이긴거지? 이긴 거 맞지! 기분 좋은데!",
+      2: "우와아! 이거 굉장한데!"
     }
   },
   "amarys": {
     "encounter": {
-      1: `I want to be the one to help a certain person. That being the case, I cannot afford to lose.
-                $… Our battle starts now.`,
+      1: `네리네는 그 사람을 구원하고 싶습니다. 그렇기에 패배는 용납되지 않습니다.
+                $… 승부를 시작합니다.`,
     },
     "victory": {
-      1: "I am… not enough, I see."
+      1: "네리네는… 안 된다는 건가요."
     },
     "defeat": {
-      1: "Victory belongs to me. Well fought."
+      1: "네리네가 승리했습니다. 수고하셨습니다."
     }
   },
   "lacey": {
     "encounter": {
-      1: "I'll be facing you with my usual party as a member of the Elite Four."
+      1: "이번에는 사천왕으로서 승부하는 거니까 평소 사용하는 아이들로 상대해 드릴게요!"
     },
     "victory": {
-      1: "That was a great battle!"
+      1: "멋진 포켓몬 배틀이었어요!"
     },
     "defeat": {
-      1: "Let's give your Pokémon a nice round of applause for their efforts!"
+      1: "당신의 포켓몬의 노력에 박수를 보내주세요!"
     }
   },
   "drayton": {
     "encounter": {
-      1: `Man, I love chairs. Don't you love chairs? What lifesavers. 
-                $I don't get why everyone doesn't just sit all the time. Standing up's tiring work!`,
+      1: `의자는 좋은 거야. 너도 그렇게 생각해? 정말 고마운 물건이지. 
+                $왜 다들 앉지 않는 걸까. 서 있는 건 힘들잖아!`,
     },
     "victory": {
-      1: "Guess I should've expected that!"
+      1: "전보다 더 강해질 줄이야!"
     },
     "defeat": {
-      1: "Heh heh! Don't mind me, just scooping up a W over here. I get it if you're upset, but don't go full Kieran on me, OK?"
+      1: "헤헤헷! 내 승리야. 분한 건 알겠지만 카지처럼 나가떨어지지마, 응?"
     }
   },
   "ramos": {
@@ -989,13 +1001,13 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "gardenia": {
     "encounter": {
-      1: "You have a winning aura about you. So, anyway, this will be fun. Let's have our battle!"
+      1: "너에게선 승리의 기운이 느껴져. 어쨌든 재밌을 것 같아. 포켓몬 승부하자!"
     },
     "victory": {
-      1: "Amazing! You're very good, aren't you?"
+      1: "대단해! 너 정말 강하구나!"
     },
     "defeat": {
-      1: "Yes! My Pokémon and I are perfectly good!"
+      1: "그렇지! 나와 포켓몬은 완벽해!"
     }
   },
   "aaron": {
@@ -1134,26 +1146,26 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "lorelei": {
     "encounter": {
-      1: `No one can best me when it comes to icy Pokémon! Freezing moves are powerful!
-                $Your Pokémon will be at my mercy when they are frozen solid! Hahaha! Are you ready?`,
+      1: `얼음포켓몬을 내보내면 대적할 사람이 없지! 상대를 얼린다는 건 매우 강력한 공격이야.
+                $네 포켓몬이 꽁꽁 얼면 그때부턴 내 손바닥 위거든! 아하하! 준비됐어?`,
     },
     "victory": {
-      1: "How dare you!"
+      1: "어떻게 감히!"
     },
     "defeat": {
-      1: "There's nothing you can do once you're frozen."
+      1: "얼어붙은 넌 아무것도 할 수 없어."
     }
   },
   "will": {
     "encounter": {
-      1: `I have trained all around the world, making my psychic Pokémon powerful.
-                $I can only keep getting better! Losing is not an option!`,
+      1: `나는 전세계를 돌아다니며, 강한 에스퍼 포켓몬을 만들도록 수행해왔다.
+                $계속 더 정진하겠다! 패배는 선택지에 없어!`,
     },
     "victory": {
-      1: "I… I can't… believe it…"
+      1: "이… 내가… 믿을수 없어…"
     },
     "defeat": {
-      1: "That was close. I wonder what it is that you lack."
+      1: "근소한 차이였다. 네게 부족한 것이 무엇인지 궁금하군."
     }
   },
   "malva": {
@@ -1204,35 +1216,35 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "bruno": {
     "encounter": {
-      1: "We will grind you down with our superior power! Hoo hah!"
+      1: "우월한 힘으로 너를 부숴주지! 우! 하~앗!"
     },
     "victory": {
-      1: "Why? How could I lose?"
+      1: "하? 어떻게 내가 진 거지?"
     },
     "defeat": {
-      1: "You can challenge me all you like, but the results will never change!"
+      1: "얼마든지 내게 도전 할 수 있지만, 결과는 절대 바뀌지 않을 거다!"
     }
   },
   "bugsy": {
     "encounter": {
-      1: "I'm Bugsy! I never lose when it comes to bug Pokémon!"
+      1: "내 이름은 호일! 벌레 포켓몬에 대해서라면 누구에게도 지지 않아!"
     },
     "victory": {
-      1: "Whoa, amazing! You're an expert on Pokémon!\nMy research isn't complete yet. OK, you win."
+      1: "우와, 대단해! 넌 포켓몬 전문가구나!\n내 연구는 아직 안 끝났네. 응, 네가 이겼어."
     },
     "defeat": {
-      1: "Thanks! Thanks to our battle, I was also able to make progress in my research!"
+      1: "고마워! 방금 승부 덕분에, 내 연구도 진전을 이룬 것 같아!"
     }
   },
   "koga": {
     "encounter": {
-      1: "Fwahahahaha! Pokémon are not merely about brute force--you shall see soon enough!"
+      1: "후하하하! 포켓몬은 딘순히 강한 것만이 아니다--곧 알려주지!"
     },
     "victory": {
-      1: "Ah! You've proven your worth!"
+      1: "하! 스스로 증명해냈군!"
     },
     "defeat": {
-      1: "Have you learned to fear the techniques of the ninja?"
+      1: "인술을 피하는 방법을 배워보겠나?"
     }
   },
   "bertha": {
@@ -1307,13 +1319,13 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "agatha": {
     "encounter": {
-      1: "Pokémon are for battling! I'll show you how a real Trainer battles!"
+      1: "포켓몬은 싸우게 하려고 있는 것이야! 진정한 싸움이라는 것을 보여주겠다!"
     },
     "victory": {
-      1: "Oh my! You're something special, child!"
+      1: "이런! 넌 무언가 특별하구나, 꼬마야!"
     },
     "defeat": {
-      1: "Bahaha. That's how a proper battle's done!"
+      1: "바하하하. 제대로 된 승부는 이렇게 하는거다!"
     }
   },
   "flint": {
@@ -1402,33 +1414,33 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "lance": {
     "encounter": {
-      1: "I've been waiting for you. Allow me to test your skill.",
-      2: "I thought that you would be able to get this far. Let's get this started."
+      1: "널 기다리고 있었다. 그 실력을 시험해보겠어.",
+      2: "여기까지 올 수 있을거라고 생각했다. 슬슬 시작해볼까."
     },
     "victory": {
-      1: "You got me. You are magnificent!",
-      2: "I never expected another trainer to beat me… I'm surprised."
+      1: "날 따라잡았군. 훌륭해!",
+      2: "다른 트레이너가 날 이길 거라곤 생각 못했는데… 놀랍군."
     },
     "defeat": {
-      1: "That was close. Want to try again?",
-      2: "It's not that you are weak. Don't let it bother you."
+      1: "근소하군. 다시 해볼까?",
+      2: "네가 약해서가 아니다. 신경쓰지 말도록."
     }
   },
   "karen": {
     "encounter": {
-      1: "I am Karen. Would you care for a showdown with my Dark-type Pokémon?",
-      2: "I am unlike those you've already met.",
-      3: "You've assembled a charming team. Our battle should be a good one."
+      1: "난 카렌! 내 악 타입 포켓몬과의 승부를 원하니?",
+      2: "난 네가 이전에 만났던 트레이너들과는 달라.",
+      3: "강한 포켓몬, 약한 포켓몬, 그런 건 사람이 멋대로 정하는 것."
     },
     "victory": {
-      1: "No! I can't win. How did you become so strong?",
-      2: "I will not stray from my chosen path.",
-      3: "The Champion is looking forward to meeting you."
+      1: "좋아하는 마음이 전해진다면 포켓몬도 답할거야. 그렇게 강해지는 거지",
+      2: "난 내가 선택한 길을 걸어갈거야.",
+      3: "챔피언이 너를 기다리고 있어."
     },
     "defeat": {
-      1: "That's about what I expected.",
-      2: "Well, that was relatively entertaining.",
-      3: "Come visit me anytime."
+      1: "정말 강한 트레이너라면 좋아하는 포켓몬으로 이길 수 있도록 열심히 해야 해.",
+      2: "뭐, 비교적 재밌었어.",
+      3: "언제라도 다시 찾아와, 상대해줄게."
     }
   },
   "milo": {
@@ -1495,13 +1507,13 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "blue": {
     "encounter": {
-      1: "You must be pretty good to get this far."
+      1: "여기까지 왔다니, 실력이 꽤 봐줄만 할 것 같은데."
     },
     "victory": {
-      1: "I've only lost to him and now to you… Him? Hee, hee…"
+      1: "그 녀석한테만 지는 줄 알았는데… 누구냐고? 하, 하…"
     },
     "defeat": {
-      1: "See? My power is what got me here."
+      1: "봤지? 여기까지 온 내 실력."
     }
   },
   "piers": {
@@ -1528,24 +1540,24 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "jasmine": {
     "encounter": {
-      1: "Oh… Your Pokémon are impressive. I think I will enjoy this."
+      1: "와… 당신의 포켓몬은 인상적이네요. 재미있을 것 같아요."
     },
     "victory": {
-      1: "You are truly strong. I'll have to try much harder, too."
+      1: "당신은 정말 강하네요. 저도 더 열심히 노력해야겠어요."
     },
     "defeat": {
-      1: "I never expected to win."
+      1: "이길 줄은 몰랐어요."
     }
   },
   "lance_champion": {
     "encounter": {
-      1: "I am still the Champion. I won't hold anything back."
+      1: "여전히 난 챔피언이다. 더이상 주저할 게 없군."
     },
     "victory": {
-      1: "This is the emergence of a new Champion."
+      1: "새로운 챔피언의 등장이군."
     },
     "defeat": {
-      1: "I successfully defended my Championship."
+      1: "성공적으로 챔피언 자리를 지켜냈다."
     }
   },
   "steven": {
@@ -1640,24 +1652,24 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "whitney": {
     "encounter": {
-      1: "Hey! Don't you think Pokémon are, like, super cute?"
+      1: "있지! 포켓몬들 말이야, 정말 너무 귀엽지?"
     },
     "victory": {
-      1: "Waaah! Waaah! You're so mean!"
+      1: "흑! 으아앙! 너무해!"
     },
     "defeat": {
-      1: "And that's that!"
+      1: "이걸로 끝!"
     }
   },
   "chuck": {
     "encounter": {
-      1: "Hah! You want to challenge me? Are you brave or just ignorant?"
+      1: "하! 나에게 도전하겠다고? 용감한 거냐, 아니면 그냥 무모한 거냐?"
     },
     "victory": {
-      1: "You're strong! Would you please make me your apprentice?"
+      1: "자네 강하군! 나를 제자로 삼아주겠나?"
     },
     "defeat": {
-      1: "There. Do you realize how much more powerful I am than you?"
+      1: "자. 내가 자네보다 얼마나 더 강력한지 깨달았겠지?"
     }
   },
   "katy": {
@@ -1673,48 +1685,48 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "pryce": {
     "encounter": {
-      1: "Youth alone does not ensure victory! Experience is what counts."
+      1: "젊음만으로는 승리를 보장할 수 없다! 중요한 것은 경험이다."
     },
     "victory": {
-      1: "Outstanding! That was perfect. Try not to forget what you feel now."
+      1: "특출하군! 완벽해. 지금 이 느낌을 잊지 말도록."
     },
     "defeat": {
-      1: "Just as I envisioned."
+      1: "내가 예상했던 그대로군."
     }
   },
   "clair": {
     "encounter": {
-      1: "Do you know who I am? And you still dare to challenge me?"
+      1: "내가 누군지 알지? 그런데도 감히 내게 도전해?"
     },
     "victory": {
-      1: "I wonder how far you can get with your skill level. This should be fascinating."
+      1: "네 실력이 어디까지 올라갈 수 있는지 궁금하네. 아주 흥미진진하겠어."
     },
     "defeat": {
-      1: "That's that."
+      1: "끝이다."
     }
   },
   "maylene": {
     "encounter": {
-      1: `I've come to challenge you now, and I won't hold anything back. 
-                    $Please prepare yourself for battle!`,
+      1: `지금 당신에게 도전하러 왔어요.
+                    $전력을 다할 테니 각오하세요!`,
     },
     "victory": {
-      1: "I admit defeat…"
+      1: "나의 패배입니다…"
     },
     "defeat": {
-      1: "That was awesome."
+      1: "멋진 승부였습니다."
     }
   },
   "fantina": {
     "encounter": {
-      1: `You shall challenge me, yes? But I shall win. 
-                    $That is what the Gym Leader of Hearthome does, non?`,
+      1: `당신도 도전해 보세요. 전 당신을 이기겠어요.
+                    $그것이 체육관 관장!`,
     },
     "victory": {
-      1: "You are so fantastically strong. I know why I have lost."
+      1: "당신 최고로 강해요. 나 진 것 알아요."
     },
     "defeat": {
-      1: "I am so, so, very happy!"
+      1: "너무, 너무 행복해요!"
     }
   },
   "byron": {
