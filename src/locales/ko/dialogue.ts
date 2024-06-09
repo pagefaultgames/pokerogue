@@ -348,7 +348,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "패배의 맛을 볼 준비는 됐겠지!"
     },
     "victory": {
-      1: "재회의 제빵을 해야겠군."
+      1: "실력이든 빵이든, 굽고 나면 단단해지는 법이라네."
     },
   },
   "biker": {
