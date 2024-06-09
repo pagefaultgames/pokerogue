@@ -8,6 +8,12 @@ const ivChartStatCoordMultipliers = [ [ 0, -1 ], [ 0.825, -0.5 ], [ 0.825, 0.5 ]
 const ivChartStatIndexes = [0,1,2,5,4,3]; // swap special attack and speed
 const defaultIvChartData = new Array(12).fill(null).map(() => 0);
 
+declare global {
+  interface Window {
+    perfectIVsChartColor: integer;
+  }
+}
+
 export class StatsContainer extends Phaser.GameObjects.Container {
   private showDiff: boolean;
   private statsIvsCache: integer[];
