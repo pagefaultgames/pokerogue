@@ -1,6 +1,7 @@
 import { AchievementTranslationEntries } from "#app/plugins/i18n.js";
 
-export const achv: AchievementTranslationEntries = {
+// Achievement translations for the when the player character is male
+export const PGMachv: AchievementTranslationEntries = {
   "Achievements": {
     name: "Achievements",
   },
@@ -168,4 +169,102 @@ export const achv: AchievementTranslationEntries = {
     name: "Undefeated",
     description: "Beat the game in classic mode",
   },
+
+  "MONO_GEN_ONE": {
+    name: "The Original Rival",
+    description: "Complete the generation one only challenge.",
+  },
+  "MONO_GEN_TWO": {
+    name: "Generation 1.5",
+    description: "Complete the generation two only challenge.",
+  },
+  "MONO_GEN_THREE": {
+    name: "Too much water?",
+    description: "Complete the generation three only challenge.",
+  },
+  "MONO_GEN_FOUR": {
+    name: "Is she really the hardest?",
+    description: "Complete the generation four only challenge.",
+  },
+  "MONO_GEN_FIVE": {
+    name: "All Original",
+    description: "Complete the generation five only challenge.",
+  },
+  "MONO_GEN_SIX": {
+    name: "Almost Royalty",
+    description: "Complete the generation six only challenge.",
+  },
+  "MONO_GEN_SEVEN": {
+    name: "Only Technically",
+    description: "Complete the generation seven only challenge.",
+  },
+  "MONO_GEN_EIGHT": {
+    name: "A Champion Time!",
+    description: "Complete the generation eight only challenge.",
+  },
+  "MONO_GEN_NINE": {
+    name: "She was going easy on you",
+    description: "Complete the generation nine only challenge.",
+  },
+
+  "MonoType": {
+    description: "Complete the {{type}} monotype challenge.",
+  },
+  "MONO_NORMAL": {
+    name: "Mono NORMAL",
+  },
+  "MONO_FIGHTING": {
+    name: "I Know Kung Fu",
+  },
+  "MONO_FLYING": {
+    name: "Mono FLYING",
+  },
+  "MONO_POISON": {
+    name: "Kanto's Favourite",
+  },
+  "MONO_GROUND": {
+    name: "Mono GROUND",
+  },
+  "MONO_ROCK": {
+    name: "Brock Hard",
+  },
+  "MONO_BUG": {
+    name: "Sting Like A Beedrill",
+  },
+  "MONO_GHOST": {
+    name: "Who you gonna call?",
+  },
+  "MONO_STEEL": {
+    name: "Mono STEEL",
+  },
+  "MONO_FIRE": {
+    name: "Mono FIRE",
+  },
+  "MONO_WATER": {
+    name: "When It Rains, It Pours",
+  },
+  "MONO_GRASS": {
+    name: "Mono GRASS",
+  },
+  "MONO_ELECTRIC": {
+    name: "Mono ELECTRIC",
+  },
+  "MONO_PSYCHIC": {
+    name: "Mono PSYCHIC",
+  },
+  "MONO_ICE": {
+    name: "Mono ICE",
+  },
+  "MONO_DRAGON": {
+    name: "Mono DRAGON",
+  },
+  "MONO_DARK": {
+    name: "It's just a phase",
+  },
+  "MONO_FAIRY": {
+    name: "Mono FAIRY",
+  },
 } as const;
+
+// Achievement translations for the when the player character is female (it for now uses the same translations as the male version)
+export const PGFachv: AchievementTranslationEntries = PGMachv;

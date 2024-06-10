@@ -531,6 +531,11 @@ export class EvolutionPhase extends Phase {
 }
 
 export class EndEvolutionPhase extends Phase {
+
+  constructor(scene: BattleScene) {
+    super(scene);
+  }
+
   start() {
     super.start();
 

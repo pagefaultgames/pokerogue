@@ -17,11 +17,13 @@ import { StatusEffect } from "../data/status-effect";
 import { getBiomeName } from "../data/biomes";
 import { Nature, getNatureStatMultiplier } from "../data/nature";
 import { loggedInUser } from "../account";
-import { PlayerGender } from "../system/game-data";
+import { PlayerGender } from "#app/data/enums/player-gender";
 import { Variant, getVariantTint } from "#app/data/variant";
 import {Button} from "../enums/buttons";
 import { Ability } from "../data/ability.js";
 import i18next from "i18next";
+import {modifierSortFunc} from "../modifier/modifier";
+
 
 enum Page {
   PROFILE,
@@ -828,8 +830,9 @@ export default class SummaryUiHandler extends UiHandler {
         statsContainer.add(statValue);
       });
 
-      const itemModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-          && (m as PokemonHeldItemModifier).pokemonId === this.pokemon.id, true) as PokemonHeldItemModifier[];
+      const itemModifiers = (this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
+          && (m as PokemonHeldItemModifier).pokemonId === this.pokemon.id, true) as PokemonHeldItemModifier[])
+        .sort(modifierSortFunc);
 
       itemModifiers.forEach((item, i) => {
         const icon = item.getIcon(this.scene, true);
