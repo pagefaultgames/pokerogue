@@ -41,5 +41,5 @@ describe("Abilities - Intrepid Sword", () => {
     expect(battleStatsPokemon[BattleStat.ATK]).toBe(1);
     const battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
     expect(battleStatsOpponent[BattleStat.ATK]).toBe(1);
-  }, 200000);
+  }, 20000);
 });

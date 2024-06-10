@@ -9,6 +9,7 @@ import {
 } from "#app/phases";
 import {Mode} from "#app/ui/ui";
 import {BattleStat} from "#app/data/battle-stat";
+import {Moves} from "#app/data/enums/moves";
 
 
 describe("Abilities - Intimidate", () => {
@@ -31,6 +32,7 @@ describe("Abilities - Intimidate", () => {
     vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INTIMIDATE);
     vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INTIMIDATE);
     vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(3);
+    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH,Moves.SPLASH,Moves.SPLASH,Moves.SPLASH]);
   });
 
   it("single - wild", async() => {
@@ -157,4 +159,29 @@ describe("Abilities - Intimidate", () => {
     const battleStatsPokemon2 = game.scene.getParty()[1].summonData.battleStats;
     expect(battleStatsPokemon2[BattleStat.ATK]).toBe(-2);
   }, 20000);
+
+  it("single - wild with switch", async() => {
+    await game.runToSummon([
+      Species.MIGHTYENA,
+      Species.POOCHYENA,
+    ]);
+    game.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
+      game.setMode(Mode.MESSAGE);
+      game.endPhase();
+    });
+    await game.phaseInterceptor.to(CommandPhase, false);
+    expect(game.scene.getParty()[0].species.speciesId).toBe(Species.MIGHTYENA);
+    let battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
+    expect(battleStatsOpponent[BattleStat.ATK]).toBe(-1);
+    let battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
+    expect(battleStatsPokemon[BattleStat.ATK]).toBe(-1);
+    await game.switchPokemon(1);
+    expect(game.scene.getParty()[0].species.speciesId).toBe(Species.POOCHYENA);
+
+    battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
+    expect(battleStatsPokemon[BattleStat.ATK]).toBe(-1);
+
+    battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
+    expect(battleStatsOpponent[BattleStat.ATK]).toBe(-2);
+  }, 200000);
 });
