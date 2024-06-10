@@ -10,6 +10,7 @@ import { MoveCategory } from "#app/data/move.js";
 import i18next from "../plugins/i18n";
 import {Button} from "../enums/buttons";
 import Pokemon, { PokemonMove } from "#app/field/pokemon.js";
+import { UiTheme } from "#app/enums/ui-theme.js";
 
 export default class FightUiHandler extends UiHandler {
   private movesContainer: Phaser.GameObjects.Container;
@@ -180,7 +181,9 @@ export default class FightUiHandler extends UiHandler {
 
       this.ppText.setText(`${Utils.padInt(pp, 2, "  ")}/${Utils.padInt(maxPP, 2, "  ")}`);
       const ppPercentLeft = pp / maxPP;
-      let ppColor = "white";
+
+      let ppColor = this.scene.uiTheme === UiTheme.DEFAULT ? "white" : "black";
+
       if (ppPercentLeft <= 0.5) {
         ppColor = "yellow";
       }
