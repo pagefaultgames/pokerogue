@@ -29,7 +29,11 @@ export enum TextStyle {
   SETTINGS_LOCKED,
   TOOLTIP_TITLE,
   TOOLTIP_CONTENT,
-  MOVE_INFO_CONTENT
+  MOVE_INFO_CONTENT,
+  MOVE_PP_FULL,
+  MOVE_PP_HALF_FULL,
+  MOVE_PP_NEAR_EMPTY,
+  MOVE_PP_EMPTY
 }
 
 interface LanguageSetting {
@@ -204,11 +208,27 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
     return !shadow ? "#f8f8f8" : "#6b5a73";
   case TextStyle.WINDOW:
   case TextStyle.MOVE_INFO_CONTENT:
+  case TextStyle.MOVE_PP_FULL:
   case TextStyle.TOOLTIP_CONTENT:
     if (uiTheme) {
       return !shadow ? "#484848" : "#d0d0c8";
     }
     return !shadow ? "#f8f8f8" : "#6b5a73";
+  case TextStyle.MOVE_PP_HALF_FULL:
+    if (uiTheme) {
+      return !shadow ? "#a68e17" : "#ebd773";
+    }
+    return !shadow ? "#ccbe00" : "#6e672c";
+  case TextStyle.MOVE_PP_NEAR_EMPTY:
+    if (uiTheme) {
+      return !shadow ? "#d64b00" : "#f7b18b";
+    }
+    return !shadow ? "#d64b00" : "#69402a";
+  case TextStyle.MOVE_PP_EMPTY:
+    if (uiTheme) {
+      return !shadow ? "#e13d3d" : "#fca2a2";
+    }
+    return !shadow ? "#e13d3d" : "#632929";
   case TextStyle.WINDOW_ALT:
     return !shadow ? "#484848" : "#d0d0c8";
   case TextStyle.BATTLE_INFO:
