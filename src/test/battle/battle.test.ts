@@ -6,7 +6,7 @@ import {Species} from "#app/data/enums/species";
 import * as overrides from "../../overrides";
 import {Command} from "#app/ui/command-ui-handler";
 import {
-  CommandPhase,
+  CommandPhase, DamagePhase,
   EncounterPhase,
   EnemyCommandPhase,
   LoginPhase,
@@ -106,9 +106,7 @@ describe("Test Battle Phase", () => {
       const movePosition = getMovePosition(game.scene, 0, Moves.TACKLE);
       (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
     });
-    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(SelectModifierPhase);
-    expect(game.scene.ui?.getMode()).toBe(Mode.MODIFIER_SELECT);
-    expect(game.scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);
+    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(SelectModifierPhase, false);
   }, 20000);
 
   it("do attack wave 3 - single battle - regular - NO OHKO with opponent using non damage attack", async() => {
@@ -258,6 +256,43 @@ describe("Test Battle Phase", () => {
     ]);
     expect(game.scene.ui?.getMode()).toBe(Mode.COMMAND);
     expect(game.scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
+  }, 20000);
+
+  it("kill opponent pokemon", async() => {
+    const moveToUse = Moves.SPLASH;
+    await game.startBattle([
+      Species.DARMANITAN,
+      Species.CHARIZARD,
+    ]);
+
+    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
+      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
+    });
+    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
+      const movePosition = getMovePosition(game.scene, 0, moveToUse);
+      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
+    });
+    await game.phaseInterceptor.to(DamagePhase, false);
+    await game.killPokemon(game.scene.currentBattle.enemyParty[0]);
+    expect(game.scene.currentBattle.enemyParty[0].isFainted()).toBe(true);
+    await game.phaseInterceptor.to(SelectModifierPhase, false);
+  }, 20000);
+
+  it("to next turn", async() => {
+    await game.startBattle();
+    const turn = game.scene.currentBattle.turn;
+    await game.doAttack(0);
+    await game.toNextTurn();
+    expect(game.scene.currentBattle.turn).toBeGreaterThan(turn);
+  }, 20000);
+
+  it("to next wave with pokemon killed, single", async() => {
+    await game.startBattle();
+    const waveIndex = game.scene.currentBattle.waveIndex;
+    await game.doAttack(0);
+    await game.doKillOpponents();
+    await game.toNextWave();
+    expect(game.scene.currentBattle.waveIndex).toBeGreaterThan(waveIndex);
   }, 20000);
 });
 

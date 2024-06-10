@@ -95,7 +95,7 @@ export default class PhaseInterceptor {
   ];
 
   private endBySetMode = [
-    TitlePhase, SelectGenderPhase, CommandPhase, SelectModifierPhase
+    TitlePhase, SelectGenderPhase, CommandPhase
   ];
 
   /**
@@ -107,8 +107,8 @@ export default class PhaseInterceptor {
     this.log = [];
     this.onHold = [];
     this.prompts = [];
+    this.startPromptHandler();
     this.initPhases();
-    this.startPromptHander();
   }
 
   rejectAll(error) {
@@ -296,16 +296,17 @@ export default class PhaseInterceptor {
   /**
    * Method to start the prompt handler.
    */
-  startPromptHander() {
+  startPromptHandler() {
     this.promptInterval = setInterval(() => {
       if (this.prompts.length) {
         const actionForNextPrompt = this.prompts[0];
         const expireFn = actionForNextPrompt.expireFn && actionForNextPrompt.expireFn();
         const currentMode = this.scene.ui.getMode();
         const currentPhase = this.scene.getCurrentPhase().constructor.name;
+        const currentHandler = this.scene.ui.getHandler();
         if (expireFn) {
           this.prompts.shift();
-        } else if (currentMode === actionForNextPrompt.mode && currentPhase === actionForNextPrompt.phaseTarget) {
+        } else if (currentMode === actionForNextPrompt.mode && currentPhase === actionForNextPrompt.phaseTarget && currentHandler.active && (!actionForNextPrompt.awaitingActionInput || (actionForNextPrompt.awaitingActionInput && currentHandler.awaitingActionInput))) {
           this.prompts.shift().callback();
         }
       }
@@ -319,12 +320,13 @@ export default class PhaseInterceptor {
    * @param callback - The callback function to execute.
    * @param expireFn - The function to determine if the prompt has expired.
    */
-  addToNextPrompt(phaseTarget: string, mode: Mode, callback: () => void, expireFn: () => void) {
+  addToNextPrompt(phaseTarget: string, mode: Mode, callback: () => void, expireFn: () => void, awaitingActionInput: boolean = false) {
     this.prompts.push({
       phaseTarget,
       mode,
       callback,
-      expireFn
+      expireFn,
+      awaitingActionInput
     });
   }
 

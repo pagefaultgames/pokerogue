@@ -3,18 +3,20 @@ import {Mode} from "#app/ui/ui";
 import {generateStarter, waitUntil} from "#app/test/utils/gameManagerUtils";
 import {
   CommandPhase,
-  EncounterPhase, FaintPhase,
-  LoginPhase,
+  DamagePhase,
+  EncounterPhase,
+  FaintPhase,
+  LoginPhase, NewBattlePhase,
   SelectGenderPhase,
   SelectStarterPhase,
-  TitlePhase,
+  TitlePhase, TurnInitPhase,
 } from "#app/phases";
 import BattleScene from "#app/battle-scene.js";
 import PhaseInterceptor from "#app/test/utils/phaseInterceptor";
 import TextInterceptor from "#app/test/utils/TextInterceptor";
 import {GameModes, getGameMode} from "#app/game-mode";
 import fs from "fs";
-import { AES, enc } from "crypto-js";
+import {AES, enc} from "crypto-js";
 import {updateUserInfo} from "#app/account";
 import {Species} from "#app/data/enums/species";
 import {PlayerGender} from "#app/data/enums/player-gender";
@@ -24,6 +26,9 @@ import {ExpNotification} from "#app/enums/exp-notification";
 import ErrorInterceptor from "#app/test/utils/errorInterceptor";
 import {EnemyPokemon, PlayerPokemon} from "#app/field/pokemon";
 import {MockClock} from "#app/test/utils/mocks/mockClock";
+import {Command} from "#app/ui/command-ui-handler";
+import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
+import {Button} from "#app/enums/buttons";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -85,8 +90,8 @@ export default class GameManager {
    * @param callback - The callback to execute.
    * @param expireFn - Optional function to determine if the prompt has expired.
    */
-  onNextPrompt(phaseTarget: string, mode: Mode, callback: () => void, expireFn?: () => void) {
-    this.phaseInterceptor.addToNextPrompt(phaseTarget, mode, callback, expireFn);
+  onNextPrompt(phaseTarget: string, mode: Mode, callback: () => void, expireFn?: () => void, awaitingActionInput: boolean = false) {
+    this.phaseInterceptor.addToNextPrompt(phaseTarget, mode, callback, expireFn, awaitingActionInput);
   }
 
   /**
@@ -143,13 +148,64 @@ export default class GameManager {
       this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
         this.setMode(Mode.MESSAGE);
         this.endPhase();
-      }, () => this.isCurrentPhase(CommandPhase));
+      }, () => this.isCurrentPhase(TurnInitPhase));
       this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
         this.setMode(Mode.MESSAGE);
         this.endPhase();
-      }, () => this.isCurrentPhase(CommandPhase));
+      }, () => this.isCurrentPhase(TurnInitPhase));
       await this.phaseInterceptor.to(CommandPhase).catch((e) => reject(e));
       console.log("==================[New Turn]==================");
+      return resolve();
+    });
+  }
+
+  doAttack(moveIndex: integer): Promise<void> {
+    this.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
+      this.scene.ui.setMode(Mode.FIGHT, (this.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
+    });
+    this.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
+      (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, moveIndex, false);
+    });
+    return this.phaseInterceptor.to(DamagePhase);
+  }
+
+  doKillOpponents() {
+    return new Promise<void>(async(resolve, reject) => {
+      await this.killPokemon(this.scene.currentBattle.enemyParty[0]).catch((e) => reject(e));
+      if (this.scene.currentBattle.double) {
+        await this.killPokemon(this.scene.currentBattle.enemyParty[1]).catch((e) => reject(e));
+      }
+      return resolve();
+    });
+  }
+
+  toNextTurn(): Promise<void> {
+    return new Promise<void>(async(resolve, reject) => {
+      await this.phaseInterceptor.to(CommandPhase).catch((e) => reject(e));
+      return resolve();
+    });
+  }
+
+  toNextWave(): Promise<void> {
+    return new Promise<void>(async(resolve, reject) => {
+      this.onNextPrompt("SelectModifierPhase", Mode.MODIFIER_SELECT, () => {
+        const handler = this.scene.ui.getHandler() as ModifierSelectUiHandler;
+        handler.processInput(Button.CANCEL);
+      }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(NewBattlePhase), true);
+      this.onNextPrompt("SelectModifierPhase", Mode.CONFIRM, () => {
+        const handler = this.scene.ui.getHandler() as ModifierSelectUiHandler;
+        handler.processInput(Button.ACTION);
+      }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(NewBattlePhase));
+      this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
+        this.setMode(Mode.MESSAGE);
+        this.endPhase();
+      }, () => this.isCurrentPhase(TurnInitPhase));
+      this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
+        this.setMode(Mode.MESSAGE);
+        this.endPhase();
+      }, () => this.isCurrentPhase(TurnInitPhase));
+      await this.phaseInterceptor.to(CommandPhase).catch((e) => reject(e));
+
       return resolve();
     });
   }
@@ -217,10 +273,10 @@ export default class GameManager {
 
   async killPokemon(pokemon: PlayerPokemon | EnemyPokemon) {
     (this.scene.time as MockClock).overrideDelay = 0.01;
-    return new Promise<void>(async(resolve) => {
+    return new Promise<void>(async(resolve, reject) => {
       pokemon.hp = 0;
       this.scene.pushPhase(new FaintPhase(this.scene, pokemon.getBattlerIndex(), true));
-      await this.phaseInterceptor.to(FaintPhase);
+      await this.phaseInterceptor.to(FaintPhase).catch((e) => reject(e));
       (this.scene.time as MockClock).overrideDelay = undefined;
       resolve();
     });

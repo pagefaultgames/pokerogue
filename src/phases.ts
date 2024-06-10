@@ -1079,6 +1079,10 @@ export class NextEncounterPhase extends EncounterPhase {
     super(scene);
   }
 
+  start() {
+    super.start();
+  }
+
   doEncounter(): void {
     this.scene.playBgm(undefined, true);
 
