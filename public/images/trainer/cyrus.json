@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "cyrus.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 80,
+				"h": 80
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 80,
+						"h": 80
+					},
+					"spriteSourceSize": {
+						"x": 15,
+						"y": 0,
+						"w": 48,
+						"h": 80
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 80
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:5fc65535a23867fca7511cc9d7fc15b3:f328e97821f4faffcbca155cc2c5dc2c:55da82f1e1919212896c9c96b682cbd1$"
+	}
+}
