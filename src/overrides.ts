@@ -37,7 +37,7 @@ export const ARENA_TINT_OVERRIDE: TimeOfDay = null;
 export const XP_MULTIPLIER_OVERRIDE: number = null;
 export const IMMEDIATE_HATCH_EGGS_OVERRIDE: boolean = false;
 // default 1000
-export const STARTING_MONEY_OVERRIDE: integer = 0;
+export const STARTING_MONEY_OVERRIDE: integer = 10000000;
 export const POKEBALL_OVERRIDE: { active: boolean, pokeballs: PokeballCounts } = {
   active: false,
   pokeballs: {
@@ -45,7 +45,7 @@ export const POKEBALL_OVERRIDE: { active: boolean, pokeballs: PokeballCounts } =
     [PokeballType.GREAT_BALL]: 0,
     [PokeballType.ULTRA_BALL]: 0,
     [PokeballType.ROGUE_BALL]: 0,
-    [PokeballType.MASTER_BALL]: 0,
+    [PokeballType.MASTER_BALL]: 50,
   }
 };
 
@@ -56,19 +56,19 @@ export const POKEBALL_OVERRIDE: { active: boolean, pokeballs: PokeballCounts } =
 // forms can be found in pokemon-species.ts
 export const STARTER_FORM_OVERRIDE: integer = 0;
 // default 5 or 20 for Daily
-export const STARTING_LEVEL_OVERRIDE: integer = 0;
+export const STARTING_LEVEL_OVERRIDE: integer = 60;
 /**
  * SPECIES OVERRIDE
  * will only apply to the first starter in your party or each enemy pokemon
  * default is 0 to not override
  * @example SPECIES_OVERRIDE = Species.Bulbasaur;
  */
-export const STARTER_SPECIES_OVERRIDE: Species | integer = 0;
+export const STARTER_SPECIES_OVERRIDE: Species | integer = Species.ZOROARK;
 export const ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
 export const GENDER_OVERRIDE: Gender = null;
-export const MOVESET_OVERRIDE: Array<Moves> = [];
+export const MOVESET_OVERRIDE: Array<Moves> = [Moves.NIGHT_DAZE, Moves.FLAMETHROWER];
 export const SHINY_OVERRIDE: boolean = false;
 export const VARIANT_OVERRIDE: Variant = 0;
 
@@ -109,7 +109,7 @@ interface ModifierOverride {
 export const STARTING_MODIFIER_OVERRIDE: Array<ModifierOverride> = [];
 export const OPP_MODIFIER_OVERRIDE: Array<ModifierOverride> = [];
 
-export const STARTING_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = [];
+export const STARTING_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = [{name: "WIDE_LENS"}, {name: "BERRY", count: 5, type: BerryType.LUM}];
 export const OPP_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = [];
 export const NEVER_CRIT_OVERRIDE: boolean = false;
 

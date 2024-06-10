@@ -1510,6 +1510,12 @@ export class PostSummonAbAttr extends AbAttr {
   }
 }
 
+export class PreSummonAbAttr extends AbAttr {
+  applyPreSummon(pokemon: Pokemon, passive: boolean, party: Pokemon[], args: any[]): boolean | Promise<boolean> {
+    return false;
+  }
+}
+
 export class PostSummonMessageAbAttr extends PostSummonAbAttr {
   private messageFunc: (pokemon: Pokemon) => string;
 
@@ -3468,6 +3474,18 @@ export class IceFaceMoveImmunityAbAttr extends MoveImmunityAbAttr {
   }
 }
 
+export class IllusionAbAttr extends PreSummonAbAttr {
+
+  applyPreSummon(pokemon: Pokemon, passive: boolean, party: Pokemon[]) {
+    //pokemon.addTag(BattlerTagType.ILLUSIONED);
+    pokemon.name = party.slice(-1)[0].name;
+    console.log("AAAAAAAAAAAAAA");
+    return true;
+  }
+
+
+}
+
 function applyAbAttrsInternal<TAttr extends AbAttr>(attrType: { new(...args: any[]): TAttr },
   pokemon: Pokemon, applyFunc: AbAttrApplyFunc<TAttr>, args: any[], isAsync: boolean = false, showAbilityInstant: boolean = false, quiet: boolean = false, passive: boolean = false): Promise<void> {
   return new Promise(resolve => {
@@ -3596,6 +3614,11 @@ export function applyPostVictoryAbAttrs(attrType: { new(...args: any[]): PostVic
 export function applyPostSummonAbAttrs(attrType: { new(...args: any[]): PostSummonAbAttr },
   pokemon: Pokemon, ...args: any[]): Promise<void> {
   return applyAbAttrsInternal<PostSummonAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostSummon(pokemon, passive, args), args);
+}
+
+export function applyPreSummonAbAttrs(attrType: { new(...args: any[]): PreSummonAbAttr },
+  pokemon: Pokemon, party: Pokemon[], ...args: any[]): Promise<void> {
+  return applyAbAttrsInternal<PreSummonAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPreSummon(pokemon, passive, party, args), args);
 }
 
 export function applyPreSwitchOutAbAttrs(attrType: { new(...args: any[]): PreSwitchOutAbAttr },
@@ -4129,6 +4152,7 @@ export function initAbilities() {
     new Ability(Abilities.ILLUSION, 5)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
+      .attr(IllusionAbAttr, true)
       .unimplemented(),
     new Ability(Abilities.IMPOSTER, 5)
       .attr(PostSummonTransformAbAttr)
