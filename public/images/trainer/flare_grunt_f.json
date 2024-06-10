@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "flare_grunt_f.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 80,
+				"h": 80
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 80,
+						"h": 80
+					},
+					"spriteSourceSize": {
+						"x": 31,
+						"y": 0,
+						"w": 23,
+						"h": 80
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 23,
+						"h": 80
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:c30bf82452209a923f4becf13d275a9a:a6355b09f92c9c0388d0b919010f587f:0638dbf213f8a974eb5af76eb1e5ddeb$"
+	}
+}

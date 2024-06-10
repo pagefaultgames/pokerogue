@@ -425,5 +425,6 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "DRAGON_MEMORY": "드래곤메모리",
     "DARK_MEMORY": "다크메모리",
     "FAIRY_MEMORY": "페어리메모리",
+    "BLANK_MEMORY": "빈메모리",
   },
 } as const;
