@@ -2,16 +2,17 @@
 
 - ### High priority
     - 🐛 Opening the chest simply moves you to a wild battle against nothingness, which you can escape after you get bored of it.
-    - 🐛 Weaker trainers from Mysterious Challenger crashes the game when the reward screen should come out
 
 - ### Medium priority
     - 🐛 PKMN Sprites and their HP/lvl bar doesn't get properly recalled when finding an ME or when meeting Rival. 🛠️
+    - 🐛 Wave seed generates different encounter data if you roll to a new wave, see the spawned stuff, and refresh the app
+    - 🐛 If a ME spawns on the first floor of a new biome (NewBiomeEncounterPhase), intro visuals do not spawn properly
     - ⚙️ "Steal from player" functionality (Gholdengo ME) ❌
     - ⚙️ Add some spacing logic to MEs spawning so you don't get floods/droughts of MEs ❌
     - ⚙️ Push Dark Deal ME to a higher wave requirement (+30) as it seems to be functioning (mostly) bugless.
 
 
-# 📝 Things to be done before Mystery Encounters ("MEs") MVP is finished:
+# 📝 Things to be done before Mystery Encounters ("~~~~MEs") MVP is finished:
   All the things on this list should be done before the merge as a MVP (Minimum Viable Product) release.
 
 - ## Bugless implementation of the MVP MEs
