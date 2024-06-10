@@ -59,4 +59,6 @@ export const battle: SimpleTranslationEntries = {
   "wildPokemonWithAffix": "야생 {{pokemonName}}",
   "foePokemonWithAffix": "상대 {{pokemonName}}",
   "useMove": "{{pokemonNameWithAffix}}의 {{moveName}}!"
+  "drainMessage": "{{pokemonName}}[[로]]부터\n체력을 흡수했다!",
+  "regainHealth": "{{pokemonName}}[[는]]\n기력을 회복했다!"
 } as const;
