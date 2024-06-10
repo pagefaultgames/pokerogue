@@ -11,6 +11,6 @@ export default class TextInterceptor {
   }
 
   getLatestMessage(): string {
-    return this.logs[this.logs.length - 1];
+    return this.logs.pop();
   }
 }
