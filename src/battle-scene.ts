@@ -687,6 +687,10 @@ export default class BattleScene extends SceneBase {
     return this.getPlayerField().find(p => p.isActive());
   }
 
+  /**
+   * Returns an array of PlayerPokemon of length 1 or 2 depending on if double battles or not
+   * @returns array of {@linkcode PlayerPokemon}
+   */
   getPlayerField(): PlayerPokemon[] {
     const party = this.getParty();
     return party.slice(0, Math.min(party.length, this.currentBattle?.double ? 2 : 1));
@@ -700,6 +704,10 @@ export default class BattleScene extends SceneBase {
     return this.getEnemyField().find(p => p.isActive());
   }
 
+  /**
+   * Returns an array of EnemyPokemon of length 1 or 2 depending on if double battles or not
+   * @returns array of {@linkcode EnemyPokemon}
+   */
   getEnemyField(): EnemyPokemon[] {
     const party = this.getEnemyParty();
     return party.slice(0, Math.min(party.length, this.currentBattle?.double ? 2 : 1));
