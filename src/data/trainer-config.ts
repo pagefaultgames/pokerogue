@@ -822,6 +822,10 @@ interface TrainerConfigs {
  */
 function getEvilGruntPartyTemplate(scene: BattleScene): TrainerPartyTemplate {
   const waveIndex = scene.currentBattle?.waveIndex;
+  // Fall back to the first grunt template if the wave index is not found so that the game does not hang
+  if (!waveIndex) {
+    return trainerPartyTemplates.TWO_AVG;
+  }
   if (waveIndex < 40) {
     return trainerPartyTemplates.TWO_AVG;
   } else if (waveIndex < 80) {
