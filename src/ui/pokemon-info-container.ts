@@ -250,6 +250,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
       } else {
         this.pokemonFormLabelText.setVisible(false);
         this.pokemonFormText.setVisible(false);
+        this.pokemonFormText.disableInteractive();
       }
 
       const abilityTextStyle = pokemon.abilityIndex === (pokemon.species.ability2 ? 2 : 1) ? TextStyle.MONEY : TextStyle.WINDOW;
