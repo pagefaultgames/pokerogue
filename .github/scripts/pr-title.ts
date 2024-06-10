@@ -34,17 +34,17 @@ async function run() {
 
 
     const info = `
-Terminology:  fix(ui): Fix female trainer names
-              ^   ^    ^
-              |   |    |__ Subject
-              |   |_______ Scope
-              |___________ Prefix
+Terminology:  [bug(ui)]: Fix female trainer names
+               ^   ^     ^
+               |   |     |__ Subject
+               |   |________ Scope
+               |____________ Prefix
 `;
 
     core.info(info.trim());
 
     // Check if title pass regex
-    const regex = RegExp(/^[a-zA-Z]+(\([a-zA-Z]+\))?: .+/);
+    const regex = RegExp(/^\[[a-zA-Z]+(\([a-zA-Z]+\))?\]: .+/);
     if (!regex.test(title)) {
       core.setFailed(`Pull Request title "${title}" failed to match - 'Prefix(Scope): Subject'`);
       return;
@@ -52,7 +52,7 @@ Terminology:  fix(ui): Fix female trainer names
 
     // Check if title starts with an allowed prefix
     core.info(`Allowed prefixes: ${PREFIXES}`);
-    if (!PREFIXES.some((prefix) => title.startsWith(prefix))) {
+    if (!PREFIXES.some((prefix) => title.toLowerCase().startsWith(prefix))) {
       core.setFailed(`Pull Request title "${title}" did not match any of the prefixes - ${PREFIXES}`);
       return;
     }
