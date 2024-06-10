@@ -485,10 +485,10 @@ export default class SummaryUiHandler extends UiHandler {
         if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
           this.hideMoveSelect();
         } else {
-          if (!ui.getMessageHandler().onActionInput) {
-            ui.setMode(Mode.PARTY);
-          } else {
+          if (ui.getMessageHandler().onActionInput) {
             ui.setMode(Mode.MESSAGE);
+          } else {
+            ui.setMode(Mode.PARTY);
           }
         }
         success = true;
@@ -498,6 +498,8 @@ export default class SummaryUiHandler extends UiHandler {
         case Button.UP:
         case Button.DOWN:
           if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
+            break;
+          } else if (ui.getMessageHandler().onActionInput) {
             break;
           }
           const isDown = button === Button.DOWN;
