@@ -1,6 +1,6 @@
 import { addTextObject, TextStyle } from "./text";
 import BattleScene from "#app/battle-scene.js";
-import { ArenaTagSide } from "#app/data/arena-tag.js";
+import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag.js";
 import { WeatherType } from "#app/data/weather.js";
 import { TerrainType } from "#app/data/terrain.js";
 import { addWindow, WindowVariant } from "./ui-theme";
@@ -29,6 +29,8 @@ interface ArenaEffectInfo {
   maxDuration: number;
   /** The current duration left on the effect */
   duration: number;
+  /** The arena tag type being added */
+  tagType?: ArenaTagType;
 }
 
 export default class ArenaFlyout extends Phaser.GameObjects.Container {
@@ -257,19 +259,43 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
     switch (arenaEffectChangedEvent.constructor) {
     case TagAddedEvent:
       const tagAddedEvent = arenaEffectChangedEvent as TagAddedEvent;
+      const isArenaTrapTag = this.battleScene.arena.getTag(tagAddedEvent.arenaTagType) instanceof ArenaTrapTag;
+      let arenaEffectType: ArenaEffectType;
+
+      if (tagAddedEvent.arenaTagSide === ArenaTagSide.BOTH) {
+        arenaEffectType = ArenaEffectType.FIELD;
+      } else if (tagAddedEvent.arenaTagSide === ArenaTagSide.PLAYER) {
+        arenaEffectType = ArenaEffectType.PLAYER;
+      } else {
+        arenaEffectType = ArenaEffectType.ENEMY;
+      }
+
+      const existingTrapTagIndex = isArenaTrapTag ? this.fieldEffectInfo.findIndex(e => tagAddedEvent.arenaTagType === e.tagType && arenaEffectType === e.type) : -1;
+      let name: string = ArenaTagType[tagAddedEvent.arenaTagType];
+
+      if (isArenaTrapTag) {
+        if (tagAddedEvent.arenaTagLayers < 2) {
+          name = `${name} (${tagAddedEvent.arenaTagLayers})`;
+        }
+        if (existingTrapTagIndex !== -1) {
+          this.fieldEffectInfo[existingTrapTagIndex].name = `${name} (${tagAddedEvent.arenaTagLayers})`;
+          break;
+        }
+      }
+
+
       this.fieldEffectInfo.push({
-        name: ArenaTagType[tagAddedEvent.arenaTagType],
-        type: tagAddedEvent.arenaTagSide === ArenaTagSide.BOTH
-          ? ArenaEffectType.FIELD
-          : tagAddedEvent.arenaTagSide === ArenaTagSide.PLAYER
-            ? ArenaEffectType.PLAYER
-            : ArenaEffectType.ENEMY,
+        name,
+        type: arenaEffectType,
         maxDuration: tagAddedEvent.duration,
-        duration: tagAddedEvent.duration});
+        duration: tagAddedEvent.duration,
+        tagType: tagAddedEvent.arenaTagType
+      });
       break;
     case TagRemovedEvent:
       const tagRemovedEvent = arenaEffectChangedEvent as TagRemovedEvent;
-      foundIndex = this.fieldEffectInfo.findIndex(info => info.name === ArenaTagType[tagRemovedEvent.arenaTagType]);
+      foundIndex = this.fieldEffectInfo.findIndex(info => info.tagType === tagRemovedEvent.arenaTagType);
+
       if (foundIndex !== -1) { // If the tag was being tracked, remove it
         this.fieldEffectInfo.splice(foundIndex, 1);
       }

@@ -9,7 +9,7 @@ import { CommonAnimPhase } from "../phases";
 import { CommonAnim } from "../data/battle-anims";
 import { Type } from "../data/type";
 import Move from "../data/move";
-import { ArenaTag, ArenaTagSide, getArenaTag } from "../data/arena-tag";
+import { ArenaTag, ArenaTagSide, ArenaTrapTag, getArenaTag } from "../data/arena-tag";
 import { ArenaTagType } from "../data/enums/arena-tag-type";
 import { TrainerType } from "../data/enums/trainer-type";
 import { BattlerIndex } from "../battle";
@@ -549,6 +549,11 @@ export class Arena {
     const existingTag = this.getTagOnSide(tagType, side);
     if (existingTag) {
       existingTag.onOverlap(this);
+
+      if (existingTag instanceof ArenaTrapTag) {
+        this.eventTarget.dispatchEvent(new TagAddedEvent(existingTag.tagType, existingTag.side, existingTag.turnCount, (existingTag as ArenaTrapTag).layers));
+      }
+
       return false;
     }
 

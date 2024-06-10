@@ -71,11 +71,15 @@ export class TagAddedEvent extends ArenaEvent {
   public arenaTagType: ArenaTagType;
   /** The {@linkcode ArenaTagSide} the tag is being placed on */
   public arenaTagSide: ArenaTagSide;
-  constructor(arenaTagType: ArenaTagType, arenaTagSide: ArenaTagSide, duration: number) {
+  /** The arena trap tag layers. */
+  public arenaTagLayers: number;
+
+  constructor(arenaTagType: ArenaTagType, arenaTagSide: ArenaTagSide, duration: number, arenaTagLayers: number = 1) {
     super(ArenaEventType.TAG_ADDED, duration);
 
     this.arenaTagType = arenaTagType;
     this.arenaTagSide = arenaTagSide;
+    this.arenaTagLayers = arenaTagLayers;
   }
 }
 /**
