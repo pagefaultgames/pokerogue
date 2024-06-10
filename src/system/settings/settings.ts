@@ -467,7 +467,10 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     scene.typeHints = Setting[index].options[value] === "On";
     break;
   case SettingKeys.Canvas_Scale:
-    document.getElementById("app").style.height = Setting[index].options[value];
+    const appDiv = document.getElementById("app");
+    if (appDiv) {
+      appDiv.style.height = Setting[index].options[value];
+    }
     break;
   case SettingKeys.Language:
     if (value) {
