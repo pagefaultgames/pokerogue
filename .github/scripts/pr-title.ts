@@ -28,7 +28,7 @@ async function run() {
       pull_number: github.context.payload.pull_request!.number,
     });
 
-    const title: string = pullRequest.title.toLowerCase();
+    const title: string = pullRequest.title;
     core.info(`Pull Request title: "${title}"`);
 
 
@@ -52,7 +52,7 @@ Terminology:  [bug(ui)]: Fix female trainer names
 
     // Check if title starts with an allowed prefix
     core.info(`Allowed prefixes: ${PREFIXES}`);
-    if (!PREFIXES.some((prefix) => title.startsWith(prefix))) {
+    if (!PREFIXES.some((prefix) => title.toLowerCase().startsWith(`[${prefix}`))) {
       core.setFailed(`Pull Request title "${title}" did not match any of the prefixes - ${PREFIXES}`);
       return;
     }
