@@ -124,7 +124,7 @@ export const trainerClasses: SimpleTranslationEntries = {
   "worker": "작업원",
   "worker_female": "작업원",
   "workers": "작업원",
-  "youngster": "반바지 꼬마"
+  "youngster": "반바지 꼬마",
   "rocket_grunt": "로켓단 조무래기",
   "rocket_grunt_female": "로켓단 조무래기",
   "magma_grunt": "마그마단 조무래기",
