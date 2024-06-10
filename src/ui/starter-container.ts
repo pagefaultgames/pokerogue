@@ -12,6 +12,7 @@ export class StarterContainer extends Phaser.GameObjects.Container {
   public classicWinIcon: Phaser.GameObjects.Image;
   public candyUpgradeIcon: Phaser.GameObjects.Image;
   public candyUpgradeOverlayIcon: Phaser.GameObjects.Image;
+  public cost: number = 0;
 
   constructor(scene: BattleScene, species: PokemonSpecies) {
     super(scene, 0, 0);

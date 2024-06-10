@@ -3,6 +3,13 @@ import { SceneBase } from "#app/scene-base.js";
 import { addTextObject, TextStyle } from "./text";
 import { addWindow, WindowVariant } from "./ui-theme";
 
+export enum DropDownColumns {
+    TYPES,
+    SHINY,
+    DIV,
+    SORT
+}
+
 export enum DropDownState {
     ON = 0,
     OFF
@@ -29,15 +36,22 @@ export class DropDownOption extends Phaser.GameObjects.Container {
   constructor(scene: SceneBase, val: any, text: string, sprite?: Phaser.GameObjects.Sprite, state: DropDownState = DropDownState.ON) {
     super(scene);
     this.val = val;
-    this.toggle = scene.add.sprite(0, 0, "candy").setScale(0.3).setOrigin(0, 0.5);
     this.text = addTextObject(scene, 0, 0, text, TextStyle.TOOLTIP_CONTENT).setOrigin(0, 0.5);
-    this.add(this.toggle);
     this.add(this.text);
     if (sprite) {
       this.sprite = sprite.setOrigin(0, 0.5);
       this.add(this.sprite);
     }
-    this.setOptionState(state);
+    this.state = state;
+  }
+
+  public setupToggle(type: DropDownType): void {
+    if (type === DropDownType.MULTI) {
+      this.toggle = this.scene.add.sprite(0, 0, "candy").setScale(0.3).setOrigin(0, 0.5);
+    } else {
+      this.toggle = this.scene.add.sprite(0, 0, "cursor").setScale(0.5).setOrigin(0, 0.5).setRotation(Math.PI / 180 * -90);
+    }
+    this.add(this.toggle);
   }
 
   public setOptionState(state: DropDownState): DropDownState {
@@ -53,6 +67,15 @@ export class DropDownOption extends Phaser.GameObjects.Container {
   public toggleOptionState(): DropDownState {
     return this.setOptionState(this.state + 1);
   }
+
+  public setDirection(dir: SortDirection): void {
+    this.dir = dir;
+    this.toggle.flipX = this.dir === SortDirection.DESC;
+  }
+
+  public toggleDirection(): void {
+    this.setDirection(this.dir * -1);
+  }
 }
 
 export class DropDown extends Phaser.GameObjects.Container {
@@ -62,6 +85,7 @@ export class DropDown extends Phaser.GameObjects.Container {
   private dropDownType: DropDownType = DropDownType.MULTI;
   private cursor: integer = 0;
   private onChange: () => void;
+  private lastDir: SortDirection = SortDirection.ASC;
 
   constructor(scene: BattleScene, x: number, y: number, options: DropDownOption[], onChange: () => void, type: DropDownType = DropDownType.MULTI, optionSpacing: number = 2) {
     const windowPadding = 5;
@@ -84,6 +108,12 @@ export class DropDown extends Phaser.GameObjects.Container {
     }
 
     options.forEach((option, index) => {
+      option.setupToggle(type);
+      if (type === DropDownType.SINGLE && option.state === DropDownState.OFF) {
+        option.toggle.setVisible(false);
+      }
+      option.setOptionState(option.state);
+
       option.width = optionWidth;
       option.y = index * optionHeight + index * optionSpacing + optionPaddingY;
 
@@ -93,11 +123,8 @@ export class DropDown extends Phaser.GameObjects.Container {
         option.sprite.x = cursorOffset + optionPaddingX + 3 + 8;
         option.sprite.y = optionHeight / 2;
       }
-      option.toggle.x = cursorOffset + optionPaddingX + 3;
-      option.toggle.y = optionHeight / 2;
-      if (type === DropDownType.SINGLE && option.state === DropDownState.OFF) {
-        option.toggle.setVisible(false);
-      }
+      option.toggle.x = cursorOffset + optionPaddingX + 3 + (type === DropDownType.MULTI ? 0 : 3);
+      option.toggle.y = optionHeight / 2 + (type === DropDownType.MULTI ? 0 : 1);
     });
     this.window = addWindow(scene, 0, 0, optionWidth, options[options.length - 1].y + optionHeight + optionPaddingY, false, false, null, null, WindowVariant.XTHIN);
     this.add(this.window);
@@ -122,7 +149,6 @@ export class DropDown extends Phaser.GameObjects.Container {
   }
 
   toggleOptionState(): void {
-    console.log(this);
     if (this.dropDownType === DropDownType.MULTI) {
       const newState = this.options[this.cursor].toggleOptionState();
 
@@ -143,10 +169,15 @@ export class DropDown extends Phaser.GameObjects.Container {
       if (this.options[this.cursor].state === DropDownState.OFF) {
         this.options.forEach((option) => {
           option.setOptionState(DropDownState.OFF);
+          option.setDirection(SortDirection.ASC);
           option.toggle.setVisible(false);
         });
         this.options[this.cursor].setOptionState(DropDownState.ON);
+        this.options[this.cursor].setDirection(this.lastDir);
         this.options[this.cursor].toggle.setVisible(true);
+      } else {
+        this.options[this.cursor].toggleDirection();
+        this.lastDir = this.options[this.cursor].dir;
       }
     }
     this.onChange();
@@ -171,7 +202,13 @@ export class DropDown extends Phaser.GameObjects.Container {
   }
 
   getVals(): any[] {
-    return this.options.filter((option, i) => !(i === 0 && this.dropDownType === DropDownType.MULTI) && option.state === DropDownState.ON).map((option) => option.val);
+    if (this.dropDownType === DropDownType.MULTI) {
+      return this.options.filter((option, i) => i > 0 && option.state === DropDownState.ON).map((option) => option.val);
+    } else {
+      return this.options.filter((option, i) => option.state === DropDownState.ON).map((option) => {
+        return {val: option.val, dir: option.dir};
+      });
+    }
   }
 
   autoSize(): void {
@@ -190,6 +227,6 @@ export class DropDown extends Phaser.GameObjects.Container {
         }
       }
     }
-    this.window.width = maxWidth + x - this.window.x + 8;
+    this.window.width = maxWidth + x - this.window.x + 6;
   }
 }

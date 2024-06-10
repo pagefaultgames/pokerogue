@@ -36,7 +36,7 @@ import {Device} from "#app/enums/devices";
 import * as Challenge from "../data/challenge";
 import MoveInfoOverlay from "./move-info-overlay";
 import { getEggTierForSpecies } from "#app/data/egg.js";
-import { DropDown, DropDownOption, DropDownState, DropDownType } from "./dropdown";
+import { DropDown, DropDownColumns, DropDownOption, DropDownState, DropDownType } from "./dropdown";
 import { StarterContainer } from "./starter-container";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
@@ -221,7 +221,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private dropDownCursor: integer = 0;
   private genScrollCursor: integer = 0;
   private starterMoveset: StarterMoveset;
-  private numFilters: number = 3;
 
   private genSpecies: PokemonSpecies[][] = [];
   private lastSpecies: PokemonSpecies;
@@ -341,13 +340,20 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       new DropDownOption(this.scene, 32n, null, shiny3),
       new DropDownOption(this.scene, DexAttr.NON_SHINY, "non shiny")], this.updateStarters));
 
-    const filterSortLabel = addTextObject(this.scene, 223, 4, "Sort", TextStyle.TOOLTIP_CONTENT).setOrigin(0, 0);
+    const filterDiv = addTextObject(this.scene, 220, 4, "Wins", TextStyle.TOOLTIP_CONTENT).setOrigin(0, 0);
+    this.filterBarContainer.add(filterDiv);
+    this.dropDowns.push(new DropDown(this.scene, filterDiv.x, 18, [
+      new DropDownOption(this.scene, 0, "has won"),
+      new DropDownOption(this.scene, 1, "hasn't won yet")], this.updateStarters));
+
+    const filterSortLabel = addTextObject(this.scene, 247, 4, "Sort", TextStyle.TOOLTIP_CONTENT).setOrigin(0, 0);
     this.filterBarContainer.add(filterSortLabel);
     this.dropDowns.push(new DropDown(this.scene, filterSortLabel.x, 18, [
-      new DropDownOption(this.scene, 0, "Dex Nr."),
+      new DropDownOption(this.scene, 0, "No."),
       new DropDownOption(this.scene, 1, "Cost", null, DropDownState.OFF),
-      new DropDownOption(this.scene, 2, "Name", null, DropDownState.OFF),
-      new DropDownOption(this.scene, 3, "IVs", null, DropDownState.OFF)], this.updateStarters, DropDownType.SINGLE));
+      new DropDownOption(this.scene, 2, "IVs", null, DropDownState.OFF),
+      new DropDownOption(this.scene, 3, "Name", null, DropDownState.OFF),
+      new DropDownOption(this.scene, 4, "# caught", null, DropDownState.OFF),], this.updateStarters, DropDownType.SINGLE));
 
     this.filterBarContainer.add(this.dropDowns);
     this.starterSelectContainer.add(this.filterBarContainer);
@@ -1028,7 +1034,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
         break;
       case Button.RIGHT:
-        if (this.filterBarCursor < this.numFilters - 1) {
+        if (this.filterBarCursor < this.dropDowns.length - 1) {
           success = this.setCursor(this.filterBarCursor + 1);
         }
         break;
@@ -1646,24 +1652,42 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         if (g !== this.getGenCursorWithScroll()) {
           return;
         }
+        const speciesVariants = container.species.speciesId && this.scene.gameData.dexData[container.species.speciesId].caughtAttr & DexAttr.SHINY
+          ? [ DexAttr.DEFAULT_VARIANT, DexAttr.VARIANT_2, DexAttr.VARIANT_3 ].filter(v => !!(this.scene.gameData.dexData[container.species.speciesId].caughtAttr & v))
+          : [];
+        const fitsType =  this.dropDowns[DropDownColumns.TYPES].getVals().some(type => container.species.isOfType((type as number) - 1));
+        const fitsShiny = this.dropDowns[DropDownColumns.SHINY].getVals().some(variant => speciesVariants.includes(variant));
+        const fitsDiv = (this.dropDowns[DropDownColumns.DIV].getVals().includes(0) && this.scene.gameData.starterData[container.species.speciesId].classicWinCount > 0) ||
+                        (this.dropDowns[DropDownColumns.DIV].getVals().includes(1) && this.scene.gameData.starterData[container.species.speciesId].classicWinCount === 0);
 
-        // const speciesVariants = container.species.speciesId && this.scene.gameData.dexData[container.species.speciesId].caughtAttr & DexAttr.SHINY
-        //   ? [ DexAttr.DEFAULT_VARIANT, DexAttr.VARIANT_2, DexAttr.VARIANT_3 ].filter(v => !!(this.scene.gameData.dexData[container.species.speciesId].caughtAttr & v))
-        //   : [];
-        // console.log(speciesVariants);
-        const fitsType =  this.dropDowns[0].getVals().some(type => container.species.isOfType((type as number) - 1));
-        const fitsShiny = true;//;this.dropDowns[1].getVals().some(variant => speciesVariants.includes(variant));
-
-        if (fitsType && fitsShiny) {
+        if (fitsType && fitsShiny && fitsDiv) {
           this.filteredStarterContainers.push(container);
         }
       });
     }
 
     // sort
-    // this.filteredStarterContainers.sort((a, b) => {
-    //   return a.species.index
-    // });
+    const sort = this.dropDowns[DropDownColumns.SORT].getVals()[0];
+    console.log(sort);
+    this.filteredStarterContainers.sort((a, b) => {
+      switch (sort.val) {
+      default:
+        break;
+      case 0:
+        return -sort.dir;
+      case 1:
+        return (a.cost - b.cost) * -sort.dir;
+      case 2:
+        const avgIVsA = this.scene.gameData.dexData[a.species.speciesId].ivs.reduce((a, b) => a + b, 0) / this.scene.gameData.dexData[a.species.speciesId].ivs.length;
+        const avgIVsB = this.scene.gameData.dexData[b.species.speciesId].ivs.reduce((a, b) => a + b, 0) / this.scene.gameData.dexData[b.species.speciesId].ivs.length;
+        return (avgIVsA - avgIVsB) * -sort.dir;
+      case 3:
+        return a.species.name.localeCompare(b.species.name) * -sort.dir;
+      case 4:
+        return (this.scene.gameData.dexData[a.species.speciesId].caughtCount - this.scene.gameData.dexData[b.species.speciesId].caughtCount) * -sort.dir;
+      }
+      return 0;
+    });
     this.filteredStarterContainers.forEach((container, i) => {
       const pos = calcIconPosition(i);
       container.setPosition(pos.x, pos.y);
@@ -2294,6 +2318,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const speciesId = starter.species.speciesId;
     const baseStarterValue = speciesStarters[speciesId];
     const starterValue = this.scene.gameData.getSpeciesStarterValue(speciesId);
+    starter.cost = starterValue;
     let valueStr = starterValue.toString();
     if (valueStr.startsWith("0.")) {
       valueStr = valueStr.slice(1);
