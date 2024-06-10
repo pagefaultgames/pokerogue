@@ -148,11 +148,11 @@ export default class GameManager {
       this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
         this.setMode(Mode.MESSAGE);
         this.endPhase();
-      }, () => this.isCurrentPhase(TurnInitPhase));
+      }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnInitPhase));
       this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
         this.setMode(Mode.MESSAGE);
         this.endPhase();
-      }, () => this.isCurrentPhase(TurnInitPhase));
+      }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnInitPhase));
       await this.phaseInterceptor.to(CommandPhase).catch((e) => reject(e));
       console.log("==================[New Turn]==================");
       return resolve();
