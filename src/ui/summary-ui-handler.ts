@@ -486,6 +486,7 @@ export default class SummaryUiHandler extends UiHandler {
           this.hideMoveSelect();
         } else {
 <<<<<<< HEAD
+<<<<<<< HEAD
           if (ui.getMessageHandler().onActionInput) {
             ui.setMode(Mode.MESSAGE);
           } else {
@@ -497,7 +498,16 @@ export default class SummaryUiHandler extends UiHandler {
           if (!ui.getMessageHandler().onActionInput) {
             ui.setMode(Mode.PARTY);
           } else {
+||||||| parent of baef39304 (Fixed issues described by HopsWas)
+          if (!ui.getMessageHandler().onActionInput) {
+            ui.setMode(Mode.PARTY);
+          } else {
+=======
+          if (ui.getMessageHandler().onActionInput) {
+>>>>>>> baef39304 (Fixed issues described by HopsWas)
             ui.setMode(Mode.MESSAGE);
+          } else {
+            ui.setMode(Mode.PARTY);
           }
 >>>>>>> c04036ce2 (Option to view Summary before adding new Pokemon to party)
         }

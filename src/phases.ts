@@ -4772,7 +4772,7 @@ export class AttemptCapturePhase extends PokemonPhase {
                 onComplete: () => this.catch()
 =======
                 onComplete: () => {
-                  this.scene.unshiftPhase(new VictoryPhase(this.scene, this.battlerIndex)); this.catch();
+                  this.scene.unshiftPhase(new VictoryPhase(this.scene, this.battlerIndex)); this.scene.gameData.setPokemonCaught(pokemon); this.catch();
                 }
 >>>>>>> c04036ce2 (Option to view Summary before adding new Pokemon to party)
               });
