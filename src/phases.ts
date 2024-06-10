@@ -59,8 +59,8 @@ import { TrainerType } from "./data/enums/trainer-type";
 import { EggHatchPhase } from "./phases/egg-hatch-phase";
 import { Egg } from "./data/egg";
 import { vouchers } from "./system/voucher";
-import { loggedInUser, updateUserInfo } from "./account";
-import { SessionSaveData } from "./system/game-data";
+import {loggedInUser, updateUserInfo} from "./account";
+import {SessionSaveData} from "./system/game-data";
 import { PlayerGender } from "./data/enums/player-gender";
 import { addPokeballCaptureStars, addPokeballOpenParticles } from "./field/anims";
 import { SpeciesFormChangeActiveTrigger, SpeciesFormChangeManualTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangePreMoveTrigger } from "./data/pokemon-forms";
@@ -85,8 +85,6 @@ import {BattlePhase} from "#app/phases/battle-phase";
 import { MysteryEncounterPhase } from "./phases/mystery-encounter-phase";
 import { MysteryEncounterVariant } from "./data/mystery-encounter";
 import { handleMysteryEncounterVictory } from "./utils/mystery-encounter-utils";
-import fs from "fs";
-import {AES, enc} from "crypto-js";
 
 
 export class LoginPhase extends Phase {
@@ -105,21 +103,7 @@ export class LoginPhase extends Phase {
 
     this.scene.ui.setMode(Mode.LOADING, { buttonActions: [] });
 
-    const loadDataAndUpdate = async (): Promise<[boolean, number]> => {
-      const saveKey = "x0i2O7WRiANTqPmZ";
-      const dataRaw = fs.readFileSync("src/test/utils/saves/everything.prsv", {encoding: "utf8", flag: "r"});
-      let dataStr = AES.decrypt(dataRaw, saveKey).toString(enc.Utf8);
-      dataStr = this.scene.gameData.convertSystemDataStr(dataStr);
-      const systemData = this.scene.gameData.parseSystemData(dataStr);
-      const valid = !!systemData.dexData && !!systemData.timestamp;
-      if (valid) {
-        await updateUserInfo();
-        await this.scene.gameData.initSystem(dataStr);
-      }
-      return updateUserInfo();
-    };
-
-    Utils.executeIf(bypassLogin || hasSession, loadDataAndUpdate).then(response => {
+    Utils.executeIf(bypassLogin || hasSession, updateUserInfo).then(response => {
       const success = response ? response[0] : false;
       const statusCode = response ? response[1] : null;
       if (!success) {

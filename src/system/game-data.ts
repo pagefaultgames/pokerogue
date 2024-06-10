@@ -275,7 +275,7 @@ export class GameData {
   }
 
   public getSystemSaveData(): SystemSaveData {
-    return {
+    const ret = {
       trainerId: this.trainerId,
       secretId: this.secretId,
       gender: this.gender,
@@ -292,6 +292,8 @@ export class GameData {
       eggPity: this.eggPity.slice(0),
       unlockPity: this.unlockPity.slice(0)
     };
+
+    return ret;
   }
 
   public saveSystem(): Promise<boolean> {
