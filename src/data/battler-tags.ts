@@ -93,7 +93,10 @@ export interface TerrainBattlerTag {
 }
 
 /**
- * Base class for tags that disable moves. Descendants can override {@linkcode moveIsDisabled} to disable moves that match a condition.
+ * Base class for tags that disable moves. Descendants can override {@linkcode moveIsDisabled} to disable moves that
+ * match a condition. Note that this tag does not do anything on its own; instead, during the move phase, move users
+ * check for all tags that are a subclass of this, and marks moves that match a {@linkcode moveIsDisabled} predicate
+ * as disabled.
  */
 export abstract class DisablingBattlerTag extends BattlerTag {
   public abstract moveIsDisabled(move: Moves): boolean;
