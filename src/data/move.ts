@@ -5114,6 +5114,12 @@ export class SuppressAbilitiesAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * Adds a secondary effect to a move which applies the effects of {@linkcode SuppressAbilitiesAttr} to the target
+ * if it has already moved this turn.
+ * @extends MoveEffectAttr
+ * @see {@linkcode Moves.CORE_ENFORCER} (the move which uses this effect)
+ */
 export class SuppressAbilitiesIfActedAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
