@@ -1232,6 +1232,15 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.SUPER_RARE]: [Species.NOIVERN],
       [TrainerPoolTier.ULTRA_RARE]: []
     }),
+  [TrainerType.CIPHER_PEON]: new TrainerConfig(++t).setHasGenders("Cipher Peon Female").setHasDouble("Cipher Peons").setMoneyMultiplier(1.0).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm("battle_plasma_grunt").setPartyTemplateFunc(scene => getEvilGruntPartyTemplate(scene))
+    .setSpeciesPools({
+      [TrainerPoolTier.COMMON]: [Species.HITMONTOP,Species.VIBRAVA,Species.REMORAID,Species.MANTINE,Species.GEODUDE,Species.FORRETRESS],
+      [TrainerPoolTier.UNCOMMON]: [Species.CROCONAW,Species.QUILAVA,Species.BAYLEEF,Species.TROPIUS],
+      [TrainerPoolTier.RARE]: [Species.MUK,Species.VILEPLUME],
+      [TrainerPoolTier.SUPER_RARE]: [Species.GRUMPIG],
+      [TrainerPoolTier.ULTRA_RARE]: []
+    }),
+
   [TrainerType.BROCK]: new TrainerConfig((t = TrainerType.BROCK)).initForGymLeader(signatureSpecies["BROCK"],true, Type.ROCK).setBattleBgm("battle_kanto_gym").setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.MISTY]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["MISTY"],false, Type.WATER).setBattleBgm("battle_kanto_gym").setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.LT_SURGE]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["LT_SURGE"],true, Type.ELECTRIC).setBattleBgm("battle_kanto_gym").setMixedBattleBgm("battle_kanto_gym"),
@@ -1716,4 +1725,18 @@ export const trainerConfigs: TrainerConfigs = {
       p.pokeball = PokeballType.ULTRA_BALL;
       p.formIndex = 1;
     })),
+  [TrainerType.MIRROR_B]: new TrainerConfig(++t).setName("Mirror B").initForEvilTeamLeader("Cipher Admin",[])
+    .setPartyMemberFunc(0,getRandomPartyMemberFunc([Species.EXPLOUD]))
+    .setPartyMemberFunc(1,getRandomPartyMemberFunc([Species.LUDICOLO]))
+    .setPartyMemberFunc(2,getRandomPartyMemberFunc([Species.LUDICOLO]))
+    .setPartyMemberFunc(3,getRandomPartyMemberFunc([Species.LUDICOLO]))
+    .setPartyMemberFunc(4,getRandomPartyMemberFunc([Species.SUDOWOODO],TrainerSlot.TRAINER, true, p => {
+      p.setBoss(true, 2);
+      p.generateAndPopulateMoveset();
+      p.pokeball = PokeballType.MASTER_BALL; // If we ever add Shadow Balls, this should be a Shadow Ball
+    }))
+    .setPartyMemberFunc(5,getRandomPartyMemberFunc([Species.ARMALDO]))
+
+
+
 };
