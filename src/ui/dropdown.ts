@@ -4,7 +4,7 @@ import { addTextObject, TextStyle } from "./text";
 import { addWindow, WindowVariant } from "./ui-theme";
 
 export enum DropDownState {
-    ON,
+    ON = 0,
     OFF
 }
 
@@ -13,14 +13,22 @@ export enum DropDownType {
     SINGLE
 }
 
+export enum SortDirection {
+  ASC = -1,
+  DESC = 1
+}
+
 export class DropDownOption extends Phaser.GameObjects.Container {
   public state: DropDownState = DropDownState.ON;
   public toggle: Phaser.GameObjects.Sprite;
   public text: Phaser.GameObjects.Text;
   public sprite?: Phaser.GameObjects.Sprite;
+  public val: any;
+  public dir: SortDirection = SortDirection.ASC;
 
-  constructor(scene: SceneBase, text: string, sprite?: Phaser.GameObjects.Sprite, state: DropDownState = DropDownState.ON) {
+  constructor(scene: SceneBase, val: any, text: string, sprite?: Phaser.GameObjects.Sprite, state: DropDownState = DropDownState.ON) {
     super(scene);
+    this.val = val;
     this.toggle = scene.add.sprite(0, 0, "candy").setScale(0.3).setOrigin(0, 0.5);
     this.text = addTextObject(scene, 0, 0, text, TextStyle.TOOLTIP_CONTENT).setOrigin(0, 0.5);
     this.add(this.toggle);
@@ -53,24 +61,26 @@ export class DropDown extends Phaser.GameObjects.Container {
   private cursorObj: Phaser.GameObjects.Image;
   private dropDownType: DropDownType = DropDownType.MULTI;
   private cursor: integer = 0;
+  private onChange: () => void;
 
-  constructor(scene: BattleScene, x: number, y: number, options: DropDownOption[], type: DropDownType = DropDownType.MULTI, optionSpacing: number = 2) {
+  constructor(scene: BattleScene, x: number, y: number, options: DropDownOption[], onChange: () => void, type: DropDownType = DropDownType.MULTI, optionSpacing: number = 2) {
     const windowPadding = 5;
     const optionHeight = 7;
     const optionPaddingX = 4;
     const optionPaddingY = 6;
     const cursorOffset = 7;
-    const optionWidth = type === DropDownType.MULTI ? 50 : 50;
+    const optionWidth = 100;
 
     super(scene, x - cursorOffset - windowPadding, y);
     this.options = options;
     this.dropDownType = type;
+    this.onChange = onChange;
 
     this.cursorObj = scene.add.image(optionPaddingX + 3, 0, "cursor").setScale(0.5).setOrigin(0, 0.5);
     this.cursorObj.setVisible(false);
 
     if (this.dropDownType === DropDownType.MULTI) {
-      this.options.unshift(new DropDownOption(scene, "All", null, DropDownState.ON));
+      this.options.unshift(new DropDownOption(scene, "ALL", "All", null, DropDownState.ON));
     }
 
     options.forEach((option, index) => {
@@ -139,6 +149,17 @@ export class DropDown extends Phaser.GameObjects.Container {
         this.options[this.cursor].toggle.setVisible(true);
       }
     }
+    this.onChange();
+  }
+
+  setVisible(value: boolean): this {
+    super.setVisible(value);
+
+    if (value) {
+      this.autoSize();
+    }
+
+    return this;
   }
 
   checkForAllOn(): boolean {
@@ -147,5 +168,28 @@ export class DropDown extends Phaser.GameObjects.Container {
 
   checkForAllOff(): boolean {
     return this.options.every((option, i) => i === 0 || option.state === DropDownState.OFF);
+  }
+
+  getVals(): any[] {
+    return this.options.filter((option, i) => !(i === 0 && this.dropDownType === DropDownType.MULTI) && option.state === DropDownState.ON).map((option) => option.val);
+  }
+
+  autoSize(): void {
+    let maxWidth = 0;
+    let x = 0;
+    for (let i = 0; i < this.options.length; i++) {
+      if (this.options[i].sprite) {
+        if (this.options[i].sprite.displayWidth > maxWidth) {
+          maxWidth = this.options[i].sprite.displayWidth;
+          x = this.options[i].sprite.x;
+        }
+      } else {
+        if (this.options[i].text.displayWidth > maxWidth) {
+          maxWidth = this.options[i].text.displayWidth;
+          x = this.options[i].text.x;
+        }
+      }
+    }
+    this.window.width = maxWidth + x - this.window.x + 8;
   }
 }
