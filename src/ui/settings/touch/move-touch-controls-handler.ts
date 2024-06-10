@@ -1,6 +1,6 @@
+import TouchControl from "#app/touch-controls.js";
 import UI from "#app/ui/ui.js";
 import { Scene } from "phaser";
-import { disableTouchControls, enableTouchControls } from "../../../touch-controls.js";
 
 export const TOUCH_CONTROL_POSITIONS_LANDSCAPE = "touchControlPositionsLandscape";
 export const TOUCH_CONTROL_POSITIONS_PORTRAIT = "touchControlPositionsPortrait";
@@ -22,15 +22,11 @@ type ToolbarRefs = {
 
 /**
  * Handles the dragging of touch controls around the screen.
- * This class is a singleton.
  */
 export default class MoveTouchControlsHandler {
 
   /** The element that is currently being dragged */
   private draggingElement: HTMLElement | null = null;
-
-  /** The singleton instance */
-  private static instance: MoveTouchControlsHandler;
 
   /**
    * Whether the user is currently configuring the touch controls.
@@ -38,28 +34,23 @@ export default class MoveTouchControlsHandler {
    */
   public inConfigurationMode: boolean;
 
+  /**
+   * The event listeners for the configuration mode.
+   * These are used to remove the event listeners when the configuration mode is disabled.
+   */
   private configurationEventListeners: ConfigurationEventListeners = {
     "touchstart": [],
     "touchmove": [],
     "touchend": []
   };
 
-  overlay: Phaser.GameObjects.Container | null = null;
+  private overlay: Phaser.GameObjects.Container;
 
-  isLandscapeMode: boolean = this.getScreenSize().width > this.getScreenSize().height;
+  private isLandscapeMode: boolean = this.getScreenSize().width > this.getScreenSize().height;
+  private touchControls: TouchControl;
 
-  /**
-   * Returns the singleton instance of this class.
-   * @returns The singleton instance of this class.
-   */
-  public static getInstance() {
-    if (!MoveTouchControlsHandler.instance) {
-      MoveTouchControlsHandler.instance = new MoveTouchControlsHandler();
-    }
-    return MoveTouchControlsHandler.instance;
-  }
-
-  private constructor() {
+  constructor(touchControls: TouchControl) {
+    this.touchControls = touchControls;
     this.inConfigurationMode = false;
     this.setPositions(this.getSavedPositionsOfCurrentOrientation() ?? []);
     this.initToolbar();
@@ -96,7 +87,7 @@ export default class MoveTouchControlsHandler {
     const { saveButton, resetButton, cancelButton } = this.getConfigToolbarRefs();
     saveButton.addEventListener("click", () => {
       this.saveCurrentPositions();
-      this.disableConfigureMode();
+      this.disableConfigurationMode();
     });
     resetButton.addEventListener("click", () => {
       this.resetPositions();
@@ -104,7 +95,7 @@ export default class MoveTouchControlsHandler {
     cancelButton.addEventListener("click", () => {
       const positions = this.getSavedPositionsOfCurrentOrientation();
       this.setPositions(positions);
-      this.disableConfigureMode();
+      this.disableConfigurationMode();
     });
   }
 
@@ -316,7 +307,7 @@ export default class MoveTouchControlsHandler {
     }
     this.inConfigurationMode = true;
 
-    disableTouchControls();
+    this.touchControls.disable();
     this.createOverlay(ui, scene);
     // Create event listeners with a delay to prevent the touchstart event from being triggered immediately.
     setTimeout(() => {
@@ -328,7 +319,7 @@ export default class MoveTouchControlsHandler {
   /**
    * Disables the configuration mode.
    */
-  public disableConfigureMode() {
+  public disableConfigurationMode() {
     this.inConfigurationMode = false;
     this.draggingElement = null;
 
@@ -341,7 +332,7 @@ export default class MoveTouchControlsHandler {
     // Remove overlay
     this.overlay?.destroy();
     document.querySelector("#touchControls").classList.remove("configMode");
-    enableTouchControls();
+    this.touchControls.enable();
   }
 
 }

@@ -211,34 +211,34 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "battle_girl": {
     "encounter": {
-      1: "You don't have to try to impress me. You can lose against me.",
+      1: "감동을 주려고 노력할 필요는 없어. 네가 질 수도 있으니까.",
     },
     "victory": {
-      1: "It's hard to say good-bye, but we are running out of time…",
+      1: "작별인사는 어렵지만, 우리에겐 시간이 얼마 안 남았네…",
     },
   },
   "hiker": {
     "encounter": {
-      1: "My middle-age spread has given me as much gravitas as the mountains I hike!",
-      2: "I inherited this big-boned body from my parents… I'm like a living mountain range…",
+      1: "중년으로 접어들면서 등산해왔던 산처럼 진중해졌습니다!",
+      2: "살아있는 산같은… 큰 체격을 부모님이 물려주셨죠…",
     },
     "victory": {
-      1: "At least I cannot lose when it comes to BMI!",
-      2: "It's not enough… It's never enough. My bad cholesterol isn't high enough…"
+      1: "적어도 BMI에 대해서는 질 수 없습니다!",
+      2: "부족해… 절대로 충분하지 않아. 저의 콜레스테롤이 부족합니다…"
     },
   },
   "ranger": {
     "encounter": {
-      1: "When I am surrounded by nature, most other things cease to matter.",
-      2: "When I'm living without nature in my life, sometimes I'll suddenly feel an anxiety attack coming on."
+      1: "자연에 둘러싸여 있으면, 다른 건 중요하지 않게 느껴져.",
+      2: "인생에서 자연을 빼고 살면, 가끔 갑자기 마음이 불안해지지."
     },
     "victory": {
-      1: "It doesn't matter to the vastness of nature whether I win or lose…",
-      2: "Something like this is pretty trivial compared to the stifling feelings of city life."
+      1: "광활한 자연 앞에서는 내가 이기든 지든 상관없어…",
+      2: "도시 생활의 답답한 느낌에 비하면 이런 것은 아주 사소한 일지."
     },
     "defeat": {
-      1: "I won the battle. But victory is nothing compared to the vastness of nature…",
-      2: "I'm sure how you feel is not so bad if you compare it to my anxiety attacks…"
+      1: "내가 이겼네. 그러나 승리는 광대한 자연에 비하면 아무것도 아니야…",
+      2: "내 마음속 불안함과 비교하면, 당신 기분은 그렇게 나쁘지 않을텐데…"
     }
   },
   "scientist": {
@@ -305,82 +305,82 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "hex_maniac": {
     "encounter": {
-      1: "I normally only ever listen to classical music, but if I lose, I think I shall try a bit of new age!",
-      2: "I grow stronger with each tear I cry."
+      1: "평소에는 클래식 음악만 들었는데, 지면 뉴에이지도 좀 들어볼까!",
+      2: "눈물을 흘릴 때마다 더 강해지는 것 같아."
     },
     "victory": {
-      1: "Is this the dawning of the age of Aquarius?",
-      2: "Now I can get even stronger. I grow with every grudge."
+      1: "지금이 물병자리 시대의 시작일까?",
+      2: "이제 나는 더 강해지겠지. 모든 원한과 함께 성장하겠어."
     },
     "defeat": {
-      1: "New age simply refers to twentieth century classical composers, right?",
-      2: "Don't get hung up on sadness or frustration. You can use your grudges to motivate yourself."
+      1: "뉴에이지란 단순히 20세기 클래식 작곡가들을 말하는 거, 맞지?",
+      2: "슬픔이나 좌절에 얽매이지 마. 넌 그 원한을 원동력으로 사용할 수 있어."
     }
   },
   "psychic": {
     "encounter": {
-      1: "Hi! Focus!",
+      1: "안녕! 집중해!",
     },
     "victory": {
-      1: "Eeeeek!",
+      1: "에에에에엣!",
     },
   },
   "officer": {
     "encounter": {
-      1: "Brace yourself, because justice is about to be served!",
-      2: "Ready to uphold the law and serve justice on the battlefield!"
+      1: "마음의 준비를 하시죠, 정의가 곧 실행될 거니까요!",
+      2: "법을 지키고 정의를 위해 봉사할 준비가 되었습니다!"
     },
     "victory": {
-      1: "The weight of justice feels heavier than ever…",
-      2: "The shadows of defeat linger in the precinct."
+      1: "정의의 무게가 그 어느 때보다 무겁게 느껴집니다…",
+      2: "패배의 그림자가 관할 경찰서에 남았습니다."
     }
   },
   "beauty": {
     "encounter": {
-      1: "My last ever battle… That's the way I'd like us to view this match…",
+      1: "나의 마지막 배틀… 이 승부를 그렇게 봐주셨으면 좋겠어요…",
     },
     "victory": {
-      1: "It's been fun… Let's have another last battle again someday…",
+      1: "즐거웠어요… 언젠가 또 다른 마지막 승부를 하죠…",
     },
   },
   "baker": {
     "encounter": {
-      1: "Hope you're ready to taste defeat!"
+      1: "패배의 맛을 볼 준비는 됐겠지!"
     },
     "victory": {
-      1: "I'll bake a comeback."
+      1: "실력이든 빵이든, 굽고 나면 단단해지는 법이라네."
     },
   },
   "biker": {
     "encounter": {
-      1: "Time to rev up and leave you in the dust!"
+      1: "힘차게 먼지 속으로 출발할 시간입니다!"
     },
     "victory": {
-      1: "I'll tune up for the next race."
+      1: "다음 경주를 위해 준비해야겠습니다."
     },
   },
   "firebreather": {
     "encounter": {
-      1: "My flames shall devour you!",
-      2: "My soul is on fire. I'll show you how hot it burns!",
-      3: "Step right up and take a look!"
+      1: "내 불꽃이 너를 삼킬 테니까!",
+      2: "내 영혼은 불타고 있다. 얼마나 뜨겁게 타는지 보여주지!",
+      3: "이리 올라와서 보도록!"
     },
     "victory": {
-      1: "I burned down to ashes...",
-      2: "Yow! That's hot!",
-      3: "Ow! I scorched the tip of my nose!"
+      1: "하얗게 불태웠다………",
+      2: "큭! 제법 뜨겁군!",
+      3: "으윽! 코끝에 화상을 입었다!"
     },
   },
   "sailor": {
     "encounter": {
-      1: "Matey, you're walking the plank if you lose!",
-      2: "Come on then! My sailor's pride is at stake!",
-      3: "Ahoy there! Are you seasick?"
+      1: "친구여, 진다면 널빤지 행이야!",
+      2: "덤벼! 내 선원으로서 자존심이 위태롭군!",
+      3: "여어 거기! 뱃멀미 하나?"
     },
     "victory": {
-      1: "Argh! Beaten by a kid!",
-      2: "Your spirit sank me!",
-      3: "I think it's me that's seasick..."
+      1: "크윽! 꼬맹이한테 지다니!",
+      2: "네 영혼이 나를 침몰시켰어!",
+      3: "내가 뱃멀미가 나는 것 같군…"
     },
   },
   "brock": {
@@ -906,51 +906,51 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "crispin": {
     "encounter": {
-      1: "I wanna win, so that's exactly what I'll do!",
-      2: "I battle because I wanna battle! And you know what? That's how it should be!"
+      1: "이기고 싶으니까 이기고 말겠어!",
+      2: "싸우고 싶으면 싸운다! 이거면 충분하지 않아!?"
     },
     "victory": {
-      1: "I wanted to win…but I lost!",
-      2: "I lost…'cause I couldn't win!"
+      1: "이기고 싶었는데…졌잖아!",
+      2: "이기지 못해서…지고 말았어!"
     },
     "defeat": {
-      1: "Hey, wait a sec. Did I just win? I think I just won! Talk about satisfying!",
-      2: "Wooo! That was amazing!"
+      1: "잠시만. 나 지금 이긴거지? 이긴 거 맞지! 기분 좋은데!",
+      2: "우와아! 이거 굉장한데!"
     }
   },
   "amarys": {
     "encounter": {
-      1: `I want to be the one to help a certain person. That being the case, I cannot afford to lose.
-                $… Our battle starts now.`,
+      1: `네리네는 그 사람을 구원하고 싶습니다. 그렇기에 패배는 용납되지 않습니다.
+                $… 승부를 시작합니다.`,
     },
     "victory": {
-      1: "I am… not enough, I see."
+      1: "네리네는… 안 된다는 건가요."
     },
     "defeat": {
-      1: "Victory belongs to me. Well fought."
+      1: "네리네가 승리했습니다. 수고하셨습니다."
     }
   },
   "lacey": {
     "encounter": {
-      1: "I'll be facing you with my usual party as a member of the Elite Four."
+      1: "이번에는 사천왕으로서 승부하는 거니까 평소 사용하는 아이들로 상대해 드릴게요!"
     },
     "victory": {
-      1: "That was a great battle!"
+      1: "멋진 포켓몬 배틀이었어요!"
     },
     "defeat": {
-      1: "Let's give your Pokémon a nice round of applause for their efforts!"
+      1: "당신의 포켓몬의 노력에 박수를 보내주세요!"
     }
   },
   "drayton": {
     "encounter": {
-      1: `Man, I love chairs. Don't you love chairs? What lifesavers. 
-                $I don't get why everyone doesn't just sit all the time. Standing up's tiring work!`,
+      1: `의자는 좋은 거야. 너도 그렇게 생각해? 정말 고마운 물건이지. 
+                $왜 다들 앉지 않는 걸까. 서 있는 건 힘들잖아!`,
     },
     "victory": {
-      1: "Guess I should've expected that!"
+      1: "전보다 더 강해질 줄이야!"
     },
     "defeat": {
-      1: "Heh heh! Don't mind me, just scooping up a W over here. I get it if you're upset, but don't go full Kieran on me, OK?"
+      1: "헤헤헷! 내 승리야. 분한 건 알겠지만 카지처럼 나가떨어지지마, 응?"
     }
   },
   "ramos": {
