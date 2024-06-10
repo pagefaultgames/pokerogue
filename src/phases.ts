@@ -1079,6 +1079,10 @@ export class NextEncounterPhase extends EncounterPhase {
     super(scene);
   }
 
+  start() {
+    super.start();
+  }
+
   doEncounter(): void {
     this.scene.playBgm(undefined, true);
 
@@ -1495,6 +1499,10 @@ export class SwitchSummonPhase extends SummonPhase {
     this.slotIndex = slotIndex;
     this.doReturn = doReturn;
     this.batonPass = batonPass;
+  }
+
+  start(): void {
+    super.start();
   }
 
   preSummon(): void {
