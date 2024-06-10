@@ -46,7 +46,7 @@ Terminology:  [bug(ui)]: Fix female trainer names
     // Check if title pass regex
     const regex = RegExp(/^\[[a-zA-Z]+(\([a-zA-Z]+\))?\]: .+/);
     if (!regex.test(title)) {
-      core.setFailed(`Pull Request title "${title}" failed to match - 'Prefix(Scope): Subject'`);
+      core.setFailed(`Pull Request title "${title}" failed to match - '[Prefix(Scope)]: Subject'`);
       return;
     }
 
