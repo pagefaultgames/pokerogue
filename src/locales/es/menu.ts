@@ -44,6 +44,7 @@ export const menu: SimpleTranslationEntries = {
   "dailyRankings": "Rankings Diarios",
   "weeklyRankings": "Rankings Semanales",
   "noRankings": "Sin Rankings",
+  "positionIcon": "#",
   "usernameScoreboard": "Username",
   "score": "Score",
   "wave": "Wave",

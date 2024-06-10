@@ -44,6 +44,7 @@ export const menu: SimpleTranslationEntries = {
   "dailyRankings": "일간 랭킹",
   "weeklyRankings": "주간 랭킹",
   "noRankings": "랭킹 정보 없음",
+  "positionIcon": "#",
   "usernameScoreboard": "Username",
   "score": "Score",
   "wave": "Wave",

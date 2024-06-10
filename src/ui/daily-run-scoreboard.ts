@@ -154,7 +154,7 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
       return entryContainer;
     };
 
-    this.rankingsContainer.add(getEntry("#", i18next.t("menu:usernameScoreboard"), i18next.t("menu:score"), i18next.t("menu:wave")));
+    this.rankingsContainer.add(getEntry(i18next.t("menu:positionIcon"), i18next.t("menu:usernameScoreboard"), i18next.t("menu:score"), i18next.t("menu:wave")));
 
     rankings.forEach((r: RankingEntry, i: integer) => {
       const entryContainer = getEntry(r.rank.toString(), r.username, r.score.toString(), r.wave.toString());
