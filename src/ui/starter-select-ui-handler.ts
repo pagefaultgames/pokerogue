@@ -30,7 +30,7 @@ import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim
 import { StatsContainer } from "./stats-container";
 import { TextStyle, addBBCodeTextObject, addTextObject } from "./text";
 import { Mode } from "./ui";
-import { addWindow } from "./ui-theme";
+import { addWindow, WindowVariant } from "./ui-theme";
 import {SettingKeyboard} from "#app/system/settings/settings-keyboard";
 import {Device} from "#app/enums/devices";
 import * as Challenge from "../data/challenge";
@@ -125,8 +125,10 @@ function getValueReductionCandyCounts(baseValue: integer): [integer, integer] {
  * @returns An interface with an x and y property
  */
 function calcIconPosition(index: number): {x: number, y: number} {
+  const yOffset = 13;
+  const height = 17;
   const x = (index % 9) * 18;
-  const y = Math.floor(index / 9) * 18;
+  const y = yOffset + Math.floor(index / 9) * height;
 
   return {x: x, y: y};
 }
@@ -156,6 +158,7 @@ const gens = [
 
 export default class StarterSelectUiHandler extends MessageUiHandler {
   private starterSelectContainer: Phaser.GameObjects.Container;
+  private filterBarContainer: Phaser.GameObjects.Container;
   private shinyOverlay: Phaser.GameObjects.Image;
   private starterSelectGenIconContainers: Phaser.GameObjects.Container[];
   private pokemonNumberText: Phaser.GameObjects.Text;
@@ -203,12 +206,16 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
   private genMode: boolean;
   private statsMode: boolean;
+  private filterMode: boolean;
+  private filterDropdown: boolean;
   private dexAttrCursor: bigint = 0n;
   private abilityCursor: integer = -1;
   private natureCursor: integer = -1;
   private genCursor: integer = 0;
+  private filterBarCursor: integer = 0;
   private genScrollCursor: integer = 0;
   private starterMoveset: StarterMoveset;
+  private numFilters: number = 3;
 
   private genSpecies: PokemonSpecies[][] = [];
   private lastSpecies: PokemonSpecies;
@@ -239,6 +246,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private starterIcons: Phaser.GameObjects.Sprite[];
   private genCursorObj: Phaser.GameObjects.Image;
   private genCursorHighlightObj: Phaser.GameObjects.Image;
+  private filterBarCursorObj: Phaser.GameObjects.Image;
   private valueLimitLabel: Phaser.GameObjects.Text;
   private startCursorObj: Phaser.GameObjects.NineSlice;
   private starterValueLabels: Phaser.GameObjects.Text[];
@@ -292,6 +300,38 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.starterSelectContainer.add(addWindow(this.scene, 107, 59, 34, 91));
     this.starterSelectContainer.add(addWindow(this.scene, 107, 145, 34, 34, true));
     this.starterSelectContainer.add(starterContainerWindow);
+
+    this.filterBarContainer = this.scene.add.container(0, 0);
+
+    this.filterBarContainer.add(addWindow(this.scene, 143, 1, 175, 17, false, false, null, null, WindowVariant.THIN));
+
+    const filterTypesLabel = addTextObject(this.scene, 155, 4, "Types", TextStyle.TOOLTIP_CONTENT).setOrigin(0, 0);
+    this.filterBarContainer.add(filterTypesLabel);
+
+    const filterShinyLabel = addTextObject(this.scene, 189, 4, "Shiny", TextStyle.TOOLTIP_CONTENT).setOrigin(0, 0);
+    this.filterBarContainer.add(filterShinyLabel);
+
+    const filterSortLabel = addTextObject(this.scene, 309, 4, "Sort", TextStyle.TOOLTIP_CONTENT).setOrigin(1, 0);
+    this.filterBarContainer.add(filterSortLabel);
+
+    const offset = 6;
+    const padding = 5;
+    const typesDropdown = addWindow(this.scene, filterTypesLabel.x - offset - padding, 18, filterTypesLabel.displayWidth + offset + padding * 2, 100, false, false, null, null, WindowVariant.XTHIN).setVisible(true);
+
+    this.filterBarContainer.add(typesDropdown);
+
+    const optionHeight = 7;
+    const optionPadding = 4;
+    const typeKeys = Object.keys(Type).filter(v => isNaN(Number(v)));
+    typeKeys.forEach((type, index) => {
+      const typeSprite = this.scene.add.sprite(typesDropdown.x + typesDropdown.displayWidth / 2, typesDropdown.y + optionPadding + index * optionHeight, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`);
+      typeSprite.setScale(0.5).setOrigin(0.5, 0);
+      typeSprite.setFrame(type.toLowerCase());
+      this.filterBarContainer.add(typeSprite);
+    });
+    typesDropdown.height = typeKeys.length * optionHeight + optionPadding * 2;
+
+    this.starterSelectContainer.add(this.filterBarContainer);
 
     if (!this.scene.uiTheme) {
       starterContainerWindow.setVisible(false);
@@ -412,6 +452,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.genCursorObj.setVisible(false);
     this.genCursorObj.setOrigin(0, 0);
     this.starterSelectContainer.add(this.genCursorObj);
+
+    this.filterBarCursorObj = this.scene.add.image(1, 1, "cursor").setScale(0.5);
+    this.filterBarCursorObj.setVisible(false);
+    this.filterBarCursorObj.setOrigin(0, 0);
+    this.filterBarContainer.add(this.filterBarCursorObj);
 
     this.valueLimitLabel = addTextObject(this.scene, 124, 150, "0/10", TextStyle.TOOLTIP_CONTENT);
     this.valueLimitLabel.setOrigin(0.5, 0);
@@ -704,7 +749,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
         this.pokerusGens.push(species.generation - 1);
         this.pokerusCursors.push(pokerusCursor);
-        this.pokerusCursorObjs[c].setPosition(150 + 18 * (pokerusCursor % 9), 10 + 18 * Math.floor(pokerusCursor / 9));
+        this.pokerusCursorObjs[c].setPosition(150 + 18 * (pokerusCursor % 9), 10 + 13 + 17 * Math.floor(pokerusCursor / 9));
       }
     }, 0, date.getTime().toString());
 
@@ -725,6 +770,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       y: this.scene.game.canvas.height / 6 - MoveInfoOverlay.getHeight(overlayScale) - 29,
     });
     this.starterSelectContainer.add(this.moveInfoOverlay);
+    this.starterSelectContainer.bringToTop(this.filterBarContainer);
 
     this.scene.eventTarget.addEventListener(BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED, (e) => this.onCandyUpgradeDisplayChanged(e));
 
@@ -1019,7 +1065,53 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.setCursor(this.cursor + 8);
         break;
       case Button.RIGHT:
-        success = this.setGenMode(false);
+        if (this.genCursor === 0) {
+          this.setGenMode(false);
+          this.setFilterMode(true);
+          success = true;
+        } else {
+          this.setFilterMode(false);
+          this.setGenMode(false);
+          success = true;
+        }
+        break;
+      }
+    } else if (this.filterMode) {
+      switch (button) {
+      case Button.LEFT:
+        if (this.filterBarCursor > 0) {
+          success = this.setCursor(this.filterBarCursor - 1);
+        } else {
+          this.setFilterMode(false);
+          success = this.setGenMode(true);
+        }
+        break;
+      case Button.RIGHT:
+        if (this.filterBarCursor < this.numFilters - 1) {
+          success = this.setCursor(this.filterBarCursor + 1);
+        }
+        break;
+      case Button.DOWN:
+        this.setFilterMode(false);
+        success = true;
+        break;
+      case Button.ACTION:
+        const options = [{
+          label: "GRASS",
+          handler: () => {
+
+          }
+        }, {
+          label: "FIRE",
+          handler: () => {
+
+          }
+        }
+        ];
+        ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+          options: options,
+          yOffset: 47
+        });
         break;
       }
     } else {
@@ -1405,13 +1497,16 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           if (row) {
             success = this.setCursor(this.cursor - 9);
           } else {
+            this.filterBarCursor = 0;
+            this.setFilterMode(true);
+            success = true;
             // when strictly opposite starter based on rows length
             // does not exits, set cursor on the second to last row
-            if (this.cursor + (rows - 1) * 9 > genStarters - 1) {
-              success = this.setCursor(this.cursor + (rows - 2) * 9);
-            } else {
-              success = this.setCursor(this.cursor + (rows - 1) * 9);
-            }
+            // if (this.cursor + (rows - 1) * 9 > genStarters - 1) {
+            //   success = this.setCursor(this.cursor + (rows - 2) * 9);
+            // } else {
+            //   success = this.setCursor(this.cursor + (rows - 1) * 9);
+            // }
           }
           break;
         case Button.DOWN:
@@ -1664,10 +1759,18 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.candyUpgradeOverlayIcon[s].setVisible(false);
         }
       }
+    } else if (this.filterMode) {
+      changed = this.filterBarCursor !== cursor;
+      this.filterBarCursor = cursor;
+
+      console.log(this.filterBarContainer.list[cursor + 1]);
+      const cursorOffset = 5;
+      const selected = (this.filterBarContainer.list[cursor + 1] as Phaser.GameObjects.Text);
+      this.filterBarCursorObj.setPosition(selected.originX ? (selected.x - selected.displayWidth - cursorOffset) : (selected.x - cursorOffset), 7);
     } else {
       changed = super.setCursor(cursor);
 
-      this.cursorObj.setPosition(150 + 18 * (cursor % 9), 10 + 18 * Math.floor(cursor / 9));
+      this.cursorObj.setPosition(150 + 18 * (cursor % 9), 10 + 13 + 17 * Math.floor(cursor / 9));
 
       this.setSpecies(this.genSpecies[this.getGenCursorWithScroll()][cursor]);
 
@@ -1708,6 +1811,24 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
       this.setCursor(genMode ? this.genCursor : this.cursor);
       if (genMode) {
+        this.setSpecies(null);
+      }
+
+      return true;
+    }
+
+    return false;
+  }
+
+  setFilterMode(filterMode: boolean): boolean {
+    this.genCursorObj.setVisible(!filterMode);
+    this.cursorObj.setVisible(!filterMode);
+    this.filterBarCursorObj.setVisible(filterMode);
+
+    if (filterMode !== this.filterMode) {
+      this.filterMode = filterMode;
+      this.setCursor(filterMode ? this.filterBarCursor : this.cursor);
+      if (filterMode) {
         this.setSpecies(null);
       }
 
