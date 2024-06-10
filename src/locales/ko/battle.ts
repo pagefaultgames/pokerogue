@@ -88,7 +88,7 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsIngrainOnTrap": "{{pokemonNameWithAffix}}[[는]] 뿌리를 뻗었다!",
   "battlerTagsAquaRingOnAdd": "{{pokemonNameWithAffix}} surrounded\nitself with a veil of water!",
   "battlerTagsAquaRingLapse": "{{moveName}} restored\n{{pokemonName}}'s HP!",
-  "battlerTagsDrowsyOnAdd": "{{pokemonNameWithAffix}} grew drowsy!",
+  "battlerTagsDrowsyOnAdd": "{{pokemonNameWithAffix}}의\n졸음을 유도했다!",
   "battlerTagsDamagingTrapLapse": "{{pokemonNameWithAffix}}[[는]] {{moveName}}의\n데미지를 입고 있다!",
   "battlerTagsBindOnTrap": "{{pokemonNameWithAffix}}[[는]] {{sourcePokemonName}}에게\n{{moveName}}[[를]] 당했다!",
   "battlerTagsWrapOnTrap": "{{pokemonNameWithAffix}}[[는]] {{sourcePokemonName}}에게\n휘감겼다!",
