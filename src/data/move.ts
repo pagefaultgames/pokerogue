@@ -1882,7 +1882,7 @@ export class StealEatBerryAttr extends MoveEffectAttr {
     if (heldBerries.length) { // if the target has berries, pick a random berry and steal it
       this.chosenBerry = heldBerries[user.randSeedInt(heldBerries.length)];
 
-      if (this.chosenBerry === undefined) { // if no berry has been provided, pick a random berry from their inventory
+      if (!this.chosenBerry) { // if no berry has been provided, pick a random berry from their inventory
         const heldBerries = this.getTargetHeldBerries(target);
         if (heldBerries.length <= 0) {
           return false;
