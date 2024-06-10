@@ -1813,7 +1813,7 @@ export class EatBerryAttr extends MoveEffectAttr {
  * @param args Unused
  * @returns {boolean} true if the function succeeds
  */
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
       return false;
     }
