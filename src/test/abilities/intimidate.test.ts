@@ -29,7 +29,9 @@ describe("Abilities - Intimidate", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
     vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INTIMIDATE);
+    vi.spyOn(overrides, "OPP_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
     vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INTIMIDATE);
     vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(3);
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH,Moves.SPLASH,Moves.SPLASH,Moves.SPLASH]);
@@ -184,4 +186,30 @@ describe("Abilities - Intimidate", () => {
     const battleStatsPokemon2 = game.scene.getParty()[1].summonData.battleStats;
     expect(battleStatsPokemon2[BattleStat.ATK]).toBe(-2);
   }, 20000);
+
+  it("double venipede opp - boss: should only trigger once per pokemon", async() => {
+    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.VENIPEDE);
+    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(false);
+    vi.spyOn(overrides, "DOUBLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(10);
+    await game.runToSummon([
+      Species.MIGHTYENA,
+      Species.POOCHYENA,
+    ]);
+    game.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
+      game.setMode(Mode.MESSAGE);
+      game.endPhase();
+    }, () => game.isCurrentPhase(CommandPhase) || game.isCurrentPhase(TurnInitPhase));
+    await game.phaseInterceptor.to(CommandPhase, false);
+    const battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
+    expect(battleStatsOpponent[BattleStat.ATK]).toBe(-2);
+    const battleStatsOpponent2 = game.scene.currentBattle.enemyParty[1].summonData.battleStats;
+    expect(battleStatsOpponent2[BattleStat.ATK]).toBe(-2);
+
+    const battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
+    expect(battleStatsPokemon[BattleStat.ATK]).toBe(-2);
+
+    const battleStatsPokemon2 = game.scene.getParty()[1].summonData.battleStats;
+    expect(battleStatsPokemon2[BattleStat.ATK]).toBe(-2);
+  }, 200000);
 });
