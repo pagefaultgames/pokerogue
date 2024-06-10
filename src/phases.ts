@@ -2515,7 +2515,13 @@ export class MovePhase extends BattlePhase {
 
     console.log(Moves[this.move.moveId]);
 
+    if (!this.pokemon.isActive(true)) {
+      // Battle has ended, for example when RUN has been selected
+      return this.end();
+    }
+
     if (!this.canMove()) {
+      // The selected move has been made unusable
       this.fail();
       this.showMoveText();
       this.showFailedText();
