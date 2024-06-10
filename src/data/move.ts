@@ -1893,8 +1893,12 @@ export class StealEatBerryAttr extends MoveEffectAttr {
       const message = i18next.t("battle:stealEatBerry", {pokemonName: user.name, targetName: target.name, berryName: this.chosenBerry.type.name});
       user.scene.queueMessage(message);
 
+
+
       if (this.chosenBerry.stackCount === 1) {
         target.scene.removeModifier(this.chosenBerry, !target.isPlayer());
+      } else {
+        this.chosenBerry.stackCount--;
       }
       target.scene.updateModifiers(target.isPlayer());
 
