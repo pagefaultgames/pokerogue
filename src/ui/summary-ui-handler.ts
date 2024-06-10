@@ -485,7 +485,11 @@ export default class SummaryUiHandler extends UiHandler {
         if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
           this.hideMoveSelect();
         } else {
-          ui.setMode(Mode.PARTY);
+          if (!ui.getMessageHandler().onActionInput) {
+            ui.setMode(Mode.PARTY);
+          } else {
+            ui.setMode(Mode.MESSAGE);
+          }
         }
         success = true;
       } else {
