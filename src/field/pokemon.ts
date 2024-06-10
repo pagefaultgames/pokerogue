@@ -3853,18 +3853,28 @@ export class PokemonMove {
     this.virtual = !!virtual;
   }
 
+  /**
+   * Checks whether the move can be selected or performed by a Pokemon, without consideration for the move's targets.
+   * The move is unusable if it is out of PP, disabled by an effect, or unimplemented.
+   *
+   * @param {Pokemon} pokemon The Pokemon that would be using this move
+   * @param ignorePp If true, skips the PP check
+   * @returns True if the move can be selected and used by the Pokemon, otherwise false.
+   */
   isUsable(pokemon: Pokemon, ignorePp?: boolean): boolean {
     if (!this.moveId) {
       return false;
     }
 
-    for (const tag of pokemon.findTags(t => t instanceof DisablingBattlerTag)) {
-      if ((tag as DisablingBattlerTag).moveIsDisabled(this.moveId)) {
-        return false;
-      }
+    if (pokemon.isMoveDisabled(this.moveId)) {
+      return false;
     }
 
-    return (ignorePp || this.ppUsed < this.getMovePp() || this.getMove().pp === -1) && !this.getMove().name.endsWith(" (N)");
+    if (this.getMove().name.endsWith(" (N)")) {
+      return false;
+    }
+
+    return (ignorePp || this.ppUsed < this.getMovePp() || this.getMove().pp === -1);
   }
 
   getMove(): Move {
