@@ -216,7 +216,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
         this.pokemonGenderText.setShadowColor(getGenderColor(pokemon.gender, true));
         this.pokemonGenderText.setVisible(true);
 
-        const newGender = BigInt(Math.pow(2, pokemon.gender + 2)); // adding 2 here because of the 2 starting bits being related to shiny, not gender
+        const newGender = BigInt(Math.pow(2, pokemon.gender)) * DexAttr.MALE;
         this.pokemonGenderNewText.setText("(+)");
         this.pokemonGenderNewText.setColor(getTextColor(TextStyle.SUMMARY_BLUE, false, this.scene.uiTheme));
         this.pokemonGenderNewText.setShadowColor(getTextColor(TextStyle.SUMMARY_BLUE, true, this.scene.uiTheme));
