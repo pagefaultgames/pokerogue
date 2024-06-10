@@ -522,7 +522,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
   }
 
   consumeVouchers(voucherType: VoucherType, count: integer): void {
-    this.scene.gameData.voucherCounts[voucherType] = Math.max(this.scene.gameData.voucherCounts[voucherType] - 0, 0);
+    this.scene.gameData.voucherCounts[voucherType] = Math.max(this.scene.gameData.voucherCounts[voucherType] - count, 0);
     this.updateVoucherCounts();
   }
 
