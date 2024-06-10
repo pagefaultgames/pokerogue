@@ -4354,44 +4354,68 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
   	// This ensures that the switch out only happens when the conditions are met
 	  const switchOutTarget = this.user ? user : target;
 	  if (switchOutTarget instanceof PlayerPokemon) {
-	  	if (switchOutTarget.hp) {
-	  	  applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, switchOutTarget);
-          this.partyChoice ? (switchOutTarget as PlayerPokemon).switchOut(this.batonPass, true).then(() => resolve(true)) : (switchOutTarget as PlayerPokemon).forceSwitchOut(true).then(() => resolve(true));
-	  	} else {
+        if (switchOutTarget.hp) {
+          applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, switchOutTarget);
+          if (this.partyChoice) {
+            switchOutTarget.switchOut(this.batonPass, true).then(() => resolve(true));
+          } else {
+            switchOutTarget.forceSwitchOut(true).then(() => resolve(true));
+          }
+        } else {
           resolve(false);
         }
-	  	return;
-	  } else if (user.scene.currentBattle.battleType) {
-	  	// Switch out logic for the battle type
-	  	switchOutTarget.resetTurnData();
-	  	switchOutTarget.resetSummonData();
-	  	switchOutTarget.hideInfo();
-	  	switchOutTarget.setVisible(false);
-	  	switchOutTarget.scene.field.remove(switchOutTarget);
-	  	user.scene.triggerPokemonFormChange(switchOutTarget, SpeciesFormChangeActiveTrigger, true);
+        return;
+      } else if (user.scene.currentBattle.battleType) {
+      // Switch out logic for the battle type
+        switchOutTarget.resetTurnData();
+        switchOutTarget.resetSummonData();
+        switchOutTarget.hideInfo();
+        switchOutTarget.setVisible(false);
+        switchOutTarget.scene.field.remove(switchOutTarget);
+        user.scene.triggerPokemonFormChange(
+          switchOutTarget,
+          SpeciesFormChangeActiveTrigger,
+          true
+        );
 
-	  	if (switchOutTarget.hp) {
-          user.scene.unshiftPhase(new SwitchSummonPhase(user.scene, switchOutTarget.getFieldIndex(), user.scene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot), false, this.batonPass, false));
+        if (switchOutTarget.hp) {
+          user.scene.unshiftPhase(
+            new SwitchSummonPhase(
+              user.scene,
+              switchOutTarget.getFieldIndex(),
+              user.scene.currentBattle.trainer.getNextSummonIndex(
+                (switchOutTarget as EnemyPokemon).trainerSlot
+              ),
+              false,
+              this.batonPass,
+              false
+            )
+          );
         }
-	  } else {
-	    // Switch out logic for everything else
-	  	switchOutTarget.setVisible(false);
+      } else {
+      // Switch out logic for everything else
+        switchOutTarget.setVisible(false);
 
-	  	if (switchOutTarget.hp) {
-	  	  switchOutTarget.hideInfo().then(() => switchOutTarget.destroy());
-	  	  switchOutTarget.scene.field.remove(switchOutTarget);
-	  	  user.scene.queueMessage(getPokemonMessage(switchOutTarget, " fled!"), null, true, 500);
-	  	}
+        if (switchOutTarget.hp) {
+          switchOutTarget.hideInfo().then(() => switchOutTarget.destroy());
+          switchOutTarget.scene.field.remove(switchOutTarget);
+          user.scene.queueMessage(
+            getPokemonMessage(switchOutTarget, " fled!"),
+            null,
+            true,
+            500
+          );
+        }
 
-	  	if (!switchOutTarget.getAlly()?.isActive(true)) {
-	  	  user.scene.clearEnemyHeldItemModifiers();
+        if (!switchOutTarget.getAlly()?.isActive(true)) {
+          user.scene.clearEnemyHeldItemModifiers();
 
-	  	  if (switchOutTarget.hp) {
-	  	  	user.scene.pushPhase(new BattleEndPhase(user.scene));
-	  	  	user.scene.pushPhase(new NewBattlePhase(user.scene));
-	  	  }
-	  	}
-	  }
+          if (switchOutTarget.hp) {
+            user.scene.pushPhase(new BattleEndPhase(user.scene));
+            user.scene.pushPhase(new NewBattlePhase(user.scene));
+          }
+        }
+      }
 
 	  resolve(true);
 	  });
@@ -4406,30 +4430,27 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
     applyAbAttrs(ForceSwitchOutImmunityAbAttr, target, blockedByAbility);
     applyPreDefendAbAttrs(MoveImmunityAbAttr, target, user, move, blockedByAbility);
 
-    target.getTag(BattlerTagType.INGRAIN) ? blockedByAbility.value = true : null;
+    blockedByAbility.value = !!target.getTag(BattlerTagType.INGRAIN);
     return blockedByAbility.value ? getPokemonMessage(target, " can't be switched out!") : null;
   }
 
 
   getSwitchOutCondition(): MoveConditionFunc {
     return (user, target, move) => {
+
       const switchOutTarget = (this.user ? user : target);
       const player = switchOutTarget instanceof PlayerPokemon;
 
-      const moveCategory =
-        move.category === MoveCategory.STATUS ||
-        move.category === MoveCategory.PHYSICAL
-          ? true
-          : false;
+      const isMoveStatusOrPhysical =
+        (move.category === MoveCategory.STATUS ||
+        move.category === MoveCategory.PHYSICAL);
 
-      const moveAttribute =
-        target.hasAbilityWithAttr(ForceSwitchOutImmunityAbAttr) ||
+      const doesMoveAttributeBlockSwitching =
+        (target.hasAbilityWithAttr(ForceSwitchOutImmunityAbAttr) ||
         target.hasAbilityWithAttr(MoveImmunityAbAttr) ||
-        target.getTag(BattlerTagType.INGRAIN)
-          ? true
-          : false;
+        target.getTag(BattlerTagType.INGRAIN));
 
-      if (!this.user && ((moveCategory && moveAttribute) || target.isMax())) {
+      if (!this.user && ((isMoveStatusOrPhysical && doesMoveAttributeBlockSwitching) || target.isMax())) {
         return false;
       }
 
