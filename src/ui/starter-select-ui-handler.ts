@@ -36,6 +36,7 @@ import {Device} from "#app/enums/devices";
 import * as Challenge from "../data/challenge";
 import MoveInfoOverlay from "./move-info-overlay";
 import { getEggTierForSpecies } from "#app/data/egg.js";
+import { DropDown, DropDownOption, DropDownState, DropDownType } from "./dropdown";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -159,6 +160,7 @@ const gens = [
 export default class StarterSelectUiHandler extends MessageUiHandler {
   private starterSelectContainer: Phaser.GameObjects.Container;
   private filterBarContainer: Phaser.GameObjects.Container;
+  private dropDowns: DropDown[];
   private shinyOverlay: Phaser.GameObjects.Image;
   private starterSelectGenIconContainers: Phaser.GameObjects.Container[];
   private pokemonNumberText: Phaser.GameObjects.Text;
@@ -213,6 +215,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private natureCursor: integer = -1;
   private genCursor: integer = 0;
   private filterBarCursor: integer = 0;
+  private dropDownCursor: integer = 0;
   private genScrollCursor: integer = 0;
   private starterMoveset: StarterMoveset;
   private numFilters: number = 3;
@@ -302,35 +305,41 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.starterSelectContainer.add(starterContainerWindow);
 
     this.filterBarContainer = this.scene.add.container(0, 0);
-
     this.filterBarContainer.add(addWindow(this.scene, 143, 1, 175, 17, false, false, null, null, WindowVariant.THIN));
 
+    this.dropDowns = [];
     const filterTypesLabel = addTextObject(this.scene, 155, 4, "Types", TextStyle.TOOLTIP_CONTENT).setOrigin(0, 0);
     this.filterBarContainer.add(filterTypesLabel);
 
+    const typeKeys = Object.keys(Type).filter(v => isNaN(Number(v)));
+    const typeOptions: DropDownOption[] = [];
+    typeKeys.forEach((type, index) => {
+      if (index === 0) {
+        return;
+      }
+      const typeSprite = this.scene.add.sprite(0, 0, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`);
+      typeSprite.setScale(0.5);
+      typeSprite.setFrame(type.toLowerCase());
+      typeOptions.push(new DropDownOption(this.scene, null, typeSprite));
+    });
+    this.dropDowns.push(new DropDown(this.scene, filterTypesLabel.x, 18, typeOptions, DropDownType.MULTI, 0.5));
+
     const filterShinyLabel = addTextObject(this.scene, 189, 4, "Shiny", TextStyle.TOOLTIP_CONTENT).setOrigin(0, 0);
     this.filterBarContainer.add(filterShinyLabel);
+    this.dropDowns.push(new DropDown(this.scene, filterShinyLabel.x, 18, [
+      new DropDownOption(this.scene, "Test 1"),
+      new DropDownOption(this.scene, "Test 2"),
+      new DropDownOption(this.scene, "Test 3")]));
 
-    const filterSortLabel = addTextObject(this.scene, 309, 4, "Sort", TextStyle.TOOLTIP_CONTENT).setOrigin(1, 0);
+    const filterSortLabel = addTextObject(this.scene, 223, 4, "Sort", TextStyle.TOOLTIP_CONTENT).setOrigin(0, 0);
     this.filterBarContainer.add(filterSortLabel);
+    this.dropDowns.push(new DropDown(this.scene, filterSortLabel.x, 18, [
+      new DropDownOption(this.scene, "Dex Nr."),
+      new DropDownOption(this.scene, "Cost", null, DropDownState.OFF),
+      new DropDownOption(this.scene, "Name", null, DropDownState.OFF),
+      new DropDownOption(this.scene, "IVs", null, DropDownState.OFF)], DropDownType.SINGLE));
 
-    const offset = 6;
-    const padding = 5;
-    const typesDropdown = addWindow(this.scene, filterTypesLabel.x - offset - padding, 18, filterTypesLabel.displayWidth + offset + padding * 2, 100, false, false, null, null, WindowVariant.XTHIN).setVisible(true);
-
-    this.filterBarContainer.add(typesDropdown);
-
-    const optionHeight = 7;
-    const optionPadding = 4;
-    const typeKeys = Object.keys(Type).filter(v => isNaN(Number(v)));
-    typeKeys.forEach((type, index) => {
-      const typeSprite = this.scene.add.sprite(typesDropdown.x + typesDropdown.displayWidth / 2, typesDropdown.y + optionPadding + index * optionHeight, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`);
-      typeSprite.setScale(0.5).setOrigin(0.5, 0);
-      typeSprite.setFrame(type.toLowerCase());
-      this.filterBarContainer.add(typeSprite);
-    });
-    typesDropdown.height = typeKeys.length * optionHeight + optionPadding * 2;
-
+    this.filterBarContainer.add(this.dropDowns);
     this.starterSelectContainer.add(this.filterBarContainer);
 
     if (!this.scene.uiTheme) {
@@ -1000,7 +1009,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         error = true;
       }
     } else if (button === Button.CANCEL) {
-      if (this.statsMode) {
+      if (this.filterMode && this.filterDropdown) {
+        this.dropDowns[this.filterBarCursor].toggle();
+        this.filterDropdown = false;
+      } else if (this.statsMode) {
         this.toggleStatsMode(false);
         success = true;
       } else if (this.starterCursors.length) {
@@ -1091,27 +1103,39 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           success = this.setCursor(this.filterBarCursor + 1);
         }
         break;
+      case Button.UP:
+        if (this.dropDownCursor > -1) {
+          this.dropDownCursor--;
+          this.dropDowns[this.filterBarCursor].setCursor(this.dropDownCursor);
+        }
+
+        break;
       case Button.DOWN:
-        this.setFilterMode(false);
-        success = true;
+        if (this.filterDropdown) {
+          if (this.dropDownCursor < this.dropDowns[this.filterBarCursor].options.length - 1) {
+            this.dropDownCursor++;
+            this.dropDowns[this.filterBarCursor].setCursor(this.dropDownCursor);
+          } else {
+            this.setFilterMode(false);
+            success = true;
+          }
+        } else {
+          this.setFilterMode(false);
+          this.setGenMode(false);
+          success = true;
+        }
         break;
       case Button.ACTION:
-        const options = [{
-          label: "GRASS",
-          handler: () => {
-
+        if (!this.filterDropdown || this.dropDownCursor === -1) {
+          this.dropDowns[this.filterBarCursor].toggle();
+          this.filterDropdown = this.dropDowns[this.filterBarCursor].visible;
+          if (this.filterDropdown) {
+            this.dropDownCursor = 0;
+            this.dropDowns[this.filterBarCursor].setCursor(this.dropDownCursor);
           }
-        }, {
-          label: "FIRE",
-          handler: () => {
-
-          }
+        } else {
+          this.dropDowns[this.filterBarCursor].toggleOptionState();
         }
-        ];
-        ui.setModeWithoutClear(Mode.OPTION_SELECT, {
-          options: options,
-          yOffset: 47
-        });
         break;
       }
     } else {
@@ -1761,12 +1785,20 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       }
     } else if (this.filterMode) {
       changed = this.filterBarCursor !== cursor;
+      const oldCursor = this.filterBarCursor;
       this.filterBarCursor = cursor;
 
       console.log(this.filterBarContainer.list[cursor + 1]);
       const cursorOffset = 5;
       const selected = (this.filterBarContainer.list[cursor + 1] as Phaser.GameObjects.Text);
       this.filterBarCursorObj.setPosition(selected.originX ? (selected.x - selected.displayWidth - cursorOffset) : (selected.x - cursorOffset), 7);
+
+      if (this.filterDropdown) {
+        this.dropDowns[oldCursor].setVisible(false);
+        this.dropDowns[cursor].setVisible(true);
+        this.dropDownCursor = 0;
+        this.dropDowns[cursor].setCursor(this.dropDownCursor);
+      }
     } else {
       changed = super.setCursor(cursor);
 
@@ -1830,6 +1862,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.setCursor(filterMode ? this.filterBarCursor : this.cursor);
       if (filterMode) {
         this.setSpecies(null);
+      } else {
+        this.dropDowns.forEach(d => d.setVisible(false));
+        this.filterDropdown = false;
       }
 
       return true;
