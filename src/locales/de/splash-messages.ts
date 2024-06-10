@@ -26,7 +26,7 @@ export const splashMessages: SimpleTranslationEntries = {
   "basedOnAnUnfinishedFlashGame": "Basierend auf einem unfertigen Flash-Spiel!",
   "moreAddictiveThanIntended": "Süchtig machender als beabsichtigt!",
   "mostlyConsistentSeeds": "Meistens konsistente Seeds!",
-  "achievementPointsDontDoAnything": "Erungenschaftspunkte tun nichts!",
+  "achievementPointsDontDoAnything": "Errungenschaftspunkte tun nichts!",
   "youDoNotStartAtLevel": "Du startest nicht auf Level 2000!",
   "dontTalkAboutTheManaphyEggIncident": "Wir reden nicht über den Manaphy-Ei-Vorfall!",
   "alsoTryPokengine": "Versuche auch Pokéngine!",
