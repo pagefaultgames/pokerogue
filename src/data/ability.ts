@@ -971,21 +971,15 @@ export class PostDefendMoveDisableAbAttr extends PostDefendAbAttr {
   }
 
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
-    if (!attacker.summonData.disabledMove) {
+    if (attacker.getTag(BattlerTagType.DISABLED) === null) {
       if (move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && (this.chance === -1 || pokemon.randSeedInt(100) < this.chance) && !attacker.isMax()) {
         this.attacker = attacker;
         this.move = move;
-
-        attacker.summonData.disabledMove = move.id;
-        attacker.summonData.disabledTurns = 4;
+        this.attacker.addTag(BattlerTagType.DISABLED, 4, 0, pokemon.id);
         return true;
       }
     }
     return false;
-  }
-
-  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
-    return getPokemonMessage(this.attacker, `'s ${this.move.name}\nwas disabled!`);
   }
 }
 

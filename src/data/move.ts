@@ -3690,70 +3690,6 @@ export class TypelessAttr extends MoveAttr { }
 */
 export class BypassRedirectAttr extends MoveAttr { }
 
-export class DisableMoveAttr extends MoveEffectAttr {
-  constructor() {
-    super(false);
-  }
-
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!super.apply(user, target, move, args)) {
-      return false;
-    }
-
-    const moveQueue = target.getLastXMoves();
-    let turnMove: TurnMove;
-    while (moveQueue.length) {
-      turnMove = moveQueue.shift();
-      if (turnMove.virtual) {
-        continue;
-      }
-
-      const moveIndex = target.getMoveset().findIndex(m => m.moveId === turnMove.move);
-      if (moveIndex === -1) {
-        return false;
-      }
-
-      const disabledMove = target.getMoveset()[moveIndex];
-      target.summonData.disabledMove = disabledMove.moveId;
-      target.summonData.disabledTurns = 4;
-
-      user.scene.queueMessage(getPokemonMessage(target, `'s ${disabledMove.getName()}\nwas disabled!`));
-
-      return true;
-    }
-
-    return false;
-  }
-
-  getCondition(): MoveConditionFunc {
-    return (user, target, move) => {
-      if (target.summonData.disabledMove || target.isMax()) {
-        return false;
-      }
-
-      const moveQueue = target.getLastXMoves();
-      let turnMove: TurnMove;
-      while (moveQueue.length) {
-        turnMove = moveQueue.shift();
-        if (turnMove.virtual) {
-          continue;
-        }
-
-        const move = target.getMoveset().find(m => m.moveId === turnMove.move);
-        if (!move) {
-          continue;
-        }
-
-        return true;
-      }
-    };
-  }
-
-  getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
-    return -5;
-  }
-}
-
 export class FrenzyAttr extends MoveEffectAttr {
   constructor() {
     super(true, MoveEffectTrigger.HIT);
@@ -3842,6 +3778,7 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
     case BattlerTagType.NIGHTMARE:
     case BattlerTagType.DROWSY:
     case BattlerTagType.NO_CRIT:
+    case BattlerTagType.DISABLED:
       return -5;
     case BattlerTagType.SEEDED:
     case BattlerTagType.SALT_CURED:
@@ -5306,6 +5243,9 @@ export class hitsSameTypeAttr extends VariableMoveTypeMultiplierAttr {
 
 const unknownTypeCondition: MoveConditionFunc = (user, target, move) => !user.getTypes().includes(Type.UNKNOWN);
 
+/** Ensures that the target has at least one non-virtual, non-NONE move in its history. */
+const targetHasMoveHistoryCondition: MoveConditionFunc = (user, target, move) => target.getLastXMoves().filter(m => m.move !== Moves.NONE && !m.virtual).length >= 1;
+
 export type MoveTargetSet = {
   targets: BattlerIndex[];
   multiple: boolean;
@@ -5506,7 +5446,8 @@ export function initMoves() {
     new AttackMove(Moves.SONIC_BOOM, Type.NORMAL, MoveCategory.SPECIAL, -1, 90, 20, -1, 0, 1)
       .attr(FixedDamageAttr, 20),
     new StatusMove(Moves.DISABLE, Type.NORMAL, 100, 20, -1, 0, 1)
-      .attr(DisableMoveAttr)
+      .attr(AddBattlerTagAttr, BattlerTagType.DISABLED, false, true, 4, 4)
+      .condition(targetHasMoveHistoryCondition)
       .condition(failOnMaxCondition),
     new AttackMove(Moves.ACID, Type.POISON, MoveCategory.SPECIAL, 40, 100, 30, 10, 0, 1)
       .attr(StatChangeAttr, BattleStat.SPDEF, -1)

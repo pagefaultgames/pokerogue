@@ -1916,7 +1916,7 @@ export class CommandPhase extends FieldPhase {
 
         // Decides between a Disabled, Not Implemented, or No PP translation message
         const errorMessage =
-            playerPokemon.summonData.disabledMove === move.moveId ? "battle:moveDisabled" :
+            playerPokemon.isMoveDisabled(move.moveId) ? "battle:moveDisabled" :
               move.getName().endsWith(" (N)") ? "battle:moveNotImplemented" : "battle:moveNoPP";
         const moveName = move.getName().replace(" (N)", ""); // Trims off the indicator
 
@@ -2355,11 +2355,6 @@ export class TurnEndPhase extends FieldPhase {
     const handlePokemon = (pokemon: Pokemon) => {
       pokemon.lapseTags(BattlerTagLapseType.TURN_END);
 
-      if (pokemon.summonData.disabledMove && !--pokemon.summonData.disabledTurns) {
-        this.scene.pushPhase(new MessagePhase(this.scene, i18next.t("battle:notDisabled", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: allMoves[pokemon.summonData.disabledMove].name })));
-        pokemon.summonData.disabledMove = Moves.NONE;
-      }
-
       this.scene.applyModifiers(TurnHealModifier, pokemon.isPlayer(), pokemon);
 
       if (this.scene.arena.terrain?.terrainType === TerrainType.GRASSY && pokemon.isGrounded()) {
@@ -2521,10 +2516,9 @@ export class MovePhase extends BattlePhase {
     console.log(Moves[this.move.moveId]);
 
     if (!this.canMove()) {
-      if (this.move.moveId && this.pokemon.summonData?.disabledMove === this.move.moveId) {
-        this.scene.queueMessage(`${this.move.getName()} is disabled!`);
-      }
-      return this.end();
+      this.fail();
+      this.showMoveText();
+      this.showFailedText();
     }
 
     if (!this.followUp) {

@@ -19,7 +19,7 @@ import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEv
 import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "../data/tms";
 import { DamagePhase, FaintPhase, LearnMovePhase, ObtainStatusEffectPhase, StatChangePhase, SwitchSummonPhase, ToggleDoublePositionPhase  } from "../phases";
 import { BattleStat } from "../data/battle-stat";
-import { BattlerTag, BattlerTagLapseType, EncoreTag, HelpingHandTag, HighestStatBoostTag, TypeBoostTag, getBattlerTag } from "../data/battler-tags";
+import { BattlerTag, BattlerTagLapseType, DisablingBattlerTag, EncoreTag, HelpingHandTag, HighestStatBoostTag, TypeBoostTag, getBattlerTag } from "../data/battler-tags";
 import { BattlerTagType } from "../data/enums/battler-tag-type";
 import { Species } from "../data/enums/species";
 import { WeatherType } from "../data/weather";
@@ -2139,6 +2139,18 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.updateInfo();
   }
 
+  /**
+   * Gets whether a move is currently disabled for this Pokemon.
+   * @see {@linkcode DisablingBattlerTag}
+   */
+  isMoveDisabled(moveId: Moves): boolean {
+    for (const tag of this.findTags(t => t instanceof DisablingBattlerTag)) {
+      if ((tag as DisablingBattlerTag).moveIsDisabled(moveId)) {
+        return true;
+      }
+    }
+  }
+
   getMoveHistory(): TurnMove[] {
     return this.battleSummonData.moveHistory;
   }
@@ -3749,8 +3761,6 @@ export interface AttackMoveResult {
 export class PokemonSummonData {
   public battleStats: integer[] = [ 0, 0, 0, 0, 0, 0, 0 ];
   public moveQueue: QueuedMove[] = [];
-  public disabledMove: Moves = Moves.NONE;
-  public disabledTurns: integer = 0;
   public tags: BattlerTag[] = [];
   public abilitySuppressed: boolean = false;
 
@@ -3844,9 +3854,16 @@ export class PokemonMove {
   }
 
   isUsable(pokemon: Pokemon, ignorePp?: boolean): boolean {
-    if (this.moveId && pokemon.summonData?.disabledMove === this.moveId) {
+    if (!this.moveId) {
       return false;
     }
+
+    for (const tag of pokemon.findTags(t => t instanceof DisablingBattlerTag)) {
+      if ((tag as DisablingBattlerTag).moveIsDisabled(this.moveId)) {
+        return false;
+      }
+    }
+
     return (ignorePp || this.ppUsed < this.getMovePp() || this.getMove().pp === -1) && !this.getMove().name.endsWith(" (N)");
   }
 

@@ -1,5 +1,5 @@
 import { CommonAnim, CommonBattleAnim } from "./battle-anims";
-import { CommonAnimPhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
+import { CommonAnimPhase, MessagePhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
 import { getPokemonMessage, getPokemonNameWithAffix } from "../messages";
 import Pokemon, { MoveResult, HitResult } from "../field/pokemon";
 import { Stat, getStatName } from "./pokemon-stat";
@@ -17,6 +17,7 @@ import { BattleStat } from "./battle-stat";
 import { allAbilities } from "./ability";
 import { SpeciesFormChangeManualTrigger } from "./pokemon-forms";
 import { Species } from "./enums/species";
+import i18next from "i18next";
 
 export enum BattlerTagLapseType {
   FAINT,
@@ -89,6 +90,84 @@ export interface WeatherBattlerTag {
 
 export interface TerrainBattlerTag {
   terrainTypes: TerrainType[];
+}
+
+/**
+ * Base class for tags that disable moves. Descendants can override {@linkcode moveIsDisabled} to disable moves that match a condition.
+ */
+export abstract class DisablingBattlerTag extends BattlerTag {
+  public abstract moveIsDisabled(move: Moves): boolean;
+
+  constructor(tagType: BattlerTagType, lapseType?: BattlerTagLapseType, turnCount?: integer, sourceMove?: Moves, sourceId?: integer) {
+    super(tagType, lapseType ?? BattlerTagLapseType.TURN_END, turnCount ?? 3, sourceMove, sourceId);
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    if (!super.lapse(pokemon, lapseType)) {
+      return false;
+    }
+
+    return true;
+  }
+}
+
+/**
+ * Tag representing the "disabling" effect performed by {@linkcode Moves.DISABLE} and {@linkcode Abilities.CURSED_BODY}.
+ * When the tag is added, the last used move of the tag holder is set as the disabled move.
+ */
+export class DisabledTag extends DisablingBattlerTag {
+  /** The move being disabled. Gets set when {@linkcode onAdd} is called for this tag. */
+  private moveId: integer = 0;
+
+  public override moveIsDisabled(move: Moves): boolean {
+    return move === this.moveId;
+  }
+
+  constructor(turnCount: integer, sourceId: integer) {
+    super(BattlerTagType.DISABLED, BattlerTagLapseType.TURN_END, turnCount, Moves.DISABLE, sourceId);
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    if (!super.lapse(pokemon, lapseType)) {
+      return false;
+    }
+
+    if (this.moveId === 0) {
+      console.warn(`attempt to disable move ID 0 on ${pokemon}`);
+      return false;
+    }
+
+    return true;
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    const history = pokemon.getLastXMoves();
+
+    if (history.length === 0) {
+      return;
+    }
+
+    const move = history.find(m => m.move !== Moves.NONE);
+    if (move === undefined) {
+      return;
+    }
+
+    this.moveId = move.move;
+
+    pokemon.scene.queueMessage(this.generateAddMessage(pokemon));
+  }
+
+  onRemove(pokemon: Pokemon): void {
+    if (this.moveId === 0) {
+      return;
+    }
+
+    pokemon.scene.pushPhase(new MessagePhase(pokemon.scene, i18next.t("battle:notDisabled", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: allMoves[this.moveId].name })));
+  }
+
+  private generateAddMessage(pokemon: Pokemon): string {
+    return getPokemonMessage(pokemon, `'s ${allMoves[this.moveId].name}\nwas disabled!`);
+  }
 }
 
 export class RechargingTag extends BattlerTag {
@@ -1522,6 +1601,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
     return new DestinyBondTag(sourceMove, sourceId);
   case BattlerTagType.ICE_FACE:
     return new IceFaceTag(sourceMove);
+  case BattlerTagType.DISABLED:
+    return new DisabledTag(turnCount, sourceId);
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
