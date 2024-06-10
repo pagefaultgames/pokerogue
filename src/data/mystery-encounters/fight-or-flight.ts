@@ -1,12 +1,12 @@
 import BattleScene from "../../battle-scene";
-import {ModifierTier} from "../../modifier/modifier-tier";
+import {ModifierTier} from "#app/modifier/modifier-tier";
 import {
   EnemyPartyConfig,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle,
   setEncounterRewards,
   showEncounterText
-} from "../../utils/mystery-encounter-utils";
+} from "#app/utils/mystery-encounter-utils";
 import MysteryEncounter, {MysteryEncounterBuilder} from "../mystery-encounter";
 import * as Utils from "../../utils";
 import {MysteryEncounterType} from "../enums/mystery-encounter-type";
@@ -15,8 +15,10 @@ import {MysteryEncounterOptionBuilder} from "../mystery-encounter-option";
 import {
   getPartyLuckValue,
   getPlayerModifierTypeOptions,
+  ModifierPoolType,
   ModifierTypeOption,
-  modifierTypes
+  modifierTypes,
+  regenerateModifierPoolThresholds
 } from "#app/modifier/modifier-type";
 
 export const FightOrFlightEncounter: MysteryEncounter = new MysteryEncounterBuilder()
@@ -34,21 +36,32 @@ export const FightOrFlightEncounter: MysteryEncounter = new MysteryEncounterBuil
     };
     instance.enemyPartyConfigs = [config];
 
-    instance.spriteConfigs = [
-      {
-        spriteKey: bossSpecies.getSpriteKey(false),
-        fileRoot: "pokemon",
-        hasShadow: true,
-        useSilhouette: true
-      }
-    ];
-
     // Calculate item
     // 1-60 ULTRA, 60-120 ROGUE, 120+ MASTER
     const tier = scene.currentBattle.waveIndex > 120 ? ModifierTier.MASTER : scene.currentBattle.waveIndex > 60 ? ModifierTier.ROGUE : ModifierTier.ULTRA;
+    regenerateModifierPoolThresholds(scene.getParty(), ModifierPoolType.PLAYER, 0); // refresh player item pool
     const item = getPlayerModifierTypeOptions(1, scene.getParty(), [], { guaranteedModifierTiers: [tier]})[0];
     scene.currentBattle.mysteryEncounter.dialogueTokens.push([/@ec\{itemName\}/gi, item.type.name]);
     scene.currentBattle.mysteryEncounter.misc = item;
+
+    instance.spriteConfigs = [
+      {
+        spriteKey: item.type.iconImage,
+        fileRoot: "items",
+        hasShadow: false,
+        x: 30,
+        y: -5,
+        scale: 0.75,
+        isItem: true
+      },
+      {
+        spriteKey: bossSpecies.speciesId.toString(),
+        fileRoot: "pokemon",
+        hasShadow: true,
+        tint: 0.5,
+        repeat: true
+      }
+    ];
 
     return true;
   })

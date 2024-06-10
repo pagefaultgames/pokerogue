@@ -65,13 +65,13 @@ export function getDataTypeKey(dataType: GameDataType, slotId: integer = 0): str
 
 export function encrypt(data: string, bypassLogin: boolean): string {
   return (bypassLogin
-    ? (data: string) => btoa(data)
+    ? (data: string) => btoa(encodeURIComponent(data))
     : (data: string) => AES.encrypt(data, saveKey))(data);
 }
 
 export function decrypt(data: string, bypassLogin: boolean): string {
   return (bypassLogin
-    ? (data: string) => atob(data)
+    ? (data: string) => decodeURIComponent(atob(data))
     : (data: string) => AES.decrypt(data, saveKey).toString(enc.Utf8))(data);
 }
 

@@ -63,4 +63,23 @@ export const mysteryEncounter: SimpleTranslationEntries = {
   "dark_deal_option_2_selected": "Not gonna help a poor fellow out?\nPah!",
   "dark_deal_outro": "After the harrowing encounter,\nyou collect yourself and depart.",
 
+  "fight_or_flight_intro_message": "Something shiny is sparking on the ground near that Pokémon!",
+  "fight_or_flight_title": "Fight or Flight",
+  "fight_or_flight_description": "It looks like there's a strong Pokémon guarding an item. Fighting is the straightforward approach, but this Pokémon looks strong. You could also try to sneak around, but the Pokémon may catch you.",
+  "fight_or_flight_query": "What will you do?",
+  "fight_or_flight_option_1_label": "Fight it",
+  "fight_or_flight_option_1_tooltip": "(+) Strong Pokémon Battle\n(+) New Item",
+  "fight_or_flight_option_2_label": "Sneak around",
+  "fight_or_flight_option_2_tooltip": "(?%) New Item\n(?%) Hard Battle\n(?%) No Rewards",
+  "fight_or_flight_option_3_label": "Leave",
+  "fight_or_flight_option_3_tooltip": "(-) No Rewards",
+  "fight_or_flight_option_1_selected_message": "You approach the Pokémon without fear.",
+  "fight_or_flight_option_2_good_result": `.@d{16}.@d{16}.@d{16}
+  $You manage to sneak your way past and grab the item!`,
+  "fight_or_flight_option_2_bad_result": `.@d{16}.@d{16}.@d{16}
+  $The Pokémon catches you as you try to sneak around!
+  $The item is tossed far into the distance...`,
+  "fight_or_flight_option_3_selected": "You leave the strong Pokémon\nwith its prize and continue on.",
+  // "fight_or_flight_outro_win": "The mysterious challengers were defeated!",
+
 } as const;

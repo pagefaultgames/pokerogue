@@ -1,6 +1,6 @@
 import BattleScene from "../../battle-scene";
-import { ModifierTier } from "../../modifier/modifier-tier";
-import { getHighestLevelPlayerPokemon, koPlayerPokemon, leaveEncounterWithoutBattle, setEncounterRewards, showEncounterText } from "../../utils/mystery-encounter-utils";
+import { ModifierTier } from "#app/modifier/modifier-tier";
+import { getHighestLevelPlayerPokemon, koPlayerPokemon, leaveEncounterWithoutBattle, setEncounterRewards, showEncounterText } from "#app/utils/mystery-encounter-utils";
 import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
 import * as Utils from "../../utils";
 import { MysteryEncounterType } from "../enums/mystery-encounter-type";
@@ -24,25 +24,25 @@ export const MysteriousChestEncounter: MysteryEncounter = new MysteryEncounterBu
       const roll = Utils.randSeedInt(100);
       if (roll > 60) {
         // Choose between 4 GREAT tier items (40%)
-        setEncounterRewards(scene, true, [ModifierTier.GREAT, ModifierTier.GREAT, ModifierTier.GREAT, ModifierTier.GREAT], false);
+        setEncounterRewards(scene, { guaranteedModifierTiers: [ModifierTier.GREAT, ModifierTier.GREAT, ModifierTier.GREAT, ModifierTier.GREAT]});
         // Display result message then proceed to rewards
         await showEncounterText(scene, "mysteryEncounter:mysterious_chest_option_1_normal_result")
           .then(() => leaveEncounterWithoutBattle(scene));
       } else if (roll > 40) {
         // Choose between 3 ULTRA tier items (20%)
-        setEncounterRewards(scene, true, [ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.ULTRA], false);
+        setEncounterRewards(scene, { guaranteedModifierTiers: [ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.ULTRA]});
         // Display result message then proceed to rewards
         await showEncounterText(scene, "mysteryEncounter:mysterious_chest_option_1_good_result")
           .then(() => leaveEncounterWithoutBattle(scene));
       } else if (roll > 36) {
         // Choose between 2 ROGUE tier items (4%)
-        setEncounterRewards(scene, true, [ModifierTier.ROGUE, ModifierTier.ROGUE], false);
+        setEncounterRewards(scene, { guaranteedModifierTiers: [ModifierTier.ROGUE, ModifierTier.ROGUE]});
         // Display result message then proceed to rewards
         await showEncounterText(scene, "mysteryEncounter:mysterious_chest_option_1_great_result")
           .then(() => leaveEncounterWithoutBattle(scene));
       } else if (roll > 35) {
         // Choose 1 MASTER tier item (1%)
-        setEncounterRewards(scene, true, [ModifierTier.MASTER], false);
+        setEncounterRewards(scene, { guaranteedModifierTiers: [ModifierTier.MASTER]});
         // Display result message then proceed to rewards
         await showEncounterText(scene, "mysteryEncounter:mysterious_chest_option_1_amazing_result")
           .then(() => leaveEncounterWithoutBattle(scene));

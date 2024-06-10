@@ -27,7 +27,15 @@ import {
   getEnemyBuffModifierForWave,
   getModifierType,
   modifierTypes,
-  regenerateModifierPoolThresholds
+  regenerateModifierPoolThresholds,
+  ModifierTypeGenerator,
+  PokemonModifierType,
+  FusePokemonModifierType,
+  PokemonMoveModifierType,
+  TmModifierType,
+  RememberMoveModifierType,
+  PokemonPpRestoreModifierType,
+  PokemonPpUpModifierType
 } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { BattlerTagLapseType, EncoreTag, HideSpriteTag as HiddenTag, ProtectedTag, TrappedTag } from "./data/battler-tags";
@@ -4052,12 +4060,104 @@ export class ModifierRewardPhase extends BattlePhase {
 
   doReward(): Promise<void> {
     return new Promise<void>(resolve => {
-      const newModifier = this.modifierType.newModifier();
-      this.scene.addModifier(newModifier).then(() => {
-        this.scene.playSound("item_fanfare");
-        this.scene.ui.showText(`You received\n${newModifier.type.name}!`, null, () => resolve(), null, true);
-      });
+      const party = this.scene.getParty();
+      if (this.modifierType instanceof ModifierTypeGenerator) {
+        this.modifierType = this.modifierType.generateType(party, [this.modifierType]).withIdFromFunc(modifierTypes[this.modifierType.name]);
+      }
+
+      if (this.modifierType instanceof PokemonModifierType) {
+        if (this.modifierType instanceof FusePokemonModifierType) {
+          // Fusion, enter party selection screen
+          this.scene.ui.showText(`You received\n${this.modifierType.name}!`, null, () => this.doFusion().then(() => resolve()), null, true);
+
+        } else {
+          // Other type of pokemon modifier
+          this.scene.ui.showText(`You received\n${this.modifierType.name}!`, null, () => this.doPokemonModify().then(() => resolve()), null, true);
+        }
+      } else {
+        // Standard item reward
+        const newModifier = this.modifierType.newModifier();
+        this.scene.addModifier(newModifier).then(() => {
+          this.scene.playSound("item_fanfare");
+          this.scene.ui.showText(`You received\n${newModifier.type.name}!`, null, () => resolve(), null, true);
+        });
+      }
     });
+  }
+
+  doFusion() {
+    const party = this.scene.getParty();
+    const modifierType = this.modifierType as FusePokemonModifierType;
+    return this.scene.ui.setModeWithoutClear(Mode.PARTY, PartyUiMode.SPLICE, -1, (fromSlotIndex: integer, spliceSlotIndex: integer) => {
+      // On exit of party screen, do fusion
+      if (spliceSlotIndex !== undefined && fromSlotIndex < 6 && spliceSlotIndex < 6 && fromSlotIndex !== spliceSlotIndex) {
+        this.scene.ui.setMode(Mode.MODIFIER_SELECT, true).then(() => {
+          const modifier = modifierType.newModifier(party[fromSlotIndex], party[spliceSlotIndex]);
+          this.scene.addModifier(modifier).then(() => {
+            this.scene.playSound("item_fanfare");
+            this.scene.ui.showText("Fusion complete!", null, () => this.end(), null, true);
+          });
+        });
+      } else {
+        // If selection was cancelled, offer second chance to reselect
+        this.scene.ui.showText("Are you sure you want to cancel the fusion?", null, () => {
+          this.scene.ui.setOverlayMode(Mode.CONFIRM, () => {
+            // End phase and continue
+            this.scene.ui.revertMode();
+            this.scene.ui.setMode(Mode.MESSAGE);
+            super.end();
+          }, () => {
+            // repeat doFusion
+            return this.doFusion();
+          });
+        });
+      }
+    }, modifierType.selectFilter);
+  }
+
+  doPokemonModify() {
+    const party = this.scene.getParty();
+    const modifierType = this.modifierType as FusePokemonModifierType;
+    const pokemonModifierType = modifierType as PokemonModifierType;
+    const isMoveModifier = modifierType instanceof PokemonMoveModifierType;
+    const isTmModifier = modifierType instanceof TmModifierType;
+    const isRememberMoveModifier = modifierType instanceof RememberMoveModifierType;
+    const isPpRestoreModifier = (modifierType instanceof PokemonPpRestoreModifierType || modifierType instanceof PokemonPpUpModifierType);
+    const partyUiMode = isMoveModifier ? PartyUiMode.MOVE_MODIFIER
+      : isTmModifier ? PartyUiMode.TM_MODIFIER
+        : isRememberMoveModifier ? PartyUiMode.REMEMBER_MOVE_MODIFIER
+          : PartyUiMode.MODIFIER;
+    const tmMoveId = isTmModifier
+      ? (modifierType as TmModifierType).moveId
+      : undefined;
+    return this.scene.ui.setModeWithoutClear(Mode.PARTY, partyUiMode, -1, (slotIndex: integer, option: PartyOption) => {
+      if (slotIndex < 6) {
+        this.scene.ui.setMode(Mode.MODIFIER_SELECT, true).then(() => {
+          const modifier = !isMoveModifier
+            ? !isRememberMoveModifier
+              ? this.modifierType.newModifier(party[slotIndex])
+              : this.modifierType.newModifier(party[slotIndex], option as integer)
+            : this.modifierType.newModifier(party[slotIndex], option - PartyOption.MOVE_1);
+          this.scene.addModifier(modifier, false, true).then(() => {
+            this.scene.playSound("item_fanfare");
+            this.scene.ui.showText(`You received\n${modifier.type.name}!`, null, () => this.end(), null, true);
+          });
+        });
+      } else {
+        // If selection was cancelled, offer second chance to reselect
+        this.scene.ui.showText(`Are you sure you want to continue\nwithout using the ${modifierType.name}?`, null, () => {
+          this.scene.ui.setOverlayMode(Mode.CONFIRM, () => {
+            // End phase and continue
+            this.scene.ui.revertMode();
+            this.scene.ui.setMode(Mode.MESSAGE);
+            super.end();
+          }, () => {
+            // repeat doPokemonModify
+            return this.doPokemonModify();
+          });
+        });
+      }
+    }, pokemonModifierType.selectFilter, modifierType instanceof PokemonMoveModifierType ? (modifierType as PokemonMoveModifierType).moveSelectFilter : undefined, tmMoveId, isPpRestoreModifier);
   }
 }
 

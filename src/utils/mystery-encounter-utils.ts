@@ -1,25 +1,26 @@
 import i18next from "i18next";
-import { BattleType } from "../battle";
+import {BattleType} from "../battle";
 import BattleScene from "../battle-scene";
-import { EggTier } from "../data/enums/egg-type";
-import { Species } from "../data/enums/species";
-import { TrainerType } from "../data/enums/trainer-type";
-import { MysteryEncounterVariant } from "../data/mystery-encounter";
-import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "../data/pokemon-species";
-import { StatusEffect } from "../data/status-effect";
-import {TrainerSlot, trainerConfigs, TrainerConfig} from "../data/trainer-config";
-import { FieldPosition, PlayerPokemon } from "../field/pokemon";
-import Trainer, { TrainerVariant } from "../field/trainer";
-import { PokemonExpBoosterModifier } from "../modifier/modifier";
+import {EggTier} from "../data/enums/egg-type";
+import {Species} from "../data/enums/species";
+import {TrainerType} from "../data/enums/trainer-type";
+import {MysteryEncounterVariant} from "../data/mystery-encounter";
+import PokemonSpecies, {getPokemonSpecies, speciesStarters} from "../data/pokemon-species";
+import {StatusEffect} from "../data/status-effect";
+import {TrainerConfig, trainerConfigs, TrainerSlot} from "../data/trainer-config";
+import {FieldPosition, PlayerPokemon} from "../field/pokemon";
+import Trainer, {TrainerVariant} from "../field/trainer";
+import {PokemonExpBoosterModifier} from "../modifier/modifier";
 import {
   CustomModifierSettings,
   ModifierPoolType,
   ModifierTypeFunc,
   regenerateModifierPoolThresholds
 } from "../modifier/modifier-type";
-import { BattleEndPhase, EggLapsePhase, ModifierRewardPhase, SelectModifierPhase, TrainerVictoryPhase } from "../phases";
-import { MysteryEncounterBattlePhase, PostMysteryEncounterPhase } from "../phases/mystery-encounter-phase";
+import {BattleEndPhase, EggLapsePhase, ModifierRewardPhase, TrainerVictoryPhase} from "../phases";
+import {MysteryEncounterBattlePhase, PostMysteryEncounterPhase} from "../phases/mystery-encounter-phase";
 import * as Utils from "../utils";
+import {SelectModifierPhase} from "#app/phases/select-modifier-phase";
 
 /**
  * Util file for functions used in mystery encounters
@@ -124,6 +125,7 @@ export function koPlayerPokemon(pokemon: PlayerPokemon) {
 /**
  * Will display a message in UI with injected encounter data tokens
  * @param scene
+ * @param contentKey
  */
 export function showEncounterText(scene: BattleScene, contentKey: TemplateStringsArray | `mysteryEncounter:${string}`): Promise<void> {
   return new Promise<void>(resolve => {
@@ -146,6 +148,9 @@ export function showEncounterText(scene: BattleScene, contentKey: TemplateString
 /**
  * Will display a dialogue (with speaker title) in UI with injected encounter data tokens
  * @param scene
+ * @param textContentKey
+ * @param speakerContentKey
+ * @param callback
  */
 export function showEncounterDialogue(scene: BattleScene, textContentKey: TemplateStringsArray | `mysteryEncounter:${string}`, speakerContentKey: TemplateStringsArray | `mysteryEncounter:${string}`, callback?: Function) {
   let text: string = i18next.t(textContentKey);
@@ -203,8 +208,8 @@ export function getRandomSpeciesByEggTier(scene: BattleScene, tiers: EggTier[]):
 export class EnemyPartyConfig {
   levelMultiplier?: number = 1;
   doubleBattle?: boolean = false;
-  trainerType?: TrainerType;
-  trainerConfig?: TrainerConfig;
+  trainerType?: TrainerType; // Generates trainer battle solely off trainer type
+  trainerConfig?: TrainerConfig; // More customizable option for configuring trainer battle
   pokemonSpecies?: PokemonSpecies[];
   pokemonBosses?: PokemonSpecies[];
 }
@@ -216,7 +221,7 @@ export class EnemyPartyConfig {
  * @param scene - Battle Scene
  * @param partyConfig - Can pass various customizable attributes for the enemy party, see EnemyPartyConfig
  */
-export function initBattleWithEnemyConfig(scene: BattleScene, partyConfig: EnemyPartyConfig): Promise<void> {
+export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig: EnemyPartyConfig): Promise<void> {
   const loaded = false;
   const loadEnemyAssets = [];
 
@@ -293,7 +298,7 @@ export function initBattleWithEnemyConfig(scene: BattleScene, partyConfig: Enemy
     }
 
     if (!loaded) {
-      scene.gameData.setPokemonSeen(enemyPokemon, true, trainerType ? true : false);
+      scene.gameData.setPokemonSeen(enemyPokemon, true, !!(trainerType || trainerConfig));
     }
 
     loadEnemyAssets.push(enemyPokemon.loadAssets());
@@ -303,23 +308,21 @@ export function initBattleWithEnemyConfig(scene: BattleScene, partyConfig: Enemy
 
   scene.pushPhase(new MysteryEncounterBattlePhase(scene));
 
-  return Promise.all(loadEnemyAssets).then(() => {
-    battle.enemyParty.forEach((enemyPokemon, e) => {
-      if (e < (partyConfig?.doubleBattle ? 2 : 1)) {
-        enemyPokemon.setVisible(false);
-        if (battle.double) {
-          enemyPokemon.setFieldPosition(e ? FieldPosition.RIGHT : FieldPosition.LEFT);
-        }
-        // Spawns at current visible field instead of on "next encounter" field (off screen to the left)
-        enemyPokemon.x += 300;
+  await Promise.all(loadEnemyAssets);
+  battle.enemyParty.forEach((enemyPokemon_2, e_1) => {
+    if (e_1 < (partyConfig?.doubleBattle ? 2 : 1)) {
+      enemyPokemon_2.setVisible(false);
+      if (battle.double) {
+        enemyPokemon_2.setFieldPosition(e_1 ? FieldPosition.RIGHT : FieldPosition.LEFT);
       }
-    });
-
-    if (!loaded) {
-      regenerateModifierPoolThresholds(scene.getEnemyField(), battle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD);
-      scene.generateEnemyModifiers();
+      // Spawns at current visible field instead of on "next encounter" field (off screen to the left)
+      enemyPokemon_2.x += 300;
     }
   });
+  if (!loaded) {
+    regenerateModifierPoolThresholds(scene.getEnemyField(), battle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD);
+    scene.generateEnemyModifiers();
+  }
 }
 
 /**
@@ -362,34 +365,6 @@ export function showTrainerDialogue(scene: BattleScene): Promise<boolean> {
   });
 }
 
-// TODO: remove and just use generateEnemyPartyForBattle (see dark deal)
-export function initBattleFromEncounter(scene: BattleScene) {
-  //scene.currentBattle.started = true;
-  //scene.playBgm(undefined);
-  //scene.pbTray.showPbTray(scene.getParty());
-  //if (scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.TRAINER_BATTLE) {
-  //  scene.pbTrayEnemy.showPbTray(scene.getEnemyParty());
-
-  //  // Hide enemy trainer
-  //  scene.tweens.add({
-  //    targets: scene.currentBattle.trainer,
-  //    x: "+=16",
-  //    y: "-=16",
-  //    alpha: 0,
-  //    ease: "Sine.easeInOut",
-  //    duration: 750
-  //  });
-  //}
-
-  //doMysteryEncounterBattle(scene, true);
-
-  //const availablePartyMembers = scene.getEnemyParty().filter(p => !p.isFainted()).length;
-  //scene.unshiftPhase(new SummonPhase(scene, 0, false));
-  //if (scene.currentBattle.double && availablePartyMembers > 1) {
-  //  scene.unshiftPhase(new SummonPhase(scene, 1, false));
-  //}
-}
-
 /**
  * Will initialize reward phases to follow the mystery encounter
  * Can have shop displayed or skipped
@@ -398,7 +373,7 @@ export function initBattleFromEncounter(scene: BattleScene) {
  * @param nonShopRewards - will add a non-shop reward phase for each specified item/modifier (can happen in addition to a shop)
  */
 export function setEncounterRewards(scene: BattleScene, customShopRewards?: CustomModifierSettings, nonShopRewards?: ModifierTypeFunc[]) {
-  const rewardsFunction = (scene: BattleScene) => {
+  scene.currentBattle.mysteryEncounter.doEncounterRewards = (scene: BattleScene) => {
     if (customShopRewards) {
       scene.unshiftPhase(new SelectModifierPhase(scene, 0, null, customShopRewards));
     } else {
@@ -417,8 +392,6 @@ export function setEncounterRewards(scene: BattleScene, customShopRewards?: Cust
 
     return true;
   };
-
-  scene.currentBattle.mysteryEncounter.doEncounterRewards = rewardsFunction;
 }
 
 /**
@@ -441,6 +414,7 @@ export function setEncounterExp(scene: BattleScene, expMultiplier: number = 100)
     partyMemberExp.push(Math.floor(pokemonExp.value));
   });
 
+  // TODO
   //if (expBalanceModifier) {
   //  let totalLevel = 0;
   //  let totalExp = 0;
@@ -473,10 +447,8 @@ export function setEncounterExp(scene: BattleScene, expMultiplier: number = 100)
  */
 export function leaveEncounterWithoutBattle(scene: BattleScene) {
   scene.currentBattle.mysteryEncounter.encounterVariant = MysteryEncounterVariant.NO_BATTLE;
-  //const postPhase = scene.findPhase(p => p instanceof PostMysteryEncounterPhase) as PostMysteryEncounterPhase;
   scene.clearPhaseQueue();
   scene.clearPhaseQueueSplice();
-  //scene.pushPhase(postPhase);
   handleMysteryEncounterVictory(scene);
 }
 

@@ -1,3 +1,4 @@
+import { GameObjects } from "phaser";
 import BattleScene from "../battle-scene";
 import MysteryEncounter from "../data/mystery-encounter";
 
@@ -6,7 +7,11 @@ export class MysteryEncounterSpriteConfig {
   fileRoot: string; // "trainer" for trainer sprites, "pokemon" for pokemon, etc. Refer to /public/images directory for the folder name
   hasShadow?: boolean = false; // Spawns shadow underneath sprite
   repeat?: boolean = false; // Cycles animation
-  useSilhouette?: boolean = false;
+  tint?: number;
+  x?: number; // X offset
+  y?: number; // Y offset
+  scale?: number;
+  isItem?: boolean; // For item sprites, set to true
 }
 
 /**
@@ -18,38 +23,87 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
   public encounter: MysteryEncounter;
   public spriteConfigs: MysteryEncounterSpriteConfig[];
 
+  // public animSpriteConfigs: MysteryEncounterSpriteConfig[];
+
+  public standardPositionSprites: MysteryEncounterSpriteConfig[];
+  public offsetSprites: MysteryEncounterSpriteConfig[];
+
+  // public iconConfigs: MysteryEncounterSpriteConfig[];
+  // public iconSpriteContainer: Phaser.GameObjects.Container;
+
   constructor(scene: BattleScene, encounter: MysteryEncounter) {
     super(scene, -72, 76);
     this.encounter = encounter;
     this.spriteConfigs = encounter.spriteConfigs;
+    // this.animSpriteConfigs = encounter.spriteConfigs.filter(c => !c.isItem);
+    // this.iconConfigs = encounter.spriteConfigs.filter(c => c.isItem);
     if (!this.spriteConfigs) {
       return;
     }
 
+    // this.iconSpriteContainer = this.scene.add.container(-72, 76);
+    // this.iconSpriteContainer.setVisible(false);
+    // ui.add(this.cursorContainer);
+
+    // this.standardPositionSprites = this.spriteConfigs.filter(s => !s.x && !s.y);
+    // this.offsetSprites = this.spriteConfigs.filter(s => s.x > 0 || s.y > 0);
+
     const getSprite = (spriteKey: string, hasShadow?: boolean) => {
       const ret = this.scene.addFieldSprite(0, 0, spriteKey);
       ret.setOrigin(0.5, 1);
-      ret.setPipeline(this.scene.spritePipeline, { tone: [0.0, 0.0, 0.0, 0.0], hasShadow: !!hasShadow });
+      ret.setPipeline(this.scene.spritePipeline, {tone: [0.0, 0.0, 0.0, 0.0], hasShadow: !!hasShadow});
       return ret;
+    };
+
+    const getItemSprite = (spriteKey: string) => {
+      const icon = this.scene.add.sprite(-19, 2, "items", spriteKey);
+      icon.setOrigin(0.5, 1);
+      return icon;
     };
 
     // Depending on number of sprites added, should space them to be on the circular field sprite
     const minX = -40;
     const maxX = 40;
     const origin = 4;
-    const spacingValue = Math.round((maxX - minX) / Math.max(this.spriteConfigs.length, 1));
-    this.spriteConfigs.forEach((config, i) => {
-      const sprite = getSprite(config.spriteKey, true);
-      const tintSprite = getSprite(config.spriteKey);
+    let n = 0;
+    // Sprites with custom X or Y defined will not count for normal spacing requirements
+    const spacingValue = Math.round((maxX - minX) / Math.max(this.spriteConfigs.filter(s => !s.x && !s.y).length, 1));
+
+    this.spriteConfigs?.forEach((config) => {
+      let sprite: GameObjects.Sprite;
+      let tintSprite: GameObjects.Sprite;
+      if (!config.isItem) {
+        sprite = getSprite(config.spriteKey, config.hasShadow);
+        tintSprite = getSprite(config.spriteKey);
+      } else {
+        sprite = getItemSprite(config.spriteKey);
+        tintSprite = getItemSprite(config.spriteKey);
+      }
 
       tintSprite.setVisible(false);
 
-      if (this.spriteConfigs.length === 1) {
-        sprite.x = origin;
-        tintSprite.x = origin;
+      if (config.scale) {
+        sprite.setScale(config.scale);
+        tintSprite.setScale(config.scale);
+      }
+
+      // Sprite offset from normal
+      if (config.x > 0 || config.y > 0) {
+        sprite.x = origin + config.x;
+        sprite.y = origin + config.y;
+        tintSprite.x = origin + config.x;
+        tintSprite.y = origin + config.y;
       } else {
-        sprite.x = minX + (i + 0.5) * spacingValue + origin;
-        tintSprite.x = minX + (i + 0.5) * spacingValue + origin;
+        // Single sprite
+        if (this.spriteConfigs.length === 1) {
+          sprite.x = origin;
+          tintSprite.x = origin;
+        } else {
+          // Do standard sprite spacing (not including offset sprites)
+          sprite.x = minX + (n + 0.5) * spacingValue + origin;
+          tintSprite.x = minX + (n + 0.5) * spacingValue + origin;
+          n++;
+        }
       }
 
       this.add(sprite);
@@ -64,11 +118,19 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
       }
 
       this.spriteConfigs.forEach((config) => {
-        this.scene.loadAtlas(config.spriteKey, config.fileRoot);
+        if (!config.isItem) {
+          this.scene.loadAtlas(config.spriteKey, config.fileRoot);
+        } else {
+          this.scene.loadAtlas("items", "");
+        }
       });
 
       this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
-        this.spriteConfigs.forEach((config) => {
+        this.spriteConfigs.every((config) => {
+          if (config.isItem) {
+            return true;
+          }
+
           const originalWarn = console.warn;
 
           // Ignore warnings for missing frames, because there will be a lot
@@ -85,6 +147,8 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
               repeat: -1
             });
           }
+
+          return true;
         });
 
         resolve();
@@ -101,12 +165,27 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
       return;
     }
 
-    this.getSprites().map((sprite, i) => sprite.setTexture(this.spriteConfigs[i].spriteKey).setFrame(0));
-    this.getTintSprites().map((tintSprite, i) => tintSprite.setTexture(this.spriteConfigs[i].spriteKey).setFrame(0));
+    this.getSprites().map((sprite, i) => {
+      if (!this.spriteConfigs[i].isItem) {
+        sprite.setTexture(this.spriteConfigs[i].spriteKey).setFrame(0);
+      }
+    });
+    this.getTintSprites().map((tintSprite, i) => {
+      if (!this.spriteConfigs[i].isItem) {
+        tintSprite.setTexture(this.spriteConfigs[i].spriteKey).setFrame(0);
+      }
+    });
 
-    if (this.spriteConfigs.some(config => config.useSilhouette)) {
-      this.tint(0, 1);
-    }
+    this.spriteConfigs.every((config, i) => {
+      if (!config.tint) {
+        return true;
+      }
+
+      const tintSprite = this.getAt(i * 2 + 1);
+      this.tint(tintSprite, 0, config.tint);
+
+      return true;
+    });
   }
 
   /**
@@ -180,45 +259,54 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
     return ret;
   }
 
-  tint(color: number, alpha?: number, duration?: integer, ease?: string): void {
+  tint(sprite, color: number, alpha?: number, duration?: integer, ease?: string): void {
+    // const tintSprites = this.getTintSprites();
+    sprite.setTintFill(color);
+    sprite.setVisible(true);
+
+    if (duration) {
+      sprite.setAlpha(0);
+
+      this.scene.tweens.add({
+        targets: sprite,
+        alpha: alpha || 1,
+        duration: duration,
+        ease: ease || "Linear"
+      });
+    } else {
+      sprite.setAlpha(alpha);
+    }
+  }
+
+  tintAll(color: number, alpha?: number, duration?: integer, ease?: string): void {
     const tintSprites = this.getTintSprites();
     tintSprites.map(tintSprite => {
-      tintSprite.setTintFill(color);
-      tintSprite.setVisible(true);
-
-      if (duration) {
-        tintSprite.setAlpha(0);
-
-        this.scene.tweens.add({
-          targets: tintSprite,
-          alpha: alpha || 1,
-          duration: duration,
-          ease: ease || "Linear"
-        });
-      } else {
-        tintSprite.setAlpha(alpha);
-      }
+      this.tint(tintSprite, color, alpha, duration, ease);
     });
   }
 
-  untint(duration: integer, ease?: string): void {
+  untint(sprite, duration: integer, ease?: string): void {
+    if (duration) {
+      this.scene.tweens.add({
+        targets: sprite,
+        alpha: 0,
+        duration: duration,
+        ease: ease || "Linear",
+        onComplete: () => {
+          sprite.setVisible(false);
+          sprite.setAlpha(1);
+        }
+      });
+    } else {
+      sprite.setVisible(false);
+      sprite.setAlpha(1);
+    }
+  }
+
+  untintAll(duration: integer, ease?: string): void {
     const tintSprites = this.getTintSprites();
     tintSprites.map(tintSprite => {
-      if (duration) {
-        this.scene.tweens.add({
-          targets: tintSprite,
-          alpha: 0,
-          duration: duration,
-          ease: ease || "Linear",
-          onComplete: () => {
-            tintSprite.setVisible(false);
-            tintSprite.setAlpha(1);
-          }
-        });
-      } else {
-        tintSprite.setVisible(false);
-        tintSprite.setAlpha(1);
-      }
+      this.untint(tintSprite, duration, ease);
     });
   }
 }

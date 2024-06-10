@@ -1,7 +1,7 @@
 import BattleScene from "../../battle-scene";
-import { ModifierTier } from "../../modifier/modifier-tier";
-import {modifierTypes} from "../../modifier/modifier-type";
-import { EnemyPartyConfig, initBattleWithEnemyConfig, setEncounterRewards } from "../../utils/mystery-encounter-utils";
+import { ModifierTier } from "#app/modifier/modifier-tier";
+import {modifierTypes} from "#app/modifier/modifier-type";
+import { EnemyPartyConfig, initBattleWithEnemyConfig, setEncounterRewards } from "#app/utils/mystery-encounter-utils";
 import { MysteryEncounterType } from "../enums/mystery-encounter-type";
 import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
@@ -62,19 +62,19 @@ export const MysteriousChallengersEncounter: MysteryEncounter = new MysteryEncou
         spriteKey: normalSpriteKey,
         fileRoot: "trainer",
         hasShadow: true,
-        useSilhouette: true
+        tint: 1
       },
       {
         spriteKey: hardSpriteKey,
         fileRoot: "trainer",
         hasShadow: true,
-        useSilhouette: true
+        tint: 1
       },
       {
         spriteKey: brutalSpriteKey,
         fileRoot: "trainer",
         hasShadow: true,
-        useSilhouette: true
+        tint: 1
       }
     ];
 
