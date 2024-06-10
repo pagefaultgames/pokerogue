@@ -738,6 +738,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     this.hideInstructions();
 
+    this.hideInstructions();
+
     this.starterSelectMessageBoxContainer = this.scene.add.container(0, this.scene.game.canvas.height / 6);
     this.starterSelectMessageBoxContainer.setVisible(false);
     this.starterSelectContainer.add(this.starterSelectMessageBoxContainer);
