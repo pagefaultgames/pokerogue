@@ -1890,7 +1890,8 @@ export class StealEatBerryAttr extends MoveEffectAttr {
         this.chosenBerry = heldBerries[user.randSeedInt(heldBerries.length)];
       }
 
-      user.scene.queueMessage(getPokemonMessage(user, ` stole and ate\n${target.name}'s ${this.chosenBerry.type.name}!`));
+      const message = i18next.t("battle:stealEatBerry", {pokemonName: user.name, targetName: target.name, berryName: this.chosenBerry.type.name});
+      user.scene.queueMessage(message);
 
       if (!--this.chosenBerry.stackCount) {
         target.scene.removeModifier(this.chosenBerry, !target.isPlayer());
