@@ -281,7 +281,7 @@ export const trainerNames: SimpleTranslationEntries = {
   "cyrus": "Zyrus",
   "ghetsis": "G-Cis",
   "lysandre": "Flordelis",
-  "mirrorB": "D. Queen",
+  "mirror_b": "D. Queen",
   "dakim": "Drakim",
   "venus": "Venus",
   "ein": "Dr. Culpa",
