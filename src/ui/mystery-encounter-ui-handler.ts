@@ -94,7 +94,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
         if (cursor === this.viewPartyIndex) {
           // Handle view party
           this.clear();
-          this.scene.ui.setMode(Mode.PARTY, PartyUiMode.VIEW_PARTY, -1, () => {
+          this.scene.ui.setMode(Mode.PARTY, PartyUiMode.CHECK, -1, () => {
             this.scene.ui.setMode(Mode.MYSTERY_ENCOUNTER, true);
             setTimeout(() => {
               this.setCursor(this.viewPartyIndex);

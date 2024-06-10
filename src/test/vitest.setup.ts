@@ -10,9 +10,10 @@ import {initMoves} from "#app/data/move";
 import {initAbilities} from "#app/data/ability";
 import {initAchievements} from "#app/system/achv.js";
 import { initVouchers } from "#app/system/voucher.js";
-import { initMysteryEncounters } from "../data/mystery-encounters/mystery-encounters";
 import { beforeEach, vi} from "vitest";
 import * as overrides from "#app/overrides";
+import {initMysteryEncounterDialogue} from "#app/data/mystery-encounters/dialogue/mystery-encounter-dialogue";
+import {initMysteryEncounters} from "#app/data/mystery-encounters/mystery-encounters";
 
 // Disables Mystery Encounters on all tests (can be overridden at test level)
 beforeEach( () => {
@@ -29,6 +30,7 @@ initPokemonForms();
 initSpecies();
 initMoves();
 initAbilities();
+initMysteryEncounterDialogue();
 initMysteryEncounters();
 
 global.testFailed = false;

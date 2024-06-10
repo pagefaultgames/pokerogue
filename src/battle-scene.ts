@@ -1021,14 +1021,13 @@ export default class BattleScene extends SceneBase {
 
       // Check for mystery encounter
       // Can only occur in place of a standard wild battle
-      // They will also never be found after floor 180 of classic mode, and cannot be in the first 2 battles
+      // They will also never be found outside of waves 3-180 in classic mode
       if (this.gameMode.hasMysteryEncounters && newBattleType === BattleType.WILD && !this.gameMode.isBoss(newWaveIndex) && !(this.gameMode.isClassic && (newWaveIndex > 180 || newWaveIndex < 3))) {
         // Roll for mystery encounter instead of wild battle (25% chance)
         const roll = Utils.randSeedInt(64);
-        const successRate = Utils.isNullOrUndefined(Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE) ? 25 : Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE;
+        const successRate = Utils.isNullOrUndefined(Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE) ? 16 : Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE;
 
         if (roll < successRate) {
-          // Successful roll, this is a mystery encounter
           newBattleType = BattleType.MYSTERY_ENCOUNTER;
         }
       }

@@ -114,11 +114,4 @@ export const MysteriousChallengersEncounter: MysteryEncounter = new MysteryEncou
       return initBattleWithEnemyConfig(scene, config);
     })
     .build())
-  // .withOption(new MysteryEncounterOptionBuilder()
-  //   .withOptionPhase(async (scene: BattleScene) => {
-  //     // Leave encounter with no rewards or exp
-  //     leaveEncounterWithoutBattle(scene);
-  //     return true;
-  //   })
-  //   .build())
   .build();

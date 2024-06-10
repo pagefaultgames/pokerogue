@@ -781,7 +781,7 @@ export class EncounterPhase extends BattlePhase {
       }
 
       if (!this.loaded) {
-        this.scene.gameData.setPokemonSeen(enemyPokemon, true, battle.battleType === BattleType.TRAINER || battle.battleType === BattleType.MYSTERY_ENCOUNTER);
+        this.scene.gameData.setPokemonSeen(enemyPokemon, true, battle.battleType === BattleType.TRAINER || battle?.mysteryEncounter?.encounterVariant === MysteryEncounterVariant.TRAINER_BATTLE);
       }
 
       if (enemyPokemon.species.speciesId === Species.ETERNATUS) {
@@ -1174,8 +1174,15 @@ export class NewBiomeEncounterPhase extends NextEncounterPhase {
     }
 
     const enemyField = this.scene.getEnemyField();
+    const moveTargets: any[]  = [ this.scene.arenaEnemy, enemyField ];
+    const mysteryEncounter = this.scene.currentBattle?.mysteryEncounter?.introVisuals;
+    if (mysteryEncounter) {
+      moveTargets.push(mysteryEncounter);
+    }
+
+
     this.scene.tweens.add({
-      targets: [ this.scene.arenaEnemy, enemyField ].flat(),
+      targets: moveTargets.flat(),
       x: "+=300",
       duration: 2000,
       onComplete: () => {

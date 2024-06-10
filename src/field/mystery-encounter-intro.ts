@@ -23,14 +23,6 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
   public encounter: MysteryEncounter;
   public spriteConfigs: MysteryEncounterSpriteConfig[];
 
-  // public animSpriteConfigs: MysteryEncounterSpriteConfig[];
-
-  public standardPositionSprites: MysteryEncounterSpriteConfig[];
-  public offsetSprites: MysteryEncounterSpriteConfig[];
-
-  // public iconConfigs: MysteryEncounterSpriteConfig[];
-  // public iconSpriteContainer: Phaser.GameObjects.Container;
-
   constructor(scene: BattleScene, encounter: MysteryEncounter) {
     super(scene, -72, 76);
     this.encounter = encounter;
@@ -40,13 +32,6 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
     if (!this.spriteConfigs) {
       return;
     }
-
-    // this.iconSpriteContainer = this.scene.add.container(-72, 76);
-    // this.iconSpriteContainer.setVisible(false);
-    // ui.add(this.cursorContainer);
-
-    // this.standardPositionSprites = this.spriteConfigs.filter(s => !s.x && !s.y);
-    // this.offsetSprites = this.spriteConfigs.filter(s => s.x > 0 || s.y > 0);
 
     const getSprite = (spriteKey: string, hasShadow?: boolean) => {
       const ret = this.scene.addFieldSprite(0, 0, spriteKey);
@@ -87,7 +72,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
         tintSprite.setScale(config.scale);
       }
 
-      // Sprite offset from normal
+      // Sprite offset from origin
       if (config.x > 0 || config.y > 0) {
         sprite.x = origin + config.x;
         sprite.y = origin + config.y;

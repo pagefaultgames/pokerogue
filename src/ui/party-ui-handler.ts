@@ -36,8 +36,7 @@ export enum PartyUiMode {
   MODIFIER_TRANSFER,
   SPLICE,
   RELEASE,
-  CHECK,
-  VIEW_PARTY
+  CHECK
 }
 
 export enum PartyOption {

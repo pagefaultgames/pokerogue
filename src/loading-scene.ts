@@ -22,7 +22,8 @@ import { initChallenges } from "./data/challenge";
 import i18next from "i18next";
 import { initStatsKeys } from "./ui/game-stats-ui-handler";
 import { initVouchers } from "./system/voucher";
-import { initMysteryEncounters } from "./data/mystery-encounters/mystery-encounters";
+import {initMysteryEncounterDialogue} from "#app/data/mystery-encounters/dialogue/mystery-encounter-dialogue";
+import {initMysteryEncounters} from "#app/data/mystery-encounters/mystery-encounters";
 
 export class LoadingScene extends SceneBase {
   constructor() {
@@ -344,6 +345,7 @@ export class LoadingScene extends SceneBase {
     initMoves();
     initAbilities();
     initChallenges();
+    initMysteryEncounterDialogue();
     initMysteryEncounters();
   }
 

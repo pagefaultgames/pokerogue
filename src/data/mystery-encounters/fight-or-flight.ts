@@ -58,7 +58,7 @@ export const FightOrFlightEncounter: MysteryEncounter = new MysteryEncounterBuil
         spriteKey: bossSpecies.speciesId.toString(),
         fileRoot: "pokemon",
         hasShadow: true,
-        tint: 0.5,
+        tint: 0.25,
         repeat: true
       }
     ];
@@ -80,14 +80,14 @@ export const FightOrFlightEncounter: MysteryEncounter = new MysteryEncounterBuil
       const roll = Utils.randSeedInt(16);
       if (roll > 4) {
         // Noticed and attacked by boss, item is knocked away (75%)
-        await showEncounterText(scene, "mysteryEncounter:fight_or_flight_option_2_caught");
+        await showEncounterText(scene, "mysteryEncounter:fight_or_flight_option_2_bad_result");
         await initBattleWithEnemyConfig(scene, scene.currentBattle.mysteryEncounter.enemyPartyConfigs[0]);
       } else {
         // Steal item (25%)
         const item = scene.currentBattle.mysteryEncounter.misc as ModifierTypeOption;
         setEncounterRewards(scene, null, [modifierTypes[item.type.id]]);
         // Display result message then proceed to rewards
-        await showEncounterText(scene, "mysteryEncounter:fight_or_flight_option_2_steal")
+        await showEncounterText(scene, "mysteryEncounter:fight_or_flight_option_2_good_result")
           .then(() => leaveEncounterWithoutBattle(scene));
       }
     })
