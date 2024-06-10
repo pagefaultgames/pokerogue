@@ -1,4 +1,5 @@
 import i18next from "i18next";
+import { MoneyFormat } from "./enums/money-format";
 
 export const MissingTextureKey = "__MISSING";
 
@@ -127,6 +128,23 @@ export function randSeedEasedWeightedItem<T>(items: T[], easingFunction: string 
   return items[Math.floor(easedValue * items.length)];
 }
 
+/**
+ * Shuffle a list using the seeded rng. Utilises the Fisher-Yates algorithm.
+ * @param {Array} items An array of items.
+ * @returns {Array} A new shuffled array of items.
+ */
+export function randSeedShuffle<T>(items: T[]): T[] {
+  if (items.length <= 1) {
+    return items;
+  }
+  const newArray = items.slice(0);
+  for (let i = items.length - 1; i > 0; i--) {
+    const j = Phaser.Math.RND.integerInRange(0, i);
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  }
+  return newArray;
+}
+
 export function getFrameMs(frameCount: integer): integer {
   return Math.floor((1 / 60) * 1000 * frameCount);
 }
@@ -220,7 +238,7 @@ export function formatLargeNumber(count: integer, threshold: integer): string {
 // Abbreviations from 10^0 to 10^33
 const AbbreviationsLargeNumber: string[] = ["", "K", "M", "B", "t", "q", "Q", "s", "S", "o", "n", "d"];
 
-export function formatFancyLargeNumber(number: number, rounded: number = 2): string {
+export function formatFancyLargeNumber(number: number, rounded: number = 3): string {
   let exponent: number;
 
   if (number < 1000) {
@@ -234,7 +252,14 @@ export function formatFancyLargeNumber(number: number, rounded: number = 2): str
     number /= Math.pow(1000, exponent);
   }
 
-  return `${(exponent === 0) ? number : number.toFixed(rounded)}${AbbreviationsLargeNumber[exponent]}`;
+  return `${(exponent === 0) || number % 1 === 0 ? number : number.toFixed(rounded)}${AbbreviationsLargeNumber[exponent]}`;
+}
+
+export function formatMoney(format: MoneyFormat, amount: number) {
+  if (format === MoneyFormat.ABBREVIATED) {
+    return formatFancyLargeNumber(amount);
+  }
+  return amount.toLocaleString();
 }
 
 export function formatStat(stat: integer, forHp: boolean = false): string {
@@ -260,14 +285,18 @@ export const isLocal = (
    /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/.test(window.location.hostname)) &&
   window.location.port !== "") || window.location.hostname === "";
 
+export const localServerUrl = import.meta.env.VITE_SERVER_URL ?? `http://${window.location.hostname}:${window.location.port+1}`;
+
 // Set the server URL based on whether it's local or not
-export const serverUrl = isLocal ? `${window.location.hostname}:${window.location.port}` : "";
+export const serverUrl = isLocal ? localServerUrl : "";
 export const apiUrl = isLocal ? serverUrl : "https://api.pokerogue.net";
+// used to disable api calls when isLocal is true and a server is not found
+export let isLocalServerConnected = true;
 
 export function setCookie(cName: string, cValue: string): void {
   const expiration = new Date();
   expiration.setTime(new Date().getTime() + 3600000 * 24 * 30 * 3/*7*/);
-  document.cookie = `${cName}=${cValue};SameSite=Strict;path=/;expires=${expiration.toUTCString()}`;
+  document.cookie = `${cName}=${cValue};Secure;SameSite=Strict;Path=/;Expires=${expiration.toUTCString()}`;
 }
 
 export function getCookie(cName: string): string {
@@ -285,8 +314,22 @@ export function getCookie(cName: string): string {
   return "";
 }
 
+/**
+ * When locally running the game, "pings" the local server
+ * with a GET request to verify if a server is running,
+ * sets isLocalServerConnected based on results
+ */
+export function localPing() {
+  if (isLocal) {
+    apiFetch("game/titlestats")
+      .then(resolved => isLocalServerConnected = true,
+        rejected => isLocalServerConnected = false
+      );
+  }
+}
+
 export function apiFetch(path: string, authed: boolean = false): Promise<Response> {
-  return new Promise((resolve, reject) => {
+  return (isLocal && isLocalServerConnected) || !isLocal ? new Promise((resolve, reject) => {
     const request = {};
     if (authed) {
       const sId = getCookie(sessionIdKey);
@@ -297,11 +340,11 @@ export function apiFetch(path: string, authed: boolean = false): Promise<Respons
     fetch(`${apiUrl}/${path}`, request)
       .then(response => resolve(response))
       .catch(err => reject(err));
-  });
+  }) : new Promise(() => {});
 }
 
 export function apiPost(path: string, data?: any, contentType: string = "application/json", authed: boolean = false): Promise<Response> {
-  return new Promise((resolve, reject) => {
+  return (isLocal && isLocalServerConnected) || !isLocal ? new Promise((resolve, reject) => {
     const headers = {
       "Accept": contentType,
       "Content-Type": contentType,
@@ -315,7 +358,7 @@ export function apiPost(path: string, data?: any, contentType: string = "applica
     fetch(`${apiUrl}/${path}`, { method: "POST", headers: headers, body: data })
       .then(response => resolve(response))
       .catch(err => reject(err));
-  });
+  }) : new Promise(() => {});
 }
 
 export class BooleanHolder {
