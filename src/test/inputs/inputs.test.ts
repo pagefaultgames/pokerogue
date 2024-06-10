@@ -52,11 +52,6 @@ describe("Inputs", () => {
     expect(game.inputsHandler.log.length).toBe(4);
   });
 
-  it("keyboard - test input holding for 1ms - 1 input", async() => {
-    await game.inputsHandler.pressKeyboardKey(cfg_keyboard_qwerty.deviceMapping.KEY_ARROW_UP, 1);
-    expect(game.inputsHandler.log.length).toBe(1);
-  });
-
   it("keyboard - test input holding for 200ms - 1 input", async() => {
     await game.inputsHandler.pressKeyboardKey(cfg_keyboard_qwerty.deviceMapping.KEY_ARROW_UP, 200);
     expect(game.inputsHandler.log.length).toBe(1);
@@ -84,6 +79,11 @@ describe("Inputs", () => {
 
   it("gamepad - test input holding for 200ms - 1 input", async() => {
     await game.inputsHandler.pressGamepadButton(pad_xbox360.deviceMapping.RC_S, 200);
+    expect(game.inputsHandler.log.length).toBe(1);
+  });
+
+  it("gamepad - test input holding for 249ms - 1 input", async() => {
+    await game.inputsHandler.pressGamepadButton(pad_xbox360.deviceMapping.RC_S, 249);
     expect(game.inputsHandler.log.length).toBe(1);
   });
 

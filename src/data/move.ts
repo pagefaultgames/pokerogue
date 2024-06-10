@@ -1251,11 +1251,18 @@ export class PartyStatusCureAttr extends MoveEffectAttr {
     this.abilityCondition = abilityCondition;
   }
 
+  //The same as MoveEffectAttr.canApply, except it doesn't check for the target's HP.
+  canApply(user: Pokemon, target: Pokemon, move: Move, args: any[]) {
+    const isTargetValid =
+      (this.selfTarget && user.hp && !user.getTag(BattlerTagType.FRENZY)) ||
+      (!this.selfTarget && (!target.getTag(BattlerTagType.PROTECTED) || move.hasFlag(MoveFlags.IGNORE_PROTECT)));
+    return !!isTargetValid;
+  }
+
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!super.apply(user, target, move, args)) {
+    if (!this.canApply(user, target, move, args)) {
       return false;
     }
-
     this.addPartyCurePhase(user);
   }
 
@@ -3317,6 +3324,19 @@ export class ShellSideArmCategoryAttr extends VariableMoveCategoryAttr {
 
 export class VariableMoveTypeAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    return false;
+  }
+}
+
+export class FormChangeItemTypeAttr extends VariableMoveTypeAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if ([user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.ARCEUS) || [user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.SILVALLY)) {
+      const form = user.species.speciesId === Species.ARCEUS || user.species.speciesId === Species.SILVALLY ? user.formIndex : user.fusionSpecies.formIndex;
+
+      move.type = Type[Type[form]];
+      return true;
+    }
+
     return false;
   }
 }
@@ -6605,7 +6625,7 @@ export function initMoves() {
       .attr(ConfuseAttr)
       .soundBased(),
     new AttackMove(Moves.JUDGMENT, Type.NORMAL, MoveCategory.SPECIAL, 100, 100, 10, -1, 0, 4)
-      .partial(),
+      .attr(FormChangeItemTypeAttr),
     new AttackMove(Moves.BUG_BITE, Type.BUG, MoveCategory.PHYSICAL, 60, 100, 20, -1, 0, 4)
       .attr(StealEatBerryAttr),
     new AttackMove(Moves.CHARGE_BEAM, Type.ELECTRIC, MoveCategory.SPECIAL, 50, 90, 10, 70, 0, 4)
@@ -7375,7 +7395,7 @@ export function initMoves() {
     new AttackMove(Moves.NATURES_MADNESS, Type.FAIRY, MoveCategory.SPECIAL, -1, 90, 10, -1, 0, 7)
       .attr(TargetHalfHpDamageAttr),
     new AttackMove(Moves.MULTI_ATTACK, Type.NORMAL, MoveCategory.PHYSICAL, 120, 100, 10, -1, 0, 7)
-      .partial(),
+      .attr(FormChangeItemTypeAttr),
     /* Unused */
     new AttackMove(Moves.TEN_MILLION_VOLT_THUNDERBOLT, Type.ELECTRIC, MoveCategory.SPECIAL, 195, -1, 1, -1, 0, 7)
       .partial()

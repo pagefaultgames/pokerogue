@@ -1070,6 +1070,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
+   * Calculates the effectiveness of a move against the Pokémon.
+   *
+   * @param source - The Pokémon using the move.
+   * @param move - The move being used.
    * @returns The type damage multiplier or undefined if it's a status move
    */
   getMoveEffectiveness(source: Pokemon, move: PokemonMove): TypeDamageMultiplier | undefined {
@@ -1077,18 +1081,27 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return undefined;
     }
 
-    return this.getAttackMoveEffectiveness(source, move);
+    return this.getAttackMoveEffectiveness(source, move, true);
   }
 
-  getAttackMoveEffectiveness(source: Pokemon, pokemonMove: PokemonMove): TypeDamageMultiplier {
+  /**
+   * Calculates the effectiveness of an attack move against the Pokémon.
+   *
+   * @param source - The attacking Pokémon.
+   * @param pokemonMove - The move being used by the attacking Pokémon.
+   * @param ignoreAbility - Whether to check for abilities that might affect type effectiveness or immunity.
+   * @returns The type damage multiplier, indicating the effectiveness of the move
+   */
+  getAttackMoveEffectiveness(source: Pokemon, pokemonMove: PokemonMove, ignoreAbility: boolean = false): TypeDamageMultiplier {
     const move = pokemonMove.getMove();
     const typeless = move.hasAttr(TypelessAttr);
     const typeMultiplier = new Utils.NumberHolder(this.getAttackTypeEffectiveness(move.type, source));
     const cancelled = new Utils.BooleanHolder(false);
-    if (!typeless) {
+    applyMoveAttrs(VariableMoveTypeMultiplierAttr, source, this, move, typeMultiplier);
+    if (!typeless && !ignoreAbility) {
       applyPreDefendAbAttrs(TypeImmunityAbAttr, this, source, move, cancelled, typeMultiplier, true);
     }
-    if (!cancelled.value) {
+    if (!cancelled.value && !ignoreAbility) {
       applyPreDefendAbAttrs(MoveImmunityAbAttr, this, source, move, cancelled, typeMultiplier, true);
     }
     return (!cancelled.value ? typeMultiplier.value : 0) as TypeDamageMultiplier;

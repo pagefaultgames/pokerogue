@@ -18,8 +18,8 @@ export const titles: SimpleTranslationEntries = {
 
 // Titles of trainers like "Youngster" or "Lass"
 export const trainerClasses: SimpleTranslationEntries = {
-  "ace_trainer": "Trinador Ás",
-  "ace_trainer_female": "Trinadora Ás",
+  "ace_trainer": "Treinador Ás",
+  "ace_trainer_female": "Treinadora Ás",
   "ace_duo": "Dupla Ás",
   "artist": "Artista",
   "artist_female": "Artista",
