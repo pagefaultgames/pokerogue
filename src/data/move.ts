@@ -1813,7 +1813,7 @@ export class EatBerryAttr extends MoveEffectAttr {
  * @param args Unused
  * @returns {boolean} true if the function succeeds
  */
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
       return false;
     }
@@ -1882,7 +1882,7 @@ export class StealEatBerryAttr extends MoveEffectAttr {
     if (heldBerries.length) { // if the target has berries, pick a random berry and steal it
       this.chosenBerry = heldBerries[user.randSeedInt(heldBerries.length)];
 
-      if (this.chosenBerry === undefined) { // if no berry has been provided, pick a random berry from their inventory
+      if (!this.chosenBerry) { // if no berry has been provided, pick a random berry from their inventory
         const heldBerries = this.getTargetHeldBerries(target);
         if (heldBerries.length <= 0) {
           return false;
@@ -1893,7 +1893,7 @@ export class StealEatBerryAttr extends MoveEffectAttr {
       const message = i18next.t("battle:stealEatBerry", {pokemonName: user.name, targetName: target.name, berryName: this.chosenBerry.type.name});
       user.scene.queueMessage(message);
 
-      if (!--this.chosenBerry.stackCount) {
+      if (this.chosenBerry.stackCount === 1) {
         target.scene.removeModifier(this.chosenBerry, !target.isPlayer());
       }
       target.scene.updateModifiers(target.isPlayer());
