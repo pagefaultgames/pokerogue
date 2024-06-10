@@ -52,10 +52,10 @@ export class StatsContainer extends Phaser.GameObjects.Container {
     this.ivStatValueTexts = [];
 
     new Array(6).fill(null).map((_, i: integer) => {
-      const statLabel = addTextObject(this.scene, ivChartBg.x + (ivChartSize) * ivChartStatCoordMultipliers[i][0] * 1.325 + (this.showDiff ? 0 : ivChartLabelxOffset[i]), ivChartBg.y + (ivChartSize) * ivChartStatCoordMultipliers[i][1] * 1.325 - 4 + (this.showDiff ? 0 : ivChartLabelyOffset[i]), getStatName(i as Stat), TextStyle.TOOLTIP_CONTENT, { fontSize: "62px" });
+      const statLabel = addTextObject(this.scene, ivChartBg.x + (ivChartSize) * ivChartStatCoordMultipliers[i][0] * 1.325 + (this.showDiff ? 0 : ivChartLabelxOffset[i]), ivChartBg.y + (ivChartSize) * ivChartStatCoordMultipliers[i][1] * 1.325 - 4 + (this.showDiff ? 0 : ivChartLabelyOffset[i]), getStatName(i as Stat), TextStyle.TOOLTIP_CONTENT);
       statLabel.setOrigin(0.5);
 
-      this.ivStatValueTexts[i] = addBBCodeTextObject(this.scene, statLabel.x - (this.showDiff ? 0 : ivChartLabelxOffset[i]), statLabel.y + 8, "0", TextStyle.TOOLTIP_CONTENT, { fontSize: "62px" });
+      this.ivStatValueTexts[i] = addBBCodeTextObject(this.scene, statLabel.x - (this.showDiff ? 0 : ivChartLabelxOffset[i]), statLabel.y + 8, "0", TextStyle.TOOLTIP_CONTENT);
       this.ivStatValueTexts[i].setOrigin(0.5);
 
       this.add(statLabel);
