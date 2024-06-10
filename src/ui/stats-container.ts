@@ -4,7 +4,10 @@ import { Stat, getStatName } from "../data/pokemon-stat";
 import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./text";
 
 const ivChartSize = 24;
-const ivChartStatCoordMultipliers = [ [ 0, -1 ], [ 0.825, -0.5 ], [ 0.825, 0.5 ], [ -0.825, -0.5 ], [ -0.825, 0.5 ], [ 0, 1 ] ];
+const ivChartStatCoordMultipliers = [[0, -1], [0.825, -0.5], [0.825, 0.5], [-0.825, -0.5], [-0.825, 0.5], [0, 1]];
+const speedLabelOffset = -3;
+const sideLabelOffset = 1;
+const ivLabelOffset = [0, sideLabelOffset, -sideLabelOffset, sideLabelOffset, -sideLabelOffset, speedLabelOffset];
 const ivChartStatIndexes = [0,1,2,5,4,3]; // swap special attack and speed
 const defaultIvChartData = new Array(12).fill(null).map(() => 0);
 
@@ -23,6 +26,7 @@ export class StatsContainer extends Phaser.GameObjects.Container {
   }
 
   setup() {
+    this.setName("container-stats");
     const ivChartBgData = new Array(6).fill(null).map((_, i: integer) => [ ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][0], ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][1] ] ).flat();
 
     const ivChartBg = this.scene.add.polygon(48, 44, ivChartBgData, 0xd8e0f0, 0.625);
@@ -50,7 +54,7 @@ export class StatsContainer extends Phaser.GameObjects.Container {
     this.ivStatValueTexts = [];
 
     new Array(6).fill(null).map((_, i: integer) => {
-      const statLabel = addTextObject(this.scene, ivChartBg.x + (ivChartSize) * ivChartStatCoordMultipliers[i][0] * 1.325, ivChartBg.y + (ivChartSize) * ivChartStatCoordMultipliers[i][1] * 1.325 - 4, getStatName(i as Stat), TextStyle.TOOLTIP_CONTENT);
+      const statLabel = addTextObject(this.scene, ivChartBg.x + (ivChartSize) * ivChartStatCoordMultipliers[i][0] * 1.325, ivChartBg.y + (ivChartSize) * ivChartStatCoordMultipliers[i][1] * 1.325 - 4 + ivLabelOffset[i], getStatName(i as Stat), TextStyle.TOOLTIP_CONTENT);
       statLabel.setOrigin(0.5);
 
       this.ivStatValueTexts[i] = addBBCodeTextObject(this.scene, statLabel.x, statLabel.y + 8, "0", TextStyle.TOOLTIP_CONTENT);
@@ -68,7 +72,14 @@ export class StatsContainer extends Phaser.GameObjects.Container {
       this.statsIvsCache = ivChartData.slice(0);
 
       this.ivStatValueTexts.map((t: BBCodeText, i: integer) => {
-        let label = ivs[i].toString();
+        let label = "";
+
+        // Check to see if IVs are 31, if so change the text style to gold, otherwise leave them be.
+        if (ivs[i] === 31) {
+          label += `[color=${getTextColor(TextStyle.SUMMARY_GOLD, false, (this.scene as BattleScene).uiTheme)}][shadow]${ivs[i].toString()}[/shadow][/color]`;
+        } else {
+          label = ivs[i].toString();
+        }
         if (this.showDiff && originalIvs) {
           if (originalIvs[i] < ivs[i]) {
             label += ` ([color=${getTextColor(TextStyle.SUMMARY_BLUE, false, (this.scene as BattleScene).uiTheme)}][shadow=${getTextColor(TextStyle.SUMMARY_BLUE, true, (this.scene as BattleScene).uiTheme)}]+${ivs[i] - originalIvs[i]}[/shadow][/color])`;

@@ -6,6 +6,7 @@ export const menu: SimpleTranslationEntries = {
   "dailyRun": "Défi du jour (Bêta)",
   "loadGame": "Charger la partie",
   "newGame": "Nouvelle partie",
+  "settings": "Paramètres",
   "selectGameMode": "Sélectionnez un mode de jeu.",
   "logInOrCreateAccount": "Connectez-vous ou créez un compte pour commencer. Aucun e-mail requis !",
   "username": "Nom d’utilisateur",
@@ -39,8 +40,10 @@ export const menu: SimpleTranslationEntries = {
   "weeklyRankings": "Classement de la Semaine",
   "noRankings": "Pas de Classement",
   "loading": "Chargement…",
+  "loadingAsset": "Loading asset: {{assetName}}",
   "playersOnline": "Joueurs Connectés",
-  "empty":"Vide",
   "yes":"Oui",
   "no":"Non",
+  "disclaimer": "AVERTISSEMENT",
+  "disclaimerDescription": "Ce jeu n’est pas un produit fini et peut contenir des problèmes de jouabilité, dont de possibles pertes de sauvegardes,\ndes modifications sans avertissement et pourrait ou non encore être mis à jour ou terminé."
 } as const;
