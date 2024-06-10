@@ -132,8 +132,8 @@ function autoSizeText<T extends AutoTextInterface>(obj: T): void {
   }
   obj.padding.top = 0;
   obj.setFontSize(obj.originalFontSize);
+
   const minFontSize = 20;
-  const fontSize = obj.originalFontSize;
   let f = 1;
   if (obj.limits?.right) {
     const maxWidth = obj.limits.right - obj.x;
@@ -142,8 +142,9 @@ function autoSizeText<T extends AutoTextInterface>(obj: T): void {
     f = obj.displayWidth / obj.limits.width;
   }
   if (f > 1) {
-    const newFontSize = Math.max(Math.floor(fontSize / f), minFontSize);
-    obj.padding.top = (fontSize - newFontSize) / 2;
+    const oldfontSize = obj.originalFontSize;
+    const newFontSize = Math.max(Math.floor(oldfontSize / f), minFontSize);
+    obj.padding.top = (oldfontSize - newFontSize) / 2;
     obj.setFontSize(newFontSize);
   }
   obj.blockAutoSize = false;
