@@ -1892,7 +1892,7 @@ export class StealEatBerryAttr extends MoveEffectAttr {
 
       user.scene.queueMessage(getPokemonMessage(user, ` stole and ate\n${target.name}'s ${this.chosenBerry.type.name}!`));
 
-      if (!--this.chosenBerry.stackCount) {
+      if (this.chosenBerry.stackCount === 1) {
         target.scene.removeModifier(this.chosenBerry, !target.isPlayer());
       }
       target.scene.updateModifiers(target.isPlayer());
