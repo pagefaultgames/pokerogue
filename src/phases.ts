@@ -661,7 +661,14 @@ export abstract class FieldPhase extends BattlePhase {
     const enemyField = this.scene.getEnemyField().filter(p => p.isActive()) as Pokemon[];
 
     // We shuffle the list before sorting so speed ties produce random results
-    let orderedTargets: Pokemon[] = Utils.randSeedShuffle(playerField.concat(enemyField)).sort((a: Pokemon, b: Pokemon) => {
+    let orderedTargets: Pokemon[] = playerField.concat(enemyField);
+    // We seed it with the current turn to prevent an inconsistency where it
+    // was varying based on how long since you last reloaded
+    this.scene.executeWithSeedOffset(() => {
+      orderedTargets = Utils.randSeedShuffle(orderedTargets);
+    }, this.scene.currentBattle.turn, this.scene.waveSeed);
+
+    orderedTargets.sort((a: Pokemon, b: Pokemon) => {
       const aSpeed = a?.getBattleStat(Stat.SPD) || 0;
       const bSpeed = b?.getBattleStat(Stat.SPD) || 0;
 
