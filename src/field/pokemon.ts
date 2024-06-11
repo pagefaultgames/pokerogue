@@ -1111,7 +1111,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return undefined;
     }
 
-    return this.getAttackMoveEffectiveness(source, move, true);
+    return this.getAttackMoveEffectiveness(source, move, !this.battleData?.abilityRevealed);
   }
 
   /**
@@ -3811,6 +3811,7 @@ export class PokemonBattleData {
   public endured: boolean = false;
   public berriesEaten: BerryType[] = [];
   public abilitiesApplied: Abilities[] = [];
+  public abilityRevealed: boolean = false;
 }
 
 export class PokemonBattleSummonData {
