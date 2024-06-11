@@ -92,7 +92,7 @@ export class DropDown extends Phaser.GameObjects.Container {
   private window: Phaser.GameObjects.NineSlice;
   private cursorObj: Phaser.GameObjects.Image;
   private dropDownType: DropDownType = DropDownType.MULTI;
-  private cursor: integer = 0;
+  public cursor: integer = 0;
   private onChange: () => void;
   private lastDir: SortDirection = SortDirection.ASC;
 
@@ -150,15 +150,22 @@ export class DropDown extends Phaser.GameObjects.Container {
     this.setVisible(!this.visible);
   }
 
-  setCursor(cursor: integer): void {
+  setCursor(cursor: integer): boolean {
+    this.cursor = cursor;
     if (cursor < 0) {
       cursor = 0;
       this.cursorObj.setVisible(false);
+      return false;
+    } else if (cursor >= this.options.length) {
+      cursor = this.options.length - 1;
+      this.cursorObj.y = this.options[cursor].y + 3.5;
+      this.cursorObj.setVisible(true);
+      return false;
     } else {
       this.cursorObj.y = this.options[cursor].y + 3.5;
       this.cursorObj.setVisible(true);
     }
-    this.cursor = cursor;
+    return true;
   }
 
   toggleOptionState(): void {

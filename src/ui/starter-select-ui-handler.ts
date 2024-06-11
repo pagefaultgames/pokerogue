@@ -30,7 +30,7 @@ import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim
 import { StatsContainer } from "./stats-container";
 import { TextStyle, addBBCodeTextObject, addTextObject } from "./text";
 import { Mode } from "./ui";
-import { addWindow, WindowVariant } from "./ui-theme";
+import { addWindow } from "./ui-theme";
 import {SettingKeyboard} from "#app/system/settings/settings-keyboard";
 import {Device} from "#app/enums/devices";
 import * as Challenge from "../data/challenge";
@@ -38,6 +38,7 @@ import MoveInfoOverlay from "./move-info-overlay";
 import { getEggTierForSpecies } from "#app/data/egg.js";
 import { DropDown, DropDownColumns, DropDownOption, DropDownState, DropDownType } from "./dropdown";
 import { StarterContainer } from "./starter-container";
+import { FilterBar } from "./filter-bar";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -150,9 +151,8 @@ const gens = [
 export default class StarterSelectUiHandler extends MessageUiHandler {
   private starterSelectContainer: Phaser.GameObjects.Container;
   private filterBarContainer: Phaser.GameObjects.Container;
-  private dropDowns: DropDown[];
+  private filterBar: FilterBar;
   private shinyOverlay: Phaser.GameObjects.Image;
-  // private starterSelectGenIconContainers: Phaser.GameObjects.Container[];
   private starterContainers: StarterContainer[][] = [];
   private filteredStarterContainers: StarterContainer[] = [];
   private pokemonNumberText: Phaser.GameObjects.Text;
@@ -214,13 +214,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private genMode: boolean;
   private statsMode: boolean;
   private filterMode: boolean;
-  private filterDropdown: boolean;
+  // private filterDropdown: boolean;
   private dexAttrCursor: bigint = 0n;
   private abilityCursor: integer = -1;
   private natureCursor: integer = -1;
   private genCursor: integer = 0;
   private filterBarCursor: integer = 0;
-  private dropDownCursor: integer = 0;
   private genScrollCursor: integer = 0;
   private starterMoveset: StarterMoveset;
 
@@ -251,7 +250,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private starterIcons: Phaser.GameObjects.Sprite[];
   private genCursorObj: Phaser.GameObjects.Image;
   private genCursorHighlightObj: Phaser.GameObjects.Image;
-  private filterBarCursorObj: Phaser.GameObjects.Image;
   private valueLimitLabel: Phaser.GameObjects.Text;
   private startCursorObj: Phaser.GameObjects.NineSlice;
   // private starterValueLabels: Phaser.GameObjects.Text[];
@@ -307,13 +305,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.starterSelectContainer.add(starterContainerWindow);
 
     this.filterBarContainer = this.scene.add.container(0, 0);
-    this.filterBarContainer.add(addWindow(this.scene, 143, 1, 175, 17, false, false, null, null, WindowVariant.THIN));
+    // this.filterBarContainer.add(addWindow(this.scene, 143, 1, 175, 17, false, false, null, null, WindowVariant.THIN));
 
-    this.dropDowns = [];
-    const filterTypesLabel = addTextObject(this.scene, 155, 4, "Types", TextStyle.TOOLTIP_CONTENT);
-    filterTypesLabel.setOrigin(0, 0);
-    this.filterBarContainer.add(filterTypesLabel);
 
+    this.filterBar = new FilterBar(this.scene, 143, 1, 175, 17);
+
+    //type filter
     const typeKeys = Object.keys(Type).filter(v => isNaN(Number(v)));
     const typeOptions: DropDownOption[] = [];
     typeKeys.forEach((type, index) => {
@@ -325,41 +322,38 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       typeSprite.setFrame(type.toLowerCase());
       typeOptions.push(new DropDownOption(this.scene, index, null, typeSprite));
     });
-    this.dropDowns.push(new DropDown(this.scene, filterTypesLabel.x, 18, typeOptions, this.updateStarters, DropDownType.MULTI, 0.5));
+    this.filterBar.addFilter("Type", new DropDown(this.scene, 0, 0, typeOptions, this.updateStarters, DropDownType.MULTI, 0.5));
 
-    const filterShinyLabel = addTextObject(this.scene, 189, 4, "Shiny", TextStyle.TOOLTIP_CONTENT);
-    filterShinyLabel.setOrigin(0, 0);
-    this.filterBarContainer.add(filterShinyLabel);
+    // shiny filter
     const shiny1 = this.scene.add.sprite(0, 0, "shiny_star_small");
     shiny1.setTint(getVariantTint(2));
     const shiny2 = this.scene.add.sprite(0, 0, "shiny_star_small");
     shiny2.setTint(getVariantTint(0));
     const shiny3 = this.scene.add.sprite(0, 0, "shiny_star_small");
     shiny3.setTint(getVariantTint(1));
-    this.dropDowns.push(new DropDown(this.scene, filterShinyLabel.x, 18, [
+    const shinyOptions = [
       new DropDownOption(this.scene, 64n, null, shiny1),
       new DropDownOption(this.scene, 16n, null, shiny2),
       new DropDownOption(this.scene, 32n, null, shiny3),
-      new DropDownOption(this.scene, DexAttr.NON_SHINY, "non shiny")], this.updateStarters));
+      new DropDownOption(this.scene, DexAttr.NON_SHINY, "non shiny")];
+    this.filterBar.addFilter("Shiny", new DropDown(this.scene, 0, 0, shinyOptions, this.updateStarters, DropDownType.MULTI));
 
-    const filterDiv = addTextObject(this.scene, 220, 4, "Wins", TextStyle.TOOLTIP_CONTENT);
-    filterDiv.setOrigin(0, 0);
-    this.filterBarContainer.add(filterDiv);
-    this.dropDowns.push(new DropDown(this.scene, filterDiv.x, 18, [
+    // win filter
+    const winOptions = [
       new DropDownOption(this.scene, 0, "has won"),
-      new DropDownOption(this.scene, 1, "hasn't won yet")], this.updateStarters));
+      new DropDownOption(this.scene, 1, "hasn't won yet")];
+    this.filterBar.addFilter("Win", new DropDown(this.scene, 0, 0, winOptions, this.updateStarters, DropDownType.MULTI));
 
-    const filterSortLabel = addTextObject(this.scene, 247, 4, "Sort", TextStyle.TOOLTIP_CONTENT);
-    filterSortLabel.setOrigin(0, 0);
-    this.filterBarContainer.add(filterSortLabel);
-    this.dropDowns.push(new DropDown(this.scene, filterSortLabel.x, 18, [
+    // sort filter
+    const sortOptions = [
       new DropDownOption(this.scene, 0, "No."),
       new DropDownOption(this.scene, 1, "Cost", null, DropDownState.OFF),
       new DropDownOption(this.scene, 2, "IVs", null, DropDownState.OFF),
       new DropDownOption(this.scene, 3, "Name", null, DropDownState.OFF),
-      new DropDownOption(this.scene, 4, "# caught", null, DropDownState.OFF),], this.updateStarters, DropDownType.SINGLE));
+      new DropDownOption(this.scene, 4, "# caught", null, DropDownState.OFF),];
+    this.filterBar.addFilter("Sort", new DropDown(this.scene, 0, 0, sortOptions, this.updateStarters, DropDownType.SINGLE));
+    this.filterBarContainer.add(this.filterBar);
 
-    this.filterBarContainer.add(this.dropDowns);
     this.starterSelectContainer.add(this.filterBarContainer);
 
     if (!this.scene.uiTheme) {
@@ -472,12 +466,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.genCursorObj.setVisible(false);
     this.genCursorObj.setOrigin(0, 0);
     this.starterSelectContainer.add(this.genCursorObj);
-
-    this.filterBarCursorObj = this.scene.add.image(1, 1, "cursor");
-    this.filterBarCursorObj.setScale(0.5);
-    this.filterBarCursorObj.setVisible(false);
-    this.filterBarCursorObj.setOrigin(0, 0);
-    this.filterBarContainer.add(this.filterBarCursorObj);
 
     this.valueLimitLabel = addTextObject(this.scene, 124, 150, "0/10", TextStyle.TOOLTIP_CONTENT);
     this.valueLimitLabel.setOrigin(0.5, 0);
@@ -770,6 +758,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
       this.starterSelectContainer.setVisible(true);
 
+      this.setFilterMode(false);
+      this.filterBarCursor = 0;
       this.setGenMode(false);
       this.setCursor(0);
       this.setGenMode(true);
@@ -979,9 +969,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         error = true;
       }
     } else if (button === Button.CANCEL) {
-      if (this.filterMode && this.filterDropdown) {
-        this.dropDowns[this.filterBarCursor].toggle();
-        this.filterDropdown = false;
+      if (this.filterMode && this.filterBar.openDropDown) {
+        this.filterBar.hideDropDowns();
       } else if (this.statsMode) {
         this.toggleStatsMode(false);
         success = true;
@@ -1015,9 +1004,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         success = true;
         break;
       case Button.LEFT:
+        console.log("LEFT");
         this.startCursorObj.setVisible(false);
         this.setGenMode(false);
-        this.setCursor(this.cursor + 8);
+        this.setCursor(Math.min(this.cursor + 8, this.filteredStarterContainers.length - 1));
         success = true;
         break;
       case Button.RIGHT:
@@ -1044,8 +1034,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         break;
       case Button.LEFT:
         const rows = Math.ceil(this.filteredStarterContainers.length / 9);
-        success = this.setGenMode(false);
-        this.setCursor(rows > 1 ? (this.cursor + 8) : (this.cursor + (this.filteredStarterContainers.length - 1)));
+        if (rows > 0) {
+          success = this.setGenMode(false);
+          this.setCursor(rows > 1 ? (this.cursor + 8) : (this.cursor + (this.filteredStarterContainers.length - 1)));
+        }
         break;
       case Button.RIGHT:
         if (this.genCursor === 0) {
@@ -1070,26 +1062,19 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
         break;
       case Button.RIGHT:
-        if (this.filterBarCursor < this.dropDowns.length - 1) {
+        if (this.filterBarCursor < this.filterBar.numFilters - 1) {
           success = this.setCursor(this.filterBarCursor + 1);
         }
         break;
       case Button.UP:
-        if (this.dropDownCursor > 0) {
-          this.dropDownCursor--;
-          this.dropDowns[this.filterBarCursor].setCursor(this.dropDownCursor);
-        } else {
-          this.dropDowns[this.filterBarCursor].toggle();
-          this.filterDropdown = false;
+        if (!this.filterBar.decDropDownCursor()) {
+          this.filterBar.hideDropDowns();
         }
 
         break;
       case Button.DOWN:
-        if (this.filterDropdown) {
-          if (this.dropDownCursor < this.dropDowns[this.filterBarCursor].options.length - 1) {
-            this.dropDownCursor++;
-            this.dropDowns[this.filterBarCursor].setCursor(this.dropDownCursor);
-          } else {
+        if (this.filterBar.openDropDown) {
+          if (!this.filterBar.incDropDownCursor()) {
             this.setFilterMode(false);
             success = true;
           }
@@ -1100,15 +1085,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
         break;
       case Button.ACTION:
-        if (!this.filterDropdown || this.dropDownCursor === -1) {
-          this.dropDowns[this.filterBarCursor].toggle();
-          this.filterDropdown = this.dropDowns[this.filterBarCursor].visible;
-          if (this.filterDropdown) {
-            this.dropDownCursor = 0;
-            this.dropDowns[this.filterBarCursor].setCursor(this.dropDownCursor);
-          }
+        if (!this.filterBar.openDropDown) {
+          this.filterBar.toggleDropDown(this.filterBarCursor);
         } else {
-          this.dropDowns[this.filterBarCursor].toggleOptionState();
+          this.filterBar.toggleOptionState();
         }
         break;
       }
@@ -1692,10 +1672,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         const speciesVariants = container.species.speciesId && this.scene.gameData.dexData[container.species.speciesId].caughtAttr & DexAttr.SHINY
           ? [ DexAttr.DEFAULT_VARIANT, DexAttr.VARIANT_2, DexAttr.VARIANT_3 ].filter(v => !!(this.scene.gameData.dexData[container.species.speciesId].caughtAttr & v))
           : [];
-        const fitsType =  this.dropDowns[DropDownColumns.TYPES].getVals().some(type => container.species.isOfType((type as number) - 1));
-        const fitsShiny = this.dropDowns[DropDownColumns.SHINY].getVals().some(variant => speciesVariants.includes(variant));
-        const fitsDiv = (this.dropDowns[DropDownColumns.DIV].getVals().includes(0) && this.scene.gameData.starterData[container.species.speciesId].classicWinCount > 0) ||
-                        (this.dropDowns[DropDownColumns.DIV].getVals().includes(1) && this.scene.gameData.starterData[container.species.speciesId].classicWinCount === 0);
+        const fitsType =  this.filterBar.getVals(DropDownColumns.TYPES).some(type => container.species.isOfType((type as number) - 1));
+        const fitsShiny = this.filterBar.getVals(DropDownColumns.SHINY).some(variant => speciesVariants.includes(variant));
+        const fitsDiv = (this.filterBar.getVals(DropDownColumns.DIV).includes(0) && this.scene.gameData.starterData[container.species.speciesId].classicWinCount > 0) ||
+                        (this.filterBar.getVals(DropDownColumns.DIV).includes(1) && this.scene.gameData.starterData[container.species.speciesId].classicWinCount === 0);
 
         if (fitsType && fitsShiny && fitsDiv) {
           this.filteredStarterContainers.push(container);
@@ -1704,7 +1684,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     }
 
     // sort
-    const sort = this.dropDowns[DropDownColumns.SORT].getVals()[0];
+    const sort = this.filterBar.getVals(DropDownColumns.SORT)[0];
     this.filteredStarterContainers.sort((a, b) => {
       switch (sort.val) {
       default:
@@ -1805,19 +1785,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.updateStarters();
     } else if (this.filterMode) {
       changed = this.filterBarCursor !== cursor;
-      const oldCursor = this.filterBarCursor;
       this.filterBarCursor = cursor;
 
-      const cursorOffset = 5;
-      const selected = (this.filterBarContainer.list[cursor + 1] as Phaser.GameObjects.Text);
-      this.filterBarCursorObj.setPosition(selected.originX ? (selected.x - selected.displayWidth - cursorOffset) : (selected.x - cursorOffset), 7);
-
-      if (this.filterDropdown) {
-        this.dropDowns[oldCursor].setVisible(false);
-        this.dropDowns[cursor].setVisible(true);
-        this.dropDownCursor = 0;
-        this.dropDowns[cursor].setCursor(this.dropDownCursor);
-      }
+      this.filterBar.setCursor(cursor);
     } else {
       changed = super.setCursor(cursor);
 
@@ -1874,7 +1844,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   setFilterMode(filterMode: boolean): boolean {
     this.genCursorObj.setVisible(!filterMode);
     this.cursorObj.setVisible(!filterMode);
-    this.filterBarCursorObj.setVisible(filterMode);
+    this.filterBar.cursorObj.setVisible(filterMode);
 
     if (filterMode !== this.filterMode) {
       this.filterMode = filterMode;
@@ -1882,8 +1852,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       if (filterMode) {
         this.setSpecies(null);
       } else {
-        this.dropDowns.forEach(d => d.setVisible(false));
-        this.filterDropdown = false;
+        this.filterBar.hideDropDowns();
       }
 
       return true;
@@ -2535,5 +2504,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       icon.setTexture(species.getIconAtlasKey(formIndex, false, variant));
       icon.setFrame(species.getIconId(female, formIndex, false, variant));
     }
+  }
+
+  autoPositionFilterBar(): void {
   }
 }
