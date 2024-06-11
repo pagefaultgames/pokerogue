@@ -1626,7 +1626,7 @@ export const biomePokemonPools: BiomePokemonPools = {
 export const biomeTrainerPools: BiomeTrainerPools = {
   [Biome.TOWN]: {
     [BiomePoolTier.COMMON]: [ TrainerType.YOUNGSTER ],
-    [BiomePoolTier.UNCOMMON]: [ TrainerType.CAMPER ],
+    [BiomePoolTier.UNCOMMON]: [],
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
@@ -7314,7 +7314,6 @@ export function initBiomes() {
     ]
     ],
     [ TrainerType.CAMPER, [
-      [ Biome.TOWN, BiomePoolTier.UNCOMMON ],
       [ Biome.PLAINS, BiomePoolTier.COMMON ],
       [ Biome.GRASS, BiomePoolTier.COMMON ],
       [ Biome.TALL_GRASS, BiomePoolTier.COMMON ]
