@@ -4,76 +4,76 @@ export const modifierType: ModifierTypeTranslationEntries = {
   ModifierType: {
     "AddPokeballModifierType": {
       name: "{{pokeballName}} x{{modifierCount}}",
-      description: "Recevez {{modifierCount}} {{pokeballName}}s (Inventaire : {{pokeballAmount}}) \nTaux de capture : {{catchRate}}",
+      description: "Recevez {{modifierCount}} {{pokeballName}}s (Inventaire : {{pokeballAmount}}) \nTaux de capture : {{catchRate}}.",
     },
     "AddVoucherModifierType": {
       name: "{{voucherTypeName}} x{{modifierCount}}",
-      description: "Recevez {{modifierCount}} {{voucherTypeName}}",
+      description: "Recevez {{modifierCount}} {{voucherTypeName}}.",
     },
     "PokemonHeldItemModifierType": {
       extra: {
-        "inoperable": "{{pokemonName}} ne peut pas\nporter cet objet !",
-        "tooMany": "{{pokemonName}} possède trop\nd’exemplaires de cet objet !",
+        "inoperable": "{{pokemonName}} ne peut pas\nporter cet objet !",
+        "tooMany": "{{pokemonName}} possède trop\nd’exemplaires de cet objet !",
       }
     },
     "PokemonHpRestoreModifierType": {
       description: "Restaure {{restorePoints}} PV ou {{restorePercent}}% des PV totaux d’un Pokémon, en fonction duquel des deux est le plus élevé",
       extra: {
-        "fully": "Restaure tous les PV d’un Pokémon",
-        "fullyWithStatus": "Restaure tous les PV d’un Pokémon et soigne tous ses problèmes de statut",
+        "fully": "Restaure tous les PV d’un Pokémon.",
+        "fullyWithStatus": "Restaure tous les PV d’un Pokémon et soigne tous ses problèmes de statut.",
       }
     },
     "PokemonReviveModifierType": {
-      description: "Réanime un Pokémon et restaure {{restorePercent}}% de ses PV",
+      description: "Réanime un Pokémon et restaure {{restorePercent}}% de ses PV.",
     },
     "PokemonStatusHealModifierType": {
-      description: "Soigne tous les problèmes de statut d’un Pokémon",
+      description: "Soigne tous les problèmes de statut d’un Pokémon.",
     },
     "PokemonPpRestoreModifierType": {
-      description: "Restaure {{restorePoints}} PP à une capacité d’un Pokémon",
+      description: "Restaure {{restorePoints}} PP à une capacité d’un Pokémon.",
       extra: {
-        "fully": "Restaure tous les PP à une capacité d’un Pokémon",
+        "fully": "Restaure tous les PP à une capacité d’un Pokémon.",
       }
     },
     "PokemonAllMovePpRestoreModifierType": {
-      description: "Restaure {{restorePoints}} PP à toutes les capacités d’un Pokémon",
+      description: "Restaure {{restorePoints}} PP à toutes les capacités d’un Pokémon.",
       extra: {
-        "fully": "Restaure tous les PP à toutes les capacités d’un Pokémon",
+        "fully": "Restaure tous les PP à toutes les capacités d’un Pokémon.",
       }
     },
     "PokemonPpUpModifierType": {
-	  description: "Augmente le max de PP de {{upPoints}} à une capacité d’un Pokémon pour chaque 5 PP max (max : 3)",
+	  description: "Augmente le max de PP de {{upPoints}} à une capacité d’un Pokémon pour chaque 5 PP max (max : 3).",
     },
     "PokemonNatureChangeModifierType": {
       name: "Aromate {{natureName}}",
 	  description: "Donne la nature {{natureName}} à un Pokémon et la débloque pour le starter lui étant lié.",
     },
     "DoubleBattleChanceBoosterModifierType": {
-	  description: "Double les chances de tomber sur un combat double pendant {{battleCount}} combats",
+	  description: "Double les chances de tomber sur un combat double pendant {{battleCount}} combats.",
     },
     "TempBattleStatBoosterModifierType": {
-	  description: "Augmente d’un cran {{tempBattleStatName}} pour toute l’équipe pendant 5 combats",
+	  description: "Augmente d’un cran {{tempBattleStatName}} pour toute l’équipe pendant 5 combats.",
     },
     "AttackTypeBoosterModifierType": {
-      description: "Augmente de 20% la puissance des capacités de type {{moveType}} d’un Pokémon",
+      description: "Augmente de 20% la puissance des capacités de type {{moveType}} d’un Pokémon.",
     },
     "PokemonLevelIncrementModifierType": {
-      description: "Fait monter un Pokémon d’un niveau",
+      description: "Fait monter un Pokémon d’un niveau.",
     },
     "AllPokemonLevelIncrementModifierType": {
-      description: "Fait monter toute l’équipe d’un niveau",
+      description: "Fait monter toute l’équipe d’un niveau.",
     },
     "PokemonBaseStatBoosterModifierType": {
 	  description: "Augmente de 10% {{statName}} de base de son porteur. Plus les IV sont hauts, plus il peut en porter.",
     },
     "AllPokemonFullHpRestoreModifierType": {
-      description: "Restaure tous les PV de toute l'équipe",
+      description: "Restaure tous les PV de toute l'équipe.",
     },
     "AllPokemonFullReviveModifierType": {
       description: "Réanime et restaure tous les PV de tous les Pokémon K.O.",
     },
     "MoneyRewardModifierType": {
-      description: "Octroie une {{moneyMultiplier}} somme d’argent ({{moneyAmount}}₽)",
+      description: "Octroie une {{moneyMultiplier}} somme d’argent ({{moneyAmount}}₽).",
       extra: {
         "small": "petite",
         "moderate": "moyenne",
@@ -81,58 +81,62 @@ export const modifierType: ModifierTypeTranslationEntries = {
       },
     },
     "ExpBoosterModifierType": {
-      description: "Augmente de {{boostPercent}}% le gain de Points d’Exp",
+      description: "Augmente de {{boostPercent}}% le gain de Points d’Exp.",
     },
     "PokemonExpBoosterModifierType": {
-      description: "Augmente de {{boostPercent}}% le gain de Points d’Exp du porteur",
+      description: "Augmente de {{boostPercent}}% le gain de Points d’Exp du porteur.",
     },
     "PokemonFriendshipBoosterModifierType": {
-      description: "Augmente le gain d’amitié de 50% par victoire",
+      description: "Augmente le gain d’amitié de 50% par victoire.",
     },
     "PokemonMoveAccuracyBoosterModifierType": {
-      description: "Augmente de {{accuracyAmount}} la précision des capacités (maximum 100)",
+      description: "Augmente de {{accuracyAmount}} la précision des capacités (maximum 100).",
     },
     "PokemonMultiHitModifierType": {
-	  description: "Frappe une fois de plus en échange d’une baisse de puissance de respectivement 60/75/82,5% par cumul",
+	  description: "Frappe une fois de plus en échange d’une baisse de puissance de respectivement 60/75/82,5% par cumul.",
     },
     "TmModifierType": {
       name: "CT{{moveId}} - {{moveName}}",
-      description: "Apprend la capacité {{moveName}} à un Pokémon",
+      description: "Apprend la capacité {{moveName}} à un Pokémon.",
+    },
+    "TmModifierTypeWithInfo": {
+      name: "CT{{moveId}} - {{moveName}}",
+      description: "Apprend la capacité {{moveName}} à un Pokémon\n(Hold C or Shift for more info).",
     },
     "EvolutionItemModifierType": {
-      description: "Permet à certains Pokémon d’évoluer",
+      description: "Permet à certains Pokémon d’évoluer.",
     },
     "FormChangeItemModifierType": {
-      description: "Permet à certains Pokémon de changer de forme",
+      description: "Permet à certains Pokémon de changer de forme.",
     },
     "FusePokemonModifierType": {
-      description: "Fusionne deux Pokémon (transfère le Talent, sépare les stats de base et les types, partage le movepool)",
+      description: "Fusionne deux Pokémon (transfère le Talent, sépare les stats de base et les types, partage le movepool).",
     },
     "TerastallizeModifierType": {
       name: "Téra-Éclat {{teraType}}",
-      description: "{{teraType}} Téracristallise son porteur pendant 10 combats",
+      description: "{{teraType}} Téracristallise son porteur pendant 10 combats.",
     },
     "ContactHeldItemTransferChanceModifierType": {
-      description: "{{chancePercent}}% de chances de voler un objet de l’adversaire en l’attaquant",
+      description: "{{chancePercent}}% de chances de voler un objet de l’adversaire en l’attaquant.",
     },
     "TurnHeldItemTransferModifierType": {
-      description: "À chaque tour, son porteur obtient un objet de son adversaire",
+      description: "À chaque tour, son porteur obtient un objet de son adversaire.",
     },
     "EnemyAttackStatusEffectChanceModifierType": {
-      description: "Ajoute {{chancePercent}}% de chances d’infliger le statut {{statusEffect}} avec des capacités offensives",
+      description: "Ajoute {{chancePercent}}% de chances d’infliger le statut {{statusEffect}} avec des capacités offensives.",
     },
     "EnemyEndureChanceModifierType": {
-      description: "Ajoute {{chancePercent}}% de chances d’encaisser un coup",
+      description: "Ajoute {{chancePercent}}% de chances d’encaisser un coup.",
     },
 
     "RARE_CANDY": { name: "Super Bonbon" },
     "RARER_CANDY": { name: "Hyper Bonbon" },
 
-    "MEGA_BRACELET": { name: "Méga-Bracelet", description: "Débloque les Méga-Gemmes" },
-    "DYNAMAX_BAND": { name: "Poignet Dynamax", description: "Débloque le Dynamax" },
-    "TERA_ORB": { name: "Orbe Téracristal", description: "Débloque les Téra-Éclats" },
+    "MEGA_BRACELET": { name: "Méga-Bracelet", description: "Débloque les Méga-Gemmes." },
+    "DYNAMAX_BAND": { name: "Poignet Dynamax", description: "Débloque le Dynamax." },
+    "TERA_ORB": { name: "Orbe Téracristal", description: "Débloque les Téra-Éclats." },
 
-    "MAP": { name: "Carte", description: "Vous permet de choisir votre destination à un croisement" },
+    "MAP": { name: "Carte", description: "Vous permet de choisir votre destination à un croisement." },
 
     "POTION": { name: "Potion" },
     "SUPER_POTION": { name: "Super Potion" },
@@ -162,12 +166,12 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "SUPER_LURE": { name: "Super Parfum" },
     "MAX_LURE": { name: "Parfum Max" },
 
-    "MEMORY_MUSHROOM": { name: "Champi Mémoriel", description: "Remémore une capacité à un Pokémon" },
+    "MEMORY_MUSHROOM": { name: "Champi Mémoriel", description: "Remémore une capacité à un Pokémon." },
 
-    "EXP_SHARE": { name: "Multi Exp", description: "Tous les non-participants reçoivent 20% des Points d’Exp d’un participant" },
-    "EXP_BALANCE": { name: "Équilibr’Exp", description: "Équilibre les Points d’Exp à l’avantage des membres de l’équipe aux plus bas niveaux" },
+    "EXP_SHARE": { name: "Multi Exp", description: "Tous les non-participants reçoivent 20% des Points d’Exp d’un participant." },
+    "EXP_BALANCE": { name: "Équilibr’Exp", description: "Équilibre les Points d’Exp à l’avantage des membres de l’équipe aux plus bas niveaux." },
 
-    "OVAL_CHARM": { name: "Charme Ovale", description: "Quand plusieurs Pokémon sont en combat, chacun gagne 10% supplémentaires du total d’Exp" },
+    "OVAL_CHARM": { name: "Charme Ovale", description: "Quand plusieurs Pokémon sont en combat, chacun gagne 10% supplémentaires du total d’Exp." },
 
     "EXP_CHARM": { name: "Charme Exp" },
     "SUPER_EXP_CHARM": { name: "Super Charme Exp" },
@@ -178,44 +182,44 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SOOTHE_BELL": { name: "Grelot Zen" },
 
-    "SOUL_DEW": { name: "Rosée Âme", description: "Augmente de 10% l’influence de la nature d’un Pokémon sur ses statistiques (cumulatif)" },
+    "SOUL_DEW": { name: "Rosée Âme", description: "Augmente de 10% l’influence de la nature d’un Pokémon sur ses statistiques (cumulatif)." },
 
     "NUGGET": { name: "Pépite" },
     "BIG_NUGGET": { name: "Maxi Pépite" },
     "RELIC_GOLD": { name: "Vieux Ducat" },
 
-    "AMULET_COIN": { name: "Pièce Rune", description: "Augmente de 20% les gains d’argent" },
-    "GOLDEN_PUNCH": { name: "Poing Doré", description: "50% des dégâts infligés sont convertis en argent" },
-    "COIN_CASE": { name: "Boite Jetons", description: "Tous les 10 combats, recevez 10% de votre argent en intérêts" },
+    "AMULET_COIN": { name: "Pièce Rune", description: "Augmente de 20% les gains d’argent." },
+    "GOLDEN_PUNCH": { name: "Poing Doré", description: "50% des dégâts infligés sont convertis en argent." },
+    "COIN_CASE": { name: "Boite Jetons", description: "Tous les 10 combats, recevez 10% de votre argent en intérêts." },
 
-    "LOCK_CAPSULE": { name: "Poké Écrin", description: "Permet de verrouiller des objets rares si vous relancez les objets proposés" },
+    "LOCK_CAPSULE": { name: "Poké Écrin", description: "Permet de verrouiller des objets rares si vous relancez les objets proposés." },
 
     "GRIP_CLAW": { name: "Accro Griffe" },
     "WIDE_LENS": { name: "Loupe" },
 
     "MULTI_LENS": { name: "Lentille Multi" },
 
-    "HEALING_CHARM": { name: "Charme Soin", description: "Augmente de 10% l’efficacité des capacités et objets de soin de PV (hors Rappels)" },
-    "CANDY_JAR": { name: "Bonbonnière", description: "Augmente de 1 le nombre de niveaux gagnés à l’utilisation d’un Super Bonbon" },
+    "HEALING_CHARM": { name: "Charme Soin", description: "Augmente de 10% l’efficacité des capacités et objets de soin de PV (hors Rappels)." },
+    "CANDY_JAR": { name: "Bonbonnière", description: "Augmente de 1 le nombre de niveaux gagnés à l’utilisation d’un Super Bonbon." },
 
-    "BERRY_POUCH": { name: "Sac à Baies", description: "Ajoute 33% de chances qu’une Baie utilisée ne soit pas consommée" },
+    "BERRY_POUCH": { name: "Sac à Baies", description: "Ajoute 30% de chances qu’une Baie utilisée ne soit pas consommée." },
 
     "FOCUS_BAND": { name: "Bandeau", description: "Ajoute 10% de chances de survivre avec 1 PV si les dégâts reçus pouvaient mettre K.O." },
 
-    "QUICK_CLAW": { name: "Vive Griffe", description: "Ajoute 10% de chances d’agir en premier, indépendamment de la vitesse (après la priorité)" },
+    "QUICK_CLAW": { name: "Vive Griffe", description: "Ajoute 10% de chances d’agir en premier, indépendamment de la vitesse (après la priorité)." },
 
-    "KINGS_ROCK": { name: "Roche Royale", description: "Ajoute 10% de chances qu’une capacité offensive apeure l’adversaire" },
+    "KINGS_ROCK": { name: "Roche Royale", description: "Ajoute 10% de chances qu’une capacité offensive apeure l’adversaire." },
 
-    "LEFTOVERS": { name: "Restes", description: "Soigne à chaque tour 1/16 des PV max d’un Pokémon" },
-    "SHELL_BELL": { name: "Grelot Coque", description: "Soigne 1/8 des dégâts infligés par un Pokémon" },
+    "LEFTOVERS": { name: "Restes", description: "Soigne à chaque tour 1/16 des PV max d’un Pokémon." },
+    "SHELL_BELL": { name: "Grelot Coque", description: "Soigne 1/8 des dégâts infligés par un Pokémon." },
 
-    "TOXIC_ORB": { name: "Orbe Toxique", description: "Un orbe bizarre qui empoisonne gravement son porteur durant le combat" },
-    "FLAME_ORB": { name: "Orbe Flamme", description: "Un orbe bizarre qui brûle son porteur durant le combat" },
+    "TOXIC_ORB": { name: "Orbe Toxique", description: "Un orbe bizarre qui empoisonne gravement son porteur durant le combat." },
+    "FLAME_ORB": { name: "Orbe Flamme", description: "Un orbe bizarre qui brûle son porteur durant le combat." },
 
     "BATON": { name: "Bâton", description: "Permet de transmettre les effets en cas de changement de Pokémon. Ignore les pièges." },
 
-    "SHINY_CHARM": { name: "Charme Chroma", description: "Augmente énormément les chances de rencontrer un Pokémon sauvage chromatique" },
-    "ABILITY_CHARM": { name: "Charme Talent", description: "Augmente énormément les chances de rencontrer un Pokémon sauvage avec un Talent Caché" },
+    "SHINY_CHARM": { name: "Charme Chroma", description: "Augmente énormément les chances de rencontrer un Pokémon sauvage chromatique." },
+    "ABILITY_CHARM": { name: "Charme Talent", description: "Augmente énormément les chances de rencontrer un Pokémon sauvage avec un Talent Caché." },
 
     "IV_SCANNER": { name: "Scanner d’IV", description: "Révèle la qualité de deux IV d’un Pokémon sauvage par scanner possédé. Les meilleurs IV sont révélés en priorité." },
 
@@ -225,15 +229,13 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "GOLDEN_POKEBALL": { name: "Poké Ball Dorée", description: "Ajoute un choix d’objet à la fin de chaque combat" },
 
-    "ENEMY_DAMAGE_BOOSTER": { name: "Jeton Dégâts", description: "Augmente les dégâts de 5%" },
-    "ENEMY_DAMAGE_REDUCTION": { name: "Jeton Protection", description: "Diminue les dégâts reçus de 2,5%" },
-    "ENEMY_HEAL": { name: "Jeton Soin", description: "Soigne 2% des PV max à chaque tour" },
+    "ENEMY_DAMAGE_BOOSTER": { name: "Jeton Dégâts", description: "Augmente les dégâts de 5%." },
+    "ENEMY_DAMAGE_REDUCTION": { name: "Jeton Protection", description: "Diminue les dégâts reçus de 2,5%." },
+    "ENEMY_HEAL": { name: "Jeton Soin", description: "Soigne 2% des PV max à chaque tour." },
     "ENEMY_ATTACK_POISON_CHANCE": { name: "Jeton Poison" },
     "ENEMY_ATTACK_PARALYZE_CHANCE": { name: "Jeton Paralysie" },
-    "ENEMY_ATTACK_SLEEP_CHANCE": { name: "Jeton Sommeil" },
-    "ENEMY_ATTACK_FREEZE_CHANCE": { name: "Jeton Gel" },
     "ENEMY_ATTACK_BURN_CHANCE": { name: "Jeton Brulure" },
-    "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "Jeton Total Soin", description: "Ajoute 10% de chances à chaque tour de se soigner d’un problème de statut." },
+    "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "Jeton Total Soin", description: "Ajoute 2.5% de chances à chaque tour de se soigner d’un problème de statut." },
     "ENEMY_ENDURE_CHANCE": { name: "Jeton Ténacité" },
     "ENEMY_FUSED_CHANCE": { name: "Jeton Fusion", description: "Ajoute 1% de chances qu’un Pokémon sauvage soit une fusion." },
   },
@@ -365,7 +367,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "HARD_METEORITE": "Méteorite Solide",
     "SMOOTH_METEORITE": "Méteorite Lisse",
     "ADAMANT_CRYSTAL": "Globe Adamant",
-    "LUSTROUS_ORB": "Orbe Perlé",
+    "LUSTROUS_GLOBE": "Globe Perlé",
     "GRISEOUS_CORE": "Globe Platiné",
     "REVEAL_GLASS": "Miroir Sacré",
     "GRACIDEA": "Gracidée",
@@ -386,5 +388,43 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "BURN_DRIVE": "Module Pyro",
     "CHILL_DRIVE": "Module Cryo",
     "DOUSE_DRIVE": "Module Aqua",
+
+    "FIST_PLATE": "Plaque Poing",
+    "SKY_PLATE": "Plaque Ciel",
+    "TOXIC_PLATE": "Plaque Toxicité",
+    "EARTH_PLATE": "Plaque Terre",
+    "STONE_PLATE": "Plaque Roc",
+    "INSECT_PLATE": "Plaque Insecte",
+    "SPOOKY_PLATE": "Plaque Fantôme",
+    "IRON_PLATE": "Plaque Fer",
+    "FLAME_PLATE": "Plaque Flamme",
+    "SPLASH_PLATE": "Plaque Hydro",
+    "MEADOW_PLATE": "Plaque Herbe",
+    "ZAP_PLATE": "Plaque Volt",
+    "MIND_PLATE": "Plaque Esprit",
+    "ICICLE_PLATE": "Plaque Glace",
+    "DRACO_PLATE": "Plaque Draco",
+    "DREAD_PLATE": "Plaque Ombre",
+    "PIXIE_PLATE": "Plaque Pixie",
+    "BLANK_PLATE": "Plaque Renouveau",
+    "LEGEND_PLATE": "Plaque Légende",
+    "FIGHTING_MEMORY": "ROM Combat",
+    "FLYING_MEMORY": "ROM Vol",
+    "POISON_MEMORY": "ROM Poison",
+    "GROUND_MEMORY": "ROM Sol",
+    "ROCK_MEMORY": "ROM Roche",
+    "BUG_MEMORY": "ROM Insecte",
+    "GHOST_MEMORY": "ROM Spectre",
+    "STEEL_MEMORY": "ROM Acier",
+    "FIRE_MEMORY": "ROM Feu",
+    "WATER_MEMORY": "ROM Eau",
+    "GRASS_MEMORY": "ROM Plante",
+    "ELECTRIC_MEMORY": "ROM Électrik",
+    "PSYCHIC_MEMORY": "ROM Psy",
+    "ICE_MEMORY": "ROM Glace",
+    "DRAGON_MEMORY": "ROM Dragon",
+    "DARK_MEMORY": "ROM Ténèbres",
+    "FAIRY_MEMORY": "ROM Fée",
+    "BLANK_MEMORY": "ROM Vierge",
   },
 } as const;
