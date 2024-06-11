@@ -12,7 +12,8 @@ import { achvs } from "./system/achv";
 import { pokemonPrevolutions } from "./data/pokemon-evolutions";
 import { EggTier } from "./data/enums/egg-type";
 import PokemonInfoContainer from "./ui/pokemon-info-container";
-import EggsToHatchCountContainer from "./ui/eggs-to-hatch-count-container";
+import EggCounterContainer from "./ui/egg-counter-container";
+import { EggCountChangedEvent } from "./events/egg";
 
 /**
  * Class that represents egg hatching
@@ -24,7 +25,7 @@ export class EggHatchPhase extends Phase {
   /** The number of eggs that are hatching */
   private eggsToHatchCount: integer;
   /** The container that lists how many eggs are hatching */
-  private eggsToHatchCountContainer: EggsToHatchCountContainer;
+  private eggCounterContainer: EggCounterContainer;
 
   /** The scene handler for egg hatching */
   private eggHatchHandler: EggHatchSceneHandler;
@@ -110,10 +111,8 @@ export class EggHatchPhase extends Phase {
       this.eggContainer.add(this.eggLightraysOverlay);
       this.eggHatchContainer.add(this.eggContainer);
 
-      this.eggsToHatchCountContainer = new EggsToHatchCountContainer(this.scene, this.eggsToHatchCount);
-      this.eggsToHatchCountContainer.setup();
-
-      this.eggHatchContainer.add(this.eggsToHatchCountContainer);
+      this.eggCounterContainer = new EggCounterContainer(this.scene, this.eggsToHatchCount);
+      this.eggHatchContainer.add(this.eggCounterContainer);
 
       const getPokemonSprite = () => {
         const ret = this.scene.add.sprite(this.eggHatchBg.displayWidth / 2, this.eggHatchBg.displayHeight / 2, "pkmn__sub");
@@ -308,13 +307,6 @@ export class EggHatchPhase extends Phase {
    * Function to do the logic and animation of completing a hatch and revealing the Pokemon
    */
   doReveal(): void {
-    // Update/reduce count of hatching eggs when revealed if count is at least 1
-    // If count is 0, hide eggsToHatchCountContainer instead
-    if (this.eggsToHatchCount > 1) {
-      this.eggsToHatchCount -= 1;
-    } else {
-      this.eggsToHatchCountContainer.setVisible(false);
-    }
     const isShiny = this.pokemon.isShiny();
     if (this.pokemon.species.subLegendary) {
       this.scene.validateAchv(achvs.HATCH_SUB_LEGENDARY);
@@ -336,10 +328,8 @@ export class EggHatchPhase extends Phase {
     this.pokemonSprite.setPipelineData("variant", this.pokemon.variant);
     this.pokemonSprite.setVisible(true);
     this.scene.time.delayedCall(Utils.fixedInt(250), () => {
-      if (this.eggsToHatchCount < 10) {
-        this.eggsToHatchCountContainer.setWindowToDefaultSize();
-      }
-      this.eggsToHatchCountContainer.eggCountText.setText(`${this.eggsToHatchCount}`);
+      this.eggsToHatchCount--;
+      this.eggHatchHandler.eventTarget.dispatchEvent(new EggCountChangedEvent(this.eggsToHatchCount));
       this.pokemon.cry();
       if (isShiny) {
         this.scene.time.delayedCall(Utils.fixedInt(500), () => {
@@ -497,10 +487,18 @@ export class EggHatchPhase extends Phase {
 
         const ignoredSpecies = [ Species.PHIONE, Species.MANAPHY, Species.ETERNATUS ];
 
-        const speciesPool = Object.keys(speciesStarters)
+        let speciesPool = Object.keys(speciesStarters)
           .filter(s => speciesStarters[s] >= minStarterValue && speciesStarters[s] <= maxStarterValue)
           .map(s => parseInt(s) as Species)
           .filter(s => !pokemonPrevolutions.hasOwnProperty(s) && getPokemonSpecies(s).isObtainable() && ignoredSpecies.indexOf(s) === -1);
+
+        // If this is the 10th egg without unlocking something new, attempt to force it.
+        if (this.scene.gameData.unlockPity[this.egg.tier] >= 9) {
+          const lockedPool = speciesPool.filter(s => !this.scene.gameData.dexData[s].caughtAttr);
+          if (lockedPool.length) { // Skip this if everything is unlocked
+            speciesPool = lockedPool;
+          }
+        }
 
         /**
          * Pokemon that are cheaper in their tier get a weight boost. Regionals get a weight penalty
@@ -534,6 +532,12 @@ export class EggHatchPhase extends Phase {
             species = speciesPool[s];
             break;
           }
+        }
+
+        if (!!this.scene.gameData.dexData[species].caughtAttr) {
+          this.scene.gameData.unlockPity[this.egg.tier] = Math.min(this.scene.gameData.unlockPity[this.egg.tier] + 1, 10);
+        } else {
+          this.scene.gameData.unlockPity[this.egg.tier] = 0;
         }
 
         const pokemonSpecies = getPokemonSpecies(species);
