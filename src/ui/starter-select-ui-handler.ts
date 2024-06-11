@@ -990,8 +990,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
         break;
       case Button.LEFT:
+        const rows = Math.ceil(this.filteredStarterContainers.length / 9);
         success = this.setGenMode(false);
-        this.setCursor(this.cursor + 8);
+        this.setCursor(rows > 1 ? (this.cursor + 8) : (this.cursor + (this.filteredStarterContainers.length - 1)));
         break;
       case Button.RIGHT:
         if (this.genCursor === 0) {
@@ -2129,9 +2130,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.pokemonSprite.setVisible(!this.statsMode);
         });
 
-        this.starterContainers[this.getGenCursorWithScroll()][this.cursor].icon
+        console.log(this.cursor);
+        this.filteredStarterContainers[this.cursor].icon
           .setTexture(species.getIconAtlasKey(formIndex, shiny, variant), species.getIconId(female, formIndex, shiny, variant));
-        this.starterContainers[this.getGenCursorWithScroll()][this.cursor].checkIconId(female, formIndex, shiny, variant);
+        this.filteredStarterContainers[this.cursor].checkIconId(female, formIndex, shiny, variant);
         this.canCycleShiny = !!(dexEntry.caughtAttr & DexAttr.NON_SHINY && dexEntry.caughtAttr & DexAttr.SHINY);
         this.canCycleGender = !!(dexEntry.caughtAttr & DexAttr.MALE && dexEntry.caughtAttr & DexAttr.FEMALE);
         this.canCycleAbility = [ abilityAttr & AbilityAttr.ABILITY_1, (abilityAttr & AbilityAttr.ABILITY_2) && species.ability2, abilityAttr & AbilityAttr.ABILITY_HIDDEN ].filter(a => a).length > 1;
