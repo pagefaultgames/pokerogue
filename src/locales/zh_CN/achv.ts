@@ -122,7 +122,7 @@ export const PGMachv: AchievementTranslationEntries = {
     description: "获得一个迷你黑洞",
   },
   "CATCH_MYTHICAL": {
-    name: "幻兽",
+    name: "神秘礼物",
     description: "捕捉一只幻之宝可梦",
   },
   "CATCH_SUB_LEGENDARY": {
@@ -154,7 +154,7 @@ export const PGMachv: AchievementTranslationEntries = {
     description: "从蛋中孵化出一只传说宝可梦",
   },
   "HATCH_SHINY": {
-    name: "金色传说",
+    name: "金色传说！",
     description: "从蛋中孵化出一只闪光宝可梦",
   },
   "HIDDEN_ABILITY": {
