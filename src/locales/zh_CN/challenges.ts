@@ -39,7 +39,7 @@ export const challenges: SimpleTranslationEntries = {
   "singleType.value.5": "地面",
   "singleType.desc.5": "你只能使用地面属性的宝可梦",
   "singleType.value.6": "岩石",
-  "singleType.desc.6": "你只能使用所选属性的宝可梦",
+  "singleType.desc.6": "你只能使用岩石属性的宝可梦",
   "singleType.value.7": "虫",
   "singleType.desc.7": "你只能使用虫属性的宝可梦",
   "singleType.value.8": "幽灵",
