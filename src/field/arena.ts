@@ -21,7 +21,7 @@ import Pokemon from "./pokemon";
 import * as Overrides from "../overrides";
 import { WeatherChangedEvent, TerrainChangedEvent, TagAddedEvent, TagRemovedEvent } from "./arena-events";
 import { Abilities } from "#app/data/enums/abilities.js";
-import { SpeciesFormChangeWeatherTrigger } from "#app/data/pokemon-forms.js";
+import { SpeciesFormChangeWeatherOriginalFormTrigger, SpeciesFormChangeWeatherTrigger } from "#app/data/pokemon-forms.js";
 
 export class Arena {
   public scene: BattleScene;
@@ -305,6 +305,17 @@ export class Arena {
   }
 
   /**
+   * Function to trigger all weather based form changes back into their original forms
+   */
+  triggerWeatherBasedFormChangesToOriginal(): void {
+    this.scene.getField(true).forEach( p => {
+      if ((p.hasAbility(Abilities.FORECAST) && p.species.speciesId === Species.CASTFORM) || false /** Cherrim will also go here */) {
+        this.scene.triggerPokemonFormChange(p, SpeciesFormChangeWeatherOriginalFormTrigger);
+      }
+    });
+  }
+
+  /**
    * Attempts to set a new weather to the battle
    * @param weather new weather to set of type WeatherType
    * @param hasPokemonSource is the new weather from a pokemon
@@ -332,6 +343,7 @@ export class Arena {
     }
 
     this.triggerWeatherBasedFormChanges();
+    this.triggerWeatherBasedFormChangesToOriginal();
 
     this.scene.getField(true).filter(p => p.isOnField()).map(pokemon => {
       pokemon.findAndRemoveTags(t => "weatherTypes" in t && !(t.weatherTypes as WeatherType[]).find(t => t === weather));

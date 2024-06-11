@@ -1756,7 +1756,7 @@ export class PostSummonFormChangeAbAttr extends PostSummonAbAttr {
  * Ability attribute for all PostSummon abilities that affect the weather
  * Used in cloud nine and air lock
  */
-export class PostSummonTriggerWeatherFormChangesForAllAbAttr extends PostSummonAbAttr {
+export class PostSummonTriggerWeatherSuppressedFormChangesForAllAbAttr extends PostSummonAbAttr {
   constructor() {
     super();
   }
@@ -1769,7 +1769,7 @@ export class PostSummonTriggerWeatherFormChangesForAllAbAttr extends PostSummonA
    * @returns true
    */
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]) {
-    pokemon.scene.arena.triggerWeatherBasedFormChanges();
+    pokemon.scene.arena.triggerWeatherBasedFormChangesToOriginal();
     return true;
   }
 }
@@ -1948,6 +1948,8 @@ export class PreSwitchOutWeatherNoLongerSuppressedAbAttr extends PreSwitchOutAbA
    * @returns n/a
    */
   applyPreSwitchOut(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
+    // THIS WILL NOT WORK SINCE THE WEATHER SUPRESSION WILL STILL BE IN EFFECT
+    // TODO: NEED TO FIGURE OUT HOW TO TURN IT OFF PRIOR TO LEAVING
     pokemon.scene.arena.triggerWeatherBasedFormChanges();
     return true;
   }
@@ -3152,6 +3154,7 @@ export class PostFaintWeatherNoLongerSuppressedAbAttr extends PostFaintAbAttr {
    * @returns true
    */
   applyPostFaint(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
+    // THIS DOES NOT TRIGGER ON SELF-KO MOVES LIKE MEMENTO
     pokemon.scene.arena.triggerWeatherBasedFormChanges();
     return true;
   }
@@ -3808,7 +3811,7 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.CLOUD_NINE, 3)
       .attr(SuppressWeatherEffectAbAttr, true)
-      .attr(PostSummonTriggerWeatherFormChangesForAllAbAttr)
+      .attr(PostSummonTriggerWeatherSuppressedFormChangesForAllAbAttr)
       .attr(PreSwitchOutWeatherNoLongerSuppressedAbAttr)
       .attr(PostFaintWeatherNoLongerSuppressedAbAttr),
     new Ability(Abilities.COMPOUND_EYES, 3)
@@ -4005,7 +4008,7 @@ export function initAbilities() {
     new Ability(Abilities.AIR_LOCK, 3)
       .attr(SuppressWeatherEffectAbAttr, true)
       .attr(PostSummonUnnamedMessageAbAttr, "The effects of the weather disappeared.")
-      .attr(PostSummonTriggerWeatherFormChangesForAllAbAttr)
+      .attr(PostSummonTriggerWeatherSuppressedFormChangesForAllAbAttr)
       .attr(PreSwitchOutWeatherNoLongerSuppressedAbAttr)
       .attr(PostFaintWeatherNoLongerSuppressedAbAttr),
     new Ability(Abilities.TANGLED_FEET, 4)
