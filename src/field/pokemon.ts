@@ -19,7 +19,7 @@ import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEv
 import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "../data/tms";
 import { DamagePhase, FaintPhase, LearnMovePhase, ObtainStatusEffectPhase, StatChangePhase, SwitchSummonPhase, ToggleDoublePositionPhase  } from "../phases";
 import { BattleStat } from "../data/battle-stat";
-import { BattlerTag, BattlerTagLapseType, EncoreTag, HelpingHandTag, HighestStatBoostTag, TypeBoostTag, getBattlerTag } from "../data/battler-tags";
+import { BattlerTag, BattlerTagLapseType, EncoreTag, HelpingHandTag, HighestStatBoostTag, TypeBoostTag, TypeImmuneTag, getBattlerTag } from "../data/battler-tags";
 import { BattlerTagType } from "../data/enums/battler-tag-type";
 import { Species } from "../data/enums/species";
 import { WeatherType } from "../data/weather";
@@ -1678,6 +1678,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       typeMultiplier.value = 1;
     }
     if (types.find(t => move.isTypeImmune(t))) {
+      typeMultiplier.value = 0;
+    }
+    if (this.getTags(BattlerTagType.MAGNET_RISEN).filter((tag) => tag instanceof TypeImmuneTag && tag.immuneType === move.type).length !== 0) {
       typeMultiplier.value = 0;
     }
 
