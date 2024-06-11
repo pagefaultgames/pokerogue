@@ -14,7 +14,8 @@ export enum GameModes {
   ENDLESS,
   SPLICED_ENDLESS,
   DAILY,
-  CHALLENGE
+  CHALLENGE,
+  BATTLE_FACTORY
 }
 
 interface GameModeConfig {
@@ -178,6 +179,8 @@ export class GameMode implements GameModeConfig {
       return !(waveIndex % 250);
     case GameModes.DAILY:
       return waveIndex === 50;
+    case GameModes.BATTLE_FACTORY:
+      return waveIndex === 56; // TODO: Adjust wave
     }
   }
 
@@ -279,6 +282,8 @@ export class GameMode implements GameModeConfig {
       return i18next.t("gameMode:dailyRun");
     case GameModes.CHALLENGE:
       return i18next.t("gameMode:challenge");
+    case GameModes.BATTLE_FACTORY:
+      return "Battle Factory"; // TODO: localize this
     }
   }
 
@@ -294,6 +299,8 @@ export class GameMode implements GameModeConfig {
       return i18next.t("gameMode:dailyRun");
     case GameModes.CHALLENGE:
       return i18next.t("gameMode:challenge");
+    case GameModes.BATTLE_FACTORY:
+      return "Battle Factory"; // TODO: localize this
     }
   }
 }
