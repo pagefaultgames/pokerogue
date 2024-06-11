@@ -88,17 +88,14 @@ export interface Localizable {
   localize(): void;
 }
 
-const alternativeFonts = {
-  "ko": [
-    new FontFace("emerald", "url(./fonts/PokePT_Wansung.ttf)"),
-  ],
-};
+const fonts = [
+  new FontFace("emerald", "url(./fonts/pokemon-emerald-pro.ttf"),
+  new FontFace("emerald", "url(./fonts/PokePT_Wansung.ttf)"),
+];
 
 function initFonts() {
-  Object.keys(alternativeFonts).forEach((language: string) => {
-    alternativeFonts[language].forEach((fontface: FontFace) => {
-      fontface.load().then(f => document.fonts.add(f)).catch(e => console.error(e));
-    });
+  fonts.forEach((fontFace: FontFace) => {
+    fontFace.load().then(f => document.fonts.add(f)).catch(e => console.error(e));
   });
 }
 
