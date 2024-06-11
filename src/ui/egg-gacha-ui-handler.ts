@@ -170,7 +170,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     const pullOptionsText = pullOptions.map(option =>{
       const desc = option.description.split(" ");
       if (desc[0].length < 2) {
-        desc[0] += resolvedLanguage === "ko" ? " " : "  ";
+        desc[0] += ["zh", "ko"].includes(resolvedLanguage.substring(0,2)) ? " " : "  ";
       }
       if (option.multiplier === multiplierOne) {
         desc[0] = " " + desc[0];
