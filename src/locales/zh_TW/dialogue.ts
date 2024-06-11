@@ -2167,7 +2167,7 @@ export const PGFmiscDialogue: SimpleTranslationEntries = PGMmiscDialogue;
 export const PGMdoubleBattleDialogue: DialogueTranslationEntries = {
   "blue_red_double": {
     "encounter": {
-      1: "青綠：嘿，赤紅，\n讓這傢伙看看我們是什麼來頭！赤紅:...赤紅: ...青綠: 見識下真新鎮的實力！",
+      1: "青綠：嘿，赤紅，\n讓這傢伙看看我們是什麼來頭！$赤紅:...$青綠: 見識下真新鎮的實力！",
     },
     "victory": {
       1: "青綠：打得真不錯$赤紅: ...",
@@ -2175,7 +2175,7 @@ export const PGMdoubleBattleDialogue: DialogueTranslationEntries = {
   },
   "red_blue_double": {
     "encounter": {
-      1: "赤紅: ...!青綠：他人狠話不多。青綠： 他人狠話不多。青綠： 但別被他耍了，\n畢竟他可是個冠軍！",
+      1: "赤紅: ...!$青綠：他人狠話不多。$青綠： 他人狠話不多。$青綠： 但別被他耍了，\n畢竟他可是個冠軍！",
     },
     "victory": {
       1: "赤紅: ...!$青綠: 下次我們一定會贏你！",
@@ -2183,7 +2183,7 @@ export const PGMdoubleBattleDialogue: DialogueTranslationEntries = {
   },
   "tate_liza_double": {
     "encounter": {
-      1: "小楓:嘿嘿嘿……你驚訝嗎？小南:這裡有兩個道館館主？小南: 這裡有兩個道館館主？小楓: 我們是雙胞胎！小南:我們無需交談，因為……小南: 我們無需交談，因為……我們可以通曉彼此的想法小楓:我們的組合……小楓: 我們的組合……小南: 你能打敗嗎？",
+      1: "小楓:嘿嘿嘿……你驚訝嗎？$小南:這裡有兩個道館館主？$小楓: 我們是雙胞胎！$小南:我們無需交談，因為……我們可以通曉彼此的想法$小楓: 我們的組合……$小南: 你能打敗嗎？",
     },
     "victory": {
       1: "小楓：什麼？我們的組合……$小南：被瓦解了！",
@@ -2191,7 +2191,7 @@ export const PGMdoubleBattleDialogue: DialogueTranslationEntries = {
   },
   "liza_tate_double": {
     "encounter": {
-      1: "小南：呵呵呵……你驚訝吧？小楓：這裡有兩個道館館主？小楓：這裡有兩個道館館主？小南：我們可以通曉……小楓：彼此的想法……小楓：彼此的想法……小南：全在我們腦中！小楓：我們的組合……小楓：我們的組合……小南：你能打敗嗎？",
+      1: "小南：呵呵呵……你驚訝吧？$小楓：這裡有兩個道館館主？$小南：我們可以通曉……$小楓：彼此的想法……$小南：全在我們腦中！$小楓：我們的組合……$小南：你能打敗嗎？",
     },
     "victory": {
       1: "小楓：你和你的寶可夢……$小南：簡直像親兄弟姐妹！",
@@ -2199,7 +2199,7 @@ export const PGMdoubleBattleDialogue: DialogueTranslationEntries = {
   },
   "wallace_steven_double": {
     "encounter": {
-      1: "大吾：米可利, 展現冠軍的實力吧！米可利：我們將展示豐緣的實力！米可利：我們將展示豐緣的實力！大吾：要上了！",
+      1: "大吾：米可利, 展現冠軍的實力吧！$米可利：我們將展示豐緣的實力！$米可利：我們將展示豐緣的實力！$大吾：要上了！",
     },
     "victory": {
       1: "大吾：打得真不錯！$米可利：我們下次會贏的！",
