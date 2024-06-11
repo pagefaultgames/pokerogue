@@ -409,7 +409,6 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       for (const tier of tiers) {
         const eggId = Utils.randInt(EGG_SEED, EGG_SEED * tier);
         const egg = new Egg(eggId, this.gachaCursor, getEggTierDefaultHatchWaves(tier), timestamp);
-        console.log(egg);
         if (egg.isManaphyEgg()) {
           this.scene.gameData.gameStats.manaphyEggsPulled++;
           egg.hatchWaves = getEggTierDefaultHatchWaves(EggTier.ULTRA);
