@@ -1075,14 +1075,16 @@ export default class BattleScene extends SceneBase {
           if (pokemon.hasAbility(Abilities.ICE_FACE)) {
             pokemon.formIndex = 0;
           }
-        }
-        this.unshiftPhase(new ShowTrainerPhase(this));
 
-        for (const pokemon of this.getParty()) {
           pokemon.resetBattleData();
           applyPostBattleInitAbAttrs(PostBattleInitAbAttr, pokemon);
-          this.triggerPokemonFormChange(pokemon, SpeciesFormChangeTimeOfDayTrigger);
         }
+
+        this.unshiftPhase(new ShowTrainerPhase(this));
+      }
+
+      for (const pokemon of this.getParty()) {
+        this.triggerPokemonFormChange(pokemon, SpeciesFormChangeTimeOfDayTrigger);
       }
 
       if (!this.gameMode.hasRandomBiomes && !isNewBiome) {
