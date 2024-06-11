@@ -2628,7 +2628,7 @@ export const PGMdoubleBattleDialogue: DialogueTranslationEntries = {
   },
   "marnie_piers_double": {
     "encounter": {
-      1:  `두송: 큰서트 즐길 준비 됐어?
+      1:  `두송: 콘서트 즐길 준비 됐어?
                     $마리: 오빠... 얘들은 노래가 아니라 승부를 하러 왔어...`,
     },
     "victory": {
