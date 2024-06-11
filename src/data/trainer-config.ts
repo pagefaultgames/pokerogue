@@ -538,7 +538,6 @@ export class TrainerConfig {
       initI18n();
     }
     this.setPartyTemplates(trainerPartyTemplates.RIVAL_5);
-    console.log(signatureSpecies);
     signatureSpecies.forEach((speciesPool, s) => {
       if (!Array.isArray(speciesPool)) {
         speciesPool = [speciesPool];

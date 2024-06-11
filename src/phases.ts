@@ -62,7 +62,7 @@ import { Abilities } from "./data/enums/abilities";
 import * as Overrides from "./overrides";
 import { TextStyle, addTextObject } from "./ui/text";
 import { Type } from "./data/type";
-import { BerryUsedEvent, EncounterPhaseEvent, MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./battle-scene-events";
+import { BerryUsedEvent, EncounterPhaseEvent, MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./events/battle-scene";
 import { ExpNotification } from "./enums/exp-notification";
 
 
@@ -5191,15 +5191,15 @@ export class EggLapsePhase extends Phase {
       return Overrides.IMMEDIATE_HATCH_EGGS_OVERRIDE ? true : --egg.hatchWaves < 1;
     });
 
-    let eggsToHatchCount: integer = eggsToHatch.length;
+    let eggCount: integer = eggsToHatch.length;
 
-    if (eggsToHatchCount) {
+    if (eggCount) {
       this.scene.queueMessage(i18next.t("battle:eggHatching"));
 
       for (const egg of eggsToHatch) {
-        this.scene.unshiftPhase(new EggHatchPhase(this.scene, egg, eggsToHatchCount));
-        if (eggsToHatchCount > 0) {
-          eggsToHatchCount--;
+        this.scene.unshiftPhase(new EggHatchPhase(this.scene, egg, eggCount));
+        if (eggCount > 0) {
+          eggCount--;
         }
       }
 
