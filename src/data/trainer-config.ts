@@ -1232,20 +1232,14 @@ export const trainerConfigs: TrainerConfigs = {
     }),
   [TrainerType.FLARE_GRUNT]: new TrainerConfig(++t).setHasGenders("Flare Grunt Female").setHasDouble("Flare Grunts").setMoneyMultiplier(1.0).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm("battle_plasma_grunt").setPartyTemplateFunc(scene => getEvilGruntPartyTemplate(scene))
     .setSpeciesPools({
-      [TrainerPoolTier.COMMON]: [ Species.FLETCHLING, Species.LITLEO, Species.PONYTA, Species.INKAY, Species.HOUNDOUR, Species.SKORUPI],
+      [TrainerPoolTier.COMMON]: [Species.FLETCHLING, Species.LITLEO, Species.PONYTA, Species.INKAY, Species.HOUNDOUR, Species.SKORUPI],
       [TrainerPoolTier.UNCOMMON]: [Species.HELIOPTILE, Species.ELECTRIKE, Species.SKRELP, Species.GULPIN],
       [TrainerPoolTier.RARE]: [Species.LITWICK, Species.SNEASEL],
       [TrainerPoolTier.SUPER_RARE]: [Species.NOIVERN],
       [TrainerPoolTier.ULTRA_RARE]: []
     }),
   [TrainerType.CIPHER_PEON]: new TrainerConfig(++t).setHasGenders("Cipher Peon Female").setHasDouble("Cipher Peons").setMoneyMultiplier(1.0).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm("battle_cipher_peon").setMixedBattleBgm("battle_cipher_peon").setPartyTemplateFunc(scene => getEvilGruntPartyTemplate(scene))
-    .setSpeciesPools({
-      [TrainerPoolTier.COMMON]: [Species.HITMONTOP,Species.VIBRAVA,Species.REMORAID,Species.MANTINE,Species.GEODUDE,Species.FORRETRESS],
-      [TrainerPoolTier.UNCOMMON]: [Species.CROCONAW,Species.QUILAVA,Species.BAYLEEF,Species.TROPIUS],
-      [TrainerPoolTier.RARE]: [Species.MUK,Species.VILEPLUME],
-      [TrainerPoolTier.SUPER_RARE]: [Species.GRUMPIG],
-      [TrainerPoolTier.ULTRA_RARE]: []
-    }),
+    .setSpeciesFilter(s => s.baseTotal < 556), // Includes stronger Pokémon like Arcanine but no Pseudo Legendaries or Paradox
 
   [TrainerType.BROCK]: new TrainerConfig((t = TrainerType.BROCK)).initForGymLeader(signatureSpecies["BROCK"],true, Type.ROCK).setBattleBgm("battle_kanto_gym").setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.MISTY]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["MISTY"],false, Type.WATER).setBattleBgm("battle_kanto_gym").setMixedBattleBgm("battle_kanto_gym"),
