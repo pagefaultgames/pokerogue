@@ -12,9 +12,9 @@ import { Moves } from "../data/enums/moves";
 import { getGenderColor, getGenderSymbol } from "../data/gender";
 import { StatusEffect } from "../data/status-effect";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
-import { pokemonEvolutions } from "../data/pokemon-evolutions";
+import { EvolutionItem, pokemonEvolutions } from "../data/pokemon-evolutions";
 import { addWindow } from "./ui-theme";
-import { SpeciesFormChangeItemTrigger } from "../data/pokemon-forms";
+import { FormChangeItem, SpeciesFormChangeItemTrigger } from "../data/pokemon-forms";
 import { getVariantTint } from "#app/data/variant";
 import {Button} from "../enums/buttons";
 import { applyChallenges, ChallengeType } from "#app/data/challenge.js";
@@ -103,6 +103,8 @@ export default class PartyUiHandler extends MessageUiHandler {
   private moveSelectFilter: PokemonMoveSelectFilter;
   private tmMoveId: Moves;
   private showMovePp: boolean;
+  private evolutionItemId: EvolutionItem;
+  private formItemId: FormChangeItem;
 
   private iconAnimHandler: PokemonIconAnimHandler;
 
@@ -239,7 +241,8 @@ export default class PartyUiHandler extends MessageUiHandler {
       : PartyUiHandler.FilterAllMoves;
     this.tmMoveId = args.length > 5 && args[5] ? args[5] : Moves.NONE;
     this.showMovePp = args.length > 6 && args[6];
-
+    this.evolutionItemId = args.length > 7 && args[7] ? args[7] : EvolutionItem.NONE;
+    this.formItemId = args.length > 8 && args[8] ? args[8] : FormChangeItem.NONE;
     this.partyContainer.setVisible(true);
     this.partyBg.setTexture(`party_bg${this.scene.currentBattle.double ? "_double" : ""}`);
     this.populatePartySlots();
@@ -542,7 +545,7 @@ export default class PartyUiHandler extends MessageUiHandler {
 
     for (const p in party) {
       const slotIndex = parseInt(p);
-      const partySlot = new PartySlot(this.scene, slotIndex, party[p], this.iconAnimHandler, this.partyUiMode, this.tmMoveId);
+      const partySlot = new PartySlot(this.scene, slotIndex, party[p], this.iconAnimHandler, this.partyUiMode, this.tmMoveId, this.evolutionItemId, this.formItemId);
       this.scene.add.existing(partySlot);
       this.partySlotsContainer.add(partySlot);
       this.partySlots.push(partySlot);
@@ -981,7 +984,7 @@ class PartySlot extends Phaser.GameObjects.Container {
   private pokemonIcon: Phaser.GameObjects.Container;
   private iconAnimHandler: PokemonIconAnimHandler;
 
-  constructor(scene: BattleScene, slotIndex: integer, pokemon: PlayerPokemon, iconAnimHandler: PokemonIconAnimHandler, partyUiMode: PartyUiMode, tmMoveId: Moves) {
+  constructor(scene: BattleScene, slotIndex: integer, pokemon: PlayerPokemon, iconAnimHandler: PokemonIconAnimHandler, partyUiMode: PartyUiMode, tmMoveId: Moves, evolutionItemId: EvolutionItem, formItemId: FormChangeItem) {
     super(scene, slotIndex >= scene.currentBattle.getBattlerCount() ? 230.5 : 64,
       slotIndex >= scene.currentBattle.getBattlerCount() ? -184 + (scene.currentBattle.double ? -40 : 0)
       + (28 + (scene.currentBattle.double ? 8 : 0)) * slotIndex : -124 + (scene.currentBattle.double ? -8 : 0) + slotIndex * 64);
@@ -990,10 +993,10 @@ class PartySlot extends Phaser.GameObjects.Container {
     this.pokemon = pokemon;
     this.iconAnimHandler = iconAnimHandler;
 
-    this.setup(partyUiMode, tmMoveId);
+    this.setup(partyUiMode, tmMoveId, evolutionItemId, formItemId);
   }
 
-  setup(partyUiMode: PartyUiMode, tmMoveId: Moves) {
+  setup(partyUiMode: PartyUiMode, tmMoveId: Moves, evolutionItemId: EvolutionItem, formItemId: FormChangeItem) {
     const battlerCount = (this.scene as BattleScene).currentBattle.getBattlerCount();
 
     const slotKey = `party_slot${this.slotIndex >= battlerCount ? "" : "_main"}`;
@@ -1103,24 +1106,7 @@ class PartySlot extends Phaser.GameObjects.Container {
       }
     }
 
-    if (partyUiMode !== PartyUiMode.TM_MODIFIER) {
-      const slotHpBar = this.scene.add.image(0, 0, "party_slot_hp_bar");
-      slotHpBar.setPositionRelative(slotBg, this.slotIndex >= battlerCount ? 72 : 8, this.slotIndex >= battlerCount ? 6 : 31);
-      slotHpBar.setOrigin(0, 0);
-
-      const hpRatio = this.pokemon.getHpRatio();
-
-      const slotHpOverlay = this.scene.add.sprite(0, 0, "party_slot_hp_overlay", hpRatio > 0.5 ? "high" : hpRatio > 0.25 ? "medium" : "low");
-      slotHpOverlay.setPositionRelative(slotHpBar, 16, 2);
-      slotHpOverlay.setOrigin(0, 0);
-      slotHpOverlay.setScale(hpRatio, 1);
-
-      const slotHpText = addTextObject(this.scene, 0, 0, `${this.pokemon.hp}/${this.pokemon.getMaxHp()}`, TextStyle.PARTY);
-      slotHpText.setPositionRelative(slotHpBar, slotHpBar.width - 3, slotHpBar.height - 2);
-      slotHpText.setOrigin(1, 0);
-
-      slotInfoContainer.add([ slotHpBar, slotHpOverlay, slotHpText ]);
-    } else {
+    if (partyUiMode === PartyUiMode.TM_MODIFIER) {
       let slotTmText: string;
       switch (true) {
       case (this.pokemon.compatibleTms.indexOf(tmMoveId) === -1):
@@ -1139,6 +1125,44 @@ class PartySlot extends Phaser.GameObjects.Container {
       slotTmLabel.setOrigin(0, 1);
 
       slotInfoContainer.add(slotTmLabel);
+    } else if (partyUiMode === PartyUiMode.MODIFIER && (evolutionItemId || formItemId)) {
+      let slotItemText = "";
+      if (evolutionItemId) {
+        if (this.pokemon.evolutionItems.indexOf(evolutionItemId) !== -1) {
+          slotItemText = "Able";
+        } else {
+          slotItemText = "Not Able";
+        }
+      } else if (formItemId) {
+        if (this.pokemon.formChangeItems.indexOf(formItemId) !== -1) {
+          slotItemText = "Able";
+        } else {
+          slotItemText = "Not Able";
+        }
+      }
+
+      const slotItemLabel = addTextObject(this.scene, 0, 0, slotItemText, TextStyle.MESSAGE);
+      slotItemLabel.setPositionRelative(slotBg, this.slotIndex >= battlerCount ? 94 : 32, this.slotIndex >= battlerCount ? 16 : 46);
+      slotItemLabel.setOrigin(0, 1);
+
+      slotInfoContainer.add(slotItemLabel);
+    } else {
+      const slotHpBar = this.scene.add.image(0, 0, "party_slot_hp_bar");
+      slotHpBar.setPositionRelative(slotBg, this.slotIndex >= battlerCount ? 72 : 8, this.slotIndex >= battlerCount ? 6 : 31);
+      slotHpBar.setOrigin(0, 0);
+
+      const hpRatio = this.pokemon.getHpRatio();
+
+      const slotHpOverlay = this.scene.add.sprite(0, 0, "party_slot_hp_overlay", hpRatio > 0.5 ? "high" : hpRatio > 0.25 ? "medium" : "low");
+      slotHpOverlay.setPositionRelative(slotHpBar, 16, 2);
+      slotHpOverlay.setOrigin(0, 0);
+      slotHpOverlay.setScale(hpRatio, 1);
+
+      const slotHpText = addTextObject(this.scene, 0, 0, `${this.pokemon.hp}/${this.pokemon.getMaxHp()}`, TextStyle.PARTY);
+      slotHpText.setPositionRelative(slotHpBar, slotHpBar.width - 3, slotHpBar.height - 2);
+      slotHpText.setOrigin(1, 0);
+
+      slotInfoContainer.add([ slotHpBar, slotHpOverlay, slotHpText ]);
     }
   }
 

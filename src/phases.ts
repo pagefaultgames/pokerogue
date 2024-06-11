@@ -19,7 +19,7 @@ import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } fr
 import { biomeLinks, getBiomeName } from "./data/biomes";
 import { Biome } from "./data/enums/biome";
 import { ModifierTier } from "./modifier/modifier-tier";
-import { FusePokemonModifierType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, PokemonPpRestoreModifierType, PokemonPpUpModifierType, RememberMoveModifierType, TmModifierType, getDailyRunStarterModifiers, getEnemyBuffModifierForWave, getModifierType, getPlayerModifierTypeOptions, getPlayerShopModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
+import { EvolutionItemModifierType, FormChangeItemModifierType, FusePokemonModifierType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, PokemonPpRestoreModifierType, PokemonPpUpModifierType, RememberMoveModifierType, TmModifierType, getDailyRunStarterModifiers, getEnemyBuffModifierForWave, getModifierType, getPlayerModifierTypeOptions, getPlayerShopModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { BattlerTagLapseType, EncoreTag, HideSpriteTag as HiddenTag, ProtectedTag, TrappedTag } from "./data/battler-tags";
 import { BattlerTagType } from "./data/enums/battler-tag-type";
@@ -5096,12 +5096,20 @@ export class SelectModifierPhase extends BattlePhase {
           const isTmModifier = modifierType instanceof TmModifierType;
           const isRememberMoveModifier = modifierType instanceof RememberMoveModifierType;
           const isPpRestoreModifier = (modifierType instanceof PokemonPpRestoreModifierType || modifierType instanceof PokemonPpUpModifierType);
+          const isEvolutionItemModifier = modifierType instanceof EvolutionItemModifierType;
+          const isFormItemModifier = modifierType instanceof FormChangeItemModifierType;
           const partyUiMode = isMoveModifier ? PartyUiMode.MOVE_MODIFIER
             : isTmModifier ? PartyUiMode.TM_MODIFIER
               : isRememberMoveModifier ? PartyUiMode.REMEMBER_MOVE_MODIFIER
                 : PartyUiMode.MODIFIER;
           const tmMoveId = isTmModifier
             ? (modifierType as TmModifierType).moveId
+            : undefined;
+          const evolutionItemId = isEvolutionItemModifier
+            ? (modifierType as EvolutionItemModifierType).evolutionItem
+            : undefined;
+          const formItemId = isFormItemModifier
+            ? (modifierType as FormChangeItemModifierType).formChangeItem
             : undefined;
           this.scene.ui.setModeWithoutClear(Mode.PARTY, partyUiMode, -1, (slotIndex: integer, option: PartyOption) => {
             if (slotIndex < 6) {
@@ -5116,7 +5124,7 @@ export class SelectModifierPhase extends BattlePhase {
             } else {
               this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost(typeOptions, this.scene.lockModifierTiers));
             }
-          }, pokemonModifierType.selectFilter, modifierType instanceof PokemonMoveModifierType ? (modifierType as PokemonMoveModifierType).moveSelectFilter : undefined, tmMoveId, isPpRestoreModifier);
+          }, pokemonModifierType.selectFilter, modifierType instanceof PokemonMoveModifierType ? (modifierType as PokemonMoveModifierType).moveSelectFilter : undefined, tmMoveId, isPpRestoreModifier, evolutionItemId, formItemId);
         }
       } else {
         applyModifier(modifierType.newModifier());
