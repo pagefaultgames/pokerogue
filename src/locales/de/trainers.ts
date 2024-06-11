@@ -148,6 +148,7 @@ export const trainerClasses: SimpleTranslationEntries = {
   "flare_grunts": "Rüpel von Team Flare",
   "cipher_peon": "Cryptoknecht",
   "cipher_peon_female": "Cryptoknecht",
+  "cipher_peons": "Cryptoknechte",
 } as const;
 
 // Names of special trainers like gym leaders, elite four, and the champion

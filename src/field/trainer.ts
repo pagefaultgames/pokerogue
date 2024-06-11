@@ -122,7 +122,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
     // Determine the title to include based on the configuration and includeTitle flag.
     let title = includeTitle && this.config.title ? this.config.title : null;
 
-    if (this.name === "" && name.toLowerCase().includes("grunt")) {
+    if (this.name === "" && (name.toLowerCase().includes("grunt")) || (name.toLowerCase().includes("peon"))) {
       // This is a evil team grunt so we localize it by only using the "name" as the title
       title = i18next.t(`trainerClasses:${name.toLowerCase().replace(/\s/g, "_")}`);
       console.log("Localized grunt name: " + title);
