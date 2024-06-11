@@ -1,7 +1,6 @@
 import Phaser from "phaser";
 import * as Utils from "./utils";
 import {deepCopy} from "./utils";
-import {initTouchControls} from "./touch-controls";
 import pad_generic from "./configs/inputs/pad_generic";
 import pad_unlicensedSNES from "./configs/inputs/pad_unlicensedSNES";
 import pad_xbox360 from "./configs/inputs/pad_xbox360";
@@ -21,6 +20,7 @@ import {
 import BattleScene from "./battle-scene";
 import {SettingGamepad} from "#app/system/settings/settings-gamepad.js";
 import {SettingKeyboard} from "#app/system/settings/settings-keyboard";
+import TouchControl from "#app/touch-controls";
 
 export interface DeviceMapping {
     [key: string]: number;
@@ -48,7 +48,7 @@ export interface InterfaceConfig {
     custom?: MappingLayout;
 }
 
-const repeatInputDelayMillis = 500;
+const repeatInputDelayMillis = 250;
 
 // Phaser.Input.Gamepad.GamepadPlugin#refreshPads
 declare module "phaser" {
@@ -92,9 +92,8 @@ export class InputsController {
   private scene: BattleScene;
   public events: Phaser.Events.EventEmitter;
 
-  private buttonLock: Button;
+  private buttonLock: Button[] = new Array();
   private interactions: Map<Button, Map<string, boolean>> = new Map();
-  private time: Phaser.Time.Clock;
   private configs: Map<string, InterfaceConfig> = new Map();
 
   public gamepadSupport: boolean = true;
@@ -102,10 +101,10 @@ export class InputsController {
 
   private disconnectedGamepads: Array<String> = new Array();
 
-  private pauseUpdate: boolean = false;
 
   public lastSource: string = "keyboard";
-  private keys: Array<number> = [];
+  private inputInterval: NodeJS.Timeout[] = new Array();
+  private touchControls: TouchControl;
 
   /**
      * Initializes a new instance of the game control system, setting up initial state and configurations.
@@ -121,7 +120,6 @@ export class InputsController {
 
   constructor(scene: BattleScene) {
     this.scene = scene;
-    this.time = this.scene.time;
     this.selectedDevice = {
       [Device.GAMEPAD]: null,
       [Device.KEYBOARD]: "default"
@@ -183,7 +181,7 @@ export class InputsController {
       this.scene.input.keyboard.on("keydown", this.keyboardKeyDown, this);
       this.scene.input.keyboard.on("keyup", this.keyboardKeyUp, this);
     }
-    initTouchControls(this.events);
+    this.touchControls = new TouchControl(this.scene);
   }
 
   /**
@@ -194,6 +192,7 @@ export class InputsController {
      */
   loseFocus(): void {
     this.deactivatePressedKey();
+    this.touchControls.deactivatePressedKey();
   }
 
   /**
@@ -232,45 +231,6 @@ export class InputsController {
   setChosenKeyboardLayout(layoutKeyboard: String): void {
     this.deactivatePressedKey();
     this.initChosenLayoutKeyboard(layoutKeyboard);
-  }
-
-  /**
-     * Updates the interaction handling by processing input states.
-     * This method gives priority to certain buttons by reversing the order in which they are checked.
-     * This method loops through all button values, checks for valid and timely interactions, and conditionally processes
-     * or ignores them based on the current state of gamepad support and other criteria.
-     *
-     * It handles special conditions such as the absence of gamepad support or mismatches between the source of the input and
-     * the currently chosen gamepad. It also respects the paused state of updates to prevent unwanted input processing.
-     *
-     * If an interaction is valid and should be processed, it emits an 'input_down' event with details of the interaction.
-     */
-  update(): void {
-    for (const b of Utils.getEnumValues(Button).reverse()) {
-      if (
-        this.interactions.hasOwnProperty(b) &&
-                this.repeatInputDurationJustPassed(b as Button) &&
-                this.interactions[b].isPressed
-      ) {
-        // Prevents repeating button interactions when gamepad support is disabled.
-        if (
-          (!this.gamepadSupport && this.interactions[b].source === "gamepad") ||
-                    (this.interactions[b].source === "gamepad" && this.interactions[b].sourceName && this.interactions[b].sourceName !== this.selectedDevice[Device.GAMEPAD]) ||
-                    (this.interactions[b].source === "keyboard" && this.interactions[b].sourceName && this.interactions[b].sourceName !== this.selectedDevice[Device.KEYBOARD]) ||
-                    this.pauseUpdate
-        ) {
-          // Deletes the last interaction for a button if gamepad is disabled.
-          this.delLastProcessedMovementTime(b as Button);
-          return;
-        }
-        // Emits an event for the button press.
-        this.events.emit("input_down", {
-          controller_type: this.interactions[b].source,
-          button: b,
-        });
-        this.setLastProcessedMovementTime(b as Button, this.interactions[b].source, this.interactions[b].sourceName);
-      }
-    }
   }
 
   /**
@@ -404,19 +364,24 @@ export class InputsController {
      */
   keyboardKeyDown(event): void {
     this.lastSource = "keyboard";
-    const keyDown = event.keyCode;
     this.ensureKeyboardIsInit();
-    if (this.keys.includes(keyDown)) {
-      return;
-    }
-    this.keys.push(keyDown);
-    const buttonDown = getButtonWithKeycode(this.getActiveConfig(Device.KEYBOARD), keyDown);
+    const buttonDown = getButtonWithKeycode(this.getActiveConfig(Device.KEYBOARD), event.keyCode);
     if (buttonDown !== undefined) {
+      if (this.buttonLock.includes(buttonDown)) {
+        return;
+      }
       this.events.emit("input_down", {
         controller_type: "keyboard",
         button: buttonDown,
       });
-      this.setLastProcessedMovementTime(buttonDown, "keyboard", this.selectedDevice[Device.KEYBOARD]);
+      clearInterval(this.inputInterval[buttonDown]);
+      this.inputInterval[buttonDown] = setInterval(() => {
+        this.events.emit("input_down", {
+          controller_type: "keyboard",
+          button: buttonDown,
+        });
+      }, repeatInputDelayMillis);
+      this.buttonLock.push(buttonDown);
     }
   }
 
@@ -427,16 +392,15 @@ export class InputsController {
      */
   keyboardKeyUp(event): void {
     this.lastSource = "keyboard";
-    const keyDown = event.keyCode;
-    this.keys = this.keys.filter(k => k !== keyDown);
-    this.ensureKeyboardIsInit();
-    const buttonUp = getButtonWithKeycode(this.getActiveConfig(Device.KEYBOARD), keyDown);
+    const buttonUp = getButtonWithKeycode(this.getActiveConfig(Device.KEYBOARD), event.keyCode);
     if (buttonUp !== undefined) {
       this.events.emit("input_up", {
         controller_type: "keyboard",
         button: buttonUp,
       });
-      this.delLastProcessedMovementTime(buttonUp);
+      const index = this.buttonLock.indexOf(buttonUp);
+      this.buttonLock.splice(index, 1);
+      clearInterval(this.inputInterval[buttonUp]);
     }
   }
 
@@ -466,11 +430,25 @@ export class InputsController {
     const activeConfig = this.getActiveConfig(Device.GAMEPAD);
     const buttonDown = activeConfig && getButtonWithKeycode(activeConfig, button.index);
     if (buttonDown !== undefined) {
+      if (this.buttonLock.includes(buttonDown)) {
+        return;
+      }
       this.events.emit("input_down", {
         controller_type: "gamepad",
         button: buttonDown,
       });
-      this.setLastProcessedMovementTime(buttonDown, "gamepad", pad.id);
+      clearInterval(this.inputInterval[buttonDown]);
+      this.inputInterval[buttonDown] = setInterval(() => {
+        if (!this.buttonLock.includes(buttonDown)) {
+          clearInterval(this.inputInterval[buttonDown]);
+          return;
+        }
+        this.events.emit("input_down", {
+          controller_type: "gamepad",
+          button: buttonDown,
+        });
+      }, repeatInputDelayMillis);
+      this.buttonLock.push(buttonDown);
     }
   }
 
@@ -497,7 +475,9 @@ export class InputsController {
         controller_type: "gamepad",
         button: buttonUp,
       });
-      this.delLastProcessedMovementTime(buttonUp);
+      const index = this.buttonLock.indexOf(buttonUp);
+      this.buttonLock.splice(index, 1);
+      clearInterval(this.inputInterval[buttonUp]);
     }
   }
 
@@ -540,143 +520,13 @@ export class InputsController {
   }
 
   /**
-     * repeatInputDurationJustPassed returns true if @param button has been held down long
-     * enough to fire a repeated input. A button must claim the buttonLock before
-     * firing a repeated input - this is to prevent multiple buttons from firing repeatedly.
-     */
-  repeatInputDurationJustPassed(button: Button): boolean {
-    if (!this.isButtonLocked(button)) {
-      return false;
-    }
-    if (this.time.now - this.interactions[button].pressTime >= repeatInputDelayMillis) {
-      return true;
-    }
-  }
-
-  /**
-     * This method updates the interaction state to reflect that the button is pressed.
-     *
-     * @param button - The button for which to set the interaction.
-     * @param source - The source of the input (defaults to 'keyboard'). This helps identify the origin of the input, especially useful in environments with multiple input devices.
-     *
-     * @remarks
-     * This method is responsible for updating the interaction state of a button within the `interactions` dictionary. If the button is not already registered, this method returns immediately.
-     * When invoked, it performs the following updates:
-     * - `pressTime`: Sets this to the current time, representing when the button was initially pressed.
-     * - `isPressed`: Marks the button as currently being pressed.
-     * - `source`: Identifies the source device of the input, which can vary across different hardware (e.g., keyboard, gamepad).
-     *
-     * Additionally, this method locks the button (by calling `setButtonLock`) to prevent it from being re-processed until it is released, ensuring that each press is handled distinctly.
-     */
-  setLastProcessedMovementTime(button: Button, source: String = "keyboard", sourceName?: String): void {
-    if (!this.interactions.hasOwnProperty(button)) {
-      return;
-    }
-    this.setButtonLock(button);
-    this.interactions[button].pressTime = this.time.now;
-    this.interactions[button].isPressed = true;
-    this.interactions[button].source = source;
-    this.interactions[button].sourceName = sourceName.toLowerCase();
-  }
-
-  /**
-     * Clears the last interaction for a specified button.
-     *
-     * @param button - The button for which to clear the interaction.
-     *
-     * @remarks
-     * This method resets the interaction details of the button, allowing it to be processed as a new input when pressed again.
-     * If the button is not registered in the `interactions` dictionary, this method returns immediately, otherwise:
-     * - `pressTime` is cleared. This was previously storing the timestamp of when the button was initially pressed.
-     * - `isPressed` is set to false, indicating that the button is no longer being pressed.
-     * - `source` is set to null, which had been indicating the device from which the button input was originating.
-     *
-     * It releases the button lock, which prevents the button from being processed repeatedly until it's explicitly released.
-     */
-  delLastProcessedMovementTime(button: Button): void {
-    if (!this.interactions.hasOwnProperty(button)) {
-      return;
-    }
-    this.releaseButtonLock(button);
-    this.interactions[button].pressTime = null;
-    this.interactions[button].isPressed = false;
-    this.interactions[button].source = null;
-    this.interactions[button].sourceName = null;
-  }
-
-  /**
-     * Deactivates all currently pressed keys and resets their interaction states.
-     *
-     * @remarks
-     * This method is used to reset the state of all buttons within the `interactions` dictionary,
-     * effectively deactivating any currently pressed keys. It performs the following actions:
-     *
-     * - Releases button lock for predefined buttons, allowing them
-     *   to be pressed again or properly re-initialized in future interactions.
-     * - Iterates over all possible button values obtained via `Utils.getEnumValues(Button)`, and for
-     *   each button:
-     *   - Checks if the button is currently registered in the `interactions` dictionary.
-     *   - Resets `pressTime` to null, indicating that there is no ongoing interaction.
-     *   - Sets `isPressed` to false, marking the button as not currently active.
-     *   - Clears the `source` field, removing the record of which device the button press came from.
-     *
-     * This method is typically called when needing to ensure that all inputs are neutralized.
+     * Deactivates all currently pressed keys.
      */
   deactivatePressedKey(): void {
-    this.pauseUpdate = true;
-    this.releaseButtonLock(this.buttonLock);
-    for (const b of Utils.getEnumValues(Button)) {
-      if (this.interactions.hasOwnProperty(b)) {
-        this.interactions[b].pressTime = null;
-        this.interactions[b].isPressed = false;
-        this.interactions[b].source = null;
-        this.interactions[b].sourceName = null;
-      }
+    for (const key of Object.keys(this.inputInterval)) {
+      clearInterval(this.inputInterval[key]);
     }
-    setTimeout(() => this.pauseUpdate = false, 500);
-  }
-
-  /**
-     * Checks if a specific button is currently locked.
-     *
-     * @param button - The button to check for a lock status.
-     * @returns `true` if the button is locked, otherwise `false`.
-     *
-     * @remarks
-     * This method is used to determine if a given button is currently prevented from being processed due to a lock.
-     * It checks against two separate lock variables, allowing for up to two buttons to be locked simultaneously.
-     */
-  isButtonLocked(button: Button): boolean {
-    return this.buttonLock === button;
-  }
-
-  /**
-     * Sets a lock on a given button.
-     *
-     * @param button - The button to lock.
-     *
-     * @remarks
-     * This method ensures that a button is not processed multiple times inadvertently.
-     * It checks if the button is already locked.
-     */
-  setButtonLock(button: Button): void {
-    this.buttonLock = button;
-  }
-
-  /**
-     * Releases a lock on a specific button, allowing it to be processed again.
-     *
-     * @param button - The button whose lock is to be released.
-     *
-     * @remarks
-     * This method checks lock variable.
-     * If either lock matches the specified button, that lock is cleared.
-     * This action frees the button to be processed again, ensuring it can respond to new inputs.
-     */
-  releaseButtonLock(button: Button): void {
-    if (this.buttonLock === button) {
-      this.buttonLock = null;
-    }
+    this.buttonLock = [];
   }
 
   /**
@@ -750,8 +600,7 @@ export class InputsController {
      * @param pressedButton The button that was pressed.
      */
   assignBinding(config, settingName, pressedButton): boolean {
-    this.pauseUpdate = true;
-    setTimeout(() => this.pauseUpdate = false, 500);
+    this.deactivatePressedKey();
     if (config.padType === "keyboard") {
       return assign(config, settingName, pressedButton);
     } else {

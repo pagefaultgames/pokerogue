@@ -1,6 +1,6 @@
 import BattleScene from "../battle-scene";
 import { addTextObject, TextStyle } from "./text";
-import { Type } from "../data/type";
+import { getTypeDamageMultiplierColor, Type } from "../data/type";
 import { Command } from "./command-ui-handler";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
@@ -9,6 +9,7 @@ import { CommandPhase } from "../phases";
 import { MoveCategory } from "#app/data/move.js";
 import i18next from "../plugins/i18n";
 import {Button} from "../enums/buttons";
+import Pokemon, { PokemonMove } from "#app/field/pokemon.js";
 
 export default class FightUiHandler extends UiHandler {
   private movesContainer: Phaser.GameObjects.Container;
@@ -162,7 +163,8 @@ export default class FightUiHandler extends UiHandler {
       ui.add(this.cursorObj);
     }
 
-    const moveset = (this.scene.getCurrentPhase() as CommandPhase).getPokemon().getMoveset();
+    const pokemon = (this.scene.getCurrentPhase() as CommandPhase).getPokemon();
+    const moveset = pokemon.getMoveset();
 
     const hasMove = cursor < moveset.length;
 
@@ -179,6 +181,26 @@ export default class FightUiHandler extends UiHandler {
       this.ppText.setText(`${Utils.padInt(pp, 2, "  ")}/${Utils.padInt(maxPP, 2, "  ")}`);
       this.powerText.setText(`${power >= 0 ? power : "---"}`);
       this.accuracyText.setText(`${accuracy >= 0 ? accuracy : "---"}`);
+
+      const ppPercentLeft = pp / maxPP;
+
+      //** Determines TextStyle according to percentage of PP remaining */
+      let ppColorStyle = TextStyle.MOVE_PP_FULL;
+      if (ppPercentLeft > 0.25 && ppPercentLeft <= 0.5) {
+        ppColorStyle = TextStyle.MOVE_PP_HALF_FULL;
+      } else if (ppPercentLeft > 0 && ppPercentLeft <= 0.25) {
+        ppColorStyle = TextStyle.MOVE_PP_NEAR_EMPTY;
+      } else if (ppPercentLeft === 0) {
+        ppColorStyle = TextStyle.MOVE_PP_EMPTY;
+      }
+
+      //** Changes the text color and shadow according to the determined TextStyle */
+      this.ppText.setColor(this.getTextColor(ppColorStyle, false));
+      this.ppText.setShadowColor(this.getTextColor(ppColorStyle, true));
+
+      pokemon.getOpponents().forEach((opponent) => {
+        opponent.updateEffectiveness(this.getEffectivenessText(pokemon, opponent, pokemonMove));
+      });
     }
 
     this.typeIcon.setVisible(hasMove);
@@ -195,15 +217,58 @@ export default class FightUiHandler extends UiHandler {
     return changed;
   }
 
+  /**
+   * Gets multiplier text for a pokemon's move against a specific opponent
+   * Returns undefined if it's a status move
+   */
+  private getEffectivenessText(pokemon: Pokemon, opponent: Pokemon, pokemonMove: PokemonMove): string | undefined {
+    const effectiveness = opponent.getMoveEffectiveness(pokemon, pokemonMove);
+    if (effectiveness === undefined) {
+      return undefined;
+    }
+
+    return `${effectiveness}x`;
+  }
+
   displayMoves() {
-    const moveset = (this.scene.getCurrentPhase() as CommandPhase).getPokemon().getMoveset();
-    for (let m = 0; m < 4; m++) {
-      const moveText = addTextObject(this.scene, m % 2 === 0 ? 0 : 100, m < 2 ? 0 : 16, "-", TextStyle.WINDOW);
-      if (m < moveset.length) {
-        moveText.setText(moveset[m].getName());
+    const pokemon = (this.scene.getCurrentPhase() as CommandPhase).getPokemon();
+    const moveset = pokemon.getMoveset();
+
+    for (let moveIndex = 0; moveIndex < 4; moveIndex++) {
+      const moveText = addTextObject(this.scene, moveIndex % 2 === 0 ? 0 : 100, moveIndex < 2 ? 0 : 16, "-", TextStyle.WINDOW);
+
+      if (moveIndex < moveset.length) {
+        const pokemonMove = moveset[moveIndex];
+        moveText.setText(pokemonMove.getName());
+        moveText.setColor(this.getMoveColor(pokemon, pokemonMove) ?? moveText.style.color);
       }
+
       this.movesContainer.add(moveText);
     }
+  }
+
+  /**
+   * Returns a specific move's color based on its type effectiveness against opponents
+   * If there are multiple opponents, the highest effectiveness' color is returned
+   * @returns A color or undefined if the default color should be used
+   */
+  private getMoveColor(pokemon: Pokemon, pokemonMove: PokemonMove): string | undefined {
+    if (!this.scene.typeHints) {
+      return undefined;
+    }
+
+    const opponents = pokemon.getOpponents();
+    if (opponents.length <= 0) {
+      return undefined;
+    }
+
+    const moveColors = opponents.map((opponent) => {
+      return opponent.getMoveEffectiveness(pokemon, pokemonMove);
+    }).sort((a, b) => b - a).map((effectiveness) => {
+      return getTypeDamageMultiplierColor(effectiveness, "offense");
+    });
+
+    return moveColors[0];
   }
 
   clear() {
@@ -222,6 +287,11 @@ export default class FightUiHandler extends UiHandler {
 
   clearMoves() {
     this.movesContainer.removeAll(true);
+
+    const opponents = (this.scene.getCurrentPhase() as CommandPhase).getPokemon().getOpponents();
+    opponents.forEach((opponent) => {
+      opponent.updateEffectiveness(undefined);
+    });
   }
 
   eraseCursor() {

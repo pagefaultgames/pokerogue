@@ -94,44 +94,22 @@ const alternativeFonts = {
   ],
 };
 
-function loadFont(language: string) {
-  if (!alternativeFonts[language]) {
-    language = language.split(/[-_/]/)[0];
-  }
-  if (alternativeFonts[language]) {
-    alternativeFonts[language].forEach((fontFace: FontFace) => {
-      document.fonts.add(fontFace);
-    });
-
-    const altFontLanguages = Object.keys(alternativeFonts);
-    altFontLanguages.splice(altFontLanguages.indexOf(language), 0);
-  }
-
-  (Object.values(alternativeFonts)).forEach(fontFaces => {
-    fontFaces.forEach(fontFace => {
-      if (fontFace && fontFace.status === "loaded") {
-        document.fonts.delete(fontFace);
-      }
+function initFonts() {
+  Object.keys(alternativeFonts).forEach((language: string) => {
+    alternativeFonts[language].forEach((fontface: FontFace) => {
+      fontface.load().then(f => document.fonts.add(f)).catch(e => console.error(e));
     });
   });
 }
 
-export function initI18n(): void {
+export async function initI18n(): Promise<void> {
   // Prevent reinitialization
   if (isInitialized) {
     return;
   }
   isInitialized = true;
-  let lang = "";
 
-  if (localStorage.getItem("prLang")) {
-    lang = localStorage.getItem("prLang");
-  }
-
-  loadFont(lang);
-  i18next.on("languageChanged", lng=> {
-    loadFont(lng);
-  });
+  initFonts();
 
   /**
    * i18next is a localization library for maintaining and using translation resources.
@@ -149,11 +127,16 @@ export function initI18n(): void {
    * A: In src/system/settings.ts, add a new case to the Setting.Language switch statement.
    */
 
-  i18next.use(LanguageDetector).use(processor).use(new KoreanPostpositionProcessor()).init({
-    lng: lang,
+  i18next.use(LanguageDetector);
+  i18next.use(processor);
+  i18next.use(new KoreanPostpositionProcessor());
+  await i18next.init({
     nonExplicitSupportedLngs: true,
     fallbackLng: "en",
     supportedLngs: ["en", "es", "fr", "it", "de", "zh", "pt", "ko"],
+    detection: {
+      lookupLocalStorage: "prLang"
+    },
     debug: true,
     interpolation: {
       escapeValue: false,
@@ -174,13 +157,13 @@ export function initI18n(): void {
       de: {
         ...deConfig
       },
-      pt_BR: {
+      "pt-BR": {
         ...ptBrConfig
       },
-      zh_CN: {
+      "zh-CN": {
         ...zhCnConfig
       },
-      zh_TW: {
+      "zh-TW": {
         ...zhTwConfig
       },
       ko: {
@@ -196,35 +179,16 @@ declare module "i18next" {
   interface CustomTypeOptions {
     defaultNS: "menu"; // Even if we don't use it, i18next requires a valid default namespace
     resources: {
-      menu: SimpleTranslationEntries;
-      menuUiHandler: SimpleTranslationEntries;
-      move: MoveTranslationEntries;
-      battle: SimpleTranslationEntries;
-      abilityTriggers: SimpleTranslationEntries;
       ability: AbilityTranslationEntries;
-      pokeball: SimpleTranslationEntries;
-      pokemon: SimpleTranslationEntries;
-      pokemonInfo: PokemonInfoTranslationEntries;
-      commandUiHandler: SimpleTranslationEntries;
-      fightUiHandler: SimpleTranslationEntries;
-      titles: SimpleTranslationEntries;
-      trainerClasses: SimpleTranslationEntries;
-      trainerNames: SimpleTranslationEntries;
-      tutorial: SimpleTranslationEntries;
-      starterSelectUiHandler: SimpleTranslationEntries;
-      splashMessages: SimpleTranslationEntries;
-      nature: SimpleTranslationEntries;
-      growth: SimpleTranslationEntries;
-      egg: SimpleTranslationEntries;
-      weather: SimpleTranslationEntries;
-      modifierType: ModifierTypeTranslationEntries;
+      abilityTriggers: SimpleTranslationEntries;
+      achv: AchievementTranslationEntries;
+      battle: SimpleTranslationEntries;
       battleMessageUiHandler: SimpleTranslationEntries;
       berry: BerryTranslationEntries;
-      achv: AchievementTranslationEntries;
-      gameStatsUiHandler: SimpleTranslationEntries;
-      voucher: SimpleTranslationEntries;
       biome: SimpleTranslationEntries;
-      pokemonInfoContainer: SimpleTranslationEntries;
+      challenges: SimpleTranslationEntries;
+      commandUiHandler: SimpleTranslationEntries;
+      PGMachv: AchievementTranslationEntries;
       PGMdialogue: DialogueTranslationEntries;
       PGMbattleSpecDialogue: SimpleTranslationEntries;
       PGMmiscDialogue: SimpleTranslationEntries;
@@ -233,6 +197,31 @@ declare module "i18next" {
       PGFbattleSpecDialogue: SimpleTranslationEntries;
       PGFmiscDialogue: SimpleTranslationEntries;
       PGFdoubleBattleDialogue: DialogueTranslationEntries;
+      PGFachv: AchievementTranslationEntries;
+      egg: SimpleTranslationEntries;
+      fightUiHandler: SimpleTranslationEntries;
+      gameMode: SimpleTranslationEntries;
+      gameStatsUiHandler: SimpleTranslationEntries;
+      growth: SimpleTranslationEntries;
+      menu: SimpleTranslationEntries;
+      menuUiHandler: SimpleTranslationEntries;
+      modifierType: ModifierTypeTranslationEntries;
+      move: MoveTranslationEntries;
+      nature: SimpleTranslationEntries;
+      partyUiHandler: SimpleTranslationEntries;
+      pokeball: SimpleTranslationEntries;
+      pokemon: SimpleTranslationEntries;
+      pokemonInfo: PokemonInfoTranslationEntries;
+      pokemonInfoContainer: SimpleTranslationEntries;
+      saveSlotSelectUiHandler: SimpleTranslationEntries;
+      splashMessages: SimpleTranslationEntries;
+      starterSelectUiHandler: SimpleTranslationEntries;
+      titles: SimpleTranslationEntries;
+      trainerClasses: SimpleTranslationEntries;
+      trainerNames: SimpleTranslationEntries;
+      tutorial: SimpleTranslationEntries;
+      voucher: SimpleTranslationEntries;
+      weather: SimpleTranslationEntries;
     };
   }
 }
@@ -244,3 +233,4 @@ export function getIsInitialized(): boolean {
 }
 
 let isInitialized = false;
+
