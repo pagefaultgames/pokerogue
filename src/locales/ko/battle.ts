@@ -59,6 +59,8 @@ export const battle: SimpleTranslationEntries = {
   "wildPokemonWithAffix": "야생 {{pokemonName}}",
   "foePokemonWithAffix": "상대 {{pokemonName}}",
   "useMove": "{{pokemonNameWithAffix}}의 {{moveName}}!",
+  "drainMessage": "{{pokemonName}}[[로]]부터\n체력을 흡수했다!",
+  "regainHealth": "{{pokemonName}}[[는]]\n기력을 회복했다!",
   "battlerTagsRechargingLapse": "공격의 반동으로\n{{pokemonNameWithAffix}}[[는]] 움직일 수 없다!",
   "battlerTagsTrappedOnAdd": "{{pokemonNameWithAffix}}[[는]]\n이제 도망칠 수 없다!",
   "battlerTagsTrappedOnRemove": "{{pokemonNameWithAffix}}[[는]]\n{{moveName}}로부터 풀려났다!",
