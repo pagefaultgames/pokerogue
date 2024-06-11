@@ -1001,45 +1001,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         success = true;
         break;
       }
-    } else if (this.starterIconsCursorObj.visible) {
-      switch (button) {
-      case Button.ACTION:
-        this.createPartyMenuOptions(this.starterGens[this.starterIconsCursorIndex], this.starterCursors[this.starterIconsCursorIndex]);
-        success = true;
-        break;
-      case Button.DOWN:
-        if (this.starterIconsCursorIndex <= this.starterCursors.length - 2) {
-          this.starterIconsCursorIndex++;
-          this.moveStarterIconsCursor(this.starterIconsCursorIndex);
-        } else {
-          this.starterIconsCursorObj.setVisible(false);
-          this.setSpecies(null);
-          this.startCursorObj.setVisible(true);
-        }
-        break;
-      case Button.UP:
-        if (this.starterIconsCursorIndex === 0) {
-          this.starterIconsCursorObj.setVisible(false);
-          this.setSpecies(null);
-          this.setGenMode(true);
-        } else {
-          this.starterIconsCursorIndex--;
-          this.moveStarterIconsCursor(this.starterIconsCursorIndex);
-        }
-        break;
-      case Button.LEFT:
-        this.starterIconsCursorObj.setVisible(false);
-        this.setGenMode(false);
-        this.setCursor(this.cursor + 8);
-        success = true;
-        break;
-      case Button.RIGHT:
-        this.starterIconsCursorObj.setVisible(false);
-        this.setGenMode(false);
-        success = true;
-        break;
-      }
-    } else if (this.genMode) {
+    } else if (this.genMode && this.genCursorObj.visible) {
       switch (button) {
       case Button.UP:
         if (this.genCursor) {
@@ -1073,7 +1035,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         if (!this.speciesStarterDexEntry?.caughtAttr) {
           error = true;
         } else if (this.starterCursors.length < 6) {
-          this.createPartyMenuOptions(this.getGenCursorWithScroll(), this.cursor);
+          if (!this.starterIconsCursorObj.visible) {
+            this.createPartyMenuOptions(this.getGenCursorWithScroll(), this.cursor);
+          } else {
+            this.createPartyMenuOptions(this.starterGens[this.starterIconsCursorIndex], this.starterCursors[this.starterIconsCursorIndex]);
+          }
           success = true;
         }
       } else {
@@ -1082,6 +1048,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         const row = Math.floor(this.cursor / 9);
         const props = this.scene.gameData.getSpeciesDexAttrProps(this.lastSpecies, this.dexAttrCursor);
         switch (button) {
+
         case Button.CYCLE_SHINY:
           if (this.canCycleShiny) {
             this.setSpeciesDetails(this.lastSpecies, !props.shiny, undefined, undefined, props.shiny ? 0 : undefined, undefined, undefined);
@@ -1169,70 +1136,119 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             success = true;
           }
           break;
+
         case Button.UP:
-          if (row) {
-            success = this.setCursor(this.cursor - 9);
-          } else {
-            // when strictly opposite starter based on rows length
-            // does not exits, set cursor on the second to last row
-            if (this.cursor + (rows - 1) * 9 > genStarters - 1) {
-              success = this.setCursor(this.cursor + (rows - 2) * 9);
+          if (!this.starterIconsCursorObj.visible) {
+            if (row) {
+              success = this.setCursor(this.cursor - 9);
             } else {
-              success = this.setCursor(this.cursor + (rows - 1) * 9);
+              // when strictly opposite starter based on rows length
+              // does not exits, set cursor on the second to last row
+              if (this.cursor + (rows - 1) * 9 > genStarters - 1) {
+                success = this.setCursor(this.cursor + (rows - 2) * 9);
+              } else {
+                success = this.setCursor(this.cursor + (rows - 1) * 9);
+              }
+            }
+          } else {
+            if (this.starterIconsCursorIndex === 0) {
+              this.starterIconsCursorObj.setVisible(false);
+              this.setSpecies(null);
+              this.setGenMode(true);
+            } else {
+              this.starterIconsCursorIndex--;
+              this.moveStarterIconsCursor(this.starterIconsCursorIndex);
             }
           }
           break;
         case Button.DOWN:
-          if (row < rows - 2 || (row < rows - 1 && this.cursor % 9 <= (genStarters - 1) % 9)) {
-            success = this.setCursor(this.cursor + 9);
-          } else {
-            // if there is no starter below while being on the second to
-            // last row, adjust cursor position with one line less
-            if (row === rows - 2 && this.cursor + 9 > genStarters - 1) {
-              success = this.setCursor(this.cursor - (rows - 2) * 9);
+          if (!this.starterIconsCursorObj.visible) {
+            if (row < rows - 2 || (row < rows - 1 && this.cursor % 9 <= (genStarters - 1) % 9)) {
+              success = this.setCursor(this.cursor + 9);
             } else {
-              success = this.setCursor(this.cursor - (rows - 1) * 9);
+              // if there is no starter below while being on the second to
+              // last row, adjust cursor position with one line less
+              if (row === rows - 2 && this.cursor + 9 > genStarters - 1) {
+                success = this.setCursor(this.cursor - (rows - 2) * 9);
+              } else {
+                success = this.setCursor(this.cursor - (rows - 1) * 9);
+              }
+            }
+          } else {
+            if (this.starterIconsCursorIndex <= this.starterCursors.length - 2) {
+              this.starterIconsCursorIndex++;
+              this.moveStarterIconsCursor(this.starterIconsCursorIndex);
+            } else {
+              this.starterIconsCursorObj.setVisible(false);
+              this.setSpecies(null);
+              this.startCursorObj.setVisible(true);
             }
           }
           break;
         case Button.LEFT:
-          if (this.cursor % 9 !== 0) {
-            success = this.setCursor(this.cursor - 1);
-          } else {
-            if (this.starterCursors.length === 0) {
-              if (row >= Math.min(5, rows - 1)) {
-                this.startCursorObj.setVisible(true);
-              }
+          if (!this.starterIconsCursorObj.visible) {
+            if (this.cursor % 9 !== 0) {
+              success = this.setCursor(this.cursor - 1);
             } else {
-              if (row >= rows - 1) { // the last row will always go to the starter button
-                this.startCursorObj.setVisible(true);
-              } else if (row > 2) { // the first three rows will always go to the gen select, so anything else will go to the starterIcons party section
-                //this.starterIconsCursorObj.setVisible(true);
-                this.starterIconsCursorIndex = 0;
-                this.moveStarterIconsCursor(this.starterIconsCursorIndex);
+              if (this.starterCursors.length === 0) {
+                if (row >= Math.min(5, rows - 1)) {
+                  this.startCursorObj.setVisible(true);
+                }
+                success = this.setGenMode(true);
+              } else {
+                if (row >= rows - 1) { // the last row will always go to the starter button
+                  this.startCursorObj.setVisible(true);
+                  //success = this.setGenMode(true);
+                } else if (row > 2) { // the first three rows will always go to the gen select, so anything else will go to the starterIcons party section
+                  //this.starterIconsCursorObj.setVisible(true);
+                  this.starterIconsCursorIndex = 0;
+                  this.moveStarterIconsCursor(this.starterIconsCursorIndex);
+                  //success = this.setGenMode(false);
+                }
+                //else {
+                //success = this.setGenMode(true);
+                //}
+                success = this.setGenMode(true);
               }
             }
-            success = this.setGenMode(true);
+          } else {
+            this.starterIconsCursorObj.setVisible(false);
+            this.setGenMode(false);
+            this.setCursor(this.cursor + 8);
+            success = true;
           }
           break;
         case Button.RIGHT:
-          if (this.cursor % 9 < (row < rows - 1 ? 8 : (genStarters - 1) % 9)) {
-            success = this.setCursor(this.cursor + 1);
-          } else {
-            if (this.starterCursors.length === 0) {
-              if (row >= Math.min(5, rows - 1)) {
-                this.startCursorObj.setVisible(true);
-              }
+          if (!this.starterIconsCursorObj.visible) {
+            if (this.cursor % 9 < (row < rows - 1 ? 8 : (genStarters - 1) % 9)) {
+              success = this.setCursor(this.cursor + 1);
             } else {
-              if (row >= rows - 1) { // the last row will always go to the starter button
-                this.startCursorObj.setVisible(true);
-              } else if (row > 2) { // the first three rows will always go to the gen select, so anything else will go to the starterIcons party section
-                //this.starterIconsCursorObj.setVisible(true);
-                this.starterIconsCursorIndex = 0;
-                this.moveStarterIconsCursor(this.starterIconsCursorIndex);
+              if (this.starterCursors.length === 0) {
+                if (row >= Math.min(5, rows - 1)) {
+                  this.startCursorObj.setVisible(true);
+                }
+                //success = this.setGenMode(true);
+              } else {
+                if (row >= rows - 1) { // the last row will always go to the starter button
+                  this.startCursorObj.setVisible(true);
+                  //success = this.setGenMode(true);
+                } else if (row > 2) { // the first three rows will always go to the gen select, so anything else will go to the starterIcons party section
+                  //this.starterIconsCursorObj.setVisible(true);
+                  this.starterIconsCursorIndex = 0;
+                  this.moveStarterIconsCursor(this.starterIconsCursorIndex);
+                  //success = this.setGenMode(false);
+                }
+                //else {
+                //  success = this.setGenMode(true);
+                //}
+                success = this.setGenMode(true);
               }
             }
-            success = this.setGenMode(true);
+          } else {
+            this.starterIconsCursorObj.setVisible(false);
+            this.setGenMode(false);
+            this.setSpecies(this.genSpecies[this.getGenCursorWithScroll()][this.cursor]);
+            success = true;
           }
           break;
         }
@@ -1452,6 +1468,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.setCursor(genMode ? this.genCursor : this.cursor);
       if (genMode) {
         this.setSpecies(null);
+      }
+      if (this.starterIconsCursorObj.visible) {
+        this.setSpecies(this.genSpecies[this.starterIconsCursorIndex][this.starterCursors[this.starterIconsCursorIndex]]);
       }
 
       return true;
