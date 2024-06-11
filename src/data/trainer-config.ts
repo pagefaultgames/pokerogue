@@ -1757,7 +1757,7 @@ export const trainerConfigs: TrainerConfigs = {
       return [modifierTypes.TERA_SHARD().generateType(null, [Type.ELECTRIC]).withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(regieleki) as PersistentModifier];
     })
     .setPartyMemberFunc(5,getRandomPartyMemberFunc([Species.ARMALDO],TrainerSlot.TRAINER,true)),
-  [TrainerType.DAKIM]: new TrainerConfig(++t).setName("Dakim").initForEvilTeamLeader("Cipher Admin",[])
+  [TrainerType.DAKIM]: new TrainerConfig(++t).setName("Dakim").initForEvilTeamLeader("Cipher Admin",[]).setBattleBgm("battle_cipher_admin").setMixedBattleBgm("battle_cipher_admin")
     .setPartyMemberFunc(0,getRandomPartyMemberFunc([Species.GOLEM], TrainerSlot.TRAINER, true, p => {
       p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.EARTHQUAKE)),new PokemonMove(Moves.PROTECT), new PokemonMove(Moves.STONE_EDGE), new PokemonMove(Moves.HEAVY_SLAM)];
       p.abilityIndex = 1; // Sturdy
@@ -1888,7 +1888,40 @@ export const trainerConfigs: TrainerConfigs = {
       const arcanine = party[5];
       return [modifierTypes.TERA_SHARD().generateType(null, [Type.FIRE]).withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(arcanine) as PersistentModifier];
     }),
-  [TrainerType.EVICE]: new TrainerConfig(++t).setName("Evice").initForEvilTeamLeader("Cipher Head",[]),
+  // Evices team will be inspired by Greevil's team from XD Gale of Darkness but with a few changes
+  [TrainerType.EVICE]: new TrainerConfig(++t).setName("Evice").initForEvilTeamLeader("Cipher Head",[])
+    .setPartyMemberFunc(0,getRandomPartyMemberFunc([Species.PALDEA_TAUROS], TrainerSlot.TRAINER, true, p => {
+      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.EARTHQUAKE)),new PokemonMove(Moves.CLOSE_COMBAT), new PokemonMove(Moves.ZEN_HEADBUTT), new PokemonMove(Moves.THROAT_CHOP)];
+      p.abilityIndex = 0; // Intimidate
+    }))
+    .setPartyMemberFunc(1,getRandomPartyMemberFunc([Species.GALAR_SLOWKING], TrainerSlot.TRAINER, true, p => {
+      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.PSYCHIC)),new PokemonMove(Moves.SLUDGE_BOMB), new PokemonMove(Moves.FIRE_BLAST), new PokemonMove(Moves.THUNDER_WAVE)];
+      p.abilityIndex = 2; // Regenerator
+    }))
+    .setPartyMemberFunc(2,getRandomPartyMemberFunc([Species.GALAR_ARTICUNO], TrainerSlot.TRAINER, true, p => {
+      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.HURRICANE)),new PokemonMove(Moves.FREEZING_GLARE), new PokemonMove(Moves.ROOST), new PokemonMove(Moves.ICE_BEAM)];
+      p.ivs = [0,0,0,0,0,0]; // 0 IVs to make this fight not too hard
+
+    }))
+    .setPartyMemberFunc(3,getRandomPartyMemberFunc([Species.GALAR_ZAPDOS], TrainerSlot.TRAINER, true, p => {
+      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.THUNDERBOLT)),new PokemonMove(Moves.HURRICANE), new PokemonMove(Moves.ROOST), new PokemonMove(Moves.THUNDEROUS_KICK)];
+      p.ivs = [0,0,0,0,0,0]; // 0 IVs to make this fight not too hard
+
+    }))
+    .setPartyMemberFunc(4,getRandomPartyMemberFunc([Species.GALAR_MOLTRES], TrainerSlot.TRAINER, true, p => {
+      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.FLAMETHROWER)),new PokemonMove(Moves.HURRICANE), new PokemonMove(Moves.ROOST), new PokemonMove(Moves.FIERY_WRATH)];
+      p.ivs = [0,0,0,0,0,0]; // 0 IVs to make this fight not too hard
+
+    }))
+    .setPartyMemberFunc(5,getRandomPartyMemberFunc([Species.LUGIA], TrainerSlot.TRAINER, true, p => {
+      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.AEROBLAST)),new PokemonMove(Moves.PSYCHIC), new PokemonMove(Moves.ROOST), new PokemonMove(Moves.LIQUIDATION)];
+      p.setBoss(true, 2);
+      p.name = `XD001 (${p.name})`;
+      p.shiny = true;
+      p.variant = 2;
+      p.pokeball = PokeballType.MASTER_BALL; // If we ever add Shadow Balls, this should be a Shadow Ball
+    }))
+  ,
 
 
 
