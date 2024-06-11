@@ -99,7 +99,7 @@ export const PGMachv: AchievementTranslationEntries = {
   },
   "MEGA_EVOLVE": {
     name: "大变身",
-    description: "Mega进化一只宝可梦",
+    description: "超级进化一只宝可梦",
   },
   "GIGANTAMAX": {
     name: "这位更是重量级",
