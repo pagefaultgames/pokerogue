@@ -13,6 +13,15 @@ export const titles: SimpleTranslationEntries = {
   "rival": "Rival",
   "professor": "Profesor",
   "frontier_brain": "As del Frente Batalla",
+  "rocket_boss": "Team Rocket Boss",
+  "magma_boss": "Team Magma Boss",
+  "aqua_boss": "Team Aqua Boss",
+  "galactic_boss": "Team Galactic Boss",
+  "plasma_boss": "Team Plasma Boss",
+  "flare_boss": "Team Flare Boss",
+  "cipher_admin": "Cipher Admin",
+  "cipher": "Cipher",
+  "cipher_head": "Cipher Head",
   // Maybe if we add the evil teams we can add "Team Rocket" and "Team Aqua" etc. here as well as "Team Rocket Boss" and "Team Aqua Admin" etc.
 } as const;
 
@@ -117,7 +126,28 @@ export const trainerClasses: SimpleTranslationEntries = {
   "worker": "Operario",
   "worker_female": "Operaria",
   "workers": "Operarios",
-  "youngster": "Joven"
+  "youngster": "Joven",
+  "rocket_grunt": "Rocket Grunt",
+  "rocket_grunt_female": "Rocket Grunt",
+  "rocket_grunts": "Rocket Grunts",
+  "magma_grunt": "Magma Grunt",
+  "magma_grunt_female": "Magma Grunt",
+  "magma_grunts": "Magma Grunts",
+  "aqua_grunt": "Aqua Grunt",
+  "aqua_grunt_female": "Aqua Grunt",
+  "aqua_grunts": "Aqua Grunts",
+  "galactic_grunt": "Galactic Grunt",
+  "galactic_grunt_female": "Galactic Grunt",
+  "galactic_grunts": "Galactic Grunts",
+  "plasma_grunt": "Plasma Grunt",
+  "plasma_grunt_female": "Plasma Grunt",
+  "plasma_grunts": "Plasma Grunts",
+  "flare_grunt": "Flare Grunt",
+  "flare_grunt_female": "Flare Grunt",
+  "flare_grunts": "Flare Grunts",
+  "cipher_peon": "Cipher Peon",
+  "cipher_peon_female": "Cipher Peon",
+  "cipher_peons": "Cipher Peons",
 } as const;
 
 // Names of special trainers like gym leaders, elite four, and the champion
@@ -246,6 +276,17 @@ export const trainerNames: SimpleTranslationEntries = {
   "leon": "Lionel",
   "rival": "Finn",
   "rival_female": "Ivy",
+  "maxie": "Maxie",
+  "archie": "Archie",
+  "cyrus": "Cyrus",
+  "ghetsis": "Ghetsis",
+  "lysandre": "Lysandre",
+  "mirror_b": "Mirror B",
+  "dakim": "Dakim",
+  "venus": "Venus",
+  "ein": "Ein",
+  "nascour": "Nascour",
+  "evice": "Evice",
 
   // Double Names
   "blue_red_double": "Azul y Rojo",
