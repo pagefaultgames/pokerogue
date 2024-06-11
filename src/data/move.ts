@@ -5446,7 +5446,7 @@ export function initMoves() {
     new AttackMove(Moves.SONIC_BOOM, Type.NORMAL, MoveCategory.SPECIAL, -1, 90, 20, -1, 0, 1)
       .attr(FixedDamageAttr, 20),
     new StatusMove(Moves.DISABLE, Type.NORMAL, 100, 20, -1, 0, 1)
-      .attr(AddBattlerTagAttr, BattlerTagType.DISABLED, false, true, 4, 4)
+      .attr(AddBattlerTagAttr, BattlerTagType.DISABLED, false, true)
       .condition(targetHasMoveHistoryCondition)
       .condition(failOnMaxCondition),
     new AttackMove(Moves.ACID, Type.POISON, MoveCategory.SPECIAL, 40, 100, 30, 10, 0, 1)
