@@ -1,5 +1,5 @@
-import Move from "./data/move";
-import { BerryModifier } from "./modifier/modifier";
+import Move from "../data/move";
+import { BerryModifier } from "../modifier/modifier";
 
 /** Alias for all {@linkcode BattleScene} events */
 export enum BattleSceneEventType {
@@ -7,7 +7,7 @@ export enum BattleSceneEventType {
    * Triggers when the corresponding setting is changed
    * @see {@linkcode CandyUpgradeNotificationChangedEvent}
    */
-  CANDY_UPGRADE_NOTIFICATION_CHANGED = "onCandyUpgradeDisplayChanged",
+  CANDY_UPGRADE_NOTIFICATION_CHANGED = "onCandyUpgradeNotificationChanged",
 
   /**
    * Triggers when a move is successfully used
