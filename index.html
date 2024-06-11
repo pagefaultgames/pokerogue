@@ -55,7 +55,14 @@
 
 <body>
 	<div id="app"></div>
-	<div id="touchControls">
+	<label class="switch">
+		<input id="toggleButton" type="checkbox" class="checkbox">
+		<span class="toggle-thumb">
+			<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" style="fill:#4ADE80;transform:;-ms-filter:"><path d="M10 15.586L6.707 12.293 5.293 13.707 10 18.414 19.707 8.707 18.293 7.293z"></path></svg>
+			<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" style="fill:#F87171;transform:;-ms-filter:"><path d="M16.192 6.344L11.949 10.586 7.707 6.344 6.293 7.758 10.535 12 6.293 16.242 7.707 17.656 11.949 13.414 16.192 17.656 17.606 16.242 13.364 12 17.606 7.758z"></path></svg>
+		</span>
+	</label>
+	<div id="touchControls" class="visible">
 		<div id="dpad" class="unselectable">
 			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 72">
 				<path id="dpadUp" data-key="UP" d="M48,5.8C48,2.5,45.4,0,42,0H29.9C26.6,0,24,2.4,24,5.8V24h24V5.8z" />
@@ -107,8 +114,13 @@
 		</div>
 	</div>
 	<script type="module" src="./src/main.ts"></script>
-	<script src="./src/touch-controls.ts" type="module"></script>
 	<script src="./src/debug.js" type="module"></script>
+	<script>
+		document.getElementById('toggleButton').addEventListener('click', function() {
+		  var touchControls = document.getElementById('touchControls');
+		  touchControls.classList.toggle('visible');
+		});
+	</script>
 </body>
 
 </html>

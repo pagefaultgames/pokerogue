@@ -244,3 +244,53 @@ input:-internal-autofill-selected {
     -ms-animation: blink normal 4s infinite ease-in-out; /* IE */
     animation: blink normal 4s infinite ease-in-out; /* Opera and prob css3 final iteration */
 }
+
+/* CSS for the toggle button */
+/* source: https://dev.to/devggaurav/let-s-create-a-custom-toggle-switch-using-html-and-css-33df */
+.switch {
+    position: absolute;
+    display: inline-block;
+    width: 45px;
+    height: 25.5px;
+    @media (orientation: landscape) {
+        left: 50%;
+        bottom: 2%;
+    }
+    @media (orientation: portrait) {
+        left: 40%;
+        bottom: 2%;
+    }
+}
+
+.toggle-thumb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #475569;
+  border-radius: 30px;
+}
+ .toggle-thumb:before {
+  content: "";
+  height: 19.5px;
+  width: 19.5px;
+  position: absolute;
+  left: 3px;
+  bottom: 3px;
+  border-radius: 50%;
+  background-color: #E2E8F0;
+  transition: .4s all ease;
+}
+ .checkbox {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.checkbox:checked + .toggle-thumb:before {
+  transform: translateX(19.5px);
+}
