@@ -1,7 +1,7 @@
 import * as Utils from "../utils";
 import BattleScene from "#app/battle-scene.js";
 import { TimeOfDay } from "#app/data/enums/time-of-day.js";
-import { BattleSceneEventType } from "#app/battle-scene-events.js";
+import { BattleSceneEventType } from "../events/battle-scene";
 import { EaseType } from "./enums/ease-type";
 
 /** A small self contained UI element that displays the time of day as an icon */
