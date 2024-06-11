@@ -162,10 +162,6 @@ export class UiInputs {
       }
     case Mode.TITLE:
     case Mode.COMMAND:
-    case Mode.FIGHT:
-    case Mode.BALL:
-    case Mode.PARTY:
-    case Mode.SUMMARY:
     case Mode.MODIFIER_SELECT:
       this.scene.ui.setOverlayMode(Mode.MENU);
       break;
