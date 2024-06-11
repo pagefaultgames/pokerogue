@@ -1311,7 +1311,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
     super.start();
     //ICITO
     const pokemon = this.getPokemon();
-    const party = pokemon.isPlayer() ? this.scene.getParty() : this.scene.getEnemyParty();
+    const party: Pokemon[] = pokemon.isPlayer() ? this.scene.getParty() : this.scene.getEnemyParty();
     applyPreSummonAbAttrs(PreSummonAbAttr, pokemon, party).then(() => this.preSummon());
   }
 

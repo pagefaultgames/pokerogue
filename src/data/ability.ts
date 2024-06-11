@@ -23,6 +23,7 @@ import { Command } from "../ui/command-ui-handler";
 import { BerryModifierType } from "#app/modifier/modifier-type";
 import { getPokeballName } from "./pokeball";
 import { Species } from "./enums/species";
+import PokemonSpecies, { getPokemonSpecies } from "./pokemon-species";
 import { BattlerIndex } from "#app/battle";
 
 export class Ability implements Localizable {
@@ -3476,14 +3477,61 @@ export class IceFaceMoveImmunityAbAttr extends MoveImmunityAbAttr {
 
 export class IllusionAbAttr extends PreSummonAbAttr {
 
+  public trueName: string;
+
   applyPreSummon(pokemon: Pokemon, passive: boolean, party: Pokemon[]) {
-    //pokemon.addTag(BattlerTagType.ILLUSIONED);
-    pokemon.name = party.slice(-1)[0].name;
-    console.log("AAAAAAAAAAAAAA");
+
+    //Case when Zoroark already used illusion one someone
+    if (!!pokemon.illusion.name) {
+      return false;
+    }
+
+    if (pokemon.hasTrainer()) {
+      const aliveParty: Pokemon[] = [];
+      for (const pkmn of party) {
+        if (pkmn.isAllowedInBattle()) {
+          aliveParty.push(pkmn);
+        }
+      }
+      const lastPokemon: Pokemon = aliveParty.slice(-1)[0];
+
+      pokemon.illusion = {active: true, species: lastPokemon.species, name: pokemon.name};
+      pokemon.name = lastPokemon.name;
+      return true;
+    } else {
+      console.log("ALLO");
+      const availables = [Species.ENTEI, Species.RAIKOU, Species.SUICUNE];
+      const randomIllusion: PokemonSpecies = getPokemonSpecies(availables[Math.floor(Math.random()*3)]);
+      pokemon.illusion = {active: true, species: randomIllusion, name: pokemon.name};
+      pokemon.name = randomIllusion.name;
+    }
+  }
+}
+
+export class IllusionBreakAbAttr extends PostDefendAbAttr {
+
+  applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean | Promise<boolean> {
+    if (hitResult > 4) {
+      return false;
+    }
+    pokemon.illusion.active = false;
+    //pokemon.summonData.speciesForm = pokemon.getSpeciesForm();
+    pokemon.name = pokemon.species.name;
+    pokemon.scene.playSound("PRSFX- Transform");
+
+    pokemon.loadAssets(false).then(() => pokemon.playAnim());
+
+    //pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` transformed\ninto ${target.name}!`));
     return true;
   }
+}
 
-
+export class IllusionAfterBattle extends PostBattleAbAttr {
+  applyPostBattle(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+    //Reset illusion
+    pokemon.illusion = {active: false};
+    return true;
+  }
 }
 
 function applyAbAttrsInternal<TAttr extends AbAttr>(attrType: { new(...args: any[]): TAttr },
@@ -4152,8 +4200,12 @@ export function initAbilities() {
     new Ability(Abilities.ILLUSION, 5)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
-      .attr(IllusionAbAttr, true)
-      .unimplemented(),
+      //The pokemon get the illusion when summon
+      .attr(IllusionAbAttr, false)
+      //The pokemon loses his illusion when he is damaged by a move
+      .conditionalAttr((pokemon) => pokemon.illusion.active, IllusionBreakAbAttr)
+      //Zoroark can do illusion again after a battle
+      .attr(IllusionAfterBattle),
     new Ability(Abilities.IMPOSTER, 5)
       .attr(PostSummonTransformAbAttr)
       .attr(UncopiableAbilityAbAttr),

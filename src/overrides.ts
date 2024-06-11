@@ -39,7 +39,7 @@ export const IMMEDIATE_HATCH_EGGS_OVERRIDE: boolean = false;
 // default 1000
 export const STARTING_MONEY_OVERRIDE: integer = 10000000;
 export const POKEBALL_OVERRIDE: { active: boolean, pokeballs: PokeballCounts } = {
-  active: false,
+  active: true,
   pokeballs: {
     [PokeballType.POKEBALL]: 5,
     [PokeballType.GREAT_BALL]: 0,
@@ -56,7 +56,7 @@ export const POKEBALL_OVERRIDE: { active: boolean, pokeballs: PokeballCounts } =
 // forms can be found in pokemon-species.ts
 export const STARTER_FORM_OVERRIDE: integer = 0;
 // default 5 or 20 for Daily
-export const STARTING_LEVEL_OVERRIDE: integer = 60;
+export const STARTING_LEVEL_OVERRIDE: integer = 100;
 /**
  * SPECIES OVERRIDE
  * will only apply to the first starter in your party or each enemy pokemon
@@ -68,7 +68,7 @@ export const ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
 export const GENDER_OVERRIDE: Gender = null;
-export const MOVESET_OVERRIDE: Array<Moves> = [Moves.NIGHT_DAZE, Moves.FLAMETHROWER];
+export const MOVESET_OVERRIDE: Array<Moves> = [];
 export const SHINY_OVERRIDE: boolean = false;
 export const VARIANT_OVERRIDE: Variant = 0;
 
@@ -76,13 +76,13 @@ export const VARIANT_OVERRIDE: Variant = 0;
  * OPPONENT / ENEMY OVERRIDES
  */
 
-export const OPP_SPECIES_OVERRIDE: Species | integer = 0;
-export const OPP_LEVEL_OVERRIDE: number = 0;
+export const OPP_SPECIES_OVERRIDE: Species | integer = Species.ZOROARK;
+export const OPP_LEVEL_OVERRIDE: number = 5;
 export const OPP_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const OPP_PASSIVE_ABILITY_OVERRIDE = Abilities.NONE;
 export const OPP_STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
 export const OPP_GENDER_OVERRIDE: Gender = null;
-export const OPP_MOVESET_OVERRIDE: Array<Moves> = [];
+export const OPP_MOVESET_OVERRIDE: Array<Moves> = [Moves.PSYCHIC, Moves.AURA_SPHERE];
 export const OPP_SHINY_OVERRIDE: boolean = false;
 export const OPP_VARIANT_OVERRIDE: Variant = 0;
 

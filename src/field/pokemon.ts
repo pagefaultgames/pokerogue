@@ -60,6 +60,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public id: integer;
   public name: string;
   public species: PokemonSpecies;
+  public illusion: {active: boolean, species?: PokemonSpecies, name?: string};
   public formIndex: integer;
   public abilityIndex: integer;
   public passive: boolean;
@@ -123,6 +124,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const randAbilityIndex = Utils.randSeedInt(2);
 
     this.species = species;
+    this.illusion = {active: false};
+
     this.pokeball = dataSource?.pokeball || PokeballType.POKEBALL;
     this.level = level;
     this.abilityIndex = abilityIndex !== undefined
@@ -431,7 +434,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (back === undefined) {
       back = this.isPlayer();
     }
-    return this.getSpeciesForm(ignoreOverride).getSpriteId(this.getGender(ignoreOverride) === Gender.FEMALE, this.formIndex, this.shiny, this.variant, back);
+    return this.getSpeciesForm(ignoreOverride, true).getSpriteId(this.getGender(ignoreOverride) === Gender.FEMALE, this.formIndex, this.shiny, this.variant, back);
   }
 
   getSpriteKey(ignoreOverride?: boolean): string {
@@ -477,14 +480,17 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.getFusionSpeciesForm(ignoreOverride).getIconId(this.getFusionGender(ignoreOverride) === Gender.FEMALE, this.fusionFormIndex, this.fusionShiny, this.fusionVariant);
   }
 
-  getSpeciesForm(ignoreOverride?: boolean): PokemonSpeciesForm {
+  getSpeciesForm(ignoreOverride?: boolean, illusion?: boolean): PokemonSpeciesForm {
+    //ICITO
+    const species: PokemonSpecies = illusion && this.illusion.active ? this.illusion.species : this.species;
+
     if (!ignoreOverride && this.summonData?.speciesForm) {
       return this.summonData.speciesForm;
     }
-    if (!this.species.forms?.length) {
-      return this.species;
+    if (!species.forms?.length) {
+      return species;
     }
-    return this.species.forms[this.formIndex];
+    return species.forms[this.formIndex];
   }
 
   getFusionSpeciesForm(ignoreOverride?: boolean): PokemonSpeciesForm {
@@ -843,7 +849,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.getLevelMoves(1, true).map(lm => lm[1]).filter(lm => !this.moveset.filter(m => m.moveId === lm).length).filter((move: Moves, i: integer, array: Moves[]) => array.indexOf(move) === i);
   }
 
-  getTypes(includeTeraType = false, forDefend: boolean = false, ignoreOverride?: boolean): Type[] {
+  getTypes(includeTeraType = false, forDefend: boolean = false, ignoreOverride?: boolean, illusion: boolean = true): Type[] {
     const types = [];
 
     if (includeTeraType) {
@@ -857,7 +863,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (!ignoreOverride && this.summonData?.types) {
         this.summonData.types.forEach(t => types.push(t));
       } else {
-        const speciesForm = this.getSpeciesForm(ignoreOverride);
+        //ILLUSION /!\
+        const speciesForm = this.getSpeciesForm(ignoreOverride, !forDefend && illusion);
 
         types.push(speciesForm.type1);
 
