@@ -551,7 +551,8 @@ export class Arena {
       existingTag.onOverlap(this);
 
       if (existingTag instanceof ArenaTrapTag) {
-        this.eventTarget.dispatchEvent(new TagAddedEvent(existingTag.tagType, existingTag.side, existingTag.turnCount, (existingTag as ArenaTrapTag).layers));
+        const { tagType, side, turnCount, layers, maxLayers } = existingTag as ArenaTrapTag;
+        this.eventTarget.dispatchEvent(new TagAddedEvent(tagType, side, turnCount, layers, maxLayers));
       }
 
       return false;
@@ -561,7 +562,9 @@ export class Arena {
     this.tags.push(newTag);
     newTag.onAdd(this, quiet);
 
-    this.eventTarget.dispatchEvent(new TagAddedEvent(newTag.tagType, newTag.side, newTag.turnCount));
+    const { layers = 0, maxLayers = 0 } = newTag instanceof ArenaTrapTag ? newTag : {};
+
+    this.eventTarget.dispatchEvent(new TagAddedEvent(newTag.tagType, newTag.side, newTag.turnCount, layers, maxLayers));
 
     return true;
   }
