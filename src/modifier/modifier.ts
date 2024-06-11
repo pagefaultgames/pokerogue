@@ -1005,12 +1005,12 @@ export class SpeciesStatBoosterModifier extends PokemonHeldItemModifier {
     return 1;
   }
 
-  getSpecies(): Species[] {
-    return this.species;
+  hasSpecies(species: Species): boolean {
+    return this.species.includes(species);
   }
 
-  getStats(): Stat[] {
-    return this.stats;
+  hasStat(stat: Stat): boolean {
+    return this.stats.includes(stat);
   }
 }
 

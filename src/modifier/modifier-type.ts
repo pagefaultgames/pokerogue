@@ -540,6 +540,39 @@ export class AttackTypeBoosterModifierType extends PokemonHeldItemModifierType i
   }
 }
 
+const speciesStatBoosterItems = {
+  "light_ball": { stats: [Stat.ATK, Stat.SPATK], multiplier: 2, species: [Species.PIKACHU] },
+  "thick_club": { stats: [Stat.ATK], multiplier: 2, species: [Species.CUBONE, Species.MAROWAK, Species.ALOLA_MAROWAK] },
+  "metal_powder": { stats: [Stat.DEF], multiplier: 2, species: [Species.DITTO] },
+  "quick_powder": { stats: [Stat.SPD], multiplier: 2, species: [Species.DITTO] },
+};
+
+export class SpeciesStatBoosterModifierType extends PokemonHeldItemModifierType implements GeneratedPersistentModifierType {
+  private key: string;
+
+  constructor(key: string) {
+    super("", key,
+      (type, args) => {
+        const item = speciesStatBoosterItems[key];
+        return new Modifiers.SpeciesStatBoosterModifier(type, (args[0] as Pokemon).id, item.stats, item.multiplier, item.species);
+      });
+
+    this.key = key;
+  }
+
+  get name(): string {
+    return i18next.t(`modifierType:SpeciesStatBoosterItem.${this.key}.name`);
+  }
+
+  getDescription(scene: BattleScene): string {
+    return i18next.t(`modifierType:SpeciesStatBoosterItem.${this.key}.description`);
+  }
+
+  getPregenArgs(): any[] {
+    return [ this.key ];
+  }
+}
+
 export class PokemonLevelIncrementModifierType extends PokemonModifierType {
   constructor(localeKey: string, iconImage: string) {
     super(localeKey, iconImage, (_type, args) => new Modifiers.PokemonLevelIncrementModifier(this, (args[0] as PlayerPokemon).id), (_pokemon: PlayerPokemon) => null);
@@ -871,6 +904,66 @@ class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
   }
 }
 
+class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
+  constructor() {
+    super((party: Pokemon[], pregenArgs?: any[]) => {
+      if (pregenArgs) {
+        return new SpeciesStatBoosterModifierType(pregenArgs[0] as string);
+      }
+      // List for every species and stats combination corresponding to the relevant items
+      const itemList = Object.keys(speciesStatBoosterItems);
+      const weights = itemList.map(() => 0);
+
+      for (const p of party) {
+        for (const i in itemList) {
+          const checkedSpecies = speciesStatBoosterItems[itemList[i]].species;
+          const checkedStats = speciesStatBoosterItems[itemList[i]].stats;
+
+          // If party member already has the item being weighted currently, skip to the next item
+          const hasItem = p.getHeldItems().some(m => {
+            if (m instanceof Modifiers.SpeciesStatBoosterModifier) {
+              const modifierInstance = m as Modifiers.SpeciesStatBoosterModifier;
+              return modifierInstance.hasSpecies(checkedSpecies[0]) && modifierInstance.hasStat(checkedStats[0]);
+            }
+          });
+
+          if (!hasItem) {
+            if ((checkedSpecies.includes(p.getSpeciesForm(true).speciesId) || (p.isFusion() ? checkedSpecies.includes(p.getFusionSpeciesForm(true).speciesId) : false))) {
+              // Add weight if party member has a matching species or, if applicable, a matching fusion species
+              weights[i]++;
+            } else if (itemList[i] === "light_ball" && p.getMoveset(true).some(m => m.moveId === Moves.FLING)) {
+              // Add weight to Light Ball if party member has Fling
+              weights[i]++;
+            }
+          }
+        }
+      }
+
+      let totalWeight = 0;
+      for (const weight of weights) {
+        totalWeight += weight;
+      }
+
+      if (totalWeight !== 0) {
+        const randInt = Utils.randSeedInt(totalWeight, 1);
+        let weight = 0;
+
+        for (const i in itemList) {
+          if (weights[i] !== 0) {
+            const curWeight = weight + weights[i];
+            if (randInt <= weight + weights[i]) {
+              return new SpeciesStatBoosterModifierType(itemList[i]);
+            }
+            weight = curWeight;
+          }
+        }
+      }
+
+      return null;
+    });
+  }
+}
+
 class TmModifierTypeGenerator extends ModifierTypeGenerator {
   constructor(tier: ModifierTier) {
     super((party: Pokemon[]) => {
@@ -1170,10 +1263,7 @@ export const modifierTypes = {
 
   SOOTHE_BELL: () => new PokemonFriendshipBoosterModifierType("modifierType:ModifierType.SOOTHE_BELL", "soothe_bell"),
 
-  LIGHT_BALL: () => new PokemonHeldItemModifierType("modifierType:ModifierType.LIGHT_BALL", "light_ball", (type, args) => new Modifiers.SpeciesStatBoosterModifier(type, (args[0] as Pokemon).id, [ Stat.ATK, Stat.SPATK ], 2, [ Species.PIKACHU ])),
-  THICK_CLUB: () => new PokemonHeldItemModifierType("modifierType:ModifierType.THICK_CLUB", "thick_club", (type, args) => new Modifiers.SpeciesStatBoosterModifier(type, (args[0] as Pokemon).id, [ Stat.ATK ], 2, [ Species.CUBONE, Species.MAROWAK, Species.ALOLA_MAROWAK])),
-  QUICK_POWDER: () => new PokemonHeldItemModifierType("modifierType:ModifierType.QUICK_POWDER", "quick_powder", (type, args) => new Modifiers.SpeciesStatBoosterModifier(type, (args[0] as Pokemon).id, [ Stat.SPD ], 2, [ Species.DITTO ])),
-  METAL_POWDER: () => new PokemonHeldItemModifierType("modifierType:ModifierType.METAL_POWDER", "metal_powder", (type, args) => new Modifiers.SpeciesStatBoosterModifier(type, (args[0] as Pokemon).id, [ Stat.DEF ], 2, [ Species.DITTO ])),
+  SPECIES_STAT_BOOSTER: () => new SpeciesStatBoosterModifierTypeGenerator(),
 
   SOUL_DEW: () => new PokemonHeldItemModifierType("modifierType:ModifierType.SOUL_DEW", "soul_dew", (type, args) => new Modifiers.PokemonNatureWeightModifier(type, (args[0] as Pokemon).id)),
 
@@ -1348,49 +1438,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.MINT, 4),
     new WeightedModifierType(modifierTypes.RARE_EVOLUTION_ITEM, (party: Pokemon[]) => Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 15) * 4, 32), 32),
     new WeightedModifierType(modifierTypes.AMULET_COIN, 3),
-    new WeightedModifierType(modifierTypes.LIGHT_BALL, (party: Pokemon[]) => {
-      // If a party member is a Pikachu (or is fused with one) or knows Fling and does not have a Light Ball already, it can appear
-      return party.some(p => ((p.getSpeciesForm(true).speciesId === Species.PIKACHU || (p.isFusion() ? p.getFusionSpeciesForm(true).speciesId === Species.PIKACHU : false)) || p.getMoveset(true).some(m => m.moveId === Moves.FLING))
-      && !p.getHeldItems().some(i => {
-        if (i instanceof Modifiers.SpeciesStatBoosterModifier) {
-          return (i as Modifiers.SpeciesStatBoosterModifier).getSpecies().includes(Species.PIKACHU);
-        }
-        return false;
-      })) ? 10 : 0;
-    }, 10),
-    new WeightedModifierType(modifierTypes.THICK_CLUB, (party: Pokemon[]) => {
-      const checkedSpecies = [ Species.CUBONE, Species.MAROWAK, Species.ALOLA_MAROWAK ];
-      // If a party member is one of the checked species (or is fused with one) and does not have a Thick Club already, it can appear
-      return party.some(p => (checkedSpecies.includes(p.getSpeciesForm(true).speciesId) || (p.isFusion() ? checkedSpecies.includes(p.getFusionSpeciesForm(true).speciesId) : false))
-      && !p.getHeldItems().some(i => {
-        if (i instanceof Modifiers.SpeciesStatBoosterModifier) {
-          return (i as Modifiers.SpeciesStatBoosterModifier).getSpecies().includes(Species.CUBONE);
-        }
-        return false;
-      })) ? 10 : 0;
-    }, 10),
-    new WeightedModifierType(modifierTypes.QUICK_POWDER, (party: Pokemon[]) => {
-      // If a party member is Ditto (or is fused with one) and does not have a Quick Powder already, it can appear
-      return party.some(p => (p.getSpeciesForm(true).speciesId === Species.DITTO || (p.isFusion() ? p.getFusionSpeciesForm(true).speciesId === Species.DITTO : false))
-      && !p.getHeldItems().some(i => {
-        if (i instanceof Modifiers.SpeciesStatBoosterModifier) {
-          const modifierInstance = i as Modifiers.SpeciesStatBoosterModifier;
-          return modifierInstance.getSpecies().includes(Species.DITTO) && modifierInstance.getStats().includes(Stat.SPD);
-        }
-        return false;
-      })) ? 10 : 0;
-    }, 10),
-    new WeightedModifierType(modifierTypes.METAL_POWDER, (party: Pokemon[]) => {
-      // If a party member is Ditto (or is fused with one) and does not have a Metal Powder already, it can appear
-      return party.some(p => (p.getSpeciesForm(true).speciesId === Species.DITTO || (p.isFusion() ? p.getFusionSpeciesForm(true).speciesId === Species.DITTO : false))
-      && !p.getHeldItems().some(i => {
-        if (i instanceof Modifiers.SpeciesStatBoosterModifier) {
-          const modifierInstance = i as Modifiers.SpeciesStatBoosterModifier;
-          return modifierInstance.getSpecies().includes(Species.DITTO) && modifierInstance.getStats().includes(Stat.DEF);
-        }
-        return false;
-      })) ? 10 : 0;
-    }, 10),
+    new WeightedModifierType(modifierTypes.SPECIES_STAT_BOOSTER, 10),
     new WeightedModifierType(modifierTypes.TOXIC_ORB, (party: Pokemon[]) => {
       const checkedAbilities = [Abilities.QUICK_FEET, Abilities.GUTS, Abilities.MARVEL_SCALE, Abilities.TOXIC_BOOST, Abilities.POISON_HEAL];
       const checkedMoves = [Moves.FACADE, Moves.TRICK, Moves.FLING, Moves.SWITCHEROO, Moves.PSYCHO_SHIFT];
