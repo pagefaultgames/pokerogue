@@ -3811,7 +3811,6 @@ export class PokemonBattleData {
   public endured: boolean = false;
   public berriesEaten: BerryType[] = [];
   public abilitiesApplied: Abilities[] = [];
-  public statsBoostedFirstTurn: boolean = false;
 }
 
 export class PokemonBattleSummonData {
@@ -3822,7 +3821,6 @@ export class PokemonBattleSummonData {
 export class PokemonTurnData {
   public flinched: boolean = false;
   public acted: boolean = false;
-  public statsBoosted: boolean = false;
   public hitCount: integer;
   public hitsLeft: integer;
   public damageDealt: integer = 0;
