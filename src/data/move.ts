@@ -2184,11 +2184,22 @@ export class ElectroShotChargeAttr extends ChargeAttr {
   }
 }
 
+/**
+ * @description Attack Move that doesn't hit the turn it is played and doesn't allow for multiple
+ * uses on the same target. Examples are Future Sight or Doom Desire.
+ * @extends OverrideMoveEffectAttr
+ */
 export class DelayedAttackAttr extends OverrideMoveEffectAttr {
   public tagType: ArenaTagType;
   public chargeAnim: ChargeAnim;
   private chargeText: string;
 
+  /**
+   * @description Creates the DelayedAttackAttr
+   * @param {ArenaTagType} tagType - The ArenaTagType that will be placed on the field when the move is used
+   * @param {ChargeAnim} chargeAnim - The Charging Animation used for the move
+   * @param {string} chargeText - The text to display when the move is used
+   */
   constructor(tagType: ArenaTagType, chargeAnim: ChargeAnim, chargeText: string) {
     super();
 
@@ -2197,15 +2208,21 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
     this.chargeText = chargeText;
   }
 
+  /**
+   * @param {Pokemon} user - User of the move
+   * @param {Pokemon} target - Target of the move
+   * @param {Move} move - The move being used
+   * @param {any[]} args- Additional arguments to pass when applying a move
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
-    const side = user.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER;
+    const side = target.isPlayer() ? ArenaTagSide.PLAYER: ArenaTagSide.ENEMY;
     return new Promise(resolve => {
       if (args.length < 2 || !args[1]) {
         new MoveChargeAnim(this.chargeAnim, move.id, user).play(user.scene, () => {
           (args[0] as Utils.BooleanHolder).value = true;
           user.scene.queueMessage(getPokemonMessage(user, ` ${this.chargeText.replace("{TARGET}", target.name)}`));
           user.pushMoveHistory({ move: move.id, targets: [ target.getBattlerIndex() ], result: MoveResult.OTHER });
-          user.scene.arena.addTag(this.tagType, 3, move.id, user.id, side, target.getBattlerIndex());
+          user.scene.arena.addTag(this.tagType, 3, move.id, user.id, side, false, target.getBattlerIndex());
           resolve(true);
         });
       } else {
@@ -6385,7 +6402,8 @@ export function initMoves() {
       .attr(ConfuseAttr)
       .pulseMove(),
     new AttackMove(Moves.DOOM_DESIRE, Type.STEEL, MoveCategory.SPECIAL, 140, 100, 5, -1, 0, 3)
-      .attr(DelayedAttackAttr, ArenaTagType.DOOM_DESIRE, ChargeAnim.DOOM_DESIRE_CHARGING, "chose\nDoom Desire as its destiny!"),
+      .attr(DelayedAttackAttr, ArenaTagType.DOOM_DESIRE, ChargeAnim.DOOM_DESIRE_CHARGING, "chose\nDoom Desire as its destiny!")
+      .ignoresProtect(),
     new AttackMove(Moves.PSYCHO_BOOST, Type.PSYCHIC, MoveCategory.SPECIAL, 140, 90, 5, 100, 0, 3)
       .attr(StatChangeAttr, BattleStat.SPATK, -2, true),
     new SelfStatusMove(Moves.ROOST, Type.FLYING, -1, 5, -1, 0, 4)

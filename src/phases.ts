@@ -2645,8 +2645,6 @@ export class MovePhase extends BattlePhase {
         // Check the player side arena if future sight is active
         const futureSightTags = this.scene.arena.findTags(t => t.tagType ===  ArenaTagType.FUTURE_SIGHT);
         const doomDesireTags = this.scene.arena.findTags(t => t.tagType === ArenaTagType.DOOM_DESIRE);
-        console.log("Future sight tag:", futureSightTags);
-        console.log("Doom Desire tag:", doomDesireTags);
         let fail = false;
         const currentTargetIndex = targets[0].getBattlerIndex();
         for (const tag of futureSightTags) {
