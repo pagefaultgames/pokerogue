@@ -1,6 +1,6 @@
 import BattleScene from "../battle-scene";
 import { Species } from "./enums/species";
-import { getPokemonSpecies, speciesStarters } from "./pokemon-species";
+import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "./pokemon-species";
 import { EggTier } from "./enums/egg-type";
 import i18next from "../plugins/i18n";
 
@@ -110,4 +110,21 @@ export function getLegendaryGachaSpeciesForTimestamp(scene: BattleScene, timesta
   }, offset, EGG_SEED.toString());
 
   return ret;
+}
+
+/**
+ * Check for a given species EggTier Value
+ * @param species - Species for wich we will check the egg tier it belongs to
+ * @returns The egg tier of a given pokemon species
+ */
+export function getEggTierForSpecies(pokemonSpecies :PokemonSpecies): EggTier {
+  const speciesBaseValue = speciesStarters[pokemonSpecies.getRootSpeciesId()];
+  if (speciesBaseValue <= 3) {
+    return EggTier.COMMON;
+  } else if (speciesBaseValue <= 5) {
+    return EggTier.GREAT;
+  } else if (speciesBaseValue <= 7) {
+    return EggTier.ULTRA;
+  }
+  return EggTier.MASTER;
 }

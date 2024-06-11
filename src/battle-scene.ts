@@ -58,7 +58,7 @@ import * as Overrides from "./overrides";
 import {InputsController} from "./inputs-controller";
 import {UiInputs} from "./ui-inputs";
 import { MoneyFormat } from "./enums/money-format";
-import { NewArenaEvent } from "./battle-scene-events";
+import { NewArenaEvent } from "./events/battle-scene";
 import { Abilities } from "./data/enums/abilities";
 import ArenaFlyout from "./ui/arena-flyout";
 import { EaseType } from "./ui/enums/ease-type";
@@ -314,7 +314,6 @@ export default class BattleScene extends SceneBase {
   }
 
   update() {
-    this.inputController.update();
     this.ui?.update();
   }
 
@@ -1820,6 +1819,8 @@ export default class BattleScene extends SceneBase {
       return 13.940;
     case "end_summit": //PMD RTDX Sky Tower Summit
       return 30.025;
+    case "battle_plasma_grunt": //BW Team Plasma Battle
+      return 12.974;
     }
 
     return 0;

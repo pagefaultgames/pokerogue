@@ -1251,11 +1251,18 @@ export class PartyStatusCureAttr extends MoveEffectAttr {
     this.abilityCondition = abilityCondition;
   }
 
+  //The same as MoveEffectAttr.canApply, except it doesn't check for the target's HP.
+  canApply(user: Pokemon, target: Pokemon, move: Move, args: any[]) {
+    const isTargetValid =
+      (this.selfTarget && user.hp && !user.getTag(BattlerTagType.FRENZY)) ||
+      (!this.selfTarget && (!target.getTag(BattlerTagType.PROTECTED) || move.hasFlag(MoveFlags.IGNORE_PROTECT)));
+    return !!isTargetValid;
+  }
+
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!super.apply(user, target, move, args)) {
+    if (!this.canApply(user, target, move, args)) {
       return false;
     }
-
     this.addPartyCurePhase(user);
   }
 
@@ -3321,6 +3328,19 @@ export class VariableMoveTypeAttr extends MoveAttr {
   }
 }
 
+export class FormChangeItemTypeAttr extends VariableMoveTypeAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if ([user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.ARCEUS) || [user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.SILVALLY)) {
+      const form = user.species.speciesId === Species.ARCEUS || user.species.speciesId === Species.SILVALLY ? user.formIndex : user.fusionSpecies.formIndex;
+
+      move.type = Type[Type[form]];
+      return true;
+    }
+
+    return false;
+  }
+}
+
 export class TechnoBlastTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if ([user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.GENESECT)) {
@@ -5097,13 +5117,42 @@ export class SuppressAbilitiesAttr extends MoveEffectAttr {
 
     target.summonData.abilitySuppressed = true;
 
-    target.scene.queueMessage(getPokemonMessage(target, " ability\nwas suppressed!"));
+    target.scene.queueMessage(getPokemonMessage(target, "'s ability\nwas suppressed!"));
 
     return true;
   }
 
   getCondition(): MoveConditionFunc {
     return (user, target, move) => !target.getAbility().hasAttr(UnsuppressableAbilityAbAttr);
+  }
+}
+
+/**
+ * Applies the effects of {@linkcode SuppressAbilitiesAttr} if the target has already moved this turn.
+ * @extends MoveEffectAttr
+ * @see {@linkcode Moves.CORE_ENFORCER} (the move which uses this effect)
+ */
+export class SuppressAbilitiesIfActedAttr extends MoveEffectAttr {
+  /**
+   * If the target has already acted this turn, apply a {@linkcode SuppressAbilitiesAttr} effect unless the
+   * abillity cannot be suppressed. This is a secondary effect and has no bearing on the success or failure of the move.
+   *
+   * @returns True if the move occurred, otherwise false. Note that true will be returned even if the target has not
+   * yet moved or if the target's abiilty is un-suppressable.
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args)) {
+      return false;
+    }
+
+    if (target.turnData.acted) {
+      const suppressAttr = new SuppressAbilitiesAttr();
+      if (suppressAttr.getCondition()(user, target, move)) {
+        suppressAttr.apply(user, target, move, args);
+      }
+    }
+
+    return true;
   }
 }
 
@@ -6605,7 +6654,7 @@ export function initMoves() {
       .attr(ConfuseAttr)
       .soundBased(),
     new AttackMove(Moves.JUDGMENT, Type.NORMAL, MoveCategory.SPECIAL, 100, 100, 10, -1, 0, 4)
-      .partial(),
+      .attr(FormChangeItemTypeAttr),
     new AttackMove(Moves.BUG_BITE, Type.BUG, MoveCategory.PHYSICAL, 60, 100, 20, -1, 0, 4)
       .attr(StealEatBerryAttr),
     new AttackMove(Moves.CHARGE_BEAM, Type.ELECTRIC, MoveCategory.SPECIAL, 50, 90, 10, 70, 0, 4)
@@ -7291,7 +7340,7 @@ export function initMoves() {
       .attr(MatchUserTypeAttr),
     new AttackMove(Moves.CORE_ENFORCER, Type.DRAGON, MoveCategory.SPECIAL, 100, 100, 10, -1, 0, 7)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
-      .partial(),
+      .attr(SuppressAbilitiesIfActedAttr),
     new AttackMove(Moves.TROP_KICK, Type.GRASS, MoveCategory.PHYSICAL, 70, 100, 15, 100, 0, 7)
       .attr(StatChangeAttr, BattleStat.ATK, -1),
     new StatusMove(Moves.INSTRUCT, Type.PSYCHIC, -1, 15, -1, 0, 7)
@@ -7375,7 +7424,7 @@ export function initMoves() {
     new AttackMove(Moves.NATURES_MADNESS, Type.FAIRY, MoveCategory.SPECIAL, -1, 90, 10, -1, 0, 7)
       .attr(TargetHalfHpDamageAttr),
     new AttackMove(Moves.MULTI_ATTACK, Type.NORMAL, MoveCategory.PHYSICAL, 120, 100, 10, -1, 0, 7)
-      .partial(),
+      .attr(FormChangeItemTypeAttr),
     /* Unused */
     new AttackMove(Moves.TEN_MILLION_VOLT_THUNDERBOLT, Type.ELECTRIC, MoveCategory.SPECIAL, 195, -1, 1, -1, 0, 7)
       .partial()
