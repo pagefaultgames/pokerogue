@@ -1783,18 +1783,28 @@ export const trainerConfigs: TrainerConfigs = {
       p.abilityIndex = 0; // Cute Charm
     }))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.STEELIX ],TrainerSlot.TRAINER,true, p => {
-
+      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.ATTRACT)),new PokemonMove(Moves.EARTHQUAKE), new PokemonMove(Moves.IRON_HEAD), new PokemonMove(Moves.DRAGON_TAIL)];
+      p.gender = Gender.MALE;
+      p.abilityIndex = 1; // Sturdy
     }))
     .setPartyMemberFunc(2,getRandomPartyMemberFunc([Species.BANETTE], TrainerSlot.TRAINER, true, p => {
-
+      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.ATTRACT)),new PokemonMove(Moves.SHADOW_BALL), new PokemonMove(Moves.THUNDERBOLT), new PokemonMove(Moves.WILL_O_WISP)];
+      p.gender = Gender.MALE;
+      p.abilityIndex = 2; // Curse Body
     }))
     .setPartyMemberFunc(3,getRandomPartyMemberFunc([Species.SUICUNE],TrainerSlot.TRAINER, true, p => {
-
+      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.HYDRO_PUMP)),new PokemonMove(Moves.AIR_SLASH), new PokemonMove(Moves.CALM_MIND), new PokemonMove(Moves.ICE_BEAM)];
+      p.abilityIndex = 2; // Inner Focus
     }))
     .setPartyMemberFunc(4,getRandomPartyMemberFunc([Species.VILEPLUME],TrainerSlot.TRAINER,true, p => {
-
+      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.ATTRACT)),new PokemonMove(Moves.SLUDGE_BOMB), new PokemonMove(Moves.PETAL_BLIZZARD), new PokemonMove(Moves.TOXIC)];
+      p.gender = Gender.FEMALE;
+      p.abilityIndex = 2; // Effect Spore
     }))
-    .setPartyMemberFunc(5,getRandomPartyMemberFunc([Species.MISMAGIUS],TrainerSlot.TRAINER,true, p => {
+    .setPartyMemberFunc(5,getRandomPartyMemberFunc([Species.BLISSEY],TrainerSlot.TRAINER,true, p => {
+      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.ATTRACT)),new PokemonMove(Moves.ZEN_HEADBUTT), new PokemonMove(Moves.SOFT_BOILED), new PokemonMove(Moves.FIRE_PUNCH)];
+      p.gender = Gender.FEMALE;
+      p.abilityIndex = 1; // Serene Grace
 
     })),
   [TrainerType.EIN]: new TrainerConfig(++t).setName("Ein").initForEvilTeamLeader("Cipher Admin",[]),
