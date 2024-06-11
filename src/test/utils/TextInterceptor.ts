@@ -1,6 +1,6 @@
 export default class TextInterceptor {
   private scene;
-  private logs = [];
+  public logs = [];
   constructor(scene) {
     this.scene = scene;
     scene.messageWrapper = this;
