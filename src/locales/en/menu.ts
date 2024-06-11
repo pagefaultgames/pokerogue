@@ -45,8 +45,10 @@ export const menu: SimpleTranslationEntries = {
   "weeklyRankings": "Weekly Rankings",
   "noRankings": "No Rankings",
   "loading": "Loading…",
+  "loadingAsset": "Loading asset: {{assetName}}",
   "playersOnline": "Players Online",
-  "empty":"Empty",
   "yes":"Yes",
   "no":"No",
+  "disclaimer": "DISCLAIMER",
+  "disclaimerDescription": "This game is an unfinished product; it might have playability issues (including the potential loss of save data),\n change without notice, and may or may not be updated further or completed."
 } as const;
