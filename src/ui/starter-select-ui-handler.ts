@@ -1260,8 +1260,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               }
             });
           }
+          const starterContainer = this.filteredStarterContainers[this.cursor];
           const starterData = this.scene.gameData.starterData[this.lastSpecies.speciesId];
-          // const candyCount = starterData.candyCount;
+          const candyCount = starterData.candyCount;
           const passiveAttr = starterData.passiveAttr;
           if (passiveAttr & PassiveAttr.UNLOCKED) {
             if (!(passiveAttr & PassiveAttr.ENABLED)) {
@@ -1286,103 +1287,101 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               });
             }
           }
-          // TODO
-          // const showUseCandies = () => {
-          //   const options = [];
-          //   if (!(passiveAttr & PassiveAttr.UNLOCKED)) {
-          //     const passiveCost = getPassiveCandyCount(speciesStarters[this.lastSpecies.speciesId]);
-          //     options.push({
-          //       label: `x${passiveCost} ${i18next.t("starterSelectUiHandler:unlockPassive")} (${allAbilities[starterPassiveAbilities[this.lastSpecies.speciesId]].name})`,
-          //       handler: () => {
-          //         if (candyCount >= passiveCost) {
-          //           starterData.passiveAttr |= PassiveAttr.UNLOCKED | PassiveAttr.ENABLED;
-          //           starterData.candyCount -= passiveCost;
-          //           this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
-          //           this.scene.gameData.saveSystem().then(success => {
-          //             if (!success) {
-          //               return this.scene.reset(true);
-          //             }
-          //           });
-          //           ui.setMode(Mode.STARTER_SELECT);
-          //           this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, undefined);
+          const showUseCandies = () => {
+            const options = [];
+            if (!(passiveAttr & PassiveAttr.UNLOCKED)) {
+              const passiveCost = getPassiveCandyCount(speciesStarters[this.lastSpecies.speciesId]);
+              options.push({
+                label: `x${passiveCost} ${i18next.t("starterSelectUiHandler:unlockPassive")} (${allAbilities[starterPassiveAbilities[this.lastSpecies.speciesId]].name})`,
+                handler: () => {
+                  if (candyCount >= passiveCost) {
+                    starterData.passiveAttr |= PassiveAttr.UNLOCKED | PassiveAttr.ENABLED;
+                    starterData.candyCount -= passiveCost;
+                    this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
+                    this.scene.gameData.saveSystem().then(success => {
+                      if (!success) {
+                        return this.scene.reset(true);
+                      }
+                    });
+                    ui.setMode(Mode.STARTER_SELECT);
+                    this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, undefined);
 
-          //           // Update the candy upgrade display
-          //           if (this.isUpgradeIconEnabled() ) {
-          //             this.setUpgradeIcon(this.cursor);
-          //           }
-          //           if (this.isUpgradeAnimationEnabled()) {
-          //             const genSpecies = this.genSpecies[this.lastSpecies.generation - 1];
-          //             this.setUpgradeAnimation(this.starterSelectGenIconContainers[this.lastSpecies.generation - 1].getAt(genSpecies.indexOf(this.lastSpecies)), this.lastSpecies, true);
-          //           }
+                    // Update the candy upgrade display
+                    if (this.isUpgradeIconEnabled() ) {
+                      this.setUpgradeIcon(starterContainer);
+                    }
+                    if (this.isUpgradeAnimationEnabled()) {
 
-          //           return true;
-          //         }
-          //         return false;
-          //       },
-          //       item: "candy",
-          //       itemArgs: starterColors[this.lastSpecies.speciesId]
-          //     });
-          //   }
-          //   const valueReduction = starterData.valueReduction;
-          //   if (valueReduction < 2) {
-          //     const reductionCost = getValueReductionCandyCounts(speciesStarters[this.lastSpecies.speciesId])[valueReduction];
-          //     options.push({
-          //       label: `x${reductionCost} ${i18next.t("starterSelectUiHandler:reduceCost")}`,
-          //       handler: () => {
-          //         if (candyCount >= reductionCost) {
-          //           starterData.valueReduction++;
-          //           starterData.candyCount -= reductionCost;
-          //           this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
-          //           this.scene.gameData.saveSystem().then(success => {
-          //             if (!success) {
-          //               return this.scene.reset(true);
-          //             }
-          //           });
-          //           this.updateStarterValueLabel(this.cursor);
-          //           this.tryUpdateValue(0);
-          //           ui.setMode(Mode.STARTER_SELECT);
-          //           this.scene.playSound("buy");
+                      this.setUpgradeAnimation(starterContainer.icon, this.lastSpecies, true);
+                    }
 
-          //           // If the notification setting is set to 'On', update the candy upgrade display
-          //           if (this.scene.candyUpgradeNotification === 2) {
-          //             if (this.isUpgradeIconEnabled() ) {
-          //               this.setUpgradeIcon(this.cursor);
-          //             }
-          //             if (this.isUpgradeAnimationEnabled()) {
-          //               const genSpecies = this.genSpecies[this.lastSpecies.generation - 1];
-          //               this.setUpgradeAnimation(this.starterSelectGenIconContainers[this.lastSpecies.generation - 1].getAt(genSpecies.indexOf(this.lastSpecies)), this.lastSpecies, true);
-          //             }
-          //           }
+                    return true;
+                  }
+                  return false;
+                },
+                item: "candy",
+                itemArgs: starterColors[this.lastSpecies.speciesId]
+              });
+            }
+            const valueReduction = starterData.valueReduction;
+            if (valueReduction < 2) {
+              const reductionCost = getValueReductionCandyCounts(speciesStarters[this.lastSpecies.speciesId])[valueReduction];
+              options.push({
+                label: `x${reductionCost} ${i18next.t("starterSelectUiHandler:reduceCost")}`,
+                handler: () => {
+                  if (candyCount >= reductionCost) {
+                    starterData.valueReduction++;
+                    starterData.candyCount -= reductionCost;
+                    this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
+                    this.scene.gameData.saveSystem().then(success => {
+                      if (!success) {
+                        return this.scene.reset(true);
+                      }
+                    });
+                    this.updateStarterValueLabel(starterContainer);
+                    this.tryUpdateValue(0);
+                    ui.setMode(Mode.STARTER_SELECT);
+                    this.scene.playSound("buy");
 
-          //           return true;
-          //         }
-          //         return false;
-          //       },
-          //       item: "candy",
-          //       itemArgs: starterColors[this.lastSpecies.speciesId]
-          //     });
-          //   }
-          //   options.push({
-          //     label: i18next.t("menu:cancel"),
-          //     handler: () => {
-          //       ui.setMode(Mode.STARTER_SELECT);
-          //       return true;
-          //     }
-          //   });
-          //   ui.setModeWithoutClear(Mode.OPTION_SELECT, {
-          //     options: options,
-          //     yOffset: 47
-          //   });
-          // };
-          // if (!pokemonPrevolutions.hasOwnProperty(this.lastSpecies.speciesId)) {
-          //   options.push({
-          //     label: i18next.t("starterSelectUiHandler:useCandies"),
-          //     handler: () => {
-          //       ui.setMode(Mode.STARTER_SELECT).then(() => showUseCandies());
-          //       return true;
-          //     }
-          //   });
-          // }
+                    // If the notification setting is set to 'On', update the candy upgrade display
+                    if (this.scene.candyUpgradeNotification === 2) {
+                      if (this.isUpgradeIconEnabled() ) {
+                        this.setUpgradeIcon(starterContainer);
+                      }
+                      if (this.isUpgradeAnimationEnabled()) {
+                        this.setUpgradeAnimation(starterContainer.icon, this.lastSpecies, true);
+                      }
+                    }
+
+                    return true;
+                  }
+                  return false;
+                },
+                item: "candy",
+                itemArgs: starterColors[this.lastSpecies.speciesId]
+              });
+            }
+            options.push({
+              label: i18next.t("menu:cancel"),
+              handler: () => {
+                ui.setMode(Mode.STARTER_SELECT);
+                return true;
+              }
+            });
+            ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+              options: options,
+              yOffset: 47
+            });
+          };
+          if (!pokemonPrevolutions.hasOwnProperty(this.lastSpecies.speciesId)) {
+            options.push({
+              label: i18next.t("starterSelectUiHandler:useCandies"),
+              handler: () => {
+                ui.setMode(Mode.STARTER_SELECT).then(() => showUseCandies());
+                return true;
+              }
+            });
+          }
           options.push({
             label: i18next.t("menu:cancel"),
             handler: () => {
@@ -2181,7 +2180,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.pokemonSprite.setVisible(!this.statsMode);
         });
 
-        console.log(this.cursor);
         this.filteredStarterContainers[this.cursor].icon
           .setTexture(species.getIconAtlasKey(formIndex, shiny, variant), species.getIconId(female, formIndex, shiny, variant));
         this.filteredStarterContainers[this.cursor].checkIconId(female, formIndex, shiny, variant);
