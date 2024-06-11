@@ -5,6 +5,7 @@ import { EggTier } from "../data/enums/egg-type";
 import { UiTheme } from "../enums/ui-theme";
 import { ModifierTier } from "../modifier/modifier-tier";
 import Phaser from "phaser";
+import i18next from "i18next";
 
 export enum TextStyle {
   MESSAGE,
@@ -83,13 +84,14 @@ export function addTextInputObject(scene: Phaser.Scene, x: number, y: number, wi
 }
 
 function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): [ number, Phaser.Types.GameObjects.Text.TextStyle | InputText.IConfig, string, number, number ] {
+  const {resolvedLanguage} = i18next;
   let shadowXpos = 4;
   let shadowYpos = 5;
   const scale = 0.1666666667;
   const defaultFontSize = 96;
 
   let styleOptions: Phaser.Types.GameObjects.Text.TextStyle = {
-    fontFamily: "emerald, vonwaon",
+    fontFamily: "emerald, unifont",
     fontSize: 96,
     color: getTextColor(style, false, uiTheme),
     padding: {
@@ -140,6 +142,11 @@ function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptio
     shadowXpos = 3;
     shadowYpos = 3;
     break;
+  }
+
+  if (["zh"].includes(resolvedLanguage.substring(0,2))) {
+    shadowXpos = 0;
+    shadowYpos = 0;
   }
 
   const shadowColor = getTextColor(style, true, uiTheme);
