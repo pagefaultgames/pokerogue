@@ -40,10 +40,10 @@ export const menu: SimpleTranslationEntries = {
   "weeklyRankings": "Classement de la Semaine",
   "noRankings": "Pas de Classement",
   "loading": "Chargement…",
+  "loadingAsset": "Loading asset: {{assetName}}",
   "playersOnline": "Joueurs Connectés",
-  "empty":"Vide",
   "yes":"Oui",
   "no":"Non",
-  "disclaimer": "DISCLAIMER",
-  "disclaimerDescription": "This game is an unfinished product; it might have playability issues (including the potential loss of save data),\n change without notice, and may or may not be updated further or completed."
+  "disclaimer": "AVERTISSEMENT",
+  "disclaimerDescription": "Ce jeu n’est pas un produit fini et peut contenir des problèmes de jouabilité, dont de possibles pertes de sauvegardes,\ndes modifications sans avertissement et pourrait ou non encore être mis à jour ou terminé."
 } as const;
