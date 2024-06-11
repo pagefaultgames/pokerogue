@@ -300,7 +300,7 @@ describe("Test Battle Phase", () => {
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
     await game.startBattle();
     const turn = game.scene.currentBattle.turn;
-    await game.doAttack(0);
+    game.doAttack(0);
     await game.toNextTurn();
     expect(game.scene.currentBattle.turn).toBeGreaterThan(turn);
   }, 20000);
@@ -318,7 +318,7 @@ describe("Test Battle Phase", () => {
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
     await game.startBattle();
     const waveIndex = game.scene.currentBattle.waveIndex;
-    await game.doAttack(0);
+    game.doAttack(0);
     await game.doKillOpponents();
     await game.toNextWave();
     expect(game.scene.currentBattle.waveIndex).toBeGreaterThan(waveIndex);

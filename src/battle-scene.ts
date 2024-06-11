@@ -58,7 +58,7 @@ import * as Overrides from "./overrides";
 import {InputsController} from "./inputs-controller";
 import {UiInputs} from "./ui-inputs";
 import { MoneyFormat } from "./enums/money-format";
-import { NewArenaEvent } from "./battle-scene-events";
+import { NewArenaEvent } from "./events/battle-scene";
 import { Abilities } from "./data/enums/abilities";
 import ArenaFlyout from "./ui/arena-flyout";
 import { EaseType } from "./ui/enums/ease-type";

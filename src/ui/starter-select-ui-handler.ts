@@ -1,4 +1,4 @@
-import { BattleSceneEventType, CandyUpgradeNotificationChangedEvent } from "#app/battle-scene-events.js";
+import { BattleSceneEventType, CandyUpgradeNotificationChangedEvent } from "../events/battle-scene";
 import { pokemonPrevolutions } from "#app/data/pokemon-evolutions";
 import { Variant, getVariantTint } from "#app/data/variant";
 import { argbFromRgba } from "@material/material-color-utilities";
@@ -705,6 +705,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.variantIconElement.setScale(0.675);
     this.variantIconElement.setOrigin(0.0, 0.0);
     this.variantLabel = addTextObject(this.scene, this.instructionRowX + this.instructionRowTextOffset, this.instructionRowY, i18next.t("starterSelectUiHandler:cycleVariant"), TextStyle.PARTY, { fontSize: instructionTextSize });
+
+    this.hideInstructions();
 
     this.starterSelectMessageBoxContainer = this.scene.add.container(0, this.scene.game.canvas.height / 6);
     this.starterSelectMessageBoxContainer.setVisible(false);
@@ -1574,6 +1576,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     iconElement.setTexture(gamepadType, iconPath);
     iconElement.setPosition(this.instructionRowX, this.instructionRowY);
     controlLabel.setPosition(this.instructionRowX + this.instructionRowTextOffset, this.instructionRowY);
+    iconElement.setVisible(true);
+    controlLabel.setVisible(true);
     this.instructionsContainer.add([iconElement, controlLabel]);
     this.instructionRowY += 8;
     if (this.instructionRowY >= 24) {
@@ -1585,6 +1589,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   updateInstructions(): void {
     this.instructionRowX = 0;
     this.instructionRowY = 0;
+    this.hideInstructions();
     this.instructionsContainer.removeAll();
     let gamepadType;
     if (this.scene.inputMethod === "gamepad") {

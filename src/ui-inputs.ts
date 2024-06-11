@@ -162,20 +162,13 @@ export class UiInputs {
       }
     case Mode.TITLE:
     case Mode.COMMAND:
-    case Mode.FIGHT:
-    case Mode.BALL:
-    case Mode.TARGET_SELECT:
-    case Mode.SAVE_SLOT:
-    case Mode.PARTY:
-    case Mode.SUMMARY:
-    case Mode.STARTER_SELECT:
-    case Mode.OPTION_SELECT:
+    case Mode.MODIFIER_SELECT:
       this.scene.ui.setOverlayMode(Mode.MENU);
       break;
-    case Mode.CONFIRM:
+    case Mode.STARTER_SELECT:
+      this.buttonTouch();
+      break;
     case Mode.MENU:
-    case Mode.SETTINGS:
-    case Mode.ACHIEVEMENTS:
       this.scene.ui.revertMode();
       this.scene.playSound("select");
       break;
