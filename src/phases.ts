@@ -62,7 +62,7 @@ import { Abilities } from "./data/enums/abilities";
 import * as Overrides from "./overrides";
 import { TextStyle, addTextObject } from "./ui/text";
 import { Type } from "./data/type";
-import { BerryUsedEvent, EncounterPhaseEvent, MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./battle-scene-events";
+import { BerryUsedEvent, EncounterPhaseEvent, MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./events/battle-scene";
 import { ExpNotification } from "./enums/exp-notification";
 
 
@@ -661,7 +661,14 @@ export abstract class FieldPhase extends BattlePhase {
     const enemyField = this.scene.getEnemyField().filter(p => p.isActive()) as Pokemon[];
 
     // We shuffle the list before sorting so speed ties produce random results
-    let orderedTargets: Pokemon[] = Utils.randSeedShuffle(playerField.concat(enemyField)).sort((a: Pokemon, b: Pokemon) => {
+    let orderedTargets: Pokemon[] = playerField.concat(enemyField);
+    // We seed it with the current turn to prevent an inconsistency where it
+    // was varying based on how long since you last reloaded
+    this.scene.executeWithSeedOffset(() => {
+      orderedTargets = Utils.randSeedShuffle(orderedTargets);
+    }, this.scene.currentBattle.turn, this.scene.waveSeed);
+
+    orderedTargets.sort((a: Pokemon, b: Pokemon) => {
       const aSpeed = a?.getBattleStat(Stat.SPD) || 0;
       const bSpeed = b?.getBattleStat(Stat.SPD) || 0;
 
@@ -1079,6 +1086,10 @@ export class NextEncounterPhase extends EncounterPhase {
     super(scene);
   }
 
+  start() {
+    super.start();
+  }
+
   doEncounter(): void {
     this.scene.playBgm(undefined, true);
 
@@ -1158,6 +1169,9 @@ export class PostSummonPhase extends PokemonPhase {
 
     const pokemon = this.getPokemon();
 
+    if (pokemon.status?.effect === StatusEffect.TOXIC) {
+      pokemon.status.turnCount = 0;
+    }
     this.scene.arena.applyTags(ArenaTrapTag, pokemon);
     applyPostSummonAbAttrs(PostSummonAbAttr, pokemon).then(() => this.end());
   }
@@ -1495,6 +1509,10 @@ export class SwitchSummonPhase extends SummonPhase {
     this.slotIndex = slotIndex;
     this.doReturn = doReturn;
     this.batonPass = batonPass;
+  }
+
+  start(): void {
+    super.start();
   }
 
   preSummon(): void {
@@ -5173,15 +5191,15 @@ export class EggLapsePhase extends Phase {
       return Overrides.IMMEDIATE_HATCH_EGGS_OVERRIDE ? true : --egg.hatchWaves < 1;
     });
 
-    let eggsToHatchCount: integer = eggsToHatch.length;
+    let eggCount: integer = eggsToHatch.length;
 
-    if (eggsToHatchCount) {
+    if (eggCount) {
       this.scene.queueMessage(i18next.t("battle:eggHatching"));
 
       for (const egg of eggsToHatch) {
-        this.scene.unshiftPhase(new EggHatchPhase(this.scene, egg, eggsToHatchCount));
-        if (eggsToHatchCount > 0) {
-          eggsToHatchCount--;
+        this.scene.unshiftPhase(new EggHatchPhase(this.scene, egg, eggCount));
+        if (eggCount > 0) {
+          eggCount--;
         }
       }
 
