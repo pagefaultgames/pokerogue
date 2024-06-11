@@ -60,86 +60,86 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "breeder": {
     "encounter": {
-      1: "Obedient Pokémon, selfish Pokémon… Pokémon have unique characteristics.",
-      2: "Even though my upbringing and behavior are poor, I've raised my Pokémon well.",
-      3: "Hmm, do you discipline your Pokémon? Pampering them too much is no good.",
+      1: "순종적인 포켓몬, 이기적인 포켓몬… 포켓몬들은 각기 다른 성격을 가지고 있지.",
+      2: "내 태도가 그렇게 좋진 않아도, 내 포켓몬들은 잘 키웠어.",
+      3: "음, 넌 포켓몬들을 훈육하니? 너무 심하게 하는 것은 좋지 않다고.",
     },
     "victory": {
-      1: "It is important to nurture and train each Pokémon's characteristics.",
-      2: "Unlike my diabolical self, these are some good Pokémon.",
-      3: "Too much praise can spoil both Pokémon and people.",
+      1: "각 포켓몬의 성격을 이해하고 육성하는 건 중요해.",
+      2: "사악한 나와는 달리 좋은 포켓몬들도 있지.",
+      3: "과도한 칭찬은 사람과 포켓몬 모두에게 독이 될 수 있어.",
     },
     "defeat": {
-      1: "You should not get angry at your Pokémon, even if you lose a battle.",
-      2: "Right? Pretty good Pokémon, huh? I'm suited to raising things.",
-      3: "No matter how much you love your Pokémon, you still have to discipline them when they misbehave."
+      1: "배틀에서 지더라도 포켓몬에게 화를 내면 안돼.",
+      2: "어때? 꽤 괜찮은 포켓몬이지? 난 무언가 기르는 게 꽤 잘 맞더라고.",
+      3: "네가 포켓몬을 얼마나 사랑하는지와 관계없이, 그들이 잘못을 저지르면 바로잡아야 해."
     }
   },
   "breeder_female": {
     "encounter": {
-      1: "Pokémon never betray you. They return all the love you give them.",
-      2: "Shall I give you a tip for training good Pokémon?",
-      3: "I have raised these very special Pokémon using a special method."
+      1: "포켓몬은 절대 널 배신하지 않아. 네가 주는 사랑을 고스란히 되돌려 준다구.",
+      2: "좋은 포켓몬을 키우는 팁을 알려줄까?",
+      3: "난 아주 특별한 방법으로 아주 특별한 포켓몬들을 키웠지!"
     },
     "victory": {
-      1: "Ugh… It wasn't supposed to be like this. Did I administer the wrong blend?",
-      2: "How could that happen to my Pokémon… What are you feeding your Pokémon?",
-      3: "If I lose, that tells you I was just killing time. It doesn't damage my ego at all."
+      1: "이런… 이렇게 될 리가 없는데. 내가 블렌딩을 잘못 썼나?",
+      2: "내 포켓몬에게 이런 일이… 넌 네 포켓몬에게 뭘 먹이는 거야?",
+      3: "내가 지는 건 그저 내가 시간을 때우고 있었다는 걸 알려주는 거지. 내 자존심엔 전혀 상처가 되지 않는다구."
     },
     "defeat": {
-      1: "This proves my Pokémon have accepted my love.",
-      2: "The real trick behind training good Pokémon is catching good Pokémon.",
-      3: "Pokémon will be strong or weak depending on how you raise them."
+      1: "이건 내 포켓몬들이 내 사랑을 받아들였다는 걸 입증하지.",
+      2: "좋은 포켓몬을 키우는 진짜 비결은 좋은 포켓몬을 잡는 거야.",
+      3: "포켓몬의 강함과 약함은 네가 어떻게 키우느냐에 따라 결정되지."
     }
   },
   "fisherman": {
     "encounter": {
-      1: "Aack! You made me lose a bite!\nWhat are you going to do about it?",
-      2: "Go away! You're scaring the Pokémon!",
-      3: "Let's see if you can reel in a victory!",
+      1: "앗! 너 때문에 한 마리 놓쳤잖아! 어떻게 할 거야?",
+      2: "저리 가! 네가 포켓몬들을 놀래키고 있잖아!",
+      3: "네가 승리를 낚을 수 있을지 한번 보자고!",
     },
     "victory": {
-      1: "Just forget about it.",
-      2: "Next time, I'll be reelin' in the triumph!",
-      3: "Guess I underestimated the currents this time.",
+      1: "그냥 잊어버려.",
+      2: "다음 번엔 내가 승리의 나팔을 울리고 있을거다!",
+      3: "이번엔 내가 물살을 과소평가했나보군.",
     },
   },
   "fisherman_female": {
     "encounter": {
-      1: "Woah! I've hooked a big one!",
-      2: "Line's in, ready to reel in success!",
-      3: "Ready to make waves!"
+      1: "월척이다!",
+      2: "낚시대는 던져졌고, 이젠 성공을 끌어올리는 일만 남았다!",
+      3: "파도를 일으킬 준비는 끝났어!"
     },
     "victory": {
-      1: "I'll be back with a stronger hook.",
-      2: "I'll reel in victory next time.",
-      3: "I'm just sharpening my hooks for the comeback!"
+      1: "더 튼튼한 바늘을 가지고 돌아올테다.",
+      2: "다음번엔 꼭 성공을 낚을 거야!",
+      3: "다시 돌아올 날을 기다리며 바늘을 다듬고 있을게!"
     },
   },
   "swimmer": {
     "encounter": {
-      1: "Time to dive in!",
-      2: "Let's ride the waves of victory!",
-      3: "Ready to make a splash!",
+      1: "뛰어들 시간이다!",
+      2: "승리의 파도 속으로!",
+      3: "첨벙댈 준비는 끝났어!",
     },
     "victory": {
-      1: "Drenched in defeat!",
-      2: "A wave of defeat!",
-      3: "Back to shore, I guess.",
+      1: "패배에 젖어버렸어…",
+      2: "패배의 파도였군.",
+      3: "해변으로 돌아갈 시간이군.",
     },
   },
   "backpacker": {
     "encounter": {
-      1: "Pack up, game on!",
-      2: "Let's see if you can keep pace!",
-      3: "Gear up, challenger!",
-      4: "I've spent 20 years trying to find myself… But where am I?"
+      1: "게임 시작이야! 짐 단단히 싸놓으라구!",
+      2: "네가 속도를 유지할 수 있을지 보자!",
+      3: "각오 단단히 하라고!",
+      4: "20년 동안 나 자신을 찾기 위해 헤매왔어… 근데 내가 어디 있지?"
     },
     "victory": {
-      1: "Tripped up this time!",
-      2: "Oh, I think I'm lost.",
-      3: "Dead end!",
-      4: "Wait up a second! Hey! Don't you know who I am?"
+      1: "이번엔 걸려 넘어져 버렸네!",
+      2: "내가 속도를 잃어버렸잖아!",
+      3: "막다른 길이야!",
+      4: "잠깐! 그래 거기, 혹시 내가 누군지 아나?"
     },
   },
   "ace_trainer": {
