@@ -15,6 +15,7 @@ import {TimeOfDay} from "#app/data/enums/time-of-day";
 import { Gender } from "./data/gender";
 import { StatusEffect } from "./data/status-effect";
 import { modifierTypes } from "./modifier/modifier-type";
+import { allSpecies } from "./data/pokemon-species"; // eslint-disable-line @typescript-eslint/no-unused-vars
 
 /**
  * Overrides for testing different in game situations
@@ -53,8 +54,18 @@ export const POKEBALL_OVERRIDE: { active: boolean, pokeballs: PokeballCounts } =
  * PLAYER OVERRIDES
  */
 
-// forms can be found in pokemon-species.ts
-export const STARTER_FORM_OVERRIDE: integer = 0;
+/**
+ * Set the form index of any starter in the party whose `speciesId` is inside this override
+ * @see {@link allSpecies} in `src/data/pokemon-species.ts` for form indexes
+ * @example
+ * ```
+ * const STARTER_FORM_OVERRIDES = {
+ *   [Species.DARMANITAN]: 1
+ * }
+ * ```
+ */
+export const STARTER_FORM_OVERRIDES: Partial<Record<Species, number>> = {};
+
 // default 5 or 20 for Daily
 export const STARTING_LEVEL_OVERRIDE: integer = 0;
 /**

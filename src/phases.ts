@@ -555,6 +555,10 @@ export class SelectStarterPhase extends Phase {
     });
   }
 
+  /**
+   * Initialize starters before starting the first battle
+   * @param starters {@linkcode Pokemon} with which to start the first battle
+   */
   initBattle(starters: Starter[]) {
     const party = this.scene.getParty();
     const loadPokemonAssets: Promise<void>[] = [];
@@ -564,9 +568,13 @@ export class SelectStarterPhase extends Phase {
       }
       const starterProps = this.scene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);
       let starterFormIndex = Math.min(starterProps.formIndex, Math.max(starter.species.forms.length - 1, 0));
-      if (!i && Overrides.STARTER_SPECIES_OVERRIDE) {
-        starterFormIndex = Overrides.STARTER_FORM_OVERRIDE;
+      if (
+        starter.species.speciesId in Overrides.STARTER_FORM_OVERRIDES &&
+        starter.species.forms[Overrides.STARTER_FORM_OVERRIDES[starter.species.speciesId]]
+      ) {
+        starterFormIndex = Overrides.STARTER_FORM_OVERRIDES[starter.species.speciesId];
       }
+
       let starterGender = starter.species.malePercent !== null
         ? !starterProps.female ? Gender.MALE : Gender.FEMALE
         : Gender.GENDERLESS;
