@@ -1,6 +1,6 @@
 export default class TextInterceptor {
   private scene;
-  private logs = [];
+  public logs = [];
   constructor(scene) {
     this.scene = scene;
     scene.messageWrapper = this;
@@ -11,6 +11,6 @@ export default class TextInterceptor {
   }
 
   getLatestMessage(): string {
-    return this.logs[this.logs.length - 1];
+    return this.logs.pop();
   }
 }

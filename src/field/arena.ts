@@ -19,7 +19,7 @@ import { Terrain, TerrainType } from "../data/terrain";
 import { PostTerrainChangeAbAttr, PostWeatherChangeAbAttr, applyPostTerrainChangeAbAttrs, applyPostWeatherChangeAbAttrs } from "../data/ability";
 import Pokemon from "./pokemon";
 import * as Overrides from "../overrides";
-import { WeatherChangedEvent, TerrainChangedEvent, TagAddedEvent, TagRemovedEvent } from "./arena-events";
+import { WeatherChangedEvent, TerrainChangedEvent, TagAddedEvent, TagRemovedEvent } from "./events/arena";
 
 export class Arena {
   public scene: BattleScene;
