@@ -1089,11 +1089,9 @@ export class MoveTypeChangeAttr extends PreAttackAbAttr {
 
   applyPreAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: Move, args: any[]): boolean {
     if (this.condition && this.condition(pokemon, defender, move)) {
-      const type = (args[0] as Utils.IntegerHolder);
-      type.value = this.newType;
-
-      if (args[1] && args[1] instanceof Utils.NumberHolder) {
-        args[1].value *= this.powerMultiplier;
+      move.type = this.newType;
+      if (args[0] && args[0] instanceof Utils.NumberHolder) {
+        args[0].value *= this.powerMultiplier;
       }
       return true;
     }
@@ -1104,6 +1102,8 @@ export class MoveTypeChangeAttr extends PreAttackAbAttr {
 
 /** Ability attribute for changing a pokemon's type before using a move */
 export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
+  private moveType: Type;
+
   constructor() {
     super(true);
   }
@@ -1111,6 +1111,7 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
   applyPreAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: Move, args: any[]): boolean {
     if (
       !pokemon.isTerastallized() &&
+      move.id !== Moves.STRUGGLE &&
       /**
        * Skip moves that call other moves because these moves generate a following move that will trigger this ability attribute
        * @see {@link https://bulbapedia.bulbagarden.net/wiki/Category:Moves_that_call_other_moves}
@@ -1122,21 +1123,20 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
         attr instanceof CopyMoveAttr
       )
     ) {
-      const moveType = new Utils.IntegerHolder(move.type);
+      // TODO remove this copy when phase order is changed so that damage, type, category, etc.
+      // TODO are all calculated prior to playing the move animation.
+      const moveCopy = new Move(move.id, move.type, move.category, move.moveTarget, move.power, move.accuracy, move.pp, move.chance, move.priority, move.generation);
 
       // Moves like Weather Ball ignore effects of abilities like Normalize and Refrigerate
       if (move.findAttr(attr => attr instanceof VariableMoveTypeAttr)) {
-        // Moves that have variable types
-        applyMoveAttrs(VariableMoveTypeAttr, pokemon, null, move, moveType);
+        applyMoveAttrs(VariableMoveTypeAttr, pokemon, null, moveCopy);
       } else {
-        // Abilities that change move types
-        // applyAbAttrs(VariableMoveTypeAbAttr, pokemon, null, moveType);
-        applyPreAttackAbAttrs(MoveTypeChangeAttr, pokemon, null, move, moveType);
+        applyPreAttackAbAttrs(MoveTypeChangeAttr, pokemon, null, moveCopy);
       }
 
-      if (pokemon.getTypes().some((t) => t !== moveType.value)) {
-        pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` transformed into the ${Type[moveType.value]} type!`));
-        pokemon.summonData.types = [moveType.value];
+      if (pokemon.getTypes().some((t) => t !== moveCopy.type)) {
+        this.moveType = moveCopy.type;
+        pokemon.summonData.types = [moveCopy.type];
         pokemon.updateInfo();
 
         return true;
@@ -1144,6 +1144,10 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
     }
 
     return false;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
+    return getPokemonMessage(pokemon, ` transformed into the ${Type[this.moveType]} type!`);
   }
 }
 
@@ -3597,6 +3601,9 @@ function applyAbAttrsInternal<TAttr extends AbAttr>(attrType: { new(...args: any
       }
       pokemon.scene.setPhaseQueueSplice();
       const onApplySuccess = () => {
+        if (pokemon.summonData && !pokemon.summonData.abilitiesApplied.includes(ability.id)) {
+          pokemon.summonData.abilitiesApplied.push(ability.id);
+        }
         if (pokemon.battleData && !pokemon.battleData.abilitiesApplied.includes(ability.id)) {
           pokemon.battleData.abilitiesApplied.push(ability.id);
         }
@@ -4299,7 +4306,8 @@ export function initAbilities() {
       .attr(HealFromBerryUseAbAttr, 1/3)
       .partial(), // Healing not blocked by Heal Block
     new Ability(Abilities.PROTEAN, 6)
-      .attr(PokemonTypeChangeAbAttr),
+      .attr(PokemonTypeChangeAbAttr)
+      .condition((p) => !p.summonData?.abilitiesApplied.includes(Abilities.PROTEAN)),
     new Ability(Abilities.FUR_COAT, 6)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => move.category === MoveCategory.PHYSICAL, 0.5)
       .ignorable(),
@@ -4533,7 +4541,8 @@ export function initAbilities() {
       .attr(PostSummonStatChangeAbAttr, BattleStat.DEF, 1, true)
       .condition(getOncePerBattleCondition(Abilities.DAUNTLESS_SHIELD)),
     new Ability(Abilities.LIBERO, 8)
-      .attr(PokemonTypeChangeAbAttr),
+      .attr(PokemonTypeChangeAbAttr)
+      .condition((p) => !p.summonData?.abilitiesApplied.includes(Abilities.LIBERO)),
     new Ability(Abilities.BALL_FETCH, 8)
       .attr(FetchBallAbAttr)
       .condition(getOncePerBattleCondition(Abilities.BALL_FETCH)),
