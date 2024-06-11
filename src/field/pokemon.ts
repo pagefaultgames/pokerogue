@@ -1692,7 +1692,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (types.find(t => move.isTypeImmune(t))) {
       typeMultiplier.value = 0;
     }
-    if (this.getTags(BattlerTagType.MAGNET_RISEN).filter((tag) => tag instanceof TypeImmuneTag && tag.immuneType === move.type).length !== 0) {
+    if (this.summonData.tags.filter((tag) => tag instanceof TypeImmuneTag && tag.immuneType === move.type).length !== 0) {
       typeMultiplier.value = 0;
     }
 
