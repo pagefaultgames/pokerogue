@@ -527,7 +527,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "…어떻게 된 거지? 이 몸은 플라스마단을 만들어낸 완벽한 남자라고! "
     },
     "defeat": {
-      1: "세계를 변하게 할 완벽한 지배자란 말이다! 마 하 하!"
+      1: "세계를 바꿀 완전한 지배자가 아니었단 말인가!? …흐하하!"
     }
   },
   "plasma_boss_ghetsis_2": {
