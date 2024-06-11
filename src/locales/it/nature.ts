@@ -15,7 +15,7 @@ export const nature: SimpleTranslationEntries = {
   "Hasty": "Lesta",
   "Serious": "Seria",
   "Jolly": "Allegra",
-  "Naive": "Ingenuaa",
+  "Naive": "Ingenua",
   "Modest": "Modesta",
   "Mild": "Mite",
   "Quiet": "Quieta",
