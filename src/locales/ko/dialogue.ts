@@ -543,7 +543,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "flare_boss_lysandre_1": {
     "encounter": {
-      1: "나를 막겠다고? 배틀로 증병하도록."
+      1: "나를 막겠다고? 배틀로 증명하도록."
     },
     "victory": {
       1: "네가 나를 여기서 막았군. 하지만 잠시 기다리도록. "
