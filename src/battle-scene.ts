@@ -962,6 +962,7 @@ export default class BattleScene extends SceneBase {
     let newBattleType: BattleType;
     let newTrainer: Trainer;
 
+
     let battleConfig: FixedBattleConfig = null;
 
     this.resetSeed(newWaveIndex);
@@ -1821,6 +1822,14 @@ export default class BattleScene extends SceneBase {
       return 30.025;
     case "battle_plasma_grunt": //BW Team Plasma Battle
       return 12.974;
+    case "battle_cipher_admin": // COL Cipher Admin Battle
+      return 47.700;
+    case "battle_cipher_boss": // COL Final Battle Theme
+      return 3.955;
+    case "battle_mirror_b": // COL Mirror B.'s Retro Groove Theme
+      return 10.035;
+    case "battle_cipher_peon": // COL Cipher Peon Battle
+      return 33.100;
     }
 
     return 0;

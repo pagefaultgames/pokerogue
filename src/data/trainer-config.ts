@@ -1238,7 +1238,7 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.SUPER_RARE]: [Species.NOIVERN],
       [TrainerPoolTier.ULTRA_RARE]: []
     }),
-  [TrainerType.CIPHER_PEON]: new TrainerConfig(++t).setHasGenders("Cipher Peon Female").setHasDouble("Cipher Peons").setMoneyMultiplier(1.0).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm("battle_plasma_grunt").setPartyTemplateFunc(scene => getEvilGruntPartyTemplate(scene))
+  [TrainerType.CIPHER_PEON]: new TrainerConfig(++t).setHasGenders("Cipher Peon Female").setHasDouble("Cipher Peons").setMoneyMultiplier(1.0).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm("battle_cipher_peon").setMixedBattleBgm("battle_cipher_peon").setPartyTemplateFunc(scene => getEvilGruntPartyTemplate(scene))
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [Species.HITMONTOP,Species.VIBRAVA,Species.REMORAID,Species.MANTINE,Species.GEODUDE,Species.FORRETRESS],
       [TrainerPoolTier.UNCOMMON]: [Species.CROCONAW,Species.QUILAVA,Species.BAYLEEF,Species.TROPIUS],
@@ -1731,7 +1731,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.pokeball = PokeballType.ULTRA_BALL;
       p.formIndex = 1;
     })),
-  [TrainerType.MIRROR_B]: new TrainerConfig(++t).setName("Mirror B").initForEvilTeamLeader("Cipher Admin",[])
+  [TrainerType.MIRROR_B]: new TrainerConfig(++t).setName("Mirror B").initForEvilTeamLeader("Cipher Admin",[]).setBattleBgm("battle_mirror_b").setMixedBattleBgm("battle_mirror_b")
     .setPartyMemberFunc(0,getRandomPartyMemberFunc([Species.PELIPPER], TrainerSlot.TRAINER, true,  p => {
       p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.HURRICANE)),new PokemonMove(Moves.ROOST), new PokemonMove(Moves.SURF), new PokemonMove(Moves.ICE_BEAM)];
       p.abilityIndex = 1; // Drizzle
@@ -1784,7 +1784,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(5,getRandomPartyMemberFunc([Species.CAMERUPT],TrainerSlot.TRAINER,true, p => {
       p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.EARTHQUAKE)),new PokemonMove(Moves.PROTECT), new PokemonMove(Moves.LAVA_PLUME), new PokemonMove(Moves.IRON_HEAD)];
     })),
-  [TrainerType.VENUS]: new TrainerConfig(++t).setName("Venus").initForEvilTeamLeader("Cipher Admin",[])
+  [TrainerType.VENUS]: new TrainerConfig(++t).setName("Venus").initForEvilTeamLeader("Cipher Admin",[]).setBattleBgm("battle_cipher_admin").setMixedBattleBgm("battle_cipher_admin")
     .setPartyMemberFunc(0,getRandomPartyMemberFunc([Species.DELCATTY], TrainerSlot.TRAINER, true, p => {
       p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.ATTRACT)),new PokemonMove(Moves.DOUBLE_EDGE), new PokemonMove(Moves.THUNDERBOLT), new PokemonMove(Moves.WATER_PULSE)];
       p.gender = Gender.FEMALE;
@@ -1820,7 +1820,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.gender = Gender.FEMALE;
       p.abilityIndex = 1; // Serene Grace
     })),
-  [TrainerType.EIN]: new TrainerConfig(++t).setName("Ein").initForEvilTeamLeader("Cipher Admin",[])
+  [TrainerType.EIN]: new TrainerConfig(++t).setName("Ein").initForEvilTeamLeader("Cipher Admin",[]).setBattleBgm("battle_cipher_admin").setMixedBattleBgm("battle_cipher_admin")
     .setPartyMemberFunc(0,getRandomPartyMemberFunc([Species.RHYPERIOR], TrainerSlot.TRAINER, true, p => {
       p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.EARTHQUAKE)),new PokemonMove(Moves.ROCK_SLIDE), new PokemonMove(Moves.RAIN_DANCE), new PokemonMove(Moves.THUNDER)];
       p.abilityIndex = 0; // Lightning Rod
@@ -1851,7 +1851,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.DRAGON_PULSE)),new PokemonMove(Moves.THUNDERBOLT), new PokemonMove(Moves.FLAMETHROWER), new PokemonMove(Moves.ICE_BEAM)];
       p.abilityIndex = 1; // Hydration
     })),
-  [TrainerType.NASCOUR]: new TrainerConfig(++t).setName("Nascour").initForEvilTeamLeader("Cipher",[])
+  [TrainerType.NASCOUR]: new TrainerConfig(++t).setName("Nascour").initForEvilTeamLeader("Cipher",[]).setBattleBgm("battle_cipher_admin").setMixedBattleBgm("battle_cipher_admin")
     .setPartyMemberFunc(0,getRandomPartyMemberFunc([Species.DUSKNOIR], TrainerSlot.TRAINER, true, p => {
       p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.SHADOW_PUNCH)),new PokemonMove(Moves.WILL_O_WISP), new PokemonMove(Moves.PAYBACK), new PokemonMove(Moves.ICE_PUNCH)];
       p.abilityIndex = 0; // Pressure
@@ -1889,7 +1889,7 @@ export const trainerConfigs: TrainerConfigs = {
       return [modifierTypes.TERA_SHARD().generateType(null, [Type.FIRE]).withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(arcanine) as PersistentModifier];
     }),
   // Evices team will be inspired by Greevil's team from XD Gale of Darkness but with a few changes
-  [TrainerType.EVICE]: new TrainerConfig(++t).setName("Evice").initForEvilTeamLeader("Cipher Head",[])
+  [TrainerType.EVICE]: new TrainerConfig(++t).setName("Evice").initForEvilTeamLeader("Cipher Head",[]).setBattleBgm("battle_cipher_boss").setMixedBattleBgm("battle_cipher_boss")
     .setPartyMemberFunc(0,getRandomPartyMemberFunc([Species.PALDEA_TAUROS], TrainerSlot.TRAINER, true, p => {
       p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.EARTHQUAKE)),new PokemonMove(Moves.CLOSE_COMBAT), new PokemonMove(Moves.ZEN_HEADBUTT), new PokemonMove(Moves.THROAT_CHOP)];
       p.abilityIndex = 0; // Intimidate
