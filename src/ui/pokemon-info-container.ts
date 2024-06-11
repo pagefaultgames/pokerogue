@@ -6,12 +6,12 @@ import { getNatureName } from "../data/nature";
 import { Type } from "../data/type";
 import Pokemon from "../field/pokemon";
 import i18next from "../plugins/i18n";
+import { DexAttr } from "../system/game-data";
 import * as Utils from "../utils";
 import ConfirmUiHandler from "./confirm-ui-handler";
 import { StatsContainer } from "./stats-container";
 import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./text";
 import { addWindow } from "./ui-theme";
-import { DexAttr } from "../system/game-data";
 
 interface LanguageSetting {
   infoContainerTextSize: string;
@@ -40,7 +40,7 @@ const languageSettings: { [key: string]: LanguageSetting } = {
   },
   "pt": {
     infoContainerTextSize: "60px",
-    infoContainerLabelXPos: -16,
+    infoContainerLabelXPos: -15,
     infoContainerTextXPos: -12,
   },
 };
@@ -222,6 +222,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
         this.pokemonGenderNewText.setShadowColor(getTextColor(TextStyle.SUMMARY_BLUE, true, this.scene.uiTheme));
         this.pokemonGenderNewText.setVisible((newGender & caughtAttr) === BigInt(0));
       } else {
+        this.pokemonGenderNewText.setVisible(false);
         this.pokemonGenderText.setVisible(false);
       }
 
@@ -312,6 +313,8 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
         this.pokemonShinyNewIcon.setShadowColor(getTextColor(TextStyle.SUMMARY_BLUE, true, this.scene.uiTheme));
         const newShinyOrVariant = ((newShiny & caughtAttr) === BigInt(0)) || ((newVariant & caughtAttr) === BigInt(0));
         this.pokemonShinyNewIcon.setVisible(!!newShinyOrVariant);
+      } else {
+        this.pokemonShinyNewIcon.setVisible(false);
       }
 
       this.pokemonFusionShinyIcon.setPosition(this.pokemonShinyIcon.x, this.pokemonShinyIcon.y);
