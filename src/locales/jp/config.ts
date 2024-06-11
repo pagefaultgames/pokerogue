@@ -5,6 +5,7 @@ import { battle } from "./battle";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
 import { berry } from "./berry";
 import { biome } from "./biome";
+import { challenges } from "./challenges";
 import { commandUiHandler } from "./command-ui-handler";
 import {
   PGFbattleSpecDialogue,
@@ -45,6 +46,7 @@ export const jpConfig = {
   battleMessageUiHandler: battleMessageUiHandler,
   berry: berry,
   biome: biome,
+  challenges: challenges,
   commandUiHandler: commandUiHandler,
   PGMachv: PGMachv,
   PGFachv: PGFachv,

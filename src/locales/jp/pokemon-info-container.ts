@@ -7,5 +7,6 @@ export const pokemonInfoContainer: SimpleTranslationEntries = {
   "nature": "せいかく:",
   "epic": "Epic",
   "rare": "Rare",
-  "common": "Common"
+  "common": "Common",
+  "form": "Form:"
 } as const;
