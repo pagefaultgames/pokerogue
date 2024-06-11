@@ -6,7 +6,7 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "成就",
   },
   "Locked": {
-    name: "锁定",
+    name: "未解锁",
   },
 
   "MoneyAchv": {
