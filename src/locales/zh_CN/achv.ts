@@ -122,20 +122,20 @@ export const PGMachv: AchievementTranslationEntries = {
     description: "获得一个迷你黑洞",
   },
   "CATCH_MYTHICAL": {
-    "name": "幻之宝可梦",
-    "description": "捕捉一只幻之宝可梦",
+    name: "幻之宝可梦",
+    description: "捕捉一只幻之宝可梦",
   },
   "CATCH_SUB_LEGENDARY": {
-    "name": "准-传说宝可梦",
-    "description": "捕捉一只准传说宝可梦",
+    name: "准-传说宝可梦",
+    description: "捕捉一只准传说宝可梦",
   },
   "CATCH_LEGENDARY": {
-    "name": "传说宝可梦",
-    "description": "捕捉一只传说宝可梦",
+    name: "传说宝可梦",
+    description: "捕捉一只传说宝可梦",
   },
   "SEE_SHINY": {
     name: "异色宝可梦",
-    description: "在野外找到一只异色宝可梦", 
+    description: "在野外找到一只异色宝可梦",
   },
   "SHINY_PARTY": {
     name: "全队异色",
@@ -214,7 +214,7 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "Mono 一般",
   },
   "MONO_FIGHTING": {
-    name: "功夫高手", 
+    name: "功夫高手",
   },
   "MONO_FLYING": {
     name: "Mono 飞行",
