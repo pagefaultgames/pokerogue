@@ -36,29 +36,6 @@ export enum TextStyle {
   MOVE_PP_EMPTY
 }
 
-
-interface LanguageSetting {
-  summaryFontSize?: string,
-  battleInfoFontSize?: string,
-  partyFontSize?: string,
-  tooltipContentFontSize?: string,
-  moveInfoFontSize?: string,
-  textScale?: number
-}
-
-const languageSettings: { [key: string]: LanguageSetting } = {
-  "en":{},
-  "de":{},
-  "es":{},
-  "fr":{},
-  "it":{},
-  "pt_BR":{},
-  "zh_CN":{
-    summaryFontSize: "85px",
-  },
-};
-
-
 export function addTextObject(scene: Phaser.Scene, x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): Phaser.GameObjects.Text {
   const [ scale, styleOptions, shadowColor, shadowXpos, shadowYpos ] = getTextStyleOptions(style, (scene as BattleScene).uiTheme, extraStyleOptions);
 
