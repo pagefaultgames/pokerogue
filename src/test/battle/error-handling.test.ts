@@ -37,7 +37,7 @@ describe("Test Battle Phase", () => {
   it.skip("to next turn", async() => {
     await game.startBattle();
     const turn = game.scene.currentBattle.turn;
-    await game.doAttack(0);
+    game.doAttack(0);
     await game.toNextTurn();
     expect(game.scene.currentBattle.turn).toBeGreaterThan(turn);
   }, 20000);
