@@ -23,7 +23,7 @@ interface ArenaEffectInfo {
   /** The enum string representation of the effect */
   name: string;
   /** {@linkcode ArenaEffectType} type of effect */
-  type: ArenaEffectType,
+  effecType: ArenaEffectType,
 
   /** The maximum duration set by the effect */
   maxDuration: number;
@@ -215,7 +215,7 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
 
       // Creates a proxy object to decide which text object needs to be updated
       let textObject: Phaser.GameObjects.Text;
-      switch (fieldEffectInfo.type) {
+      switch (fieldEffectInfo.effecType) {
       case ArenaEffectType.PLAYER:
         textObject = this.flyoutTextPlayer;
         break;
@@ -233,7 +233,7 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
       }
 
       textObject.text += this.formatText(fieldEffectInfo.name);
-      if (fieldEffectInfo.type === ArenaEffectType.TERRAIN) {
+      if (fieldEffectInfo.effecType === ArenaEffectType.TERRAIN) {
         textObject.text += " Terrain"; // Adds 'Terrain' since the enum does not contain it
       }
 
@@ -270,7 +270,7 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
         arenaEffectType = ArenaEffectType.ENEMY;
       }
 
-      const existingTrapTagIndex = isArenaTrapTag ? this.fieldEffectInfo.findIndex(e => tagAddedEvent.arenaTagType === e.tagType && arenaEffectType === e.type) : -1;
+      const existingTrapTagIndex = isArenaTrapTag ? this.fieldEffectInfo.findIndex(e => tagAddedEvent.arenaTagType === e.tagType && arenaEffectType === e.effecType) : -1;
       let name: string = ArenaTagType[tagAddedEvent.arenaTagType];
 
       if (isArenaTrapTag && tagAddedEvent.arenaTagMaxLayers > 1) {
@@ -285,7 +285,7 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
 
       this.fieldEffectInfo.push({
         name,
-        type: arenaEffectType,
+        effecType: arenaEffectType,
         maxDuration: tagAddedEvent.duration,
         duration: tagAddedEvent.duration,
         tagType: tagAddedEvent.arenaTagType
@@ -315,7 +315,7 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
           fieldEffectChangedEvent instanceof WeatherChangedEvent
             ? WeatherType[fieldEffectChangedEvent.newWeatherType]
             : TerrainType[fieldEffectChangedEvent.newTerrainType],
-        type: fieldEffectChangedEvent instanceof WeatherChangedEvent
+        effecType: fieldEffectChangedEvent instanceof WeatherChangedEvent
           ? ArenaEffectType.WEATHER
           : ArenaEffectType.TERRAIN,
         maxDuration: fieldEffectChangedEvent.duration,
