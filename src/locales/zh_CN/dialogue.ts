@@ -2125,16 +2125,16 @@ export const PGFdialogue: DialogueTranslationEntries = PGMdialogue;
 
 // Dialogue of the endboss of the game when the player character is male (Or unset)
 export const PGMbattleSpecDialogue: SimpleTranslationEntries = {
-  "encounter": "看来终于又到了那个时候。\n你知道自己为何会来到这里，不是吗？
+  "encounter": `看来终于又到了那个时候。\n你知道自己为何会来到这里，不是吗？
     $你被吸引到这里，因为你以前就来过这里。\n无数次。
     $尽管，或许可以数一数。\n准确地说，这实际上是你的第5,643,853次循环。
     $每一次循环，你的思想都会恢复到之前的状态。\n即便如此，不知何故，你之前自我的残留仍然存在。
     $直到现在，你仍未成功，但我感觉这次你身上有一种异样的气息。\n
     $你是这里唯一的人，尽管感觉上还有……另一个人。
     $你最终会成为对我来的一个硬茬吗？\n我渴望了数千年的挑战？
-    $我们，开始。",
-  "firstStageWin": "我明白了。我所感觉到的气息确实是真实的。\n看来我不再需要保留实力了。
-        $别让我失望。",
+    $我们，开始。`,
+  "firstStageWin": `我明白了。我所感觉到的气息确实是真实的。\n看来我不再需要保留实力了。
+        $别让我失望。`,
   "secondStageWin": "…漂亮。"
 };
 
