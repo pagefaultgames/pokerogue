@@ -36,8 +36,12 @@ export class DropDownOption extends Phaser.GameObjects.Container {
   constructor(scene: SceneBase, val: any, text: string, sprite?: Phaser.GameObjects.Sprite, state: DropDownState = DropDownState.ON) {
     super(scene);
     this.val = val;
-    this.text = addTextObject(scene, 0, 0, text, TextStyle.TOOLTIP_CONTENT).setOrigin(0, 0.5);
-    this.add(this.text);
+    if (text) {
+      this.text = addTextObject(scene, 0, 0, text, TextStyle.TOOLTIP_CONTENT);
+      this.text.setOrigin(0, 0.5);
+      this.add(this.text);
+    }
+
     if (sprite) {
       this.sprite = sprite.setOrigin(0, 0.5);
       this.add(this.sprite);
@@ -47,9 +51,14 @@ export class DropDownOption extends Phaser.GameObjects.Container {
 
   public setupToggle(type: DropDownType): void {
     if (type === DropDownType.MULTI) {
-      this.toggle = this.scene.add.sprite(0, 0, "candy").setScale(0.3).setOrigin(0, 0.5);
+      this.toggle = this.scene.add.sprite(0, 0, "candy");
+      this.toggle.setScale(0.3);
+      this.toggle.setOrigin(0, 0.5);
     } else {
-      this.toggle = this.scene.add.sprite(0, 0, "cursor").setScale(0.5).setOrigin(0, 0.5).setRotation(Math.PI / 180 * -90);
+      this.toggle = this.scene.add.sprite(0, 0, "cursor");
+      this.toggle.setScale(0.5);
+      this.toggle.setOrigin(0, 0.5);
+      this.toggle.setRotation(Math.PI / 180 * -90);
     }
     this.add(this.toggle);
   }
@@ -100,7 +109,9 @@ export class DropDown extends Phaser.GameObjects.Container {
     this.dropDownType = type;
     this.onChange = onChange;
 
-    this.cursorObj = scene.add.image(optionPaddingX + 3, 0, "cursor").setScale(0.5).setOrigin(0, 0.5);
+    this.cursorObj = scene.add.image(optionPaddingX + 3, 0, "cursor");
+    this.cursorObj.setScale(0.5);
+    this.cursorObj.setOrigin(0, 0.5);
     this.cursorObj.setVisible(false);
 
     if (this.dropDownType === DropDownType.MULTI) {
@@ -117,8 +128,10 @@ export class DropDown extends Phaser.GameObjects.Container {
       option.width = optionWidth;
       option.y = index * optionHeight + index * optionSpacing + optionPaddingY;
 
-      option.text.x = cursorOffset + optionPaddingX + 3 + 8;
-      option.text.y = optionHeight / 2;
+      if (option.text) {
+        option.text.x = cursorOffset + optionPaddingX + 3 + 8;
+        option.text.y = optionHeight / 2;
+      }
       if (option.sprite) {
         option.sprite.x = cursorOffset + optionPaddingX + 3 + 8;
         option.sprite.y = optionHeight / 2;

@@ -310,7 +310,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.filterBarContainer.add(addWindow(this.scene, 143, 1, 175, 17, false, false, null, null, WindowVariant.THIN));
 
     this.dropDowns = [];
-    const filterTypesLabel = addTextObject(this.scene, 155, 4, "Types", TextStyle.TOOLTIP_CONTENT).setOrigin(0, 0);
+    const filterTypesLabel = addTextObject(this.scene, 155, 4, "Types", TextStyle.TOOLTIP_CONTENT);
+    filterTypesLabel.setOrigin(0, 0);
     this.filterBarContainer.add(filterTypesLabel);
 
     const typeKeys = Object.keys(Type).filter(v => isNaN(Number(v)));
@@ -326,7 +327,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     });
     this.dropDowns.push(new DropDown(this.scene, filterTypesLabel.x, 18, typeOptions, this.updateStarters, DropDownType.MULTI, 0.5));
 
-    const filterShinyLabel = addTextObject(this.scene, 189, 4, "Shiny", TextStyle.TOOLTIP_CONTENT).setOrigin(0, 0);
+    const filterShinyLabel = addTextObject(this.scene, 189, 4, "Shiny", TextStyle.TOOLTIP_CONTENT);
+    filterShinyLabel.setOrigin(0, 0);
     this.filterBarContainer.add(filterShinyLabel);
     const shiny1 = this.scene.add.sprite(0, 0, "shiny_star_small");
     shiny1.setTint(getVariantTint(2));
@@ -340,13 +342,15 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       new DropDownOption(this.scene, 32n, null, shiny3),
       new DropDownOption(this.scene, DexAttr.NON_SHINY, "non shiny")], this.updateStarters));
 
-    const filterDiv = addTextObject(this.scene, 220, 4, "Wins", TextStyle.TOOLTIP_CONTENT).setOrigin(0, 0);
+    const filterDiv = addTextObject(this.scene, 220, 4, "Wins", TextStyle.TOOLTIP_CONTENT);
+    filterDiv.setOrigin(0, 0);
     this.filterBarContainer.add(filterDiv);
     this.dropDowns.push(new DropDown(this.scene, filterDiv.x, 18, [
       new DropDownOption(this.scene, 0, "has won"),
       new DropDownOption(this.scene, 1, "hasn't won yet")], this.updateStarters));
 
-    const filterSortLabel = addTextObject(this.scene, 247, 4, "Sort", TextStyle.TOOLTIP_CONTENT).setOrigin(0, 0);
+    const filterSortLabel = addTextObject(this.scene, 247, 4, "Sort", TextStyle.TOOLTIP_CONTENT);
+    filterSortLabel.setOrigin(0, 0);
     this.filterBarContainer.add(filterSortLabel);
     this.dropDowns.push(new DropDown(this.scene, filterSortLabel.x, 18, [
       new DropDownOption(this.scene, 0, "No."),
@@ -469,7 +473,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.genCursorObj.setOrigin(0, 0);
     this.starterSelectContainer.add(this.genCursorObj);
 
-    this.filterBarCursorObj = this.scene.add.image(1, 1, "cursor").setScale(0.5);
+    this.filterBarCursorObj = this.scene.add.image(1, 1, "cursor");
+    this.filterBarCursorObj.setScale(0.5);
     this.filterBarCursorObj.setVisible(false);
     this.filterBarCursorObj.setOrigin(0, 0);
     this.filterBarContainer.add(this.filterBarCursorObj);
