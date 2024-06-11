@@ -1066,7 +1066,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   isGrounded(): boolean {
-    return !this.isOfType(Type.FLYING, true, true) && !this.hasAbility(Abilities.LEVITATE);
+    return !this.isOfType(Type.FLYING, true, true) && !this.hasAbility(Abilities.LEVITATE) && !this.getTag(BattlerTagType.MAGNET_RISEN);
   }
 
   /**
@@ -1692,9 +1692,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (types.find(t => move.isTypeImmune(t))) {
       typeMultiplier.value = 0;
     }
-    if (this.summonData.tags.filter((tag) => tag instanceof TypeImmuneTag && tag.immuneType === move.type).length !== 0) {
-      typeMultiplier.value = 0;
-    }
+
 
     // Apply arena tags for conditional protection
     if (!move.hasFlag(MoveFlags.IGNORE_PROTECT) && !move.isAllyTarget()) {
@@ -1708,6 +1706,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     switch (moveCategory) {
     case MoveCategory.PHYSICAL:
     case MoveCategory.SPECIAL:
+      if (this.summonData.tags.filter((tag) => tag instanceof TypeImmuneTag && tag.immuneType === move.type).length !== 0) {
+        typeMultiplier.value = 0;
+      }
       const isPhysical = moveCategory === MoveCategory.PHYSICAL;
       const power = new Utils.NumberHolder(move.power);
       const sourceTeraType = source.getTeraType();
