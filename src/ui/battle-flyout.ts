@@ -4,7 +4,7 @@ import * as Utils from "../utils";
 import BattleScene from "#app/battle-scene.js";
 import { UiTheme } from "#app/enums/ui-theme.js";
 import Move from "#app/data/move.js";
-import { BattleSceneEventType, BerryUsedEvent, MoveUsedEvent } from "#app/battle-scene-events.js";
+import { BattleSceneEventType, BerryUsedEvent, MoveUsedEvent } from "../events/battle-scene";
 import { BerryType } from "#app/data/enums/berry-type.js";
 import { Moves } from "#app/data/enums/moves.js";
 
