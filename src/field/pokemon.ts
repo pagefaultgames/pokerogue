@@ -15,7 +15,7 @@ import { PokeballType } from "../data/pokeball";
 import { Gender } from "../data/gender";
 import { initMoveAnim, loadMoveAnimAssets } from "../data/battle-anims";
 import { Status, StatusEffect, getRandomStatus } from "../data/status-effect";
-import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEvolutionCondition, FusionSpeciesFormEvolution } from "../data/pokemon-evolutions";
+import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEvolutionCondition, FusionSpeciesFormEvolution, EvolutionItem } from "../data/pokemon-evolutions";
 import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "../data/tms";
 import { DamagePhase, FaintPhase, LearnMovePhase, MoveEffectPhase, ObtainStatusEffectPhase, StatChangePhase, SwitchSummonPhase, ToggleDoublePositionPhase  } from "../phases";
 import { BattleStat } from "../data/battle-stat";
@@ -34,7 +34,7 @@ import { DamageAchv, achvs } from "../system/achv";
 import { DexAttr, StarterDataEntry, StarterMoveset } from "../system/game-data";
 import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from "@material/material-color-utilities";
 import { Nature, getNatureStatMultiplier } from "../data/nature";
-import { SpeciesFormChange, SpeciesFormChangeActiveTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangeStatusEffectTrigger } from "../data/pokemon-forms";
+import { FormChangeItem, SpeciesFormChange, SpeciesFormChangeActiveTrigger, SpeciesFormChangeItemTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangeStatusEffectTrigger, pokemonFormChanges } from "../data/pokemon-forms";
 import { TerrainType } from "../data/terrain";
 import { TrainerSlot } from "../data/trainer-config";
 import * as Overrides from "../overrides";
@@ -42,14 +42,15 @@ import i18next from "i18next";
 import { speciesEggMoves } from "../data/egg-moves";
 import { ModifierTier } from "../modifier/modifier-tier";
 import { applyChallenges, ChallengeType } from "#app/data/challenge.js";
-import { Abilities } from "#enums/abilities";
-import { ArenaTagType } from "#enums/arena-tag-type";
-import { BattleSpec } from "#enums/battle-spec";
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { BerryType } from "#enums/berry-type";
-import { Biome } from "#enums/biome";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import * as Modifiers from "../modifier/modifier";
+import { Biome } from "#app/enums/biome.js";
+import { Abilities } from "#app/enums/abilities.js";
+import { ArenaTagType } from "#app/enums/arena-tag-type.js";
+import { BattleSpec } from "#app/enums/battle-spec.js";
+import { BattlerTagType } from "#app/enums/battler-tag-type.js";
+import { BerryType } from "#app/enums/berry-type.js";
+import { Moves } from "#app/enums/moves.js";
+import { Species } from "#app/enums/species.js";
 
 export enum FieldPosition {
   CENTER,
@@ -3008,6 +3009,8 @@ export default interface Pokemon {
 
 export class PlayerPokemon extends Pokemon {
   public compatibleTms: Moves[];
+  public evolutionItems: EvolutionItem[];
+  public formChangeItems: FormChangeItem[];
 
   constructor(scene: BattleScene, species: PokemonSpecies, level: integer, abilityIndex: integer, formIndex: integer, gender: Gender, shiny: boolean, variant: Variant, ivs: integer[], nature: Nature, dataSource: Pokemon | PokemonData) {
     super(scene, 106, 148, species, level, abilityIndex, formIndex, gender, shiny, variant, ivs, nature, dataSource);
@@ -3028,6 +3031,8 @@ export class PlayerPokemon extends Pokemon {
       this.generateAndPopulateMoveset();
     }
     this.generateCompatibleTms();
+    this.generatePossibleEvolutionItems();
+    this.generatePossibleFormChangeItems();
   }
 
   initBattleInfo(): void {
@@ -3080,6 +3085,45 @@ export class PlayerPokemon extends Pokemon {
         this.compatibleTms.push(moveId);
       }
     }
+  }
+
+  /**
+   * Sets evolutionItems to be all possible evolutionary items for the Pokemon.
+   * Based on EvolutionItemModifierTypeGenerator from modifier-types.ts
+   */
+  generatePossibleEvolutionItems(): void {
+    this.evolutionItems = [];
+    let speciesFormEvolutions = [];
+
+    if (pokemonEvolutions.hasOwnProperty(this.species.speciesId)) {
+      const evolutions = pokemonEvolutions[this.species.speciesId];
+      speciesFormEvolutions = evolutions.filter(e => e.item !== EvolutionItem.NONE && (e.evoFormKey === null || (e.preFormKey || "") === this.getFormKey()) && (!e.condition || e.condition.predicate(this)));
+    }
+    if (this.isFusion() && pokemonEvolutions.hasOwnProperty(this.fusionSpecies.speciesId)) {
+      const evolutions = pokemonEvolutions[this.fusionSpecies.speciesId];
+      speciesFormEvolutions.concat(evolutions.filter(e => e.item !== EvolutionItem.NONE && (e.evoFormKey === null || (e.preFormKey || "") === this.getFusionFormKey()) && (!e.condition || e.condition.predicate(this))));
+    }
+
+    const possibleEvolutionItems = speciesFormEvolutions.flat().flatMap(e => e.item);
+    this.evolutionItems = possibleEvolutionItems;
+  }
+
+  /**
+   * Sets formChangeItems to be all possible form change items for the Pokemon.
+   * Based on FormChangeItemModifierTypeGenerator from modifier-types.ts
+   */
+  generatePossibleFormChangeItems(): void {
+    this.formChangeItems = [];
+    let possibleFormItems = [];
+
+    if (pokemonFormChanges.hasOwnProperty(this.species.speciesId)) {
+      const formChanges = pokemonFormChanges[this.species.speciesId];
+      possibleFormItems = formChanges.map(fc => fc.findTrigger(SpeciesFormChangeItemTrigger) as SpeciesFormChangeItemTrigger)
+        .filter(t => t && t.active && !this.scene.findModifier(m => m instanceof Modifiers.PokemonFormChangeItemModifier && m.pokemonId === this.id && m.formChangeItem === t.item))
+        .flat().flatMap(fc => fc.item);
+    }
+
+    this.formChangeItems = possibleFormItems;
   }
 
   tryPopulateMoveset(moveset: StarterMoveset): boolean {
@@ -3236,6 +3280,8 @@ export class PlayerPokemon extends Pokemon {
           this.fusionAbilityIndex = abilityCount - 1;
         }
       }
+      this.generatePossibleEvolutionItems();
+      this.generatePossibleFormChangeItems();
       this.compatibleTms.splice(0, this.compatibleTms.length);
       this.generateCompatibleTms();
       const updateAndResolve = () => {
@@ -3327,6 +3373,8 @@ export class PlayerPokemon extends Pokemon {
   clearFusionSpecies(): void {
     super.clearFusionSpecies();
     this.generateCompatibleTms();
+    this.generatePossibleEvolutionItems();
+    this.generatePossibleFormChangeItems();
   }
 
   /**
@@ -3363,8 +3411,9 @@ export class PlayerPokemon extends Pokemon {
         this.hp = Math.max(this.hp, 1);
         this.status = pokemon.status; // Inherit the other Pokemon's status
       }
-
       this.generateCompatibleTms();
+      this.generatePossibleEvolutionItems();
+      this.generatePossibleFormChangeItems();
       this.updateInfo(true);
       const fusedPartyMemberIndex = this.scene.getParty().indexOf(pokemon);
       let partyMemberIndex = this.scene.getParty().indexOf(this);
