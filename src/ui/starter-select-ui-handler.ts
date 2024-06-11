@@ -1,4 +1,4 @@
-import { BattleSceneEventType, CandyUpgradeNotificationChangedEvent } from "#app/battle-scene-events.js";
+import { BattleSceneEventType, CandyUpgradeNotificationChangedEvent } from "../events/battle-scene";
 import { pokemonPrevolutions } from "#app/data/pokemon-evolutions";
 import { Variant, getVariantTint } from "#app/data/variant";
 import { argbFromRgba } from "@material/material-color-utilities";
