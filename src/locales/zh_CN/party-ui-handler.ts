@@ -1,10 +1,10 @@
 import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const partyUiHandler: SimpleTranslationEntries = {
-  "SEND_OUT": "Send Out",
-  "SUMMARY": "Summary",
-  "CANCEL": "Cancel",
-  "RELEASE": "Release",
-  "APPLY": "Apply",
-  "TEACH": "Teach"
+  "SEND_OUT": "上场",
+  "SUMMARY": "概要",
+  "CANCEL": "取消",
+  "RELEASE": "放生",
+  "APPLY": "应用",
+  "TEACH": "教授"
 } as const;
