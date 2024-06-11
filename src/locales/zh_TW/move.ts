@@ -71,7 +71,7 @@ export const move: MoveTranslationEntries = {
   },
   doubleKick: {
     name: "二連踢",
-    effect: "用２只腳踢飛對手進行攻擊。\n連續２次給予傷害",
+    effect: "用２隻腳踢飛對手進行攻擊。\n連續２次給予傷害",
   },
   megaKick: {
     name: "百萬噸重踢",
@@ -2886,7 +2886,7 @@ export const move: MoveTranslationEntries = {
   },
   dragonDarts: {
     name: "龍箭",
-    effect: "讓多龍梅西亞進行２次攻擊。\n如果對手有２只寶可夢，\n則對它們各進行１次攻擊",
+    effect: "讓多龍梅西亞進行２次攻擊。\n如果對手有２隻寶可夢，\n則對它們各進行１次攻擊",
   },
   teatime: {
     name: "茶會",

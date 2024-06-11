@@ -60,86 +60,86 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "breeder": {
     "encounter": {
-      1: "Obedient Pokémon, selfish Pokémon… Pokémon have unique characteristics.",
-      2: "Even though my upbringing and behavior are poor, I've raised my Pokémon well.",
-      3: "Hmm, do you discipline your Pokémon? Pampering them too much is no good.",
+      1: "순종적인 포켓몬, 이기적인 포켓몬… 포켓몬들은 각기 다른 성격을 가지고 있지.",
+      2: "내 태도가 그렇게 좋진 않아도, 내 포켓몬들은 잘 키웠어.",
+      3: "음, 넌 포켓몬들을 훈육하니? 너무 심하게 하는 것은 좋지 않다고.",
     },
     "victory": {
-      1: "It is important to nurture and train each Pokémon's characteristics.",
-      2: "Unlike my diabolical self, these are some good Pokémon.",
-      3: "Too much praise can spoil both Pokémon and people.",
+      1: "각 포켓몬의 성격을 이해하고 육성하는 건 중요해.",
+      2: "사악한 나와는 달리 좋은 포켓몬들도 있지.",
+      3: "과도한 칭찬은 사람과 포켓몬 모두에게 독이 될 수 있어.",
     },
     "defeat": {
-      1: "You should not get angry at your Pokémon, even if you lose a battle.",
-      2: "Right? Pretty good Pokémon, huh? I'm suited to raising things.",
-      3: "No matter how much you love your Pokémon, you still have to discipline them when they misbehave."
+      1: "배틀에서 지더라도 포켓몬에게 화를 내면 안돼.",
+      2: "어때? 꽤 괜찮은 포켓몬이지? 난 무언가 기르는 게 꽤 잘 맞더라고.",
+      3: "네가 포켓몬을 얼마나 사랑하는지와 관계없이, 그들이 잘못을 저지르면 바로잡아야 해."
     }
   },
   "breeder_female": {
     "encounter": {
-      1: "Pokémon never betray you. They return all the love you give them.",
-      2: "Shall I give you a tip for training good Pokémon?",
-      3: "I have raised these very special Pokémon using a special method."
+      1: "포켓몬은 절대 널 배신하지 않아. 네가 주는 사랑을 고스란히 되돌려 준다구.",
+      2: "좋은 포켓몬을 키우는 팁을 알려줄까?",
+      3: "난 아주 특별한 방법으로 아주 특별한 포켓몬들을 키웠지!"
     },
     "victory": {
-      1: "Ugh… It wasn't supposed to be like this. Did I administer the wrong blend?",
-      2: "How could that happen to my Pokémon… What are you feeding your Pokémon?",
-      3: "If I lose, that tells you I was just killing time. It doesn't damage my ego at all."
+      1: "이런… 이렇게 될 리가 없는데. 내가 블렌딩을 잘못 썼나?",
+      2: "내 포켓몬에게 이런 일이… 넌 네 포켓몬에게 뭘 먹이는 거야?",
+      3: "내가 지는 건 그저 내가 시간을 때우고 있었다는 걸 알려주는 거지. 내 자존심엔 전혀 상처가 되지 않는다구."
     },
     "defeat": {
-      1: "This proves my Pokémon have accepted my love.",
-      2: "The real trick behind training good Pokémon is catching good Pokémon.",
-      3: "Pokémon will be strong or weak depending on how you raise them."
+      1: "이건 내 포켓몬들이 내 사랑을 받아들였다는 걸 입증하지.",
+      2: "좋은 포켓몬을 키우는 진짜 비결은 좋은 포켓몬을 잡는 거야.",
+      3: "포켓몬의 강함과 약함은 네가 어떻게 키우느냐에 따라 결정되지."
     }
   },
   "fisherman": {
     "encounter": {
-      1: "Aack! You made me lose a bite!\nWhat are you going to do about it?",
-      2: "Go away! You're scaring the Pokémon!",
-      3: "Let's see if you can reel in a victory!",
+      1: "앗! 너 때문에 한 마리 놓쳤잖아! 어떻게 할 거야?",
+      2: "저리 가! 네가 포켓몬들을 놀래키고 있잖아!",
+      3: "네가 승리를 낚을 수 있을지 한번 보자고!",
     },
     "victory": {
-      1: "Just forget about it.",
-      2: "Next time, I'll be reelin' in the triumph!",
-      3: "Guess I underestimated the currents this time.",
+      1: "그냥 잊어버려.",
+      2: "다음 번엔 내가 승리의 나팔을 울리고 있을거다!",
+      3: "이번엔 내가 물살을 과소평가했나보군.",
     },
   },
   "fisherman_female": {
     "encounter": {
-      1: "Woah! I've hooked a big one!",
-      2: "Line's in, ready to reel in success!",
-      3: "Ready to make waves!"
+      1: "월척이다!",
+      2: "낚시대는 던져졌고, 이젠 성공을 끌어올리는 일만 남았다!",
+      3: "파도를 일으킬 준비는 끝났어!"
     },
     "victory": {
-      1: "I'll be back with a stronger hook.",
-      2: "I'll reel in victory next time.",
-      3: "I'm just sharpening my hooks for the comeback!"
+      1: "더 튼튼한 바늘을 가지고 돌아올테다.",
+      2: "다음번엔 꼭 성공을 낚을 거야!",
+      3: "다시 돌아올 날을 기다리며 바늘을 다듬고 있을게!"
     },
   },
   "swimmer": {
     "encounter": {
-      1: "Time to dive in!",
-      2: "Let's ride the waves of victory!",
-      3: "Ready to make a splash!",
+      1: "뛰어들 시간이다!",
+      2: "승리의 파도 속으로!",
+      3: "첨벙댈 준비는 끝났어!",
     },
     "victory": {
-      1: "Drenched in defeat!",
-      2: "A wave of defeat!",
-      3: "Back to shore, I guess.",
+      1: "패배에 젖어버렸어…",
+      2: "패배의 파도였군.",
+      3: "해변으로 돌아갈 시간이군.",
     },
   },
   "backpacker": {
     "encounter": {
-      1: "Pack up, game on!",
-      2: "Let's see if you can keep pace!",
-      3: "Gear up, challenger!",
-      4: "I've spent 20 years trying to find myself… But where am I?"
+      1: "게임 시작이야! 짐 단단히 싸놓으라구!",
+      2: "네가 속도를 유지할 수 있을지 보자!",
+      3: "각오 단단히 하라고!",
+      4: "20년 동안 나 자신을 찾기 위해 헤매왔어… 근데 내가 어디 있지?"
     },
     "victory": {
-      1: "Tripped up this time!",
-      2: "Oh, I think I'm lost.",
-      3: "Dead end!",
-      4: "Wait up a second! Hey! Don't you know who I am?"
+      1: "이번엔 걸려 넘어져 버렸네!",
+      2: "내가 속도를 잃어버렸잖아!",
+      3: "막다른 길이야!",
+      4: "잠깐! 그래 거기, 혹시 내가 누군지 아나?"
     },
   },
   "ace_trainer": {
@@ -211,34 +211,34 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "battle_girl": {
     "encounter": {
-      1: "You don't have to try to impress me. You can lose against me.",
+      1: "감동을 주려고 노력할 필요는 없어. 네가 질 수도 있으니까.",
     },
     "victory": {
-      1: "It's hard to say good-bye, but we are running out of time…",
+      1: "작별인사는 어렵지만, 우리에겐 시간이 얼마 안 남았네…",
     },
   },
   "hiker": {
     "encounter": {
-      1: "My middle-age spread has given me as much gravitas as the mountains I hike!",
-      2: "I inherited this big-boned body from my parents… I'm like a living mountain range…",
+      1: "중년으로 접어들면서 등산해왔던 산처럼 진중해졌습니다!",
+      2: "살아있는 산같은… 큰 체격을 부모님이 물려주셨죠…",
     },
     "victory": {
-      1: "At least I cannot lose when it comes to BMI!",
-      2: "It's not enough… It's never enough. My bad cholesterol isn't high enough…"
+      1: "적어도 BMI에 대해서는 질 수 없습니다!",
+      2: "부족해… 절대로 충분하지 않아. 저의 콜레스테롤이 부족합니다…"
     },
   },
   "ranger": {
     "encounter": {
-      1: "When I am surrounded by nature, most other things cease to matter.",
-      2: "When I'm living without nature in my life, sometimes I'll suddenly feel an anxiety attack coming on."
+      1: "자연에 둘러싸여 있으면, 다른 건 중요하지 않게 느껴져.",
+      2: "인생에서 자연을 빼고 살면, 가끔 갑자기 마음이 불안해지지."
     },
     "victory": {
-      1: "It doesn't matter to the vastness of nature whether I win or lose…",
-      2: "Something like this is pretty trivial compared to the stifling feelings of city life."
+      1: "광활한 자연 앞에서는 내가 이기든 지든 상관없어…",
+      2: "도시 생활의 답답한 느낌에 비하면 이런 것은 아주 사소한 일지."
     },
     "defeat": {
-      1: "I won the battle. But victory is nothing compared to the vastness of nature…",
-      2: "I'm sure how you feel is not so bad if you compare it to my anxiety attacks…"
+      1: "내가 이겼네. 그러나 승리는 광대한 자연에 비하면 아무것도 아니야…",
+      2: "내 마음속 불안함과 비교하면, 당신 기분은 그렇게 나쁘지 않을텐데…"
     }
   },
   "scientist": {
@@ -305,83 +305,263 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "hex_maniac": {
     "encounter": {
-      1: "I normally only ever listen to classical music, but if I lose, I think I shall try a bit of new age!",
-      2: "I grow stronger with each tear I cry."
+      1: "평소에는 클래식 음악만 들었는데, 지면 뉴에이지도 좀 들어볼까!",
+      2: "눈물을 흘릴 때마다 더 강해지는 것 같아."
     },
     "victory": {
-      1: "Is this the dawning of the age of Aquarius?",
-      2: "Now I can get even stronger. I grow with every grudge."
+      1: "지금이 물병자리 시대의 시작일까?",
+      2: "이제 나는 더 강해지겠지. 모든 원한과 함께 성장하겠어."
     },
     "defeat": {
-      1: "New age simply refers to twentieth century classical composers, right?",
-      2: "Don't get hung up on sadness or frustration. You can use your grudges to motivate yourself."
+      1: "뉴에이지란 단순히 20세기 클래식 작곡가들을 말하는 거, 맞지?",
+      2: "슬픔이나 좌절에 얽매이지 마. 넌 그 원한을 원동력으로 사용할 수 있어."
     }
   },
   "psychic": {
     "encounter": {
-      1: "Hi! Focus!",
+      1: "안녕! 집중해!",
     },
     "victory": {
-      1: "Eeeeek!",
+      1: "에에에에엣!",
     },
   },
   "officer": {
     "encounter": {
-      1: "Brace yourself, because justice is about to be served!",
-      2: "Ready to uphold the law and serve justice on the battlefield!"
+      1: "마음의 준비를 하시죠, 정의가 곧 실행될 거니까요!",
+      2: "법을 지키고 정의를 위해 봉사할 준비가 되었습니다!"
     },
     "victory": {
-      1: "The weight of justice feels heavier than ever…",
-      2: "The shadows of defeat linger in the precinct."
+      1: "정의의 무게가 그 어느 때보다 무겁게 느껴집니다…",
+      2: "패배의 그림자가 관할 경찰서에 남았습니다."
     }
   },
   "beauty": {
     "encounter": {
-      1: "My last ever battle… That's the way I'd like us to view this match…",
+      1: "나의 마지막 배틀… 이 승부를 그렇게 봐주셨으면 좋겠어요…",
     },
     "victory": {
-      1: "It's been fun… Let's have another last battle again someday…",
+      1: "즐거웠어요… 언젠가 또 다른 마지막 승부를 하죠…",
     },
   },
   "baker": {
     "encounter": {
-      1: "Hope you're ready to taste defeat!"
+      1: "패배의 맛을 볼 준비는 됐겠지!"
     },
     "victory": {
-      1: "I'll bake a comeback."
+      1: "실력이든 빵이든, 굽고 나면 단단해지는 법이라네."
     },
   },
   "biker": {
     "encounter": {
-      1: "Time to rev up and leave you in the dust!"
+      1: "힘차게 먼지 속으로 출발할 시간입니다!"
     },
     "victory": {
-      1: "I'll tune up for the next race."
+      1: "다음 경주를 위해 준비해야겠습니다."
     },
   },
   "firebreather": {
     "encounter": {
-      1: "My flames shall devour you!",
-      2: "My soul is on fire. I'll show you how hot it burns!",
-      3: "Step right up and take a look!"
+      1: "내 불꽃이 너를 삼킬 테니까!",
+      2: "내 영혼은 불타고 있다. 얼마나 뜨겁게 타는지 보여주지!",
+      3: "이리 올라와서 보도록!"
     },
     "victory": {
-      1: "I burned down to ashes...",
-      2: "Yow! That's hot!",
-      3: "Ow! I scorched the tip of my nose!"
+      1: "하얗게 불태웠다………",
+      2: "큭! 제법 뜨겁군!",
+      3: "으윽! 코끝에 화상을 입었다!"
     },
   },
   "sailor": {
     "encounter": {
-      1: "Matey, you're walking the plank if you lose!",
-      2: "Come on then! My sailor's pride is at stake!",
-      3: "Ahoy there! Are you seasick?"
+      1: "친구여, 진다면 널빤지 행이야!",
+      2: "덤벼! 내 선원으로서 자존심이 위태롭군!",
+      3: "여어 거기! 뱃멀미 하나?"
     },
     "victory": {
-      1: "Argh! Beaten by a kid!",
-      2: "Your spirit sank me!",
-      3: "I think it's me that's seasick..."
+      1: "크윽! 꼬맹이한테 지다니!",
+      2: "네 영혼이 나를 침몰시켰어!",
+      3: "내가 뱃멀미가 나는 것 같군…"
     },
+  },
+  "rocket_grunt": {
+    "encounter": {
+      1: "Prepare for trouble!"
+    },
+    "victory": {
+      1: "Team Rocket blasting off again!"
+    },
+  },
+  "magma_grunt": {
+    "encounter": {
+      1: " If you get in the way of Team Magma, don’t expect any mercy!"
+    },
+    "victory": {
+      1: "Huh? I lost?!"
+    },
+  },
+  "aqua_grunt": {
+    "encounter": {
+      1: "No one who crosses Team Aqua gets any mercy, not even kids!"
+    },
+    "victory": {
+      1: "You're kidding me!"
+    },
+  },
+  "galactic_grunt": {
+    "encounter": {
+      1: "Don't mess with Team Galactic!"
+    },
+    "victory": {
+      1: "Shut down..."
+    },
+  },
+  "plasma_grunt": {
+    "encounter": {
+      1: "We won't tolerate people who have different ideas!"
+    },
+    "victory": {
+      1: "Plasmaaaaaaaaa!"
+    },
+  },
+  "flare_grunt": {
+    "encounter": {
+      1: "Fashion is most important to us!"
+    },
+    "victory": {
+      1: "The future doesn't look bright for me."
+    },
+  },
+  "rocket_boss_giovanni_1": {
+    "encounter": {
+      1: "So! I must say, I am impressed you got here!"
+    },
+    "victory": {
+      1: "WHAT! This cannot be!"
+    },
+    "defeat": {
+      1: "Mark my words. Not being able to measure your own strength shows that you are still a child."
+    }
+  },
+  "rocket_boss_giovanni_2": {
+    "encounter": {
+      1: "My old associates need me... Are you going to get in my way?"
+    },
+    "victory": {
+      1: "How is this possible...?\nThe precious dream of Team Rocket has become little more than an illusion..."
+    },
+    "defeat": {
+      1: "Team Rocket will be reborn again, and I will rule the world!"
+    }
+  },
+  "magma_boss_maxie_1": {
+    "encounter": {
+      1: "I will bury you by my own hand. I hope you appreciate this honor!"
+    },
+    "victory": {
+      1: "Ugh! You are... quite capable...\nI fell behind, but only by an inch..."
+    },
+    "defeat": {
+      1: "Team Magma will prevail!"
+    }
+  },
+  "magma_boss_maxie_2": {
+    "encounter": {
+      1: "You are the final obstacle remaining between me and my goals.\nBrace yourself for my ultimate attack! Fuhahaha!"
+    },
+    "victory": {
+      1: "This... This is not.. Ngh..."
+    },
+    "defeat": {
+      1: "And now... I will transform this planet to a land ideal for humanity."
+    }
+  },
+  "aqua_boss_archie_1": {
+    "encounter": {
+      1: "I'm leader of Team Aqua, so I'm afraid it's the rope's end for you."
+    },
+    "victory": {
+      1: "Let's meet again somewhere. I'll be sure to remember that face."
+    },
+    "defeat": {
+      1: "Brilliant! My team won't hold back now!"
+    }
+  },
+  "aqua_boss_archie_2": {
+    "encounter": {
+      1: "I've been waiting so long for this day to come.\nThis is the true power of my team!"
+    },
+    "victory": {
+      1: "Like I figured..."
+    },
+    "defeat": {
+      1: "I'll return everything in this world to its original, pure state!!"
+    }
+  },
+  "galactic_boss_cyrus_1": {
+    "encounter": {
+      1: "You were compelled to come here by such vacuous sentimentality\nI will make you regret paying heed to your heart!"
+    },
+    "victory": {
+      1: "Interesting. And quite curious."
+    },
+    "defeat": {
+      1: "I will create my new world..."
+    }
+  },
+  "galactic_boss_cyrus_2": {
+    "encounter": {
+      1: "So we meet again. It seems our fates have become intertwined.\nBut here and now, I will finally break that bond!"
+    },
+    "victory": {
+      1: "How? How? HOW?!"
+    },
+    "defeat": {
+      1: "Farewell."
+    }
+  },
+  "plasma_boss_ghetsis_1": {
+    "encounter": {
+      1: "I won't allow anyone to stop me! No matter who does what!"
+    },
+    "victory": {
+      1: "How can this be? I'm the creator of Team Plasma! I'm perfect!"
+    },
+    "defeat": {
+      1: "I am the perfect ruler of a perfect new world! Mwa ha ha!"
+    }
+  },
+  "plasma_boss_ghetsis_2": {
+    "encounter": {
+      1: "Come now! I want to see your face at the moment you lose all hope!"
+    },
+    "victory": {
+      1: "My calculations... No! My careful schemes! The world should be mine!"
+    },
+    "defeat": {
+      1: "Kyurem! Use Absofusion!"
+    }
+  },
+  "flare_boss_lysandre_1": {
+    "encounter": {
+      1: "Do you want to stop me? Show me in battle."
+    },
+    "victory": {
+      1: "You are here to stop me. But I ask you to wait. "
+    },
+    "defeat": {
+      1: "Pokemon...Shall no longer exist."
+    }
+  },
+  "flare_boss_lysandre_2": {
+    "encounter": {
+      1: "The future you want, or the future I want... Let us see which one is more deserving, shall we?"
+    },
+    "victory": {
+      1: "Whaugh!"
+    },
+    "defeat": {
+      1: "Fools with no vision will continue to befoul this beautiful world."
+    }
   },
   "brock": {
     "encounter": {
