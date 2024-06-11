@@ -1075,9 +1075,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
         break;
       case Button.UP:
-        if (this.dropDownCursor > -1) {
+        if (this.dropDownCursor > 0) {
           this.dropDownCursor--;
           this.dropDowns[this.filterBarCursor].setCursor(this.dropDownCursor);
+        } else {
+          this.dropDowns[this.filterBarCursor].toggle();
+          this.filterDropdown = false;
         }
 
         break;
