@@ -1798,7 +1798,12 @@ export class TurnInitPhase extends FieldPhase {
   start() {
     super.start();
     const enemyField = this.scene.getEnemyField().filter(p => p.isActive()) as Pokemon[];
-    enemyField.map(p => this.scene.unshiftPhase(new PostSummonPhase(this.scene, p.getBattlerIndex())));
+    enemyField.map(p => {
+      if (p.battleSummonData.turnCount !== 1) {
+        return;
+      }
+      return this.scene.unshiftPhase(new PostSummonPhase(this.scene, p.getBattlerIndex()));
+    });
 
     this.scene.getPlayerField().forEach(p => {
       // If this pokemon is in play and evolved into something illegal under the current challenge, force a switch
