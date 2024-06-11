@@ -23,7 +23,7 @@ export const challenges: SimpleTranslationEntries = {
   "singleGeneration.desc.7": "你只能使用第七世代的宝可梦",
   "singleGeneration.value.8": "第八世代",
   "singleGeneration.desc.8": "你只能使用第八世代的宝可梦",
-  "singleGeneration.value.9": "第久世代",
+  "singleGeneration.value.9": "第九世代",
   "singleGeneration.desc.9": "你只能使用第九世代的宝可梦",
   "singleType.name": "单属性",
   "singleType.value.0": "关闭",
