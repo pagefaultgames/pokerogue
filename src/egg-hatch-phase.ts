@@ -8,7 +8,6 @@ import EggHatchSceneHandler from "./ui/egg-hatch-scene-handler";
 import { PlayerPokemon } from "./field/pokemon";
 import { achvs } from "./system/achv";
 import PokemonInfoContainer from "./ui/pokemon-info-container";
-import EggsToHatchCountContainer from "./ui/eggs-to-hatch-count-container";
 import { GachaType } from "./data/enums/gacha-types";
 import EggCounterContainer from "./ui/egg-counter-container";
 import { EggCountChangedEvent } from "./events/egg";
