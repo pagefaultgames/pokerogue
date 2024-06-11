@@ -1,5 +1,5 @@
 import { CommonAnim, CommonBattleAnim } from "./battle-anims";
-import { CommonAnimPhase, MessagePhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
+import { CommonAnimPhase, MessagePhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase, TurnEndPhase } from "../phases";
 import { getPokemonMessage, getPokemonNameWithAffix } from "../messages";
 import Pokemon, { MoveResult, HitResult } from "../field/pokemon";
 import { Stat, getStatName } from "./pokemon-stat";
@@ -94,24 +94,58 @@ export interface TerrainBattlerTag {
 
 /**
  * Base class for tags that disable moves. Descendants can override {@linkcode moveIsDisabled} to disable moves that
- * match a condition. Note that this tag does not do anything on its own; instead, during the move phase, move users
- * check for all tags that are a subclass of this, and marks moves that match a {@linkcode moveIsDisabled} predicate
- * as disabled.
+ * match a condition. A disabled move gets cancelled before it is used. Players and enemies should not be allowed
+ * to select disabled moves.
  */
 export abstract class DisablingBattlerTag extends BattlerTag {
   public abstract moveIsDisabled(move: Moves): boolean;
 
-  constructor(tagType: BattlerTagType, lapseType?: BattlerTagLapseType, turnCount?: integer, sourceMove?: Moves, sourceId?: integer) {
-    super(tagType, lapseType ?? BattlerTagLapseType.TURN_END, turnCount ?? 3, sourceMove, sourceId);
+  constructor(tagType: BattlerTagType, turnCount: integer, sourceMove?: Moves, sourceId?: integer) {
+    super(tagType, BattlerTagLapseType.PRE_MOVE, turnCount, sourceMove, sourceId);
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (!super.lapse(pokemon, lapseType)) {
+      // Duration has expired
       return false;
+    }
+
+    // If the subject selected their move at the start of the turn before it got disabled, cancel it
+    const movePhase = pokemon.scene.getCurrentPhase() as MovePhase;
+    if (movePhase && this.moveIsDisabled(movePhase.move.moveId)) {
+      movePhase.cancel();
+
+      const interruptedText = this.interruptedText(pokemon, movePhase.move.moveId);
+      if (interruptedText !== null) {
+        pokemon.scene.queueMessage(interruptedText);
+      }
     }
 
     return true;
   }
+
+  /** Called when the disable expires due to duration. */
+  onRemove(pokemon: Pokemon): void {
+    if (this.finishedText(pokemon) === null) {
+      return;
+    }
+
+    // In the games, disable effects always show their finish message at the end of a turn, if they have one. This tag
+    //  lapses on PRE_MOVE, so we must manually insert a message phase after the next end of turn.
+    const turnEndPhaseIndex = pokemon.scene.phaseQueue.findIndex(p => p instanceof TurnEndPhase);
+    if (turnEndPhaseIndex >= 0) {
+      pokemon.scene.phaseQueue.splice(turnEndPhaseIndex, 0, new MessagePhase(pokemon.scene, this.finishedText(pokemon)));
+    }
+  }
+
+  /** The text to display when the disable finishes. Can return {@link null}, in which case no message will be displayed. */
+  protected abstract finishedText(pokemon: Pokemon): string | null;
+
+  /**
+   * The text to display when a move is prevented as a result of the disable. Can return null, in which case
+   * no message will be displayed.
+   */
+  protected abstract interruptedText(pokemon: Pokemon, move: Moves): string | null;
 }
 
 /**
@@ -120,14 +154,14 @@ export abstract class DisablingBattlerTag extends BattlerTag {
  */
 export class DisabledTag extends DisablingBattlerTag {
   /** The move being disabled. Gets set when {@linkcode onAdd} is called for this tag. */
-  private moveId: integer = 0;
+  public moveId: integer = 0;
 
   public override moveIsDisabled(move: Moves): boolean {
     return move === this.moveId;
   }
 
-  constructor(turnCount: integer, sourceId: integer) {
-    super(BattlerTagType.DISABLED, BattlerTagLapseType.TURN_END, turnCount, Moves.DISABLE, sourceId);
+  constructor(sourceId: number) {
+    super(BattlerTagType.DISABLED, 4, Moves.DISABLE, sourceId);
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
@@ -143,9 +177,14 @@ export class DisabledTag extends DisablingBattlerTag {
     return true;
   }
 
-  onAdd(pokemon: Pokemon): void {
-    const history = pokemon.getLastXMoves();
+  /**
+   * Ensures that move history exists and has a valid move. If so, sets the {@link moveId} and shows a message.
+   * Otherwise, something has gone wrong, so the move ID will not get assigned and this tag will get removed next turn.
+   */
+  public override onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
 
+    const history = pokemon.getLastXMoves();
     if (history.length === 0) {
       return;
     }
@@ -157,19 +196,15 @@ export class DisabledTag extends DisablingBattlerTag {
 
     this.moveId = move.move;
 
-    pokemon.scene.queueMessage(this.generateAddMessage(pokemon));
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, `'s ${allMoves[this.moveId].name}\nwas disabled!`));
   }
 
-  onRemove(pokemon: Pokemon): void {
-    if (this.moveId === 0) {
-      return;
-    }
-
-    pokemon.scene.pushPhase(new MessagePhase(pokemon.scene, i18next.t("battle:notDisabled", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: allMoves[this.moveId].name })));
+  protected override interruptedText(pokemon: Pokemon, move: Moves): string {
+    return getPokemonMessage(pokemon, `'s ${allMoves[this.moveId].name}\nis disabled!`);
   }
 
-  private generateAddMessage(pokemon: Pokemon): string {
-    return getPokemonMessage(pokemon, `'s ${allMoves[this.moveId].name}\nwas disabled!`);
+  protected override finishedText(pokemon: Pokemon): string {
+    return i18next.t("battle:notDisabled", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: allMoves[this.moveId].name });
   }
 }
 
@@ -1605,7 +1640,7 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
   case BattlerTagType.ICE_FACE:
     return new IceFaceTag(sourceMove);
   case BattlerTagType.DISABLED:
-    return new DisabledTag(turnCount, sourceId);
+    return new DisabledTag(sourceId);
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
