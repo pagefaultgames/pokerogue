@@ -6458,7 +6458,7 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.MAGNET_RISEN, true, true)
       .condition((user, target, move) => !user.scene.arena.getTag(ArenaTagType.GRAVITY) &&
       !user.getTag(BattlerTagType.IGNORE_FLYING) && !user.getTag(BattlerTagType.INGRAIN) &&
-      !user.getTag(BattlerTagType.MAGNET_RISEN)).partial(),
+      !user.getTag(BattlerTagType.MAGNET_RISEN)),
     new AttackMove(Moves.FLARE_BLITZ, Type.FIRE, MoveCategory.PHYSICAL, 120, 100, 15, 10, 0, 4)
       .attr(RecoilAttr, false, 0.33)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
