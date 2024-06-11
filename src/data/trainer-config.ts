@@ -17,6 +17,7 @@ import {PartyMemberStrength} from "./enums/party-member-strength";
 import {getIsInitialized, initI18n} from "#app/plugins/i18n";
 import i18next from "i18next";
 import {Gender} from "#app/data/gender";
+import {Nature} from "#app/data/nature";
 
 export enum TrainerPoolTier {
   COMMON,
@@ -1732,11 +1733,10 @@ export const trainerConfigs: TrainerConfigs = {
     })),
   [TrainerType.MIRROR_B]: new TrainerConfig(++t).setName("Mirror B").initForEvilTeamLeader("Cipher Admin",[])
     .setPartyMemberFunc(0,getRandomPartyMemberFunc([Species.PELIPPER], TrainerSlot.TRAINER, true,  p => {
-      p.generateAndPopulateMoveset();
+      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.HURRICANE)),new PokemonMove(Moves.ROOST), new PokemonMove(Moves.SURF), new PokemonMove(Moves.ICE_BEAM)];
       p.abilityIndex = 1; // Drizzle
     }))
     .setPartyMemberFunc(1,getRandomPartyMemberFunc([Species.LUDICOLO],TrainerSlot.TRAINER,true, p => {
-      p.generateAndPopulateMoveset();
       p.abilityIndex = 1; // Rain Dish
     }))
     .setPartyMemberFunc(2,getRandomPartyMemberFunc([Species.LUDICOLO],TrainerSlot.TRAINER,true, p => {
@@ -1747,14 +1747,14 @@ export const trainerConfigs: TrainerConfigs = {
       p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.HYDRO_PUMP)),new PokemonMove(Moves.ICE_BEAM), new PokemonMove(Moves.GIGA_DRAIN), new PokemonMove(Moves.RAIN_DANCE)];
       // This one gets a random ability but is the alternative rain setter
     }))
-    .setPartyMemberFunc(4,getRandomPartyMemberFunc([Species.SUDOWOODO],TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(4,getRandomPartyMemberFunc([Species.REGIELEKI],TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.MASTER_BALL; // If we ever add Shadow Balls, this should be a Shadow Ball
     })).setGenModifiersFunc(party => {
-      // Set Sudowoodo to terra water
-      const sudowoodo = party[4];
-      return [modifierTypes.TERA_SHARD().generateType(null, [Type.WATER]).withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(sudowoodo) as PersistentModifier];
+      // Set Regieleki to terra electric
+      const regieleki = party[4];
+      return [modifierTypes.TERA_SHARD().generateType(null, [Type.ELECTRIC]).withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(regieleki) as PersistentModifier];
     })
     .setPartyMemberFunc(5,getRandomPartyMemberFunc([Species.ARMALDO],TrainerSlot.TRAINER,true)),
   [TrainerType.DAKIM]: new TrainerConfig(++t).setName("Dakim").initForEvilTeamLeader("Cipher Admin",[])
@@ -1819,7 +1819,6 @@ export const trainerConfigs: TrainerConfigs = {
       p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.ATTRACT)),new PokemonMove(Moves.ZEN_HEADBUTT), new PokemonMove(Moves.SOFT_BOILED), new PokemonMove(Moves.FIRE_PUNCH)];
       p.gender = Gender.FEMALE;
       p.abilityIndex = 1; // Serene Grace
-
     })),
   [TrainerType.EIN]: new TrainerConfig(++t).setName("Ein").initForEvilTeamLeader("Cipher Admin",[])
     .setPartyMemberFunc(0,getRandomPartyMemberFunc([Species.RHYPERIOR], TrainerSlot.TRAINER, true, p => {
@@ -1852,7 +1851,43 @@ export const trainerConfigs: TrainerConfigs = {
       p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.DRAGON_PULSE)),new PokemonMove(Moves.THUNDERBOLT), new PokemonMove(Moves.FLAMETHROWER), new PokemonMove(Moves.ICE_BEAM)];
       p.abilityIndex = 1; // Hydration
     })),
-  [TrainerType.NASCOUR]: new TrainerConfig(++t).setName("Nascour").initForEvilTeamLeader("Cipher",[]),
+  [TrainerType.NASCOUR]: new TrainerConfig(++t).setName("Nascour").initForEvilTeamLeader("Cipher",[])
+    .setPartyMemberFunc(0,getRandomPartyMemberFunc([Species.DUSKNOIR], TrainerSlot.TRAINER, true, p => {
+      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.SHADOW_PUNCH)),new PokemonMove(Moves.WILL_O_WISP), new PokemonMove(Moves.PAYBACK), new PokemonMove(Moves.ICE_PUNCH)];
+      p.abilityIndex = 0; // Pressure
+    }))
+    .setPartyMemberFunc(1,getRandomPartyMemberFunc([Species.GARDEVOIR], TrainerSlot.TRAINER, true, p => {
+      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.PSYCHIC)),new PokemonMove(Moves.SHADOW_BALL), new PokemonMove(Moves.THUNDERBOLT), new PokemonMove(Moves.CALM_MIND)];
+      p.abilityIndex = 2; // Telepathy
+    }))
+    .setPartyMemberFunc(2,getRandomPartyMemberFunc([Species.BLAZIKEN], TrainerSlot.TRAINER, true, p => {
+      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.FLARE_BLITZ)),new PokemonMove(Moves.BRAVE_BIRD), new PokemonMove(Moves.CLOSE_COMBAT), new PokemonMove(Moves.SWORDS_DANCE)];
+      p.abilityIndex = 2; // Speed Boost
+    }))
+    .setPartyMemberFunc(3,getRandomPartyMemberFunc([Species.WALREIN], TrainerSlot.TRAINER, true, p => {
+      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.ICE_BEAM)),new PokemonMove(Moves.SURF), new PokemonMove(Moves.ROCK_SLIDE), new PokemonMove(Moves.HYPER_BEAM)];
+      p.abilityIndex = 0; // Thick Fat
+    }))
+    .setPartyMemberFunc(4,getRandomPartyMemberFunc([Species.TYRANITAR], TrainerSlot.TRAINER, true, p => {
+      p.setBoss(true,2);
+      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.STONE_EDGE)),new PokemonMove(Moves.CRUNCH), new PokemonMove(Moves.EARTHQUAKE), new PokemonMove(Moves.DRAGON_DANCE)];
+      p.abilityIndex = 2; // Unnerve
+    }))
+  // This arcanine is buffed to be a boss and equal to the legis of the admins
+    .setPartyMemberFunc(5,getRandomPartyMemberFunc([Species.ARCANINE], TrainerSlot.TRAINER, true, p => {
+      p.setBoss(true, 3);
+      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.MORNING_SUN)),new PokemonMove(Moves.WILL_O_WISP), new PokemonMove(Moves.CLOSE_COMBAT), new PokemonMove(Moves.EXTREME_SPEED)];
+      p.setNature(Nature.SASSY);
+      p.passive = true;
+      p.pokeball = PokeballType.MASTER_BALL; // If we ever add Shadow Balls, this should be a Shadow Ball
+      p.gender = Gender.MALE;
+      p.ivs = [31,31,31,31,31,31];
+      p.abilityIndex = 0; // Intimidate
+    })).setGenModifiersFunc(party => {
+      // Set Arcanine to terra fire
+      const arcanine = party[5];
+      return [modifierTypes.TERA_SHARD().generateType(null, [Type.FIRE]).withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(arcanine) as PersistentModifier];
+    }),
   [TrainerType.EVICE]: new TrainerConfig(++t).setName("Evice").initForEvilTeamLeader("Cipher Head",[]),
 
 
