@@ -2149,6 +2149,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         return true;
       }
     }
+    return false;
   }
 
   getMoveHistory(): TurnMove[] {
