@@ -44,8 +44,8 @@ describe("Abilities - Intrepid Sword", () => {
     expect(game.scene.getParty()[0].summonData).not.toBeUndefined();
     let battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
     expect(battleStatsPokemon[BattleStat.ATK]).toBe(0);
-    await game.phaseInterceptor.mustRun(ShowAbilityPhase).catch((error) => expect(error).toBe(ShowAbilityPhase));
-    await game.phaseInterceptor.mustRun(StatChangePhase).catch((error) => expect(error).toBe(StatChangePhase));
+    await game.phaseInterceptor.run(ShowAbilityPhase);
+    await game.phaseInterceptor.run(StatChangePhase);
     battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
     expect(battleStatsPokemon[BattleStat.ATK]).toBe(1);
   }, 20000);
@@ -57,8 +57,8 @@ describe("Abilities - Intrepid Sword", () => {
     let battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
     expect(battleStatsOpponent[BattleStat.ATK]).toBe(0);
     await game.phaseInterceptor.runFrom(PostSummonPhase).to(ToggleDoublePositionPhase);
-    await game.phaseInterceptor.mustRun(StatChangePhase).catch((error) => expect(error).toBe(StatChangePhase));
-    await game.phaseInterceptor.whenAboutToRun(MessagePhase);
+    await game.phaseInterceptor.run(StatChangePhase);
+    await game.phaseInterceptor.run(MessagePhase);
     battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
     expect(battleStatsOpponent[BattleStat.ATK]).toBe(1);
   }, 20000);
