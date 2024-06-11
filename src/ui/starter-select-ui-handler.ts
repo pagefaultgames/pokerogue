@@ -1,4 +1,4 @@
-import { BattleSceneEventType, CandyUpgradeNotificationChangedEvent } from "#app/battle-scene-events.js";
+import { BattleSceneEventType, CandyUpgradeNotificationChangedEvent } from "../events/battle-scene";
 import { pokemonPrevolutions } from "#app/data/pokemon-evolutions";
 import { Variant, getVariantTint } from "#app/data/variant";
 import { argbFromRgba } from "@material/material-color-utilities";
@@ -18,9 +18,10 @@ import { LevelMoves, pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "../
 import PokemonSpecies, { allSpecies, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from "../data/pokemon-species";
 import { Type } from "../data/type";
 import { Button } from "../enums/buttons";
-import { GameModes, gameModes } from "../game-mode";
-import { TitlePhase } from "../phases";
-import { AbilityAttr, DexAttr, DexAttrProps, DexEntry, Passive as PassiveAttr, StarterFormMoveData, StarterMoveset } from "../system/game-data";
+import { GameModes } from "../game-mode";
+import { SelectChallengePhase, TitlePhase } from "../phases";
+import { AbilityAttr, DexAttr, DexAttrProps, DexEntry, StarterFormMoveData, StarterMoveset } from "../system/game-data";
+import { Passive as PassiveAttr } from "#app/data/enums/passive";
 import { Tutorial, handleTutorial } from "../tutorial";
 import * as Utils from "../utils";
 import { OptionSelectItem } from "./abstact-option-select-ui-handler";
@@ -30,6 +31,11 @@ import { StatsContainer } from "./stats-container";
 import { TextStyle, addBBCodeTextObject, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
+import {SettingKeyboard} from "#app/system/settings/settings-keyboard";
+import {Device} from "#app/enums/devices";
+import * as Challenge from "../data/challenge";
+import MoveInfoOverlay from "./move-info-overlay";
+import { getEggTierForSpecies } from "#app/data/egg.js";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -53,7 +59,7 @@ interface LanguageSetting {
 const languageSettings: { [key: string]: LanguageSetting } = {
   "en":{
     starterInfoTextSize: "56px",
-    instructionTextSize: "42px",
+    instructionTextSize: "38px",
   },
   "de":{
     starterInfoTextSize: "56px",
@@ -63,13 +69,18 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoTextSize: "56px",
     instructionTextSize: "35px",
   },
+  "fr":{
+    starterInfoTextSize: "54px",
+    instructionTextSize: "42px",
+  },
   "it":{
     starterInfoTextSize: "56px",
     instructionTextSize: "38px",
   },
-  "fr":{
-    starterInfoTextSize: "54px",
-    instructionTextSize: "42px",
+  "pt_BR":{
+    starterInfoTextSize: "47px",
+    instructionTextSize: "38px",
+    starterInfoXPos: 33,
   },
   "zh":{
     starterInfoTextSize: "40px",
@@ -179,13 +190,29 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private pokemonCandyCountText: Phaser.GameObjects.Text;
   private pokemonCaughtHatchedContainer: Phaser.GameObjects.Container;
   private pokemonCaughtCountText: Phaser.GameObjects.Text;
+  private pokemonHatchedIcon : Phaser.GameObjects.Sprite;
   private pokemonHatchedCountText: Phaser.GameObjects.Text;
   private genOptionsText: Phaser.GameObjects.Text;
-  private instructionsText: Phaser.GameObjects.Text;
+
+  private instructionsContainer: Phaser.GameObjects.Container;
+  private shinyIconElement: Phaser.GameObjects.Sprite;
+  private formIconElement: Phaser.GameObjects.Sprite;
+  private abilityIconElement: Phaser.GameObjects.Sprite;
+  private genderIconElement: Phaser.GameObjects.Sprite;
+  private natureIconElement: Phaser.GameObjects.Sprite;
+  private variantIconElement: Phaser.GameObjects.Sprite;
+  private shinyLabel: Phaser.GameObjects.Text;
+  private formLabel: Phaser.GameObjects.Text;
+  private genderLabel: Phaser.GameObjects.Text;
+  private abilityLabel: Phaser.GameObjects.Text;
+  private natureLabel: Phaser.GameObjects.Text;
+  private variantLabel: Phaser.GameObjects.Text;
+
   private starterSelectMessageBox: Phaser.GameObjects.NineSlice;
   private starterSelectMessageBoxContainer: Phaser.GameObjects.Container;
   private statsContainer: StatsContainer;
   private pokemonFormText: Phaser.GameObjects.Text;
+  private moveInfoOverlay : MoveInfoOverlay;
 
   private genMode: boolean;
   private statsMode: boolean;
@@ -199,8 +226,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private genSpecies: PokemonSpecies[][] = [];
   private lastSpecies: PokemonSpecies;
   private speciesLoaded: Map<Species, boolean> = new Map<Species, boolean>();
-  private starterGens: integer[] = [];
-  private starterCursors: integer[] = [];
+  public starterGens: integer[] = [];
+  public starterCursors: integer[] = [];
   private pokerusGens: integer[] = [];
   private pokerusCursors: integer[] = [];
   private starterAttr: bigint[] = [];
@@ -216,9 +243,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private canCycleNature: boolean;
   private canCycleVariant: boolean;
   private value: integer = 0;
+  private canAddParty: boolean;
 
   private assetLoadCancelled: Utils.BooleanHolder;
-  private cursorObj: Phaser.GameObjects.Image;
+  public cursorObj: Phaser.GameObjects.Image;
   private starterCursorObjs: Phaser.GameObjects.Image[];
   private pokerusCursorObjs: Phaser.GameObjects.Image[];
   private starterIcons: Phaser.GameObjects.Sprite[];
@@ -235,8 +263,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
   private iconAnimHandler: PokemonIconAnimHandler;
 
+  //variables to keep track of the dynamically rendered list of instruction prompts for starter select
+  private instructionRowX = 0;
+  private instructionRowY = 0;
+  private instructionRowTextOffset = 12;
+
   private starterSelectCallback: StarterSelectCallback;
-  private gameMode: GameModes;
 
   protected blockInput: boolean = false;
 
@@ -246,7 +278,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
   setup() {
     const ui = this.getUi();
-    const currentLanguage = i18next.language;
+    const currentLanguage = i18next.resolvedLanguage;
     const langSettingKey = Object.keys(languageSettings).find(lang => currentLanguage.includes(lang));
     const textSettings = languageSettings[langSettingKey];
 
@@ -513,11 +545,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonSprite.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });
     this.starterSelectContainer.add(this.pokemonSprite);
 
-    this.type1Icon = this.scene.add.sprite(8, 98, `types${Utils.verifyLang(i18next.language) ? `_${i18next.language}` : ""}`);    this.type1Icon.setScale(0.5);
+    this.type1Icon = this.scene.add.sprite(8, 98, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`);    this.type1Icon.setScale(0.5);
     this.type1Icon.setOrigin(0, 0);
     this.starterSelectContainer.add(this.type1Icon);
 
-    this.type2Icon = this.scene.add.sprite(26, 98, `types${Utils.verifyLang(i18next.language) ? `_${i18next.language}` : ""}`);    this.type2Icon.setScale(0.5);
+    this.type2Icon = this.scene.add.sprite(26, 98, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`);    this.type2Icon.setScale(0.5);
     this.type2Icon.setOrigin(0, 0);
     this.starterSelectContainer.add(this.type2Icon);
 
@@ -568,10 +600,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonCaughtCountText.setOrigin(0, 0);
     this.pokemonCaughtHatchedContainer.add(this.pokemonCaughtCountText);
 
-    const pokemonHatchedIcon = this.scene.add.sprite(1, 14, "items", "mystery_egg");
-    pokemonHatchedIcon.setOrigin(0, 0);
-    pokemonHatchedIcon.setScale(0.75);
-    this.pokemonCaughtHatchedContainer.add(pokemonHatchedIcon);
+    this.pokemonHatchedIcon = this.scene.add.sprite(1, 14, "egg_icons");
+    this.pokemonHatchedIcon.setOrigin(0.15, 0.2);
+    this.pokemonHatchedIcon.setScale(0.8);
+    this.pokemonCaughtHatchedContainer.add(this.pokemonHatchedIcon);
 
     this.pokemonHatchedCountText = addTextObject(this.scene, 24, 19, "0", TextStyle.SUMMARY_ALT);
     this.pokemonHatchedCountText.setOrigin(0, 0);
@@ -639,8 +671,42 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     // The font size should be set per language
     const instructionTextSize = textSettings.instructionTextSize;
 
-    this.instructionsText = addTextObject(this.scene, 4, 156, "", TextStyle.PARTY, { fontSize: instructionTextSize });
-    this.starterSelectContainer.add(this.instructionsText);
+    this.instructionsContainer = this.scene.add.container(4, 156);
+    this.instructionsContainer.setVisible(true);
+    this.starterSelectContainer.add(this.instructionsContainer);
+
+    // instruction rows that will be pushed into the container dynamically based on need
+    this.shinyIconElement = this.scene.add.sprite(this.instructionRowX, this.instructionRowY, "keyboard", "R.png");
+    this.shinyIconElement.setScale(0.675);
+    this.shinyIconElement.setOrigin(0.0, 0.0);
+    this.shinyLabel = addTextObject(this.scene, this.instructionRowX + this.instructionRowTextOffset, this.instructionRowY, i18next.t("starterSelectUiHandler:cycleShiny"), TextStyle.PARTY, { fontSize: instructionTextSize });
+
+    this.formIconElement = this.scene.add.sprite(this.instructionRowX, this.instructionRowY, "keyboard", "F.png");
+    this.formIconElement.setScale(0.675);
+    this.formIconElement.setOrigin(0.0, 0.0);
+    this.formLabel = addTextObject(this.scene, this.instructionRowX + this.instructionRowTextOffset, this.instructionRowY, i18next.t("starterSelectUiHandler:cycleForm"), TextStyle.PARTY, { fontSize: instructionTextSize });
+
+    this.genderIconElement = this.scene.add.sprite(this.instructionRowX, this.instructionRowY, "keyboard", "G.png");
+    this.genderIconElement.setScale(0.675);
+    this.genderIconElement.setOrigin(0.0, 0.0);
+    this.genderLabel = addTextObject(this.scene, this.instructionRowX + this.instructionRowTextOffset, this.instructionRowY, i18next.t("starterSelectUiHandler:cycleGender"), TextStyle.PARTY, { fontSize: instructionTextSize });
+
+    this.abilityIconElement = this.scene.add.sprite(this.instructionRowX, this.instructionRowY, "keyboard", "E.png");
+    this.abilityIconElement.setScale(0.675);
+    this.abilityIconElement.setOrigin(0.0, 0.0);
+    this.abilityLabel = addTextObject(this.scene, this.instructionRowX + this.instructionRowTextOffset, this.instructionRowY, i18next.t("starterSelectUiHandler:cycleAbility"), TextStyle.PARTY, { fontSize: instructionTextSize });
+
+    this.natureIconElement = this.scene.add.sprite(this.instructionRowX, this.instructionRowY, "keyboard", "N.png");
+    this.natureIconElement.setScale(0.675);
+    this.natureIconElement.setOrigin(0.0, 0.0);
+    this.natureLabel = addTextObject(this.scene, this.instructionRowX + this.instructionRowTextOffset, this.instructionRowY, i18next.t("starterSelectUiHandler:cycleNature"), TextStyle.PARTY, { fontSize: instructionTextSize });
+
+    this.variantIconElement = this.scene.add.sprite(this.instructionRowX, this.instructionRowY, "keyboard", "V.png");
+    this.variantIconElement.setScale(0.675);
+    this.variantIconElement.setOrigin(0.0, 0.0);
+    this.variantLabel = addTextObject(this.scene, this.instructionRowX + this.instructionRowTextOffset, this.instructionRowY, i18next.t("starterSelectUiHandler:cycleVariant"), TextStyle.PARTY, { fontSize: instructionTextSize });
+
+    this.hideInstructions();
 
     this.starterSelectMessageBoxContainer = this.scene.add.container(0, this.scene.game.canvas.height / 6);
     this.starterSelectMessageBoxContainer.setVisible(false);
@@ -698,19 +764,28 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     this.starterSelectContainer.add(this.statsContainer);
 
+    // add the info overlay last to be the top most ui element and prevent the IVs from overlaying this
+    const overlayScale = 1;
+    this.moveInfoOverlay = new MoveInfoOverlay(this.scene, {
+      scale: overlayScale,
+      top: true,
+      x: 1,
+      y: this.scene.game.canvas.height / 6 - MoveInfoOverlay.getHeight(overlayScale) - 29,
+    });
+    this.starterSelectContainer.add(this.moveInfoOverlay);
+
     this.scene.eventTarget.addEventListener(BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED, (e) => this.onCandyUpgradeDisplayChanged(e));
 
     this.updateInstructions();
   }
 
   show(args: any[]): boolean {
-    if (args.length >= 2 && args[0] instanceof Function && typeof args[1] === "number") {
+    this.moveInfoOverlay.clear(); // clear this when removing a menu; the cancel button doesn't seem to trigger this automatically on controllers
+    if (args.length >= 1 && args[0] instanceof Function) {
       super.show(args);
       this.starterSelectCallback = args[0] as StarterSelectCallback;
 
       this.starterSelectContainer.setVisible(true);
-
-      this.gameMode = args[1];
 
       this.setGenMode(false);
       this.setCursor(0);
@@ -937,7 +1012,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       } else {
         this.blockInput = true;
         this.scene.clearPhaseQueue();
-        this.scene.pushPhase(new TitlePhase(this.scene));
+        if (this.scene.gameMode.isChallenge) {
+          this.scene.pushPhase(new SelectChallengePhase(this.scene));
+        } else {
+          this.scene.pushPhase(new TitlePhase(this.scene));
+        }
         this.scene.getCurrentPhase().end();
         success = true;
       }
@@ -1009,7 +1088,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                   }
                 }
                 const species = this.genSpecies[this.getGenCursorWithScroll()][this.cursor];
-                if (!isDupe && this.tryUpdateValue(this.scene.gameData.getSpeciesStarterValue(species.speciesId))) {
+
+                const isValidForChallenge = new Utils.BooleanHolder(true);
+                Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge);
+
+                if (!isDupe && isValidForChallenge.value && this.tryUpdateValue(this.scene.gameData.getSpeciesStarterValue(species.speciesId))) {
                   const cursorObj = this.starterCursorObjs[this.starterCursors.length];
                   cursorObj.setVisible(true);
                   cursorObj.setPosition(this.cursorObj.x, this.cursorObj.y);
@@ -1030,6 +1113,16 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                     this.tryStart();
                   }
                   this.updateInstructions();
+
+                  /**
+                   * If the user can't select a pokemon anymore,
+                   * go to start button.
+                   */
+                  if (!this.canAddParty) {
+                    this.startCursorObj.setVisible(true);
+                    this.setGenMode(true);
+                  }
+
                   ui.playSelect();
                 } else {
                   ui.playError();
@@ -1051,6 +1144,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             const showSwapOptions = (moveset: StarterMoveset) => {
               ui.setMode(Mode.STARTER_SELECT).then(() => {
                 ui.showText(i18next.t("starterSelectUiHandler:selectMoveSwapOut"), null, () => {
+                  this.moveInfoOverlay.show(allMoves[moveset[0]]);
+
                   ui.setModeWithoutClear(Mode.OPTION_SELECT, {
                     options: moveset.map((m: Moves, i: number) => {
                       const option: OptionSelectItem = {
@@ -1058,8 +1153,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                         handler: () => {
                           ui.setMode(Mode.STARTER_SELECT).then(() => {
                             ui.showText(`${i18next.t("starterSelectUiHandler:selectMoveSwapWith")} ${allMoves[m].name}.`, null, () => {
+                              const possibleMoves = this.speciesStarterMoves.filter((sm: Moves) => sm !== m);
+                              this.moveInfoOverlay.show(allMoves[possibleMoves[0]]);
+
                               ui.setModeWithoutClear(Mode.OPTION_SELECT, {
-                                options: this.speciesStarterMoves.filter((sm: Moves) => sm !== m).map(sm => {
+                                options: possibleMoves.map(sm => {
                                   // make an option for each available starter move
                                   const option = {
                                     label: allMoves[sm].name,
@@ -1067,7 +1165,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                                       this.switchMoveHandler(i, sm, m);
                                       showSwapOptions(this.starterMoveset);
                                       return true;
-                                    }
+                                    },
+                                    onHover: () => {
+                                      this.moveInfoOverlay.show(allMoves[sm]);
+                                    },
                                   };
                                   return option;
                                 }).concat({
@@ -1075,25 +1176,37 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                                   handler: () => {
                                     showSwapOptions(this.starterMoveset);
                                     return true;
-                                  }
+                                  },
+                                  onHover: () => {
+                                    this.moveInfoOverlay.clear();
+                                  },
                                 }),
+                                supportHover: true,
                                 maxOptions: 8,
                                 yOffset: 19
                               });
                             });
                           });
                           return true;
-                        }
+                        },
+                        onHover: () => {
+                          this.moveInfoOverlay.show(allMoves[m]);
+                        },
                       };
                       return option;
                     }).concat({
                       label: i18next.t("menu:cancel"),
                       handler: () => {
+                        this.moveInfoOverlay.clear();
                         this.clearText();
                         ui.setMode(Mode.STARTER_SELECT);
                         return true;
-                      }
+                      },
+                      onHover: () => {
+                        this.moveInfoOverlay.clear();
+                      },
                     }),
+                    supportHover: true,
                     maxOptions: 8,
                     yOffset: 19
                   });
@@ -1429,55 +1542,98 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, undefined, false);
   }
 
+  updateButtonIcon(iconSetting, gamepadType, iconElement, controlLabel): void {
+    let iconPath;
+    // touch controls cannot be rebound as is, and are just emulating a keyboard event.
+    // Additionally, since keyboard controls can be rebound (and will be displayed when they are), we need to have special handling for the touch controls
+    if (gamepadType === "touch") {
+      gamepadType = "keyboard";
+      switch (iconSetting) {
+      case SettingKeyboard.Button_Cycle_Shiny:
+        iconPath = "R.png";
+        break;
+      case SettingKeyboard.Button_Cycle_Form:
+        iconPath = "F.png";
+        break;
+      case SettingKeyboard.Button_Cycle_Gender:
+        iconPath = "G.png";
+        break;
+      case SettingKeyboard.Button_Cycle_Ability:
+        iconPath = "E.png";
+        break;
+      case SettingKeyboard.Button_Cycle_Nature:
+        iconPath = "N.png";
+        break;
+      case SettingKeyboard.Button_Cycle_Variant:
+        iconPath = "V.png";
+        break;
+      default:
+        break;
+      }
+    } else {
+      iconPath = this.scene.inputController?.getIconForLatestInputRecorded(iconSetting);
+    }
+    iconElement.setTexture(gamepadType, iconPath);
+    iconElement.setPosition(this.instructionRowX, this.instructionRowY);
+    controlLabel.setPosition(this.instructionRowX + this.instructionRowTextOffset, this.instructionRowY);
+    iconElement.setVisible(true);
+    controlLabel.setVisible(true);
+    this.instructionsContainer.add([iconElement, controlLabel]);
+    this.instructionRowY += 8;
+    if (this.instructionRowY >= 24) {
+      this.instructionRowY = 0;
+      this.instructionRowX += 50;
+    }
+  }
+
   updateInstructions(): void {
-    const instructionLines = [ ];
-    const cycleInstructionLines = [];
+    this.instructionRowX = 0;
+    this.instructionRowY = 0;
+    this.hideInstructions();
+    this.instructionsContainer.removeAll();
+    let gamepadType;
+    if (this.scene.inputMethod === "gamepad") {
+      gamepadType = this.scene.inputController.getConfig(this.scene.inputController.selectedDevice[Device.GAMEPAD]).padType;
+    } else {
+      gamepadType = this.scene.inputMethod;
+    }
+
     if (this.speciesStarterDexEntry?.caughtAttr) {
       if (this.canCycleShiny) {
-        cycleInstructionLines.push(i18next.t("starterSelectUiHandler:cycleShiny"));
+        this.updateButtonIcon(SettingKeyboard.Button_Cycle_Shiny, gamepadType, this.shinyIconElement, this.shinyLabel);
       }
       if (this.canCycleForm) {
-        cycleInstructionLines.push(i18next.t("starterSelectUiHandler:cycleForm"));
+        this.updateButtonIcon(SettingKeyboard.Button_Cycle_Form, gamepadType, this.formIconElement, this.formLabel);
       }
       if (this.canCycleGender) {
-        cycleInstructionLines.push(i18next.t("starterSelectUiHandler:cycleGender"));
+        this.updateButtonIcon(SettingKeyboard.Button_Cycle_Gender, gamepadType, this.genderIconElement, this.genderLabel);
       }
       if (this.canCycleAbility) {
-        cycleInstructionLines.push(i18next.t("starterSelectUiHandler:cycleAbility"));
+        this.updateButtonIcon(SettingKeyboard.Button_Cycle_Ability, gamepadType, this.abilityIconElement, this.abilityLabel);
       }
       if (this.canCycleNature) {
-        cycleInstructionLines.push(i18next.t("starterSelectUiHandler:cycleNature"));
+        this.updateButtonIcon(SettingKeyboard.Button_Cycle_Nature, gamepadType, this.natureIconElement, this.natureLabel);
       }
       if (this.canCycleVariant) {
-        cycleInstructionLines.push(i18next.t("starterSelectUiHandler:cycleVariant"));
+        this.updateButtonIcon(SettingKeyboard.Button_Cycle_Variant, gamepadType, this.variantIconElement, this.variantLabel);
       }
     }
-
-    if (cycleInstructionLines.length > 2) {
-      cycleInstructionLines[0] += " | " + cycleInstructionLines.splice(1, 1);
-      if (cycleInstructionLines.length > 2) {
-        cycleInstructionLines[1] += " | " + cycleInstructionLines.splice(2, 1);
-      }
-      if (cycleInstructionLines.length > 2) {
-        cycleInstructionLines[2] += " | " + cycleInstructionLines.splice(3, 1);
-      }
-    }
-
-    for (const cil of cycleInstructionLines) {
-      instructionLines.push(cil);
-    }
-
-    this.instructionsText.setText(instructionLines.join("\n"));
   }
 
   getValueLimit(): integer {
-    switch (this.gameMode) {
+    const valueLimit = new Utils.IntegerHolder(0);
+    switch (this.scene.gameMode.modeId) {
     case GameModes.ENDLESS:
     case GameModes.SPLICED_ENDLESS:
-      return 15;
+      valueLimit.value = 15;
+      break;
     default:
-      return 10;
+      valueLimit.value = 10;
     }
+
+    Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_POINTS, valueLimit);
+
+    return valueLimit.value;
   }
 
   setCursor(cursor: integer): boolean {
@@ -1668,11 +1824,26 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonPassiveLabelText.setVisible(true);
         this.pokemonNatureLabelText.setVisible(true);
         this.pokemonCaughtCountText.setText(`${this.speciesStarterDexEntry.caughtCount}`);
+        if (species.speciesId === Species.MANAPHY || species.speciesId === Species.PHIONE) {
+          this.pokemonHatchedIcon.setFrame("manaphy");
+        } else {
+          this.pokemonHatchedIcon.setFrame(getEggTierForSpecies(species));
+        }
         this.pokemonHatchedCountText.setText(`${this.speciesStarterDexEntry.hatchedCount}`);
         this.pokemonCaughtHatchedContainer.setVisible(true);
         if (pokemonPrevolutions.hasOwnProperty(species.speciesId)) {
           this.pokemonCaughtHatchedContainer.setY(16);
-          [ this.pokemonCandyIcon, this.pokemonCandyOverlayIcon, this.pokemonCandyDarknessOverlay, this.pokemonCandyCountText ].map(c => c.setVisible(false));
+          [
+            this.pokemonCandyIcon,
+            this.pokemonCandyOverlayIcon,
+            this.pokemonCandyDarknessOverlay,
+            this.pokemonCandyCountText,
+            this.pokemonHatchedIcon,
+            this.pokemonHatchedCountText
+          ].map(c => c.setVisible(false));
+        } else if (species.speciesId === Species.ETERNATUS) {
+          this.pokemonHatchedIcon.setVisible(false);
+          this.pokemonHatchedCountText.setVisible(false);
         } else {
           this.pokemonCaughtHatchedContainer.setY(25);
           this.pokemonCandyIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(colorScheme[0])));
@@ -1683,6 +1854,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.pokemonCandyCountText.setText(`x${this.scene.gameData.starterData[species.speciesId].candyCount}`);
           this.pokemonCandyCountText.setVisible(true);
           this.pokemonFormText.setVisible(true);
+          this.pokemonHatchedIcon.setVisible(true);
+          this.pokemonHatchedCountText.setVisible(true);
 
           let currentFriendship = this.scene.gameData.starterData[this.lastSpecies.speciesId].friendship;
           if (!currentFriendship || currentFriendship === undefined) {
@@ -2094,11 +2267,48 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.scene.time.delayedCall(Utils.fixedInt(500), () => this.tryUpdateValue());
       return false;
     }
+
+    /**
+     * this loop is used to set the Sprite's alpha value and check if the user can select other pokemon more.
+     */
+    this.canAddParty = false;
+    const remainValue = valueLimit - newValue;
     for (let g = 0; g < this.genSpecies.length; g++) {
       for (let s = 0; s < this.genSpecies[g].length; s++) {
-        (this.starterSelectGenIconContainers[g].getAt(s) as Phaser.GameObjects.Sprite).setAlpha((newValue + this.scene.gameData.getSpeciesStarterValue(this.genSpecies[g][s].speciesId)) > valueLimit ? 0.375 : 1);
+        /** Cost of pokemon species */
+        const speciesStarterValue = this.scene.gameData.getSpeciesStarterValue(this.genSpecies[g][s].speciesId);
+        /** Used to detect if this pokemon is registered in starter */
+        const speciesStarterDexEntry = this.scene.gameData.dexData[this.genSpecies[g][s].speciesId];
+        /** {@linkcode Phaser.GameObjects.Sprite} object of Pokémon for setting the alpha value */
+        const speciesSprite = this.starterSelectGenIconContainers[g].getAt(s) as Phaser.GameObjects.Sprite;
+
+        /**
+         * If remainValue greater than or equal pokemon species and the pokemon is legal for this challenge, the user can select.
+         * so that the alpha value of pokemon sprite set 1.
+         *
+         * If speciesStarterDexEntry?.caughtAttr is true, this species registered in stater.
+         * we change to can AddParty value to true since the user has enough cost to choose this pokemon and this pokemon registered too.
+         */
+        const isValidForChallenge = new Utils.BooleanHolder(true);
+        Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, this.genSpecies[g][s], isValidForChallenge);
+
+        const canBeChosen = remainValue >= speciesStarterValue && isValidForChallenge.value;
+
+        if (canBeChosen) {
+          speciesSprite.setAlpha(1);
+          if (speciesStarterDexEntry?.caughtAttr) {
+            this.canAddParty = true;
+          }
+        } else {
+          /**
+           * If it can't be chosen, the user can't select.
+           * so that the alpha value of pokemon sprite set 0.375.
+           */
+          speciesSprite.setAlpha(0.375);
+        }
       }
     }
+
     this.value = newValue;
     return true;
   }
@@ -2120,8 +2330,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     ui.showText(i18next.t("starterSelectUiHandler:confirmStartTeam"), null, () => {
       ui.setModeWithoutClear(Mode.CONFIRM, () => {
-        const startRun = (gameMode: GameModes) => {
-          this.scene.gameMode = gameModes[gameMode];
+        const startRun = () => {
           this.scene.money = this.scene.gameMode.getStartingMoney();
           ui.setMode(Mode.STARTER_SELECT);
           const thisObj = this;
@@ -2140,7 +2349,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             };
           }));
         };
-        startRun(this.gameMode);
+        startRun();
       }, cancel, null, null, 19);
     });
 
@@ -2178,9 +2387,25 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     super.clearText();
   }
 
+  hideInstructions(): void {
+    this.shinyIconElement.setVisible(false);
+    this.shinyLabel.setVisible(false);
+    this.formIconElement.setVisible(false);
+    this.formLabel.setVisible(false);
+    this.genderIconElement.setVisible(false);
+    this.genderLabel.setVisible(false);
+    this.abilityIconElement.setVisible(false);
+    this.abilityLabel.setVisible(false);
+    this.natureIconElement.setVisible(false);
+    this.natureLabel.setVisible(false);
+    this.variantIconElement.setVisible(false);
+    this.variantLabel.setVisible(false);
+  }
+
   clear(): void {
     super.clear();
     this.cursor = -1;
+    this.hideInstructions();
     this.starterSelectContainer.setVisible(false);
     this.blockInput = false;
 
