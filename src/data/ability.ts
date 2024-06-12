@@ -1126,6 +1126,7 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
       // TODO remove this copy when phase order is changed so that damage, type, category, etc.
       // TODO are all calculated prior to playing the move animation.
       const moveCopy = new Move(move.id, move.type, move.category, move.moveTarget, move.power, move.accuracy, move.pp, move.chance, move.priority, move.generation);
+      moveCopy.attrs = move.attrs;
 
       // Moves like Weather Ball ignore effects of abilities like Normalize and Refrigerate
       if (move.findAttr(attr => attr instanceof VariableMoveTypeAttr)) {
