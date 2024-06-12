@@ -98,13 +98,6 @@ export default class EggListUiHandler extends MessageUiHandler {
 
     let e = 0;
 
-    /*this.scene.gameData.eggs = [
-      new Egg(1, 1, 5, new Date().getTime()),
-      new Egg(1 + EGG_SEED, 1, 15, new Date().getTime()),
-      new Egg(1 + EGG_SEED * 2, 1, 50, new Date().getTime()),
-      new Egg(1 + EGG_SEED * 3, GachaType.LEGENDARY, 100, new Date().getTime())
-    ];*/
-
     for (const egg of this.scene.gameData.eggs) {
       const x = (e % 11) * 18;
       const y = Math.floor(e / 11) * 18;
