@@ -44,18 +44,18 @@ export const PGMdialogue: DialogueTranslationEntries = {
       6: "Un combat doit être pris au sérieux. Es-tu prêt à te battre ?",
       7: "Tu ne seras pas jeune éternellement. Tu n'auras qu'une chance pendant un combat. Bientôt, tu ne seras plus qu'un souvenir.",
       8: "Tu ferais mieux d'y aller doucement avec moi. Mais je vais me battre sérieusement !",
-      9: "Je m'ennuie à l'école. Je n'ai rien a faire. *Baille*. Je me bats juste pour passer le temps."
+      9: "Je m'ennuie à l'école. Je n'ai rien à faire. *Baille*. Je me bats juste pour passer le temps."
     },
     "victory": {
       1: "Wow, c'était impressionnant. J'ai beaucoup à apprendre.",
-      2: "Je ne pensais pas que je perdrais comme ça...",
+      2: "Je ne pensais pas que je perdrais comme ça…",
       3: "J'espère que j'aurai ma revanche un jour.",
-      4: "C'était super amusant ! Ce combat m'a épuisé...",
+      4: "C'était super amusant ! Ce combat m'a épuisé…",
       5: "Tu m'as appris une belle leçon ! Tu es vraiment incroyable !",
-      6: "Vraiment ? J'ai perdu... C'est des choses qui arrivent, ça me déprime mais tu es vraiment très cool.",
-      7: "Je n'ai pas besoin de souvenirs comme ça. *Suppression de la mémoire...*",
+      6: "Vraiment ? J'ai perdu… C'est des choses qui arrivent, ça me déprime mais tu es vraiment très cool.",
+      7: "Je n'ai pas besoin de souvenirs comme ça. *Suppression de la mémoire…*",
       8: "Hé ! Je t'avais dit d'y aller doucement avec moi ! Mais tu es vraiment trop cool quand tu te bats sérieusement.",
-      9: "J'en ai marre des combats Pokémon... Il doit y avoir de nouvelles choses à faire..."
+      9: "J'en ai marre des combats Pokémon… Il doit y avoir de nouvelles choses à faire…"
     }
   },
   "breeder": {
