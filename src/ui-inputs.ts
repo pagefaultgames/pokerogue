@@ -9,7 +9,8 @@ import {Button} from "./enums/buttons";
 import SettingsGamepadUiHandler from "./ui/settings/settings-gamepad-ui-handler";
 import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";
 import BattleScene from "./battle-scene";
-import SettingsAccessibilityUiHandler from "./ui/settings/settings-accessiblity-ui-handler";
+import SettingsDisplayUiHandler from "./ui/settings/settings-display-ui-handler";
+import SettingsAudioUiHandler from "./ui/settings/settings-audio-ui-handler";
 
 type ActionKeys = Record<Button, () => void>;
 
@@ -29,8 +30,23 @@ export class UiInputs {
     this.listenInputs();
   }
 
+  detectInputMethod(evt): void {
+    if (evt.controller_type === "keyboard") {
+      //if the touch property is present and defined, then this is a simulated keyboard event from the touch screen
+      if (evt.hasOwnProperty("isTouch") && evt.isTouch) {
+        this.scene.inputMethod = "touch";
+      } else {
+        this.scene.inputMethod = "keyboard";
+      }
+    } else if (evt.controller_type === "gamepad") {
+      this.scene.inputMethod = "gamepad";
+    }
+  }
+
   listenInputs(): void {
     this.events.on("input_down", (event) => {
+      this.detectInputMethod(event);
+
       const actions = this.getActionsKeyDown();
       if (!actions.hasOwnProperty(event.button)) {
         return;
@@ -114,6 +130,11 @@ export class UiInputs {
   }
 
   buttonStats(pressed: boolean = true): void {
+    // allow access to Button.STATS as a toggle for other elements
+    for (const t of this.scene.getInfoToggles(true)) {
+      t.toggleInfo(pressed);
+    }
+    // handle normal pokemon battle ui
     for (const p of this.scene.getField().filter(p => p?.isActive(true))) {
       p.toggleStats(pressed);
     }
@@ -141,20 +162,13 @@ export class UiInputs {
       }
     case Mode.TITLE:
     case Mode.COMMAND:
-    case Mode.FIGHT:
-    case Mode.BALL:
-    case Mode.TARGET_SELECT:
-    case Mode.SAVE_SLOT:
-    case Mode.PARTY:
-    case Mode.SUMMARY:
-    case Mode.STARTER_SELECT:
-    case Mode.OPTION_SELECT:
+    case Mode.MODIFIER_SELECT:
       this.scene.ui.setOverlayMode(Mode.MENU);
       break;
-    case Mode.CONFIRM:
+    case Mode.STARTER_SELECT:
+      this.buttonTouch();
+      break;
     case Mode.MENU:
-    case Mode.SETTINGS:
-    case Mode.ACHIEVEMENTS:
       this.scene.ui.revertMode();
       this.scene.playSound("select");
       break;
@@ -164,7 +178,7 @@ export class UiInputs {
   }
 
   buttonCycleOption(button: Button): void {
-    const whitelist = [StarterSelectUiHandler, SettingsUiHandler, SettingsAccessibilityUiHandler, SettingsGamepadUiHandler, SettingsKeyboardUiHandler];
+    const whitelist = [StarterSelectUiHandler, SettingsUiHandler, SettingsDisplayUiHandler, SettingsAudioUiHandler, SettingsGamepadUiHandler, SettingsKeyboardUiHandler];
     const uiHandler = this.scene.ui?.getHandler();
     if (whitelist.some(handler => uiHandler instanceof handler)) {
       this.scene.ui.processInput(button);

@@ -29,6 +29,7 @@ import { modifierTypes } from "./modifier/modifier-type";
 export const SEED_OVERRIDE: string = "";
 export const WEATHER_OVERRIDE: WeatherType = WeatherType.NONE;
 export const DOUBLE_BATTLE_OVERRIDE: boolean = false;
+export const SINGLE_BATTLE_OVERRIDE: boolean = false;
 export const STARTING_WAVE_OVERRIDE: integer = 0;
 export const STARTING_BIOME_OVERRIDE: Biome = Biome.TOWN;
 export const ARENA_TINT_OVERRIDE: TimeOfDay = null;
@@ -78,7 +79,7 @@ export const VARIANT_OVERRIDE: Variant = 0;
 export const OPP_SPECIES_OVERRIDE: Species | integer = 0;
 export const OPP_LEVEL_OVERRIDE: number = 0;
 export const OPP_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
-export const OPP_PASSIVE_ABILITY_OVERRIDE = Abilities.NONE;
+export const OPP_PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const OPP_STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
 export const OPP_GENDER_OVERRIDE: Gender = null;
 export const OPP_MOVESET_OVERRIDE: Array<Moves> = [];
@@ -110,3 +111,12 @@ export const OPP_MODIFIER_OVERRIDE: Array<ModifierOverride> = [];
 
 export const STARTING_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = [];
 export const OPP_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = [];
+export const NEVER_CRIT_OVERRIDE: boolean = false;
+
+/**
+ * An array of items by keys as defined in the "modifierTypes" object in the "modifier/modifier-type.ts" file.
+ * Items listed will replace the normal rolls.
+ * If less items are listed than rolled, only some items will be replaced
+ * If more items are listed than rolled, only the first X items will be shown, where X is the number of items rolled.
+ */
+export const ITEM_REWARD_OVERRIDE: Array<String> = [];

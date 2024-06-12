@@ -2,6 +2,7 @@ import BattleScene from "../battle-scene";
 import { Achv, getAchievementDescription } from "../system/achv";
 import { Voucher } from "../system/voucher";
 import { TextStyle, addTextObject } from "./text";
+import { PlayerGender } from "#app/data/enums/player-gender";
 
 export default class AchvBar extends Phaser.GameObjects.Container {
   private defaultWidth: number;
@@ -14,11 +15,13 @@ export default class AchvBar extends Phaser.GameObjects.Container {
   private descriptionText: Phaser.GameObjects.Text;
 
   private queue: (Achv | Voucher)[] = [];
+  private playerGender: PlayerGender;
 
   public shown: boolean;
 
   constructor(scene: BattleScene) {
     super(scene, scene.game.canvas.width / 6, 0);
+    this.playerGender = scene.gameData.gender;
   }
 
   setup(): void {
@@ -64,7 +67,7 @@ export default class AchvBar extends Phaser.GameObjects.Container {
 
     this.bg.setTexture(`achv_bar${tier ? `_${tier + 1}` : ""}`);
     this.icon.setFrame(achv.getIconImage());
-    this.titleText.setText(achv.getName());
+    this.titleText.setText(achv.getName(this.playerGender));
     this.scoreText.setVisible(achv instanceof Achv);
     if (achv instanceof Achv) {
       this.descriptionText.setText(getAchievementDescription((achv as Achv).localizationKey));
@@ -96,13 +99,13 @@ export default class AchvBar extends Phaser.GameObjects.Container {
       ease: "Sine.easeOut"
     });
 
-    this.scene.time.delayedCall(10000, () => this.hide());
+    this.scene.time.delayedCall(10000, () => this.hide(this.playerGender));
 
     this.setVisible(true);
     this.shown = true;
   }
 
-  protected hide(): void {
+  protected hide(playerGender: PlayerGender): void {
     if (!this.shown) {
       return;
     }

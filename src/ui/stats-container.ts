@@ -4,7 +4,10 @@ import { Stat, getStatName } from "../data/pokemon-stat";
 import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./text";
 
 const ivChartSize = 24;
-const ivChartStatCoordMultipliers = [ [ 0, -1 ], [ 0.825, -0.5 ], [ 0.825, 0.5 ], [ -0.825, -0.5 ], [ -0.825, 0.5 ], [ 0, 1 ] ];
+const ivChartStatCoordMultipliers = [[0, -1], [0.825, -0.5], [0.825, 0.5], [-0.825, -0.5], [-0.825, 0.5], [0, 1]];
+const speedLabelOffset = -3;
+const sideLabelOffset = 1;
+const ivLabelOffset = [0, sideLabelOffset, -sideLabelOffset, sideLabelOffset, -sideLabelOffset, speedLabelOffset];
 const ivChartStatIndexes = [0,1,2,5,4,3]; // swap special attack and speed
 const defaultIvChartData = new Array(12).fill(null).map(() => 0);
 
@@ -51,7 +54,7 @@ export class StatsContainer extends Phaser.GameObjects.Container {
     this.ivStatValueTexts = [];
 
     new Array(6).fill(null).map((_, i: integer) => {
-      const statLabel = addTextObject(this.scene, ivChartBg.x + (ivChartSize) * ivChartStatCoordMultipliers[i][0] * 1.325, ivChartBg.y + (ivChartSize) * ivChartStatCoordMultipliers[i][1] * 1.325 - 4, getStatName(i as Stat), TextStyle.TOOLTIP_CONTENT);
+      const statLabel = addTextObject(this.scene, ivChartBg.x + (ivChartSize) * ivChartStatCoordMultipliers[i][0] * 1.325, ivChartBg.y + (ivChartSize) * ivChartStatCoordMultipliers[i][1] * 1.325 - 4 + ivLabelOffset[i], getStatName(i as Stat), TextStyle.TOOLTIP_CONTENT);
       statLabel.setOrigin(0.5);
 
       this.ivStatValueTexts[i] = addBBCodeTextObject(this.scene, statLabel.x, statLabel.y + 8, "0", TextStyle.TOOLTIP_CONTENT);
