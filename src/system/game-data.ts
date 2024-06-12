@@ -9,7 +9,7 @@ import PokemonData from "./pokemon-data";
 import PersistentModifierData from "./modifier-data";
 import ArenaData from "./arena-data";
 import { Unlockables } from "./unlockables";
-import { GameModes, gameModes } from "../game-mode";
+import { GameModes, getGameMode } from "../game-mode";
 import { BattleType } from "../battle";
 import TrainerData from "./trainer-data";
 import { trainerConfigs } from "../data/trainer-config";
@@ -32,12 +32,13 @@ import { OutdatedPhase, ReloadSessionPhase } from "#app/phases";
 import { Variant, variantData } from "#app/data/variant";
 import {setSettingGamepad, SettingGamepad, settingGamepadDefaults} from "./settings/settings-gamepad";
 import {setSettingKeyboard, SettingKeyboard} from "#app/system/settings/settings-keyboard";
-import { TerrainChangedEvent, WeatherChangedEvent } from "#app/field/arena-events.js";
+import { TerrainChangedEvent, WeatherChangedEvent } from "#app/field/events/arena";
 import { Device } from "#app/enums/devices.js";
 import { EnemyAttackStatusEffectChanceModifier } from "../modifier/modifier";
 import { StatusEffect } from "#app/data/status-effect.js";
 import { PlayerGender } from "#app/data/enums/player-gender";
 import { GameDataType } from "#app/data/enums/game-data-type";
+import ChallengeData from "./challenge-data";
 
 const saveKey = "x0i2O7WRiANTqPmZ"; // Temporary; secure encryption is not yet necessary
 
@@ -60,13 +61,13 @@ export function getDataTypeKey(dataType: GameDataType, slotId: integer = 0): str
   }
 }
 
-function encrypt(data: string, bypassLogin: boolean): string {
+export function encrypt(data: string, bypassLogin: boolean): string {
   return (bypassLogin
     ? (data: string) => btoa(data)
     : (data: string) => AES.encrypt(data, saveKey))(data);
 }
 
-function decrypt(data: string, bypassLogin: boolean): string {
+export function decrypt(data: string, bypassLogin: boolean): string {
   return (bypassLogin
     ? (data: string) => atob(data)
     : (data: string) => AES.decrypt(data, saveKey).toString(enc.Utf8))(data);
@@ -107,6 +108,7 @@ export interface SessionSaveData {
   trainer: TrainerData;
   gameVersion: string;
   timestamp: integer;
+  challenges: ChallengeData[];
 }
 
 interface Unlocks {
@@ -493,7 +495,7 @@ export class GameData {
     });
   }
 
-  private parseSystemData(dataStr: string): SystemSaveData {
+  parseSystemData(dataStr: string): SystemSaveData {
     return JSON.parse(dataStr, (k: string, v: any) => {
       if (k === "gameStats") {
         return new GameStats(v);
@@ -512,7 +514,7 @@ export class GameData {
     }) as SystemSaveData;
   }
 
-  private convertSystemDataStr(dataStr: string, shorten: boolean = false): string {
+  convertSystemDataStr(dataStr: string, shorten: boolean = false): string {
     if (!shorten) {
       // Account for past key oversight
       dataStr = dataStr.replace(/\$pAttr/g, "$pa");
@@ -780,7 +782,8 @@ export class GameData {
       battleType: scene.currentBattle.battleType,
       trainer: scene.currentBattle.battleType === BattleType.TRAINER ? new TrainerData(scene.currentBattle.trainer) : null,
       gameVersion: scene.game.config.gameVersion,
-      timestamp: new Date().getTime()
+      timestamp: new Date().getTime(),
+      challenges: scene.gameMode.challenges.map(c => new ChallengeData(c))
     } as SessionSaveData;
   }
 
@@ -829,7 +832,10 @@ export class GameData {
         const initSessionFromData = async sessionData => {
           console.debug(sessionData);
 
-          scene.gameMode = gameModes[sessionData.gameMode || GameModes.CLASSIC];
+          scene.gameMode = getGameMode(sessionData.gameMode || GameModes.CLASSIC);
+          if (sessionData.challenges) {
+            scene.gameMode.challenges = sessionData.challenges.map(c => c.toChallenge());
+          }
 
           scene.setSeed(sessionData.seed || scene.game.config.seed[0]);
           scene.resetSeed();
@@ -1073,6 +1079,17 @@ export class GameData {
 
       if (k === "arena") {
         return new ArenaData(v);
+      }
+
+      if (k === "challenges") {
+        const ret: ChallengeData[] = [];
+        if (v === null) {
+          v = [];
+        }
+        for (const c of v) {
+          ret.push(new ChallengeData(c));
+        }
+        return ret;
       }
 
       return v;

@@ -6,10 +6,10 @@ export const titles: SimpleTranslationEntries = {
   "elite_four_female": "Elite dos Quatro",
   "gym_leader": "Líder de Ginásio",
   "gym_leader_female": "Líder de Ginásio",
-  "gym_leader_double": "Gym Leader Duo",
+  "gym_leader_double": "Líderes de Ginásio",
   "champion": "Campeão",
-  "champion_female": "Champion",
-  "champion_double": "Champion Duo",
+  "champion_female": "Campeã",
+  "champion_double": "Dupla Campeã",
   "rival": "Rival",
   "professor": "Professor",
   "frontier_brain": "Cérebro da Fronteira",
@@ -18,8 +18,8 @@ export const titles: SimpleTranslationEntries = {
 
 // Titles of trainers like "Youngster" or "Lass"
 export const trainerClasses: SimpleTranslationEntries = {
-  "ace_trainer": "Trinador Ás",
-  "ace_trainer_female": "Trinadora Ás",
+  "ace_trainer": "Treinador Ás",
+  "ace_trainer_female": "Treinadora Ás",
   "ace_duo": "Dupla Ás",
   "artist": "Artista",
   "artist_female": "Artista",
@@ -30,7 +30,7 @@ export const trainerClasses: SimpleTranslationEntries = {
   "baker": "Padeira",
   "battle_girl": "Lutadora",
   "beauty": "Modelo",
-  "beginners": "Beginners",
+  "beginners": "Iniciantes",
   "biker": "Motoqueiro",
   "black_belt": "Faixa Preta",
   "breeder": "Criador",

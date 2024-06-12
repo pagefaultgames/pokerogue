@@ -449,6 +449,222 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       ]
     }
   ],
+  [TrainerType.ROCKET_GRUNT]: [
+    {
+      encounter: [
+        "dialogue:rocket_grunt.encounter.1"
+      ],
+      victory: [
+        "dialogue:rocket_grunt.victory.1"
+      ]
+    }
+  ],
+  [TrainerType.MAGMA_GRUNT]: [
+    {
+      encounter: [
+        "dialogue:magma_grunt.encounter.1"
+      ],
+      victory: [
+        "dialogue:magma_grunt.victory.1"
+      ]
+    }
+  ],
+  [TrainerType.AQUA_GRUNT]: [
+    {
+      encounter: [
+        "dialogue:aqua_grunt.encounter.1"
+      ],
+      victory: [
+        "dialogue:aqua_grunt.victory.1"
+      ]
+    }
+  ],
+  [TrainerType.GALACTIC_GRUNT]: [
+    {
+      encounter: [
+        "dialogue:galactic_grunt.encounter.1"
+      ],
+      victory: [
+        "dialogue:galactic_grunt.victory.1"
+      ]
+    }
+  ],
+  [TrainerType.PLASMA_GRUNT]: [
+    {
+      encounter: [
+        "dialogue:plasma_grunt.encounter.1"
+      ],
+      victory: [
+        "dialogue:plasma_grunt.victory.1"
+      ]
+    }
+  ],
+  [TrainerType.FLARE_GRUNT]: [
+    {
+      encounter: [
+        "dialogue:flare_grunt.encounter.1"
+      ],
+      victory: [
+        "dialogue:flare_grunt.victory.1"
+      ]
+    }
+  ],
+  [TrainerType.ROCKET_BOSS_GIOVANNI_1]: [
+    {
+      encounter: [
+        "dialogue:rocket_boss_giovanni_1.encounter.1"
+      ],
+      victory: [
+        "dialogue:rocket_boss_giovanni_1.victory.1"
+      ],
+      defeat: [
+        "dialogue:rocket_boss_giovanni_1.defeat.1"
+      ]
+    }
+  ],
+  [TrainerType.ROCKET_BOSS_GIOVANNI_2]: [
+    {
+      encounter: [
+        "dialogue:rocket_boss_giovanni_2.encounter.1"
+      ],
+      victory: [
+        "dialogue:rocket_boss_giovanni_2.victory.1"
+      ],
+      defeat: [
+        "dialogue:rocket_boss_giovanni_2.defeat.1"
+      ]
+    }
+  ],
+  [TrainerType.MAXIE]: [
+    {
+      encounter: [
+        "dialogue:magma_boss_maxie_1.encounter.1"
+      ],
+      victory: [
+        "dialogue:magma_boss_maxie_1.victory.1"
+      ],
+      defeat: [
+        "dialogue:magma_boss_maxie_1.defeat.1"
+      ]
+    }
+  ],
+  [TrainerType.MAXIE_2]: [
+    {
+      encounter: [
+        "dialogue:magma_boss_maxie_2.encounter.1"
+      ],
+      victory: [
+        "dialogue:magma_boss_maxie_2.victory.1"
+      ],
+      defeat: [
+        "dialogue:magma_boss_maxie_2.defeat.1"
+      ]
+    }
+  ],
+  [TrainerType.ARCHIE]: [
+    {
+      encounter: [
+        "dialogue:aqua_boss_archie_1.encounter.1"
+      ],
+      victory: [
+        "dialogue:aqua_boss_archie_1.victory.1"
+      ],
+      defeat: [
+        "dialogue:aqua_boss_archie_1.defeat.1"
+      ]
+    }
+  ],
+  [TrainerType.ARCHIE_2]: [
+    {
+      encounter: [
+        "dialogue:aqua_boss_archie_2.encounter.1"
+      ],
+      victory: [
+        "dialogue:aqua_boss_archie_2.victory.1"
+      ],
+      defeat: [
+        "dialogue:aqua_boss_archie_2.defeat.1"
+      ]
+    }
+  ],
+  [TrainerType.CYRUS]: [
+    {
+      encounter: [
+        "dialogue:galactic_boss_cyrus_1.encounter.1"
+      ],
+      victory: [
+        "dialogue:galactic_boss_cyrus_1.victory.1"
+      ],
+      defeat: [
+        "dialogue:galactic_boss_cyrus_1.defeat.1"
+      ]
+    }
+  ],
+  [TrainerType.CYRUS_2]: [
+    {
+      encounter: [
+        "dialogue:galactic_boss_cyrus_2.encounter.1"
+      ],
+      victory: [
+        "dialogue:galactic_boss_cyrus_2.victory.1"
+      ],
+      defeat: [
+        "dialogue:galactic_boss_cyrus_2.defeat.1"
+      ]
+    }
+  ],
+  [TrainerType.GHETSIS]: [
+    {
+      encounter: [
+        "dialogue:plasma_boss_ghetsis_1.encounter.1"
+      ],
+      victory: [
+        "dialogue:plasma_boss_ghetsis_1.victory.1"
+      ],
+      defeat: [
+        "dialogue:plasma_boss_ghetsis_1.defeat.1"
+      ]
+    }
+  ],
+  [TrainerType.GHETSIS_2]: [
+    {
+      encounter: [
+        "dialogue:plasma_boss_ghetsis_2.encounter.1"
+      ],
+      victory: [
+        "dialogue:plasma_boss_ghetsis_2.victory.1"
+      ],
+      defeat: [
+        "dialogue:plasma_boss_ghetsis_2.defeat.1"
+      ]
+    }
+  ],
+  [TrainerType.LYSANDRE]: [
+    {
+      encounter: [
+        "dialogue:flare_boss_lysandre_1.encounter.1"
+      ],
+      victory: [
+        "dialogue:flare_boss_lysandre_1.victory.1"
+      ],
+      defeat: [
+        "dialogue:flare_boss_lysandre_1.defeat.1"
+      ]
+    }
+  ],
+  [TrainerType.LYSANDRE_2]: [
+    {
+      encounter: [
+        "dialogue:flare_boss_lysandre_2.encounter.1"
+      ],
+      victory: [
+        "dialogue:flare_boss_lysandre_2.victory.1"
+      ],
+      defeat: [
+        "dialogue:flare_boss_lysandre_2.defeat.1"
+      ]
+    }
+  ],
   [TrainerType.BROCK]: {
     encounter: [
       "dialogue:brock.encounter.1",
