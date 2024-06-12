@@ -3,6 +3,6 @@ import { SimpleTranslationEntries } from "#app/plugins/i18n";
 export const abilityTriggers: SimpleTranslationEntries = {
   "blockRecoilDamage" : "{{abilityName}} di {{pokemonName}}\nl'ha protetto dal contraccolpo!",
   "badDreams": "{{pokemonName}} è tormentato!",
-  "windPowerCharged": "{{moveName}} carica {{pokemonName}} di potenza!",
-  "iceFaceAvoidedDamage": "{{pokemonName}} evita il \ndanno con {{abilityName}}!"
+  "windPowerCharged": "Being hit by {{moveName}} charged {{pokemonName}} with power!",
+  "iceFaceAvoidedDamage": "{{pokemonName}} avoided\ndamage with {{abilityName}}!"
 } as const;

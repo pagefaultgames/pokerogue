@@ -13,7 +13,7 @@ export const PGMachv: AchievementTranslationEntries = {
     description: "Accumula ₽{{moneyAmount}} PokéDollari",
   },
   "10K_MONEY": {
-    name: "Coi Soldi",
+    name: "Benestante",
   },
   "100K_MONEY": {
     name: "Ricco",
@@ -90,11 +90,11 @@ export const PGMachv: AchievementTranslationEntries = {
   },
 
   "TRANSFER_MAX_BATTLE_STAT": {
-    name: "Teamwork",
+    name: "Lavoro di Squadra",
     description: "Trasferisci almeno sei bonus statistiche tramite staffetta",
   },
   "MAX_FRIENDSHIP": {
-    name: "Amiciziando",
+    name: "Amiconi",
     description: "Raggiungi amicizia massima con un Pokémon",
   },
   "MEGA_EVOLVE": {
@@ -102,7 +102,7 @@ export const PGMachv: AchievementTranslationEntries = {
     description: "Megaevolvi un pokémon",
   },
   "GIGANTAMAX": {
-    name: "Absolute Unit",
+    name: "Grosso e Cattivo",
     description: "Ottieni una gigamax",
   },
   "TERASTALLIZE": {
@@ -110,7 +110,7 @@ export const PGMachv: AchievementTranslationEntries = {
     description: "Teracristallizza un Pokémon",
   },
   "STELLAR_TERASTALLIZE": {
-    name: "Un Tipo Segreto",
+    name: "Tipo Segreto",
     description: "Teracristallizza un Pokémon stellare",
   },
   "SPLICE": {
@@ -130,11 +130,11 @@ export const PGMachv: AchievementTranslationEntries = {
     description: "Cattura un Pokémon semileggendario",
   },
   "CATCH_LEGENDARY": {
-    name: "Legendary",
+    name: "Leggendario",
     description: "Cattura un Pokémon leggendario",
   },
   "SEE_SHINY": {
-    name: "Shiny",
+    name: "Cromatico",
     description: "Trova un Pokémon shiny in natura",
   },
   "SHINY_PARTY": {
@@ -259,7 +259,7 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "Mono DRAGO",
   },
   "MONO_DARK": {
-    name: "Non è solo una fase!",
+    name: "Solo una fase",
   },
   "MONO_FAIRY": {
     name: "Mono FATA",
