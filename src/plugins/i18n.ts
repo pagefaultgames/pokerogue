@@ -91,6 +91,7 @@ export interface Localizable {
 
 const fonts = [
   new FontFace("emerald", "url(./fonts/PokePT_Wansung.ttf)"),
+  new FontFace("emerald", "KH-Dot-Kodenmachou-12.ttf)"),
   new FontFace("emerald", "url(./fonts/pokemon-emerald-pro.ttf"),
 ];
 
