@@ -56,7 +56,9 @@ describe("Abilities - Intimidate", () => {
     expect(battleStatsOpponent[BattleStat.ATK]).toBe(-1);
     let battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
     expect(battleStatsPokemon[BattleStat.ATK]).toBe(-1);
-    await game.switchPokemon(1);
+    game.doSwitchPokemon(1);
+    await game.phaseInterceptor.run(CommandPhase);
+    await game.phaseInterceptor.to(CommandPhase);
     expect(game.scene.getParty()[0].species.speciesId).toBe(Species.POOCHYENA);
 
     battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
@@ -81,7 +83,9 @@ describe("Abilities - Intimidate", () => {
     expect(battleStatsOpponent[BattleStat.ATK]).toBe(-1);
     let battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
     expect(battleStatsPokemon[BattleStat.ATK]).toBe(-1);
-    await game.switchPokemon(1);
+    game.doSwitchPokemon(1);
+    await game.phaseInterceptor.run(CommandPhase);
+    await game.phaseInterceptor.to(CommandPhase);
     expect(game.scene.getParty()[0].species.speciesId).toBe(Species.POOCHYENA);
 
     battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
@@ -106,7 +110,9 @@ describe("Abilities - Intimidate", () => {
     expect(battleStatsOpponent[BattleStat.ATK]).toBe(-1);
     let battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
     expect(battleStatsPokemon[BattleStat.ATK]).toBe(-1);
-    await game.switchPokemon(1);
+    game.doSwitchPokemon(1);
+    await game.phaseInterceptor.run(CommandPhase);
+    await game.phaseInterceptor.to(CommandPhase);
     expect(game.scene.getParty()[0].species.speciesId).toBe(Species.POOCHYENA);
 
     battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
