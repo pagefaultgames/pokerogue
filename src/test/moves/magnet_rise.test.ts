@@ -28,8 +28,10 @@ describe("Moves - Magnet Rise", () => {
     const moveToUse = Moves.MAGNET_RISE;
     vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
     vi.spyOn(overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGNEZONE);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.GOLEM);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.EARTHQUAKE, Moves.EARTHQUAKE, Moves.EARTHQUAKE, Moves.EARTHQUAKE]);
+    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
+    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.DRILL_RUN, Moves.DRILL_RUN, Moves.DRILL_RUN, Moves.DRILL_RUN]);
+    vi.spyOn(overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
+    vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(1);
     vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse, Moves.SPLASH, Moves.GRAVITY, Moves.BATON_PASS]);
   });
 
@@ -50,5 +52,35 @@ describe("Moves - Magnet Rise", () => {
     const finalHp = game.scene.getParty()[0].hp;
     const hpLost = finalHp - startingHp;
     expect(hpLost).toBe(0);
+  }, 20000);
+
+  it("MAGNET RISE - Gravity", async () => {
+    await game.startBattle();
+
+    const startingHp = game.scene.getParty()[0].hp;
+    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
+      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
+    });
+
+    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
+      const movePosition = getMovePosition(game.scene, 0, Moves.MAGNET_RISE);
+      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
+    });
+    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(CommandPhase);
+    let finalHp = game.scene.getParty()[0].hp;
+    let hpLost = finalHp - startingHp;
+    expect(hpLost).toBe(0);
+    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
+      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
+    });
+
+    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
+      const movePosition = getMovePosition(game.scene, 0, Moves.GRAVITY);
+      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
+    });
+    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnEndPhase);
+    finalHp = game.scene.getParty()[0].hp;
+    hpLost = finalHp - startingHp;
+    expect(hpLost).not.toBe(0);
   }, 20000);
 });
