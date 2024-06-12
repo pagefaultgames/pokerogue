@@ -88,50 +88,25 @@ export interface Localizable {
   localize(): void;
 }
 
-const alternativeFonts = {
-  "ko": [
-    new FontFace("emerald", "url(./fonts/PokePT_Wansung.ttf)"),
-  ],
-};
+const fonts = [
+  new FontFace("emerald", "url(./fonts/PokePT_Wansung.ttf)"),
+  new FontFace("emerald", "url(./fonts/pokemon-emerald-pro.ttf"),
+];
 
-function loadFont(language: string) {
-  if (!alternativeFonts[language]) {
-    language = language.split(/[-_/]/)[0];
-  }
-  if (alternativeFonts[language]) {
-    alternativeFonts[language].forEach((fontFace: FontFace) => {
-      document.fonts.add(fontFace);
-    });
-
-    const altFontLanguages = Object.keys(alternativeFonts);
-    altFontLanguages.splice(altFontLanguages.indexOf(language), 0);
-  }
-
-  (Object.values(alternativeFonts)).forEach(fontFaces => {
-    fontFaces.forEach(fontFace => {
-      if (fontFace && fontFace.status === "loaded") {
-        document.fonts.delete(fontFace);
-      }
-    });
+function initFonts() {
+  fonts.forEach((fontFace: FontFace) => {
+    fontFace.load().then(f => document.fonts.add(f)).catch(e => console.error(e));
   });
 }
 
-export function initI18n(): void {
+export async function initI18n(): Promise<void> {
   // Prevent reinitialization
   if (isInitialized) {
     return;
   }
   isInitialized = true;
-  let lang = "";
 
-  if (localStorage.getItem("prLang")) {
-    lang = localStorage.getItem("prLang");
-  }
-
-  loadFont(lang);
-  i18next.on("languageChanged", lng=> {
-    loadFont(lng);
-  });
+  initFonts();
 
   /**
    * i18next is a localization library for maintaining and using translation resources.
@@ -149,11 +124,16 @@ export function initI18n(): void {
    * A: In src/system/settings.ts, add a new case to the Setting.Language switch statement.
    */
 
-  i18next.use(LanguageDetector).use(processor).use(new KoreanPostpositionProcessor()).init({
-    lng: lang,
+  i18next.use(LanguageDetector);
+  i18next.use(processor);
+  i18next.use(new KoreanPostpositionProcessor());
+  await i18next.init({
     nonExplicitSupportedLngs: true,
     fallbackLng: "en",
     supportedLngs: ["en", "es", "fr", "it", "de", "zh", "pt", "ko"],
+    detection: {
+      lookupLocalStorage: "prLang"
+    },
     debug: true,
     interpolation: {
       escapeValue: false,
@@ -205,6 +185,7 @@ declare module "i18next" {
       biome: SimpleTranslationEntries;
       challenges: SimpleTranslationEntries;
       commandUiHandler: SimpleTranslationEntries;
+      PGMachv: AchievementTranslationEntries;
       PGMdialogue: DialogueTranslationEntries;
       PGMbattleSpecDialogue: SimpleTranslationEntries;
       PGMmiscDialogue: SimpleTranslationEntries;
@@ -213,6 +194,7 @@ declare module "i18next" {
       PGFbattleSpecDialogue: SimpleTranslationEntries;
       PGFmiscDialogue: SimpleTranslationEntries;
       PGFdoubleBattleDialogue: DialogueTranslationEntries;
+      PGFachv: AchievementTranslationEntries;
       egg: SimpleTranslationEntries;
       fightUiHandler: SimpleTranslationEntries;
       gameMode: SimpleTranslationEntries;
@@ -248,3 +230,4 @@ export function getIsInitialized(): boolean {
 }
 
 let isInitialized = false;
+

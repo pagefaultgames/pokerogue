@@ -1317,7 +1317,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.EVOLUTION_ITEM, (party: Pokemon[]) => {
       return Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 15), 8);
     }, 8),
-    new WeightedModifierType(modifierTypes.MAP, (party: Pokemon[]) => party[0].scene.gameMode.isClassic ? 1 : 0, 1),
+    new WeightedModifierType(modifierTypes.MAP, (party: Pokemon[]) => party[0].scene.gameMode.isClassic && party[0].scene.currentBattle.waveIndex < 180 ? 1 : 0, 1),
     new WeightedModifierType(modifierTypes.TM_GREAT, 2),
     new WeightedModifierType(modifierTypes.MEMORY_MUSHROOM, (party: Pokemon[]) => {
       if (!party.find(p => p.getLearnableLevelMoves().length)) {
