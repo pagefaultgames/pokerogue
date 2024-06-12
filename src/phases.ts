@@ -1026,6 +1026,15 @@ export class EncounterPhase extends BattlePhase {
     });
 
     if (this.scene.currentBattle.battleType !== BattleType.TRAINER) {
+      enemyField.map(p => this.scene.pushConditionalPhase(new PostSummonPhase(this.scene, p.getBattlerIndex()), () => {
+        // is the player party initialized ?
+        const a = !!this.scene.getParty()?.length;
+        // how many player pokemon are on the field ?
+        const amountOnTheField = this.scene.getParty().filter(p => p.isOnField()).length;
+        // if it's a double, there should be 2, otherwise 1
+        const b = this.scene.currentBattle.double ? amountOnTheField === 2 : amountOnTheField === 1;
+        return a && b;
+      }));
       const ivScannerModifier = this.scene.findModifier(m => m instanceof IvScannerModifier);
       if (ivScannerModifier) {
         enemyField.map(p => this.scene.pushPhase(new ScanIvsPhase(this.scene, p.getBattlerIndex(), Math.min(ivScannerModifier.getStackCount() * 2, 6))));
@@ -1481,10 +1490,6 @@ export class SummonPhase extends PartyMemberPokemonPhase {
 
     if (!this.loaded || this.scene.currentBattle.battleType === BattleType.TRAINER || (this.scene.currentBattle.waveIndex % 10) === 1) {
       this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
-    }
-    if (pokemon.isPlayer()) {
-      // postSummon for player only here, since we want the postSummon from opponent to be call in the turnInitPhase
-      // covering both wild & trainer battles
       this.queuePostSummon();
     }
   }
@@ -1799,13 +1804,6 @@ export class TurnInitPhase extends FieldPhase {
 
   start() {
     super.start();
-    const enemyField = this.scene.getEnemyField().filter(p => p.isActive()) as Pokemon[];
-    enemyField.map(p => {
-      if (p.battleSummonData.turnCount !== 1) {
-        return;
-      }
-      return this.scene.unshiftPhase(new PostSummonPhase(this.scene, p.getBattlerIndex()));
-    });
 
     this.scene.getPlayerField().forEach(p => {
       // If this pokemon is in play and evolved into something illegal under the current challenge, force a switch
@@ -3643,7 +3641,7 @@ export class FaintPhase extends PokemonPhase {
       this.scene.currentBattle.enemyFaints += 1;
     }
 
-    this.scene.queueMessage(getPokemonMessage(pokemon, " fainted!"), null, true);
+    this.scene.queueMessage(i18next.t("battle:fainted", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), null, true);
 
     if (pokemon.turnData?.attacksReceived?.length) {
       const lastAttack = pokemon.turnData.attacksReceived[0];
