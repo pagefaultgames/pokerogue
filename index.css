@@ -244,3 +244,7 @@ input:-internal-autofill-selected {
     -ms-animation: blink normal 4s infinite ease-in-out; /* IE */
     animation: blink normal 4s infinite ease-in-out; /* Opera and prob css3 final iteration */
 }
+
+input {
+  font-size: 16px;
+}

@@ -29,6 +29,7 @@ import {Command} from "#app/ui/command-ui-handler";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import {Button} from "#app/enums/buttons";
 import PartyUiHandler, {PartyUiMode} from "#app/ui/party-ui-handler";
+import Trainer from "#app/field/trainer";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -192,6 +193,14 @@ export default class GameManager {
     }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(NewBattlePhase));
   }
 
+  forceOpponentToSwitch() {
+    const originalMatchupScore = Trainer.prototype.getPartyMemberMatchupScores;
+    Trainer.prototype.getPartyMemberMatchupScores = () => {
+      Trainer.prototype.getPartyMemberMatchupScores = originalMatchupScore;
+      return [[1, 100], [1, 100]];
+    };
+  }
+
   /** Transition to the next upcoming {@linkcode CommandPhase} */
   async toNextTurn() {
     await this.phaseInterceptor.to(CommandPhase);
@@ -281,14 +290,16 @@ export default class GameManager {
     });
   }
 
-  async switchPokemon(pokemonIndex: number) {
+  async switchPokemon(pokemonIndex: number, toNext: boolean = true) {
     this.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
       this.scene.ui.setMode(Mode.PARTY, PartyUiMode.SWITCH, (this.scene.getCurrentPhase() as CommandPhase).getPokemon().getFieldIndex(), null, PartyUiHandler.FilterNonFainted);
     });
     this.onNextPrompt("CommandPhase", Mode.PARTY, () => {
       (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.POKEMON, pokemonIndex, false);
     });
-    await this.phaseInterceptor.run(CommandPhase);
-    await this.phaseInterceptor.to(CommandPhase);
+    if (toNext) {
+      await this.phaseInterceptor.run(CommandPhase);
+      await this.phaseInterceptor.to(CommandPhase);
+    }
   }
 }
