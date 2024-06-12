@@ -77,7 +77,7 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsInfatuatedOnOverlap": "{{pokemonNameWithAffix}}[[는]]\n이미 헤롱헤롱해있다!",
   "battlerTagsInfatuatedLapse": "{{pokemonNameWithAffix}}[[는]]\n{{sourcePokemonName}}에게 헤롱헤롱해 있다!",
   "battlerTagsInfatuatedLapseImmobilize": "{{pokemonNameWithAffix}}[[는]] 헤롱헤롱해서\n기술을 쓸 수 없었다!",
-  "battlerTagsInfatuatedOnRemove": "{{pokemonNameWithAffix}}[[는]]\n헤롱헤롱한 상태에서 벗어났다.",
+  "battlerTagsInfatuatedOnRemove": "{{pokemonNameWithAffix}}[[는]]\n헤롱헤롱 상태에서 벗어났다.",
   "battlerTagsSeededOnAdd": "{{pokemonNameWithAffix}}에게\n씨앗을 심었다!",
   "battlerTagsSeededLapse": "씨뿌리기가 {{pokemonNameWithAffix}}의\n체력을 빼앗는다!",
   "battlerTagsSeededLapseShed": "{{pokemonNameWithAffix}}[[는]]\n씨앗을 날려버렸다!",
