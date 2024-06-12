@@ -10,7 +10,6 @@ const speedLabelOffset = -3;
 const sideLabelOffset = 1;
 const ivLabelOffset = [0, sideLabelOffset, -sideLabelOffset, sideLabelOffset, -sideLabelOffset, speedLabelOffset];
 const ivChartStatIndexes = [0,1,2,5,4,3]; // swap special attack and speed
-const ivChartLabelxOffset= [0,7,8,-8,-8,0];
 const ivChartLabelyOffset= [0,5,0,5,0,0]; // doing this so attack does not overlap with (+N)
 const defaultIvChartData = new Array(12).fill(null).map(() => 0);
 
@@ -56,10 +55,10 @@ export class StatsContainer extends Phaser.GameObjects.Container {
     this.ivStatValueTexts = [];
 
     new Array(6).fill(null).map((_, i: integer) => {
-      const statLabel = addTextObject(this.scene, ivChartBg.x + (ivChartSize) * ivChartStatCoordMultipliers[i][0] * 1.325 + (this.showDiff ? 0 : ivChartLabelxOffset[i]), ivChartBg.y + (ivChartSize) * ivChartStatCoordMultipliers[i][1] * 1.325 - 4 + (this.showDiff ? 0 : ivChartLabelyOffset[i]), getStatName(i as Stat), TextStyle.TOOLTIP_CONTENT);
+      const statLabel = addTextObject(this.scene, ivChartBg.x + (ivChartSize) * ivChartStatCoordMultipliers[i][0] * 1.325 + (this.showDiff ? 0 : ivLabelOffset[i]), ivChartBg.y + (ivChartSize) * ivChartStatCoordMultipliers[i][1] * 1.325 - 4 + (this.showDiff ? 0 : ivChartLabelyOffset[i]), getStatName(i as Stat), TextStyle.TOOLTIP_CONTENT);
       statLabel.setOrigin(0.5);
 
-      this.ivStatValueTexts[i] = addBBCodeTextObject(this.scene, statLabel.x - (this.showDiff ? 0 : ivChartLabelxOffset[i]), statLabel.y + 8, "0", TextStyle.TOOLTIP_CONTENT);
+      this.ivStatValueTexts[i] = addBBCodeTextObject(this.scene, statLabel.x - (this.showDiff ? 0 : ivLabelOffset[i]), statLabel.y + 8, "0", TextStyle.TOOLTIP_CONTENT);
       this.ivStatValueTexts[i].setOrigin(0.5);
 
       this.add(statLabel);
