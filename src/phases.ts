@@ -3651,7 +3651,7 @@ export class FaintPhase extends PokemonPhase {
       this.scene.currentBattle.enemyFaints += 1;
     }
 
-    this.scene.queueMessage(getPokemonMessage(pokemon, " fainted!"), null, true);
+    this.scene.queueMessage(i18next.t("battle:fainted", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), null, true);
 
     if (pokemon.turnData?.attacksReceived?.length) {
       const lastAttack = pokemon.turnData.attacksReceived[0];
