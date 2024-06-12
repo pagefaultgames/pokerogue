@@ -1188,7 +1188,7 @@ export class HideSpriteTag extends BattlerTag {
 export class TypeImmuneTag extends BattlerTag {
   public immuneType: Type;
 
-  constructor(tagType: BattlerTagType, sourceMove: Moves, immuneType: Type, length: number) {
+  constructor(tagType: BattlerTagType, sourceMove: Moves, immuneType: Type, length: number = 1) {
     super(tagType, BattlerTagLapseType.TURN_END, length, sourceMove);
 
     this.immuneType = immuneType;
@@ -1213,6 +1213,12 @@ export class MagnetRisenTag extends TypeImmuneTag {
     super.onAdd(pokemon);
 
     pokemon.scene.queueMessage(getPokemonMessage(pokemon, " levitated with electromagnetism!"));
+  }
+
+  onRemove(pokemon: Pokemon): void {
+    super.onRemove(pokemon);
+
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, " stopped levitating!"));
   }
 }
 
