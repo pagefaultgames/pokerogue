@@ -156,15 +156,27 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     this.eggGachaOptionSelectBg.setOrigin(1, 1);
     this.eggGachaOptionsContainer.add(this.eggGachaOptionSelectBg);
 
+    const multiplierOne = "x1";
+    const multiplierTen = "x10";
     const pullOptions = [
-      { multiplier: "x1", description: `1 ${i18next.t("egg:pull")}` },
-      { multiplier: "x10", description: `10 ${i18next.t("egg:pulls")}` },
-      { multiplier: "x1", description: `5 ${i18next.t("egg:pulls")}` },
-      { multiplier: "x1", description: `10 ${i18next.t("egg:pulls")}` },
-      { multiplier: "x1", description: `25 ${i18next.t("egg:pulls")}` }
+      { multiplier: multiplierOne, description: `1 ${i18next.t("egg:pull")}`, icon: getVoucherTypeIcon(VoucherType.REGULAR) },
+      { multiplier: multiplierTen, description: `10 ${i18next.t("egg:pulls")}`, icon: getVoucherTypeIcon(VoucherType.REGULAR) },
+      { multiplier: multiplierOne, description: `5 ${i18next.t("egg:pulls")}`, icon: getVoucherTypeIcon(VoucherType.PLUS) },
+      { multiplier: multiplierOne, description: `10 ${i18next.t("egg:pulls")}`, icon: getVoucherTypeIcon(VoucherType.PREMIUM) },
+      { multiplier: multiplierOne, description: `25 ${i18next.t("egg:pulls")}`, icon: getVoucherTypeIcon(VoucherType.GOLDEN) }
     ];
 
-    const pullOptionsText = pullOptions.map(option => `     ${option.multiplier.padEnd(4)} ${option.description}`).join("\n");
+    const { resolvedLanguage } = i18next;
+    const pullOptionsText = pullOptions.map(option =>{
+      const desc = option.description.split(" ");
+      if (desc[0].length < 2) {
+        desc[0] += ["zh", "ko"].includes(resolvedLanguage.substring(0,2)) ? " " : "  ";
+      }
+      if (option.multiplier === multiplierOne) {
+        desc[0] = " " + desc[0];
+      }
+      return `     ${option.multiplier.padEnd(5)}${desc.join(" ")}`;
+    }).join("\n");
 
     const optionText = addTextObject(
       this.scene,
@@ -181,9 +193,8 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
     optionText.setPositionRelative(this.eggGachaOptionSelectBg, 16, 9);
 
-    new Array(5).fill(null).map((_, i) => {
-      const voucherType = i < 2 ? VoucherType.REGULAR : i === 2 ? VoucherType.PLUS : i === 3 ? VoucherType.PREMIUM : VoucherType.GOLDEN;
-      const icon = this.scene.add.sprite(0, 0, "items", getVoucherTypeIcon(voucherType));
+    pullOptions.forEach((option, i) => {
+      const icon = this.scene.add.sprite(0, 0, "items", option.icon);
       icon.setScale(0.5);
       icon.setPositionRelative(this.eggGachaOptionSelectBg, 20, 17 + i * 16);
       this.eggGachaOptionsContainer.add(icon);
@@ -396,7 +407,8 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       const timestamp = new Date().getTime();
 
       for (const tier of tiers) {
-        const egg = new Egg(Utils.randInt(EGG_SEED, EGG_SEED * tier), this.gachaCursor, getEggTierDefaultHatchWaves(tier), timestamp);
+        const eggId = Utils.randInt(EGG_SEED, EGG_SEED * tier);
+        const egg = new Egg(eggId, this.gachaCursor, getEggTierDefaultHatchWaves(tier), timestamp);
         if (egg.isManaphyEgg()) {
           this.scene.gameData.gameStats.manaphyEggsPulled++;
           egg.hatchWaves = getEggTierDefaultHatchWaves(EggTier.ULTRA);
