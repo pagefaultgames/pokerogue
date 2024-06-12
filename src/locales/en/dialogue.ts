@@ -2306,7 +2306,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     },
     "victory": {
       1: `I don't believe it...
-          $What a fun and heart-punding battle!`
+          $What a fun and heart-pounding battle!`
     },
     "defeat": {
       1: `Wowzers, what a battle!
