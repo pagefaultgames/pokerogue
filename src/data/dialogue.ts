@@ -2301,6 +2301,17 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       "dialogue:alder.defeat.1"
     ]
   },
+  [TrainerType.KIERAN]: {
+    encounter: [
+      "dialogue:kieran.encounter.1"
+    ],
+    victory: [
+      "dialogue:kieran.victory.1"
+    ],
+    defeat: [
+      "dialogue:kieran.defeat.1"
+    ]
+  },
   [TrainerType.RIVAL]: [
     {
       encounter: [
