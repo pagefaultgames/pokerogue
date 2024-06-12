@@ -53,7 +53,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       4: "C'était super amusant ! Ce combat m'a épuisé...",
       5: "Tu m'as appris une belle leçon ! Tu es vraiment incroyable !",
       6: "Vraiment ? J'ai perdu... C'est des choses qui arrivent, ça me déprime mais tu es vraiment très cool.",
-      7: "Je n'ai pas besoin de souvenir comme ça. *Suppression de la mémoire...*",
+      7: "Je n'ai pas besoin de souvenirs comme ça. *Suppression de la mémoire...*",
       8: "Hé ! Je t'avais dit d'y aller doucement avec moi ! Mais tu es vraiment trop cool quand tu te bats sérieusement.",
       9: "J'en ai marre des combats Pokémon... Il doit y avoir de nouvelles choses à faire..."
     }
