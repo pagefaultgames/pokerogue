@@ -1,4 +1,4 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import * as Overrides from "#app/overrides";
@@ -23,7 +23,6 @@ describe("Abilities - BATTLE BOND", () => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    vi.resetAllMocks();
   });
 
   beforeEach(() => {
@@ -35,7 +34,7 @@ describe("Abilities - BATTLE BOND", () => {
     vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
   });
 
-  it(
+  test(
     "check if fainted pokemon switches to base form on arena reset",
     async () => {
       const baseForm = 1,

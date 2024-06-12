@@ -1,4 +1,4 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
 import * as Overrides from "#app/overrides";
@@ -38,7 +38,6 @@ describe("Abilities - ZEN MODE", () => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    vi.resetAllMocks();
   });
 
   beforeEach(() => {
@@ -53,7 +52,7 @@ describe("Abilities - ZEN MODE", () => {
     vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
   });
 
-  it(
+  test(
     "not enough damage to change form",
     async () => {
       const moveToUse = Moves.SPLASH;
@@ -81,7 +80,7 @@ describe("Abilities - ZEN MODE", () => {
     TIMEOUT
   );
 
-  it(
+  test(
     "enough damage to change form",
     async () => {
       const moveToUse = Moves.SPLASH;
@@ -106,7 +105,7 @@ describe("Abilities - ZEN MODE", () => {
     TIMEOUT
   );
 
-  it(
+  test(
     "kill pokemon while on zen mode",
     async () => {
       const moveToUse = Moves.SPLASH;
@@ -149,7 +148,7 @@ describe("Abilities - ZEN MODE", () => {
     TIMEOUT
   );
 
-  it(
+  test(
     "check if fainted pokemon switches to base form on arena reset",
     async () => {
       const baseForm = 0,
