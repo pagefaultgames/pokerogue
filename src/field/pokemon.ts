@@ -2545,6 +2545,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         this.lapseTag(BattlerTagType.CONFUSED);
       }
     }
+    this.loadAssets(false).then(() => this.playAnim());
   }
 
   primeSummonData(summonDataPrimer: PokemonSummonData): void {
