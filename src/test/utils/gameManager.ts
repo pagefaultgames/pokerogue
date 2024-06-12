@@ -29,6 +29,7 @@ import {Command} from "#app/ui/command-ui-handler";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import {Button} from "#app/enums/buttons";
 import PartyUiHandler, {PartyUiMode} from "#app/ui/party-ui-handler";
+import Trainer from "#app/field/trainer";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -190,6 +191,14 @@ export default class GameManager {
       const handler = this.scene.ui.getHandler() as ModifierSelectUiHandler;
       handler.processInput(Button.ACTION);
     }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(NewBattlePhase));
+  }
+
+  forceOpponentToSwitch() {
+    const originalMatchupScore = Trainer.prototype.getPartyMemberMatchupScores;
+    Trainer.prototype.getPartyMemberMatchupScores = () => {
+      Trainer.prototype.getPartyMemberMatchupScores = originalMatchupScore;
+      return [[1, 100], [1, 100]];
+    };
   }
 
   /** Transition to the next upcoming {@linkcode CommandPhase} */

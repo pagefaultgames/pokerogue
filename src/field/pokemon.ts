@@ -1111,7 +1111,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return undefined;
     }
 
-    return this.getAttackMoveEffectiveness(source, move, true);
+    return this.getAttackMoveEffectiveness(source, move, !this.battleData?.abilityRevealed);
   }
 
   /**
@@ -2167,12 +2167,22 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     tags.filter(t => t.sourceId === sourceId).forEach(t => t.sourceId = newSourceId);
   }
 
+  /**
+   * Transferring stat changes and Tags
+   * @param source {@linkcode Pokemon} the pokemon whose stats/Tags are to be passed on from, ie: the Pokemon using Baton Pass
+   */
   transferSummon(source: Pokemon): void {
     const battleStats = Utils.getEnumValues(BattleStat);
     for (const stat of battleStats) {
       this.summonData.battleStats[stat] = source.summonData.battleStats[stat];
     }
     for (const tag of source.summonData.tags) {
+
+      // bypass yawn, and infatuation as those can not be passed via Baton Pass
+      if (tag.sourceMove === Moves.YAWN || tag.tagType === BattlerTagType.INFATUATED) {
+        continue;
+      }
+
       this.summonData.tags.push(tag);
     }
     if (this instanceof PlayerPokemon && source.summonData.battleStats.find(bs => bs === 6)) {
@@ -3813,6 +3823,7 @@ export class PokemonBattleData {
   public endured: boolean = false;
   public berriesEaten: BerryType[] = [];
   public abilitiesApplied: Abilities[] = [];
+  public abilityRevealed: boolean = false;
 }
 
 export class PokemonBattleSummonData {
