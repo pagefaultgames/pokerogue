@@ -1029,8 +1029,10 @@ export class EncounterPhase extends BattlePhase {
         const a = !!this.scene.getParty()?.length;
         // how many player pokemon are on the field ?
         const amountOnTheField = this.scene.getParty().filter(p => p.isOnField()).length;
+        // if it's a 2vs1, there will never be a 2nd pokemon on our field even
+        const minPossible = Math.min(this.scene.getParty().filter((p) => !p.isFainted()).length, 2);
         // if it's a double, there should be 2, otherwise 1
-        const b = this.scene.currentBattle.double ? amountOnTheField === 2 : amountOnTheField === 1;
+        const b = this.scene.currentBattle.double ? amountOnTheField === minPossible : amountOnTheField === 1;
         return a && b;
       }));
       const ivScannerModifier = this.scene.findModifier(m => m instanceof IvScannerModifier);

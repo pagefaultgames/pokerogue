@@ -116,6 +116,7 @@ export default class GameManager {
     this.scene.expGainsSpeed = 3;
     this.scene.expParty = ExpNotification.SKIP;
     this.scene.hpBarSpeed = 3;
+    this.scene.enableTutorials = false;
   }
 
   /**
