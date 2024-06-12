@@ -120,6 +120,8 @@ export default class PokemonData {
         this.summonData.moveQueue = source.summonData.moveQueue;
         this.summonData.disabledMove = source.summonData.disabledMove;
         this.summonData.disabledTurns = source.summonData.disabledTurns;
+        this.summonData.isTaunted = source.summonData.isTaunted;
+        this.summonData.tauntedTurns = source.summonData.tauntedTurns;
         this.summonData.abilitySuppressed = source.summonData.abilitySuppressed;
 
         this.summonData.ability = source.summonData.ability;

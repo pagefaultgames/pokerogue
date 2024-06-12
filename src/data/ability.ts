@@ -1516,6 +1516,21 @@ export class IgnoreOpponentEvasionAbAttr extends AbAttr {
   }
 }
 
+export class TauntImmunityAbAttr extends AbAttr {
+  constructor() {
+    super(false);
+  }
+
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    cancelled.value = true;
+    return true;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
+    return getPokemonMessage(pokemon, `'s ${abilityName} prevented it from being Taunted!`);
+  }
+}
+
 export class IntimidateImmunityAbAttr extends AbAttr {
   constructor() {
     super(false);
@@ -3780,6 +3795,7 @@ export function initAbilities() {
     new Ability(Abilities.OBLIVIOUS, 3)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.INFATUATED)
       .attr(IntimidateImmunityAbAttr)
+      .attr(TauntImmunityAbAttr)
       .ignorable(),
     new Ability(Abilities.CLOUD_NINE, 3)
       .attr(SuppressWeatherEffectAbAttr, true),

@@ -3767,6 +3767,25 @@ export class DisableMoveAttr extends MoveEffectAttr {
   }
 }
 
+export class TauntAttr extends MoveEffectAttr {
+  constructor() {
+    super(false);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args)) {
+      return false;
+    }
+
+      target.summonData.isTaunted = true;
+      target.summonData.tauntedTurns = 3;
+
+      user.scene.queueMessage(getPokemonMessage(target, ` fell for the taunt!`));
+
+      return true;
+  }
+}
+
 export class FrenzyAttr extends MoveEffectAttr {
   constructor() {
     super(true, MoveEffectTrigger.HIT);
@@ -6163,7 +6182,8 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPDEF, 1, true)
       .attr(AddBattlerTagAttr, BattlerTagType.CHARGED, true, false),
     new StatusMove(Moves.TAUNT, Type.DARK, 100, 20, -1, 0, 3)
-      .unimplemented(),
+      .attr(TauntAttr)
+      .condition((user, target, move) => !target.summonData.isTaunted),
     new StatusMove(Moves.HELPING_HAND, Type.NORMAL, -1, 20, -1, 5, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.HELPING_HAND)
       .target(MoveTarget.NEAR_ALLY),

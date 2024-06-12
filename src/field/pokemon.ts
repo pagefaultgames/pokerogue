@@ -3793,6 +3793,8 @@ export class PokemonSummonData {
   public moveQueue: QueuedMove[] = [];
   public disabledMove: Moves = Moves.NONE;
   public disabledTurns: integer = 0;
+  public isTaunted: boolean = false;
+  public tauntedTurns: integer = 0;
   public tags: BattlerTag[] = [];
   public abilitySuppressed: boolean = false;
 
@@ -3886,7 +3888,7 @@ export class PokemonMove {
   }
 
   isUsable(pokemon: Pokemon, ignorePp?: boolean): boolean {
-    if (this.moveId && pokemon.summonData?.disabledMove === this.moveId) {
+    if (this.moveId && pokemon.summonData?.disabledMove === this.moveId || pokemon.summonData?.isTaunted === true && this.getMove().category === MoveCategory.STATUS) {
       return false;
     }
     return (ignorePp || this.ppUsed < this.getMovePp() || this.getMove().pp === -1) && !this.getMove().name.endsWith(" (N)");

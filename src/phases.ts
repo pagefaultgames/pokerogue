@@ -1939,8 +1939,9 @@ export class CommandPhase extends FieldPhase {
         const move = playerPokemon.getMoveset()[cursor];
         this.scene.ui.setMode(Mode.MESSAGE);
 
-        // Decides between a Disabled, Not Implemented, or No PP translation message
+        // Decides between a Taunted, Disabled, Not Implemented, or No PP translation message
         const errorMessage =
+            playerPokemon.summonData.isTaunted === true ? "battle:moveTaunted":
             playerPokemon.summonData.disabledMove === move.moveId ? "battle:moveDisabled" :
               move.getName().endsWith(" (N)") ? "battle:moveNotImplemented" : "battle:moveNoPP";
         const moveName = move.getName().replace(" (N)", ""); // Trims off the indicator
@@ -2385,6 +2386,11 @@ export class TurnEndPhase extends FieldPhase {
         pokemon.summonData.disabledMove = Moves.NONE;
       }
 
+      if (pokemon.summonData.isTaunted && !--pokemon.summonData.tauntedTurns) {
+        this.scene.pushPhase(new MessagePhase(this.scene, i18next.t("battle:notTaunted", { pokemonName: getPokemonNameWithAffix(pokemon)})));
+        pokemon.summonData.isTaunted = false;
+      }
+
       this.scene.applyModifiers(TurnHealModifier, pokemon.isPlayer(), pokemon);
 
       if (this.scene.arena.terrain?.terrainType === TerrainType.GRASSY && pokemon.isGrounded()) {
@@ -2548,6 +2554,9 @@ export class MovePhase extends BattlePhase {
     if (!this.canMove()) {
       if (this.move.moveId && this.pokemon.summonData?.disabledMove === this.move.moveId) {
         this.scene.queueMessage(`${this.move.getName()} is disabled!`);
+      }
+      else if (this.move.moveId && this.pokemon.summonData?.isTaunted) {
+        this.scene.queueMessage(`${this.pokemon.name} can't use\n${this.move.getName()} after the taunt!`);
       }
       return this.end();
     }
