@@ -68,6 +68,12 @@ export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
 const DEBUG_RNG = false;
 
+const OPP_IVS_OVERRIDE_VALIDATED : integer[] = (
+  Array.isArray(Overrides.OPP_IVS_OVERRIDE) ?
+    Overrides.OPP_IVS_OVERRIDE :
+    new Array(6).fill(Overrides.OPP_IVS_OVERRIDE)
+).map(iv => isNaN(iv) || iv === null || iv > 31 ? -1 : iv);
+
 export const startingWave = Overrides.STARTING_WAVE_OVERRIDE || 1;
 
 const expSpriteKeys: string[] = [];
@@ -689,6 +695,10 @@ export default class BattleScene extends SceneBase {
     return this.getPlayerField().find(p => p.isActive());
   }
 
+  /**
+   * Returns an array of PlayerPokemon of length 1 or 2 depending on if double battles or not
+   * @returns array of {@linkcode PlayerPokemon}
+   */
   getPlayerField(): PlayerPokemon[] {
     const party = this.getParty();
     return party.slice(0, Math.min(party.length, this.currentBattle?.double ? 2 : 1));
@@ -702,6 +712,10 @@ export default class BattleScene extends SceneBase {
     return this.getEnemyField().find(p => p.isActive());
   }
 
+  /**
+   * Returns an array of EnemyPokemon of length 1 or 2 depending on if double battles or not
+   * @returns array of {@linkcode EnemyPokemon}
+   */
   getEnemyField(): EnemyPokemon[] {
     const party = this.getEnemyParty();
     return party.slice(0, Math.min(party.length, this.currentBattle?.double ? 2 : 1));
@@ -766,6 +780,13 @@ export default class BattleScene extends SceneBase {
     if (postProcess) {
       postProcess(pokemon);
     }
+
+    for (let i = 0; i < pokemon.ivs.length; i++) {
+      if (OPP_IVS_OVERRIDE_VALIDATED[i] > -1) {
+        pokemon.ivs[i] = OPP_IVS_OVERRIDE_VALIDATED[i];
+      }
+    }
+
     pokemon.init();
     return pokemon;
   }
