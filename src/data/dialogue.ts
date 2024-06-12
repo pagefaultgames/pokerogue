@@ -2290,6 +2290,17 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       "dialogue:raihan_elite.defeat.2"
     ]
   },
+  [TrainerType.ALDER]: {
+    encounter: [
+      "dialogue:alder.encounter.1"
+    ],
+    victory: [
+      "dialogue:alder.victory.1"
+    ],
+    defeat: [
+      "dialogue:alder.defeat.1"
+    ]
+  },
   [TrainerType.RIVAL]: [
     {
       encounter: [

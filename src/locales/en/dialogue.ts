@@ -2287,6 +2287,17 @@ export const PGMdialogue: DialogueTranslationEntries = {
       2: "You got caught in my storm! Better luck next time!"
     }
   },
+  "alder": {
+    "encounter": {
+      1: "Prepare yourself for a match against the strongest Trainer in Unova!"
+    },
+    "victory": {
+      1: "Well done! You certainly are an unmatched talent"
+    },
+    "defeat": {
+      1: "A fresh wind blows through my heart... What an extraordinary effort!"
+    }
+  },
   "rival": {
     "encounter": {
       1: `@c{smile}Hey, I was looking for you! I knew you were eager to get going but I expected at least a goodbye…
