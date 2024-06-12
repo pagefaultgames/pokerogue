@@ -487,7 +487,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
          $Ich werde dir deine Mätzchen schon austreiben, du halbe Portion!`
     },
     "victory": {
-      1: "Grrr... Du miese kleine Ratte! Der Crypto-Pokémon Plan wird trotzdem vollendet werden!"
+      1: "Grrr... Du miese kleine Ratte! Der Crypto-Pokémon-Plan wird trotzdem vollendet werden!"
     },
     "defeat": {
       1: "Meine meisterhaften Moves haben dich in die Knie gezwungen!"

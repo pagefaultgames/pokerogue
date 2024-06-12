@@ -1814,13 +1814,13 @@ export const trainerConfigs: TrainerConfigs = {
       p.abilityIndex = 1; // Serene Grace
     })),
   [TrainerType.EIN]: new TrainerConfig(++t).setName("Ein").initForEvilTeamLeader("Cipher Admin",[]).setBattleBgm("battle_cipher_admin").setMixedBattleBgm("battle_cipher_admin")
-    .setPartyMemberFunc(0,getRandomPartyMemberFunc([Species.RHYPERIOR], TrainerSlot.TRAINER, true, p => {
-      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.EARTHQUAKE)),new PokemonMove(Moves.ROCK_SLIDE), new PokemonMove(Moves.RAIN_DANCE), new PokemonMove(Moves.THUNDER)];
-      p.abilityIndex = 0; // Lightning Rod
-    }))
-    .setPartyMemberFunc(1,getRandomPartyMemberFunc([Species.POLITOED], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(0,getRandomPartyMemberFunc([Species.POLITOED], TrainerSlot.TRAINER, true, p => {
       p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.HYDRO_PUMP)),new PokemonMove(Moves.ICE_BEAM), new PokemonMove(Moves.WATERFALL), new PokemonMove(Moves.PSYCHIC)];
       p.abilityIndex = 2; // Drizzle
+    }))
+    .setPartyMemberFunc(1,getRandomPartyMemberFunc([Species.RHYPERIOR], TrainerSlot.TRAINER, true, p => {
+      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.EARTHQUAKE)),new PokemonMove(Moves.ROCK_SLIDE), new PokemonMove(Moves.RAIN_DANCE), new PokemonMove(Moves.THUNDER)];
+      p.abilityIndex = 0; // Lightning Rod
     }))
     .setPartyMemberFunc(2,getRandomPartyMemberFunc([Species.LANTURN], TrainerSlot.TRAINER, true, p => {
       p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.SCALD)),new PokemonMove(Moves.THUNDERBOLT), new PokemonMove(Moves.ICE_BEAM), new PokemonMove(Moves.VOLT_SWITCH)];
