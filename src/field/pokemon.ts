@@ -1104,6 +1104,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!cancelled.value && !ignoreAbility) {
       applyPreDefendAbAttrs(MoveImmunityAbAttr, this, source, move, cancelled, typeMultiplier, true);
     }
+    if (!!this.summonData.tags.find((tag) => tag instanceof TypeImmuneTag && tag.immuneType === move.type)) {
+      cancelled.value = true;
+    }
     return (!cancelled.value ? typeMultiplier.value : 0) as TypeDamageMultiplier;
   }
 
@@ -1706,7 +1709,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     switch (moveCategory) {
     case MoveCategory.PHYSICAL:
     case MoveCategory.SPECIAL:
-      if (this.summonData.tags.filter((tag) => tag instanceof TypeImmuneTag && tag.immuneType === move.type).length !== 0) {
+      if (!!this.summonData.tags.find((tag) => tag instanceof TypeImmuneTag && tag.immuneType === move.type)) {
         typeMultiplier.value = 0;
       }
       const isPhysical = moveCategory === MoveCategory.PHYSICAL;
