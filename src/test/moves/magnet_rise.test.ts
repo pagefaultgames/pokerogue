@@ -4,10 +4,7 @@ import GameManager from "#app/test/utils/gameManager";
 import * as overrides from "#app/overrides";
 import {Moves} from "#app/data/enums/moves.js";
 import {Species} from "#app/data/enums/species.js";
-import {Mode} from "#app/ui/ui.js";
 import {CommandPhase, EnemyCommandPhase, TurnEndPhase} from "#app/phases.js";
-import {getMovePosition} from "../utils/gameManagerUtils";
-import {Command} from "#app/ui/command-ui-handler.js";
 
 describe("Moves - Magnet Rise", () => {
   let phaserGame: Phaser.Game;
@@ -36,19 +33,11 @@ describe("Moves - Magnet Rise", () => {
   });
 
   it("MAGNET RISE", async () => {
-    const moveToUse = Moves.MAGNET_RISE;
     await game.startBattle();
 
     const startingHp = game.scene.getParty()[0].hp;
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, moveToUse);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
-    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnEndPhase);
+    game.doAttack(0);
+    await game.phaseInterceptor.to(TurnEndPhase);
     const finalHp = game.scene.getParty()[0].hp;
     const hpLost = finalHp - startingHp;
     expect(hpLost).toBe(0);
@@ -58,26 +47,12 @@ describe("Moves - Magnet Rise", () => {
     await game.startBattle();
 
     const startingHp = game.scene.getParty()[0].hp;
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, Moves.MAGNET_RISE);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
+    game.doAttack(0);
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(CommandPhase);
     let finalHp = game.scene.getParty()[0].hp;
     let hpLost = finalHp - startingHp;
     expect(hpLost).toBe(0);
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, Moves.GRAVITY);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
+    game.doAttack(2);
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnEndPhase);
     finalHp = game.scene.getParty()[0].hp;
     hpLost = finalHp - startingHp;
