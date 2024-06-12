@@ -4,7 +4,7 @@ import GameManager from "#app/test/utils/gameManager";
 import * as overrides from "#app/overrides";
 import {Moves} from "#app/data/enums/moves.js";
 import {Species} from "#app/data/enums/species.js";
-import {CommandPhase, EnemyCommandPhase, TurnEndPhase} from "#app/phases.js";
+import {CommandPhase, TurnEndPhase} from "#app/phases.js";
 
 describe("Moves - Magnet Rise", () => {
   let phaserGame: Phaser.Game;
@@ -48,12 +48,12 @@ describe("Moves - Magnet Rise", () => {
 
     const startingHp = game.scene.getParty()[0].hp;
     game.doAttack(0);
-    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(CommandPhase);
+    await game.phaseInterceptor.to(CommandPhase);
     let finalHp = game.scene.getParty()[0].hp;
     let hpLost = finalHp - startingHp;
     expect(hpLost).toBe(0);
     game.doAttack(2);
-    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnEndPhase);
+    await game.phaseInterceptor.to(TurnEndPhase);
     finalHp = game.scene.getParty()[0].hp;
     hpLost = finalHp - startingHp;
     expect(hpLost).not.toBe(0);
