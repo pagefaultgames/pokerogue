@@ -9,7 +9,7 @@ import { BattlerTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { StatusEffect, getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
 import { Gender } from "./gender";
-import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, StatusMoveTypeImmunityAttr, FlinchAttr, OneHitKOAttr, HitHealAttr, allMoves, StatusMove, SelfStatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr  } from "./move";
+import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, FlinchAttr, OneHitKOAttr, HitHealAttr, allMoves, StatusMove, SelfStatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr  } from "./move";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { ArenaTagType } from "./enums/arena-tag-type";
 import { Stat, getStatName } from "./pokemon-stat";
@@ -357,6 +357,7 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
   }
 
   /**
+   * Applies immunity if this ability grants immunity to the type of the given move.
    * @param pokemon {@linkcode Pokemon} the defending Pokemon
    * @param passive N/A
    * @param attacker {@linkcode Pokemon} the attacking Pokemon
@@ -366,7 +367,12 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
    * @param args [1] {@linkcode Utils.NumberHolder} type of move being defended against in case it has changed from default type
    */
   applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if ((move instanceof AttackMove || move.getAttrs(StatusMoveTypeImmunityAttr).find(attr => attr.immuneType === this.immuneType)) && move.type === this.immuneType) {
+    // Field moves should ignore immunity
+    if ([ MoveTarget.BOTH_SIDES, MoveTarget.ENEMY_SIDE, MoveTarget.USER_SIDE ].includes(move.moveTarget)) {
+      return false;
+    }
+
+    if (move.type === this.immuneType) {
       (args[0] as Utils.NumberHolder).value = 0;
       return true;
     }
