@@ -2,9 +2,8 @@ import BattleScene from "../battle-scene";
 import { PlayerPokemon } from "../field/pokemon";
 import { Starter } from "../ui/starter-select-ui-handler";
 import * as Utils from "../utils";
-import { Species } from "./enums/species";
 import PokemonSpecies, { PokemonSpeciesForm, getPokemonSpecies, getPokemonSpeciesForm, speciesStarters } from "./pokemon-species";
-import { PartyMemberStrength } from "./enums/party-member-strength";
+import { PartyMemberStrength, Species } from "#enums";
 
 export interface DailyRunConfig {
   seed: integer;
