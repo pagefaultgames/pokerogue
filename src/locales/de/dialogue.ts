@@ -459,6 +459,95 @@ export const PGMdialogue: DialogueTranslationEntries = {
           $deine eigene Stärke zu messen, zeigt, dass du immer noch ein Kind bist.`
     }
   },
+  "cipher_peon": {
+    "encounter": {
+      1: "Wir von Team Crypto werden die ultimativen Pokémon erschaffen! Du stehst unserem Ziel im Weg!",
+      2: "Du siehst aus wie dieser eine Trainer von Team Krall… Aber das ist unmöglich!"
+    },
+    "victory": {
+      1: "Auch wenn ich verliere, wird Team Crypto niemals aufgeben!",
+      2: "Ich habe mich geirrt… Du bist nicht der Trainer von Team Krall… Aber mindestens genauso stark!"
+    },
+  },
+  "mirror_b": {
+    "encounter": {
+      1: `Hallo meine Täubchen! Schön, dass ihr hier seid. Ich hatte euch bereits erwartet!
+            $Ich bin D. Queen, der wunderschöne, der einzigartige, der unvergleichliche… Musik ab!`
+    },
+    "victory": {
+      1: "Ich bin aus dem Takt! Nein! Das hätte nicht passieren dürfen!"
+    },
+    "defeat": {
+      1: "Tja, jetzt kennst du die wahre Macht von Funk!"
+    }
+  },
+  "dakim": {
+    "encounter": {
+      1: `Du willst dich mir in den Weg stellen? Mir, Drakim? Das soll wohl ein Witz sein! 
+         $Ich werde dir deine Mätzchen schon austreiben, du halbe Portion!`
+    },
+    "victory": {
+      1: "Grrr... Du miese kleine Ratte! Der Crypto-Pokémon Plan wird trotzdem vollendet werden!"
+    },
+    "defeat": {
+      1: "Meine meisterhaften Moves haben dich in die Knie gezwungen!"
+    }
+  },
+  "venus": {
+    "encounter": {
+      1: `Hallo! Ich, Venus - euer aller Venus - grüße euch herzlich! 
+          $Heute habe ich eine wichtige Mitteilung für euch alle! Es gibt schreckliche Neuigkeiten!
+          $Ihr werdet jetzt ausgelöscht!`
+    },
+    "victory": {
+      1: "Pfui! Was soll denn das? Wie kannst du nur? Wie kannst du es wagen, mich zu besiegen?!"
+    },
+    "defeat": {
+      1: "An alle, die mich hören: Die Spione wurden durch die Macht von Team Crypto besiegt!"
+    }
+  },
+  "ein": {
+    "encounter": {
+      1: `Ich hielt, wie ich gestehen muss, euer Eintreffen hier für höchst unwahrscheinlich!
+        $Mein Name ist Culpa. Professor Culpa! Ich bin der Leiter dieses Crypto-Pokémon-Labors.
+        $Und ich dulde keine Störelemente wie euch, die versuchen, den Crypto-Pokémon-Plan zu vereiteln!
+        $Lasst mich euch nun die Macht meiner Crypto-Pokémon vorführen!`
+    },
+    "victory": {
+      1: "Diese Kraft... Sie negiert sämtliche physikalischen Gesetze!"
+    },
+    "defeat": {
+      1: "Ha! Der Crypto-Pokémon-Plan wird niemals scheitern! XD001 steht kurz vor der Vollendung!"
+    }
+  },
+  "nascour": {
+    "encounter": {
+      1: `Ich bin Jakira! Ich bin der Anführer von Team Crypto! Dass du es bis hierher geschafft hast...
+         $Ich werde wohl ein ernstes Gespräch mit den Vorständen führen müssen!`
+    },
+    "victory": {
+      1: "Aaaah! Pass auf! Wir sind noch lange nicht... Es tut mir leid Erhabener"
+    },
+    "defeat": {
+      1: "Team Crypto wird niemals besiegt werden! XD001 wird die Welt erobern!"
+    }
+  },
+  "evice": {
+    "encounter": {
+      1: `Dachtest du wirklich Jakira wäre der Anführer von Team Crypto? Du hast dich geirrt!
+         $Er ist nur unser Aushängeschild. Damit ich im Verborgenen arbeiten kann! 
+         $Mein Name ist Maskad, nein das ist mein Deckname. Mein richtiger Name ist Intrigo!
+         $Auch bekannt als "Obercrypto". Wir haben es vollbracht. Mit der Hilfe von Professor Culpa
+         $XD001 ist vollendet. Und ich werde dir jetzt dessen Macht zeigen. Das ULTIMATIVE Crypto-Pokémon!`
+    },
+    "victory": {
+      1: "Das kann nicht sein! XD001 ist das stärkste Pokémon, das es je gab! Einfach so geschlagen!"
+    },
+    "defeat": {
+      1: `Hahaha! XD001 ist das stärkste Pokémon, das es je gab! Es wird die Welt erobern!
+          $Alle Pokémon werden in ultimative Kämpfer verwandelt!`
+    }
+  },
   "rocket_boss_giovanni_2": {
     "encounter": {
       1: "Du schon wieder… Wie hast du mich gefunden? Team Rocket wird dich endlich aus der Welt schaffen!"

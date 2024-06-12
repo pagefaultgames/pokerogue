@@ -509,6 +509,93 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       ]
     }
   ],
+  [TrainerType.CIPHER_PEON]: [
+    {
+      encounter: [
+        "dialogue:cipher_peon.encounter.1",
+        "dialogue:cipher_peon.encounter.2"
+      ],
+      victory: [
+        "dialogue:cipher_peon.victory.1",
+        "dialogue:cipher_peon.victory.2"
+      ]
+    }
+  ],
+  [TrainerType.MIRROR_B]: [
+    {
+      encounter: [
+        "dialogue:mirror_b.encounter.1"
+      ],
+      victory: [
+        "dialogue:mirror_b.victory.1"
+      ]
+    }
+  ],
+  [TrainerType.DAKIM]: [
+    {
+      encounter: [
+        "dialogue:dakim.encounter.1"
+      ],
+      victory: [
+        "dialogue:dakim.victory.1"
+      ],
+      defeat: [
+        "dialogue:dakim.defeat.1"
+      ]
+    }
+  ],
+  [TrainerType.VENUS]: [
+    {
+      encounter: [
+        "dialogue:venus.encounter.1"
+      ],
+      victory: [
+        "dialogue:venus.victory.1"
+      ],
+      defeat: [
+        "dialogue:venus.defeat.1"
+      ]
+    }
+  ],
+  [TrainerType.EIN]: [
+    {
+      encounter: [
+        "dialogue:ein.encounter.1"
+      ],
+      victory: [
+        "dialogue:ein.victory.1"
+      ],
+      defeat: [
+        "dialogue:ein.defeat.1"
+      ]
+    }
+  ],
+  [TrainerType.NASCOUR]: [
+    {
+      encounter: [
+        "dialogue:nascour.encounter.1"
+      ],
+      victory: [
+        "dialogue:nascour.victory.1"
+      ],
+      defeat: [
+        "dialogue:nascour.defeat.1"
+      ]
+    }
+  ],
+  [TrainerType.EVICE]: [
+    {
+      encounter: [
+        "dialogue:evice.encounter.1"
+      ],
+      victory: [
+        "dialogue:evice.victory.1"
+      ],
+      defeat: [
+        "dialogue:evice.defeat.1"
+      ]
+    }
+  ],
   [TrainerType.ROCKET_BOSS_GIOVANNI_1]: [
     {
       encounter: [
