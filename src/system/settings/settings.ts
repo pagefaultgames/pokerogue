@@ -44,6 +44,7 @@ export const SettingKeys = {
   Skip_Seen_Dialogues: "SKIP_SEEN_DIALOGUES",
   Battle_Style: "BATTLE_STYLE",
   Enable_Retries: "ENABLE_RETRIES",
+  Gacha_Pity: "GACHA_PITY",
   Tutorials: "TUTORIALS",
   Touch_Controls: "TOUCH_CONTROLS",
   Vibration: "VIBRATION",
@@ -122,6 +123,13 @@ export const Setting: Array<Setting> = [
     label: "Enable Retries",
     options: OFF_ON,
     default: 0,
+    type: SettingType.GENERAL
+  },
+  {
+    key: SettingKeys.Gacha_Pity,
+    label: "Gacha Pity",
+    options: OFF_ON,
+    default: 1,
     type: SettingType.GENERAL
   },
   {
@@ -363,6 +371,9 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     break;
   case SettingKeys.Window_Type:
     updateWindowType(scene, parseInt(Setting[index].options[value]));
+    break;
+  case SettingKeys.Gacha_Pity:
+    scene.gachaPity = Setting[index].options[value] === "On";
     break;
   case SettingKeys.Tutorials:
     scene.enableTutorials = Setting[index].options[value] === "On";

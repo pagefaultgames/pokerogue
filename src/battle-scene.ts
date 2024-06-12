@@ -112,6 +112,7 @@ export default class BattleScene extends SceneBase {
   public showTimeOfDayWidget: boolean = true;
   public timeOfDayAnimation: EaseType = EaseType.NONE;
   public showLevelUpStats: boolean = true;
+  public gachaPity: boolean = true;
   public enableTutorials: boolean = import.meta.env.VITE_BYPASS_TUTORIAL === "1";
   public enableMoveInfo: boolean = true;
   public enableRetries: boolean = false;
