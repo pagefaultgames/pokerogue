@@ -27,7 +27,7 @@ import { TempBattleStat } from "../data/temp-battle-stat";
 import { ArenaTagSide, WeakenMoveScreenTag, WeakenMoveTypeTag } from "../data/arena-tag";
 import { ArenaTagType } from "../data/enums/arena-tag-type";
 import { Biome } from "../data/enums/biome";
-import { Ability, AbAttr, BattleStatMultiplierAbAttr, MoveTypeChangeAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, FieldVariableMovePowerAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, PreApplyBattlerTagAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr } from "../data/ability";
+import { Ability, AbAttr, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, FieldVariableMovePowerAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, MoveTypeChangeAttr, PreApplyBattlerTagAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldBattleStatMultiplierAbAttrs, FieldMultiplyBattleStatAbAttr } from "../data/ability";
 import { Abilities } from "#app/data/enums/abilities";
 import PokemonData from "../system/pokemon-data";
 import { BattlerIndex } from "../battle";
@@ -48,6 +48,7 @@ import { BerryType } from "../data/enums/berry-type";
 import i18next from "../plugins/i18n";
 import { speciesEggMoves } from "../data/egg-moves";
 import { ModifierTier } from "../modifier/modifier-tier";
+import { applyChallenges, ChallengeType } from "#app/data/challenge.js";
 
 export enum FieldPosition {
   CENTER,
@@ -266,11 +267,22 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return !this.hp && (!checkStatus || this.status?.effect === StatusEffect.FAINT);
   }
 
+  /**
+   * Check if this pokemon is both not fainted and allowed to be in battle.
+   * This is frequently a better alternative to {@link isFainted}
+   * @returns {boolean} True if pokemon is allowed in battle
+   */
+  isAllowedInBattle(): boolean {
+    const challengeAllowed = new Utils.BooleanHolder(true);
+    applyChallenges(this.scene.gameMode, ChallengeType.POKEMON_IN_BATTLE, this, challengeAllowed);
+    return !this.isFainted() && challengeAllowed.value;
+  }
+
   isActive(onField?: boolean): boolean {
     if (!this.scene) {
       return false;
     }
-    return !this.isFainted() && !!this.scene && (!onField || this.isOnField());
+    return this.isAllowedInBattle() && !!this.scene && (!onField || this.isOnField());
   }
 
   getDexAttr(): bigint {
@@ -644,6 +656,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.scene.applyModifiers(TempBattleStatBoosterModifier, this.isPlayer(), battleStat as integer as TempBattleStat, statLevel);
     }
     const statValue = new Utils.NumberHolder(this.getStat(stat));
+    const fieldApplied = new Utils.BooleanHolder(false);
+    for (const pokemon of this.scene.getField(true)) {
+      applyFieldBattleStatMultiplierAbAttrs(FieldMultiplyBattleStatAbAttr, pokemon, stat, statValue, this, fieldApplied);
+      if (fieldApplied.value) {
+        break;
+      }
+    }
     applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, this, battleStat, statValue);
     let ret = statValue.value * (Math.max(2, 2 + statLevel.value) / Math.max(2, 2 - statLevel.value));
     switch (stat) {
@@ -845,11 +864,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (!ignoreOverride && this.summonData?.types) {
         this.summonData.types.forEach(t => types.push(t));
       } else {
-        const speciesForm = this.getSpeciesForm();
+        const speciesForm = this.getSpeciesForm(ignoreOverride);
 
         types.push(speciesForm.type1);
 
-        const fusionSpeciesForm = this.getFusionSpeciesForm();
+        const fusionSpeciesForm = this.getFusionSpeciesForm(ignoreOverride);
         if (fusionSpeciesForm) {
           if (fusionSpeciesForm.type2 !== null && fusionSpeciesForm.type2 !== speciesForm.type1) {
             types.push(fusionSpeciesForm.type2);
@@ -885,8 +904,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return types;
   }
 
-  isOfType(type: Type, forDefend: boolean = false): boolean {
-    return !!this.getTypes(true, forDefend).find(t => t === type);
+  isOfType(type: Type, includeTeraType: boolean = true, forDefend: boolean = false, ignoreOverride?: boolean): boolean {
+    return !!this.getTypes(includeTeraType, forDefend, ignoreOverride).some(t => t === type);
   }
 
   /**
@@ -937,6 +956,29 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       starterSpeciesId = pokemonPrevolutions[starterSpeciesId];
     }
     return allAbilities[starterPassiveAbilities[starterSpeciesId]];
+  }
+
+  /**
+   * Gets a list of all instances of a given ability attribute among abilities this pokemon has.
+   * Accounts for all the various effects which can affect whether an ability will be present or
+   * in effect, and both passive and non-passive.
+   * @param attrType {@linkcode AbAttr} The ability attribute to check for.
+   * @param canApply {@linkcode Boolean} If false, it doesn't check whether the ability is currently active
+   * @param ignoreOverride {@linkcode Boolean} If true, it ignores ability changing effects
+   * @returns {AbAttr[]} A list of all the ability attributes on this ability.
+   */
+  getAbilityAttrs(attrType: { new(...args: any[]): AbAttr }, canApply: boolean = true, ignoreOverride?: boolean): AbAttr[] {
+    const abilityAttrs: AbAttr[] = [];
+
+    if (!canApply || this.canApplyAbility()) {
+      abilityAttrs.push(...this.getAbility(ignoreOverride).getAttrs(attrType));
+    }
+
+    if (!canApply || this.canApplyAbility(true)) {
+      abilityAttrs.push(...this.getPassiveAbility().getAttrs(attrType));
+    }
+
+    return abilityAttrs;
   }
 
   /**
@@ -1054,18 +1096,42 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   isGrounded(): boolean {
-    return !this.isOfType(Type.FLYING, true) && !this.hasAbility(Abilities.LEVITATE);
+    return !this.isOfType(Type.FLYING, true, true) && !this.hasAbility(Abilities.LEVITATE);
   }
 
-  getAttackMoveEffectiveness(source: Pokemon, pokemonMove: PokemonMove): TypeDamageMultiplier {
+  /**
+   * Calculates the effectiveness of a move against the Pokémon.
+   *
+   * @param source - The Pokémon using the move.
+   * @param move - The move being used.
+   * @returns The type damage multiplier or undefined if it's a status move
+   */
+  getMoveEffectiveness(source: Pokemon, move: PokemonMove): TypeDamageMultiplier | undefined {
+    if (move.getMove().category === MoveCategory.STATUS) {
+      return undefined;
+    }
+
+    return this.getAttackMoveEffectiveness(source, move, true);
+  }
+
+  /**
+   * Calculates the effectiveness of an attack move against the Pokémon.
+   *
+   * @param source - The attacking Pokémon.
+   * @param pokemonMove - The move being used by the attacking Pokémon.
+   * @param ignoreAbility - Whether to check for abilities that might affect type effectiveness or immunity.
+   * @returns The type damage multiplier, indicating the effectiveness of the move
+   */
+  getAttackMoveEffectiveness(source: Pokemon, pokemonMove: PokemonMove, ignoreAbility: boolean = false): TypeDamageMultiplier {
     const move = pokemonMove.getMove();
     const typeless = move.hasAttr(TypelessAttr);
     const typeMultiplier = new Utils.NumberHolder(this.getAttackTypeEffectiveness(move.type, source));
     const cancelled = new Utils.BooleanHolder(false);
-    if (!typeless) {
+    applyMoveAttrs(VariableMoveTypeMultiplierAttr, source, this, move, typeMultiplier);
+    if (!typeless && !ignoreAbility) {
       applyPreDefendAbAttrs(TypeImmunityAbAttr, this, source, move, cancelled, typeMultiplier, true);
     }
-    if (!cancelled.value) {
+    if (!cancelled.value && !ignoreAbility) {
       applyPreDefendAbAttrs(MoveImmunityAbAttr, this, source, move, cancelled, typeMultiplier, true);
     }
     return (!cancelled.value ? typeMultiplier.value : 0) as TypeDamageMultiplier;
@@ -1576,11 +1642,20 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.battleInfo.updateInfo(this, instant);
   }
 
+  /**
+   * Show or hide the type effectiveness multiplier window
+   * Passing undefined will hide the window
+   */
+  updateEffectiveness(effectiveness?: string) {
+    this.battleInfo.updateEffectiveness(effectiveness);
+  }
+
   toggleStats(visible: boolean): void {
     this.battleInfo.toggleStats(visible);
   }
+
   toggleFlyout(visible: boolean): void {
-    this.battleInfo.flyoutMenu?.toggleFlyout(visible);
+    this.battleInfo.toggleFlyout(visible);
   }
 
   addExp(exp: integer) {

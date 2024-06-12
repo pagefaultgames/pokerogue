@@ -1,6 +1,7 @@
 import { AchievementTranslationEntries } from "#app/plugins/i18n.js";
 
-export const achv: AchievementTranslationEntries = {
+// Achievement translations for the when the player character is male
+export const PGMachv: AchievementTranslationEntries = {
   "Achievements": {
     name: "업적",
   },
@@ -168,4 +169,102 @@ export const achv: AchievementTranslationEntries = {
     name: "무패",
     description: "클래식 모드 클리어",
   },
+
+  "MONO_GEN_ONE": {
+    name: "근본 라이벌",
+    description: "1세대 챌린지 모드 클리어.",
+  },
+  "MONO_GEN_TWO": {
+    name: "이거 1.5세대죠?",
+    description: "2세대 챌린지 모드 클리어.",
+  },
+  "MONO_GEN_THREE": {
+    name: "Too much water?",
+    description: "3세대 챌린지 모드 클리어.",
+  },
+  "MONO_GEN_FOUR": {
+    name: "난천이 진짜 최강인가요?",
+    description: "4세대 챌린지 모드 클리어.",
+  },
+  "MONO_GEN_FIVE": {
+    name: "100% 오리지널!",
+    description: "5세대 챌린지 모드 클리어.",
+  },
+  "MONO_GEN_SIX": {
+    name: "크루아상 안에 뭐 들었나요?",
+    description: "6세대 챌린지 모드 클리어.",
+  },
+  "MONO_GEN_SEVEN": {
+    name: "기술적으로는…",
+    description: "7세대 챌린지 모드 클리어.",
+  },
+  "MONO_GEN_EIGHT": {
+    name: "챔피언 타임!",
+    description: "8세대 챌린지 모드 클리어.",
+  },
+  "MONO_GEN_NINE": {
+    name: "걔, 봐 준 거야",
+    description: "9세대 챌린지 모드 클리어.",
+  },
+
+  "MonoType": {
+    description: "{{type}} 타입 챌린지 모드 클리어.",
+  },
+  "MONO_NORMAL": {
+    name: "심플한 것이 가장 강한 것",
+  },
+  "MONO_FIGHTING": {
+    name: "태권도 할 줄 알아요",
+  },
+  "MONO_FLYING": {
+    name: "추락하는 것은 날개가 있다",
+  },
+  "MONO_POISON": {
+    name: "관동 지방 최애 타입",
+  },
+  "MONO_GROUND": {
+    name: "전기 안 통해요",
+  },
+  "MONO_ROCK": {
+    name: "웅골참",
+  },
+  "MONO_BUG": {
+    name: "독침붕처럼 쏴라",
+  },
+  "MONO_GHOST": {
+    name: "누굴 부를 거야?",
+  },
+  "MONO_STEEL": {
+    name: "강철 심장",
+  },
+  "MONO_FIRE": {
+    name: "불타오르네",
+  },
+  "MONO_WATER": {
+    name: "물 들어올 때 노 젓기",
+  },
+  "MONO_GRASS": {
+    name: "초록은 동색",
+  },
+  "MONO_ELECTRIC": {
+    name: "찌릿찌릿",
+  },
+  "MONO_PSYCHIC": {
+    name: "1세대 최강",
+  },
+  "MONO_ICE": {
+    name: "얼음땡",
+  },
+  "MONO_DRAGON": {
+    name: "용용 죽겠지",
+  },
+  "MONO_DARK": {
+    name: "어둠의 다크",
+  },
+  "MONO_FAIRY": {
+    name: "설마 자시안으로?",
+  },
 } as const;
+
+// Achievement translations for the when the player character is female (it for now uses the same translations as the male version)
+export const PGFachv: AchievementTranslationEntries = PGMachv;

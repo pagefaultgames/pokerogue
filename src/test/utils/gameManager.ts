@@ -2,30 +2,34 @@ import GameWrapper from "#app/test/utils/gameWrapper";
 import {Mode} from "#app/ui/ui";
 import {generateStarter, waitUntil} from "#app/test/utils/gameManagerUtils";
 import {
-  CheckSwitchPhase,
   CommandPhase,
   EncounterPhase,
-  LoginPhase,
-  PostSummonPhase,
+  FaintPhase,
+  LoginPhase, NewBattlePhase,
   SelectGenderPhase,
   SelectStarterPhase,
-  SummonPhase,
-  TitlePhase,
-  ToggleDoublePositionPhase,
+  TitlePhase, TurnInitPhase,
 } from "#app/phases";
 import BattleScene from "#app/battle-scene.js";
 import PhaseInterceptor from "#app/test/utils/phaseInterceptor";
 import TextInterceptor from "#app/test/utils/TextInterceptor";
-import {expect} from "vitest";
-import {GameModes} from "#app/game-mode";
+import {GameModes, getGameMode} from "#app/game-mode";
 import fs from "fs";
-import { AES, enc } from "crypto-js";
+import {AES, enc} from "crypto-js";
 import {updateUserInfo} from "#app/account";
 import {Species} from "#app/data/enums/species";
 import {PlayerGender} from "#app/data/enums/player-gender";
 import {GameDataType} from "#app/data/enums/game-data-type";
 import InputsHandler from "#app/test/utils/inputsHandler";
 import {ExpNotification} from "#app/enums/exp-notification";
+import ErrorInterceptor from "#app/test/utils/errorInterceptor";
+import {EnemyPokemon, PlayerPokemon} from "#app/field/pokemon";
+import {MockClock} from "#app/test/utils/mocks/mockClock";
+import {Command} from "#app/ui/command-ui-handler";
+import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
+import {Button} from "#app/enums/buttons";
+import PartyUiHandler, {PartyUiMode} from "#app/ui/party-ui-handler";
+import Trainer from "#app/field/trainer";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -43,6 +47,8 @@ export default class GameManager {
    * @param bypassLogin - Whether to bypass the login phase.
    */
   constructor(phaserGame: Phaser.Game, bypassLogin: boolean = true) {
+    localStorage.clear();
+    ErrorInterceptor.getInstance().clear();
     BattleScene.prototype.randBattleSeedInt = (arg) => arg-1;
     this.gameWrapper = new GameWrapper(phaserGame, bypassLogin);
     this.scene = new BattleScene();
@@ -85,31 +91,31 @@ export default class GameManager {
    * @param callback - The callback to execute.
    * @param expireFn - Optional function to determine if the prompt has expired.
    */
-  onNextPrompt(phaseTarget: string, mode: Mode, callback: () => void, expireFn?: () => void) {
-    this.phaseInterceptor.addToNextPrompt(phaseTarget, mode, callback, expireFn);
+  onNextPrompt(phaseTarget: string, mode: Mode, callback: () => void, expireFn?: () => void, awaitingActionInput: boolean = false) {
+    this.phaseInterceptor.addToNextPrompt(phaseTarget, mode, callback, expireFn, awaitingActionInput);
   }
 
   /**
    * Runs the game to the title phase.
    * @returns A promise that resolves when the title phase is reached.
    */
-  runToTitle(): Promise<void> {
-    return new Promise(async(resolve) => {
-      await this.phaseInterceptor.run(LoginPhase);
-      this.onNextPrompt("SelectGenderPhase", Mode.OPTION_SELECT, () => {
-        this.scene.gameData.gender = PlayerGender.MALE;
-        this.endPhase();
-      }, () => this.isCurrentPhase(TitlePhase));
-      await this.phaseInterceptor.run(SelectGenderPhase, () => this.isCurrentPhase(TitlePhase));
-      await this.phaseInterceptor.run(TitlePhase);
-      this.scene.gameSpeed = 5;
-      this.scene.moveAnimations = false;
-      this.scene.showLevelUpStats = false;
-      this.scene.expGainsSpeed = 3;
-      this.scene.expParty = ExpNotification.SKIP;
-      this.scene.hpBarSpeed = 3;
-      resolve();
-    });
+  async runToTitle(): Promise<void> {
+    await this.phaseInterceptor.run(LoginPhase);
+
+    this.onNextPrompt("SelectGenderPhase", Mode.OPTION_SELECT, () => {
+      this.scene.gameData.gender = PlayerGender.MALE;
+      this.endPhase();
+    }, () => this.isCurrentPhase(TitlePhase));
+
+    await this.phaseInterceptor.run(SelectGenderPhase, () => this.isCurrentPhase(TitlePhase));
+    await this.phaseInterceptor.run(TitlePhase);
+
+    this.scene.gameSpeed = 5;
+    this.scene.moveAnimations = false;
+    this.scene.showLevelUpStats = false;
+    this.scene.expGainsSpeed = 3;
+    this.scene.expParty = ExpNotification.SKIP;
+    this.scene.hpBarSpeed = 3;
   }
 
   /**
@@ -117,47 +123,99 @@ export default class GameManager {
    * @param species - Optional array of species to summon.
    * @returns A promise that resolves when the summon phase is reached.
    */
-  runToSummon(species?: Species[]): Promise<void> {
-    return new Promise(async(resolve) => {
-      await this.runToTitle();
-      this.onNextPrompt("TitlePhase", Mode.TITLE, () => {
-        const starters = generateStarter(this.scene, species);
-        const selectStarterPhase = new SelectStarterPhase(this.scene, GameModes.CLASSIC);
-        this.scene.pushPhase(new EncounterPhase(this.scene, false));
-        selectStarterPhase.initBattle(starters);
-      });
-      await this.phaseInterceptor.run(EncounterPhase);
-      resolve();
+  async runToSummon(species?: Species[]) {
+    await this.runToTitle();
+
+    this.onNextPrompt("TitlePhase", Mode.TITLE, () => {
+      this.scene.gameMode = getGameMode(GameModes.CLASSIC);
+      const starters = generateStarter(this.scene, species);
+      const selectStarterPhase = new SelectStarterPhase(this.scene);
+      this.scene.pushPhase(new EncounterPhase(this.scene, false));
+      selectStarterPhase.initBattle(starters);
     });
+
+    await this.phaseInterceptor.run(EncounterPhase);
   }
 
   /**
-   * Starts a battle.
+   * Transitions to the start of a battle.
    * @param species - Optional array of species to start the battle with.
    * @returns A promise that resolves when the battle is started.
    */
-  startBattle(species?: Species[]): Promise<void> {
-    return new Promise(async(resolve) => {
-      await this.runToSummon(species);
-      await this.phaseInterceptor.runFrom(PostSummonPhase).to(ToggleDoublePositionPhase);
-      await this.phaseInterceptor.run(SummonPhase, () => this.isCurrentPhase(CheckSwitchPhase) || this.isCurrentPhase(PostSummonPhase));
-      this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
-        this.setMode(Mode.MESSAGE);
-        this.endPhase();
-      }, () => this.isCurrentPhase(PostSummonPhase));
-      this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
-        this.setMode(Mode.MESSAGE);
-        this.endPhase();
-      }, () => this.isCurrentPhase(PostSummonPhase));
-      await this.phaseInterceptor.run(CheckSwitchPhase, () => this.isCurrentPhase(PostSummonPhase));
-      await this.phaseInterceptor.run(CheckSwitchPhase, () => this.isCurrentPhase(PostSummonPhase));
-      await this.phaseInterceptor.runFrom(PostSummonPhase).to(CommandPhase);
-      await waitUntil(() => this.scene.ui?.getMode() === Mode.COMMAND);
-      console.log("==================[New Turn]==================");
-      expect(this.scene.ui?.getMode()).toBe(Mode.COMMAND);
-      expect(this.scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
-      return resolve();
+  async startBattle(species?: Species[]) {
+    await this.runToSummon(species);
+
+    this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
+      this.setMode(Mode.MESSAGE);
+      this.endPhase();
+    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnInitPhase));
+
+    this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
+      this.setMode(Mode.MESSAGE);
+      this.endPhase();
+    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnInitPhase));
+
+    await this.phaseInterceptor.to(CommandPhase);
+    console.log("==================[New Turn]==================");
+  }
+
+  /**
+   * Emulate a player attack
+   * @param movePosition the index of the move in the pokemon's moveset array
+   */
+  doAttack(movePosition: integer) {
+    this.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
+      this.scene.ui.setMode(Mode.FIGHT, (this.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
     });
+    this.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
+      (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
+    });
+  }
+
+  /** Faint all opponents currently on the field */
+  async doKillOpponents() {
+    await this.killPokemon(this.scene.currentBattle.enemyParty[0]);
+    if (this.scene.currentBattle.double) {
+      await this.killPokemon(this.scene.currentBattle.enemyParty[1]);
+    }
+  }
+
+  /** Emulate selecting a modifier (item) */
+  doSelectModifier() {
+    this.onNextPrompt("SelectModifierPhase", Mode.MODIFIER_SELECT, () => {
+      const handler = this.scene.ui.getHandler() as ModifierSelectUiHandler;
+      handler.processInput(Button.CANCEL);
+    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(NewBattlePhase), true);
+
+    this.onNextPrompt("SelectModifierPhase", Mode.CONFIRM, () => {
+      const handler = this.scene.ui.getHandler() as ModifierSelectUiHandler;
+      handler.processInput(Button.ACTION);
+    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(NewBattlePhase));
+  }
+
+  forceOpponentToSwitch() {
+    const originalMatchupScore = Trainer.prototype.getPartyMemberMatchupScores;
+    Trainer.prototype.getPartyMemberMatchupScores = () => {
+      Trainer.prototype.getPartyMemberMatchupScores = originalMatchupScore;
+      return [[1, 100], [1, 100]];
+    };
+  }
+
+  /** Transition to the next upcoming {@linkcode CommandPhase} */
+  async toNextTurn() {
+    await this.phaseInterceptor.to(CommandPhase);
+  }
+
+  /** Emulate selecting a modifier (item) and transition to the next upcoming {@linkcode CommandPhase} */
+  async toNextWave() {
+    this.doSelectModifier();
+
+    this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
+      this.setMode(Mode.MESSAGE);
+      this.endPhase();
+    }, () => this.isCurrentPhase(TurnInitPhase));
+
+    await this.toNextTurn();
   }
 
   /**
@@ -219,5 +277,29 @@ export default class GameManager {
       await this.scene.gameData.initSystem(dataStr);
     }
     return updateUserInfo();
+  }
+
+  async killPokemon(pokemon: PlayerPokemon | EnemyPokemon) {
+    (this.scene.time as MockClock).overrideDelay = 0.01;
+    return new Promise<void>(async(resolve, reject) => {
+      pokemon.hp = 0;
+      this.scene.pushPhase(new FaintPhase(this.scene, pokemon.getBattlerIndex(), true));
+      await this.phaseInterceptor.to(FaintPhase).catch((e) => reject(e));
+      (this.scene.time as MockClock).overrideDelay = undefined;
+      resolve();
+    });
+  }
+
+  async switchPokemon(pokemonIndex: number, toNext: boolean = true) {
+    this.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
+      this.scene.ui.setMode(Mode.PARTY, PartyUiMode.SWITCH, (this.scene.getCurrentPhase() as CommandPhase).getPokemon().getFieldIndex(), null, PartyUiHandler.FilterNonFainted);
+    });
+    this.onNextPrompt("CommandPhase", Mode.PARTY, () => {
+      (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.POKEMON, pokemonIndex, false);
+    });
+    if (toNext) {
+      await this.phaseInterceptor.run(CommandPhase);
+      await this.phaseInterceptor.to(CommandPhase);
+    }
   }
 }

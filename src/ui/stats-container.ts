@@ -3,8 +3,12 @@ import BattleScene from "../battle-scene";
 import { Stat, getStatName } from "../data/pokemon-stat";
 import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./text";
 
-const ivChartStatCoordMultipliers = [ [ 0, -1 ], [ 0.825, -0.5 ], [ 0.825, 0.5 ], [ -0.825, -0.5 ], [ -0.825, 0.5 ], [ 0, 1 ] ];
+
 const ivChartSize = 24;
+const ivChartStatCoordMultipliers = [[0, -1], [0.825, -0.5], [0.825, 0.5], [-0.825, -0.5], [-0.825, 0.5], [0, 1]];
+const speedLabelOffset = -3;
+const sideLabelOffset = 1;
+const ivLabelOffset = [0, sideLabelOffset, -sideLabelOffset, sideLabelOffset, -sideLabelOffset, speedLabelOffset];
 const ivChartStatIndexes = [0,1,2,5,4,3]; // swap special attack and speed
 const ivChartLabelxOffset= [0,7,8,-8,-8,0];
 const ivChartLabelyOffset= [0,5,0,5,0,0]; // doing this so attack does not overlap with (+N)
