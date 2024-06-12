@@ -37,7 +37,7 @@ describe("Moves - Magnet Rise", () => {
     const moveToUse = Moves.MAGNET_RISE;
     await game.startBattle();
 
-    const startingHp = game.scene.currentBattle.enemyParty[0].hp;
+    const startingHp = game.scene.getParty()[0].hp;
     game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
       game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
     });
@@ -47,7 +47,7 @@ describe("Moves - Magnet Rise", () => {
       (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
     });
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnEndPhase);
-    const finalHp = game.scene.currentBattle.enemyParty[0].hp;
+    const finalHp = game.scene.getParty()[0].hp;
     const hpLost = finalHp - startingHp;
     expect(hpLost).toBe(0);
   }, 20000);
