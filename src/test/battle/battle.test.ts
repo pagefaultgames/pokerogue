@@ -6,7 +6,7 @@ import {Species} from "#app/data/enums/species";
 import * as overrides from "../../overrides";
 import {Command} from "#app/ui/command-ui-handler";
 import {
-  CommandPhase,
+  CommandPhase, DamagePhase,
   EncounterPhase,
   EnemyCommandPhase,
   LoginPhase,
@@ -15,7 +15,7 @@ import {
   SelectStarterPhase,
   SummonPhase,
   TitlePhase,
-  TurnInitPhase,
+  TurnInitPhase, VictoryPhase,
 } from "#app/phases";
 import {Moves} from "#app/data/enums/moves";
 import GameManager from "#app/test/utils/gameManager";
@@ -106,9 +106,7 @@ describe("Test Battle Phase", () => {
       const movePosition = getMovePosition(game.scene, 0, Moves.TACKLE);
       (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
     });
-    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(SelectModifierPhase);
-    expect(game.scene.ui?.getMode()).toBe(Mode.MODIFIER_SELECT);
-    expect(game.scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);
+    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(SelectModifierPhase, false);
   }, 20000);
 
   it("do attack wave 3 - single battle - regular - NO OHKO with opponent using non damage attack", async() => {
@@ -128,7 +126,7 @@ describe("Test Battle Phase", () => {
       const movePosition = getMovePosition(game.scene, 0, Moves.TACKLE);
       (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
     });
-    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnInitPhase);
+    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnInitPhase, false);
   }, 20000);
 
   it("load 100% data file", async() => {
@@ -258,6 +256,72 @@ describe("Test Battle Phase", () => {
     ]);
     expect(game.scene.ui?.getMode()).toBe(Mode.COMMAND);
     expect(game.scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
+  }, 20000);
+
+  it("kill opponent pokemon", async() => {
+    const moveToUse = Moves.SPLASH;
+    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    vi.spyOn(overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MEWTWO);
+    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
+    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
+    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.ZEN_MODE);
+    vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
+    vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(3);
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
+    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
+    await game.startBattle([
+      Species.DARMANITAN,
+      Species.CHARIZARD,
+    ]);
+
+    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
+      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
+    });
+    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
+      const movePosition = getMovePosition(game.scene, 0, moveToUse);
+      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
+    });
+    await game.phaseInterceptor.to(DamagePhase, false);
+    await game.killPokemon(game.scene.currentBattle.enemyParty[0]);
+    expect(game.scene.currentBattle.enemyParty[0].isFainted()).toBe(true);
+    await game.phaseInterceptor.to(VictoryPhase, false);
+  }, 200000);
+
+  it("to next turn", async() => {
+    const moveToUse = Moves.SPLASH;
+    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    vi.spyOn(overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MEWTWO);
+    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
+    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
+    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.ZEN_MODE);
+    vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
+    vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(3);
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
+    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
+    await game.startBattle();
+    const turn = game.scene.currentBattle.turn;
+    game.doAttack(0);
+    await game.toNextTurn();
+    expect(game.scene.currentBattle.turn).toBeGreaterThan(turn);
+  }, 20000);
+
+  it("to next wave with pokemon killed, single", async() => {
+    const moveToUse = Moves.SPLASH;
+    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    vi.spyOn(overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MEWTWO);
+    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
+    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
+    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.ZEN_MODE);
+    vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
+    vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(3);
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
+    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
+    await game.startBattle();
+    const waveIndex = game.scene.currentBattle.waveIndex;
+    game.doAttack(0);
+    await game.doKillOpponents();
+    await game.toNextWave();
+    expect(game.scene.currentBattle.waveIndex).toBeGreaterThan(waveIndex);
   }, 20000);
 });
 

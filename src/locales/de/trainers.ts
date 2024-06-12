@@ -13,6 +13,12 @@ export const titles: SimpleTranslationEntries = {
   "rival": "Rivale",
   "professor": "Professor",
   "frontier_brain": "Kampfkoryphäen",
+  "rocket_boss": "Rocket-Boss",
+  "magma_boss": "Magma-Boss",
+  "aqua_boss": "Aqua-Boss",
+  "galactic_boss": "Galaktik-Boss",
+  "plasma_boss": "Weiser von Team Plasma", // This is on purpose, since "Ghetsis" is never mentioned as the boss of team plasma in the game but as "Weiser"
+  "flare_boss": "Flare-Boss",
   // Maybe if we add the evil teams we can add "Team Rocket" and "Team Aqua" etc. here as well as "Team Rocket Boss" and "Team Aqua Admin" etc.
 } as const;
 
@@ -118,7 +124,25 @@ export const trainerClasses: SimpleTranslationEntries = {
   "worker": "Arbeiter",
   "worker_female": "Arbeiterin",
   "workers": "Arbeiter",
-  "youngster": "Knirps"
+  "youngster": "Knirps",
+  "rocket_grunt": "Rüpel von Team Rocket",
+  "rocket_grunt_female": "Rüpel von Team Rocket",
+  "rocket_grunts": "Rüpel von Team Rocket",
+  "magma_grunt": "Rüpel von Team Magma",
+  "magma_grunt_female": "Rüpel von Team Magma",
+  "magma_grunts": "Rüpel von Team Magma",
+  "aqua_grunt": "Rüpel von Team Aqua",
+  "aqua_grunt_female": "Rüpel von Team Aqua",
+  "aqua_grunts": "Rüpel von Team Aqua",
+  "galactic_grunt": "Rüpel von Team Galaktik",
+  "galactic_grunt_female": "Rüpel von Team Galaktik",
+  "galactic_grunts": "Rüpel von Team Galaktik",
+  "plasma_grunt": "Rüpel von Team Plasma",
+  "plasma_grunt_female": "Rüpel von Team Plasma",
+  "plasma_grunts": "Rüpel von Team Plasma",
+  "flare_grunt": "Rüpel von Team Flare",
+  "flare_grunt_female": "Rüpel von Team Flare",
+  "flare_grunts": "Rüpel von Team Flare",
 } as const;
 
 // Names of special trainers like gym leaders, elite four, and the champion
@@ -247,6 +271,11 @@ export const trainerNames: SimpleTranslationEntries = {
   "leon": "Delion",
   "rival": "Finn",
   "rival_female": "Ivy",
+  "maxie": "Marc",
+  "archie": "Adrian",
+  "cyrus": "Zyrus",
+  "ghetsis": "G-Cis",
+  "lysandre": "Flordelis",
 
   // Double Names
   "blue_red_double": "Blau & Rot",
