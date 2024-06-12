@@ -1,6 +1,6 @@
 import { Arena } from "../field/arena";
 import { ArenaTag } from "../data/arena-tag";
-import { Biome } from "../data/enums/biome";
+import { Biome } from "#enums";
 import { Weather } from "../data/weather";
 import { Terrain } from "#app/data/terrain.js";
 

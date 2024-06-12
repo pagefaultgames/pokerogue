@@ -1,12 +1,11 @@
 import BattleScene from "../battle-scene";
-import { Button } from "../enums/buttons";
+import { Button, PlayerGender } from "#enums";
 import i18next from "../plugins/i18n";
 import { Achv, achvs, getAchievementDescription } from "../system/achv";
 import MessageUiHandler from "./message-ui-handler";
 import { addTextObject, TextStyle } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
-import { PlayerGender } from "#app/data/enums/player-gender";
 import { ParseKeys } from "i18next";
 
 export default class AchvsUiHandler extends MessageUiHandler {

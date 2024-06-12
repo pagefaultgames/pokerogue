@@ -2,8 +2,7 @@ import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
 import * as overrides from "#app/overrides";
-import {Abilities} from "#app/data/enums/abilities";
-import {Species} from "#app/data/enums/species";
+import {Abilities, Species, Moves} from "#enums";
 import {
   CommandPhase, DamagePhase, EncounterPhase,
   EnemyCommandPhase, SelectStarterPhase,
@@ -11,7 +10,6 @@ import {
 } from "#app/phases";
 import {Mode} from "#app/ui/ui";
 import {BattleStat} from "#app/data/battle-stat";
-import {Moves} from "#app/data/enums/moves";
 import {generateStarter, getMovePosition} from "#app/test/utils/gameManagerUtils";
 import {Command} from "#app/ui/command-ui-handler";
 import {Status, StatusEffect} from "#app/data/status-effect";

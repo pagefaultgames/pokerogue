@@ -1,17 +1,15 @@
-import { Abilities } from "./enums/abilities";
+import { Abilities, PartyMemberStrength, Species } from "#enums";
 import BattleScene, { AnySound } from "../battle-scene";
 import { Variant, variantColorCache } from "./variant";
 import { variantData } from "./variant";
 import { GrowthRate } from "./exp";
 import { SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } from "./pokemon-evolutions";
-import { Species } from "./enums/species";
 import { Type } from "./type";
 import { LevelMoves, pokemonFormLevelMoves, pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves, pokemonSpeciesLevelMoves } from "./pokemon-level-moves";
 import { uncatchableSpecies } from "./biomes";
 import * as Utils from "../utils";
 import { StarterMoveset } from "../system/game-data";
 import { speciesEggMoves } from "./egg-moves";
-import { PartyMemberStrength } from "./enums/party-member-strength";
 import { GameMode } from "../game-mode";
 import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from "@material/material-color-utilities";
 import { VariantSet } from "./variant";

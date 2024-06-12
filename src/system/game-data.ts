@@ -2,7 +2,7 @@ import BattleScene, { PokeballCounts, bypassLogin } from "../battle-scene";
 import Pokemon, { EnemyPokemon, PlayerPokemon } from "../field/pokemon";
 import { pokemonEvolutions, pokemonPrevolutions } from "../data/pokemon-evolutions";
 import PokemonSpecies, { allSpecies, getPokemonSpecies, noStarterFormKeys, speciesStarters } from "../data/pokemon-species";
-import { Species, defaultStarterSpecies } from "../data/enums/species";
+import { Species, defaultStarterSpecies, Moves, Device, PlayerGender, GameDataType } from "#enums";
 import * as Utils from "../utils";
 import * as Overrides from "../overrides";
 import PokemonData from "./pokemon-data";
@@ -24,7 +24,6 @@ import { clientSessionId, loggedInUser, updateUserInfo } from "../account";
 import { Nature } from "../data/nature";
 import { GameStats } from "./game-stats";
 import { Tutorial } from "../tutorial";
-import { Moves } from "../data/enums/moves";
 import { speciesEggMoves } from "../data/egg-moves";
 import { allMoves } from "../data/move";
 import { TrainerVariant } from "../field/trainer";
@@ -32,12 +31,9 @@ import { OutdatedPhase, ReloadSessionPhase } from "#app/phases";
 import { Variant, variantData } from "#app/data/variant";
 import {setSettingGamepad, SettingGamepad, settingGamepadDefaults} from "./settings/settings-gamepad";
 import {setSettingKeyboard, SettingKeyboard} from "#app/system/settings/settings-keyboard";
-import { TerrainChangedEvent, WeatherChangedEvent } from "#app/field/events/arena";
-import { Device } from "#app/enums/devices.js";
+import { TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena.js";
 import { EnemyAttackStatusEffectChanceModifier } from "../modifier/modifier";
 import { StatusEffect } from "#app/data/status-effect.js";
-import { PlayerGender } from "#app/data/enums/player-gender";
-import { GameDataType } from "#app/data/enums/game-data-type";
 import ChallengeData from "./challenge-data";
 
 const saveKey = "x0i2O7WRiANTqPmZ"; // Temporary; secure encryption is not yet necessary
@@ -1213,9 +1209,11 @@ export class GameData {
 
         reader.onload = (_ => {
           return e => {
+            let dataName: string;
             let dataStr = AES.decrypt(e.target.result.toString(), saveKey).toString(enc.Utf8);
             let valid = false;
             try {
+              dataName = GameDataType[dataType].toLowerCase();
               switch (dataType) {
               case GameDataType.SYSTEM:
                 dataStr = this.convertSystemDataStr(dataStr);
@@ -1235,28 +1233,12 @@ export class GameData {
               console.error(ex);
             }
 
-            let dataName: string;
-            switch (dataType) {
-            case GameDataType.SYSTEM:
-              dataName = "save";
-              break;
-            case GameDataType.SESSION:
-              dataName = "session";
-              break;
-            case GameDataType.SETTINGS:
-              dataName = "settings";
-              break;
-            case GameDataType.TUTORIALS:
-              dataName = "tutorials";
-              break;
-            }
-
             const displayError = (error: string) => this.scene.ui.showText(error, null, () => this.scene.ui.showText(null, 0), Utils.fixedInt(1500));
 
             if (!valid) {
               return this.scene.ui.showText(`Your ${dataName} data could not be loaded. It may be corrupted.`, null, () => this.scene.ui.showText(null, 0), Utils.fixedInt(1500));
             }
-            this.scene.ui.revertMode();
+
             this.scene.ui.showText(`Your ${dataName} data will be overridden and the page will reload. Proceed?`, null, () => {
               this.scene.ui.setOverlayMode(Mode.CONFIRM, () => {
                 localStorage.setItem(dataKey, encrypt(dataStr, bypassLogin));

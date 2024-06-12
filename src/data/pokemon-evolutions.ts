@@ -1,15 +1,12 @@
 import { Gender } from "./gender";
-import { Moves } from "./enums/moves";
 import { PokeballType } from "./pokeball";
 import Pokemon from "../field/pokemon";
 import { Stat } from "./pokemon-stat";
-import { Species } from "./enums/species";
 import { Type } from "./type";
 import * as Utils from "../utils";
 import { SpeciesFormKey } from "./pokemon-species";
 import { WeatherType } from "./weather";
-import { Biome } from "./enums/biome";
-import { TimeOfDay } from "./enums/time-of-day";
+import { Biome, Moves, Species, TimeOfDay } from "#enums";
 import { Nature } from "./nature";
 
 export enum SpeciesWildEvolutionDelay {
