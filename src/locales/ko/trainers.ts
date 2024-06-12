@@ -146,7 +146,7 @@ export const trainerClasses: SimpleTranslationEntries = {
   "plasma_grunts": "Plasma Grunts",
   "flare_grunt": "플레어단 조무래기",
   "flare_grunt_female": "플레어단 조무래기",
-   "flare_grunts": "Flare Grunts",
+  "flare_grunts": "Flare Grunts",
   "cipher_peon": "Cipher Peon",
   "cipher_peon_female": "Cipher Peon",
   "cipher_peons": "Cipher Peons",
