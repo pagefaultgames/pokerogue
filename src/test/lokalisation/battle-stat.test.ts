@@ -84,20 +84,20 @@ describe("Test for BattleStat Localization", () => {
     battleStatUnits.push({ stat: BattleStat.ACC, key: "Stat.ACC" });
     battleStatUnits.push({ stat: BattleStat.EVA, key: "Stat.EVA" });
 
-    battleStatLevelUnits.push({ levels: 1, up: true, key: "statIsRose" });
-    battleStatLevelUnits.push({ levels: 2, up: true, key: "statIsSharplyRose" });
-    battleStatLevelUnits.push({ levels: 3, up: true, key: "statIsRoseDrastically" });
-    battleStatLevelUnits.push({ levels: 4, up: true, key: "statIsRoseDrastically" });
-    battleStatLevelUnits.push({ levels: 5, up: true, key: "statIsRoseDrastically" });
-    battleStatLevelUnits.push({ levels: 6, up: true, key: "statIsRoseDrastically" });
-    battleStatLevelUnits.push({ levels: 7, up: true, key: "statIsWontGoAnyHigher" });
-    battleStatLevelUnits.push({ levels: 1, up: false, key: "statIsFell" });
-    battleStatLevelUnits.push({ levels: 2, up: false, key: "statIsHarshlyFell" });
-    battleStatLevelUnits.push({ levels: 3, up: false, key: "statIsSeverelyFell" });
-    battleStatLevelUnits.push({ levels: 4, up: false, key: "statIsSeverelyFell" });
-    battleStatLevelUnits.push({ levels: 5, up: false, key: "statIsSeverelyFell" });
-    battleStatLevelUnits.push({ levels: 6, up: false, key: "statIsSeverelyFell" });
-    battleStatLevelUnits.push({ levels: 7, up: false, key: "statIsWontGoAnyLower" });
+    battleStatLevelUnits.push({ levels: 1, up: true, key: "statRose" });
+    battleStatLevelUnits.push({ levels: 2, up: true, key: "statSharplyRose" });
+    battleStatLevelUnits.push({ levels: 3, up: true, key: "statRoseDrastically" });
+    battleStatLevelUnits.push({ levels: 4, up: true, key: "statRoseDrastically" });
+    battleStatLevelUnits.push({ levels: 5, up: true, key: "statRoseDrastically" });
+    battleStatLevelUnits.push({ levels: 6, up: true, key: "statRoseDrastically" });
+    battleStatLevelUnits.push({ levels: 7, up: true, key: "statWontGoAnyHigher" });
+    battleStatLevelUnits.push({ levels: 1, up: false, key: "statFell" });
+    battleStatLevelUnits.push({ levels: 2, up: false, key: "statHarshlyFell" });
+    battleStatLevelUnits.push({ levels: 3, up: false, key: "statSeverelyFell" });
+    battleStatLevelUnits.push({ levels: 4, up: false, key: "statSeverelyFell" });
+    battleStatLevelUnits.push({ levels: 5, up: false, key: "statSeverelyFell" });
+    battleStatLevelUnits.push({ levels: 6, up: false, key: "statSeverelyFell" });
+    battleStatLevelUnits.push({ levels: 7, up: false, key: "statWontGoAnyLower" });
   });
 
   it("Test getBattleStatName() in English", async () => {
