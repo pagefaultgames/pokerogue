@@ -281,14 +281,16 @@ export default class GameManager {
     });
   }
 
-  async switchPokemon(pokemonIndex: number) {
+  /**
+   * Switch pokemon and transition to the enemy command phase
+   * @param pokemonIndex the index of the pokemon in your party to switch to
+   */
+  doSwitchPokemon(pokemonIndex: number) {
     this.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
       this.scene.ui.setMode(Mode.PARTY, PartyUiMode.SWITCH, (this.scene.getCurrentPhase() as CommandPhase).getPokemon().getFieldIndex(), null, PartyUiHandler.FilterNonFainted);
     });
     this.onNextPrompt("CommandPhase", Mode.PARTY, () => {
       (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.POKEMON, pokemonIndex, false);
     });
-    await this.phaseInterceptor.run(CommandPhase);
-    await this.phaseInterceptor.to(CommandPhase);
   }
 }
