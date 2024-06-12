@@ -494,7 +494,7 @@ export const PGFachv: AchievementTranslationEntries = {
     name: "Comendo Poeira",
   },
   "MONO_ROCK": {
-    name: "Duro Como Pedra!",
+    name: "Duro Como Pedra",
   },
   "MONO_BUG": {
     name: "Vida de Inseto",
