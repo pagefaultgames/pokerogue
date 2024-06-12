@@ -4,6 +4,6 @@ export const fightUiHandler: SimpleTranslationEntries = {
   "pp": "PP",
   "power": "Potencia",
   "accuracy": "Precisión",
-  "abilityFlyInText": " {{pokemonName}}'s {{passive}}{{abilityName}}",
-  "passive": "Passive ", // The space at the end is important
+  "abilityFlyInText": " {{passive}}{{pokemonName}}\n{{abilityName}}",
+  "passive": "Pasiva de ", // The space at the end is important
 } as const;
