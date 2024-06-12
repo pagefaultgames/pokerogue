@@ -13,6 +13,12 @@ export const titles: SimpleTranslationEntries = {
   "rival": "Rival",
   "professor": "Professor",
   "frontier_brain": "Cérebro da Fronteira",
+  "rocket_boss": "Chefe da Equipe Rocket",
+  "magma_boss": "Chefe da Equipe Magma",
+  "aqua_boss": "Chefe da Equipe Aqua",
+  "galactic_boss": "Chefe da Equipe Galáctica",
+  "plasma_boss": "Chefe da Equipe Plasma",
+  "flare_boss": "Chefe da Equipe Flare",
   // Maybe if we add the evil teams we can add "Team Rocket" and "Team Aqua" etc. here as well as "Team Rocket Boss" and "Team Aqua Admin" etc.
 } as const;
 
@@ -119,6 +125,18 @@ export const trainerClasses: SimpleTranslationEntries = {
   "worker_female": "Operária",
   "workers": "Operários",
   "youngster": "Jovem",
+  "rocket_grunt": "Recruta da Equipe Rocket",
+  "rocket_grunt_female": "Recruta da Equipe Rocket",
+  "magma_grunt": "Recruta da Equipe Magma",
+  "magma_grunt_female": "Recruta da Equipe Magma",
+  "aqua_grunt": "Recruta da Equipe Aqua",
+  "aqua_grunt_female": "Recruta da Equipe Aqua",
+  "galactic_grunt": "Recruta da Equipe Galáctica",
+  "galactic_grunt_female": "Recruta da Equipe Galáctica",
+  "plasma_grunt": "Recruta da Equipe Plasma",
+  "plasma_grunt_female": "Recruta da Equipe Plasma",
+  "flare_grunt": "Recruta da Equipe Flare",
+  "flare_grunt_female": "Recruta da Equipe Flare",
 } as const;
 
 // Names of special trainers like gym leaders, elite four, and the champion
@@ -247,6 +265,11 @@ export const trainerNames: SimpleTranslationEntries = {
   "leon": "Leon",
   "rival": "Finn",
   "rival_female": "Ivy",
+  "maxie": "Maxie",
+  "archie": "Archie",
+  "cyrus": "Cyrus",
+  "ghetsis": "Ghetsis",
+  "lysandre": "Lysandre",
 
   // Double Names
   "blue_red_double": "Blue & Red",

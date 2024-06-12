@@ -385,182 +385,182 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "rocket_grunt": {
     "encounter": {
-      1: "Prepare for trouble!"
+      1: "트러블에 대비하도록!"
     },
     "victory": {
-      1: "Team Rocket blasting off again!"
+      1: "로켓단은 다시 떠오를 거니까!"
     },
   },
   "magma_grunt": {
     "encounter": {
-      1: " If you get in the way of Team Magma, don’t expect any mercy!"
+      1: " 마그마단을 방해한다면, 자비는 없닷!"
     },
     "victory": {
-      1: "Huh? I lost?!"
+      1: "하? 내가 졌어?!"
     },
   },
   "aqua_grunt": {
     "encounter": {
-      1: "No one who crosses Team Aqua gets any mercy, not even kids!"
+      1: "아쿠아단을 넘본 사람에게는 자비는 없다, 꼬마도 마찬가지야!"
     },
     "victory": {
-      1: "You're kidding me!"
+      1: "말도 안돼!"
     },
   },
   "galactic_grunt": {
     "encounter": {
-      1: "Don't mess with Team Galactic!"
+      1: "갤럭시단을 방해하지 마!"
     },
     "victory": {
-      1: "Shut down..."
+      1: "사격 중지…… "
     },
   },
   "plasma_grunt": {
     "encounter": {
-      1: "We won't tolerate people who have different ideas!"
+      1: "다른 생각을 가진사람들은 용납하지 않겠다!"
     },
     "victory": {
-      1: "Plasmaaaaaaaaa!"
+      1: "플라-스마-!"
     },
   },
   "flare_grunt": {
     "encounter": {
-      1: "Fashion is most important to us!"
+      1: "패션이 우리한텐 가장 중요하다고!"
     },
     "victory": {
-      1: "The future doesn't look bright for me."
+      1: "미래가 밝아 보이질 않네."
     },
   },
   "rocket_boss_giovanni_1": {
     "encounter": {
-      1: "So! I must say, I am impressed you got here!"
+      1: "그래서! 여기까지 오다니, 감탄이 절로 나오는군!"
     },
     "victory": {
-      1: "WHAT! This cannot be!"
+      1: "하! 이럴 순 없어!"
     },
     "defeat": {
-      1: "Mark my words. Not being able to measure your own strength shows that you are still a child."
+      1: "자신의 힘을 측정하지 못하는 걸 보아하니, 아직 별볼일 없는 꼬맹이로군. 내 말을 명심하도록. "
     }
   },
   "rocket_boss_giovanni_2": {
     "encounter": {
-      1: "My old associates need me... Are you going to get in my way?"
+      1: "옛 친구들이 나를 필요로 하고 있다…… 그런데도 방해하겠다는 건가?"
     },
     "victory": {
-      1: "How is this possible...?\nThe precious dream of Team Rocket has become little more than an illusion..."
+      1: "어떻게 이런 일이…?\n로켓단의 소중한 꿈이 환상에 불과해졌군…… "
     },
     "defeat": {
-      1: "Team Rocket will be reborn again, and I will rule the world!"
+      1: "로켓단은 다시 태어난다, 그리고 세상을 지배할 것이다!"
     }
   },
   "magma_boss_maxie_1": {
     "encounter": {
-      1: "I will bury you by my own hand. I hope you appreciate this honor!"
+      1: "내 손으로 널 파묻어주지. 영광으로 알도록!"
     },
     "victory": {
-      1: "Ugh! You are... quite capable...\nI fell behind, but only by an inch..."
+      1: "윽! 꽤… 제법이군…\n내가 뒤쳐졌지만, 겨우 한 끝이다…"
     },
     "defeat": {
-      1: "Team Magma will prevail!"
+      1: "마그마단이 앞선다!"
     }
   },
   "magma_boss_maxie_2": {
     "encounter": {
-      1: "You are the final obstacle remaining between me and my goals.\nBrace yourself for my ultimate attack! Fuhahaha!"
+      1: "나와 내 목표 사이에 남은 마지막 장애물이로군.\n최후의 공격에 대비하도록! 후하하하!"
     },
     "victory": {
-      1: "This... This is not.. Ngh..."
+      1: "이런… 이럴 수는… 없어… "
     },
     "defeat": {
-      1: "And now... I will transform this planet to a land ideal for humanity."
+      1: "이제부터… 인류의 이상을 위해 대지를 더 늘려가겠다."
     }
   },
   "aqua_boss_archie_1": {
     "encounter": {
-      1: "I'm leader of Team Aqua, so I'm afraid it's the rope's end for you."
+      1: "내가 아쿠아단의 리더다, 유감스럽게도 넌 이게 끝이겠군."
     },
     "victory": {
-      1: "Let's meet again somewhere. I'll be sure to remember that face."
+      1: "다시 어딘가에서 만나도록하지. 그 얼굴 기억해둘테니까."
     },
     "defeat": {
-      1: "Brilliant! My team won't hold back now!"
+      1: "좋군! 이제 아쿠아단을 막아설 것은 없다!"
     }
   },
   "aqua_boss_archie_2": {
     "encounter": {
-      1: "I've been waiting so long for this day to come.\nThis is the true power of my team!"
+      1: "이 날이 오는 것을 너무 오래 기다렸군.\n이것이 우리의 진정한 힘이다!"
     },
     "victory": {
-      1: "Like I figured..."
+      1: "내가 생각했던 것들이…… "
     },
     "defeat": {
-      1: "I'll return everything in this world to its original, pure state!!"
+      1: "이 세상을 원래의 순수한 상태로 되돌리겠다, 그 모든 것을!!"
     }
   },
   "galactic_boss_cyrus_1": {
     "encounter": {
-      1: "You were compelled to come here by such vacuous sentimentality\nI will make you regret paying heed to your heart!"
+      1: "넌 공허한 감정에 이끌려 이곳에 오게된 것이다.\n마음에 귀를 기울인 것을 후회하게 해주지!"
     },
     "victory": {
-      1: "Interesting. And quite curious."
+      1: "흥미롭군. 게다가 꽤 궁금해졌어."
     },
     "defeat": {
-      1: "I will create my new world..."
+      1: "새로운 세상을 만들 것이다…"
     }
   },
   "galactic_boss_cyrus_2": {
     "encounter": {
-      1: "So we meet again. It seems our fates have become intertwined.\nBut here and now, I will finally break that bond!"
+      1: "이런 우리가 다시 만나게 됐군. 우리의 운명이 얽히게 된 것 같군.\n 하지만 지금 여기서, 나는 마침내 그 끈을 끊을 것이다!"
     },
     "victory": {
-      1: "How? How? HOW?!"
+      1: "어떻게? 어째서? 어떻게?!"
     },
     "defeat": {
-      1: "Farewell."
+      1: "작별이로군."
     }
   },
   "plasma_boss_ghetsis_1": {
     "encounter": {
-      1: "I won't allow anyone to stop me! No matter who does what!"
+      1: "누구도 저를 막을 수 없습니다! 무슨 짓을 하더라도!"
     },
     "victory": {
-      1: "How can this be? I'm the creator of Team Plasma! I'm perfect!"
+      1: "…어떻게 된 거지? 이 몸은 플라스마단을 만들어낸 완벽한 남자라고! "
     },
     "defeat": {
-      1: "I am the perfect ruler of a perfect new world! Mwa ha ha!"
+      1: "세계를 바꿀 완전한 지배자가 아니었단 말인가!? …흐하하!"
     }
   },
   "plasma_boss_ghetsis_2": {
     "encounter": {
-      1: "Come now! I want to see your face at the moment you lose all hope!"
+      1: "오시죠! 당신이 모든 희망을 잃는 순간의 얼굴을 보겠습니다!"
     },
     "victory": {
-      1: "My calculations... No! My careful schemes! The world should be mine!"
+      1: "내 계산이… 틀려! 내 치밀한 계획이 틀리다니! 세상은 내 것이어야 하는데!"
     },
     "defeat": {
-      1: "Kyurem! Use Absofusion!"
+      1: "큐레무! 합체해라!"
     }
   },
   "flare_boss_lysandre_1": {
     "encounter": {
-      1: "Do you want to stop me? Show me in battle."
+      1: "나를 막겠다고? 배틀로 증명하도록."
     },
     "victory": {
-      1: "You are here to stop me. But I ask you to wait. "
+      1: "네가 나를 여기서 막았군. 하지만 잠시 기다리도록. "
     },
     "defeat": {
-      1: "Pokemon...Shall no longer exist."
+      1: "포켓몬은… 더 이상 존재하지 않는다."
     }
   },
   "flare_boss_lysandre_2": {
     "encounter": {
-      1: "The future you want, or the future I want... Let us see which one is more deserving, shall we?"
+      1: "너의 미래와 나의 미래… 어느 쪽이 옳은지 서로의 포켓몬에게 묻도록 하지."
     },
     "victory": {
-      1: "Whaugh!"
+      1: "크윽!"
     },
     "defeat": {
-      1: "Fools with no vision will continue to befoul this beautiful world."
+      1: "우매한 자들이 이 아름다운 세상을 계속 더럽히고 있군."
     }
   },
   "brock": {
@@ -2628,7 +2628,7 @@ export const PGMdoubleBattleDialogue: DialogueTranslationEntries = {
   },
   "marnie_piers_double": {
     "encounter": {
-      1:  `두송: 큰서트 즐길 준비 됐어?
+      1:  `두송: 콘서트 즐길 준비 됐어?
                     $마리: 오빠... 얘들은 노래가 아니라 승부를 하러 왔어...`,
     },
     "victory": {
