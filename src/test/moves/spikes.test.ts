@@ -74,11 +74,11 @@ describe("Moves - Spikes", () => {
     await game.phaseInterceptor.to(CommandPhase, false);
 
     const initialHp = game.scene.getParty()[0].hp;
-    await game.switchPokemon(1, false);
+    game.doSwitchPokemon(1);
     await game.phaseInterceptor.run(CommandPhase);
     await game.phaseInterceptor.to(CommandPhase, false);
 
-    await game.switchPokemon(1, false);
+    game.doSwitchPokemon(1);
     await game.phaseInterceptor.run(CommandPhase);
     await game.phaseInterceptor.to(CommandPhase, false);
 
