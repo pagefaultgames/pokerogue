@@ -64,7 +64,7 @@ export const STARTING_LEVEL_OVERRIDE: integer = 0;
  * @example SPECIES_OVERRIDE = Species.Bulbasaur;
  */
 export const STARTER_SPECIES_OVERRIDE: Species | integer = 0;
-export const ABILITY_OVERRIDE: Abilities = Abilities.NONE;
+export const ABILITY_OVERRIDE: Abilities = Abilities.PICKUP;
 export const PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
 export const GENDER_OVERRIDE: Gender = null;
