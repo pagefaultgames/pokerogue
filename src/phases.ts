@@ -36,7 +36,7 @@ import { getBiomeKey } from "./field/arena";
 import { BattleType, BattlerIndex, TurnCommand } from "./battle";
 import { BattleSpec } from "./enums/battle-spec";
 import { Species } from "./data/enums/species";
-import { HealAchv, LevelAchv, achvs } from "./system/achv";
+import { ChallengeAchv, HealAchv, LevelAchv, achvs } from "./system/achv";
 import { TrainerSlot, trainerConfigs } from "./data/trainer-config";
 import { TrainerType } from "./data/enums/trainer-type";
 import { EggHatchPhase } from "./egg-hatch-phase";
@@ -55,14 +55,14 @@ import { TerrainType } from "./data/terrain";
 import { OptionSelectConfig, OptionSelectItem } from "./ui/abstact-option-select-ui-handler";
 import { SaveSlotUiMode } from "./ui/save-slot-select-ui-handler";
 import { fetchDailyRunSeed, getDailyRunStarters } from "./data/daily-run";
-import { GameModes, gameModes } from "./game-mode";
+import { GameMode, GameModes, getGameMode } from "./game-mode";
 import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "./data/pokemon-species";
 import i18next from "./plugins/i18n";
 import { Abilities } from "./data/enums/abilities";
 import * as Overrides from "./overrides";
 import { TextStyle, addTextObject } from "./ui/text";
 import { Type } from "./data/type";
-import { BerryUsedEvent, EncounterPhaseEvent, MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./battle-scene-events";
+import { BerryUsedEvent, EncounterPhaseEvent, MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./events/battle-scene";
 import { ExpNotification } from "./enums/exp-notification";
 
 
@@ -202,14 +202,21 @@ export class TitlePhase extends Phase {
         if (this.scene.gameData.unlocks[Unlockables.ENDLESS_MODE]) {
           const options: OptionSelectItem[] = [
             {
-              label: gameModes[GameModes.CLASSIC].getName(),
+              label: GameMode.getModeName(GameModes.CLASSIC),
               handler: () => {
                 setModeAndEnd(GameModes.CLASSIC);
                 return true;
               }
             },
             {
-              label: gameModes[GameModes.ENDLESS].getName(),
+              label: GameMode.getModeName(GameModes.CHALLENGE),
+              handler: () => {
+                setModeAndEnd(GameModes.CHALLENGE);
+                return true;
+              }
+            },
+            {
+              label: GameMode.getModeName(GameModes.ENDLESS),
               handler: () => {
                 setModeAndEnd(GameModes.ENDLESS);
                 return true;
@@ -218,7 +225,7 @@ export class TitlePhase extends Phase {
           ];
           if (this.scene.gameData.unlocks[Unlockables.SPLICED_ENDLESS_MODE]) {
             options.push({
-              label: gameModes[GameModes.SPLICED_ENDLESS].getName(),
+              label: GameMode.getModeName(GameModes.SPLICED_ENDLESS),
               handler: () => {
                 setModeAndEnd(GameModes.SPLICED_ENDLESS);
                 return true;
@@ -307,7 +314,7 @@ export class TitlePhase extends Phase {
       this.scene.sessionSlotId = slotId;
 
       const generateDaily = (seed: string) => {
-        this.scene.gameMode = gameModes[GameModes.DAILY];
+        this.scene.gameMode = getGameMode(GameModes.DAILY);
 
         this.scene.setSeed(seed);
         this.scene.resetSeed(1);
@@ -369,7 +376,12 @@ export class TitlePhase extends Phase {
   end(): void {
     if (!this.loaded && !this.scene.gameMode.isDaily) {
       this.scene.arena.preloadBgm();
-      this.scene.pushPhase(new SelectStarterPhase(this.scene, this.gameMode));
+      this.scene.gameMode = getGameMode(this.gameMode);
+      if (this.gameMode === GameModes.CHALLENGE) {
+        this.scene.pushPhase(new SelectChallengePhase(this.scene));
+      } else {
+        this.scene.pushPhase(new SelectStarterPhase(this.scene));
+      }
       this.scene.newArena(this.scene.gameMode.getStartingBiome(this.scene));
     } else {
       this.scene.playBgm();
@@ -378,7 +390,7 @@ export class TitlePhase extends Phase {
     this.scene.pushPhase(new EncounterPhase(this.scene, this.loaded));
 
     if (this.loaded) {
-      const availablePartyMembers = this.scene.getParty().filter(p => !p.isFainted()).length;
+      const availablePartyMembers = this.scene.getParty().filter(p => p.isAllowedInBattle()).length;
 
       this.scene.pushPhase(new SummonPhase(this.scene, 0, true, true));
       if (this.scene.currentBattle.double && availablePartyMembers > 1) {
@@ -504,13 +516,24 @@ export class SelectGenderPhase extends Phase {
   }
 }
 
-export class SelectStarterPhase extends Phase {
-  private gameMode: GameModes;
-
-  constructor(scene: BattleScene, gameMode: GameModes) {
+export class SelectChallengePhase extends Phase {
+  constructor(scene: BattleScene) {
     super(scene);
+  }
 
-    this.gameMode = gameMode;
+  start() {
+    super.start();
+
+    this.scene.playBgm("menu");
+
+    this.scene.ui.setMode(Mode.CHALLENGE_SELECT);
+  }
+}
+
+export class SelectStarterPhase extends Phase {
+
+  constructor(scene: BattleScene) {
+    super(scene);
   }
 
   start() {
@@ -529,7 +552,7 @@ export class SelectStarterPhase extends Phase {
         this.scene.sessionSlotId = slotId;
         this.initBattle(starters);
       });
-    }, this.gameMode);
+    });
   }
 
   initBattle(starters: Starter[]) {
@@ -638,7 +661,14 @@ export abstract class FieldPhase extends BattlePhase {
     const enemyField = this.scene.getEnemyField().filter(p => p.isActive()) as Pokemon[];
 
     // We shuffle the list before sorting so speed ties produce random results
-    let orderedTargets: Pokemon[] = Utils.randSeedShuffle(playerField.concat(enemyField)).sort((a: Pokemon, b: Pokemon) => {
+    let orderedTargets: Pokemon[] = playerField.concat(enemyField);
+    // We seed it with the current turn to prevent an inconsistency where it
+    // was varying based on how long since you last reloaded
+    this.scene.executeWithSeedOffset(() => {
+      orderedTargets = Utils.randSeedShuffle(orderedTargets);
+    }, this.scene.currentBattle.turn, this.scene.waveSeed);
+
+    orderedTargets.sort((a: Pokemon, b: Pokemon) => {
       const aSpeed = a?.getBattleStat(Stat.SPD) || 0;
       const bSpeed = b?.getBattleStat(Stat.SPD) || 0;
 
@@ -994,7 +1024,15 @@ export class EncounterPhase extends BattlePhase {
     });
 
     if (this.scene.currentBattle.battleType !== BattleType.TRAINER) {
-      enemyField.map(p => this.scene.pushPhase(new PostSummonPhase(this.scene, p.getBattlerIndex())));
+      enemyField.map(p => this.scene.pushConditionalPhase(new PostSummonPhase(this.scene, p.getBattlerIndex()), () => {
+        // is the player party initialized ?
+        const a = !!this.scene.getParty()?.length;
+        // how many player pokemon are on the field ?
+        const amountOnTheField = this.scene.getParty().filter(p => p.isOnField()).length;
+        // if it's a double, there should be 2, otherwise 1
+        const b = this.scene.currentBattle.double ? amountOnTheField === 2 : amountOnTheField === 1;
+        return a && b;
+      }));
       const ivScannerModifier = this.scene.findModifier(m => m instanceof IvScannerModifier);
       if (ivScannerModifier) {
         enemyField.map(p => this.scene.pushPhase(new ScanIvsPhase(this.scene, p.getBattlerIndex(), Math.min(ivScannerModifier.getStackCount() * 2, 6))));
@@ -1002,7 +1040,7 @@ export class EncounterPhase extends BattlePhase {
     }
 
     if (!this.loaded) {
-      const availablePartyMembers = this.scene.getParty().filter(p => !p.isFainted());
+      const availablePartyMembers = this.scene.getParty().filter(p => p.isAllowedInBattle());
 
       if (!availablePartyMembers[0].isOnField()) {
         this.scene.pushPhase(new SummonPhase(this.scene, 0));
@@ -1054,6 +1092,10 @@ export class EncounterPhase extends BattlePhase {
 export class NextEncounterPhase extends EncounterPhase {
   constructor(scene: BattleScene) {
     super(scene);
+  }
+
+  start() {
+    super.start();
   }
 
   doEncounter(): void {
@@ -1135,6 +1177,9 @@ export class PostSummonPhase extends PokemonPhase {
 
     const pokemon = this.getPokemon();
 
+    if (pokemon.status?.effect === StatusEffect.TOXIC) {
+      pokemon.status.turnCount = 0;
+    }
     this.scene.arena.applyTags(ArenaTrapTag, pokemon);
     applyPostSummonAbAttrs(PostSummonAbAttr, pokemon).then(() => this.end());
   }
@@ -1295,20 +1340,33 @@ export class SummonPhase extends PartyMemberPokemonPhase {
   */
   preSummon(): void {
     const partyMember = this.getPokemon();
-    // If the Pokemon about to be sent out is fainted, switch to the first non-fainted Pokemon
-    if (partyMember.isFainted()) {
-      console.warn("The Pokemon about to be sent out is fainted. Attempting to resolve...");
+    // If the Pokemon about to be sent out is fainted or illegal under a challenge, switch to the first non-fainted legal Pokemon
+    if (!partyMember.isAllowedInBattle()) {
+      console.warn("The Pokemon about to be sent out is fainted or illegal under a challenge. Attempting to resolve...");
+
+      // First check if they're somehow still in play, if so remove them.
+      if (partyMember.isOnField()) {
+        partyMember.hideInfo();
+        partyMember.setVisible(false);
+        this.scene.field.remove(partyMember);
+        this.scene.triggerPokemonFormChange(partyMember, SpeciesFormChangeActiveTrigger, true);
+      }
+
       const party = this.getParty();
 
       // Find the first non-fainted Pokemon index above the current one
-      const nonFaintedIndex = party.findIndex((p, i) => i > this.partyMemberIndex && !p.isFainted());
-      if (nonFaintedIndex === -1) {
+      const legalIndex = party.findIndex((p, i) => i > this.partyMemberIndex && p.isAllowedInBattle());
+      if (legalIndex === -1) {
         console.error("Party Details:\n", party);
-        throw new Error("All available Pokemon were fainted!");
+        console.error("All available Pokemon were fainted or illegal!");
+        this.scene.clearPhaseQueue();
+        this.scene.unshiftPhase(new GameOverPhase(this.scene));
+        this.end();
+        return;
       }
 
-      // Swaps the fainted Pokemon and the first non-fainted Pokemon in the party
-      [party[this.partyMemberIndex], party[nonFaintedIndex]] = [party[nonFaintedIndex], party[this.partyMemberIndex]];
+      // Swaps the fainted Pokemon and the first non-fainted legal Pokemon in the party
+      [party[this.partyMemberIndex], party[legalIndex]] = [party[legalIndex], party[this.partyMemberIndex]];
       console.warn("Swapped %s %O with %s %O", partyMember?.name, partyMember, party[0]?.name, party[0]);
     }
 
@@ -1352,7 +1410,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
     if (this.fieldIndex === 1) {
       pokemon.setFieldPosition(FieldPosition.RIGHT, 0);
     } else {
-      const availablePartyMembers = this.getParty().filter(p => !p.isFainted()).length;
+      const availablePartyMembers = this.getParty().filter(p => p.isAllowedInBattle()).length;
       pokemon.setFieldPosition(!this.scene.currentBattle.double || availablePartyMembers === 1 ? FieldPosition.CENTER : FieldPosition.LEFT);
     }
 
@@ -1430,7 +1488,6 @@ export class SummonPhase extends PartyMemberPokemonPhase {
 
     if (!this.loaded || this.scene.currentBattle.battleType === BattleType.TRAINER || (this.scene.currentBattle.waveIndex % 10) === 1) {
       this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
-
       this.queuePostSummon();
     }
   }
@@ -1459,6 +1516,10 @@ export class SwitchSummonPhase extends SummonPhase {
     this.slotIndex = slotIndex;
     this.doReturn = doReturn;
     this.batonPass = batonPass;
+  }
+
+  start(): void {
+    super.start();
   }
 
   preSummon(): void {
@@ -1642,7 +1703,7 @@ export class ToggleDoublePositionPhase extends BattlePhase {
 
     const playerPokemon = this.scene.getPlayerField().find(p => p.isActive(true));
     if (playerPokemon) {
-      playerPokemon.setFieldPosition(this.double && this.scene.getParty().filter(p => !p.isFainted()).length > 1 ? FieldPosition.LEFT : FieldPosition.CENTER, 500).then(() => {
+      playerPokemon.setFieldPosition(this.double && this.scene.getParty().filter(p => p.isAllowedInBattle()).length > 1 ? FieldPosition.LEFT : FieldPosition.CENTER, 500).then(() => {
         if (playerPokemon.getFieldIndex() === 1) {
           const party = this.scene.getParty();
           party[1] = party[0];
@@ -1742,6 +1803,34 @@ export class TurnInitPhase extends FieldPhase {
   start() {
     super.start();
 
+    this.scene.getPlayerField().forEach(p => {
+      // If this pokemon is in play and evolved into something illegal under the current challenge, force a switch
+      if (p.isOnField() && !p.isAllowedInBattle()) {
+        this.scene.queueMessage(i18next.t("challenges:illegalEvolution", {"pokemon": p.name}), null, true);
+
+        const allowedPokemon = this.scene.getParty().filter(p => p.isAllowedInBattle());
+
+        if (!allowedPokemon.length) {
+          // If there are no longer any legal pokemon in the party, game over.
+          this.scene.clearPhaseQueue();
+          this.scene.unshiftPhase(new GameOverPhase(this.scene));
+        } else if (allowedPokemon.length >= this.scene.currentBattle.getBattlerCount() || (this.scene.currentBattle.double && !allowedPokemon[0].isActive(true))) {
+          // If there is at least one pokemon in the back that is legal to switch in, force a switch.
+          p.switchOut(false, true);
+        } else {
+          // If there are no pokemon in the back but we're not game overing, just hide the pokemon.
+          // This should only happen in double battles.
+          p.hideInfo();
+          p.setVisible(false);
+          this.scene.field.remove(p);
+          this.scene.triggerPokemonFormChange(p, SpeciesFormChangeActiveTrigger, true);
+        }
+        if (allowedPokemon.length === 1 && this.scene.currentBattle.double) {
+          this.scene.unshiftPhase(new ToggleDoublePositionPhase(this.scene, true));
+        }
+      }
+    });
+
     //this.scene.pushPhase(new MoveAnimTestPhase(this.scene));
     this.scene.eventTarget.dispatchEvent(new TurnInitEvent());
 
@@ -1776,9 +1865,15 @@ export class CommandPhase extends FieldPhase {
     super.start();
 
     if (this.fieldIndex) {
-      const allyCommand = this.scene.currentBattle.turnCommands[this.fieldIndex - 1];
-      if (allyCommand.command === Command.BALL || allyCommand.command === Command.RUN) {
-        this.scene.currentBattle.turnCommands[this.fieldIndex] = { command: allyCommand.command, skip: true };
+      // If we somehow are attempting to check the right pokemon but there's only one pokemon out
+      // Switch back to the center pokemon. This can happen rarely in double battles with mid turn switching
+      if (this.scene.getPlayerField().filter(p => p.isActive()).length === 1) {
+        this.fieldIndex = FieldPosition.CENTER;
+      } else {
+        const allyCommand = this.scene.currentBattle.turnCommands[this.fieldIndex - 1];
+        if (allyCommand.command === Command.BALL || allyCommand.command === Command.RUN) {
+          this.scene.currentBattle.turnCommands[this.fieldIndex] = { command: allyCommand.command, skip: true };
+        }
       }
     }
 
@@ -2353,7 +2448,7 @@ export class BattleEndPhase extends BattlePhase {
       }
     }
 
-    for (const pokemon of this.scene.getParty().filter(p => !p.isFainted())) {
+    for (const pokemon of this.scene.getParty().filter(p => p.isAllowedInBattle())) {
       applyPostBattleAbAttrs(PostBattleAbAttr, pokemon);
     }
 
@@ -3486,7 +3581,7 @@ export class DamagePhase extends PokemonPhase {
           this.scene.setFieldScale(0.75);
           this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
           this.scene.currentBattle.double = true;
-          const availablePartyMembers = this.scene.getParty().filter(p => !p.isFainted());
+          const availablePartyMembers = this.scene.getParty().filter(p => p.isAllowedInBattle());
           if (availablePartyMembers.length > 1) {
             this.scene.pushPhase(new ToggleDoublePositionPhase(this.scene, true));
             if (!availablePartyMembers[1].isOnField()) {
@@ -3544,7 +3639,7 @@ export class FaintPhase extends PokemonPhase {
       this.scene.currentBattle.enemyFaints += 1;
     }
 
-    this.scene.queueMessage(getPokemonMessage(pokemon, " fainted!"), null, true);
+    this.scene.queueMessage(i18next.t("battle:fainted", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), null, true);
 
     if (pokemon.turnData?.attacksReceived?.length) {
       const lastAttack = pokemon.turnData.attacksReceived[0];
@@ -3568,11 +3663,11 @@ export class FaintPhase extends PokemonPhase {
     }
 
     if (this.player) {
-      const nonFaintedPartyMembers = this.scene.getParty().filter(p => !p.isFainted());
-      const nonFaintedPartyMemberCount = nonFaintedPartyMembers.length;
+      const nonFaintedLegalPartyMembers = this.scene.getParty().filter(p => p.isAllowedInBattle());
+      const nonFaintedPartyMemberCount = nonFaintedLegalPartyMembers.length;
       if (!nonFaintedPartyMemberCount) {
         this.scene.unshiftPhase(new GameOverPhase(this.scene));
-      } else if (nonFaintedPartyMemberCount >= this.scene.currentBattle.getBattlerCount() || (this.scene.currentBattle.double && !nonFaintedPartyMembers[0].isActive(true))) {
+      } else if (nonFaintedPartyMemberCount >= this.scene.currentBattle.getBattlerCount() || (this.scene.currentBattle.double && !nonFaintedLegalPartyMembers[0].isActive(true))) {
         this.scene.pushPhase(new SwitchPhase(this.scene, this.fieldIndex, true, false));
       }
       if (nonFaintedPartyMemberCount === 1 && this.scene.currentBattle.double) {
@@ -3966,7 +4061,7 @@ export class GameOverPhase extends BattlePhase {
             this.scene.gameData.loadSession(this.scene, this.scene.sessionSlotId).then(() => {
               this.scene.pushPhase(new EncounterPhase(this.scene, true));
 
-              const availablePartyMembers = this.scene.getParty().filter(p => !p.isFainted()).length;
+              const availablePartyMembers = this.scene.getParty().filter(p => p.isAllowedInBattle()).length;
 
               this.scene.pushPhase(new SummonPhase(this.scene, 0));
               if (this.scene.currentBattle.double && availablePartyMembers > 1) {
@@ -4017,6 +4112,10 @@ export class GameOverPhase extends BattlePhase {
           this.scene.setFieldScale(1, true);
           this.scene.clearPhaseQueue();
           this.scene.ui.clearText();
+
+          if (this.victory && this.scene.gameMode.isChallenge) {
+            this.scene.gameMode.challenges.forEach(c => this.scene.validateAchvs(ChallengeAchv, c));
+          }
 
           const clear = (endCardPhase?: EndCardPhase) => {
             if (newClear) {
@@ -4221,17 +4320,17 @@ export class SwitchPhase extends BattlePhase {
     super.start();
 
     // Skip modal switch if impossible
-    if (this.isModal && !this.scene.getParty().filter(p => !p.isFainted() && !p.isActive(true)).length) {
+    if (this.isModal && !this.scene.getParty().filter(p => p.isAllowedInBattle() && !p.isActive(true)).length) {
       return super.end();
     }
 
     // Check if there is any space still in field
-    if (this.isModal && this.scene.getPlayerField().filter(p => !p.isFainted() && p.isActive(true)).length >= this.scene.currentBattle.getBattlerCount()) {
+    if (this.isModal && this.scene.getPlayerField().filter(p => p.isAllowedInBattle() && p.isActive(true)).length >= this.scene.currentBattle.getBattlerCount()) {
       return super.end();
     }
 
-    // Override field index to 0 in case of double battle where 2/3 remaining party members fainted at once
-    const fieldIndex = this.scene.currentBattle.getBattlerCount() === 1 || this.scene.getParty().filter(p => !p.isFainted()).length > 1 ? this.fieldIndex : 0;
+    // Override field index to 0 in case of double battle where 2/3 remaining legal party members fainted at once
+    const fieldIndex = this.scene.currentBattle.getBattlerCount() === 1 || this.scene.getParty().filter(p => p.isAllowedInBattle()).length > 1 ? this.fieldIndex : 0;
 
     this.scene.ui.setMode(Mode.PARTY, this.isModal ? PartyUiMode.FAINT_SWITCH : PartyUiMode.POST_BATTLE_SWITCH, fieldIndex, (slotIndex: integer, option: PartyOption) => {
       if (slotIndex >= this.scene.currentBattle.getBattlerCount() && slotIndex < 6) {
@@ -4917,7 +5016,8 @@ export class SelectModifierPhase extends BattlePhase {
       let cost: integer;
       switch (rowCursor) {
       case 0:
-        if (!cursor) {
+        switch (cursor) {
+        case 0:
           const rerollCost = this.getRerollCost(typeOptions, this.scene.lockModifierTiers);
           if (this.scene.money < rerollCost) {
             this.scene.ui.playError();
@@ -4932,18 +5032,25 @@ export class SelectModifierPhase extends BattlePhase {
             this.scene.animateMoneyChanged(false);
             this.scene.playSound("buy");
           }
-        } else if (cursor === 1) {
+          break;
+        case 1:
           this.scene.ui.setModeWithoutClear(Mode.PARTY, PartyUiMode.MODIFIER_TRANSFER, -1, (fromSlotIndex: integer, itemIndex: integer, itemQuantity: integer, toSlotIndex: integer) => {
             if (toSlotIndex !== undefined && fromSlotIndex < 6 && toSlotIndex < 6 && fromSlotIndex !== toSlotIndex && itemIndex > -1) {
               const itemModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-                    && (m as PokemonHeldItemModifier).getTransferrable(true) && (m as PokemonHeldItemModifier).pokemonId === party[fromSlotIndex].id) as PokemonHeldItemModifier[];
+                      && (m as PokemonHeldItemModifier).getTransferrable(true) && (m as PokemonHeldItemModifier).pokemonId === party[fromSlotIndex].id) as PokemonHeldItemModifier[];
               const itemModifier = itemModifiers[itemIndex];
               this.scene.tryTransferHeldItemModifier(itemModifier, party[toSlotIndex], true, itemQuantity);
             } else {
               this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost(typeOptions, this.scene.lockModifierTiers));
             }
           }, PartyUiHandler.FilterItemMaxStacks);
-        } else {
+          break;
+        case 2:
+          this.scene.ui.setModeWithoutClear(Mode.PARTY, PartyUiMode.CHECK, -1, () => {
+            this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost(typeOptions, this.scene.lockModifierTiers));
+          });
+          break;
+        case 3:
           this.scene.lockModifierTiers = !this.scene.lockModifierTiers;
           const uiHandler = this.scene.ui.getHandler() as ModifierSelectUiHandler;
           uiHandler.setRerollCost(this.getRerollCost(typeOptions, this.scene.lockModifierTiers));
@@ -5091,15 +5198,15 @@ export class EggLapsePhase extends Phase {
       return Overrides.IMMEDIATE_HATCH_EGGS_OVERRIDE ? true : --egg.hatchWaves < 1;
     });
 
-    let eggsToHatchCount: integer = eggsToHatch.length;
+    let eggCount: integer = eggsToHatch.length;
 
-    if (eggsToHatchCount) {
+    if (eggCount) {
       this.scene.queueMessage(i18next.t("battle:eggHatching"));
 
       for (const egg of eggsToHatch) {
-        this.scene.unshiftPhase(new EggHatchPhase(this.scene, egg, eggsToHatchCount));
-        if (eggsToHatchCount > 0) {
-          eggsToHatchCount--;
+        this.scene.unshiftPhase(new EggHatchPhase(this.scene, egg, eggCount));
+        if (eggCount > 0) {
+          eggCount--;
         }
       }
 

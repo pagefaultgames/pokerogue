@@ -5,11 +5,7 @@ import * as overrides from "#app/overrides";
 import {Abilities} from "#app/data/enums/abilities";
 import {Species} from "#app/data/enums/species";
 import {
-  MessagePhase,
-  PostSummonPhase,
-  ShowAbilityPhase,
-  StatChangePhase,
-  ToggleDoublePositionPhase
+  CommandPhase,
 } from "#app/phases";
 import {BattleStat} from "#app/data/battle-stat";
 
@@ -40,26 +36,10 @@ describe("Abilities - Intrepid Sword", () => {
     await game.runToSummon([
       Species.ZACIAN,
     ]);
-    await game.phaseInterceptor.runFrom(PostSummonPhase).to(PostSummonPhase);
-    expect(game.scene.getParty()[0].summonData).not.toBeUndefined();
-    let battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
-    expect(battleStatsPokemon[BattleStat.ATK]).toBe(0);
-    await game.phaseInterceptor.mustRun(ShowAbilityPhase).catch((error) => expect(error).toBe(ShowAbilityPhase));
-    await game.phaseInterceptor.mustRun(StatChangePhase).catch((error) => expect(error).toBe(StatChangePhase));
-    battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
+    await game.phaseInterceptor.to(CommandPhase, false);
+    const battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
     expect(battleStatsPokemon[BattleStat.ATK]).toBe(1);
-  }, 20000);
-
-  it("INTREPID SWORD on opponent", async() => {
-    await game.runToSummon([
-      Species.ZACIAN,
-    ]);
-    let battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
-    expect(battleStatsOpponent[BattleStat.ATK]).toBe(0);
-    await game.phaseInterceptor.runFrom(PostSummonPhase).to(ToggleDoublePositionPhase);
-    await game.phaseInterceptor.mustRun(StatChangePhase).catch((error) => expect(error).toBe(StatChangePhase));
-    await game.phaseInterceptor.whenAboutToRun(MessagePhase);
-    battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
+    const battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
     expect(battleStatsOpponent[BattleStat.ATK]).toBe(1);
   }, 20000);
 });

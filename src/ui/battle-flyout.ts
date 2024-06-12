@@ -4,7 +4,7 @@ import * as Utils from "../utils";
 import BattleScene from "#app/battle-scene.js";
 import { UiTheme } from "#app/enums/ui-theme.js";
 import Move from "#app/data/move.js";
-import { BattleSceneEventType, BerryUsedEvent, MoveUsedEvent } from "#app/battle-scene-events.js";
+import { BattleSceneEventType, BerryUsedEvent, MoveUsedEvent } from "../events/battle-scene";
 import { BerryType } from "#app/data/enums/berry-type.js";
 import { Moves } from "#app/data/enums/moves.js";
 
@@ -54,6 +54,9 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
   private flyoutText: Phaser.GameObjects.Text[] = new Array(4);
   /** The array of {@linkcode MoveInfo} used to track moves for the {@linkcode Pokemon} linked to the flyout */
   private moveInfo: MoveInfo[] = new Array();
+
+  /** Current state of the flyout's visibility */
+  public flyoutVisible: boolean = false;
 
   // Stores callbacks in a variable so they can be unsubscribed from when destroyed
   private readonly onMoveUsedEvent = (event: Event) => this.onMoveUsed(event);
@@ -170,6 +173,8 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
 
   /** Animates the flyout to either show or hide it by applying a fade and translation */
   toggleFlyout(visible: boolean): void {
+    this.flyoutVisible = visible;
+
     this.scene.tweens.add({
       targets: this.flyoutParent,
       x: visible ? this.anchorX : this.anchorX - this.translationX,
