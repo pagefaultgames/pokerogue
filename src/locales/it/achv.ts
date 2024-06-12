@@ -22,20 +22,20 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "Milionario",
   },
   "10M_MONEY": {
-    name: "Nell'un percento",
+    name: "L'Un Percento",
   },
 
   "DamageAchv": {
     description: "Infliggi {{damageAmount}} danno in un colpo",
   },
   "250_DMG": {
-    name: "Gran danni!",
+    name: "Gran Danni!",
   },
   "1000_DMG": {
-    name: "Incredibili danni",
+    name: "Incredibili Danni",
   },
   "2500_DMG": {
-    name: "Danni a palate!",
+    name: "Danni a Palate!",
   },
   "10000_DMG": {
     name: "One Punch Man",
@@ -61,17 +61,17 @@ export const PGMachv: AchievementTranslationEntries = {
     description: "Porta un pokémon a Lv{{level}}",
   },
   "LV_100": {
-    name: "E non finisce qui!",
+    name: "E Non Finisce Qui!",
   },
   "LV_250": {
     name: "Elite",
   },
   "LV_1000": {
-    name: "Verso l'infinito ed oltre!",
+    name: "Verso l'Infinito ed Oltre!",
   },
 
   "RibbonAchv": {
-    description: "Accumula un totale di {{ribbonAmount}} Nastri",
+    description: "Accumula un Totale di {{ribbonAmount}} Nastri",
   },
   "10_RIBBONS": {
     name: "Campione Lega Pokémon",
@@ -98,7 +98,7 @@ export const PGMachv: AchievementTranslationEntries = {
     description: "Raggiungi amicizia massima con un Pokémon",
   },
   "MEGA_EVOLVE": {
-    name: "Megamorph",
+    name: "Megamorfosi",
     description: "Megaevolvi un pokémon",
   },
   "GIGANTAMAX": {
@@ -118,7 +118,7 @@ export const PGMachv: AchievementTranslationEntries = {
     description: "Fondi due Pokémon insieme tramite cuneo DNA",
   },
   "MINI_BLACK_HOLE": {
-    name: "Universo di oggetti",
+    name: "Universo di Oggetti",
     description: "Ottieni un Mini Buco Nero",
   },
   "CATCH_MYTHICAL": {
@@ -126,7 +126,7 @@ export const PGMachv: AchievementTranslationEntries = {
     description: "Cattura un Pokémon mitico",
   },
   "CATCH_SUB_LEGENDARY": {
-    name: "(Semi-)Leggendario",
+    name: "(Semi)Leggendario",
     description: "Cattura un Pokémon semileggendario",
   },
   "CATCH_LEGENDARY": {
@@ -146,7 +146,7 @@ export const PGMachv: AchievementTranslationEntries = {
     description: "Schiudi l'uovo di un Pokémon mitico",
   },
   "HATCH_SUB_LEGENDARY": {
-    name:  "Uovo (Semi-)Leggendario",
+    name:  "Uovo (Semi)Leggendario",
     description: "Schiudi l'uovo di un Pokémon semileggendario",
   },
   "HATCH_LEGENDARY": {
@@ -154,7 +154,7 @@ export const PGMachv: AchievementTranslationEntries = {
     description: "Schiudi l'uovo di un Pokémon leggendario",
   },
   "HATCH_SHINY": {
-    name: "Uovo Shiny",
+    name: "Uovo Cromatico",
     description: "Schiudi l'uovo di un Pokémon shiny",
   },
   "HIDDEN_ABILITY": {
@@ -171,7 +171,7 @@ export const PGMachv: AchievementTranslationEntries = {
   },
 
   "MONO_GEN_ONE": {
-    name: "Il Rivale Originale",
+    name: "Rivale Originale",
     description: "Completa la modalità sfida generazione uno.",
   },
   "MONO_GEN_TWO": {
@@ -179,11 +179,11 @@ export const PGMachv: AchievementTranslationEntries = {
     description: "Completa la modalità sfida generazione due.",
   },
   "MONO_GEN_THREE": {
-    name: "Troppa acqua?",
+    name: "Troppa Acqua?",
     description: "Completa la modalità sfida generazione tre.",
   },
   "MONO_GEN_FOUR": {
-    name: "È veramente lei la più forte?",
+    name: "È Davvero La Più Forte?",
     description: "Completa la modalità sfida generazione quattro.",
   },
   "MONO_GEN_FIVE": {
@@ -203,7 +203,7 @@ export const PGMachv: AchievementTranslationEntries = {
     description:  "Completa la modalità sfida generazione otto.",
   },
   "MONO_GEN_NINE": {
-    name: "Non si stava impegnando",
+    name: "Non si Stava Impegnando...",
     description:  "Completa la modalità sfida generazione nove.",
   },
 
@@ -229,10 +229,10 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "Brock-o Forte!",
   },
   "MONO_BUG": {
-    name: "Pungi come un Beedrill",
+    name: "Pungi Come un Beedrill",
   },
   "MONO_GHOST": {
-    name: "Chi chiamerai?",
+    name: "Chi Chiamerai?",
   },
   "MONO_STEEL": {
     name: "Mono ACCIAIO",
@@ -241,7 +241,7 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "Mono FUOCO",
   },
   "MONO_WATER": {
-    name: "Se piove diluvia",
+    name: "Piove Sempre Sul Bagnato",
   },
   "MONO_GRASS": {
     name: "Mono ERBA",
