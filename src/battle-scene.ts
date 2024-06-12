@@ -1206,7 +1206,7 @@ export default class BattleScene extends SceneBase {
     case Species.GRENINJA:
       return Utils.randSeedInt(2);
     case Species.ZYGARDE:
-      return Utils.randSeedInt(3);
+      return Utils.randSeedInt(4);
     case Species.MINIOR:
       return Utils.randSeedInt(6);
     case Species.ALCREMIE:
