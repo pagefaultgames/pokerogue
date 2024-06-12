@@ -2295,18 +2295,22 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "Well done! You certainly are an unmatched talent."
     },
     "defeat": {
-      1: "A fresh wind blows through my heart... What an extraordinary effort!"
+      1: `A fresh wind blows through my heart...
+          $What an extraordinary effort!`
     }
   },
   "kieran": {
     "encounter": {
-      1: "Through hard work, I become stronger and stronger! I don't lose."
+      1: `Through hard work, I become stronger and stronger!
+          $I don't lose.`
     },
     "victory": {
-      1: "I don't believe it... What a fun and heart-punding battle!"
+      1: `I don't believe it...
+          $What a fun and heart-punding battle!`
     },
     "defeat": {
-      1: "Wowzers, what a battle! Time for you to train even harder."
+      1: `Wowzers, what a battle!
+          $Time for you to train even harder.`
     }
   },
   "rival": {
