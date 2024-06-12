@@ -479,7 +479,7 @@ export const PGFachv: AchievementTranslationEntries = {
     description: "Complete o desafio de monotipo {{type}}.",
   },
   "MONO_NORMAL": {
-    name: "Tenho medo de fantasma",
+    name: "Extra Ordinário",
   },
   "MONO_FIGHTING": {
     name: "Briga de Rua",
@@ -491,16 +491,16 @@ export const PGFachv: AchievementTranslationEntries = {
     name: "Menina Veneno",
   },
   "MONO_GROUND": {
-    name: "Deixou eles comendo poeira!",
+    name: "Comendo Poeira",
   },
   "MONO_ROCK": {
-    name: "Duro como Pedra",
+    name: "Duro Como Pedra",
   },
   "MONO_BUG": {
     name: "Vida de Inseto",
   },
   "MONO_GHOST": {
-    name: "Posso dormir com você hoje, mamãe?",
+    name: "Fantasminha Camarada",
   },
   "MONO_STEEL": {
     name: "Levantando Ferro",
@@ -509,7 +509,7 @@ export const PGFachv: AchievementTranslationEntries = {
     name: "Tá Pegando Fogo, Bicho!",
   },
   "MONO_WATER": {
-    name: "Água mole em pedra dura...",
+    name: "Água Mole em Pedra Dura...",
   },
   "MONO_GRASS": {
     name: "Jardim Botânico",
@@ -527,9 +527,9 @@ export const PGFachv: AchievementTranslationEntries = {
     name: "Caverna do Dragão",
   },
   "MONO_DARK": {
-    name: "É só uma fase",
+    name: "É Só Uma Fase",
   },
   "MONO_FAIRY": {
-    name: "Clube das Winx",
+    name: "O Clube das Winx",
   },
 } as const;
