@@ -1360,7 +1360,7 @@ const modifierPool: ModifierPool = {
   [ModifierTier.ULTRA]: [
     new WeightedModifierType(modifierTypes.ULTRA_BALL, 24),
     new WeightedModifierType(modifierTypes.MAX_LURE, 4),
-    new WeightedModifierType(modifierTypes.BIG_NUGGET, skipInLastClassicWaveOrDefault(5)),
+    new WeightedModifierType(modifierTypes.BIG_NUGGET, skipInLastClassicWaveOrDefault(12)),
     new WeightedModifierType(modifierTypes.PP_UP, 9),
     new WeightedModifierType(modifierTypes.PP_MAX, 3),
     new WeightedModifierType(modifierTypes.MINT, 4),
