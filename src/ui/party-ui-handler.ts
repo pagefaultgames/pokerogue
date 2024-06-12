@@ -869,6 +869,8 @@ export default class PartyUiHandler extends MessageUiHandler {
         optionText.setText(optionName + amountText);
       }
 
+      optionText.setText(`[shadow]${optionText.text}[/shadow]`);
+
       optionTexts.push(optionText);
 
       widestOptionWidth = Math.max(optionText.displayWidth, widestOptionWidth);
