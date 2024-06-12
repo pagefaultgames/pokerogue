@@ -7337,6 +7337,7 @@ export function initMoves() {
       .attr(StatChangeAttr, [ BattleStat.DEF, BattleStat.SPDEF ], -1, true),
     new AttackMove(Moves.HYPERSPACE_FURY, Type.DARK, MoveCategory.PHYSICAL, 100, -1, 5, 100, 0, 6)
       .attr(StatChangeAttr, BattleStat.DEF, -1, true)
+      .makesContact(false)
       .ignoresProtect(),
     /* Unused */
     new AttackMove(Moves.BREAKNECK_BLITZ__PHYSICAL, Type.NORMAL, MoveCategory.PHYSICAL, -1, -1, 1, -1, 0, 7)
