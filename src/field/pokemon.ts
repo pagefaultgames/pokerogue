@@ -1104,9 +1104,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!cancelled.value && !ignoreAbility) {
       applyPreDefendAbAttrs(MoveImmunityAbAttr, this, source, move, cancelled, typeMultiplier, true);
     }
-    if (!!this.summonData.tags.find((tag) => tag instanceof TypeImmuneTag && tag.immuneType === move.type)) {
-      cancelled.value = true;
-    }
+
     return (!cancelled.value ? typeMultiplier.value : 0) as TypeDamageMultiplier;
   }
 
@@ -1132,6 +1130,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!ignoreStrongWinds && this.scene.arena.weather?.weatherType === WeatherType.STRONG_WINDS && !this.scene.arena.weather.isEffectSuppressed(this.scene) && multiplier >= 2 && this.isOfType(Type.FLYING) && getTypeDamageMultiplier(moveType, Type.FLYING) === 2) {
       multiplier /= 2;
     }
+
+    if (!!this.summonData.tags.find((tag) => tag instanceof TypeImmuneTag && tag.immuneType === moveType)) {
+      multiplier = 0;
+    }
+
     return multiplier;
   }
 
@@ -1709,9 +1712,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     switch (moveCategory) {
     case MoveCategory.PHYSICAL:
     case MoveCategory.SPECIAL:
-      if (!!this.summonData.tags.find((tag) => tag instanceof TypeImmuneTag && tag.immuneType === move.type)) {
-        typeMultiplier.value = 0;
-      }
       const isPhysical = moveCategory === MoveCategory.PHYSICAL;
       const power = new Utils.NumberHolder(move.power);
       const sourceTeraType = source.getTeraType();
