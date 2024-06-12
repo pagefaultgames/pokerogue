@@ -49,7 +49,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "victory": {
       1: "Wow, c'était impressionnant. J'ai beaucoup à apprendre.",
       2: "Je ne pensais pas que perdrait comme ça...",
-      3: "J'espère que j'aurais ma revanche un jour.",
+      3: "J'espère que j'aurai ma revanche un jour.",
       4: "C'était super amusant ! Ce combat m'a épuisé...",
       5: "Tu m'as appris une belle leçon ! Tu es vraiment incroyable !",
       6: "Vraiment ? J'ai perdu... C'est des choses qui arrivent, ça me déprime mais tu es vraiment très cool.",
