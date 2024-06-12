@@ -61,6 +61,7 @@ export const battle: SimpleTranslationEntries = {
   "useMove": "¡{{pokemonNameWithAffix}} usó {{moveName}}!",
   "drainMessage": "¡{{pokemonName}} tuvo su\nenergía absorbida!",
   "regainHealth": "¡{{pokemonName}} recuperó\nPS!",
+  "fainted": "{{pokemonNameWithAffix}} fainted!",
   "battlerTagsRechargingLapse": "{{pokemonNameWithAffix}} must\nrecharge!",
   "battlerTagsTrappedOnAdd": "{{pokemonNameWithAffix}} can no\nlonger escape!",
   "battlerTagsTrappedOnRemove": "{{pokemonNameWithAffix}} was freed\nfrom {{moveName}}",
