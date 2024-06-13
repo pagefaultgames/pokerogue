@@ -40,13 +40,15 @@ export const menu: SimpleTranslationEntries = {
   "weeklyRankings": "Classifica Settimanale",
   "noRankings": "Nessuna Classifica",
   "loading": "Caricamento…",
+  "loadingAsset": "Loading asset: {{assetName}}",
   "playersOnline": "Giocatori Online",
   "evolving": "Cosa?\n{{pokemonName}} si evolvendo!",
   "stoppedEvolving": "{{pokemonName}} ha smesso di evolversi.",
   "pauseEvolutionsQuestion": "Vuoi sospendere le evoluzioni per {{pokemonName}}?\nLe evoluzioni possono essere riattivate dalla schermata del party.",
   "evolutionsPaused": "Le evoluzioni sono state sospese per {{pokemonName}}.",
   "evolutionDone": "Congratulazioni!\n{{pokemonName}} si è evoluto in {{evolvedPokemonName}}!",
-  "empty":"Vuoto",
   "yes":"Si",
   "no":"No",
+  "disclaimer": "DISCLAIMER",
+  "disclaimerDescription": "This game is an unfinished product; it might have playability issues (including the potential loss of save data),\n change without notice, and may or may not be updated further or completed."
 } as const;

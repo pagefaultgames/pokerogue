@@ -55,5 +55,11 @@ export const battle: SimpleTranslationEntries = {
   "notDisabled": "{{pokemonName}}'s {{moveName}} is disabled\nno more!",
   "skipItemQuestion": "Are you sure you want to skip taking an item?",
   "eggHatching": "Oh?",
-  "ivScannerUseQuestion": "Use IV Scanner on {{pokemonName}}?"
+  "ivScannerUseQuestion": "Use IV Scanner on {{pokemonName}}?",
+  "wildPokemonWithAffix": "Wild {{pokemonName}}",
+  "foePokemonWithAffix": "Foe {{pokemonName}}",
+  "useMove": "{{pokemonNameWithAffix}} used {{moveName}}!",
+  "drainMessage": "{{pokemonName}} had its\nenergy drained!",
+  "regainHealth": "{{pokemonName}} regained\nhealth!",
+  "fainted": "{{pokemonNameWithAffix}} fainted!"
 } as const;

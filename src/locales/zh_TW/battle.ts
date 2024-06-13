@@ -4,7 +4,7 @@ export const battle: SimpleTranslationEntries = {
   "bossAppeared": "{{bossName}} 出現了.",
   "trainerAppeared": "{{trainerName}}\n想要和你對戰!",
   "trainerAppearedDouble": "{{trainerName}}\n想要和你對戰!",
-  "singleWildAppeared": "一只野生的 {{pokemonName}} 出現了!",
+  "singleWildAppeared": "一隻野生的 {{pokemonName}} 出現了!",
   "multiWildAppeared": "野生的 {{pokemonName1}}\n和 {{pokemonName2}} 出現了!",
   "playerComeBack": "回來吧, {{pokemonName}}!",
   "trainerComeBack": "{{trainerName}} 收回了 {{pokemonName}}!",
@@ -52,5 +52,11 @@ export const battle: SimpleTranslationEntries = {
   "notDisabled": "{{moveName}} 不再被禁用!",
   "skipItemQuestion": "你要跳過拾取道具嗎?",
   "eggHatching": "咦?",
-  "ivScannerUseQuestion": "對 {{pokemonName}} 使用個體值掃描?"
+  "ivScannerUseQuestion": "對 {{pokemonName}} 使用個體值掃描?",
+  "wildPokemonWithAffix": "Wild {{pokemonName}}",
+  "foePokemonWithAffix": "Foe {{pokemonName}}",
+  "useMove": "{{pokemonNameWithAffix}} used {{moveName}}!",
+  "drainMessage": "{{pokemonName}} had its\nenergy drained!",
+  "regainHealth": "{{pokemonName}} regained\nhealth!",
+  "fainted": "{{pokemonNameWithAffix}} fainted!"
 } as const;
