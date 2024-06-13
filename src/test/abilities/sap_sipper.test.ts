@@ -5,7 +5,7 @@ import * as overrides from "#app/overrides";
 import {Species} from "#app/data/enums/species";
 import {
   CommandPhase,
-  EnemyCommandPhase, TurnEndPhase,
+  EnemyCommandPhase, MoveEndPhase, TurnEndPhase,
 } from "#app/phases";
 import {Mode} from "#app/ui/ui";
 import {Moves} from "#app/data/enums/moves";
@@ -14,8 +14,9 @@ import {Command} from "#app/ui/command-ui-handler";
 import { Abilities } from "#app/data/enums/abilities.js";
 import { BattleStat } from "#app/data/battle-stat.js";
 import { TerrainType } from "#app/data/terrain.js";
+import { BattlerTagType } from "#app/data/enums/battler-tag-type.js";
 
-// See also: ArenaTypeAbAttr
+// See also: TypeImmunityAbAttr
 describe("Abilities - Sap Sipper", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -112,5 +113,29 @@ describe("Abilities - Sap Sipper", () => {
     expect(game.scene.arena.terrain).toBeDefined();
     expect(game.scene.arena.terrain.terrainType).toBe(TerrainType.GRASSY);
     expect(game.scene.getEnemyParty()[0].summonData.battleStats[BattleStat.ATK]).toBe(0);
+  });
+
+  it("do not activate against status moves that target the user", async() => {
+    const moveToUse = Moves.SPIKY_SHIELD;
+    const ability = Abilities.SAP_SIPPER;
+
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
+    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(ability);
+    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
+    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
+    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
+
+    await game.startBattle();
+
+    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
+
+    await game.phaseInterceptor.to(MoveEndPhase);
+
+    expect(game.scene.getParty()[0].getTag(BattlerTagType.SPIKY_SHIELD)).toBeDefined();
+
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    expect(game.scene.getParty()[0].summonData.battleStats[BattleStat.ATK]).toBe(0);
+    expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
   });
 });
