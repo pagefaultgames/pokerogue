@@ -3,14 +3,9 @@ import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
 import * as overrides from "#app/overrides";
 import {Species} from "#app/data/enums/species";
-import {
-  CommandPhase,
-  EnemyCommandPhase, TurnEndPhase,
-} from "#app/phases";
-import {Mode} from "#app/ui/ui";
+import { TurnEndPhase } from "#app/phases";
 import {Moves} from "#app/data/enums/moves";
 import {getMovePosition} from "#app/test/utils/gameManagerUtils";
-import {Command} from "#app/ui/command-ui-handler";
 import { Abilities } from "#app/data/enums/abilities.js";
 import { BattleStat } from "#app/data/battle-stat.js";
 import { TerrainType } from "#app/data/terrain.js";
@@ -49,15 +44,9 @@ describe("Abilities - Sap Sipper", () => {
 
     const startingOppHp = game.scene.currentBattle.enemyParty[0].hp;
 
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, moveToUse);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
+    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
 
-    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnEndPhase);
+    await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(startingOppHp - game.scene.getEnemyParty()[0].hp).toBe(0);
     expect(game.scene.getEnemyParty()[0].summonData.battleStats[BattleStat.ATK]).toBe(1);
@@ -74,15 +63,9 @@ describe("Abilities - Sap Sipper", () => {
 
     await game.startBattle();
 
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, moveToUse);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
+    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
 
-    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnEndPhase);
+    await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(game.scene.getEnemyParty()[0].status).toBeUndefined();
     expect(game.scene.getEnemyParty()[0].summonData.battleStats[BattleStat.ATK]).toBe(1);
@@ -99,15 +82,9 @@ describe("Abilities - Sap Sipper", () => {
 
     await game.startBattle();
 
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, moveToUse);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
+    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
 
-    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnEndPhase);
+    await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(game.scene.arena.terrain).toBeDefined();
     expect(game.scene.arena.terrain.terrainType).toBe(TerrainType.GRASSY);
@@ -127,15 +104,9 @@ describe("Abilities - Sap Sipper", () => {
 
     const startingOppHp = game.scene.currentBattle.enemyParty[0].hp;
 
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, moveToUse);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
+    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
 
-    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnEndPhase);
+    await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(startingOppHp - game.scene.getEnemyParty()[0].hp).toBe(0);
     expect(game.scene.getEnemyParty()[0].summonData.battleStats[BattleStat.ATK]).toBe(1);
@@ -157,15 +128,9 @@ describe("Abilities - Sap Sipper", () => {
 
     const startingOppHp = game.scene.currentBattle.enemyParty[0].hp;
 
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, moveToUse);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
+    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
 
-    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnEndPhase);
+    await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(startingOppHp - game.scene.getEnemyParty()[0].hp).toBe(0);
     expect(game.scene.getEnemyParty()[0].summonData.battleStats[BattleStat.ATK]).toBe(1);
