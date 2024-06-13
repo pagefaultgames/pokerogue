@@ -1022,53 +1022,53 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       }
     } else if (this.startCursorObj.visible) {
       switch (button) {
-      case Button.ACTION:
-        if (this.tryStart(true)) {
+        case Button.ACTION:
+          if (this.tryStart(true)) {
+            success = true;
+          } else {
+            error = true;
+          }
+          break;
+        case Button.UP:
+          this.startCursorObj.setVisible(false);
+          this.setGenMode(true);
           success = true;
-        } else {
-          error = true;
-        }
-        break;
-      case Button.UP:
-        this.startCursorObj.setVisible(false);
-        this.setGenMode(true);
-        success = true;
-        break;
-      case Button.LEFT:
-        this.startCursorObj.setVisible(false);
-        this.setGenMode(false);
-        this.setCursor(this.cursor + 8);
-        success = true;
-        break;
-      case Button.RIGHT:
-        this.startCursorObj.setVisible(false);
-        this.setGenMode(false);
-        success = true;
-        break;
+          break;
+        case Button.LEFT:
+          this.startCursorObj.setVisible(false);
+          this.setGenMode(false);
+          this.setCursor(this.cursor + 8);
+          success = true;
+          break;
+        case Button.RIGHT:
+          this.startCursorObj.setVisible(false);
+          this.setGenMode(false);
+          success = true;
+          break;
       }
     } else if (this.genMode) {
       switch (button) {
-      case Button.UP:
-        if (this.genCursor) {
-          success = this.setCursor(this.genCursor - 1);
-        }
-        break;
-      case Button.DOWN:
-        if (this.genCursor < 2) {
-          success = this.setCursor(this.genCursor + 1);
-        } else {
-          this.startCursorObj.setVisible(true);
-          this.setGenMode(true);
-          success = true;
-        }
-        break;
-      case Button.LEFT:
-        success = this.setGenMode(false);
-        this.setCursor(this.cursor + 8);
-        break;
-      case Button.RIGHT:
-        success = this.setGenMode(false);
-        break;
+        case Button.UP:
+          if (this.genCursor) {
+            success = this.setCursor(this.genCursor - 1);
+          }
+          break;
+        case Button.DOWN:
+          if (this.genCursor < 2) {
+            success = this.setCursor(this.genCursor + 1);
+          } else {
+            this.startCursorObj.setVisible(true);
+            this.setGenMode(true);
+            success = true;
+          }
+          break;
+        case Button.LEFT:
+          success = this.setGenMode(false);
+          this.setCursor(this.cursor + 8);
+          break;
+        case Button.RIGHT:
+          success = this.setGenMode(false);
+          break;
       }
     } else {
       if (button === Button.ACTION) {
@@ -1362,139 +1362,139 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         const row = Math.floor(this.cursor / 9);
         const props = this.scene.gameData.getSpeciesDexAttrProps(this.lastSpecies, this.dexAttrCursor);
         switch (button) {
-        case Button.CYCLE_SHINY:
-          if (this.canCycleShiny) {
-            this.setSpeciesDetails(this.lastSpecies, !props.shiny, undefined, undefined, props.shiny ? 0 : undefined, undefined, undefined);
-            if (this.dexAttrCursor & DexAttr.SHINY) {
-              this.scene.playSound("sparkle");
-            } else {
+          case Button.CYCLE_SHINY:
+            if (this.canCycleShiny) {
+              this.setSpeciesDetails(this.lastSpecies, !props.shiny, undefined, undefined, props.shiny ? 0 : undefined, undefined, undefined);
+              if (this.dexAttrCursor & DexAttr.SHINY) {
+                this.scene.playSound("sparkle");
+              } else {
+                success = true;
+              }
+            }
+            break;
+          case Button.CYCLE_FORM:
+            if (this.canCycleForm) {
+              const formCount = this.lastSpecies.forms.length;
+              let newFormIndex = props.formIndex;
+              do {
+                newFormIndex = (newFormIndex + 1) % formCount;
+                if (this.lastSpecies.forms[newFormIndex].isStarterSelectable && this.speciesStarterDexEntry.caughtAttr & this.scene.gameData.getFormAttr(newFormIndex)) {
+                  break;
+                }
+              } while (newFormIndex !== props.formIndex);
+              this.setSpeciesDetails(this.lastSpecies, undefined, newFormIndex, undefined, undefined, undefined, undefined);
               success = true;
             }
-          }
-          break;
-        case Button.CYCLE_FORM:
-          if (this.canCycleForm) {
-            const formCount = this.lastSpecies.forms.length;
-            let newFormIndex = props.formIndex;
-            do {
-              newFormIndex = (newFormIndex + 1) % formCount;
-              if (this.lastSpecies.forms[newFormIndex].isStarterSelectable && this.speciesStarterDexEntry.caughtAttr & this.scene.gameData.getFormAttr(newFormIndex)) {
-                break;
-              }
-            } while (newFormIndex !== props.formIndex);
-            this.setSpeciesDetails(this.lastSpecies, undefined, newFormIndex, undefined, undefined, undefined, undefined);
-            success = true;
-          }
-          break;
-        case Button.CYCLE_GENDER:
-          if (this.canCycleGender) {
-            this.setSpeciesDetails(this.lastSpecies, undefined, undefined, !props.female, undefined, undefined, undefined);
-            success = true;
-          }
-          break;
-        case Button.CYCLE_ABILITY:
-          if (this.canCycleAbility) {
-            const abilityCount = this.lastSpecies.getAbilityCount();
-            const abilityAttr = this.scene.gameData.starterData[this.lastSpecies.speciesId].abilityAttr;
-            let newAbilityIndex = this.abilityCursor;
-            do {
-              newAbilityIndex = (newAbilityIndex + 1) % abilityCount;
-              if (!newAbilityIndex) {
-                if (abilityAttr & AbilityAttr.ABILITY_1) {
-                  break;
+            break;
+          case Button.CYCLE_GENDER:
+            if (this.canCycleGender) {
+              this.setSpeciesDetails(this.lastSpecies, undefined, undefined, !props.female, undefined, undefined, undefined);
+              success = true;
+            }
+            break;
+          case Button.CYCLE_ABILITY:
+            if (this.canCycleAbility) {
+              const abilityCount = this.lastSpecies.getAbilityCount();
+              const abilityAttr = this.scene.gameData.starterData[this.lastSpecies.speciesId].abilityAttr;
+              let newAbilityIndex = this.abilityCursor;
+              do {
+                newAbilityIndex = (newAbilityIndex + 1) % abilityCount;
+                if (!newAbilityIndex) {
+                  if (abilityAttr & AbilityAttr.ABILITY_1) {
+                    break;
+                  }
+                } else if (newAbilityIndex === 1) {
+                  if (abilityAttr & (this.lastSpecies.ability2 ? AbilityAttr.ABILITY_2 : AbilityAttr.ABILITY_HIDDEN)) {
+                    break;
+                  }
+                } else {
+                  if (abilityAttr & AbilityAttr.ABILITY_HIDDEN) {
+                    break;
+                  }
                 }
-              } else if (newAbilityIndex === 1) {
-                if (abilityAttr & (this.lastSpecies.ability2 ? AbilityAttr.ABILITY_2 : AbilityAttr.ABILITY_HIDDEN)) {
-                  break;
+              } while (newAbilityIndex !== this.abilityCursor);
+              this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, newAbilityIndex, undefined);
+              success = true;
+            }
+            break;
+          case Button.CYCLE_NATURE:
+            if (this.canCycleNature) {
+              const natures = this.scene.gameData.getNaturesForAttr(this.speciesStarterDexEntry.natureAttr);
+              const natureIndex = natures.indexOf(this.natureCursor);
+              const newNature = natures[natureIndex < natures.length - 1 ? natureIndex + 1 : 0];
+              this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, newNature, undefined);
+              success = true;
+            }
+            break;
+          case Button.V:
+            if (this.canCycleVariant) {
+              let newVariant = props.variant;
+              do {
+                newVariant = (newVariant + 1) % 3;
+                if (!newVariant) {
+                  if (this.speciesStarterDexEntry.caughtAttr & DexAttr.DEFAULT_VARIANT) {
+                    break;
+                  }
+                } else if (newVariant === 1) {
+                  if (this.speciesStarterDexEntry.caughtAttr & DexAttr.VARIANT_2) {
+                    break;
+                  }
+                } else {
+                  if (this.speciesStarterDexEntry.caughtAttr & DexAttr.VARIANT_3) {
+                    break;
+                  }
                 }
-              } else {
-                if (abilityAttr & AbilityAttr.ABILITY_HIDDEN) {
-                  break;
-                }
-              }
-            } while (newAbilityIndex !== this.abilityCursor);
-            this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, newAbilityIndex, undefined);
-            success = true;
-          }
-          break;
-        case Button.CYCLE_NATURE:
-          if (this.canCycleNature) {
-            const natures = this.scene.gameData.getNaturesForAttr(this.speciesStarterDexEntry.natureAttr);
-            const natureIndex = natures.indexOf(this.natureCursor);
-            const newNature = natures[natureIndex < natures.length - 1 ? natureIndex + 1 : 0];
-            this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, newNature, undefined);
-            success = true;
-          }
-          break;
-        case Button.V:
-          if (this.canCycleVariant) {
-            let newVariant = props.variant;
-            do {
-              newVariant = (newVariant + 1) % 3;
-              if (!newVariant) {
-                if (this.speciesStarterDexEntry.caughtAttr & DexAttr.DEFAULT_VARIANT) {
-                  break;
-                }
-              } else if (newVariant === 1) {
-                if (this.speciesStarterDexEntry.caughtAttr & DexAttr.VARIANT_2) {
-                  break;
-                }
-              } else {
-                if (this.speciesStarterDexEntry.caughtAttr & DexAttr.VARIANT_3) {
-                  break;
-                }
-              }
-            } while (newVariant !== props.variant);
-            this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, newVariant, undefined, undefined);
-            success = true;
-          }
-          break;
-        case Button.UP:
-          if (row) {
-            success = this.setCursor(this.cursor - 9);
-          } else {
+              } while (newVariant !== props.variant);
+              this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, newVariant, undefined, undefined);
+              success = true;
+            }
+            break;
+          case Button.UP:
+            if (row) {
+              success = this.setCursor(this.cursor - 9);
+            } else {
             // when strictly opposite starter based on rows length
             // does not exits, set cursor on the second to last row
-            if (this.cursor + (rows - 1) * 9 > genStarters - 1) {
-              success = this.setCursor(this.cursor + (rows - 2) * 9);
-            } else {
-              success = this.setCursor(this.cursor + (rows - 1) * 9);
+              if (this.cursor + (rows - 1) * 9 > genStarters - 1) {
+                success = this.setCursor(this.cursor + (rows - 2) * 9);
+              } else {
+                success = this.setCursor(this.cursor + (rows - 1) * 9);
+              }
             }
-          }
-          break;
-        case Button.DOWN:
-          if (row < rows - 2 || (row < rows - 1 && this.cursor % 9 <= (genStarters - 1) % 9)) {
-            success = this.setCursor(this.cursor + 9);
-          } else {
+            break;
+          case Button.DOWN:
+            if (row < rows - 2 || (row < rows - 1 && this.cursor % 9 <= (genStarters - 1) % 9)) {
+              success = this.setCursor(this.cursor + 9);
+            } else {
             // if there is no starter below while being on the second to
             // last row, adjust cursor position with one line less
-            if (row === rows - 2 && this.cursor + 9 > genStarters - 1) {
-              success = this.setCursor(this.cursor - (rows - 2) * 9);
+              if (row === rows - 2 && this.cursor + 9 > genStarters - 1) {
+                success = this.setCursor(this.cursor - (rows - 2) * 9);
+              } else {
+                success = this.setCursor(this.cursor - (rows - 1) * 9);
+              }
+            }
+            break;
+          case Button.LEFT:
+            if (this.cursor % 9) {
+              success = this.setCursor(this.cursor - 1);
             } else {
-              success = this.setCursor(this.cursor - (rows - 1) * 9);
+              if (row >= Math.min(5, rows - 1)) {
+                this.startCursorObj.setVisible(true);
+              }
+              success = this.setGenMode(true);
             }
-          }
-          break;
-        case Button.LEFT:
-          if (this.cursor % 9) {
-            success = this.setCursor(this.cursor - 1);
-          } else {
-            if (row >= Math.min(5, rows - 1)) {
-              this.startCursorObj.setVisible(true);
+            break;
+          case Button.RIGHT:
+            if (this.cursor % 9 < (row < rows - 1 ? 8 : (genStarters - 1) % 9)) {
+              success = this.setCursor(this.cursor + 1);
+            } else {
+              if (row >= Math.min(5, rows - 1)) {
+                this.startCursorObj.setVisible(true);
+              }
+              success = this.setGenMode(true);
             }
-            success = this.setGenMode(true);
-          }
-          break;
-        case Button.RIGHT:
-          if (this.cursor % 9 < (row < rows - 1 ? 8 : (genStarters - 1) % 9)) {
-            success = this.setCursor(this.cursor + 1);
-          } else {
-            if (row >= Math.min(5, rows - 1)) {
-              this.startCursorObj.setVisible(true);
-            }
-            success = this.setGenMode(true);
-          }
-          break;
+            break;
         }
       }
     }
@@ -1549,26 +1549,26 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     if (gamepadType === "touch") {
       gamepadType = "keyboard";
       switch (iconSetting) {
-      case SettingKeyboard.Button_Cycle_Shiny:
-        iconPath = "R.png";
-        break;
-      case SettingKeyboard.Button_Cycle_Form:
-        iconPath = "F.png";
-        break;
-      case SettingKeyboard.Button_Cycle_Gender:
-        iconPath = "G.png";
-        break;
-      case SettingKeyboard.Button_Cycle_Ability:
-        iconPath = "E.png";
-        break;
-      case SettingKeyboard.Button_Cycle_Nature:
-        iconPath = "N.png";
-        break;
-      case SettingKeyboard.Button_Cycle_Variant:
-        iconPath = "V.png";
-        break;
-      default:
-        break;
+        case SettingKeyboard.Button_Cycle_Shiny:
+          iconPath = "R.png";
+          break;
+        case SettingKeyboard.Button_Cycle_Form:
+          iconPath = "F.png";
+          break;
+        case SettingKeyboard.Button_Cycle_Gender:
+          iconPath = "G.png";
+          break;
+        case SettingKeyboard.Button_Cycle_Ability:
+          iconPath = "E.png";
+          break;
+        case SettingKeyboard.Button_Cycle_Nature:
+          iconPath = "N.png";
+          break;
+        case SettingKeyboard.Button_Cycle_Variant:
+          iconPath = "V.png";
+          break;
+        default:
+          break;
       }
     } else {
       iconPath = this.scene.inputController?.getIconForLatestInputRecorded(iconSetting);
@@ -1623,12 +1623,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   getValueLimit(): integer {
     const valueLimit = new Utils.IntegerHolder(0);
     switch (this.scene.gameMode.modeId) {
-    case GameModes.ENDLESS:
-    case GameModes.SPLICED_ENDLESS:
-      valueLimit.value = 15;
-      break;
-    default:
-      valueLimit.value = 10;
+      case GameModes.ENDLESS:
+      case GameModes.SPLICED_ENDLESS:
+        valueLimit.value = 15;
+        break;
+      default:
+        valueLimit.value = 10;
     }
 
     Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_POINTS, valueLimit);
@@ -2236,16 +2236,16 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.starterValueLabels[cursor].setText(valueStr);
     let textStyle: TextStyle;
     switch (baseStarterValue - starterValue) {
-    case 0:
-      textStyle = TextStyle.WINDOW;
-      break;
-    case 1:
-    case 0.5:
-      textStyle = TextStyle.SUMMARY_BLUE;
-      break;
-    default:
-      textStyle = TextStyle.SUMMARY_GOLD;
-      break;
+      case 0:
+        textStyle = TextStyle.WINDOW;
+        break;
+      case 1:
+      case 0.5:
+        textStyle = TextStyle.SUMMARY_BLUE;
+        break;
+      default:
+        textStyle = TextStyle.SUMMARY_GOLD;
+        break;
     }
     this.starterValueLabels[cursor].setColor(this.getTextColor(textStyle));
     this.starterValueLabels[cursor].setShadowColor(this.getTextColor(textStyle, true));

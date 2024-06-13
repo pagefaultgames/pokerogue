@@ -159,125 +159,125 @@ export function getAchievementDescription(localizationKey: string): string {
   }
 
   switch (localizationKey) {
-  case "10K_MONEY":
-    return i18next.t(`${genderPrefix}achv:MoneyAchv.description` as ParseKeys, {"moneyAmount": achvs._10K_MONEY.moneyAmount.toLocaleString("en-US")});
-  case "100K_MONEY":
-    return i18next.t(`${genderPrefix}achv:MoneyAchv.description` as ParseKeys, {"moneyAmount": achvs._100K_MONEY.moneyAmount.toLocaleString("en-US")});
-  case "1M_MONEY":
-    return i18next.t(`${genderPrefix}achv:MoneyAchv.description` as ParseKeys, {"moneyAmount": achvs._1M_MONEY.moneyAmount.toLocaleString("en-US")});
-  case "10M_MONEY":
-    return i18next.t(`${genderPrefix}achv:MoneyAchv.description` as ParseKeys, {"moneyAmount": achvs._10M_MONEY.moneyAmount.toLocaleString("en-US")});
-  case "250_DMG":
-    return i18next.t(`${genderPrefix}achv:DamageAchv.description` as ParseKeys, {"damageAmount": achvs._250_DMG.damageAmount.toLocaleString("en-US")});
-  case "1000_DMG":
-    return i18next.t(`${genderPrefix}achv:DamageAchv.description` as ParseKeys, {"damageAmount": achvs._1000_DMG.damageAmount.toLocaleString("en-US")});
-  case "2500_DMG":
-    return i18next.t(`${genderPrefix}achv:DamageAchv.description` as ParseKeys, {"damageAmount": achvs._2500_DMG.damageAmount.toLocaleString("en-US")});
-  case "10000_DMG":
-    return i18next.t(`${genderPrefix}achv:DamageAchv.description` as ParseKeys, {"damageAmount": achvs._10000_DMG.damageAmount.toLocaleString("en-US")});
-  case "250_HEAL":
-    return i18next.t(`${genderPrefix}achv:HealAchv.description` as ParseKeys, {"healAmount": achvs._250_HEAL.healAmount.toLocaleString("en-US"), "HP": i18next.t("pokemonInfo:Stat.HPshortened")});
-  case "1000_HEAL":
-    return i18next.t(`${genderPrefix}achv:HealAchv.description` as ParseKeys, {"healAmount": achvs._1000_HEAL.healAmount.toLocaleString("en-US"), "HP": i18next.t("pokemonInfo:Stat.HPshortened")});
-  case "2500_HEAL":
-    return i18next.t(`${genderPrefix}achv:HealAchv.description` as ParseKeys, {"healAmount": achvs._2500_HEAL.healAmount.toLocaleString("en-US"), "HP": i18next.t("pokemonInfo:Stat.HPshortened")});
-  case "10000_HEAL":
-    return i18next.t(`${genderPrefix}achv:HealAchv.description` as ParseKeys, {"healAmount": achvs._10000_HEAL.healAmount.toLocaleString("en-US"), "HP": i18next.t("pokemonInfo:Stat.HPshortened")});
-  case "LV_100":
-    return i18next.t(`${genderPrefix}achv:LevelAchv.description` as ParseKeys, {"level": achvs.LV_100.level});
-  case "LV_250":
-    return i18next.t(`${genderPrefix}achv:LevelAchv.description` as ParseKeys, {"level": achvs.LV_250.level});
-  case "LV_1000":
-    return i18next.t(`${genderPrefix}achv:LevelAchv.description` as ParseKeys, {"level": achvs.LV_1000.level});
-  case "10_RIBBONS":
-    return i18next.t(`${genderPrefix}achv:RibbonAchv.description` as ParseKeys, {"ribbonAmount": achvs._10_RIBBONS.ribbonAmount.toLocaleString("en-US")});
-  case "25_RIBBONS":
-    return i18next.t(`${genderPrefix}achv:RibbonAchv.description` as ParseKeys, {"ribbonAmount": achvs._25_RIBBONS.ribbonAmount.toLocaleString("en-US")});
-  case "50_RIBBONS":
-    return i18next.t(`${genderPrefix}achv:RibbonAchv.description` as ParseKeys, {"ribbonAmount": achvs._50_RIBBONS.ribbonAmount.toLocaleString("en-US")});
-  case "75_RIBBONS":
-    return i18next.t(`${genderPrefix}achv:RibbonAchv.description` as ParseKeys, {"ribbonAmount": achvs._75_RIBBONS.ribbonAmount.toLocaleString("en-US")});
-  case "100_RIBBONS":
-    return i18next.t(`${genderPrefix}achv:RibbonAchv.description` as ParseKeys, {"ribbonAmount": achvs._100_RIBBONS.ribbonAmount.toLocaleString("en-US")});
-  case "TRANSFER_MAX_BATTLE_STAT":
-    return i18next.t(`${genderPrefix}achv:TRANSFER_MAX_BATTLE_STAT.description` as ParseKeys);
-  case "MAX_FRIENDSHIP":
-    return i18next.t(`${genderPrefix}achv:MAX_FRIENDSHIP.description` as ParseKeys);
-  case "MEGA_EVOLVE":
-    return i18next.t(`${genderPrefix}achv:MEGA_EVOLVE.description` as ParseKeys);
-  case "GIGANTAMAX":
-    return i18next.t(`${genderPrefix}achv:GIGANTAMAX.description` as ParseKeys);
-  case "TERASTALLIZE":
-    return i18next.t(`${genderPrefix}achv:TERASTALLIZE.description` as ParseKeys);
-  case "STELLAR_TERASTALLIZE":
-    return i18next.t(`${genderPrefix}achv:STELLAR_TERASTALLIZE.description` as ParseKeys);
-  case "SPLICE":
-    return i18next.t(`${genderPrefix}achv:SPLICE.description` as ParseKeys);
-  case "MINI_BLACK_HOLE":
-    return i18next.t(`${genderPrefix}achv:MINI_BLACK_HOLE.description` as ParseKeys);
-  case "CATCH_MYTHICAL":
-    return i18next.t(`${genderPrefix}achv:CATCH_MYTHICAL.description` as ParseKeys);
-  case "CATCH_SUB_LEGENDARY":
-    return i18next.t(`${genderPrefix}achv:CATCH_SUB_LEGENDARY.description` as ParseKeys);
-  case "CATCH_LEGENDARY":
-    return i18next.t(`${genderPrefix}achv:CATCH_LEGENDARY.description` as ParseKeys);
-  case "SEE_SHINY":
-    return i18next.t(`${genderPrefix}achv:SEE_SHINY.description` as ParseKeys);
-  case "SHINY_PARTY":
-    return i18next.t(`${genderPrefix}achv:SHINY_PARTY.description` as ParseKeys);
-  case "HATCH_MYTHICAL":
-    return i18next.t(`${genderPrefix}achv:HATCH_MYTHICAL.description` as ParseKeys);
-  case "HATCH_SUB_LEGENDARY":
-    return i18next.t(`${genderPrefix}achv:HATCH_SUB_LEGENDARY.description` as ParseKeys);
-  case "HATCH_LEGENDARY":
-    return i18next.t(`${genderPrefix}achv:HATCH_LEGENDARY.description` as ParseKeys);
-  case "HATCH_SHINY":
-    return i18next.t(`${genderPrefix}achv:HATCH_SHINY.description` as ParseKeys);
-  case "HIDDEN_ABILITY":
-    return i18next.t(`${genderPrefix}achv:HIDDEN_ABILITY.description` as ParseKeys);
-  case "PERFECT_IVS":
-    return i18next.t(`${genderPrefix}achv:PERFECT_IVS.description` as ParseKeys);
-  case "CLASSIC_VICTORY":
-    return i18next.t(`${genderPrefix}achv:CLASSIC_VICTORY.description` as ParseKeys);
-  case "MONO_GEN_ONE":
-    return i18next.t(`${genderPrefix}achv:MONO_GEN_ONE.description` as ParseKeys);
-  case "MONO_GEN_TWO":
-    return i18next.t(`${genderPrefix}achv:MONO_GEN_TWO.description` as ParseKeys);
-  case "MONO_GEN_THREE":
-    return i18next.t(`${genderPrefix}achv:MONO_GEN_THREE.description` as ParseKeys);
-  case "MONO_GEN_FOUR":
-    return i18next.t(`${genderPrefix}achv:MONO_GEN_FOUR.description` as ParseKeys);
-  case "MONO_GEN_FIVE":
-    return i18next.t(`${genderPrefix}achv:MONO_GEN_FIVE.description` as ParseKeys);
-  case "MONO_GEN_SIX":
-    return i18next.t(`${genderPrefix}achv:MONO_GEN_SIX.description` as ParseKeys);
-  case "MONO_GEN_SEVEN":
-    return i18next.t(`${genderPrefix}achv:MONO_GEN_SEVEN.description` as ParseKeys);
-  case "MONO_GEN_EIGHT":
-    return i18next.t(`${genderPrefix}achv:MONO_GEN_EIGHT.description` as ParseKeys);
-  case "MONO_GEN_NINE":
-    return i18next.t(`${genderPrefix}achv:MONO_GEN_NINE.description` as ParseKeys);
-  case "MONO_NORMAL":
-  case "MONO_FIGHTING":
-  case "MONO_FLYING":
-  case "MONO_POISON":
-  case "MONO_GROUND":
-  case "MONO_ROCK":
-  case "MONO_BUG":
-  case "MONO_GHOST":
-  case "MONO_STEEL":
-  case "MONO_FIRE":
-  case "MONO_WATER":
-  case "MONO_GRASS":
-  case "MONO_ELECTRIC":
-  case "MONO_PSYCHIC":
-  case "MONO_ICE":
-  case "MONO_DRAGON":
-  case "MONO_DARK":
-  case "MONO_FAIRY":
-    return i18next.t(`${genderPrefix}achv:MonoType.description` as ParseKeys, {"type": i18next.t(`pokemonInfo:Type.${localizationKey.slice(5)}`)});
-  default:
-    return "";
+    case "10K_MONEY":
+      return i18next.t(`${genderPrefix}achv:MoneyAchv.description` as ParseKeys, {"moneyAmount": achvs._10K_MONEY.moneyAmount.toLocaleString("en-US")});
+    case "100K_MONEY":
+      return i18next.t(`${genderPrefix}achv:MoneyAchv.description` as ParseKeys, {"moneyAmount": achvs._100K_MONEY.moneyAmount.toLocaleString("en-US")});
+    case "1M_MONEY":
+      return i18next.t(`${genderPrefix}achv:MoneyAchv.description` as ParseKeys, {"moneyAmount": achvs._1M_MONEY.moneyAmount.toLocaleString("en-US")});
+    case "10M_MONEY":
+      return i18next.t(`${genderPrefix}achv:MoneyAchv.description` as ParseKeys, {"moneyAmount": achvs._10M_MONEY.moneyAmount.toLocaleString("en-US")});
+    case "250_DMG":
+      return i18next.t(`${genderPrefix}achv:DamageAchv.description` as ParseKeys, {"damageAmount": achvs._250_DMG.damageAmount.toLocaleString("en-US")});
+    case "1000_DMG":
+      return i18next.t(`${genderPrefix}achv:DamageAchv.description` as ParseKeys, {"damageAmount": achvs._1000_DMG.damageAmount.toLocaleString("en-US")});
+    case "2500_DMG":
+      return i18next.t(`${genderPrefix}achv:DamageAchv.description` as ParseKeys, {"damageAmount": achvs._2500_DMG.damageAmount.toLocaleString("en-US")});
+    case "10000_DMG":
+      return i18next.t(`${genderPrefix}achv:DamageAchv.description` as ParseKeys, {"damageAmount": achvs._10000_DMG.damageAmount.toLocaleString("en-US")});
+    case "250_HEAL":
+      return i18next.t(`${genderPrefix}achv:HealAchv.description` as ParseKeys, {"healAmount": achvs._250_HEAL.healAmount.toLocaleString("en-US"), "HP": i18next.t("pokemonInfo:Stat.HPshortened")});
+    case "1000_HEAL":
+      return i18next.t(`${genderPrefix}achv:HealAchv.description` as ParseKeys, {"healAmount": achvs._1000_HEAL.healAmount.toLocaleString("en-US"), "HP": i18next.t("pokemonInfo:Stat.HPshortened")});
+    case "2500_HEAL":
+      return i18next.t(`${genderPrefix}achv:HealAchv.description` as ParseKeys, {"healAmount": achvs._2500_HEAL.healAmount.toLocaleString("en-US"), "HP": i18next.t("pokemonInfo:Stat.HPshortened")});
+    case "10000_HEAL":
+      return i18next.t(`${genderPrefix}achv:HealAchv.description` as ParseKeys, {"healAmount": achvs._10000_HEAL.healAmount.toLocaleString("en-US"), "HP": i18next.t("pokemonInfo:Stat.HPshortened")});
+    case "LV_100":
+      return i18next.t(`${genderPrefix}achv:LevelAchv.description` as ParseKeys, {"level": achvs.LV_100.level});
+    case "LV_250":
+      return i18next.t(`${genderPrefix}achv:LevelAchv.description` as ParseKeys, {"level": achvs.LV_250.level});
+    case "LV_1000":
+      return i18next.t(`${genderPrefix}achv:LevelAchv.description` as ParseKeys, {"level": achvs.LV_1000.level});
+    case "10_RIBBONS":
+      return i18next.t(`${genderPrefix}achv:RibbonAchv.description` as ParseKeys, {"ribbonAmount": achvs._10_RIBBONS.ribbonAmount.toLocaleString("en-US")});
+    case "25_RIBBONS":
+      return i18next.t(`${genderPrefix}achv:RibbonAchv.description` as ParseKeys, {"ribbonAmount": achvs._25_RIBBONS.ribbonAmount.toLocaleString("en-US")});
+    case "50_RIBBONS":
+      return i18next.t(`${genderPrefix}achv:RibbonAchv.description` as ParseKeys, {"ribbonAmount": achvs._50_RIBBONS.ribbonAmount.toLocaleString("en-US")});
+    case "75_RIBBONS":
+      return i18next.t(`${genderPrefix}achv:RibbonAchv.description` as ParseKeys, {"ribbonAmount": achvs._75_RIBBONS.ribbonAmount.toLocaleString("en-US")});
+    case "100_RIBBONS":
+      return i18next.t(`${genderPrefix}achv:RibbonAchv.description` as ParseKeys, {"ribbonAmount": achvs._100_RIBBONS.ribbonAmount.toLocaleString("en-US")});
+    case "TRANSFER_MAX_BATTLE_STAT":
+      return i18next.t(`${genderPrefix}achv:TRANSFER_MAX_BATTLE_STAT.description` as ParseKeys);
+    case "MAX_FRIENDSHIP":
+      return i18next.t(`${genderPrefix}achv:MAX_FRIENDSHIP.description` as ParseKeys);
+    case "MEGA_EVOLVE":
+      return i18next.t(`${genderPrefix}achv:MEGA_EVOLVE.description` as ParseKeys);
+    case "GIGANTAMAX":
+      return i18next.t(`${genderPrefix}achv:GIGANTAMAX.description` as ParseKeys);
+    case "TERASTALLIZE":
+      return i18next.t(`${genderPrefix}achv:TERASTALLIZE.description` as ParseKeys);
+    case "STELLAR_TERASTALLIZE":
+      return i18next.t(`${genderPrefix}achv:STELLAR_TERASTALLIZE.description` as ParseKeys);
+    case "SPLICE":
+      return i18next.t(`${genderPrefix}achv:SPLICE.description` as ParseKeys);
+    case "MINI_BLACK_HOLE":
+      return i18next.t(`${genderPrefix}achv:MINI_BLACK_HOLE.description` as ParseKeys);
+    case "CATCH_MYTHICAL":
+      return i18next.t(`${genderPrefix}achv:CATCH_MYTHICAL.description` as ParseKeys);
+    case "CATCH_SUB_LEGENDARY":
+      return i18next.t(`${genderPrefix}achv:CATCH_SUB_LEGENDARY.description` as ParseKeys);
+    case "CATCH_LEGENDARY":
+      return i18next.t(`${genderPrefix}achv:CATCH_LEGENDARY.description` as ParseKeys);
+    case "SEE_SHINY":
+      return i18next.t(`${genderPrefix}achv:SEE_SHINY.description` as ParseKeys);
+    case "SHINY_PARTY":
+      return i18next.t(`${genderPrefix}achv:SHINY_PARTY.description` as ParseKeys);
+    case "HATCH_MYTHICAL":
+      return i18next.t(`${genderPrefix}achv:HATCH_MYTHICAL.description` as ParseKeys);
+    case "HATCH_SUB_LEGENDARY":
+      return i18next.t(`${genderPrefix}achv:HATCH_SUB_LEGENDARY.description` as ParseKeys);
+    case "HATCH_LEGENDARY":
+      return i18next.t(`${genderPrefix}achv:HATCH_LEGENDARY.description` as ParseKeys);
+    case "HATCH_SHINY":
+      return i18next.t(`${genderPrefix}achv:HATCH_SHINY.description` as ParseKeys);
+    case "HIDDEN_ABILITY":
+      return i18next.t(`${genderPrefix}achv:HIDDEN_ABILITY.description` as ParseKeys);
+    case "PERFECT_IVS":
+      return i18next.t(`${genderPrefix}achv:PERFECT_IVS.description` as ParseKeys);
+    case "CLASSIC_VICTORY":
+      return i18next.t(`${genderPrefix}achv:CLASSIC_VICTORY.description` as ParseKeys);
+    case "MONO_GEN_ONE":
+      return i18next.t(`${genderPrefix}achv:MONO_GEN_ONE.description` as ParseKeys);
+    case "MONO_GEN_TWO":
+      return i18next.t(`${genderPrefix}achv:MONO_GEN_TWO.description` as ParseKeys);
+    case "MONO_GEN_THREE":
+      return i18next.t(`${genderPrefix}achv:MONO_GEN_THREE.description` as ParseKeys);
+    case "MONO_GEN_FOUR":
+      return i18next.t(`${genderPrefix}achv:MONO_GEN_FOUR.description` as ParseKeys);
+    case "MONO_GEN_FIVE":
+      return i18next.t(`${genderPrefix}achv:MONO_GEN_FIVE.description` as ParseKeys);
+    case "MONO_GEN_SIX":
+      return i18next.t(`${genderPrefix}achv:MONO_GEN_SIX.description` as ParseKeys);
+    case "MONO_GEN_SEVEN":
+      return i18next.t(`${genderPrefix}achv:MONO_GEN_SEVEN.description` as ParseKeys);
+    case "MONO_GEN_EIGHT":
+      return i18next.t(`${genderPrefix}achv:MONO_GEN_EIGHT.description` as ParseKeys);
+    case "MONO_GEN_NINE":
+      return i18next.t(`${genderPrefix}achv:MONO_GEN_NINE.description` as ParseKeys);
+    case "MONO_NORMAL":
+    case "MONO_FIGHTING":
+    case "MONO_FLYING":
+    case "MONO_POISON":
+    case "MONO_GROUND":
+    case "MONO_ROCK":
+    case "MONO_BUG":
+    case "MONO_GHOST":
+    case "MONO_STEEL":
+    case "MONO_FIRE":
+    case "MONO_WATER":
+    case "MONO_GRASS":
+    case "MONO_ELECTRIC":
+    case "MONO_PSYCHIC":
+    case "MONO_ICE":
+    case "MONO_DRAGON":
+    case "MONO_DARK":
+    case "MONO_FAIRY":
+      return i18next.t(`${genderPrefix}achv:MonoType.description` as ParseKeys, {"type": i18next.t(`pokemonInfo:Type.${localizationKey.slice(5)}`)});
+    default:
+      return "";
   }
 
 }

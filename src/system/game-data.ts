@@ -44,20 +44,20 @@ const saveKey = "x0i2O7WRiANTqPmZ"; // Temporary; secure encryption is not yet n
 
 export function getDataTypeKey(dataType: GameDataType, slotId: integer = 0): string {
   switch (dataType) {
-  case GameDataType.SYSTEM:
-    return "data";
-  case GameDataType.SESSION:
-    let ret = "sessionData";
-    if (slotId) {
-      ret += slotId;
-    }
-    return ret;
-  case GameDataType.SETTINGS:
-    return "settings";
-  case GameDataType.TUTORIALS:
-    return "tutorials";
-  case GameDataType.SEEN_DIALOGUES:
-    return "seenDialogues";
+    case GameDataType.SYSTEM:
+      return "data";
+    case GameDataType.SESSION:
+      let ret = "sessionData";
+      if (slotId) {
+        ret += slotId;
+      }
+      return ret;
+    case GameDataType.SETTINGS:
+      return "settings";
+    case GameDataType.TUTORIALS:
+      return "tutorials";
+    case GameDataType.SEEN_DIALOGUES:
+      return "seenDialogues";
   }
 }
 
@@ -1159,9 +1159,9 @@ export class GameData {
       const dataKey: string = `${getDataTypeKey(dataType, slotId)}_${loggedInUser.username}`;
       const handleData = (dataStr: string) => {
         switch (dataType) {
-        case GameDataType.SYSTEM:
-          dataStr = this.convertSystemDataStr(dataStr, true);
-          break;
+          case GameDataType.SYSTEM:
+            dataStr = this.convertSystemDataStr(dataStr, true);
+            break;
         }
         const encryptedData = AES.encrypt(dataStr, saveKey);
         const blob = new Blob([ encryptedData.toString() ], {type: "text/json"});
@@ -1217,19 +1217,19 @@ export class GameData {
             let valid = false;
             try {
               switch (dataType) {
-              case GameDataType.SYSTEM:
-                dataStr = this.convertSystemDataStr(dataStr);
-                const systemData = this.parseSystemData(dataStr);
-                valid = !!systemData.dexData && !!systemData.timestamp;
-                break;
-              case GameDataType.SESSION:
-                const sessionData = this.parseSessionData(dataStr);
-                valid = !!sessionData.party && !!sessionData.enemyParty && !!sessionData.timestamp;
-                break;
-              case GameDataType.SETTINGS:
-              case GameDataType.TUTORIALS:
-                valid = true;
-                break;
+                case GameDataType.SYSTEM:
+                  dataStr = this.convertSystemDataStr(dataStr);
+                  const systemData = this.parseSystemData(dataStr);
+                  valid = !!systemData.dexData && !!systemData.timestamp;
+                  break;
+                case GameDataType.SESSION:
+                  const sessionData = this.parseSessionData(dataStr);
+                  valid = !!sessionData.party && !!sessionData.enemyParty && !!sessionData.timestamp;
+                  break;
+                case GameDataType.SETTINGS:
+                case GameDataType.TUTORIALS:
+                  valid = true;
+                  break;
               }
             } catch (ex) {
               console.error(ex);
@@ -1237,18 +1237,18 @@ export class GameData {
 
             let dataName: string;
             switch (dataType) {
-            case GameDataType.SYSTEM:
-              dataName = "save";
-              break;
-            case GameDataType.SESSION:
-              dataName = "session";
-              break;
-            case GameDataType.SETTINGS:
-              dataName = "settings";
-              break;
-            case GameDataType.TUTORIALS:
-              dataName = "tutorials";
-              break;
+              case GameDataType.SYSTEM:
+                dataName = "save";
+                break;
+              case GameDataType.SESSION:
+                dataName = "session";
+                break;
+              case GameDataType.SETTINGS:
+                dataName = "settings";
+                break;
+              case GameDataType.TUTORIALS:
+                dataName = "tutorials";
+                break;
             }
 
             const displayError = (error: string) => this.scene.ui.showText(error, null, () => this.scene.ui.showText(null, 0), Utils.fixedInt(1500));

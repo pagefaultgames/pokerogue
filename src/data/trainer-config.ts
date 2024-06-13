@@ -282,53 +282,53 @@ export class TrainerConfig {
   getDerivedType(trainerTypeToDeriveFrom: TrainerType = null): TrainerType {
     let trainerType = trainerTypeToDeriveFrom ? trainerTypeToDeriveFrom : this.trainerType;
     switch (trainerType) {
-    case TrainerType.RIVAL_2:
-    case TrainerType.RIVAL_3:
-    case TrainerType.RIVAL_4:
-    case TrainerType.RIVAL_5:
-    case TrainerType.RIVAL_6:
-      trainerType = TrainerType.RIVAL;
-      break;
-    case TrainerType.LANCE_CHAMPION:
-      trainerType = TrainerType.LANCE;
-      break;
-    case TrainerType.LARRY_ELITE:
-      trainerType = TrainerType.LARRY;
-      break;
-    case TrainerType.ROCKET_BOSS_GIOVANNI_1:
-    case TrainerType.ROCKET_BOSS_GIOVANNI_2:
-      trainerType = TrainerType.GIOVANNI;
-      break;
-    case TrainerType.MAXIE_2:
-      trainerType = TrainerType.MAXIE;
-      break;
-    case TrainerType.ARCHIE_2:
-      trainerType = TrainerType.ARCHIE;
-      break;
-    case TrainerType.CYRUS_2:
-      trainerType = TrainerType.CYRUS;
-      break;
-    case TrainerType.GHETSIS_2:
-      trainerType = TrainerType.GHETSIS;
-      break;
-    case TrainerType.LYSANDRE_2:
-      trainerType = TrainerType.LYSANDRE;
-      break;
-    case TrainerType.MARNIE_ELITE:
-      trainerType = TrainerType.MARNIE;
-      break;
-    case TrainerType.NESSA_ELITE:
-      trainerType = TrainerType.NESSA;
-      break;
-    case TrainerType.BEA_ELITE:
-      trainerType = TrainerType.BEA;
-      break;
-    case TrainerType.ALLISTER_ELITE:
-      trainerType = TrainerType.ALLISTER;
-      break;
-    case TrainerType.RAIHAN_ELITE:
-      trainerType = TrainerType.RAIHAN;
-      break;
+      case TrainerType.RIVAL_2:
+      case TrainerType.RIVAL_3:
+      case TrainerType.RIVAL_4:
+      case TrainerType.RIVAL_5:
+      case TrainerType.RIVAL_6:
+        trainerType = TrainerType.RIVAL;
+        break;
+      case TrainerType.LANCE_CHAMPION:
+        trainerType = TrainerType.LANCE;
+        break;
+      case TrainerType.LARRY_ELITE:
+        trainerType = TrainerType.LARRY;
+        break;
+      case TrainerType.ROCKET_BOSS_GIOVANNI_1:
+      case TrainerType.ROCKET_BOSS_GIOVANNI_2:
+        trainerType = TrainerType.GIOVANNI;
+        break;
+      case TrainerType.MAXIE_2:
+        trainerType = TrainerType.MAXIE;
+        break;
+      case TrainerType.ARCHIE_2:
+        trainerType = TrainerType.ARCHIE;
+        break;
+      case TrainerType.CYRUS_2:
+        trainerType = TrainerType.CYRUS;
+        break;
+      case TrainerType.GHETSIS_2:
+        trainerType = TrainerType.GHETSIS;
+        break;
+      case TrainerType.LYSANDRE_2:
+        trainerType = TrainerType.LYSANDRE;
+        break;
+      case TrainerType.MARNIE_ELITE:
+        trainerType = TrainerType.MARNIE;
+        break;
+      case TrainerType.NESSA_ELITE:
+        trainerType = TrainerType.NESSA;
+        break;
+      case TrainerType.BEA_ELITE:
+        trainerType = TrainerType.BEA;
+        break;
+      case TrainerType.ALLISTER_ELITE:
+        trainerType = TrainerType.ALLISTER;
+        break;
+      case TrainerType.RAIHAN_ELITE:
+        trainerType = TrainerType.RAIHAN;
+        break;
     }
 
     return trainerType;
@@ -824,19 +824,19 @@ function getEvilGruntPartyTemplate(scene: BattleScene): TrainerPartyTemplate {
     return trainerPartyTemplates.TWO_AVG;
   } else if (waveIndex < 80) {
     switch (waveIndex) {
-    case 62:
-      return trainerPartyTemplates.THREE_AVG;
-    case 64:
-      return trainerPartyTemplates.TWO_AVG_ONE_STRONG;
-    case 65:
-      return trainerPartyTemplates.GYM_LEADER_4; // 3avg 1 strong 1 stronger
+      case 62:
+        return trainerPartyTemplates.THREE_AVG;
+      case 64:
+        return trainerPartyTemplates.TWO_AVG_ONE_STRONG;
+      case 65:
+        return trainerPartyTemplates.GYM_LEADER_4; // 3avg 1 strong 1 stronger
     }
   } else {
     switch (waveIndex) {
-    case 112:
-      return trainerPartyTemplates.GYM_LEADER_4; // 3avg 1 strong 1 stronger
-    case 114:
-      return trainerPartyTemplates.GYM_LEADER_5; // 3 avg 2 strong 1 stronger
+      case 112:
+        return trainerPartyTemplates.GYM_LEADER_4; // 3avg 1 strong 1 stronger
+      case 114:
+        return trainerPartyTemplates.GYM_LEADER_5; // 3 avg 2 strong 1 stronger
     }
   }
 }

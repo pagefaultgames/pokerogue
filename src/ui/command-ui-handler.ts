@@ -81,54 +81,54 @@ export default class CommandUiHandler extends UiHandler {
       if (button === Button.ACTION) {
         switch (cursor) {
         // Fight
-        case 0:
-          if ((this.scene.getCurrentPhase() as CommandPhase).checkFightOverride()) {
-            return true;
-          }
-          ui.setMode(Mode.FIGHT, (this.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-          success = true;
-          break;
+          case 0:
+            if ((this.scene.getCurrentPhase() as CommandPhase).checkFightOverride()) {
+              return true;
+            }
+            ui.setMode(Mode.FIGHT, (this.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
+            success = true;
+            break;
           // Ball
-        case 1:
-          ui.setModeWithoutClear(Mode.BALL);
-          success = true;
-          break;
+          case 1:
+            ui.setModeWithoutClear(Mode.BALL);
+            success = true;
+            break;
           // Pokemon
-        case 2:
-          ui.setMode(Mode.PARTY, PartyUiMode.SWITCH, (this.scene.getCurrentPhase() as CommandPhase).getPokemon().getFieldIndex(), null, PartyUiHandler.FilterNonFainted);
-          success = true;
-          break;
+          case 2:
+            ui.setMode(Mode.PARTY, PartyUiMode.SWITCH, (this.scene.getCurrentPhase() as CommandPhase).getPokemon().getFieldIndex(), null, PartyUiHandler.FilterNonFainted);
+            success = true;
+            break;
           // Run
-        case 3:
-          (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.RUN, 0);
-          success = true;
-          break;
+          case 3:
+            (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.RUN, 0);
+            success = true;
+            break;
         }
       } else {
         (this.scene.getCurrentPhase() as CommandPhase).cancel();
       }
     } else {
       switch (button) {
-      case Button.UP:
-        if (cursor >= 2) {
-          success = this.setCursor(cursor - 2);
-        }
-        break;
-      case Button.DOWN:
-        if (cursor < 2) {
-          success = this.setCursor(cursor + 2);
-        }
-        break;
-      case Button.LEFT:
-        if (cursor % 2 === 1) {
-          success = this.setCursor(cursor - 1);
-        }
-        break;
-      case Button.RIGHT:
-        if (cursor % 2 === 0) {
-          success = this.setCursor(cursor + 1);
-        }
-        break;
+        case Button.UP:
+          if (cursor >= 2) {
+            success = this.setCursor(cursor - 2);
+          }
+          break;
+        case Button.DOWN:
+          if (cursor < 2) {
+            success = this.setCursor(cursor + 2);
+          }
+          break;
+        case Button.LEFT:
+          if (cursor % 2 === 1) {
+            success = this.setCursor(cursor - 1);
+          }
+          break;
+        case Button.RIGHT:
+          if (cursor % 2 === 0) {
+            success = this.setCursor(cursor + 1);
+          }
+          break;
       }
     }
 

@@ -274,52 +274,52 @@ export class SingleGenerationChallenge extends Challenge {
      * normal generation check to correctly treat victini as gen 5.
      */
     switch (challengeType) {
-    case ChallengeType.STARTER_CHOICE:
-      const species = args[0] as PokemonSpecies;
-      const isValidStarter = args[1] as Utils.BooleanHolder;
-      const starterGeneration = species.speciesId === Species.VICTINI ? 5 : species.generation;
-      if (starterGeneration !== this.value) {
-        isValidStarter.value = false;
-        return true;
-      }
-      break;
-    case ChallengeType.POKEMON_IN_BATTLE:
-      const pokemon = args[0] as Pokemon;
-      const isValidPokemon = args[1] as Utils.BooleanHolder;
-      const baseGeneration = pokemon.species.speciesId === Species.VICTINI ? 5 : getPokemonSpecies(pokemon.species.speciesId).generation;
-      const fusionGeneration = pokemon.isFusion() ? pokemon.fusionSpecies.speciesId === Species.VICTINI ? 5 : getPokemonSpecies(pokemon.fusionSpecies.speciesId).generation : 0;
-      if (pokemon.isPlayer() && (baseGeneration !== this.value || (pokemon.isFusion() && fusionGeneration !== this.value))) {
-        isValidPokemon.value = false;
-        return true;
-      }
-      break;
-    case ChallengeType.FIXED_BATTLES:
-      const waveIndex = args[0] as integer;
-      const battleConfig = args[1] as FixedBattleConfig;
-      let trainerTypes: TrainerType[] = [];
-      switch (waveIndex) {
-      case 182:
-        trainerTypes = [ TrainerType.LORELEI, TrainerType.WILL, TrainerType.SIDNEY, TrainerType.AARON, TrainerType.SHAUNTAL, TrainerType.MALVA, Utils.randSeedItem([ TrainerType.HALA, TrainerType.MOLAYNE ]),TrainerType.MARNIE_ELITE, TrainerType.RIKA ];
+      case ChallengeType.STARTER_CHOICE:
+        const species = args[0] as PokemonSpecies;
+        const isValidStarter = args[1] as Utils.BooleanHolder;
+        const starterGeneration = species.speciesId === Species.VICTINI ? 5 : species.generation;
+        if (starterGeneration !== this.value) {
+          isValidStarter.value = false;
+          return true;
+        }
         break;
-      case 184:
-        trainerTypes = [ TrainerType.BRUNO, TrainerType.KOGA, TrainerType.PHOEBE, TrainerType.BERTHA, TrainerType.MARSHAL, TrainerType.SIEBOLD, TrainerType.OLIVIA, TrainerType.NESSA_ELITE, TrainerType.POPPY ];
+      case ChallengeType.POKEMON_IN_BATTLE:
+        const pokemon = args[0] as Pokemon;
+        const isValidPokemon = args[1] as Utils.BooleanHolder;
+        const baseGeneration = pokemon.species.speciesId === Species.VICTINI ? 5 : getPokemonSpecies(pokemon.species.speciesId).generation;
+        const fusionGeneration = pokemon.isFusion() ? pokemon.fusionSpecies.speciesId === Species.VICTINI ? 5 : getPokemonSpecies(pokemon.fusionSpecies.speciesId).generation : 0;
+        if (pokemon.isPlayer() && (baseGeneration !== this.value || (pokemon.isFusion() && fusionGeneration !== this.value))) {
+          isValidPokemon.value = false;
+          return true;
+        }
         break;
-      case 186:
-        trainerTypes = [ TrainerType.AGATHA, TrainerType.BRUNO, TrainerType.GLACIA, TrainerType.FLINT, TrainerType.GRIMSLEY, TrainerType.WIKSTROM, TrainerType.ACEROLA, Utils.randSeedItem([TrainerType.BEA_ELITE,TrainerType.ALLISTER_ELITE]), TrainerType.LARRY_ELITE ];
-        break;
-      case 188:
-        trainerTypes = [ TrainerType.LANCE, TrainerType.KAREN, TrainerType.DRAKE, TrainerType.LUCIAN, TrainerType.CAITLIN, TrainerType.DRASNA, TrainerType.KAHILI, TrainerType.RAIHAN_ELITE, TrainerType.HASSEL ];
-        break;
-      case 190:
-        trainerTypes = [ TrainerType.BLUE, Utils.randSeedItem([ TrainerType.RED, TrainerType.LANCE_CHAMPION ]), Utils.randSeedItem([ TrainerType.STEVEN, TrainerType.WALLACE ]), TrainerType.CYNTHIA, Utils.randSeedItem([ TrainerType.ALDER, TrainerType.IRIS ]), TrainerType.DIANTHA, TrainerType.HAU, TrainerType.LEON, Utils.randSeedItem([ TrainerType.GEETA, TrainerType.NEMONA ]) ];
-        break;
-      }
-      if (trainerTypes.length === 0) {
-        return false;
-      } else {
-        battleConfig.setBattleType(BattleType.TRAINER).setGetTrainerFunc(scene => new Trainer(scene, trainerTypes[this.value - 1], TrainerVariant.DEFAULT));
-        return true;
-      }
+      case ChallengeType.FIXED_BATTLES:
+        const waveIndex = args[0] as integer;
+        const battleConfig = args[1] as FixedBattleConfig;
+        let trainerTypes: TrainerType[] = [];
+        switch (waveIndex) {
+          case 182:
+            trainerTypes = [ TrainerType.LORELEI, TrainerType.WILL, TrainerType.SIDNEY, TrainerType.AARON, TrainerType.SHAUNTAL, TrainerType.MALVA, Utils.randSeedItem([ TrainerType.HALA, TrainerType.MOLAYNE ]),TrainerType.MARNIE_ELITE, TrainerType.RIKA ];
+            break;
+          case 184:
+            trainerTypes = [ TrainerType.BRUNO, TrainerType.KOGA, TrainerType.PHOEBE, TrainerType.BERTHA, TrainerType.MARSHAL, TrainerType.SIEBOLD, TrainerType.OLIVIA, TrainerType.NESSA_ELITE, TrainerType.POPPY ];
+            break;
+          case 186:
+            trainerTypes = [ TrainerType.AGATHA, TrainerType.BRUNO, TrainerType.GLACIA, TrainerType.FLINT, TrainerType.GRIMSLEY, TrainerType.WIKSTROM, TrainerType.ACEROLA, Utils.randSeedItem([TrainerType.BEA_ELITE,TrainerType.ALLISTER_ELITE]), TrainerType.LARRY_ELITE ];
+            break;
+          case 188:
+            trainerTypes = [ TrainerType.LANCE, TrainerType.KAREN, TrainerType.DRAKE, TrainerType.LUCIAN, TrainerType.CAITLIN, TrainerType.DRASNA, TrainerType.KAHILI, TrainerType.RAIHAN_ELITE, TrainerType.HASSEL ];
+            break;
+          case 190:
+            trainerTypes = [ TrainerType.BLUE, Utils.randSeedItem([ TrainerType.RED, TrainerType.LANCE_CHAMPION ]), Utils.randSeedItem([ TrainerType.STEVEN, TrainerType.WALLACE ]), TrainerType.CYNTHIA, Utils.randSeedItem([ TrainerType.ALDER, TrainerType.IRIS ]), TrainerType.DIANTHA, TrainerType.HAU, TrainerType.LEON, Utils.randSeedItem([ TrainerType.GEETA, TrainerType.NEMONA ]) ];
+            break;
+        }
+        if (trainerTypes.length === 0) {
+          return false;
+        } else {
+          battleConfig.setBattleType(BattleType.TRAINER).setGetTrainerFunc(scene => new Trainer(scene, trainerTypes[this.value - 1], TrainerVariant.DEFAULT));
+          return true;
+        }
     }
     return false;
   }
@@ -369,23 +369,23 @@ export class SingleTypeChallenge extends Challenge {
     }
 
     switch (challengeType) {
-    case ChallengeType.STARTER_CHOICE:
-      const species = args[0] as PokemonSpecies;
-      const isValidStarter = args[1] as Utils.BooleanHolder;
-      if (!species.isOfType(this.value - 1)) {
-        isValidStarter.value = false;
-        return true;
-      }
-      break;
-    case ChallengeType.POKEMON_IN_BATTLE:
-      const pokemon = args[0] as Pokemon;
-      const isValidPokemon = args[1] as Utils.BooleanHolder;
-      if (pokemon.isPlayer() && !pokemon.isOfType(this.value - 1, false, false, true)
+      case ChallengeType.STARTER_CHOICE:
+        const species = args[0] as PokemonSpecies;
+        const isValidStarter = args[1] as Utils.BooleanHolder;
+        if (!species.isOfType(this.value - 1)) {
+          isValidStarter.value = false;
+          return true;
+        }
+        break;
+      case ChallengeType.POKEMON_IN_BATTLE:
+        const pokemon = args[0] as Pokemon;
+        const isValidPokemon = args[1] as Utils.BooleanHolder;
+        if (pokemon.isPlayer() && !pokemon.isOfType(this.value - 1, false, false, true)
         && !SingleTypeChallenge.TYPE_OVERRIDES.some(o => o.type === (this.value - 1) && (pokemon.isFusion() && o.fusion ? pokemon.fusionSpecies : pokemon.species).speciesId === o.species)) {
-        isValidPokemon.value = false;
-        return true;
-      }
-      break;
+          isValidPokemon.value = false;
+          return true;
+        }
+        break;
     }
     return false;
   }
@@ -421,14 +421,14 @@ export class FreshStartChallenge extends Challenge {
     }
 
     switch (challengeType) {
-    case ChallengeType.STARTER_CHOICE:
-      const species = args[0] as PokemonSpecies;
-      const isValidStarter = args[1] as Utils.BooleanHolder;
-      if (species) {
-        isValidStarter.value = false;
-        return true;
-      }
-      break;
+      case ChallengeType.STARTER_CHOICE:
+        const species = args[0] as PokemonSpecies;
+        const isValidStarter = args[1] as Utils.BooleanHolder;
+        if (species) {
+          isValidStarter.value = false;
+          return true;
+        }
+        break;
     }
     return false;
   }
@@ -473,13 +473,13 @@ export class LowerStarterMaxCostChallenge extends Challenge {
     }
 
     switch (challengeType) {
-    case ChallengeType.STARTER_CHOICE:
-      const species = args[0] as PokemonSpecies;
-      const isValid = args[1] as Utils.BooleanHolder;
-      if (speciesStarters[species.speciesId] > 10 - this.value) {
-        isValid.value = false;
-        return true;
-      }
+      case ChallengeType.STARTER_CHOICE:
+        const species = args[0] as PokemonSpecies;
+        const isValid = args[1] as Utils.BooleanHolder;
+        if (speciesStarters[species.speciesId] > 10 - this.value) {
+          isValid.value = false;
+          return true;
+        }
     }
     return false;
   }
@@ -517,10 +517,10 @@ export class LowerStarterPointsChallenge extends Challenge {
     }
 
     switch (challengeType) {
-    case ChallengeType.STARTER_POINTS:
-      const points = args[0] as Utils.NumberHolder;
-      points.value -= this.value;
-      return true;
+      case ChallengeType.STARTER_POINTS:
+        const points = args[0] as Utils.NumberHolder;
+        points.value -= this.value;
+        return true;
     }
     return false;
   }
@@ -552,14 +552,14 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
 
 export function copyChallenge(source: Challenge | any): Challenge {
   switch (source.id) {
-  case Challenges.SINGLE_GENERATION:
-    return SingleGenerationChallenge.loadChallenge(source);
-  case Challenges.SINGLE_TYPE:
-    return SingleTypeChallenge.loadChallenge(source);
-  case Challenges.LOWER_MAX_STARTER_COST:
-    return LowerStarterMaxCostChallenge.loadChallenge(source);
-  case Challenges.LOWER_STARTER_POINTS:
-    return LowerStarterPointsChallenge.loadChallenge(source);
+    case Challenges.SINGLE_GENERATION:
+      return SingleGenerationChallenge.loadChallenge(source);
+    case Challenges.SINGLE_TYPE:
+      return SingleTypeChallenge.loadChallenge(source);
+    case Challenges.LOWER_MAX_STARTER_COST:
+      return LowerStarterMaxCostChallenge.loadChallenge(source);
+    case Challenges.LOWER_STARTER_POINTS:
+      return LowerStarterPointsChallenge.loadChallenge(source);
   }
   throw new Error("Unknown challenge copied");
 }

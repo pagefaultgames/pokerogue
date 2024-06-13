@@ -457,33 +457,33 @@ export class LoadingScene extends SceneBase {
 
     this.load.on("filecomplete", key => {
       switch (key) {
-      case "intro_dark":
-        intro.load("intro_dark");
-        intro.on("complete", () => {
-          this.tweens.add({
-            targets: intro,
-            duration: 500,
-            alpha: 0,
-            ease: "Sine.easeIn"
+        case "intro_dark":
+          intro.load("intro_dark");
+          intro.on("complete", () => {
+            this.tweens.add({
+              targets: intro,
+              duration: 500,
+              alpha: 0,
+              ease: "Sine.easeIn"
+            });
+            loadingGraphics.map(g => g.setVisible(true));
+            disclaimerText.setVisible(true);
+            disclaimerDescriptionText.setVisible(true);
           });
-          loadingGraphics.map(g => g.setVisible(true));
-          disclaimerText.setVisible(true);
-          disclaimerDescriptionText.setVisible(true);
-        });
-        intro.play();
-        break;
-      case "loading_bg":
-        bg.setTexture("loading_bg");
-        if (mobile) {
-          bg.setVisible(true);
-        }
-        break;
-      case "logo":
-        logo.setTexture("logo");
-        if (mobile) {
-          logo.setVisible(true);
-        }
-        break;
+          intro.play();
+          break;
+        case "loading_bg":
+          bg.setTexture("loading_bg");
+          if (mobile) {
+            bg.setVisible(true);
+          }
+          break;
+        case "logo":
+          logo.setTexture("logo");
+          if (mobile) {
+            logo.setVisible(true);
+          }
+          break;
       }
     });
 

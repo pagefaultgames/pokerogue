@@ -104,32 +104,32 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
           error = true;
         } else {
           switch (this.uiMode) {
-          case SaveSlotUiMode.LOAD:
-            this.saveSlotSelectCallback = null;
-            originalCallback(cursor);
-            break;
-          case SaveSlotUiMode.SAVE:
-            const saveAndCallback = () => {
-              const originalCallback = this.saveSlotSelectCallback;
+            case SaveSlotUiMode.LOAD:
               this.saveSlotSelectCallback = null;
-              ui.revertMode();
-              ui.showText(null, 0);
-              ui.setMode(Mode.MESSAGE);
               originalCallback(cursor);
-            };
-            if (this.sessionSlots[cursor].hasData) {
-              ui.showText(i18next.t("saveSlotSelectUiHandler:overwriteData"), null, () => {
-                ui.setOverlayMode(Mode.CONFIRM, () => saveAndCallback(), () => {
-                  ui.revertMode();
-                  ui.showText(null, 0);
-                }, false, 0, 19, 2000);
-              });
-            } else if (this.sessionSlots[cursor].hasData === false) {
-              saveAndCallback();
-            } else {
-              return false;
-            }
-            break;
+              break;
+            case SaveSlotUiMode.SAVE:
+              const saveAndCallback = () => {
+                const originalCallback = this.saveSlotSelectCallback;
+                this.saveSlotSelectCallback = null;
+                ui.revertMode();
+                ui.showText(null, 0);
+                ui.setMode(Mode.MESSAGE);
+                originalCallback(cursor);
+              };
+              if (this.sessionSlots[cursor].hasData) {
+                ui.showText(i18next.t("saveSlotSelectUiHandler:overwriteData"), null, () => {
+                  ui.setOverlayMode(Mode.CONFIRM, () => saveAndCallback(), () => {
+                    ui.revertMode();
+                    ui.showText(null, 0);
+                  }, false, 0, 19, 2000);
+                });
+              } else if (this.sessionSlots[cursor].hasData === false) {
+                saveAndCallback();
+              } else {
+                return false;
+              }
+              break;
           }
           success = true;
         }
@@ -140,20 +140,20 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
       }
     } else {
       switch (button) {
-      case Button.UP:
-        if (this.cursor) {
-          success = this.setCursor(this.cursor - 1);
-        } else if (this.scrollCursor) {
-          success = this.setScrollCursor(this.scrollCursor - 1);
-        }
-        break;
-      case Button.DOWN:
-        if (this.cursor < 2) {
-          success = this.setCursor(this.cursor + 1);
-        } else if (this.scrollCursor < sessionSlotCount - 3) {
-          success = this.setScrollCursor(this.scrollCursor + 1);
-        }
-        break;
+        case Button.UP:
+          if (this.cursor) {
+            success = this.setCursor(this.cursor - 1);
+          } else if (this.scrollCursor) {
+            success = this.setScrollCursor(this.scrollCursor - 1);
+          }
+          break;
+        case Button.DOWN:
+          if (this.cursor < 2) {
+            success = this.setCursor(this.cursor + 1);
+          } else if (this.scrollCursor < sessionSlotCount - 3) {
+            success = this.setScrollCursor(this.scrollCursor + 1);
+          }
+          break;
       }
     }
 

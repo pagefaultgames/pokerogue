@@ -291,21 +291,21 @@ export async function printPokemon() {
         const moveId = Math.max(Utils.getEnumKeys(Moves).indexOf(moveName), 0);
 
         switch (verData.move_learn_method.name) {
-        case "level-up":
-          speciesLevelMoves[speciesKey].push([ verData.level_learned_at, moveId ]);
-          break;
-        case "machine":
-        case "tutor":
-          if (moveId > 0) {
-            if (!moveTmSpecies.hasOwnProperty(moveId)) {
-              moveTmSpecies[moveId] = [];
+          case "level-up":
+            speciesLevelMoves[speciesKey].push([ verData.level_learned_at, moveId ]);
+            break;
+          case "machine":
+          case "tutor":
+            if (moveId > 0) {
+              if (!moveTmSpecies.hasOwnProperty(moveId)) {
+                moveTmSpecies[moveId] = [];
+              }
+              if (moveTmSpecies[moveId].indexOf(speciesKey) === -1) {
+                moveTmSpecies[moveId].push(speciesKey);
+              }
+              speciesTmMoves.push(moveId);
             }
-            if (moveTmSpecies[moveId].indexOf(speciesKey) === -1) {
-              moveTmSpecies[moveId].push(speciesKey);
-            }
-            speciesTmMoves.push(moveId);
-          }
-          break;
+            break;
         }
       });
     }

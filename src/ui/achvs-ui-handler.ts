@@ -174,26 +174,26 @@ export default class AchvsUiHandler extends MessageUiHandler {
       this.scene.ui.revertMode();
     } else {
       switch (button) {
-      case Button.UP:
-        if (this.cursor >= 17) {
-          success = this.setCursor(this.cursor - 17);
-        }
-        break;
-      case Button.DOWN:
-        if (this.cursor + 17 < Object.keys(achvs).length) {
-          success = this.setCursor(this.cursor + 17);
-        }
-        break;
-      case Button.LEFT:
-        if (this.cursor) {
-          success = this.setCursor(this.cursor - 1);
-        }
-        break;
-      case Button.RIGHT:
-        if (this.cursor < Object.keys(achvs).length - 1) {
-          success = this.setCursor(this.cursor + 1);
-        }
-        break;
+        case Button.UP:
+          if (this.cursor >= 17) {
+            success = this.setCursor(this.cursor - 17);
+          }
+          break;
+        case Button.DOWN:
+          if (this.cursor + 17 < Object.keys(achvs).length) {
+            success = this.setCursor(this.cursor + 17);
+          }
+          break;
+        case Button.LEFT:
+          if (this.cursor) {
+            success = this.setCursor(this.cursor - 1);
+          }
+          break;
+        case Button.RIGHT:
+          if (this.cursor < Object.keys(achvs).length - 1) {
+            success = this.setCursor(this.cursor + 1);
+          }
+          break;
       }
     }
 

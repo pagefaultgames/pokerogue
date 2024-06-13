@@ -207,23 +207,23 @@ export function formatLargeNumber(count: integer, threshold: integer): string {
   const ret = count.toString();
   let suffix = "";
   switch (Math.ceil(ret.length / 3) - 1) {
-  case 1:
-    suffix = "K";
-    break;
-  case 2:
-    suffix = "M";
-    break;
-  case 3:
-    suffix = "B";
-    break;
-  case 4:
-    suffix = "T";
-    break;
-  case 5:
-    suffix = "q";
-    break;
-  default:
-    return "?";
+    case 1:
+      suffix = "K";
+      break;
+    case 2:
+      suffix = "M";
+      break;
+    case 3:
+      suffix = "B";
+      break;
+    case 4:
+      suffix = "T";
+      break;
+    case 5:
+      suffix = "q";
+      break;
+    default:
+      return "?";
   }
   const digits = ((ret.length + 2) % 3) + 1;
   let decimalNumber = ret.slice(digits, digits + 2);
@@ -455,17 +455,17 @@ export function verifyLang(lang?: string): boolean {
   }
 
   switch (lang) {
-  case "es":
-  case "fr":
-  case "de":
-  case "it":
-  case "zh_CN":
-  case "zh_TW":
-  case "pt_BR":
-  case "ko":
-    return true;
-  default:
-    return false;
+    case "es":
+    case "fr":
+    case "de":
+    case "it":
+    case "zh_CN":
+    case "zh_TW":
+    case "pt_BR":
+    case "ko":
+      return true;
+    default:
+      return false;
   }
 }
 
