@@ -118,14 +118,14 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "swimmer": {
     "encounter": {
-      1: "Time to dive in!",
-      2: "Let's ride the waves of victory!",
-      3: "Ready to make a splash!",
+      1: "C'est l'heure de plonger dans le combat !",
+      2: "Je vais surfer sur les vagues de la victoire !",
+      3: "Je vais t'éclabousser de mon talent !",
     },
     "victory": {
-      1: "Drenched in defeat!",
-      2: "A wave of defeat!",
-      3: "Back to shore, I guess.",
+      1: "Tu m'as complètement séché",
+      2: "Il semblerait que j'ai surfé sur les vagues de la défaite...",
+      3: "Retour sur la terre ferme je suppose",
     },
   },
   "backpacker": {
