@@ -113,4 +113,62 @@ describe("Abilities - Sap Sipper", () => {
     expect(game.scene.arena.terrain.terrainType).toBe(TerrainType.GRASSY);
     expect(game.scene.getEnemyParty()[0].summonData.battleStats[BattleStat.ATK]).toBe(0);
   });
+
+  it("activate once against multi-hit grass attacks", async() => {
+    const moveToUse = Moves.BULLET_SEED;
+    const enemyAbility = Abilities.SAP_SIPPER;
+
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
+    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
+    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
+    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(enemyAbility);
+
+    await game.startBattle();
+
+    const startingOppHp = game.scene.currentBattle.enemyParty[0].hp;
+
+    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
+      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
+    });
+    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
+      const movePosition = getMovePosition(game.scene, 0, moveToUse);
+      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
+    });
+
+    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnEndPhase);
+
+    expect(startingOppHp - game.scene.getEnemyParty()[0].hp).toBe(0);
+    expect(game.scene.getEnemyParty()[0].summonData.battleStats[BattleStat.ATK]).toBe(1);
+  });
+
+  /*
+  // TODO Add METRONOME outcome override
+  // To run this testcase, manually modify the METRONOME ability to always give SAP_SIPPER, then uncomment
+  it.todo("activate once against multi-hit grass attacks (metronome)", async() => {
+    const moveToUse = Moves.METRONOME;
+    const enemyAbility = Abilities.SAP_SIPPER;
+
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
+    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
+    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
+    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(enemyAbility);
+
+    await game.startBattle();
+
+    const startingOppHp = game.scene.currentBattle.enemyParty[0].hp;
+
+    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
+      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
+    });
+    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
+      const movePosition = getMovePosition(game.scene, 0, moveToUse);
+      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
+    });
+
+    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnEndPhase);
+
+    expect(startingOppHp - game.scene.getEnemyParty()[0].hp).toBe(0);
+    expect(game.scene.getEnemyParty()[0].summonData.battleStats[BattleStat.ATK]).toBe(1);
+  });
+  */
 });
