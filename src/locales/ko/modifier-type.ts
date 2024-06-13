@@ -8,7 +8,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     },
     "AddVoucherModifierType": {
       name: "{{voucherTypeName}} {{modifierCount}}장",
-      description: "{{voucherTypeName}} {{modifierCount}}장을 획득",
+      description: "{{voucherTypeName}} {{modifierCount}}장을 획득한다.",
     },
     "PokemonHeldItemModifierType": {
       extra: {
@@ -17,63 +17,63 @@ export const modifierType: ModifierTypeTranslationEntries = {
       }
     },
     "PokemonHpRestoreModifierType": {
-      description: "포켓몬 1마리의 HP를 {{restorePoints}} 또는 {{restorePercent}}% 중\n높은 수치만큼 회복",
+      description: "포켓몬 1마리의 HP를 {{restorePoints}} 또는 {{restorePercent}}% 중\n높은 수치만큼 회복한다.",
       extra: {
-        "fully": "포켓몬 1마리의 HP를 모두 회복",
-        "fullyWithStatus": "포켓몬 1마리의 HP와 상태 이상을 모두 회복",
+        "fully": "포켓몬 1마리의 HP를 모두 회복한다.",
+        "fullyWithStatus": "포켓몬 1마리의 HP와 상태 이상을 모두 회복한다.",
       }
     },
     "PokemonReviveModifierType": {
-      description: "기절해 버린 포켓몬 1마리의 HP를 {{restorePercent}}%까지 회복",
+      description: "기절해 버린 포켓몬 1마리의 HP를 {{restorePercent}}%까지 회복한다.",
     },
     "PokemonStatusHealModifierType": {
-      description: "포켓몬 1마리의 상태 이상을 모두 회복",
+      description: "포켓몬 1마리의 상태 이상을 모두 회복한다.",
     },
     "PokemonPpRestoreModifierType": {
-      description: "포켓몬이 기억하고 있는 기술 중 1개의 PP를 {{restorePoints}}만큼 회복",
+      description: "포켓몬이 기억하고 있는 기술 중 1개의 PP를 {{restorePoints}}만큼 회복한다.",
       extra: {
-        "fully": "포켓몬이 기억하고 있는 기술 중 1개의 PP를 모두 회복",
+        "fully": "포켓몬이 기억하고 있는 기술 중 1개의 PP를 모두 회복한다.",
       }
     },
     "PokemonAllMovePpRestoreModifierType": {
-      description: "포켓몬이 기억하고 있는 4개의 기술 PP를 {{restorePoints}}씩 회복",
+      description: "포켓몬이 기억하고 있는 4개의 기술 PP를 {{restorePoints}}씩 회복한다.",
       extra: {
-        "fully": "포켓몬이 기억하고 있는 4개의 기술 PP를 모두 회복",
+        "fully": "포켓몬이 기억하고 있는 4개의 기술 PP를 모두 회복한다.",
       }
     },
     "PokemonPpUpModifierType": {
-      description: "포켓몬이 기억하고 있는 기술 중 1개의 PP 최대치를 5마다 {{upPoints}}씩 상승 (최대 3)",
+      description: "포켓몬이 기억하고 있는 기술 중 1개의 PP 최대치를 5마다 {{upPoints}}씩 상승시킨다 (최대 3).",
     },
     "PokemonNatureChangeModifierType": {
       name: "{{natureName}}민트",
       description: "포켓몬의 성격을 {{natureName}}[[로]] 바꾸고 스타팅에도 등록한다.",
     },
     "DoubleBattleChanceBoosterModifierType": {
-      description: "{{battleCount}}번의 배틀 동안 더블 배틀이 등장할 확률 두 배",
+      description: "{{battleCount}}번의 배틀 동안 더블 배틀이 등장할 확률이 두 배가 된다.",
     },
     "TempBattleStatBoosterModifierType": {
-      description: "자신의 모든 포켓몬이 5번의 배틀 동안 {{tempBattleStatName}}[[가]] 한 단계 증가"
+      description: "자신의 모든 포켓몬이 5번의 배틀 동안 {{tempBattleStatName}}[[가]] 한 단계 증가한다."
     },
     "AttackTypeBoosterModifierType": {
-      description: "지니게 하면 {{moveType}}타입 기술의 위력이 20% 상승",
+      description: "지니게 하면 {{moveType}}타입 기술의 위력이 20% 상승한다.",
     },
     "PokemonLevelIncrementModifierType": {
-      description: "포켓몬 1마리의 레벨이 1만큼 상승",
+      description: "포켓몬 1마리의 레벨이 1만큼 상승한다.",
     },
     "AllPokemonLevelIncrementModifierType": {
-      description: "자신의 모든 포켓몬의 레벨이 1씩 상승",
+      description: "자신의 모든 포켓몬의 레벨이 1씩 상승한다.",
     },
     "PokemonBaseStatBoosterModifierType": {
       description: "지니게 하면 {{statName}} 종족값을 10% 올려준다. 개체값이 높을수록 더 많이 누적시킬 수 있다.",
     },
     "AllPokemonFullHpRestoreModifierType": {
-      description: "자신의 포켓몬의 HP를 모두 회복",
+      description: "자신의 포켓몬의 HP를 모두 회복한다.",
     },
     "AllPokemonFullReviveModifierType": {
-      description: "자신의 포켓몬의 HP를 기절해 버렸더라도 모두 회복",
+      description: "기절해 버린 포켓몬 전원의 HP를 완전히 회복한다.",
     },
     "MoneyRewardModifierType": {
-      description: "{{moneyMultiplier}} 양의 돈을 획득 (₽{{moneyAmount}})",
+      description: "{{moneyMultiplier}} 양의 돈을 획득한다 (₽{{moneyAmount}}).",
       extra: {
         "small": "적은",
         "moderate": "적당한",
@@ -81,62 +81,62 @@ export const modifierType: ModifierTypeTranslationEntries = {
       },
     },
     "ExpBoosterModifierType": {
-      description: "포켓몬이 받는 경험치가 늘어나는 부적. {{boostPercent}}% 증가",
+      description: "포켓몬이 받는 경험치가 {{boostPercent}}% 증가한다.",
     },
     "PokemonExpBoosterModifierType": {
-      description: "지니게 한 포켓몬은 받을 수 있는 경험치가 {{boostPercent}}% 증가",
+      description: "지니게 한 포켓몬은 받는 경험치가 {{boostPercent}}% 증가한다.",
     },
     "PokemonFriendshipBoosterModifierType": {
-      description: "배틀 승리로 얻는 친밀도가 50% 증가",
+      description: "배틀 승리로 얻는 친밀도가 50% 증가한다.",
     },
     "PokemonMoveAccuracyBoosterModifierType": {
-      description: "기술의 명중률이 {{accuracyAmount}} 증가 (최대 100)",
+      description: "기술의 명중률이 {{accuracyAmount}} 증가한다 (최대 100).",
     },
     "PokemonMultiHitModifierType": {
       description: "지닌 개수(최대 3개)마다 추가 공격을 하는 대신, 공격력이 60%(1개)/75%(2개)/82.5%(3개)만큼 감소합니다.",
     },
     "TmModifierType": {
       name: "No.{{moveId}} {{moveName}}",
-      description: "포켓몬에게 {{moveName}}[[를]] 가르침",
+      description: "포켓몬에게 {{moveName}}[[를]] 가르침.",
     },
     "TmModifierTypeWithInfo": {
       name: "No.{{moveId}} {{moveName}}",
-      description: "포켓몬에게 {{moveName}}를(을) 가르침\n(C 또는 Shift를 꾹 눌러 정보 확인)",
+      description: "포켓몬에게 {{moveName}}를(을) 가르침\n(C 또는 Shift를 꾹 눌러 정보 확인).",
     },
     "EvolutionItemModifierType": {
-      description: "어느 특정 포켓몬을 진화",
+      description: "어느 특정 포켓몬을 진화시킨다.",
     },
     "FormChangeItemModifierType": {
-      description: "어느 특정 포켓몬을 폼 체인지",
+      description: "어느 특정 포켓몬을 폼 체인지시킨다.",
     },
     "FusePokemonModifierType": {
-      description: "두 포켓몬을 결합 (특성 변환, 종족값과 타입 분배, 기술폭 공유)",
+      description: "두 포켓몬을 결합시킨다 (특성 변환, 종족값과 타입 분배, 기술폭 공유).",
     },
     "TerastallizeModifierType": {
       name: "테라피스 {{teraType}}",
-      description: "지니게 하면 10번의 배틀 동안 {{teraType}} 테라스탈타입으로 테라스탈",
+      description: "지니게 하면 10번의 배틀 동안 {{teraType}} 테라스탈타입으로 테라스탈한다.",
     },
     "ContactHeldItemTransferChanceModifierType": {
-      description: "공격했을 때, {{chancePercent}}%의 확률로 상대의 도구를 도둑질",
+      description: "공격했을 때, {{chancePercent}}%의 확률로 상대의 도구를 도둑질한다.",
     },
     "TurnHeldItemTransferModifierType": {
-      description: "매 턴, 지닌 포켓몬은 상대로부터 도구를 하나 획득",
+      description: "매 턴, 지닌 포켓몬은 상대로부터 도구를 하나 획득한다.",
     },
     "EnemyAttackStatusEffectChanceModifierType": {
-      description: "공격했을 때 {{statusEffect}} 상태로 만들 확률 {{chancePercent}}% 추가",
+      description: "공격했을 때 {{statusEffect}} 상태로 만들 확률이 {{chancePercent}}% 추가된다.",
     },
     "EnemyEndureChanceModifierType": {
-      description: "받은 공격을 버텨낼 확률 {{chancePercent}}% 추가",
+      description: "받은 공격을 버텨낼 확률이 {{chancePercent}}% 추가된다.",
     },
 
     "RARE_CANDY": { name: "이상한사탕" },
     "RARER_CANDY": { name: "더이상한사탕" },
 
-    "MEGA_BRACELET": { name: "메가링", description: "메가스톤을 사용 가능" },
-    "DYNAMAX_BAND": { name: "다이맥스 밴드", description: "다이버섯을 사용 가능" },
-    "TERA_ORB": { name: "테라스탈오브", description: "테라피스를 사용 가능" },
+    "MEGA_BRACELET": { name: "메가링", description: "메가스톤을 사용할 수 있게 된다." },
+    "DYNAMAX_BAND": { name: "다이맥스 밴드", description: "다이버섯을 사용할 수 있게 된다." },
+    "TERA_ORB": { name: "테라스탈오브", description: "테라피스를 사용할 수 있게 된다." },
 
-    "MAP": { name: "지도", description: "갈림길에서 목적지 선택 가능" },
+    "MAP": { name: "지도", description: "갈림길에서 목적지를 선택할 수 있다." },
 
     "POTION": { name: "상처약" },
     "SUPER_POTION": { name: "좋은상처약" },
@@ -151,7 +151,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SACRED_ASH": { name: "성스러운분말" },
 
-    "REVIVER_SEED": { name: "부활의씨앗", description: "포켓몬이 쓰러지려 할 때 HP를 절반 회복" },
+    "REVIVER_SEED": { name: "부활의씨앗", description: "포켓몬이 쓰러지려 할 때 HP를 절반 회복한다." },
 
     "ETHER": { name: "PP에이드" },
     "MAX_ETHER": { name: "PP회복" },
@@ -166,12 +166,12 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "SUPER_LURE": { name: "실버코롱" },
     "MAX_LURE": { name: "골드코롱" },
 
-    "MEMORY_MUSHROOM": { name: "기억버섯", description: "포켓몬의 잊어버린 기술을 떠올림" },
+    "MEMORY_MUSHROOM": { name: "기억버섯", description: "포켓몬이 잊어버린 기술을 떠올린다." },
 
-    "EXP_SHARE": { name: "학습장치", description: "배틀에 참여하지 않아도 20%의 경험치를 받을 수 있는 장치" },
-    "EXP_BALANCE": { name: "균형학습장치", description: "레벨이 낮은 포켓몬이 받는 경험치를 가중" },
+    "EXP_SHARE": { name: "학습장치", description: "배틀에 참여하지 않아도 20%의 경험치를 받을 수 있게 된다." },
+    "EXP_BALANCE": { name: "균형학습장치", description: "레벨이 낮은 포켓몬이 받는 경험치를 가중시킨다." },
 
-    "OVAL_CHARM": { name: "둥근부적", description: "여러 마리의 포켓몬이 배틀에 참여할 경우, 전체 경험치의 10%씩을 추가로 획득" },
+    "OVAL_CHARM": { name: "둥근부적", description: "여러 마리의 포켓몬이 배틀에 참여할 경우, 전체 경험치의 10%씩을 추가로 획득한다." },
 
     "EXP_CHARM": { name: "경험부적" },
     "SUPER_EXP_CHARM": { name: "좋은경험부적" },
@@ -182,62 +182,62 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SOOTHE_BELL": { name: "평온의방울" },
 
-    "SOUL_DEW": { name: "마음의물방울", description: "지닌 포켓몬의 성격의 효과가 10% 증가 (합연산)" },
+    "SOUL_DEW": { name: "마음의물방울", description: "지닌 포켓몬의 성격의 효과가 10% 증가한다 (합연산)." },
 
     "NUGGET": { name: "금구슬" },
     "BIG_NUGGET": { name: "큰금구슬" },
     "RELIC_GOLD": { name: "고대의금화" },
 
-    "AMULET_COIN": { name: "부적금화", description: "받는 돈이 20% 증가" },
-    "GOLDEN_PUNCH": { name: "골든펀치", description: "주는 데미지의 50%만큼 돈을 획득" },
-    "COIN_CASE": { name: "동전케이스", description: "매 열 번째 배틀마다, 가진 돈의 10%를 이자로 획득" },
+    "AMULET_COIN": { name: "부적금화", description: "받는 돈이 20% 증가한다." },
+    "GOLDEN_PUNCH": { name: "골든펀치", description: "주는 데미지의 50%만큼 돈을 획득한다." },
+    "COIN_CASE": { name: "동전케이스", description: "매 열 번째 배틀마다, 가진 돈의 10%를 이자로 획득한다." },
 
-    "LOCK_CAPSULE": { name: "록캡슐", description: "받을 아이템을 갱신할 때 희귀도를 고정 가능" },
+    "LOCK_CAPSULE": { name: "록캡슐", description: "받을 아이템을 갱신할 때 희귀도를 고정시킬 수 있게 된다." },
 
     "GRIP_CLAW": { name: "끈기갈고리손톱" },
     "WIDE_LENS": { name: "광각렌즈" },
 
     "MULTI_LENS": { name: "멀티렌즈" },
 
-    "HEALING_CHARM": { name: "치유의부적", description: "HP를 회복하는 기술을 썼을 때 효율이 10% 증가 (부활 제외)" },
-    "CANDY_JAR": { name: "사탕단지", description: "이상한사탕 종류의 아이템이 올려주는 레벨 1 증가" },
+    "HEALING_CHARM": { name: "치유의부적", description: "HP를 회복하는 기술을 썼을 때 효율이 10% 증가한다 (부활 제외)." },
+    "CANDY_JAR": { name: "사탕단지", description: "이상한사탕 종류의 아이템이 올려주는 레벨이 1 증가한다." },
 
-    "BERRY_POUCH": { name: "열매주머니", description: "사용한 나무열매가 소모되지 않을 확률 33% 추가" },
+    "BERRY_POUCH": { name: "열매주머니", description: "사용한 나무열매가 소모되지 않을 확률이 30% 추가된다." },
 
-    "FOCUS_BAND": { name: "기합의머리띠", description: "기절할 듯한 데미지를 받아도 HP를 1 남겨서 견딜 확률 10% 추가" },
+    "FOCUS_BAND": { name: "기합의머리띠", description: "기절할 듯한 데미지를 받아도 HP를 1 남겨서 견딜 확률이 10% 추가된다." },
 
-    "QUICK_CLAW": { name: "선제공격손톱", description: "상대보다 먼저 행동할 수 있게 될 확률 10% 추가 (우선도 처리 이후)" },
+    "QUICK_CLAW": { name: "선제공격손톱", description: "상대보다 먼저 행동할 수 있게 될 확률이 10% 추가된다 (우선도 처리 이후)." },
 
-    "KINGS_ROCK": { name: "왕의징표석", description: "공격해서 데미지를 줄 때 상대를 풀죽일 확률 10% 추가" },
+    "KINGS_ROCK": { name: "왕의징표석", description: "공격해서 데미지를 줄 때 상대를 풀죽일 확률이 10% 추가된다." },
 
-    "LEFTOVERS": { name: "먹다남은음식", description: "포켓몬의 HP가 매 턴 최대 체력의 1/16씩 회복" },
-    "SHELL_BELL": { name: "조개껍질방울", description: "포켓몬이 준 데미지의 1/8씩 회복" },
+    "LEFTOVERS": { name: "먹다남은음식", description: "포켓몬의 HP가 매 턴 최대 체력의 1/16씩 회복된다." },
+    "SHELL_BELL": { name: "조개껍질방울", description: "포켓몬이 준 데미지의 1/8씩을 회복한다." },
 
     "TOXIC_ORB": { name: "맹독구슬", description: "이 도구를 지닌 포켓몬은 턴이 끝나는 시점에 상태이상에 걸리지 않았다면 맹독 상태가 된다." },
     "FLAME_ORB": { name: "화염구슬", description: "이 도구를 지닌 포켓몬은 턴이 끝나는 시점에 상태이상에 걸리지 않았다면 화상 상태가 된다." },
 
     "BATON": { name: "바톤", description: "포켓몬을 교체할 때 효과를 넘겨줄 수 있으며, 함정의 영향을 받지 않게 함" },
 
-    "SHINY_CHARM": { name: "빛나는부적", description: "야생 포켓몬이 색이 다른 포켓몬으로 등장할 확률을 급격히 증가" },
-    "ABILITY_CHARM": { name: "특성부적", description: "야생 포켓몬이 숨겨진 특성을 가지고 등장할 확률을 급격히 증가" },
+    "SHINY_CHARM": { name: "빛나는부적", description: "야생 포켓몬이 색이 다른 포켓몬으로 등장할 확률을 급격히 높인다." },
+    "ABILITY_CHARM": { name: "특성부적", description: "야생 포켓몬이 숨겨진 특성을 가지고 등장할 확률을 급격히 높인다." },
 
-    "IV_SCANNER": { name: "개체값탐지기", description: "야생 포켓몬의 개체값을 확인 가능하다. 높은 값이 먼저 표시되며 확인할 수 있는 개체값을 두 종류씩 추가" },
+    "IV_SCANNER": { name: "개체값탐지기", description: "야생 포켓몬의 개체값을 확인 가능하다. 높은 값부터, 확인할 수 있는 개체값이 두 종류씩 추가된다." },
 
     "DNA_SPLICERS": { name: "유전자쐐기" },
 
     "MINI_BLACK_HOLE": { name: "미니 블랙홀" },
 
-    "GOLDEN_POKEBALL": { name: "황금몬스터볼", description: "전투 후 획득하는 아이템의 선택지를 하나 더 추가" },
+    "GOLDEN_POKEBALL": { name: "황금몬스터볼", description: "전투 후 획득하는 아이템의 선택지가 하나 더 늘어난다." },
 
-    "ENEMY_DAMAGE_BOOSTER": { name: "데미지 토큰", description: "주는 데미지를 5% 증가" },
-    "ENEMY_DAMAGE_REDUCTION": { name: "보호 토큰", description: "받는 데미지를 2.5% 감소" },
-    "ENEMY_HEAL": { name: "회복 토큰", description: "매 턴 최대 체력의 2%를 회복" },
+    "ENEMY_DAMAGE_BOOSTER": { name: "데미지 토큰", description: "주는 데미지를 5% 증가시킨다." },
+    "ENEMY_DAMAGE_REDUCTION": { name: "보호 토큰", description: "받는 데미지를 2.5% 감소시킨다." },
+    "ENEMY_HEAL": { name: "회복 토큰", description: "매 턴 최대 체력의 2%를 회복한다." },
     "ENEMY_ATTACK_POISON_CHANCE": { name: "독 토큰" },
     "ENEMY_ATTACK_PARALYZE_CHANCE": { name: "마비 토큰" },
     "ENEMY_ATTACK_BURN_CHANCE": { name: "화상 토큰" },
-    "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "만병통치 토큰", description: "매 턴 상태이상에서 회복될 확률 2.5% 추가" },
+    "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "만병통치 토큰", description: "매 턴 상태이상에서 회복될 확률이 2.5% 추가된다." },
     "ENEMY_ENDURE_CHANCE": { name: "버티기 토큰" },
-    "ENEMY_FUSED_CHANCE": { name: "합체 토큰", description: "야생 포켓몬이 합체할 확률 1% 추가" },
+    "ENEMY_FUSED_CHANCE": { name: "합체 토큰", description: "야생 포켓몬이 합체되어 등장할 확률이 1% 추가된다." },
   },
   TempBattleStatBoosterItem: {
     "x_attack": "플러스파워",
@@ -425,5 +425,6 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "DRAGON_MEMORY": "드래곤메모리",
     "DARK_MEMORY": "다크메모리",
     "FAIRY_MEMORY": "페어리메모리",
+    "BLANK_MEMORY": "빈메모리",
   },
 } as const;
