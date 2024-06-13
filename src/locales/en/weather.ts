@@ -40,5 +40,9 @@ export const weather: SimpleTranslationEntries = {
 
   "strongWindsStartMessage": "A heavy wind began!",
   "strongWindsLapseMessage": "The wind blows intensely.",
-  "strongWindsClearMessage": "The heavy wind stopped."
+  "strongWindsClearMessage": "The heavy wind stopped.",
+  
+  "newMoonStartMessage": "The world turned dark!",
+  "newMoonLapseMessage": "The darkness lingers.",
+  "newMoonClearMessage": "The darkness subsides."
 };

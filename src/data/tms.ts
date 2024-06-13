@@ -32,6 +32,7 @@ export const reverseCompatibleTms: Moves[] = [];/*[
 ];*/
 
 export const tmSpecies: TmSpecies = {
+  
   [Moves.MEGA_PUNCH]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
@@ -921,7 +922,121 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_GOODRA,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.SWORDS_DANCE]: [
+    [Moves.SWORDS_DANCE]: [
+
+        [
+            Species.AGGRON,
+            "delta",
+        ],
+
+
+        [
+            Species.ARCANINE,
+            "delta",
+        ],
+
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.DUNSPARCE,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTABUZZ,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTIVIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.ELEKID,
+            "delta",
+        ],
+
+
+        [
+            Species.FROAKIE,
+            "delta",
+        ],
+
+
+        [
+            Species.GROWLITHE,
+            "delta",
+        ],
+
+
+        [
+            Species.LAIRON,
+            "delta",
+        ],
+
+
+        [
+            Species.LIEPARD,
+            "delta",
+        ],
+
+
+        [
+            Species.MARACTUS,
+            "delta",
+        ],
+
+
+        [
+            Species.NOIBAT,
+            "delta",
+        ],
+
+
+        [
+            Species.NOIVERN,
+            "delta",
+        ],
+
+
+        [
+            Species.PHANTUMP,
+            "delta",
+        ],
+
+
+        [
+            Species.PURRLOIN,
+            "delta",
+        ],
+
+
+        [
+            Species.SABLEYE,
+            "delta",
+        ],
+
+
+        [
+            Species.TREVENANT,
+            "delta",
+        ],
+
+
+        [
+            Species.VESPIQUEN,
+            "delta",
+        ],
+
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -3687,7 +3802,163 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_LINOONE,
     Species.HISUI_QWILFISH,
   ],
-  [Moves.ROAR]: [
+    [Moves.ROAR]: [
+
+        [
+            Species.BERGMITE,
+            "delta",
+        ],
+
+
+        [
+            Species.COMBUSKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.DRAGONAIR,
+            "delta",
+        ],
+
+
+        [
+            Species.DRATINI,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTIVIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.GIRAFARIG,
+            "delta",
+        ],
+
+
+        [
+            Species.GLALIE,
+            "delta",
+        ],
+
+
+        [
+            Species.HUNTAIL,
+            "delta",
+        ],
+
+
+        [
+            Species.KOFFING,
+            "delta",
+        ],
+
+
+        [
+            Species.MAWILE,
+            "delta",
+        ],
+
+
+        [
+            Species.MUNCHLAX,
+            "delta",
+        ],
+
+
+        [
+            Species.NOIBAT,
+            "delta",
+        ],
+
+
+        [
+            Species.NOIVERN,
+            "delta",
+        ],
+
+
+        [
+            Species.PHANTUMP,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOTTO,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOT,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEY,
+            "delta",
+        ],
+
+
+        [
+            Species.QUAGSIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCIZOR,
+            "delta",
+        ],
+
+
+        [
+            Species.SCYTHER,
+            "delta",
+        ],
+
+
+        [
+            Species.SNORLAX,
+            "delta",
+        ],
+
+
+        [
+            Species.TORCHIC,
+            "delta",
+        ],
+
+
+        [
+            Species.TOXICROAK,
+            "delta",
+        ],
+
+
+        [
+            Species.TREVENANT,
+            "delta",
+        ],
+
+
+        [
+            Species.WEEZING,
+            "delta",
+        ],
+
+
+        [
+            Species.WOOPER,
+            "delta",
+        ],
+
     Species.VENUSAUR,
     Species.CHARMANDER,
     Species.CHARMELEON,
@@ -3923,7 +4194,235 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_ZOROARK,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.FLAMETHROWER]: [
+    [Moves.FLAMETHROWER]: [
+
+        [
+            Species.ARON,
+            "delta",
+        ],
+
+
+        [
+            Species.AVALUGG,
+            "delta",
+        ],
+
+
+        [
+            Species.CHINCHOU,
+            "delta",
+        ],
+
+
+        [
+            Species.COFAGRIGUS,
+            "delta",
+        ],
+
+
+        [
+            Species.CROAGUNK,
+            "delta",
+        ],
+
+
+        [
+            Species.DEINO,
+            "delta",
+        ],
+
+
+        [
+            Species.DRIFBLIM,
+            "delta",
+        ],
+
+
+        [
+            Species.DRIFLOON,
+            "delta",
+        ],
+
+
+        [
+            Species.EMOLGA,
+            "delta",
+        ],
+
+
+        [
+            Species.FROSLASS,
+            "delta",
+        ],
+
+
+        [
+            Species.GLALIE,
+            "delta",
+        ],
+
+
+        [
+            Species.GRENINJA,
+            "delta",
+        ],
+
+
+        [
+            Species.HUNTAIL,
+            "delta",
+        ],
+
+
+        [
+            Species.LAIRON,
+            "delta",
+        ],
+
+
+        [
+            Species.LANTURN,
+            "delta",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-water",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-water",
+        ],
+
+
+        [
+            Species.PIDGEOTTO,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOT,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEY,
+            "delta",
+        ],
+
+
+        [
+            Species.PLUSLE,
+            "delta",
+        ],
+
+
+        [
+            Species.QUAGSIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.REGISTEEL,
+            "delta",
+        ],
+
+
+        [
+            Species.SABLEYE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCEPTILE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCOLIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.SHIFTRY,
+            "delta",
+        ],
+
+
+        [
+            Species.SNORUNT,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNFLORA,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNKERN,
+            "delta",
+        ],
+
+
+        [
+            Species.TANGELA,
+            "delta",
+        ],
+
+
+        [
+            Species.TANGROWTH,
+            "delta",
+        ],
+
+
+        [
+            Species.TOXICROAK,
+            "delta",
+        ],
+
+
+        [
+            Species.VENIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.VESPIQUEN,
+            "delta",
+        ],
+
+
+        [
+            Species.WHIRLIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.WOOPER,
+            "delta",
+        ],
+
+
+        [
+            Species.ZWEILOUS,
+            "delta",
+        ],
+
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -4589,7 +5088,211 @@ export const tmSpecies: TmSpecies = {
     ],
     Species.PALDEA_WOOPER,
   ],
-  [Moves.ICE_BEAM]: [
+    [Moves.ICE_BEAM]: [
+
+        [
+            Species.AIPOM,
+            "delta",
+        ],
+
+
+        [
+            Species.AMBIPOM,
+            "delta",
+        ],
+
+
+        [
+            Species.AMOONGUSS,
+            "delta",
+        ],
+
+
+        [
+            Species.AXEW,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARIZARD,
+            "delta",
+        ],
+
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.DIGLETT,
+            "delta",
+        ],
+
+
+        [
+            Species.DUGTRIO,
+            "delta",
+        ],
+
+
+        [
+            Species.FRAXURE,
+            "delta",
+        ],
+
+
+        [
+            Species.GALLADE,
+            "delta",
+        ],
+
+
+        [
+            Species.GARDEVOIR,
+            "delta",
+        ],
+
+
+        [
+            Species.GROTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.HAXORUS,
+            "delta",
+        ],
+
+
+        [
+            Species.HEATMOR,
+            "delta",
+        ],
+
+
+        [
+            Species.HOOPA,
+            "delta",
+        ],
+
+
+        [
+            Species.HOOTHOOT,
+            "delta",
+        ],
+
+
+        [
+            Species.KIRLIA,
+            "delta",
+        ],
+
+
+        [
+            Species.MAGBY,
+            "delta",
+        ],
+
+
+        [
+            Species.MAGMAR,
+            "delta",
+        ],
+
+
+        [
+            Species.MAGMORTAR,
+            "delta",
+        ],
+
+
+        [
+            Species.MINUN,
+            "delta",
+        ],
+
+
+        [
+            Species.MISDREAVUS,
+            "delta",
+        ],
+
+
+        [
+            Species.MISMAGIUS,
+            "delta",
+        ],
+
+
+        [
+            Species.NOCTOWL,
+            "delta",
+        ],
+
+
+        [
+            Species.PHANTUMP,
+            "delta",
+        ],
+
+
+        [
+            Species.RALTS,
+            "delta",
+        ],
+
+
+        [
+            Species.SCIZOR,
+            "delta",
+        ],
+
+
+        [
+            Species.SCYTHER,
+            "delta",
+        ],
+
+
+        [
+            Species.SERPERIOR,
+            "delta",
+        ],
+
+
+        [
+            Species.SERVINE,
+            "delta",
+        ],
+
+
+        [
+            Species.SNIVY,
+            "delta",
+        ],
+
+
+        [
+            Species.TORTERRA,
+            "delta",
+        ],
+
+
+        [
+            Species.TREVENANT,
+            "delta",
+        ],
+
+
+        [
+            Species.TURTWIG,
+            "delta",
+        ],
+
     Species.SQUIRTLE,
     Species.WARTORTLE,
     Species.BLASTOISE,
@@ -4891,7 +5594,181 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_GOODRA,
     Species.HISUI_AVALUGG,
   ],
-  [Moves.BLIZZARD]: [
+    [Moves.BLIZZARD]: [
+
+        [
+            Species.AXEW,
+            "delta",
+        ],
+
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.DIGLETT,
+            "delta",
+        ],
+
+
+        [
+            Species.DUGTRIO,
+            "delta",
+        ],
+
+
+        [
+            Species.ESCAVALIER,
+            "delta",
+        ],
+
+
+        [
+            Species.FRAXURE,
+            "delta",
+        ],
+
+
+        [
+            Species.GALLADE,
+            "delta",
+        ],
+
+
+        [
+            Species.GARDEVOIR,
+            "delta",
+        ],
+
+
+        [
+            Species.GROTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.HAXORUS,
+            "delta",
+        ],
+
+
+        [
+            Species.HOOPA,
+            "delta",
+        ],
+
+
+        [
+            Species.HOOTHOOT,
+            "delta",
+        ],
+
+
+        [
+            Species.KIRLIA,
+            "delta",
+        ],
+
+
+        [
+            Species.LUCARIO,
+            "delta",
+        ],
+
+
+        [
+            Species.MAGBY,
+            "delta",
+        ],
+
+
+        [
+            Species.MAGMAR,
+            "delta",
+        ],
+
+
+        [
+            Species.MAGMORTAR,
+            "delta",
+        ],
+
+
+        [
+            Species.MINUN,
+            "delta",
+        ],
+
+
+        [
+            Species.MISDREAVUS,
+            "delta",
+        ],
+
+
+        [
+            Species.MISMAGIUS,
+            "delta",
+        ],
+
+
+        [
+            Species.NOCTOWL,
+            "delta",
+        ],
+
+
+        [
+            Species.PHANTUMP,
+            "delta",
+        ],
+
+
+        [
+            Species.RALTS,
+            "delta",
+        ],
+
+
+        [
+            Species.SCIZOR,
+            "delta",
+        ],
+
+
+        [
+            Species.SCYTHER,
+            "delta",
+        ],
+
+
+        [
+            Species.TORTERRA,
+            "delta",
+        ],
+
+
+        [
+            Species.TREVENANT,
+            "delta",
+        ],
+
+
+        [
+            Species.TURTWIG,
+            "delta",
+        ],
+
+
+        [
+            Species.VOLCARONA,
+            "delta",
+        ],
+
     Species.SQUIRTLE,
     Species.WARTORTLE,
     Species.BLASTOISE,
@@ -5301,7 +6178,79 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_SLOWKING,
     Species.HISUI_BRAVIARY,
   ],
-  [Moves.HYPER_BEAM]: [
+    [Moves.HYPER_BEAM]: [
+
+        [
+            Species.AXEW,
+            "delta",
+        ],
+
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.FRAXURE,
+            "delta",
+        ],
+
+
+        [
+            Species.GROWLITHE,
+            "delta",
+        ],
+
+
+        [
+            Species.HEATMOR,
+            "delta",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-water",
+        ],
+
+
+        [
+            Species.MARACTUS,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.MINUN,
+            "delta",
+        ],
+
+
+        [
+            Species.PLUSLE,
+            "delta",
+        ],
+
+
+        [
+            Species.SHUCKLE,
+            "delta",
+        ],
+
+
+        [
+            Species.YANMA,
+            "delta",
+        ],
+
     Species.VENUSAUR,
     Species.CHARIZARD,
     Species.BLASTOISE,
@@ -6501,7 +7450,175 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_TAUROS,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.SOLAR_BEAM]: [
+    [Moves.SOLAR_BEAM]: [
+
+        [
+            Species.AMAURA,
+            "delta",
+        ],
+
+
+        [
+            Species.AURORUS,
+            "delta",
+        ],
+
+
+        [
+            Species.COMBUSKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.DEINO,
+            "delta",
+        ],
+
+
+        [
+            Species.DRIFBLIM,
+            "delta",
+        ],
+
+
+        [
+            Species.DRIFLOON,
+            "delta",
+        ],
+
+
+        [
+            Species.FROAKIE,
+            "delta",
+        ],
+
+
+        [
+            Species.FROGADIER,
+            "delta",
+        ],
+
+
+        [
+            Species.FROSLASS,
+            "delta",
+        ],
+
+
+        [
+            Species.GLALIE,
+            "delta",
+        ],
+
+
+        [
+            Species.GRENINJA,
+            "delta",
+        ],
+
+
+        [
+            Species.HYDREIGON,
+            "delta",
+        ],
+
+
+        [
+            Species.MEDICHAM,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-ruin",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-ruin",
+        ],
+
+
+        [
+            Species.OCTILLERY,
+            "delta",
+        ],
+
+
+        [
+            Species.PLUSLE,
+            "delta",
+        ],
+
+
+        [
+            Species.QUAGSIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.REMORAID,
+            "delta",
+        ],
+
+
+        [
+            Species.SCRAFTY,
+            "delta",
+        ],
+
+
+        [
+            Species.SCRAGGY,
+            "delta",
+        ],
+
+
+        [
+            Species.SNORUNT,
+            "delta",
+        ],
+
+
+        [
+            Species.TENTACOOL,
+            "delta",
+        ],
+
+
+        [
+            Species.TENTACRUEL,
+            "delta",
+        ],
+
+
+        [
+            Species.TORCHIC,
+            "delta",
+        ],
+
+
+        [
+            Species.VESPIQUEN,
+            "delta",
+        ],
+
+
+        [
+            Species.WOOPER,
+            "delta",
+        ],
+
+
+        [
+            Species.ZWEILOUS,
+            "delta",
+        ],
+
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -6937,7 +8054,157 @@ export const tmSpecies: TmSpecies = {
       "blaze",
     ],
   ],
-  [Moves.THUNDERBOLT]: [
+    [Moves.THUNDERBOLT]: [
+
+        [
+            Species.AMOONGUSS,
+            "delta",
+        ],
+
+
+        [
+            Species.BUDEW,
+            "delta",
+        ],
+
+
+        [
+            Species.CYNDAQUIL,
+            "delta",
+        ],
+
+
+        [
+            Species.DODRIO,
+            "delta",
+        ],
+
+
+        [
+            Species.DODUO,
+            "delta",
+        ],
+
+
+        [
+            Species.HEATMOR,
+            "delta",
+        ],
+
+
+        [
+            Species.IVYSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.LIEPARD,
+            "delta",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-water",
+        ],
+
+
+        [
+            Species.LUDICOLO,
+            "delta",
+        ],
+
+
+        [
+            Species.MARACTUS,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-ruin",
+        ],
+
+
+        [
+            Species.NUZLEAF,
+            "delta",
+        ],
+
+
+        [
+            Species.QUILAVA,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSELIA,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSERADE,
+            "delta",
+        ],
+
+
+        [
+            Species.SEEDOT,
+            "delta",
+        ],
+
+
+        [
+            Species.SERPERIOR,
+            "delta",
+        ],
+
+
+        [
+            Species.SERVINE,
+            "delta",
+        ],
+
+
+        [
+            Species.SHIFTRY,
+            "delta",
+        ],
+
+
+        [
+            Species.TYPHLOSION,
+            "delta",
+        ],
+
+
+        [
+            Species.VENUSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.VESPIQUEN,
+            "delta",
+        ],
+
+
+        [
+            Species.VOLCARONA,
+            "delta",
+        ],
+
     Species.RATTATA,
     Species.RATICATE,
     Species.PIKACHU,
@@ -7213,7 +8480,241 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_SLIGGOO,
     Species.HISUI_GOODRA,
   ],
-  [Moves.THUNDER_WAVE]: [
+    [Moves.THUNDER_WAVE]: [
+
+        [
+            Species.AMOONGUSS,
+            "delta",
+        ],
+
+
+        [
+            Species.BUDEW,
+            "delta",
+        ],
+
+
+        [
+            Species.BULBASAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.CRUSTLE,
+            "delta-berry",
+        ],
+
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.CYNDAQUIL,
+            "delta",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-berry",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.FOONGUS,
+            "delta",
+        ],
+
+
+        [
+            Species.GEODUDE,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLEM,
+            "delta",
+        ],
+
+
+        [
+            Species.GRAVELER,
+            "delta",
+        ],
+
+
+        [
+            Species.IVYSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.KOFFING,
+            "delta",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-water",
+        ],
+
+
+        [
+            Species.LUDICOLO,
+            "delta",
+        ],
+
+
+        [
+            Species.MAGMORTAR,
+            "delta",
+        ],
+
+
+        [
+            Species.MARACTUS,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-ruin",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-ruin",
+        ],
+
+
+        [
+            Species.NUZLEAF,
+            "delta",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.QUILAVA,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSELIA,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSERADE,
+            "delta",
+        ],
+
+
+        [
+            Species.SEEDOT,
+            "delta",
+        ],
+
+
+        [
+            Species.SERPERIOR,
+            "delta",
+        ],
+
+
+        [
+            Species.SERVINE,
+            "delta",
+        ],
+
+
+        [
+            Species.SHIFTRY,
+            "delta",
+        ],
+
+
+        [
+            Species.SHUCKLE,
+            "delta",
+        ],
+
+
+        [
+            Species.SNIVY,
+            "delta",
+        ],
+
+
+        [
+            Species.TYPHLOSION,
+            "delta",
+        ],
+
+
+        [
+            Species.VENUSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.VESPIQUEN,
+            "delta",
+        ],
+
+
+        [
+            Species.VOLCARONA,
+            "delta",
+        ],
+
+
+        [
+            Species.WAILMER,
+            "delta",
+        ],
+
+
+        [
+            Species.WAILORD,
+            "delta",
+        ],
+
+
+        [
+            Species.WEEZING,
+            "delta",
+        ],
+
     Species.RATTATA,
     Species.RATICATE,
     Species.PIKACHU,
@@ -7504,7 +9005,169 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_VOLTORB,
     Species.HISUI_ELECTRODE,
   ],
-  [Moves.THUNDER]: [
+    [Moves.THUNDER]: [
+
+        [
+            Species.AMOONGUSS,
+            "delta",
+        ],
+
+
+        [
+            Species.BUDEW,
+            "delta",
+        ],
+
+
+        [
+            Species.BUNEARY,
+            "delta",
+        ],
+
+
+        [
+            Species.CYNDAQUIL,
+            "delta",
+        ],
+
+
+        [
+            Species.DODRIO,
+            "delta",
+        ],
+
+
+        [
+            Species.GALLADE,
+            "delta",
+        ],
+
+
+        [
+            Species.GARDEVOIR,
+            "delta",
+        ],
+
+
+        [
+            Species.HOOPA,
+            "delta",
+        ],
+
+
+        [
+            Species.KIRLIA,
+            "delta",
+        ],
+
+
+        [
+            Species.LIEPARD,
+            "delta",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.LUCARIO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUDICOLO,
+            "delta",
+        ],
+
+
+        [
+            Species.MARACTUS,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-ruin",
+        ],
+
+
+        [
+            Species.NUZLEAF,
+            "delta",
+        ],
+
+
+        [
+            Species.QUILAVA,
+            "delta",
+        ],
+
+
+        [
+            Species.RALTS,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSELIA,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSERADE,
+            "delta",
+        ],
+
+
+        [
+            Species.SEEDOT,
+            "delta",
+        ],
+
+
+        [
+            Species.SERPERIOR,
+            "delta",
+        ],
+
+
+        [
+            Species.SHIFTRY,
+            "delta",
+        ],
+
+
+        [
+            Species.TYPHLOSION,
+            "delta",
+        ],
+
+
+        [
+            Species.VOLCARONA,
+            "delta",
+        ],
+
+
+        [
+            Species.WAILMER,
+            "delta",
+        ],
+
+
+        [
+            Species.WAILORD,
+            "delta",
+        ],
+
     Species.RATTATA,
     Species.RATICATE,
     Species.PIKACHU,
@@ -7747,7 +9410,205 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_SLIGGOO,
     Species.HISUI_GOODRA,
   ],
-  [Moves.EARTHQUAKE]: [
+    [Moves.EARTHQUAKE]: [
+
+        [
+            Species.ARCANINE,
+            "delta",
+        ],
+
+
+        [
+            Species.BERGMITE,
+            "delta",
+        ],
+
+
+        [
+            Species.DEINO,
+            "delta",
+        ],
+
+
+        [
+            Species.DUOSION,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTABUZZ,
+            "delta",
+        ],
+
+
+        [
+            Species.ELEKID,
+            "delta",
+        ],
+
+
+        [
+            Species.GOOMY,
+            "delta",
+        ],
+
+
+        [
+            Species.GRIMER,
+            "delta",
+        ],
+
+
+        [
+            Species.GROTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.GROWLITHE,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXIO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXRAY,
+            "delta",
+        ],
+
+
+        [
+            Species.MEDICHAM,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.MUK,
+            "delta",
+        ],
+
+
+        [
+            Species.NOIVERN,
+            "delta",
+        ],
+
+
+        [
+            Species.OCTILLERY,
+            "delta",
+        ],
+
+
+        [
+            Species.PHANTUMP,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOT,
+            "delta",
+        ],
+
+
+        [
+            Species.REUNICLUS,
+            "delta",
+        ],
+
+
+        [
+            Species.SABLEYE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCRAFTY,
+            "delta",
+        ],
+
+
+        [
+            Species.SCRAGGY,
+            "delta",
+        ],
+
+
+        [
+            Species.SERPERIOR,
+            "delta",
+        ],
+
+
+        [
+            Species.SHINX,
+            "delta",
+        ],
+
+
+        [
+            Species.SLIGGOO,
+            "delta",
+        ],
+
+
+        [
+            Species.SOLOSIS,
+            "delta",
+        ],
+
+
+        [
+            Species.TANGELA,
+            "delta",
+        ],
+
+
+        [
+            Species.TURTWIG,
+            "delta",
+        ],
+
+
+        [
+            Species.VOLCARONA,
+            "delta",
+        ],
+
+
+        [
+            Species.WARTORTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.ZWEILOUS,
+            "delta",
+        ],
+
     Species.VENUSAUR,
     Species.CHARIZARD,
     Species.BLASTOISE,
@@ -8066,7 +9927,241 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.DIG]: [
+    [Moves.DIG]: [
+
+        [
+            Species.AVALUGG,
+            "delta",
+        ],
+
+
+        [
+            Species.BERGMITE,
+            "delta",
+        ],
+
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.DEINO,
+            "delta",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.ELECTABUZZ,
+            "delta",
+        ],
+
+
+        [
+            Species.ELEKID,
+            "delta",
+        ],
+
+
+        [
+            Species.EMOLGA,
+            "delta",
+        ],
+
+
+        [
+            Species.ESCAVALIER,
+            "delta",
+        ],
+
+
+        [
+            Species.GOODRA,
+            "delta",
+        ],
+
+
+        [
+            Species.GOOMY,
+            "delta",
+        ],
+
+
+        [
+            Species.HYDREIGON,
+            "delta",
+        ],
+
+
+        [
+            Species.KARRABLAST,
+            "delta",
+        ],
+
+
+        [
+            Species.MAWILE,
+            "delta",
+        ],
+
+
+        [
+            Species.MEDICHAM,
+            "delta",
+        ],
+
+
+        [
+            Species.MEDITITE,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-ruin",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-ruin",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.NOIBAT,
+            "delta",
+        ],
+
+
+        [
+            Species.NOIVERN,
+            "delta",
+        ],
+
+
+        [
+            Species.OCTILLERY,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOTTO,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOT,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEY,
+            "delta",
+        ],
+
+
+        [
+            Species.REGISTEEL,
+            "delta",
+        ],
+
+
+        [
+            Species.SERPERIOR,
+            "delta",
+        ],
+
+
+        [
+            Species.SERVINE,
+            "delta",
+        ],
+
+
+        [
+            Species.SLIGGOO,
+            "delta",
+        ],
+
+
+        [
+            Species.SNIVY,
+            "delta",
+        ],
+
+
+        [
+            Species.TANGELA,
+            "delta",
+        ],
+
+
+        [
+            Species.TANGROWTH,
+            "delta",
+        ],
+
+
+        [
+            Species.VENIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.VESPIQUEN,
+            "delta",
+        ],
+
+
+        [
+            Species.WHIRLIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.YANMA,
+            "delta",
+        ],
+
+
+        [
+            Species.YANMEGA,
+            "delta",
+        ],
+
+
+        [
+            Species.ZWEILOUS,
+            "delta",
+        ],
+
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -8496,7 +10591,43 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.TOXIC]: [
+    [Moves.TOXIC]: [
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-water",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-water",
+        ],
+
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -9337,7 +11468,217 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_SNEASEL,
     Species.PALDEA_WOOPER,
   ],
-  [Moves.PSYCHIC]: [
+    [Moves.PSYCHIC]: [
+
+        [
+            Species.AIPOM,
+            "delta",
+        ],
+
+
+        [
+            Species.AMBIPOM,
+            "delta",
+        ],
+
+
+        [
+            Species.AMOONGUSS,
+            "delta",
+        ],
+
+
+        [
+            Species.BLAZIKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.BUDEW,
+            "delta",
+        ],
+
+
+        [
+            Species.BULBASAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.BUNEARY,
+            "delta",
+        ],
+
+
+        [
+            Species.CHINCHOU,
+            "delta",
+        ],
+
+
+        [
+            Species.COMBUSKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.DODRIO,
+            "delta",
+        ],
+
+
+        [
+            Species.DODUO,
+            "delta",
+        ],
+
+
+        [
+            Species.ESCAVALIER,
+            "delta",
+        ],
+
+
+        [
+            Species.FOONGUS,
+            "delta",
+        ],
+
+
+        [
+            Species.GEODUDE,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLEM,
+            "delta",
+        ],
+
+
+        [
+            Species.GRAVELER,
+            "delta",
+        ],
+
+
+        [
+            Species.IVYSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.KARRABLAST,
+            "delta",
+        ],
+
+
+        [
+            Species.LANTURN,
+            "delta",
+        ],
+
+
+        [
+            Species.LIEPARD,
+            "delta",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.LOMBRE,
+            "delta",
+        ],
+
+
+        [
+            Species.LOPUNNY,
+            "delta",
+        ],
+
+
+        [
+            Species.LOTAD,
+            "delta",
+        ],
+
+
+        [
+            Species.LUDICOLO,
+            "delta",
+        ],
+
+
+        [
+            Species.MILOTIC,
+            "delta",
+        ],
+
+
+        [
+            Species.MINUN,
+            "delta",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.PLUSLE,
+            "delta",
+        ],
+
+
+        [
+            Species.PURRLOIN,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSELIA,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSERADE,
+            "delta",
+        ],
+
+
+        [
+            Species.TORCHIC,
+            "delta",
+        ],
+
+
+        [
+            Species.VENUSAUR,
+            "delta",
+        ],
+
     Species.BUTTERFREE,
     Species.CLEFAIRY,
     Species.CLEFABLE,
@@ -10233,7 +12574,43 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_ELECTRODE,
     Species.HISUI_SNEASEL,
   ],
-  [Moves.DOUBLE_TEAM]: [
+    [Moves.DOUBLE_TEAM]: [
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-water",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-water",
+        ],
+
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -11217,7 +13594,391 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_ZOROARK,
     Species.HISUI_BRAVIARY,
   ],
-  [Moves.LIGHT_SCREEN]: [
+    [Moves.LIGHT_SCREEN]: [
+
+        [
+            Species.AIPOM,
+            "delta",
+        ],
+
+
+        [
+            Species.AMBIPOM,
+            "delta",
+        ],
+
+
+        [
+            Species.AMOONGUSS,
+            "delta",
+        ],
+
+
+        [
+            Species.ARCANINE,
+            "delta",
+        ],
+
+
+        [
+            Species.AVALUGG,
+            "delta",
+        ],
+
+
+        [
+            Species.BERGMITE,
+            "delta",
+        ],
+
+
+        [
+            Species.BLASTOISE,
+            "delta",
+        ],
+
+
+        [
+            Species.BLAZIKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.BUDEW,
+            "delta",
+        ],
+
+
+        [
+            Species.BUNEARY,
+            "delta",
+        ],
+
+
+        [
+            Species.CHANDELURE,
+            "delta",
+        ],
+
+
+        [
+            Species.CLAMPERL,
+            "delta",
+        ],
+
+
+        [
+            Species.COFAGRIGUS,
+            "delta",
+        ],
+
+
+        [
+            Species.COMBUSKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.CRUSTLE,
+            "delta-berry",
+        ],
+
+
+        [
+            Species.CYNDAQUIL,
+            "delta",
+        ],
+
+
+        [
+            Species.DODRIO,
+            "delta",
+        ],
+
+
+        [
+            Species.DODUO,
+            "delta",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-berry",
+        ],
+
+
+        [
+            Species.ESCAVALIER,
+            "delta",
+        ],
+
+
+        [
+            Species.FOONGUS,
+            "delta",
+        ],
+
+
+        [
+            Species.GEODUDE,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLEM,
+            "delta",
+        ],
+
+
+        [
+            Species.GOREBYSS,
+            "delta",
+        ],
+
+
+        [
+            Species.GRAVELER,
+            "delta",
+        ],
+
+
+        [
+            Species.GROWLITHE,
+            "delta",
+        ],
+
+
+        [
+            Species.HUNTAIL,
+            "delta",
+        ],
+
+
+        [
+            Species.KARRABLAST,
+            "delta",
+        ],
+
+
+        [
+            Species.KOFFING,
+            "delta",
+        ],
+
+
+        [
+            Species.LAMPENT,
+            "delta",
+        ],
+
+
+        [
+            Species.LIEPARD,
+            "delta",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-water",
+        ],
+
+
+        [
+            Species.LITWICK,
+            "delta",
+        ],
+
+
+        [
+            Species.LOMBRE,
+            "delta",
+        ],
+
+
+        [
+            Species.LOPUNNY,
+            "delta",
+        ],
+
+
+        [
+            Species.LOTAD,
+            "delta",
+        ],
+
+
+        [
+            Species.LUCARIO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUDICOLO,
+            "delta",
+        ],
+
+
+        [
+            Species.MARACTUS,
+            "delta",
+        ],
+
+
+        [
+            Species.MISDREAVUS,
+            "delta",
+        ],
+
+
+        [
+            Species.MISMAGIUS,
+            "delta",
+        ],
+
+
+        [
+            Species.NUZLEAF,
+            "delta",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-water",
+        ],
+
+
+        [
+            Species.PURRLOIN,
+            "delta",
+        ],
+
+
+        [
+            Species.QUILAVA,
+            "delta",
+        ],
+
+
+        [
+            Species.REGICE,
+            "delta",
+        ],
+
+
+        [
+            Species.REGIROCK,
+            "delta",
+        ],
+
+
+        [
+            Species.REGISTEEL,
+            "delta",
+        ],
+
+
+        [
+            Species.RIOLU,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSELIA,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSERADE,
+            "delta",
+        ],
+
+
+        [
+            Species.SEEDOT,
+            "delta",
+        ],
+
+
+        [
+            Species.SHIFTRY,
+            "delta",
+        ],
+
+
+        [
+            Species.SQUIRTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.TENTACOOL,
+            "delta",
+        ],
+
+
+        [
+            Species.TENTACRUEL,
+            "delta",
+        ],
+
+
+        [
+            Species.TORCHIC,
+            "delta",
+        ],
+
+
+        [
+            Species.TYPHLOSION,
+            "delta",
+        ],
+
+
+        [
+            Species.WAILMER,
+            "delta",
+        ],
+
+
+        [
+            Species.WAILORD,
+            "delta",
+        ],
+
+
+        [
+            Species.WARTORTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.WEEZING,
+            "delta",
+        ],
+
+
+        [
+            Species.YAMASK,
+            "delta",
+        ],
+
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -11661,7 +14422,355 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_DECIDUEYE,
     Species.PALDEA_WOOPER,
   ],
-  [Moves.REFLECT]: [
+    [Moves.REFLECT]: [
+
+        [
+            Species.AIPOM,
+            "delta",
+        ],
+
+
+        [
+            Species.AMBIPOM,
+            "delta",
+        ],
+
+
+        [
+            Species.AVALUGG,
+            "delta",
+        ],
+
+
+        [
+            Species.BERGMITE,
+            "delta",
+        ],
+
+
+        [
+            Species.BLAZIKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.BUNEARY,
+            "delta",
+        ],
+
+
+        [
+            Species.CHANDELURE,
+            "delta",
+        ],
+
+
+        [
+            Species.CLAMPERL,
+            "delta",
+        ],
+
+
+        [
+            Species.COFAGRIGUS,
+            "delta",
+        ],
+
+
+        [
+            Species.COMBUSKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.CRUSTLE,
+            "delta-berry",
+        ],
+
+
+        [
+            Species.CYNDAQUIL,
+            "delta",
+        ],
+
+
+        [
+            Species.DRIFBLIM,
+            "delta",
+        ],
+
+
+        [
+            Species.DRIFLOON,
+            "delta",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-berry",
+        ],
+
+
+        [
+            Species.ELECTIVIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.ELEKID,
+            "delta",
+        ],
+
+
+        [
+            Species.ESCAVALIER,
+            "delta",
+        ],
+
+
+        [
+            Species.GEODUDE,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLEM,
+            "delta",
+        ],
+
+
+        [
+            Species.GOODRA,
+            "delta",
+        ],
+
+
+        [
+            Species.GOOMY,
+            "delta",
+        ],
+
+
+        [
+            Species.GOREBYSS,
+            "delta",
+        ],
+
+
+        [
+            Species.GRAVELER,
+            "delta",
+        ],
+
+
+        [
+            Species.HUNTAIL,
+            "delta",
+        ],
+
+
+        [
+            Species.KARRABLAST,
+            "delta",
+        ],
+
+
+        [
+            Species.KOFFING,
+            "delta",
+        ],
+
+
+        [
+            Species.LAMPENT,
+            "delta",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.LITWICK,
+            "delta",
+        ],
+
+
+        [
+            Species.LOMBRE,
+            "delta",
+        ],
+
+
+        [
+            Species.LOPUNNY,
+            "delta",
+        ],
+
+
+        [
+            Species.LOTAD,
+            "delta",
+        ],
+
+
+        [
+            Species.LUDICOLO,
+            "delta",
+        ],
+
+
+        [
+            Species.MAGBY,
+            "delta",
+        ],
+
+
+        [
+            Species.MAGMAR,
+            "delta",
+        ],
+
+
+        [
+            Species.MAGMORTAR,
+            "delta",
+        ],
+
+
+        [
+            Species.MARACTUS,
+            "delta",
+        ],
+
+
+        [
+            Species.MELOETTA,
+            "delta",
+        ],
+
+
+        [
+            Species.MILOTIC,
+            "delta",
+        ],
+
+
+        [
+            Species.NOIBAT,
+            "delta",
+        ],
+
+
+        [
+            Species.NOIVERN,
+            "delta",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.QUILAVA,
+            "delta",
+        ],
+
+
+        [
+            Species.REGICE,
+            "delta",
+        ],
+
+
+        [
+            Species.REGIROCK,
+            "delta",
+        ],
+
+
+        [
+            Species.REGISTEEL,
+            "delta",
+        ],
+
+
+        [
+            Species.SHUCKLE,
+            "delta",
+        ],
+
+
+        [
+            Species.SLIGGOO,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNFLORA,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNKERN,
+            "delta",
+        ],
+
+
+        [
+            Species.TORCHIC,
+            "delta",
+        ],
+
+
+        [
+            Species.TYPHLOSION,
+            "delta",
+        ],
+
+
+        [
+            Species.VESPIQUEN,
+            "delta",
+        ],
+
+
+        [
+            Species.WAILMER,
+            "delta",
+        ],
+
+
+        [
+            Species.WAILORD,
+            "delta",
+        ],
+
+
+        [
+            Species.WEEZING,
+            "delta",
+        ],
+
+
+        [
+            Species.YAMASK,
+            "delta",
+        ],
+
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -12400,7 +15509,241 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_ELECTRODE,
     Species.HISUI_QWILFISH,
   ],
-  [Moves.FIRE_BLAST]: [
+    [Moves.FIRE_BLAST]: [
+
+        [
+            Species.ARON,
+            "delta",
+        ],
+
+
+        [
+            Species.AVALUGG,
+            "delta",
+        ],
+
+
+        [
+            Species.CHINCHOU,
+            "delta",
+        ],
+
+
+        [
+            Species.COFAGRIGUS,
+            "delta",
+        ],
+
+
+        [
+            Species.CROAGUNK,
+            "delta",
+        ],
+
+
+        [
+            Species.DEINO,
+            "delta",
+        ],
+
+
+        [
+            Species.DRIFBLIM,
+            "delta",
+        ],
+
+
+        [
+            Species.DRIFLOON,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTIVIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.EMOLGA,
+            "delta",
+        ],
+
+
+        [
+            Species.FROSLASS,
+            "delta",
+        ],
+
+
+        [
+            Species.GLALIE,
+            "delta",
+        ],
+
+
+        [
+            Species.GRENINJA,
+            "delta",
+        ],
+
+
+        [
+            Species.HUNTAIL,
+            "delta",
+        ],
+
+
+        [
+            Species.LAIRON,
+            "delta",
+        ],
+
+
+        [
+            Species.LANTURN,
+            "delta",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-water",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-water",
+        ],
+
+
+        [
+            Species.PIDGEOTTO,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOT,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEY,
+            "delta",
+        ],
+
+
+        [
+            Species.PLUSLE,
+            "delta",
+        ],
+
+
+        [
+            Species.QUAGSIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.REGISTEEL,
+            "delta",
+        ],
+
+
+        [
+            Species.SABLEYE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCEPTILE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCOLIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.SHIFTRY,
+            "delta",
+        ],
+
+
+        [
+            Species.SNORUNT,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNFLORA,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNKERN,
+            "delta",
+        ],
+
+
+        [
+            Species.TANGELA,
+            "delta",
+        ],
+
+
+        [
+            Species.TANGROWTH,
+            "delta",
+        ],
+
+
+        [
+            Species.TOXICROAK,
+            "delta",
+        ],
+
+
+        [
+            Species.VENIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.VESPIQUEN,
+            "delta",
+        ],
+
+
+        [
+            Species.WHIRLIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.WOOPER,
+            "delta",
+        ],
+
+
+        [
+            Species.ZWEILOUS,
+            "delta",
+        ],
+
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -13445,7 +16788,187 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_CORSOLA,
     Species.PALDEA_WOOPER,
   ],
-  [Moves.DREAM_EATER]: [
+    [Moves.DREAM_EATER]: [
+
+        [
+            Species.AMOONGUSS,
+            "delta",
+        ],
+
+
+        [
+            Species.BUDEW,
+            "delta",
+        ],
+
+
+        [
+            Species.BULBASAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.BUNEARY,
+            "delta",
+        ],
+
+
+        [
+            Species.CHINCHOU,
+            "delta",
+        ],
+
+
+        [
+            Species.DARMANITAN,
+            "delta",
+        ],
+
+
+        [
+            Species.DARUMAKA,
+            "delta",
+        ],
+
+
+        [
+            Species.DODRIO,
+            "delta",
+        ],
+
+
+        [
+            Species.DODUO,
+            "delta",
+        ],
+
+
+        [
+            Species.ESCAVALIER,
+            "delta",
+        ],
+
+
+        [
+            Species.FOONGUS,
+            "delta",
+        ],
+
+
+        [
+            Species.GEODUDE,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLEM,
+            "delta",
+        ],
+
+
+        [
+            Species.GOREBYSS,
+            "delta",
+        ],
+
+
+        [
+            Species.GRAVELER,
+            "delta",
+        ],
+
+
+        [
+            Species.IVYSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.KARRABLAST,
+            "delta",
+        ],
+
+
+        [
+            Species.KOFFING,
+            "delta",
+        ],
+
+
+        [
+            Species.LANTURN,
+            "delta",
+        ],
+
+
+        [
+            Species.LOMBRE,
+            "delta",
+        ],
+
+
+        [
+            Species.LOPUNNY,
+            "delta",
+        ],
+
+
+        [
+            Species.LUCARIO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUDICOLO,
+            "delta",
+        ],
+
+
+        [
+            Species.MILOTIC,
+            "delta",
+        ],
+
+
+        [
+            Species.MINUN,
+            "delta",
+        ],
+
+
+        [
+            Species.PLUSLE,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSELIA,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSERADE,
+            "delta",
+        ],
+
+
+        [
+            Species.VENUSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.WEEZING,
+            "delta",
+        ],
+
     Species.BUTTERFREE,
     Species.CLEFAIRY,
     Species.CLEFABLE,
@@ -13712,7 +17235,79 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_SANDSHREW,
     Species.ALOLA_SANDSLASH,
   ],
-  [Moves.FLASH]: [
+    [Moves.FLASH]: [
+
+        [
+            Species.BLAZIKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.COMBUSKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.CYNDAQUIL,
+            "delta",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.FEEBAS,
+            "delta",
+        ],
+
+
+        [
+            Species.LARVESTA,
+            "delta",
+        ],
+
+
+        [
+            Species.MILOTIC,
+            "delta",
+        ],
+
+
+        [
+            Species.QUILAVA,
+            "delta",
+        ],
+
+
+        [
+            Species.TORCHIC,
+            "delta",
+        ],
+
+
+        [
+            Species.TYPHLOSION,
+            "delta",
+        ],
+
+
+        [
+            Species.VOLCARONA,
+            "delta",
+        ],
+
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -14033,7 +17628,169 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_AVALUGG,
     Species.PALDEA_WOOPER,
   ],
-  [Moves.EXPLOSION]: [
+    [Moves.EXPLOSION]: [
+
+        [
+            Species.AGGRON,
+            "delta",
+        ],
+
+
+        [
+            Species.ARON,
+            "delta",
+        ],
+
+
+        [
+            Species.CHANDELURE,
+            "delta",
+        ],
+
+
+        [
+            Species.COFAGRIGUS,
+            "delta",
+        ],
+
+
+        [
+            Species.CROAGUNK,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTABUZZ,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTIVIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.ELEKID,
+            "delta",
+        ],
+
+
+        [
+            Species.GIRAFARIG,
+            "delta",
+        ],
+
+
+        [
+            Species.GOODRA,
+            "delta",
+        ],
+
+
+        [
+            Species.GOOMY,
+            "delta",
+        ],
+
+
+        [
+            Species.LAIRON,
+            "delta",
+        ],
+
+
+        [
+            Species.MARACTUS,
+            "delta",
+        ],
+
+
+        [
+            Species.NUMEL,
+            "delta",
+        ],
+
+
+        [
+            Species.QUAGSIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCOLIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.SHUCKLE,
+            "delta",
+        ],
+
+
+        [
+            Species.SLIGGOO,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNFLORA,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNKERN,
+            "delta",
+        ],
+
+
+        [
+            Species.TOXICROAK,
+            "delta",
+        ],
+
+
+        [
+            Species.VENIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.VESPIQUEN,
+            "delta",
+        ],
+
+
+        [
+            Species.VOLCARONA,
+            "delta",
+        ],
+
+
+        [
+            Species.WHIRLIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.WOOPER,
+            "delta",
+        ],
+
+
+        [
+            Species.YAMASK,
+            "delta",
+        ],
+
     Species.GEODUDE,
     Species.GRAVELER,
     Species.GOLEM,
@@ -14132,7 +17889,43 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_VOLTORB,
     Species.HISUI_ELECTRODE,
   ],
-  [Moves.REST]: [
+    [Moves.REST]: [
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-water",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-water",
+        ],
+
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -15195,7 +18988,205 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.ROCK_SLIDE]: [
+    [Moves.ROCK_SLIDE]: [
+
+        [
+            Species.ARCANINE,
+            "delta",
+        ],
+
+
+        [
+            Species.BUNEARY,
+            "delta",
+        ],
+
+
+        [
+            Species.DEINO,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTABUZZ,
+            "delta",
+        ],
+
+
+        [
+            Species.ELEKID,
+            "delta",
+        ],
+
+
+        [
+            Species.ESCAVALIER,
+            "delta",
+        ],
+
+
+        [
+            Species.GLALIE,
+            "delta",
+        ],
+
+
+        [
+            Species.GROTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.GROWLITHE,
+            "delta",
+        ],
+
+
+        [
+            Species.KOFFING,
+            "delta",
+        ],
+
+
+        [
+            Species.LOPUNNY,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXIO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXRAY,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.NOIVERN,
+            "delta",
+        ],
+
+
+        [
+            Species.OCTILLERY,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOTTO,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOT,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEY,
+            "delta",
+        ],
+
+
+        [
+            Species.REMORAID,
+            "delta",
+        ],
+
+
+        [
+            Species.SABLEYE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCIZOR,
+            "delta",
+        ],
+
+
+        [
+            Species.SCYTHER,
+            "delta",
+        ],
+
+
+        [
+            Species.SHINX,
+            "delta",
+        ],
+
+
+        [
+            Species.TANGELA,
+            "delta",
+        ],
+
+
+        [
+            Species.TURTWIG,
+            "delta",
+        ],
+
+
+        [
+            Species.VENIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.VENUSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.VESPIQUEN,
+            "delta",
+        ],
+
+
+        [
+            Species.WEEZING,
+            "delta",
+        ],
+
+
+        [
+            Species.WHIRLIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.ZWEILOUS,
+            "delta",
+        ],
+
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -15736,7 +19727,43 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_SANDSHREW,
     Species.ALOLA_SANDSLASH,
   ],
-  [Moves.SUBSTITUTE]: [
+    [Moves.SUBSTITUTE]: [
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-water",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-water",
+        ],
+
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -16801,7 +20828,193 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.THIEF]: [
+    [Moves.THIEF]: [
+
+        [
+            Species.AMOONGUSS,
+            "delta",
+        ],
+
+
+        [
+            Species.BLASTOISE,
+            "delta",
+        ],
+
+
+        [
+            Species.BUDEW,
+            "delta",
+        ],
+
+
+        [
+            Species.BUNEARY,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARIZARD,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARMANDER,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARMELEON,
+            "delta",
+        ],
+
+
+        [
+            Species.DUOSION,
+            "delta",
+        ],
+
+
+        [
+            Species.EMOLGA,
+            "delta",
+        ],
+
+
+        [
+            Species.FEEBAS,
+            "delta",
+        ],
+
+
+        [
+            Species.FOONGUS,
+            "delta",
+        ],
+
+
+        [
+            Species.LARVESTA,
+            "delta",
+        ],
+
+
+        [
+            Species.LOPUNNY,
+            "delta",
+        ],
+
+
+        [
+            Species.LUCARIO,
+            "delta",
+        ],
+
+
+        [
+            Species.MAWILE,
+            "delta",
+        ],
+
+
+        [
+            Species.MELOETTA,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.MILOTIC,
+            "delta",
+        ],
+
+
+        [
+            Species.PICHU,
+            "delta",
+        ],
+
+
+        [
+            Species.REUNICLUS,
+            "delta",
+        ],
+
+
+        [
+            Species.RIOLU,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSELIA,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSERADE,
+            "delta",
+        ],
+
+
+        [
+            Species.SOLOSIS,
+            "delta",
+        ],
+
+
+        [
+            Species.SQUIRTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNFLORA,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNKERN,
+            "delta",
+        ],
+
+
+        [
+            Species.VOLCARONA,
+            "delta",
+        ],
+
+
+        [
+            Species.WARTORTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.WOOPER,
+            "delta",
+        ],
+
     Species.BUTTERFREE,
     Species.BEEDRILL,
     Species.PIDGEY,
@@ -19034,7 +23247,43 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_ZORUA,
     Species.HISUI_ZOROARK,
   ],
-  [Moves.PROTECT]: [
+    [Moves.PROTECT]: [
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-water",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-water",
+        ],
+
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -20443,7 +24692,241 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_TAUROS,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.SLUDGE_BOMB]: [
+    [Moves.SLUDGE_BOMB]: [
+
+        [
+            Species.BUNEARY,
+            "delta",
+        ],
+
+
+        [
+            Species.CAMERUPT,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARIZARD,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARMANDER,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARMELEON,
+            "delta",
+        ],
+
+
+        [
+            Species.CHINCHOU,
+            "delta",
+        ],
+
+
+        [
+            Species.COFAGRIGUS,
+            "delta",
+        ],
+
+
+        [
+            Species.CRUSTLE,
+            "delta-berry",
+        ],
+
+
+        [
+            Species.DEINO,
+            "delta",
+        ],
+
+
+        [
+            Species.DRIFBLIM,
+            "delta",
+        ],
+
+
+        [
+            Species.DRIFLOON,
+            "delta",
+        ],
+
+
+        [
+            Species.DUOSION,
+            "delta",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-berry",
+        ],
+
+
+        [
+            Species.GIRAFARIG,
+            "delta",
+        ],
+
+
+        [
+            Species.HEATMOR,
+            "delta",
+        ],
+
+
+        [
+            Species.HYDREIGON,
+            "delta",
+        ],
+
+
+        [
+            Species.KABUTOPS,
+            "delta",
+        ],
+
+
+        [
+            Species.KABUTO,
+            "delta",
+        ],
+
+
+        [
+            Species.LANTURN,
+            "delta",
+        ],
+
+
+        [
+            Species.LARVESTA,
+            "delta",
+        ],
+
+
+        [
+            Species.LIEPARD,
+            "delta",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-water",
+        ],
+
+
+        [
+            Species.LOPUNNY,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXIO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXRAY,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.NUMEL,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOTTO,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOT,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEY,
+            "delta",
+        ],
+
+
+        [
+            Species.PURRLOIN,
+            "delta",
+        ],
+
+
+        [
+            Species.REMORAID,
+            "delta",
+        ],
+
+
+        [
+            Species.REUNICLUS,
+            "delta",
+        ],
+
+
+        [
+            Species.SHINX,
+            "delta",
+        ],
+
+
+        [
+            Species.SOLOSIS,
+            "delta",
+        ],
+
+
+        [
+            Species.VOLCARONA,
+            "delta",
+        ],
+
+
+        [
+            Species.YAMASK,
+            "delta",
+        ],
+
+
+        [
+            Species.ZWEILOUS,
+            "delta",
+        ],
+
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -21117,7 +25600,163 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_STUNFISK,
     Species.PALDEA_WOOPER,
   ],
-  [Moves.SPIKES]: [
+    [Moves.SPIKES]: [
+
+        [
+            Species.AGGRON,
+            "delta",
+        ],
+
+
+        [
+            Species.ARON,
+            "delta",
+        ],
+
+
+        [
+            Species.AVALUGG,
+            "delta",
+        ],
+
+
+        [
+            Species.BERGMITE,
+            "delta",
+        ],
+
+
+        [
+            Species.BLASTOISE,
+            "delta",
+        ],
+
+
+        [
+            Species.DUNSPARCE,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTABUZZ,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTIVIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.ELEKID,
+            "delta",
+        ],
+
+
+        [
+            Species.LAIRON,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXIO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXRAY,
+            "delta",
+        ],
+
+
+        [
+            Species.MAWILE,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.OCTILLERY,
+            "delta",
+        ],
+
+
+        [
+            Species.REMORAID,
+            "delta",
+        ],
+
+
+        [
+            Species.SABLEYE,
+            "delta",
+        ],
+
+
+        [
+            Species.SHUCKLE,
+            "delta",
+        ],
+
+
+        [
+            Species.SQUIRTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.TANGELA,
+            "delta",
+        ],
+
+
+        [
+            Species.TANGROWTH,
+            "delta",
+        ],
+
+
+        [
+            Species.TENTACOOL,
+            "delta",
+        ],
+
+
+        [
+            Species.TENTACRUEL,
+            "delta",
+        ],
+
+
+        [
+            Species.TORTERRA,
+            "delta",
+        ],
+
+
+        [
+            Species.WARTORTLE,
+            "delta",
+        ],
+
     Species.SANDSHREW,
     Species.SANDSLASH,
     Species.SHELLDER,
@@ -21707,7 +26346,253 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_GOODRA,
     Species.PALDEA_TAUROS,
   ],
-  [Moves.SANDSTORM]: [
+    [Moves.SANDSTORM]: [
+
+        [
+            Species.AVALUGG,
+            "delta",
+        ],
+
+
+        [
+            Species.BERGMITE,
+            "delta",
+        ],
+
+
+        [
+            Species.BLAZIKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.COMBUSKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.CROAGUNK,
+            "delta",
+        ],
+
+
+        [
+            Species.DEINO,
+            "delta",
+        ],
+
+
+        [
+            Species.DUOSION,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTABUZZ,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTIVIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.ELEKID,
+            "delta",
+        ],
+
+
+        [
+            Species.GIRAFARIG,
+            "delta",
+        ],
+
+
+        [
+            Species.GLALIE,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLETT,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLURK,
+            "delta",
+        ],
+
+
+        [
+            Species.GOODRA,
+            "delta",
+        ],
+
+
+        [
+            Species.GOOMY,
+            "delta",
+        ],
+
+
+        [
+            Species.GROTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.HEATMOR,
+            "delta",
+        ],
+
+
+        [
+            Species.HYDREIGON,
+            "delta",
+        ],
+
+
+        [
+            Species.LARVESTA,
+            "delta",
+        ],
+
+
+        [
+            Species.LUCARIO,
+            "delta",
+        ],
+
+
+        [
+            Species.MEDICHAM,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.PIDGEOTTO,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOT,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEY,
+            "delta",
+        ],
+
+
+        [
+            Species.REUNICLUS,
+            "delta",
+        ],
+
+
+        [
+            Species.SABLEYE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCOLIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.SLIGGOO,
+            "delta",
+        ],
+
+
+        [
+            Species.SOLOSIS,
+            "delta",
+        ],
+
+
+        [
+            Species.TANGELA,
+            "delta",
+        ],
+
+
+        [
+            Species.TANGROWTH,
+            "delta",
+        ],
+
+
+        [
+            Species.TORCHIC,
+            "delta",
+        ],
+
+
+        [
+            Species.TOXICROAK,
+            "delta",
+        ],
+
+
+        [
+            Species.TURTWIG,
+            "delta",
+        ],
+
+
+        [
+            Species.VENIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.VOLCARONA,
+            "delta",
+        ],
+
+
+        [
+            Species.WHIRLIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.ZWEILOUS,
+            "delta",
+        ],
+
     Species.CHARIZARD,
     Species.SANDSHREW,
     Species.SANDSLASH,
@@ -23489,7 +28374,343 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_SLIGGOO,
     Species.HISUI_GOODRA,
   ],
-  [Moves.FALSE_SWIPE]: [
+    [Moves.FALSE_SWIPE]: [
+
+        [
+            Species.AGGRON,
+            "delta",
+        ],
+
+
+        [
+            Species.AIPOM,
+            "delta",
+        ],
+
+
+        [
+            Species.AMBIPOM,
+            "delta",
+        ],
+
+
+        [
+            Species.ARCANINE,
+            "delta",
+        ],
+
+
+        [
+            Species.BLAZIKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.COMBUSKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.CRUSTLE,
+            "delta-berry",
+        ],
+
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.DARMANITAN,
+            "delta",
+        ],
+
+
+        [
+            Species.DARUMAKA,
+            "delta",
+        ],
+
+
+        [
+            Species.DIGLETT,
+            "delta",
+        ],
+
+
+        [
+            Species.DODRIO,
+            "delta",
+        ],
+
+
+        [
+            Species.DODUO,
+            "delta",
+        ],
+
+
+        [
+            Species.DRAGONITE,
+            "delta",
+        ],
+
+
+        [
+            Species.DUGTRIO,
+            "delta",
+        ],
+
+
+        [
+            Species.DUNSPARCE,
+            "delta",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-berry",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.ELECTABUZZ,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTIVIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.ELEKID,
+            "delta",
+        ],
+
+
+        [
+            Species.GROWLITHE,
+            "delta",
+        ],
+
+
+        [
+            Species.HOOTHOOT,
+            "delta",
+        ],
+
+
+        [
+            Species.KABUTOPS,
+            "delta",
+        ],
+
+
+        [
+            Species.KABUTO,
+            "delta",
+        ],
+
+
+        [
+            Species.LAIRON,
+            "delta",
+        ],
+
+
+        [
+            Species.LIEPARD,
+            "delta",
+        ],
+
+
+        [
+            Species.LUCARIO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXIO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXRAY,
+            "delta",
+        ],
+
+
+        [
+            Species.MARACTUS,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-ruin",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-ruin",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.NOCTOWL,
+            "delta",
+        ],
+
+
+        [
+            Species.NOIBAT,
+            "delta",
+        ],
+
+
+        [
+            Species.NOIVERN,
+            "delta",
+        ],
+
+
+        [
+            Species.PHANTUMP,
+            "delta",
+        ],
+
+
+        [
+            Species.PURRLOIN,
+            "delta",
+        ],
+
+
+        [
+            Species.RIOLU,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSELIA,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSERADE,
+            "delta",
+        ],
+
+
+        [
+            Species.SABLEYE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCOLIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCRAFTY,
+            "delta",
+        ],
+
+
+        [
+            Species.SCRAGGY,
+            "delta",
+        ],
+
+
+        [
+            Species.SHINX,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNFLORA,
+            "delta",
+        ],
+
+
+        [
+            Species.TENTACOOL,
+            "delta",
+        ],
+
+
+        [
+            Species.TENTACRUEL,
+            "delta",
+        ],
+
+
+        [
+            Species.TORCHIC,
+            "delta",
+        ],
+
+
+        [
+            Species.TOXICROAK,
+            "delta",
+        ],
+
+
+        [
+            Species.TREECKO,
+            "delta",
+        ],
+
+
+        [
+            Species.TREVENANT,
+            "delta",
+        ],
+
+
+        [
+            Species.VESPIQUEN,
+            "delta",
+        ],
+
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -23628,7 +28849,43 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_SAMUROTT,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.SWAGGER]: [
+    [Moves.SWAGGER]: [
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-water",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-water",
+        ],
+
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -24459,7 +29716,79 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_SLOWKING,
     Species.PALDEA_TAUROS,
   ],
-  [Moves.STEEL_WING]: [
+    [Moves.STEEL_WING]: [
+
+        [
+            Species.BISHARP,
+            "delta",
+        ],
+
+
+        [
+            Species.BLAZIKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTABUZZ,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTIVIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.PAWNIARD,
+            "delta",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.PICHU,
+            "delta",
+        ],
+
+
+        [
+            Species.PIKACHU,
+            "delta",
+        ],
+
+
+        [
+            Species.RAICHU,
+            "delta",
+        ],
+
+
+        [
+            Species.VESPIQUEN,
+            "delta",
+        ],
+
+
+        [
+            Species.VOLCARONA,
+            "delta",
+        ],
+
     Species.CHARIZARD,
     Species.PIDGEY,
     Species.PIDGEOTTO,
@@ -24562,7 +29891,49 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_ZAPDOS,
     Species.GALAR_MOLTRES,
   ],
-  [Moves.ATTRACT]: [
+    [Moves.ATTRACT]: [
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.HOOPA,
+            "delta",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-water",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-water",
+        ],
+
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -25370,7 +30741,43 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_YAMASK,
     Species.GALAR_STUNFISK,
   ],
-  [Moves.SLEEP_TALK]: [
+    [Moves.SLEEP_TALK]: [
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-water",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-water",
+        ],
+
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -26434,7 +31841,43 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.RETURN]: [
+    [Moves.RETURN]: [
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-water",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-water",
+        ],
+
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -27246,7 +32689,43 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_MAROWAK,
     Species.ETERNAL_FLOETTE,
   ],
-  [Moves.FRUSTRATION]: [
+    [Moves.FRUSTRATION]: [
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-water",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-water",
+        ],
+
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -28058,7 +33537,313 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_MAROWAK,
     Species.ETERNAL_FLOETTE,
   ],
-  [Moves.SAFEGUARD]: [
+    [Moves.SAFEGUARD]: [
+
+        [
+            Species.AMOONGUSS,
+            "delta",
+        ],
+
+
+        [
+            Species.BLASTOISE,
+            "delta",
+        ],
+
+
+        [
+            Species.BLAZIKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.BUDEW,
+            "delta",
+        ],
+
+
+        [
+            Species.CHINCHOU,
+            "delta",
+        ],
+
+
+        [
+            Species.CLAMPERL,
+            "delta",
+        ],
+
+
+        [
+            Species.CRUSTLE,
+            "delta-berry",
+        ],
+
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.DODRIO,
+            "delta",
+        ],
+
+
+        [
+            Species.DODUO,
+            "delta",
+        ],
+
+
+        [
+            Species.DRIFBLIM,
+            "delta",
+        ],
+
+
+        [
+            Species.DRIFLOON,
+            "delta",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-berry",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.EMOLGA,
+            "delta",
+        ],
+
+
+        [
+            Species.ESCAVALIER,
+            "delta",
+        ],
+
+
+        [
+            Species.FOONGUS,
+            "delta",
+        ],
+
+
+        [
+            Species.GEODUDE,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLEM,
+            "delta",
+        ],
+
+
+        [
+            Species.GRAVELER,
+            "delta",
+        ],
+
+
+        [
+            Species.HOOTHOOT,
+            "delta",
+        ],
+
+
+        [
+            Species.HUNTAIL,
+            "delta",
+        ],
+
+
+        [
+            Species.KARRABLAST,
+            "delta",
+        ],
+
+
+        [
+            Species.KOFFING,
+            "delta",
+        ],
+
+
+        [
+            Species.LANTURN,
+            "delta",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-water",
+        ],
+
+
+        [
+            Species.LOMBRE,
+            "delta",
+        ],
+
+
+        [
+            Species.LOTAD,
+            "delta",
+        ],
+
+
+        [
+            Species.LUCARIO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUDICOLO,
+            "delta",
+        ],
+
+
+        [
+            Species.MAWILE,
+            "delta",
+        ],
+
+
+        [
+            Species.MEDICHAM,
+            "delta",
+        ],
+
+
+        [
+            Species.MEDITITE,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-ruin",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-ruin",
+        ],
+
+
+        [
+            Species.MINUN,
+            "delta",
+        ],
+
+
+        [
+            Species.NOCTOWL,
+            "delta",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-water",
+        ],
+
+
+        [
+            Species.PICHU,
+            "delta",
+        ],
+
+
+        [
+            Species.PIKACHU,
+            "delta",
+        ],
+
+
+        [
+            Species.PLUSLE,
+            "delta",
+        ],
+
+
+        [
+            Species.RIOLU,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSELIA,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSERADE,
+            "delta",
+        ],
+
+
+        [
+            Species.SQUIRTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.WAILMER,
+            "delta",
+        ],
+
+
+        [
+            Species.WAILORD,
+            "delta",
+        ],
+
+
+        [
+            Species.WARTORTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.WEEZING,
+            "delta",
+        ],
+
+
+        [
+            Species.YANMA,
+            "delta",
+        ],
+
+
+        [
+            Species.YANMEGA,
+            "delta",
+        ],
+
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -28914,7 +34699,67 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_SAMUROTT,
     Species.HISUI_LILLIGANT,
   ],
-  [Moves.IRON_TAIL]: [
+    [Moves.IRON_TAIL]: [
+
+        [
+            Species.DEINO,
+            "delta",
+        ],
+
+
+        [
+            Species.HEATMOR,
+            "delta",
+        ],
+
+
+        [
+            Species.HUNTAIL,
+            "delta",
+        ],
+
+
+        [
+            Species.IVYSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOTTO,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOT,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEY,
+            "delta",
+        ],
+
+
+        [
+            Species.VENUSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.YANMEGA,
+            "delta",
+        ],
+
+
+        [
+            Species.ZWEILOUS,
+            "delta",
+        ],
+
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -29354,7 +35199,43 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_BRAVIARY,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.HIDDEN_POWER]: [
+    [Moves.HIDDEN_POWER]: [
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-water",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-water",
+        ],
+
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -30167,7 +36048,97 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_MAROWAK,
     Species.ETERNAL_FLOETTE,
   ],
-  [Moves.RAIN_DANCE]: [
+    [Moves.RAIN_DANCE]: [
+
+        [
+            Species.CYNDAQUIL,
+            "delta",
+        ],
+
+
+        [
+            Species.GROTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.LARVESTA,
+            "delta",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-water",
+        ],
+
+
+        [
+            Species.MAGBY,
+            "delta",
+        ],
+
+
+        [
+            Species.MAGMAR,
+            "delta",
+        ],
+
+
+        [
+            Species.MAGMORTAR,
+            "delta",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-water",
+        ],
+
+
+        [
+            Species.QUILAVA,
+            "delta",
+        ],
+
+
+        [
+            Species.SERPERIOR,
+            "delta",
+        ],
+
+
+        [
+            Species.SERVINE,
+            "delta",
+        ],
+
+
+        [
+            Species.SNIVY,
+            "delta",
+        ],
+
+
+        [
+            Species.TORTERRA,
+            "delta",
+        ],
+
+
+        [
+            Species.TURTWIG,
+            "delta",
+        ],
+
+
+        [
+            Species.TYPHLOSION,
+            "delta",
+        ],
+
     Species.SQUIRTLE,
     Species.WARTORTLE,
     Species.BLASTOISE,
@@ -30907,7 +36878,139 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.SUNNY_DAY]: [
+    [Moves.SUNNY_DAY]: [
+
+        [
+            Species.AMAURA,
+            "delta",
+        ],
+
+
+        [
+            Species.AURORUS,
+            "delta",
+        ],
+
+
+        [
+            Species.BISHARP,
+            "delta",
+        ],
+
+
+        [
+            Species.CHINCHOU,
+            "delta",
+        ],
+
+
+        [
+            Species.CRUSTLE,
+            "delta-berry",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-berry",
+        ],
+
+
+        [
+            Species.EMOLGA,
+            "delta",
+        ],
+
+
+        [
+            Species.FROAKIE,
+            "delta",
+        ],
+
+
+        [
+            Species.FROGADIER,
+            "delta",
+        ],
+
+
+        [
+            Species.FROSLASS,
+            "delta",
+        ],
+
+
+        [
+            Species.GLALIE,
+            "delta",
+        ],
+
+
+        [
+            Species.GRENINJA,
+            "delta",
+        ],
+
+
+        [
+            Species.LANTURN,
+            "delta",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-water",
+        ],
+
+
+        [
+            Species.PAWNIARD,
+            "delta",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-water",
+        ],
+
+
+        [
+            Species.PLUSLE,
+            "delta",
+        ],
+
+
+        [
+            Species.QUAGSIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.SNORUNT,
+            "delta",
+        ],
+
+
+        [
+            Species.TENTACOOL,
+            "delta",
+        ],
+
+
+        [
+            Species.TENTACRUEL,
+            "delta",
+        ],
+
+
+        [
+            Species.WOOPER,
+            "delta",
+        ],
+
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -31874,7 +37977,367 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_AVALUGG,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.PSYCH_UP]: [
+    [Moves.PSYCH_UP]: [
+
+        [
+            Species.AIPOM,
+            "delta",
+        ],
+
+
+        [
+            Species.AMBIPOM,
+            "delta",
+        ],
+
+
+        [
+            Species.AMOONGUSS,
+            "delta",
+        ],
+
+
+        [
+            Species.ARCANINE,
+            "delta",
+        ],
+
+
+        [
+            Species.BISHARP,
+            "delta",
+        ],
+
+
+        [
+            Species.BLAZIKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.BULBASAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.BUNEARY,
+            "delta",
+        ],
+
+
+        [
+            Species.COMBUSKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.CROAGUNK,
+            "delta",
+        ],
+
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.DODRIO,
+            "delta",
+        ],
+
+
+        [
+            Species.DODUO,
+            "delta",
+        ],
+
+
+        [
+            Species.DRAGONAIR,
+            "delta",
+        ],
+
+
+        [
+            Species.DRAGONITE,
+            "delta",
+        ],
+
+
+        [
+            Species.DRATINI,
+            "delta",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.ESCAVALIER,
+            "delta",
+        ],
+
+
+        [
+            Species.FOONGUS,
+            "delta",
+        ],
+
+
+        [
+            Species.FROAKIE,
+            "delta",
+        ],
+
+
+        [
+            Species.FROGADIER,
+            "delta",
+        ],
+
+
+        [
+            Species.GEODUDE,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLEM,
+            "delta",
+        ],
+
+
+        [
+            Species.GRAVELER,
+            "delta",
+        ],
+
+
+        [
+            Species.GRENINJA,
+            "delta",
+        ],
+
+
+        [
+            Species.GROVYLE,
+            "delta",
+        ],
+
+
+        [
+            Species.GROWLITHE,
+            "delta",
+        ],
+
+
+        [
+            Species.IVYSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.KARRABLAST,
+            "delta",
+        ],
+
+
+        [
+            Species.LARVESTA,
+            "delta",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.LOMBRE,
+            "delta",
+        ],
+
+
+        [
+            Species.LOPUNNY,
+            "delta",
+        ],
+
+
+        [
+            Species.LOTAD,
+            "delta",
+        ],
+
+
+        [
+            Species.LUCARIO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUDICOLO,
+            "delta",
+        ],
+
+
+        [
+            Species.MARACTUS,
+            "delta",
+        ],
+
+
+        [
+            Species.OCTILLERY,
+            "delta",
+        ],
+
+
+        [
+            Species.PAWNIARD,
+            "delta",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.PICHU,
+            "delta",
+        ],
+
+
+        [
+            Species.PIKACHU,
+            "delta",
+        ],
+
+
+        [
+            Species.QUAGSIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.RAICHU,
+            "delta",
+        ],
+
+
+        [
+            Species.REMORAID,
+            "delta",
+        ],
+
+
+        [
+            Species.RIOLU,
+            "delta",
+        ],
+
+
+        [
+            Species.SCEPTILE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCIZOR,
+            "delta",
+        ],
+
+
+        [
+            Species.SCRAFTY,
+            "delta",
+        ],
+
+
+        [
+            Species.SCRAGGY,
+            "delta",
+        ],
+
+
+        [
+            Species.SCYTHER,
+            "delta",
+        ],
+
+
+        [
+            Species.SHUCKLE,
+            "delta",
+        ],
+
+
+        [
+            Species.TENTACOOL,
+            "delta",
+        ],
+
+
+        [
+            Species.TENTACRUEL,
+            "delta",
+        ],
+
+
+        [
+            Species.TORCHIC,
+            "delta",
+        ],
+
+
+        [
+            Species.TOXICROAK,
+            "delta",
+        ],
+
+
+        [
+            Species.TREECKO,
+            "delta",
+        ],
+
+
+        [
+            Species.VENUSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.VOLCARONA,
+            "delta",
+        ],
+
+
+        [
+            Species.WOOPER,
+            "delta",
+        ],
+
     Species.BUTTERFREE,
     Species.CLEFAIRY,
     Species.CLEFABLE,
@@ -32138,7 +38601,331 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_SLOWBRO,
     Species.GALAR_SLOWKING,
   ],
-  [Moves.SHADOW_BALL]: [
+    [Moves.SHADOW_BALL]: [
+
+        [
+            Species.AMOONGUSS,
+            "delta",
+        ],
+
+
+        [
+            Species.BLASTOISE,
+            "delta",
+        ],
+
+
+        [
+            Species.BLAZIKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.BULBASAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.CAMERUPT,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARIZARD,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARMANDER,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARMELEON,
+            "delta",
+        ],
+
+
+        [
+            Species.CHINCHOU,
+            "delta",
+        ],
+
+
+        [
+            Species.COMBUSKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.CYNDAQUIL,
+            "delta",
+        ],
+
+
+        [
+            Species.DARMANITAN,
+            "delta",
+        ],
+
+
+        [
+            Species.DARUMAKA,
+            "delta",
+        ],
+
+
+        [
+            Species.DODRIO,
+            "delta",
+        ],
+
+
+        [
+            Species.DODUO,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTIVIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.EMOLGA,
+            "delta",
+        ],
+
+
+        [
+            Species.FEEBAS,
+            "delta",
+        ],
+
+
+        [
+            Species.FOONGUS,
+            "delta",
+        ],
+
+
+        [
+            Species.GEODUDE,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLEM,
+            "delta",
+        ],
+
+
+        [
+            Species.GRAVELER,
+            "delta",
+        ],
+
+
+        [
+            Species.HEATMOR,
+            "delta",
+        ],
+
+
+        [
+            Species.HUNTAIL,
+            "delta",
+        ],
+
+
+        [
+            Species.IVYSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.KABUTOPS,
+            "delta",
+        ],
+
+
+        [
+            Species.KABUTO,
+            "delta",
+        ],
+
+
+        [
+            Species.LANTURN,
+            "delta",
+        ],
+
+
+        [
+            Species.LARVESTA,
+            "delta",
+        ],
+
+
+        [
+            Species.LOMBRE,
+            "delta",
+        ],
+
+
+        [
+            Species.LOTAD,
+            "delta",
+        ],
+
+
+        [
+            Species.LUDICOLO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXIO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXRAY,
+            "delta",
+        ],
+
+
+        [
+            Species.MAGBY,
+            "delta",
+        ],
+
+
+        [
+            Species.MAGMAR,
+            "delta",
+        ],
+
+
+        [
+            Species.MAGMORTAR,
+            "delta",
+        ],
+
+
+        [
+            Species.MILOTIC,
+            "delta",
+        ],
+
+
+        [
+            Species.NUMEL,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOTTO,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOT,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEY,
+            "delta",
+        ],
+
+
+        [
+            Species.QUAGSIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.QUILAVA,
+            "delta",
+        ],
+
+
+        [
+            Species.RIOLU,
+            "delta",
+        ],
+
+
+        [
+            Species.SHINX,
+            "delta",
+        ],
+
+
+        [
+            Species.SQUIRTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNFLORA,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNKERN,
+            "delta",
+        ],
+
+
+        [
+            Species.TORCHIC,
+            "delta",
+        ],
+
+
+        [
+            Species.VENUSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.VOLCARONA,
+            "delta",
+        ],
+
+
+        [
+            Species.WARTORTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.WOOPER,
+            "delta",
+        ],
+
     Species.BUTTERFREE,
     Species.RATTATA,
     Species.RATICATE,
@@ -32582,7 +39369,43 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_ARTICUNO,
     Species.GALAR_SLOWKING,
   ],
-  [Moves.ROCK_SMASH]: [
+    [Moves.ROCK_SMASH]: [
+
+        [
+            Species.GRIMER,
+            "delta",
+        ],
+
+
+        [
+            Species.OCTILLERY,
+            "delta",
+        ],
+
+
+        [
+            Species.PICHU,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOTTO,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOT,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEY,
+            "delta",
+        ],
+
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -33769,7 +40592,199 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_TYPHLOSION,
     Species.HISUI_BRAVIARY,
   ],
-  [Moves.HAIL]: [
+    [Moves.HAIL]: [
+
+        [
+            Species.AXEW,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARIZARD,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARMANDER,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARMELEON,
+            "delta",
+        ],
+
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.DIGLETT,
+            "delta",
+        ],
+
+
+        [
+            Species.DUGTRIO,
+            "delta",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.FRAXURE,
+            "delta",
+        ],
+
+
+        [
+            Species.GALLADE,
+            "delta",
+        ],
+
+
+        [
+            Species.GARDEVOIR,
+            "delta",
+        ],
+
+
+        [
+            Species.GROTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.HAXORUS,
+            "delta",
+        ],
+
+
+        [
+            Species.HOOPA,
+            "delta",
+        ],
+
+
+        [
+            Species.HOOTHOOT,
+            "delta",
+        ],
+
+
+        [
+            Species.KIRLIA,
+            "delta",
+        ],
+
+
+        [
+            Species.LARVESTA,
+            "delta",
+        ],
+
+
+        [
+            Species.MAGBY,
+            "delta",
+        ],
+
+
+        [
+            Species.MAGMAR,
+            "delta",
+        ],
+
+
+        [
+            Species.MAGMORTAR,
+            "delta",
+        ],
+
+
+        [
+            Species.MINUN,
+            "delta",
+        ],
+
+
+        [
+            Species.MISDREAVUS,
+            "delta",
+        ],
+
+
+        [
+            Species.MISMAGIUS,
+            "delta",
+        ],
+
+
+        [
+            Species.NOCTOWL,
+            "delta",
+        ],
+
+
+        [
+            Species.PHANTUMP,
+            "delta",
+        ],
+
+
+        [
+            Species.RALTS,
+            "delta",
+        ],
+
+
+        [
+            Species.SCIZOR,
+            "delta",
+        ],
+
+
+        [
+            Species.SCYTHER,
+            "delta",
+        ],
+
+
+        [
+            Species.TORTERRA,
+            "delta",
+        ],
+
+
+        [
+            Species.TREVENANT,
+            "delta",
+        ],
+
+
+        [
+            Species.TURTWIG,
+            "delta",
+        ],
+
+
+        [
+            Species.VOLCARONA,
+            "delta",
+        ],
+
     Species.SQUIRTLE,
     Species.WARTORTLE,
     Species.BLASTOISE,
@@ -33954,7 +40969,367 @@ export const tmSpecies: TmSpecies = {
       "ice",
     ],
   ],
-  [Moves.TORMENT]: [
+    [Moves.TORMENT]: [
+
+        [
+            Species.AIPOM,
+            "delta",
+        ],
+
+
+        [
+            Species.AMBIPOM,
+            "delta",
+        ],
+
+
+        [
+            Species.AMOONGUSS,
+            "delta",
+        ],
+
+
+        [
+            Species.BLASTOISE,
+            "delta",
+        ],
+
+
+        [
+            Species.BLAZIKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.BUDEW,
+            "delta",
+        ],
+
+
+        [
+            Species.BULBASAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.BUNEARY,
+            "delta",
+        ],
+
+
+        [
+            Species.CAMERUPT,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARIZARD,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARMANDER,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARMELEON,
+            "delta",
+        ],
+
+
+        [
+            Species.CHINCHOU,
+            "delta",
+        ],
+
+
+        [
+            Species.COFAGRIGUS,
+            "delta",
+        ],
+
+
+        [
+            Species.COMBUSKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.DARUMAKA,
+            "delta",
+        ],
+
+
+        [
+            Species.DUNSPARCE,
+            "delta",
+        ],
+
+
+        [
+            Species.DUOSION,
+            "delta",
+        ],
+
+
+        [
+            Species.EMOLGA,
+            "delta",
+        ],
+
+
+        [
+            Species.FEEBAS,
+            "delta",
+        ],
+
+
+        [
+            Species.FOONGUS,
+            "delta",
+        ],
+
+
+        [
+            Species.GIRAFARIG,
+            "delta",
+        ],
+
+
+        [
+            Species.HEATMOR,
+            "delta",
+        ],
+
+
+        [
+            Species.IVYSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.KABUTOPS,
+            "delta",
+        ],
+
+
+        [
+            Species.KABUTO,
+            "delta",
+        ],
+
+
+        [
+            Species.LANTURN,
+            "delta",
+        ],
+
+
+        [
+            Species.LARVESTA,
+            "delta",
+        ],
+
+
+        [
+            Species.LOPUNNY,
+            "delta",
+        ],
+
+
+        [
+            Species.LUCARIO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXIO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXRAY,
+            "delta",
+        ],
+
+
+        [
+            Species.MELOETTA,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.MILOTIC,
+            "delta",
+        ],
+
+
+        [
+            Species.NUMEL,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOTTO,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOT,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEY,
+            "delta",
+        ],
+
+
+        [
+            Species.QUAGSIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.REUNICLUS,
+            "delta",
+        ],
+
+
+        [
+            Species.RIOLU,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSELIA,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSERADE,
+            "delta",
+        ],
+
+
+        [
+            Species.SHINX,
+            "delta",
+        ],
+
+
+        [
+            Species.SOLOSIS,
+            "delta",
+        ],
+
+
+        [
+            Species.SQUIRTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNFLORA,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNKERN,
+            "delta",
+        ],
+
+
+        [
+            Species.TANGELA,
+            "delta",
+        ],
+
+
+        [
+            Species.TANGROWTH,
+            "delta",
+        ],
+
+
+        [
+            Species.TENTACOOL,
+            "delta",
+        ],
+
+
+        [
+            Species.TENTACRUEL,
+            "delta",
+        ],
+
+
+        [
+            Species.TORCHIC,
+            "delta",
+        ],
+
+
+        [
+            Species.VENUSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.VOLCARONA,
+            "delta",
+        ],
+
+
+        [
+            Species.WARTORTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.WOOPER,
+            "delta",
+        ],
+
+
+        [
+            Species.YAMASK,
+            "delta",
+        ],
+
     Species.EKANS,
     Species.ARBOK,
     Species.NIDOQUEEN,
@@ -34153,7 +41528,229 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_ZORUA,
     Species.HISUI_ZOROARK,
   ],
-  [Moves.WILL_O_WISP]: [
+    [Moves.WILL_O_WISP]: [
+
+        [
+            Species.AGGRON,
+            "delta",
+        ],
+
+
+        [
+            Species.AIPOM,
+            "delta",
+        ],
+
+
+        [
+            Species.AMBIPOM,
+            "delta",
+        ],
+
+
+        [
+            Species.AMOONGUSS,
+            "delta",
+        ],
+
+
+        [
+            Species.ARON,
+            "delta",
+        ],
+
+
+        [
+            Species.CHINCHOU,
+            "delta",
+        ],
+
+
+        [
+            Species.CROAGUNK,
+            "delta",
+        ],
+
+
+        [
+            Species.DUOSION,
+            "delta",
+        ],
+
+
+        [
+            Species.EMOLGA,
+            "delta",
+        ],
+
+
+        [
+            Species.FEEBAS,
+            "delta",
+        ],
+
+
+        [
+            Species.FOONGUS,
+            "delta",
+        ],
+
+
+        [
+            Species.GIRAFARIG,
+            "delta",
+        ],
+
+
+        [
+            Species.GLALIE,
+            "delta",
+        ],
+
+
+        [
+            Species.GRENINJA,
+            "delta",
+        ],
+
+
+        [
+            Species.LAIRON,
+            "delta",
+        ],
+
+
+        [
+            Species.LANTURN,
+            "delta",
+        ],
+
+
+        [
+            Species.LIEPARD,
+            "delta",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-water",
+        ],
+
+
+        [
+            Species.MILOTIC,
+            "delta",
+        ],
+
+
+        [
+            Species.OCTILLERY,
+            "delta",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-water",
+        ],
+
+
+        [
+            Species.PLUSLE,
+            "delta",
+        ],
+
+
+        [
+            Species.PURRLOIN,
+            "delta",
+        ],
+
+
+        [
+            Species.QUAGSIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.REGISTEEL,
+            "delta",
+        ],
+
+
+        [
+            Species.REMORAID,
+            "delta",
+        ],
+
+
+        [
+            Species.REUNICLUS,
+            "delta",
+        ],
+
+
+        [
+            Species.SCOLIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.SNORUNT,
+            "delta",
+        ],
+
+
+        [
+            Species.SOLOSIS,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNFLORA,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNKERN,
+            "delta",
+        ],
+
+
+        [
+            Species.TOXICROAK,
+            "delta",
+        ],
+
+
+        [
+            Species.VENIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.VESPIQUEN,
+            "delta",
+        ],
+
+
+        [
+            Species.WHIRLIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.WOOPER,
+            "delta",
+        ],
+
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -34305,7 +41902,43 @@ export const tmSpecies: TmSpecies = {
       "blaze",
     ],
   ],
-  [Moves.FACADE]: [
+    [Moves.FACADE]: [
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-water",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-water",
+        ],
+
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -35595,7 +43228,55 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_DECIDUEYE,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.NATURE_POWER]: [
+    [Moves.NATURE_POWER]: [
+
+        [
+            Species.LARVESTA,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-ruin",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-ruin",
+        ],
+
+
+        [
+            Species.TENTACOOL,
+            "delta",
+        ],
+
+
+        [
+            Species.TENTACRUEL,
+            "delta",
+        ],
+
+
+        [
+            Species.VOLCARONA,
+            "delta",
+        ],
+
+
+        [
+            Species.YANMA,
+            "delta",
+        ],
+
+
+        [
+            Species.YANMEGA,
+            "delta",
+        ],
+
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -35821,7 +43502,409 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_VOLTORB,
     Species.HISUI_ELECTRODE,
   ],
-  [Moves.TAUNT]: [
+    [Moves.TAUNT]: [
+
+        [
+            Species.AMOONGUSS,
+            "delta",
+        ],
+
+
+        [
+            Species.BLASTOISE,
+            "delta",
+        ],
+
+
+        [
+            Species.BLAZIKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.BUDEW,
+            "delta",
+        ],
+
+
+        [
+            Species.BULBASAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.BUNEARY,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARIZARD,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARMANDER,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARMELEON,
+            "delta",
+        ],
+
+
+        [
+            Species.COFAGRIGUS,
+            "delta",
+        ],
+
+
+        [
+            Species.COMBUSKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.DODUO,
+            "delta",
+        ],
+
+
+        [
+            Species.DUNSPARCE,
+            "delta",
+        ],
+
+
+        [
+            Species.DUOSION,
+            "delta",
+        ],
+
+
+        [
+            Species.ELEKID,
+            "delta",
+        ],
+
+
+        [
+            Species.FEEBAS,
+            "delta",
+        ],
+
+
+        [
+            Species.FOONGUS,
+            "delta",
+        ],
+
+
+        [
+            Species.GIRAFARIG,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLETT,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLURK,
+            "delta",
+        ],
+
+
+        [
+            Species.GROVYLE,
+            "delta",
+        ],
+
+
+        [
+            Species.HUNTAIL,
+            "delta",
+        ],
+
+
+        [
+            Species.IVYSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.KABUTOPS,
+            "delta",
+        ],
+
+
+        [
+            Species.KABUTO,
+            "delta",
+        ],
+
+
+        [
+            Species.LARVESTA,
+            "delta",
+        ],
+
+
+        [
+            Species.LOPUNNY,
+            "delta",
+        ],
+
+
+        [
+            Species.LUCARIO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXIO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXRAY,
+            "delta",
+        ],
+
+
+        [
+            Species.MELOETTA,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-ruin",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-ruin",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.MILOTIC,
+            "delta",
+        ],
+
+
+        [
+            Species.NUZLEAF,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOTTO,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOT,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEY,
+            "delta",
+        ],
+
+
+        [
+            Species.QUAGSIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.RAICHU,
+            "delta",
+        ],
+
+
+        [
+            Species.REUNICLUS,
+            "delta",
+        ],
+
+
+        [
+            Species.RIOLU,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSELIA,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSERADE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCEPTILE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCIZOR,
+            "delta",
+        ],
+
+
+        [
+            Species.SCOLIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCYTHER,
+            "delta",
+        ],
+
+
+        [
+            Species.SEEDOT,
+            "delta",
+        ],
+
+
+        [
+            Species.SHINX,
+            "delta",
+        ],
+
+
+        [
+            Species.SHUCKLE,
+            "delta",
+        ],
+
+
+        [
+            Species.SNORUNT,
+            "delta",
+        ],
+
+
+        [
+            Species.SOLOSIS,
+            "delta",
+        ],
+
+
+        [
+            Species.SQUIRTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNFLORA,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNKERN,
+            "delta",
+        ],
+
+
+        [
+            Species.TORCHIC,
+            "delta",
+        ],
+
+
+        [
+            Species.TREECKO,
+            "delta",
+        ],
+
+
+        [
+            Species.VENUSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.VOLCARONA,
+            "delta",
+        ],
+
+
+        [
+            Species.WARTORTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.WOOPER,
+            "delta",
+        ],
+
+
+        [
+            Species.YAMASK,
+            "delta",
+        ],
+
+
+        [
+            Species.YANMA,
+            "delta",
+        ],
+
+
+        [
+            Species.YANMEGA,
+            "delta",
+        ],
+
     Species.RATTATA,
     Species.RATICATE,
     Species.NIDOQUEEN,
@@ -37261,7 +45344,109 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_ZAPDOS,
     Species.GALAR_STUNFISK,
   ],
-  [Moves.BRICK_BREAK]: [
+    [Moves.BRICK_BREAK]: [
+
+        [
+            Species.BUNEARY,
+            "delta",
+        ],
+
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.ESCAVALIER,
+            "delta",
+        ],
+
+
+        [
+            Species.FROAKIE,
+            "delta",
+        ],
+
+
+        [
+            Species.FROGADIER,
+            "delta",
+        ],
+
+
+        [
+            Species.FROSLASS,
+            "delta",
+        ],
+
+
+        [
+            Species.GRIMER,
+            "delta",
+        ],
+
+
+        [
+            Species.LIEPARD,
+            "delta",
+        ],
+
+
+        [
+            Species.LOPUNNY,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.ROSELIA,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSERADE,
+            "delta",
+        ],
+
+
+        [
+            Species.SHUCKLE,
+            "delta",
+        ],
+
+
+        [
+            Species.TREVENANT,
+            "delta",
+        ],
+
+
+        [
+            Species.VESPIQUEN,
+            "delta",
+        ],
+
+
+        [
+            Species.WOOPER,
+            "delta",
+        ],
+
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -38263,7 +46448,313 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_TYPHLOSION,
     Species.PALDEA_TAUROS,
   ],
-  [Moves.SKILL_SWAP]: [
+    [Moves.SKILL_SWAP]: [
+
+        [
+            Species.AIPOM,
+            "delta",
+        ],
+
+
+        [
+            Species.AMBIPOM,
+            "delta",
+        ],
+
+
+        [
+            Species.AMOONGUSS,
+            "delta",
+        ],
+
+
+        [
+            Species.BISHARP,
+            "delta",
+        ],
+
+
+        [
+            Species.BLAZIKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.BUDEW,
+            "delta",
+        ],
+
+
+        [
+            Species.BULBASAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.BUNEARY,
+            "delta",
+        ],
+
+
+        [
+            Species.CHANDELURE,
+            "delta",
+        ],
+
+
+        [
+            Species.CHINCHOU,
+            "delta",
+        ],
+
+
+        [
+            Species.COMBUSKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.DODRIO,
+            "delta",
+        ],
+
+
+        [
+            Species.DODUO,
+            "delta",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.ESCAVALIER,
+            "delta",
+        ],
+
+
+        [
+            Species.FOONGUS,
+            "delta",
+        ],
+
+
+        [
+            Species.GEODUDE,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLEM,
+            "delta",
+        ],
+
+
+        [
+            Species.GOODRA,
+            "delta",
+        ],
+
+
+        [
+            Species.GOOMY,
+            "delta",
+        ],
+
+
+        [
+            Species.GOREBYSS,
+            "delta",
+        ],
+
+
+        [
+            Species.GRAVELER,
+            "delta",
+        ],
+
+
+        [
+            Species.IVYSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.KARRABLAST,
+            "delta",
+        ],
+
+
+        [
+            Species.LAMPENT,
+            "delta",
+        ],
+
+
+        [
+            Species.LANTURN,
+            "delta",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.LITWICK,
+            "delta",
+        ],
+
+
+        [
+            Species.LOMBRE,
+            "delta",
+        ],
+
+
+        [
+            Species.LOPUNNY,
+            "delta",
+        ],
+
+
+        [
+            Species.LOTAD,
+            "delta",
+        ],
+
+
+        [
+            Species.LUCARIO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUDICOLO,
+            "delta",
+        ],
+
+
+        [
+            Species.MAWILE,
+            "delta",
+        ],
+
+
+        [
+            Species.MILOTIC,
+            "delta",
+        ],
+
+
+        [
+            Species.MINUN,
+            "delta",
+        ],
+
+
+        [
+            Species.NOIBAT,
+            "delta",
+        ],
+
+
+        [
+            Species.NOIVERN,
+            "delta",
+        ],
+
+
+        [
+            Species.PAWNIARD,
+            "delta",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.ROSELIA,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSERADE,
+            "delta",
+        ],
+
+
+        [
+            Species.SHUCKLE,
+            "delta",
+        ],
+
+
+        [
+            Species.SLIGGOO,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNFLORA,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNKERN,
+            "delta",
+        ],
+
+
+        [
+            Species.TORCHIC,
+            "delta",
+        ],
+
+
+        [
+            Species.VENUSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.WAILMER,
+            "delta",
+        ],
+
+
+        [
+            Species.WAILORD,
+            "delta",
+        ],
+
     Species.BUTTERFREE,
     Species.CLEFAIRY,
     Species.CLEFABLE,
@@ -39447,7 +47938,205 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_BRAVIARY,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.OVERHEAT]: [
+    [Moves.OVERHEAT]: [
+
+        [
+            Species.AGGRON,
+            "delta",
+        ],
+
+
+        [
+            Species.ARON,
+            "delta",
+        ],
+
+
+        [
+            Species.CHINCHOU,
+            "delta",
+        ],
+
+
+        [
+            Species.CROAGUNK,
+            "delta",
+        ],
+
+
+        [
+            Species.DRIFBLIM,
+            "delta",
+        ],
+
+
+        [
+            Species.DRIFLOON,
+            "delta",
+        ],
+
+
+        [
+            Species.EMOLGA,
+            "delta",
+        ],
+
+
+        [
+            Species.FROSLASS,
+            "delta",
+        ],
+
+
+        [
+            Species.GLALIE,
+            "delta",
+        ],
+
+
+        [
+            Species.GRENINJA,
+            "delta",
+        ],
+
+
+        [
+            Species.HUNTAIL,
+            "delta",
+        ],
+
+
+        [
+            Species.LAIRON,
+            "delta",
+        ],
+
+
+        [
+            Species.LANTURN,
+            "delta",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-water",
+        ],
+
+
+        [
+            Species.MARACTUS,
+            "delta",
+        ],
+
+
+        [
+            Species.OCTILLERY,
+            "delta",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-water",
+        ],
+
+
+        [
+            Species.PLUSLE,
+            "delta",
+        ],
+
+
+        [
+            Species.QUAGSIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.REGISTEEL,
+            "delta",
+        ],
+
+
+        [
+            Species.REMORAID,
+            "delta",
+        ],
+
+
+        [
+            Species.SABLEYE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCOLIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.SNORUNT,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNFLORA,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNKERN,
+            "delta",
+        ],
+
+
+        [
+            Species.TANGELA,
+            "delta",
+        ],
+
+
+        [
+            Species.TANGROWTH,
+            "delta",
+        ],
+
+
+        [
+            Species.TOXICROAK,
+            "delta",
+        ],
+
+
+        [
+            Species.VENIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.VESPIQUEN,
+            "delta",
+        ],
+
+
+        [
+            Species.WHIRLIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.WOOPER,
+            "delta",
+        ],
+
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -39560,7 +48249,223 @@ export const tmSpecies: TmSpecies = {
       "blaze",
     ],
   ],
-  [Moves.ROCK_TOMB]: [
+    [Moves.ROCK_TOMB]: [
+
+        [
+            Species.ARCANINE,
+            "delta",
+        ],
+
+
+        [
+            Species.BUNEARY,
+            "delta",
+        ],
+
+
+        [
+            Species.DEINO,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTABUZZ,
+            "delta",
+        ],
+
+
+        [
+            Species.ELEKID,
+            "delta",
+        ],
+
+
+        [
+            Species.FROSLASS,
+            "delta",
+        ],
+
+
+        [
+            Species.GIRAFARIG,
+            "delta",
+        ],
+
+
+        [
+            Species.GLALIE,
+            "delta",
+        ],
+
+
+        [
+            Species.GOODRA,
+            "delta",
+        ],
+
+
+        [
+            Species.GOOMY,
+            "delta",
+        ],
+
+
+        [
+            Species.GROTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.GROWLITHE,
+            "delta",
+        ],
+
+
+        [
+            Species.IVYSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.LOPUNNY,
+            "delta",
+        ],
+
+
+        [
+            Species.MARACTUS,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.NOIBAT,
+            "delta",
+        ],
+
+
+        [
+            Species.NOIVERN,
+            "delta",
+        ],
+
+
+        [
+            Species.OCTILLERY,
+            "delta",
+        ],
+
+
+        [
+            Species.PHANTUMP,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOTTO,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOT,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEY,
+            "delta",
+        ],
+
+
+        [
+            Species.REMORAID,
+            "delta",
+        ],
+
+
+        [
+            Species.SCIZOR,
+            "delta",
+        ],
+
+
+        [
+            Species.SCYTHER,
+            "delta",
+        ],
+
+
+        [
+            Species.SLIGGOO,
+            "delta",
+        ],
+
+
+        [
+            Species.SNORUNT,
+            "delta",
+        ],
+
+
+        [
+            Species.TANGELA,
+            "delta",
+        ],
+
+
+        [
+            Species.TREVENANT,
+            "delta",
+        ],
+
+
+        [
+            Species.TURTWIG,
+            "delta",
+        ],
+
+
+        [
+            Species.VENIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.VENUSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.WHIRLIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.ZWEILOUS,
+            "delta",
+        ],
+
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -40627,7 +49532,205 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_LILLIGANT,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.AERIAL_ACE]: [
+    [Moves.AERIAL_ACE]: [
+
+        [
+            Species.BUNEARY,
+            "delta",
+        ],
+
+
+        [
+            Species.DUNSPARCE,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTABUZZ,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTIVIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.ELEKID,
+            "delta",
+        ],
+
+
+        [
+            Species.FROSLASS,
+            "delta",
+        ],
+
+
+        [
+            Species.GARDEVOIR,
+            "delta",
+        ],
+
+
+        [
+            Species.GLALIE,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLETT,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLURK,
+            "delta",
+        ],
+
+
+        [
+            Species.HOOPA,
+            "delta",
+        ],
+
+
+        [
+            Species.KIRLIA,
+            "delta",
+        ],
+
+
+        [
+            Species.KOFFING,
+            "delta",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.LOPUNNY,
+            "delta",
+        ],
+
+
+        [
+            Species.MELOETTA,
+            "delta",
+        ],
+
+
+        [
+            Species.MINUN,
+            "delta",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.PHANTUMP,
+            "delta",
+        ],
+
+
+        [
+            Species.PICHU,
+            "delta",
+        ],
+
+
+        [
+            Species.PIKACHU,
+            "delta",
+        ],
+
+
+        [
+            Species.PLUSLE,
+            "delta",
+        ],
+
+
+        [
+            Species.RAICHU,
+            "delta",
+        ],
+
+
+        [
+            Species.RALTS,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSELIA,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSERADE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCOLIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCRAFTY,
+            "delta",
+        ],
+
+
+        [
+            Species.SCRAGGY,
+            "delta",
+        ],
+
+
+        [
+            Species.TREVENANT,
+            "delta",
+        ],
+
+
+        [
+            Species.WAILMER,
+            "delta",
+        ],
+
+
+        [
+            Species.WAILORD,
+            "delta",
+        ],
+
+
+        [
+            Species.WEEZING,
+            "delta",
+        ],
+
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -41306,7 +50409,61 @@ export const tmSpecies: TmSpecies = {
     ],
     Species.HISUI_AVALUGG,
   ],
-  [Moves.DRAGON_CLAW]: [
+    [Moves.DRAGON_CLAW]: [
+
+        [
+            Species.ARCANINE,
+            "delta",
+        ],
+
+
+        [
+            Species.AVALUGG,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTIVIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.GROVYLE,
+            "delta",
+        ],
+
+
+        [
+            Species.GROWLITHE,
+            "delta",
+        ],
+
+
+        [
+            Species.LAIRON,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOTTO,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOT,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEY,
+            "delta",
+        ],
+
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -41401,7 +50558,157 @@ export const tmSpecies: TmSpecies = {
     Species.MEOWSCARADA,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.BULK_UP]: [
+    [Moves.BULK_UP]: [
+
+        [
+            Species.BISHARP,
+            "delta",
+        ],
+
+
+        [
+            Species.BLASTOISE,
+            "delta",
+        ],
+
+
+        [
+            Species.BUNEARY,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARIZARD,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARMANDER,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARMELEON,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLETT,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLURK,
+            "delta",
+        ],
+
+
+        [
+            Species.GROVYLE,
+            "delta",
+        ],
+
+
+        [
+            Species.LOPUNNY,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXIO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXRAY,
+            "delta",
+        ],
+
+
+        [
+            Species.PAWNIARD,
+            "delta",
+        ],
+
+
+        [
+            Species.PHANTUMP,
+            "delta",
+        ],
+
+
+        [
+            Species.SCEPTILE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCIZOR,
+            "delta",
+        ],
+
+
+        [
+            Species.SCYTHER,
+            "delta",
+        ],
+
+
+        [
+            Species.SHINX,
+            "delta",
+        ],
+
+
+        [
+            Species.SHUCKLE,
+            "delta",
+        ],
+
+
+        [
+            Species.SNORLAX,
+            "delta",
+        ],
+
+
+        [
+            Species.SQUIRTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.TANGROWTH,
+            "delta",
+        ],
+
+
+        [
+            Species.TREECKO,
+            "delta",
+        ],
+
+
+        [
+            Species.TREVENANT,
+            "delta",
+        ],
+
+
+        [
+            Species.WARTORTLE,
+            "delta",
+        ],
+
     Species.MANKEY,
     Species.PRIMEAPE,
     Species.POLIWRATH,
@@ -42106,7 +51413,271 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_LILLIGANT,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.CALM_MIND]: [
+    [Moves.CALM_MIND]: [
+
+        [
+            Species.ARCANINE,
+            "delta",
+        ],
+
+
+        [
+            Species.BLASTOISE,
+            "delta",
+        ],
+
+
+        [
+            Species.BLAZIKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.BUDEW,
+            "delta",
+        ],
+
+
+        [
+            Species.BULBASAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.BUNEARY,
+            "delta",
+        ],
+
+
+        [
+            Species.COMBUSKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.DODRIO,
+            "delta",
+        ],
+
+
+        [
+            Species.DODUO,
+            "delta",
+        ],
+
+
+        [
+            Species.DRAGONAIR,
+            "delta",
+        ],
+
+
+        [
+            Species.DRAGONITE,
+            "delta",
+        ],
+
+
+        [
+            Species.DRATINI,
+            "delta",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.ESCAVALIER,
+            "delta",
+        ],
+
+
+        [
+            Species.GEODUDE,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLEM,
+            "delta",
+        ],
+
+
+        [
+            Species.GOODRA,
+            "delta",
+        ],
+
+
+        [
+            Species.GOREBYSS,
+            "delta",
+        ],
+
+
+        [
+            Species.GRAVELER,
+            "delta",
+        ],
+
+
+        [
+            Species.GROWLITHE,
+            "delta",
+        ],
+
+
+        [
+            Species.IVYSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.KARRABLAST,
+            "delta",
+        ],
+
+
+        [
+            Species.KOFFING,
+            "delta",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-water",
+        ],
+
+
+        [
+            Species.LOMBRE,
+            "delta",
+        ],
+
+
+        [
+            Species.LOPUNNY,
+            "delta",
+        ],
+
+
+        [
+            Species.LOTAD,
+            "delta",
+        ],
+
+
+        [
+            Species.LUDICOLO,
+            "delta",
+        ],
+
+
+        [
+            Species.MARACTUS,
+            "delta",
+        ],
+
+
+        [
+            Species.MAWILE,
+            "delta",
+        ],
+
+
+        [
+            Species.MILOTIC,
+            "delta",
+        ],
+
+
+        [
+            Species.MINUN,
+            "delta",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-water",
+        ],
+
+
+        [
+            Species.PLUSLE,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSELIA,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSERADE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCEPTILE,
+            "delta",
+        ],
+
+
+        [
+            Species.TORCHIC,
+            "delta",
+        ],
+
+
+        [
+            Species.VENUSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.VESPIQUEN,
+            "delta",
+        ],
+
+
+        [
+            Species.WEEZING,
+            "delta",
+        ],
+
     Species.PIKACHU,
     Species.RAICHU,
     Species.CLEFAIRY,
@@ -42876,7 +52447,133 @@ export const tmSpecies: TmSpecies = {
     ],
     Species.PALDEA_WOOPER,
   ],
-  [Moves.ROOST]: [
+    [Moves.ROOST]: [
+
+        [
+            Species.BISHARP,
+            "delta",
+        ],
+
+
+        [
+            Species.BLAZIKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.DRIFBLIM,
+            "delta",
+        ],
+
+
+        [
+            Species.DRIFLOON,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTABUZZ,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTIVIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.KOFFING,
+            "delta",
+        ],
+
+
+        [
+            Species.LIEPARD,
+            "delta",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.MINUN,
+            "delta",
+        ],
+
+
+        [
+            Species.MISDREAVUS,
+            "delta",
+        ],
+
+
+        [
+            Species.MISMAGIUS,
+            "delta",
+        ],
+
+
+        [
+            Species.PAWNIARD,
+            "delta",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.PICHU,
+            "delta",
+        ],
+
+
+        [
+            Species.PIKACHU,
+            "delta",
+        ],
+
+
+        [
+            Species.PURRLOIN,
+            "delta",
+        ],
+
+
+        [
+            Species.RAICHU,
+            "delta",
+        ],
+
+
+        [
+            Species.WAILMER,
+            "delta",
+        ],
+
+
+        [
+            Species.WAILORD,
+            "delta",
+        ],
+
+
+        [
+            Species.WEEZING,
+            "delta",
+        ],
+
     Species.CHARIZARD,
     Species.BUTTERFREE,
     Species.BEEDRILL,
@@ -43121,7 +52818,193 @@ export const tmSpecies: TmSpecies = {
     Species.TERAPAGOS,
     Species.ALOLA_EXEGGUTOR,
   ],
-  [Moves.GYRO_BALL]: [
+    [Moves.GYRO_BALL]: [
+
+        [
+            Species.AGGRON,
+            "delta",
+        ],
+
+
+        [
+            Species.AMOONGUSS,
+            "delta",
+        ],
+
+
+        [
+            Species.ARON,
+            "delta",
+        ],
+
+
+        [
+            Species.CHANDELURE,
+            "delta",
+        ],
+
+
+        [
+            Species.CLAMPERL,
+            "delta",
+        ],
+
+
+        [
+            Species.COFAGRIGUS,
+            "delta",
+        ],
+
+
+        [
+            Species.CRUSTLE,
+            "delta-berry",
+        ],
+
+
+        [
+            Species.CYNDAQUIL,
+            "delta",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-berry",
+        ],
+
+
+        [
+            Species.ESCAVALIER,
+            "delta",
+        ],
+
+
+        [
+            Species.FOONGUS,
+            "delta",
+        ],
+
+
+        [
+            Species.FROSLASS,
+            "delta",
+        ],
+
+
+        [
+            Species.GIRAFARIG,
+            "delta",
+        ],
+
+
+        [
+            Species.GOREBYSS,
+            "delta",
+        ],
+
+
+        [
+            Species.HUNTAIL,
+            "delta",
+        ],
+
+
+        [
+            Species.KARRABLAST,
+            "delta",
+        ],
+
+
+        [
+            Species.LAIRON,
+            "delta",
+        ],
+
+
+        [
+            Species.LAMPENT,
+            "delta",
+        ],
+
+
+        [
+            Species.MAGMORTAR,
+            "delta",
+        ],
+
+
+        [
+            Species.MARACTUS,
+            "delta",
+        ],
+
+
+        [
+            Species.MUNCHLAX,
+            "delta",
+        ],
+
+
+        [
+            Species.PHANTUMP,
+            "delta",
+        ],
+
+
+        [
+            Species.QUILAVA,
+            "delta",
+        ],
+
+
+        [
+            Species.REGISTEEL,
+            "delta",
+        ],
+
+
+        [
+            Species.SNORLAX,
+            "delta",
+        ],
+
+
+        [
+            Species.SNORUNT,
+            "delta",
+        ],
+
+
+        [
+            Species.TREVENANT,
+            "delta",
+        ],
+
+
+        [
+            Species.VESPIQUEN,
+            "delta",
+        ],
+
+
+        [
+            Species.WAILMER,
+            "delta",
+        ],
+
+
+        [
+            Species.WAILORD,
+            "delta",
+        ],
+
+
+        [
+            Species.YAMASK,
+            "delta",
+        ],
+
     Species.SQUIRTLE,
     Species.WARTORTLE,
     Species.BLASTOISE,
@@ -43257,7 +53140,199 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_GOODRA,
     Species.HISUI_AVALUGG,
   ],
-  [Moves.BRINE]: [
+    [Moves.BRINE]: [
+
+        [
+            Species.AMAURA,
+            "delta",
+        ],
+
+
+        [
+            Species.AMOONGUSS,
+            "delta",
+        ],
+
+
+        [
+            Species.AURORUS,
+            "delta",
+        ],
+
+
+        [
+            Species.AXEW,
+            "delta",
+        ],
+
+
+        [
+            Species.DRAGONAIR,
+            "delta",
+        ],
+
+
+        [
+            Species.DRAGONITE,
+            "delta",
+        ],
+
+
+        [
+            Species.DRATINI,
+            "delta",
+        ],
+
+
+        [
+            Species.DUNSPARCE,
+            "delta",
+        ],
+
+
+        [
+            Species.FOONGUS,
+            "delta",
+        ],
+
+
+        [
+            Species.FRAXURE,
+            "delta",
+        ],
+
+
+        [
+            Species.GOODRA,
+            "delta",
+        ],
+
+
+        [
+            Species.GOOMY,
+            "delta",
+        ],
+
+
+        [
+            Species.GROTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.HAXORUS,
+            "delta",
+        ],
+
+
+        [
+            Species.HOOPA,
+            "delta",
+        ],
+
+
+        [
+            Species.KOFFING,
+            "delta",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-water",
+        ],
+
+
+        [
+            Species.LOMBRE,
+            "delta",
+        ],
+
+
+        [
+            Species.LOTAD,
+            "delta",
+        ],
+
+
+        [
+            Species.LUDICOLO,
+            "delta",
+        ],
+
+
+        [
+            Species.MAGBY,
+            "delta",
+        ],
+
+
+        [
+            Species.MAGMAR,
+            "delta",
+        ],
+
+
+        [
+            Species.MAGMORTAR,
+            "delta",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-water",
+        ],
+
+
+        [
+            Species.REGICE,
+            "delta",
+        ],
+
+
+        [
+            Species.SERPERIOR,
+            "delta",
+        ],
+
+
+        [
+            Species.SERVINE,
+            "delta",
+        ],
+
+
+        [
+            Species.SLIGGOO,
+            "delta",
+        ],
+
+
+        [
+            Species.SNIVY,
+            "delta",
+        ],
+
+
+        [
+            Species.TORTERRA,
+            "delta",
+        ],
+
+
+        [
+            Species.TURTWIG,
+            "delta",
+        ],
+
+
+        [
+            Species.WEEZING,
+            "delta",
+        ],
+
     Species.SQUIRTLE,
     Species.WARTORTLE,
     Species.BLASTOISE,
@@ -43519,7 +53594,217 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_BRAVIARY,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.U_TURN]: [
+    [Moves.U_TURN]: [
+
+        [
+            Species.BISHARP,
+            "delta",
+        ],
+
+
+        [
+            Species.BLASTOISE,
+            "delta",
+        ],
+
+
+        [
+            Species.BUNEARY,
+            "delta",
+        ],
+
+
+        [
+            Species.DRAGONAIR,
+            "delta",
+        ],
+
+
+        [
+            Species.DRAGONITE,
+            "delta",
+        ],
+
+
+        [
+            Species.DRATINI,
+            "delta",
+        ],
+
+
+        [
+            Species.DRIFBLIM,
+            "delta",
+        ],
+
+
+        [
+            Species.DRIFLOON,
+            "delta",
+        ],
+
+
+        [
+            Species.DUNSPARCE,
+            "delta",
+        ],
+
+
+        [
+            Species.GROVYLE,
+            "delta",
+        ],
+
+
+        [
+            Species.HOOPA,
+            "delta",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.MARACTUS,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.MINUN,
+            "delta",
+        ],
+
+
+        [
+            Species.MISDREAVUS,
+            "delta",
+        ],
+
+
+        [
+            Species.MISMAGIUS,
+            "delta",
+        ],
+
+
+        [
+            Species.NUZLEAF,
+            "delta",
+        ],
+
+
+        [
+            Species.PAWNIARD,
+            "delta",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.PICHU,
+            "delta",
+        ],
+
+
+        [
+            Species.PIKACHU,
+            "delta",
+        ],
+
+
+        [
+            Species.PLUSLE,
+            "delta",
+        ],
+
+
+        [
+            Species.RAICHU,
+            "delta",
+        ],
+
+
+        [
+            Species.SCEPTILE,
+            "delta",
+        ],
+
+
+        [
+            Species.SERPERIOR,
+            "delta",
+        ],
+
+
+        [
+            Species.SERVINE,
+            "delta",
+        ],
+
+
+        [
+            Species.SHIFTRY,
+            "delta",
+        ],
+
+
+        [
+            Species.SNIVY,
+            "delta",
+        ],
+
+
+        [
+            Species.SQUIRTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.TREECKO,
+            "delta",
+        ],
+
+
+        [
+            Species.WAILMER,
+            "delta",
+        ],
+
+
+        [
+            Species.WAILORD,
+            "delta",
+        ],
+
+
+        [
+            Species.WARTORTLE,
+            "delta",
+        ],
+
     Species.BUTTERFREE,
     Species.BEEDRILL,
     Species.PIDGEY,
@@ -43882,7 +54167,457 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_DECIDUEYE,
     Species.PALDEA_TAUROS,
   ],
-  [Moves.PAYBACK]: [
+    [Moves.PAYBACK]: [
+
+        [
+            Species.ARON,
+            "delta",
+        ],
+
+
+        [
+            Species.AVALUGG,
+            "delta",
+        ],
+
+
+        [
+            Species.BERGMITE,
+            "delta",
+        ],
+
+
+        [
+            Species.BLASTOISE,
+            "delta",
+        ],
+
+
+        [
+            Species.BUDEW,
+            "delta",
+        ],
+
+
+        [
+            Species.BULBASAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.CAMERUPT,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARIZARD,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARMANDER,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARMELEON,
+            "delta",
+        ],
+
+
+        [
+            Species.CYNDAQUIL,
+            "delta",
+        ],
+
+
+        [
+            Species.DARUMAKA,
+            "delta",
+        ],
+
+
+        [
+            Species.DEINO,
+            "delta",
+        ],
+
+
+        [
+            Species.DUNSPARCE,
+            "delta",
+        ],
+
+
+        [
+            Species.DUOSION,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTABUZZ,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTIVIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.ELEKID,
+            "delta",
+        ],
+
+
+        [
+            Species.EMOLGA,
+            "delta",
+        ],
+
+
+        [
+            Species.GIRAFARIG,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLETT,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLURK,
+            "delta",
+        ],
+
+
+        [
+            Species.GOODRA,
+            "delta",
+        ],
+
+
+        [
+            Species.GOOMY,
+            "delta",
+        ],
+
+
+        [
+            Species.GROTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.HUNTAIL,
+            "delta",
+        ],
+
+
+        [
+            Species.IVYSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.KABUTOPS,
+            "delta",
+        ],
+
+
+        [
+            Species.KABUTO,
+            "delta",
+        ],
+
+
+        [
+            Species.LAIRON,
+            "delta",
+        ],
+
+
+        [
+            Species.LARVESTA,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXIO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXRAY,
+            "delta",
+        ],
+
+
+        [
+            Species.MEDICHAM,
+            "delta",
+        ],
+
+
+        [
+            Species.MEDITITE,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-ruin",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-ruin",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.MILOTIC,
+            "delta",
+        ],
+
+
+        [
+            Species.NUMEL,
+            "delta",
+        ],
+
+
+        [
+            Species.PHANTUMP,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOTTO,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOT,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEY,
+            "delta",
+        ],
+
+
+        [
+            Species.QUAGSIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.QUILAVA,
+            "delta",
+        ],
+
+
+        [
+            Species.REGICE,
+            "delta",
+        ],
+
+
+        [
+            Species.REGIROCK,
+            "delta",
+        ],
+
+
+        [
+            Species.REGISTEEL,
+            "delta",
+        ],
+
+
+        [
+            Species.REMORAID,
+            "delta",
+        ],
+
+
+        [
+            Species.REUNICLUS,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSELIA,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSERADE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCIZOR,
+            "delta",
+        ],
+
+
+        [
+            Species.SCYTHER,
+            "delta",
+        ],
+
+
+        [
+            Species.SERPERIOR,
+            "delta",
+        ],
+
+
+        [
+            Species.SERVINE,
+            "delta",
+        ],
+
+
+        [
+            Species.SHINX,
+            "delta",
+        ],
+
+
+        [
+            Species.SHUCKLE,
+            "delta",
+        ],
+
+
+        [
+            Species.SLIGGOO,
+            "delta",
+        ],
+
+
+        [
+            Species.SNIVY,
+            "delta",
+        ],
+
+
+        [
+            Species.SNORUNT,
+            "delta",
+        ],
+
+
+        [
+            Species.SOLOSIS,
+            "delta",
+        ],
+
+
+        [
+            Species.SQUIRTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.TANGELA,
+            "delta",
+        ],
+
+
+        [
+            Species.TORTERRA,
+            "delta",
+        ],
+
+
+        [
+            Species.TREVENANT,
+            "delta",
+        ],
+
+
+        [
+            Species.TURTWIG,
+            "delta",
+        ],
+
+
+        [
+            Species.TYPHLOSION,
+            "delta",
+        ],
+
+
+        [
+            Species.VENUSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.VOLCARONA,
+            "delta",
+        ],
+
+
+        [
+            Species.WARTORTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.WOOPER,
+            "delta",
+        ],
+
+
+        [
+            Species.ZWEILOUS,
+            "delta",
+        ],
+
     Species.BEEDRILL,
     Species.EKANS,
     Species.ARBOK,
@@ -44402,7 +55137,523 @@ export const tmSpecies: TmSpecies = {
       "combat",
     ],
   ],
-  [Moves.EMBARGO]: [
+    [Moves.EMBARGO]: [
+
+        [
+            Species.AIPOM,
+            "delta",
+        ],
+
+
+        [
+            Species.AMBIPOM,
+            "delta",
+        ],
+
+
+        [
+            Species.ARCANINE,
+            "delta",
+        ],
+
+
+        [
+            Species.BLASTOISE,
+            "delta",
+        ],
+
+
+        [
+            Species.BULBASAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.BUNEARY,
+            "delta",
+        ],
+
+
+        [
+            Species.CAMERUPT,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARIZARD,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARMANDER,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARMELEON,
+            "delta",
+        ],
+
+
+        [
+            Species.CHINCHOU,
+            "delta",
+        ],
+
+
+        [
+            Species.CLAMPERL,
+            "delta",
+        ],
+
+
+        [
+            Species.CRUSTLE,
+            "delta-berry",
+        ],
+
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.DARMANITAN,
+            "delta",
+        ],
+
+
+        [
+            Species.DARUMAKA,
+            "delta",
+        ],
+
+
+        [
+            Species.DUNSPARCE,
+            "delta",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-berry",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.ELECTABUZZ,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTIVIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.ELEKID,
+            "delta",
+        ],
+
+
+        [
+            Species.EMOLGA,
+            "delta",
+        ],
+
+
+        [
+            Species.FEEBAS,
+            "delta",
+        ],
+
+
+        [
+            Species.GEODUDE,
+            "delta",
+        ],
+
+
+        [
+            Species.GIRAFARIG,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLEM,
+            "delta",
+        ],
+
+
+        [
+            Species.GOODRA,
+            "delta",
+        ],
+
+
+        [
+            Species.GOOMY,
+            "delta",
+        ],
+
+
+        [
+            Species.GOREBYSS,
+            "delta",
+        ],
+
+
+        [
+            Species.GRAVELER,
+            "delta",
+        ],
+
+
+        [
+            Species.GRIMER,
+            "delta",
+        ],
+
+
+        [
+            Species.GROWLITHE,
+            "delta",
+        ],
+
+
+        [
+            Species.HUNTAIL,
+            "delta",
+        ],
+
+
+        [
+            Species.IVYSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.KABUTOPS,
+            "delta",
+        ],
+
+
+        [
+            Species.KABUTO,
+            "delta",
+        ],
+
+
+        [
+            Species.KOFFING,
+            "delta",
+        ],
+
+
+        [
+            Species.LANTURN,
+            "delta",
+        ],
+
+
+        [
+            Species.LARVESTA,
+            "delta",
+        ],
+
+
+        [
+            Species.LOMBRE,
+            "delta",
+        ],
+
+
+        [
+            Species.LOPUNNY,
+            "delta",
+        ],
+
+
+        [
+            Species.LOTAD,
+            "delta",
+        ],
+
+
+        [
+            Species.LUCARIO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUDICOLO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXIO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXRAY,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.MILOTIC,
+            "delta",
+        ],
+
+
+        [
+            Species.MUK,
+            "delta",
+        ],
+
+
+        [
+            Species.MUNCHLAX,
+            "delta",
+        ],
+
+
+        [
+            Species.NUMEL,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOTTO,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOT,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEY,
+            "delta",
+        ],
+
+
+        [
+            Species.QUAGSIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.REGICE,
+            "delta",
+        ],
+
+
+        [
+            Species.REGIROCK,
+            "delta",
+        ],
+
+
+        [
+            Species.REGISTEEL,
+            "delta",
+        ],
+
+
+        [
+            Species.RIOLU,
+            "delta",
+        ],
+
+
+        [
+            Species.SCOLIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCRAFTY,
+            "delta",
+        ],
+
+
+        [
+            Species.SCRAGGY,
+            "delta",
+        ],
+
+
+        [
+            Species.SEEDOT,
+            "delta",
+        ],
+
+
+        [
+            Species.SERPERIOR,
+            "delta",
+        ],
+
+
+        [
+            Species.SERVINE,
+            "delta",
+        ],
+
+
+        [
+            Species.SHINX,
+            "delta",
+        ],
+
+
+        [
+            Species.SHUCKLE,
+            "delta",
+        ],
+
+
+        [
+            Species.SLIGGOO,
+            "delta",
+        ],
+
+
+        [
+            Species.SNIVY,
+            "delta",
+        ],
+
+
+        [
+            Species.SNORLAX,
+            "delta",
+        ],
+
+
+        [
+            Species.SQUIRTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.TANGELA,
+            "delta",
+        ],
+
+
+        [
+            Species.TANGROWTH,
+            "delta",
+        ],
+
+
+        [
+            Species.TENTACOOL,
+            "delta",
+        ],
+
+
+        [
+            Species.TENTACRUEL,
+            "delta",
+        ],
+
+
+        [
+            Species.VENIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.VENUSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.VOLCARONA,
+            "delta",
+        ],
+
+
+        [
+            Species.WAILMER,
+            "delta",
+        ],
+
+
+        [
+            Species.WAILORD,
+            "delta",
+        ],
+
+
+        [
+            Species.WARTORTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.WEEZING,
+            "delta",
+        ],
+
+
+        [
+            Species.WHIRLIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.WOOPER,
+            "delta",
+        ],
+
     Species.PERSIAN,
     Species.ABRA,
     Species.KADABRA,
@@ -44499,7 +55750,295 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_GRIMER,
     Species.ALOLA_MUK,
   ],
-  [Moves.FLING]: [
+    [Moves.FLING]: [
+
+        [
+            Species.AMOONGUSS,
+            "delta",
+        ],
+
+
+        [
+            Species.ARCANINE,
+            "delta",
+        ],
+
+
+        [
+            Species.BUDEW,
+            "delta",
+        ],
+
+
+        [
+            Species.CHANDELURE,
+            "delta",
+        ],
+
+
+        [
+            Species.COFAGRIGUS,
+            "delta",
+        ],
+
+
+        [
+            Species.CRUSTLE,
+            "delta-berry",
+        ],
+
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.CYNDAQUIL,
+            "delta",
+        ],
+
+
+        [
+            Species.DODRIO,
+            "delta",
+        ],
+
+
+        [
+            Species.DODUO,
+            "delta",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-berry",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.ESCAVALIER,
+            "delta",
+        ],
+
+
+        [
+            Species.FOONGUS,
+            "delta",
+        ],
+
+
+        [
+            Species.GROWLITHE,
+            "delta",
+        ],
+
+
+        [
+            Species.HOOTHOOT,
+            "delta",
+        ],
+
+
+        [
+            Species.HUNTAIL,
+            "delta",
+        ],
+
+
+        [
+            Species.KABUTOPS,
+            "delta",
+        ],
+
+
+        [
+            Species.KABUTO,
+            "delta",
+        ],
+
+
+        [
+            Species.KARRABLAST,
+            "delta",
+        ],
+
+
+        [
+            Species.LAMPENT,
+            "delta",
+        ],
+
+
+        [
+            Species.LIEPARD,
+            "delta",
+        ],
+
+
+        [
+            Species.LITWICK,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXIO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXRAY,
+            "delta",
+        ],
+
+
+        [
+            Species.MARACTUS,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.NOCTOWL,
+            "delta",
+        ],
+
+
+        [
+            Species.NOIBAT,
+            "delta",
+        ],
+
+
+        [
+            Species.NOIVERN,
+            "delta",
+        ],
+
+
+        [
+            Species.OCTILLERY,
+            "delta",
+        ],
+
+
+        [
+            Species.PURRLOIN,
+            "delta",
+        ],
+
+
+        [
+            Species.QUILAVA,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSELIA,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSERADE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCYTHER,
+            "delta",
+        ],
+
+
+        [
+            Species.SHINX,
+            "delta",
+        ],
+
+
+        [
+            Species.SHUCKLE,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNFLORA,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNKERN,
+            "delta",
+        ],
+
+
+        [
+            Species.TANGELA,
+            "delta",
+        ],
+
+
+        [
+            Species.TENTACOOL,
+            "delta",
+        ],
+
+
+        [
+            Species.TENTACRUEL,
+            "delta",
+        ],
+
+
+        [
+            Species.WOOPER,
+            "delta",
+        ],
+
+
+        [
+            Species.YAMASK,
+            "delta",
+        ],
+
+
+        [
+            Species.YANMA,
+            "delta",
+        ],
+
+
+        [
+            Species.YANMEGA,
+            "delta",
+        ],
+
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -45282,7 +56821,151 @@ export const tmSpecies: TmSpecies = {
     Species.TERAPAGOS,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.ROCK_POLISH]: [
+    [Moves.ROCK_POLISH]: [
+
+        [
+            Species.DUOSION,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTABUZZ,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTIVIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.ELEKID,
+            "delta",
+        ],
+
+
+        [
+            Species.GLALIE,
+            "delta",
+        ],
+
+
+        [
+            Species.GOODRA,
+            "delta",
+        ],
+
+
+        [
+            Species.GOOMY,
+            "delta",
+        ],
+
+
+        [
+            Species.MARACTUS,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.OCTILLERY,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOTTO,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOT,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEY,
+            "delta",
+        ],
+
+
+        [
+            Species.REMORAID,
+            "delta",
+        ],
+
+
+        [
+            Species.REUNICLUS,
+            "delta",
+        ],
+
+
+        [
+            Species.SABLEYE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCOLIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.SLIGGOO,
+            "delta",
+        ],
+
+
+        [
+            Species.SOLOSIS,
+            "delta",
+        ],
+
+
+        [
+            Species.VENIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.WAILMER,
+            "delta",
+        ],
+
+
+        [
+            Species.WAILORD,
+            "delta",
+        ],
+
+
+        [
+            Species.WHIRLIPEDE,
+            "delta",
+        ],
+
     Species.GEODUDE,
     Species.GRAVELER,
     Species.GOLEM,
@@ -45396,7 +57079,295 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_GRIMER,
     Species.ALOLA_MUK,
   ],
-  [Moves.POISON_JAB]: [
+    [Moves.POISON_JAB]: [
+
+        [
+            Species.AIPOM,
+            "delta",
+        ],
+
+
+        [
+            Species.AMBIPOM,
+            "delta",
+        ],
+
+
+        [
+            Species.BLASTOISE,
+            "delta",
+        ],
+
+
+        [
+            Species.BUDEW,
+            "delta",
+        ],
+
+
+        [
+            Species.BUNEARY,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARIZARD,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARMANDER,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARMELEON,
+            "delta",
+        ],
+
+
+        [
+            Species.COFAGRIGUS,
+            "delta",
+        ],
+
+
+        [
+            Species.DEINO,
+            "delta",
+        ],
+
+
+        [
+            Species.DODRIO,
+            "delta",
+        ],
+
+
+        [
+            Species.DODUO,
+            "delta",
+        ],
+
+
+        [
+            Species.GIRAFARIG,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLETT,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLURK,
+            "delta",
+        ],
+
+
+        [
+            Species.GROVYLE,
+            "delta",
+        ],
+
+
+        [
+            Species.HEATMOR,
+            "delta",
+        ],
+
+
+        [
+            Species.HYDREIGON,
+            "delta",
+        ],
+
+
+        [
+            Species.KABUTOPS,
+            "delta",
+        ],
+
+
+        [
+            Species.KABUTO,
+            "delta",
+        ],
+
+
+        [
+            Species.LIEPARD,
+            "delta",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-water",
+        ],
+
+
+        [
+            Species.LOPUNNY,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXIO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXRAY,
+            "delta",
+        ],
+
+
+        [
+            Species.MAWILE,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-ruin",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-ruin",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.OCTILLERY,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOTTO,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOT,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEY,
+            "delta",
+        ],
+
+
+        [
+            Species.PURRLOIN,
+            "delta",
+        ],
+
+
+        [
+            Species.QUAGSIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.REUNICLUS,
+            "delta",
+        ],
+
+
+        [
+            Species.SCEPTILE,
+            "delta",
+        ],
+
+
+        [
+            Species.SHINX,
+            "delta",
+        ],
+
+
+        [
+            Species.SQUIRTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNFLORA,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNKERN,
+            "delta",
+        ],
+
+
+        [
+            Species.TREECKO,
+            "delta",
+        ],
+
+
+        [
+            Species.VESPIQUEN,
+            "delta",
+        ],
+
+
+        [
+            Species.WARTORTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.WOOPER,
+            "delta",
+        ],
+
+
+        [
+            Species.YAMASK,
+            "delta",
+        ],
+
+
+        [
+            Species.ZWEILOUS,
+            "delta",
+        ],
+
     Species.BEEDRILL,
     Species.EKANS,
     Species.ARBOK,
@@ -45592,7 +57563,373 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_LILLIGANT,
     Species.PALDEA_WOOPER,
   ],
-  [Moves.DARK_PULSE]: [
+    [Moves.DARK_PULSE]: [
+
+        [
+            Species.AIPOM,
+            "delta",
+        ],
+
+
+        [
+            Species.AMBIPOM,
+            "delta",
+        ],
+
+
+        [
+            Species.AMOONGUSS,
+            "delta",
+        ],
+
+
+        [
+            Species.BUDEW,
+            "delta",
+        ],
+
+
+        [
+            Species.BULBASAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.BUNEARY,
+            "delta",
+        ],
+
+
+        [
+            Species.CAMERUPT,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARIZARD,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARMANDER,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARMELEON,
+            "delta",
+        ],
+
+
+        [
+            Species.CYNDAQUIL,
+            "delta",
+        ],
+
+
+        [
+            Species.DARMANITAN,
+            "delta",
+        ],
+
+
+        [
+            Species.DARUMAKA,
+            "delta",
+        ],
+
+
+        [
+            Species.DUOSION,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTABUZZ,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTIVIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.EMOLGA,
+            "delta",
+        ],
+
+
+        [
+            Species.FEEBAS,
+            "delta",
+        ],
+
+
+        [
+            Species.FOONGUS,
+            "delta",
+        ],
+
+
+        [
+            Species.FROSLASS,
+            "delta",
+        ],
+
+
+        [
+            Species.GIRAFARIG,
+            "delta",
+        ],
+
+
+        [
+            Species.GRIMER,
+            "delta",
+        ],
+
+
+        [
+            Species.HEATMOR,
+            "delta",
+        ],
+
+
+        [
+            Species.HUNTAIL,
+            "delta",
+        ],
+
+
+        [
+            Species.IVYSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.KABUTOPS,
+            "delta",
+        ],
+
+
+        [
+            Species.KABUTO,
+            "delta",
+        ],
+
+
+        [
+            Species.LARVESTA,
+            "delta",
+        ],
+
+
+        [
+            Species.LOPUNNY,
+            "delta",
+        ],
+
+
+        [
+            Species.LUDICOLO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXIO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXRAY,
+            "delta",
+        ],
+
+
+        [
+            Species.MAGMORTAR,
+            "delta",
+        ],
+
+
+        [
+            Species.MELOETTA,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.MILOTIC,
+            "delta",
+        ],
+
+
+        [
+            Species.NUMEL,
+            "delta",
+        ],
+
+
+        [
+            Species.OCTILLERY,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOTTO,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOT,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEY,
+            "delta",
+        ],
+
+
+        [
+            Species.QUILAVA,
+            "delta",
+        ],
+
+
+        [
+            Species.REMORAID,
+            "delta",
+        ],
+
+
+        [
+            Species.REUNICLUS,
+            "delta",
+        ],
+
+
+        [
+            Species.RIOLU,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSELIA,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSERADE,
+            "delta",
+        ],
+
+
+        [
+            Species.SERPERIOR,
+            "delta",
+        ],
+
+
+        [
+            Species.SERVINE,
+            "delta",
+        ],
+
+
+        [
+            Species.SHINX,
+            "delta",
+        ],
+
+
+        [
+            Species.SNIVY,
+            "delta",
+        ],
+
+
+        [
+            Species.SNORUNT,
+            "delta",
+        ],
+
+
+        [
+            Species.SOLOSIS,
+            "delta",
+        ],
+
+
+        [
+            Species.SQUIRTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNFLORA,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNKERN,
+            "delta",
+        ],
+
+
+        [
+            Species.TYPHLOSION,
+            "delta",
+        ],
+
+
+        [
+            Species.VENUSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.VOLCARONA,
+            "delta",
+        ],
+
+
+        [
+            Species.WARTORTLE,
+            "delta",
+        ],
+
     Species.BLASTOISE,
     Species.EKANS,
     Species.ARBOK,
@@ -46147,7 +58484,193 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_BRAVIARY,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.X_SCISSOR]: [
+    [Moves.X_SCISSOR]: [
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.DRAGONITE,
+            "delta",
+        ],
+
+
+        [
+            Species.DUNSPARCE,
+            "delta",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.FROAKIE,
+            "delta",
+        ],
+
+
+        [
+            Species.FROGADIER,
+            "delta",
+        ],
+
+
+        [
+            Species.GARDEVOIR,
+            "delta",
+        ],
+
+
+        [
+            Species.GRENINJA,
+            "delta",
+        ],
+
+
+        [
+            Species.KIRLIA,
+            "delta",
+        ],
+
+
+        [
+            Species.LIEPARD,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXIO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXRAY,
+            "delta",
+        ],
+
+
+        [
+            Species.MAWILE,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-ruin",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-ruin",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.PIDGEOTTO,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOT,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEY,
+            "delta",
+        ],
+
+
+        [
+            Species.PURRLOIN,
+            "delta",
+        ],
+
+
+        [
+            Species.QUAGSIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.RALTS,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSELIA,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSERADE,
+            "delta",
+        ],
+
+
+        [
+            Species.SHINX,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNFLORA,
+            "delta",
+        ],
+
+
+        [
+            Species.TENTACOOL,
+            "delta",
+        ],
+
+
+        [
+            Species.TENTACRUEL,
+            "delta",
+        ],
+
+
+        [
+            Species.TREECKO,
+            "delta",
+        ],
+
+
+        [
+            Species.WOOPER,
+            "delta",
+        ],
+
     Species.BEEDRILL,
     Species.SANDSHREW,
     Species.SANDSLASH,
@@ -46344,7 +58867,103 @@ export const tmSpecies: TmSpecies = {
     Species.IRON_MOTH,
     Species.TERAPAGOS,
   ],
-  [Moves.DRAGON_PULSE]: [
+    [Moves.DRAGON_PULSE]: [
+
+        [
+            Species.AURORUS,
+            "delta",
+        ],
+
+
+        [
+            Species.AVALUGG,
+            "delta",
+        ],
+
+
+        [
+            Species.BLAZIKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.CLAMPERL,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTIVIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.GOREBYSS,
+            "delta",
+        ],
+
+
+        [
+            Species.GROWLITHE,
+            "delta",
+        ],
+
+
+        [
+            Species.HEATMOR,
+            "delta",
+        ],
+
+
+        [
+            Species.HUNTAIL,
+            "delta",
+        ],
+
+
+        [
+            Species.LAIRON,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOTTO,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOT,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEY,
+            "delta",
+        ],
+
+
+        [
+            Species.SERVINE,
+            "delta",
+        ],
+
+
+        [
+            Species.VENUSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.YANMEGA,
+            "delta",
+        ],
+
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -46549,7 +59168,193 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_GROWLITHE,
     Species.HISUI_ARCANINE,
   ],
-  [Moves.DRAIN_PUNCH]: [
+    [Moves.DRAIN_PUNCH]: [
+
+        [
+            Species.AIPOM,
+            "delta",
+        ],
+
+
+        [
+            Species.AMBIPOM,
+            "delta",
+        ],
+
+
+        [
+            Species.BISHARP,
+            "delta",
+        ],
+
+
+        [
+            Species.BLASTOISE,
+            "delta",
+        ],
+
+
+        [
+            Species.BLAZIKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.DARMANITAN,
+            "delta",
+        ],
+
+
+        [
+            Species.DARUMAKA,
+            "delta",
+        ],
+
+
+        [
+            Species.DRAGONITE,
+            "delta",
+        ],
+
+
+        [
+            Species.GEODUDE,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLEM,
+            "delta",
+        ],
+
+
+        [
+            Species.GOODRA,
+            "delta",
+        ],
+
+
+        [
+            Species.GRAVELER,
+            "delta",
+        ],
+
+
+        [
+            Species.MAWILE,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-ruin",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-ruin",
+        ],
+
+
+        [
+            Species.MUNCHLAX,
+            "delta",
+        ],
+
+
+        [
+            Species.PAWNIARD,
+            "delta",
+        ],
+
+
+        [
+            Species.PHANTUMP,
+            "delta",
+        ],
+
+
+        [
+            Species.PIKACHU,
+            "delta",
+        ],
+
+
+        [
+            Species.QUILAVA,
+            "delta",
+        ],
+
+
+        [
+            Species.RAICHU,
+            "delta",
+        ],
+
+
+        [
+            Species.REGICE,
+            "delta",
+        ],
+
+
+        [
+            Species.REGISTEEL,
+            "delta",
+        ],
+
+
+        [
+            Species.SCIZOR,
+            "delta",
+        ],
+
+
+        [
+            Species.SCYTHER,
+            "delta",
+        ],
+
+
+        [
+            Species.SHUCKLE,
+            "delta",
+        ],
+
+
+        [
+            Species.SNORLAX,
+            "delta",
+        ],
+
+
+        [
+            Species.SQUIRTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.TANGROWTH,
+            "delta",
+        ],
+
+
+        [
+            Species.TYPHLOSION,
+            "delta",
+        ],
+
+
+        [
+            Species.WARTORTLE,
+            "delta",
+        ],
+
     Species.CLEFAIRY,
     Species.CLEFABLE,
     Species.JIGGLYPUFF,
@@ -46746,7 +59551,181 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_BRAVIARY,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.FOCUS_BLAST]: [
+    [Moves.FOCUS_BLAST]: [
+
+        [
+            Species.AIPOM,
+            "delta",
+        ],
+
+
+        [
+            Species.AMBIPOM,
+            "delta",
+        ],
+
+
+        [
+            Species.ARCANINE,
+            "delta",
+        ],
+
+
+        [
+            Species.BUNEARY,
+            "delta",
+        ],
+
+
+        [
+            Species.DEINO,
+            "delta",
+        ],
+
+
+        [
+            Species.DODRIO,
+            "delta",
+        ],
+
+
+        [
+            Species.DODUO,
+            "delta",
+        ],
+
+
+        [
+            Species.FROGADIER,
+            "delta",
+        ],
+
+
+        [
+            Species.GRENINJA,
+            "delta",
+        ],
+
+
+        [
+            Species.GRIMER,
+            "delta",
+        ],
+
+
+        [
+            Species.GROTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.GROVYLE,
+            "delta",
+        ],
+
+
+        [
+            Species.KIRLIA,
+            "delta",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-ruin",
+        ],
+
+
+        [
+            Species.OCTILLERY,
+            "delta",
+        ],
+
+
+        [
+            Species.PAWNIARD,
+            "delta",
+        ],
+
+
+        [
+            Species.REMORAID,
+            "delta",
+        ],
+
+
+        [
+            Species.SABLEYE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCIZOR,
+            "delta",
+        ],
+
+
+        [
+            Species.SCYTHER,
+            "delta",
+        ],
+
+
+        [
+            Species.SHUCKLE,
+            "delta",
+        ],
+
+
+        [
+            Species.SQUIRTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.TORCHIC,
+            "delta",
+        ],
+
+
+        [
+            Species.TORTERRA,
+            "delta",
+        ],
+
+
+        [
+            Species.TREECKO,
+            "delta",
+        ],
+
+
+        [
+            Species.TURTWIG,
+            "delta",
+        ],
+
+
+        [
+            Species.WARTORTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.ZWEILOUS,
+            "delta",
+        ],
+
     Species.CHARMANDER,
     Species.CHARIZARD,
     Species.BLASTOISE,
@@ -46983,7 +59962,325 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_DECIDUEYE,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.ENERGY_BALL]: [
+    [Moves.ENERGY_BALL]: [
+
+        [
+            Species.AMAURA,
+            "delta",
+        ],
+
+
+        [
+            Species.AURORUS,
+            "delta",
+        ],
+
+
+        [
+            Species.BLASTOISE,
+            "delta",
+        ],
+
+
+        [
+            Species.BLAZIKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.BUNEARY,
+            "delta",
+        ],
+
+
+        [
+            Species.COMBUSKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.CRUSTLE,
+            "delta-berry",
+        ],
+
+
+        [
+            Species.CYNDAQUIL,
+            "delta",
+        ],
+
+
+        [
+            Species.DODRIO,
+            "delta",
+        ],
+
+
+        [
+            Species.DODUO,
+            "delta",
+        ],
+
+
+        [
+            Species.DRAGONAIR,
+            "delta",
+        ],
+
+
+        [
+            Species.DRAGONITE,
+            "delta",
+        ],
+
+
+        [
+            Species.DRATINI,
+            "delta",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-berry",
+        ],
+
+
+        [
+            Species.FROAKIE,
+            "delta",
+        ],
+
+
+        [
+            Species.FROGADIER,
+            "delta",
+        ],
+
+
+        [
+            Species.FROSLASS,
+            "delta",
+        ],
+
+
+        [
+            Species.GLALIE,
+            "delta",
+        ],
+
+
+        [
+            Species.GOREBYSS,
+            "delta",
+        ],
+
+
+        [
+            Species.GRENINJA,
+            "delta",
+        ],
+
+
+        [
+            Species.HEATMOR,
+            "delta",
+        ],
+
+
+        [
+            Species.KOFFING,
+            "delta",
+        ],
+
+
+        [
+            Species.LARVESTA,
+            "delta",
+        ],
+
+
+        [
+            Species.LIEPARD,
+            "delta",
+        ],
+
+
+        [
+            Species.LOPUNNY,
+            "delta",
+        ],
+
+
+        [
+            Species.MAGMORTAR,
+            "delta",
+        ],
+
+
+        [
+            Species.MAWILE,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-ruin",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-ruin",
+        ],
+
+
+        [
+            Species.MILOTIC,
+            "delta",
+        ],
+
+
+        [
+            Species.MINUN,
+            "delta",
+        ],
+
+
+        [
+            Species.MUNCHLAX,
+            "delta",
+        ],
+
+
+        [
+            Species.NOIBAT,
+            "delta",
+        ],
+
+
+        [
+            Species.NOIVERN,
+            "delta",
+        ],
+
+
+        [
+            Species.PLUSLE,
+            "delta",
+        ],
+
+
+        [
+            Species.PURRLOIN,
+            "delta",
+        ],
+
+
+        [
+            Species.QUAGSIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.QUILAVA,
+            "delta",
+        ],
+
+
+        [
+            Species.REMORAID,
+            "delta",
+        ],
+
+
+        [
+            Species.SNORLAX,
+            "delta",
+        ],
+
+
+        [
+            Species.SNORUNT,
+            "delta",
+        ],
+
+
+        [
+            Species.SQUIRTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.TENTACOOL,
+            "delta",
+        ],
+
+
+        [
+            Species.TENTACRUEL,
+            "delta",
+        ],
+
+
+        [
+            Species.TORCHIC,
+            "delta",
+        ],
+
+
+        [
+            Species.TYPHLOSION,
+            "delta",
+        ],
+
+
+        [
+            Species.VESPIQUEN,
+            "delta",
+        ],
+
+
+        [
+            Species.VOLCARONA,
+            "delta",
+        ],
+
+
+        [
+            Species.WARTORTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.WEEZING,
+            "delta",
+        ],
+
+
+        [
+            Species.WOOPER,
+            "delta",
+        ],
+
+
+        [
+            Species.YANMA,
+            "delta",
+        ],
+
+
+        [
+            Species.YANMEGA,
+            "delta",
+        ],
+
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -47522,7 +60819,67 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.GIGA_IMPACT]: [
+    [Moves.GIGA_IMPACT]: [
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.GROWLITHE,
+            "delta",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-water",
+        ],
+
+
+        [
+            Species.MARACTUS,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.MINUN,
+            "delta",
+        ],
+
+
+        [
+            Species.PLUSLE,
+            "delta",
+        ],
+
+
+        [
+            Species.SHUCKLE,
+            "delta",
+        ],
+
+
+        [
+            Species.YANMA,
+            "delta",
+        ],
+
     Species.VENUSAUR,
     Species.CHARIZARD,
     Species.BLASTOISE,
@@ -48312,7 +61669,151 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_ZOROARK,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.AVALANCHE]: [
+    [Moves.AVALANCHE]: [
+
+        [
+            Species.ARCANINE,
+            "delta",
+        ],
+
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.DIGLETT,
+            "delta",
+        ],
+
+
+        [
+            Species.DUGTRIO,
+            "delta",
+        ],
+
+
+        [
+            Species.GALLADE,
+            "delta",
+        ],
+
+
+        [
+            Species.GARDEVOIR,
+            "delta",
+        ],
+
+
+        [
+            Species.GEODUDE,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLEM,
+            "delta",
+        ],
+
+
+        [
+            Species.GRAVELER,
+            "delta",
+        ],
+
+
+        [
+            Species.GROTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.HOOTHOOT,
+            "delta",
+        ],
+
+
+        [
+            Species.KIRLIA,
+            "delta",
+        ],
+
+
+        [
+            Species.MINUN,
+            "delta",
+        ],
+
+
+        [
+            Species.MISDREAVUS,
+            "delta",
+        ],
+
+
+        [
+            Species.MISMAGIUS,
+            "delta",
+        ],
+
+
+        [
+            Species.NOCTOWL,
+            "delta",
+        ],
+
+
+        [
+            Species.PHANTUMP,
+            "delta",
+        ],
+
+
+        [
+            Species.RALTS,
+            "delta",
+        ],
+
+
+        [
+            Species.SCIZOR,
+            "delta",
+        ],
+
+
+        [
+            Species.SCYTHER,
+            "delta",
+        ],
+
+
+        [
+            Species.TORTERRA,
+            "delta",
+        ],
+
+
+        [
+            Species.TREVENANT,
+            "delta",
+        ],
+
+
+        [
+            Species.TURTWIG,
+            "delta",
+        ],
+
+
+        [
+            Species.VENUSAUR,
+            "delta",
+        ],
+
     Species.BLASTOISE,
     Species.NIDOQUEEN,
     Species.NIDOKING,
@@ -48423,7 +61924,319 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_AVALUGG,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.SHADOW_CLAW]: [
+    [Moves.SHADOW_CLAW]: [
+
+        [
+            Species.AMOONGUSS,
+            "delta",
+        ],
+
+
+        [
+            Species.ARCANINE,
+            "delta",
+        ],
+
+
+        [
+            Species.AVALUGG,
+            "delta",
+        ],
+
+
+        [
+            Species.BLASTOISE,
+            "delta",
+        ],
+
+
+        [
+            Species.CYNDAQUIL,
+            "delta",
+        ],
+
+
+        [
+            Species.DARMANITAN,
+            "delta",
+        ],
+
+
+        [
+            Species.DARUMAKA,
+            "delta",
+        ],
+
+
+        [
+            Species.DODRIO,
+            "delta",
+        ],
+
+
+        [
+            Species.DODUO,
+            "delta",
+        ],
+
+
+        [
+            Species.DRAGONITE,
+            "delta",
+        ],
+
+
+        [
+            Species.DUNSPARCE,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTABUZZ,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTIVIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.ELEKID,
+            "delta",
+        ],
+
+
+        [
+            Species.EMOLGA,
+            "delta",
+        ],
+
+
+        [
+            Species.FROSLASS,
+            "delta",
+        ],
+
+
+        [
+            Species.GROVYLE,
+            "delta",
+        ],
+
+
+        [
+            Species.GROWLITHE,
+            "delta",
+        ],
+
+
+        [
+            Species.KABUTOPS,
+            "delta",
+        ],
+
+
+        [
+            Species.KABUTO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXIO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXRAY,
+            "delta",
+        ],
+
+
+        [
+            Species.MAGBY,
+            "delta",
+        ],
+
+
+        [
+            Species.MAGMAR,
+            "delta",
+        ],
+
+
+        [
+            Species.MAGMORTAR,
+            "delta",
+        ],
+
+
+        [
+            Species.MARACTUS,
+            "delta",
+        ],
+
+
+        [
+            Species.MAWILE,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-ruin",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.MUNCHLAX,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOTTO,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOT,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEY,
+            "delta",
+        ],
+
+
+        [
+            Species.QUAGSIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.QUILAVA,
+            "delta",
+        ],
+
+
+        [
+            Species.REUNICLUS,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSELIA,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSERADE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCEPTILE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCIZOR,
+            "delta",
+        ],
+
+
+        [
+            Species.SCRAFTY,
+            "delta",
+        ],
+
+
+        [
+            Species.SCRAGGY,
+            "delta",
+        ],
+
+
+        [
+            Species.SCYTHER,
+            "delta",
+        ],
+
+
+        [
+            Species.SHINX,
+            "delta",
+        ],
+
+
+        [
+            Species.SNORLAX,
+            "delta",
+        ],
+
+
+        [
+            Species.SQUIRTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNFLORA,
+            "delta",
+        ],
+
+
+        [
+            Species.TREECKO,
+            "delta",
+        ],
+
+
+        [
+            Species.VESPIQUEN,
+            "delta",
+        ],
+
+
+        [
+            Species.WARTORTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.WOOPER,
+            "delta",
+        ],
+
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -49348,7 +63161,235 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_BRAVIARY,
     Species.PALDEA_TAUROS,
   ],
-  [Moves.FLASH_CANNON]: [
+    [Moves.FLASH_CANNON]: [
+
+        [
+            Species.ARCANINE,
+            "delta",
+        ],
+
+
+        [
+            Species.ARON,
+            "delta",
+        ],
+
+
+        [
+            Species.BLAZIKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.CHANDELURE,
+            "delta",
+        ],
+
+
+        [
+            Species.COFAGRIGUS,
+            "delta",
+        ],
+
+
+        [
+            Species.COMBUSKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.CYNDAQUIL,
+            "delta",
+        ],
+
+
+        [
+            Species.DRAGONAIR,
+            "delta",
+        ],
+
+
+        [
+            Species.DRAGONITE,
+            "delta",
+        ],
+
+
+        [
+            Species.DRATINI,
+            "delta",
+        ],
+
+
+        [
+            Species.GARDEVOIR,
+            "delta",
+        ],
+
+
+        [
+            Species.GIRAFARIG,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLETT,
+            "delta",
+        ],
+
+
+        [
+            Species.HAXORUS,
+            "delta",
+        ],
+
+
+        [
+            Species.HEATMOR,
+            "delta",
+        ],
+
+
+        [
+            Species.KOFFING,
+            "delta",
+        ],
+
+
+        [
+            Species.LAIRON,
+            "delta",
+        ],
+
+
+        [
+            Species.LAMPENT,
+            "delta",
+        ],
+
+
+        [
+            Species.LARVESTA,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXIO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXRAY,
+            "delta",
+        ],
+
+
+        [
+            Species.MAGMORTAR,
+            "delta",
+        ],
+
+
+        [
+            Species.MARACTUS,
+            "delta",
+        ],
+
+
+        [
+            Species.MISDREAVUS,
+            "delta",
+        ],
+
+
+        [
+            Species.MISMAGIUS,
+            "delta",
+        ],
+
+
+        [
+            Species.NOIBAT,
+            "delta",
+        ],
+
+
+        [
+            Species.NOIVERN,
+            "delta",
+        ],
+
+
+        [
+            Species.QUILAVA,
+            "delta",
+        ],
+
+
+        [
+            Species.SHIFTRY,
+            "delta",
+        ],
+
+
+        [
+            Species.SHINX,
+            "delta",
+        ],
+
+
+        [
+            Species.SHUCKLE,
+            "delta",
+        ],
+
+
+        [
+            Species.TORCHIC,
+            "delta",
+        ],
+
+
+        [
+            Species.TYPHLOSION,
+            "delta",
+        ],
+
+
+        [
+            Species.VESPIQUEN,
+            "delta",
+        ],
+
+
+        [
+            Species.VOLCARONA,
+            "delta",
+        ],
+
+
+        [
+            Species.WEEZING,
+            "delta",
+        ],
+
+
+        [
+            Species.YAMASK,
+            "delta",
+        ],
+
     Species.BLASTOISE,
     Species.MAGNEMITE,
     Species.MAGNETON,
@@ -49496,7 +63537,175 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_SLIGGOO,
     Species.HISUI_GOODRA,
   ],
-  [Moves.ROCK_CLIMB]: [
+    [Moves.ROCK_CLIMB]: [
+
+        [
+            Species.AIPOM,
+            "delta",
+        ],
+
+
+        [
+            Species.AMBIPOM,
+            "delta",
+        ],
+
+
+        [
+            Species.ARON,
+            "delta",
+        ],
+
+
+        [
+            Species.AVALUGG,
+            "delta",
+        ],
+
+
+        [
+            Species.BERGMITE,
+            "delta",
+        ],
+
+
+        [
+            Species.BULBASAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.BUNEARY,
+            "delta",
+        ],
+
+
+        [
+            Species.DRAGONITE,
+            "delta",
+        ],
+
+
+        [
+            Species.GIRAFARIG,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLETT,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLURK,
+            "delta",
+        ],
+
+
+        [
+            Species.GROVYLE,
+            "delta",
+        ],
+
+
+        [
+            Species.GROWLITHE,
+            "delta",
+        ],
+
+
+        [
+            Species.HAXORUS,
+            "delta",
+        ],
+
+
+        [
+            Species.IVYSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.LAIRON,
+            "delta",
+        ],
+
+
+        [
+            Species.LOPUNNY,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXRAY,
+            "delta",
+        ],
+
+
+        [
+            Species.MEDICHAM,
+            "delta",
+        ],
+
+
+        [
+            Species.MEDITITE,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-ruin",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-ruin",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.MUK,
+            "delta",
+        ],
+
+
+        [
+            Species.PHANTUMP,
+            "delta",
+        ],
+
+
+        [
+            Species.SABLEYE,
+            "delta",
+        ],
+
+
+        [
+            Species.TREVENANT,
+            "delta",
+        ],
+
     Species.VENUSAUR,
     Species.BLASTOISE,
     Species.SANDSHREW,
@@ -49786,7 +63995,199 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_BRAVIARY,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.TRICK_ROOM]: [
+    [Moves.TRICK_ROOM]: [
+
+        [
+            Species.AMOONGUSS,
+            "delta",
+        ],
+
+
+        [
+            Species.BLAZIKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.BULBASAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.BUNEARY,
+            "delta",
+        ],
+
+
+        [
+            Species.CHINCHOU,
+            "delta",
+        ],
+
+
+        [
+            Species.COMBUSKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.DARMANITAN,
+            "delta",
+        ],
+
+
+        [
+            Species.DARUMAKA,
+            "delta",
+        ],
+
+
+        [
+            Species.DODRIO,
+            "delta",
+        ],
+
+
+        [
+            Species.DODUO,
+            "delta",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.ESCAVALIER,
+            "delta",
+        ],
+
+
+        [
+            Species.FOONGUS,
+            "delta",
+        ],
+
+
+        [
+            Species.GEODUDE,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLEM,
+            "delta",
+        ],
+
+
+        [
+            Species.GOREBYSS,
+            "delta",
+        ],
+
+
+        [
+            Species.GRAVELER,
+            "delta",
+        ],
+
+
+        [
+            Species.IVYSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.KARRABLAST,
+            "delta",
+        ],
+
+
+        [
+            Species.LANTURN,
+            "delta",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.LOMBRE,
+            "delta",
+        ],
+
+
+        [
+            Species.LOPUNNY,
+            "delta",
+        ],
+
+
+        [
+            Species.LUCARIO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUDICOLO,
+            "delta",
+        ],
+
+
+        [
+            Species.MILOTIC,
+            "delta",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.SUNFLORA,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNKERN,
+            "delta",
+        ],
+
+
+        [
+            Species.TORCHIC,
+            "delta",
+        ],
+
+
+        [
+            Species.VENUSAUR,
+            "delta",
+        ],
+
     Species.ABRA,
     Species.KADABRA,
     Species.ALAKAZAM,
@@ -50567,7 +64968,205 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_AVALUGG,
     Species.PALDEA_TAUROS,
   ],
-  [Moves.STONE_EDGE]: [
+    [Moves.STONE_EDGE]: [
+
+        [
+            Species.ARCANINE,
+            "delta",
+        ],
+
+
+        [
+            Species.ARON,
+            "delta",
+        ],
+
+
+        [
+            Species.BLASTOISE,
+            "delta",
+        ],
+
+
+        [
+            Species.DEINO,
+            "delta",
+        ],
+
+
+        [
+            Species.DUOSION,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTABUZZ,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTIVIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.ELEKID,
+            "delta",
+        ],
+
+
+        [
+            Species.GLALIE,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLETT,
+            "delta",
+        ],
+
+
+        [
+            Species.GROTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.GROVYLE,
+            "delta",
+        ],
+
+
+        [
+            Species.HAXORUS,
+            "delta",
+        ],
+
+
+        [
+            Species.LOPUNNY,
+            "delta",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-ruin",
+        ],
+
+
+        [
+            Species.MUK,
+            "delta",
+        ],
+
+
+        [
+            Species.NOIVERN,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOT,
+            "delta",
+        ],
+
+
+        [
+            Species.REGISTEEL,
+            "delta",
+        ],
+
+
+        [
+            Species.REUNICLUS,
+            "delta",
+        ],
+
+
+        [
+            Species.SABLEYE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCEPTILE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCIZOR,
+            "delta",
+        ],
+
+
+        [
+            Species.SCOLIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCYTHER,
+            "delta",
+        ],
+
+
+        [
+            Species.SOLOSIS,
+            "delta",
+        ],
+
+
+        [
+            Species.SQUIRTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.TREVENANT,
+            "delta",
+        ],
+
+
+        [
+            Species.TURTWIG,
+            "delta",
+        ],
+
+
+        [
+            Species.VENIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.WARTORTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.WHIRLIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.ZWEILOUS,
+            "delta",
+        ],
+
     Species.SANDSHREW,
     Species.SANDSLASH,
     Species.NIDOQUEEN,
@@ -51034,7 +65633,229 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_AVALUGG,
     Species.PALDEA_WOOPER,
   ],
-  [Moves.GRASS_KNOT]: [
+    [Moves.GRASS_KNOT]: [
+
+        [
+            Species.AMAURA,
+            "delta",
+        ],
+
+
+        [
+            Species.AURORUS,
+            "delta",
+        ],
+
+
+        [
+            Species.BLAZIKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.COMBUSKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.CRUSTLE,
+            "delta-berry",
+        ],
+
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.DODRIO,
+            "delta",
+        ],
+
+
+        [
+            Species.DODUO,
+            "delta",
+        ],
+
+
+        [
+            Species.DRAGONITE,
+            "delta",
+        ],
+
+
+        [
+            Species.DUNSPARCE,
+            "delta",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-berry",
+        ],
+
+
+        [
+            Species.ESCAVALIER,
+            "delta",
+        ],
+
+
+        [
+            Species.GEODUDE,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLEM,
+            "delta",
+        ],
+
+
+        [
+            Species.GOODRA,
+            "delta",
+        ],
+
+
+        [
+            Species.GRAVELER,
+            "delta",
+        ],
+
+
+        [
+            Species.KARRABLAST,
+            "delta",
+        ],
+
+
+        [
+            Species.LARVESTA,
+            "delta",
+        ],
+
+
+        [
+            Species.LUCARIO,
+            "delta",
+        ],
+
+
+        [
+            Species.MILOTIC,
+            "delta",
+        ],
+
+
+        [
+            Species.MUNCHLAX,
+            "delta",
+        ],
+
+
+        [
+            Species.NOIBAT,
+            "delta",
+        ],
+
+
+        [
+            Species.NOIVERN,
+            "delta",
+        ],
+
+
+        [
+            Species.QUAGSIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.QUILAVA,
+            "delta",
+        ],
+
+
+        [
+            Species.RIOLU,
+            "delta",
+        ],
+
+
+        [
+            Species.SHUCKLE,
+            "delta",
+        ],
+
+
+        [
+            Species.SLIGGOO,
+            "delta",
+        ],
+
+
+        [
+            Species.SNORLAX,
+            "delta",
+        ],
+
+
+        [
+            Species.TENTACOOL,
+            "delta",
+        ],
+
+
+        [
+            Species.TENTACRUEL,
+            "delta",
+        ],
+
+
+        [
+            Species.TORCHIC,
+            "delta",
+        ],
+
+
+        [
+            Species.TYPHLOSION,
+            "delta",
+        ],
+
+
+        [
+            Species.VOLCARONA,
+            "delta",
+        ],
+
+
+        [
+            Species.WOOPER,
+            "delta",
+        ],
+
+
+        [
+            Species.YANMA,
+            "delta",
+        ],
+
+
+        [
+            Species.YANMEGA,
+            "delta",
+        ],
+
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -51494,7 +66315,283 @@ export const tmSpecies: TmSpecies = {
     Species.DIPPLIN,
     Species.HYDRAPPLE,
   ],
-  [Moves.CHARGE_BEAM]: [
+    [Moves.CHARGE_BEAM]: [
+
+        [
+            Species.AIPOM,
+            "delta",
+        ],
+
+
+        [
+            Species.AMBIPOM,
+            "delta",
+        ],
+
+
+        [
+            Species.AMOONGUSS,
+            "delta",
+        ],
+
+
+        [
+            Species.BULBASAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.CAMERUPT,
+            "delta",
+        ],
+
+
+        [
+            Species.CHANDELURE,
+            "delta",
+        ],
+
+
+        [
+            Species.CYNDAQUIL,
+            "delta",
+        ],
+
+
+        [
+            Species.DODRIO,
+            "delta",
+        ],
+
+
+        [
+            Species.DODUO,
+            "delta",
+        ],
+
+
+        [
+            Species.DRAGONAIR,
+            "delta",
+        ],
+
+
+        [
+            Species.DRAGONITE,
+            "delta",
+        ],
+
+
+        [
+            Species.DRATINI,
+            "delta",
+        ],
+
+
+        [
+            Species.FOONGUS,
+            "delta",
+        ],
+
+
+        [
+            Species.GEODUDE,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLEM,
+            "delta",
+        ],
+
+
+        [
+            Species.GOREBYSS,
+            "delta",
+        ],
+
+
+        [
+            Species.GRAVELER,
+            "delta",
+        ],
+
+
+        [
+            Species.HEATMOR,
+            "delta",
+        ],
+
+
+        [
+            Species.IVYSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.KOFFING,
+            "delta",
+        ],
+
+
+        [
+            Species.LAMPENT,
+            "delta",
+        ],
+
+
+        [
+            Species.LIEPARD,
+            "delta",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-water",
+        ],
+
+
+        [
+            Species.LITWICK,
+            "delta",
+        ],
+
+
+        [
+            Species.LOMBRE,
+            "delta",
+        ],
+
+
+        [
+            Species.LOTAD,
+            "delta",
+        ],
+
+
+        [
+            Species.LUCARIO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUDICOLO,
+            "delta",
+        ],
+
+
+        [
+            Species.MAGMORTAR,
+            "delta",
+        ],
+
+
+        [
+            Species.MARACTUS,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-ruin",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-ruin",
+        ],
+
+
+        [
+            Species.NUZLEAF,
+            "delta",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.PURRLOIN,
+            "delta",
+        ],
+
+
+        [
+            Species.QUILAVA,
+            "delta",
+        ],
+
+
+        [
+            Species.SEEDOT,
+            "delta",
+        ],
+
+
+        [
+            Species.SERPERIOR,
+            "delta",
+        ],
+
+
+        [
+            Species.SERVINE,
+            "delta",
+        ],
+
+
+        [
+            Species.SHIFTRY,
+            "delta",
+        ],
+
+
+        [
+            Species.SNIVY,
+            "delta",
+        ],
+
+
+        [
+            Species.TYPHLOSION,
+            "delta",
+        ],
+
+
+        [
+            Species.VENUSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.VESPIQUEN,
+            "delta",
+        ],
+
+
+        [
+            Species.WEEZING,
+            "delta",
+        ],
+
     Species.RATTATA,
     Species.RATICATE,
     Species.PIKACHU,
@@ -51688,7 +66785,205 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_VOLTORB,
     Species.HISUI_ELECTRODE,
   ],
-  [Moves.HONE_CLAWS]: [
+    [Moves.HONE_CLAWS]: [
+
+        [
+            Species.AMOONGUSS,
+            "delta",
+        ],
+
+
+        [
+            Species.BLASTOISE,
+            "delta",
+        ],
+
+
+        [
+            Species.DARMANITAN,
+            "delta",
+        ],
+
+
+        [
+            Species.DARUMAKA,
+            "delta",
+        ],
+
+
+        [
+            Species.DUNSPARCE,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTABUZZ,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTIVIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.ELEKID,
+            "delta",
+        ],
+
+
+        [
+            Species.GROVYLE,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXIO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXRAY,
+            "delta",
+        ],
+
+
+        [
+            Species.MAGBY,
+            "delta",
+        ],
+
+
+        [
+            Species.MAGMAR,
+            "delta",
+        ],
+
+
+        [
+            Species.MAGMORTAR,
+            "delta",
+        ],
+
+
+        [
+            Species.MARACTUS,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.NOIBAT,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOTTO,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOT,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEY,
+            "delta",
+        ],
+
+
+        [
+            Species.RIOLU,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSERADE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCIZOR,
+            "delta",
+        ],
+
+
+        [
+            Species.SCRAFTY,
+            "delta",
+        ],
+
+
+        [
+            Species.SCRAGGY,
+            "delta",
+        ],
+
+
+        [
+            Species.SCYTHER,
+            "delta",
+        ],
+
+
+        [
+            Species.SHINX,
+            "delta",
+        ],
+
+
+        [
+            Species.SQUIRTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNFLORA,
+            "delta",
+        ],
+
+
+        [
+            Species.TOXICROAK,
+            "delta",
+        ],
+
+
+        [
+            Species.TREECKO,
+            "delta",
+        ],
+
+
+        [
+            Species.WARTORTLE,
+            "delta",
+        ],
+
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -51983,7 +67278,133 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_SLOWKING,
     Species.GALAR_YAMASK,
   ],
-  [Moves.PSYSHOCK]: [
+    [Moves.PSYSHOCK]: [
+
+        [
+            Species.BLAZIKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.BULBASAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.BUNEARY,
+            "delta",
+        ],
+
+
+        [
+            Species.COMBUSKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.DODRIO,
+            "delta",
+        ],
+
+
+        [
+            Species.DODUO,
+            "delta",
+        ],
+
+
+        [
+            Species.GEODUDE,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLEM,
+            "delta",
+        ],
+
+
+        [
+            Species.GOREBYSS,
+            "delta",
+        ],
+
+
+        [
+            Species.GRAVELER,
+            "delta",
+        ],
+
+
+        [
+            Species.IVYSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.LOMBRE,
+            "delta",
+        ],
+
+
+        [
+            Species.LOPUNNY,
+            "delta",
+        ],
+
+
+        [
+            Species.LOTAD,
+            "delta",
+        ],
+
+
+        [
+            Species.LUCARIO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUDICOLO,
+            "delta",
+        ],
+
+
+        [
+            Species.MILOTIC,
+            "delta",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.TORCHIC,
+            "delta",
+        ],
+
+
+        [
+            Species.VENUSAUR,
+            "delta",
+        ],
+
     Species.CLEFAIRY,
     Species.CLEFABLE,
     Species.NINETALES,
@@ -52122,7 +67543,181 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_SLOWKING,
     Species.HISUI_BRAVIARY,
   ],
-  [Moves.VENOSHOCK]: [
+    [Moves.VENOSHOCK]: [
+
+        [
+            Species.CAMERUPT,
+            "delta",
+        ],
+
+
+        [
+            Species.CHINCHOU,
+            "delta",
+        ],
+
+
+        [
+            Species.COFAGRIGUS,
+            "delta",
+        ],
+
+
+        [
+            Species.CRUSTLE,
+            "delta-berry",
+        ],
+
+
+        [
+            Species.DEINO,
+            "delta",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-berry",
+        ],
+
+
+        [
+            Species.GIRAFARIG,
+            "delta",
+        ],
+
+
+        [
+            Species.HEATMOR,
+            "delta",
+        ],
+
+
+        [
+            Species.HYDREIGON,
+            "delta",
+        ],
+
+
+        [
+            Species.KABUTOPS,
+            "delta",
+        ],
+
+
+        [
+            Species.KABUTO,
+            "delta",
+        ],
+
+
+        [
+            Species.LANTURN,
+            "delta",
+        ],
+
+
+        [
+            Species.LARVESTA,
+            "delta",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-water",
+        ],
+
+
+        [
+            Species.LUXIO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXRAY,
+            "delta",
+        ],
+
+
+        [
+            Species.MAWILE,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.NUMEL,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOTTO,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOT,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEY,
+            "delta",
+        ],
+
+
+        [
+            Species.SHINX,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNFLORA,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNKERN,
+            "delta",
+        ],
+
+
+        [
+            Species.VOLCARONA,
+            "delta",
+        ],
+
+
+        [
+            Species.YAMASK,
+            "delta",
+        ],
+
+
+        [
+            Species.ZWEILOUS,
+            "delta",
+        ],
+
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -52315,7 +67910,367 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_RAPIDASH,
     Species.GALAR_MR_MIME,
   ],
-  [Moves.SMACK_DOWN]: [
+    [Moves.SMACK_DOWN]: [
+
+        [
+            Species.AMAURA,
+            "delta",
+        ],
+
+
+        [
+            Species.ARON,
+            "delta",
+        ],
+
+
+        [
+            Species.AURORUS,
+            "delta",
+        ],
+
+
+        [
+            Species.AVALUGG,
+            "delta",
+        ],
+
+
+        [
+            Species.BERGMITE,
+            "delta",
+        ],
+
+
+        [
+            Species.BISHARP,
+            "delta",
+        ],
+
+
+        [
+            Species.BUNEARY,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARIZARD,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARMANDER,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARMELEON,
+            "delta",
+        ],
+
+
+        [
+            Species.CROAGUNK,
+            "delta",
+        ],
+
+
+        [
+            Species.DARUMAKA,
+            "delta",
+        ],
+
+
+        [
+            Species.DRAGONITE,
+            "delta",
+        ],
+
+
+        [
+            Species.DUOSION,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTABUZZ,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTIVIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.ELEKID,
+            "delta",
+        ],
+
+
+        [
+            Species.ESCAVALIER,
+            "delta",
+        ],
+
+
+        [
+            Species.GALLADE,
+            "delta",
+        ],
+
+
+        [
+            Species.GIRAFARIG,
+            "delta",
+        ],
+
+
+        [
+            Species.GLALIE,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLETT,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLURK,
+            "delta",
+        ],
+
+
+        [
+            Species.GOODRA,
+            "delta",
+        ],
+
+
+        [
+            Species.GOOMY,
+            "delta",
+        ],
+
+
+        [
+            Species.GRIMER,
+            "delta",
+        ],
+
+
+        [
+            Species.GROVYLE,
+            "delta",
+        ],
+
+
+        [
+            Species.HYDREIGON,
+            "delta",
+        ],
+
+
+        [
+            Species.LAIRON,
+            "delta",
+        ],
+
+
+        [
+            Species.LOPUNNY,
+            "delta",
+        ],
+
+
+        [
+            Species.LUCARIO,
+            "delta",
+        ],
+
+
+        [
+            Species.MARACTUS,
+            "delta",
+        ],
+
+
+        [
+            Species.MAWILE,
+            "delta",
+        ],
+
+
+        [
+            Species.MEDICHAM,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-ruin",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-ruin",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.MUK,
+            "delta",
+        ],
+
+
+        [
+            Species.MUNCHLAX,
+            "delta",
+        ],
+
+
+        [
+            Species.PAWNIARD,
+            "delta",
+        ],
+
+
+        [
+            Species.PHANTUMP,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOT,
+            "delta",
+        ],
+
+
+        [
+            Species.REGICE,
+            "delta",
+        ],
+
+
+        [
+            Species.REGISTEEL,
+            "delta",
+        ],
+
+
+        [
+            Species.REUNICLUS,
+            "delta",
+        ],
+
+
+        [
+            Species.SABLEYE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCEPTILE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCOLIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.SLIGGOO,
+            "delta",
+        ],
+
+
+        [
+            Species.SOLOSIS,
+            "delta",
+        ],
+
+
+        [
+            Species.SQUIRTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.TANGELA,
+            "delta",
+        ],
+
+
+        [
+            Species.TANGROWTH,
+            "delta",
+        ],
+
+
+        [
+            Species.TOXICROAK,
+            "delta",
+        ],
+
+
+        [
+            Species.TREECKO,
+            "delta",
+        ],
+
+
+        [
+            Species.TREVENANT,
+            "delta",
+        ],
+
+
+        [
+            Species.VENIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.WARTORTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.WHIRLIPEDE,
+            "delta",
+        ],
+
     Species.BLASTOISE,
     Species.SANDSHREW,
     Species.SANDSLASH,
@@ -52483,7 +68438,187 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_DECIDUEYE,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.SLUDGE_WAVE]: [
+    [Moves.SLUDGE_WAVE]: [
+
+        [
+            Species.CAMERUPT,
+            "delta",
+        ],
+
+
+        [
+            Species.COFAGRIGUS,
+            "delta",
+        ],
+
+
+        [
+            Species.CRUSTLE,
+            "delta-berry",
+        ],
+
+
+        [
+            Species.DEINO,
+            "delta",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-berry",
+        ],
+
+
+        [
+            Species.GIRAFARIG,
+            "delta",
+        ],
+
+
+        [
+            Species.HEATMOR,
+            "delta",
+        ],
+
+
+        [
+            Species.HYDREIGON,
+            "delta",
+        ],
+
+
+        [
+            Species.LANTURN,
+            "delta",
+        ],
+
+
+        [
+            Species.LARVESTA,
+            "delta",
+        ],
+
+
+        [
+            Species.LIEPARD,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXIO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXRAY,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.NUMEL,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOTTO,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOT,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEY,
+            "delta",
+        ],
+
+
+        [
+            Species.PURRLOIN,
+            "delta",
+        ],
+
+
+        [
+            Species.REMORAID,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSELIA,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSERADE,
+            "delta",
+        ],
+
+
+        [
+            Species.SHINX,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNFLORA,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNKERN,
+            "delta",
+        ],
+
+
+        [
+            Species.VESPIQUEN,
+            "delta",
+        ],
+
+
+        [
+            Species.VOLCARONA,
+            "delta",
+        ],
+
+
+        [
+            Species.YAMASK,
+            "delta",
+        ],
+
+
+        [
+            Species.ZWEILOUS,
+            "delta",
+        ],
+
     Species.EKANS,
     Species.ARBOK,
     Species.NIDOQUEEN,
@@ -52772,7 +68907,223 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_VOLTORB,
     Species.HISUI_ELECTRODE,
   ],
-  [Moves.FLAME_CHARGE]: [
+    [Moves.FLAME_CHARGE]: [
+
+        [
+            Species.AGGRON,
+            "delta",
+        ],
+
+
+        [
+            Species.ARON,
+            "delta",
+        ],
+
+
+        [
+            Species.CHINCHOU,
+            "delta",
+        ],
+
+
+        [
+            Species.COFAGRIGUS,
+            "delta",
+        ],
+
+
+        [
+            Species.CROAGUNK,
+            "delta",
+        ],
+
+
+        [
+            Species.DRIFBLIM,
+            "delta",
+        ],
+
+
+        [
+            Species.DRIFLOON,
+            "delta",
+        ],
+
+
+        [
+            Species.EMOLGA,
+            "delta",
+        ],
+
+
+        [
+            Species.FROSLASS,
+            "delta",
+        ],
+
+
+        [
+            Species.GLALIE,
+            "delta",
+        ],
+
+
+        [
+            Species.GRENINJA,
+            "delta",
+        ],
+
+
+        [
+            Species.LAIRON,
+            "delta",
+        ],
+
+
+        [
+            Species.LANTURN,
+            "delta",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-water",
+        ],
+
+
+        [
+            Species.OCTILLERY,
+            "delta",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-water",
+        ],
+
+
+        [
+            Species.PICHU,
+            "delta",
+        ],
+
+
+        [
+            Species.PIKACHU,
+            "delta",
+        ],
+
+
+        [
+            Species.PLUSLE,
+            "delta",
+        ],
+
+
+        [
+            Species.QUAGSIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.RAICHU,
+            "delta",
+        ],
+
+
+        [
+            Species.REGIROCK,
+            "delta",
+        ],
+
+
+        [
+            Species.REGISTEEL,
+            "delta",
+        ],
+
+
+        [
+            Species.REMORAID,
+            "delta",
+        ],
+
+
+        [
+            Species.SABLEYE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCOLIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.SHIFTRY,
+            "delta",
+        ],
+
+
+        [
+            Species.SNORUNT,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNFLORA,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNKERN,
+            "delta",
+        ],
+
+
+        [
+            Species.TOXICROAK,
+            "delta",
+        ],
+
+
+        [
+            Species.VENIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.VESPIQUEN,
+            "delta",
+        ],
+
+
+        [
+            Species.WHIRLIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.WOOPER,
+            "delta",
+        ],
+
+
+        [
+            Species.YAMASK,
+            "delta",
+        ],
+
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -52875,7 +69226,157 @@ export const tmSpecies: TmSpecies = {
       "blaze",
     ],
   ],
-  [Moves.LOW_SWEEP]: [
+    [Moves.LOW_SWEEP]: [
+
+        [
+            Species.BLASTOISE,
+            "delta",
+        ],
+
+
+        [
+            Species.DODRIO,
+            "delta",
+        ],
+
+
+        [
+            Species.DODUO,
+            "delta",
+        ],
+
+
+        [
+            Species.FROGADIER,
+            "delta",
+        ],
+
+
+        [
+            Species.KABUTOPS,
+            "delta",
+        ],
+
+
+        [
+            Species.LIEPARD,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.NOIBAT,
+            "delta",
+        ],
+
+
+        [
+            Species.NOIVERN,
+            "delta",
+        ],
+
+
+        [
+            Species.OCTILLERY,
+            "delta",
+        ],
+
+
+        [
+            Species.PHANTUMP,
+            "delta",
+        ],
+
+
+        [
+            Species.PURRLOIN,
+            "delta",
+        ],
+
+
+        [
+            Species.QUAGSIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCIZOR,
+            "delta",
+        ],
+
+
+        [
+            Species.SCYTHER,
+            "delta",
+        ],
+
+
+        [
+            Species.SHUCKLE,
+            "delta",
+        ],
+
+
+        [
+            Species.SQUIRTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.TANGROWTH,
+            "delta",
+        ],
+
+
+        [
+            Species.TREECKO,
+            "delta",
+        ],
+
+
+        [
+            Species.TREVENANT,
+            "delta",
+        ],
+
+
+        [
+            Species.TYPHLOSION,
+            "delta",
+        ],
+
+
+        [
+            Species.VESPIQUEN,
+            "delta",
+        ],
+
+
+        [
+            Species.WARTORTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.WOOPER,
+            "delta",
+        ],
+
     Species.PSYDUCK,
     Species.GOLDUCK,
     Species.MANKEY,
@@ -53285,7 +69786,43 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_ZORUA,
     Species.HISUI_ZOROARK,
   ],
-  [Moves.ROUND]: [
+    [Moves.ROUND]: [
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-water",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-water",
+        ],
+
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -54208,7 +70745,331 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_YAMASK,
     Species.GALAR_STUNFISK,
   ],
-  [Moves.ECHOED_VOICE]: [
+    [Moves.ECHOED_VOICE]: [
+
+        [
+            Species.AIPOM,
+            "delta",
+        ],
+
+
+        [
+            Species.AMBIPOM,
+            "delta",
+        ],
+
+
+        [
+            Species.ARCANINE,
+            "delta",
+        ],
+
+
+        [
+            Species.BISHARP,
+            "delta",
+        ],
+
+
+        [
+            Species.BLASTOISE,
+            "delta",
+        ],
+
+
+        [
+            Species.BUDEW,
+            "delta",
+        ],
+
+
+        [
+            Species.BUNEARY,
+            "delta",
+        ],
+
+
+        [
+            Species.COFAGRIGUS,
+            "delta",
+        ],
+
+
+        [
+            Species.CROAGUNK,
+            "delta",
+        ],
+
+
+        [
+            Species.CYNDAQUIL,
+            "delta",
+        ],
+
+
+        [
+            Species.DEINO,
+            "delta",
+        ],
+
+
+        [
+            Species.DRIFBLIM,
+            "delta",
+        ],
+
+
+        [
+            Species.DRIFLOON,
+            "delta",
+        ],
+
+
+        [
+            Species.ESCAVALIER,
+            "delta",
+        ],
+
+
+        [
+            Species.FROSLASS,
+            "delta",
+        ],
+
+
+        [
+            Species.GLALIE,
+            "delta",
+        ],
+
+
+        [
+            Species.GRIMER,
+            "delta",
+        ],
+
+
+        [
+            Species.GROVYLE,
+            "delta",
+        ],
+
+
+        [
+            Species.GROWLITHE,
+            "delta",
+        ],
+
+
+        [
+            Species.HOOPA,
+            "delta",
+        ],
+
+
+        [
+            Species.KARRABLAST,
+            "delta",
+        ],
+
+
+        [
+            Species.KOFFING,
+            "delta",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.LOPUNNY,
+            "delta",
+        ],
+
+
+        [
+            Species.LUCARIO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXIO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXRAY,
+            "delta",
+        ],
+
+
+        [
+            Species.MAWILE,
+            "delta",
+        ],
+
+
+        [
+            Species.MEDICHAM,
+            "delta",
+        ],
+
+
+        [
+            Species.MEDITITE,
+            "delta",
+        ],
+
+
+        [
+            Species.MUK,
+            "delta",
+        ],
+
+
+        [
+            Species.PAWNIARD,
+            "delta",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.PIDGEOTTO,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOT,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEY,
+            "delta",
+        ],
+
+
+        [
+            Species.QUILAVA,
+            "delta",
+        ],
+
+
+        [
+            Species.RIOLU,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSELIA,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSERADE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCEPTILE,
+            "delta",
+        ],
+
+
+        [
+            Species.SHINX,
+            "delta",
+        ],
+
+
+        [
+            Species.SNORUNT,
+            "delta",
+        ],
+
+
+        [
+            Species.SQUIRTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNFLORA,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNKERN,
+            "delta",
+        ],
+
+
+        [
+            Species.TOXICROAK,
+            "delta",
+        ],
+
+
+        [
+            Species.TREECKO,
+            "delta",
+        ],
+
+
+        [
+            Species.TYPHLOSION,
+            "delta",
+        ],
+
+
+        [
+            Species.VESPIQUEN,
+            "delta",
+        ],
+
+
+        [
+            Species.WARTORTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.WEEZING,
+            "delta",
+        ],
+
+
+        [
+            Species.YAMASK,
+            "delta",
+        ],
+
+
+        [
+            Species.ZWEILOUS,
+            "delta",
+        ],
+
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -54594,7 +71455,277 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_SLOWKING,
     Species.HISUI_BRAVIARY,
   ],
-  [Moves.ALLY_SWITCH]: [
+    [Moves.ALLY_SWITCH]: [
+
+        [
+            Species.AMOONGUSS,
+            "delta",
+        ],
+
+
+        [
+            Species.ARCANINE,
+            "delta",
+        ],
+
+
+        [
+            Species.BLASTOISE,
+            "delta",
+        ],
+
+
+        [
+            Species.BLAZIKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.BUDEW,
+            "delta",
+        ],
+
+
+        [
+            Species.BULBASAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.BUNEARY,
+            "delta",
+        ],
+
+
+        [
+            Species.CHINCHOU,
+            "delta",
+        ],
+
+
+        [
+            Species.COMBUSKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.DARMANITAN,
+            "delta",
+        ],
+
+
+        [
+            Species.DARUMAKA,
+            "delta",
+        ],
+
+
+        [
+            Species.DODRIO,
+            "delta",
+        ],
+
+
+        [
+            Species.DODUO,
+            "delta",
+        ],
+
+
+        [
+            Species.ESCAVALIER,
+            "delta",
+        ],
+
+
+        [
+            Species.FOONGUS,
+            "delta",
+        ],
+
+
+        [
+            Species.FROAKIE,
+            "delta",
+        ],
+
+
+        [
+            Species.FROGADIER,
+            "delta",
+        ],
+
+
+        [
+            Species.GEODUDE,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLEM,
+            "delta",
+        ],
+
+
+        [
+            Species.GRAVELER,
+            "delta",
+        ],
+
+
+        [
+            Species.GRENINJA,
+            "delta",
+        ],
+
+
+        [
+            Species.GROWLITHE,
+            "delta",
+        ],
+
+
+        [
+            Species.IVYSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.KARRABLAST,
+            "delta",
+        ],
+
+
+        [
+            Species.LANTURN,
+            "delta",
+        ],
+
+
+        [
+            Species.LIEPARD,
+            "delta",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.LOMBRE,
+            "delta",
+        ],
+
+
+        [
+            Species.LOPUNNY,
+            "delta",
+        ],
+
+
+        [
+            Species.LOTAD,
+            "delta",
+        ],
+
+
+        [
+            Species.LUCARIO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUDICOLO,
+            "delta",
+        ],
+
+
+        [
+            Species.MINUN,
+            "delta",
+        ],
+
+
+        [
+            Species.NOIBAT,
+            "delta",
+        ],
+
+
+        [
+            Species.NOIVERN,
+            "delta",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.PLUSLE,
+            "delta",
+        ],
+
+
+        [
+            Species.PURRLOIN,
+            "delta",
+        ],
+
+
+        [
+            Species.RIOLU,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSELIA,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSERADE,
+            "delta",
+        ],
+
+
+        [
+            Species.SQUIRTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.TORCHIC,
+            "delta",
+        ],
+
+
+        [
+            Species.VENUSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.WARTORTLE,
+            "delta",
+        ],
+
     Species.CLEFAIRY,
     Species.CLEFABLE,
     Species.JIGGLYPUFF,
@@ -54779,7 +71910,187 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_ARTICUNO,
     Species.GALAR_YAMASK,
   ],
-  [Moves.SCALD]: [
+    [Moves.SCALD]: [
+
+        [
+            Species.AMAURA,
+            "delta",
+        ],
+
+
+        [
+            Species.AURORUS,
+            "delta",
+        ],
+
+
+        [
+            Species.AXEW,
+            "delta",
+        ],
+
+
+        [
+            Species.CAMERUPT,
+            "delta",
+        ],
+
+
+        [
+            Species.CHANDELURE,
+            "delta",
+        ],
+
+
+        [
+            Species.DRAGONAIR,
+            "delta",
+        ],
+
+
+        [
+            Species.DRAGONITE,
+            "delta",
+        ],
+
+
+        [
+            Species.DRATINI,
+            "delta",
+        ],
+
+
+        [
+            Species.DRIFBLIM,
+            "delta",
+        ],
+
+
+        [
+            Species.DRIFLOON,
+            "delta",
+        ],
+
+
+        [
+            Species.DUNSPARCE,
+            "delta",
+        ],
+
+
+        [
+            Species.FRAXURE,
+            "delta",
+        ],
+
+
+        [
+            Species.GOOMY,
+            "delta",
+        ],
+
+
+        [
+            Species.GROTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.HAXORUS,
+            "delta",
+        ],
+
+
+        [
+            Species.HEATMOR,
+            "delta",
+        ],
+
+
+        [
+            Species.LAMPENT,
+            "delta",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-water",
+        ],
+
+
+        [
+            Species.MAGBY,
+            "delta",
+        ],
+
+
+        [
+            Species.MAGMAR,
+            "delta",
+        ],
+
+
+        [
+            Species.MAGMORTAR,
+            "delta",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-water",
+        ],
+
+
+        [
+            Species.REGICE,
+            "delta",
+        ],
+
+
+        [
+            Species.SERPERIOR,
+            "delta",
+        ],
+
+
+        [
+            Species.SERVINE,
+            "delta",
+        ],
+
+
+        [
+            Species.SLIGGOO,
+            "delta",
+        ],
+
+
+        [
+            Species.SNIVY,
+            "delta",
+        ],
+
+
+        [
+            Species.TORTERRA,
+            "delta",
+        ],
+
+
+        [
+            Species.TURTWIG,
+            "delta",
+        ],
+
+
+        [
+            Species.VESPIQUEN,
+            "delta",
+        ],
+
     Species.SQUIRTLE,
     Species.WARTORTLE,
     Species.BLASTOISE,
@@ -55071,7 +72382,163 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_ZORUA,
     Species.HISUI_ZOROARK,
   ],
-  [Moves.SKY_DROP]: [
+    [Moves.SKY_DROP]: [
+
+        [
+            Species.BISHARP,
+            "delta",
+        ],
+
+
+        [
+            Species.BLAZIKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.DRIFBLIM,
+            "delta",
+        ],
+
+
+        [
+            Species.DRIFLOON,
+            "delta",
+        ],
+
+
+        [
+            Species.HOOPA,
+            "delta",
+        ],
+
+
+        [
+            Species.HOOTHOOT,
+            "delta",
+        ],
+
+
+        [
+            Species.KOFFING,
+            "delta",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.MISDREAVUS,
+            "delta",
+        ],
+
+
+        [
+            Species.MISMAGIUS,
+            "delta",
+        ],
+
+
+        [
+            Species.NOCTOWL,
+            "delta",
+        ],
+
+
+        [
+            Species.PAWNIARD,
+            "delta",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.PICHU,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOTTO,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOT,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEY,
+            "delta",
+        ],
+
+
+        [
+            Species.PIKACHU,
+            "delta",
+        ],
+
+
+        [
+            Species.RAICHU,
+            "delta",
+        ],
+
+
+        [
+            Species.SHIFTRY,
+            "delta",
+        ],
+
+
+        [
+            Species.VOLCARONA,
+            "delta",
+        ],
+
+
+        [
+            Species.WAILMER,
+            "delta",
+        ],
+
+
+        [
+            Species.WAILORD,
+            "delta",
+        ],
+
+
+        [
+            Species.WEEZING,
+            "delta",
+        ],
+
+
+        [
+            Species.YANMA,
+            "delta",
+        ],
+
+
+        [
+            Species.YANMEGA,
+            "delta",
+        ],
+
     Species.CHARIZARD,
     Species.AERODACTYL,
     Species.ARTICUNO,
@@ -55095,7 +72562,325 @@ export const tmSpecies: TmSpecies = {
     Species.LUNALA,
     Species.NAGANADEL,
   ],
-  [Moves.QUASH]: [
+    [Moves.QUASH]: [
+
+        [
+            Species.AGGRON,
+            "delta",
+        ],
+
+
+        [
+            Species.ARCANINE,
+            "delta",
+        ],
+
+
+        [
+            Species.AVALUGG,
+            "delta",
+        ],
+
+
+        [
+            Species.BERGMITE,
+            "delta",
+        ],
+
+
+        [
+            Species.BLASTOISE,
+            "delta",
+        ],
+
+
+        [
+            Species.BUDEW,
+            "delta",
+        ],
+
+
+        [
+            Species.CAMERUPT,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARIZARD,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARMANDER,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARMELEON,
+            "delta",
+        ],
+
+
+        [
+            Species.DARMANITAN,
+            "delta",
+        ],
+
+
+        [
+            Species.DARUMAKA,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTIVIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.FEEBAS,
+            "delta",
+        ],
+
+
+        [
+            Species.GEODUDE,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLEM,
+            "delta",
+        ],
+
+
+        [
+            Species.GOODRA,
+            "delta",
+        ],
+
+
+        [
+            Species.GRAVELER,
+            "delta",
+        ],
+
+
+        [
+            Species.GRIMER,
+            "delta",
+        ],
+
+
+        [
+            Species.LAIRON,
+            "delta",
+        ],
+
+
+        [
+            Species.LARVESTA,
+            "delta",
+        ],
+
+
+        [
+            Species.LIEPARD,
+            "delta",
+        ],
+
+
+        [
+            Species.LUCARIO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXIO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXRAY,
+            "delta",
+        ],
+
+
+        [
+            Species.MAWILE,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.MILOTIC,
+            "delta",
+        ],
+
+
+        [
+            Species.MUK,
+            "delta",
+        ],
+
+
+        [
+            Species.MUNCHLAX,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOTTO,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOT,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEY,
+            "delta",
+        ],
+
+
+        [
+            Species.PURRLOIN,
+            "delta",
+        ],
+
+
+        [
+            Species.QUAGSIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.REGICE,
+            "delta",
+        ],
+
+
+        [
+            Species.REGIROCK,
+            "delta",
+        ],
+
+
+        [
+            Species.REGISTEEL,
+            "delta",
+        ],
+
+
+        [
+            Species.REUNICLUS,
+            "delta",
+        ],
+
+
+        [
+            Species.RIOLU,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSELIA,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSERADE,
+            "delta",
+        ],
+
+
+        [
+            Species.SHINX,
+            "delta",
+        ],
+
+
+        [
+            Species.SNORLAX,
+            "delta",
+        ],
+
+
+        [
+            Species.SQUIRTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.TENTACOOL,
+            "delta",
+        ],
+
+
+        [
+            Species.TENTACRUEL,
+            "delta",
+        ],
+
+
+        [
+            Species.VOLCARONA,
+            "delta",
+        ],
+
+
+        [
+            Species.WAILMER,
+            "delta",
+        ],
+
+
+        [
+            Species.WAILORD,
+            "delta",
+        ],
+
+
+        [
+            Species.WARTORTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.WOOPER,
+            "delta",
+        ],
+
     Species.NIDOQUEEN,
     Species.NIDOKING,
     Species.KINGLER,
@@ -55136,7 +72921,193 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_GRIMER,
     Species.ALOLA_MUK,
   ],
-  [Moves.ACROBATICS]: [
+    [Moves.ACROBATICS]: [
+
+        [
+            Species.BISHARP,
+            "delta",
+        ],
+
+
+        [
+            Species.BUNEARY,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTABUZZ,
+            "delta",
+        ],
+
+
+        [
+            Species.ELEKID,
+            "delta",
+        ],
+
+
+        [
+            Species.HOOPA,
+            "delta",
+        ],
+
+
+        [
+            Species.KOFFING,
+            "delta",
+        ],
+
+
+        [
+            Species.LIEPARD,
+            "delta",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.MINUN,
+            "delta",
+        ],
+
+
+        [
+            Species.MISDREAVUS,
+            "delta",
+        ],
+
+
+        [
+            Species.MISMAGIUS,
+            "delta",
+        ],
+
+
+        [
+            Species.NUZLEAF,
+            "delta",
+        ],
+
+
+        [
+            Species.PAWNIARD,
+            "delta",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.PICHU,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOTTO,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOT,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEY,
+            "delta",
+        ],
+
+
+        [
+            Species.PIKACHU,
+            "delta",
+        ],
+
+
+        [
+            Species.PLUSLE,
+            "delta",
+        ],
+
+
+        [
+            Species.PURRLOIN,
+            "delta",
+        ],
+
+
+        [
+            Species.RAICHU,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSERADE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCRAFTY,
+            "delta",
+        ],
+
+
+        [
+            Species.SCRAGGY,
+            "delta",
+        ],
+
+
+        [
+            Species.SHIFTRY,
+            "delta",
+        ],
+
+
+        [
+            Species.WAILMER,
+            "delta",
+        ],
+
+
+        [
+            Species.WAILORD,
+            "delta",
+        ],
+
+
+        [
+            Species.WEEZING,
+            "delta",
+        ],
+
+
+        [
+            Species.YANMA,
+            "delta",
+        ],
+
+
+        [
+            Species.YANMEGA,
+            "delta",
+        ],
+
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -55317,7 +73288,331 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_LILLIGANT,
     Species.HISUI_BRAVIARY,
   ],
-  [Moves.RETALIATE]: [
+    [Moves.RETALIATE]: [
+
+        [
+            Species.BLASTOISE,
+            "delta",
+        ],
+
+
+        [
+            Species.BLAZIKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.BUDEW,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARIZARD,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARMANDER,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARMELEON,
+            "delta",
+        ],
+
+
+        [
+            Species.COMBUSKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.DEINO,
+            "delta",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.ESCAVALIER,
+            "delta",
+        ],
+
+
+        [
+            Species.FROGADIER,
+            "delta",
+        ],
+
+
+        [
+            Species.GEODUDE,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLEM,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLETT,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLURK,
+            "delta",
+        ],
+
+
+        [
+            Species.GRAVELER,
+            "delta",
+        ],
+
+
+        [
+            Species.GRENINJA,
+            "delta",
+        ],
+
+
+        [
+            Species.GRIMER,
+            "delta",
+        ],
+
+
+        [
+            Species.GROVYLE,
+            "delta",
+        ],
+
+
+        [
+            Species.HYDREIGON,
+            "delta",
+        ],
+
+
+        [
+            Species.KABUTOPS,
+            "delta",
+        ],
+
+
+        [
+            Species.KARRABLAST,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXIO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXRAY,
+            "delta",
+        ],
+
+
+        [
+            Species.MAGBY,
+            "delta",
+        ],
+
+
+        [
+            Species.MAGMAR,
+            "delta",
+        ],
+
+
+        [
+            Species.MAGMORTAR,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-ruin",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-ruin",
+        ],
+
+
+        [
+            Species.MUK,
+            "delta",
+        ],
+
+
+        [
+            Species.PHANTUMP,
+            "delta",
+        ],
+
+
+        [
+            Species.PICHU,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOTTO,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOT,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEY,
+            "delta",
+        ],
+
+
+        [
+            Species.PIKACHU,
+            "delta",
+        ],
+
+
+        [
+            Species.QUILAVA,
+            "delta",
+        ],
+
+
+        [
+            Species.RAICHU,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSELIA,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSERADE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCEPTILE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCIZOR,
+            "delta",
+        ],
+
+
+        [
+            Species.SCOLIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCYTHER,
+            "delta",
+        ],
+
+
+        [
+            Species.SHINX,
+            "delta",
+        ],
+
+
+        [
+            Species.SHUCKLE,
+            "delta",
+        ],
+
+
+        [
+            Species.SQUIRTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.TORCHIC,
+            "delta",
+        ],
+
+
+        [
+            Species.TREECKO,
+            "delta",
+        ],
+
+
+        [
+            Species.TREVENANT,
+            "delta",
+        ],
+
+
+        [
+            Species.TYPHLOSION,
+            "delta",
+        ],
+
+
+        [
+            Species.WARTORTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.ZWEILOUS,
+            "delta",
+        ],
+
     Species.RATTATA,
     Species.RATICATE,
     Species.CLEFAIRY,
@@ -55632,7 +73927,127 @@ export const tmSpecies: TmSpecies = {
     Species.MEOWSCARADA,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.VOLT_SWITCH]: [
+    [Moves.VOLT_SWITCH]: [
+
+        [
+            Species.CYNDAQUIL,
+            "delta",
+        ],
+
+
+        [
+            Species.DRAGONAIR,
+            "delta",
+        ],
+
+
+        [
+            Species.DRAGONITE,
+            "delta",
+        ],
+
+
+        [
+            Species.DRATINI,
+            "delta",
+        ],
+
+
+        [
+            Species.DRIFBLIM,
+            "delta",
+        ],
+
+
+        [
+            Species.DRIFLOON,
+            "delta",
+        ],
+
+
+        [
+            Species.GALLADE,
+            "delta",
+        ],
+
+
+        [
+            Species.GARDEVOIR,
+            "delta",
+        ],
+
+
+        [
+            Species.HOOPA,
+            "delta",
+        ],
+
+
+        [
+            Species.KIRLIA,
+            "delta",
+        ],
+
+
+        [
+            Species.KOFFING,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-ruin",
+        ],
+
+
+        [
+            Species.NUZLEAF,
+            "delta",
+        ],
+
+
+        [
+            Species.QUILAVA,
+            "delta",
+        ],
+
+
+        [
+            Species.RALTS,
+            "delta",
+        ],
+
+
+        [
+            Species.SEEDOT,
+            "delta",
+        ],
+
+
+        [
+            Species.SHIFTRY,
+            "delta",
+        ],
+
+
+        [
+            Species.TYPHLOSION,
+            "delta",
+        ],
+
+
+        [
+            Species.VESPIQUEN,
+            "delta",
+        ],
+
+
+        [
+            Species.WEEZING,
+            "delta",
+        ],
+
     Species.PIKACHU,
     Species.RAICHU,
     Species.MAGNEMITE,
@@ -55715,7 +74130,25 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_VOLTORB,
     Species.HISUI_ELECTRODE,
   ],
-  [Moves.STRUGGLE_BUG]: [
+    [Moves.STRUGGLE_BUG]: [
+
+        [
+            Species.DUNSPARCE,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
     Species.BUTTERFREE,
     Species.BEEDRILL,
     Species.PARAS,
@@ -55804,7 +74237,169 @@ export const tmSpecies: TmSpecies = {
     Species.RABSCA,
     Species.IRON_MOTH,
   ],
-  [Moves.BULLDOZE]: [
+    [Moves.BULLDOZE]: [
+
+        [
+            Species.CHARMELEON,
+            "delta",
+        ],
+
+
+        [
+            Species.DEINO,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTABUZZ,
+            "delta",
+        ],
+
+
+        [
+            Species.ELEKID,
+            "delta",
+        ],
+
+
+        [
+            Species.GOOMY,
+            "delta",
+        ],
+
+
+        [
+            Species.GRIMER,
+            "delta",
+        ],
+
+
+        [
+            Species.GROWLITHE,
+            "delta",
+        ],
+
+
+        [
+            Species.LARVESTA,
+            "delta",
+        ],
+
+
+        [
+            Species.LOPUNNY,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXIO,
+            "delta",
+        ],
+
+
+        [
+            Species.LUXRAY,
+            "delta",
+        ],
+
+
+        [
+            Species.MAWILE,
+            "delta",
+        ],
+
+
+        [
+            Species.MEDICHAM,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.MUK,
+            "delta",
+        ],
+
+
+        [
+            Species.OCTILLERY,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOT,
+            "delta",
+        ],
+
+
+        [
+            Species.SABLEYE,
+            "delta",
+        ],
+
+
+        [
+            Species.SHINX,
+            "delta",
+        ],
+
+
+        [
+            Species.SLIGGOO,
+            "delta",
+        ],
+
+
+        [
+            Species.TANGELA,
+            "delta",
+        ],
+
+
+        [
+            Species.VENIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.VOLCARONA,
+            "delta",
+        ],
+
+
+        [
+            Species.WARTORTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.WHIRLIPEDE,
+            "delta",
+        ],
+
+
+        [
+            Species.ZWEILOUS,
+            "delta",
+        ],
+
     Species.VENUSAUR,
     Species.CHARIZARD,
     Species.BLASTOISE,
@@ -56182,7 +74777,145 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.FROST_BREATH]: [
+    [Moves.FROST_BREATH]: [
+
+        [
+            Species.CHARIZARD,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARMANDER,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARMELEON,
+            "delta",
+        ],
+
+
+        [
+            Species.DIGLETT,
+            "delta",
+        ],
+
+
+        [
+            Species.DUGTRIO,
+            "delta",
+        ],
+
+
+        [
+            Species.FEEBAS,
+            "delta",
+        ],
+
+
+        [
+            Species.GALLADE,
+            "delta",
+        ],
+
+
+        [
+            Species.GARDEVOIR,
+            "delta",
+        ],
+
+
+        [
+            Species.HEATMOR,
+            "delta",
+        ],
+
+
+        [
+            Species.HOOTHOOT,
+            "delta",
+        ],
+
+
+        [
+            Species.KIRLIA,
+            "delta",
+        ],
+
+
+        [
+            Species.MILOTIC,
+            "delta",
+        ],
+
+
+        [
+            Species.MINUN,
+            "delta",
+        ],
+
+
+        [
+            Species.MISDREAVUS,
+            "delta",
+        ],
+
+
+        [
+            Species.MISMAGIUS,
+            "delta",
+        ],
+
+
+        [
+            Species.NOCTOWL,
+            "delta",
+        ],
+
+
+        [
+            Species.PHANTUMP,
+            "delta",
+        ],
+
+
+        [
+            Species.RALTS,
+            "delta",
+        ],
+
+
+        [
+            Species.SCIZOR,
+            "delta",
+        ],
+
+
+        [
+            Species.SCYTHER,
+            "delta",
+        ],
+
+
+        [
+            Species.TREVENANT,
+            "delta",
+        ],
+
+
+        [
+            Species.WAILMER,
+            "delta",
+        ],
+
+
+        [
+            Species.WAILORD,
+            "delta",
+        ],
+
     Species.DEWGONG,
     Species.CLOYSTER,
     Species.JYNX,
@@ -56224,7 +74957,121 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_VULPIX,
     Species.ALOLA_NINETALES,
   ],
-  [Moves.DRAGON_TAIL]: [
+    [Moves.DRAGON_TAIL]: [
+
+        [
+            Species.ARCANINE,
+            "delta",
+        ],
+
+
+        [
+            Species.AVALUGG,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTIVIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.GIRAFARIG,
+            "delta",
+        ],
+
+
+        [
+            Species.GOREBYSS,
+            "delta",
+        ],
+
+
+        [
+            Species.GROTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.GROWLITHE,
+            "delta",
+        ],
+
+
+        [
+            Species.HEATMOR,
+            "delta",
+        ],
+
+
+        [
+            Species.HUNTAIL,
+            "delta",
+        ],
+
+
+        [
+            Species.LAIRON,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOTTO,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOT,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEY,
+            "delta",
+        ],
+
+
+        [
+            Species.SERVINE,
+            "delta",
+        ],
+
+
+        [
+            Species.SNIVY,
+            "delta",
+        ],
+
+
+        [
+            Species.TORTERRA,
+            "delta",
+        ],
+
+
+        [
+            Species.VENUSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.WARTORTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.YANMEGA,
+            "delta",
+        ],
+
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -56330,7 +75177,73 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_EXEGGUTOR,
     Species.HISUI_GOODRA,
   ],
-  [Moves.WORK_UP]: [
+    [Moves.WORK_UP]: [
+
+        [
+            Species.ARCANINE,
+            "delta",
+        ],
+
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.GOLETT,
+            "delta",
+        ],
+
+
+        [
+            Species.GOLURK,
+            "delta",
+        ],
+
+
+        [
+            Species.GROWLITHE,
+            "delta",
+        ],
+
+
+        [
+            Species.LARVESTA,
+            "delta",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.SHUCKLE,
+            "delta",
+        ],
+
+
+        [
+            Species.VOLCARONA,
+            "delta",
+        ],
+
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -56717,7 +75630,235 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_GRAVELER,
     Species.ALOLA_GOLEM,
   ],
-  [Moves.WILD_CHARGE]: [
+    [Moves.WILD_CHARGE]: [
+
+        [
+            Species.BLASTOISE,
+            "delta",
+        ],
+
+
+        [
+            Species.CAMERUPT,
+            "delta",
+        ],
+
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.DARMANITAN,
+            "delta",
+        ],
+
+
+        [
+            Species.DRAGONAIR,
+            "delta",
+        ],
+
+
+        [
+            Species.DRAGONITE,
+            "delta",
+        ],
+
+
+        [
+            Species.DRATINI,
+            "delta",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.ESCAVALIER,
+            "delta",
+        ],
+
+
+        [
+            Species.GALLADE,
+            "delta",
+        ],
+
+
+        [
+            Species.GARDEVOIR,
+            "delta",
+        ],
+
+
+        [
+            Species.GIRAFARIG,
+            "delta",
+        ],
+
+
+        [
+            Species.GROVYLE,
+            "delta",
+        ],
+
+
+        [
+            Species.HOOPA,
+            "delta",
+        ],
+
+
+        [
+            Species.HUNTAIL,
+            "delta",
+        ],
+
+
+        [
+            Species.KARRABLAST,
+            "delta",
+        ],
+
+
+        [
+            Species.KIRLIA,
+            "delta",
+        ],
+
+
+        [
+            Species.KOFFING,
+            "delta",
+        ],
+
+
+        [
+            Species.LIEPARD,
+            "delta",
+        ],
+
+
+        [
+            Species.MAGMORTAR,
+            "delta",
+        ],
+
+
+        [
+            Species.MARACTUS,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-ruin",
+        ],
+
+
+        [
+            Species.NUZLEAF,
+            "delta",
+        ],
+
+
+        [
+            Species.PURRLOIN,
+            "delta",
+        ],
+
+
+        [
+            Species.RALTS,
+            "delta",
+        ],
+
+
+        [
+            Species.SCEPTILE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCRAFTY,
+            "delta",
+        ],
+
+
+        [
+            Species.SCRAGGY,
+            "delta",
+        ],
+
+
+        [
+            Species.SEEDOT,
+            "delta",
+        ],
+
+
+        [
+            Species.SERPERIOR,
+            "delta",
+        ],
+
+
+        [
+            Species.SERVINE,
+            "delta",
+        ],
+
+
+        [
+            Species.SHIFTRY,
+            "delta",
+        ],
+
+
+        [
+            Species.SQUIRTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.VESPIQUEN,
+            "delta",
+        ],
+
+
+        [
+            Species.WAILMER,
+            "delta",
+        ],
+
+
+        [
+            Species.WAILORD,
+            "delta",
+        ],
+
+
+        [
+            Species.WARTORTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.WEEZING,
+            "delta",
+        ],
+
     Species.RATTATA,
     Species.RATICATE,
     Species.PIKACHU,
@@ -57120,7 +76261,463 @@ export const tmSpecies: TmSpecies = {
   [Moves.SECRET_SWORD]: [
     Species.KELDEO,
   ],
-  [Moves.SNARL]: [
+    [Moves.SNARL]: [
+
+        [
+            Species.AGGRON,
+            "delta",
+        ],
+
+
+        [
+            Species.AIPOM,
+            "delta",
+        ],
+
+
+        [
+            Species.AMBIPOM,
+            "delta",
+        ],
+
+
+        [
+            Species.AMOONGUSS,
+            "delta",
+        ],
+
+
+        [
+            Species.ARON,
+            "delta",
+        ],
+
+
+        [
+            Species.AVALUGG,
+            "delta",
+        ],
+
+
+        [
+            Species.BERGMITE,
+            "delta",
+        ],
+
+
+        [
+            Species.BLASTOISE,
+            "delta",
+        ],
+
+
+        [
+            Species.BUDEW,
+            "delta",
+        ],
+
+
+        [
+            Species.BUNEARY,
+            "delta",
+        ],
+
+
+        [
+            Species.CAMERUPT,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARIZARD,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARMANDER,
+            "delta",
+        ],
+
+
+        [
+            Species.CHARMELEON,
+            "delta",
+        ],
+
+
+        [
+            Species.COFAGRIGUS,
+            "delta",
+        ],
+
+
+        [
+            Species.CROAGUNK,
+            "delta",
+        ],
+
+
+        [
+            Species.CYNDAQUIL,
+            "delta",
+        ],
+
+
+        [
+            Species.DARMANITAN,
+            "delta",
+        ],
+
+
+        [
+            Species.DARUMAKA,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTABUZZ,
+            "delta",
+        ],
+
+
+        [
+            Species.ELECTIVIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.ELEKID,
+            "delta",
+        ],
+
+
+        [
+            Species.FOONGUS,
+            "delta",
+        ],
+
+
+        [
+            Species.FROAKIE,
+            "delta",
+        ],
+
+
+        [
+            Species.FROGADIER,
+            "delta",
+        ],
+
+
+        [
+            Species.FROSLASS,
+            "delta",
+        ],
+
+
+        [
+            Species.GIRAFARIG,
+            "delta",
+        ],
+
+
+        [
+            Species.GLALIE,
+            "delta",
+        ],
+
+
+        [
+            Species.GRENINJA,
+            "delta",
+        ],
+
+
+        [
+            Species.GROVYLE,
+            "delta",
+        ],
+
+
+        [
+            Species.HOOPA,
+            "delta",
+        ],
+
+
+        [
+            Species.HUNTAIL,
+            "delta",
+        ],
+
+
+        [
+            Species.KABUTOPS,
+            "delta",
+        ],
+
+
+        [
+            Species.KABUTO,
+            "delta",
+        ],
+
+
+        [
+            Species.KOFFING,
+            "delta",
+        ],
+
+
+        [
+            Species.LAIRON,
+            "delta",
+        ],
+
+
+        [
+            Species.LARVESTA,
+            "delta",
+        ],
+
+
+        [
+            Species.LOPUNNY,
+            "delta",
+        ],
+
+
+        [
+            Species.LUCARIO,
+            "delta",
+        ],
+
+
+        [
+            Species.MAWILE,
+            "delta",
+        ],
+
+
+        [
+            Species.MEDICHAM,
+            "delta",
+        ],
+
+
+        [
+            Species.MEDITITE,
+            "delta",
+        ],
+
+
+        [
+            Species.MELOETTA,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.NOIBAT,
+            "delta",
+        ],
+
+
+        [
+            Species.NOIVERN,
+            "delta",
+        ],
+
+
+        [
+            Species.NUMEL,
+            "delta",
+        ],
+
+
+        [
+            Species.PHANTUMP,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOTTO,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOT,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEY,
+            "delta",
+        ],
+
+
+        [
+            Species.QUAGSIRE,
+            "delta",
+        ],
+
+
+        [
+            Species.QUILAVA,
+            "delta",
+        ],
+
+
+        [
+            Species.RIOLU,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSELIA,
+            "delta",
+        ],
+
+
+        [
+            Species.ROSERADE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCEPTILE,
+            "delta",
+        ],
+
+
+        [
+            Species.SCIZOR,
+            "delta",
+        ],
+
+
+        [
+            Species.SCYTHER,
+            "delta",
+        ],
+
+
+        [
+            Species.SERPERIOR,
+            "delta",
+        ],
+
+
+        [
+            Species.SERVINE,
+            "delta",
+        ],
+
+
+        [
+            Species.SNIVY,
+            "delta",
+        ],
+
+
+        [
+            Species.SNORUNT,
+            "delta",
+        ],
+
+
+        [
+            Species.SQUIRTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNFLORA,
+            "delta",
+        ],
+
+
+        [
+            Species.SUNKERN,
+            "delta",
+        ],
+
+
+        [
+            Species.TOXICROAK,
+            "delta",
+        ],
+
+
+        [
+            Species.TREECKO,
+            "delta",
+        ],
+
+
+        [
+            Species.TREVENANT,
+            "delta",
+        ],
+
+
+        [
+            Species.TYPHLOSION,
+            "delta",
+        ],
+
+
+        [
+            Species.VOLCARONA,
+            "delta",
+        ],
+
+
+        [
+            Species.WARTORTLE,
+            "delta",
+        ],
+
+
+        [
+            Species.WEEZING,
+            "delta",
+        ],
+
+
+        [
+            Species.WOOPER,
+            "delta",
+        ],
+
+
+        [
+            Species.YAMASK,
+            "delta",
+        ],
+
     Species.EKANS,
     Species.ARBOK,
     Species.VULPIX,
@@ -57902,7 +77499,43 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_WEEZING,
     Species.HISUI_TYPHLOSION,
   ],
-  [Moves.CONFIDE]: [
+    [Moves.CONFIDE]: [
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-water",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-water",
+        ],
+
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -58958,7 +78591,313 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_VOLTORB,
     Species.HISUI_ELECTRODE,
   ],
-  [Moves.DAZZLING_GLEAM]: [
+    [Moves.DAZZLING_GLEAM]: [
+
+        [
+            Species.ARCANINE,
+            "delta",
+        ],
+
+
+        [
+            Species.BLAZIKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.BULBASAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.CHANDELURE,
+            "delta",
+        ],
+
+
+        [
+            Species.COMBUSKEN,
+            "delta",
+        ],
+
+
+        [
+            Species.CRUSTLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.CYNDAQUIL,
+            "delta",
+        ],
+
+
+        [
+            Species.DODRIO,
+            "delta",
+        ],
+
+
+        [
+            Species.DODUO,
+            "delta",
+        ],
+
+
+        [
+            Species.DRAGONITE,
+            "delta",
+        ],
+
+
+        [
+            Species.DWEBBLE,
+            "delta-cake",
+        ],
+
+
+        [
+            Species.ESCAVALIER,
+            "delta",
+        ],
+
+
+        [
+            Species.FROSLASS,
+            "delta",
+        ],
+
+
+        [
+            Species.GOREBYSS,
+            "delta",
+        ],
+
+
+        [
+            Species.HOOPA,
+            "delta",
+        ],
+
+
+        [
+            Species.HOOTHOOT,
+            "delta",
+        ],
+
+
+        [
+            Species.IVYSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.KARRABLAST,
+            "delta",
+        ],
+
+
+        [
+            Species.LAMPENT,
+            "delta",
+        ],
+
+
+        [
+            Species.LIEPARD,
+            "delta",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.LILLIGANT,
+            "delta-water",
+        ],
+
+
+        [
+            Species.LITWICK,
+            "delta",
+        ],
+
+
+        [
+            Species.LOMBRE,
+            "delta",
+        ],
+
+
+        [
+            Species.LOPUNNY,
+            "delta",
+        ],
+
+
+        [
+            Species.LOTAD,
+            "delta",
+        ],
+
+
+        [
+            Species.LUDICOLO,
+            "delta",
+        ],
+
+
+        [
+            Species.MEDICHAM,
+            "delta",
+        ],
+
+
+        [
+            Species.MEDITITE,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-ruin",
+        ],
+
+
+        [
+            Species.MILOTIC,
+            "delta",
+        ],
+
+
+        [
+            Species.MINUN,
+            "delta",
+        ],
+
+
+        [
+            Species.NOCTOWL,
+            "delta",
+        ],
+
+
+        [
+            Species.NUZLEAF,
+            "delta",
+        ],
+
+
+        [
+            Species.PETILIL,
+            "delta-fairy",
+        ],
+
+
+        [
+            Species.PHANTUMP,
+            "delta",
+        ],
+
+
+        [
+            Species.PICHU,
+            "delta",
+        ],
+
+
+        [
+            Species.PIKACHU,
+            "delta",
+        ],
+
+
+        [
+            Species.PLUSLE,
+            "delta",
+        ],
+
+
+        [
+            Species.PURRLOIN,
+            "delta",
+        ],
+
+
+        [
+            Species.QUILAVA,
+            "delta",
+        ],
+
+
+        [
+            Species.RAICHU,
+            "delta",
+        ],
+
+
+        [
+            Species.SEEDOT,
+            "delta",
+        ],
+
+
+        [
+            Species.SHIFTRY,
+            "delta",
+        ],
+
+
+        [
+            Species.TORCHIC,
+            "delta",
+        ],
+
+
+        [
+            Species.TREVENANT,
+            "delta",
+        ],
+
+
+        [
+            Species.TYPHLOSION,
+            "delta",
+        ],
+
+
+        [
+            Species.VENUSAUR,
+            "delta",
+        ],
+
+
+        [
+            Species.VESPIQUEN,
+            "delta",
+        ],
+
+
+        [
+            Species.VOLCARONA,
+            "delta",
+        ],
+
+
+        [
+            Species.YANMEGA,
+            "delta",
+        ],
+
     Species.CLEFAIRY,
     Species.CLEFABLE,
     Species.JIGGLYPUFF,
@@ -59135,7 +79074,115 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_MR_MIME,
     Species.HISUI_BRAVIARY,
   ],
-  [Moves.INFESTATION]: [
+    [Moves.INFESTATION]: [
+
+        [
+            Species.AIPOM,
+            "delta",
+        ],
+
+
+        [
+            Species.AMBIPOM,
+            "delta",
+        ],
+
+
+        [
+            Species.AMOONGUSS,
+            "delta",
+        ],
+
+
+        [
+            Species.DEINO,
+            "delta",
+        ],
+
+
+        [
+            Species.DUNSPARCE,
+            "delta",
+        ],
+
+
+        [
+            Species.FOONGUS,
+            "delta",
+        ],
+
+
+        [
+            Species.GIRAFARIG,
+            "delta",
+        ],
+
+
+        [
+            Species.HEATMOR,
+            "delta",
+        ],
+
+
+        [
+            Species.HYDREIGON,
+            "delta",
+        ],
+
+
+        [
+            Species.LARVESTA,
+            "delta",
+        ],
+
+
+        [
+            Species.METAGROSS,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.METANG,
+            "delta-spider",
+        ],
+
+
+        [
+            Species.MILOTIC,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOTTO,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEOT,
+            "delta",
+        ],
+
+
+        [
+            Species.PIDGEY,
+            "delta",
+        ],
+
+
+        [
+            Species.VOLCARONA,
+            "delta",
+        ],
+
+
+        [
+            Species.ZWEILOUS,
+            "delta",
+        ],
+
     Species.BUTTERFREE,
     Species.BEEDRILL,
     Species.EKANS,
@@ -63123,12 +83170,9 @@ export const tmSpecies: TmSpecies = {
   [Moves.SNOWSCAPE]: [
     Species.SLOWPOKE,
     Species.SLOWBRO,
-    Species.SEEL,
-    Species.DEWGONG,
     Species.SHELLDER,
     Species.CLOYSTER,
     Species.CHANSEY,
-    Species.LAPRAS,
     Species.ARTICUNO,
     Species.DRAGONITE,
     Species.MEW,
@@ -63143,7 +83187,6 @@ export const tmSpecies: TmSpecies = {
     Species.PILOSWINE,
     Species.DELIBIRD,
     Species.BLISSEY,
-    Species.SUICUNE,
     Species.WINGULL,
     Species.PELIPPER,
     Species.SPOINK,
@@ -63152,20 +83195,11 @@ export const tmSpecies: TmSpecies = {
     Species.SNORUNT,
     Species.GLALIE,
     Species.LUVDISC,
-    Species.REGICE,
     Species.PIPLUP,
     Species.PRINPLUP,
     Species.EMPOLEON,
-    [
-      Species.SHELLOS,
-      "east",
-      "west",
-    ],
-    [
-      Species.GASTRODON,
-      "east",
-      "west",
-    ],
+    Species.SHELLOS,
+    Species.GASTRODON,
     Species.MISMAGIUS,
     Species.HAPPINY,
     Species.SNOVER,
@@ -63183,17 +83217,7 @@ export const tmSpecies: TmSpecies = {
     Species.CUBCHOO,
     Species.BEARTIC,
     Species.CRYOGONAL,
-    [
-      Species.TORNADUS,
-      "incarnate",
-      "therian",
-    ],
-    [
-      Species.KYUREM,
-      "",
-      "black",
-      "white",
-    ],
+    Species.TORNADUS,
     Species.FROAKIE,
     Species.FROGADIER,
     [
@@ -63207,13 +83231,8 @@ export const tmSpecies: TmSpecies = {
     Species.BERGMITE,
     Species.AVALUGG,
     Species.DIANCIE,
-    Species.PRIMARINA,
     Species.CRABOMINABLE,
-    [
-      Species.MAGEARNA,
-      "",
-      "original",
-    ],
+    Species.MAGEARNA,
     Species.INTELEON,
     Species.FROSMOTH,
     Species.EISCUE,
@@ -63661,21 +83680,12 @@ export const tmSpecies: TmSpecies = {
     Species.WEAVILE,
     Species.GLACEON,
     Species.FROSLASS,
-    [
-      Species.PALKIA,
-      "",
-      "origin",
-    ],
+    Species.PALKIA,
     Species.ARCEUS,
     Species.OSHAWOTT,
     Species.DEWOTT,
     Species.SAMUROTT,
-    [
-      Species.BASCULIN,
-      "red-striped",
-      "blue-striped",
-      "white-striped",
-    ],
+    Species.BASCULIN,
     Species.DUCKLETT,
     Species.SWANNA,
     Species.ALOMOMOLA,
@@ -64028,7 +84038,7 @@ export const tmSpecies: TmSpecies = {
       "blaze",
     ],
   ],
-  [Moves.SUPERCELL_SLAM]:[
+  [Moves.SUPERCELL_SLAM]: [
     Species.ELECTRODE,
     Species.RHYHORN,
     Species.RHYDON,
@@ -64213,6 +84223,804 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_LILLIGANT,
     Species.HISUI_DECIDUEYE,
   ],
+  [Moves.NEW_MOON]: [
+    Species.GASTLY,
+    Species.HAUNTER,
+    Species.GENGAR,
+    Species.MEW,
+    Species.UMBREON,
+    Species.MISDREAVUS,
+    Species.SEEDOT,
+    Species.NUZLEAF,
+    Species.SHIFTRY,
+    Species.SABLEYE,
+    Species.CASTFORM,
+    Species.DRIFLOON,
+    Species.DRIFBLIM,
+    Species.MISMAGIUS,
+    Species.SPIRITOMB,
+    Species.GIRATINA,
+    Species.DARKRAI,
+    Species.YAMASK,
+    Species.COFAGRIGUS,
+    Species.ZORUA,
+    Species.ZOROARK,
+    Species.VULLABY,
+    Species.MANDIBUZZ,
+    Species.DEINO,
+    Species.ZWEILOUS,
+    Species.HYDREIGON,
+    Species.INKAY,
+    Species.MALAMAR,
+    Species.PHANTUMP,
+    Species.TREVENANT,
+    Species.PUMPKABOO,
+    Species.GOURGEIST,
+
+   [
+       Species.BULBASAUR,
+       "delta",
+   ],
+
+   [
+       Species.IVYSAUR,
+       "delta",
+   ],
+
+   [
+       Species.VENUSAUR,
+       "delta",
+   ],
+
+   [
+       Species.CHARMANDER,
+       "delta",
+   ],
+
+   [
+       Species.CHARMELEON,
+       "delta",
+   ],
+
+   [
+       Species.CHARIZARD,
+       "delta",
+   ],
+
+   [
+       Species.SQUIRTLE,
+       "delta",
+   ],
+
+   [
+       Species.WARTORTLE,
+       "delta",
+   ],
+
+   [
+       Species.BLASTOISE,
+       "delta",
+   ],
+
+   [
+       Species.PURRLOIN,
+       "delta",
+   ],
+
+   [
+       Species.LIEPARD,
+       "delta",
+   ],
+
+   [
+       Species.PHANTUMP,
+       "delta",
+   ],
+
+   [
+       Species.TREVENANT,
+       "delta",
+   ],
+
+   [
+       Species.BUDEW,
+       "delta",
+   ],
+
+   [
+       Species.ROSELIA,
+       "delta",
+   ],
+
+   [
+       Species.ROSERADE,
+       "delta",
+   ],
+
+   [
+       Species.WOOPER,
+       "delta",
+   ],
+
+   [
+       Species.QUAGSIRE,
+       "delta",
+   ],
+
+   [
+       Species.CYNDAQUIL,
+       "delta",
+   ],
+
+   [
+       Species.QUILAVA,
+       "delta",
+   ],
+
+   [
+       Species.TYPHLOSION,
+       "delta",
+   ],
+
+   [
+       Species.PIDGEY,
+       "delta",
+   ],
+
+   [
+       Species.PIDGEOTTO,
+       "delta",
+   ],
+
+   [
+       Species.PIDGEOT,
+       "delta",
+   ],
+
+   [
+       Species.CHINCHOU,
+       "delta",
+   ],
+
+   [
+       Species.LANTURN,
+       "delta",
+   ],
+
+   [
+       Species.AIPOM,
+       "delta",
+   ],
+
+   [
+       Species.AMBIPOM,
+       "delta",
+   ],
+
+   [
+       Species.ELECTIVIRE,
+       "delta",
+   ],
+
+   [
+       Species.MAWILE,
+       "delta",
+   ],
+
+   [
+       Species.MEDITITE,
+       "delta",
+   ],
+
+   [
+       Species.MEDICHAM,
+       "delta",
+   ],
+
+   [
+       Species.FEEBAS,
+       "delta",
+   ],
+
+   [
+       Species.MILOTIC,
+       "delta",
+   ],
+
+   [
+       Species.HUNTAIL,
+       "delta",
+   ],
+
+   [
+       Species.RIOLU,
+       "delta",
+   ],
+
+   [
+       Species.LUCARIO,
+       "delta",
+   ],
+
+   [
+       Species.LARVESTA,
+       "delta",
+   ],
+
+   [
+       Species.VOLCARONA,
+       "delta",
+   ],
+
+  ],
+  [Moves.CORRODE]: [
+    Species.BULBASAUR,
+    Species.IVYSAUR,
+    Species.VENUSAUR,
+    Species.BEEDRILL,
+    Species.EKANS,
+    Species.ARBOK,
+    Species.NIDORAN_F,
+    Species.NIDORINA,
+    Species.NIDOQUEEN,
+    Species.NIDORAN_M,
+    Species.NIDORINO,
+    Species.NIDOKING,
+    Species.ZUBAT,
+    Species.GOLBAT,
+    Species.ODDISH,
+    Species.GLOOM,
+    Species.VILEPLUME,
+    Species.VENONAT,
+    Species.VENOMOTH,
+    Species.BELLSPROUT,
+    Species.WEEPINBELL,
+    Species.VICTREEBEL,
+    Species.TENTACOOL,
+    Species.TENTACRUEL,
+    Species.GRIMER,
+    Species.MUK,
+    Species.GASTLY,
+    Species.HAUNTER,
+    Species.GENGAR,
+    Species.KOFFING,
+    Species.WEEZING,
+    Species.MEW,
+    Species.SPINARAK,
+    Species.ARIADOS,
+    Species.CROBAT,
+    Species.QWILFISH,
+    Species.DUSTOX,
+    Species.ROSELIA,
+    Species.GULPIN,
+    Species.SWALOT,
+    Species.SEVIPER,
+    Species.BUDEW,
+    Species.ROSERADE,
+    Species.STUNKY,
+    Species.SKUNTANK,
+    Species.SKORUPI,
+    Species.DRAPION,
+    Species.CROAGUNK,
+    Species.TOXICROAK,
+    Species.VENIPEDE,
+    Species.WHIRLIPEDE,
+    Species.SCOLIPEDE,
+    Species.TRUBBISH,
+    Species.GARBODOR,
+    Species.FOONGUS,
+    Species.AMOONGUSS,
+    Species.SKRELP,
+    Species.DRAGALGE,
+
+   [
+       Species.SUNKERN,
+       "delta",
+   ],
+
+   [
+       Species.SUNKERN,
+       "delta",
+   ],
+
+   [
+       Species.SHINX,
+       "delta",
+   ],
+
+   [
+       Species.LUXIO,
+       "delta",
+   ],
+
+   [
+       Species.LUXRAY,
+       "delta",
+   ],
+
+   [
+       Species.TENTACOOL,
+       "delta",
+   ],
+
+   [
+       Species.TENTACRUEL,
+       "delta",
+   ],
+
+   [
+       Species.GIRAFARIG,
+       "delta",
+   ],
+
+   [
+       Species.NUMEL,
+       "delta",
+   ],
+
+   [
+       Species.CAMERUPT,
+       "delta",
+   ],
+
+   [
+       Species.METANG,
+       "delta-",
+   ],
+
+   [
+       Species.METAGROSS,
+       "delta-",
+   ],
+
+   [
+       Species.DWEBBLE,
+       "delta-",
+   ],
+
+   [
+       Species.CRUSTLE,
+       "delta-",
+   ],
+
+   [
+       Species.YAMASK,
+       "delta",
+   ],
+
+   [
+       Species.COFAGRIGUS,
+       "delta",
+   ],
+
+   [
+       Species.HEATMOR,
+       "delta",
+   ],
+
+   [
+       Species.DEINO,
+       "delta",
+   ],
+
+   [
+       Species.ZWEILOUS,
+       "delta",
+   ],
+
+   [
+       Species.HYDREIGON,
+       "delta",
+   ],
+
+   [
+       Species.LARVESTA,
+       "delta",
+   ],
+
+   [
+       Species.VOLCARONA,
+       "delta",
+   ],
+
+  ],
+  [Moves.LUNAR_CANNON]: [
+    Species.CLEFAIRY,
+    Species.CLEFABLE,
+    Species.JIGGLYPUFF,
+    Species.WIGGLYTUFF,
+    Species.GASTLY,
+    Species.HAUNTER,
+    Species.GENGAR,
+    Species.MEW,
+    Species.TOGEPI,
+    Species.TOGETIC,
+    Species.UMBREON,
+    Species.MISDREAVUS,
+    Species.SNUBBULL,
+    Species.GRANBULL,
+    Species.SNEASEL,
+    Species.HOUNDOOM,
+    Species.TYRANITAR,
+    Species.POOCHYENA,
+    Species.MIGHTYENA,
+    Species.SHIFTRY,
+    Species.SABLEYE,
+    Species.CACTURNE,
+    Species.CASTFORM,
+    Species.SHUPPET,
+    Species.BANETTE,
+    Species.DUSKULL,
+    Species.DUSCLOPS,
+    Species.ABSOL,
+    Species.DRIFLOON,
+    Species.DRIFBLIM,
+    Species.MISMAGIUS,
+    Species.HONCHKROW,
+    Species.SKUNTANK,
+    Species.SPIRITOMB,
+    Species.DRAPION,
+    Species.WEAVILE,
+    Species.TOGEKISS,
+    Species.DUSKNOIR,
+    Species.FROSLASS,
+    Species.GIRATINA,
+    Species.DARKRAI,
+    Species.ARCEUS,
+    Species.LIEPARD,
+    Species.AUDINO,
+    Species.YAMASK,
+    Species.COFAGRIGUS,
+    Species.ZOROARK,
+    Species.FRILLISH,
+    Species.JELLICENT,
+    Species.LITWICK,
+    Species.LAMPENT,
+    Species.CHANDELURE,
+    Species.GOLETT,
+    Species.GOLURK,
+    Species.DEINO,
+    Species.ZWEILOUS,
+    Species.HYDREIGON,
+    Species.GRENINJA,
+    Species.FLABEBE,
+    Species.FLOETTE,
+    Species.FLORGES,
+    Species.PANGORO,
+    Species.HONEDGE,
+    Species.DOUBLADE,
+    Species.AEGISLASH,
+    Species.SPRITZEE,
+    Species.AROMATISSE,
+    Species.SWIRLIX,
+    Species.SLURPUFF,
+    Species.INKAY,
+    Species.MALAMAR,
+    Species.SYLVEON,
+    Species.DEDENNE,
+    Species.CARBINK,
+    Species.KLEFKI,
+    Species.PHANTUMP,
+    Species.TREVENANT,
+    Species.PUMPKABOO,
+    Species.GOURGEIST,
+    Species.XERNEAS,
+    Species.YVELTAL,
+    Species.DIANCIE,
+    Species.HOOPA,
+
+   [
+       Species.IVYSAUR,
+       "delta",
+   ],
+
+   [
+       Species.VENUSAUR,
+       "delta",
+   ],
+
+   [
+       Species.CHARMANDER,
+       "delta",
+   ],
+
+   [
+       Species.CHARMELEON,
+       "delta",
+   ],
+
+   [
+       Species.CHARIZARD,
+       "delta",
+   ],
+
+   [
+       Species.SQUIRTLE,
+       "delta",
+   ],
+
+   [
+       Species.WARTORTLE,
+       "delta",
+   ],
+
+   [
+       Species.BLASTOISE,
+       "delta",
+   ],
+
+   [
+       Species.PURRLOIN,
+       "delta",
+   ],
+
+   [
+       Species.LIEPARD,
+       "delta",
+   ],
+
+   [
+       Species.PHANTUMP,
+       "delta",
+   ],
+
+   [
+       Species.TREVENANT,
+       "delta",
+   ],
+
+   [
+       Species.BUDEW,
+       "delta",
+   ],
+
+   [
+       Species.ROSELIA,
+       "delta",
+   ],
+
+   [
+       Species.ROSERADE,
+       "delta",
+   ],
+
+   [
+       Species.MISDREAVUS,
+       "delta",
+   ],
+
+   [
+       Species.MISMAGIUS,
+       "delta",
+   ],
+
+   [
+       Species.PIDGEY,
+       "delta",
+   ],
+
+   [
+       Species.PIDGEOTTO,
+       "delta",
+   ],
+
+   [
+       Species.PIDGEOT,
+       "delta",
+   ],
+
+   [
+       Species.DODUO,
+       "delta",
+   ],
+
+   [
+       Species.DODRIO,
+       "delta",
+   ],
+
+   [
+       Species.KABUTO,
+       "delta",
+   ],
+
+   [
+       Species.KABUTOPS,
+       "delta",
+   ],
+
+   [
+       Species.CHINCHOU,
+       "delta",
+   ],
+
+   [
+       Species.LANTURN,
+       "delta",
+   ],
+
+   [
+       Species.PICHU,
+       "delta",
+   ],
+
+   [
+       Species.PIKACHU,
+       "delta",
+   ],
+
+   [
+       Species.RAICHU,
+       "delta",
+   ],
+
+   [
+       Species.ELECTIVIRE,
+       "delta",
+   ],
+
+   [
+       Species.LUDICOLO,
+       "delta",
+   ],
+
+   [
+       Species.MAWILE,
+       "delta",
+   ],
+
+   [
+       Species.MEDITITE,
+       "delta",
+   ],
+
+   [
+       Species.MEDICHAM,
+       "delta",
+   ],
+
+   [
+       Species.CAMERUPT,
+       "delta",
+   ],
+
+   [
+       Species.PLUSLE,
+       "delta",
+   ],
+
+   [
+       Species.MINUN,
+       "delta",
+   ],
+
+   [
+       Species.HUNTAIL,
+       "delta",
+   ],
+
+   [
+       Species.GOREBYSS,
+       "delta",
+   ],
+
+   [
+       Species.RIOLU,
+       "delta",
+   ],
+
+   [
+       Species.LUCARIO,
+       "delta",
+   ],
+
+   [
+       Species.PETILIL,
+       "delta-",
+   ],
+
+   [
+       Species.LILLIGANT,
+       "delta-",
+   ],
+
+   [
+       Species.SOLOSIS,
+       "delta",
+   ],
+
+   [
+       Species.DUOSION,
+       "delta",
+   ],
+
+   [
+       Species.REUNICLUS,
+       "delta",
+   ],
+
+   [
+       Species.DARUMAKA,
+       "delta",
+   ],
+
+   [
+       Species.DARMANITAN,
+       "delta",
+   ],
+
+   [
+       Species.DWEBBLE,
+       "delta-",
+   ],
+
+   [
+       Species.CRUSTLE,
+       "delta-",
+   ],
+
+   [
+       Species.EMOLGA,
+       "delta",
+   ],
+
+   [
+       Species.KARRABLAST,
+       "delta",
+   ],
+
+   [
+       Species.ESCAVALIER,
+       "delta",
+   ],
+
+   [
+       Species.FOONGUS,
+       "delta",
+   ],
+
+   [
+       Species.AMOONGUSS,
+       "delta",
+   ],
+
+   [
+       Species.LITWICK,
+       "delta",
+   ],
+
+   [
+       Species.LAMPENT,
+       "delta",
+   ],
+
+   [
+       Species.CHANDELURE,
+       "delta",
+   ],
+
+   [
+       Species.LARVESTA,
+       "delta",
+   ],
+
+   [
+       Species.VOLCARONA,
+       "delta",
+   ],
+
+   [
+       Species.MELOETTA,
+       "delta",
+   ],
+
+   [
+       Species.HOOPA,
+       "delta",
+   ],
+
+  ]
+
 };
 
 interface TmPoolTiers {
@@ -64525,4 +85333,9 @@ export const tmPoolTiers: TmPoolTiers = {
   [Moves.SUPERCELL_SLAM]: ModifierTier.GREAT,
   [Moves.PSYCHIC_NOISE]: ModifierTier.GREAT,
   [Moves.UPPER_HAND]: ModifierTier.COMMON,
+
+  
+  [Moves.CORRODE]: ModifierTier.GREAT,
+  [Moves.LUNAR_CANNON]: ModifierTier.ULTRA,
+  [Moves.NEW_MOON]: ModifierTier.COMMON,
 };

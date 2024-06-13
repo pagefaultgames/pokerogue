@@ -95,6 +95,7 @@ export enum CommonAnim {
     HEAVY_RAIN,
     HARSH_SUN,
     STRONG_WINDS,
+    NEW_MOON,
     MISTY_TERRAIN = 2110,
     ELECTRIC_TERRAIN,
     GRASSY_TERRAIN,

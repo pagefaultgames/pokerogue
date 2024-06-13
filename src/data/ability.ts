@@ -8,7 +8,7 @@ import { Weather, WeatherType } from "./weather";
 import { BattlerTag } from "./battler-tags";
 import { StatusEffect, getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
 import { Gender } from "./gender";
-import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, FlinchAttr, OneHitKOAttr, HitHealAttr, allMoves, StatusMove, SelfStatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr, VariableMoveTypeAttr, RandomMovesetMoveAttr, RandomMoveAttr, NaturePowerAttr, CopyMoveAttr  } from "./move";
+import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, FlinchAttr, OneHitKOAttr, HitHealAttr, allMoves, StatusMove, SelfStatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr, VariableMoveTypeAttr, RandomMovesetMoveAttr, RandomMoveAttr, NaturePowerAttr, CopyMoveAttr, StatusEffectAttr  } from "./move";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { Stat, getStatName } from "./pokemon-stat";
 import { BerryModifier, PokemonHeldItemModifier } from "../modifier/modifier";
@@ -1159,6 +1159,26 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
     return getPokemonMessage(pokemon, ` transformed into the ${Type[this.moveType]} type!`);
   }
 }
+//If the move would apply a status effect given in effectsToSwapOn instead apply the status effect given by effectToSwap ex. venomous
+export class SwapOnStatusEffectAbAttr extends PreAttackAbAttr {
+  private effectToSwap : StatusEffect
+  private effectsToSwapOn : StatusEffect[]
+
+  constructor(effectToSwap: StatusEffect, ...effectsToSwapOn:StatusEffect[]) {
+    super();
+    this.effectsToSwapOn = effectsToSwapOn;
+    this.effectToSwap = effectToSwap
+  }
+  applyPreAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: Move, args: any[]): boolean {
+    if(!defender.status && !defender.isFainted() && move.findAttr(attr => attr instanceof StatusEffectAttr)){
+      if (this.effectsToSwapOn.indexOf(move.findAttr(attr => attr instanceof StatusEffectAttr).effect) > -1){
+        defender.trySetStatus(this.effectToSwap, true, pokemon)
+        return true;
+      }
+    }
+    return false
+  }
+}
 
 /**
  * Class for abilities that boost the damage of moves
@@ -1325,6 +1345,23 @@ export class BattleStatMultiplierAbAttr extends AbAttr {
 export class PostAttackAbAttr extends AbAttr {
   applyPostAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean | Promise<boolean> {
     return false;
+  }
+}
+
+export class PostAttackHealAbAttr extends PostAttackAbAttr{
+  private condition: PokemonAttackCondition;
+  private healPercent: number;
+  constructor(healPercent: integer, condition?: PokemonAttackCondition){
+    super();
+    this.condition = condition;
+    this.healPercent = healPercent/100;
+  }
+  applyPostAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean{
+      if (pokemon != defender && hitResult < HitResult.NO_EFFECT && (!this.condition || this.condition(pokemon, defender, move))) {
+        pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.getBattlerIndex(),
+        Math.max(Math.floor(pokemon.turnData.damageDealt * this.healPercent), 1), getPokemonMessage(pokemon, ` sucked fluids\nfrom ${defender.name}`), false, true,false));
+      }
+      return;
   }
 }
 
@@ -1702,6 +1739,50 @@ export class PostSummonStatChangeAbAttr extends PostSummonAbAttr {
     }
     return true;
   }
+}
+
+export class PostSummonStatChangeForFaintedAbAttr extends PostSummonAbAttr {
+  private stats: BattleStat[];
+  private levels: integer;
+  private selfTarget: boolean;
+  private intimidate: boolean;
+
+  constructor(stats: BattleStat | BattleStat[], selfTarget?: boolean, intimidate?: boolean) {
+    super(false);
+
+    this.stats = typeof(stats) === "number"
+      ? [ stats as BattleStat ]
+      : stats as BattleStat[];
+    this.selfTarget = !!selfTarget;
+    this.intimidate = !!intimidate;
+  }
+
+  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+    
+    this.levels = pokemon.scene.getParty().reduce((acc, pokemonInParty) => acc + (pokemonInParty.status?.effect === StatusEffect.FAINT ? 1 : 0),0);
+    if (this.levels > 0){
+      queueShowAbility(pokemon, passive);  // TODO: Better solution than manually showing the ability here
+      if (this.selfTarget) {
+        pokemon.scene.pushPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, this.stats, this.levels));
+        return true;
+      }
+      for (const opponent of pokemon.getOpponents()) {
+        const cancelled = new Utils.BooleanHolder(false);
+        if (this.intimidate) {
+          applyAbAttrs(IntimidateImmunityAbAttr, opponent, cancelled);
+          applyAbAttrs(PostIntimidateStatChangeAbAttr, opponent, cancelled);
+        }
+        if (!cancelled.value) {
+          const statChangePhase = new StatChangePhase(pokemon.scene, opponent.getBattlerIndex(), false, this.stats, this.levels);
+          pokemon.scene.unshiftPhase(statChangePhase);
+        }
+      }
+      return true;
+    }
+    else{
+      return false;
+    }
+    }
 }
 
 export class PostSummonAllyHealAbAttr extends PostSummonAbAttr {
@@ -4834,6 +4915,72 @@ export function initAbilities() {
     new Ability(Abilities.POISON_PUPPETEER, 9)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
-      .conditionalAttr(pokemon => pokemon.species.speciesId===Species.PECHARUNT,ConfusionOnStatusEffectAbAttr,StatusEffect.POISON,StatusEffect.TOXIC)
+      .conditionalAttr(pokemon => pokemon.species.speciesId===Species.PECHARUNT,ConfusionOnStatusEffectAbAttr,StatusEffect.POISON,StatusEffect.TOXIC),
+
+    
+    new Ability(Abilities.PSYCHO_CALL, 9)
+      .attr(LowHpMoveTypePowerBoostAbAttr, Type.PSYCHIC),
+    new Ability(Abilities.SPIRIT_CALL, 9)
+      .attr(LowHpMoveTypePowerBoostAbAttr, Type.GHOST),
+    new Ability(Abilities.SHADOW_CALL, 9)
+      .attr(LowHpMoveTypePowerBoostAbAttr, Type.DARK),
+    new Ability(Abilities.SHADOW_DANCE, 9)
+        .attr(BattleStatMultiplierAbAttr, BattleStat.SPD, 2)
+        .condition(getWeatherCondition(WeatherType.NEW_MOON)),
+    new Ability(Abilities.REGURGITATION, 9)
+        .attr(UncopiableAbilityAbAttr)
+        .attr(UnswappableAbilityAbAttr)  
+        .unimplemented(),
+    new Ability(Abilities.AMPLIFIER, 9)
+      .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.SOUND_BASED), 1.25)
+      .ignorable(),
+    new Ability(Abilities.ICE_CLEATS, 9)
+      .attr(BattleStatMultiplierAbAttr, BattleStat.SPD, 2)
+      .condition(getWeatherCondition(WeatherType.HAIL, WeatherType.SNOW)),
+    new Ability(Abilities.WINTER_JOY, 9)
+        .attr(UncopiableAbilityAbAttr)
+        .attr(UnswappableAbilityAbAttr)  
+        .unimplemented(),
+    new Ability(Abilities.HUBRIS, 9)
+      .attr(PostVictoryStatChangeAbAttr, BattleStat.SPATK, 1),
+    new Ability(Abilities.ATHENIAN, 9)
+      .attr(BattleStatMultiplierAbAttr, BattleStat.SPATK, 2),
+    new Ability(Abilities.HELIOPHOBIA, 9)
+      .attr(PostWeatherLapseDamageAbAttr, 2, WeatherType.SUNNY, WeatherType.HARSH_SUN)
+      .attr(PostWeatherLapseHealAbAttr, 2, WeatherType.NEW_MOON)
+      .ignorable(),
+    new Ability(Abilities.VENOMOUS, 9)
+        .attr(SwapOnStatusEffectAbAttr,StatusEffect.TOXIC,StatusEffect.POISON),
+    new Ability(Abilities.FOUNDRY, 9)
+    //TODO FIRE SPIKES
+      .attr(MoveTypeChangeAttr, Type.FIRE, 1.3,  (user, target, move) => move.type === Type.ROCK)
+      .partial(),
+    new Ability(Abilities.VAMPIRIC, 9)
+      .attr(PostAttackHealAbAttr, 25, (target, user, move) => move.hasFlag(MoveFlags.MAKES_CONTACT)),
+    new Ability(Abilities.BLAZE_BOOST, 9)
+      .attr(MoveTypeChangeAttr, Type.FIRE, 1.3,  (user, target, move) => move.type === Type.FIRE)
+      .attr(PostDefendContactApplyStatusEffectAbAttr, 10, StatusEffect.BURN)
+      .partial(),
+    new Ability(Abilities.WIND_FORCE, 9)
+      .attr(MoveImmunityStatChangeAbAttr, (pokemon, attacker, move) => pokemon !== attacker && move.type === Type.FLYING, BattleStat.SPD, 1)
+      .ignorable(),
+    new Ability(Abilities.INTOXICATE, 9)
+      .attr(MoveTypeChangeAttr, Type.POISON, 1.3,  (user, target, move) => move.type === Type.NORMAL),
+    new Ability(Abilities.ABSOLUTION, 9)
+      .attr(PostWeatherLapseDamageAbAttr, 2, WeatherType.NEW_MOON)
+      .attr(BattleStatMultiplierAbAttr, BattleStat.SPATK, 1.5)
+      .condition(getWeatherCondition(WeatherType.NEW_MOON)),
+    new Ability(Abilities.PHOTOTROPH, 9)
+      .attr(PostWeatherLapseHealAbAttr, 2, WeatherType.SUNNY, WeatherType.HARSH_SUN)
+      .partial(),
+    new Ability(Abilities.NOCTEM, 9)
+      .attr(PostSummonWeatherChangeAbAttr, WeatherType.NEW_MOON)
+      .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.NEW_MOON),
+    new Ability(Abilities.SUPERCELL, 9)
+      .attr(BattleStatMultiplierAbAttr, BattleStat.SPATK, 1.5)
+      .condition(getWeatherCondition(WeatherType.NEW_MOON,WeatherType.RAIN)),
+    new Ability(Abilities.CHLOROFURY, 9)
+    .attr(PostSummonStatChangeForFaintedAbAttr, [BattleStat.SPD, BattleStat.SPATK],true)
+    .condition(getOncePerBattleCondition(Abilities.CHLOROFURY)),
   );
 }

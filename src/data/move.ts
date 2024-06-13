@@ -26,6 +26,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { SpeciesFormKey } from "./pokemon-species";
 
 export enum MoveCategory {
   PHYSICAL,
@@ -1360,6 +1361,24 @@ export class PlantHealAttr extends WeatherHealAttr {
     case WeatherType.HAIL:
     case WeatherType.SNOW:
     case WeatherType.HEAVY_RAIN:
+    case WeatherType.NEW_MOON:
+      return 0.25;
+    default:
+      return 0.5;
+    }
+  }
+}
+export class MoonHealAttr extends WeatherHealAttr {
+  getWeatherHealRatio(weatherType: WeatherType): number {
+    switch (weatherType) {
+    
+    case WeatherType.NEW_MOON:
+      return 2 / 3;
+    case WeatherType.RAIN:
+    case WeatherType.SANDSTORM:
+    case WeatherType.HAIL:
+    case WeatherType.SNOW:
+    case WeatherType.HEAVY_RAIN:
       return 0.25;
     default:
       return 0.5;
@@ -2166,6 +2185,23 @@ export class ChargeAttr extends OverrideMoveEffectAttr {
   }
 }
 
+export class MoonlightChargeAttr extends ChargeAttr {
+  constructor(chargeAnim: ChargeAnim, chargeText: string, tagType?: BattlerTagType) {
+    super(chargeAnim, chargeText, tagType);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
+    return new Promise(resolve => {
+      const weatherType = user.scene.arena.weather?.weatherType;
+      if (!user.scene.arena.weather?.isEffectSuppressed(user.scene) && (weatherType === WeatherType.NEW_MOON)) {
+        resolve(false);
+      } else {
+        super.apply(user, target, move, args).then(result => resolve(result));
+      }
+    });
+  }
+}
+
 export class SunlightChargeAttr extends ChargeAttr {
   constructor(chargeAnim: ChargeAnim, chargeText: string) {
     super(chargeAnim, chargeText);
@@ -2324,6 +2360,22 @@ export class StatChangeAttr extends MoveEffectAttr {
       ret += (levels * 4) + (levels > 0 ? -2 : 2);
     }
     return ret;
+  }
+}
+
+export class NewMoonStatChangeAttr extends StatChangeAttr {
+  constructor() {
+    super([ BattleStat.ATK, BattleStat.ACC ], 1, true);
+  }
+
+  getLevels(user: Pokemon): number {
+    if (!user.scene.arena.weather?.isEffectSuppressed(user.scene)) {
+      const weatherType = user.scene.arena.weather?.weatherType;
+      if (weatherType === WeatherType.NEW_MOON) {
+        return this.levels + 1;
+      }
+    }
+    return this.levels;
   }
 }
 
@@ -3487,9 +3539,12 @@ export class IvyCudgelTypeAttr extends VariableMoveTypeAttr {
   }
 }
 
+
 export class WeatherBallTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!user.scene.arena.weather?.isEffectSuppressed(user.scene)) {
+      const type = (args[0] as Utils.IntegerHolder);
+
       switch (user.scene.arena.weather?.weatherType) {
       case WeatherType.SUNNY:
       case WeatherType.HARSH_SUN:
@@ -3506,6 +3561,9 @@ export class WeatherBallTypeAttr extends VariableMoveTypeAttr {
       case WeatherType.SNOW:
         move.type = Type.ICE;
         break;
+      case WeatherType.NEW_MOON:
+        move.type = Type.DARK;
+        break;
       default:
         return false;
       }
@@ -3515,6 +3573,7 @@ export class WeatherBallTypeAttr extends VariableMoveTypeAttr {
     return false;
   }
 }
+
 
 /**
  * Changes the move's type to match the current terrain.
@@ -3611,6 +3670,16 @@ export class NeutralDamageAgainstFlyingTypeMultiplierAttr extends VariableMoveTy
       return true;
     }
 
+    return false;
+  }
+}
+
+export class SuperEffectDamageAgainstSteelTypeMultiplierAttr extends VariableMoveTypeMultiplierAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+      const multiplier = args[0] as Utils.NumberHolder;
+      if (target.isOfType(Type.STEEL)) {
+        multiplier.value = 2;
+      }
     return false;
   }
 }
@@ -5192,6 +5261,40 @@ export class SuppressAbilitiesIfActedAttr extends MoveEffectAttr {
   }
 }
 
+export class MorphAttr extends MoveEffectAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
+    return new Promise(resolve => {
+      if (!super.apply(user, target, move, args)) {
+        return resolve(false);
+      }
+      //if species has a delta form turn into that instead
+      if (!(target.species.forms.findIndex(f => f.formKey === SpeciesFormKey.DELTA) === -1)){
+        user.summonData.speciesForm = target.species.forms.find(f => f.formKey === SpeciesFormKey.DELTA);
+        user.summonData.types = [target.species.forms.find(f => f.formKey === SpeciesFormKey.DELTA).type1,target.species.forms.find(f => f.formKey === SpeciesFormKey.DELTA).type2] ;
+      }
+
+      else{
+        user.summonData.speciesForm = target.getSpeciesForm();
+        user.summonData.types = target.getTypes();
+      }
+      user.summonData.fusionSpeciesForm = target.getFusionSpeciesForm();
+      user.summonData.ability = target.getAbility().id;
+      user.summonData.gender = target.getGender();
+      user.summonData.fusionGender = target.getFusionGender();
+      user.summonData.stats = [ user.stats[Stat.HP] ].concat(target.stats.slice(1));
+      user.summonData.battleStats = target.summonData.battleStats.slice(0);
+      user.summonData.moveset = target.getMoveset().map(m => new PokemonMove(m.moveId, m.ppUsed, m.ppUp));
+
+      user.scene.queueMessage(getPokemonMessage(user, ` transformed\ninto ${target.name}!`));
+
+      user.loadAssets(false).then(() => {
+        user.playAnim();
+        resolve(true);
+      });
+    });
+  }
+}
+
 export class TransformAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
@@ -6104,7 +6207,7 @@ export function initMoves() {
       .attr(PlantHealAttr)
       .triageMove(),
     new SelfStatusMove(Moves.MOONLIGHT, Type.FAIRY, -1, 5, -1, 0, 2)
-      .attr(PlantHealAttr)
+      .attr(MoonHealAttr)
       .triageMove(),
     new AttackMove(Moves.HIDDEN_POWER, Type.NORMAL, MoveCategory.SPECIAL, 60, 100, 15, -1, 0, 2)
       .attr(HiddenPowerTypeAttr),
@@ -6305,7 +6408,7 @@ export function initMoves() {
       .attr(FlinchAttr),
     new AttackMove(Moves.WEATHER_BALL, Type.NORMAL, MoveCategory.SPECIAL, 50, 100, 10, -1, 0, 3)
       .attr(WeatherBallTypeAttr)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => [WeatherType.SUNNY, WeatherType.RAIN, WeatherType.SANDSTORM, WeatherType.HAIL, WeatherType.SNOW, WeatherType.FOG, WeatherType.HEAVY_RAIN, WeatherType.HARSH_SUN].includes(user.scene.arena.weather?.weatherType) && !user.scene.arena.weather?.isEffectSuppressed(user.scene) ? 2 : 1)
+      .attr(MovePowerMultiplierAttr, (user, target, move) => [WeatherType.SUNNY, WeatherType.RAIN, WeatherType.SANDSTORM, WeatherType.HAIL, WeatherType.SNOW, WeatherType.FOG, WeatherType.HEAVY_RAIN, WeatherType.HARSH_SUN, WeatherType.NEW_MOON].includes(user.scene.arena.weather?.weatherType) && !user.scene.arena.weather?.isEffectSuppressed(user.scene) ? 2 : 1)
       .ballBombMove(),
     new StatusMove(Moves.AROMATHERAPY, Type.GRASS, -1, 5, -1, 0, 3)
       .attr(PartyStatusCureAttr, "A soothing aroma wafted through the area!", Abilities.SAP_SIPPER)
@@ -6734,11 +6837,11 @@ export function initMoves() {
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD ], 1, true)
       .windMove(),
     new AttackMove(Moves.SHADOW_FORCE, Type.GHOST, MoveCategory.PHYSICAL, 120, 100, 5, -1, 0, 4)
-      .attr(ChargeAttr, ChargeAnim.SHADOW_FORCE_CHARGING, "vanished\ninstantly!", BattlerTagType.HIDDEN)
+      .attr(MoonlightChargeAttr, ChargeAnim.SHADOW_FORCE_CHARGING, "vanished\ninstantly!", BattlerTagType.HIDDEN)
       .ignoresProtect()
       .ignoresVirtual(),
     new SelfStatusMove(Moves.HONE_CLAWS, Type.DARK, -1, 15, -1, 0, 5)
-      .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.ACC ], 1, true),
+      .attr(NewMoonStatChangeAttr),
     new StatusMove(Moves.WIDE_GUARD, Type.ROCK, -1, 10, -1, 3, 5)
       .target(MoveTarget.USER_SIDE)
       .attr(AddArenaTagAttr, ArenaTagType.WIDE_GUARD, 1, true, true),
@@ -7015,7 +7118,7 @@ export function initMoves() {
     new AttackMove(Moves.FELL_STINGER, Type.BUG, MoveCategory.PHYSICAL, 50, 100, 25, -1, 0, 6)
       .attr(PostVictoryStatChangeAttr, BattleStat.ATK, 3, true ),
     new AttackMove(Moves.PHANTOM_FORCE, Type.GHOST, MoveCategory.PHYSICAL, 90, 100, 10, -1, 0, 6)
-      .attr(ChargeAttr, ChargeAnim.PHANTOM_FORCE_CHARGING, "vanished\ninstantly!", BattlerTagType.HIDDEN)
+      .attr(MoonlightChargeAttr, ChargeAnim.PHANTOM_FORCE_CHARGING, "vanished\ninstantly!", BattlerTagType.HIDDEN)
       .ignoresProtect()
       .ignoresVirtual(),
     new StatusMove(Moves.TRICK_OR_TREAT, Type.GHOST, 100, 20, -1, 0, 6)
@@ -8212,6 +8315,32 @@ export function initMoves() {
       //TODO: Should also apply when target move priority increased by ability ex. gale wings
       .partial(),
     new AttackMove(Moves.MALIGNANT_CHAIN, Type.POISON, MoveCategory.SPECIAL, 100, 100, 5, 50, 0, 9)
-      .attr(StatusEffectAttr, StatusEffect.TOXIC)
+      .attr(StatusEffectAttr, StatusEffect.TOXIC),
+
+    new AttackMove(Moves.CRYSTAL_RUSH, Type.UNKNOWN, MoveCategory.PHYSICAL, 40, 100, 30, -1, 1, 9),
+    //TODO: CRYSTAL TYPE
+    new AttackMove(Moves.DRAKON_VOICE, Type.DRAGON, MoveCategory.SPECIAL, 105, 85, 10, -1, 0, 9)
+      .soundBased(),
+    new AttackMove(Moves.ANCIENT_ROAR, Type.ROCK, MoveCategory.SPECIAL, 80, 100, 15, -1, 0, 9)
+      .soundBased(),
+    new StatusMove(Moves.MEDUSA_RAY, Type.ROCK, 100, 20, -1, 0, 9)
+      .attr(ChangeTypeAttr, Type.ROCK),
+    new AttackMove(Moves.LUNAR_CANNON, Type.DARK, MoveCategory.SPECIAL, 105, 100, 10, -1, 0, 9)
+      .attr(MoonlightChargeAttr, ChargeAnim.GEOMANCY_CHARGING, "bathed\nin darkness")
+      .ignoresVirtual(),
+    new StatusMove(Moves.SPIRIT_AWAY, Type.FAIRY, -1, 10, -1, 0, 9)
+      //TODO: MAKE THIS WORK as expected
+      .unimplemented(),
+    new AttackMove(Moves.CORRODE, Type.POISON, MoveCategory.SPECIAL, 70, 100, 10, -1, 0, 9)
+      .attr(SuperEffectDamageAgainstSteelTypeMultiplierAttr),
+    new StatusMove(Moves.MORPH, Type.NORMAL, -1, 10, -1, 0, 9)
+      .attr(MorphAttr)
+      .ignoresProtect(),
+    new StatusMove(Moves.RETROGRADE, Type.NORMAL, -1, 10, -1, 0, 1)
+      .unimplemented(),
+    new StatusMove(Moves.NEW_MOON, Type.DARK, -1, 5, -1, 0, 2)
+    .attr(WeatherChangeAttr, WeatherType.NEW_MOON)
+    .target(MoveTarget.BOTH_SIDES)
+    .partial(),
   );
 }

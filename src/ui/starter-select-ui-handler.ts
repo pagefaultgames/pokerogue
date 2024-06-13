@@ -2106,8 +2106,14 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       }
 
       if (dexEntry.caughtAttr) {
-        const ability = this.lastSpecies.getAbility(abilityIndex);
-        this.pokemonAbilityText.setText(allAbilities[ability].name);
+        if (formIndex > 0){
+          const ability = this.lastSpecies.forms[formIndex].getAbility(abilityIndex);
+          this.pokemonAbilityText.setText(allAbilities[ability].name);
+        }
+        else{
+          const ability = this.lastSpecies.getAbility(abilityIndex);
+          this.pokemonAbilityText.setText(allAbilities[ability].name);
+        }
 
         const isHidden = abilityIndex === (this.lastSpecies.ability2 ? 2 : 1);
         this.pokemonAbilityText.setColor(this.getTextColor(!isHidden ? TextStyle.SUMMARY_ALT : TextStyle.SUMMARY_GOLD));
