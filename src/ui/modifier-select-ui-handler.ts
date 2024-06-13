@@ -231,7 +231,11 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       });
 
       this.setCursor(0);
-      this.setRowCursor(1);
+      if(this.scene.hasRerolled){
+        this.setRowCursor(this.scene.rerollTarget);
+      } else {
+        this.setRowCursor(1);
+      }
 
       handleTutorial(this.scene, Tutorial.Select_Item).then(() => {
         this.setCursor(0);

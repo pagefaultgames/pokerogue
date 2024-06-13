@@ -54,6 +54,7 @@ export const SettingKeys = {
   Damage_Numbers: "DAMAGE_NUMBERS",
   Move_Animations: "MOVE_ANIMATIONS",
   Show_Stats_on_Level_Up: "SHOW_LEVEL_UP_STATS",
+  Reroll_Target: "REROLL_TARGET",
   Candy_Upgrade_Notification: "CANDY_UPGRADE_NOTIFICATION",
   Candy_Upgrade_Display: "CANDY_UPGRADE_DISPLAY",
   Move_Info: "MOVE_INFO",
@@ -193,6 +194,13 @@ export const Setting: Array<Setting> = [
     key: SettingKeys.Show_Stats_on_Level_Up,
     label: "Show Stats on Level Up",
     options: OFF_ON,
+    default: 1,
+    type: SettingType.DISPLAY
+  },
+  {
+    key: SettingKeys.Reroll_Target,
+    label: "Reroll Target",
+    options: ["Reroll", "Items", "Shop"],
     default: 1,
     type: SettingType.DISPLAY
   },
@@ -424,6 +432,8 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
   case SettingKeys.Show_Stats_on_Level_Up:
     scene.showLevelUpStats = Setting[index].options[value] === "On";
     break;
+  case SettingKeys.Reroll_Target:
+    scene.rerollTarget = value;
   case SettingKeys.EXP_Gains_Speed:
     scene.expGainsSpeed = value;
     break;
