@@ -56,7 +56,7 @@ export default class VouchersUiHandler extends MessageUiHandler {
       const x = (a % itemCols) * 18;
       const y = Math.floor(a / itemCols) * 18;
 
-      const icon = this.scene.add.sprite(x, y, "items", "unknown");
+      const icon = this.scene.add.sprite(x, y, "vouchers", "unknown");
       icon.setOrigin(0, 0);
       icon.setScale(0.5);
 
@@ -232,8 +232,11 @@ export default class VouchersUiHandler extends MessageUiHandler {
     voucherRange.forEach((voucher: Voucher, i: integer) => {
       const icon = this.voucherIcons[i];
       const unlocked = voucherUnlocks.hasOwnProperty(voucher.id);
-
-      icon.setFrame(getVoucherTypeIcon(voucher.voucherType));
+      if (voucher.icon) {
+        icon.setFrame(voucher.icon);
+      } else {
+        icon.setFrame(getVoucherTypeIcon(voucher.voucherType));
+      }
       icon.setVisible(true);
       if (!unlocked) {
         icon.setTintFill(0);

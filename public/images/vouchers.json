@@ -1,0 +1,461 @@
+{
+	"textures": [
+		{
+			"image": "vouchers.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 133,
+				"h": 133
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "boulder_badge",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 1,
+						"w": 30,
+						"h": 30
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 30,
+						"h": 30
+					}
+				},
+				{
+					"filename": "hive_badge",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 1,
+						"w": 30,
+						"h": 30
+					},
+					"frame": {
+						"x": 0,
+						"y": 30,
+						"w": 30,
+						"h": 30
+					}
+				},
+				{
+					"filename": "marsh_badge",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 1,
+						"w": 30,
+						"h": 30
+					},
+					"frame": {
+						"x": 0,
+						"y": 60,
+						"w": 30,
+						"h": 30
+					}
+				},
+				{
+					"filename": "mineral_badge",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 1,
+						"w": 30,
+						"h": 30
+					},
+					"frame": {
+						"x": 0,
+						"y": 90,
+						"w": 30,
+						"h": 30
+					}
+				},
+				{
+					"filename": "earth_badge",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 2,
+						"w": 30,
+						"h": 28
+					},
+					"frame": {
+						"x": 30,
+						"y": 0,
+						"w": 30,
+						"h": 28
+					}
+				},
+				{
+					"filename": "falkner-zephyr_badge",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 2,
+						"w": 30,
+						"h": 28
+					},
+					"frame": {
+						"x": 60,
+						"y": 0,
+						"w": 30,
+						"h": 28
+					}
+				},
+				{
+					"filename": "plain_badge",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 2,
+						"w": 30,
+						"h": 28
+					},
+					"frame": {
+						"x": 90,
+						"y": 0,
+						"w": 30,
+						"h": 28
+					}
+				},
+				{
+					"filename": "fog_badge",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 3,
+						"w": 30,
+						"h": 26
+					},
+					"frame": {
+						"x": 30,
+						"y": 28,
+						"w": 30,
+						"h": 26
+					}
+				},
+				{
+					"filename": "storm_badge",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 3,
+						"w": 30,
+						"h": 26
+					},
+					"frame": {
+						"x": 60,
+						"y": 28,
+						"w": 30,
+						"h": 26
+					}
+				},
+				{
+					"filename": "rainbow_badge",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 2,
+						"y": 1,
+						"w": 29,
+						"h": 29
+					},
+					"frame": {
+						"x": 90,
+						"y": 28,
+						"w": 29,
+						"h": 29
+					}
+				},
+				{
+					"filename": "rising_badge",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 2,
+						"y": 1,
+						"w": 28,
+						"h": 30
+					},
+					"frame": {
+						"x": 30,
+						"y": 54,
+						"w": 28,
+						"h": 30
+					}
+				},
+				{
+					"filename": "volcano_badge",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 2,
+						"y": 1,
+						"w": 28,
+						"h": 30
+					},
+					"frame": {
+						"x": 58,
+						"y": 54,
+						"w": 28,
+						"h": 30
+					}
+				},
+				{
+					"filename": "glacier_badge",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 3,
+						"y": 1,
+						"w": 26,
+						"h": 30
+					},
+					"frame": {
+						"x": 30,
+						"y": 84,
+						"w": 26,
+						"h": 30
+					}
+				},
+				{
+					"filename": "coupon",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 4,
+						"y": 7,
+						"w": 23,
+						"h": 19
+					},
+					"frame": {
+						"x": 30,
+						"y": 114,
+						"w": 23,
+						"h": 19
+					}
+				},
+				{
+					"filename": "golden_mystic_ticket",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 4,
+						"y": 7,
+						"w": 23,
+						"h": 19
+					},
+					"frame": {
+						"x": 53,
+						"y": 114,
+						"w": 23,
+						"h": 19
+					}
+				},
+				{
+					"filename": "soul_badge",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 3,
+						"y": 1,
+						"w": 26,
+						"h": 30
+					},
+					"frame": {
+						"x": 56,
+						"y": 84,
+						"w": 26,
+						"h": 30
+					}
+				},
+				{
+					"filename": "mystic_ticket",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 4,
+						"y": 7,
+						"w": 23,
+						"h": 19
+					},
+					"frame": {
+						"x": 76,
+						"y": 114,
+						"w": 23,
+						"h": 19
+					}
+				},
+				{
+					"filename": "cascade_badge",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 1,
+						"w": 22,
+						"h": 30
+					},
+					"frame": {
+						"x": 82,
+						"y": 84,
+						"w": 22,
+						"h": 30
+					}
+				},
+				{
+					"filename": "pair_of_tickets",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 4,
+						"y": 7,
+						"w": 23,
+						"h": 19
+					},
+					"frame": {
+						"x": 99,
+						"y": 114,
+						"w": 23,
+						"h": 19
+					}
+				},
+				{
+					"filename": "thunder_badge",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 2,
+						"y": 2,
+						"w": 27,
+						"h": 28
+					},
+					"frame": {
+						"x": 104,
+						"y": 57,
+						"w": 27,
+						"h": 28
+					}
+				},
+				{
+					"filename": "ribbon-gen1",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 2,
+						"w": 22,
+						"h": 28
+					},
+					"frame": {
+						"x": 104,
+						"y": 85,
+						"w": 22,
+						"h": 28
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:53d986d331ea960d22c59c3472e051f1:795fb8b375667965817598a1a792a31e:b96935c75d1175dd464f8d6a33fa8f82$"
+	}
+}
