@@ -290,7 +290,7 @@ export const speciesEggMoves = {
   [Species.TRUBBISH]: [ Moves.TIDY_UP, Moves.RECOVER, Moves.DIRE_CLAW, Moves.GIGATON_HAMMER ],
   [Species.ZORUA]: [ Moves.FLAMETHROWER, Moves.MOONBLAST, Moves.AURA_SPHERE, Moves.FIERY_WRATH ],
   [Species.MINCCINO]: [ Moves.ICICLE_SPEAR, Moves.TIDY_UP, Moves.KNOCK_OFF, Moves.POPULATION_BOMB ],
-  [Species.GOTHITA]: [ Moves.MILK_DRINK, Moves.MOONBLAST, Moves.AURA_SPHERE, Moves.PSYSTRIKE ],
+  [Species.GOTHITA]: [ Moves.MOONLIGHT, Moves.MOONBLAST, Moves.AURA_SPHERE, Moves.PSYSTRIKE ],
   [Species.SOLOSIS]: [ Moves.COSMIC_POWER, Moves.MOONBLAST, Moves.AURA_SPHERE, Moves.PSYSTRIKE ],
   [Species.DUCKLETT]: [ Moves.QUIVER_DANCE, Moves.EARTH_POWER, Moves.FREEZE_DRY, Moves.OBLIVION_WING ],
   [Species.VANILLITE]: [ Moves.EARTH_POWER, Moves.AURORA_VEIL, Moves.DECORATE, Moves.MILK_DRINK ],
