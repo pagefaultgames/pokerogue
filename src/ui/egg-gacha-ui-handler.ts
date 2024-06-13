@@ -402,9 +402,9 @@ export default class EggGachaUiHandler extends MessageUiHandler {
           } else if (this.scene.gameData.eggPity[EggTier.GREAT] >= 9 && tiers[i] === EggTier.COMMON) {
             tiers[i] = EggTier.GREAT;
           }
-        this.scene.gameData.eggPity[tiers[i]] = 0;
+          this.scene.gameData.eggPity[tiers[i]] = 0;
+        }
       }
-    }
 
       const timestamp = new Date().getTime();
 
