@@ -1,9 +1,7 @@
-import { Moves } from "./enums/moves";
 import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
 import { BattleEndPhase, MovePhase, NewBattlePhase, PartyStatusCurePhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../phases";
 import { BattleStat, getBattleStatName } from "./battle-stat";
 import { EncoreTag } from "./battler-tags";
-import { BattlerTagType } from "./enums/battler-tag-type";
 import { getPokemonMessage } from "../messages";
 import Pokemon, { AttackMoveResult, EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../field/pokemon";
 import { StatusEffect, getStatusEffectHealText, isNonVolatileStatusEffect, getNonVolatileStatusEffects} from "./status-effect";
@@ -11,19 +9,16 @@ import { Type } from "./type";
 import * as Utils from "../utils";
 import { WeatherType } from "./weather";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
-import { ArenaTagType } from "./enums/arena-tag-type";
 import { UnswappableAbilityAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr, applyPostDefendAbAttrs, PostDefendContactApplyStatusEffectAbAttr, MoveAbilityBypassAbAttr, ReverseDrainAbAttr, FieldPreventExplosiveMovesAbAttr, ForceSwitchOutImmunityAbAttr, BlockItemTheftAbAttr, applyPostAttackAbAttrs, ConfusionOnStatusEffectAbAttr, HealFromBerryUseAbAttr } from "./ability";
-import { Abilities } from "./enums/abilities";
+import { Abilities, ArenaTagType, BattlerTagType, Biome, Moves, Species } from "#enums";
 import { allAbilities } from "./ability";
 import { PokemonHeldItemModifier, BerryModifier, PreserveBerryModifier } from "../modifier/modifier";
 import { BattlerIndex } from "../battle";
 import { Stat } from "./pokemon-stat";
 import { TerrainType } from "./terrain";
 import { SpeciesFormChangeActiveTrigger } from "./pokemon-forms";
-import { Species } from "./enums/species";
 import { ModifierPoolType } from "#app/modifier/modifier-type";
 import { Command } from "../ui/command-ui-handler";
-import { Biome } from "./enums/biome";
 import i18next, { Localizable } from "../plugins/i18n";
 import { getBerryEffectFunc } from "./berry";
 
@@ -1797,7 +1792,7 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
 }
 
 /**
- * Attribute that causes targets of the move to eat a berry. If chosenBerry is not overriden, a random berry will be picked from the target's inventory.
+ * Attribute that causes targets of the move to eat a berry. If chosenBerry is not overridden, a random berry will be picked from the target's inventory.
  */
 export class EatBerryAttr extends MoveEffectAttr {
   protected chosenBerry: BerryModifier;

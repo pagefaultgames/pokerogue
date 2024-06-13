@@ -1,5 +1,5 @@
 import {beforeEach, describe, expect, it} from "vitest";
-import {Button} from "#app/enums/buttons";
+import {Button, Device} from "#enums";
 import {deepCopy} from "#app/utils";
 import {
   getKeyWithKeycode,
@@ -7,7 +7,6 @@ import {
 } from "#app/configs/inputs/configHandler";
 import {MenuManip} from "#app/test/settingMenu/helpers/menuManip";
 import {InGameManip} from "#app/test/settingMenu/helpers/inGameManip";
-import {Device} from "#app/enums/devices";
 import {InterfaceConfig} from "#app/inputs-controller";
 import cfg_keyboard_qwerty from "#app/configs/inputs/cfg_keyboard_qwerty";
 import {SettingKeyboard} from "#app/system/settings/settings-keyboard";

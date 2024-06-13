@@ -6,12 +6,11 @@ import pad_unlicensedSNES from "./configs/inputs/pad_unlicensedSNES";
 import pad_xbox360 from "./configs/inputs/pad_xbox360";
 import pad_dualshock from "./configs/inputs/pad_dualshock";
 import pad_procon from "./configs/inputs/pad_procon";
-import {Button} from "./enums/buttons";
 import {Mode} from "./ui/ui";
 import SettingsGamepadUiHandler from "./ui/settings/settings-gamepad-ui-handler";
 import SettingsKeyboardUiHandler from "./ui/settings/settings-keyboard-ui-handler";
 import cfg_keyboard_qwerty from "./configs/inputs/cfg_keyboard_qwerty";
-import {Device} from "#app/enums/devices";
+import {Button, Device} from "#enums";
 import {
   assign,
   getButtonWithKeycode,
