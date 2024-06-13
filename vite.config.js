@@ -1,20 +1,16 @@
 import { resolve } from 'path';
 import { defineConfig } from 'vite';
+import tsconfigPaths from 'vite-tsconfig-paths';
 // import fs from 'vite-plugin-fs';
 
 export default defineConfig(({ mode }) => {
 	return {
-		plugins: [/*fs()*/],
+		plugins: [tsconfigPaths()],
 		server: { host: '0.0.0.0', port: 8000 },
 		clearScreen: false,
 		build: {
 			minify: 'esbuild',
 			sourcemap: false,
-			rollupOptions: {
-				external: [
-					/^\#enums/,
-				]
-			}
 		},
 		rollupOptions: {
 			onwarn(warning, warn) {
