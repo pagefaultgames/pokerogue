@@ -1004,7 +1004,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param {boolean} passive If true, check if passive can be applied instead of non-passive
    * @returns {Ability} The passive ability of the pokemon
    */
-  canApplyAbility(passive: boolean = false, forceBypass: boolean = false): boolean {
+  canApplyAbility(passive: boolean = false): boolean {
     if (passive && !this.hasPassive()) {
       return false;
     }
@@ -1032,7 +1032,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         return false;
       }
     }
-    return (this.hp || ability.isBypassFaint || forceBypass) && !ability.conditions.find(condition => !condition(this));
+    return (this.hp || ability.isBypassFaint) && !ability.conditions.find(condition => !condition(this));
   }
 
   /**
@@ -2527,8 +2527,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   * Resets the status of a pokemon.
   * @param revive Whether revive should be cured; defaults to true.
   * @param confusion Whether resetStatus should include confusion or not; defaults to false.
+  * @param reloadAssets Whether to reload the assets or not; defaults to false.
   */
-  resetStatus(revive: boolean = true, confusion: boolean = false): void {
+  resetStatus(revive: boolean = true, confusion: boolean = false, reloadAssets: boolean = false): void {
     const lastStatus = this.status?.effect;
     if (!revive && lastStatus === StatusEffect.FAINT) {
       return;
@@ -2544,6 +2545,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (this.getTag(BattlerTagType.CONFUSED)) {
         this.lapseTag(BattlerTagType.CONFUSED);
       }
+    }
+    if (reloadAssets) {
+      this.loadAssets(false).then(() => this.playAnim());
     }
   }
 
