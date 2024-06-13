@@ -1,0 +1,31 @@
+name: Tests
+
+on:
+  # Trigger the workflow on push or pull request,
+  # but only for the main branch
+  push:
+    branches:
+      - main  # Trigger on push events to the main branch
+  pull_request:
+    branches:
+      - main  # Trigger on pull request events targeting the main branch
+
+jobs:
+  run-tests:  # Define a job named "run-tests"
+    name: Run tests  # Human-readable name for the job
+    runs-on: ubuntu-latest  # Specify the latest Ubuntu runner for the job
+
+    steps:
+      - name: Check out Git repository  # Step to check out the repository
+        uses: actions/checkout@v4  # Use the checkout action version 4
+
+      - name: Set up Node.js  # Step to set up Node.js environment
+        uses: actions/setup-node@v4  # Use the setup-node action version 4
+        with:
+          node-version: 20  # Specify Node.js version 20
+
+      - name: Install Node.js dependencies  # Step to install Node.js dependencies
+        run: npm ci  # Use 'npm ci' to install dependencies
+
+      - name: tests  # Step to run tests
+        run: npm run test:silent
