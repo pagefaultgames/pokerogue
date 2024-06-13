@@ -337,6 +337,13 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
           case 2:
             success = false;
             break;
+          case 3:
+            if (this.transferButtonContainer.visible) {
+              success = this.setCursor(1);
+            } else {
+              success = this.setCursor(2);
+            }
+            break;
           }
         } else if (this.cursor < this.getRowItems(this.rowCursor) - 1) {
           success = this.setCursor(this.cursor + 1);
