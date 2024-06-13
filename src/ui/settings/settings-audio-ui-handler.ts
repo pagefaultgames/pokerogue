@@ -6,7 +6,7 @@ import { SettingType } from "#app/system/settings/settings";
 
 export default class SettingsAudioUiHandler extends AbstractSettingsUiHandler {
   /**
-   * Creates an instance of SettingsGamepadUiHandler.
+   * Creates an instance of SettingsAudioUiHandler.
    *
    * @param scene - The BattleScene instance.
    * @param mode - The UI mode, optional.
@@ -15,5 +15,6 @@ export default class SettingsAudioUiHandler extends AbstractSettingsUiHandler {
     super(scene, mode, SettingType.AUDIO);
     this.title = "Audio";
     this.localStorageKey = "settings";
+    this.rowsToDisplay = 4;
   }
 }

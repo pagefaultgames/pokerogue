@@ -32,6 +32,11 @@ input:-internal-autofill-selected {
   background-clip: text;
 }
 
+/* Need adjust input font-size */
+input {
+  font-size: 3.2rem;
+}
+
 .hidden {
   display: none !important;
 }
