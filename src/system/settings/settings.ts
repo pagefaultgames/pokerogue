@@ -4,7 +4,7 @@ import BattleScene from "../../battle-scene";
 import { hasTouchscreen } from "../../touch-controls";
 import { updateWindowType } from "../../ui/ui-theme";
 import { PlayerGender } from "#app/data/enums/player-gender";
-import { CandyUpgradeNotificationChangedEvent } from "#app/battle-scene-events.js";
+import { CandyUpgradeNotificationChangedEvent } from "../../events/battle-scene";
 import { MoneyFormat } from "../../enums/money-format";
 import SettingsUiHandler from "#app/ui/settings/settings-ui-handler";
 import { EaseType } from "#app/ui/enums/ease-type.js";
@@ -463,8 +463,7 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
       if (scene.ui) {
         const cancelHandler = () => {
           scene.ui.revertMode();
-          const languageSetting = Setting.find(setting => setting.key === SettingKeys.Language);
-          (scene.ui.getHandler() as SettingsUiHandler).setOptionCursor(Setting.indexOf(languageSetting), 0, true);
+          (scene.ui.getHandler() as SettingsUiHandler).setOptionCursor(0, 0, true);
         };
         const changeLocaleHandler = (locale: string): boolean => {
           try {

@@ -70,7 +70,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "자신의 포켓몬의 HP를 모두 회복한다.",
     },
     "AllPokemonFullReviveModifierType": {
-      description: "자신의 포켓몬의 HP를 기절해 버렸더라도 모두 회복한다.",
+      description: "기절해 버린 포켓몬 전원의 HP를 완전히 회복한다.",
     },
     "MoneyRewardModifierType": {
       description: "{{moneyMultiplier}} 양의 돈을 획득한다 (₽{{moneyAmount}}).",
@@ -425,5 +425,6 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "DRAGON_MEMORY": "드래곤메모리",
     "DARK_MEMORY": "다크메모리",
     "FAIRY_MEMORY": "페어리메모리",
+    "BLANK_MEMORY": "빈메모리",
   },
 } as const;

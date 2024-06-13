@@ -6517,8 +6517,8 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.METAGROSS]: [
     [ 0, Moves.HAMMER_ARM ],
-    [ 0, Moves.CONFUSION ],
-    [ 0, Moves.METAL_CLAW ],
+    [ 1, Moves.CONFUSION ],
+    [ 1, Moves.METAL_CLAW ],
     [ 1, Moves.BULLET_PUNCH ],
     [ 1, Moves.TACKLE ],
     [ 1, Moves.EXPLOSION ],
