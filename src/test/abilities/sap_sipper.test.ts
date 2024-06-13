@@ -4,10 +4,8 @@ import GameManager from "#app/test/utils/gameManager";
 import * as overrides from "#app/overrides";
 import {Species} from "#app/data/enums/species";
 import {
-  CommandPhase,
-  EnemyCommandPhase, MoveEndPhase, TurnEndPhase,
+  MoveEndPhase, TurnEndPhase,
 } from "#app/phases";
-import {Mode} from "#app/ui/ui";
 import {Moves} from "#app/data/enums/moves";
 import {getMovePosition} from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#app/data/enums/abilities.js";
