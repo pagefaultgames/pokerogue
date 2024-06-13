@@ -41,6 +41,7 @@ describe("Abilities - Volt Absorb", () => {
     vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(ability);
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
     vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.DUSKULL);
+    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
 
     await game.startBattle();
 
@@ -50,5 +51,6 @@ describe("Abilities - Volt Absorb", () => {
 
     expect(game.scene.getParty()[0].summonData.battleStats[BattleStat.SPDEF]).toBe(1);
     expect(game.scene.getParty()[0].getTag(BattlerTagType.CHARGED)).toBeDefined();
+    expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
   });
 });
