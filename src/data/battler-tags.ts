@@ -34,13 +34,15 @@ export class BattlerTag {
   public turnCount: integer;
   public sourceMove: Moves;
   public sourceId?: integer;
+  public ignoreTurnCount: boolean;
 
-  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, turnCount: integer, sourceMove: Moves, sourceId?: integer) {
+  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, turnCount: integer, sourceMove: Moves, sourceId?: integer, ignoreTurnCount: boolean = false) {
     this.tagType = tagType;
     this.lapseType = lapseType;
     this.turnCount = turnCount;
     this.sourceMove = sourceMove;
     this.sourceId = sourceId;
+    this.ignoreTurnCount = ignoreTurnCount;
   }
 
   canAdd(pokemon: Pokemon): boolean {
@@ -54,7 +56,7 @@ export class BattlerTag {
   onOverlap(pokemon: Pokemon): void { }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    return --this.turnCount > 0;
+    return this.ignoreTurnCount || (--this.turnCount > 0);
   }
 
   getDescriptor(): string {
@@ -1207,6 +1209,43 @@ export class MagnetRisenTag extends TypeImmuneTag {
   }
 }
 
+/**
+ * A tag used to identify when a pokemon has used imprison since it was summoned.
+ * @see {@linkcode onAdd}
+ * @see {@linkcode onOverlap}
+ * @see {@linkcode lapse}
+ * @see {@linkcode getDescriptor}
+ */
+export class ImprisonTag extends BattlerTag {
+  constructor(sourceMove: Integer) {
+    super(BattlerTagType.IMPRISON, BattlerTagLapseType.CUSTOM, 0, sourceMove, undefined, true);
+  }
+
+  /**
+   * There are no immediate effects of imprison, all effects occur on opposing pokemon turns.
+   * @param pokemon The pokemon using imprison.
+   */
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` sealed any\nmoves its target shares with it!`));
+  }
+
+  /**
+   * If the pokemon tries to use imprison a second time, there are no additional effects.
+   * @param pokemon The pokemon using imprison.
+   */
+  onOverlap(pokemon: Pokemon): void {
+    super.onOverlap(pokemon);
+
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is\nalready imprisoning!'));
+  }
+
+  getDescriptor(): string {
+    return 'imprison';
+  }
+}
+
 export class TypeBoostTag extends BattlerTag {
   public boostedType: Type;
   public boostValue: number;
@@ -1518,10 +1557,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
     return new MagnetRisenTag(tagType, sourceMove);
   case BattlerTagType.MINIMIZED:
     return new MinimizeTag();
-  case BattlerTagType.DESTINY_BOND:
-    return new DestinyBondTag(sourceMove, sourceId);
-  case BattlerTagType.ICE_FACE:
-    return new IceFaceTag(sourceMove);
+  case BattlerTagType.IMPRISON:
+    return new ImprisonTag(sourceMove);
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);

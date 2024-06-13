@@ -2126,7 +2126,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   lapseTags(lapseType: BattlerTagLapseType): void {
     const tags = this.summonData.tags;
-    tags.filter(t => lapseType === BattlerTagLapseType.FAINT || ((t.lapseType === lapseType) && !(t.lapse(this, lapseType))) || (lapseType === BattlerTagLapseType.TURN_END && t.turnCount < 1)).forEach(t => {
+    tags.filter(t => lapseType === BattlerTagLapseType.FAINT || ((t.lapseType === lapseType) && !(t.lapse(this, lapseType))) || (!t.ignoreTurnCount && lapseType === BattlerTagLapseType.TURN_END && t.turnCount < 1)).forEach(t => {
       t.onRemove(this);
       tags.splice(tags.indexOf(t), 1);
     });
@@ -3906,8 +3906,21 @@ export class PokemonMove {
     this.virtual = !!virtual;
   }
 
+  /**
+   * Checks whether the current move is restricted by an opposing pokemon that has used imprison.
+   * @param pokemon This is the pokemon that is trying to attack, their moves will be limited by opposing pokemon who have used imprisoned.
+   * @returns True if the move is imprisoned by an opposing pokemon and cannot be used, false if the move is useable.
+   */
+  private isImprisoned(pokemon: Pokemon) {
+    const opposingPokemon = pokemon.isPlayer() ? pokemon.scene.getEnemyField() as Pokemon[] : pokemon.scene.getPlayerField() as Pokemon[];
+    const imprisoningOpponents = opposingPokemon.filter(p => p.summonData.tags.some(({ tagType }) => tagType === BattlerTagType.IMPRISON));
+    const imprisonedMoves = imprisoningOpponents.flatMap(p => p.moveset);
+
+    return imprisonedMoves.some(m => m.moveId === this.moveId);
+  }
+
   isUsable(pokemon: Pokemon, ignorePp?: boolean): boolean {
-    if (this.moveId && pokemon.summonData?.disabledMove === this.moveId) {
+    if (this.moveId && (pokemon.summonData?.disabledMove === this.moveId) || this.isImprisoned(pokemon))
       return false;
     }
     return (ignorePp || this.ppUsed < this.getMovePp() || this.getMove().pp === -1) && !this.getMove().name.endsWith(" (N)");

@@ -1191,6 +1191,7 @@ export class PostSummonPhase extends PokemonPhase {
     super.start();
 
     const pokemon = this.getPokemon();
+    pokemon.removeTag(BattlerTagType.IMPRISON);
 
     if (pokemon.status?.effect === StatusEffect.TOXIC) {
       pokemon.status.turnCount = 0;
