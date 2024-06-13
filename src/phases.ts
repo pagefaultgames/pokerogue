@@ -1025,15 +1025,19 @@ export class EncounterPhase extends BattlePhase {
 
     if (this.scene.currentBattle.battleType !== BattleType.TRAINER) {
       enemyField.map(p => this.scene.pushConditionalPhase(new PostSummonPhase(this.scene, p.getBattlerIndex()), () => {
-        // is the player party initialized ?
-        const a = !!this.scene.getParty()?.length;
+        // if there is not a player party, we can't continue
+        if (!this.scene.getParty()?.length) {
+          return false;
+        }
         // how many player pokemon are on the field ?
-        const amountOnTheField = this.scene.getParty().filter(p => p.isOnField()).length;
+        const pokemonsOnFieldCount = this.scene.getParty().filter(p => p.isOnField()).length;
         // if it's a 2vs1, there will never be a 2nd pokemon on our field even
-        const minPossible = Math.min(this.scene.getParty().filter((p) => !p.isFainted()).length, 2);
+        const requiredPokemonsOnField  = Math.min(this.scene.getParty().filter((p) => !p.isFainted()).length, 2);
         // if it's a double, there should be 2, otherwise 1
-        const b = this.scene.currentBattle.double ? amountOnTheField === minPossible : amountOnTheField === 1;
-        return a && b;
+        if (this.scene.currentBattle.double) {
+          return pokemonsOnFieldCount === requiredPokemonsOnField;
+        }
+        return pokemonsOnFieldCount === 1;
       }));
       const ivScannerModifier = this.scene.findModifier(m => m instanceof IvScannerModifier);
       if (ivScannerModifier) {
