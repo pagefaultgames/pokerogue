@@ -19,7 +19,7 @@ import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEv
 import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "../data/tms";
 import { DamagePhase, FaintPhase, LearnMovePhase, ObtainStatusEffectPhase, StatChangePhase, SwitchSummonPhase, ToggleDoublePositionPhase  } from "../phases";
 import { BattleStat } from "../data/battle-stat";
-import { BattlerTag, BattlerTagLapseType, EncoreTag, HelpingHandTag, HighestStatBoostTag, TypeBoostTag, getBattlerTag } from "../data/battler-tags";
+import { BattlerTag, BattlerTagLapseType, EncoreTag, HelpingHandTag, HighestStatBoostTag, ExposedTag, TypeBoostTag, getBattlerTag } from "../data/battler-tags";
 import { BattlerTagType } from "../data/enums/battler-tag-type";
 import { Species } from "../data/enums/species";
 import { WeatherType } from "../data/weather";
@@ -1150,6 +1150,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           applyAbAttrs(IgnoreTypeImmunityAbAttr, source, ignoreImmunity, moveType, defType);
         }
         if (ignoreImmunity.value) {
+          return 1;
+        }
+
+        const exposedTags = this.getTags(ExposedTag) as ExposedTag[];
+        if (exposedTags.some(t => t.ignoreImmunity(defType, moveType))) {
           return 1;
         }
       }
