@@ -1868,6 +1868,9 @@ export class PostSummonFormChangeAbAttr extends PostSummonAbAttr {
 
 /** Attempts to copy a pokemon's ability */
 export class PostSummonCopyAbilityAbAttr extends PostSummonAbAttr {
+  private targetName: string;
+  private targetAbilityName: string;
+
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     const targets = pokemon.getOpponents();
     if (!targets.length) {
@@ -1889,17 +1892,24 @@ export class PostSummonCopyAbilityAbAttr extends PostSummonAbAttr {
       return false;
     }
 
+    this.targetName = target.name;
+    this.targetAbilityName = allAbilities[target.getAbility().id].name;
     pokemon.summonData.ability = target.getAbility().id;
     pokemon.updateInfo();
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` traced ${target.name}'s\n${allAbilities[target.getAbility().id].name}!`));
 
     return true;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
+    return getPokemonMessage(pokemon, ` copied ${this.targetName}'s\n${this.targetAbilityName}!`);
   }
 }
 
 
 /** Attempt to copy the stat changes on an ally pokemon */
 export class PostSummonCopyAllyStatsAbAttr extends PostSummonAbAttr {
+  private allyName: string;
+
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     if (!pokemon.scene.currentBattle.double) {
       return false;
@@ -1910,11 +1920,15 @@ export class PostSummonCopyAllyStatsAbAttr extends PostSummonAbAttr {
       return false;
     }
 
+    this.allyName = ally.name;
     pokemon.summonData.battleStats = ally.summonData.battleStats;
     pokemon.updateInfo();
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` copied ${ally.name}'s stat changes!`));
 
     return true;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
+    return getPokemonMessage(pokemon, ` copied ${this.allyName}'s stat changes!`);
   }
 }
 
