@@ -27,7 +27,7 @@ import { TempBattleStat } from "../data/temp-battle-stat";
 import { ArenaTagSide, WeakenMoveScreenTag, WeakenMoveTypeTag } from "../data/arena-tag";
 import { ArenaTagType } from "../data/enums/arena-tag-type";
 import { Biome } from "../data/enums/biome";
-import { Ability, AbAttr, BattleStatMultiplierAbAttr, MoveTypeChangeAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, FieldVariableMovePowerAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, PreApplyBattlerTagAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr } from "../data/ability";
+import { Ability, AbAttr, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, FieldVariableMovePowerAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, MoveTypeChangeAttr, PreApplyBattlerTagAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldBattleStatMultiplierAbAttrs, FieldMultiplyBattleStatAbAttr } from "../data/ability";
 import { Abilities } from "#app/data/enums/abilities";
 import PokemonData from "../system/pokemon-data";
 import { BattlerIndex } from "../battle";
@@ -656,6 +656,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.scene.applyModifiers(TempBattleStatBoosterModifier, this.isPlayer(), battleStat as integer as TempBattleStat, statLevel);
     }
     const statValue = new Utils.NumberHolder(this.getStat(stat));
+    const fieldApplied = new Utils.BooleanHolder(false);
+    for (const pokemon of this.scene.getField(true)) {
+      applyFieldBattleStatMultiplierAbAttrs(FieldMultiplyBattleStatAbAttr, pokemon, stat, statValue, this, fieldApplied);
+      if (fieldApplied.value) {
+        break;
+      }
+    }
     applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, this, battleStat, statValue);
     let ret = statValue.value * (Math.max(2, 2 + statLevel.value) / Math.max(2, 2 - statLevel.value));
     switch (stat) {
@@ -952,6 +959,29 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
+   * Gets a list of all instances of a given ability attribute among abilities this pokemon has.
+   * Accounts for all the various effects which can affect whether an ability will be present or
+   * in effect, and both passive and non-passive.
+   * @param attrType {@linkcode AbAttr} The ability attribute to check for.
+   * @param canApply {@linkcode Boolean} If false, it doesn't check whether the ability is currently active
+   * @param ignoreOverride {@linkcode Boolean} If true, it ignores ability changing effects
+   * @returns {AbAttr[]} A list of all the ability attributes on this ability.
+   */
+  getAbilityAttrs(attrType: { new(...args: any[]): AbAttr }, canApply: boolean = true, ignoreOverride?: boolean): AbAttr[] {
+    const abilityAttrs: AbAttr[] = [];
+
+    if (!canApply || this.canApplyAbility()) {
+      abilityAttrs.push(...this.getAbility(ignoreOverride).getAttrs(attrType));
+    }
+
+    if (!canApply || this.canApplyAbility(true)) {
+      abilityAttrs.push(...this.getPassiveAbility().getAttrs(attrType));
+    }
+
+    return abilityAttrs;
+  }
+
+  /**
    * Checks if a pokemon has a passive either from:
    *  - bought with starter candy
    *  - set by override
@@ -1081,7 +1111,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return undefined;
     }
 
-    return this.getAttackMoveEffectiveness(source, move, true);
+    return this.getAttackMoveEffectiveness(source, move, !this.battleData?.abilityRevealed);
   }
 
   /**
@@ -1116,7 +1146,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     let multiplier = types.map(defType => {
       if (source) {
         const ignoreImmunity = new Utils.BooleanHolder(false);
-        applyAbAttrs(IgnoreTypeImmunityAbAttr, source, ignoreImmunity, moveType, defType);
+        if (source.isActive(true) && source.hasAbilityWithAttr(IgnoreTypeImmunityAbAttr)) {
+          applyAbAttrs(IgnoreTypeImmunityAbAttr, source, ignoreImmunity, moveType, defType);
+        }
         if (ignoreImmunity.value) {
           return 1;
         }
@@ -2137,12 +2169,22 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     tags.filter(t => t.sourceId === sourceId).forEach(t => t.sourceId = newSourceId);
   }
 
+  /**
+   * Transferring stat changes and Tags
+   * @param source {@linkcode Pokemon} the pokemon whose stats/Tags are to be passed on from, ie: the Pokemon using Baton Pass
+   */
   transferSummon(source: Pokemon): void {
     const battleStats = Utils.getEnumValues(BattleStat);
     for (const stat of battleStats) {
       this.summonData.battleStats[stat] = source.summonData.battleStats[stat];
     }
     for (const tag of source.summonData.tags) {
+
+      // bypass yawn, and infatuation as those can not be passed via Baton Pass
+      if (tag.sourceMove === Moves.YAWN || tag.tagType === BattlerTagType.INFATUATED) {
+        continue;
+      }
+
       this.summonData.tags.push(tag);
     }
     if (this instanceof PlayerPokemon && source.summonData.battleStats.find(bs => bs === 6)) {
@@ -2485,8 +2527,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   * Resets the status of a pokemon.
   * @param revive Whether revive should be cured; defaults to true.
   * @param confusion Whether resetStatus should include confusion or not; defaults to false.
+  * @param reloadAssets Whether to reload the assets or not; defaults to false.
   */
-  resetStatus(revive: boolean = true, confusion: boolean = false): void {
+  resetStatus(revive: boolean = true, confusion: boolean = false, reloadAssets: boolean = false): void {
     const lastStatus = this.status?.effect;
     if (!revive && lastStatus === StatusEffect.FAINT) {
       return;
@@ -2502,6 +2545,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (this.getTag(BattlerTagType.CONFUSED)) {
         this.lapseTag(BattlerTagType.CONFUSED);
       }
+    }
+    if (reloadAssets) {
+      this.loadAssets(false).then(() => this.playAnim());
     }
   }
 
@@ -3781,6 +3827,7 @@ export class PokemonBattleData {
   public endured: boolean = false;
   public berriesEaten: BerryType[] = [];
   public abilitiesApplied: Abilities[] = [];
+  public abilityRevealed: boolean = false;
 }
 
 export class PokemonBattleSummonData {
