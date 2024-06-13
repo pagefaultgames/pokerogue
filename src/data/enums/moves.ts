@@ -1,5 +1,5 @@
 export enum Moves {
-  /**{@link https://bulbapedia.bulbagarden.net/wiki/None_(move) | Source} */
+  /** Represents an empty slot in the moveset */
   NONE,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pound_(move) | Source} */
   POUND,
