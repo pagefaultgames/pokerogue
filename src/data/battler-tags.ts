@@ -1522,6 +1522,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
     return new DestinyBondTag(sourceMove, sourceId);
   case BattlerTagType.ICE_FACE:
     return new IceFaceTag(sourceMove);
+  case BattlerTagType.STATS_BOOSTED:
+    return new BattlerTag(tagType, BattlerTagLapseType.TURN_END, turnCount, sourceMove);
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
