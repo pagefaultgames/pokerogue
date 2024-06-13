@@ -2542,7 +2542,7 @@ export function initSpecies() {
     ),
     new PokemonSpecies(Species.WALKING_WAKE, 9, false, false, false, "Paradox Pokémon", Type.WATER, Type.DRAGON, 3.5, 280, Abilities.PROTOSYNTHESIS, Abilities.NONE, Abilities.NONE, 590, 99, 83, 91, 125, 83, 109, 5, 0, 295, GrowthRate.SLOW, null, false),
     new PokemonSpecies(Species.IRON_LEAVES, 9, false, false, false, "Paradox Pokémon", Type.GRASS, Type.PSYCHIC, 1.5, 125, Abilities.QUARK_DRIVE, Abilities.NONE, Abilities.NONE, 590, 90, 130, 88, 70, 108, 104, 5, 0, 295, GrowthRate.SLOW, null, false),
-    new PokemonSpecies(Species.DIPPLIN, 9, false, false, false, "Candy Apple Pokémon", Type.GRASS, Type.DRAGON, 0.4, 9.7, Abilities.SUPERSWEET_SYRUP, Abilities.GLUTTONY, Abilities.STICKY_HOLD, 485, 80, 80, 110, 95, 80, 40, 45, 50, 170, GrowthRate.SLOW, null, false),
+    new PokemonSpecies(Species.DIPPLIN, 9, false, false, false, "Candy Apple Pokémon", Type.GRASS, Type.DRAGON, 0.4, 9.7, Abilities.SUPERSWEET_SYRUP, Abilities.GLUTTONY, Abilities.STICKY_HOLD, 485, 80, 80, 110, 95, 80, 40, 45, 50, 170, GrowthRate.ERRATIC, null, false),
     new PokemonSpecies(Species.POLTCHAGEIST, 9, false, false, false, "Matcha Pokémon", Type.GRASS, Type.GHOST, 0.1, 1.1, Abilities.HOSPITALITY, Abilities.NONE, Abilities.HEATPROOF, 308, 40, 45, 45, 74, 54, 50, 120, 50, 62, GrowthRate.SLOW, null, false, false,
       new PokemonForm("Counterfeit Form", "counterfeit", Type.GRASS, Type.GHOST, 0.1, 1.1, Abilities.HOSPITALITY, Abilities.NONE, Abilities.HEATPROOF, 308, 40, 45, 45, 74, 54, 50, 120, 50, 62, false, null, true),
       new PokemonForm("Artisan Form", "artisan", Type.GRASS, Type.GHOST, 0.1, 1.1, Abilities.HOSPITALITY, Abilities.NONE, Abilities.HEATPROOF, 308, 40, 45, 45, 74, 54, 50, 120, 50, 62, false, null, true),

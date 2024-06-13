@@ -1004,7 +1004,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param {boolean} passive If true, check if passive can be applied instead of non-passive
    * @returns {Ability} The passive ability of the pokemon
    */
-  canApplyAbility(passive: boolean = false, forceBypass: boolean = false): boolean {
+  canApplyAbility(passive: boolean = false): boolean {
     if (passive && !this.hasPassive()) {
       return false;
     }
@@ -1032,7 +1032,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         return false;
       }
     }
-    return (this.hp || ability.isBypassFaint || forceBypass) && !ability.conditions.find(condition => !condition(this));
+    return (this.hp || ability.isBypassFaint) && !ability.conditions.find(condition => !condition(this));
   }
 
   /**
@@ -1111,7 +1111,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return undefined;
     }
 
-    return this.getAttackMoveEffectiveness(source, move, true);
+    return this.getAttackMoveEffectiveness(source, move, !this.battleData?.abilityRevealed);
   }
 
   /**
@@ -1146,7 +1146,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     let multiplier = types.map(defType => {
       if (source) {
         const ignoreImmunity = new Utils.BooleanHolder(false);
-        applyAbAttrs(IgnoreTypeImmunityAbAttr, source, ignoreImmunity, moveType, defType);
+        if (source.isActive(true) && source.hasAbilityWithAttr(IgnoreTypeImmunityAbAttr)) {
+          applyAbAttrs(IgnoreTypeImmunityAbAttr, source, ignoreImmunity, moveType, defType);
+        }
         if (ignoreImmunity.value) {
           return 1;
         }
@@ -2167,12 +2169,22 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     tags.filter(t => t.sourceId === sourceId).forEach(t => t.sourceId = newSourceId);
   }
 
+  /**
+   * Transferring stat changes and Tags
+   * @param source {@linkcode Pokemon} the pokemon whose stats/Tags are to be passed on from, ie: the Pokemon using Baton Pass
+   */
   transferSummon(source: Pokemon): void {
     const battleStats = Utils.getEnumValues(BattleStat);
     for (const stat of battleStats) {
       this.summonData.battleStats[stat] = source.summonData.battleStats[stat];
     }
     for (const tag of source.summonData.tags) {
+
+      // bypass yawn, and infatuation as those can not be passed via Baton Pass
+      if (tag.sourceMove === Moves.YAWN || tag.tagType === BattlerTagType.INFATUATED) {
+        continue;
+      }
+
       this.summonData.tags.push(tag);
     }
     if (this instanceof PlayerPokemon && source.summonData.battleStats.find(bs => bs === 6)) {
@@ -2515,8 +2527,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   * Resets the status of a pokemon.
   * @param revive Whether revive should be cured; defaults to true.
   * @param confusion Whether resetStatus should include confusion or not; defaults to false.
+  * @param reloadAssets Whether to reload the assets or not; defaults to false.
   */
-  resetStatus(revive: boolean = true, confusion: boolean = false): void {
+  resetStatus(revive: boolean = true, confusion: boolean = false, reloadAssets: boolean = false): void {
     const lastStatus = this.status?.effect;
     if (!revive && lastStatus === StatusEffect.FAINT) {
       return;
@@ -2532,6 +2545,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (this.getTag(BattlerTagType.CONFUSED)) {
         this.lapseTag(BattlerTagType.CONFUSED);
       }
+    }
+    if (reloadAssets) {
+      this.loadAssets(false).then(() => this.playAnim());
     }
   }
 
@@ -3795,6 +3811,7 @@ export class PokemonSummonData {
   public disabledTurns: integer = 0;
   public tags: BattlerTag[] = [];
   public abilitySuppressed: boolean = false;
+  public abilitiesApplied: Abilities[] = [];
 
   public speciesForm: PokemonSpeciesForm;
   public fusionSpeciesForm: PokemonSpeciesForm;
@@ -3803,7 +3820,8 @@ export class PokemonSummonData {
   public fusionGender: Gender;
   public stats: integer[];
   public moveset: PokemonMove[];
-  public types: Type[];
+  // If not initialized this value will not be populated from save data.
+  public types: Type[] = null;
 }
 
 export class PokemonBattleData {
@@ -3811,10 +3829,13 @@ export class PokemonBattleData {
   public endured: boolean = false;
   public berriesEaten: BerryType[] = [];
   public abilitiesApplied: Abilities[] = [];
+  public abilityRevealed: boolean = false;
 }
 
 export class PokemonBattleSummonData {
+  /** The number of turns the pokemon has passed since entering the battle */
   public turnCount: integer = 1;
+  /** The list of moves the pokemon has used since entering the battle */
   public moveHistory: TurnMove[] = [];
 }
 

@@ -54,6 +54,7 @@
 	},
 	"imports": {
 		"#app": "./src/main.js",
-		"#app/*": "./src/*"
+		"#app/*": "./src/*",
+		"#test/*": "./src/test/*"
 	}
 }
