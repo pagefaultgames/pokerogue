@@ -125,8 +125,11 @@ export default class VouchersUiHandler extends MessageUiHandler {
   protected showVoucher(voucher: Voucher) {
     const voucherUnlocks = this.scene.gameData.voucherUnlocks;
     const unlocked = voucherUnlocks.hasOwnProperty(voucher.id);
-
-    this.titleText.setText(getVoucherTypeName(voucher.voucherType));
+    if (voucher.icon) {
+      this.titleText.setText(i18next.t(`voucher:${voucher.icon}`));
+    } else {
+      this.titleText.setText(getVoucherTypeName(voucher.voucherType));
+    }
     this.showText(voucher.description);
     this.unlockText.setText(unlocked ? new Date(voucherUnlocks[voucher.id]).toLocaleDateString() : i18next.t("voucher:locked"));
   }

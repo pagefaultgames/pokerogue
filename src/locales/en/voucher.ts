@@ -82,11 +82,11 @@ export const voucher: SimpleTranslationEntries = {
   "dark_badge_galar":"",
   "dragon_badge_galar":"",
   "bug_badge_paldea":"", //Paldia Gym Badges (Gen 9)
-  "grass_badge_galar":"",
-  "electric_badge_galar":"",
-  "water_badge_galar":"",
-  "normal_badge_galar":"",
-  "ghost_badge_galar":"",
-  "psychic_badge_galar":"",
-  "ice_badge_galar":""
+  "grass_badge_paldea":"",
+  "electric_badge_paldea":"",
+  "water_badge_paldea":"",
+  "normal_badge_paldea":"",
+  "ghost_badge_paldea":"",
+  "psychic_badge_paldea":"",
+  "ice_badge_paldea":""
 } as const;
