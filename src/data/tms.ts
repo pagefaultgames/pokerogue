@@ -1,6 +1,5 @@
 import { ModifierTier } from "../modifier/modifier-tier";
-import { Moves } from "./enums/moves";
-import { Species } from "./enums/species";
+import { Moves, Species } from "#enums";
 
 interface TmSpecies {
     [key: integer]: Array<Species | Array<Species | string>>
@@ -63123,9 +63122,12 @@ export const tmSpecies: TmSpecies = {
   [Moves.SNOWSCAPE]: [
     Species.SLOWPOKE,
     Species.SLOWBRO,
+    Species.SEEL,
+    Species.DEWGONG,
     Species.SHELLDER,
     Species.CLOYSTER,
     Species.CHANSEY,
+    Species.LAPRAS,
     Species.ARTICUNO,
     Species.DRAGONITE,
     Species.MEW,
@@ -63140,6 +63142,7 @@ export const tmSpecies: TmSpecies = {
     Species.PILOSWINE,
     Species.DELIBIRD,
     Species.BLISSEY,
+    Species.SUICUNE,
     Species.WINGULL,
     Species.PELIPPER,
     Species.SPOINK,
@@ -63148,11 +63151,20 @@ export const tmSpecies: TmSpecies = {
     Species.SNORUNT,
     Species.GLALIE,
     Species.LUVDISC,
+    Species.REGICE,
     Species.PIPLUP,
     Species.PRINPLUP,
     Species.EMPOLEON,
-    Species.SHELLOS,
-    Species.GASTRODON,
+    [
+      Species.SHELLOS,
+      "east",
+      "west",
+    ],
+    [
+      Species.GASTRODON,
+      "east",
+      "west",
+    ],
     Species.MISMAGIUS,
     Species.HAPPINY,
     Species.SNOVER,
@@ -63170,7 +63182,17 @@ export const tmSpecies: TmSpecies = {
     Species.CUBCHOO,
     Species.BEARTIC,
     Species.CRYOGONAL,
-    Species.TORNADUS,
+    [
+      Species.TORNADUS,
+      "incarnate",
+      "therian",
+    ],
+    [
+      Species.KYUREM,
+      "",
+      "black",
+      "white",
+    ],
     Species.FROAKIE,
     Species.FROGADIER,
     [
@@ -63184,8 +63206,13 @@ export const tmSpecies: TmSpecies = {
     Species.BERGMITE,
     Species.AVALUGG,
     Species.DIANCIE,
+    Species.PRIMARINA,
     Species.CRABOMINABLE,
-    Species.MAGEARNA,
+    [
+      Species.MAGEARNA,
+      "",
+      "original",
+    ],
     Species.INTELEON,
     Species.FROSMOTH,
     Species.EISCUE,
@@ -63633,12 +63660,21 @@ export const tmSpecies: TmSpecies = {
     Species.WEAVILE,
     Species.GLACEON,
     Species.FROSLASS,
-    Species.PALKIA,
+    [
+      Species.PALKIA,
+      "",
+      "origin",
+    ],
     Species.ARCEUS,
     Species.OSHAWOTT,
     Species.DEWOTT,
     Species.SAMUROTT,
-    Species.BASCULIN,
+    [
+      Species.BASCULIN,
+      "red-striped",
+      "blue-striped",
+      "white-striped",
+    ],
     Species.DUCKLETT,
     Species.SWANNA,
     Species.ALOMOMOLA,

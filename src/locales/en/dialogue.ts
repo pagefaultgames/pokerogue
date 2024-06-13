@@ -1,4 +1,4 @@
-import {DialogueTranslationEntries, SimpleTranslationEntries} from "#app/plugins/i18n";
+import { DialogueTranslationEntries, SimpleTranslationEntries } from "#app/plugins/i18n";
 
 // Dialogue of the NPCs in the game when the player character is male (or unset)
 export const PGMdialogue: DialogueTranslationEntries = {
@@ -370,6 +370,198 @@ export const PGMdialogue: DialogueTranslationEntries = {
       2: "Yow! That's hot!",
       3: "Ow! I scorched the tip of my nose!"
     },
+  },
+  "sailor": {
+    "encounter": {
+      1: "Matey, you're walking the plank if you lose!",
+      2: "Come on then! My sailor's pride is at stake!",
+      3: "Ahoy there! Are you seasick?"
+    },
+    "victory": {
+      1: "Argh! Beaten by a kid!",
+      2: "Your spirit sank me!",
+      3: "I think it's me that's seasick..."
+    },
+  },
+  "rocket_grunt": {
+    "encounter": {
+      1: "Prepare for trouble!"
+    },
+    "victory": {
+      1: "Team Rocket blasting off again!"
+    },
+  },
+  "magma_grunt": {
+    "encounter": {
+      1: " If you get in the way of Team Magma, don’t expect any mercy!"
+    },
+    "victory": {
+      1: "Huh? I lost?!"
+    },
+  },
+  "aqua_grunt": {
+    "encounter": {
+      1: "No one who crosses Team Aqua gets any mercy, not even kids!"
+    },
+    "victory": {
+      1: "You're kidding me!"
+    },
+  },
+  "galactic_grunt": {
+    "encounter": {
+      1: "Don't mess with Team Galactic!"
+    },
+    "victory": {
+      1: "Shut down..."
+    },
+  },
+  "plasma_grunt": {
+    "encounter": {
+      1: "We won't tolerate people who have different ideas!"
+    },
+    "victory": {
+      1: "Plasmaaaaaaaaa!"
+    },
+  },
+  "flare_grunt": {
+    "encounter": {
+      1: "Fashion is most important to us!"
+    },
+    "victory": {
+      1: "The future doesn't look bright for me."
+    },
+  },
+  "rocket_boss_giovanni_1": {
+    "encounter": {
+      1: "So! I must say, I am impressed you got here!"
+    },
+    "victory": {
+      1: "WHAT! This cannot be!"
+    },
+    "defeat": {
+      1: "Mark my words. Not being able to measure your own strength shows that you are still a child."
+    }
+  },
+  "rocket_boss_giovanni_2": {
+    "encounter": {
+      1: "My old associates need me... Are you going to get in my way?"
+    },
+    "victory": {
+      1: "How is this possible...?\nThe precious dream of Team Rocket has become little more than an illusion..."
+    },
+    "defeat": {
+      1: "Team Rocket will be reborn again, and I will rule the world!"
+    }
+  },
+  "magma_boss_maxie_1": {
+    "encounter": {
+      1: "I will bury you by my own hand. I hope you appreciate this honor!"
+    },
+    "victory": {
+      1: "Ugh! You are... quite capable...\nI fell behind, but only by an inch..."
+    },
+    "defeat": {
+      1: "Team Magma will prevail!"
+    }
+  },
+  "magma_boss_maxie_2": {
+    "encounter": {
+      1: "You are the final obstacle remaining between me and my goals.\nBrace yourself for my ultimate attack! Fuhahaha!"
+    },
+    "victory": {
+      1: "This... This is not.. Ngh..."
+    },
+    "defeat": {
+      1: "And now... I will transform this planet to a land ideal for humanity."
+    }
+  },
+  "aqua_boss_archie_1": {
+    "encounter": {
+      1: "I'm leader of Team Aqua, so I'm afraid it's the rope's end for you."
+    },
+    "victory": {
+      1: "Let's meet again somewhere. I'll be sure to remember that face."
+    },
+    "defeat": {
+      1: "Brilliant! My team won't hold back now!"
+    }
+  },
+  "aqua_boss_archie_2": {
+    "encounter": {
+      1: "I've been waiting so long for this day to come.\nThis is the true power of my team!"
+    },
+    "victory": {
+      1: "Like I figured..."
+    },
+    "defeat": {
+      1: "I'll return everything in this world to its original, pure state!!"
+    }
+  },
+  "galactic_boss_cyrus_1": {
+    "encounter": {
+      1: "You were compelled to come here by such vacuous sentimentality\nI will make you regret paying heed to your heart!"
+    },
+    "victory": {
+      1: "Interesting. And quite curious."
+    },
+    "defeat": {
+      1: "I will create my new world..."
+    }
+  },
+  "galactic_boss_cyrus_2": {
+    "encounter": {
+      1: "So we meet again. It seems our fates have become intertwined.\nBut here and now, I will finally break that bond!"
+    },
+    "victory": {
+      1: "How? How? HOW?!"
+    },
+    "defeat": {
+      1: "Farewell."
+    }
+  },
+  "plasma_boss_ghetsis_1": {
+    "encounter": {
+      1: "I won't allow anyone to stop me! No matter who does what!"
+    },
+    "victory": {
+      1: "How can this be? I'm the creator of Team Plasma! I'm perfect!"
+    },
+    "defeat": {
+      1: "I am the perfect ruler of a perfect new world! Mwa ha ha!"
+    }
+  },
+  "plasma_boss_ghetsis_2": {
+    "encounter": {
+      1: "Come now! I want to see your face at the moment you lose all hope!"
+    },
+    "victory": {
+      1: "My calculations... No! My careful schemes! The world should be mine!"
+    },
+    "defeat": {
+      1: "Kyurem! Use Absofusion!"
+    }
+  },
+  "flare_boss_lysandre_1": {
+    "encounter": {
+      1: "Do you want to stop me? Show me in battle."
+    },
+    "victory": {
+      1: "You are here to stop me. But I ask you to wait. "
+    },
+    "defeat": {
+      1: "Pokemon...Shall no longer exist."
+    }
+  },
+  "flare_boss_lysandre_2": {
+    "encounter": {
+      1: "The future you want, or the future I want... Let us see which one is more deserving, shall we?"
+    },
+    "victory": {
+      1: "Whaugh!"
+    },
+    "defeat": {
+      1: "Fools with no vision will continue to befoul this beautiful world."
+    }
   },
   "brock": {
     "encounter": {
@@ -1578,7 +1770,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "encounter": {
       1: `Know what? I really look forward to having serious battles with strong Trainers! 
                 $I mean, come on! The Trainers who make it here are Trainers who desire victory with every fiber of their being! 
-                #And they are battling alongside Pokémon that have been through countless difficult battles! 
+                $And they are battling alongside Pokémon that have been through countless difficult battles! 
                 $If I battle with people like that, not only will I get stronger, my Pokémon will, too! 
                 $And we'll get to know each other even better! OK! Brace yourself! 
                 $I'm Iris, the Pokémon League Champion, and I'm going to defeat you!`,
@@ -2360,7 +2552,7 @@ export const PGMdoubleBattleDialogue: DialogueTranslationEntries = {
   },
   "tate_liza_double": {
     "encounter": {
-      1: `Tate: Are you suprised?
+      1: `Tate: Are you surprised?
                   $Liza: We are two gym leaders at once!
                   $Tate: We are twins!
                   $Liza: We dont need to talk to understand each other!
@@ -2374,7 +2566,7 @@ export const PGMdoubleBattleDialogue: DialogueTranslationEntries = {
   },
   "liza_tate_double": {
     "encounter": {
-      1: `Liza: Hihihi... Are you suprised?
+      1: `Liza: Hihihi... Are you surprised?
                   $Tate: Yes, we are really two gym leaders at once!
                   $Liza: This is my twin brother Tate!
                   $Tate: And this is my twin sister Liza!
@@ -2398,12 +2590,12 @@ export const PGMdoubleBattleDialogue: DialogueTranslationEntries = {
   },
   "steven_wallace_double": {
     "encounter": {
-      1: `Steven: Do you have any rare pokémon?
-          $Wallace: Steven... We are here for a battle, not to show off our pokémon.
+      1: `Steven: Do you have any rare Pokémon?
+          $Wallace: Steven... We are here for a battle, not to show off our Pokémon.
             $Steven: Oh... I see... Let's go then!`,
     },
     "victory": {
-      1: `Steven: Now that we are done with the battle, let's show off our pokémon!
+      1: `Steven: Now that we are done with the battle, let's show off our Pokémon!
             $Wallace: Steven...`,
     },
   },

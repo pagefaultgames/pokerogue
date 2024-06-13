@@ -18,11 +18,11 @@ export const battle: SimpleTranslationEntries = {
   "partyFull": "Tu equipo esta completo.\n¿Quieres liberar un Pokémon para meter a {{pokemonName}}?",
   "pokemon": "Pokémon",
   "sendOutPokemon": "¡Adelante, {{pokemonName}}!",
-  "hitResultCriticalHit": "!Un golpe crítico!",
-  "hitResultSuperEffective": "!Es supereficaz!",
+  "hitResultCriticalHit": "¡Un golpe crítico!",
+  "hitResultSuperEffective": "¡Es supereficaz!",
   "hitResultNotVeryEffective": "No es muy eficaz…",
   "hitResultNoEffect": "No afecta a {{pokemonName}}!",
-  "hitResultOneHitKO": "!KO en 1 golpe!",
+  "hitResultOneHitKO": "¡KO en 1 golpe!",
   "attackFailed": "¡Pero ha fallado!",
   "attackHitsCount": "N.º de golpes: {{count}}.",
   "expGain": "{{pokemonName}} ha ganado\n{{exp}} puntos de experiencia.",
@@ -55,5 +55,11 @@ export const battle: SimpleTranslationEntries = {
   "notDisabled": "¡El movimiento {{moveName}} de {{pokemonName}}\nya no está anulado!",
   "skipItemQuestion": "¿Estás seguro de que no quieres coger un objeto?",
   "eggHatching": "¿Y esto?",
-  "ivScannerUseQuestion": "¿Quieres usar el Escáner de IVs en {{pokemonName}}?"
+  "ivScannerUseQuestion": "¿Quieres usar el Escáner de IVs en {{pokemonName}}?",
+  "wildPokemonWithAffix": "El {{pokemonName}} salvaje",
+  "foePokemonWithAffix": "El {{pokemonName}} enemigo",
+  "useMove": "¡{{pokemonNameWithAffix}} usó {{moveName}}!",
+  "drainMessage": "¡{{pokemonName}} tuvo su\nenergía absorbida!",
+  "regainHealth": "¡{{pokemonName}} recuperó\nPS!",
+  "fainted": "¡{{pokemonNameWithAffix}} se debilitó!"
 } as const;
