@@ -1698,7 +1698,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "piers": {
     "encounter": {
-      1: "뜨거운 현장을 즐길 준비는 됐겠지! 스파이크 마을, it's time to rock!" 
+      1: "뜨거운 현장을 즐길 준비는 됐겠지! 스파이크 마을, it's time to rock!"
     },
     "victory": {
       1: "나도 내 멤버들도 최선을 다했어. 다음에 또 배틀하자고…"
