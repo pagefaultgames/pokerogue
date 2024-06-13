@@ -1922,6 +1922,8 @@ export default class BattleScene extends SceneBase {
     }
     if (!this.phaseQueue.length) {
       this.populatePhaseQueue();
+      // clear the conditionalQueue if there are no phases left in the phaseQueue
+      this.conditionalQueue = [];
     }
     this.currentPhase = this.phaseQueue.shift();
 
