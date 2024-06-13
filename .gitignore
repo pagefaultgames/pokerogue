@@ -34,6 +34,7 @@ src/data/battle-anim-data.ts
 src/overrides.ts
 
 coverage
+/.vs
 
 # Local Documentation
 /typedoc
