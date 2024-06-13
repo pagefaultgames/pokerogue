@@ -12,8 +12,7 @@ import { Species } from "../data/enums/species";
 import { GrowthRate, getGrowthRateColor } from "../data/exp";
 import { Gender, getGenderColor, getGenderSymbol } from "../data/gender";
 import { allMoves } from "../data/move";
-import { Nature, getNatureName, getNatureStatMultiplier } from "../data/nature";
-import { Stat, getStatName } from "../data/pokemon-stat";
+import { Nature, getNatureName } from "../data/nature";
 import { pokemonFormChanges } from "../data/pokemon-forms";
 import { LevelMoves, pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "../data/pokemon-level-moves";
 import PokemonSpecies, { allSpecies, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from "../data/pokemon-species";
@@ -1232,27 +1231,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           let starterAttributes = this.starterPreferences[this.lastSpecies.speciesId];
           if (this.canCycleNature) {
             // if we could cycle natures, enable the improved nature menu
-            const affectedStats : Stat[] = [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD];
-            const natureSorted : Nature[][] = [[], [], [], [], [], []];
-            this.scene.gameData.getNaturesForAttr(this.speciesStarterDexEntry.natureAttr).forEach((n:Nature) => {
-              let x = 0;
-              // test what kind of nature we have
-              for (const s of affectedStats) {
-                if (getNatureStatMultiplier(n, s) > 1) {
-                  natureSorted[x].push(n);
-                  return;
-                }
-                x++;
-              }
-              // it's neutral
-              natureSorted[x].push(n);
-            });
-
-            const showNatureSubOptions = (natures: Nature[]) => {
+            const showNatureOptions = () => {
               ui.setMode(Mode.STARTER_SELECT).then(() => {
                 ui.showText(i18next.t("starterSelectUiHandler:selectNature"), null, () => {
+                  const natures = this.scene.gameData.getNaturesForAttr(this.speciesStarterDexEntry.natureAttr);
                   ui.setModeWithoutClear(Mode.OPTION_SELECT, {
-                    options: natures.map((n: Nature) => {
+                    options: natures.map((n: Nature, i: number) => {
                       const option: OptionSelectItem = {
                         label: getNatureName(n, true, true, true, this.scene.uiTheme),
                         handler: () => {
@@ -1274,44 +1258,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                       label: i18next.t("menu:cancel"),
                       handler: () => {
                         this.clearText();
-                        showNatureSuperOptions();
-                        return true;
-                      }
-                    }),
-                    maxOptions: 8,
-                    yOffset: 19
-                  });
-                });
-              });
-            };
-            const showNatureSuperOptions = () => {
-              const options : OptionSelectItem[] = affectedStats.filter((_:Stat, i:integer) => natureSorted[i].length > 0).map((s: Stat) => {
-                const option: OptionSelectItem = {
-                  label: getStatName(s),
-                  handler: () => {
-                    // show submenu containing natures increasing the specified stat
-                    showNatureSubOptions(natureSorted[affectedStats.indexOf(s)]);
-                    return true;
-                  }
-                };
-                return option;
-              });
-              if (natureSorted[natureSorted.length -1].length > 0) {
-                options.push({
-                  label: i18next.t("starterSelectUiHandler:neutralNature"),
-                  handler: () => {
-                    showNatureSubOptions(natureSorted[natureSorted.length -1]);
-                    return true;
-                  }
-                });
-              }
-              ui.setMode(Mode.STARTER_SELECT).then(() => {
-                ui.showText(i18next.t("starterSelectUiHandler:selectNature"), null, () => {
-                  ui.setModeWithoutClear(Mode.OPTION_SELECT, {
-                    options: options.concat({
-                      label: i18next.t("menu:cancel"),
-                      handler: () => {
-                        this.clearText();
                         ui.setMode(Mode.STARTER_SELECT);
                         return true;
                       }
@@ -1325,7 +1271,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             options.push({
               label: i18next.t("starterSelectUiHandler:manageNature"),
               handler: () => {
-                showNatureSuperOptions();
+                showNatureOptions();
                 return true;
               }
             });
