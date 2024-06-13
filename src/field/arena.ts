@@ -55,6 +55,10 @@ export class Arena {
     this.scene.arenaNextEnemy.setBiome(this.biomeType);
     this.scene.arenaBg.setTexture(`${biomeKey}_bg`);
     this.scene.arenaBgTransition.setTexture(`${biomeKey}_bg`);
+
+    // Redo this on initialise because during save/load the current wave isn't always
+    // set correctly during construction
+    this.updatePoolsForTimeOfDay();
   }
 
   updatePoolsForTimeOfDay(): void {

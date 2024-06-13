@@ -30,7 +30,7 @@ import { Weather, WeatherType, getRandomWeatherType, getTerrainBlockMessage, get
 import { TempBattleStat } from "./data/temp-battle-stat";
 import { ArenaTagSide, ArenaTrapTag, MistTag, TrickRoomTag } from "./data/arena-tag";
 import { ArenaTagType } from "./data/enums/arena-tag-type";
-import { CheckTrappedAbAttr, IgnoreOpponentStatChangesAbAttr, IgnoreOpponentEvasionAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, BlockRedirectAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, BattleStatMultiplierAbAttr, applyBattleStatMultiplierAbAttrs, IncrementMovePriorityAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr, BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, PostBiomeChangeAbAttr, applyPostFaintAbAttrs, PostFaintAbAttr, IncreasePpAbAttr, PostStatChangeAbAttr, applyPostStatChangeAbAttrs, AlwaysHitAbAttr, PreventBerryUseAbAttr, StatChangeCopyAbAttr, applyPostMoveUsedAbAttrs, PostMoveUsedAbAttr, MaxMultiHitAbAttr, HealFromBerryUseAbAttr } from "./data/ability";
+import { CheckTrappedAbAttr, IgnoreOpponentStatChangesAbAttr, IgnoreOpponentEvasionAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, BlockRedirectAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, BattleStatMultiplierAbAttr, applyBattleStatMultiplierAbAttrs, IncrementMovePriorityAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr, BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, PostBiomeChangeAbAttr, applyPostFaintAbAttrs, PostFaintAbAttr, IncreasePpAbAttr, PostStatChangeAbAttr, applyPostStatChangeAbAttrs, AlwaysHitAbAttr, PreventBerryUseAbAttr, StatChangeCopyAbAttr, PokemonTypeChangeAbAttr, applyPreAttackAbAttrs, applyPostMoveUsedAbAttrs, PostMoveUsedAbAttr, MaxMultiHitAbAttr, HealFromBerryUseAbAttr } from "./data/ability";
 import { Unlockables, getUnlockableName } from "./system/unlockables";
 import { getBiomeKey } from "./field/arena";
 import { BattleType, BattlerIndex, TurnCommand } from "./battle";
@@ -64,6 +64,7 @@ import { TextStyle, addTextObject } from "./ui/text";
 import { Type } from "./data/type";
 import { BerryUsedEvent, EncounterPhaseEvent, MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./events/battle-scene";
 import { ExpNotification } from "./enums/exp-notification";
+import { BattleStyle } from "./enums/battle-style";
 
 
 export class LoginPhase extends Phase {
@@ -555,6 +556,10 @@ export class SelectStarterPhase extends Phase {
     });
   }
 
+  /**
+   * Initialize starters before starting the first battle
+   * @param starters {@linkcode Pokemon} with which to start the first battle
+   */
   initBattle(starters: Starter[]) {
     const party = this.scene.getParty();
     const loadPokemonAssets: Promise<void>[] = [];
@@ -564,9 +569,13 @@ export class SelectStarterPhase extends Phase {
       }
       const starterProps = this.scene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);
       let starterFormIndex = Math.min(starterProps.formIndex, Math.max(starter.species.forms.length - 1, 0));
-      if (!i && Overrides.STARTER_SPECIES_OVERRIDE) {
-        starterFormIndex = Overrides.STARTER_FORM_OVERRIDE;
+      if (
+        starter.species.speciesId in Overrides.STARTER_FORM_OVERRIDES &&
+        starter.species.forms[Overrides.STARTER_FORM_OVERRIDES[starter.species.speciesId]]
+      ) {
+        starterFormIndex = Overrides.STARTER_FORM_OVERRIDES[starter.species.speciesId];
       }
+
       let starterGender = starter.species.malePercent !== null
         ? !starterProps.female ? Gender.MALE : Gender.FEMALE
         : Gender.GENDERLESS;
@@ -1024,7 +1033,21 @@ export class EncounterPhase extends BattlePhase {
     });
 
     if (this.scene.currentBattle.battleType !== BattleType.TRAINER) {
-      enemyField.map(p => this.scene.pushPhase(new PostSummonPhase(this.scene, p.getBattlerIndex())));
+      enemyField.map(p => this.scene.pushConditionalPhase(new PostSummonPhase(this.scene, p.getBattlerIndex()), () => {
+        // if there is not a player party, we can't continue
+        if (!this.scene.getParty()?.length) {
+          return false;
+        }
+        // how many player pokemon are on the field ?
+        const pokemonsOnFieldCount = this.scene.getParty().filter(p => p.isOnField()).length;
+        // if it's a 2vs1, there will never be a 2nd pokemon on our field even
+        const requiredPokemonsOnField  = Math.min(this.scene.getParty().filter((p) => !p.isFainted()).length, 2);
+        // if it's a double, there should be 2, otherwise 1
+        if (this.scene.currentBattle.double) {
+          return pokemonsOnFieldCount === requiredPokemonsOnField;
+        }
+        return pokemonsOnFieldCount === 1;
+      }));
       const ivScannerModifier = this.scene.findModifier(m => m instanceof IvScannerModifier);
       if (ivScannerModifier) {
         enemyField.map(p => this.scene.pushPhase(new ScanIvsPhase(this.scene, p.getBattlerIndex(), Math.min(ivScannerModifier.getStackCount() * 2, 6))));
@@ -1480,7 +1503,6 @@ export class SummonPhase extends PartyMemberPokemonPhase {
 
     if (!this.loaded || this.scene.currentBattle.battleType === BattleType.TRAINER || (this.scene.currentBattle.waveIndex % 10) === 1) {
       this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
-
       this.queuePostSummon();
     }
   }
@@ -1726,7 +1748,7 @@ export class CheckSwitchPhase extends BattlePhase {
 
     const pokemon = this.scene.getPlayerField()[this.fieldIndex];
 
-    if (this.scene.battleStyle === 1) {
+    if (this.scene.battleStyle === BattleStyle.SET) {
       super.end();
       return;
     }
@@ -2670,6 +2692,16 @@ export class MovePhase extends BattlePhase {
           failedText = getTerrainBlockMessage(targets[0], this.scene.arena.terrain.terrainType);
         }
       }
+
+      /**
+       * Trigger pokemon type change before playing the move animation
+       * Will still change the user's type when using Roar, Whirlwind, Trick-or-Treat, and Forest's Curse,
+       * regardless of whether the move successfully executes or not.
+       */
+      if (success || [Moves.ROAR, Moves.WHIRLWIND, Moves.TRICK_OR_TREAT, Moves.FORESTS_CURSE].includes(this.move.moveId)) {
+        applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, this.move.getMove());
+      }
+
       if (success) {
         this.scene.unshiftPhase(this.getEffectPhase());
       } else {
@@ -3115,7 +3147,12 @@ export class ShowAbilityPhase extends PokemonPhase {
   start() {
     super.start();
 
-    this.scene.abilityBar.showAbility(this.getPokemon(), this.passive);
+    const pokemon = this.getPokemon();
+
+    this.scene.abilityBar.showAbility(pokemon, this.passive);
+    if (pokemon.battleData) {
+      pokemon.battleData.abilityRevealed = true;
+    }
 
     this.end();
   }
@@ -3632,7 +3669,7 @@ export class FaintPhase extends PokemonPhase {
       this.scene.currentBattle.enemyFaints += 1;
     }
 
-    this.scene.queueMessage(getPokemonMessage(pokemon, " fainted!"), null, true);
+    this.scene.queueMessage(i18next.t("battle:fainted", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), null, true);
 
     if (pokemon.turnData?.attacksReceived?.length) {
       const lastAttack = pokemon.turnData.attacksReceived[0];

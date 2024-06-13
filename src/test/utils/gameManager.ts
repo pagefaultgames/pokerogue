@@ -6,7 +6,6 @@ import {
   EncounterPhase,
   FaintPhase,
   LoginPhase, NewBattlePhase,
-  SelectGenderPhase,
   SelectStarterPhase,
   TitlePhase, TurnInitPhase,
 } from "#app/phases";
@@ -28,6 +27,8 @@ import {MockClock} from "#app/test/utils/mocks/mockClock";
 import {Command} from "#app/ui/command-ui-handler";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import {Button} from "#app/enums/buttons";
+import PartyUiHandler, {PartyUiMode} from "#app/ui/party-ui-handler";
+import Trainer from "#app/field/trainer";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -98,14 +99,8 @@ export default class GameManager {
    * @returns A promise that resolves when the title phase is reached.
    */
   async runToTitle(): Promise<void> {
-    await this.phaseInterceptor.run(LoginPhase);
-
-    this.onNextPrompt("SelectGenderPhase", Mode.OPTION_SELECT, () => {
-      this.scene.gameData.gender = PlayerGender.MALE;
-      this.endPhase();
-    }, () => this.isCurrentPhase(TitlePhase));
-
-    await this.phaseInterceptor.run(SelectGenderPhase, () => this.isCurrentPhase(TitlePhase));
+    await this.phaseInterceptor.whenAboutToRun(LoginPhase);
+    this.phaseInterceptor.pop();
     await this.phaseInterceptor.run(TitlePhase);
 
     this.scene.gameSpeed = 5;
@@ -114,6 +109,9 @@ export default class GameManager {
     this.scene.expGainsSpeed = 3;
     this.scene.expParty = ExpNotification.SKIP;
     this.scene.hpBarSpeed = 3;
+    this.scene.enableTutorials = false;
+    this.scene.gameData.gender = PlayerGender.MALE;
+
   }
 
   /**
@@ -189,6 +187,14 @@ export default class GameManager {
       const handler = this.scene.ui.getHandler() as ModifierSelectUiHandler;
       handler.processInput(Button.ACTION);
     }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(NewBattlePhase));
+  }
+
+  forceOpponentToSwitch() {
+    const originalMatchupScore = Trainer.prototype.getPartyMemberMatchupScores;
+    Trainer.prototype.getPartyMemberMatchupScores = () => {
+      Trainer.prototype.getPartyMemberMatchupScores = originalMatchupScore;
+      return [[1, 100], [1, 100]];
+    };
   }
 
   /** Transition to the next upcoming {@linkcode CommandPhase} */
@@ -277,6 +283,19 @@ export default class GameManager {
       await this.phaseInterceptor.to(FaintPhase).catch((e) => reject(e));
       (this.scene.time as MockClock).overrideDelay = undefined;
       resolve();
+    });
+  }
+
+  /**
+   * Switch pokemon and transition to the enemy command phase
+   * @param pokemonIndex the index of the pokemon in your party to switch to
+   */
+  doSwitchPokemon(pokemonIndex: number) {
+    this.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
+      this.scene.ui.setMode(Mode.PARTY, PartyUiMode.SWITCH, (this.scene.getCurrentPhase() as CommandPhase).getPokemon().getFieldIndex(), null, PartyUiHandler.FilterNonFainted);
+    });
+    this.onNextPrompt("CommandPhase", Mode.PARTY, () => {
+      (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.POKEMON, pokemonIndex, false);
     });
   }
 }
