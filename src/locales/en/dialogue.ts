@@ -563,6 +563,95 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "Fools with no vision will continue to befoul this beautiful world."
     }
   },
+  "cipher_peon": {
+    "encounter": {
+      1: "We from Cipher will create the ultimate Pokémon! You stand in our way!",
+      2: "You look like that one trainer from Team Snaggem… But that's impossible!"
+    },
+    "victory": {
+      1: "Even if I lose, Cipher will never give up!",
+      2: "I was wrong… You're not the trainer from Team Snaggem… But just as strong!"
+    }
+  },
+  "mirror_b": {
+    "encounter": {
+      1: `Hello, my darlings! I'm so glad you're here. I was expecting you!
+            $I am Mirror B., the beautiful, the unique, the incomparable… Music, please!`
+    },
+    "victory": {
+      1: "I'm offbeat! No! That shouldn't have happened!"
+    },
+    "defeat": {
+      1: "Well, now you know the true power of funk!"
+    }
+  },
+  "dakim": {
+    "encounter": {
+      1: `You want to stand in my way? Me, Dakim? That must be a joke!
+         $I'll knock the nonsense out of you, you little runt!`
+    },
+    "victory": {
+      1: "Grrr... You miserable little rat! The Shadow Pokémon plan will still be completed!"
+    },
+    "defeat": {
+      1: "My masterful moves have brought you to your knees!"
+    }
+  },
+  "venus": {
+    "encounter": {
+      1: `Hello! I, Venus - your beloved Venus - warmly greet you all!
+          $Today, I have an important announcement for all of you! There is terrible news!
+          $You will now be eradicated!`
+    },
+    "victory": {
+      1: "Yuck! What is this? How can you? How dare you defeat me?!"
+    },
+    "defeat": {
+      1: "To all who can hear me: The spies have been defeated by the power of Cipher!"
+    }
+  },
+  "ein": {
+    "encounter": {
+      1: `I must confess, I considered your arrival here highly unlikely!
+        $My name is Ein. Professor Ein! I am the head of this Shadow Pokémon Lab.
+        $And I do not tolerate disturbances like you, who try to thwart the Shadow Pokémon plan!
+        $Let me show you the power of my Shadow Pokémon!`
+    },
+    "victory": {
+      1: "This power... It negates all physical laws!"
+    },
+    "defeat": {
+      1: "Ha! The Shadow Pokémon plan will never fail! XD001 is nearing completion!"
+    }
+  },
+  "nascour": {
+    "encounter": {
+      1: `I am Nascour! I am the leader of Cipher! That you made it this far...
+         $I will have to have a serious talk with the executives!`
+    },
+    "victory": {
+      1: "Aaaah! Watch out! We are not yet... I'm sorry, Exalted One."
+    },
+    "defeat": {
+      1: "Cipher will never be defeated! XD001 will conquer the world!"
+    }
+  },
+  "evice": {
+    "encounter": {
+      1: `Did you really think Nascour was the leader of Cipher? You were wrong!
+         $He is just our front. So I can work in the shadows!
+         $My name is Es Cade, no, that's my cover name. My real name is Evice!
+         $Also known as "Grand Master". We have succeeded. With the help of Professor Ein,
+         $XD001 is complete. And now I will show you its power. The ULTIMATE Shadow Pokémon!`
+    },
+    "victory": {
+      1: "This can't be! XD001 is the strongest Pokémon ever! Beaten just like that!"
+    },
+    "defeat": {
+      1: `Hahaha! XD001 is the strongest Pokémon ever! It will conquer the world!
+          $All Pokémon will be turned into ultimate fighters!`
+    }
+  },
   "brock": {
     "encounter": {
       1: "My expertise on Rock-type Pokémon will take you down! Come on!",
