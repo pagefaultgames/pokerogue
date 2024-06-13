@@ -291,9 +291,10 @@ export const localServerUrl = import.meta.env.VITE_SERVER_URL ?? `http://${windo
 export const serverUrl = isLocal ? localServerUrl : "";
 export const apiUrl = isLocal ? serverUrl : "https://api.pokerogue.net";
 // used to disable api calls when isLocal is true and a server is not found
-export let isLocalServerConnected = true;
+export const isLocalServerConnected = true;
 
 export function setCookie(cName: string, cValue: string): void {
+  console.log("setCookie: ", cName, cValue);
   const expiration = new Date();
   expiration.setTime(new Date().getTime() + 3600000 * 24 * 30 * 3/*7*/);
   document.cookie = `${cName}=${cValue};Secure;SameSite=Strict;Path=/;Expires=${expiration.toUTCString()}`;
@@ -314,22 +315,8 @@ export function getCookie(cName: string): string {
   return "";
 }
 
-/**
- * When locally running the game, "pings" the local server
- * with a GET request to verify if a server is running,
- * sets isLocalServerConnected based on results
- */
-export function localPing() {
-  if (isLocal) {
-    apiFetch("game/titlestats")
-      .then(resolved => isLocalServerConnected = true,
-        rejected => isLocalServerConnected = false
-      );
-  }
-}
-
 export function apiFetch(path: string, authed: boolean = false): Promise<Response> {
-  return (isLocal && isLocalServerConnected) || !isLocal ? new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     const request = {};
     if (authed) {
       const sId = getCookie(sessionIdKey);
@@ -340,11 +327,11 @@ export function apiFetch(path: string, authed: boolean = false): Promise<Respons
     fetch(`${apiUrl}/${path}`, request)
       .then(response => resolve(response))
       .catch(err => reject(err));
-  }) : new Promise(() => {});
+  });
 }
 
 export function apiPost(path: string, data?: any, contentType: string = "application/json", authed: boolean = false): Promise<Response> {
-  return (isLocal && isLocalServerConnected) || !isLocal ? new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     const headers = {
       "Accept": contentType,
       "Content-Type": contentType,
@@ -358,7 +345,7 @@ export function apiPost(path: string, data?: any, contentType: string = "applica
     fetch(`${apiUrl}/${path}`, { method: "POST", headers: headers, body: data })
       .then(response => resolve(response))
       .catch(err => reject(err));
-  }) : new Promise(() => {});
+  });
 }
 
 export class BooleanHolder {

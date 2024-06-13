@@ -29,6 +29,7 @@
 		"jsdom": "^24.0.0",
 		"json-beautify": "^1.1.1",
 		"lefthook": "^1.6.12",
+    "msw": "^2.3.1",
 		"phaser3spectorjs": "^0.0.8",
 		"pokenode-ts": "^1.20.0",
 		"typedoc": "^0.25.13",
@@ -55,5 +56,10 @@
 	"imports": {
 		"#app": "./src/main.js",
 		"#app/*": "./src/*"
-	}
+	},
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
+  }
 }
