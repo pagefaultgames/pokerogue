@@ -28,7 +28,7 @@ export class Egg {
   }
 
   isManaphyEgg(): boolean {
-    return this.tier === EggTier.COMMON && !(this.id % 255);
+    return this.tier === EggTier.COMMON && !(this.id % 204);
   }
 
   getKey(): string {
