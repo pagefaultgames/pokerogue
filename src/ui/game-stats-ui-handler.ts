@@ -157,7 +157,7 @@ const displayStats: DisplayStats = {
   },
   mythicalPokemonHatched: {
     label_key: "mythicalsHatched",
-    sourceFunc: gameData => gameData.gameStats.legendaryPokemonHatched.toString(),
+    sourceFunc: gameData => gameData.gameStats.mythicalPokemonHatched.toString(),
     hidden: true
   },
   shinyPokemonSeen: {
