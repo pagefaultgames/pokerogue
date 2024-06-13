@@ -1,7 +1,6 @@
 import BattleScene, { bypassLogin } from "./battle-scene";
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition, HitResult, TurnMove } from "./field/pokemon";
 import * as Utils from "./utils";
-import { Abilities, ArenaTagType, BattleSpec, BattleStyle, BattlerTagType, Biome, ExpNotification, Moves, PlayerGender, Species, TrainerType } from "#enums";
 import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, PreMoveMessageAttr, HealStatusEffectAttr, IgnoreOpponentStatChangesAttr, NoEffectAttr, BypassRedirectAttr, FixedDamageAttr, PostVictoryStatChangeAttr, OneHitKOAccuracyAttr, ForceSwitchOutAttr, VariableTargetAttr, IncrementMovePriorityAttr  } from "./data/move";
 import { Mode } from "./ui/ui";
 import { Command } from "./ui/command-ui-handler";
@@ -55,6 +54,17 @@ import * as Overrides from "./overrides";
 import { TextStyle, addTextObject } from "./ui/text";
 import { Type } from "./data/type";
 import { BerryUsedEvent, EncounterPhaseEvent, MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./events/battle-scene";
+import { Abilities } from "#enums/abilities";
+import { ArenaTagType } from "#enums/arena-tag-type";
+import { BattleSpec } from "#enums/battle-spec";
+import { BattleStyle } from "#enums/battle-style";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { Biome } from "#enums/biome";
+import { ExpNotification } from "#enums/exp-notification";
+import { Moves } from "#enums/moves";
+import { PlayerGender } from "#enums/player-gender";
+import { Species } from "#enums/species";
+import { TrainerType } from "#enums/trainer-type";
 
 
 export class LoginPhase extends Phase {

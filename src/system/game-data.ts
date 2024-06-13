@@ -2,7 +2,6 @@ import BattleScene, { PokeballCounts, bypassLogin } from "../battle-scene";
 import Pokemon, { EnemyPokemon, PlayerPokemon } from "../field/pokemon";
 import { pokemonEvolutions, pokemonPrevolutions } from "../data/pokemon-evolutions";
 import PokemonSpecies, { allSpecies, getPokemonSpecies, noStarterFormKeys, speciesStarters } from "../data/pokemon-species";
-import { Species, defaultStarterSpecies, Moves, Device, PlayerGender, GameDataType } from "#enums";
 import * as Utils from "../utils";
 import * as Overrides from "../overrides";
 import PokemonData from "./pokemon-data";
@@ -35,6 +34,23 @@ import { TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena.js";
 import { EnemyAttackStatusEffectChanceModifier } from "../modifier/modifier";
 import { StatusEffect } from "#app/data/status-effect.js";
 import ChallengeData from "./challenge-data";
+import { Device } from "#enums/devices";
+import { GameDataType } from "#enums/game-data-type";
+import { Moves } from "#enums/moves";
+import { PlayerGender } from "#enums/player-gender";
+import { Species } from "#enums/species";
+
+export const defaultStarterSpecies: Species[] = [
+  Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE,
+  Species.CHIKORITA, Species.CYNDAQUIL, Species.TOTODILE,
+  Species.TREECKO, Species.TORCHIC, Species.MUDKIP,
+  Species.TURTWIG, Species.CHIMCHAR, Species.PIPLUP,
+  Species.SNIVY, Species.TEPIG, Species.OSHAWOTT,
+  Species.CHESPIN, Species.FENNEKIN, Species.FROAKIE,
+  Species.ROWLET, Species.LITTEN, Species.POPPLIO,
+  Species.GROOKEY, Species.SCORBUNNY, Species.SOBBLE,
+  Species.SPRIGATITO, Species.FUECOCO, Species.QUAXLY
+];
 
 const saveKey = "x0i2O7WRiANTqPmZ"; // Temporary; secure encryption is not yet necessary
 

@@ -2,7 +2,7 @@ import BattleScene from "../../battle-scene";
 import AbstractBindingUiHandler from "./abstract-binding-ui-handler";
 import {Mode} from "../ui";
 import { getKeyWithKeycode} from "#app/configs/inputs/configHandler";
-import {Device} from "#enums";
+import {Device} from "#enums/devices";
 import {addTextObject, TextStyle} from "#app/ui/text";
 
 

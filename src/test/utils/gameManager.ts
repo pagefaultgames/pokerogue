@@ -22,9 +22,13 @@ import {EnemyPokemon, PlayerPokemon} from "#app/field/pokemon";
 import {MockClock} from "#app/test/utils/mocks/mockClock";
 import {Command} from "#app/ui/command-ui-handler";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
-import {Button, ExpNotification, GameDataType, PlayerGender, Species} from "#enums";
 import PartyUiHandler, {PartyUiMode} from "#app/ui/party-ui-handler";
 import Trainer from "#app/field/trainer";
+import { ExpNotification } from "#enums/exp-notification";
+import { GameDataType } from "#enums/game-data-type";
+import { PlayerGender } from "#enums/player-gender";
+import { Species } from "#enums/species";
+import { Button } from "#enums/buttons";
 
 /**
  * Class to manage the game state and transitions between phases.

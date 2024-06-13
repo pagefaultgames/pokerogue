@@ -1,5 +1,4 @@
 import {beforeEach, describe, expect, it} from "vitest";
-import {Button, Device} from "#enums";
 import {deepCopy} from "#app/utils";
 import {
   getKeyWithKeycode,
@@ -10,6 +9,8 @@ import {InGameManip} from "#app/test/settingMenu/helpers/inGameManip";
 import {InterfaceConfig} from "#app/inputs-controller";
 import cfg_keyboard_qwerty from "#app/configs/inputs/cfg_keyboard_qwerty";
 import {SettingKeyboard} from "#app/system/settings/settings-keyboard";
+import { Device } from "#enums/devices";
+import { Button } from "#enums/buttons";
 
 
 describe("Test Rebinding", () => {

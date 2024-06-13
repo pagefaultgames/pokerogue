@@ -1,6 +1,5 @@
 import { BattleType } from "../battle";
 import BattleScene from "../battle-scene";
-import { Biome, Species, Moves } from "#enums";
 import { Gender } from "../data/gender";
 import { Nature } from "../data/nature";
 import { PokeballType } from "../data/pokeball";
@@ -10,6 +9,9 @@ import Pokemon, { EnemyPokemon, PokemonMove, PokemonSummonData } from "../field/
 import { TrainerSlot } from "../data/trainer-config";
 import { Variant } from "#app/data/variant";
 import { loadBattlerTag } from "../data/battler-tags";
+import { Biome } from "#enums/biome";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 
 export default class PokemonData {
   public id: integer;

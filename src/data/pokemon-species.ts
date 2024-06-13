@@ -1,4 +1,4 @@
-import { Abilities, PartyMemberStrength, Species } from "#enums";
+
 import BattleScene, { AnySound } from "../battle-scene";
 import { Variant, variantColorCache } from "./variant";
 import { variantData } from "./variant";
@@ -15,6 +15,9 @@ import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from "@material/material-
 import { VariantSet } from "./variant";
 import i18next, { Localizable } from "../plugins/i18n";
 import { Stat } from "./pokemon-stat";
+import { Abilities } from "#enums/abilities";
+import { PartyMemberStrength } from "#enums/party-member-strength";
+import { Species } from "#enums/species";
 
 export enum Region {
   NORMAL,

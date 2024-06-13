@@ -2,9 +2,9 @@ import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vi
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import * as Overrides from "#app/overrides";
-import { Moves } from "#enums";
-import { Abilities } from "#enums";
-import { Species } from "#enums";
+import { Moves } from "#enums/moves";
+import { Abilities } from "#enums/abilities";
+import { Species } from "#enums/species";
 import { Status, StatusEffect } from "#app/data/status-effect.js";
 import { TurnEndPhase } from "#app/phases.js";
 import { QuietFormChangePhase } from "#app/form-change-phase.js";

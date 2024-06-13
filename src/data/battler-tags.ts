@@ -8,12 +8,15 @@ import * as Utils from "../utils";
 import { ChargeAttr, MoveFlags, allMoves } from "./move";
 import { Type } from "./type";
 import { BlockNonDirectDamageAbAttr, FlinchEffectAbAttr, ReverseDrainAbAttr, applyAbAttrs } from "./ability";
-import { Abilities, BattlerTagType, Moves, Species } from "#enums";
 import { TerrainType } from "./terrain";
 import { WeatherType } from "./weather";
 import { BattleStat } from "./battle-stat";
 import { allAbilities } from "./ability";
 import { SpeciesFormChangeManualTrigger } from "./pokemon-forms";
+import { Abilities } from "#enums/abilities";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 
 export enum BattlerTagLapseType {
   FAINT,

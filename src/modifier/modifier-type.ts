@@ -1,6 +1,5 @@
 import * as Modifiers from "./modifier";
 import { AttackMove, allMoves } from "../data/move";
-import { Abilities, BattlerTagType, BerryType, Moves } from "#enums";
 import { PokeballType, getPokeballCatchMultiplier, getPokeballName } from "../data/pokeball";
 import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove } from "../field/pokemon";
 import { EvolutionItem, pokemonEvolutions } from "../data/pokemon-evolutions";
@@ -23,6 +22,10 @@ import i18next from "#app/plugins/i18n";
 import { getModifierTierTextTint } from "#app/ui/text";
 import * as Overrides from "../overrides";
 import { MoneyMultiplierModifier } from "./modifier";
+import { Abilities } from "#enums/abilities";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { BerryType } from "#enums/berry-type";
+import { Moves } from "#enums/moves";
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;

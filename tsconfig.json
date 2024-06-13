@@ -11,8 +11,7 @@
 		"rootDir": "./src",
 		"baseUrl": "./src",
 		"paths": {
-			"#enums": ["./enums"],
-			"#enums/*": ["./enums/*"],
+			"#enums/*": ["./enums/*.ts"],
 			"#app/*": ["*.ts"],
 			"#app": ["."],
 			"#test/*": ["./test/*.ts"]

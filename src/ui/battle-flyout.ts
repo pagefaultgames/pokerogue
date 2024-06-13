@@ -4,7 +4,9 @@ import * as Utils from "../utils";
 import BattleScene from "#app/battle-scene.js";
 import Move from "#app/data/move.js";
 import { BattleSceneEventType, BerryUsedEvent, MoveUsedEvent } from "../events/battle-scene";
-import { BerryType, Moves, UiTheme } from "#enums";
+import { BerryType } from "#enums/berry-type";
+import { Moves } from "#enums/moves";
+import { UiTheme } from "#enums/ui-theme";
 
 /** Container for info about a {@linkcode Move} */
 interface MoveInfo {

@@ -1,6 +1,5 @@
 import BattleScene from "../battle-scene";
 import { BiomePoolTier, PokemonPools, BiomeTierTrainerPools, biomePokemonPools, biomeTrainerPools } from "../data/biomes";
-import { ArenaTagType, Biome, Moves, Species, TimeOfDay, TrainerType } from "#enums";
 import * as Utils from "../utils";
 import PokemonSpecies, { getPokemonSpecies } from "../data/pokemon-species";
 import { Weather, WeatherType, getTerrainClearMessage, getTerrainStartMessage, getWeatherClearMessage, getWeatherStartMessage } from "../data/weather";
@@ -15,6 +14,12 @@ import { PostTerrainChangeAbAttr, PostWeatherChangeAbAttr, applyPostTerrainChang
 import Pokemon from "./pokemon";
 import * as Overrides from "../overrides";
 import { WeatherChangedEvent, TerrainChangedEvent, TagAddedEvent, TagRemovedEvent } from "../events/arena";
+import { ArenaTagType } from "#enums/arena-tag-type";
+import { Biome } from "#enums/biome";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import { TimeOfDay } from "#enums/time-of-day";
+import { TrainerType } from "#enums/trainer-type";
 
 export class Arena {
   public scene: BattleScene;

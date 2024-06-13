@@ -11,7 +11,6 @@ import {
   trainerPartyTemplates,
   signatureSpecies
 } from "../data/trainer-config";
-import {PartyMemberStrength, Species, TrainerType} from "#enums";
 import {EnemyPokemon} from "./pokemon";
 import * as Utils from "../utils";
 import {PersistentModifier} from "../modifier/modifier";
@@ -19,6 +18,9 @@ import {trainerNamePools} from "../data/trainer-names";
 import {ArenaTagSide, ArenaTrapTag} from "#app/data/arena-tag";
 import {getIsInitialized, initI18n} from "#app/plugins/i18n";
 import i18next from "i18next";
+import { PartyMemberStrength } from "#enums/party-member-strength";
+import { Species } from "#enums/species";
+import { TrainerType } from "#enums/trainer-type";
 
 export enum TrainerVariant {
     DEFAULT,

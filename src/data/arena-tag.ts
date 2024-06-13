@@ -7,11 +7,14 @@ import Pokemon, { HitResult, PokemonMove } from "../field/pokemon";
 import { MoveEffectPhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase} from "../phases";
 import { StatusEffect } from "./status-effect";
 import { BattlerIndex } from "../battle";
-import { Abilities, ArenaTagType, BattlerTagType, Moves } from "#enums";
 import { BlockNonDirectDamageAbAttr, ProtectStatAbAttr, applyAbAttrs } from "./ability";
 import { BattleStat } from "./battle-stat";
 import { CommonAnim, CommonBattleAnim } from "./battle-anims";
 import i18next from "i18next";
+import { Abilities } from "#enums/abilities";
+import { ArenaTagType } from "#enums/arena-tag-type";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { Moves } from "#enums/moves";
 
 export enum ArenaTagSide {
   BOTH,

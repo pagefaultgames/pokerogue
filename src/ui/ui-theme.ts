@@ -1,4 +1,4 @@
-import { UiTheme } from "#enums";
+import { UiTheme } from "#enums/ui-theme";
 import { legacyCompatibleImages } from "#app/scene-base";
 import BattleScene from "../battle-scene";
 

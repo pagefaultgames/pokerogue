@@ -52,8 +52,18 @@ import * as Overrides from "./overrides";
 import {InputsController} from "./inputs-controller";
 import {UiInputs} from "./ui-inputs";
 import { NewArenaEvent } from "./events/battle-scene";
-import { Abilities, BattleSpec, BattleStyle, Biome, EaseType, ExpNotification, MoneyFormat, Moves, PlayerGender, UiTheme, Species} from "#enums";
 import ArenaFlyout from "./ui/arena-flyout";
+import { EaseType } from "#enums/ease-type";
+import { Abilities } from "#enums/abilities";
+import { BattleSpec } from "#enums/battle-spec";
+import { BattleStyle } from "#enums/battle-style";
+import { Biome } from "#enums/biome";
+import { ExpNotification } from "#enums/exp-notification";
+import { MoneyFormat } from "#enums/money-format";
+import { Moves } from "#enums/moves";
+import { PlayerGender } from "#enums/player-gender";
+import { Species } from "#enums/species";
+import { UiTheme } from "#enums/ui-theme";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 

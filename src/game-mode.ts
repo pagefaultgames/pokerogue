@@ -2,11 +2,12 @@ import i18next from "i18next";
 import { classicFixedBattles, FixedBattleConfig, FixedBattleConfigs } from "./battle";
 import BattleScene from "./battle-scene";
 import { allChallenges, applyChallenges, Challenge, ChallengeType, copyChallenge } from "./data/challenge";
-import { Biome, Species } from "#enums";
 import PokemonSpecies, { allSpecies } from "./data/pokemon-species";
 import { Arena } from "./field/arena";
 import * as Overrides from "./overrides";
 import * as Utils from "./utils";
+import { Biome } from "#enums/biome";
+import { Species } from "#enums/species";
 
 export enum GameModes {
   CLASSIC,

@@ -28,10 +28,14 @@ import { TextStyle, addBBCodeTextObject, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
 import {SettingKeyboard} from "#app/system/settings/settings-keyboard";
-import {Device, Moves, Species, Button, Passive as PassiveAttr} from "#enums";
+import {Passive as PassiveAttr} from "#enums/passive";
 import * as Challenge from "../data/challenge";
 import MoveInfoOverlay from "./move-info-overlay";
 import { getEggTierForSpecies } from "#app/data/egg.js";
+import { Device } from "#enums/devices";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import {Button} from "#enums/buttons";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 

@@ -1,5 +1,4 @@
 import * as Utils from "../utils";
-import { Challenges, TrainerType, Species } from "#enums";
 import i18next from "#app/plugins/i18n.js";
 import { GameData } from "#app/system/game-data.js";
 import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "./pokemon-species";
@@ -8,6 +7,9 @@ import { BattleType, FixedBattleConfig } from "#app/battle.js";
 import Trainer, { TrainerVariant } from "#app/field/trainer.js";
 import { GameMode } from "#app/game-mode.js";
 import { Type } from "./type";
+import { Challenges } from "#enums/challenges";
+import { Species } from "#enums/species";
+import { TrainerType } from "#enums/trainer-type";
 
 /**
  * An enum for all the challenge types. The parameter entries on these describe the

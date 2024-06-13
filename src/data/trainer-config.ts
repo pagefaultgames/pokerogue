@@ -10,9 +10,12 @@ import {Type} from "./type";
 import {doubleBattleDialogue} from "./dialogue";
 import {PersistentModifier} from "../modifier/modifier";
 import {TrainerVariant} from "../field/trainer";
-import {Moves, PartyMemberStrength, Species, TrainerType} from "#enums";
 import {getIsInitialized, initI18n} from "#app/plugins/i18n";
 import i18next from "i18next";
+import { Moves } from "#enums/moves";
+import { PartyMemberStrength } from "#enums/party-member-strength";
+import { Species } from "#enums/species";
+import { TrainerType } from "#enums/trainer-type";
 
 export enum TrainerPoolTier {
   COMMON,

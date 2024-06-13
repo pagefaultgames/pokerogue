@@ -4,10 +4,14 @@ import { Command } from "./ui/command-ui-handler";
 import * as Utils from "./utils";
 import Trainer, { TrainerVariant } from "./field/trainer";
 import { GameMode } from "./game-mode";
-import { BattleSpec, Moves, PlayerGender, Species, TrainerType } from "#enums";
 import { MoneyMultiplierModifier, PokemonHeldItemModifier } from "./modifier/modifier";
 import { PokeballType } from "./data/pokeball";
 import {trainerConfigs} from "#app/data/trainer-config";
+import { BattleSpec } from "#enums/battle-spec";
+import { Moves } from "#enums/moves";
+import { PlayerGender } from "#enums/player-gender";
+import { Species } from "#enums/species";
+import { TrainerType } from "#enums/trainer-type";
 
 export enum BattleType {
     WILD,

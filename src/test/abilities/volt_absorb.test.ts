@@ -6,8 +6,11 @@ import {
   TurnEndPhase,
 } from "#app/phases";
 import {getMovePosition} from "#app/test/utils/gameManagerUtils";
-import { Abilities, BattlerTagType, Moves, Species } from "#enums";
 import { BattleStat } from "#app/data/battle-stat.js";
+import { Abilities } from "#enums/abilities";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 
 // See also: TypeImmunityAbAttr
 describe("Abilities - Volt Absorb", () => {

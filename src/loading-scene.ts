@@ -1,5 +1,4 @@
 import { GachaType } from "./data/egg";
-import { Biome, TrainerType } from "#enums";
 import { trainerConfigs } from "./data/trainer-config";
 import { getBiomeHasProps } from "./field/arena";
 import CacheBustedLoaderPlugin from "./plugins/cache-busted-loader-plugin";
@@ -21,6 +20,8 @@ import { initChallenges } from "./data/challenge";
 import i18next from "i18next";
 import { initStatsKeys } from "./ui/game-stats-ui-handler";
 import { initVouchers } from "./system/voucher";
+import { Biome } from "#enums/biome";
+import { TrainerType } from "#enums/trainer-type";
 
 export class LoadingScene extends SceneBase {
   constructor() {

@@ -10,7 +10,6 @@ import {Mode} from "./ui/ui";
 import SettingsGamepadUiHandler from "./ui/settings/settings-gamepad-ui-handler";
 import SettingsKeyboardUiHandler from "./ui/settings/settings-keyboard-ui-handler";
 import cfg_keyboard_qwerty from "./configs/inputs/cfg_keyboard_qwerty";
-import {Button, Device} from "#enums";
 import {
   assign,
   getButtonWithKeycode,
@@ -20,6 +19,8 @@ import BattleScene from "./battle-scene";
 import {SettingGamepad} from "#app/system/settings/settings-gamepad.js";
 import {SettingKeyboard} from "#app/system/settings/settings-keyboard";
 import TouchControl from "#app/touch-controls";
+import { Button } from "#enums/buttons";
+import { Device } from "#enums/devices";
 
 export interface DeviceMapping {
     [key: string]: number;

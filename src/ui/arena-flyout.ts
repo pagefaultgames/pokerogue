@@ -6,7 +6,7 @@ import { TerrainType } from "#app/data/terrain.js";
 import { addWindow, WindowVariant } from "./ui-theme";
 import { ArenaEvent, ArenaEventType, TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena.js";
 import { BattleSceneEventType, TurnEndEvent } from "../events/battle-scene";
-import { ArenaTagType } from "#enums";
+import { ArenaTagType } from "#enums/arena-tag-type";
 import TimeOfDayWidget from "./time-of-day-widget";
 import * as Utils from "../utils";
 
