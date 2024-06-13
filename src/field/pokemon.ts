@@ -3811,6 +3811,7 @@ export class PokemonSummonData {
   public disabledTurns: integer = 0;
   public tags: BattlerTag[] = [];
   public abilitySuppressed: boolean = false;
+  public abilitiesApplied: Abilities[] = [];
 
   public speciesForm: PokemonSpeciesForm;
   public fusionSpeciesForm: PokemonSpeciesForm;
@@ -3819,7 +3820,8 @@ export class PokemonSummonData {
   public fusionGender: Gender;
   public stats: integer[];
   public moveset: PokemonMove[];
-  public types: Type[];
+  // If not initialized this value will not be populated from save data.
+  public types: Type[] = null;
 }
 
 export class PokemonBattleData {
@@ -3831,7 +3833,9 @@ export class PokemonBattleData {
 }
 
 export class PokemonBattleSummonData {
+  /** The number of turns the pokemon has passed since entering the battle */
   public turnCount: integer = 1;
+  /** The list of moves the pokemon has used since entering the battle */
   public moveHistory: TurnMove[] = [];
 }
 
