@@ -89,8 +89,11 @@ export interface Localizable {
 }
 
 const fonts = [
-  new FontFace("emerald", "url(./fonts/PokePT_Wansung.ttf)"),
-  new FontFace("emerald", "url(./fonts/pokemon-emerald-pro.ttf"),
+  new FontFace("emerald", "url(./fonts/PokePT_Wansung.ttf)", { unicodeRange: "U+AC00-D7AC"}),
+  Object.assign(
+    new FontFace("pkmnems", "url(./fonts/PokePT_Wansung.ttf)", { unicodeRange: "U+AC00-D7AC"}),
+    { sizeAdjust: "133%" }
+  ),
 ];
 
 function initFonts() {

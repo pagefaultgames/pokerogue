@@ -6,7 +6,6 @@ import {
   EncounterPhase,
   FaintPhase,
   LoginPhase, NewBattlePhase,
-  SelectGenderPhase,
   SelectStarterPhase,
   TitlePhase, TurnInitPhase,
 } from "#app/phases";
@@ -100,14 +99,8 @@ export default class GameManager {
    * @returns A promise that resolves when the title phase is reached.
    */
   async runToTitle(): Promise<void> {
-    await this.phaseInterceptor.run(LoginPhase);
-
-    this.onNextPrompt("SelectGenderPhase", Mode.OPTION_SELECT, () => {
-      this.scene.gameData.gender = PlayerGender.MALE;
-      this.endPhase();
-    }, () => this.isCurrentPhase(TitlePhase));
-
-    await this.phaseInterceptor.run(SelectGenderPhase, () => this.isCurrentPhase(TitlePhase));
+    await this.phaseInterceptor.whenAboutToRun(LoginPhase);
+    this.phaseInterceptor.pop();
     await this.phaseInterceptor.run(TitlePhase);
 
     this.scene.gameSpeed = 5;
@@ -116,6 +109,9 @@ export default class GameManager {
     this.scene.expGainsSpeed = 3;
     this.scene.expParty = ExpNotification.SKIP;
     this.scene.hpBarSpeed = 3;
+    this.scene.enableTutorials = false;
+    this.scene.gameData.gender = PlayerGender.MALE;
+
   }
 
   /**
@@ -290,16 +286,16 @@ export default class GameManager {
     });
   }
 
-  async switchPokemon(pokemonIndex: number, toNext: boolean = true) {
+  /**
+   * Switch pokemon and transition to the enemy command phase
+   * @param pokemonIndex the index of the pokemon in your party to switch to
+   */
+  doSwitchPokemon(pokemonIndex: number) {
     this.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
       this.scene.ui.setMode(Mode.PARTY, PartyUiMode.SWITCH, (this.scene.getCurrentPhase() as CommandPhase).getPokemon().getFieldIndex(), null, PartyUiHandler.FilterNonFainted);
     });
     this.onNextPrompt("CommandPhase", Mode.PARTY, () => {
       (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.POKEMON, pokemonIndex, false);
     });
-    if (toNext) {
-      await this.phaseInterceptor.run(CommandPhase);
-      await this.phaseInterceptor.to(CommandPhase);
-    }
   }
 }
