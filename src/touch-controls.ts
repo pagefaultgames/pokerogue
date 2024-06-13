@@ -1,25 +1,164 @@
 import {Button} from "./enums/buttons";
 import EventEmitter = Phaser.Events.EventEmitter;
+import BattleScene from "./battle-scene";
 
-// Create a map to store key bindings
-export const keys = new Map<string, string>();
-// Create a map to store keys that are currently pressed
-export const keysDown = new Map<string, string>();
-// Variable to store the ID of the last touched element
-let lastTouchedId: string;
+const repeatInputDelayMillis = 250;
 
-/**
- * Initialize touch controls by binding keys to buttons.
- *
- * @param events - The event emitter for handling input events.
- */
-export function initTouchControls(events: EventEmitter): void {
-  preventElementZoom(document.querySelector("#dpad"));
-  preventElementZoom(document.querySelector("#apad"));
-  // Select all elements with the 'data-key' attribute and bind keys to them
-  for (const button of document.querySelectorAll("[data-key]")) {
-    // @ts-ignore - Bind the key to the button using the dataset key
-    bindKey(button, button.dataset.key, events);
+export default class TouchControl {
+  events: EventEmitter;
+  private buttonLock: string[] = new Array();
+  private inputInterval: NodeJS.Timeout[] = new Array();
+
+  constructor(scene: BattleScene) {
+    this.events = scene.game.events;
+    this.init();
+  }
+
+  /**
+   * Initialize touch controls by binding keys to buttons.
+   */
+  init() {
+    this.preventElementZoom(document.querySelector("#dpad"));
+    this.preventElementZoom(document.querySelector("#apad"));
+    // Select all elements with the 'data-key' attribute and bind keys to them
+    for (const button of document.querySelectorAll("[data-key]")) {
+      // @ts-ignore - Bind the key to the button using the dataset key
+      this.bindKey(button, button.dataset.key);
+    }
+  }
+
+  /**
+   * Binds a node to a specific key to simulate keyboard events on touch.
+   *
+   * @param node - The DOM element to bind the key to.
+   * @param key - The key to simulate.
+   * @param events - The event emitter for handling input events.
+   *
+   * @remarks
+   * This function binds touch events to a node to simulate 'keydown' and 'keyup' keyboard events.
+   * It adds the key to the keys map and tracks the keydown state. When a touch starts, it simulates
+   * a 'keydown' event and adds an 'active' class to the node. When the touch ends, it simulates a 'keyup'
+   * event, removes the keydown state, and removes the 'active' class from the node and the last touched element.
+   */
+  bindKey(node: HTMLElement, key: string) {
+    node.addEventListener("touchstart", event => {
+      event.preventDefault();
+      this.touchButtonDown(node, key);
+    });
+
+    node.addEventListener("touchend", event => {
+      event.preventDefault();
+      this.touchButtonUp(node, key, event.target["id"]);
+    });
+  }
+
+  touchButtonDown(node: HTMLElement, key: string) {
+    if (this.buttonLock.includes(key)) {
+      return;
+    }
+    this.simulateKeyboardEvent("keydown", key);
+    clearInterval(this.inputInterval[key]);
+    this.inputInterval[key] = setInterval(() => {
+      this.simulateKeyboardEvent("keydown", key);
+    }, repeatInputDelayMillis);
+    this.buttonLock.push(key);
+    node.classList.add("active");
+
+  }
+
+  touchButtonUp(node: HTMLElement, key: string, id: string) {
+    if (!this.buttonLock.includes(key)) {
+      return;
+    }
+    this.simulateKeyboardEvent("keyup", key);
+
+    node.classList.remove("active");
+
+    document.getElementById(id)?.classList.remove("active");
+    const index = this.buttonLock.indexOf(key);
+    this.buttonLock.splice(index, 1);
+    clearInterval(this.inputInterval[key]);
+  }
+
+  /**
+   * Simulates a keyboard event on the canvas.
+   *
+   * @param eventType - The type of the keyboard event ('keydown' or 'keyup').
+   * @param key - The key to simulate.
+   *
+   * @remarks
+   * This function checks if the key exists in the Button enum. If it does, it retrieves the corresponding button
+   * and emits the appropriate event ('input_down' or 'input_up') based on the event type.
+   */
+  simulateKeyboardEvent(eventType: string, key: string) {
+    if (!Button.hasOwnProperty(key)) {
+      return;
+    }
+    const button = Button[key];
+
+    switch (eventType) {
+    case "keydown":
+      this.events.emit("input_down", {
+        controller_type: "keyboard",
+        button: button,
+        isTouch: true
+      });
+      break;
+    case "keyup":
+      this.events.emit("input_up", {
+        controller_type: "keyboard",
+        button: button,
+        isTouch: true
+      });
+      break;
+    }
+  }
+
+  /**
+   * {@link https://stackoverflow.com/a/39778831/4622620|Source}
+   *
+   * Prevent zoom on specified element
+   * @param {HTMLElement} element
+   */
+  preventElementZoom(element: HTMLElement): void {
+    if (!element) {
+      return;
+    }
+    element.addEventListener("touchstart", (event: TouchEvent) => {
+
+      if (!(event.currentTarget instanceof HTMLElement)) {
+        return;
+      }
+
+      const currentTouchTimeStamp = event.timeStamp;
+      const previousTouchTimeStamp = Number(event.currentTarget.dataset.lastTouchTimeStamp) || currentTouchTimeStamp;
+      const timeStampDifference = currentTouchTimeStamp - previousTouchTimeStamp;
+      const fingers = event.touches.length;
+      event.currentTarget.dataset.lastTouchTimeStamp = String(currentTouchTimeStamp);
+
+      if (!timeStampDifference || timeStampDifference > 500 || fingers > 1) {
+        return;
+      } // not double-tap
+
+      event.preventDefault();
+
+      if (event.target instanceof HTMLElement) {
+        event.target.click();
+      }
+    });
+  }
+
+  /**
+     * Deactivates all currently pressed keys.
+     */
+  deactivatePressedKey(): void {
+    for (const key of Object.keys(this.inputInterval)) {
+      clearInterval(this.inputInterval[key]);
+    }
+    for (const button of document.querySelectorAll("[data-key]")) {
+      button.classList.remove("active");
+    }
+    this.buttonLock = [];
   }
 }
 
@@ -46,112 +185,4 @@ export function isMobile(): boolean {
     }
   })(navigator.userAgent || navigator.vendor || window["opera"]);
   return ret;
-}
-
-/**
- * Simulates a keyboard event on the canvas.
- *
- * @param eventType - The type of the keyboard event ('keydown' or 'keyup').
- * @param key - The key to simulate.
- * @param events - The event emitter for handling input events.
- *
- * @remarks
- * This function checks if the key exists in the Button enum. If it does, it retrieves the corresponding button
- * and emits the appropriate event ('input_down' or 'input_up') based on the event type.
- */
-function simulateKeyboardEvent(eventType: string, key: string, events: EventEmitter) {
-  if (!Button.hasOwnProperty(key)) {
-    return;
-  }
-  const button = Button[key];
-
-  switch (eventType) {
-  case "keydown":
-    events.emit("input_down", {
-      controller_type: "keyboard",
-      button: button,
-    });
-    break;
-  case "keyup":
-    events.emit("input_up", {
-      controller_type: "keyboard",
-      button: button,
-    });
-    break;
-  }
-}
-
-/**
- * Binds a node to a specific key to simulate keyboard events on touch.
- *
- * @param node - The DOM element to bind the key to.
- * @param key - The key to simulate.
- * @param events - The event emitter for handling input events.
- *
- * @remarks
- * This function binds touch events to a node to simulate 'keydown' and 'keyup' keyboard events.
- * It adds the key to the keys map and tracks the keydown state. When a touch starts, it simulates
- * a 'keydown' event and adds an 'active' class to the node. When the touch ends, it simulates a 'keyup'
- * event, removes the keydown state, and removes the 'active' class from the node and the last touched element.
- */
-function bindKey(node: HTMLElement, key: string, events) {
-  keys.set(node.id, key);
-
-  node.addEventListener("touchstart", event => {
-    event.preventDefault();
-    simulateKeyboardEvent("keydown", key, events);
-    keysDown.set(event.target["id"], node.id);
-    node.classList.add("active");
-  });
-
-  node.addEventListener("touchend", event => {
-    event.preventDefault();
-
-    const pressedKey = keysDown.get(event.target["id"]);
-    if (pressedKey && keys.has(pressedKey)) {
-      const key = keys.get(pressedKey);
-      simulateKeyboardEvent("keyup", key, events);
-    }
-
-    keysDown.delete(event.target["id"]);
-    node.classList.remove("active");
-
-    if (lastTouchedId) {
-      document.getElementById(lastTouchedId).classList.remove("active");
-    }
-  });
-}
-
-/**
- * {@link https://stackoverflow.com/a/39778831/4622620|Source}
- *
- * Prevent zoom on specified element
- * @param {HTMLElement} element
- */
-function preventElementZoom(element: HTMLElement): void {
-  if (!element) {
-    return;
-  }
-  element.addEventListener("touchstart", (event: TouchEvent) => {
-
-    if (!(event.currentTarget instanceof HTMLElement)) {
-      return;
-    }
-
-    const currentTouchTimeStamp = event.timeStamp;
-    const previousTouchTimeStamp = Number(event.currentTarget.dataset.lastTouchTimeStamp) || currentTouchTimeStamp;
-    const timeStampDifference = currentTouchTimeStamp - previousTouchTimeStamp;
-    const fingers = event.touches.length;
-    event.currentTarget.dataset.lastTouchTimeStamp = String(currentTouchTimeStamp);
-
-    if (!timeStampDifference || timeStampDifference > 500 || fingers > 1) {
-      return;
-    } // not double-tap
-
-    event.preventDefault();
-
-    if (event.target instanceof HTMLElement) {
-      event.target.click();
-    }
-  });
 }

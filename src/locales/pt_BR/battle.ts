@@ -5,7 +5,7 @@ export const battle: SimpleTranslationEntries = {
   "trainerAppeared": "{{trainerName}}\nquer batalhar!",
   "trainerAppearedDouble": "{{trainerName}}\nquerem batalhar!",
   "singleWildAppeared": "Um {{pokemonName}} selvagem apareceu!",
-  "trainerSendOut": "{{trainerName}} sent out\n{{pokemonName}}!",
+  "trainerSendOut": "{{trainerName}} escolheu\n{{pokemonName}}!",
   "multiWildAppeared": "Um {{pokemonName1}} e um {{pokemonName2}} selvagens\napareceram!",
   "playerComeBack": "{{pokemonName}}, retorne!",
   "trainerComeBack": "{{trainerName}} retirou {{pokemonName}} da batalha!",
@@ -13,9 +13,9 @@ export const battle: SimpleTranslationEntries = {
   "trainerGo": "{{trainerName}} escolheu {{pokemonName}}!",
   "switchQuestion": "Quer trocar\nde {{pokemonName}}?",
   "trainerDefeated": "Você derrotou\n{{trainerName}}!",
-  "moneyWon": "You got\n₽{{moneyAmount}} for winning!",
+  "moneyWon": "Você ganhou\n₽{{moneyAmount}} por ganhar!",
   "pokemonCaught": "{{pokemonName}} foi capturado!",
-  "partyFull": "Your party is full.\nRelease a Pokémon to make room for {{pokemonName}}?",
+  "partyFull": "Sua equipe está cheia.\nSolte um Pokémon para ter espaço para {{pokemonName}}?",
   "pokemon": "Pokémon",
   "sendOutPokemon": "{{pokemonName}}, eu escolho você!!",
   "hitResultCriticalHit": "Um golpe crítico!",
@@ -60,5 +60,6 @@ export const battle: SimpleTranslationEntries = {
   "foePokemonWithAffix": "{{pokemonName}} adversário",
   "useMove": "{{pokemonNameWithAffix}} usou {{moveName}}!",
   "drainMessage": "{{pokemonName}} teve sua\nenergia drenada!",
-  "regainHealth": "{{pokemonName}} recuperou\npontos de saúde!"
+  "regainHealth": "{{pokemonName}} recuperou\npontos de saúde!",
+  "fainted": "{{pokemonNameWithAffix}} desmaiou!",
 } as const;

@@ -1,6 +1,6 @@
 import { ability } from "./ability";
 import { abilityTriggers } from "./ability-trigger";
-import { achv } from "./achv";
+import { PGFachv, PGMachv } from "./achv";
 import { battle } from "./battle";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
 import { berry } from "./berry";
@@ -19,6 +19,7 @@ import {
 } from "./dialogue";
 import { egg } from "./egg";
 import { fightUiHandler } from "./fight-ui-handler";
+import { gameMode } from "./game-mode";
 import { gameStatsUiHandler } from "./game-stats-ui-handler";
 import { growth } from "./growth";
 import { menu } from "./menu";
@@ -30,6 +31,7 @@ import { pokeball } from "./pokeball";
 import { pokemon } from "./pokemon";
 import { pokemonInfo } from "./pokemon-info";
 import { pokemonInfoContainer } from "./pokemon-info-container";
+import { saveSlotSelectUiHandler } from "./save-slot-select-ui-handler";
 import { splashMessages } from "./splash-messages";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
 import { titles, trainerClasses, trainerNames } from "./trainers";
@@ -41,13 +43,14 @@ import { partyUiHandler } from "./party-ui-handler";
 export const koConfig = {
   ability: ability,
   abilityTriggers: abilityTriggers,
-  achv: achv,
   battle: battle,
   battleMessageUiHandler: battleMessageUiHandler,
   berry: berry,
   biome: biome,
   challenges: challenges,
   commandUiHandler: commandUiHandler,
+  PGMachv: PGMachv,
+  PGFachv: PGFachv,
   PGMdialogue: PGMdialogue,
   PGFdialogue: PGFdialogue,
   PGMbattleSpecDialogue: PGMbattleSpecDialogue,
@@ -58,6 +61,7 @@ export const koConfig = {
   PGFdoubleBattleDialogue: PGFdoubleBattleDialogue,
   egg: egg,
   fightUiHandler: fightUiHandler,
+  gameMode: gameMode,
   gameStatsUiHandler: gameStatsUiHandler,
   growth: growth,
   menu: menu,
@@ -69,6 +73,7 @@ export const koConfig = {
   pokemon: pokemon,
   pokemonInfo: pokemonInfo,
   pokemonInfoContainer: pokemonInfoContainer,
+  saveSlotSelectUiHandler: saveSlotSelectUiHandler,
   splashMessages: splashMessages,
   starterSelectUiHandler: starterSelectUiHandler,
   titles: titles,

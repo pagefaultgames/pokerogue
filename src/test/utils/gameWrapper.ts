@@ -86,7 +86,6 @@ export default class GameWrapper {
       frames: {},
     });
     Pokemon.prototype.enableMask = () => null;
-    localStorage.clear();
   }
 
   setScene(scene: BattleScene) {
@@ -121,7 +120,7 @@ export default class GameWrapper {
       pause: () => null,
       setRate: () => null,
       add: () => this.scene.sound,
-      get: () => this.scene.sound,
+      get: () => ({...this.scene.sound, totalDuration: 0}),
       getAllPlaying: () => [],
       manager: {
         game: this.game,
@@ -131,6 +130,13 @@ export default class GameWrapper {
       on: (evt, callback) => callback(),
       key: "",
     };
+
+    this.scene.cameras = {
+      main: {
+        setPostPipeline: () => null,
+        removePostPipeline: () => null,
+      },
+    }
 
     this.scene.tweens = {
       add: (data) => {

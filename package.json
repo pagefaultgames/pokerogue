@@ -11,6 +11,7 @@
 		"test": "vitest run",
 		"test:cov": "vitest run --coverage",
 		"test:watch": "vitest watch --coverage",
+		"test:silent": "vitest run --silent",
 		"eslint": "eslint --fix .",
 		"eslint-ci": "eslint .",
 		"docs": "typedoc"
@@ -53,6 +54,7 @@
 	},
 	"imports": {
 		"#app": "./src/main.js",
-		"#app/*": "./src/*"
+		"#app/*": "./src/*",
+		"#test/*": "./src/test/*"
 	}
 }
