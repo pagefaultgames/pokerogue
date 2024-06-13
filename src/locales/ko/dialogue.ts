@@ -1418,7 +1418,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "koga": {
     "encounter": {
-      1: "후하하하! 포켓몬은 딘순히 강한 것만이 아니다--곧 알려주지!"
+      1: "후하하하! 포켓몬은 단순히 강한 것만이 아니다--곧 알려주지!"
     },
     "victory": {
       1: "하! 스스로 증명해냈군!"
@@ -2628,7 +2628,7 @@ export const PGMdoubleBattleDialogue: DialogueTranslationEntries = {
   },
   "marnie_piers_double": {
     "encounter": {
-      1:  `두송: 큰서트 즐길 준비 됐어?
+      1:  `두송: 콘서트 즐길 준비 됐어?
                     $마리: 오빠... 얘들은 노래가 아니라 승부를 하러 왔어...`,
     },
     "victory": {

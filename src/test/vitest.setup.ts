@@ -11,6 +11,7 @@ import { initAbilities } from "#app/data/ability";
 import { initAchievements } from "#app/system/achv.js";
 import { initVouchers } from "#app/system/voucher.js";
 import { beforeAll, vi } from "vitest";
+import {initLoggedInUser} from "#app/account";
 
 initVouchers();
 initAchievements();
@@ -22,6 +23,7 @@ initPokemonForms();
 initSpecies();
 initMoves();
 initAbilities();
+initLoggedInUser();
 
 beforeAll(() => {
   vi.mock("../overrides", async (importOriginal) => {

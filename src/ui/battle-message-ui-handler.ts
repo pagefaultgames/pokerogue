@@ -6,7 +6,7 @@ import MessageUiHandler from "./message-ui-handler";
 import { getStatName, Stat } from "../data/pokemon-stat";
 import { addWindow } from "./ui-theme";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
-import {Button} from "../enums/buttons";
+import {Button} from "#enums/buttons";
 import i18next from "../plugins/i18n";
 
 export default class BattleMessageUiHandler extends MessageUiHandler {
