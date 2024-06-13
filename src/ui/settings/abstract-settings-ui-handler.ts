@@ -33,8 +33,8 @@ export default class AbstractSettingsUiHandler extends UiHandler {
 
   private reloadSettings: Array<Setting>;
   private reloadRequired: boolean;
-  private rowsToDisplay: number;
 
+  protected rowsToDisplay: number;
   protected title: string;
   protected settings: Array<Setting>;
   protected localStorageKey: string;
