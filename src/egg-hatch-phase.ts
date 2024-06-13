@@ -492,7 +492,7 @@ export class EggHatchPhase extends Phase {
           .map(s => parseInt(s) as Species)
           .filter(s => !pokemonPrevolutions.hasOwnProperty(s) && getPokemonSpecies(s).isObtainable() && ignoredSpecies.indexOf(s) === -1);
 
-        // If this is the 10th egg without unlocking something new, attempt to force it.
+        // If this is the 10th egg without unlocking something new, attempt to force it as long as gacha pity is enabled.
         if ((this.scene.gameData.unlockPity[this.egg.tier] >= 9) && (this.scene.gachaPity)) {
           const lockedPool = speciesPool.filter(s => !this.scene.gameData.dexData[s].caughtAttr);
           if (lockedPool.length) { // Skip this if everything is unlocked
@@ -534,9 +534,14 @@ export class EggHatchPhase extends Phase {
           }
         }
 
+        /**
+         * Keep track of how many eggs the user has has hatched without receiving something new.
+         * First condition increments the count of something not new is hatched and gacha pity is enabled.
+         * Second condition sets the count to zero when something new is hatched and gacha pity is enabled.
+         */
         if ((!!this.scene.gameData.dexData[species].caughtAttr) && (this.scene.gachaPity)) {
           this.scene.gameData.unlockPity[this.egg.tier] = Math.min(this.scene.gameData.unlockPity[this.egg.tier] + 1, 10);
-        } else {
+        } else if (this.scene.gachaPity) {
           this.scene.gameData.unlockPity[this.egg.tier] = 0;
         }
 
