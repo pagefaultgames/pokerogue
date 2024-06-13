@@ -1855,7 +1855,7 @@ export class ShinyRateBoosterModifier extends PersistentModifier {
   }
 
   apply(args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value *= Math.pow(2, 2 + this.getStackCount());
+    (args[0] as Utils.IntegerHolder).value *= Math.pow(2, 1 + this.getStackCount());
 
     return true;
   }
