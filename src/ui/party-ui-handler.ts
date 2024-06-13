@@ -1,7 +1,7 @@
 import { CommandPhase, SelectModifierPhase } from "../phases";
 import BattleScene from "../battle-scene";
 import { PlayerPokemon, PokemonMove } from "../field/pokemon";
-import { addTextObject, TextStyle } from "./text";
+import { addBBCodeTextObject, addTextObject, getTextColor, TextStyle } from "./text";
 import { Command } from "./command-ui-handler";
 import MessageUiHandler from "./message-ui-handler";
 import { Mode } from "./ui";
@@ -20,6 +20,7 @@ import {Button} from "../enums/buttons";
 import { applyChallenges, ChallengeType } from "#app/data/challenge.js";
 import MoveInfoOverlay from "./move-info-overlay";
 import i18next from "i18next";
+import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 
 const defaultMessage = "Choose a Pokémon.";
 
@@ -800,7 +801,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     optionEndIndex = this.options.length;
 
     let widestOptionWidth = 0;
-    const optionTexts: Phaser.GameObjects.Text[] = [];
+    const optionTexts: BBCodeText[] = [];
 
     for (let o = optionStartIndex; o < optionEndIndex; o++) {
       const option = this.options[this.options.length - (o + 1)];
@@ -845,19 +846,30 @@ export default class PartyUiHandler extends MessageUiHandler {
       } else {
         const itemModifier = itemModifiers[option];
         optionName = itemModifier.type.name;
-        /** For every item that has stack bigger than 1, display the current quantity selection */
-        if (this.transferQuantitiesMax[option] > 1) {
-          optionName += ` (${this.transferQuantities[option]})`;
-        }
       }
 
       const yCoord = -6 - 16 * o;
-      const optionText = addTextObject(this.scene, 0, yCoord - 16, optionName, TextStyle.WINDOW);
+      const optionText = addBBCodeTextObject(this.scene, 0, yCoord - 16, optionName, TextStyle.WINDOW, { maxLines: 1 });
       if (altText) {
         optionText.setColor("#40c8f8");
         optionText.setShadowColor("#006090");
       }
       optionText.setOrigin(0, 0);
+
+      /** For every item that has stack bigger than 1, display the current quantity selection */
+      if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER && this.transferQuantitiesMax[option] > 1) {
+        const itemModifier = itemModifiers[option];
+        let amountText = ` (${this.transferQuantities[option]})`;
+
+        /** If the amount held is the maximum, display the count in red */
+        if (this.transferQuantitiesMax[option] === itemModifier.getMaxHeldItemCount(this.scene.getParty()[0])) {
+          amountText = `[color=${getTextColor(TextStyle.SUMMARY_RED)}]${amountText}[/color]`;
+        }
+
+        optionText.setText(optionName + amountText);
+      }
+
+      optionText.setText(`[shadow]${optionText.text}[/shadow]`);
 
       optionTexts.push(optionText);
 

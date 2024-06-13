@@ -829,7 +829,7 @@ export class GameData {
   loadSession(scene: BattleScene, slotId: integer, sessionData?: SessionSaveData): Promise<boolean> {
     return new Promise(async (resolve, reject) => {
       try {
-        const initSessionFromData = async sessionData => {
+        const initSessionFromData = async (sessionData: SessionSaveData) => {
           console.debug(sessionData);
 
           scene.gameMode = getGameMode(sessionData.gameMode || GameModes.CLASSIC);

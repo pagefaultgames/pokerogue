@@ -12,7 +12,8 @@
 		"baseUrl": "./src",
 		"paths": {
 			"#app/*": ["*.ts"],
-			"#app": ["."]
+			"#app": ["."],
+			"#test/*": ["./test/*.ts"]
 		},
 		"outDir": "./build",
 		"noEmit": true
