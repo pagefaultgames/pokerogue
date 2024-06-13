@@ -45,8 +45,10 @@ export const menu: SimpleTranslationEntries = {
   "weeklyRankings": "주간 랭킹",
   "noRankings": "랭킹 정보 없음",
   "loading": "로딩 중…",
+  "loadingAsset": "Loading asset: {{assetName}}",
   "playersOnline": "플레이어 온라인",
-  "empty":"빈 슬롯",
   "yes":"예",
   "no":"아니오",
+  "disclaimer": "면책 조항",
+  "disclaimerDescription": "이 게임은 완전히 개발되지 않았습니다- (세이브 데이터 소실을 포함) 플레이에 지장을 주는 문제가 생길 수 있으며,\n공지 없이 업데이트가 진행 혹은 중지될 수 있습니다.",
 } as const;
