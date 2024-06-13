@@ -7552,8 +7552,14 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, false, 1)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, true, false, 1)
       .bitingMove(),
-    new SelfStatusMove(Moves.STUFF_CHEEKS, Type.NORMAL, -1, 10, 100, 0, 8)
-      .unimplemented(),
+    new SelfStatusMove(Moves.STUFF_CHEEKS, Type.NORMAL, -1, 10, 100, 0, 8) // TODO: Stuff Cheeks should not be selectable when the user does not have a berry, see wiki
+      .attr(EatBerryAttr)
+      .attr(StatChangeAttr, BattleStat.DEF, 2, true)
+      .condition((user) => {
+        const userBerries = user.scene.findModifiers(m => m instanceof BerryModifier);
+        return userBerries.length > 0;
+      })
+      .partial(),
     new SelfStatusMove(Moves.NO_RETREAT, Type.FIGHTING, -1, 5, 100, 0, 8)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD ], 1, true)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, true, true, 1),
