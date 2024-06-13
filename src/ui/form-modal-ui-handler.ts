@@ -18,6 +18,7 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
   protected inputs: InputText[];
   protected errorMessage: Phaser.GameObjects.Text;
   protected submitAction: Function;
+  protected tween: Phaser.Tweens.Tween;
 
   constructor(scene: BattleScene, mode?: Mode) {
     super(scene, mode);
@@ -99,7 +100,7 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
       this.modalContainer.y += 24;
       this.modalContainer.setAlpha(0);
 
-      this.scene.tweens.add({
+      this.tween = this.scene.tweens.add({
         targets: this.modalContainer,
         duration: Utils.fixedInt(1000),
         ease: "Sine.easeInOut",
@@ -142,5 +143,9 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
     this.inputContainers.map(ic => ic.setVisible(false));
 
     this.submitAction = null;
+
+    if (this.tween) {
+      this.tween.remove();
+    }
   }
 }
