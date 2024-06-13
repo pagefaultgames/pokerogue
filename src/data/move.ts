@@ -1551,47 +1551,57 @@ export class MultiHitAttr extends MoveAttr {
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     let hitTimes: integer;
-    const hitType = new Utils.IntegerHolder(this.multiHitType);
-    applyMoveAttrs(ChangeMultiHitTypeAttr, user, target, move, hitType);
-    switch (hitType.value) {
-    case MultiHitType._2_TO_5:
-      {
-        const rand = user.randSeedInt(16);
-        const hitValue = new Utils.IntegerHolder(rand);
-        applyAbAttrs(MaxMultiHitAbAttr, user, null, hitValue);
-        if (hitValue.value >= 10) {
-          hitTimes = 2;
-        } else if (hitValue.value >= 4) {
-          hitTimes = 3;
-        } else if (hitValue.value >= 2) {
-          hitTimes = 4;
-        } else {
-          hitTimes = 5;
-        }
-      }
-      break;
-    case MultiHitType._2:
-      hitTimes = 2;
-      break;
-    case MultiHitType._3:
-      hitTimes = 3;
-      break;
-    case MultiHitType._10:
-      hitTimes = 10;
-      break;
-    case MultiHitType.BEAT_UP:
-      const party = user.isPlayer() ? user.scene.getParty() : user.scene.getEnemyParty();
-      // No status means the ally pokemon can contribute to Beat Up
-      hitTimes = party.reduce((total, pokemon) => {
-        return total + (pokemon.id === user.id ? 1 : pokemon?.status && pokemon.status.effect !== StatusEffect.NONE ? 0 : 1);
-      }, 0);
+
+    if (target.getAttackMoveEffectiveness(user, new PokemonMove(move.id)) === 0) {
+      // If there is a type immunity, the attack will stop no matter what
+      hitTimes = 1;
+    } else {
+      const hitType = new Utils.IntegerHolder(this.multiHitType);
+      applyMoveAttrs(ChangeMultiHitTypeAttr, user, target, move, hitType);
+      hitTimes = this.getHitTimes(user, target);
     }
+
     (args[0] as Utils.IntegerHolder).value = hitTimes;
     return true;
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
     return -5;
+  }
+
+  getHitTimes(user: Pokemon, target: Pokemon) {
+    switch (this.multiHitType) {
+    case MultiHitType._2_TO_5:
+    {
+      const rand = user.randSeedInt(16);
+      const hitValue = new Utils.IntegerHolder(rand);
+      applyAbAttrs(MaxMultiHitAbAttr, user, null, hitValue);
+      if (hitValue.value >= 10) {
+        return 2;
+      } else if (hitValue.value >= 4) {
+        return 3;
+      } else if (hitValue.value >= 2) {
+        return 4;
+      } else {
+        return 5;
+      }
+    }
+    case MultiHitType._2:
+      return 2;
+      break;
+    case MultiHitType._3:
+      return 3;
+      break;
+    case MultiHitType._10:
+      return 10;
+      break;
+    case MultiHitType.BEAT_UP:
+      const party = user.isPlayer() ? user.scene.getParty() : user.scene.getEnemyParty();
+      // No status means the ally pokemon can contribute to Beat Up
+      return party.reduce((total, pokemon) => {
+        return total + (pokemon.id === user.id ? 1 : pokemon?.status && pokemon.status.effect !== StatusEffect.NONE ? 0 : 1);
+      }, 0);
+    }
   }
 }
 
@@ -4661,8 +4671,8 @@ export class RandomMoveAttr extends OverrideMoveEffectAttr {
         : moveTargets.targets.indexOf(target.getBattlerIndex()) > -1
           ? [ target.getBattlerIndex() ]
           : [ moveTargets.targets[user.randSeedInt(moveTargets.targets.length)] ];
-      user.getMoveQueue().push({ move: moveId, targets: targets, ignorePP: true });
-      user.scene.unshiftPhase(new MovePhase(user.scene, user, targets, new PokemonMove(moveId, 0, 0, true), true));
+      user.getMoveQueue().push({ move: Moves.BULLET_SEED, targets: targets, ignorePP: true });
+      user.scene.unshiftPhase(new MovePhase(user.scene, user, targets, new PokemonMove(Moves.BULLET_SEED, 0, 0, true), true));
       initMoveAnim(user.scene, moveId).then(() => {
         loadMoveAnimAssets(user.scene, [ moveId ], true)
           .then(() => resolve(true));
