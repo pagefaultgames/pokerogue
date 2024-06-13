@@ -5,7 +5,7 @@ export const egg: SimpleTranslationEntries = {
   "greatTier": "레어",
   "ultraTier": "에픽",
   "masterTier": "레전더리",
-  "defaultTier": "커먼",
+  "defaultTier": "일반",
   "hatchWavesMessageSoon": "안에서 소리가 들려온다! 이제 곧 태어날 것 같아!",
   "hatchWavesMessageClose": "가끔 움직이고 있는 것 같다. 태어나기까지 이제 조금 남은 건가?",
   "hatchWavesMessageNotClose": "무엇이 태어날까? 태어나기까지 아직 시간이 걸릴 것 같다.",
