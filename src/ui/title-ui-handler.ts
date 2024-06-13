@@ -13,6 +13,12 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
   private playerCountLabel: Phaser.GameObjects.Text;
   private splashMessage: string;
   private splashMessageText: Phaser.GameObjects.Text;
+  private MENU_MESSAGE: { active: boolean, text: string, textColor: string, backgroundColor: string } = {
+    active: true,
+    text: "Shiny event active!",
+    textColor: "#FFD700",
+    backgroundColor: "#FAFAD2"
+  }
 
   private titleStatsTimer: NodeJS.Timeout;
 
@@ -41,6 +47,16 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     this.playerCountLabel = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - 109, `? ${i18next.t("menu:playersOnline")}`, TextStyle.MESSAGE, { fontSize: "54px" });
     this.playerCountLabel.setOrigin(1, 0);
     this.titleContainer.add(this.playerCountLabel);
+	
+    if (this.MENU_MESSAGE.active) {
+        this.menuMessage = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - 100, this.MENU_MESSAGE.text, TextStyle.MESSAGE, {
+            fontSize: '54px',
+            backgroundColor: this.MENU_MESSAGE.backgroundColor,
+            color: this.MENU_MESSAGE.textColor !== "" ? this.MENU_MESSAGE.textColor : "#FFFFFF"
+        });
+        this.menuMessage.setOrigin(1, 0);
+        this.titleContainer.add(this.menuMessage);
+    }
 
     this.splashMessageText = addTextObject(this.scene, logo.x + 64, logo.y + logo.displayHeight - 8, "", TextStyle.MONEY, { fontSize: "54px" });
     this.splashMessageText.setOrigin(0.5, 0.5);
