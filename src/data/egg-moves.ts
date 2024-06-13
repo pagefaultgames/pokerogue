@@ -1,4 +1,5 @@
-import { Moves, Species } from "#enums";
+import { Moves } from "./enums/moves";
+import { Species } from "./enums/species";
 import { allMoves } from "./move";
 import * as Utils from "../utils";
 

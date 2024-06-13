@@ -4,9 +4,9 @@ import { ArenaTagSide } from "#app/data/arena-tag.js";
 import { WeatherType } from "#app/data/weather.js";
 import { TerrainType } from "#app/data/terrain.js";
 import { addWindow, WindowVariant } from "./ui-theme";
-import { ArenaEvent, ArenaEventType, TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena.js";
+import { ArenaEvent, ArenaEventType, TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#app/field/events/arena";
 import { BattleSceneEventType, TurnEndEvent } from "../events/battle-scene";
-import { ArenaTagType } from "#enums";
+import { ArenaTagType } from "#app/data/enums/arena-tag-type.js";
 import TimeOfDayWidget from "./time-of-day-widget";
 import * as Utils from "../utils";
 

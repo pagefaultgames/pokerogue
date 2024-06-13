@@ -2,6 +2,8 @@ import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vi
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
 import * as Overrides from "#app/overrides";
+import { Abilities } from "#app/data/enums/abilities";
+import { Species } from "#app/data/enums/species";
 import {
   CommandPhase,
   DamagePhase,
@@ -16,7 +18,7 @@ import {
 } from "#app/phases";
 import { Mode } from "#app/ui/ui";
 import { Stat } from "#app/data/pokemon-stat";
-import { Abilities, Moves, Species } from "#enums";
+import { Moves } from "#app/data/enums/moves";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Command } from "#app/ui/command-ui-handler";
 import { QuietFormChangePhase } from "#app/form-change-phase";
