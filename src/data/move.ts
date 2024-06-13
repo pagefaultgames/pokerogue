@@ -7552,7 +7552,7 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, false, 1)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, true, false, 1)
       .bitingMove(),
-    new SelfStatusMove(Moves.STUFF_CHEEKS, Type.NORMAL, -1, 10, 100, 0, 8)
+    new SelfStatusMove(Moves.STUFF_CHEEKS, Type.NORMAL, -1, 10, 100, 0, 8) // TODO: Stuff Cheeks should not be selectable when the user does not have a berry, see wiki
       .attr(EatBerryAttr)
       .attr(StatChangeAttr, BattleStat.DEF, 2, true)
       .condition((user) => {
