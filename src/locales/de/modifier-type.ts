@@ -182,7 +182,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SOOTHE_BELL": { name: "Sanftglocke" },
 
-    "EVIOLITE": { name: "Evolith", description: "Ein mysteriöser Klumpen, der die Verteidigung und Spezial-Verteidigung von Pokémon erhöht, die sich noch entwickeln können." },
+    "EVIOLITE": { name: "Evolith", description: "Ein mysteriöser Klumpen, der die Vert. u. Spez.-Vert. von Pokémon erhöht, die sich noch entwickeln können." },
 
     "SOUL_DEW": { name: "Seelentau", description: "Erhöht den Einfluss des Wesens eines Pokemon auf seine Werte um 10% (additiv)." },
 
