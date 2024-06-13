@@ -1605,13 +1605,11 @@ export class PostIntimidateStatChangeAbAttr extends AbAttr {
 
 /**
  * Base class for defining all {@linkcode Ability} Attributes post summon
- * @abstract
  * @see {@linkcode applyPostSummon()}
  */
 export class PostSummonAbAttr extends AbAttr {
   /**
    * Applies ability post summon (after switching in)
-   * @abstract
    * @param pokemon {@linkcode Pokemon} with this ability
    * @param passive Whether this ability is a passive
    * @param args Set of unique arguments needed by this attribute
