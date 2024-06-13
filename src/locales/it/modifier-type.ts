@@ -182,6 +182,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SOOTHE_BELL": { name: "Calmanella" },
 
+    "EVIOLITE": { name: "Evolcondensa", description: "Misterioso concentrato di materia evolutiva. Aumenta la Difesa e la Difesa Speciale di un Pokémon che può ancora evolversi." },
+
     "SOUL_DEW": { name: "Cuorugiada", description: "Aumenta del 10% l'influenza della natura di un Pokémon sulle sue statistiche (Aggiuntivo)." },
 
     "NUGGET": { name: "Pepita" },
