@@ -372,7 +372,7 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
       return false;
     }
 
-    if (move.type === this.immuneType) {
+    if (attacker !== pokemon && move.type === this.immuneType) {
       (args[0] as Utils.NumberHolder).value = 0;
       return true;
     }
