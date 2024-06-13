@@ -109,18 +109,19 @@ const gymBadges = {
   "Jasmine":"mineral_badge",
   "Pryce":"glacier_badge",
   "Clair":"rising_badge",
-};
-/*
   "Roxanne":"stone_badge", //Hoenn
   "Brawly":"knuckle_badge",
   "Wattson":"dynamo_badge",
   "Flannery":"heat_badge",
   "Norman":"balance_badge",
   "Winona":"feather_badge",
-  "Tate":"mind_badge",
-  "Liza":"mind_badge",
+  "Tate":"mind_badge_p1",
+  "Liza":"mind_badge_p2",
   "Tate and Liza":"mind_badge",
   "Juan":"rain_badge",
+};
+
+/*
   "Roark":"coal_badge", //Sinnoh
   "Gardenia":"forest_badge",
   "Maylene":"cobble_badge",
