@@ -1257,16 +1257,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               } else {
                 if (row >= rows - 1) { // the last row will always go to the starter button
                   this.startCursorObj.setVisible(true);
-                  //success = this.setGenMode(true);
                 } else if (row > 2) { // the first three rows will always go to the gen select, so anything else will go to the starterIcons party section
-                  //this.starterIconsCursorObj.setVisible(true);
                   this.starterIconsCursorIndex = 0;
                   this.moveStarterIconsCursor(this.starterIconsCursorIndex);
-                  //success = this.setGenMode(false);
                 }
-                //else {
-                //success = this.setGenMode(true);
-                //}
                 success = this.setGenMode(true);
               }
             }
@@ -1286,20 +1280,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 if (row >= Math.min(5, rows - 1)) {
                   this.startCursorObj.setVisible(true);
                 }
-                //success = this.setGenMode(true);
               } else {
                 if (row >= rows - 1) { // the last row will always go to the starter button
                   this.startCursorObj.setVisible(true);
-                  //success = this.setGenMode(true);
                 } else if (row > 2) { // the first three rows will always go to the gen select, so anything else will go to the starterIcons party section
-                  //this.starterIconsCursorObj.setVisible(true);
                   this.starterIconsCursorIndex = 0;
                   this.moveStarterIconsCursor(this.starterIconsCursorIndex);
-                  //success = this.setGenMode(false);
                 }
-                //else {
-                //  success = this.setGenMode(true);
-                //}
                 success = this.setGenMode(true);
               }
             }
