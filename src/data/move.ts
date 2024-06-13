@@ -1540,6 +1540,14 @@ export class IncrementMovePriorityAttr extends MoveAttr {
   }
 }
 
+/**
+ * Attribute used for attack moves that hit multiple times per use, e.g. Bullet Seed.
+ *
+ * Applied at the beginning of {@linkcode MoveEffectPhase}.
+ *
+ * @extends MoveAttr
+ * @see {@linkcode apply}
+ */
 export class MultiHitAttr extends MoveAttr {
   private multiHitType: MultiHitType;
 
@@ -1549,6 +1557,16 @@ export class MultiHitAttr extends MoveAttr {
     this.multiHitType = multiHitType !== undefined ? multiHitType : MultiHitType._2_TO_5;
   }
 
+  /**
+   * Set the hit count of an attack based on this attribute instance's {@linkcode MultiHitType}.
+   * If the target has an immunity to this attack's types, the hit count will always be 1.
+   *
+   * @param user {@linkcode Pokemon} that used the attack
+   * @param target {@linkcode Pokemon} targeted by the attack
+   * @param move {@linkcode Move} being used
+   * @param args [0] {@linkcode Utils.IntegerHolder} storing the hit count of the attack
+   * @returns True
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     let hitTimes: integer;
 
@@ -1558,7 +1576,7 @@ export class MultiHitAttr extends MoveAttr {
     } else {
       const hitType = new Utils.IntegerHolder(this.multiHitType);
       applyMoveAttrs(ChangeMultiHitTypeAttr, user, target, move, hitType);
-      hitTimes = this.getHitTimes(user, target);
+      hitTimes = this.getHitCount(user, target);
     }
 
     (args[0] as Utils.IntegerHolder).value = hitTimes;
@@ -1569,7 +1587,15 @@ export class MultiHitAttr extends MoveAttr {
     return -5;
   }
 
-  getHitTimes(user: Pokemon, target: Pokemon) {
+  /**
+   * Calculate the number of hits that an attack should have given this attribute's
+   * {@linkcode MultiHitType}.
+   *
+   * @param user {@linkcode Pokemon} using the attack
+   * @param target {@linkcode Pokemon} targeted by the attack
+   * @returns The number of hits this attack should deal
+   */
+  getHitCount(user: Pokemon, target: Pokemon): integer {
     switch (this.multiHitType) {
     case MultiHitType._2_TO_5:
     {
