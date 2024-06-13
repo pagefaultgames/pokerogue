@@ -2058,7 +2058,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     for (let s = 0; s < this.starterCursors.length; s++) {
       const species = this.genSpecies[this.starterGens[s]][this.starterCursors[s]];
-      const props = this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor);
+      const currentDexAttr = this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true);
+      const props = this.scene.gameData.getSpeciesDexAttrProps(species, currentDexAttr);
       this.starterIcons[s].setTexture(species.getIconAtlasKey(props.formIndex, props.shiny, props.variant));
       this.starterIcons[s].setFrame(species.getIconId(props.female, props.formIndex, props.shiny, props.variant));
       if (s >= index) {
@@ -2098,14 +2099,20 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         break;
       }
     }
-    if (!isDupe) {
+    const species = this.genSpecies[pokemonGen][pokemonCursor];
+
+    const isValidForChallenge = new Utils.BooleanHolder(true);
+    Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge);
+    const currentPartyValue = this.starterGens.reduce((total: number, gen: number, i: number) => total += this.scene.gameData.getSpeciesStarterValue(this.genSpecies[gen][this.starterCursors[i]].speciesId), 0);
+    const newCost = this.scene.gameData.getSpeciesStarterValue(species.speciesId);
+    if (!isDupe && isValidForChallenge.value && currentPartyValue + newCost <= this.getValueLimit()) {
       options = [
         {
           label: i18next.t("starterSelectUiHandler:addToParty"),
           handler: () => {
             ui.setMode(Mode.STARTER_SELECT);
-            const species = this.genSpecies[pokemonGen][pokemonCursor];
-            if (!isDupe && this.tryUpdateValue(this.scene.gameData.getSpeciesStarterValue(species.speciesId))) {
+
+            if (!isDupe && isValidForChallenge.value && this.tryUpdateValue(this.scene.gameData.getSpeciesStarterValue(species.speciesId))) {
               const cursorObj = this.starterCursorObjs[this.starterCursors.length];
               cursorObj.setVisible(true);
               cursorObj.setPosition(this.cursorObj.x, this.cursorObj.y);
@@ -2128,9 +2135,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               this.updateInstructions();
 
               /**
-                                         * If the user can't select a pokemon anymore,
-                                         * go to start button.
-                                         */
+              * If the user can't select a pokemon anymore,
+              * go to start button.
+              */
               if (!this.canAddParty) {
                 this.startCursorObj.setVisible(true);
                 this.setGenMode(true);
@@ -2138,13 +2145,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
               ui.playSelect();
             } else {
-              ui.playError();
+              ui.playError(); // this should be redundant as there is now a trigger for when a pokemon can't be added to party
             }
             return true;
           },
           overrideSound: true
         }];
-    } else {
+    } else if (isDupe) {
       options = [{
         label: i18next.t("starterSelectUiHandler:removeFromParty"),
         handler: () => {
