@@ -1,11 +1,13 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import GameManager from "../utils/gameManager";
 import Phaser from "phaser";
-import { Abilities, Moves, Species } from "#enums";
 import * as Overrides from "#app/overrides";
 import { BattleStat } from "#app/data/battle-stat.js";
 import { CommandPhase, MessagePhase } from "#app/phases.js";
 import { getMovePosition } from "../utils/gameManagerUtils";
+import { Abilities } from "#app/data/enums/abilities.js";
+import { Moves } from "#app/data/enums/moves.js";
+import { Species } from "#app/data/enums/species.js";
 
 const TIMEOUT = 20 * 1000;
 
