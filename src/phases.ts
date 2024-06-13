@@ -21,7 +21,7 @@ import { Biome } from "./data/enums/biome";
 import { ModifierTier } from "./modifier/modifier-tier";
 import { FusePokemonModifierType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, PokemonPpRestoreModifierType, PokemonPpUpModifierType, RememberMoveModifierType, TmModifierType, getDailyRunStarterModifiers, getEnemyBuffModifierForWave, getModifierType, getPlayerModifierTypeOptions, getPlayerShopModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { BattlerTagLapseType, EncoreTag, HideSpriteTag as HiddenTag, ProtectedTag, TrappedTag } from "./data/battler-tags";
+import { BattlerTagLapseType, BeakBlastTag, EncoreTag, HideSpriteTag as HiddenTag, ProtectedTag, TrappedTag } from "./data/battler-tags";
 import { BattlerTagType } from "./data/enums/battler-tag-type";
 import { getPokemonMessage, getPokemonNameWithAffix } from "./messages";
 import { Starter } from "./ui/starter-select-ui-handler";
@@ -2247,7 +2247,7 @@ export class TurnStartPhase extends FieldPhase {
         applyMoveAttrs(IncrementMovePriorityAttr,this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === a),null,aMove,aPriority);
         applyMoveAttrs(IncrementMovePriorityAttr,this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === b),null,bMove,bPriority);
 
-		    applyAbAttrs(IncrementMovePriorityAbAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === a), null, aMove, aPriority);
+        applyAbAttrs(IncrementMovePriorityAbAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === a), null, aMove, aPriority);
         applyAbAttrs(IncrementMovePriorityAbAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === b), null, bMove, bPriority);
 
         if (aPriority.value !== bPriority.value) {
@@ -2321,7 +2321,6 @@ export class TurnStartPhase extends FieldPhase {
         break;
       }
     }
-
 
     this.scene.pushPhase(new WeatherEffectPhase(this.scene));
 
@@ -2723,6 +2722,14 @@ export class MovePhase extends BattlePhase {
       this.end();
     };
 
+    // beak blast's first stage should not be affected by status conditions
+    // while the second stage should be affected by status conditions
+    // we can achieve this easily by flipping this.followUp, which is false
+    // during the first portion and true during the second portion
+    if (this.move.moveId === Moves.BEAK_BLAST) {
+      this.followUp = !this.followUp;
+    }
+
     if (!this.followUp && this.pokemon.status && !this.pokemon.status.isPostTurn()) {
       this.pokemon.status.incrementTurn();
       let activated = false;
@@ -2896,6 +2903,9 @@ export class MoveEffectPhase extends PokemonPhase {
           moveHistoryEntry.result = MoveResult.SUCCESS;
 
           const hitResult = !isProtected ? target.apply(user, move) : HitResult.NO_EFFECT;
+
+          // handle beak blast burn on contact after hit
+          target.findTags(t => t instanceof BeakBlastTag).find(t => target.lapseTag(t.tagType));
 
           this.scene.triggerPokemonFormChange(user, SpeciesFormChangePostMoveTrigger);
 
