@@ -143,7 +143,7 @@ describe("Abilities - Sap Sipper", () => {
 
   /*
   // TODO Add METRONOME outcome override
-  // To run this testcase, manually modify the METRONOME ability to always give SAP_SIPPER, then uncomment
+  // To run this testcase, manually modify the METRONOME move to always give SAP_SIPPER, then uncomment
   it("activate once against multi-hit grass attacks (metronome)", async() => {
     const moveToUse = Moves.METRONOME;
     const enemyAbility = Abilities.SAP_SIPPER;
