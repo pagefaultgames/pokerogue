@@ -1312,7 +1312,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     const rand1 = Utils.binToDec(Utils.decToBin(this.id).substring(0, 16));
-    const rand2 = Utils.binToDec(Utils.decToBin(this.id).substring(16, 64));
+    const rand2 = Utils.binToDec(Utils.decToBin(this.id).substring(16, 32));
 
     const E = this.scene.gameData.trainerId ^ this.scene.gameData.secretId;
     const F = rand1 ^ rand2;
