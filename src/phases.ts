@@ -64,6 +64,7 @@ import { TextStyle, addTextObject } from "./ui/text";
 import { Type } from "./data/type";
 import { BerryUsedEvent, EncounterPhaseEvent, MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./events/battle-scene";
 import { ExpNotification } from "./enums/exp-notification";
+import { BattleStyle } from "./enums/battle-style";
 
 
 export class LoginPhase extends Phase {
@@ -1747,7 +1748,7 @@ export class CheckSwitchPhase extends BattlePhase {
 
     const pokemon = this.scene.getPlayerField()[this.fieldIndex];
 
-    if (this.scene.battleStyle === 1) {
+    if (this.scene.battleStyle === BattleStyle.SET) {
       super.end();
       return;
     }
