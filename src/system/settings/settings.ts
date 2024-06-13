@@ -463,8 +463,7 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
       if (scene.ui) {
         const cancelHandler = () => {
           scene.ui.revertMode();
-          const languageSetting = Setting.find(setting => setting.key === SettingKeys.Language);
-          (scene.ui.getHandler() as SettingsUiHandler).setOptionCursor(Setting.indexOf(languageSetting), 0, true);
+          (scene.ui.getHandler() as SettingsUiHandler).setOptionCursor(0, 0, true);
         };
         const changeLocaleHandler = (locale: string): boolean => {
           try {
