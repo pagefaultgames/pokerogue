@@ -117,6 +117,30 @@ describe("Abilities - Sap Sipper", () => {
     expect(game.scene.getEnemyParty()[0].summonData.battleStats[BattleStat.ATK]).toBe(1);
   });
 
+  it("do not activate against status moves that target the user", async() => {
+    const moveToUse = Moves.SPIKY_SHIELD;
+    const ability = Abilities.SAP_SIPPER;
+
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
+    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(ability);
+    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
+    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
+    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
+
+    await game.startBattle();
+
+    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
+
+    await game.phaseInterceptor.to(MoveEndPhase);
+
+    expect(game.scene.getParty()[0].getTag(BattlerTagType.SPIKY_SHIELD)).toBeDefined();
+
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    expect(game.scene.getParty()[0].summonData.battleStats[BattleStat.ATK]).toBe(0);
+    expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
+  });
+
   /*
   // TODO Add METRONOME outcome override
   // To run this testcase, manually modify the METRONOME move to always give SAP_SIPPER, then uncomment
@@ -141,28 +165,4 @@ describe("Abilities - Sap Sipper", () => {
     expect(game.scene.getEnemyParty()[0].summonData.battleStats[BattleStat.ATK]).toBe(1);
   });
   */
-
-  it("do not activate against status moves that target the user", async() => {
-    const moveToUse = Moves.SPIKY_SHIELD;
-    const ability = Abilities.SAP_SIPPER;
-
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(ability);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
-
-    await game.startBattle();
-
-    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
-
-    await game.phaseInterceptor.to(MoveEndPhase);
-
-    expect(game.scene.getParty()[0].getTag(BattlerTagType.SPIKY_SHIELD)).toBeDefined();
-
-    await game.phaseInterceptor.to(TurnEndPhase);
-
-    expect(game.scene.getParty()[0].summonData.battleStats[BattleStat.ATK]).toBe(0);
-    expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
-  });
 });
