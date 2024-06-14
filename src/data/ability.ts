@@ -3582,6 +3582,15 @@ export class IceFaceMoveImmunityAbAttr extends MoveImmunityAbAttr {
 }
 
 export class IllusionPreSummonAbAttr extends PreSummonAbAttr {
+  /**
+   * Apply a new illusion when summoning Zoroark if the illusion is available
+   *
+   * @param {Pokemon} pokemon - The Pokémon with the Illusion ability.
+   * @param {boolean} passive - Whether the ability is passive.
+   * @param {Pokemon[]} party - The party of the trainer's pokemon.
+   * @param {...any} args - Additional arguments.
+   * @returns {boolean} - Whether the illusion was applied.
+   */
   applyPreSummon(pokemon: Pokemon, passive: boolean, party: Pokemon[], args: any[]): boolean | Promise<boolean> {
     if (pokemon.illusion.available) {
       pokemon.generateIllusion(pokemon, party);
@@ -3593,6 +3602,15 @@ export class IllusionPreSummonAbAttr extends PreSummonAbAttr {
 }
 
 export class IllusionPostTurnAbAttr extends PostTurnAbAttr {
+  /**
+   * Apply a new illusion after each turn if the illusion is available
+   *
+   * @param {Pokemon} pokemon - The Pokémon with the Illusion ability.
+   * @param {boolean} passive - Whether the ability is passive.
+   * @param {Pokemon[]} party - The party of the trainer's pokemon.
+   * @param {...any} args - Additional arguments.
+   * @returns {boolean} - Whether the illusion was applied.
+   */
   applyPostTurn(pokemon: Pokemon, passive: boolean, party: Pokemon[]) {
     if (pokemon.hasTrainer() && !pokemon.isOnField() && pokemon.illusion.available) {
       pokemon.generateIllusion(pokemon, party);
@@ -3604,6 +3622,17 @@ export class IllusionPostTurnAbAttr extends PostTurnAbAttr {
 }
 
 export class IllusionBreakAbAttr extends PostDefendAbAttr {
+  /**
+   * Destroy illusion if attack move deals damage to zoroark
+   *
+   * @param {Pokemon} pokemon - The Pokémon with the Illusion ability.
+   * @param {boolean} passive - Whether the ability is passive.
+   * @param {Pokemon} attacker - The attacking Pokémon.
+   * @param {PokemonMove} move - The move being used.
+   * @param {PokemonMove} hitResult - The type of hitResult the pokemon got
+   * @param {...any} args - Additional arguments..
+   * @returns {boolean} - Whether the illusion was destroyed.
+   */
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean | Promise<boolean> {
     if (hitResult > 4) {
       return false;
@@ -3618,6 +3647,15 @@ export class IllusionBreakAbAttr extends PostDefendAbAttr {
 }
 
 export class IllusionAfterBattle extends PostBattleAbAttr {
+  /**
+   * Illusion will be available again after a battle and apply the illusion of the pokemon is already on field
+   *
+   * @param {Pokemon} pokemon - The Pokémon with the Illusion ability.
+   * @param {boolean} passive - Whether the ability is passive.
+   * @param {Pokemon[]} party - The party of the trainer's pokemon.
+   * @param {...any} args - Additional arguments.
+   * @returns {boolean} - Whether the illusion was applied.
+   */
   applyPostBattle(pokemon: Pokemon, passive: boolean, party: Pokemon[], args: any[]): boolean {
     pokemon.generateIllusion(pokemon, party);
     if (pokemon.isOnField()) {
@@ -3630,6 +3668,15 @@ export class IllusionAfterBattle extends PostBattleAbAttr {
 }
 
 export class IllusionDisableAbAttr extends PostSummonAbAttr {
+  /**
+   * Illusion will be disabled if the pokemon is summoned with an illusion.
+   * So the pokemon can use 1 illusion per battle.
+   *
+   * @param {Pokemon} pokemon - The Pokémon with the Illusion ability.
+   * @param {boolean} passive - Whether the ability is passive.
+   * @param {...any} args - Additional arguments.
+   * @returns {boolean}
+   */
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
     pokemon.illusion.available = false;
     return true;
