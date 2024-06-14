@@ -2,11 +2,11 @@ import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const abilityTriggers: SimpleTranslationEntries = {
   "blockRecoilDamage" : "{{abilityName}} di {{pokemonName}}\nl'ha protetto dal contraccolpo!",
-  "badDreams": "{{pokemonName}} è tormentato!",
-  "windPowerCharged": "Being hit by {{moveName}} charged {{pokemonName}} with power!",
+  "badDreams": "{{pokemonName}} è tormentato dagli incubi!",
+  "windPowerCharged": "Venire colpito da {{moveName}} ha caricato {{pokemonName}}!",
   "perishBody": "{{pokemonName}}'s {{abilityName}}\nwill faint both pokemon in 3 turns!",
   "poisonHeal": "{{pokemonName}}'s {{abilityName}}\nrestored its HP a little!",
-  "iceFaceAvoidedDamage": "{{pokemonName}} avoided\ndamage with {{abilityName}}!",
+  "iceFaceAvoidedDamage": "{{pokemonName}} ha evitato\ni danni grazie a {{abilityName}}!"
   "blockItemTheft": "{{pokemonName}}'s {{abilityName}}\nprevents item theft!",
   "typeImmunityHealAb": "{{pokemonName}}'s {{abilityName}}\nrestored its HP a little!",
   "nonSuperEffectiveImmunityAb": "{{pokemonName}} avoided\ndamage with {{abilityName}}!",

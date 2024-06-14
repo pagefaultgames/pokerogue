@@ -2,9 +2,9 @@ import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest
 import GameManager from "#app/test/utils/gameManager";
 import Phaser from "phaser";
 import * as overrides from "#app/overrides";
-import {Species} from "#app/data/enums/species";
-import {Moves} from "#app/data/enums/moves";
-import {Abilities} from "#app/data/enums/abilities";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 
 describe("Test Battle Phase", () => {
   let phaserGame: Phaser.Game;
@@ -37,7 +37,7 @@ describe("Test Battle Phase", () => {
   it.skip("to next turn", async() => {
     await game.startBattle();
     const turn = game.scene.currentBattle.turn;
-    await game.doAttack(0);
+    game.doAttack(0);
     await game.toNextTurn();
     expect(game.scene.currentBattle.turn).toBeGreaterThan(turn);
   }, 20000);
