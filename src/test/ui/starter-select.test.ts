@@ -1,7 +1,6 @@
 import {afterEach, beforeAll, beforeEach, describe, expect, it} from "vitest";
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
-import {Species} from "#app/data/enums/species";
 import {
   EncounterPhase,
   SelectStarterPhase,
@@ -10,14 +9,15 @@ import {
 import {Mode} from "#app/ui/ui";
 import {GameModes} from "#app/game-mode";
 import StarterSelectUiHandler from "#app/ui/starter-select-ui-handler";
-import {Button} from "#app/enums/buttons";
 import OptionSelectUiHandler from "#app/ui/settings/option-select-ui-handler";
 import SaveSlotSelectUiHandler from "#app/ui/save-slot-select-ui-handler";
 import {OptionSelectItem} from "#app/ui/abstact-option-select-ui-handler";
 import {Gender} from "#app/data/gender";
 import {allSpecies} from "#app/data/pokemon-species";
 import {Nature} from "#app/data/nature";
-import {Abilities} from "#app/data/enums/abilities";
+import { Button } from "#enums/buttons";
+import { Abilities } from "#enums/abilities";
+import { Species } from "#enums/species";
 
 
 describe("UI - Starter select", () => {

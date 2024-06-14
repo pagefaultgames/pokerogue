@@ -2,7 +2,7 @@ import BattleScene from "../../battle-scene";
 import SettingsGamepadUiHandler from "../../ui/settings/settings-gamepad-ui-handler";
 import {Mode} from "../../ui/ui";
 import {truncateString} from "../../utils";
-import {Button} from "../../enums/buttons";
+import {Button} from "#enums/buttons";
 import {SettingKeyboard} from "#app/system/settings/settings-keyboard";
 
 export enum SettingGamepad {
