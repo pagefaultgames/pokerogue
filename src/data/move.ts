@@ -2615,6 +2615,29 @@ export class LessPPMorePowerAttr extends VariablePowerAttr {
   }
 }
 
+// getTargetHeldItems(target: Pokemon): PokemonHeldItemModifier[] {
+//   return target.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
+//     && (m as PokemonHeldItemModifier).pokemonId === target.id, target.isPlayer()) as PokemonHeldItemModifier[];
+// }
+
+export class FlingAttr extends VariablePowerAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+
+    const heldItems = this.getMyHeldItems(user);
+    const itemNames = heldItems.map(item => item.type.name);
+
+    console.log("INDIAHeld items:", itemNames);
+
+    return true;
+  }
+
+  getMyHeldItems(user: Pokemon): PokemonHeldItemModifier[] {
+    return user.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
+        && (m as PokemonHeldItemModifier).pokemonId === user.id, user.isPlayer()) as PokemonHeldItemModifier[];
+  }
+
+}
+
 export class MovePowerMultiplierAttr extends VariablePowerAttr {
   private powerMultiplierFunc: (user: Pokemon, target: Pokemon, move: Move) => number;
 
@@ -6477,8 +6500,9 @@ export function initMoves() {
     new StatusMove(Moves.EMBARGO, Type.DARK, 100, 15, -1, 0, 4)
       .unimplemented(),
     new AttackMove(Moves.FLING, Type.DARK, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 4)
-      .makesContact(false)
-      .unimplemented(),
+      .attr(FlingAttr)
+      .makesContact(false),
+    //.unimplemented(),
     new StatusMove(Moves.PSYCHO_SHIFT, Type.PSYCHIC, 100, 10, -1, 0, 4)
       .attr(PsychoShiftEffectAttr)
       .condition((user, target, move) => (user.status?.effect === StatusEffect.BURN
