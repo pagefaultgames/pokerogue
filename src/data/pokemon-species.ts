@@ -3785,7 +3785,7 @@ export const starterPassiveAbilities = {
   [Species.CETODDLE]: Abilities.ICE_SCALES,
   [Species.VELUZA]: Abilities.SUPER_LUCK,
   [Species.DONDOZO]: Abilities.PARENTAL_BOND,
-  [Species.TATSUGIRI]: Abilities.ADAPTABILITy,
+  [Species.TATSUGIRI]: Abilities.ADAPTABILITY,
   [Species.GREAT_TUSK]: Abilities.INTIMIDATE,
   [Species.SCREAM_TAIL]: Abilities.UNAWARE,
   [Species.BRUTE_BONNET]: Abilities.CHLOROPHYLL,
