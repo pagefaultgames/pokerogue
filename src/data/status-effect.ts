@@ -36,17 +36,17 @@ export function getStatusEffectObtainText(statusEffect: StatusEffect, sourceText
   const sourceClause = sourceText ? ` ${statusEffect !== StatusEffect.SLEEP ? i18next.t("statusEffectSourceClause:by") : i18next.t("statusEffectSourceClause:from")} ${sourceText}` : "";
   switch (statusEffect) {
   case StatusEffect.POISON:
-    return i18next.t("statusEffectObtainText:poison", { sourceClause: sourceClause });
+    return i18next.t("statusEffectObtainText:poison", { sourceClause });
   case StatusEffect.TOXIC:
-    return i18next.t("statusEffectObtainText:toxic", { sourceClause: sourceClause });
+    return i18next.t("statusEffectObtainText:toxic", { sourceClause });
   case StatusEffect.PARALYSIS:
-    return i18next.t("statusEffectObtainText:paralysis", { sourceClause: sourceClause });
+    return i18next.t("statusEffectObtainText:paralysis", { sourceClause });
   case StatusEffect.SLEEP:
-    return i18next.t("statusEffectObtainText:sleep", { sourceClause: sourceClause });
+    return i18next.t("statusEffectObtainText:sleep", { sourceClause });
   case StatusEffect.FREEZE:
-    return i18next.t("statusEffectObtainText:freeze", { sourceClause: sourceClause });
+    return i18next.t("statusEffectObtainText:freeze", { sourceClause });
   case StatusEffect.BURN:
-    return i18next.t("statusEffectObtainText:burn", { sourceClause: sourceClause });
+    return i18next.t("statusEffectObtainText:burn", { sourceClause });
   }
 
   return "";
