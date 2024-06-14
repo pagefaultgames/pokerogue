@@ -38,15 +38,15 @@ export const ARENA_TINT_OVERRIDE: TimeOfDay = null;
 export const XP_MULTIPLIER_OVERRIDE: number = null;
 export const IMMEDIATE_HATCH_EGGS_OVERRIDE: boolean = false;
 // default 1000
-export const STARTING_MONEY_OVERRIDE: integer = 10000000;
+export const STARTING_MONEY_OVERRIDE: integer = 0;
 export const POKEBALL_OVERRIDE: { active: boolean, pokeballs: PokeballCounts } = {
-  active: true,
+  active: false,
   pokeballs: {
     [PokeballType.POKEBALL]: 5,
     [PokeballType.GREAT_BALL]: 0,
     [PokeballType.ULTRA_BALL]: 0,
     [PokeballType.ROGUE_BALL]: 0,
-    [PokeballType.MASTER_BALL]: 50,
+    [PokeballType.MASTER_BALL]: 0,
   }
 };
 
@@ -67,19 +67,19 @@ export const POKEBALL_OVERRIDE: { active: boolean, pokeballs: PokeballCounts } =
 export const STARTER_FORM_OVERRIDES: Partial<Record<Species, number>> = {};
 
 // default 5 or 20 for Daily
-export const STARTING_LEVEL_OVERRIDE: integer = 100;
+export const STARTING_LEVEL_OVERRIDE: integer = 0;
 /**
  * SPECIES OVERRIDE
  * will only apply to the first starter in your party or each enemy pokemon
  * default is 0 to not override
  * @example SPECIES_OVERRIDE = Species.Bulbasaur;
  */
-export const STARTER_SPECIES_OVERRIDE: Species | integer = Species.ZOROARK;
+export const STARTER_SPECIES_OVERRIDE: Species | integer = 0;
 export const ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
 export const GENDER_OVERRIDE: Gender = null;
-export const MOVESET_OVERRIDE: Array<Moves> = [Moves.AGILITY];
+export const MOVESET_OVERRIDE: Array<Moves> = [];
 export const SHINY_OVERRIDE: boolean = false;
 export const VARIANT_OVERRIDE: Variant = 0;
 
@@ -87,14 +87,14 @@ export const VARIANT_OVERRIDE: Variant = 0;
  * OPPONENT / ENEMY OVERRIDES
  */
 
-export const OPP_SPECIES_OVERRIDE: Species | integer = Species.ALAKAZAM;
-export const OPP_LEVEL_OVERRIDE: number = 5;
+export const OPP_SPECIES_OVERRIDE: Species | integer = 0;
+export const OPP_LEVEL_OVERRIDE: number = 0;
 export const OPP_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const OPP_PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const OPP_STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
 export const OPP_GENDER_OVERRIDE: Gender = null;
-export const OPP_MOVESET_OVERRIDE: Array<Moves> = [Moves.PSYCHIC, Moves.AURA_SPHERE, Moves.AGILITY, Moves.AGILITY];
-export const OPP_SHINY_OVERRIDE: boolean = true;
+export const OPP_MOVESET_OVERRIDE: Array<Moves> = [];
+export const OPP_SHINY_OVERRIDE: boolean = false;
 export const OPP_VARIANT_OVERRIDE: Variant = 0;
 export const OPP_IVS_OVERRIDE: integer | integer[] = [];
 
@@ -121,8 +121,8 @@ interface ModifierOverride {
 export const STARTING_MODIFIER_OVERRIDE: Array<ModifierOverride> = [];
 export const OPP_MODIFIER_OVERRIDE: Array<ModifierOverride> = [];
 
-export const STARTING_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = [{name: "WIDE_LENS"}, {name: "BERRY", count: 5, type: BerryType.LUM}];
-export const OPP_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = [{name: "WIDE_LENS"}, {name: "BERRY", count: 5, type: BerryType.LUM}];
+export const STARTING_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = [];
+export const OPP_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = [];
 export const NEVER_CRIT_OVERRIDE: boolean = false;
 
 /**
@@ -131,4 +131,4 @@ export const NEVER_CRIT_OVERRIDE: boolean = false;
  * If less items are listed than rolled, only some items will be replaced
  * If more items are listed than rolled, only the first X items will be shown, where X is the number of items rolled.
  */
-export const ITEM_REWARD_OVERRIDE: Array<String> = ["DNA_SPLICERS"];
+export const ITEM_REWARD_OVERRIDE: Array<String> = [];
