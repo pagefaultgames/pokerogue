@@ -1819,15 +1819,15 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "leon": {
     "encounter": {
-      1: "We're gonna have an absolutely champion time!"
+      1: "레츠, 챔피언 타임!!!"
     },
     "victory": {
-      1: `My time as Champion is over… 
-                $But what a champion time it's been! 
-                $Thank you for the greatest battle I've ever had!`,
+      1: `챔피언 타임은 끝났어… 
+                $하지만 정말 멋진 시간이었지! 
+                $최고의 시합을 만들어줘서 고맙다!`,
     },
     "defeat": {
-      1: "An absolute champion time, that was!"
+      1: "최고의 챔피언 타임이었어, 정말로!"
     }
   },
   "whitney": {
@@ -2219,72 +2219,72 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "marnie_elite": {
     "encounter": {
-      1: "You've made it this far, huh? Let's see if you can handle my Pokémon!",
-      2: "I'll give it my best shot, but don't think I'll go easy on you!"
+      1: "여기까지 왔구나? 포켓몬 다루는 실력 좀 볼까!",
+      2: "최선을 다할 거니까, 쉽게 넘어갈 수 있을 거라고 생각하지 마!"
     },
     "victory": {
-      1: "I can't believe I lost... But you deserved that win. Well done!",
-      2: "Looks like I've still got a lot to learn. Great battle, though!"
+      1: "내가 지다니 믿을 수 없어… 그렇지만 네가 바란 것도 이런 승리였겠지. 잘했어!",
+      2: "난 여전히 배울 게 많은 것 같아. 그래도, 멋진 승부였어!"
     },
     "defeat": {
-      1: "You put up a good fight, but I've got the edge! Better luck next time!",
-      2: "Seems like my training's paid off. Thanks for the battle!"
+      1: "잘 싸웠지만, 내가 위야! 다음에는 더 잘해봐!",
+      2: "트레이닝이 제값을 하는 것 같네. 승부에 응해줘서 고마워!"
     }
   },
   "nessa_elite": {
     "encounter": {
-      1: "The tides are turning in my favor. Ready to get swept away?",
-      2: "Let's make some waves with this battle! I hope you're prepared!"
+      1: "조류가 오늘은 내 편인 것 같네. 휩쓸릴 준비 됐어?",
+      2: "이번 승부로 파도를 일으키는 거야! 준비는 됐겠지!"
     },
     "victory": {
-      1: "You navigated those waters perfectly... Well done!",
-      2: "Looks like my currents were no match for you. Great job!"
+      1: "너 그런 바다를 완벽하게 버텨냈네… 잘했어!",
+      2: "내 쪽의 해류가 너와 맞지 않았던 거 같네. 잘했어!"
     },
     "defeat": {
-      1: "Water always finds a way. That was a refreshing battle!",
-      2: "You fought well, but the ocean's power is unstoppable!"
+      1: "물은 항상 자기 길을 찾아 흐르지. 상쾌한 승부였어!",
+      2: "잘 싸웠지만, 바다의 힘은 막을 수 없다고!"
     }
   },
   "bea_elite": {
     "encounter": {
-      1: "Prepare yourself! My fighting spirit burns bright!",
-      2: "Let's see if you can keep up with my relentless pace!"
+      1: "준비는 되셨겠죠! 제 투지가 불타고 있습니다!",
+      2: "가차 없는 제 속도를 따라잡으실 수 있는지 지켜보겠습니다!"
     },
     "victory": {
-      1: "Your strength... It's impressive. You truly deserve this win.",
-      2: "I've never felt this intensity before. Amazing job!"
+      1: "당신의 힘… 인상적이군요. 정말로 이기실 만합니다.",
+      2: "이런 강렬함은 처음 느껴봅니다. 대단하군요!"
     },
     "defeat": {
-      1: "Another victory for my intense training regimen! Well done!",
-      2: "You've got strength, but I trained harder. Great battle!"
+      1: "치열했던 훈련으로 또 한번 승리를 거두게 뒀군요! 고생하셨습니다!",
+      2: "당신도 힘냈겠지만, 제가 더 열심히 훈련했거든요. 좋은 배틀이었습니다!"
     }
   },
   "allister_elite": {
     "encounter": {
-      1: "Shadows fall... Are you ready to face your fears?",
-      2: "Let's see if you can handle the darkness that I command."
+      1: "그림자가 떨어지네… 두려움에 맞설 준비는 됐어?",
+      2: "내가 다루는 어둠을 감당할 수 있는지 지켜볼게."
     },
     "victory": {
-      1: "You've dispelled the shadows... For now. Well done.",
-      2: "Your light pierced through my darkness. Great job."
+      1: "너 그림자를 쫓아내 버렸구나… 일단은. 잘했어.",
+      2: "네 빛이 어둠을 관통해 버렸네. 훌륭해."
     },
     "defeat": {
-      1: "The shadows have spoken... Your strength isn't enough.",
-      2: "Darkness triumphs... Maybe next time you'll see the light."
+      1: "그림자가 말했어… 네 힘은 아직 부족한 것 같아.",
+      2: "어둠의 승리… 다음번에는 빛을 보게 될 거야."
     }
   },
   "raihan_elite": {
     "encounter": {
-      1: "Storm's brewing! Let's see if you can weather this fight!",
-      2: "Get ready to face the eye of the storm!"
+      1: "폭풍이 몰아치는군! 네가 이 배틀에서도 견뎌낼 수 있는지 지켜보겠어!",
+      2: "폭풍의 눈과 마주칠 준비는 됐겠지!"
     },
     "victory": {
-      1: "You've bested the storm... Incredible job!",
-      2: "You rode the winds perfectly... Great battle!"
+      1: "폭풍을 이겨내다니… 정말 놀라운걸!",
+      2: "너 바람에 완벽하게 올라탔구나… 대단한 승부였어!"
     },
     "defeat": {
-      1: "Another storm weathered, another victory claimed! Well fought!",
-      2: "You got caught in my storm! Better luck next time!"
+      1: "폭풍을 견디고, 또 다른 승리도 잡아버렸네! 좋은 승부였어!",
+      2: "넌 내 폭풍을 잡아냈잖아! 다음엔 더 잘해봐!"
     }
   },
   "rival": {
