@@ -4764,20 +4764,9 @@ export class AttemptCapturePhase extends PokemonPhase {
                     });
                   }
                 },
-<<<<<<< HEAD
                 onComplete: () => {
                   this.scene.unshiftPhase(new VictoryPhase(this.scene, this.battlerIndex)); this.scene.gameData.setPokemonCaught(pokemon); this.catch();
-                }
-||||||| parent of c04036ce2 (Option to view Summary before adding new Pokemon to party)
-                onComplete: () => this.catch()
-=======
-                onComplete: () => {
-                  this.scene.unshiftPhase(new VictoryPhase(this.scene, this.battlerIndex)); this.scene.gameData.setPokemonCaught(pokemon); this.catch();
-                }
->>>>>>> c04036ce2 (Option to view Summary before adding new Pokemon to party)
-              });
-            };
-
+                };
             this.scene.time.delayedCall(250, () => doPokeballBounceAnim(this.scene, this.pokeball, 16, 72, 350, doShake));
           }
         });
