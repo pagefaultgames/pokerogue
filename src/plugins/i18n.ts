@@ -96,10 +96,15 @@ const fonts = [
   ),
 ];
 
-function initFonts() {
-  fonts.forEach((fontFace: FontFace) => {
-    fontFace.load().then(f => document.fonts.add(f)).catch(e => console.error(e));
-  });
+async function initFonts() {
+  for (const font of fonts) {
+    try {
+      await font.load();
+      document.fonts.add(font);
+    } catch (e) {
+      console.error(e);
+    }
+  }
 }
 
 export async function initI18n(): Promise<void> {
@@ -109,7 +114,7 @@ export async function initI18n(): Promise<void> {
   }
   isInitialized = true;
 
-  initFonts();
+  await initFonts();
 
   /**
    * i18next is a localization library for maintaining and using translation resources.
