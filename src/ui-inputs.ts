@@ -5,7 +5,7 @@ import MessageUiHandler from "./ui/message-ui-handler";
 import StarterSelectUiHandler from "./ui/starter-select-ui-handler";
 import {Setting, SettingKeys, settingIndex} from "./system/settings/settings";
 import SettingsUiHandler from "./ui/settings/settings-ui-handler";
-import {Button} from "./enums/buttons";
+import {Button} from "#enums/buttons";
 import SettingsGamepadUiHandler from "./ui/settings/settings-gamepad-ui-handler";
 import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";
 import BattleScene from "./battle-scene";

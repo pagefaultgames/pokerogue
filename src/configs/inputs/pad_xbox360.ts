@@ -1,5 +1,5 @@
 import {SettingGamepad} from "../../system/settings/settings-gamepad";
-import {Button} from "#app/enums/buttons";
+import {Button} from "#enums/buttons";
 
 /**
  * Generic pad mapping

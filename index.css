@@ -31,6 +31,11 @@ body {
   transform-origin: top !important;
 }
 
+/* Need adjust input font-size */
+input {
+  font-size: 3.2rem;
+}
+
 #touchControls:not(.visible) {
   display: none;
 }

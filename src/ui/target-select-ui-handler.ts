@@ -1,11 +1,11 @@
 import { BattlerIndex } from "../battle";
 import BattleScene from "../battle-scene";
-import { Moves } from "../data/enums/moves";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import * as Utils from "../utils";
 import { getMoveTargets } from "../data/move";
-import {Button} from "../enums/buttons";
+import {Button} from "#enums/buttons";
+import { Moves } from "#enums/moves";
 
 export type TargetSelectCallback = (cursor: integer) => void;
 

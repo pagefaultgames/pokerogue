@@ -3,15 +3,15 @@ import { EnemyPokemon, PlayerPokemon, QueuedMove } from "./field/pokemon";
 import { Command } from "./ui/command-ui-handler";
 import * as Utils from "./utils";
 import Trainer, { TrainerVariant } from "./field/trainer";
-import { Species } from "./data/enums/species";
-import { Moves } from "./data/enums/moves";
-import { TrainerType } from "./data/enums/trainer-type";
 import { GameMode } from "./game-mode";
-import { BattleSpec } from "./enums/battle-spec";
-import { PlayerGender } from "./data/enums/player-gender";
 import { MoneyMultiplierModifier, PokemonHeldItemModifier } from "./modifier/modifier";
 import { PokeballType } from "./data/pokeball";
 import {trainerConfigs} from "#app/data/trainer-config";
+import { BattleSpec } from "#enums/battle-spec";
+import { Moves } from "#enums/moves";
+import { PlayerGender } from "#enums/player-gender";
+import { Species } from "#enums/species";
+import { TrainerType } from "#enums/trainer-type";
 
 export enum BattleType {
     WILD,

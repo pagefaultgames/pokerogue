@@ -222,6 +222,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
         this.pokemonGenderNewText.setShadowColor(getTextColor(TextStyle.SUMMARY_BLUE, true, this.scene.uiTheme));
         this.pokemonGenderNewText.setVisible((newGender & caughtAttr) === BigInt(0));
       } else {
+        this.pokemonGenderNewText.setVisible(false);
         this.pokemonGenderText.setVisible(false);
       }
 
@@ -312,6 +313,8 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
         this.pokemonShinyNewIcon.setShadowColor(getTextColor(TextStyle.SUMMARY_BLUE, true, this.scene.uiTheme));
         const newShinyOrVariant = ((newShiny & caughtAttr) === BigInt(0)) || ((newVariant & caughtAttr) === BigInt(0));
         this.pokemonShinyNewIcon.setVisible(!!newShinyOrVariant);
+      } else {
+        this.pokemonShinyNewIcon.setVisible(false);
       }
 
       this.pokemonFusionShinyIcon.setPosition(this.pokemonShinyIcon.x, this.pokemonShinyIcon.y);

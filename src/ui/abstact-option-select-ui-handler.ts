@@ -5,7 +5,7 @@ import UiHandler from "./ui-handler";
 import { addWindow } from "./ui-theme";
 import * as Utils from "../utils";
 import { argbFromRgba } from "@material/material-color-utilities";
-import {Button} from "../enums/buttons";
+import {Button} from "#enums/buttons";
 
 export interface OptionSelectConfig {
   xOffset?: number;

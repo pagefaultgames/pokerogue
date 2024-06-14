@@ -1,5 +1,5 @@
 import i18next from "i18next";
-import { MoneyFormat } from "./enums/money-format";
+import { MoneyFormat } from "#enums/money-format";
 
 export const MissingTextureKey = "__MISSING";
 

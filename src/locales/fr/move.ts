@@ -2931,7 +2931,7 @@ export const move: MoveTranslationEntries = {
   },
   "bouncyBubble": {
     name: "Évo-Thalasso",
-    effect: "Évoli frappe l’adversaire avec des bulles d’eau qu’il absorbe ensuite pour récupérer un nombre de PV égal à la moitié des dégâts infligés à l’ennemi."
+    effect: "L’adversaire est frappé par des bulles d’eau qui sont ensuite absorbées pour récupérer un nombre de PV égal aux dégâts infligés à l’ennemi."
   },
   "buzzyBuzz": {
     name: "Évo-Dynamo",

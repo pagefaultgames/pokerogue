@@ -1,4 +1,4 @@
-import { BattleSpec } from "./enums/battle-spec";
+import { BattleSpec } from "#enums/battle-spec";
 import Pokemon from "./field/pokemon";
 import i18next from "./plugins/i18n";
 

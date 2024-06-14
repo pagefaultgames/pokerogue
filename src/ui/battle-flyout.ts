@@ -2,11 +2,11 @@ import { default as Pokemon } from "../field/pokemon";
 import { addTextObject, TextStyle } from "./text";
 import * as Utils from "../utils";
 import BattleScene from "#app/battle-scene.js";
-import { UiTheme } from "#app/enums/ui-theme.js";
 import Move from "#app/data/move.js";
 import { BattleSceneEventType, BerryUsedEvent, MoveUsedEvent } from "../events/battle-scene";
-import { BerryType } from "#app/data/enums/berry-type.js";
-import { Moves } from "#app/data/enums/moves.js";
+import { BerryType } from "#enums/berry-type";
+import { Moves } from "#enums/moves";
+import { UiTheme } from "#enums/ui-theme";
 
 /** Container for info about a {@linkcode Move} */
 interface MoveInfo {
