@@ -29,8 +29,8 @@ describe("Abilities - DISGUISE", () => {
     game = new GameManager(phaserGame);
     const moveToUse = Moves.SPLASH;
     vi.spyOn(Overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.DISGUISE);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
+    vi.spyOn(Overrides.STARTER_OVERRIDE[1], "ability", "get").mockReturnValue(Abilities.DISGUISE);
+    vi.spyOn(Overrides.STARTER_OVERRIDE[1], "moveset", "get").mockReturnValue([moveToUse]);
     vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
   });
 
@@ -40,7 +40,7 @@ describe("Abilities - DISGUISE", () => {
       const baseForm = 0,
         bustedForm = 1;
       vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(4);
-      vi.spyOn(Overrides, "STARTER_FORM_OVERRIDES", "get").mockReturnValue({
+      vi.spyOn(Overrides.STARTER_OVERRIDE[1], "form", "get").mockReturnValue({
         [Species.MIMIKYU]: bustedForm,
       });
 

@@ -569,11 +569,11 @@ export class SelectStarterPhase extends Phase {
       }
       const starterProps = this.scene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);
       let starterFormIndex = Math.min(starterProps.formIndex, Math.max(starter.species.forms.length - 1, 0));
-      if (Overrides.STARTER_OVERRIDE[i]?.form) {
-        starterFormIndex = Overrides.STARTER_OVERRIDE[i].form;
+      if (Overrides.STARTER_OVERRIDE[i]?.form[starter.species.speciesId]) {
+        starterFormIndex = Overrides.STARTER_OVERRIDE[i].form[starter.species.speciesId];
         const availableForms = starter.species.forms.length;
         // prevent use forms which does not exist for species
-        if (Overrides.STARTER_OVERRIDE[i].form >= availableForms) {
+        if (Overrides.STARTER_OVERRIDE[i].form[starter.species.speciesId] >= availableForms) {
           starterFormIndex = 0;
         }
       }

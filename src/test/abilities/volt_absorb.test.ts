@@ -37,8 +37,8 @@ describe("Abilities - Volt Absorb", () => {
     const moveToUse = Moves.CHARGE;
     const ability = Abilities.VOLT_ABSORB;
 
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(ability);
+    vi.spyOn(overrides.STARTER_OVERRIDE[0], "moveset", "get").mockReturnValue([moveToUse]);
+    vi.spyOn(overrides.STARTER_OVERRIDE[0], "ability", "get").mockReturnValue(ability);
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
     vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.DUSKULL);
     vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);

@@ -31,11 +31,14 @@ describe("Moves - Spikes", () => {
     vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
     vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
     vi.spyOn(overrides, "OPP_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
-    vi.spyOn(overrides, "PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
+    vi.spyOn(overrides.STARTER_OVERRIDE[0], "ability", "get").mockReturnValue(Abilities.HYDRATION);
+    vi.spyOn(overrides.STARTER_OVERRIDE[1], "ability", "get").mockReturnValue(Abilities.HYDRATION);
+    vi.spyOn(overrides.STARTER_OVERRIDE[0], "passiveAbility", "get").mockReturnValue(Abilities.HYDRATION);
+    vi.spyOn(overrides.STARTER_OVERRIDE[1], "passiveAbility", "get").mockReturnValue(Abilities.HYDRATION);
     vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(3);
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH,Moves.SPLASH,Moves.SPLASH,Moves.SPLASH]);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPIKES,Moves.SPLASH, Moves.ROAR]);
+    vi.spyOn(overrides.STARTER_OVERRIDE[0], "moveset", "get").mockReturnValue([Moves.SPIKES,Moves.SPLASH, Moves.ROAR]);
+    vi.spyOn(overrides.STARTER_OVERRIDE[1], "moveset", "get").mockReturnValue([Moves.SPIKES,Moves.SPLASH, Moves.ROAR]);
   });
 
   it("single - wild - stay on field - no damage", async() => {

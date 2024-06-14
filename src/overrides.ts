@@ -68,11 +68,17 @@ interface StarterOverride {
   * @example Species.Bulbasaur
   */
   species?: Species | integer;
-  /** override form of the starter
-  * forms can be found in {@link pokemon-species.ts}
-  * @example 1
-  */
-  form?: integer;
+  /**
+ * Set the form index of any starter in the party whose `speciesId` is inside this override
+ * @see {@link allSpecies} in `src/data/pokemon-species.ts` for form indexes
+ * @example
+ * ```
+ * {
+ *   [Species.DARMANITAN]: 1
+ * }
+ * ```
+ */
+  form?: Partial<Record<Species, number>>;
   /** override ability of the starter
   * @example Abilities.ADAPTABILITY
   */
@@ -106,7 +112,7 @@ interface StarterOverride {
 }
 const starterOverrideDefault = {
   species: 0,
-  form: 0,
+  form: {},
   ability: Abilities.NONE,
   passiveAbility: Abilities.NONE,
   status: StatusEffect.NONE,
