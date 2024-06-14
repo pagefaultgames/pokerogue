@@ -7,6 +7,7 @@ import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
+import { WeatherType } from "./weather";
 
 export enum FormChangeItem {
   NONE,
