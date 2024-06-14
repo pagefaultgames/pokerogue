@@ -31,6 +31,11 @@ body {
   transform-origin: top !important;
 }
 
+/* Need adjust input font-size */
+input {
+  font-size: 3.2rem;
+}
+
 #touchControls:not(.visible) {
   display: none;
 }
@@ -243,8 +248,4 @@ input:-internal-autofill-selected {
     -webkit-animation: blink normal 4s infinite ease-in-out; /* Webkit */
     -ms-animation: blink normal 4s infinite ease-in-out; /* IE */
     animation: blink normal 4s infinite ease-in-out; /* Opera and prob css3 final iteration */
-}
-
-input {
-  font-size: 16px;
 }

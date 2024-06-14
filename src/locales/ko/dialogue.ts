@@ -1507,7 +1507,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "koga": {
     "encounter": {
-      1: "후하하하! 포켓몬은 딘순히 강한 것만이 아니다--곧 알려주지!"
+      1: "후하하하! 포켓몬은 단순히 강한 것만이 아니다--곧 알려주지!"
     },
     "victory": {
       1: "하! 스스로 증명해냈군!"
