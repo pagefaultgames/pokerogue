@@ -336,7 +336,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       pokemon.loadAssets(false).then(() => pokemon.playAnim());
     } else {
       const availables = [Species.ENTEI, Species.RAIKOU, Species.SUICUNE];
-      const randomIllusion: PokemonSpecies = getPokemonSpecies(availables[this.randSeedInt(3, 0)]);
+      const randomIllusion: PokemonSpecies = getPokemonSpecies(availables[this.randSeedInt(3)]);
       pokemon.illusion = {active: true, available: true, species: randomIllusion, name: pokemon.name};
       pokemon.name = randomIllusion.name;
       pokemon.loadAssets(false).then(() => pokemon.playAnim());
