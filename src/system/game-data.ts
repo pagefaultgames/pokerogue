@@ -1132,7 +1132,7 @@ export class GameData {
             return cachedRHData;
           }
           return data;
-      }
+        }
   } catch(err) {
       console.log("Something went wrong: ", err);
       var cachedResponse = localStorage.getItem(`runHistoryData_${loggedInUser.username}`, true);
@@ -1140,14 +1140,13 @@ export class GameData {
         cachedResponse = JSON.parse(decrypt(cachedResponse, true));
       }
       return cachedResponse ?? {};
-  }
+    }
 }
 
-  async saveRunHistory(scene: BattleScene, runEntry : SessionSaveData, victory: boolean): Promise<boolean> {
+  public saveRunHistory(scene: BattleScene, runEntry : SessionSaveData, victory: boolean): Promise<boolean> {
 
-    const runHistoryData = await this.getRunHistoryData(scene);
+    const runHistoryData = this.getRunHistoryData(scene);
     const timestamps = Object.keys(runHistoryData);
-    console.log(typeof(timestamps[0]));
 
     //Arbitrary limit of 25 entries per User --> Can increase or decrease
     if (timestamps.length >= 25) {
