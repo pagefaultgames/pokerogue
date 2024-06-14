@@ -1,7 +1,7 @@
 import { Stat, getStatName } from "./pokemon-stat";
 import * as Utils from "../utils";
 import { TextStyle, getBBCodeFrag } from "../ui/text";
-import { UiTheme } from "#app/enums/ui-theme";
+import { UiTheme } from "#enums/ui-theme";
 import i18next from "i18next";
 
 export enum Nature {

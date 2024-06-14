@@ -6,11 +6,11 @@ import PokemonSpecies, { PokemonForm, SpeciesFormKey, allSpecies } from "./pokem
 import { GrowthRate } from "./exp";
 import { Type } from "./type";
 import { allAbilities } from "./ability";
-import { Abilities } from "./enums/abilities";
-import { Species } from "./enums/species";
 import { pokemonFormLevelMoves } from "./pokemon-level-moves";
 import { tmSpecies } from "./tms";
-import { Moves } from "./enums/moves";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 
 const targetMap = {
   "specific-move": MoveTarget.ATTACKER,

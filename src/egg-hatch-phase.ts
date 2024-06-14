@@ -5,15 +5,15 @@ import * as Utils from "./utils";
 import { Mode } from "./ui/ui";
 import { EGG_SEED, Egg, GachaType, getLegendaryGachaSpeciesForTimestamp } from "./data/egg";
 import EggHatchSceneHandler from "./ui/egg-hatch-scene-handler";
-import { Species } from "./data/enums/species";
 import { PlayerPokemon } from "./field/pokemon";
 import { getPokemonSpecies, speciesStarters } from "./data/pokemon-species";
 import { achvs } from "./system/achv";
 import { pokemonPrevolutions } from "./data/pokemon-evolutions";
-import { EggTier } from "./data/enums/egg-type";
 import PokemonInfoContainer from "./ui/pokemon-info-container";
 import EggCounterContainer from "./ui/egg-counter-container";
 import { EggCountChangedEvent } from "./events/egg";
+import { EggTier } from "#enums/egg-type";
+import { Species } from "#enums/species";
 
 /**
  * Class that represents egg hatching

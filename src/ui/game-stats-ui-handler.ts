@@ -7,7 +7,7 @@ import { addWindow } from "./ui-theme";
 import * as Utils from "../utils";
 import { DexAttr, GameData } from "../system/game-data";
 import { speciesStarters } from "../data/pokemon-species";
-import {Button} from "../enums/buttons";
+import {Button} from "#enums/buttons";
 import i18next from "../plugins/i18n";
 
 interface DisplayStat {
@@ -157,7 +157,7 @@ const displayStats: DisplayStats = {
   },
   mythicalPokemonHatched: {
     label_key: "mythicalsHatched",
-    sourceFunc: gameData => gameData.gameStats.legendaryPokemonHatched.toString(),
+    sourceFunc: gameData => gameData.gameStats.mythicalPokemonHatched.toString(),
     hidden: true
   },
   shinyPokemonSeen: {

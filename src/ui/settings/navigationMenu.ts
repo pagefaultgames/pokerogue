@@ -3,7 +3,7 @@ import {Mode} from "#app/ui/ui";
 import {InputsIcons} from "#app/ui/settings/abstract-control-settings-ui-handler.js";
 import {addTextObject, setTextStyle, TextStyle} from "#app/ui/text";
 import {addWindow} from "#app/ui/ui-theme";
-import {Button} from "#app/enums/buttons";
+import {Button} from "#enums/buttons";
 
 const LEFT = "LEFT";
 const RIGHT = "RIGHT";
