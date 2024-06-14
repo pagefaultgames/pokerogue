@@ -2,20 +2,18 @@ import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
 import * as overrides from "#app/overrides";
-import {Species} from "#app/data/enums/species";
 import {
-  CommandPhase,
-  EnemyCommandPhase, TurnEndPhase,
+  MoveEndPhase, TurnEndPhase,
 } from "#app/phases";
-import {Mode} from "#app/ui/ui";
-import {Moves} from "#app/data/enums/moves";
 import {getMovePosition} from "#app/test/utils/gameManagerUtils";
-import {Command} from "#app/ui/command-ui-handler";
-import { Abilities } from "#app/data/enums/abilities.js";
 import { BattleStat } from "#app/data/battle-stat.js";
 import { TerrainType } from "#app/data/terrain.js";
+import { Abilities } from "#enums/abilities";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 
-// See also: ArenaTypeAbAttr
+// See also: TypeImmunityAbAttr
 describe("Abilities - Sap Sipper", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -49,15 +47,9 @@ describe("Abilities - Sap Sipper", () => {
 
     const startingOppHp = game.scene.currentBattle.enemyParty[0].hp;
 
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, moveToUse);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
+    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
 
-    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnEndPhase);
+    await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(startingOppHp - game.scene.getEnemyParty()[0].hp).toBe(0);
     expect(game.scene.getEnemyParty()[0].summonData.battleStats[BattleStat.ATK]).toBe(1);
@@ -74,15 +66,9 @@ describe("Abilities - Sap Sipper", () => {
 
     await game.startBattle();
 
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, moveToUse);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
+    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
 
-    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnEndPhase);
+    await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(game.scene.getEnemyParty()[0].status).toBeUndefined();
     expect(game.scene.getEnemyParty()[0].summonData.battleStats[BattleStat.ATK]).toBe(1);
@@ -99,18 +85,82 @@ describe("Abilities - Sap Sipper", () => {
 
     await game.startBattle();
 
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, moveToUse);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
+    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
 
-    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnEndPhase);
+    await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(game.scene.arena.terrain).toBeDefined();
     expect(game.scene.arena.terrain.terrainType).toBe(TerrainType.GRASSY);
     expect(game.scene.getEnemyParty()[0].summonData.battleStats[BattleStat.ATK]).toBe(0);
   });
+
+  it("activate once against multi-hit grass attacks", async() => {
+    const moveToUse = Moves.BULLET_SEED;
+    const enemyAbility = Abilities.SAP_SIPPER;
+
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
+    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
+    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
+    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(enemyAbility);
+
+    await game.startBattle();
+
+    const startingOppHp = game.scene.currentBattle.enemyParty[0].hp;
+
+    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
+
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    expect(startingOppHp - game.scene.getEnemyParty()[0].hp).toBe(0);
+    expect(game.scene.getEnemyParty()[0].summonData.battleStats[BattleStat.ATK]).toBe(1);
+  });
+
+  it("do not activate against status moves that target the user", async() => {
+    const moveToUse = Moves.SPIKY_SHIELD;
+    const ability = Abilities.SAP_SIPPER;
+
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
+    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(ability);
+    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
+    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
+    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
+
+    await game.startBattle();
+
+    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
+
+    await game.phaseInterceptor.to(MoveEndPhase);
+
+    expect(game.scene.getParty()[0].getTag(BattlerTagType.SPIKY_SHIELD)).toBeDefined();
+
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    expect(game.scene.getParty()[0].summonData.battleStats[BattleStat.ATK]).toBe(0);
+    expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
+  });
+
+  /*
+  // TODO Add METRONOME outcome override
+  // To run this testcase, manually modify the METRONOME move to always give SAP_SIPPER, then uncomment
+  it("activate once against multi-hit grass attacks (metronome)", async() => {
+    const moveToUse = Moves.METRONOME;
+    const enemyAbility = Abilities.SAP_SIPPER;
+
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
+    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
+    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
+    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(enemyAbility);
+
+    await game.startBattle();
+
+    const startingOppHp = game.scene.currentBattle.enemyParty[0].hp;
+
+    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
+
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    expect(startingOppHp - game.scene.getEnemyParty()[0].hp).toBe(0);
+    expect(game.scene.getEnemyParty()[0].summonData.battleStats[BattleStat.ATK]).toBe(1);
+  });
+  */
 });

@@ -2931,7 +2931,7 @@ export const move: MoveTranslationEntries = {
   },
   "bouncyBubble": {
     name: "Bouncy Bubble",
-    effect: "The user attacks by shooting water bubbles at the target. It then absorbs water and restores its HP by half the damage taken by the target."
+    effect: "The user attacks by shooting water bubbles at the target. It then absorbs water and restores its HP by the damage taken by the target."
   },
   "buzzyBuzz": {
     name: "Buzzy Buzz",

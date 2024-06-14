@@ -2931,7 +2931,7 @@ export const move: MoveTranslationEntries = {
   },
   "bouncyBubble": {
     name: "活活气泡",
-    effect: "投掷水球进行攻击。吸水后\n能回复等同于造成的伤害一\n半的HP",
+    effect: "投掷水球进行攻击。吸水后\n能回复等同于造成的伤害\n的HP",
   },
   "buzzyBuzz": {
     name: "麻麻电击",

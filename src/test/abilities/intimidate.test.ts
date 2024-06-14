@@ -2,18 +2,20 @@ import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
 import * as overrides from "#app/overrides";
-import {Abilities} from "#app/data/enums/abilities";
-import {Species} from "#app/data/enums/species";
 import {
-  CommandPhase, DamagePhase,
-  EnemyCommandPhase,
+  CommandPhase, DamagePhase, EncounterPhase,
+  EnemyCommandPhase, SelectStarterPhase,
   TurnInitPhase,
 } from "#app/phases";
 import {Mode} from "#app/ui/ui";
 import {BattleStat} from "#app/data/battle-stat";
-import {Moves} from "#app/data/enums/moves";
-import {getMovePosition} from "#app/test/utils/gameManagerUtils";
+import {generateStarter, getMovePosition} from "#app/test/utils/gameManagerUtils";
 import {Command} from "#app/ui/command-ui-handler";
+import {Status, StatusEffect} from "#app/data/status-effect";
+import {GameModes, getGameMode} from "#app/game-mode";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 
 
 describe("Abilities - Intimidate", () => {
@@ -337,5 +339,53 @@ describe("Abilities - Intimidate", () => {
     expect(battleStatsPokemon[BattleStat.ATK]).toBe(-1);
     battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
     expect(battleStatsOpponent[BattleStat.ATK]).toBe(-1);
-  }, 200000);
+  }, 20000);
+
+  it("double - wild vs only 1 on player side", async() => {
+    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(false);
+    vi.spyOn(overrides, "DOUBLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(3);
+    await game.runToSummon([
+      Species.MIGHTYENA,
+    ]);
+    await game.phaseInterceptor.to(CommandPhase, false);
+    const battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
+    expect(battleStatsOpponent[BattleStat.ATK]).toBe(-1);
+    const battleStatsOpponent2 = game.scene.currentBattle.enemyParty[1].summonData.battleStats;
+    expect(battleStatsOpponent2[BattleStat.ATK]).toBe(-1);
+
+    const battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
+    expect(battleStatsPokemon[BattleStat.ATK]).toBe(-2);
+  }, 20000);
+
+  it("double - wild vs only 1 alive on player side", async() => {
+    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(false);
+    vi.spyOn(overrides, "DOUBLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(3);
+    await game.runToTitle();
+
+    game.onNextPrompt("TitlePhase", Mode.TITLE, () => {
+      game.scene.gameMode = getGameMode(GameModes.CLASSIC);
+      const starters = generateStarter(game.scene, [
+        Species.MIGHTYENA,
+        Species.POOCHYENA,
+      ]);
+      const selectStarterPhase = new SelectStarterPhase(game.scene);
+      game.scene.pushPhase(new EncounterPhase(game.scene, false));
+      selectStarterPhase.initBattle(starters);
+      game.scene.getParty()[1].hp = 0;
+      game.scene.getParty()[1].status = new Status(StatusEffect.FAINT);
+    });
+
+    await game.phaseInterceptor.run(EncounterPhase);
+
+    await game.phaseInterceptor.to(CommandPhase, false);
+    const battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
+    expect(battleStatsOpponent[BattleStat.ATK]).toBe(-1);
+    const battleStatsOpponent2 = game.scene.currentBattle.enemyParty[1].summonData.battleStats;
+    expect(battleStatsOpponent2[BattleStat.ATK]).toBe(-1);
+
+    const battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
+    expect(battleStatsPokemon[BattleStat.ATK]).toBe(-2);
+  }, 20000);
 });
