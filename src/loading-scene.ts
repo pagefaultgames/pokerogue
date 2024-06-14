@@ -1,6 +1,4 @@
 import { GachaType } from "./data/egg";
-import { Biome } from "./data/enums/biome";
-import { TrainerType } from "./data/enums/trainer-type";
 import { trainerConfigs } from "./data/trainer-config";
 import { getBiomeHasProps } from "./field/arena";
 import CacheBustedLoaderPlugin from "./plugins/cache-busted-loader-plugin";
@@ -22,6 +20,8 @@ import { initChallenges } from "./data/challenge";
 import i18next from "i18next";
 import { initStatsKeys } from "./ui/game-stats-ui-handler";
 import { initVouchers } from "./system/voucher";
+import { Biome } from "#enums/biome";
+import { TrainerType } from "#enums/trainer-type";
 
 export class LoadingScene extends SceneBase {
   constructor() {
@@ -41,6 +41,7 @@ export class LoadingScene extends SceneBase {
 
     this.loadImage("loading_bg", "arenas");
     this.loadImage("logo", "");
+    this.loadImage("pride-update", "events");
 
     // Load menu images
     this.loadAtlas("bg", "ui");
