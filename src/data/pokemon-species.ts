@@ -3740,7 +3740,7 @@ export const starterPassiveAbilities = {
   [Species.DREEPY]: Abilities.PARENTAL_BOND,
   [Species.ZACIAN]: Abilities.UNNERVE,
   [Species.ZAMAZENTA]: Abilities.STAMINA,
-  [Species.ETERNATUS]: Abilities.LEVITATE,
+  [Species.ETERNATUS]: Abilities.SUPREME_OVERLORD,
   [Species.KUBFU]: Abilities.IRON_FIST,
   [Species.ZARUDE]: Abilities.GRASSY_SURGE,
   [Species.REGIELEKI]: Abilities.ELECTRIC_SURGE,
