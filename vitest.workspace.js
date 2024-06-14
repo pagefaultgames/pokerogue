@@ -15,28 +15,28 @@ export default defineWorkspace([
       name: "main",
       include: ["src/test/**/*.test.ts"],
       exclude: ["src/test/pre.test.ts"],
-      setupFiles: ['src/test/vitest.setup.ts'],
+      setupFiles: ["src/test/vitest.setup.ts"],
       environment: "jsdom",
       environmentOptions: {
-				jsdom: {
-					resources: 'usable',
-				},
-			},
+        jsdom: {
+          resources: "usable",
+        },
+      },
       threads: false,
-			trace: true,
-			restoreMocks: true,
+      trace: true,
+      restoreMocks: true,
       deps: {
-				optimizer: {
-					web: {
-						include: ['vitest-canvas-mock'],
-					}
-				}
-			},
+        optimizer: {
+          web: {
+            include: ["vitest-canvas-mock"],
+          },
+        },
+      },
       coverage: {
-				provider: 'istanbul',
-				reportsDirectory: 'coverage',
-				reporters: ['text-summary', 'html'],
-			},
+        provider: "istanbul",
+        reportsDirectory: "coverage",
+        reporters: ["text-summary", "html"],
+      },
     },
   },
 ]);
