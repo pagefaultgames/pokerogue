@@ -23,7 +23,6 @@ import { Command } from "../ui/command-ui-handler";
 import { BerryModifierType } from "#app/modifier/modifier-type";
 import { getPokeballName } from "./pokeball";
 import { Species } from "./enums/species";
-import PokemonSpecies, { getPokemonSpecies } from "./pokemon-species";
 import { BattlerIndex } from "#app/battle";
 
 export class Ability implements Localizable {
@@ -2471,7 +2470,7 @@ function getTerrainCondition(...terrainTypes: TerrainType[]): AbAttrCondition {
 }
 
 export class PostTurnAbAttr extends AbAttr {
-  applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
+  applyPostTurn(pokemon: Pokemon, passive: boolean, party: Pokemon[], args: any[]): boolean | Promise<boolean> {
     return false;
   }
 }
@@ -2996,11 +2995,11 @@ export class MaxMultiHitAbAttr extends AbAttr {
 }
 
 export class PostBattleAbAttr extends AbAttr {
-  constructor() {
-    super(true);
+  constructor(showAbility: boolean = true) {
+    super(showAbility);
   }
 
-  applyPostBattle(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+  applyPostBattle(pokemon: Pokemon, passive: boolean, party: Pokemon[], args: any[]): boolean {
     return false;
   }
 }
@@ -3475,61 +3474,57 @@ export class IceFaceMoveImmunityAbAttr extends MoveImmunityAbAttr {
   }
 }
 
-export class IllusionAbAttr extends PreSummonAbAttr {
-
-  public trueName: string;
-
-  applyPreSummon(pokemon: Pokemon, passive: boolean, party: Pokemon[]) {
-
-    //Case when Zoroark already used illusion one someone
-    if (!!pokemon.illusion.name) {
-      return false;
-    }
-
-    if (pokemon.hasTrainer()) {
-      const aliveParty: Pokemon[] = [];
-      for (const pkmn of party) {
-        if (pkmn.isAllowedInBattle()) {
-          aliveParty.push(pkmn);
-        }
-      }
-      const lastPokemon: Pokemon = aliveParty.slice(-1)[0];
-
-      pokemon.illusion = {active: true, species: lastPokemon.species, name: pokemon.name};
-      pokemon.name = lastPokemon.name;
+export class IllusionPreSummonAbAttr extends PreSummonAbAttr {
+  applyPreSummon(pokemon: Pokemon, passive: boolean, party: Pokemon[], args: any[]): boolean | Promise<boolean> {
+    if (pokemon.illusion.available) {
+      pokemon.generateIllusion(pokemon, party);
       return true;
     } else {
-      console.log("ALLO");
-      const availables = [Species.ENTEI, Species.RAIKOU, Species.SUICUNE];
-      const randomIllusion: PokemonSpecies = getPokemonSpecies(availables[Math.floor(Math.random()*3)]);
-      pokemon.illusion = {active: true, species: randomIllusion, name: pokemon.name};
-      pokemon.name = randomIllusion.name;
+      return false;
+    }
+  }
+}
+
+export class IllusionPostTurnAbAttr extends PostTurnAbAttr {
+  applyPostTurn(pokemon: Pokemon, passive: boolean, party: Pokemon[]) {
+    if (pokemon.hasTrainer() && !pokemon.isOnField() && pokemon.illusion.available) {
+      pokemon.generateIllusion(pokemon, party);
+      return true;
+    } else {
+      return false;
     }
   }
 }
 
 export class IllusionBreakAbAttr extends PostDefendAbAttr {
-
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean | Promise<boolean> {
     if (hitResult > 4) {
       return false;
     }
     pokemon.illusion.active = false;
-    //pokemon.summonData.speciesForm = pokemon.getSpeciesForm();
-    pokemon.name = pokemon.species.name;
+    pokemon.name = pokemon.illusion.name;
     pokemon.scene.playSound("PRSFX- Transform");
-
     pokemon.loadAssets(false).then(() => pokemon.playAnim());
-
-    //pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` transformed\ninto ${target.name}!`));
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, "'s illusion wore off!"));
     return true;
   }
 }
 
 export class IllusionAfterBattle extends PostBattleAbAttr {
-  applyPostBattle(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
-    //Reset illusion
-    pokemon.illusion = {active: false};
+  applyPostBattle(pokemon: Pokemon, passive: boolean, party: Pokemon[], args: any[]): boolean {
+    pokemon.generateIllusion(pokemon, party);
+    if (pokemon.isOnField()) {
+      pokemon.scene.playSound("PRSFX- Transform");
+      pokemon.illusion.available = false;
+    }
+    pokemon.loadAssets(false).then(() => pokemon.playAnim());
+    return true;
+  }
+}
+
+export class IllusionDisableAbAttr extends PostSummonAbAttr {
+  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
+    pokemon.illusion.available = false;
     return true;
   }
 }
@@ -3701,8 +3696,8 @@ export function applyPreWeatherEffectAbAttrs(attrType: { new(...args: any[]): Pr
 }
 
 export function applyPostTurnAbAttrs(attrType: { new(...args: any[]): PostTurnAbAttr },
-  pokemon: Pokemon, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PostTurnAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostTurn(pokemon, passive, args), args);
+  pokemon: Pokemon, party: Pokemon[], ...args: any[]): Promise<void> {
+  return applyAbAttrsInternal<PostTurnAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostTurn(pokemon, passive, party, args), args);
 }
 
 export function applyPostWeatherChangeAbAttrs(attrType: { new(...args: any[]): PostWeatherChangeAbAttr },
@@ -3726,8 +3721,8 @@ export function applyCheckTrappedAbAttrs(attrType: { new(...args: any[]): CheckT
 }
 
 export function applyPostBattleAbAttrs(attrType: { new(...args: any[]): PostBattleAbAttr },
-  pokemon: Pokemon, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PostBattleAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostBattle(pokemon, passive, args), args);
+  pokemon: Pokemon, party: Pokemon[], ...args: any[]): Promise<void> {
+  return applyAbAttrsInternal<PostBattleAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostBattle(pokemon, passive, party, args), args);
 }
 
 export function applyPostFaintAbAttrs(attrType: { new(...args: any[]): PostFaintAbAttr },
@@ -4200,12 +4195,16 @@ export function initAbilities() {
     new Ability(Abilities.ILLUSION, 5)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
-      //The pokemon get the illusion when summon
-      .attr(IllusionAbAttr, false)
+      //The pokemon genrate an illusion if it's available
+      .conditionalAttr((pokemon) => pokemon.illusion.available, IllusionPostTurnAbAttr, false)
+      .conditionalAttr((pokemon) => pokemon.illusion.available, IllusionPreSummonAbAttr, false)
+      //Illusion is not available after summon
+      .attr(IllusionDisableAbAttr, false)
       //The pokemon loses his illusion when he is damaged by a move
-      .conditionalAttr((pokemon) => pokemon.illusion.active, IllusionBreakAbAttr)
-      //Zoroark can do illusion again after a battle
-      .attr(IllusionAfterBattle),
+      .conditionalAttr((pokemon) => pokemon.illusion.active, IllusionBreakAbAttr, true)
+      //Illusion is available again after a battle again after a battle
+      .conditionalAttr((pokemon) => pokemon.isAllowedInBattle(), IllusionAfterBattle, false)
+      .bypassFaint(),
     new Ability(Abilities.IMPOSTER, 5)
       .attr(PostSummonTransformAbAttr)
       .attr(UncopiableAbilityAbAttr),

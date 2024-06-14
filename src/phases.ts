@@ -797,6 +797,7 @@ export class EncounterPhase extends BattlePhase {
           });
         }
       }
+
       const enemyPokemon = this.scene.getEnemyParty()[e];
       if (e < (battle.double ? 2 : 1)) {
         enemyPokemon.setX(-66 + enemyPokemon.getFieldPositionOffset()[0]);
@@ -848,13 +849,16 @@ export class EncounterPhase extends BattlePhase {
       battle.enemyParty.forEach((enemyPokemon, e) => {
         if (e < (battle.double ? 2 : 1)) {
           if (battle.battleType === BattleType.WILD) {
-            this.scene.field.add(enemyPokemon);
-            battle.seenEnemyPartyMemberIds.add(enemyPokemon.id);
-            const playerPokemon = this.scene.getPlayerPokemon();
-            if (playerPokemon?.visible) {
-              this.scene.field.moveBelow(enemyPokemon as Pokemon, playerPokemon);
-            }
-            enemyPokemon.tint(0, 0.5);
+
+            applyPreSummonAbAttrs(PreSummonAbAttr, enemyPokemon, []).then(() => {
+              this.scene.field.add(enemyPokemon);
+              battle.seenEnemyPartyMemberIds.add(enemyPokemon.id);
+              const playerPokemon = this.scene.getPlayerPokemon();
+              if (playerPokemon?.visible) {
+                this.scene.field.moveBelow(enemyPokemon as Pokemon, playerPokemon);
+              }
+              enemyPokemon.tint(0, 0.5);
+            });
           } else if (battle.battleType === BattleType.TRAINER) {
             enemyPokemon.setVisible(false);
             this.scene.currentBattle.trainer.tint(0, 0.5);
@@ -1309,9 +1313,9 @@ export class SummonPhase extends PartyMemberPokemonPhase {
 
   start() {
     super.start();
-    //ICITO
+
     const pokemon = this.getPokemon();
-    const party: Pokemon[] = pokemon.isPlayer() ? this.scene.getParty() : this.scene.getEnemyParty();
+    const party: Pokemon[] = pokemon.isPlayer() ? this.scene.getParty().filter(p => p.isAllowedInBattle()) : this.scene.getEnemyParty().filter(p => p.isAllowedInBattle());
     applyPreSummonAbAttrs(PreSummonAbAttr, pokemon, party).then(() => this.preSummon());
   }
 
@@ -1508,18 +1512,15 @@ export class SwitchSummonPhase extends SummonPhase {
         this.scene.pbTrayEnemy.showPbTray(this.scene.getEnemyParty());
       }
     }
-
+    const pokemon: Pokemon = this.getPokemon();
     if (!this.doReturn || (this.slotIndex !== -1 && !(this.player ? this.scene.getParty() : this.scene.getEnemyParty())[this.slotIndex])) {
       if (this.player) {
-
         return this.switchAndSummon();
       } else {
         this.scene.time.delayedCall(750, () => this.switchAndSummon());
         return;
       }
     }
-
-    const pokemon = this.getPokemon();
 
     if (!this.batonPass) {
       (this.player ? this.scene.getEnemyField() : this.scene.getPlayerField()).forEach(enemyPokemon => enemyPokemon.removeTagsBySourceId(pokemon.id));
@@ -2374,7 +2375,8 @@ export class TurnEndPhase extends FieldPhase {
         this.scene.applyModifier(EnemyStatusEffectHealChanceModifier, false, pokemon);
       }
 
-      applyPostTurnAbAttrs(PostTurnAbAttr, pokemon);
+      const party: Pokemon[] = pokemon.isPlayer() ? this.scene.getParty().filter(p => p.isAllowedInBattle()) : this.scene.getEnemyParty().filter(p => p.isAllowedInBattle());
+      applyPostTurnAbAttrs(PostTurnAbAttr, pokemon, party);
 
       this.scene.applyModifiers(TurnStatusEffectModifier, pokemon.isPlayer(), pokemon);
 
@@ -2426,7 +2428,7 @@ export class BattleEndPhase extends BattlePhase {
     }
 
     for (const pokemon of this.scene.getParty().filter(p => p.isAllowedInBattle())) {
-      applyPostBattleAbAttrs(PostBattleAbAttr, pokemon);
+      applyPostBattleAbAttrs(PostBattleAbAttr, pokemon, this.scene.getParty().filter(p => p.isAllowedInBattle()));
     }
 
     if (this.scene.currentBattle.moneyScattered) {

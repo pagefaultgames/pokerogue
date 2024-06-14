@@ -59,5 +59,4 @@ export enum BattlerTagType {
   MINIMIZED = "MINIMIZED",
   DESTINY_BOND = "DESTINY_BOND",
   ICE_FACE = "ICE_FACE",
-  ILLUSIONED = "ILLUSIONED"
 }
