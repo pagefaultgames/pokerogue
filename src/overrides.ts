@@ -100,11 +100,12 @@ export const OPP_VARIANT_OVERRIDE: Variant = 0;
  * - Nature is for MINT
  * - Type is for TERA_SHARD or ATTACK_TYPE_BOOSTER (type boosting items i.e Silk Scarf)
  * - BerryType is for BERRY
+ * - string is for SPECIES_STAT_BOOSTER
  */
 interface ModifierOverride {
     name: keyof typeof modifierTypes & string,
     count?: integer
-    type?: TempBattleStat|Stat|Nature|Type|BerryType
+    type?: TempBattleStat|Stat|Nature|Type|BerryType|string
 }
 export const STARTING_MODIFIER_OVERRIDE: Array<ModifierOverride> = [];
 export const OPP_MODIFIER_OVERRIDE: Array<ModifierOverride> = [];

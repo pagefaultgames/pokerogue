@@ -948,9 +948,9 @@ export class SpeciesStatBoosterModifier extends PokemonHeldItemModifier {
   /** The stats that the held item boosts */
   private stats: Stat[];
   /** The multiplier used to increase the relevant stat(s) */
-  private multiplier: integer;
+  private multiplier: number;
 
-  constructor(type: ModifierType, pokemonId: integer, stats: Stat[], multiplier: integer, species: Species[], stackCount?: integer) {
+  constructor(type: ModifierType, pokemonId: integer, stats: Stat[], multiplier: number, species: Species[], stackCount?: integer) {
     super(type, pokemonId, stackCount);
 
     this.stats = stats;

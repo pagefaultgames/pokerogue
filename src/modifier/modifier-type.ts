@@ -540,45 +540,23 @@ export class AttackTypeBoosterModifierType extends PokemonHeldItemModifierType i
   }
 }
 
-function getSpeciesBoosterItemKey(species: Species, stat?: Stat): string {
-  switch (species) {
-  case Species.PIKACHU:
-    return "LIGHT_BALL";
-  case Species.CUBONE:
-  case Species.MAROWAK:
-  case Species.ALOLA_MAROWAK:
-    return "THICK_CLUB";
-  case Species.DITTO:
-    switch (stat) {
-    case Stat.DEF:
-      return "METAL_POWDER";
-    case Stat.SPD:
-      return "QUICK_POWDER";
-    }
-  }
-}
-
 /**
  * Modifier type for {@linkcode Modifiers.SpeciesStatBoosterModifier}
  * @extends PokemonHeldItemModifierType
  * @implements GeneratedPersistentModifierType
  */
 export class SpeciesStatBoosterModifierType extends PokemonHeldItemModifierType implements GeneratedPersistentModifierType {
-  private species: Species[];
-  private stats: Stat[];
-  private multiplier: integer;
+  private key: string;
 
-  constructor(stats: Stat[], multiplier: integer, species: Species[], ) {
-    const key = getSpeciesBoosterItemKey(species[0], stats[0]);
-    super(`modifierType:SpeciesBoosterItem.${key}`, key.toLowerCase(), (type, args) => new Modifiers.SpeciesStatBoosterModifier(type, (args[0] as Pokemon).id, stats, multiplier, species));
+  constructor(key: string) {
+    const item = SpeciesStatBoosterModifierTypeGenerator.items[key];
+    super(`modifierType:SpeciesBoosterItem.${key}`, key.toLowerCase(), (type, args) => new Modifiers.SpeciesStatBoosterModifier(type, (args[0] as Pokemon).id, item.stats, item.multiplier, item.species));
 
-    this.stats = stats;
-    this.multiplier = multiplier;
-    this.species = species;
+    this.id = this.key = key;
   }
 
   getPregenArgs(): any[] {
-    return [ this.stats, this.multiplier, this.species ];
+    return [ this.key ];
   }
 }
 
@@ -917,37 +895,36 @@ class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
 /**
  * Modifier type generator for {@linkcode SpeciesStatBoosterModifierType}, which
  * encapsulates the logic for weighting the most useful held item from
- * the current list of available species-based stat boosting held items:
- *  - Light Ball, Thick Club, Metal Powder, and Quick Powder
+ * the current list of {@linkcode items}.
  * @extends ModifierTypeGenerator
  */
 class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
+  /** Object comprised of the currently available species-based stat boosting held items */
+  public static items = {
+    LIGHT_BALL: { stats: [Stat.ATK, Stat.SPATK], multiplier: 2, species: [Species.PIKACHU] },
+    THICK_CLUB: { stats: [Stat.ATK], multiplier: 2, species: [Species.CUBONE, Species.MAROWAK, Species.ALOLA_MAROWAK] },
+    METAL_POWDER: { stats: [Stat.DEF], multiplier: 2, species: [Species.DITTO] },
+    QUICK_POWDER: { stats: [Stat.SPD], multiplier: 2, species: [Species.DITTO] },
+  };
+
   constructor() {
     super((party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs) {
-        return new SpeciesStatBoosterModifierType(pregenArgs[0] as Stat[], pregenArgs[1] as integer, pregenArgs[2] as Species[]);
+        return new SpeciesStatBoosterModifierType(pregenArgs[0] as string);
       }
 
-      const itemList = [
-        /** Light Ball */
-        { stats: [Stat.ATK, Stat.SPATK], multiplier: 2, species: [Species.PIKACHU] },
-        /** Thick Club */
-        { stats: [Stat.ATK], multiplier: 2, species: [Species.CUBONE, Species.MAROWAK, Species.ALOLA_MAROWAK] },
-        /** Metal Powder */
-        { stats: [Stat.DEF], multiplier: 2, species: [Species.DITTO] },
-        /** Quick Powder */
-        { stats: [Stat.SPD], multiplier: 2, species: [Species.DITTO] },
-      ];
-      const weights = itemList.map(() => 0);
+      const values = Object.values(SpeciesStatBoosterModifierTypeGenerator.items);
+      const keys = Object.keys(SpeciesStatBoosterModifierTypeGenerator.items);
+      const weights = keys.map(() => 0);
 
       for (const p of party) {
         const speciesId = p.getSpeciesForm(true).speciesId;
         const fusionSpeciesId = p.isFusion() ? p.getFusionSpeciesForm(true).speciesId : null;
         const hasFling = p.getMoveset(true).some(m => m.moveId === Moves.FLING);
 
-        for (const i in itemList) {
-          const checkedSpecies = itemList[i].species;
-          const checkedStats = itemList[i].stats;
+        for (const i in values) {
+          const checkedSpecies = values[i].species;
+          const checkedStats = values[i].stats;
 
           // If party member already has the item being weighted currently, skip to the next item
           const hasItem = p.getHeldItems().some(m => m instanceof Modifiers.SpeciesStatBoosterModifier
@@ -978,7 +955,7 @@ class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
           if (weights[i] !== 0) {
             const curWeight = weight + weights[i];
             if (randInt <= weight + weights[i]) {
-              return new SpeciesStatBoosterModifierType(itemList[i].stats, itemList[i].multiplier, itemList[i].species);
+              return new SpeciesStatBoosterModifierType(keys[i]);
             }
             weight = curWeight;
           }
@@ -1206,6 +1183,8 @@ export const modifierTypes = {
   SUPER_LURE: () => new DoubleBattleChanceBoosterModifierType("modifierType:ModifierType.SUPER_LURE", "super_lure", 10),
   MAX_LURE: () => new DoubleBattleChanceBoosterModifierType("modifierType:ModifierType.MAX_LURE", "max_lure", 25),
 
+  SPECIES_STAT_BOOSTER: () => new SpeciesStatBoosterModifierTypeGenerator(),
+
   TEMP_STAT_BOOSTER: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
     if (pregenArgs) {
       return new TempBattleStatBoosterModifierType(pregenArgs[0] as TempBattleStat);
@@ -1288,8 +1267,6 @@ export const modifierTypes = {
   GOLDEN_EGG: () => new PokemonExpBoosterModifierType("modifierType:ModifierType.GOLDEN_EGG", "golden_egg", 100),
 
   SOOTHE_BELL: () => new PokemonFriendshipBoosterModifierType("modifierType:ModifierType.SOOTHE_BELL", "soothe_bell"),
-
-  SPECIES_STAT_BOOSTER: () => new SpeciesStatBoosterModifierTypeGenerator(),
 
   SOUL_DEW: () => new PokemonHeldItemModifierType("modifierType:ModifierType.SOUL_DEW", "soul_dew", (type, args) => new Modifiers.PokemonNatureWeightModifier(type, (args[0] as Pokemon).id)),
 
