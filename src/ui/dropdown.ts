@@ -3,13 +3,6 @@ import { SceneBase } from "#app/scene-base.js";
 import { addTextObject, TextStyle } from "./text";
 import { addWindow, WindowVariant } from "./ui-theme";
 
-export enum DropDownColumns {
-    TYPES,
-    SHINY,
-    DIV,
-    SORT
-}
-
 export enum DropDownState {
     ON = 0,
     OFF
@@ -248,5 +241,13 @@ export class DropDown extends Phaser.GameObjects.Container {
       }
     }
     this.window.width = maxWidth + x - this.window.x + 6;
+
+    if (this.x + this.window.width > this.parentContainer.width) {
+      this.x = this.parentContainer.width - this.window.width;
+    }
+  }
+
+  isActive(): boolean {
+    return this.options.some((option) => option.state === DropDownState.ON);
   }
 }

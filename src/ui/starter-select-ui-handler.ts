@@ -36,9 +36,10 @@ import {Device} from "#app/enums/devices";
 import * as Challenge from "../data/challenge";
 import MoveInfoOverlay from "./move-info-overlay";
 import { getEggTierForSpecies } from "#app/data/egg.js";
-import { DropDown, DropDownColumns, DropDownOption, DropDownState, DropDownType } from "./dropdown";
+import { DropDown, DropDownOption, DropDownState, DropDownType } from "./dropdown";
 import { StarterContainer } from "./starter-container";
-import { FilterBar } from "./filter-bar";
+import { DropDownColumn, FilterBar } from "./filter-bar";
+import { ScrollBar } from "./scroll-bar";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -127,11 +128,11 @@ function getValueReductionCandyCounts(baseValue: integer): [integer, integer] {
  * @param index UI index to calculate the starter position of
  * @returns An interface with an x and y property
  */
-function calcStarterPosition(index: number): {x: number, y: number} {
+function calcStarterPosition(index: number, scrollCursor:number = 0): {x: number, y: number} {
   const yOffset = 13;
   const height = 17;
   const x = (index % 9) * 18;
-  const y = yOffset + Math.floor(index / 9) * height;
+  const y = yOffset + (Math.floor(index / 9) - scrollCursor) * height;
 
   return {x: x, y: y};
 }
@@ -150,6 +151,7 @@ const gens = [
 
 export default class StarterSelectUiHandler extends MessageUiHandler {
   private starterSelectContainer: Phaser.GameObjects.Container;
+  private starterSelectScrollBar: ScrollBar;
   private filterBarContainer: Phaser.GameObjects.Container;
   private filterBar: FilterBar;
   private shinyOverlay: Phaser.GameObjects.Image;
@@ -189,7 +191,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private pokemonCaughtCountText: Phaser.GameObjects.Text;
   private pokemonHatchedIcon : Phaser.GameObjects.Sprite;
   private pokemonHatchedCountText: Phaser.GameObjects.Text;
-  private genOptionsText: Phaser.GameObjects.Text;
 
   private instructionsContainer: Phaser.GameObjects.Container;
   private shinyIconElement: Phaser.GameObjects.Sprite;
@@ -211,17 +212,14 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private pokemonFormText: Phaser.GameObjects.Text;
   private moveInfoOverlay : MoveInfoOverlay;
 
-  private genMode: boolean;
   private statsMode: boolean;
   private filterMode: boolean;
-  // private filterDropdown: boolean;
   private dexAttrCursor: bigint = 0n;
-  private abilityCursor: integer = -1;
-  private natureCursor: integer = -1;
-  private genCursor: integer = 0;
+  private abilityCursor: number = -1;
+  private natureCursor: number = -1;
   private filterBarCursor: integer = 0;
-  private genScrollCursor: integer = 0;
   private starterMoveset: StarterMoveset;
+  private scrollCursor: number;
 
   private genSpecies: PokemonSpecies[][] = [];
   private lastSpecies: PokemonSpecies;
@@ -248,8 +246,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private starterCursorObjs: Phaser.GameObjects.Image[];
   private pokerusCursorObjs: Phaser.GameObjects.Image[];
   private starterIcons: Phaser.GameObjects.Sprite[];
-  private genCursorObj: Phaser.GameObjects.Image;
-  private genCursorHighlightObj: Phaser.GameObjects.Image;
   private valueLimitLabel: Phaser.GameObjects.Text;
   private startCursorObj: Phaser.GameObjects.NineSlice;
   // private starterValueLabels: Phaser.GameObjects.Text[];
@@ -297,20 +293,35 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.shinyOverlay.setVisible(false);
     this.starterSelectContainer.add(this.shinyOverlay);
 
-    const starterContainerWindow = addWindow(this.scene, 141, 1, 178, 178);
+    const starterContainerWindow = addWindow(this.scene, 110, 19, 178, 178);
+    const starterContainerBg = this.scene.add.image(110, 19, "starter_container_bg");
+    starterContainerBg.setOrigin(0, 0);
+    this.starterSelectContainer.add(starterContainerBg);
 
-    this.starterSelectContainer.add(addWindow(this.scene, 107, 1, 34, 58));
-    this.starterSelectContainer.add(addWindow(this.scene, 107, 59, 34, 91));
-    this.starterSelectContainer.add(addWindow(this.scene, 107, 145, 34, 34, true));
+    this.starterSelectContainer.add(addWindow(this.scene, 285, 59, 34, 91));
+    this.starterSelectContainer.add(addWindow(this.scene, 285, 145, 34, 34, true));
     this.starterSelectContainer.add(starterContainerWindow);
 
     this.filterBarContainer = this.scene.add.container(0, 0);
-    // this.filterBarContainer.add(addWindow(this.scene, 143, 1, 175, 17, false, false, null, null, WindowVariant.THIN));
 
+    // this.filterBar = new FilterBar(this.scene, 143, 1, 175, 17);
+    this.filterBar = new FilterBar(this.scene, 109, 1, 175, 17);
 
-    this.filterBar = new FilterBar(this.scene, 143, 1, 175, 17);
+    // gen filter
+    const genOptions: DropDownOption[] = [
+      new DropDownOption(this.scene, 0, "I", null, DropDownState.ON),
+      new DropDownOption(this.scene, 1, "II", null, DropDownState.OFF),
+      new DropDownOption(this.scene, 2, "III", null, DropDownState.OFF),
+      new DropDownOption(this.scene, 3, "IV", null, DropDownState.OFF),
+      new DropDownOption(this.scene, 4, "V", null, DropDownState.OFF),
+      new DropDownOption(this.scene, 5, "VI", null, DropDownState.OFF),
+      new DropDownOption(this.scene, 6, "VII", null, DropDownState.OFF),
+      new DropDownOption(this.scene, 7, "VIII", null, DropDownState.OFF),
+      new DropDownOption(this.scene, 8, "IX", null, DropDownState.OFF),
+    ];
+    this.filterBar.addFilter("Gen", new DropDown(this.scene, 0, 0, genOptions, this.updateStarters, DropDownType.MULTI));
 
-    //type filter
+    // type filter
     const typeKeys = Object.keys(Type).filter(v => isNaN(Number(v)));
     const typeOptions: DropDownOption[] = [];
     typeKeys.forEach((type, index) => {
@@ -431,18 +442,32 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonEggMoveBgs = [];
     this.pokemonEggMoveLabels = [];
 
-    this.genOptionsText = addTextObject(this.scene, 124, 7, "", TextStyle.WINDOW, { fontSize: 72, lineSpacing: 39, align: "center" });
-    this.genOptionsText.setShadowOffset(4.5, 4.5);
-    this.genOptionsText.setOrigin(0.5, 0);
-    this.starterSelectContainer.add(this.genOptionsText);
+    this.valueLimitLabel = addTextObject(this.scene, 302, 150, "0/10", TextStyle.TOOLTIP_CONTENT);
+    this.valueLimitLabel.setOrigin(0.5, 0);
+    this.starterSelectContainer.add(this.valueLimitLabel);
 
-    this.updateGenOptions();
+    const startLabel = addTextObject(this.scene, 302, 162, i18next.t("starterSelectUiHandler:start"), TextStyle.TOOLTIP_CONTENT);
+    startLabel.setOrigin(0.5, 0);
+    this.starterSelectContainer.add(startLabel);
+
+    this.startCursorObj = this.scene.add.nineslice(288, 160, "select_cursor", null, 26, 15, 6, 6, 6, 6);
+    this.startCursorObj.setVisible(false);
+    this.startCursorObj.setOrigin(0, 0);
+    this.starterSelectContainer.add(this.startCursorObj);
+
+    const starterSpecies: Species[] = [];
+
+    const starterBoxContainer = this.scene.add.container(115, 9);
+
+    this.starterSelectScrollBar = new ScrollBar(this.scene, 161, 12, 0);
+
+    starterBoxContainer.add(this.starterSelectScrollBar);
 
     this.pokerusCursorObjs = new Array(3).fill(null).map(() => {
       const cursorObj = this.scene.add.image(0, 0, "select_cursor_pokerus");
       cursorObj.setVisible(false);
       cursorObj.setOrigin(0, 0);
-      this.starterSelectContainer.add(cursorObj);
+      starterBoxContainer.add(cursorObj);
       return cursorObj;
     });
 
@@ -450,39 +475,14 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       const cursorObj = this.scene.add.image(0, 0, "select_cursor_highlight");
       cursorObj.setVisible(false);
       cursorObj.setOrigin(0, 0);
-      this.starterSelectContainer.add(cursorObj);
+      starterBoxContainer.add(cursorObj);
       return cursorObj;
     });
 
     this.cursorObj = this.scene.add.image(0, 0, "select_cursor");
     this.cursorObj.setOrigin(0, 0);
-    this.starterSelectContainer.add(this.cursorObj);
+    starterBoxContainer.add(this.cursorObj);
 
-    this.genCursorHighlightObj = this.scene.add.image(111, 5, "select_gen_cursor_highlight");
-    this.genCursorHighlightObj.setOrigin(0, 0);
-    this.starterSelectContainer.add(this.genCursorHighlightObj);
-
-    this.genCursorObj = this.scene.add.image(111, 5, "select_gen_cursor");
-    this.genCursorObj.setVisible(false);
-    this.genCursorObj.setOrigin(0, 0);
-    this.starterSelectContainer.add(this.genCursorObj);
-
-    this.valueLimitLabel = addTextObject(this.scene, 124, 150, "0/10", TextStyle.TOOLTIP_CONTENT);
-    this.valueLimitLabel.setOrigin(0.5, 0);
-    this.starterSelectContainer.add(this.valueLimitLabel);
-
-    const startLabel = addTextObject(this.scene, 124, 162, i18next.t("starterSelectUiHandler:start"), TextStyle.TOOLTIP_CONTENT);
-    startLabel.setOrigin(0.5, 0);
-    this.starterSelectContainer.add(startLabel);
-
-    this.startCursorObj = this.scene.add.nineslice(111, 160, "select_cursor", null, 26, 15, 6, 6, 6, 6);
-    this.startCursorObj.setVisible(false);
-    this.startCursorObj.setOrigin(0, 0);
-    this.starterSelectContainer.add(this.startCursorObj);
-
-    const starterSpecies: Species[] = [];
-
-    const starterBoxContainer = this.scene.add.container(151, 9);
     for (let g = 0; g < gens.length; g++) {
       this.genSpecies.push([]);
       this.starterContainers.push([]);
@@ -505,7 +505,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.starterSelectContainer.add(starterBoxContainer);
 
     this.starterIcons = new Array(6).fill(null).map((_, i) => {
-      const icon = this.scene.add.sprite(113, 63 + 13 * i, "pokemon_icons_0");
+      const icon = this.scene.add.sprite(292, 63 + 13 * i, "pokemon_icons_0");
       icon.setScale(0.5);
       icon.setOrigin(0, 0);
       icon.setFrame("unknown");
@@ -747,7 +747,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.scene.eventTarget.addEventListener(BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED, (e) => this.onCandyUpgradeDisplayChanged(e));
 
     this.updateInstructions();
-    // this.updateStarters();
+
+    // this.scene.time.delayedCall(1000, () => {
+    //   this.updateStarters();
+    // });
   }
 
   show(args: any[]): boolean {
@@ -760,9 +763,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
       this.setFilterMode(false);
       this.filterBarCursor = 0;
-      this.setGenMode(false);
-      this.setCursor(0);
-      this.setGenMode(true);
       this.setCursor(0);
       this.tryUpdateValue(0);
 
@@ -780,6 +780,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.setUpgradeAnimation(icon, species);
         });
       }
+
+      this.updateStarters();
 
       handleTutorial(this.scene, Tutorial.Starter_Select);
 
@@ -971,6 +973,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     } else if (button === Button.CANCEL) {
       if (this.filterMode && this.filterBar.openDropDown) {
         this.filterBar.hideDropDowns();
+        success = true;
       } else if (this.statsMode) {
         this.toggleStatsMode(false);
         success = true;
@@ -1000,55 +1003,16 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         break;
       case Button.UP:
         this.startCursorObj.setVisible(false);
-        this.setGenMode(true);
         success = true;
         break;
       case Button.LEFT:
-        console.log("LEFT");
         this.startCursorObj.setVisible(false);
-        this.setGenMode(false);
         this.setCursor(Math.min(this.cursor + 8, this.filteredStarterContainers.length - 1));
         success = true;
         break;
       case Button.RIGHT:
         this.startCursorObj.setVisible(false);
-        this.setGenMode(false);
         success = true;
-        break;
-      }
-    } else if (this.genMode) {
-      switch (button) {
-      case Button.UP:
-        if (this.genCursor) {
-          success = this.setCursor(this.genCursor - 1);
-        }
-        break;
-      case Button.DOWN:
-        if (this.genCursor < 2) {
-          success = this.setCursor(this.genCursor + 1);
-        } else {
-          this.startCursorObj.setVisible(true);
-          this.setGenMode(true);
-          success = true;
-        }
-        break;
-      case Button.LEFT:
-        const rows = Math.ceil(this.filteredStarterContainers.length / 9);
-        if (rows > 0) {
-          success = this.setGenMode(false);
-          this.setCursor(rows > 1 ? (this.cursor + 8) : (this.cursor + (this.filteredStarterContainers.length - 1)));
-        }
-        break;
-      case Button.RIGHT:
-        if (this.genCursor === 0) {
-          this.setGenMode(false);
-          this.setFilterMode(true);
-          success = true;
-        } else {
-          this.setFilterMode(false);
-          this.setGenMode(false);
-          success = true;
-        }
         break;
       }
     } else if (this.filterMode) {
@@ -1058,12 +1022,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           success = this.setCursor(this.filterBarCursor - 1);
         } else {
           this.setFilterMode(false);
-          success = this.setGenMode(true);
         }
         break;
       case Button.RIGHT:
         if (this.filterBarCursor < this.filterBar.numFilters - 1) {
           success = this.setCursor(this.filterBarCursor + 1);
+        } else {
+          this.setFilterMode(false);
         }
         break;
       case Button.UP:
@@ -1080,7 +1045,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           }
         } else {
           this.setFilterMode(false);
-          this.setGenMode(false);
           success = true;
         }
         break;
@@ -1142,7 +1106,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                    */
                   if (!this.canAddParty) {
                     this.startCursorObj.setVisible(true);
-                    this.setGenMode(true);
                   }
 
                   ui.playSelect();
@@ -1472,25 +1435,26 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           }
           break;
         case Button.UP:
-          if (row) {
+          if (row > 0) {
+            if (this.scrollCursor > 0 && row - this.scrollCursor === 0) {
+              this.scrollCursor--;
+              this.updateScroll();
+            }
+
             success = this.setCursor(this.cursor - 9);
           } else {
-            this.filterBarCursor = 0;
+            this.filterBarCursor = 0;//this.filterBar.getNearestFilter(this.filteredStarterContainers[this.cursor]);
             this.setFilterMode(true);
             success = true;
           }
           break;
         case Button.DOWN:
-          if (row < rows - 2 || (row < rows - 1 && this.cursor % 9 <= (genStarters - 1) % 9)) {
-            success = this.setCursor(this.cursor + 9);
-          } else {
-            // if there is no starter below while being on the second to
-            // last row, adjust cursor position with one line less
-            if (row === rows - 2 && this.cursor + 9 > genStarters - 1) {
-              success = this.setCursor(this.cursor - (rows - 2) * 9);
-            } else {
-              success = this.setCursor(this.cursor - (rows - 1) * 9);
+          if (row < rows - 1) {
+            if (row - this.scrollCursor === 8) {
+              this.scrollCursor++;
             }
+            success = this.setCursor(this.cursor + 9);
+            this.updateScroll();
           }
           break;
         case Button.LEFT:
@@ -1500,7 +1464,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             if (row >= 5) {
               this.startCursorObj.setVisible(true);
             }
-            success = this.setGenMode(true);
           }
           break;
         case Button.RIGHT:
@@ -1510,7 +1473,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             if (row >= Math.min(5, rows - 1)) {
               this.startCursorObj.setVisible(true);
             }
-            success = this.setGenMode(true);
           }
           break;
         }
@@ -1655,6 +1617,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   updateStarters = () => {
+    this.scrollCursor = 0;
+    console.log("UPDATE STARTERS", this.filterBar.getVals(DropDownColumn.GEN)),
     this.filteredStarterContainers = [];
 
     this.pokerusCursorObjs.forEach(cursor => cursor.setVisible(false));
@@ -1665,26 +1629,27 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.starterContainers[g].forEach(container => {
         container.setVisible(false);
 
-        // for now only in selected gen
-        if (g !== this.getGenCursorWithScroll()) {
-          return;
-        }
         const speciesVariants = container.species.speciesId && this.scene.gameData.dexData[container.species.speciesId].caughtAttr & DexAttr.SHINY
           ? [ DexAttr.DEFAULT_VARIANT, DexAttr.VARIANT_2, DexAttr.VARIANT_3 ].filter(v => !!(this.scene.gameData.dexData[container.species.speciesId].caughtAttr & v))
           : [];
-        const fitsType =  this.filterBar.getVals(DropDownColumns.TYPES).some(type => container.species.isOfType((type as number) - 1));
-        const fitsShiny = this.filterBar.getVals(DropDownColumns.SHINY).some(variant => speciesVariants.includes(variant));
-        const fitsDiv = (this.filterBar.getVals(DropDownColumns.DIV).includes(0) && this.scene.gameData.starterData[container.species.speciesId].classicWinCount > 0) ||
-                        (this.filterBar.getVals(DropDownColumns.DIV).includes(1) && this.scene.gameData.starterData[container.species.speciesId].classicWinCount === 0);
+        const fitsGen =   this.filterBar.getVals(DropDownColumn.GEN).includes(g);
+        const fitsType =  this.filterBar.getVals(DropDownColumn.TYPES).some(type => container.species.isOfType((type as number) - 1));
+        const fitsShiny = this.filterBar.getVals(DropDownColumn.SHINY).some(variant => speciesVariants.includes(variant));
+        const fitsDiv =   (this.filterBar.getVals(DropDownColumn.DIV).includes(0) && this.scene.gameData.starterData[container.species.speciesId].classicWinCount > 0) ||
+                          (this.filterBar.getVals(DropDownColumn.DIV).includes(1) && this.scene.gameData.starterData[container.species.speciesId].classicWinCount === 0);
 
-        if (fitsType && fitsShiny && fitsDiv) {
+        if (fitsGen && fitsType && fitsShiny && fitsDiv) {
           this.filteredStarterContainers.push(container);
         }
       });
     }
 
+    // set pages
+    this.starterSelectScrollBar.setPages(Math.ceil((this.filteredStarterContainers.length - 81) / 9) + 1);
+    this.starterSelectScrollBar.setPage(0);
+
     // sort
-    const sort = this.filterBar.getVals(DropDownColumns.SORT)[0];
+    const sort = this.filterBar.getVals(DropDownColumn.SORT)[0];
     this.filteredStarterContainers.sort((a, b) => {
       switch (sort.val) {
       default:
@@ -1705,21 +1670,35 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       return 0;
     });
 
+    this.updateScroll();
+  };
+
+  updateScroll = () => {
+    const perRow = 9;
+    const maxRows = 9;
+
+    this.starterSelectScrollBar.setPage(this.scrollCursor);
+
     let pokerusCursorIndex = 0;
     let starterCursorIndex = 0;
     this.filteredStarterContainers.forEach((container, i) => {
-      const pos = calcStarterPosition(i);
+      const pos = calcStarterPosition(i, this.scrollCursor);
       container.setPosition(pos.x, pos.y);
-      container.setVisible(true);
+
+      if (i < (maxRows + this.scrollCursor) * perRow && i >= this.scrollCursor * perRow) {
+        container.setVisible(true);
+      } else {
+        container.setVisible(false);
+      }
 
       if (this.pokerusSpecies.includes(container.species)) {
-        this.pokerusCursorObjs[pokerusCursorIndex].setPosition(pos.x + 151 - 1, pos.y + 9 + 1);
+        this.pokerusCursorObjs[pokerusCursorIndex].setPosition(pos.x - 1, pos.y + 1);
         this.pokerusCursorObjs[pokerusCursorIndex].setVisible(true);
         pokerusCursorIndex++;
       }
 
       if (this.starterSpecies.includes(container.species)) {
-        this.starterCursorObjs[starterCursorIndex].setPosition(pos.x + 151 - 1, pos.y + 9 + 1);
+        this.starterCursorObjs[starterCursorIndex].setPosition(pos.x - 1, pos.y + 1);
         this.starterCursorObjs[starterCursorIndex].setVisible(true);
         starterCursorIndex++;
       }
@@ -1764,23 +1743,23 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   setCursor(cursor: integer): boolean {
     let changed = false;
 
-    if (this.genMode) {
-      changed = this.genCursor !== cursor;
+    if (false) {
+      // changed = this.genCursor !== cursor;
 
-      if (!cursor && this.genScrollCursor) {
-        this.genScrollCursor--;
-        cursor++;
-        this.updateGenOptions();
-      } else if (cursor === 2 && this.genScrollCursor < gens.length - 3) {
-        this.genScrollCursor++;
-        cursor--;
-        this.updateGenOptions();
-      }
+      // if (!cursor && this.genScrollCursor) {
+      //   this.genScrollCursor--;
+      //   cursor++;
+      //   this.updateGenOptions();
+      // } else if (cursor === 2 && this.genScrollCursor < gens.length - 3) {
+      //   this.genScrollCursor++;
+      //   cursor--;
+      //   this.updateGenOptions();
+      // }
 
-      this.cursor = 0;
-      this.genCursor = cursor;
-      this.genCursorObj.setY(5 + 17 * this.genCursor);
-      this.genCursorHighlightObj.setY(this.genCursorObj.y);
+      // this.cursor = 0;
+      // this.genCursor = cursor;
+      // this.genCursorObj.setY(5 + 17 * this.genCursor);
+      // this.genCursorHighlightObj.setY(this.genCursorObj.y);
 
       this.updateStarters();
     } else if (this.filterMode) {
@@ -1789,9 +1768,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
       this.filterBar.setCursor(cursor);
     } else {
+      cursor = Math.max(Math.min(this.filteredStarterContainers.length - 1, cursor),0);
       changed = super.setCursor(cursor);
 
-      this.cursorObj.setPosition(150 + 18 * (cursor % 9), 10 + 13 + 17 * Math.floor(cursor / 9));
+      const pos = calcStarterPosition(cursor, this.scrollCursor);
+      this.cursorObj.setPosition(pos.x - 1, pos.y + 1);
 
       this.setSpecies(this.filteredStarterContainers[cursor]?.species);
 
@@ -1802,47 +1783,30 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   getGenCursorWithScroll(): integer {
-    return this.genCursor !== undefined
-      ? this.genCursor + this.genScrollCursor
-      : undefined;
+    return undefined;
+    // return this.genCursor !== undefined
+    //   ? this.genCursor + this.genScrollCursor
+    //   : undefined;
   }
 
   updateGenOptions(): void {
-    let text = "";
-    for (let g = this.genScrollCursor; g <= this.genScrollCursor + 2; g++) {
-      let optionText = "";
-      if (g === this.genScrollCursor && this.genScrollCursor) {
-        optionText = "↑";
-      } else if (g === this.genScrollCursor + 2 && this.genScrollCursor < gens.length - 3) {
-        optionText = "↓";
-      } else {
-        optionText = i18next.t(`starterSelectUiHandler:gen${g + 1}`);
-      }
-      text += `${text ? "\n" : ""}${optionText}`;
-    }
-    this.genOptionsText.setText(text);
-  }
-
-  setGenMode(genMode: boolean): boolean {
-    this.genCursorObj.setVisible(genMode && !this.startCursorObj.visible);
-    this.cursorObj.setVisible(!genMode && !this.startCursorObj.visible);
-
-    if (genMode !== this.genMode) {
-      this.genMode = genMode;
-
-      this.setCursor(genMode ? this.genCursor : this.cursor);
-      if (genMode) {
-        this.setSpecies(null);
-      }
-
-      return true;
-    }
-
-    return false;
+    // let text = "";
+    // for (let g = this.genScrollCursor; g <= this.genScrollCursor + 2; g++) {
+    //   let optionText = "";
+    //   if (g === this.genScrollCursor && this.genScrollCursor) {
+    //     optionText = "↑";
+    //   } else if (g === this.genScrollCursor + 2 && this.genScrollCursor < gens.length - 3) {
+    //     optionText = "↓";
+    //   } else {
+    //     optionText = i18next.t(`starterSelectUiHandler:gen${g + 1}`);
+    //   }
+    //   text += `${text ? "\n" : ""}${optionText}`;
+    // }
+    // this.genOptionsText.setText(text);
   }
 
   setFilterMode(filterMode: boolean): boolean {
-    this.genCursorObj.setVisible(!filterMode);
+    // this.genCursorObj.setVisible(!filterMode);
     this.cursorObj.setVisible(!filterMode);
     this.filterBar.cursorObj.setVisible(filterMode);
 
@@ -2504,8 +2468,5 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       icon.setTexture(species.getIconAtlasKey(formIndex, false, variant));
       icon.setFrame(species.getIconId(female, formIndex, false, variant));
     }
-  }
-
-  autoPositionFilterBar(): void {
   }
 }

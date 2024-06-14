@@ -21,6 +21,7 @@ export class StarterContainer extends Phaser.GameObjects.Container {
 
     const defaultDexAttr = scene.gameData.getSpeciesDefaultDexAttr(species, false, true);
     const defaultProps = scene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
+
     // icon
     this.icon = this.scene.add.sprite(-2, 2, species.getIconAtlasKey(defaultProps.formIndex, defaultProps.shiny, defaultProps.variant));
     this.icon.setScale(0.5);

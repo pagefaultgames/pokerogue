@@ -1,7 +1,16 @@
 import BattleScene from "#app/battle-scene.js";
-import { DropDown, DropDownColumns } from "./dropdown";
+import { DropDown } from "./dropdown";
+import { StarterContainer } from "./starter-container";
 import { addTextObject, TextStyle } from "./text";
 import { addWindow, WindowVariant } from "./ui-theme";
+
+export enum DropDownColumn {
+  GEN,
+  TYPES,
+  SHINY,
+  DIV,
+  SORT
+}
 
 export class FilterBar extends Phaser.GameObjects.Container {
   private window: Phaser.GameObjects.NineSlice;
@@ -67,6 +76,7 @@ export class FilterBar extends Phaser.GameObjects.Container {
       if (this.dropDowns[this.lastCursor].visible) {
         this.dropDowns[this.lastCursor].setVisible(false);
         this.dropDowns[cursor].setVisible(true);
+        this.dropDowns[cursor].setCursor(0);
       }
     }
 
@@ -79,6 +89,7 @@ export class FilterBar extends Phaser.GameObjects.Container {
     this.dropDowns[index].toggle();
     this.openDropDown = this.dropDowns[index].visible;
     this.dropDowns[index].setCursor(0);
+    (this.scene as BattleScene).ui.playSelect();
   }
 
   hideDropDowns(): void {
@@ -89,18 +100,49 @@ export class FilterBar extends Phaser.GameObjects.Container {
   }
 
   incDropDownCursor(): boolean {
+    (this.scene as BattleScene).ui.playSelect();
     return this.dropDowns[this.lastCursor].setCursor(this.dropDowns[this.lastCursor].cursor + 1);
   }
 
   decDropDownCursor(): boolean {
+    (this.scene as BattleScene).ui.playSelect();
     return this.dropDowns[this.lastCursor].setCursor(this.dropDowns[this.lastCursor].cursor - 1);
   }
 
   toggleOptionState(): void {
+    if (this.isFilterActive(this.lastCursor)) {
+      // this.labels[this.lastCursor].setTint(0xffef5c);
+    }
+
     this.dropDowns[this.lastCursor].toggleOptionState();
+    (this.scene as BattleScene).ui.playSelect();
   }
 
-  getVals(col: DropDownColumns): any[] {
+  getVals(col: DropDownColumn): any[] {
     return this.dropDowns[col].getVals();
+  }
+
+  getNearestFilter(container: StarterContainer): number {
+    // find the nearest filter to the x position
+    const midx = container.x + container.icon.displayWidth / 2;
+    let nearest = 0;
+    let nearestDist = 1000;
+    for (let i=0; i < this.labels.length; i++) {
+      const dist = Math.abs(midx - (this.labels[i].x + this.labels[i].displayWidth / 2));
+      if (dist < nearestDist) {
+        nearest = i;
+        nearestDist = dist;
+      }
+    }
+
+    return nearest;
+  }
+
+  getLastFilterX(): number {
+    return this.labels[this.lastCursor].x + this.labels[this.lastCursor].displayWidth / 2;
+  }
+
+  isFilterActive(index: number) {
+    return this.dropDowns[index].isActive();
   }
 }
