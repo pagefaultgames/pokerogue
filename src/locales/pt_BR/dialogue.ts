@@ -384,7 +384,6 @@ export const PGMdialogue: DialogueTranslationEntries = {
     },
   },
   "camper": {
-  "camper": {
     "encounter": {
       1: "Hey, watch it! You almost stepped on my sleeping bag!",
       2: "Huh? You want to talk to me?",
