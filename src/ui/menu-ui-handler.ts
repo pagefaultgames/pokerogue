@@ -13,11 +13,11 @@ import {Button} from "../enums/buttons";
 
 export enum MenuOptions {
   GAME_SETTINGS,
+  EGG_GACHA,
+  EGG_LIST,
   ACHIEVEMENTS,
   STATS,
   VOUCHERS,
-  EGG_LIST,
-  EGG_GACHA,
   MANAGE_DATA,
   COMMUNITY,
   SAVE_AND_QUIT,
