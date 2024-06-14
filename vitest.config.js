@@ -5,7 +5,6 @@ import path from 'path';
 export default defineConfig(({ mode }) => {
 	return {
 		plugins: [/*fs()*/],
-		server: { host: '0.0.0.0', port: 8000 },
 		clearScreen: false,
 		build: {
 			minify: 'esbuild',

@@ -8,6 +8,7 @@ export default defineWorkspace([
       include: ["src/test/pre.test.ts"],
       environment: "jsdom",
     },
+    server: { host: '0.0.0.0', port: 5744 },
   },
   {
     extends: "./vite.config.js",
@@ -38,5 +39,6 @@ export default defineWorkspace([
         reporters: ["text-summary", "html"],
       },
     },
+    server: { host: '0.0.0.0', port: 5743 },
   },
 ]);
