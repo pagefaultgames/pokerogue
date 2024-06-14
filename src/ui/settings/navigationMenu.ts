@@ -3,7 +3,7 @@ import {Mode} from "#app/ui/ui";
 import {InputsIcons} from "#app/ui/settings/abstract-control-settings-ui-handler.js";
 import {addTextObject, setTextStyle, TextStyle} from "#app/ui/text";
 import {addWindow} from "#app/ui/ui-theme";
-import {Button} from "#app/enums/buttons";
+import {Button} from "#enums/buttons";
 
 const LEFT = "LEFT";
 const RIGHT = "RIGHT";
@@ -27,11 +27,12 @@ export class NavigationManager {
   constructor() {
     this.modes = [
       Mode.SETTINGS,
-      Mode.SETTINGS_ACCESSIBILITY,
+      Mode.SETTINGS_DISPLAY,
+      Mode.SETTINGS_AUDIO,
       Mode.SETTINGS_GAMEPAD,
       Mode.SETTINGS_KEYBOARD,
     ];
-    this.labels = ["General", "Accessibility", "Gamepad", "Keyboard"];
+    this.labels = ["General", "Display", "Audio", "Gamepad", "Keyboard"];
   }
 
   public reset() {

@@ -5,7 +5,7 @@ import UiHandler from "./ui-handler";
 import { addWindow } from "./ui-theme";
 import * as Utils from "../utils";
 import { argbFromRgba } from "@material/material-color-utilities";
-import {Button} from "../enums/buttons";
+import {Button} from "#enums/buttons";
 
 export interface OptionSelectConfig {
   xOffset?: number;
@@ -14,15 +14,17 @@ export interface OptionSelectConfig {
   maxOptions?: integer;
   delay?: integer;
   noCancel?: boolean;
+  supportHover?: boolean;
 }
 
 export interface OptionSelectItem {
   label: string;
   handler: () => boolean;
+  onHover?: () => void;
   keepOpen?: boolean;
   overrideSound?: boolean;
   item?: string;
-  itemArgs?: any[]
+  itemArgs?: any[];
 }
 
 const scrollUpLabel = "↑";
@@ -192,6 +194,10 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
           success = this.setCursor(this.cursor + 1);
         }
         break;
+      }
+      if (this.config?.supportHover) {
+        // handle hover code if the element supports hover-handlers and the option has the optional hover-handler set.
+        this.config?.options[this.cursor + (this.scrollCursor - (this.scrollCursor ? 1 : 0))]?.onHover?.();
       }
     }
 

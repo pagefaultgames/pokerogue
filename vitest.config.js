@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite';
+import path from 'path';
 // import fs from 'vite-plugin-fs';
 
 export default defineConfig(({ mode }) => {
@@ -15,6 +16,7 @@ export default defineConfig(({ mode }) => {
 			},
 			threads: false,
 			trace: true,
+			restoreMocks: true,
 			environmentOptions: {
 				jsdom: {
 					resources: 'usable',
@@ -32,6 +34,11 @@ export default defineConfig(({ mode }) => {
 		build: {
 			minify: 'esbuild',
 			sourcemap: true
+		},
+		resolve: {
+			alias: {
+				"#enums": path.resolve('./src/enums')
+			}
 		},
 		esbuild: {
 			pure: mode === 'production' ? [ 'console.log' ] : [],
