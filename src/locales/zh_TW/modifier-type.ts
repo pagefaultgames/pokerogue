@@ -153,7 +153,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     SACRED_ASH: { name: "聖灰" },
     REVIVER_SEED: {
       name: "復活種子",
-      description: "恢復1只瀕死寶可夢的HP至1/2。",
+      description: "恢復1隻瀕死寶可夢的HP至1/2。",
     },
     ETHER: { name: "PP單項小補劑" },
     MAX_ETHER: { name: "PP單項全補劑" },

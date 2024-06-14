@@ -1,4 +1,4 @@
-import { BattleSceneEventType, CandyUpgradeNotificationChangedEvent } from "#app/battle-scene-events.js";
+import { BattleSceneEventType, CandyUpgradeNotificationChangedEvent } from "../events/battle-scene";
 import { pokemonPrevolutions } from "#app/data/pokemon-evolutions";
 import { Variant, getVariantTint } from "#app/data/variant";
 import { argbFromRgba } from "@material/material-color-utilities";
@@ -7,8 +7,6 @@ import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import BattleScene, { starterColors } from "../battle-scene";
 import { allAbilities } from "../data/ability";
 import { speciesEggMoves } from "../data/egg-moves";
-import { Moves } from "../data/enums/moves";
-import { Species } from "../data/enums/species";
 import { GrowthRate, getGrowthRateColor } from "../data/exp";
 import { Gender, getGenderColor, getGenderSymbol } from "../data/gender";
 import { allMoves } from "../data/move";
@@ -17,11 +15,9 @@ import { pokemonFormChanges } from "../data/pokemon-forms";
 import { LevelMoves, pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "../data/pokemon-level-moves";
 import PokemonSpecies, { allSpecies, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from "../data/pokemon-species";
 import { Type } from "../data/type";
-import { Button } from "../enums/buttons";
 import { GameModes } from "../game-mode";
 import { SelectChallengePhase, TitlePhase } from "../phases";
 import { AbilityAttr, DexAttr, DexAttrProps, DexEntry, StarterFormMoveData, StarterMoveset } from "../system/game-data";
-import { Passive as PassiveAttr } from "#app/data/enums/passive";
 import { Tutorial, handleTutorial } from "../tutorial";
 import * as Utils from "../utils";
 import { OptionSelectItem } from "./abstact-option-select-ui-handler";
@@ -32,10 +28,14 @@ import { TextStyle, addBBCodeTextObject, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
 import {SettingKeyboard} from "#app/system/settings/settings-keyboard";
-import {Device} from "#app/enums/devices";
+import {Passive as PassiveAttr} from "#enums/passive";
 import * as Challenge from "../data/challenge";
 import MoveInfoOverlay from "./move-info-overlay";
 import { getEggTierForSpecies } from "#app/data/egg.js";
+import { Device } from "#enums/devices";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import {Button} from "#enums/buttons";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -705,6 +705,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.variantIconElement.setScale(0.675);
     this.variantIconElement.setOrigin(0.0, 0.0);
     this.variantLabel = addTextObject(this.scene, this.instructionRowX + this.instructionRowTextOffset, this.instructionRowY, i18next.t("starterSelectUiHandler:cycleVariant"), TextStyle.PARTY, { fontSize: instructionTextSize });
+
+    this.hideInstructions();
 
     this.starterSelectMessageBoxContainer = this.scene.add.container(0, this.scene.game.canvas.height / 6);
     this.starterSelectMessageBoxContainer.setVisible(false);
@@ -1444,6 +1446,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               }
             } while (newVariant !== props.variant);
             this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, newVariant, undefined, undefined);
+
+            // Cycle tint based on current sprite tint
+            const tint = getVariantTint(newVariant);
+            this.variantLabel.setTint(tint);
+
             success = true;
           }
           break;
@@ -1574,6 +1581,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     iconElement.setTexture(gamepadType, iconPath);
     iconElement.setPosition(this.instructionRowX, this.instructionRowY);
     controlLabel.setPosition(this.instructionRowX + this.instructionRowTextOffset, this.instructionRowY);
+    iconElement.setVisible(true);
+    controlLabel.setVisible(true);
     this.instructionsContainer.add([iconElement, controlLabel]);
     this.instructionRowY += 8;
     if (this.instructionRowY >= 24) {
@@ -1585,6 +1594,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   updateInstructions(): void {
     this.instructionRowX = 0;
     this.instructionRowY = 0;
+    this.hideInstructions();
     this.instructionsContainer.removeAll();
     let gamepadType;
     if (this.scene.inputMethod === "gamepad") {
@@ -1710,8 +1720,15 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
       this.cursorObj.setPosition(150 + 18 * (cursor % 9), 10 + 18 * Math.floor(cursor / 9));
 
-      this.setSpecies(this.genSpecies[this.getGenCursorWithScroll()][cursor]);
+      const species = this.genSpecies[this.getGenCursorWithScroll()][cursor];
 
+      const defaultDexAttr = this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true);
+      const defaultProps = this.scene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
+      const variant = defaultProps.variant;
+      const tint = getVariantTint(variant);
+
+      this.variantLabel.setTint(tint);
+      this.setSpecies(species);
       this.updateInstructions();
     }
 
