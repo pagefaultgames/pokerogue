@@ -1,18 +1,18 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
 import * as overrides from "#app/overrides";
-import {Species} from "#app/data/enums/species";
+import { Species } from "#enums/species";
 import {
   MoveEndPhase,
   TurnEndPhase,
   TurnInitPhase,
 } from "#app/phases";
-import {Moves} from "#app/data/enums/moves";
-import {getMovePosition} from "#app/test/utils/gameManagerUtils";
-import { Abilities } from "#app/data/enums/abilities.js";
-import { BattlerTagType } from "#app/data/enums/battler-tag-type.js";
-import { QuietFormChangePhase } from "#app/form-change-phase.js";
+import { Moves } from "#enums/moves";
+import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { Abilities } from "#enums/abilities";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { QuietFormChangePhase } from "#app/form-change-phase";
 
 describe("Abilities - Ice Face", () => {
   let phaserGame: Phaser.Game;
