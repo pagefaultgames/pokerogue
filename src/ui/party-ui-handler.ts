@@ -893,7 +893,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     this.transferMode = true;
     this.transferCursor = this.cursor;
     this.transferOptionCursor = this.getOptionsCursorWithScroll();
-    this.transferAll = this.options[this.transferOptionCursor] === PartyOption.ALL;
+    this.transferAll = this.options[this.optionsCursor] === PartyOption.ALL;
 
     this.partySlots[this.transferCursor].setTransfer(true);
   }
