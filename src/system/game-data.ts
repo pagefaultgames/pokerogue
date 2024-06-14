@@ -1489,7 +1489,7 @@ export class GameData {
       };
     }
 
-    const defaultStarterAttr = DexAttr.NON_SHINY | DexAttr.MALE | DexAttr.DEFAULT_VARIANT | DexAttr.DEFAULT_FORM;
+    const defaultStarterAttr = DexAttr.NON_SHINY | DexAttr.MALE | DexAttr.FEMALE | DexAttr.DEFAULT_VARIANT | DexAttr.DEFAULT_FORM;
 
     const defaultStarterNatures: Nature[] = [];
 
@@ -1920,6 +1920,7 @@ export class GameData {
   fixStarterData(systemData: SystemSaveData): void {
     for (const starterId of defaultStarterSpecies) {
       systemData.starterData[starterId].abilityAttr |= AbilityAttr.ABILITY_1;
+      systemData.dexData[starterId].caughtAttr |= DexAttr.FEMALE;
     }
   }
 
