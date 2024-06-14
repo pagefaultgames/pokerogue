@@ -1,6 +1,6 @@
-import { BerryType } from "#app/data/enums/berry-type";
-import { Moves } from "#app/data/enums/moves";
-import { Species } from "#app/data/enums/species";
+import { BerryType } from "#app/enums/berry-type";
+import { Moves } from "#app/enums/moves";
+import { Species } from "#app/enums/species";
 import { Button } from "#app/enums/buttons";
 import * as overrides from "#app/overrides";
 import {
