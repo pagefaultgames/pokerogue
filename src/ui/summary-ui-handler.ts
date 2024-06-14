@@ -485,31 +485,11 @@ export default class SummaryUiHandler extends UiHandler {
         if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
           this.hideMoveSelect();
         } else {
-<<<<<<< HEAD
-<<<<<<< HEAD
           if (ui.getMessageHandler().onActionInput) {
             ui.setMode(Mode.MESSAGE);
           } else {
             ui.setMode(Mode.PARTY);
           }
-||||||| parent of c04036ce2 (Option to view Summary before adding new Pokemon to party)
-          ui.setMode(Mode.PARTY);
-=======
-          if (!ui.getMessageHandler().onActionInput) {
-            ui.setMode(Mode.PARTY);
-          } else {
-||||||| parent of baef39304 (Fixed issues described by HopsWas)
-          if (!ui.getMessageHandler().onActionInput) {
-            ui.setMode(Mode.PARTY);
-          } else {
-=======
-          if (ui.getMessageHandler().onActionInput) {
->>>>>>> baef39304 (Fixed issues described by HopsWas)
-            ui.setMode(Mode.MESSAGE);
-          } else {
-            ui.setMode(Mode.PARTY);
-          }
->>>>>>> c04036ce2 (Option to view Summary before adding new Pokemon to party)
         }
         success = true;
       } else {
