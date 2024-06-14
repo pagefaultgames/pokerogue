@@ -1,13 +1,7 @@
+import { Stat } from "#enums/stat";
 import i18next from "../plugins/i18n";
 
-export enum Stat {
-  HP = 0,
-  ATK,
-  DEF,
-  SPATK,
-  SPDEF,
-  SPD
-}
+export { Stat };
 
 export function getStatName(stat: Stat, shorten: boolean = false) {
   let ret: string;
