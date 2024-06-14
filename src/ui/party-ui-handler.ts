@@ -6,7 +6,7 @@ import { Command } from "./command-ui-handler";
 import MessageUiHandler from "./message-ui-handler";
 import { Mode } from "./ui";
 import * as Utils from "../utils";
-import { PokemonFormChangeItemModifier, PokemonHeldItemModifier, SwitchEffectTransferModifier } from "../modifier/modifier";
+import { PokemonBaseStatModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier, SwitchEffectTransferModifier } from "../modifier/modifier";
 import { allMoves } from "../data/move";
 import { Moves } from "../data/enums/moves";
 import { getGenderColor, getGenderSymbol } from "../data/gender";
@@ -85,7 +85,8 @@ export default class PartyUiHandler extends MessageUiHandler {
   private optionsCursor: integer = 0;
   private optionsScrollCursor: integer = 0;
   private optionsScrollTotal: integer = 0;
-  private optionsContainer: Phaser.GameObjects.Container;
+  /** This is only public for test/ui/transfer-item.test.ts */
+  public optionsContainer: Phaser.GameObjects.Container;
   private optionsBg: Phaser.GameObjects.NineSlice;
   private optionsCursorObj: Phaser.GameObjects.Image;
   private options: integer[];
@@ -859,10 +860,16 @@ export default class PartyUiHandler extends MessageUiHandler {
       /** For every item that has stack bigger than 1, display the current quantity selection */
       if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER && this.transferQuantitiesMax[option] > 1) {
         const itemModifier = itemModifiers[option];
+
+        /** Not sure why getMaxHeldItemCount had an error, but it only checks the Pokemon parameter if the modifier is PokemonBaseStatModifier */
+        if (itemModifier === undefined || itemModifier instanceof PokemonBaseStatModifier) {
+          continue;
+        }
+
         let amountText = ` (${this.transferQuantities[option]})`;
 
         /** If the amount held is the maximum, display the count in red */
-        if (this.transferQuantitiesMax[option] === itemModifier.getMaxHeldItemCount(this.scene.getParty()[0])) {
+        if (this.transferQuantitiesMax[option] === itemModifier.getMaxHeldItemCount(undefined)) {
           amountText = `[color=${getTextColor(TextStyle.SUMMARY_RED)}]${amountText}[/color]`;
         }
 
