@@ -384,6 +384,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     },
   },
   "camper": {
+  "camper": {
     "encounter": {
       1: "Hey, watch it! You almost stepped on my sleeping bag!",
       2: "Huh? You want to talk to me?",
@@ -401,6 +402,12 @@ export const PGMdialogue: DialogueTranslationEntries = {
       2: "Me? Well, okay. I'll play!",
       3: "I'm a cool girl. I've got a boyfriend!"
     },
+    "victory": {
+      1: "Darn, even stronger than the green-haired trainer from earlier...",
+      2: "Things just didn't work...",
+      3: "Please don't tell my boyfriend..."
+    },
+  },
   "brock": {
     "encounter": {
       1: "Minha especialidade em Pokémon do tipo Pedra vai te derrubar! Vamos lá!",
