@@ -6,7 +6,7 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "windPowerCharged": "Venire colpito da {{moveName}} ha caricato {{pokemonName}}!",
   "perishBody": "{{pokemonName}}'s {{abilityName}}\nwill faint both pokemon in 3 turns!",
   "poisonHeal": "{{pokemonName}}'s {{abilityName}}\nrestored its HP a little!",
-  "iceFaceAvoidedDamage": "{{pokemonName}} ha evitato\ni danni grazie a {{abilityName}}!"
+  "iceFaceAvoidedDamage": "{{pokemonName}} ha evitato\ni danni grazie a {{abilityName}}!",
   "blockItemTheft": "{{pokemonName}}'s {{abilityName}}\nprevents item theft!",
   "typeImmunityHealAb": "{{pokemonName}}'s {{abilityName}}\nrestored its HP a little!",
   "nonSuperEffectiveImmunityAb": "{{pokemonName}} avoided\ndamage with {{abilityName}}!",
