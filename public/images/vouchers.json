@@ -4,8 +4,8 @@
 			"image": "vouchers.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 133,
-				"h": 133
+				"w": 160,
+				"h": 160
 			},
 			"scale": 1,
 			"frames": [
@@ -66,8 +66,8 @@
 						"h": 30
 					},
 					"frame": {
-						"x": 0,
-						"y": 60,
+						"x": 30,
+						"y": 0,
 						"w": 30,
 						"h": 30
 					}
@@ -88,7 +88,7 @@
 					},
 					"frame": {
 						"x": 0,
-						"y": 90,
+						"y": 60,
 						"w": 30,
 						"h": 30
 					}
@@ -109,28 +109,7 @@
 					},
 					"frame": {
 						"x": 30,
-						"y": 0,
-						"w": 30,
-						"h": 28
-					}
-				},
-				{
-					"filename": "falkner-zephyr_badge",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 1,
-						"y": 2,
-						"w": 30,
-						"h": 28
-					},
-					"frame": {
-						"x": 60,
-						"y": 0,
+						"y": 30,
 						"w": 30,
 						"h": 28
 					}
@@ -150,52 +129,10 @@
 						"h": 28
 					},
 					"frame": {
-						"x": 90,
+						"x": 60,
 						"y": 0,
 						"w": 30,
 						"h": 28
-					}
-				},
-				{
-					"filename": "fog_badge",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 1,
-						"y": 3,
-						"w": 30,
-						"h": 26
-					},
-					"frame": {
-						"x": 30,
-						"y": 28,
-						"w": 30,
-						"h": 26
-					}
-				},
-				{
-					"filename": "storm_badge",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 1,
-						"y": 3,
-						"w": 30,
-						"h": 26
-					},
-					"frame": {
-						"x": 60,
-						"y": 28,
-						"w": 30,
-						"h": 26
 					}
 				},
 				{
@@ -213,8 +150,8 @@
 						"h": 29
 					},
 					"frame": {
-						"x": 90,
-						"y": 28,
+						"x": 0,
+						"y": 90,
 						"w": 29,
 						"h": 29
 					}
@@ -235,9 +172,30 @@
 					},
 					"frame": {
 						"x": 30,
-						"y": 54,
+						"y": 58,
 						"w": 28,
 						"h": 30
+					}
+				},
+				{
+					"filename": "stone_badge",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 2,
+						"w": 30,
+						"h": 28
+					},
+					"frame": {
+						"x": 60,
+						"y": 28,
+						"w": 30,
+						"h": 28
 					}
 				},
 				{
@@ -255,9 +213,219 @@
 						"h": 30
 					},
 					"frame": {
-						"x": 58,
-						"y": 54,
+						"x": 90,
+						"y": 0,
 						"w": 28,
+						"h": 30
+					}
+				},
+				{
+					"filename": "zephyr_badge",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 2,
+						"w": 30,
+						"h": 28
+					},
+					"frame": {
+						"x": 118,
+						"y": 0,
+						"w": 30,
+						"h": 28
+					}
+				},
+				{
+					"filename": "balance_badge",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 2,
+						"y": 2,
+						"w": 28,
+						"h": 28
+					},
+					"frame": {
+						"x": 0,
+						"y": 119,
+						"w": 28,
+						"h": 28
+					}
+				},
+				{
+					"filename": "fog_badge",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 3,
+						"w": 30,
+						"h": 26
+					},
+					"frame": {
+						"x": 90,
+						"y": 30,
+						"w": 30,
+						"h": 26
+					}
+				},
+				{
+					"filename": "heat_badge",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 2,
+						"y": 2,
+						"w": 28,
+						"h": 28
+					},
+					"frame": {
+						"x": 120,
+						"y": 28,
+						"w": 28,
+						"h": 28
+					}
+				},
+				{
+					"filename": "cascade_badge",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 1,
+						"w": 22,
+						"h": 30
+					},
+					"frame": {
+						"x": 58,
+						"y": 58,
+						"w": 22,
+						"h": 30
+					}
+				},
+				{
+					"filename": "knuckle_badge",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 3,
+						"w": 30,
+						"h": 27
+					},
+					"frame": {
+						"x": 80,
+						"y": 56,
+						"w": 30,
+						"h": 27
+					}
+				},
+				{
+					"filename": "storm_badge",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 3,
+						"w": 30,
+						"h": 26
+					},
+					"frame": {
+						"x": 110,
+						"y": 56,
+						"w": 30,
+						"h": 26
+					}
+				},
+				{
+					"filename": "mind_badge_p1",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 2,
+						"y": 3,
+						"w": 20,
+						"h": 27
+					},
+					"frame": {
+						"x": 140,
+						"y": 56,
+						"w": 20,
+						"h": 27
+					}
+				},
+				{
+					"filename": "mind_badge",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 2,
+						"y": 3,
+						"w": 28,
+						"h": 27
+					},
+					"frame": {
+						"x": 80,
+						"y": 83,
+						"w": 28,
+						"h": 27
+					}
+				},
+				{
+					"filename": "dynamo_badge",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 1,
+						"w": 22,
+						"h": 30
+					},
+					"frame": {
+						"x": 29,
+						"y": 90,
+						"w": 22,
 						"h": 30
 					}
 				},
@@ -276,14 +444,14 @@
 						"h": 30
 					},
 					"frame": {
-						"x": 30,
-						"y": 84,
+						"x": 51,
+						"y": 88,
 						"w": 26,
 						"h": 30
 					}
 				},
 				{
-					"filename": "coupon",
+					"filename": "feather_badge",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -291,37 +459,16 @@
 						"h": 32
 					},
 					"spriteSourceSize": {
-						"x": 4,
-						"y": 7,
-						"w": 23,
-						"h": 19
+						"x": 3,
+						"y": 2,
+						"w": 26,
+						"h": 28
 					},
 					"frame": {
-						"x": 30,
-						"y": 114,
-						"w": 23,
-						"h": 19
-					}
-				},
-				{
-					"filename": "golden_mystic_ticket",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 4,
-						"y": 7,
-						"w": 23,
-						"h": 19
-					},
-					"frame": {
-						"x": 53,
-						"y": 114,
-						"w": 23,
-						"h": 19
+						"x": 28,
+						"y": 120,
+						"w": 26,
+						"h": 28
 					}
 				},
 				{
@@ -339,73 +486,10 @@
 						"h": 30
 					},
 					"frame": {
-						"x": 56,
-						"y": 84,
+						"x": 54,
+						"y": 118,
 						"w": 26,
 						"h": 30
-					}
-				},
-				{
-					"filename": "mystic_ticket",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 4,
-						"y": 7,
-						"w": 23,
-						"h": 19
-					},
-					"frame": {
-						"x": 76,
-						"y": 114,
-						"w": 23,
-						"h": 19
-					}
-				},
-				{
-					"filename": "cascade_badge",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 5,
-						"y": 1,
-						"w": 22,
-						"h": 30
-					},
-					"frame": {
-						"x": 82,
-						"y": 84,
-						"w": 22,
-						"h": 30
-					}
-				},
-				{
-					"filename": "pair_of_tickets",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 4,
-						"y": 7,
-						"w": 23,
-						"h": 19
-					},
-					"frame": {
-						"x": 99,
-						"y": 114,
-						"w": 23,
-						"h": 19
 					}
 				},
 				{
@@ -423,10 +507,115 @@
 						"h": 28
 					},
 					"frame": {
-						"x": 104,
-						"y": 57,
+						"x": 80,
+						"y": 110,
 						"w": 27,
 						"h": 28
+					}
+				},
+				{
+					"filename": "coupon",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 4,
+						"y": 7,
+						"w": 23,
+						"h": 19
+					},
+					"frame": {
+						"x": 80,
+						"y": 138,
+						"w": 23,
+						"h": 19
+					}
+				},
+				{
+					"filename": "mind_badge_p2",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 10,
+						"y": 3,
+						"w": 20,
+						"h": 27
+					},
+					"frame": {
+						"x": 108,
+						"y": 83,
+						"w": 20,
+						"h": 27
+					}
+				},
+				{
+					"filename": "rain_badge",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 3,
+						"y": 2,
+						"w": 26,
+						"h": 28
+					},
+					"frame": {
+						"x": 107,
+						"y": 110,
+						"w": 26,
+						"h": 28
+					}
+				},
+				{
+					"filename": "golden_mystic_ticket",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 4,
+						"y": 7,
+						"w": 23,
+						"h": 19
+					},
+					"frame": {
+						"x": 103,
+						"y": 138,
+						"w": 23,
+						"h": 19
+					}
+				},
+				{
+					"filename": "mystic_ticket",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 4,
+						"y": 7,
+						"w": 23,
+						"h": 19
+					},
+					"frame": {
+						"x": 128,
+						"y": 83,
+						"w": 23,
+						"h": 19
 					}
 				},
 				{
@@ -444,10 +633,31 @@
 						"h": 28
 					},
 					"frame": {
-						"x": 104,
-						"y": 85,
+						"x": 133,
+						"y": 102,
 						"w": 22,
 						"h": 28
+					}
+				},
+				{
+					"filename": "pair_of_tickets",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 4,
+						"y": 7,
+						"w": 23,
+						"h": 19
+					},
+					"frame": {
+						"x": 133,
+						"y": 130,
+						"w": 23,
+						"h": 19
 					}
 				}
 			]
@@ -456,6 +666,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:53d986d331ea960d22c59c3472e051f1:795fb8b375667965817598a1a792a31e:b96935c75d1175dd464f8d6a33fa8f82$"
+		"smartupdate": "$TexturePacker:SmartUpdate:454df88fac83c688475acc350c8b3f2d:cc657b9ea27236f2e8f1e1ae79627acc:b96935c75d1175dd464f8d6a33fa8f82$"
 	}
 }
