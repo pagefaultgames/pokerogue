@@ -14,8 +14,8 @@ import i18next from "i18next";
 import {Button} from "../enums/buttons";
 import { BattleType } from "../battle";
 import {TrainerType} from "../data/enums/trainer-type";
-import { TrainerVariant } from "../field/trainer";
-import { getPartyLuckValue, getLuckString, getLuckTextTint } from "../modifier/modifier-type";
+import { TrainerVariant } from "../field/trainer"
+import { getPartyLuckValue, getLuckString, getLuckTextTint } from "../modifier/modifier-type"
 
 export const runCount = 25;
 
@@ -145,7 +145,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
       this.scene.add.existing(entry);
       this.runsContainer.add(entry);
       this.runs.push(entry);
-    }
+    } 
   }
 
   showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
@@ -265,12 +265,12 @@ class RunEntry extends Phaser.GameObjects.Container {
         const tObj = data.trainer.toTrainer(this.scene);
         const tType = TrainerType[data.trainer.trainerType];
         if (data.trainer.trainerType >= 375) {
-          const gameOutcomeLabel = addTextObject(this.scene, 8, 5, "Defeated by Rival", TextStyle.WINDOW);
+          const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `Defeated by Rival`, TextStyle.WINDOW);
           //otherwise it becomes Rival_5 in Ivy's case
           this.add(gameOutcomeLabel);
         } else {
           if (tObj.variant === TrainerVariant.DOUBLE) {
-            const gameOutcomeLabel = addTextObject(this.scene, 8, 5, "Defeated by Duo", TextStyle.WINDOW);
+            const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `Defeated by Duo`, TextStyle.WINDOW);
           }
           const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `Defeated by ${tObj.getName(0, true)}`, TextStyle.WINDOW);
           this.add(gameOutcomeLabel);
@@ -287,7 +287,7 @@ class RunEntry extends Phaser.GameObjects.Container {
     this.add(timestampLabel);
 
     const pokemonIconsContainer = this.scene.add.container(125, 17);
-    let luckValue = 0;
+    var luckValue = 0;
 
     data.party.forEach((p: PokemonData, i: integer) => {
       const iconContainer = this.scene.add.container(26 * i, 0);
@@ -312,23 +312,23 @@ class RunEntry extends Phaser.GameObjects.Container {
 
     this.add(pokemonIconsContainer);
 
-    //Display Score - only visible for Daily Mode
+    //Display Score - only visible for Daily Mode 
     //Display Luck - only visible for Endless Modes
-    switch (data.gameMode) {
-    case GameModes.DAILY:
-      const runScore = data.score;
-      const scoreText = addTextObject(this.scene, 240, 5, `Score: ${data.score}`, TextStyle.WINDOW, {color: "#f89890"});
-      this.add(scoreText);
-      break;
-    case GameModes.ENDLESS:
-    case GameModes.SPLICED_ENDLESS:
-      if (luckValue > 14) {
-        luckValue = 14;
-      }
-      const luckTextTint = "#"+(getLuckTextTint(luckValue)).toString(16);
-      const luckText = addTextObject(this.scene, 240, 5, `Luck: ${getLuckString(luckValue)}`, TextStyle.WINDOW, {color: `${luckTextTint}`});
-      this.add(luckText);
-      break;
+    switch(data.gameMode) {
+      case GameModes.DAILY:
+        const runScore = data.score;
+        const scoreText = addTextObject(this.scene, 240, 5, `Score: ${data.score}`, TextStyle.WINDOW, {color: "#f89890"});
+        this.add(scoreText);
+        break;
+      case GameModes.ENDLESS:
+      case GameModes.SPLICED_ENDLESS:
+        if (luckValue > 14) {
+          luckValue = 14;
+        }
+        const luckTextTint = "#"+(getLuckTextTint(luckValue)).toString(16);
+        const luckText = addTextObject(this.scene, 240, 5, `Luck: ${getLuckString(luckValue)}`, TextStyle.WINDOW, {color: `${luckTextTint}`});
+        this.add(luckText);
+        break;
     }
     /*
     const modifiersModule = import("../modifier/modifier");

@@ -1122,27 +1122,29 @@ export class GameData {
       console.log(data);
       if (!data) {
         throw new Error("No data");
-      } else {
+      } 
+      else {
         var cachedResponse = localStorage.getItem(`runHistoryData_${loggedInUser.username}`, true);
         if (cachedResponse) {
           cachedResponse = JSON.parse(decrypt(cachedResponse, true));
         }
-        const cachedRHData = cachedResponse ?? {};
-        //check to see whether cachedData or serverData is more up-to-date
+        var cachedRHData = cachedResponse ?? {};
+        //check to see whether cachedData or serverData is more up-to-date 
         if ( Object.keys(cachedRHData).length >= Object.keys(data).length ) {
           return cachedRHData;
         }
         return data;
-      }
-    } catch (err) {
+    }
+  } 
+  catch(err) {
       console.log("Something went wrong: ", err);
       var cachedResponse = localStorage.getItem(`runHistoryData_${loggedInUser.username}`, true);
       if (cachedResponse) {
         cachedResponse = JSON.parse(decrypt(cachedResponse, true));
       }
       return cachedResponse ?? {};
-    }
   }
+}
 
   async saveRunHistory(scene: BattleScene, runEntry : SessionSaveData, victory: boolean): Promise<boolean> {
 
@@ -1164,7 +1166,8 @@ export class GameData {
     try {
       const response = Utils.apiPost("savedata/runHistory", JSON.stringify(runHistoryData), undefined, true);
       return true;
-    } catch (err) {
+    }
+    catch (err) {
       console.log("savedata/runHistory POST failed : ", err);
       return false;
     }
