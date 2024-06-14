@@ -3,7 +3,7 @@ import Phaser from "phaser";
 import {InputsController} from "#app/inputs-controller";
 import pad_xbox360 from "#app/configs/inputs/pad_xbox360";
 import {holdOn} from "#app/test/utils/gameManagerUtils";
-import {initTouchControls} from "#app/touch-controls";
+import TouchControl from "#app/touch-controls";
 import { JSDOM } from "jsdom";
 import fs from "fs";
 
@@ -54,10 +54,8 @@ export default class InputsHandler {
   }
 
   init(): void {
-    setInterval(() => {
-      this.inputController.update();
-    });
-    initTouchControls(this.inputController.events);
+    const touchControl = new TouchControl(this.scene);
+    touchControl.deactivatePressedKey(); //test purpose
     this.events = this.inputController.events;
     this.scene.input.gamepad.emit("connected", this.fakePad);
     this.listenInputs();

@@ -14,7 +14,7 @@ export const challenges: SimpleTranslationEntries = {
   "singleGeneration.value.3": "3세대",
   "singleGeneration.desc.3": "3세대의 포켓몬만 사용할 수 있습니다.",
   "singleGeneration.value.4": "4세대",
-  "singleGeneration.desc.4": "4세대의 포켓몬만 사용할 수 있습니다r",
+  "singleGeneration.desc.4": "4세대의 포켓몬만 사용할 수 있습니다.",
   "singleGeneration.value.5": "5세대",
   "singleGeneration.desc.5": "5세대의 포켓몬만 사용할 수 있습니다.",
   "singleGeneration.value.6": "6세대",

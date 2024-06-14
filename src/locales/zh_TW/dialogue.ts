@@ -4,2232 +4,2080 @@ import {DialogueTranslationEntries, SimpleTranslationEntries} from "#app/plugins
 export const PGMdialogue: DialogueTranslationEntries = {
   "youngster": {
     "encounter": {
-      1: "Hey, wanna battle?",
-      2: "Are you a new trainer too?",
-      3: "Hey, I haven't seen you before. Let's battle!",
-      4: "I just lost, so I'm trying to find more Pokémon.\nWait! You look weak! Come on, let's battle!",
-      5: "Have we met or not? I don't really remember. Well, I guess it's nice to meet you anyway!",
-      6: "All right! Let's go!",
-      7: "All right! Here I come! I'll show you my power!",
-      8: "Haw haw haw... I'll show you how hawesome my Pokémon are!",
-      9: "No need to waste time saying hello. Bring it on whenever you're ready!",
-      10: "Don't let your guard down, or you may be crying when a kid beats you.",
-      11: "I've raised my Pokémon with great care. You're not allowed to hurt them!",
-      12: "Glad you made it! It won't be an easy job from here.",
-      13: "The battles continue forever! Welcome to the world with no end!"
+      1: "嘿，想來對戰嗎？",
+      2: "你也是新人訓練師嗎？",
+      3: "嘿，我之前沒見過你。我們來對戰吧！",
+      4: "我剛輸了，所以我正在尋找更多的寶可夢。$等等！你看起來很弱！\n來吧，我們對戰吧！",
+      5: "我們見過面嗎？我記不太清了。$嗯，不管怎樣，很高興見到你！",
+      6: "好的！我們上吧！",
+      7: "好的！我來啦！我會向你展示我的實力！",
+      8: "嚯嚯嚯...我會向你展示我的寶可夢有多厲害！",
+      9: "不要浪費時間打招呼。你準備好了就放馬過來！",
+      10: "別掉以輕心，$否則你可能會被小朋友打到哭鼻子哦。",
+      11: "我精心培養了我的寶可夢。不許你傷害它們！",
+      12: "恭喜你成功了！從這以後可不輕鬆哦。",
+      13: "戰鬥永無止境！歡迎來到沒有盡頭的世界！",
     },
     "victory": {
-      1: "Wow! You're strong!",
-      2: "I didn't stand a chance, huh?",
-      3: "I'll find you again when I'm older and beat you!",
-      4: "Ugh. I don't have any more Pokémon.",
-      5: "No way… NO WAY! How could I lose again…",
-      6: "No! I lost!",
-      7: "Whoa! You are incredible! I'm amazed and surprised!",
-      8: "Could it be… How… My Pokémon and I are the strongest, though…",
-      9: "I won't lose next time! Let's battle again sometime!",
-      10: "Sheesh! Can't you see that I'm just a kid! It wasn't fair of you to go all out like that!",
-      11: "Your Pokémon are more amazing! Trade with me!",
-      12: "I got a little carried away earlier, but what job was I talking about?",
-      13: "Ahaha! There it is! That's right! You're already right at home in this world!"
+      1: "哇！你很強！",
+      2: "我根本沒機會贏，對吧？",
+      3: "我會等長大了再來打敗你！",
+      4: "呃。我沒有更多寶可夢了。",
+      5: "不可能…不可能！我怎麼可能又輸了…",
+      6: "不！我輸了！",
+      7: "哇！你真是太不可思議了！我既驚訝又欽佩！",
+      8: "這怎麼…怎麼可能…$明明我和我的寶可夢是最強大的…",
+      9: "下次我不會輸了！我們找時間再對戰吧！",
+      10: "天哪！你看不出我還只是個小孩子嗎！$你那樣全力以赴太賴了！",
+      11: "你的寶可夢更棒啊！和我交換吧！",
+      12: "我之前有點上頭，我說了什麼來著？",
+      13: "啊哈哈！就是這樣！$對！你已經熟悉這個世界了！",
     }
   },
   "lass": {
     "encounter": {
-      1: "Let's have a battle, shall we?",
-      2: "You look like a new trainer. Let's have a battle!",
-      3: "I don't recognize you. How about a battle?",
-      4: "Let's have a fun Pokémon battle!",
-      5: "I'll show you the ropes of how to really use Pokémon!",
-      6: "A serious battle starts from a serious beginning! Are you sure you're ready?",
-      7: "You're only young once. And you only get one shot at a given battle. Soon, you'll be nothing but a memory.",
-      8: "You'd better go easy on me, OK? Though I'll be seriously fighting!",
-      9: "School is boring. I've got nothing to do. Yawn. I'm only battling to kill the time."
+      1: "我們來對戰吧，好嗎？",
+      2: "你看起來像是個新人訓練師。我們來戰鬥吧！",
+      3: "我不認識你。來對戰怎麼樣？",
+      4: "讓我們來進行一場有趣的寶可夢對戰吧！",
+      5: "我會向你展示如何真正使用寶可夢！",
+      6: "一場認真的對戰從始於認真的開場白！$你確定你準備好了嗎？",
+      7: "花無重開日，人無再少年。$你在對戰中只有一次機會。$很快，你就只能活在回憶中了。",
+      8: "你最好對我手下留情，好嗎？$當然我會認真對戰的！",
+      9: "學校很無聊，我無事可做。$*哈欠*…我只是來對戰打發時間。",
     },
     "victory": {
-      1: "That was impressive! I've got a lot to learn.",
-      2: "I didn't think you'd beat me that bad…",
-      3: "I hope we get to have a rematch some day.",
-      4: "That was pretty amazingly fun! You've totally exhausted me…",
-      5: "You actually taught me a lesson! You're pretty amazing!",
-      6: "Seriously, I lost. That is, like, seriously depressing, but you were seriously cool.",
-      7: "I don't need memories like this. Deleting memory…",
-      8: "Hey! I told you to go easy on me! Still, you're pretty cool when you're serious.",
-      9: "I'm actually getting tired of battling… There's gotta be something new to do…"
+      1: "那真是令人印象深刻！我還有很多要學習。",
+      2: "我沒想到你會這麼輕易地打敗我…",
+      3: "我希望有一天，我們能再進行一場對戰。",
+      4: "那真是場非常有趣的對戰！$你讓我精疲力盡了…",
+      5: "你給我上了一課！你真是太棒了！",
+      6: "說真的，我輸了。$這，怎麼說，真的好難過，但你也真的很厲害。",
+      7: "我不需要像這樣的記憶。刪除記憶中…",
+      8: "嘿！我告訴過你要對我手下留情！$不過，當你認真的時候，你真的很酷。",
+      9: "實際上，我開始厭倦對戰了…$一定有新的事情可以做…",
     }
   },
   "breeder": {
     "encounter": {
-      1: "Obedient Pokémon, selfish Pokémon… Pokémon have unique characteristics.",
-      2: "Even though my upbringing and behavior are poor, I've raised my Pokémon well.",
-      3: "Hmm, do you discipline your Pokémon? Pampering them too much is no good.",
+      1: "聽話的寶可夢，自私的寶可夢…$寶可夢有獨特的性格呢。",
+      2: "儘管我出生貧寒，但我的寶可夢培養的很好。",
+      3: "嗯，你有沒有管教你的寶可夢？$過度溺愛是不好的。",
     },
     "victory": {
-      1: "It is important to nurture and train each Pokémon's characteristics.",
-      2: "Unlike my diabolical self, these are some good Pokémon.",
-      3: "Too much praise can spoil both Pokémon and people.",
+      1: "對每個寶可夢因材施教是很重要的。",
+      2: "不像一無是處的我…這些寶可夢都很優秀。",
+      3: "過度的讚美會寵壞寶可夢和人。",
     },
     "defeat": {
-      1: "You should not get angry at your Pokémon, even if you lose a battle.",
-      2: "Right? Pretty good Pokémon, huh? I'm suited to raising things.",
-      3: "No matter how much you love your Pokémon, you still have to discipline them when they misbehave."
+      1: "即使輸了，也不應該對你的寶可夢發火。",
+      2: "相當好的寶可夢，對吧？我很會養東西。",
+      3: "無論你多麼愛你的寶可夢，$你仍要在它沒做好時管教它們。",
     }
   },
   "breeder_female": {
     "encounter": {
-      1: "Pokémon never betray you. They return all the love you give them.",
-      2: "Shall I give you a tip for training good Pokémon?",
-      3: "I have raised these very special Pokémon using a special method."
+      1: "寶可夢永遠不會背叛你。$它們會回報你對它們的愛。",
+      2: "要我教教你訓練優秀寶可夢的技巧嗎？",
+      3: "特別的寶可夢有特別的培育技巧。",
     },
     "victory": {
-      1: "Ugh… It wasn't supposed to be like this. Did I administer the wrong blend?",
-      2: "How could that happen to my Pokémon… What are you feeding your Pokémon?",
-      3: "If I lose, that tells you I was just killing time. It doesn't damage my ego at all."
+      1: "呃…事情不應該是這樣的。$我是不是用錯了能量方塊？",
+      2: "這怎麼會發生在我的寶可夢身上…$你給你的寶可夢餵了什麼？",
+      3: "如果我輸了，我告訴你我只是在消磨時間。$你根本不會傷害到我的自尊心。",
     },
     "defeat": {
-      1: "This proves my Pokémon have accepted my love.",
-      2: "The real trick behind training good Pokémon is catching good Pokémon.",
-      3: "Pokémon will be strong or weak depending on how you raise them."
+      1: "這證明了我的寶可夢已經接受了我的愛。",
+      2: "訓出好寶可夢的真正技巧是捉到好的寶可夢。",
+      3: "寶可夢的強弱取決於你的飼養方式。",
     }
   },
   "fisherman": {
     "encounter": {
-      1: "Aack! You made me lose a bite!\nWhat are you going to do about it?",
-      2: "Go away! You're scaring the Pokémon!",
-      3: "Let's see if you can reel in a victory!",
+      1: "啊！你讓我錯過了一次咬鉤！$你打算怎麼辦？",
+      2: "走開！你嚇跑了寶可夢！",
+      3: "讓我看看你能否贏得勝利！",
     },
     "victory": {
-      1: "Just forget about it.",
-      2: "Next time, I'll be reelin' in the triumph!",
-      3: "Guess I underestimated the currents this time.",
+      1: "算了吧。",
+      2: "下一次，我將捲土重來，凱旋而歸！",
+      3: "我想這次我低估了海流。",
     },
   },
   "fisherman_female": {
     "encounter": {
-      1: "Woah! I've hooked a big one!",
-      2: "Line's in, ready to reel in success!",
-      3: "Ready to make waves!"
+      1: "哇！我釣到了一條大魚！",
+      2: "線已收好，準備提竿！",
+      3: "準備製造波浪！",
     },
     "victory": {
-      1: "I'll be back with a stronger hook.",
-      2: "I'll reel in victory next time.",
-      3: "I'm just sharpening my hooks for the comeback!"
+      1: "我會帶著更強大的魚鉤回來。",
+      2: "下次我會贏得勝利。",
+      3: "我只是在為回歸磨利我的魚鉤！",
     },
   },
   "swimmer": {
     "encounter": {
-      1: "Time to dive in!",
-      2: "Let's ride the waves of victory!",
-      3: "Ready to make a splash!",
+      1: "是時候潛水了！",
+      2: "讓我們一起乘風破浪，贏得勝利！",
+      3: "該一鳴驚人了！",
     },
     "victory": {
-      1: "Drenched in defeat!",
-      2: "A wave of defeat!",
-      3: "Back to shore, I guess.",
+      1: "沉浸在失敗中！",
+      2: "失敗的波浪！",
+      3: "後浪死在沙灘上，我猜。",
     },
   },
   "backpacker": {
     "encounter": {
-      1: "Pack up, game on!",
-      2: "Let's see if you can keep pace!",
-      3: "Gear up, challenger!",
-      4: "I've spent 20 years trying to find myself… But where am I?"
+      1: "收拾行李，開始遊戲！",
+      2: "讓我看看你是否能跟上！",
+      3: "全副武裝，挑戰者！",
+      4: "我花了20年時間試圖找到自己……但我在哪裡？",
     },
     "victory": {
-      1: "Tripped up this time!",
-      2: "Oh, I think I'm lost.",
-      3: "Dead end!",
-      4: "Wait up a second! Hey! Don't you know who I am?"
+      1: "這次絆倒了！",
+      2: "哦，我覺得我迷路了。",
+      3: "死路！",
+      4: "等一下！嘿！你不知道我是誰嗎？",
     },
   },
   "ace_trainer": {
     "encounter": {
-      1: "You seem quite confident.",
-      2: "Your Pokémon… Show them to me…",
-      3: "Because I'm an Ace Trainer, people think I'm strong.",
-      4: "Are you aware of what it takes to be an Ace Trainer?"
+      1: "你看起來挺自信的。",
+      2: "你的寶可夢…… 讓我看看……",
+      3: "因為我是王牌訓練師，人們認為我很強。",
+      4: "你知道成為王牌訓練師需要什麼嗎？",
     },
     "victory": {
-      1: "Yes… You have good Pokémon…",
-      2: "What?! But I'm a battling genius!",
-      3: "Of course, you are the main character!",
-      4: "OK! OK! You could be an Ace Trainer!"
+      1: "是的…… 你的寶可夢很棒……",
+      2: "什麼？！我是戰鬥天才啊！",
+      3: "理所應當，你才是主角！",
+      4: "好好好！你可以成為王牌訓練師！",
     },
     "defeat": {
-      1: "I am devoting my body and soul to Pokémon battles!",
-      2: "All within my expectations… Nothing to be surprised about…",
-      3: "I thought I'd grow up to be a frail person who looked like they would break if you squeezed them too hard.",
-      4: "Of course I'm strong and don't lose. It's important that I win gracefully."
+      1: "我將把我的身體和靈魂全都奉獻給寶可夢對戰！",
+      2: "一切都在我的預料之中… \n沒有什麼好驚訝的…",
+      3: "我覺得我長大後有點玻璃心，$你太壓力我我會垮的……",
+      4: "我當然很強大，不會輸。$而且重要的是我要優雅地贏。",
     }
   },
   "parasol_lady": {
     "encounter": {
-      1: "Time to grace the battlefield with elegance and poise!",
+      1: "是時候用優雅和從容來為戰鬥添彩了！",
     },
     "victory": {
-      2: "My elegance remains unbroken!",
+      1: "我的優雅依然完好無損！",
     }
   },
   "twins": {
     "encounter": {
-      1: "Get ready, because when we team up, it's double the trouble!",
-      2: "Two hearts, one strategy – let's see if you can keep up with our twin power!",
-      3: "Hope you're ready for double trouble, because we're about to bring the heat!"
+      1: "準備好囉，因為我們聯手，\n麻煩雙倍！",
+      2: "兩顆心，一條繩$讓我們看看你能否跟上我們雙胞胎的力量！",
+      3: "希望你準備好了面對雙倍的麻煩，$因為我們即將燃起來啦！",
     },
     "victory": {
-      1: "We may have lost this round, but our bond remains unbreakable!",
-      2: "Our twin spirit won't be dimmed for long.",
-      3: "We'll come back stronger as a dynamic duo!"
+      1: "雖然我們在這一輪輸了，$但我們的羈絆依然堅不可摧！",
+      2: "我們的雙胞胎精神，才不會就此熄滅。",
+      3: "我們會作為充滿活力的二人組，$捲土重來，變得更強！",
     },
     "defeat": {
-      1: "Twin power reigns supreme!",
-      2: "Two hearts, one triumph!",
-      3: "Double the smiles, double the victory dance!"
+      1: "雙胞胎的力量至高無上！",
+      2: "兩顆心，一起贏！",
+      3: "笑容成雙，共舞成雙！",
     }
   },
   "cyclist": {
     "encounter": {
-      1: "Get ready to eat my dust!",
-      2: "Gear up, challenger! I'm about to leave you in the dust!",
-      3: "Pedal to the metal, let's see if you can keep pace!"
+      1: "準備好在我後面吃土吧！",
+      2: "挑戰者，準備好！我要把你打得落花流水！",
+      3: "全速前進，讓我看看你能不能跟得上！",
     },
     "victory": {
-      1: "Spokes may be still, but determination pedals on.",
-      2: "Outpaced!",
-      3: "The road to victory has many twists and turns yet to explore."
+      1: "輪子可能不轉了，但我的決心沒有停下。",
+      2: "被超越了！",
+      3: "通往勝利的道路還有許多曲折等待探索。",
     },
   },
   "black_belt": {
     "encounter": {
-      1: "I praise your courage in challenging me! For I am the one with the strongest kick!",
-      2: "Oh, I see. Would you like to be cut to pieces? Or do you prefer the role of punching bag?"
+      1: "我讚揚你挑戰我的勇氣！$因為我是踢力最強的人！",
+      2: "哦，我明白了。你想被切成碎片嗎？$或者你更喜歡當個沙袋？",
     },
     "victory": {
-      1: "Oh. The Pokémon did the fighting. My strong kick didn't help a bit.",
-      2: "Hmmm… If I was going to lose anyway, I was hoping to get totally messed up in the process."
+      1: "哦。是寶可夢在戰鬥。$我強大的踢擊一點忙都沒幫上。",
+      2: "嗯…如果我無論如何都會輸，我希望能被徹底打敗。",
     },
   },
   "battle_girl": {
     "encounter": {
-      1: "You don't have to try to impress me. You can lose against me.",
+      1: "你不必試圖勾引我。你可以輸給我。",
     },
     "victory": {
-      1: "It's hard to say good-bye, but we are running out of time…",
+      1: "很難說再見，但我們快沒時間了……",
     },
   },
   "hiker": {
     "encounter": {
-      1: "My middle-age spread has given me as much gravitas as the mountains I hike!",
-      2: "I inherited this big-boned body from my parents… I'm like a living mountain range…",
+      1: "人到中年後，我的身體和我爬過的山一樣強壯！",
+      2: "我從父母那裡遺傳了這副魁梧的身材…$就像一座活生生的山脈…",
     },
     "victory": {
-      1: "At least I cannot lose when it comes to BMI!",
-      2: "It's not enough… It's never enough. My bad cholesterol isn't high enough…"
+      1: "至少在BMI方面我不能輸！",
+      2: "這還不夠……永遠不夠。$我的壞膽固醇還不夠高……",
     },
   },
   "ranger": {
     "encounter": {
-      1: "When I am surrounded by nature, most other things cease to matter.",
-      2: "When I'm living without nature in my life, sometimes I'll suddenly feel an anxiety attack coming on."
+      1: "當我身處大自然中，其他事情都不重要了。",
+      2: "如果我生活中沒有大自然，有時就會突然感到焦慮。",
     },
     "victory": {
-      1: "It doesn't matter to the vastness of nature whether I win or lose…",
-      2: "Something like this is pretty trivial compared to the stifling feelings of city life."
+      1: "無論我是贏是輸，\n對廣闊的大自然來說並不重要……",
+      2: "與城市生活的窒息感相比，\n這種事情微不足道。",
     },
     "defeat": {
-      1: "I won the battle. But victory is nothing compared to the vastness of nature…",
-      2: "I'm sure how you feel is not so bad if you compare it to my anxiety attacks…"
+      1: "我贏了。但與浩瀚的大自然相比，\n勝利算不了什麼…",
+      2: "與我的焦慮症相比，我覺得你也不會怎樣…",
     }
   },
   "scientist": {
     "encounter": {
-      1: "My research will lead this world to peace and joy.",
+      1: "我的研究將引導這個世界走向和平與歡樂。",
     },
     "victory": {
-      1: "I am a genius… I am not supposed to lose against someone like you…",
+      1: "我是個天才…我不應該輸給你這樣的人…",
     },
   },
   "school_kid": {
     "encounter": {
-      1: "…Heehee. I'm confident in my calculations and analysis.",
-      2: "I'm gaining as much experience as I can because I want to be a Gym Leader someday."
+      1: "……嘿嘿。我對計算和分析很有信心。",
+      2: "我正在盡可能地積累經驗，$因為我希望有一天能成為道館館主。",
     },
     "victory": {
-      1: "Ohhhh… Calculation and analysis are perhaps no match for chance…",
-      2: "Even difficult, trying experiences have their purpose, I suppose."
+      1: "哦…計算和分析也許和個例不太匹配呀…",
+      2: "我想，即使是艱難困苦的經歷，也有存在的意義。",
     }
   },
   "artist": {
     "encounter": {
-      1: "I used to be popular, but now I am all washed up.",
+      1: "我以前很受歡迎，但現在已經徹底過氣了。",
     },
     "victory": {
-      1: "As times change, values also change. I realized that too late.",
+      1: "隨著時代的變遷，價值觀也在變化。$我意識到這一點已經太晚了。",
     },
   },
   "guitarist": {
     "encounter": {
-      1: "Get ready to feel the rhythm of defeat as I strum my way to victory!",
+      1: "當我彈奏著走向勝利的旋律時，$準備好感受失敗的節奏吧！",
     },
     "victory": {
-      1: "Silenced for now, but my melody of resilience will play on.",
+      1: "暫時沉默了，但我不屈的旋律將繼續演奏。",
     },
   },
   "worker": {
     "encounter": {
-      1: "It bothers me that people always misunderstand me. I'm a lot more pure than everyone thinks.",
+      1: "人們總誤解我，這讓我很煩。$我比大家想象的要乾淨得多。",
     },
     "victory": {
-      1: "I really don't want my skin to burn, so I want to stay in the shade while I work.",
+      1: "我真的不想曬傷皮膚，所以我想在陰涼處工作。",
     },
   },
   "worker_female": {
     "encounter": {
-      1: `It bothers me that people always misunderstand me. 
-                $I'm a lot more pure than everyone thinks.`
+      1: "人們總是誤解我，這讓我很煩。 $我比大家想象的要乾淨得多。",
     },
     "victory": {
-      1: "I really don't want my skin to burn, so I want to stay in the shade while I work."
+      1: "我真的不想曬傷皮膚，\n所以我想在陰涼處工作。",
     },
     "defeat": {
-      1: "My body and mind aren't necessarily always in sync."
+      1: "我的身體和心靈並不總同步。",
     }
   },
   "worker_double": {
     "encounter": {
-      1: "I'll show you we can break you. We've been training in the field!",
+      1: "你會知道我們怎麼擊敗你的。我們在工地訓練過！",
     },
     "victory": {
-      1: "How strange… How could this be… I shouldn't have been outmuscled.",
+      1: "真奇怪…怎麼會這樣…我不應該被打敗的。",
     },
   },
   "hex_maniac": {
     "encounter": {
-      1: "I normally only ever listen to classical music, but if I lose, I think I shall try a bit of new age!",
-      2: "I grow stronger with each tear I cry."
+      1: "我通常只聽古典音樂，但如果我輸了，$我想我應該試試新時代的音樂！",
+      2: "我的每一滴眼淚都讓我變得更加堅強。",
     },
     "victory": {
-      1: "Is this the dawning of the age of Aquarius?",
-      2: "Now I can get even stronger. I grow with every grudge."
+      1: "樂壇新時代的曙光就此出現了嗎？",
+      2: "現在我變得更強了。我隨著他人怨恨而成長。",
     },
     "defeat": {
-      1: "New age simply refers to twentieth century classical composers, right?",
-      2: "Don't get hung up on sadness or frustration. You can use your grudges to motivate yourself."
+      1: "“新時代”指的是二十世紀的古典作曲家，對吧？",
+      2: "不要糾結於悲傷或沮喪。$你可以用悲憤來激勵自己。",
     }
   },
   "psychic": {
     "encounter": {
-      1: "Hi! Focus!",
+      1: "嘿！集中！",
     },
     "victory": {
-      1: "Eeeeek!",
+      1: "呃呃呃！",
     },
   },
   "officer": {
     "encounter": {
-      1: "Brace yourself, because justice is about to be served!",
-      2: "Ready to uphold the law and serve justice on the battlefield!"
+      1: "準備好，因為正義即將得到伸張！",
+      2: "準備好維護法律，在戰場上伸張正義！",
     },
     "victory": {
-      1: "The weight of justice feels heavier than ever…",
-      2: "The shadows of defeat linger in the precinct."
+      1: "正義的分量比以往還要沉重……",
+      2: "失敗的陰影，在警局中徘徊。",
     }
   },
   "beauty": {
     "encounter": {
-      1: "My last ever battle… That's the way I'd like us to view this match…",
+      1: "我最後的戰鬥…我就是這麼看待這場對戰的…",
     },
     "victory": {
-      1: "It's been fun… Let's have another last battle again someday…",
+      1: "很有趣…有時間再來一場最後的戰鬥…",
     },
   },
   "baker": {
     "encounter": {
-      1: "Hope you're ready to taste defeat!"
+      1: "希望你準備好品嚐失敗的滋味！",
     },
     "victory": {
-      1: "I'll bake a comeback."
+      1: "我會捲土重來的。",
     },
   },
   "biker": {
     "encounter": {
-      1: "Time to rev up and leave you in the dust!"
+      1: "是時候加速，把你甩在後面了！",
     },
     "victory": {
-      1: "I'll tune up for the next race."
+      1: "我會為下一場比賽調整狀態。",
     },
   },
   "firebreather": {
     "encounter": {
-      1: "My flames shall devour you!",
-      2: "My soul is on fire. I'll show you how hot it burns!",
-      3: "Step right up and take a look!"
+      1: "我的火焰會吞噬你！",
+      2: "我的靈魂在燃燒，我要讓你看看它有多滾燙！",
+      3: "快來看看吧！"
     },
     "victory": {
-      1: "I burned down to ashes...",
-      2: "Yow! That's hot!",
-      3: "Ow! I scorched the tip of my nose!"
+      1: "我燃成灰了…",
+      2: "哟！ 好燙！",
+      3: "嗷！ 我的鼻尖燒焦了！"
     },
   },
   "sailor": {
     "encounter": {
-      1: "Matey, you're walking the plank if you lose!",
-      2: "Come on then! My sailor's pride is at stake!",
-      3: "Ahoy there! Are you seasick?"
+      1: "夥計，如果你輸了，你就得挨板子！",
+      2: "來吧！這關係到我作為水手的尊嚴！",
+      3: "你好啊！你暈船麼？"
     },
     "victory": {
-      1: "Argh! Beaten by a kid!",
-      2: "Your spirit sank me!",
-      3: "I think it's me that's seasick..."
+      1: "啊，被孩子打敗了。",
+      2: "你的精神讓我沉淪！",
+      3: "好像是我暈船了…"
     },
   },
   "brock": {
     "encounter": {
-      1: "My expertise on Rock-type Pokémon will take you down! Come on!",
-      2: "My rock-hard willpower will overwhelm you!",
-      3: "Allow me to show you the true strength of my Pokémon!"
+      1: "我對岩石屬性寶可夢的專精會擊敗你！來吧！",
+      2: "我磐石般的意志將壓倒你！",
+      3: "讓我展示給你看看，我寶可夢真正的力量！",
     },
     "victory": {
-      1: "Your Pokémon's strength have overcome my rock-hard defenses!",
-      2: "The world is huge! I'm glad to have had a chance to battle you.",
-      3: "Perhaps I should go back to pursuing my dream as a Pokémon Breeder…"
+      1: "你寶可夢的力量戰勝了我堅如磐石的防禦！",
+      2: "世界很大！很高興有機會和你戰鬥。",
+      3: "也許我應該回去追尋我成為寶可夢飼養員的夢想……",
     },
     "defeat": {
-      1: "The best offense is a good defense!\nThat's my way of doing things!",
-      2: "Come study rocks with me next time to better learn how to fight them!",
-      3: "Hah, all my traveling around the regions is paying off!"
+      1: "最好的進攻就是堅固的防守！$那是我做事的方式！",
+      2: "下次來和我一起研究岩石屬性，$更好地了解如何與它們對戰！",
+      3: "哈哈，我在各地的旅行有所回報了！",
     }
   },
   "misty": {
     "encounter": {
-      1: "My policy is an all out offensive with Water-type Pokémon!",
-      2: "Hiya, I'll show you the strength of my aquatic Pokémon!",
-      3: "My dream was to go on a journey and battle powerful trainers…\nWill you be a sufficient challenge?"
+      1: "我的戰策就是使用水屬性寶可夢全面進攻！",
+      2: "嗨，我會讓你見識我的水屬性寶可夢的力量！",
+      3: "我的夢想是踏上旅程，與強大的訓練師戰鬥……$你能滿足我嗎？",
     },
     "victory": {
-      1: "You really are strong… I'll admit that you are skilled…",
-      2: "Grrr… You know you just got lucky, right?!",
-      3: "Wow, you're too much! I can't believe you beat me!"
+      1: "你真的很強……我承認，你有技術的……",
+      2: "哼……你知道你只是運氣好，對吧？！",
+      3: "哇，你太過分了！不敢相信你打敗我了！",
     },
     "defeat": {
-      1: "Was the mighty Misty too much for you?",
-      2: "I hope you saw my Pokémon's elegant swimming techniques!",
-      3: "Your Pokémon were no match for my pride and joys!"
+      1: "強大的小霞對你來說，太過分了嗎？",
+      2: "我希望你看到了我寶可夢優雅的游泳技巧！",
+      3: "你的寶可夢無法匹敵我的心腹和驕傲！",
     }
   },
   "lt_surge": {
     "encounter": {
-      1: "My Electric Pokémon saved me during the war! I'll show you how!",
-      2: "Ten-hut! I'll shock you into surrender!",
-      3: "I'll zap you just like I do to all my enemies in battle!"
+      1: "我的電屬性寶可夢在戰爭中救了我！$我來給你展示一下！",
+      2: "立正！我要電到你投降！",
+      3: "我會像對待敵軍一樣，狠狠電你！",
     },
     "victory": {
-      1: "Whoa! Your team's the real deal, kid!",
-      2: "Aaargh, you're strong! Even my electric tricks lost against you.",
-      3: "That was an absolutely shocking loss!"
+      1: "哇！你的隊伍有真傢伙，小子！",
+      2: "啊啊，你很強！連我的電擊技巧都輸給了你。",
+      3: "這失敗真是把我給電麻了！",
     },
     "defeat": {
-      1: "Oh yeah! When it comes to Electric-type Pokémon, I'm number one in the world!",
-      2: "Hahaha! That was an electrifying battle, kid!",
-      3: "A Pokémon battle is war, and I have showed you first-hand combat!"
+      1: "哦耶！我的電屬性寶可夢是世界第一！",
+      2: "哈哈哈！真是一場電動人心的戰鬥，小子！",
+      3: "寶可夢對戰等於戰爭，$我向你展示了軍隊中的格鬥技巧！",
     }
   },
   "erika": {
     "encounter": {
-      1: "Ah, the weather is lovely here…\nOh, a battle? Very well then.",
-      2: "My Pokémon battling skills rival that of my flower arranging skills.",
-      3: "Oh, I hope the pleasant aroma of my Pokémon doesn't put me to sleep again…",
-      4: "Seeing flowers in a garden is so soothing."
+      1: "啊，這裡天氣真好…$哦，對戰？那好吧。",
+      2: "我在寶可夢對戰上的造詣，$可以與我的插花技巧相媲美。",
+      3: "哦，希望我寶可夢的宜人香氣\n不會再讓我睡著…",
+      4: "看看花園裡的花朵，如此令人心曠神怡。",
     },
     "victory": {
-      1: "Oh! I concede defeat.",
-      2: "That match was most delightful.",
-      3: "Ah, it appears it is my loss…",
-      4: "Oh, my goodness."
+      1: "哦！我認輸啦~",
+      2: "這場比賽非常愉快。",
+      3: "啊，看來我輸了…",
+      4: "哦，我的天哪。",
     },
     "defeat": {
-      1: "I was afraid I would doze off…",
-      2: "Oh my, it seems my Grass Pokémon overwhelmed you.",
-      3: "That battle was such a soothing experience.",
-      4: "Oh… Is that all?"
+      1: "我怕我會打瞌睡…",
+      2: "哦，我天。看來我的草屬性寶可夢擊敗了你。",
+      3: "那場戰鬥是如此令人心曠神怡。",
+      4: "哦…這就完啦？",
     }
   },
   "janine": {
     "encounter": {
-      1: "I am mastering the art of poisonous attacks.\nI shall spar with you today!",
-      2: "Father trusts that I can hold my own.\nI will prove him right!",
-      3: "My ninja techniques are only second to my Father's!\nCan you keep up?"
+      1: "我正在掌握毒屬性攻擊的藝術。$今天我來和你過過招！",
+      2: "父親相信我能獨當一面。$我來證明他說的對！",
+      3: "我的忍術，僅次於我的父親！$你能跟的上嗎？",
     },
     "victory": {
-      1: "Even now, I still need training… I understand.",
-      2: "Your battle technique has outmatched mine.",
-      3: "I'm going to really apply myself and improve my skills."
+      1: "就算現在，我仍然需要繼續訓練…我明白了。",
+      2: "你的戰鬥技巧，超過了我。",
+      3: "我要好好努力提高我的技術。",
     },
     "defeat": {
-      1: "Fufufu… the poison has sapped all your strength to battle.",
-      2: "Ha! You didn't stand a chance against my superior ninja skills!",
-      3: "Father's faith in me has proven to not be misplaced."
+      1: "呵呵…毒液耗盡了你所有的力量。",
+      2: "哈！你根本無法抵擋我卓越的忍技！",
+      3: "我沒有辜負父親對我的信任。",
     }
   },
   "sabrina": {
     "encounter": {
-      1: "Through my psychic ability, I had a vision of your arrival!",
-      2: "I dislike fighting, but if you wish, I will show you my powers!",
-      3: "I can sense great ambition in you. I shall see if it not unfounded."
+      1: "我的超能力預見了你的到來！",
+      2: "我不喜歡戰鬥，但如果你想，$我會展示我的實力！",
+      3: "我能感覺到你的雄心壯志。$我倒要看看你是不是虛有其表。",
     },
     "victory": {
-      1: "Your power… It far exceeds what I foresaw…",
-      2: "I failed to accurately predict your power.",
-      3: "Even with my immense psychic powers, I cannot sense another as strong as you."
+      1: "你的力量……遠遠超出了我的預知……",
+      2: "我沒有準確預測到你的實力。",
+      3: "即使我強大的超能力也無法感知到你這樣強大的人。",
     },
     "defeat": {
-      1: "This victory… It is exactly as I foresaw in my visions!",
-      2: "Perhaps it was another I sensed a great desire in…",
-      3: "Hone your abilities before recklessly charging into battle.\nYou never know what the future may hold if you do…"
+      1: "這場勝利……和我看到的未來一樣啊！",
+      2: "也許我預感到有強大實力的人，是另一個……",
+      3: "在你奮不顧身投入戰鬥之前，\n磨練你的能力。$如果你這樣做，你才未來可期……",
     }
   },
   "blaine": {
     "encounter": {
-      1: "Hah! Hope you brought a Burn Heal!",
-      2: "My fiery Pokémon will incinerate all challengers!",
-      3: "Get ready to play with fire!"
+      1: "哈！希望你帶了燒傷治療藥！",
+      2: "我火熱的寶可夢將所有挑戰者都焚燒殆盡！",
+      3: "準備好玩火吧！",
     },
     "victory": {
-      1: "I have burned down to nothing! Not even ashes remain!",
-      2: "Didn't I stoke the flames high enough?",
-      3: "I'm all burned out… But this makes my motivation to improve burn even hotter!"
+      1: "我已經焚燒殆盡了！甚至連灰燼都沒有留下！",
+      2: "我沒有把火焰煽得足夠高嗎？",
+      3: "我燃盡了……但這讓我進步的動力燃燒得更旺了！",
     },
     "defeat": {
-      1: "My raging inferno cannot be quelled!",
-      2: "My Pokémon have been powered up with the heat from this victory!",
-      3: "Hah! My passion burns brighter than yours!"
+      1: "我的熊熊烈火無法被撲滅！",
+      2: "我的寶可夢因這次勝利而變得更加強大！",
+      3: "哈！我的激情燃得比你的更熱烈！",
     }
   },
   "giovanni": {
     "encounter": {
-      1: "I, the leader of Team Rocket, will make you feel a world of pain!",
-      2: "My training here will be vital before I am to face my old associates again.",
-      3: "I do not think you are prepared for the level of failure you are about to experience!"
+      1: "我，火箭隊的領袖，\n會讓你的世界感受到痛苦！",
+      2: "我在這裡的訓練在我再次面對老朋友之前至關重要。",
+      3: "我認為你還沒有準備好迎接你即將經歷的失敗！",
     },
     "victory": {
-      1: "WHAT! Me, lose?! There is nothing I wish to say to you!",
-      2: "Hmph… You could never understand what I hope to achieve.",
-      3: "This defeat is merely delaying the inevitable.\nI will rise Team Rocket from the ashes in due time."
+      1: "什麼！我輸了？！ 我沒什麼可和你說的！",
+      2: "哼……你永遠無法理解我希望實現的目標。",
+      3: "這次失敗只是暫時的。$我將找準時機，讓火箭隊浴火重生。",
     },
     "defeat": {
-      1: "Not being able to measure your own strength shows that you are still but a child.",
-      2: "Do not try to interfere with me again.",
-      3: "I hope you understand how foolish challenging me was."
+      1: "不知自己幾斤幾兩，\n說明你仍然只是一個孩子。",
+      2: "不要再試圖干涉我。",
+      3: "我希望你明白挑戰我是多麼愚蠢。",
     }
   },
   "roxanne": {
     "encounter": {
-      1: "Would you kindly demonstrate how you battle?",
-      2: "You can learn many things by battling many trainers.",
-      3: "Oh, you caught me strategizing.\nWould you like to battle?"
+      1: "您能否展示一下您是如何戰鬥的麼？",
+      2: "你可以和更多訓練師戰鬥來學到很多東西。",
+      3: "哦，被你抓到我正在用功了~$你想戰鬥嗎？",
     },
     "victory": {
-      1: "Oh, I appear to have lost.\nI understand.",
-      2: "It seems that I still have so much more to learn when it comes to battle.",
-      3: "I'll take what I learned here today to heart."
+      1: "哦，看來我輸了。$我明白了。",
+      2: "看來我在戰鬥方面還有更多東西要學。",
+      3: "我會把今天在這裡學到的東西銘記於心。",
     },
     "defeat": {
-      1: "I have learned many things from our battle.\nI hope you have too.",
-      2: "I look forward to battling you again.\nI hope you'll use what you've learned here.",
-      3: "I won due to everything I have learned."
+      1: "從我們的對戰中，我學到了很多。$希望你也是。",
+      2: "我期待再次與你戰鬥。$希望你能運用在此學到的東西。",
+      3: "我憑借我所學到的一切贏得了勝利。",
     }
   },
   "brawly": {
     "encounter": {
-      1: "Oh man, a challenger!\nLet's see what you can do!",
-      2: "You seem like a big splash.\nLet's battle!",
-      3: "Time to create a storm!\nLet's go!"
+      1: "哦，夥計，挑戰者！$讓我看看你的能耐！",
+      2: "你看起來很厲害嘛。$來對戰吧！",
+      3: "是時候掀起風暴了！$我們上吧！",
     },
     "victory": {
-      1: "Oh woah, you've washed me out!",
-      2: "You surfed my wave and crashed me down!",
-      3: "I feel like I'm lost in Granite Cave!"
+      1: "哦哇，你把我沖走了！",
+      2: "你駕馭了我的海浪，把我打敗了！",
+      3: "我覺得我就像是在武鬥洞窟裡迷路了！",
     },
     "defeat": {
-      1: "Haha, I surfed the big wave!\nChallenge me again sometime.",
-      2: "Surf with me again some time!",
-      3: "Just like the tides come in and out, I hope you return to challenge me again."
+      1: "哈哈，我駕馭了大浪！$有時間再挑戰我吧。",
+      2: "再和我一起衝浪吧！",
+      3: "就像潮水的漲落，\n我希望你也能再來挑戰我。",
     }
   },
   "wattson": {
     "encounter": {
-      1: "Time to get shocked!\nWahahahaha!",
-      2: "I'll make sparks fly!\nWahahahaha!",
-      3: "I hope you brought Paralyz Heal!\nWahahahaha!"
+      1: "是時候被電擊了！$哈哈哈！",
+      2: "我要讓火星子飛蹦！$哈哈哈！",
+      3: "我希望你帶了麻痺藥！$哇哈哈哈！",
     },
     "victory": {
-      1: "Seems like I'm out of charge!\nWahahahaha!",
-      2: "You've completely grounded me!\nWahahahaha!",
-      3: "Thanks for the thrill!\nWahahahaha!"
+      1: "看來我的電量用完了！$哇哈哈哈！",
+      2: "你完全接地了是吧！$哇哈哈哈！",
+      3: "謝謝你給我電了一下！$哇哈哈哈！",
     },
     "defeat": {
-      1: "Recharge your batteries and challenge me again sometime!\nWahahahaha!",
-      2: "I hope you found our battle electrifying!\nWahahahaha!",
-      3: "Aren't you shocked I won?\nWahahahaha!"
+      1: "電充充滿，有時間再挑戰我吧！$哇哈哈哈！",
+      2: "我希望你覺得我們的戰鬥激情似電！$哇哈哈哈！",
+      3: "你沒想到我贏了吧？$哇哈哈哈！",
     }
   },
   "flannery": {
     "encounter": {
-      1: "Nice to meet you! Wait, no…\nI will crush you!",
-      2: "I've only been a leader for a little while, but I'll smoke you!",
-      3: "It's time to demonstrate the moves my grandfather has taught me! Let's battle!"
+      1: "很高興見到你！等等，不對……$我要粉碎你！",
+      2: "我才當道館主沒多久，\n但我會讓你灰飛煙滅！",
+      3: "是時候展示爺爺教給我的招式了！來對戰吧！",
     },
     "victory": {
-      1: "You remind me of my grandfather…\nNo wonder I lost.",
-      2: "Am I trying too hard?\nI should relax, can't get too heated.",
-      3: "Losing isn't going to smother me out.\nTime to reignite training!"
+      1: "你讓我想起了我的爺爺……$難怪我輸了。",
+      2: "我是不是太努力了？$我應該放鬆，不能太上頭了。",
+      3: "失敗才不會嗆到我。$是時候重新點燃訓練了！",
     },
     "defeat": {
-      1: "I hope I've made my grandfather proud…\nLet's battle again some time.",
-      2: "I…I can't believe I won!\nDoing things my way worked!",
-      3: "Let's exchange burning hot moves again soon!"
+      1: "我希望我讓祖父感到驕傲了……$有時間我們再戰鬥吧。",
+      2: "我……我簡直不敢相信我贏了！$按照自己的方式做事奏效了！",
+      3: "早點用炙熱的招式再來交手吧！",
     }
   },
   "norman": {
     "encounter": {
-      1: "I'm surprised you managed to get here.\nLet's battle.",
-      2: "I'll do everything in my power as a Gym Leader to win.\nLet's go!",
-      3: "You better give this your all.\nIt's time to battle!"
+      1: "我沒想到你能一路來到這裡。$我們來對戰吧。",
+      2: "作為道館主，我會盡一切努力贏得勝利。$我們開始吧！",
+      3: "你最好全力以赴。$對戰的時候到了！",
     },
     "victory": {
-      1: "I lost to you…?\nRules are rules, though.",
-      2: "Was moving from Olivine a mistake…?",
-      3: "I can't believe it.\nThat was a great match."
+      1: "我輸給了你……？$但規則就是規則。",
+      2: "難道我不該從城都搬家嗎……？",
+      3: "我不敢相信。$這是一場好對戰。",
     },
     "defeat": {
-      1: "We both tried our best.\nI hope we can battle again soon.",
-      2: "You should try challenging my kid instead.\nYou might learn something!",
-      3: "Thank you for the excellent battle.\nBetter luck next time."
+      1: "我們都盡力了。$希望我們不久之後能再對戰。",
+      2: "你應該嘗試挑戰我的孩子。$可能會有一些收穫！",
+      3: "謝謝你精彩的戰鬥。$下次好運。",
     }
   },
   "winona": {
     "encounter": {
-      1: "I've been soaring the skies looking for prey…\nAnd you're my target!",
-      2: "No matter how our battle is, my Flying Pokémon and I will triumph with grace. Let's battle!",
-      3: "I hope you aren't scared of heights.\nLet's ascend!"
+      1: "我一直在天空中翱翔尋找獵物…$而你就是我的目標！",
+      2: "不管戰況如何，我都會和我的飛行寶可夢$以優雅的姿態獲勝。來戰鬥吧！",
+      3: "我希望你不怕高。$我們一起升上高空吧！",
     },
     "victory": {
-      1: "You're the first Trainer I've seen with more grace than I.\nExcellently played.",
-      2: "Oh, my Flying Pokémon have plummeted!\nVery well.",
-      3: "Though I may have fallen, my Pokémon will continue to fly!"
+      1: "你是我見過的第一位比我更有風度的訓練師。$打的非常出色。",
+      2: "哦，我的飛行系寶可夢都已經墜落了！$好吧。",
+      3: "儘管我倒下了，我的寶可夢將繼續翱翔！",
     },
     "defeat": {
-      1: "My Flying Pokémon and I will forever dance elegantly!",
-      2: "I hope you enjoyed our show.\nOur graceful dance is finished.",
-      3: "Won't you come see our elegant choreography again?"
+      1: "我與我的飛行系寶可夢，\n將永遠優雅地起舞！",
+      2: "我希望你喜歡我們的演出。$我們優雅的舞蹈已經落幕。",
+      3: "你願意再來觀看我們優雅的編舞嗎？",
     }
   },
   "tate": {
     "encounter": {
-      1: "Hehehe…\nWere you surprised to see me without my sister?",
-      2: "I can see what you're thinking…\nYou want to battle!",
-      3: "How can you defeat someone…\nWho knows your every move?"
+      1: "嘿嘿嘿…$看到我沒和妹妹在一起，很驚訝麼？",
+      2: "我可以讀懂你在想什麼…$你想要戰鬥！",
+      3: "你如何擊敗一個…$讀懂你一舉一動的人？",
     },
     "victory": {
-      1: "It can't be helped…\nI miss Liza…",
-      2: "Your bond with your Pokémon was stronger than mine.",
-      3: "If I were with Liza, we would have won.\nWe can finish each other's thoughts!"
+      1: "贏不了啊…$我想小南了…",
+      2: "你和寶可夢之間的聯繫比我們更強。",
+      3: "如果我和小南聯手，我們會贏的。$我們可以了解彼此的想法！",
     },
     "defeat": {
-      1: "My Pokémon and I are superior!",
-      2: "If you can't even defeat me, you'll never be able to defeat Liza either.",
-      3: "It's all thanks to my strict training with Liza.\nI can make myself one with Pokémon."
+      1: "我和我的寶可夢無與倫比！",
+      2: "如果你連我都打不過，\n你肯定也打不過小南。",
+      3: "這多虧了我和小南的嚴格訓練。$我可以與寶可夢一心同體。",
     }
   },
   "liza": {
     "encounter": {
-      1: "Fufufu…\nWere you surprised to see me without my brother?",
-      2: "I can determine what you desire…\nYou want to battle, don't you?",
-      3: "How can you defeat someone…\nWho's one with their Pokémon?"
+      1: "呵呵呵…$看到我沒和哥哥一起，很驚訝嗎？",
+      2: "我可以讀懂你渴望什麼…$你想戰鬥，不是嗎？",
+      3: "你如何擊敗一個…$與寶可夢們一心同體的人？",
     },
     "victory": {
-      1: "It can't be helped…\nI miss Tate…",
-      2: "Your bond with your Pokémon…\nIt's stronger than mine.",
-      3: "If I were with Tate, we would have won.\nWe can finish each other's sentences!"
+      1: "贏不了啊…$我想小楓了…",
+      2: "你和寶可夢之間的聯繫…$比我強。",
+      3: "如果我和小楓在一起，我們會贏的。$我們甚至可以接上彼此的話！",
     },
     "defeat": {
-      1: "My Pokémon and I are victorious.",
-      2: "If you can't even defeat me, you'll never be able to defeat Tate either.",
-      3: "It's all thanks to my strict training with Tate.\nI can synchronize myself with my Pokémon."
+      1: "我和我的寶可夢勢不可擋。",
+      2: "如果你連我都打不過，\n你肯定也打不過小楓。",
+      3: "這多虧了我和小楓的嚴格訓練。$我可以與我的寶可夢一心同體。",
     }
   },
   "juan": {
     "encounter": {
-      1: "Now's not the time to act coy.\nLet's battle!",
-      2: "Ahahaha, You'll be witness to my artistry with Water Pokémon!",
-      3: "A typhoon approaches!\nWill you be able to test me?",
-      4: "Please, you shall bear witness to our artistry.\nA grand illusion of water sculpted by my Pokémon and myself!"
+      1: "別害羞啊。$我們來戰鬥吧！",
+      2: "啊哈哈哈，敬請期待\n我和水屬性寶可夢的盛大演出！",
+      3: "我就是正在逼近的風暴！$你能經受住考驗嗎？",
+      4: "請你見證我們的表演。$由我和寶可夢共同創造的宏偉水之幻境！",
     },
     "victory": {
-      1: "You may be a genius who can take on Wallace!",
-      2: "I focused on elegance while you trained.\nIt's only natural that you defeated me.",
-      3: "Ahahaha!\nVery well, You have won this time.",
-      4: "From you, I sense the brilliant shine of skill that will overcome all."
+      1: "你可能是一個能挑戰米可利的天才！",
+      2: "我專注於優雅，而你刻苦鍛鍊。$你能擊敗我是很正常的。",
+      3: "啊哈哈哈！$好吧，這次你贏了。",
+      4: "從你身上，我感受到了技巧的光輝，\n它將戰勝一切。",
     },
     "defeat": {
-      1: "My Pokémon and I have sculpted an illusion of Water and come out victorious.",
-      2: "Ahahaha, I have won, and you have lost.",
-      3: "Shall I loan you my outfit? It may help you battle!\nAhahaha, I jest!",
-      4: "I'm the winner! Which is to say, you lost."
+      1: "寶可夢和我創造的水之幻境，讓我取得了勝利。",
+      2: "啊哈哈哈，我贏了，你輸了。",
+      3: "要我把我的服裝借給你嗎？\n可能能幫到你對戰啊！$啊哈哈哈，我開玩笑的！",
+      4: "我是贏家！也就是說，你輸了。",
     }
   },
   "crasher_wake": {
     "encounter": {
-      1: "Crash! Crash! Watch out!\nCrasher Wake…is…heeere!",
-      2: "Crash! Crash! Crasher Wake!",
-      3: "I'm the tidal wave of power to wash you away!"
+      1: "極限! 極限! 看好了!$極限假面…就此…登場!",
+      2: "極限! 極限! 極限假面!",
+      3: "我是滔滔巨浪，將你沖走！",
     },
     "victory": {
-      1: "That puts a grin on my face!\nGuhahaha! That was a blast!",
-      2: "Hunwah! It's gone and ended!\nHow will I say this…\nI want more! I wanted to battle a lot more!",
-      3: "WHAAAAT!?"
+      1: "我真是笑得合不攏嘴啊！$哈哈哈！那真是太有趣了！",
+      2: "呼哇！結束收尾了！$我該怎麼說呢……$我還想再對戰！我還想再繼續戰鬥！",
+      3: "啊啊啊啊啊!?",
     },
     "defeat": {
-      1: "Yeeeeah! That's right!",
-      2: "I won, but I want more! I wanted to battle a lot more!",
-      3: "So long!"
+      1: "耶！就是這樣！",
+      2: "我贏了，但我還想要更多！\n我還想再更多地戰鬥！",
+      3: "再見！",
     }
   },
   "falkner": {
     "encounter": {
-      1: "I'll show you the real power of the magnificent bird Pokémon!",
-      2: "Winds, stay with me!",
-      3: "Dad! I hope you're watching me battle from above!"
+      1: "我將向你展示華麗的飛行寶可夢真正的力量！",
+      2: "風啊，伴我同行！",
+      3: "爸爸！我希望你能在空中注視著我的戰鬥！",
     },
     "victory": {
-      1: "I understand… I'll bow out gracefully.",
-      2: "A defeat is a defeat. You are strong indeed.",
-      3: "…Shoot! Yeah, I lost."
+      1: "明白了……我會禮貌地退場。",
+      2: "輸了就是輸了。你確實很強大。",
+      3: "…行吧! 嗯, 我輸了。",
     },
     "defeat": {
-      1: "Dad! I won with your cherished bird Pokémon…",
-      2: "Bird Pokémon are the best after all!",
-      3: "Feels like I'm catching up to my dad!"
+      1: "爸爸！我用你珍愛的飛行寶可夢贏了……",
+      2: "飛行系寶可夢才是最強的！",
+      3: "感覺我正在追趕上我的父親！",
     }
   },
   "nessa": {
     "encounter": {
-      1: "No matter what kind of plan your refined mind may be plotting, my partner and I will be sure to sink it.",
-      2: "I'm not here to chat. I'm here to win!",
-      3: "This is a little gift from my Pokémon… I hope you can take it!"
+      1: "無論你的小腦瓜子在搞什麼陰謀詭計，$我和我的搭檔都會確保它石沉大海。",
+      2: "我來這裡可不是為了閒聊，\n而是為了贏！",
+      3: "這是我的寶可夢給你的一點小禮物……\n我希望你能接受！",
     },
     "victory": {
-      1: "You and your Pokémon are just too much…",
-      2: "How…? How can this be?!",
-      3: "I was totally washed away!"
+      1: "你和你的寶可夢太過分了……",
+      2: "怎麼……？這怎麼可能？！",
+      3: "我完全被沖走了！",
     },
     "defeat": {
-      1: "The raging wave crashes again!",
-      2: "Time to ride the wave of victory!",
-      3: "Ehehe!"
+      1: "洶湧的海浪再次襲來！",
+      2: "是時候乘風破浪，取得勝利了！",
+      3: "誒嘿嘿！",
     }
   },
   "melony": {
     "encounter": {
-      1: "I'm not going to hold back!",
-      2: "All righty, I suppose we should get started.",
-      3: "I'll freeze you solid!"
+      1: "我不會手下留情！",
+      2: "好吧，我想我們應該開始了。",
+      3: "我會把你凍得結結實實的！",
     },
     "victory": {
-      1: "You… You're pretty good, huh?",
-      2: "If you find Gordie around, be sure to give him a right trashing, would you?",
-      3: "I think you took breaking the ice a little too literally…"
+      1: "你……你可厲害了，是不是？",
+      2: "如果你找到瑪瓜，一定要好好教訓他，好嗎？",
+      3: "你的破冰方式有點過於直接了呢……",
     },
     "defeat": {
-      1: "Now do you see how severe battles can be?",
-      2: "Hee! Looks like I went and won again!",
-      3: "Are you holding back?"
+      1: "現在你知道戰鬥有多殘酷了吧？",
+      2: "嘿！看來我又贏了！",
+      3: "你是在保留實力嗎？",
     }
   },
   "marlon": {
     "encounter": {
-      1: "You look strong! Shoots! Let's start!",
-      2: "I'm strong like the ocean's wide. You're gonna get swept away, fo' sho'.",
-      3: "Oh ho, so I'm facing you! That's off the wall."
+      1: "你看起來很強！來吧！讓我們開始吧！",
+      2: "我的強大像大海一樣無邊無際。$你會被我沖走，絕對的。",
+      3: "哦豁，由我來面對你！這可不得了咯！",
     },
     "victory": {
-      1: "You totally rocked that! You're raising some wicked Pokémon. You got this Trainer thing down!",
-      2: "You don't just look strong, you're strong fo' reals! Eh, I was swept away, too!",
-      3: "You're strong as a gnarly wave!"
+      1: "你太厲害了！\n你培養了一些非常強大的寶可夢啊，$你已經掌握了訓練師的精髓！",
+      2: "你不僅僅是看起來，\n你是真的強，真的！$呃，我也被沖走了！",
+      3: "你像兇猛的波浪一樣強壯！",
     },
     "defeat": {
-      1: "You're tough, but it's not enough to sway the sea, 'K!",
-      2: "Hee! Looks like I went and won again!",
-      3: "Sweet, sweet victory!"
+      1: "你很強，但這還不足以動搖大海，懂？",
+      2: "嘻！看來我又贏了！",
+      3: "甜蜜的勝利！",
     }
   },
   "shauntal": {
     "encounter": {
-      1: "Excuse me. You're a challenger, right?\nI'm the Elite Four's Ghost-type Pokémon user, Shauntal, and I shall be your opponent.",
-      2: "I absolutely love writing about Trainers who come here and the Pokémon they train.\nCould I use you and your Pokémon as a subject?",
-      3: "Every person who works with Pokémon has a story to tell.\nWhat story is about to be told?"
+      1: "打擾了。你是挑戰者，對嗎？$我是四天王的幽靈系寶可夢使用者，$婉龍，我將是你的對手。",
+      2: "我非常喜歡描寫來到這裡的訓練師，\n以及他們訓練的寶可夢。$我可以用你和你的寶可夢作為主題嗎？",
+      3: "每個與寶可夢相處的人都有故事要講。$接下來要講的故事是怎樣的呢？",
     },
     "victory": {
-      1: "Wow. I'm dumbstruck!",
-      2: "S-sorry! First, I must apologize to my Pokémon…\n\nI'm really sorry you had a bad experience because of me!",
-      3: "Even in light of that, I'm still one of the Elite Four!"
+      1: "哇。我驚呆了！",
+      2: "對…對不起！我必須先向我的寶可夢道歉……$都是因為我讓你們有了不好的經歷，真的很抱歉！",
+      3: "你要知道，我仍然是四天王之一！",
     },
     "defeat": {
-      1: "Eheh.",
-      2: "That gave me excellent material for my next novel!",
-      3: "And so, another tale ends…"
+      1: "額呵呵。",
+      2: "給了我下一部小說的絕佳素材！",
+      3: "就這樣，又一篇故事來到尾聲……",
     }
   },
   "marshal": {
     "encounter": {
-      1: "My mentor, Alder, sees your potential as a Trainer and is taking an interest in you.\nIt is my intention to test you--to take you to the limits of your strength. Kiai!",
-      2: "Victory, decisive victory, is my intention! Challenger, here I come!",
-      3: "In myself, I seek to develop the strength of a fighter and shatter any weakness in myself!\nPrevailing with the force of my convictions!"
+      1: "我的師傅，阿戴克，\n看到了你作為訓練師的潛力，$對你很有興趣。$我要來考驗你——挖掘你力量的極限。\n丹田發力！",
+      2: "勝利，決定性的勝利，\n正是我所求！挑戰者，我來了！",
+      3: "在我的心中，我尋求著成為戰士的力量，\n克服自身的所有弱點！$以我的信念，取勝！",
     },
     "victory": {
-      1: "Whew! Well done!",
-      2: "As your battles continue, aim for even greater heights!",
-      3: "The strength shown by you and your Pokémon has deeply impressed me…"
+      1: "呼！幹得好！",
+      2: "不要停止戰鬥，追求更高的目標！",
+      3: "你和你寶可夢展現的力量\n給我留下了深刻的印象……",
     },
     "defeat": {
-      1: "Hmm.",
-      2: "That was good battle.",
-      3: "Haaah! Haaah! Haiyaaaah!"
+      1: "嗯…",
+      2: "這真是場好戰鬥。",
+      3: "哈啊！哈啊！嗨呀啊！",
     }
   },
   "cheren": {
     "encounter": {
-      1: "You remind me of an old friend. That makes me excited about this Pokémon battle!",
-      2: `Pokémon battles have no meaning if you don't think why you battle. 
-      $Or better said, it makes battling together with Pokémon meaningless.`,
-      3: "My name's Cheren! I'm a Gym Leader and a teacher! Pleasure to meet you."
+      1: "你讓我想起了一位老朋友。$這讓我對這場寶可夢戰鬥感到興奮！",
+      2: "不考慮清楚這一點，\n寶可夢對戰就沒有了意義。$這就是失去了和寶可夢一同戰鬥的意義。",
+      3: "我的名字是黑連！我是道館館主，\n也是老師！$很高興認識你。",
     },
     "victory": {
-      1: "Thank you! I saw what was missing in me.",
-      2: "Thank you! I feel like I saw a little of the way toward my ideals.",
-      3: "Hmm… This is problematic."
+      1: "謝謝……我又能發現自己的不足了。",
+      2: "謝謝…接近理想的道路…我好像隱約看到了。",
+      3: "嗯……這值得思考。",
     },
     "defeat": {
-      1: "As a Gym Leader, I aim to be a wall for you to overcome.",
-      2: "All right!",
-      3: "I made it where I am because Pokémon were by my side.\nPerhaps we need to think about why Pokémon help us not in terms of Pokémon and Trainers but as a relationship between living beings."
+      1: "作為道館館主，我要成為你要跨越的壁壘！",
+      2: "好吧！",
+      3: "正因為有寶可夢，我們才能走到這裡。$為什麼寶可夢會幫助我們，\n這個恐怕不僅是寶可夢與訓練家…$而是生命與生命之間的問題。",
     }
   },
   "chili": {
     "encounter": {
-      1: "Yeeeeooow! Time to play with FIRE!! I'm the strongest of us brothers!",
-      2: "Ta-da! The Fire-type scorcher Chili--that's me--will be your opponent!",
-      3: "I'm going to show you what me and my blazing Fire types can do!"
+      1: "咿呀！是時候玩火了！！我是三兄弟中最強的！",
+      2: "嗒噠！如火似焰的伯特——就是我\n——你接下來的對手！",
+      3: "我將向你展示，\n我和我熾熱的火系寶可夢的能耐！",
     },
     "victory": {
-      1: "You got me. I am… burned… out…",
-      2: "Whoa ho! You're on fire!",
-      3: "Augh! You got me!"
+      1: "被你幹掉了。我……燃盡了……",
+      2: "哇吼！你燃起來了！",
+      3: "啊！被你幹碎了！",
     },
     "defeat": {
-      1: "I'm on fire! Play with me, and you'll get burned!",
-      2: "When you play with fire, you get burned!",
-      3: "I mean, c'mon, your opponent was me! You didn't have a chance!"
+      1: "我燃起來啦！和我玩兒，你就會被燙傷！",
+      2: "你要是玩兒火，就會被燙傷！",
+      3: "我說，拜託，\n你的對手是我，沒機會贏的！",
     }
   },
   "cilan": {
     "encounter": {
-      1: `Nothing personal... No hard feelings... Me and my Grass-type Pokémon will...
-               $Um... We're gonna battle come what may.`,
-      2: "So, um, if you're OK with me, I'll, um, put everything I've got into being, er, you know, your opponent.",
-      3: "OK… So, um, I'm Cilan, I like Grass-type Pokémon."
+      1: "無關個人情感…也不會有艱難的感受…$我和我的草屬性寶可夢會…$呃…不管什麼樣的對手我們都會應戰的。",
+      2: "所以，呃，如果你願意的話，我會，\n呃，盡我所能做好，呃，你知道的，你的對手。",
+      3: "好吧……所以，我是天桐，\n我喜歡草屬性寶可夢。",
     },
     "victory": {
-      1: "Er… Is it over now?",
-      2: `…What a surprise. You are very strong, aren't you? 
-               $I guess my brothers wouldn't have been able to defeat you either…`,
-      3: "…Huh. Looks like my timing was, um, off?"
+      1: "呃……已經結束了嗎？",
+      2: "…真是太意外了。你真…強。$看起來就算是伯特或寇恩都贏不了你…",
+      3: "…嗯。看起來我來的…不是時候？",
     },
     "defeat": {
-      1: "Huh? Did I win?",
-      2: `I guess… 
-                $I suppose I won, because I've been competing with my brothers Chili and Cress, and we all were able to get tougher.`,
-      3: "It…it was quite a thrilling experience…"
+      1: "哈？我贏了？",
+      2: "我想…$我想我贏了，因為我一直在和我的兄弟伯特和寇恩競爭，\n我們都變得更強了。",
+      3: "…這…這是一次非常嚇人的經歷呢…",
     }
   },
   "roark": {
     "encounter": {
-      1: "I need to see your potential as a Trainer. And, I'll need to see the toughness of the Pokémon that battle with you!",
-      2: "Here goes! These are my rocking Pokémon, my pride and joy!",
-      3: "Rock-type Pokémon are simply the best!",
-      4: "I need to see your potential as a Trainer. And, I'll need to see the toughness of the Pokémon that battle with you!"
+      1: "我需要看看你作為訓練師的潛力。$還有，我要看看與你並肩作戰的寶可夢的堅韌！",
+      2: "來吧！這些是我的岩石系寶可夢，我的驕傲！",
+      3: "岩石屬性寶可夢就是最強的！",
+      4: "我要看看你作為訓練師的潛力。$還要看看與你並肩作戰的寶可夢的堅韌！",
     },
     "victory": {
-      1: "W-what? That can't be! My buffed-up Pokémon!",
-      2: "…We lost control there. Next time I'd like to challenge you to a Fossil-digging race underground.",
-      3: "With skill like yours, it's natural for you to win.",
-      4: "Wh-what?! It can't be! Even that wasn't enough?",
-      5: "I blew it."
+      1: "什麼？不可能！我強化的寶可夢們！",
+      2: "……我大腦過載了。$下次邀請你參加地下的化石挖掘比賽。",
+      3: "有你這種技術，贏得勝利是很正常的。",
+      4: "什麼？！連這也不夠？",
+      5: "我搞砸了。",
     },
     "defeat": {
-      1: "See? I'm proud of my rocking battle style!",
-      2: "Thanks! The battle gave me confidence that I may be able to beat my dad!",
-      3: "I feel like I just smashed through a really stubborn boulder!"
+      1: "看？我為我的搖滾戰鬥風格感到驕傲！",
+      2: "謝謝！這場戰鬥給了我自信，$我感覺能夠打敗我父親了！",
+      3: "我感覺就像我砸穿了一塊頑石！",
     }
   },
   "morty": {
     "encounter": {
-      1: `With a little more, I could see a future in which I meet the legendary Pokémon.
-                $You're going to help me reach that level!`,
-      2: `It's said that a rainbow-hued Pokémon will come down to appear before a truly powerful Trainer. 
-                $I believed that tale, so I have secretly trained here all my life. As a result, I can now see what others cannot. 
-                $I see a shadow of the person who will make the Pokémon appear. 
-                $I believe that person is me! You're going to help me reach that level!`,
-      3: "Whether you choose to believe or not, mystic power does exist.",
-      4: "You can bear witness to the fruits of my training.",
-      5: "You must make your soul one with that of Pokémon. Can you do this?",
-      6: "Say, do you want to be part of my training?"
+      1: "只要我再多努力一點，我就能看到我遇到傳說中的寶可夢的未來！$你會幫助我達到那個水平！",
+      2: "據說，彩虹色的寶可夢會\n出現在真正強大的訓練師面前。 $我一直相信著這個美麗的傳說，\n所以，從出生開始，\n就在這裡進行著秘密的修行。$因為這樣，其他人看不到的東西\n我也能夠看得到…$我看到的，是那個將傳說中的寶可夢\n召喚到這片大地上的人的影子。$我一直相信，那就是我自己！\n希望你也能助我一臂之力！",
+      3: "無論你相信還是不相信，神秘的力量確實存在。",
+      4: "你可以見證我訓練的成果。",
+      5: "你必須讓你與寶可夢的靈魂合二為一。你能做到嗎？",
+      6: "嘿，你想成為我訓練的一部分嗎？",
     },
     "victory": {
-      1: "I'm not good enough yet…",
-      2: `I see… Your journey has taken you to far-away places and you have witnessed much more than I.
-                $I envy you for that…`,
-      3: "How is this possible…",
-      4: `I don't think our potentials are so different.
-                $But you seem to have something more than that… So be it.`,
-      5: "Guess I need more training.",
-      6: "That's a shame."
+      1: "我還不夠好……",
+      2: "我明白了…你的旅程…去了遙遠的地方，你見過的比我多得多。$我羨慕你…",
+      3: "這怎麼可能……",
+      4: "我認為我們的潛力沒什麼不同。$但是，我覺得你並不簡單，似乎還有什麼……",
+      5: "我想我需要更多的訓練。",
+      6: "那太遺憾了",
     },
     "defeat": {
-      1: "I moved… one step ahead again.",
-      2: "Fufufu…",
-      3: "Wh-what?! It can't be! Even that wasn't enough?",
-      4: "I feel like I just smashed through a really stubborn boulder!",
-      5: "Ahahahah!",
-      6: "I knew I would win!"
+      1: "我又向前邁進了一步。",
+      2: "呵呵呵……",
+      3: "什…麼？！那還不夠？",
+      4: "我感覺就像我砸穿了一塊頑石！",
+      5: "哈哈哈啊！",
+      6: "我知道我會贏！",
     }
   },
   "crispin": {
     "encounter": {
-      1: "I wanna win, so that's exactly what I'll do!",
-      2: "I battle because I wanna battle! And you know what? That's how it should be!"
+      1: "我想贏，所以接下來我正要贏！",
+      2: "我想對戰就對戰！懂嗎！就應該這樣！",
     },
     "victory": {
-      1: "I wanted to win…but I lost!",
-      2: "I lost…'cause I couldn't win!"
+      1: "我想贏……但我還是輸了！",
+      2: "我輸了……因為我贏不了！",
     },
     "defeat": {
-      1: "Hey, wait a sec. Did I just win? I think I just won! Talk about satisfying!",
-      2: "Wooo! That was amazing!"
+      1: "嘿，等一下。我是不是贏了？$我覺得我贏了！太滿足了！",
+      2: "哇哦！那太棒了！",
     }
   },
   "amarys": {
     "encounter": {
-      1: `I want to be the one to help a certain person. That being the case, I cannot afford to lose.
-                $… Our battle starts now.`,
+      1: "我想幫助某個人。因此，我不能輸。$…我們的戰鬥現在開始。",
     },
     "victory": {
-      1: "I am… not enough, I see."
+      1: "我還不夠，我明白了。",
     },
     "defeat": {
-      1: "Victory belongs to me. Well fought."
+      1: "勝利屬於我。打得好。",
     }
   },
   "lacey": {
     "encounter": {
-      1: "I'll be facing you with my usual party as a member of the Elite Four."
+      1: "我將用我平時的隊伍\n作為四天王的一員面對你。",
     },
     "victory": {
-      1: "That was a great battle!"
+      1: "打得真好呀~",
     },
     "defeat": {
-      1: "Let's give your Pokémon a nice round of applause for their efforts!"
+      1: "讓我們為你寶可夢的努力給予熱烈的掌聲！",
     }
   },
   "drayton": {
     "encounter": {
-      1: `Man, I love chairs. Don't you love chairs? What lifesavers. 
-                $I don't get why everyone doesn't just sit all the time. Standing up's tiring work!`,
+      1: "哥們，我喜歡椅子。\n你喜歡椅子嗎？簡直是救星。$我不明白為什麼大家不一直坐著。\n站著多累人！",
     },
     "victory": {
-      1: "Guess I should've expected that!"
+      1: "我早該想到的！",
     },
     "defeat": {
-      1: "Heh heh! Don't mind me, just scooping up a W over here. I get it if you're upset, but don't go full Kieran on me, OK?"
+      1: "嘿嘿嘿！別介意我，\n我只是在這裡小贏一下。$如果你不開心，我懂，\n但別因為我對烏栗發火，OK？",
     }
   },
   "ramos": {
     "encounter": {
-      1: `Did yeh enjoy the garden playground I made with all these sturdy plants o' mine?
-                $Their strength is a sign o' my strength as a gardener and a Gym Leader! Yeh sure yer up to facing all that?`,
+      1: "我用那些強壯的植物\n蓋出來的遊樂場精彩嗎？$它們的力量象徵著我這個園丁兼道館館主的實力，\n你真的確定能夠與之抗衡嗎？",
     },
     "victory": {
-      1: "Yeh believe in yer Pokémon… And they believe in yeh, too… It was a fine battle, sprout."
+      1: "你信任你的寶可夢，\n它們也信任你…不錯的戰鬥，小豆芽。",
     },
     "defeat": {
-      1: "Hohoho… Indeed. Frail little blades o' grass'll break through even concrete."
+      1: "呵呵呵…確實，\n脆弱的小草甚至能穿透混凝土。",
     }
   },
   "viola": {
     "encounter": {
-      1: `Whether it's the tears of frustration that follow a loss or the blossoming of joy that comes with victory…
-                $They're both great subjects for my camera! Fantastic! This'll be just fantastic! 
-                $Now come at me!`,
-      2: "My lens is always focused on victory--I won't let anything ruin this shot!"
+      1: "敗陣時的後悔，勝利的瞬間…$都是最棒的影象！很好呀，很好呀！$那麼來吧！",
+      2: "我的鏡頭總會聚焦在勝利上，\n我不會讓任何事情破壞這個畫面！",
     },
     "victory": {
-      1: "You and your Pokémon have shown me a whole new depth of field! Fantastic! Just fantastic!",
-      2: `The world you see through a lens, and the world you see with a Pokémon by your side…
-                $The same world can look entirely different depending on your view.`
+      1: "你和你的寶可夢向我展示了一個全新的鏡頭機位！\n很好呀，很好呀！",
+      2: "你通過鏡頭看到的世界，\n和你與寶可夢並肩作戰時看到的世界…$視角不同，即使是同一個世界看起來也完全不同。",
     },
     "defeat": {
-      1: "The photo from the moment of my victory will be a real winner, all right!",
-      2: "Yes! I took some great photos!"
+      1: "我勝利那一刻的照片，\n將是一個真正的贏家，對吧！",
+      2: "是的！我拍了些很棒的照片！",
     }
   },
   "candice": {
     "encounter": {
-      1: `You want to challenge Candice? Sure thing! I was waiting for someone tough! 
-                $But I should tell you, I'm tough because I know how to focus.`,
-      2: `Pokémon, fashion, romance… It's all about focus! 
-                $I'll show you just what I mean. Get ready to lose!`
+      1: "向小菘我挑戰嗎？好啊！\n我就是在等待強者$但是我也氣勢高昂，很強哦？",
+      2: "寶可夢也好，時尚也好，戀愛也好，\n無論做什麼都氣勢高昂！$就說到這兒吧，讓你見識一下我的氣勢，\n要做好覺悟哦！",
     },
     "victory": {
-      1: "I must say, I'm warmed up to you! I might even admire you a little.",
-      2: `Wow! You're great! You've earned my respect! 
-                $I think your focus and will bowled us over totally. `
+      1: "好厲害！我有點尊敬你了。",
+      2: "好厲害！我有點尊敬你了！$嗯，感覺是被你的氣勢給壓倒了。",
     },
     "defeat": {
-      1: "I sensed your will to win, but I don't lose!",
-      2: "See? Candice's focus! My Pokémon's focus is great, too!"
+      1: "你的氣勢我看到了，但我還是不會輸的！",
+      2: "怎麼樣？小菘我的氣勢！\n寶可夢們的氣勢滿滿哦！",
     }
   },
   "gardenia": {
     "encounter": {
-      1: "You have a winning aura about you. So, anyway, this will be fun. Let's have our battle!"
+      1: "你身上有一種勝利的氣息。\n那麼不管怎樣，$這應該會是場有趣的戰鬥。\n讓我們對戰吧！",
     },
     "victory": {
-      1: "Amazing! You're very good, aren't you?"
+      1: "太棒了！你可擅長對戰了，不是嗎？",
     },
     "defeat": {
-      1: "Yes! My Pokémon and I are perfectly good!"
+      1: "太好了！我的寶可夢和我都很棒！",
     }
   },
   "aaron": {
     "encounter": {
-      1: "Ok! Let me take you on!"
+      1: "好的！讓我來接受你的挑戰！",
     },
     "victory": {
-      1: "Battling is a deep and complex affair…"
+      1: "戰鬥是一件深刻而複雜的事情……",
     },
     "defeat": {
-      1: "Victory over an Elite Four member doesn't come easily."
+      1: "戰勝一位四天王並不容易。",
     }
   },
   "cress": {
     "encounter": {
-      1: "That is correct! It shall be I and my esteemed Water types that you must face in battle!"
+      1: "沒！錯！你必須面對\n與我和我高貴的水屬性的戰鬥！",
     },
     "victory": {
-      1: "Lose? Me? I don't believe this."
+      1: "輸了？我？我不敢相信。",
     },
     "defeat": {
-      1: "This is the appropriate result when I'm your opponent."
+      1: "當你的對手是我時，這是必然的結果。",
     }
   },
   "allister": {
     "encounter": {
-      1: "'M Allister.\nH-here… I go…"
+      1: "我是歐尼奧。$我…我來了……",
     },
     "victory": {
-      1: `I nearly lost my mask from the shock… That was…
-                $Wow. I can see your skill for what it is.`,
+      1: "我差點被嚇得丟了面具…那真是…$哇。我可以看清你真正的實力。",
     },
     "defeat": {
-      1: "Th-that was ace!"
+      1: "這真是太棒了！",
     }
   },
   "clay": {
     "encounter": {
-      1: "Harrumph! Kept me waitin', didn't ya, kid? All right, time to see what ya can do!"
+      1: "咳咳! 讓我好等，不是嗎，孩子？$好吧，是時候看看你能做到什麼了！",
     },
     "victory": {
-      1: "Man oh man… It feels good to go all out and still be defeated!"
+      1: "真是的……我先說好，\n我可沒有手下留情。",
     },
     "defeat": {
-      1: `What's important is how ya react to losin'. 
-                $That's why folks who use losin' as fuel to get better are tough.`,
+      1: "最重要的是輸掉的時候該怎麼辦。$只要你能在失敗中找到教訓，\n就能夠不斷地成長！",
     }
   },
   "kofu": {
     "encounter": {
-      1: "I'mma serve you a full course o' Water-type Pokémon! Don't try to eat 'em, though!"
+      1: "我會給你上一整道水系寶可夢大餐！\n但別真吃了它們！",
     },
     "victory": {
-      1: "Vaultin' Veluza! Yer a lively one, aren't ya! A little TOO lively, if I do say so myself!"
+      1: "吃了嗎！你真是活力又新鮮啊，\n不是嗎！$就是有點太鮮活了！",
     },
     "defeat": {
-      1: "You come back to see me again now, ya hear?"
+      1: "你要再來找我，聽見了嗎？",
     }
   },
   "tulip": {
     "encounter": {
-      1: "Allow me to put my skills to use to make your cute little Pokémon even more beautiful!"
+      1: "請讓我運用我的化妝技巧，$讓你可愛的小寶可夢變得更美麗！",
     },
     "victory": {
-      1: "Your strength has a magic to it that cannot be washed away."
+      1: "你妝點的力量宛如魔法加固，\n完全沖洗不掉啊。",
     },
     "defeat": {
-      1: "You know, in my line of work, people who lack talent in one area or the other often fade away quickly—never to be heard of again."
+      1: "你知道嗎，在我這行，\n那些沒天賦的人往往會很快消失，$再也不會被提起。",
     }
   },
   "sidney": {
     "encounter": {
-      1: `I like that look you're giving me. I guess you'll give me a good match.
-                $That's good! Looking real good! All right!
-                $You and me, let's enjoy a battle that can only be staged here!`,
+      1: "你給我的印象不錯，\n我猜這會是一場精彩的對戰。$很棒！看起來真的很棒！$你和我，讓我們享受一場\n只能在這裡上演的戰鬥吧！",
     },
     "victory": {
-      1: "Well, how do you like that? I lost! Eh, it was fun, so it doesn't matter."
+      1: "嗯，你覺得怎樣？我輸了！\n嗯，不過這很有趣，所以無所謂啊。",
     },
     "defeat": {
-      1: "No hard feelings, alright?"
+      1: "別介意，OK？",
     }
   },
   "phoebe": {
     "encounter": {
-      1: `While I trained, I gained the ability to commune with Ghost-type Pokémon. 
-                $Yes, the bond I developed with Pokémon is extremely tight. 
-                $So, come on, just try and see if you can even inflict damage on my Pokémon!`,
+      1: "過去我在修行時得到了\n能與幽靈寶可夢親密交流的能力。$沒錯，我和寶可夢之間\n有著強烈的羈絆。$那麼，來試試看你有沒有能力\n傷到我的寶可夢吧！",
     },
     "victory": {
-      1: "Oh, darn. I've gone and lost."
+      1: "哦，天呀。我輸了。",
     },
     "defeat": {
-      1: "I look forward to battling you again sometime!"
+      1: "我期待著下次再和你戰鬥！",
     }
   },
   "glacia": {
     "encounter": {
-      1: `All I have seen are challenges by weak Trainers and their Pokémon. 
-                $What about you? It would please me to no end if I could go all out against you!`,
+      1: "我在這兒見到的盡是些\n弱不禁風的訓練家和寶可夢。$你又如何呢？如果你能讓我不得不用\n上全力的話就再好不過了！",
     },
     "victory": {
-      1: `You and your Pokémon… How hot your spirits burn!
-                $The all-consuming heat overwhelms. 
-                $It's no surprise that my icy skills failed to harm you.`,
+      1: "你和你的寶可夢…\n你們的靈魂燃燒得多麼熱烈啊！$這股激烈的熱能仿佛能征服一切。\n$難怪我的冰屬性技巧也奈何不了你了。",
     },
     "defeat": {
-      1: "A fiercely passionate battle, indeed."
+      1: "一場充滿激情的戰鬥，確實。",
     }
   },
   "drake": {
     "encounter": {
-      1: `For us to battle with Pokémon as partners, do you know what it takes? Do you know what is needed? 
-                $If you don't, then you will never prevail over me!`,
+      1: "對於我們這些將寶可夢視為\n同伴一同戰鬥的訓練家來說，$你知道怎樣才能贏得勝利嗎？\n你知道獲得勝利的條件嗎？$如果你不知道，\n那麼你永遠也無法戰勝我！",
     },
     "victory": {
-      1: "Superb, it should be said."
+      1: "幹得漂亮，就是這樣。",
     },
     "defeat": {
-      1: "I gave my all for that battle!"
+      1: "我在這場戰鬥中全力以赴了！",
     }
   },
   "wallace": {
     "encounter": {
-      1: `There's something about you… A difference in your demeanor. 
-                $I think I sense that in you. Now, show me. Show me the power you wield with your Pokémon. 
-                $And I, in turn, shall present you with a performance of illusions in water by me and my Pokémon!`,
+      1: "你的氣質變了，\n我能感覺到這一點。$現在，把你和你的寶可夢\n的力量展現給我看吧。$作為回禮，就由我和我的寶可夢\n演出一場水之幻影吧！",
     },
     "victory": {
-      1: `Bravo. I realize now your authenticity and magnificence as a Pokémon Trainer. 
-                    $I find much joy in having met you and your Pokémon. You have proven yourself worthy.`,
+      1: "精彩。此刻，我能從你身上感覺到\n身為寶可夢訓練家的可靠與高貴。$我真榮幸能遇到你和你的寶可夢。",
     },
     "defeat": {
-      1: "A grand illusion!"
+      1: "偉大的幻影！",
     }
   },
   "lorelei": {
     "encounter": {
-      1: `No one can best me when it comes to icy Pokémon! Freezing moves are powerful!
-                $Your Pokémon will be at my mercy when they are frozen solid! Hahaha! Are you ready?`,
+      1: "只要能讓我用冰屬性寶可夢，\n就絕對沒人能贏得過我！\n能凍住對方可是很厲害的哦！$因為如果被凍住，你的寶可夢就無法動彈了！\n啊哈哈！你做好覺悟了吧！",
     },
     "victory": {
-      1: "How dare you!"
+      1: "你怎麼敢！",
     },
     "defeat": {
-      1: "There's nothing you can do once you're frozen."
+      1: "一旦你被凍結，你就什麼都做不了。",
     }
   },
   "will": {
     "encounter": {
-      1: `I have trained all around the world, making my psychic Pokémon powerful.
-                $I can only keep getting better! Losing is not an option!`,
+      1: "我曾經環遊世界，\n日以繼夜地做著超能力寶可夢的修行之旅。$我會不斷變強！沒理由會在這裡輸掉！",
     },
     "victory": {
-      1: "I… I can't… believe it…"
+      1: "……不會吧……",
     },
     "defeat": {
-      1: "That was close. I wonder what it is that you lack."
+      1: "就差一點。\n我想知道你缺少了什麼。",
     }
   },
   "malva": {
     "encounter": {
-      1: `I feel like my heart might just burst into flames. 
-                $I'm burning up with my hatred for you, runt!`,
+      1: "我的內心可是一直燃燒著呢。$燃燒著對你的怒火！",
     },
     "victory": {
-      1: "What news… So a new challenger has defeated Malva!"
+      1: "挑戰者出色地擊敗了四天王之一，帕琦拉。",
     },
     "defeat": {
-      1: "I am delighted! Yes, delighted that I could squash you beneath my heel."
+      1: "真開心啊，能將你徹底粉碎！",
     }
   },
   "hala": {
     "encounter": {
-      1: "Old Hala is here to make you holler!"
+      1: "老哈拉讓你放開嗓子！"
     },
     "victory": {
-      1: "I could feel the power you gained on your journey."
+      1: "我能感受到你在旅途中所獲得的力量。"
     },
     "defeat": {
-      1: "Haha! What a delightful battle!"
+      1: "啊哈哈。多麼有趣的戰鬥。"
     }
   },
   "molayne": {
     "encounter": {
-      1: `I gave the captain position to my cousin Sophocles, but I'm confident in my ability. 
-                $My strength is like that of a supernova!`,
+      1: "我將隊長的位置讓給了我的表弟馬瑪內,\n但我對自己的能力很有信心。 $我的力量就像超新星一樣！",
     },
     "victory": {
-      1: "I certainly found an interesting Trainer to face!"
+      1: "我發現了一個有趣的訓練師對手！",
     },
     "defeat": {
-      1: "Ahaha. What an interesting battle."
+      1: "啊哈哈。多麼有趣的戰鬥。",
     }
   },
   "rika": {
     "encounter": {
-      1: "I'd say I'll go easy on you, but… I'd be lying! Think fast!"
+      1: "我要對你手下留情，但……騙你的啦！ $好好動腦！",
     },
     "victory": {
-      1: "Not bad, kiddo."
+      1: "不錯，小子。",
     },
     "defeat": {
-      1: "Nahahaha! You really are something else, kiddo!"
+      1: "啊哈哈哈哈！你真的很特别，小子！",
     }
   },
   "bruno": {
     "encounter": {
-      1: "We will grind you down with our superior power! Hoo hah!"
+      1: "我們將用勢不可擋的力量磨滅你！呼哈！",
     },
     "victory": {
-      1: "Why? How could I lose?"
+      1: "為什麼？我怎麼會輸？",
     },
     "defeat": {
-      1: "You can challenge me all you like, but the results will never change!"
+      1: "你可以隨意挑戰我，\n但結果永遠不會改變！",
     }
   },
   "bugsy": {
     "encounter": {
-      1: "I'm Bugsy! I never lose when it comes to bug Pokémon!"
+      1: "我是阿筆！\n對蟲系寶可夢的熟悉不會輸給任何人的！",
     },
     "victory": {
-      1: "Whoa, amazing! You're an expert on Pokémon!\nMy research isn't complete yet. OK, you win."
+      1: "哇，太棒了！\n你是個寶可夢專家！$我的研究還沒有完成。\n好吧，你贏了。",
     },
     "defeat": {
-      1: "Thanks! Thanks to our battle, I was also able to make progress in my research!"
+      1: "謝謝！多虧了我們的戰鬥，\n我的研究也取得了進展！",
     }
   },
   "koga": {
     "encounter": {
-      1: "Fwahahahaha! Pokémon are not merely about brute force--you shall see soon enough!"
+      1: "哇哈哈哈哈！$寶可夢不僅僅是關於蠻力，拭目以待吧！",
     },
     "victory": {
-      1: "Ah! You've proven your worth!"
+      1: "啊！你證明了自己！",
     },
     "defeat": {
-      1: "Have you learned to fear the techniques of the ninja?"
+      1: "懂不懂要對忍者的技巧心神畏懼？",
     }
   },
   "bertha": {
     "encounter": {
-      1: "Well, would you show this old lady how much you've learned?"
+      1: "啊，讓老婆婆看看你學到了什麼？",
     },
     "victory": {
-      1: `Well! Dear child, I must say, that was most impressive. 
-                $Your Pokémon believed in you and did their best to earn you the win. 
-                $Even though I've lost, I find myself with this silly grin!`,
+      1: "好吧，親愛的孩子，\n不得不說，那令人印象深刻。$你的寶可夢相信你並盡最大努力為你贏得勝利。$儘管我輸了，\n我也止不住笑呢！",
     },
     "defeat": {
-      1: "Hahahahah! Looks like this old lady won!"
+      1: "哈哈哈！看來老婆婆我贏了！",
     }
   },
   "lenora": {
     "encounter": {
-      1: "Well then, challenger, I'm going to research how you battle with the Pokémon you've so lovingly raised!"
+      1: "那麼，挑戰者，讓我來研究$你與你精心養育的寶可夢要如何戰鬥！",
     },
     "victory": {
-      1: "My theory about you was correct. You're more than just talented… You're motivated! I salute you!"
+      1: "我關於你的理論是正確的。$你不僅僅是有天賦……你很努力！\n我向你致敬！",
     },
     "defeat": {
-      1: "Ah ha ha! If you lose, make sure to analyze why, and use that knowledge in your next battle!"
+      1: "啊哈哈！如果你輸了，\n一定要分析原因，$並在下一場戰鬥中運用那些知識！",
     }
   },
   "siebold": {
     "encounter": {
-      1: "As long as I am alive, I shall strive onward to seek the ultimate cuisine... and the strongest opponents in battle!"
+      1: "只要我活著，我將不斷努力尋求終極美食…$以及和最強的對手戰鬥！",
     },
     "victory": {
-      1: "I shall store my memory of you and your Pokémon forever away within my heart."
+      1: "您的事蹟，我志米銘記在心。",
     },
     "defeat": {
-      1: `Our Pokémon battle was like food for my soul. It shall keep me going. 
-                $That is how I will pay my respects to you for giving your all in battle!`,
+      1: "我們的寶可夢戰鬥就像我靈魂的養料。\n它將讓我繼續前進。$這就是我將向你表示敬意的方式，\n感謝你在戰鬥中全力以赴！",
     }
   },
   "roxie": {
     "encounter": {
-      1: "Get ready! I'm gonna knock some sense outta ya!"
+      1: "準備好了嗎！我要給你上一課！",
     },
     "victory": {
-      1: "Wild! Your reason's already more toxic than mine!"
+      1: "夠野的！你的想法比我的還要毒！",
     },
     "defeat": {
-      1: "Hey, c'mon! Get serious! You gotta put more out there!"
+      1: "嘿，拜託！認真點！\n你要加把勁啊!",
     }
   },
   "olivia": {
     "encounter": {
-      1: "No introduction needed here. Time to battle me, Olivia!"
+      1: "沒什麼開場白。\n是時候和我麗姿，戰鬥了！",
     },
     "victory": {
-      1: "Really lovely… Both you and your Pokémon…"
+      1: "真的很可愛……你和你的寶可夢……",
     },
     "defeat": {
-      1: "Mmm-hmm."
+      1: "嗯哼。",
     }
   },
   "poppy": {
     "encounter": {
-      1: "Oooh! Do you wanna have a Pokémon battle with me?"
+      1: "哦！你想和我進行寶可夢對戰麼？",
     },
     "victory": {
-      1: "Uagh?! Mmmuuuggghhh…"
+      1: "嗚哇？！嘛……",
     },
     "defeat": {
-      1: `Yaaay! I did it! I de-feet-ed you! You can come for… For… An avenge match? 
-                $Come for an avenge match anytime you want!`,
+      1: "耶！我做到了！我擊~敗~了~你！\n你可以來…打…復仇之戰？$只要你想，隨時來打復仇之戰吧！",
     }
   },
   "agatha": {
     "encounter": {
-      1: "Pokémon are for battling! I'll show you how a real Trainer battles!"
+      1: "寶可夢是用來戰鬥的！我會讓你看看真正訓練家的戰鬥！"
     },
     "victory": {
-      1: "Oh my! You're something special, child!"
+      1: "哦，我的天！你真是個特別的孩子！"
     },
     "defeat": {
-      1: "Bahaha. That's how a proper battle's done!"
+      1: "哈哈哈，這才是正確的戰鬥方式！"
     }
   },
   "flint": {
     "encounter": {
-      1: "Hope you're warmed up, cause here comes the Big Bang!"
+      1: "希望你已經熱身完畢，\n因為這裡即將大爆炸！",
     },
     "victory": {
-      1: "Incredible! Your moves are so hot, they make mine look lukewarm!"
+      1: "不可思議！$你的動作如此火熱，讓我看起來溫吞吞的！",
     },
     "defeat": {
-      1: "Huh? Is that it? I think you need a bit more passion."
+      1: "嗯？就這嗎？\n我覺得你得再激情點。",
     }
   },
   "grimsley": {
     "encounter": {
-      1: "The winner takes everything, and there's nothing left for the loser."
+      1: "一無所有，\n或者，贏下所有！",
     },
     "victory": {
-      1: "When one loses, they lose everything… The next thing I'll look for will be victory, too!"
+      1: "一旦失敗，\n就意味著失去一切……$下一次我要追尋勝利！",
     },
     "defeat": {
-      1: "If somebody wins, the person who fought against that person will lose."
+      1: "如果有人贏了，\n和他對戰的人就會輸。",
     }
   },
   "caitlin": {
     "encounter": {
-      1: `It's me who appeared when the flower opened up. You who have been waiting…
-                $You look like a Pokémon Trainer with refined strength and deepened kindness. 
-                $What I look for in my opponent is superb strength… 
-                $Please unleash your power to the fullest!`,
+      1: "當花兒綻開時、我便出現。\n成為你在等待的人…$你似乎同時具備實力和善意$我所尋找的是擁有卓越力量的對手…$請用出你的全力吧！",
     },
     "victory": {
-      1: "My Pokémon and I learned so much! I offer you my thanks."
+      1: "我和我的寶可夢學到了很多！非常感謝。",
     },
     "defeat": {
-      1: "I aspire to claim victory with elegance and grace."
+      1: "我渴望以優雅的姿態取得勝利。",
     }
   },
   "diantha": {
     "encounter": {
-      1: `Battling against you and your Pokémon, all of you brimming with hope for the future… 
-                $Honestly, it just fills me up with energy I need to keep facing each new day! It does!`,
+      1: "與你的寶可夢對戰\n讓你充滿了未來的希望…$說真的，這讓我更有活力地面對新的一天，確實如此！",
     },
     "victory": {
-      1: "Witnessing the noble spirits of you and your Pokémon in battle has really touched my heart…"
+      1: "擁有高尚靈魂的訓練家和寶可夢的身姿，\n讓我的心激烈地震顫…",
     },
     "defeat": {
-      1: "Oh, fantastic! What did you think? My team was pretty cool, right?"
+      1: "哦，太棒了！你覺得怎麼樣？\n我的隊伍很酷吧~對吧？",
     }
   },
   "wikstrom": {
     "encounter": {
-      1: `Well met, young challenger! Verily am I the famed blade of hardened steel, Duke Wikstrom! 
-                $Let the battle begin! En garde!`,
+      1: "年輕的挑戰者，幸會！\n我乃是著名的鋼鐵之刃，公爵雁鎧! $讓我們開始戰鬥吧！預備！",
     },
     "victory": {
-      1: "Glorious! The trust that you share with your honorable Pokémon surpasses even mine!"
+      1: "輝煌！你與你尊貴的\n寶可夢之間的信任居然勝過了我！",
     },
     "defeat": {
-      1: `What manner of magic is this? My heart, it doth hammer ceaselessly in my breast! 
-                $Winning against such a worthy opponent doth give my soul wings--thus do I soar!`,
+      1: "哦哦哦！這是怎麼回事，\n我的心止不住地在震顫！ $與如此有價值的對手的勝利\n讓我的靈魂飛翔——我心翱翔！",
     }
   },
   "acerola": {
     "encounter": {
-      1: "Battling is just plain fun! Come on, I can take you!"
+      1: "對戰只是找個樂子！來吧，我來會會你！",
     },
     "victory": {
-      1: "I'm… I'm speechless! How did you do it?!"
+      1: "我……我說不出話！你是怎麼做到的？！",
     },
     "defeat": {
-      1: "Ehaha! What an amazing victory!"
+      1: "哈哈！真是嚇人倒怪的勝利呀！",
     }
   },
   "larry_elite": {
     "encounter": {
-      1: `Hello there… It's me, Larry.
-                $I serve as a member of the Elite Four too, yes… Unfortunately for me.`,
+      1: "……你好，我是青木。$麻煩的是我還要兼任四天王。",
     },
     "victory": {
-      1: "Well, that took the wind from under our wings…"
+      1: "好吧，我們翅膀下的疾風止於你這了啊…",
     },
     "defeat": {
-      1: "It's time for a meeting with the boss."
+      1: "是時候和老闆開會了。",
     }
   },
   "lance": {
     "encounter": {
-      1: "I've been waiting for you. Allow me to test your skill.",
-      2: "I thought that you would be able to get this far. Let's get this started."
+      1: "我一直在等你。讓我來試試你有幾斤幾兩。",
+      2: "我知道你能走這麼遠。讓我們開始吧。",
     },
     "victory": {
-      1: "You got me. You are magnificent!",
-      2: "I never expected another trainer to beat me… I'm surprised."
+      1: "被你拿下了啊。你太出色了!",
+      2: "我從沒想到會有另一個訓練師打敗我……$我很驚訝。",
     },
     "defeat": {
-      1: "That was close. Want to try again?",
-      2: "It's not that you are weak. Don't let it bother you."
+      1: "就差一點。想再試一次嗎？",
+      2: "我沒覺得你弱，別因此困擾。",
     }
   },
   "karen": {
     "encounter": {
-      1: "I am Karen. Would you care for a showdown with my Dark-type Pokémon?",
-      2: "I am unlike those you've already met.",
-      3: "You've assembled a charming team. Our battle should be a good one."
+      1: "我是梨花，你想和我的惡屬性寶可夢$來一場對決嗎？",
+      2: "我和你見過的那些人不一樣。",
+      3: "你組建了一支迷人的隊伍。$我們的戰鬥應該會是場精彩的比賽。",
     },
     "victory": {
-      1: "No! I can't win. How did you become so strong?",
-      2: "I will not stray from my chosen path.",
-      3: "The Champion is looking forward to meeting you."
+      1: "不！我贏不了。你是怎麼做到變得這麼強的？",
+      2: "我不會偏離我所選擇的道路。",
+      3: "冠軍正期待與你見面。",
     },
     "defeat": {
-      1: "That's about what I expected.",
-      2: "Well, that was relatively entertaining.",
-      3: "Come visit me anytime."
+      1: "意料之中。",
+      2: "嗯，還算有點意思。",
+      3: "隨時歡迎你來找我。",
     }
   },
   "milo": {
     "encounter": {
-      1: `Sure seems like you understand Pokémon real well. 
-               $This is gonna be a doozy of a battle! 
-               $I'll have to Dynamax my Pokémon if I want to win!`,
+      1: "看起來你顯然很了解寶可夢。$這會是一場激烈的戰鬥！$如果我想贏，我得讓我的寶可夢極巨化！",
     },
     "victory": {
-      1: "The power of Grass has wilted… What an incredible Challenger!"
+      1: "草的力量凋謝了…多麼不可思議的挑戰者！",
     },
     "defeat": {
-      1: "This'll really leave you in shock and awe."
+      1: "這必將讓你大吃一驚。",
     }
   },
   "lucian": {
     "encounter": {
-      1: `Just a moment, please. The book I'm reading has nearly reached its thrilling climax… 
-                $The hero has obtained a mystic sword and is about to face their final trial… Ah, never mind. 
-                $Since you've made it this far, I'll put that aside and battle you. 
-                $Let me see if you'll achieve as much glory as the hero of my book!,`
+      1: "請稍等，我正在讀的書\n正要進入最精彩的部分…$英雄獲得了一把神秘之劍，\n即將面臨最後的考驗…啊，算了。$既然你能走到這一步，\n我就不說這些了，和你戰鬥吧。$讓我看看你是否\n能像我書中的主角一樣榮耀！",
     },
     "victory": {
-      1: "I see… It appears you've put me in checkmate."
+      1: "我明白了…看來你把我逼入了絕境。",
     },
     "defeat": {
-      1: "I have a reputation to uphold."
+      1: "我得維護我的名譽。",
     }
   },
   "drasna": {
     "encounter": {
-      1: `You must be a strong Trainer. Yes, quite strong indeed…
-                $That's just wonderful news! Facing opponents like you and your team will make my Pokémon grow like weeds!`
+      1: "你很厲害吧，\n而且相當相當地厲害呢。$我很高興，能和這樣的對手交手，\n就能更好地培養寶可夢們了。",
     },
     "victory": {
-      1: "Oh, dear me. That sure was a quick battle… I do hope you'll come back again sometime!"
+      1: "哎呀，就這麼結束了，\n不好意思，可以的話歡迎再來。",
     },
     "defeat": {
-      1: "How can this be?"
+      1: "怎麼會這樣？",
     }
   },
   "kahili": {
     "encounter": {
-      1: "So, here you are… Why don't we see who the winds favor today, you… Or me?"
+      1: "那麼，既然來了……\n要不來看看今天的風更青睞誰？$是你……還是我？",
     },
     "victory": {
-      1: "It's frustrating to me as a member of the Elite Four, but it seems your strength is the real deal."
+      1: "讓我這個四天王都感到沮喪，$看來你的力量貨真價實。",
     },
     "defeat": {
-      1: "That was an ace!"
+      1: "那真是一記好球！",
     }
   },
   "hassel": {
     "encounter": {
-      1: "Prepare to learn firsthand how the fiery breath of ferocious battle feels!"
+      1: "讓你親身感受一下什麼叫做猛烈的對戰氣息吧！",
     },
     "victory": {
-      1: `Fortune smiled on me this time, but… 
-                $Judging from how the match went, who knows if I will be so lucky next time.`,
+      1: "這次幸運之神對我微笑了，但是……$誰知道我下次會不會這麼幸運。",
     },
     "defeat": {
-      1: "That was an ace!"
+      1: "那可真厲害！",
     }
   },
   "blue": {
     "encounter": {
-      1: "You must be pretty good to get this far."
+      1: "能走到這裡，你一定非常優秀。",
     },
     "victory": {
-      1: "I've only lost to him and now to you… Him? Hee, hee…"
+      1: "我只輸給過他，現在又是你……？$你問他是誰？哈哈哈……",
     },
     "defeat": {
-      1: "See? My power is what got me here."
+      1: "看吧？我的實力就是我來到這裡的原因。",
     }
   },
   "piers": {
     "encounter": {
-      1: "Get ready for a mosh pit with me and my party! Spikemuth, it's time to rock!"
+      1: "準備好和我的隊伍來個大狂歡吧！$尖釘鎮，是時候嗨起來了！",
     },
     "victory": {
-      1: "Me an' my team gave it our best. Let's meet up again for a battle some time…"
+      1: "我和我的隊伍已經盡力了。$找個時間再來對戰吧……",
     },
     "defeat": {
-      1: "My throat's ragged from shoutin'… But 'at was an excitin' battle!"
+      1: "我的喉嚨因為呼喊而變得沙啞……$但這是一場激動人心的戰鬥！",
     }
   },
   "red": {
     "encounter": {
-      1: "…!"
+      1: "…!",
     },
     "victory": {
-      1: "…?"
+      1: "…?",
     },
     "defeat": {
-      1: "…!"
+      1: "…!",
     }
   },
   "jasmine": {
     "encounter": {
-      1: "Oh… Your Pokémon are impressive. I think I will enjoy this."
+      1: "哦……你的寶可夢給人印象深刻。$我想我會享受這場戰鬥的。",
     },
     "victory": {
-      1: "You are truly strong. I'll have to try much harder, too."
+      1: "你真的很強。我也得加把勁了。",
     },
     "defeat": {
-      1: "I never expected to win."
+      1: "我從沒想到會贏。",
     }
   },
   "lance_champion": {
     "encounter": {
-      1: "I am still the Champion. I won't hold anything back."
+      1: "我依舊是冠軍，所以我不會留情的。",
     },
     "victory": {
-      1: "This is the emergence of a new Champion."
+      1: "這就是新冠軍的崛起。",
     },
     "defeat": {
-      1: "I successfully defended my Championship."
+      1: "我成功捍衛了冠軍的頭銜。",
     }
   },
   "steven": {
     "encounter": {
-      1: `Tell me… What have you seen on your journey with your Pokémon? 
-                $What have you felt, meeting so many other Trainers out there? 
-                $Traveling this rich land… Has it awoken something inside you? 
-                $I want you to come at me with all that you've learned. 
-                $My Pokémon and I will respond in turn with all that we know!`,
+      1: "告訴我…你在和寶可夢的旅途過程中看到了什麼？$邂逅了那麼多的訓練師，\n你都會有什麼樣的感受呢？$在這豐饒的大地上旅行…\n有沒有喚醒你內在的某種東西？$你不如就用一場對戰來告訴我你心中的答案吧。$我也會和我的寶可夢用這種方式\n將我們所知道的告訴你的！",
     },
     "victory": {
-      1: "So I, the Champion, fall in defeat…"
+      1: "沒想到連我這個聯盟冠軍\n都敗在你的手上了呢…",
     },
     "defeat": {
-      1: "That was time well spent! Thank you!"
+      1: "正如我所期待的。謝謝！",
     }
   },
   "cynthia": {
     "encounter": {
-      1: "I, Cynthia, accept your challenge! There won't be any letup from me!"
+      1: "我，竹蘭，接受你的挑戰！\n我是絕不會手軟的！",
     },
     "victory": {
-      1: "No matter how fun the battle is, it will always end sometime…"
+      1: "無論對戰多麼有趣，\n它總會有結束的時候……",
     },
     "defeat": {
-      1: "Even if you lose, never lose your love of Pokémon."
+      1: "即使你輸了，\n也永遠不要失去你對寶可夢的熱愛。",
     }
   },
   "iris": {
     "encounter": {
-      1: `Know what? I really look forward to having serious battles with strong Trainers! 
-                $I mean, come on! The Trainers who make it here are Trainers who desire victory with every fiber of their being! 
-                #And they are battling alongside Pokémon that have been through countless difficult battles! 
-                $If I battle with people like that, not only will I get stronger, my Pokémon will, too! 
-                $And we'll get to know each other even better! OK! Brace yourself! 
-                $I'm Iris, the Pokémon League Champion, and I'm going to defeat you!`,
+      1: "你知道嗎？\n我真的很期待和強大的訓練師進行認真的戰鬥！$我的意思是，來吧！\n到達這裡的是那些渴望勝利的訓練師，$他們與經歷過無數艱難\n戰鬥的寶可夢一起戰鬥！$如果我和那樣的人戰鬥，\n不僅我會變得更強，我的寶可夢也會！$我們也會更好地了解彼此！\n好！做好準備吧！$我是艾莉絲，寶可夢聯盟冠軍，\n我，將打敗你！",
     },
     "victory": {
-      1: "Aghhhh… I did my best, but we lost…"
+      1: "啊……我盡力了，但我們輸了……",
     },
     "defeat": {
-      1: "Yay! We won!"
+      1: "耶！我們贏了！",
     }
   },
   "hau": {
     "encounter": {
-      1: `I wonder if a Trainer battles differently depending on whether they're from a warm region or a cold region.
-                $Let's test it out!`,
+      1: "我想知道，訓練師是否會根據他們是\n來自溫暖地區還是寒冷地區而以不同的方式戰鬥。$讓我們來測試一下！",
     },
     "victory": {
-      1: "That was awesome! I think I kinda understand your vibe a little better now!"
+      1: "那太棒了！我覺得我現在有點了解你的感覺了！",
     },
     "defeat": {
-      1: "Ma-an, that was some kinda battle!"
+      1: "老鐵，這才叫戰鬥！",
     }
   },
   "geeta": {
     "encounter": {
-      1: `I decided to throw my hat in the ring once more. 
-                $Come now… Show me the fruits of your training.`,
+      1: "我決定再試一次。$來吧…讓我看看你的訓練成果。",
     },
     "victory": {
-      1: "I eagerly await news of all your achievements!"
+      1: "我期待著你的成就！",
     },
     "defeat": {
-      1: "What's the matter? This isn't all, is it?"
+      1: "怎麼，這就結束了？",
     }
   },
   "nemona": {
     "encounter": {
-      1: "Yesss! I'm so psyched! Time for us to let loose!"
+      1: "耶！我太興奮了！讓我們稍微放輕鬆！",
     },
     "victory": {
-      1: "Well, that stinks, but I still had fun! I'll getcha next time!"
+      1: "好吧，太糟了，但我還是玩得很開心！$下次我一定會贏你！",
     },
     "defeat": {
-      1: "Well, that was a great battle! Fruitful for sure."
+      1: "好吧，那是一場很棒的戰鬥！$肯定是會有收穫的啦。",
     }
   },
   "leon": {
     "encounter": {
-      1: "We're gonna have an absolutely champion time!"
+      1: "來享受一段冠軍時刻吧！",
     },
     "victory": {
-      1: `My time as Champion is over… 
-                $But what a champion time it's been! 
-                $Thank you for the greatest battle I've ever had!`,
+      1: "我的冠軍生涯結束了……但這是多麼美好的冠軍時刻啊！但這是多麼美好的冠軍時刻啊！謝謝你給了我最精彩的一戰！",
     },
     "defeat": {
-      1: "An absolute champion time, that was!"
+      1: "名副其實的冠軍時刻！",
     }
   },
   "whitney": {
     "encounter": {
-      1: "Hey! Don't you think Pokémon are, like, super cute?"
+      1: "嘿！你不認為寶可夢超級可愛嗎？",
     },
     "victory": {
-      1: "Waaah! Waaah! You're so mean!"
+      1: "哇啊！哇啊！你太壞了！",
     },
     "defeat": {
-      1: "And that's that!"
+      1: "就是這樣！",
     }
   },
   "chuck": {
     "encounter": {
-      1: "Hah! You want to challenge me? Are you brave or just ignorant?"
+      1: "哈！你想挑戰我？你是勇敢還是無知？",
     },
     "victory": {
-      1: "You're strong! Would you please make me your apprentice?"
+      1: "你很強！能不能收我為徒？",
     },
     "defeat": {
-      1: "There. Do you realize how much more powerful I am than you?"
+      1: "搞定。你明白我比你強得多了嗎？",
     }
   },
   "katy": {
     "encounter": {
-      1: "Don't let your guard down unless you would like to find yourself knocked off your feet!"
+      1: "不要放鬆警惕，除非你想被蟲絲絆倒哦！",
     },
     "victory": {
-      1: "All of my sweet little Pokémon dropped like flies!"
+      1: "我可愛的寶可夢們都像蒼蠅一樣墜落了！",
     },
     "defeat": {
-      1: "Eat up, my cute little Vivillon!"
+      1: "開飯啦，我可愛的彩粉蝶！",
     }
   },
   "pryce": {
     "encounter": {
-      1: "Youth alone does not ensure victory! Experience is what counts."
+      1: "年輕不代表能獲得勝利！經驗才是關鍵。",
     },
     "victory": {
-      1: "Outstanding! That was perfect. Try not to forget what you feel now."
+      1: "無與倫比！贏得完美，試著不要忘記你現在的感受。",
     },
     "defeat": {
-      1: "Just as I envisioned."
+      1: "正如我所料。",
     }
   },
   "clair": {
     "encounter": {
-      1: "Do you know who I am? And you still dare to challenge me?"
+      1: "你知道我是誰嗎？知道還敢挑戰我？",
     },
     "victory": {
-      1: "I wonder how far you can get with your skill level. This should be fascinating."
+      1: "我想知道以你現在的水平能走多遠，有趣。",
     },
     "defeat": {
-      1: "That's that."
+      1: "就是這樣。",
     }
   },
   "maylene": {
     "encounter": {
-      1: `I've come to challenge you now, and I won't hold anything back. 
-                    $Please prepare yourself for battle!`,
+      1: "我現在要挑戰你，我不會保留任何實力。$請準備好戰鬥！",
     },
     "victory": {
-      1: "I admit defeat…"
+      1: "是我輸了…",
     },
     "defeat": {
-      1: "That was awesome."
+      1: "太棒了。",
     }
   },
   "fantina": {
     "encounter": {
-      1: `You shall challenge me, yes? But I shall win. 
-                    $That is what the Gym Leader of Hearthome does, non?`,
+      1: "你來挑戰吧。我會勝利。$這就是家緣市的道館館主。",
     },
     "victory": {
-      1: "You are so fantastically strong. I know why I have lost."
+      1: "你是最強的，我認輸了。",
     },
     "defeat": {
-      1: "I am so, so, very happy!"
+      1: "我非常，非常高興！",
     }
   },
   "byron": {
     "encounter": {
-      1: `Trainer! You're young, just like my son, Roark. 
-                    $With more young Trainers taking charge, the future of Pokémon is bright! 
-                    $So, as a wall for young people, I'll take your challenge!`,
+      1: "和我兒子瓢太一樣的年輕人啊！$我相信培養年輕人\n關係到寶可夢光明的未來！$為此就讓我來成為\n年輕人必須跨越的堡壘吧！",
     },
     "victory": {
-      1: "Hmm! My sturdy Pokémon--defeated!"
+      1: "唔！我千錘百煉的寶可夢！",
     },
     "defeat": {
-      1: "Gwahahaha! How were my sturdy Pokémon?!"
+      1: "哈哈哈哈！怎麼樣！我千錘百煉的寶可夢！",
     }
   },
   "olympia": {
     "encounter": {
-      1: "An ancient custom deciding one's destiny. The battle begins!"
+      1: "戰鬥是決定命運的古老傳統。讓我們開始吧！",
     },
     "victory": {
-      1: "Create your own path. Let nothing get in your way. Your fate, your future."
+      1: "創造你自己的道路。$不要讓任何東西阻擋你的路、你的命運、你的未來。",
     },
     "defeat": {
-      1: "Our path is clear now."
+      1: "我們的道路現在已經清晰了。",
     }
   },
   "volkner": {
     "encounter": {
-      1: `Since you've come this far, you must be quite strong…
-                    $I hope you're the Trainer who'll make me remember how fun it is to battle!`,
+      1: "能留到最後的訓練家想必肯定是很強的…$希望你會是能讓我回憶起\n寶可夢對戰樂趣的訓練家！",
     },
     "victory": {
-      1: `You've got me beat…
-                    $Your desire and the noble way your Pokémon battled for you… 
-                    $I even felt thrilled during our match. That was a very good battle.`,
+      1: "我輸了…$你的心意，寶可夢的不顧一切。$戰鬥的時候就讓我熱血沸騰。",
     },
     "defeat": {
-      1: `It was not shocking at all… 
-                    $That is not what I wanted!`,
+      1: "完全沒感覺…$和我希望的完全不一樣！",
     }
   },
   "burgh": {
     "encounter": {
-      1: `M'hm… If I win this battle, I feel like I can draw a picture unlike any before it. 
-                    $OK! I can hear my battle muse loud and clear. Let's get straight to it!`,
-      2: `Of course, I'm really proud of all of my Pokémon! 
-                    $Well now… Let's get right to it!`
+      1: "唔…我有預感，\n只要贏了這場戰鬥就能畫出更好的畫來…$嗯！戰鬥充滿了幻象！那麼，馬上開始吧。",
+      2: "當然，我對我所有的寶可夢都相當驕傲！ $現在…讓我們馬上開始吧！",
     },
     "victory": {
-      1: "Is it over? Has my muse abandoned me?",
-      2: "Hmm… It's over! You're incredible!"
+      1: "結束了嗎？我的女神拋棄我了嗎？",
+      2: "啊唔，輸了……你還真是很強啊。",
     },
     "defeat": {
-      1: "Wow… It's beautiful somehow, isn't it…",
-      2: `Sometimes I hear people say something was an ugly win. 
-                    $I think if you're trying your best, any win is beautiful.`
+      1: "唔啊……好……好美啊！",
+      2: "偶爾也有一些不是很好看的勝利，$但只要努力了，\n不管怎麼樣的戰鬥，都是很美麗的。",
     }
   },
   "elesa": {
     "encounter": {
-      1: `C'est fini! When I'm certain of that, I feel an electric jolt run through my body! 
-                    $I want to feel the sensation, so now my beloved Pokémon are going to make your head spin!`,
+      1: "最後一擊！\n在確信這一點的時候全身會流淌過電流！$為追求這個快感，\n我要用可愛的寶可夢們讓你頭暈眼花。",
     },
     "victory": {
-      1: "I meant to make your head spin, but you shocked me instead."
+      1: "本想讓你頭暈的，\n結果我倒反被你電到了。",
     },
     "defeat": {
-      1: "That was unsatisfying somehow… Will you give it your all next time?"
+      1: "感覺還不夠啊……下次能使出全力來嗎？",
     }
   },
   "skyla": {
     "encounter": {
-      1: `It's finally time for a showdown! That means the Pokémon battle that decides who's at the top, right? 
-                    $I love being on the summit! 'Cause you can see forever and ever from high places! 
-                    $So, how about you and I have some fun?`,
+      1: "終於到決戰了！\n這是決定頂點的寶可夢對戰吧？$我最喜歡頂點了！\n在高的地方能看到很遠很遠！$好了！就讓我和你好好地玩一場吧！",
     },
     "victory": {
-      1: "Being your opponent in battle is a new source of strength to me. Thank you!"
+      1: "和你的戰鬥讓我更強了……謝謝。",
     },
     "defeat": {
-      1: "Win or lose, you always gain something from a battle, right?"
+      1: "不管是贏了還是輸了，戰鬥都能得到一些東西。",
     }
   },
   "brycen": {
     "encounter": {
-      1: `There is also strength in being with other people and Pokémon. 
-                    $Receiving their support makes you stronger. I'll show you this power!`,
+      1: "有其他的人和寶可夢在一起，$這份支持會讓自己更強…\n讓我來給你展示一下這樣的強大吧！",
     },
     "victory": {
-      1: "The wonderful combination of you and your Pokémon! What a beautiful friendship!"
+      1: "你和你的寶可夢！配合得天衣無縫！\n華麗的友情！",
     },
     "defeat": {
-      1: "Extreme conditions really test you and train you!"
+      1: "嘗試極限！鍛鍊！",
     }
   },
   "drayden": {
     "encounter": {
-      1: `What I want to find is a young Trainer who can show me a bright future. 
-                    $Let's battle with everything we have: your skill, my experience, and the love we've raised our Pokémon with!`,
+      1: "現在我尋求的是\n能讓我看到光明未來的年輕訓練家。$你有多少實力，就讓我用我的經驗，\n我對寶可夢傾注的愛來驗證吧！",
     },
     "victory": {
-      1: "This intense feeling that floods me after a defeat… I don't know how to describe it."
+      1: "失敗後湧現的這灼熱的意志…\n該怎麼說呢…",
     },
     "defeat": {
-      1: "Harrumph! I know your ability is greater than that!"
+      1: "啊啊啊！你的實力就這種程度嗎！",
     }
   },
   "grant": {
     "encounter": {
-      1: `There is only one thing I wish for. 
-                    $That by surpassing one another, we find a way to even greater heights.`,
+      1: "我只期待一件事。. $通過超越彼此，\n我們找到通往更高境界的道路。",
     },
     "victory": {
-      1: "You are a wall that I am unable to surmount!"
+      1: "你是一堵我無法逾越的牆！",
     },
     "defeat": {
-      1: `Do not give up. 
-                    $That is all there really is to it. 
-                    $The most important lessons in life are simple.`,
+      1: "不要放棄。\n這就是人生的真諦。$大道至簡。",
     }
   },
   "korrina": {
     "encounter": {
-      1: "Time for Lady Korrina's big appearance!"
+      1: "小女子科爾尼來大顯身手啦！",
     },
     "victory": {
-      1: "It's your very being that allows your Pokémon to evolve!"
+      1: "正因為有你，\n才能讓你的寶可夢進化！",
     },
     "defeat": {
-      1: "What an explosive battle!"
+      1: "好勁爆的戰鬥呀！",
     }
   },
   "clemont": {
     "encounter": {
-      1: "Oh! I'm glad that we got to meet!"
+      1: "哦！我很高興我們能見面！",
     },
     "victory": {
-      1: "Your passion for battle inspires me!"
+      1: "你對戰鬥的熱情激勵了我！",
     },
     "defeat": {
-      1: "Looks like my Trainer-Grow-Stronger Machine, Mach 2 is really working!"
+      1: "看來我的訓練師成長強化機-馬克2號，\n真的起作用了！",
     }
   },
   "valerie": {
     "encounter": {
-      1: `Oh, if it isn't a young Trainer… It is lovely to get to meet you like this. 
-                    $Then I suppose you have earned yourself the right to a battle, as a reward for your efforts. 
-                    $The elusive Fairy may appear frail as the breeze and delicate as a bloom, but it is strong.`,
+      1: "哦，這不是一個年輕的訓練師嗎……\n能這樣遇見你真是太好了。 $我想你已經獲得了這場戰鬥的資格，\n作為對你努力的獎勵。 $難以捉摸的妖精可能看起來像微風一樣脆弱，\n像花朵一樣精緻，但很堅強。",
     },
     "victory": {
-      1: "I hope that you will find things worth smiling about tomorrow…"
+      1: "我希望明天你也能找到一些值得會心微笑的事物……",
     },
     "defeat": {
-      1: "Oh goodness, what a pity…"
+      1: "哦，天哪，這太遺憾了……",
     }
   },
   "wulfric": {
     "encounter": {
-      1: `You know what? We all talk big about what you learn from battling and bonds and all that…
-                    $But really, I just do it 'cause it's fun. 
-                    $Who cares about the grandstanding? Let's get to battling!`,
+      1: "你知道嗎？\n我們都說戰鬥能學到東西，羈絆之類的，$但實際上，我這麼做只是因為有趣。 $誰在乎那些華而不實的東西？\n我們來戰鬥吧！",
     },
     "victory": {
-      1: "Outstanding! I'm tough as an iceberg, but you smashed me through and through!"
+      1: "傑出！我像冰山一樣堅硬，但你徹底擊潰了我！",
     },
     "defeat": {
-      1: "Tussle with me and this is what happens!"
+      1: "和我幹的結果就是這樣！",
     }
   },
   "kabu": {
     "encounter": {
-      1: `Every Trainer and Pokémon trains hard in pursuit of victory. 
-                    $But that means your opponent is also working hard to win. 
-                    $In the end, the match is decided by which side is able to unleash their true potential.`,
+      1: "每個訓練師和寶可夢都在努力追求勝利。$但這意味著你的對手也在努力贏得勝利。$最終，比賽是由哪一方\n能夠發揮出他們真正的潛力來決定的。",
     },
     "victory": {
-      1: "I'm glad I could battle you today!"
+      1: "我很高興今天能和你戰鬥！",
     },
     "defeat": {
-      1: "That's a great way for me to feel my own growth!"
+      1: "這是我感覺自己的成長的好方式！",
     }
   },
   "bea": {
     "encounter": {
-      1: `Do you have an unshakable spirit that won't be moved, no matter how you are attacked? 
-                    $I think I'll just test that out, shall I?`,
+      1: "你有沒有一種不可動搖的精神，\n受到什麼攻擊都安如磐石？ $就讓我來試試吧？",
     },
     "victory": {
-      1: "I felt the fighting spirit of your Pokémon as you led them in battle."
+      1: "我感受到了你的寶可夢\n在戰鬥中被你指揮時的戰鬥之魂。",
     },
     "defeat": {
-      1: "That was the best sort of match anyone could ever hope for."
+      1: "每個人都希望能有一場這樣的好比賽。",
     }
   },
   "opal": {
     "encounter": {
-      1: "Let me have a look at how you and your partner Pokémon behave!"
+      1: "讓我看看你和你的寶可夢的表現如何！",
     },
     "victory": {
-      1: "Your pink is still lacking, but you're an excellent Trainer with excellent Pokémon."
+      1: "你不夠粉嫩呀，\n但你是一個優秀的訓練師，$還擁有著優秀的寶可夢。",
     },
     "defeat": {
-      1: "Too bad for you, I guess."
+      1: "對你來說太慘了，我覺得。",
     }
   },
   "bede": {
     "encounter": {
-      1: "I suppose I should prove beyond doubt just how pathetic you are and how strong I am."
+      1: "就讓我來證明你有多可憐，我有多強大。",
     },
     "victory": {
-      1: "I see… Well, that's fine. I wasn't really trying all that hard anyway."
+      1: "我懂了……好吧。其實我還沒拿出全力呢。",
     },
     "defeat": {
-      1: "Not a bad job, I suppose."
+      1: "我覺得我打得不錯。",
     }
   },
   "gordie": {
     "encounter": {
-      1: "So, let's get this over with."
+      1: "好了，我們來做個了結吧！",
     },
     "victory": {
-      1: "I just want to climb into a hole… Well, I guess it'd be more like falling from here."
+      1: "我只想要挖一個洞爬進去……$好吧，現在更像是掉了進去。",
     },
     "defeat": {
-      1: "Battle like you always do, victory will follow!"
+      1: "像往常一樣戰鬥，勝利就會隨之而來！",
     }
   },
   "marnie": {
     "encounter": {
-      1: `The truth is, when all's said and done… I really just wanna become Champion for myself! 
-                    $So don't take it personal when I kick your butt!`,
+      1: "事實上，言而總之… \n人家自己也想當冠軍呀! $所以別認為我在針對你！",
     },
     "victory": {
-      1: "OK, so I lost… But I got to see a lot of the good points of you and your Pokémon!"
+      1: "好吧，我還是輸了……\n但是我看到了很多你和你寶可夢的優點哦",
     },
     "defeat": {
-      1: "Hope you enjoyed our battle tactics."
+      1: "希望你喜歡我們的戰鬥策略。",
     }
   },
   "raihan": {
     "encounter": {
-      1: "I'm going to defeat the Champion, win the whole tournament, and prove to the world just how strong the great Raihan really is!"
+      1: "我打算擊敗冠軍，贏得錦標賽，\n並向世界證明奇巴納大人有多強！",
     },
     "victory": {
-      1: `I look this good even when I lose. 
-                    $It's a real curse. 
-                    $Guess it's time for another selfie!`,
+      1: "就算輸了我也好帥。$真是罪孽深重啊。$看來得再來張自拍了！",
     },
     "defeat": {
-      1: "Let's take a selfie to remember this."
+      1: "為了紀念此刻，來張自拍吧！",
     }
   },
   "brassius": {
     "encounter": {
-      1: "I assume you are ready? Let our collaborative work of art begin!"
+      1: "你應該準備好了吧，\一起完成這美麗的藝術作品吧！",
     },
     "victory": {
-      1: "Ahhh…vant-garde!"
+      1: "啊……前衛！",
     },
     "defeat": {
-      1: "I will begin on a new piece at once!"
+      1: "我將立即開始新的創作！",
     }
   },
   "iono": {
     "encounter": {
-      1: `How're ya feelin' about this battle?
-                    $...
-                    $Let's get this show on the road! How strong is our challenger? 
-                    $I 'unno! Let's find out together!`,
+      1: "誰在奇述！是我奇樹！\n做好準備了嗎！$...$直播開始！\n今天的小挑戰者有多強？$奇樹不知道哦~\n讓我們一起來看看吧！",
     },
     "victory": {
-      1: "You're as flashy and bright as a 10,000,000-volt Thunderbolt, friendo!"
+      1: "你的閃耀如1000萬伏特！朋友！",
     },
     "defeat": {
-      1: "Your eyeballs are MINE!"
+      1: "奇樹奇樹捕獲你的眼球！",
     }
   },
   "larry": {
     "encounter": {
-      1: "When all's said and done, simplicity is strongest."
+      1: "歸根結底，普普通通就是最強。",
     },
     "victory": {
-      1: "A serving of defeat, huh?"
+      1: "哼，給我上了一道“戰敗”。",
     },
     "defeat": {
-      1: "I'll call it a day."
+      1: "下班打卡，走了",
     }
   },
   "ryme": {
     "encounter": {
-      1: "Come on, baby! Rattle me down to the bone!"
+      1: "寶貝, 一起! \n搖滾搖到骨子裡!",
     },
     "victory": {
-      1: "You're cool, my friend—you move my SOUL!"
+      1: "你好酷！我佩服！\n我的靈魂為你哭！",
     },
     "defeat": {
-      1: "Later, baby!"
+      1: "再會, 寶貝!",
     }
   },
   "grusha": {
     "encounter": {
-      1: "All I need to do is make sure the power of my Pokémon chills you to the bone!"
+      1: "我保證我寶可夢的力量\n會讓你感到寒冷徹骨！",
     },
     "victory": {
-      1: "Your burning passion… I kinda like it, to be honest."
+      1: "你燃燒的熱情……老實說，我有點喜歡。",
     },
     "defeat": {
-      1: "Things didn't heat up for you."
+      1: "你沒有升溫。",
     }
   },
   "marnie_elite": {
     "encounter": {
-      1: "You've made it this far, huh? Let's see if you can handle my Pokémon!",
-      2: "I'll give it my best shot, but don't think I'll go easy on you!"
+      1: "你已經走到這一步了？$哼~ 看看你能不能對付我的寶可夢！",
+      2: "我將全力以赴, 別覺得我會手下留情哦~",
     },
     "victory": {
-      1: "I can't believe I lost... But you deserved that win. Well done!",
-      2: "Looks like I've still got a lot to learn. Great battle, though!"
+      1: "不敢相信…我輸掉了… $但是你確實贏得好，幹得漂亮捏~",
+      2: "看來我還要多多學習呀，\n不過你打得很不錯哦~",
     },
     "defeat": {
-      1: "You put up a good fight, but I've got the edge! Better luck next time!",
-      2: "Seems like my training's paid off. Thanks for the battle!"
+      1: "你打得不錯，但是我更勝一籌！$祝你下次好運啦~",
+      2: "看來我的練習有所回報了。\n感謝一戰！",
     }
   },
   "nessa_elite": {
     "encounter": {
-      1: "The tides are turning in my favor. Ready to get swept away?",
-      2: "Let's make some waves with this battle! I hope you're prepared!"
+      1: "海流正在朝著對我有利的方向轉變。$準備好被捲走了嗎？",
+      2: "讓我們在這場戰鬥中掀起波瀾！$我希望你做好準備！",
     },
     "victory": {
-      1: "You navigated those waters perfectly... Well done!",
-      2: "Looks like my currents were no match for you. Great job!"
+      1: "你完美地渡過了這片水域......幹得好！",
+      2: "看來我現在無法與你匹敵。幹得好！",
     },
     "defeat": {
-      1: "Water always finds a way. That was a refreshing battle!",
-      2: "You fought well, but the ocean's power is unstoppable!"
+      1: "水總能找到出路。\n真是爽快的一戰！",
+      2: "你打得很好，\n但海洋的力量是不可阻擋的！",
     }
   },
   "bea_elite": {
     "encounter": {
-      1: "Prepare yourself! My fighting spirit burns bright!",
-      2: "Let's see if you can keep up with my relentless pace!"
+      1: "做好準備！我的鬥志熊熊燃燒！",
+      2: "讓我們看看你是否能跟上我永不停歇的節奏！",
     },
     "victory": {
-      1: "Your strength... It's impressive. You truly deserve this win.",
-      2: "I've never felt this intensity before. Amazing job!"
+      1: "你的實力......令人印象深刻。\n你真的值得這場勝利。",
+      2: "我以前從未感受過這種強度。\n太棒了！",
     },
     "defeat": {
-      1: "Another victory for my intense training regimen! Well done!",
-      2: "You've got strength, but I trained harder. Great battle!"
+      1: "我的高強度訓練又帶來勝利了！\n幹得好！",
+      2: "你有實力，但我的訓練更努力。\n精彩的戰鬥！",
     }
   },
   "allister_elite": {
     "encounter": {
-      1: "Shadows fall... Are you ready to face your fears?",
-      2: "Let's see if you can handle the darkness that I command."
+      1: "黑暗降臨...你準備好面對你的恐懼了嗎？",
+      2: "讓我們看看你能否應對我所操控的黑暗。",
     },
     "victory": {
-      1: "You've dispelled the shadows... For now. Well done.",
-      2: "Your light pierced through my darkness. Great job."
+      1: "你已經驅散了陰影......\n暫時。幹得很好。",
+      2: "你的光芒刺穿了我的黑暗。幹得好。",
     },
     "defeat": {
-      1: "The shadows have spoken... Your strength isn't enough.",
-      2: "Darkness triumphs... Maybe next time you'll see the light."
+      1: "黑影在輕語...\n你的力量還不夠。",
+      2: "黑暗獲勝了......\n也許下次你會看到光明。",
     }
   },
   "raihan_elite": {
     "encounter": {
-      1: "Storm's brewing! Let's see if you can weather this fight!",
-      2: "Get ready to face the eye of the storm!"
+      1: "風暴來臨！你能挺過這場戰鬥嗎！",
+      2: "準備好面對風暴之眼！",
     },
     "victory": {
-      1: "You've bested the storm... Incredible job!",
-      2: "You rode the winds perfectly... Great battle!"
+      1: "你戰勝了風暴...難以置信！",
+      2: "你完美地駕馭了風……打得好！",
     },
     "defeat": {
-      1: "Another storm weathered, another victory claimed! Well fought!",
-      2: "You got caught in my storm! Better luck next time!"
+      1: "又一場風暴襲來，又一場勝利！打得好！",
+      2: "你被我的風暴捲入了！祝你下次好運！",
     }
   },
   "rival": {
     "encounter": {
-      1: `@c{smile}Hey, I was looking for you! I knew you were eager to get going but I expected at least a goodbye…
-                    $@c{smile_eclosed}So you're really pursuing your dream after all?\n I almost can't believe it.
-                    $@c{serious_smile_fists}Since we're here, how about a battle?\nAfter all, I want to make sure you're ready.
-                    $@c{serious_mopen_fists}Don't hold back, I want you to give me everything you've got!`
+      1: "@c{smile}嘿，我在找你呢！我知道你急著上路，\n但至少說個再見吧…$@c{smile_eclosed}所以你終於要開始追逐夢想了？\n我幾乎不敢相信。$@c{serious_smile_fists}來都來了，來一場對戰怎麼樣？\n畢竟，我想看看你是不是準備周全了。$@c{serious_mopen_fists}不要手下留情，我想讓你全力以赴！",
     },
     "victory": {
-      1: `@c{shock}Wow… You cleaned me out.\nAre you actually a beginner?
-                   $@c{smile}Maybe it was a bit of luck but…\nWho knows you might just be able to go all the way.
-                   $By the way, the professor asked me to give you these items. They look pretty cool.
-                   $@c{serious_smile_fists}Good luck out there!`
+      1: "@c{shock}哇…你徹底擊敗了我。\n你是真初學者嗎？$@c{smile}也許是靠點運氣，但是…\n誰知道，你可能真的能一路走下去。$順便說一下，博士讓我給你這些東西。它們看起來可牛了。$@c{serious_smile_fists}祝你好运！",
     },
   },
   "rival_female": {
     "encounter": {
-      1: `@c{smile_wave}There you are! I've been looking everywhere for you!\n@c{angry_mopen}Did you forget to say goodbye to your best friend?
-                    $@c{smile_ehalf}You're going after your dream, huh?\nThat day is really today isn't it…
-                    $@c{smile}Anyway, I'll forgive you for forgetting me, but on one condition. @c{smile_wave_wink}You have to battle me!
-                    $@c{angry_mopen}Give it your all! Wouldn't want your adventure to be over before it started, right?`
+      1: "@c{smile_wave}你在這兒啊！我到處找你呢！$@c{angry_mopen}你忘了和你最好的朋友說再見了嗎？$@c{smile_ehalf}你要去追逐夢想了，對吧？\n從今天開始，是不是…$@c{smile}不管怎樣，忘了我的事就原諒你吧，\n但有個條件。@c{smile_wave_wink}你必須和我對戰！$@c{angry_mopen}全力以赴！\n你也不想讓你的冒險在開始之前就結束了，對吧？",
     },
     "victory": {
-      1: `@c{shock}You just started and you're already this strong?!@d{96}\n@c{angry}You totally cheated, didn't you?
-                    $@c{smile_wave_wink}Just kidding!@d{64} @c{smile_eclosed}I lost fair and square… I have a feeling you're going to do really well out there.
-                    $@c{smile}By the way, the professor wanted me to give you some items. Hopefully they're helpful!
-                    $@c{smile_wave}Do your best like always! I believe in you!`
+      1: "@c{shock}你剛開始就已經這麼強了？！@d{96}$@c{angry}你是不是開了？$@c{smile_wave_wink}只是開個玩笑啦！@d{64} @c{smile_eclosed}我輸地心服口服了…\n我感覺你出去挺有天賦的。$@c{smile}順便說一下，博士想讓我給你一些東西。\n希望它們能幫上忙！$@c{smile_wave}像往常一樣盡力而為！\n我相信你！",
     },
   },
   "rival_2": {
     "encounter": {
-      1: `@c{smile}Hey, you're here too?\n@c{smile_eclosed}Still a perfect record, huh…?
-                $@c{serious_mopen_fists}I know it kind of looks like I followed you here, but that's mostly not true.
-                $@c{serious_smile_fists}Honestly though, I've been itching for a rematch since you beat me back at home.
-                $I've been doing a lot of my own training so I'll definitely put up a fight this time.
-                $@c{serious_mopen_fists}Don't hold back, just like before!\nLet's go!`
+      1: "@c{smile}嘿，你也在這裡嗎？$@c{smile_eclosed}一路過關斬將，是吧？$@c{serious_mopen_fists}我知道看起來好像我尾隨著你來到這裡，\n怎麼可能啦。$@c{serious_smile_fists}說真的，自從你在老家打敗我後，\n我就一直很渴望再比一場。$我自己也進行了很多訓練，\n所以這次我肯定會好好打一場。$@c{serious_mopen_fists}不要手下留情，就像以前一樣！$讓我們開始吧！",
     },
     "victory": {
-      1: `@c{neutral_eclosed}Oh. I guess I was overconfident.
-                $@c{smile}That's alright, though. I figured this might happen.\n@c{serious_mopen_fists}It just means I need to try harder for next time!\n
-                $@c{smile}Oh, not that you really need the help, but I had an extra one of these lying around and figured you might want it.\n
-                $@c{serious_smile_fists}Don't expect another one after this, though!\nI can't keep giving my opponent an advantage after all.
-                $@c{smile}Anyway, take care!`
+      1: "@c{neutral_eclosed}哦。我過於自信了。$@c{smile}不過沒關係。我猜到可能會這樣。$@c{serious_mopen_fists}這只意味著我下次需要更努力！$$@c{smile}呃，不是特意幫你，我正好有多餘的這個，\n我覺得你可能想要。$$@c{serious_smile_fists}不過這次之後別指望再有了！$我不能一直給我的對手優勢。$@c{smile}反正，保重！",
     },
   },
   "rival_2_female": {
     "encounter": {
-      1: `@c{smile_wave}Oh, fancy meeting you here. Looks like you're still undefeated. @c{angry_mopen}Huh… Not bad!
-                $@c{angry_mopen}I know what you're thinking, and no, I wasn't creeping on you. @c{smile_eclosed}I just happened to be in the area.
-                $@c{smile_ehalf}I'm happy for you but I just want to let you know that it's OK to lose sometimes.
-                $@c{smile}We learn from our mistakes, often more than we would if we kept succeeding.
-                $@c{angry_mopen}In any case, I've been training hard for our rematch, so you'd better give it your all!`
+      1: "@c{smile_wave}哦，真巧，在這裡遇見你。\n看來你還沒輸過嘛。@c{angry_mopen}哈……好傢伙！$@c{angry_mopen}我知道你在想什麼，\n不，我才不會跟蹤你什麼呢。 @c{smile_eclosed}我只是碰巧在附近。$@c{smile_ehalf}我為你感到高興，但我只想讓你知道\n有時輸了是可以接受的。$@c{smile}我們從錯誤中學到的東西\n往往比我們一直成功時學到的還要多。$@c{angry_mopen}無論如何，我為了我們的複賽已經努力訓練了\n所以你最好全力以赴！",
     },
     "victory": {
-      1: `@c{neutral}I… wasn't supposed to lose that time…
-                $@c{smile}Aw well. That just means I'll have to train even harder for next time!
-                $@c{smile_wave}I also got you another one of these!\n@c{smile_wave_wink}No need to thank me~.
-                $@c{angry_mopen}This is the last one, though! You won't be getting anymore freebies from me after this!
-                $@c{smile_wave}Keep at it!`
+      1: "@c{neutral}我……沒打算會輸來著……$@c{smile}嗷……好吧。看來我要再更加努力訓練了！$@c{smile_wave}我還給你帶了個這個$@c{smile_wave_wink}不用謝我哦~.$@c{angry_mopen}不過，這是最後一個啦！\n 你可別想再從我這賺小便宜了~$@c{smile_wave}要保重哦！",
     },
     "defeat": {
-      1: "It's OK to lose sometimes…"
+      1: "輸了有時候也不要緊的…",
     }
   },
   "rival_3": {
     "encounter": {
-      1: `@c{smile}Hey, look who it is! It's been a while.\n@c{neutral}You're… still undefeated? Huh.
-                $@c{neutral_eclosed}Things have been kind of… strange.\nIt's not the same back home without you.
-                $@c{serious}I know it's selfish, but I need to get this off my chest.\n@c{neutral_eclosed}I think you're in over your head here.
-                $@c{serious}Never losing once is just unrealistic.\nWe need to lose sometimes in order to grow.
-                $@c{neutral_eclosed}You've had a great run but there's still so much ahead, and it only gets harder. @c{neutral}Are you prepared for that?
-                $@c{serious_mopen_fists}If so, prove it to me.`
+      1: "@c{smile}嘿，看看這是誰！好久不見啊。$@c{neutral}你……還是沒輸過？哈…$@c{neutral_eclosed}這有點……不太對勁。$沒有你一起，回家的感覺有很不一樣。$@c{serious}雖然我知道這挺別扭的，但我就直說了。$@c{neutral_eclosed}我覺得你有點兒難以理解。$@c{serious}沒有人能夠戰無不勝。$失敗乃成功之母。$@c{neutral_eclosed}你已經贏得了夠好的成績，\n但前面道阻且長，只會愈發艱難。 @c{neutral}你做好準備了沒？$@c{serious_mopen_fists}如果做好了，證明給我看吧。",
     },
     "victory": {
-      1: "@c{angry_mhalf}This is ridiculous… I've hardly stopped training…\nHow are we still so far apart?"
+      1: "@c{angry_mhalf}這太離譜了……我幾乎從沒停下訓練……$我們之間的差距怎麼還是這麼大？",
     },
   },
   "rival_3_female": {
     "encounter": {
-      1: `@c{smile_wave}Long time no see! Still haven't lost, huh.\n@c{angry}You're starting to get on my nerves. @c{smile_wave_wink}Just kidding!
-                $@c{smile_ehalf}But really, don't you miss home by now? Or… me?\nI… I mean, we've really missed you.
-                $@c{smile_eclosed}I support you in your dream and everything, but the reality is you're going to lose sooner or later.
-                $@c{smile}And when you do, I'll be there for you like always.\n@c{angry_mopen}Now, let me show you how strong I've become!`
+      1: "@c{smile_wave}好久不見！還沒輸過，對吧。$@c{angry}我覺得你點煩了。@c{smile_wave_wink}開玩笑啦！$@c{smile_ehalf}但說真的，你現在不想家嗎？\n 不想…我嗎?$我……我的意思是，我們真的很想你。$@c{smile_eclosed}我支持你的一切，包括你的夢想。\n但現實就是你早晚會經歷失敗。$@c{smile}當你失敗的時候，我想像往常一樣陪在你身邊。$@c{angry_mopen}現在，給你看看我變得多強了吧！",
     },
     "victory": {
-      1: "@c{shock}After all that… it wasn't enough…?\nYou'll never come back at this rate…"
-
+      1: "@c{shock}都這樣了……還是不夠嗎？$這樣下去，你就永遠不會回來了……",
     },
     "defeat": {
-      1: "You gave it your best, now let's go home."
+      1: "你盡力了，現在讓我們回家吧。",
     }
   },
   "rival_4": {
     "encounter": {
-      1: `@c{neutral}Hey.
-                $I won't mince words or pleasantries with you.\n@c{neutral_eclosed}I'm here to win, plain and simple.
-                $@c{serious_mhalf_fists}I've learned to maximize my potential by putting all my time into training.
-                $@c{smile}You get a lot of extra time when you cut out the unnecessary sleep and social interaction.
-                $@c{serious_mopen_fists}None of that matters anymore, not until I win.
-                $@c{neutral_eclosed}I've even reached the point where I don't lose anymore.\n@c{smile_eclosed}I suppose your philosophy wasn't so wrong after all.
-                $@c{angry_mhalf}Losing is for the weak, and I'm not weak anymore.
-                $@c{serious_mopen_fists}Prepare yourself.`
+      1: "@c{neutral}嘿。$我不會對你說什麼拐彎抹角的客套話。$@c{neutral_eclosed}我來，就是為了贏，簡單明了。$@c{serious_mhalf_fists}我將所有時間都投入到訓練中，\n掌握了如何發揮我的潛力。$@c{smile}當你削減掉不必要的睡眠和社交後，\n你會得到很多額外的時間。$@c{serious_mopen_fists}但在我獲勝之前，這些都不重要了。$@c{neutral_eclosed}我甚至已經到達了戰無不敗的境地。$@c{smile_eclosed}我覺得你的思路倒是也沒毛病。$@c{angry_mhalf}失敗是屬於弱者的，\n我已經不再軟弱了。$@c{serious_mopen_fists}準備好吧。",
     },
     "victory": {
-      1: "@c{neutral}What…@d{64} What are you?"
+      1: "@c{neutral}你…@d{64} 你是人嗎？",
     },
   },
   "rival_4_female": {
     "encounter": {
-      1: `@c{neutral}It's me! You didn't forget about me again… did you?
-                $@c{smile}You should be proud of how far you made it. Congrats!\nBut it looks like it's the end of your journey.
-                $@c{smile_eclosed}You've awoken something in me I never knew was there.\nIt seems like all I do now is train.
-                $@c{smile_ehalf}I hardly even eat or sleep now, I just train my Pokémon all day, getting stronger every time.
-                $@c{neutral}In fact, I… hardly recognize myself.
-                $And now, I've finally reached peak performance.\nI don't think anyone could beat me now.
-                $And you know what? It's all because of you.\n@c{smile_ehalf}I don't know whether to thank you or hate you.
-                $@c{angry_mopen}Prepare yourself.`
+      1: "@c{neutral}是我哦！沒又把我忘了吧……是嗎？$@c{smile}你應該為自己走了這麼遠感到驕傲。恭喜你！$但看來你的旅程到此為止了。$@c{smile_eclosed}你喚醒了我體內一些我從未有過的東西。\n就像我現在滿腦子除了訓練還是訓練。$@c{smile_ehalf}我幾乎已經沒空吃飯睡覺了，\n我沒日沒夜訓練我的寶可夢，每次都能變得更強。$@c{neutral}事實上，我……幾乎不認識自己了。$現在，我終於達到了巔峰。\n我感覺我已經戰無不勝了。$而且你知道嗎？這一切都是因為你。$@c{smile_ehalf}我不知道到底是該感謝你還是恨你。$@c{angry_mopen}做好準備…",
     },
     "victory": {
-      1: "@c{neutral}What…@d{64} What are you?"
-
+      1: "@c{neutral}你…@d{64} 你是人嗎？",
     },
     "defeat": {
-      1: "$@c{smile}You should be proud of how far you made it."
+      1: "@c{smile}你應該為自己走了這麼遠感到驕傲。",
     }
   },
   "rival_5": {
@@ -2254,47 +2102,18 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "rival_6": {
     "encounter": {
-      1: `@c{smile_eclosed}We meet again.
-                $@c{neutral}I've had some time to reflect on all this.\nThere's a reason this all seems so strange.
-                $@c{neutral_eclosed}Your dream, my drive to beat you…\nIt's all a part of something greater.
-                $@c{serious}This isn't about me, or about you… This is about the world, @c{serious_mhalf_fists}and it's my purpose to push you to your limits.
-                $@c{neutral_eclosed}Whether I've fulfilled that purpose I can't say, but I've done everything in my power.
-                $@c{neutral}This place we ended up in is terrifying… Yet somehow I feel unphased, like I've been here before.
-                $@c{serious_mhalf_fists}You feel the same, don't you?
-                $@c{serious}…and it's like something here is speaking to me.\nThis is all the world's known for a long time now.
-                $Those times we cherished together that seem so recent are nothing but a distant memory.
-                $@c{neutral_eclosed}Who can say whether they were ever even real in the first place.
-                $@c{serious_mopen_fists}You need to keep pushing, because if you don't, it will never end. You're the only one who can do this.
-                $@c{serious_smile_fists}I hardly know what any of this means, I just know that it's true.
-                $@c{serious_mopen_fists}If you can't defeat me here and now, you won't stand a chance.`
+      1: "@c{smile_eclosed}又見面了。$@c{neutral}我花了點時間思考反思\n有理由說明為什麼這一切都顯得如此奇妙。$@c{neutral_eclosed}你所追逐的夢想，我想擊敗你的決心…$這都是某種龐大使命的一部分。$@c{serious}這不僅僅是關於我和你… 而是關於這個世界， @c{serious_mhalf_fists}我的使命就是將你推向極限。$@c{neutral_eclosed}我是否達成了那個使命，我說不上來，但我已盡我所能。$@c{neutral}我們最終到達的這個地方看起來很可怕\n 然而不知何故，我心中毫無畏懼，好像我早就來過這裡。$@c{serious_mhalf_fists}你也有同樣的感覺，對吧？$@c{serious}……這裡好像有什麼東西在呼喚我。\n這是世界早已記錄的一切。$那些我們經歷過的時光，那些記憶猶新的過去，\n其實只是遙遠的回憶。$@c{neutral_eclosed}誰能保證它們是否真的發生過。$@c{serious_mopen_fists}你必須繼續前進，不然的話，這一切將永無止境。\n這件事而只有你能辦成。$@c{serious_smile_fists}我不清楚這一切意味著什麼，但我知道……$@c{serious_mopen_fists}如果現在你不能就此擊敗我，\n你將毫無機會可言。",
     },
     "victory": {
-      1: `@c{smile_eclosed}It looks like my work is done here.
-                $I want you to promise me one thing.\n@c{smile}After you heal the world, please come home.`
+      1: "@c{smile_eclosed}看來我的使命在這裡已經完成了。\n我想讓你答應我一件事。$@c{smile}在你拯救世界之後，要回家。",
     },
   },
   "rival_6_female": {
     "encounter": {
-      1: `@c{smile_ehalf}So it's just us again.
-                $@c{smile_eclosed}You know, I keep going around and around in my head…
-                $@c{smile_ehalf}There's something to all this, why everything seems so strange now…
-                $@c{smile}You have your dream, and I have this ambition in me…
-                $I just can't help but feel there's a greater purpose to all this, to what we're doing, you and I.
-                $@c{smile_eclosed}I think I'm supposed to push you… to your limits.
-                $@c{smile_ehalf}I'm not sure if I've been doing a good job at that, but I've tried my best up to now.
-                $It's something about this strange and dreadful place… Everything seems so clear…
-                $This… is all the world's known for a long time now.
-                $@c{smile_eclosed}It's like I can barely remember the memories we cherished together.
-                $@c{smile_ehalf}Were they even real? They seem so far away now…
-                $@c{angry_mopen}You need to keep pushing, because if you don't, it will never end. You're the only one who can do this.
-                $@c{smile_ehalf}I… don't know what all this means… but I feel it's true.
-                $@c{neutral}If you can't defeat me here and now, you won't stand a chance.`
+      1: "@c{smile_ehalf}又只有我們兩個人了。$@c{smile_eclosed}你知道嗎，我在心裡想啊想，\n想了好久……$@c{smile_ehalf}這一切背後是有什麼原因嗎，\n為什麼一切現在看起來都這麼奇怪……$@c{smile}你有你的夢想，而我內心有這個抱負……$我不禁感覺這一切背後有一個更龐大的力量，$掌控者我們所做的一切，你和我之間。$@c{smile_eclosed}}我想我注定要推動你……到你的極限。$@c{smile_ehalf}我不清楚我是否一直做得很好，\n但到現在為止，我已經盡力了。$這個奇怪而可怕的地方……\n一切看起來都那麼清晰……$這是世界早已記錄的一切。$@c{smile_eclosed}我好像記不清我們一起度過的日子了。$@c{smile_ehalf}那些回憶到底是真的嗎？\n怎麼感覺這麼久遠……$@c{angry_mopen}你得繼續前進，不然的話，這一切將永無止境。\n你是唯一能做到這件事的。$@c{smile_ehalf}}我……不知道這一切意味著什麼……\n但我明白$@c{neutral}如果你現在不能就此擊敗我，\n你將毫無機會可言。",
     },
     "victory": {
-      1: `@c{smile_ehalf}I… I think I fulfilled my purpose…
-                $@c{smile_eclosed}Promise me… After you heal the world… Please… come home safe.
-                $@c{smile_ehalf}…Thank you.`
-
+      1: "@c{smile_ehalf}我……\n我想我完成了我的使命……$@c{smile_eclosed}答應我……在你拯救世界之後\n……要……平安到家。$@c{smile_ehalf}……謝謝你。",
     },
   },
 };
@@ -2305,17 +2124,17 @@ export const PGFdialogue: DialogueTranslationEntries = PGMdialogue;
 
 // Dialogue of the endboss of the game when the player character is male (Or unset)
 export const PGMbattleSpecDialogue: SimpleTranslationEntries = {
-  "encounter": `It appears the time has finally come once again.\nYou know why you have come here, do you not?
-               $You were drawn here, because you have been here before.\nCountless times.
-               $Though, perhaps it can be counted.\nTo be precise, this is in fact your 5,643,853rd cycle.
-               $Each cycle your mind reverts to its former state.\nEven so, somehow, remnants of your former selves remain.
-               $Until now you have yet to succeed, but I sense a different presence in you this time.\n
-               $You are the only one here, though it is as if there is… another.
-               $Will you finally prove a formidable challenge to me?\nThe challenge I have longed for for millennia?
-               $We begin.`,
-  "firstStageWin": `I see. The presence I felt was indeed real.\nIt appears I no longer need to hold back.
-                    $Do not disappoint me.`,
-  "secondStageWin": "…Magnificent."
+  "encounter": `看來終於又到了那個時候。\n你知道自己為何會來到這裡，不是嗎？
+    $你被吸引到這裡，因為你以前就來過這裡。\n無數次。
+    $儘管，或許可以數一數。\n準確地說，這實際上是你的第5,643,853次循環。
+    $每一次循環，你的思想都會恢復到之前的狀態。\n即便如此，不知何故，你之前自我的殘留仍然存在。
+    $直到現在，你仍未成功，但我感覺這次你身上有一種異樣的氣息。
+    $你是這裡唯一的人，儘管感覺上還有……另一個人。
+    $你最終會成為對我來的一個硬茬嗎？\n我渴望了數千年的挑戰？
+    $我們，開始。`,
+  "firstStageWin": `我明白了。我所感覺到的氣息確實是真實的。\n看來我不再需要保留實力了。
+        $別讓我失望。`,
+  "secondStageWin": "…漂亮。"
 };
 
 // Dialogue of the endboss of the game when the player character is female. For languages that do not have gendered pronouns, this can be set to PGMbattleSpecDialogue.
@@ -2324,21 +2143,21 @@ export const PGFbattleSpecDialogue: SimpleTranslationEntries = PGMbattleSpecDial
 // Dialogue that does not fit into any other category (e.g. tutorial messages, or the end of the game). For when the player character is male
 export const PGMmiscDialogue: SimpleTranslationEntries = {
   "ending":
-      `@c{smile}Oh? You won?@d{96} @c{smile_eclosed}I guess I should've known.\nBut, you're back now.
-        $@c{smile}It's over.@d{64} You ended the loop.
-        $@c{serious_smile_fists}You fulfilled your dream too, didn't you?\nYou didn't lose even once.
-        $@c{neutral}I'm the only one who'll remember what you did.@d{96}\nI guess that's okay, isn't it?
-        $@c{serious_smile_fists}Your legend will always live on in our hearts.
-        $@c{smile_eclosed}Anyway, I've had about enough of this place, haven't you? Let's head home.
-        $@c{serious_smile_fists}Maybe when we get back, we can have another battle?\nIf you're up to it.`,
+      `@c{smile}哦?你贏了？@d{96} @c{smile_eclosed}我應該早猜到了\n你回來了。
+        $@c{smile}結束了。@d{64} 你終結了這個循環。
+        $@c{serious_smile_fists}你也完成了自己的夢想，不是嗎？\n你甚至一次都沒失敗。
+        $@c{neutral}我是唯一能夠記得你所作所為的人@d{96}\n我覺得這應該也還行吧？
+        $@c{serious_smile_fists}你的傳奇將永遠留存於我們心中。
+        $@c{smile_eclosed}不管了，我真是受夠這個地方了，你也一樣嗎？我們回家吧。
+        $@c{serious_smile_fists}可能等我們回家以後，再打一場？\n要是你想的話`,
   "ending_female":
-      `@c{shock}You're back?@d{32} Does that mean…@d{96} you won?!\n@c{smile_ehalf}I should have known you had it in you.
-        $@c{smile_eclosed}Of course… I always had that feeling.\n@c{smile}It's over now, right? You ended the loop.
-        $@c{smile_ehalf}You fulfilled your dream too, didn't you?\nYou didn't lose even once.
-        $I'll be the only one to remember what you did.\n@c{angry_mopen}I'll try not to forget!
-        $@c{smile_wave_wink}Just kidding!@d{64} @c{smile}I'd never forget.@d{32}\nYour legend will live on in our hearts.
-        $@c{smile_wave}Anyway,@d{64} it's getting late…@d{96} I think?\nIt's hard to tell in this place.
-        $Let's go home. @c{smile_wave_wink}Maybe tomorrow, we can have another battle, for old time's sake?`,
+      `@c{shock}你回來了？@d{32} 也就是說…@d{96} 你贏了呀！？\n@c{smile_ehalf}我應該早料到了。
+        $@c{smile_eclosed}當然…我一直有這種感覺\n@c{smile}一切都結束了，對麼？ 你打破了循環。
+        $@c{smile_ehalf}你也完成了自己的夢想，不是嗎？\n你甚至一次都沒失敗。
+        $我是唯一能夠記得你所作所為的人\n@c{angry_mopen}我會努力不忘掉哒！
+        $@c{smile_wave_wink}開玩笑啦，@d{64} @c{smile}我才不會忘呢。@d{32}\n你的傳奇將永遠留存於我們心中。
+        $@c{smile_wave}不管了，@d{64} 時候不早了@d{96} ，應該吧？\n在這地方還真搞不清楚。
+        $一起回家吧。 @c{smile_wave_wink}可能明天，我們再來打一場，為了重溫回憶嘛~`,
 };
 // Dialogue that does not fit into any other category (e.g. tutorial messages, or the end of the game). For when the player character is female. For languages that do not have gendered pronouns, this can be set to PGMmiscDialogue.
 export const PGFmiscDialogue: SimpleTranslationEntries = PGMmiscDialogue;
@@ -2348,113 +2167,82 @@ export const PGFmiscDialogue: SimpleTranslationEntries = PGMmiscDialogue;
 export const PGMdoubleBattleDialogue: DialogueTranslationEntries = {
   "blue_red_double": {
     "encounter": {
-      1: `Blue: Hey Red, let's show them what we're made of!
-                  $Red: ...
-                  $Blue: This is Pallet Town Power!`,
+      1: "青綠：嘿，赤紅，\n讓這傢伙看看我們是什麼來頭！$赤紅:...$青綠: 見識下真新鎮的實力！",
     },
     "victory": {
-      1: `Blue: That was a great battle!
-              $Red: ...`,
+      1: "青綠：打得真不錯$赤紅: ...",
     },
   },
   "red_blue_double": {
     "encounter": {
-      1: `Red: ...!
-                  $Blue: He never talks much.
-                    $Blue: But dont let that fool you! He is a champ after all!`,
+      1: "赤紅: ...!$青綠：他人狠話不多。$青綠： 他人狠話不多。$青綠： 但別被他耍了，\n畢竟他可是個冠軍！",
     },
     "victory": {
-      1: `Red: ...!
-                $Blue: Next time we will beat you!`,
+      1: "赤紅: ...!$青綠: 下次我們一定會贏你！",
     },
   },
   "tate_liza_double": {
     "encounter": {
-      1: `Tate: Are you suprised?
-                  $Liza: We are two gym leaders at once!
-                  $Tate: We are twins!
-                  $Liza: We dont need to talk to understand each other!
-                  $Tate: Twice the power...
-                  $Liza: Can you handle it?`,
+      1: "小楓:嘿嘿嘿……你驚訝嗎？$小南:這裡有兩個道館館主？$小楓: 我們是雙胞胎！$小南:我們無需交談，因為……我們可以通曉彼此的想法$小楓: 我們的組合……$小南: 你能打敗嗎？",
     },
     "victory": {
-      1: `Tate: What? Our combination was perfect!
-                  $Liza: Looks like we need to train more...`,
+      1: "小楓：什麼？我們的組合……$小南：被瓦解了！",
     },
   },
   "liza_tate_double": {
     "encounter": {
-      1: `Liza: Hihihi... Are you suprised?
-                  $Tate: Yes, we are really two gym leaders at once!
-                  $Liza: This is my twin brother Tate!
-                  $Tate: And this is my twin sister Liza!
-                  $Liza: Don't you think we are a perfect combination?`
+      1: "小南：呵呵呵……你驚訝吧？$小楓：這裡有兩個道館館主？$小南：我們可以通曉……$小楓：彼此的想法……$小南：全在我們腦中！$小楓：我們的組合……$小南：你能打敗嗎？",
     },
     "victory": {
-      1: `Liza: Are we...
-                  $Tate: ...not as strong as we thought?`,
+      1: "小楓：你和你的寶可夢……$小南：簡直像親兄弟姐妹！",
     },
   },
   "wallace_steven_double": {
     "encounter": {
-      1: `Steven: Wallace, let's show them the power of the champions!
-                  $Wallace: We will show you the power of Hoenn!
-                  $Steven: Let's go!`,
+      1: "大吾：米可利, 展現冠軍的實力吧！$米可利：我們將展示豐緣的實力！$米可利：我們將展示豐緣的實力！$大吾：要上了！",
     },
     "victory": {
-      1: `Steven: That was a great battle!
-                  $Wallace: We will win next time!`,
+      1: "大吾：打得真不錯！$米可利：我們下次會贏的！",
     },
   },
   "steven_wallace_double": {
     "encounter": {
-      1: `Steven: Do you have any rare pokémon?
-          $Wallace: Steven... We are here for a battle, not to show off our pokémon.
-            $Steven: Oh... I see... Let's go then!`,
+      1: "大吾：你有什麼稀有的寶可夢嗎？$米可利：大吾……我們是來對戰的，\n不是來炫耀寶可夢的。$大吾：哦……知道了… 那麼要上了！",
     },
     "victory": {
-      1: `Steven: Now that we are done with the battle, let's show off our pokémon!
-            $Wallace: Steven...`,
+      1: "大吾：戰鬥結束了，\n來看看我的稀有寶可夢！$米可利：大吾……",
     },
   },
   "alder_iris_double": {
     "encounter": {
-      1:  `Alder: We are the strongest trainers in Unova!
-                  $Iris: Fights against strong trainers are the best!`,
+      1: "阿戴克：我們倆是合眾最強的訓練家！$艾莉絲：與最強來一場最激烈的戰鬥吧！",
     },
     "victory": {
-      1:   `Alder: Wow! You are super strong!
-                  $Iris: We will win next time!`,
+      1: "阿戴克：哇哦！你真是超級厲害！$艾莉絲：我們下次會贏的啦！",
     },
   },
   "iris_alder_double": {
     "encounter": {
-      1:   `Iris: Welcome Challenger! I am THE Unova Champion!
-                  $Alder: Iris, aren't you a bit too excited?`,
+      1: "艾莉絲：歡迎！挑戰者，\n合眾地區最強的冠軍大駕光臨！$阿戴克：艾莉絲，你是不是有點太興奮了…",
     },
     "victory": {
-      1:    `Iris: A loss like this is not easy to take...
-                  $Alder: But we will only get stronger with every loss!`,
+      1: "艾莉絲：這樣的失敗可不好受啊…$阿戴克：但是只有失敗才能讓我們變強！",
     },
   },
   "piers_marnie_double": {
     "encounter": {
-      1:   `Marnie: Brother, let's show them the power of Spikemuth!
-                  $Piers: We bring darkness!`,
+      1: "瑪俐：哥哥，給他們展現尖釘鎮的實力！$聶梓：我們帶來黑暗！",
     },
     "victory": {
-      1:  `Marnie: You brought light to our darkness!
-                  $Piers: Its too bright...`,
+      1: "瑪俐：你的強光亮瞎我們的黑暗了啦……$聶梓：實在太亮了…",
     },
   },
   "marnie_piers_double": {
     "encounter": {
-      1:  `Piers: Ready for a concert?
-                    $Marnie: Brother... They are here to fight, not to sing...`,
+      1: "聶梓: 台下準備好了嗎！$瑪俐: 哥哥，我們是來對戰的，\n不是來唱歌的……",
     },
     "victory": {
-      1:  `Piers: Now that was a great concert!
-                    $Marnie: Brother...`,
+      1: "聶梓：這首歌獻給大家！$瑪俐：哥哥……",
     },
   },
 };

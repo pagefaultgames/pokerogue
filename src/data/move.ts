@@ -1,9 +1,7 @@
-import { Moves } from "./enums/moves";
 import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
 import { BattleEndPhase, MovePhase, NewBattlePhase, PartyStatusCurePhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../phases";
 import { BattleStat, getBattleStatName } from "./battle-stat";
 import { EncoreTag } from "./battler-tags";
-import { BattlerTagType } from "./enums/battler-tag-type";
 import { getPokemonMessage } from "../messages";
 import Pokemon, { AttackMoveResult, EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../field/pokemon";
 import { StatusEffect, getStatusEffectHealText, isNonVolatileStatusEffect, getNonVolatileStatusEffects} from "./status-effect";
@@ -11,21 +9,23 @@ import { Type } from "./type";
 import * as Utils from "../utils";
 import { WeatherType } from "./weather";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
-import { ArenaTagType } from "./enums/arena-tag-type";
 import { UnswappableAbilityAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr, applyPostDefendAbAttrs, PostDefendContactApplyStatusEffectAbAttr, MoveAbilityBypassAbAttr, ReverseDrainAbAttr, FieldPreventExplosiveMovesAbAttr, ForceSwitchOutImmunityAbAttr, BlockItemTheftAbAttr, applyPostAttackAbAttrs, ConfusionOnStatusEffectAbAttr, HealFromBerryUseAbAttr } from "./ability";
-import { Abilities } from "./enums/abilities";
 import { allAbilities } from "./ability";
 import { PokemonHeldItemModifier, BerryModifier, PreserveBerryModifier } from "../modifier/modifier";
 import { BattlerIndex } from "../battle";
 import { Stat } from "./pokemon-stat";
 import { TerrainType } from "./terrain";
 import { SpeciesFormChangeActiveTrigger } from "./pokemon-forms";
-import { Species } from "./enums/species";
 import { ModifierPoolType } from "#app/modifier/modifier-type";
 import { Command } from "../ui/command-ui-handler";
-import { Biome } from "./enums/biome";
 import i18next, { Localizable } from "../plugins/i18n";
 import { getBerryEffectFunc } from "./berry";
+import { Abilities } from "#enums/abilities";
+import { ArenaTagType } from "#enums/arena-tag-type";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { Biome } from "#enums/biome";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 
 export enum MoveCategory {
   PHYSICAL,
@@ -1251,11 +1251,18 @@ export class PartyStatusCureAttr extends MoveEffectAttr {
     this.abilityCondition = abilityCondition;
   }
 
+  //The same as MoveEffectAttr.canApply, except it doesn't check for the target's HP.
+  canApply(user: Pokemon, target: Pokemon, move: Move, args: any[]) {
+    const isTargetValid =
+      (this.selfTarget && user.hp && !user.getTag(BattlerTagType.FRENZY)) ||
+      (!this.selfTarget && (!target.getTag(BattlerTagType.PROTECTED) || move.hasFlag(MoveFlags.IGNORE_PROTECT)));
+    return !!isTargetValid;
+  }
+
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!super.apply(user, target, move, args)) {
+    if (!this.canApply(user, target, move, args)) {
       return false;
     }
-
     this.addPartyCurePhase(user);
   }
 
@@ -1533,6 +1540,14 @@ export class IncrementMovePriorityAttr extends MoveAttr {
   }
 }
 
+/**
+ * Attribute used for attack moves that hit multiple times per use, e.g. Bullet Seed.
+ *
+ * Applied at the beginning of {@linkcode MoveEffectPhase}.
+ *
+ * @extends MoveAttr
+ * @see {@linkcode apply}
+ */
 export class MultiHitAttr extends MoveAttr {
   private multiHitType: MultiHitType;
 
@@ -1542,49 +1557,77 @@ export class MultiHitAttr extends MoveAttr {
     this.multiHitType = multiHitType !== undefined ? multiHitType : MultiHitType._2_TO_5;
   }
 
+  /**
+   * Set the hit count of an attack based on this attribute instance's {@linkcode MultiHitType}.
+   * If the target has an immunity to this attack's types, the hit count will always be 1.
+   *
+   * @param user {@linkcode Pokemon} that used the attack
+   * @param target {@linkcode Pokemon} targeted by the attack
+   * @param move {@linkcode Move} being used
+   * @param args [0] {@linkcode Utils.IntegerHolder} storing the hit count of the attack
+   * @returns True
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     let hitTimes: integer;
-    const hitType = new Utils.IntegerHolder(this.multiHitType);
-    applyMoveAttrs(ChangeMultiHitTypeAttr, user, target, move, hitType);
-    switch (hitType.value) {
-    case MultiHitType._2_TO_5:
-      {
-        const rand = user.randSeedInt(16);
-        const hitValue = new Utils.IntegerHolder(rand);
-        applyAbAttrs(MaxMultiHitAbAttr, user, null, hitValue);
-        if (hitValue.value >= 10) {
-          hitTimes = 2;
-        } else if (hitValue.value >= 4) {
-          hitTimes = 3;
-        } else if (hitValue.value >= 2) {
-          hitTimes = 4;
-        } else {
-          hitTimes = 5;
-        }
-      }
-      break;
-    case MultiHitType._2:
-      hitTimes = 2;
-      break;
-    case MultiHitType._3:
-      hitTimes = 3;
-      break;
-    case MultiHitType._10:
-      hitTimes = 10;
-      break;
-    case MultiHitType.BEAT_UP:
-      const party = user.isPlayer() ? user.scene.getParty() : user.scene.getEnemyParty();
-      // No status means the ally pokemon can contribute to Beat Up
-      hitTimes = party.reduce((total, pokemon) => {
-        return total + (pokemon.id === user.id ? 1 : pokemon?.status && pokemon.status.effect !== StatusEffect.NONE ? 0 : 1);
-      }, 0);
+
+    if (target.getAttackMoveEffectiveness(user, new PokemonMove(move.id)) === 0) {
+      // If there is a type immunity, the attack will stop no matter what
+      hitTimes = 1;
+    } else {
+      const hitType = new Utils.IntegerHolder(this.multiHitType);
+      applyMoveAttrs(ChangeMultiHitTypeAttr, user, target, move, hitType);
+      hitTimes = this.getHitCount(user, target);
     }
+
     (args[0] as Utils.IntegerHolder).value = hitTimes;
     return true;
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
     return -5;
+  }
+
+  /**
+   * Calculate the number of hits that an attack should have given this attribute's
+   * {@linkcode MultiHitType}.
+   *
+   * @param user {@linkcode Pokemon} using the attack
+   * @param target {@linkcode Pokemon} targeted by the attack
+   * @returns The number of hits this attack should deal
+   */
+  getHitCount(user: Pokemon, target: Pokemon): integer {
+    switch (this.multiHitType) {
+    case MultiHitType._2_TO_5:
+    {
+      const rand = user.randSeedInt(16);
+      const hitValue = new Utils.IntegerHolder(rand);
+      applyAbAttrs(MaxMultiHitAbAttr, user, null, hitValue);
+      if (hitValue.value >= 10) {
+        return 2;
+      } else if (hitValue.value >= 4) {
+        return 3;
+      } else if (hitValue.value >= 2) {
+        return 4;
+      } else {
+        return 5;
+      }
+    }
+    case MultiHitType._2:
+      return 2;
+      break;
+    case MultiHitType._3:
+      return 3;
+      break;
+    case MultiHitType._10:
+      return 10;
+      break;
+    case MultiHitType.BEAT_UP:
+      const party = user.isPlayer() ? user.scene.getParty() : user.scene.getEnemyParty();
+      // No status means the ally pokemon can contribute to Beat Up
+      return party.reduce((total, pokemon) => {
+        return total + (pokemon.id === user.id ? 1 : pokemon?.status && pokemon.status.effect !== StatusEffect.NONE ? 0 : 1);
+      }, 0);
+    }
   }
 }
 
@@ -1790,7 +1833,7 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
 }
 
 /**
- * Attribute that causes targets of the move to eat a berry. If chosenBerry is not overriden, a random berry will be picked from the target's inventory.
+ * Attribute that causes targets of the move to eat a berry. If chosenBerry is not overridden, a random berry will be picked from the target's inventory.
  */
 export class EatBerryAttr extends MoveEffectAttr {
   protected chosenBerry: BerryModifier;
@@ -3317,6 +3360,19 @@ export class ShellSideArmCategoryAttr extends VariableMoveCategoryAttr {
 
 export class VariableMoveTypeAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    return false;
+  }
+}
+
+export class FormChangeItemTypeAttr extends VariableMoveTypeAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if ([user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.ARCEUS) || [user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.SILVALLY)) {
+      const form = user.species.speciesId === Species.ARCEUS || user.species.speciesId === Species.SILVALLY ? user.formIndex : user.fusionSpecies.formIndex;
+
+      move.type = Type[Type[form]];
+      return true;
+    }
+
     return false;
   }
 }
@@ -5097,13 +5153,42 @@ export class SuppressAbilitiesAttr extends MoveEffectAttr {
 
     target.summonData.abilitySuppressed = true;
 
-    target.scene.queueMessage(getPokemonMessage(target, " ability\nwas suppressed!"));
+    target.scene.queueMessage(getPokemonMessage(target, "'s ability\nwas suppressed!"));
 
     return true;
   }
 
   getCondition(): MoveConditionFunc {
     return (user, target, move) => !target.getAbility().hasAttr(UnsuppressableAbilityAbAttr);
+  }
+}
+
+/**
+ * Applies the effects of {@linkcode SuppressAbilitiesAttr} if the target has already moved this turn.
+ * @extends MoveEffectAttr
+ * @see {@linkcode Moves.CORE_ENFORCER} (the move which uses this effect)
+ */
+export class SuppressAbilitiesIfActedAttr extends MoveEffectAttr {
+  /**
+   * If the target has already acted this turn, apply a {@linkcode SuppressAbilitiesAttr} effect unless the
+   * abillity cannot be suppressed. This is a secondary effect and has no bearing on the success or failure of the move.
+   *
+   * @returns True if the move occurred, otherwise false. Note that true will be returned even if the target has not
+   * yet moved or if the target's abiilty is un-suppressable.
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args)) {
+      return false;
+    }
+
+    if (target.turnData.acted) {
+      const suppressAttr = new SuppressAbilitiesAttr();
+      if (suppressAttr.getCondition()(user, target, move)) {
+        suppressAttr.apply(user, target, move, args);
+      }
+    }
+
+    return true;
   }
 }
 
@@ -6605,7 +6690,7 @@ export function initMoves() {
       .attr(ConfuseAttr)
       .soundBased(),
     new AttackMove(Moves.JUDGMENT, Type.NORMAL, MoveCategory.SPECIAL, 100, 100, 10, -1, 0, 4)
-      .partial(),
+      .attr(FormChangeItemTypeAttr),
     new AttackMove(Moves.BUG_BITE, Type.BUG, MoveCategory.PHYSICAL, 60, 100, 20, -1, 0, 4)
       .attr(StealEatBerryAttr),
     new AttackMove(Moves.CHARGE_BEAM, Type.ELECTRIC, MoveCategory.SPECIAL, 50, 90, 10, 70, 0, 4)
@@ -7092,6 +7177,7 @@ export function initMoves() {
       .attr(StatChangeAttr, [ BattleStat.DEF, BattleStat.SPDEF ], -1, true),
     new AttackMove(Moves.HYPERSPACE_FURY, Type.DARK, MoveCategory.PHYSICAL, 100, -1, 5, 100, 0, 6)
       .attr(StatChangeAttr, BattleStat.DEF, -1, true)
+      .makesContact(false)
       .ignoresProtect(),
     /* Unused */
     new AttackMove(Moves.BREAKNECK_BLITZ__PHYSICAL, Type.NORMAL, MoveCategory.PHYSICAL, -1, -1, 1, -1, 0, 7)
@@ -7291,7 +7377,7 @@ export function initMoves() {
       .attr(MatchUserTypeAttr),
     new AttackMove(Moves.CORE_ENFORCER, Type.DRAGON, MoveCategory.SPECIAL, 100, 100, 10, -1, 0, 7)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
-      .partial(),
+      .attr(SuppressAbilitiesIfActedAttr),
     new AttackMove(Moves.TROP_KICK, Type.GRASS, MoveCategory.PHYSICAL, 70, 100, 15, 100, 0, 7)
       .attr(StatChangeAttr, BattleStat.ATK, -1),
     new StatusMove(Moves.INSTRUCT, Type.PSYCHIC, -1, 15, -1, 0, 7)
@@ -7375,7 +7461,7 @@ export function initMoves() {
     new AttackMove(Moves.NATURES_MADNESS, Type.FAIRY, MoveCategory.SPECIAL, -1, 90, 10, -1, 0, 7)
       .attr(TargetHalfHpDamageAttr),
     new AttackMove(Moves.MULTI_ATTACK, Type.NORMAL, MoveCategory.PHYSICAL, 120, 100, 10, -1, 0, 7)
-      .partial(),
+      .attr(FormChangeItemTypeAttr),
     /* Unused */
     new AttackMove(Moves.TEN_MILLION_VOLT_THUNDERBOLT, Type.ELECTRIC, MoveCategory.SPECIAL, 195, -1, 1, -1, 0, 7)
       .partial()
@@ -7466,8 +7552,14 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, false, 1)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, true, false, 1)
       .bitingMove(),
-    new SelfStatusMove(Moves.STUFF_CHEEKS, Type.NORMAL, -1, 10, 100, 0, 8)
-      .unimplemented(),
+    new SelfStatusMove(Moves.STUFF_CHEEKS, Type.NORMAL, -1, 10, 100, 0, 8) // TODO: Stuff Cheeks should not be selectable when the user does not have a berry, see wiki
+      .attr(EatBerryAttr)
+      .attr(StatChangeAttr, BattleStat.DEF, 2, true)
+      .condition((user) => {
+        const userBerries = user.scene.findModifiers(m => m instanceof BerryModifier);
+        return userBerries.length > 0;
+      })
+      .partial(),
     new SelfStatusMove(Moves.NO_RETREAT, Type.FIGHTING, -1, 5, 100, 0, 8)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD ], 1, true)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, true, true, 1),
