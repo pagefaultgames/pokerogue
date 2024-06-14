@@ -4,12 +4,12 @@ import { Mode } from "./ui";
 import * as Utils from "../utils";
 import { addWindow } from "./ui-theme";
 import MessageUiHandler from "./message-ui-handler";
-import { GameDataType } from "#app/data/enums/game-data-type";
 import { OptionSelectConfig, OptionSelectItem } from "./abstact-option-select-ui-handler";
 import { Tutorial, handleTutorial } from "../tutorial";
 import { updateUserInfo } from "../account";
 import i18next from "../plugins/i18n";
-import {Button} from "../enums/buttons";
+import {Button} from "#enums/buttons";
+import { GameDataType } from "#enums/game-data-type";
 
 export enum MenuOptions {
   GAME_SETTINGS,
@@ -156,6 +156,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       manageDataOptions.push({
         label: i18next.t("menuUiHandler:importData"),
         handler: () => {
+          ui.revertMode();
           this.scene.gameData.importData(GameDataType.SYSTEM);
           return true;
         },

@@ -1,6 +1,6 @@
 import re
 
-filenames = [['src/data/enums/moves.ts', 'move'], ['src/data/enums/abilities.ts', 'ability'], ['src/data/enums/species.ts', 'Pokémon']]
+filenames = [['src/enums/moves.ts', 'move'], ['src/enums/abilities.ts', 'ability'], ['src/enums/species.ts', 'Pokémon']]
 
 commentBlockStart   = re.compile('\/\*[^\*].*')     # Regex for the start of a comment block
 commentBlockEnd     = re.compile('.*,\*\/')         # Regex for the end of a comment block 
