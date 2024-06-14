@@ -1,4 +1,4 @@
-import {Button} from "#app/enums/buttons";
+import {Button} from "#enums/buttons";
 import BattleScene from "#app/battle-scene";
 import {Mode} from "#app/ui/ui";
 import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";

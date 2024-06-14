@@ -3,7 +3,6 @@ import BattleScene, { AnySound } from "../battle-scene";
 import { Variant, VariantSet, variantColorCache } from "#app/data/variant";
 import { variantData } from "#app/data/variant";
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from "../ui/battle-info";
-import { Moves } from "../data/enums/moves";
 import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, VariableMoveTypeAttr, StatusMoveTypeImmunityAttr, MoveTarget, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatChangesAttr, SacrificialAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatChangeAttr, RechargeAttr, ChargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit, MoveFlags } from "../data/move";
 import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from "../data/pokemon-species";
 import * as Utils from "../utils";
@@ -20,18 +19,12 @@ import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "../data/tms";
 import { DamagePhase, FaintPhase, LearnMovePhase, ObtainStatusEffectPhase, StatChangePhase, SwitchSummonPhase, ToggleDoublePositionPhase  } from "../phases";
 import { BattleStat } from "../data/battle-stat";
 import { BattlerTag, BattlerTagLapseType, EncoreTag, HelpingHandTag, HighestStatBoostTag, TypeBoostTag, getBattlerTag } from "../data/battler-tags";
-import { BattlerTagType } from "../data/enums/battler-tag-type";
-import { Species } from "../data/enums/species";
 import { WeatherType } from "../data/weather";
 import { TempBattleStat } from "../data/temp-battle-stat";
 import { ArenaTagSide, WeakenMoveScreenTag, WeakenMoveTypeTag } from "../data/arena-tag";
-import { ArenaTagType } from "../data/enums/arena-tag-type";
-import { Biome } from "../data/enums/biome";
 import { Ability, AbAttr, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, FieldVariableMovePowerAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, MoveTypeChangeAttr, PreApplyBattlerTagAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldBattleStatMultiplierAbAttrs, FieldMultiplyBattleStatAbAttr } from "../data/ability";
-import { Abilities } from "#app/data/enums/abilities";
 import PokemonData from "../system/pokemon-data";
 import { BattlerIndex } from "../battle";
-import { BattleSpec } from "../enums/battle-spec";
 import { Mode } from "../ui/ui";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "../ui/party-ui-handler";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
@@ -44,11 +37,18 @@ import { SpeciesFormChange, SpeciesFormChangeActiveTrigger, SpeciesFormChangeMov
 import { TerrainType } from "../data/terrain";
 import { TrainerSlot } from "../data/trainer-config";
 import * as Overrides from "../overrides";
-import { BerryType } from "../data/enums/berry-type";
 import i18next from "../plugins/i18n";
 import { speciesEggMoves } from "../data/egg-moves";
 import { ModifierTier } from "../modifier/modifier-tier";
 import { applyChallenges, ChallengeType } from "#app/data/challenge.js";
+import { Abilities } from "#enums/abilities";
+import { ArenaTagType } from "#enums/arena-tag-type";
+import { BattleSpec } from "#enums/battle-spec";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { BerryType } from "#enums/berry-type";
+import { Biome } from "#enums/biome";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 
 export enum FieldPosition {
   CENTER,
@@ -1004,7 +1004,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param {boolean} passive If true, check if passive can be applied instead of non-passive
    * @returns {Ability} The passive ability of the pokemon
    */
-  canApplyAbility(passive: boolean = false, forceBypass: boolean = false): boolean {
+  canApplyAbility(passive: boolean = false): boolean {
     if (passive && !this.hasPassive()) {
       return false;
     }
@@ -1032,7 +1032,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         return false;
       }
     }
-    return (this.hp || ability.isBypassFaint || forceBypass) && !ability.conditions.find(condition => !condition(this));
+    return (this.hp || ability.isBypassFaint) && !ability.conditions.find(condition => !condition(this));
   }
 
   /**
@@ -1111,7 +1111,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return undefined;
     }
 
-    return this.getAttackMoveEffectiveness(source, move, true);
+    return this.getAttackMoveEffectiveness(source, move, !this.battleData?.abilityRevealed);
   }
 
   /**
@@ -1146,7 +1146,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     let multiplier = types.map(defType => {
       if (source) {
         const ignoreImmunity = new Utils.BooleanHolder(false);
-        applyAbAttrs(IgnoreTypeImmunityAbAttr, source, ignoreImmunity, moveType, defType);
+        if (source.isActive(true) && source.hasAbilityWithAttr(IgnoreTypeImmunityAbAttr)) {
+          applyAbAttrs(IgnoreTypeImmunityAbAttr, source, ignoreImmunity, moveType, defType);
+        }
         if (ignoreImmunity.value) {
           return 1;
         }
@@ -2167,12 +2169,22 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     tags.filter(t => t.sourceId === sourceId).forEach(t => t.sourceId = newSourceId);
   }
 
+  /**
+   * Transferring stat changes and Tags
+   * @param source {@linkcode Pokemon} the pokemon whose stats/Tags are to be passed on from, ie: the Pokemon using Baton Pass
+   */
   transferSummon(source: Pokemon): void {
     const battleStats = Utils.getEnumValues(BattleStat);
     for (const stat of battleStats) {
       this.summonData.battleStats[stat] = source.summonData.battleStats[stat];
     }
     for (const tag of source.summonData.tags) {
+
+      // bypass yawn, and infatuation as those can not be passed via Baton Pass
+      if (tag.sourceMove === Moves.YAWN || tag.tagType === BattlerTagType.INFATUATED) {
+        continue;
+      }
+
       this.summonData.tags.push(tag);
     }
     if (this instanceof PlayerPokemon && source.summonData.battleStats.find(bs => bs === 6)) {
@@ -2515,8 +2527,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   * Resets the status of a pokemon.
   * @param revive Whether revive should be cured; defaults to true.
   * @param confusion Whether resetStatus should include confusion or not; defaults to false.
+  * @param reloadAssets Whether to reload the assets or not; defaults to false.
   */
-  resetStatus(revive: boolean = true, confusion: boolean = false): void {
+  resetStatus(revive: boolean = true, confusion: boolean = false, reloadAssets: boolean = false): void {
     const lastStatus = this.status?.effect;
     if (!revive && lastStatus === StatusEffect.FAINT) {
       return;
@@ -2532,6 +2545,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (this.getTag(BattlerTagType.CONFUSED)) {
         this.lapseTag(BattlerTagType.CONFUSED);
       }
+    }
+    if (reloadAssets) {
+      this.loadAssets(false).then(() => this.playAnim());
     }
   }
 
@@ -3795,6 +3811,7 @@ export class PokemonSummonData {
   public disabledTurns: integer = 0;
   public tags: BattlerTag[] = [];
   public abilitySuppressed: boolean = false;
+  public abilitiesApplied: Abilities[] = [];
 
   public speciesForm: PokemonSpeciesForm;
   public fusionSpeciesForm: PokemonSpeciesForm;
@@ -3803,7 +3820,8 @@ export class PokemonSummonData {
   public fusionGender: Gender;
   public stats: integer[];
   public moveset: PokemonMove[];
-  public types: Type[];
+  // If not initialized this value will not be populated from save data.
+  public types: Type[] = null;
 }
 
 export class PokemonBattleData {
@@ -3811,10 +3829,13 @@ export class PokemonBattleData {
   public endured: boolean = false;
   public berriesEaten: BerryType[] = [];
   public abilitiesApplied: Abilities[] = [];
+  public abilityRevealed: boolean = false;
 }
 
 export class PokemonBattleSummonData {
+  /** The number of turns the pokemon has passed since entering the battle */
   public turnCount: integer = 1;
+  /** The list of moves the pokemon has used since entering the battle */
   public moveHistory: TurnMove[] = [];
 }
 

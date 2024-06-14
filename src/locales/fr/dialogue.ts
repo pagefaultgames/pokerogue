@@ -36,26 +36,26 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "lass": {
     "encounter": {
-      1: "Let's have a battle, shall we?",
-      2: "You look like a new trainer. Let's have a battle!",
-      3: "I don't recognize you. How about a battle?",
-      4: "Let's have a fun Pokémon battle!",
-      5: "I'll show you the ropes of how to really use Pokémon!",
-      6: "A serious battle starts from a serious beginning! Are you sure you're ready?",
-      7: "You're only young once. And you only get one shot at a given battle. Soon, you'll be nothing but a memory.",
-      8: "You'd better go easy on me, OK? Though I'll be seriously fighting!",
-      9: "School is boring. I've got nothing to do. Yawn. I'm only battling to kill the time."
+      1: "Affrontons-nous, d'accord ?",
+      2: "Tu as l'air d'un nouveau dresseur. Battons nous !",
+      3: "Je ne te reconnais pas. Que dirais-tu de te battre ?",
+      4: "Amusons-nous pendant ce combat Pokémon !",
+      5: "Je vais t'apprendre à te battre avec des Pokémon !",
+      6: "Un combat doit être pris au sérieux. Es-tu prêt à te battre ?",
+      7: "Tu ne seras pas jeune éternellement. Tu n'auras qu'une chance pendant un combat. Bientôt, tu ne seras plus qu'un souvenir.",
+      8: "Tu ferais mieux d'y aller doucement avec moi. Mais je vais me battre sérieusement !",
+      9: "Je m'ennuie à l'école. Je n'ai rien à faire. *Baille*. Je me bats juste pour passer le temps."
     },
     "victory": {
-      1: "That was impressive! I've got a lot to learn.",
-      2: "I didn't think you'd beat me that bad…",
-      3: "I hope we get to have a rematch some day.",
-      4: "That was pretty amazingly fun! You've totally exhausted me…",
-      5: "You actually taught me a lesson! You're pretty amazing!",
-      6: "Seriously, I lost. That is, like, seriously depressing, but you were seriously cool.",
-      7: "I don't need memories like this. Deleting memory…",
-      8: "Hey! I told you to go easy on me! Still, you're pretty cool when you're serious.",
-      9: "I'm actually getting tired of battling… There's gotta be something new to do…"
+      1: "Wow, c'était impressionnant. J'ai beaucoup à apprendre.",
+      2: "Je ne pensais pas que je perdrais comme ça…",
+      3: "J'espère que j'aurai ma revanche un jour.",
+      4: "C'était super amusant ! Ce combat m'a épuisé…",
+      5: "Tu m'as appris une belle leçon ! Tu es vraiment incroyable !",
+      6: "Vraiment ? J'ai perdu… C'est des choses qui arrivent, ça me déprime mais tu es vraiment très cool.",
+      7: "Je n'ai pas besoin de souvenirs comme ça. *Suppression de la mémoire…*",
+      8: "Hé ! Je t'avais dit d'y aller doucement avec moi ! Mais tu es vraiment trop cool quand tu te bats sérieusement.",
+      9: "J'en ai marre des combats Pokémon… Il doit y avoir de nouvelles choses à faire…"
     }
   },
   "breeder": {
@@ -118,14 +118,14 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "swimmer": {
     "encounter": {
-      1: "Time to dive in!",
-      2: "Let's ride the waves of victory!",
-      3: "Ready to make a splash!",
+      1: "C'est l'heure de plonger dans le combat !",
+      2: "Je vais surfer sur les vagues de la victoire !",
+      3: "Je vais t'éclabousser de mon talent !",
     },
     "victory": {
-      1: "Drenched in defeat!",
-      2: "A wave of defeat!",
-      3: "Back to shore, I guess.",
+      1: "Tu m'as complètement séché",
+      2: "Il semblerait que j'ai surfé sur les vagues de la défaite...",
+      3: "Retour sur la terre ferme je suppose",
     },
   },
   "backpacker": {
