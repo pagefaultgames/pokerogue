@@ -3,7 +3,7 @@ import { Type } from "./type";
 import * as Utils from "../utils";
 import { BattleStat, getBattleStatName } from "./battle-stat";
 import { MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
-import { getPokemonNameWithAffix } from "../messages";
+import { getPokemonNameWithAffix} from "../messages";
 import { Weather, WeatherType } from "./weather";
 import { BattlerTag } from "./battler-tags";
 import { StatusEffect, getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
@@ -1156,7 +1156,7 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
   }
 
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
-    return getPokemonMessage(pokemon, ` transformed into the ${Type[this.moveType]} type!`);
+    return `${i18next.t("abilityTriggers:pokemonTypeChangeAb", { pokemonName: getPokemonNameWithAffix(pokemon),abilityName: abilityName,type:Type[this.moveType] })}`;
   }
 }
 
@@ -4733,19 +4733,19 @@ export function initAbilities() {
       .partial(),
     new Ability(Abilities.VESSEL_OF_RUIN, 9)
       .attr(FieldMultiplyBattleStatAbAttr, Stat.SPATK, 0.75)
-      .attr(PostSummonMessageAbAttr, (user) => getPokemonMessage(user, `'s Vessel of Ruin lowered the ${getStatName(Stat.SPATK)}\nof all surrounding Pokémon!`))
+      .attr(PostSummonMessageAbAttr, (user) => i18next.t("abilityTriggers:vesselOfRuinAb", { pokemonName: getPokemonNameWithAffix(user),statName: getStatName(Stat.SPATK)}))
       .ignorable(),
     new Ability(Abilities.SWORD_OF_RUIN, 9)
       .attr(FieldMultiplyBattleStatAbAttr, Stat.DEF, 0.75)
-      .attr(PostSummonMessageAbAttr, (user) => getPokemonMessage(user, `'s Sword of Ruin lowered the ${getStatName(Stat.DEF)}\nof all surrounding Pokémon!`))
+      .attr(PostSummonMessageAbAttr, (user) => i18next.t("abilityTriggers:swordOfRuinAb", { pokemonName: getPokemonNameWithAffix(user),statName: getStatName(Stat.DEF)}))
       .ignorable(),
     new Ability(Abilities.TABLETS_OF_RUIN, 9)
       .attr(FieldMultiplyBattleStatAbAttr, Stat.ATK, 0.75)
-      .attr(PostSummonMessageAbAttr, (user) => getPokemonMessage(user, `'s Tablets of Ruin lowered the ${getStatName(Stat.ATK)}\nof all surrounding Pokémon!`))
+      .attr(PostSummonMessageAbAttr, (user) => i18next.t("abilityTriggers:tabletsOfRuinAb", { pokemonName: getPokemonNameWithAffix(user),statName: getStatName(Stat.ATK)}))
       .ignorable(),
     new Ability(Abilities.BEADS_OF_RUIN, 9)
       .attr(FieldMultiplyBattleStatAbAttr, Stat.SPDEF, 0.75)
-      .attr(PostSummonMessageAbAttr, (user) => getPokemonMessage(user, `'s Beads of Ruin lowered the ${getStatName(Stat.SPDEF)}\nof all surrounding Pokémon!`))
+      .attr(PostSummonMessageAbAttr, (user) => i18next.t("abilityTriggers:beadsOfRuinAb", { pokemonName: getPokemonNameWithAffix(user),statName: getStatName(Stat.SPDEF)}))
       .ignorable(),
     new Ability(Abilities.ORICHALCUM_PULSE, 9)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.SUNNY)

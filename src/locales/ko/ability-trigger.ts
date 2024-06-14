@@ -52,4 +52,9 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "asOneGlastrierAb": "{{pokemonName}} has two abilities",
   "asOneSpectrierAb": "{{pokemonName}} has two abilities",
   "airlockAb": "The effects of weather disappeared!",
+  "pokemonTypeChangeAb": "{{pokemonName}} transformed into the {{type}} type!",
+  "vesselOfRuinAb": "{{pokemonName}}'s Vessel of Ruin lowered the {{statName}} of all surrounding Pokémon!",
+  "swordOfRuinAb": "{{pokemonName}}'s Sword of Ruin lowered the {{statName}} of all surrounding Pokémon!",
+  "tabletsOfRuinAb": "{{pokemonName}}'s Tablet of Ruin lowered the {{statName}} of all surrounding Pokémon!",
+  "beadsOfRuinAb": "{{pokemonName}}'s Beads of Ruin lowered the {{statName}} of all surrounding Pokémon!",
 } as const;
