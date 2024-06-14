@@ -8,7 +8,6 @@ import { Mode } from "./ui";
 import * as Utils from "../utils";
 import { PokemonFormChangeItemModifier, PokemonHeldItemModifier, SwitchEffectTransferModifier } from "../modifier/modifier";
 import { allMoves } from "../data/move";
-import { Moves } from "../data/enums/moves";
 import { getGenderColor, getGenderSymbol } from "../data/gender";
 import { StatusEffect } from "../data/status-effect";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
@@ -16,10 +15,11 @@ import { pokemonEvolutions } from "../data/pokemon-evolutions";
 import { addWindow } from "./ui-theme";
 import { SpeciesFormChangeItemTrigger } from "../data/pokemon-forms";
 import { getVariantTint } from "#app/data/variant";
-import {Button} from "../enums/buttons";
+import {Button} from "#enums/buttons";
 import { applyChallenges, ChallengeType } from "#app/data/challenge.js";
 import MoveInfoOverlay from "./move-info-overlay";
 import i18next from "i18next";
+import { Moves } from "#enums/moves";
 
 const defaultMessage = "Choose a Pokémon.";
 

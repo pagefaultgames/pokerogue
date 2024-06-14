@@ -2,12 +2,12 @@ import { PokemonHealPhase, StatChangePhase } from "../phases";
 import { getPokemonMessage } from "../messages";
 import Pokemon, { HitResult } from "../field/pokemon";
 import { BattleStat } from "./battle-stat";
-import { BattlerTagType } from "./enums/battler-tag-type";
 import { getStatusEffectHealText } from "./status-effect";
 import * as Utils from "../utils";
 import { DoubleBerryEffectAbAttr, ReduceBerryUseThresholdAbAttr, applyAbAttrs } from "./ability";
 import i18next from "../plugins/i18n";
-import { BerryType } from "./enums/berry-type";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { BerryType } from "#enums/berry-type";
 
 export function getBerryName(berryType: BerryType): string {
   return i18next.t(`berry:${BerryType[berryType]}.name`);
