@@ -4,7 +4,10 @@ import { Stat, getStatName } from "../data/pokemon-stat";
 import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./text";
 
 const ivChartSize = 24;
-const ivChartStatCoordMultipliers = [ [ 0, -1 ], [ 0.825, -0.5 ], [ 0.825, 0.5 ], [ -0.825, -0.5 ], [ -0.825, 0.5 ], [ 0, 1 ] ];
+const ivChartStatCoordMultipliers = [[0, -1], [0.825, -0.5], [0.825, 0.5], [-0.825, -0.5], [-0.825, 0.5], [0, 1]];
+const speedLabelOffset = -3;
+const sideLabelOffset = 1;
+const ivLabelOffset = [0, sideLabelOffset, -sideLabelOffset, sideLabelOffset, -sideLabelOffset, speedLabelOffset];
 const ivChartStatIndexes = [0,1,2,5,4,3]; // swap special attack and speed
 const defaultIvChartData = new Array(12).fill(null).map(() => 0);
 
@@ -51,7 +54,7 @@ export class StatsContainer extends Phaser.GameObjects.Container {
     this.ivStatValueTexts = [];
 
     new Array(6).fill(null).map((_, i: integer) => {
-      const statLabel = addTextObject(this.scene, ivChartBg.x + (ivChartSize) * ivChartStatCoordMultipliers[i][0] * 1.325, ivChartBg.y + (ivChartSize) * ivChartStatCoordMultipliers[i][1] * 1.325 - 4, getStatName(i as Stat), TextStyle.TOOLTIP_CONTENT);
+      const statLabel = addTextObject(this.scene, ivChartBg.x + (ivChartSize) * ivChartStatCoordMultipliers[i][0] * 1.325, ivChartBg.y + (ivChartSize) * ivChartStatCoordMultipliers[i][1] * 1.325 - 4 + ivLabelOffset[i], getStatName(i as Stat), TextStyle.TOOLTIP_CONTENT);
       statLabel.setOrigin(0.5);
 
       this.ivStatValueTexts[i] = addBBCodeTextObject(this.scene, statLabel.x, statLabel.y + 8, "0", TextStyle.TOOLTIP_CONTENT);
@@ -66,6 +69,7 @@ export class StatsContainer extends Phaser.GameObjects.Container {
     if (ivs) {
       const ivChartData = new Array(6).fill(null).map((_, i) => [ (ivs[ivChartStatIndexes[i]] / 31) * ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][0], (ivs[ivChartStatIndexes[i]] / 31) * ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][1] ] ).flat();
       const lastIvChartData = this.statsIvsCache || defaultIvChartData;
+      const perfectIVColor: string = getTextColor(TextStyle.SUMMARY_GOLD, false, (this.scene as BattleScene).uiTheme);
       this.statsIvsCache = ivChartData.slice(0);
 
       this.ivStatValueTexts.map((t: BBCodeText, i: integer) => {
@@ -73,7 +77,7 @@ export class StatsContainer extends Phaser.GameObjects.Container {
 
         // Check to see if IVs are 31, if so change the text style to gold, otherwise leave them be.
         if (ivs[i] === 31) {
-          label += `[color=${getTextColor(TextStyle.SUMMARY_GOLD, false, (this.scene as BattleScene).uiTheme)}][shadow]${ivs[i].toString()}[/shadow][/color]`;
+          label += `[color=${perfectIVColor}][shadow]${ivs[i].toString()}[/shadow][/color]`;
         } else {
           label = ivs[i].toString();
         }
@@ -87,6 +91,13 @@ export class StatsContainer extends Phaser.GameObjects.Container {
         t.setText(`[shadow]${label}[/shadow]`);
       });
 
+      const newColor = ivs.every(iv => iv === 31) ? parseInt(perfectIVColor.substr(1), 16) : 0x98d8a0;
+      const oldColor = this.ivChart.fillColor;
+      const interpolateColor = oldColor !== newColor ? [
+        Phaser.Display.Color.IntegerToColor(oldColor),
+        Phaser.Display.Color.IntegerToColor(newColor)
+      ] : null;
+
       this.scene.tweens.addCounter({
         from: 0,
         to: 1,
@@ -95,6 +106,13 @@ export class StatsContainer extends Phaser.GameObjects.Container {
         onUpdate: (tween: Phaser.Tweens.Tween) => {
           const progress = tween.getValue();
           const interpolatedData = ivChartData.map((v: number, i: integer) => v * progress + (lastIvChartData[i] * (1 - progress)));
+          if (interpolateColor) {
+            this.ivChart.setFillStyle(
+              Phaser.Display.Color.ValueToColor(
+                Phaser.Display.Color.Interpolate.ColorWithColor(interpolateColor[0], interpolateColor[1], 1, progress)
+              ).color,
+              0.75);
+          }
           this.ivChart.setTo(interpolatedData);
         }
       });
