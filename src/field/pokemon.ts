@@ -60,6 +60,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public id: integer;
   public name: string;
   public species: PokemonSpecies;
+  /**Illusion attribute
+   * @property {boolean} active - Whether the ability is active or not.
+   * @property {boolean} available - If the pokemon can create an illusion.
+   * @property {PokemonSpecies} species - The species of the illusion.
+   * @property {string} name - The stored name of the pokemon.
+   * @property {fusionSpecies} fusionSpecies - The fusionned species of the illusion if it's a fusion.
+   */
   public illusion: {active: boolean, available: boolean, species?: PokemonSpecies, name?: string, fusionSpecies?: PokemonSpecies};
   public formIndex: integer;
   public abilityIndex: integer;
@@ -308,6 +315,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
   }
 
+  /**
+   * Generate an illusion of the last pokemon in the party.
+   *
+   * @param {Pokemon} pokemon - The Pokemon that will create an illusion.
+   * @param {Pokemon[]} party - The party of the trainer's pokemon.
+   */
   generateIllusion(pokemon: Pokemon, party: Pokemon[]): void {
     if (pokemon.hasTrainer()) {
       const lastPokemon: Pokemon = party.slice(-1)[0];
@@ -323,7 +336,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       pokemon.loadAssets(false).then(() => pokemon.playAnim());
     } else {
       const availables = [Species.ENTEI, Species.RAIKOU, Species.SUICUNE];
-      const randomIllusion: PokemonSpecies = getPokemonSpecies(availables[Math.floor(Math.random()*3)]);
+      const randomIllusion: PokemonSpecies = getPokemonSpecies(availables[this.randSeedInt(3, 0)]);
       pokemon.illusion = {active: true, available: true, species: randomIllusion, name: pokemon.name};
       pokemon.name = randomIllusion.name;
       pokemon.loadAssets(false).then(() => pokemon.playAnim());
