@@ -2,11 +2,12 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 import Phase from "phaser";
 import GameManager from "#app/test/utils/gameManager";
 import * as overrides from "#app/overrides";
-import { Species } from "#enums/species";
 import { Stat } from "#app/data/pokemon-stat";
 import { EvolutionStatBoosterModifier } from "#app/modifier/modifier";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import * as Utils from "#app/utils";
+import i18next from "#app/plugins/i18n";
+import { Species } from "#enums/species";
 
 describe("Items - Eviolite", () => {
   let phaserGame: Phaser.Game;
@@ -39,28 +40,28 @@ describe("Items - Eviolite", () => {
 
     // Checking consoe log to make sure Eviolite is applied when getBattleStat (with the appropriate stat) is called
     partyMember.getBattleStat(Stat.DEF);
-    expect(consoleSpy).toHaveBeenLastCalledWith("Applied", "Eviolite", "");
+    expect(consoleSpy).toHaveBeenLastCalledWith("Applied", i18next.t("modifierType:ModifierType.EVIOLITE.name"), "");
 
     // Printing dummy console messages along the way so subsequent checks don't pass because of the first
     console.log("");
 
     partyMember.getBattleStat(Stat.SPDEF);
-    expect(consoleSpy).toHaveBeenLastCalledWith("Applied", "Eviolite", "");
+    expect(consoleSpy).toHaveBeenLastCalledWith("Applied", i18next.t("modifierType:ModifierType.EVIOLITE.name"), "");
 
     console.log("");
 
     partyMember.getBattleStat(Stat.ATK);
-    expect(consoleSpy).not.toHaveBeenLastCalledWith("Applied", "Eviolite", "");
+    expect(consoleSpy).not.toHaveBeenLastCalledWith("Applied", i18next.t("modifierType:ModifierType.EVIOLITE.name"), "");
 
     console.log("");
 
     partyMember.getBattleStat(Stat.SPATK);
-    expect(consoleSpy).not.toHaveBeenLastCalledWith("Applied", "Eviolite", "");
+    expect(consoleSpy).not.toHaveBeenLastCalledWith("Applied", i18next.t("modifierType:ModifierType.EVIOLITE.name"), "");
 
     console.log("");
 
     partyMember.getBattleStat(Stat.SPD);
-    expect(consoleSpy).not.toHaveBeenLastCalledWith("Applied", "Eviolite", "");
+    expect(consoleSpy).not.toHaveBeenLastCalledWith("Applied", i18next.t("modifierType:ModifierType.EVIOLITE.name"), "");
   });
 
   it("EVIOLITE held by unevolved, unfused pokemon", async() => {
