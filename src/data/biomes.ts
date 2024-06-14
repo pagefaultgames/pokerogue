@@ -25,9 +25,9 @@ export function getBiomeName(biome: Biome | -1) {
     return i18next.t(`biome:${Biome[biome].toUpperCase()}`);
   }
 }
-type BiomeLink = (Biome | [Biome, integer])[];
+
 interface BiomeLinks {
-  [key: integer]: BiomeLink
+  [key: integer]: Biome | (Biome | [Biome, integer])[]
 }
 
 interface BiomeDepths {
@@ -35,11 +35,11 @@ interface BiomeDepths {
 }
 
 export const biomeLinks: BiomeLinks = {
-  [Biome.TOWN]: [Biome.PLAINS],
+  [Biome.TOWN]: Biome.PLAINS,
   [Biome.PLAINS]: [ Biome.GRASS, Biome.METROPOLIS, Biome.LAKE ],
-  [Biome.GRASS]: [Biome.TALL_GRASS],
+  [Biome.GRASS]: Biome.TALL_GRASS,
   [Biome.TALL_GRASS]: [ Biome.FOREST, Biome.CAVE ],
-  [Biome.SLUM]: [Biome.CONSTRUCTION_SITE],
+  [Biome.SLUM]: Biome.CONSTRUCTION_SITE,
   [Biome.FOREST]: [ Biome.JUNGLE, Biome.MEADOW ],
   [Biome.SEA]: [ Biome.SEABED, Biome.ICE_CAVE ],
   [Biome.SWAMP]: [ Biome.GRAVEYARD, Biome.TALL_GRASS ],
@@ -49,26 +49,26 @@ export const biomeLinks: BiomeLinks = {
   [Biome.MOUNTAIN]: [ Biome.VOLCANO, [ Biome.WASTELAND, 3 ] ],
   [Biome.BADLANDS]: [ Biome.DESERT, Biome.MOUNTAIN ],
   [Biome.CAVE]: [ Biome.BADLANDS, Biome.LAKE ],
-  [Biome.DESERT]: [Biome.RUINS],
-  [Biome.ICE_CAVE]: [Biome.SNOWY_FOREST],
+  [Biome.DESERT]: Biome.RUINS,
+  [Biome.ICE_CAVE]: Biome.SNOWY_FOREST,
   [Biome.MEADOW]: [ Biome.PLAINS, [ Biome.FAIRY_CAVE, 2 ] ],
-  [Biome.POWER_PLANT]: [Biome.FACTORY],
+  [Biome.POWER_PLANT]: Biome.FACTORY,
   [Biome.VOLCANO]: [ Biome.BEACH, [ Biome.ICE_CAVE, 4 ] ],
-  [Biome.GRAVEYARD]: [Biome.ABYSS],
+  [Biome.GRAVEYARD]: Biome.ABYSS,
   [Biome.DOJO]: [ Biome.PLAINS, [ Biome.TEMPLE, 3 ] ],
   [Biome.FACTORY]: [ Biome.PLAINS, [ Biome.LABORATORY, 4 ] ],
   [Biome.RUINS]: [ Biome.FOREST ],
-  [Biome.WASTELAND]: [Biome.BADLANDS],
+  [Biome.WASTELAND]: Biome.BADLANDS,
   [Biome.ABYSS]: [ Biome.CAVE, [ Biome.SPACE, 3 ], [ Biome.WASTELAND, 3 ] ],
-  [Biome.SPACE]: [Biome.RUINS],
+  [Biome.SPACE]: Biome.RUINS,
   [Biome.CONSTRUCTION_SITE]: [ Biome.DOJO, Biome.POWER_PLANT ],
   [Biome.JUNGLE]: [ Biome.TEMPLE ],
   [Biome.FAIRY_CAVE]: [ Biome.ICE_CAVE, [ Biome.SPACE, 3 ] ],
   [Biome.TEMPLE]: [ Biome.SWAMP, [ Biome.RUINS, 3 ] ],
-  [Biome.METROPOLIS]: [Biome.SLUM],
+  [Biome.METROPOLIS]: Biome.SLUM,
   [Biome.SNOWY_FOREST]: [ Biome.FOREST, Biome.LAKE, Biome.MOUNTAIN ],
-  [Biome.ISLAND]: [Biome.SEA],
-  [Biome.LABORATORY]: [Biome.CONSTRUCTION_SITE]
+  [Biome.ISLAND]: Biome.SEA,
+  [Biome.LABORATORY]: Biome.CONSTRUCTION_SITE
 };
 
 export const biomeDepths: BiomeDepths = {};
@@ -87,12 +87,20 @@ export enum BiomePoolTier {
 
 export const uncatchableSpecies: Species[] = [];
 
+export interface SpeciesTree {
+  [key: integer]: Species[]
+}
+
 export interface PokemonPools {
-  [key: integer]: (Species | Record<number, Species[]>)[]
+  [key: integer]: (Species | SpeciesTree)[]
+}
+
+export interface BiomeTierPokemonPools {
+  [key: integer]: PokemonPools
 }
 
 export interface BiomePokemonPools {
-  [key: integer]: Record<number, PokemonPools>
+  [key: integer]: BiomeTierPokemonPools
 }
 
 export interface BiomeTierTrainerPools {
@@ -7657,9 +7665,16 @@ export function initBiomes() {
   biomeDepths[Biome.TOWN] = [ 0, 1 ];
 
   const traverseBiome = (biome: Biome, depth: integer) => {
-    for (const linkedBiomeEntry of biomeLinks[biome]) {
-      const linkedBiome = !Array.isArray(linkedBiomeEntry) ? linkedBiomeEntry as Biome : linkedBiomeEntry[0];
-      const biomeChance = !Array.isArray(linkedBiomeEntry) ? 1 : linkedBiomeEntry[1];
+    const linkedBiomes: (Biome | [ Biome, integer ])[] = Array.isArray(biomeLinks[biome])
+      ? biomeLinks[biome] as (Biome | [ Biome, integer ])[]
+      : [ biomeLinks[biome] as Biome ];
+    for (const linkedBiomeEntry of linkedBiomes) {
+      const linkedBiome = !Array.isArray(linkedBiomeEntry)
+        ? linkedBiomeEntry as Biome
+        : linkedBiomeEntry[0];
+      const biomeChance = !Array.isArray(linkedBiomeEntry)
+        ? 1
+        : linkedBiomeEntry[1];
       if (!biomeDepths.hasOwnProperty(linkedBiome) || biomeChance < biomeDepths[linkedBiome][1] || (depth < biomeDepths[linkedBiome][0] && biomeChance === biomeDepths[linkedBiome][1])) {
         biomeDepths[linkedBiome] = [ depth + 1, biomeChance ];
         traverseBiome(linkedBiome, depth + 1);
