@@ -3,7 +3,7 @@ import { AchievementTranslationEntries } from "#app/plugins/i18n.js";
 // Achievement translations for the when the player character is male
 export const PGMachv: AchievementTranslationEntries = {
   "Achievements": {
-    name: "Trofei",
+    name: "Obiettivi",
   },
   "Locked": {
     name: "Bloccato",
@@ -22,20 +22,20 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "Milionario",
   },
   "10M_MONEY": {
-    name: "L'Un Percento",
+    name: "La numero uno",
   },
 
   "DamageAchv": {
-    description: "Infliggi {{damageAmount}} danno in un colpo",
+    description: "Infliggi {{damageAmount}} danni in un colpo",
   },
   "250_DMG": {
-    name: "Gran Danni!",
+    name: "Grandi danni!",
   },
   "1000_DMG": {
-    name: "Incredibili Danni",
+    name: "Incredibili danni",
   },
   "2500_DMG": {
-    name: "Danni a Palate!",
+    name: "Danni a palate!",
   },
   "10000_DMG": {
     name: "One Punch Man",
@@ -172,97 +172,97 @@ export const PGMachv: AchievementTranslationEntries = {
 
   "MONO_GEN_ONE": {
     name: "Rivale Originale",
-    description: "Completa la modalità sfida generazione uno.",
+    description: "Completa la modalità sfida di prima generazione.",
   },
   "MONO_GEN_TWO": {
     name: "Generazione 1.5",
-    description: "Completa la modalità sfida generazione due.",
+    description: "Completa la modalità sfida di seconda generazione.",
   },
   "MONO_GEN_THREE": {
     name: "Troppa Acqua?",
-    description: "Completa la modalità sfida generazione tre.",
+    description: "Completa la modalità sfida di terza generazione.",
   },
   "MONO_GEN_FOUR": {
     name: "È Davvero La Più Forte?",
-    description: "Completa la modalità sfida generazione quattro.",
+    description: "Completa la modalità sfida di quarta generazione.",
   },
   "MONO_GEN_FIVE": {
     name: "Tutti Originali",
-    description: "Completa la modalità sfida generazione cinque.",
+    description: "Completa la modalità sfida di quinta generazione.",
   },
   "MONO_GEN_SIX": {
     name: "Quasi Reali",
-    description: "Completa la modalità sfida generazione sei.",
+    description: "Completa la modalità sfida di sesta generazione.",
   },
   "MONO_GEN_SEVEN": {
     name: "Solo In Teoria",
-    description:  "Completa la modalità sfida generazione sette.",
+    description:  "Completa la modalità sfida di settima generazione.",
   },
   "MONO_GEN_EIGHT": {
     name: "È Champion-time!",
-    description:  "Completa la modalità sfida generazione otto.",
+    description:  "Completa la modalità sfida di ottava generazione.",
   },
   "MONO_GEN_NINE": {
     name: "Non si Stava Impegnando...",
-    description:  "Completa la modalità sfida generazione nove.",
+    description:  "Completa la modalità sfida di nona generazione.",
   },
 
   "MonoType": {
     description: "Completa la modalità sfida monotipo {{type}}",
   },
   "MONO_NORMAL": {
-    name: "Mono NORMALE",
+    name: "Un tipo semplice",
   },
   "MONO_FIGHTING": {
     name: "Conosco il Kung-fu",
   },
   "MONO_FLYING": {
-    name: "Mono VOLANTE",
+    name: "È un uccello? È un aereo?",
   },
   "MONO_POISON": {
     name: "I migliori di Kanto",
   },
   "MONO_GROUND": {
-    name: "Mono TERRA",
+    name: "Con i piedi per terra",
   },
   "MONO_ROCK": {
-    name: "Brock-o Forte!",
+    name: "Forte come una roccia!",
   },
   "MONO_BUG": {
-    name: "Pungi Come un Beedrill",
+    name: "Pungi come un Beedrill",
   },
   "MONO_GHOST": {
-    name: "Chi Chiamerai?",
+    name: "Sono fantasmi, caro Watson",
   },
   "MONO_STEEL": {
-    name: "Mono ACCIAIO",
+    name: "Pugno di ferro",
   },
   "MONO_FIRE": {
-    name: "Mono FUOCO",
+    name: "Giocare col fuoco",
   },
   "MONO_WATER": {
-    name: "Piove Sempre Sul Bagnato",
+    name: "Piove sul bagnato",
   },
   "MONO_GRASS": {
-    name: "Mono ERBA",
+    name: "L'erba del vicino è sempre più verde",
   },
   "MONO_ELECTRIC": {
-    name: "Mono ELETTRO",
+    name: "Elettrizzante",
   },
   "MONO_PSYCHIC": {
-    name: "Mono PSICO",
+    name: "Mentalista",
   },
   "MONO_ICE": {
-    name: "Mono GHIACCIO",
+    name: "Rompere il ghiaccio",
   },
   "MONO_DRAGON": {
-    name: "Mono DRAGO",
+    name: "Sangue di drago",
   },
   "MONO_DARK": {
     name: "Solo una fase",
   },
   "MONO_FAIRY": {
-    name: "Mono FATA",
+    name: "Fatina dei denti",
   },
 } as const;
 
