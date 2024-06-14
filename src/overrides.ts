@@ -1,21 +1,21 @@
-import { Species } from "./data/enums/species";
-import { Abilities } from "./data/enums/abilities";
-import { Biome } from "./data/enums/biome";
-import { Moves } from "./data/enums/moves";
 import { WeatherType } from "./data/weather";
 import { Variant } from "./data/variant";
-import { BerryType } from "./data/enums/berry-type";
 import { TempBattleStat } from "./data/temp-battle-stat";
 import { Nature } from "./data/nature";
 import { Type } from "./data/type";
 import { Stat } from "./data/pokemon-stat";
 import { PokeballCounts } from "./battle-scene";
 import { PokeballType } from "./data/pokeball";
-import {TimeOfDay} from "#app/data/enums/time-of-day";
 import { Gender } from "./data/gender";
 import { StatusEffect } from "./data/status-effect";
 import { modifierTypes } from "./modifier/modifier-type";
 import { allSpecies } from "./data/pokemon-species"; // eslint-disable-line @typescript-eslint/no-unused-vars
+import { Abilities } from "#enums/abilities";
+import { BerryType } from "#enums/berry-type";
+import { Biome } from "#enums/biome";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import { TimeOfDay } from "#enums/time-of-day";
 
 /**
  * Overrides for testing different in game situations

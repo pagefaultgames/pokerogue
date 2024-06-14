@@ -2,15 +2,15 @@ import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
 import * as overrides from "#app/overrides";
-import {Species} from "#app/data/enums/species";
 import {
   TurnEndPhase,
 } from "#app/phases";
-import {Moves} from "#app/data/enums/moves";
 import {getMovePosition} from "#app/test/utils/gameManagerUtils";
-import { Abilities } from "#app/data/enums/abilities.js";
 import { BattleStat } from "#app/data/battle-stat.js";
-import { BattlerTagType } from "#app/data/enums/battler-tag-type.js";
+import { Abilities } from "#enums/abilities";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 
 // See also: TypeImmunityAbAttr
 describe("Abilities - Volt Absorb", () => {
