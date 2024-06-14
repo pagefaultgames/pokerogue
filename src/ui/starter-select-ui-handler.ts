@@ -747,10 +747,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.scene.eventTarget.addEventListener(BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED, (e) => this.onCandyUpgradeDisplayChanged(e));
 
     this.updateInstructions();
-
-    // this.scene.time.delayedCall(1000, () => {
-    //   this.updateStarters();
-    // });
   }
 
   show(args: any[]): boolean {
