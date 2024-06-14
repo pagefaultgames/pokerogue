@@ -182,6 +182,22 @@ export default class FightUiHandler extends UiHandler {
       this.powerText.setText(`${power >= 0 ? power : "---"}`);
       this.accuracyText.setText(`${accuracy >= 0 ? accuracy : "---"}`);
 
+      const ppPercentLeft = pp / maxPP;
+
+      //** Determines TextStyle according to percentage of PP remaining */
+      let ppColorStyle = TextStyle.MOVE_PP_FULL;
+      if (ppPercentLeft > 0.25 && ppPercentLeft <= 0.5) {
+        ppColorStyle = TextStyle.MOVE_PP_HALF_FULL;
+      } else if (ppPercentLeft > 0 && ppPercentLeft <= 0.25) {
+        ppColorStyle = TextStyle.MOVE_PP_NEAR_EMPTY;
+      } else if (ppPercentLeft === 0) {
+        ppColorStyle = TextStyle.MOVE_PP_EMPTY;
+      }
+
+      //** Changes the text color and shadow according to the determined TextStyle */
+      this.ppText.setColor(this.getTextColor(ppColorStyle, false));
+      this.ppText.setShadowColor(this.getTextColor(ppColorStyle, true));
+
       pokemon.getOpponents().forEach((opponent) => {
         opponent.updateEffectiveness(this.getEffectivenessText(pokemon, opponent, pokemonMove));
       });
