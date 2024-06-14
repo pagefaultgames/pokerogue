@@ -2,9 +2,9 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import GameManager from "../utils/gameManager";
 import * as Overrides from "#app/overrides";
-import { Species } from "#app/data/enums/species.js";
-import { Abilities } from "#app/data/enums/abilities.js";
-import { Moves } from "#app/data/enums/moves.js";
+import { Species } from "#enums/species";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
 import { getMovePosition } from "../utils/gameManagerUtils";
 import { TurnEndPhase } from "#app/phases.js";
 
