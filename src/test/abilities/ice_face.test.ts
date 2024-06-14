@@ -45,60 +45,60 @@ describe("Abilities - Ice Face", () => {
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
-    const enemy = game.scene.getEnemyPokemon();
+    const eiscue = game.scene.getEnemyPokemon();
 
-    expect(enemy.hp).equals(enemy.getMaxHp());
-    expect(enemy.formIndex).toBe(noiceForm);
-    expect(enemy.getTag(BattlerTagType.ICE_FACE)).toBe(undefined);
+    expect(eiscue.hp).equals(eiscue.getMaxHp());
+    expect(eiscue.formIndex).toBe(noiceForm);
+    expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBe(undefined);
   });
 
   it("takes damage from special moves", async () => {
-    await game.startBattle([Species.CHIMECHO]);
+    await game.startBattle([Species.MAGIKARP]);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.ICE_BEAM));
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
-    const enemy = game.scene.getEnemyPokemon();
+    const eiscue = game.scene.getEnemyPokemon();
 
-    expect(enemy.getTag(BattlerTagType.ICE_FACE)).not.toBe(undefined);
-    expect(enemy.formIndex).toBe(icefaceForm);
-    expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
+    expect(eiscue.getTag(BattlerTagType.ICE_FACE)).not.toBe(undefined);
+    expect(eiscue.formIndex).toBe(icefaceForm);
+    expect(eiscue.hp).toBeLessThan(eiscue.getMaxHp());
   });
 
   it("takes effects from status moves", async () => {
-    await game.startBattle([Species.CHIMECHO]);
+    await game.startBattle([Species.MAGIKARP]);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.TOXIC_THREAD));
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
-    const enemy = game.scene.getEnemyPokemon();
+    const eiscue = game.scene.getEnemyPokemon();
 
-    expect(enemy.getTag(BattlerTagType.ICE_FACE)).not.toBe(undefined);
-    expect(enemy.formIndex).toBe(icefaceForm);
+    expect(eiscue.getTag(BattlerTagType.ICE_FACE)).not.toBe(undefined);
+    expect(eiscue.formIndex).toBe(icefaceForm);
   });
 
   it("transforms to Ice Face when Hail or Snow starts", async () => {
     vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.QUICK_ATTACK]);
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.HAIL, Moves.HAIL, Moves.HAIL, Moves.HAIL]);
 
-    await game.startBattle([Species.CHIMECHO]);
+    await game.startBattle([Species.MAGIKARP]);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_ATTACK));
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
-    const enemy = game.scene.getEnemyPokemon();
+    const eiscue = game.scene.getEnemyPokemon();
 
-    expect(enemy.hp).equals(enemy.getMaxHp());
-    expect(enemy.formIndex).toBe(noiceForm);
-    expect(enemy.getTag(BattlerTagType.ICE_FACE)).toBe(undefined);
+    expect(eiscue.hp).equals(eiscue.getMaxHp());
+    expect(eiscue.formIndex).toBe(noiceForm);
+    expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBe(undefined);
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
-    expect(enemy.getTag(BattlerTagType.ICE_FACE)).not.toBe(undefined);
-    expect(enemy.formIndex).toBe(icefaceForm);
+    expect(eiscue.getTag(BattlerTagType.ICE_FACE)).not.toBe(undefined);
+    expect(eiscue.formIndex).toBe(icefaceForm);
   });
 
   it("transforms to Ice Face when summoned on arena with active Snow or Hail", async () => {
@@ -195,6 +195,53 @@ describe("Abilities - Ice Face", () => {
 
     expect(eiscue.formIndex).toBe(icefaceForm);
     expect(eiscue.getTag(BattlerTagType.ICE_FACE)).not.toBe(undefined);
+  });
 
+  it("cannot be suppressed", async () => {
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.GASTRO_ACID]);
+
+    await game.startBattle([Species.MAGIKARP]);
+
+    game.doAttack(getMovePosition(game.scene, 0, Moves.GASTRO_ACID));
+
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    const eiscue = game.scene.getEnemyPokemon();
+
+    expect(eiscue.getTag(BattlerTagType.ICE_FACE)).not.toBe(undefined);
+    expect(eiscue.formIndex).toBe(icefaceForm);
+    expect(eiscue.summonData.abilitySuppressed).toBe(false);
+  });
+
+  it("cannot be swapped with another ability", async () => {
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SKILL_SWAP]);
+
+    await game.startBattle([Species.MAGIKARP]);
+
+    game.doAttack(getMovePosition(game.scene, 0, Moves.SKILL_SWAP));
+
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    const eiscue = game.scene.getEnemyPokemon();
+
+    expect(eiscue.getTag(BattlerTagType.ICE_FACE)).not.toBe(undefined);
+    expect(eiscue.formIndex).toBe(icefaceForm);
+    expect(eiscue.hasAbility(Abilities.ICE_FACE)).toBe(true);
+  });
+
+  it("cannot be copied", async () => {
+    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.TRACE);
+
+    await game.startBattle([Species.MAGIKARP]);
+
+    game.doAttack(getMovePosition(game.scene, 0, Moves.SIMPLE_BEAM));
+
+    await game.phaseInterceptor.to(TurnInitPhase);
+
+    const eiscue = game.scene.getEnemyPokemon();
+
+    expect(eiscue.getTag(BattlerTagType.ICE_FACE)).not.toBe(undefined);
+    expect(eiscue.formIndex).toBe(icefaceForm);
+    expect(game.scene.getPlayerPokemon().hasAbility(Abilities.TRACE)).toBe(true);
   });
 });
