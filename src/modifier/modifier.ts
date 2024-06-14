@@ -686,15 +686,19 @@ export class EvolutionStatBoosterModifier extends PokemonHeldItemModifier {
   /** The multiplier used to increase the relevant stat(s) */
   private multiplier: number;
 
-  constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
+  constructor(type: ModifierType, pokemonId: integer, stats: Stat[], multiplier: number, stackCount?: integer) {
     super(type, pokemonId, stackCount);
 
-    this.stats = [ Stat.DEF, Stat.SPDEF ];
-    this.multiplier = 1.5;
+    this.stats = stats;
+    this.multiplier = multiplier;
   }
 
   clone() {
-    return new EvolutionStatBoosterModifier(this.type, this.pokemonId);
+    return new EvolutionStatBoosterModifier(this.type, this.pokemonId, this.stats, this.multiplier, this.stackCount);
+  }
+
+  getArgs(): any[] {
+    return [ ...super.getArgs(), this.stats, this.multiplier ];
   }
 
   matchType(modifier: Modifier): boolean {
