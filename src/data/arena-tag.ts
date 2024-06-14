@@ -481,9 +481,22 @@ class ToxicSpikesTag extends ArenaTrapTag {
   }
 }
 
+/**
+ * @description Tag to be placed on a target pokemon to prevent it from being targeted multiple times by a multiturn attack
+ * such as Doom Desire or Future Sight
+ * @extends ArenaTag
+ */
 export class DelayedAttackTag extends ArenaTag {
   public targetIndex: BattlerIndex;
 
+  /**
+   * @description - Creates the DelayedAttackTag
+   * @param {ArenaTagType} tagType - The Tag Type
+   * @param {Moves} sourceMove - The delayed attack move
+   * @param {integer} sourceId - the ID of the pokemon on the arena
+   * @param {BattlerIndex} targetIndex - The battler index of the pokemon that the move is being used on
+   * @param {ArenaTagSide} side - Enum of which side the tag should apply to
+   */
   constructor(tagType: ArenaTagType, sourceMove: Moves, sourceId: integer, targetIndex: BattlerIndex, side: ArenaTagSide = ArenaTagSide.BOTH) {
     super(tagType, 3, sourceMove, sourceId, side);
 
@@ -491,6 +504,11 @@ export class DelayedAttackTag extends ArenaTag {
     this.side = side;
   }
 
+  /**
+   * @param {Arena} arena - The arena that the battle is happening on
+   *
+   * Counts down the arena tag and moves to the MoveEffectPhase
+   */
   lapse(arena: Arena): boolean {
     const ret = super.lapse(arena);
 

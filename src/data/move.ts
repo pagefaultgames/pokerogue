@@ -2248,7 +2248,8 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
    * @param {Pokemon} user - User of the move
    * @param {Pokemon} target - Target of the move
    * @param {Move} move - The move being used
-   * @param {any[]} args- Additional arguments to pass when applying a move
+   * @param {any[]} args- Additional arguments to pass when applying a move. Typically this would be Utils.BooleanHolder
+   * for overridden, and a boolean for virtual
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     const side = target.isPlayer() ? ArenaTagSide.PLAYER: ArenaTagSide.ENEMY;
