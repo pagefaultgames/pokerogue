@@ -401,6 +401,12 @@ export const PGMdialogue: DialogueTranslationEntries = {
       2: "Me? Well, okay. I'll play!",
       3: "I'm a cool girl. I've got a boyfriend!"
     },
+    "victory": {
+      1: "Darn, even stronger than the green-haired trainer from earlier...",
+      2: "Things just didn't work...",
+      3: "Please don't tell my boyfriend..."
+    },
+  },
   "brock": {
     "encounter": {
       1: "My expertise on Rock-type Pokémon will take you down! Come on!",
