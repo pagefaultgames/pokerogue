@@ -3,7 +3,7 @@ import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import { addWindow } from "./ui-theme";
-import {Button} from "../enums/buttons";
+import {Button} from "#enums/buttons";
 import i18next from "#app/plugins/i18n.js";
 import { SelectStarterPhase, TitlePhase } from "#app/phases.js";
 import { Challenge } from "#app/data/challenge.js";

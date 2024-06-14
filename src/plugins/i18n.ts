@@ -90,12 +90,12 @@ export interface Localizable {
 }
 
 const fonts = [
-  new FontFace("emerald", "url(./fonts/PokePT_Wansung.ttf)"),
   new FontFace("emerald", "url(./fonts/PokePT_Wansung.ttf)", { unicodeRange: "U+AC00-D7AC"}),
   Object.assign(
     new FontFace("pkmnems", "url(./fonts/PokePT_Wansung.ttf)", { unicodeRange: "U+AC00-D7AC"}),
     { sizeAdjust: "133%" }
   ),
+  new FontFace("japanese", "url(./fonts/KH-Dot-Kodenmachou-12.ttf)", { unicodeRange: "U+3040-30FF, U+4E00-9FFF"}),
 ];
 
 function initFonts() {
@@ -135,7 +135,7 @@ export async function initI18n(): Promise<void> {
   await i18next.init({
     nonExplicitSupportedLngs: true,
     fallbackLng: "en",
-    supportedLngs: ["en", "es", "fr", "it", "de", "zh", "pt", "ko", "jp"],
+    supportedLngs: ["en", "es", "fr", "it", "de", "zh", "pt", "ko","jp"],
     detection: {
       lookupLocalStorage: "prLang"
     },

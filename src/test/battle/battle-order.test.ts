@@ -2,19 +2,19 @@ import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
 import * as overrides from "#app/overrides";
-import {Abilities} from "#app/data/enums/abilities";
-import {Species} from "#app/data/enums/species";
 import {
   CommandPhase, EnemyCommandPhase, SelectTargetPhase,
   TurnStartPhase
 } from "#app/phases";
 import {Mode} from "#app/ui/ui";
 import {getMovePosition} from "#app/test/utils/gameManagerUtils";
-import {Moves} from "#app/data/enums/moves";
 import {Command} from "#app/ui/command-ui-handler";
 import {Stat} from "#app/data/pokemon-stat";
 import TargetSelectUiHandler from "#app/ui/target-select-ui-handler";
-import {Button} from "#app/enums/buttons";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import {Button} from "#enums/buttons";
 
 
 describe("Battle order", () => {

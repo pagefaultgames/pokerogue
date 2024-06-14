@@ -3,11 +3,11 @@ import i18next from "i18next";
 import BattleScene from "../../battle-scene";
 import { hasTouchscreen } from "../../touch-controls";
 import { updateWindowType } from "../../ui/ui-theme";
-import { PlayerGender } from "#app/data/enums/player-gender";
 import { CandyUpgradeNotificationChangedEvent } from "../../events/battle-scene";
-import { MoneyFormat } from "../../enums/money-format";
 import SettingsUiHandler from "#app/ui/settings/settings-ui-handler";
-import { EaseType } from "#app/ui/enums/ease-type.js";
+import { EaseType } from "#enums/ease-type";
+import { MoneyFormat } from "#enums/money-format";
+import { PlayerGender } from "#enums/player-gender";
 
 const MUTE = "Mute";
 const VOLUME_OPTIONS = new Array(11).fill(null).map((_, i) => i ? (i * 10).toString() : MUTE);
@@ -463,8 +463,7 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
       if (scene.ui) {
         const cancelHandler = () => {
           scene.ui.revertMode();
-          const languageSetting = Setting.find(setting => setting.key === SettingKeys.Language);
-          (scene.ui.getHandler() as SettingsUiHandler).setOptionCursor(Setting.indexOf(languageSetting), 0, true);
+          (scene.ui.getHandler() as SettingsUiHandler).setOptionCursor(0, 0, true);
         };
         const changeLocaleHandler = (locale: string): boolean => {
           try {
