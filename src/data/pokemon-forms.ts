@@ -259,6 +259,7 @@ export class SpeciesFormChangeWeatherOriginalFormTrigger extends SpeciesFormChan
     if (pokemon.hasAbility(this.ability)) {
       const currentWeather = pokemon.scene.arena.weather?.weatherType ?? WeatherType.NONE;
       const isWeatherSuppressed = pokemon.scene.arena.weather?.isEffectSuppressed(pokemon.scene);
+
       if (this.weathers.includes(currentWeather) || isWeatherSuppressed) {
         return true;
       }
