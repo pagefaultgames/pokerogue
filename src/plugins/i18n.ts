@@ -97,12 +97,12 @@ const fonts = [
 ];
 
 async function initFonts() {
-  for (const font of fonts) {
-    try {
-      await font.load();
-      document.fonts.add(font);
-    } catch (e) {
-      console.error(e);
+  const results = await Promise.allSettled(fonts.map(font => font.load()));
+  for (const result of results) {
+    if (result.status === "fulfilled") {
+      document.fonts?.add(result.value);
+    } else {
+      console.error(result.reason);
     }
   }
 }
@@ -113,8 +113,6 @@ export async function initI18n(): Promise<void> {
     return;
   }
   isInitialized = true;
-
-  await initFonts();
 
   /**
    * i18next is a localization library for maintaining and using translation resources.
@@ -177,6 +175,8 @@ export async function initI18n(): Promise<void> {
     },
     postProcess: ["korean-postposition"],
   });
+
+  await initFonts();
 }
 
 // Module declared to make referencing keys in the localization files type-safe.
