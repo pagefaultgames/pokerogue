@@ -26,7 +26,7 @@ import { getModifierTierTextTint } from "#app/ui/text";
 import { BattlerTagType } from "#app/data/enums/battler-tag-type.js";
 import * as Overrides from "../overrides";
 import { MoneyMultiplierModifier } from "./modifier";
-import { Species } from "#app/data/enums/species.ts";
+import { Species } from "#app/data/enums/species";
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
@@ -540,36 +540,45 @@ export class AttackTypeBoosterModifierType extends PokemonHeldItemModifierType i
   }
 }
 
-const speciesStatBoosterItems = {
-  "light_ball": { stats: [Stat.ATK, Stat.SPATK], multiplier: 2, species: [Species.PIKACHU] },
-  "thick_club": { stats: [Stat.ATK], multiplier: 2, species: [Species.CUBONE, Species.MAROWAK, Species.ALOLA_MAROWAK] },
-  "metal_powder": { stats: [Stat.DEF], multiplier: 2, species: [Species.DITTO] },
-  "quick_powder": { stats: [Stat.SPD], multiplier: 2, species: [Species.DITTO] },
-};
+function getSpeciesBoosterItemKey(species: Species, stat?: Stat): string {
+  switch (species) {
+  case Species.PIKACHU:
+    return "LIGHT_BALL";
+  case Species.CUBONE:
+  case Species.MAROWAK:
+  case Species.ALOLA_MAROWAK:
+    return "THICK_CLUB";
+  case Species.DITTO:
+    switch (stat) {
+    case Stat.DEF:
+      return "METAL_POWDER";
+    case Stat.SPD:
+      return "QUICK_POWDER";
+    }
+  }
+}
 
+/**
+ * Modifier type for {@linkcode Modifiers.SpeciesStatBoosterModifier}
+ * @extends PokemonHeldItemModifierType
+ * @implements GeneratedPersistentModifierType
+ */
 export class SpeciesStatBoosterModifierType extends PokemonHeldItemModifierType implements GeneratedPersistentModifierType {
-  private key: string;
+  private species: Species[];
+  private stats: Stat[];
+  private multiplier: integer;
 
-  constructor(key: string) {
-    super("", key,
-      (type, args) => {
-        const item = speciesStatBoosterItems[key];
-        return new Modifiers.SpeciesStatBoosterModifier(type, (args[0] as Pokemon).id, item.stats, item.multiplier, item.species);
-      });
+  constructor(stats: Stat[], multiplier: integer, species: Species[], ) {
+    const key = getSpeciesBoosterItemKey(species[0], stats[0]);
+    super(`modifierType:SpeciesBoosterItem.${key}`, key.toLowerCase(), (type, args) => new Modifiers.SpeciesStatBoosterModifier(type, (args[0] as Pokemon).id, stats, multiplier, species));
 
-    this.key = key;
-  }
-
-  get name(): string {
-    return i18next.t(`modifierType:SpeciesStatBoosterItem.${this.key}.name`);
-  }
-
-  getDescription(scene: BattleScene): string {
-    return i18next.t(`modifierType:SpeciesStatBoosterItem.${this.key}.description`);
+    this.stats = stats;
+    this.multiplier = multiplier;
+    this.species = species;
   }
 
   getPregenArgs(): any[] {
-    return [ this.key ];
+    return [ this.stats, this.multiplier, this.species ];
   }
 }
 
@@ -904,34 +913,51 @@ class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
   }
 }
 
+
+/**
+ * Modifier type generator for {@linkcode SpeciesStatBoosterModifierType}, which
+ * encapsulates the logic for weighting the most useful held item from
+ * the current list of available species-based stat boosting held items:
+ *  - Light Ball, Thick Club, Metal Powder, and Quick Powder
+ * @extends ModifierTypeGenerator
+ */
 class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
   constructor() {
     super((party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs) {
-        return new SpeciesStatBoosterModifierType(pregenArgs[0] as string);
+        return new SpeciesStatBoosterModifierType(pregenArgs[0] as Stat[], pregenArgs[1] as integer, pregenArgs[2] as Species[]);
       }
-      // List for every species and stats combination corresponding to the relevant items
-      const itemList = Object.keys(speciesStatBoosterItems);
+
+      const itemList = [
+        /** Light Ball */
+        { stats: [Stat.ATK, Stat.SPATK], multiplier: 2, species: [Species.PIKACHU] },
+        /** Thick Club */
+        { stats: [Stat.ATK], multiplier: 2, species: [Species.CUBONE, Species.MAROWAK, Species.ALOLA_MAROWAK] },
+        /** Metal Powder */
+        { stats: [Stat.DEF], multiplier: 2, species: [Species.DITTO] },
+        /** Quick Powder */
+        { stats: [Stat.SPD], multiplier: 2, species: [Species.DITTO] },
+      ];
       const weights = itemList.map(() => 0);
 
       for (const p of party) {
+        const speciesId = p.getSpeciesForm(true).speciesId;
+        const fusionSpeciesId = p.isFusion() ? p.getFusionSpeciesForm(true).speciesId : null;
+        const hasFling = p.getMoveset(true).some(m => m.moveId === Moves.FLING);
+
         for (const i in itemList) {
-          const checkedSpecies = speciesStatBoosterItems[itemList[i]].species;
-          const checkedStats = speciesStatBoosterItems[itemList[i]].stats;
+          const checkedSpecies = itemList[i].species;
+          const checkedStats = itemList[i].stats;
 
           // If party member already has the item being weighted currently, skip to the next item
-          const hasItem = p.getHeldItems().some(m => {
-            if (m instanceof Modifiers.SpeciesStatBoosterModifier) {
-              const modifierInstance = m as Modifiers.SpeciesStatBoosterModifier;
-              return modifierInstance.hasSpecies(checkedSpecies[0]) && modifierInstance.hasStat(checkedStats[0]);
-            }
-          });
+          const hasItem = p.getHeldItems().some(m => m instanceof Modifiers.SpeciesStatBoosterModifier
+            && (m as Modifiers.SpeciesStatBoosterModifier).contains(checkedSpecies[0], checkedStats[0]));
 
           if (!hasItem) {
-            if ((checkedSpecies.includes(p.getSpeciesForm(true).speciesId) || (p.isFusion() ? checkedSpecies.includes(p.getFusionSpeciesForm(true).speciesId) : false))) {
+            if (checkedSpecies.includes(speciesId) || (!!fusionSpeciesId && checkedSpecies.includes(fusionSpeciesId))) {
               // Add weight if party member has a matching species or, if applicable, a matching fusion species
               weights[i]++;
-            } else if (itemList[i] === "light_ball" && p.getMoveset(true).some(m => m.moveId === Moves.FLING)) {
+            } else if (checkedSpecies.includes(Species.PIKACHU) && hasFling) {
               // Add weight to Light Ball if party member has Fling
               weights[i]++;
             }
@@ -948,11 +974,11 @@ class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
         const randInt = Utils.randSeedInt(totalWeight, 1);
         let weight = 0;
 
-        for (const i in itemList) {
+        for (const i in weights) {
           if (weights[i] !== 0) {
             const curWeight = weight + weights[i];
             if (randInt <= weight + weights[i]) {
-              return new SpeciesStatBoosterModifierType(itemList[i]);
+              return new SpeciesStatBoosterModifierType(itemList[i].stats, itemList[i].multiplier, itemList[i].species);
             }
             weight = curWeight;
           }

@@ -978,22 +978,30 @@ export class SpeciesStatBoosterModifier extends PokemonHeldItemModifier {
   }
 
   /**
+   * Checks if the incoming stat is listed in {@linkcode stats}
+   * @param args [0] {@linkcode Pokemon} N/A
+   *             [1] {@linkcode Stat} being checked at the time
+   *             [2] {@linkcode Utils.NumberHolder} N/A
+   * @returns true if the stat could be boosted, false otherwise
+   */
+  shouldApply(args: any[]): boolean {
+    return this.stats.includes(args[1] as Stat);
+  }
+
+  /**
    * Boosts the incoming stat by a {@linkcode multiplier} if the stat is listed
    * in {@linkcode stats} and if the holder's {@linkcode Species} (or its fused
    * species) is listed in {@linkcode species}.
    * @param args [0] {@linkcode Pokemon} that holds the held item
-   *             [1] {@linkcode Stat} being checked at the time
+   *             [1] {@linkcode Stat} N/A
    *             [2] {@linkcode Utils.NumberHolder} that holds the resulting value of the stat
    * @returns true if the stat boost applies successfully, false otherwise
    */
   apply(args: any[]): boolean {
     const holder = args[0] as Pokemon;
-    /** The actual {@linkcode Species} of the holder, ignoring the effect of moves like Transform */
-    const speciesId = holder.getSpeciesForm(true).speciesId;
-    const stat = args[1] as Stat;
     const statValue = args[2] as Utils.NumberHolder;
 
-    if (this.stats.includes(stat) && (this.species.includes(speciesId) || (holder.isFusion() ? this.species.includes(holder.getFusionSpeciesForm(true).speciesId) : false))) {
+    if (this.species.includes(holder.getSpeciesForm(true).speciesId) || (holder.isFusion() && this.species.includes(holder.getFusionSpeciesForm(true).speciesId))) {
       statValue.value *= this.multiplier;
       return true;
     }
@@ -1005,12 +1013,14 @@ export class SpeciesStatBoosterModifier extends PokemonHeldItemModifier {
     return 1;
   }
 
-  hasSpecies(species: Species): boolean {
-    return this.species.includes(species);
-  }
-
-  hasStat(stat: Stat): boolean {
-    return this.stats.includes(stat);
+  /**
+   * Checks if either parameter is included in the corresponding lists
+   * @param speciesId {@linkcode Species} being checked
+   * @param stat {@linkcode Stat} being checked
+   * @returns true if both parameters are in {@linkcode species} and {@linkcode stats} respectively, false otherwise
+   */
+  contains(speciesId: Species, stat: Stat): boolean {
+    return this.species.includes(speciesId) && this.stats.includes(stat);
   }
 }
 
