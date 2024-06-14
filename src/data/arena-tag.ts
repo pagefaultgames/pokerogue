@@ -2,7 +2,7 @@ import { Arena } from "../field/arena";
 import { Type } from "./type";
 import * as Utils from "../utils";
 import { MoveCategory, allMoves, MoveTarget } from "./move";
-import {getPokemonNameWithAffix} from "../messages";
+import { getPokemonNameWithAffix } from "../messages";
 import Pokemon, { HitResult, PokemonMove } from "../field/pokemon";
 import { MoveEffectPhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase} from "../phases";
 import { StatusEffect } from "./status-effect";
