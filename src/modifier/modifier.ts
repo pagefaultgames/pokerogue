@@ -684,7 +684,7 @@ export class EvolutionStatBoosterModifier extends PokemonHeldItemModifier {
   /** The stats that the held item boosts */
   private stats: Stat[];
   /** The multiplier used to increase the relevant stat(s) */
-  private multiplier: integer;
+  private multiplier: number;
 
   constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
     super(type, pokemonId, stackCount);
