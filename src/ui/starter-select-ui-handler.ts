@@ -1447,13 +1447,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             } while (newVariant !== props.variant);
             this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, newVariant, undefined, undefined);
 
-            // Get the luck value
-            const luck = this.scene.gameData.getDexAttrLuck(this.speciesStarterDexEntry.caughtAttr);
-
-            // Get the tint based on the luck value
-            const tint = getVariantTint(Math.min(luck - 1, 2) as Variant);
-
-            // Set the color of variantLabel to the luck tint
+            // Cycle tint based on current sprite tint
+            const tint = getVariantTint(newVariant);
             this.variantLabel.setTint(tint);
 
             success = true;
@@ -1725,8 +1720,15 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
       this.cursorObj.setPosition(150 + 18 * (cursor % 9), 10 + 18 * Math.floor(cursor / 9));
 
-      this.setSpecies(this.genSpecies[this.getGenCursorWithScroll()][cursor]);
+      const species = this.genSpecies[this.getGenCursorWithScroll()][cursor];
 
+      const defaultDexAttr = this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true);
+      const defaultProps = this.scene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
+      const variant = defaultProps.variant;
+      const tint = getVariantTint(variant);
+
+      this.variantLabel.setTint(tint);
+      this.setSpecies(species);
       this.updateInstructions();
     }
 
