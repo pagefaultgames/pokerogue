@@ -20,6 +20,8 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
+import { Abilities } from "#app/enums/abilities.js";
+import { SpeciesFormChangeWeatherOriginalFormTrigger, SpeciesFormChangeWeatherTrigger } from "#app/data/pokemon-forms.js";
 
 export class Arena {
   public scene: BattleScene;
