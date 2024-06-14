@@ -4990,7 +4990,7 @@ export class AttemptCapturePhase extends PokemonPhase {
         if (this.scene.getParty().length === 6) {
           const promptRelease = () => {
             this.scene.ui.showText(i18next.t("battle:partyFull", { pokemonName: pokemon.name }), null, () => {
-              this.scene.pokemonInfoContainer.makeRoomForConfirmUi();
+              this.scene.pokemonInfoContainer.makeRoomForConfirmUi(1, true);
               this.scene.ui.setMode(Mode.CONFIRM, () => {
                 const newPokemon = this.scene.addPlayerPokemon(pokemon.species, pokemon.level, pokemon.abilityIndex, pokemon.formIndex, pokemon.gender, pokemon.shiny, pokemon.variant, pokemon.ivs, pokemon.nature, pokemon);
                 this.scene.ui.setMode(Mode.SUMMARY, newPokemon).then(() => {
