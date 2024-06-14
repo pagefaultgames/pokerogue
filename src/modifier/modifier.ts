@@ -23,7 +23,7 @@ import { Nature } from "#app/data/nature";
 import * as Overrides from "../overrides";
 import { ModifierType, modifierTypes } from "./modifier-type";
 import { Command } from "#app/ui/command-ui-handler.js";
-import { Species } from "#app/data/enums/species.ts";
+import { Species } from "#enums/species";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 
