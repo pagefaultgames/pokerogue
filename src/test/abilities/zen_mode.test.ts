@@ -53,7 +53,7 @@ describe("Abilities - ZEN MODE", () => {
     vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
   });
 
-  test.only(
+  test(
     "not enough damage to change form",
     async () => {
       const moveToUse = Moves.SPLASH;
