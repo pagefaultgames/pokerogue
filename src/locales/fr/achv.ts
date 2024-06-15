@@ -220,7 +220,7 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "Angry Birds",
   },
   "MONO_POISON": {
-    name: "Touche moi je t’empoissonne !",
+    name: "Touche moi je t’empoisonne !",
   },
   "MONO_GROUND": {
     name: "Prévisions : Séisme",
