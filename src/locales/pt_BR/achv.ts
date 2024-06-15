@@ -479,57 +479,57 @@ export const PGFachv: AchievementTranslationEntries = {
     description: "Complete o desafio de monotipo {{type}}.",
   },
   "MONO_NORMAL": {
-    name: "Extra ordinário",
+    name: "Extra Ordinário",
   },
   "MONO_FIGHTING": {
-    name: "Briga de rua",
+    name: "Briga de Rua",
   },
   "MONO_FLYING": {
-    name: "Rinha de pidgeys",
+    name: "Rinha de Pidgeys",
   },
   "MONO_POISON": {
-    name: "Menina veneno",
+    name: "Menina Veneno",
   },
   "MONO_GROUND": {
-    name: "Comendo poeira",
+    name: "Comendo Poeira",
   },
   "MONO_ROCK": {
-    name: "Duro Como pedra",
+    name: "Duro Como Pedra",
   },
   "MONO_BUG": {
-    name: "Vida de inseto",
+    name: "Vida de Inseto",
   },
   "MONO_GHOST": {
-    name: "Fantasminha camarada",
+    name: "Fantasminha Camarada",
   },
   "MONO_STEEL": {
-    name: "Levantando ferro",
+    name: "Levantando Ferro",
   },
   "MONO_FIRE": {
-    name: "Tá Pegando Fogo, bicho!",
+    name: "Tá Pegando Fogo, Bicho!",
   },
   "MONO_WATER": {
-    name: "Água Mole em Pedra dura...",
+    name: "Água Mole em Pedra Dura...",
   },
   "MONO_GRASS": {
-    name: "Jardim botânico",
+    name: "Jardim Botânico",
   },
   "MONO_ELECTRIC": {
-    name: "Choque de realidade",
+    name: "Choque de Realidade",
   },
   "MONO_PSYCHIC": {
-    name: "Preciso de terapia",
+    name: "Preciso de Terapia",
   },
   "MONO_ICE": {
-    name: "Era do gelo",
+    name: "Era do Gelo",
   },
   "MONO_DRAGON": {
-    name: "Caverna do dragão",
+    name: "Caverna do Dragão",
   },
   "MONO_DARK": {
-    name: "É Só Uma fase",
+    name: "É Só Uma Fase",
   },
   "MONO_FAIRY": {
-    name: "O Clube das winx",
+    name: "O Clube das Winx",
   },
 } as const;
