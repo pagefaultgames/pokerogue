@@ -2292,8 +2292,9 @@ export class StatChangeAttr extends MoveEffectAttr {
   public levels: integer;
   private condition: MoveConditionFunc;
   private showMessage: boolean;
+  private moveSource: string;
 
-  constructor(stats: BattleStat | BattleStat[], levels: integer, selfTarget?: boolean, condition?: MoveConditionFunc, showMessage: boolean = true, firstHitOnly: boolean = false, moveEffectTrigger: MoveEffectTrigger = MoveEffectTrigger.HIT) {
+  constructor(stats: BattleStat | BattleStat[], levels: integer, selfTarget?: boolean, condition?: MoveConditionFunc, showMessage: boolean = true, firstHitOnly: boolean = false, moveEffectTrigger: MoveEffectTrigger = MoveEffectTrigger.HIT, moveSource?: string) {
     super(selfTarget, moveEffectTrigger, firstHitOnly);
     this.stats = typeof(stats) === "number"
       ? [ stats as BattleStat ]
@@ -2301,6 +2302,7 @@ export class StatChangeAttr extends MoveEffectAttr {
     this.levels = levels;
     this.condition = condition || null;
     this.showMessage = showMessage;
+    this.moveSource = moveSource || null;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
@@ -2310,7 +2312,7 @@ export class StatChangeAttr extends MoveEffectAttr {
 
     if (move.chance < 0 || move.chance === 100 || user.randSeedInt(100) < move.chance) {
       const levels = this.getLevels(user);
-      user.scene.unshiftPhase(new StatChangePhase(user.scene, (this.selfTarget ? user : target).getBattlerIndex(), this.selfTarget, this.stats, levels, this.showMessage));
+      user.scene.unshiftPhase(new StatChangePhase(user.scene, (this.selfTarget ? user : target).getBattlerIndex(), this.selfTarget, this.stats, levels, this.showMessage, false, true, this.moveSource));
       return true;
     }
 
@@ -2436,21 +2438,28 @@ export class StockpileStatChangeAttr extends StatChangeAttr {
    * for moves associated with the STOCKPILE Battler Tags
    * 
    * @param gainsStats - boolean serving as a switch for this Attr:
-   *   - if true, we save 1 under levels
+   *   - if true, we save 1 under levels and moveSource is "Stockpile"
    *   - if false, we save -1 under levels
    */
-  constructor(gainStats: boolean = true) {
+  constructor(gainStats: boolean = true, moveSource: string = "Stockpile") {
     super(
       [ BattleStat.DEF, BattleStat.SPDEF ],
       gainStats ? 1 : -1,
-      true);
+      true,
+      null,
+      true,
+      false,
+      MoveEffectTrigger.HIT,
+      moveSource
+    );
   }
 
   /**
    * This applies the state changes as normal in {@link StatChangeAttr}
    * if this.levels is negative, however:
-   *   first, multiply this.levels by stock (so that stats get removed based on number of stock)
-   *   second, this goes through the class @prop tagTypes and removes them from the user
+   *   first, get stockpileStats and multiply it by -1 if the stat increases are equal
+   *     if the stockpile stat changes are not equal, we will have to do the stat change one by one
+   *   second, this goes through the class @prop {@link tagTypes} and removes them from the user
    * 
    * @param user {@linkcode Pokemon} using this move
    * @param target {@linkcode Pokemon} target of this move
@@ -2459,17 +2468,37 @@ export class StockpileStatChangeAttr extends StatChangeAttr {
    * @returns true if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
-    const stock = getStockpiles(user);
+    this.stats = [ BattleStat.DEF, BattleStat.SPDEF ];
+    let statChangeIsEqual: boolean = true;
     
     if (this.levels < 0) {
-      this.levels = stock * -1;
+      // remove the stats equal to the number of stats given by stocks
+      this.levels = user.stockpileStats[0] * -1;
 
-      // remove the stats equal to the number of stocks
+      // if stockpile stat buffs are not equal, we gotta do it one at a time starting with DEF
+      if (user.stockpileStats[0] != user.stockpileStats[1]){
+        statChangeIsEqual = false;
+        this.stats = [ BattleStat.DEF ];
+      }
+
+      // remove the stockpile tags
       for (let tagType of this.tagTypes)
         user.removeTag(tagType);
     }
 
-    return super.apply(user, target, move, args);
+    if (statChangeIsEqual){
+      return super.apply(user, target, move, args);
+    } else {
+      // if stat change is not equal, apply DEF change first
+      if (super.apply(user, target, move, args)){
+        // now apply SPDEF change
+        this.stats = [ BattleStat.SPDEF ];
+        this.levels = user.stockpileStats[1] * -1;
+        return super.apply(user, target, move, args);
+      } else {
+        return false;
+      }
+    }
   }
 }
 
@@ -6350,11 +6379,11 @@ export function initMoves() {
       .condition(failOnMaxStockCondition),
     new AttackMove(Moves.SPIT_UP, Type.NORMAL, MoveCategory.SPECIAL, -1, 100, 10, -1, 0, 3)
       .attr(SpitUpPowerAttr)
-      .attr(StockpileStatChangeAttr, false)
+      .attr(StockpileStatChangeAttr, false, "Spit Up")
       .condition(failOnNoStockCondition),
     new SelfStatusMove(Moves.SWALLOW, Type.NORMAL, -1, 10, -1, 0, 3)
       .attr(SwallowHealAttr)
-      .attr(StockpileStatChangeAttr, false)
+      .attr(StockpileStatChangeAttr, false, "Swallow")
       .condition(failOnNoStockCondition)
       .triageMove(),
     new AttackMove(Moves.HEAT_WAVE, Type.FIRE, MoveCategory.SPECIAL, 95, 90, 10, 10, 0, 3)
