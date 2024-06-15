@@ -2,14 +2,19 @@
 module.exports = {
   forbidden: [
     {
-      name: 'no-circular',
+      name: 'no-circular-at-runtime',
       severity: 'warn',
       comment:
         'This dependency is part of a circular relationship. You might want to revise ' +
         'your solution (i.e. use dependency inversion, make sure the modules have a single responsibility) ',
       from: {},
       to: {
-        circular: true
+        circular: true,
+        viaOnly: {
+          dependencyTypesNot: [
+            'type-only'
+          ]
+        }
       }
     },
     {
