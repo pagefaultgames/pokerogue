@@ -162,7 +162,7 @@ export const PGMachv: AchievementTranslationEntries = {
     description: "Capturer un Pokémon possédant un talent caché",
   },
   "PERFECT_IVS": {
-    name: "Certificat d’Authenticité",
+    name: "Certificat d’authenticité",
     description: "Avoir des IV parfaits sur un Pokémon",
   },
   "CLASSIC_VICTORY": {
@@ -171,98 +171,98 @@ export const PGMachv: AchievementTranslationEntries = {
   },
 
   "MONO_GEN_ONE": {
-    name: "The Original Rival",
-    description: "Complete the generation one only challenge.",
+    name: "Le rival originel",
+    description: "Compléter le défi de la génération 1 uniquement.",
   },
   "MONO_GEN_TWO": {
-    name: "Generation 1.5",
-    description: "Complete the generation two only challenge.",
+    name: "Entre tradition et modernité",
+    description: "Compléter le défi de la génération 2 uniquement.",
   },
   "MONO_GEN_THREE": {
     name: "Too much water?",
-    description: "Complete the generation three only challenge.",
+    description: "Compléter le défi de la génération 3 uniquement.",
   },
   "MONO_GEN_FOUR": {
-    name: "Is she really the hardest?",
-    description: "Complete the generation four only challenge.",
+    name: "Est-elle vraiment la plus difficile?",
+    description: "Compléter le défi de la génération 4 uniquement.",
   },
   "MONO_GEN_FIVE": {
-    name: "All Original",
-    description: "Complete the generation five only challenge.",
+    name: "Tous les originaux",
+    description: "Compléter le défi de la génération 5 uniquement.",
   },
   "MONO_GEN_SIX": {
-    name: "Almost Royalty",
-    description: "Complete the generation six only challenge.",
+    name: "Aristocrate",
+    description: "Compléter le défi de la génération 6 uniquement.",
   },
   "MONO_GEN_SEVEN": {
-    name: "Only Technically",
-    description: "Complete the generation seven only challenge.",
+    name: "Seulement sur le plan technique",
+    description: "Compléter le défi de la génération 7 uniquement.",
   },
   "MONO_GEN_EIGHT": {
-    name: "A Champion Time!",
-    description: "Complete the generation eight only challenge.",
+    name: "Le temps d'un champion !",
+    description: "Compléter le défi de la génération 8 uniquement.",
   },
   "MONO_GEN_NINE": {
-    name: "She was going easy on you",
-    description: "Complete the generation nine only challenge.",
+    name: "Elle y est allée doucement avec toi",
+    description: "Compléter le défi de la génération 9 uniquement.",
   },
 
   "MonoType": {
-    description: "Complete the {{type}} monotype challenge.",
+    description: "Compléter le défi du monotype {{type}}.",
   },
   "MONO_NORMAL": {
-    name: "Mono NORMAL",
+    name: "Normalement extraordinaire",
   },
   "MONO_FIGHTING": {
-    name: "I Know Kung Fu",
+    name: "Je connais le kung-fu",
   },
   "MONO_FLYING": {
-    name: "Mono FLYING",
+    name: "Maître des oiseaux",
   },
   "MONO_POISON": {
-    name: "Kanto's Favourite",
+    name: "Touche moi je t'empoissonne !",
   },
   "MONO_GROUND": {
-    name: "Mono GROUND",
+    name: "Prévisions: Tremblements de terre",
   },
   "MONO_ROCK": {
-    name: "Brock Hard",
+    name: "Solide comme un roc",
   },
   "MONO_BUG": {
-    name: "Sting Like A Beedrill",
+    name: "Une chenille !!!",
   },
   "MONO_GHOST": {
     name: "Who you gonna call?",
   },
   "MONO_STEEL": {
-    name: "Mono STEEL",
+    name: "Acier galvanisé",
   },
   "MONO_FIRE": {
-    name: "Mono FIRE",
+    name: "Allumer le feu !!",
   },
   "MONO_WATER": {
-    name: "When It Rains, It Pours",
+    name: "Quand il pleut, il pleut",
   },
   "MONO_GRASS": {
-    name: "Mono GRASS",
+    name: "Ne pas toucher !",
   },
   "MONO_ELECTRIC": {
-    name: "Mono ELECTRIC",
+    name: "Survolté",
   },
   "MONO_PSYCHIC": {
-    name: "Mono PSYCHIC",
+    name: "Télépathe",
   },
   "MONO_ICE": {
-    name: "Mono ICE",
+    name: "Froid comme la glace",
   },
   "MONO_DRAGON": {
-    name: "Mono DRAGON",
+    name: "Sort le dragon !",
   },
   "MONO_DARK": {
-    name: "It's just a phase",
+    name: "Dresseur bresom",
   },
   "MONO_FAIRY": {
-    name: "Mono FAIRY",
+    name: "Juste un peu de magie",
   },
 } as const;
 
