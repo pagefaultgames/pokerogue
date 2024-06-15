@@ -4672,11 +4672,144 @@ export const PGMmiscDialogue: SimpleTranslationEntries = {
 };
 
 // Diálogo que não se enquadra em nenhuma outra categoria (por exemplo, mensagens de tutorial ou o final do jogo). Para quando o personagem do jogador é feminino. Para idiomas que não possuem pronomes de gênero, isso pode ser definido como PGMmiscDialogue.
-export const PGFmiscDialogue: SimpleTranslationEntries = PGMmiscDialogue;
+export const PGFmiscDialogue: SimpleTranslationEntries = {
+  "ending":
+      `@c{smile}Oh? Você venceu?@d{96} @c{smile_eclosed}Acho que eu deveria saber.\nMas, você está de volta agora.
+        $@c{smile}Acabou.@d{64} Você quebrou o ciclo.
+        $@c{serious_smile_fists}Você também realizou seu sonho, não é?\nVocê não perdeu nenhuma vez.
+        $@c{neutral}Eu sou o único que vai lembrar o que você fez.@d{96}\nAcho que está tudo bem, não é?
+        $@c{serious_smile_fists}Sua lenda sempre viverá em nossos corações.
+        $@c{smile_eclosed}Enfim, já tive o suficiente deste lugar, não é? Vamos para casa.
+        $@c{serious_smile_fists}Talvez quando voltarmos, possamos ter outra batalha?\nSe você estiver disposta.`,
+  "ending_female":
+      `@c{shock}Você está de volta?@d{32} Isso significa que…@d{96} você venceu?!\n@c{smile_ehalf}Eu deveria saber que você conseguiria.
+        $@c{smile_eclosed}Claro… Eu sempre tive essa sensação.\n@c{smile}Acabou agora, certo? Você quebrou o ciclo.
+        $@c{smile_ehalf}Você também realizou seu sonho, não foi?\nVocê não perdeu nenhuma vez.
+        $Eu serei a única a lembrar o que você fez.\n@c{angry_mopen}Eu tentarei não esquecer!
+        $@c{smile_wave_wink}Brincadeirinha!@d{64} @c{smile}Eu nunca esqueceria.@d{32}\nSua lenda viverá em nossos corações.
+        $@c{smile_wave}De qualquer forma,@d{64} está ficando tarde…@d{96} Eu acho?\nÉ difícil dizer neste lugar.
+        $Vamos para casa. @c{smile_wave_wink}Talvez amanhã possamos ter outra batalha, pelos velhos tempos?`,
+};
 
 
 // Diálogo das batalhas duplas nomeadas no jogo. Para quando o jogador é masculino (ou não definido).
 export const PGMdoubleBattleDialogue: DialogueTranslationEntries = {
+  "blue_red_double": {
+    "encounter": {
+      1: `Blue: Ei Red, vamos mostrar do que somos feitos!
+                  $Red: ...
+                  $Blue: Este é o poder da Cidade de Pallet!`,
+    },
+    "victory": {
+      1: `Blue: Essa foi uma ótima batalha!
+              $Red: ...`,
+    },
+  },
+  "red_blue_double": {
+    "encounter": {
+      1: `Red: ...!
+                  $Blue: Ele nunca fala muito.
+                    $Blue: Mas não se deixe enganar! Ele é um campeão, afinal!`,
+    },
+    "victory": {
+      1: `Red: ...!
+                $Blue: Da próxima vez, vamos vencer você!`,
+    },
+  },
+  "tate_liza_double": {
+    "encounter": {
+      1: `Tate: Está surpreso?
+                  $Liza: Somos dois líderes de ginásio ao mesmo tempo!
+                  $Tate: Somos gêmeos!
+                  $Liza: Não precisamos falar para nos entender!
+                  $Tate: Duas vezes o poder...
+                  $Liza: Você consegue lidar com isso?`,
+    },
+    "victory": {
+      1: `Tate: O quê? Nossa combinação foi perfeita!
+                  $Liza: Parece que precisamos treinar mais...`,
+    },
+  },
+  "liza_tate_double": {
+    "encounter": {
+      1: `Liza: Hihihi... Está surpreso?
+                  $Tate: Sim, somos realmente dois líderes de ginásio ao mesmo tempo!
+                  $Liza: Este é meu irmão gêmeo Tate!
+                  $Tate: E esta é minha irmã gêmea Liza!
+                  $Liza: Não acha que somos uma combinação perfeita?`
+    },
+    "victory": {
+      1: `Liza: Nós somos...
+                  $Tate: ...não tão fortes quanto pensávamos?`,
+    },
+  },
+  "wallace_steven_double": {
+    "encounter": {
+      1: `Steven: Wallace, vamos mostrar a eles o poder dos campeões!
+                  $Wallace: Vamos mostrar o poder de Hoenn!
+                  $Steven: Vamos lá!`,
+    },
+    "victory": {
+      1: `Steven: Essa foi uma ótima batalha!
+                  $Wallace: Vamos vencer da próxima vez!`,
+    },
+  },
+  "steven_wallace_double": {
+    "encounter": {
+      1: `Steven: Você tem algum Pokémon raro?
+          $Wallace: Steven... Estamos aqui para uma batalha, não para mostrar nossos Pokémon.
+            $Steven: Ah... Entendi... Vamos lá então!`,
+    },
+    "victory": {
+      1: `Steven: Agora que terminamos a batalha, vamos mostrar nossos Pokémon!
+            $Wallace: Steven...`,
+    },
+  },
+  "alder_iris_double": {
+    "encounter": {
+      1:  `Alder: Somos os treinadores mais fortes de Unova!
+                  $Iris: Lutas contra treinadores fortes são as melhores!`,
+    },
+    "victory": {
+      1:   `Alder: Uau! Você é super forte!
+                  $Iris: Vamos vencer da próxima vez!`,
+    },
+  },
+  "iris_alder_double": {
+    "encounter": {
+      1:   `Iris: Bem-vindo, Desafiante! Eu sou A Campeã de Unova!
+                  $Alder: Iris, você não está um pouco empolgada demais?`,
+    },
+    "victory": {
+      1:    `Iris: Uma derrota como essa não é fácil de engolir...
+                  $Alder: Mas só ficaremos mais fortes a cada derrota!`,
+    },
+  },
+  "piers_marnie_double": {
+    "encounter": {
+      1:   `Marnie: Irmão, vamos mostrar a eles o poder de Spikemuth!
+                  $Piers: Nós trazemos a escuridão!`,
+    },
+    "victory": {
+      1:  `Marnie: Você trouxe luz para nossa escuridão!
+                  $Piers: Está muito claro...`,
+    },
+  },
+  "marnie_piers_double": {
+    "encounter": {
+      1:  `Piers: Prontos para um show?
+                    $Marnie: Irmão... Eles estão aqui para lutar, não para cantar...`,
+    },
+    "victory": {
+      1:  `Piers: Agora esse foi um ótimo show!
+                    $Marnie: Irmão...`,
+    },
+  },
+};
+
+
+// Dialogue of the named double battles in the game. For when the player is female. For languages that do not have gendered pronouns, this can be set to PGMdoubleBattleDialogue.
+export const PGFdoubleBattleDialogue: DialogueTranslationEntries = {
   "blue_red_double": {
     "encounter": {
       1: `Blue: Ei Red, vamos mostrar do que somos feitos!
@@ -4789,7 +4922,3 @@ export const PGMdoubleBattleDialogue: DialogueTranslationEntries = {
     },
   },
 };
-
-
-// Dialogue of the named double battles in the game. For when the player is female. For languages that do not have gendered pronouns, this can be set to PGMdoubleBattleDialogue.
-export const PGFdoubleBattleDialogue: DialogueTranslationEntries = PGMdoubleBattleDialogue;
