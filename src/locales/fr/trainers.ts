@@ -22,12 +22,6 @@ export const titles: SimpleTranslationEntries = {
   "cipher_admin": "Cipher Admin",
   "cipher": "Cipher",
   "cipher_head": "Cipher Head",
-  "rocket_boss": "Leader de la Team Rocket",
-  "magma_boss": "Leader de la Team Magma",
-  "aqua_boss": "Leader de la Team Aqua",
-  "galactic_boss": "Leader de la Team Galaxie",
-  "plasma_boss": "Leader de la Team Plasma",
-  "flare_boss": "Leader de la Team Flare",
   // Maybe if we add the evil teams we can add "Team Rocket" and "Team Aqua" etc. here as well as "Team Rocket Boss" and "Team Aqua Admin" etc.
 } as const;
 
