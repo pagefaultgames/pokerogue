@@ -1958,8 +1958,11 @@ export class PreSwitchOutClearWeatherAbAttr extends PreSwitchOutAbAttr {
    * @returns {boolean} Returns true if the weather clears, otherwise false.
    */
   applyPreSwitchOut(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
-    const weatherType = pokemon.scene.arena.weather.weatherType;
     let turnOffWeather = false;
+    let weatherType = WeatherType.NONE;
+    if (pokemon.scene.arena.weather.weatherType) {
+      weatherType = pokemon.scene.arena.weather.weatherType;
+    }
 
     // Clear weather only if user's ability matches the weather and no other pokemon has the ability.
     switch (weatherType) {
