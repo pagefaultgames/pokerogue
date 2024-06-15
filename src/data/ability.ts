@@ -582,8 +582,9 @@ export class MoveImmunityAbAttr extends PreDefendAbAttr {
  */
 export class WonderSkinAbAttr extends PreDefendAbAttr {
   applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (move.category === MoveCategory.STATUS && move.accuracy >= 50) {
-      move.accuracy = 50;
+    const moveAccuracy = args[0] as Utils.NumberHolder;
+    if (move.category === MoveCategory.STATUS && moveAccuracy.value >= 50) {
+      moveAccuracy.value = 50;
       return true;
     }
 

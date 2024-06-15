@@ -7,7 +7,10 @@ import { TurnEndPhase, } from "#app/phases";
 import { Moves } from "#enums/moves";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
-import { allMoves } from "#app/data/move.js";
+import Move, { allMoves } from "#app/data/move.js";
+import { MoveAbilityBypassAbAttr, WonderSkinAbAttr } from "#app/data/ability.js";
+import { NumberHolder } from "#app/utils.js";
+import Pokemon from "#app/field/pokemon.js";
 
 describe("Abilities - Wonder Skin", () => {
   let phaserGame: Phaser.Game;
@@ -34,31 +37,29 @@ describe("Abilities - Wonder Skin", () => {
   it("lowers accuracy of status moves to 50%", async () => {
     await game.startBattle([Species.MAGIKARP]);
 
-    const attacker = game.scene.getPlayerPokemon();
-
     game.doAttack(getMovePosition(game.scene, 0, Moves.CHARM));
+
+    const appliedAccuracy = getAppliedMoveAccuracy(game.scene.getEnemyPokemon(), game.scene.getPlayerPokemon(), allMoves[Moves.CHARM]);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    const lastUsedMoveAccuracy = allMoves[attacker.getLastXMoves()[0].move].accuracy;
-
-    expect(lastUsedMoveAccuracy).not.toBe(100);
-    expect(lastUsedMoveAccuracy).toBe(50);
+    expect(appliedAccuracy).not.toBe(undefined);
+    expect(appliedAccuracy).not.toBe(100);
+    expect(appliedAccuracy).toBe(50);
   });
 
   it("does not lower accuracy of non-status moves", async () => {
     await game.startBattle([Species.MAGIKARP]);
 
-    const attacker = game.scene.getPlayerPokemon();
-
     game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+
+    const appliedAccuracy = getAppliedMoveAccuracy(game.scene.getEnemyPokemon(), game.scene.getPlayerPokemon(), allMoves[Moves.TACKLE]);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    const lastUsedMoveAccuracy = allMoves[attacker.getLastXMoves()[0].move].accuracy;
-
-    expect(lastUsedMoveAccuracy).toBe(100);
-    expect(lastUsedMoveAccuracy).not.toBe(50);
+    expect(appliedAccuracy).not.toBe(undefined);
+    expect(appliedAccuracy).toBe(100);
+    expect(appliedAccuracy).not.toBe(50);
   });
 
   it("does not affect pokemon with Mold Breaker", async () => {
@@ -66,15 +67,15 @@ describe("Abilities - Wonder Skin", () => {
 
     await game.startBattle([Species.MAGIKARP]);
 
-    const attacker = game.scene.getPlayerPokemon();
-
     game.doAttack(getMovePosition(game.scene, 0, Moves.CHARM));
+
+    const appliedAccuracy = getAppliedMoveAccuracy(game.scene.getEnemyPokemon(), game.scene.getPlayerPokemon(), allMoves[Moves.CHARM]);
+
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    const lastUsedMoveAccuracy = allMoves[attacker.getLastXMoves()[0].move].accuracy;
-
-    expect(lastUsedMoveAccuracy).toBe(100);
-    expect(lastUsedMoveAccuracy).not.toBe(50);
+    expect(appliedAccuracy).not.toBe(undefined);
+    expect(appliedAccuracy).toBe(100);
+    expect(appliedAccuracy).not.toBe(50);
   });
 
   it("does not affect pokemon with Teravolt", async () => {
@@ -82,15 +83,15 @@ describe("Abilities - Wonder Skin", () => {
 
     await game.startBattle([Species.MAGIKARP]);
 
-    const attacker = game.scene.getPlayerPokemon();
-
     game.doAttack(getMovePosition(game.scene, 0, Moves.CHARM));
+
+    const appliedAccuracy = getAppliedMoveAccuracy(game.scene.getEnemyPokemon(), game.scene.getPlayerPokemon(), allMoves[Moves.CHARM]);
+
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    const lastUsedMoveAccuracy = allMoves[attacker.getLastXMoves()[0].move].accuracy;
-
-    expect(lastUsedMoveAccuracy).toBe(100);
-    expect(lastUsedMoveAccuracy).not.toBe(50);
+    expect(appliedAccuracy).not.toBe(undefined);
+    expect(appliedAccuracy).toBe(100);
+    expect(appliedAccuracy).not.toBe(50);
   });
 
   it("does not affect pokemon with Turboblaze", async () => {
@@ -98,14 +99,40 @@ describe("Abilities - Wonder Skin", () => {
 
     await game.startBattle([Species.MAGIKARP]);
 
-    const attacker = game.scene.getPlayerPokemon();
-
     game.doAttack(getMovePosition(game.scene, 0, Moves.CHARM));
+
+    const appliedAccuracy = getAppliedMoveAccuracy(game.scene.getEnemyPokemon(), game.scene.getPlayerPokemon(), allMoves[Moves.CHARM]);
+
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    const lastUsedMoveAccuracy = allMoves[attacker.getLastXMoves()[0].move].accuracy;
-
-    expect(lastUsedMoveAccuracy).toBe(100);
-    expect(lastUsedMoveAccuracy).not.toBe(50);
+    expect(appliedAccuracy).not.toBe(undefined);
+    expect(appliedAccuracy).toBe(100);
+    expect(appliedAccuracy).not.toBe(50);
   });
 });
+
+/**
+ * Calculates the adjusted applied accuracy of a move.
+ *
+ * @param defender - The defending Pokémon.
+ * @param attacker - The attacking Pokémon.
+ * @param move - The move being used by the attacker.
+ * @returns The adjusted accuracy of the move.
+ */
+const getAppliedMoveAccuracy = (defender: Pokemon, attacker: Pokemon, move: Move) => {
+  const accuracyHolder = new NumberHolder(move.accuracy);
+
+  /**
+     * Simulate ignoring ability
+     * @see MoveAbilityBypassAbAttr
+     */
+  if (attacker.hasAbilityWithAttr(MoveAbilityBypassAbAttr)) {
+    return accuracyHolder.value;
+  }
+
+  const wonderSkinInstance = new WonderSkinAbAttr();
+
+  wonderSkinInstance.applyPreDefend(defender, false, attacker, move, { value: false }, [ accuracyHolder ]);
+
+  return accuracyHolder.value;
+};

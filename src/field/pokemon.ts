@@ -1995,7 +1995,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         applyPreDefendAbAttrs(TypeImmunityAbAttr, this, source, move, cancelled, typeMultiplier);
       }
       if (!cancelled.value) {
-        applyPreDefendAbAttrs(WonderSkinAbAttr, this, source, move, cancelled);
+        applyPreDefendAbAttrs(WonderSkinAbAttr, this, source, move, cancelled, new Utils.NumberHolder(move.accuracy));
         applyPreDefendAbAttrs(MoveImmunityAbAttr, this, source, move, cancelled, typeMultiplier);
         defendingSidePlayField.forEach((p) => applyPreDefendAbAttrs(FieldPriorityMoveImmunityAbAttr, p, source, move, cancelled, typeMultiplier));
       }
