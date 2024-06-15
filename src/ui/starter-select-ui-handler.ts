@@ -1368,17 +1368,17 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                     ////
 
                     // // Custom shiny rate. 1/32 chance of shiny
-                    // if (Utils.randSeedInt(32)) {
+                    // if (!Utils.randSeedInt(32)) {
                     //   eggOptions.isShiny = true;
                     // }
                     // // Custom hidden ability rate. 1/16 chance of hidden ability
-                    // if (Utils.randSeedInt(16)) {
+                    // if (!Utils.randSeedInt(16)) {
                     //   eggOptions.overrideHiddenAbility = true;
                     // }
                     // // Custom rare egg move rate. baseChance = 3 means same chance as Move UP! gacha.
                     // // The odds of getting a rare egg move are 1/3 for legendary eggs, 1/6 for epic eggs, 1/12 for rare eggs, and 1/24 for common eggs.
                     // const baseChance = 3;
-                    // if (Utils.randSeedInt(baseChance * Math.pow(2, 3 - getEggTierForSpecies(this.lastSpecies)))) {
+                    // if (!Utils.randSeedInt(baseChance * Math.pow(2, 3 - getEggTierForSpecies(this.lastSpecies)))) {
                     //   eggOptions.overrideRareEggMove = true;
                     // }
 
