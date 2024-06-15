@@ -130,7 +130,7 @@ export const trainerClasses: SimpleTranslationEntries = {
   "magma_grunt": "Sbire de la Team Magma",
   "magma_grunt_female": "Sbire de la Team Magma",
   "aqua_grunt": "Sbire de la Team Aqua",
-  "aqua_grunt_female": "Sbire Team Aqua",
+  "aqua_grunt_female": "Sbire de la Team Aqua",
   "galactic_grunt": "Sbire de la Team Galaxie",
   "galactic_grunt_female": "Sbire Team Galaxie",
   "plasma_grunt": "Sbire de la Team Plasma",
