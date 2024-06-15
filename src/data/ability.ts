@@ -2439,6 +2439,9 @@ export class FriskAbAttr extends PostSummonAbAttr {
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     for (const opponent of pokemon.getOpponents()) {
       pokemon.scene.queueMessage(getPokemonMessage(pokemon, " frisked " + opponent.name + "'s " + opponent.getAbility().name + "!"));
+      if (opponent.battleData) {
+        opponent.battleData.abilityRevealed = true;
+      }
     }
     return true;
   }
