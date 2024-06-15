@@ -7,7 +7,7 @@ import { EndEvolutionPhase, EvolutionPhase } from "./evolution-phase";
 import Pokemon, { EnemyPokemon, PlayerPokemon } from "./field/pokemon";
 import { Mode } from "./ui/ui";
 import PartyUiHandler from "./ui/party-ui-handler";
-import { BattleSpec } from "./enums/battle-spec";
+import { BattleSpec } from "#enums/battle-spec";
 import { BattlePhase, MovePhase, PokemonHealPhase } from "./phases";
 import { getTypeRgb } from "./data/type";
 
