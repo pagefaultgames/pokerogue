@@ -4,7 +4,7 @@ import { TextStyle, addTextObject } from "../text";
 import { Mode } from "../ui";
 import UiHandler from "../ui-handler";
 import { addWindow } from "../ui-theme";
-import {Button} from "../../enums/buttons";
+import {Button} from "#enums/buttons";
 import {InputsIcons} from "#app/ui/settings/abstract-control-settings-ui-handler.js";
 import NavigationMenu, {NavigationManager} from "#app/ui/settings/navigationMenu";
 import { Setting, SettingKeys } from "#app/system/settings/settings";
@@ -33,8 +33,8 @@ export default class AbstractSettingsUiHandler extends UiHandler {
 
   private reloadSettings: Array<Setting>;
   private reloadRequired: boolean;
-  private rowsToDisplay: number;
 
+  protected rowsToDisplay: number;
   protected title: string;
   protected settings: Array<Setting>;
   protected localStorageKey: string;
