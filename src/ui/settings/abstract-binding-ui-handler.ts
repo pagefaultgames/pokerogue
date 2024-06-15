@@ -3,7 +3,7 @@ import BattleScene from "../../battle-scene";
 import {Mode} from "../ui";
 import {addWindow} from "../ui-theme";
 import {addTextObject, TextStyle} from "../text";
-import {Button} from "../../enums/buttons";
+import {Button} from "#enums/buttons";
 import {NavigationManager} from "#app/ui/settings/navigationMenu";
 
 /**
