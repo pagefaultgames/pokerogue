@@ -119,9 +119,6 @@ const gymBadges = {
   "Liza":"mind_badge_p2",
   "Tate and Liza":"mind_badge",
   "Juan":"rain_badge",
-};
-
-/*
   "Roark":"coal_badge", //Sinnoh
   "Gardenia":"forest_badge",
   "Maylene":"cobble_badge",
@@ -130,6 +127,10 @@ const gymBadges = {
   "Byron":"mine_badge",
   "Candice":"icicle_badge",
   "Volkner":"beacon_badge",
+};
+
+/*
+  
   "Cilan":"trio_badge_cilan", //Unova
   "Chili":"trio_badge_chili",
   "Cress":"trio_badge_cress",
