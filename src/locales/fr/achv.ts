@@ -203,7 +203,7 @@ export const PGMachv: AchievementTranslationEntries = {
     description: "Terminer un challange avec uniquement des Pokémon de 8e génération.",
   },
   "MONO_GEN_NINE": {
-    name: "Ça va, c'était EZ",
+    name: "Ça va, c’était EZ",
     description: "Terminer un challange avec uniquement des Pokémon de 9e génération.",
   },
 
