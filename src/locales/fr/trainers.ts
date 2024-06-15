@@ -13,6 +13,12 @@ export const titles: SimpleTranslationEntries = {
   "rival": "Rival·e", //Written in gender-inclusive language in wait of a potential split of the entry
   "professor": "Professeur·e", //Written in gender-inclusive language in wait of a potential split of the entry
   "frontier_brain": "Meneur·euse de Zone", //Written in gender-inclusive language in wait of a potential split of the entry
+  "rocket_boss": "Leader Team Rocket",
+  "magma_boss": "Leader Team Magma",
+  "aqua_boss": "Leader Team Aqua",
+  "galactic_boss": "Leader Team Galaxy",
+  "plasma_boss": "Leader Team Plasma",
+  "flare_boss": "Leader Team Flare",
   // Maybe if we add the evil teams we can add "Team Rocket" and "Team Aqua" etc. here as well as "Team Rocket Boss" and "Team Aqua Admin" etc.
 } as const;
 
@@ -118,7 +124,19 @@ export const trainerClasses: SimpleTranslationEntries = {
   "worker": "Ouvrier",
   "worker_female": "Ouvrière",
   "workers": "Ouvriers",
-  "youngster": "Gamin"
+  "youngster": "Gamin",
+  "rocket_grunt": "Sbire Team Rocket",
+  "rocket_grunt_female": "Sbire Team Rocket",
+  "magma_grunt": "Sbire Team Magma",
+  "magma_grunt_female": "Sbire Team Magma",
+  "aqua_grunt": "Sbire Team Aqua",
+  "aqua_grunt_female": "Sbire Team Aqua",
+  "galactic_grunt": "Sbire Team Galaxy",
+  "galactic_grunt_female": "Sbire Team Galaxy",
+  "plasma_grunt": "Sbire Team Plasma",
+  "plasma_grunt_female": "Sbire Team Plasma",
+  "flare_grunt": "Sbire Team Flare",
+  "flare_grunt_female": "Sbire Team Flare",
 } as const;
 
 // Names of special trainers like gym leaders, elite four, and the champion
