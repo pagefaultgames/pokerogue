@@ -252,8 +252,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
   TempBattleStatBoosterStatName: {
     "ATK": "Attaque",
     "DEF": "Défense",
-    "SPATK": "Attaque Spéciale",
-    "SPDEF": "Défense Spéciale",
+    "SPATK": "Atq. Spé.",
+    "SPDEF": "Déf. Spé.",
     "SPD": "Vitesse",
     "ACC": "Précision",
     "CRIT": "Taux de critique",
