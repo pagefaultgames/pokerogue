@@ -1,8 +1,8 @@
 import * as Utils from "../utils";
 import BattleScene from "#app/battle-scene.js";
-import { TimeOfDay } from "#app/data/enums/time-of-day.js";
 import { BattleSceneEventType } from "../events/battle-scene";
-import { EaseType } from "./enums/ease-type";
+import { EaseType } from "#enums/ease-type";
+import { TimeOfDay } from "#enums/time-of-day";
 
 /** A small self contained UI element that displays the time of day as an icon */
 export default class TimeOfDayWidget extends Phaser.GameObjects.Container {
