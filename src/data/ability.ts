@@ -2440,6 +2440,9 @@ export class FriskAbAttr extends PostSummonAbAttr {
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     for (const opponent of pokemon.getOpponents()) {
       pokemon.scene.queueMessage(`${i18next.t("abilityTriggers:friskAb", { pokemonName: getPokemonNameWithAffix(pokemon),abilityName: opponent.getAbility().name,targetPokemonName: getPokemonNameWithAffix(opponent) })}`);
+      if (opponent.battleData) {
+        opponent.battleData.abilityRevealed = true;
+      }
     }
     return true;
   }
