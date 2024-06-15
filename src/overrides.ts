@@ -39,7 +39,7 @@ export const ARENA_TINT_OVERRIDE: TimeOfDay = null;
 export const XP_MULTIPLIER_OVERRIDE: number = null;
 // default 1000
 export const STARTING_MONEY_OVERRIDE: integer = 0;
-export const STARTER_CANDY_FREE_NO_COST_OVERRIDE: boolean = false;
+export const FREE_CANDY_UPGRADE_OVERRIDE: boolean = false;
 export const POKEBALL_OVERRIDE: { active: boolean, pokeballs: PokeballCounts } = {
   active: false,
   pokeballs: {

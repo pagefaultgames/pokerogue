@@ -31,7 +31,7 @@ import { StatsContainer } from "./stats-container";
 import { TextStyle, addBBCodeTextObject, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
-import { Egg } from "#app/data/egg";
+import { Egg, IEggOptions } from "#app/data/egg";
 import * as Overrides from "../overrides";
 import {SettingKeyboard} from "#app/system/settings/settings-keyboard";
 import {Device} from "#app/enums/devices";
@@ -101,13 +101,13 @@ const languageSettings: { [key: string]: LanguageSetting } = {
 };
 
 const starterCandyCosts: { passive: integer, costReduction: [integer, integer], egg: integer }[] = [
-  { passive: 50, costReduction: [30, 75], egg: 10 }, // 1
-  { passive: 45, costReduction: [25, 60], egg: 10 }, // 2
-  { passive: 40, costReduction: [20, 50], egg: 10 }, // 3
-  { passive: 30, costReduction: [15, 40], egg: 10 }, // 4
-  { passive: 25, costReduction: [12, 35], egg: 10 }, // 5
-  { passive: 20, costReduction: [10, 30], egg: 10 }, // 6
-  { passive: 15, costReduction: [8, 20], egg: 10 },  // 7
+  { passive: 50, costReduction: [30, 75], egg: 50 }, // 1
+  { passive: 45, costReduction: [25, 60], egg: 45 }, // 2
+  { passive: 40, costReduction: [20, 50], egg: 40 }, // 3
+  { passive: 30, costReduction: [15, 40], egg: 30 }, // 4
+  { passive: 25, costReduction: [12, 35], egg: 25 }, // 5
+  { passive: 20, costReduction: [10, 30], egg: 20 }, // 6
+  { passive: 15, costReduction: [8, 20], egg: 15 },  // 7
   { passive: 10, costReduction: [5, 15], egg: 10 },  // 8
   { passive: 10, costReduction: [3, 10], egg: 10 },  // 9
   { passive: 10, costReduction: [3, 10], egg: 10 },  // 10
@@ -1272,9 +1272,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               options.push({
                 label: `x${passiveCost} ${i18next.t("starterSelectUiHandler:unlockPassive")} (${allAbilities[starterPassiveAbilities[this.lastSpecies.speciesId]].name})`,
                 handler: () => {
-                  if (Overrides.STARTER_CANDY_FREE_NO_COST_OVERRIDE || candyCount >= passiveCost) {
+                  if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= passiveCost) {
                     starterData.passiveAttr |= PassiveAttr.UNLOCKED | PassiveAttr.ENABLED;
-                    if (!Overrides.STARTER_CANDY_FREE_NO_COST_OVERRIDE) {
+                    if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
                       starterData.candyCount -= passiveCost;
                     }
                     this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
@@ -1309,9 +1309,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               options.push({
                 label: `x${reductionCost} ${i18next.t("starterSelectUiHandler:reduceCost")}`,
                 handler: () => {
-                  if (Overrides.STARTER_CANDY_FREE_NO_COST_OVERRIDE || candyCount >= reductionCost) {
+                  if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= reductionCost) {
                     starterData.valueReduction++;
-                    if (!Overrides.STARTER_CANDY_FREE_NO_COST_OVERRIDE) {
+                    if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
                       starterData.candyCount -= reductionCost;
                     }
                     this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
@@ -1345,46 +1345,68 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               });
             }
 
-            // Same species egg menu option
-            const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(speciesStarters[this.lastSpecies.speciesId]);
-            options.push({
-              label: `x${sameSpeciesEggCost} ${i18next.t("starterSelectUiHandler:sameSpeciesEgg")}`,
-              handler: () => {
-                if (Overrides.STARTER_CANDY_FREE_NO_COST_OVERRIDE || candyCount >= sameSpeciesEggCost) {
-                  if (!Overrides.STARTER_CANDY_FREE_NO_COST_OVERRIDE) {
-                    starterData.candyCount -= sameSpeciesEggCost;
-                  }
-                  this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
-                  this.scene.gameData.saveSystem().then(success => {
-                    if (!success) {
-                      return this.scene.reset(true);
+            // Same species egg menu option. Only visible if passive is bought
+            if (passiveAttr & PassiveAttr.UNLOCKED) {
+              const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(speciesStarters[this.lastSpecies.speciesId]);
+              options.push({
+                label: `x${sameSpeciesEggCost} ${i18next.t("starterSelectUiHandler:sameSpeciesEgg")}`,
+                handler: () => {
+                  if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= sameSpeciesEggCost) {
+                    if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
+                      starterData.candyCount -= sameSpeciesEggCost;
                     }
-                  });
+                    this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
+                    this.scene.gameData.saveSystem().then(success => {
+                      if (!success) {
+                        return this.scene.reset(true);
+                      }
+                    });
 
-                  const egg = new Egg({scene: this.scene, species: this.lastSpecies.speciesId});
-                  egg.addEggToGameData(this.scene);
+                    const eggOptions: IEggOptions = {scene: this.scene, species: this.lastSpecies.speciesId};
+                    ////
+                    // Uncomment if you want to set custom rates for shiny, hidden ability and rare egg move.
+                    ////
 
-                  ui.setMode(Mode.STARTER_SELECT);
-                  this.scene.playSound("buy");
+                    // // Custom shiny rate. 1/32 chance of shiny
+                    // if (Utils.randSeedInt(32)) {
+                    //   eggOptions.isShiny = true;
+                    // }
+                    // // Custom hidden ability rate. 1/16 chance of hidden ability
+                    // if (Utils.randSeedInt(16)) {
+                    //   eggOptions.overrideHiddenAbility = true;
+                    // }
+                    // // Custom rare egg move rate. baseChance = 3 means same chance as Move UP! gacha.
+                    // // The odds of getting a rare egg move are 1/3 for legendary eggs, 1/6 for epic eggs, 1/12 for rare eggs, and 1/24 for common eggs.
+                    // const baseChance = 3;
+                    // if (Utils.randSeedInt(baseChance * Math.pow(2, 3 - getEggTierForSpecies(this.lastSpecies)))) {
+                    //   eggOptions.overrideRareEggMove = true;
+                    // }
 
-                  // If the notification setting is set to 'On', update the candy upgrade display
-                  // if (this.scene.candyUpgradeNotification === 2) {
-                  //   if (this.isUpgradeIconEnabled() ) {
-                  //     this.setUpgradeIcon(this.cursor);
-                  //   }
-                  //   if (this.isUpgradeAnimationEnabled()) {
-                  //     const genSpecies = this.genSpecies[this.lastSpecies.generation - 1];
-                  //     this.setUpgradeAnimation(this.starterSelectGenIconContainers[this.lastSpecies.generation - 1].getAt(genSpecies.indexOf(this.lastSpecies)), this.lastSpecies, true);
-                  //   }
-                  // }
+                    const egg = new Egg(eggOptions);
+                    egg.addEggToGameData(this.scene);
 
-                  return true;
-                }
-                return false;
-              },
-              item: "candy",
-              itemArgs: starterColors[this.lastSpecies.speciesId]
-            });
+                    ui.setMode(Mode.STARTER_SELECT);
+                    this.scene.playSound("buy");
+
+                    // If the notification setting is set to 'On', update the candy upgrade display
+                    // if (this.scene.candyUpgradeNotification === 2) {
+                    //   if (this.isUpgradeIconEnabled() ) {
+                    //     this.setUpgradeIcon(this.cursor);
+                    //   }
+                    //   if (this.isUpgradeAnimationEnabled()) {
+                    //     const genSpecies = this.genSpecies[this.lastSpecies.generation - 1];
+                    //     this.setUpgradeAnimation(this.starterSelectGenIconContainers[this.lastSpecies.generation - 1].getAt(genSpecies.indexOf(this.lastSpecies)), this.lastSpecies, true);
+                    //   }
+                    // }
+
+                    return true;
+                  }
+                  return false;
+                },
+                item: "candy",
+                itemArgs: starterColors[this.lastSpecies.speciesId]
+              });
+            }
             options.push({
               label: i18next.t("menu:cancel"),
               handler: () => {
