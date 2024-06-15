@@ -302,7 +302,7 @@ export default class SummaryUiHandler extends UiHandler {
     });
     this.pokemon.cry();
 
-    this.nameText.setText(this.pokemon.name);
+    this.nameText.setText(this.pokemon.illusion.active ? this.pokemon.illusion.name : this.pokemon.name);
 
     const isFusion = this.pokemon.isFusion();
 
@@ -707,7 +707,7 @@ export default class SummaryUiHandler extends UiHandler {
         return typeIcon;
       };
 
-      const types = this.pokemon.getTypes(false, false, true);
+      const types = this.pokemon.getTypes(false, false, true, false);
       profileContainer.add(getTypeIcon(0, types[0]));
       if (types.length > 1) {
         profileContainer.add(getTypeIcon(1, types[1]));

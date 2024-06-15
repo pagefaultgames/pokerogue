@@ -26,7 +26,7 @@ import { Gender } from "./data/gender";
 import { Weather, WeatherType, getRandomWeatherType, getTerrainBlockMessage, getWeatherDamageMessage, getWeatherLapseMessage } from "./data/weather";
 import { TempBattleStat } from "./data/temp-battle-stat";
 import { ArenaTagSide, ArenaTrapTag, MistTag, TrickRoomTag } from "./data/arena-tag";
-import { CheckTrappedAbAttr, IgnoreOpponentStatChangesAbAttr, IgnoreOpponentEvasionAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, BlockRedirectAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, BattleStatMultiplierAbAttr, applyBattleStatMultiplierAbAttrs, IncrementMovePriorityAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr, BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, PostBiomeChangeAbAttr, applyPostFaintAbAttrs, PostFaintAbAttr, IncreasePpAbAttr, PostStatChangeAbAttr, applyPostStatChangeAbAttrs, AlwaysHitAbAttr, PreventBerryUseAbAttr, StatChangeCopyAbAttr, PokemonTypeChangeAbAttr, applyPreAttackAbAttrs, applyPostMoveUsedAbAttrs, PostMoveUsedAbAttr, MaxMultiHitAbAttr, HealFromBerryUseAbAttr } from "./data/ability";
+import { CheckTrappedAbAttr, IgnoreOpponentStatChangesAbAttr, IgnoreOpponentEvasionAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr,PreSummonAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, BlockRedirectAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPreSummonAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, BattleStatMultiplierAbAttr, applyBattleStatMultiplierAbAttrs, IncrementMovePriorityAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr, BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, PostBiomeChangeAbAttr, applyPostFaintAbAttrs, PostFaintAbAttr, IncreasePpAbAttr, PostStatChangeAbAttr, applyPostStatChangeAbAttrs, AlwaysHitAbAttr, PreventBerryUseAbAttr, StatChangeCopyAbAttr, PokemonTypeChangeAbAttr, applyPreAttackAbAttrs, applyPostMoveUsedAbAttrs, PostMoveUsedAbAttr, MaxMultiHitAbAttr, HealFromBerryUseAbAttr } from "./data/ability";
 import { Unlockables, getUnlockableName } from "./system/unlockables";
 import { getBiomeKey } from "./field/arena";
 import { BattleType, BattlerIndex, TurnCommand } from "./battle";
@@ -813,6 +813,7 @@ export class EncounterPhase extends BattlePhase {
           });
         }
       }
+
       const enemyPokemon = this.scene.getEnemyParty()[e];
       if (e < (battle.double ? 2 : 1)) {
         enemyPokemon.setX(-66 + enemyPokemon.getFieldPositionOffset()[0]);
@@ -864,13 +865,16 @@ export class EncounterPhase extends BattlePhase {
       battle.enemyParty.forEach((enemyPokemon, e) => {
         if (e < (battle.double ? 2 : 1)) {
           if (battle.battleType === BattleType.WILD) {
-            this.scene.field.add(enemyPokemon);
-            battle.seenEnemyPartyMemberIds.add(enemyPokemon.id);
-            const playerPokemon = this.scene.getPlayerPokemon();
-            if (playerPokemon?.visible) {
-              this.scene.field.moveBelow(enemyPokemon as Pokemon, playerPokemon);
-            }
-            enemyPokemon.tint(0, 0.5);
+
+            applyPreSummonAbAttrs(PreSummonAbAttr, enemyPokemon, []).then(() => {
+              this.scene.field.add(enemyPokemon);
+              battle.seenEnemyPartyMemberIds.add(enemyPokemon.id);
+              const playerPokemon = this.scene.getPlayerPokemon();
+              if (playerPokemon?.visible) {
+                this.scene.field.moveBelow(enemyPokemon as Pokemon, playerPokemon);
+              }
+              enemyPokemon.tint(0, 0.5);
+            });
           } else if (battle.battleType === BattleType.TRAINER) {
             enemyPokemon.setVisible(false);
             this.scene.currentBattle.trainer.tint(0, 0.5);
@@ -1347,7 +1351,9 @@ export class SummonPhase extends PartyMemberPokemonPhase {
   start() {
     super.start();
 
-    this.preSummon();
+    const pokemon = this.getPokemon();
+    const party: Pokemon[] = pokemon.isPlayer() ? this.scene.getParty().filter(p => p.isAllowedInBattle()) : this.scene.getEnemyParty().filter(p => p.isAllowedInBattle());
+    applyPreSummonAbAttrs(PreSummonAbAttr, pokemon, party).then(() => this.preSummon());
   }
 
   /**
@@ -1416,7 +1422,6 @@ export class SummonPhase extends PartyMemberPokemonPhase {
 
   summon(): void {
     const pokemon = this.getPokemon();
-
     const pokeball = this.scene.addFieldSprite(this.player ? 36 : 248, this.player ? 80 : 44, "pb", getPokeballAtlasKey(pokemon.pokeball));
     pokeball.setVisible(false);
     pokeball.setOrigin(0.5, 0.625);
@@ -1547,7 +1552,7 @@ export class SwitchSummonPhase extends SummonPhase {
         this.scene.pbTrayEnemy.showPbTray(this.scene.getEnemyParty());
       }
     }
-
+    const pokemon: Pokemon = this.getPokemon();
     if (!this.doReturn || (this.slotIndex !== -1 && !(this.player ? this.scene.getParty() : this.scene.getEnemyParty())[this.slotIndex])) {
       if (this.player) {
         return this.switchAndSummon();
@@ -1556,8 +1561,6 @@ export class SwitchSummonPhase extends SummonPhase {
         return;
       }
     }
-
-    const pokemon = this.getPokemon();
 
     if (!this.batonPass) {
       (this.player ? this.scene.getEnemyField() : this.scene.getPlayerField()).forEach(enemyPokemon => enemyPokemon.removeTagsBySourceId(pokemon.id));
@@ -2412,7 +2415,8 @@ export class TurnEndPhase extends FieldPhase {
         this.scene.applyModifier(EnemyStatusEffectHealChanceModifier, false, pokemon);
       }
 
-      applyPostTurnAbAttrs(PostTurnAbAttr, pokemon);
+      const party: Pokemon[] = pokemon.isPlayer() ? this.scene.getParty().filter(p => p.isAllowedInBattle()) : this.scene.getEnemyParty().filter(p => p.isAllowedInBattle());
+      applyPostTurnAbAttrs(PostTurnAbAttr, pokemon, party);
 
       this.scene.applyModifiers(TurnStatusEffectModifier, pokemon.isPlayer(), pokemon);
 
@@ -2464,7 +2468,7 @@ export class BattleEndPhase extends BattlePhase {
     }
 
     for (const pokemon of this.scene.getParty().filter(p => p.isAllowedInBattle())) {
-      applyPostBattleAbAttrs(PostBattleAbAttr, pokemon);
+      applyPostBattleAbAttrs(PostBattleAbAttr, pokemon, this.scene.getParty().filter(p => p.isAllowedInBattle()));
     }
 
     if (this.scene.currentBattle.moneyScattered) {
