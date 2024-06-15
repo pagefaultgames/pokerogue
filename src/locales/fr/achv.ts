@@ -172,97 +172,97 @@ export const PGMachv: AchievementTranslationEntries = {
 
   "MONO_GEN_ONE": {
     name: "Le rival originel",
-    description: "Compléter le défi de la génération 1 uniquement.",
+    description: "Terminer un challenge avec uniquement des Pokémon de 1re génération.",
   },
   "MONO_GEN_TWO": {
     name: "Entre tradition et modernité",
-    description: "Compléter le défi de la génération 2 uniquement.",
+    description: "Terminer un challenge avec uniquement des Pokémon de 2e génération.",
   },
   "MONO_GEN_THREE": {
-    name: "Too much water?",
-    description: "Compléter le défi de la génération 3 uniquement.",
+    name: "Too much water ?",
+    description: "Terminer un challenge avec uniquement des Pokémon de 3e génération.",
   },
   "MONO_GEN_FOUR": {
-    name: "Est-elle vraiment la plus difficile?",
-    description: "Compléter le défi de la génération 4 uniquement.",
+    name: "Réellement la plus difficile ?",
+    description: "Terminer un challenge avec uniquement des Pokémon de 4e génération.",
   },
   "MONO_GEN_FIVE": {
-    name: "Tous les originaux",
-    description: "Compléter le défi de la génération 5 uniquement.",
+    name: "Recast complet",
+    description: "Terminer un challenge avec uniquement des Pokémon de 5e génération.",
   },
   "MONO_GEN_SIX": {
     name: "Aristocrate",
-    description: "Compléter le défi de la génération 6 uniquement.",
+    description: "Terminer un challenge avec uniquement des Pokémon de 6e génération.",
   },
   "MONO_GEN_SEVEN": {
-    name: "Seulement sur le plan technique",
-    description: "Compléter le défi de la génération 7 uniquement.",
+    name: "Seulement techniquement",
+    description: "Terminer un challenge avec uniquement des Pokémon de 7e génération.",
   },
   "MONO_GEN_EIGHT": {
-    name: "Le temps d'un champion !",
-    description: "Compléter le défi de la génération 8 uniquement.",
+    name: "L’heure de gloire",
+    description: "Terminer un challenge avec uniquement des Pokémon de 8e génération.",
   },
   "MONO_GEN_NINE": {
-    name: "Elle y est allée doucement avec toi",
-    description: "Compléter le défi de la génération 9 uniquement.",
+    name: "Ça va, c’était EZ",
+    description: "Terminer un challenge avec uniquement des Pokémon de 9e génération.",
   },
 
   "MonoType": {
-    description: "Compléter le défi du monotype {{type}}.",
+    description: "Terminer un challenge en monotype {{type}}.",
   },
   "MONO_NORMAL": {
-    name: "Normalement extraordinaire",
+    name: "Extraordinairement banal",
   },
   "MONO_FIGHTING": {
     name: "Je connais le kung-fu",
   },
   "MONO_FLYING": {
-    name: "Maître des oiseaux",
+    name: "Angry Birds",
   },
   "MONO_POISON": {
-    name: "Touche moi je t'empoissonne !",
+    name: "Touche moi je t’empoisonne !",
   },
   "MONO_GROUND": {
-    name: "Prévisions: Tremblements de terre",
+    name: "Prévisions : Séisme",
   },
   "MONO_ROCK": {
-    name: "Solide comme un roc",
+    name: "Comme un roc",
   },
   "MONO_BUG": {
-    name: "Une chenille !!!",
+    name: "Une chenille !",
   },
   "MONO_GHOST": {
-    name: "Who you gonna call?",
+    name: "SOS Fantômes",
   },
   "MONO_STEEL": {
-    name: "Acier galvanisé",
+    name: "De type Acier !",
   },
   "MONO_FIRE": {
-    name: "Allumer le feu !!",
+    name: "Allumer le feu",
   },
   "MONO_WATER": {
-    name: "Quand il pleut, il pleut",
+    name: "Vacances en Bretagne",
   },
   "MONO_GRASS": {
-    name: "Ne pas toucher !",
+    name: "Ne pas toucher !",
   },
   "MONO_ELECTRIC": {
-    name: "Survolté",
+    name: "À la masse",
   },
   "MONO_PSYCHIC": {
-    name: "Télépathe",
+    name: "Grocervo",
   },
   "MONO_ICE": {
     name: "Froid comme la glace",
   },
   "MONO_DRAGON": {
-    name: "Sort le dragon !",
+    name: "Légendes du club, ou presque",
   },
   "MONO_DARK": {
-    name: "Dresseur bresom",
+    name: "Ça va lui passer",
   },
   "MONO_FAIRY": {
-    name: "Juste un peu de magie",
+    name: "Hey ! Listen !",
   },
 } as const;
 
