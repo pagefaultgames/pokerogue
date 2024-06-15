@@ -1,9 +1,9 @@
 import { EggTier } from "#app/data/enums/egg-type";
 import BattleScene from "../battle-scene";
-import { TrainerType } from "../data/enums/trainer-type";
 import i18next from "../plugins/i18n";
 import { Achv, AchvTier, achvs, getAchievementDescription } from "./achv";
-import { PlayerGender } from "#app/data/enums/player-gender";
+import { PlayerGender } from "#enums/player-gender";
+import { TrainerType } from "#enums/trainer-type";
 
 export enum VoucherType {
   REGULAR,

@@ -1,22 +1,23 @@
-import { Species } from "./data/enums/species";
-import { Abilities } from "./data/enums/abilities";
-import { Biome } from "./data/enums/biome";
-import { Moves } from "./data/enums/moves";
 import { WeatherType } from "./data/weather";
 import { Variant } from "./data/variant";
-import { BerryType } from "./data/enums/berry-type";
 import { TempBattleStat } from "./data/temp-battle-stat";
 import { Nature } from "./data/nature";
 import { Type } from "./data/type";
 import { Stat } from "./data/pokemon-stat";
 import { PokeballCounts } from "./battle-scene";
 import { PokeballType } from "./data/pokeball";
-import {TimeOfDay} from "#app/data/enums/time-of-day";
 import { Gender } from "./data/gender";
 import { StatusEffect } from "./data/status-effect";
 import { modifierTypes } from "./modifier/modifier-type";
 import { VariantTier } from "./data/enums/variant-tiers";
-import { EggTier } from "./data/enums/egg-type";
+import { EggTier } from "#enums/egg-type";
+import { allSpecies } from "./data/pokemon-species"; // eslint-disable-line @typescript-eslint/no-unused-vars
+import { Abilities } from "#enums/abilities";
+import { BerryType } from "#enums/berry-type";
+import { Biome } from "#enums/biome";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import { TimeOfDay } from "#enums/time-of-day";
 
 /**
  * Overrides for testing different in game situations
@@ -55,8 +56,18 @@ export const POKEBALL_OVERRIDE: { active: boolean, pokeballs: PokeballCounts } =
  * PLAYER OVERRIDES
  */
 
-// forms can be found in pokemon-species.ts
-export const STARTER_FORM_OVERRIDE: integer = 0;
+/**
+ * Set the form index of any starter in the party whose `speciesId` is inside this override
+ * @see {@link allSpecies} in `src/data/pokemon-species.ts` for form indexes
+ * @example
+ * ```
+ * const STARTER_FORM_OVERRIDES = {
+ *   [Species.DARMANITAN]: 1
+ * }
+ * ```
+ */
+export const STARTER_FORM_OVERRIDES: Partial<Record<Species, number>> = {};
+
 // default 5 or 20 for Daily
 export const STARTING_LEVEL_OVERRIDE: integer = 0;
 /**
@@ -87,6 +98,7 @@ export const OPP_GENDER_OVERRIDE: Gender = null;
 export const OPP_MOVESET_OVERRIDE: Array<Moves> = [];
 export const OPP_SHINY_OVERRIDE: boolean = false;
 export const OPP_VARIANT_OVERRIDE: Variant = 0;
+export const OPP_IVS_OVERRIDE: integer | integer[] = [];
 
 /**
  * EGG OVERRIDES

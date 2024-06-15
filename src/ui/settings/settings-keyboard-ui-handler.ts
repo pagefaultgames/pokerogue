@@ -13,7 +13,7 @@ import AbstractControlSettingsUiHandler from "#app/ui/settings/abstract-control-
 import {InterfaceConfig} from "#app/inputs-controller";
 import {addTextObject, TextStyle} from "#app/ui/text";
 import {deleteBind} from "#app/configs/inputs/configHandler";
-import {Device} from "#app/enums/devices";
+import {Device} from "#enums/devices";
 import {NavigationManager} from "#app/ui/settings/navigationMenu";
 
 /**

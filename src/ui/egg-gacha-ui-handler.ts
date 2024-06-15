@@ -8,12 +8,12 @@ import { VoucherType, getGuaranteedEggTierFromPullCount, getVoucherTypeIcon } fr
 import { getPokemonSpecies } from "../data/pokemon-species";
 import { addWindow } from "./ui-theme";
 import { Tutorial, handleTutorial } from "../tutorial";
-import { EggTier } from "../data/enums/egg-type";
-import {Button} from "../enums/buttons";
+import {Button} from "#enums/buttons";
 import i18next from "../plugins/i18n";
 import * as Overrides from "../overrides";
 import { GachaType } from "#app/data/enums/gacha-types";
 import { arrayShuffle } from "#app/helper/array_helper";
+import { EggTier } from "#enums/egg-type";
 
 export default class EggGachaUiHandler extends MessageUiHandler {
   private eggGachaContainer: Phaser.GameObjects.Container;

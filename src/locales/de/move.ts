@@ -2931,7 +2931,7 @@ export const move: MoveTranslationEntries = {
   },
   "bouncyBubble": {
     name: "Blubbsauger",
-    effect: "Evoli greift mit Wasserblasen an. Evolis KP werden um die Hälfte des vom Wasser angerichteten Schadens geheilt."
+    effect: "Der Anwender greift mit Wasserblasen an. Seine KP werden in Höhe des vom Wasser angerichteten Schadens geheilt."
   },
   "buzzyBuzz": {
     name: "Knisterladung",
