@@ -3428,7 +3428,13 @@ export class NoFusionAbilityAbAttr extends AbAttr {
 
 export class BatteryAbAttr extends AbAttr {
   constructor() {
-    super(true);
+    super(false);
+  }
+}
+
+export class PowerSpotAbAttr extends AbAttr {
+  constructor() {
+    super(false);
   }
 }
 
@@ -4613,7 +4619,7 @@ export function initAbilities() {
       .attr(IceFaceMoveImmunityAbAttr, (target, user, move) => move.category === MoveCategory.PHYSICAL && !!target.getTag(BattlerTagType.ICE_FACE))
       .ignorable(),
     new Ability(Abilities.POWER_SPOT, 8)
-      .unimplemented(),
+      .attr(PowerSpotAbAttr),
     new Ability(Abilities.MIMICRY, 8)
       .unimplemented(),
     new Ability(Abilities.SCREEN_CLEANER, 8)
