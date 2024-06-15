@@ -263,7 +263,7 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "É Só Uma Fase",
   },
   "MONO_FAIRY": {
-    name: "O Clube das Winx",
+    name: "Clube das Winx",
   },
 } as const;
 
@@ -530,6 +530,6 @@ export const PGFachv: AchievementTranslationEntries = {
     name: "É Só Uma Fase",
   },
   "MONO_FAIRY": {
-    name: "O Clube das Winx",
+    name: "Clube das Winx",
   },
 } as const;
