@@ -2289,28 +2289,28 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "alder": {
     "encounter": {
-      1: "Prepare yourself for a match against the strongest Trainer in Unova!"
+      1: "하나지방에서 가장 강한 트레이너를 상대할 준비는 됐나?"
     },
     "victory": {
-      1: "Well done! You certainly are an unmatched talent."
+      1: "장하구나! 실로 견줄 자가 천하에 없도다!"
     },
     "defeat": {
-      1: `A fresh wind blows through my heart...
-          $What an extraordinary effort!`
+      1: `나의 마음에 상쾌한 바람이 지나갔다...
+          $정말 대단한 노력이다!`
     }
   },
   "kieran": {
     "encounter": {
-      1: `Through hard work, I become stronger and stronger!
-          $I don't lose.`
+      1: `난 노력을 통해 강해지고 또 강해지지!
+          $난 지지 않아.`
     },
     "victory": {
-      1: `I don't believe it...
-          $What a fun and heart-pounding battle!`
+      1: `믿을 수 없어...
+          $정말 재밌고 가슴 뛰는 배틀이었어!`
     },
     "defeat": {
-      1: `Wowzers, what a battle!
-          $Time for you to train even harder.`
+      1: `세상에 마상에! 정말 멋진 배틀이었어!
+          $네가 더 열심히 훈련할 시간이야.`
     }
   },
   "rival": {
