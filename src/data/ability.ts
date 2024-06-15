@@ -1881,6 +1881,7 @@ export class TraceAbAttr extends PostSummonAbAttr {
     pokemon.summonData.ability = target.getAbility().id;
 
     pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` traced ${target.name}'s\n${allAbilities[target.getAbility().id].name}!`));
+    setAbilityRevealed(target);
 
     return true;
   }
@@ -2439,9 +2440,7 @@ export class FriskAbAttr extends PostSummonAbAttr {
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     for (const opponent of pokemon.getOpponents()) {
       pokemon.scene.queueMessage(getPokemonMessage(pokemon, " frisked " + opponent.name + "'s " + opponent.getAbility().name + "!"));
-      if (opponent.battleData) {
-        opponent.battleData.abilityRevealed = true;
-      }
+      setAbilityRevealed(opponent);
     }
     return true;
   }
@@ -3800,6 +3799,17 @@ function canApplyAttr(pokemon: Pokemon, attr: AbAttr): boolean {
 function queueShowAbility(pokemon: Pokemon, passive: boolean): void {
   pokemon.scene.unshiftPhase(new ShowAbilityPhase(pokemon.scene, pokemon.id, passive));
   pokemon.scene.clearPhaseQueueSplice();
+}
+
+/**
+ * Sets the ability of a Pokémon as revealed.
+ *
+ * @param pokemon - The Pokémon whose ability is being revealed.
+ */
+function setAbilityRevealed(pokemon: Pokemon): void {
+  if (pokemon.battleData) {
+    pokemon.battleData.abilityRevealed = true;
+  }
 }
 
 export const allAbilities = [ new Ability(Abilities.NONE, 3) ];
