@@ -158,5 +158,5 @@ export const menu: SimpleTranslationEntries = {
   "altButtonSpeedUp": "Speed Up (Alt)",
   "buttonSlowDown": "Slow Down",
   "altButtonSlowDown": "Slow Down (Alt)",
-  "altButtonSubmit": "Submit (Alt)"
+  "altButtonSubmit": "Submit (Alt)",
 } as const;

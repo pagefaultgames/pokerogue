@@ -158,5 +158,5 @@ export const menu: SimpleTranslationEntries = {
   "altButtonSpeedUp": "속도 올리기 (대체)",
   "buttonSlowDown": "속도 내리기",
   "altButtonSlowDown": "속도 내리기 (대체)",
-  "altButtonSubmit": "확인 (대체)"
+  "altButtonSubmit": "확인 (대체)",
 } as const;
