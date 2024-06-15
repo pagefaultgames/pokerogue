@@ -38,6 +38,10 @@ export const XP_MULTIPLIER_OVERRIDE: number = null;
 export const NEVER_CRIT_OVERRIDE: boolean = false;
 // default 1000
 export const STARTING_MONEY_OVERRIDE: integer = 0;
+/** Sets all shop item prices to 0 */
+export const WAIVE_SHOP_FEES_OVERRIDE: boolean = false;
+/** Sets reroll price to 0 */
+export const WAIVE_REROLL_FEE_OVERRIDE: boolean = false;
 export const FREE_CANDY_UPGRADE_OVERRIDE: boolean = false;
 export const POKEBALL_OVERRIDE: { active: boolean, pokeballs: PokeballCounts } = {
   active: false,
