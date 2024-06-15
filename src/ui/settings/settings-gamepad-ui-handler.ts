@@ -13,7 +13,7 @@ import pad_dualshock from "#app/configs/inputs/pad_dualshock";
 import pad_unlicensedSNES from "#app/configs/inputs/pad_unlicensedSNES";
 import {InterfaceConfig} from "#app/inputs-controller";
 import AbstractControlSettingsUiHandler from "#app/ui/settings/abstract-control-settings-ui-handler.js";
-import {Device} from "#app/enums/devices";
+import {Device} from "#enums/devices";
 import {truncateString} from "#app/utils";
 
 /**
