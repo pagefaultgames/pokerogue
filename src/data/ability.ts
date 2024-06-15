@@ -574,6 +574,24 @@ export class MoveImmunityAbAttr extends PreDefendAbAttr {
   }
 }
 
+/**
+ * Reduces the accuracy of status moves used against the Pokémon with this ability to 50%.
+ * Used by Wonder Skin.
+ *
+ * @extends PreDefendAbAttr
+ */
+export class WonderSkinAbAttr extends PreDefendAbAttr {
+  applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    const moveAccuracy = args[0] as Utils.NumberHolder;
+    if (move.category === MoveCategory.STATUS && moveAccuracy.value >= 50) {
+      moveAccuracy.value = 50;
+      return true;
+    }
+
+    return false;
+  }
+}
+
 export class MoveImmunityStatChangeAbAttr extends MoveImmunityAbAttr {
   private stat: BattleStat;
   private levels: integer;
@@ -4250,8 +4268,8 @@ export function initAbilities() {
       .attr(BlockWeatherDamageAttr, WeatherType.SANDSTORM)
       .condition(getWeatherCondition(WeatherType.SANDSTORM)),
     new Ability(Abilities.WONDER_SKIN, 5)
-      .ignorable()
-      .unimplemented(),
+      .attr(WonderSkinAbAttr)
+      .ignorable(),
     new Ability(Abilities.ANALYTIC, 5)
       .attr(MovePowerBoostAbAttr, (user, target, move) => !!target.getLastXMoves(1).find(m => m.turn === target.scene.currentBattle.turn) || user.scene.currentBattle.turnCommands[target.getBattlerIndex()].command !== Command.FIGHT, 1.3),
     new Ability(Abilities.ILLUSION, 5)
