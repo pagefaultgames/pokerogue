@@ -1014,22 +1014,22 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "cilan": {
     "encounter": {
-      1: `Nothing personal... No hard feelings... Me and my Grass-type Pokémon will...
-               $Um... We're gonna battle come what may.`,
-      2: "So, um, if you're OK with me, I'll, um, put everything I've got into being, er, you know, your opponent.",
-      3: "OK… So, um, I'm Cilan, I like Grass-type Pokémon."
+      1: `개인적으로 받아들이지 마세요... 감정 상하지도 말고요... 저와 제 풀타입 포켓몬들 이라면...
+               $음... 무슨일이 있더라도 배틀을 할겁니다.`,
+      2: "네. 저로 괜찮다면 진심을 담아서 상대해 드리겠습니다.", 
+      3: "네… 그, 음, 저는 덴트입니다, 풀타입 포켓몬을 좋아합니다."
     },
     "victory": {
-      1: "Er… Is it over now?",
-      2: `…What a surprise. You are very strong, aren't you? 
-               $I guess my brothers wouldn't have been able to defeat you either…`,
-      3: "…Huh. Looks like my timing was, um, off?"
+      1: "…에- 그게…  끝나버렸나요?",
+      2: `…놀랐습니다. 당신 아주 강하군요. 
+               $팟이나 콘이라도 이길 수 없었을 것 같습니다…`,
+      3: "…어라, 타이밀이좀 잘못된것 같네요?"
     },
     "defeat": {
-      1: "Huh? Did I win?",
-      2: `I guess… 
-                $I suppose I won, because I've been competing with my brothers Chili and Cress, and we all were able to get tougher.`,
-      3: "It…it was quite a thrilling experience…"
+      1: "어라? 제가 이긴건가요?",
+      2: `제 생각엔… 
+                $아무래도 제가 이겼어야만 했을거라 생각합니다, 팟과 콘이랑 배틀하면서 우리는 모두 더 강해졌기 때문이죠.`,
+      3: "정말… 아주 짜릿한 경험이었습니다…"
     }
   },
   "roark": {
