@@ -997,25 +997,25 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "chili": {
     "encounter": {
-      1: "Yeeeeooow! Time to play with FIRE!! I'm the strongest of us brothers!",
-      2: "Ta-da! The Fire-type scorcher Chili--that's me--will be your opponent!",
-      3: "I'm going to show you what me and my blazing Fire types can do!"
+      1: "이얏호-! 형제중 가장강한 나하고 놀자고!",
+      2: "짜잔! 불꽃타입 불꽃의 남자 팟, 바로 너의 상대가되어주지!",
+      3: "나와 내 불타오르는 불꽃타입 포켓몬들이 뭘 할수 있는지 보여주지!"
     },
     "victory": {
-      1: "You got me. I am… burned… out…",
-      2: "Whoa ho! You're on fire!",
-      3: "Augh! You got me!"
+      1: "졌지만… 모 두 불 태 웠 어!!",
+      2: "와우! 불태워졌네!",
+      3: "으악! 너가 나를 이겨버렸잖아!"
     },
     "defeat": {
-      1: "I'm on fire! Play with me, and you'll get burned!",
-      2: "When you play with fire, you get burned!",
-      3: "I mean, c'mon, your opponent was me! You didn't have a chance!"
+      1: "난 지금 불타오르고 있어, 나와 싸우게된다면 넌 다치게될거야!",
+      2: "불장난하면 밤에 이불에 지도를 그리는법이지!",
+      3: "그러니까, 상대가 나였잖아? 너에게는 처음부터 기회가 없었다고!"
     }
   },
   "cilan": {
     "encounter": {
-      1: `개인적으로 받아들이지 마세요... 감정 상하지도 말고요... 저와 제 풀타입 포켓몬들 이라면...
-               $음... 무슨일이 있더라도 배틀을 할겁니다.`,
+      1: `개인적으로 받아들이지 마세요… 감정 상하지도 말고요… 저와 제 풀타입 포켓몬들 이라면…
+               $음… 무슨일이 있더라도 배틀을 할겁니다.`,
       2: "네. 저로 괜찮다면 진심을 담아서 상대해 드리겠습니다.", 
       3: "네… 그, 음, 저는 덴트입니다, 풀타입 포켓몬을 좋아합니다."
     },
