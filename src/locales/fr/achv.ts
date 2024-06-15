@@ -172,39 +172,39 @@ export const PGMachv: AchievementTranslationEntries = {
 
   "MONO_GEN_ONE": {
     name: "Le rival originel",
-    description: "Terminer un challange avec uniquement la 1re génération.",
+    description: "Terminer un challange avec uniquement des Pokémon de 1re génération.",
   },
   "MONO_GEN_TWO": {
     name: "Entre tradition et modernité",
-    description: "Terminer un challange avec uniquement la 2e génération.",
+    description: "Terminer un challange avec uniquement des Pokémon de 2e génération.",
   },
   "MONO_GEN_THREE": {
     name: "Too much water ?",
-    description: "Terminer un challange avec uniquement la 3e génération.",
+    description: "Terminer un challange avec uniquement des Pokémon de 3e génération.",
   },
   "MONO_GEN_FOUR": {
     name: "Réellement la plus difficile ?",
-    description: "Terminer un challange avec uniquement la 4e génération.",
+    description: "Terminer un challange avec uniquement des Pokémon de 4e génération.",
   },
   "MONO_GEN_FIVE": {
     name: "Recast complet",
-    description: "Terminer un challange avec uniquement la 5e génération.",
+    description: "Terminer un challange avec uniquement des Pokémon de 5e génération.",
   },
   "MONO_GEN_SIX": {
     name: "Aristocrate",
-    description: "Terminer un challange avec uniquement la 6e génération.",
+    description: "Terminer un challange avec uniquement des Pokémon de 6e génération.",
   },
   "MONO_GEN_SEVEN": {
     name: "Seulement techniquement",
-    description: "Terminer un challange avec uniquement la 7e génération.",
+    description: "Terminer un challange avec uniquement des Pokémon de 7e génération.",
   },
   "MONO_GEN_EIGHT": {
     name: "L’heure de gloire",
-    description: "Terminer un challange avec uniquement la 8e génération.",
+    description: "Terminer un challange avec uniquement des Pokémon de 8e génération.",
   },
   "MONO_GEN_NINE": {
     name: "Ça va, c'était EZ",
-    description: "Terminer un challange avec uniquement la 9e génération.",
+    description: "Terminer un challange avec uniquement des Pokémon de 9e génération.",
   },
 
   "MonoType": {
