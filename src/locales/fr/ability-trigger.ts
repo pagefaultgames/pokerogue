@@ -4,9 +4,9 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "blockRecoilDamage" : "{{abilityName}}\nde {{pokemonName}} le protège du contrecoup !",
   "badDreams": "{{pokemonName}} a le sommeil agité !",
   "windPowerCharged": "{{pokemonName}} a été touché par la capacité {{moveName}} et se charge en électricité !",
-  "perishBody": "{{pokemonName}}'s {{abilityName}}\nwill faint both pokemon in 3 turns!",
-  "poisonHeal": "{{pokemonName}}'s {{abilityName}}\nrestored its HP a little!",
-  "iceFaceAvoidedDamage": "{{pokemonName}} avoided\ndamage with {{abilityName}}!",
+  "perishBody": "{{abilityName}} de {{pokemonName}} \nmettra KO les deux pokémons dans 3 tours !",
+  "poisonHeal": "{{abilityName}} de {{pokemonName}} \nrétablit un peu ses PV !",
+  "iceFaceAvoidedDamage": "{{pokemonName}} a évité les\ndommages avec {{abilityName}}!".
   "blockItemTheft": "{{pokemonName}}'s {{abilityName}}\nprevents item theft!",
   "typeImmunityHealAb": "{{pokemonName}}'s {{abilityName}}\nrestored its HP a little!",
   "nonSuperEffectiveImmunityAb": "{{pokemonName}} avoided\ndamage with {{abilityName}}!",
