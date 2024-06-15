@@ -26,6 +26,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { BerryType } from "#enums/berry-type";
 
 export enum MoveCategory {
   PHYSICAL,
@@ -2615,20 +2616,130 @@ export class LessPPMorePowerAttr extends VariablePowerAttr {
   }
 }
 
-// getTargetHeldItems(target: Pokemon): PokemonHeldItemModifier[] {
-//   return target.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-//     && (m as PokemonHeldItemModifier).pokemonId === target.id, target.isPlayer()) as PokemonHeldItemModifier[];
-// }
-
 export class FlingAttr extends VariablePowerAttr {
+  protected randomItem;
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const berryNames = Object.keys(BerryType)
+      .map((key) => `${key.toLowerCase()} berry`);
+    const power = args[0] as Utils.NumberHolder; //to be changed based on held item
+    //list of flingable items sorted by how they change power
+    const arr10i = [
+      ...berryNames,
+      "Choice Band", "Choice Scarf", "Choice Specs", "Air Balloon", "Absorb Bulb", "Amulet Coin", "Big Root",
+      "Destiny Knot", "Expert Belt", "Focus Band", "Focus Sash", "Lagging Tail", "Leftovers", "Mental Herb",
+      "Muscle Band", "Power Herb", "Red Card", "Shed Shell", "Silk Scarf", "Silver Powder", "Smooth Rock", "Soft Sand",
+      "Soothe Bell", "White Herb","Wide Lens", "Wise Glasses", "Zoom Lens"
+    ];
+    const arr30i = [
+      "Flame Orb","Yellow Flute", "Amulet Coin", "Binding Band", "Black Belt", "Black Glasses", "Black Sludge", "Cell Battery",
+      "Charcoal", "Eject Button", "Escape Rope", "Everstone", "Exp. Share", "Fire Stone",
+      "Float Stone", "Heart Scale", "King's Rock", "Leaf Stone", "Life Orb", "Light Ball", "Light Clay",
+      "Lucky Egg", "Luminous Moss", "Magnet", "Metal Coat", "Metronome", "Miracle Seed", "Moon Stone",
+      "Mystic Water", "NeverMeltIce", "Pearl", "Poké Doll", "Razor Fang", "Scope Lens", "Shell Bell",
+      "Smoke Ball", "Snowball", "Spell Tag", "Stardust", "Sun Stone", "Thunder Stone", "Toxic Orb",
+      "Twisted Spoon", "Water Stone"];
+    const arr40i = ["Eviolite","Icy Rock"];
+    const arr50i = ["Sharp Beak"];
+    const arr60i = ["Damp Rock", "Heat Rock", "Macho Brace", "Rocky Helmet"];
+    const arr70i = [ "Dragon Fang", "Poison Barb","Power Anklet", "Power Band", "Power Belt", "Power Bracer",
+      "Power Lens", "Power Weight"];
+    const arr80i = [
+      "Assault Vest", "Dawn Stone", "Quick Claw", "Razor Claw",
+      "Sachet", "Safety Goggles", "Shiny Stone", "Sticky Barb",
+      "Weakness Policy"
+    ];
+    const arr90i = ["Grip Claw"];
+    const arr100i = ["Hard Stone"];
+    const arr130i = ["Iron Ball"];
 
-    const heldItems = this.getMyHeldItems(user);
-    const itemNames = heldItems.map(item => item.type.name);
+    //all items turned to lower case to match item name as in game code
+    const arr10 = arr10i.map(item => item.toLowerCase());
+    const arr30 = arr30i.map(item => item.toLowerCase());
+    const arr40 = arr40i.map(item => item.toLowerCase());
+    const arr50 = arr50i.map(item => item.toLowerCase());
+    const arr60 = arr60i.map(item => item.toLowerCase());
+    const arr70 = arr70i.map(item => item.toLowerCase());
+    const arr80 = arr80i.map(item => item.toLowerCase());
+    const arr90 = arr90i.map(item => item.toLowerCase());
+    const arr100 = arr100i.map(item => item.toLowerCase());
+    const arr130 = arr130i.map(item => item.toLowerCase());
 
-    console.log("INDIAHeld items:", itemNames);
+    const allItems= [...arr10, ...arr30, ...arr40, ...arr50, ...arr60, ...arr70, ...arr80, ...arr90, ...arr100, ...arr130];
 
-    return true;
+    const heldItems = this.getMyHeldItems(user); //gets all held items carried by user's pokemon
+    if (heldItems.length === 0) { //user has no held item
+      power.value = 0;
+      user.scene.queueMessage("But it failed!");
+      return false;
+    }
+    const validHeldItems = heldItems.filter(item => allItems.includes(item.type.name.toLowerCase().replace(/_/g, " ")));
+    if (validHeldItems.length === 0) { //user has no flingable held item
+      power.value = 0;
+      user.scene.queueMessage("No valid item found!");
+      return false;
+    }
+
+    const randomHeldItemModifier = validHeldItems[user.randSeedInt(validHeldItems.length)];
+    this.randomItem = randomHeldItemModifier.type.name;
+    this.randomItem = this.randomItem.toLowerCase().replace(/_/g, " ");
+
+    if (this.randomItem) { //assigns value to power and removes item in possesion
+      if (arr10.includes(this.randomItem)) {
+        power.value = 10;
+        user.scene.removeModifier(randomHeldItemModifier, !user.isPlayer());
+        user.scene.updateModifiers(user.isPlayer());
+        return true;
+      } else if (arr30.includes(this.randomItem)) {
+        power.value = 30;
+        user.scene.removeModifier(randomHeldItemModifier, !user.isPlayer());
+        user.scene.updateModifiers(user.isPlayer());
+        return true;
+      } else if (arr40.includes(this.randomItem)) {
+        power.value = 40;
+        user.scene.removeModifier(randomHeldItemModifier, !user.isPlayer());
+        user.scene.updateModifiers(user.isPlayer());
+        return true;
+      } else if (arr50.includes(this.randomItem)) {
+        power.value = 50;
+        user.scene.removeModifier(randomHeldItemModifier, !user.isPlayer());
+        user.scene.updateModifiers(user.isPlayer());
+        return true;
+      } else if (arr60.includes(this.randomItem)) {
+        power.value = 60;
+        user.scene.removeModifier(randomHeldItemModifier, !user.isPlayer());
+        user.scene.updateModifiers(user.isPlayer());
+        return true;
+      } else if (arr70.includes(this.randomItem)) {
+        power.value = 70;
+        user.scene.removeModifier(randomHeldItemModifier, !user.isPlayer());
+        user.scene.updateModifiers(user.isPlayer());
+        return true;
+      } else if (arr80.includes(this.randomItem)) {
+        power.value = 80;
+        user.scene.removeModifier(randomHeldItemModifier, !user.isPlayer());
+        user.scene.updateModifiers(user.isPlayer());
+        return true;
+      } else if (arr90.includes(this.randomItem)) {
+        power.value = 90;
+        user.scene.removeModifier(randomHeldItemModifier, !user.isPlayer());
+        user.scene.updateModifiers(user.isPlayer());
+        return true;
+      } else if (arr100.includes(this.randomItem)) {
+        power.value = 100;
+        user.scene.removeModifier(randomHeldItemModifier, !user.isPlayer());
+        user.scene.updateModifiers(user.isPlayer());
+        return true;
+      } else if (arr130.includes(this.randomItem)) {
+        power.value = 130;
+        user.scene.removeModifier(randomHeldItemModifier, !user.isPlayer());
+        user.scene.updateModifiers(user.isPlayer());
+        return true;
+      }
+    }
+
+    power.value = 0;
+    user.scene.queueMessage("But it failed!");
+    return false;
   }
 
   getMyHeldItems(user: Pokemon): PokemonHeldItemModifier[] {
