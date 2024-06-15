@@ -1,7 +1,5 @@
 
 import BattleScene, { AnySound } from "../battle-scene";
-import { Variant, variantColorCache } from "./variant";
-import { variantData } from "./variant";
 import { GrowthRate } from "./exp";
 import { SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } from "./pokemon-evolutions";
 import { Type } from "./type";
@@ -12,7 +10,7 @@ import { StarterMoveset } from "../system/game-data";
 import { speciesEggMoves } from "./egg-moves";
 import { GameMode } from "../game-mode";
 import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from "@material/material-color-utilities";
-import { VariantSet } from "./variant";
+import { Variant, variantColorCache, variantData, VariantSet } from "./variant";
 import i18next, { Localizable } from "../plugins/i18n";
 import { Stat } from "./pokemon-stat";
 import { Abilities } from "#enums/abilities";

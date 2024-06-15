@@ -12,7 +12,6 @@ import { getPokeballAtlasKey } from "../data/pokeball";
 import { getGenderColor, getGenderSymbol } from "../data/gender";
 import { getLevelRelExp, getLevelTotalExp } from "../data/exp";
 import { Stat, getStatName } from "../data/pokemon-stat";
-import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { StatusEffect } from "../data/status-effect";
 import { getBiomeName } from "../data/biomes";
 import { Nature, getNatureStatMultiplier } from "../data/nature";
@@ -21,7 +20,7 @@ import { Variant, getVariantTint } from "#app/data/variant";
 import {Button} from "#enums/buttons";
 import { Ability } from "../data/ability.js";
 import i18next from "i18next";
-import {modifierSortFunc} from "../modifier/modifier";
+import { PokemonHeldItemModifier, modifierSortFunc } from "../modifier/modifier";
 import { PlayerGender } from "#enums/player-gender";
 
 

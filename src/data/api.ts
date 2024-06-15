@@ -1,4 +1,4 @@
-import { MainClient, NamedAPIResource } from "pokenode-ts";
+import { MainClient, type NamedAPIResource } from "pokenode-ts";
 import { MoveTarget, allMoves } from "./move";
 import * as Utils from "../utils";
 import fs from "vite-plugin-fs/browser";

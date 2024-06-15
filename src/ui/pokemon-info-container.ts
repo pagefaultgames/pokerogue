@@ -46,6 +46,8 @@ const languageSettings: { [key: string]: LanguageSetting } = {
 };
 
 export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
+  scene: BattleScene;
+
   private readonly infoWindowWidth = 104;
 
   private pokemonFormLabelText: Phaser.GameObjects.Text;
@@ -410,8 +412,4 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
       this.shown = false;
     });
   }
-}
-
-export default interface PokemonInfoContainer {
-  scene: BattleScene
 }

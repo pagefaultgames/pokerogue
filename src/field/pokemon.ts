@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 import BattleScene, { AnySound } from "../battle-scene";
-import { Variant, VariantSet, variantColorCache } from "#app/data/variant";
-import { variantData } from "#app/data/variant";
+import { Variant, VariantSet, variantColorCache, variantData } from "#app/data/variant";
+
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from "../ui/battle-info";
 import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, VariableMoveTypeAttr, StatusMoveTypeImmunityAttr, MoveTarget, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatChangesAttr, SacrificialAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatChangeAttr, RechargeAttr, ChargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit, MoveFlags } from "../data/move";
 import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from "../data/pokemon-species";
@@ -57,6 +57,8 @@ export enum FieldPosition {
 }
 
 export default abstract class Pokemon extends Phaser.GameObjects.Container {
+  scene: BattleScene;
+
   public id: integer;
   public name: string;
   public species: PokemonSpecies;
@@ -2926,10 +2928,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   getBattleInfo(): BattleInfo {
     return this.battleInfo;
   }
-}
-
-export default interface Pokemon {
-  scene: BattleScene
 }
 
 export class PlayerPokemon extends Pokemon {

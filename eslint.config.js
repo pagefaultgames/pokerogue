@@ -2,18 +2,33 @@ import tseslint from '@typescript-eslint/eslint-plugin';
 import parser from '@typescript-eslint/parser';
 import imports from 'eslint-plugin-import';
 
-export default [ 
+export default [
     {
         files: ["src/**/*.{ts,tsx,js,jsx}"],
         ignores: ["dist/*", "build/*", "coverage/*", "public/*", ".github/*", "node_modules/*", ".vscode/*"],
         languageOptions: {
-            parser: parser
+            parser,
+            parserOptions: {
+                ecmaVersion: "latest",
+                sourceType: "module",
+            }
+        },
+        settings: {
+            "import/parsers": {
+                espree: [".js", ".cjs", ".mjs", ".jsx"],
+                "@typescript-eslint/parser": [".ts"],
+            },
+            "import/resolver": {
+                typescript: true,
+                node: true,
+            }
         },
         plugins: {
-            imports: imports.configs.recommended,
+            import: imports,
             '@typescript-eslint': tseslint
         },
         rules: {
+            ...imports.configs.recommended.rules,
             "eqeqeq": ["error", "always"], // Enforces the use of === and !== instead of == and !=
             "indent": ["error", 2], // Enforces a 2-space indentation
             "quotes": ["error", "double"], // Enforces the use of double quotes for strings

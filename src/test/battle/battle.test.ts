@@ -1,7 +1,6 @@
 import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
 import {generateStarter, getMovePosition,} from "#app/test/utils/gameManagerUtils";
 import {Mode} from "#app/ui/ui";
-import {GameModes} from "#app/game-mode";
 import * as overrides from "../../overrides";
 import {Command} from "#app/ui/command-ui-handler";
 import {
@@ -19,7 +18,7 @@ import {
 import GameManager from "#app/test/utils/gameManager";
 import Phaser from "phaser";
 import {allSpecies} from "#app/data/pokemon-species";
-import { getGameMode } from "#app/game-mode.js";
+import { GameModes, getGameMode } from "#app/game-mode";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";

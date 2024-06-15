@@ -29,6 +29,8 @@ export enum TrainerVariant {
 }
 
 export default class Trainer extends Phaser.GameObjects.Container {
+  scene: BattleScene;
+
   public config: TrainerConfig;
   public variant: TrainerVariant;
   public partyTemplateIndex: integer;
@@ -624,8 +626,4 @@ export default class Trainer extends Phaser.GameObjects.Container {
       }
     });
   }
-}
-
-export default interface Trainer {
-    scene: BattleScene
 }
