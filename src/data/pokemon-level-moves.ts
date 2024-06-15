@@ -28326,9 +28326,6 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 75, Moves.FISSURE ],
     [ 99, Moves.SPLASH ],
   ],
-
-
-
 };
 
 export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {

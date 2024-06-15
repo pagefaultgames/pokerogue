@@ -2564,6 +2564,6 @@ export const defaultStarterSpecies: Species[] = [
   Species.GROOKEY, Species.SCORBUNNY, Species.SOBBLE,
   Species.SPRIGATITO, Species.FUECOCO, Species.QUAXLY,
   Species.GRASSHOLE, Species.ARABOMB, Species.EJACASM,
-  Species.REPTYKE,
-  Species.SADROG
+  Species.REPTYKE, Species.FAERIOCK, Species.CLOUCAT,
+  Species.SADROG, Species.HODTOG, Species.GNARRK
 ];
