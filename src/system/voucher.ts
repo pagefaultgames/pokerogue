@@ -1,4 +1,4 @@
-import { EggTier } from "#app/data/enums/egg-type";
+import { EggTier } from "#enums/egg-type";
 import BattleScene from "../battle-scene";
 import i18next from "../plugins/i18n";
 import { Achv, AchvTier, achvs, getAchievementDescription } from "./achv";

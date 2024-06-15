@@ -7,13 +7,10 @@ import { EGG_SEED, Egg } from "./data/egg";
 import EggHatchSceneHandler from "./ui/egg-hatch-scene-handler";
 import { PlayerPokemon } from "./field/pokemon";
 import { achvs } from "./system/achv";
-import { pokemonPrevolutions } from "./data/pokemon-evolutions";
 import PokemonInfoContainer from "./ui/pokemon-info-container";
-import { GachaType } from "./data/enums/gacha-types";
+import { GachaType } from "./enums/gacha-types";
 import EggCounterContainer from "./ui/egg-counter-container";
 import { EggCountChangedEvent } from "./events/egg";
-import { EggTier } from "#enums/egg-type";
-import { Species } from "#enums/species";
 
 /**
  * Class that represents egg hatching

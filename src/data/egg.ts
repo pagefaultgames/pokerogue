@@ -1,8 +1,8 @@
 import BattleScene from "../battle-scene";
 import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "./pokemon-species";
 import i18next from "../plugins/i18n";
-import { VariantTier } from "./enums/variant-tiers";
-import { GachaType } from "./enums/gacha-types";
+import { VariantTier } from "../enums/variant-tiers";
+import { GachaType } from "../enums/gacha-types";
 import * as Utils from "../utils";
 import * as Overrides from "../overrides";
 import { pokemonPrevolutions } from "./pokemon-evolutions";

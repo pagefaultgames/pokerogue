@@ -9,7 +9,7 @@ import { PokeballType } from "./data/pokeball";
 import { Gender } from "./data/gender";
 import { StatusEffect } from "./data/status-effect";
 import { modifierTypes } from "./modifier/modifier-type";
-import { VariantTier } from "./data/enums/variant-tiers";
+import { VariantTier } from "./enums/variant-tiers";
 import { EggTier } from "#enums/egg-type";
 import { allSpecies } from "./data/pokemon-species"; // eslint-disable-line @typescript-eslint/no-unused-vars
 import { Abilities } from "#enums/abilities";

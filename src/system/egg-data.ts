@@ -1,7 +1,7 @@
-import { EggTier } from "#app/data/enums/egg-type";
-import { GachaType } from "#app/data/enums/gacha-types";
-import { Species } from "#app/data/enums/species";
-import { VariantTier } from "#app/data/enums/variant-tiers.js";
+import { EggTier } from "#enums/egg-type";
+import { GachaType } from "#app/enums/gacha-types";
+import { Species } from "#enums/species";
+import { VariantTier } from "#enums/variant-tiers";
 import { Egg } from "../data/egg";
 
 export default class EggData {

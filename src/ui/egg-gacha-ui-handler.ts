@@ -11,7 +11,7 @@ import { Tutorial, handleTutorial } from "../tutorial";
 import {Button} from "#enums/buttons";
 import i18next from "../plugins/i18n";
 import * as Overrides from "../overrides";
-import { GachaType } from "#app/data/enums/gacha-types";
+import { GachaType } from "#app/enums/gacha-types";
 import { arrayShuffle } from "#app/helper/array_helper";
 import { EggTier } from "#enums/egg-type";
 
