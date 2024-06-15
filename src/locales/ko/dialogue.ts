@@ -1203,13 +1203,13 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "cress": {
     "encounter": {
-      1: "That is correct! It shall be I and my esteemed Water types that you must face in battle!"
+      1: "맞습니다! 당신은 저와 제 자랑스러운 물타입 포켓몬들과 상대하게 될것입니다."
     },
     "victory": {
-      1: "Lose? Me? I don't believe this."
+      1: "곤란하네… 이 콘이 질 줄이야."
     },
     "defeat": {
-      1: "This is the appropriate result when I'm your opponent."
+      1: "제가 당신의 상대였기때문에 이건 당연한 결과였습니다."
     }
   },
   "allister": {
