@@ -32,7 +32,7 @@ export const voucher: SimpleTranslationEntries = {
   "feather_badge":"Feather Badge",
   "mind_badge":"Mind Badge",
   "mind_badge_p1":"Mind Badge Half",
-  "mind_badge_p2":"Mind Badge Half"
+  "mind_badge_p2":"Mind Badge Half",
   "rain_badge":"Rain Badge",
   "coal_badge":"Coal Badge", //Sinnoh Gym Badges (Gen 4)
   "forest_badge":"Forest Badge",
