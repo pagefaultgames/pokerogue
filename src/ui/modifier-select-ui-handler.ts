@@ -589,6 +589,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
 
       this.itemCostText.setOrigin(0.5, 0);
       this.itemCostText.setAlpha(0);
+      this.itemCostText.setShadow(0, 0, "#000000", 16, true, true);
       this.add(this.itemCostText);
 
       this.updateCostText();
