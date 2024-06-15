@@ -476,7 +476,7 @@ export const PGFachv: AchievementTranslationEntries = {
   },
 
   "MonoType": {
-    description: "Complete {{type}}.",
+    description: "Complete o desafio de monotipo {{type}}.",
   },
   "MONO_NORMAL": {
     name: "Extra Ordinário",
