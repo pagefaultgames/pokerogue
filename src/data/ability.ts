@@ -3426,6 +3426,12 @@ export class NoFusionAbilityAbAttr extends AbAttr {
   }
 }
 
+export class BatteryAbAttr extends AbAttr {
+  constructor() {
+    super(true);
+  }
+}
+
 export class IgnoreTypeImmunityAbAttr extends AbAttr {
   private defenderType: Type;
   private allowedMoveTypes: Type[];
@@ -4495,7 +4501,7 @@ export function initAbilities() {
     new Ability(Abilities.DANCER, 7)
       .attr(PostDancingMoveAbAttr),
     new Ability(Abilities.BATTERY, 7)
-      .unimplemented(),
+      .attr(BatteryAbAttr),
     new Ability(Abilities.FLUFFY, 7)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => move.hasFlag(MoveFlags.MAKES_CONTACT), 0.5)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => move.type === Type.FIRE, 2)
