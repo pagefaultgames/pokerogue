@@ -223,7 +223,7 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "Touche moi je t’empoissonne !",
   },
   "MONO_GROUND": {
-    name: "Prévisions : Séismes",
+    name: "Prévisions : Séisme",
   },
   "MONO_ROCK": {
     name: "Comme un roc",
