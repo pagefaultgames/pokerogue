@@ -5,5 +5,7 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "stockpile" : "{{pokemonName}}\nstockpiled {{stockpileNumber}}!",
   "badDreams": "{{pokemonName}} está tendo pesadelos!",
   "windPowerCharged": "Ser atingido por {{moveName}} carregou {{pokemonName}} com poder!",
+  "perishBody": "{{abilityName}} de {{pokemonName}}\nirá desmaiar ambos os Pokémon em 3 turnos!",
+  "poisonHeal": "{{abilityName}} de {{pokemonName}}\nrestaurou seus PS um pouco!",
   "iceFaceAvoidedDamage": "{{pokemonName}} evitou\ndanos com sua {{abilityName}}!"
 } as const;
