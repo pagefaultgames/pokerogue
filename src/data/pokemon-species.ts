@@ -3634,7 +3634,7 @@ export const starterPassiveAbilities = {
   [Species.HAWLUCHA]: Abilities.MOXIE,
   [Species.DEDENNE]: Abilities.PIXILATE,
   [Species.CARBINK]: Abilities.SOLID_ROCK,
-  [Species.GOOMY]: Abilities.DRIZZLE,
+  [Species.GOOMY]: Abilities.REGENERATOR,
   [Species.KLEFKI]: Abilities.LEVITATE,
   [Species.PHANTUMP]: Abilities.RIPEN,
   [Species.PUMPKABOO]: Abilities.WELL_BAKED_BODY,
