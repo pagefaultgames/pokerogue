@@ -20,21 +20,21 @@ export function getPokemonMessage(pokemon: Pokemon, content: string): string {
  */
 export function getPokemonNameWithAffix(pokemon: Pokemon): string {
   switch (pokemon.scene.currentBattle.battleSpec) {
-  case BattleSpec.DEFAULT:
-    return !pokemon.isPlayer()
-      ? pokemon.hasTrainer()
-        ? i18next.t("battle:foePokemonWithAffix", {
-          pokemonName: pokemon.name,
-        })
-        : i18next.t("battle:wildPokemonWithAffix", {
-          pokemonName: pokemon.name,
-        })
-      : pokemon.name;
-  case BattleSpec.FINAL_BOSS:
-    return !pokemon.isPlayer()
-      ? i18next.t("battle:foePokemonWithAffix", { pokemonName: pokemon.name })
-      : pokemon.name;
-  default:
-    return pokemon.name;
+    case BattleSpec.DEFAULT:
+      return !pokemon.isPlayer()
+        ? pokemon.hasTrainer()
+          ? i18next.t("battle:foePokemonWithAffix", {
+            pokemonName: pokemon.name,
+          })
+          : i18next.t("battle:wildPokemonWithAffix", {
+            pokemonName: pokemon.name,
+          })
+        : pokemon.name;
+    case BattleSpec.FINAL_BOSS:
+      return !pokemon.isPlayer()
+        ? i18next.t("battle:foePokemonWithAffix", { pokemonName: pokemon.name })
+        : pokemon.name;
+    default:
+      return pokemon.name;
   }
 }

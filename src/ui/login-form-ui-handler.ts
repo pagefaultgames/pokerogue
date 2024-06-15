@@ -31,14 +31,14 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
       error = error.slice(0, colonIndex);
     }
     switch (error) {
-    case "invalid username":
-      return i18next.t("menu:invalidLoginUsername");
-    case "invalid password":
-      return i18next.t("menu:invalidLoginPassword");
-    case "account doesn't exist":
-      return i18next.t("menu:accountNonExistent");
-    case "password doesn't match":
-      return i18next.t("menu:unmatchingPassword");
+      case "invalid username":
+        return i18next.t("menu:invalidLoginUsername");
+      case "invalid password":
+        return i18next.t("menu:invalidLoginPassword");
+      case "account doesn't exist":
+        return i18next.t("menu:accountNonExistent");
+      case "password doesn't match":
+        return i18next.t("menu:unmatchingPassword");
     }
 
     return super.getReadableErrorMessage(error);

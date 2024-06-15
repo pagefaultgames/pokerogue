@@ -467,22 +467,22 @@ export class EggHatchPhase extends Phase {
         let maxStarterValue: integer;
 
         switch (this.egg.tier) {
-        case EggTier.GREAT:
-          minStarterValue = 4;
-          maxStarterValue = 5;
-          break;
-        case EggTier.ULTRA:
-          minStarterValue = 6;
-          maxStarterValue = 7;
-          break;
-        case EggTier.MASTER:
-          minStarterValue = 8;
-          maxStarterValue = 9;
-          break;
-        default:
-          minStarterValue = 1;
-          maxStarterValue = 3;
-          break;
+          case EggTier.GREAT:
+            minStarterValue = 4;
+            maxStarterValue = 5;
+            break;
+          case EggTier.ULTRA:
+            minStarterValue = 6;
+            maxStarterValue = 7;
+            break;
+          case EggTier.MASTER:
+            minStarterValue = 8;
+            maxStarterValue = 9;
+            break;
+          default:
+            minStarterValue = 1;
+            maxStarterValue = 3;
+            break;
         }
 
         const ignoredSpecies = [ Species.PHIONE, Species.MANAPHY, Species.ETERNATUS ];

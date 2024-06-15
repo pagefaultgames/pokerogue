@@ -214,20 +214,20 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
       // Creates a proxy object to decide which text object needs to be updated
       let textObject: Phaser.GameObjects.Text;
       switch (fieldEffectInfo.type) {
-      case ArenaEffectType.PLAYER:
-        textObject = this.flyoutTextPlayer;
-        break;
+        case ArenaEffectType.PLAYER:
+          textObject = this.flyoutTextPlayer;
+          break;
 
-      case ArenaEffectType.WEATHER:
-      case ArenaEffectType.TERRAIN:
-      case ArenaEffectType.FIELD:
-        textObject = this.flyoutTextField;
+        case ArenaEffectType.WEATHER:
+        case ArenaEffectType.TERRAIN:
+        case ArenaEffectType.FIELD:
+          textObject = this.flyoutTextField;
 
-        break;
+          break;
 
-      case ArenaEffectType.ENEMY:
-        textObject = this.flyoutTextEnemy;
-        break;
+        case ArenaEffectType.ENEMY:
+          textObject = this.flyoutTextEnemy;
+          break;
       }
 
       textObject.text += this.formatText(fieldEffectInfo.name);
@@ -255,58 +255,58 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
 
     let foundIndex: number;
     switch (arenaEffectChangedEvent.constructor) {
-    case TagAddedEvent:
-      const tagAddedEvent = arenaEffectChangedEvent as TagAddedEvent;
-      this.fieldEffectInfo.push({
-        name: ArenaTagType[tagAddedEvent.arenaTagType],
-        type: tagAddedEvent.arenaTagSide === ArenaTagSide.BOTH
-          ? ArenaEffectType.FIELD
-          : tagAddedEvent.arenaTagSide === ArenaTagSide.PLAYER
-            ? ArenaEffectType.PLAYER
-            : ArenaEffectType.ENEMY,
-        maxDuration: tagAddedEvent.duration,
-        duration: tagAddedEvent.duration});
-      break;
-    case TagRemovedEvent:
-      const tagRemovedEvent = arenaEffectChangedEvent as TagRemovedEvent;
-      foundIndex = this.fieldEffectInfo.findIndex(info => info.name === ArenaTagType[tagRemovedEvent.arenaTagType]);
-      if (foundIndex !== -1) { // If the tag was being tracked, remove it
-        this.fieldEffectInfo.splice(foundIndex, 1);
-      }
-      break;
+      case TagAddedEvent:
+        const tagAddedEvent = arenaEffectChangedEvent as TagAddedEvent;
+        this.fieldEffectInfo.push({
+          name: ArenaTagType[tagAddedEvent.arenaTagType],
+          type: tagAddedEvent.arenaTagSide === ArenaTagSide.BOTH
+            ? ArenaEffectType.FIELD
+            : tagAddedEvent.arenaTagSide === ArenaTagSide.PLAYER
+              ? ArenaEffectType.PLAYER
+              : ArenaEffectType.ENEMY,
+          maxDuration: tagAddedEvent.duration,
+          duration: tagAddedEvent.duration});
+        break;
+      case TagRemovedEvent:
+        const tagRemovedEvent = arenaEffectChangedEvent as TagRemovedEvent;
+        foundIndex = this.fieldEffectInfo.findIndex(info => info.name === ArenaTagType[tagRemovedEvent.arenaTagType]);
+        if (foundIndex !== -1) { // If the tag was being tracked, remove it
+          this.fieldEffectInfo.splice(foundIndex, 1);
+        }
+        break;
 
-    case WeatherChangedEvent:
-    case TerrainChangedEvent:
-      const fieldEffectChangedEvent = arenaEffectChangedEvent as WeatherChangedEvent | TerrainChangedEvent;
+      case WeatherChangedEvent:
+      case TerrainChangedEvent:
+        const fieldEffectChangedEvent = arenaEffectChangedEvent as WeatherChangedEvent | TerrainChangedEvent;
 
-      // Stores the old Weather/Terrain name in case it's in the array already
-      const oldName =
+        // Stores the old Weather/Terrain name in case it's in the array already
+        const oldName =
       fieldEffectChangedEvent instanceof WeatherChangedEvent
         ? WeatherType[fieldEffectChangedEvent.oldWeatherType]
         : TerrainType[fieldEffectChangedEvent.oldTerrainType];
-      // Stores the new Weather/Terrain info
-      const newInfo = {
-        name:
+        // Stores the new Weather/Terrain info
+        const newInfo = {
+          name:
           fieldEffectChangedEvent instanceof WeatherChangedEvent
             ? WeatherType[fieldEffectChangedEvent.newWeatherType]
             : TerrainType[fieldEffectChangedEvent.newTerrainType],
-        type: fieldEffectChangedEvent instanceof WeatherChangedEvent
-          ? ArenaEffectType.WEATHER
-          : ArenaEffectType.TERRAIN,
-        maxDuration: fieldEffectChangedEvent.duration,
-        duration: fieldEffectChangedEvent.duration};
+          type: fieldEffectChangedEvent instanceof WeatherChangedEvent
+            ? ArenaEffectType.WEATHER
+            : ArenaEffectType.TERRAIN,
+          maxDuration: fieldEffectChangedEvent.duration,
+          duration: fieldEffectChangedEvent.duration};
 
-      foundIndex = this.fieldEffectInfo.findIndex(info => [newInfo.name, oldName].includes(info.name));
-      if (foundIndex === -1) {
-        if (newInfo.name !== undefined) {
-          this.fieldEffectInfo.push(newInfo); // Adds the info to the array if it doesn't already exist and is defined
+        foundIndex = this.fieldEffectInfo.findIndex(info => [newInfo.name, oldName].includes(info.name));
+        if (foundIndex === -1) {
+          if (newInfo.name !== undefined) {
+            this.fieldEffectInfo.push(newInfo); // Adds the info to the array if it doesn't already exist and is defined
+          }
+        } else if (!newInfo.name) {
+          this.fieldEffectInfo.splice(foundIndex, 1); // Removes the old info if the new one is undefined
+        } else {
+          this.fieldEffectInfo[foundIndex] = newInfo; // Otherwise, replace the old info
         }
-      } else if (!newInfo.name) {
-        this.fieldEffectInfo.splice(foundIndex, 1); // Removes the old info if the new one is undefined
-      } else {
-        this.fieldEffectInfo[foundIndex] = newInfo; // Otherwise, replace the old info
-      }
-      break;
+        break;
     }
 
     this.updateFieldText();

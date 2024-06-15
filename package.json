@@ -14,7 +14,9 @@
 		"test:silent": "vitest run --silent",
 		"eslint": "eslint --fix .",
 		"eslint-ci": "eslint .",
-		"docs": "typedoc"
+		"docs": "typedoc",
+		"format": "prettier . --write",
+		"format-ci": "prettier . --check"
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.3.0",
@@ -31,6 +33,7 @@
 		"lefthook": "^1.6.12",
 		"phaser3spectorjs": "^0.0.8",
 		"pokenode-ts": "^1.20.0",
+		"prettier": "3.3.2",
 		"typedoc": "^0.25.13",
 		"typescript": "^5.4.5",
 		"typescript-eslint": "^7.10.0",

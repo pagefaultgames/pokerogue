@@ -129,26 +129,26 @@ export default class EggListUiHandler extends MessageUiHandler {
       const rows = Math.ceil(eggCount / 11);
       const row = Math.floor(this.cursor / 11);
       switch (button) {
-      case Button.UP:
-        if (row) {
-          success = this.setCursor(this.cursor - 11);
-        }
-        break;
-      case Button.DOWN:
-        if (row < rows - 2 || (row < rows - 1 && this.cursor % 11 <= (eggCount - 1) % 11)) {
-          success = this.setCursor(this.cursor + 11);
-        }
-        break;
-      case Button.LEFT:
-        if (this.cursor % 11) {
-          success = this.setCursor(this.cursor - 1);
-        }
-        break;
-      case Button.RIGHT:
-        if (this.cursor % 11 < (row < rows - 1 ? 10 : (eggCount - 1) % 11)) {
-          success = this.setCursor(this.cursor + 1);
-        }
-        break;
+        case Button.UP:
+          if (row) {
+            success = this.setCursor(this.cursor - 11);
+          }
+          break;
+        case Button.DOWN:
+          if (row < rows - 2 || (row < rows - 1 && this.cursor % 11 <= (eggCount - 1) % 11)) {
+            success = this.setCursor(this.cursor + 11);
+          }
+          break;
+        case Button.LEFT:
+          if (this.cursor % 11) {
+            success = this.setCursor(this.cursor - 1);
+          }
+          break;
+        case Button.RIGHT:
+          if (this.cursor % 11 < (row < rows - 1 ? 10 : (eggCount - 1) % 11)) {
+            success = this.setCursor(this.cursor + 1);
+          }
+          break;
       }
     }
 

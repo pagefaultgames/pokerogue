@@ -156,24 +156,24 @@ export class UiInputs {
       return;
     }
     switch (this.scene.ui?.getMode()) {
-    case Mode.MESSAGE:
-      if (!(this.scene.ui.getHandler() as MessageUiHandler).pendingPrompt) {
+      case Mode.MESSAGE:
+        if (!(this.scene.ui.getHandler() as MessageUiHandler).pendingPrompt) {
+          return;
+        }
+      case Mode.TITLE:
+      case Mode.COMMAND:
+      case Mode.MODIFIER_SELECT:
+        this.scene.ui.setOverlayMode(Mode.MENU);
+        break;
+      case Mode.STARTER_SELECT:
+        this.buttonTouch();
+        break;
+      case Mode.MENU:
+        this.scene.ui.revertMode();
+        this.scene.playSound("select");
+        break;
+      default:
         return;
-      }
-    case Mode.TITLE:
-    case Mode.COMMAND:
-    case Mode.MODIFIER_SELECT:
-      this.scene.ui.setOverlayMode(Mode.MENU);
-      break;
-    case Mode.STARTER_SELECT:
-      this.buttonTouch();
-      break;
-    case Mode.MENU:
-      this.scene.ui.revertMode();
-      this.scene.playSound("select");
-      break;
-    default:
-      return;
     }
   }
 
