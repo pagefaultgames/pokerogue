@@ -2564,6 +2564,10 @@ export class MovePhase extends BattlePhase {
       if (this.move.moveId && this.pokemon.summonData?.disabledMove === this.move.moveId) {
         this.scene.queueMessage(`${this.move.getName()} is disabled!`);
       }
+      if (this.move.ppUsed >= this.move.getMovePp()) {
+        this.showFailedText();
+        this.cancel();
+      }
       return this.end();
     }
 

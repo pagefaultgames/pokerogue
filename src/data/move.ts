@@ -4899,6 +4899,18 @@ export class ReducePpMoveAttr extends MoveEffectAttr {
     const movesetMove = target.getMoveset().find(m => m.moveId === lastMove.move);
     const lastPpUsed = movesetMove.ppUsed;
     movesetMove.ppUsed = Math.min(movesetMove.ppUsed + 4, movesetMove.getMovePp());
+
+    const movePhase = user.scene.findPhase(m => m instanceof MovePhase && m.pokemon === target && m.move.moveId === lastMove.move);
+    if (movePhase) {
+      const movesetMove = target.getMoveset().find(m => m.moveId === lastMove.move);
+      if (movesetMove) {
+        const lastMove = target.getLastXMoves(1)[0];
+        user.scene.tryReplacePhase((m => m instanceof MovePhase && m.pokemon === target),
+          new MovePhase(target.scene, target, lastMove.targets, movesetMove));
+      }
+    }
+
+    // movesetMove.usePp(4);
     user.scene.queueMessage(`It reduced the PP of ${getPokemonMessage(target, `'s\n${movesetMove.getName()} by ${movesetMove.ppUsed - lastPpUsed}!`)}`);
 
     return true;
