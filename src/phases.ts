@@ -4898,7 +4898,7 @@ export class AttemptCapturePhase extends PokemonPhase {
         this.scene.clearEnemyHeldItemModifiers();
         this.scene.field.remove(pokemon, true);
       };
-      const addToParty = () => {
+      const addToParty = (modifiersFromReleasedPokemon?: PokemonHeldItemModifier[]) => {
         const newPokemon = pokemon.addToParty(this.pokeballType);
         const modifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier, false);
         if (this.scene.getParty().filter(p => p.isShiny()).length === 6) {
@@ -4908,6 +4908,7 @@ export class AttemptCapturePhase extends PokemonPhase {
           this.scene.updateModifiers(true);
           removePokemon();
           if (newPokemon) {
+            modifiersFromReleasedPokemon?.forEach(m => this.scene.tryTransferHeldItemModifier(m, newPokemon, true, false));
             newPokemon.loadAssets().then(end);
           } else {
             end();
@@ -4920,10 +4921,19 @@ export class AttemptCapturePhase extends PokemonPhase {
             this.scene.ui.showText(i18next.t("battle:partyFull", { pokemonName: pokemon.name }), null, () => {
               this.scene.pokemonInfoContainer.makeRoomForConfirmUi();
               this.scene.ui.setMode(Mode.CONFIRM, () => {
-                this.scene.ui.setMode(Mode.PARTY, PartyUiMode.RELEASE, this.fieldIndex, (slotIndex: integer, _option: PartyOption) => {
+                this.scene.ui.setMode(Mode.PARTY, PartyUiMode.RELEASE, this.fieldIndex, (releasedPokemonSlotIndex: integer, _option: PartyOption) => {
+                  const releasedPokemon = releasedPokemonSlotIndex < 6 ? this.scene.getParty()[releasedPokemonSlotIndex] : null;
+                  const releasedItems =  releasedPokemon?.getTransferrableHeldItems();
                   this.scene.ui.setMode(Mode.MESSAGE).then(() => {
-                    if (slotIndex < 6) {
-                      addToParty();
+                    if (releasedPokemonSlotIndex < 6) {
+                      if (releasedItems !== null && releasedItems.length > 0) {
+                        this.scene.ui.showText(`You transferred all items held by ${releasedPokemon.name} to ${pokemon.name}.`, null, () => {
+                          addToParty(releasedItems);
+                        }, 0, true);
+                      } else {
+                        this.scene.ui.clearText();
+                        addToParty();
+                      }
                     } else {
                       promptRelease();
                     }
