@@ -235,7 +235,7 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "SOS Fantômes",
   },
   "MONO_STEEL": {
-    name: "Acier galvanisé",
+    name: "De type Acier !",
   },
   "MONO_FIRE": {
     name: "Allumer le feu",
