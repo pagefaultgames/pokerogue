@@ -4,10 +4,10 @@ import {Mode} from "../ui";
 import {InterfaceConfig} from "../../inputs-controller";
 import {addWindow} from "../ui-theme";
 import {addTextObject, TextStyle} from "../text";
-import {Button} from "../../enums/buttons";
 import {getIconWithSettingName} from "#app/configs/inputs/configHandler";
 import NavigationMenu, {NavigationManager} from "#app/ui/settings/navigationMenu";
-import { Device } from "#app/enums/devices.js";
+import { Device } from "#enums/devices";
+import { Button } from "#enums/buttons";
 
 export interface InputsIcons {
     [key: string]: Phaser.GameObjects.Sprite;
