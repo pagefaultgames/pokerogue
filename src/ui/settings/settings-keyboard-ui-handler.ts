@@ -59,7 +59,7 @@ export default class SettingsKeyboardUiHandler extends AbstractControlSettingsUi
     this.layout["noKeyboard"] = new Map();
     const optionsContainer = this.scene.add.container(0, 0);
     optionsContainer.setVisible(false); // Initially hide the container as no gamepads are connected.
-    const label = addTextObject(this.scene, 0, 28, i18next.t("menu:keyboardPleasePress"), TextStyle.SETTINGS_LABEL);
+    const label = addTextObject(this.scene, 8, 28, i18next.t("menu:keyboardPleasePress"), TextStyle.SETTINGS_LABEL);
     label.setOrigin(0, 0);
     optionsContainer.add(label);
     this.settingsContainer.add(optionsContainer);

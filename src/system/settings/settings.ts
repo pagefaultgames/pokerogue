@@ -468,7 +468,6 @@ export const Setting: Array<Setting> = [
   {
     key: SettingKeys.Player_Gender,
     label: i18next.t("menu:playerGender"),
-    //options: ["Boy", "Girl"],
     options: [
       {
         value: "Boy",
