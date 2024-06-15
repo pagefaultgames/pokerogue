@@ -235,15 +235,15 @@ export function getModifierTierTextTint(tier: ModifierTier): integer {
   case ModifierTier.COMMON:
     return 0xffffff;
   case ModifierTier.GREAT:
-    return 0x3890f8;
+    return 0x5da3f9;
   case ModifierTier.ULTRA:
     return 0xf8d038;
   case ModifierTier.ROGUE:
-    return 0x50C878;
+    return 0xE38787;
   case ModifierTier.MASTER:
-    return 0xe020c0;
+    return 0xEC74D8;
   case ModifierTier.LUXURY:
-    return 0xe64a18;
+    return 0xEE825D;
   }
 }
 
