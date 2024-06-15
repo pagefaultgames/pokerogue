@@ -1,13 +1,13 @@
-import { TimeOfDay } from "./enums/time-of-day";
 import { PokemonFormChangeItemModifier } from "../modifier/modifier";
 import Pokemon from "../field/pokemon";
-import { Moves } from "./enums/moves";
 import { SpeciesFormKey } from "./pokemon-species";
-import { Species } from "./enums/species";
 import { StatusEffect } from "./status-effect";
 import { MoveCategory, allMoves } from "./move";
-import { Abilities } from "./enums/abilities";
 import { Constructor } from "#app/utils";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import { TimeOfDay } from "#enums/time-of-day";
 
 export enum FormChangeItem {
   NONE,

@@ -1,12 +1,12 @@
-import { Species } from "./enums/species";
 import { Type } from "./type";
 import * as Utils from "../utils";
 import beautify from "json-beautify";
-import { TrainerType } from "./enums/trainer-type";
-import { TimeOfDay } from "./enums/time-of-day";
-import { Biome } from "./enums/biome";
 import {pokemonEvolutions, SpeciesFormEvolution} from "./pokemon-evolutions";
 import i18next from "i18next";
+import { Biome } from "#enums/biome";
+import { Species } from "#enums/species";
+import { TimeOfDay } from "#enums/time-of-day";
+import { TrainerType } from "#enums/trainer-type";
 
 export function getBiomeName(biome: Biome | -1) {
   if (biome === -1) {
@@ -2934,7 +2934,7 @@ export function initBiomes() {
     [ Species.AZUMARILL, Type.WATER, Type.FAIRY, [
       [ Biome.LAKE, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
       [ Biome.LAKE, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-      [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ],
+      [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ]
     ]
     ],
     [ Species.SUDOWOODO, Type.ROCK, -1, [
@@ -3630,7 +3630,7 @@ export function initBiomes() {
     [ Species.FLYGON, Type.GROUND, Type.DRAGON, [
       [ Biome.DESERT, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
       [ Biome.WASTELAND, BiomePoolTier.COMMON ],
-      [ Biome.WASTELAND, BiomePoolTier.BOSS ],
+      [ Biome.WASTELAND, BiomePoolTier.BOSS ]
     ]
     ],
     [ Species.CACNEA, Type.GRASS, -1, [
@@ -3694,14 +3694,14 @@ export function initBiomes() {
     [ Species.BALTOY, Type.GROUND, Type.PSYCHIC, [
       [ Biome.RUINS, BiomePoolTier.COMMON ],
       [ Biome.SPACE, BiomePoolTier.UNCOMMON ],
-      [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ],
+      [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ]
     ]
     ],
     [ Species.CLAYDOL, Type.GROUND, Type.PSYCHIC, [
       [ Biome.RUINS, BiomePoolTier.COMMON ],
       [ Biome.RUINS, BiomePoolTier.BOSS ],
       [ Biome.SPACE, BiomePoolTier.UNCOMMON ],
-      [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ],
+      [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ]
     ]
     ],
     [ Species.LILEEP, Type.ROCK, Type.GRASS, [
@@ -4199,14 +4199,14 @@ export function initBiomes() {
     [ Species.SKORUPI, Type.POISON, Type.BUG, [
       [ Biome.SWAMP, BiomePoolTier.UNCOMMON ],
       [ Biome.DESERT, BiomePoolTier.COMMON ],
-      [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ],
+      [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ]
     ]
     ],
     [ Species.DRAPION, Type.POISON, Type.DARK, [
       [ Biome.SWAMP, BiomePoolTier.UNCOMMON ],
       [ Biome.DESERT, BiomePoolTier.COMMON ],
       [ Biome.DESERT, BiomePoolTier.BOSS ],
-      [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ],
+      [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ]
     ]
     ],
     [ Species.CROAGUNK, Type.POISON, Type.FIGHTING, [
@@ -4793,7 +4793,7 @@ export function initBiomes() {
     ]
     ],
     [ Species.CINCCINO, Type.NORMAL, -1, [
-      [ Biome.MEADOW, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.MEADOW, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
     ]
     ],
     [ Species.GOTHITA, Type.PSYCHIC, -1, [
@@ -4898,7 +4898,7 @@ export function initBiomes() {
     ]
     ],
     [ Species.JOLTIK, Type.BUG, Type.ELECTRIC, [
-      [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ],
+      [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ]
     ]
     ],
     [ Species.GALVANTULA, Type.BUG, Type.ELECTRIC, [
