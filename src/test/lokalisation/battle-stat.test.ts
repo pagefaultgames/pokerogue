@@ -50,30 +50,6 @@ describe("Test for BattleStat Localization", () => {
   const battleStatLevelUnits: BattleStatLevelTestUnit[] = [];
 
   beforeAll(() => {
-    const fontFaceSetMock = {
-      add: jest.fn(),
-      load: jest.fn().mockResolvedValue([]),
-      check: jest.fn().mockReturnValue(true),
-      ready: Promise.resolve(),
-    };
-
-    const proxyHandler = {
-      get: (target, prop) => {
-        if (prop in target) {
-          return target[prop];
-        } else {
-          return document.fonts[prop];
-        }
-      }
-    };
-
-    const fontsProxy = new Proxy(fontFaceSetMock, proxyHandler);
-
-    Object.defineProperty(document, "fonts", {
-      value: fontsProxy,
-      configurable: true,
-    });
-
     initI18n();
 
     battleStatUnits.push({ stat: BattleStat.ATK, key: "Stat.ATK" });
