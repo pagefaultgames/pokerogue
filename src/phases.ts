@@ -2879,6 +2879,8 @@ export class MoveEffectPhase extends PokemonPhase {
         applyAbAttrs(FieldPreventMovesAbAttr, other, prevented, move, user as Pokemon);
       }
       if (prevented.value) {
+        // Just bail out of the move if it got prevented. No need to manually show message; the Attr handles that.
+        moveHistoryEntry.result = MoveResult.FAIL;
         return this.end();
       }
 
