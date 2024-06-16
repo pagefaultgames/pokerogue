@@ -30,7 +30,7 @@ describe("Abilities - Wonder Skin", () => {
     game = new GameManager(phaserGame);
     vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
     vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.WONDER_SKIN);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.CHARM]);
+    vi.spyOn(overrides.STARTER_OVERRIDE[0], "moveset", "get").mockReturnValue([Moves.TACKLE, Moves.CHARM]);
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
   });
 
@@ -63,7 +63,7 @@ describe("Abilities - Wonder Skin", () => {
   });
 
   it("does not affect pokemon with Mold Breaker", async () => {
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.MOLD_BREAKER);
+    vi.spyOn(overrides.STARTER_OVERRIDE[0], "ability", "get").mockReturnValue(Abilities.MOLD_BREAKER);
 
     await game.startBattle([Species.MAGIKARP]);
 
@@ -79,7 +79,7 @@ describe("Abilities - Wonder Skin", () => {
   });
 
   it("does not affect pokemon with Teravolt", async () => {
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.TERAVOLT);
+    vi.spyOn(overrides.STARTER_OVERRIDE[0], "ability", "get").mockReturnValue(Abilities.TERAVOLT);
 
     await game.startBattle([Species.MAGIKARP]);
 
@@ -95,7 +95,7 @@ describe("Abilities - Wonder Skin", () => {
   });
 
   it("does not affect pokemon with Turboblaze", async () => {
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.TURBOBLAZE);
+    vi.spyOn(overrides.STARTER_OVERRIDE[0], "ability", "get").mockReturnValue(Abilities.TURBOBLAZE);
 
     await game.startBattle([Species.MAGIKARP]);
 
