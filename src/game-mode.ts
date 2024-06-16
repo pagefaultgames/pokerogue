@@ -10,11 +10,14 @@ import { Biome } from "#enums/biome";
 import { Species } from "#enums/species";
 
 export enum GameModes {
-  CLASSIC,
-  ENDLESS,
-  SPLICED_ENDLESS,
-  DAILY,
-  CHALLENGE
+  NONE,
+  CLASSIC         = 1 << 0,
+  ENDLESS         = 1 << 1,
+  SPLICED_ENDLESS = 1 << 2,
+  DAILY           = 1 << 3,
+  CHALLENGE       = 1 << 4,
+
+  ANY             = ~0,
 }
 
 interface GameModeConfig {

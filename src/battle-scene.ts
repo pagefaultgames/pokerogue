@@ -2018,7 +2018,7 @@ export default class BattleScene extends SceneBase {
   }
 
   getWaveMoneyAmount(moneyMultiplier: number): integer {
-    const waveIndex = this.currentBattle.waveIndex;
+    const waveIndex = this.currentBattle?.waveIndex | 1;
     const waveSetIndex = Math.ceil(waveIndex / 10) - 1;
     const moneyValue = Math.pow((waveSetIndex + 1 + (0.75 + (((waveIndex - 1) % 10) + 1) / 10)) * 100, 1 + 0.005 * waveSetIndex) * moneyMultiplier;
     return Math.floor(moneyValue / 10) * 10;

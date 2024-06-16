@@ -544,7 +544,7 @@ export class SelectStarterPhase extends Phase {
 
     this.scene.ui.setMode(Mode.STARTER_SELECT, (starters: Starter[]) => {
       this.scene.ui.clearText();
-      this.scene.ui.setMode(Mode.POINT_SHOP, () => { // Can pass along whatever you want to this scope
+      this.scene.ui.setMode(Mode.POINT_SHOP, (modifiers: Modifier[]) => { // Can pass along whatever you want to this scope
         this.scene.ui.setMode(Mode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: integer) => {
           if (slotId === -1) {
             this.scene.clearPhaseQueue();
@@ -552,7 +552,7 @@ export class SelectStarterPhase extends Phase {
             return this.end();
           }
           this.scene.sessionSlotId = slotId;
-          this.initBattle(starters);
+          this.initBattle(starters, modifiers);
         });
       });
     });
@@ -562,7 +562,7 @@ export class SelectStarterPhase extends Phase {
    * Initialize starters before starting the first battle
    * @param starters {@linkcode Pokemon} with which to start the first battle
    */
-  initBattle(starters: Starter[]) {
+  initBattle(starters: Starter[], modifiers: Modifier[]) {
     const party = this.scene.getParty();
     const loadPokemonAssets: Promise<void>[] = [];
     starters.forEach((starter: Starter, i: integer) => {
@@ -601,8 +601,12 @@ export class SelectStarterPhase extends Phase {
       party.push(starterPokemon);
       loadPokemonAssets.push(starterPokemon.loadAssets());
     });
+
     overrideModifiers(this.scene);
     overrideHeldItems(this.scene, party[0]);
+
+    modifiers.forEach(modifier => this.scene.addModifier(modifier, true, false, false, true));
+
     Promise.all(loadPokemonAssets).then(() => {
       SoundFade.fadeOut(this.scene, this.scene.sound.get("menu"), 500, true);
       this.scene.time.delayedCall(500, () => this.scene.playBgm());

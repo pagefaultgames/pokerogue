@@ -8,14 +8,22 @@ import { TextStyle, addTextObject, setTextStyle } from "./text";
 import { AbstractMultiPointShopModifierType, PointShopModifierCategories, PointShopModifierType, PointShopModifierTypes } from "#app/modifier/point-shop-modifier.js";
 import { achvs } from "#app/system/achv.js";
 import i18next from "i18next";
+import { Modifier } from "../modifier/modifier.js";
 
-type PointShopUiCallback = () => void;
+type PointShopUiCallback = (modifiers: Modifier[]) => void;
 
-const WindowMargin = {
+const WindowPadding = {
   left: 8,
   right: 8,
   top: 5,
   bottom: 5,
+};
+
+const Padding = {
+  left: 4,
+  right: 4,
+  top: 4,
+  bottom: 4,
 };
 
 const IconSize = {
@@ -23,9 +31,19 @@ const IconSize = {
   height: 16,
 };
 
+const EnabledIconSize = {
+  width: 16,
+  height: 16,
+};
+
 const MaxIcons = {
-  row: 5,
-  column: 5,
+  row: 4,
+  column: 7,
+};
+
+const MaxEnabledIcons = {
+  row: 2,
+  column: 9,
 };
 
 export default class PointShopUiHandler extends MessageUiHandler {
@@ -59,6 +77,12 @@ export default class PointShopUiHandler extends MessageUiHandler {
   private itemFooterLeftText: Phaser.GameObjects.Text;
   private itemFooterRightText: Phaser.GameObjects.Text;
 
+  private enabledItemsContainer: Phaser.GameObjects.Container;
+  private enabledItemsWindow: Phaser.GameObjects.NineSlice;
+  private enabledItemsIconContainer: Phaser.GameObjects.Container;
+  private readonly enabledItemsIcons: Phaser.GameObjects.Image[] = new Array(MaxEnabledIcons.column * MaxEnabledIcons.row);
+  private enabledItemsText: Phaser.GameObjects.Text;
+
   private itemWindowContainer: Phaser.GameObjects.Container;
   private itemListWindow: Phaser.GameObjects.NineSlice;
 
@@ -84,6 +108,8 @@ export default class PointShopUiHandler extends MessageUiHandler {
 
   private selectionCostWindow: Phaser.GameObjects.NineSlice;
   private selectionCostText: Phaser.GameObjects.Text;
+
+  private testText: Phaser.GameObjects.Text;
 
   private currentCategory: PointShopModifierCategories = PointShopModifierCategories.DEFAULT;
 
@@ -120,17 +146,33 @@ export default class PointShopUiHandler extends MessageUiHandler {
   }
 
   private getIconPositionFromIndex(i: number) : {x: number, y: number} {
-    return this.getIconPosition(i % MaxIcons.row, Math.floor(i / MaxIcons.row));
+    return this.getIconPosition(i % MaxIcons.column, Math.floor(i / MaxIcons.column));
+  }
+
+  private getEnabledIconPositionFromIndex(i: number) : {x: number, y: number} {
+    return this.getEnabledIconPosition(i % MaxEnabledIcons.column, Math.floor(i / MaxEnabledIcons.column));
   }
 
   private getIconPosition(x: number, y: number): {x: number, y: number} {
     const innerWindowSize: { width: number, height: number } = {
-      width: this.itemListWindow.displayWidth - WindowMargin.right - WindowMargin.left - IconSize.width,
-      height: this.itemListWindow.displayHeight - WindowMargin.top - WindowMargin.bottom - IconSize.height,
+      width: this.itemListWindow.displayWidth - WindowPadding.right - WindowPadding.left - IconSize.width,
+      height: this.itemListWindow.displayHeight - WindowPadding.top - WindowPadding.bottom - IconSize.height,
     };
 
-    const iconX: number = WindowMargin.left + innerWindowSize.width / (MaxIcons.row - 1) * x;
-    const iconY: number = WindowMargin.top + innerWindowSize.height / (MaxIcons.column - 1) * y;
+    const iconX: number = WindowPadding.left + innerWindowSize.width / (MaxIcons.column - 1) * x;
+    const iconY: number = WindowPadding.top + innerWindowSize.height / (MaxIcons.row - 1) * y;
+
+    return {x: iconX, y: iconY};
+  }
+
+  private getEnabledIconPosition(x: number, y: number): {x: number, y: number} {
+    const innerWindowSize: { width: number, height: number } = {
+      width: this.enabledItemsWindow.displayWidth - WindowPadding.right - WindowPadding.left - EnabledIconSize.width,
+      height: this.enabledItemsWindow.displayHeight - WindowPadding.top - WindowPadding.bottom - EnabledIconSize.height,
+    };
+
+    const iconX: number = WindowPadding.left + innerWindowSize.width / (MaxEnabledIcons.column - 1) * x;
+    const iconY: number = WindowPadding.top + innerWindowSize.height / (MaxEnabledIcons.row - 1) * y;
 
     return {x: iconX, y: iconY};
   }
@@ -182,42 +224,42 @@ export default class PointShopUiHandler extends MessageUiHandler {
 
     // Item List Header Cursor
     this.itemHeaderCursorLeft = this.scene.add
-      .sprite(WindowMargin.left, -this.itemHeaderWindow.displayHeight / 2, "cursor_reverse")
+      .sprite(WindowPadding.left, -this.itemHeaderWindow.displayHeight / 2, "cursor_reverse")
       .setOrigin(0, 0.5);
     this.itemHeaderCursorRight = this.scene.add
-      .sprite(this.itemHeaderWindow.displayWidth - WindowMargin.right, -this.itemHeaderWindow.displayHeight / 2, "cursor")
+      .sprite(this.itemHeaderWindow.displayWidth - WindowPadding.right, -this.itemHeaderWindow.displayHeight / 2, "cursor")
       .setOrigin(1, 0.5);
 
     // Item List Header Icon
     this.itemHeaderIconLeft = this.scene.add
-      .sprite(this.itemHeaderCursorLeft.x + this.itemHeaderCursorLeft.displayWidth + 4, -this.itemHeaderWindow.displayHeight / 2, "keyboard", "Q.png")
+      .sprite(this.itemHeaderCursorLeft.x + this.itemHeaderCursorLeft.displayWidth + Padding.left, -this.itemHeaderWindow.displayHeight / 2, "keyboard", "Q.png")
       .setOrigin(0, 0.5);
     this.itemHeaderIconRight = this.scene.add
-      .sprite(this.itemHeaderCursorRight.x - this.itemHeaderCursorRight.displayWidth - 4, -this.itemHeaderWindow.displayHeight / 2, "keyboard", "E.png")
+      .sprite(this.itemHeaderCursorRight.x - this.itemHeaderCursorRight.displayWidth - Padding.right, -this.itemHeaderWindow.displayHeight / 2, "keyboard", "E.png")
       .setOrigin(1, 0.5);
     this.itemHeaderContainer.add([this.itemHeaderWindow, this.itemHeaderCursorLeft, this.itemHeaderCursorRight, this.itemHeaderIconLeft, this.itemHeaderIconRight]);
 
     // Item List Window
     this.itemWindowContainer = this.scene.add
-      .container(0, -this.getRatioHeight(1/9) + 1)
+      .container(0, -this.getRatioHeight(3/9) + 1)
       .setName("Item Window Container");
     this.itemContainer.add(this.itemWindowContainer);
 
     this.itemListWindow =
-      addWindow(this.scene, 0, 0, this.getRatioWidth(2/3), this.getRatioHeight(7/9) + 2)
+      addWindow(this.scene, 0, 0, this.getRatioWidth(2/3), this.getRatioHeight(5/9) + 2)
         .setOrigin(0, 1);
     this.itemWindowContainer.add(this.itemListWindow);
 
     // Item List
     this.itemListContainer = this.scene.add
       .container(0, -this.itemListWindow.displayHeight)
-      .setName("Item Window Container");
+      .setName("Item List Container");
     this.itemWindowContainer.add(this.itemListContainer);
 
     PointShopModifierTypes.forEach((category, i) => {
       const isCurrentCategory = this.currentCategory === i;
 
-      let x = this.itemHeaderIconLeft.x + this.itemHeaderIconLeft.displayWidth + 4;
+      let x = this.itemHeaderIconLeft.x + this.itemHeaderIconLeft.displayWidth + Padding.left;
       if (i > 0) {
         x = this.itemHeaderText[i - 1].x + this.itemHeaderText[i - 1].displayWidth + 8;
       }
@@ -275,7 +317,44 @@ export default class PointShopUiHandler extends MessageUiHandler {
       }
     } */
 
+    this.enabledItemsContainer = this.scene.add.container(this.getRatioWidth(1/3), -this.getRatioHeight(1/9) + 1);
+    this.parentContainer.add(this.enabledItemsContainer);
 
+    this.enabledItemsWindow =
+      addWindow(this.scene, 0, 0, this.getRatioWidth(2/3), this.getRatioHeight(2/9) + 1)
+        .setOrigin(0, 1);
+    this.enabledItemsContainer.add(this.enabledItemsWindow);
+
+    //this.enabledItemsIcons
+    this.enabledItemsText =
+      addTextObject(this.scene, this.enabledItemsWindow.displayWidth / 2, -this.enabledItemsWindow.displayHeight / 2, "No Items Enabled...", TextStyle.PARTY)
+        .setOrigin(0.5, 0.5)
+        .setAlpha(0.5);
+    this.enabledItemsText.setScale(this.enabledItemsText.scale / 2);
+    this.enabledItemsContainer.add(this.enabledItemsText);
+
+    this.enabledItemsIconContainer = this.scene.add.container(0, -this.enabledItemsWindow.displayHeight);
+    this.enabledItemsContainer.add(this.enabledItemsIconContainer);
+
+    for (let i = 0; i < this.enabledItemsIcons.length; i++) {
+      const position = this.getEnabledIconPositionFromIndex(i);
+
+      this.enabledItemsIcons[i] = this.scene.add
+        .image(position.x, position.y, "items", "exp_charm")
+        .setOrigin(0, 0)
+        .setScale(0.5)
+        .setVisible(false);
+
+      this.enabledItemsIconContainer.add(this.enabledItemsIcons[i]);
+
+      /* this.enabledItemsIconContainer.add(this.scene.add
+        .rectangle(
+          position.x,
+          position.y,
+          EnabledIconSize.width,
+          EnabledIconSize.height, 0x000000, 0.6)
+        .setOrigin(0, 0)); */
+    }
 
     // Item List Footer Windows
     this.itemFooterLeftWindow =
@@ -306,11 +385,11 @@ export default class PointShopUiHandler extends MessageUiHandler {
       addWindow(this.scene, 0, 0, this.getRatioWidth(2/3), this.getRatioHeight(1/9))
         .setOrigin(0, 1)
         .setVisible(false);
-    this.itemContainer.add(this.messageWindow);
+    this.enabledItemsContainer.add(this.messageWindow);
 
-    this.message = addTextObject(this.scene, WindowMargin.left, -this.messageWindow.displayHeight / 2 - 1, "", TextStyle.PARTY, { maxLines: 1 })
+    this.message = addTextObject(this.scene, WindowPadding.left, this.messageWindow.y - this.messageWindow.displayHeight / 2 - 1, "", TextStyle.PARTY, { maxLines: 1 })
       .setOrigin(0, 0.5);
-    this.itemContainer.add(this.message);
+    this.enabledItemsContainer.add(this.message);
 
     // Selection Container
     this.selectionContainer = this.scene.add
@@ -336,9 +415,9 @@ export default class PointShopUiHandler extends MessageUiHandler {
         .setOrigin()
         .setAlign("center");
     this.selectionDescriptionText =
-      addTextObject(this.scene, WindowMargin.left, -this.selectionDescriptionWindow.displayHeight + WindowMargin.top, "", TextStyle.PARTY)
+      addTextObject(this.scene, WindowPadding.left, -this.selectionDescriptionWindow.displayHeight + WindowPadding.top, "", TextStyle.PARTY)
         .setText("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.")
-        .setWordWrapWidth((this.selectionDescriptionWindow.displayWidth - (WindowMargin.left + WindowMargin.right)) * 6);
+        .setWordWrapWidth((this.selectionDescriptionWindow.displayWidth - (WindowPadding.left + WindowPadding.right)) * 6);
     this.selectionCostText =
       addTextObject(this.scene, this.selectionCostWindow.displayWidth / 2, this.selectionCostWindow.y + this.selectionCostWindow.displayHeight / 2, "???", TextStyle.PARTY)
         .setOrigin()
@@ -350,6 +429,13 @@ export default class PointShopUiHandler extends MessageUiHandler {
       .setOrigin()
       .setScale(1.75);
     this.selectionContainer.add(this.selectionIcon);
+
+    /*this.testText = addTextObject(this.scene, 10, -66, "The quick brown fox \njumps over the lazy \ndog", TextStyle.PARTY)
+      .setOrigin(0, 0)
+      .setFontSize(11 * 6 * 4)
+      .setScale(1/6 / 4)
+      .setShadow();
+    this.parentContainer.add(this.testText);*/
   }
 
   show(args: any[]): boolean {
@@ -370,6 +456,8 @@ export default class PointShopUiHandler extends MessageUiHandler {
     this.maxPoints = points;
     this.setPoints(points);
 
+    PointShopModifierTypes.forEach(category => category.forEach(modifier => modifier.init(this.scene)));
+
     this.cursor = -1;
     this.setCursor(0);
 
@@ -381,7 +469,7 @@ export default class PointShopUiHandler extends MessageUiHandler {
   }
 
   getEnabledModifiers(): PointShopModifierType[] {
-    return PointShopModifierTypes.flat().filter(modifier => modifier.active); // What about multi tho
+    return PointShopModifierTypes.flat().filter(modifier => modifier.active);
   }
 
   setCursor(cursor: integer): boolean {
@@ -407,7 +495,7 @@ export default class PointShopUiHandler extends MessageUiHandler {
     this.selectionCostText.setText(this.currentSelection.cost.toString());
     this.selectionIcon.setFrame(this.currentSelection.iconImage);
     this.selectionHeaderText.setText(this.currentSelection.name);
-    this.selectionDescriptionText.setText(this.currentSelection.description || this.currentSelection.getDescription(this.scene));
+    this.selectionDescriptionText.setText(this.currentSelection.getDescription(this.scene));
 
     return changed;
   }
@@ -443,13 +531,34 @@ export default class PointShopUiHandler extends MessageUiHandler {
   }
 
   onCategoryLeft() {
+    if (this.getUi().getMode() !== Mode.POINT_SHOP) {
+      return;
+    }
+
     this.setCategory(Math.max(this.currentCategory - 1, 0));
   }
   onCategoryRight() {
+    if (this.getUi().getMode() !== Mode.POINT_SHOP) {
+      return;
+    }
+
     this.setCategory(Math.min(this.currentCategory + 1, PointShopModifierTypes.length - 1));
   }
 
-  updateOptions(index: number) {
+  updateEnabledIcons() {
+    this.enabledItemsText.setVisible(false);
+    this.enabledItemsIcons.forEach(icon => icon.setVisible(false));
+
+    let i = 0;
+    this.getEnabledModifiers().forEach(modifier => {
+      this.enabledItemsIcons[i++]
+        .setFrame(modifier.iconImage)
+        .setVisible(true);
+    });
+
+    this.enabledItemsText.setVisible(i === 0);
+  }
+  updateMessage(index: number) {
     let messageString: string;
     if (!(this.currentSelection instanceof AbstractMultiPointShopModifierType)) {
       messageString = "Current Status: " + (this.currentSelection.active ? "Enabled" : "Disabled");
@@ -467,12 +576,15 @@ export default class PointShopUiHandler extends MessageUiHandler {
   }
   handleToggle(index: number) {
     if (!(this.currentSelection instanceof AbstractMultiPointShopModifierType)) {
-      this.currentSelection.active = !this.currentSelection.active;
+      if (!this.currentSelection.tryToggleActive()) {
+        this.scene.playSound("error");
+      }
+
       this.currentEnabledIcon.setVisible(this.currentSelection.active);
     } else {
-      this.currentSelection.modifierOptions[index].active = !this.currentSelection.modifierOptions[index].active;
-
-      if (!this.currentSelection.multiSelect) {
+      if (!this.currentSelection.modifierOptions[index].tryToggleActive()) {
+        this.scene.playSound("error");
+      } else if (!this.currentSelection.multiSelect) {
         this.currentSelection.modifierOptions.forEach((option, i) => {
           if (i !== index) {
             option.active = false;
@@ -482,7 +594,9 @@ export default class PointShopUiHandler extends MessageUiHandler {
 
       this.currentEnabledIcon.setVisible(this.currentSelection.modifierOptions.some(option => option.active));
     }
-    this.updateOptions(index);
+
+    this.updateMessage(index);
+    this.updateEnabledIcons();
   }
   handleSelection() {
     const ui = this.getUi();
@@ -496,7 +610,7 @@ export default class PointShopUiHandler extends MessageUiHandler {
     }
 
     ui.showText("Current Status: ", undefined, () => {
-      this.updateOptions(0);
+      this.updateMessage(0);
       ui.setModeWithoutClear(Mode.OPTION_SELECT, {
         options: optionStrings.map((optionString, i) => {
           // make an option for each available starter move
@@ -506,7 +620,7 @@ export default class PointShopUiHandler extends MessageUiHandler {
               this.handleToggle(i);
             },
             onHover: () => {
-              this.updateOptions(i);
+              this.updateMessage(i);
             },
           };
           return option;
@@ -523,7 +637,7 @@ export default class PointShopUiHandler extends MessageUiHandler {
         }),
         supportHover: true,
         maxOptions: 8,
-        yOffset: 29,
+        yOffset: 30 - this.getRatioHeight(1/9),
         xOffset: -1,
       });
     });
@@ -538,16 +652,16 @@ export default class PointShopUiHandler extends MessageUiHandler {
       this.setCursor(PointShopModifierTypes[this.currentCategory].length);
     case Button.ACTION:
       if (!this.currentSelection) {
-        this.callbackFunction();
+        this.callbackFunction(this.getEnabledModifiers().map(modifier => modifier.newModifier()));
       } else {
         this.handleSelection();
       }
       break;
     case Button.UP:
-      this.setCursor(Math.max(this.cursor - MaxIcons.row, 0));
+      this.setCursor(Math.max(this.cursor - MaxIcons.column, 0));
       break;
     case Button.DOWN:
-      this.setCursor(Math.min(this.cursor + MaxIcons.row, PointShopModifierTypes[this.currentCategory].length));
+      this.setCursor(Math.min(this.cursor + MaxIcons.column, PointShopModifierTypes[this.currentCategory].length));
       break;
     case Button.LEFT:
       this.setCursor(Math.max(this.cursor - 1, 0));

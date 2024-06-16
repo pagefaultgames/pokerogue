@@ -1,7 +1,10 @@
-
-import { getBiomeName } from "#app/data/biomes.js";
-import { Biome } from "#app/data/enums/biome.js";
-import { ExpBalanceModifier, ExpShareModifier, ExtraModifierModifier, HealingBoosterModifier, HiddenAbilityRateBoosterModifier, IvScannerModifier, LockModifierTiersModifier, MapModifier, Modifier, MoneyInterestModifier, MoneyMultiplierModifier, PreserveBerryModifier, ShinyRateBoosterModifier } from "./modifier";
+import * as Utils from "../utils";
+import BattleScene from "#app/battle-scene.js";
+import { getBiomeName } from "#app/data/biomes";
+import { GameModes } from "#app/game-mode.js";
+import { achvs } from "#app/system/achv.js";
+import { Biome } from "#enums/biome";
+import { ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, HealingBoosterModifier, HiddenAbilityRateBoosterModifier, IvScannerModifier, LockModifierTiersModifier, MapModifier, Modifier, MoneyInterestModifier, MoneyMultiplierModifier, MoneyRewardModifier, PreserveBerryModifier, ShinyRateBoosterModifier } from "./modifier";
 import { ModifierType } from "./modifier-type";
 
 export enum PointShopModifierCategories {
@@ -9,50 +12,219 @@ export enum PointShopModifierCategories {
   UTILITY,
   BATTLE_ITEM,
 }
+export enum PointShopModifierTier {
+  TIER_I,
+  TIER_II,
+  TIER_III,
+  TIER_IV,
+}
 
 export const PointShopModifierTypes: PointShopModifierType[][] = Array.from({ length: (Object.keys(PointShopModifierCategories).length / 2) }, () => Array(0));
 
-export interface PointShopModifierType extends ModifierType {
+interface Requirements {
+  achievement: string,
+  gameModes: GameModes,
+}
+function passesAchievement(requirements: Requirements, battleScene: BattleScene): boolean {
+  if (requirements.achievement) {
+    const unlockedKeys = Object.keys(battleScene.gameData.achvUnlocks);
+
+    return unlockedKeys.some(key => achvs[key].id === requirements.achievement);
+  }
+
+  return true;
+}
+function passesGameModes(requirements: Requirements, battleScene: BattleScene): boolean {
+  return battleScene.gameMode.modeId === (requirements.gameModes & battleScene.gameMode.modeId);
+}
+function meetsRequirements(requirements: Requirements, battleScene: BattleScene): boolean {
+  return passesGameModes(requirements, battleScene) && passesAchievement(requirements, battleScene);
+}
+
+export interface PointShopModifierType extends Requirements {
   id: string,
   name: string,
   description: string,
   iconImage: string,
   cost: number,
-  active: boolean,
+  readonly active: boolean,
 
-  secret: boolean,
-  hasParent: boolean,
-  parentId: string,
+  init(battleScene: BattleScene),
+
+  getDescription(scene: Phaser.Scene): string,
+  newModifier(...args: any[]): Modifier,
+
+  trySetActive(value: boolean): boolean,
+  tryToggleActive(): boolean,
 }
-
 type NewModifierFunc = (type: ModifierType, args: any[]) => Modifier;
 export class AbstractPointShopModifierType extends ModifierType implements PointShopModifierType {
   public description: string;
   public cost: number;
-  public active: boolean;
 
-  public secret: boolean;
-  public hasParent: boolean;
-  public parentId: string;
+  protected _active: boolean;
+  public get active(): boolean {
+    return this._active;
+  }
+  protected set active(value: boolean) {
+    this._active = value;
+  }
+
+  public achievement: string;
+  public gameModes: GameModes = GameModes.ANY;
+
+  public battleScene: BattleScene;
 
   protected constructor(localeKey: string, iconImage: string, newModifierFunc: NewModifierFunc, group?: string, soundName?: string) {
     super(localeKey, iconImage, newModifierFunc, group, soundName);
   }
+
+  public init(battleScene: BattleScene) {
+    this.battleScene = battleScene;
+  }
+
+  protected passesAchievement(): boolean {
+    return passesAchievement(this, this.battleScene);
+  }
+  protected passesGameModes(): boolean {
+    return passesGameModes(this, this.battleScene);
+  }
+  protected meetsRequirements(): boolean {
+    return this.passesGameModes() && this.passesAchievement();
+  }
+
+  public trySetActive(value: boolean = true): boolean {
+    if (!this.meetsRequirements()) {
+      return false;
+    }
+
+    this.active = value;
+    return true;
+  }
+
+  public tryToggleActive(): boolean {
+    return this.trySetActive(!this.active);
+  }
+
+  getDescription(scene: BattleScene): string {
+    if (!this.meetsRequirements()) {
+      let achievementString = "";
+      if (!this.passesAchievement()) {
+        achievementString = "Missing achievement \n\"" + Utils.toReadableString(this.achievement) + "\".\n";
+      }
+
+      let gameModeString = "";
+
+      const gameModes = Object.values(GameModes).filter(value => value !== GameModes.ANY).filter(value => this.gameModes & value as GameModes);
+      if (!this.passesGameModes() && gameModes.length) {
+        gameModeString += "Can only be used in ";
+        gameModes.forEach ((value, i) => {
+          const aggrigator = i < gameModes.length - 2 ? ", " : " and ";
+          gameModeString += Utils.toReadableString(GameModes[value]) + (i < gameModes.length - 1 ?  aggrigator : " mode.");
+        });
+      }
+
+      return achievementString + gameModeString;
+    }
+
+    if (this.description) {
+      return this.description;
+    }
+
+    return super.getDescription(scene);
+  }
 }
 
-export interface PointShopModifierOption {
+export interface PointShopModifierOption extends Requirements {
   name: string,
-  option: any,
+  value: number | string,
   cost: number,
   active?: boolean,
 }
+export class AbstractPointShopModifierOption implements PointShopModifierOption {
+  public name: string;
+  public value: string|number;
+  public cost: number;
+  public active: boolean = false;
+
+  public achievement: string;
+  public gameModes: GameModes = GameModes.ANY;
+
+  public battleScene: BattleScene;
+
+  protected constructor(init?:Partial<AbstractPointShopModifierOption>) {
+    Object.assign(this, init);
+  }
+
+  public trySetActive(value: boolean = true): boolean {
+    if (meetsRequirements(this, this.battleScene)) {
+      return false;
+    }
+
+    this.active = value;
+    return true;
+  }
+
+  public tryToggleActive(): boolean {
+    return this.trySetActive(!this.active);
+  }
+}
+export class PointShopModifierOptionString extends AbstractPointShopModifierOption {
+  public override value: string;
+
+  public constructor(init?:Partial<PointShopModifierOptionString>) {
+    super(init);
+  }
+}
+export class PointShopModifierOptionNumber extends AbstractPointShopModifierOption {
+  public override value: number;
+
+  public constructor(init?:Partial<PointShopModifierOptionNumber>) {
+    super(init);
+  }
+}
+
+type NewModifierOptionFunc = (option: any) => Modifier;
 export class AbstractMultiPointShopModifierType extends AbstractPointShopModifierType implements PointShopModifierType {
-  public modifierOptions: PointShopModifierOption[];
+  public modifierOptions: AbstractPointShopModifierOption[];
 
   public multiSelect = false;
 
-  protected constructor(localeKey: string, iconImage: string, group?: string, soundName?: string) {
-    super(localeKey, iconImage, null, group, soundName);
+  public override get active() {
+    return this.modifierOptions.some(option => option.active);
+  }
+
+  protected constructor(localeKey: string, iconImage: string, newModifierFunc: NewModifierOptionFunc, group?: string, soundName?: string) {
+    super(
+      localeKey,
+      iconImage,
+      (_type, _args) => {
+        if (this.multiSelect) {
+          let value = 0;
+          this.modifierOptions.forEach(option => {
+            if (option.active) {
+              value += option.value as number;
+            }
+          });
+
+          return newModifierFunc(value);
+        }
+
+        const activeOption = this.modifierOptions.find(option => option.active);
+        if (!activeOption) {
+          return undefined;
+        }
+
+        return newModifierFunc(activeOption.value);
+      },
+      group,
+      soundName);
+  }
+
+  public init(battleScene: BattleScene): void {
+    super.init(battleScene);
+
+    this.modifierOptions.forEach(option => option.battleScene = this.battleScene);
   }
 }
 
@@ -91,14 +263,14 @@ export class ExpCharmPointShopModifierType extends AbstractMultiPointShopModifie
   }
 
   protected constructor() {
-    super("modifierType:ModifierType.GOLDEN_EXP_CHARM", "golden_exp_charm");
+    super("modifierType:ModifierType.GOLDEN_EXP_CHARM", "golden_exp_charm", (option) => new ExpBoosterModifier(this, option));
 
     this.multiSelect = true;
 
     this.modifierOptions = [
-      {name: "25%",  option: 25,  cost: 50},
-      {name: "50%",  option: 50,  cost: 100},
-      {name: "100%", option: 100, cost: 200},
+      new PointShopModifierOptionNumber({name: "25%",  value: 25,  cost: 50}),
+      new PointShopModifierOptionNumber({name: "50%",  value: 50,  cost: 100}),
+      new PointShopModifierOptionNumber({name: "100%", value: 100, cost: 200}),
     ];
 
     this.cost = this.modifierOptions[0].cost;
@@ -142,15 +314,15 @@ export class MoneyStartPointShopModifierType extends AbstractMultiPointShopModif
   }
 
   protected constructor() {
-    super("modifierType:ModifierType.RELIC_GOLD", "relic_gold");
+    super("modifierType:ModifierType.RELIC_GOLD", "relic_gold", (option) => new MoneyRewardModifier(this, option));
 
     this.multiSelect = true;
 
     this.modifierOptions = [
-      {name: "1000",  option: 1000,  cost: 50},
-      {name: "2500",  option: 2500,  cost: 250},
-      {name: "5000",  option: 5000,  cost: 500},
-      {name: "10000", option: 10000, cost: 500},
+      new PointShopModifierOptionNumber({name: "1000",  value: 1,  cost: 50}),
+      new PointShopModifierOptionNumber({name: "2500",  value: 2.5,  cost: 250}),
+      new PointShopModifierOptionNumber({name: "5000",  value: 5,  cost: 500}),
+      new PointShopModifierOptionNumber({name: "10000", value: 10, cost: 1000}),
     ];
 
     this.cost = this.modifierOptions[0].cost;
@@ -210,11 +382,11 @@ export class BiomeStartShopModifierType extends AbstractMultiPointShopModifierTy
   public modifierTypes: PointShopModifierOption[] = new Array();
 
   protected constructor() {
-    super("modifierType:ModifierType.MAP", "map");
+    super("modifierType:ModifierType.MAP", "map", (option) => undefined);
 
     this.modifierOptions = new Array();
     Object.values(Biome).filter(key => isNaN(Number(Biome[key]))).forEach(biome => {
-      this.modifierOptions.push({name: getBiomeName(biome as Biome), option: biome as Biome,  cost: 100});
+      this.modifierOptions.push(new PointShopModifierOptionNumber({name: getBiomeName(biome as Biome), value: biome as Biome,  cost: 100}));
     });
 
     this.cost = this.modifierOptions[0].cost;
