@@ -3598,6 +3598,39 @@ export class IceFaceMoveImmunityAbAttr extends MoveImmunityAbAttr {
   }
 }
 
+/**
+ * If a Pokémon with this Ability selects a damaging move, it has a 30% chance of going first in its priority bracket. If the Ability activates, this is announced at the start of the turn (after move selection).
+ * @extends AbAttr
+ */
+export class BypassSpeedChanceAbAttr extends AbAttr {
+  apply(
+    pokemon: Pokemon,
+    passive: boolean,
+    cancelled: Utils.BooleanHolder,
+    args: any[]
+  ): boolean {
+    const bypassSpeed = args[0] as Utils.BooleanHolder;
+
+    if (!bypassSpeed.value && pokemon.randSeedInt(10) < 3) {
+      const turnCommand =
+        pokemon.scene.currentBattle.turnCommands[pokemon.getBattlerIndex()];
+      const isCommandFight = turnCommand?.command === Command.FIGHT;
+      const move = allMoves[turnCommand.move?.move];
+      const hasPower = move?.power !== -1;
+
+      if (isCommandFight && hasPower) {
+        bypassSpeed.value = true;
+        pokemon.scene.queueMessage(
+          getPokemonMessage(pokemon, " can act faster than normal, thanks to its Quick Draw!")
+        );
+      }
+      return true;
+    }
+
+    return false;
+  }
+}
+
 function applyAbAttrsInternal<TAttr extends AbAttr>(attrType: { new(...args: any[]): TAttr },
   pokemon: Pokemon, applyFunc: AbAttrApplyFunc<TAttr>, args: any[], isAsync: boolean = false, showAbilityInstant: boolean = false, quiet: boolean = false, passive: boolean = false): Promise<void> {
   return new Promise(resolve => {
@@ -4673,7 +4706,7 @@ export function initAbilities() {
       .attr(NoFusionAbilityAbAttr)
       .condition((pokemon) => !pokemon.isTerastallized()),
     new Ability(Abilities.QUICK_DRAW, 8)
-      .unimplemented(),
+      .attr(BypassSpeedChanceAbAttr),
     new Ability(Abilities.UNSEEN_FIST, 8)
       .attr(IgnoreProtectOnContactAbAttr),
     new Ability(Abilities.CURIOUS_MEDICINE, 8)
