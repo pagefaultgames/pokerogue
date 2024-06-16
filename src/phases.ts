@@ -35,7 +35,7 @@ import { TrainerSlot, trainerConfigs } from "./data/trainer-config";
 import { EggHatchPhase } from "./egg-hatch-phase";
 import { Egg } from "./data/egg";
 import { vouchers } from "./system/voucher";
-import { loggedInUser, updateUserInfo } from "./account";
+import { clientSessionId, loggedInUser, updateUserInfo } from "./account";
 import { SessionSaveData } from "./system/game-data";
 import { addPokeballCaptureStars, addPokeballOpenParticles } from "./field/anims";
 import { SpeciesFormChangeActiveTrigger, SpeciesFormChangeManualTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangePreMoveTrigger } from "./data/pokemon-forms";
@@ -2889,7 +2889,7 @@ export class MoveEffectPhase extends PokemonPhase {
             continue;
           }
 
-          const isProtected = !move.hasFlag(MoveFlags.IGNORE_PROTECT) && target.findTags(t => t instanceof ProtectedTag).find(t => target.lapseTag(t.tagType));
+          const isProtected = !this.move.getMove().checkFlag(MoveFlags.IGNORE_PROTECT, user, target) && target.findTags(t => t instanceof ProtectedTag).find(t => target.lapseTag(t.tagType));
 
           const firstHit = moveHistoryEntry.result !== MoveResult.SUCCESS;
 
@@ -4198,8 +4198,7 @@ export class GameOverPhase extends BattlePhase {
     If Offline, execute offlineNewClear(), a localStorage implementation of newClear daily run checks */
     if (this.victory) {
       if (!Utils.isLocal) {
-        Utils.apiFetch(`savedata/newclear?slot=${this.scene.sessionSlotId}`, true)
-          .then(response => response.json())
+        Utils.apiFetch(`savedata/session/newclear?slot=${this.scene.sessionSlotId}&clientSessionId=${clientSessionId}`, true)          .then(response => response.json())
           .then(newClear => doGameOver(newClear));
       } else {
         this.scene.gameData.offlineNewClear(this.scene).then(result => {
