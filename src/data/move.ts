@@ -5291,6 +5291,32 @@ export class LastResortAttr extends MoveAttr {
   }
 }
 
+
+/**
+ * The move only works if the target has a transferable held item
+ * @extends MoveAttr
+ * @see {@linkcode getCondition}
+ */
+export class AttackedByItemAttr extends MoveAttr {
+  /**
+   * @returns the {@linkcode MoveConditionFunc} for this {@linkcode Move}
+   */
+  getCondition(): MoveConditionFunc {
+    return (user: Pokemon, target: Pokemon, move: Move) => {
+      const heldItems = target.getHeldItems().filter(i => i.getTransferrable(true));
+      if (heldItems.length === 0) {
+        return false;
+      }
+
+      const itemName = heldItems[0]?.type?.name ?? "item";
+      const attackedByItemString = ` is about to be attacked by its ${itemName}!`;
+      target.scene.queueMessage(getPokemonMessage(target, attackedByItemString));
+
+      return true;
+    };
+  }
+}
+
 export class VariableTargetAttr extends MoveAttr {
   private targetChangeFunc: (user: Pokemon, target: Pokemon, move: Move) => number;
 
@@ -7764,8 +7790,8 @@ export function initMoves() {
     new AttackMove(Moves.LASH_OUT, Type.DARK, MoveCategory.PHYSICAL, 75, 100, 5, -1, 0, 8)
       .partial(),
     new AttackMove(Moves.POLTERGEIST, Type.GHOST, MoveCategory.PHYSICAL, 110, 90, 5, -1, 0, 8)
-      .makesContact(false)
-      .partial(),
+      .attr(AttackedByItemAttr)
+      .makesContact(false),
     new StatusMove(Moves.CORROSIVE_GAS, Type.POISON, 100, 40, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_OTHERS)
       .unimplemented(),
