@@ -198,10 +198,10 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
   case TextStyle.PARTY_RED:
     return !shadow ? "#f89890" : "#984038";
   case TextStyle.SUMMARY:
-    return !shadow ? "#ffffff" : "#636363";
+    return !shadow ? "#f8f8f8" : "#636363";
   case TextStyle.SUMMARY_ALT:
     if (uiTheme) {
-      return !shadow ? "#ffffff" : "#636363";
+      return !shadow ? "#f8f8f8" : "#636363";
     }
     return !shadow ? "#484848" : "#d0d0c8";
   case TextStyle.SUMMARY_RED:
@@ -233,17 +233,17 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
 export function getModifierTierTextTint(tier: ModifierTier): integer {
   switch (tier) {
   case ModifierTier.COMMON:
-    return 0xffffff;
+    return 0xf8f8f8;
   case ModifierTier.GREAT:
-    return 0x3890f8;
+    return 0x4998f8;
   case ModifierTier.ULTRA:
     return 0xf8d038;
   case ModifierTier.ROGUE:
-    return 0xd52929;
+    return 0xdb4343;
   case ModifierTier.MASTER:
-    return 0xe020c0;
+    return 0xe331c5;
   case ModifierTier.LUXURY:
-    return 0xe64a18;
+    return 0xe74c18;
   }
 }
 
