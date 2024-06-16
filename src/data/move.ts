@@ -283,6 +283,10 @@ export default class Move implements Localizable {
    * @returns boolean
    */
   isTypeImmune(type: Type): boolean {
+    if (this.moveTarget === MoveTarget.USER) {
+      return false;
+    }
+
     switch (type) {
     case Type.GRASS:
       if (this.hasFlag(MoveFlags.POWDER_MOVE)) {
@@ -6810,8 +6814,7 @@ export function initMoves() {
       .partial(),
     new SelfStatusMove(Moves.RAGE_POWDER, Type.BUG, -1, 20, -1, 2, 5)
       .powderMove()
-      .attr(AddBattlerTagAttr, BattlerTagType.CENTER_OF_ATTENTION, true)
-      .partial(),
+      .attr(AddBattlerTagAttr, BattlerTagType.CENTER_OF_ATTENTION, true),
     new StatusMove(Moves.TELEKINESIS, Type.PSYCHIC, -1, 15, -1, 0, 5)
       .condition(failOnGravityCondition)
       .unimplemented(),
