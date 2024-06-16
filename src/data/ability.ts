@@ -3624,8 +3624,8 @@ export class BypassSpeedChanceAbAttr extends AbAttr {
         pokemon.scene.queueMessage(
           getPokemonMessage(pokemon, " can act faster than normal, thanks to its Quick Draw!")
         );
+        return true;
       }
-      return true;
     }
 
     return false;
