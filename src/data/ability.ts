@@ -574,6 +574,24 @@ export class MoveImmunityAbAttr extends PreDefendAbAttr {
   }
 }
 
+/**
+ * Reduces the accuracy of status moves used against the Pokémon with this ability to 50%.
+ * Used by Wonder Skin.
+ *
+ * @extends PreDefendAbAttr
+ */
+export class WonderSkinAbAttr extends PreDefendAbAttr {
+  applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    const moveAccuracy = args[0] as Utils.NumberHolder;
+    if (move.category === MoveCategory.STATUS && moveAccuracy.value >= 50) {
+      moveAccuracy.value = 50;
+      return true;
+    }
+
+    return false;
+  }
+}
+
 export class MoveImmunityStatChangeAbAttr extends MoveImmunityAbAttr {
   private stat: BattleStat;
   private levels: integer;
@@ -1881,6 +1899,7 @@ export class TraceAbAttr extends PostSummonAbAttr {
     pokemon.summonData.ability = target.getAbility().id;
 
     pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` traced ${target.name}'s\n${allAbilities[target.getAbility().id].name}!`));
+    setAbilityRevealed(target);
 
     return true;
   }
@@ -2439,9 +2458,7 @@ export class FriskAbAttr extends PostSummonAbAttr {
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     for (const opponent of pokemon.getOpponents()) {
       pokemon.scene.queueMessage(getPokemonMessage(pokemon, " frisked " + opponent.name + "'s " + opponent.getAbility().name + "!"));
-      if (opponent.battleData) {
-        opponent.battleData.abilityRevealed = true;
-      }
+      setAbilityRevealed(opponent);
     }
     return true;
   }
@@ -3802,6 +3819,17 @@ function queueShowAbility(pokemon: Pokemon, passive: boolean): void {
   pokemon.scene.clearPhaseQueueSplice();
 }
 
+/**
+ * Sets the ability of a Pokémon as revealed.
+ *
+ * @param pokemon - The Pokémon whose ability is being revealed.
+ */
+function setAbilityRevealed(pokemon: Pokemon): void {
+  if (pokemon.battleData) {
+    pokemon.battleData.abilityRevealed = true;
+  }
+}
+
 export const allAbilities = [ new Ability(Abilities.NONE, 3) ];
 
 export function initAbilities() {
@@ -4250,8 +4278,8 @@ export function initAbilities() {
       .attr(BlockWeatherDamageAttr, WeatherType.SANDSTORM)
       .condition(getWeatherCondition(WeatherType.SANDSTORM)),
     new Ability(Abilities.WONDER_SKIN, 5)
-      .ignorable()
-      .unimplemented(),
+      .attr(WonderSkinAbAttr)
+      .ignorable(),
     new Ability(Abilities.ANALYTIC, 5)
       .attr(MovePowerBoostAbAttr, (user, target, move) => !!target.getLastXMoves(1).find(m => m.turn === target.scene.currentBattle.turn) || user.scene.currentBattle.turnCommands[target.getBattlerIndex()].command !== Command.FIGHT, 1.3),
     new Ability(Abilities.ILLUSION, 5)
