@@ -6,5 +6,5 @@ export const pokeball: SimpleTranslationEntries = {
   "ultraBall": "Ultra Ball",
   "rogueBall": "Rogue Ball",
   "masterBall": "Master Ball",
-  "luxuryBall": "Chich Ball",
+  "luxuryBall": "Chic Ball",
 } as const;
