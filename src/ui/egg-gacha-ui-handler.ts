@@ -12,7 +12,6 @@ import {Button} from "#enums/buttons";
 import i18next from "../plugins/i18n";
 import * as Overrides from "../overrides";
 import { GachaType } from "#app/enums/gacha-types";
-import { arrayShuffle } from "#app/helper/array_helper";
 import { EggTier } from "#enums/egg-type";
 
 export default class EggGachaUiHandler extends MessageUiHandler {
@@ -402,7 +401,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
         eggs.push(egg);
       }
       // Shuffle the eggs in case the guaranteed one got added as last egg
-      eggs = arrayShuffle<Egg>(eggs);
+      eggs = Utils.randSeedShuffle<Egg>(eggs);
 
 
       (this.scene.currentBattle ? this.scene.gameData.saveAll(this.scene, true, true, true) : this.scene.gameData.saveSystem()).then(success => {
