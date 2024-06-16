@@ -256,7 +256,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "SPDEF": "Defesa Esp.",
     "SPD": "Velocidade",
     "ACC": "Precisão",
-    "CRIT": "Acerto Crítico",
+    "CRIT": "Chance de Acerto Crítico",
     "EVA": "Evasão",
     "DEFAULT": "???",
   },
