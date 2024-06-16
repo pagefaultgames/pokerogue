@@ -28,7 +28,7 @@ export function getBattleStatName(stat: BattleStat) {
   case BattleStat.EVA:
     return i18next.t("pokemonInfo:Stat.EVA");
   default:
-    return i18next.t("???");
+    return "???";
   }
 }
 
