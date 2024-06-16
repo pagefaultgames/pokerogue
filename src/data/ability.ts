@@ -3413,6 +3413,9 @@ export class SuppressFieldAbilitiesAbAttr extends AbAttr {
 
 export class AlwaysHitAbAttr extends AbAttr { }
 
+/** Attribute for abilities that allow moves that make contact to ignore protection (i.e. Unseen Fist) */
+export class IgnoreProtectOnContactAbAttr extends AbAttr { }
+
 export class UncopiableAbilityAbAttr extends AbAttr {
   constructor() {
     super(false);
@@ -4672,7 +4675,7 @@ export function initAbilities() {
     new Ability(Abilities.QUICK_DRAW, 8)
       .unimplemented(),
     new Ability(Abilities.UNSEEN_FIST, 8)
-      .unimplemented(),
+      .attr(IgnoreProtectOnContactAbAttr),
     new Ability(Abilities.CURIOUS_MEDICINE, 8)
       .attr(PostSummonClearAllyStatsAbAttr),
     new Ability(Abilities.TRANSISTOR, 8)
