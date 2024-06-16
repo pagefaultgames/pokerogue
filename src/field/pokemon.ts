@@ -1319,6 +1319,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     const shinyThreshold = new Utils.IntegerHolder(32);
     if (thresholdOverride === undefined) {
+      if (this.scene.eventManager.isEventActive()) {
+        shinyThreshold.value *= this.scene.eventManager.getShinyMultiplier();
+      }
       if (!this.hasTrainer()) {
         this.scene.applyModifiers(ShinyRateBoosterModifier, true, shinyThreshold);
       }
@@ -1726,7 +1729,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     // Apply arena tags for conditional protection
-    if (!move.hasFlag(MoveFlags.IGNORE_PROTECT) && !move.isAllyTarget()) {
+    if (!move.checkFlag(MoveFlags.IGNORE_PROTECT, source, this) && !move.isAllyTarget()) {
       const defendingSide = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
       this.scene.arena.applyTagsForSide(ArenaTagType.QUICK_GUARD, defendingSide, cancelled, this, move.priority);
       this.scene.arena.applyTagsForSide(ArenaTagType.WIDE_GUARD, defendingSide, cancelled, this, move.moveTarget);
