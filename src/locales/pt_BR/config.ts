@@ -27,7 +27,6 @@ import { menuUiHandler } from "./menu-ui-handler";
 import { modifierType } from "./modifier-type";
 import { move } from "./move";
 import { nature } from "./nature";
-import { partyUiHandler } from "./party-ui-handler";
 import { pokeball } from "./pokeball";
 import { pokemon } from "./pokemon";
 import { pokemonInfo } from "./pokemon-info";
@@ -46,6 +45,7 @@ import {
   statusEffectObtainText, statusEffectOverlapText, statusEffectSourceClause
 } from "./status-effect";
 import {arenaTag} from "./arena-tag";
+import { partyUiHandler } from "./party-ui-handler";
 
 export const ptBrConfig = {
   ability: ability,
@@ -97,4 +97,5 @@ export const ptBrConfig = {
   statusEffectOverlapText: statusEffectOverlapText,
   statusEffectSourceClause: statusEffectSourceClause,
   arenaTag: arenaTag
+
 };

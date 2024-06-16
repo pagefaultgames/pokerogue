@@ -20,8 +20,14 @@
 		"noEmit": true
 	},
 	"typedocOptions": {
-        "entryPoints": ["src/"],
+		"entryPoints": ["src/"],
 		"entryPointStrategy": "expand",
-        "out": "typedoc",
-    }
+		"out": "typedoc",
+	},
+	"exclude": [
+		"node_modules",
+		"dist",
+		"vite.config.ts",
+		"vitest.config.ts"
+	]
 }
