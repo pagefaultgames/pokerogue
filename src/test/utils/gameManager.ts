@@ -111,7 +111,6 @@ export default class GameManager {
     this.scene.hpBarSpeed = 3;
     this.scene.enableTutorials = false;
     this.scene.gameData.gender = PlayerGender.MALE;
-
   }
 
   /**

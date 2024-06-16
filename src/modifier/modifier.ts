@@ -875,6 +875,27 @@ export class TurnHealModifier extends PokemonHeldItemModifier {
   }
 }
 
+export class ConditionalStatsBoost extends PokemonHeldItemModifier {
+  protected stat: Stat;
+  constructor (type: ModifierType, pokemonId: integer, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+    this.stat = Stat.SPDEF;
+  }
+  matchType(_modifier: Modifier): boolean {
+    return _modifier instanceof ConditionalStatsBoost;
+  }
+  getMaxHeldItemCount(pokemon: Pokemon): number {
+    return 1;
+  }
+  clone(): PersistentModifier {
+    return new ConditionalStatsBoost(this.type, this.pokemonId, this.stackCount);
+  }
+  apply(args: any[]): boolean | Promise<boolean> {
+    args[1][this.stat] = Math.floor(args[1][this.stat] * 1.5);
+    return true;
+  }
+}
+
 /**
  * Modifier used for held items, namely Toxic Orb and Flame Orb, that apply a
  * set {@linkcode StatusEffect} at the end of a turn.
