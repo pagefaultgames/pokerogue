@@ -12,6 +12,7 @@ import ConfirmUiHandler from "./confirm-ui-handler";
 import { StatsContainer } from "./stats-container";
 import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./text";
 import { addWindow } from "./ui-theme";
+import * as pokemonSpecies from "../data/pokemon-species";
 
 interface LanguageSetting {
   infoContainerTextSize: string;
@@ -226,7 +227,19 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
         this.pokemonGenderText.setVisible(false);
       }
 
-      if (pokemon.species.forms?.[pokemon.formIndex]?.formName) {
+      let isFormVisible = true;
+      if (pokemon.species.forms?.length > 0) {
+        const nonFormKeyForms = pokemon.species.forms.filter(object => {
+          return !pokemonSpecies.noStarterFormKeys.includes(object.formKey);
+        });
+        if (nonFormKeyForms.length === 1) {
+          isFormVisible = false;
+        }
+      } else {
+        isFormVisible = false;
+      }
+
+      if (isFormVisible) {
         this.pokemonFormLabelText.setVisible(true);
         this.pokemonFormText.setVisible(true);
         const newForm = BigInt(Math.pow(2, pokemon.formIndex)) * DexAttr.DEFAULT_FORM;
