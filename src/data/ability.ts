@@ -1298,6 +1298,33 @@ export class FieldMoveTypePowerBoostAbAttr extends FieldMovePowerBoostAbAttr {
   }
 }
 
+export class UserFieldVariableMovePowerAbAttr extends AbAttr {
+  private condition: PokemonAttackCondition;
+  private powerMultiplier: number;
+
+  constructor(condition: PokemonAttackCondition, powerMultiplier: number) {
+    super(false);
+    this.condition = condition;
+    this.powerMultiplier = powerMultiplier;
+  }
+
+  applyPreAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: Move, args: any[]): boolean {
+    if (this.condition(pokemon, defender, move)) {
+      (args[0] as Utils.NumberHolder).value *= this.powerMultiplier;
+
+      return true;
+    }
+
+    return false;
+  }
+}
+
+export class AllyMoveCategoryPowerBoostAbAttr extends UserFieldVariableMovePowerAbAttr {
+  constructor(boostedCategories: MoveCategory[], powerMultiplier: number) {
+    super((pokemon, defender, move) => boostedCategories.includes(move.category), powerMultiplier);
+  }
+}
+
 export class BattleStatMultiplierAbAttr extends AbAttr {
   private battleStat: BattleStat;
   private multiplier: number;
@@ -3426,18 +3453,6 @@ export class NoFusionAbilityAbAttr extends AbAttr {
   }
 }
 
-export class BatteryAbAttr extends AbAttr {
-  constructor() {
-    super(false);
-  }
-}
-
-export class PowerSpotAbAttr extends AbAttr {
-  constructor() {
-    super(false);
-  }
-}
-
 export class IgnoreTypeImmunityAbAttr extends AbAttr {
   private defenderType: Type;
   private allowedMoveTypes: Type[];
@@ -4507,7 +4522,7 @@ export function initAbilities() {
     new Ability(Abilities.DANCER, 7)
       .attr(PostDancingMoveAbAttr),
     new Ability(Abilities.BATTERY, 7)
-      .attr(BatteryAbAttr),
+      .attr(AllyMoveCategoryPowerBoostAbAttr, [MoveCategory.SPECIAL], 1.3),
     new Ability(Abilities.FLUFFY, 7)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => move.hasFlag(MoveFlags.MAKES_CONTACT), 0.5)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => move.type === Type.FIRE, 2)
@@ -4619,7 +4634,7 @@ export function initAbilities() {
       .attr(IceFaceMoveImmunityAbAttr, (target, user, move) => move.category === MoveCategory.PHYSICAL && !!target.getTag(BattlerTagType.ICE_FACE))
       .ignorable(),
     new Ability(Abilities.POWER_SPOT, 8)
-      .attr(PowerSpotAbAttr),
+      .attr(AllyMoveCategoryPowerBoostAbAttr, [MoveCategory.SPECIAL, MoveCategory.PHYSICAL], 1.3),
     new Ability(Abilities.MIMICRY, 8)
       .unimplemented(),
     new Ability(Abilities.SCREEN_CLEANER, 8)
