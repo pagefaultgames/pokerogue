@@ -570,18 +570,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
     this.itemText = addTextObject(this.scene, 0, 35, this.modifierTypeOption.type.name, TextStyle.PARTY, { align: "center" });
     this.itemText.setOrigin(0.5, 0);
     this.itemText.setAlpha(0);
-    // Call the original function to get the integer color value
-    const colorInt = getModifierTierTextTint(this.modifierTypeOption.type.tier);
-    // Convert the integer color value to a hex string
-    // Use toString(16) to convert to hex, then pad with leading zeros if necessary
-    const textColor  = "#" + colorInt?.toString(16).padStart(6, "0");
-    // Check if the colorInt is null, if it is, use the tint color, otherwise use the hex color to be able to set the shadow color differently to the text color
-    if (!colorInt) {
-      this.itemText.setTint(getModifierTierTextTint(this.modifierTypeOption.type.tier));
-    } else {
-      this.itemText.setColor(textColor);
-    }
-    this.itemText.setShadow(0, 0, "#000000", 16, true, true);
+    this.itemText.setTint(getModifierTierTextTint(this.modifierTypeOption.type.tier));
     this.add(this.itemText);
 
     if (this.modifierTypeOption.cost) {
@@ -589,7 +578,6 @@ class ModifierOption extends Phaser.GameObjects.Container {
 
       this.itemCostText.setOrigin(0.5, 0);
       this.itemCostText.setAlpha(0);
-      this.itemCostText.setShadow(0, 0, "#000000", 16, true, true);
       this.add(this.itemCostText);
 
       this.updateCostText();
