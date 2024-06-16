@@ -30,6 +30,7 @@ import RegistrationFormUiHandler from "./registration-form-ui-handler";
 import LoadingModalUiHandler from "./loading-modal-ui-handler";
 import * as Utils from "../utils";
 import GameStatsUiHandler from "./game-stats-ui-handler";
+import RunStatsUiHandler from "./run-stats-ui-handler";
 import AwaitableUiHandler from "./awaitable-ui-handler";
 import SaveSlotSelectUiHandler from "./save-slot-select-ui-handler";
 import TitleUiHandler from "./title-ui-handler";
@@ -73,6 +74,7 @@ export enum Mode {
   KEYBOARD_BINDING,
   ACHIEVEMENTS,
   GAME_STATS,
+  RUN_STATS,
   VOUCHERS,
   EGG_LIST,
   EGG_GACHA,
@@ -168,6 +170,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new KeyboardBindingUiHandler(scene),
       new AchvsUiHandler(scene),
       new GameStatsUiHandler(scene),
+      new RunStatsUiHandler(scene),
       new VouchersUiHandler(scene),
       new EggListUiHandler(scene),
       new EggGachaUiHandler(scene),

@@ -5,7 +5,7 @@ import { Nature } from "../data/nature";
 import { PokeballType } from "../data/pokeball";
 import { getPokemonSpecies } from "../data/pokemon-species";
 import { Status } from "../data/status-effect";
-import Pokemon, { EnemyPokemon, PokemonMove, PokemonSummonData } from "../field/pokemon";
+import Pokemon, { EnemyPokemon, PokemonMove, PokemonSummonData, PokemonRunData } from "../field/pokemon";
 import { TrainerSlot } from "../data/trainer-config";
 import { Variant } from "#app/data/variant";
 import { loadBattlerTag } from "../data/battler-tags";
@@ -36,6 +36,7 @@ export default class PokemonData {
   public status: Status;
   public friendship: integer;
   public metLevel: integer;
+  public metWave: integer;
   public metBiome: Biome | -1;
   public luck: integer;
   public pauseEvolutions: boolean;
@@ -52,6 +53,7 @@ export default class PokemonData {
   public boss: boolean;
 
   public summonData: PokemonSummonData;
+  public runData: PokemonRunData;
 
   constructor(source: Pokemon | any, forHistory: boolean = false) {
     const sourcePokemon = source instanceof Pokemon ? source : null;
@@ -79,6 +81,7 @@ export default class PokemonData {
     this.natureOverride = source.natureOverride !== undefined ? source.natureOverride : -1;
     this.friendship = source.friendship !== undefined ? source.friendship : getPokemonSpecies(this.species).baseFriendship;
     this.metLevel = source.metLevel || 5;
+    this.metWave = source.metWave || 0;
     this.metBiome = source.metBiome !== undefined ? source.metBiome : -1;
     this.luck = source.luck !== undefined ? source.luck : (source.shiny ? (source.variant + 1) : 0);
     if (!forHistory) {
@@ -104,13 +107,14 @@ export default class PokemonData {
         this.status = sourcePokemon.status;
         if (this.player) {
           this.summonData = sourcePokemon.summonData;
+          this.runData = sourcePokemon.runData;
         }
       }
     } else {
       this.moveset = (source.moveset || [ new PokemonMove(Moves.TACKLE), new PokemonMove(Moves.GROWL) ]).filter(m => m).map((m: any) => new PokemonMove(m.moveId, m.ppUsed, m.ppUp));
       if (!forHistory) {
         this.status = source.status
-          ? new Status(source.status.effect, source.status.turnCount, source.status.cureTurn)
+          ? new Status(source.status.effect, source.status.turnCount, source.status.cureTurn, source.status.sourcePokemon)
           : undefined;
       }
 
@@ -132,6 +136,15 @@ export default class PokemonData {
         } else {
           this.summonData.tags = [];
         }
+      }
+
+      this.runData = new PokemonRunData();
+      if (!forHistory && source.runData) {
+        this.runData.kills = source.runData.kills;
+        this.runData.assists = source.runData.assists;
+        this.runData.deaths = source.runData.deaths;
+        this.runData.damageDealt = source.runData.damageDealt;
+        this.runData.damageTaken = source.runData.damageTaken;
       }
     }
   }

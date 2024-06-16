@@ -1,4 +1,5 @@
 import * as Utils from "../utils";
+import Pokemon from "../field/pokemon";
 
 export enum StatusEffect {
   NONE,
@@ -15,11 +16,13 @@ export class Status {
   public effect: StatusEffect;
   public turnCount: integer;
   public cureTurn: integer;
+  public sourcePokemon: Pokemon;
 
-  constructor(effect: StatusEffect, turnCount: integer = 0, cureTurn?: integer) {
+  constructor(effect: StatusEffect, turnCount: integer = 0, cureTurn?: integer, sourcePokemon?: Pokemon) {
     this.effect = effect;
     this.turnCount = turnCount === undefined ? 0 : turnCount;
     this.cureTurn = cureTurn;
+    this.sourcePokemon = sourcePokemon;
   }
 
   incrementTurn(): void {
@@ -177,8 +180,8 @@ export function getRandomStatus(statusA: Status, statusB: Status): Status {
 }
 
 /**
- * Gets all non volatile status effects
- * @returns A list containing all non volatile status effects
+ * Gets all non-volatile status effects
+ * @returns A list containing all non-volatile status effects
  */
 export function getNonVolatileStatusEffects():Array<StatusEffect> {
   return [
@@ -192,7 +195,7 @@ export function getNonVolatileStatusEffects():Array<StatusEffect> {
 }
 
 /**
- * Returns whether a statuss effect is non volatile.
+ * Returns whether a status effect is non-volatile.
  * Non-volatile status condition is a status that remains after being switched out.
  * @param status The status to check
  */

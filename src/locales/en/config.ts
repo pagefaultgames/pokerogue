@@ -21,6 +21,7 @@ import { egg } from "./egg";
 import { fightUiHandler } from "./fight-ui-handler";
 import { gameMode } from "./game-mode";
 import { gameStatsUiHandler } from "./game-stats-ui-handler";
+import { runStatsUiHandler } from "./run-stats-ui-handler";
 import { growth } from "./growth";
 import { menu } from "./menu";
 import { menuUiHandler } from "./menu-ui-handler";
@@ -63,6 +64,7 @@ export const enConfig = {
   fightUiHandler: fightUiHandler,
   gameMode: gameMode,
   gameStatsUiHandler: gameStatsUiHandler,
+  runStatsUiHandler: runStatsUiHandler,
   growth: growth,
   menu: menu,
   menuUiHandler: menuUiHandler,

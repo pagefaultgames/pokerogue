@@ -13,7 +13,7 @@ export default class ArenaData {
   constructor(source: Arena | any) {
     const sourceArena = source instanceof Arena ? source as Arena : null;
     this.biome = sourceArena ? sourceArena.biomeType : source.biome;
-    this.weather = sourceArena ? sourceArena.weather : source.weather ? new Weather(source.weather.weatherType, source.weather.turnsLeft) : undefined;
+    this.weather = sourceArena ? sourceArena.weather : source.weather ? new Weather(source.weather.weatherType, source.weather.turnsLeft, source.weather.sourcePokemon) : undefined;
     this.terrain = sourceArena ? sourceArena.terrain : source.terrain ? new Terrain(source.terrain.terrainType, source.terrain.turnsLeft) : undefined;
     this.tags = sourceArena ? sourceArena.tags : [];
   }

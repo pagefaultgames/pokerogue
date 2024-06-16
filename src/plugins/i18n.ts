@@ -208,6 +208,7 @@ declare module "i18next" {
       fightUiHandler: SimpleTranslationEntries;
       gameMode: SimpleTranslationEntries;
       gameStatsUiHandler: SimpleTranslationEntries;
+      runStatsUiHandler: SimpleTranslationEntries;
       growth: SimpleTranslationEntries;
       menu: SimpleTranslationEntries;
       menuUiHandler: SimpleTranslationEntries;
