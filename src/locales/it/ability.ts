@@ -471,7 +471,7 @@ export const ability: AbilityTranslationEntries = {
   },
   honeyGather: {
     name: "Mielincetta",
-    description: "Il pokémon raccoglie del miele dopo ogni battaglia. Esso viene poi venduto.",
+    description: "Il Pokémon raccoglie del miele dopo ogni battaglia. Esso viene poi venduto.",
   },
   frisk: {
     name: "Indagine",
