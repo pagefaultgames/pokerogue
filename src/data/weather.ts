@@ -19,7 +19,8 @@ export enum WeatherType {
   FOG,
   HEAVY_RAIN,
   HARSH_SUN,
-  STRONG_WINDS
+  STRONG_WINDS,
+  NEW_MOON
 }
 
 export class Weather {
@@ -94,8 +95,15 @@ export class Weather {
         return 1.5;
       }
       break;
-    }
 
+    case WeatherType.NEW_MOON:
+      if (attackType === Type.DARK || attackType === Type.GHOST){
+        return 1.35;
+      }
+      if (attackType === Type.FAIRY){
+        return .75;
+      }
+    }
     return 1;
   }
 
@@ -147,6 +155,8 @@ export function getWeatherStartMessage(weatherType: WeatherType): string {
     return i18next.t("weather:harshSunStartMessage");
   case WeatherType.STRONG_WINDS:
     return i18next.t("weather:strongWindsStartMessage");
+  case WeatherType.NEW_MOON:
+    return i18next.t("weather:newMoonStartMessage");
   }
 
   return null;
@@ -172,6 +182,8 @@ export function getWeatherLapseMessage(weatherType: WeatherType): string {
     return i18next.t("weather:harshSunLapseMessage");
   case WeatherType.STRONG_WINDS:
     return i18next.t("weather:strongWindsLapseMessage");
+  case WeatherType.NEW_MOON:
+    return i18next.t("weather:newMoonLapseMessage");
   }
 
   return null;
@@ -208,6 +220,8 @@ export function getWeatherClearMessage(weatherType: WeatherType): string {
     return i18next.t("weather:harshSunClearMessage");
   case WeatherType.STRONG_WINDS:
     return i18next.t("weather:strongWindsClearMessage");
+  case WeatherType.NEW_MOON:
+    return i18next.t("weather:newMoonClearMessage");
   }
 
   return null;

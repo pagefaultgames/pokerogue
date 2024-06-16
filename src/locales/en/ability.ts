@@ -1241,4 +1241,95 @@ export const ability: AbilityTranslationEntries = {
     name: "Poison Puppeteer",
     description: "Pokémon poisoned by Pecharunt's moves will also become confused.",
   },
+  
+  
+  psychoCall: {
+    name: "Psycho Call",
+    description: "Powers up Psychic-type moves in a pinch.",
+  },
+  spiritCall: {
+    name: "Spirit Call",
+    description: "Powers up Ghost-type moves in a pinch.",
+  },
+  shadowCall: {
+    name: "Shadow Call",
+    description: "Powers up Dark-type moves in a pinch.",
+  },
+  shadowDance: {
+    name: "Shadow Dance",
+    description: "Boosts the Speed stat when the New Moon is active.",
+  },
+  regurgitation: {
+    name: "Regurgitation",
+    description: "The Pokémon's minion does damage after every attack.",
+  },
+  amplifier: {
+    name: "Amplifier",
+    description: "Sound-based moves are boosted by 1.25x.",
+  },
+  iceCleats: {
+    name: "Ice Cleats",
+    description: "Speed is doubled in Hail.",
+  },
+  winterJoy: {
+    name: "Winter Joy",
+    description: "Strengthened in winter and weakened in summer.",
+  },
+  hubris: {
+    name: "Hubris",
+    description: "Boosts Special Attack after knocking out.",
+  },
+  athenian: {
+    name: "Athenian",
+    description: "Doubles the Pokémon's Special Attack stat.",
+  },
+  heliophobia: {
+    name: "Heliophobia",
+    description: "This Pokemon heals itself when the New Moon is active.",
+  },
+  venomous: {
+    name: "Venomous",
+    description: "This Pokemon always badly poisons.",
+  },
+  foundry: {
+    name: "Foundry",
+    description: "Rock-type moves, when used, melt and become Fire Type.",
+  },
+  vampiric: {
+    name: "Vampiric",
+    description: "Recovers a little HP with contact moves.",
+  },
+  blazeBoost: {
+    name: "Blaze Boost",
+    description: "Fire moves up its stats. May burn on contact.",
+  },
+  windForce: {
+    name: "Wind Force",
+    description: "Flying-type moves boost this Pokémon's speed.",
+  },
+  intoxicate: {
+    name: "Intoxicate",
+    description: "Normal-type moves become Poison-type moves.",
+  },
+  absolution: {
+    name: "Absolution",
+    description: "Boosts the Special Attack stat when the New Moon is active.",
+  },
+  
+  phototroph: {
+    name: "Phototroph",
+    description: "The Pokémon gradually regains HP in sunny weather.",
+  },
+  noctem: {
+    name: "Noctem",
+    description: "The Pokémon summons darkness and blots out the sky as it enters the battle.",
+  },
+  supercell: {
+    name: "Supercell",
+    description: "Special Attack surges in the rain and darkness.",
+  },
+  chlorofury: {
+    name: "Chlorofury",
+    description: "Boost the Speed, and Special Attack stat 1 stage for every fainted parter member.",
+  },
 } as const;

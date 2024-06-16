@@ -621,4 +621,29 @@ export enum Abilities {
   TERAFORM_ZERO,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Poison_Puppeteer_(ability) | Source} */
   POISON_PUPPETEER,
+
+    /** DELTA ABILITIES {@link https://wiki.p-insurgence.com/Category:Abilities | Source} */
+    PSYCHO_CALL,
+    SPIRIT_CALL,
+    SHADOW_CALL,
+    SHADOW_DANCE,
+    REGURGITATION,
+    AMPLIFIER,
+    ICE_CLEATS,
+    WINTER_JOY,
+    HUBRIS,
+    ATHENIAN,
+    HELIOPHOBIA,
+    VENOMOUS,
+    FOUNDRY,
+    VAMPIRIC,
+    BLAZE_BOOST,
+    WIND_FORCE,
+    INTOXICATE,
+    ABSOLUTION,
+    PHOTOTROPH,
+    NOCTEM,
+    SUPERCELL,
+    CHLOROFURY,
+    
 }

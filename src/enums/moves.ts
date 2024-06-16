@@ -1872,4 +1872,16 @@ export enum Moves {
   UPPER_HAND,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Malignant_Chain_(move) | Source} */
   MALIGNANT_CHAIN,
+
+  //https://wiki.p-insurgence.com/Category:Moves
+  CRYSTAL_RUSH,
+  DRAKON_VOICE,
+  ANCIENT_ROAR,
+  MEDUSA_RAY,
+  LUNAR_CANNON,
+  SPIRIT_AWAY,
+  CORRODE,
+  MORPH,
+  RETROGRADE,
+  NEW_MOON,
 }

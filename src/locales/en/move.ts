@@ -3808,5 +3808,49 @@ export const move: MoveTranslationEntries = {
   "malignantChain": {
     name: "Malignant Chain",
     effect: "The user pours toxins into the target by wrapping them in a toxic, corrosive chain. This may also leave the target badly poisoned."
+  },
+  
+  "crystalRush":{
+    name: "Crystal Rush",
+    effect: "The user turns to solid crystal, hitting first."
+  },
+  "drakonVoice":{
+    name: "Drakon Voice",
+    effect: "The sheer force of the user's voice obliterates everything in its path."
+  },
+  "ancientRoar":{
+    name: "Ancient Roar",
+    effect: "The user's voice shakes with a primal roar, damaging its foes with pure fear."
+  },
+  "medusaRay":{
+    name: "Medusa Ray",
+    effect: "The user glares and petrifies the foe, making them Rock-type."
+  },
+  "lunarCannon":{
+    name: "Lunar Cannon",
+    effect: "The user absorbs darkness on the first turn, then strikes with a powerful attack on the second."
+  },
+  "spiritAway":{
+    name: "Spirit Away",
+    effect: "The target is whisked away, returning on the next turn. The target cannot attack during this time."
+  },
+  "corrode":{
+    name: "Corrode",
+    effect: "The user launches a corrosive acid at the opponent that is Super Effective against Steel-types."
+  },
+  
+  "morph":{
+    name: "Morph",
+    effect: "If a delta version of the opponent exists, the user morphs into that. Otherwise, Transforms."
+  },
+  
+  "retrograde":{
+    name: "Retrograde",
+    effect: "The target, if they are a Mega Pokémon, is reverted to its basic form."
+  },
+  
+  "newMoon":{
+    name: "New Moon",
+    effect: "The sky darkens to night, increasing the power of Dark- and Ghost-type moves."
   }
 } as const;

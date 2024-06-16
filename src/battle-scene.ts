@@ -1179,14 +1179,207 @@ export default class BattleScene extends SceneBase {
     }
 
     switch (species.speciesId) {
+      
+    case Species.BULBASAUR:
+    case Species.IVYSAUR:
+    case Species.CHARMANDER:
+    case Species.CHARMELEON:
+    case Species.SQUIRTLE:
+    case Species.WARTORTLE:
+    case Species.PIDGEY:
+    case Species.PIDGEOTTO:
+    case Species.RAICHU:
+    case Species.DIGLETT:
+    case Species.DUGTRIO:
+    case Species.GROWLITHE:
+    case Species.ARCANINE:
+    case Species.TENTACOOL:
+    case Species.TENTACRUEL:
+    case Species.GEODUDE:
+    case Species.GRAVELER:
+    case Species.GOLEM:
+    case Species.DODUO:
+    case Species.DODRIO:
+    case Species.GRIMER:
+    case Species.MUK:
+    case Species.KOFFING:
+    case Species.WEEZING:
+    case Species.TANGELA:
+    case Species.SCYTHER:
+    case Species.ELECTABUZZ:
+    case Species.MAGMAR:
+    case Species.DITTO:
+    case Species.KABUTO:
+    case Species.KABUTOPS:
+    case Species.DRATINI:
+    case Species.DRAGONAIR:
+    case Species.DRAGONITE:
+    case Species.CYNDAQUIL:
+    case Species.QUILAVA:
+    case Species.TYPHLOSION:
+    case Species.HOOTHOOT:
+    case Species.NOCTOWL:
+    case Species.CHINCHOU:
+    case Species.LANTURN:
+    case Species.AIPOM:
+    case Species.SUNKERN:
+    case Species.SUNFLORA:
+    case Species.YANMA:
+    case Species.WOOPER:
+    case Species.QUAGSIRE:
+    case Species.MISDREAVUS:
+    case Species.GIRAFARIG:
+    case Species.DUNSPARCE:
+    case Species.SHUCKLE:
+    case Species.REMORAID:
+    case Species.OCTILLERY:
+    case Species.ELEKID:
+    case Species.MAGBY:
+    case Species.TREECKO:
+    case Species.GROVYLE:
+    case Species.TORCHIC:
+    case Species.COMBUSKEN:
+    case Species.LOTAD:
+    case Species.LOMBRE:
+    case Species.LUDICOLO:
+    case Species.SEEDOT:
+    case Species.NUZLEAF:
+    case Species.SHIFTRY:
+    case Species.RALTS:
+    case Species.KIRLIA:
+    case Species.ARON:
+    case Species.LAIRON:
+    case Species.MEDITITE:
+    case Species.PLUSLE:
+    case Species.MINUN:
+    case Species.ROSELIA:
+    case Species.WAILMER:
+    case Species.WAILORD:
+    case Species.NUMEL:
+    case Species.FEEBAS:
+    case Species.MILOTIC:
+    case Species.SNORUNT:
+    case Species.CLAMPERL:
+    case Species.HUNTAIL:
+    case Species.GOREBYSS:
+    case Species.BELDUM:
+    case Species.METANG:
+    case Species.REGIROCK:
+    case Species.REGICE:
+    case Species.REGISTEEL:
+    case Species.TURTWIG:
+    case Species.GROTLE:
+    case Species.TORTERRA:
+    case Species.SHINX:
+    case Species.LUXIO:
+    case Species.LUXRAY:
+    case Species.BUDEW:
+    case Species.ROSERADE:
+    case Species.COMBEE:
+    case Species.VESPIQUEN:
+    case Species.AMBIPOM:
+    case Species.DRIFLOON:
+    case Species.DRIFBLIM:
+    case Species.BUNEARY:
+    case Species.MISMAGIUS:
+    case Species.MUNCHLAX:
+    case Species.RIOLU:
+    case Species.CROAGUNK:
+    case Species.TOXICROAK:
+    case Species.TANGROWTH:
+    case Species.ELECTIVIRE:
+    case Species.MAGMORTAR:
+    case Species.YANMEGA:
+    case Species.FROSLASS:
+    case Species.SNIVY:
+    case Species.SERVINE:
+    case Species.SERPERIOR:
+    case Species.PURRLOIN:
+    case Species.LIEPARD:
+    case Species.VENIPEDE:
+    case Species.WHIRLIPEDE:
+    case Species.SCOLIPEDE:
+    case Species.PETILIL:
+    case Species.LILLIGANT:
+    case Species.DARUMAKA:
+    case Species.MARACTUS:
+    case Species.DWEBBLE:
+    case Species.CRUSTLE:
+    case Species.SCRAGGY:
+    case Species.SCRAFTY:
+    case Species.YAMASK:
+    case Species.COFAGRIGUS:
+    case Species.SOLOSIS:
+    case Species.DUOSION:
+    case Species.REUNICLUS:
+    case Species.EMOLGA:
+    case Species.KARRABLAST:
+    case Species.ESCAVALIER:
+    case Species.FOONGUS:
+    case Species.AMOONGUSS:
+    case Species.LITWICK:
+    case Species.LAMPENT:
+    case Species.CHANDELURE:
+    case Species.AXEW:
+    case Species.FRAXURE:
+    case Species.HAXORUS:
+    case Species.GOLETT:
+    case Species.GOLURK:
+    case Species.PAWNIARD:
+    case Species.BISHARP:
+    case Species.HEATMOR:
+    case Species.DEINO:
+    case Species.ZWEILOUS:
+    case Species.HYDREIGON:
+    case Species.LARVESTA:
+    case Species.VOLCARONA:
+    case Species.AMAURA:
+    case Species.AURORUS:
+    case Species.GOOMY:
+    case Species.SLIGGOO:
+    case Species.GOODRA:
+    case Species.PHANTUMP:
+    case Species.TREVENANT:
+    case Species.BERGMITE:
+    case Species.AVALUGG:
+    case Species.NOIBAT:
+    case Species.NOIVERN:
+    case Species.PICHU:
+    case Species.FROAKIE:
+    case Species.FROGADIER:
+    case Species.VENUSAUR:
+    case Species.GENESECT:
+    case Species.CHARIZARD:      
+    case Species.BLASTOISE:
+    case Species.PIDGEOT:
+    case Species.SNORLAX:
+    case Species.SCIZOR:
+    case Species.SCEPTILE:
+    case Species.BLAZIKEN:       
+    case Species.GARDEVOIR:        
+    case Species.SABLEYE:        
+    case Species.MAWILE:        
+    case Species.AGGRON:         
+    case Species.MEDICHAM:         
+    case Species.CAMERUPT:         
+    case Species.GLALIE:        
+    case Species.LOPUNNY:        
+    case Species.LUCARIO:
+    case Species.GALLADE:
+    case Species.DARMANITAN:
+    case Species.HOOPA:
+        return Utils.randSeedInt(2);
+
+    case Species.GRENINJA:
+    case Species.MELOETTA:
+    case Species.METAGROSS:
+    return Utils.randSeedInt(3);
     case Species.UNOWN:
     case Species.SHELLOS:
     case Species.GASTRODON:
     case Species.BASCULIN:
     case Species.DEERLING:
     case Species.SAWSBUCK:
-    case Species.FROAKIE:
-    case Species.FROGADIER:
     case Species.SCATTERBUG:
     case Species.SPEWPA:
     case Species.VIVILLON:
@@ -1194,8 +1387,6 @@ export default class BattleScene extends SceneBase {
     case Species.FLOETTE:
     case Species.FLORGES:
     case Species.FURFROU:
-    case Species.PUMPKABOO:
-    case Species.GOURGEIST:
     case Species.ORICORIO:
     case Species.MAGEARNA:
     case Species.ZARUDE:
@@ -1203,16 +1394,13 @@ export default class BattleScene extends SceneBase {
     case Species.TATSUGIRI:
     case Species.PALDEA_TAUROS:
       return Utils.randSeedInt(species.forms.length);
-    case Species.PIKACHU:
-      return Utils.randSeedInt(8);
     case Species.EEVEE:
-      return Utils.randSeedInt(2);
-    case Species.GRENINJA:
       return Utils.randSeedInt(2);
     case Species.ZYGARDE:
       return Utils.randSeedInt(3);
     case Species.MINIOR:
       return Utils.randSeedInt(6);
+    case Species.PIKACHU:
     case Species.ALCREMIE:
       return Utils.randSeedInt(9);
     case Species.MEOWSTIC:
@@ -1226,6 +1414,7 @@ export default class BattleScene extends SceneBase {
         return 1;
       }
       return 0;
+    
     }
 
     if (ignoreArena) {
