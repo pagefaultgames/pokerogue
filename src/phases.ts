@@ -2221,8 +2221,8 @@ export class TurnStartPhase extends FieldPhase {
 
     this.scene.getField(true).filter(p => p.summonData).map(p => {
       const bypassSpeed = new Utils.BooleanHolder(false);
-      this.scene.applyModifiers(BypassSpeedChanceModifier, p.isPlayer(), p, bypassSpeed);
       applyAbAttrs(BypassSpeedChanceAbAttr, p, null, bypassSpeed);
+      this.scene.applyModifiers(BypassSpeedChanceModifier, p.isPlayer(), p, bypassSpeed);
       battlerBypassSpeed[p.getBattlerIndex()] = bypassSpeed;
     });
 
