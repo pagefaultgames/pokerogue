@@ -4,7 +4,7 @@ import { TextStyle, addTextObject, getEggTierTextTint } from "./text";
 import MessageUiHandler from "./message-ui-handler";
 import * as Utils from "../utils";
 import { Egg, getLegendaryGachaSpeciesForTimestamp, IEggOptions } from "../data/egg";
-import { VoucherType, getGuaranteedEggTierFromPullCount, getVoucherTypeIcon } from "../system/voucher";
+import { VoucherType, getVoucherTypeIcon } from "../system/voucher";
 import { getPokemonSpecies } from "../data/pokemon-species";
 import { addWindow } from "./ui-theme";
 import { Tutorial, handleTutorial } from "../tutorial";
@@ -391,7 +391,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
         // Before creating the last egg, check if the guaranteed egg tier was already generated
         // if not, override the egg tier
         if (i === pullCount) {
-          const guaranteedEggTier = getGuaranteedEggTierFromPullCount(pullCount);
+          const guaranteedEggTier = this.getGuaranteedEggTierFromPullCount(pullCount);
           if (!eggs.some(egg => egg.tier >= guaranteedEggTier)) {
             eggOptions.tier = guaranteedEggTier;
           }
@@ -414,6 +414,17 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     }
 
     doPull();
+  }
+
+  getGuaranteedEggTierFromPullCount(pullCount: number): EggTier {
+    switch (pullCount) {
+    case 10:
+      return EggTier.GREAT;
+    case 25:
+      return EggTier.ULTRA;
+    default:
+      return EggTier.COMMON;
+    }
   }
 
   showSummary(eggs: Egg[]): void {

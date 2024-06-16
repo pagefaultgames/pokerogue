@@ -130,7 +130,7 @@ export class Egg {
   constructor(eggOptions?: IEggOptions) {
     //if (eggOptions.tier && eggOptions.species) throw Error("Error egg can't have species and tier as option. only choose one of them.")
 
-    this._tier = eggOptions.tier ?? this.rollEggTier();
+    this._tier = eggOptions.tier ?? (Overrides.EGG_TIER_OVERRIDE ?? this.rollEggTier());
     if (eggOptions.pulled) {
       this.checkForPityTierOverrides(eggOptions.scene);
       this.increasePullStatistic(eggOptions.scene);
@@ -143,7 +143,7 @@ export class Egg {
 
     // First roll shiny and variant so we can filter if species with an variant exist
     this._isShiny = eggOptions.isShiny ?? (Overrides.EGG_SHINY_OVERRIDE || this.rollShiny(eggOptions.scene));
-    this._variantTier = eggOptions.variantTier ?? (Overrides.EGG_VARIANT_OVERRIDE || this.rollVariant());
+    this._variantTier = eggOptions.variantTier ?? (Overrides.EGG_VARIANT_OVERRIDE ?? this.rollVariant());
     this._species = eggOptions.species ?? this.rollSpecies(eggOptions.scene);
 
     this._overrideRareEggMove = eggOptions.overrideRareEggMove ?? false;
@@ -274,10 +274,6 @@ export class Egg {
   }
 
   private rollEggTier(): EggTier {
-    if (Overrides.EGG_TIER_OVERRIDE) {
-      return Overrides.EGG_TIER_OVERRIDE;
-    }
-
     const tierValueOffset = this._gachaType === GachaType.LEGENDARY ? 1 : 0;
     const tierValue = Utils.randInt(256);
     return tierValue >= 52 + tierValueOffset ? EggTier.COMMON : tierValue >= 8 + tierValueOffset ? EggTier.GREAT : tierValue >= 1 + tierValueOffset ? EggTier.ULTRA : EggTier.MASTER;

@@ -110,7 +110,7 @@ const starterCandyCosts: { passive: integer, costReduction: [integer, integer], 
   { passive: 15, costReduction: [8, 20], egg: 15 },  // 7
   { passive: 10, costReduction: [5, 15], egg: 10 },  // 8
   { passive: 10, costReduction: [3, 10], egg: 10 },  // 9
-  { passive: 10, costReduction: [3, 10], egg: 0 },  // 10
+  { passive: 10, costReduction: [3, 10], egg: 10 },  // 10
 ];
 
 function getPassiveCandyCount(baseValue: integer): integer {
@@ -1347,8 +1347,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             }
 
             // Same species egg menu option. Only visible if passive is bought
-            const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(speciesStarters[this.lastSpecies.speciesId]);
-            if ((passiveAttr & PassiveAttr.UNLOCKED) && sameSpeciesEggCost > 0) {
+            if (passiveAttr & PassiveAttr.UNLOCKED) {
+              const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(speciesStarters[this.lastSpecies.speciesId]);
               options.push({
                 label: `x${sameSpeciesEggCost} ${i18next.t("starterSelectUiHandler:sameSpeciesEgg")}`,
                 handler: () => {
