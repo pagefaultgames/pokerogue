@@ -3600,6 +3600,7 @@ export class IceFaceMoveImmunityAbAttr extends MoveImmunityAbAttr {
 
 /**
  * If a Pokémon with this Ability selects a damaging move, it has a 30% chance of going first in its priority bracket. If the Ability activates, this is announced at the start of the turn (after move selection).
+ *
  * @extends AbAttr
  */
 export class BypassSpeedChanceAbAttr extends AbAttr {
