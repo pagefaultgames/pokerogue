@@ -1241,6 +1241,29 @@ export class MoveTypePowerBoostAbAttr extends MovePowerBoostAbAttr {
   }
 }
 
+export class BoostAllyMovesAbAttr extends AbAttr {
+  public powerMultiplier: number;
+  public boostedType: Type;
+
+  constructor(powerMultiplier: number, boostedType?: Type) {
+    super(true);
+
+    this.boostedType = boostedType;
+    this.powerMultiplier = powerMultiplier;
+  }
+  /**
+   *
+   * @param pokemon N/A
+   * @param passive N/A
+   * @param cancelled N/A
+   * @param args N/A
+   * @returns true if the function succeeds
+   */
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
+    return true;
+  }
+}
+
 export class LowHpMoveTypePowerBoostAbAttr extends MoveTypePowerBoostAbAttr {
   constructor(boostedType: Type) {
     super(boostedType);
@@ -4644,8 +4667,10 @@ export function initAbilities() {
     new Ability(Abilities.SCREEN_CLEANER, 8)
       .unimplemented(),
     new Ability(Abilities.STEELY_SPIRIT, 8)
-      .attr(MoveTypePowerBoostAbAttr, Type.STEEL)
-      .partial(),
+      .conditionalAttr(p => !p.scene.currentBattle.double, MoveTypePowerBoostAbAttr, Type.STEEL, 1.5)
+      .conditionalAttr(p => p.scene.currentBattle.double && !p.getAlly().getAbility().hasAttr(BoostAllyMovesAbAttr), MoveTypePowerBoostAbAttr, Type.STEEL, 1.5)
+      .conditionalAttr(p => p.scene.currentBattle.double && p.getAlly().getAbility().hasAttr(BoostAllyMovesAbAttr), MoveTypePowerBoostAbAttr, Type.STEEL, 1.5 * 1.5)
+      .attr(BoostAllyMovesAbAttr, 1.5, Type.STEEL),
     new Ability(Abilities.PERISH_BODY, 8)
       .attr(PostDefendPerishSongAbAttr, 4),
     new Ability(Abilities.WANDERING_SPIRIT, 8)
