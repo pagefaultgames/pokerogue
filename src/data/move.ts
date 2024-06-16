@@ -1739,7 +1739,11 @@ export class PsychoShiftEffectAttr extends MoveEffectAttr {
     return !(this.selfTarget ? user : target).status && (this.selfTarget ? user : target).canSetStatus(user.status?.effect, true, false, user) ? Math.floor(move.chance * -0.1) : 0;
   }
 }
-
+/**
+ * The following needs to be implemented for Thief
+ * "If the user faints due to the target's Ability (Rough Skin or Iron Barbs) or held Rocky Helmet, it cannot remove the target's held item."
+ * "If Knock Off causes a Pokémon with the Sticky Hold Ability to faint, it can now remove that Pokémon's held item."
+ */
 export class StealHeldItemChanceAttr extends MoveEffectAttr {
   private chance: number;
 
@@ -1789,37 +1793,65 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * Removes a random held item (or berry) from target.
+ * Used for Incinerate and Knock Off.
+ * Not Implemented Cases: (Same applies for Thief)
+ * "If the user faints due to the target's Ability (Rough Skin or Iron Barbs) or held Rocky Helmet, it cannot remove the target's held item."
+ * "If Knock Off causes a Pokémon with the Sticky Hold Ability to faint, it can now remove that Pokémon's held item."
+ */
 export class RemoveHeldItemAttr extends MoveEffectAttr {
-  private chance: number;
 
-  constructor(chance: number) {
+  /** Optional restriction for item pool to berries only i.e. Differentiating Incinerate and Knock Off */
+  private berriesOnly: boolean;
+
+  constructor(berriesOnly: boolean) {
     super(false, MoveEffectTrigger.HIT);
-    this.chance = chance;
+    this.berriesOnly = berriesOnly;
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
-    return new Promise<boolean>(resolve => {
-      const rand = Phaser.Math.RND.realInRange(0, 1);
-      if (rand >= this.chance) {
-        return resolve(false);
-      }
-      const heldItems = this.getTargetHeldItems(target).filter(i => i.getTransferrable(false));
-      if (heldItems.length) {
-        const poolType = target.isPlayer() ? ModifierPoolType.PLAYER : target.hasTrainer() ? ModifierPoolType.TRAINER : ModifierPoolType.WILD;
-        const highestItemTier = heldItems.map(m => m.type.getOrInferTier(poolType)).reduce((highestTier, tier) => Math.max(tier, highestTier), 0);
-        const tierHeldItems = heldItems.filter(m => m.type.getOrInferTier(poolType) === highestItemTier);
-        const stolenItem = tierHeldItems[user.randSeedInt(tierHeldItems.length)];
-        user.scene.tryTransferHeldItemModifier(stolenItem, user, false).then(success => {
-          if (success) {
-            user.scene.queueMessage(getPokemonMessage(user, ` knocked off\n${target.name}'s ${stolenItem.type.name}!`));
-          }
-          resolve(success);
-        });
-        return;
-      }
+  /**
+   *
+   * @param user {@linkcode Pokemon} that used the move
+   * @param target Target {@linkcode Pokemon} that the moves applies to
+   * @param move {@linkcode Move} that is used
+   * @param args N/A
+   * @returns {boolean} True if an item was removed
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
 
-      resolve(false);
-    });
+    if (!this.berriesOnly && target.isPlayer()) { // "Wild Pokemon cannot knock off Player Pokemon's held items" (See Bulbapedia)
+      return false;
+    }
+
+    const cancelled = new Utils.BooleanHolder(false);
+    applyAbAttrs(BlockItemTheftAbAttr, target, cancelled); // Check for abilities that block item theft
+
+    if (cancelled.value === true) {
+      return false;
+    }
+
+    // Considers entire transferrable item pool by default (Knock Off). Otherwise berries only if specified (Incinerate).
+    let heldItems = this.getTargetHeldItems(target).filter(i => i.getTransferrable(false));
+    if (this.berriesOnly) {
+      heldItems = heldItems.filter(m => m instanceof BerryModifier && m.pokemonId === target.id, target.isPlayer());
+    }
+
+    if (heldItems.length) {
+      const removedItem = heldItems[user.randSeedInt(heldItems.length)];
+
+      // Decrease item amount and update icon
+      !--removedItem.stackCount;
+      target.scene.updateModifiers(target.isPlayer());
+
+      if (this.berriesOnly) {
+        user.scene.queueMessage(getPokemonMessage(user, ` incinerated\n${target.name}'s ${removedItem.type.name}!`));
+      } else {
+        user.scene.queueMessage(getPokemonMessage(user, ` knocked off\n${target.name}'s ${removedItem.type.name}!`));
+      }
+    }
+
+    return true;
   }
 
   getTargetHeldItems(target: Pokemon): PokemonHeldItemModifier[] {
@@ -3090,17 +3122,6 @@ export class PresentPowerAttr extends VariablePowerAttr {
     }
 
     return true;
-  }
-}
-
-export class KnockOffPowerAttr extends VariablePowerAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (target.getHeldItems().length > 0) {
-      (args[0] as Utils.NumberHolder).value *= 1.5;
-      return true;
-    }
-
-    return false;
   }
 }
 
@@ -6261,8 +6282,8 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.DROWSY, false, true)
       .condition((user, target, move) => !target.status),
     new AttackMove(Moves.KNOCK_OFF, Type.DARK, MoveCategory.PHYSICAL, 65, 100, 20, -1, 0, 3)
-      .attr(KnockOffPowerAttr)
-      .partial(),
+      .attr(MovePowerMultiplierAttr, (user, target, move) => target.getHeldItems().filter(i => i.getTransferrable(false)).length > 0 ? 1.5 : 1)
+      .attr(RemoveHeldItemAttr, false),
     new AttackMove(Moves.ENDEAVOR, Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 5, -1, 0, 3)
       .attr(MatchHpAttr)
       .condition(failOnBossCondition),
@@ -6891,7 +6912,7 @@ export function initMoves() {
       .attr(ForceSwitchOutAttr),
     new AttackMove(Moves.INCINERATE, Type.FIRE, MoveCategory.SPECIAL, 60, 100, 15, -1, 0, 5)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
-      .partial(),
+      .attr(RemoveHeldItemAttr, true),
     new StatusMove(Moves.QUASH, Type.DARK, 100, 15, -1, 0, 5)
       .unimplemented(),
     new AttackMove(Moves.ACROBATICS, Type.FLYING, MoveCategory.PHYSICAL, 55, 100, 15, -1, 0, 5)
