@@ -1115,13 +1115,6 @@ export class VariableMovePowerAbAttr extends PreAttackAbAttr {
   }
 }
 
-export class FieldPreventExplosiveMovesAbAttr extends AbAttr {
-  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
-    cancelled.value = true;
-    return true;
-  }
-}
-
 /**
  * Multiplies a BattleStat if the checked Pokemon lacks this ability.
  * If this ability cannot stack, a BooleanHolder can be used to prevent this from stacking.
@@ -3639,10 +3632,11 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
   applyPostFaint(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
     if (move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) {
       const cancelled = new Utils.BooleanHolder(false);
-      pokemon.scene.getField(true).map(p=>applyAbAttrs(FieldPreventExplosiveMovesAbAttr, p, cancelled));
+      pokemon.scene.getField(true).forEach(p => applyAbAttrs(PreventPostFaintContactDamageAbAttr, p, cancelled));
       if (cancelled.value || attacker.hasAbilityWithAttr(BlockNonDirectDamageAbAttr)) {
         return false;
       }
+
       attacker.damageAndUpdate(Math.ceil(attacker.getMaxHp() * (1 / this.damageRatio)), HitResult.OTHER);
       attacker.turnData.damageTaken += Math.ceil(attacker.getMaxHp() * (1 / this.damageRatio));
       return true;
@@ -3653,6 +3647,19 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
 
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
     return i18next.t("abilityTriggers:postFaintContactDamage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName });
+  }
+}
+
+/**
+ * Prevents the effects of another Pokemon's {@link PostFaintContactDamageAbAttr} ability.
+ * {@linkcode apply} always returns true.
+ */
+export class PreventPostFaintContactDamageAbAttr extends AbAttr {
+  showAbility: boolean = false;
+
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    cancelled.value = true;
+    return true;
   }
 }
 
@@ -3710,6 +3717,36 @@ export class RedirectTypeMoveAbAttr extends RedirectMoveAbAttr {
 }
 
 export class BlockRedirectAbAttr extends AbAttr { }
+
+/**
+ * Prevents other Pokemon from using moves that match the given {@linkcode moveCondition}.
+ *
+ * @param args [0] {@linkcode Move} The move being checked
+ * @param args [1] {@linkcode Pokemon} The user of the attack
+ */
+export class FieldPreventMovesAbAttr extends AbAttr {
+  public moveCondition: (Moves) => boolean;
+
+  constructor(moveCondition: (Moves) => boolean) {
+    super();
+    this.moveCondition = moveCondition;
+  }
+
+  /** @param args See {@linkcode FieldPreventMovesAbAttr}. */
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    if (this.moveCondition((args[0] as Move).id)) {
+      cancelled.value = true;
+      return true;
+    }
+
+    return false;
+  }
+
+  /** @param args See {@linkcode FieldPreventMovesAbAttr}.  */
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
+    return (getPokemonMessage(args[1] as Pokemon, ` cannot use ${(args[0] as Move).name}`));
+  }
+}
 
 export class ReduceStatusEffectDurationAbAttr extends AbAttr {
   private statusEffect: StatusEffect;
@@ -4137,7 +4174,7 @@ async function applyAbAttrsInternal<TAttr extends AbAttr>(
         }
 
         if (!quiet) {
-          const message = attr.getTriggerMessage(pokemon, ability.name, args);
+          const message = attr.getTriggerMessage(pokemon, (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name, args);
           if (message) {
             pokemon.scene.queueMessage(message);
           }
@@ -4320,7 +4357,8 @@ export function initAbilities() {
       .attr(BlockOneHitKOAbAttr)
       .ignorable(),
     new Ability(Abilities.DAMP, 3)
-      .attr(FieldPreventExplosiveMovesAbAttr)
+      .attr(FieldPreventMovesAbAttr, (move) => [Moves.EXPLOSION, Moves.SELF_DESTRUCT, Moves.MIND_BLOWN, Moves.MISTY_EXPLOSION].includes(move))
+      .attr(PreventPostFaintContactDamageAbAttr)
       .ignorable(),
     new Ability(Abilities.LIMBER, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.PARALYSIS)
