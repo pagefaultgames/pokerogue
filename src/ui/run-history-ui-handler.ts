@@ -1,5 +1,5 @@
 import BattleScene from "../battle-scene";
-import { gameModes, GameModes } from "../game-mode";
+import { GameModes } from "../game-mode";
 import { SessionSaveData, parseSessionData, getRunHistoryData, RunHistoryData, RunEntries, decrypt } from "../system/game-data";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
@@ -13,7 +13,7 @@ import MessageUiHandler from "./message-ui-handler";
 import i18next from "i18next";
 import {Button} from "../enums/buttons";
 import { BattleType } from "../battle";
-import {TrainerType} from "../data/enums/trainer-type";
+import { TrainerType } from "../enums/trainer-type";
 import { TrainerVariant } from "../field/trainer";
 import { getPartyLuckValue, getLuckString, getLuckTextTint } from "../modifier/modifier-type";
 
@@ -134,7 +134,6 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
 
   async populateruns(scene: BattleScene) {
     const response = await this.scene.gameData.getRunHistoryData(this.scene);
-    console.log(response);
     const timestamps = Object.keys(response);
     if (timestamps.length > 1) {
       timestamps.sort((a, b) => a - b);
@@ -278,9 +277,24 @@ class RunEntry extends Phaser.GameObjects.Container {
       }
     }
 
-    const gameModeLabel = addTextObject(this.scene, 8, 19, `${gameModes[data.gameMode]?.getName() || "Unknown"} - Wave ${data.waveIndex}`, TextStyle.WINDOW);
-    this.add(gameModeLabel);
 
+    switch (data.gameMode) {
+      case GameModes.DAILY:
+        const dailyModeLabel = addTextObject(this.scene, 8, 19, `${i18next.t('gameMode:dailyRun') || "Unknown"} - Wave ${data.waveIndex}`, TextStyle.WINDOW);
+        this.add(dailyModeLabel);
+        break;
+      case GameModes.SPLICED_ENDLESS:
+        const endlessSplicedLabel = addTextObject(this.scene, 8, 19, `${i18next.t('gameMode:endlessSpliced') || "Unknown"} - Wave ${data.waveIndex}`, TextStyle.WINDOW);
+        this.add(endlessSplicedLabel);
+        break;
+      case GameModes.ENDLESS:
+      case GameModes.CLASSIC:
+      case GameModes.CHALLENGE:
+        const gameModeLabel = addTextObject(this.scene, 8, 19, `${i18next.t('gameMode:'+GameModes[data.gameMode].toLowerCase()) || "Unknown"} - Wave ${data.waveIndex}`, TextStyle.WINDOW);
+        this.add(gameModeLabel);
+        break;
+    }
+    
     const date = new Date(data.timestamp);
 
     const timestampLabel = addTextObject(this.scene, 8, 33, new Date(data.timestamp).toLocaleString(), TextStyle.WINDOW);
