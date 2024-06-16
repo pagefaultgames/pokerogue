@@ -3313,7 +3313,8 @@ export class FieldPreventMovesAbAttr extends AbAttr {
 
   /** @param args See {@linkcode FieldPreventMovesAbAttr}.  */
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
-    return (getPokemonMessage(args[1] as Pokemon, ` cannot use ${(args[0] as Move).name}.`));
+    return i18next.t("abilityTriggers:movePrevented",
+      { moveUser: getPokemonNameWithAffix(args[1] as Pokemon), moveName: (args[0] as Move).name });
   }
 }
 
