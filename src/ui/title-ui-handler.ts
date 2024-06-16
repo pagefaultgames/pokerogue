@@ -55,7 +55,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
       bannerShadow.setOrigin(0,0);
       this.eventTimerText = addTextObject(
         this.scene,
-        banner.x + 22,
+        banner.x + 8,
         banner.y + 100,
         this.timeToGo(event.endDate),
         TextStyle.WINDOW
@@ -102,12 +102,13 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     diff = Math.abs(diff);
 
     // Get time components
-    const hours = diff/3.6e6 | 0;
+    const days = diff/8.64e7 | 0;
+    const hours = diff%8.64e7 / 3.6e6 | 0;
     const mins  = diff%3.6e6 / 6e4 | 0;
     const secs  = Math.round(diff%6e4 / 1e3);
 
     // Return formatted string
-    return "Event Ends in : " + z(hours) + ":" + z(mins) + ":" + z(secs);
+    return "Event Ends in : " + z(days) + "d " + z(hours) + "h " + z(mins) + "m " + z(secs)+ "s";
   }
 
   updateCountdown() {
