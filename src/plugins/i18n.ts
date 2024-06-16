@@ -8,6 +8,7 @@ import { esConfig } from "#app/locales/es/config.js";
 import { frConfig } from "#app/locales/fr/config.js";
 import { itConfig } from "#app/locales/it/config.js";
 import { koConfig } from "#app/locales/ko/config.js";
+import { thConfig } from "#app/locales/th/config.js";
 import { ptBrConfig } from "#app/locales/pt_BR/config.js";
 import { zhCnConfig } from "#app/locales/zh_CN/config.js";
 import { zhTwConfig } from "#app/locales/zh_TW/config.js";
@@ -137,7 +138,7 @@ export async function initI18n(): Promise<void> {
   await i18next.init({
     nonExplicitSupportedLngs: true,
     fallbackLng: "en",
-    supportedLngs: ["en", "es", "fr", "it", "de", "zh", "pt", "ko"],
+    supportedLngs: ["en", "es", "fr", "it", "de", "zh", "pt", "ko","th"],
     detection: {
       lookupLocalStorage: "prLang"
     },
@@ -169,6 +170,9 @@ export async function initI18n(): Promise<void> {
       },
       "zh-TW": {
         ...zhTwConfig
+      },
+      "th": {
+        ...thConfig
       },
       ko: {
         ...koConfig

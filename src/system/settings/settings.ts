@@ -513,6 +513,10 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
               handler: () => changeLocaleHandler("zh-TW")
             },
             {
+              label: "ภาษาไทย",
+              handler: () => changeLocaleHandler("th")
+            },
+            {
               label: "한국어",
               handler: () => changeLocaleHandler("ko")
             },

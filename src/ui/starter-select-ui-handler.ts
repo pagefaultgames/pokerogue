@@ -92,6 +92,11 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     instructionTextSize: "42px",
     starterInfoXPos: 33,
   },
+  "th":{
+    starterInfoTextSize: "30px",
+    instructionTextSize: "38px",
+    starterInfoXPos: 2,
+  },
   "ko":{
     starterInfoTextSize: "52px",
     instructionTextSize: "38px",

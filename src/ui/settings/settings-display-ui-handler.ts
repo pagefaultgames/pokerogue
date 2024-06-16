@@ -48,6 +48,9 @@ export default class SettingsDisplayUiHandler extends AbstractSettingsUiHandler 
       case "zh-TW":
         this.settings[languageIndex].options[0] = "繁體中文";
         break;
+      case "th":
+        this.settings[languageIndex].options[0] = "ภาษาไทย";
+        break;
       case "ko":
         this.settings[languageIndex].options[0] = "한국어";
         break;
