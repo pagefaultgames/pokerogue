@@ -997,39 +997,39 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "chili": {
     "encounter": {
-      1: "Yeeeeooow! Time to play with FIRE!! I'm the strongest of us brothers!",
-      2: "Ta-da! The Fire-type scorcher Chili--that's me--will be your opponent!",
-      3: "I'm going to show you what me and my blazing Fire types can do!"
+      1: "이얏호-! 형제중 가장 강한 나하고 놀자고!",
+      2: "짜잔! 불꽃타입 불꽃의 남자 팟, 바로 너의 상대가 되어주지!",
+      3: "나와 내 불타오르는 불꽃타입 포켓몬들이 뭘 할수 있는지 보여주지!"
     },
     "victory": {
-      1: "You got me. I am… burned… out…",
-      2: "Whoa ho! You're on fire!",
-      3: "Augh! You got me!"
+      1: "졌지만… 모 두 불 태 웠 어!!",
+      2: "와우! 불태워졌네!",
+      3: "으악! 너가 나를 이겨버렸잖아!"
     },
     "defeat": {
-      1: "I'm on fire! Play with me, and you'll get burned!",
-      2: "When you play with fire, you get burned!",
-      3: "I mean, c'mon, your opponent was me! You didn't have a chance!"
+      1: "난 지금 불타오르고 있어, 나와 싸우게 된다면 넌 다치게 될거야!",
+      2: "불장난하면 밤에 이불에 지도를 그리는 법이지!",
+      3: "그러니까, 상대가 나였잖아? 너에게는 처음부터 기회가 없었다고!"
     }
   },
   "cilan": {
     "encounter": {
-      1: `Nothing personal... No hard feelings... Me and my Grass-type Pokémon will...
-               $Um... We're gonna battle come what may.`,
-      2: "So, um, if you're OK with me, I'll, um, put everything I've got into being, er, you know, your opponent.",
-      3: "OK… So, um, I'm Cilan, I like Grass-type Pokémon."
+      1: `개인적으로 받아들이지 마세요… 감정 상하지도 말고요… 저와 제 풀타입 포켓몬들이라면…
+              $음… 무슨 일이 있더라도 배틀을 할 겁니다.`,
+      2: "네. 저로 괜찮다면 진심을 담아서 상대해 드리겠습니다.",
+      3: "네… 그, 음, 저는 덴트입니다, 풀타입 포켓몬을 좋아합니다."
     },
     "victory": {
-      1: "Er… Is it over now?",
-      2: `…What a surprise. You are very strong, aren't you? 
-               $I guess my brothers wouldn't have been able to defeat you either…`,
-      3: "…Huh. Looks like my timing was, um, off?"
+      1: "…에- 그게…  끝나버렸나요?",
+      2: `…놀랐습니다. 당신 아주 강하군요. 
+               $팟이나 콘이라도 이길 수 없었을 것 같습니다…`,
+      3: "…어라, 타이밍이 좀 잘못된것 같네요?"
     },
     "defeat": {
-      1: "Huh? Did I win?",
-      2: `I guess… 
-                $I suppose I won, because I've been competing with my brothers Chili and Cress, and we all were able to get tougher.`,
-      3: "It…it was quite a thrilling experience…"
+      1: "어라? 제가 이긴 건가요?",
+      2: `제 생각엔… 
+                $아무래도 제가 이겼어야만 했을 거라 생각합니다, 팟과 콘이랑 배틀하면서 우리는 모두 더 강해졌기 때문이죠.`,
+      3: "정말… 아주 짜릿한 경험이었습니다…"
     }
   },
   "roark": {
@@ -1203,13 +1203,13 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "cress": {
     "encounter": {
-      1: "That is correct! It shall be I and my esteemed Water types that you must face in battle!"
+      1: "맞습니다! 당신은 저와 제 자랑스러운 물타입 포켓몬들과 상대하게 될것입니다."
     },
     "victory": {
-      1: "Lose? Me? I don't believe this."
+      1: "곤란하네… 이 콘이 질 줄이야."
     },
     "defeat": {
-      1: "This is the appropriate result when I'm your opponent."
+      1: "제가 당신의 상대였기 때문에 이건 당연한 결과였습니다."
     }
   },
   "allister": {
@@ -2285,6 +2285,32 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "defeat": {
       1: "폭풍을 견디고, 또 다른 승리도 잡아버렸네! 좋은 승부였어!",
       2: "넌 내 폭풍을 잡아냈잖아! 다음엔 더 잘해봐!"
+    }
+  },
+  "alder": {
+    "encounter": {
+      1: "Prepare yourself for a match against the strongest Trainer in Unova!"
+    },
+    "victory": {
+      1: "Well done! You certainly are an unmatched talent."
+    },
+    "defeat": {
+      1: `A fresh wind blows through my heart...
+          $What an extraordinary effort!`
+    }
+  },
+  "kieran": {
+    "encounter": {
+      1: `Through hard work, I become stronger and stronger!
+          $I don't lose.`
+    },
+    "victory": {
+      1: `I don't believe it...
+          $What a fun and heart-pounding battle!`
+    },
+    "defeat": {
+      1: `Wowzers, what a battle!
+          $Time for you to train even harder.`
     }
   },
   "rival": {
