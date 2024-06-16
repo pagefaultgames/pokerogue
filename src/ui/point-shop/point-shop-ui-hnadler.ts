@@ -1,14 +1,14 @@
-import * as Utils from "../utils";
-import { Button } from "../enums/buttons";
-import BattleScene from "../battle-scene";
-import MessageUiHandler from "./message-ui-handler";
-import { Mode } from "./ui";
-import { addWindow } from "./ui-theme";
-import { TextStyle, addTextObject, setTextStyle } from "./text";
-import { AbstractMultiPointShopModifierType, PointShopModifierCategory, PointShopModifierType, PointShopModifierTypes, initPointShopModifierTypes } from "#app/modifier/point-shop-modifier.js";
+import * as Utils from "../../utils.js";
+import { Button } from "../../enums/buttons.js";
+import BattleScene from "../../battle-scene.js";
+import MessageUiHandler from "../message-ui-handler.js";
+import { Mode } from "../ui.js";
+import { addWindow } from "../ui-theme.js";
+import { TextStyle, addTextObject, setTextStyle } from "../text.js";
+import { AbstractMultiPointShopModifierType, PointShopModifierCategory, PointShopModifierType, PointShopModifierTypes, initPointShopModifierTypes } from "#app/ui/point-shop/point-shop-modifier.js";
 import { achvs } from "#app/system/achv.js";
 import i18next from "i18next";
-import { Modifier } from "../modifier/modifier.js";
+import { Modifier } from "../../modifier/modifier.js";
 
 type PointShopUiCallback = (modifiers: Modifier[]) => void;
 

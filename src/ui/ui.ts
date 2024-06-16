@@ -45,7 +45,7 @@ import KeyboardBindingUiHandler from "#app/ui/settings/keyboard-binding-ui-handl
 import SettingsDisplayUiHandler from "./settings/settings-display-ui-handler";
 import SettingsAudioUiHandler from "./settings/settings-audio-ui-handler";
 import { PlayerGender } from "#enums/player-gender";
-import PointShopUiHandler from "./point-shop-ui-hnadler";
+import PointShopUiHandler from "./point-shop/point-shop-ui-hnadler";
 
 export enum Mode {
   MESSAGE,

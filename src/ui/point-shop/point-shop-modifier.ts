@@ -1,11 +1,11 @@
-import * as Utils from "../utils";
+import * as Utils from "../../utils";
 import BattleScene from "#app/battle-scene.js";
 import { getBiomeName } from "#app/data/biomes";
 import { GameModes } from "#app/game-mode.js";
 import { achvs } from "#app/system/achv.js";
 import { Biome } from "#enums/biome";
-import { ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, HealingBoosterModifier, HiddenAbilityRateBoosterModifier, IvScannerModifier, LockModifierTiersModifier, MapModifier, Modifier, MoneyInterestModifier, MoneyMultiplierModifier, MoneyRewardModifier, PreserveBerryModifier, ShinyRateBoosterModifier } from "./modifier";
-import { ModifierType } from "./modifier-type";
+import { ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, HealingBoosterModifier, HiddenAbilityRateBoosterModifier, IvScannerModifier, LockModifierTiersModifier, MapModifier, Modifier, MoneyInterestModifier, MoneyMultiplierModifier, MoneyRewardModifier, PreserveBerryModifier, ShinyRateBoosterModifier } from "../../modifier/modifier";
+import { ModifierType } from "../../modifier/modifier-type";
 
 export enum PointShopModifierCategory {
   DEFAULT,
