@@ -313,7 +313,7 @@ export class GameData {
       localStorage.setItem(`data_${loggedInUser.username}`, encrypt(systemData, bypassLogin));
 
       if (!bypassLogin) {
-        Utils.apiPost(`savedata/update?datatype=${GameDataType.SYSTEM}&clientSessionId=${clientSessionId}`, systemData, undefined, true)
+        Utils.apiPost(`savedata/system/update?clientSessionId=${clientSessionId}`, systemData, undefined, true)
           .then(response => response.text())
           .then(error => {
             this.scene.ui.savingIcon.hide();
@@ -347,7 +347,7 @@ export class GameData {
       }
 
       if (!bypassLogin) {
-        Utils.apiFetch(`savedata/system?clientSessionId=${clientSessionId}`, true)
+        Utils.apiFetch(`savedata/system/get?clientSessionId=${clientSessionId}`, true)
           .then(response => response.text())
           .then(response => {
             if (!response.length || response[0] !== "{") {
@@ -545,7 +545,7 @@ export class GameData {
       return true;
     }
 
-    const response = await Utils.apiPost("savedata/system/verify", JSON.stringify({ clientSessionId: clientSessionId }), undefined, true)
+    const response = await Utils.apiFetch(`savedata/system/verify?clientSessionId=${clientSessionId}`, true)
       .then(response => response.json());
 
     if (!response.valid) {
@@ -815,7 +815,7 @@ export class GameData {
       };
 
       if (!bypassLogin && !localStorage.getItem(`sessionData${slotId ? slotId : ""}_${loggedInUser.username}`)) {
-        Utils.apiFetch(`savedata/session?slot=${slotId}&clientSessionId=${clientSessionId}`, true)
+        Utils.apiFetch(`savedata/session/get?slot=${slotId}&clientSessionId=${clientSessionId}`, true)
           .then(response => response.text())
           .then(async response => {
             if (!response.length || response[0] !== "{") {
@@ -963,7 +963,7 @@ export class GameData {
         if (success !== null && !success) {
           return resolve(false);
         }
-        Utils.apiFetch(`savedata/delete?datatype=${GameDataType.SESSION}&slot=${slotId}&clientSessionId=${clientSessionId}`, true).then(response => {
+        Utils.apiFetch(`savedata/session/delete?slot=${slotId}&clientSessionId=${clientSessionId}`, true).then(response => {
           if (response.ok) {
             loggedInUser.lastSessionSlot = -1;
             localStorage.removeItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ""}_${loggedInUser.username}`);
@@ -1027,7 +1027,7 @@ export class GameData {
           return resolve([false, false]);
         }
         const sessionData = this.getSessionSaveData(scene);
-        Utils.apiPost(`savedata/clear?slot=${slotId}&trainerId=${this.trainerId}&secretId=${this.secretId}&clientSessionId=${clientSessionId}`, JSON.stringify(sessionData), undefined, true).then(response => {
+        Utils.apiPost(`savedata/session/clear?slot=${slotId}&trainerId=${this.trainerId}&secretId=${this.secretId}&clientSessionId=${clientSessionId}`, JSON.stringify(sessionData), undefined, true).then(response => {
           if (response.ok) {
             loggedInUser.lastSessionSlot = -1;
             localStorage.removeItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ""}_${loggedInUser.username}`);
@@ -1184,7 +1184,7 @@ export class GameData {
         link.remove();
       };
       if (!bypassLogin && dataType < GameDataType.SETTINGS) {
-        Utils.apiFetch(`savedata/${dataType === GameDataType.SYSTEM ? "system" : "session"}?clientSessionId=${clientSessionId}${dataType === GameDataType.SESSION ? `&slot=${slotId}` : ""}`, true)
+        Utils.apiFetch(`savedata/${dataType === GameDataType.SYSTEM ? "system" : "session"}/get?clientSessionId=${clientSessionId}${dataType === GameDataType.SESSION ? `&slot=${slotId}` : ""}`, true)
           .then(response => response.text())
           .then(response => {
             if (!response.length || response[0] !== "{") {
@@ -1264,7 +1264,13 @@ export class GameData {
                     if (!success) {
                       return displayError(`Could not contact the server. Your ${dataName} data could not be imported.`);
                     }
-                    Utils.apiPost(`savedata/update?datatype=${dataType}${dataType === GameDataType.SESSION ? `&slot=${slotId}` : ""}&trainerId=${this.trainerId}&secretId=${this.secretId}&clientSessionId=${clientSessionId}`, dataStr, undefined, true)
+                    let url: string;
+                    if (dataType === GameDataType.SESSION) {
+                      url = `savedata/session/update?slot=${slotId}&trainerId=${this.trainerId}&secretId=${this.secretId}&clientSessionId=${clientSessionId}`;
+                    } else {
+                      url = `savedata/system/update?trainerId=${this.trainerId}&secretId=${this.secretId}&clientSessionId=${clientSessionId}`;
+                    }
+                    Utils.apiPost(url, dataStr, undefined, true)
                       .then(response => response.text())
                       .then(error => {
                         if (error) {
