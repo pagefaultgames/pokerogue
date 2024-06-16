@@ -1881,30 +1881,26 @@ export const trainerConfigs: TrainerConfigs = {
       const arcanine = party[5];
       return [modifierTypes.TERA_SHARD().generateType(null, [Type.FIRE]).withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(arcanine) as PersistentModifier];
     }),
-  // Evices team will be inspired by Greevil's team from XD Gale of Darkness but with a few changes
   [TrainerType.EVICE]: new TrainerConfig(++t).setName("Evice").initForEvilTeamLeader("Cipher Head",[]).setBattleBgm("battle_cipher_boss").setMixedBattleBgm("battle_cipher_boss")
-    .setPartyMemberFunc(0,getRandomPartyMemberFunc([Species.PALDEA_TAUROS], TrainerSlot.TRAINER, true, p => {
-      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.EARTHQUAKE)),new PokemonMove(Moves.CLOSE_COMBAT), new PokemonMove(Moves.ZEN_HEADBUTT), new PokemonMove(Moves.THROAT_CHOP)];
-      p.abilityIndex = 0; // Intimidate
-    }))
-    .setPartyMemberFunc(1,getRandomPartyMemberFunc([Species.GALAR_SLOWKING], TrainerSlot.TRAINER, true, p => {
-      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.PSYCHIC)),new PokemonMove(Moves.SLUDGE_BOMB), new PokemonMove(Moves.FIRE_BLAST), new PokemonMove(Moves.THUNDER_WAVE)];
+    .setPartyMemberFunc(0,getRandomPartyMemberFunc([Species.SLOWKING], TrainerSlot.TRAINER, true, p => {
+      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.SKILL_SWAP)),new PokemonMove(Moves.SHADOW_BALL), new PokemonMove(Moves.PSYCHIC), new PokemonMove(Moves.WATER_PULSE)];
       p.abilityIndex = 2; // Regenerator
     }))
-    .setPartyMemberFunc(2,getRandomPartyMemberFunc([Species.GALAR_ARTICUNO], TrainerSlot.TRAINER, true, p => {
-      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.HURRICANE)),new PokemonMove(Moves.FREEZING_GLARE), new PokemonMove(Moves.ROOST), new PokemonMove(Moves.ICE_BEAM)];
-      p.ivs = [0,0,0,0,0,0]; // 0 IVs to make this fight not too hard
-
+    .setPartyMemberFunc(1,getRandomPartyMemberFunc([Species.SLAKING], TrainerSlot.TRAINER, true, p => {
+      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.DRAIN_PUNCH)),new PokemonMove(Moves.CRUSH_CLAW), new PokemonMove(Moves.GIGA_IMPACT), new PokemonMove(Moves.FIRE_BLAST)];
+      p.abilityIndex = 0; // Truant
     }))
-    .setPartyMemberFunc(3,getRandomPartyMemberFunc([Species.GALAR_ZAPDOS], TrainerSlot.TRAINER, true, p => {
-      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.THUNDERBOLT)),new PokemonMove(Moves.HURRICANE), new PokemonMove(Moves.ROOST), new PokemonMove(Moves.THUNDEROUS_KICK)];
-      p.ivs = [0,0,0,0,0,0]; // 0 IVs to make this fight not too hard
-
+    .setPartyMemberFunc(2,getRandomPartyMemberFunc([Species.SCIZOR], TrainerSlot.TRAINER, true, p => {
+      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.SWORDS_DANCE)),new PokemonMove(Moves.IRON_HEAD), new PokemonMove(Moves.X_SCISSOR), new PokemonMove(Moves.BATON_PASS)];
+      p.abilityIndex = 0; // Swarm
     }))
-    .setPartyMemberFunc(4,getRandomPartyMemberFunc([Species.GALAR_MOLTRES], TrainerSlot.TRAINER, true, p => {
-      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.FLAMETHROWER)),new PokemonMove(Moves.HURRICANE), new PokemonMove(Moves.ROOST), new PokemonMove(Moves.FIERY_WRATH)];
-      p.ivs = [0,0,0,0,0,0]; // 0 IVs to make this fight not too hard
-
+    .setPartyMemberFunc(3,getRandomPartyMemberFunc([Species.MACHAMP], TrainerSlot.TRAINER, true, p => {
+      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.CROSS_CHOP)),new PokemonMove(Moves.ROCK_SLIDE), new PokemonMove(Moves.EARTHQUAKE), new PokemonMove(Moves.BULK_UP)];
+      p.abilityIndex = 1; // No Guard
+    }))
+    .setPartyMemberFunc(4,getRandomPartyMemberFunc([Species.SALAMENCE], TrainerSlot.TRAINER, true, p => {
+      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.DRAGON_DANCE)),new PokemonMove(Moves.DRAGON_CLAW), new PokemonMove(Moves.CRUNCH), new PokemonMove(Moves.FLAMETHROWER)];
+      p.abilityIndex = 2; // Moxie
     }))
     .setPartyMemberFunc(5,getRandomPartyMemberFunc([Species.LUGIA], TrainerSlot.TRAINER, true, p => {
       p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.AEROBLAST)),new PokemonMove(Moves.PSYCHIC), new PokemonMove(Moves.ROOST), new PokemonMove(Moves.LIQUIDATION)];
