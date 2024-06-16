@@ -112,7 +112,7 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsEnduringOnAdd": "{{pokemonNameWithAffix}} braced\nitself!",
   "battlerTagsEnduringLapse": "{{pokemonNameWithAffix}} endured\nthe hit!",
   "battlerTagsSturdyLapse": "{{pokemonNameWithAffix}} endured\nthe hit!",
-  "battlerTagsPerishSongLapse": "{{pokemonNameWithAffix}}\'s perish count fell to {{turnCount}}.",
+  "battlerTagsPerishSongLapse": "{{pokemonNameWithAffix}}'s perish count fell to {{turnCount}}.",
   "battlerTagsTruantLapse": "{{pokemonNameWithAffix}} is\nloafing around!",
   "battlerTagsSlowStartOnAdd": "{{pokemonNameWithAffix}} can't\nget it going!",
   "battlerTagsSlowStartOnRemove": "{{pokemonNameWithAffix}} finally\ngot its act together!",
