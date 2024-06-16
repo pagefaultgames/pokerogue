@@ -7335,12 +7335,12 @@ export function initBiomes() {
     ],
     [ Species.FURNAZI, Type.FIRE, Type.ROCK, [
       [ Biome.CONSTRUCTION_SITE, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-      [ Biome.TOWN, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.VOLCANO, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
     ]
     ],
     [ Species.FINASOVEN, Type.FIRE, Type.ROCK, [
       [ Biome.CONSTRUCTION_SITE, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-      [ Biome.TOWN, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+      [ Biome.VOLCANO, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
     ]
     ],
     [ Species.TROUBAIT, Type.WATER, -1, [
