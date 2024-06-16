@@ -19,6 +19,7 @@ import { TextStyle, addTextObject } from "./text";
 import AchvBar from "./achv-bar";
 import MenuUiHandler from "./menu-ui-handler";
 import AchvsUiHandler from "./achvs-ui-handler";
+import OptionSelectUiHandler from "./settings/option-select-ui-handler";
 import EggHatchSceneHandler from "./egg-hatch-scene-handler";
 import EggListUiHandler from "./egg-list-ui-handler";
 import EggGachaUiHandler from "./egg-gacha-ui-handler";

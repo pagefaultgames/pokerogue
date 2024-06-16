@@ -1128,31 +1128,26 @@ export class GameData {
   }
 
   async public getRunHistoryData(scene: BattleScene): Promise<Object> {
-    try {
+    if (!Utils.isLocal) {
       const response = await Utils.apiFetch("savedata/runHistory", true);
       const data = await response.json();
-      console.log(data);
-      if (!data) {
-        throw new Error("No data");
-      } else {
-        var cachedResponse = localStorage.getItem(`runHistoryData_${loggedInUser.username}`, true);
-        if (cachedResponse) {
-          cachedResponse = JSON.parse(decrypt(cachedResponse, true));
-        }
-        const cachedRHData = cachedResponse ?? {};
-        //check to see whether cachedData or serverData is more up-to-date
-        if ( Object.keys(cachedRHData).length >= Object.keys(data).length ) {
-          return cachedRHData;
-        }
-        return data;
-      }
-    } catch (err) {
-      console.log("Something went wrong: ", err);
-      var cachedResponse = localStorage.getItem(`runHistoryData_${loggedInUser.username}`, true);
+      const cachedResponse = localStorage.getItem(`runHistoryData_${loggedInUser.username}`, true);
       if (cachedResponse) {
         cachedResponse = JSON.parse(decrypt(cachedResponse, true));
       }
-      return cachedResponse ?? {};
+      const cachedRHData = cachedResponse ?? {};
+      //check to see whether cachedData or serverData is more up-to-date
+      if ( Object.keys(cachedRHData).length >= Object.keys(data).length ) {
+        return cachedRHData;
+      }
+      return data;
+    } else {
+      const cachedResponse = localStorage.getItem(`runHistoryData_${loggedInUser.username}`, true);
+      if (cachedResponse) {
+        cachedResponse = JSON.parse(decrypt(cachedResponse, true));
+      }
+      const cachedRHData = cachedResponse ?? {};
+      return cachedRHData;
     }
   }
 
@@ -1173,12 +1168,14 @@ export class GameData {
 
     localStorage.setItem(`runHistoryData_${loggedInUser.username}`, encrypt(JSON.stringify(runHistoryData), true));
 
-    try {
-      const response = Utils.apiPost("savedata/runHistory", JSON.stringify(runHistoryData), undefined, true);
-      return true;
-    } catch (err) {
-      console.log("savedata/runHistory POST failed : ", err);
-      return false;
+    if (!Utils.local) {
+      try {
+        const response = Utils.apiPost("savedata/runHistory", JSON.stringify(runHistoryData), undefined, true);
+        return true;
+      } catch (err) {
+        console.log("savedata/runHistory POST failed : ", err);
+        return false;
+      }
     }
   }
 
