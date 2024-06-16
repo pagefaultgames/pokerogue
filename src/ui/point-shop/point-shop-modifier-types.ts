@@ -6,27 +6,8 @@ import { achvs } from "#app/system/achv.js";
 import { Biome } from "#enums/biome";
 import { ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, HealingBoosterModifier, HiddenAbilityRateBoosterModifier, IvScannerModifier, LockModifierTiersModifier, MapModifier, Modifier, MoneyInterestModifier, MoneyMultiplierModifier, MoneyRewardModifier, PreserveBerryModifier, ShinyRateBoosterModifier } from "../../modifier/modifier";
 import { ModifierType } from "../../modifier/modifier-type";
+import { PointShopModifierType, PointShopModifierOption, Requirements, pushPointShopModifierType, PointShopModifierCategory } from "./point-shop-modifier-type";
 
-export enum PointShopModifierCategory {
-  DEFAULT,
-  UTILITY,
-  BATTLE_ITEM,
-}
-export enum PointShopModifierTier {
-  TIER_I,
-  TIER_II,
-  TIER_III,
-  TIER_IV,
-}
-
-export const PointShopModifierTypes: PointShopModifierType[][] = Array.from({ length: (Object.keys(PointShopModifierCategory).length / 2) }, () => Array(0));
-
-interface Requirements {
-  achievement: string,
-  gameModes: GameModes,
-
-  isSecret: boolean,
-}
 function passesAchievement(requirements: Requirements, battleScene: BattleScene): boolean {
   if (requirements.achievement) {
     const unlockedKeys = Object.keys(battleScene.gameData.achvUnlocks);
@@ -41,31 +22,6 @@ function passesGameModes(requirements: Requirements, battleScene: BattleScene): 
 }
 function meetsRequirements(requirements: Requirements, battleScene: BattleScene): boolean {
   return passesGameModes(requirements, battleScene) && passesAchievement(requirements, battleScene);
-}
-
-export interface PointShopModifierType extends Requirements {
-  id: string,
-  name: string,
-  description: string,
-  iconImage: string,
-  cost: number,
-  readonly active: boolean,
-
-  init(battleScene: BattleScene),
-
-  getDescription(scene: Phaser.Scene): string,
-  newModifier(...args: any[]): Modifier,
-
-  trySetActive(value: boolean): boolean,
-  tryToggleActive(): boolean,
-
-  meetsRequirements(): boolean,
-}
-
-function pushPointShopModifierType(category: PointShopModifierCategory, modifier: PointShopModifierType) {
-  if (!modifier.isSecret || (modifier.isSecret && modifier.meetsRequirements())) {
-    PointShopModifierTypes[category].push(modifier);
-  }
 }
 
 type NewModifierFunc = (type: ModifierType, args: any[]) => Modifier;
@@ -148,12 +104,6 @@ export class AbstractPointShopModifierType extends ModifierType implements Point
   }
 }
 
-export interface PointShopModifierOption extends Requirements {
-  name: string,
-  value: number | string,
-  cost: number,
-  active?: boolean,
-}
 export class AbstractPointShopModifierOption implements PointShopModifierOption {
   public name: string;
   public value: string|number;
@@ -256,7 +206,6 @@ export class ExpSharePointShopModifierType extends AbstractPointShopModifierType
   }
 }
 
-
 export class ExpBalancePointShopModifierType extends AbstractPointShopModifierType implements PointShopModifierType {
   private static _instance: ExpBalancePointShopModifierType;
   public static get instance() {
@@ -269,7 +218,6 @@ export class ExpBalancePointShopModifierType extends AbstractPointShopModifierTy
     this.cost = 50;
   }
 }
-
 
 export class ExpCharmPointShopModifierType extends AbstractMultiPointShopModifierType implements PointShopModifierType {
   private static _instance: MoneyMultiplierPointShopModifierType;
