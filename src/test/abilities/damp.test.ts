@@ -94,7 +94,4 @@ describe("Abilities - Damp", () => {
 
     expect(game.phaseInterceptor.log).toContain("ShowAbilityPhase");
   }, TIMEOUT);
-
-  // TODO Test some of the other AbAttrs that use `args`
-  // BattlerTagImmunityAbAttr, StatusEffectImmunityAbAttr
 });
