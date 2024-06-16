@@ -35,7 +35,7 @@ import { TrainerSlot, trainerConfigs } from "./data/trainer-config";
 import { EggHatchPhase } from "./egg-hatch-phase";
 import { Egg } from "./data/egg";
 import { vouchers } from "./system/voucher";
-import { loggedInUser, updateUserInfo } from "./account";
+import { clientSessionId, loggedInUser, updateUserInfo } from "./account";
 import { SessionSaveData } from "./system/game-data";
 import { addPokeballCaptureStars, addPokeballOpenParticles } from "./field/anims";
 import { SpeciesFormChangeActiveTrigger, SpeciesFormChangeManualTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangePreMoveTrigger } from "./data/pokemon-forms";
@@ -4198,8 +4198,7 @@ export class GameOverPhase extends BattlePhase {
     If Offline, execute offlineNewClear(), a localStorage implementation of newClear daily run checks */
     if (this.victory) {
       if (!Utils.isLocal) {
-        Utils.apiFetch(`savedata/newclear?slot=${this.scene.sessionSlotId}`, true)
-          .then(response => response.json())
+        Utils.apiFetch(`savedata/session/newclear?slot=${this.scene.sessionSlotId}&clientSessionId=${clientSessionId}`, true)          .then(response => response.json())
           .then(newClear => doGameOver(newClear));
       } else {
         this.scene.gameData.offlineNewClear(this.scene).then(result => {

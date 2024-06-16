@@ -14,21 +14,21 @@ export enum BattleStat {
 export function getBattleStatName(stat: BattleStat) {
   switch (stat) {
   case BattleStat.ATK:
-    return i18next.t("pokemonInfo:Stat.ATK");
+    return i18next.t("modifierType:TempBattleStatBoosterStatName.ATK");
   case BattleStat.DEF:
-    return i18next.t("pokemonInfo:Stat.DEF");
+    return i18next.t("modifierType:TempBattleStatBoosterStatName.DEF");
   case BattleStat.SPATK:
-    return i18next.t("pokemonInfo:Stat.SPATK");
+    return i18next.t("modifierType:TempBattleStatBoosterStatName.SPATK");
   case BattleStat.SPDEF:
-    return i18next.t("pokemonInfo:Stat.SPDEF");
+    return i18next.t("modifierType:TempBattleStatBoosterStatName.SPDEF");
   case BattleStat.SPD:
-    return i18next.t("pokemonInfo:Stat.SPD");
+    return i18next.t("modifierType:TempBattleStatBoosterStatName.SPD");
   case BattleStat.ACC:
-    return i18next.t("pokemonInfo:Stat.ACC");
+    return i18next.t("modifierType:TempBattleStatBoosterStatName.ACC");
   case BattleStat.EVA:
-    return i18next.t("pokemonInfo:Stat.EVA");
+    return i18next.t("modifierType:TempBattleStatBoosterStatName.EVA");
   default:
-    return "???";
+    return i18next.t("modifierType:TempBattleStatBoosterStatName.DEFAULT");
   }
 }
 
