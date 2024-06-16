@@ -2565,8 +2565,9 @@ export class MovePhase extends BattlePhase {
         this.scene.queueMessage(`${this.move.getName()} is disabled!`);
       }
       if (this.move.ppUsed >= this.move.getMovePp()) { // if the move PP was reduced from Spite or otherwise, the move fails
+        this.fail();
+        this.showMoveText();
         this.showFailedText();
-        this.cancel();
       }
       return this.end();
     }
