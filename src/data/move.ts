@@ -95,8 +95,7 @@ export enum MoveFlags {
   /**
    * Indicates a move is able to be redirected to allies in a double battle if the attacker faints
    */
-  REDIRECT_COUNTER = 1 << 18,
-  EXPLOSIVE_MOVE   = 1 << 19
+  REDIRECT_COUNTER = 1 << 18
 }
 
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
@@ -518,17 +517,6 @@ export default class Move implements Localizable {
    */
   windMove(windMove: boolean = true): this { // TODO: is `true` the correct default?
     this.setFlag(MoveFlags.WIND_MOVE, windMove);
-    return this;
-  }
-
-  /**
-   * Sets the {@linkcode MoveFlags.EXPLOSIVE_MOVE} flag for the calling Move
-   * @param explosiveMove The value (boolean) to set the flag to
-   * example: @see {@linkcode Moves.EXPLOSION}
-   * @returns The {@linkcode Move} that called this function
-   */
-  explosiveMove(explosiveMove?: boolean): this {
-    this.setFlag(MoveFlags.EXPLOSIVE_MOVE, explosiveMove);
     return this;
   }
 
@@ -6472,7 +6460,6 @@ export function initMoves() {
     new AttackMove(Moves.SELF_DESTRUCT, Type.NORMAL, MoveCategory.PHYSICAL, 200, 100, 5, -1, 0, 1)
       .attr(SacrificialAttr)
       .makesContact(false)
-      .explosiveMove()
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.EGG_BOMB, Type.NORMAL, MoveCategory.PHYSICAL, 100, 75, 10, -1, 0, 1)
       .makesContact(false)
@@ -6564,7 +6551,6 @@ export function initMoves() {
     new AttackMove(Moves.EXPLOSION, Type.NORMAL, MoveCategory.PHYSICAL, 250, 100, 5, -1, 0, 1)
       .attr(SacrificialAttr)
       .makesContact(false)
-      .explosiveMove()
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.FURY_SWIPES, Type.NORMAL, MoveCategory.PHYSICAL, 18, 80, 15, -1, 0, 1)
       .attr(MultiHitAttr),
@@ -8187,7 +8173,6 @@ export function initMoves() {
     /* End Unused */
     new AttackMove(Moves.MIND_BLOWN, Type.FIRE, MoveCategory.SPECIAL, 150, 100, 5, -1, 0, 7)
       .attr(HalfSacrificialAttr)
-      .explosiveMove()
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.PLASMA_FISTS, Type.ELECTRIC, MoveCategory.PHYSICAL, 100, 100, 15, -1, 0, 7)
       .punchingMove()
@@ -8468,7 +8453,6 @@ export function initMoves() {
       .attr(SacrificialAttr)
       .target(MoveTarget.ALL_NEAR_OTHERS)
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.MISTY && user.isGrounded() ? 1.5 : 1)
-      .explosiveMove()
       .makesContact(false),
     new AttackMove(Moves.GRASSY_GLIDE, Type.GRASS, MoveCategory.PHYSICAL, 55, 100, 20, -1, 0, 8)
       .attr(IncrementMovePriorityAttr,(user,target,move) =>user.scene.arena.getTerrainType()===TerrainType.GRASSY&&user.isGrounded()),
