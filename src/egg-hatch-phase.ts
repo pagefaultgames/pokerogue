@@ -8,7 +8,6 @@ import EggHatchSceneHandler from "./ui/egg-hatch-scene-handler";
 import { PlayerPokemon } from "./field/pokemon";
 import { achvs } from "./system/achv";
 import PokemonInfoContainer from "./ui/pokemon-info-container";
-import { GachaType } from "./enums/gacha-types";
 import EggCounterContainer from "./ui/egg-counter-container";
 import { EggCountChangedEvent } from "./events/egg";
 
@@ -442,11 +441,7 @@ export class EggHatchPhase extends Phase {
 
     this.scene.executeWithSeedOffset(() => {
       ret = this.egg.generatePlayerPokemon(this.scene);
-
-      const baseChance = this.egg.gachaType === GachaType.MOVE ? 3 : 6;
-      this.eggMoveIndex = this.egg.overrideRareEggMove ? 3 : Utils.randSeedInt(baseChance * Math.pow(2, 3 - this.egg.tier))
-        ? Utils.randSeedInt(3)
-        : 3;
+      this.eggMoveIndex = this.egg.eggMoveIndex;
 
     }, this.egg.id, EGG_SEED.toString());
 

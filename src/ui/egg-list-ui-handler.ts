@@ -173,7 +173,7 @@ export default class EggListUiHandler extends MessageUiHandler {
       })
     );
     this.eggHatchWavesText.setText(egg.getEggHatchWavesMessage());
-    this.eggGachaInfoText.setText(egg.getEggGachaTypeDescriptor(this.scene));
+    this.eggGachaInfoText.setText(egg.getEggTypeDescriptor(this.scene));
   }
 
   setCursor(cursor: integer): boolean {

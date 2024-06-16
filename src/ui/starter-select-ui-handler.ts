@@ -27,7 +27,7 @@ import { StatsContainer } from "./stats-container";
 import { TextStyle, addBBCodeTextObject, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
-import { Egg, IEggOptions } from "#app/data/egg";
+import { Egg } from "#app/data/egg";
 import * as Overrides from "../overrides";
 import {SettingKeyboard} from "#app/system/settings/settings-keyboard";
 import {Passive as PassiveAttr} from "#enums/passive";
@@ -38,6 +38,7 @@ import { Device } from "#enums/devices";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import {Button} from "#enums/buttons";
+import { EggSourceType } from "#app/enums/egg-source-types.js";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -1363,27 +1364,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                       }
                     });
 
-                    const eggOptions: IEggOptions = {scene: this.scene, species: this.lastSpecies.speciesId};
-                    ////
-                    // Uncomment if you want to set custom rates for shiny, hidden ability and rare egg move.
-                    ////
-
-                    // // Custom shiny rate. 1/32 chance of shiny
-                    // if (!Utils.randSeedInt(32)) {
-                    //   eggOptions.isShiny = true;
-                    // }
-                    // // Custom hidden ability rate. 1/16 chance of hidden ability
-                    // if (!Utils.randSeedInt(16)) {
-                    //   eggOptions.overrideHiddenAbility = true;
-                    // }
-                    // // Custom rare egg move rate. baseChance = 3 means same chance as Move UP! gacha.
-                    // // The odds of getting a rare egg move are 1/3 for legendary eggs, 1/6 for epic eggs, 1/12 for rare eggs, and 1/24 for common eggs.
-                    // const baseChance = 3;
-                    // if (!Utils.randSeedInt(baseChance * Math.pow(2, 3 - getEggTierForSpecies(this.lastSpecies)))) {
-                    //   eggOptions.overrideRareEggMove = true;
-                    // }
-
-                    const egg = new Egg(eggOptions);
+                    const egg = new Egg({scene: this.scene, species: this.lastSpecies.speciesId, sourceType: EggSourceType.SAME_SPECIES_EGG});
                     egg.addEggToGameData(this.scene);
 
                     ui.setMode(Mode.STARTER_SELECT);
