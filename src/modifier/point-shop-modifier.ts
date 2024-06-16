@@ -7,7 +7,7 @@ import { Biome } from "#enums/biome";
 import { ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, HealingBoosterModifier, HiddenAbilityRateBoosterModifier, IvScannerModifier, LockModifierTiersModifier, MapModifier, Modifier, MoneyInterestModifier, MoneyMultiplierModifier, MoneyRewardModifier, PreserveBerryModifier, ShinyRateBoosterModifier } from "./modifier";
 import { ModifierType } from "./modifier-type";
 
-export enum PointShopModifierCategories {
+export enum PointShopModifierCategory {
   DEFAULT,
   UTILITY,
   BATTLE_ITEM,
@@ -19,11 +19,13 @@ export enum PointShopModifierTier {
   TIER_IV,
 }
 
-export const PointShopModifierTypes: PointShopModifierType[][] = Array.from({ length: (Object.keys(PointShopModifierCategories).length / 2) }, () => Array(0));
+export const PointShopModifierTypes: PointShopModifierType[][] = Array.from({ length: (Object.keys(PointShopModifierCategory).length / 2) }, () => Array(0));
 
 interface Requirements {
   achievement: string,
   gameModes: GameModes,
+
+  isSecret: boolean,
 }
 function passesAchievement(requirements: Requirements, battleScene: BattleScene): boolean {
   if (requirements.achievement) {
@@ -56,13 +58,22 @@ export interface PointShopModifierType extends Requirements {
 
   trySetActive(value: boolean): boolean,
   tryToggleActive(): boolean,
+
+  meetsRequirements(): boolean,
 }
+
+function pushPointShopModifierType(category: PointShopModifierCategory, modifier: PointShopModifierType) {
+  if (!modifier.isSecret || (modifier.isSecret && modifier.meetsRequirements())) {
+    PointShopModifierTypes[category].push(modifier);
+  }
+}
+
 type NewModifierFunc = (type: ModifierType, args: any[]) => Modifier;
 export class AbstractPointShopModifierType extends ModifierType implements PointShopModifierType {
   public description: string;
   public cost: number;
 
-  protected _active: boolean;
+  protected _active: boolean = false;
   public get active(): boolean {
     return this._active;
   }
@@ -72,6 +83,8 @@ export class AbstractPointShopModifierType extends ModifierType implements Point
 
   public achievement: string;
   public gameModes: GameModes = GameModes.ANY;
+
+  public isSecret: boolean = false;
 
   public battleScene: BattleScene;
 
@@ -89,7 +102,7 @@ export class AbstractPointShopModifierType extends ModifierType implements Point
   protected passesGameModes(): boolean {
     return passesGameModes(this, this.battleScene);
   }
-  protected meetsRequirements(): boolean {
+  public meetsRequirements(): boolean {
     return this.passesGameModes() && this.passesAchievement();
   }
 
@@ -149,6 +162,8 @@ export class AbstractPointShopModifierOption implements PointShopModifierOption 
 
   public achievement: string;
   public gameModes: GameModes = GameModes.ANY;
+
+  public isSecret: boolean = false;
 
   public battleScene: BattleScene;
 
@@ -240,7 +255,7 @@ export class ExpSharePointShopModifierType extends AbstractPointShopModifierType
     this.cost = 150;
   }
 }
-PointShopModifierTypes[PointShopModifierCategories.DEFAULT].push(ExpSharePointShopModifierType.instance);
+
 
 export class ExpBalancePointShopModifierType extends AbstractPointShopModifierType implements PointShopModifierType {
   private static _instance: ExpBalancePointShopModifierType;
@@ -254,7 +269,7 @@ export class ExpBalancePointShopModifierType extends AbstractPointShopModifierTy
     this.cost = 50;
   }
 }
-PointShopModifierTypes[PointShopModifierCategories.DEFAULT].push(ExpBalancePointShopModifierType.instance);
+
 
 export class ExpCharmPointShopModifierType extends AbstractMultiPointShopModifierType implements PointShopModifierType {
   private static _instance: MoneyMultiplierPointShopModifierType;
@@ -277,7 +292,6 @@ export class ExpCharmPointShopModifierType extends AbstractMultiPointShopModifie
     this.description = "Increases EXP earned by the chosen amounts";
   }
 }
-PointShopModifierTypes[PointShopModifierCategories.DEFAULT].push(ExpCharmPointShopModifierType.instance);
 
 export class MoneyMultiplierPointShopModifierType extends AbstractPointShopModifierType implements PointShopModifierType {
   private static _instance: MoneyMultiplierPointShopModifierType;
@@ -291,7 +305,6 @@ export class MoneyMultiplierPointShopModifierType extends AbstractPointShopModif
     this.cost = 200;
   }
 }
-PointShopModifierTypes[PointShopModifierCategories.DEFAULT].push(MoneyMultiplierPointShopModifierType.instance);
 
 export class MoneyInterestPointShopModifierType extends AbstractPointShopModifierType implements PointShopModifierType {
   private static _instance: MoneyInterestPointShopModifierType;
@@ -305,7 +318,6 @@ export class MoneyInterestPointShopModifierType extends AbstractPointShopModifie
     this.cost = 250;
   }
 }
-PointShopModifierTypes[PointShopModifierCategories.DEFAULT].push(MoneyInterestPointShopModifierType.instance);
 
 export class MoneyStartPointShopModifierType extends AbstractMultiPointShopModifierType implements PointShopModifierType {
   private static _instance: MoneyStartPointShopModifierType;
@@ -329,7 +341,6 @@ export class MoneyStartPointShopModifierType extends AbstractMultiPointShopModif
     this.description = "Increases starting money by the chosen amounts";
   }
 }
-PointShopModifierTypes[PointShopModifierCategories.DEFAULT].push(MoneyStartPointShopModifierType.instance);
 
 export class ShinyRateBoosterPointShopModifierType extends AbstractPointShopModifierType implements PointShopModifierType {
   private static _instance: ShinyRateBoosterPointShopModifierType;
@@ -337,13 +348,15 @@ export class ShinyRateBoosterPointShopModifierType extends AbstractPointShopModi
     return this._instance || (this._instance = new this());
   }
 
+  public achievement: string = "Don't Have This";
+  public gameModes: GameModes = GameModes.ENDLESS | GameModes.CHALLENGE | GameModes.DAILY;
+
   protected constructor() {
     super("modifierType:ModifierType.SHINY_CHARM", "shiny_charm", (type, _args) => new ShinyRateBoosterModifier(type));
 
     this.cost = 1500;
   }
 }
-PointShopModifierTypes[PointShopModifierCategories.DEFAULT].push(ShinyRateBoosterPointShopModifierType.instance);
 
 export class HiddenAbilityRateBoosterPointShopModifierType extends AbstractPointShopModifierType implements PointShopModifierType {
   private static _instance: HiddenAbilityRateBoosterPointShopModifierType;
@@ -357,7 +370,6 @@ export class HiddenAbilityRateBoosterPointShopModifierType extends AbstractPoint
     this.cost = 1000;
   }
 }
-PointShopModifierTypes[PointShopModifierCategories.DEFAULT].push(HiddenAbilityRateBoosterPointShopModifierType.instance);
 
 export class MapPointShopModifierType extends AbstractPointShopModifierType implements PointShopModifierType {
   private static _instance: MapPointShopModifierType;
@@ -371,7 +383,6 @@ export class MapPointShopModifierType extends AbstractPointShopModifierType impl
     this.cost = 50;
   }
 }
-PointShopModifierTypes[PointShopModifierCategories.UTILITY].push(MapPointShopModifierType.instance);
 
 export class BiomeStartShopModifierType extends AbstractMultiPointShopModifierType implements PointShopModifierType {
   private static _instance: BiomeStartShopModifierType;
@@ -393,7 +404,6 @@ export class BiomeStartShopModifierType extends AbstractMultiPointShopModifierTy
     this.description = "Starts the new run in the selected Biome";
   }
 }
-PointShopModifierTypes[PointShopModifierCategories.UTILITY].push(BiomeStartShopModifierType.instance);
 
 export class IvScannerPointShopModifierType extends AbstractPointShopModifierType implements PointShopModifierType {
   private static _instance: IvScannerPointShopModifierType;
@@ -407,7 +417,6 @@ export class IvScannerPointShopModifierType extends AbstractPointShopModifierTyp
     this.cost = 50;
   }
 }
-PointShopModifierTypes[PointShopModifierCategories.UTILITY].push(IvScannerPointShopModifierType.instance);
 
 export class ExtraModifierPointShopModifierType extends AbstractPointShopModifierType implements PointShopModifierType {
   private static _instance: ExtraModifierPointShopModifierType;
@@ -421,7 +430,6 @@ export class ExtraModifierPointShopModifierType extends AbstractPointShopModifie
     this.cost = 1000;
   }
 }
-PointShopModifierTypes[PointShopModifierCategories.UTILITY].push(ExtraModifierPointShopModifierType.instance);
 
 export class LockModifierTierPointShopModifierType extends AbstractPointShopModifierType implements PointShopModifierType {
   private static _instance: LockModifierTierPointShopModifierType;
@@ -435,7 +443,6 @@ export class LockModifierTierPointShopModifierType extends AbstractPointShopModi
     this.cost = 2000;
   }
 }
-PointShopModifierTypes[PointShopModifierCategories.UTILITY].push(LockModifierTierPointShopModifierType.instance);
 
 export class HealingBoosterPointShopModifierType extends AbstractPointShopModifierType implements PointShopModifierType {
   private static _instance: HealingBoosterPointShopModifierType;
@@ -449,7 +456,6 @@ export class HealingBoosterPointShopModifierType extends AbstractPointShopModifi
     this.cost = 1000;
   }
 }
-PointShopModifierTypes[PointShopModifierCategories.BATTLE_ITEM].push(HealingBoosterPointShopModifierType.instance);
 
 export class PreserveBerryPointShopModifierType extends AbstractPointShopModifierType implements PointShopModifierType {
   private static _instance: PreserveBerryPointShopModifierType;
@@ -463,4 +469,27 @@ export class PreserveBerryPointShopModifierType extends AbstractPointShopModifie
     this.cost = 1000;
   }
 }
-PointShopModifierTypes[PointShopModifierCategories.BATTLE_ITEM].push(PreserveBerryPointShopModifierType.instance);
+
+export function initPointShopModifierTypes() {
+  pushPointShopModifierType(PointShopModifierCategory.DEFAULT, ExpSharePointShopModifierType.instance);
+  pushPointShopModifierType(PointShopModifierCategory.DEFAULT, ExpBalancePointShopModifierType.instance);
+  pushPointShopModifierType(PointShopModifierCategory.DEFAULT, ExpCharmPointShopModifierType.instance);
+
+  pushPointShopModifierType(PointShopModifierCategory.DEFAULT, MoneyMultiplierPointShopModifierType.instance);
+  pushPointShopModifierType(PointShopModifierCategory.DEFAULT, MoneyInterestPointShopModifierType.instance);
+  pushPointShopModifierType(PointShopModifierCategory.DEFAULT, MoneyStartPointShopModifierType.instance);
+
+  pushPointShopModifierType(PointShopModifierCategory.DEFAULT, ShinyRateBoosterPointShopModifierType.instance);
+  pushPointShopModifierType(PointShopModifierCategory.DEFAULT, HiddenAbilityRateBoosterPointShopModifierType.instance);
+
+  pushPointShopModifierType(PointShopModifierCategory.UTILITY, MapPointShopModifierType.instance);
+  pushPointShopModifierType(PointShopModifierCategory.UTILITY, BiomeStartShopModifierType.instance);
+
+  pushPointShopModifierType(PointShopModifierCategory.UTILITY, IvScannerPointShopModifierType.instance);
+
+  pushPointShopModifierType(PointShopModifierCategory.UTILITY, ExtraModifierPointShopModifierType.instance);
+  pushPointShopModifierType(PointShopModifierCategory.UTILITY, LockModifierTierPointShopModifierType.instance);
+
+  pushPointShopModifierType(PointShopModifierCategory.BATTLE_ITEM, HealingBoosterPointShopModifierType.instance);
+  pushPointShopModifierType(PointShopModifierCategory.BATTLE_ITEM, PreserveBerryPointShopModifierType.instance);
+}

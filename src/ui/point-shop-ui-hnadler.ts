@@ -5,7 +5,7 @@ import MessageUiHandler from "./message-ui-handler";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
 import { TextStyle, addTextObject, setTextStyle } from "./text";
-import { AbstractMultiPointShopModifierType, PointShopModifierCategories, PointShopModifierType, PointShopModifierTypes } from "#app/modifier/point-shop-modifier.js";
+import { AbstractMultiPointShopModifierType, PointShopModifierCategory, PointShopModifierType, PointShopModifierTypes, initPointShopModifierTypes } from "#app/modifier/point-shop-modifier.js";
 import { achvs } from "#app/system/achv.js";
 import i18next from "i18next";
 import { Modifier } from "../modifier/modifier.js";
@@ -72,7 +72,7 @@ export default class PointShopUiHandler extends MessageUiHandler {
   private itemHeaderIconLeft: Phaser.GameObjects.Sprite;
   private itemHeaderIconRight: Phaser.GameObjects.Sprite;
 
-  private readonly itemHeaderText: Phaser.GameObjects.Text[] = new Array(Object.keys(PointShopModifierCategories).length / 2);
+  private readonly itemHeaderText: Phaser.GameObjects.Text[] = new Array(Object.keys(PointShopModifierCategory).length / 2);
 
   private itemFooterLeftText: Phaser.GameObjects.Text;
   private itemFooterRightText: Phaser.GameObjects.Text;
@@ -87,9 +87,9 @@ export default class PointShopUiHandler extends MessageUiHandler {
   private itemListWindow: Phaser.GameObjects.NineSlice;
 
   private itemListContainer: Phaser.GameObjects.Container;
-  private readonly itemIcons: Phaser.GameObjects.Image[][] = Array.from({ length: (Object.keys(PointShopModifierCategories).length / 2) }, () => Array(0));
-  private readonly itemEnableIcon: Phaser.GameObjects.Image[][] = Array.from({ length: (Object.keys(PointShopModifierCategories).length / 2) }, () => Array(0));
-  private readonly itemCostText: Phaser.GameObjects.Text[][] = Array.from({ length: (Object.keys(PointShopModifierCategories).length / 2) }, () => Array(0));
+  private readonly itemIcons: Phaser.GameObjects.Image[][] = Array.from({ length: (Object.keys(PointShopModifierCategory).length / 2) }, () => Array(0));
+  private readonly itemEnableIcon: Phaser.GameObjects.Image[][] = Array.from({ length: (Object.keys(PointShopModifierCategory).length / 2) }, () => Array(0));
+  private readonly itemCostText: Phaser.GameObjects.Text[][] = Array.from({ length: (Object.keys(PointShopModifierCategory).length / 2) }, () => Array(0));
 
   private itemCursor: Phaser.GameObjects.Image;
   private startCursor: Phaser.GameObjects.NineSlice;
@@ -111,7 +111,7 @@ export default class PointShopUiHandler extends MessageUiHandler {
 
   private testText: Phaser.GameObjects.Text;
 
-  private currentCategory: PointShopModifierCategories = PointShopModifierCategories.DEFAULT;
+  private currentCategory: PointShopModifierCategory = PointShopModifierCategory.DEFAULT;
 
   private currentPoints: number = 0;
   private maxPoints: number = 0;
@@ -189,6 +189,8 @@ export default class PointShopUiHandler extends MessageUiHandler {
   }
 
   setup() {
+    initPointShopModifierTypes();
+
     const ui = this.getUi();
 
     this.parentContainer = this.scene.add
@@ -265,7 +267,7 @@ export default class PointShopUiHandler extends MessageUiHandler {
       }
 
       this.itemHeaderText[i] =
-        addTextObject(this.scene, x, this.itemHeaderIconLeft.y, Utils.toReadableString(Object.values(PointShopModifierCategories)[i].toString()), isCurrentCategory ? TextStyle.PARTY_ORANGE : TextStyle.PARTY)
+        addTextObject(this.scene, x, this.itemHeaderIconLeft.y, Utils.toReadableString(Object.values(PointShopModifierCategory)[i].toString()), isCurrentCategory ? TextStyle.PARTY_ORANGE : TextStyle.PARTY)
           .setOrigin(0, 0.5);
 
       this.itemHeaderContainer.add(this.itemHeaderText[i]);
@@ -456,7 +458,15 @@ export default class PointShopUiHandler extends MessageUiHandler {
     this.maxPoints = points;
     this.setPoints(points);
 
-    PointShopModifierTypes.forEach(category => category.forEach(modifier => modifier.init(this.scene)));
+    PointShopModifierTypes.forEach((category, i) => category.forEach((modifier, j) => {
+      modifier.init(this.scene);
+
+      if (!modifier.meetsRequirements()) {
+        this.itemIcons[i][j].setTint(0x808080);
+      } else {
+        this.itemIcons[i][j].clearTint();
+      }
+    }));
 
     this.cursor = -1;
     this.setCursor(0);
@@ -494,12 +504,17 @@ export default class PointShopUiHandler extends MessageUiHandler {
 
     this.selectionCostText.setText(this.currentSelection.cost.toString());
     this.selectionIcon.setFrame(this.currentSelection.iconImage);
+    if (!this.currentSelection.meetsRequirements()) {
+      this.selectionIcon.setTint(0x808080);
+    } else {
+      this.selectionIcon.clearTint();
+    }
     this.selectionHeaderText.setText(this.currentSelection.name);
     this.selectionDescriptionText.setText(this.currentSelection.getDescription(this.scene));
 
     return changed;
   }
-  setCategory(category: PointShopModifierCategories): boolean {
+  setCategory(category: PointShopModifierCategory): boolean {
     const changed = this.currentCategory !== category;
     if (!changed) {
       return changed;
