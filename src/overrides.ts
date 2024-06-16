@@ -1,3 +1,4 @@
+import { WeatherType } from "./data/weather";
 import { Variant } from "./data/variant";
 import { TempBattleStat } from "./data/temp-battle-stat";
 import { Nature } from "./data/nature";
@@ -15,7 +16,6 @@ import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
-import { WeatherType } from "./data/weather";
 
 /**
  * Overrides for testing different in game situations
@@ -75,7 +75,7 @@ export const STARTING_LEVEL_OVERRIDE: integer = 0;
  * @example SPECIES_OVERRIDE = Species.Bulbasaur;
  */
 export const STARTER_SPECIES_OVERRIDE: Species | integer = 0;
-export const ABILITY_OVERRIDE: Abilities = Abilities.DAMP;
+export const ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
 export const GENDER_OVERRIDE: Gender = null;
@@ -87,13 +87,13 @@ export const VARIANT_OVERRIDE: Variant = 0;
  * OPPONENT / ENEMY OVERRIDES
  */
 
-export const OPP_SPECIES_OVERRIDE: Species | integer = Species.RATTATA;
+export const OPP_SPECIES_OVERRIDE: Species | integer = 0;
 export const OPP_LEVEL_OVERRIDE: number = 0;
 export const OPP_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const OPP_PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const OPP_STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
 export const OPP_GENDER_OVERRIDE: Gender = null;
-export const OPP_MOVESET_OVERRIDE: Array<Moves> = [Moves.EXPLOSION, Moves.SELF_DESTRUCT, Moves.MISTY_EXPLOSION, Moves.MIND_BLOWN];
+export const OPP_MOVESET_OVERRIDE: Array<Moves> = [];
 export const OPP_SHINY_OVERRIDE: boolean = false;
 export const OPP_VARIANT_OVERRIDE: Variant = 0;
 export const OPP_IVS_OVERRIDE: integer | integer[] = [];
