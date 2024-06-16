@@ -26,7 +26,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { BerryType } from "#enums/berry-type";
+
 
 export enum MoveCategory {
   PHYSICAL,
@@ -2657,33 +2657,37 @@ export class LessPPMorePowerAttr extends VariablePowerAttr {
 export class FlingAttr extends VariablePowerAttr {
   protected randomItem;
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const berryNames = Object.keys(BerryType)
-      .map((key) => `${key.toLowerCase()} berry`);
     const power = args[0] as Utils.NumberHolder; //to be changed based on held item
-    //list of flingable items sorted by how they change power
+    const heldItems = this.getMyHeldItems(user); //gets all held items carried by user's pokemon
+    if (heldItems.length === 0) { //user has no held item
+      power.value = 0;
+      user.scene.queueMessage("But it failed!");
+      return false;
+    }
+
     const arr10i = [
-      ...berryNames,
-      "Choice Band", "Choice Scarf", "Choice Specs", "Air Balloon", "Absorb Bulb", "Amulet Coin", "Big Root",
+      "Sitrus Berry","Lum Berry","Enigma Berry","Liechi Berry","Ganlon Berry","Petaya Berry","Apicot Berry","Salac Berry",
+      "Lansat Berry","Starf Berry","Leppa Berry","Choice Band", "Choice Scarf", "Choice Specs", "Air Balloon", "Absorb Bulb", "Amulet Coin", "Big Root",
       "Destiny Knot", "Expert Belt", "Focus Band", "Focus Sash", "Lagging Tail", "Leftovers", "Mental Herb",
       "Muscle Band", "Power Herb", "Red Card", "Shed Shell", "Silk Scarf", "Silver Powder", "Smooth Rock", "Soft Sand",
       "Soothe Bell", "White Herb","Wide Lens", "Wise Glasses", "Zoom Lens"
     ];
     const arr30i = [
       "Flame Orb","Yellow Flute", "Amulet Coin", "Binding Band", "Black Belt", "Black Glasses", "Black Sludge", "Cell Battery",
-      "Charcoal", "Eject Button", "Escape Rope", "Everstone", "Exp. Share", "Fire Stone",
-      "Float Stone", "Heart Scale", "King's Rock", "Leaf Stone", "Life Orb", "Light Ball", "Light Clay",
-      "Lucky Egg", "Luminous Moss", "Magnet", "Metal Coat", "Metronome", "Miracle Seed", "Moon Stone",
+      "Charcoal", "Eject Button", "Escape Rope", "Exp. Share",
+      "Float Stone", "Heart Scale", "King's Rock", "Life Orb", "Light Ball", "Light Clay",
+      "Lucky Egg", "Luminous Moss", "Magnet", "Metal Coat", "Metronome", "Miracle Seed",
       "Mystic Water", "NeverMeltIce", "Pearl", "Poké Doll", "Razor Fang", "Scope Lens", "Shell Bell",
-      "Smoke Ball", "Snowball", "Spell Tag", "Stardust", "Sun Stone", "Thunder Stone", "Toxic Orb",
-      "Twisted Spoon", "Water Stone"];
+      "Smoke Ball", "Snowball", "Spell Tag", "Stardust", "Toxic Orb",
+      "Twisted Spoon"];
     const arr40i = ["Eviolite","Icy Rock"];
     const arr50i = ["Sharp Beak"];
     const arr60i = ["Damp Rock", "Heat Rock", "Macho Brace", "Rocky Helmet"];
     const arr70i = [ "Dragon Fang", "Poison Barb","Power Anklet", "Power Band", "Power Belt", "Power Bracer",
       "Power Lens", "Power Weight"];
     const arr80i = [
-      "Assault Vest", "Dawn Stone", "Quick Claw", "Razor Claw",
-      "Sachet", "Safety Goggles", "Shiny Stone", "Sticky Barb",
+      "Assault Vest", "Quick Claw", "Razor Claw",
+      "Sachet", "Safety Goggles", "Sticky Barb",
       "Weakness Policy"
     ];
     const arr90i = ["Grip Claw"];
@@ -2704,12 +2708,6 @@ export class FlingAttr extends VariablePowerAttr {
 
     const allItems= [...arr10, ...arr30, ...arr40, ...arr50, ...arr60, ...arr70, ...arr80, ...arr90, ...arr100, ...arr130];
 
-    const heldItems = this.getMyHeldItems(user); //gets all held items carried by user's pokemon
-    if (heldItems.length === 0) { //user has no held item
-      power.value = 0;
-      user.scene.queueMessage("But it failed!");
-      return false;
-    }
     const validHeldItems = heldItems.filter(item => allItems.includes(item.type.name.toLowerCase().replace(/_/g, " ")));
     if (validHeldItems.length === 0) { //user has no flingable held item
       power.value = 0;
@@ -6666,7 +6664,6 @@ export function initMoves() {
     new AttackMove(Moves.FLING, Type.DARK, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 4)
       .attr(FlingAttr)
       .makesContact(false),
-    //.unimplemented(),
     new StatusMove(Moves.PSYCHO_SHIFT, Type.PSYCHIC, 100, 10, -1, 0, 4)
       .attr(PsychoShiftEffectAttr)
       .condition((user, target, move) => (user.status?.effect === StatusEffect.BURN
