@@ -49,7 +49,7 @@ export default class CharSprite extends Phaser.GameObjects.Container {
 
       this.scene.tweens.add({
         targets: this,
-        x: (this.scene.game.canvas.width / this.scene.resolutionScale) - 102,
+        x: (this.scene.game.canvas.width / (this.scene as BattleScene).resolutionScale) - 102,
         duration: 750,
         ease: "Cubic.easeOut",
         onComplete: () => {
@@ -95,7 +95,7 @@ export default class CharSprite extends Phaser.GameObjects.Container {
 
       this.scene.tweens.add({
         targets: this,
-        x: (this.scene.game.canvas.width / this.scene.resolutionScale) + 32,
+        x: (this.scene.game.canvas.width / (this.scene as BattleScene).resolutionScale) + 32,
         duration: 750,
         ease: "Cubic.easeIn",
         onComplete: () => {

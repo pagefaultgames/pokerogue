@@ -75,7 +75,7 @@ export default class CandyBar extends Phaser.GameObjects.Container {
 
       this.tween = this.scene.tweens.add({
         targets: this,
-        x: (this.scene.game.canvas.width / this.scene.resolutionScale) - (this.bg.width - 5),
+        x: (this.scene.game.canvas.width / (this.scene as BattleScene).resolutionScale) - (this.bg.width - 5),
         duration: 500,
         ease: "Sine.easeOut",
         onComplete: () => {
@@ -106,7 +106,7 @@ export default class CandyBar extends Phaser.GameObjects.Container {
 
       this.tween = this.scene.tweens.add({
         targets: this,
-        x: (this.scene.game.canvas.width / this.scene.resolutionScale),
+        x: (this.scene.game.canvas.width / (this.scene as BattleScene).resolutionScale),
         duration: 500,
         ease: "Sine.easeIn",
         onComplete: () => {
