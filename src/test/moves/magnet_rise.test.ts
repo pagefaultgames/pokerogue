@@ -2,8 +2,8 @@ import {beforeAll, afterEach, beforeEach, describe, vi, it, expect} from "vitest
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
 import * as overrides from "#app/overrides";
-import {Moves} from "#app/data/enums/moves.js";
-import {Species} from "#app/data/enums/species.js";
+import {Moves} from "#enums/moves";
+import {Species} from "#enums/species";
 import {CommandPhase, TurnEndPhase} from "#app/phases.js";
 
 describe("Moves - Magnet Rise", () => {
