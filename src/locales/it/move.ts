@@ -2931,7 +2931,7 @@ export const move: MoveTranslationEntries = {
   },
   bouncyBubble: {
     name: "Bollaslurp",
-    effect: "Chi la usa colpisce il bersaglio con una raffica di bolle, per poi assorbirle e recuperare una quantità di PS pari alla metà del danno inferto.",
+    effect: "Chi la usa colpisce il bersaglio con una raffica di bolle, per poi assorbirle e recuperare una quantità di PS pari alla del danno inferto.",
   },
   buzzyBuzz: {
     name: "Elettrozap",
