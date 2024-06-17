@@ -116,7 +116,7 @@ export const menu: SimpleTranslationEntries = {
   "delete": "Supprimer",
   "keyboardPleasePress": "Veuillez appuyer sur une touche de votre clavier",
   "reset": "Réinitialiser",
-  "requireReload": "Redémarage requis",
+  "requireReload": "Redémarrage requis",
   "action": "Action",
   "pressToBind": "Selectionner pour assigner",
   "pressButton": "Appuyez sur un bouton…",
