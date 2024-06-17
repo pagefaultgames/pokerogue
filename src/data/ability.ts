@@ -3057,6 +3057,7 @@ export class PostBattleLootAbAttr extends PostBattleAbAttr {
         return true;
       }
     }
+
     return false;
   }
 }

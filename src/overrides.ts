@@ -64,7 +64,7 @@ export const STARTING_LEVEL_OVERRIDE: integer = 0;
  * @example SPECIES_OVERRIDE = Species.Bulbasaur;
  */
 export const STARTER_SPECIES_OVERRIDE: Species | integer = 0;
-export const ABILITY_OVERRIDE: Abilities = Abilities.PICKUP;
+export const ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
 export const GENDER_OVERRIDE: Gender = null;
@@ -76,7 +76,7 @@ export const VARIANT_OVERRIDE: Variant = 0;
  * OPPONENT / ENEMY OVERRIDES
  */
 
-export const OPP_SPECIES_OVERRIDE: Species | integer = 10;
+export const OPP_SPECIES_OVERRIDE: Species | integer = 0;
 export const OPP_LEVEL_OVERRIDE: number = 0;
 export const OPP_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const OPP_PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
@@ -110,7 +110,7 @@ export const STARTING_MODIFIER_OVERRIDE: Array<ModifierOverride> = [];
 export const OPP_MODIFIER_OVERRIDE: Array<ModifierOverride> = [];
 
 export const STARTING_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = [];
-export const OPP_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = [{name: "BERRY", count: 2, type: BerryType.SITRUS}];
+export const OPP_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = [];
 export const NEVER_CRIT_OVERRIDE: boolean = false;
 
 /**
