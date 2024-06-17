@@ -3628,17 +3628,18 @@ export class BypassSpeedChanceAbAttr extends AbAttr {
 
       if (isCommandFight && hasPower) {
         bypassSpeed.value = true;
-        pokemon.scene.queueMessage(
-          getPokemonMessage(
-            pokemon,
-            " can act faster than normal, thanks to its Quick Draw!"
-          )
-        );
         return true;
       }
     }
 
     return false;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
+    return getPokemonMessage(
+      pokemon,
+      " can act faster than normal, thanks to its Quick Draw!"
+    );
   }
 }
 
