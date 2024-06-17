@@ -11,7 +11,7 @@ import { AllyMoveCategoryPowerBoostAbAttr } from "#app/data/ability.js";
 import { NumberHolder } from "#app/utils.js";
 import Pokemon from "#app/field/pokemon.js";
 
-describe("Abilities - Battery", () => {
+describe("Abilities - Power Spot", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
   const batteryMultiplier = 1.3;
