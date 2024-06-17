@@ -2651,68 +2651,80 @@ export class EnemyFusionChanceModifier extends EnemyPersistentModifier {
 }
 
 /**
- * Uses override from overrides.ts to set PersistentModifiers for starting a new game
- * @param scene current BattleScene
- * @param player is this for player for enemy
+ * Uses either `MODIFIER_OVERRIDE` in overrides.ts to set {@linkcode PersistentModifier}s for either:
+ *  - The player
+ *  - The enemy
+ * @param scene current {@linkcode BattleScene}
+ * @param isPlayer {@linkcode boolean} for whether the the player or enemy is being overridden
  */
-export function overrideModifiers(scene: BattleScene, player: boolean = true): void {
-  const modifierOverride = player ? Overrides.STARTING_MODIFIER_OVERRIDE : Overrides.OPP_MODIFIER_OVERRIDE;
-  if (!modifierOverride || modifierOverride.length === 0 || !scene) {
+export function overrideModifiers(scene: BattleScene, isPlayer: boolean = true): void {
+  const modifiersOverride = isPlayer ? Overrides.STARTING_MODIFIER_OVERRIDE : Overrides.OPP_MODIFIER_OVERRIDE;
+  if (!modifiersOverride || modifiersOverride.length === 0 || !scene) {
     return;
-  } // if no override, do nothing
-  // if it's the opponent, we clear all his current modifiers to avoid stacking
-  if (!player) {
+  } // If no override is provided, do nothing
+
+  // If it's the opponent, clear all of their current modifiers to avoid stacking
+  if (!isPlayer) {
     scene.clearEnemyModifiers();
   }
-  // we loop through all the modifier name given in the override file
-  modifierOverride.forEach(item => {
-    const modifierName = item.name;
-    const qty = item.count || 1;
-    if (!modifierTypes.hasOwnProperty(modifierName)) {
-      return;
-    } // if the modifier does not exist, we skip it
-    const modifierType: ModifierType = modifierTypes[modifierName]();
-    const modifier: PersistentModifier = modifierType.withIdFromFunc(modifierTypes[modifierName]).newModifier() as PersistentModifier;
-    modifier.stackCount = qty;
-    if (player) {
-      scene.addModifier(modifier, true, false, false, true);
-    } else {
-      scene.addEnemyModifier(modifier, true, true);
+
+  // Loop through all the override items given
+  modifiersOverride.forEach(item => {
+    // If the item does not exist in modifierTypes, skip it
+    if (modifierTypes.hasOwnProperty(item.name)) {
+      // Retrieve the item entry from modifierTypes
+      const modifierFunc = modifierTypes[item.name];
+      const modifier = modifierFunc().withIdFromFunc(modifierFunc).newModifier() as PersistentModifier;
+      modifier.stackCount = item.count || 1; // Set quantity
+
+      if (isPlayer) {
+        scene.addModifier(modifier, true, false, false, true);
+      } else {
+        scene.addEnemyModifier(modifier, true, true);
+      }
     }
   });
 }
 
 /**
- * Uses override from overrides.ts to set PokemonHeldItemModifiers for starting a new game
- * @param scene current BattleScene
- * @param player is this for player for enemy
+ * Uses either `HELD_ITEMS_OVERRIDE` in overrides.ts to set {@linkcode PokemonHeldItemModifier}s for either:
+ *  - The first member of the player's team when starting a new game
+ *  - An enemy {@linkcode Pokemon} being spawned in
+ * @param scene current {@linkcode BattleScene}
+ * @param pokemon {@linkcode Pokemon} whose held items are being overridden
+ * @param isPlayer {@linkcode boolean} for whether the {@linkcode pokemon} is the player's or an enemy
  */
-export function overrideHeldItems(scene: BattleScene, pokemon: Pokemon, player: boolean = true): void {
-  const heldItemsOverride = player ? Overrides.STARTING_HELD_ITEMS_OVERRIDE : Overrides.OPP_HELD_ITEMS_OVERRIDE;
+export function overrideHeldItems(scene: BattleScene, pokemon: Pokemon, isPlayer: boolean = true): void {
+  const heldItemsOverride = isPlayer ? Overrides.STARTING_HELD_ITEMS_OVERRIDE : Overrides.OPP_HELD_ITEMS_OVERRIDE;
   if (!heldItemsOverride || heldItemsOverride.length === 0 || !scene) {
     return;
-  } // if no override, do nothing
-  // we loop through all the itemName given in the override file
+  } // If no override is provided, do nothing
+
+  // Loop through all the override items given
   heldItemsOverride.forEach(item => {
-    const itemName = item.name;
-    const qty = item.count || 1;
-    if (!modifierTypes.hasOwnProperty(itemName)) {
-      return;
-    } // if the item does not exist, we skip it
-    const modifierType: ModifierType = modifierTypes[itemName](); // we retrieve the item in the list
-    let itemModifier: PokemonHeldItemModifier;
-    if (modifierType instanceof ModifierTypes.ModifierTypeGenerator) {
-      itemModifier = modifierType.generateType(null, [item.type]).withIdFromFunc(modifierTypes[itemName]).newModifier(pokemon) as PokemonHeldItemModifier;
-    } else {
-      itemModifier = modifierType.withIdFromFunc(modifierTypes[itemName]).newModifier(pokemon) as PokemonHeldItemModifier;
-    }
-    // we create the item
-    itemModifier.pokemonId = pokemon.id; // we assign the created item to the pokemon
-    itemModifier.stackCount = qty; // we say how many items we want
-    if (player) {
-      scene.addModifier(itemModifier, true, false, false, true);
-    } else {
-      scene.addEnemyModifier(itemModifier, true, true);
+    // If the item does not exist in modifierTypes, skip it
+    if (modifierTypes.hasOwnProperty(item.name)) {
+      // Retrieve the item entry from modifierTypes
+      const modifierFunc = modifierTypes[item.name];
+      let modifierType = modifierFunc();
+      const qty = item.count || 1;
+
+      // Generate modifier type if necessary
+      if (modifierType instanceof ModifierTypes.ModifierTypeGenerator) {
+        modifierType = modifierType.generateType(null, (item.type !== null) ? [item.type] : null);
+      }
+
+      // Create the held item
+      const heldItemModifier = modifierType.withIdFromFunc(modifierFunc).newModifier(pokemon) as PokemonHeldItemModifier;
+      heldItemModifier.pokemonId = pokemon.id; // Assign the created item to the pokemon
+      heldItemModifier.stackCount = qty; // Set quantity
+
+      // Give it to the appropriate Pokemon
+      if (isPlayer) {
+        scene.addModifier(heldItemModifier, true, false, false, true);
+      } else {
+        scene.addEnemyModifier(heldItemModifier, true, true);
+      }
     }
   });
 }

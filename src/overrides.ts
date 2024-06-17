@@ -1,22 +1,21 @@
-import {WeatherType} from "./data/weather";
-import {Variant} from "./data/variant";
-import {TempBattleStat} from "./data/temp-battle-stat";
-import {Nature} from "./data/nature";
-import {Type} from "./data/type";
-import {Stat} from "./data/pokemon-stat";
-import {PokeballCounts} from "./battle-scene";
-import {PokeballType} from "./data/pokeball";
-import {Gender} from "./data/gender";
-import {StatusEffect} from "./data/status-effect";
-import {modifierTypes, SpeciesStatBoosterItem} from "./modifier/modifier-type";
-import {VariantTier} from "./enums/variant-tiers";
-import {EggTier} from "#enums/egg-type";
-import {Abilities} from "#enums/abilities";
-import {BerryType} from "#enums/berry-type";
-import {Biome} from "#enums/biome";
-import {Moves} from "#enums/moves";
-import {Species} from "#enums/species";
-import {TimeOfDay} from "#enums/time-of-day";
+import { WeatherType } from "./data/weather";
+import { Variant } from "./data/variant";
+import { TempBattleStat } from "./data/temp-battle-stat";
+import { Nature } from "./data/nature";
+import { Type } from "./data/type";
+import { Stat } from "./data/pokemon-stat";
+import { PokeballCounts } from "./battle-scene";
+import { PokeballType } from "./data/pokeball";
+import { Gender } from "./data/gender";
+import { StatusEffect } from "./data/status-effect";
+import { modifierTypes, PokemonHeldItemModifierType, ModifierType, ModifierTypeGenerator } from "./modifier/modifier-type"; // eslint-disable-line @typescript-eslint/no-unused-vars
+import { allSpecies } from "./data/pokemon-species"; // eslint-disable-line @typescript-eslint/no-unused-vars
+import { Abilities } from "#enums/abilities";
+import { BerryType } from "#enums/berry-type";
+import { Biome } from "#enums/biome";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import { TimeOfDay } from "#enums/time-of-day";
 import {MysteryEncounterType} from "#enums/mystery-encounter-type"; // eslint-disable-line @typescript-eslint/no-unused-vars
 import {MysteryEncounterTier} from "#app/data/mystery-encounter"; // eslint-disable-line @typescript-eslint/no-unused-vars
 
@@ -38,6 +37,7 @@ export const STARTING_WAVE_OVERRIDE: integer = 0;
 export const STARTING_BIOME_OVERRIDE: Biome = Biome.TOWN;
 export const ARENA_TINT_OVERRIDE: TimeOfDay = null;
 // Multiplies XP gained by this value including 0. Set to null to ignore the override
+export const NEVER_CRIT_OVERRIDE: boolean = false;
 export const XP_MULTIPLIER_OVERRIDE: number = null;
 // default 1000
 export const STARTING_MONEY_OVERRIDE: integer = 0;
@@ -122,37 +122,60 @@ export const MYSTERY_ENCOUNTER_TIER_OVERRIDE: MysteryEncounterTier = null;
 export const MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType = null;
 
 /**
- * MODIFIER / ITEM OVERRIDES
- * if count is not provided, it will default to 1
- * @example Modifier Override [{name: "EXP_SHARE", count: 2}]
- * @example Held Item Override [{name: "LUCKY_EGG"}]
- *
- * Some items are generated based on a sub-type (i.e. berries), to override those:
- * @example [{name: "BERRY", count: 5, type: BerryType.SITRUS}]
- * types are listed in interface below
- * - TempBattleStat is for TEMP_STAT_BOOSTER / X Items (Dire hit is separate)
- * - Stat is for BASE_STAT_BOOSTER / Vitamin
- * - Nature is for MINT
- * - Type is for TERA_SHARD or ATTACK_TYPE_BOOSTER (type boosting items i.e Silk Scarf)
- * - BerryType is for BERRY
- * - SpeciesStatBoosterItem is for SPECIES_STAT_BOOSTER
+ * MODIFIER / HELD ITEM OVERRIDES
  */
-interface ModifierOverride {
-    name: keyof typeof modifierTypes & string,
-    count?: integer
-    type?: TempBattleStat|Stat|Nature|Type|BerryType|SpeciesStatBoosterItem
-}
-export const STARTING_MODIFIER_OVERRIDE: Array<ModifierOverride> = [];
-export const OPP_MODIFIER_OVERRIDE: Array<ModifierOverride> = [];
-
-export const STARTING_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = [];
-export const OPP_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = [];
-export const NEVER_CRIT_OVERRIDE: boolean = false;
 
 /**
- * An array of items by keys as defined in the "modifierTypes" object in the "modifier/modifier-type.ts" file.
- * Items listed will replace the normal rolls.
- * If less items are listed than rolled, only some items will be replaced
- * If more items are listed than rolled, only the first X items will be shown, where X is the number of items rolled.
+ * Type used to construct modifiers and held items for overriding purposes.
+ *
+ * While both pertain to modifiers in the class hierarchy, overrides labeled `HELD_ITEM`
+ * specifically pertain to any entry in {@linkcode modifierTypes} that is, extends, or generates
+ * {@linkcode PokemonHeldItemModifierType}s, like `SOUL_DEW`, `TOXIC_ORB`, etc. Overrides
+ * labeled `MODIFIER` deal with any modifier so long as it doesn't require a party
+ * member to hold it (typically is, extends, or generates {@linkcode ModifierType}s),
+ * like `EXP_SHARE`, `CANDY_JAR`, etc.
+ *
+ * Note that, if count is not provided, it will default to 1. Additionally, note that some
+ * held items and modifiers are grouped together via a {@linkcode ModifierTypeGenerator} and
+ * require pre-generation arguments to get a specific item.
+ *
+ * @example STARTING_MODIFIER_OVERRIDE = [{name: "EXP_SHARE", count: 2}] // will have a quantity of 2 in-game
+ * @example STARTING_HELD_ITEM_OVERRIDE = [{name: "LUCKY_EGG"}] // will have a quantity of 1 in-game
+ * @example {name: "BERRY", count: 5, type: BerryType.SITRUS} // type must be given to get a specific berry
  */
-export const ITEM_REWARD_OVERRIDE: Array<String> = [];
+type ModifierOverride = {
+    /** Key for any given modifier, held item, or generator in {@linkcode modifierTypes} */
+    name: keyof typeof modifierTypes & string,
+    /** Quantity of the held item or modifier desired */
+    count?: integer
+    /** Sub-type used for generator-based held items and modifiers. The available types are:
+     * - {@linkcode TempBattleStat}, for {@linkcode modifierTypes.TEMP_STAT_BOOSTER} / X-stat items (Dire Hit is separate)
+     * - {@linkcode Stat}, for {@linkcode modifierTypes.BASE_STAT_BOOSTER} / Vitamins
+     * - {@linkcode Nature}, for {@linkcode modifierTypes.MINT}
+     * - {@linkcode Type}, for {@linkcode modifierTypes.TERA_SHARD} or {@linkcode modifierTypes.ATTACK_TYPE_BOOSTER} / Type-boosting items
+     * - {@linkcode BerryType}, for {@linkcode modifierTypes.BERRY}
+     */
+    type?: TempBattleStat|Stat|Nature|Type|BerryType
+};
+
+/** Override array of {@linkcode ModifierOverride}s used to provide modifiers to the player when starting a new game */
+export const STARTING_MODIFIER_OVERRIDE: ModifierOverride[] = [];
+/**
+ * Override array of {@linkcode ModifierOverride}s used to provide modifiers to enemies.
+ *
+ * Note that any previous modifiers are cleared.
+ */
+export const OPP_MODIFIER_OVERRIDE: ModifierOverride[] = [];
+
+/** Override array of {@linkcode ModifierOverride}s used to provide held items to first party member when starting a new game*/
+export const STARTING_HELD_ITEMS_OVERRIDE: ModifierOverride[] = [];
+/** Override array of {@linkcode ModifierOverride}s used to provide held items to enemies on spawn */
+export const OPP_HELD_ITEMS_OVERRIDE: ModifierOverride[] = [];
+
+/**
+ * Override array of {@linkcode ModifierOverride}s used to replace the generated item rolls after a wave.
+ *
+ * If less entries are listed than rolled, only those entries will be used to replace the corresponding items while the rest randomly generated.
+ * If more entries are listed than rolled, only the first X entries will be used, where X is the number of items rolled.
+ */
+export const ITEM_REWARD_OVERRIDE: ModifierOverride[] = [];

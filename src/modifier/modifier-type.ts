@@ -1907,14 +1907,28 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
     }
   }
 
-  // OVERRIDE IF NECESSARY
-  if (Overrides.ITEM_REWARD_OVERRIDE?.length) {
-    options.forEach((mod, i) => {
-      // @ts-ignore: keeps throwing don't use string as index error in typedoc run
-      const override = modifierTypes[Overrides.ITEM_REWARD_OVERRIDE[i]]?.();
-      mod.type = (override instanceof ModifierTypeGenerator ? override.generateType(party) : override) || mod.type;
-    });
+  // Override rolled options if any override entries are present
+  for (let i = 0; i < Overrides.ITEM_REWARD_OVERRIDE.length; i++) {
+    if (options.length >= i) {
+      break;
+    }
+    const override = Overrides.ITEM_REWARD_OVERRIDE[i];
+    // If the item does not exist in modifierTypes, skip it
+    if (modifierTypes.hasOwnProperty(override.name)) {
+      // Retrieve the item entry from modifierTypes
+      const modifierFunc = modifierTypes[override.name];
+      let modifierType = modifierFunc();
+
+      // Generate modifier type if necessary
+      if (modifierType instanceof ModifierTypeGenerator) {
+        modifierType = modifierType.generateType(party, (override.type !== null) ? [override.type] : null);
+      }
+
+      // Replace the corresponding original option
+      options[i].type = modifierType.withIdFromFunc(modifierFunc);
+    }
   }
+
   return options;
 }
 
