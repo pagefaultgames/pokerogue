@@ -108,7 +108,7 @@ export class DropDown extends Phaser.GameObjects.Container {
     this.cursorObj.setVisible(false);
 
     if (this.dropDownType === DropDownType.MULTI) {
-      this.options.unshift(new DropDownOption(scene, "ALL", "All", null, DropDownState.ON));
+      this.options.unshift(new DropDownOption(scene, "ALL", "All", null, this.checkForAllOn() ? DropDownState.ON : DropDownState.OFF));
     }
 
     options.forEach((option, index) => {

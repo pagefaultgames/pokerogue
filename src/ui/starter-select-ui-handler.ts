@@ -1034,12 +1034,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
         break;
       case Button.DOWN:
-        if (this.filterBar.openDropDown) {
-          if (!this.filterBar.incDropDownCursor()) {
-            this.setFilterMode(false);
-            success = true;
-          }
-        } else {
+        if (!this.filterBar.openDropDown || !this.filterBar.incDropDownCursor()) {
           this.setFilterMode(false);
           success = true;
         }
@@ -1439,7 +1434,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
             success = this.setCursor(this.cursor - 9);
           } else {
-            this.filterBarCursor = 0;//this.filterBar.getNearestFilter(this.filteredStarterContainers[this.cursor]);
+            this.filterBarCursor = this.filterBar.getNearestFilter(this.filteredStarterContainers[this.cursor]);
             this.setFilterMode(true);
             success = true;
           }

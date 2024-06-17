@@ -128,7 +128,7 @@ export class FilterBar extends Phaser.GameObjects.Container {
     let nearest = 0;
     let nearestDist = 1000;
     for (let i=0; i < this.labels.length; i++) {
-      const dist = Math.abs(midx - (this.labels[i].x + this.labels[i].displayWidth / 2));
+      const dist = Math.abs(midx - (this.labels[i].x + this.labels[i].displayWidth / 3));
       if (dist < nearestDist) {
         nearest = i;
         nearestDist = dist;
