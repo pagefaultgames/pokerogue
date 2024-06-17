@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales.js";
 
 export const pokemonSummary: SimpleTranslationEntries = {
   "pokemonInfo": "宝可梦信息",
