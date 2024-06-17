@@ -4956,7 +4956,9 @@ export class ReducePpMoveAttr extends MoveEffectAttr {
       }
     }
 
-    user.scene.queueMessage(`It reduced the PP of ${getPokemonMessage(target, `'s\n${movesetMove.getName()} by ${movesetMove.ppUsed - lastPpUsed}!`)}`);
+    const message = i18next.t("battle:ppReduced", {targetName: target.name, moveName: movesetMove.getName(), reduction: movesetMove.ppUsed - lastPpUsed});
+
+    user.scene.queueMessage(message);
 
     return true;
   }
