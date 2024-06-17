@@ -1163,7 +1163,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       multiplier /= 2;
     }
 
-    if (!!this.summonData && !!this.summonData.tags.find((tag) => tag instanceof TypeImmuneTag && tag.immuneType === moveType)) {
+    if (!!this.summonData?.tags.find((tag) => tag instanceof TypeImmuneTag && tag.immuneType === moveType)) {
       multiplier = 0;
     }
 
