@@ -18,7 +18,8 @@ import { TerrainType } from "./terrain";
 import { SpeciesFormChangeActiveTrigger } from "./pokemon-forms";
 import { ModifierPoolType } from "#app/modifier/modifier-type";
 import { Command } from "../ui/command-ui-handler";
-import i18next, { Localizable } from "../plugins/i18n";
+import i18next from "i18next";
+import { Localizable } from "#app/interfaces/locales";
 import { getBerryEffectFunc } from "./berry";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
@@ -793,7 +794,7 @@ export enum MoveEffectTrigger {
  */
 export class MoveEffectAttr extends MoveAttr {
   /** Defines when this effect should trigger in the move's effect order
-   * @see {@linkcode MoveEffectPhase.start}
+   * @see {@linkcode phases.MoveEffectPhase.start}
    */
   public trigger: MoveEffectTrigger;
   /** Should this effect only apply on the first hit? */
