@@ -6,7 +6,7 @@ import { achvs } from "#app/system/achv.js";
 import { Biome } from "#enums/biome";
 import { ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, HealingBoosterModifier, HiddenAbilityRateBoosterModifier, IvScannerModifier, LockModifierTiersModifier, MapModifier, Modifier, MoneyInterestModifier, MoneyMultiplierModifier, MoneyRewardModifier, PreserveBerryModifier, ShinyRateBoosterModifier } from "../../modifier/modifier";
 import { ModifierType } from "../../modifier/modifier-type";
-import { PointShopModifierType, PointShopModifierOption, Requirements, pushPointShopModifierType, PointShopModifierCategory } from "./point-shop-modifier-type";
+import { PointShopModifierType, PointShopModifierOption, Requirements, pushPointShopModifierType, PointShopModifierCategory, ActiveChangedEvent, PointShopModifierEvent, ActiveOptionChangedEvent } from "./point-shop-modifier-type";
 
 function passesAchievement(requirements: Requirements, battleScene: BattleScene): boolean {
   if (requirements.achievement) {
@@ -35,6 +35,8 @@ export class AbstractPointShopModifierType extends ModifierType implements Point
   }
   protected set active(value: boolean) {
     this._active = value;
+
+    this.eventTarget.dispatchEvent(new ActiveChangedEvent(value));
   }
 
   public achievement: string;
@@ -44,12 +46,16 @@ export class AbstractPointShopModifierType extends ModifierType implements Point
 
   public battleScene: BattleScene;
 
+  public eventTarget: EventTarget = new EventTarget();
+
   protected constructor(localeKey: string, iconImage: string, newModifierFunc: NewModifierFunc, group?: string, soundName?: string) {
     super(localeKey, iconImage, newModifierFunc, group, soundName);
   }
 
   public init(battleScene: BattleScene) {
     this.battleScene = battleScene;
+
+    this.eventTarget.dispatchEvent(new Event(PointShopModifierEvent.INIT_EVENT));
   }
 
   protected passesAchievement(): boolean {
@@ -122,7 +128,7 @@ export class AbstractPointShopModifierOption implements PointShopModifierOption 
   }
 
   public trySetActive(value: boolean = true): boolean {
-    if (meetsRequirements(this, this.battleScene)) {
+    if (!meetsRequirements(this, this.battleScene)) {
       return false;
     }
 
@@ -190,6 +196,26 @@ export class AbstractMultiPointShopModifierType extends AbstractPointShopModifie
     super.init(battleScene);
 
     this.modifierOptions.forEach(option => option.battleScene = this.battleScene);
+  }
+
+  public trySetOptionActive(index: number, value: boolean): boolean {
+    const result = this.modifierOptions[index].trySetActive(value);
+    if (result) {
+      this.eventTarget.dispatchEvent(new ActiveOptionChangedEvent(index, value));
+
+      if (!this.multiSelect) {
+        this.modifierOptions.forEach((option, i) => {
+          if (i !== index) {
+            option.active = false;
+          }
+        });
+      }
+    }
+
+    return result;
+  }
+  public tryToggleOptionActive(index: number): boolean {
+    return this.trySetOptionActive(index, !this.modifierOptions[index].active);
   }
 }
 

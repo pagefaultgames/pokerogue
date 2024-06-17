@@ -15,6 +15,31 @@ export enum PointShopModifierTier {
   TIER_IV
 }
 
+export enum PointShopModifierEvent {
+  INIT_EVENT = "onInit",
+  ACTIVE_CHANGED_EVENT = "onActiveChanged",
+  ACTIVE_OPTION_CHANGED_EVENT = "onActiveOptionChanged",
+}
+
+export class ActiveChangedEvent extends Event {
+  public value: boolean;
+  public constructor(value: boolean) {
+    super(PointShopModifierEvent.ACTIVE_CHANGED_EVENT);
+
+    this.value = value;
+  }
+}
+export class ActiveOptionChangedEvent extends Event {
+  public index: number;
+  public value: boolean;
+  public constructor(index: number, value: boolean) {
+    super(PointShopModifierEvent.ACTIVE_OPTION_CHANGED_EVENT);
+
+    this.index = index;
+    this.value = value;
+  }
+}
+
 export interface Requirements {
   achievement: string;
   gameModes: GameModes;
@@ -29,6 +54,8 @@ export interface PointShopModifierType extends Requirements {
   iconImage: string;
   cost: number;
   readonly active: boolean;
+
+  eventTarget: EventTarget;
 
   init(battleScene: BattleScene);
 
