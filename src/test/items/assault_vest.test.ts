@@ -47,20 +47,27 @@ describe("Items - Assault Vest", () => {
   });
 
   it("ASSAULT_VEST check stat", async() => {
+    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MIGHTYENA);
+    vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
     await game.runToSummon([
       Species.MIGHTYENA,
     ]);
     await game.phaseInterceptor.run(SummonPhase);
     const pokemon = game.scene.getParty()[0];
+    const opponent = game.scene.currentBattle.enemyParty[0];
     pokemon.setNature(Nature.CALM);
+    opponent.setNature(Nature.CALM);
     expect(game.scene.modifiers[0].type.id).toBe("ASSAULT_VEST");
     expect(pokemon.nature).toBe(Nature.CALM);
+    expect(opponent.nature).toBe(Nature.CALM);
     await game.phaseInterceptor.run(ToggleDoublePositionPhase);
     await game.phaseInterceptor.run(PostSummonPhase);
     await game.phaseInterceptor.run(PostSummonPhase);
     await game.phaseInterceptor.to(CommandPhase);
     const spDef = pokemon.stats[Stat.SPDEF];
+    const oppSpDef = opponent.stats[Stat.SPDEF];
     expect(spDef).toBe(207); // 138 * 1.5
+    expect(oppSpDef).toBe(143);
 
     //
     // game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
