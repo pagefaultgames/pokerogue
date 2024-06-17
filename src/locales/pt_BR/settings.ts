@@ -22,7 +22,7 @@ export const settings: SimpleTranslationEntries = {
   "fast": "Rápido",
   "faster": "Mais Rápido",
   "skip": "Pular",
-  "levelUpNotifications": "Notificação ao Subir de Nível",
+  "levelUpNotifications": "Notificação",
   "on": "Ligado",
   "off": "Desligado",
   "switch": "Alternar",
