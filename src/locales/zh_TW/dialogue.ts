@@ -2009,28 +2009,28 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "alder": {
     "encounter": {
-      1: "Prepare yourself for a match against the strongest Trainer in Unova!"
+      1: "準備好和合眾最強的訓練家交手吧！"
     },
     "victory": {
-      1: "Well done! You certainly are an unmatched talent."
+      1: "精彩！簡直就是天下無雙！"
     },
     "defeat": {
-      1: `A fresh wind blows through my heart...
-          $What an extraordinary effort!`
+      1: `戰鬥結束後，我的心像是吹過了溫和的風…
+	  	$真是厲害！`
     }
   },
   "kieran": {
     "encounter": {
-      1: `Through hard work, I become stronger and stronger!
-          $I don't lose.`
+      1: `我的努力讓我越來越強！
+	  	$所以我不會輸。`
     },
     "victory": {
-      1: `I don't believe it...
-          $What a fun and heart-pounding battle!`
+      1: `不可能…
+	  	$真是一場有趣又激動人心的戰鬥啊！`
     },
     "defeat": {
-      1: `Wowzers, what a battle!
-          $Time for you to train even harder.`
+      1: `哇塞，好一場戰鬥！
+	  	$你得多練練了。`
     }
   },
   "rival": {
