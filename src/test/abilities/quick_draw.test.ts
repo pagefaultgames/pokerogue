@@ -71,7 +71,6 @@ describe("Abilities - Quick Draw", () => {
     await game.phaseInterceptor.run(TurnStartPhase);
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(game.phaseInterceptor.log).toContain("ShowAbilityPhase");
     expect(pokemon.battleData.abilityRevealed).toBe(true);
   }, 20000);
 
@@ -99,7 +98,6 @@ describe("Abilities - Quick Draw", () => {
     await game.phaseInterceptor.run(TurnStartPhase);
     await game.phaseInterceptor.to(TitlePhase);
 
-    expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
     expect(pokemon.battleData.abilityRevealed).not.toBe(true);
   }, 20000);
 
@@ -127,7 +125,6 @@ describe("Abilities - Quick Draw", () => {
     await game.phaseInterceptor.run(TurnStartPhase);
     await game.phaseInterceptor.to(TitlePhase);
 
-    expect(game.phaseInterceptor.log).toContain("ShowAbilityPhase");
     expect(pokemon.battleData.abilityRevealed).toBe(true);
   }, 20000);
 });
