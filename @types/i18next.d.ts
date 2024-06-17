@@ -3,6 +3,7 @@ import { AbilityTranslationEntries, SimpleTranslationEntries, AchievementTransla
 // Module declared to make referencing keys in the localization files type-safe.
 declare module "i18next" {
     interface CustomTypeOptions {
+      defaultNS: "menu", // needed here as well for typedoc
       resources: {
         ability: AbilityTranslationEntries;
         abilityTriggers: SimpleTranslationEntries;
