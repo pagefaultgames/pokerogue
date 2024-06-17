@@ -1017,6 +1017,30 @@ export class EnemyEndureChanceModifierType extends ModifierType {
 export type ModifierTypeFunc = () => ModifierType;
 type WeightedModifierTypeWeightFunc = (party: Pokemon[], rerollCount?: integer) => integer;
 
+/**
+ * High order function that returns a WeightedModifierTypeWeightFunc that will only be applied on
+ * classic and skip an ModifierType if current wave is greater or equal to the one passed down
+ * @param wave - Wave where we should stop showing the modifier
+ * @param defaultWeight - ModifierType default weight
+ * @returns A WeightedModifierTypeWeightFunc
+ */
+function skipInClassicAfterWave(wave: integer, defaultWeight: integer): WeightedModifierTypeWeightFunc {
+  return (party: Pokemon[]) => {
+    const gameMode =  party[0].scene.gameMode;
+    const currentWave = party[0].scene.currentBattle.waveIndex;
+    return gameMode.isClassic && currentWave >= wave ? 0 : defaultWeight;
+  };
+}
+
+/**
+ * High order function that returns a WeightedModifierTypeWeightFunc that will only be applied on
+ * classic and it will skip a ModifierType if it is the last wave pull.
+ * @param defaultWeight ModifierType default weight
+ * @returns A WeightedModifierTypeWeightFunc
+ */
+function skipInLastClassicWaveOrDefault(defaultWeight: integer) : WeightedModifierTypeWeightFunc {
+  return skipInClassicAfterWave(199, defaultWeight);
+}
 class WeightedModifierType {
   public modifierType: ModifierType;
   public weight: integer | WeightedModifierTypeWeightFunc;
@@ -1313,7 +1337,7 @@ const modifierPool: ModifierPool = {
     }, 3),
     new WeightedModifierType(modifierTypes.DIRE_HIT, 4),
     new WeightedModifierType(modifierTypes.SUPER_LURE, 4),
-    new WeightedModifierType(modifierTypes.NUGGET, 5),
+    new WeightedModifierType(modifierTypes.NUGGET, skipInLastClassicWaveOrDefault(5)),
     new WeightedModifierType(modifierTypes.EVOLUTION_ITEM, (party: Pokemon[]) => {
       return Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 15), 8);
     }, 8),
@@ -1336,7 +1360,7 @@ const modifierPool: ModifierPool = {
   [ModifierTier.ULTRA]: [
     new WeightedModifierType(modifierTypes.ULTRA_BALL, 24),
     new WeightedModifierType(modifierTypes.MAX_LURE, 4),
-    new WeightedModifierType(modifierTypes.BIG_NUGGET, 12),
+    new WeightedModifierType(modifierTypes.BIG_NUGGET, skipInLastClassicWaveOrDefault(12)),
     new WeightedModifierType(modifierTypes.PP_UP, 9),
     new WeightedModifierType(modifierTypes.PP_MAX, 3),
     new WeightedModifierType(modifierTypes.MINT, 4),
@@ -1371,7 +1395,7 @@ const modifierPool: ModifierPool = {
   }),
   [ModifierTier.ROGUE]: [
     new WeightedModifierType(modifierTypes.ROGUE_BALL, 24),
-    new WeightedModifierType(modifierTypes.RELIC_GOLD, 2),
+    new WeightedModifierType(modifierTypes.RELIC_GOLD, skipInLastClassicWaveOrDefault(2)),
     new WeightedModifierType(modifierTypes.LEFTOVERS, 3),
     new WeightedModifierType(modifierTypes.SHELL_BELL, 3),
     new WeightedModifierType(modifierTypes.BERRY_POUCH, 4),
