@@ -1261,7 +1261,7 @@ export class GameData {
 
                 if (!bypassLogin && dataType < GameDataType.SETTINGS) {
                   updateUserInfo().then(success => {
-                    if (!success) {
+                    if (!success[0]) {
                       return displayError(`Could not contact the server. Your ${dataName} data could not be imported.`);
                     }
                     let url: string;
