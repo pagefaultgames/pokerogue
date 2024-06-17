@@ -5683,9 +5683,11 @@ export function initMoves() {
     new AttackMove(Moves.STRENGTH, Type.NORMAL, MoveCategory.PHYSICAL, 80, 100, 15, -1, 0, 1),
     new AttackMove(Moves.ABSORB, Type.GRASS, MoveCategory.SPECIAL, 20, 100, 25, -1, 0, 1)
       .attr(HitHealAttr)
+      .partial() // Healing not blocked by Heal Block
       .triageMove(),
     new AttackMove(Moves.MEGA_DRAIN, Type.GRASS, MoveCategory.SPECIAL, 40, 100, 15, -1, 0, 1)
       .attr(HitHealAttr)
+      .partial() // Healing not blocked by Heal Block
       .triageMove(),
     new StatusMove(Moves.LEECH_SEED, Type.GRASS, 90, 10, -1, 0, 1)
       .attr(AddBattlerTagAttr, BattlerTagType.SEEDED)
@@ -5779,6 +5781,7 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.EVA, 1, true),
     new SelfStatusMove(Moves.RECOVER, Type.NORMAL, -1, 5, -1, 0, 1)
       .attr(HealAttr, 0.5)
+      .partial() // Healing not blocked by Heal Block
       .triageMove(),
     new SelfStatusMove(Moves.HARDEN, Type.NORMAL, -1, 30, -1, 0, 1)
       .attr(StatChangeAttr, BattleStat.DEF, 1, true),
@@ -5856,6 +5859,7 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.ACC, -1),
     new SelfStatusMove(Moves.SOFT_BOILED, Type.NORMAL, -1, 5, -1, 0, 1)
       .attr(HealAttr, 0.5)
+      .partial() // Healing not blocked by Heal Block
       .triageMove(),
     new AttackMove(Moves.HIGH_JUMP_KICK, Type.FIGHTING, MoveCategory.PHYSICAL, 130, 90, 10, -1, 0, 1)
       .attr(MissEffectAttr, crashDamageFunc)
@@ -5866,6 +5870,7 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS),
     new AttackMove(Moves.DREAM_EATER, Type.PSYCHIC, MoveCategory.SPECIAL, 100, 100, 15, -1, 0, 1)
       .attr(HitHealAttr)
+      .partial() // Healing not blocked by Heal Block
       .condition(targetSleptOrComatoseCondition)
       .triageMove(),
     new StatusMove(Moves.POISON_GAS, Type.POISON, 90, 40, -1, 0, 1)
@@ -5877,6 +5882,7 @@ export function initMoves() {
       .ballBombMove(),
     new AttackMove(Moves.LEECH_LIFE, Type.BUG, MoveCategory.PHYSICAL, 80, 100, 10, -1, 0, 1)
       .attr(HitHealAttr)
+      .partial() // Healing not blocked by Heal Block
       .triageMove(),
     new StatusMove(Moves.LOVELY_KISS, Type.NORMAL, 75, 10, -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.SLEEP),
@@ -5921,6 +5927,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.REST, Type.PSYCHIC, -1, 5, -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.SLEEP, true, 3, true)
       .attr(HealAttr, 1, true)
+      .partial() // Healing not blocked by Heal Block
       .condition((user, target, move) => user.getHpRatio() < 1 && user.canSetStatus(StatusEffect.SLEEP, true, true))
       .triageMove(),
     new AttackMove(Moves.ROCK_SLIDE, Type.ROCK, MoveCategory.PHYSICAL, 75, 90, 10, 30, 0, 1)
@@ -6050,6 +6057,7 @@ export function initMoves() {
       .target(MoveTarget.BOTH_SIDES),
     new AttackMove(Moves.GIGA_DRAIN, Type.GRASS, MoveCategory.SPECIAL, 75, 100, 10, -1, 0, 2)
       .attr(HitHealAttr)
+      .partial() // Healing not blocked by Heal Block
       .triageMove(),
     new SelfStatusMove(Moves.ENDURE, Type.NORMAL, -1, 10, -1, 4, 2)
       .attr(EndureAttr),
@@ -6064,6 +6072,7 @@ export function initMoves() {
       .attr(ConfuseAttr),
     new SelfStatusMove(Moves.MILK_DRINK, Type.NORMAL, -1, 5, -1, 0, 2)
       .attr(HealAttr, 0.5)
+      .partial() // Healing not blocked by Heal Block
       .triageMove(),
     new AttackMove(Moves.SPARK, Type.ELECTRIC, MoveCategory.PHYSICAL, 65, 100, 20, 30, 0, 2)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS),
@@ -6150,12 +6159,15 @@ export function initMoves() {
     new AttackMove(Moves.VITAL_THROW, Type.FIGHTING, MoveCategory.PHYSICAL, 70, -1, 10, -1, -1, 2),
     new SelfStatusMove(Moves.MORNING_SUN, Type.NORMAL, -1, 5, -1, 0, 2)
       .attr(PlantHealAttr)
+      .partial() // Healing not blocked by Heal Block
       .triageMove(),
     new SelfStatusMove(Moves.SYNTHESIS, Type.GRASS, -1, 5, -1, 0, 2)
       .attr(PlantHealAttr)
+      .partial() // Healing not blocked by Heal Block
       .triageMove(),
     new SelfStatusMove(Moves.MOONLIGHT, Type.FAIRY, -1, 5, -1, 0, 2)
       .attr(PlantHealAttr)
+      .partial() // Healing not blocked by Heal Block
       .triageMove(),
     new AttackMove(Moves.HIDDEN_POWER, Type.NORMAL, MoveCategory.SPECIAL, 60, 100, 15, -1, 0, 2)
       .attr(HiddenPowerTypeAttr),
@@ -6336,6 +6348,7 @@ export function initMoves() {
       .attr(FlinchAttr),
     new SelfStatusMove(Moves.SLACK_OFF, Type.NORMAL, -1, 5, -1, 0, 3)
       .attr(HealAttr, 0.5)
+      .partial() // Healing not blocked by Heal Block
       .triageMove(),
     new AttackMove(Moves.HYPER_VOICE, Type.NORMAL, MoveCategory.SPECIAL, 90, 100, 10, -1, 0, 3)
       .soundBased()
@@ -6476,6 +6489,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.ROOST, Type.FLYING, -1, 5, -1, 0, 4)
       .attr(HealAttr, 0.5)
       .attr(AddBattlerTagAttr, BattlerTagType.GROUNDED, true, false, 1)
+      .partial() // Healing not blocked by Heal Block
       .triageMove(),
     new StatusMove(Moves.GRAVITY, Type.PSYCHIC, -1, 5, -1, 0, 4)
       .attr(AddArenaTagAttr, ArenaTagType.GRAVITY, 5)
@@ -6631,6 +6645,7 @@ export function initMoves() {
     new AttackMove(Moves.DRAIN_PUNCH, Type.FIGHTING, MoveCategory.PHYSICAL, 75, 100, 10, -1, 0, 4)
       .attr(HitHealAttr)
       .punchingMove()
+      .partial() // Healing not blocked by Heal Block
       .triageMove(),
     new AttackMove(Moves.VACUUM_WAVE, Type.FIGHTING, MoveCategory.SPECIAL, 40, 100, 30, -1, 1, 4),
     new AttackMove(Moves.FOCUS_BLAST, Type.FIGHTING, MoveCategory.SPECIAL, 120, 70, 5, 10, 0, 4)
@@ -6757,6 +6772,7 @@ export function initMoves() {
       .attr(StatChangeAttr, [ BattleStat.DEF, BattleStat.SPDEF ], 1, true),
     new SelfStatusMove(Moves.HEAL_ORDER, Type.BUG, -1, 10, -1, 0, 4)
       .attr(HealAttr, 0.5)
+      .partial() // Healing not blocked by Heal Block
       .triageMove(),
     new AttackMove(Moves.HEAD_SMASH, Type.ROCK, MoveCategory.PHYSICAL, 150, 80, 5, -1, 0, 4)
       .attr(RecoilAttr, false, 0.5)
@@ -6894,6 +6910,7 @@ export function initMoves() {
     new StatusMove(Moves.HEAL_PULSE, Type.PSYCHIC, -1, 10, -1, 0, 5)
       .attr(HealAttr, 0.5, false, false)
       .pulseMove()
+      .partial() // Healing not blocked by Heal Block
       .triageMove(),
     new AttackMove(Moves.HEX, Type.GHOST, MoveCategory.SPECIAL, 65, 100, 10, -1, 0, 5)
       .attr(
@@ -6962,6 +6979,7 @@ export function initMoves() {
       .attr(FlinchAttr),
     new AttackMove(Moves.HORN_LEECH, Type.GRASS, MoveCategory.PHYSICAL, 75, 100, 10, -1, 0, 5)
       .attr(HitHealAttr)
+      .partial() // Healing not blocked by Heal Block
       .triageMove(),
     new AttackMove(Moves.SACRED_SWORD, Type.FIGHTING, MoveCategory.PHYSICAL, 90, 100, 15, -1, 0, 5)
       .attr(IgnoreOpponentStatChangesAttr)
@@ -7081,6 +7099,7 @@ export function initMoves() {
     new AttackMove(Moves.PARABOLIC_CHARGE, Type.ELECTRIC, MoveCategory.SPECIAL, 65, 100, 20, -1, 0, 6)
       .attr(HitHealAttr)
       .target(MoveTarget.ALL_NEAR_OTHERS)
+      .partial() // Healing not blocked by Heal Block
       .triageMove(),
     new StatusMove(Moves.FORESTS_CURSE, Type.GRASS, 100, 20, -1, 0, 6)
       .attr(AddTypeAttr, Type.GRASS)
@@ -7104,6 +7123,7 @@ export function initMoves() {
     new AttackMove(Moves.DRAINING_KISS, Type.FAIRY, MoveCategory.SPECIAL, 50, 100, 10, -1, 0, 6)
       .attr(HitHealAttr, 0.75)
       .makesContact()
+      .partial() // Healing not blocked by Heal Block
       .triageMove(),
     new StatusMove(Moves.CRAFTY_SHIELD, Type.FAIRY, -1, 10, -1, 3, 6)
       .target(MoveTarget.USER_SIDE)
@@ -7200,6 +7220,7 @@ export function initMoves() {
       .punchingMove(),
     new AttackMove(Moves.OBLIVION_WING, Type.FLYING, MoveCategory.SPECIAL, 80, 100, 10, -1, 0, 6)
       .attr(HitHealAttr, 0.75)
+      .partial() // Healing not blocked by Heal Block
       .triageMove(),
     new AttackMove(Moves.THOUSAND_ARROWS, Type.GROUND, MoveCategory.PHYSICAL, 90, 100, 10, 100, 0, 6)
       .attr(NeutralDamageAgainstFlyingTypeMultiplierAttr)
@@ -7345,6 +7366,7 @@ export function initMoves() {
     /* End Unused */
     new SelfStatusMove(Moves.SHORE_UP, Type.GROUND, -1, 5, -1, 0, 7)
       .attr(SandHealAttr)
+      .partial() // Healing not blocked by Heal Block
       .triageMove(),
     new AttackMove(Moves.FIRST_IMPRESSION, Type.BUG, MoveCategory.PHYSICAL, 90, 100, 10, -1, 2, 7)
       .condition(new FirstMoveCondition()),
@@ -7364,12 +7386,14 @@ export function initMoves() {
       .punchingMove(),
     new StatusMove(Moves.FLORAL_HEALING, Type.FAIRY, -1, 10, -1, 0, 7)
       .attr(BoostHealAttr, 0.5, 2/3, true, false, (user, target, move) => user.scene.arena.terrain?.terrainType === TerrainType.GRASSY)
+      .partial() // Healing not blocked by Heal Block
       .triageMove(),
     new AttackMove(Moves.HIGH_HORSEPOWER, Type.GROUND, MoveCategory.PHYSICAL, 95, 95, 10, -1, 0, 7),
     new StatusMove(Moves.STRENGTH_SAP, Type.GRASS, 100, 10, 100, 0, 7)
       .attr(HitHealAttr, null, Stat.ATK)
       .attr(StatChangeAttr, BattleStat.ATK, -1)
       .condition((user, target, move) => target.summonData.battleStats[BattleStat.ATK] > -6)
+      .partial() // Healing not blocked by Heal Block
       .triageMove(),
     new AttackMove(Moves.SOLAR_BLADE, Type.GRASS, MoveCategory.PHYSICAL, 125, 100, 10, -1, 0, 7)
       .attr(SunlightChargeAttr, ChargeAnim.SOLAR_BLADE_CHARGING, "is glowing!")
@@ -7393,6 +7417,7 @@ export function initMoves() {
     new AttackMove(Moves.POLLEN_PUFF, Type.BUG, MoveCategory.SPECIAL, 90, 100, 15, -1, 0, 7)
       .attr(StatusCategoryOnAllyAttr)
       .attr(HealOnAllyAttr, 0.5, true, false)
+      .partial() // Healing not blocked by Heal Block
       .ballBombMove(),
     new AttackMove(Moves.ANCHOR_SHOT, Type.STEEL, MoveCategory.PHYSICAL, 80, 100, 20, -1, 0, 7)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, false, 1),
@@ -7422,6 +7447,7 @@ export function initMoves() {
         (user: Pokemon, target: Pokemon, move: Move) => isNonVolatileStatusEffect(user.status?.effect))
       .attr(HealAttr, 0.5)
       .attr(HealStatusEffectAttr, true, ...getNonVolatileStatusEffects())
+      .partial() // Healing not blocked by Heal Block
       .triageMove(),
     new AttackMove(Moves.REVELATION_DANCE, Type.NORMAL, MoveCategory.SPECIAL, 90, 100, 15, -1, 0, 7)
       .danceMove()
@@ -7565,6 +7591,7 @@ export function initMoves() {
       .attr(FriendshipPowerAttr),
     new AttackMove(Moves.BOUNCY_BUBBLE, Type.WATER, MoveCategory.SPECIAL, 60, 100, 20, -1, 0, 7)
       .attr(HitHealAttr, 1.0)
+      .partial() // Healing not blocked by Heal Block
       .triageMove()
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.BUZZY_BUZZ, Type.ELECTRIC, MoveCategory.SPECIAL, 60, 100, 20, 100, 0, 7)
@@ -7757,6 +7784,7 @@ export function initMoves() {
     new StatusMove(Moves.LIFE_DEW, Type.WATER, -1, 10, -1, 0, 8)
       .attr(HealAttr, 0.25, true, false)
       .target(MoveTarget.USER_AND_ALLIES)
+      .partial() // Healing not blocked by Heal Block
       .ignoresProtect(),
     new SelfStatusMove(Moves.OBSTRUCT, Type.DARK, 100, 10, -1, 4, 8)
       .attr(ProtectAttr, BattlerTagType.OBSTRUCT),
@@ -7833,6 +7861,7 @@ export function initMoves() {
     new StatusMove(Moves.JUNGLE_HEALING, Type.GRASS, -1, 10, -1, 0, 8)
       .attr(HealAttr, 0.25, true, false)
       .target(MoveTarget.USER_AND_ALLIES)
+      .partial() // Healing not blocked by Heal Block
       .partial(),
     new AttackMove(Moves.WICKED_BLOW, Type.DARK, MoveCategory.PHYSICAL, 75, 100, 5, -1, 0, 8)
       .attr(CritOnlyAttr)
@@ -7933,7 +7962,7 @@ export function initMoves() {
       .attr(HealAttr, 0.25)
       .target(MoveTarget.USER_AND_ALLIES)
       .triageMove()
-      .partial(),
+      .partial(), // Healing not blocked by Heal Block
     new SelfStatusMove(Moves.TAKE_HEART, Type.PSYCHIC, -1, 10, -1, 0, 8)
       .attr(StatChangeAttr, [ BattleStat.SPATK, BattleStat.SPDEF ], 1, true)
       .attr(HealStatusEffectAttr, true, StatusEffect.PARALYSIS, StatusEffect.POISON, StatusEffect.TOXIC, StatusEffect.BURN, StatusEffect.SLEEP),
@@ -8163,6 +8192,7 @@ export function initMoves() {
     new AttackMove(Moves.BITTER_BLADE, Type.FIRE, MoveCategory.PHYSICAL, 90, 100, 10, -1, 0, 9)
       .attr(HitHealAttr)
       .slicingMove()
+      .partial() // Healing not blocked by Heal Block
       .triageMove(),
     new AttackMove(Moves.DOUBLE_SHOCK, Type.ELECTRIC, MoveCategory.PHYSICAL, 120, 100, 5, -1, 0, 9)
       .condition((user) => {
@@ -8212,7 +8242,7 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.BURN)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .triageMove()
-      .partial(),
+      .partial(), // Healing not blocked by Heal Block
     new AttackMove(Moves.SYRUP_BOMB, Type.GRASS, MoveCategory.SPECIAL, 60, 85, 10, -1, 0, 9)
       .attr(StatChangeAttr, BattleStat.SPD, -1) //Temporary
       .ballBombMove()
