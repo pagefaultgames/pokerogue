@@ -3294,16 +3294,16 @@ export class BlockRedirectAbAttr extends AbAttr { }
  * @param args [1] {@linkcode Pokemon} The user of the attack
  */
 export class FieldPreventMovesAbAttr extends AbAttr {
-  public moveCondition: (Moves) => boolean;
+  public preventedMoves: Moves[];
 
-  constructor(moveCondition: (Moves) => boolean) {
+  constructor(moves: Moves[]) {
     super();
-    this.moveCondition = moveCondition;
+    this.preventedMoves = moves;
   }
 
   /** @param args See {@linkcode FieldPreventMovesAbAttr}. */
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (this.moveCondition((args[0] as Move).id)) {
+    if (this.preventedMoves.includes((args[0] as Move).id)) {
       cancelled.value = true;
       return true;
     }
@@ -3890,7 +3890,7 @@ export function initAbilities() {
       .attr(BlockOneHitKOAbAttr)
       .ignorable(),
     new Ability(Abilities.DAMP, 3)
-      .attr(FieldPreventMovesAbAttr, (move) => [Moves.EXPLOSION, Moves.SELF_DESTRUCT, Moves.MIND_BLOWN, Moves.MISTY_EXPLOSION].includes(move))
+      .attr(FieldPreventMovesAbAttr, [Moves.EXPLOSION, Moves.SELF_DESTRUCT, Moves.MIND_BLOWN, Moves.MISTY_EXPLOSION])
       .attr(PreventPostFaintContactDamageAbAttr)
       .ignorable(),
     new Ability(Abilities.LIMBER, 3)
