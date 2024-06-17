@@ -279,22 +279,22 @@ class RunEntry extends Phaser.GameObjects.Container {
 
 
     switch (data.gameMode) {
-      case GameModes.DAILY:
-        const dailyModeLabel = addTextObject(this.scene, 8, 19, `${i18next.t('gameMode:dailyRun') || "Unknown"} - Wave ${data.waveIndex}`, TextStyle.WINDOW);
-        this.add(dailyModeLabel);
-        break;
-      case GameModes.SPLICED_ENDLESS:
-        const endlessSplicedLabel = addTextObject(this.scene, 8, 19, `${i18next.t('gameMode:endlessSpliced') || "Unknown"} - Wave ${data.waveIndex}`, TextStyle.WINDOW);
-        this.add(endlessSplicedLabel);
-        break;
-      case GameModes.ENDLESS:
-      case GameModes.CLASSIC:
-      case GameModes.CHALLENGE:
-        const gameModeLabel = addTextObject(this.scene, 8, 19, `${i18next.t('gameMode:'+GameModes[data.gameMode].toLowerCase()) || "Unknown"} - Wave ${data.waveIndex}`, TextStyle.WINDOW);
-        this.add(gameModeLabel);
-        break;
+    case GameModes.DAILY:
+      const dailyModeLabel = addTextObject(this.scene, 8, 19, `${i18next.t("gameMode:dailyRun") || "Unknown"} - Wave ${data.waveIndex}`, TextStyle.WINDOW);
+      this.add(dailyModeLabel);
+      break;
+    case GameModes.SPLICED_ENDLESS:
+      const endlessSplicedLabel = addTextObject(this.scene, 8, 19, `${i18next.t("gameMode:endlessSpliced") || "Unknown"} - Wave ${data.waveIndex}`, TextStyle.WINDOW);
+      this.add(endlessSplicedLabel);
+      break;
+    case GameModes.ENDLESS:
+    case GameModes.CLASSIC:
+    case GameModes.CHALLENGE:
+      const gameModeLabel = addTextObject(this.scene, 8, 19, `${i18next.t("gameMode:"+GameModes[data.gameMode].toLowerCase()) || "Unknown"} - Wave ${data.waveIndex}`, TextStyle.WINDOW);
+      this.add(gameModeLabel);
+      break;
     }
-    
+
     const date = new Date(data.timestamp);
 
     const timestampLabel = addTextObject(this.scene, 8, 33, new Date(data.timestamp).toLocaleString(), TextStyle.WINDOW);
