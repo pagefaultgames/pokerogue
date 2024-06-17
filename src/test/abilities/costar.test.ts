@@ -5,9 +5,9 @@ import * as Overrides from "#app/overrides";
 import { BattleStat } from "#app/data/battle-stat.js";
 import { CommandPhase, MessagePhase } from "#app/phases.js";
 import { getMovePosition } from "../utils/gameManagerUtils";
-import { Abilities } from "#app/data/enums/abilities.js";
-import { Moves } from "#app/data/enums/moves.js";
-import { Species } from "#app/data/enums/species.js";
+import { Abilities } from "#app/enums/abilities.js";
+import { Moves } from "#app/enums/moves.js";
+import { Species } from "#app/enums/species.js";
 
 const TIMEOUT = 20 * 1000;
 
