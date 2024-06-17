@@ -48,58 +48,12 @@ export async function initI18n(): Promise<void> {
    *
    * Q: How do I add a new namespace?
    * A: To add a new namespace, create a new file in each language folder with the translations.
-   *    Then update the `resources` field in the init() call and the CustomTypeOptions interface.
+   *    Then update the config file for that language in its locale directory
+   *    and the CustomTypeOptions interface in the @types/i18next.d.ts file.
    *
    * Q: How do I make a language selectable in the settings?
    * A: In src/system/settings.ts, add a new case to the Setting.Language switch statement.
    */
-
-  // if you need to update this you can console.log(Object.keys(enConfig))
-  const namespaces = [
-    "ability",
-    "abilityTriggers",
-    "battle",
-    "battleMessageUiHandler",
-    "berry",
-    "biome",
-    "challenges",
-    "commandUiHandler",
-    "PGMachv",
-    "PGFachv",
-    "PGMdialogue",
-    "PGFdialogue",
-    "PGMbattleSpecDialogue",
-    "PGFbattleSpecDialogue",
-    "PGMmiscDialogue",
-    "PGFmiscDialogue",
-    "PGMdoubleBattleDialogue",
-    "PGFdoubleBattleDialogue",
-    "egg",
-    "fightUiHandler",
-    "gameMode",
-    "gameStatsUiHandler",
-    "growth",
-    "menu",
-    "menuUiHandler",
-    "modifierType",
-    "move",
-    "nature",
-    "partyUiHandler",
-    "pokeball",
-    "pokemon",
-    "pokemonInfo",
-    "pokemonInfoContainer",
-    "saveSlotSelectUiHandler",
-    "settings",
-    "splashMessages",
-    "starterSelectUiHandler",
-    "titles",
-    "trainerClasses",
-    "trainerNames",
-    "tutorial",
-    "voucher",
-    "weather"
-  ];
 
   i18next.use(LanguageDetector);
   i18next.use(processor);
@@ -109,7 +63,7 @@ export async function initI18n(): Promise<void> {
     fallbackLng: "en",
     supportedLngs: ["en", "es", "fr", "it", "de", "zh", "pt", "ko"],
     defaultNS: "menu",
-    ns: namespaces,
+    ns: Object.keys(enConfig),
     detection: {
       lookupLocalStorage: "prLang"
     },
