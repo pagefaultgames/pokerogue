@@ -24,7 +24,7 @@ export enum MenuOptions {
   LOG_OUT
 }
 
-const wikiUrl = "https://wiki.pokerogue.net";
+const wikiUrl = "https://wiki.pokerogue.net/start";
 const discordUrl = "https://discord.gg/uWpTfdKG49";
 const githubUrl = "https://github.com/pagefaultgames/pokerogue";
 const redditUrl = "https://www.reddit.com/r/pokerogue";
