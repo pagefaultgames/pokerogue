@@ -3312,7 +3312,7 @@ export class FieldPreventMovesAbAttr extends AbAttr {
   }
 
   /** @param args See {@linkcode FieldPreventMovesAbAttr}.  */
-  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, args: any[]): string {
     return i18next.t("abilityTriggers:movePrevented",
       { moveUser: getPokemonNameWithAffix(args[1] as Pokemon), moveName: (args[0] as Move).name });
   }
@@ -3685,7 +3685,7 @@ function applyAbAttrsInternal<TAttr extends AbAttr>(attrType: { new(...args: any
           }
         }
         if (!quiet) {
-          const message = attr.getTriggerMessage(pokemon, (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name, ...args);
+          const message = attr.getTriggerMessage(pokemon, (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name, args);
           if (message) {
             if (isAsync) {
               pokemon.scene.ui.showText(message, null, () => pokemon.scene.ui.showText(null, 0), null, true);
