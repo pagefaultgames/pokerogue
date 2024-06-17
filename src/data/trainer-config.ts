@@ -610,7 +610,7 @@ export class TrainerConfig {
     this.setVictoryBgm("victory_gym");
     this.setGenModifiersFunc(party => {
       const waveIndex = party[0].scene.currentBattle.waveIndex;
-      return getRandomTeraModifiers(party, waveIndex >= 100 ? 1 : 0, specialtyTypes.length ? specialtyTypes : null);
+      return getRandomTeraModifiers(party, waveIndex >= 100 ? 1 : 0, specialtyTypes.length ? specialtyTypes : null, true);
     });
 
     return this;
@@ -666,7 +666,7 @@ export class TrainerConfig {
     this.setStaticParty();
     this.setBattleBgm("battle_unova_elite");
     this.setVictoryBgm("victory_gym");
-    this.setGenModifiersFunc(party => getRandomTeraModifiers(party, 2, specialtyTypes.length ? specialtyTypes : null));
+    this.setGenModifiersFunc(party => getRandomTeraModifiers(party, 2, specialtyTypes.length ? specialtyTypes : null, true));
 
     return this;
   }
@@ -868,11 +868,22 @@ function getSpeciesFilterRandomPartyMemberFunc(speciesFilter: PokemonSpeciesFilt
   };
 }
 
-function getRandomTeraModifiers(party: EnemyPokemon[], count: integer, types?: Type[]): PersistentModifier[] {
+function getRandomTeraModifiers(party: EnemyPokemon[], count: integer, types?: Type[], forceTeraForOffType?: boolean): PersistentModifier[] {
   const ret: PersistentModifier[] = [];
   const partyMemberIndexes = new Array(party.length).fill(null).map((_, i) => i);
-  for (let t = 0; t < Math.min(count, party.length); t++) {
-    const randomIndex = Utils.randSeedItem(partyMemberIndexes);
+  let offTypes = (forceTeraForOffType && types)? party.filter((p) => {
+    return !p.getTypes().some((t)=>types.includes(t));
+  }).length: 0;
+  const teras = Math.max(offTypes, count);
+  for (let t = 0; t < Math.min(teras, party.length); t++) {
+    const randomIndex = offTypes > 0? party.findIndex((p, i)=>{
+      if (partyMemberIndexes.includes(i) && !p.getTypes().some((t)=>types.includes(t))) {
+        offTypes--;
+        return true;
+      }
+      return false;
+    }):
+      Utils.randSeedItem(partyMemberIndexes);
     partyMemberIndexes.splice(partyMemberIndexes.indexOf(randomIndex), 1);
     ret.push(modifierTypes.TERA_SHARD().generateType(null, [Utils.randSeedItem(types ? types : party[randomIndex].getTypes())]).withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(party[randomIndex]) as PersistentModifier);
   }
