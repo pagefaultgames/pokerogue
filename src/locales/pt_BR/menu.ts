@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 /**
  * The menu namespace holds most miscellaneous text that isn't directly part of the game's
@@ -34,8 +34,6 @@ export const menu: SimpleTranslationEntries = {
   "sessionSuccess": "Sessão carregada com sucesso.",
   "failedToLoadSession": "Não foi possível carregar os dados da sua sessão.\nEles podem estar corrompidos.",
   "boyOrGirl": "Você é um menino ou uma menina?",
-  "boy": "Menino",
-  "girl": "Menina",
   "evolving": "Que?\n{{pokemonName}} tá evoluindo!",
   "stoppedEvolving": "{{pokemonName}} parou de evoluir.",
   "pauseEvolutionsQuestion": "Gostaria de pausar evoluções para {{pokemonName}}?\nEvoluções podem ser religadas na tela de equipe.",
