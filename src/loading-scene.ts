@@ -215,6 +215,9 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas("c_rival_m", "character", "rival_m");
     this.loadAtlas("c_rival_f", "character", "rival_f");
 
+    //Load run-history related images
+    this.loadImage("hall_of_fame", "ui");
+
     // Load pokemon-related images
     this.loadImage("pkmn__back__sub", "pokemon/back", "sub.png");
     this.loadImage("pkmn__sub", "pokemon", "sub.png");

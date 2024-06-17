@@ -1,21 +1,17 @@
 import BattleScene from "../battle-scene";
 import { GameModes } from "../game-mode";
-import { SessionSaveData, parseSessionData, getRunHistoryData, RunHistoryData, RunEntries, decrypt } from "../system/game-data";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
 import * as Utils from "../utils";
-import { PokemonData } from "../system/pokemon-data";
-import { TrainerData } from "../system/trainer-data";
-import Pokemon, { EnemyPokemon, PlayerPokemon } from "../field/pokemon";
-import { PokemonHeldItemModifier } from "../modifier/modifier";
+import PokemonData from "../system/pokemon-data";
 import MessageUiHandler from "./message-ui-handler";
 import i18next from "i18next";
 import {Button} from "../enums/buttons";
 import { BattleType } from "../battle";
-import { TrainerType } from "../enums/trainer-type";
 import { TrainerVariant } from "../field/trainer";
-import { getPartyLuckValue, getLuckString, getLuckTextTint } from "../modifier/modifier-type";
+import { RunHistoryData } from "../system/game-data";
+
 
 export const runCount = 25;
 
@@ -27,9 +23,8 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
   private runsContainer: Phaser.GameObjects.Container;
   private runSelectMessageBox: Phaser.GameObjects.NineSlice;
   private runSelectMessageBoxContainer: Phaser.GameObjects.Container;
-  private runs: runEntry[];
+  private runs: RunEntry[];
 
-  private uiMode: RunHistoryUiMode;
   private runSelectCallback: RunSelectCallback;
 
   private scrollCursor: integer = 0;
@@ -93,10 +88,11 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
     const error = false;
 
     if (button === Button.ACTION || button === Button.CANCEL) {
-      const originalCallback = this.runSelectCallback;
       if (button === Button.ACTION) {
         const cursor = this.cursor + this.scrollCursor;
-        console.log("Action --> page with more detailed run information");
+        if (this.runs[cursor].hasData) {
+          this.scene.ui.setOverlayMode(Mode.RUN_INFO, this.runs[cursor].entryData, true);
+        }
         success = true;
         return success;
       } else {
@@ -135,12 +131,13 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
   async populateruns(scene: BattleScene) {
     const response = await this.scene.gameData.getRunHistoryData(this.scene);
     const timestamps = Object.keys(response);
+    const timestampsNo = timestamps.map(Number);
     if (timestamps.length > 1) {
-      timestamps.sort((a, b) => a - b);
+      timestampsNo.sort((a, b) => a - b);
     }
     const entryCount = timestamps.length;
     for (let s = 0; s < entryCount; s++) {
-      const entry = new RunEntry(this.scene, response, timestamps[s], s);
+      const entry = new RunEntry(this.scene, response, timestampsNo[s].toString(), s);
       this.scene.add.existing(entry);
       this.runsContainer.add(entry);
       this.runs.push(entry);
@@ -215,18 +212,21 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
 class RunEntry extends Phaser.GameObjects.Container {
   public slotId: integer;
   public hasData: boolean;
+  public entryData: RunHistoryData;
   private loadingLabel: Phaser.GameObjects.Text;
 
-  constructor(scene: BattleScene, runHistory: RunHistoryData, timestamp: string, slotId: integer) {
+  constructor(scene: BattleScene, runHistory: any, timestamp: string, slotId: integer) {
     super(scene, 0, slotId*56);
 
     this.slotId = slotId;
+    this.hasData = true;
+    this.entryData = runHistory[timestamp];
 
-    this.setup(runHistory[timestamp]);
+    this.setup(this.entryData);
 
   }
 
-  setup(run: RunHistoryData) {
+  setup(run: any) {
 
     const victory = run.victory;
     const data = this.scene.gameData.parseSessionData(JSON.stringify(run.entry));
@@ -236,12 +236,12 @@ class RunEntry extends Phaser.GameObjects.Container {
 
 
     if (victory) {
-      const gameOutcomeLabel = addTextObject(this.scene, 8, 5, "Victory", TextStyle.WINDOW);
+      const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `${i18next.t("runHistory:victory")}`, TextStyle.WINDOW);
       this.add(gameOutcomeLabel);
     } else {
       if (data.battleType === BattleType.WILD) {
         const enemyContainer = this.scene.add.container(8, 5);
-        const gameOutcomeLabel = addTextObject(this.scene, 0, 0, "Defeated by ", TextStyle.WINDOW);
+        const gameOutcomeLabel = addTextObject(this.scene, 0, 0, `${i18next.t("runHistory:defeatedWild")}`, TextStyle.WINDOW);
         enemyContainer.add(gameOutcomeLabel);
         data.enemyParty.forEach((enemyData, e) => {
           //This allows the enemyParty to be shown - doubles or sings -> 58+(e*8)
@@ -250,7 +250,7 @@ class RunEntry extends Phaser.GameObjects.Container {
           enemyData.boss = false;
           const enemy = enemyData.toPokemon(this.scene);
           const enemyIcon = this.scene.addPokemonIcon(enemy, 0, 0, 0, 0);
-          const enemyLevel = addTextObject(this.scene, 32, 20, `Lv${Utils.formatLargeNumber(enemy.level, 1000)}`, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
+          const enemyLevel = addTextObject(this.scene, 32, 20, `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
           enemyLevel.setShadow(0, 0, null);
           enemyLevel.setStroke("#424242", 14);
           enemyLevel.setOrigin(1, 0);
@@ -262,46 +262,46 @@ class RunEntry extends Phaser.GameObjects.Container {
         this.add(enemyContainer);
       } else if (data.battleType === BattleType.TRAINER) {
         const tObj = data.trainer.toTrainer(this.scene);
-        const tType = TrainerType[data.trainer.trainerType];
         if (data.trainer.trainerType >= 375) {
-          const gameOutcomeLabel = addTextObject(this.scene, 8, 5, "Defeated by Rival", TextStyle.WINDOW);
+          const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `${i18next.t("runHistory:defeatedRival")}`, TextStyle.WINDOW);
           //otherwise it becomes Rival_5 in Ivy's case
           this.add(gameOutcomeLabel);
+        } else if (data.trainer.variant === TrainerVariant.DOUBLE) {
+          const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `${i18next.t("runHistory:defeatedTrainer")+tObj.config.nameDouble+" "+tObj.getName(0, false)}`, TextStyle.WINDOW);
+          this.add(gameOutcomeLabel);
         } else {
-          if (tObj.variant === TrainerVariant.DOUBLE) {
-            const gameOutcomeLabel = addTextObject(this.scene, 8, 5, "Defeated by Duo", TextStyle.WINDOW);
-          }
-          const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `Defeated by ${tObj.getName(0, true)}`, TextStyle.WINDOW);
+          const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `${i18next.t("runHistory:defeatedTrainer")+tObj.getName(0, true)}`, TextStyle.WINDOW);
           this.add(gameOutcomeLabel);
         }
       }
     }
 
-
+    const gameModeLabel = addTextObject(this.scene, 8, 19, "", TextStyle.WINDOW);
     switch (data.gameMode) {
-      case GameModes.DAILY:
-        const dailyModeLabel = addTextObject(this.scene, 8, 19, `${i18next.t('gameMode:dailyRun') || "Unknown"} - Wave ${data.waveIndex}`, TextStyle.WINDOW);
-        this.add(dailyModeLabel);
-        break;
-      case GameModes.SPLICED_ENDLESS:
-        const endlessSplicedLabel = addTextObject(this.scene, 8, 19, `${i18next.t('gameMode:endlessSpliced') || "Unknown"} - Wave ${data.waveIndex}`, TextStyle.WINDOW);
-        this.add(endlessSplicedLabel);
-        break;
-      case GameModes.ENDLESS:
-      case GameModes.CLASSIC:
-      case GameModes.CHALLENGE:
-        const gameModeLabel = addTextObject(this.scene, 8, 19, `${i18next.t('gameMode:'+GameModes[data.gameMode].toLowerCase()) || "Unknown"} - Wave ${data.waveIndex}`, TextStyle.WINDOW);
-        this.add(gameModeLabel);
-        break;
+    case GameModes.DAILY:
+      gameModeLabel.appendText(`${i18next.t("gameMode:dailyRun")}`, false);
+      break;
+    case GameModes.SPLICED_ENDLESS:
+      gameModeLabel.appendText(`${i18next.t("gameMode:splicedEndless")}`, false);
+      break;
+    case GameModes.ENDLESS:
+      gameModeLabel.appendText(`${i18next.t("gameMode:endless")}`, false);
+      break;
+    case GameModes.CLASSIC:
+      gameModeLabel.appendText(`${i18next.t("gameMode:classic")}`, false);
+      break;
+    case GameModes.CHALLENGE:
+      gameModeLabel.appendText(`${i18next.t("gameMode:challenge")}`, false);
+      break;
     }
-    
-    const date = new Date(data.timestamp);
+    gameModeLabel.appendText(" - ", false);
+    gameModeLabel.appendText(i18next.t("saveSlotSelectUiHandler:wave")+" "+data.waveIndex, false);
+    this.add(gameModeLabel);
 
     const timestampLabel = addTextObject(this.scene, 8, 33, new Date(data.timestamp).toLocaleString(), TextStyle.WINDOW);
     this.add(timestampLabel);
 
     const pokemonIconsContainer = this.scene.add.container(125, 17);
-    let luckValue = 0;
 
     data.party.forEach((p: PokemonData, i: integer) => {
       const iconContainer = this.scene.add.container(26 * i, 0);
@@ -309,7 +309,7 @@ class RunEntry extends Phaser.GameObjects.Container {
       const pokemon = p.toPokemon(this.scene);
       const icon = this.scene.addPokemonIcon(pokemon, 0, 0, 0, 0);
 
-      const text = addTextObject(this.scene, 32, 20, `Lv${Utils.formatLargeNumber(pokemon.level, 1000)}`, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
+      const text = addTextObject(this.scene, 32, 20, `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(pokemon.level, 1000)}`, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
       text.setShadow(0, 0, null);
       text.setStroke("#424242", 14);
       text.setOrigin(1, 0);
@@ -319,52 +319,10 @@ class RunEntry extends Phaser.GameObjects.Container {
 
       pokemonIconsContainer.add(iconContainer);
 
-      luckValue += pokemon.getLuck();
-
       pokemon.destroy();
     });
 
     this.add(pokemonIconsContainer);
-
-    //Display Score - only visible for Daily Mode
-    //Display Luck - only visible for Endless Modes
-    switch (data.gameMode) {
-    case GameModes.DAILY:
-      const runScore = data.score;
-      const scoreText = addTextObject(this.scene, 240, 5, `Score: ${data.score}`, TextStyle.WINDOW, {color: "#f89890"});
-      this.add(scoreText);
-      break;
-    case GameModes.ENDLESS:
-    case GameModes.SPLICED_ENDLESS:
-      if (luckValue > 14) {
-        luckValue = 14;
-      }
-      const luckTextTint = "#"+(getLuckTextTint(luckValue)).toString(16);
-      const luckText = addTextObject(this.scene, 240, 5, `Luck: ${getLuckString(luckValue)}`, TextStyle.WINDOW, {color: `${luckTextTint}`});
-      this.add(luckText);
-      break;
-    }
-    /*
-    const modifiersModule = import("../modifier/modifier");
-
-    const modifierIconsContainer = this.scene.add.container(148, 30);
-    modifierIconsContainer.setScale(0.5);
-    let visibleModifierIndex = 0;
-    for (const m of data.modifiers) {
-      const modifier = m.toModifier(this.scene, modifiersModule[m.className]);
-      if (modifier instanceof PokemonHeldItemModifier) {
-        continue;
-      }
-      const icon = modifier.getIcon(this.scene, false);
-      icon.setPosition(24 * visibleModifierIndex, 0);
-      modifierIconsContainer.add(icon);
-      if (++visibleModifierIndex === 12) {
-        break;
-      }
-    }
-
-    this.add(modifierIconsContainer);
-    */
   }
 }
 

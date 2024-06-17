@@ -44,9 +44,9 @@ import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-han
 import KeyboardBindingUiHandler from "#app/ui/settings/keyboard-binding-ui-handler";
 import SettingsDisplayUiHandler from "./settings/settings-display-ui-handler";
 import SettingsAudioUiHandler from "./settings/settings-audio-ui-handler";
+import RunHistoryUiHandler from "./run-history-ui-handler";
+import RunInfoUiHandler from "./run-info-ui-handler";
 import { PlayerGender } from "#enums/player-gender";
-import BgmBar from "#app/ui/bgm-bar";
-import RenameFormUiHandler from "./rename-form-ui-handler";
 
 export enum Mode {
   MESSAGE,
@@ -74,6 +74,8 @@ export enum Mode {
   SETTINGS_KEYBOARD,
   KEYBOARD_BINDING,
   ACHIEVEMENTS,
+  RUN_HISTORY,
+  RUN_INFO,
   GAME_STATS,
   VOUCHERS,
   EGG_LIST,
@@ -84,8 +86,7 @@ export enum Mode {
   SESSION_RELOAD,
   UNAVAILABLE,
   OUTDATED,
-  CHALLENGE_SELECT,
-  RENAME_POKEMON
+  CHALLENGE_SELECT
 }
 
 const transitionModes = [
@@ -117,12 +118,12 @@ const noTransitionModes = [
   Mode.GAME_STATS,
   Mode.VOUCHERS,
   Mode.LOGIN_FORM,
+  Mode.RUN_HISTORY,
   Mode.REGISTRATION_FORM,
   Mode.LOADING,
   Mode.SESSION_RELOAD,
   Mode.UNAVAILABLE,
-  Mode.OUTDATED,
-  Mode.RENAME_POKEMON
+  Mode.OUTDATED
 ];
 
 export default class UI extends Phaser.GameObjects.Container {
@@ -131,7 +132,6 @@ export default class UI extends Phaser.GameObjects.Container {
   public handlers: UiHandler[];
   private overlay: Phaser.GameObjects.Rectangle;
   public achvBar: AchvBar;
-  public bgmBar: BgmBar;
   public savingIcon: SavingIconHandler;
 
   private tooltipContainer: Phaser.GameObjects.Container;
@@ -164,7 +164,6 @@ export default class UI extends Phaser.GameObjects.Container {
       new OptionSelectUiHandler(scene),
       new MenuUiHandler(scene),
       new OptionSelectUiHandler(scene, Mode.MENU_OPTION_SELECT),
-      // settings
       new SettingsUiHandler(scene),
       new SettingsDisplayUiHandler(scene),
       new SettingsAudioUiHandler(scene),
@@ -173,6 +172,8 @@ export default class UI extends Phaser.GameObjects.Container {
       new SettingsKeyboardUiHandler(scene),
       new KeyboardBindingUiHandler(scene),
       new AchvsUiHandler(scene),
+      new RunHistoryUiHandler(scene),
+      new RunInfoUiHandler(scene),
       new GameStatsUiHandler(scene),
       new VouchersUiHandler(scene),
       new EggListUiHandler(scene),
@@ -183,18 +184,16 @@ export default class UI extends Phaser.GameObjects.Container {
       new SessionReloadModalUiHandler(scene),
       new UnavailableModalUiHandler(scene),
       new OutdatedModalUiHandler(scene),
-      new GameChallengesUiHandler(scene),
-      new RenameFormUiHandler(scene),
+      new GameChallengesUiHandler(scene)
     ];
   }
 
   setup(): void {
-    this.setName(`ui-${Mode[this.mode]}`);
+    this.setName("container-ui");
     for (const handler of this.handlers) {
       handler.setup();
     }
     this.overlay = this.scene.add.rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6, 0);
-    this.overlay.setName("rect-ui-overlay");
     this.overlay.setOrigin(0, 0);
     (this.scene as BattleScene).uiContainer.add(this.overlay);
     this.overlay.setVisible(false);
@@ -213,19 +212,15 @@ export default class UI extends Phaser.GameObjects.Container {
 
   private setupTooltip() {
     this.tooltipContainer = this.scene.add.container(0, 0);
-    this.tooltipContainer.setName("tooltip");
     this.tooltipContainer.setVisible(false);
 
     this.tooltipBg = addWindow(this.scene as BattleScene, 0, 0, 128, 31);
-    this.tooltipBg.setName("window-tooltip-bg");
     this.tooltipBg.setOrigin(0, 0);
 
     this.tooltipTitle = addTextObject(this.scene, 64, 4, "", TextStyle.TOOLTIP_TITLE);
-    this.tooltipTitle.setName("text-tooltip-title");
     this.tooltipTitle.setOrigin(0.5, 0);
 
     this.tooltipContent = addTextObject(this.scene, 6, 16, "", TextStyle.TOOLTIP_CONTENT);
-    this.tooltipContent.setName("text-tooltip-content");
     this.tooltipContent.setWordWrapWidth(696);
 
     this.tooltipContainer.add(this.tooltipBg);
@@ -235,8 +230,8 @@ export default class UI extends Phaser.GameObjects.Container {
     (this.scene as BattleScene).uiContainer.add(this.tooltipContainer);
   }
 
-  getHandler<H extends UiHandler = UiHandler>(): H {
-    return this.handlers[this.mode] as H;
+  getHandler(): UiHandler {
+    return this.handlers[this.mode];
   }
 
   getMessageHandler(): BattleMessageUiHandler {
@@ -253,6 +248,7 @@ export default class UI extends Phaser.GameObjects.Container {
       battleScene?.processInfoButton(pressed);
       return true;
     }
+
     battleScene?.processInfoButton(false);
     return true;
   }
@@ -459,6 +455,7 @@ export default class UI extends Phaser.GameObjects.Container {
             touchControls.dataset.uiMode = Mode[mode];
           }
           this.getHandler().show(args);
+          console.log(args);
         }
         resolve();
       };
