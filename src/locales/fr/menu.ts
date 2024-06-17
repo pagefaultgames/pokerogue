@@ -118,7 +118,7 @@ export const menu: SimpleTranslationEntries = {
   "reset": "Réinitialiser",
   "requireReload": "Redémarrage requis",
   "action": "Action",
-  "pressToBind": "Selectionner pour assigner",
+  "pressToBind": "Sélectionnez pour assigner",
   "pressButton": "Appuyez sur un bouton…",
   "buttonUp": "Haut",
   "buttonDown": "Bas",
