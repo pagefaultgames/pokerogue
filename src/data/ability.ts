@@ -1648,8 +1648,8 @@ export class PostSummonRemoveArenaTagAbAttr extends PostSummonAbAttr {
   }
 
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
-    for (const arena of this.arenaTags) {
-      pokemon.scene.arena.removeTag(arena);
+    for (const arenaTag of this.arenaTags) {
+      pokemon.scene.arena.removeTag(arenaTag);
     }
     return true;
   }
