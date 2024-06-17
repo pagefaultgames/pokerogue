@@ -40,6 +40,7 @@ import { voucher } from "./voucher";
 import { weather } from "./weather";
 import { partyUiHandler } from "./party-ui-handler";
 import { settings } from "#app/locales/fr/settings.js";
+import { pokemonSummary } from "./pokemon-summary";
 
 export const frConfig = {
   ability: ability,
@@ -74,6 +75,7 @@ export const frConfig = {
   pokemon: pokemon,
   pokemonInfo: pokemonInfo,
   pokemonInfoContainer: pokemonInfoContainer,
+  pokemonSummary: pokemonSummary,
   saveSlotSelectUiHandler: saveSlotSelectUiHandler,
   settings: settings,
   splashMessages: splashMessages,
