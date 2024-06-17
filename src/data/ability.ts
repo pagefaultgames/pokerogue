@@ -1282,17 +1282,18 @@ export class VariableMovePowerBoostAbAttr extends VariableMovePowerAbAttr {
   }
 }
 
-export class FieldVariableMovePowerAbAttr extends AbAttr {
-  applyPreAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: Move, args: any[]): boolean {
-    //const power = args[0] as Utils.NumberHolder;
-    return false;
-  }
-}
-
-export class FieldMovePowerBoostAbAttr extends FieldVariableMovePowerAbAttr {
+/**
+ * Boosts the power of a Pokémon's move under certain conditions.
+ * @extends AbAttr
+ */
+export class FieldMovePowerBoostAbAttr extends AbAttr {
   private condition: PokemonAttackCondition;
   private powerMultiplier: number;
 
+  /**
+   * @param condition - A function that determines whether the power boost condition is met.
+   * @param powerMultiplier - The multiplier to apply to the move's power when the condition is met.
+   */
   constructor(condition: PokemonAttackCondition, powerMultiplier: number) {
     super(false);
     this.condition = condition;
@@ -1310,9 +1311,31 @@ export class FieldMovePowerBoostAbAttr extends FieldVariableMovePowerAbAttr {
   }
 }
 
+/**
+ * Boosts the power of a specific type of move.
+ * @extends FieldMovePowerBoostAbAttr
+ */
 export class FieldMoveTypePowerBoostAbAttr extends FieldMovePowerBoostAbAttr {
+  /**
+   * @param boostedType - The type of move that will receive the power boost.
+   * @param powerMultiplier - The multiplier to apply to the move's power, defaults to 1.5 if not provided.
+   */
   constructor(boostedType: Type, powerMultiplier?: number) {
     super((pokemon, defender, move) => move.type === boostedType, powerMultiplier || 1.5);
+  }
+}
+
+/**
+ * Boosts the power of moves in specified categories.
+ * @extends FieldMovePowerBoostAbAttr
+ */
+export class AllyMoveCategoryPowerBoostAbAttr extends FieldMovePowerBoostAbAttr {
+  /**
+   * @param boostedCategories - The categories of moves that will receive the power boost.
+   * @param powerMultiplier - The multiplier to apply to the move's power.
+   */
+  constructor(boostedCategories: MoveCategory[], powerMultiplier: number) {
+    super((pokemon, defender, move) => boostedCategories.includes(move.category), powerMultiplier);
   }
 }
 
@@ -4548,7 +4571,7 @@ export function initAbilities() {
     new Ability(Abilities.DANCER, 7)
       .attr(PostDancingMoveAbAttr),
     new Ability(Abilities.BATTERY, 7)
-      .unimplemented(),
+      .attr(AllyMoveCategoryPowerBoostAbAttr, [MoveCategory.SPECIAL], 1.3),
     new Ability(Abilities.FLUFFY, 7)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => move.hasFlag(MoveFlags.MAKES_CONTACT), 0.5)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => move.type === Type.FIRE, 2)
@@ -4660,7 +4683,7 @@ export function initAbilities() {
       .attr(IceFaceMoveImmunityAbAttr, (target, user, move) => move.category === MoveCategory.PHYSICAL && !!target.getTag(BattlerTagType.ICE_FACE))
       .ignorable(),
     new Ability(Abilities.POWER_SPOT, 8)
-      .unimplemented(),
+      .attr(AllyMoveCategoryPowerBoostAbAttr, [MoveCategory.SPECIAL, MoveCategory.PHYSICAL], 1.3),
     new Ability(Abilities.MIMICRY, 8)
       .unimplemented(),
     new Ability(Abilities.SCREEN_CLEANER, 8)
