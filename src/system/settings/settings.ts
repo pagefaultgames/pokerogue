@@ -467,7 +467,7 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     scene.typeHints = Setting[index].options[value] === "On";
     break;
   case SettingKeys.Target_Resolution:
-    scene.resolutionScale = parseInt(Setting[index].options[value].split('p')[0]) / 180;
+    scene.resolutionScale = parseInt(Setting[index].options[value].split("p")[0]) / 180;
     localStorage.setItem("resolutionScale", scene.resolutionScale);
     break;
   case SettingKeys.Language:

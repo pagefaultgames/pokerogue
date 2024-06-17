@@ -1,10 +1,7 @@
 export const legacyCompatibleImages: string[] = [];
 
-var resolutionScale = localStorage.getItem("resolutionScale");
-if (resolutionScale) {
-  var width = 320*resolutionScale;
-  var height = 180*resolutionScale;
-} else {
+let resolutionScale = localStorage.getItem("resolutionScale");
+if (!resolutionScale) {
   localStorage.setItem("resolutionScale", 6);
   resolutionScale = 6;
 }

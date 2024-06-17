@@ -25,10 +25,12 @@ window.addEventListener("unhandledrejection", (event) => {
   //alert(errorString);
 });
 
-var resolutionScale = localStorage.getItem("resolutionScale");
+let resolutionScale = localStorage.getItem("resolutionScale");
+let width = 1920;
+let height = 1080;
 if (resolutionScale) {
-  var width = 320*resolutionScale;
-  var height = 180*resolutionScale;
+  width = 320*resolutionScale;
+  height = 180*resolutionScale;
 } else {
   localStorage.setItem("resolutionScale", 6);
   resolutionScale = 6;
