@@ -70,4 +70,9 @@ export const battle: SimpleTranslationEntries = {
   "statHarshlyFell": "[[가]] 크게 떨어졌다!",
   "statSeverelyFell": "[[가]] 매우 크게 떨어졌다!",
   "statWontGoAnyLower": "[[는]] 더 떨어지지 않는다!",
+  "retryBattle": "이 배틀의 처음부터 재도전하시겠습니까?",
+  "receivedNewModifier": "{{modifierName}}[[를]]\n손에 넣었다!",
+  "unlockedSomething": "{{unlockedThing}}[[가]]\n해금되었다.",
+  "congratulations": "축하합니다!",
+  "beatModeFirstTime": "{{speciesName}}[[가]] {{gameMode}} 모드를 처음으로 클리어했다!\n{{newModifier}}[[를]] 손에 넣었다!",
 } as const;
