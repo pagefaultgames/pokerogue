@@ -9,10 +9,33 @@ import { EaseType } from "#enums/ease-type";
 import { MoneyFormat } from "#enums/money-format";
 import { PlayerGender } from "#enums/player-gender";
 
-const MUTE = "Mute";
-const VOLUME_OPTIONS = new Array(11).fill(null).map((_, i) => i ? (i * 10).toString() : MUTE);
-const OFF_ON = ["Off", "On"];
-const AUTO_DISABLED = ["Auto", "Disabled"];
+const VOLUME_OPTIONS: SettingOption[] = new Array(11).fill(null).map((_, i) => i ? {
+  value: (i * 10).toString(),
+  label: (i * 10).toString(),
+} : {
+  value: "Mute",
+  label: i18next.t("menu:mute")
+});
+const OFF_ON: SettingOption[] = [
+  {
+    value: "Off",
+    label: i18next.t("menu:off")
+  },
+  {
+    value: "On",
+    label: i18next.t("menu:on")
+  }
+];
+const AUTO_DISABLED: SettingOption[] = [
+  {
+    value: "Auto",
+    label: i18next.t("menu:auto")
+  },
+  {
+    value: "Disabled",
+    label: i18next.t("menu:disabled")
+  }
+];
 
 /**
  * Types for helping separate settings to different menus
@@ -23,10 +46,15 @@ export enum SettingType {
   AUDIO
 }
 
+type SettingOption = {
+  value: string,
+  label: string
+};
+
 export interface Setting {
   key: string
   label: string
-  options: Array<string>
+  options: SettingOption[]
   default: number
   type: SettingType
   requireReload?: boolean
@@ -77,164 +105,321 @@ export const SettingKeys = {
 export const Setting: Array<Setting> = [
   {
     key: SettingKeys.Game_Speed,
-    label: "Game Speed",
-    options: ["1x", "1.25x", "1.5x", "2x", "2.5x", "3x", "4x", "5x"],
+    label: i18next.t("menu:gameSpeed"),
+    options: [
+      {
+        value: "1",
+        label: "1x"
+      },
+      {
+        value: "1.25",
+        label: "1.25x"
+      },
+      {
+        value: "1.5",
+        label: "1.5x"
+      },
+      {
+        value: "2",
+        label: "2x"
+      },
+      {
+        value: "2.5",
+        label: "2.5x"
+      },
+      {
+        value: "3",
+        label: "3x"
+      },
+      {
+        value: "4",
+        label: "4x"
+      },
+      {
+        value: "5",
+        label: "5x"
+      }
+    ],
     default: 3,
     type: SettingType.GENERAL
   },
   {
     key: SettingKeys.HP_Bar_Speed,
-    label: "HP Bar Speed",
-    options: ["Normal", "Fast", "Faster", "Skip"],
+    label: i18next.t("menu:hpBarSpeed"),
+    options: [
+      {
+        value: "Normal",
+        label: i18next.t("menu:normal")
+      },
+      {
+        value: "Fast",
+        label: i18next.t("menu:fast")
+      },
+      {
+        value: "Faster",
+        label: i18next.t("menu:faster")
+      },
+      {
+        value: "Skip",
+        label: i18next.t("menu:skip")
+      }
+    ],
     default: 0,
     type: SettingType.GENERAL
   },
   {
     key: SettingKeys.EXP_Gains_Speed,
-    label: "EXP Gains Speed",
-    options: ["Normal", "Fast", "Faster", "Skip"],
+    label: i18next.t("menu:expGainsSpeed"),
+    options: [
+      {
+        value: "Normal",
+        label: i18next.t("menu:normal")
+      },
+      {
+        value: "Fast",
+        label: i18next.t("menu:fast")
+      },
+      {
+        value: "Faster",
+        label: i18next.t("menu:faster")
+      },
+      {
+        value: "Skip",
+        label: i18next.t("menu:skip")
+      }
+    ],
     default: 0,
     type: SettingType.GENERAL
   },
   {
     key: SettingKeys.EXP_Party_Display,
-    label: "EXP Party Display",
-    options: ["Normal", "Level Up Notification", "Skip"],
+    label: i18next.t("menu:expPartyDisplay"),
+    options: [
+      {
+        value: "Normal",
+        label: i18next.t("menu:normal")
+      },
+      {
+        value: "Level Up Notification",
+        label: i18next.t("menu:levelUpNotifications")
+      },
+      {
+        value: "Skip",
+        label: i18next.t("menu:skip")
+      }
+    ],
     default: 0,
     type: SettingType.GENERAL
   },
   {
     key: SettingKeys.Skip_Seen_Dialogues,
-    label: "Skip Seen Dialogues",
+    label: i18next.t("menu:skipSeenDialogues"),
     options: OFF_ON,
     default: 0,
     type: SettingType.GENERAL
   },
   {
     key: SettingKeys.Battle_Style,
-    label: "Battle Style",
-    options: ["Switch", "Set"],
+    label: i18next.t("menu:battleStyle"),
+    options: [
+      {
+        value: "Switch",
+        label: i18next.t("menu:switch")
+      },
+      {
+        value: "Set",
+        label: i18next.t("menu:set")
+      }
+    ],
     default: 0,
     type: SettingType.GENERAL
   },
   {
     key: SettingKeys.Enable_Retries,
-    label: "Enable Retries",
+    label: i18next.t("menu:enableRetries"),
     options: OFF_ON,
     default: 0,
     type: SettingType.GENERAL
   },
   {
     key: SettingKeys.Tutorials,
-    label: "Tutorials",
+    label: i18next.t("menu:tutorials"),
     options: OFF_ON,
     default: 1,
     type: SettingType.GENERAL
   },
   {
     key: SettingKeys.Touch_Controls,
-    label: "Touch Controls",
+    label: i18next.t("menu:touchControls"),
     options: AUTO_DISABLED,
     default: 0,
     type: SettingType.GENERAL
   },
   {
     key: SettingKeys.Vibration,
-    label: "Vibration",
+    label: i18next.t("menu:vibrations"),
     options: AUTO_DISABLED,
     default: 0,
     type: SettingType.GENERAL
   },
   {
     key: SettingKeys.Language,
-    label: "Language",
-    options: ["English", "Change"],
+    label: i18next.t("menu:language"),
+    options: [
+      {
+        value: "English",
+        label: "English"
+      },
+      {
+        value: "Change",
+        label: i18next.t("menu:change")
+      }
+    ],
     default: 0,
     type: SettingType.DISPLAY,
     requireReload: true
   },
   {
     key: SettingKeys.UI_Theme,
-    label: "UI Theme",
-    options: ["Default", "Legacy"],
+    label: i18next.t("menu:uiTheme"),
+    options: [
+      {
+        value: "Default",
+        label: i18next.t("menu:default")
+      },
+      {
+        value: "Legacy",
+        label: i18next.t("menu:legacy")
+      }
+    ],
     default: 0,
     type: SettingType.DISPLAY,
     requireReload: true
   },
   {
     key: SettingKeys.Window_Type,
-    label: "Window Type",
-    options: new Array(5).fill(null).map((_, i) => (i + 1).toString()),
+    label: i18next.t("menu:windowType"),
+    options: new Array(5).fill(null).map((_, i) => {
+      const windowType = (i + 1).toString();
+      return {
+        value: windowType,
+        label: windowType
+      };
+    }),
     default: 0,
     type: SettingType.DISPLAY
   },
   {
     key: SettingKeys.Money_Format,
-    label: "Money Format",
-    options: ["Normal", "Abbreviated"],
+    label: i18next.t("menu:moneyFormat"),
+    options: [
+      {
+        value: "Normal",
+        label: i18next.t("menu:normal")
+      },
+      {
+        value: "Abbreviated",
+        label: i18next.t("menu:abbreviated")
+      }
+    ],
     default: 0,
     type: SettingType.DISPLAY
   },
   {
     key: SettingKeys.Damage_Numbers,
-    label: "Damage Numbers",
-    options: ["Off", "Simple", "Fancy"],
+    label: i18next.t("menu:damageNumbers"),
+    options: [
+      {
+        value: "Off",
+        label: i18next.t("menu:off")
+      },
+      {
+        value: "Simple",
+        label: i18next.t("menu:simple")
+      },
+      {
+        value: "Fancy",
+        label: i18next.t("menu:fancy")
+      }
+    ],
     default: 0,
     type: SettingType.DISPLAY
   },
   {
     key: SettingKeys.Move_Animations,
-    label: "Move Animations",
+    label: i18next.t("menu:moveAnimations"),
     options: OFF_ON,
     default: 1,
     type: SettingType.DISPLAY
   },
   {
     key: SettingKeys.Show_Stats_on_Level_Up,
-    label: "Show Stats on Level Up",
+    label: i18next.t("menu:showStatsOnLevelUp"),
     options: OFF_ON,
     default: 1,
     type: SettingType.DISPLAY
   },
   {
     key: SettingKeys.Candy_Upgrade_Notification,
-    label: "Candy Upgrade Notification",
-    options: ["Off", "Passives Only", "On"],
+    label: i18next.t("menu:candyUpgradeNotification"),
+    options: [
+      {
+        value: "Off",
+        label: i18next.t("menu:off")
+      },
+      {
+        value: "Passives Only",
+        label: i18next.t("menu:passivesOnly")
+      },
+      {
+        value: "On",
+        label: i18next.t("menu:on")
+      }
+    ],
     default: 0,
     type: SettingType.DISPLAY
   },
   {
     key: SettingKeys.Candy_Upgrade_Display,
-    label: "Candy Upgrade Display",
-    options: ["Icon", "Animation"],
+    label: i18next.t("menu:candyUpgradeDisplay"),
+    options: [
+      {
+        value: "Icon",
+        label: i18next.t("menu:icon")
+      },
+      {
+        value: "Animation",
+        label: i18next.t("menu:animation")
+      }
+    ],
     default: 0,
     type: SettingType.DISPLAY,
     requireReload: true
   },
   {
     key: SettingKeys.Move_Info,
-    label: "Move Info",
+    label: i18next.t("menu:moveInfo"),
     options: OFF_ON,
     default: 1,
     type: SettingType.DISPLAY
   },
   {
     key: SettingKeys.Show_Moveset_Flyout,
-    label: "Show Moveset Flyout",
+    label: i18next.t("menu:showMovesetFlyout"),
     options: OFF_ON,
     default: 1,
     type: SettingType.DISPLAY
   },
   {
     key: SettingKeys.Show_Arena_Flyout,
-    label: "Show Battle Effects Flyout",
+    label: i18next.t("menu:showArenaFlyout"),
     options: OFF_ON,
     default: 1,
     type: SettingType.DISPLAY
   },
   {
     key: SettingKeys.Show_Time_Of_Day_Widget,
-    label: "Show Time of Day Widget",
+    label: i18next.t("menu:showTimeOfDayWidget"),
     options: OFF_ON,
     default: 1,
     type: SettingType.DISPLAY,
@@ -242,65 +427,101 @@ export const Setting: Array<Setting> = [
   },
   {
     key: SettingKeys.Time_Of_Day_Animation,
-    label: "Time of Day Animation",
-    options: ["Bounce", "Back"],
+    label: i18next.t("menu:timeOfDayAnimation"),
+    options: [
+      {
+        value: "Bounce",
+        label: i18next.t("menu:bounce")
+      },
+      {
+        value: "Back",
+        label: i18next.t("menu:back")
+      }
+    ],
     default: 0,
     type: SettingType.DISPLAY
   },
   {
     key: SettingKeys.Sprite_Set,
-    label: "Sprite Set",
-    options: ["Consistent", "Mixed Animated"],
+    label: i18next.t("menu:spriteSet"),
+    options: [
+      {
+        value: "Consistent",
+        label: i18next.t("menu:consistent")
+      },
+      {
+        value: "Mixed Animated",
+        label: i18next.t("menu:mixedAnimated")
+      }
+    ],
     default: 0,
     type: SettingType.DISPLAY,
     requireReload: true
   },
   {
     key: SettingKeys.Fusion_Palette_Swaps,
-    label: "Fusion Palette Swaps",
+    label: i18next.t("menu:fusionPaletteSwaps"),
     options: OFF_ON,
     default: 1,
     type: SettingType.DISPLAY
   },
   {
     key: SettingKeys.Player_Gender,
-    label: "Player Gender",
-    options: ["Boy", "Girl"],
+    label: i18next.t("menu:playerGender"),
+    options: [
+      {
+        value: "Boy",
+        label: i18next.t("menu:boy")
+      },
+      {
+        value: "Girl",
+        label: i18next.t("menu:girl")
+      }
+    ],
     default: 0,
     type: SettingType.DISPLAY
   },
   {
     key: SettingKeys.Type_Hints,
-    label: "Type hints",
+    label: i18next.t("menu:typeHints"),
     options: OFF_ON,
     default: 0,
     type: SettingType.DISPLAY
   },
   {
     key: SettingKeys.Master_Volume,
-    label: "Master Volume",
+    label: i18next.t("menu:masterVolume"),
     options: VOLUME_OPTIONS,
     default: 5,
     type: SettingType.AUDIO
   },
   {
     key: SettingKeys.BGM_Volume,
-    label: "BGM Volume",
+    label: i18next.t("menu:bgmVolume"),
     options: VOLUME_OPTIONS,
     default: 10,
     type: SettingType.AUDIO
   },
   {
     key: SettingKeys.SE_Volume,
-    label: "SE Volume",
+    label: i18next.t("menu:seVolume"),
     options: VOLUME_OPTIONS,
     default: 10,
     type: SettingType.AUDIO
   },
   {
     key: SettingKeys.Music_Preference,
-    label: "Music Preference",
-    options: ["Consistent", "Mixed"],
+    label: i18next.t("menu:musicPreference"),
+    options: [
+      {
+        value: "Consistent",
+        label: i18next.t("menu:consistent")
+      },
+      {
+        value: "Mixed",
+        label: i18next.t("menu:mixed")
+      }
+    ],
     default: 0,
     type: SettingType.AUDIO,
     requireReload: true
@@ -333,23 +554,23 @@ export function resetSettings(scene: BattleScene) {
  */
 export function setSetting(scene: BattleScene, setting: string, value: integer): boolean {
   const index: number = settingIndex(setting);
-  if ( index === -1) {
+  if (index === -1) {
     return false;
   }
   switch (Setting[index].key) {
   case SettingKeys.Game_Speed:
-    scene.gameSpeed = parseFloat(Setting[index].options[value].replace("x", ""));
+    scene.gameSpeed = parseFloat(Setting[index].options[value].value.replace("x", ""));
     break;
   case SettingKeys.Master_Volume:
-    scene.masterVolume = value ? parseInt(Setting[index].options[value]) * 0.01 : 0;
+    scene.masterVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
     scene.updateSoundVolume();
     break;
   case SettingKeys.BGM_Volume:
-    scene.bgmVolume = value ? parseInt(Setting[index].options[value]) * 0.01 : 0;
+    scene.bgmVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
     scene.updateSoundVolume();
     break;
   case SettingKeys.SE_Volume:
-    scene.seVolume = value ? parseInt(Setting[index].options[value]) * 0.01 : 0;
+    scene.seVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
     scene.updateSoundVolume();
     break;
   case SettingKeys.Music_Preference:
@@ -362,19 +583,19 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     scene.uiTheme = value;
     break;
   case SettingKeys.Window_Type:
-    updateWindowType(scene, parseInt(Setting[index].options[value]));
+    updateWindowType(scene, parseInt(Setting[index].options[value].value));
     break;
   case SettingKeys.Tutorials:
-    scene.enableTutorials = Setting[index].options[value] === "On";
+    scene.enableTutorials = Setting[index].options[value].value === "On";
     break;
   case SettingKeys.Move_Info:
-    scene.enableMoveInfo = Setting[index].options[value] === "On";
+    scene.enableMoveInfo = Setting[index].options[value].value === "On";
     break;
   case SettingKeys.Enable_Retries:
-    scene.enableRetries = Setting[index].options[value] === "On";
+    scene.enableRetries = Setting[index].options[value].value === "On";
     break;
   case SettingKeys.Skip_Seen_Dialogues:
-    scene.skipSeenDialogues = Setting[index].options[value] === "On";
+    scene.skipSeenDialogues = Setting[index].options[value].value === "On";
     break;
   case SettingKeys.Battle_Style:
     scene.battleStyle = value;
@@ -390,7 +611,7 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
   case SettingKeys.Candy_Upgrade_Display:
     scene.candyUpgradeDisplay = value;
   case SettingKeys.Money_Format:
-    switch (Setting[index].options[value]) {
+    switch (Setting[index].options[value].value) {
     case "Normal":
       scene.moneyFormat = MoneyFormat.NORMAL;
       break;
@@ -407,22 +628,22 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     }
     break;
   case SettingKeys.Move_Animations:
-    scene.moveAnimations = Setting[index].options[value] === "On";
+    scene.moveAnimations = Setting[index].options[value].value === "On";
     break;
   case SettingKeys.Show_Moveset_Flyout:
-    scene.showMovesetFlyout = Setting[index].options[value] === "On";
+    scene.showMovesetFlyout = Setting[index].options[value].value === "On";
     break;
   case SettingKeys.Show_Arena_Flyout:
-    scene.showArenaFlyout = Setting[index].options[value] === "On";
+    scene.showArenaFlyout = Setting[index].options[value].value === "On";
     break;
   case SettingKeys.Show_Time_Of_Day_Widget:
-    scene.showTimeOfDayWidget = Setting[index].options[value] === "On";
+    scene.showTimeOfDayWidget = Setting[index].options[value].value === "On";
     break;
   case SettingKeys.Time_Of_Day_Animation:
-    scene.timeOfDayAnimation = Setting[index].options[value] === "Bounce" ? EaseType.BOUNCE : EaseType.BACK;
+    scene.timeOfDayAnimation = Setting[index].options[value].value === "Bounce" ? EaseType.BOUNCE : EaseType.BACK;
     break;
   case SettingKeys.Show_Stats_on_Level_Up:
-    scene.showLevelUpStats = Setting[index].options[value] === "On";
+    scene.showLevelUpStats = Setting[index].options[value].value === "On";
     break;
   case SettingKeys.EXP_Gains_Speed:
     scene.expGainsSpeed = value;
@@ -438,7 +659,7 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     break;
   case SettingKeys.Player_Gender:
     if (scene.gameData) {
-      const female = Setting[index].options[value] === "Girl";
+      const female = Setting[index].options[value].value === "Girl";
       scene.gameData.gender = female ? PlayerGender.FEMALE : PlayerGender.MALE;
       scene.trainer.setTexture(scene.trainer.texture.key.replace(female ? "m" : "f", female ? "f" : "m"));
     } else {
@@ -446,17 +667,17 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     }
     break;
   case SettingKeys.Touch_Controls:
-    scene.enableTouchControls = Setting[index].options[value] !== "Disabled" && hasTouchscreen();
+    scene.enableTouchControls = Setting[index].options[value].value !== "Disabled" && hasTouchscreen();
     const touchControls = document.getElementById("touchControls");
     if (touchControls) {
       touchControls.classList.toggle("visible", scene.enableTouchControls);
     }
     break;
   case SettingKeys.Vibration:
-    scene.enableVibration = Setting[index].options[value] !== "Disabled" && hasTouchscreen();
+    scene.enableVibration = Setting[index].options[value].value !== "Disabled" && hasTouchscreen();
     break;
   case SettingKeys.Type_Hints:
-    scene.typeHints = Setting[index].options[value] === "On";
+    scene.typeHints = Setting[index].options[value].value === "On";
     break;
   case SettingKeys.Language:
     if (value) {
@@ -517,7 +738,7 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
               handler: () => changeLocaleHandler("ko")
             },
             {
-              label: "Cancel",
+              label: i18next.t("menu:back"),
               handler: () => cancelHandler()
             }
           ],
