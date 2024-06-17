@@ -4944,18 +4944,6 @@ export class ReducePpMoveAttr extends MoveEffectAttr {
     const lastPpUsed = movesetMove.ppUsed;
     movesetMove.ppUsed = Math.min(movesetMove.ppUsed + this.reduction, movesetMove.getMovePp());
 
-    // MovePhase contains move-data from before Spite was used
-    // If the target uses the move that was just reduced, we need to update the MovePhase to reflect current changes
-    const movePhase = user.scene.findPhase(m => m instanceof MovePhase && m.pokemon === target && m.move.moveId === lastMove.move);
-    if (movePhase && movesetMove.ppUsed >= movesetMove.getMovePp()) {
-      const movesetMove = target.getMoveset().find(m => m.moveId === lastMove.move);
-      if (movesetMove) {
-        const lastMove = target.getLastXMoves(1)[0];
-        user.scene.tryReplacePhase((m => m instanceof MovePhase && m.pokemon === target),
-          new MovePhase(target.scene, target, lastMove.targets, movesetMove));
-      }
-    }
-
     const message = i18next.t("battle:ppReduced", {targetName: target.name, moveName: movesetMove.getName(), reduction: movesetMove.ppUsed - lastPpUsed});
 
     user.scene.queueMessage(message);
