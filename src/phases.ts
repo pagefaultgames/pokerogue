@@ -3410,7 +3410,7 @@ export class WeatherEffectPhase extends CommonAnimPhase {
           const damage = Math.ceil(pokemon.getMaxHp() / 16);
 
           this.scene.queueMessage(getWeatherDamageMessage(this.weather.weatherType, pokemon));
-          pokemon.damageAndUpdate(damage, HitResult.EFFECTIVE, this.weather.sourcePokemon, false, false, true);
+          pokemon.damageAndUpdate(damage, HitResult.EFFECTIVE, pokemon.scene.getPokemonById(this.weather.sourceId), false, false, true);
         };
 
         this.executeForAll((pokemon: Pokemon) => {
@@ -3499,7 +3499,7 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
         }
         if (damage) {
     		  // Set preventEndure flag to avoid pokemon surviving thanks to focus band, sturdy, endure ...
-          this.scene.damageNumberHandler.add(this.getPokemon(), pokemon.damage(damage, pokemon.status.sourcePokemon, false, true));
+          this.scene.damageNumberHandler.add(this.getPokemon(), pokemon.damage(damage, pokemon.scene.getPokemonById(pokemon.status.sourceId), false, true));
           pokemon.updateInfo();
         }
         new CommonBattleAnim(CommonAnim.POISON + (pokemon.status.effect - 1), pokemon).play(this.scene, () => this.end());

@@ -2567,7 +2567,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
 
-    this.status = new Status(effect, 0, statusCureTurn?.value, sourcePokemon);
+    this.status = new Status(effect, 0, statusCureTurn?.value, sourcePokemon?.id);
 
     if (effect !== StatusEffect.FAINT) {
       this.scene.triggerPokemonFormChange(this, SpeciesFormChangeStatusEffectTrigger, true);

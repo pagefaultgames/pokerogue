@@ -934,7 +934,7 @@ export class PostDefendWeatherChangeAbAttr extends PostDefendAbAttr {
 
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
     if (!pokemon.scene.arena.weather?.isImmutable()) {
-      return pokemon.scene.arena.trySetWeather(this.weatherType, pokemon);
+      return pokemon.scene.arena.trySetWeather(this.weatherType, pokemon.id);
     }
 
     return false;
@@ -1837,7 +1837,7 @@ export class PostSummonWeatherChangeAbAttr extends PostSummonAbAttr {
     if ((this.weatherType === WeatherType.HEAVY_RAIN ||
       this.weatherType === WeatherType.HARSH_SUN ||
       this.weatherType === WeatherType.STRONG_WINDS) || !pokemon.scene.arena.weather?.isImmutable()) {
-      return pokemon.scene.arena.trySetWeather(this.weatherType, pokemon);
+      return pokemon.scene.arena.trySetWeather(this.weatherType, pokemon.id);
     }
 
     return false;
@@ -2547,7 +2547,7 @@ export class PostWeatherLapseDamageAbAttr extends PostWeatherLapseAbAttr {
       const scene = pokemon.scene;
       const abilityName = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name;
       scene.queueMessage(getPokemonMessage(pokemon, ` is hurt\nby its ${abilityName}!`));
-      pokemon.damageAndUpdate(Math.ceil(pokemon.getMaxHp() / (16 / this.damageFactor)), HitResult.OTHER, weather.sourcePokemon);
+      pokemon.damageAndUpdate(Math.ceil(pokemon.getMaxHp() / (16 / this.damageFactor)), HitResult.OTHER, pokemon.scene.getPokemonById(weather.sourceId));
       return true;
     }
 
@@ -2872,7 +2872,7 @@ export class PostBiomeChangeWeatherChangeAbAttr extends PostBiomeChangeAbAttr {
 
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     if (!pokemon.scene.arena.weather?.isImmutable()) {
-      return pokemon.scene.arena.trySetWeather(this.weatherType, pokemon);
+      return pokemon.scene.arena.trySetWeather(this.weatherType, pokemon.id);
     }
 
     return false;

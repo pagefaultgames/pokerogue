@@ -1,5 +1,4 @@
 import * as Utils from "../utils";
-import Pokemon from "../field/pokemon";
 
 export enum StatusEffect {
   NONE,
@@ -16,13 +15,13 @@ export class Status {
   public effect: StatusEffect;
   public turnCount: integer;
   public cureTurn: integer;
-  public sourcePokemon: Pokemon;
+  public sourceId: integer;
 
-  constructor(effect: StatusEffect, turnCount: integer = 0, cureTurn?: integer, sourcePokemon?: Pokemon) {
+  constructor(effect: StatusEffect, turnCount: integer = 0, cureTurn?: integer, sourceId?: integer) {
     this.effect = effect;
     this.turnCount = turnCount === undefined ? 0 : turnCount;
     this.cureTurn = cureTurn;
-    this.sourcePokemon = sourcePokemon;
+    this.sourceId = sourceId;
   }
 
   incrementTurn(): void {

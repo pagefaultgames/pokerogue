@@ -188,7 +188,6 @@ export default class RunStatsUiHandler extends UiHandler {
   }
 
   updateStats(): void {
-    // populate values
     const playerParty = this.scene.getParty();
     const sortedPlayerParty = [...playerParty].sort((a, b) => b.runData.kills - a.runData.kills);
 

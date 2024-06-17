@@ -2058,7 +2058,7 @@ export class WeatherChangeAttr extends MoveEffectAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    return user.scene.arena.trySetWeather(this.weatherType, user);
+    return user.scene.arena.trySetWeather(this.weatherType, user.id);
   }
 
   getCondition(): MoveConditionFunc {
@@ -2077,7 +2077,7 @@ export class ClearWeatherAttr extends MoveEffectAttr {
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (user.scene.arena.weather?.weatherType === this.weatherType) {
-      return user.scene.arena.trySetWeather(WeatherType.NONE, user);
+      return user.scene.arena.trySetWeather(WeatherType.NONE, user.id);
     }
 
     return false;

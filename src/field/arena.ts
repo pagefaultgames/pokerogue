@@ -286,11 +286,11 @@ export class Arena {
   /**
    * Sets weather to the override specified in overrides.ts
    * @param weather new weather to set of type WeatherType
-   * @param sourcePokemon the pokemon responsible for the weather
+   * @param sourceId the id of the pokemon responsible for the weather
    * @returns true to force trySetWeather to return true
    */
-  trySetWeatherOverride(weather: WeatherType, sourcePokemon?: Pokemon): boolean {
-    this.weather = new Weather(weather, 0, sourcePokemon);
+  trySetWeatherOverride(weather: WeatherType, sourceId?: integer): boolean {
+    this.weather = new Weather(weather, 0, sourceId);
     this.scene.unshiftPhase(new CommonAnimPhase(this.scene, undefined, undefined, CommonAnim.SUNNY + (weather - 1)));
     this.scene.queueMessage(getWeatherStartMessage(weather));
     return true;
@@ -299,12 +299,12 @@ export class Arena {
   /**
    * Attempts to set a new weather to the battle
    * @param weather new weather to set of type WeatherType
-   * @param sourcePokemon the pokemon responsible for the weather
+   * @param sourceId the id of the pokemon responsible for the weather
    * @returns true if new weather set, false if no weather provided or attempting to set the same weather as currently in use
    */
-  trySetWeather(weather: WeatherType, sourcePokemon?: Pokemon): boolean {
+  trySetWeather(weather: WeatherType, sourceId?: integer): boolean {
     if (Overrides.WEATHER_OVERRIDE) {
-      return this.trySetWeatherOverride(Overrides.WEATHER_OVERRIDE, sourcePokemon);
+      return this.trySetWeatherOverride(Overrides.WEATHER_OVERRIDE, sourceId);
     }
 
     if (this.weather?.weatherType === (weather || undefined)) {
@@ -313,7 +313,7 @@ export class Arena {
 
     const oldWeatherType = this.weather?.weatherType || WeatherType.NONE;
 
-    this.weather = weather ? new Weather(weather, sourcePokemon ? 5 : 0, sourcePokemon) : null;
+    this.weather = weather ? new Weather(weather, sourceId ? 5 : 0, sourceId) : null;
     this.eventTarget.dispatchEvent(new WeatherChangedEvent(oldWeatherType, this.weather?.weatherType, this.weather?.turnsLeft));
 
     if (this.weather) {
