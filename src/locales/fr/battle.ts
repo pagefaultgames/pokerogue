@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const battle: SimpleTranslationEntries = {
   "bossAppeared": "Un {{bossName}} apparait.",
@@ -70,6 +70,7 @@ export const battle: SimpleTranslationEntries = {
   "statHarshlyFell": "baisse beaucoup",
   "statSeverelyFell": "baisse énormément",
   "statWontGoAnyLower": "ne peut plus baisser",
+  "ppReduced": "It reduced the PP of {{targetName}}'s\n{{moveName}} by {{reduction}}!",
   "battlerTagsRechargingLapse": "Le contrecoup empêche {{pokemonNameWithAffix}}\n de bouger !",
   "battlerTagsTrappedOnAdd": "{{pokemonNameWithAffix}}\nne peut plus s’échapper !",
   "battlerTagsTrappedOnRemove": "{{pokemonNameWithAffix}} est libéré\nde la capacité {{moveName}} !",

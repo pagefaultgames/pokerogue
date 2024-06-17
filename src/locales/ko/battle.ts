@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const battle: SimpleTranslationEntries = {
   "bossAppeared": "{{bossName}}[[가]] 나타났다.",
@@ -70,6 +70,7 @@ export const battle: SimpleTranslationEntries = {
   "statHarshlyFell": "[[가]] 크게 떨어졌다!",
   "statSeverelyFell": "[[가]] 매우 크게 떨어졌다!",
   "statWontGoAnyLower": "[[는]] 더 떨어지지 않는다!",
+  "ppReduced": "It reduced the PP of {{targetName}}'s\n{{moveName}} by {{reduction}}!",
   "battlerTagsRechargingLapse": "공격의 반동으로\n{{pokemonNameWithAffix}}[[는]] 움직일 수 없다!",
   "battlerTagsTrappedOnAdd": "{{pokemonNameWithAffix}}[[는]]\n이제 도망칠 수 없다!",
   "battlerTagsTrappedOnRemove": "{{pokemonNameWithAffix}}[[는]]\n{{moveName}}로부터 풀려났다!",

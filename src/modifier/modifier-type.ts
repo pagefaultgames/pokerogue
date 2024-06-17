@@ -18,7 +18,7 @@ import { VoucherType, getVoucherTypeIcon, getVoucherTypeName } from "../system/v
 import { FormChangeItem, SpeciesFormChangeItemTrigger, pokemonFormChanges } from "../data/pokemon-forms";
 import { ModifierTier } from "./modifier-tier";
 import { Nature, getNatureName, getNatureStatMultiplier } from "#app/data/nature";
-import i18next from "#app/plugins/i18n";
+import i18next from "i18next";
 import { getModifierTierTextTint } from "#app/ui/text";
 import * as Overrides from "../overrides";
 import { MoneyMultiplierModifier } from "./modifier";

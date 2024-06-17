@@ -18,7 +18,8 @@ import { TerrainType } from "./terrain";
 import { SpeciesFormChangeActiveTrigger } from "./pokemon-forms";
 import { ModifierPoolType } from "#app/modifier/modifier-type";
 import { Command } from "../ui/command-ui-handler";
-import i18next, { Localizable } from "../plugins/i18n";
+import i18next from "i18next";
+import { Localizable } from "#app/interfaces/locales";
 import { getBerryEffectFunc } from "./berry";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
@@ -283,6 +284,10 @@ export default class Move implements Localizable {
    * @returns boolean
    */
   isTypeImmune(type: Type): boolean {
+    if (this.moveTarget === MoveTarget.USER) {
+      return false;
+    }
+
     switch (type) {
     case Type.GRASS:
       if (this.hasFlag(MoveFlags.POWDER_MOVE)) {
@@ -793,7 +798,7 @@ export enum MoveEffectTrigger {
  */
 export class MoveEffectAttr extends MoveAttr {
   /** Defines when this effect should trigger in the move's effect order
-   * @see {@linkcode MoveEffectPhase.start}
+   * @see {@linkcode phases.MoveEffectPhase.start}
    */
   public trigger: MoveEffectTrigger;
   /** Should this effect only apply on the first hit? */
@@ -4923,14 +4928,36 @@ export class CopyMoveAttr extends OverrideMoveEffectAttr {
   }
 }
 
+/**
+ *  Attribute used for moves that reduce PP of the target's last used move.
+ *  Used for Spite.
+ */
 export class ReducePpMoveAttr extends MoveEffectAttr {
+  protected reduction: number;
+  constructor(reduction: number) {
+    super();
+    this.reduction = reduction;
+  }
+
+  /**
+   * Reduces the PP of the target's last-used move by an amount based on this attribute instance's {@linkcode reduction}.
+   *
+   * @param user {@linkcode Pokemon} that used the attack
+   * @param target {@linkcode Pokemon} targeted by the attack
+   * @param move {@linkcode Move} being used
+   * @param args N/A
+   * @returns {boolean} true
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     // Null checks can be skipped due to condition function
     const lastMove = target.getLastXMoves().find(() => true);
     const movesetMove = target.getMoveset().find(m => m.moveId === lastMove.move);
     const lastPpUsed = movesetMove.ppUsed;
-    movesetMove.ppUsed = Math.min(movesetMove.ppUsed + 4, movesetMove.getMovePp());
-    user.scene.queueMessage(`It reduced the PP of ${getPokemonMessage(target, `'s\n${movesetMove.getName()} by ${movesetMove.ppUsed - lastPpUsed}!`)}`);
+    movesetMove.ppUsed = Math.min(movesetMove.ppUsed + this.reduction, movesetMove.getMovePp());
+
+    const message = i18next.t("battle:ppReduced", {targetName: target.name, moveName: movesetMove.getName(), reduction: movesetMove.ppUsed - lastPpUsed});
+
+    user.scene.queueMessage(message);
 
     return true;
   }
@@ -4962,6 +4989,42 @@ export class ReducePpMoveAttr extends MoveEffectAttr {
     }
 
     return 0;
+  }
+}
+
+/**
+ *  Attribute used for moves that damage target, and then reduce PP of the target's last used move.
+ *  Used for Eerie Spell.
+ */
+export class AttackReducePpMoveAttr extends ReducePpMoveAttr {
+  constructor(reduction: number) {
+    super(reduction);
+  }
+
+  /**
+   * Checks if the target has used a move prior to the attack. PP-reduction is applied through the super class if so.
+   *
+   * @param user {@linkcode Pokemon} that used the attack
+   * @param target {@linkcode Pokemon} targeted by the attack
+   * @param move {@linkcode Move} being used
+   * @param args N/A
+   * @returns {boolean} true
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const lastMove = target.getLastXMoves().find(() => true);
+    if (lastMove) {
+      const movesetMove = target.getMoveset().find(m => m.moveId === lastMove.move);
+      if (Boolean(movesetMove?.getPpRatio())) {
+        super.apply(user, target, move, args);
+      }
+    }
+
+    return true;
+  }
+
+  // Override condition function to always perform damage. Instead, perform pp-reduction condition check in apply function above
+  getCondition(): MoveConditionFunc {
+    return (user, target, move) => true;
   }
 }
 
@@ -5996,7 +6059,7 @@ export function initMoves() {
     new AttackMove(Moves.REVERSAL, Type.FIGHTING, MoveCategory.PHYSICAL, -1, 100, 15, -1, 0, 2)
       .attr(LowHpPowerAttr),
     new StatusMove(Moves.SPITE, Type.GHOST, 100, 10, -1, 0, 2)
-      .attr(ReducePpMoveAttr),
+      .attr(ReducePpMoveAttr, 4),
     new AttackMove(Moves.POWDER_SNOW, Type.ICE, MoveCategory.SPECIAL, 40, 100, 25, 10, 0, 2)
       .attr(StatusEffectAttr, StatusEffect.FREEZE)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
@@ -6248,7 +6311,7 @@ export function initMoves() {
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.status?.effect === StatusEffect.PARALYSIS ? 2 : 1)
       .attr(HealStatusEffectAttr, true, StatusEffect.PARALYSIS),
     new SelfStatusMove(Moves.FOLLOW_ME, Type.NORMAL, -1, 20, -1, 2, 3)
-      .unimplemented(),
+      .attr(AddBattlerTagAttr, BattlerTagType.CENTER_OF_ATTENTION, true),
     new StatusMove(Moves.NATURE_POWER, Type.NORMAL, -1, 20, -1, 0, 3)
       .attr(NaturePowerAttr)
       .ignoresVirtual(),
@@ -6591,10 +6654,7 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.AQUA_RING, true, true),
     new SelfStatusMove(Moves.MAGNET_RISE, Type.ELECTRIC, -1, 10, -1, 0, 4)
       .attr(AddBattlerTagAttr, BattlerTagType.MAGNET_RISEN, true, true)
-      .condition((user, target, move) => !user.scene.arena.getTag(ArenaTagType.GRAVITY) &&
-      !user.getTag(BattlerTagType.IGNORE_FLYING) && !user.getTag(BattlerTagType.INGRAIN) &&
-      !user.getTag(BattlerTagType.MAGNET_RISEN))
-      .unimplemented(),
+      .condition((user, target, move) => !user.scene.arena.getTag(ArenaTagType.GRAVITY) && [BattlerTagType.MAGNET_RISEN, BattlerTagType.IGNORE_FLYING, BattlerTagType.INGRAIN].every((tag) => !user.getTag(tag))),
     new AttackMove(Moves.FLARE_BLITZ, Type.FIRE, MoveCategory.PHYSICAL, 120, 100, 15, 10, 0, 4)
       .attr(RecoilAttr, false, 0.33)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
@@ -6816,7 +6876,7 @@ export function initMoves() {
       .partial(),
     new SelfStatusMove(Moves.RAGE_POWDER, Type.BUG, -1, 20, -1, 2, 5)
       .powderMove()
-      .unimplemented(),
+      .attr(AddBattlerTagAttr, BattlerTagType.CENTER_OF_ATTENTION, true),
     new StatusMove(Moves.TELEKINESIS, Type.PSYCHIC, -1, 15, -1, 0, 5)
       .condition(failOnGravityCondition)
       .unimplemented(),
@@ -6827,7 +6887,7 @@ export function initMoves() {
     new AttackMove(Moves.SMACK_DOWN, Type.ROCK, MoveCategory.PHYSICAL, 50, 100, 15, 100, 0, 5)
       .attr(AddBattlerTagAttr, BattlerTagType.IGNORE_FLYING, false, false, 5)
       .attr(AddBattlerTagAttr, BattlerTagType.INTERRUPTED)
-      .attr(RemoveBattlerTagAttr, [BattlerTagType.FLYING])
+      .attr(RemoveBattlerTagAttr, [BattlerTagType.FLYING, BattlerTagType.MAGNET_RISEN])
       .attr(HitsTagAttr, BattlerTagType.FLYING, false)
       .makesContact(false),
     new AttackMove(Moves.STORM_THROW, Type.FIGHTING, MoveCategory.PHYSICAL, 60, 100, 10, -1, 0, 5)
@@ -7211,7 +7271,7 @@ export function initMoves() {
       .attr(NeutralDamageAgainstFlyingTypeMultiplierAttr)
       .attr(HitsTagAttr, BattlerTagType.FLYING, false)
       .attr(AddBattlerTagAttr, BattlerTagType.INTERRUPTED)
-      .attr(RemoveBattlerTagAttr, [BattlerTagType.FLYING])
+      .attr(RemoveBattlerTagAttr, [BattlerTagType.FLYING, BattlerTagType.MAGNET_RISEN])
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.THOUSAND_WAVES, Type.GROUND, MoveCategory.PHYSICAL, 90, 100, 10, -1, 0, 6)
@@ -7384,7 +7444,7 @@ export function initMoves() {
     new AttackMove(Moves.LEAFAGE, Type.GRASS, MoveCategory.PHYSICAL, 40, 100, 40, -1, 0, 7)
       .makesContact(false),
     new StatusMove(Moves.SPOTLIGHT, Type.NORMAL, -1, 15, -1, 3, 7)
-      .unimplemented(),
+      .attr(AddBattlerTagAttr, BattlerTagType.CENTER_OF_ATTENTION, false),
     new StatusMove(Moves.TOXIC_THREAD, Type.POISON, 100, 20, 100, 0, 7)
       .attr(StatusEffectAttr, StatusEffect.POISON)
       .attr(StatChangeAttr, BattleStat.SPD, -1),
@@ -7865,8 +7925,8 @@ export function initMoves() {
     new AttackMove(Moves.ASTRAL_BARRAGE, Type.GHOST, MoveCategory.SPECIAL, 120, 100, 5, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.EERIE_SPELL, Type.PSYCHIC, MoveCategory.SPECIAL, 80, 100, 5, 100, 0, 8)
-      .soundBased()
-      .partial(),
+      .attr(AttackReducePpMoveAttr, 3)
+      .soundBased(),
     new AttackMove(Moves.DIRE_CLAW, Type.POISON, MoveCategory.PHYSICAL, 80, 100, 15, 50, 0, 8)
       .attr(MultiStatusEffectAttr, [StatusEffect.POISON, StatusEffect.PARALYSIS, StatusEffect.SLEEP]),
     new AttackMove(Moves.PSYSHIELD_BASH, Type.PSYCHIC, MoveCategory.PHYSICAL, 70, 90, 10, 100, 0, 8)
