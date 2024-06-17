@@ -1220,8 +1220,15 @@ export class HealAttr extends MoveEffectAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (target.getTag(BattlerTagType.HEAL_BLOCK)) {
+      return false;
+    }
     this.addHealPhase(this.selfTarget ? user : target, this.healRatio);
     return true;
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target, move) => user !== target || !target.getTag(BattlerTagType.HEAL_BLOCK);
   }
 
   /**
@@ -1343,6 +1350,9 @@ export abstract class WeatherHealAttr extends HealAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (target.getTag(BattlerTagType.HEAL_BLOCK)) {
+      return false;
+    }
     let healRatio = 0.5;
     if (!user.scene.arena.weather?.isEffectSuppressed(user.scene)) {
       const weatherType = user.scene.arena.weather?.weatherType || WeatherType.NONE;
@@ -1350,6 +1360,10 @@ export abstract class WeatherHealAttr extends HealAttr {
     }
     this.addHealPhase(user, healRatio);
     return true;
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target, move) => user !== target || !target.getTag(BattlerTagType.HEAL_BLOCK);
   }
 
   abstract getWeatherHealRatio(weatherType: WeatherType): number;
@@ -1413,9 +1427,16 @@ export class BoostHealAttr extends HealAttr {
    * @returns true if the move was successful
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (target.getTag(BattlerTagType.HEAL_BLOCK)) {
+      return false;
+    }
     const healRatio = this.condition(user, target, move) ? this.boostedHealRatio : this.normalHealRatio;
     this.addHealPhase(target, healRatio);
     return true;
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target, move) => user !== target || !target.getTag(BattlerTagType.HEAL_BLOCK);
   }
 }
 
@@ -1433,12 +1454,19 @@ export class HealOnAllyAttr extends HealAttr {
    * @returns true if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (target.getTag(BattlerTagType.HEAL_BLOCK)) {
+      return false;
+    }
     if (user.getAlly() === target) {
       super.apply(user, target, move, args);
       return true;
     }
 
     return false;
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target, move) => user !== target || !target.getTag(BattlerTagType.HEAL_BLOCK);
   }
 }
 
@@ -1487,6 +1515,9 @@ export class HitHealAttr extends MoveEffectAttr {
       user.turnData.damageTaken += healAmount;
       healAmount = healAmount * -1;
       message = null;
+    }
+    if (user.getTag(BattlerTagType.HEAL_BLOCK)) {
+      healAmount = 0;
     }
     user.scene.unshiftPhase(new PokemonHealPhase(user.scene, user.getBattlerIndex(), healAmount, message, false, true));
     return true;
@@ -6543,8 +6574,9 @@ export function initMoves() {
       .makesContact()
       .attr(LessPPMorePowerAttr),
     new StatusMove(Moves.HEAL_BLOCK, Type.PSYCHIC, 100, 15, -1, 0, 4)
+      .attr(AddBattlerTagAttr, BattlerTagType.HEAL_BLOCK, false, false, 5)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
-      .unimplemented(),
+      .partial(), // Need logic to block moves selection
     new AttackMove(Moves.WRING_OUT, Type.NORMAL, MoveCategory.SPECIAL, -1, 100, 5, -1, 0, 4)
       .attr(OpponentHighHpPowerAttr)
       .makesContact(),
@@ -8264,6 +8296,6 @@ export function initMoves() {
       //TODO: Should also apply when target move priority increased by ability ex. gale wings
       .partial(),
     new AttackMove(Moves.MALIGNANT_CHAIN, Type.POISON, MoveCategory.SPECIAL, 100, 100, 5, 50, 0, 9)
-      .attr(StatusEffectAttr, StatusEffect.TOXIC)
+      .attr(StatusEffectAttr, StatusEffect.TOXIC),
   );
 }

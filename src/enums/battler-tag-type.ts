@@ -1,4 +1,3 @@
-
 export enum BattlerTagType {
   NONE = "NONE",
   RECHARGING = "RECHARGING",
@@ -58,5 +57,6 @@ export enum BattlerTagType {
   MAGNET_RISEN = "MAGNET_RISEN",
   MINIMIZED = "MINIMIZED",
   DESTINY_BOND = "DESTINY_BOND",
-  ICE_FACE = "ICE_FACE"
+  ICE_FACE = "ICE_FACE",
+  HEAL_BLOCK = "HEAL_BLOCK",
 }
