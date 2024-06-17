@@ -17,7 +17,7 @@ import PokemonSpecies, { allSpecies, getPokemonSpecies, getPokemonSpeciesForm, g
 import { Type } from "../data/type";
 import { GameModes } from "../game-mode";
 import { SelectChallengePhase, TitlePhase } from "../phases";
-import { AbilityAttr, DexAttr, DexAttrProps, DexEntry, StarterFormMoveData, StarterMoveset } from "../system/game-data";
+import { AbilityAttr, DexAttr, DexAttrProps, DexEntry, StarterFormMoveData, StarterMoveset, StarterAttributes, StarterPreferences, StarterPrefs } from "../system/game-data";
 import { Tutorial, handleTutorial } from "../tutorial";
 import * as Utils from "../utils";
 import { OptionSelectItem } from "./abstact-option-select-ui-handler";
@@ -269,6 +269,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private instructionRowTextOffset = 12;
 
   private starterSelectCallback: StarterSelectCallback;
+
+  private starterPreferences: StarterPreferences;
 
   protected blockInput: boolean = false;
 
@@ -780,6 +782,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   show(args: any[]): boolean {
+    if (!this.starterPreferences) {
+      // starterPreferences haven't been loaded yet
+      this.starterPreferences = StarterPrefs.load();
+    }
     this.moveInfoOverlay.clear(); // clear this when removing a menu; the cancel button doesn't seem to trigger this automatically on controllers
     if (args.length >= 1 && args[0] instanceof Function) {
       super.show(args);
@@ -1223,6 +1229,54 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             });
           }
           const starterData = this.scene.gameData.starterData[this.lastSpecies.speciesId];
+          let starterAttributes = this.starterPreferences[this.lastSpecies.speciesId];
+          if (this.canCycleNature) {
+            // if we could cycle natures, enable the improved nature menu
+            const showNatureOptions = () => {
+              ui.setMode(Mode.STARTER_SELECT).then(() => {
+                ui.showText(i18next.t("starterSelectUiHandler:selectNature"), null, () => {
+                  const natures = this.scene.gameData.getNaturesForAttr(this.speciesStarterDexEntry.natureAttr);
+                  ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+                    options: natures.map((n: Nature, i: number) => {
+                      const option: OptionSelectItem = {
+                        label: getNatureName(n, true, true, true, this.scene.uiTheme),
+                        handler: () => {
+                          // update default nature in starter save data
+                          if (!starterAttributes) {
+                            starterAttributes=
+                            this.starterPreferences[this.lastSpecies.speciesId] = {};
+                          }
+                          starterAttributes.nature = n as unknown as integer;
+                          this.clearText();
+                          ui.setMode(Mode.STARTER_SELECT);
+                          // set nature for starter
+                          this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, n, undefined);
+                          return true;
+                        }
+                      };
+                      return option;
+                    }).concat({
+                      label: i18next.t("menu:cancel"),
+                      handler: () => {
+                        this.clearText();
+                        ui.setMode(Mode.STARTER_SELECT);
+                        return true;
+                      }
+                    }),
+                    maxOptions: 8,
+                    yOffset: 19
+                  });
+                });
+              });
+            };
+            options.push({
+              label: i18next.t("starterSelectUiHandler:manageNature"),
+              handler: () => {
+                showNatureOptions();
+                return true;
+              }
+            });
+          }
           const candyCount = starterData.candyCount;
           const passiveAttr = starterData.passiveAttr;
           if (passiveAttr & PassiveAttr.UNLOCKED) {
@@ -1362,9 +1416,16 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         const rows = Math.ceil(genStarters / 9);
         const row = Math.floor(this.cursor / 9);
         const props = this.scene.gameData.getSpeciesDexAttrProps(this.lastSpecies, this.dexAttrCursor);
+        // prepare persistent starter data to store changes
+        let starterAttributes = this.starterPreferences[this.lastSpecies.speciesId];
+        if (!starterAttributes) {
+          starterAttributes =
+          this.starterPreferences[this.lastSpecies.speciesId] = {};
+        }
         switch (button) {
         case Button.CYCLE_SHINY:
           if (this.canCycleShiny) {
+            starterAttributes.variant = !props.shiny ? props.variant : -1; // update shiny setting
             this.setSpeciesDetails(this.lastSpecies, !props.shiny, undefined, undefined, props.shiny ? 0 : undefined, undefined, undefined);
             if (this.dexAttrCursor & DexAttr.SHINY) {
               this.scene.playSound("sparkle");
@@ -1383,12 +1444,14 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 break;
               }
             } while (newFormIndex !== props.formIndex);
+            starterAttributes.form = newFormIndex; // store the selected form
             this.setSpeciesDetails(this.lastSpecies, undefined, newFormIndex, undefined, undefined, undefined, undefined);
             success = true;
           }
           break;
         case Button.CYCLE_GENDER:
           if (this.canCycleGender) {
+            starterAttributes.female = !props.female;
             this.setSpeciesDetails(this.lastSpecies, undefined, undefined, !props.female, undefined, undefined, undefined);
             success = true;
           }
@@ -1414,6 +1477,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 }
               }
             } while (newAbilityIndex !== this.abilityCursor);
+            starterAttributes.ability = newAbilityIndex; // store the selected ability
             this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, newAbilityIndex, undefined);
             success = true;
           }
@@ -1423,6 +1487,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             const natures = this.scene.gameData.getNaturesForAttr(this.speciesStarterDexEntry.natureAttr);
             const natureIndex = natures.indexOf(this.natureCursor);
             const newNature = natures[natureIndex < natures.length - 1 ? natureIndex + 1 : 0];
+            // store cycled nature as default
+            starterAttributes.nature = newNature as unknown as integer;
             this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, newNature, undefined);
             success = true;
           }
@@ -1446,6 +1512,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 }
               }
             } while (newVariant !== props.variant);
+            starterAttributes.variant = newVariant; // store the selected variant
             this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, newVariant, undefined, undefined);
 
             // Cycle tint based on current sprite tint
@@ -1782,6 +1849,60 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.abilityCursor = species ? this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(species) : 0;
     this.natureCursor = species ? this.scene.gameData.getSpeciesDefaultNature(species) : 0;
 
+    const starterAttributes : StarterAttributes = species ? {...this.starterPreferences[species.speciesId]} : null;
+    // validate starterAttributes
+    if (starterAttributes) {
+      // this may cause changes so we created a copy of the attributes before
+      if (!isNaN(starterAttributes.variant)) {
+        if (![
+          this.speciesStarterDexEntry.caughtAttr & DexAttr.NON_SHINY,
+          this.speciesStarterDexEntry.caughtAttr & DexAttr.DEFAULT_VARIANT,
+          this.speciesStarterDexEntry.caughtAttr & DexAttr.VARIANT_2,
+          this.speciesStarterDexEntry.caughtAttr & DexAttr.VARIANT_3
+        ][starterAttributes.variant+1]) { // add 1 as -1 = non-shiny
+          // requested variant wasn't unlocked, purging setting
+          delete starterAttributes.variant;
+        }
+      }
+
+      if (typeof starterAttributes.female !== "boolean" || !(starterAttributes.female ?
+        this.speciesStarterDexEntry.caughtAttr & DexAttr.FEMALE :
+        this.speciesStarterDexEntry.caughtAttr & DexAttr.MALE
+      )) {
+        // requested gender wasn't unlocked, purging setting
+        delete starterAttributes.female;
+      }
+
+      const abilityAttr = this.scene.gameData.starterData[species.speciesId].abilityAttr;
+      if (![
+        abilityAttr & AbilityAttr.ABILITY_1,
+        species.ability2 ? (abilityAttr & AbilityAttr.ABILITY_2) : abilityAttr & AbilityAttr.ABILITY_HIDDEN,
+        species.ability2 && abilityAttr & AbilityAttr.ABILITY_HIDDEN
+      ][starterAttributes.ability]) {
+        // requested ability wasn't unlocked, purging setting
+        delete starterAttributes.ability;
+      }
+
+      if (!(species.forms[starterAttributes.form]?.isStarterSelectable && this.speciesStarterDexEntry.caughtAttr & this.scene.gameData.getFormAttr(starterAttributes.form))) {
+        // requested form wasn't unlocked/isn't a starter form, purging setting
+        delete starterAttributes.form;
+      }
+
+      if (this.scene.gameData.getNaturesForAttr(this.speciesStarterDexEntry.natureAttr).indexOf(starterAttributes.nature as unknown as Nature) < 0) {
+        // requested nature wasn't unlocked, purging setting
+        delete starterAttributes.nature;
+      }
+    }
+
+    if (starterAttributes?.nature) {
+      // load default nature from stater save data, if set
+      this.natureCursor = starterAttributes.nature;
+    }
+    if (!isNaN(starterAttributes?.ability)) {
+      // load default nature from stater save data, if set
+      this.abilityCursor = starterAttributes.ability;
+    }
+
     if (this.statsMode) {
       if (this.speciesStarterDexEntry?.caughtAttr) {
         this.statsContainer.setVisible(true);
@@ -1920,9 +2041,17 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.setSpeciesDetails(species, props.shiny, props.formIndex, props.female, props.variant, this.starterAbilityIndexes[starterIndex], this.starterNatures[starterIndex]);
         } else {
           const defaultDexAttr = this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true);
-          const defaultAbilityIndex = this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
-          const defaultNature = this.scene.gameData.getSpeciesDefaultNature(species);
+          const defaultAbilityIndex = starterAttributes?.ability ?? this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
+          // load default nature from stater save data, if set
+          const defaultNature = starterAttributes?.nature || this.scene.gameData.getSpeciesDefaultNature(species);
           props = this.scene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
+          if (!isNaN(starterAttributes?.variant)) {
+            if (props.shiny = (starterAttributes.variant >= 0)) {
+              props.variant = starterAttributes.variant as Variant;
+            }
+          }
+          props.formIndex = starterAttributes?.form ?? props.formIndex;
+          props.female = starterAttributes?.female ?? props.female;
 
           this.setSpeciesDetails(species, props.shiny, props.formIndex, props.female, props.variant, defaultAbilityIndex, defaultNature);
         }
@@ -2417,6 +2546,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
   clear(): void {
     super.clear();
+
+    StarterPrefs.save(this.starterPreferences);
     this.cursor = -1;
     this.hideInstructions();
     this.starterSelectContainer.setVisible(false);

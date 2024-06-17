@@ -8,6 +8,7 @@ import {Button} from "#enums/buttons";
 import {InputsIcons} from "#app/ui/settings/abstract-control-settings-ui-handler.js";
 import NavigationMenu, {NavigationManager} from "#app/ui/settings/navigationMenu";
 import { Setting, SettingKeys } from "#app/system/settings/settings";
+import i18next from "i18next";
 
 
 /**
@@ -71,7 +72,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     iconAction.setPositionRelative(actionsBg, this.navigationContainer.width - 32, 4);
     this.navigationIcons["BUTTON_ACTION"] = iconAction;
 
-    const actionText = addTextObject(this.scene, 0, 0, "Action", TextStyle.SETTINGS_LABEL);
+    const actionText = addTextObject(this.scene, 0, 0, i18next.t("menu:action"), TextStyle.SETTINGS_LABEL);
     actionText.setOrigin(0, 0.15);
     actionText.setPositionRelative(iconAction, -actionText.width/6-2, 0);
 
@@ -80,7 +81,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     iconCancel.setPositionRelative(actionsBg, this.navigationContainer.width - 100, 4);
     this.navigationIcons["BUTTON_CANCEL"] = iconCancel;
 
-    const cancelText = addTextObject(this.scene, 0, 0, "Cancel", TextStyle.SETTINGS_LABEL);
+    const cancelText = addTextObject(this.scene, 0, 0, i18next.t("menu:back"), TextStyle.SETTINGS_LABEL);
     cancelText.setOrigin(0, 0.15);
     cancelText.setPositionRelative(iconCancel, -cancelText.width/6-2, 0);
 
@@ -95,7 +96,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
       .forEach((setting, s) => {
         let settingName = setting.label;
         if (setting?.requireReload) {
-          settingName += " (Requires Reload)";
+          settingName += ` (${i18next.t("menu:requireReload")})`;
         }
 
         this.settingLabels[s] = addTextObject(this.scene, 8, 28 + s * 16, settingName, TextStyle.SETTINGS_LABEL);
@@ -103,7 +104,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
 
         this.optionsContainer.add(this.settingLabels[s]);
         this.optionValueLabels.push(setting.options.map((option, o) => {
-          const valueLabel = addTextObject(this.scene, 0, 0, option, setting.default === o ? TextStyle.SETTINGS_SELECTED : TextStyle.WINDOW);
+          const valueLabel = addTextObject(this.scene, 0, 0, option.label, setting.default === o ? TextStyle.SETTINGS_SELECTED : TextStyle.WINDOW);
           valueLabel.setOrigin(0, 0);
 
           this.optionsContainer.add(valueLabel);
