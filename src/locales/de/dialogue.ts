@@ -2351,31 +2351,30 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "alder": {
     "encounter": {
-      1: "Prepare yourself for a match against the strongest Trainer in Unova!"
+      1: "Mach dich bereit für einen Kampf gegen den stärksten Trainer in Einall! Mich - Lauro!"
     },
     "victory": {
-      1: "Well done! You certainly are an unmatched talent."
+      1: "Gut gemacht! Du hast wirklich ein unvergleichliches Talent."
     },
     "defeat": {
-      1: `A fresh wind blows through my heart...
-          $What an extraordinary effort!`
+      1: `Ein frischer Wind weht durch mein Herz...
+          $Was für ein außergewöhnliches Gefühl!`
     }
   },
   "kieran": {
     "encounter": {
-      1: `Through hard work, I become stronger and stronger!
-          $I don't lose.`
+      1: `Durch harte Arbeit werde ich immer stärker und stärker!
+         $Ich verliere nicht.`
     },
     "victory": {
-      1: `I don't believe it...
-          $What a fun and heart-pounding battle!`
+      1: `Ich kann es nicht glauben...
+          $Was für ein lustiger und herzzerreißender Kampf!`
     },
     "defeat": {
-      1: `Wowzers, what a battle!
-          $Time for you to train even harder.`
+      1: `Wow, was für ein Kampf!
+          $Es ist Zeit für dich, noch härter zu trainieren.`
     }
   },
-
   "rival": {
     "encounter": {
       1: `@c{smile}Hey, ich habe dich gesucht! Ich weiß, dass du es nicht erwarten konntest loszugehen,
