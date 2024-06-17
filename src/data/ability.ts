@@ -1632,10 +1632,15 @@ export class PostSummonAbAttr extends AbAttr {
     return false;
   }
 }
-
+/**
+ * Removes specified arena tags when a Pokemon is summoned.
+ */
 export class PostSummonRemoveArenaTagAbAttr extends PostSummonAbAttr {
   private arenaTags: ArenaTagType[];
 
+  /**
+   * @param arenaTags {@linkcode ArenaTagType[]} - the arena tags to be removed
+   */
   constructor(arenaTags: ArenaTagType[]) {
     super(true);
 
@@ -1643,11 +1648,9 @@ export class PostSummonRemoveArenaTagAbAttr extends PostSummonAbAttr {
   }
 
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
-    console.log("tags before summon", pokemon.scene.arena.tags);
     for (const arena of this.arenaTags) {
       pokemon.scene.arena.removeTag(arena);
     }
-    console.log("tags after summon", pokemon.scene.arena.tags);
     return true;
   }
 }
