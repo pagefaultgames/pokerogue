@@ -1,17 +1,21 @@
 import { WeatherType } from "./data/weather";
 import { Variant } from "./data/variant";
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { TempBattleStat } from "./data/temp-battle-stat";
 import { Nature } from "./data/nature";
 import { Type } from "./data/type";
 import { Stat } from "./data/pokemon-stat";
+import { EvolutionItem } from "./data/pokemon-evolutions";
+import { FormChangeItem } from "./data/pokemon-forms";
+import { BerryType } from "#enums/berry-type";
+/* eslint-enable @typescript-eslint/no-unused-vars */
 import { PokeballCounts } from "./battle-scene";
 import { PokeballType } from "./data/pokeball";
 import { Gender } from "./data/gender";
 import { StatusEffect } from "./data/status-effect";
-import { modifierTypes, PokemonHeldItemModifierType, ModifierType, ModifierTypeGenerator } from "./modifier/modifier-type"; // eslint-disable-line @typescript-eslint/no-unused-vars
+import { ModifierOverride } from "./modifier/modifier-type";
 import { allSpecies } from "./data/pokemon-species"; // eslint-disable-line @typescript-eslint/no-unused-vars
 import { Abilities } from "#enums/abilities";
-import { BerryType } from "#enums/berry-type";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -125,39 +129,6 @@ export const MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType = null;
  * MODIFIER / HELD ITEM OVERRIDES
  */
 
-/**
- * Type used to construct modifiers and held items for overriding purposes.
- *
- * While both pertain to modifiers in the class hierarchy, overrides labeled `HELD_ITEM`
- * specifically pertain to any entry in {@linkcode modifierTypes} that is, extends, or generates
- * {@linkcode PokemonHeldItemModifierType}s, like `SOUL_DEW`, `TOXIC_ORB`, etc. Overrides
- * labeled `MODIFIER` deal with any modifier so long as it doesn't require a party
- * member to hold it (typically is, extends, or generates {@linkcode ModifierType}s),
- * like `EXP_SHARE`, `CANDY_JAR`, etc.
- *
- * Note that, if count is not provided, it will default to 1. Additionally, note that some
- * held items and modifiers are grouped together via a {@linkcode ModifierTypeGenerator} and
- * require pre-generation arguments to get a specific item.
- *
- * @example STARTING_MODIFIER_OVERRIDE = [{name: "EXP_SHARE", count: 2}] // will have a quantity of 2 in-game
- * @example STARTING_HELD_ITEM_OVERRIDE = [{name: "LUCKY_EGG"}] // will have a quantity of 1 in-game
- * @example {name: "BERRY", count: 5, type: BerryType.SITRUS} // type must be given to get a specific berry
- */
-type ModifierOverride = {
-    /** Key for any given modifier, held item, or generator in {@linkcode modifierTypes} */
-    name: keyof typeof modifierTypes & string,
-    /** Quantity of the held item or modifier desired */
-    count?: integer
-    /** Sub-type used for generator-based held items and modifiers. The available types are:
-     * - {@linkcode TempBattleStat}, for {@linkcode modifierTypes.TEMP_STAT_BOOSTER} / X-stat items (Dire Hit is separate)
-     * - {@linkcode Stat}, for {@linkcode modifierTypes.BASE_STAT_BOOSTER} / Vitamins
-     * - {@linkcode Nature}, for {@linkcode modifierTypes.MINT}
-     * - {@linkcode Type}, for {@linkcode modifierTypes.TERA_SHARD} or {@linkcode modifierTypes.ATTACK_TYPE_BOOSTER} / Type-boosting items
-     * - {@linkcode BerryType}, for {@linkcode modifierTypes.BERRY}
-     */
-    type?: TempBattleStat|Stat|Nature|Type|BerryType
-};
-
 /** Override array of {@linkcode ModifierOverride}s used to provide modifiers to the player when starting a new game */
 export const STARTING_MODIFIER_OVERRIDE: ModifierOverride[] = [];
 /**
@@ -177,5 +148,7 @@ export const OPP_HELD_ITEMS_OVERRIDE: ModifierOverride[] = [];
  *
  * If less entries are listed than rolled, only those entries will be used to replace the corresponding items while the rest randomly generated.
  * If more entries are listed than rolled, only the first X entries will be used, where X is the number of items rolled.
+ *
+ * Note that, for all items in the array, `count` is not used.
  */
 export const ITEM_REWARD_OVERRIDE: ModifierOverride[] = [];

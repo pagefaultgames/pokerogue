@@ -1909,7 +1909,7 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
 
   // Replace rolled options if any override entries are present
   for (let i = 0; i < Overrides.ITEM_REWARD_OVERRIDE.length; i++) {
-    if (options.length >= i) {
+    if (options.length <= i) {
       break;
     }
     const override = Overrides.ITEM_REWARD_OVERRIDE[i];
@@ -1918,10 +1918,12 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
       let modifierType = modifierFunc();
 
       if (modifierType instanceof ModifierTypeGenerator) {
-        modifierType = modifierType.generateType(party, (override.type !== null) ? [override.type] : null);
+        modifierType = modifierType.generateType(party, "type" in override ? [override.type] : null);
       }
 
-      options[i].type = modifierType.withIdFromFunc(modifierFunc);
+      if (modifierType) {
+        options[i].type = modifierType.withIdFromFunc(modifierFunc);
+      }
     }
   }
 
@@ -2149,3 +2151,70 @@ export function getLuckTextTint(luckValue: integer): integer {
   const modifierTier = luckValue ? luckValue > 2 ? luckValue > 5 ? luckValue > 9 ? luckValue > 11 ? ModifierTier.LUXURY : ModifierTier.MASTER : ModifierTier.ROGUE : ModifierTier.ULTRA : ModifierTier.GREAT : ModifierTier.COMMON;
   return getModifierTierTextTint(modifierTier);
 }
+
+type BaseModifierOverride = {
+  /** Key for any given modifier, held item, or generator in {@linkcode modifierTypes} */
+  name: Exclude<keyof typeof modifierTypes, GeneratorModifierOverride["name"]>;
+  /** Quantity of the held item or modifier desired */
+  count?: number;
+};
+
+type GeneratorModifierOverride = {
+    /** Quantity of the held item or modifier desired */
+    count?: number
+  } & (
+  | {
+      name: "TEMP_STAT_BOOSTER";
+      type?: TempBattleStat;
+    }
+  | {
+      name: "BASE_STAT_BOOSTER";
+      type?: Stat;
+    }
+  | {
+      name: "MINT";
+      type?: Nature;
+    }
+  | {
+      name: "TERA_SHARD" | "ATTACK_TYPE_BOOSTER";
+      type?: Type;
+    }
+  | {
+      name: "BERRY";
+      type?: BerryType;
+    }
+  | {
+      name: "EVOLUTION_ITEM" | "RARE_EVOLUTION_ITEM";
+      type?: EvolutionItem;
+    }
+  | {
+      name: "FORM_CHANGE_ITEM";
+      type?: FormChangeItem;
+    }
+  | {
+      name: "TM_COMMON" | "TM_GREAT" | "TM_ULTRA";
+    }
+);
+
+/**
+ * Type used to construct modifiers and held items for overriding purposes.
+ *
+ * While both pertain to modifiers in the class hierarchy, overrides labeled `HELD_ITEM`
+ * specifically pertain to any entry in {@linkcode modifierTypes} that is, extends, or generates
+ * {@linkcode PokemonHeldItemModifierType}s, like `SOUL_DEW`, `TOXIC_ORB`, etc. Overrides
+ * labeled `MODIFIER` deal with any modifier so long as it doesn't require a party
+ * member to hold it (typically is, extends, or generates {@linkcode ModifierType}s),
+ * like `EXP_SHARE`, `CANDY_JAR`, etc.
+ *
+ * Note that, if count is not provided, it will default to 1. Additionally, note that some
+ * held items and modifiers are grouped together via a {@linkcode ModifierTypeGenerator} and
+ * require pre-generation arguments to get a specific item from that group. If a type is
+ * not set, the generator will either use the party to weight item choice or randomly
+ * pick an item.
+ *
+ * @example STARTING_MODIFIER_OVERRIDE = [{name: "EXP_SHARE", count: 2}] // will have a quantity of 2 in-game
+ * @example STARTING_HELD_ITEM_OVERRIDE = [{name: "LUCKY_EGG"}] // will have a quantity of 1 in-game
+ * @example {name: "BERRY", type: BerryType.SITRUS} // type must be given to get a specific berry
+ * @example {name: "BERRY"} // a random berry will be generated at runtime
+ */
+export type ModifierOverride = GeneratorModifierOverride | BaseModifierOverride;
