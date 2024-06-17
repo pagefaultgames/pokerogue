@@ -1747,9 +1747,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         power.value = 60;
       }
       applyPreAttackAbAttrs(VariableMovePowerAbAttr, source, this, move, power);
-      const fieldAuraPokemon = this.scene.getField(true).find(p => p.hasAbilityWithAttr(FieldVariableMovePowerAbAttr));
-      if (fieldAuraPokemon) {
-        applyPreAttackAbAttrs(FieldVariableMovePowerAbAttr, fieldAuraPokemon, fieldAuraPokemon, move, power);
+
+      const fieldAuras = new Set(
+        this.scene.getField(true)
+          .map((p) => p.getAbilityAttrs(FieldVariableMovePowerAbAttr) as FieldVariableMovePowerAbAttr[])
+          .flat(),
+      );
+      for (const aura of fieldAuras) {
+        // The only relevant values are `move` and the `power` holder
+        aura.applyPreAttack(null, null, null, move, [power]);
       }
 
       applyPreDefendAbAttrs(ReceivedMoveDamageMultiplierAbAttr, this, source, move, cancelled, power);
