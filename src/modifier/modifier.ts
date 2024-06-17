@@ -891,7 +891,8 @@ export class ConditionalStatsBoost extends PokemonHeldItemModifier {
     return new ConditionalStatsBoost(this.type, this.pokemonId, this.stackCount);
   }
   apply(args: any[]): boolean | Promise<boolean> {
-    args[1][this.stat] = Math.floor(args[1][this.stat] * 1.5);
+    const targetPokemon = args[0];
+    targetPokemon.stats[this.stat] *= 1.5;
     return true;
   }
 }

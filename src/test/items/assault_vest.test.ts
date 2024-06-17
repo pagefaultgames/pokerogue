@@ -60,7 +60,7 @@ describe("Items - Assault Vest", () => {
     await game.phaseInterceptor.run(PostSummonPhase);
     await game.phaseInterceptor.to(CommandPhase);
     const spDef = pokemon.stats[Stat.SPDEF];
-    expect(spDef).toBeGreaterThan(138);
+    expect(spDef).toBe(207); // 138 * 1.5
 
     //
     // game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
