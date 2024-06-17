@@ -1,12 +1,12 @@
 import { Type } from "./type";
 import * as Utils from "../utils";
-import beautify from "json-beautify";
 import {pokemonEvolutions, SpeciesFormEvolution} from "./pokemon-evolutions";
 import i18next from "i18next";
 import { Biome } from "#enums/biome";
 import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
+// import beautify from "json-beautify";
 
 export function getBiomeName(biome: Biome | -1) {
   if (biome === -1) {
@@ -7808,57 +7808,56 @@ export function initBiomes() {
 
 
   // used in a commented code
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  function outputPools() {
-    const pokemonOutput = {};
-    const trainerOutput = {};
+  // function outputPools() {
+  //   const pokemonOutput = {};
+  //   const trainerOutput = {};
 
-    for (const b of Object.keys(biomePokemonPools)) {
-      const biome = Biome[b];
-      pokemonOutput[biome] = {};
-      trainerOutput[biome] = {};
+  //   for (const b of Object.keys(biomePokemonPools)) {
+  //     const biome = Biome[b];
+  //     pokemonOutput[biome] = {};
+  //     trainerOutput[biome] = {};
 
-      for (const t of Object.keys(biomePokemonPools[b])) {
-        const tier = BiomePoolTier[t];
+  //     for (const t of Object.keys(biomePokemonPools[b])) {
+  //       const tier = BiomePoolTier[t];
 
-        pokemonOutput[biome][tier] = {};
+  //       pokemonOutput[biome][tier] = {};
 
-        for (const tod of Object.keys(biomePokemonPools[b][t])) {
-          const timeOfDay = TimeOfDay[tod];
+  //       for (const tod of Object.keys(biomePokemonPools[b][t])) {
+  //         const timeOfDay = TimeOfDay[tod];
 
-          pokemonOutput[biome][tier][timeOfDay] = [];
+  //         pokemonOutput[biome][tier][timeOfDay] = [];
 
-          for (const f of biomePokemonPools[b][t][tod]) {
-            if (typeof f === "number") {
-              pokemonOutput[biome][tier][timeOfDay].push(Species[f]);
-            } else {
-              const tree = {};
+  //         for (const f of biomePokemonPools[b][t][tod]) {
+  //           if (typeof f === "number") {
+  //             pokemonOutput[biome][tier][timeOfDay].push(Species[f]);
+  //           } else {
+  //             const tree = {};
 
-              for (const l of Object.keys(f)) {
-                tree[l] = f[l].map(s => Species[s]);
-              }
+  //             for (const l of Object.keys(f)) {
+  //               tree[l] = f[l].map(s => Species[s]);
+  //             }
 
-              pokemonOutput[biome][tier][timeOfDay].push(tree);
-            }
-          }
+  //             pokemonOutput[biome][tier][timeOfDay].push(tree);
+  //           }
+  //         }
 
-        }
-      }
+  //       }
+  //     }
 
-      for (const t of Object.keys(biomeTrainerPools[b])) {
-        const tier = BiomePoolTier[t];
+  //     for (const t of Object.keys(biomeTrainerPools[b])) {
+  //       const tier = BiomePoolTier[t];
 
-        trainerOutput[biome][tier] = [];
+  //       trainerOutput[biome][tier] = [];
 
-        for (const f of biomeTrainerPools[b][t]) {
-          trainerOutput[biome][tier].push(TrainerType[f]);
-        }
-      }
-    }
+  //       for (const f of biomeTrainerPools[b][t]) {
+  //         trainerOutput[biome][tier].push(TrainerType[f]);
+  //       }
+  //     }
+  //   }
 
-    console.log(beautify(pokemonOutput, null, 2, 180).replace(/(        |        (?:\{ "\d+": \[ )?|    "(?:.*?)": \[ |(?:,|\[) (?:"\w+": \[ |(?:\{ )?"\d+": \[ )?)"(\w+)"(?= |,|\n)/g, "$1Species.$2").replace(/"(\d+)": /g, "$1: ").replace(/((?:      )|(?:(?!\n)    "(?:.*?)": \{) |\[(?: .*? )?\], )"(\w+)"/g, "$1[TimeOfDay.$2]").replace(/(    )"(.*?)"/g, "$1[BiomePoolTier.$2]").replace(/(  )"(.*?)"/g, "$1[Biome.$2]"));
-    console.log(beautify(trainerOutput, null, 2, 120).replace(/(      |      (?:\{ "\d+": \[ )?|    "(?:.*?)": \[ |, (?:(?:\{ )?"\d+": \[ )?)"(.*?)"/g, "$1TrainerType.$2").replace(/"(\d+)": /g, "$1: ").replace(/(    )"(.*?)"/g, "$1[BiomePoolTier.$2]").replace(/(  )"(.*?)"/g, "$1[Biome.$2]"));
-  }
+  //   console.log(beautify(pokemonOutput, null, 2, 180).replace(/(        |        (?:\{ "\d+": \[ )?|    "(?:.*?)": \[ |(?:,|\[) (?:"\w+": \[ |(?:\{ )?"\d+": \[ )?)"(\w+)"(?= |,|\n)/g, "$1Species.$2").replace(/"(\d+)": /g, "$1: ").replace(/((?:      )|(?:(?!\n)    "(?:.*?)": \{) |\[(?: .*? )?\], )"(\w+)"/g, "$1[TimeOfDay.$2]").replace(/(    )"(.*?)"/g, "$1[BiomePoolTier.$2]").replace(/(  )"(.*?)"/g, "$1[Biome.$2]"));
+  //   console.log(beautify(trainerOutput, null, 2, 120).replace(/(      |      (?:\{ "\d+": \[ )?|    "(?:.*?)": \[ |, (?:(?:\{ )?"\d+": \[ )?)"(.*?)"/g, "$1TrainerType.$2").replace(/"(\d+)": /g, "$1: ").replace(/(    )"(.*?)"/g, "$1[BiomePoolTier.$2]").replace(/(  )"(.*?)"/g, "$1[Biome.$2]"));
+  // }
 
   /*for (let pokemon of allSpecies) {
     if (pokemon.speciesId >= Species.XERNEAS)

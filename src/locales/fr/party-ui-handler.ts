@@ -1,6 +1,7 @@
 import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const partyUiHandler: SimpleTranslationEntries = {
+  "ALL": "Tout",
   "SEND_OUT": "Envoyer",
   "SUMMARY": "Résumé",
   "CANCEL": "Annuler",
