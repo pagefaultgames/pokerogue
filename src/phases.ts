@@ -2581,6 +2581,11 @@ export class MovePhase extends BattlePhase {
       if (this.move.moveId && this.pokemon.summonData?.disabledMove === this.move.moveId) {
         this.scene.queueMessage(`${this.move.getName()} is disabled!`);
       }
+      if (this.move.ppUsed >= this.move.getMovePp()) { // if the move PP was reduced from Spite or otherwise, the move fails
+        this.fail();
+        this.showMoveText();
+        this.showFailedText();
+      }
       return this.end();
     }
 
