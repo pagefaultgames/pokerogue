@@ -8,13 +8,13 @@ import UiHandler from "./ui-handler";
 import { addWindow } from "./ui-theme";
 import { Button } from "../enums/buttons";
 import i18next from "../plugins/i18n";
+import { formatLargeNumber } from "../utils";
 
 interface DisplayStat {
   labelKey?: string;
-  width: integer;
+  rightPaddingPx: integer;
   setupFunc: (scene: BattleScene, x: integer, y: integer) => Phaser.GameObjects.Sprite | Phaser.GameObjects.Text;
   sourceFunc: (element: Phaser.GameObjects.Sprite | Phaser.GameObjects.Text, pokemon: PlayerPokemon) => void;
-  culmulativeWidth?: integer; // Automatically computed
 }
 
 const defaultTextSetupFunc = (scene, x, y) => {
@@ -25,7 +25,7 @@ const defaultTextSetupFunc = (scene, x, y) => {
 
 const displayStats: DisplayStat[] = [
   {
-    width: 24,
+    rightPaddingPx: 4,
     setupFunc: (scene, x, y) => {
       const spriteIcon = scene.add.sprite(x, y, "pkmn__sub");
       spriteIcon.setOrigin(0, 0.25);
@@ -40,7 +40,7 @@ const displayStats: DisplayStat[] = [
   },
   {
     labelKey: "pokemonName",
-    width: 55,
+    rightPaddingPx: 8,
     setupFunc: defaultTextSetupFunc,
     sourceFunc: (element, pokemon) => {
       element.setText(pokemon.name.trim());
@@ -48,15 +48,15 @@ const displayStats: DisplayStat[] = [
   },
   {
     labelKey: "level",
-    width: 24,
+    rightPaddingPx: 8,
     setupFunc: defaultTextSetupFunc,
     sourceFunc: (element, pokemon) => {
-      element.setText(pokemon.level);
+      element.setText(formatLargeNumber(pokemon.level, 100000));
     }
   },
   {
     labelKey: "metOnWave",
-    width: 52,
+    rightPaddingPx: 8,
     setupFunc: defaultTextSetupFunc,
     sourceFunc: (element, pokemon) => {
       element.setText(pokemon.metWave !== 0 ? pokemon.metWave : i18next.t("runStatsUiHandler:starter"));
@@ -64,42 +64,42 @@ const displayStats: DisplayStat[] = [
   },
   {
     labelKey: "kills",
-    width: 12,
+    rightPaddingPx: 8,
     setupFunc: defaultTextSetupFunc,
     sourceFunc: (element, pokemon) => {
-      element.setText(pokemon.runData.kills);
+      element.setText(formatLargeNumber(pokemon.runData.kills, 100000));
     }
   },
   {
     labelKey: "assists",
-    width: 12,
+    rightPaddingPx: 8,
     setupFunc: defaultTextSetupFunc,
     sourceFunc: (element, pokemon) => {
-      element.setText(pokemon.runData.assists);
+      element.setText(formatLargeNumber(pokemon.runData.assists, 100000));
     }
   },
   {
     labelKey: "deaths",
-    width: 12,
+    rightPaddingPx: 8,
     setupFunc: defaultTextSetupFunc,
     sourceFunc: (element, pokemon) => {
-      element.setText(pokemon.runData.deaths);
+      element.setText(formatLargeNumber(pokemon.runData.deaths, 100000));
     }
   },
   {
     labelKey: "damageDealt",
-    width: 21,
+    rightPaddingPx: 8,
     setupFunc: defaultTextSetupFunc,
     sourceFunc: (element, pokemon) => {
-      element.setText(pokemon.runData.damageDealt);
+      element.setText(formatLargeNumber(pokemon.runData.damageDealt, 100000));
     }
   },
   {
     labelKey: "damageTaken",
-    width: 21,
+    rightPaddingPx: 8,
     setupFunc: defaultTextSetupFunc,
     sourceFunc: (element, pokemon) => {
-      element.setText(pokemon.runData.damageTaken);
+      element.setText(formatLargeNumber(pokemon.runData.damageTaken, 100000));
     }
   },
 ];
@@ -116,11 +116,6 @@ export default class RunStatsUiHandler extends UiHandler {
 
     this.statLabels = new Array(displayStats.length);
     this.statValues = new Array(6).fill(undefined).map(x => Array(displayStats.length).fill(undefined));
-
-    displayStats[0].culmulativeWidth = displayStats[0].width;
-    for (let i = 1; i < displayStats.length; ++i) {
-      displayStats[i].culmulativeWidth = displayStats[i-1].culmulativeWidth + displayStats[i].width;
-    }
   }
 
   setup() {
@@ -145,17 +140,17 @@ export default class RunStatsUiHandler extends UiHandler {
 
     for (let row = 0; row < 6+1; ++row) {
       for (let col = 0; col < displayStats.length; ++col) {
-        const x = 42 + (col === 0 ? 0 : displayStats[col-1].culmulativeWidth);
-        const y = 28 + (row * 16);
+        // x values are computed later
+        const y = 30 + (row * 16);
 
         if (row === 0) {
           const statLabelKey = displayStats[col].labelKey;
-          const statLabel = addTextObject(this.scene, x, y, statLabelKey ? i18next.t(`runStatsUiHandler:${statLabelKey}`) : "", TextStyle.TOOLTIP_TITLE);
+          const statLabel = addTextObject(this.scene, 0, y, statLabelKey ? i18next.t(`runStatsUiHandler:${statLabelKey}`) : "", TextStyle.TOOLTIP_TITLE);
           statLabel.setOrigin(0, 0);
           this.statLabels[col] = statLabel;
           this.statsContainer.add(statLabel);
         } else {
-          const statValue = displayStats[col].setupFunc(this.scene, x, y);
+          const statValue = displayStats[col].setupFunc(this.scene, 0, y);
           this.statValues[row-1][col] = statValue;
           this.statsContainer.add(statValue);
         }
@@ -181,6 +176,8 @@ export default class RunStatsUiHandler extends UiHandler {
 
     this.updateStats();
 
+    this.alignStats();
+
     this.runStatsContainer.setVisible(true);
 
     this.getUi().moveTo(this.runStatsContainer, this.getUi().length - 1);
@@ -191,6 +188,7 @@ export default class RunStatsUiHandler extends UiHandler {
   }
 
   updateStats(): void {
+    // populate values
     const playerParty = this.scene.getParty();
     const sortedPlayerParty = [...playerParty].sort((a, b) => b.runData.kills - a.runData.kills);
 
@@ -202,6 +200,37 @@ export default class RunStatsUiHandler extends UiHandler {
         } else {
           this.statValues[row][col].setVisible(false);
         }
+      }
+    }
+  }
+
+  alignStats(): void {
+    // left-align all columns such that they're non-overlapping and separated by a given padding
+    let culmulativeDisplayWidth = 0;
+
+    for (let col = 0; col < displayStats.length; ++col) {
+      // x offset of this column = culmulative width of all previous columns
+      this.statLabels[col].x = culmulativeDisplayWidth;
+      for (let row = 0; row < 6; ++row) {
+        this.statValues[row][col].x = culmulativeDisplayWidth;
+      }
+
+      let maxDisplayWidthOnColumn = 0;
+      maxDisplayWidthOnColumn = Math.max(maxDisplayWidthOnColumn, this.statLabels[col].displayWidth);
+      for (let row = 0; row < 6; ++row) {
+        maxDisplayWidthOnColumn = Math.max(maxDisplayWidthOnColumn, this.statValues[row][col].displayWidth);
+      }
+
+      culmulativeDisplayWidth += maxDisplayWidthOnColumn + displayStats[col].rightPaddingPx;
+    }
+
+    // center all columns
+    const offsetToCenter = (((this.scene.game.canvas.width / 6) - 2) - culmulativeDisplayWidth) / 2;
+
+    for (let col = 0; col < displayStats.length; ++col) {
+      this.statLabels[col].x += offsetToCenter;
+      for (let row = 0; row < 6; ++row) {
+        this.statValues[row][col].x += offsetToCenter;
       }
     }
   }
@@ -250,6 +279,7 @@ export default class RunStatsUiHandler extends UiHandler {
 
     if (ret) {
       this.updateStats();
+      this.alignStats();
     }
 
     return ret;

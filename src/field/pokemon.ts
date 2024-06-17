@@ -2043,12 +2043,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     console.log("Run stats: processing damage: " + sourcePokemon?.name + " -> " + this.name);
 
     if (damage > 0) {
-      this.runData.damageTaken += damage;
-      console.log("Run stats: " + this.name + " took damage: " + damage);
+      if (this.isPlayer()) {
+        this.runData.damageTaken += damage;
+        console.log("Run stats: " + this.name + " took damage: " + damage);
+      }
 
       if (sourcePokemon && !isSelfDamage) {
-        sourcePokemon.runData.damageDealt += damage;
-        console.log("Run stats: " + sourcePokemon.name + " dealt damage: " + damage);
+        if (sourcePokemon.isPlayer()) {
+          sourcePokemon.runData.damageDealt += damage;
+          console.log("Run stats: " + sourcePokemon.name + " dealt damage: " + damage);
+        }
 
         if (!this.isPlayer()) {
           this.battleData.creditAssistOnFaintToPokemonIds.add(sourcePokemon.id);
@@ -2057,10 +2061,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     if (this.isFainted()) {
-      this.runData.deaths += 1;
-      console.log("Run stats: " + this.name + " died");
+      if (this.isPlayer()) {
+        this.runData.deaths += 1;
+        console.log("Run stats: " + this.name + " died");
+      }
 
-      if (sourcePokemon && !isSelfDamage) {
+      if (sourcePokemon && !isSelfDamage && sourcePokemon.isPlayer()) {
         sourcePokemon.runData.kills += 1;
         console.log("Run stats: " + sourcePokemon.name + " got a kill");
       }
@@ -2068,7 +2074,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       // Ignore self-assists and don't grant sourcePokemon an assist since it's probably already been awarded a kill
       for (const pokemonId of [...this.battleData.creditAssistOnFaintToPokemonIds].filter(id => (id !== this.id && id !== sourcePokemon?.id))) {
         const assistantPokemon = this.scene.getPokemonById(pokemonId);
-        if (assistantPokemon) {
+        if (assistantPokemon && assistantPokemon.isPlayer()) {
           assistantPokemon.runData.assists += 1;
           console.log("Run stats: " + assistantPokemon.name + " got an assist");
         }
