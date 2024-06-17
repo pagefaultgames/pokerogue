@@ -96,7 +96,8 @@ export class LoginPhase extends Phase {
           const loadData = () => {
             updateUserInfo().then(success => {
               if (!success[0]) {
-                this.scene.reset();
+                Utils.setCookie(Utils.sessionIdKey, "");
+                this.scene.reset(true, true);
                 return;
               }
               this.scene.gameData.loadSystem().then(() => this.end());
@@ -116,7 +117,8 @@ export class LoginPhase extends Phase {
                       this.scene.ui.playSelect();
                       updateUserInfo().then(success => {
                         if (!success[0]) {
-                          this.scene.reset();
+                          Utils.setCookie(Utils.sessionIdKey, "");
+                          this.scene.reset(true, true);
                           return;
                         }
                         this.end();
@@ -130,6 +132,9 @@ export class LoginPhase extends Phase {
               }
             ]
           });
+        } else if (statusCode === 401) {
+          Utils.setCookie(Utils.sessionIdKey, "");
+          this.scene.reset(true, true);
         } else {
           this.scene.unshiftPhase(new UnavailablePhase(this.scene));
           super.end();
