@@ -2107,6 +2107,32 @@ export const PGMdialogue: DialogueTranslationEntries = {
       2: "You got caught in my storm! Better luck next time!"
     }
   },
+  "alder": {
+    "encounter": {
+      1: "Preparati ad affrontare l’allenatore più in gamba di Unima!"
+    },
+    "victory": {
+      1: "Ben fatto! Hai un talento invidiabile."
+    },
+    "defeat": {
+      1: `Un freddo vento attraversa il mio cuore...
+          $Che battaglia!`
+    }
+  },
+  "kieran": {
+    "encounter": {
+      1: `Attraverso il duro lavoro, divento sempre più forte!
+          $Non perdo mai.`
+    },
+    "victory": {
+      1: `Non posso crederci…
+          $Che battaglia mozzafiato!`
+    },
+    "defeat": {
+      1: `Cavoli, che scontro!
+          $È ora che tu ti alleni ancora più duramente.`
+    }
+  },
   "rival": {
     "encounter": {
       1: `@c{smile}Hey, I was looking for you! I knew you were eager to get going but I expected at least a goodbye…

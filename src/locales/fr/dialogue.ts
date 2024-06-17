@@ -2107,6 +2107,32 @@ export const PGMdialogue: DialogueTranslationEntries = {
       2: "You got caught in my storm! Better luck next time!"
     }
   },
+  "alder": {
+    "encounter": {
+      1: "Prépare-toi pour un combat contre le meilleur Dresseur d'Unys !",
+    },
+    "victory": {
+      1: "Bien joué ! Tu as sans aucun doute un talent inégalé.",
+    },
+    "defeat": {
+      1: `Une brise fraîche traverse mon cœur…
+          $Quel effort extraordinaire !`,
+    }
+  },
+  "kieran": {
+    "encounter": {
+      1: `Grâce à un travail acharné, je deviens de plus en plus fort !
+          $Je ne perdrai pas.`,
+    },
+    "victory": {
+      1: `Je n'y crois pas…
+          $Quel combat amusant et palpitant !`
+    },
+    "defeat": {
+      1: `Eh beh, quel combat !
+          $Il est temps pour toi de t'entraîner encore plus dur.`,
+    }
+  },
   "rival": {
     "encounter": {
 	  1: `@c{smile}Ah, je te cherchais ! Je savais que t’étais pressée de partir, mais je m’attendais quand même à un au revoir…

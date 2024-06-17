@@ -2007,6 +2007,32 @@ export const PGMdialogue: DialogueTranslationEntries = {
       2: "你被我的风暴卷入了！祝你下次好运！",
     }
   },
+  "alder": {
+    "encounter": {
+      1: "准备好和合众最强的训练家交手吧！"
+    },
+    "victory": {
+      1: "精彩！简直就是天下无双！"
+    },
+    "defeat": {
+      1: `战斗结束后，我的心像是吹过了温和的风……
+          $真是厉害！`
+    }
+  },
+  "kieran": {
+    "encounter": {
+      1: `我的努力让我越来越强！
+          $所以我不会输。`
+    },
+    "victory": {
+      1: `不可能……
+          $真是一场有趣又激动人心的战斗啊！`
+    },
+    "defeat": {
+      1: `哇塞，好一场战斗！
+          $你得多练练了。`
+    }
+  },
   "rival": {
     "encounter": {
       1: "@c{smile}嘿，我在找你呢！我知道你急着上路，\n但至少说个再见吧…$@c{smile_eclosed}所以你终于要开始追逐梦想了？\n我几乎不敢相信。$@c{serious_smile_fists}来都来了，来一场对战怎么样？\n毕竟，我想看看你是不是准备周全了。$@c{serious_mopen_fists}不要手下留情，我想让你全力以赴！",
