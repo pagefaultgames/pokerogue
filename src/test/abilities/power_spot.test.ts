@@ -14,7 +14,7 @@ import Pokemon from "#app/field/pokemon.js";
 describe("Abilities - Power Spot", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  const batteryMultiplier = 1.3;
+  const powerSpotMultiplier = 1.3;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -48,7 +48,7 @@ describe("Abilities - Power Spot", () => {
 
     expect(appliedPower).not.toBe(undefined);
     expect(appliedPower).not.toBe(basePower);
-    expect(appliedPower).toBe(basePower * batteryMultiplier);
+    expect(appliedPower).toBe(basePower * powerSpotMultiplier);
   });
 
   it("raises the power of allies' physical moves by 30%", async () => {
@@ -66,7 +66,7 @@ describe("Abilities - Power Spot", () => {
 
     expect(appliedPower).not.toBe(undefined);
     expect(appliedPower).not.toBe(basePower);
-    expect(appliedPower).toBe(basePower * batteryMultiplier);
+    expect(appliedPower).toBe(basePower * powerSpotMultiplier);
   });
 
   it("does not raise the power of the ability owner's moves", async () => {
@@ -84,7 +84,7 @@ describe("Abilities - Power Spot", () => {
 
     expect(appliedPower).not.toBe(undefined);
     expect(appliedPower).toBe(basePower);
-    expect(appliedPower).not.toBe(basePower * batteryMultiplier);
+    expect(appliedPower).not.toBe(basePower * powerSpotMultiplier);
   });
 });
 
@@ -103,8 +103,8 @@ const getAppliedMovePower = (defender: Pokemon, attacker: Pokemon, move: Move) =
      * @see AllyMoveCategoryPowerBoostAbAttr
      */
   if (attacker.getAlly().hasAbilityWithAttr(AllyMoveCategoryPowerBoostAbAttr)) {
-    const batteryInstance = new AllyMoveCategoryPowerBoostAbAttr([MoveCategory.SPECIAL, MoveCategory.PHYSICAL], 1.3);
-    batteryInstance.applyPreAttack(attacker, false, defender, move, [ powerHolder ]);
+    const powerSpotInstance = new AllyMoveCategoryPowerBoostAbAttr([MoveCategory.SPECIAL, MoveCategory.PHYSICAL], 1.3);
+    powerSpotInstance.applyPreAttack(attacker, false, defender, move, [ powerHolder ]);
   }
 
   return powerHolder.value;
