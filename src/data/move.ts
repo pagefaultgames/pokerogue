@@ -2654,36 +2654,58 @@ export class LessPPMorePowerAttr extends VariablePowerAttr {
   }
 }
 
+/**
+ * Represents the Fling attribute which extends VariablePowerAttr.
+ * This class handles the logic for the Fling move in the game.
+ */
 export class FlingAttr extends VariablePowerAttr {
-  protected randomItem;
+  protected randomItem: string;
+
+  /**
+   * Applies the Fling move logic to the given user and target Pokémon.
+   * Determines the random item to be used, calculates power, and removes the item.
+   *
+   * @param user - The Pokémon using the move.
+   * @param target - The target Pokémon.
+   * @param move - The move being used.
+   * @param args - Additional arguments for the move. The first element is expected to be a Utils.NumberHolder which holds the power of the move.
+   *               This power value is dynamically calculated based on the item being flung.
+   * @returns A boolean indicating whether the move was successfully applied.
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const power = args[0] as Utils.NumberHolder; //to be changed based on held item
-    const heldItems = this.getMyHeldItems(user); //gets all held items carried by user's pokemon
-    if (heldItems.length === 0) { //user has no held item
+    const power = args[0] as Utils.NumberHolder;
+
+    // Inline logic to retrieve the held items for the given Pokémon
+    const heldItems = user.scene.findModifiers(
+      (m) => m instanceof PokemonHeldItemModifier && (m as PokemonHeldItemModifier).pokemonId === user.id,
+      user.isPlayer()
+    ) as PokemonHeldItemModifier[];
+
+    if (heldItems.length === 0) {
       power.value = 0;
       user.scene.queueMessage("But it failed!");
       return false;
     }
 
     const arr10i = [
-      "Sitrus Berry","Lum Berry","Enigma Berry","Liechi Berry","Ganlon Berry","Petaya Berry","Apicot Berry","Salac Berry",
-      "Lansat Berry","Starf Berry","Leppa Berry","Choice Band", "Choice Scarf", "Choice Specs", "Air Balloon", "Absorb Bulb", "Amulet Coin", "Big Root",
+      "Sitrus Berry", "Lum Berry", "Enigma Berry", "Liechi Berry", "Ganlon Berry", "Petaya Berry", "Apicot Berry", "Salac Berry",
+      "Lansat Berry", "Starf Berry", "Leppa Berry", "Choice Band", "Choice Scarf", "Choice Specs", "Air Balloon", "Absorb Bulb", "Amulet Coin", "Big Root",
       "Destiny Knot", "Expert Belt", "Focus Band", "Focus Sash", "Lagging Tail", "Leftovers", "Mental Herb",
       "Muscle Band", "Power Herb", "Red Card", "Shed Shell", "Silk Scarf", "Silver Powder", "Smooth Rock", "Soft Sand",
-      "Soothe Bell", "White Herb","Wide Lens", "Wise Glasses", "Zoom Lens"
+      "Soothe Bell", "White Herb", "Wide Lens", "Wise Glasses", "Zoom Lens"
     ];
     const arr30i = [
-      "Flame Orb","Yellow Flute", "Amulet Coin", "Binding Band", "Black Belt", "Black Glasses", "Black Sludge", "Cell Battery",
+      "Flame Orb", "Yellow Flute", "Amulet Coin", "Binding Band", "Black Belt", "Black Glasses", "Black Sludge", "Cell Battery",
       "Charcoal", "Eject Button", "Escape Rope", "Exp. Share",
       "Float Stone", "Heart Scale", "King's Rock", "Life Orb", "Light Ball", "Light Clay",
       "Lucky Egg", "Luminous Moss", "Magnet", "Metal Coat", "Metronome", "Miracle Seed",
       "Mystic Water", "NeverMeltIce", "Pearl", "Poké Doll", "Razor Fang", "Scope Lens", "Shell Bell",
       "Smoke Ball", "Snowball", "Spell Tag", "Stardust", "Toxic Orb",
       "Twisted Spoon"];
-    const arr40i = ["Eviolite","Icy Rock"];
+    const arr40i = ["Eviolite", "Icy Rock"];
     const arr50i = ["Sharp Beak"];
     const arr60i = ["Damp Rock", "Heat Rock", "Macho Brace", "Rocky Helmet"];
-    const arr70i = [ "Dragon Fang", "Poison Barb","Power Anklet", "Power Band", "Power Belt", "Power Bracer",
+    const arr70i = ["Dragon Fang", "Poison Barb", "Power Anklet", "Power Band", "Power Belt", "Power Bracer",
       "Power Lens", "Power Weight"];
     const arr80i = [
       "Assault Vest", "Quick Claw", "Razor Claw",
@@ -2694,7 +2716,7 @@ export class FlingAttr extends VariablePowerAttr {
     const arr100i = ["Hard Stone"];
     const arr130i = ["Iron Ball"];
 
-    //all items turned to lower case to match item name as in game code
+    // All items turned to lower case to match item name as in game code
     const arr10 = arr10i.map(item => item.toLowerCase());
     const arr30 = arr30i.map(item => item.toLowerCase());
     const arr40 = arr40i.map(item => item.toLowerCase());
@@ -2706,10 +2728,10 @@ export class FlingAttr extends VariablePowerAttr {
     const arr100 = arr100i.map(item => item.toLowerCase());
     const arr130 = arr130i.map(item => item.toLowerCase());
 
-    const allItems= [...arr10, ...arr30, ...arr40, ...arr50, ...arr60, ...arr70, ...arr80, ...arr90, ...arr100, ...arr130];
+    const allItems = [...arr10, ...arr30, ...arr40, ...arr50, ...arr60, ...arr70, ...arr80, ...arr90, ...arr100, ...arr130];
 
     const validHeldItems = heldItems.filter(item => allItems.includes(item.type.name.toLowerCase().replace(/_/g, " ")));
-    if (validHeldItems.length === 0) { //user has no flingable held item
+    if (validHeldItems.length === 0) { // user has no flingable held item
       power.value = 0;
       user.scene.queueMessage("No valid item found!");
       return false;
@@ -2719,7 +2741,7 @@ export class FlingAttr extends VariablePowerAttr {
     this.randomItem = randomHeldItemModifier.type.name;
     this.randomItem = this.randomItem.toLowerCase().replace(/_/g, " ");
 
-    if (this.randomItem) { //assigns value to power and removes item in possesion
+    if (this.randomItem) { // assigns value to power and removes item in possession
       if (arr10.includes(this.randomItem)) {
         power.value = 10;
         user.scene.removeModifier(randomHeldItemModifier, !user.isPlayer());
@@ -2777,13 +2799,8 @@ export class FlingAttr extends VariablePowerAttr {
     user.scene.queueMessage("But it failed!");
     return false;
   }
-
-  getMyHeldItems(user: Pokemon): PokemonHeldItemModifier[] {
-    return user.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-        && (m as PokemonHeldItemModifier).pokemonId === user.id, user.isPlayer()) as PokemonHeldItemModifier[];
-  }
-
 }
+
 
 export class MovePowerMultiplierAttr extends VariablePowerAttr {
   private powerMultiplierFunc: (user: Pokemon, target: Pokemon, move: Move) => number;
