@@ -4,8 +4,14 @@ export const partyUiHandler: SimpleTranslationEntries = {
   "ALL": "Tout",
   "SEND_OUT": "Envoyer",
   "SUMMARY": "Résumé",
-  "CANCEL": "Annuler",
+  "CANCEL": "Sortir",
   "RELEASE": "Relâcher",
   "APPLY": "Appliquer",
-  "TEACH": "Apprendre"
+  "TEACH": "Apprendre",
+  "chooseAPokemon": "Choisir un Pokémon.",
+  "doWhatWithPokemon": "Que faire avec ce Pokémon ?",
+  "selectMove": "Sélectionnez une capacité.",
+  "selectItemTransfer": "Sélectionnez un objet tenu à transférer.\nUtilisez les touches < et > pour modifier la quantité.",
+  "selectPokemonSplice": "Sélectionnez un autre Pokémon à fusionner.",
+  "cancelButton": "Retour",
 } as const;
