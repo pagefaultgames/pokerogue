@@ -68,7 +68,7 @@ export class EvolutionPhase extends Phase {
       this.evolutionBg.setVisible(false);
       this.evolutionContainer.add(this.evolutionBg);
 
-      this.evolutionBgOverlay = this.scene.add.rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6, 0x262626);
+      this.evolutionBgOverlay = this.scene.add.rectangle(0, 0, this.scene.game.canvas.width / this.scene.resolutionScale, this.scene.game.canvas.height / this.scene.resolutionScale, 0x262626);
       this.evolutionBgOverlay.setOrigin(0, 0);
       this.evolutionBgOverlay.setAlpha(0);
       this.evolutionContainer.add(this.evolutionBgOverlay);
@@ -90,7 +90,7 @@ export class EvolutionPhase extends Phase {
       this.pokemonEvoTintSprite.setVisible(false);
       this.pokemonEvoTintSprite.setTintFill(0xFFFFFF);
 
-      this.evolutionOverlay = this.scene.add.rectangle(0, -this.scene.game.canvas.height / 6, this.scene.game.canvas.width / 6, (this.scene.game.canvas.height / 6) - 48, 0xFFFFFF);
+      this.evolutionOverlay = this.scene.add.rectangle(0, -this.scene.game.canvas.height / this.scene.resolutionScale, this.scene.game.canvas.width / this.scene.resolutionScale, (this.scene.game.canvas.height / this.scene.resolutionScale) - 48, 0xFFFFFF);
       this.evolutionOverlay.setOrigin(0, 0);
       this.evolutionOverlay.setAlpha(0);
       this.scene.ui.add(this.evolutionOverlay);

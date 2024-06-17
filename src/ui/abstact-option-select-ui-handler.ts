@@ -57,7 +57,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
   setup() {
     const ui = this.getUi();
 
-    this.optionSelectContainer = this.scene.add.container((this.scene.game.canvas.width / 6) - 1, -48);
+    this.optionSelectContainer = this.scene.add.container((this.scene.game.canvas.width / this.scene.resolutionScale) - 1, -48);
     this.optionSelectContainer.setVisible(false);
     ui.add(this.optionSelectContainer);
 
@@ -84,7 +84,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     this.optionSelectText = addTextObject(this.scene, 0, 0, options.map(o => o.item ? `    ${o.label}` : o.label).join("\n"), TextStyle.WINDOW, { maxLines: options.length });
     this.optionSelectText.setLineSpacing(12);
     this.optionSelectContainer.add(this.optionSelectText);
-    this.optionSelectContainer.setPosition((this.scene.game.canvas.width / 6) - 1 - (this.config?.xOffset || 0), -48 + (this.config?.yOffset || 0));
+    this.optionSelectContainer.setPosition((this.scene.game.canvas.width / this.scene.resolutionScale) - 1 - (this.config?.xOffset || 0), -48 + (this.config?.yOffset || 0));
 
     this.optionSelectBg.width = Math.max(this.optionSelectText.displayWidth + 24, this.getWindowWidth());
 

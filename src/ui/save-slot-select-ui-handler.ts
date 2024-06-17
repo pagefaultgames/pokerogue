@@ -48,11 +48,11 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
     this.saveSlotSelectContainer.setVisible(false);
     ui.add(this.saveSlotSelectContainer);
 
-    const loadSessionBg = this.scene.add.rectangle(0, 0, this.scene.game.canvas.width / 6, -this.scene.game.canvas.height / 6, 0x006860);
+    const loadSessionBg = this.scene.add.rectangle(0, 0, this.scene.game.canvas.width / this.scene.resolutionScale, -this.scene.game.canvas.height / this.scene.resolutionScale, 0x006860);
     loadSessionBg.setOrigin(0, 0);
     this.saveSlotSelectContainer.add(loadSessionBg);
 
-    this.sessionSlotsContainerInitialY = -this.scene.game.canvas.height / 6 + 8;
+    this.sessionSlotsContainerInitialY = -this.scene.game.canvas.height / this.scene.resolutionScale + 8;
 
     this.sessionSlotsContainer = this.scene.add.container(8, this.sessionSlotsContainerInitialY);
     this.saveSlotSelectContainer.add(this.sessionSlotsContainer);

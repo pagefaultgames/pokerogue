@@ -127,7 +127,7 @@ export class EggHatchPhase extends Phase {
 
       this.eggHatchContainer.add(this.pokemonShinySparkle);
 
-      this.eggHatchOverlay = this.scene.add.rectangle(0, -this.scene.game.canvas.height / 6, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6, 0xFFFFFF);
+      this.eggHatchOverlay = this.scene.add.rectangle(0, -this.scene.game.canvas.height / this.scene.resolutionScale, this.scene.game.canvas.width / this.scene.resolutionScale, this.scene.game.canvas.height / this.scene.resolutionScale, 0xFFFFFF);
       this.eggHatchOverlay.setOrigin(0, 0);
       this.eggHatchOverlay.setAlpha(0);
       this.scene.fieldUI.add(this.eggHatchOverlay);

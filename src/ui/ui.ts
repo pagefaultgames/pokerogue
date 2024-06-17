@@ -137,7 +137,7 @@ export default class UI extends Phaser.GameObjects.Container {
   private overlayActive: boolean;
 
   constructor(scene: BattleScene) {
-    super(scene, 0, scene.game.canvas.height / 6);
+    super(scene, 0, scene.game.canvas.height / scene.resolutionScale);
 
     this.mode = Mode.MESSAGE;
     this.modeChain = [];
@@ -186,7 +186,7 @@ export default class UI extends Phaser.GameObjects.Container {
     for (const handler of this.handlers) {
       handler.setup();
     }
-    this.overlay = this.scene.add.rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6, 0);
+    this.overlay = this.scene.add.rectangle(0, 0, this.scene.game.canvas.width / this.scene.resolutionScale, this.scene.game.canvas.height / this.scene.resolutionScale, 0);
     this.overlay.setOrigin(0, 0);
     (this.scene as BattleScene).uiContainer.add(this.overlay);
     this.overlay.setVisible(false);
@@ -361,7 +361,7 @@ export default class UI extends Phaser.GameObjects.Container {
   update(): void {
     if (this.tooltipContainer.visible) {
       const reverse = this.scene.game.input.mousePointer.x >= this.scene.game.canvas.width - this.tooltipBg.width * 6 - 12;
-      this.tooltipContainer.setPosition(!reverse ? this.scene.game.input.mousePointer.x / 6 + 2 : this.scene.game.input.mousePointer.x / 6 - this.tooltipBg.width - 2, this.scene.game.input.mousePointer.y / 6 + 2);
+      this.tooltipContainer.setPosition(!reverse ? this.scene.game.input.mousePointer.x / this.scene.resolutionScale + 2 : this.scene.game.input.mousePointer.x / this.scene.resolutionScale - this.tooltipBg.width - 2, this.scene.game.input.mousePointer.y / this.scene.resolutionScale + 2);
     }
   }
 

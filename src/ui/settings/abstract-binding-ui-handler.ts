@@ -69,11 +69,11 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
     ui.add(this.actionsContainer);
 
     // Setup backgrounds and text objects for UI.
-    this.titleBg = addWindow(this.scene, (this.scene.game.canvas.width / 6) - this.getWindowWidth(), -(this.scene.game.canvas.height / 6) + 28 + 21, this.getWindowWidth(), 24);
+    this.titleBg = addWindow(this.scene, (this.scene.game.canvas.width / this.scene.resolutionScale) - this.getWindowWidth(), -(this.scene.game.canvas.height / this.scene.resolutionScale) + 28 + 21, this.getWindowWidth(), 24);
     this.titleBg.setOrigin(0.5);
     this.optionSelectContainer.add(this.titleBg);
 
-    this.actionBg = addWindow(this.scene, (this.scene.game.canvas.width / 6) - this.getWindowWidth(), -(this.scene.game.canvas.height / 6) + this.getWindowHeight() + 28 + 21 + 21, this.getWindowWidth(), 24);
+    this.actionBg = addWindow(this.scene, (this.scene.game.canvas.width / this.scene.resolutionScale) - this.getWindowWidth(), -(this.scene.game.canvas.height / this.scene.resolutionScale) + this.getWindowHeight() + 28 + 21 + 21, this.getWindowWidth(), 24);
     this.actionBg.setOrigin(0.5);
     this.actionsContainer.add(this.actionBg);
 
@@ -88,7 +88,7 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
     this.timerText.setPositionRelative(this.unlockText, (this.unlockText.width/6) + 5, 0);
     this.optionSelectContainer.add(this.timerText);
 
-    this.optionSelectBg = addWindow(this.scene, (this.scene.game.canvas.width / 6) - this.getWindowWidth(), -(this.scene.game.canvas.height / 6) + this.getWindowHeight() + 28, this.getWindowWidth(), this.getWindowHeight());
+    this.optionSelectBg = addWindow(this.scene, (this.scene.game.canvas.width / this.scene.resolutionScale) - this.getWindowWidth(), -(this.scene.game.canvas.height / this.scene.resolutionScale) + this.getWindowHeight() + 28, this.getWindowWidth(), this.getWindowHeight());
     this.optionSelectBg.setOrigin(0.5);
     this.optionSelectContainer.add(this.optionSelectBg);
 

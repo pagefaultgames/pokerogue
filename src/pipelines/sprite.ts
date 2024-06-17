@@ -450,11 +450,11 @@ export default class SpritePipeline extends FieldSpritePipeline {
     if (hasShadow) {
       const isEntityObj = sprite.parentContainer instanceof Pokemon || sprite.parentContainer instanceof Trainer;
       const field = isEntityObj ? sprite.parentContainer.parentContainer : sprite.parentContainer;
-      const fieldScaleRatio = field.scale / 6;
+      const fieldScaleRatio = field.scale / sprite.scene.resolutionScale;
       const baseY = (isEntityObj
         ? sprite.parentContainer.y
-        : sprite.y + sprite.height) * 6 / fieldScaleRatio;
-      const bottomPadding = Math.ceil(sprite.height * 0.05) * 6 / fieldScaleRatio;
+        : sprite.y + sprite.height) * sprite.scene.resolutionScale / fieldScaleRatio;
+      const bottomPadding = Math.ceil(sprite.height * 0.05) * sprite.scene.resolutionScale / fieldScaleRatio;
       const yDelta = (baseY - y1) / field.scale;
       y2 = y1 = baseY + bottomPadding;
       const pixelHeight = (v1 - v0) / (sprite.frame.height * (isEntityObj ? sprite.parentContainer.scale : sprite.scale));

@@ -352,7 +352,7 @@ export class LoadingScene extends SceneBase {
 
     const bg = this.add.image(0, 0, "");
     bg.setOrigin(0, 0);
-    bg.setScale(6);
+    bg.setScale(this.resolutionScale);
     bg.setVisible(false);
 
     const graphics = this.add.graphics();
@@ -363,6 +363,8 @@ export class LoadingScene extends SceneBase {
     const progressBox = this.add.graphics();
     progressBox.lineStyle(5, 0xff00ff, 1.0);
     progressBox.fillStyle(0x222222, 0.8);
+    //progressBar.setScale(this.resolutionScale/6);
+    progressBox.setScale(this.resolutionScale/6);
 
     const width = this.cameras.main.width;
     const height = this.cameras.main.height;
@@ -370,47 +372,50 @@ export class LoadingScene extends SceneBase {
     const midWidth = width / 2;
     const midHeight = height / 2;
 
-    const logo = this.add.image(midWidth, 240, "");
+    const logo = this.add.image(midWidth, 40 * this.resolutionScale, "");
     logo.setVisible(false);
     logo.setOrigin(0.5, 0.5);
-    logo.setScale(4);
+    logo.setScale(this.resolutionScale*2/3);
 
     const percentText = this.make.text({
       x: midWidth,
-      y: midHeight - 24,
+      y: midHeight - 4 * this.resolutionScale,
       text: "0%",
       style: {
         font: "72px emerald",
         color: "#ffffff",
       },
     });
+    percentText.setScale(this.resolutionScale/6);
     percentText.setOrigin(0.5, 0.5);
 
     const assetText = this.make.text({
       x: midWidth,
-      y: midHeight + 48,
+      y: midHeight + 8 * this.resolutionScale,
       text: "",
       style: {
         font: "48px emerald",
         color: "#ffffff",
       },
     });
+    assetText.setScale(this.resolutionScale/6);
     assetText.setOrigin(0.5, 0.5);
 
     const disclaimerText = this.make.text({
       x: midWidth,
-      y: assetText.y + 152,
+      y: assetText.y + 25 * this.resolutionScale,
       text: i18next.t("menu:disclaimer"),
       style: {
         font: "72px emerald",
         color: "#DA3838",
       },
     });
+    disclaimerText.setScale(this.resolutionScale/6);
     disclaimerText.setOrigin(0.5, 0.5);
 
     const disclaimerDescriptionText = this.make.text({
       x: midWidth,
-      y: disclaimerText.y + 120,
+      y: disclaimerText.y + 20 * this.resolutionScale,
       text: i18next.t("menu:disclaimerDescription"),
       style: {
         font: "48px emerald",
@@ -418,6 +423,7 @@ export class LoadingScene extends SceneBase {
         align: "center"
       },
     });
+    disclaimerDescriptionText.setScale(this.resolutionScale/6);
     disclaimerDescriptionText.setOrigin(0.5, 0.5);
 
     disclaimerText.setVisible(false);
@@ -425,14 +431,14 @@ export class LoadingScene extends SceneBase {
 
     const intro = this.add.video(0, 0);
     intro.setOrigin(0, 0);
-    intro.setScale(3);
+    intro.setScale(this.resolutionScale/2);
 
     this.load.on("progress", (value: string) => {
       const parsedValue = parseFloat(value);
       percentText.setText(`${Math.floor(parsedValue * 100)}%`);
       progressBar.clear();
       progressBar.fillStyle(0xffffff, 0.8);
-      progressBar.fillRect(midWidth - 320, 360, 640 * parsedValue, 64);
+      progressBar.fillRect(midWidth - 55 * this.resolutionScale, 60 * this.resolutionScale, 110 * parsedValue * this.resolutionScale, 11 * this.resolutionScale);
     });
 
     this.load.on("fileprogress", file => {

@@ -48,7 +48,7 @@ export default class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
       const xOffset = (args.length >= 4 && args[3] !== null ? args[3] as number : 0);
       const yOffset = (args.length >= 5 && args[4] !== null ? args[4] as number : 0);
 
-      this.optionSelectContainer.setPosition((this.scene.game.canvas.width / 6) - 1 + xOffset, -48 + yOffset);
+      this.optionSelectContainer.setPosition((this.scene.game.canvas.width / this.scene.resolutionScale) - 1 + xOffset, -48 + yOffset);
 
       this.setCursor(this.switchCheck ? this.switchCheckCursor : 0);
 

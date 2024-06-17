@@ -20,7 +20,7 @@ export default class AchvBar extends Phaser.GameObjects.Container {
   public shown: boolean;
 
   constructor(scene: BattleScene) {
-    super(scene, scene.game.canvas.width / 6, 0);
+    super(scene, scene.game.canvas.width / scene.resolutionScale, 0);
     this.playerGender = scene.gameData.gender;
   }
 
@@ -94,7 +94,7 @@ export default class AchvBar extends Phaser.GameObjects.Container {
 
     this.scene.tweens.add({
       targets: this,
-      x: (this.scene.game.canvas.width / 6) - (this.bg.width / 2),
+      x: (this.scene.game.canvas.width / this.scene.resolutionScale) - (this.bg.width / 2),
       duration: 500,
       ease: "Sine.easeOut"
     });
@@ -112,7 +112,7 @@ export default class AchvBar extends Phaser.GameObjects.Container {
 
     this.scene.tweens.add({
       targets: this,
-      x: (this.scene.game.canvas.width / 6),
+      x: (this.scene.game.canvas.width / this.scene.resolutionScale),
       duration: 500,
       ease: "Sine.easeIn",
       onComplete: () => {

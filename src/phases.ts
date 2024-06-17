@@ -3219,7 +3219,7 @@ export class StatChangePhase extends PokemonPhase {
       const statSprite = this.scene.add.tileSprite(tileX, tileY, tileWidth, tileHeight, "battle_stats", spriteColor);
       statSprite.setPipeline(this.scene.fieldSpritePipeline);
       statSprite.setAlpha(0);
-      statSprite.setScale(6);
+      statSprite.setScale(this.scene.resolutionScale);
       statSprite.setOrigin(0.5, 1);
 
       this.scene.playSound(`stat_${levels.value >= 1 ? "up" : "down"}`);
@@ -4216,7 +4216,7 @@ export class EndCardPhase extends Phase {
     this.endCard.setScale(0.5);
     this.scene.field.add(this.endCard);
 
-    this.text = addTextObject(this.scene, this.scene.game.canvas.width / 12, (this.scene.game.canvas.height / 6) - 16, "Congratulations!", TextStyle.SUMMARY, { fontSize: "128px" });
+    this.text = addTextObject(this.scene, this.scene.game.canvas.width / (2*this.scene.resolutionScale), (this.scene.game.canvas.height / this.scene.resolutionScale) - 16, "Congratulations!", TextStyle.SUMMARY, { fontSize: "128px" });
     this.text.setOrigin(0.5);
     this.scene.field.add(this.text);
 

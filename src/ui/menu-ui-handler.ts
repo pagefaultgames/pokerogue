@@ -55,9 +55,9 @@ export default class MenuUiHandler extends MessageUiHandler {
   setup() {
     const ui = this.getUi();
 
-    this.menuContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
+    this.menuContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / this.scene.resolutionScale) + 1);
 
-    this.menuContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
+    this.menuContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / this.scene.resolutionScale, this.scene.game.canvas.height / this.scene.resolutionScale), Phaser.Geom.Rectangle.Contains);
 
     const menuMessageText = addTextObject(this.scene, 8, 8, "", TextStyle.WINDOW, { maxLines: 2 });
     menuMessageText.setWordWrapWidth(1224);
@@ -66,7 +66,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     this.optionSelectText = addTextObject(this.scene, 0, 0, this.menuOptions.map(o => `${i18next.t(`menuUiHandler:${MenuOptions[o]}`)}`).join("\n"), TextStyle.WINDOW, { maxLines: this.menuOptions.length });
     this.optionSelectText.setLineSpacing(12);
 
-    this.menuBg = addWindow(this.scene, (this.scene.game.canvas.width / 6) - (this.optionSelectText.displayWidth + 25), 0, this.optionSelectText.displayWidth + 23, (this.scene.game.canvas.height / 6) - 2);
+    this.menuBg = addWindow(this.scene, (this.scene.game.canvas.width / this.scene.resolutionScale) - (this.optionSelectText.displayWidth + 25), 0, this.optionSelectText.displayWidth + 23, (this.scene.game.canvas.height / this.scene.resolutionScale) - 2);
     this.menuBg.setOrigin(0, 0);
 
     this.optionSelectText.setPositionRelative(this.menuBg, 14, 6);

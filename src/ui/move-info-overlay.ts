@@ -76,7 +76,7 @@ export default class MoveInfoOverlay extends Phaser.GameObjects.Container implem
     moveDescriptionTextMaskRect.fillRect(
       maskPointOrigin.x + ((options?.onSide && !options?.right ? EFF_WIDTH : 0) + BORDER) * scale, maskPointOrigin.y + ((options?.top ? EFF_HEIGHT : 0) + BORDER - 2) * scale,
       width - ((options?.onSide ? EFF_WIDTH : 0) - BORDER * 2) * scale, (DESC_HEIGHT - (BORDER - 2) * 2) * scale);
-    moveDescriptionTextMaskRect.setScale(6);
+    moveDescriptionTextMaskRect.setScale(this.scene.resolutionScale);
     const moveDescriptionTextMask = this.createGeometryMask(moveDescriptionTextMaskRect);
 
     this.add(this.desc);

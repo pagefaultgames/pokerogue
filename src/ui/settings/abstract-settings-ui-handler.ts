@@ -52,18 +52,18 @@ export default class AbstractSettingsUiHandler extends UiHandler {
   setup() {
     const ui = this.getUi();
 
-    this.settingsContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
+    this.settingsContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / this.scene.resolutionScale) + 1);
 
-    this.settingsContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6 - 20), Phaser.Geom.Rectangle.Contains);
+    this.settingsContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / this.scene.resolutionScale, this.scene.game.canvas.height / this.scene.resolutionScale - 20), Phaser.Geom.Rectangle.Contains);
 
     this.navigationIcons = {};
 
     this.navigationContainer = new NavigationMenu(this.scene, 0, 0);
 
-    this.optionsBg = addWindow(this.scene, 0, this.navigationContainer.height, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - 16 - this.navigationContainer.height - 2);
+    this.optionsBg = addWindow(this.scene, 0, this.navigationContainer.height, (this.scene.game.canvas.width / this.scene.resolutionScale) - 2, (this.scene.game.canvas.height / this.scene.resolutionScale) - 16 - this.navigationContainer.height - 2);
     this.optionsBg.setOrigin(0, 0);
 
-    const actionsBg = addWindow(this.scene, 0, (this.scene.game.canvas.height / 6) - this.navigationContainer.height, (this.scene.game.canvas.width / 6) - 2, 22);
+    const actionsBg = addWindow(this.scene, 0, (this.scene.game.canvas.height / this.scene.resolutionScale) - this.navigationContainer.height, (this.scene.game.canvas.width / this.scene.resolutionScale) - 2, 22);
     actionsBg.setOrigin(0, 0);
 
     const iconAction = this.scene.add.sprite(0, 0, "keyboard");
@@ -111,18 +111,18 @@ export default class AbstractSettingsUiHandler extends UiHandler {
           return valueLabel;
         }));
 
-        const totalWidth = this.optionValueLabels[s].map(o => o.width).reduce((total, width) => total += width, 0);
+        const totalWidth = this.optionValueLabels[s].map(o => o.displayWidth).reduce((total, width) => total += width, 0);
 
         const labelWidth =  Math.max(78, this.settingLabels[s].displayWidth + 8);
 
-        const totalSpace = (300 - labelWidth) - totalWidth / 6;
+        const totalSpace = (300 - labelWidth) - totalWidth;
         const optionSpacing = Math.floor(totalSpace / (this.optionValueLabels[s].length - 1));
 
         let xOffset = 0;
 
         for (const value of this.optionValueLabels[s]) {
           value.setPositionRelative(this.settingLabels[s], labelWidth + xOffset, 0);
-          xOffset += value.width / 6 + optionSpacing;
+          xOffset += value.displayWidth + optionSpacing;
         }
       });
 
@@ -283,7 +283,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     const ret = super.setCursor(cursor);
 
     if (!this.cursorObj) {
-      this.cursorObj = this.scene.add.nineslice(0, 0, "summary_moves_cursor", null, (this.scene.game.canvas.width / 6) - 10, 16, 1, 1, 1, 1);
+      this.cursorObj = this.scene.add.nineslice(0, 0, "summary_moves_cursor", null, (this.scene.game.canvas.width / this.scene.resolutionScale) - 10, 16, 1, 1, 1, 1);
       this.cursorObj.setOrigin(0, 0);
       this.optionsContainer.add(this.cursorObj);
     }

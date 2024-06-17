@@ -42,7 +42,7 @@ export abstract class ModalUiHandler extends UiHandler {
 
     this.modalContainer = this.scene.add.container(0, 0);
 
-    this.modalContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
+    this.modalContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / this.scene.resolutionScale, this.scene.game.canvas.height / this.scene.resolutionScale), Phaser.Geom.Rectangle.Contains);
 
     this.modalBg = addWindow(this.scene, 0, 0, 0, 0);
 
@@ -108,7 +108,7 @@ export abstract class ModalUiHandler extends UiHandler {
     const [ marginTop, marginRight, marginBottom, marginLeft ] = this.getMargin(config);
 
     const [ width, height ] = [ this.getWidth(config), this.getHeight(config) ];
-    this.modalContainer.setPosition((((this.scene.game.canvas.width / 6) - (width + (marginRight - marginLeft))) / 2), (((-this.scene.game.canvas.height / 6) - (height + (marginBottom - marginTop))) / 2));
+    this.modalContainer.setPosition((((this.scene.game.canvas.width / this.scene.resolutionScale) - (width + (marginRight - marginLeft))) / 2), (((-this.scene.game.canvas.height / this.scene.resolutionScale) - (height + (marginBottom - marginTop))) / 2));
 
     this.modalBg.setSize(width, height);
 

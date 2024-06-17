@@ -192,7 +192,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       this.add(expBar);
 
       const expMaskRect = this.scene.make.graphics({});
-      expMaskRect.setScale(6);
+      expMaskRect.setScale(this.scene.resolutionScale);
       expMaskRect.fillStyle(0xFFFFFF);
       expMaskRect.beginPath();
       expMaskRect.fillRect(127, 126, 85, 2);
@@ -387,7 +387,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     }
 
     if (this.player) {
-      this.expMaskRect.x = (pokemon.levelExp / getLevelTotalExp(pokemon.level, pokemon.species.growthRate)) * 510;
+      this.expMaskRect.x = (pokemon.levelExp / getLevelTotalExp(pokemon.level, pokemon.species.growthRate)) * 85 * this.scene.resolutionScale;
       this.lastExp = pokemon.exp;
       this.lastLevelExp = pokemon.levelExp;
 
@@ -675,7 +675,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       this.scene.tweens.add({
         targets: this.expMaskRect,
         ease: "Sine.easeIn",
-        x: ratio * 510,
+        x: ratio * 85 * this.scene.resolutionScale,
         duration: duration,
         onComplete: () => {
           if (!this.scene) {
@@ -776,7 +776,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
 export class PlayerBattleInfo extends BattleInfo {
   constructor(scene: Phaser.Scene) {
-    super(scene, Math.floor(scene.game.canvas.width / 6) - 10, -72, true);
+    super(scene, Math.floor(scene.game.canvas.width / scene.resolutionScale) - 10, -72, true);
   }
 }
 

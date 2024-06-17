@@ -25,11 +25,11 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
 
     const ui = this.getUi();
 
-    this.titleContainer = this.scene.add.container(0, -(this.scene.game.canvas.height / 6));
+    this.titleContainer = this.scene.add.container(0, -(this.scene.game.canvas.height / this.scene.resolutionScale));
     this.titleContainer.setAlpha(0);
     ui.add(this.titleContainer);
 
-    const logo = this.scene.add.image((this.scene.game.canvas.width / 6) / 2, 8, "logo");
+    const logo = this.scene.add.image((this.scene.game.canvas.width / this.scene.resolutionScale) / 2, 8, "logo");
     logo.setOrigin(0.5, 0);
     this.titleContainer.add(logo);
 
@@ -38,7 +38,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
 
     this.titleContainer.add(this.dailyRunScoreboard);
 
-    this.playerCountLabel = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - 109, `? ${i18next.t("menu:playersOnline")}`, TextStyle.MESSAGE, { fontSize: "54px" });
+    this.playerCountLabel = addTextObject(this.scene, (this.scene.game.canvas.width / this.scene.resolutionScale) - 2, (this.scene.game.canvas.height / this.scene.resolutionScale) - 109, `? ${i18next.t("menu:playersOnline")}`, TextStyle.MESSAGE, { fontSize: "54px" });
     this.playerCountLabel.setOrigin(1, 0);
     this.titleContainer.add(this.playerCountLabel);
 

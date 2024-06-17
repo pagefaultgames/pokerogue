@@ -34,18 +34,18 @@ export default class VouchersUiHandler extends MessageUiHandler {
   setup() {
     const ui = this.getUi();
 
-    this.vouchersContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
+    this.vouchersContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / this.scene.resolutionScale) + 1);
 
-    this.vouchersContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
+    this.vouchersContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / this.scene.resolutionScale, this.scene.game.canvas.height / this.scene.resolutionScale), Phaser.Geom.Rectangle.Contains);
 
-    const headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6) - 2, 24);
+    const headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / this.scene.resolutionScale) - 2, 24);
     headerBg.setOrigin(0, 0);
 
     const headerText = addTextObject(this.scene, 0, 0, i18next.t("voucher:vouchers"), TextStyle.SETTINGS_LABEL);
     headerText.setOrigin(0, 0);
     headerText.setPositionRelative(headerBg, 8, 4);
 
-    this.voucherIconsBg = addWindow(this.scene, 0, headerBg.height, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - headerBg.height - 68);
+    this.voucherIconsBg = addWindow(this.scene, 0, headerBg.height, (this.scene.game.canvas.width / this.scene.resolutionScale) - 2, (this.scene.game.canvas.height / this.scene.resolutionScale) - headerBg.height - 68);
     this.voucherIconsBg.setOrigin(0, 0);
 
     this.voucherIconsContainer = this.scene.add.container(6, headerBg.height + 6);
@@ -78,7 +78,7 @@ export default class VouchersUiHandler extends MessageUiHandler {
     this.unlockText.setOrigin(0, 0);
     this.unlockText.setPositionRelative(unlockBg, 8, 4);
 
-    const descriptionBg = addWindow(this.scene, 0, titleBg.y + titleBg.height, (this.scene.game.canvas.width / 6) - 2, 42);
+    const descriptionBg = addWindow(this.scene, 0, titleBg.y + titleBg.height, (this.scene.game.canvas.width / this.scene.resolutionScale) - 2, 42);
     descriptionBg.setOrigin(0, 0);
 
     const descriptionText = addTextObject(this.scene, 0, 0, "", TextStyle.WINDOW, { maxLines: 2 });

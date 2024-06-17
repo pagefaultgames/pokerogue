@@ -48,7 +48,7 @@ export function addWindow(scene: BattleScene, x: number, y: number, width: numbe
 
   if (mergeMaskTop || mergeMaskLeft) {
     const maskRect = scene.make.graphics({});
-    maskRect.setScale(6);
+    maskRect.setScale(scene.resolutionScale);
     maskRect.fillStyle(0xFFFFFF);
     maskRect.beginPath();
     maskRect.fillRect(window.x + (mergeMaskLeft ? 2 : 0) + (maskOffsetX || 0), window.y + (mergeMaskTop ? 2 : 0) + (maskOffsetY || 0), window.width - (mergeMaskLeft ? 2 : 0), window.height - (mergeMaskTop ? 2 : 0));

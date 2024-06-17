@@ -1,6 +1,17 @@
 export const legacyCompatibleImages: string[] = [];
 
+var resolutionScale = localStorage.getItem("resolutionScale");
+if (resolutionScale) {
+  var width = 320*resolutionScale;
+  var height = 180*resolutionScale;
+} else {
+  localStorage.setItem("resolutionScale", 6);
+  resolutionScale = 6;
+}
+
 export class SceneBase extends Phaser.Scene {
+  public resolutionScale: integer = resolutionScale;
+
   constructor(config?: string | Phaser.Types.Scenes.SettingsConfig) {
     super(config);
   }

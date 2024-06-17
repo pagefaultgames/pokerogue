@@ -10,7 +10,7 @@ export default class PokeballTray extends Phaser.GameObjects.Container {
   public shown: boolean;
 
   constructor(scene: BattleScene, player: boolean) {
-    super(scene, player ? (scene.game.canvas.width / 6) : 0, player ? -72 : -144);
+    super(scene, player ? (scene.game.canvas.width / scene.resolutionScale) : 0, player ? -72 : -144);
     this.player = player;
   }
 
@@ -20,7 +20,7 @@ export default class PokeballTray extends Phaser.GameObjects.Container {
 
     this.add(this.bg);
 
-    this.balls = new Array(6).fill(null).map((_, i) => this.scene.add.sprite((this.player ? -83 : 76) + (this.scene.game.canvas.width / 6) * (this.player ? -1 : 1) + 10 * i * (this.player ? 1 : -1), -8, "pb_tray_ball", "empty"));
+    this.balls = new Array(6).fill(null).map((_, i) => this.scene.add.sprite((this.player ? -83 : 76) + (this.scene.game.canvas.width / this.scene.resolutionScale) * (this.player ? -1 : 1) + 10 * i * (this.player ? 1 : -1), -8, "pb_tray_ball", "empty"));
 
     for (const ball of this.balls) {
       ball.setOrigin(0, 0);
@@ -45,7 +45,7 @@ export default class PokeballTray extends Phaser.GameObjects.Container {
       this.bg.alpha = 1;
 
       this.balls.forEach((ball, b) => {
-        ball.x += (this.scene.game.canvas.width / 6 + 104) * (this.player ? 1 : -1);
+        ball.x += (this.scene.game.canvas.width / this.scene.resolutionScale + 104) * (this.player ? 1 : -1);
         let ballFrame = "ball";
         if (b >= party.length) {
           ballFrame = "empty";
@@ -93,7 +93,7 @@ export default class PokeballTray extends Phaser.GameObjects.Container {
       this.balls.forEach((ball, b) => {
         this.scene.tweens.add({
           targets: ball,
-          x: `${this.player ? "-" : "+"}=${this.scene.game.canvas.width / 6}`,
+          x: `${this.player ? "-" : "+"}=${this.scene.game.canvas.width / this.scene.resolutionScale}`,
           duration: 250,
           delay: b * 100,
           ease: "Sine.easeIn"

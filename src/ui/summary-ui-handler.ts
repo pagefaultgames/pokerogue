@@ -767,7 +767,7 @@ export default class SummaryUiHandler extends UiHandler {
 
         // Sets up the mask that hides the description text to give an illusion of scrolling
         const descriptionTextMaskRect = this.scene.make.graphics({});
-        descriptionTextMaskRect.setScale(6);
+        descriptionTextMaskRect.setScale(this.scene.resolutionScale);
         descriptionTextMaskRect.fillStyle(0xFFFFFF);
         descriptionTextMaskRect.beginPath();
         descriptionTextMaskRect.fillRect(110, 90.5, 206, 31);
@@ -872,7 +872,7 @@ export default class SummaryUiHandler extends UiHandler {
       statsContainer.add(expOverlay);
 
       const expMaskRect = this.scene.make.graphics({});
-      expMaskRect.setScale(6);
+      expMaskRect.setScale(this.scene.resolutionScale);
       expMaskRect.fillStyle(0xFFFFFF);
       expMaskRect.beginPath();
       expMaskRect.fillRect(140 + pageContainer.x, 145 + pageContainer.y + 21, Math.floor(expRatio * 64), 3);
@@ -951,7 +951,7 @@ export default class SummaryUiHandler extends UiHandler {
       this.movesContainer.add(this.moveDescriptionText);
 
       const moveDescriptionTextMaskRect = this.scene.make.graphics({});
-      moveDescriptionTextMaskRect.setScale(6);
+      moveDescriptionTextMaskRect.setScale(this.scene.resolutionScale);
       moveDescriptionTextMaskRect.fillStyle(0xFFFFFF);
       moveDescriptionTextMaskRect.beginPath();
       moveDescriptionTextMaskRect.fillRect(112, 130, 202, 46);

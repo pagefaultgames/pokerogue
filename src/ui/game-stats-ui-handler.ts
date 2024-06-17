@@ -228,24 +228,24 @@ export default class GameStatsUiHandler extends UiHandler {
   setup() {
     const ui = this.getUi();
 
-    this.gameStatsContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
+    this.gameStatsContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / this.scene.resolutionScale) + 1);
 
-    this.gameStatsContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
+    this.gameStatsContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / this.scene.resolutionScale, this.scene.game.canvas.height / this.scene.resolutionScale), Phaser.Geom.Rectangle.Contains);
 
-    const headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6) - 2, 24);
+    const headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / this.scene.resolutionScale) - 2, 24);
     headerBg.setOrigin(0, 0);
 
     const headerText = addTextObject(this.scene, 0, 0, i18next.t("gameStatsUiHandler:stats"), TextStyle.SETTINGS_LABEL);
     headerText.setOrigin(0, 0);
     headerText.setPositionRelative(headerBg, 8, 4);
 
-    const statsBgWidth = ((this.scene.game.canvas.width / 6) - 2) / 2;
+    const statsBgWidth = ((this.scene.game.canvas.width / this.scene.resolutionScale) - 2) / 2;
     const [ statsBgLeft, statsBgRight ] = new Array(2).fill(null).map((_, i) => {
       let width = statsBgWidth;
       if (!i) {
         width += 5;
       }
-      const statsBg = addWindow(this.scene, statsBgWidth * i, headerBg.height, width, (this.scene.game.canvas.height / 6) - headerBg.height - 2, false, !!i, 2);
+      const statsBg = addWindow(this.scene, statsBgWidth * i, headerBg.height, width, (this.scene.game.canvas.height / this.scene.resolutionScale) - headerBg.height - 2, false, !!i, 2);
       statsBg.setOrigin(0, 0);
       return statsBg;
     });

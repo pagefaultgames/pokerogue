@@ -8,7 +8,7 @@ export default class SavingIconHandler extends Phaser.GameObjects.Container {
   private shown: boolean;
 
   constructor(scene: BattleScene) {
-    super(scene, scene.game.canvas.width / 6 - 4, scene.game.canvas.height / 6 - 4);
+    super(scene, scene.game.canvas.width / scene.resolutionScale - 4, scene.game.canvas.height / scene.resolutionScale - 4);
   }
 
   setup(): void {

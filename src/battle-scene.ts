@@ -323,13 +323,13 @@ export default class BattleScene extends SceneBase {
 
     [ this.arenaBgTransition, this.arenaBg ].forEach(a => {
       a.setPipeline(this.fieldSpritePipeline);
-      a.setScale(6);
+      a.setScale(this.resolutionScale);
       a.setOrigin(0);
       a.setSize(320, 240);
     });
 
     const field = this.add.container(0, 0);
-    field.setScale(6);
+    field.setScale(this.resolutionScale);
     field.setName("container-field");
 
     this.field = field;
@@ -337,14 +337,14 @@ export default class BattleScene extends SceneBase {
     const fieldUI = this.add.container(0, this.game.canvas.height);
     fieldUI.setName("container-field-ui");
     fieldUI.setDepth(1);
-    fieldUI.setScale(6);
+    fieldUI.setScale(this.resolutionScale);
 
     this.fieldUI = fieldUI;
 
     const transition = (this.make as any).rexTransitionImagePack({
       x: 0,
       y: 0,
-      scale: 6,
+      scale: this.resolutionScale,
       key: "loading_bg",
       origin: { x: 0, y: 0 }
     }, true);
@@ -361,12 +361,12 @@ export default class BattleScene extends SceneBase {
     const uiContainer = this.add.container(0, 0);
     uiContainer.setName("container-ui");
     uiContainer.setDepth(2);
-    uiContainer.setScale(6);
+    uiContainer.setScale(this.resolutionScale);
 
     this.uiContainer = uiContainer;
 
-    const overlayWidth = this.game.canvas.width / 6;
-    const overlayHeight = (this.game.canvas.height / 6) - 48;
+    const overlayWidth = this.game.canvas.width / this.resolutionScale;
+    const overlayHeight = (this.game.canvas.height / this.resolutionScale) - 48;
     this.fieldOverlay = this.add.rectangle(0, overlayHeight * -1 - 48, overlayWidth, overlayHeight, 0x424242);
     this.fieldOverlay.setName("rect-field-overlay");
     this.fieldOverlay.setOrigin(0, 0);
@@ -418,28 +418,28 @@ export default class BattleScene extends SceneBase {
     this.candyBar.setup();
     this.fieldUI.add(this.candyBar);
 
-    this.biomeWaveText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, startingWave.toString(), TextStyle.BATTLE_INFO);
+    this.biomeWaveText = addTextObject(this, (this.game.canvas.width / this.resolutionScale) - 2, 0, startingWave.toString(), TextStyle.BATTLE_INFO);
     this.biomeWaveText.setName("text-biome-wave");
     this.biomeWaveText.setOrigin(1, 0.5);
     this.fieldUI.add(this.biomeWaveText);
 
-    this.moneyText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "", TextStyle.MONEY);
+    this.moneyText = addTextObject(this, (this.game.canvas.width / this.resolutionScale) - 2, 0, "", TextStyle.MONEY);
     this.moneyText.setName("text-money");
     this.moneyText.setOrigin(1, 0.5);
     this.fieldUI.add(this.moneyText);
 
-    this.scoreText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "", TextStyle.PARTY, { fontSize: "54px" });
+    this.scoreText = addTextObject(this, (this.game.canvas.width / this.resolutionScale) - 2, 0, "", TextStyle.PARTY, { fontSize: "54px" });
     this.scoreText.setName("text-score");
     this.scoreText.setOrigin(1, 0.5);
     this.fieldUI.add(this.scoreText);
 
-    this.luckText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "", TextStyle.PARTY, { fontSize: "54px" });
+    this.luckText = addTextObject(this, (this.game.canvas.width / this.resolutionScale) - 2, 0, "", TextStyle.PARTY, { fontSize: "54px" });
     this.luckText.setName("text-luck");
     this.luckText.setOrigin(1, 0.5);
     this.luckText.setVisible(false);
     this.fieldUI.add(this.luckText);
 
-    this.luckLabelText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "Luck:", TextStyle.PARTY, { fontSize: "54px" });
+    this.luckLabelText = addTextObject(this, (this.game.canvas.width / this.resolutionScale) - 2, 0, "Luck:", TextStyle.PARTY, { fontSize: "54px" });
     this.luckLabelText.setName("text-luck-label");
     this.luckLabelText.setOrigin(1, 0.5);
     this.luckLabelText.setVisible(false);
@@ -456,7 +456,7 @@ export default class BattleScene extends SceneBase {
     this.spriteSparkleHandler = new PokemonSpriteSparkleHandler();
     this.spriteSparkleHandler.setup(this);
 
-    this.pokemonInfoContainer = new PokemonInfoContainer(this, (this.game.canvas.width / 6) + 52, -(this.game.canvas.height / 6) + 66);
+    this.pokemonInfoContainer = new PokemonInfoContainer(this, (this.game.canvas.width / this.resolutionScale) + 52, -(this.game.canvas.height / this.resolutionScale) + 66);
     this.pokemonInfoContainer.setup();
 
     this.fieldUI.add(this.pokemonInfoContainer);
@@ -1124,13 +1124,13 @@ export default class BattleScene extends SceneBase {
 
   setFieldScale(scale: number, instant: boolean = false): Promise<void> {
     return new Promise(resolve => {
-      scale *= 6;
+      scale *= this.resolutionScale;
       if (this.field.scale === scale) {
         return resolve();
       }
 
-      const defaultWidth = this.arenaBg.width * 6;
-      const defaultHeight = 132 * 6;
+      const defaultWidth = this.arenaBg.width * this.resolutionScale;
+      const defaultHeight = 132 * this.resolutionScale;
       const scaledWidth = this.arenaBg.width * scale;
       const scaledHeight = 132 * scale;
 
@@ -1429,7 +1429,7 @@ export default class BattleScene extends SceneBase {
     } else {
       this.luckText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
     }
-    this.luckLabelText.setX((this.game.canvas.width / 6) - 2 - (this.luckText.displayWidth + 2));
+    this.luckLabelText.setX((this.game.canvas.width / this.resolutionScale) - 2 - (this.luckText.displayWidth + 2));
     this.tweens.add({
       targets: labels,
       duration: duration,
@@ -1459,7 +1459,7 @@ export default class BattleScene extends SceneBase {
     const enemyModifierCount = this.enemyModifiers.filter(m => m.isIconVisible(this)).length;
     const biomeWaveTextHeight = this.biomeWaveText.getBottomLeft().y - this.biomeWaveText.getTopLeft().y;
     this.biomeWaveText.setY(
-      -(this.game.canvas.height / 6) + (enemyModifierCount ? enemyModifierCount <= 12 ? 15 : 24 : 0) + (biomeWaveTextHeight / 2)
+      -(this.game.canvas.height / this.resolutionScale) + (enemyModifierCount ? enemyModifierCount <= 12 ? 15 : 24 : 0) + (biomeWaveTextHeight / 2)
     );
     this.moneyText.setY(this.biomeWaveText.y + 10);
     this.scoreText.setY(this.moneyText.y + 10);
@@ -1467,7 +1467,7 @@ export default class BattleScene extends SceneBase {
     const offsetY = (this.scoreText.visible ? this.scoreText : this.moneyText).y + 15;
     this.partyExpBar.setY(offsetY);
     this.candyBar.setY(offsetY + 15);
-    this.ui?.achvBar.setY(this.game.canvas.height / 6 + offsetY);
+    this.ui?.achvBar.setY(this.game.canvas.height / this.resolutionScale + offsetY);
   }
 
   /**

@@ -90,17 +90,17 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
     const ui = this.getUi();
     this.navigationIcons = {};
 
-    this.settingsContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
+    this.settingsContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / this.scene.resolutionScale) + 1);
 
-    this.settingsContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
+    this.settingsContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / this.scene.resolutionScale, this.scene.game.canvas.height / this.scene.resolutionScale), Phaser.Geom.Rectangle.Contains);
 
     this.navigationContainer = new NavigationMenu(this.scene, 0, 0);
 
-    this.optionsBg = addWindow(this.scene, 0, this.navigationContainer.height, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - 16 - this.navigationContainer.height - 2);
+    this.optionsBg = addWindow(this.scene, 0, this.navigationContainer.height, (this.scene.game.canvas.width / this.scene.resolutionScale) - 2, (this.scene.game.canvas.height / this.scene.resolutionScale) - 16 - this.navigationContainer.height - 2);
     this.optionsBg.setOrigin(0, 0);
 
 
-    this.actionsBg = addWindow(this.scene, 0, (this.scene.game.canvas.height / 6) - this.navigationContainer.height, (this.scene.game.canvas.width / 6) - 2, 22);
+    this.actionsBg = addWindow(this.scene, 0, (this.scene.game.canvas.height / this.scene.resolutionScale) - this.navigationContainer.height, (this.scene.game.canvas.width / this.scene.resolutionScale) - 2, 22);
     this.actionsBg.setOrigin(0, 0);
 
     const iconAction = this.scene.add.sprite(0, 0, "keyboard");
@@ -219,14 +219,14 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
 
         // Calculate the total width of all option labels within a specific setting
         // This is achieved by summing the width of each option label
-        const totalWidth = optionValueLabels[s].map((o) => (o as Phaser.GameObjects.Text).width).reduce((total, width) => total += width, 0);
+        const totalWidth = optionValueLabels[s].map((o) => (o as Phaser.GameObjects.Text).displayWidth).reduce((total, width) => total += width, 0);
 
         // Define the minimum width for a label, ensuring it's at least 78 pixels wide or the width of the setting label plus some padding
         const labelWidth = Math.max(130, settingLabels[s].displayWidth + 8);
 
         // Calculate the total available space for placing option labels next to their setting label
         // We reserve space for the setting label and then distribute the remaining space evenly
-        const totalSpace = (300 - labelWidth) - totalWidth / 6;
+        const totalSpace = (300 - labelWidth) - totalWidth;
         // Calculate the spacing between options based on the available space divided by the number of gaps between labels
         const optionSpacing = Math.floor(totalSpace / (optionValueLabels[s].length - 1));
 
@@ -238,7 +238,7 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
           // Set the option label's position right next to the setting label, adjusted by xOffset
           (value as Phaser.GameObjects.Text).setPositionRelative(settingLabels[s], labelWidth + xOffset, 0);
           // Move the xOffset to the right for the next label, ensuring each label is spaced evenly
-          xOffset += (value as Phaser.GameObjects.Text).width / 6 + optionSpacing;
+          xOffset += (value as Phaser.GameObjects.Text).displayWidth + optionSpacing;
         }
       });
 
@@ -532,7 +532,7 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
 
     // Check if the cursor object exists, if not, create it.
     if (!this.cursorObj) {
-      this.cursorObj = this.scene.add.nineslice(0, 0, "summary_moves_cursor", null, (this.scene.game.canvas.width / 6) - 10, 16, 1, 1, 1, 1);
+      this.cursorObj = this.scene.add.nineslice(0, 0, "summary_moves_cursor", null, (this.scene.game.canvas.width / this.scene.resolutionScale) - 10, 16, 1, 1, 1, 1);
       this.cursorObj.setOrigin(0, 0); // Set the origin to the top-left corner.
       this.optionsContainer.add(this.cursorObj); // Add the cursor to the options container.
     }

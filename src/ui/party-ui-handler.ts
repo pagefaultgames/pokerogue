@@ -194,7 +194,7 @@ export default class PartyUiHandler extends MessageUiHandler {
 
     this.partyCancelButton = partyCancelButton;
 
-    this.optionsContainer = this.scene.add.container((this.scene.game.canvas.width / 6) - 1, -1);
+    this.optionsContainer = this.scene.add.container((this.scene.game.canvas.width / this.scene.resolutionScale) - 1, -1);
     partyContainer.add(this.optionsContainer);
 
     this.iconAnimHandler = new PokemonIconAnimHandler();
@@ -206,7 +206,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       scale: overlayScale,
       top: true,
       x: 1,
-      y: -MoveInfoOverlay.getHeight(overlayScale) - 1, //this.scene.game.canvas.height / 6 - MoveInfoOverlay.getHeight(overlayScale) - 29,
+      y: -MoveInfoOverlay.getHeight(overlayScale) - 1, //this.scene.game.canvas.height / this.scene.resolutionScale - MoveInfoOverlay.getHeight(overlayScale) - 29,
       width: this.scene.game.canvas.width / 12 - 30,
     });
     ui.add(this.moveInfoOverlay);

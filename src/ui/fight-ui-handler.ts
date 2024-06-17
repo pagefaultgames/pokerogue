@@ -36,43 +36,43 @@ export default class FightUiHandler extends UiHandler {
     this.movesContainer = this.scene.add.container(18, -38.7);
     ui.add(this.movesContainer);
 
-    this.typeIcon = this.scene.add.sprite((this.scene.game.canvas.width / 6) - 57, -36,`types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}` , "unknown");
+    this.typeIcon = this.scene.add.sprite((this.scene.game.canvas.width / this.scene.resolutionScale) - 57, -36,`types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}` , "unknown");
     this.typeIcon.setVisible(false);
     ui.add(this.typeIcon);
 
-    this.moveCategoryIcon = this.scene.add.sprite((this.scene.game.canvas.width / 6) - 25, -36, "categories", "physical");
+    this.moveCategoryIcon = this.scene.add.sprite((this.scene.game.canvas.width / this.scene.resolutionScale) - 25, -36, "categories", "physical");
     this.moveCategoryIcon.setVisible(false);
     ui.add(this.moveCategoryIcon);
 
-    this.ppLabel = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 70, -26, "PP", TextStyle.MOVE_INFO_CONTENT);
+    this.ppLabel = addTextObject(this.scene, (this.scene.game.canvas.width / this.scene.resolutionScale) - 70, -26, "PP", TextStyle.MOVE_INFO_CONTENT);
     this.ppLabel.setOrigin(0.0, 0.5);
     this.ppLabel.setVisible(false);
     this.ppLabel.setText(i18next.t("fightUiHandler:pp"));
     ui.add(this.ppLabel);
 
-    this.ppText = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 12, -26, "--/--", TextStyle.MOVE_INFO_CONTENT);
+    this.ppText = addTextObject(this.scene, (this.scene.game.canvas.width / this.scene.resolutionScale) - 12, -26, "--/--", TextStyle.MOVE_INFO_CONTENT);
     this.ppText.setOrigin(1, 0.5);
     this.ppText.setVisible(false);
     ui.add(this.ppText);
 
-    this.powerLabel = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 70, -18, "POWER", TextStyle.MOVE_INFO_CONTENT);
+    this.powerLabel = addTextObject(this.scene, (this.scene.game.canvas.width / this.scene.resolutionScale) - 70, -18, "POWER", TextStyle.MOVE_INFO_CONTENT);
     this.powerLabel.setOrigin(0.0, 0.5);
     this.powerLabel.setVisible(false);
     this.powerLabel.setText(i18next.t("fightUiHandler:power"));
     ui.add(this.powerLabel);
 
-    this.powerText = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 12, -18, "---", TextStyle.MOVE_INFO_CONTENT);
+    this.powerText = addTextObject(this.scene, (this.scene.game.canvas.width / this.scene.resolutionScale) - 12, -18, "---", TextStyle.MOVE_INFO_CONTENT);
     this.powerText.setOrigin(1, 0.5);
     this.powerText.setVisible(false);
     ui.add(this.powerText);
 
-    this.accuracyLabel = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 70, -10, "ACC", TextStyle.MOVE_INFO_CONTENT);
+    this.accuracyLabel = addTextObject(this.scene, (this.scene.game.canvas.width / this.scene.resolutionScale) - 70, -10, "ACC", TextStyle.MOVE_INFO_CONTENT);
     this.accuracyLabel.setOrigin(0.0, 0.5);
     this.accuracyLabel.setVisible(false);
     this.accuracyLabel.setText(i18next.t("fightUiHandler:accuracy"));
     ui.add(this.accuracyLabel);
 
-    this.accuracyText = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 12, -10, "---", TextStyle.MOVE_INFO_CONTENT);
+    this.accuracyText = addTextObject(this.scene, (this.scene.game.canvas.width / this.scene.resolutionScale) - 12, -10, "---", TextStyle.MOVE_INFO_CONTENT);
     this.accuracyText.setOrigin(1, 0.5);
     this.accuracyText.setVisible(false);
     ui.add(this.accuracyText);

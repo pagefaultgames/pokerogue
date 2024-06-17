@@ -46,7 +46,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.modifierContainer = this.scene.add.container(0, 0);
     ui.add(this.modifierContainer);
 
-    this.transferButtonContainer = this.scene.add.container((this.scene.game.canvas.width / 6) - 71, -64);
+    this.transferButtonContainer = this.scene.add.container((this.scene.game.canvas.width / this.scene.resolutionScale) - 71, -64);
     this.transferButtonContainer.setName("container-transfer-btn");
     this.transferButtonContainer.setVisible(false);
     ui.add(this.transferButtonContainer);
@@ -56,7 +56,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     transferButtonText.setOrigin(1, 0);
     this.transferButtonContainer.add(transferButtonText);
 
-    this.checkButtonContainer = this.scene.add.container((this.scene.game.canvas.width / 6) - 1, -64);
+    this.checkButtonContainer = this.scene.add.container((this.scene.game.canvas.width / this.scene.resolutionScale) - 1, -64);
     this.checkButtonContainer.setName("container-use-btn");
     this.checkButtonContainer.setVisible(false);
     ui.add(this.checkButtonContainer);
@@ -99,7 +99,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       right: true,
       x: 1,
       y: -MoveInfoOverlay.getHeight(overlayScale, true) -1,
-      width: (this.scene.game.canvas.width / 6) - 2,
+      width: (this.scene.game.canvas.width / this.scene.resolutionScale) - 2,
     });
     ui.add(this.moveInfoOverlay);
     // register the overlay to receive toggle events
@@ -154,8 +154,8 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     const optionsYOffset = shopTypeOptions.length >= SHOP_OPTIONS_ROW_LIMIT ? -8 : -24;
 
     for (let m = 0; m < typeOptions.length; m++) {
-      const sliceWidth = (this.scene.game.canvas.width / 6) / (typeOptions.length + 2);
-      const option = new ModifierOption(this.scene, sliceWidth * (m + 1) + (sliceWidth * 0.5), -this.scene.game.canvas.height / 12 + optionsYOffset, typeOptions[m]);
+      const sliceWidth = (this.scene.game.canvas.width / this.scene.resolutionScale) / (typeOptions.length + 2);
+      const option = new ModifierOption(this.scene, sliceWidth * (m + 1) + (sliceWidth * 0.5), -this.scene.game.canvas.height / (2*this.scene.resolutionScale) + optionsYOffset, typeOptions[m]);
       option.setScale(0.5);
       this.scene.add.existing(option);
       this.modifierContainer.add(option);
@@ -166,8 +166,8 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       const row = m < SHOP_OPTIONS_ROW_LIMIT ? 0 : 1;
       const col = m < SHOP_OPTIONS_ROW_LIMIT ? m : m - SHOP_OPTIONS_ROW_LIMIT;
       const rowOptions = shopTypeOptions.slice(row ? SHOP_OPTIONS_ROW_LIMIT : 0, row ? undefined : SHOP_OPTIONS_ROW_LIMIT);
-      const sliceWidth = (this.scene.game.canvas.width / SHOP_OPTIONS_ROW_LIMIT) / (rowOptions.length + 2);
-      const option = new ModifierOption(this.scene, sliceWidth * (col + 1) + (sliceWidth * 0.5), ((-this.scene.game.canvas.height / 12) - (this.scene.game.canvas.height / 32) - (40 - (28 * row - 1))), shopTypeOptions[m]);
+      const sliceWidth = (this.scene.game.canvas.width / this.scene.resolutionScale) / (rowOptions.length + 2);
+      const option = new ModifierOption(this.scene, sliceWidth * (col + 1) + (sliceWidth * 0.5), ((-this.scene.game.canvas.height / (2*this.scene.resolutionScale)) - (this.scene.game.canvas.height / /*32*/ (5*this.scene.resolutionScale)) - (40 - (28 * row - 1))), shopTypeOptions[m]);
       option.setScale(0.375);
       this.scene.add.existing(option);
       this.modifierContainer.add(option);
@@ -370,11 +370,11 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     // the modifier selection has been updated, always hide the overlay
     this.moveInfoOverlay.clear();
     if (this.rowCursor) {
-      const sliceWidth = (this.scene.game.canvas.width / 6) / (options.length + 2);
+      const sliceWidth = (this.scene.game.canvas.width / this.scene.resolutionScale) / (options.length + 2);
       if (this.rowCursor < 2) {
-        this.cursorObj.setPosition(sliceWidth * (cursor + 1) + (sliceWidth * 0.5) - 20, (-this.scene.game.canvas.height / 12) - (this.shopOptionsRows.length > 1 ? 6 : 22));
+        this.cursorObj.setPosition(sliceWidth * (cursor + 1) + (sliceWidth * 0.5) - 20, (-this.scene.game.canvas.height / (2*this.scene.resolutionScale)) - (this.shopOptionsRows.length > 1 ? 6 : 22));
       } else {
-        this.cursorObj.setPosition(sliceWidth * (cursor + 1) + (sliceWidth * 0.5) - 16, (-this.scene.game.canvas.height / 12 - this.scene.game.canvas.height / 32) - (-16 + 28 * (this.rowCursor - (this.shopOptionsRows.length - 1))));
+        this.cursorObj.setPosition(sliceWidth * (cursor + 1) + (sliceWidth * 0.5) - 16, (-this.scene.game.canvas.height / (2*this.scene.resolutionScale) - this.scene.game.canvas.height / /*32*/ (5*this.scene.resolutionScale)) - (-16 + 28 * (this.rowCursor - (this.shopOptionsRows.length - 1))));
       }
 
       const type = options[this.cursor].modifierTypeOption.type;
@@ -387,10 +387,10 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       this.cursorObj.setPosition(6, this.lockRarityButtonContainer.visible ? -72 : -60);
       ui.showText("Spend money to reroll your item options.");
     } else if (cursor === 1) {
-      this.cursorObj.setPosition((this.scene.game.canvas.width / 6) - 120, -60);
+      this.cursorObj.setPosition((this.scene.game.canvas.width / this.scene.resolutionScale) - 120, -60);
       ui.showText("Transfer a held item from one Pokémon to another.");
     } else if (cursor === 2) {
-      this.cursorObj.setPosition((this.scene.game.canvas.width / 6) - 60, -60);
+      this.cursorObj.setPosition((this.scene.game.canvas.width / this.scene.resolutionScale) - 60, -60);
       ui.showText("Check your team or use a form changing item.");
     } else {
       this.cursorObj.setPosition(6, -60);

@@ -282,11 +282,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const langSettingKey = Object.keys(languageSettings).find(lang => currentLanguage.includes(lang));
     const textSettings = languageSettings[langSettingKey];
 
-    this.starterSelectContainer = this.scene.add.container(0, -this.scene.game.canvas.height / 6);
+    this.starterSelectContainer = this.scene.add.container(0, -this.scene.game.canvas.height / this.scene.resolutionScale);
     this.starterSelectContainer.setVisible(false);
     ui.add(this.starterSelectContainer);
 
-    const bgColor = this.scene.add.rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6, 0x006860);
+    const bgColor = this.scene.add.rectangle(0, 0, this.scene.game.canvas.width / this.scene.resolutionScale, this.scene.game.canvas.height / this.scene.resolutionScale, 0x006860);
     bgColor.setOrigin(0, 0);
     this.starterSelectContainer.add(bgColor);
 
@@ -708,7 +708,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     this.hideInstructions();
 
-    this.starterSelectMessageBoxContainer = this.scene.add.container(0, this.scene.game.canvas.height / 6);
+    this.starterSelectMessageBoxContainer = this.scene.add.container(0, this.scene.game.canvas.height / this.scene.resolutionScale);
     this.starterSelectMessageBoxContainer.setVisible(false);
     this.starterSelectContainer.add(this.starterSelectMessageBoxContainer);
 
@@ -770,7 +770,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       scale: overlayScale,
       top: true,
       x: 1,
-      y: this.scene.game.canvas.height / 6 - MoveInfoOverlay.getHeight(overlayScale) - 29,
+      y: this.scene.game.canvas.height / this.scene.resolutionScale - MoveInfoOverlay.getHeight(overlayScale) - 29,
     });
     this.starterSelectContainer.add(this.moveInfoOverlay);
 

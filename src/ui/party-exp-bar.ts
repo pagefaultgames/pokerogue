@@ -12,7 +12,7 @@ export default class PartyExpBar extends Phaser.GameObjects.Container {
   public shown: boolean;
 
   constructor(scene: BattleScene) {
-    super(scene, (scene.game.canvas.width / 6), -((scene.game.canvas.height) / 6) + 15);
+    super(scene, (scene.game.canvas.width / scene.resolutionScale), -((scene.game.canvas.height) / scene.resolutionScale) + 15);
   }
 
   setup(): void {
@@ -62,7 +62,7 @@ export default class PartyExpBar extends Phaser.GameObjects.Container {
 
       this.tween = this.scene.tweens.add({
         targets: this,
-        x: (this.scene.game.canvas.width / 6) - (this.bg.width - 5),
+        x: (this.scene.game.canvas.width / this.scene.resolutionScale) - (this.bg.width - 5),
         duration: 500 / Math.pow(2, pokemon.scene.expGainsSpeed),
         ease: "Sine.easeOut",
         onComplete: () => {
@@ -88,7 +88,7 @@ export default class PartyExpBar extends Phaser.GameObjects.Container {
 
       this.tween = this.scene.tweens.add({
         targets: this,
-        x: (this.scene.game.canvas.width / 6),
+        x: (this.scene.game.canvas.width / this.scene.resolutionScale),
         duration: 500,
         ease: "Sine.easeIn",
         onComplete: () => {

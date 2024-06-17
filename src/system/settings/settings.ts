@@ -65,6 +65,7 @@ export const SettingKeys = {
   Fusion_Palette_Swaps: "FUSION_PALETTE_SWAPS",
   Player_Gender: "PLAYER_GENDER",
   Type_Hints: "TYPE_HINTS",
+  Target_Resolution: "TARGET_RESOLUTION",
   Master_Volume: "MASTER_VOLUME",
   BGM_Volume: "BGM_VOLUME",
   SE_Volume: "SE_VOLUME",
@@ -277,6 +278,13 @@ export const Setting: Array<Setting> = [
     type: SettingType.DISPLAY
   },
   {
+    key: SettingKeys.Target_Resolution,
+    label: "Res. (Req. Reload)",
+    options: ["180p", "360p", "540p", "720p", "1080p", "1440p", "2160p"],
+    default: 4,
+    type: SettingType.DISPLAY
+  },
+  {
     key: SettingKeys.Master_Volume,
     label: "Master Volume",
     options: VOLUME_OPTIONS,
@@ -457,6 +465,10 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     break;
   case SettingKeys.Type_Hints:
     scene.typeHints = Setting[index].options[value] === "On";
+    break;
+  case SettingKeys.Target_Resolution:
+    scene.resolutionScale = parseInt(Setting[index].options[value].split('p')[0]) / 180;
+    localStorage.setItem("resolutionScale", scene.resolutionScale);
     break;
   case SettingKeys.Language:
     if (value) {

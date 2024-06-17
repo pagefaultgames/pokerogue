@@ -25,12 +25,21 @@ window.addEventListener("unhandledrejection", (event) => {
   //alert(errorString);
 });
 
+var resolutionScale = localStorage.getItem("resolutionScale");
+if (resolutionScale) {
+  var width = 320*resolutionScale;
+  var height = 180*resolutionScale;
+} else {
+  localStorage.setItem("resolutionScale", 6);
+  resolutionScale = 6;
+}
+
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.WEBGL,
   parent: "app",
   scale: {
-    width: 1920,
-    height: 1080,
+    width: width,
+    height: height,
     mode: Phaser.Scale.FIT
   },
   plugins: {
