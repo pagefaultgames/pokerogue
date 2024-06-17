@@ -763,11 +763,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
       this.starterSelectContainer.setVisible(true);
 
-      this.setFilterMode(false);
-      this.filterBarCursor = 0;
-      this.setCursor(0);
-      this.tryUpdateValue(0);
-
       for (let g = 0; g < gens.length; g++) {
         this.genSpecies[g].forEach((species, s) => {
           const icon = this.starterContainers[g][s].icon;
@@ -784,6 +779,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       }
 
       this.updateStarters();
+
+      this.setFilterMode(false);
+      this.filterBarCursor = 0;
+      this.setCursor(0);
+      this.tryUpdateValue(0);
 
       handleTutorial(this.scene, Tutorial.Starter_Select);
 
@@ -1837,6 +1837,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       const pos = calcStarterPosition(cursor, this.scrollCursor);
       this.cursorObj.setPosition(pos.x - 1, pos.y + 1);
 
+      console.log(this.filteredStarterContainers, cursor);
       const species = this.filteredStarterContainers[cursor]?.species;
 
       const defaultDexAttr = this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true);
