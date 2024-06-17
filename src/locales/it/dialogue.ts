@@ -359,6 +359,30 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "I'll tune up for the next race."
     },
   },
+  "firebreather": {
+    "encounter": {
+      1: "My flames shall devour you!",
+      2: "My soul is on fire. I'll show you how hot it burns!",
+      3: "Step right up and take a look!"
+    },
+    "victory": {
+      1: "I burned down to ashes...",
+      2: "Yow! That's hot!",
+      3: "Ow! I scorched the tip of my nose!"
+    },
+  },
+  "sailor": {
+    "encounter": {
+      1: "Matey, you're walking the plank if you lose!",
+      2: "Come on then! My sailor's pride is at stake!",
+      3: "Ahoy there! Are you seasick?"
+    },
+    "victory": {
+      1: "Argh! Beaten by a kid!",
+      2: "Your spirit sank me!",
+      3: "I think it's me that's seasick..."
+    },
+  },
   "brock": {
     "encounter": {
       1: "My expertise on Rock-type Pokémon will take you down! Come on!",
@@ -1203,8 +1227,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "bugsy": {
     "encounter": {
-      1: `Whoa, amazing! You're an expert on Pokémon! 
-                $My research isn't complete yet. OK, you win.`,
+      1: "I'm Bugsy! I never lose when it comes to bug Pokémon!"
     },
     "victory": {
       1: "Whoa, amazing! You're an expert on Pokémon!\nMy research isn't complete yet. OK, you win."
@@ -2082,6 +2105,32 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "defeat": {
       1: "Another storm weathered, another victory claimed! Well fought!",
       2: "You got caught in my storm! Better luck next time!"
+    }
+  },
+  "alder": {
+    "encounter": {
+      1: "Prepare yourself for a match against the strongest Trainer in Unova!"
+    },
+    "victory": {
+      1: "Well done! You certainly are an unmatched talent."
+    },
+    "defeat": {
+      1: `A fresh wind blows through my heart...
+          $What an extraordinary effort!`
+    }
+  },
+  "kieran": {
+    "encounter": {
+      1: `Through hard work, I become stronger and stronger!
+          $I don't lose.`
+    },
+    "victory": {
+      1: `I don't believe it...
+          $What a fun and heart-pounding battle!`
+    },
+    "defeat": {
+      1: `Wowzers, what a battle!
+          $Time for you to train even harder.`
     }
   },
   "rival": {

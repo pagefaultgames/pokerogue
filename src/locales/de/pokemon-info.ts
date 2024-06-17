@@ -2,8 +2,8 @@ import { PokemonInfoTranslationEntries } from "#app/plugins/i18n";
 
 export const pokemonInfo: PokemonInfoTranslationEntries = {
   Stat: {
-    "HP": "Max. KP",
-    "HPshortened": "MaxKP",
+    "HP": "KP",
+    "HPshortened": "KP",
     "ATK": "Angriff",
     "ATKshortened": "Ang",
     "DEF": "Verteidigung",
@@ -14,6 +14,8 @@ export const pokemonInfo: PokemonInfoTranslationEntries = {
     "SPDEFshortened": "SpVert",
     "SPD": "Initiative",
     "SPDshortened": "Init",
+    "ACC": "Genauigkeit",
+    "EVA": "Fluchtwert",
   },
 
   Type: {

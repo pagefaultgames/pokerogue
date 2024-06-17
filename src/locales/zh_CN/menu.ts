@@ -44,9 +44,15 @@ export const menu: SimpleTranslationEntries = {
   "dailyRankings": "每日排名",
   "weeklyRankings": "每周排名",
   "noRankings": "无排名",
+  "positionIcon": "#",
+  "usernameScoreboard": "Username",
+  "score": "Score",
+  "wave": "Wave",
   "loading": "加载中...",
+  "loadingAsset": "Loading asset: {{assetName}}",
   "playersOnline": "在线玩家",
-  "empty": "空",
   "yes": "是",
   "no": "否",
+  "disclaimer": "DISCLAIMER",
+  "disclaimerDescription": "This game is an unfinished product; it might have playability issues (including the potential loss of save data),\n change without notice, and may or may not be updated further or completed."
 } as const;

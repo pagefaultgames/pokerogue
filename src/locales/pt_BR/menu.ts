@@ -44,9 +44,15 @@ export const menu: SimpleTranslationEntries = {
   "dailyRankings": "Classificação Diária",
   "weeklyRankings": "Classificação Semanal",
   "noRankings": "Sem Classificação",
+  "positionIcon": "#",
+  "usernameScoreboard": "Usuário",
+  "score": "Pontuação",
+  "wave": "Onda",
   "loading": "Carregando…",
+  "loadingAsset": "Carregando recurso: {{assetName}}",
   "playersOnline": "Jogadores Ativos",
-  "empty": "Vazio",
   "yes": "Sim",
   "no": "Não",
+  "disclaimer": "AVISO",
+  "disclaimerDescription": "Este jogo é um produto inacabado; ele pode ter problemas de jogabilidade (incluindo possíveis perdas de dados salvos),\n sofrer alterações sem aviso prévio e pode ou não ser atualizado ou concluído."
 } as const;

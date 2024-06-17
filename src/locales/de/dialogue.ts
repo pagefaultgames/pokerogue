@@ -367,6 +367,225 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "Ich werde für das nächste Rennen tunen."
     },
   },
+  "rocket_grunt": {
+    "encounter": {
+      1: `Jetzt gibt es Ärger!…
+          $und es kommt noch härter!
+          $Wir wollen über die Erde regieren…
+          $und naja du kennst den Rest…!`
+    },
+    "victory": {
+      1: "Das war mal wieder ein Schuss in den Ofen!"
+    },
+  },
+  "firebreather": {
+    "encounter": {
+      1: "Meine Flammen werden dich verschlingen!",
+      2: "Meine Seele hat Feuer gefangen. Ich werde dir zeigen, wie heiß sie brennt!",
+      3: "Komm näher und sieh dir meine Flammen an!"
+    },
+    "victory": {
+      1: "Verbrannt bis zur Asche...",
+      2: "Yow! Das ist heiß!",
+      3: "Auuu! Ich habe mir die Nasenspitze verbrannt!"
+    },
+  },
+  "sailor": {
+    "encounter": {
+      1: "Matrose, du gehst über Bord, wenn du verlierst!",
+      2: "Komm schon! Mein Stolz als Seemann steht auf dem Spiel!",
+      3: "Ahoj! Bist du seekrank?"
+    },
+    "victory": {
+      1: "Argh! Von einem Kind besiegt!",
+      2: "Dein Geist hat mich versenkt!",
+      3: "Ich glaube, ich bin der der seekrank ist..."
+    },
+  },
+  "magma_grunt": {
+    "encounter": {
+      1: "Keiner, der sich Team Magma in den Weg stellt, bekommt Gnade, nicht einmal Kinder!"
+    },
+    "victory": {
+      1: "Wie kann das sein? Ich bin Teil vom mächtigen Team Magma! Wir wollen doch nur die Welt verbessern…"
+    },
+  },
+  "aqua_grunt": {
+    "encounter": {
+      1: "Du willst dich also mit Team Aqua anlegen? Du traust dich ja was… Dich werfe ich über Bord!",
+    },
+    "victory": {
+      1: "Vielleicht sollte ich wohl lieber selber über die Planke gehen…",
+    },
+  },
+  "galactic_grunt": {
+    "encounter": {
+      1: "Team Galaktik wird die Welt in eine bessere Welt verwandeln! Und du wirst uns nicht aufhalten!"
+    },
+    "victory": {
+      1: "Zyrus wird uns für diese Niederlage bestrafen…"
+    },
+  },
+  "plasma_grunt": {
+    "encounter": {
+      1: "Pokémon sollten frei sein! Team Plasma wird sie befreien!"
+    },
+    "victory": {
+      1: "Wie konnte ich verlieren? Ich dachte, ich würde die Welt retten…"
+    },
+  },
+  "flare_grunt": {
+    "encounter": {
+      1: `Ich bin ein Mitglied von Team Flare! Das sieht man mir doch an. Mein Stil ist unverkennbar!
+          $Du kannst definitiv ein Umstyling gebrauchen!`
+    },
+    "victory": {
+      1: "Stil ist wohl doch nicht alles…"
+    },
+  },
+  "rocket_boss_giovanni_1": {
+    "encounter": {
+      1: `Ich bin beeindruckt, du hast es bis hierher geschafft!
+            $Ich bin Giovanni, der Anführer von Team Rocket!
+            $Wir regieren den Untergrund von Kanto!
+            $Und wir lassen sicherlich nicht zu, dass ein Kind uns aufhält!`
+
+    },
+    "victory": {
+      1: "Ich ziehe mich zurück, aber ich werde zurückkehren! Team Rocket wird niemals besiegt werden!"
+    },
+    "defeat": {
+      1: `Merke dir meine Worte. Nicht in der Lage zu sein,
+          $deine eigene Stärke zu messen, zeigt, dass du immer noch ein Kind bist.`
+    }
+  },
+  "rocket_boss_giovanni_2": {
+    "encounter": {
+      1: "Du schon wieder… Wie hast du mich gefunden? Team Rocket wird dich endlich aus der Welt schaffen!"
+    },
+    "victory": {
+      1: "Wie ist das möglich...? Der kostbare Traum von Team Rocket ist nicht mehr als eine Illusion geworden..."
+    },
+    "defeat": {
+      1: "Team Rocket wird niemals besiegt werden! Ich werde zurückkehren!"
+    }
+  },
+  "magma_boss_maxie_1": {
+    "encounter": {
+      1: `Die Welt ist nicht perfekt. Ich werde sie verbessern, indem ich sie neu erschaffe!
+          $Wir brauchen mehr Landmassen um zu leben! Team Magma wird dieses Ziel mit aller Macht erreichen!`
+    },
+    "victory": {
+      1:"Ugh! Das entspricht nicht meinen Berechnungen! Wie konnte ich verlieren? Wir sehen uns wieder!"
+    },
+    "defeat": {
+      1: "Team Magma wird weiterhin die Welt verbessern!"
+    }
+  },
+  "magma_boss_maxie_2": {
+    "encounter": {
+      1: `Du bist das letzte Hindernis, das zwischen mir und meinen Zielen steht.
+          $Mach dich bereit durch die Macht von Team Magma besiegt zu werden!`
+    },
+    "victory": {
+      1: "Das... Das kann nicht sein...",
+    },
+    "defeat": {
+      1: "Und jetzt werde ich diesen Planeten terraformen, um ihn ideal für die Menschheit zu machen."
+    }
+  },
+  "aqua_boss_archie_1": {
+    "encounter": {
+      1: "Ich bin Adrian, der Anführer von Team Aqua! Wir werden die Welt mit Wasser überfluten!"
+    },
+    "victory": {
+      1: "Lass uns mal wieder treffen. Ich werde mir sicher sein, dass ich dieses Gesicht wiedererkenne."
+    },
+    "defeat": {
+      1: "Brilliant! Mein Team wird jetzt nicht zurückhalten!"
+    }
+  },
+  "aqua_boss_archie_2": {
+    "encounter": {
+      1: "Ich habe lange auf diesen Tag gewartet. Das ist die wahre Macht von Team Aqua!"
+    },
+    "victory": {
+      1: "So habe ich mir das nicht vorgestellt..."
+    },
+    "defeat": {
+      1: "Ich werde alles in dieser Welt in seinen ursprünglichen, reinen Zustand zurückversetzen!!"
+    }
+  },
+  "galactic_boss_cyrus_1": {
+    "encounter": {
+      1: `Du wurdest von leerer Gefühlsduselei hierher getrieben.
+         $Ich werde dich bereuen lassen, auf dein Herz gehört zu haben!`
+    },
+    "victory": {
+      1: "Interessant. Und ziemlich eigenartig."
+    },
+    "defeat": {
+      1: "Ich werde meine neue Welt erschaffen..."
+    }
+  },
+  "galactic_boss_cyrus_2": {
+    "encounter": {
+      1: `So sehen wir uns wieder. Es scheint, als wären unsere Schicksale miteinander verflochten.
+          $Aber hier und jetzt werde ich diese Verbindung brechen!`
+    },
+    "victory": {
+      1: "Wie? Wie? WIE?!"
+    },
+    "defeat": {
+      1: "Bis bald."
+    }
+  },
+  "plasma_boss_ghetsis_1": {
+    "encounter": {
+      1:"Ich werde nicht zulassen, dass mich jemand aufhält! Egal wer es auch sein mag!"
+    },
+    "victory": {
+      1: "Wie kann das sein? Ich bin der Schöpfer von Team Plasma! Ich bin perfekt!"
+    },
+    "defeat": {
+      1: "Ich bin der perfekte Herrscher einer perfekten neuen Welt! Mwa ha ha!"
+    }
+  },
+  "plasma_boss_ghetsis_2": {
+    "encounter": {
+      1: "Komm schon! Ich will dein Gesicht sehen, in dem Moment, in dem du alle Hoffnung verlierst!"
+    },
+    "victory": {
+      1: "Meine Berechnungen... Nein! Meine sorgfältigen Pläne! Die Welt sollte mir gehören!"
+    },
+    "defeat": {
+      1: "Kyurem! Verwende Absorptionsfusion!"
+    }
+  },
+  "flare_boss_lysandre_1": {
+    "encounter": {
+      1: "DU willst mich aufhalten? Dann zeig mir deine Stärke in einem Kampf!"
+    },
+    "victory": {
+      1: `Du bist hier, um mich aufzuhalten. Aber ich bitte dich zu warten.
+          $Ich bin so kurz davor, meine Vision zu verwirklichen.`
+    },
+    "defeat": {
+      1: "Pokémon... Sollten nicht mehr existieren."
+    }
+  },
+  "flare_boss_lysandre_2": {
+    "encounter": {
+      1: `Die Zukunft, die du willst, oder die Zukunft, die ich will...
+          $Lass uns sehen, welche mehr zu existieren verdient, sollen wir?`
+    },
+    "victory": {
+      1: "Die Zukunft, die ich erschaffen wollte... Es ist vorbei..."
+    },
+    "defeat": {
+      1: "Narren ohne Vision werden weiterhin diese wunderschöne Welt verunreinigen."
+    }
+  },
   "brock": {
     "encounter": {
       1: "Meine Expertise in Bezug auf Gesteins-Pokémon wird dich besiegen! Komm schon!",
@@ -516,7 +735,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     },
     "victory": {
       1: "Oh, es scheint, als hätte ich verloren.",
-      2: "Es scheint, als hätte ich noch so viel mehr zu lernen, wenn es um den Kämpfe geht.",
+      2: "Es scheint, als hätte ich noch so viel mehr zu lernen, wenn es um Kämpfe geht.",
       3: "Ich werde mir zu Herzen nehmen, was ich heute gelernt habe."
     },
     "defeat": {
@@ -775,7 +994,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "marshal": {
     "encounter": {
-      1: `Mein Mentor, Lauro, sieht sieht Potential in dir. Ich werde dich testen,
+      1: `Mein Mentor, Lauro, sieht Potential in dir. Ich werde dich testen,
           $dich an die Grenzen deiner Stärke bringen. Kiai!`,
       2: "Ein Sieg, ein entscheidender Sieg, das ist mein Ziel! Herausforderer, hier komme ich!",
       3: "Ich selber suche die Stärke eines Kämpfers zu entwickeln und jede Schwäche in mir zu brechen!"
@@ -930,7 +1149,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "lacey": {
     "encounter": {
-      1: "Ich werde dir mit meiner gewohnten Team, als Mitglied der Top Vier gegenüberstehen."
+      1: "Ich werde dir mit meinem gewohnten Team, als Mitglied der Top Vier gegenüberstehen."
     },
     "victory": {
       1: "Das war ein großartiger Kampf!"
@@ -1025,7 +1244,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "cress": {
     "encounter": {
-      1: "Das ist korrekt! Ich und meine geschätzten Wasser-Typen werden deine Gegner im Kampf sein!"
+      1: "Das ist korrekt! Ich und meine geschätzten Wasser-Pokémon werden deine Gegner im Kampf sein!"
     },
     "victory": {
       1: "Verlieren? Ich? Das glaube ich nicht."
@@ -1234,8 +1453,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "bugsy": {
     "encounter": {
-      1: `Wow, erstaunlich! Du bist ein Experte für Pokémon!
-                $Meine Forschung ist noch nicht abgeschlossen. OK, du gewinnst.`,
+      1: "Ich bin Kai, der Arenaleiter von Azalea City. Ich bin ein großer Fan von Käfer-Pokémon.",
     },
     "victory": {
       1: `Wow, erstaunlich! Du bist ein Experte für Pokémon!
@@ -2129,6 +2347,32 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "defeat": {
       1: "Ein weiterer Sturm überstanden, ein weiterer Sieg errungen! Gut gekämpft!",
       2: "Du bist in meinen Sturm geraten! Viel Glück beim nächsten Mal!"
+    }
+  },
+  "alder": {
+    "encounter": {
+      1: "Prepare yourself for a match against the strongest Trainer in Unova!"
+    },
+    "victory": {
+      1: "Well done! You certainly are an unmatched talent."
+    },
+    "defeat": {
+      1: `A fresh wind blows through my heart...
+          $What an extraordinary effort!`
+    }
+  },
+  "kieran": {
+    "encounter": {
+      1: `Through hard work, I become stronger and stronger!
+          $I don't lose.`
+    },
+    "victory": {
+      1: `I don't believe it...
+          $What a fun and heart-pounding battle!`
+    },
+    "defeat": {
+      1: `Wowzers, what a battle!
+          $Time for you to train even harder.`
     }
   },
 

@@ -16,7 +16,7 @@ export const biome: SimpleTranslationEntries = {
   "MOUNTAIN": "Montagne",
   "BADLANDS": "Terres Sauvages",
   "CAVE": "Grotte",
-  "DESERT": "Desert",
+  "DESERT": "Désert",
   "ICE_CAVE": "Caverne Gelée",
   "MEADOW": "Prairie",
   "POWER_PLANT": "Centrale",
