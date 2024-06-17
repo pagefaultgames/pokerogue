@@ -13,7 +13,9 @@ export const pokemonInfo: PokemonInfoTranslationEntries = {
     "SPDEF": "とくぼう",
     "SPDEFshortened": "とくぼう",
     "SPD": "すばやさ",
-    "SPDshortened": "すばやさ"
+    "SPDshortened": "すばやさ",
+    "ACC": "めいちゅう",
+    "EVA": "かいひ"
   },
 
   Type: {

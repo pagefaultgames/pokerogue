@@ -248,6 +248,19 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "x_accuracy": "ヨクアタール",
     "dire_hit": "クリティカット",
   },
+
+  TempBattleStatBoosterStatName: {
+    "ATK": "こうげき",
+    "DEF": "ぼうぎょ",
+    "SPATK": "とくこう",
+    "SPDEF": "とくぼう",
+    "SPD": "すばやさ",
+    "ACC": "めいちゅう",
+    "CRIT": "きゅうしょりつ",
+    "EVA": "かいひ",
+    "DEFAULT": "???",
+  },
+
   AttackTypeBoosterItem: {
     "silk_scarf": "シルクのスカーフ",
     "black_belt": "くろおび",
