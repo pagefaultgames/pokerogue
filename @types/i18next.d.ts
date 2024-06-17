@@ -14,15 +14,15 @@ declare module "i18next" {
         challenges: SimpleTranslationEntries;
         commandUiHandler: SimpleTranslationEntries;
         PGMachv: AchievementTranslationEntries;
-        PGMdialogue: DialogueTranslationEntries;
-        PGMbattleSpecDialogue: SimpleTranslationEntries;
-        PGMmiscDialogue: SimpleTranslationEntries;
-        PGMdoubleBattleDialogue: DialogueTranslationEntries;
-        PGFdialogue: DialogueTranslationEntries;
-        PGFbattleSpecDialogue: SimpleTranslationEntries;
-        PGFmiscDialogue: SimpleTranslationEntries;
-        PGFdoubleBattleDialogue: DialogueTranslationEntries;
         PGFachv: AchievementTranslationEntries;
+        PGMdialogue: DialogueTranslationEntries;
+        PGFdialogue: DialogueTranslationEntries;
+        PGMbattleSpecDialogue: SimpleTranslationEntries;
+        PGFbattleSpecDialogue: SimpleTranslationEntries;
+        PGMmiscDialogue: SimpleTranslationEntries;
+        PGFmiscDialogue: SimpleTranslationEntries;
+        PGMdoubleBattleDialogue: DialogueTranslationEntries;
+        PGFdoubleBattleDialogue: DialogueTranslationEntries;
         egg: SimpleTranslationEntries;
         fightUiHandler: SimpleTranslationEntries;
         gameMode: SimpleTranslationEntries;
@@ -39,6 +39,7 @@ declare module "i18next" {
         pokemonInfo: PokemonInfoTranslationEntries;
         pokemonInfoContainer: SimpleTranslationEntries;
         saveSlotSelectUiHandler: SimpleTranslationEntries;
+        settings: SimpleTranslationEntries;
         splashMessages: SimpleTranslationEntries;
         starterSelectUiHandler: SimpleTranslationEntries;
         titles: SimpleTranslationEntries;
@@ -47,8 +48,6 @@ declare module "i18next" {
         tutorial: SimpleTranslationEntries;
         voucher: SimpleTranslationEntries;
         weather: SimpleTranslationEntries;
-        battleStat: SimpleTranslationEntries;
-        settings: SimpleTranslationEntries;
       };
     }
   }

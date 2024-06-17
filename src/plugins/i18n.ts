@@ -54,6 +54,53 @@ export async function initI18n(): Promise<void> {
    * A: In src/system/settings.ts, add a new case to the Setting.Language switch statement.
    */
 
+  // if you need to update this you can console.log(Object.keys(enConfig))
+  const namespaces = [
+    "ability",
+    "abilityTriggers",
+    "battle",
+    "battleMessageUiHandler",
+    "berry",
+    "biome",
+    "challenges",
+    "commandUiHandler",
+    "PGMachv",
+    "PGFachv",
+    "PGMdialogue",
+    "PGFdialogue",
+    "PGMbattleSpecDialogue",
+    "PGFbattleSpecDialogue",
+    "PGMmiscDialogue",
+    "PGFmiscDialogue",
+    "PGMdoubleBattleDialogue",
+    "PGFdoubleBattleDialogue",
+    "egg",
+    "fightUiHandler",
+    "gameMode",
+    "gameStatsUiHandler",
+    "growth",
+    "menu",
+    "menuUiHandler",
+    "modifierType",
+    "move",
+    "nature",
+    "partyUiHandler",
+    "pokeball",
+    "pokemon",
+    "pokemonInfo",
+    "pokemonInfoContainer",
+    "saveSlotSelectUiHandler",
+    "settings",
+    "splashMessages",
+    "starterSelectUiHandler",
+    "titles",
+    "trainerClasses",
+    "trainerNames",
+    "tutorial",
+    "voucher",
+    "weather"
+  ];
+
   i18next.use(LanguageDetector);
   i18next.use(processor);
   i18next.use(new KoreanPostpositionProcessor());
@@ -61,8 +108,8 @@ export async function initI18n(): Promise<void> {
     nonExplicitSupportedLngs: true,
     fallbackLng: "en",
     supportedLngs: ["en", "es", "fr", "it", "de", "zh", "pt", "ko"],
-    ns: Object.keys(enConfig),
     defaultNS: "menu",
+    ns: namespaces,
     detection: {
       lookupLocalStorage: "prLang"
     },

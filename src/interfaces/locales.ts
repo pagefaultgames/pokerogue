@@ -39,6 +39,7 @@ export interface ModifierTypeTranslationEntries {
     EvolutionItem: SimpleTranslationEntries,
     FormChangeItem: SimpleTranslationEntries,
   }
+
 export interface PokemonInfoTranslationEntries {
     Stat: SimpleTranslationEntries,
     Type: SimpleTranslationEntries,
