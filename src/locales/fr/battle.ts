@@ -70,4 +70,9 @@ export const battle: SimpleTranslationEntries = {
   "statHarshlyFell": "harshly fell",
   "statSeverelyFell": "severely fell",
   "statWontGoAnyLower": "won't go any lower",
+  "retryBattle": "Voulez-vous réessayer depuis le début du combat ?",
+  "receivedNewModifier": "Vous avez reçu\n{{modifierName}} !",
+  "unlockedSomething": "{{unlockedThing}}\na été débloqué.",
+  "congratulations": "Félicitations !",
+  "beatModeFirstTime": "{{speciesName}} a battu le mode {{gameMode}} pour la première fois !\nVous avez reçu {{newModifier}} !",
 } as const;
