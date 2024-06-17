@@ -94,7 +94,13 @@ export class LoginPhase extends Phase {
           this.scene.playSound("menu_open");
 
           const loadData = () => {
-            updateUserInfo().then(() => this.scene.gameData.loadSystem().then(() => this.end()));
+            updateUserInfo().then(success => {
+              if (!success[0]) {
+                this.scene.reset();
+                return;
+              }
+              this.scene.gameData.loadSystem().then(() => this.end());
+            });
           };
 
           this.scene.ui.setMode(Mode.LOGIN_FORM, {
@@ -108,7 +114,13 @@ export class LoginPhase extends Phase {
                   buttonActions: [
                     () => {
                       this.scene.ui.playSelect();
-                      updateUserInfo().then(() => this.end());
+                      updateUserInfo().then(success => {
+                        if (!success[0]) {
+                          this.scene.reset();
+                          return;
+                        }
+                        this.end();
+                      } );
                     }, () => {
                       this.scene.unshiftPhase(new LoginPhase(this.scene, false));
                       this.end();
@@ -4198,7 +4210,8 @@ export class GameOverPhase extends BattlePhase {
     If Offline, execute offlineNewClear(), a localStorage implementation of newClear daily run checks */
     if (this.victory) {
       if (!Utils.isLocal) {
-        Utils.apiFetch(`savedata/session/newclear?slot=${this.scene.sessionSlotId}&clientSessionId=${clientSessionId}`, true)          .then(response => response.json())
+        Utils.apiFetch(`savedata/session/newclear?slot=${this.scene.sessionSlotId}&clientSessionId=${clientSessionId}`, true)
+          .then(response => response.json())
           .then(newClear => doGameOver(newClear));
       } else {
         this.scene.gameData.offlineNewClear(this.scene).then(result => {
