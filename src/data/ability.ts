@@ -1264,14 +1264,7 @@ export class VariableMovePowerBoostAbAttr extends VariableMovePowerAbAttr {
   }
 }
 
-export class FieldVariableMovePowerAbAttr extends AbAttr {
-  applyPreAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: Move, args: any[]): boolean {
-    //const power = args[0] as Utils.NumberHolder;
-    return false;
-  }
-}
-
-export class FieldMovePowerBoostAbAttr extends FieldVariableMovePowerAbAttr {
+export class FieldMovePowerBoostAbAttr extends AbAttr {
   private condition: PokemonAttackCondition;
   private powerMultiplier: number;
 
@@ -1298,28 +1291,7 @@ export class FieldMoveTypePowerBoostAbAttr extends FieldMovePowerBoostAbAttr {
   }
 }
 
-export class UserFieldVariableMovePowerAbAttr extends AbAttr {
-  private condition: PokemonAttackCondition;
-  private powerMultiplier: number;
-
-  constructor(condition: PokemonAttackCondition, powerMultiplier: number) {
-    super(false);
-    this.condition = condition;
-    this.powerMultiplier = powerMultiplier;
-  }
-
-  applyPreAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: Move, args: any[]): boolean {
-    if (this.condition(pokemon, defender, move)) {
-      (args[0] as Utils.NumberHolder).value *= this.powerMultiplier;
-
-      return true;
-    }
-
-    return false;
-  }
-}
-
-export class AllyMoveCategoryPowerBoostAbAttr extends UserFieldVariableMovePowerAbAttr {
+export class AllyMoveCategoryPowerBoostAbAttr extends FieldMovePowerBoostAbAttr {
   constructor(boostedCategories: MoveCategory[], powerMultiplier: number) {
     super((pokemon, defender, move) => boostedCategories.includes(move.category), powerMultiplier);
   }
