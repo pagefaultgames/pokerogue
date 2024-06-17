@@ -14,7 +14,6 @@ import Pokemon from "#app/field/pokemon.js";
 describe("Abilities - Power Spot", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  const powerSpotMultiplier = 1.3;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -42,13 +41,14 @@ describe("Abilities - Power Spot", () => {
     game.doAttack(getMovePosition(game.scene, 0, moveToBeUsed));
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
+    const multiplier = getAttrPowerMultiplier(game.scene.getPlayerField()[1]);
     const appliedPower = getAppliedMovePower(game.scene.getEnemyField()[0], game.scene.getPlayerField()[0], allMoves[moveToBeUsed]);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(appliedPower).not.toBe(undefined);
     expect(appliedPower).not.toBe(basePower);
-    expect(appliedPower).toBe(basePower * powerSpotMultiplier);
+    expect(appliedPower).toBe(basePower * multiplier);
   });
 
   it("raises the power of allies' physical moves by 30%", async () => {
@@ -60,13 +60,14 @@ describe("Abilities - Power Spot", () => {
     game.doAttack(getMovePosition(game.scene, 0, moveToBeUsed));
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
+    const multiplier = getAttrPowerMultiplier(game.scene.getPlayerField()[1]);
     const appliedPower = getAppliedMovePower(game.scene.getEnemyField()[0], game.scene.getPlayerField()[0], allMoves[moveToBeUsed]);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(appliedPower).not.toBe(undefined);
     expect(appliedPower).not.toBe(basePower);
-    expect(appliedPower).toBe(basePower * powerSpotMultiplier);
+    expect(appliedPower).toBe(basePower * multiplier);
   });
 
   it("does not raise the power of the ability owner's moves", async () => {
@@ -78,13 +79,14 @@ describe("Abilities - Power Spot", () => {
     game.doAttack(getMovePosition(game.scene, 0, moveToBeUsed));
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
+    const multiplier = getAttrPowerMultiplier(game.scene.getPlayerField()[0]);
     const appliedPower = getAppliedMovePower(game.scene.getEnemyField()[0], game.scene.getPlayerField()[0], allMoves[moveToBeUsed]);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(appliedPower).not.toBe(undefined);
     expect(appliedPower).toBe(basePower);
-    expect(appliedPower).not.toBe(basePower * powerSpotMultiplier);
+    expect(appliedPower).not.toBe(basePower * multiplier);
   });
 });
 
@@ -100,12 +102,24 @@ const getAppliedMovePower = (defender: Pokemon, attacker: Pokemon, move: Move) =
   const powerHolder = new NumberHolder(move.power);
 
   /**
-     * @see AllyMoveCategoryPowerBoostAbAttr
-     */
+   * @see AllyMoveCategoryPowerBoostAbAttr
+   */
   if (attacker.getAlly().hasAbilityWithAttr(AllyMoveCategoryPowerBoostAbAttr)) {
     const powerSpotInstance = new AllyMoveCategoryPowerBoostAbAttr([MoveCategory.SPECIAL, MoveCategory.PHYSICAL], 1.3);
     powerSpotInstance.applyPreAttack(attacker, false, defender, move, [ powerHolder ]);
   }
 
   return powerHolder.value;
+};
+
+/**
+ * Retrieves the power multiplier from a Pokémon's ability attribute.
+ *
+ * @param pokemon - The Pokémon whose ability attributes are being queried.
+ * @returns The power multiplier of the `AllyMoveCategoryPowerBoostAbAttr` attribute.
+ */
+const getAttrPowerMultiplier = (pokemon: Pokemon) => {
+  const attr = pokemon.getAbilityAttrs(AllyMoveCategoryPowerBoostAbAttr);
+
+  return (attr[0] as AllyMoveCategoryPowerBoostAbAttr)["powerMultiplier"];
 };
