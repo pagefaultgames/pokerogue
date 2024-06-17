@@ -27,7 +27,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "manageMoves": "Mudar Movimentos",
   "manageNature": "Mudar Natureza",
   "useCandies": "Usar Doces",
-  "selectNature": "Escolha Natureza.",
+  "selectNature": "Escolha uma natureza.",
   "selectMoveSwapOut": "Escolha um movimento para substituir.",
   "selectMoveSwapWith": "Escolha o movimento que substituirá",
   "unlockPassive": "Aprender Passiva",
