@@ -70,4 +70,9 @@ export const battle: SimpleTranslationEntries = {
   "statHarshlyFell": "大幅降低了！",
   "statSeverelyFell": "极大幅降低了！",
   "statWontGoAnyLower": "已经无法再降低了！",
+  "retryBattle": "你要从对战开始时重试么？",
+  "receivedNewModifier": "你获得了\n{{modifierName}}！",
+  "unlockedSomething": "{{unlockedThing}}\n已解锁。",
+  "congratulations": "恭喜！",
+  "beatModeFirstTime": "{{speciesName}} 首次击败了 {{gameMode}} 模式！\n你获得了{{newModifier}}！",
 } as const;
