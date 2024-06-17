@@ -1,6 +1,6 @@
+import { BattleSpec } from "#enums/battle-spec";
+import { TrainerType } from "#enums/trainer-type";
 import {trainerConfigs} from "./trainer-config";
-import {TrainerType} from "./enums/trainer-type";
-import {BattleSpec} from "../enums/battle-spec";
 
 export interface TrainerTypeMessages {
     encounter?: string | string[],
@@ -2288,6 +2288,28 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
     defeat: [
       "dialogue:raihan_elite.defeat.1",
       "dialogue:raihan_elite.defeat.2"
+    ]
+  },
+  [TrainerType.ALDER]: {
+    encounter: [
+      "dialogue:alder.encounter.1"
+    ],
+    victory: [
+      "dialogue:alder.victory.1"
+    ],
+    defeat: [
+      "dialogue:alder.defeat.1"
+    ]
+  },
+  [TrainerType.KIERAN]: {
+    encounter: [
+      "dialogue:kieran.encounter.1"
+    ],
+    victory: [
+      "dialogue:kieran.victory.1"
+    ],
+    defeat: [
+      "dialogue:kieran.defeat.1"
     ]
   },
   [TrainerType.RIVAL]: [
