@@ -7,7 +7,7 @@ import MessageUiHandler from "./message-ui-handler";
 import { OptionSelectConfig, OptionSelectItem } from "./abstact-option-select-ui-handler";
 import { Tutorial, handleTutorial } from "../tutorial";
 import { updateUserInfo } from "../account";
-import i18next from "../plugins/i18n";
+import i18next from "i18next";
 import {Button} from "#enums/buttons";
 import { GameDataType } from "#enums/game-data-type";
 

@@ -1,5 +1,5 @@
 import * as Utils from "../utils";
-import i18next from "#app/plugins/i18n.js";
+import i18next from "i18next";
 import { GameData } from "#app/system/game-data.js";
 import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "./pokemon-species";
 import Pokemon from "#app/field/pokemon.js";

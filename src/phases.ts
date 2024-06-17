@@ -66,6 +66,7 @@ import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 
+const { t } = i18next;
 
 export class LoginPhase extends Phase {
   private showText: boolean;
@@ -146,7 +147,7 @@ export class LoginPhase extends Phase {
             this.end();
           } else {
             this.scene.ui.setMode(Mode.MESSAGE);
-            this.scene.ui.showText(i18next.t("menu:failedToLoadSaveData"));
+            this.scene.ui.showText(t("menu:failedToLoadSaveData"));
           }
         });
       }
@@ -201,7 +202,7 @@ export class TitlePhase extends Phase {
     const options: OptionSelectItem[] = [];
     if (loggedInUser.lastSessionSlot > -1) {
       options.push({
-        label: i18next.t("menu:continue"),
+        label: i18next.t("continue", null, { ns: "menu"}),
         handler: () => {
           this.loadSaveSlot(this.lastSessionData ? -1 : loggedInUser.lastSessionSlot);
           return true;
@@ -506,7 +507,7 @@ export class SelectGenderPhase extends Phase {
       this.scene.ui.setMode(Mode.OPTION_SELECT, {
         options: [
           {
-            label: i18next.t("menu:boy"),
+            label: i18next.t("settings:boy"),
             handler: () => {
               this.scene.gameData.gender = PlayerGender.MALE;
               this.scene.gameData.saveSetting(SettingKeys.Player_Gender, 0);
@@ -515,7 +516,7 @@ export class SelectGenderPhase extends Phase {
             }
           },
           {
-            label: i18next.t("menu:girl"),
+            label: i18next.t("settings:girl"),
             handler: () => {
               this.scene.gameData.gender = PlayerGender.FEMALE;
               this.scene.gameData.saveSetting(SettingKeys.Player_Gender, 1);

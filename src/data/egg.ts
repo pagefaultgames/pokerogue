@@ -1,6 +1,6 @@
 import BattleScene from "../battle-scene";
 import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "./pokemon-species";
-import i18next from "../plugins/i18n";
+import i18next from "i18next";
 import { EggTier } from "#enums/egg-type";
 import { Species } from "#enums/species";
 

@@ -12,83 +12,6 @@ import { ptBrConfig } from "#app/locales/pt_BR/config.js";
 import { zhCnConfig } from "#app/locales/zh_CN/config.js";
 import { zhTwConfig } from "#app/locales/zh_TW/config.js";
 
-export interface SimpleTranslationEntries {
-  [key: string]: string
-}
-
-export interface MoveTranslationEntry {
-  name: string,
-  effect: string
-}
-
-export interface MoveTranslationEntries {
-  [key: string]: MoveTranslationEntry
-}
-
-export interface AbilityTranslationEntry {
-  name: string,
-  description: string
-}
-
-export interface AbilityTranslationEntries {
-  [key: string]: AbilityTranslationEntry
-}
-
-export interface ModifierTypeTranslationEntry {
-  name?: string,
-  description?: string,
-  extra?: SimpleTranslationEntries
-}
-
-export interface ModifierTypeTranslationEntries {
-  ModifierType: { [key: string]: ModifierTypeTranslationEntry },
-  AttackTypeBoosterItem: SimpleTranslationEntries,
-  TempBattleStatBoosterItem: SimpleTranslationEntries,
-  TempBattleStatBoosterStatName: SimpleTranslationEntries,
-  BaseStatBoosterItem: SimpleTranslationEntries,
-  EvolutionItem: SimpleTranslationEntries,
-  FormChangeItem: SimpleTranslationEntries,
-}
-export interface PokemonInfoTranslationEntries {
-  Stat: SimpleTranslationEntries,
-  Type: SimpleTranslationEntries,
-}
-
-export interface BerryTranslationEntry {
-  name: string,
-  effect: string,
-}
-
-export interface BerryTranslationEntries {
-  [key: string]: BerryTranslationEntry
-}
-
-export interface AchievementTranslationEntry {
-  name?: string,
-  description?: string,
-}
-
-export interface AchievementTranslationEntries {
-  [key: string]: AchievementTranslationEntry;
-}
-
-export interface DialogueTranslationEntry {
-  [key: number]: string;
-}
-
-export interface DialogueTranslationCategory {
-  [category: string]: DialogueTranslationEntry;
-}
-
-export interface DialogueTranslationEntries {
-  [trainertype: string]: DialogueTranslationCategory;
-}
-
-
-export interface Localizable {
-  localize(): void;
-}
-
 const fonts = [
   new FontFace("emerald", "url(./fonts/PokePT_Wansung.ttf)", { unicodeRange: "U+AC00-D7AC"}),
   Object.assign(
@@ -138,6 +61,8 @@ export async function initI18n(): Promise<void> {
     nonExplicitSupportedLngs: true,
     fallbackLng: "en",
     supportedLngs: ["en", "es", "fr", "it", "de", "zh", "pt", "ko"],
+    ns: Object.keys(enConfig),
+    defaultNS: "menu",
     detection: {
       lookupLocalStorage: "prLang"
     },
@@ -178,59 +103,6 @@ export async function initI18n(): Promise<void> {
   });
 
   await initFonts();
-}
-
-// Module declared to make referencing keys in the localization files type-safe.
-declare module "i18next" {
-  interface CustomTypeOptions {
-    defaultNS: "menu"; // Even if we don't use it, i18next requires a valid default namespace
-    resources: {
-      ability: AbilityTranslationEntries;
-      abilityTriggers: SimpleTranslationEntries;
-      achv: AchievementTranslationEntries;
-      battle: SimpleTranslationEntries;
-      battleMessageUiHandler: SimpleTranslationEntries;
-      berry: BerryTranslationEntries;
-      biome: SimpleTranslationEntries;
-      challenges: SimpleTranslationEntries;
-      commandUiHandler: SimpleTranslationEntries;
-      PGMachv: AchievementTranslationEntries;
-      PGMdialogue: DialogueTranslationEntries;
-      PGMbattleSpecDialogue: SimpleTranslationEntries;
-      PGMmiscDialogue: SimpleTranslationEntries;
-      PGMdoubleBattleDialogue: DialogueTranslationEntries;
-      PGFdialogue: DialogueTranslationEntries;
-      PGFbattleSpecDialogue: SimpleTranslationEntries;
-      PGFmiscDialogue: SimpleTranslationEntries;
-      PGFdoubleBattleDialogue: DialogueTranslationEntries;
-      PGFachv: AchievementTranslationEntries;
-      egg: SimpleTranslationEntries;
-      fightUiHandler: SimpleTranslationEntries;
-      gameMode: SimpleTranslationEntries;
-      gameStatsUiHandler: SimpleTranslationEntries;
-      growth: SimpleTranslationEntries;
-      menu: SimpleTranslationEntries;
-      menuUiHandler: SimpleTranslationEntries;
-      modifierType: ModifierTypeTranslationEntries;
-      move: MoveTranslationEntries;
-      nature: SimpleTranslationEntries;
-      partyUiHandler: SimpleTranslationEntries;
-      pokeball: SimpleTranslationEntries;
-      pokemon: SimpleTranslationEntries;
-      pokemonInfo: PokemonInfoTranslationEntries;
-      pokemonInfoContainer: SimpleTranslationEntries;
-      saveSlotSelectUiHandler: SimpleTranslationEntries;
-      splashMessages: SimpleTranslationEntries;
-      starterSelectUiHandler: SimpleTranslationEntries;
-      titles: SimpleTranslationEntries;
-      trainerClasses: SimpleTranslationEntries;
-      trainerNames: SimpleTranslationEntries;
-      tutorial: SimpleTranslationEntries;
-      voucher: SimpleTranslationEntries;
-      weather: SimpleTranslationEntries;
-      battleStat: SimpleTranslationEntries;
-    };
-  }
 }
 
 export default i18next;
