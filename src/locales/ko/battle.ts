@@ -60,5 +60,14 @@ export const battle: SimpleTranslationEntries = {
   "foePokemonWithAffix": "상대 {{pokemonName}}",
   "useMove": "{{pokemonNameWithAffix}}의 {{moveName}}!",
   "drainMessage": "{{pokemonName}}[[로]]부터\n체력을 흡수했다!",
-  "regainHealth": "{{pokemonName}}[[는]]\n기력을 회복했다!"
+  "regainHealth": "{{pokemonName}}[[는]]\n기력을 회복했다!",
+  "fainted": "{{pokemonNameWithAffix}}[[는]] 쓰러졌다!",
+  "statRose": "[[가]] 올라갔다!",
+  "statSharplyRose": "[[가]] 크게 올라갔다!",
+  "statRoseDrastically": "[[가]] 매우 크게 올라갔다!",
+  "statWontGoAnyHigher": "[[는]] 더 올라가지 않는다!",
+  "statFell": "[[가]] 떨어졌다!",
+  "statHarshlyFell": "[[가]] 크게 떨어졌다!",
+  "statSeverelyFell": "[[가]] 매우 크게 떨어졌다!",
+  "statWontGoAnyLower": "[[는]] 더 떨어지지 않는다!",
 } as const;

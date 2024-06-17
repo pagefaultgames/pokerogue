@@ -248,6 +248,19 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "x_accuracy": "命中强化",
     "dire_hit": "要害攻击",
   },
+
+  TempBattleStatBoosterStatName: {
+    "ATK": "Attack",
+    "DEF": "Defense",
+    "SPATK": "Sp. Atk",
+    "SPDEF": "Sp. Def",
+    "SPD": "Speed",
+    "ACC": "Accuracy",
+    "CRIT": "Critical Hit Ratio",
+    "EVA": "Evasiveness",
+    "DEFAULT": "???",
+  },
+
   AttackTypeBoosterItem: {
     "silk_scarf": "丝绸围巾",
     "black_belt": "黑带",
@@ -404,9 +417,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "MIND_PLATE": "神奇石板",
     "ICICLE_PLATE": "冰柱石板",
     "DRACO_PLATE": "龙之石板",
-    "DREAD_PLATE": "恶顏石板",
+    "DREAD_PLATE": "恶颜石板",
     "PIXIE_PLATE": "妖精石板",
-    "BLANK_PLATE": "淨空石板",
+    "BLANK_PLATE": "净空石板",
     "LEGEND_PLATE": "传说石板",
     "FIGHTING_MEMORY": "战斗存储碟",
     "FLYING_MEMORY": "飞翔存储碟",
