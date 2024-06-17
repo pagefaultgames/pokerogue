@@ -743,6 +743,10 @@ export default class BattleScene extends SceneBase {
       : ret;
   }
 
+  getModifierBar(): ModifierBar {
+    return this.modifierBar;
+  }
+
   // store info toggles to be accessible by the ui
   addInfoToggle(infoToggle: InfoToggle): void {
     this.infoToggles.push(infoToggle);
