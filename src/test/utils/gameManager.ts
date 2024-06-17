@@ -16,19 +16,19 @@ import {GameModes, getGameMode} from "#app/game-mode";
 import fs from "fs";
 import {AES, enc} from "crypto-js";
 import {updateUserInfo} from "#app/account";
-import {Species} from "#app/data/enums/species";
-import {PlayerGender} from "#app/data/enums/player-gender";
-import {GameDataType} from "#app/data/enums/game-data-type";
 import InputsHandler from "#app/test/utils/inputsHandler";
-import {ExpNotification} from "#app/enums/exp-notification";
 import ErrorInterceptor from "#app/test/utils/errorInterceptor";
 import {EnemyPokemon, PlayerPokemon} from "#app/field/pokemon";
 import {MockClock} from "#app/test/utils/mocks/mockClock";
 import {Command} from "#app/ui/command-ui-handler";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
-import {Button} from "#app/enums/buttons";
 import PartyUiHandler, {PartyUiMode} from "#app/ui/party-ui-handler";
 import Trainer from "#app/field/trainer";
+import { ExpNotification } from "#enums/exp-notification";
+import { GameDataType } from "#enums/game-data-type";
+import { PlayerGender } from "#enums/player-gender";
+import { Species } from "#enums/species";
+import { Button } from "#enums/buttons";
 
 /**
  * Class to manage the game state and transitions between phases.

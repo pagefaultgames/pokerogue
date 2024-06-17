@@ -63,4 +63,12 @@ export const battle: SimpleTranslationEntries = {
   "regainHealth": "¡{{pokemonName}} recuperó\nPS!",
   "stealEatBerry": "{{pokemonName}} stole and ate\n{{targetName}}'s {{berryName}}!",
   "fainted": "¡{{pokemonNameWithAffix}} se debilitó!",
+  "statRose": "rose",
+  "statSharplyRose": "sharply rose",
+  "statRoseDrastically": "rose drastically",
+  "statWontGoAnyHigher": "won't go any higher",
+  "statFell": "fell",
+  "statHarshlyFell": "harshly fell",
+  "statSeverelyFell": "severely fell",
+  "statWontGoAnyLower": "won't go any lower",
 } as const;

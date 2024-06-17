@@ -62,5 +62,13 @@ export const battle: SimpleTranslationEntries = {
   "drainMessage": "{{pokemonName}} wurde Energie abgesaugt",
   "regainHealth": "KP von {{pokemonName}} wurden wieder aufgefrischt!",
   "stealEatBerry": "{{pokemonName}} stole and ate\n{{targetName}}'s {{berryName}}!",
-  "fainted": "{{pokemonNameWithAffix}} wurde besiegt!"
+  "fainted": "{{pokemonNameWithAffix}} wurde besiegt!",
+  "statRose": "steigt",
+  "statSharplyRose": "steigt stark",
+  "statRoseDrastically": "steigt drastisch",
+  "statWontGoAnyHigher": "kann nicht weiter erhöht werden",
+  "statFell": "sinkt",
+  "statHarshlyFell": "sinkt stark",
+  "statSeverelyFell": "sinkt drastisch",
+  "statWontGoAnyLower": "kann nicht weiter sinken",
 } as const;

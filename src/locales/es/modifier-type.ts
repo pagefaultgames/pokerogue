@@ -248,6 +248,18 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "x_accuracy": "Precisión X",
     "dire_hit": "Crítico X",
   },
+
+  TempBattleStatBoosterStatName: {
+    "ATK": "Attack",
+    "DEF": "Defense",
+    "SPATK": "Sp. Atk",
+    "SPDEF": "Sp. Def",
+    "SPD": "Speed",
+    "ACC": "Accuracy",
+    "CRIT": "Critical Hit Ratio",
+    "EVA": "Evasiveness",
+    "DEFAULT": "???",
+  },
   AttackTypeBoosterItem: {
     "silk_scarf": "Pañuelo Seda",
     "black_belt": "Cinturón Negro",
