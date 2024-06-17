@@ -262,6 +262,9 @@ export class EggHatchPhase extends Phase {
     if (!this.canSkip || this.skipped) {
       return false;
     }
+    if (this.eggCounterContainer.eggCountText?.data === undefined) {
+      return false;
+    }
     this.skipped = true;
     if (!this.hatched) {
       this.doHatch();

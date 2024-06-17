@@ -24,9 +24,10 @@ export enum MenuOptions {
   LOG_OUT
 }
 
-const wikiUrl = "https://wiki.pokerogue.net";
+const wikiUrl = "https://wiki.pokerogue.net/start";
 const discordUrl = "https://discord.gg/uWpTfdKG49";
 const githubUrl = "https://github.com/pagefaultgames/pokerogue";
+const redditUrl = "https://www.reddit.com/r/pokerogue";
 
 export default class MenuUiHandler extends MessageUiHandler {
   private menuContainer: Phaser.GameObjects.Container;
@@ -207,6 +208,14 @@ export default class MenuUiHandler extends MessageUiHandler {
         label: "GitHub",
         handler: () => {
           window.open(githubUrl, "_blank").focus();
+          return true;
+        },
+        keepOpen: true
+      },
+      {
+        label: "Reddit",
+        handler: () => {
+          window.open(redditUrl, "_blank").focus();
           return true;
         },
         keepOpen: true
