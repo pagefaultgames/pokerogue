@@ -2,7 +2,7 @@ import { Abilities } from "#app/enums/abilities.js";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import * as overrides from "#app/overrides";
-import { TurnEndPhase } from "#app/phases";
+import { TurnEndPhase, TurnStartPhase } from "#app/phases";
 import GameManager from "#app/test/utils/gameManager";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import Phaser from "phaser";
@@ -77,21 +77,21 @@ describe("Abilities - Damp", () => {
 
   // Ensures fix of #1476.
   it("does not show ability popup during AI calculations", async() => {
-    const moveToUse = Moves.EXPLOSION;
-    const enemyAbility = Abilities.DAMP;
+    const moveToUse = Moves.SPLASH;
+    const playerAbility = Abilities.DAMP;
 
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
+    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(playerAbility);
     vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
+    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.EXPLOSION, Moves.SELF_DESTRUCT, Moves.MIND_BLOWN, Moves.MISTY_EXPLOSION]);
     vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.BIDOOF);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(enemyAbility);
+    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
 
     await game.startBattle();
 
     game.doAttack(getMovePosition(game.scene, 0, moveToUse));
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to(TurnStartPhase);
 
-    expect(game.phaseInterceptor.log).toContain("ShowAbilityPhase");
+    expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
   }, TIMEOUT);
 });
