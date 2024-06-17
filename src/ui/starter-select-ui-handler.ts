@@ -1514,16 +1514,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             } while (newVariant !== props.variant);
             starterAttributes.variant = newVariant; // store the selected variant
             this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, newVariant, undefined, undefined);
-
-            // Get the luck value
-            const luck = this.scene.gameData.getDexAttrLuck(this.speciesStarterDexEntry.caughtAttr);
-
-            // Get the tint based on the luck value
-            const tint = getVariantTint(Math.min(luck - 1, 2) as Variant);
-
-            // Set the color of variantLabel to the luck tint
-            this.variantLabel.setTint(tint);
-
             success = true;
           }
           break;
