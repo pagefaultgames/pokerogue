@@ -3795,7 +3795,7 @@ export const starterPassiveAbilities = {
   [Species.IRON_TREADS]: Abilities.STEELY_SPIRIT,
   [Species.IRON_BUNDLE]: Abilities.SNOW_WARNING,
   [Species.IRON_HANDS]: Abilities.IRON_FIST,
-  [Species.IRON_JUGULIS]: Abilities.AERILATE,
+  [Species.IRON_JUGULIS]: Abilities.LIGHTNING_ROD,
   [Species.IRON_MOTH]: Abilities.LEVITATE,
   [Species.IRON_THORNS]: Abilities.SAND_STREAM,
   [Species.FRIGIBAX]: Abilities.SNOW_WARNING,

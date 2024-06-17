@@ -70,4 +70,5 @@ export const battle: SimpleTranslationEntries = {
   "statHarshlyFell": "diminuiu duramente",
   "statSeverelyFell": "diminuiu severamente",
   "statWontGoAnyLower": "não vai mais diminuir",
+  "ppReduced": "It reduced the PP of {{targetName}}'s\n{{moveName}} by {{reduction}}!",
 } as const;
