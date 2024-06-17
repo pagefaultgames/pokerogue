@@ -1305,6 +1305,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 if (row >= Math.min(5, rows - 1)) {
                   this.startCursorObj.setVisible(true);
                 }
+                success = this.setGenMode(true);
               } else {
                 if (row >= rows - 1) { // the last row will always go to the starter button
                   this.startCursorObj.setVisible(true);
