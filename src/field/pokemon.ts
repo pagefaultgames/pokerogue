@@ -1737,8 +1737,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.scene.arena.applyTagsForSide(ArenaTagType.CRAFTY_SHIELD, defendingSide, cancelled, this, move.category, move.moveTarget);
     }
 
-
-
     switch (moveCategory) {
     case MoveCategory.PHYSICAL:
     case MoveCategory.SPECIAL:
@@ -1750,9 +1748,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
       applyPreAttackAbAttrs(VariableMovePowerAbAttr, source, this, move, power);
 
-      console.log(source.name);
-      console.log("before", power);
-
       if (source.getAlly()?.hasAbilityWithAttr(AllyMoveCategoryPowerBoostAbAttr)) {
         applyPreAttackAbAttrs(AllyMoveCategoryPowerBoostAbAttr, source, this, move, power);
       }
@@ -1763,7 +1758,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
       power.value *= typeChangeMovePowerMultiplier.value;
 
-      console.log("after", power);
       if (!typeless) {
         applyPreDefendAbAttrs(TypeImmunityAbAttr, this, source, move, cancelled, typeMultiplier);
       }

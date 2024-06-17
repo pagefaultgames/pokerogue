@@ -1264,10 +1264,18 @@ export class VariableMovePowerBoostAbAttr extends VariableMovePowerAbAttr {
   }
 }
 
+/**
+ * Boosts the power of a Pokémon's move under certain conditions.
+ * @extends AbAttr
+ */
 export class FieldMovePowerBoostAbAttr extends AbAttr {
   private condition: PokemonAttackCondition;
   private powerMultiplier: number;
 
+  /**
+   * @param condition - A function that determines whether the power boost condition is met.
+   * @param powerMultiplier - The multiplier to apply to the move's power when the condition is met.
+   */
   constructor(condition: PokemonAttackCondition, powerMultiplier: number) {
     super(false);
     this.condition = condition;
@@ -1285,13 +1293,29 @@ export class FieldMovePowerBoostAbAttr extends AbAttr {
   }
 }
 
+/**
+ * Boosts the power of a specific type of move.
+ * @extends FieldMovePowerBoostAbAttr
+ */
 export class FieldMoveTypePowerBoostAbAttr extends FieldMovePowerBoostAbAttr {
+  /**
+   * @param boostedType - The type of move that will receive the power boost.
+   * @param powerMultiplier - The multiplier to apply to the move's power, defaults to 1.5 if not provided.
+   */
   constructor(boostedType: Type, powerMultiplier?: number) {
     super((pokemon, defender, move) => move.type === boostedType, powerMultiplier || 1.5);
   }
 }
 
+/**
+ * Boosts the power of moves in specified categories.
+ * @extends FieldMovePowerBoostAbAttr
+ */
 export class AllyMoveCategoryPowerBoostAbAttr extends FieldMovePowerBoostAbAttr {
+  /**
+   * @param boostedCategories - The categories of moves that will receive the power boost.
+   * @param powerMultiplier - The multiplier to apply to the move's power.
+   */
   constructor(boostedCategories: MoveCategory[], powerMultiplier: number) {
     super((pokemon, defender, move) => boostedCategories.includes(move.category), powerMultiplier);
   }
