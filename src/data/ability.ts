@@ -1633,6 +1633,25 @@ export class PostSummonAbAttr extends AbAttr {
   }
 }
 
+export class PostSummonRemoveArenaTagAbAttr extends PostSummonAbAttr {
+  private arenaTags: ArenaTagType[];
+
+  constructor(arenaTags: ArenaTagType[]) {
+    super(true);
+
+    this.arenaTags = arenaTags;
+  }
+
+  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
+    console.log("tags before summon", pokemon.scene.arena.tags);
+    for (const arena of this.arenaTags) {
+      pokemon.scene.arena.removeTag(arena);
+    }
+    console.log("tags after summon", pokemon.scene.arena.tags);
+    return true;
+  }
+}
+
 export class PostSummonMessageAbAttr extends PostSummonAbAttr {
   private messageFunc: (pokemon: Pokemon) => string;
 
@@ -4642,7 +4661,7 @@ export function initAbilities() {
     new Ability(Abilities.MIMICRY, 8)
       .unimplemented(),
     new Ability(Abilities.SCREEN_CLEANER, 8)
-      .unimplemented(),
+      .attr(PostSummonRemoveArenaTagAbAttr, [ArenaTagType.AURORA_VEIL, ArenaTagType.LIGHT_SCREEN, ArenaTagType.REFLECT]),
     new Ability(Abilities.STEELY_SPIRIT, 8)
       .attr(MoveTypePowerBoostAbAttr, Type.STEEL)
       .partial(),
