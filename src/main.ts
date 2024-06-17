@@ -8,6 +8,7 @@ import InputTextPlugin from "phaser3-rex-plugins/plugins/inputtext-plugin.js";
 import TransitionImagePackPlugin from "phaser3-rex-plugins/templates/transitionimagepack/transitionimagepack-plugin.js";
 import { LoadingScene } from "./loading-scene";
 import { isMobile } from "./touch-controls";
+import { getTouchControlSetting } from "./system/settings/settings";
 
 // Catch global errors and display them in an alert so users can report the issue.
 window.onerror = function (message, source, lineno, colno, error) {
@@ -29,11 +30,8 @@ window.addEventListener("unhandledrejection", (event) => {
 // If they are already visible, ignore the event, but otherwise, show the touch controls. This should allow for both gamepad and mobile support
 // without the need for the touch and gamepad settings.
 window.addEventListener("touchstart", (event) => {
-  let settings: object = {};
-  if (localStorage.hasOwnProperty("settings")) {
-    settings = JSON.parse(localStorage.getItem("settings"));
-  }
-  if (isMobile() && settings.TOUCH_CONTROLS === 0) {
+  const touchControlsEnabled = getTouchControlSetting();
+  if (isMobile() && touchControlsEnabled) {
     const touchControls = document.getElementById("touchControls");
     if (touchControls && !touchControls.classList.contains("visible")) {
       touchControls.classList.toggle("visible");
