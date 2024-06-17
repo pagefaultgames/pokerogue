@@ -72,7 +72,7 @@ export const menu: SimpleTranslationEntries = {
   "vibrations": "Vibração",
   "normal": "Normal",
   "fast": "Rápido",
-  "faster": "Bem Rápido",
+  "faster": "Mais Rápido",
   "skip": "Pular",
   "levelUpNotifications": "Notificação",
   "on": "Ligado",
