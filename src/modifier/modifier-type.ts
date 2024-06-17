@@ -1918,7 +1918,7 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
       let modifierType = modifierFunc();
 
       if (modifierType instanceof ModifierTypeGenerator) {
-        modifierType = modifierType.generateType(party, "type" in override ? [override.type] : null);
+        modifierType = modifierType.generateType(party, ("type" in override) && (override.type !== null) ? [override.type] : null);
       }
 
       if (modifierType) {

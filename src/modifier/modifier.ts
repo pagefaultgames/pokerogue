@@ -2704,7 +2704,7 @@ export function overrideHeldItems(scene: BattleScene, pokemon: Pokemon, isPlayer
       const qty = item.count || 1;
 
       if (modifierType instanceof ModifierTypes.ModifierTypeGenerator) {
-        modifierType = modifierType.generateType(null, "type" in item ? [item.type] : null);
+        modifierType = modifierType.generateType(null, ("type" in item) && (item.type !== null) ? [item.type] : null);
       }
 
       const heldItemModifier = modifierType.withIdFromFunc(modifierFunc).newModifier(pokemon) as PokemonHeldItemModifier;
