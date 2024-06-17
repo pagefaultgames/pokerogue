@@ -3604,6 +3604,13 @@ export class IceFaceMoveImmunityAbAttr extends MoveImmunityAbAttr {
  * @extends AbAttr
  */
 export class BypassSpeedChanceAbAttr extends AbAttr {
+  private chance: integer;
+
+  constructor(chance: integer) {
+    super(true);
+    this.chance = chance;
+  }
+
   apply(
     pokemon: Pokemon,
     passive: boolean,
@@ -3612,7 +3619,7 @@ export class BypassSpeedChanceAbAttr extends AbAttr {
   ): boolean {
     const bypassSpeed = args[0] as Utils.BooleanHolder;
 
-    if (!bypassSpeed.value && pokemon.randSeedInt(10) < 3) {
+    if (!bypassSpeed.value && pokemon.randSeedInt(100) < this.chance) {
       const turnCommand =
         pokemon.scene.currentBattle.turnCommands[pokemon.getBattlerIndex()];
       const isCommandFight = turnCommand?.command === Command.FIGHT;
@@ -3622,7 +3629,10 @@ export class BypassSpeedChanceAbAttr extends AbAttr {
       if (isCommandFight && hasPower) {
         bypassSpeed.value = true;
         pokemon.scene.queueMessage(
-          getPokemonMessage(pokemon, " can act faster than normal, thanks to its Quick Draw!")
+          getPokemonMessage(
+            pokemon,
+            " can act faster than normal, thanks to its Quick Draw!"
+          )
         );
         return true;
       }
@@ -4707,7 +4717,7 @@ export function initAbilities() {
       .attr(NoFusionAbilityAbAttr)
       .condition((pokemon) => !pokemon.isTerastallized()),
     new Ability(Abilities.QUICK_DRAW, 8)
-      .attr(BypassSpeedChanceAbAttr),
+      .attr(BypassSpeedChanceAbAttr,30),
     new Ability(Abilities.UNSEEN_FIST, 8)
       .attr(IgnoreProtectOnContactAbAttr),
     new Ability(Abilities.CURIOUS_MEDICINE, 8)
