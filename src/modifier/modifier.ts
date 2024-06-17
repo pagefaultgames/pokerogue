@@ -2655,27 +2655,24 @@ export class EnemyFusionChanceModifier extends EnemyPersistentModifier {
  *  - The player
  *  - The enemy
  * @param scene current {@linkcode BattleScene}
- * @param isPlayer {@linkcode boolean} for whether the the player or enemy is being overridden
+ * @param isPlayer {@linkcode boolean} for whether the the player (`true`) or enemy (`false`) is being overridden
  */
 export function overrideModifiers(scene: BattleScene, isPlayer: boolean = true): void {
   const modifiersOverride = isPlayer ? Overrides.STARTING_MODIFIER_OVERRIDE : Overrides.OPP_MODIFIER_OVERRIDE;
   if (!modifiersOverride || modifiersOverride.length === 0 || !scene) {
     return;
-  } // If no override is provided, do nothing
+  }
 
   // If it's the opponent, clear all of their current modifiers to avoid stacking
   if (!isPlayer) {
     scene.clearEnemyModifiers();
   }
 
-  // Loop through all the override items given
   modifiersOverride.forEach(item => {
-    // If the item does not exist in modifierTypes, skip it
-    if (modifierTypes.hasOwnProperty(item.name)) {
-      // Retrieve the item entry from modifierTypes
+    if (item.name in modifierTypes) {
       const modifierFunc = modifierTypes[item.name];
       const modifier = modifierFunc().withIdFromFunc(modifierFunc).newModifier() as PersistentModifier;
-      modifier.stackCount = item.count || 1; // Set quantity
+      modifier.stackCount = item.count || 1;
 
       if (isPlayer) {
         scene.addModifier(modifier, true, false, false, true);
@@ -2692,34 +2689,28 @@ export function overrideModifiers(scene: BattleScene, isPlayer: boolean = true):
  *  - An enemy {@linkcode Pokemon} being spawned in
  * @param scene current {@linkcode BattleScene}
  * @param pokemon {@linkcode Pokemon} whose held items are being overridden
- * @param isPlayer {@linkcode boolean} for whether the {@linkcode pokemon} is the player's or an enemy
+ * @param isPlayer {@linkcode boolean} for whether the {@linkcode pokemon} is the player's (`true`) or an enemy (`false`)
  */
 export function overrideHeldItems(scene: BattleScene, pokemon: Pokemon, isPlayer: boolean = true): void {
   const heldItemsOverride = isPlayer ? Overrides.STARTING_HELD_ITEMS_OVERRIDE : Overrides.OPP_HELD_ITEMS_OVERRIDE;
   if (!heldItemsOverride || heldItemsOverride.length === 0 || !scene) {
     return;
-  } // If no override is provided, do nothing
+  }
 
-  // Loop through all the override items given
   heldItemsOverride.forEach(item => {
-    // If the item does not exist in modifierTypes, skip it
-    if (modifierTypes.hasOwnProperty(item.name)) {
-      // Retrieve the item entry from modifierTypes
+    if (item.name in modifierTypes) {
       const modifierFunc = modifierTypes[item.name];
       let modifierType = modifierFunc();
       const qty = item.count || 1;
 
-      // Generate modifier type if necessary
       if (modifierType instanceof ModifierTypes.ModifierTypeGenerator) {
         modifierType = modifierType.generateType(null, (item.type !== null) ? [item.type] : null);
       }
 
-      // Create the held item
       const heldItemModifier = modifierType.withIdFromFunc(modifierFunc).newModifier(pokemon) as PokemonHeldItemModifier;
-      heldItemModifier.pokemonId = pokemon.id; // Assign the created item to the pokemon
-      heldItemModifier.stackCount = qty; // Set quantity
+      heldItemModifier.pokemonId = pokemon.id;
+      heldItemModifier.stackCount = qty;
 
-      // Give it to the appropriate Pokemon
       if (isPlayer) {
         scene.addModifier(heldItemModifier, true, false, false, true);
       } else {

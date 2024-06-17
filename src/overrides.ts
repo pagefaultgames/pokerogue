@@ -36,9 +36,9 @@ export const SINGLE_BATTLE_OVERRIDE: boolean = false;
 export const STARTING_WAVE_OVERRIDE: integer = 0;
 export const STARTING_BIOME_OVERRIDE: Biome = Biome.TOWN;
 export const ARENA_TINT_OVERRIDE: TimeOfDay = null;
-// Multiplies XP gained by this value including 0. Set to null to ignore the override
-export const NEVER_CRIT_OVERRIDE: boolean = false;
+/** Multiplies XP gained by this value including 0. Set to null to ignore the override */
 export const XP_MULTIPLIER_OVERRIDE: number = null;
+export const NEVER_CRIT_OVERRIDE: boolean = false;
 // default 1000
 export const STARTING_MONEY_OVERRIDE: integer = 0;
 export const FREE_CANDY_UPGRADE_OVERRIDE: boolean = false;
