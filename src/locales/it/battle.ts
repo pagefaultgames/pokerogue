@@ -65,9 +65,9 @@ export const battle: SimpleTranslationEntries = {
   "statRose": "aumenta!",
   "statSharplyRose": "aumenta di molto!",
   "statRoseDrastically": "aumenta moltissimo!",
-  "statWontGoAnyHigher": "non può aumentare ulteriormente",
+  "statWontGoAnyHigher": "non può aumentare di più!",
   "statFell": "diminuisce!",
   "statHarshlyFell": "diminuisce di molto!",
   "statSeverelyFell": "diminuisce moltissimo!",
-  "statWontGoAnyLower": "non può diminuire ulteriormente",
+  "statWontGoAnyLower": "non può diminuire di più!",
 } as const;
