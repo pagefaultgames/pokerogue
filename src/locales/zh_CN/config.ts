@@ -40,6 +40,7 @@ import { voucher } from "./voucher";
 import { weather } from "./weather";
 import { partyUiHandler } from "./party-ui-handler";
 import { settings } from "#app/locales/zh_CN/settings.js";
+import { pokemonSummary } from "./pokemon-summary";
 
 export const zhCnConfig = {
   ability: ability,
@@ -74,6 +75,7 @@ export const zhCnConfig = {
   pokemon: pokemon,
   pokemonInfo: pokemonInfo,
   pokemonInfoContainer: pokemonInfoContainer,
+  pokemonSummary: pokemonSummary,
   saveSlotSelectUiHandler: saveSlotSelectUiHandler,
   settings: settings,
   splashMessages: splashMessages,
