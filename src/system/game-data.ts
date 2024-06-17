@@ -944,22 +944,27 @@ export class GameData {
     }) as SessionSaveData;
   }
 
-  async public getRunHistoryData(scene: BattleScene): Promise<Object> {
+  public async getRunHistoryData(scene: BattleScene): Promise<Object> {
     if (!Utils.isLocal) {
-      const response = await Utils.apiFetch("savedata/runHistory", true);
-      const data = await response.json();
-      const cachedResponse = localStorage.getItem(`runHistoryData_${loggedInUser.username}`, true);
-      if (cachedResponse) {
-        cachedResponse = JSON.parse(decrypt(cachedResponse, true));
-      }
-      const cachedRHData = cachedResponse ?? {};
-      //check to see whether cachedData or serverData is more up-to-date
-      if ( Object.keys(cachedRHData).length >= Object.keys(data).length ) {
-        return cachedRHData;
+      const data = await Utils.apiFetch("savedata/runHistory", true).json();
+      //const data = await response.json();
+      if (localStorage.hasOwnProperty(`runHistoryData_${loggedInUser.username}`)) {
+        let cachedResponse = localStorage.getItem(`runHistoryData_${loggedInUser.username}`, true);
+        if (cachedResponse) {
+          cachedResponse = JSON.parse(decrypt(cachedResponse, true));
+        }
+        const cachedRHData = cachedResponse ?? {};
+        //check to see whether cachedData or serverData is more up-to-date
+        if ( Object.keys(cachedRHData).length >= Object.keys(data).length ) {
+          return cachedRHData;
+        }
+      } else {
+        localStorage.setItem(`runHistoryData_${loggedInUser.username}`, JSON.parse(encrypt({}, true)));
+        return {};
       }
       return data;
     } else {
-      const cachedResponse = localStorage.getItem(`runHistoryData_${loggedInUser.username}`, true);
+      let cachedResponse = localStorage.getItem(`runHistoryData_${loggedInUser.username}`, true);
       if (cachedResponse) {
         cachedResponse = JSON.parse(decrypt(cachedResponse, true));
       }
@@ -970,7 +975,10 @@ export class GameData {
 
   async saveRunHistory(scene: BattleScene, runEntry : SessionSaveData, victory: boolean): Promise<boolean> {
 
-    const runHistoryData = await this.getRunHistoryData(scene);
+    let runHistoryData = await this.getRunHistoryData(scene);
+    if (!runHistoryData) {
+      runHistoryData = {};
+    }
     const timestamps = Object.keys(runHistoryData);
 
     //Arbitrary limit of 25 entries per User --> Can increase or decrease
@@ -985,9 +993,9 @@ export class GameData {
 
     localStorage.setItem(`runHistoryData_${loggedInUser.username}`, encrypt(JSON.stringify(runHistoryData), true));
 
-    if (!Utils.local) {
+    if (!Utils.isLocal) {
       try {
-        const response = Utils.apiPost("savedata/runHistory", JSON.stringify(runHistoryData), undefined, true);
+        Utils.apiPost("savedata/runHistory", JSON.stringify(runHistoryData), undefined, true);
         return true;
       } catch (err) {
         console.log("savedata/runHistory POST failed : ", err);
