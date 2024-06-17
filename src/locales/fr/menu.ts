@@ -72,7 +72,7 @@ export const menu: SimpleTranslationEntries = {
   "levelUpNotifications": "Notif. gain de N.",
   "on": "Activé",
   "off": "Désactivé",
-  "switch": "Remplacer",
+  "switch": "Choix",
   "set": "Défini",
   "auto": "Auto",
   "disabled": "Désactivé",
