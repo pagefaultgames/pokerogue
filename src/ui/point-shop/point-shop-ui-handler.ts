@@ -201,7 +201,17 @@ export default class PointShopUiHandler extends MessageUiHandler {
   }
   private calculateTotalCost(): number {
     let points = 0;
-    this.getEnabledModifiers().forEach(modifier => points += modifier.cost);
+    this.getEnabledModifiers().forEach(modifier => {
+      if (!(modifier instanceof AbstractMultiPointShopModifierType)) {
+        points += modifier.cost;
+      } else {
+        modifier.modifierOptions.forEach(option => {
+          if (option.active) {
+            points += option.cost;
+          }
+        });
+      }
+    });
 
     return points;
   }
@@ -458,6 +468,15 @@ export default class PointShopUiHandler extends MessageUiHandler {
 
     PointShopModifierTypes.forEach(category => category.forEach(modifier => modifier.init(this.scene)));
 
+    switch (this.scene.inputController.lastSource) {
+    case "keyboard":
+      this.itemHeaderIconLeft.setTexture("keyboard").setFrame("Q.png");
+      this.itemHeaderIconRight.setTexture("keyboard").setFrame("E.png");
+    case "gamepad":
+      this.itemHeaderIconLeft.setTexture("xbox").setFrame("Bumper_L.png");
+      this.itemHeaderIconRight.setTexture("xbox").setFrame("Bumper_R.png");
+    }
+
     this.setCategory(PointShopModifierCategory.DEFAULT);
 
     this.setCursor(0);
@@ -708,15 +727,15 @@ export default class PointShopUiHandler extends MessageUiHandler {
       onComplete: resetText,
       onStop: resetText,
       tweens: [{
-        x: anchorX + 2,
+        x: anchorX + 1,
         ease: EaseType.LINEAR,
         yoyo: true,
-        duration: 15,
+        duration: 10,
       }, {
-        x: anchorX - 2,
+        x: anchorX - 1,
         ease: EaseType.LINEAR,
         yoyo: true,
-        duration: 15,
+        duration: 10,
       }]
     });
   }
