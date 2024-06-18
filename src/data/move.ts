@@ -278,12 +278,14 @@ export default class Move implements Localizable {
   }
 
   /**
-   * Checks if the move is immune to certain types
-   * currently only look at case of Grass types and powder moves
-   * @param type {@linkcode Type} enum
+   * Checks if the move is immune to certain types.
+   * Currently looks at cases of Grass types with powder moves and Dark types with moves affected by Prankster.
+   * @param {Pokemon} user the source of this move
+   * @param {Pokemon} target the target of this move
+   * @param {Type} type the type of the move's target
    * @returns boolean
    */
-  isTypeImmune(type: Type): boolean {
+  isTypeImmune(user: Pokemon, target: Pokemon, type: Type): boolean {
     if (this.moveTarget === MoveTarget.USER) {
       return false;
     }
@@ -291,6 +293,11 @@ export default class Move implements Localizable {
     switch (type) {
     case Type.GRASS:
       if (this.hasFlag(MoveFlags.POWDER_MOVE)) {
+        return true;
+      }
+      break;
+    case Type.DARK:
+      if (user.hasAbility(Abilities.PRANKSTER) && this.category === MoveCategory.STATUS && (user.isPlayer() !== target.isPlayer())) {
         return true;
       }
       break;
@@ -4599,7 +4606,7 @@ export class RemoveTypeAttr extends MoveEffectAttr {
 
 export class CopyTypeAttr extends MoveEffectAttr {
   constructor() {
-    super(true);
+    super(false);
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
