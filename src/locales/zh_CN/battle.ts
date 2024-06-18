@@ -70,7 +70,7 @@ export const battle: SimpleTranslationEntries = {
   "statHarshlyFell": "大幅降低了！",
   "statSeverelyFell": "极大幅降低了！",
   "statWontGoAnyLower": "已经无法再降低了！",
-  "ppReduced": "It reduced the PP of {{targetName}}'s\n{{moveName}} by {{reduction}}!",
+  "ppReduced": "降低了 {{targetName}} 的\n{{moveName}} 的PP{{reduction}}点！",
   "battlerTagsRechargingLapse": "{{pokemonNameWithAffix}} 因为技能\n无法动弹！",
   "battlerTagsTrappedOnAdd": "{{pokemonNameWithAffix}} 不能逃跑！",
   "battlerTagsTrappedOnRemove": "{{pokemonNameWithAffix}} 摆脱了\n {{moveName}}",
