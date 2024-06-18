@@ -1,5 +1,5 @@
 import * as Utils from "../utils";
-import i18next from "#app/plugins/i18n.js";
+import i18next from "i18next";
 import { GameData } from "#app/system/game-data.js";
 import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "./pokemon-species";
 import Pokemon from "#app/field/pokemon.js";
@@ -535,7 +535,7 @@ export class LowerStarterPointsChallenge extends Challenge {
 
 /**
  * Apply all challenges of a given challenge type.
- * @param {BattleScene} scene The current scene
+ * @param {GameMode} gameMode The current game mode
  * @param {ChallengeType} challengeType What challenge type to apply
  * @param {any[]} args Any args for that challenge type
  * @returns {boolean} True if any challenge was successfully applied.
