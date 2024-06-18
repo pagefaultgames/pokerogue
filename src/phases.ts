@@ -1973,9 +1973,16 @@ export class CommandPhase extends FieldPhase {
         this.scene.ui.setMode(Mode.MESSAGE);
 
         // Decides between a Disabled, Not Implemented, or No PP translation message
-        const errorMessage =
-            playerPokemon.summonData.disabledMove === move.moveId ? "battle:moveDisabled" :
-              move.getName().endsWith(" (N)") ? "battle:moveNotImplemented" : "battle:moveNoPP";
+        let errorMessage = "battle:moveNoPP";
+        if (playerPokemon.summonData.disabledMove === move.moveId) {
+          errorMessage = "battle:moveDisabled";
+        } else if (move.getName().endsWith(" (N)")) {
+          errorMessage = "battle:moveNotImplemented";
+        } else if (move.getMove().pp === 0) {
+          errorMessage = "battle:moveNoPP";
+        } else if (playerPokemon.summonData.attack_move_restriction) {
+          errorMessage = "battle:assaultVestRestriction";
+        }
         const moveName = move.getName().replace(" (N)", ""); // Trims off the indicator
 
         this.scene.ui.showText(i18next.t(errorMessage, { moveName: moveName }), null, () => {

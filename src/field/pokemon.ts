@@ -3835,6 +3835,7 @@ export class PokemonSummonData {
   public disabledTurns: integer = 0;
   public tags: BattlerTag[] = [];
   public abilitySuppressed: boolean = false;
+  public attack_move_restriction: boolean = false;
   public abilitiesApplied: Abilities[] = [];
 
   public speciesForm: PokemonSpeciesForm;
@@ -3933,6 +3934,12 @@ export class PokemonMove {
   isUsable(pokemon: Pokemon, ignorePp?: boolean): boolean {
     if (this.moveId && pokemon.summonData?.disabledMove === this.moveId) {
       return false;
+    }
+    if (pokemon.summonData?.attack_move_restriction) {
+      const move = this.getMove();
+      if (move.power === -1) {
+        return false;
+      }
     }
     return (ignorePp || this.ppUsed < this.getMovePp() || this.getMove().pp === -1) && !this.getMove().name.endsWith(" (N)");
   }

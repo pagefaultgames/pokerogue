@@ -52,6 +52,7 @@ export const battle: SimpleTranslationEntries = {
   "runAwayCannotEscape": "You can't escape!",
   "escapeVerbSwitch": "switching",
   "escapeVerbFlee": "fleeing",
+  "assaultVestRestriction": "The assault vest prevents the use of any non-offensive moves.",
   "notDisabled": "{{pokemonName}}'s {{moveName}} is disabled\nno more!",
   "skipItemQuestion": "Are you sure you want to skip taking an item?",
   "eggHatching": "Oh?",
