@@ -213,8 +213,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "LEFTOVERS": { name: "吃剩的东西", description: "携带该道具的宝可梦在每个回合结束时恢复\n最大HP的1/16。" },
     "SHELL_BELL": { name: "贝壳之铃", description: "携带该道具的宝可梦在攻击对方成功造成伤\n害时，携带者的HP会恢复其所造成伤害\n的1/8。" },
 
-    "TOXIC_ORB": { name: "Toxic Orb", description: "触碰后会放出毒的神奇宝珠。携带后，在战斗时会变成剧毒状态。" },
-    "FLAME_ORB": { name: "Flame Orb", description: "触碰后会放出热量的神奇宝珠。携带后，在战斗时会变成灼伤状态。" },
+    "TOXIC_ORB": { name: "剧毒宝珠", description: "触碰后会放出毒的神奇宝珠。携带后，在战斗时会变成剧毒状态。" },
+    "FLAME_ORB": { name: "火焰宝珠", description: "触碰后会放出热量的神奇宝珠。携带后，在战斗时会变成灼伤状态。" },
 
     "BATON": { name: "接力棒", description: "允许在切换宝可梦时保留能力变化, 对陷阱\n同样生效。" },
 
