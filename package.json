@@ -52,6 +52,7 @@
 		"i18next-browser-languagedetector": "^7.2.1",
 		"i18next-korean-postposition-processor": "^1.0.0",
 		"json-stable-stringify": "^1.1.0",
+		"lru-cache": "^10.2.2",
 		"phaser": "^3.70.0",
 		"phaser3-rex-plugins": "^1.1.84"
 	},
