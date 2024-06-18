@@ -3604,7 +3604,7 @@ export class IceFaceMoveImmunityAbAttr extends MoveImmunityAbAttr {
  * @extends AbAttr
  */
 export class BypassSpeedChanceAbAttr extends AbAttr {
-  private chance: integer;
+  public chance: integer;
 
   constructor(chance: integer) {
     super(true);
@@ -3635,7 +3635,11 @@ export class BypassSpeedChanceAbAttr extends AbAttr {
     return false;
   }
 
-  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
+  getTriggerMessage(
+    pokemon: Pokemon,
+    abilityName: string,
+    ...args: any[]
+  ): string {
     return getPokemonMessage(
       pokemon,
       " can act faster than normal, thanks to its Quick Draw!"

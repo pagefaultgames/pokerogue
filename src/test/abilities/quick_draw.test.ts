@@ -9,7 +9,7 @@ import {EnemyCommandPhase,  TitlePhase, TurnEndPhase, TurnStartPhase,
 import { Moves } from "#enums/moves";
 import { Stat } from "#app/data/pokemon-stat";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
-import { Ability, allAbilities, BypassSpeedChanceAbAttr } from "#app/data/ability";
+import { allAbilities, BypassSpeedChanceAbAttr } from "#app/data/ability";
 
 
 describe("Abilities - Quick Draw", () => {
@@ -48,10 +48,10 @@ describe("Abilities - Quick Draw", () => {
       Moves.TACKLE,
     ]);
 
-    allAbilities[Abilities.QUICK_DRAW] = new Ability(
-      Abilities.QUICK_DRAW,
-      8
-    ).attr(BypassSpeedChanceAbAttr, 100);
+    vi.spyOn(
+      allAbilities[Abilities.QUICK_DRAW].getAttrs(BypassSpeedChanceAbAttr)[0],
+      "chance","get"
+    ).mockReturnValue(100);
   });
 
   it("makes pokemon going first in its priority bracket", async() => {
