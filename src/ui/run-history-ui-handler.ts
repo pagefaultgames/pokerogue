@@ -236,12 +236,12 @@ class RunEntry extends Phaser.GameObjects.Container {
 
 
     if (victory) {
-      const gameOutcomeLabel = addTextObject(this.scene, 8, 5, "Victory", TextStyle.WINDOW);
+      const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `${i18next.t("runHistory:victory")}`, TextStyle.WINDOW);
       this.add(gameOutcomeLabel);
     } else {
       if (data.battleType === BattleType.WILD) {
         const enemyContainer = this.scene.add.container(8, 5);
-        const gameOutcomeLabel = addTextObject(this.scene, 0, 0, "Defeated by ", TextStyle.WINDOW);
+        const gameOutcomeLabel = addTextObject(this.scene, 0, 0, `${i18next.t("runHistory:defeatedWild")}`, TextStyle.WINDOW);
         enemyContainer.add(gameOutcomeLabel);
         data.enemyParty.forEach((enemyData, e) => {
           //This allows the enemyParty to be shown - doubles or sings -> 58+(e*8)
@@ -250,7 +250,7 @@ class RunEntry extends Phaser.GameObjects.Container {
           enemyData.boss = false;
           const enemy = enemyData.toPokemon(this.scene);
           const enemyIcon = this.scene.addPokemonIcon(enemy, 0, 0, 0, 0);
-          const enemyLevel = addTextObject(this.scene, 32, 20, `Lv${Utils.formatLargeNumber(enemy.level, 1000)}`, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
+          const enemyLevel = addTextObject(this.scene, 32, 20, `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
           enemyLevel.setShadow(0, 0, null);
           enemyLevel.setStroke("#424242", 14);
           enemyLevel.setOrigin(1, 0);
@@ -264,14 +264,14 @@ class RunEntry extends Phaser.GameObjects.Container {
         const tObj = data.trainer.toTrainer(this.scene);
         const tType = TrainerType[data.trainer.trainerType];
         if (data.trainer.trainerType >= 375) {
-          const gameOutcomeLabel = addTextObject(this.scene, 8, 5, "Defeated by Rival", TextStyle.WINDOW);
+          const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `${i18next.t("runHistory:defeatedRival")}`, TextStyle.WINDOW);
           //otherwise it becomes Rival_5 in Ivy's case
           this.add(gameOutcomeLabel);
         } else {
           if (tObj.variant === TrainerVariant.DOUBLE) {
-            const gameOutcomeLabel = addTextObject(this.scene, 8, 5, "Defeated by Duo", TextStyle.WINDOW);
+            const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `${i18next.t("runHistory:defeatedTrainerDouble")}`, TextStyle.WINDOW);
           }
-          const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `Defeated by ${tObj.getName(0, true)}`, TextStyle.WINDOW);
+          const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `${i18next.t("runHistory:defeatedTrainer")+tObj.getName(0, true)}`, TextStyle.WINDOW);
           this.add(gameOutcomeLabel);
         }
       }
@@ -280,17 +280,17 @@ class RunEntry extends Phaser.GameObjects.Container {
 
     switch (data.gameMode) {
     case GameModes.DAILY:
-      const dailyModeLabel = addTextObject(this.scene, 8, 19, `${i18next.t("gameMode:dailyRun") || "Unknown"} - Wave ${data.waveIndex}`, TextStyle.WINDOW);
+      const dailyModeLabel = addTextObject(this.scene, 8, 19, `${i18next.t("gameMode:dailyRun") || i18next.t("gameMode:unknown")} - ${i18next.t("saveSlotSelectUiHandler:wave")} ${data.waveIndex}`, TextStyle.WINDOW);
       this.add(dailyModeLabel);
       break;
     case GameModes.SPLICED_ENDLESS:
-      const endlessSplicedLabel = addTextObject(this.scene, 8, 19, `${i18next.t("gameMode:endlessSpliced") || "Unknown"} - Wave ${data.waveIndex}`, TextStyle.WINDOW);
+      const endlessSplicedLabel = addTextObject(this.scene, 8, 19, `${i18next.t("gameMode:endlessSpliced") || i18next.t("gameMode:unknown")} - ${i18next.t("saveSlotSelectUiHandler:wave")} ${data.waveIndex}`, TextStyle.WINDOW);
       this.add(endlessSplicedLabel);
       break;
     case GameModes.ENDLESS:
     case GameModes.CLASSIC:
     case GameModes.CHALLENGE:
-      const gameModeLabel = addTextObject(this.scene, 8, 19, `${i18next.t("gameMode:"+GameModes[data.gameMode].toLowerCase()) || "Unknown"} - Wave ${data.waveIndex}`, TextStyle.WINDOW);
+      const gameModeLabel = addTextObject(this.scene, 8, 19, `${i18next.t("gameMode:"+GameModes[data.gameMode].toLowerCase()) || i18next.t("gameMode:unknown")} - ${i18next.t("saveSlotSelectUiHandler:wave")} ${data.waveIndex}`, TextStyle.WINDOW);
       this.add(gameModeLabel);
       break;
     }
@@ -309,7 +309,7 @@ class RunEntry extends Phaser.GameObjects.Container {
       const pokemon = p.toPokemon(this.scene);
       const icon = this.scene.addPokemonIcon(pokemon, 0, 0, 0, 0);
 
-      const text = addTextObject(this.scene, 32, 20, `Lv${Utils.formatLargeNumber(pokemon.level, 1000)}`, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
+      const text = addTextObject(this.scene, 32, 20, `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(pokemon.level, 1000)}`, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
       text.setShadow(0, 0, null);
       text.setStroke("#424242", 14);
       text.setOrigin(1, 0);
@@ -331,7 +331,7 @@ class RunEntry extends Phaser.GameObjects.Container {
     switch (data.gameMode) {
     case GameModes.DAILY:
       const runScore = data.score;
-      const scoreText = addTextObject(this.scene, 240, 5, `Score: ${data.score}`, TextStyle.WINDOW, {color: "#f89890"});
+      const scoreText = addTextObject(this.scene, 240, 5, `${i18next.t("runHistory:score")}: ${data.score}`, TextStyle.WINDOW, {color: "#f89890"});
       this.add(scoreText);
       break;
     case GameModes.ENDLESS:
@@ -340,7 +340,7 @@ class RunEntry extends Phaser.GameObjects.Container {
         luckValue = 14;
       }
       const luckTextTint = "#"+(getLuckTextTint(luckValue)).toString(16);
-      const luckText = addTextObject(this.scene, 240, 5, `Luck: ${getLuckString(luckValue)}`, TextStyle.WINDOW, {color: `${luckTextTint}`});
+      const luckText = addTextObject(this.scene, 240, 5, `${i18next.t("runHistory:luck")}: ${getLuckString(luckValue)}`, TextStyle.WINDOW, {color: `${luckTextTint}`});
       this.add(luckText);
       break;
     }
