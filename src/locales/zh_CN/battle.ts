@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const battle: SimpleTranslationEntries = {
   "bossAppeared": "{{bossName}} 出现了。",
@@ -70,4 +70,5 @@ export const battle: SimpleTranslationEntries = {
   "statHarshlyFell": "大幅降低了！",
   "statSeverelyFell": "极大幅降低了！",
   "statWontGoAnyLower": "已经无法再降低了！",
+  "ppReduced": "降低了 {{targetName}} 的\n{{moveName}} 的PP{{reduction}}点！",
 } as const;
