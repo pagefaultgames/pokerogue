@@ -7,6 +7,7 @@ import { addWindow } from "./ui-theme";
 import PokemonSpecies, { allSpecies } from "#app/data/pokemon-species.js";
 import { getVariantTint } from "#app/data/variant.js";
 import { Gender, getGenderColor, getGenderSymbol } from "#app/data/gender.js";
+import { Abilities } from "#app/enums/abilities.js";
 
 const itemRows = 4;
 const itemCols = 17;
@@ -131,6 +132,10 @@ export default class VouchersUiHandler extends MessageUiHandler {
     this.descriptionContainer.removeAll(true);
     this.caughtInfoContainer.removeAll(true);
 
+    if (!dexEntry.caughtAttr && !dexEntry.seenAttr) {
+      return;
+    }
+
     for (let a = 0; a < voucher.forms.length; a++) {
       const x = (a % itemCols) * 18;
       const y = Math.floor(a / itemCols) * 18;
@@ -141,6 +146,17 @@ export default class VouchersUiHandler extends MessageUiHandler {
       icon.setFrame(frame);
       icon.setOrigin(0, 0);
       icon.setScale(0.5);
+
+      const caught = (BigInt(dexEntry.caughtAttr) & BigInt(Math.pow(2,7+a))) !== 0n;
+      const seen = (BigInt(dexEntry.seenAttr) & BigInt(Math.pow(2,7+a))) !== 0n;
+
+      if (caught) {
+        icon.clearTint();
+      } else if (seen) {
+        icon.setTint(0x808080);
+      } else {
+        icon.setTint(0);
+      }
 
       this.descriptionContainer.add(icon);
     }
@@ -156,17 +172,18 @@ export default class VouchersUiHandler extends MessageUiHandler {
     const isOnlyMale = voucher.malePercent === 100;
     const isOnlyFemale = voucher.malePercent === 0;
     const isGenderless = voucher.malePercent === null;
+    const hasOnlyOneAbility = voucher.ability2 === Abilities.NONE;
 
-    const icons: {texture?: string, frame?: string, color?: number, isVisible?: boolean, type?: string, gender?: Gender, skip: boolean}[] = [
+    const icons: {texture?: string, frame?: string, color?: number, isVisible?: boolean, type?: string, gender?: Gender, skip?: boolean}[] = [
       {type: "gender", gender: Gender.FEMALE, isVisible: isFemale, skip: isGenderless || isOnlyMale},
       {type: "gender", gender: Gender.MALE, isVisible: isMale, skip: isGenderless || isOnlyFemale},
-      {texture: "shiny_star_small", color: getVariantTint(0), isVisible: isYellowShiny, skip:false},
-      {texture: "shiny_star_small", color: getVariantTint(1), isVisible: isBlueShiny, skip:false},
-      {texture: "shiny_star_small", color: getVariantTint(2), isVisible: isRedShiny, skip: false},
-      {texture: "ha_capsule", isVisible: isAbility1, skip:false},
-      {texture: "ha_capsule", isVisible: isAbility2, skip: false},
-      {texture: "ha_capsule", isVisible: isHiddenAbility, skip: false},
-      {texture: "champion_ribbon", isVisible: starterData?.classicWinCount > 0, skip: false},
+      {texture: "shiny_star_small", color: getVariantTint(0), isVisible: isYellowShiny},
+      {texture: "shiny_star_small", color: getVariantTint(1), isVisible: isBlueShiny},
+      {texture: "shiny_star_small", color: getVariantTint(2), isVisible: isRedShiny},
+      {texture: "ha_capsule", isVisible: isAbility1},
+      {texture: "ha_capsule", isVisible: isAbility2, skip: hasOnlyOneAbility},
+      {texture: "ha_capsule", isVisible: isHiddenAbility},
+      {texture: "champion_ribbon", isVisible: starterData?.classicWinCount > 0},
     ].filter(a => !a.skip);
 
     for (let a = 0; a < icons.length; a++) {
