@@ -109,6 +109,8 @@ export default class PartyUiHandler extends MessageUiHandler {
 
   private iconAnimHandler: PokemonIconAnimHandler;
 
+  private blockInput: boolean;
+
   private static FilterAll = (_pokemon: PlayerPokemon) => null;
 
   public static FilterNonFainted = (pokemon: PlayerPokemon) => {
@@ -254,7 +256,7 @@ export default class PartyUiHandler extends MessageUiHandler {
   processInput(button: Button): boolean {
     const ui = this.getUi();
 
-    if (this.pendingPrompt) {
+    if (this.pendingPrompt || this.blockInput) {
       return false;
     }
 
@@ -395,7 +397,9 @@ export default class PartyUiHandler extends MessageUiHandler {
           this.clearOptions();
           ui.playSelect();
           if (this.cursor >= this.scene.currentBattle.getBattlerCount() || !pokemon.isAllowedInBattle()) {
+            this.blockInput = true;
             this.showText(`Do you really want to release ${pokemon.name}?`, null, () => {
+              this.blockInput = false;
               ui.setModeWithoutClear(Mode.CONFIRM, () => {
                 ui.setMode(Mode.PARTY);
                 this.doRelease(this.cursor);
