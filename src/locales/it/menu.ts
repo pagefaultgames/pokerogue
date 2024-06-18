@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 /**
  * The menu namespace holds most miscellaneous text that isn't directly part of the game's
@@ -34,8 +34,6 @@ export const menu: SimpleTranslationEntries = {
   "sessionSuccess": "Sessione caricata correttamente.",
   "failedToLoadSession": "Impossibile caricare i dati della sessione.\nPotrebbero essere danneggiati.",
   "boyOrGirl": "Sei un ragazzo o una ragazza?",
-  "boy": "Ragazzo",
-  "girl": "Ragazza",
   "dailyRankings": "Classifica giornaliera",
   "weeklyRankings": "Classifica settimanale",
   "noRankings": "Nessuna classifica",
@@ -54,5 +52,5 @@ export const menu: SimpleTranslationEntries = {
   "yes":"Si",
   "no":"No",
   "disclaimer": "DISCLAIMER",
-  "disclaimerDescription": "Questo gioco è un prodotto incompleto; si potrebbero riscontrare errori (inclusa la perdita dei dati di salvataggio),\ncambiamenti impercettibili, e non è detto che venga aggiornato nel tempo o mai completato del tutto."
+  "disclaimerDescription": "Questo gioco è un prodotto incompleto; si potrebbero riscontrare errori (inclusa la perdita dei dati di salvataggio),\ncambiamenti impercettibili, e non è detto che venga aggiornato nel tempo o mai completato del tutto.",
 } as const;

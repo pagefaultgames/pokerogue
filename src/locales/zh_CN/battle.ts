@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const battle: SimpleTranslationEntries = {
   "bossAppeared": "{{bossName}} 出现了。",
@@ -75,4 +75,5 @@ export const battle: SimpleTranslationEntries = {
   "unlockedSomething": "{{unlockedThing}}\n已解锁。",
   "congratulations": "恭喜！",
   "beatModeFirstTime": "{{speciesName}} 首次击败了 {{gameMode}} 模式！\n你获得了{{newModifier}}！",
+  "ppReduced": "降低了 {{targetName}} 的\n{{moveName}} 的PP{{reduction}}点！",
 } as const;
