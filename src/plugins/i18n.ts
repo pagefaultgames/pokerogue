@@ -8,7 +8,7 @@ import { esConfig } from "#app/locales/es/config.js";
 import { frConfig } from "#app/locales/fr/config.js";
 import { itConfig } from "#app/locales/it/config.js";
 import { koConfig } from "#app/locales/ko/config.js";
-import { jpConfig } from "#app/locales/jp/config.js";
+import { jaConfig } from "#app/locales/ja/config.js";
 import { ptBrConfig } from "#app/locales/pt_BR/config.js";
 import { zhCnConfig } from "#app/locales/zh_CN/config.js";
 import { zhTwConfig } from "#app/locales/zh_TW/config.js";
@@ -19,7 +19,7 @@ const fonts = [
     new FontFace("pkmnems", "url(./fonts/PokePT_Wansung.ttf)", { unicodeRange: "U+AC00-D7AC"}),
     { sizeAdjust: "133%" }
   ),
-  new FontFace("japanese", "url(./fonts/KH-Dot-Kodenmachou-12.ttf)", { unicodeRange: "U+3040-30FF, U+4E00-9FFF"}),
+  new FontFace("japanese", "url(./fonts/Galmuri9.ttf)", { unicodeRange: "U+3040-30FF, U+4E00-9FFF"}),
 ];
 
 async function initFonts() {
@@ -63,7 +63,7 @@ export async function initI18n(): Promise<void> {
   await i18next.init({
     nonExplicitSupportedLngs: true,
     fallbackLng: "en",
-    supportedLngs: ["en", "es", "fr", "it", "de", "zh", "pt", "ko", "jp"],
+    supportedLngs: ["en", "es", "fr", "it", "de", "zh", "pt", "ko", "ja"],
     defaultNS: "menu",
     ns: Object.keys(enConfig),
     detection: {
@@ -101,8 +101,8 @@ export async function initI18n(): Promise<void> {
       ko: {
         ...koConfig
       },
-      jp: {
-        ...jpConfig
+      ja: {
+        ...jaConfig
       },
     },
     postProcess: ["korean-postposition"],

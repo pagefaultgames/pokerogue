@@ -78,7 +78,7 @@ export default class SettingsDisplayUiHandler extends AbstractSettingsUiHandler 
           label: "한국어",
         };
         break;
-      case "jp":
+      case "ja":
         this.settings[languageIndex].options[0] = {
           value: "日本語",
           label: "日本語",

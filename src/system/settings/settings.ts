@@ -739,7 +739,7 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
             },
             {
               label: "日本語",
-              handler: () => changeLocaleHandler("jp")
+              handler: () => changeLocaleHandler("ja")
             },
             {
               label: i18next.t("settings:back"),
