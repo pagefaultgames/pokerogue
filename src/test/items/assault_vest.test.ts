@@ -35,7 +35,7 @@ describe("Items - Assault Vest", () => {
     const oppMoveToUse = Moves.SPLASH;
     vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
     vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(3);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
+    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.ZEKROM);
     vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INSOMNIA);
     vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INSOMNIA);
     vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
@@ -47,7 +47,6 @@ describe("Items - Assault Vest", () => {
   });
 
   it("ASSAULT_VEST check stat", async() => {
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MIGHTYENA);
     vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
     await game.runToSummon([
       Species.MIGHTYENA,
@@ -55,6 +54,7 @@ describe("Items - Assault Vest", () => {
     await game.phaseInterceptor.run(SummonPhase);
     const pokemon = game.scene.getParty()[0];
     const opponent = game.scene.currentBattle.enemyParty[0];
+    opponent.ivs = [0, 0, 0, 0, 0, 0];
     pokemon.setNature(Nature.CALM);
     opponent.setNature(Nature.CALM);
     expect(game.scene.modifiers[0].type.id).toBe("ASSAULT_VEST");
@@ -67,7 +67,7 @@ describe("Items - Assault Vest", () => {
     const spDef = pokemon.stats[Stat.SPDEF];
     const oppSpDef = opponent.stats[Stat.SPDEF];
     expect(spDef).toBe(207); // 138 * 1.5
-    expect(oppSpDef).toBe(143);
+    expect(oppSpDef).toBe(226);
 
     //
     // game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
