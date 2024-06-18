@@ -20,9 +20,10 @@
 		"noEmit": true
 	},
 	"typedocOptions": {
-		"entryPoints": ["src/"],
+		"entryPoints": ["./src"],
 		"entryPointStrategy": "expand",
-		"out": "typedoc",
+		"exclude": "**/*+.test.ts",
+		"out": "typedoc"
 	},
 	"exclude": [
 		"node_modules",
