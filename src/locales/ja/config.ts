@@ -41,7 +41,7 @@ import { weather } from "./weather";
 import { partyUiHandler } from "./party-ui-handler";
 import { settings } from "#app/locales/ja/settings.js";
 
-export const jpConfig = {
+export const jaConfig = {
   ability: ability,
   abilityTriggers: abilityTriggers,
   battle: battle,
