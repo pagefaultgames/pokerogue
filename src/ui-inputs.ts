@@ -190,12 +190,12 @@ export class UiInputs {
   buttonSpeedChange(up = true): void {
     const settingGameSpeed = settingIndex(SettingKeys.Game_Speed);
     if (up && this.scene.gameSpeed < 5) {
-      this.scene.gameData.saveSetting(SettingKeys.Game_Speed, Setting[settingGameSpeed].options.indexOf(`${this.scene.gameSpeed}x`) + 1);
+      this.scene.gameData.saveSetting(SettingKeys.Game_Speed, Setting[settingGameSpeed].options.findIndex((item) => item.value === `${this.scene.gameSpeed}x`) + 1);
       if (this.scene.ui?.getMode() === Mode.SETTINGS) {
         (this.scene.ui.getHandler() as SettingsUiHandler).show([]);
       }
     } else if (!up && this.scene.gameSpeed > 1) {
-      this.scene.gameData.saveSetting(SettingKeys.Game_Speed, Math.max(Setting[settingGameSpeed].options.indexOf(`${this.scene.gameSpeed}x`) - 1, 0));
+      this.scene.gameData.saveSetting(SettingKeys.Game_Speed, Math.max(Setting[settingGameSpeed].options.findIndex((item) => item.value === `${this.scene.gameSpeed}x`) - 1, 0));
       if (this.scene.ui?.getMode() === Mode.SETTINGS) {
         (this.scene.ui.getHandler() as SettingsUiHandler).show([]);
       }
