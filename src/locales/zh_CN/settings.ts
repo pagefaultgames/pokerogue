@@ -67,7 +67,7 @@ export const settings: SimpleTranslationEntries = {
   "mixed": "全曲混合",
   "gamepadPleasePlug": "请链接手柄或按任意键",
   "delete": "删除",
-  "keyboardPleasePress": 请点击键盘上的对应按键",
+  "keyboardPleasePress": "请点击键盘上的对应按键",
   "reset": "重置",
   "requireReload": "需要重新加载",
   "action": "操作",
