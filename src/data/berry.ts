@@ -73,6 +73,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
       applyAbAttrs(DoubleBerryEffectAbAttr, pokemon, null, hpHealed);
       pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.getBattlerIndex(),
         hpHealed.value, getPokemonMessage(pokemon, `'s ${getBerryName(berryType)}\nrestored its HP!`), true));
+      pokemon.summonData.itemLost = true;
     };
   case BerryType.LUM:
     return (pokemon: Pokemon) => {
@@ -84,6 +85,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
       }
       pokemon.resetStatus(true, true);
       pokemon.updateInfo();
+      pokemon.summonData.itemLost = true;
     };
   case BerryType.LIECHI:
   case BerryType.GANLON:
@@ -98,6 +100,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
       const statLevels = new Utils.NumberHolder(1);
       applyAbAttrs(DoubleBerryEffectAbAttr, pokemon, null, statLevels);
       pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ battleStat ], statLevels.value));
+      pokemon.summonData.itemLost = true;
     };
   case BerryType.LANSAT:
     return (pokemon: Pokemon) => {
@@ -105,6 +108,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
         pokemon.battleData.berriesEaten.push(berryType);
       }
       pokemon.addTag(BattlerTagType.CRIT_BOOST);
+      pokemon.summonData.itemLost = true;
     };
   case BerryType.STARF:
     return (pokemon: Pokemon) => {
@@ -114,6 +118,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
       const statLevels = new Utils.NumberHolder(2);
       applyAbAttrs(DoubleBerryEffectAbAttr, pokemon, null, statLevels);
       pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ BattleStat.RAND ], statLevels.value));
+      pokemon.summonData.itemLost = true;
     };
   case BerryType.LEPPA:
     return (pokemon: Pokemon) => {
@@ -124,6 +129,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
       if (ppRestoreMove !== undefined) {
         ppRestoreMove.ppUsed = Math.max(ppRestoreMove.ppUsed - 10, 0);
         pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` restored PP to its move ${ppRestoreMove.getName()}\nusing its ${getBerryName(berryType)}!`));
+        pokemon.summonData.itemLost = true;
       }
     };
   }
