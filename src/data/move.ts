@@ -8314,8 +8314,7 @@ export function initMoves() {
       .attr(HealStatusEffectAttr, false, StatusEffect.FREEZE)
       .attr(StatusEffectAttr, StatusEffect.BURN)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
-      .triageMove()
-      .partial(),
+      .triageMove(),
     new AttackMove(Moves.SYRUP_BOMB, Type.GRASS, MoveCategory.SPECIAL, 60, 85, 10, -1, 0, 9)
       .attr(StatChangeAttr, BattleStat.SPD, -1) //Temporary
       .ballBombMove()
