@@ -1984,8 +1984,7 @@ export class CommandPhase extends FieldPhase {
           errorMessage = "battle:assaultVestRestriction";
         }
         const moveName = move.getName().replace(" (N)", ""); // Trims off the indicator
-
-        this.scene.ui.showText(i18next.t(errorMessage, { moveName: moveName }), null, () => {
+        this.scene.ui.showText(i18next.t(errorMessage, { defaultValue: "", moveName: moveName }), null, () => {
           this.scene.ui.clearText();
           this.scene.ui.setMode(Mode.FIGHT, this.fieldIndex);
         }, null, true);
