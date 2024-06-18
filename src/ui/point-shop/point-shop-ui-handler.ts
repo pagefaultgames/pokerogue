@@ -11,6 +11,7 @@ import { achvs } from "#app/system/achv.js";
 import i18next from "i18next";
 import { Modifier } from "../../modifier/modifier.js";
 import { PointShopModifierTypeUi } from "./point-shop-modifier-type-ui";
+import { EaseType } from "#enums/ease-type";
 
 type PointShopUiCallback = (modifiers: Modifier[]) => void;
 
@@ -197,6 +198,12 @@ export default class PointShopUiHandler extends MessageUiHandler {
 
     this.itemFooterRightText.setText("Points: " + this.currentPoints + "/" + this.maxPoints);
     return true;
+  }
+  private calculateTotalCost(): number {
+    let points = 0;
+    this.getEnabledModifiers().forEach(modifier => points += modifier.cost);
+
+    return points;
   }
 
   setup() {
@@ -441,14 +448,13 @@ export default class PointShopUiHandler extends MessageUiHandler {
 
     const unlockedKeys = Object.keys(this.scene.gameData.achvUnlocks);
 
-    let points = 0;
+    this.maxPoints = 0;
     for (let i = 0; i < unlockedKeys.length; i++) {
       const key = unlockedKeys[i];
 
-      points += achvs[key].score;
+      this.maxPoints += achvs[key].score;
     }
-    this.maxPoints = points;
-    this.setPoints(points);
+    this.setPoints(this.maxPoints);
 
     PointShopModifierTypes.forEach(category => category.forEach(modifier => modifier.init(this.scene)));
 
@@ -575,15 +581,24 @@ export default class PointShopUiHandler extends MessageUiHandler {
     this.message.setText(messageString);
   }
   handleToggle(index: number) {
+    let tooExpensive: boolean;
     if (!(this.currentSelection instanceof AbstractMultiPointShopModifierType)) {
-      if (!this.currentSelection.tryToggleActive()) {
+      tooExpensive = !this.currentSelection.active && this.currentPoints - this.currentSelection.cost < 0;
+      if (tooExpensive || !this.currentSelection.tryToggleActive()) {
         this.scene.playSound("error");
       }
     } else {
-      if (!this.currentSelection.tryToggleOptionActive(index)) {
+      tooExpensive = !this.currentSelection.modifierOptions[index].active && this.currentPoints - this.currentSelection.modifierOptions[index].cost < 0;
+      if (tooExpensive || !this.currentSelection.tryToggleOptionActive(index)) {
         this.scene.playSound("error");
       }
     }
+
+    if (tooExpensive) {
+      this.shakePointText();
+    }
+
+    this.setPoints(this.maxPoints - this.calculateTotalCost());
 
     this.updateMessage(index);
     this.updateEnabledIcons();
@@ -596,7 +611,7 @@ export default class PointShopUiHandler extends MessageUiHandler {
       optionStrings = ["Toggle " + this.currentSelection.name];
     } else {
       const currentMultiSelection = this.currentSelection as AbstractMultiPointShopModifierType;
-      optionStrings = currentMultiSelection.modifierOptions.map(option => option.name);
+      optionStrings = currentMultiSelection.modifierOptions.map(option => option.name + " - " + option.cost);
     }
 
     ui.showText("Current Status: ", undefined, () => {
@@ -678,5 +693,30 @@ export default class PointShopUiHandler extends MessageUiHandler {
   clearText() {
     this.messageWindow.setVisible(false);
     super.clearText();
+  }
+
+  shakePointText() {
+    this.scene.tweens.getTweensOf(this.itemFooterRightText).forEach(tween => tween.stop());
+
+    const anchorX = this.itemFooterRightText.x;
+    const resetText = () => {
+      this.itemFooterRightText.setX(anchorX);
+    };
+    this.scene.tweens.chain({
+      targets: this.itemFooterRightText,
+      onComplete: resetText,
+      onStop: resetText,
+      tweens: [{
+        x: anchorX + 2,
+        ease: EaseType.LINEAR,
+        yoyo: true,
+        duration: 25,
+      }, {
+        x: anchorX - 2,
+        ease: EaseType.LINEAR,
+        yoyo: true,
+        duration: 25,
+      }]
+    });
   }
 }
