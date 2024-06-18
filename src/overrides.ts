@@ -1,14 +1,5 @@
 import { WeatherType } from "./data/weather";
 import { Variant } from "./data/variant";
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { TempBattleStat } from "./data/temp-battle-stat";
-import { Nature } from "./data/nature";
-import { Type } from "./data/type";
-import { Stat } from "./data/pokemon-stat";
-import { EvolutionItem } from "./data/pokemon-evolutions";
-import { FormChangeItem } from "./data/pokemon-forms";
-import { BerryType } from "#enums/berry-type";
-/* eslint-enable @typescript-eslint/no-unused-vars */
 import { PokeballCounts } from "./battle-scene";
 import { PokeballType } from "./data/pokeball";
 import { Gender } from "./data/gender";
