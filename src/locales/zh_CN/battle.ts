@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const battle: SimpleTranslationEntries = {
   "bossAppeared": "{{bossName}} 出现了。",
@@ -56,10 +56,19 @@ export const battle: SimpleTranslationEntries = {
   "skipItemQuestion": "你确定要跳过拾取道具吗？",
   "eggHatching": "咦？",
   "ivScannerUseQuestion": "对 {{pokemonName}} 使用个体值扫描仪？",
-  "wildPokemonWithAffix": "Wild {{pokemonName}}",
-  "foePokemonWithAffix": "Foe {{pokemonName}}",
-  "useMove": "{{pokemonNameWithAffix}} used {{moveName}}!",
-  "drainMessage": "{{pokemonName}} had its\nenergy drained!",
-  "regainHealth": "{{pokemonName}} regained\nhealth!",
-  "fainted": "{{pokemonNameWithAffix}} fainted!"
+  "wildPokemonWithAffix": "野生的 {{pokemonName}}",
+  "foePokemonWithAffix": "对手 {{pokemonName}}",
+  "useMove": "{{pokemonNameWithAffix}} 使用了 {{moveName}}！",
+  "drainMessage": "{{pokemonName}} 吸取了体力！",
+  "regainHealth": "{{pokemonName}} 回复了体力！",
+  "fainted": "{{pokemonNameWithAffix}} 倒下了！",
+  "statRose": "提高了！",
+  "statSharplyRose": "大幅提高了！",
+  "statRoseDrastically": "极大幅提高了！",
+  "statWontGoAnyHigher": "已经无法再提高了！",
+  "statFell": "降低了！",
+  "statHarshlyFell": "大幅降低了！",
+  "statSeverelyFell": "极大幅降低了！",
+  "statWontGoAnyLower": "已经无法再降低了！",
+  "ppReduced": "降低了 {{targetName}} 的\n{{moveName}} 的PP{{reduction}}点！",
 } as const;
