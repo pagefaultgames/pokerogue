@@ -229,8 +229,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "GOLDEN_POKEBALL": { name: "黄金精灵球", description: "在每场战斗结束后增加一个额外物品选项。" },
 
-    "ENEMY_DAMAGE_BOOSTER": { name: "伤害硬币", description: "增加5%造成伤害。" },
-    "ENEMY_DAMAGE_REDUCTION": { name: "防御硬币", description: "减少2.5%承受伤害。" },
+    "ENEMY_DAMAGE_BOOSTER": { name: "伤害硬币", description: "造成5%额外伤害（乘算）。" },
+    "ENEMY_DAMAGE_REDUCTION": { name: "防御硬币", description: "受到2.5%更少伤害（乘算）。" },
     "ENEMY_HEAL": { name: "回复硬币", description: "每回合回复2%最大HP。" },
     "ENEMY_ATTACK_POISON_CHANCE": { name: "剧毒硬币" },
     "ENEMY_ATTACK_PARALYZE_CHANCE": { name: "麻痹硬币" },
