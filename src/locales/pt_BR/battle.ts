@@ -63,6 +63,7 @@ export const battle: SimpleTranslationEntries = {
   "regainHealth": "{{pokemonName}} recuperou\npontos de saúde!",
   "fainted": "{{pokemonNameWithAffix}} desmaiou!",
   "statChange": "{{pokemonNameWithAffix}}'s {{statsFragment}} {{battleStatLevelChangeDescription}}!",
+  "statsAnd": " and ",
   "statRose": "aumentou",
   "statSharplyRose": "aumentou bruscamente",
   "statRoseDrastically": "aumentou drasticamente",

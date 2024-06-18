@@ -3374,9 +3374,7 @@ export class StatChangePhase extends PokemonPhase {
       let statsFragment = "";
 
       if (relLevelStats.length > 1) {
-        statsFragment = relLevelStats.length >= 5
-          ? "stats"
-          : `${relLevelStats.slice(0, -1).map(s => getBattleStatName(s)).join(", ")}${relLevelStats.length > 2 ? "," : ""}, ${getBattleStatName(relLevelStats[relLevelStats.length - 1])}`;
+        statsFragment = `${relLevelStats.slice(0, -1).map(s => getBattleStatName(s)).join(", ")}${relLevelStats.length > 2 ? "," : ""}${i18next.t("battle:statsAnd")}${getBattleStatName(relLevelStats[relLevelStats.length - 1])}`;
       } else {
         statsFragment = getBattleStatName(relLevelStats[0]);
       }
