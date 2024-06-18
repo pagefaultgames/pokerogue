@@ -126,7 +126,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "攻击时{{chancePercent}}%概率造成{{statusEffect}}。",
     },
     "EnemyEndureChanceModifierType": {
-      description: "增加{{chancePercent}}%遭受攻击的概率。",
+      description: "增加{{chancePercent}}%忍住攻击的概率。",
     },
 
     "RARE_CANDY": { name: "神奇糖果" },
