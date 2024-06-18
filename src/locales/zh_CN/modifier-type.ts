@@ -250,14 +250,14 @@ export const modifierType: ModifierTypeTranslationEntries = {
   },
 
   TempBattleStatBoosterStatName: {
-    "ATK": "Attack",
-    "DEF": "Defense",
-    "SPATK": "Sp. Atk",
-    "SPDEF": "Sp. Def",
-    "SPD": "Speed",
-    "ACC": "Accuracy",
-    "CRIT": "Critical Hit Ratio",
-    "EVA": "Evasiveness",
+    "ATK": "攻击",
+    "DEF": "防御",
+    "SPATK": "特攻",
+    "SPDEF": "特防",
+    "SPD": "速度",
+    "ACC": "命中",
+    "CRIT": "会心",
+    "EVA": "闪避",
     "DEFAULT": "???",
   },
 
