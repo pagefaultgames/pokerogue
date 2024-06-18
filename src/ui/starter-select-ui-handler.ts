@@ -17,7 +17,7 @@ import PokemonSpecies, { allSpecies, getPokemonSpecies, getPokemonSpeciesForm, g
 import { Type } from "../data/type";
 import { GameModes } from "../game-mode";
 import { SelectChallengePhase, TitlePhase } from "../phases";
-import { AbilityAttr, DexAttr, DexAttrProps, DexEntry, StarterFormMoveData, StarterMoveset, StarterPreferences, StarterPrefs } from "../system/game-data";
+import { AbilityAttr, DexAttr, DexAttrProps, DexEntry, StarterFormMoveData, StarterMoveset, StarterAttributes, StarterPreferences, StarterPrefs } from "../system/game-data";
 import { Tutorial, handleTutorial } from "../tutorial";
 import * as Utils from "../utils";
 import { OptionSelectItem } from "./abstact-option-select-ui-handler";
@@ -1861,6 +1861,60 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.dexAttrCursor = species ? this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true) : 0n;
     this.abilityCursor = species ? this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(species) : 0;
     this.natureCursor = species ? this.scene.gameData.getSpeciesDefaultNature(species) : 0;
+
+    const starterAttributes : StarterAttributes = species ? {...this.starterPreferences[species.speciesId]} : null;
+    // validate starterAttributes
+    if (starterAttributes) {
+      // this may cause changes so we created a copy of the attributes before
+      if (!isNaN(starterAttributes.variant)) {
+        if (![
+          this.speciesStarterDexEntry.caughtAttr & DexAttr.NON_SHINY,
+          this.speciesStarterDexEntry.caughtAttr & DexAttr.DEFAULT_VARIANT,
+          this.speciesStarterDexEntry.caughtAttr & DexAttr.VARIANT_2,
+          this.speciesStarterDexEntry.caughtAttr & DexAttr.VARIANT_3
+        ][starterAttributes.variant+1]) { // add 1 as -1 = non-shiny
+          // requested variant wasn't unlocked, purging setting
+          delete starterAttributes.variant;
+        }
+      }
+
+      if (typeof starterAttributes.female !== "boolean" || !(starterAttributes.female ?
+        this.speciesStarterDexEntry.caughtAttr & DexAttr.FEMALE :
+        this.speciesStarterDexEntry.caughtAttr & DexAttr.MALE
+      )) {
+        // requested gender wasn't unlocked, purging setting
+        delete starterAttributes.female;
+      }
+
+      const abilityAttr = this.scene.gameData.starterData[species.speciesId].abilityAttr;
+      if (![
+        abilityAttr & AbilityAttr.ABILITY_1,
+        species.ability2 ? (abilityAttr & AbilityAttr.ABILITY_2) : abilityAttr & AbilityAttr.ABILITY_HIDDEN,
+        species.ability2 && abilityAttr & AbilityAttr.ABILITY_HIDDEN
+      ][starterAttributes.ability]) {
+        // requested ability wasn't unlocked, purging setting
+        delete starterAttributes.ability;
+      }
+
+      if (!(species.forms[starterAttributes.form]?.isStarterSelectable && this.speciesStarterDexEntry.caughtAttr & this.scene.gameData.getFormAttr(starterAttributes.form))) {
+        // requested form wasn't unlocked/isn't a starter form, purging setting
+        delete starterAttributes.form;
+      }
+
+      if (this.scene.gameData.getNaturesForAttr(this.speciesStarterDexEntry.natureAttr).indexOf(starterAttributes.nature as unknown as Nature) < 0) {
+        // requested nature wasn't unlocked, purging setting
+        delete starterAttributes.nature;
+      }
+    }
+
+    if (starterAttributes?.nature) {
+      // load default nature from stater save data, if set
+      this.natureCursor = starterAttributes.nature;
+    }
+    if (!isNaN(starterAttributes?.ability)) {
+      // load default nature from stater save data, if set
+      this.abilityCursor = starterAttributes.ability;
+    }
 
     if (this.statsMode) {
       if (this.speciesStarterDexEntry?.caughtAttr) {
