@@ -3376,11 +3376,15 @@ export class StatChangePhase extends PokemonPhase {
       if (relLevelStats.length > 1) {
         statsFragment = relLevelStats.length >= 5
           ? "stats"
-          : `${relLevelStats.slice(0, -1).map(s => getBattleStatName(s)).join(", ")}${relLevelStats.length > 2 ? "," : ""} and ${getBattleStatName(relLevelStats[relLevelStats.length - 1])}`;
+          : `${relLevelStats.slice(0, -1).map(s => getBattleStatName(s)).join(", ")}${relLevelStats.length > 2 ? "," : ""}, ${getBattleStatName(relLevelStats[relLevelStats.length - 1])}`;
       } else {
         statsFragment = getBattleStatName(relLevelStats[0]);
       }
-      messages.push(getPokemonMessage(this.getPokemon(), `'s ${statsFragment} ${getBattleStatLevelChangeDescription(Math.abs(parseInt(rl)), levels >= 1)}!`));
+      messages.push(i18next.t("battle:statChange", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(this.getPokemon()),
+        statsFragment: statsFragment,
+        battleStatLevelChangeDescription: getBattleStatLevelChangeDescription(Math.abs(parseInt(rl)), levels >= 1)
+      }));
     });
 
     return messages;
