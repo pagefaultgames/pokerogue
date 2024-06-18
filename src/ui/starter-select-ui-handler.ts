@@ -98,7 +98,7 @@ const languageSettings: { [key: string]: LanguageSetting } = {
   },
   "jp":{
     starterInfoTextSize: "45px",
-    instructionTextSize: "38px",
+    instructionTextSize: "35px",
   }
 };
 

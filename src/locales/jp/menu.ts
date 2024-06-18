@@ -17,7 +17,7 @@ export const menu: SimpleTranslationEntries = {
   "username": "ユーザーめい",
   "password": "パスワード",
   "login": "ログイン",
-  "register": "かいいん　とうろく",
+  "register": "かいいん とうろく",
   "emptyUsername": "ユーザー名は空にできません",
   "invalidLoginUsername": "入力したユーザー名は無効です",
   "invalidRegisterUsername": "ユーザー名には英文字、数字、アンダースコアのみを含める必要があります",

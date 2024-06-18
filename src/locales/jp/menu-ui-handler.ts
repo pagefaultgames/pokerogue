@@ -11,7 +11,7 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "COMMUNITY": "コミュニティ",
   "SAVE_AND_QUIT": "Save and Quit",
   "LOG_OUT": "ログアウト",
-  "slot": "スロット　{{slotNumber}}",
+  "slot": "スロット {{slotNumber}}",
   "importSession": "セッションのインポート",
   "importSlotSelect": "Select a slot to import to.",
   "exportSession": "セッションのエクスポート",
