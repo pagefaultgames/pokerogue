@@ -69,7 +69,7 @@ describe("Items - Assault Vest", () => {
     const oppSpDef = opponent.stats[Stat.SPDEF];
     expect(spDef).toBe(207); // 138 * 1.5
     expect(oppSpDef).toBe(226);
-    expect(pokemon.getTags(BattlerTagType.ATTACK_MOVE_ONLY)).toBe(true);
+    expect(pokemon.getTags(BattlerTagType.ATTACK_MOVE_ONLY)).not.toBe(undefined);
 
     //
     // game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {

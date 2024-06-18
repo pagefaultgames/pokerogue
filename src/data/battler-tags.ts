@@ -1398,6 +1398,17 @@ export class CursedTag extends BattlerTag {
   }
 }
 
+export class AttackMoveOnly extends BattlerTag {
+  constructor() {
+    super(BattlerTagType.ATTACK_MOVE_ONLY, BattlerTagLapseType.CUSTOM, 0, undefined);
+  }
+  canAdd(pokemon: Pokemon): boolean {
+    if (!pokemon) {
+      return false;
+    }
+  }
+}
+
 /**
  * Provides the Ice Face ability's effects.
  */
@@ -1566,6 +1577,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
     return new DestinyBondTag(sourceMove, sourceId);
   case BattlerTagType.ICE_FACE:
     return new IceFaceTag(sourceMove);
+  case BattlerTagType.ATTACK_MOVE_ONLY:
+    return new AttackMoveOnly();
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
