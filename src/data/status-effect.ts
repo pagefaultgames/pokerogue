@@ -15,7 +15,7 @@ export class Status {
   public effect: StatusEffect;
   public turnCount: integer;
   public cureTurn: integer;
-  public sourceId: integer;
+  public sourceId?: integer;
 
   constructor(effect: StatusEffect, turnCount: integer = 0, cureTurn?: integer, sourceId?: integer) {
     this.effect = effect;

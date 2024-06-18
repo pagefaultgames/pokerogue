@@ -3322,6 +3322,12 @@ export class PlayerPokemon extends Pokemon {
       this.fusionGender = pokemon.gender;
       this.fusionLuck = pokemon.luck;
 
+      this.runData.kills += pokemon.runData.kills;
+      this.runData.assists += pokemon.runData.assists;
+      this.runData.deaths += pokemon.runData.deaths;
+      this.runData.damageDealt += pokemon.runData.damageDealt;
+      this.runData.damageTaken += pokemon.runData.damageTaken;
+
       this.scene.validateAchv(achvs.SPLICE);
       this.scene.gameData.gameStats.pokemonFused++;
 
