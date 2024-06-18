@@ -12,6 +12,7 @@ import { Species } from "#enums/species";
 import {BattleStyle} from "#enums/battle-style";
 import {Nature} from "#app/data/nature";
 import {Stat} from "#app/data/pokemon-stat";
+import {BattlerTagType} from "#enums/battler-tag-type";
 
 
 describe("Items - Assault Vest", () => {
@@ -68,6 +69,7 @@ describe("Items - Assault Vest", () => {
     const oppSpDef = opponent.stats[Stat.SPDEF];
     expect(spDef).toBe(207); // 138 * 1.5
     expect(oppSpDef).toBe(226);
+    expect(pokemon.getTags(BattlerTagType.ATTACK_MOVE_ONLY)).toBe(true);
 
     //
     // game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {

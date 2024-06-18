@@ -893,6 +893,7 @@ export class ConditionalStatsBoost extends PokemonHeldItemModifier {
   apply(args: any[]): boolean | Promise<boolean> {
     const targetPokemon = args[0];
     targetPokemon.stats[this.stat] *= 1.5;
+    targetPokemon.addTag(BattlerTagType.ATTACK_MOVE_ONLY);
     return true;
   }
 }
