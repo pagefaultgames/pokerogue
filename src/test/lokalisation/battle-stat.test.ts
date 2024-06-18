@@ -21,6 +21,7 @@ import { pokemonInfo as zhTwPokemonInfo } from "#app/locales/zh_TW/pokemon-info.
 import { battle as zhTwBattleStat } from "#app/locales/zh_TW/battle.js";
 
 import i18next, {initI18n} from "#app/plugins/i18n";
+import { KoreanPostpositionProcessor } from "i18next-korean-postposition-processor";
 
 interface BattleStatTestUnit {
   stat: BattleStat,
@@ -198,7 +199,9 @@ describe("Test for BattleStat Localization", () => {
   it("Test getBattleStatLevelChangeDescription() in 한국어", async () => {
     i18next.changeLanguage("ko", () => {
       battleStatLevelUnits.forEach(unit => {
-        testBattleStatLevelChangeDescription(unit.levels, unit.up, koBattleStat[unit.key]);
+        const processor = new KoreanPostpositionProcessor();
+        const message = processor.process(koBattleStat[unit.key]);
+        testBattleStatLevelChangeDescription(unit.levels, unit.up, message);
       });
     });
   });
