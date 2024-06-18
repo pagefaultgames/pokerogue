@@ -198,6 +198,22 @@ export default class MenuUiHandler extends MessageUiHandler {
         keepOpen: true
       },
       {
+        label: i18next.t("menuUiHandler:importSettings"),
+        handler: () => {
+          console.log('TODO import settings');
+          return true;
+        },
+        keepOpen: true
+      },
+      {
+        label: i18next.t("menuUiHandler:exportSettings"),
+        handler: () => {
+          console.log('TODO export settings');
+          return true;
+        },
+        keepOpen: true
+      },
+      {
         label: i18next.t("menuUiHandler:cancel"),
         handler: () => {
           this.scene.ui.revertMode();
