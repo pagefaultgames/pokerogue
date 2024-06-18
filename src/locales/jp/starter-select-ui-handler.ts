@@ -31,7 +31,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "selectMoveSwapOut": "交換する技を選択してください",
   "selectMoveSwapWith": "交換先の技を選択してください",
   "unlockPassive": "パッシブを かいほうする",
-  "reduceCost": "ポケモンの コストを さくげんする",
+  "reduceCost": "ポケモンの 必要ポイントを へらす",
   "cycleShiny": ": 色違い変更",
   "cycleForm": ": フォルム変更",
   "cycleGender": ": 性別変更",
