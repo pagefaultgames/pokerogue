@@ -1,11 +1,11 @@
 import BattleScene from "../battle-scene";
 import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "./pokemon-species";
-import i18next from "../plugins/i18n";
 import { VariantTier } from "../enums/variant-tiers";
 import * as Utils from "../utils";
 import * as Overrides from "../overrides";
 import { pokemonPrevolutions } from "./pokemon-evolutions";
 import { PlayerPokemon } from "#app/field/pokemon";
+import i18next from "i18next";
 import { EggTier } from "#enums/egg-type";
 import { Species } from "#enums/species";
 import { EggSourceType } from "#app/enums/egg-source-types.js";

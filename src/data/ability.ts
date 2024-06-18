@@ -14,7 +14,8 @@ import { Stat, getStatName } from "./pokemon-stat";
 import { BerryModifier, PokemonHeldItemModifier } from "../modifier/modifier";
 import { TerrainType } from "./terrain";
 import { SpeciesFormChangeManualTrigger } from "./pokemon-forms";
-import i18next, { Localizable } from "#app/plugins/i18n.js";
+import i18next from "i18next";
+import { Localizable } from "#app/interfaces/locales.js";
 import { Command } from "../ui/command-ui-handler";
 import { BerryModifierType } from "#app/modifier/modifier-type";
 import { getPokeballName } from "./pokeball";
@@ -1044,6 +1045,56 @@ export class PreAttackAbAttr extends AbAttr {
   }
 }
 
+/**
+ * Modifies moves additional effects with multipliers, ie. Sheer Force, Serene Grace.
+ * @extends AbAttr
+ * @see {@linkcode apply}
+ */
+export class MoveEffectChanceMultiplierAbAttr extends AbAttr {
+  private chanceMultiplier: number;
+
+  constructor(chanceMultiplier?: number) {
+    super(true);
+    this.chanceMultiplier = chanceMultiplier;
+  }
+  /**
+   * @param args [0]: {@linkcode Utils.NumberHolder} Move additional effect chance. Has to be higher than or equal to 0.
+   *             [1]: {@linkcode Moves } Move used by the ability user.
+   */
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+
+    if ((args[0] as Utils.NumberHolder).value <= 0 || (args[1] as Move).id === Moves.ORDER_UP) {
+      return false;
+    }
+
+    (args[0] as Utils.NumberHolder).value *= this.chanceMultiplier;
+    (args[0] as Utils.NumberHolder).value = Math.min((args[0] as Utils.NumberHolder).value, 100);
+    return true;
+
+  }
+}
+
+/**
+ * Sets incoming moves additional effect chance to zero, ignoring all effects from moves. ie. Shield Dust.
+ * @extends PreDefendAbAttr
+ * @see {@linkcode applyPreDefend}
+ */
+export class IgnoreMoveEffectsAbAttr extends PreDefendAbAttr {
+  /**
+   * @param args [0]: {@linkcode Utils.NumberHolder} Move additional effect chance.
+   */
+  applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+
+    if ((args[0] as Utils.NumberHolder).value <= 0) {
+      return false;
+    }
+
+    (args[0] as Utils.NumberHolder).value = 0;
+    return true;
+
+  }
+}
+
 export class VariableMovePowerAbAttr extends PreAttackAbAttr {
   applyPreAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: Move, args: any[]): boolean {
     //const power = args[0] as Utils.NumberHolder;
@@ -1282,17 +1333,18 @@ export class VariableMovePowerBoostAbAttr extends VariableMovePowerAbAttr {
   }
 }
 
-export class FieldVariableMovePowerAbAttr extends AbAttr {
-  applyPreAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: Move, args: any[]): boolean {
-    //const power = args[0] as Utils.NumberHolder;
-    return false;
-  }
-}
-
-export class FieldMovePowerBoostAbAttr extends FieldVariableMovePowerAbAttr {
+/**
+ * Boosts the power of a Pokémon's move under certain conditions.
+ * @extends AbAttr
+ */
+export class FieldMovePowerBoostAbAttr extends AbAttr {
   private condition: PokemonAttackCondition;
   private powerMultiplier: number;
 
+  /**
+   * @param condition - A function that determines whether the power boost condition is met.
+   * @param powerMultiplier - The multiplier to apply to the move's power when the condition is met.
+   */
   constructor(condition: PokemonAttackCondition, powerMultiplier: number) {
     super(false);
     this.condition = condition;
@@ -1310,9 +1362,31 @@ export class FieldMovePowerBoostAbAttr extends FieldVariableMovePowerAbAttr {
   }
 }
 
+/**
+ * Boosts the power of a specific type of move.
+ * @extends FieldMovePowerBoostAbAttr
+ */
 export class FieldMoveTypePowerBoostAbAttr extends FieldMovePowerBoostAbAttr {
+  /**
+   * @param boostedType - The type of move that will receive the power boost.
+   * @param powerMultiplier - The multiplier to apply to the move's power, defaults to 1.5 if not provided.
+   */
   constructor(boostedType: Type, powerMultiplier?: number) {
     super((pokemon, defender, move) => move.type === boostedType, powerMultiplier || 1.5);
+  }
+}
+
+/**
+ * Boosts the power of moves in specified categories.
+ * @extends FieldMovePowerBoostAbAttr
+ */
+export class AllyMoveCategoryPowerBoostAbAttr extends FieldMovePowerBoostAbAttr {
+  /**
+   * @param boostedCategories - The categories of moves that will receive the power boost.
+   * @param powerMultiplier - The multiplier to apply to the move's power.
+   */
+  constructor(boostedCategories: MoveCategory[], powerMultiplier: number) {
+    super((pokemon, defender, move) => boostedCategories.includes(move.category), powerMultiplier);
   }
 }
 
@@ -1394,7 +1468,8 @@ export class PostAttackApplyStatusEffectAbAttr extends PostAttackAbAttr {
   }
 
   applyPostAttack(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
-    if (pokemon !== attacker && (!this.contactRequired || move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) && pokemon.randSeedInt(100) < this.chance && !pokemon.status) {
+    /**Status inflicted by abilities post attacking are also considered additional effects.*/
+    if (!attacker.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr) && pokemon !== attacker && (!this.contactRequired || move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) && pokemon.randSeedInt(100) < this.chance && !pokemon.status) {
       const effect = this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randSeedInt(this.effects.length)];
       return attacker.trySetStatus(effect, true, pokemon);
     }
@@ -1424,10 +1499,9 @@ export class PostAttackApplyBattlerTagAbAttr extends PostAttackAbAttr {
   }
 
   applyPostAttack(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
-    if (pokemon !== attacker && (!this.contactRequired || move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) && pokemon.randSeedInt(100) < this.chance(attacker, pokemon, move) && !pokemon.status) {
+    /**Battler tags inflicted by abilities post attacking are also considered additional effects.*/
+    if (!attacker.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr) && pokemon !== attacker && (!this.contactRequired || move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) && pokemon.randSeedInt(100) < this.chance(attacker, pokemon, move) && !pokemon.status) {
       const effect = this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randSeedInt(this.effects.length)];
-
-
       return attacker.addTag(effect);
     }
 
@@ -1630,6 +1704,28 @@ export class PostIntimidateStatChangeAbAttr extends AbAttr {
 export class PostSummonAbAttr extends AbAttr {
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
     return false;
+  }
+}
+/**
+ * Removes specified arena tags when a Pokemon is summoned.
+ */
+export class PostSummonRemoveArenaTagAbAttr extends PostSummonAbAttr {
+  private arenaTags: ArenaTagType[];
+
+  /**
+   * @param arenaTags {@linkcode ArenaTagType[]} - the arena tags to be removed
+   */
+  constructor(arenaTags: ArenaTagType[]) {
+    super(true);
+
+    this.arenaTags = arenaTags;
+  }
+
+  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
+    for (const arenaTag of this.arenaTags) {
+      pokemon.scene.arena.removeTag(arenaTag);
+    }
+    return true;
   }
 }
 
@@ -2354,6 +2450,35 @@ export class SuppressWeatherEffectAbAttr extends PreWeatherEffectAbAttr {
 
     return false;
   }
+}
+
+/**
+ * Condition function to applied to abilities related to Sheer Force.
+ * Checks if last move used against target was affected by a Sheer Force user and:
+ * Disables: Color Change, Pickpocket, Wimp Out, Emergency Exit, Berserk, Anger Shell
+ * @returns {AbAttrCondition} If false disables the ability which the condition is applied to.
+ */
+function getSheerForceHitDisableAbCondition(): AbAttrCondition {
+  return (pokemon: Pokemon) => {
+    if (!pokemon.turnData) {
+      return true;
+    }
+
+    const lastReceivedAttack = pokemon.turnData.attacksReceived[0];
+    if (!lastReceivedAttack) {
+      return true;
+    }
+
+    const lastAttacker = pokemon.getOpponents().find(p => p.id === lastReceivedAttack.sourceId);
+    if (!lastAttacker) {
+      return true;
+    }
+
+    /**if the last move chance is greater than or equal to cero, and the last attacker's ability is sheer force*/
+    const SheerForceAffected = allMoves[lastReceivedAttack.move].chance >= 0 && lastAttacker.hasAbility(Abilities.SHEER_FORCE);
+
+    return !SheerForceAffected;
+  };
 }
 
 function getWeatherCondition(...weatherTypes: WeatherType[]): AbAttrCondition {
@@ -3886,7 +4011,8 @@ export function initAbilities() {
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
       .ignorable(),
     new Ability(Abilities.COLOR_CHANGE, 3)
-      .attr(PostDefendTypeChangeAbAttr),
+      .attr(PostDefendTypeChangeAbAttr)
+      .condition(getSheerForceHitDisableAbCondition()),
     new Ability(Abilities.IMMUNITY, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
       .ignorable(),
@@ -3894,8 +4020,8 @@ export function initAbilities() {
       .attr(TypeImmunityAddBattlerTagAbAttr, Type.FIRE, BattlerTagType.FIRE_BOOST, 1, (pokemon: Pokemon) => !pokemon.status || pokemon.status.effect !== StatusEffect.FREEZE)
       .ignorable(),
     new Ability(Abilities.SHIELD_DUST, 3)
-      .ignorable()
-      .unimplemented(),
+      .attr(IgnoreMoveEffectsAbAttr)
+      .partial(),
     new Ability(Abilities.OWN_TEMPO, 3)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.CONFUSED)
       .attr(IntimidateImmunityAbAttr)
@@ -3938,7 +4064,8 @@ export function initAbilities() {
       .attr(TypeImmunityStatChangeAbAttr, Type.ELECTRIC, BattleStat.SPATK, 1)
       .ignorable(),
     new Ability(Abilities.SERENE_GRACE, 3)
-      .unimplemented(),
+      .attr(MoveEffectChanceMultiplierAbAttr, 2)
+      .partial(),
     new Ability(Abilities.SWIFT_SWIM, 3)
       .attr(BattleStatMultiplierAbAttr, BattleStat.SPD, 2)
       .condition(getWeatherCondition(WeatherType.RAIN, WeatherType.HEAVY_RAIN)),
@@ -4214,9 +4341,12 @@ export function initAbilities() {
     new Ability(Abilities.BAD_DREAMS, 4)
       .attr(PostTurnHurtIfSleepingAbAttr),
     new Ability(Abilities.PICKPOCKET, 5)
-      .attr(PostDefendStealHeldItemAbAttr, (target, user, move) => move.hasFlag(MoveFlags.MAKES_CONTACT)),
+      .attr(PostDefendStealHeldItemAbAttr, (target, user, move) => move.hasFlag(MoveFlags.MAKES_CONTACT))
+      .condition(getSheerForceHitDisableAbCondition()),
     new Ability(Abilities.SHEER_FORCE, 5)
-      .unimplemented(),
+      .attr(MovePowerBoostAbAttr, (user, target, move) => move.chance >= 1, 5461/4096)
+      .attr(MoveEffectChanceMultiplierAbAttr, 0)
+      .partial(),
     new Ability(Abilities.CONTRARY, 5)
       .attr(StatChangeMultiplierAbAttr, -1)
       .ignorable(),
@@ -4425,8 +4555,10 @@ export function initAbilities() {
     new Ability(Abilities.STAMINA, 7)
       .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, BattleStat.DEF, 1),
     new Ability(Abilities.WIMP_OUT, 7)
+      .condition(getSheerForceHitDisableAbCondition())
       .unimplemented(),
     new Ability(Abilities.EMERGENCY_EXIT, 7)
+      .condition(getSheerForceHitDisableAbCondition())
       .unimplemented(),
     new Ability(Abilities.WATER_COMPACTION, 7)
       .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.type === Type.WATER && move.category !== MoveCategory.STATUS, BattleStat.DEF, 2),
@@ -4452,7 +4584,8 @@ export function initAbilities() {
     new Ability(Abilities.STEELWORKER, 7)
       .attr(MoveTypePowerBoostAbAttr, Type.STEEL),
     new Ability(Abilities.BERSERK, 7)
-      .attr(PostDefendHpGatedStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, 0.5, [BattleStat.SPATK], 1),
+      .attr(PostDefendHpGatedStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, 0.5, [BattleStat.SPATK], 1)
+      .condition(getSheerForceHitDisableAbCondition()),
     new Ability(Abilities.SLUSH_RUSH, 7)
       .attr(BattleStatMultiplierAbAttr, BattleStat.SPD, 2)
       .condition(getWeatherCondition(WeatherType.HAIL, WeatherType.SNOW)),
@@ -4526,7 +4659,7 @@ export function initAbilities() {
     new Ability(Abilities.DANCER, 7)
       .attr(PostDancingMoveAbAttr),
     new Ability(Abilities.BATTERY, 7)
-      .unimplemented(),
+      .attr(AllyMoveCategoryPowerBoostAbAttr, [MoveCategory.SPECIAL], 1.3),
     new Ability(Abilities.FLUFFY, 7)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => move.hasFlag(MoveFlags.MAKES_CONTACT), 0.5)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => move.type === Type.FIRE, 2)
@@ -4638,11 +4771,11 @@ export function initAbilities() {
       .attr(IceFaceMoveImmunityAbAttr, (target, user, move) => move.category === MoveCategory.PHYSICAL && !!target.getTag(BattlerTagType.ICE_FACE))
       .ignorable(),
     new Ability(Abilities.POWER_SPOT, 8)
-      .unimplemented(),
+      .attr(AllyMoveCategoryPowerBoostAbAttr, [MoveCategory.SPECIAL, MoveCategory.PHYSICAL], 1.3),
     new Ability(Abilities.MIMICRY, 8)
       .unimplemented(),
     new Ability(Abilities.SCREEN_CLEANER, 8)
-      .unimplemented(),
+      .attr(PostSummonRemoveArenaTagAbAttr, [ArenaTagType.AURORA_VEIL, ArenaTagType.LIGHT_SCREEN, ArenaTagType.REFLECT]),
     new Ability(Abilities.STEELY_SPIRIT, 8)
       .attr(MoveTypePowerBoostAbAttr, Type.STEEL)
       .partial(),
@@ -4711,7 +4844,8 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.ANGER_SHELL, 9)
       .attr(PostDefendHpGatedStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, 0.5, [ BattleStat.ATK, BattleStat.SPATK, BattleStat.SPD ], 1)
-      .attr(PostDefendHpGatedStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, 0.5, [ BattleStat.DEF, BattleStat.SPDEF ], -1),
+      .attr(PostDefendHpGatedStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, 0.5, [ BattleStat.DEF, BattleStat.SPDEF ], -1)
+      .condition(getSheerForceHitDisableAbCondition()),
     new Ability(Abilities.PURIFYING_SALT, 9)
       .attr(StatusEffectImmunityAbAttr)
       .attr(ReceivedTypeDamageMultiplierAbAttr, Type.GHOST, 0.5)
