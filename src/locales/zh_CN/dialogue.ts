@@ -2070,7 +2070,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "rival_3": {
     "encounter": {
-      1: "@c{smile}}嘿，看看这是谁！好久不见啊。$@c{neutral}你……还是没输过？哈…$@c{neutral_eclosed}这有点……不太对劲。$没有你一起，回家的感觉有很不一样。$@c{serious}虽然我知道这挺别扭的，但我就直说了。$@c{neutral_eclosed}我觉得你有点儿难以理喻。$@c{serious}没有人能够战无不胜。$失败乃成功之母。$@c{neutral_eclosed}你已经赢得了够好的成绩，\n但前面道阻且长，只会愈发艰难。 @c{neutral}你做好准备了没？$@c{serious_mopen_fists}如果做好了，证明给我看吧。",
+      1: "@c{smile}嘿，看看这是谁！好久不见啊。$@c{neutral}你……还是没输过？哈…$@c{neutral_eclosed}这有点……不太对劲。$没有你一起，回家的感觉有很不一样。$@c{serious}虽然我知道这挺别扭的，但我就直说了。$@c{neutral_eclosed}我觉得你有点儿难以理喻。$@c{serious}没有人能够战无不胜。$失败乃成功之母。$@c{neutral_eclosed}你已经赢得了够好的成绩，\n但前面道阻且长，只会愈发艰难。 @c{neutral}你做好准备了没？$@c{serious_mopen_fists}如果做好了，证明给我看吧。",
     },
     "victory": {
       1: "@c{angry_mhalf}这太离谱了……我几乎从没停下训练……$我们之间的差距怎么还是这么大？",
@@ -2136,7 +2136,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "rival_6_female": {
     "encounter": {
-      1: "@c{smile_ehalf}又只有我们两个人了。$@c{smile_eclosed}你知道吗，我在心里想啊想，\n想了好久……$@c{smile_ehalf}这一切背后是有什么原因吗，\n为什么一切现在看起来都这么奇怪……$@c{smile}你有你的梦想，而我内心有这个抱负……$我不禁感觉这一切背后有一个更庞大的力量，$掌控者我们所做的一切，你和我之间。$@c{smile_eclosed}}我想我注定要推动你……到你的极限。$@c{smile_ehalf}我不清楚我是否一直做得很好，\n但到现在为止，我已经尽力了。$这个奇怪而可怕的地方……\n一切看起来都那么清晰……$这是世界早已记录的一切。$@c{smile_eclosed}我好像记不清我们一起度过的日子了。$@c{smile_ehalf}那些回忆到底是真的吗？\n怎么感觉这么久远……$@c{angry_mopen}你得继续前进，不然的话，这一切将永无止境。\n你是唯一能做到这件事的。$@c{smile_ehalf}}我……不知道这一切意味着什么……\n但我明白$@c{neutral}如果你现在不能就此击败我，\n你将毫无机会可言。",
+      1: "@c{smile_ehalf}又只有我们两个人了。$@c{smile_eclosed}你知道吗，我在心里想啊想，\n想了好久……$@c{smile_ehalf}这一切背后是有什么原因吗，\n为什么一切现在看起来都这么奇怪……$@c{smile}你有你的梦想，而我内心有这个抱负……$我不禁感觉这一切背后有一个更庞大的力量，$掌控者我们所做的一切，你和我之间。$@c{smile_eclosed}我想我注定要推动你……到你的极限。$@c{smile_ehalf}我不清楚我是否一直做得很好，\n但到现在为止，我已经尽力了。$这个奇怪而可怕的地方……\n一切看起来都那么清晰……$这是世界早已记录的一切。$@c{smile_eclosed}我好像记不清我们一起度过的日子了。$@c{smile_ehalf}那些回忆到底是真的吗？\n怎么感觉这么久远……$@c{angry_mopen}你得继续前进，不然的话，这一切将永无止境。\n你是唯一能做到这件事的。$@c{smile_ehalf}我……不知道这一切意味着什么……\n但我明白$@c{neutral}如果你现在不能就此击败我，\n你将毫无机会可言。",
     },
     "victory": {
       1: "@c{smile_ehalf}我……\n我想我完成了我的使命……$@c{smile_eclosed}答应我……在你拯救世界之后\n……要……平安到家。$@c{smile_ehalf}……谢谢你。",
@@ -2155,7 +2155,7 @@ export const PGMbattleSpecDialogue: SimpleTranslationEntries = {
     $你被吸引到这里，因为你以前就来过这里。\n无数次。
     $尽管，或许可以数一数。\n准确地说，这实际上是你的第5,643,853次循环。
     $每一次循环，你的思想都会恢复到之前的状态。\n即便如此，不知何故，你之前自我的残留仍然存在。
-    $直到现在，你仍未成功，但我感觉这次你身上有一种异样的气息。\n
+    $直到现在，你仍未成功，\n但我感觉这次你身上有一种异样的气息。
     $你是这里唯一的人，尽管感觉上还有……另一个人。
     $你最终会成为对我来的一个硬茬吗？\n我渴望了数千年的挑战？
     $我们，开始。`,
