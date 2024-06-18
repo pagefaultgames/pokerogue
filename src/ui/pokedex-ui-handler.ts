@@ -5,7 +5,8 @@ import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
 import PokemonSpecies, { allSpecies } from "#app/data/pokemon-species.js";
-import { DexData } from "#app/system/game-data.js";
+import { getVariantTint } from "#app/data/variant.js";
+import { Gender, getGenderColor, getGenderSymbol } from "#app/data/gender.js";
 
 const itemRows = 4;
 const itemCols = 17;
@@ -15,23 +16,21 @@ export default class VouchersUiHandler extends MessageUiHandler {
   private voucherIconsContainer: Phaser.GameObjects.Container;
 
   private voucherIconsBg: Phaser.GameObjects.NineSlice;
+  private unlockBg: Phaser.GameObjects.NineSlice;
   private voucherIcons: Phaser.GameObjects.Sprite[];
   private voucherSpecies: PokemonSpecies[];
   private titleText: Phaser.GameObjects.Text;
   private descriptionContainer: Phaser.GameObjects.Container;
-  private unlockText: Phaser.GameObjects.Text;
+  private caughtInfoContainer: Phaser.GameObjects.Container;
 
   private itemsTotal: integer;
   private scrollCursor: integer;
 
   private cursorObj: Phaser.GameObjects.NineSlice;
-  private vouchers: DexData;
 
   constructor(scene: BattleScene, mode?: Mode) {
     super(scene, mode);
 
-
-    this.vouchers = scene.gameData.dexData;
     this.itemsTotal = Object.keys(allSpecies).length;
     this.scrollCursor = 0;
   }
@@ -79,27 +78,14 @@ export default class VouchersUiHandler extends MessageUiHandler {
     this.titleText.setOrigin(0, 0);
     this.titleText.setPositionRelative(titleBg, 8, 4);
 
-    const unlockBg = addWindow(this.scene, titleBg.x + titleBg.width, titleBg.y, 98, 24);
-    unlockBg.setOrigin(0, 0);
-
-    this.unlockText = addTextObject(this.scene, 0, 0, "", TextStyle.WINDOW);
-    this.unlockText.setOrigin(0, 0);
-    this.unlockText.setPositionRelative(unlockBg, 8, 4);
+    this.unlockBg = addWindow(this.scene, titleBg.x + titleBg.width, titleBg.y, 98, 24);
+    this.unlockBg.setOrigin(0, 0);
 
     const descriptionBg = addWindow(this.scene, 0, titleBg.y + titleBg.height, (this.scene.game.canvas.width / 6) - 2, 42);
     descriptionBg.setOrigin(0, 0);
 
     this.descriptionContainer = this.scene.add.container(6, descriptionBg.y + descriptionBg.height-40);
-
-
-
-    // const descriptionText = addTextObject(this.scene, 0, 0, "", TextStyle.WINDOW, { maxLines: 2 });
-    // descriptionText.setWordWrapWidth(1870);
-    // descriptionText.setOrigin(0, 0);
-    // descriptionText.setPositionRelative(descriptionBg, 8, 4);
-
-    // this.message = descriptionText;
-    // this.descriptionContainer.
+    this.caughtInfoContainer = this.scene.add.container(6, this.unlockBg.y + this.unlockBg.height-40);
 
     this.vouchersContainer.add(headerBg);
     this.vouchersContainer.add(headerText);
@@ -107,10 +93,9 @@ export default class VouchersUiHandler extends MessageUiHandler {
     this.vouchersContainer.add(this.voucherIconsContainer);
     this.vouchersContainer.add(titleBg);
     this.vouchersContainer.add(this.titleText);
-    this.vouchersContainer.add(unlockBg);
-    this.vouchersContainer.add(this.unlockText);
+    this.vouchersContainer.add(this.unlockBg);
+    this.vouchersContainer.add(this.caughtInfoContainer);
     this.vouchersContainer.add(descriptionBg);
-    // this.vouchersContainer.add(descriptionText);
     this.vouchersContainer.add(this.descriptionContainer);
 
     ui.add(this.vouchersContainer);
@@ -137,20 +122,22 @@ export default class VouchersUiHandler extends MessageUiHandler {
   }
 
   protected showVoucher(voucher: PokemonSpecies) {
+
+    const gameData = this.scene.gameData;
+    const dexEntry = gameData.dexData[voucher.speciesId];
+    const starterData = gameData.starterData[voucher.speciesId];
+
     this.titleText.setText(`#${voucher.speciesId} ${voucher.name}`);
     this.descriptionContainer.removeAll(true);
-    console.log({forms: voucher.forms});
+    this.caughtInfoContainer.removeAll(true);
+
     for (let a = 0; a < voucher.forms.length; a++) {
-      // const species = allSpecies[a]
       const x = (a % itemCols) * 18;
       const y = Math.floor(a / itemCols) * 18;
 
       const icon = this.scene.add.sprite(x, y, voucher.getIconAtlasKey(0));
       icon.setTexture(`pokemon_icons_${voucher.generation}`);
-      let frame = voucher.getIconId(false);
-      if (voucher.forms[a].getFormSpriteKey()) {
-        frame += `-${voucher.forms[a].getFormSpriteKey()}`;
-      }
+      const frame = voucher.getIconId(false, a);
       icon.setFrame(frame);
       icon.setOrigin(0, 0);
       icon.setScale(0.5);
@@ -158,18 +145,52 @@ export default class VouchersUiHandler extends MessageUiHandler {
       this.descriptionContainer.add(icon);
     }
 
-    // const description = voucher.forms.map(form => {
-    //   return form.formName + ' ' + voucher.name
-    // }).join(', ')
-    // this.showText(description || '');
+    const isMale = (BigInt(dexEntry.caughtAttr) & 4n) !== 0n;
+    const isFemale = (BigInt(dexEntry.caughtAttr) & 8n) !== 0n;
+    const isYellowShiny = (BigInt(dexEntry.caughtAttr) & 16n) !== 0n;
+    const isBlueShiny = (BigInt(dexEntry.caughtAttr) & 32n) !== 0n;
+    const isRedShiny = (BigInt(dexEntry.caughtAttr) & 64n) !== 0n;
+    const isAbility1 = (BigInt(this.scene.gameData.starterData[voucher.getRootSpeciesId()].abilityAttr) & 1n) !== 0n;
+    const isAbility2 = (BigInt(this.scene.gameData.starterData[voucher.getRootSpeciesId()].abilityAttr) & 2n) !== 0n;
+    const isHiddenAbility = (BigInt(this.scene.gameData.starterData[voucher.getRootSpeciesId()].abilityAttr) & 4n) !== 0n;
+    const isOnlyMale = voucher.malePercent === 100;
+    const isOnlyFemale = voucher.malePercent === 0;
+    const isGenderless = voucher.malePercent === null;
 
-    const dexEntry = this.scene.gameData.dexData[voucher.speciesId];
-    if (dexEntry.caughtAttr) {
-      this.unlockText.setText("Caught");
-    } else if (dexEntry.seenAttr) {
-      this.unlockText.setText("Seen");
-    } else {
-      this.unlockText.setText("Not seen");
+    const icons: {texture?: string, frame?: string, color?: number, isVisible?: boolean, type?: string, gender?: Gender, skip: boolean}[] = [
+      {type: "gender", gender: Gender.FEMALE, isVisible: isFemale, skip: isGenderless || isOnlyMale},
+      {type: "gender", gender: Gender.MALE, isVisible: isMale, skip: isGenderless || isOnlyFemale},
+      {texture: "shiny_star_small", color: getVariantTint(0), isVisible: isYellowShiny, skip:false},
+      {texture: "shiny_star_small", color: getVariantTint(1), isVisible: isBlueShiny, skip:false},
+      {texture: "shiny_star_small", color: getVariantTint(2), isVisible: isRedShiny, skip: false},
+      {texture: "ha_capsule", isVisible: isAbility1, skip:false},
+      {texture: "ha_capsule", isVisible: isAbility2, skip: false},
+      {texture: "ha_capsule", isVisible: isHiddenAbility, skip: false},
+      {texture: "champion_ribbon", isVisible: starterData?.classicWinCount > 0, skip: false},
+    ].filter(a => !a.skip);
+
+    for (let a = 0; a < icons.length; a++) {
+      const y = Math.floor(a / itemCols) * 18;
+
+      if (icons[a].type === "gender") {
+        const icon = addTextObject(this.scene, this.unlockBg.x+a*10, y+20, "", TextStyle.BATTLE_INFO);
+        icon.setName("text_gender");
+        icon.setOrigin(0, 0);
+        icon.setText(getGenderSymbol(icons[a].gender));
+        icon.setColor(getGenderColor(icons[a].gender));
+        !icons[a].isVisible && icon.setTint(0);
+        this.caughtInfoContainer.add(icon);
+      } else {
+        const icon = this.scene.add.sprite(this.unlockBg.x+a*10, y+20, icons[a].texture);
+        icon.setTexture(icons[a].texture);
+        icons[a].frame && icon.setFrame(icons[a].frame);
+        icon.setOrigin(0, 0);
+        icon.setScale(0.5);
+        icons[a].color && icon.setTint(icons[a].color);
+
+        !icons[a].isVisible && icon.setTint(0);
+        this.caughtInfoContainer.add(icon);
+      }
     }
   }
 
