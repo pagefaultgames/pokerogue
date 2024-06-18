@@ -58,7 +58,8 @@
 		"lru-cache": "^10.2.2",
 		"phaser": "^3.70.0",
 		"phaser3-rex-plugins": "^1.1.84",
-		"rimraf": "^5.0.7"
+		"rimraf": "^5.0.7",
+		"test-exclude": "^7.0.1"
 	},
 	"engines": {
 		"node": ">=20.0.0"
