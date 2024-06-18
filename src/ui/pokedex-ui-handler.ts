@@ -171,7 +171,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
     const isGenderless = species.malePercent === null;
     const hasOnlyOneAbility = species.ability2 === Abilities.NONE;
 
-    const icons: {texture?: string, frame?: string, color?: number, isVisible?: boolean, type?: string, gender?: Gender, skip?: boolean}[] = [
+    const icons: {texture?: string, color?: number, isVisible: boolean, type?: string, gender?: Gender, skip?: boolean}[] = [
       {type: "gender", gender: Gender.FEMALE, isVisible: isFemale, skip: isGenderless || isOnlyMale},
       {type: "gender", gender: Gender.MALE, isVisible: isMale, skip: isGenderless || isOnlyFemale},
       {texture: "shiny_star_small", color: getVariantTint(0), isVisible: isYellowShiny},
@@ -196,12 +196,9 @@ export default class PokedexUiHandler extends MessageUiHandler {
         this.caughtInfoContainer.add(icon);
       } else {
         const icon = this.scene.add.sprite(this.caughtInfoBg.x + a * 10, y + 20, icons[a].texture);
-        icon.setTexture(icons[a].texture);
-        icons[a].frame && icon.setFrame(icons[a].frame);
         icon.setOrigin(0, 0);
         icon.setScale(0.5);
         icons[a].color && icon.setTint(icons[a].color);
-
         !icons[a].isVisible && icon.setTint(0);
         this.caughtInfoContainer.add(icon);
       }
