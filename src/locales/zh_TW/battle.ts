@@ -1,10 +1,10 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const battle: SimpleTranslationEntries = {
   "bossAppeared": "{{bossName}} 出現了.",
   "trainerAppeared": "{{trainerName}}\n想要和你對戰!",
   "trainerAppearedDouble": "{{trainerName}}\n想要和你對戰!",
-  "singleWildAppeared": "一只野生的 {{pokemonName}} 出現了!",
+  "singleWildAppeared": "一隻野生的 {{pokemonName}} 出現了!",
   "multiWildAppeared": "野生的 {{pokemonName1}}\n和 {{pokemonName2}} 出現了!",
   "playerComeBack": "回來吧, {{pokemonName}}!",
   "trainerComeBack": "{{trainerName}} 收回了 {{pokemonName}}!",
@@ -57,5 +57,15 @@ export const battle: SimpleTranslationEntries = {
   "foePokemonWithAffix": "Foe {{pokemonName}}",
   "useMove": "{{pokemonNameWithAffix}} used {{moveName}}!",
   "drainMessage": "{{pokemonName}} had its\nenergy drained!",
-  "regainHealth": "{{pokemonName}} regained\nhealth!"
+  "regainHealth": "{{pokemonName}} regained\nhealth!",
+  "fainted": "{{pokemonNameWithAffix}} fainted!",
+  "statRose": "rose",
+  "statSharplyRose": "sharply rose",
+  "statRoseDrastically": "rose drastically",
+  "statWontGoAnyHigher": "won't go any higher",
+  "statFell": "fell",
+  "statHarshlyFell": "harshly fell",
+  "statSeverelyFell": "severely fell",
+  "statWontGoAnyLower": "won't go any lower",
+  "ppReduced": "It reduced the PP of {{targetName}}'s\n{{moveName}} by {{reduction}}!",
 } as const;

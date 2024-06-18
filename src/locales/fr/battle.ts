@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const battle: SimpleTranslationEntries = {
   "bossAppeared": "Un {{bossName}} apparait.",
@@ -54,11 +54,21 @@ export const battle: SimpleTranslationEntries = {
   "escapeVerbFlee": "la fuite",
   "notDisabled": "La capacité {{moveName}}\nde {{pokemonName}} n’est plus sous entrave !",
   "skipItemQuestion": "Êtes-vous sûr·e de ne pas vouloir prendre d’objet ?",
-  "eggHatching": "Oh ?",
+  "eggHatching": "Hein ?",
   "ivScannerUseQuestion": "Utiliser le Scanner d’IV sur {{pokemonName}} ?",
   "wildPokemonWithAffix": "{{pokemonName}} sauvage",
   "foePokemonWithAffix": "{{pokemonName}} ennemi",
   "useMove": "{{pokemonNameWithAffix}} utilise\n{{moveName}} !",
-  "drainMessage": "{{pokemonName}} had its\nenergy drained!",
-  "regainHealth": "{{pokemonName}} regained\nhealth!"
+  "drainMessage": "L’énergie de {{pokemonName}}\nest drainée !",
+  "regainHealth": "{{pokemonName}} récupère\ndes PV !",
+  "fainted": "{{pokemonNameWithAffix}}\nest K.O. !",
+  "statRose": "rose",
+  "statSharplyRose": "sharply rose",
+  "statRoseDrastically": "rose drastically",
+  "statWontGoAnyHigher": "won't go any higher",
+  "statFell": "fell",
+  "statHarshlyFell": "harshly fell",
+  "statSeverelyFell": "severely fell",
+  "statWontGoAnyLower": "won't go any lower",
+  "ppReduced": "It reduced the PP of {{targetName}}'s\n{{moveName}} by {{reduction}}!",
 } as const;

@@ -1,17 +1,17 @@
 import * as Utils from "../utils";
-import { Challenges } from "./enums/challenges";
-import i18next from "#app/plugins/i18n.js";
+import i18next from "i18next";
 import { DexAttrProps, GameData } from "#app/system/game-data.js";
 import PokemonSpecies, { getPokemonSpecies, getPokemonSpeciesForm, speciesStarters } from "./pokemon-species";
 import Pokemon from "#app/field/pokemon.js";
 import { BattleType, FixedBattleConfig } from "#app/battle.js";
-import { TrainerType } from "./enums/trainer-type";
 import Trainer, { TrainerVariant } from "#app/field/trainer.js";
 import { GameMode } from "#app/game-mode.js";
-import { Species } from "./enums/species";
 import { Type } from "./type";
 import { pokemonEvolutions } from "./pokemon-evolutions";
 import { pokemonFormChanges } from "./pokemon-forms";
+import { Challenges } from "#enums/challenges";
+import { Species } from "#enums/species";
+import { TrainerType } from "#enums/trainer-type";
 
 /**
  * An enum for all the challenge types. The parameter entries on these describe the
@@ -576,7 +576,7 @@ export class LowerStarterPointsChallenge extends Challenge {
 
 /**
  * Apply all challenges of a given challenge type.
- * @param {BattleScene} scene The current scene
+ * @param {GameMode} gameMode The current game mode
  * @param {ChallengeType} challengeType What challenge type to apply
  * @param {any[]} args Any args for that challenge type
  * @returns {boolean} True if any challenge was successfully applied.

@@ -13,16 +13,19 @@ import { getPokemonMessage } from "../messages";
 import * as Utils from "../utils";
 import { TempBattleStat } from "../data/temp-battle-stat";
 import { getBerryEffectFunc, getBerryPredicate } from "../data/berry";
-import { BerryType } from "../data/enums/berry-type";
+import { BattlerTagType} from "#enums/battler-tag-type";
+import { BerryType } from "#enums/berry-type";
 import { StatusEffect, getStatusEffectHealText } from "../data/status-effect";
 import { achvs } from "../system/achv";
 import { VoucherType } from "../system/voucher";
 import { FormChangeItem, SpeciesFormChangeItemTrigger } from "../data/pokemon-forms";
 import { Nature } from "#app/data/nature";
-import { BattlerTagType } from "#app/data/enums/battler-tag-type";
 import * as Overrides from "../overrides";
 import { ModifierType, modifierTypes } from "./modifier-type";
 import { Command } from "#app/ui/command-ui-handler.js";
+
+import { allMoves } from "#app/data/move.js";
+import { Abilities } from "#app/enums/abilities.js";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 
@@ -520,6 +523,18 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
     return 1;
   }
 
+  //Applies to items with chance of activating secondary effects ie Kings Rock
+  getSecondaryChanceMultiplier(pokemon: Pokemon): integer {
+    const sheerForceAffected = allMoves[pokemon.getLastXMoves(0)[0].move].chance >= 0 && pokemon.hasAbility(Abilities.SHEER_FORCE);
+
+    if (sheerForceAffected) {
+      return 0;
+    } else if (pokemon.hasAbility(Abilities.SERENE_GRACE)) {
+      return 2;
+    }
+    return 1;
+  }
+
   getMaxStackCount(scene: BattleScene, forThreshold?: boolean): integer {
     const pokemon = this.getPokemon(scene);
     if (!pokemon) {
@@ -831,7 +846,7 @@ export class FlinchChanceModifier extends PokemonHeldItemModifier {
     const pokemon = args[0] as Pokemon;
     const flinched = args[1] as Utils.BooleanHolder;
 
-    if (!flinched.value && pokemon.randSeedInt(10) < this.getStackCount()) {
+    if (!flinched.value && pokemon.randSeedInt(10) < (this.getStackCount() * this.getSecondaryChanceMultiplier(pokemon))) {
       flinched.value = true;
       return true;
     }
@@ -1091,8 +1106,7 @@ export class PokemonInstantReviveModifier extends PokemonHeldItemModifier {
     pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.getBattlerIndex(),
       Math.max(Math.floor(pokemon.getMaxHp() / 2), 1), getPokemonMessage(pokemon, ` was revived\nby its ${this.type.name}!`), false, false, true));
 
-    pokemon.resetStatus();
-
+    pokemon.resetStatus(true, false, true);
     return true;
   }
 

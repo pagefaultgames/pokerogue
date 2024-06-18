@@ -39,6 +39,7 @@ import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { weather } from "./weather";
 import { partyUiHandler } from "./party-ui-handler";
+import { settings } from "#app/locales/es/settings.js";
 
 export const esConfig = {
   ability: ability,
@@ -74,6 +75,7 @@ export const esConfig = {
   pokemonInfo: pokemonInfo,
   pokemonInfoContainer: pokemonInfoContainer,
   saveSlotSelectUiHandler: saveSlotSelectUiHandler,
+  settings: settings,
   splashMessages: splashMessages,
   starterSelectUiHandler: starterSelectUiHandler,
   titles: titles,

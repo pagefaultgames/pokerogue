@@ -1,4 +1,4 @@
-import { ModifierTypeTranslationEntries } from "#app/plugins/i18n";
+import { ModifierTypeTranslationEntries } from "#app/interfaces/locales";
 
 export const modifierType: ModifierTypeTranslationEntries = {
   ModifierType: {
@@ -153,7 +153,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     SACRED_ASH: { name: "聖灰" },
     REVIVER_SEED: {
       name: "復活種子",
-      description: "恢復1只瀕死寶可夢的HP至1/2。",
+      description: "恢復1隻瀕死寶可夢的HP至1/2。",
     },
     ETHER: { name: "PP單項小補劑" },
     MAX_ETHER: { name: "PP單項全補劑" },
@@ -306,6 +306,19 @@ export const modifierType: ModifierTypeTranslationEntries = {
     x_accuracy: "命中強化",
     dire_hit: "要害攻擊",
   },
+
+  TempBattleStatBoosterStatName: {
+    "ATK": "Attack",
+    "DEF": "Defense",
+    "SPATK": "Sp. Atk",
+    "SPDEF": "Sp. Def",
+    "SPD": "Speed",
+    "ACC": "Accuracy",
+    "CRIT": "Critical Hit Ratio",
+    "EVA": "Evasiveness",
+    "DEFAULT": "???",
+  },
+
   AttackTypeBoosterItem: {
     silk_scarf: "絲綢圍巾",
     black_belt: "黑帶",
