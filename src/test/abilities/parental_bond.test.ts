@@ -39,7 +39,7 @@ describe("Abilities - Parental Bond", () => {
   test(
     "ability should add second strike to attack move",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE])
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
 
       await game.startBattle();
 
@@ -69,9 +69,9 @@ describe("Abilities - Parental Bond", () => {
   test(
     "ability should apply secondary effects to both strikes",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.POWER_UP_PUNCH])
-      vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.AMOONGUSS)
-      
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.POWER_UP_PUNCH]);
+      vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.AMOONGUSS);
+
       await game.startBattle([Species.CHARIZARD]);
 
       const leadPokemon = game.scene.getPlayerPokemon();
@@ -92,7 +92,7 @@ describe("Abilities - Parental Bond", () => {
   test(
     "ability should not apply to Status moves",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.BABY_DOLL_EYES])
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.BABY_DOLL_EYES]);
 
       await game.startBattle([Species.CHARIZARD]);
 
@@ -112,7 +112,7 @@ describe("Abilities - Parental Bond", () => {
   test(
     "ability should not apply to multi-hit moves",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.DOUBLE_HIT])
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.DOUBLE_HIT]);
 
       await game.startBattle([Species.CHARIZARD]);
 
@@ -125,9 +125,9 @@ describe("Abilities - Parental Bond", () => {
       game.doAttack(getMovePosition(game.scene, 0, Moves.DOUBLE_HIT));
 
       await game.phaseInterceptor.to(MoveEffectPhase, false);
-      
+
       vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
-      
+
       await game.phaseInterceptor.to(TurnEndPhase, false);
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
@@ -137,7 +137,7 @@ describe("Abilities - Parental Bond", () => {
   test(
     "ability should not apply to self-sacrifice moves",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SELF_DESTRUCT])
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SELF_DESTRUCT]);
 
       await game.startBattle([Species.CHARIZARD]);
 
@@ -158,7 +158,7 @@ describe("Abilities - Parental Bond", () => {
   test(
     "ability should not apply to Rollout",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.ROLLOUT])
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.ROLLOUT]);
 
       await game.startBattle([Species.CHARIZARD]);
 
@@ -182,7 +182,7 @@ describe("Abilities - Parental Bond", () => {
   test(
     "ability should not apply multiplier to fixed-damage moves",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.DRAGON_RAGE])
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.DRAGON_RAGE]);
 
       await game.startBattle([Species.CHARIZARD]);
 
@@ -204,8 +204,8 @@ describe("Abilities - Parental Bond", () => {
   test(
     "ability should not apply multiplier to counter moves",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.COUNTER])
-      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE])
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.COUNTER]);
+      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
 
       await game.startBattle([Species.CHARIZARD]);
 
