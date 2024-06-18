@@ -4246,7 +4246,7 @@ export class AddArenaTrapTagAttr extends AddArenaTagAttr {
       }
 
       const tag = user.scene.arena.getTagOnSide(this.tagType, side) as ArenaTrapTag;
-      return tag.layers < tag.maxLayers;
+      return tag && tag.layers < tag.maxLayers;
     };
   }
 }
