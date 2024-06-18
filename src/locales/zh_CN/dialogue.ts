@@ -942,7 +942,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "ramos": {
     "encounter": {
-      1: "我用那些强壮的植物\n盖出来的游乐场精彩吗？$它们的力量象征著我这个园丁兼道馆馆主的实力，\n你真的确定能够与之抗衡吗？",
+      1: "我用那些强壮的植物\n盖出来的游乐场精彩吗？$它们的力量象征着我这个园丁兼道馆馆主的实力，\n你真的确定能够与之抗衡吗？",
     },
     "victory": {
       1: "你信任你的宝可梦，\n它们也信任你…不错的战斗，小豆芽。",
@@ -1278,13 +1278,13 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "agatha": {
     "encounter": {
-      1: "Pokémon are for battling! I'll show you how a real Trainer battles!"
+      1: "宝可梦是为战斗而生的！ \n让我来告诉你什么是真正的战斗吧！"
     },
     "victory": {
-      1: "Oh my! You're something special, child!"
+      1: "呵呵！你可真是了不起！"
     },
     "defeat": {
-      1: "Bahaha. That's how a proper battle's done!"
+      1: "额哈哈哈，真正的战斗就是该这样。"
     }
   },
   "flint": {
@@ -2062,7 +2062,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "@c{smile_wave}哦，真巧，在这里遇见你。\n看来你还没输过嘛。@c{angry_mopen}哈……好家伙！$@c{angry_mopen}我知道你在想什么，\n不，我才不会跟踪你什么呢。 @c{smile_eclosed}我只是碰巧在附近。$@c{smile_ehalf}我为你感到高兴，但我只想让你知道\n有时输了是可以接受的。$@c{smile}我们从错误中学到的东西\n往往比我们一直成功时学到的还要多。$@c{angry_mopen}无论如何，我为了我们的复赛已经努力训练了\n所以你最好全力以赴！",
     },
     "victory": {
-      1: "@c{neutral}我……没打算会输来着……$@c{smile}嗷……好吧。看来我要再更加努力训练了！$@c{smile_wave}我还给你带了个这个$@c{smile_wave_wink}不用谢我哦~.$@c{angry_mopen}不过，这是最后一个啦！\n 你可别想再从我这赚小便宜了~$@c{smile_wave}要保重哦！",
+      1: "@c{neutral}我……没打算会输来着……$@c{smile}嗷……好吧。看来我要再更加努力训练了！$@c{smile_wave}我还给你带了个这个$@c{smile_wave_wink}不用谢我哦~.$@c{angry_mopen}不过，这是最后一个啦！\n你可别想再从我这赚小便宜了~$@c{smile_wave}要保重哦！",
     },
     "defeat": {
       1: "输了有时候也不要紧的…",
@@ -2078,7 +2078,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "rival_3_female": {
     "encounter": {
-      1: "@c{smile_wave}好久不见！还没输过，对吧。$@c{angry}我觉得你点烦了。@c{smile_wave_wink}开玩笑啦！$@c{smile_ehalf}但说真的，你现在不想家吗？\n 不想…我吗?$我……我的意思是，我们真的很想你。$@c{smile_eclosed}我支持你的一切，包括你的梦想。\n但现实就是你早晚会经历失败。$@c{smile}当你失败的时候，我想像往常一样陪在你身边。$@c{angry_mopen}}现在，给你看看我变得多强了吧！",
+      1: "@c{smile_wave}好久不见！还没输过，对吧。$@c{angry}我觉得你点烦了。@c{smile_wave_wink}开玩笑啦！$@c{smile_ehalf}但说真的，你现在不想家吗？\n不想…我吗?$我……我的意思是，我们真的很想你。$@c{smile_eclosed}我支持你的一切，包括你的梦想。\n但现实就是你早晚会经历失败。$@c{smile}当你失败的时候，我想像往常一样陪在你身边。$@c{angry_mopen}现在，给你看看我变得多强了吧！",
     },
     "victory": {
       1: "@c{shock}都这样了……还是不够吗？$这样下去，你就永远不会回来了……",
