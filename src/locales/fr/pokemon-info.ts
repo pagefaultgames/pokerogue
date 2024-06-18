@@ -13,7 +13,9 @@ export const pokemonInfo: PokemonInfoTranslationEntries = {
     "SPDEF": "Déf. Spé.",
     "SPDEFshortened": "DéfSp",
     "SPD": "Vitesse",
-    "SPDshortened": "Vit"
+    "SPDshortened": "Vit",
+    "ACC": "Accuracy",
+    "EVA": "Evasiveness"
   },
 
   Type: {

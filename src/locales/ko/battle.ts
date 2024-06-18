@@ -62,4 +62,12 @@ export const battle: SimpleTranslationEntries = {
   "drainMessage": "{{pokemonName}}[[로]]부터\n체력을 흡수했다!",
   "regainHealth": "{{pokemonName}}[[는]]\n기력을 회복했다!",
   "fainted": "{{pokemonNameWithAffix}}[[는]] 쓰러졌다!",
+  "statRose": "상승했다",
+  "statSharplyRose": "약간 상승했다",
+  "statRoseDrastically": "대폭 상승했다",
+  "statWontGoAnyHigher": "더 이상 상승할 수 없다",
+  "statFell": "떨어졌다",
+  "statHarshlyFell": "약간 떨어졌다",
+  "statSeverelyFell": "대폭 떨어졌다",
+  "statWontGoAnyLower": "더 이상 떨어질 수 없다",
 } as const;

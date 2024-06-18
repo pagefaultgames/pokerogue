@@ -44,6 +44,7 @@ export interface ModifierTypeTranslationEntries {
   ModifierType: { [key: string]: ModifierTypeTranslationEntry },
   AttackTypeBoosterItem: SimpleTranslationEntries,
   TempBattleStatBoosterItem: SimpleTranslationEntries,
+  TempBattleStatBoosterStatName: SimpleTranslationEntries,
   BaseStatBoosterItem: SimpleTranslationEntries,
   EvolutionItem: SimpleTranslationEntries,
   FormChangeItem: SimpleTranslationEntries,
@@ -96,10 +97,15 @@ const fonts = [
   ),
 ];
 
-function initFonts() {
-  fonts.forEach((fontFace: FontFace) => {
-    fontFace.load().then(f => document.fonts.add(f)).catch(e => console.error(e));
-  });
+async function initFonts() {
+  const results = await Promise.allSettled(fonts.map(font => font.load()));
+  for (const result of results) {
+    if (result.status === "fulfilled") {
+      document.fonts?.add(result.value);
+    } else {
+      console.error(result.reason);
+    }
+  }
 }
 
 export async function initI18n(): Promise<void> {
@@ -108,8 +114,6 @@ export async function initI18n(): Promise<void> {
     return;
   }
   isInitialized = true;
-
-  initFonts();
 
   /**
    * i18next is a localization library for maintaining and using translation resources.
@@ -172,6 +176,8 @@ export async function initI18n(): Promise<void> {
     },
     postProcess: ["korean-postposition"],
   });
+
+  await initFonts();
 }
 
 // Module declared to make referencing keys in the localization files type-safe.
@@ -222,6 +228,7 @@ declare module "i18next" {
       tutorial: SimpleTranslationEntries;
       voucher: SimpleTranslationEntries;
       weather: SimpleTranslationEntries;
+      battleStat: SimpleTranslationEntries;
     };
   }
 }

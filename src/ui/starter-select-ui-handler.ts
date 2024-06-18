@@ -787,6 +787,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
       this.starterSelectContainer.setVisible(true);
 
+      this.setCursor(0);
       this.setGenMode(false);
       this.setCursor(0);
       this.setGenMode(true);
@@ -1446,6 +1447,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               }
             } while (newVariant !== props.variant);
             this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, newVariant, undefined, undefined);
+
+            // Cycle tint based on current sprite tint
+            const tint = getVariantTint(newVariant);
+            this.variantLabel.setTint(tint);
+
             success = true;
           }
           break;
@@ -1715,8 +1721,15 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
       this.cursorObj.setPosition(150 + 18 * (cursor % 9), 10 + 18 * Math.floor(cursor / 9));
 
-      this.setSpecies(this.genSpecies[this.getGenCursorWithScroll()][cursor]);
+      const species = this.genSpecies[this.getGenCursorWithScroll()][cursor];
 
+      const defaultDexAttr = this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true);
+      const defaultProps = this.scene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
+      const variant = defaultProps.variant;
+      const tint = getVariantTint(variant);
+
+      this.variantLabel.setTint(tint);
+      this.setSpecies(species);
       this.updateInstructions();
     }
 

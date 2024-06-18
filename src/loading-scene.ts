@@ -41,6 +41,7 @@ export class LoadingScene extends SceneBase {
 
     this.loadImage("loading_bg", "arenas");
     this.loadImage("logo", "");
+    this.loadImage("pride-update", "events");
 
     // Load menu images
     this.loadAtlas("bg", "ui");

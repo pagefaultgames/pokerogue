@@ -71,4 +71,7 @@ export default class MockRectangle {
   getAll() {
     return this.list;
   }
+  setScale(scale) {
+    // return this.phaserText.setScale(scale);
+  }
 }

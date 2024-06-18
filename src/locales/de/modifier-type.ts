@@ -249,6 +249,20 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "x_accuracy": "X-Treffer",
     "dire_hit": "X-Volltreffer",
   },
+
+  TempBattleStatBoosterStatName: {
+    "ATK": "Angriff",
+    "DEF": "Verteidigung",
+    "SPATK": "Sp. Ang",
+    "SPDEF": "Sp. Vert",
+    "SPD": "Initiative",
+    "ACC": "Genauigkeit",
+    "CRIT": "Volltrefferquote",
+    "EVA": "Fluchtwert",
+    "DEFAULT": "???",
+  },
+
+
   AttackTypeBoosterItem: {
     "silk_scarf": "Seidenschal",
     "black_belt": "Schwarzgurt",
