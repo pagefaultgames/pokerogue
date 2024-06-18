@@ -3,379 +3,379 @@ import { AbilityTranslationEntries } from "#app/plugins/i18n.js";
 export const ability: AbilityTranslationEntries = {
   stench: {
     name: "Stench",
-    description: "By releasing stench when attacking, this Pokémon may cause the target to flinch.",
+    description: "การปล่อยกลิ่นเหม็นเมื่อโจมตี โปเกมอนนี้อาจทำให้เป้าหมายชะงัก",
   },
   drizzle: {
     name: "Drizzle",
-    description: "The Pokémon makes it rain when it enters a battle.",
+    description: "โปเกมอนจะทำให้ฝนตกเมื่อเข้าสู่การต่อสู้",
   },
   speedBoost: {
     name: "Speed Boost",
-    description: "Its Speed stat is boosted every turn.",
+    description: "สถานะความเร็วจะเพิ่มขึ้นทุกเทิร์น",
   },
   battleArmor: {
     name: "Battle Armor",
-    description: "Hard armor protects the Pokémon from critical hits.",
+    description: "เกราะแข็งช่วยปกป้องโปเกมอนจากการโจมตีคริติคอล",
   },
   sturdy: {
     name: "Sturdy",
-    description: "It cannot be knocked out with one hit. One-hit KO moves cannot knock it out, either.",
+    description: "ไม่สามารถทำให้น็อคได้ด้วยการโจมตีเพียงครั้งเดียว การโจมตี KO เพียงครั้งเดียวก็ไม่สามารถทำให้น็อคได้เช่นกัน",
   },
   damp: {
     name: "Damp",
-    description: "Prevents the use of explosive moves, such as Self-Destruct, by dampening its surroundings.",
+    description: "ป้องกันการใช้การโจมตีที่ระเบิดออกมา เช่น การทำลายตนเอง โดยทำให้บริเวณโดยรอบชื้น",
   },
   limber: {
     name: "Limber",
-    description: "Its limber body protects the Pokémon from paralysis.",
+    description: "ร่างกายที่อ่อนนุ่มช่วยปกป้องโปเกมอนจากการอัมพาต",
   },
   sandVeil: {
     name: "Sand Veil",
-    description: "Boosts the Pokémon's evasiveness in a sandstorm.",
+    description: "เพิ่มความสามารถในการหลบหลีกของโปเกมอนเมื่ออยู่ในพายุทราย",
   },
   static: {
     name: "Static",
-    description: "The Pokémon is charged with static electricity, so contact with it may cause paralysis.",
+    description: "โปเกมอนมีประจุไฟฟ้าสถิต ดังนั้นการสัมผัสกับโปเกมอนอาจทำให้เกิดอัมพาตได้",
   },
   voltAbsorb: {
     name: "Volt Absorb",
-    description: "Restores HP if hit by an Electric-type move instead of taking damage.",
+    description: "ฟื้นฟู HP หากโดนโจมตีด้วยท่าประเภทไฟฟ้า แทนที่จะได้รับความเสียหาย",
   },
   waterAbsorb: {
     name: "Water Absorb",
-    description: "Restores HP if hit by a Water-type move instead of taking damage.",
+    description: "ฟื้นฟู HP หากโดนโจมตีด้วยท่าประเภท Water แทนที่จะได้รับความเสียหาย",
   },
   oblivious: {
     name: "Oblivious",
-    description: "The Pokémon is oblivious, and that keeps it from being infatuated or falling for taunts.",
+    description: "โปเกมอนจะหลงลืม และนั่นช่วยป้องกันไม่ให้มันหลงใหลหรือตกหลุมรักการเยาะเย้ย",
   },
   cloudNine: {
     name: "Cloud Nine",
-    description: "Eliminates the effects of weather.",
+    description: "ขจัดผลกระทบจากสภาพอากาศ",
   },
   compoundEyes: {
     name: "Compound Eyes",
-    description: "The Pokémon's compound eyes boost its accuracy.",
+    description: "Compound Eyes ช่วยเพิ่มความแม่นยำให้กับโปเกมอน",
   },
   insomnia: {
     name: "Insomnia",
-    description: "The Pokémon is suffering from insomnia and cannot fall asleep.",
+    description: "โปเกมอนมีอาการนอนไม่หลับและไม่สามารถหลับได้",
   },
   colorChange: {
     name: "Color Change",
-    description: "The Pokémon's type becomes the type of the move used on it.",
+    description: "ประเภทของโปเกมอนจะกลายเป็นประเภทของท่าที่ใช้กับมัน",
   },
   immunity: {
     name: "Immunity",
-    description: "The immune system of the Pokémon prevents it from getting poisoned.",
+    description: "ระบบภูมิคุ้มกันของโปเกมอนป้องกันไม่ให้มันได้รับพิษ",
   },
   flashFire: {
     name: "Flash Fire",
-    description: "Powers up the Pokémon's Fire-type moves if it's hit by one.",
+    description: "เพิ่มพลังให้กับท่าประเภทไฟของโปเกมอนหากถูกโจมตีด้วยท่าเดียว",
   },
   shieldDust: {
     name: "Shield Dust",
-    description: "This Pokémon's dust blocks the additional effects of attacks taken.",
+    description: "ฝุ่นของโปเกมอนนี้จะบล็อกเอฟเฟกต์เพิ่มเติมของการโจมตีที่ได้รับ",
   },
   ownTempo: {
     name: "Own Tempo",
-    description: "This Pokémon has its own tempo, and that prevents it from becoming confused.",
+    description: "โปเกมอนตัวนี้มีจังหวะของเป็นตัวเอง และช่วยป้องกันไม่ให้มันสับสน",
   },
   suctionCups: {
     name: "Suction Cups",
-    description: "This Pokémon uses suction cups to stay in one spot to negate all moves and items that force switching out.",
+    description: "โปเกมอนตัวนี้ใช้ถ้วยเพื่อดูดให้อยู่ในจุดเดียวเพื่อลบล้างการเคลื่อนไหวและไอเท็มทั้งหมดที่บังคับให้เปลี่ยนออก",
   },
   intimidate: {
     name: "Intimidate",
-    description: "The Pokémon intimidates opposing Pokémon upon entering battle, lowering their Attack stat.",
+    description: "โปเกมอนจะข่มขู่โปเกมอนฝ่ายตรงข้ามเมื่อเข้าสู่การต่อสู้ ซึ่งจะทำให้สถานะการโจมตีศัตรูลดลง",
   },
   shadowTag: {
     name: "Shadow Tag",
-    description: "This Pokémon steps on the opposing Pokémon's shadow to prevent it from escaping.",
+    description: "โปเกมอนนี้จะเหยียบเงาของโปเกมอนฝ่ายตรงข้ามเพื่อป้องกันไม่ให้มันหลบหนี",
   },
   roughSkin: {
     name: "Rough Skin",
-    description: "This Pokémon inflicts damage with its rough skin to the attacker on contact.",
+    description: "โปเกมอนตัวนี้สร้างความเสียหายด้วยผิวหนังที่หยาบกร้านแก่ผู้โจมตีเมื่อสัมผัสกัน",
   },
   wonderGuard: {
     name: "Wonder Guard",
-    description: "Its mysterious power only lets supereffective moves hit the Pokémon.",
+    description: "พลังลึกลับของมันเท่านั้นที่จะทำให้มีการโจมตีมีประสิทธิภาพสูงเมื่อโจมตีโปเกมอน",
   },
   levitate: {
     name: "Levitate",
-    description: "By floating in the air, the Pokémon receives full immunity to all Ground-type moves.",
+    description: "เมื่อลอยอยู่ในอากาศ โปเกมอนจะได้รับภูมิคุ้มกันเต็มที่ต่อท่าประเภทพื้นดินทั้งหมด",
   },
   effectSpore: {
     name: "Effect Spore",
-    description: "Contact with the Pokémon may inflict poison, sleep, or paralysis on its attacker.",
+    description: "การสัมผัสกับโปเกมอนอาจทำให้ผู้โจมตีติดพิษ หลับ หรือเป็นอัมพาตได้",
   },
   synchronize: {
     name: "Synchronize",
-    description: "The attacker will receive the same status condition if it inflicts a burn, poison, or paralysis to the Pokémon.",
+    description: "ผู้โจมตีจะได้รับสถานะสถานะเดียวกันหากทำให้โปเกมอนถูกเผาไหม้ วางยาพิษ หรือเป็นอัมพาต",
   },
   clearBody: {
     name: "Clear Body",
-    description: "Prevents other Pokémon's moves or Abilities from lowering the Pokémon's stats.",
+    description: "ป้องกันการเคลื่อนไหวหรือความสามารถของโปเกมอนตัวอื่นจากการลดสถิติของโปเกมอน",
   },
   naturalCure: {
     name: "Natural Cure",
-    description: "All status conditions heal when the Pokémon switches out.",
+    description: "สภาวะสถานะทั้งหมดจะหายเมื่อเปลี่ยนตัวโปเกมอน",
   },
   lightningRod: {
     name: "Lightning Rod",
-    description: "The Pokémon draws in all Electric-type moves. Instead of being hit by Electric-type moves, it boosts its Sp. Atk.",
+    description: "โปเกมอนจะดึงท่าประเภทไฟฟ้าทั้งหมด แทนที่จะถูกโจมตีด้วยท่าประเภทไฟฟ้า แต่มันจะเพิ่ม Sp. Atk",
   },
   sereneGrace: {
     name: "Serene Grace",
-    description: "Boosts the likelihood of additional effects occurring when attacking.",
+    description: "เพิ่มโอกาสที่จะเกิดเอฟเฟกต์เพิ่มเติมเมื่อโจมตี",
   },
   swiftSwim: {
     name: "Swift Swim",
-    description: "Boosts the Pokémon's Speed stat in rain.",
+    description: "เพิ่มสถานะความเร็วของโปเกมอนท่ามกลางสายฝน",
   },
   chlorophyll: {
     name: "Chlorophyll",
-    description: "Boosts the Pokémon's Speed stat in harsh sunlight.",
+    description: "เพิ่มสถานะความเร็วของโปเกมอนในแสงแดดจ้า",
   },
   illuminate: {
     name: "Illuminate",
-    description: "By illuminating its surroundings, the Pokémon raises the likelihood of meeting wild Pokémon and prevents its accuracy from being lowered.",
+    description: "ด้วยการส่องสว่างรอบๆ ตัวโปเกมอนจะเพิ่มโอกาสที่จะพบกับโปเกมอนป่า และป้องกันไม่ให้ความแม่นยำของมันลดลง",
   },
   trace: {
     name: "Trace",
-    description: "When it enters a battle, the Pokémon copies an opposing Pokémon's Ability.",
+    description: "เมื่อมันเข้าสู่การต่อสู้ โปเกมอนจะคัดลอกความสามารถของโปเกมอนฝ่ายตรงข้าม",
   },
   hugePower: {
     name: "Huge Power",
-    description: "Doubles the Pokémon's Attack stat.",
+    description: "เพิ่มค่าพลังโจมตีสองเท่า",
   },
   poisonPoint: {
     name: "Poison Point",
-    description: "Contact with the Pokémon may poison the attacker.",
+    description: "การสัมผัสกับโปเกมอนอาจทำให้ฝ่ายโจมตีติดพิษ",
   },
   innerFocus: {
     name: "Inner Focus",
-    description: "The Pokémon's intensely focused, and that protects the Pokémon from flinching.",
+    description: "สมาธิที่แน่วแน่ ป้องกันไม่ให้โปเกมอนสะดุ้ง",
   },
   magmaArmor: {
     name: "Magma Armor",
-    description: "The Pokémon is covered with hot magma, which prevents the Pokémon from becoming frozen.",
+    description: "ปกคลุมด้วยแม็กม่าร้อน ป้องกันไม่ให้โปเกมอนติดแช่แข็ง",
   },
   waterVeil: {
     name: "Water Veil",
-    description: "The Pokémon is covered with a water veil, which prevents the Pokémon from getting a burn.",
+    description: "ปกคลุมด้วยม่านน้ำ ป้องกันไม่ให้โปเกมอนติดไฟ",
   },
   magnetPull: {
     name: "Magnet Pull",
-    description: "Prevents Steel-type Pokémon from escaping using its magnetic force.",
+    description: "ใช้พลังแม่เหล็กป้องกันโปเกมอนธาตุเหล็กหนีออกจากสนาม",
   },
   soundproof: {
     name: "Soundproof",
-    description: "Soundproofing gives the Pokémon full immunity to all sound-based moves.",
+    description: "Soundproof จะทำให้โปเกมอนมีภูมิคุ้มกันต่อทักษะธาตุเสียงทั้งหมด",
   },
   rainDish: {
     name: "Rain Dish",
-    description: "The Pokémon gradually regains HP in rain.",
+    description: "โปเกมอนจะค่อยๆได้รับ HP กลับมาเมื่ออยู่ในสภาพอากาศฝนตก",
   },
   sandStream: {
     name: "Sand Stream",
-    description: "The Pokémon summons a sandstorm when it enters a battle.",
+    description: "โปเกมอนสร้างพายุทรายขึ้นเมื่อเข้าสู่การต่อสู้",
   },
   pressure: {
     name: "Pressure",
-    description: "By putting pressure on the opposing Pokémon, it raises their PP usage.",
+    description: "โดยการกดดันโปเกมอนตรงข้าม ทำให้การใช้ PP ของพวกมันเพิ่มขึ้น",
   },
   thickFat: {
     name: "Thick Fat",
-    description: "The Pokémon is protected by a layer of thick fat, which halves the damage taken from Fire- and Ice-type moves.",
+    description: "โปเกมอนได้รับการป้องกันด้วยชั้นไขมันหนา ซึ่งลดความเสียหายที่ได้รับจากการโจมตีประเภทไฟและน้ำแข็งลงครึ่งหนึ่ง",
   },
   earlyBird: {
     name: "Early Bird",
-    description: "The Pokémon awakens from sleep twice as fast as other Pokémon.",
+    description: "โปเกมอนตื่นจากการหลับได้เร็วขึ้นสองเท่าเมื่อเทียบกับโปเกมอนอื่น",
   },
   flameBody: {
     name: "Flame Body",
-    description: "Contact with the Pokémon may burn the attacker.",
+    description: "การสัมผัสกับโปเกมอนอาจทำให้ผู้โจมตีถูกไหม้",
   },
   runAway: {
     name: "Run Away",
-    description: "Enables a sure getaway from wild Pokémon.",
+    description: "ช่วยให้หลบหนีจากโปเกมอนป่าได้อย่างแน่นอน",
   },
   keenEye: {
     name: "Keen Eye",
-    description: "Keen eyes prevent other Pokémon from lowering this Pokémon's accuracy.",
+    description: "ดวงตาที่คมชัดช่วยป้องกันไม่ให้โปเกมอนตัวอื่นลดความแม่นยำของโปเกมอนตัวนี้",
   },
   hyperCutter: {
     name: "Hyper Cutter",
-    description: "The Pokémon's proud of its powerful pincers. They prevent other Pokémon from lowering its Attack stat.",
+    description: "โปเกมอนภูมิใจในกระดูกคีบที่แข็งแกร่งของมัน พวกมันป้องกันไม่ให้โปเกมอนตัวอื่นลดสถิติการโจมตีของมัน",
   },
   pickup: {
     name: "Pickup",
-    description: "The Pokémon may pick up the item an opposing Pokémon held during a battle.",
+    description: "โปเกมอนอาจหยิบข้าวของที่โปเกมอนตรงข้ามถือระหว่างการต่อสู้ได้",
   },
   truant: {
     name: "Truant",
-    description: "The Pokémon can't use a move if it had used a move on the previous turn.",
+    description: "โปเกมอนไม่สามารถใช้ท่าไม้ตายได้ถ้าได้ใช้ท่าไม้ตายในรอบที่ผ่านมา",
   },
   hustle: {
     name: "Hustle",
-    description: "Boosts the Attack stat, but lowers accuracy.",
+    description: "เพิ่มพลังโจมตี แต่ลดความแม่นยำ"
   },
   cuteCharm: {
     name: "Cute Charm",
-    description: "Contact with the Pokémon may cause infatuation.",
+    description: "การสัมผัสกับโปเกมอนอาจทำให้หลงเสน่ห์ได้"
   },
   plus: {
     name: "Plus",
-    description: "Boosts the Sp. Atk stat of the Pokémon if an ally with the Plus or Minus Ability is also in battle.",
+    description: "เพิ่มพลังโจมตีพิเศษของโปเกมอน ถ้ามีเพื่อนร่วมทีมที่มีความสามารถ Plus หรือ Minus อยู่ในสนาม"
   },
   minus: {
     name: "Minus",
-    description: "Boosts the Sp. Atk stat of the Pokémon if an ally with the Plus or Minus Ability is also in battle.",
+    description: "เพิ่มพลังโจมตีพิเศษของโปเกมอน ถ้ามีเพื่อนร่วมทีมที่มีความสามารถ Plus หรือ Minus อยู่ในสนาม"
   },
   forecast: {
     name: "Forecast",
-    description: "The Pokémon transforms with the weather to change its type to Water, Fire, or Ice.",
+    description: "โปเกมอนจะเปลี่ยนร่างตามสภาพอากาศเพื่อเปลี่ยนธาตุของตัวเองเป็นธาตุ น้ำ, ไฟ, หรือ น้ำแข็ง"
   },
   stickyHold: {
     name: "Sticky Hold",
-    description: "Items held by the Pokémon are stuck fast and cannot be removed by other Pokémon.",
+    description: "ของที่ถือโดยโปเกมอนจะติดและไม่สามารถถอดได้จากโปเกมอนตัวอื่น"
   },
   shedSkin: {
     name: "Shed Skin",
-    description: "The Pokémon may heal its own status conditions by shedding its skin.",
+    description: "โปเกมอนอาจรักษาสภาพของตัวเองได้โดยการลอกหนัง"
   },
   guts: {
     name: "Guts",
-    description: "It's so gutsy that having a status condition boosts the Pokémon's Attack stat.",
+    description: "มีความกล้าหาญมากที่ทำให้ความสามารถในการโจมตีของโปเกมอนเพิ่มขึ้นเมื่อมีสภาพการเปลี่ยนแปลง"
   },
   marvelScale: {
     name: "Marvel Scale",
-    description: "The Pokémon's marvelous scales boost the Defense stat if it has a status condition.",
+    description: "เกล็ดที่ยอดเยี่ยมของโปเกมอนจะเพิ่มความแข็งแกร่งในการป้องกันหากมีสภาพการเปลี่ยนแปลง"
   },
   liquidOoze: {
     name: "Liquid Ooze",
-    description: "The oozed liquid has a strong stench, which damages attackers using any draining move.",
+    description: "ของเหลวที่ไหลออกมีกลิ่นเหม็นเข้มขึ้น ซึ่งทำให้โปเกมอนที่ใช้การโจมตีดรานด์ถูกเสียหาย"
   },
   overgrow: {
     name: "Overgrow",
-    description: "Powers up Grass-type moves when the Pokémon's HP is low.",
+    description: "เพิ่มพลังให้กับการโจมตีธาตุหญ้าเมื่อ HP ของโปเกมอนต่ำลง"
   },
   blaze: {
     name: "Blaze",
-    description: "Powers up Fire-type moves when the Pokémon's HP is low.",
+    description: "เพิ่มพลังให้กับการโจมตีธาตุไฟเมื่อ HP ของโปเกมอนต่ำลง"
   },
   torrent: {
     name: "Torrent",
-    description: "Powers up Water-type moves when the Pokémon's HP is low.",
+    description: "เพิ่มพลังให้กับการโจมตีธาตุน้ำแข็งเมื่อ HP ของโปเกมอนต่ำลง"
   },
   swarm: {
     name: "Swarm",
-    description: "Powers up Bug-type moves when the Pokémon's HP is low.",
+    description: "เพิ่มพลังให้กับการโจมตีธาตุแมลงเมื่อ HP ของโปเกมอนต่ำลง"
   },
   rockHead: {
     name: "Rock Head",
-    description: "Protects the Pokémon from recoil damage.",
+    description: "ป้องกันโปเกมอนไม่ให้เสียหายจากการกระโดดย้อน"
   },
   drought: {
     name: "Drought",
-    description: "Turns the sunlight harsh when the Pokémon enters a battle.",
+    description: "ทำให้แสงแดดแรงขึ้นเมื่อโปเกมอนเข้าสู่การต่อสู้"
   },
   arenaTrap: {
     name: "Arena Trap",
-    description: "Prevents opposing Pokémon from fleeing.",
+    description: "ป้องกันโปเกมอนฝ่ายตรงข้ามไม่ให้หนีไป"
   },
   vitalSpirit: {
     name: "Vital Spirit",
-    description: "The Pokémon is full of vitality, and that prevents it from falling asleep.",
+    description: "โปเกมอนมีชีวิตชีวา ซึ่งป้องกันไม่ให้มันหลับ"
   },
   whiteSmoke: {
     name: "White Smoke",
-    description: "The Pokémon is protected by its white smoke, which prevents other Pokémon from lowering its stats.",
+    description: "โปเกมอนได้รับความคุ้มครองจากควันขาวซึ่งป้องกันไม่ให้โปเกมอนอื่นลดสถานะของมัน"
   },
   purePower: {
     name: "Pure Power",
-    description: "Using its pure power, the Pokémon doubles its Attack stat.",
+    description: "โปเกมอนใช้พลังตัวเองในการเพิ่มค่าโจมตี โดยการทำให้ค่าโจมตีเพิ่ม 2 เท่า"
   },
   shellArmor: {
     name: "Shell Armor",
-    description: "A hard shell protects the Pokémon from critical hits.",
+    description: "เปลือกแข็งช่วยปกป้องโปเกมอนจากการโจมตีคริติคอล"
   },
   airLock: {
     name: "Air Lock",
-    description: "Eliminates the effects of weather.",
+    description: "ลบผลของสภาพอากาศ"
   },
   tangledFeet: {
     name: "Tangled Feet",
-    description: "Raises evasiveness if the Pokémon is confused.",
+    description: "เพิ่มการหลบหลีกหากโปเกมอนมีอาการสับสน"
   },
   motorDrive: {
     name: "Motor Drive",
-    description: "Boosts its Speed stat if hit by an Electric-type move instead of taking damage.",
+    description: "เพิ่มความเร็วของโปเกมอนถ้าโดนโจมตีธาตุไฟ"
   },
   rivalry: {
     name: "Rivalry",
-    description: "Becomes competitive and deals more damage to Pokémon of the same gender, but deals less to Pokémon of the opposite gender.",
+    description: "สร้างความเสียหายให้กับโปเกมอนเพศเดียวกันได้มากขึ้น แต่สร้างความเสียหายให้กับโปเกมอนเพศตรงข้ามได้น้อยกว่า"
   },
   steadfast: {
     name: "Steadfast",
-    description: "The Pokémon's determination boosts the Speed stat each time the Pokémon flinches.",
+    description: "ความมุ่งมั่นของโปเกมอนจะเพิ่มสถานะความเร็วทุกครั้งที่โปเกมอนสะดุ้ง"
   },
   snowCloak: {
     name: "Snow Cloak",
-    description: "Boosts the Pokémon's evasiveness in snow.",
+    description: "เพิ่มความสามารถในการหลบหลีกของโปเกมอนในหิมะ"
   },
   gluttony: {
     name: "Gluttony",
-    description: "Makes the Pokémon eat a held Berry when its HP drops to half or less, which is sooner than usual.",
+    description: "ทำให้โปเกมอนกินเบอร์รี่ที่ถือไว้เมื่อ HP ลดลงเหลือครึ่งหนึ่งหรือน้อยกว่าซึ่งเร็วกว่าปกติ"
   },
   angerPoint: {
     name: "Anger Point",
-    description: "The Pokémon is angered when it takes a critical hit, and that maxes its Attack stat.",
+    description: "โปเกมอนจะโกรธเมื่อได้รับการโจมตีแบบคริติคอล และนั่นจะทำให้สถานะการโจมตีของมันเพิ่มขึ้นสูงสุด"
   },
   unburden: {
     name: "Unburden",
-    description: "Boosts the Speed stat if the Pokémon's held item is used or lost.",
+    description: "เพิ่มความเร็วของโปเกมอนถ้าไอเท็มที่ถือของโปเกมอนถูกใช้หรือสูญหาย"
   },
   heatproof: {
     name: "Heatproof",
-    description: "The heatproof body of the Pokémon halves the damage from Fire-type moves that hit it.",
+    description: "ร่างที่มีอุณหภูมิสูงของโปเกมอนลดความเสียหายจากการโจมตีธาตุไฟลงครึ่งหนึ่ง"
   },
   simple: {
     name: "Simple",
-    description: "The stat changes the Pokémon receives are doubled.",
+    description: "การเปลี่ยนแปลงสถานะที่โปเกมอนได้รับจะเพิ่มขึ้นสองเท่า"
   },
   drySkin: {
     name: "Dry Skin",
-    description: "Restores HP in rain or when hit by Water-type moves. Reduces HP in harsh sunlight, and increases the damage received from Fire-type moves.",
+    description: "ฟื้นฟู HP ท่ามกลางสายฝนหรือเมื่อถูกโจมตีด้วยท่าธาตุน้ำ ลด HP เมื่อถูกแสงแดดจ้า และเพิ่มความเสียหายที่ได้รับจากท่าธาตุไฟ"
   },
   download: {
     name: "Download",
-    description: "Compares an opposing Pokémon's Defense and Sp. Def stats before raising its own Attack or Sp. Atk stat—whichever will be more effective.",
+    description: "เปรียบเทียบ Defense และ Sp ของโปเกมอนฝ่ายตรงข้าม สถิติ Def ก่อนที่จะเพิ่มการโจมตีหรือ Sp ของตัวเอง สถานะ Atk—แล้วแต่จำนวนใดจะมีประสิทธิภาพมากกว่า"
   },
   ironFist: {
     name: "Iron Fist",
-    description: "Powers up punching moves.",
+    description: "เพิ่มพลังให้กับการโจมตีที่ใช้การต่อย"
   },
   poisonHeal: {
     name: "Poison Heal",
-    description: "Restores HP if the Pokémon is poisoned instead of losing HP.",
+    description: "ฟื้นฟู HP ถ้าโปเกมอนถูกพิษแทนที่จะสูญเสีย HP"
   },
   adaptability: {
     name: "Adaptability",
-    description: "Powers up moves of the same type as the Pokémon.",
+    description: "เพิ่มพลังให้กับการโจมตีของธาตุเดียวกับโปเกมอน"
   },
   skillLink: {
     name: "Skill Link",
-    description: "Maximizes the number of times multistrike moves hit.",
+    description: "ทำให้โปเกมอนมีโอกาสสูงสุดในการโจมตีหลายครั้ง"
   },
   hydration: {
     name: "Hydration",
-    description: "Heals status conditions if it's raining.",
+    description: "ฟื้นฟูหากฝนตก"
   },
   solarPower: {
     name: "Solar Power",
-    description: "Boosts the Sp. Atk stat in harsh sunlight, but HP decreases every turn.",
+    description: "ช่วยเพิ่ม Sp. พลังโจมตีเมื่อถูกแสงแดดจ้า แต่ HP ลดลงทุกเทิร์น"
   },
   quickFeet: {
     name: "Quick Feet",
