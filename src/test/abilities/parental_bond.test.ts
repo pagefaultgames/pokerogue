@@ -6,7 +6,7 @@ import { Species } from "#enums/species";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { getMovePosition } from "../utils/gameManagerUtils";
-import { DamagePhase, MoveEffectPhase, TurnEndPhase } from "#app/phases.js";
+import { CommandPhase, DamagePhase, MoveEffectPhase, TurnEndPhase } from "#app/phases.js";
 import { BattleStat } from "#app/data/battle-stat.js";
 
 const TIMEOUT = 20 * 1000;
@@ -226,6 +226,53 @@ describe("Abilities - Parental Bond", () => {
       await game.phaseInterceptor.to(TurnEndPhase, false);
 
       expect(enemyPokemon.hp).toBe(enemyStartingHp - 4*playerDamage);
+    }, TIMEOUT
+  );
+
+  test(
+    "ability should not apply to multi-target moves",
+    async () => {
+      vi.spyOn(Overrides, "DOUBLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+      vi.spyOn(Overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(false);
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.EARTHQUAKE]);
+
+      await game.startBattle([Species.CHARIZARD, Species.PIDGEOT]);
+
+      const playerPokemon = game.scene.getPlayerField();
+      expect(playerPokemon.length).toBe(2);
+      playerPokemon.forEach(p => expect(p).not.toBe(undefined));
+
+      const enemyPokemon = game.scene.getEnemyField();
+      expect(enemyPokemon.length).toBe(2);
+      enemyPokemon.forEach(p => expect(p).not.toBe(undefined));
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.EARTHQUAKE));
+      await game.phaseInterceptor.to(CommandPhase);
+
+      game.doAttack(getMovePosition(game.scene, 1, Moves.EARTHQUAKE));
+      await game.phaseInterceptor.to(TurnEndPhase, false);
+
+      playerPokemon.forEach(p => expect(p.turnData.hitCount).toBe(1));
+    }, TIMEOUT
+  );
+
+  test(
+    "ability should apply to multi-target moves when hitting only one target",
+    async () => {
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.EARTHQUAKE]);
+
+      await game.startBattle([Species.CHARIZARD]);
+
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).not.toBe(undefined);
+
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).not.toBe(undefined);
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.EARTHQUAKE));
+      await game.phaseInterceptor.to(DamagePhase, false);
+
+      expect(leadPokemon.turnData.hitCount).toBe(2);
     }, TIMEOUT
   );
 });

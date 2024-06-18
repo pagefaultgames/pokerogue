@@ -1234,11 +1234,8 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
  * Class for abilities that convert single-strike moves to two-strike moves (i.e. Parental Bond).
  * @param damageMultiplier the damage multiplier for the second strike, relative to the first.
  */
-export class AddTwoStrikeAbAttr extends PreAttackAbAttr {
+export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
   private damageMultiplier: number;
-
-  // This toggles within applyPreAttack() to determine whether the damage multiplier should be applied.
-  private firstStrike: boolean = true;
 
   constructor(damageMultiplier: number) {
     super(false);
@@ -1246,7 +1243,17 @@ export class AddTwoStrikeAbAttr extends PreAttackAbAttr {
     this.damageMultiplier = damageMultiplier;
   }
 
+  /**
+   * Determines whether this attribute can apply to a given move.
+   * @param {Move} move the move to which this attribute may apply
+   * @param numTargets the number of {@linkcode Pokemon} targeted by this move
+   * @returns true if the attribute can apply to the move, false otherwise
+   */
   canApplyPreAttack(move: Move, numTargets: integer): boolean {
+    /**
+     * Parental Bond cannot apply to multi-hit moves, charging moves, or
+     * moves that cause the user to faint.
+     */
     const exceptAttrs: { new(...args: any[]): MoveAttr }[] = [
       MultiHitAttr,
       ChargeAttr,
@@ -1254,6 +1261,9 @@ export class AddTwoStrikeAbAttr extends PreAttackAbAttr {
       SacrificialAttrOnHit
     ];
 
+    /**
+     * Parental Bond cannot apply to these specific moves
+     */
     const exceptMoves: Moves[] = [
       Moves.FLING,
       Moves.UPROAR,
@@ -1262,6 +1272,7 @@ export class AddTwoStrikeAbAttr extends PreAttackAbAttr {
       Moves.ENDEAVOR
     ];
 
+    /** Also check if this move is an Attack move and if it's only targeting one Pokemon */
     return numTargets === 1
       && !exceptAttrs.some(attr => move.hasAttr(attr))
       && !exceptMoves.some(id => move.id === id)
@@ -1271,9 +1282,9 @@ export class AddTwoStrikeAbAttr extends PreAttackAbAttr {
   /**
    * If conditions are met, this doubles the move's hit count (via args[1])
    * or multiplies the damage of secondary strikes (via args[2])
-   * @param pokemon unused
-   * @param passive unused
-   * @param defender unused
+   * @param {Pokemon} pokemon the Pokemon using the move
+   * @param passive n/a
+   * @param defender n/a
    * @param {Move} move the move used by the ability source
    * @param args\[0\] the number of Pokemon this move is targeting
    * @param {Utils.IntegerHolder} args\[1\] the number of strikes with this move
@@ -1290,11 +1301,8 @@ export class AddTwoStrikeAbAttr extends PreAttackAbAttr {
         hitCount.value *= 2;
       }
 
-      if (!!multiplier.value) {
-        if (!this.firstStrike) {
-          multiplier.value *= this.damageMultiplier;
-        }
-        this.firstStrike = !this.firstStrike;
+      if (!!multiplier.value && pokemon.turnData.hitsLeft % 2 === 1) {
+        multiplier.value *= this.damageMultiplier;
       }
       return true;
     }
@@ -4703,7 +4711,7 @@ export function initAbilities() {
     new Ability(Abilities.AERILATE, 6)
       .attr(MoveTypeChangeAttr, Type.FLYING, 1.2, (user, target, move) => move.type === Type.NORMAL),
     new Ability(Abilities.PARENTAL_BOND, 6)
-      .attr(AddTwoStrikeAbAttr, 0.25),
+      .attr(AddSecondStrikeAbAttr, 0.25),
     new Ability(Abilities.DARK_AURA, 6)
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, " is radiating a Dark Aura!"))
       .attr(FieldMoveTypePowerBoostAbAttr, Type.DARK, 4 / 3),
