@@ -4009,6 +4009,10 @@ export class MoneyRewardPhase extends BattlePhase {
 
     this.scene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
 
+    if (this.scene.arena.getTag(ArenaTagType.HAPPY_HOUR)) {
+      moneyAmount.value *= 2;
+    }
+
     this.scene.addMoney(moneyAmount.value);
 
     const userLocale = navigator.language || "en-US";
