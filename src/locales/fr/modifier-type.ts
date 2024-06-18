@@ -1,4 +1,4 @@
-import { ModifierTypeTranslationEntries } from "#app/plugins/i18n";
+import { ModifierTypeTranslationEntries } from "#app/interfaces/locales";
 
 export const modifierType: ModifierTypeTranslationEntries = {
   ModifierType: {
@@ -248,6 +248,19 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "x_accuracy": "Précision +",
     "dire_hit": "Muscle +",
   },
+
+  TempBattleStatBoosterStatName: {
+    "ATK": "Attaque",
+    "DEF": "Défense",
+    "SPATK": "Atq. Spé.",
+    "SPDEF": "Déf. Spé.",
+    "SPD": "Vitesse",
+    "ACC": "Précision",
+    "CRIT": "Taux de critique",
+    "EVA": "Esquive",
+    "DEFAULT": "???",
+  },
+
   AttackTypeBoosterItem: {
     "silk_scarf": "Mouchoir Soie",
     "black_belt": "Ceinture Noire",

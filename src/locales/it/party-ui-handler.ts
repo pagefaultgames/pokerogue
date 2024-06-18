@@ -1,10 +1,10 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const partyUiHandler: SimpleTranslationEntries = {
-  "SEND_OUT": "Send Out",
-  "SUMMARY": "Summary",
-  "CANCEL": "Cancel",
-  "RELEASE": "Release",
-  "APPLY": "Apply",
-  "TEACH": "Teach"
+  "SEND_OUT": "Manda in campo",
+  "SUMMARY": "Sommario",
+  "CANCEL": "Annulla",
+  "RELEASE": "Rilascia",
+  "APPLY": "Applica",
+  "TEACH": "Insegna"
 } as const;

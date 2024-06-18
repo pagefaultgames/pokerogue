@@ -39,6 +39,7 @@ import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { weather } from "./weather";
 import { partyUiHandler } from "./party-ui-handler";
+import { settings } from "#app/locales/ko/settings.js";
 
 export const koConfig = {
   ability: ability,
@@ -74,6 +75,7 @@ export const koConfig = {
   pokemonInfo: pokemonInfo,
   pokemonInfoContainer: pokemonInfoContainer,
   saveSlotSelectUiHandler: saveSlotSelectUiHandler,
+  settings: settings,
   splashMessages: splashMessages,
   starterSelectUiHandler: starterSelectUiHandler,
   titles: titles,

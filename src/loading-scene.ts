@@ -24,6 +24,8 @@ import { Biome } from "#enums/biome";
 import { TrainerType } from "#enums/trainer-type";
 
 export class LoadingScene extends SceneBase {
+  readonly LOAD_EVENTS = Phaser.Loader.Events;
+
   constructor() {
     super("loading");
 
@@ -34,10 +36,6 @@ export class LoadingScene extends SceneBase {
   preload() {
     Utils.localPing();
     this.load["manifest"] = this.game["manifest"];
-
-    if (!isMobile()) {
-      this.load.video("intro_dark", "images/intro_dark.mp4", true);
-    }
 
     this.loadImage("loading_bg", "arenas");
     this.loadImage("logo", "");
@@ -421,58 +419,46 @@ export class LoadingScene extends SceneBase {
     });
     disclaimerDescriptionText.setOrigin(0.5, 0.5);
 
-    disclaimerText.setVisible(false);
-    disclaimerDescriptionText.setVisible(false);
-
-    const intro = this.add.video(0, 0);
-    intro.setOrigin(0, 0);
-    intro.setScale(3);
-
-    this.load.on("progress", (value: string) => {
-      const parsedValue = parseFloat(value);
-      percentText.setText(`${Math.floor(parsedValue * 100)}%`);
-      progressBar.clear();
-      progressBar.fillStyle(0xffffff, 0.8);
-      progressBar.fillRect(midWidth - 320, 360, 640 * parsedValue, 64);
-    });
-
-    this.load.on("fileprogress", file => {
-      assetText.setText(i18next.t("menu:loadingAsset", { assetName: file.key }));
-    });
-
-    loadingGraphics.push(bg, graphics, progressBar, progressBox, logo, percentText, assetText);
+    loadingGraphics.push(bg, graphics, progressBar, progressBox, logo, percentText, assetText, disclaimerText, disclaimerDescriptionText);
 
     if (!mobile) {
       loadingGraphics.map(g => g.setVisible(false));
     }
 
-    const destroyLoadingAssets = () => {
-      intro.destroy();
-      bg.destroy();
-      logo.destroy();
-      progressBar.destroy();
-      progressBox.destroy();
-      percentText.destroy();
-      assetText.destroy();
-    };
+    const intro = this.add.video(0, 0);
+    intro.on(Phaser.GameObjects.Events.VIDEO_COMPLETE, (video: Phaser.GameObjects.Video) => {
+      this.tweens.add({
+        targets: intro,
+        duration: 500,
+        alpha: 0,
+        ease: "Sine.easeIn",
+        onComplete: () => video.destroy(),
+      });
+      loadingGraphics.forEach(g => g.setVisible(true));
+    });
+    intro.setOrigin(0, 0);
+    intro.setScale(3);
 
-    this.load.on("filecomplete", key => {
+    this.load.once(this.LOAD_EVENTS.START, () => {
+      // videos do not need to be preloaded
+      intro.loadURL("images/intro_dark.mp4", true);
+      if (mobile) {
+        intro.video.setAttribute("webkit-playsinline", "webkit-playsinline");
+        intro.video.setAttribute("playsinline", "playsinline");
+      }
+      intro.play();
+    });
+
+    this.load.on(this.LOAD_EVENTS.PROGRESS , (progress: number) => {
+      percentText.setText(`${Math.floor(progress * 100)}%`);
+      progressBar.clear();
+      progressBar.fillStyle(0xffffff, 0.8);
+      progressBar.fillRect(midWidth - 320, 360, 640 * progress, 64);
+    });
+
+    this.load.on(this.LOAD_EVENTS.FILE_COMPLETE, (key: string) => {
+      assetText.setText(i18next.t("menu:loadingAsset", { assetName: key }));
       switch (key) {
-      case "intro_dark":
-        intro.load("intro_dark");
-        intro.on("complete", () => {
-          this.tweens.add({
-            targets: intro,
-            duration: 500,
-            alpha: 0,
-            ease: "Sine.easeIn"
-          });
-          loadingGraphics.map(g => g.setVisible(true));
-          disclaimerText.setVisible(true);
-          disclaimerDescriptionText.setVisible(true);
-        });
-        intro.play();
-        break;
       case "loading_bg":
         bg.setTexture("loading_bg");
         if (mobile) {
@@ -488,7 +474,7 @@ export class LoadingScene extends SceneBase {
       }
     });
 
-    this.load.on("complete", () => destroyLoadingAssets());
+    this.load.on(this.LOAD_EVENTS.COMPLETE, () => loadingGraphics.forEach(go => go.destroy()));
   }
 
   get gameHeight() {

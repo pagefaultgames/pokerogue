@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const biome: SimpleTranslationEntries = {
   "unknownLocation": "기억할 수 없는 곳",

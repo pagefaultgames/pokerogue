@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 /**
  * The menu namespace holds most miscellaneous text that isn't directly part of the game's
@@ -34,8 +34,6 @@ export const menu: SimpleTranslationEntries = {
   "sessionSuccess": "会话加载成功。",
   "failedToLoadSession": "无法加载您的会话数据。它可能已损坏。",
   "boyOrGirl": "你是男孩还是女孩？",
-  "boy": "男孩",
-  "girl": "女孩",
   "evolving": "咦？\n{{pokemonName}} 开始进化了！",
   "stoppedEvolving": "{{pokemonName}} 停止了进化。",
   "pauseEvolutionsQuestion": "你确定要停止 {{pokemonName}} 的进化吗？\n你可以在队伍界面中重新进化。",
@@ -44,11 +42,15 @@ export const menu: SimpleTranslationEntries = {
   "dailyRankings": "每日排名",
   "weeklyRankings": "每周排名",
   "noRankings": "无排名",
+  "positionIcon": "#",
+  "usernameScoreboard": "用户名",
+  "score": "分数",
+  "wave": "层数",
   "loading": "加载中...",
-  "loadingAsset": "Loading asset: {{assetName}}",
+  "loadingAsset": "加载资源： {{assetName}}",
   "playersOnline": "在线玩家",
   "yes": "是",
   "no": "否",
-  "disclaimer": "DISCLAIMER",
-  "disclaimerDescription": "This game is an unfinished product; it might have playability issues (including the potential loss of save data),\n change without notice, and may or may not be updated further or completed."
+  "disclaimer": "免责声明",
+  "disclaimerDescription": "这个游戏尚未完成; 可能存在游戏性问题（包括潜在的丢档风险）、\n 不经通知的调整、 未来可能会更新或完成更多内容",
 } as const;

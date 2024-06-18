@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 /**
  * The menu namespace holds most miscellaneous text that isn't directly part of the game's
@@ -25,7 +25,9 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "addToParty": "加入隊伍",
   "toggleIVs": "查看個體值",
   "manageMoves": "管理技能",
+  "manageNature": "管理性格",
   "useCandies": "使用糖果",
+  "selectNature": "選擇性格",
   "selectMoveSwapOut": "選擇想要替換走的招式",
   "selectMoveSwapWith": "選擇想要替換成的招式",
   "unlockPassive": "解鎖被動",

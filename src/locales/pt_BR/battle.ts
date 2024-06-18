@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const battle: SimpleTranslationEntries = {
   "bossAppeared": "{{bossName}} apareceu.",
@@ -62,4 +62,13 @@ export const battle: SimpleTranslationEntries = {
   "drainMessage": "{{pokemonName}} teve sua\nenergia drenada!",
   "regainHealth": "{{pokemonName}} recuperou\npontos de saúde!",
   "fainted": "{{pokemonNameWithAffix}} desmaiou!",
+  "statRose": "aumentou",
+  "statSharplyRose": "aumentou bruscamente",
+  "statRoseDrastically": "aumentou drasticamente",
+  "statWontGoAnyHigher": "não vai mais aumentar",
+  "statFell": "diminuiu",
+  "statHarshlyFell": "diminuiu duramente",
+  "statSeverelyFell": "diminuiu severamente",
+  "statWontGoAnyLower": "não vai mais diminuir",
+  "ppReduced": "It reduced the PP of {{targetName}}'s\n{{moveName}} by {{reduction}}!",
 } as const;

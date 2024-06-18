@@ -1,4 +1,4 @@
-import { ModifierTypeTranslationEntries } from "#app/plugins/i18n";
+import { ModifierTypeTranslationEntries } from "#app/interfaces/locales";
 
 export const modifierType: ModifierTypeTranslationEntries = {
   ModifierType: {
@@ -247,6 +247,18 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "x_speed": "Velocidad X",
     "x_accuracy": "Precisión X",
     "dire_hit": "Crítico X",
+  },
+
+  TempBattleStatBoosterStatName: {
+    "ATK": "Attack",
+    "DEF": "Defense",
+    "SPATK": "Sp. Atk",
+    "SPDEF": "Sp. Def",
+    "SPD": "Speed",
+    "ACC": "Accuracy",
+    "CRIT": "Critical Hit Ratio",
+    "EVA": "Evasiveness",
+    "DEFAULT": "???",
   },
   AttackTypeBoosterItem: {
     "silk_scarf": "Pañuelo Seda",
