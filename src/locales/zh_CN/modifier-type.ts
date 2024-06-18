@@ -93,7 +93,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "招式命中率增加{{accuracyAmount}} (最大100)。",
     },
     "PokemonMultiHitModifierType": {
-      description: "攻击造成一次额外伤害，每次堆叠额外伤害\n分别衰减60/75/82.5%。",
+      description: "攻击造成一次额外伤害，\n每堆叠一件会让攻击伤害\n衰减60/75/82.5%。",
     },
     "TmModifierType": {
       name: "招式学习器 {{moveId}} - {{moveName}}",
@@ -290,7 +290,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "carbos": "速度增强剂",
   },
   EvolutionItem: {
-    "NONE": "None",
+    "NONE": "无",
 
     "LINKING_CORD": "联系绳",
     "SUN_STONE": "日之石",
@@ -323,7 +323,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "SYRUPY_APPLE": "蜜汁苹果",
   },
   FormChangeItem: {
-    "NONE": "None",
+    "NONE": "无",
 
     "ABOMASITE": "暴雪王进化石",
     "ABSOLITE": "阿勃梭鲁进化石",
