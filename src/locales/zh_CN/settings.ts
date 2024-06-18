@@ -61,7 +61,7 @@ export const settings: SimpleTranslationEntries = {
   "playerGender": "玩家性别",
   "typeHints": "属性提示",
   "masterVolume": "主音量",
-  "bgmVolume": "音乐",	
+  "bgmVolume": "音乐",
   "seVolume": "音效",
   "musicPreference": "音乐偏好",
   "mixed": "全曲混合",
