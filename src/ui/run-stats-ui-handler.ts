@@ -33,7 +33,7 @@ const displayStats: DisplayStat[] = [
       spriteIcon.setPipeline(scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });
       return spriteIcon;
     },
-    sourceFunc: (element, pokemon) => {
+    sourceFunc: (element: Phaser.GameObjects.Sprite, pokemon) => {
       element.setTexture(pokemon.getIconAtlasKey());
       element.setFrame(pokemon.getIconId());
     }
@@ -42,7 +42,7 @@ const displayStats: DisplayStat[] = [
     labelKey: "pokemonName",
     rightPaddingPx: 8,
     setupFunc: defaultTextSetupFunc,
-    sourceFunc: (element, pokemon) => {
+    sourceFunc: (element: Phaser.GameObjects.Text, pokemon) => {
       element.setText(pokemon.name.trim());
     }
   },
@@ -50,7 +50,7 @@ const displayStats: DisplayStat[] = [
     labelKey: "level",
     rightPaddingPx: 8,
     setupFunc: defaultTextSetupFunc,
-    sourceFunc: (element, pokemon) => {
+    sourceFunc: (element: Phaser.GameObjects.Text, pokemon) => {
       element.setText(formatLargeNumber(pokemon.level, 100000));
     }
   },
@@ -58,15 +58,15 @@ const displayStats: DisplayStat[] = [
     labelKey: "metOnWave",
     rightPaddingPx: 8,
     setupFunc: defaultTextSetupFunc,
-    sourceFunc: (element, pokemon) => {
-      element.setText(pokemon.metWave !== 0 ? pokemon.metWave : i18next.t("runStatsUiHandler:starter"));
+    sourceFunc: (element: Phaser.GameObjects.Text, pokemon) => {
+      element.setText(pokemon.metWave !== 0 ? pokemon.metWave.toString() : i18next.t("runStatsUiHandler:starter"));
     }
   },
   {
     labelKey: "kills",
     rightPaddingPx: 8,
     setupFunc: defaultTextSetupFunc,
-    sourceFunc: (element, pokemon) => {
+    sourceFunc: (element: Phaser.GameObjects.Text, pokemon) => {
       element.setText(formatLargeNumber(pokemon.runData.kills, 100000));
     }
   },
@@ -74,7 +74,7 @@ const displayStats: DisplayStat[] = [
     labelKey: "assists",
     rightPaddingPx: 8,
     setupFunc: defaultTextSetupFunc,
-    sourceFunc: (element, pokemon) => {
+    sourceFunc: (element: Phaser.GameObjects.Text, pokemon) => {
       element.setText(formatLargeNumber(pokemon.runData.assists, 100000));
     }
   },
@@ -82,7 +82,7 @@ const displayStats: DisplayStat[] = [
     labelKey: "deaths",
     rightPaddingPx: 8,
     setupFunc: defaultTextSetupFunc,
-    sourceFunc: (element, pokemon) => {
+    sourceFunc: (element: Phaser.GameObjects.Text, pokemon) => {
       element.setText(formatLargeNumber(pokemon.runData.deaths, 100000));
     }
   },
@@ -90,7 +90,7 @@ const displayStats: DisplayStat[] = [
     labelKey: "damageDealt",
     rightPaddingPx: 8,
     setupFunc: defaultTextSetupFunc,
-    sourceFunc: (element, pokemon) => {
+    sourceFunc: (element: Phaser.GameObjects.Text, pokemon) => {
       element.setText(formatLargeNumber(pokemon.runData.damageDealt, 100000));
     }
   },
@@ -98,7 +98,7 @@ const displayStats: DisplayStat[] = [
     labelKey: "damageTaken",
     rightPaddingPx: 8,
     setupFunc: defaultTextSetupFunc,
-    sourceFunc: (element, pokemon) => {
+    sourceFunc: (element: Phaser.GameObjects.Text, pokemon) => {
       element.setText(formatLargeNumber(pokemon.runData.damageTaken, 100000));
     }
   },
