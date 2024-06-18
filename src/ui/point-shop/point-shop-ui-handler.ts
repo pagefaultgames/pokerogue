@@ -540,6 +540,18 @@ export default class PointShopUiHandler extends MessageUiHandler {
       setTextStyle(this.itemHeaderText[i], this.scene, isCurrentCategory ? TextStyle.PARTY_ORANGE : TextStyle.PARTY);
     });
 
+    if (this.currentCategory === 0) {
+      this.itemHeaderCursorLeft.setTint(0x808080);
+    } else {
+      this.itemHeaderCursorLeft.clearTint();
+    }
+
+    if (this.currentCategory === Object.keys(PointShopModifierCategory).length / 2 - 1) {
+      this.itemHeaderCursorRight.setTint(0x808080);
+    } else {
+      this.itemHeaderCursorRight.clearTint();
+    }
+
     // Clamp the cursor between valid values
     this.setCursor(Math.max(0, Math.min(this.cursor, PointShopModifierTypes[this.currentCategory].length - 1)));
 
