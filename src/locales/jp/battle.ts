@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const battle: SimpleTranslationEntries = {
   "bossAppeared": "{{bossName}}が　あらわれた！",
@@ -7,7 +7,7 @@ export const battle: SimpleTranslationEntries = {
   "trainerSendOut": "{{trainerName}}は\n{{pokemonName}}を　くりだした！",
   "singleWildAppeared": "あっ！　やせいの\n{{pokemonName}}が　とびだしてきた！",
   "multiWildAppeared": "あっ！　やせいの　{{pokemonName1}}と\n{{pokemonName2}}が　とびだしてきた！",
-  "playerComeBack": "{{pokemonName}}! もどれ！",
+  "playerComeBack": "{{pokemonName}}!　もどれ！",
   "trainerComeBack": "{{trainerName}}は\n{{pokemonName}}を　ひっこめた！",
   "playerGo": "ゆけっ！　{{pokemonName}}！",
   "trainerGo": "{{trainerName}}は\n{{pokemonName}}を　くりだした！",
@@ -56,11 +56,11 @@ export const battle: SimpleTranslationEntries = {
   "skipItemQuestion": "Are you sure you want to skip taking an item?",
   "eggHatching": "おや？",
   "ivScannerUseQuestion": "Use IV Scanner on {{pokemonName}}?",
-  "wildPokemonWithAffix": "やせいの {{pokemonName}}",
-  "foePokemonWithAffix": "あいての {{pokemonName}}",
-  "useMove": "{{pokemonNameWithAffix}}の {{moveName}}！",
-  "drainMessage": "{{pokemonName}} は\nたいりょくを　すいとった！",
-  "regainHealth": "{{pokemonName}} は\nたいりょくを　かいふくした！",
+  "wildPokemonWithAffix": "やせいの　{{pokemonName}}",
+  "foePokemonWithAffix": "あいての　{{pokemonName}}",
+  "useMove": "{{pokemonNameWithAffix}}の　{{moveName}}！",
+  "drainMessage": "{{pokemonName}}は\nたいりょくを　すいとった！",
+  "regainHealth": "{{pokemonName}}は\nたいりょくを　かいふくした！",
   "fainted": "{{pokemonNameWithAffix}}は　たおれた！",
   "statRose": "あがった",
   "statSharplyRose": "ぐーんと　あがった",
@@ -70,4 +70,5 @@ export const battle: SimpleTranslationEntries = {
   "statHarshlyFell": "がくっと　さがった",
   "statSeverelyFell": "がくーんと　さがった",
   "statWontGoAnyLower": "これいじょう　さがらないr",
+  "ppReduced": "It reduced the PP of {{targetName}}'s\n{{moveName}} by {{reduction}}!",
 } as const;

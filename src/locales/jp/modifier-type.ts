@@ -1,4 +1,4 @@
-import { ModifierTypeTranslationEntries } from "#app/plugins/i18n";
+import { ModifierTypeTranslationEntries } from "#app/interfaces/locales";
 
 export const modifierType: ModifierTypeTranslationEntries = {
   ModifierType: {
@@ -96,11 +96,11 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "こうげきがもういちどあたる。そのたびにいりょくがそれぞれ60/75/82.5%へる",
     },
     "TmModifierType": {
-      name: "わざレコード{{moveId}} - {{moveName}}",
+      name: "TM{{moveId}} - {{moveName}}",
       description: "ポケモンに {{moveName}} をおしえる",
     },
     "TmModifierTypeWithInfo": {
-      name: "わざレコード{{moveId}} - {{moveName}}",
+      name: "TM{{moveId}} - {{moveName}}",
       description: "ポケモンに {{moveName}} をおしえる\n(Hold C or Shift for more info)",
     },
     "EvolutionItemModifierType": {

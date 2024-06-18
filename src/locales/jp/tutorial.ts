@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const tutorial: SimpleTranslationEntries = {
   intro: `PokéRogueへようこそ！ログライク要素が加わったバトル中心のポケモンファンゲームです。

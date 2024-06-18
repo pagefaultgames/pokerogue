@@ -38,6 +38,8 @@ import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { weather } from "./weather";
+import { partyUiHandler } from "./party-ui-handler";
+import { settings } from "#app/locales/jp/settings.js";
 
 export const jpConfig = {
   ability: ability,
@@ -68,11 +70,13 @@ export const jpConfig = {
   modifierType: modifierType,
   move: move,
   nature: nature,
+  partyUiHandler: partyUiHandler,
   pokeball: pokeball,
   pokemon: pokemon,
   pokemonInfo: pokemonInfo,
   pokemonInfoContainer: pokemonInfoContainer,
   saveSlotSelectUiHandler: saveSlotSelectUiHandler,
+  settings: settings,
   splashMessages: splashMessages,
   starterSelectUiHandler: starterSelectUiHandler,
   titles: titles,

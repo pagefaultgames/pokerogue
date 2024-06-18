@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 /**
  * The menu namespace holds most miscellaneous text that isn't directly part of the game's
@@ -23,7 +23,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "eggMoves": "タマゴわざ",
   "start": "始める",
   "addToParty": "えらぶ",
-  "toggleIVs": "こたいちを　ひょうじ",
+  "toggleIVs": "個体値を　ひょうじ",
   "manageMoves": "わざを　ならびかえ",
   "manageNature": "せいかくを　ならびかえ",
   "useCandies": "アメを　つかう",
