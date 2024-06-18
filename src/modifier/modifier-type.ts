@@ -2212,9 +2212,11 @@ type GeneratorModifierOverride = {
  * not set, the generator will either use the party to weight item choice or randomly
  * pick an item.
  *
- * @example STARTING_MODIFIER_OVERRIDE = [{name: "EXP_SHARE", count: 2}] // will have a quantity of 2 in-game
- * @example STARTING_HELD_ITEM_OVERRIDE = [{name: "LUCKY_EGG"}] // will have a quantity of 1 in-game
- * @example {name: "BERRY", type: BerryType.SITRUS} // type must be given to get a specific berry
- * @example {name: "BERRY"} // a random berry will be generated at runtime
+ * @example ```ts
+ * STARTING_MODIFIER_OVERRIDE = [{name: "EXP_SHARE", count: 2}] // will have a quantity of 2 in-game
+ * STARTING_HELD_ITEM_OVERRIDE = [{name: "LUCKY_EGG"}] // will have a quantity of 1 in-game
+ * {name: "BERRY", type: BerryType.SITRUS} // type must be given to get a specific berry
+ * {name: "BERRY"} // a random berry will be generated at runtime
+ * ```
  */
 export type ModifierOverride = GeneratorModifierOverride | BaseModifierOverride;
