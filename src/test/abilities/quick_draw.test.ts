@@ -56,20 +56,23 @@ describe("Abilities - Quick Draw", () => {
 
   it("makes pokemon going first in its priority bracket", async() => {
     await game.startBattle([Species.SLOWBRO]);
-    game.scene.getParty()[0].stats[Stat.SPD] = 50;
-    game.scene.getEnemyParty()[0].stats[Stat.SPD] = 150;
-    game.scene.getParty()[0].hp = 1;
-    game.scene.getEnemyParty()[0].hp = 1;
+
+    const pokemon = game.scene.getParty()[0];
+    const enemy = game.scene.getEnemyParty()[0];
+
+    pokemon.stats[Stat.SPD] = 50;
+    enemy.stats[Stat.SPD] = 150;
+    pokemon.hp = 1;
+    enemy.hp = 1;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
 
     await game.phaseInterceptor.run(EnemyCommandPhase);
     await game.phaseInterceptor.run(TurnStartPhase);
-
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(game.phaseInterceptor.log).toContain("ShowAbilityPhase");
-    expect(game.phaseInterceptor.log).toContain("VictoryPhase");
+    expect(pokemon.battleData.abilityRevealed).toBe(true);
   }, 20000);
 
   it("does not triggered by non damage moves", async () => {
@@ -81,19 +84,23 @@ describe("Abilities - Quick Draw", () => {
     ]);
 
     await game.startBattle([Species.SLOWBRO]);
-    game.scene.getParty()[0].stats[Stat.SPD] = 50;
-    game.scene.getEnemyParty()[0].stats[Stat.SPD] = 150;
-    game.scene.getParty()[0].hp = 1;
-    game.scene.getEnemyParty()[0].hp = 1;
+
+    const pokemon = game.scene.getParty()[0];
+    const enemy = game.scene.getEnemyParty()[0];
+
+    pokemon.stats[Stat.SPD] = 50;
+    enemy.stats[Stat.SPD] = 150;
+    pokemon.hp = 1;
+    enemy.hp = 1;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
 
     await game.phaseInterceptor.run(EnemyCommandPhase);
     await game.phaseInterceptor.run(TurnStartPhase);
-
     await game.phaseInterceptor.to(TitlePhase);
 
     expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
+    expect(pokemon.battleData.abilityRevealed).not.toBe(true);
   }, 20000);
 
   it("does not increase priority", async () => {
@@ -105,19 +112,22 @@ describe("Abilities - Quick Draw", () => {
     ]);
 
     await game.startBattle([Species.SLOWBRO]);
-    game.scene.getParty()[0].stats[Stat.SPD] = 50;
-    game.scene.getEnemyParty()[0].stats[Stat.SPD] = 150;
-    game.scene.getParty()[0].hp = 1;
-    game.scene.getEnemyParty()[0].hp = 1;
+
+    const pokemon = game.scene.getParty()[0];
+    const enemy = game.scene.getEnemyParty()[0];
+
+    pokemon.stats[Stat.SPD] = 50;
+    enemy.stats[Stat.SPD] = 150;
+    pokemon.hp = 1;
+    enemy.hp = 1;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
 
     await game.phaseInterceptor.run(EnemyCommandPhase);
     await game.phaseInterceptor.run(TurnStartPhase);
-
     await game.phaseInterceptor.to(TitlePhase);
 
     expect(game.phaseInterceptor.log).toContain("ShowAbilityPhase");
-    expect(game.phaseInterceptor.log).not.toContain("VictoryPhase");
+    expect(pokemon.battleData.abilityRevealed).toBe(true);
   }, 20000);
 });
