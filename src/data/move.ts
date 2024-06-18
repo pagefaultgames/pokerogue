@@ -1927,6 +1927,7 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
         user.scene.tryTransferHeldItemModifier(stolenItem, user, false).then(success => {
           if (success) {
             user.scene.queueMessage(getPokemonMessage(user, ` stole\n${target.name}'s ${stolenItem.type.name}!`));
+            target.summonData.itemLost = true;
           }
           resolve(success);
         });
@@ -2117,6 +2118,7 @@ export class StealEatBerryAttr extends EatBerryAttr {
     this.chosenBerry = heldBerries[user.randSeedInt(heldBerries.length)];
     const message = i18next.t("battle:stealEatBerry", {pokemonName: user.name, targetName: target.name, berryName: this.chosenBerry.type.name});
     user.scene.queueMessage(message);
+    target.summonData.itemLost = true;
     this.reduceBerryModifier(target);
     this.eatBerry(user);
     return true;
@@ -5324,7 +5326,6 @@ export class MovesetCopyMoveAttr extends OverrideMoveEffectAttr {
     if (!targetMoves.length) {
       return false;
     }
-
     const copiedMove = allMoves[targetMoves[0].move];
 
     const thisMoveIndex = user.getMoveset().findIndex(m => m.moveId === move.id);

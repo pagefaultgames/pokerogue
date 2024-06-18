@@ -2575,6 +2575,7 @@ export class BlockOneHitKOAbAttr extends AbAttr {
   }
 }
 
+
 export class IncrementMovePriorityAbAttr extends AbAttr {
   private moveIncrementFunc: (pokemon: Pokemon, move: Move) => boolean;
   private increaseAmount: integer;
@@ -2722,6 +2723,11 @@ function getAnticipationCondition(): AbAttrCondition {
   };
 }
 
+function getItemLostCondition(): AbAttrCondition {
+  return (pokemon:Pokemon) => {
+    return pokemon.summonData.itemLost;
+  };
+}
 /**
  * Creates an ability condition that causes the ability to fail if that ability
  * has already been used by that pokemon that battle. It requires an ability to
@@ -4442,7 +4448,8 @@ export function initAbilities() {
     new Ability(Abilities.ANGER_POINT, 4)
       .attr(PostDefendCritStatChangeAbAttr, BattleStat.ATK, 6),
     new Ability(Abilities.UNBURDEN, 4)
-      .unimplemented(),
+      .attr(BattleStatMultiplierAbAttr, BattleStat.SPD, 2)
+      .condition(getItemLostCondition()),
     new Ability(Abilities.HEATPROOF, 4)
       .attr(ReceivedTypeDamageMultiplierAbAttr, Type.FIRE, 0.5)
       .ignorable(),
