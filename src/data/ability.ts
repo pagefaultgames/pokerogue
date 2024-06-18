@@ -3765,10 +3765,9 @@ export class BypassSpeedChanceAbAttr extends AbAttr {
     abilityName: string,
     ...args: any[]
   ): string {
-    return getPokemonMessage(
-      pokemon,
-      " can act faster than normal, thanks to its Quick Draw!"
-    );
+    return i18next.t("abilityTriggers:quickDraw", {
+      pokemonName: getPokemonNameWithAffix(pokemon),
+    });
   }
 }
 

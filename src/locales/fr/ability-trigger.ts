@@ -6,5 +6,6 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "windPowerCharged": "{{pokemonName}} a été touché par la capacité {{moveName}} et se charge en électricité !",
   "perishBody": "{{abilityName}} de {{pokemonName}}\nmettra les deux Pokémon K.O. dans trois tours !",
   "poisonHeal": "{{abilityName}} de {{pokemonName}}\nrestaure un peu ses PV !",
-  "iceFaceAvoidedDamage": "{{pokemonName}} évite les dégâts\navec {{abilityName}} !"
+  "iceFaceAvoidedDamage": "{{pokemonName}} évite les dégâts\navec {{abilityName}} !",
+  "quickDraw": "{{pokemonName}} can act faster than normal, thanks to its Quick Draw!"
 } as const;

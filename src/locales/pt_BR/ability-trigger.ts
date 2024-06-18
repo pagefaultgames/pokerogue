@@ -6,5 +6,6 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "windPowerCharged": "Ser atingido por {{moveName}} carregou {{pokemonName}} com poder!",
   "perishBody": "{{abilityName}} de {{pokemonName}}\nirá desmaiar ambos os Pokémon em 3 turnos!",
   "poisonHeal": "{{abilityName}} de {{pokemonName}}\nrestaurou seus PS um pouco!",
-  "iceFaceAvoidedDamage": "{{pokemonName}} evitou\ndanos com sua {{abilityName}}!"
+  "iceFaceAvoidedDamage": "{{pokemonName}} evitou\ndanos com sua {{abilityName}}!",
+  "quickDraw":"{{pokemonName}} can act faster than normal, thanks to its Quick Draw!"
 } as const;

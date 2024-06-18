@@ -5,4 +5,5 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "badDreams": "{{pokemonName}} ist in einem Alptraum gefangen!",
   "windPowerCharged": "Der Treffer durch {{moveName}} läd die Stärke von {{pokemonName}} auf!",
   "iceFaceAvoidedDamage": "{{pokemonName}} wehrt Schaden\nmit {{abilityName}} ab!",
+  "quickDraw": "{{pokemonName}} can act faster than normal, thanks to its Quick Draw!"
 } as const;
