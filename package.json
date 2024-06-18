@@ -56,7 +56,8 @@
 		"koa-router": "^12.0.1",
 		"lru-cache": "^10.2.2",
 		"phaser": "^3.70.0",
-		"phaser3-rex-plugins": "^1.1.84"
+		"phaser3-rex-plugins": "^1.1.84",
+		"rimraf": "^5.0.7"
 	},
 	"engines": {
 		"node": ">=20.0.0"
