@@ -58,7 +58,7 @@ export abstract class Challenge {
   public conditions: ChallengeCondition[];
 
   /**
-   * @param {Challenges} id The enum value for the challenge
+   * @param id {@link Challenges} The enum value for the challenge
    */
   constructor(id: Challenges, maxValue: integer = Number.MAX_SAFE_INTEGER) {
     this.id = id;
@@ -80,7 +80,7 @@ export abstract class Challenge {
 
   /**
    * Gets the localisation key for the challenge
-   * @returns The i18n key for this challenge
+   * @returns {@link string} The i18n key for this challenge
    */
   geti18nKey(): string {
     return Challenges[this.id].split("_").map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join("");
@@ -88,8 +88,8 @@ export abstract class Challenge {
 
   /**
    * Used for unlockable challenges to check if they're unlocked.
-   * @param {GameData} data The save data.
-   * @returns {boolean} Whether this challenge is unlocked.
+   * @param data {@link GameData} The save data.
+   * @returns {@link boolean} Whether this challenge is unlocked.
    */
   isUnlocked(data: GameData): boolean {
     return this.conditions.every(f => f(data));
@@ -97,8 +97,8 @@ export abstract class Challenge {
 
   /**
    * Adds an unlock condition to this challenge.
-   * @param {ChallengeCondition} condition The condition to add.
-   * @returns {Challenge} This challenge
+   * @param condition {@link ChallengeCondition} The condition to add.
+   * @returns {@link Challenge} This challenge
    */
   condition(condition: ChallengeCondition): Challenge {
     this.conditions.push(condition);
@@ -107,7 +107,7 @@ export abstract class Challenge {
   }
 
   /**
-   * @returns {string} The localised name of this challenge.
+   * @returns {@link string} The localised name of this challenge.
    */
   getName(): string {
     return i18next.t(`challenges:${this.geti18nKey()}.name`);
@@ -115,8 +115,8 @@ export abstract class Challenge {
 
   /**
    * Returns the textual representation of a challenge's current value.
-   * @param {value} overrideValue The value to check for. If undefined, gets the current value.
-   * @returns {string} The localised name for the current value.
+   * @param overrideValue {@link integer} The value to check for. If undefined, gets the current value.
+   * @returns {@link string} The localised name for the current value.
    */
   getValue(overrideValue?: integer): string {
     if (overrideValue === undefined) {
@@ -127,8 +127,8 @@ export abstract class Challenge {
 
   /**
    * Returns the description of a challenge's current value.
-   * @param {value} overrideValue The value to check for. If undefined, gets the current value.
-   * @returns {string} The localised description for the current value.
+   * @param overrideValue {@link integer} The value to check for. If undefined, gets the current value.
+   * @returns {@link string} The localised description for the current value.
    */
   getDescription(overrideValue?: integer): string {
     if (overrideValue === undefined) {
@@ -139,7 +139,7 @@ export abstract class Challenge {
 
   /**
    * Increase the value of the challenge
-   * @returns {boolean} Returns true if the value changed
+   * @returns {@link boolean} Returns true if the value changed
    */
   increaseValue(): boolean {
     if (this.value < this.maxValue) {
@@ -151,7 +151,7 @@ export abstract class Challenge {
 
   /**
    * Decrease the value of the challenge
-   * @returns {boolean} Returns true if the value changed
+   * @returns {@link boolean} Returns true if the value changed
    */
   decreaseValue(): boolean {
     if (this.value > 0) {
@@ -170,7 +170,7 @@ export abstract class Challenge {
 
   /**
    * Decrease the severity of the challenge
-   * @returns {boolean} Returns true if the value changed
+   * @returns {@link boolean} Returns true if the value changed
    */
   decreaseSeverity(): boolean {
     if (this.severity > 0) {
@@ -182,7 +182,7 @@ export abstract class Challenge {
 
   /**
    * Increase the severity of the challenge
-   * @returns {boolean} Returns true if the value changed
+   * @returns {@link boolean} Returns true if the value changed
    */
   increaseSeverity(): boolean {
     if (this.severity < this.maxSeverity) {
@@ -194,7 +194,7 @@ export abstract class Challenge {
 
   /**
    * Gets the "difficulty" value of this challenge.
-   * @returns {integer} The difficulty value.
+   * @returns {@link integer} The difficulty value.
    */
   getDifficulty(): integer {
     return this.value;
@@ -202,7 +202,7 @@ export abstract class Challenge {
 
   /**
    * Gets the minimum difficulty added by this challenge.
-   * @returns {integer} The difficulty value.
+   * @returns {@link integer} The difficulty value.
    */
   getMinDifficulty(): integer {
     return 0;
@@ -210,8 +210,8 @@ export abstract class Challenge {
 
   /**
    * Clones a challenge, either from another challenge or json. Chainable.
-   * @param {Challenge | any} source The source challenge of json.
-   * @returns {Challenge} This challenge.
+   * @param source The source challenge or json.
+   * @returns This challenge.
    */
   static loadChallenge(source: Challenge | any): Challenge {
     throw new Error("Method not implemented! Use derived class");
@@ -219,9 +219,9 @@ export abstract class Challenge {
 
   /**
    * An apply function for STARTER_CHOICE challenges. Derived classes should alter this.
-   * @param {PokemonSpecies} pokemon The pokemon to check the validity of.
-   * @param {Utils.BooleanHolder} valid A BooleanHolder, the value gets set to false if the pokemon isn't allowed.
-   * @returns {boolean} Whether this function did anything.
+   * @param pokemon {@link PokemonSpecies} The pokemon to check the validity of.
+   * @param valid {@link Utils.BooleanHolder} A BooleanHolder, the value gets set to false if the pokemon isn't allowed.
+   * @returns {@link boolean} Whether this function did anything.
    */
   applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder): boolean {
     return false;
@@ -229,8 +229,8 @@ export abstract class Challenge {
 
   /**
    * An apply function for STARTER_POINTS challenges. Derived classes should alter this.
-   * @param {Utils.NumberHolder} points The amount of points you have available.
-   * @returns {boolean} Whether this function did anything.
+   * @param points {@link Utils.NumberHolder} The amount of points you have available.
+   * @returns {@link boolean} Whether this function did anything.
    */
   applyStarterPoints(points: Utils.NumberHolder): boolean {
     return false;
@@ -238,8 +238,8 @@ export abstract class Challenge {
 
   /**
    * An apply function for STARTER_MODIFY challenges. Derived classes should alter this.
-   * @param {PlayerPokemon} pokemon The pokemon to modify.
-   * @returns {boolean} Whether this function did anything.
+   * @param pokemon {@link PlayerPokemon} The pokemon to modify.
+   * @returns {@link boolean} Whether this function did anything.
    */
   applyStarterModify(pokemon: PlayerPokemon): boolean {
     return false;
@@ -247,9 +247,9 @@ export abstract class Challenge {
 
   /**
    * An apply function for POKEMON_IN_BATTLE challenges. Derived classes should alter this.
-   * @param {Pokemon} pokemon The pokemon to check the validity of.
-   * @param {valid} valid A BooleanHolder, the value gets set to false if the pokemon isn't allowed.
-   * @returns {boolean} Whether this function did anything.
+   * @param pokemon {@link Pokemon} The pokemon to check the validity of.
+   * @param valid {@link Utils.BooleanHolder} A BooleanHolder, the value gets set to false if the pokemon isn't allowed.
+   * @returns {@link boolean} Whether this function did anything.
    */
   applyPokemonInBattle(pokemon: Pokemon, valid: Utils.BooleanHolder): boolean {
     return false;
@@ -257,9 +257,9 @@ export abstract class Challenge {
 
   /**
    * An apply function for FIXED_BATTLE challenges. Derived classes should alter this.
-   * @param {Number} waveIndex The current wave index.
-   * @param {FixedBattleConfig} battleConfig The battle config to modify.
-   * @returns {boolean} Whether this function did anything.
+   * @param waveIndex {@link Number} The current wave index.
+   * @param battleConfig {@link FixedBattleConfig} The battle config to modify.
+   * @returns {@link boolean} Whether this function did anything.
    */
   applyFixedBattle(waveIndex: Number, battleConfig: FixedBattleConfig): boolean {
     return false;
@@ -518,31 +518,67 @@ export class LowerStarterPointsChallenge extends Challenge {
 }
 
 /**
- * Apply all challenges of a given challenge type.
- * @param {BattleScene} scene The current scene
- * @param {ChallengeType} challengeType What challenge type to apply
- * @param {any[]} args Any args for that challenge type
- * @returns {boolean} True if any challenge was successfully applied.
+ * Apply all challenges that modify starter choice.
+ * @param gameMode {@link GameMode} The current gameMode
+ * @param challengeType {@link ChallengeType} ChallengeType.STARTER_CHOICE
+ * @param pokemon {@link PokemonSpecies} The pokemon to check the validity of.
+ * @param valid {@link Utils.BooleanHolder} A BooleanHolder, the value gets set to false if the pokemon isn't allowed.
+ * @returns True if any challenge was successfully applied.
  */
+export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.STARTER_CHOICE, pokemon: PokemonSpecies, valid: Utils.BooleanHolder): boolean;
+/**
+ * Apply all challenges that modify starter points.
+ * @param gameMode {@link GameMode} The current gameMode
+ * @param challengeType {@link ChallengeType} ChallengeType.STARTER_POINTS
+ * @param points {@link Utils.NumberHolder} The amount of points you have available.
+ * @returns True if any challenge was successfully applied.
+ */
+export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.STARTER_POINTS, points: Utils.NumberHolder): boolean;
+/**
+ * Apply all challenges that modify a starter after selection.
+ * @param gameMode {@link GameMode} The current gameMode
+ * @param challengeType {@link ChallengeType} ChallengeType.STARTER_MODIFY
+ * @param pokemon {@link PlayerPokemon} The pokemon to modify.
+ * @returns True if any challenge was successfully applied.
+ */
+export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.STARTER_MODIFY, pokemon: PlayerPokemon): boolean;
+/**
+ * Apply all challenges that what pokemon you can have in battle.
+ * @param gameMode {@link GameMode} The current gameMode
+ * @param challengeType {@link ChallengeType} ChallengeType.POKEMON_IN_BATTLE
+ * @param pokemon {@link Pokemon} The pokemon to check the validity of.
+ * @param valid {@link Utils.BooleanHolder} A BooleanHolder, the value gets set to false if the pokemon isn't allowed.
+ * @returns True if any challenge was successfully applied.
+ */
+export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.POKEMON_IN_BATTLE, pokemon: Pokemon, valid: Utils.BooleanHolder): boolean;
+/**
+ * Apply all challenges that modify what fixed battles there are.
+ * @param gameMode {@link GameMode} The current gameMode
+ * @param challengeType {@link ChallengeType} ChallengeType.STARTER_CHOICE
+ * @param waveIndex {@link Number} The current wave index.
+ * @param battleConfig {@link FixedBattleConfig} The battle config to modify.
+ * @returns True if any challenge was successfully applied.
+ */
+export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.STARTER_CHOICE, waveIndex: Number, battleConfig: FixedBattleConfig): boolean;
 export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType, ...args: any[]): boolean {
   let ret = false;
   gameMode.challenges.forEach(c => {
     if (c.value !== 0) {
       switch (challengeType) {
       case ChallengeType.STARTER_CHOICE:
-        ret ||= c.applyStarterChoice(...args);
+        ret ||= c.applyStarterChoice(args[0], args[1]);
         break;
       case ChallengeType.STARTER_POINTS:
-        ret ||= c.applyStarterPoints(...args);
+        ret ||= c.applyStarterPoints(args[0]);
         break;
       case ChallengeType.STARTER_MODIFY:
-        ret ||= c.applyStarterModify(...args);
+        ret ||= c.applyStarterModify(args[0]);
         break;
       case ChallengeType.POKEMON_IN_BATTLE:
-        ret ||= c.applyPokemonInBattle(...args);
+        ret ||= c.applyPokemonInBattle(args[0], args[1]);
         break;
       case ChallengeType.FIXED_BATTLES:
-        ret ||= c.applyFixedBattles(...args);
+        ret ||= c.applyFixedBattle(args[0], args[1]);
         break;
       }
     }
