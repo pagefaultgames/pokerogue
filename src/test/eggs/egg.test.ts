@@ -8,7 +8,7 @@ import { EggTier } from "#app/enums/egg-type.js";
 import { VariantTier } from "#app/enums/variant-tiers.js";
 import GameManager from "../utils/gameManager";
 
-describe("getLegendaryGachaSpeciesForTimestamp", () => {
+describe("Egg Generation Tests", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
