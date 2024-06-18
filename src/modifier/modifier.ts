@@ -907,6 +907,11 @@ export class ConditionalStatsBoost extends PokemonHeldItemModifier {
   }
   apply(args: any[]): boolean | Promise<boolean> {
     const targetPokemon = args[0];
+    const active = args[1] as boolean;
+    if (active === false) {
+      targetPokemon.summonData.attack_move_restriction = false;
+      return true;
+    }
     if (targetPokemon.summonData) {
       targetPokemon.stats[this.stat] *= 1.5;
       targetPokemon.summonData.attack_move_restriction = true;
