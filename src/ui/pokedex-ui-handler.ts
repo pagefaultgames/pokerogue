@@ -12,17 +12,16 @@ import { Abilities } from "#app/enums/abilities.js";
 const itemRows = 4;
 const itemCols = 17;
 
-export default class VouchersUiHandler extends MessageUiHandler {
-  private vouchersContainer: Phaser.GameObjects.Container;
-  private voucherIconsContainer: Phaser.GameObjects.Container;
+export default class PokedexUiHandler extends MessageUiHandler {
+  private pokedexContainer: Phaser.GameObjects.Container;
+  private pokedexIconsContainer: Phaser.GameObjects.Container;
 
-  private voucherIconsBg: Phaser.GameObjects.NineSlice;
-  private unlockBg: Phaser.GameObjects.NineSlice;
-  private voucherIcons: Phaser.GameObjects.Sprite[];
-  private voucherSpecies: PokemonSpecies[];
-  private titleText: Phaser.GameObjects.Text;
-  private descriptionContainer: Phaser.GameObjects.Container;
+  private pokedexIconsBg: Phaser.GameObjects.NineSlice;
+  private caughtInfoBg: Phaser.GameObjects.NineSlice;
   private caughtInfoContainer: Phaser.GameObjects.Container;
+  private pokemonIcons: Phaser.GameObjects.Sprite[];
+  private pokemonNameText: Phaser.GameObjects.Text;
+  private formsContainer: Phaser.GameObjects.Container;
 
   private itemsTotal: integer;
   private scrollCursor: integer;
@@ -39,9 +38,9 @@ export default class VouchersUiHandler extends MessageUiHandler {
   setup() {
     const ui = this.getUi();
 
-    this.vouchersContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
+    this.pokedexContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
 
-    this.vouchersContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
+    this.pokedexContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
 
     const headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6) - 2, 24);
     headerBg.setOrigin(0, 0);
@@ -50,13 +49,12 @@ export default class VouchersUiHandler extends MessageUiHandler {
     headerText.setOrigin(0, 0);
     headerText.setPositionRelative(headerBg, 8, 4);
 
-    this.voucherIconsBg = addWindow(this.scene, 0, headerBg.height, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - headerBg.height - 68);
-    this.voucherIconsBg.setOrigin(0, 0);
+    this.pokedexIconsBg = addWindow(this.scene, 0, headerBg.height, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - headerBg.height - 68);
+    this.pokedexIconsBg.setOrigin(0, 0);
 
-    this.voucherIconsContainer = this.scene.add.container(6, headerBg.height + 6);
+    this.pokedexIconsContainer = this.scene.add.container(6, headerBg.height + 6);
 
-    this.voucherIcons = [];
-    this.voucherSpecies = [];
+    this.pokemonIcons = [];
 
     for (let a = 0; a < itemRows * itemCols; a++) {
       const species = allSpecies[a];
@@ -67,82 +65,81 @@ export default class VouchersUiHandler extends MessageUiHandler {
       icon.setOrigin(0, 0);
       icon.setScale(0.5);
 
-      this.voucherIcons.push(icon);
-      this.voucherSpecies.push(species);
-      this.voucherIconsContainer.add(icon);
+      this.pokemonIcons.push(icon);
+      this.pokedexIconsContainer.add(icon);
     }
 
-    const titleBg = addWindow(this.scene, 0, headerBg.height + this.voucherIconsBg.height, 220, 24);
-    titleBg.setOrigin(0, 0);
+    const pokemonNameBg = addWindow(this.scene, 0, headerBg.height + this.pokedexIconsBg.height, 220, 24);
+    pokemonNameBg.setOrigin(0, 0);
 
-    this.titleText = addTextObject(this.scene, 0, 0, "", TextStyle.WINDOW);
-    this.titleText.setOrigin(0, 0);
-    this.titleText.setPositionRelative(titleBg, 8, 4);
+    this.pokemonNameText = addTextObject(this.scene, 0, 0, "", TextStyle.WINDOW);
+    this.pokemonNameText.setOrigin(0, 0);
+    this.pokemonNameText.setPositionRelative(pokemonNameBg, 8, 4);
 
-    this.unlockBg = addWindow(this.scene, titleBg.x + titleBg.width, titleBg.y, 98, 24);
-    this.unlockBg.setOrigin(0, 0);
+    this.caughtInfoBg = addWindow(this.scene, pokemonNameBg.x + pokemonNameBg.width, pokemonNameBg.y, 98, 24);
+    this.caughtInfoBg.setOrigin(0, 0);
 
-    const descriptionBg = addWindow(this.scene, 0, titleBg.y + titleBg.height, (this.scene.game.canvas.width / 6) - 2, 42);
-    descriptionBg.setOrigin(0, 0);
+    const formsBg = addWindow(this.scene, 0, pokemonNameBg.y + pokemonNameBg.height, (this.scene.game.canvas.width / 6) - 2, 42);
+    formsBg.setOrigin(0, 0);
 
-    this.descriptionContainer = this.scene.add.container(6, descriptionBg.y + descriptionBg.height-40);
-    this.caughtInfoContainer = this.scene.add.container(6, this.unlockBg.y + this.unlockBg.height-40);
+    this.formsContainer = this.scene.add.container(6, formsBg.y + formsBg.height - 40);
+    this.caughtInfoContainer = this.scene.add.container(6, this.caughtInfoBg.y + this.caughtInfoBg.height - 40);
 
-    this.vouchersContainer.add(headerBg);
-    this.vouchersContainer.add(headerText);
-    this.vouchersContainer.add(this.voucherIconsBg);
-    this.vouchersContainer.add(this.voucherIconsContainer);
-    this.vouchersContainer.add(titleBg);
-    this.vouchersContainer.add(this.titleText);
-    this.vouchersContainer.add(this.unlockBg);
-    this.vouchersContainer.add(this.caughtInfoContainer);
-    this.vouchersContainer.add(descriptionBg);
-    this.vouchersContainer.add(this.descriptionContainer);
+    this.pokedexContainer.add(headerBg);
+    this.pokedexContainer.add(headerText);
+    this.pokedexContainer.add(this.pokedexIconsBg);
+    this.pokedexContainer.add(this.pokedexIconsContainer);
+    this.pokedexContainer.add(pokemonNameBg);
+    this.pokedexContainer.add(this.pokemonNameText);
+    this.pokedexContainer.add(this.caughtInfoBg);
+    this.pokedexContainer.add(this.caughtInfoContainer);
+    this.pokedexContainer.add(formsBg);
+    this.pokedexContainer.add(this.formsContainer);
 
-    ui.add(this.vouchersContainer);
+    ui.add(this.pokedexContainer);
 
     this.setCursor(0);
 
-    this.vouchersContainer.setVisible(false);
+    this.pokedexContainer.setVisible(false);
   }
 
   show(args: any[]): boolean {
     super.show(args);
 
-    this.vouchersContainer.setVisible(true);
+    this.pokedexContainer.setVisible(true);
     this.setCursor(0);
     this.setScrollCursor(0);
 
-    this.updateVoucherIcons();
+    this.updateSpeciesIcons();
 
-    this.getUi().moveTo(this.vouchersContainer, this.getUi().length - 1);
+    this.getUi().moveTo(this.pokedexContainer, this.getUi().length - 1);
 
     this.getUi().hideTooltip();
 
     return true;
   }
 
-  protected showVoucher(voucher: PokemonSpecies) {
+  protected showInfo(species: PokemonSpecies) {
 
     const gameData = this.scene.gameData;
-    const dexEntry = gameData.dexData[voucher.speciesId];
-    const starterData = gameData.starterData[voucher.speciesId];
+    const dexEntry = gameData.dexData[species.speciesId];
+    const starterData = gameData.starterData[species.speciesId];
 
-    this.titleText.setText(`#${voucher.speciesId} ${voucher.name}`);
-    this.descriptionContainer.removeAll(true);
+    this.pokemonNameText.setText(`#${species.speciesId} ${species.name}`);
+    this.formsContainer.removeAll(true);
     this.caughtInfoContainer.removeAll(true);
 
     if (!dexEntry.caughtAttr && !dexEntry.seenAttr) {
       return;
     }
 
-    for (let a = 0; a < voucher.forms.length; a++) {
+    for (let a = 0; a < species.forms.length; a++) {
       const x = (a % itemCols) * 18;
       const y = Math.floor(a / itemCols) * 18;
 
-      const icon = this.scene.add.sprite(x, y, voucher.getIconAtlasKey(0));
-      icon.setTexture(`pokemon_icons_${voucher.generation}`);
-      const frame = voucher.getIconId(false, a);
+      const icon = this.scene.add.sprite(x, y, species.getIconAtlasKey(0));
+      icon.setTexture(`pokemon_icons_${species.generation}`);
+      const frame = species.getIconId(false, a);
       icon.setFrame(frame);
       icon.setOrigin(0, 0);
       icon.setScale(0.5);
@@ -158,7 +155,7 @@ export default class VouchersUiHandler extends MessageUiHandler {
         icon.setTint(0);
       }
 
-      this.descriptionContainer.add(icon);
+      this.formsContainer.add(icon);
     }
 
     const isMale = (BigInt(dexEntry.caughtAttr) & 4n) !== 0n;
@@ -166,13 +163,13 @@ export default class VouchersUiHandler extends MessageUiHandler {
     const isYellowShiny = (BigInt(dexEntry.caughtAttr) & 16n) !== 0n;
     const isBlueShiny = (BigInt(dexEntry.caughtAttr) & 32n) !== 0n;
     const isRedShiny = (BigInt(dexEntry.caughtAttr) & 64n) !== 0n;
-    const isAbility1 = (BigInt(this.scene.gameData.starterData[voucher.getRootSpeciesId()].abilityAttr) & 1n) !== 0n;
-    const isAbility2 = (BigInt(this.scene.gameData.starterData[voucher.getRootSpeciesId()].abilityAttr) & 2n) !== 0n;
-    const isHiddenAbility = (BigInt(this.scene.gameData.starterData[voucher.getRootSpeciesId()].abilityAttr) & 4n) !== 0n;
-    const isOnlyMale = voucher.malePercent === 100;
-    const isOnlyFemale = voucher.malePercent === 0;
-    const isGenderless = voucher.malePercent === null;
-    const hasOnlyOneAbility = voucher.ability2 === Abilities.NONE;
+    const isAbility1 = (BigInt(this.scene.gameData.starterData[species.getRootSpeciesId()].abilityAttr) & 1n) !== 0n;
+    const isAbility2 = (BigInt(this.scene.gameData.starterData[species.getRootSpeciesId()].abilityAttr) & 2n) !== 0n;
+    const isHiddenAbility = (BigInt(this.scene.gameData.starterData[species.getRootSpeciesId()].abilityAttr) & 4n) !== 0n;
+    const isOnlyMale = species.malePercent === 100;
+    const isOnlyFemale = species.malePercent === 0;
+    const isGenderless = species.malePercent === null;
+    const hasOnlyOneAbility = species.ability2 === Abilities.NONE;
 
     const icons: {texture?: string, frame?: string, color?: number, isVisible?: boolean, type?: string, gender?: Gender, skip?: boolean}[] = [
       {type: "gender", gender: Gender.FEMALE, isVisible: isFemale, skip: isGenderless || isOnlyMale},
@@ -190,7 +187,7 @@ export default class VouchersUiHandler extends MessageUiHandler {
       const y = Math.floor(a / itemCols) * 18;
 
       if (icons[a].type === "gender") {
-        const icon = addTextObject(this.scene, this.unlockBg.x+a*10, y+20, "", TextStyle.BATTLE_INFO);
+        const icon = addTextObject(this.scene, this.caughtInfoBg.x + a * 10, y + 20, "", TextStyle.BATTLE_INFO);
         icon.setName("text_gender");
         icon.setOrigin(0, 0);
         icon.setText(getGenderSymbol(icons[a].gender));
@@ -198,7 +195,7 @@ export default class VouchersUiHandler extends MessageUiHandler {
         !icons[a].isVisible && icon.setTint(0);
         this.caughtInfoContainer.add(icon);
       } else {
-        const icon = this.scene.add.sprite(this.unlockBg.x+a*10, y+20, icons[a].texture);
+        const icon = this.scene.add.sprite(this.caughtInfoBg.x + a * 10, y + 20, icons[a].texture);
         icon.setTexture(icons[a].texture);
         icons[a].frame && icon.setFrame(icons[a].frame);
         icon.setOrigin(0, 0);
@@ -269,19 +266,19 @@ export default class VouchersUiHandler extends MessageUiHandler {
   setCursor(cursor: integer): boolean {
     const ret = super.setCursor(cursor);
 
-    let updateVoucher = ret;
+    let updateInfo = ret;
 
     if (!this.cursorObj) {
       this.cursorObj = this.scene.add.nineslice(0, 0, "select_cursor_highlight", null, 18, 18, 1, 1, 1, 1);
       this.cursorObj.setOrigin(0, 0);
-      this.voucherIconsContainer.add(this.cursorObj);
-      updateVoucher = true;
+      this.pokedexIconsContainer.add(this.cursorObj);
+      updateInfo = true;
     }
 
-    this.cursorObj.setPositionRelative(this.voucherIcons[this.cursor], 0, 0);
+    this.cursorObj.setPositionRelative(this.pokemonIcons[this.cursor], 0, 0);
 
-    if (updateVoucher) {
-      this.showVoucher(allSpecies[Object.keys(allSpecies)[cursor + this.scrollCursor * itemCols]]);
+    if (updateInfo) {
+      this.showInfo(allSpecies[Object.keys(allSpecies)[cursor + this.scrollCursor * itemCols]]);
     }
 
     return ret;
@@ -294,23 +291,22 @@ export default class VouchersUiHandler extends MessageUiHandler {
 
     this.scrollCursor = scrollCursor;
 
-    this.updateVoucherIcons();
+    this.updateSpeciesIcons();
 
-    this.showVoucher(allSpecies[Object.keys(allSpecies)[Math.min(this.cursor + this.scrollCursor * itemCols, Object.values(allSpecies).length - 1)]]);
+    this.showInfo(allSpecies[Object.keys(allSpecies)[Math.min(this.cursor + this.scrollCursor * itemCols, Object.values(allSpecies).length - 1)]]);
 
     return true;
   }
 
-  updateVoucherIcons(): void {
+  updateSpeciesIcons(): void {
 
     const itemOffset = this.scrollCursor * itemCols;
     const itemLimit = itemRows * itemCols;
 
-    const voucherRange = Object.values(allSpecies).slice(itemOffset, itemLimit + itemOffset);
+    const speciesRange = Object.values(allSpecies).slice(itemOffset, itemLimit + itemOffset);
 
-    voucherRange.forEach((voucher: PokemonSpecies, i: integer) => {
-      const icon = this.voucherIcons[i];
-      const species = voucher;
+    speciesRange.forEach((species: PokemonSpecies, i: integer) => {
+      const icon = this.pokemonIcons[i];
       const dexEntry = this.scene.gameData.dexData[species.speciesId];
 
 
@@ -330,14 +326,14 @@ export default class VouchersUiHandler extends MessageUiHandler {
 
     });
 
-    if (voucherRange.length < this.voucherIcons.length) {
-      this.voucherIcons.slice(voucherRange.length).map(i => i.setVisible(false));
+    if (speciesRange.length < this.pokemonIcons.length) {
+      this.pokemonIcons.slice(speciesRange.length).map(i => i.setVisible(false));
     }
   }
 
   clear() {
     super.clear();
-    this.vouchersContainer.setVisible(false);
+    this.pokedexContainer.setVisible(false);
     this.eraseCursor();
   }
 
