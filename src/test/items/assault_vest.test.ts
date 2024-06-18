@@ -67,8 +67,12 @@ describe("Items - Assault Vest", () => {
     await game.phaseInterceptor.to(CommandPhase);
     const spDef = pokemon.stats[Stat.SPDEF];
     const oppSpDef = opponent.stats[Stat.SPDEF];
+    // Check Special Defense stat boost
     expect(spDef).toBe(207); // 138 * 1.5
+
+    // Check opponent does not have any special defense boost
     expect(oppSpDef).toBe(226);
+    // Check if the assault vest restricts the use of non-offensive moves
     expect(pokemon.summonData.attack_move_restriction).toBe(true);
     let battleStatsPokemon = pokemon.summonData.battleStats;
     expect(battleStatsPokemon[Stat.SPATK]).toBe(0);
@@ -85,7 +89,5 @@ describe("Items - Assault Vest", () => {
     expect(message).toBe("The assault vest prevents the use of any non-offensive moves.");
     battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
     expect(battleStatsPokemon[BattleStat.SPATK]).toBe(0);
-
-
   }, 20000);
 });
