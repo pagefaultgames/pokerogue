@@ -46,6 +46,7 @@ import {
 } from "./status-effect";
 import {arenaTag} from "./arena-tag";
 import { partyUiHandler } from "./party-ui-handler";
+import { settings } from "#app/locales/pt_BR/settings.js";
 
 export const ptBrConfig = {
   ability: ability,
@@ -82,6 +83,7 @@ export const ptBrConfig = {
   pokemonInfo: pokemonInfo,
   pokemonInfoContainer: pokemonInfoContainer,
   saveSlotSelectUiHandler: saveSlotSelectUiHandler,
+  settings: settings,
   splashMessages: splashMessages,
   starterSelectUiHandler: starterSelectUiHandler,
   titles: titles,

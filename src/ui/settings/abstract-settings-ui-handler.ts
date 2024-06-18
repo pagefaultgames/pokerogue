@@ -72,7 +72,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     iconAction.setPositionRelative(actionsBg, this.navigationContainer.width - 32, 4);
     this.navigationIcons["BUTTON_ACTION"] = iconAction;
 
-    const actionText = addTextObject(this.scene, 0, 0, i18next.t("menu:action"), TextStyle.SETTINGS_LABEL);
+    const actionText = addTextObject(this.scene, 0, 0, i18next.t("settings:action"), TextStyle.SETTINGS_LABEL);
     actionText.setOrigin(0, 0.15);
     actionText.setPositionRelative(iconAction, -actionText.width/6-2, 0);
 
@@ -81,7 +81,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     iconCancel.setPositionRelative(actionsBg, this.navigationContainer.width - 100, 4);
     this.navigationIcons["BUTTON_CANCEL"] = iconCancel;
 
-    const cancelText = addTextObject(this.scene, 0, 0, i18next.t("menu:back"), TextStyle.SETTINGS_LABEL);
+    const cancelText = addTextObject(this.scene, 0, 0, i18next.t("settings:back"), TextStyle.SETTINGS_LABEL);
     cancelText.setOrigin(0, 0.15);
     cancelText.setPositionRelative(iconCancel, -cancelText.width/6-2, 0);
 
@@ -96,7 +96,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
       .forEach((setting, s) => {
         let settingName = setting.label;
         if (setting?.requireReload) {
-          settingName += ` (${i18next.t("menu:requireReload")})`;
+          settingName += ` (${i18next.t("settings:requireReload")})`;
         }
 
         this.settingLabels[s] = addTextObject(this.scene, 8, 28 + s * 16, settingName, TextStyle.SETTINGS_LABEL);

@@ -46,6 +46,7 @@ import {
   statusEffectObtainText, statusEffectOverlapText, statusEffectSourceClause
 } from "./status-effect";
 import {arenaTag} from "./arena-tag";
+import { settings } from "./settings";
 
 export const itConfig = {
   ability: ability,
@@ -81,6 +82,7 @@ export const itConfig = {
   pokemonInfo: pokemonInfo,
   pokemonInfoContainer: pokemonInfoContainer,
   saveSlotSelectUiHandler: saveSlotSelectUiHandler,
+  settings: settings,
   splashMessages: splashMessages,
   starterSelectUiHandler: starterSelectUiHandler,
   titles: titles,
