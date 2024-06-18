@@ -569,7 +569,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonCandyIcon.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonCandyIcon);
 
-    this.pokemonFormText = addTextObject(this.scene, 6, 42, "Form", TextStyle.WINDOW_ALT, { fontSize: "42px" });
+    this.pokemonFormText = addTextObject(this.scene, 6, 48, "Form", TextStyle.WINDOW_ALT, { fontSize: "42px" });
     this.pokemonFormText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonFormText);
 
@@ -1806,6 +1806,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       const tint = getVariantTint(variant);
 
       this.pokemonShinyIcon.setTint(tint);
+      this.pokemonFormText.setY(48);
       this.setSpecies(species);
       this.updateInstructions();
     }
