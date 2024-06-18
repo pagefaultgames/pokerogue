@@ -704,18 +704,19 @@ export default class PointShopUiHandler extends MessageUiHandler {
     };
     this.scene.tweens.chain({
       targets: this.itemFooterRightText,
+      loop: 1,
       onComplete: resetText,
       onStop: resetText,
       tweens: [{
         x: anchorX + 2,
         ease: EaseType.LINEAR,
         yoyo: true,
-        duration: 25,
+        duration: 15,
       }, {
         x: anchorX - 2,
         ease: EaseType.LINEAR,
         yoyo: true,
-        duration: 25,
+        duration: 15,
       }]
     });
   }
