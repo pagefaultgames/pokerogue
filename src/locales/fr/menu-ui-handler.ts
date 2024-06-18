@@ -22,6 +22,8 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "unlinkDiscord": "Unlink Discord",
   "linkGoogle": "Link Google",
   "unlinkGoogle": "Unlink Google",
+  "importSettings": "Importer paramètres",
+  "exportSettings": "Exporter paramètres",
   "cancel": "Retour",
   "losingProgressionWarning": "Vous allez perdre votre progression depuis le début du combat. Continuer ?",
   "noEggs": "Vous ne faites actuellement\néclore aucun Œuf !"
