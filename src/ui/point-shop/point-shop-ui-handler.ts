@@ -121,8 +121,6 @@ export default class PointShopUiHandler extends MessageUiHandler {
   private selectionCostWindow: Phaser.GameObjects.NineSlice;
   private selectionCostText: Phaser.GameObjects.Text;
 
-  private testText: Phaser.GameObjects.Text;
-
   private currentCategory: PointShopModifierCategory;
 
   private currentPoints: number = 0;
@@ -138,11 +136,10 @@ export default class PointShopUiHandler extends MessageUiHandler {
     const categoryLeftEvent = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
     const categoryRightEvent = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
 
-    //const categoryLeftEvent = scene.input.gamepad.gamepads[0].on(Phaser.Input.Gamepad.Events.BUTTON_DOWN);
-    //const categoryRightEvent = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
-
     categoryLeftEvent.on("down", this.onCategoryLeft, this);
     categoryRightEvent.on("down", this.onCategoryRight, this);
+
+    scene.input.gamepad.on(Phaser.Input.Gamepad.Events.GAMEPAD_BUTTON_DOWN, this.onGamepadButtonDown, this);
   }
 
   private getCanvasWidth(): number {
@@ -431,6 +428,8 @@ export default class PointShopUiHandler extends MessageUiHandler {
       .setScale(1/6 / 4)
       .setShadow();
     this.parentContainer.add(this.testText);*/
+
+    this.cursor = -1;
   }
 
   show(args: any[]): boolean {
@@ -455,7 +454,6 @@ export default class PointShopUiHandler extends MessageUiHandler {
 
     this.setCategory(PointShopModifierCategory.DEFAULT);
 
-    this.cursor = -1;
     this.setCursor(0);
 
     this.callbackFunction = args[0]; // Holds a callback for when this UI is finished to continue on
@@ -517,8 +515,8 @@ export default class PointShopUiHandler extends MessageUiHandler {
       setTextStyle(this.itemHeaderText[i], this.scene, isCurrentCategory ? TextStyle.PARTY_ORANGE : TextStyle.PARTY);
     });
 
-    this.cursor = -1;
-    this.setCursor(0);
+    // Clamp the cursor between valid values
+    this.setCursor(Math.max(0, Math.min(this.cursor, PointShopModifierTypes[this.currentCategory].length - 1)));
 
     return changed;
   }
@@ -536,6 +534,15 @@ export default class PointShopUiHandler extends MessageUiHandler {
     }
 
     this.setCategory(Math.min(this.currentCategory + 1, PointShopModifierTypes.length - 1));
+  }
+
+  public onGamepadButtonDown(gamepad: Phaser.Input.Gamepad.Gamepad, button: Phaser.Input.Gamepad.Button, test: number) {
+    if (gamepad.L1) {
+      this.onCategoryLeft();
+    }
+    if (gamepad.R1) {
+      this.onCategoryRight();
+    }
   }
 
   updateEnabledIcons() {
@@ -596,7 +603,6 @@ export default class PointShopUiHandler extends MessageUiHandler {
       this.updateMessage(0);
       ui.setModeWithoutClear(Mode.OPTION_SELECT, {
         options: optionStrings.map((optionString, i) => {
-          // make an option for each available starter move
           const option = {
             label: optionString,
             handler: () => {
