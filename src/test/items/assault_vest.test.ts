@@ -11,7 +11,7 @@ import {Nature} from "#app/data/nature";
 import {Stat} from "#app/data/pokemon-stat";
 import {BattleStat} from "#app/data/battle-stat";
 import {Mode} from "#app/ui/ui";
-import {Command} from "#app/ui/command-ui-handler";
+import CommandUiHandler, {Command} from "#app/ui/command-ui-handler";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import {Button} from "#enums/buttons";
 import PartyUiHandler from "#app/ui/party-ui-handler";
@@ -147,15 +147,22 @@ describe("Items - Assault Vest", () => {
     ]);
     await game.phaseInterceptor.run(SummonPhase);
     let pokemon = game.scene.getParty()[0];
+    pokemon.setNature(Nature.CALM);
+    expect(pokemon.nature).toBe(Nature.CALM);
     addModifierToPokemon([{
       name: "ASSAULT_VEST",
     }], game.scene, pokemon, true);
+    expect(game.scene.modifiers[0].type.id).toBe("ASSAULT_VEST");
+    expect(pokemon.summonData.attack_move_restriction).toBe(true);
+    const spDef = pokemon.stats[Stat.SPDEF];
+    // Check Special Defense stat boost
+    expect(spDef).toBe(207); // 138 * 1.5
+    const spDefOld = game.scene.getParty()[1].stats[Stat.SPDEF];
+    // Check Special Defense stat boost
+    expect(spDefOld).toBe(65); // 138 * 1.5
     const opponent = game.scene.currentBattle.enemyParty[0];
     opponent.ivs = [0, 0, 0, 0, 0, 0];
-    pokemon.setNature(Nature.CALM);
     opponent.setNature(Nature.CALM);
-    expect(game.scene.modifiers[0].type.id).toBe("ASSAULT_VEST");
-    expect(pokemon.nature).toBe(Nature.CALM);
     expect(opponent.nature).toBe(Nature.CALM);
     await game.phaseInterceptor.to(CommandPhase);
     game.doAttack(1);
@@ -197,6 +204,8 @@ describe("Items - Assault Vest", () => {
       });
       game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
         (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, 0, false);
+        const handler = game.scene.ui.getHandler() as CommandUiHandler;
+        handler.processInput(Button.CANCEL);
         resolve();
       });
     });
@@ -204,7 +213,20 @@ describe("Items - Assault Vest", () => {
     expect(message).toBe("The assault vest prevents the use of any non-offensive moves.");
     battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
     expect(battleStatsPokemon[BattleStat.SPATK]).toBe(0);
-  }, 20000);
+    let spDefNew = game.scene.getParty()[0].stats[Stat.SPDEF];
+    expect(game.scene.getParty()[0].summonData.attack_move_restriction).toBe(true);
+    // Check Special Defense stat boost
+    expect(spDefNew).toBe(65*1.5); // 138 * 1.5
+    game.doSwitchPokemon(1);
+    await game.phaseInterceptor.to(CommandPhase);
+    expect(game.scene.getParty()[0].summonData.attack_move_restriction).toBe(false);
+    game.doSwitchPokemon(1);
+    await game.phaseInterceptor.to(CommandPhase);
+    expect(game.scene.getParty()[0].summonData.attack_move_restriction).toBe(true);
+    spDefNew = game.scene.getParty()[0].stats[Stat.SPDEF];
+    // Check Special Defense stat boost
+    expect(spDefNew).toBe(spDefOld*1.5); // 65 * 1.5
+  }, 200000);
 
   it("transfer assault vest to another mon to revert stats boost and restriction", async() => {
     vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
