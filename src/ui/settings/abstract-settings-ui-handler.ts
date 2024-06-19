@@ -99,6 +99,11 @@ export default class AbstractSettingsUiHandler extends UiHandler {
           settingName += ` (${i18next.t("settings:requireReload")})`;
         }
 
+        // Add a ":" to the end of the setting name if it doesn't already have one.
+        if (settingName.charAt(settingName.length - 1) !== ":") {
+          settingName += ":";
+        }
+
         this.settingLabels[s] = addTextObject(this.scene, 8, 28 + s * 16, settingName, TextStyle.SETTINGS_LABEL);
         this.settingLabels[s].setOrigin(0, 0);
 
