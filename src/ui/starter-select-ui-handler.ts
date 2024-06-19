@@ -102,9 +102,9 @@ const languageSettings: { [key: string]: LanguageSetting } = {
 };
 
 const starterCandyCosts: { passive: integer, costReduction: [integer, integer], egg: integer }[] = [
-  { passive: 50, costReduction: [30, 75], egg: 50 }, // 1
-  { passive: 45, costReduction: [25, 60], egg: 45 }, // 2
-  { passive: 40, costReduction: [20, 50], egg: 40 }, // 3
+  { passive: 50, costReduction: [30, 75], egg: 35 }, // 1
+  { passive: 45, costReduction: [25, 60], egg: 35 }, // 2
+  { passive: 40, costReduction: [20, 50], egg: 35 }, // 3
   { passive: 30, costReduction: [15, 40], egg: 30 }, // 4
   { passive: 25, costReduction: [12, 35], egg: 25 }, // 5
   { passive: 20, costReduction: [10, 30], egg: 20 }, // 6
