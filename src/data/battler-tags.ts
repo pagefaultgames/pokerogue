@@ -572,7 +572,7 @@ export class HelpingHandTag extends BattlerTag {
   onAdd(pokemon: Pokemon): void {
     pokemon.scene.queueMessage(
       i18next.t("battle:battlerTagsHelpingHandOnAdd", {
-        pokemonNameWithAffix: pokemon.scene.getPokemonById(this.sourceId),
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon.scene.getPokemonById(this.sourceId)),
         pokemonName: pokemon.name
       })
     );
