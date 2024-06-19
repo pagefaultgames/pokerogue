@@ -1,4 +1,4 @@
-import {DialogueTranslationEntries, SimpleTranslationEntries} from "#app/plugins/i18n";
+import {DialogueTranslationEntries, SimpleTranslationEntries} from "#app/interfaces/locales";
 
 // Dialogue of the NPCs in the game when the player character is male (or unset)
 export const PGMdialogue: DialogueTranslationEntries = {
@@ -2005,6 +2005,32 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "defeat": {
       1: "又一場風暴襲來，又一場勝利！打得好！",
       2: "你被我的風暴捲入了！祝你下次好運！",
+    }
+  },
+  "alder": {
+    "encounter": {
+      1: "準備好和合眾最強的訓練家交手吧！"
+    },
+    "victory": {
+      1: "精彩！簡直就是天下無雙！"
+    },
+    "defeat": {
+      1: `戰鬥結束後，我的心像是吹過了溫和的風…
+	  	$真是厲害！`
+    }
+  },
+  "kieran": {
+    "encounter": {
+      1: `我的努力讓我越來越強！
+	  	$所以我不會輸。`
+    },
+    "victory": {
+      1: `不可能…
+	  	$真是一場有趣又激動人心的戰鬥啊！`
+    },
+    "defeat": {
+      1: `哇塞，好一場戰鬥！
+	  	$你得多練練了。`
     }
   },
   "rival": {

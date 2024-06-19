@@ -1,4 +1,4 @@
-import {DialogueTranslationEntries, SimpleTranslationEntries} from "#app/plugins/i18n";
+import {DialogueTranslationEntries, SimpleTranslationEntries} from "#app/interfaces/locales";
 
 
 // Dialogue of the NPCs in the game when the player character is male (or unset)
@@ -2349,7 +2349,32 @@ export const PGMdialogue: DialogueTranslationEntries = {
       2: "Du bist in meinen Sturm geraten! Viel Glück beim nächsten Mal!"
     }
   },
-
+  "alder": {
+    "encounter": {
+      1: "Mach dich bereit für einen Kampf gegen den stärksten Trainer in Einall! Mich - Lauro!"
+    },
+    "victory": {
+      1: "Gut gemacht! Du hast wirklich ein unvergleichliches Talent."
+    },
+    "defeat": {
+      1: `Ein frischer Wind weht durch mein Herz...
+          $Was für ein außergewöhnliches Gefühl!`
+    }
+  },
+  "kieran": {
+    "encounter": {
+      1: `Durch harte Arbeit werde ich immer stärker und stärker!
+         $Ich verliere nicht.`
+    },
+    "victory": {
+      1: `Ich kann es nicht glauben...
+          $Was für ein lustiger und herzzerreißender Kampf!`
+    },
+    "defeat": {
+      1: `Wow, was für ein Kampf!
+          $Es ist Zeit für dich, noch härter zu trainieren.`
+    }
+  },
   "rival": {
     "encounter": {
       1: `@c{smile}Hey, ich habe dich gesucht! Ich weiß, dass du es nicht erwarten konntest loszugehen,
