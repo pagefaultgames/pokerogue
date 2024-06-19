@@ -3682,7 +3682,7 @@ export class PostSummonStatChangeOnArenaAbAttr extends PostSummonStatChangeAbAtt
 }
 
 /**
- * Blocks the first hit of a physical move.
+ * Takes no damage from the first hit of a physical move.
  * This is used in Ice Face ability.
  */
 export class IceFaceBlockPhysicalAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
