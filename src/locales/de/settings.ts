@@ -73,7 +73,6 @@ export const settings: SimpleTranslationEntries = {
   "action": "Aktion",
   "back": "Zurück",
   "pressToBind": "Zum Zuweisen drücken",
-  
   "pressButton": "Eine Taste drücken...",
   "buttonUp": "Hoch",
   "buttonDown": "Runter",
