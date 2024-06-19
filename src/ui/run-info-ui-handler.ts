@@ -24,7 +24,7 @@ const defaultTextSetupFunc = (scene, x, y) => {
   return text;
 };
 
-const DEFAULT_RIGHT_PADDING_PX = 7;
+const DEFAULT_RIGHT_PADDING_PX = 8;
 
 const displayStats: DisplayStat[] = [
   {
@@ -53,7 +53,7 @@ const displayStats: DisplayStat[] = [
   },
   {
     labelKey: "level",
-    rightPaddingPx: DEFAULT_RIGHT_PADDING_PX,
+    rightPaddingPx: 1.5*DEFAULT_RIGHT_PADDING_PX,
     centerAlign: true,
     setupFunc: defaultTextSetupFunc,
     sourceFunc: (element: Phaser.GameObjects.Text, pokemon) => {
@@ -62,7 +62,7 @@ const displayStats: DisplayStat[] = [
   },
   {
     labelKey: "metOnWave",
-    rightPaddingPx: DEFAULT_RIGHT_PADDING_PX,
+    rightPaddingPx: 1.5*DEFAULT_RIGHT_PADDING_PX,
     centerAlign: true,
     setupFunc: defaultTextSetupFunc,
     sourceFunc: (element: Phaser.GameObjects.Text, pokemon) => {
