@@ -3743,7 +3743,7 @@ function applyAbAttrsInternal<TAttr extends AbAttr>(attrType: { new(...args: any
     const attrs = ability.getAttrs(attrType);
 
     const clearSpliceQueueAndResolve = () => {
-      pokemon.scene.clearPhaseQueueSplice();
+      pokemon.scene?.clearPhaseQueueSplice();
       if (!passive) {
         return applyAbAttrsInternal(attrType, pokemon, applyFunc, args, isAsync, showAbilityInstant, quiet, true).then(() => resolve());
       } else {

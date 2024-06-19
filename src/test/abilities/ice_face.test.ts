@@ -53,7 +53,7 @@ describe("Abilities - Ice Face", () => {
     expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBe(undefined);
   });
 
-  it("takes no damage from multihit physical move and transforms to Noice", async () => {
+  it("takes no damage from the first hit of multihit physical move and transforms to Noice", async () => {
     vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SURGING_STRIKES]);
     vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(5);
     await game.startBattle([Species.HITMONLEE]);
