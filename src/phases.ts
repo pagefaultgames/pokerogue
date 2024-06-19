@@ -2904,9 +2904,7 @@ export class MoveEffectPhase extends PokemonPhase {
 
       // Check if other Pokemon on the field have an ability that prevents this move
       const prevented = new Utils.BooleanHolder(false);
-      for (const other of this.scene.getField(true).filter(p => user.id !== p.id)) {
-        applyAbAttrs(FieldPreventMovesAbAttr, other, prevented, move, user as Pokemon);
-      }
+      this.scene.getField(true).forEach(p => applyAbAttrs(FieldPreventMovesAbAttr, p, prevented, move, user));
       if (prevented.value) {
         // Just bail out of the move if it got prevented. No need to manually show message; the Attr handles that.
         moveHistoryEntry.result = MoveResult.FAIL;
