@@ -2060,18 +2060,18 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     const isSelfDamage = (sourcePokemon?.id === this.id);
 
-    //console.log("Run stats: processing damage: " + sourcePokemon?.name + " -> " + this.name);
+    //console.log("Run info: processing damage: " + sourcePokemon?.name + " -> " + this.name);
 
     if (damage > 0) {
       if (this.isPlayer()) {
         this.runData.damageTaken += damage;
-        //console.log("Run stats: " + this.name + " took damage: " + damage);
+        //console.log("Run info: " + this.name + " took damage: " + damage);
       }
 
       if (sourcePokemon && !isSelfDamage) {
         if (sourcePokemon.isPlayer()) {
           sourcePokemon.runData.damageDealt += damage;
-          //console.log("Run stats: " + sourcePokemon.name + " dealt damage: " + damage);
+          //console.log("Run info: " + sourcePokemon.name + " dealt damage: " + damage);
         }
 
         if (!this.isPlayer()) {
@@ -2083,12 +2083,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.isFainted()) {
       if (this.isPlayer()) {
         this.runData.deaths += 1;
-        //console.log("Run stats: " + this.name + " died");
+        //console.log("Run info: " + this.name + " died");
       }
 
       if (sourcePokemon && !isSelfDamage && sourcePokemon.isPlayer()) {
         sourcePokemon.runData.kills += 1;
-        //console.log("Run stats: " + sourcePokemon.name + " got a kill");
+        //console.log("Run info: " + sourcePokemon.name + " got a kill");
       }
 
       // Ignore self-assists and don't grant sourcePokemon an assist since it's probably already been awarded a kill
@@ -2096,7 +2096,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         const assistantPokemon = this.scene.getPokemonById(pokemonId);
         if (assistantPokemon && assistantPokemon.isPlayer()) {
           assistantPokemon.runData.assists += 1;
-          //console.log("Run stats: " + assistantPokemon.name + " got an assist");
+          //console.log("Run info: " + assistantPokemon.name + " got an assist");
         }
       }
 

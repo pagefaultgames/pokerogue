@@ -13,9 +13,9 @@ import { GameDataType } from "#enums/game-data-type";
 
 export enum MenuOptions {
   GAME_SETTINGS,
+  RUN_INFO,
   ACHIEVEMENTS,
   STATS,
-  RUN_STATS,
   VOUCHERS,
   EGG_LIST,
   EGG_GACHA,
@@ -274,16 +274,16 @@ export default class MenuUiHandler extends MessageUiHandler {
         ui.setOverlayMode(Mode.SETTINGS);
         success = true;
         break;
+      case MenuOptions.RUN_INFO:
+        ui.setOverlayMode(Mode.RUN_INFO);
+        success = true;
+        break;
       case MenuOptions.ACHIEVEMENTS:
         ui.setOverlayMode(Mode.ACHIEVEMENTS);
         success = true;
         break;
       case MenuOptions.STATS:
         ui.setOverlayMode(Mode.GAME_STATS);
-        success = true;
-        break;
-      case MenuOptions.RUN_STATS:
-        ui.setOverlayMode(Mode.RUN_STATS);
         success = true;
         break;
       case MenuOptions.VOUCHERS:
@@ -428,7 +428,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     }
 
     if (this.scene.getParty().length === 0) {
-      this.ignoredMenuOptions.push(MenuOptions.RUN_STATS);
+      this.ignoredMenuOptions.push(MenuOptions.RUN_INFO);
     }
 
     this.menuOptions = Utils.getEnumKeys(MenuOptions).map(m => parseInt(MenuOptions[m]) as MenuOptions).filter(m => !this.ignoredMenuOptions.includes(m));

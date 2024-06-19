@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 import BattleScene from "../battle-scene";
-import { EndRunStatsPhase } from "../phases";
+import { EndRunInfoPhase } from "../phases";
 import { PlayerPokemon } from "../field/pokemon";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
@@ -59,7 +59,7 @@ const displayStats: DisplayStat[] = [
     rightPaddingPx: 8,
     setupFunc: defaultTextSetupFunc,
     sourceFunc: (element: Phaser.GameObjects.Text, pokemon) => {
-      element.setText(pokemon.metWave !== 0 ? pokemon.metWave.toString() : i18next.t("runStatsUiHandler:starter"));
+      element.setText(pokemon.metWave !== 0 ? pokemon.metWave.toString() : i18next.t("runInfoUiHandler:starter"));
     }
   },
   {
@@ -104,8 +104,8 @@ const displayStats: DisplayStat[] = [
   },
 ];
 
-export default class RunStatsUiHandler extends UiHandler {
-  private runStatsContainer: Phaser.GameObjects.Container;
+export default class runInfoUiHandler extends UiHandler {
+  private runInfoContainer: Phaser.GameObjects.Container;
   private statsContainer: Phaser.GameObjects.Container;
 
   private statLabels: Phaser.GameObjects.Text[];
@@ -121,14 +121,14 @@ export default class RunStatsUiHandler extends UiHandler {
   setup() {
     const ui = this.getUi();
 
-    this.runStatsContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
+    this.runInfoContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
 
-    this.runStatsContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
+    this.runInfoContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
 
     const headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6) - 2, 24);
     headerBg.setOrigin(0, 0);
 
-    const headerText = addTextObject(this.scene, 0, 0, i18next.t("runStatsUiHandler:stats"), TextStyle.SETTINGS_LABEL);
+    const headerText = addTextObject(this.scene, 0, 0, i18next.t("runInfoUiHandler:title"), TextStyle.SETTINGS_LABEL);
     headerText.setOrigin(0, 0);
     headerText.setPositionRelative(headerBg, 8, 4);
 
@@ -145,7 +145,7 @@ export default class RunStatsUiHandler extends UiHandler {
 
         if (row === 0) {
           const statLabelKey = displayStats[col].labelKey;
-          const statLabel = addTextObject(this.scene, 0, y, statLabelKey ? i18next.t(`runStatsUiHandler:${statLabelKey}`) : "", TextStyle.TOOLTIP_TITLE);
+          const statLabel = addTextObject(this.scene, 0, y, statLabelKey ? i18next.t(`runInfoUiHandler:${statLabelKey}`) : "", TextStyle.TOOLTIP_TITLE);
           statLabel.setOrigin(0, 0);
           this.statLabels[col] = statLabel;
           this.statsContainer.add(statLabel);
@@ -157,16 +157,16 @@ export default class RunStatsUiHandler extends UiHandler {
       }
     }
 
-    this.runStatsContainer.add(headerBg);
-    this.runStatsContainer.add(headerText);
-    this.runStatsContainer.add(statsBg);
-    this.runStatsContainer.add(this.statsContainer);
+    this.runInfoContainer.add(headerBg);
+    this.runInfoContainer.add(headerText);
+    this.runInfoContainer.add(statsBg);
+    this.runInfoContainer.add(this.statsContainer);
 
-    ui.add(this.runStatsContainer);
+    ui.add(this.runInfoContainer);
 
     this.setCursor(0);
 
-    this.runStatsContainer.setVisible(false);
+    this.runInfoContainer.setVisible(false);
   }
 
   show(args: any[]): boolean {
@@ -178,9 +178,9 @@ export default class RunStatsUiHandler extends UiHandler {
 
     this.alignStats();
 
-    this.runStatsContainer.setVisible(true);
+    this.runInfoContainer.setVisible(true);
 
-    this.getUi().moveTo(this.runStatsContainer, this.getUi().length - 1);
+    this.getUi().moveTo(this.runInfoContainer, this.getUi().length - 1);
 
     this.getUi().hideTooltip();
 
@@ -238,13 +238,13 @@ export default class RunStatsUiHandler extends UiHandler {
     const ui = this.getUi();
 
     const currentPhase = this.scene.getCurrentPhase();
-    const isEndRunStatsPhase = (currentPhase instanceof EndRunStatsPhase);
+    const isEndRunInfoPhase = (currentPhase instanceof EndRunInfoPhase);
 
     let success = false;
 
     switch (button) {
     case Button.CANCEL:
-      if (!isEndRunStatsPhase) {
+      if (!isEndRunInfoPhase) {
         success = true;
         this.scene.ui.revertMode();
       }
@@ -259,7 +259,7 @@ export default class RunStatsUiHandler extends UiHandler {
       break;
     case Button.ACTION:
     case Button.SUBMIT:
-      if (isEndRunStatsPhase) {
+      if (isEndRunInfoPhase) {
         currentPhase.end();
         success = true;
       }
@@ -286,6 +286,6 @@ export default class RunStatsUiHandler extends UiHandler {
 
   clear() {
     super.clear();
-    this.runStatsContainer.setVisible(false);
+    this.runInfoContainer.setVisible(false);
   }
 }

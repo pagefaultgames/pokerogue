@@ -4193,7 +4193,7 @@ export class GameOverPhase extends BattlePhase {
           }
 
           const clear = (endCardPhase?: EndCardPhase) => {
-            this.scene.unshiftPhase(new EndRunStatsPhase(this.scene));
+            this.scene.unshiftPhase(new EndRunInfoPhase(this.scene));
 
             if (newClear) {
               this.handleUnlocks();
@@ -4316,14 +4316,14 @@ export class EndCardPhase extends Phase {
   }
 }
 
-export class EndRunStatsPhase extends Phase {
+export class EndRunInfoPhase extends Phase {
   constructor(scene: BattleScene) {
     super(scene);
   }
 
   start(): void {
     super.start();
-    this.scene.ui.setOverlayMode(Mode.RUN_STATS);
+    this.scene.ui.setOverlayMode(Mode.RUN_INFO);
   }
 }
 
