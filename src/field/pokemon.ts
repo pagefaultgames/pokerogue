@@ -2082,12 +2082,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     if (this.isFainted()) {
       if (this.isPlayer()) {
-        this.runData.deaths += 1;
+        this.runData.faints += 1;
         //console.log("Run info: " + this.name + " died");
       }
 
       if (sourcePokemon && !isSelfDamage && sourcePokemon.isPlayer()) {
-        sourcePokemon.runData.kills += 1;
+        sourcePokemon.runData.knockouts += 1;
         //console.log("Run info: " + sourcePokemon.name + " got a kill");
       }
 
@@ -3342,9 +3342,9 @@ export class PlayerPokemon extends Pokemon {
       this.fusionGender = pokemon.gender;
       this.fusionLuck = pokemon.luck;
 
-      this.runData.kills += pokemon.runData.kills;
+      this.runData.knockouts += pokemon.runData.knockouts;
       this.runData.assists += pokemon.runData.assists;
-      this.runData.deaths += pokemon.runData.deaths;
+      this.runData.faints += pokemon.runData.faints;
       this.runData.damageDealt += pokemon.runData.damageDealt;
       this.runData.damageTaken += pokemon.runData.damageTaken;
 
@@ -3935,9 +3935,9 @@ export class PokemonTurnData {
 }
 
 export class PokemonRunData {
-  public kills: integer = 0;
+  public knockouts: integer = 0;
   public assists: integer = 0;
-  public deaths: integer = 0;
+  public faints: integer = 0;
   public damageDealt: integer = 0;
   public damageTaken: integer = 0;
 }

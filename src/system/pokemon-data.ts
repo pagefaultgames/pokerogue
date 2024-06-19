@@ -140,9 +140,9 @@ export default class PokemonData {
 
       this.runData = new PokemonRunData();
       if (!forHistory && source.runData) {
-        this.runData.kills = source.runData.kills;
+        this.runData.knockouts = source.runData.knockouts;
         this.runData.assists = source.runData.assists;
-        this.runData.deaths = source.runData.deaths;
+        this.runData.faints = source.runData.faints;
         this.runData.damageDealt = source.runData.damageDealt;
         this.runData.damageTaken = source.runData.damageTaken;
       }

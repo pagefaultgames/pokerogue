@@ -4,11 +4,11 @@ export const runInfoUiHandler: SimpleTranslationEntries = {
   "title": "Run Info",
   "pokemonName": "Pokemon",
   "level": "Lv",
-  "metOnWave": "Met on wave",
+  "metOnWave": "Met on\nwave",
   "starter": "Starter",
-  "kills": "K",
-  "assists": "A",
-  "deaths": "D",
-  "damageDealt": "DMG",
-  "damageTaken": "MIT"
+  "knockouts": "KOs",
+  "assists": "Assists",
+  "faints": "Faints",
+  "damageDealt": "Damage",
+  "damageTaken": "Blocked"
 } as const;
