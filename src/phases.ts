@@ -65,6 +65,7 @@ import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
+import { ChallengeType, applyChallenges } from "./data/challenge";
 
 const { t } = i18next;
 
@@ -5238,7 +5239,7 @@ export class SelectModifierPhase extends BattlePhase {
   }
 
   getModifierTypeOptions(modifierCount: integer): ModifierTypeOption[] {
-    return getPlayerModifierTypeOptions(modifierCount, this.scene.getParty(), this.scene.lockModifierTiers ? this.modifierTiers : undefined);
+    return getPlayerModifierTypeOptions(modifierCount, this.scene.getParty(), this.scene.gameMode, this.scene.lockModifierTiers ? this.modifierTiers : undefined);
   }
 
   addModifier(modifier: Modifier): Promise<boolean> {
@@ -5350,6 +5351,14 @@ export class PartyHealPhase extends BattlePhase {
 
   start() {
     super.start();
+
+    const isHealPhaseActive = new Utils.BooleanHolder(true);
+    applyChallenges(this.scene.gameMode, ChallengeType.NO_HEAL_PHASE, isHealPhaseActive);
+    console.log("HEAL PHASE CHALLENGE???", isHealPhaseActive.value);
+    if (!isHealPhaseActive.value) {
+      this.end();
+      return;
+    }
 
     const bgmPlaying = this.scene.isBgmPlaying();
     if (bgmPlaying) {

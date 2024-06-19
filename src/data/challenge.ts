@@ -12,6 +12,7 @@ import { pokemonFormChanges } from "./pokemon-forms";
 import { Challenges } from "#enums/challenges";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
+import { ModifierTypeOption } from "#app/modifier/modifier-type.js";
 
 /**
  * An enum for all the challenge types. The parameter entries on these describe the
@@ -46,6 +47,9 @@ export enum ChallengeType {
    *             [1] {@link FixedBattleConfig} A new fixed battle. It'll be modified if a battle exists.
   */
   FIXED_BATTLES,
+  NO_HEAL_PHASE,
+  SHOP_ITEM_BLACKLIST,
+  RANDOM_ITEM_BLACKLIST
 }
 
 /**
@@ -575,6 +579,61 @@ export class LowerStarterPointsChallenge extends Challenge {
 }
 
 /**
+ * Lowers the maximum cost of starters available.
+ */
+export class NuzlockeChallenge extends Challenge {
+  constructor() {
+    super(Challenges.NUZLOCKE, 1);
+    this.addChallengeType(ChallengeType.NO_HEAL_PHASE);
+    this.addChallengeType(ChallengeType.RANDOM_ITEM_BLACKLIST);
+    this.addChallengeType(ChallengeType.SHOP_ITEM_BLACKLIST);
+  }
+
+  apply(challengeType: ChallengeType, args: any[]): boolean {
+    if (this.value === 0) {
+      return false;
+    }
+
+    switch (challengeType) {
+    case ChallengeType.NO_HEAL_PHASE:
+      const isHealPhaseActive = args[0] as Utils.BooleanHolder;
+      isHealPhaseActive.value = false;
+      return true;
+    case ChallengeType.SHOP_ITEM_BLACKLIST:
+      const shopItem: ModifierTypeOption = args[0];
+      const isShopItemValid = args[1] as Utils.BooleanHolder;
+      const shopItemBlackList = ["modifierType:ModifierType.REVIVE", "modifierType:ModifierType.MAX_REVIVE", "modifierType:ModifierType.SACRED_ASH", "modifierType:ModifierType.REVIVER_SEED"];
+
+      if (shopItemBlackList.includes(shopItem.type.localeKey)) {
+        isShopItemValid.value = false;
+      } else {
+        isShopItemValid.value = true;
+      }
+      return true;
+    case ChallengeType.RANDOM_ITEM_BLACKLIST:
+      const randomItem: ModifierTypeOption = args[0];
+      const isRandomItemValid = args[1] as Utils.BooleanHolder;
+      const randomItemBlackList = ["modifierType:ModifierType.REVIVE", "modifierType:ModifierType.MAX_REVIVE", "modifierType:ModifierType.SACRED_ASH", "modifierType:ModifierType.REVIVER_SEED"];
+
+      if (randomItemBlackList.includes(randomItem.type.localeKey)) {
+        isRandomItemValid.value = false;
+      } else {
+        isRandomItemValid.value = true;
+      }
+      return true;
+    }
+    return false;
+  }
+
+  static loadChallenge(source: NuzlockeChallenge | any): NuzlockeChallenge {
+    const newChallenge = new NuzlockeChallenge();
+    newChallenge.value = source.value;
+    newChallenge.severity = source.severity;
+    return newChallenge;
+  }
+}
+
+/**
  * Apply all challenges of a given challenge type.
  * @param {GameMode} gameMode The current game mode
  * @param {ChallengeType} challengeType What challenge type to apply
@@ -601,6 +660,8 @@ export function copyChallenge(source: Challenge | any): Challenge {
     return LowerStarterMaxCostChallenge.loadChallenge(source);
   case Challenges.LOWER_STARTER_POINTS:
     return LowerStarterPointsChallenge.loadChallenge(source);
+  case Challenges.NUZLOCKE:
+    return NuzlockeChallenge.loadChallenge(source);
   }
   throw new Error("Unknown challenge copied");
 }
@@ -614,5 +675,6 @@ export function initChallenges() {
     // new LowerStarterMaxCostChallenge(),
     // new LowerStarterPointsChallenge(),
     // new FreshStartChallenge()
+    new NuzlockeChallenge()
   );
 }
