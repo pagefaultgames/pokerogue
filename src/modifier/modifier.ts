@@ -905,7 +905,7 @@ export class ConditionalStatsBoost extends PokemonHeldItemModifier {
   clone(): PersistentModifier {
     return new ConditionalStatsBoost(this.type, this.pokemonId, this.stackCount);
   }
-  apply(args: any[]): boolean | Promise<boolean> {
+  apply(args: any[]): boolean {
     const targetPokemon = args[0];
     const active = args[1] as boolean;
     if (active === false) {

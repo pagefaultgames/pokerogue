@@ -2036,7 +2036,7 @@ export default class BattleScene extends SceneBase {
           modifiersToRemove.push(...(this.findModifiers(m => m instanceof TerastallizeModifier && m.pokemonId === modifier.pokemonId)));
         }
         if ((modifier as PersistentModifier).add(this.modifiers, !!virtual, this)) {
-          if (modifier instanceof PokemonFormChangeItemModifier || modifier instanceof TerastallizeModifier) {
+          if (modifier instanceof PokemonFormChangeItemModifier || modifier instanceof TerastallizeModifier || modifier instanceof ConditionalStatsBoost) {
             success = modifier.apply([ this.getPokemonById(modifier.pokemonId), true ]);
           }
           if (playSound && !this.sound.get(soundName)) {

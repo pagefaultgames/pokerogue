@@ -5,7 +5,7 @@ import Pokemon, { MoveResult, HitResult } from "../field/pokemon";
 import { Stat, getStatName } from "./pokemon-stat";
 import { StatusEffect } from "./status-effect";
 import * as Utils from "../utils";
-import { ChargeAttr, MoveFlags, allMoves } from "./move";
+import Move, { ChargeAttr, MoveFlags, allMoves } from "./move";
 import { Type } from "./type";
 import { BlockNonDirectDamageAbAttr, FlinchEffectAbAttr, ReverseDrainAbAttr, applyAbAttrs } from "./ability";
 import { TerrainType } from "./terrain";
@@ -499,6 +499,9 @@ export class EncoreTag extends BattlerTag {
     }
 
     const repeatableMove = lastMoves[0];
+    if (pokemon.summonData?.attack_move_restriction && (allMoves[repeatableMove.move] as Move).power === -1) {
+      return false;
+    }
 
     if (!repeatableMove.move || repeatableMove.virtual) {
       return false;

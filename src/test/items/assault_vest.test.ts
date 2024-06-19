@@ -18,6 +18,7 @@ import {Command} from "#app/ui/command-ui-handler";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import {Button} from "#enums/buttons";
 import PartyUiHandler from "#app/ui/party-ui-handler";
+import {overrideHeldItems} from "#app/modifier/modifier";
 
 
 describe("Items - Assault Vest", () => {
@@ -149,5 +150,116 @@ describe("Items - Assault Vest", () => {
     expect(messages).not.toContain("The assault vest prevents the use of any non-offensive moves.");
     battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
     expect(battleStatsPokemon[BattleStat.SPATK]).toBe(1);
-  }, 200000);
+  }, 20000);
+
+  it("no assault-vest, no pp left", async() => {
+    vi.spyOn(overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([]);
+    vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
+    await game.runToSummon([
+      Species.MIGHTYENA,
+      Species.POOCHYENA,
+    ]);
+    await game.phaseInterceptor.run(SummonPhase);
+    const pokemon = game.scene.getParty()[0];
+    const opponent = game.scene.currentBattle.enemyParty[0];
+    opponent.ivs = [0, 0, 0, 0, 0, 0];
+    pokemon.setNature(Nature.CALM);
+    pokemon.moveset[0].getMove().pp = 0;
+    pokemon.moveset[1].getMove().pp = 0;
+    pokemon.moveset[2].getMove().pp = 0;
+    pokemon.moveset[3].getMove().pp = 0;
+    expect(pokemon.nature).toBe(Nature.CALM);
+    await game.phaseInterceptor.to(CommandPhase);
+    const spDef = pokemon.stats[Stat.SPDEF];
+    // Check Special Defense stat boost
+    expect(spDef).toBe(138); // 138 * 1.5
+    // Check if the assault vest restricts the use of non-offensive moves
+    expect(pokemon.summonData.attack_move_restriction).toBe(false);
+    await new Promise<void>((resolve) => {
+      game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
+        game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
+      });
+      game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
+        (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, 0, false);
+        resolve();
+      });
+    });
+    await game.phaseInterceptor.to(TurnEndPhase);
+    const messages = game.textInterceptor.logs;
+    expect(messages).toContain("Mightyena used Struggle!");
+  }, 20000);
+
+  it("with assault-vest, no pp left except status move, should struggle", async() => {
+    vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.GROWTH, Moves.SWORDS_DANCE]);
+    await game.runToSummon([
+      Species.MIGHTYENA,
+      Species.POOCHYENA,
+    ]);
+    await game.phaseInterceptor.run(SummonPhase);
+    const pokemon = game.scene.getParty()[0];
+    const opponent = game.scene.currentBattle.enemyParty[0];
+    opponent.ivs = [0, 0, 0, 0, 0, 0];
+    pokemon.setNature(Nature.CALM);
+    pokemon.moveset[2].getMove().pp = 0;
+    pokemon.moveset[3].getMove().pp = 0;
+    expect(pokemon.nature).toBe(Nature.CALM);
+    await game.phaseInterceptor.to(CommandPhase);
+    const spDef = pokemon.stats[Stat.SPDEF];
+    // Check Special Defense stat boost
+    expect(spDef).toBe(207); // 138 * 1.5
+    // Check if the assault vest restricts the use of non-offensive moves
+    expect(pokemon.summonData.attack_move_restriction).toBe(true);
+    await new Promise<void>((resolve) => {
+      game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
+        game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
+      });
+      game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
+        (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, 0, false);
+        resolve();
+      });
+    });
+    await game.phaseInterceptor.to(TurnEndPhase);
+    const messages = game.textInterceptor.logs;
+    expect(messages).toContain("Mightyena used Struggle!");
+  }, 20000);
+
+  it("opponent use move Encore, should struggle instead of non-offensive move", async() => {
+    vi.spyOn(overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([]);
+    vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.GROWTH, Moves.TACKLE]);
+    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.ENCORE, Moves.ENCORE, Moves.ENCORE, Moves.ENCORE]);
+    await game.runToSummon([
+      Species.MIGHTYENA,
+      Species.POOCHYENA,
+    ]);
+    await game.phaseInterceptor.run(SummonPhase);
+    const pokemon = game.scene.getParty()[0];
+    const opponent = game.scene.currentBattle.enemyParty[0];
+    opponent.ivs = [0, 0, 0, 0, 0, 0];
+    pokemon.moveset[1].getMove().pp = 0;
+    pokemon.moveset[2].getMove().pp = 0;
+    pokemon.moveset[3].getMove().pp = 0;
+    pokemon.setNature(Nature.CALM);
+    opponent.setNature(Nature.CALM);
+    // expect(game.scene.modifiers[0].type.id).toBe("ASSAULT_VEST");
+    expect(pokemon.nature).toBe(Nature.CALM);
+    expect(opponent.nature).toBe(Nature.CALM);
+    await game.phaseInterceptor.to(CommandPhase);
+    game.doAttack(0);
+    await game.phaseInterceptor.to(TurnEndPhase);
+    const battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
+    expect(battleStatsPokemon[BattleStat.SPATK]).toBe(1);
+    vi.spyOn(overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{
+      name: "ASSAULT_VEST",
+    }]);
+    overrideHeldItems(game.scene, pokemon, true);
+    expect(game.scene.modifiers[0].type.id).toBe("ASSAULT_VEST");
+    expect(pokemon.summonData.attack_move_restriction).toBe(true);
+    game.doAttack(0);
+    await game.phaseInterceptor.to(TurnEndPhase);
+    const messages = game.textInterceptor.logs;
+    expect(messages).toContain("Mightyena used Struggle!");
+  }, 20000);
 });
