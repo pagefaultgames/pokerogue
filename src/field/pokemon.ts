@@ -3931,11 +3931,11 @@ export class PokemonMove {
     this.virtual = !!virtual;
   }
 
-  isUsable(pokemon: Pokemon, ignorePp?: boolean): boolean {
+  isUsable(pokemon: Pokemon, ignorePp?: boolean, followUp?: boolean): boolean {
     if (this.moveId && pokemon.summonData?.disabledMove === this.moveId) {
       return false;
     }
-    if (pokemon.summonData?.attack_move_restriction) {
+    if (pokemon.summonData?.attack_move_restriction && !followUp) {
       const move = this.getMove();
       if (move.power === -1) {
         return false;

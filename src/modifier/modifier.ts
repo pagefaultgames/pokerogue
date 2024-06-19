@@ -26,6 +26,7 @@ import { Command } from "#app/ui/command-ui-handler.js";
 
 import { allMoves } from "#app/data/move.js";
 import { Abilities } from "#app/enums/abilities.js";
+import {ModifierOverride} from "../overrides";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 
@@ -2438,6 +2439,11 @@ export function overrideModifiers(scene: BattleScene, player: boolean = true): v
  */
 export function overrideHeldItems(scene: BattleScene, pokemon: Pokemon, player: boolean = true): void {
   const heldItemsOverride = player ? Overrides.STARTING_HELD_ITEMS_OVERRIDE : Overrides.OPP_HELD_ITEMS_OVERRIDE;
+  addModifierToPokemon(heldItemsOverride, scene, pokemon);
+}
+
+export function addModifierToPokemon(modifierNames: ModifierOverride[], scene: BattleScene, pokemon: Pokemon, player: boolean = true): void {
+  const heldItemsOverride = modifierNames;
   if (!heldItemsOverride || heldItemsOverride.length === 0 || !scene) {
     return;
   } // if no override, do nothing

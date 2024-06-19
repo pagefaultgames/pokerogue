@@ -2,13 +2,10 @@ import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
 import * as overrides from "#app/overrides";
-import {
-  CommandPhase, SelectModifierPhase,
-  SummonPhase, TurnEndPhase,
-} from "#app/phases";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import {CommandPhase, SelectModifierPhase, SummonPhase, TurnEndPhase,} from "#app/phases";
+import {Abilities} from "#enums/abilities";
+import {Moves} from "#enums/moves";
+import {Species} from "#enums/species";
 import {BattleStyle} from "#enums/battle-style";
 import {Nature} from "#app/data/nature";
 import {Stat} from "#app/data/pokemon-stat";
@@ -18,8 +15,13 @@ import {Command} from "#app/ui/command-ui-handler";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import {Button} from "#enums/buttons";
 import PartyUiHandler from "#app/ui/party-ui-handler";
-import {overrideHeldItems} from "#app/modifier/modifier";
+import {addModifierToPokemon} from "#app/modifier/modifier";
+import {allMoves} from "#app/data/move";
 
+
+
+// move.getMove() instanceof AttackMove
+// should use that instead of power === -1
 
 describe("Items - Assault Vest", () => {
   let phaserGame: Phaser.Game;
@@ -95,6 +97,49 @@ describe("Items - Assault Vest", () => {
     battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
     expect(battleStatsPokemon[BattleStat.SPATK]).toBe(0);
   }, 20000);
+
+  it("prevent use of max-guard", async() => {
+    vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.MAX_GUARD]);
+    await game.runToSummon([
+      Species.MIGHTYENA,
+      Species.POOCHYENA,
+    ]);
+    await game.phaseInterceptor.run(SummonPhase);
+    const pokemon = game.scene.getParty()[0];
+    const opponent = game.scene.currentBattle.enemyParty[0];
+    opponent.ivs = [0, 0, 0, 0, 0, 0];
+    pokemon.setNature(Nature.CALM);
+    opponent.setNature(Nature.CALM);
+    expect(game.scene.modifiers[0].type.id).toBe("ASSAULT_VEST");
+    expect(pokemon.nature).toBe(Nature.CALM);
+    expect(opponent.nature).toBe(Nature.CALM);
+    await game.phaseInterceptor.to(CommandPhase);
+    const oppSpDef = opponent.stats[Stat.SPDEF];
+    const spDef = pokemon.stats[Stat.SPDEF];
+    // Check Special Defense stat boost
+    expect(spDef).toBe(207); // 138 * 1.5
+
+    // Check opponent does not have any special defense boost
+    expect(oppSpDef).toBe(226);
+    // Check if the assault vest restricts the use of non-offensive moves
+    expect(pokemon.summonData.attack_move_restriction).toBe(true);
+    let battleStatsPokemon = pokemon.summonData.battleStats;
+    expect(battleStatsPokemon[Stat.SPATK]).toBe(0);
+    await new Promise<void>((resolve) => {
+      game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
+        game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
+      });
+      game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
+        (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, 0, false);
+        resolve();
+      });
+    });
+    const message = game.textInterceptor.getLatestMessage();
+    expect(message).toBe("The assault vest prevents the use of any non-offensive moves.");
+    battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
+    expect(battleStatsPokemon[BattleStat.SPATK]).toBe(0);
+  });
 
   it("transfer assault vest to another mon to revert stats boost and restriction", async() => {
     vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
@@ -251,10 +296,9 @@ describe("Items - Assault Vest", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
     const battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
     expect(battleStatsPokemon[BattleStat.SPATK]).toBe(1);
-    vi.spyOn(overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{
+    addModifierToPokemon([{
       name: "ASSAULT_VEST",
-    }]);
-    overrideHeldItems(game.scene, pokemon, true);
+    }], game.scene, pokemon, true);
     expect(game.scene.modifiers[0].type.id).toBe("ASSAULT_VEST");
     expect(pokemon.summonData.attack_move_restriction).toBe(true);
     game.doAttack(0);
@@ -262,4 +306,59 @@ describe("Items - Assault Vest", () => {
     const messages = game.textInterceptor.logs;
     expect(messages).toContain("Mightyena used Struggle!");
   }, 20000);
+
+  it("double - ally use a dance move while ability dancer is active, should repeat the non-offensive and gain the boost stats", async() => {
+    vi.spyOn(overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([]);
+    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(false);
+    vi.spyOn(overrides, "DOUBLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.GROWTH, Moves.TACKLE, Moves.DRAGON_DANCE]);
+    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
+    await game.runToSummon([
+      Species.MIGHTYENA,
+      Species.POOCHYENA,
+    ]);
+    const pokemonA = game.scene.getParty()[0];
+    const pokemonB = game.scene.getParty()[1];
+    pokemonA.species.ability1 = Abilities.DANCER;
+    pokemonA.species.ability2 = Abilities.NONE;
+    pokemonA.species.abilityHidden = Abilities.NONE;
+    pokemonB.species.ability1 = Abilities.HYDRATION;
+    pokemonB.species.ability2 = Abilities.NONE;
+    pokemonB.species.abilityHidden = Abilities.NONE;
+    addModifierToPokemon([{
+      name: "ASSAULT_VEST",
+    }], game.scene, pokemonA, true);
+    pokemonA.setNature(Nature.CALM);
+    pokemonB.setNature(Nature.CALM);
+    expect(pokemonA.getAbility().id).toBe(Abilities.DANCER);
+    expect(pokemonB.getAbility().id).toBe(Abilities.HYDRATION);
+    await game.phaseInterceptor.to(CommandPhase);
+    expect(pokemonA.summonData.attack_move_restriction).toBe(true);
+    expect(pokemonB.summonData.attack_move_restriction).toBe(false);
+    game.doAttack(1);
+    game.doSelectTarget(0);
+    game.doAttack(2);
+    await game.phaseInterceptor.to(TurnEndPhase);
+    const battleStatsPokemonA = pokemonA.summonData.battleStats;
+    expect(battleStatsPokemonA[BattleStat.ATK]).toBe(1);
+    expect(battleStatsPokemonA[BattleStat.SPD]).toBe(1);
+    const battleStatsPokemonB = pokemonB.summonData.battleStats;
+    expect(battleStatsPokemonB[BattleStat.ATK]).toBe(1);
+    expect(battleStatsPokemonB[BattleStat.SPD]).toBe(1);
+  }, 200000);
+
+  it("placeholder to add tests when move Me first is implemented", async() => {
+    const move = allMoves[Moves.ME_FIRST];
+    expect(move.name).toContain("(N)");
+  });
+
+  it("placeholder to add tests when move Instruct is implemented", async() => {
+    const move = allMoves[Moves.INSTRUCT];
+    expect(move.name).toContain("(N)");
+  });
+
+  it("placeholder to add tests when move Torment is implemented", async() => {
+    const move = allMoves[Moves.TORMENT];
+    expect(move.name).toContain("(N)");
+  });
 });

@@ -113,7 +113,7 @@ export const OPP_IVS_OVERRIDE: integer | integer[] = [];
  * - Type is for TERA_SHARD or ATTACK_TYPE_BOOSTER (type boosting items i.e Silk Scarf)
  * - BerryType is for BERRY
  */
-interface ModifierOverride {
+export interface ModifierOverride {
     name: keyof typeof modifierTypes & string,
     count?: integer
     type?: TempBattleStat|Stat|Nature|Type|BerryType

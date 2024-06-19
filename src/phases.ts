@@ -2566,7 +2566,8 @@ export class MovePhase extends BattlePhase {
   }
 
   canMove(): boolean {
-    return this.pokemon.isActive(true) && this.move.isUsable(this.pokemon, this.ignorePp) && !!this.targets.length;
+    // params followUp is added for the dancer case with assault vest
+    return this.pokemon.isActive(true) && this.move.isUsable(this.pokemon, this.ignorePp, this.followUp) && !!this.targets.length;
   }
 
   /**Signifies the current move should fail but still use PP */
