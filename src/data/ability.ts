@@ -3682,13 +3682,21 @@ export class PostSummonStatChangeOnArenaAbAttr extends PostSummonStatChangeAbAtt
 }
 
 /**
- * Applies immunity to physical moves.
+ * Takes no damage from the first hit of a physical move.
  * This is used in Ice Face ability.
  */
-export class IceFaceMoveImmunityAbAttr extends MoveImmunityAbAttr {
+export class IceFaceBlockPhysicalAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
+  private multiplier: number;
+
+  constructor(condition: PokemonDefendCondition, multiplier: number) {
+    super(condition, multiplier);
+
+    this.multiplier = multiplier;
+  }
+
   /**
    * Applies the Ice Face pre-defense ability to the Pokémon.
-   * Removes BattlerTagType.ICE_FACE hit by physical attack and is in Ice Face form.
+   * Removes BattlerTagType.ICE_FACE when hit by physical attack and is in Ice Face form.
    *
    * @param {Pokemon} pokemon - The Pokémon with the Ice Face ability.
    * @param {boolean} passive - Whether the ability is passive.
@@ -3699,16 +3707,13 @@ export class IceFaceMoveImmunityAbAttr extends MoveImmunityAbAttr {
    * @returns {boolean} - Whether the immunity was applied.
    */
   applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    const isImmune = super.applyPreDefend(pokemon, passive, attacker, move, cancelled, args);
-
-    if (isImmune) {
-      const simulated = args.length > 1 && args[1];
-      if (!simulated) {
-        pokemon.removeTag(BattlerTagType.ICE_FACE);
-      }
+    if (this.condition(pokemon, attacker, move)) {
+      (args[0] as Utils.NumberHolder).value = this.multiplier;
+      pokemon.removeTag(BattlerTagType.ICE_FACE);
+      return true;
     }
 
-    return isImmune;
+    return false;
   }
 
   /**
@@ -4768,7 +4773,7 @@ export function initAbilities() {
       .conditionalAttr(getWeatherCondition(WeatherType.HAIL, WeatherType.SNOW), PostSummonAddBattlerTagAbAttr, BattlerTagType.ICE_FACE, 0)
       // When weather changes to HAIL or SNOW while pokemon is fielded, add BattlerTagType.ICE_FACE
       .attr(PostWeatherChangeAddBattlerTagAttr, BattlerTagType.ICE_FACE, 0, WeatherType.HAIL, WeatherType.SNOW)
-      .attr(IceFaceMoveImmunityAbAttr, (target, user, move) => move.category === MoveCategory.PHYSICAL && !!target.getTag(BattlerTagType.ICE_FACE))
+      .attr(IceFaceBlockPhysicalAbAttr, (target, user, move) => move.category === MoveCategory.PHYSICAL && !!target.getTag(BattlerTagType.ICE_FACE), 0)
       .ignorable(),
     new Ability(Abilities.POWER_SPOT, 8)
       .attr(AllyMoveCategoryPowerBoostAbAttr, [MoveCategory.SPECIAL, MoveCategory.PHYSICAL], 1.3),
