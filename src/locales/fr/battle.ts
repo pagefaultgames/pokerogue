@@ -75,7 +75,7 @@ export const battle: SimpleTranslationEntries = {
   "unlockedSomething": "{{unlockedThing}}\na été débloqué.",
   "congratulations": "Félicitations !",
   "beatModeFirstTime": "{{speciesName}} a battu le mode {{gameMode}} pour la première fois !\nVous avez reçu {{newModifier}} !",
-  "ppReduced": "It reduced the PP of {{targetName}}'s\n{{moveName}} by {{reduction}}!",
+  "ppReduced": "Les PP de la capacité {{moveName}}\nde {{targetName}} sont réduits de {{reduction}} !",
   "battlerTagsRechargingLapse": "Le contrecoup empêche {{pokemonNameWithAffix}}\n de bouger !",
   "battlerTagsTrappedOnAdd": "{{pokemonNameWithAffix}}\nne peut plus s’échapper !",
   "battlerTagsTrappedOnRemove": "{{pokemonNameWithAffix}} est libéré\nde la capacité {{moveName}} !",
@@ -130,7 +130,7 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsCritBoostOnAdd": "{{pokemonNameWithAffix}}\nest prêt à tout donner !",
   "battlerTagsCritBoostOnRemove": "{{pokemonNameWithAffix}} se détend.",
   "battlerTagsSaltCuredOnAdd": "{{pokemonNameWithAffix}}\nest couvert de sel !",
-  "battlerTagsSaltCuredLapse": "{{pokemonNameWithAffix}}est blessé\npar la capacité {{moveName}} !",
+  "battlerTagsSaltCuredLapse": "{{pokemonNameWithAffix}} est blessé\npar la capacité {{moveName}} !",
   "battlerTagsCursedOnAdd": "{{pokemonNameWithAffix}} sacrifie des PV\net lance une malédiction sur {{pokemonName}} !",
   "battlerTagsCursedLapse": "{{pokemonNameWithAffix}} est touché par la malédiction !"
 } as const;
