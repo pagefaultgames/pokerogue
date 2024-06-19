@@ -86,7 +86,7 @@ export function getPokeballTintColor(type: PokeballType): number {
   }
 }
 
-export function doPokeballBounceAnim(scene: BattleScene, pokeball: Phaser.GameObjects.Sprite, y1: number, y2: number, baseBounceDuration: integer, callback: Function) {
+export function doPokeballBounceAnim(scene: BattleScene, pokeball: Phaser.GameObjects.Sprite, overlayPokeball: Phaser.GameObjects.Sprite, y1: number, y2: number, baseBounceDuration: integer, callback: Function) {
   let bouncePower = 1;
   let bounceYOffset = y1;
   let bounceY = y2;
@@ -94,7 +94,7 @@ export function doPokeballBounceAnim(scene: BattleScene, pokeball: Phaser.GameOb
 
   const doBounce = () => {
     scene.tweens.add({
-      targets: pokeball,
+      targets: [pokeball, overlayPokeball],
       y: y2,
       duration: bouncePower * baseBounceDuration,
       ease: "Cubic.easeIn",
@@ -108,13 +108,20 @@ export function doPokeballBounceAnim(scene: BattleScene, pokeball: Phaser.GameOb
           bounceY = y2 - bounceYOffset;
 
           scene.tweens.add({
-            targets: pokeball,
+            targets: [pokeball, overlayPokeball],
             y: bounceY,
             duration: bouncePower * baseBounceDuration,
             ease: "Cubic.easeOut",
             onComplete: () => doBounce()
           });
         } else if (callback) {
+          // Fade out the overlay Pokeball after the bounce finishes
+          scene.tweens.add({
+            targets: overlayPokeball,
+            alpha: 0,
+            duration: 800,
+          });
+
           callback();
         }
       }

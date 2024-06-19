@@ -1244,6 +1244,9 @@ export const modifierTypes = {
 
   GOLDEN_POKEBALL: () => new ModifierType("modifierType:ModifierType.GOLDEN_POKEBALL", "pb_gold", (type, _args) => new Modifiers.ExtraModifierModifier(type), null, "pb_bounce_1"),
 
+  QUICK_BALL: () => new ModifierType("modifierType:ModifierType.QUICK_BALL", "qb", (type, _args) => new Modifiers.QuickBallModifier(type)),
+  TIMER_BALL: () => new ModifierType("modifierType:ModifierType.TIMER_BALL", "tb", (type, _args) => new Modifiers.TimerBallModifier(type)),
+
   ENEMY_DAMAGE_BOOSTER: () => new ModifierType("modifierType:ModifierType.ENEMY_DAMAGE_BOOSTER", "wl_item_drop", (type, _args) => new Modifiers.EnemyDamageBoosterModifier(type, 5)),
   ENEMY_DAMAGE_REDUCTION: () => new ModifierType("modifierType:ModifierType.ENEMY_DAMAGE_REDUCTION", "wl_guard_spec", (type, _args) => new Modifiers.EnemyDamageReducerModifier(type, 2.5)),
   //ENEMY_SUPER_EFFECT_BOOSTER: () => new ModifierType('Type Advantage Token', 'Increases damage of super effective attacks by 30%', (type, _args) => new Modifiers.EnemySuperEffectiveDamageBoosterModifier(type, 30), 'wl_custom_super_effective'),

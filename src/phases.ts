@@ -5,7 +5,7 @@ import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMov
 import { Mode } from "./ui/ui";
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
-import { BerryModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyPersistentModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HitHealModifier, LapsingPersistentModifier, MapModifier, Modifier, MultipleParticipantExpBonusModifier, PersistentModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, SwitchEffectTransferModifier, TempBattleStatBoosterModifier, TurnHealModifier, TurnHeldItemTransferModifier, MoneyMultiplierModifier, MoneyInterestModifier, IvScannerModifier, LapsingPokemonHeldItemModifier, PokemonMultiHitModifier, PokemonMoveAccuracyBoosterModifier, overrideModifiers, overrideHeldItems, BypassSpeedChanceModifier, TurnStatusEffectModifier } from "./modifier/modifier";
+import { BerryModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyPersistentModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HitHealModifier, LapsingPersistentModifier, MapModifier, Modifier, MultipleParticipantExpBonusModifier, PersistentModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, SwitchEffectTransferModifier, TempBattleStatBoosterModifier, TurnHealModifier, TurnHeldItemTransferModifier, MoneyMultiplierModifier, MoneyInterestModifier, IvScannerModifier, LapsingPokemonHeldItemModifier, PokemonMultiHitModifier, PokemonMoveAccuracyBoosterModifier, overrideModifiers, overrideHeldItems, BypassSpeedChanceModifier, TurnStatusEffectModifier, BallEffectivenessModifier, QuickBallModifier, TimerBallModifier } from "./modifier/modifier";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./data/pokeball";
 import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from "./data/battle-anims";
@@ -4728,6 +4728,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
 export class AttemptCapturePhase extends PokemonPhase {
   private pokeballType: PokeballType;
   private pokeball: Phaser.GameObjects.Sprite;
+  private overlayBall: Phaser.GameObjects.Sprite;
   private originalY: number;
 
   constructor(scene: BattleScene, targetIndex: integer, pokeballType: PokeballType) {
@@ -4752,16 +4753,52 @@ export class AttemptCapturePhase extends PokemonPhase {
     const _3m = 3 * pokemon.getMaxHp();
     const _2h = 2 * pokemon.hp;
     const catchRate = pokemon.species.catchRate;
+
     const pokeballMultiplier = getPokeballCatchMultiplier(this.pokeballType);
+
+    let boostedBallMultiplier = pokeballMultiplier;
+    let showOverlayBall = false;
+    let overlayBallKey: string;
+    const ballEffectivenessModifier = this.scene.findModifier(m => m instanceof BallEffectivenessModifier);
+    // When the player has a matching modifier and is not using a Master Ball
+    if (ballEffectivenessModifier && this.pokeballType !== PokeballType.MASTER_BALL) {
+      if (ballEffectivenessModifier instanceof QuickBallModifier) {
+        if (this.scene.currentBattle.turn === 1) { // Only applies on the first turn of battle
+          boostedBallMultiplier *= 5;
+          showOverlayBall = true;
+          overlayBallKey = "qb";
+        }
+      }
+      if (ballEffectivenessModifier instanceof TimerBallModifier) {
+        // Increases the multiplier each turn up to a cap
+        boostedBallMultiplier *= Math.min(1 + 0.3 * this.scene.currentBattle.turn, 4);
+        showOverlayBall = this.scene.currentBattle.turn > 1;
+        overlayBallKey = "tb";
+      }
+    }
+
     const statusMultiplier = pokemon.status ? getStatusEffectCatchRateMultiplier(pokemon.status.effect) : 1;
+
+    // Create a modified and unmodified catch value to compare later for the 'echo' animation
     const x = Math.round((((_3m - _2h) * catchRate * pokeballMultiplier) / _3m) * statusMultiplier);
+    const boostedX = Math.round((((_3m - _2h) * catchRate * boostedBallMultiplier) / _3m) * statusMultiplier);
+
     const y = Math.round(65536 / Math.sqrt(Math.sqrt(255 / x)));
+    const boostedY = Math.round(65536 / Math.sqrt(Math.sqrt(255 / boostedX)));
+
     const fpOffset = pokemon.getFieldPositionOffset();
 
     const pokeballAtlasKey = getPokeballAtlasKey(this.pokeballType);
-    this.pokeball = this.scene.addFieldSprite(16, 80, "pb", pokeballAtlasKey);
-    this.pokeball.setOrigin(0.5, 0.625);
+    this.pokeball = this.scene
+      .addFieldSprite(16, 80, "pb", pokeballAtlasKey)
+      .setOrigin(0.5, 0.625);
     this.scene.field.add(this.pokeball);
+
+    this.overlayBall = this.scene
+      .addFieldSprite(this.pokeball.x, this.pokeball.y, "pb", overlayBallKey)
+      .setOrigin(this.pokeball.originX, this.pokeball.originY)
+      .setVisible(showOverlayBall);
+    this.scene.field.add(this.overlayBall);
 
     this.scene.playSound("pb_throw");
     this.scene.time.delayedCall(300, () => {
@@ -4769,13 +4806,19 @@ export class AttemptCapturePhase extends PokemonPhase {
     });
 
     this.scene.tweens.add({
-      targets: this.pokeball,
+      targets: [this.pokeball, this.overlayBall],
       x: { value: 236 + fpOffset[0], ease: "Linear" },
       y: { value: 16 + fpOffset[1], ease: "Cubic.easeOut" },
       duration: 500,
       onComplete: () => {
         this.pokeball.setTexture("pb", `${pokeballAtlasKey}_opening`);
-        this.scene.time.delayedCall(17, () => this.pokeball.setTexture("pb", `${pokeballAtlasKey}_open`));
+        this.overlayBall.setTexture("pb", `${overlayBallKey}_opening`);
+
+        this.scene.time.delayedCall(17, () => {
+          this.pokeball.setTexture("pb", `${pokeballAtlasKey}_open`);
+          this.overlayBall.setTexture("pb", `${overlayBallKey}_open`);
+        });
+
         this.scene.playSound("pb_rel");
         pokemon.tint(getPokeballTintColor(this.pokeballType));
 
@@ -4789,10 +4832,17 @@ export class AttemptCapturePhase extends PokemonPhase {
           y: 20,
           onComplete: () => {
             this.pokeball.setTexture("pb", `${pokeballAtlasKey}_opening`);
+            this.overlayBall.setTexture("pb", `${overlayBallKey}_opening`);
+
             pokemon.setVisible(false);
             this.scene.playSound("pb_catch");
-            this.scene.time.delayedCall(17, () => this.pokeball.setTexture("pb", `${pokeballAtlasKey}`));
 
+            this.scene.time.delayedCall(17, () => {
+              this.pokeball.setTexture("pb", `${pokeballAtlasKey}`);
+              this.overlayBall.setTexture("pb", `${overlayBallKey}`);
+            });
+
+            // Will repeat up to three times unless a Master Ball is used
             const doShake = () => {
               let shakeCount = 0;
               const pbX = this.pokeball.x;
@@ -4810,6 +4860,10 @@ export class AttemptCapturePhase extends PokemonPhase {
                     const directionMultiplier = shakeCount % 2 === 1 ? 1 : -1;
                     this.pokeball.setX(pbX + value * 4 * directionMultiplier);
                     this.pokeball.setAngle(value * 27.5 * directionMultiplier);
+
+                    // Ensure the overlay mirrors the real ball
+                    this.overlayBall.setX(this.pokeball.x);
+                    this.overlayBall.setAngle(this.pokeball.angle);
                   }
                 },
                 onRepeat: () => {
@@ -4817,13 +4871,32 @@ export class AttemptCapturePhase extends PokemonPhase {
                     shakeCounter.stop();
                     this.failCatch(shakeCount);
                   } else if (shakeCount++ < 3) {
-                    if (pokeballMultiplier === -1 || pokemon.randSeedInt(65536) < y) {
+                    const randSeedInt = pokemon.randSeedInt(65536);
+                    if (pokeballMultiplier === -1 || randSeedInt < boostedY) {
+                      if (randSeedInt >= y) { // Would have failed without boost from modifier
+                        this.overlayBall
+                          .setAlpha(1)
+                          .setScale(1); // Reset the overlay Poke Ball
+                        // Creates a scale and fade tween to make a sort of 'echo' animation
+                        this.scene.tweens.add({
+                          targets: this.overlayBall,
+                          scale: 1.5,
+                          duration: 700,
+                          ease: "Back.easeOut"
+                        });
+                        this.scene.tweens.add({
+                          targets: this.overlayBall,
+                          alpha: 0,
+                          duration: 700,
+                          ease: "Cubic.easeOut"
+                        });
+                      }
                       this.scene.playSound("pb_move");
                     } else {
                       shakeCounter.stop();
                       this.failCatch(shakeCount);
                     }
-                  } else {
+                  } else { // Successful capture
                     this.scene.playSound("pb_lock");
                     addPokeballCaptureStars(this.scene, this.pokeball);
 
@@ -4853,7 +4926,7 @@ export class AttemptCapturePhase extends PokemonPhase {
               });
             };
 
-            this.scene.time.delayedCall(250, () => doPokeballBounceAnim(this.scene, this.pokeball, 16, 72, 350, doShake));
+            this.scene.time.delayedCall(250, () => doPokeballBounceAnim(this.scene, this.pokeball, this.overlayBall, 16, 72, 350, doShake));
           }
         });
       }
