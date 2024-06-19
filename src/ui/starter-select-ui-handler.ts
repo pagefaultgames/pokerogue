@@ -1942,7 +1942,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.setSpecies(null);
       }
       if (this.starterIconsCursorObj.visible) {
-        this.setSpecies(this.genSpecies[this.starterIconsCursorIndex][this.starterCursors[this.starterIconsCursorIndex]]);
+        this.setSpecies(this.genSpecies[this.starterGens[this.starterIconsCursorIndex]][this.starterCursors[this.starterIconsCursorIndex]]);
       }
 
       return true;
