@@ -3491,6 +3491,24 @@ export class WeightMultiplierAbAttr extends AbAttr {
   }
 }
 
+/** When ability owner would be burned, paralysed or poisoned, show ability.
+ *  if user becomes burned, paralysed or any kind of poisoned by the opposing pokemon,
+ *  inflict it on the opposing pokemon immediately if they can have this status.
+ *  all poisons are inflicted on opponent as regular poisoned.
+ *  "by" the opposing pokemon means ability or attack.
+ *  ability triggers before user eats berry.
+ *  triggers in between psycho shift transferring the status and psychoshift curing the user
+ *  chain reaction allowed.
+ *  ignore toxic spikes.
+ *  ignore substitute.
+ */
+export class SyncSomeInflictedStatusAbAttr extends AbAttr {
+
+}
+
+/** make wild pokemon have the same nature if pokemon with the ability is first in the party
+ * was removed in gen XI(S&V)
+ */
 export class SyncEncounterNatureAbAttr extends AbAttr {
   constructor() {
     super(false);
@@ -4053,6 +4071,7 @@ export function initAbilities() {
       .attr(EffectSporeAbAttr),
     new Ability(Abilities.SYNCHRONIZE, 3)
       .attr(SyncEncounterNatureAbAttr)
+      .attr(SyncSomeInflictedStatusAbAttr)
       .unimplemented(),
     new Ability(Abilities.CLEAR_BODY, 3)
       .attr(ProtectStatAbAttr)
