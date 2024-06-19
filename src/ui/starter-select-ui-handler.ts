@@ -1101,11 +1101,361 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         if (!this.speciesStarterDexEntry?.caughtAttr) {
           error = true;
         } else if (this.starterCursors.length < 6) {
+          let pokemonGen;
+          let pokemonCursor;
           if (!this.starterIconsCursorObj.visible) {
-            this.createPartyMenuOptions(this.getGenCursorWithScroll(), this.cursor);
+            pokemonGen = this.getGenCursorWithScroll();
+            pokemonCursor = this.cursor;
           } else {
-            this.createPartyMenuOptions(this.starterGens[this.starterIconsCursorIndex], this.starterCursors[this.starterIconsCursorIndex]);
+            pokemonGen = this.starterGens[this.starterIconsCursorIndex];
+            pokemonCursor = this.starterCursors[this.starterIconsCursorIndex];
           }
+          const ui = this.getUi();
+          let options = [];
+          let removeIndex = 0;
+          let isDupe = false;
+          for (let s = 0; s < this.starterCursors.length; s++) {
+            if (this.starterGens[s] === pokemonGen && this.starterCursors[s] === pokemonCursor) {
+              isDupe = true;
+              removeIndex = s;
+              break;
+            }
+          }
+          const species = this.genSpecies[pokemonGen][pokemonCursor];
+
+          const isValidForChallenge = new Utils.BooleanHolder(true);
+          Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge);
+          const currentPartyValue = this.starterGens.reduce((total: number, gen: number, i: number) => total += this.scene.gameData.getSpeciesStarterValue(this.genSpecies[gen][this.starterCursors[i]].speciesId), 0);
+          const newCost = this.scene.gameData.getSpeciesStarterValue(species.speciesId);
+          if (!isDupe && isValidForChallenge.value && currentPartyValue + newCost <= this.getValueLimit()) {
+            options = [
+              {
+                label: i18next.t("starterSelectUiHandler:addToParty"),
+                handler: () => {
+                  ui.setMode(Mode.STARTER_SELECT);
+
+                  if (!isDupe && isValidForChallenge.value && this.tryUpdateValue(this.scene.gameData.getSpeciesStarterValue(species.speciesId))) {
+                    const cursorObj = this.starterCursorObjs[this.starterCursors.length];
+                    cursorObj.setVisible(true);
+                    cursorObj.setPosition(this.cursorObj.x, this.cursorObj.y);
+                    const props = this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor);
+                    this.starterIcons[this.starterCursors.length].setTexture(species.getIconAtlasKey(props.formIndex, props.shiny, props.variant));
+                    this.starterIcons[this.starterCursors.length].setFrame(species.getIconId(props.female, props.formIndex, props.shiny, props.variant));
+                    this.checkIconId(this.starterIcons[this.starterCursors.length], species, props.female, props.formIndex, props.shiny, props.variant);
+                    this.starterGens.push(pokemonGen);
+                    this.starterCursors.push(pokemonCursor);
+                    this.starterAttr.push(this.dexAttrCursor);
+                    this.starterAbilityIndexes.push(this.abilityCursor);
+                    this.starterNatures.push(this.natureCursor as unknown as Nature);
+                    this.starterMovesets.push(this.starterMoveset.slice(0) as StarterMoveset);
+                    if (this.speciesLoaded.get(species.speciesId)) {
+                      getPokemonSpeciesForm(species.speciesId, props.formIndex).cry(this.scene);
+                    }
+                    if (this.starterCursors.length === 6 || this.value === this.getValueLimit()) {
+                      this.tryStart();
+                    }
+                    this.updateInstructions();
+
+                    /**
+                    * If the user can't select a pokemon anymore,
+                    * go to start button.
+                    */
+                    if (!this.canAddParty) {
+                      this.startCursorObj.setVisible(true);
+                      this.setGenMode(true);
+                    }
+
+                    ui.playSelect();
+                  } else {
+                    ui.playError(); // this should be redundant as there is now a trigger for when a pokemon can't be added to party
+                  }
+                  return true;
+                },
+                overrideSound: true
+              }];
+          } else if (isDupe) {
+            options = [{
+              label: i18next.t("starterSelectUiHandler:removeFromParty"),
+              handler: () => {
+                this.popStarter(removeIndex);
+                ui.setMode(Mode.STARTER_SELECT);
+                return true;
+              }
+            }];
+          }
+
+          options.push(
+            {
+              label: i18next.t("starterSelectUiHandler:toggleIVs"),
+              handler: () => {
+                this.toggleStatsMode();
+                ui.setMode(Mode.STARTER_SELECT);
+                return true;
+              }
+            });
+          if (this.speciesStarterMoves.length > 1) {
+            const showSwapOptions = (moveset: StarterMoveset) => {
+              ui.setMode(Mode.STARTER_SELECT).then(() => {
+                ui.showText(i18next.t("starterSelectUiHandler:selectMoveSwapOut"), null, () => {
+                  this.moveInfoOverlay.show(allMoves[moveset[0]]);
+
+                  ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+                    options: moveset.map((m: Moves, i: number) => {
+                      const option: OptionSelectItem = {
+                        label: allMoves[m].name,
+                        handler: () => {
+                          ui.setMode(Mode.STARTER_SELECT).then(() => {
+                            ui.showText(`${i18next.t("starterSelectUiHandler:selectMoveSwapWith")} ${allMoves[m].name}.`, null, () => {
+                              const possibleMoves = this.speciesStarterMoves.filter((sm: Moves) => sm !== m);
+                              this.moveInfoOverlay.show(allMoves[possibleMoves[0]]);
+
+                              ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+                                options: possibleMoves.map(sm => {
+                                  // make an option for each available starter move
+                                  const option = {
+                                    label: allMoves[sm].name,
+                                    handler: () => {
+                                      this.switchMoveHandler(i, sm, m);
+                                      showSwapOptions(this.starterMoveset);
+                                      return true;
+                                    },
+                                    onHover: () => {
+                                      this.moveInfoOverlay.show(allMoves[sm]);
+                                    },
+                                  };
+                                  return option;
+                                }).concat({
+                                  label: i18next.t("menu:cancel"),
+                                  handler: () => {
+                                    showSwapOptions(this.starterMoveset);
+                                    return true;
+                                  },
+                                  onHover: () => {
+                                    this.moveInfoOverlay.clear();
+                                  },
+                                }),
+                                supportHover: true,
+                                maxOptions: 8,
+                                yOffset: 19
+                              });
+                            });
+                          });
+                          return true;
+                        },
+                        onHover: () => {
+                          this.moveInfoOverlay.show(allMoves[m]);
+                        },
+                      };
+                      return option;
+                    }).concat({
+                      label: i18next.t("menu:cancel"),
+                      handler: () => {
+                        this.moveInfoOverlay.clear();
+                        this.clearText();
+                        ui.setMode(Mode.STARTER_SELECT);
+                        return true;
+                      },
+                      onHover: () => {
+                        this.moveInfoOverlay.clear();
+                      },
+                    }),
+                    supportHover: true,
+                    maxOptions: 8,
+                    yOffset: 19
+                  });
+                });
+              });
+            };
+            options.push({
+              label: i18next.t("starterSelectUiHandler:manageMoves"),
+              handler: () => {
+                showSwapOptions(this.starterMoveset);
+                return true;
+              }
+            });
+          }
+          const starterData = this.scene.gameData.starterData[this.lastSpecies.speciesId];
+          let starterAttributes = this.starterPreferences[this.lastSpecies.speciesId];
+          if (this.canCycleNature) {
+            // if we could cycle natures, enable the improved nature menu
+            const showNatureOptions = () => {
+              ui.setMode(Mode.STARTER_SELECT).then(() => {
+                ui.showText(i18next.t("starterSelectUiHandler:selectNature"), null, () => {
+                  const natures = this.scene.gameData.getNaturesForAttr(this.speciesStarterDexEntry.natureAttr);
+                  ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+                    options: natures.map((n: Nature, i: number) => {
+                      const option: OptionSelectItem = {
+                        label: getNatureName(n, true, true, true, this.scene.uiTheme),
+                        handler: () => {
+                          // update default nature in starter save data
+                          if (!starterAttributes) {
+                            starterAttributes =
+                              this.starterPreferences[this.lastSpecies.speciesId] = {};
+                          }
+                          starterAttributes.nature = n as unknown as integer;
+                          this.clearText();
+                          ui.setMode(Mode.STARTER_SELECT);
+                          // set nature for starter
+                          this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, n, undefined);
+                          return true;
+                        }
+                      };
+                      return option;
+                    }).concat({
+                      label: i18next.t("menu:cancel"),
+                      handler: () => {
+                        this.clearText();
+                        ui.setMode(Mode.STARTER_SELECT);
+                        return true;
+                      }
+                    }),
+                    maxOptions: 8,
+                    yOffset: 19
+                  });
+                });
+              });
+            };
+            options.push({
+              label: i18next.t("starterSelectUiHandler:manageNature"),
+              handler: () => {
+                showNatureOptions();
+                return true;
+              }
+            });
+          }
+          const candyCount = starterData.candyCount;
+          const passiveAttr = starterData.passiveAttr;
+          if (passiveAttr & PassiveAttr.UNLOCKED) {
+            if (!(passiveAttr & PassiveAttr.ENABLED)) {
+              options.push({
+                label: i18next.t("starterSelectUiHandler:enablePassive"),
+                handler: () => {
+                  starterData.passiveAttr |= PassiveAttr.ENABLED;
+                  ui.setMode(Mode.STARTER_SELECT);
+                  this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, undefined);
+                  return true;
+                }
+              });
+            } else {
+              options.push({
+                label: i18next.t("starterSelectUiHandler:disablePassive"),
+                handler: () => {
+                  starterData.passiveAttr ^= PassiveAttr.ENABLED;
+                  ui.setMode(Mode.STARTER_SELECT);
+                  this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, undefined);
+                  return true;
+                }
+              });
+            }
+          }
+          const showUseCandies = () => {
+            const options = [];
+            if (!(passiveAttr & PassiveAttr.UNLOCKED)) {
+              const passiveCost = getPassiveCandyCount(speciesStarters[this.lastSpecies.speciesId]);
+              options.push({
+
+                label: `x${passiveCost} ${i18next.t("starterSelectUiHandler:unlockPassive")} (${allAbilities[starterPassiveAbilities[this.lastSpecies.speciesId]].name})`,
+                handler: () => {
+                  if (candyCount >= passiveCost) {
+                    starterData.passiveAttr |= PassiveAttr.UNLOCKED | PassiveAttr.ENABLED;
+                    starterData.candyCount -= passiveCost;
+                    this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
+                    this.scene.gameData.saveSystem().then(success => {
+                      if (!success) {
+                        return this.scene.reset(true);
+                      }
+                    });
+                    ui.setMode(Mode.STARTER_SELECT);
+                    this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, undefined);
+
+                    // Update the candy upgrade display
+                    if (this.isUpgradeIconEnabled()) {
+                      this.setUpgradeIcon(pokemonCursor);
+                    }
+                    if (this.isUpgradeAnimationEnabled()) {
+                      const genSpecies = this.genSpecies[this.lastSpecies.generation - 1];
+                      this.setUpgradeAnimation(this.starterSelectGenIconContainers[this.lastSpecies.generation - 1].getAt(genSpecies.indexOf(this.lastSpecies)), this.lastSpecies, true);
+                    }
+
+                    return true;
+                  }
+                  return false;
+                },
+                item: "candy",
+                itemArgs: starterColors[this.lastSpecies.speciesId]
+              });
+            }
+            const valueReduction = starterData.valueReduction;
+            if (valueReduction < 2) {
+              const reductionCost = getValueReductionCandyCounts(speciesStarters[this.lastSpecies.speciesId])[valueReduction];
+              options.push({
+                label: `x${reductionCost} ${i18next.t("starterSelectUiHandler:reduceCost")}`,
+                handler: () => {
+                  if (candyCount >= reductionCost) {
+                    starterData.valueReduction++;
+                    starterData.candyCount -= reductionCost;
+                    this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
+                    this.scene.gameData.saveSystem().then(success => {
+                      if (!success) {
+                        return this.scene.reset(true);
+                      }
+                    });
+                    this.updateStarterValueLabel(pokemonCursor);
+                    this.tryUpdateValue(0);
+                    ui.setMode(Mode.STARTER_SELECT);
+                    this.scene.playSound("buy");
+
+                    // If the notification setting is set to 'On', update the candy upgrade display
+                    if (this.scene.candyUpgradeNotification === 2) {
+                      if (this.isUpgradeIconEnabled()) {
+                        this.setUpgradeIcon(pokemonCursor);
+                      }
+                      if (this.isUpgradeAnimationEnabled()) {
+                        const genSpecies = this.genSpecies[this.lastSpecies.generation - 1];
+                        this.setUpgradeAnimation(this.starterSelectGenIconContainers[this.lastSpecies.generation - 1].getAt(genSpecies.indexOf(this.lastSpecies)), this.lastSpecies, true);
+                      }
+                    }
+
+                    return true;
+                  }
+                  return false;
+                },
+                item: "candy",
+                itemArgs: starterColors[this.lastSpecies.speciesId]
+              });
+            }
+            options.push({
+              label: i18next.t("menu:cancel"),
+              handler: () => {
+                ui.setMode(Mode.STARTER_SELECT);
+                return true;
+              }
+            });
+            ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+              options: options,
+              yOffset: 47
+            });
+          };
+          if (!pokemonPrevolutions.hasOwnProperty(this.lastSpecies.speciesId)) {
+            options.push({
+              label: i18next.t("starterSelectUiHandler:useCandies"),
+              handler: () => {
+                ui.setMode(Mode.STARTER_SELECT).then(() => showUseCandies());
+                return true;
+              }
+            });
+          }
+          options.push({
+            label: i18next.t("menu:cancel"),
+            handler: () => {
+              ui.setMode(Mode.STARTER_SELECT);
+              return true;
+            }
+          });
+          ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+            options: options,
+            yOffset: 47
+          });
           success = true;
         }
       } else {
@@ -2167,355 +2517,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     }
 
     this.tryUpdateValue();
-  }
-
-  createPartyMenuOptions(pokemonGen: number, pokemonCursor: number): void {
-    const ui = this.getUi();
-    let options = [];
-    let removeIndex = 0;
-    let isDupe = false;
-    for (let s = 0; s < this.starterCursors.length; s++) {
-      if (this.starterGens[s] === pokemonGen && this.starterCursors[s] === pokemonCursor) {
-        isDupe = true;
-        removeIndex = s;
-        break;
-      }
-    }
-    const species = this.genSpecies[pokemonGen][pokemonCursor];
-
-    const isValidForChallenge = new Utils.BooleanHolder(true);
-    Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge);
-    const currentPartyValue = this.starterGens.reduce((total: number, gen: number, i: number) => total += this.scene.gameData.getSpeciesStarterValue(this.genSpecies[gen][this.starterCursors[i]].speciesId), 0);
-    const newCost = this.scene.gameData.getSpeciesStarterValue(species.speciesId);
-    if (!isDupe && isValidForChallenge.value && currentPartyValue + newCost <= this.getValueLimit()) {
-      options = [
-        {
-          label: i18next.t("starterSelectUiHandler:addToParty"),
-          handler: () => {
-            ui.setMode(Mode.STARTER_SELECT);
-
-            if (!isDupe && isValidForChallenge.value && this.tryUpdateValue(this.scene.gameData.getSpeciesStarterValue(species.speciesId))) {
-              const cursorObj = this.starterCursorObjs[this.starterCursors.length];
-              cursorObj.setVisible(true);
-              cursorObj.setPosition(this.cursorObj.x, this.cursorObj.y);
-              const props = this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor);
-              this.starterIcons[this.starterCursors.length].setTexture(species.getIconAtlasKey(props.formIndex, props.shiny, props.variant));
-              this.starterIcons[this.starterCursors.length].setFrame(species.getIconId(props.female, props.formIndex, props.shiny, props.variant));
-              this.checkIconId(this.starterIcons[this.starterCursors.length], species, props.female, props.formIndex, props.shiny, props.variant);
-              this.starterGens.push(pokemonGen);
-              this.starterCursors.push(pokemonCursor);
-              this.starterAttr.push(this.dexAttrCursor);
-              this.starterAbilityIndexes.push(this.abilityCursor);
-              this.starterNatures.push(this.natureCursor as unknown as Nature);
-              this.starterMovesets.push(this.starterMoveset.slice(0) as StarterMoveset);
-              if (this.speciesLoaded.get(species.speciesId)) {
-                getPokemonSpeciesForm(species.speciesId, props.formIndex).cry(this.scene);
-              }
-              if (this.starterCursors.length === 6 || this.value === this.getValueLimit()) {
-                this.tryStart();
-              }
-              this.updateInstructions();
-
-              /**
-              * If the user can't select a pokemon anymore,
-              * go to start button.
-              */
-              if (!this.canAddParty) {
-                this.startCursorObj.setVisible(true);
-                this.setGenMode(true);
-              }
-
-              ui.playSelect();
-            } else {
-              ui.playError(); // this should be redundant as there is now a trigger for when a pokemon can't be added to party
-            }
-            return true;
-          },
-          overrideSound: true
-        }];
-    } else if (isDupe) {
-      options = [{
-        label: i18next.t("starterSelectUiHandler:removeFromParty"),
-        handler: () => {
-          this.popStarter(removeIndex);
-          ui.setMode(Mode.STARTER_SELECT);
-          return true;
-        }
-      }];
-    }
-
-    options.push(
-      {
-        label: i18next.t("starterSelectUiHandler:toggleIVs"),
-        handler: () => {
-          this.toggleStatsMode();
-          ui.setMode(Mode.STARTER_SELECT);
-          return true;
-        }
-      });
-    if (this.speciesStarterMoves.length > 1) {
-      const showSwapOptions = (moveset: StarterMoveset) => {
-        ui.setMode(Mode.STARTER_SELECT).then(() => {
-          ui.showText(i18next.t("starterSelectUiHandler:selectMoveSwapOut"), null, () => {
-            this.moveInfoOverlay.show(allMoves[moveset[0]]);
-
-            ui.setModeWithoutClear(Mode.OPTION_SELECT, {
-              options: moveset.map((m: Moves, i: number) => {
-                const option: OptionSelectItem = {
-                  label: allMoves[m].name,
-                  handler: () => {
-                    ui.setMode(Mode.STARTER_SELECT).then(() => {
-                      ui.showText(`${i18next.t("starterSelectUiHandler:selectMoveSwapWith")} ${allMoves[m].name}.`, null, () => {
-                        const possibleMoves = this.speciesStarterMoves.filter((sm: Moves) => sm !== m);
-                        this.moveInfoOverlay.show(allMoves[possibleMoves[0]]);
-
-                        ui.setModeWithoutClear(Mode.OPTION_SELECT, {
-                          options: possibleMoves.map(sm => {
-                            // make an option for each available starter move
-                            const option = {
-                              label: allMoves[sm].name,
-                              handler: () => {
-                                this.switchMoveHandler(i, sm, m);
-                                showSwapOptions(this.starterMoveset);
-                                return true;
-                              },
-                              onHover: () => {
-                                this.moveInfoOverlay.show(allMoves[sm]);
-                              },
-                            };
-                            return option;
-                          }).concat({
-                            label: i18next.t("menu:cancel"),
-                            handler: () => {
-                              showSwapOptions(this.starterMoveset);
-                              return true;
-                            },
-                            onHover: () => {
-                              this.moveInfoOverlay.clear();
-                            },
-                          }),
-                          supportHover: true,
-                          maxOptions: 8,
-                          yOffset: 19
-                        });
-                      });
-                    });
-                    return true;
-                  },
-                  onHover: () => {
-                    this.moveInfoOverlay.show(allMoves[m]);
-                  },
-                };
-                return option;
-              }).concat({
-                label: i18next.t("menu:cancel"),
-                handler: () => {
-                  this.moveInfoOverlay.clear();
-                  this.clearText();
-                  ui.setMode(Mode.STARTER_SELECT);
-                  return true;
-                },
-                onHover: () => {
-                  this.moveInfoOverlay.clear();
-                },
-              }),
-              supportHover: true,
-              maxOptions: 8,
-              yOffset: 19
-            });
-          });
-        });
-      };
-      options.push({
-        label: i18next.t("starterSelectUiHandler:manageMoves"),
-        handler: () => {
-          showSwapOptions(this.starterMoveset);
-          return true;
-        }
-      });
-    }
-    const starterData = this.scene.gameData.starterData[this.lastSpecies.speciesId];
-    let starterAttributes = this.starterPreferences[this.lastSpecies.speciesId];
-    if (this.canCycleNature) {
-      // if we could cycle natures, enable the improved nature menu
-      const showNatureOptions = () => {
-        ui.setMode(Mode.STARTER_SELECT).then(() => {
-          ui.showText(i18next.t("starterSelectUiHandler:selectNature"), null, () => {
-            const natures = this.scene.gameData.getNaturesForAttr(this.speciesStarterDexEntry.natureAttr);
-            ui.setModeWithoutClear(Mode.OPTION_SELECT, {
-              options: natures.map((n: Nature, i: number) => {
-                const option: OptionSelectItem = {
-                  label: getNatureName(n, true, true, true, this.scene.uiTheme),
-                  handler: () => {
-                    // update default nature in starter save data
-                    if (!starterAttributes) {
-                      starterAttributes =
-                        this.starterPreferences[this.lastSpecies.speciesId] = {};
-                    }
-                    starterAttributes.nature = n as unknown as integer;
-                    this.clearText();
-                    ui.setMode(Mode.STARTER_SELECT);
-                    // set nature for starter
-                    this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, n, undefined);
-                    return true;
-                  }
-                };
-                return option;
-              }).concat({
-                label: i18next.t("menu:cancel"),
-                handler: () => {
-                  this.clearText();
-                  ui.setMode(Mode.STARTER_SELECT);
-                  return true;
-                }
-              }),
-              maxOptions: 8,
-              yOffset: 19
-            });
-          });
-        });
-      };
-      options.push({
-        label: i18next.t("starterSelectUiHandler:manageNature"),
-        handler: () => {
-          showNatureOptions();
-          return true;
-        }
-      });
-    }
-    const candyCount = starterData.candyCount;
-    const passiveAttr = starterData.passiveAttr;
-    if (passiveAttr & PassiveAttr.UNLOCKED) {
-      if (!(passiveAttr & PassiveAttr.ENABLED)) {
-        options.push({
-          label: i18next.t("starterSelectUiHandler:enablePassive"),
-          handler: () => {
-            starterData.passiveAttr |= PassiveAttr.ENABLED;
-            ui.setMode(Mode.STARTER_SELECT);
-            this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, undefined);
-            return true;
-          }
-        });
-      } else {
-        options.push({
-          label: i18next.t("starterSelectUiHandler:disablePassive"),
-          handler: () => {
-            starterData.passiveAttr ^= PassiveAttr.ENABLED;
-            ui.setMode(Mode.STARTER_SELECT);
-            this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, undefined);
-            return true;
-          }
-        });
-      }
-    }
-    const showUseCandies = () => {
-      const options = [];
-      if (!(passiveAttr & PassiveAttr.UNLOCKED)) {
-        const passiveCost = getPassiveCandyCount(speciesStarters[this.lastSpecies.speciesId]);
-        options.push({
-
-          label: `x${passiveCost} ${i18next.t("starterSelectUiHandler:unlockPassive")} (${allAbilities[starterPassiveAbilities[this.lastSpecies.speciesId]].name})`,
-          handler: () => {
-            if (candyCount >= passiveCost) {
-              starterData.passiveAttr |= PassiveAttr.UNLOCKED | PassiveAttr.ENABLED;
-              starterData.candyCount -= passiveCost;
-              this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
-              this.scene.gameData.saveSystem().then(success => {
-                if (!success) {
-                  return this.scene.reset(true);
-                }
-              });
-              ui.setMode(Mode.STARTER_SELECT);
-              this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, undefined);
-
-              // Update the candy upgrade display
-              if (this.isUpgradeIconEnabled()) {
-                this.setUpgradeIcon(pokemonCursor);
-              }
-              if (this.isUpgradeAnimationEnabled()) {
-                const genSpecies = this.genSpecies[this.lastSpecies.generation - 1];
-                this.setUpgradeAnimation(this.starterSelectGenIconContainers[this.lastSpecies.generation - 1].getAt(genSpecies.indexOf(this.lastSpecies)), this.lastSpecies, true);
-              }
-
-              return true;
-            }
-            return false;
-          },
-          item: "candy",
-          itemArgs: starterColors[this.lastSpecies.speciesId]
-        });
-      }
-      const valueReduction = starterData.valueReduction;
-      if (valueReduction < 2) {
-        const reductionCost = getValueReductionCandyCounts(speciesStarters[this.lastSpecies.speciesId])[valueReduction];
-        options.push({
-          label: `x${reductionCost} ${i18next.t("starterSelectUiHandler:reduceCost")}`,
-          handler: () => {
-            if (candyCount >= reductionCost) {
-              starterData.valueReduction++;
-              starterData.candyCount -= reductionCost;
-              this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
-              this.scene.gameData.saveSystem().then(success => {
-                if (!success) {
-                  return this.scene.reset(true);
-                }
-              });
-              this.updateStarterValueLabel(pokemonCursor);
-              this.tryUpdateValue(0);
-              ui.setMode(Mode.STARTER_SELECT);
-              this.scene.playSound("buy");
-
-              // If the notification setting is set to 'On', update the candy upgrade display
-              if (this.scene.candyUpgradeNotification === 2) {
-                if (this.isUpgradeIconEnabled()) {
-                  this.setUpgradeIcon(pokemonCursor);
-                }
-                if (this.isUpgradeAnimationEnabled()) {
-                  const genSpecies = this.genSpecies[this.lastSpecies.generation - 1];
-                  this.setUpgradeAnimation(this.starterSelectGenIconContainers[this.lastSpecies.generation - 1].getAt(genSpecies.indexOf(this.lastSpecies)), this.lastSpecies, true);
-                }
-              }
-
-              return true;
-            }
-            return false;
-          },
-          item: "candy",
-          itemArgs: starterColors[this.lastSpecies.speciesId]
-        });
-      }
-      options.push({
-        label: i18next.t("menu:cancel"),
-        handler: () => {
-          ui.setMode(Mode.STARTER_SELECT);
-          return true;
-        }
-      });
-      ui.setModeWithoutClear(Mode.OPTION_SELECT, {
-        options: options,
-        yOffset: 47
-      });
-    };
-    if (!pokemonPrevolutions.hasOwnProperty(this.lastSpecies.speciesId)) {
-      options.push({
-        label: i18next.t("starterSelectUiHandler:useCandies"),
-        handler: () => {
-          ui.setMode(Mode.STARTER_SELECT).then(() => showUseCandies());
-          return true;
-        }
-      });
-    }
-    options.push({
-      label: i18next.t("menu:cancel"),
-      handler: () => {
-        ui.setMode(Mode.STARTER_SELECT);
-        return true;
-      }
-    });
-    ui.setModeWithoutClear(Mode.OPTION_SELECT, {
-      options: options,
-      yOffset: 47
-    });
   }
 
   updateStarterValueLabel(cursor: integer): void {
