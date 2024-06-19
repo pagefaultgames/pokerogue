@@ -93,7 +93,7 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsNightmareOnAdd": "{{pokemonNameWithAffix}}[[는]]\n악몽을 꾸기 시작했다!",
   "battlerTagsNightmareOnOverlap": "{{pokemonNameWithAffix}}[[는]]\n이미 악몽을 꾸고 있다!",
   "battlerTagsNightmareLapse": "{{pokemonNameWithAffix}}[[는]]\n악몽에 시달리고 있다!",
-  "battlerTagsEncoreOnAdd": "{{sourcePokemonNameWithAffix}}[[는]]\n앙코르를 받았다!",
+  "battlerTagsEncoreOnAdd": "{{pokemonNameWithAffix}}[[는]]\n앙코르를 받았다!",
   "battlerTagsEncoreOnRemove": "{{pokemonNameWithAffix}}의\n앙코르 상태가 풀렸다!",
   "battlerTagsHelpingHandOnAdd": "{{pokemonNameWithAffix}}[[는]] {{pokemonName}}에게\n도우미가 되어주려 한다!",
   "battlerTagsIngrainLapse": "{{pokemonNameWithAffix}}[[는]] 뿌리로부터\n양분을 흡수했다!",
