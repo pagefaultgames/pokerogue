@@ -24,7 +24,7 @@ const defaultTextSetupFunc = (scene, x, y) => {
   return text;
 };
 
-const DEFAULT_RIGHT_PADDING_PX = 8;
+const DEFAULT_RIGHT_PADDING_PX = 7;
 
 const displayStats: DisplayStat[] = [
   {
