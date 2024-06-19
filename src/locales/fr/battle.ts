@@ -125,7 +125,7 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsCritBoostOnAdd": "{{pokemonNameWithAffix}}\nest prêt à tout donner !",
   "battlerTagsCritBoostOnRemove": "{{pokemonNameWithAffix}} se détend.",
   "battlerTagsSaltCuredOnAdd": "{{pokemonNameWithAffix}}\nest couvert de sel !",
-  "battlerTagsSaltCuredLapse": "{{pokemonNameWithAffix}}est blessé\npar la capacité {{moveName}} !",
+  "battlerTagsSaltCuredLapse": "{{pokemonNameWithAffix}} est blessé\npar la capacité {{moveName}} !",
   "battlerTagsCursedOnAdd": "{{pokemonNameWithAffix}} sacrifie des PV\net lance une malédiction sur {{pokemonName}} !",
   "battlerTagsCursedLapse": "{{pokemonNameWithAffix}} est touché par la malédiction !"
 } as const;
