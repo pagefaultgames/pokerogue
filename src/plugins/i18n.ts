@@ -19,7 +19,10 @@ const fonts = [
     new FontFace("pkmnems", "url(./fonts/PokePT_Wansung.ttf)", { unicodeRange: "U+AC00-D7AC"}),
     { sizeAdjust: "133%" }
   ),
-  new FontFace("japanese", "url(./fonts/Galmuri9.ttf)", { unicodeRange: "U+3040-30FF, U+4E00-9FFF"}),
+  Object.assign(
+    new FontFace("japanese", "url(./fonts/Galmuri11.ttf)", { unicodeRange: "U+3040-30FF, U+4E00-9FFF"}),
+    { sizeAdjust: "50%" }
+  ),
 ];
 
 async function initFonts() {
