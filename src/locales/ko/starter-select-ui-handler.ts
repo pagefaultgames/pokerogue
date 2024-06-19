@@ -21,7 +21,6 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "passive": "패시브:",
   "nature": "성격:",
   "eggMoves": "알 기술",
-  "start": "시작",
   "addToParty": "파티에 추가",
   "toggleIVs": "개체값 토글",
   "manageMoves": "기술 관리",
