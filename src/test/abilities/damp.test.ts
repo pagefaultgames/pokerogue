@@ -30,7 +30,7 @@ describe("Abilities - Damp", () => {
     vi.spyOn(overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
   });
 
-  it("prevents self-destruction effect on explosive attacks", async() => {
+  it("prevents explosive attacks used by others", async() => {
     const moveToUse = Moves.EXPLOSION;
     const enemyAbility = Abilities.DAMP;
 
@@ -39,6 +39,26 @@ describe("Abilities - Damp", () => {
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
     vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.BIDOOF);
     vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(enemyAbility);
+
+    await game.startBattle();
+
+    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
+
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    expect(game.phaseInterceptor.log).toContain("ShowAbilityPhase");
+    expect(game.phaseInterceptor.log).not.toContain("FaintPhase");
+  }, TIMEOUT);
+
+  it("prevents explosive attacks used by the battler with Damp", async() => {
+    const moveToUse = Moves.EXPLOSION;
+    const playerAbility = Abilities.DAMP;
+
+    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(playerAbility);
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
+    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
+    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.BIDOOF);
+    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
 
     await game.startBattle();
 
@@ -74,6 +94,7 @@ describe("Abilities - Damp", () => {
     expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
     expect(game.scene.getParty()[0].getHpRatio()).toBe(1);
   }, TIMEOUT);
+
 
   // Ensures fix of #1476.
   it("does not show ability popup during AI calculations", async() => {
