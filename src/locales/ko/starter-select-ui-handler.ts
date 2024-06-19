@@ -27,6 +27,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "manageMoves": "기술 관리",
   "manageNature": "성격 관리",
   "useCandies": "사탕 사용",
+  "selectNature": "교체할 성격을 선택해주세요.",
   "selectMoveSwapOut": "교체할 기술을 선택해주세요.",
   "selectMoveSwapWith": "교체될 기술을 선택해주세요. 대상:",
   "unlockPassive": "패시브 해금",
