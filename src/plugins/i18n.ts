@@ -21,7 +21,7 @@ const fonts = [
   ),
   Object.assign(
     new FontFace("japanese", "url(./fonts/Galmuri11.ttf)", { unicodeRange: "U+3040-30FF, U+4E00-9FFF"}),
-    { sizeAdjust: "50%" }
+    { sizeAdjust: "66%" }
   ),
 ];
 
