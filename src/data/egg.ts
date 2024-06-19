@@ -15,13 +15,13 @@ export const EGG_SEED = 1073741824;
 // Rates for specific random properties in 1/x
 const DEFAULT_SHINY_RATE = 128;
 const GACHA_SHINY_UP_SHINY_RATE = 64;
-const SAME_SPECIES_EGG_SHINY_RATE = 32; // eslint-disable-line @typescript-eslint/no-unused-vars
-const SAME_SPECIES_EGG_HA_RATE = 32; // eslint-disable-line @typescript-eslint/no-unused-vars
+const SAME_SPECIES_EGG_SHINY_RATE = 32;
+const SAME_SPECIES_EGG_HA_RATE = 32;
 const MANAPHY_EGG_MANAPHY_RATE = 8;
 
 // 1/x for legendary eggs, 1/x*2 for epic eggs, 1/x*4 for rare eggs, and 1/x*8 for common eggs
 const DEFAULT_RARE_EGGMOVE_RATE = 6;
-const SAME_SPECIES_EGG_RARE_EGGMOVE_RATE = 3; // eslint-disable-line @typescript-eslint/no-unused-vars
+const SAME_SPECIES_EGG_RARE_EGGMOVE_RATE = 3;
 const GACHA_MOVE_UP_RARE_EGGMOVE_RATE = 3;
 
 /** Egg options to override egg properties */
@@ -199,7 +199,7 @@ export class Egg {
     // or if the same species egg hits the chance
     let abilityIndex = undefined;
     if (pokemonSpecies.abilityHidden && (this._overrideHiddenAbility
-    )) { // REPLACE LINE IF SAME SPECEIS EGG HAS CHANGED RATES || (this._sourceType === EggSourceType.SAME_SPECIES_EGG && !Utils.randSeedInt(SAME_SPECIES_EGG_HA_RATE)))) {
+      || (this._sourceType === EggSourceType.SAME_SPECIES_EGG && !Utils.randSeedInt(SAME_SPECIES_EGG_HA_RATE)))) {
       abilityIndex = pokemonSpecies.ability2 ? 2 : 1;
     }
 
@@ -278,9 +278,9 @@ export class Egg {
     case EggSourceType.GACHA_MOVE:
       baseChance = GACHA_MOVE_UP_RARE_EGGMOVE_RATE;
       break;
-      // case EggSourceType.SAME_SPECIES_EGG:
-      //   baseChance = SAME_SPECIES_EGG_RARE_EGGMOVE_RATE;
-      //   break;
+    case EggSourceType.SAME_SPECIES_EGG:
+      baseChance = SAME_SPECIES_EGG_RARE_EGGMOVE_RATE;
+      break;
     default:
       break;
     }
@@ -424,9 +424,9 @@ export class Egg {
     case EggSourceType.GACHA_SHINY:
       shinyChance = GACHA_SHINY_UP_SHINY_RATE;
       break;
-      // case EggSourceType.SAME_SPECIES_EGG:
-      //   shinyChance = SAME_SPECIES_EGG_SHINY_RATE;
-      //   break;
+    case EggSourceType.SAME_SPECIES_EGG:
+      shinyChance = SAME_SPECIES_EGG_SHINY_RATE;
+      break;
     default:
       break;
     }
