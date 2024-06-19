@@ -19,10 +19,6 @@ import {addModifierToPokemon} from "#app/modifier/modifier";
 import {allMoves} from "#app/data/move";
 
 
-
-// move.getMove() instanceof AttackMove
-// should use that instead of power === -1
-
 describe("Items - Assault Vest", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -98,7 +94,7 @@ describe("Items - Assault Vest", () => {
     expect(battleStatsPokemon[BattleStat.SPATK]).toBe(0);
   }, 20000);
 
-  it("prevent use of max-guard", async() => {
+  it("check if max-guard is also prevented by assault vest", async() => {
     vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
     vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.MAX_GUARD]);
     await game.runToSummon([
@@ -197,7 +193,7 @@ describe("Items - Assault Vest", () => {
     expect(battleStatsPokemon[BattleStat.SPATK]).toBe(1);
   }, 20000);
 
-  it("no assault-vest, no pp left", async() => {
+  it("no assault-vest, no pp left should struggle", async() => {
     vi.spyOn(overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([]);
     vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
     vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
