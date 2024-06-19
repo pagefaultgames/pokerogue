@@ -3,6 +3,7 @@ import UI from "./ui/ui";
 import { NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, TurnInitPhase, ReturnPhase, LevelCapPhase, ShowTrainerPhase, LoginPhase, MovePhase, TitlePhase, SwitchPhase } from "./phases";
 import Pokemon, { PlayerPokemon, EnemyPokemon } from "./field/pokemon";
 import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies } from "./data/pokemon-species";
+import { Constructor } from "#app/utils";
 import * as Utils from "./utils";
 import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier, FusePokemonModifier, PokemonFormChangeItemModifier, TerastallizeModifier, overrideModifiers, overrideHeldItems } from "./modifier/modifier";
 import { PokeballType } from "./data/pokeball";
@@ -2340,8 +2341,14 @@ export default class BattleScene extends SceneBase {
     return false;
   }
 
-  getModifiers(modifierType: { new(...args: any[]): Modifier }, player: boolean = true): PersistentModifier[] {
-    return (player ? this.modifiers : this.enemyModifiers).filter(m => m instanceof modifierType);
+  /**
+   * Get all of the modifiers that match `modifierType`
+   * @param modifierType The type of modifier to apply; must extend {@linkcode PersistentModifier}
+   * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
+   * @returns the list of all modifiers that matched `modifierType`.
+   */
+  getModifiers<T extends PersistentModifier>(modifierType: Constructor<T>, player: boolean = true): T[] {
+    return (player ? this.modifiers : this.enemyModifiers).filter((m): m is T => m instanceof modifierType);
   }
 
   findModifiers(modifierFilter: ModifierPredicate, player: boolean = true): PersistentModifier[] {
@@ -2352,7 +2359,7 @@ export default class BattleScene extends SceneBase {
     return (player ? this.modifiers : this.enemyModifiers).find(m => (modifierFilter as ModifierPredicate)(m));
   }
 
-  applyShuffledModifiers(scene: BattleScene, modifierType: { new(...args: any[]): Modifier }, player: boolean = true, ...args: any[]): PersistentModifier[] {
+  applyShuffledModifiers(scene: BattleScene, modifierType: Constructor<Modifier>, player: boolean = true, ...args: any[]): PersistentModifier[] {
     let modifiers = (player ? this.modifiers : this.enemyModifiers).filter(m => m instanceof modifierType && m.shouldApply(args));
     scene.executeWithSeedOffset(() => {
       const shuffleModifiers = mods => {
@@ -2367,7 +2374,7 @@ export default class BattleScene extends SceneBase {
     return this.applyModifiersInternal(modifiers, player, args);
   }
 
-  applyModifiers(modifierType: { new(...args: any[]): Modifier }, player: boolean = true, ...args: any[]): PersistentModifier[] {
+  applyModifiers(modifierType: Constructor<Modifier>, player: boolean = true, ...args: any[]): PersistentModifier[] {
     const modifiers = (player ? this.modifiers : this.enemyModifiers).filter(m => m instanceof modifierType && m.shouldApply(args));
     return this.applyModifiersInternal(modifiers, player, args);
   }
@@ -2384,7 +2391,7 @@ export default class BattleScene extends SceneBase {
     return appliedModifiers;
   }
 
-  applyModifier(modifierType: { new(...args: any[]): Modifier }, player: boolean = true, ...args: any[]): PersistentModifier {
+  applyModifier(modifierType: Constructor<Modifier>, player: boolean = true, ...args: any[]): PersistentModifier {
     const modifiers = (player ? this.modifiers : this.enemyModifiers).filter(m => m instanceof modifierType && m.shouldApply(args));
     for (const modifier of modifiers) {
       if (modifier.apply(args)) {
@@ -2396,7 +2403,7 @@ export default class BattleScene extends SceneBase {
     return null;
   }
 
-  triggerPokemonFormChange(pokemon: Pokemon, formChangeTriggerType: { new(...args: any[]): SpeciesFormChangeTrigger }, delayed: boolean = false, modal: boolean = false): boolean {
+  triggerPokemonFormChange(pokemon: Pokemon, formChangeTriggerType: Constructor<SpeciesFormChangeTrigger>, delayed: boolean = false, modal: boolean = false): boolean {
     if (pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId)) {
       const matchingFormChange = pokemonFormChanges[pokemon.species.speciesId].find(fc => fc.findTrigger(formChangeTriggerType) && fc.canChange(pokemon));
       if (matchingFormChange) {
@@ -2420,7 +2427,7 @@ export default class BattleScene extends SceneBase {
     return false;
   }
 
-  validateAchvs(achvType: { new(...args: any[]): Achv }, ...args: any[]): void {
+  validateAchvs(achvType: Constructor<Achv>, ...args: unknown[]): void {
     const filteredAchvs = Object.values(achvs).filter(a => a instanceof achvType);
     for (const achv of filteredAchvs) {
       this.validateAchv(achv, args);
