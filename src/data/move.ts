@@ -5297,7 +5297,7 @@ export class SuppressAbilitiesAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => !target.getAbility().hasAttr(UnsuppressableAbilityAbAttr);
+    return (user, target, move) => !target.getAbility().hasAttr(UnsuppressableAbilityAbAttr) && !target.summonData.abilitySuppressed;
   }
 }
 
@@ -5312,7 +5312,7 @@ export class SuppressAbilitiesIfActedAttr extends MoveEffectAttr {
    * abillity cannot be suppressed. This is a secondary effect and has no bearing on the success or failure of the move.
    *
    * @returns True if the move occurred, otherwise false. Note that true will be returned even if the target has not
-   * yet moved or if the target's abiilty is un-suppressable.
+   * yet moved or if the suppression failed to apply.
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
