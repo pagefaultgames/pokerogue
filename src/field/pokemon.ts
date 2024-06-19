@@ -2597,6 +2597,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
       this.summonDataPrimer = null;
     }
+    this.scene.applyModifier(StatsBoostWithRestriction, this.isPlayer(), this);
     this.updateInfo();
   }
 

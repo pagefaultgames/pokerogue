@@ -913,9 +913,12 @@ export class StatsBoostWithRestriction extends PokemonHeldItemModifier {
       targetPokemon.summonData.attack_move_restriction = false;
       return true;
     }
-    targetPokemon.stats[this.stat] *= 1.5;
-    targetPokemon.summonData.attack_move_restriction = true;
-    return true;
+    if (targetPokemon.summonData) {
+      targetPokemon.stats[this.stat] *= 1.5;
+      targetPokemon.summonData.attack_move_restriction = true;
+      return true;
+    }
+    return false;
   }
 }
 
