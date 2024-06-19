@@ -1009,6 +1009,33 @@ export class PerishSongTag extends BattlerTag {
   }
 }
 
+/**
+ * Applies the "Center of Attention" volatile status effect, the effect applied by Follow Me, Rage Powder, and Spotlight.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Center_of_attention | Center of Attention}
+ */
+export class CenterOfAttentionTag extends BattlerTag {
+  public powder: boolean;
+
+  constructor(sourceMove: Moves) {
+    super(BattlerTagType.CENTER_OF_ATTENTION, BattlerTagLapseType.TURN_END, 1, sourceMove);
+
+    this.powder = (this.sourceMove === Moves.RAGE_POWDER);
+  }
+
+  /** "Center of Attention" can't be added if an ally is already the Center of Attention. */
+  canAdd(pokemon: Pokemon): boolean {
+    const activeTeam = pokemon.isPlayer() ? pokemon.scene.getPlayerField() : pokemon.scene.getEnemyField();
+
+    return !activeTeam.find(p => p.getTag(BattlerTagType.CENTER_OF_ATTENTION));
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, " became the center\nof attention!"));
+  }
+}
+
 export class AbilityBattlerTag extends BattlerTag {
   public ability: Abilities;
 
@@ -1494,6 +1521,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
     return new SturdyTag(sourceMove);
   case BattlerTagType.PERISH_SONG:
     return new PerishSongTag(turnCount);
+  case BattlerTagType.CENTER_OF_ATTENTION:
+    return new CenterOfAttentionTag(sourceMove);
   case BattlerTagType.TRUANT:
     return new TruantTag();
   case BattlerTagType.SLOW_START:
