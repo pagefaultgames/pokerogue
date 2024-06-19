@@ -891,20 +891,20 @@ export class TurnHealModifier extends PokemonHeldItemModifier {
   }
 }
 
-export class ConditionalStatsBoost extends PokemonHeldItemModifier {
+export class StatsBoostWithRestriction extends PokemonHeldItemModifier {
   protected stat: Stat;
   constructor (type: ModifierType, pokemonId: integer, stackCount?: integer) {
     super(type, pokemonId, stackCount);
     this.stat = Stat.SPDEF;
   }
   matchType(_modifier: Modifier): boolean {
-    return _modifier instanceof ConditionalStatsBoost;
+    return _modifier instanceof StatsBoostWithRestriction;
   }
   getMaxHeldItemCount(pokemon: Pokemon): number {
     return 1;
   }
   clone(): PersistentModifier {
-    return new ConditionalStatsBoost(this.type, this.pokemonId, this.stackCount);
+    return new StatsBoostWithRestriction(this.type, this.pokemonId, this.stackCount);
   }
   apply(args: any[]): boolean {
     const targetPokemon = args[0];
@@ -913,12 +913,9 @@ export class ConditionalStatsBoost extends PokemonHeldItemModifier {
       targetPokemon.summonData.attack_move_restriction = false;
       return true;
     }
-    if (targetPokemon.summonData) {
-      targetPokemon.stats[this.stat] *= 1.5;
-      targetPokemon.summonData.attack_move_restriction = true;
-      return true;
-    }
-    return false;
+    targetPokemon.stats[this.stat] *= 1.5;
+    targetPokemon.summonData.attack_move_restriction = true;
+    return true;
   }
 }
 

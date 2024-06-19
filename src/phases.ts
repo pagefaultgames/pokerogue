@@ -617,8 +617,6 @@ export class SelectStarterPhase extends Phase {
       party.push(starterPokemon);
       loadPokemonAssets.push(starterPokemon.loadAssets());
     });
-    overrideModifiers(this.scene);
-    overrideHeldItems(this.scene, party[0]);
     Promise.all(loadPokemonAssets).then(() => {
       SoundFade.fadeOut(this.scene, this.scene.sound.get("menu"), 500, true);
       this.scene.time.delayedCall(500, () => this.scene.playBgm());
@@ -1511,6 +1509,8 @@ export class SummonPhase extends PartyMemberPokemonPhase {
   }
 
   onEnd(): void {
+    overrideModifiers(this.scene);
+    overrideHeldItems(this.scene, this.scene.getParty()[0]);
     const pokemon = this.getPokemon();
 
     if (pokemon.isShiny()) {

@@ -1226,7 +1226,7 @@ export const modifierTypes = {
 
   TOXIC_ORB: () => new PokemonHeldItemModifierType("modifierType:ModifierType.TOXIC_ORB", "toxic_orb", (type, args) => new Modifiers.TurnStatusEffectModifier(type, (args[0] as Pokemon).id)),
   FLAME_ORB: () => new PokemonHeldItemModifierType("modifierType:ModifierType.FLAME_ORB", "flame_orb", (type, args) => new Modifiers.TurnStatusEffectModifier(type, (args[0] as Pokemon).id)),
-  ASSAULT_VEST: () => new PokemonHeldItemModifierType("modifierType:ModifierType.ASSAULT_VEST", "assault_vest", (type, args) => new Modifiers.ConditionalStatsBoost(type, (args[0] as Pokemon).id)),
+  ASSAULT_VEST: () => new PokemonHeldItemModifierType("modifierType:ModifierType.ASSAULT_VEST", "assault_vest", (type, args) => new Modifiers.StatsBoostWithRestriction(type, (args[0] as Pokemon).id)),
 
   BATON: () => new PokemonHeldItemModifierType("modifierType:ModifierType.BATON", "stick", (type, args) => new Modifiers.SwitchEffectTransferModifier(type, (args[0] as Pokemon).id)),
 

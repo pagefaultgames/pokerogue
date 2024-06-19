@@ -4,7 +4,7 @@ import { NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePh
 import Pokemon, { PlayerPokemon, EnemyPokemon } from "./field/pokemon";
 import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies } from "./data/pokemon-species";
 import * as Utils from "./utils";
-import { ConditionalStatsBoost, Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier, FusePokemonModifier, PokemonFormChangeItemModifier, TerastallizeModifier, overrideModifiers, overrideHeldItems } from "./modifier/modifier";
+import { StatsBoostWithRestriction, Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier, FusePokemonModifier, PokemonFormChangeItemModifier, TerastallizeModifier, overrideModifiers, overrideHeldItems } from "./modifier/modifier";
 import { PokeballType } from "./data/pokeball";
 import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets, populateAnims } from "./data/battle-anims";
 import { Phase } from "./phase";
@@ -2036,7 +2036,7 @@ export default class BattleScene extends SceneBase {
           modifiersToRemove.push(...(this.findModifiers(m => m instanceof TerastallizeModifier && m.pokemonId === modifier.pokemonId)));
         }
         if ((modifier as PersistentModifier).add(this.modifiers, !!virtual, this)) {
-          if (modifier instanceof PokemonFormChangeItemModifier || modifier instanceof TerastallizeModifier || modifier instanceof ConditionalStatsBoost) {
+          if (modifier instanceof PokemonFormChangeItemModifier || modifier instanceof TerastallizeModifier || modifier instanceof StatsBoostWithRestriction) {
             success = modifier.apply([ this.getPokemonById(modifier.pokemonId), true ]);
           }
           if (playSound && !this.sound.get(soundName)) {
@@ -2331,7 +2331,7 @@ export default class BattleScene extends SceneBase {
     const modifierIndex = modifiers.indexOf(modifier);
     if (modifierIndex > -1) {
       modifiers.splice(modifierIndex, 1);
-      if (modifier instanceof PokemonFormChangeItemModifier || modifier instanceof TerastallizeModifier || modifier instanceof ConditionalStatsBoost) {
+      if (modifier instanceof PokemonFormChangeItemModifier || modifier instanceof TerastallizeModifier || modifier instanceof StatsBoostWithRestriction) {
         modifier.apply([ this.getPokemonById(modifier.pokemonId), false ]);
       }
       return true;
