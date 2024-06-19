@@ -1,141 +1,141 @@
-import { AbilityTranslationEntries } from "#app/interfaces/locales.js";
+import { AbilityTranslationEntries } from "#app/interfaces/locales";
 
 export const ability: AbilityTranslationEntries = {
   stench: {
     name: "あくしゅう",
-    description: "By releasing stench when attacking, this Pokémon may cause the target to flinch.",
+    description: "臭い　においを　放つことによって 攻撃した　ときに　相手を ひるませることが　ある。",
   },
   drizzle: {
     name: "あめふらし",
-    description: "The Pokémon makes it rain when it enters a battle.",
+    description: "登場　したときに 天気を　雨に　する。",
   },
   speedBoost: {
     name: "かそく",
-    description: "Its Speed stat is boosted every turn.",
+    description: "毎ターン　素早さが　上がる。",
   },
   battleArmor: {
     name: "カブトアーマー",
-    description: "Hard armor protects the Pokémon from critical hits.",
+    description: "硬い　甲羅に　守られて 相手の　攻撃が 急所に　当たらない。",
   },
   sturdy: {
     name: "がんじょう",
-    description: "It cannot be knocked out with one hit. One-hit KO moves cannot knock it out, either.",
+    description: "相手の　技を　受けても 一撃で　倒されることが　ない。 一撃必殺技も　効かない。",
   },
   damp: {
     name: "しめりけ",
-    description: "Prevents the use of explosive moves, such as Self-Destruct, by dampening its surroundings.",
+    description: "あたりを　湿らせることに　よって じばく　などの　爆発する　技を だれも　使えなくなる。",
   },
   limber: {
     name: "じゅうなん",
-    description: "Its limber body protects the Pokémon from paralysis.",
+    description: "柔軟な　体によって まひ状態に　ならない。",
   },
   sandVeil: {
     name: "すながくれ",
-    description: "Boosts the Pokémon's evasiveness in a sandstorm.",
+    description: "砂あらしの　とき 回避率が　上がる。",
   },
   static: {
     name: "せいでんき",
-    description: "The Pokémon is charged with static electricity, so contact with it may cause paralysis.",
+    description: "静電気を　体に　まとい 触った　相手を まひさせる　ことがある。",
   },
   voltAbsorb: {
     name: "ちくでん",
-    description: "Restores HP if hit by an Electric-type move instead of taking damage.",
+    description: "でんきタイプの　技を　受けると ダメージを　受けずに　回復する。",
   },
   waterAbsorb: {
     name: "ちょすい",
-    description: "Restores HP if hit by a Water-type move instead of taking damage.",
+    description: "みずタイプの　技を　受けると ダメージを　受けずに　回復する。",
   },
   oblivious: {
     name: "どんかん",
-    description: "The Pokémon is oblivious, and that keeps it from being infatuated or falling for taunts.",
+    description: "鈍感なので メロメロや　ちょうはつ状態に ならない。",
   },
   cloudNine: {
     name: "ノーてんき",
-    description: "Eliminates the effects of weather.",
+    description: "あらゆる　天気の　影響が なくなって　しまう。",
   },
   compoundEyes: {
     name: "ふくがん",
-    description: "The Pokémon's compound eyes boost its accuracy.",
+    description: "複眼を　持っているため 技の　命中率が　上がる。",
   },
   insomnia: {
     name: "ふみん",
-    description: "The Pokémon is suffering from insomnia and cannot fall asleep.",
+    description: "眠れない　体質　なので ねむり状態に　ならない。",
   },
   colorChange: {
     name: "へんしょく",
-    description: "The Pokémon's type becomes the type of the move used on it.",
+    description: "相手から　受けた　技の　タイプに 自分の　タイプが　変化　する。",
   },
   immunity: {
     name: "めんえき",
-    description: "The immune system of the Pokémon prevents it from getting poisoned.",
+    description: "体内に　免疫を　持っているため どく状態に　ならない。",
   },
   flashFire: {
     name: "もらいび",
-    description: "Powers up the Pokémon's Fire-type moves if it's hit by one.",
+    description: "ほのおタイプの　技を　受けると 炎を　もらい　自分が　出す ほのおタイプの　技が　強くなる。",
   },
   shieldDust: {
     name: "りんぷん",
-    description: "This Pokémon's dust blocks the additional effects of attacks taken.",
+    description: "りんぷんに　守られて 技の　追加効果を　受けなくなる。",
   },
   ownTempo: {
     name: "マイペース",
-    description: "This Pokémon has its own tempo, and that prevents it from becoming confused.",
+    description: "マイペースなので こんらん状態に　ならない。",
   },
   suctionCups: {
     name: "きゅうばん",
-    description: "This Pokémon uses suction cups to stay in one spot to negate all moves and items that force switching out.",
+    description: "吸盤で　地面に　張り付き ポケモンを　入れ替えさせる 技や　道具が　効かなくなる。",
   },
   intimidate: {
     name: "いかく",
-    description: "The Pokémon intimidates opposing Pokémon upon entering battle, lowering their Attack stat.",
+    description: "登場　したとき　威嚇して 相手を　萎縮させ 相手の　攻撃を　下げて　しまう。",
   },
   shadowTag: {
     name: "かげふみ",
-    description: "This Pokémon steps on the opposing Pokémon's shadow to prevent it from escaping.",
+    description: "相手の　影を　踏み 逃げたり　交代　できなくする。",
   },
   roughSkin: {
     name: "さめはだ",
-    description: "This Pokémon inflicts damage with its rough skin to the attacker on contact.",
+    description: "攻撃を　受けたとき 自分に　触れた　相手を ざらざらの　肌で　キズつける。",
   },
   wonderGuard: {
     name: "ふしぎなまもり",
-    description: "Its mysterious power only lets supereffective moves hit the Pokémon.",
+    description: "効果バツグンの　技しか 当たらない　不思議な　力。",
   },
   levitate: {
     name: "ふゆう",
-    description: "By floating in the air, the Pokémon receives full immunity to all Ground-type moves.",
+    description: "地面から　浮くことによって じめんタイプの　技を　受けない。",
   },
   effectSpore: {
     name: "ほうし",
-    description: "Contact with the Pokémon may inflict poison, sleep, or paralysis on its attacker.",
+    description: "攻撃で　自分に　触れた　相手を どくや　まひや　ねむり状態に する　ことがある。",
   },
   synchronize: {
     name: "シンクロ",
-    description: "The attacker will receive the same status condition if it inflicts a burn, poison, or paralysis to the Pokémon.",
+    description: "自分が　なってしまった どくや　まひや　やけどを 相手に　うつす。",
   },
   clearBody: {
     name: "クリアボディ",
-    description: "Prevents other Pokémon's moves or Abilities from lowering the Pokémon's stats.",
+    description: "相手の　技や　特性で 能力を　下げられない。",
   },
   naturalCure: {
     name: "しぜんかいふく",
-    description: "All status conditions heal when the Pokémon switches out.",
+    description: "手持ちに　ひっこむと 状態異常が　治る。",
   },
   lightningRod: {
     name: "ひらいしん",
-    description: "The Pokémon draws in all Electric-type moves. Instead of being hit by Electric-type moves, it boosts its Sp. Atk.",
+    description: "でんきタイプの　技を　自分に 寄せつけ　ダメージを　受けずに 特攻が　上がる。",
   },
   sereneGrace: {
     name: "てんのめぐみ",
-    description: "Boosts the likelihood of additional effects occurring when attacking.",
+    description: "天の恵みの　おかげで 技の　追加効果が　でやすい。",
   },
   swiftSwim: {
     name: "すいすい",
-    description: "Boosts the Pokémon's Speed stat in rain.",
+    description: "天気が　雨のとき 素早さが　上がる。",
   },
   chlorophyll: {
     name: "ようりょくそ",
-    description: "Boosts the Pokémon's Speed stat in harsh sunlight.",
+    description: "天気が　晴れのとき 素早さが　上がる。",
   },
   illuminate: {
     name: "はっこう",
@@ -143,71 +143,71 @@ export const ability: AbilityTranslationEntries = {
   },
   trace: {
     name: "トレース",
-    description: "When it enters a battle, the Pokémon copies an opposing Pokémon's Ability.",
+    description: "登場　したとき 相手の　特性を　トレースして 同じ　特性に　なる。",
   },
   hugePower: {
     name: "ちからもち",
-    description: "Doubles the Pokémon's Attack stat.",
+    description: "物理攻撃の 威力が　２倍になる。",
   },
   poisonPoint: {
     name: "どくのトゲ",
-    description: "Contact with the Pokémon may poison the attacker.",
+    description: "自分に　触った　相手を どく状態に　することがある。",
   },
   innerFocus: {
     name: "せいしんりょく",
-    description: "The Pokémon's intensely focused, and that protects the Pokémon from flinching.",
+    description: "鍛えられた　精神に　よって 相手の　攻撃に　ひるまない。",
   },
   magmaArmor: {
     name: "マグマのよろい",
-    description: "The Pokémon is covered with hot magma, which prevents the Pokémon from becoming frozen.",
+    description: "熱い　マグマを　身にまとい こおり状態に　ならない。",
   },
   waterVeil: {
     name: "みずのベール",
-    description: "The Pokémon is covered with a water veil, which prevents the Pokémon from getting a burn.",
+    description: "水のベールを　身にまとい やけど状態に　ならない。",
   },
   magnetPull: {
     name: "じりょく",
-    description: "Prevents Steel-type Pokémon from escaping using its magnetic force.",
+    description: "はがねタイプの　ポケモンを 磁力で　引きつけて 逃げられなくする。",
   },
   soundproof: {
     name: "ぼうおん",
-    description: "Soundproofing gives the Pokémon full immunity to all sound-based moves.",
+    description: "音を　遮断　することに　よって 音の　攻撃を　受けない。",
   },
   rainDish: {
     name: "あめうけざら",
-    description: "The Pokémon gradually regains HP in rain.",
+    description: "天気が　雨のとき 少しずつ　ＨＰを　回復する。",
   },
   sandStream: {
     name: "すなおこし",
-    description: "The Pokémon summons a sandstorm when it enters a battle.",
+    description: "登場　したとき 天気を　砂あらしにする。",
   },
   pressure: {
     name: "プレッシャー",
-    description: "By putting pressure on the opposing Pokémon, it raises their PP usage.",
+    description: "プレッシャーを　あたえて 相手の　使う　技の　ＰＰを 多く　減らす。",
   },
   thickFat: {
     name: "あついしぼう",
-    description: "The Pokémon is protected by a layer of thick fat, which halves the damage taken from Fire- and Ice-type moves.",
+    description: "厚い　脂肪で　守られているので ほのおタイプと　こおりタイプの 技の　ダメージを　半減させる。",
   },
   earlyBird: {
     name: "はやおき",
-    description: "The Pokémon awakens from sleep twice as fast as other Pokémon.",
+    description: "ねむり状態に　なっても ２倍の　早さで 目覚める　ことが　できる。",
   },
   flameBody: {
     name: "ほのおのからだ",
-    description: "Contact with the Pokémon may burn the attacker.",
+    description: "自分に　触った　相手を やけど状態に　する　ことがある。",
   },
   runAway: {
     name: "にげあし",
-    description: "Enables a sure getaway from wild Pokémon.",
+    description: "野生の　ポケモンから 必ず　逃げられる。",
   },
   keenEye: {
     name: "するどいめ",
-    description: "Keen eyes prevent other Pokémon from lowering this Pokémon's accuracy.",
+    description: "鋭い　目の　おかげで 命中率を　下げられない。",
   },
   hyperCutter: {
     name: "かいりきバサミ",
-    description: "The Pokémon's proud of its powerful pincers. They prevent other Pokémon from lowering its Attack stat.",
+    description: "力自慢の　ハサミを　持っているので 相手に　攻撃を　下げられない。",
   },
   pickup: {
     name: "ものひろい",
@@ -215,111 +215,111 @@ export const ability: AbilityTranslationEntries = {
   },
   truant: {
     name: "なまけ",
-    description: "The Pokémon can't use a move if it had used a move on the previous turn.",
+    description: "技を　出すと 次の　ターンは　休んでしまう。",
   },
   hustle: {
     name: "はりきり",
-    description: "Boosts the Attack stat, but lowers accuracy.",
+    description: "自分の　攻撃が　高くなるが 命中率が　下がる。",
   },
   cuteCharm: {
     name: "メロメロボディ",
-    description: "Contact with the Pokémon may cause infatuation.",
+    description: "自分に　触った　相手を メロメロに　することが　ある。",
   },
   plus: {
     name: "プラス",
-    description: "Boosts the Sp. Atk stat of the Pokémon if an ally with the Plus or Minus Ability is also in battle.",
+    description: "プラスか　マイナスの　特性を　持つ ポケモンが　仲間に　いると 自分の　特攻が　上がる。",
   },
   minus: {
     name: "マイナス",
-    description: "Boosts the Sp. Atk stat of the Pokémon if an ally with the Plus or Minus Ability is also in battle.",
+    description: "プラスか　マイナスの　特性を　持つ ポケモンが　仲間に　いると 自分の　特攻が　上がる。",
   },
   forecast: {
     name: "てんきや",
-    description: "The Pokémon transforms with the weather to change its type to Water, Fire, or Ice.",
+    description: "天気の　影響を　受けて みずタイプ　ほのおタイプ　こおりタイプの どれかに　変化する。",
   },
   stickyHold: {
     name: "ねんちゃく",
-    description: "Items held by the Pokémon are stuck fast and cannot be removed by other Pokémon.",
+    description: "粘着質の　体に 道具が　くっついているため 相手に　道具を　奪われない。",
   },
   shedSkin: {
     name: "だっぴ",
-    description: "The Pokémon may heal its own status conditions by shedding its skin.",
+    description: "体の　皮を　脱ぎ捨てることで 状態異常を 治すことが　ある。",
   },
   guts: {
     name: "こんじょう",
-    description: "It's so gutsy that having a status condition boosts the Pokémon's Attack stat.",
+    description: "状態異常に　なると 根性を　だして 攻撃が　上がる。",
   },
   marvelScale: {
     name: "ふしぎなうろこ",
-    description: "The Pokémon's marvelous scales boost the Defense stat if it has a status condition.",
+    description: "状態異常に　なると 不思議なウロコが　反応して 防御が　上がる。",
   },
   liquidOoze: {
     name: "ヘドロえき",
-    description: "The oozed liquid has a strong stench, which damages attackers using any draining move.",
+    description: "ヘドロ液を　吸い取った　相手は 強烈な　悪臭で ダメージを　受けて　ＨＰを　減らす。",
   },
   overgrow: {
     name: "しんりょく",
-    description: "Powers up Grass-type moves when the Pokémon's HP is low.",
+    description: "ＨＰが　減ったとき くさタイプの　技の 威力が　上がる。",
   },
   blaze: {
     name: "もうか",
-    description: "Powers up Fire-type moves when the Pokémon's HP is low.",
+    description: "ＨＰが　減ったとき ほのおタイプの　技の 威力が　上がる。",
   },
   torrent: {
     name: "げきりゅう",
-    description: "Powers up Water-type moves when the Pokémon's HP is low.",
+    description: "ＨＰが　減ったとき みずタイプの　技の 威力が　上がる。",
   },
   swarm: {
     name: "むしのしらせ",
-    description: "Powers up Bug-type moves when the Pokémon's HP is low.",
+    description: "ＨＰが　減ったとき むしタイプの　技の 威力が　上がる。",
   },
   rockHead: {
     name: "いしあたま",
-    description: "Protects the Pokémon from recoil damage.",
+    description: "反動を　受ける　技を　出しても ＨＰが　減らない。",
   },
   drought: {
     name: "ひでり",
-    description: "Turns the sunlight harsh when the Pokémon enters a battle.",
+    description: "登場　したときに 天気を　晴れに　する。",
   },
   arenaTrap: {
     name: "ありじごく",
-    description: "Prevents opposing Pokémon from fleeing.",
+    description: "戦闘で　相手を 逃げられなくする。",
   },
   vitalSpirit: {
     name: "やるき",
-    description: "The Pokémon is full of vitality, and that prevents it from falling asleep.",
+    description: "やる気を　だすことに　よって ねむり状態に　ならない。",
   },
   whiteSmoke: {
     name: "しろいけむり",
-    description: "The Pokémon is protected by its white smoke, which prevents other Pokémon from lowering its stats.",
+    description: "白い煙に　守られて 相手に　能力を　下げられない。",
   },
   purePower: {
     name: "ヨガパワー",
-    description: "Using its pure power, the Pokémon doubles its Attack stat.",
+    description: "ヨガの　力で 物理攻撃の　威力が ２倍に　なる。",
   },
   shellArmor: {
     name: "シェルアーマー",
-    description: "A hard shell protects the Pokémon from critical hits.",
+    description: "硬い　殻に　守られ 相手の　攻撃が 急所に　当たらない。",
   },
   airLock: {
     name: "エアロック",
-    description: "Eliminates the effects of weather.",
+    description: "あらゆる　天気の　影響が なくなって　しまう。",
   },
   tangledFeet: {
     name: "ちどりあし",
-    description: "Raises evasiveness if the Pokémon is confused.",
+    description: "こんらん状態の　ときは 回避率が　アップする。",
   },
   motorDrive: {
     name: "でんきエンジン",
-    description: "Boosts its Speed stat if hit by an Electric-type move instead of taking damage.",
+    description: "でんきタイプの　技を　受けると ダメージを　受けずに 素早さが　上がる。",
   },
   rivalry: {
     name: "とうそうしん",
-    description: "Becomes competitive and deals more damage to Pokémon of the same gender, but deals less to Pokémon of the opposite gender.",
+    description: "性別が　同じだと 闘争心を　燃やして　強くなる。 性別が　違うと　弱くなる。",
   },
   steadfast: {
     name: "ふくつのこころ",
-    description: "The Pokémon's determination boosts the Speed stat each time the Pokémon flinches.",
+    description: "ひるむ　たびに 不屈の心を　燃やして 素早さが　上がる。",
   },
   snowCloak: {
     name: "ゆきがくれ",
@@ -327,135 +327,135 @@ export const ability: AbilityTranslationEntries = {
   },
   gluttony: {
     name: "くいしんぼう",
-    description: "Makes the Pokémon eat a held Berry when its HP drops to half or less, which is sooner than usual.",
+    description: "ＨＰが　少なくなったら　食べる きのみを　ＨＰ　半分の 時に　食べてしまう。",
   },
   angerPoint: {
     name: "いかりのつぼ",
-    description: "The Pokémon is angered when it takes a critical hit, and that maxes its Attack stat.",
+    description: "急所に　攻撃が　当たると 怒りくるって　攻撃力が 最大に　なる。",
   },
   unburden: {
     name: "かるわざ",
-    description: "Boosts the Speed stat if the Pokémon's held item is used or lost.",
+    description: "持っていた　道具が　なくなると 素早さが　上がる。",
   },
   heatproof: {
     name: "たいねつ",
-    description: "The heatproof body of the Pokémon halves the damage from Fire-type moves that hit it.",
+    description: "耐熱の　体に　よって ほのおタイプの　技の 威力を　半減させる。",
   },
   simple: {
     name: "たんじゅん",
-    description: "The stat changes the Pokémon receives are doubled.",
+    description: "能力　変化が いつもの　２倍に　なる。",
   },
   drySkin: {
     name: "かんそうはだ",
-    description: "Restores HP in rain or when hit by Water-type moves. Reduces HP in harsh sunlight, and increases the damage received from Fire-type moves.",
+    description: "天気が　雨の時や　みずタイプの 技で　ＨＰが　回復し　はれの時や ほのおタイプの　技で　減ってしまう。",
   },
   download: {
     name: "ダウンロード",
-    description: "Compares an opposing Pokémon's Defense and Sp. Def stats before raising its own Attack or Sp. Atk stat—whichever will be more effective.",
+    description: "相手の　防御と　特防を　くらべて 低い　ほうの　能力に　あわせて 自分の　攻撃か　特攻を　上げる。",
   },
   ironFist: {
     name: "てつのこぶし",
-    description: "Powers up punching moves.",
+    description: "パンチを　使う　技の 威力が　上がる。",
   },
   poisonHeal: {
     name: "ポイズンヒール",
-    description: "Restores HP if the Pokémon is poisoned instead of losing HP.",
+    description: "どく状態に　なると ＨＰが　減らずに　増えていく。",
   },
   adaptability: {
     name: "てきおうりょく",
-    description: "Powers up moves of the same type as the Pokémon.",
+    description: "自分と　おなじ　タイプの 技の　威力が　上がる。",
   },
   skillLink: {
     name: "スキルリンク",
-    description: "Maximizes the number of times multistrike moves hit.",
+    description: "連続技を　使うと　いつも 最高回数　出すことが　できる。",
   },
   hydration: {
     name: "うるおいボディ",
-    description: "Heals status conditions if it's raining.",
+    description: "天気が　雨のとき 状態異常が　治る。",
   },
   solarPower: {
     name: "サンパワー",
-    description: "Boosts the Sp. Atk stat in harsh sunlight, but HP decreases every turn.",
+    description: "天気が　晴れると 特攻が　上がるが 毎ターン　ＨＰが　減る。",
   },
   quickFeet: {
     name: "はやあし",
-    description: "Boosts the Speed stat if the Pokémon has a status condition.",
+    description: "状態異常に　なると 素早さが　上がる。",
   },
   normalize: {
     name: "ノーマルスキン",
-    description: "All the Pokémon's moves become Normal type. The power of those moves is boosted a little.",
+    description: "どんな　タイプの　技でも すべて　ノーマルタイプに　なる。 威力が　少し　上がる。",
   },
   sniper: {
     name: "スナイパー",
-    description: "Powers up moves if they become critical hits when attacking.",
+    description: "攻撃を　急所に　当てると 威力が　さらに　上がる。",
   },
   magicGuard: {
     name: "マジックガード",
-    description: "The Pokémon only takes damage from attacks.",
+    description: "攻撃　以外では ダメージを　受けない。",
   },
   noGuard: {
     name: "ノーガード",
-    description: "The Pokémon employs no-guard tactics to ensure incoming and outgoing attacks always land.",
+    description: "ノーガード戦法に　よって お互いの　出す　技が かならず　当たる　ようになる。",
   },
   stall: {
     name: "あとだし",
-    description: "The Pokémon moves after all other Pokémon do.",
+    description: "技を　出す　順番が かならず　最後に　なる。",
   },
   technician: {
     name: "テクニシャン",
-    description: "Powers up the Pokémon's weaker moves.",
+    description: "威力が　低い　技の 威力を　高くして　攻撃できる。",
   },
   leafGuard: {
     name: "リーフガード",
-    description: "Prevents status conditions in harsh sunlight.",
+    description: "天気が　晴れのときは 状態異常に　ならない。",
   },
   klutz: {
     name: "ぶきよう",
-    description: "The Pokémon can't use any held items.",
+    description: "持っている　道具を 使うことが　できない。",
   },
   moldBreaker: {
     name: "かたやぶり",
-    description: "Moves can be used on the target regardless of its Abilities.",
+    description: "相手の　特性に ジャマされる　ことなく　相手に 技を　出すことが　できる。",
   },
   superLuck: {
     name: "きょううん",
-    description: "The Pokémon is so lucky that the critical-hit ratios of its moves are boosted.",
+    description: "強運を　持っているため 相手の　急所に 攻撃が　当たりやすい。",
   },
   aftermath: {
     name: "ゆうばく",
-    description: "Damages the attacker if it contacts the Pokémon with a finishing hit.",
+    description: "ひんしに　なったとき 触った　相手に ダメージを　あたえる。",
   },
   anticipation: {
     name: "きけんよち",
-    description: "The Pokémon can sense an opposing Pokémon's dangerous moves.",
+    description: "相手の　持つ　危険な　技を 察知する　ことができる。",
   },
   forewarn: {
     name: "よちむ",
-    description: "When it enters a battle, the Pokémon can tell one of the moves an opposing Pokémon has.",
+    description: "登場　したとき 相手の　持つ　技を ひとつだけ　読み取る。",
   },
   unaware: {
     name: "てんねん",
-    description: "When attacking, the Pokémon ignores the target Pokémon's stat changes.",
+    description: "相手の　能力の　変化を 無視して　攻撃が　できる。",
   },
   tintedLens: {
     name: "いろめがね",
-    description: "The Pokémon can use \"not very effective\" moves to deal regular damage.",
+    description: "効果が　いまひとつの　技を 通常の　威力で 出すことが　できる。",
   },
   filter: {
     name: "フィルター",
-    description: "Reduces the power of supereffective attacks taken.",
+    description: "効果バツグンに　なってしまう 攻撃の　威力を 弱める　ことが　できる。",
   },
   slowStart: {
     name: "スロースタート",
-    description: "For five turns, the Pokémon's Attack and Speed stats are halved.",
+    description: "５ターンの　あいだ 攻撃と　素早さが 半分に　なる。",
   },
   scrappy: {
     name: "きもったま",
-    description: "The Pokémon can hit Ghost-type Pokémon with Normal- and Fighting-type moves.",
+    description: "ゴーストタイプの　ポケモンに ノーマルタイプと　かくとうタイプの 技を　当てることが　できる。",
   },
   stormDrain: {
     name: "よびみず",
-    description: "Draws in all Water-type moves. Instead of being hit by Water-type moves, it boosts its Sp. Atk.",
+    description: "みずタイプの　技を　自分に　よせつけ ダメージは　受けずに　特攻が　上がる。",
   },
   iceBody: {
     name: "アイスボディ",
@@ -463,7 +463,7 @@ export const ability: AbilityTranslationEntries = {
   },
   solidRock: {
     name: "ハードロック",
-    description: "Reduces the power of supereffective attacks taken.",
+    description: "効果バツグンに　なってしまう 攻撃の　威力を 弱める　ことが　できる。",
   },
   snowWarning: {
     name: "ゆきふらし",
@@ -471,151 +471,151 @@ export const ability: AbilityTranslationEntries = {
   },
   honeyGather: {
     name: "みつあつめ",
-    description: "The Pokémon may gather Honey after a battle.",
+    description: "戦闘が　終わったとき あまいミツを　拾うことが　ある。",
   },
   frisk: {
     name: "おみとおし",
-    description: "When it enters a battle, the Pokémon can check an opposing Pokémon's held item.",
+    description: "登場　したとき 相手の　持ち物を 見通すことが　できる。",
   },
   reckless: {
     name: "すてみ",
-    description: "Powers up moves that have recoil damage.",
+    description: "反動で　ダメージを 受ける　技の　威力が　上がる。",
   },
   multitype: {
     name: "マルチタイプ",
-    description: "Changes the Pokémon's type to match the Plate or Z-Crystal it holds.",
+    description: "持っている　プレートや Ｚクリスタルの　タイプによって 自分の　タイプが　変わる。",
   },
   flowerGift: {
     name: "フラワーギフト",
-    description: "Boosts the Attack and Sp. Def stats of itself and allies in harsh sunlight.",
+    description: "天気が　晴れのとき 自分と　味方の　攻撃と 特防の　能力が　上がる。",
   },
   badDreams: {
     name: "ナイトメア",
-    description: "Reduces the HP of sleeping opposing Pokémon.",
+    description: "ねむり状態の　相手に ダメージを　あたえる。",
   },
   pickpocket: {
     name: "わるいてぐせ",
-    description: "Steals an item from an attacker that made direct contact.",
+    description: "触られた　相手の　道具を 盗んで　しまう。",
   },
   sheerForce: {
     name: "ちからずく",
-    description: "Removes additional effects to increase the power of moves when attacking.",
+    description: "技の　追加効果は　なくなるが そのぶん　高い　威力で 技を　出すことが　できる。",
   },
   contrary: {
     name: "あまのじゃく",
-    description: "Makes stat changes have an opposite effect.",
+    description: "能力の　変化が　逆転して 上がるときに　下がり 下がるときに　上がる。",
   },
   unnerve: {
     name: "きんちょうかん",
-    description: "Unnerves opposing Pokémon and makes them unable to eat Berries.",
+    description: "相手を　緊張させて きのみを　食べられなく　させる。",
   },
   defiant: {
     name: "まけんき",
-    description: "Boosts the Pokémon's Attack stat sharply when its stats are lowered.",
+    description: "能力を　下げられると 攻撃が　ぐーんと　上がる。",
   },
   defeatist: {
     name: "よわき",
-    description: "Halves the Pokémon's Attack and Sp. Atk stats when its HP becomes half or less.",
+    description: "ＨＰが　半分に　なると 弱気に　なって　攻撃と 特攻が　半減する。",
   },
   cursedBody: {
     name: "のろわれボディ",
-    description: "May disable a move used on the Pokémon.",
+    description: "攻撃を　受けると　相手の　技を かなしばり状態に することが　ある。",
   },
   healer: {
     name: "いやしのこころ",
-    description: "Sometimes heals an ally's status condition.",
+    description: "状態異常の　味方を たまに　治してあげる。",
   },
   friendGuard: {
     name: "フレンドガード",
-    description: "Reduces damage done to allies.",
+    description: "味方の　ダメージを 減らすことが　できる。",
   },
   weakArmor: {
     name: "くだけるよろい",
-    description: "Physical attacks to the Pokémon lower its Defense stat but sharply raise its Speed stat.",
+    description: "物理技で　ダメージを　受けると 防御が　下がり 素早さが　ぐーんと　上がる。",
   },
   heavyMetal: {
     name: "ヘヴィメタル",
-    description: "Doubles the Pokémon's weight.",
+    description: "自分の　重さが ２倍に　なる。",
   },
   lightMetal: {
     name: "ライトメタル",
-    description: "Halves the Pokémon's weight.",
+    description: "自分の　重さが 半分に　なる。",
   },
   multiscale: {
     name: "マルチスケイル",
-    description: "Reduces the amount of damage the Pokémon takes while its HP is full.",
+    description: "ＨＰが　満タンの　ときに 受ける　ダメージが　少なくなる。",
   },
   toxicBoost: {
     name: "どくぼうそう",
-    description: "Powers up physical attacks when the Pokémon is poisoned.",
+    description: "どく状態に　なったとき 物理技の　威力が　上がる。",
   },
   flareBoost: {
     name: "ねつぼうそう",
-    description: "Powers up special attacks when the Pokémon is burned.",
+    description: "やけど状態に　なったとき 特殊技の　威力が　上がる。",
   },
   harvest: {
     name: "しゅうかく",
-    description: "May create another Berry after one is used.",
+    description: "使った　きのみを 何回も　作りだす。",
   },
   telepathy: {
     name: "テレパシー",
-    description: "Anticipates an ally's attack and dodges it.",
+    description: "味方の　攻撃を　読み取って 技を　回避する。",
   },
   moody: {
     name: "ムラっけ",
-    description: "Raises one stat sharply and lowers another every turn.",
+    description: "毎ターン　能力の　どれかが ぐーんと　上がって　どれかが　下がる。",
   },
   overcoat: {
     name: "ぼうじん",
-    description: "Protects the Pokémon from things like sand, hail, and powder.",
+    description: "すなあらしや　あられなどの ダメージを　受けない。 粉の　技を　受けない。",
   },
   poisonTouch: {
     name: "どくしゅ",
-    description: "May poison a target when the Pokémon makes contact.",
+    description: "触る　だけで　相手を どく　状態に　することがある。",
   },
   regenerator: {
     name: "さいせいりょく",
-    description: "Restores a little HP when withdrawn from battle.",
+    description: "手持ちに　引っ込むと ＨＰが　少し　回復する。",
   },
   bigPecks: {
     name: "はとむね",
-    description: "Protects the Pokémon from Defense-lowering effects.",
+    description: "防御を　下げる 効果を　受けない。",
   },
   sandRush: {
     name: "すなかき",
-    description: "Boosts the Pokémon's Speed stat in a sandstorm.",
+    description: "天気が　すなあらし　のとき 素早さが　上がる。",
   },
   wonderSkin: {
     name: "ミラクルスキン",
-    description: "Makes status moves more likely to miss.",
+    description: "変化技を　受けにくい 体に　なっている。",
   },
   analytic: {
     name: "アナライズ",
-    description: "Boosts move power when the Pokémon moves last.",
+    description: "いちばん　最後に　技を　出すと 技の　威力が　上がる。",
   },
   illusion: {
     name: "イリュージョン",
-    description: "Comes out disguised as the Pokémon in the party's last spot.",
+    description: "手持ちの　いちばん　うしろに　いる ポケモンに　なりきって　登場して 相手を　化かす。",
   },
   imposter: {
     name: "かわりもの",
-    description: "The Pokémon transforms itself into the Pokémon it's facing.",
+    description: "目の前の　ポケモンに 変身　してしまう。",
   },
   infiltrator: {
     name: "すりぬけ",
-    description: "Passes through the opposing Pokémon's barrier, substitute, and the like and strikes.",
+    description: "相手の　壁や　身代わりを すりぬけて　攻撃　できる",
   },
   mummy: {
     name: "ミイラ",
-    description: "Contact with the Pokémon changes the attacker's Ability to Mummy.",
+    description: "相手に　触られると 相手を　ミイラに　してしまう。",
   },
   moxie: {
     name: "じしんかじょう",
-    description: "The Pokémon shows moxie, and that boosts the Attack stat after knocking out any Pokémon.",
+    description: "相手を　倒すと 自信が　ついて 攻撃が　上がる。",
   },
   justified: {
     name: "せいぎのこころ",
-    description: "Being hit by a Dark-type move boosts the Attack stat of the Pokémon, for justice.",
+    description: "あくタイプの　攻撃を　受けると 正義感で　攻撃が　上がる。",
   },
   rattled: {
     name: "びびり",
@@ -623,187 +623,187 @@ export const ability: AbilityTranslationEntries = {
   },
   magicBounce: {
     name: "マジックミラー",
-    description: "Reflects status moves instead of getting hit by them.",
+    description: "相手に　だされた　変化技を　受けずに そのまま　返す　ことが　できる。",
   },
   sapSipper: {
     name: "そうしょく",
-    description: "Boosts the Attack stat if hit by a Grass-type move instead of taking damage.",
+    description: "くさタイプの　技を　受けると ダメージを　受けずに 攻撃が　上がる。",
   },
   prankster: {
     name: "いたずらごころ",
-    description: "Gives priority to a status move.",
+    description: "変化技を　先制で 出すことが　できる。",
   },
   sandForce: {
     name: "すなのちから",
-    description: "Boosts the power of Rock-, Ground-, and Steel-type moves in a sandstorm.",
+    description: "天気が　すなあらしの　とき いわタイプと　じめんタイプと はがねタイプの　威力が　上がる。",
   },
   ironBarbs: {
     name: "てつのトゲ",
-    description: "Inflicts damage on the attacker upon contact with iron barbs.",
+    description: "自分に　触った　相手に 鉄のトゲで　ダメージを　あたえる。",
   },
   zenMode: {
     name: "ダルマモード",
-    description: "Changes the Pokémon's shape when HP is half or less.",
+    description: "ＨＰが　半分　以下に　なると 姿が　変化する。",
   },
   victoryStar: {
     name: "しょうりのほし",
-    description: "Boosts the accuracy of its allies and itself.",
+    description: "自分や　味方の 命中率が　上がる。",
   },
   turboblaze: {
     name: "ターボブレイズ",
-    description: "Moves can be used on the target regardless of its Abilities.",
+    description: "相手の　特性に ジャマされる　ことなく　相手に 技を　出すことが　できる。",
   },
   teravolt: {
     name: "テラボルテージ",
-    description: "Moves can be used on the target regardless of its Abilities.",
+    description: "相手の　特性に ジャマされる　ことなく　相手に 技を　出すことが　できる。",
   },
   aromaVeil: {
     name: "アロマベール",
-    description: "Protects itself and its allies from attacks that limit their move choices.",
+    description: "自分と　味方への　メンタル 攻撃を　防ぐことが　できる。",
   },
   flowerVeil: {
     name: "フラワーベール",
-    description: "Ally Grass-type Pokémon are protected from status conditions and the lowering of their stats.",
+    description: "味方の　草ポケモンは 能力が　下がらず 状態異常にも　ならない。",
   },
   cheekPouch: {
     name: "ほおぶくろ",
-    description: "Restores HP as well when the Pokémon eats a Berry.",
+    description: "どんな　きのみでも 食べると　ＨＰも　回復する。",
   },
   protean: {
     name: "へんげんじざい",
-    description: "Changes the Pokémon's type to the type of the move it's about to use.",
+    description: "自分が　出す　技と 同じ　タイプに　変化する。",
   },
   furCoat: {
     name: "ファーコート",
-    description: "Halves the damage from physical moves.",
+    description: "相手から　受ける　物理技の ダメージが　半分に　なる。",
   },
   magician: {
     name: "マジシャン",
-    description: "The Pokémon steals the held item of a Pokémon it hits with a move.",
+    description: "技を　当てた　相手の 道具を　奪ってしまう。",
   },
   bulletproof: {
     name: "ぼうだん",
-    description: "Protects the Pokémon from some ball and bomb moves.",
+    description: "相手の　弾や　爆弾などの 技を　防ぐことが　できる。",
   },
   competitive: {
     name: "かちき",
-    description: "Boosts the Sp. Atk stat sharply when a stat is lowered.",
+    description: "能力を　下げられると 特攻が　ぐーんと　上がる。",
   },
   strongJaw: {
     name: "がんじょうあご",
-    description: "The Pokémon's strong jaw boosts the power of its biting moves.",
+    description: "あごが　頑丈で 噛む　技の　威力が 高くなる。",
   },
   refrigerate: {
     name: "フリーズスキン",
-    description: "Normal-type moves become Ice-type moves. The power of those moves is boosted a little.",
+    description: "ノーマルタイプの　技が こおりタイプに　なる。 威力が　少し　上がる。",
   },
   sweetVeil: {
     name: "スイートベール",
-    description: "Prevents itself and ally Pokémon from falling asleep.",
+    description: "味方の　ポケモンは 眠らなくなる。",
   },
   stanceChange: {
     name: "バトルスイッチ",
-    description: "The Pokémon changes its form to Blade Forme when it uses an attack move and changes to Shield Forme when it uses King's Shield.",
+    description: "攻撃技を　出すと　ブレードフォルムに 技　キングシールドを　出すと シールドフォルムに　変化する。",
   },
   galeWings: {
     name: "はやてのつばさ",
-    description: "Gives priority to Flying-type moves when the Pokémon's HP is full.",
+    description: "ＨＰが　満タン　だと ひこうタイプの　技を 先制で　出すことが　できる。",
   },
   megaLauncher: {
     name: "メガランチャー",
-    description: "Powers up aura and pulse moves.",
+    description: "波動の　技の 威力が　高くなる。",
   },
   grassPelt: {
     name: "くさのけがわ",
-    description: "Boosts the Pokémon's Defense stat on Grassy Terrain.",
+    description: "グラスフィールドのとき 防御が　上がる。",
   },
   symbiosis: {
     name: "きょうせい",
-    description: "The Pokémon passes its item to an ally that has used up an item.",
+    description: "味方が　道具を　使うと 自分の　持っている　道具を 味方に　渡す。",
   },
   toughClaws: {
     name: "かたいツメ",
-    description: "Powers up moves that make direct contact.",
+    description: "相手に　接触する　技の 威力が　高くなる。",
   },
   pixilate: {
     name: "フェアリースキン",
-    description: "Normal-type moves become Fairy-type moves. The power of those moves is boosted a little.",
+    description: "ノーマルタイプの　技が フェアリータイプになる。 威力が　少し　上がる。",
   },
   gooey: {
     name: "ぬめぬめ",
-    description: "Contact with the Pokémon lowers the attacker's Speed stat.",
+    description: "攻撃で　自分に　触れた　相手の 素早さを　下げる。",
   },
   aerilate: {
     name: "スカイスキン",
-    description: "Normal-type moves become Flying-type moves. The power of those moves is boosted a little.",
+    description: "ノーマルタイプの　技が ひこうタイプになる。 威力が　少し　上がる。",
   },
   parentalBond: {
     name: "おやこあい",
-    description: "Parent and child each attacks.",
+    description: "親子　２匹で　２回 攻撃することが　できる。",
   },
   darkAura: {
     name: "ダークオーラ",
-    description: "Powers up each Pokémon's Dark-type moves.",
+    description: "全員の　あくタイプの 技が　強くなる。",
   },
   fairyAura: {
     name: "フェアリーオーラ",
-    description: "Powers up each Pokémon's Fairy-type moves.",
+    description: "全員の　フェアリータイプの 技が　強くなる。",
   },
   auraBreak: {
     name: "オーラブレイク",
-    description: "The effects of \"Aura\" Abilities are reversed to lower the power of affected moves.",
+    description: "オーラの　効果を　逆転させて 威力を　下げる。",
   },
   primordialSea: {
     name: "はじまりのうみ",
-    description: "The Pokémon changes the weather to nullify Fire-type attacks.",
+    description: "ほのおタイプの　攻撃を 受けない　天気にする。",
   },
   desolateLand: {
     name: "おわりのだいち",
-    description: "The Pokémon changes the weather to nullify Water-type attacks.",
+    description: "みずタイプの　攻撃を 受けない　天気にする。",
   },
   deltaStream: {
     name: "デルタストリーム",
-    description: "The Pokémon changes the weather to eliminate all of the Flying type's weaknesses.",
+    description: "ひこうタイプの　弱点が なくなる　天気にする。",
   },
   stamina: {
     name: "じきゅうりょく",
-    description: "Boosts the Defense stat when hit by an attack.",
+    description: "攻撃を　受けると 防御が　上がる。",
   },
   wimpOut: {
     name: "にげごし",
-    description: "The Pokémon cowardly switches out when its HP becomes half or less.",
+    description: "ＨＰが　半分に　なると あわてて　逃げ出して 手持ちに　引っ込んで　しまう。",
   },
   emergencyExit: {
     name: "ききかいひ",
-    description: "The Pokémon, sensing danger, switches out when its HP becomes half or less.",
+    description: "ＨＰが　半分に　なると 危険を　回避するため 手持ちに　引っ込んで　しまう。",
   },
   waterCompaction: {
     name: "みずがため",
-    description: "Boosts the Pokémon's Defense stat sharply when hit by a Water-type move.",
+    description: "みずタイプの　技を　受けると 防御が　ぐーんと　上がる。",
   },
   merciless: {
     name: "ひとでなし",
-    description: "The Pokémon's attacks become critical hits if the target is poisoned.",
+    description: "どく状態の 相手を　攻撃すると かならず　急所に　当たる。",
   },
   shieldsDown: {
     name: "リミットシールド",
-    description: "When its HP becomes half or less, the Pokémon's shell breaks and it becomes aggressive.",
+    description: "ＨＰが　半分に　なると 殻が　壊れて 攻撃的に　なる。",
   },
   stakeout: {
     name: "はりこみ",
-    description: "Doubles the damage dealt to the target's replacement if the target switches out.",
+    description: "交代で　出てきた　相手に ２倍の　ダメージで　攻撃　できる。",
   },
   waterBubble: {
     name: "すいほう",
-    description: "Lowers the power of Fire-type moves done to the Pokémon and prevents the Pokémon from getting a burn.",
+    description: "自分に　対する　ほのおタイプの 技の　威力を　下げる。 やけど　しない。",
   },
   steelworker: {
     name: "はがねつかい",
-    description: "Powers up Steel-type moves.",
+    description: "はがねタイプの　技の 威力が　上がる。",
   },
   berserk: {
     name: "ぎゃくじょう",
-    description: "Boosts the Pokémon's Sp. Atk stat when it takes a hit that causes its HP to become half or less.",
+    description: "相手の　攻撃で ＨＰが　半分に　なると 特攻が　上がる。",
   },
   slushRush: {
     name: "ゆきかき",
@@ -811,139 +811,139 @@ export const ability: AbilityTranslationEntries = {
   },
   longReach: {
     name: "えんかく",
-    description: "The Pokémon uses its moves without making contact with the target.",
+    description: "すべての　技を 相手に　接触　しないで 出すことが　できる。",
   },
   liquidVoice: {
     name: "うるおいボイス",
-    description: "All sound-based moves become Water-type moves.",
+    description: "すべての　音技が みずタイプに　なる。",
   },
   triage: {
     name: "ヒーリングシフト",
-    description: "Gives priority to a healing move.",
+    description: "回復技を　先制で 出すことが　できる。",
   },
   galvanize: {
     name: "エレキスキン",
-    description: "Normal-type moves become Electric-type moves. The power of those moves is boosted a little.",
+    description: "ノーマルタイプの　技が でんきタイプになる。 威力が　少し　上がる。",
   },
   surgeSurfer: {
     name: "サーフテール",
-    description: "Doubles the Pokémon's Speed stat on Electric Terrain.",
+    description: "エレキフィールド　のとき 素早さが　２倍に　なる。",
   },
   schooling: {
     name: "ぎょぐん",
-    description: "When it has a lot of HP, the Pokémon forms a powerful school. It stops schooling when its HP is low.",
+    description: "ＨＰが　多いときは　群れて　強くなる。 ＨＰの　残りが　少なくなると 群れは　散り散りに　なってしまう。",
   },
   disguise: {
     name: "ばけのかわ",
-    description: "Once per battle, the shroud that covers the Pokémon can protect it from an attack.",
+    description: "体を　被う　化けの皮で １回　攻撃を　防ぐことが　できる。",
   },
   battleBond: {
     name: "きずなへんげ",
-    description: "Defeating an opposing Pokémon strengthens the Pokémon's bond with its Trainer, and it becomes Ash-Greninja. Water Shuriken gets more powerful.",
+    description: "相手を　倒すと　トレーナーとの キズナが　深まり　サトシゲッコウガに 変化する。みずしゅりけんが　強くなる。",
   },
   powerConstruct: {
     name: "スワームチェンジ",
-    description: "Other Cells gather to aid when its HP becomes half or less. Then the Pokémon changes its form to Complete Forme.",
+    description: "ＨＰが　半分に　なると セルたちが　応援に　駆けつけ パーフェクトフォルムに　姿を　変える。",
   },
   corrosion: {
     name: "ふしょく",
-    description: "The Pokémon can poison the target even if it's a Steel or Poison type.",
+    description: "はがねタイプや　どくタイプも どく状態に　することが　できる。",
   },
   comatose: {
     name: "ぜったいねむり",
-    description: "It's always drowsing and will never wake up. It can attack without waking up.",
+    description: "つねに　夢うつつの　状態で 絶対に　目覚めない。 眠ったまま　攻撃が　できる。",
   },
   queenlyMajesty: {
     name: "じょおうのいげん",
-    description: "Its majesty pressures the opposing Pokémon, making it unable to attack using priority moves.",
+    description: "相手に　威圧感を　あたえ こちらに　むかって　先制技を 出せない　ようにする。",
   },
   innardsOut: {
     name: "とびだすなかみ",
-    description: "Damages the attacker landing the finishing hit by the amount equal to its last HP.",
+    description: "相手に　倒されたとき ＨＰの　残りの　ぶんだけ 相手に　ダメージを　あたえる。",
   },
   dancer: {
     name: "おどりこ",
-    description: "When another Pokémon uses a dance move, it can use a dance move following it regardless of its Speed.",
+    description: "だれかが　踊り技を　使うと 自分も　それに　続いて 踊り技を　出すことが　できる。",
   },
   battery: {
     name: "バッテリー",
-    description: "Powers up ally Pokémon's special moves.",
+    description: "味方の　特殊技の 威力を　上げる。",
   },
   fluffy: {
     name: "もふもふ",
-    description: "Halves the damage taken from moves that make direct contact, but doubles that of Fire-type moves.",
+    description: "相手から　受けた　接触する　技の ダメージを　半減するが　ほのおタイプの 技の　ダメージは　２倍になる。",
   },
   dazzling: {
     name: "ビビッドボディ",
-    description: "Surprises the opposing Pokémon, making it unable to attack using priority moves.",
+    description: "相手を　びっくり　させて こちらに　むかって　先制技を 出せない　ようにする。",
   },
   soulHeart: {
     name: "ソウルハート",
-    description: "Boosts its Sp. Atk stat every time a Pokémon faints.",
+    description: "ポケモンが　ひんしに　なるたびに 特攻が　上がる。",
   },
   tanglingHair: {
     name: "カーリーヘアー",
-    description: "Contact with the Pokémon lowers the attacker's Speed stat.",
+    description: "攻撃で　自分に　触れた　相手の 素早さを　下げる。",
   },
   receiver: {
     name: "レシーバー",
-    description: "The Pokémon copies the Ability of a defeated ally.",
+    description: "倒された　味方の　特性を 受け継いで　同じ　特性に　なる。",
   },
   powerOfAlchemy: {
     name: "かがくのちから",
-    description: "The Pokémon copies the Ability of a defeated ally.",
+    description: "倒された　味方の　特性を 受け継いで　同じ　特性に　なる。",
   },
   beastBoost: {
     name: "ビーストブースト",
-    description: "The Pokémon boosts its most proficient stat each time it knocks out a Pokémon.",
+    description: "相手を　倒したとき 自分の　いちばん　高い 能力が　上がる。",
   },
   rksSystem: {
     name: "ＡＲシステム",
-    description: "Changes the Pokémon's type to match the memory disc it holds.",
+    description: "持っている　メモリで 自分の　タイプが　変わる。",
   },
   electricSurge: {
     name: "エレキメイカー",
-    description: "Turns the ground into Electric Terrain when the Pokémon enters a battle.",
+    description: "登場　したときに エレキフィールドを　はりめぐらせる。",
   },
   psychicSurge: {
     name: "サイコメイカー",
-    description: "Turns the ground into Psychic Terrain when the Pokémon enters a battle.",
+    description: "登場　したときに サイコフィールドを　はりめぐらせる。",
   },
   mistySurge: {
     name: "ミストメイカー",
-    description: "Turns the ground into Misty Terrain when the Pokémon enters a battle.",
+    description: "登場　したときに ミストフィールドを　はりめぐらせる。",
   },
   grassySurge: {
     name: "グラスメイカー",
-    description: "Turns the ground into Grassy Terrain when the Pokémon enters a battle.",
+    description: "登場　したときに グラスフィールドを　はりめぐらせる。",
   },
   fullMetalBody: {
     name: "メタルプロテクト",
-    description: "Prevents other Pokémon's moves or Abilities from lowering the Pokémon's stats.",
+    description: "相手の　技や　特性で 能力を　下げられない。",
   },
   shadowShield: {
     name: "ファントムガード",
-    description: "Reduces the amount of damage the Pokémon takes while its HP is full.",
+    description: "ＨＰが　満タンの　ときに 受ける　ダメージが　少なくなる。",
   },
   prismArmor: {
     name: "プリズムアーマー",
-    description: "Reduces the power of supereffective attacks taken.",
+    description: "効果バツグンに　なってしまう 攻撃の　威力を 弱める　ことが　できる。",
   },
   neuroforce: {
     name: "ブレインフォース",
-    description: "Powers up moves that are super effective.",
+    description: "効果バツグンの　攻撃で 威力が　さらに　上がる。",
   },
   intrepidSword: {
     name: "ふとうのけん",
-    description: "Boosts the Pokémon's Attack stat when the Pokémon enters a battle.",
+    description: "登場　したときに 攻撃が　上がる。",
   },
   dauntlessShield: {
     name: "ふくつのたて",
-    description: "Boosts the Pokémon's Defense stat when the Pokémon enters a battle.",
+    description: "登場　したときに 防御が　上がる。",
   },
   libero: {
     name: "リベロ",
-    description: "Changes the Pokémon's type to the type of the move it's about to use.",
+    description: "自分が　出す　技と 同じ　タイプに　変化する。",
   },
   ballFetch: {
     name: "たまひろい",
@@ -951,123 +951,123 @@ export const ability: AbilityTranslationEntries = {
   },
   cottonDown: {
     name: "わたげ",
-    description: "When the Pokémon is hit by an attack, it scatters cotton fluff around and lowers the Speed stat of all Pokémon except itself.",
+    description: "攻撃を　受けると　わたげを　ばらまいて 自分以外の　ポケモン　すべての 素早さを　下げる。",
   },
   propellerTail: {
     name: "スクリューおびれ",
-    description: "Ignores the effects of opposing Pokémon's Abilities and moves that draw in moves.",
+    description: "相手の　技を　引き受ける 特性や　技の 影響を　無視　できる。",
   },
   mirrorArmor: {
     name: "ミラーアーマー",
-    description: "Bounces back only the stat-lowering effects that the Pokémon receives.",
+    description: "自分が　受けた 能力　ダウンの 効果　だけを　跳ね返す。",
   },
   gulpMissile: {
     name: "うのミサイル",
-    description: "When the Pokémon uses Surf or Dive, it will come back with prey. When it takes damage, it will spit out the prey to attack.",
+    description: "なみのりか　ダイビングを　すると 獲物を　くわえてくる。　ダメージを 受けると　獲物を　吐きだして　攻撃。",
   },
   stalwart: {
     name: "すじがねいり",
-    description: "Ignores the effects of opposing Pokémon's Abilities and moves that draw in moves.",
+    description: "相手の　技を　引き受ける 特性や　技の 影響を　無視　できる。",
   },
   steamEngine: {
     name: "じょうききかん",
-    description: "Boosts the Pokémon's Speed stat drastically if hit by a Fire- or Water-type move.",
+    description: "みずタイプ　ほのおタイプの 技を　受けると 素早さが　ぐぐーんと　上がる。",
   },
   punkRock: {
     name: "パンクロック",
-    description: "Boosts the power of sound-based moves. The Pokémon also takes half the damage from these kinds of moves.",
+    description: "音技の　威力が　上がる。 受けた　音技の ダメージは　半分に　なる。",
   },
   sandSpit: {
     name: "すなはき",
-    description: "The Pokémon creates a sandstorm when it's hit by an attack.",
+    description: "攻撃を　受けると 砂あらしを　起こす。",
   },
   iceScales: {
     name: "こおりのりんぷん",
-    description: "The Pokémon is protected by ice scales, which halve the damage taken from special moves.",
+    description: "こおりのりんぷんに　守られて 特殊攻撃で　受ける ダメージが　半減　する。",
   },
   ripen: {
     name: "じゅくせい",
-    description: "Ripens Berries and doubles their effect.",
+    description: "熟成　させることで きのみの　効果が 倍に　なる。",
   },
   iceFace: {
     name: "アイスフェイス",
-    description: "The Pokémon's ice head can take a physical attack as a substitute, but the attack also changes the Pokémon's appearance. The ice will be restored when it hails.",
+    description: "物理攻撃は　頭の　氷が みがわりに　なるが　姿も　変わる。 氷は　あられが　降ると　元に戻る。",
   },
   powerSpot: {
     name: "パワースポット",
-    description: "Just being next to the Pokémon powers up moves.",
+    description: "隣に　いるだけで 技の　威力が　上がる。",
   },
   mimicry: {
     name: "ぎたい",
-    description: "Changes the Pokémon's type depending on the terrain.",
+    description: "フィールドの　状態に　あわせて ポケモンの　タイプが　変わる。",
   },
   screenCleaner: {
     name: "バリアフリー",
-    description: "When the Pokémon enters a battle, the effects of Light Screen, Reflect, and Aurora Veil are nullified for both opposing and ally Pokémon.",
+    description: "登場　したときに　敵と　味方の ひかりのかべ　リフレクター オーロラベールの　効果が　消える。",
   },
   steelySpirit: {
     name: "はがねのせいしん",
-    description: "Powers up ally Pokémon's Steel-type moves.",
+    description: "味方の　はがねタイプの 攻撃の　威力が　上がる。",
   },
   perishBody: {
     name: "ほろびのボディ",
-    description: "When hit by a move that makes direct contact, the Pokémon and the attacker will faint after three turns unless they switch out of battle.",
+    description: "接触する　技を　受けると お互い　３ターン　たつと　ひんしになる。 交代すると　効果は　なくなる。",
   },
   wanderingSpirit: {
     name: "さまようたましい",
-    description: "The Pokémon exchanges Abilities with a Pokémon that hits it with a move that makes direct contact.",
+    description: "接触する　技で 攻撃　してきた　ポケモンと 特性を　入れ替える。",
   },
   gorillaTactics: {
     name: "ごりむちゅう",
-    description: "Boosts the Pokémon's Attack stat but only allows the use of the first selected move.",
+    description: "攻撃は　上がるが 最初に　選んだ 技しか　出せなくなる。",
   },
   neutralizingGas: {
     name: "かがくへんかガス",
-    description: "If the Pokémon with Neutralizing Gas is in the battle, the effects of all Pokémon's Abilities will be nullified or will not be triggered.",
+    description: "かがくへんかガスの　ポケモンが　場にいると すべての　ポケモンの　特性の 効果が　消えたり　発動　しなくなる。",
   },
   pastelVeil: {
     name: "パステルベール",
-    description: "Protects the Pokémon and its ally Pokémon from being poisoned.",
+    description: "自分も　味方も どくの　状態異常を 受けなくなる。",
   },
   hungerSwitch: {
     name: "はらぺこスイッチ",
-    description: "The Pokémon changes its form, alternating between its Full Belly Mode and Hangry Mode after the end of each turn.",
+    description: "ターンの　終わりに　まんぷくもよう はらぺこもよう　まんぷくもよう……と 交互に　姿を　変える。",
   },
   quickDraw: {
     name: "クイックドロウ",
-    description: "Enables the Pokémon to move first occasionally.",
+    description: "相手より　先に 行動できることが　ある。",
   },
   unseenFist: {
     name: "ふかしのこぶし",
-    description: "If the Pokémon uses moves that make direct contact, it can attack the target even if the target protects itself.",
+    description: "相手に　接触する　技なら 守りの　効果を 無視して　攻撃することが　できる。",
   },
   curiousMedicine: {
     name: "きみょうなくすり",
-    description: "When the Pokémon enters a battle, it scatters medicine from its shell, which removes all stat changes from allies.",
+    description: "登場　したときに 貝がらから　薬を　振りまいて 味方の　能力変化を　元に戻す。",
   },
   transistor: {
     name: "トランジスタ",
-    description: "Powers up Electric-type moves.",
+    description: "でんきタイプの　技の 威力が　上がる。",
   },
   dragonsMaw: {
     name: "りゅうのあぎと",
-    description: "Powers up Dragon-type moves.",
+    description: "ドラゴンタイプの　技の 威力が　上がる。",
   },
   chillingNeigh: {
     name: "しろのいななき",
-    description: "When the Pokémon knocks out a target, it utters a chilling neigh, which boosts its Attack stat.",
+    description: "相手を　倒すと 冷たい　声で　いなないて 攻撃が　上がる。",
   },
   grimNeigh: {
     name: "くろのいななき",
-    description: "When the Pokémon knocks out a target, it utters a terrifying neigh, which boosts its Sp. Atk stat.",
+    description: "相手を　倒すと 恐ろしい　声で　いなないて 特攻が　上がる。",
   },
   asOneGlastrier: {
     name: "じんばいったい",
-    description: "This Ability combines the effects of both Calyrex's Unnerve Ability and Glastrier's Chilling Neigh Ability.",
+    description: "バドレックスの　きんちょうかんと ブリザポスの　しろのいななきの 二つの　特性を　あわせ持つ。",
   },
   asOneSpectrier: {
     name: "じんばいったい",
-    description: "This Ability combines the effects of both Calyrex's Unnerve Ability and Spectrier's Grim Neigh Ability.",
+    description: "バドレックスの　きんちょうかんと レイスポスの　くろのいななきの 二つの　特性を　あわせ持つ。",
   },
   lingeringAroma: {
     name: "とれないにおい",
