@@ -1,5 +1,5 @@
 import BattleScene, { bypassLogin } from "../battle-scene";
-import { TextStyle, addTextObject } from "./text";
+import { TextStyle, addTextObject, getTextStyleOptions } from "./text";
 import { Mode } from "./ui";
 import * as Utils from "../utils";
 import { addWindow } from "./ui-theme";
@@ -44,6 +44,8 @@ export default class MenuUiHandler extends MessageUiHandler {
   protected manageDataConfig: OptionSelectConfig;
   protected communityConfig: OptionSelectConfig;
 
+  protected scale: number = 0.1666666667;
+
   constructor(scene: BattleScene, mode?: Mode) {
     super(scene, mode);
 
@@ -67,10 +69,16 @@ export default class MenuUiHandler extends MessageUiHandler {
     this.optionSelectText = addTextObject(this.scene, 0, 0, this.menuOptions.map(o => `${i18next.t(`menuUiHandler:${MenuOptions[o]}`)}`).join("\n"), TextStyle.WINDOW, { maxLines: this.menuOptions.length });
     this.optionSelectText.setLineSpacing(12);
 
-    this.menuBg = addWindow(this.scene, (this.scene.game.canvas.width / 6) - (this.optionSelectText.displayWidth + 25), 0, this.optionSelectText.displayWidth + 23, (this.scene.game.canvas.height / 6) - 2);
+    this.scale = getTextStyleOptions(TextStyle.WINDOW, (this.scene as BattleScene).uiTheme).scale;
+    this.menuBg = addWindow(this.scene,
+      (this.scene.game.canvas.width / 6) - (this.optionSelectText.displayWidth + 25),
+      0,
+      this.optionSelectText.displayWidth + 19+24*this.scale,
+      (this.scene.game.canvas.height / 6) - 2
+    );
     this.menuBg.setOrigin(0, 0);
 
-    this.optionSelectText.setPositionRelative(this.menuBg, 14, 6);
+    this.optionSelectText.setPositionRelative(this.menuBg, 10+24*this.scale, 6);
 
     this.menuContainer.add(this.menuBg);
 
@@ -400,7 +408,8 @@ export default class MenuUiHandler extends MessageUiHandler {
       this.menuContainer.add(this.cursorObj);
     }
 
-    this.cursorObj.setPositionRelative(this.menuBg, 7, 9 + this.cursor * 16);
+    this.cursorObj.setScale(this.scale * 6);
+    this.cursorObj.setPositionRelative(this.menuBg, 7, 6 + (18 + this.cursor * 96) * this.scale);
 
     return ret;
   }
