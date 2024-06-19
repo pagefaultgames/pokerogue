@@ -75,5 +75,5 @@ export const battle: SimpleTranslationEntries = {
   "unlockedSomething": "{{unlockedThing}}[[가]]\n해금되었다.",
   "congratulations": "축하합니다!",
   "beatModeFirstTime": "{{speciesName}}[[가]] {{gameMode}} 모드를 처음으로 클리어했다!\n{{newModifier}}[[를]] 손에 넣었다!",
-  "ppReduced": "It reduced the PP of {{targetName}}'s\n{{moveName}} by {{reduction}}!",
+  "ppReduced": "{{targetName}}의\n{{moveName}}[[를]] {{reduction}} 깎았다!",
 } as const;
