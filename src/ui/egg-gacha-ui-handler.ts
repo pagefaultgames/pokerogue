@@ -1,6 +1,6 @@
 import BattleScene from "../battle-scene";
 import { Mode } from "./ui";
-import { TextStyle, addTextObject, getEggTierTextTint } from "./text";
+import { TextStyle, addTextObject, getTextStyleOptions, getEggTierTextTint } from "./text";
 import MessageUiHandler from "./message-ui-handler";
 import * as Utils from "../utils";
 import { EGG_SEED, Egg, GachaType, getEggTierDefaultHatchWaves, getEggDescriptor, getLegendaryGachaSpeciesForTimestamp } from "../data/egg";
@@ -34,6 +34,8 @@ export default class EggGachaUiHandler extends MessageUiHandler {
   private transitionCancelled: boolean;
   private defaultText: string;
 
+  private scale: number = 0.1666666667;
+
   constructor(scene: BattleScene) {
     super(scene, Mode.EGG_GACHA);
 
@@ -48,6 +50,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
   setup() {
     this.gachaCursor = 0;
+    this.scale = getTextStyleOptions(TextStyle.WINDOW, this.scene.uiTheme).scale;
 
     const ui = this.getUi();
 
@@ -152,7 +155,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     this.eggGachaContainer.add(this.eggGachaOptionsContainer);
 
 
-    this.eggGachaOptionSelectBg = addWindow(this.scene, 0, 0, 96, 112);
+    this.eggGachaOptionSelectBg = addWindow(this.scene, 0, 0, 96, 16 + 576 * this.scale);
     this.eggGachaOptionSelectBg.setOrigin(1, 1);
     this.eggGachaOptionsContainer.add(this.eggGachaOptionSelectBg);
 
@@ -195,8 +198,8 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
     pullOptions.forEach((option, i) => {
       const icon = this.scene.add.sprite(0, 0, "items", option.icon);
-      icon.setScale(0.5);
-      icon.setPositionRelative(this.eggGachaOptionSelectBg, 20, 17 + i * 16);
+      icon.setScale(3 * this.scale);
+      icon.setPositionRelative(this.eggGachaOptionSelectBg, 20, 9 + (48 + i * 96) * this.scale);
       this.eggGachaOptionsContainer.add(icon);
     });
 
@@ -694,7 +697,8 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       this.eggGachaOptionsContainer.add(this.cursorObj);
     }
 
-    this.cursorObj.setPositionRelative(this.eggGachaOptionSelectBg, 10, 17 + this.cursor * 16);
+    this.cursorObj.setScale(this.scale * 6);
+    this.cursorObj.setPositionRelative(this.eggGachaOptionSelectBg, 10, 9 + (48 + this.cursor * 96) * this.scale);
 
     return ret;
   }

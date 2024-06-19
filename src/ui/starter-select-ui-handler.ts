@@ -24,7 +24,7 @@ import { OptionSelectItem } from "./abstact-option-select-ui-handler";
 import MessageUiHandler from "./message-ui-handler";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
 import { StatsContainer } from "./stats-container";
-import { TextStyle, addBBCodeTextObject, addTextObject } from "./text";
+import { TextStyle, addBBCodeTextObject, addTextObject, getTextStyleOptions } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
 import {SettingKeyboard} from "#app/system/settings/settings-keyboard";
@@ -387,7 +387,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonEggMoveBgs = [];
     this.pokemonEggMoveLabels = [];
 
-    this.genOptionsText = addTextObject(this.scene, 124, 7, "", TextStyle.WINDOW, { fontSize: 72, lineSpacing: 39, align: "center" });
+    const scale = getTextStyleOptions(TextStyle.TOOLTIP_TITLE, this.scene.uiTheme).scale;
+    this.genOptionsText = addTextObject(this.scene, 124, 1+1/scale, "", TextStyle.WINDOW, { fontSize: 72, lineSpacing: 6.5/scale, align: "center" });
     this.genOptionsText.setShadowOffset(4.5, 4.5);
     this.genOptionsText.setOrigin(0.5, 0);
     this.starterSelectContainer.add(this.genOptionsText);
