@@ -18,7 +18,7 @@ export const egg: SimpleTranslationEntries = {
   "tooManyEggs": "你的蛋太多啦！",
   "pull": "次",
   "pulls": "次",
-  "hatchFromTheEgg": "{{pokemonName}} hatched from the egg!",
-  "eggMoveUnlock": "Egg Move unlocked",
-  "rareEggMoveUnlock": "Rare Egg Move unlocked",
+  "hatchFromTheEgg": "{{pokemonName}} 从蛋中孵化了！",
+  "eggMoveUnlock": "蛋招式已解锁",
+  "rareEggMoveUnlock": "稀有蛋招式已解锁",
 } as const;
