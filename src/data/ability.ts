@@ -2483,6 +2483,9 @@ function getSheerForceHitDisableAbCondition(): AbAttrCondition {
 
 function getWeatherCondition(...weatherTypes: WeatherType[]): AbAttrCondition {
   return (pokemon: Pokemon) => {
+    if (!pokemon.scene?.arena) {
+      return false;
+    }
     if (pokemon.scene.arena.weather?.isEffectSuppressed(pokemon.scene)) {
       return false;
     }
