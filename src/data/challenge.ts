@@ -1,12 +1,14 @@
 import * as Utils from "../utils";
 import i18next from "i18next";
-import { GameData } from "#app/system/game-data.js";
-import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "./pokemon-species";
+import { DexAttrProps, GameData } from "#app/system/game-data.js";
+import PokemonSpecies, { getPokemonSpecies, getPokemonSpeciesForm, speciesStarters } from "./pokemon-species";
 import Pokemon from "#app/field/pokemon.js";
 import { BattleType, FixedBattleConfig } from "#app/battle.js";
 import Trainer, { TrainerVariant } from "#app/field/trainer.js";
 import { GameMode } from "#app/game-mode.js";
 import { Type } from "./type";
+import { pokemonEvolutions } from "./pokemon-evolutions";
+import { pokemonFormChanges } from "./pokemon-forms";
 import { Challenges } from "#enums/challenges";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
@@ -277,8 +279,22 @@ export class SingleGenerationChallenge extends Challenge {
     case ChallengeType.STARTER_CHOICE:
       const species = args[0] as PokemonSpecies;
       const isValidStarter = args[1] as Utils.BooleanHolder;
+      const amountOfPokemon = args[3] as number;
       const starterGeneration = species.speciesId === Species.VICTINI ? 5 : species.generation;
-      if (starterGeneration !== this.value) {
+      const generations = [starterGeneration];
+      if (amountOfPokemon > 0) {
+        const speciesToCheck = [species.speciesId];
+        while (speciesToCheck.length) {
+          const checking = speciesToCheck.pop();
+          if (pokemonEvolutions.hasOwnProperty(checking)) {
+            pokemonEvolutions[checking].forEach(e => {
+              speciesToCheck.push(e.speciesId);
+              generations.push(getPokemonSpecies(e.speciesId).generation);
+            });
+          }
+        }
+      }
+      if (!generations.includes(this.value)) {
         isValidStarter.value = false;
         return true;
       }
@@ -372,7 +388,32 @@ export class SingleTypeChallenge extends Challenge {
     case ChallengeType.STARTER_CHOICE:
       const species = args[0] as PokemonSpecies;
       const isValidStarter = args[1] as Utils.BooleanHolder;
-      if (!species.isOfType(this.value - 1)) {
+      const dexAttr = args[2] as DexAttrProps;
+      const amountOfPokemon = args[3] as number;
+      const speciesForm = getPokemonSpeciesForm(species.speciesId, dexAttr.formIndex);
+      const types = [speciesForm.type1, speciesForm.type2];
+      if (amountOfPokemon > 0) {
+        const speciesToCheck = [species.speciesId];
+        while (speciesToCheck.length) {
+          const checking = speciesToCheck.pop();
+          if (pokemonEvolutions.hasOwnProperty(checking)) {
+            pokemonEvolutions[checking].forEach(e => {
+              speciesToCheck.push(e.speciesId);
+              types.push(getPokemonSpecies(e.speciesId).type1, getPokemonSpecies(e.speciesId).type2);
+            });
+          }
+          if (pokemonFormChanges.hasOwnProperty(checking)) {
+            pokemonFormChanges[checking].forEach(f1 => {
+              getPokemonSpecies(checking).forms.forEach(f2 => {
+                if (f1.formKey === f2.formKey) {
+                  types.push(f2.type1, f2.type2);
+                }
+              });
+            });
+          }
+        }
+      }
+      if (!types.includes(this.value - 1)) {
         isValidStarter.value = false;
         return true;
       }

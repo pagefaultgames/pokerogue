@@ -1730,10 +1730,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (typeless) {
       typeMultiplier.value = 1;
     }
-    if (types.find(t => move.isTypeImmune(t))) {
+    if (types.find(t => move.isTypeImmune(source, this, t))) {
       typeMultiplier.value = 0;
     }
-
 
     // Apply arena tags for conditional protection
     if (!move.checkFlag(MoveFlags.IGNORE_PROTECT, source, this) && !move.isAllyTarget()) {
