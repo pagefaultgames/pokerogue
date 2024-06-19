@@ -70,7 +70,7 @@ export const battle: SimpleTranslationEntries = {
   "statHarshlyFell": "baisse beaucoup",
   "statSeverelyFell": "baisse énormément",
   "statWontGoAnyLower": "ne peut plus baisser",
-  "ppReduced": "It reduced the PP of {{targetName}}'s\n{{moveName}} by {{reduction}}!",
+  "ppReduced": "Les PP de la capacité {{moveName}}\nde {{targetName}} sont réduits de {{reduction}} !",
   "battlerTagsRechargingLapse": "Le contrecoup empêche {{pokemonNameWithAffix}}\n de bouger !",
   "battlerTagsTrappedOnAdd": "{{pokemonNameWithAffix}}\nne peut plus s’échapper !",
   "battlerTagsTrappedOnRemove": "{{pokemonNameWithAffix}} est libéré\nde la capacité {{moveName}} !",
