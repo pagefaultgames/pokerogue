@@ -2095,6 +2095,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             this.pokemonHatchedIcon,
             this.pokemonHatchedCountText
           ].map(c => c.setVisible(false));
+          this.pokemonFormText.setY(25);
         } else if (species.speciesId === Species.ETERNATUS) {
           this.pokemonHatchedIcon.setVisible(false);
           this.pokemonHatchedCountText.setVisible(false);
@@ -2108,6 +2109,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.pokemonCandyCountText.setText(`x${this.scene.gameData.starterData[species.speciesId].candyCount}`);
           this.pokemonCandyCountText.setVisible(true);
           this.pokemonFormText.setVisible(true);
+          this.pokemonFormText.setY(42);
           this.pokemonHatchedIcon.setVisible(true);
           this.pokemonHatchedCountText.setVisible(true);
 
@@ -2584,7 +2586,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
          * we change to can AddParty value to true since the user has enough cost to choose this pokemon and this pokemon registered too.
          */
         const isValidForChallenge = new Utils.BooleanHolder(true);
-        Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, this.genSpecies[g][s], isValidForChallenge);
+        Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, this.genSpecies[g][s], isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(this.genSpecies[g][s], this.scene.gameData.getSpeciesDefaultDexAttr(this.genSpecies[g][s], false, true)), this.starterGens.length + (add ? 1 : 0));
 
         const canBeChosen = remainValue >= speciesStarterValue && isValidForChallenge.value;
 

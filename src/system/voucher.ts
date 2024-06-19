@@ -1,5 +1,5 @@
 import BattleScene from "../battle-scene";
-import i18next from "../plugins/i18n";
+import i18next from "i18next";
 import { Achv, AchvTier, achvs, getAchievementDescription } from "./achv";
 import { PlayerGender } from "#enums/player-gender";
 import { TrainerType } from "#enums/trainer-type";

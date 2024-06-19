@@ -1,4 +1,4 @@
-import {SimpleTranslationEntries} from "#app/plugins/i18n";
+import {SimpleTranslationEntries} from "#app/interfaces/locales";
 
 // Titles of special trainers like gym leaders, elite four, and the champion
 export const titles: SimpleTranslationEntries = {
@@ -112,7 +112,7 @@ export const trainerClasses: SimpleTranslationEntries = {
   "school_kid": "학원끝난 아이",
   "school_kid_female": "학원끝난 아이",
   "school_kids": "학원끝난 아이",
-  "swimmer": "수연팬티 소년",
+  "swimmer": "수영팬티 소년",
   "swimmer_female": "비키니 아가씨",
   "swimmers": "수영팬티 소년 & 비키니 아가씨", // 확인 필요
   "twins": "쌍둥이",
