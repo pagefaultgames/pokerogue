@@ -94,5 +94,5 @@ export const settings: SimpleTranslationEntries = {
   "alt": " (Alt)",
   "mute": "Stumm",
   "controller": "Controller",
-  "gamepadSupport": "Gamepad Untersützung",
+  "gamepadSupport": "Gamepad Unterstützung",
 } as const;
