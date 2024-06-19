@@ -56,7 +56,7 @@ export function addTextObject(scene: Phaser.Scene, x: number, y: number, content
   }
 
   if (ret.lineSpacing < 12 && i18next.resolvedLanguage === "ja") {
-    ret.setLineSpacing(ret.lineSpacing * 8);
+    ret.setLineSpacing(ret.lineSpacing + 35);
   }
   return ret;
 }
@@ -70,7 +70,7 @@ export function setTextStyle(obj: Phaser.GameObjects.Text, scene: Phaser.Scene, 
   }
 
   if (obj.lineSpacing < 12 && i18next.resolvedLanguage === "ja") {
-    obj.setLineSpacing(obj.lineSpacing * 8);
+    obj.setLineSpacing(obj.lineSpacing + 35);
   }
 }
 
@@ -86,7 +86,7 @@ export function addBBCodeTextObject(scene: Phaser.Scene, x: number, y: number, c
   }
 
   if (ret.lineSpacing < 12 && i18next.resolvedLanguage === "ja") {
-    ret.setLineSpacing(ret.lineSpacing * 8);
+    ret.setLineSpacing(ret.lineSpacing + 35);
   }
   return ret;
 }
