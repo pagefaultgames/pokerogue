@@ -1,4 +1,4 @@
-import { AbilityTranslationEntries, SimpleTranslationEntries, AchievementTranslationEntries, BerryTranslationEntries, DialogueTranslationEntries, ModifierTypeTranslationEntries, MoveTranslationEntries, PokemonInfoTranslationEntries } from "#app/interfaces/locales";
+import { AbilityTranslationEntries, SimpleTranslationEntries, AchievementTranslationEntries, BerryTranslationEntries, DialogueTranslationEntries, ModifierTypeTranslationEntries, MoveTranslationEntries, PokemonInfoTranslationEntries, TranslationEntries } from "#app/interfaces/locales";
 
 // Module declared to make referencing keys in the localization files type-safe.
 declare module "i18next" {
@@ -14,6 +14,7 @@ declare module "i18next" {
         biome: SimpleTranslationEntries;
         challenges: SimpleTranslationEntries;
         commandUiHandler: SimpleTranslationEntries;
+        common: TranslationEntries;
         PGMachv: AchievementTranslationEntries;
         PGFachv: AchievementTranslationEntries;
         PGMdialogue: DialogueTranslationEntries;
