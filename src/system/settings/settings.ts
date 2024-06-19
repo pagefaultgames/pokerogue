@@ -435,7 +435,7 @@ export const Setting: Array<Setting> = [
       },
       {
         value: "Back",
-        label: i18next.t("settings:back")
+        label: i18next.t("settings:timeOfDay_back")
       }
     ],
     default: 0,
