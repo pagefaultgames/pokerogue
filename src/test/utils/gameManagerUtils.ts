@@ -38,7 +38,7 @@ export function generateStarter(scene, species?: Species[]) {
     const starterGender = starter.species.malePercent !== null
       ? !starterProps.female ? Gender.MALE : Gender.FEMALE
       : Gender.GENDERLESS;
-    // completely disable shiny here to ensuite consistent tests
+    // completely disable shiny here to ensure consistent tests
     const starterPokemon = scene.addPlayerPokemon(starter.species, startingLevel, starter.abilityIndex, starterFormIndex, starterGender, false, starterProps.variant, undefined, starter.nature);
     starter.moveset = starterPokemon.moveset;
   }
