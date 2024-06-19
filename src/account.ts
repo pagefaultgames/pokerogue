@@ -13,7 +13,7 @@ export let loggedInUser: UserInfo = null;
 export const clientSessionId = Utils.randomString(32);
 
 export function initLoggedInUser(): void {
-  loggedInUser = { username: "Guest", lastSessionSlot: -1 };
+  loggedInUser = { username: "Guest", lastSessionSlot: -1, discordId: "", googleId: ""};
 }
 
 export function updateUserInfo(): Promise<[boolean, integer]> {
