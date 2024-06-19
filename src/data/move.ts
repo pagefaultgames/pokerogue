@@ -4583,7 +4583,7 @@ export class RemoveTypeAttr extends MoveEffectAttr {
   private messageCallback: ((user: Pokemon) => void) | undefined;
 
   constructor(removedType: Type, messageCallback?: (user: Pokemon) => void) {
-    super(true, MoveEffectTrigger.POST_APPLY);
+    super(true, MoveEffectTrigger.POST_TARGET);
     this.removedType = removedType;
     this.messageCallback = messageCallback;
 

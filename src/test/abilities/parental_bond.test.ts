@@ -8,6 +8,7 @@ import { Moves } from "#enums/moves";
 import { getMovePosition } from "../utils/gameManagerUtils";
 import { CommandPhase, DamagePhase, MoveEffectPhase, TurnEndPhase } from "#app/phases.js";
 import { BattleStat } from "#app/data/battle-stat.js";
+import { Type } from "#app/data/type.js";
 
 const TIMEOUT = 20 * 1000;
 
@@ -273,6 +274,59 @@ describe("Abilities - Parental Bond", () => {
       await game.phaseInterceptor.to(DamagePhase, false);
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
+    }, TIMEOUT
+  );
+
+  test(
+    "ability should only trigger post-target move effects once",
+    async () => {
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.MIND_BLOWN]);
+
+      await game.startBattle([Species.PIDGEOT]);
+
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).not.toBe(undefined);
+
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).not.toBe(undefined);
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.MIND_BLOWN));
+
+      await game.phaseInterceptor.to(DamagePhase, false);
+
+      expect(leadPokemon.turnData.hitCount).toBe(2);
+
+      // This test will time out if the user faints
+      await game.phaseInterceptor.to(TurnEndPhase, false);
+
+      expect(leadPokemon.hp).toBe(Math.floor(leadPokemon.getMaxHp()/2));
+    }, TIMEOUT
+  );
+
+  test(
+    "Burn Up only removes type after second strike with this ability",
+    async () => {
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.BURN_UP]);
+
+      await game.startBattle([Species.CHARIZARD]);
+
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).not.toBe(undefined);
+
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).not.toBe(undefined);
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.BURN_UP));
+
+      await game.phaseInterceptor.to(DamagePhase);
+
+      expect(leadPokemon.turnData.hitCount).toBe(2);
+      expect(enemyPokemon.hp).toBeGreaterThan(0);
+      expect(leadPokemon.isOfType(Type.FIRE)).toBe(true);
+
+      await game.phaseInterceptor.to(TurnEndPhase, false);
+
+      expect(leadPokemon.isOfType(Type.FIRE)).toBe(false);
     }, TIMEOUT
   );
 });

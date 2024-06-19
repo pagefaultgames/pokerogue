@@ -2975,14 +2975,17 @@ export class MoveEffectPhase extends PokemonPhase {
             });
           }));
         }
-        // Trigger effect which should only apply one time after all targeted effects have already applied
-        const postTarget = applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && attr.trigger === MoveEffectTrigger.POST_TARGET,
-          user, null, move);
+        // Trigger effect which should only apply one time on the last hit after all targeted effects have already applied
+        const postTarget = (user.turnData.hitsLeft === 1) ?
+          applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && attr.trigger === MoveEffectTrigger.POST_TARGET, user, null, move) :
+          null;
 
-        if (applyAttrs.length) { // If there is a pending asynchronous move effect, do this after
-          applyAttrs[applyAttrs.length - 1]?.then(() => postTarget);
-        } else { // Otherwise, push a new asynchronous move effect
-          applyAttrs.push(postTarget);
+        if (!!postTarget) {
+          if (applyAttrs.length) { // If there is a pending asynchronous move effect, do this after
+            applyAttrs[applyAttrs.length - 1]?.then(() => postTarget);
+          } else { // Otherwise, push a new asynchronous move effect
+            applyAttrs.push(postTarget);
+          }
         }
 
         Promise.allSettled(applyAttrs).then(() => this.end());
