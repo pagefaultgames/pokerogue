@@ -3,23 +3,23 @@ import { TranslationEntries } from "#app/interfaces/locales";
 export const challenges: TranslationEntries = {
   "title": "Modificatori delle sfide",
   "illegalEvolution": "{{pokemon}} changed into an ineligble pokémon\nfor this challenge!",
-  "usePokemon": "Puoi usare solo Pokémon {{desc}}",
   "singleGeneration": {
     "name": "Mono gen",
-    "desc_default": "della generazione selezionata.",
-    "desc_1": "di 1ª generazione.",
-    "desc_2": "di 2ª generazione.",
-    "desc_3": "di 3ª generazione.",
-    "desc_4": "di 4ª generazione.",
-    "desc_5": "di 5ª generazione.",
-    "desc_6": "di 6ª generazione.",
-    "desc_7": "di 7ª generazione.",
-    "desc_8": "di 8ª generazione.",
-    "desc_9": "di 9ª generazione.",
+    "desc": "Puoi usare solo Pokémon di {{gen}} generazione.",
+    "desc_default": "Puoi usare solo Pokémon della generazione selezionata.",
+    "gen_1": "1ª",
+    "gen_2": "2ª",
+    "gen_3": "3ª",
+    "gen_4": "4ª",
+    "gen_5": "5ª",
+    "gen_6": "6ª",
+    "gen_7": "7ª",
+    "gen_8": "8ª",
+    "gen_9": "9ª",
   },
   "singleType": {
     "name": "Mono tipo",
-    "desc": "di tipo {{type}}.",
-    "desc_default": "del tipo selezionato."
+    "desc": "Puoi usare solo Pokémon di tipo {{type}}.",
+    "desc_default": "Puoi usare solo Pokémon del tipo selezionato."
   },
 } as const;

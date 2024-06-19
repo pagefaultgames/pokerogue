@@ -3,23 +3,24 @@ import { TranslationEntries } from "#app/interfaces/locales.js";
 export const challenges: TranslationEntries = {
   "title": "Challenge Modifiers",
   "illegalEvolution": "{{pokemon}} changed into an ineligble pokémon\nfor this challenge!",
-  "usePokemon": "You can only use Pokémon {{desc}}",
   "singleGeneration": {
     "name": "Mono Gen",
-    "desc_default": "from the chosen generation.",
-    "desc_1": "from generation one.",
-    "desc_2": "from generation two.",
-    "desc_3": "from generation three.",
-    "desc_4": "from generation four.",
-    "desc_5": "from generation five.",
-    "desc_6": "from generation six.",
-    "desc_7": "from generation seven.",
-    "desc_8": "from generation eight.",
-    "desc_9": "from generation nine.",
+    "desc": "You can only use Pokémon from Generation {{gen}}.",
+    "desc_default": "You can only use Pokémon from the chosen generation.",
+    "gen_1": "one",
+    "gen_2": "two",
+    "gen_3": "three",
+    "gen_4": "four",
+    "gen_5": "five",
+    "gen_6": "six",
+    "gen_7": "seven",
+    "gen_8": "eight",
+    "gen_9": "nine",
   },
   "singleType": {
     "name": "Mono Type",
-    "desc": "with the {{type}} type.",
-    "desc_default": "of the chosen type."
+    "desc": "You can only use Pokémon with the {{type}} type.",
+    "desc_default": "You can only use Pokémon of the chosen type."
+    //types in pokemon-info
   },
 } as const;

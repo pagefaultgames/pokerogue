@@ -372,8 +372,10 @@ export class SingleGenerationChallenge extends Challenge {
     if (overrideValue === undefined) {
       overrideValue = this.value;
     }
-    const genDesc = i18next.t(`challenges:singleGeneration.desc_${this.value=== 0 ? "default" : this.value}`);
-    return i18next.t("challenges:usePokemon", { desc: genDesc });
+    if (this.value === 0) {
+      return i18next.t("challenges:singleGeneration.desc_default");
+    }
+    return i18next.t("challenges:singleGeneration.desc", { gen: i18next.t(`challenges:singleGeneration.gen_${this.value}`) });
   }
 
 
@@ -490,11 +492,10 @@ export class SingleTypeChallenge extends Challenge {
       overrideValue = this.value;
     }
     const type = i18next.t(`pokemonInfo:Type.${Type[this.value - 1]}`);
-    const typeColor = `[color=${TypeColor[Type[this.value-1]]}][shadow=${TypeShadow[Type[this.value-1]]}]${type}`;
+    const typeColor = `[color=${TypeColor[Type[this.value-1]]}][shadow=${TypeShadow[Type[this.value-1]]}]${type}[/shadow][/color]`;
     const defaultDesc = i18next.t("challenges:singleType.desc_default");
     const typeDesc = i18next.t("challenges:singleType.desc", {type: typeColor});
-    const desc = this.value === 0 ? defaultDesc : typeDesc;
-    return i18next.t("challenges:usePokemon", { desc: desc });
+    return this.value === 0 ? defaultDesc : typeDesc;
   }
 
   static loadChallenge(source: SingleTypeChallenge | any): SingleTypeChallenge {
