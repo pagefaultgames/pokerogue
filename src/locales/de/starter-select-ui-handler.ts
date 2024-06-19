@@ -21,7 +21,6 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "passive": "Passiv:",
   "nature": "Wesen:",
   "eggMoves": "Ei-Attacken",
-  "start": "Start",
   "addToParty": "Zum Team hinzufügen",
   "toggleIVs": "DVs anzeigen/verbergen",
   "manageMoves": "Attacken ändern",
