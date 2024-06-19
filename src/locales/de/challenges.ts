@@ -9,6 +9,7 @@ export const challenges: TranslationEntries = {
     "desc_default": "Du kannst nur Pokémon gewählten Generation verwenden.",
     "gen_1": "ersten",
     "gen_2": "zweiten",
+    "gen_3": "dritten",
     "gen_4": "vierten",
     "gen_5": "fünften",
     "gen_6": "sechsten",
