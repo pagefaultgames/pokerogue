@@ -2,7 +2,7 @@ import { TranslationEntries } from "#app/interfaces/locales";
 
 export const challenges: TranslationEntries = {
   "title": "Herausforderungsmodifikatoren",
-  "illegalEvolution": "{{pokemon}} changed into an ineligble pokémon\nfor this challenge!",
+  "illegalEvolution": "{{pokemon}} hat sich in ein Pokémon verwandelt, dass für diese Herausforderung nicht zulässig ist!",
   "singleGeneration": {
     "name": "Mono-Generation",
     "desc": "Du kannst nur Pokémon aus der {{gen}} Generation verwenden.",
