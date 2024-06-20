@@ -45,6 +45,7 @@ import KeyboardBindingUiHandler from "#app/ui/settings/keyboard-binding-ui-handl
 import SettingsDisplayUiHandler from "./settings/settings-display-ui-handler";
 import SettingsAudioUiHandler from "./settings/settings-audio-ui-handler";
 import { PlayerGender } from "#enums/player-gender";
+import BgmBar from "#app/ui/bgm-bar";
 
 export enum Mode {
   MESSAGE,
@@ -127,6 +128,7 @@ export default class UI extends Phaser.GameObjects.Container {
   public handlers: UiHandler[];
   private overlay: Phaser.GameObjects.Rectangle;
   public achvBar: AchvBar;
+  public bgmBar: BgmBar;
   public savingIcon: SavingIconHandler;
 
   private tooltipContainer: Phaser.GameObjects.Container;
@@ -194,6 +196,9 @@ export default class UI extends Phaser.GameObjects.Container {
 
     this.achvBar = new AchvBar(this.scene as BattleScene);
     this.achvBar.setup();
+
+    this.bgmBar = new BgmBar(this.scene as BattleScene);
+    this.bgmBar.setup();
 
     (this.scene as BattleScene).uiContainer.add(this.achvBar);
 
