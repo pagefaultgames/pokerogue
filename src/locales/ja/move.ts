@@ -3,671 +3,671 @@ import { MoveTranslationEntries } from "#app/interfaces/locales";
 export const move: MoveTranslationEntries = {
   pound: {
     name: "はたく",
-    effect: "The target is physically pounded with a long tail, a foreleg, or the like."
+    effect: "長い しっぽや 手などを 使って 相手を はたいて 攻撃する。"
   },
   karateChop: {
     name: "からてチョップ",
-    effect: "The target is attacked with a sharp chop. Critical hits land more easily."
+    effect: "鋭い チョップで 相手を たたいて 攻撃する。 急所に 当たりやすい。"
   },
   doubleSlap: {
     name: "おうふくビンタ",
-    effect: "The target is slapped repeatedly, back and forth, two to five times in a row."
+    effect: "おうふく ビンタで 相手を たたいて 攻撃する。 ２ー５回の 間 連続で だす。"
   },
   cometPunch: {
     name: "れんぞくパンチ",
-    effect: "The target is hit with a flurry of punches that strike two to five times in a row."
+    effect: "どとうの パンチで 相手を なぐりつけて 攻撃する。 ２ー５回の 間 連続で だす。"
   },
   megaPunch: {
     name: "メガトンパンチ",
-    effect: "The target is slugged by a punch thrown with muscle-packed power."
+    effect: "力を こめた パンチで 相手を 攻撃する。"
   },
   payDay: {
     name: "ネコにこばん",
-    effect: "Numerous coins are hurled at the target to inflict damage. Money is earned after the battle."
+    effect: "相手の 体に 小判を 投げつけて 攻撃する。 戦闘の あとで お金が もらえる。"
   },
   firePunch: {
     name: "ほのおのパンチ",
-    effect: "The target is punched with a fiery fist. This may also leave the target with a burn."
+    effect: "炎を こめた パンチで 相手を 攻撃する。 やけど状態に することが ある。"
   },
   icePunch: {
     name: "れいとうパンチ",
-    effect: "The target is punched with an icy fist. This may also leave the target frozen."
+    effect: "冷気を こめた パンチで 相手を 攻撃する。 こおり状態に することが ある。"
   },
   thunderPunch: {
     name: "かみなりパンチ",
-    effect: "The target is punched with an electrified fist. This may also leave the target with paralysis."
+    effect: "電撃を こめた パンチで 相手を 攻撃する。 まひ状態に することが ある。"
   },
   scratch: {
     name: "ひっかく",
-    effect: "Hard, pointed, sharp claws rake the target to inflict damage."
+    effect: "硬く とがった 鋭い ツメで 相手を ひっかいて 攻撃する。"
   },
   viseGrip: {
     name: "はさむ",
-    effect: "The target is gripped and squeezed from both sides to inflict damage."
+    effect: "相手を 両側から はさんで ダメージを あたえる。"
   },
   guillotine: {
     name: "ハサミギロチン",
-    effect: "A vicious, tearing attack with big pincers. The target faints instantly if this attack hits."
+    effect: "大きな ハサミで 相手を 切り裂いて 攻撃する。 当たれば 一撃で ひんしに する。"
   },
   razorWind: {
     name: "かまいたち",
-    effect: "In this two-turn attack, blades of wind hit opposing Pokémon on the second turn. Critical hits land more easily."
+    effect: "風の 刃を つくり ２ターン目に 相手を 攻撃する。 急所に 当たりやすい。"
   },
   swordsDance: {
     name: "つるぎのまい",
-    effect: "A frenetic dance to uplift the fighting spirit. This sharply raises the user's Attack stat."
+    effect: "戦いの舞を 激しく おどって 気合を 高める。 自分の 攻撃を ぐーんと あげる。"
   },
   cut: {
     name: "いあいぎり",
-    effect: "The target is cut with a scythe or claw."
+    effect: "カマや ツメなどで 相手を 切りつけて 攻撃する。"
   },
   gust: {
     name: "かぜおこし",
-    effect: "A gust of wind is whipped up by wings and launched at the target to inflict damage."
+    effect: "翼で おこした 激しい 風を 相手に ぶつけて 攻撃する。"
   },
   wingAttack: {
     name: "つばさでうつ",
-    effect: "The target is struck with large, imposing wings spread wide to inflict damage."
+    effect: "大きく ひろげた りっぱな 翼を 相手に ぶつけて 攻撃する。"
   },
   whirlwind: {
     name: "ふきとばし",
-    effect: "The target is blown away, and a different Pokémon is dragged out. In the wild, this ends a battle against a single Pokémon."
+    effect: "相手を 吹きとばして 控えの ポケモンを ひきずりだす。 野生の 場合は 戦闘が 終わる。"
   },
   fly: {
     name: "そらをとぶ",
-    effect: "The user flies up into the sky and then strikes its target on the next turn."
+    effect: "１ターン目で 空へ 飛び ２ターン目に 相手を 攻撃する。"
   },
   bind: {
     name: "しめつける",
-    effect: "Things such as long bodies or tentacles are used to bind and squeeze the target for four to five turns."
+    effect: "長い 体や つるなどを 使い ４ー５ターンの 間 相手を 締めつけて 攻撃する。"
   },
   slam: {
     name: "たたきつける",
-    effect: "The target is slammed with a long tail, vines, or the like to inflict damage."
+    effect: "長い しっぽや つるなどを 使い 相手を たたきつけて 攻撃する。"
   },
   vineWhip: {
     name: "つるのムチ",
-    effect: "The target is struck with slender, whiplike vines to inflict damage."
+    effect: "ムチのように しなる 細長い つるで 相手を たたきつけて 攻撃する。"
   },
   stomp: {
     name: "ふみつけ",
-    effect: "The target is stomped with a big foot. This may also make the target flinch."
+    effect: "大きな 足で 相手を 踏みつけて 攻撃する。 相手を ひるませることが ある。"
   },
   doubleKick: {
     name: "にどげり",
-    effect: "The target is quickly kicked twice in succession using both feet."
+    effect: "２本の 足で 相手を けとばして 攻撃する。 ２回連続で ダメージを 与える。"
   },
   megaKick: {
     name: "メガトンキック",
-    effect: "The target is attacked by a kick launched with muscle-packed power."
+    effect: "ものすごい 力を こめた キックで 相手を けとばして 攻撃する。"
   },
   jumpKick: {
     name: "とびげり",
-    effect: "The user jumps up high, then strikes with a kick. If the kick misses, the user hurts itself."
+    effect: "高い ジャンプからの キックで 相手を 攻撃する。 はずすと 自分が ダメージを 受ける。"
   },
   rollingKick: {
     name: "まわしげり",
-    effect: "The user lashes out with a quick, spinning kick. This may also make the target flinch."
+    effect: "体を 素早く 回転させながら けとばして 攻撃する。 相手を ひるませる ことが ある。"
   },
   sandAttack: {
     name: "すなかけ",
-    effect: "Sand is hurled in the target's face, reducing the target's accuracy."
+    effect: "相手の 顔に 砂を かけて 命中率を さげる。"
   },
   headbutt: {
     name: "ずつき",
-    effect: "The user sticks out its head and attacks by charging straight into the target. This may also make the target flinch."
+    effect: "頭を 突きだして まっすぐ つっこんで 攻撃する。 相手を ひるませることが ある。"
   },
   hornAttack: {
     name: "つのでつく",
-    effect: "The target is jabbed with a sharply pointed horn to inflict damage."
+    effect: "鋭く とがった つので 相手を 攻撃する。"
   },
   furyAttack: {
     name: "みだれづき",
-    effect: "The target is jabbed repeatedly with a horn or beak two to five times in a row."
+    effect: "つのや くちばしで 相手を つついて 攻撃する。 ２ー５回の 間 連続で だす。"
   },
   hornDrill: {
     name: "つのドリル",
-    effect: "The user stabs the target with a horn that rotates like a drill. The target faints instantly if this attack hits."
+    effect: "回転する つのを 相手に 突き刺して 攻撃する。 当たれば 一撃で ひんしに する。"
   },
   tackle: {
     name: "たいあたり",
-    effect: "A physical attack in which the user charges and slams into the target with its whole body."
+    effect: "相手に むかって 全身で ぶつかっていき 攻撃する。"
   },
   bodySlam: {
     name: "のしかかり",
-    effect: "The user drops onto the target with its full body weight. This may also leave the target with paralysis."
+    effect: "全身で 相手に のしかかり 攻撃する。 まひ状態に することが ある。"
   },
   wrap: {
     name: "まきつく",
-    effect: "A long body, vines, or the like are used to wrap and squeeze the target for four to five turns."
+    effect: "長い 体や つるなどを 使って ４ー５ターンの 間 相手に まきついて 攻撃する。"
   },
   takeDown: {
     name: "とっしん",
-    effect: "A reckless, full-body charge attack for slamming into the target. This also damages the user a little."
+    effect: "すごい 勢いで 相手に ぶつかって 攻撃する。 自分も 少し ダメージを 受ける。"
   },
   thrash: {
     name: "あばれる",
-    effect: "The user rampages and attacks for two to three turns. The user then becomes confused."
+    effect: "２ー３ターンの 間 暴れまくって 相手を 攻撃する。 暴れたあとは 混乱する。"
   },
   doubleEdge: {
     name: "すてみタックル",
-    effect: "A reckless, life-risking tackle in which the user rushes the target. This also damages the user quite a lot."
+    effect: "命を 懸けて 相手に 突進して 攻撃する。 自分も かなり ダメージを 受ける。"
   },
   tailWhip: {
     name: "しっぽをふる",
-    effect: "The user wags its tail cutely, making opposing Pokémon less wary and lowering their Defense stats."
+    effect: "しっぽを 左右に かわいく ふって 油断を 誘う。 相手の 防御を さげる。"
   },
   poisonSting: {
     name: "どくばり",
-    effect: "The user stabs the target with a poisonous stinger. This may also poison the target."
+    effect: "毒の ある ハリを 相手に 突き刺して 攻撃する。 毒状態に することが ある。"
   },
   twineedle: {
     name: "ダブルニードル",
-    effect: "The user damages the target twice in succession by jabbing it with two spikes. This may also poison the target."
+    effect: "２本の ハリを 相手に 突き刺し ２回連続で ダメージ。 毒状態に することが ある。"
   },
   pinMissile: {
     name: "ミサイルばり",
-    effect: "Sharp spikes are shot at the target in rapid succession. They hit two to five times in a row."
+    effect: "鋭い ハリを 相手に 発射して 攻撃する。 ２ー５回の 間 連続で だす。"
   },
   leer: {
     name: "にらみつける",
-    effect: "The user gives opposing Pokémon an intimidating leer that lowers the Defense stat."
+    effect: "鋭い 目つきで おびえさせて 相手の 防御を さげる。"
   },
   bite: {
     name: "かみつく",
-    effect: "The target is bitten with viciously sharp fangs. This may also make the target flinch."
+    effect: "鋭く とがった 歯で かみついて 攻撃する。 相手を ひるませることが ある。"
   },
   growl: {
     name: "なきごえ",
-    effect: "The user growls in an endearing way, making opposing Pokémon less wary. This lowers their Attack stats."
+    effect: "かわいい なきごえを 聞かせて 気を ひき 油断を させて 相手の 攻撃を さげる。"
   },
   roar: {
     name: "ほえる",
-    effect: "The target is scared off, and a different Pokémon is dragged out. In the wild, this ends a battle against a single Pokémon."
+    effect: "相手を 逃がして 控えの ポケモンを ひきずりだす。 野生の 場合は 戦闘が 終わる。"
   },
   sing: {
     name: "うたう",
-    effect: "A soothing lullaby is sung in a calming voice that puts the target into a deep slumber."
+    effect: "心地好い きれいな 歌声を 聞かせて 相手を 眠り状態に する。"
   },
   supersonic: {
     name: "ちょうおんぱ",
-    effect: "The user generates odd sound waves from its body that confuse the target."
+    effect: "特殊な 音波を 体から 発して 相手を 混乱させる。"
   },
   sonicBoom: {
     name: "ソニックブーム",
-    effect: "The target is hit with a destructive shock wave that always inflicts 20 HP damage."
+    effect: "衝撃波を 相手に ぶつけて 攻撃する。 ２０の ダメージを 決まって 与える。"
   },
   disable: {
     name: "かなしばり",
-    effect: "For four turns, this move prevents the target from using the move it last used."
+    effect: "相手の 動きを とめて 直前に だしていた 技を ４ターンの 間 使えなくする。"
   },
   acid: {
     name: "ようかいえき",
-    effect: "Opposing Pokémon are attacked with a spray of harsh acid. This may also lower their Sp. Def stats."
+    effect: "強い 酸を 相手に かけて 攻撃する。 相手の 特防を さげることが ある。"
   },
   ember: {
     name: "ひのこ",
-    effect: "The target is attacked with small flames. This may also leave the target with a burn."
+    effect: "小さな 炎を 相手に 発射して 攻撃する。 やけど状態に することが ある。"
   },
   flamethrower: {
     name: "かえんほうしゃ",
-    effect: "The target is scorched with an intense blast of fire. This may also leave the target with a burn."
+    effect: "激しい 炎を 相手に 発射して 攻撃する。 やけど状態に することが ある。"
   },
   mist: {
     name: "しろいきり",
-    effect: "The user cloaks itself and its allies in a white mist that prevents any of their stats from being lowered for five turns."
+    effect: "白い霧で 体を おおう。 ５ターンの 間 相手に 能力を さげられなく なる。"
   },
   waterGun: {
     name: "みずでっぽう",
-    effect: "The target is blasted with a forceful shot of water."
+    effect: "水を 勢いよく 相手に 発射して 攻撃する。"
   },
   hydroPump: {
     name: "ハイドロポンプ",
-    effect: "The target is blasted by a huge volume of water launched under great pressure."
+    effect: "大量の 水を 激しい 勢いで 相手に 発射して 攻撃する。"
   },
   surf: {
     name: "なみのり",
-    effect: "The user attacks everything around it by swamping its surroundings with a giant wave."
+    effect: "大きな 波で 自分の 周りに いるものを 攻撃する。"
   },
   iceBeam: {
     name: "れいとうビーム",
-    effect: "The target is struck with an icy-cold beam of energy. This may also leave the target frozen."
+    effect: "凍える ビームを 相手に 発射して 攻撃する。 こおり状態に することが ある。"
   },
   blizzard: {
     name: "ふぶき",
-    effect: "A howling blizzard is summoned to strike opposing Pokémon. This may also leave the opposing Pokémon frozen."
+    effect: "激しい 吹雪を 相手に 吹きつけて 攻撃する。 こおり状態に することが ある。"
   },
   psybeam: {
     name: "サイケこうせん",
-    effect: "The target is attacked with a peculiar ray. This may also leave the target confused."
+    effect: "不思議な 光線を 相手に 発射して 攻撃する。 混乱させることが ある。"
   },
   bubbleBeam: {
     name: "バブルこうせん",
-    effect: "A spray of bubbles is forcefully ejected at the target. This may also lower the target's Speed stat."
+    effect: "泡を 勢いよく 相手に 発射して 攻撃する。 素早さを さげる ことが ある。"
   },
   auroraBeam: {
     name: "オーロラビーム",
-    effect: "The target is hit with a rainbow-colored beam. This may also lower the target's Attack stat."
+    effect: "にじいろの ビームを 相手に 発射して 攻撃する。 攻撃を さげる ことが ある。"
   },
   hyperBeam: {
     name: "はかいこうせん",
-    effect: "The target is attacked with a powerful beam. The user can't move on the next turn."
+    effect: "強い 光線を 相手に 発射して 攻撃する。 次の ターンは 動けなくなる。"
   },
   peck: {
     name: "つつく",
-    effect: "The target is jabbed with a sharply pointed beak or horn."
+    effect: "鋭く とがった くちばしや つので 相手を 突いて 攻撃する。"
   },
   drillPeck: {
     name: "ドリルくちばし",
-    effect: "A corkscrewing attack that strikes the target with a sharp beak acting as a drill."
+    effect: "回転しながら とがった くちばしを 相手に 突き刺して 攻撃する。"
   },
   submission: {
     name: "じごくぐるま",
-    effect: "The user grabs the target and recklessly dives for the ground. This also damages the user a little."
+    effect: "地面に 自分ごと 相手を 投げつけて 攻撃する。 自分も 少し ダメージを 受ける。"
   },
   lowKick: {
     name: "けたぐり",
-    effect: "A powerful low kick that makes the target fall over. The heavier the target, the greater the move's power."
+    effect: "足を 強く けり 相手を 転ばせて 攻撃する。 相手が 重いほど 威力が あがる。"
   },
   counter: {
     name: "カウンター",
-    effect: "A retaliation move that counters any physical attack, inflicting double the damage taken."
+    effect: "相手から 受けた 物理攻撃の ダメージを ２倍に して 同じ 相手に 返す。"
   },
   seismicToss: {
     name: "ちきゅうなげ",
-    effect: "The target is thrown using the power of gravity. It inflicts damage equal to the user's level."
+    effect: "引力を 使い 投げとばす。 自分の レベルと 同じ ダメージを 相手に 与える。"
   },
   strength: {
     name: "かいりき",
-    effect: "The target is slugged with a punch thrown at maximum power."
+    effect: "こん身の 力で 相手を なぐりつけて 攻撃する。"
   },
   absorb: {
     name: "すいとる",
-    effect: "A nutrient-draining attack. The user's HP is restored by half the damage taken by the target."
+    effect: "養分を 吸い取り 攻撃する。 相手に 与えた ダメージの 半分の ＨＰを 回復できる。"
   },
   megaDrain: {
     name: "メガドレイン",
-    effect: "A nutrient-draining attack. The user's HP is restored by half the damage taken by the target."
+    effect: "養分を 吸い取り 攻撃する。 相手に 与えた ダメージの 半分の ＨＰを 回復できる。"
   },
   leechSeed: {
     name: "やどりぎのタネ",
-    effect: "A seed is planted on the target. It steals some HP from the target every turn."
+    effect: "植えつけた 相手の ＨＰを 毎ターン 少しだけ 吸い取り 自分の ＨＰを 回復する。"
   },
   growth: {
     name: "せいちょう",
-    effect: "The user's body grows all at once, raising the Attack and Sp. Atk stats."
+    effect: "体を 一気に 大きく 生長させて 攻撃と 特攻を あげる。"
   },
   razorLeaf: {
     name: "はっぱカッター",
-    effect: "Sharp-edged leaves are launched to slash at opposing Pokémon. Critical hits land more easily."
+    effect: "はっぱを とばして 相手を 切りつけて 攻撃する。 急所に 当たりやすい。"
   },
   solarBeam: {
     name: "ソーラービーム",
-    effect: "In this two-turn attack, the user gathers light, then blasts a bundled beam on the next turn."
+    effect: "１ターン目に 光を いっぱいに 集め ２ターン目に 光の 束を 発射して 攻撃する。"
   },
   poisonPowder: {
     name: "どくのこな",
-    effect: "The user scatters a cloud of poisonous dust that poisons the target."
+    effect: "毒の ある 粉を たくさん ふりまいて 相手を 毒状態に する。"
   },
   stunSpore: {
     name: "しびれごな",
-    effect: "The user scatters a cloud of numbing powder that paralyzes the target."
+    effect: "しびれる 粉を たくさん ふりまいて 相手を まひ状態に する。"
   },
   sleepPowder: {
     name: "ねむりごな",
-    effect: "The user scatters a big cloud of sleep-inducing dust around the target."
+    effect: "眠くなる 粉を たくさん ふりまいて 相手を 眠り状態に する。"
   },
   petalDance: {
     name: "はなびらのまい",
-    effect: "The user attacks the target by scattering petals for two to three turns. The user then becomes confused."
+    effect: "２ー３ターンの 間 花を まきちらして 相手を 攻撃する。 まきちらした あとは 混乱する。"
   },
   stringShot: {
     name: "いとをはく",
-    effect: "Opposing Pokémon are bound with silk blown from the user's mouth that harshly lowers the Speed stat."
+    effect: "口から 吹きだした 糸を まきつけて 相手の 素早さを がくっと さげる。"
   },
   dragonRage: {
     name: "りゅうのいかり",
-    effect: "This attack hits the target with a shock wave of pure rage. This attack always inflicts 40 HP damage."
+    effect: "怒りの 衝撃波を 相手に ぶつけて 攻撃する。 ４０の ダメージを 決まって 与える。"
   },
   fireSpin: {
     name: "ほのおのうず",
-    effect: "The target becomes trapped within a fierce vortex of fire that rages for four to five turns."
+    effect: "激しく 渦をまく 炎の中に ４ー５ターンの 間 相手を 閉じこめて 攻撃する。"
   },
   thunderShock: {
     name: "でんきショック",
-    effect: "A jolt of electricity crashes down on the target to inflict damage. This may also leave the target with paralysis."
+    effect: "電気の 刺激を 相手に 浴びせて 攻撃する。 まひ状態に することが ある。"
   },
   thunderbolt: {
     name: "１０まんボルト",
-    effect: "A strong electric blast crashes down on the target. This may also leave the target with paralysis."
+    effect: "強い 電撃を 相手に 浴びせて 攻撃する。 まひ状態に することが ある。"
   },
   thunderWave: {
     name: "でんじは",
-    effect: "The user launches a weak jolt of electricity that paralyzes the target."
+    effect: "弱い 電撃を 浴びせることで 相手を まひ状態に する。"
   },
   thunder: {
     name: "かみなり",
-    effect: "A wicked thunderbolt is dropped on the target to inflict damage. This may also leave the target with paralysis."
+    effect: "激しい 雷を 相手に 落として 攻撃する。 まひ状態に することが ある。"
   },
   rockThrow: {
     name: "いわおとし",
-    effect: "The user picks up and throws a small rock at the target to attack."
+    effect: "小さな 岩を 持ちあげて 相手に 投げつけて 攻撃する。"
   },
   earthquake: {
     name: "じしん",
-    effect: "The user sets off an earthquake that strikes every Pokémon around it."
+    effect: "地震の 衝撃で 自分の 周りに いるものを 攻撃する。"
   },
   fissure: {
     name: "じわれ",
-    effect: "The user opens up a fissure in the ground and drops the target in. The target faints instantly if this attack hits."
+    effect: "地割れの 裂け目に 相手を 落として 攻撃する。 当たれば 一撃で ひんしに する。"
   },
   dig: {
     name: "あなをほる",
-    effect: "The user burrows into the ground, then attacks on the next turn."
+    effect: "１ターン目に 潜り ２ターン目で 相手を 攻撃する。"
   },
   toxic: {
     name: "どくどく",
-    effect: "A move that leaves the target badly poisoned. Its poison damage worsens every turn."
+    effect: "相手を 猛毒の 状態に する。 ターンが すすむほど 毒の ダメージが 増えていく。"
   },
   confusion: {
     name: "ねんりき",
-    effect: "The target is hit by a weak telekinetic force. This may also confuse the target."
+    effect: "弱い 念力を 相手に 送って 攻撃する。 相手を 混乱させることが ある。"
   },
   psychic: {
     name: "サイコキネシス",
-    effect: "The target is hit by a strong telekinetic force. This may also lower the target's Sp. Def stat."
+    effect: "強い 念力を 相手に 送って 攻撃する。 相手の 特防を さげることが ある。"
   },
   hypnosis: {
     name: "さいみんじゅつ",
-    effect: "The user employs hypnotic suggestion to make the target fall into a deep sleep."
+    effect: "眠気を 誘う 暗示を かけて 相手を 眠り状態に する。"
   },
   meditate: {
     name: "ヨガのポーズ",
-    effect: "The user meditates to awaken the power deep within its body and raise its Attack stat."
+    effect: "眠っている 力を 体の 奥から ひきだして 自分の 攻撃を あげる。"
   },
   agility: {
     name: "こうそくいどう",
-    effect: "The user relaxes and lightens its body to move faster. This sharply raises the Speed stat."
+    effect: "力を ぬいて 体を 軽くして 高速で 動く。 自分の 素早さを ぐーんと あげる。"
   },
   quickAttack: {
     name: "でんこうせっか",
-    effect: "The user lunges at the target at a speed that makes it almost invisible. This move always goes first."
+    effect: "目にも 留まらぬ ものすごい 速さで 相手に つっこむ。 必ず 先制攻撃 できる。"
   },
   rage: {
     name: "いかり",
-    effect: "As long as this move is in use, the power of rage raises the Attack stat each time the user is hit in battle."
+    effect: "技を だしたときに 攻撃を 受けると 怒りの 力で 攻撃が あがる。"
   },
   teleport: {
     name: "テレポート",
-    effect: "The user switches places with a party Pokémon in waiting, if any. If a wild Pokémon uses this move, it flees."
+    effect: "ひかえの ポケモンが いるときに 使うと 入れ替わる。 野生の ポケモンは 逃げてしまう。"
   },
   nightShade: {
     name: "ナイトヘッド",
-    effect: "The user makes the target see a frightening mirage. It inflicts damage equal to the user's level."
+    effect: "恐ろしい 幻を みせて 自分の レベルと 同じだけの ダメージを 相手に 与える。"
   },
   mimic: {
     name: "ものまね",
-    effect: "The user copies the target's last move. The move can be used during battle until the Pokémon is switched out."
+    effect: "相手が 最後に 使った 技を 戦闘の あいだ 自分の 技に することが できる。"
   },
   screech: {
     name: "いやなおと",
-    effect: "An earsplitting screech harshly lowers the target's Defense stat."
+    effect: "おもわず 耳を ふさぎたくなる いやなおとを だして 相手の 防御を がくっと さげる。"
   },
   doubleTeam: {
     name: "かげぶんしん",
-    effect: "By moving rapidly, the user makes illusory copies of itself to raise its evasiveness."
+    effect: "素早い 動きで 分身を つくり 相手を まどわせて 回避率を あげる。"
   },
   recover: {
     name: "じこさいせい",
-    effect: "Restoring its own cells, the user restores its own HP by half of its max HP."
+    effect: "細胞を 再生させて 自分の 最大ＨＰの 半分の ＨＰを 回復する。"
   },
   harden: {
     name: "かたくなる",
-    effect: "The user stiffens all the muscles in its body to raise its Defense stat."
+    effect: "全身に 力を こめて 体を 硬くして 自分の 防御を あげる。"
   },
   minimize: {
     name: "ちいさくなる",
-    effect: "The user compresses its body to make itself look smaller, which sharply raises its evasiveness."
+    effect: "体を ちぢめて 小さく みせて 自分の 回避率を ぐーんと あげる。"
   },
   smokescreen: {
     name: "えんまく",
-    effect: "The user releases an obscuring cloud of smoke or ink. This lowers the target's accuracy."
+    effect: "煙や 墨などを 吹きかけて 相手の 命中率を さげる。"
   },
   confuseRay: {
     name: "あやしいひかり",
-    effect: "The target is exposed to a sinister ray that triggers confusion."
+    effect: "怪しい 光を 相手に みせて まどわせる。 相手を 混乱させる。"
   },
   withdraw: {
     name: "からにこもる",
-    effect: "The user withdraws its body into its hard shell, raising its Defense stat."
+    effect: "殻に 潜りこんで 身を守り 自分の 防御を あげる。"
   },
   defenseCurl: {
     name: "まるくなる",
-    effect: "The user curls up to conceal weak spots and raise its Defense stat."
+    effect: "体を まるめて ちぢこまり 自分の 防御を あげる。"
   },
   barrier: {
     name: "バリアー",
-    effect: "The user throws up a sturdy wall that sharply raises its Defense stat."
+    effect: "頑丈な 壁を つくって 自分の 防御を ぐーんと あげる。"
   },
   lightScreen: {
     name: "ひかりのかべ",
-    effect: "A wondrous wall of light is put up to reduce damage from special attacks for five turns."
+    effect: "５ターンの 間 不思議な かべで 相手から 受ける 特殊攻撃の ダメージを 弱める。"
   },
   haze: {
     name: "くろいきり",
-    effect: "The user creates a haze that eliminates every stat change among all the Pokémon engaged in battle."
+    effect: "黒い霧を だして 戦闘に でている ポケモン 全員の 能力変化を もとに もどす。"
   },
   reflect: {
     name: "リフレクター",
-    effect: "A wondrous wall of light is put up to reduce damage from physical attacks for five turns."
+    effect: "５ターンの 間 不思議な かべで 相手から 受ける 物理攻撃の ダメージを 弱める。"
   },
   focusEnergy: {
     name: "きあいだめ",
-    effect: "The user takes a deep breath and focuses so that critical hits land more easily."
+    effect: "深く 息を 吸い 気合を こめる。 自分の 攻撃が 急所に 当たりやすくなる。"
   },
   bide: {
     name: "がまん",
-    effect: "The user endures attacks for two turns, then strikes back to cause double the damage taken."
+    effect: "２ターンの 間 攻撃に たえて 受けた ダメージを ２倍にして 相手に 返す。"
   },
   metronome: {
     name: "ゆびをふる",
-    effect: "The user waggles a finger and stimulates its brain into randomly using nearly any move."
+    effect: "指をふり 自分の 脳を 刺激して すべての 技の なかから どれか １つを くりだす。"
   },
   mirrorMove: {
     name: "オウムがえし",
-    effect: "The user counters the target by mimicking the target's last move."
+    effect: "相手の 使った 技を まねして 自分も 同じ技を 使う。"
   },
   selfDestruct: {
     name: "じばく",
-    effect: "The user attacks everything around it by causing an explosion. The user faints upon using this move."
+    effect: "爆発を おこして 自分の 周りに いるものを 攻撃する。 使ったあとに ひんしに なる。"
   },
   eggBomb: {
     name: "タマゴばくだん",
-    effect: "A large egg is hurled at the target with maximum force to inflict damage."
+    effect: "大きな タマゴを 力いっぱい 相手に 投げつけて 攻撃する。"
   },
   lick: {
     name: "したでなめる",
-    effect: "The target is licked with a long tongue, causing damage. This may also leave the target with paralysis."
+    effect: "長い 舌で 相手を なめまわして 攻撃する。 まひ状態に することが ある。"
   },
   smog: {
     name: "スモッグ",
-    effect: "The target is attacked with a discharge of filthy gases. This may also poison the target."
+    effect: "汚れた ガスを 相手に 吹きつけて 攻撃する。 毒状態に することが ある。"
   },
   sludge: {
     name: "ヘドロこうげき",
-    effect: "Unsanitary sludge is hurled at the target. This may also poison the target."
+    effect: "汚い ヘドロを 相手に 投げつけて 攻撃する。 毒状態に することが ある。"
   },
   boneClub: {
     name: "ホネこんぼう",
-    effect: "The user clubs the target with a bone. This may also make the target flinch."
+    effect: "手に 持った ホネで 相手を なぐりつけて 攻撃する。 相手を ひるませることが ある。"
   },
   fireBlast: {
     name: "だいもんじ",
-    effect: "The target is attacked with an intense blast of all-consuming fire. This may also leave the target with a burn."
+    effect: "大の字の 炎で 相手を 焼きつくす。 やけど状態に することが ある。"
   },
   waterfall: {
     name: "たきのぼり",
-    effect: "The user charges at the target and may make it flinch."
+    effect: "すごい 勢いで 相手に つっこむ。 相手を ひるませることが ある。"
   },
   clamp: {
     name: "からではさむ",
-    effect: "The target is clamped and squeezed by the user's very thick and sturdy shell for four to five turns."
+    effect: "とても 頑丈な ぶあつい 殻に ４ー５ターンの 間 相手を はさんで 攻撃する。"
   },
   swift: {
     name: "スピードスター",
-    effect: "Star-shaped rays are shot at opposing Pokémon. This attack never misses."
+    effect: "星型の 光を 発射して 相手を 攻撃する。 攻撃は 必ず 命中する。"
   },
   skullBash: {
     name: "ロケットずつき",
-    effect: "The user tucks in its head to raise its Defense stat on the first turn, then rams the target on the next turn."
+    effect: "１ターン目に 頭を ひっこめて 防御を あげる。 ２ターン目に 相手を 攻撃する。"
   },
   spikeCannon: {
     name: "とげキャノン",
-    effect: "Sharp spikes are shot at the target in rapid succession. They hit two to five times in a row."
+    effect: "鋭い ハリを 相手に 発射して 攻撃する。 ２ー５回の 間 連続で だす。"
   },
   constrict: {
     name: "からみつく",
-    effect: "The target is attacked with long, creeping tentacles, vines, or the like. This may also lower the target's  Speed stat."
+    effect: "触手や ツタなどを からみつけて 攻撃する。相手の 素早さを さげることが ある。"
   },
   amnesia: {
     name: "ドわすれ",
-    effect: "The user temporarily empties its mind to forget its concerns. This sharply raises the user's Sp. Def stat."
+    effect: "頭を からにして 一瞬 なにかを 忘れることで 自分の 特防を ぐーんと あげる。"
   },
   kinesis: {
     name: "スプーンまげ",
-    effect: "The user distracts the target by bending a spoon. This lowers the target's accuracy."
+    effect: "スプーンを まげて 注意を ひき 相手の 命中率を さげる。"
   },
   softBoiled: {
     name: "タマゴうみ",
-    effect: "The user restores its own HP by up to half of its max HP."
+    effect: "最大ＨＰの 半分 自分の ＨＰを 回復する。"
   },
   highJumpKick: {
     name: "とびひざげり",
-    effect: "The target is attacked with a knee kick from a jump. If it misses, the user is hurt instead."
+    effect: "ジャンプからの ひざげりで 相手を 攻撃する。 はずすと 自分が ダメージを 受ける。"
   },
   glare: {
     name: "へびにらみ",
-    effect: "The user intimidates the target with the pattern on its belly to cause paralysis."
+    effect: "おなかの 模様で おびえさせて 相手を まひの 状態に する。"
   },
   dreamEater: {
     name: "ゆめくい",
-    effect: "The user eats the dreams of a sleeping target. The user's HP is restored by half the damage taken by the target."
+    effect: "寝ている 相手の 夢を 食べて 攻撃する。 ダメージの 半分の ＨＰを 回復する。"
   },
   poisonGas: {
     name: "どくガス",
-    effect: "A cloud of poison gas is sprayed in the face of opposing Pokémon, poisoning those it hits."
+    effect: "毒ガスを 相手の 顔に 吹きかけて 毒の 状態に する。"
   },
   barrage: {
     name: "たまなげ",
-    effect: "Round objects are hurled at the target to strike two to five times in a row."
+    effect: "まるい ものを 相手に 投げつけて 攻撃する。 ２ー５回の 間 連続で だす。"
   },
   leechLife: {
     name: "きゅうけつ",
-    effect: "The user drains the target's blood. The user's HP is restored by half the damage taken by the target."
+    effect: "血を 吸い取って 相手を 攻撃する。 与えた ダメージの 半分の ＨＰを 回復できる。"
   },
   lovelyKiss: {
     name: "あくまのキッス",
-    effect: "With a scary face, the user tries to force a kiss on the target. If it succeeds, the target falls asleep."
+    effect: "恐ろしい 顔で キスを せまる。 相手を 眠り状態に する。"
   },
   skyAttack: {
     name: "ゴッドバード",
-    effect: "A second-turn attack move where critical hits land more easily. This may also make the target flinch."
+    effect: "２ターン目に 相手を 攻撃する。 たまに ひるませる。 急所にも 当たりやすい。"
   },
   transform: {
     name: "へんしん",
-    effect: "The user transforms into a copy of the target right down to having the same move set."
+    effect: "相手の ポケモンに 変身することで 相手と まったく 同じ 技が 使える。"
   },
   bubble: {
     name: "あわ",
-    effect: "A spray of countless bubbles is jetted at the opposing Pokémon. This may also lower their Speed stat."
+    effect: "無数の 泡を 相手に 吹きかけて 攻撃する。 相手の 素早さを さげることが ある。"
   },
   dizzyPunch: {
     name: "ピヨピヨパンチ",
-    effect: "The target is hit with rhythmically launched punches. This may also leave the target confused."
+    effect: "リズミカルに パンチを くりだして 相手を 攻撃する。 混乱させることが ある。"
   },
   spore: {
     name: "キノコのほうし",
-    effect: "The user scatters bursts of spores that induce sleep."
+    effect: "催眠効果の ある 胞子を パラパラと ふりまき 相手を 眠り状態に する。"
   },
   flash: {
     name: "フラッシュ",
-    effect: "The user flashes a bright light that cuts the target's accuracy."
+    effect: "まぶしい 光で 相手の 命中率を さげる。"
   },
   psywave: {
     name: "サイコウェーブ",
-    effect: "The target is attacked with an odd psychic wave. The attack varies in intensity."
+    effect: "不思議な 念波を 相手に 発射して 攻撃する。 使うたびに ダメージが 変わる。"
   },
   splash: {
     name: "はねる",
-    effect: "The user just flops and splashes around to no effect at all..."
+    effect: "攻撃もせずに ピョン ピョンと 跳ねるだけで なにも おこらない……。"
   },
   acidArmor: {
     name: "とける",
-    effect: "The user alters its cellular structure to liquefy itself, sharply raising its Defense stat."
+    effect: "細胞の 変化で 液状に なり 自分の 防御を ぐーんと あげる。"
   },
   crabhammer: {
     name: "クラブハンマー",
-    effect: "The target is hammered with a large pincer. Critical hits land more easily."
+    effect: "大きな ハサミを 相手に たたきつけて 攻撃する。 急所に 当たりやすい。"
   },
   explosion: {
     name: "だいばくはつ",
-    effect: "The user attacks everything around it by causing a tremendous explosion. The user faints upon using this move."
+    effect: "大きな 爆発で 自分の 周りに いるものを 攻撃する。 使ったあとに ひんしに なる。"
   },
   furySwipes: {
     name: "みだれひっかき",
-    effect: "The target is raked with sharp claws or scythes quickly two to five times in a row."
+    effect: "ツメや カマなどで 相手を ひっかいて 攻撃する。 ２ー５回の 間 連続で だす。"
   },
   bonemerang: {
     name: "ホネブーメラン",
-    effect: "The user throws the bone it holds. The bone loops around to hit the target twice—coming and going."
+    effect: "手に 持った ホネを 相手に 投げつけ 行きと 帰りの ２回連続で ダメージを 与える。"
   },
   rest: {
     name: "ねむる",
-    effect: "The user goes to sleep for two turns. This fully restores the user's HP and heals any status conditions."
+    effect: "２ターンの 間 眠り続ける。 自分の ＨＰと 状態異常を すべて 回復する。"
   },
   rockSlide: {
     name: "いわなだれ",
-    effect: "Large boulders are hurled at opposing Pokémon to inflict damage. This may also make the opposing Pokémon flinch."
+    effect: "大きな 岩を 激しく ぶつけて 攻撃する。 相手を ひるませることが ある。"
   },
   hyperFang: {
     name: "ひっさつまえば",
-    effect: "The user bites hard on the target with its sharp front fangs. This may also make the target flinch."
+    effect: "鋭い 前歯で 強く かみついて 攻撃する。 相手を ひるませることが ある。"
   },
   sharpen: {
     name: "かくばる",
-    effect: "The user makes its edges more jagged,  which raises its Attack stat."
+    effect: "体の かどを 増やして カクカクに なることで 自分の 攻撃を あげる。"
   },
   conversion: {
     name: "テクスチャー",
-    effect: "The user changes its type to become the same type as the move at the top of the list of moves it knows."
+    effect: "自分の タイプを おぼえている 技で 一番 上の 技と 同じ タイプに する。"
   },
   triAttack: {
     name: "トライアタック",
-    effect: "The user strikes with a simultaneous three-beam attack. This may also burn, freeze, or paralyze the target."
+    effect: "３つの 光線で 攻撃する。 まひか やけどか こおり状態の どれかに することが ある。"
   },
   superFang: {
     name: "いかりのまえば",
-    effect: "The user chomps hard on the target with its sharp front fangs. This cuts the target's HP in half."
+    effect: "鋭い 前歯で 激しく かみついて 攻撃する。 相手の ＨＰは 半分に なる。"
   },
   slash: {
     name: "きりさく",
-    effect: "The target is attacked with a slash of claws or blades. Critical hits land more easily."
+    effect: "ツメや カマなどで 相手を 切り裂いて 攻撃する。 急所に 当たりやすい。"
   },
   substitute: {
     name: "みがわり",
-    effect: "The user creates a substitute for itself using some of its HP. The substitute serves as the user's decoy."
+    effect: "自分の ＨＰを 少し 削って 分身を だす。 分身は 自分の 身代わりに なる。"
   },
   struggle: {
     name: "わるあがき",
-    effect: "This attack is used in desperation only if the user has no PP. It also damages the user a little."
+    effect: "自分の ＰＰが なくなると あがいて 相手を 攻撃する。 自分も 少し ダメージを 受ける。"
   },
   sketch: {
     name: "スケッチ",
-    effect: "It enables the user to permanently learn the move last used by the target. Once used, Sketch disappears."
+    effect: "相手が 使った 技を 自分の ものに する。 １回 使うと スケッチは 消える。"
   },
   tripleKick: {
     name: "トリプルキック",
-    effect: "A consecutive three-kick attack that becomes more powerful with each successful hit."
+    effect: "３回連続で キックを くりだして 攻撃する。 技が 当たるたびに 威力は あがる。"
   },
   thief: {
     name: "どろぼう",
@@ -675,699 +675,699 @@ export const move: MoveTranslationEntries = {
   },
   spiderWeb: {
     name: "クモのす",
-    effect: "The user ensnares the target with thin, gooey silk so it can't flee from battle."
+    effect: "ネバネバした 細い 糸を グルグルと からませて 相手を 戦闘から 逃げられなくする。"
   },
   mindReader: {
     name: "こころのめ",
-    effect: "The user senses the target's movements with its mind to ensure its next attack does not miss the target."
+    effect: "相手の 動きを 心で 感じて 次の 攻撃が 必ず 相手に 当たるように する。"
   },
   nightmare: {
     name: "あくむ",
-    effect: "A sleeping target sees a nightmare that inflicts some damage every turn."
+    effect: "眠り状態の 相手に 悪夢を みせて 毎ターン 少しずつ ＨＰを 減らしていく。"
   },
   flameWheel: {
     name: "かえんぐるま",
-    effect: "The user cloaks itself in fire and charges at the target. This may also leave the target with a burn."
+    effect: "炎を まとい 相手に 突進して 攻撃する。 やけど状態に することが ある。"
   },
   snore: {
     name: "いびき",
-    effect: "This attack can be used only if the user is asleep. The harsh noise may also make the target flinch."
+    effect: "自分が 寝ているときに 雑音を だして 攻撃する。 相手を ひるませることが ある。"
   },
   curse: {
     name: "のろい",
-    effect: "A move that works differently for the Ghost type than for all other types."
+    effect: "使う ポケモンが ゴーストタイプと それ以外 とでは 効果が 変わる。"
   },
   flail: {
     name: "じたばた",
-    effect: "The user flails about aimlessly to attack. The less HP the user has, the greater the move's power."
+    effect: "じたばた 暴れて 攻撃する。 自分の ＨＰが 少ないほど 技の 威力は あがる。"
   },
   conversion2: {
     name: "テクスチャー２",
-    effect: "The user changes its type to make itself resistant to the type of the attack the target used last."
+    effect: "相手が 最後に 使った技に 抵抗できる ように 自分の タイプを 変化させる。"
   },
   aeroblast: {
     name: "エアロブラスト",
-    effect: "A vortex of air is shot at the target to inflict damage. Critical hits land more easily."
+    effect: "空気の 渦を 発射して 攻撃する。 急所に 当たりやすい。"
   },
   cottonSpore: {
     name: "わたほうし",
-    effect: "The user releases cotton-like spores that cling to opposing Pokémon, which harshly lowers their Speed stats."
+    effect: "綿のような フワフワの 胞子を まとわり つかせて 相手の 素早さを がくっと さげる。"
   },
   reversal: {
     name: "きしかいせい",
-    effect: "An all-out attack that becomes more powerful the less HP the user has."
+    effect: "力を ふりしぼり 攻撃する。 自分の ＨＰが 少ないほど 技の 威力は あがる。"
   },
   spite: {
     name: "うらみ",
-    effect: "The user unleashes its grudge on the move last used by the target by cutting 4 PP from it."
+    effect: "相手が 最後に 使った技に 恨みを 抱いて その技の ＰＰを ４だけ 減らす。"
   },
   powderSnow: {
     name: "こなゆき",
-    effect: "The user attacks with a chilling gust of powdery snow. This may also freeze opposing Pokémon."
+    effect: "冷たい 粉雪を 相手に 吹きつけて 攻撃する。 こおり状態に することが ある。"
   },
   protect: {
     name: "まもる",
-    effect: "This move enables the user to protect itself from all attacks. Its chance of failing rises if it is used in succession."
+    effect: "相手の 攻撃を まったく 受けない。 連続で だすと 失敗しやすい。"
   },
   machPunch: {
     name: "マッハパンチ",
-    effect: "The user throws a punch at blinding speed. This move always goes first."
+    effect: "目にも 留まらぬ ものすごい 速さで パンチを くりだす。 必ず 先制攻撃 できる。"
   },
   scaryFace: {
     name: "こわいかお",
-    effect: "The user frightens the target with a scary face to harshly lower its Speed stat."
+    effect: "恐ろしい 顔で にらみ おびえさせて 相手の 素早さを がくっと さげる。"
   },
   feintAttack: {
     name: "だましうち",
-    effect: "The user approaches the target disarmingly, then throws a sucker punch. This attack never misses."
+    effect: "さりげなく 相手に ちかづき 油断した すきを みて なぐりつける。 攻撃は 必ず 命中する。"
   },
   sweetKiss: {
     name: "てんしのキッス",
-    effect: "The user kisses the target with a sweet, angelic cuteness that causes confusion."
+    effect: "天使のように かわいく キスして 相手を 混乱させる。"
   },
   bellyDrum: {
     name: "はらだいこ",
-    effect: "The user maximizes its Attack stat in exchange for HP equal to half its max HP."
+    effect: "自分の ＨＰを 最大ＨＰの 半分 減らして 自分の 攻撃を 最大に あげる。"
   },
   sludgeBomb: {
     name: "ヘドロばくだん",
-    effect: "Unsanitary sludge is hurled at the target. This may also poison the target."
+    effect: "汚い ヘドロを 相手に 投げつけて 攻撃する。 毒状態に することが ある。"
   },
   mudSlap: {
     name: "どろかけ",
-    effect: "The user hurls mud in the target's face to inflict damage and lower its accuracy."
+    effect: "相手の 顔などに 泥を 投げつけて 攻撃する。 命中率を さげる。"
   },
   octazooka: {
     name: "オクタンほう",
-    effect: "The user attacks by spraying ink in the target's face or eyes. This may also lower the target's accuracy."
+    effect: "相手の 顔などに 墨を 吹きかけて 攻撃する。 命中率を さげることが ある。"
   },
   spikes: {
     name: "まきびし",
-    effect: "The user lays a trap of spikes at the opposing team's feet. The trap hurts Pokémon that switch into battle."
+    effect: "相手の 足下に まきびしを しかける。交代で でてきた 相手の ポケモンに ダメージを 与える。"
   },
   zapCannon: {
     name: "でんじほう",
-    effect: "The user fires an electric blast like a cannon to inflict damage and cause paralysis."
+    effect: "大砲の ような 電気を 発射して 攻撃する。 相手を まひの 状態に する。"
   },
   foresight: {
     name: "みやぶる",
-    effect: "Enables a Ghost-type target to be hit by Normal- and Fighting-type attacks. This also enables an evasive target to be hit."
+    effect: "ゴーストタイプに 効果がない 技や 回避率の 高い 相手に 攻撃が 当たるように なる。"
   },
   destinyBond: {
     name: "みちづれ",
-    effect: "After using this move, if the user faints, the Pokémon that landed the knockout hit also faints. Its chance of failing rises if it is used in succession."
+    effect: "技のあと 相手の 攻撃で ひんしに なると 攻撃 相手も ひんしにする。 連続して 出すと 失敗する。"
   },
   perishSong: {
     name: "ほろびのうた",
-    effect: "Any Pokémon that hears this song faints in three turns, unless it switches out of battle."
+    effect: "歌を 聴いた ポケモンは ３ターン たつと ひんしに なる。 交代すると 効果は なくなる。"
   },
   icyWind: {
     name: "こごえるかぜ",
-    effect: "The user attacks with a gust of chilled air. This also lowers opposing Pokémon's Speed stats."
+    effect: "凍てつく 冷気を 相手に 吹きつけて 攻撃する。 相手の 素早さを さげる。"
   },
   detect: {
     name: "みきり",
-    effect: "This move enables the user to protect itself from all attacks. Its chance of failing rises if it is used in succession."
+    effect: "相手の 攻撃を まったく 受けない。 連続で だすと 失敗しやすい。"
   },
   boneRush: {
     name: "ボーンラッシュ",
-    effect: "The user strikes the target with a hard bone two to five times in a row."
+    effect: "硬い ホネで 相手を なぐりつけて 攻撃する。 ２ー５回の 間 連続で だす。"
   },
   lockOn: {
     name: "ロックオン",
-    effect: "The user takes sure aim at the target. This ensures the next attack does not miss the target."
+    effect: "照準を しっかり あわせて 次の 攻撃が 必ず 相手に 当たるように する。"
   },
   outrage: {
     name: "げきりん",
-    effect: "The user rampages and attacks for two to three turns. The user then becomes confused."
+    effect: "２ー３ターンの 間 暴れまくって 相手を 攻撃する。 暴れたあとは 混乱する。"
   },
   sandstorm: {
     name: "すなあらし",
-    effect: "A five-turn sandstorm is summoned to hurt all combatants except Rock, Ground, and Steel types. It raises the Sp. Def stat of Rock types."
+    effect: "５ターンの 間 砂あらしで いわ じめん はがねタイプ 以外に ダメージ。 いわタイプの 特防が あがる。"
   },
   gigaDrain: {
     name: "ギガドレイン",
-    effect: "A nutrient-draining attack. The user's HP is restored by half the damage taken by the target."
+    effect: "養分を 吸い取り 攻撃する。 相手に 与えた ダメージの 半分の ＨＰを 回復できる。"
   },
   endure: {
     name: "こらえる",
-    effect: "The user endures any attack with at least 1 HP. Its chance of failing rises if it is used in succession."
+    effect: "攻撃を 受けても ＨＰを 必ず １だけ 残せる。 連続で だすと 失敗しやすい。"
   },
   charm: {
     name: "あまえる",
-    effect: "The user gazes at the target rather charmingly, making it less wary. This harshly lowers the target's Attack stat."
+    effect: "かわいく みつめて 油断を 誘い 相手の 攻撃を がくっと さげる。"
   },
   rollout: {
     name: "ころがる",
-    effect: "The user continually rolls into the target over five turns. It becomes more powerful each time it hits."
+    effect: "５ターンの 間 転がり続けて 攻撃する。 技が 当たるたびに 威力が あがる。"
   },
   falseSwipe: {
     name: "みねうち",
-    effect: "A restrained attack that prevents the target from fainting. The target is left with at least 1 HP."
+    effect: "相手の ＨＰが 必ず １だけ 残るように 手加減して 攻撃する。"
   },
   swagger: {
     name: "いばる",
-    effect: "The user enrages and confuses the target. However, this also sharply raises the target's Attack stat."
+    effect: "相手を 怒らせて 混乱させる。 怒りで 相手の 攻撃は ぐーんと あがってしまう。"
   },
   milkDrink: {
     name: "ミルクのみ",
-    effect: "The user restores its own HP by up to half of its max HP."
+    effect: "最大ＨＰの 半分 自分の ＨＰを 回復する。"
   },
   spark: {
     name: "スパーク",
-    effect: "The user throws an electrically charged tackle at the target. This may also leave the target with paralysis."
+    effect: "電気を まとい 相手に 突進して 攻撃する。 まひ状態に することが ある。"
   },
   furyCutter: {
     name: "れんぞくぎり",
-    effect: "The target is slashed with scythes or claws. This attack becomes more powerful if it hits in succession."
+    effect: "カマや ツメなどで 相手を 切りつけて 攻撃する。 連続で 当てると 威力が あがる。"
   },
   steelWing: {
     name: "はがねのつばさ",
-    effect: "The target is hit with wings of steel. This may also raise the user's Defense stat."
+    effect: "硬い 翼を 相手に たたきつけて 攻撃する。 自分の 防御が あがることが ある。"
   },
   meanLook: {
     name: "くろいまなざし",
-    effect: "The user pins the target with a dark, arresting look. The target becomes unable to flee."
+    effect: "吸いこまれるような 黒い まなざしで じっと みつめて 相手を 戦闘から 逃げられなくする。"
   },
   attract: {
     name: "メロメロ",
-    effect: "If it is the opposite gender of the user, the target becomes infatuated and less likely to attack."
+    effect: "♂なら♀を ♀なら♂を 誘惑して メロメロに する。 相手は 技が だしにくくなる。"
   },
   sleepTalk: {
     name: "ねごと",
-    effect: "While it is asleep, the user randomly uses one of the moves it knows."
+    effect: "自分が おぼえている 技の うち どれか １つを くりだす。 自分が 寝ているときだけ 使える。"
   },
   healBell: {
     name: "いやしのすず",
-    effect: "The user makes a soothing bell chime to heal the status conditions of all the party Pokémon."
+    effect: "心地好い 鈴の 音色を 聞かせて 味方 全員の 状態異常を 回復 する。"
   },
   return: {
     name: "おんがえし",
-    effect: "This full-power attack grows more powerful the more the user likes its Trainer."
+    effect: "トレーナーの ために 全力で 相手を 攻撃する。 なついているほど 威力は あがる。"
   },
   present: {
     name: "プレゼント",
-    effect: "The user attacks by giving the target a gift with a hidden trap. It restores HP sometimes, however."
+    effect: "わなを しかけた 箱を 相手に わたして 攻撃する。ＨＰが 回復して しまうことも ある。"
   },
   frustration: {
     name: "やつあたり",
-    effect: "This full-power attack grows more powerful the less the user likes its Trainer."
+    effect: "不満を はらすため 全力で 相手を 攻撃する。 なついていないほど 威力は あがる。"
   },
   safeguard: {
     name: "しんぴのまもり",
-    effect: "The user creates a protective field that prevents status conditions for five turns."
+    effect: "５ターンの 間 不思議な 力に 守られて 状態異常に ならなくなる。"
   },
   painSplit: {
     name: "いたみわけ",
-    effect: "The user adds its HP to the target's HP, then equally shares the combined HP with the target."
+    effect: "自分の ＨＰと 相手の ＨＰを あわせて それを 自分と 相手で なかよく わける。"
   },
   sacredFire: {
     name: "せいなるほのお",
-    effect: "The target is razed with a mystical fire of great intensity. This may also leave the target with a burn."
+    effect: "神秘の 炎で 相手を 焼きつくして 攻撃する。 やけど状態に することが ある。"
   },
   magnitude: {
     name: "マグニチュード",
-    effect: "The user attacks everything around it with a ground-shaking quake. Its power varies."
+    effect: "地面を 揺らして 自分の 周りに いるものを 攻撃する。 技の 威力は いろいろ 変わる。"
   },
   dynamicPunch: {
     name: "ばくれつパンチ",
-    effect: "The user punches the target with full, concentrated power. This confuses the target if it hits."
+    effect: "こん身の 力で パンチを くりだして 攻撃する。 相手を 必ず 混乱させる。"
   },
   megahorn: {
     name: "メガホーン",
-    effect: "Using its tough and impressive horn, the user rams into the target with no letup."
+    effect: "硬くて りっぱな つので おもいっきり 相手を 突き刺して 攻撃する。"
   },
   dragonBreath: {
     name: "りゅうのいぶき",
-    effect: "The user exhales a mighty gust that inflicts damage. This may also leave the target with paralysis."
+    effect: "ものすごい 息を 相手に 吹きつけて 攻撃する。 まひ状態に することが ある。"
   },
   batonPass: {
     name: "バトンタッチ",
-    effect: "The user switches places with a party Pokémon in waiting and passes along any stat changes."
+    effect: "控えの ポケモンと 入れ替わる。 能力変化は 替わった ポケモンが そのまま 受けつぐ。"
   },
   encore: {
     name: "アンコール",
-    effect: "The user compels the target to keep using the move it encored for three turns."
+    effect: "相手に アンコールした 技を ３回 続けて 出させる。"
   },
   pursuit: {
     name: "おいうち",
-    effect: "The power of this attack move is doubled if it's used on a target that's switching out of battle."
+    effect: "相手 ポケモンが 入れ替わるときに 技を だしていると 倍の 威力で 攻撃できる。"
   },
   rapidSpin: {
     name: "こうそくスピン",
-    effect: "A spin attack that can also eliminate such moves as Bind, Wrap, and Leech Seed. This also raises the user's Speed stat."
+    effect: "回転して 相手を 攻撃する。 しめつける まきつく やどりぎのタネ など 吹きとばす。自分の 素早さも あがる。"
   },
   sweetScent: {
     name: "あまいかおり",
-    effect: "A sweet scent that harshly lowers opposing Pokémon's evasiveness."
+    effect: "香りで 相手の 回避率を がくっと さげる。"
   },
   ironTail: {
     name: "アイアンテール",
-    effect: "The target is slammed with a steel-hard tail. This may also lower the target's Defense stat."
+    effect: "硬い しっぽで 相手を たたきつけて 攻撃する。 相手の 防御を さげることが ある。"
   },
   metalClaw: {
     name: "メタルクロー",
-    effect: "The target is raked with steel claws. This may also raise the user's Attack stat."
+    effect: "鋼鉄の ツメで 相手を 切り裂いて 攻撃する。 自分の 攻撃が あがることが ある。"
   },
   vitalThrow: {
     name: "あてみなげ",
-    effect: "The user attacks last. In return, this throw move never misses."
+    effect: "相手より あとに 攻撃する。 そのかわり 自分の 攻撃は 必ず 命中する。"
   },
   morningSun: {
     name: "あさのひざし",
-    effect: "The user restores its own HP. The amount of HP regained varies with the weather."
+    effect: "自分の ＨＰを 回復する。 天気に よって 回復の 量が 変化する。"
   },
   synthesis: {
     name: "こうごうせい",
-    effect: "The user restores its own HP. The amount of HP regained varies with the weather."
+    effect: "自分の ＨＰを 回復する。 天気に よって 回復の 量が 変化する。"
   },
   moonlight: {
     name: "つきのひかり",
-    effect: "The user restores its own HP. The amount of HP regained varies with the weather."
+    effect: "自分の ＨＰを 回復する。 天気に よって 回復の 量が 変化する。"
   },
   hiddenPower: {
     name: "めざめるパワー",
-    effect: "A unique attack that varies in type depending on the Pokémon using it."
+    effect: "技を 使った ポケモンに よって 技の タイプが 変わる。"
   },
   crossChop: {
     name: "クロスチョップ",
-    effect: "The user delivers a double chop with its forearms crossed. Critical hits land more easily."
+    effect: "両手チョップを 相手に たたきつけて 攻撃する。 急所に 当たりやすい。"
   },
   twister: {
     name: "たつまき",
-    effect: "The user whips up a vicious tornado to tear at opposing Pokémon. This may also make them flinch."
+    effect: "竜巻を おこして 相手を まきこみ 攻撃する。 相手を ひるませることが ある。"
   },
   rainDance: {
     name: "あまごい",
-    effect: "The user summons a heavy rain that falls for five turns, powering up Water-type moves. It lowers the power of Fire-type moves."
+    effect: "５ターンの 間 雨を 降らせて みずタイプの 威力を あげる。 ほのおタイプの 威力は さがる。"
   },
   sunnyDay: {
     name: "にほんばれ",
-    effect: "The user intensifies the sun for five turns, powering up Fire-type moves. It lowers the power of Water-type moves."
+    effect: "５ターンの 間 日差しを 強くして ほのおタイプの 威力を あげる。 みずタイプの 威力は さがる。"
   },
   crunch: {
     name: "かみくだく",
-    effect: "The user crunches up the target with sharp fangs. This may also lower the target's Defense stat."
+    effect: "鋭い 歯で 相手を かみくだいて 攻撃する。 相手の 防御を さげることが ある。"
   },
   mirrorCoat: {
     name: "ミラーコート",
-    effect: "A retaliation move that counters any special attack, inflicting double the damage taken."
+    effect: "相手から 受けた 特殊攻撃の ダメージを ２倍に して その相手に 返す。"
   },
   psychUp: {
     name: "じこあんじ",
-    effect: "The user hypnotizes itself into copying any stat change made by the target."
+    effect: "自分に 暗示を かけることで 能力変化の 状態を 相手と 同じにする。"
   },
   extremeSpeed: {
     name: "しんそく",
-    effect: "The user charges the target at blinding speed. This move always goes first."
+    effect: "目にも 留まらぬ ものすごい 速さで 相手に 突進して 攻撃する。 必ず 先制攻撃 できる。"
   },
   ancientPower: {
     name: "げんしのちから",
-    effect: "The user attacks with a prehistoric power. This may also raise all the user's stats at once."
+    effect: "原始の 力で 攻撃する。 自分の すべての 能力が あがることが ある。"
   },
   shadowBall: {
     name: "シャドーボール",
-    effect: "The user hurls a shadowy blob at the target. This may also lower the target's Sp. Def stat."
+    effect: "黒い影の 塊を 投げつけて 攻撃する。 相手の 特防を さげることが ある。"
   },
   futureSight: {
     name: "みらいよち",
-    effect: "Two turns after this move is used, a hunk of psychic energy attacks the target."
+    effect: "技を 使った ２ターン後に 相手に 念力の 塊を 送って 攻撃する。"
   },
   rockSmash: {
     name: "いわくだき",
-    effect: "The user attacks with a punch. This may also lower the target's Defense stat."
+    effect: "パンチで 攻撃する。相手の 防御を さげる ことが ある。"
   },
   whirlpool: {
     name: "うずしお",
-    effect: "The user traps the target in a violent swirling whirlpool for four to five turns."
+    effect: "激しく 渦をまく 水の中に ４ー５ターンの 間 相手を 閉じこめて 攻撃する。"
   },
   beatUp: {
     name: "ふくろだたき",
-    effect: "The user gets all party Pokémon to attack the target. The more party Pokémon, the greater the number of attacks."
+    effect: "味方 全員で 攻撃する。 仲間の ポケモンが 多いほど 技の 攻撃回数が 増える。"
   },
   fakeOut: {
     name: "ねこだまし",
-    effect: "This attack hits first and makes the target flinch. It only works the first turn each time the user enters battle."
+    effect: "先制攻撃で 相手を ひるませる。 戦闘に でたら すぐに ださないと 成功しない。"
   },
   uproar: {
     name: "さわぐ",
-    effect: "The user attacks in an uproar for three turns. During that time, no Pokémon can fall asleep."
+    effect: "３ターンの 間 騒いで 相手を 攻撃する。 そのあいだは だれも 眠れなくなる。"
   },
   stockpile: {
     name: "たくわえる",
-    effect: "The user charges up power and raises both its Defense and Sp. Def stats. The move can be used three times."
+    effect: "力を 蓄えて 自分の 防御と 特防を あげる。 最大 ３回まで 蓄えられる。"
   },
   spitUp: {
     name: "はきだす",
-    effect: "The power stored using the move Stockpile is released at once in an attack. The more power is stored, the greater the move's power."
+    effect: "蓄えた 力を 相手に ぶつけて 攻撃する。 蓄えているほど 威力が あがる。"
   },
   swallow: {
     name: "のみこむ",
-    effect: "The power stored using the move Stockpile is absorbed by the user to heal its HP. Storing more power heals more HP."
+    effect: "蓄えた 力を のみこんで 自分の ＨＰを 回復する。 蓄えているほど 回復する。"
   },
   heatWave: {
     name: "ねっぷう",
-    effect: "The user attacks by exhaling hot breath on opposing Pokémon. This may also leave those Pokémon with a burn."
+    effect: "熱い 息を 相手に 吹きつけて 攻撃する。 やけど状態に することが ある。"
   },
   hail: {
     name: "あられ",
-    effect: "The user summons a hailstorm lasting five turns. It damages all Pokémon except Ice types."
+    effect: "５ターンの 間 あられを 降らして こおりタイプで ない ポケモン 全員に ダメージを 与える。"
   },
   torment: {
     name: "いちゃもん",
-    effect: "The user torments and enrages the target, making it incapable of using the same move twice in a row."
+    effect: "相手に いちゃもんを つけて 同じ 技を ２回連続で だせなくする。"
   },
   flatter: {
     name: "おだてる",
-    effect: "Flattery is used to confuse the target. However, this also raises the target's Sp. Atk stat."
+    effect: "相手を おだてて 混乱させる。 同時に 相手の 特攻も あげてしまう。"
   },
   willOWisp: {
     name: "おにび",
-    effect: "The user shoots a sinister flame at the target to inflict a burn."
+    effect: "不気味で 怪しい 炎を 放って 相手を やけどの 状態に する。"
   },
   memento: {
     name: "おきみやげ",
-    effect: "The user faints when using this move. In return, this harshly lowers the target's Attack and Sp. Atk stats."
+    effect: "自分は ひんしに なるが そのかわりに 相手の 攻撃と 特攻を がくっと さげる。"
   },
   facade: {
     name: "からげんき",
-    effect: "This attack move doubles its power if the user is poisoned, burned, or paralyzed."
+    effect: "自分が 毒 まひ やけど 状態のとき 相手に くりだすと 技の 威力が ２倍に なる。"
   },
   focusPunch: {
     name: "きあいパンチ",
-    effect: "The user focuses its mind before launching a punch. This move fails if the user is hit before it is used."
+    effect: "精神を 高めて パンチを くりだす。 技を だすまでに 攻撃を 受けると 失敗する。"
   },
   smellingSalts: {
     name: "きつけ",
-    effect: "This attack's power is doubled when used on a target with paralysis. This also cures the target's paralysis, however."
+    effect: "まひ状態の 相手には 威力が ２倍に なるが かわりに 相手の まひが 治る。"
   },
   followMe: {
     name: "このゆびとまれ",
-    effect: "The user draws attention to itself, making all targets take aim only at the user."
+    effect: "自分に 注目させて 相手からの 攻撃を すべて 自分に むけさせる。"
   },
   naturePower: {
     name: "しぜんのちから",
-    effect: "This attack makes use of nature's power. Its effects vary depending on the user's environment."
+    effect: "自然の 力で 攻撃する。 使う 場所で でてくる 技が 変化する。"
   },
   charge: {
     name: "じゅうでん",
-    effect: "The user boosts the power of the Electric move it uses on the next turn. This also raises the user's Sp. Def stat."
+    effect: "次の ターンに だす でんきタイプの 技の 威力を あげる。 自分の 特防も あがる。"
   },
   taunt: {
     name: "ちょうはつ",
-    effect: "The target is taunted into a rage that allows it to use only attack moves for three turns."
+    effect: "相手を 怒らせる。 ３ターンの 間 相手は ダメージを 与える 技しか だせなくなる。"
   },
   helpingHand: {
     name: "てだすけ",
-    effect: "The user assists an ally by boosting the power of that ally's attack."
+    effect: "仲間を 助ける。 てだすけ された ポケモンの 技の 威力は いつもより 大きくなる。"
   },
   trick: {
     name: "トリック",
-    effect: "The user catches the target off guard and swaps its held item with its own."
+    effect: "相手の すきを ついて 自分と 相手の 持ち物を 交換する。"
   },
   rolePlay: {
     name: "なりきり",
-    effect: "The user mimics the target completely, copying the target's Ability."
+    effect: "相手に なりきって 自分も 相手と 同じ 特性に 変化する。"
   },
   wish: {
     name: "ねがいごと",
-    effect: "One turn after this move is used, the user's or its replacement's HP is restored by half the user's max HP."
+    effect: "次の ターンに 自分 もしくは 入れ替わった ポケモンの ＨＰを 最大ＨＰの 半分 回復する。"
   },
   assist: {
     name: "ねこのて",
-    effect: "The user hurriedly and randomly uses a move among those known by ally Pokémon."
+    effect: "大急ぎで 味方の 助けを かりて 味方の ポケモンが おぼえている 技を どれか １つ 使う。"
   },
   ingrain: {
     name: "ねをはる",
-    effect: "The user lays roots that restore its HP on every turn. Because it's rooted, it can't switch out."
+    effect: "大地に 根を 張り 毎ターン 自分の ＨＰを 回復する。 根を 張っているので 入れ替えられない。"
   },
   superpower: {
     name: "ばかぢから",
-    effect: "The user attacks the target with great power. However, this also lowers the user's Attack and Defense stats."
+    effect: "すごい 力を 発揮して 相手を 攻撃する。自分の 攻撃と 防御が さがる。"
   },
   magicCoat: {
     name: "マジックコート",
-    effect: "Moves like Leech Seed and moves that inflict status conditions are blocked by a barrier and reflected back to the user of those moves."
+    effect: "状態異常に なる 技や やどりぎのタネ などを だされたとき 相手に 跳ね返す。"
   },
   recycle: {
     name: "リサイクル",
-    effect: "The user recycles a held item that has been used in battle so it can be used again."
+    effect: "戦闘中に 使って なくなった 自分の 持ち物を 再生させて 使えるように する。"
   },
   revenge: {
     name: "リベンジ",
-    effect: "This attack move's power is doubled if the user has been hurt by the opponent in the same turn."
+    effect: "相手から 技を 受けていると その相手に 対して 与える ダメージが ２倍に なる。"
   },
   brickBreak: {
     name: "かわらわり",
-    effect: "The user attacks with a swift chop. It can also break barriers, such as Light Screen and Reflect."
+    effect: "手刀を 勢いよく 振りおろして 相手を 攻撃する。 ひかりのかべや リフレクター なども 破壊できる。"
   },
   yawn: {
     name: "あくび",
-    effect: "The user lets loose a huge yawn that lulls the target into falling asleep on the next turn."
+    effect: "大きな あくびで 眠気を 誘う。 次の ターンに 相手を 眠り状態に する。"
   },
   knockOff: {
     name: "はたきおとす",
-    effect: "The user slaps down the target's held item, and that item can't be used in that battle. The move does more damage if the target has a held item."
+    effect: "相手の 持ち物を はたき 落として 戦闘が 終わるまで 使えなくする。 物を持つ 相手には ダメージが増す。"
   },
   endeavor: {
     name: "がむしゃら",
-    effect: "This attack move cuts down the target's HP to equal the user's HP."
+    effect: "相手の ＨＰが 自分の ＨＰと 同じくらいに なるように ダメージを 与える。"
   },
   eruption: {
     name: "ふんか",
-    effect: "The user attacks opposing Pokémon with explosive fury. The lower the user's HP, the lower the move's power."
+    effect: "怒りを 爆発させて 相手を 攻撃する。 自分の ＨＰが 少ないほど 技の 威力は さがる。"
   },
   skillSwap: {
     name: "スキルスワップ",
-    effect: "The user employs its psychic power to exchange Abilities with the target."
+    effect: "超能力で 自分の 特性と 相手の 特性を 入れ替える。"
   },
   imprison: {
     name: "ふういん",
-    effect: "If opposing Pokémon know any move also known by the user, they are prevented from using it."
+    effect: "相手が 自分と 同じ 技を おぼえていたら 相手だけ その技を 使えなくする。"
   },
   refresh: {
     name: "リフレッシュ",
-    effect: "The user rests to cure itself of poisoning, a burn, or paralysis."
+    effect: "体を やすめて 自分が おっている 毒 まひ やけどの 状態異常を 治す。"
   },
   grudge: {
     name: "おんねん",
-    effect: "If the user faints, the user's grudge fully depletes the PP of the opponent's move that knocked it out."
+    effect: "相手の 技で ひんしに されたとき おんねんを かけて その技の ＰＰを ０に する。"
   },
   snatch: {
     name: "よこどり",
-    effect: "The user steals the effects of any attempts to use a healing or stat-changing move."
+    effect: "相手が 使おうと した 回復技や 能力変化の 技を うばって 自分に 使う。"
   },
   secretPower: {
     name: "ひみつのちから",
-    effect: "The additional effects of this attack depend upon where it was used."
+    effect: "使う場所で 追加効果が 変化する 攻撃。"
   },
   dive: {
     name: "ダイビング",
-    effect: "Diving on the first turn, the user floats up and attacks on the next turn."
+    effect: "１ターン目で 潜り ２ターン目に 浮きあがって 攻撃する。"
   },
   armThrust: {
     name: "つっぱり",
-    effect: "The user lets loose a flurry of open-palmed arm thrusts that hit two to five times in a row."
+    effect: "ひらいた 両手で 相手を つっぱって 攻撃する。 ２ー５回の 間 連続で だす。"
   },
   camouflage: {
     name: "ほごしょく",
-    effect: "The user's type is changed depending on its environment, such as at water's edge, in grass, or in a cave."
+    effect: "水辺や 草むら どうくつなど いる 場所に あわせて 自分の タイプを 変える。"
   },
   tailGlow: {
     name: "ほたるび",
-    effect: "The user stares at flashing lights to focus its mind, drastically raising its Sp. Atk stat."
+    effect: "点滅する 光を 眺めて 自分の 精神を 統一し 特攻を ぐぐーんと あげる。"
   },
   lusterPurge: {
     name: "ラスターパージ",
-    effect: "The user lets loose a damaging burst of light. This may also lower the target's Sp. Def stat."
+    effect: "まばゆい 光を 解放して 攻撃する。 相手の 特防を さげることが ある。"
   },
   mistBall: {
     name: "ミストボール",
-    effect: "A mist-like flurry of down envelops and damages the target. This may also lower the target's Sp. Atk stat."
+    effect: "霧状の 羽毛で 包みこみ 攻撃する。 相手の 特攻を さげることが ある。"
   },
   featherDance: {
     name: "フェザーダンス",
-    effect: "The user covers the target's body with a mass of down that harshly lowers its Attack stat."
+    effect: "羽毛を ふりまいて 相手の 体に からませる。 相手の 攻撃を がくっと さげる。"
   },
   teeterDance: {
     name: "フラフラダンス",
-    effect: "The user performs a wobbly dance that confuses the Pokémon around it."
+    effect: "フラフラと ダンスを おどって 自分の 周りに いるものを 混乱状態に させる。"
   },
   blazeKick: {
     name: "ブレイズキック",
-    effect: "The user launches a kick that lands a critical hit more easily. This may also leave the target with a burn."
+    effect: "攻撃した 相手を やけど状態に することが ある。 急所にも 当たりやすい。"
   },
   mudSport: {
     name: "どろあそび",
-    effect: "The user kicks up mud on the battlefield. This weakens Electric-type moves for five turns."
+    effect: "あたりを 泥まみれにする。 ５ターンの 間 でんきタイプの 技を 弱める。"
   },
   iceBall: {
     name: "アイスボール",
-    effect: "The user attacks the target for five turns. The move's power increases each time it hits."
+    effect: "５ターンの 間 相手を 攻撃する。 技が 当たるたび 威力が あがる。"
   },
   needleArm: {
     name: "ニードルアーム",
-    effect: "The user attacks by wildly swinging its thorny arms. This may also make the target flinch."
+    effect: "トゲの 腕を 激しく ふるって 攻撃する。 相手を ひるませることが ある。"
   },
   slackOff: {
     name: "なまける",
-    effect: "The user slacks off, restoring its own HP by up to half of its max HP."
+    effect: "怠けて やすむ。 自分の ＨＰを 最大ＨＰの 半分 回復する。"
   },
   hyperVoice: {
     name: "ハイパーボイス",
-    effect: "The user lets loose a horribly echoing shout with the power to inflict damage."
+    effect: "うるさく 響く 大きな 振動を 相手に 与えて 攻撃する。"
   },
   poisonFang: {
     name: "どくどくのキバ",
-    effect: "The user bites the target with toxic fangs. This may also leave the target badly poisoned."
+    effect: "毒の ある キバで 相手に かみついて 攻撃する。 猛毒を おわせる ことが ある。"
   },
   crushClaw: {
     name: "ブレイククロー",
-    effect: "The user slashes the target with hard and sharp claws. This may also lower the target's Defense stat."
+    effect: "硬く 鋭い ツメで 切り裂いて 攻撃する。 相手の 防御を さげることが ある。"
   },
   blastBurn: {
     name: "ブラストバーン",
-    effect: "The target is razed by a fiery explosion. The user can't move on the next turn."
+    effect: "爆発の 炎で 相手を 焼きつくして 攻撃する。 次の ターンは 動けなくなる。"
   },
   hydroCannon: {
     name: "ハイドロカノン",
-    effect: "The target is hit with a watery blast. The user can't move on the next turn."
+    effect: "水の 大砲を 相手に 発射して 攻撃する。 次の ターンは 動けなくなる。"
   },
   meteorMash: {
     name: "コメットパンチ",
-    effect: "The target is hit with a hard punch fired like a meteor. This may also raise the user's Attack stat."
+    effect: "すい星の ごとく パンチを くりだして 相手を 攻撃する。 自分の 攻撃が あがることが ある。"
   },
   astonish: {
     name: "おどろかす",
-    effect: "The user attacks the target while shouting in a startling fashion. This may also make the target flinch."
+    effect: "大きな 声などで 不意に 驚かして 攻撃する。 相手を ひるませることが ある。"
   },
   weatherBall: {
     name: "ウェザーボール",
-    effect: "This attack move varies in power and type depending on the weather."
+    effect: "使ったときの 天気に よって 技の タイプと 威力が 変わる。"
   },
   aromatherapy: {
     name: "アロマセラピー",
-    effect: "The user releases a soothing scent that heals all status conditions affecting the user's party."
+    effect: "心地好い やすらぐ 香りを かがせて 味方全員の 状態異常を 回復する。"
   },
   fakeTears: {
     name: "うそなき",
-    effect: "The user feigns crying to fluster the target, harshly lowering its Sp. Def stat."
+    effect: "ないた ふりをして 涙を 流す。 こまらせる ことで 相手の 特防を がくっと さげる。"
   },
   airCutter: {
     name: "エアカッター",
-    effect: "The user launches razor-like wind to slash opposing Pokémon. Critical hits land more easily."
+    effect: "鋭い 風で 相手を 切りつけて 攻撃する。 急所に 当たりやすい。"
   },
   overheat: {
     name: "オーバーヒート",
-    effect: "The user attacks the target at full power. The attack's recoil harshly lowers the user's Sp. Atk stat."
+    effect: "フルパワーで 相手を 攻撃する。 使うと 反動で 自分の 特攻が がくっと さがる。"
   },
   odorSleuth: {
     name: "かぎわける",
-    effect: "Enables a Ghost-type target to be hit by Normal- and Fighting-type attacks. This also enables an evasive target to be hit."
+    effect: "ゴーストタイプに 効果がない 技や 回避率の 高い 相手に 攻撃が 当たるように なる。"
   },
   rockTomb: {
     name: "がんせきふうじ",
-    effect: "Boulders are hurled at the target. This also lowers the target's Speed stat by preventing its movement."
+    effect: "岩石を 投げつけて 攻撃する。 相手の 動きを 封じることで 素早さを さげる。"
   },
   silverWind: {
     name: "ぎんいろのかぜ",
-    effect: "The target is attacked with powdery scales blown by the wind. This may also raise all the user's stats."
+    effect: "風に りんぷんを のせて 相手を 攻撃する。自分の すべての 能力が あがることが ある。"
   },
   metalSound: {
     name: "きんぞくおん",
-    effect: "A horrible sound like scraping metal harshly lowers the target's Sp. Def stat."
+    effect: "金属を こすって でるような いやな 音を 聞かせる。 相手の 特防を がくっと さげる。"
   },
   grassWhistle: {
     name: "くさぶえ",
-    effect: "The user plays a pleasant melody that lulls the target into a deep sleep."
+    effect: "心地好い 笛の 音色を 聞かせて 相手を 眠りの 状態に する。"
   },
   tickle: {
     name: "くすぐる",
-    effect: "The user tickles the target into laughing, reducing its Attack and Defense stats."
+    effect: "体を くすぐり 笑わせる ことで 相手の 攻撃と 防御を さげる。"
   },
   cosmicPower: {
     name: "コスモパワー",
-    effect: "The user absorbs a mystical power from space to raise its Defense and Sp. Def stats."
+    effect: "宇宙から 神秘の 力を とりこむ ことで 自分の 防御と 特防を あげる。"
   },
   waterSpout: {
     name: "しおふき",
-    effect: "The user spouts water to damage opposing Pokémon. The lower the user's HP, the lower the move's power."
+    effect: "潮を 吹きつけて 攻撃する。 自分の ＨＰが 少ないほど 技の 威力は さがる。"
   },
   signalBeam: {
     name: "シグナルビーム",
-    effect: "The user attacks with a sinister beam of light. This may also confuse the target."
+    effect: "不思議な 光を 発射して 攻撃する。 相手を 混乱させることが ある。"
   },
   shadowPunch: {
     name: "シャドーパンチ",
-    effect: "The user throws a punch from the shadows. This attack never misses."
+    effect: "影に まぎれて パンチを くりだす。 攻撃は 必ず 命中する。"
   },
   extrasensory: {
     name: "じんつうりき",
-    effect: "The user attacks with an odd, unseeable power. This may also make the target flinch."
+    effect: "みえない 不思議な 力を 送って 攻撃する。 相手を ひるませることが ある。"
   },
   skyUppercut: {
     name: "スカイアッパー",
-    effect: "The user attacks the target with an uppercut thrown skyward with force."
+    effect: "空に むかうような 高い アッパーで 相手を 突きあげて 攻撃する。"
   },
   sandTomb: {
     name: "すなじごく",
-    effect: "The user traps the target inside a harshly raging sandstorm for four to five turns."
+    effect: "激しく 吹きあれる 砂あらしの 中に ４ー５ターンの 間 相手を 閉じこめて 攻撃する。"
   },
   sheerCold: {
     name: "ぜったいれいど",
-    effect: "The target faints instantly. It's less likely to hit the target if it's used by Pokémon other than Ice types."
+    effect: "相手を 一撃で 瀕死に する。 こおりタイプ 以外の ポケモンが 使うと 当たりにくい。"
   },
   muddyWater: {
     name: "だくりゅう",
-    effect: "The user attacks by shooting muddy water at opposing Pokémon. This may also lower their accuracy."
+    effect: "濁った 水を 相手に 発射して 攻撃する。 命中率を さげることが ある。"
   },
   bulletSeed: {
     name: "タネマシンガン",
-    effect: "The user forcefully shoots seeds at the target two to five times in a row."
+    effect: "タネを 勢いよく 相手に 発射して 攻撃する。 ２ー５回の 間 連続で だす。"
   },
   aerialAce: {
     name: "つばめがえし",
-    effect: "The user confounds the target with speed, then slashes. This attack never misses."
+    effect: "素早い 動きで 相手を ほんろうして 切りつける。 攻撃は 必ず 命中する。"
   },
   icicleSpear: {
     name: "つららばり",
-    effect: "The user launches sharp icicles at the target two to five times in a row."
+    effect: "鋭い 氷柱を 相手に 発射して 攻撃する。 ２ー５回の 間 連続で だす。"
   },
   ironDefense: {
     name: "てっぺき",
-    effect: "The user hardens its body's surface like iron, sharply raising its Defense stat."
+    effect: "皮膚を 鉄のように 硬くする ことで 自分の 防御を ぐーんと あげる。"
   },
   block: {
     name: "とおせんぼう",
-    effect: "The user blocks the target's way with arms spread wide to prevent escape."
+    effect: "両手を ひろげて たちはだかり 相手の 逃げ道を ふさいで 逃げられなくする。"
   },
   howl: {
     name: "とおぼえ",
-    effect: "The user howls loudly to raise the spirit of itself and allies. This raises their Attack stats."
+    effect: "大声で ほえて 気合を 高め 自分と 味方の 攻撃を あげる。"
   },
   dragonClaw: {
     name: "ドラゴンクロー",
-    effect: "The user slashes the target with huge sharp claws."
+    effect: "鋭く とがった 巨大な ツメで 相手を 切り裂いて 攻撃する。"
   },
   frenzyPlant: {
     name: "ハードプラント",
-    effect: "The user slams the target with the roots of an enormous tree. The user can't move on the next turn."
+    effect: "大きな 樹木で 相手を たたきつけて 攻撃する。 次の ターンは 動けなくなる。"
   },
   bulkUp: {
     name: "ビルドアップ",
-    effect: "The user tenses its muscles to bulk up its body, raising both its Attack and Defense stats."
+    effect: "体に 力を こめて 筋肉を ぶあつく することで 自分の 攻撃と 防御を あげる。"
   },
   bounce: {
     name: "とびはねる",
-    effect: "The user bounces up high, then drops on the target on the second turn. This may also leave the target with paralysis."
+    effect: "空高く 飛び跳ねて ２ターン目に 相手を 攻撃する。 まひ状態に することが ある。"
   },
   mudShot: {
     name: "マッドショット",
-    effect: "The user attacks by hurling a blob of mud at the target. This also lowers the target's Speed stat."
+    effect: "泥の 塊を 相手に 投げつけて 攻撃する。 同時に 相手の 素早さを さげる。"
   },
   poisonTail: {
     name: "ポイズンテール",
-    effect: "The user hits the target with its tail. This may also poison the target. Critical hits land more easily."
+    effect: "しっぽで たたく。 毒状態に することが あり 急所にも 当たりやすい。"
   },
   covet: {
     name: "ほしがる",
@@ -1375,1403 +1375,1403 @@ export const move: MoveTranslationEntries = {
   },
   voltTackle: {
     name: "ボルテッカー",
-    effect: "The user electrifies itself and charges the target. This also damages the user quite a lot. This attack may leave the target with paralysis."
+    effect: "電気を まとって 突進する。 自分も かなり ダメージを 受ける。 まひ状態に することが ある。"
   },
   magicalLeaf: {
     name: "マジカルリーフ",
-    effect: "The user scatters curious leaves that chase the target. This attack never misses."
+    effect: "相手を 追跡する 不思議な はっぱを まきちらす。 攻撃は 必ず 命中する。"
   },
   waterSport: {
     name: "みずあそび",
-    effect: "The user soaks the battlefield with water. This weakens Fire-type moves for five turns."
+    effect: "あたりを 水で びしょびしょにする。 ５ターンの 間 ほのおタイプの 技を 弱める。"
   },
   calmMind: {
     name: "めいそう",
-    effect: "The user quietly focuses its mind and calms its spirit to raise its Sp. Atk and Sp. Def stats."
+    effect: "静かに 精神を 統一し 心を 鎮めることで 自分の 特攻と 特防を あげる。"
   },
   leafBlade: {
     name: "リーフブレード",
-    effect: "The user handles a sharp leaf like a sword and attacks by cutting its target. Critical hits land more easily."
+    effect: "はっぱを 剣のように あやつり 相手を 切りつけて 攻撃する。 急所に 当たりやすい。"
   },
   dragonDance: {
     name: "りゅうのまい",
-    effect: "The user vigorously performs a mystic, powerful dance that raises its Attack and Speed stats."
+    effect: "神秘的で 力強い 舞を 激しく おどる。 自分の 攻撃と 素早さを あげる。"
   },
   rockBlast: {
     name: "ロックブラスト",
-    effect: "The user hurls hard rocks at the target. Two to five rocks are launched in a row."
+    effect: "硬い 岩石を 相手に 発射して 攻撃する。 ２ー５回の 間 連続で だす。"
   },
   shockWave: {
     name: "でんげきは",
-    effect: "The user strikes the target with a quick jolt of electricity. This attack never misses."
+    effect: "電撃を 素早く 相手に 浴びせる。 攻撃は 必ず 命中する。"
   },
   waterPulse: {
     name: "みずのはどう",
-    effect: "The user attacks the target with a pulsing blast of water. This may also confuse the target."
+    effect: "水の 振動を 相手に 与えて 攻撃する。 相手を 混乱させることが ある。"
   },
   doomDesire: {
     name: "はめつのねがい",
-    effect: "Two turns after this move is used, a concentrated bundle of light blasts the target."
+    effect: "技を 使った ２ターン後に 無数の 光の 束で 相手を 攻撃する。"
   },
   psychoBoost: {
     name: "サイコブースト",
-    effect: "The user attacks the target at full power. The attack's recoil harshly lowers the user's Sp. Atk stat."
+    effect: "フルパワーで 相手を 攻撃する。 使うと 反動で 自分の 特攻が がくっと さがる。"
   },
   roost: {
     name: "はねやすめ",
-    effect: "The user lands and rests its body. This move restores the user's HP by up to half of its max HP."
+    effect: "地面に 降りて 体を やすめる。 最大ＨＰの 半分の ＨＰを 回復する。"
   },
   gravity: {
     name: "じゅうりょく",
-    effect: "This move enables Flying-type Pokémon or Pokémon with the Levitate Ability to be hit by Ground-type moves. Moves that involve flying can't be used."
+    effect: "５ターンの間 ふゆうや ひこうタイプに じめんタイプの 技が 当たるようになる。 空中に 飛ぶ 技も 使えない。"
   },
   miracleEye: {
     name: "ミラクルアイ",
-    effect: "Enables a Dark-type target to be hit by Psychic-type attacks. This also enables an evasive target to be hit."
+    effect: "あくタイプに 効果がない 技や 回避率の 高い 相手に 攻撃が 当たるように なる。"
   },
   wakeUpSlap: {
     name: "めざましビンタ",
-    effect: "This attack inflicts big damage on a sleeping target. This also wakes the target up, however."
+    effect: "眠り状態の 相手に 大きな ダメージを 与える。 かわりに 相手は 眠りから さめる。"
   },
   hammerArm: {
     name: "アームハンマー",
-    effect: "The user swings and hits with its strong, heavy fist. It lowers the user's Speed, however."
+    effect: "強くて 重い こぶしを ふるって ダメージを 与える。 自分の 素早さが さがる。"
   },
   gyroBall: {
     name: "ジャイロボール",
-    effect: "The user tackles the target with a high-speed spin. The slower the user compared to the target, the greater the move's power."
+    effect: "体を 高速に 回転させて 体当たりする。相手より 素早さが 低いほど 強い。"
   },
   healingWish: {
     name: "いやしのねがい",
-    effect: "The user faints. In return, the Pokémon taking its place will have its HP restored and status conditions cured."
+    effect: "自分は ひんしに なるが 控えから でてくる ポケモンの 状態異常と ＨＰを 回復する。"
   },
   brine: {
     name: "しおみず",
-    effect: "If the target's HP is half or less, this attack will hit with double the power."
+    effect: "相手が ＨＰの 半分くらい きずを おっていると 技の 威力が ２倍に なる。"
   },
   naturalGift: {
     name: "しぜんのめぐみ",
-    effect: "The user draws power to attack by using its held Berry. The Berry determines the move's type and power."
+    effect: "きのみから 力を もらい 攻撃する。持たせた きのみで 技の タイプと 威力が 変わる。"
   },
   feint: {
     name: "フェイント",
-    effect: "This attack hits a target using a move such as Protect or Detect. This also lifts the effects of those moves."
+    effect: "まもるや みきり などを している 相手に 攻撃が できる。 守りの 効果を 解除させる。"
   },
   pluck: {
     name: "ついばむ",
-    effect: "The user pecks the target. If the target is holding a Berry, the user eats it and gains its effect."
+    effect: "くちばしで 攻撃。 相手が きのみを 持っているとき 食べて きのみの 効果を 受けられる。"
   },
   tailwind: {
     name: "おいかぜ",
-    effect: "The user whips up a turbulent whirlwind that ups the Speed stats of the user and its allies for four turns."
+    effect: "激しく 吹きあれる 風の渦を つくり ４ターンの 間 味方 全員の 素早さを あげる。"
   },
   acupressure: {
     name: "つぼをつく",
-    effect: "The user applies pressure to stress points, sharply boosting one of its or its allies' stats."
+    effect: "つぼおしで 体を 活性化させる。 能力の どれか １つを ぐーんと あげる。"
   },
   metalBurst: {
     name: "メタルバースト",
-    effect: "The user retaliates with much greater force against the opponent that last inflicted damage on it."
+    effect: "技を だす前に 最後に 受けた 技の ダメージを 大きくして だした 相手に 返す。"
   },
   uTurn: {
     name: "とんぼがえり",
-    effect: "After making its attack, the user rushes back to switch places with a party Pokémon in waiting."
+    effect: "攻撃したあと ものすごい スピードで もどってきて 控えの ポケモンと 入れ替わる。"
   },
   closeCombat: {
     name: "インファイト",
-    effect: "The user fights the target up close without guarding itself. This also lowers the user's Defense and Sp. Def stats."
+    effect: "守りを 捨てて 相手の ふところに 突撃する。 自分の 防御と 特防が さがる。"
   },
   payback: {
     name: "しっぺがえし",
-    effect: "The user stores power, then attacks. If the user moves after the target, this attack's power will be doubled."
+    effect: "ためこんで 攻撃する。 相手より あとに 攻撃できると 技の 威力は ２倍に なる。"
   },
   assurance: {
     name: "ダメおし",
-    effect: "If the target has already taken some damage in the same turn, this attack's power is doubled."
+    effect: "そのターンに 相手が すでに ダメージを 受けていたら 技の 威力は ２倍に なる。"
   },
   embargo: {
     name: "さしおさえ",
-    effect: "This move prevents the target from using its held item for five turns. Its Trainer is also prevented from using items on it."
+    effect: "持たせた 道具を ５ターンの 間 使えなくする。 トレーナーも その ポケモンには 道具を 使えない。"
   },
   fling: {
     name: "なげつける",
-    effect: "The user flings its held item at the target to attack. This move's power and effects depend on the item."
+    effect: "持たせた 道具を 素早く 投げつけて 攻撃する。 道具で 威力と 効果が 変わる。"
   },
   psychoShift: {
     name: "サイコシフト",
-    effect: "Using its psychic power of suggestion, the user transfers its status conditions to the target."
+    effect: "超能力で 暗示を かけて 自分の 受けている 状態異常を 相手に うつす。"
   },
   trumpCard: {
     name: "きりふだ",
-    effect: "The fewer PP this move has, the greater its power."
+    effect: "きりふだの 残り ＰＰが 少なければ 少ないほど 技の 威力が あがる。"
   },
   healBlock: {
     name: "かいふくふうじ",
-    effect: "For five turns, the user prevents the opposing team from using any moves, Abilities, or held items that recover HP."
+    effect: "５ターンの 間 技や 特性や 持っている 道具によって ＨＰを 回復 できなくする。"
   },
   wringOut: {
     name: "しぼりとる",
-    effect: "The user powerfully wrings the target. The more HP the target has, the greater the move's power."
+    effect: "強く 締めあげて 攻撃を する。 相手の ＨＰが 残っているほど 威力は あがる。"
   },
   powerTrick: {
     name: "パワートリック",
-    effect: "The user employs its psychic power to switch its Attack stat with its Defense stat."
+    effect: "超能力で 自分の 攻撃と 防御の 力を 交換する。"
   },
   gastroAcid: {
     name: "いえき",
-    effect: "The user hurls up its stomach acids on the target. The fluid eliminates the effect of the target's Ability."
+    effect: "胃液を 相手の 体に 吐きつける。 ついた 胃液は 相手の 特性の 効果を 消す。"
   },
   luckyChant: {
     name: "おまじない",
-    effect: "The user chants an incantation toward the sky, preventing opposing Pokémon from landing critical hits for five turns."
+    effect: "天に むかって おいのりを ささげ ５ターンの 間 相手の 攻撃を 急所に 当たらなくする。"
   },
   meFirst: {
     name: "さきどり",
-    effect: "The user cuts ahead of the target to copy and use the target's intended move with greater power. This move fails if it isn't used first."
+    effect: "威力を あげて 相手が だそうとする 技を 先にだす。 先に だせないと 失敗する。"
   },
   copycat: {
     name: "まねっこ",
-    effect: "The user mimics the move used immediately before it. The move fails if no other move has been used yet."
+    effect: "直前に でた 技を まねして 同じ 技を だす。 技が でていないと 失敗する。"
   },
   powerSwap: {
     name: "パワースワップ",
-    effect: "The user employs its psychic power to switch changes to its Attack and Sp. Atk stats with the target."
+    effect: "超能力で 自分と 相手の 攻撃と 特攻の 能力変化を 入れ替える。"
   },
   guardSwap: {
     name: "ガードスワップ",
-    effect: "The user employs its psychic power to switch changes to its Defense and Sp. Def stats with the target."
+    effect: "超能力で 自分と 相手の 防御と 特防の 能力変化を 入れ替える。"
   },
   punishment: {
     name: "おしおき",
-    effect: "The more the target has powered up with stat changes, the greater the move's power."
+    effect: "能力変化で 相手が パワーアップ しているほど 技の 威力が あがる。"
   },
   lastResort: {
     name: "とっておき",
-    effect: "This move can be used only after the user has used all the other moves it knows in the battle."
+    effect: "戦闘中に おぼえている 技を すべて 使うと はじめて だせる とっておきの 技。"
   },
   worrySeed: {
     name: "なやみのタネ",
-    effect: "A seed that causes worry is planted on the target. It prevents sleep by making the target's Ability Insomnia."
+    effect: "心を なやませる タネを 植えつける。 相手を 眠れなくして 特性を ふみんに する。"
   },
   suckerPunch: {
     name: "ふいうち",
-    effect: "This move enables the user to attack first. This move fails if the target is not readying an attack."
+    effect: "相手より 先に 攻撃 できる。 相手が だす技が 攻撃技でないと 失敗する。"
   },
   toxicSpikes: {
     name: "どくびし",
-    effect: "The user lays a trap of poison spikes at the feet of the opposing team. The spikes will poison opposing Pokémon that switch into battle."
+    effect: "相手の 足下に どくびしを しかける。 交代で でてきた 相手の ポケモンに 毒を おわせる。"
   },
   heartSwap: {
     name: "ハートスワップ",
-    effect: "The user employs its psychic power to switch stat changes with the target."
+    effect: "超能力で 自分と 相手に かかっている 能力変化を 入れ替える。"
   },
   aquaRing: {
     name: "アクアリング",
-    effect: "The user envelops itself in a veil made of water. It regains some HP every turn."
+    effect: "自分の 体の 周りを 水で つくった ベールで おおう。 毎ターン ＨＰを 回復する。"
   },
   magnetRise: {
     name: "でんじふゆう",
-    effect: "The user levitates using electrically generated magnetism for five turns."
+    effect: "電気で つくった 磁力の 力で 宙に 浮かぶ。 ５ターンの 間 浮遊できる。"
   },
   flareBlitz: {
     name: "フレアドライブ",
-    effect: "The user cloaks itself in fire and charges the target. This also damages the user quite a lot. This attack may leave the target with a burn."
+    effect: "炎を まとって 突進する。 自分も かなり ダメージを 受ける。 やけど状態に することが ある。"
   },
   forcePalm: {
     name: "はっけい",
-    effect: "The target is attacked with a shock wave. This may also leave the target with paralysis."
+    effect: "相手の 体に 衝撃波を 当てて 攻撃する。 まひ状態に することが ある。"
   },
   auraSphere: {
     name: "はどうだん",
-    effect: "The user lets loose a blast of aura power from deep within its body at the target. This attack never misses."
+    effect: "体の 奥から 波導の 力を 相手に うち放つ。 攻撃は 必ず 命中する。"
   },
   rockPolish: {
     name: "ロックカット",
-    effect: "The user polishes its body to reduce drag. This sharply raises the Speed stat."
+    effect: "自分の 体を 磨いて 空気の 抵抗を 少なくする。素早さを ぐーんと あげることが できる。"
   },
   poisonJab: {
     name: "どくづき",
-    effect: "The target is stabbed with a tentacle, arm, or the like steeped in poison. This may also poison the target."
+    effect: "毒に そまった 触手や 腕で 相手を 突き刺す。 毒状態に することが ある。"
   },
   darkPulse: {
     name: "あくのはどう",
-    effect: "The user releases a horrible aura imbued with dark thoughts. This may also make the target flinch."
+    effect: "体から 悪意に みちた 恐ろしい オーラを 発する。 相手を ひるませることが ある。"
   },
   nightSlash: {
     name: "つじぎり",
-    effect: "The user slashes the target the instant an opportunity arises. Critical hits land more easily."
+    effect: "一瞬の すきを ついて 相手を 切りはらう。 急所に 当たりやすい。"
   },
   aquaTail: {
     name: "アクアテール",
-    effect: "The user attacks by swinging its tail as if it were a vicious wave in a raging storm."
+    effect: "激しく あれくるう 荒波の ように 大きな しっぽを ふって 相手を 攻撃する。"
   },
   seedBomb: {
     name: "タネばくだん",
-    effect: "The user slams a barrage of hard-shelled seeds down on the target from above."
+    effect: "硬い 殻を もつ 大きな タネを 上から たたきつけて 相手を 攻撃する。"
   },
   airSlash: {
     name: "エアスラッシュ",
-    effect: "The user attacks with a blade of air that slices even the sky. This may also make the target flinch."
+    effect: "空をも 切り裂く 空気の 刃で 攻撃する。 相手を ひるませることが ある。"
   },
   xScissor: {
     name: "シザークロス",
-    effect: "The user slashes at the target by crossing its scythes or claws as if they were a pair of scissors."
+    effect: "カマや ツメを ハサミのように 交差させながら 相手を 切り裂く。"
   },
   bugBuzz: {
     name: "むしのさざめき",
-    effect: "The user generates a damaging sound wave by vibration. This may also lower the target's Sp. Def stat."
+    effect: "振動で 音波を おこして 攻撃する。相手の 特防を さげることが ある。"
   },
   dragonPulse: {
     name: "りゅうのはどう",
-    effect: "The target is attacked with a shock wave generated by the user's gaping mouth."
+    effect: "大きな 口から 衝撃波を まきおこして 相手を 攻撃する。"
   },
   dragonRush: {
     name: "ドラゴンダイブ",
-    effect: "The user tackles the target while exhibiting overwhelming menace. This may also make the target flinch."
+    effect: "すさまじい 殺気で 威圧しながら 体当たりする。 相手を ひるませることが ある。"
   },
   powerGem: {
     name: "パワージェム",
-    effect: "The user attacks with a ray of light that sparkles as if it were made of gemstones."
+    effect: "宝石のように きらめく 光を 発射して 相手を 攻撃する。"
   },
   drainPunch: {
     name: "ドレインパンチ",
-    effect: "An energy-draining punch. The user's HP is restored by half the damage taken by the target."
+    effect: "こぶしから 相手の 力を 吸い取る。 与えた ダメージの 半分の ＨＰを 回復できる。"
   },
   vacuumWave: {
     name: "しんくうは",
-    effect: "The user whirls its fists to send a wave of pure vacuum at the target. This move always goes first."
+    effect: "こぶしを ふって 真空の 波を まきおこす。 必ず 先制攻撃できる。"
   },
   focusBlast: {
     name: "きあいだま",
-    effect: "The user heightens its mental focus and unleashes its power. This may also lower the target's Sp. Def stat."
+    effect: "気合を 高めて ありったけの 力を 放出する。 相手の 特防を さげることが ある。"
   },
   energyBall: {
     name: "エナジーボール",
-    effect: "The user draws power from nature and fires it at the target. This may also lower the target's Sp. Def stat."
+    effect: "自然から 集めた 命の力を 発射する。 相手の 特防を さげることがある。"
   },
   braveBird: {
     name: "ブレイブバード",
-    effect: "The user tucks in its wings and charges from a low altitude. This also damages the user quite a lot."
+    effect: "はねを おりたたみ 低空飛行で 突撃する。 自分も かなり ダメージを 受ける。"
   },
   earthPower: {
     name: "だいちのちから",
-    effect: "The user makes the ground under the target erupt with power. This may also lower the target's Sp. Def stat."
+    effect: "相手の 足下へ 大地の力を 放出する。相手の 特防を さげることが ある。"
   },
   switcheroo: {
     name: "すりかえ",
-    effect: "The user trades held items with the target faster than the eye can follow."
+    effect: "目にも とまらぬ 速さで 自分と 相手の 持ち物を 交換する。"
   },
   gigaImpact: {
     name: "ギガインパクト",
-    effect: "The user charges at the target using every bit of its power. The user can't move on the next turn."
+    effect: "持てる 力を すべて 使って 相手に 突撃する。 次の ターンは 動けなくなる。"
   },
   nastyPlot: {
     name: "わるだくみ",
-    effect: "The user stimulates its brain by thinking bad thoughts. This sharply raises the user's Sp. Atk stat."
+    effect: "悪いことを 考えて 頭を 活性化させる。 自分の 特攻を ぐーんと あげる。"
   },
   bulletPunch: {
     name: "バレットパンチ",
-    effect: "The user strikes the target with tough punches as fast as bullets. This move always goes first."
+    effect: "弾丸の ような 速くて 硬い パンチを 相手に くりだす。 必ず 先制攻撃 できる。"
   },
   avalanche: {
     name: "ゆきなだれ",
-    effect: "The power of this attack move is doubled if the user has been hurt by the target in the same turn."
+    effect: "相手から 技を 受けていると その 相手に 対して 技の 威力が ２倍に なる。"
   },
   iceShard: {
     name: "こおりのつぶて",
-    effect: "The user flash-freezes chunks of ice and hurls them at the target. This move always goes first."
+    effect: "氷の塊を 一瞬で つくり 相手に 素早く 放つ。 必ず 先制攻撃 できる。"
   },
   shadowClaw: {
     name: "シャドークロー",
-    effect: "The user slashes with a sharp claw made from shadows. Critical hits land more easily."
+    effect: "影から つくった 鋭い ツメで 相手を 切り裂く。 急所に 当たりやすい。"
   },
   thunderFang: {
     name: "かみなりのキバ",
-    effect: "The user bites with electrified fangs. This may also make the target flinch or leave it with paralysis."
+    effect: "電気を ためた キバで かみつく。 相手を ひるませたり まひ状態に することが ある。"
   },
   iceFang: {
     name: "こおりのキバ",
-    effect: "The user bites with cold-infused fangs. This may also make the target flinch or leave it frozen."
+    effect: "冷気を ひめた キバで かみつく。 相手を ひるませたり こおり状態に することが ある。"
   },
   fireFang: {
     name: "ほのおのキバ",
-    effect: "The user bites with flame-cloaked fangs. This may also make the target flinch or leave it with a burn."
+    effect: "炎を まとった キバで かみつく。 相手を ひるませたり やけど状態に することが ある。"
   },
   shadowSneak: {
     name: "かげうち",
-    effect: "The user extends its shadow and attacks the target from behind. This move always goes first."
+    effect: "影を のばして 相手の 背後から 攻撃する。 必ず 先制攻撃 できる。"
   },
   mudBomb: {
     name: "どろばくだん",
-    effect: "The user launches a hard-packed mud ball to attack. This may also lower the target's accuracy."
+    effect: "硬い 泥の 弾を 相手に 発射して 攻撃する。 命中率を さげることが ある。"
   },
   psychoCut: {
     name: "サイコカッター",
-    effect: "The user tears at the target with blades formed by psychic power. Critical hits land more easily."
+    effect: "実体化させた 心の 刃で 相手を 切り裂く。 急所に 当たりやすい。"
   },
   zenHeadbutt: {
     name: "しねんのずつき",
-    effect: "The user focuses its willpower to its head and attacks the target. This may also make the target flinch."
+    effect: "思念の 力を 額に 集めて 攻撃する。 相手を ひるませることが ある。"
   },
   mirrorShot: {
     name: "ミラーショット",
-    effect: "The user lets loose a flash of energy at the target from its polished body. This may also lower the target's accuracy."
+    effect: "磨きあげられた 体から せん光の 力を 相手に 放つ。 命中率を さげることが ある。"
   },
   flashCannon: {
     name: "ラスターカノン",
-    effect: "The user gathers all its light energy and releases it all at once. This may also lower the target's Sp. Def stat."
+    effect: "体の 光を 一点に 集めて 力を 放つ。 相手の 特防を さげることが ある。"
   },
   rockClimb: {
     name: "ロッククライム",
-    effect: "The user attacks the target by smashing into it with incredible force. This may also confuse the target."
+    effect: "すごい 勢いで 相手に つっこみ 攻撃する。 相手を 混乱させることが ある。"
   },
   defog: {
     name: "きりばらい",
-    effect: "A strong wind blows away the target's barriers such as Reflect or Light Screen. This also lowers the target's evasiveness."
+    effect: "強い風で 相手の リフレクターや ひかりのかべ などを はらいのける。 回避率も さげる。"
   },
   trickRoom: {
     name: "トリックルーム",
-    effect: "The user creates a bizarre area in which slower Pokémon get to move first for five turns."
+    effect: "まか不思議な 空間を つくる。 ５ターンの 間 遅い ポケモンから 行動できる。"
   },
   dracoMeteor: {
     name: "りゅうせいぐん",
-    effect: "Comets are summoned down from the sky onto the target. The attack's recoil harshly lowers the user's Sp. Atk stat."
+    effect: "天空から 隕石を 相手に 落とす。使うと 反動で 自分の 特攻が がくっと さがる。"
   },
   discharge: {
     name: "ほうでん",
-    effect: "The user strikes everything around it by letting loose a flare of electricity. This may also cause paralysis."
+    effect: "まばゆい 電撃で 自分の 周りに いるものを 攻撃する。 まひ状態に することが ある。"
   },
   lavaPlume: {
     name: "ふんえん",
-    effect: "The user torches everything around it in an inferno of scarlet flames. This may also leave those it hits with a burn."
+    effect: "真っ赤な 炎で 自分の 周りに いるものを 攻撃する。 やけど状態に することが ある。"
   },
   leafStorm: {
     name: "リーフストーム",
-    effect: "The user whips up a storm of leaves around the target. The attack's recoil harshly lowers the user's Sp. Atk stat."
+    effect: "とがった はっぱで 相手に あらしを おこす。使うと 反動で 自分の 特攻が がくっと さがる。"
   },
   powerWhip: {
     name: "パワーウィップ",
-    effect: "The user violently whirls its vines, tentacles, or the like to harshly lash the target."
+    effect: "ツタや 触手を 激しく ふるって 相手を たたきつけ 攻撃する。"
   },
   rockWrecker: {
     name: "がんせきほう",
-    effect: "The user launches a huge boulder at the target to attack. The user can't move on the next turn."
+    effect: "巨大な 岩を 相手に 発射して 攻撃する。 次の ターンは 動けなくなる。"
   },
   crossPoison: {
     name: "クロスポイズン",
-    effect: "A slashing attack with a poisonous blade that may also poison the target. Critical hits land more easily."
+    effect: "毒の 刃で 相手を 切り裂く。 毒状態に することが あり 急所にも 当たりやすい。"
   },
   gunkShot: {
     name: "ダストシュート",
-    effect: "The user shoots filthy garbage at the target to attack. This may also poison the target."
+    effect: "汚い ゴミを 相手に ぶつけて 攻撃する。 毒状態に することが ある。"
   },
   ironHead: {
     name: "アイアンヘッド",
-    effect: "The user slams the target with its steel-hard head. This may also make the target flinch."
+    effect: "鋼の ような 硬い 頭で 攻撃する。 相手を ひるませることが ある。"
   },
   magnetBomb: {
     name: "マグネットボム",
-    effect: "The user launches steel bombs that stick to the target. This attack never misses."
+    effect: "相手に 吸いつく 鋼の 爆弾を 発射する。 攻撃は 必ず 命中 する。"
   },
   stoneEdge: {
     name: "ストーンエッジ",
-    effect: "The user stabs the target from below with sharpened stones. Critical hits land more easily."
+    effect: "とがった 岩を 相手に 突き刺して 攻撃する。 急所に 当たりやすい。"
   },
   captivate: {
     name: "ゆうわく",
-    effect: "If any opposing Pokémon is the opposite gender of the user, it is charmed, which harshly lowers its Sp. Atk stat."
+    effect: "♂なら♀を ♀なら♂を 誘惑して 相手の 特攻を がくっと さげる。"
   },
   stealthRock: {
     name: "ステルスロック",
-    effect: "The user lays a trap of levitating stones around the opposing team. The trap hurts opposing Pokémon that switch into battle."
+    effect: "相手の 周りに 無数の 岩を 浮かべて 交代で でてきた 相手の ポケモンに ダメージを 与える。"
   },
   grassKnot: {
     name: "くさむすび",
-    effect: "The user snares the target with grass and trips it. The heavier the target, the greater the move's power."
+    effect: "草を からませて 相手を 転ばせる。相手が 重いほど 威力が あがる。"
   },
   chatter: {
     name: "おしゃべり",
-    effect: "The user attacks the target with sound waves of deafening chatter. This confuses the target."
+    effect: "とても うるさい おしゃべりの 音波で 相手を 攻撃する。 相手を 混乱させる。"
   },
   judgment: {
     name: "さばきのつぶて",
-    effect: "The user releases countless shots of light at the target. This move's type varies depending on the kind of Plate the user is holding."
+    effect: "無数の 光弾を 相手に 放出する。 自分の 持つ プレートに より タイプが 変わる。"
   },
   bugBite: {
     name: "むしくい",
-    effect: "The user bites the target. If the target is holding a Berry, the user eats it and gains its effect."
+    effect: "かみついて 攻撃する。 相手が きのみを 持っているとき 食べて きのみの 効果を 受けられる。"
   },
   chargeBeam: {
     name: "チャージビーム",
-    effect: "The user attacks the target with an electric charge. The user may use any remaining electricity to raise its Sp. Atk stat."
+    effect: "電撃の 束を 相手に 発射する。電気を ためて 自分の 特攻を あげることが ある。"
   },
   woodHammer: {
     name: "ウッドハンマー",
-    effect: "The user slams its rugged body into the target to attack. This also damages the user quite a lot."
+    effect: "硬い 胴体を 相手に たたきつけて 攻撃する。 自分も かなり ダメージを 受ける。"
   },
   aquaJet: {
     name: "アクアジェット",
-    effect: "The user lunges at the target at a speed that makes it almost invisible. This move always goes first."
+    effect: "目にも 留まらぬ ものすごい 速さで 相手に つっこむ。 必ず 先制攻撃 できる。"
   },
   attackOrder: {
     name: "こうげきしれい",
-    effect: "The user calls out its underlings to pummel the target. Critical hits land more easily."
+    effect: "しもべを 呼びだして 相手に むかって 攻撃させる。 急所に 当たりやすい。"
   },
   defendOrder: {
     name: "ぼうぎょしれい",
-    effect: "The user calls out its underlings to shield its body, raising its Defense and Sp. Def stats."
+    effect: "しもべを 呼びだして 自分の 体に おおい つかせる。防御と 特防を あげることが できる。"
   },
   healOrder: {
     name: "かいふくしれい",
-    effect: "The user calls out its underlings to heal it. The user regains up to half of its max HP."
+    effect: "しもべを 呼びだして きずを 治す。 最大ＨＰの 半分 自分の ＨＰを 回復する。"
   },
   headSmash: {
     name: "もろはのずつき",
-    effect: "The user attacks the target with a hazardous, full-power headbutt. This also damages the user terribly."
+    effect: "命を 懸けて こん身の 力で 相手に ずつきを する。 自分も ものすごい ダメージを 受ける。"
   },
   doubleHit: {
     name: "ダブルアタック",
-    effect: "The user slams the target with a long tail, vines, or a tentacle. The target is hit twice in a row."
+    effect: "しっぽなどを 使い 相手を たたいて 攻撃する。 ２回連続で ダメージを 与える。"
   },
   roarOfTime: {
     name: "ときのほうこう",
-    effect: "The user blasts the target with power that distorts even time. The user can't move on the next turn."
+    effect: "時間が ゆがむほどの 力を うちだして 相手を 攻撃する。 次の ターンは 動けなくなる。"
   },
   spacialRend: {
     name: "あくうせつだん",
-    effect: "The user tears the target along with the space around it. Critical hits land more easily."
+    effect: "周りの 空間ごと 相手を 引き裂き ダメージを 与える。 急所に 当たりやすい。"
   },
   lunarDance: {
     name: "みかづきのまい",
-    effect: "The user faints. In return, the Pokémon taking its place will have its status and HP fully restored."
+    effect: "自分は ひんしに なるが 控えから でてくる ポケモンの すべての 状態を 回復する。"
   },
   crushGrip: {
     name: "にぎりつぶす",
-    effect: "The target is crushed with great force. The more HP the target has left, the greater this move's power."
+    effect: "すさまじい 力で 相手を にぎりつぶす。 相手の ＨＰが 残っているほど 威力が あがる。"
   },
   magmaStorm: {
     name: "マグマストーム",
-    effect: "The target becomes trapped within a maelstrom of fire that rages for four to five turns."
+    effect: "激しく 燃えたぎる 炎の なかに ４ー５ターンの 間 相手を 閉じこめて 攻撃する。"
   },
   darkVoid: {
     name: "ダークホール",
-    effect: "Opposing Pokémon are dragged into a world of total darkness that makes them sleep."
+    effect: "暗黒の 世界に ひきずり 落として 相手を 眠り状態に する。"
   },
   seedFlare: {
     name: "シードフレア",
-    effect: "The user emits a shock wave from its body to attack its target. This may also harshly lower the target's Sp. Def stat."
+    effect: "体の 中から 衝撃波を 発生させる。相手の 特防を がくっと さげることが ある。"
   },
   ominousWind: {
     name: "あやしいかぜ",
-    effect: "The user blasts the target with a gust of repulsive wind. This may also raise all the user's stats at once."
+    effect: "みのけも よだつ 突風で 相手を 攻撃する。自分の すべての 能力が あがることが ある。"
   },
   shadowForce: {
     name: "シャドーダイブ",
-    effect: "The user disappears, then strikes the target on the next turn. This move hits even if the target protects itself."
+    effect: "１ターン目で 姿を 消して ２ターン目に 相手を 攻撃する。 守っていても 攻撃は 当たる。"
   },
   honeClaws: {
     name: "つめとぎ",
-    effect: "The user sharpens its claws to boost its Attack stat and accuracy."
+    effect: "ツメを 磨いて 鋭く する。 自分の 攻撃と 命中率を あげる。"
   },
   wideGuard: {
     name: "ワイドガード",
-    effect: "The user and its allies are protected from wide-ranging attacks for one turn."
+    effect: "味方全員に 当たる 攻撃を １ターンの 間 防ぐ。"
   },
   guardSplit: {
     name: "ガードシェア",
-    effect: "The user employs its psychic power to average its Defense and Sp. Def stats with those of the target."
+    effect: "超能力で 自分と 相手の 防御と 特防を たして 半分に わける。"
   },
   powerSplit: {
     name: "パワーシェア",
-    effect: "The user employs its psychic power to average its Attack and Sp. Atk stats with those of the target."
+    effect: "超能力で 自分と 相手の 攻撃と 特攻を たして 半分に わける。"
   },
   wonderRoom: {
     name: "ワンダールーム",
-    effect: "The user creates a bizarre area in which Pokémon's Defense and Sp. Def stats are swapped for five turns."
+    effect: "まか不思議な 空間を つくる。 ５ターンのあいだ すべてのポケモンの 防御と 特防が 入れ替わる。"
   },
   psyshock: {
     name: "サイコショック",
-    effect: "The user materializes an odd psychic wave to attack the target. This attack does physical damage."
+    effect: "不思議な 念波を 実体化して 相手を 攻撃する。 物理的な ダメージを 与える。"
   },
   venoshock: {
     name: "ベノムショック",
-    effect: "The user drenches the target in a special poisonous liquid. This move's power is doubled if the target is poisoned."
+    effect: "特殊な 毒液を 浴びせかける。 毒状態の 相手には 威力が ２倍に なる。"
   },
   autotomize: {
     name: "ボディパージ",
-    effect: "The user sheds part of its body to make itself lighter and sharply raise its Speed stat."
+    effect: "体の ムダな 部分を 削る。 自分の 素早さを ぐーんと あげて 体重も 軽くなる。"
   },
   ragePowder: {
     name: "いかりのこな",
-    effect: "The user scatters a cloud of irritating powder to draw attention to itself. Opposing Pokémon aim only at the user."
+    effect: "イライラさせる 粉を 自分に ふりかけて 注意を ひく。 相手の 攻撃を すべて 自分に むける。"
   },
   telekinesis: {
     name: "テレキネシス",
-    effect: "The user makes the target float with its psychic power. The target is easier to hit for three turns."
+    effect: "超能力で 相手を 浮かせる。 ３ターンの 間 攻撃が 相手に 当たりやすく なる。"
   },
   magicRoom: {
     name: "マジックルーム",
-    effect: "The user creates a bizarre area in which Pokémon's held items lose their effects for five turns."
+    effect: "まか不思議な 空間を つくる。 ５ターンの間 すべてのポケモンの 道具の 効果が なくなる。"
   },
   smackDown: {
     name: "うちおとす",
-    effect: "The user throws a stone or similar projectile to attack the target. A flying Pokémon will fall to the ground when it's hit."
+    effect: "石や 弾を 投げて 飛んでいる 相手を 攻撃する。 相手は うち落とされて 地面に 落ちる。"
   },
   stormThrow: {
     name: "やまあらし",
-    effect: "The user strikes the target with a fierce blow. This attack always results in a critical hit."
+    effect: "強烈な 一撃を 相手に くりだす。攻撃は 必ず 急所に 当たる。"
   },
   flameBurst: {
     name: "はじけるほのお",
-    effect: "The user attacks the target with a bursting flame. The bursting flame damages Pokémon next to the target as well."
+    effect: "当たると はじける 炎で 相手を 攻撃する。はじけた 炎は 隣の 相手にも ふりかかる。"
   },
   sludgeWave: {
     name: "ヘドロウェーブ",
-    effect: "The user strikes everything around it by swamping the area with a giant sludge wave. This may also poison those hit."
+    effect: "ヘドロの 波で 自分の 周りに いるものを 攻撃する。 毒状態に することが ある。"
   },
   quiverDance: {
     name: "ちょうのまい",
-    effect: "The user lightly performs a beautiful, mystic dance. This boosts the user's Sp. Atk, Sp. Def, and Speed stats."
+    effect: "神秘的で 美しい 舞を 軽やかに おどる。 自分の 特攻と 特防と 素早さを あげる。"
   },
   heavySlam: {
     name: "ヘビーボンバー",
-    effect: "The user slams into the target with its heavy body. The more the user outweighs the target, the greater the move's power."
+    effect: "重たい 体で 相手に ぶつかって 攻撃する。 自分が 相手より 重いほど 威力が あがる。"
   },
   synchronoise: {
     name: "シンクロノイズ",
-    effect: "Using an odd shock wave, the user inflicts damage on any Pokémon of the same type in the area around it."
+    effect: "不思議な 電波で 周りに いる 自分と 同じ タイプの ポケモンに ダメージを 与える。"
   },
   electroBall: {
     name: "エレキボール",
-    effect: "The user hurls an electric orb at the target. The faster the user is than the target, the greater the move's power."
+    effect: "電気の 塊を 相手に ぶつける。相手より 素早さが 速いほど 威力が あがる。"
   },
   soak: {
     name: "みずびたし",
-    effect: "The user shoots a torrent of water at the target and changes the target's type to Water."
+    effect: "たくさんの 水を 浴びせかけて 相手を みずタイプに する。"
   },
   flameCharge: {
     name: "ニトロチャージ",
-    effect: "Cloaking itself in flame, the user attacks the target. Then, building up more power, the user raises its Speed stat."
+    effect: "炎を まとい 相手を 攻撃する。 力を ためて 自分の 素早さを あげる。"
   },
   coil: {
     name: "とぐろをまく",
-    effect: "The user coils up and concentrates. This raises its Attack and Defense stats as well as its accuracy."
+    effect: "とぐろを まいて 集中する。 自分の 攻撃と 防御と 命中率を あげる。"
   },
   lowSweep: {
     name: "ローキック",
-    effect: "The user makes a swift attack on the target's legs, which lowers the target's Speed stat."
+    effect: "素早い 動きで 相手の 足を ねらって 攻撃する。 相手の 素早さを さげる。"
   },
   acidSpray: {
     name: "アシッドボム",
-    effect: "The user spits fluid that works to melt the target. This harshly lowers the target's Sp. Def stat."
+    effect: "相手を とかす 液体を 吐きだして 攻撃する。 相手の 特防を がくっと さげる。"
   },
   foulPlay: {
     name: "イカサマ",
-    effect: "The user turns the target's power against it. The higher the target's Attack stat, the greater the damage it deals."
+    effect: "相手の 力を 利用する。 戦っている 相手の 攻撃が 高いほど ダメージが あがる。"
   },
   simpleBeam: {
     name: "シンプルビーム",
-    effect: "The user's mysterious psychic wave changes the target's Ability to Simple."
+    effect: "なぞの 念波を 相手に 送る。 念波を 受けとった 相手は 特性が たんじゅんに なる。"
   },
   entrainment: {
     name: "なかまづくり",
-    effect: "The user dances with an odd rhythm that compels the target to mimic it, making the target's Ability the same as the user's."
+    effect: "不思議な リズムで おどる。 動きを まねさせて 自分と 相手の 特性を 同じに する。"
   },
   afterYou: {
     name: "おさきにどうぞ",
-    effect: "The user helps the target and makes it use its move right after the user."
+    effect: "相手の 行動を サポートして 自分の 行動の あとに 続けて 動けるように する。"
   },
   round: {
     name: "りんしょう",
-    effect: "The user attacks the target with a song. Others can join in the Round to increase the power of the attack."
+    effect: "歌で 相手を 攻撃する。 みんなで 輪唱すると 続けて だすことが でき 威力も あがる。"
   },
   echoedVoice: {
     name: "エコーボイス",
-    effect: "The user attacks the target with an echoing voice. If this move is used every turn, its power is increased."
+    effect: "響く 声で 相手を 攻撃する。 毎ターン だれかが 技を 使い続けると 威力が あがる。"
   },
   chipAway: {
     name: "なしくずし",
-    effect: "Looking for an opening, the user strikes consistently. The target's stat changes don't affect this attack's damage."
+    effect: "すきを みて 堅実に 攻撃する。 相手の 能力変化に 関係なく ダメージを 与える。"
   },
   clearSmog: {
     name: "クリアスモッグ",
-    effect: "The user attacks the target by throwing a clump of special mud. All stat changes are returned to normal."
+    effect: "特殊な 泥の 塊を 相手に 投げつけて 攻撃する。 能力変化を もとに もどす。"
   },
   storedPower: {
     name: "アシストパワー",
-    effect: "The user attacks the target with stored power. The more the user's stats are raised, the greater the move's power."
+    effect: "蓄積された パワーで 相手を 攻撃する。自分の 能力が あがっているほど 威力が あがる。"
   },
   quickGuard: {
     name: "ファストガード",
-    effect: "The user protects itself and its allies from priority moves."
+    effect: "自分と 味方を 相手の 先制攻撃から 守る。"
   },
   allySwitch: {
     name: "サイドチェンジ",
-    effect: "The user teleports using a strange power and switches places with one of its allies."
+    effect: "不思議な 力で テレポートして 自分と 味方の 居場所を 入れ替える。"
   },
   scald: {
     name: "ねっとう",
-    effect: "The user shoots boiling hot water at its target. This may also leave the target with a burn."
+    effect: "熱く 煮えたぎる 水を 相手に 発射して 攻撃する。 やけど状態に することが ある。"
   },
   shellSmash: {
     name: "からをやぶる",
-    effect: "The user breaks its shell, which lowers Defense and Sp. Def stats but sharply raises its Attack, Sp. Atk, and Speed stats."
+    effect: "殻を やぶって 自分の 防御 特防を さげるが 攻撃 特攻 素早さを ぐーんと あげる。"
   },
   healPulse: {
     name: "いやしのはどう",
-    effect: "The user emits a healing pulse that restores the target's HP by up to half of its max HP."
+    effect: "いやしのはどうを とばして 最大ＨＰの 半分 相手の ＨＰを 回復する。"
   },
   hex: {
     name: "たたりめ",
-    effect: "This relentless attack does massive damage to a target affected by status conditions."
+    effect: "たたみかける ように 攻撃する。 状態異常の 相手に 大きな ダメージを 与える。"
   },
   skyDrop: {
     name: "フリーフォール",
-    effect: "The user takes the target into the sky, then drops it during the next turn. The target cannot attack while in the sky."
+    effect: "１ターン目で 相手を 空へ 連れさり ２ターン目に 落として 攻撃する。 連れさられた 相手は 動けない。"
   },
   shiftGear: {
     name: "ギアチェンジ",
-    effect: "The user rotates its gears, raising its Attack stat and sharply raising its Speed stat."
+    effect: "歯車を 回して 自分の 攻撃を あげる だけでなく 素早さも ぐーんと あげる。"
   },
   circleThrow: {
     name: "ともえなげ",
-    effect: "The target is thrown, and a different Pokémon is dragged out. In the wild, this ends a battle against a single Pokémon."
+    effect: "相手を 投げとばして 控えの ポケモンを ひきずりだす。 野生の 場合は 戦闘が 終わる。"
   },
   incinerate: {
     name: "やきつくす",
-    effect: "The user attacks opposing Pokémon with fire. If a Pokémon is holding a certain item, such as a Berry, the item becomes burned up and unusable."
+    effect: "炎で 相手を 攻撃する。 相手が きのみなどを 持っているとき 燃やして 使えなくする。"
   },
   quash: {
     name: "さきおくり",
-    effect: "The user suppresses the target and makes its move go last."
+    effect: "相手を おさえつけて 行動の 順番を 最後に する。"
   },
   acrobatics: {
     name: "アクロバット",
-    effect: "The user nimbly strikes the target. If the user is not holding an item, this attack inflicts massive damage."
+    effect: "軽やかに 相手を 攻撃する。 自分が 道具を 持っていないとき 大きな ダメージを 与える。"
   },
   reflectType: {
     name: "ミラータイプ",
-    effect: "The user reflects the target's type, making the user the same type as the target."
+    effect: "相手の タイプを 反射して 自分も 同じ タイプに なる。"
   },
   retaliate: {
     name: "かたきうち",
-    effect: "The user gets revenge for a fainted ally. If an ally fainted in the previous turn, this move's power is increased."
+    effect: "倒れた 味方の かたきを 討つ。 前の ターンに 味方が 倒されていると 威力が あがる。"
   },
   finalGambit: {
     name: "いのちがけ",
-    effect: "The user risks everything to attack its target. The user faints but does damage equal to its HP."
+    effect: "命懸けで 相手を 攻撃する。 自分は ひんしに なるが 相手に ＨＰ分の ダメージを 与える。"
   },
   bestow: {
     name: "ギフトパス",
-    effect: "The user passes its held item to the target when the target isn't holding an item."
+    effect: "相手が 道具を 持っていないとき 自分が 持っている 道具を 相手に わたす。"
   },
   inferno: {
     name: "れんごく",
-    effect: "The user attacks by engulfing the target in an intense fire. This leaves the target with a burn."
+    effect: "激しい 炎で 相手を 包みこみ 攻撃する。 やけど状態に する。"
   },
   waterPledge: {
     name: "みずのちかい",
-    effect: "A column of water hits the target. When used with its fire equivalent, its power increases and a rainbow appears."
+    effect: "水の柱で 攻撃する。 ほのおと 組みあわせると 威力が あがって 空に にじが かかる。"
   },
   firePledge: {
     name: "ほのおのちかい",
-    effect: "A column of fire hits the target. When used with its grass equivalent, its power increases and a vast sea of fire appears."
+    effect: "炎の柱で 攻撃する。 くさと 組みあわせると 威力が あがって 周りが 火の海に なる。"
   },
   grassPledge: {
     name: "くさのちかい",
-    effect: "A column of grass hits the target. When used with its water equivalent, its power increases and a vast swamp appears."
+    effect: "草の柱で 攻撃する。 みずと 組みあわせると 威力が あがって あたりが 湿原に なる。"
   },
   voltSwitch: {
     name: "ボルトチェンジ",
-    effect: "After making its attack, the user rushes back to switch places with a party Pokémon in waiting."
+    effect: "攻撃したあと ものすごい スピードで もどってきて 控えの ポケモンと 入れ替わる。"
   },
   struggleBug: {
     name: "むしのていこう",
-    effect: "While resisting, the user attacks opposing Pokémon. This lowers the Sp. Atk stats of those hit."
+    effect: "抵抗して 相手を 攻撃する。 相手の 特攻を さげる。"
   },
   bulldoze: {
     name: "じならし",
-    effect: "The user strikes everything around it by stomping down on the ground. This lowers the Speed stats of those hit."
+    effect: "地面を 踏みならして 自分の 周りに いるものを 攻撃する。 相手の 素早さを さげる。"
   },
   frostBreath: {
     name: "こおりのいぶき",
-    effect: "The user blows its cold breath on the target. This attack always results in a critical hit."
+    effect: "冷たい 息を 相手に 吹きつけて 攻撃する。 必ず 急所に 当たる。"
   },
   dragonTail: {
     name: "ドラゴンテール",
-    effect: "The target is knocked away, and a different Pokémon is dragged out. In the wild, this ends a battle against a single Pokémon."
+    effect: "相手を はじきとばして 控えの ポケモンを ひきずりだす。 野生の 場合は 戦闘が 終わる。"
   },
   workUp: {
     name: "ふるいたてる",
-    effect: "The user is roused, and its Attack and Sp. Atk stats increase."
+    effect: "自分を 奮いたてて 攻撃と 特攻を あげる。"
   },
   electroweb: {
     name: "エレキネット",
-    effect: "The user attacks and captures opposing Pokémon using an electric net. This lowers their Speed stats."
+    effect: "電気の ネットで 相手を 捕まえて 攻撃する。 相手の 素早さを さげる。"
   },
   wildCharge: {
     name: "ワイルドボルト",
-    effect: "The user shrouds itself in electricity and smashes into its target. This also damages the user a little."
+    effect: "電気を まとって 相手に ぶつかって 攻撃する。 自分も 少し ダメージを 受ける。"
   },
   drillRun: {
     name: "ドリルライナー",
-    effect: "The user crashes into its target while rotating its body like a drill. Critical hits land more easily."
+    effect: "ドリルのように 体を 回転しながら 相手に 体当たりする。 急所に 当たりやすい。"
   },
   dualChop: {
     name: "ダブルチョップ",
-    effect: "The user attacks its target by hitting it with brutal strikes. The target is hit twice in a row."
+    effect: "体の 硬い部分で 相手を たたいて 攻撃する。 ２回連続で ダメージを 与える。"
   },
   heartStamp: {
     name: "ハートスタンプ",
-    effect: "The user unleashes a vicious blow after its cute act makes the target less wary. This may also make the target flinch."
+    effect: "かわいい しぐさで 油断させて 強烈な 一撃を 浴びせる。 相手を ひるませることが ある。"
   },
   hornLeech: {
     name: "ウッドホーン",
-    effect: "The user drains the target's energy with its horns. The user's HP is restored by half the damage taken by the target."
+    effect: "つのを 突き刺して 相手の 養分を 吸い取る。 与えた ダメージの 半分の ＨＰを 回復できる。"
   },
   sacredSword: {
     name: "せいなるつるぎ",
-    effect: "The user attacks by slicing with a long horn. The target's stat changes don't affect this attack's damage."
+    effect: "長い つので 切りつけ 攻撃する。 相手の 能力変化に 関係なく ダメージを 与える。"
   },
   razorShell: {
     name: "シェルブレード",
-    effect: "The user cuts its target with sharp shells. This may also lower the target's Defense stat."
+    effect: "鋭い 貝殻で 切りつけて 攻撃する。 相手の 防御を さげることが ある。"
   },
   heatCrash: {
     name: "ヒートスタンプ",
-    effect: "The user slams its target with its flame-covered body. The more the user outweighs the target, the greater the move's power."
+    effect: "燃える 体で 相手に ぶつかって 攻撃する。 自分が 相手より 重いほど 威力が あがる。"
   },
   leafTornado: {
     name: "グラスミキサー",
-    effect: "The user attacks its target by encircling it in sharp leaves. This attack may also lower the target's accuracy."
+    effect: "鋭い はっぱで 相手を 包みこんで 攻撃する。 命中率を さげることが ある。"
   },
   steamroller: {
     name: "ハードローラー",
-    effect: "The user crushes its target by rolling over the target with its rolled-up body. This may also make the target flinch."
+    effect: "まるめた 体で 回転して 相手を おしつぶす。 相手を ひるませることが ある。"
   },
   cottonGuard: {
     name: "コットンガード",
-    effect: "The user protects itself by wrapping its body in soft cotton, which drastically raises the user's Defense stat."
+    effect: "フワフワの 綿毛で 自分の 体を 包みこんで 守る。 防御を ぐぐーんと あげる。"
   },
   nightDaze: {
     name: "ナイトバースト",
-    effect: "The user lets loose a pitch-black shock wave at its target. This may also lower the target's accuracy."
+    effect: "暗黒の 衝撃波を とばして 相手を 攻撃する。 命中率を さげることが ある。"
   },
   psystrike: {
     name: "サイコブレイク",
-    effect: "The user materializes an odd psychic wave to attack the target. This attack does physical damage."
+    effect: "不思議な 念波を 実体化して 相手を 攻撃する。 物理的な ダメージを 与える。"
   },
   tailSlap: {
     name: "スイープビンタ",
-    effect: "The user attacks by striking the target with its hard tail. It hits the target two to five times in a row."
+    effect: "硬い しっぽで 相手を たたいて 攻撃する。 ２ー５回の 間 連続で だす。"
   },
   hurricane: {
     name: "ぼうふう",
-    effect: "The user attacks by wrapping its opponent in a fierce wind that flies up into the sky. This may also confuse the target."
+    effect: "強烈な 風で 相手を 包みこんで 攻撃する。 相手を 混乱させることが ある。"
   },
   headCharge: {
     name: "アフロブレイク",
-    effect: "The user charges its head into its target, using its powerful guard hair. This also damages the user a little."
+    effect: "すごい アフロの 頭で 相手に 突進して 攻撃する。 自分も 少し ダメージを 受ける。"
   },
   gearGrind: {
     name: "ギアソーサー",
-    effect: "The user attacks by throwing steel gears at its target twice."
+    effect: "鋼鉄の ギアを 相手に 投げつけて 攻撃する。 ２回連続で ダメージを 与える。"
   },
   searingShot: {
     name: "かえんだん",
-    effect: "The user torches everything around it in an inferno of scarlet flames. This may also leave those it hits with a burn."
+    effect: "真っ赤な 炎で 自分の 周りに いるものを 攻撃する。 やけど状態に することが ある。"
   },
   technoBlast: {
     name: "テクノバスター",
-    effect: "The user fires a beam of light at its target. The move's type changes depending on the Drive the user holds."
+    effect: "光弾を 相手に 放出する。 自分の 持つ カセットにより タイプが 変わる。"
   },
   relicSong: {
     name: "いにしえのうた",
-    effect: "The user sings an ancient song and attacks by appealing to the hearts of the listening opposing Pokémon. This may also induce sleep."
+    effect: "いにしえのうたを 相手に 聞かせて 心に うったえて 攻撃する。 眠り状態に することが ある。"
   },
   secretSword: {
     name: "しんぴのつるぎ",
-    effect: "The user cuts with its long horn. The odd power contained in the horn does physical damage to the target."
+    effect: "長い つので 切りつけ 攻撃する。 つのが まとった 不思議な 力は 物理的な ダメージを 与える。"
   },
   glaciate: {
     name: "こごえるせかい",
-    effect: "The user attacks by blowing freezing cold air at opposing Pokémon. This lowers their Speed stats."
+    effect: "凍えるような 冷気を 相手に 吹きつけて 攻撃する。 相手の 素早さを さげる。"
   },
   boltStrike: {
     name: "らいげき",
-    effect: "The user surrounds itself with a great amount of electricity and charges its target. This may also leave the target with paralysis."
+    effect: "ぼうだいな 電気を 身に まとって 相手に 突進して 攻撃する。 まひ状態に することが ある。"
   },
   blueFlare: {
     name: "あおいほのお",
-    effect: "The user attacks by engulfing the target in an intense, yet beautiful, blue flame. This may also leave the target with a burn."
+    effect: "美しくも 激しい 青い炎で 相手を 包みこんで 攻撃する。 やけど状態に することが ある。"
   },
   fieryDance: {
     name: "ほのおのまい",
-    effect: "Cloaked in flames, the user attacks the target by dancing and flapping its wings. This may also raise the user's Sp. Atk stat."
+    effect: "炎を まとい はばたいて 相手を 攻撃する。自分の 特攻が あがることが ある。"
   },
   freezeShock: {
     name: "フリーズボルト",
-    effect: "On the second turn, the user hits the target with electrically charged ice. This may also leave the target with paralysis."
+    effect: "電気を まとった 氷の 塊で ２ターン目に 相手を たたきつける。 まひ状態に することが ある。"
   },
   iceBurn: {
     name: "コールドフレア",
-    effect: "On the second turn, an ultracold, freezing wind surrounds the target. This may leave the target with a burn."
+    effect: "すべてを 凍らせる 激しい 冷気で ２ターン目に 相手を 包みこむ。 やけど状態に することが ある。"
   },
   snarl: {
     name: "バークアウト",
-    effect: "The user yells as if it's ranting about something, which lowers the Sp. Atk stats of opposing Pokémon."
+    effect: "まくしたてる ように 怒鳴りつけて 相手の 特攻を さげる。"
   },
   icicleCrash: {
     name: "つららおとし",
-    effect: "The user attacks by harshly dropping large icicles onto the target. This may also make the target flinch."
+    effect: "大きな 氷柱を 激しく ぶつけて 攻撃する。 相手を ひるませることが ある。"
   },
   vCreate: {
     name: "Ｖジェネレート",
-    effect: "With a hot flame on its forehead, the user hurls itself at its target. This lowers the user's Defense, Sp. Def, and Speed stats."
+    effect: "灼熱の 炎を 額から 発生させて 捨て身の 体当たり。 防御 特防 素早さが さがる。"
   },
   fusionFlare: {
     name: "クロスフレイム",
-    effect: "The user brings down a giant flame. This move's power is increased when influenced by an enormous lightning bolt."
+    effect: "巨大な 炎を たたきつける。 巨大な 雷の 影響を受け 技の 威力が あがる。"
   },
   fusionBolt: {
     name: "クロスサンダー",
-    effect: "The user throws down a giant lightning bolt. This move's power is increased when influenced by an enormous flame."
+    effect: "巨大な 雷を たたきつける。 巨大な 炎の 影響を受け 技の 威力が あがる。"
   },
   flyingPress: {
     name: "フライングプレス",
-    effect: "The user dives down onto the target from the sky. This move is Fighting and Flying type simultaneously."
+    effect: "空中から 相手に ダイブする。 この技は かくとうタイプと 同時に ひこうタイプでも ある。"
   },
   matBlock: {
     name: "たたみがえし",
-    effect: "Using a pulled-up mat as a shield, the user protects itself and its allies from damaging moves. This does not stop status moves."
+    effect: "かえした タタミを 盾にして 自分や 味方への 技の ダメージを 防ぐ。 変化技は 防ぐことが できない。"
   },
   belch: {
     name: "ゲップ",
-    effect: "The user lets out a damaging belch at the target. The user must eat a held Berry to use this move."
+    effect: "相手に 向かって ゲップを 浴びせて ダメージを 与える。 きのみを 食べないと だせない。"
   },
   rototiller: {
     name: "たがやす",
-    effect: "Tilling the soil, the user makes it easier for plants to grow. This raises the Attack and Sp. Atk stats of Grass-type Pokémon."
+    effect: "地面を 耕して 草木が 育ちやすいようにする。 くさタイプの 攻撃と 特攻が あがる。"
   },
   stickyWeb: {
     name: "ねばねばネット",
-    effect: "The user weaves a sticky net around the opposing team, which lowers their Speed stats upon switching into battle."
+    effect: "相手の 周りに ねばねばした ネットを はりめぐらせ 交代で でてきた 相手の 素早さを さげる。"
   },
   fellStinger: {
     name: "とどめばり",
-    effect: "When the user knocks out a target with this move, the user's Attack stat rises drastically."
+    effect: "この 技を 使って 相手を 倒すと 攻撃が ぐぐーんと あがる。"
   },
   phantomForce: {
     name: "ゴーストダイブ",
-    effect: "The user vanishes somewhere, then strikes the target on the next turn. This move hits even if the target protects itself."
+    effect: "１ターンめで どこかに 消えて ２ターンめに 相手を 攻撃する。 守りを 無視して 攻撃できる。"
   },
   trickOrTreat: {
     name: "ハロウィン",
-    effect: "The user takes the target trick-or-treating. This adds Ghost type to the target's type."
+    effect: "相手を ハロウィンに 誘う。 相手の タイプに ゴーストタイプが 追加される。"
   },
   nobleRoar: {
     name: "おたけび",
-    effect: "Letting out a noble roar, the user intimidates the target and lowers its Attack and Sp. Atk stats."
+    effect: "おたけびを あげて 相手を 威嚇し 相手の 攻撃と 特攻を さげる。"
   },
   ionDeluge: {
     name: "プラズマシャワー",
-    effect: "The user disperses electrically charged particles, which changes Normal-type moves to Electric-type moves."
+    effect: "電気を 帯びた 粒子を 拡散し ノーマルタイプの 技を でんきタイプに してしまう。"
   },
   parabolicCharge: {
     name: "パラボラチャージ",
-    effect: "The user attacks everything around it. The user's HP is restored by half the damage taken by those hit."
+    effect: "周りにいる ポケモン 全員に ダメージ。 与えた ダメージの 半分を 自分が 回復する。"
   },
   forestsCurse: {
     name: "もりののろい",
-    effect: "The user puts a forest curse on the target. The target is now Grass type as well."
+    effect: "相手に 森ののろいを かける。 のろいを かけられた 相手は タイプに くさタイプが 追加される。"
   },
   petalBlizzard: {
     name: "はなふぶき",
-    effect: "The user stirs up a violent petal blizzard and attacks everything around it."
+    effect: "激しい 花吹雪を 起こし 周りに いるものに 攻撃して ダメージを 与える。"
   },
   freezeDry: {
     name: "フリーズドライ",
-    effect: "The user rapidly cools the target. This may also leave the target frozen. This move is super effective on Water types."
+    effect: "相手を 急激に 冷やして こおり 状態に することが ある。 みずタイプにも 効果バツグンになる。"
   },
   disarmingVoice: {
     name: "チャームボイス",
-    effect: "Letting out a charming cry, the user does emotional damage to opposing Pokémon. This attack never misses."
+    effect: "魅惑の 鳴き声を だして 相手に 精神的な ダメージを 与える。 攻撃は 必ず 命中 する。"
   },
   partingShot: {
     name: "すてゼリフ",
-    effect: "With a parting threat, the user lowers the target's Attack and Sp. Atk stats. Then it switches with a party Pokémon."
+    effect: "すてゼリフで 相手を いかくし 攻撃と 特攻を さげたのち 控えの ポケモンと 入れ替わる。"
   },
   topsyTurvy: {
     name: "ひっくりかえす",
-    effect: "All stat changes affecting the target turn topsy-turvy and become the opposite of what they were."
+    effect: "相手に かかっている すべての 能力変化を ひっくり返して 逆にする。"
   },
   drainingKiss: {
     name: "ドレインキッス",
-    effect: "The user steals the target's HP with a kiss. The user's HP is restored by over half of the damage taken by the target."
+    effect: "キッスによって 相手から ＨＰを 吸い取る。 与えた ダメージの 半分以上 ＨＰを 回復する。"
   },
   craftyShield: {
     name: "トリックガード",
-    effect: "The user protects itself and its allies from status moves with a mysterious power. This does not stop moves that do damage."
+    effect: "不思議な 力を 使って 味方への 変化技を 防ぐ。 ダメージ技は 受けてしまう。"
   },
   flowerShield: {
     name: "フラワーガード",
-    effect: "The user raises the Defense stats of all Grass-type Pokémon in battle with a mysterious power."
+    effect: "不思議な 力を 使って 場にいる くさタイプの ポケモン 全員の 防御を あげる。"
   },
   grassyTerrain: {
     name: "グラスフィールド",
-    effect: "The user turns the ground to grass for five turns. This restores the HP of Pokémon on the ground a little every turn and powers up Grass-type moves."
+    effect: "５ターンの 間 グラスフィールドにする。 地面にいると 毎ターン 回復する。 くさタイプの 威力が あがる。"
   },
   mistyTerrain: {
     name: "ミストフィールド",
-    effect: "This protects Pokémon on the ground from status conditions and halves damage from Dragon-type moves for five turns."
+    effect: "５ターンの 間 地面にいると 状態異常に ならず ドラゴン技の ダメージも 半分になる。"
   },
   electrify: {
     name: "そうでん",
-    effect: "If the target is electrified before it uses a move during that turn, the target's move becomes Electric type."
+    effect: "相手が 技を だす前に そうでん すると そのターン 相手の 技は でんきタイプになる。"
   },
   playRough: {
     name: "じゃれつく",
-    effect: "The user plays rough with the target and attacks it. This may also lower the target's Attack stat."
+    effect: "相手に じゃれついて 攻撃する。 相手の 攻撃を さげる ことがある。"
   },
   fairyWind: {
     name: "ようせいのかぜ",
-    effect: "The user stirs up a fairy wind and strikes the target with it."
+    effect: "ようせいのかぜを 起こし 相手に 吹きつけて 攻撃する。"
   },
   moonblast: {
     name: "ムーンフォース",
-    effect: "Borrowing the power of the moon, the user attacks the target. This may also lower the target's Sp. Atk stat."
+    effect: "月の パワーを かりて 相手を 攻撃する。 相手の 特攻を さげる ことがある。"
   },
   boomburst: {
     name: "ばくおんぱ",
-    effect: "The user attacks everything around it with the destructive power of a terrible, explosive sound."
+    effect: "すさまじい 爆音の 破壊力に よって 周りに いるものを 攻撃する。"
   },
   fairyLock: {
     name: "フェアリーロック",
-    effect: "By locking down the battlefield, the user keeps all Pokémon from fleeing during the next turn."
+    effect: "ロックを かけることによって 次のターン すべての ポケモンを 逃げられなくする。"
   },
   kingsShield: {
     name: "キングシールド",
-    effect: "The user takes a defensive stance while it protects itself from damage. It also lowers the Attack stat of any attacker that makes direct contact."
+    effect: "相手の 攻撃を 防ぐと 同時に 防御態勢になる。 触れた 相手の 攻撃を さげる。"
   },
   playNice: {
     name: "なかよくする",
-    effect: "The user and the target become friends, and the target loses its will to fight. This lowers the target's Attack stat."
+    effect: "相手と なかよくなって 戦う 気力を 失わせ 相手の 攻撃を さげる。"
   },
   confide: {
     name: "ないしょばなし",
-    effect: "The user tells the target a secret, and the target loses its ability to concentrate. This lowers the target's Sp. Atk stat."
+    effect: "ないしょばなしを することで 相手の 集中力を 失わせ 相手の 特攻を さげる。"
   },
   diamondStorm: {
     name: "ダイヤストーム",
-    effect: "The user whips up a storm of diamonds to damage opposing Pokémon. This may also sharply raise the user's Defense stat."
+    effect: "ダイヤの 嵐を 巻き起こし ダメージを 与える。 自分の 防御を ぐーんと あげることが ある。"
   },
   steamEruption: {
     name: "スチームバースト",
-    effect: "The user immerses the target in superheated steam. This may also leave the target with a burn."
+    effect: "ものすごく 熱い 蒸気を 相手に 浴びせる。 相手は やけどする ことがある。"
   },
   hyperspaceHole: {
     name: "いじげんホール",
-    effect: "Using a hyperspace hole, the user appears right next to the target and strikes. This also hits a target using a move such as Protect or Detect."
+    effect: "異次元ホールで 突然 相手の 真横に 現れ 攻撃する。 まもるや みきり なども 無視 できる。"
   },
   waterShuriken: {
     name: "みずしゅりけん",
-    effect: "The user hits the target with throwing stars two to five times in a row. This move always goes first."
+    effect: "粘液で できた 手裏剣を ２ー５回の 間 連続で だす。 必ず 先制攻撃 できる。"
   },
   mysticalFire: {
     name: "マジカルフレイム",
-    effect: "The user attacks by breathing a special, hot fire. This also lowers the target's Sp. Atk stat."
+    effect: "口から 吐きだす 特別 熱い 炎で 攻撃する。 相手の 特攻を さげる。"
   },
   spikyShield: {
     name: "ニードルガード",
-    effect: "In addition to protecting the user from attacks, this move also damages any attacker that makes direct contact."
+    effect: "相手の 攻撃を 防ぐと 同時に 触れた 相手の 体力を 削って しまう。"
   },
   aromaticMist: {
     name: "アロマミスト",
-    effect: "The user raises the Sp. Def stat of an ally Pokémon by using a mysterious aroma."
+    effect: "不思議な アロマの 香りによって 味方の 特防を あげる。"
   },
   eerieImpulse: {
     name: "かいでんぱ",
-    effect: "The user's body generates an eerie impulse. Exposing the target to it harshly lowers the target's Sp. Atk stat."
+    effect: "体から かいでんぱを 放ち 相手に 浴びせる ことによって 特攻を がくっと さげる。"
   },
   venomDrench: {
     name: "ベノムトラップ",
-    effect: "Opposing Pokémon are drenched in an odd poisonous liquid. This lowers the Attack, Sp. Atk, and Speed stats of a poisoned target."
+    effect: "特殊な 毒液を 浴びせかける。 毒状態の 相手は 攻撃 特攻 素早さが さがる。"
   },
   powder: {
     name: "ふんじん",
-    effect: "The user covers the target in a combustible powder. If the target uses a Fire-type move, the powder explodes and damages the target."
+    effect: "ふんじんを 浴びせた 相手が ほのお技を 使うと 爆発して ダメージを 与える。"
   },
   geomancy: {
     name: "ジオコントロール",
-    effect: "The user absorbs energy and sharply raises its Sp. Atk, Sp. Def, and Speed stats on the next turn."
+    effect: "１ターン目で エネルギーを 吸収し ２ターン目に 特攻 特防 素早さを ぐーんと あげる。"
   },
   magneticFlux: {
     name: "じばそうさ",
-    effect: "The user manipulates magnetic fields, which raises the Defense and Sp. Def stats of ally Pokémon with the Plus or Minus Ability."
+    effect: "磁場を 操作 することによって 特性 プラスと マイナスの 防御 特防が あがる。"
   },
   happyHour: {
     name: "ハッピータイム",
-    effect: "Using Happy Hour doubles the amount of prize money received after battle."
+    effect: "ハッピータイムの 技を 使うと 戦闘の あとで もらえる お金が 倍になる。"
   },
   electricTerrain: {
     name: "エレキフィールド",
-    effect: "The user electrifies the ground for five turns, powering up Electric-type moves. Pokémon on the ground no longer fall asleep."
+    effect: "５ターンの 間 エレキフィールドにする。 地面にいる ポケモンは 眠らない。 でんきタイプの 威力が あがる。"
   },
   dazzlingGleam: {
     name: "マジカルシャイン",
-    effect: "The user damages opposing Pokémon by emitting a powerful flash."
+    effect: "強力な 光を 放ち 相手に ダメージを 与える。"
   },
   celebrate: {
     name: "おいわい",
-    effect: "The Pokémon congratulates you on your special day!"
+    effect: "ポケモンが とっても ハッピーな あなたのことを お祝い してくれる。"
   },
   holdHands: {
     name: "てをつなぐ",
-    effect: "The user and an ally hold hands. This makes them very happy."
+    effect: "味方の ポケモン 同士が 手をつなぐ。 とっても 幸せな 気持ちに なれる。"
   },
   babyDollEyes: {
     name: "つぶらなひとみ",
-    effect: "The user stares at the target with its baby-doll eyes, which lowers the target's Attack stat. This move always goes first."
+    effect: "つぶらなひとみで 相手を みつめて 攻撃を さげる。 必ず 先制攻撃 できる。"
   },
   nuzzle: {
     name: "ほっぺすりすり",
-    effect: "The user attacks by nuzzling its electrified cheeks against the target. This also leaves the target with paralysis."
+    effect: "電気を 帯びた ほっぺを すりつけて 攻撃。 相手を まひ状態に する。"
   },
   holdBack: {
     name: "てかげん",
-    effect: "The user holds back when it attacks, and the target is left with at least 1 HP."
+    effect: "手加減 した 攻撃で 相手の ＨＰを 必ず １だけ 残す。"
   },
   infestation: {
     name: "まとわりつく",
-    effect: "The target is infested and attacked for four to five turns. The target can't flee during this time."
+    effect: "４ー５ターンの 間 相手に まとわりついて 攻撃する。 そのあいだ 相手は 逃げられない。"
   },
   powerUpPunch: {
     name: "グロウパンチ",
-    effect: "Striking opponents over and over makes the user's fists harder. Hitting a target raises the Attack stat."
+    effect: "繰り返し 打つことで だんだん こぶしが 固くなる。 相手に 当てると 攻撃が あがる。"
   },
   oblivionWing: {
     name: "デスウイング",
-    effect: "The user absorbs its target's HP. The user's HP is restored by over half of the damage taken by the target."
+    effect: "ねらいを 定めた 相手から ＨＰを 吸い取る。 与えた ダメージの 半分以上 ＨＰを 回復する。"
   },
   thousandArrows: {
     name: "サウザンアロー",
-    effect: "This move also hits opposing Pokémon that are in the air. Those Pokémon are knocked down to the ground."
+    effect: "浮いている ポケモンにも 当たる。 浮いていた 相手は 撃ち落とされて 地面に 落ちる。"
   },
   thousandWaves: {
     name: "サウザンウェーブ",
-    effect: "The user attacks with a wave that crawls along the ground. Those it hits can't flee from battle."
+    effect: "地をはう 波によって 攻撃。 波に 巻き込まれた 相手は 戦闘から 逃げられなくなる。"
   },
   landsWrath: {
     name: "グランドフォース",
-    effect: "The user gathers the energy of the land and focuses that power on opposing Pokémon to damage them."
+    effect: "大地の パワーを 集め 力を 相手に 集中させて ダメージを 与える。"
   },
   lightOfRuin: {
     name: "はめつのひかり",
-    effect: "Drawing power from the Eternal Flower, the user fires a powerful beam of light. This also damages the user quite a lot."
+    effect: "永遠の花 の パワーを かりて 強力な 光線を 撃ちだす。 自分も かなりの ダメージを 受ける。"
   },
   originPulse: {
     name: "こんげんのはどう",
-    effect: "The user attacks opposing Pokémon with countless beams of light that glow a deep and brilliant blue."
+    effect: "青白く 輝く 無数の 光線で 相手を 攻撃する。"
   },
   precipiceBlades: {
     name: "だんがいのつるぎ",
-    effect: "The user attacks opposing Pokémon by manifesting the power of the land in fearsome blades of stone."
+    effect: "大地の 力を 刃に 変えて 相手を 攻撃する。"
   },
   dragonAscent: {
     name: "ガリョウテンセイ",
-    effect: "After soaring upward, the user attacks its target by dropping out of the sky at high speeds. But it lowers its own Defense and Sp. Def stats in the process."
+    effect: "大空から 急速落下 して 相手を 攻撃する。 自分の 防御と 特防が さがる。"
   },
   hyperspaceFury: {
     name: "いじげんラッシュ",
-    effect: "Using its many arms, the user unleashes a barrage of attacks that ignore the effects of moves like Protect and Detect. But the user's Defense stat falls."
+    effect: "たくさんの 腕で まもるや みきり などを 無視した 連続攻撃。 自分の 防御が さがる。"
   },
   breakneckBlitzPhysical: {
     name: "ウルトラダッシュアタック",
-    effect: "The user builds up its momentum using its Z-Power and crashes into the target at full speed. The power varies, depending on the original move."
+    effect: "Ｚパワーで 勢いを つけて 全力で 相手に ぶつかる。 元になった 技で 威力が 変わる。"
   },
   breakneckBlitzSpecial: {
     name: "ウルトラダッシュアタック",
-    effect: "Dummy Data"
+    effect: "ダミーデータ"
   },
   allOutPummelingPhysical: {
     name: "ぜんりょくむそうげきれつけん",
-    effect: "The user rams an energy orb created by its Z-Power into the target with full force. The power varies, depending on the original move."
+    effect: "Ｚパワーで 作った エネルギーの 弾を 全力で 相手に ぶつける。 元になった 技で 威力が 変わる。"
   },
   allOutPummelingSpecial: {
     name: "ぜんりょくむそうげきれつけん",
-    effect: "Dummy Data"
+    effect: "ダミーデータ"
   },
   supersonicSkystrikePhysical: {
     name: "ファイナルダイブクラッシュ",
-    effect: "The user soars up with its Z-Power and plummets toward the target at full speed. The power varies, depending on the original move."
+    effect: "Ｚパワーで 勢いよく 飛びあがり 相手に 向かって 全力で 落下。 元になった 技で 威力が 変わる。"
   },
   supersonicSkystrikeSpecial: {
     name: "ファイナルダイブクラッシュ",
-    effect: "Dummy Data"
+    effect: "ダミーデータ"
   },
   acidDownpourPhysical: {
     name: "アシッドポイズンデリート",
-    effect: "The user creates a poisonous swamp using its Z-Power and sinks the target into it at full force. The power varies, depending on the original move."
+    effect: "Ｚパワーで 毒の 沼を 湧きあがらせ 全力で 相手を 沈める。 元になった 技で 威力が 変わる。"
   },
   acidDownpourSpecial: {
     name: "アシッドポイズンデリート",
-    effect: "Dummy Data"
+    effect: "ダミーデータ"
   },
   tectonicRagePhysical: {
     name: "ライジングランドオーバー",
-    effect: "The user burrows deep into the ground and slams into the target with the full force of its Z-Power. The power varies, depending on the original move."
+    effect: "Ｚパワーで 地面の 奥深くに 潜り 全力で 相手に ぶつかる。 元になった 技で 威力が 変わる。"
   },
   tectonicRageSpecial: {
     name: "ライジングランドオーバー",
-    effect: "Dummy Data"
+    effect: "ダミーデータ"
   },
   continentalCrushPhysical: {
     name: "ワールズエンドフォール",
-    effect: "The user summons a huge rock mountain using its Z-Power and drops it onto the target with full force. The power varies, depending on the original move."
+    effect: "Ｚパワーで 大きな 岩山を 呼びだし 全力で 相手に ぶつける。 元になった 技で 威力が 変わる。"
   },
   continentalCrushSpecial: {
     name: "ワールズエンドフォール",
-    effect: "Dummy Data"
+    effect: "ダミーデータ"
   },
   savageSpinOutPhysical: {
     name: "ぜったいほしょくかいてんざん",
-    effect: "The user binds the target with full force with threads of silk that the user spits using its Z-Power. The power varies, depending on the original move."
+    effect: "Ｚパワーで 吐きだした 糸が 全力で 相手を 縛りつける。 元になった 技で 威力が 変わる。"
   },
   savageSpinOutSpecial: {
     name: "ぜったいほしょくかいてんざん",
-    effect: "Dummy Data"
+    effect: "ダミーデータ"
   },
   neverEndingNightmarePhysical: {
     name: "むげんあんやへのいざない",
-    effect: "Deep-seated grudges summoned by the user's Z-Power trap the target. The power varies, depending on the original move."
+    effect: "Ｚパワーで 呼びよせた 強い 怨念が 全力で 相手に 降りかかる。 元になった 技で 威力が 変わる。"
   },
   neverEndingNightmareSpecial: {
     name: "むげんあんやへのいざない",
-    effect: "Dummy Data"
+    effect: "ダミーデータ"
   },
   corkscrewCrashPhysical: {
     name: "ちょうぜつらせんれんげき",
-    effect: "The user spins very fast and rams into the target with the full force of its Z-Power. The power varies, depending on the original move."
+    effect: "Ｚパワーで 高速回転を おこない 全力で 相手に ぶつかる。 元になった 技で 威力が 変わる。"
   },
   corkscrewCrashSpecial: {
     name: "ちょうぜつらせんれんげき",
-    effect: "Dummy Data"
+    effect: "ダミーデータ"
   },
   infernoOverdrivePhysical: {
     name: "ダイナミックフルフレイム",
-    effect: "The user breathes a stream of intense fire toward the target with the full force of its Z-Power. The power varies depending on the original move."
+    effect: "Ｚパワーで 燃えさかる 炎を 吐きだし 全力で 相手に ぶつける。 元になった 技で 威力が 変わる。"
   },
   infernoOverdriveSpecial: {
     name: "ダイナミックフルフレイム",
-    effect: "Dummy Data"
+    effect: "ダミーデータ"
   },
   hydroVortexPhysical: {
     name: "スーパーアクアトルネード",
-    effect: "The user creates a huge whirling current using its Z-Power to swallow the target with full force. The power varies, depending on the original move."
+    effect: "Ｚパワーで 大きな 渦潮を 作り 全力で 相手を 飲みこむ。 元になった 技で 威力が 変わる。"
   },
   hydroVortexSpecial: {
     name: "スーパーアクアトルネード",
-    effect: "Dummy Data"
+    effect: "ダミーデータ"
   },
   bloomDoomPhysical: {
     name: "ブルームシャインエクストラ",
-    effect: "The user collects energy from plants using its Z-Power and attacks the target with full force. The power varies, depending on the original move."
+    effect: "Ｚパワーで 草花の エネルギーを 借り 全力で 相手を 攻撃する。 元になった 技で 威力が 変わる。"
   },
   bloomDoomSpecial: {
     name: "ブルームシャインエクストラ",
-    effect: "Dummy Data"
+    effect: "ダミーデータ"
   },
   gigavoltHavocPhysical: {
     name: "スパーキングギガボルト",
-    effect: "The user hits the target with a powerful electric current collected by its Z-Power. The power varies, depending on the original move."
+    effect: "Ｚパワーで 溜めた 強い 電気を 全力で 相手に ぶつける。 元になった 技で 威力が 変わる。"
   },
   gigavoltHavocSpecial: {
     name: "スパーキングギガボルト",
-    effect: "Dummy Data"
+    effect: "ダミーデータ"
   },
   shatteredPsychePhysical: {
     name: "マキシマムサイブレイカー",
-    effect: "The user controls the target with its Z-Power and hurts the target with full force. The power varies, depending on the original move."
+    effect: "Ｚパワーで 相手を 操り 全力で 痛い 思いを させる。 元になった 技で 威力が 変わる。"
   },
   shatteredPsycheSpecial: {
     name: "マキシマムサイブレイカー",
-    effect: "Dummy Data"
+    effect: "ダミーデータ"
   },
   subzeroSlammerPhysical: {
     name: "レイジングジオフリーズ",
-    effect: "The user dramatically drops the temperature using its Z-Power and freezes the target with full force. The power varies, depending on the original move."
+    effect: "Ｚパワーで 気温を 急激に 下げ 全力で 相手を 凍らせる。 元になった 技で 威力が 変わる。"
   },
   subzeroSlammerSpecial: {
     name: "レイジングジオフリーズ",
-    effect: "Dummy Data"
+    effect: "ダミーデータ"
   },
   devastatingDrakePhysical: {
     name: "アルティメットドラゴンバーン",
-    effect: "The user materializes its aura using its Z-Power and attacks the target with full force. The power varies, depending on the original move."
+    effect: "Ｚパワーで オーラを 実体化し 全力で 相手に 襲いかかる。 元になった 技で 威力が 変わる。"
   },
   devastatingDrakeSpecial: {
     name: "アルティメットドラゴンバーン",
-    effect: "Dummy Data"
+    effect: "ダミーデータ"
   },
   blackHoleEclipsePhysical: {
     name: "ブラックホールイクリプス",
-    effect: "The user gathers dark energy using its Z-Power and sucks the target into it. The power varies, depending on the original move."
+    effect: "Ｚパワーで 悪の エネルギーを 集め 全力で 相手を 吸いよせる。 元になった 技で 威力が 変わる。"
   },
   blackHoleEclipseSpecial: {
     name: "ブラックホールイクリプス",
-    effect: "Dummy Data"
+    effect: "ダミーデータ"
   },
   twinkleTacklePhysical: {
     name: "ラブリースターインパクト",
-    effect: "The user creates a very charming space using its Z-Power and totally toys with the target. The power varies, depending on the original move."
+    effect: "Ｚパワーで 魅惑の 空間を 作り 全力で 相手を もてあそぶ。 元になった 技で 威力が 変わる。"
   },
   twinkleTackleSpecial: {
     name: "ラブリースターインパクト",
-    effect: "Dummy Data"
+    effect: "ダミーデータ"
   },
   catastropika: {
     name: "ひっさつのピカチュート",
-    effect: "The user, Pikachu, surrounds itself with the maximum amount of electricity using its Z-Power and pounces on its target with full force."
+    effect: "Ｚパワーで 最大 電力を 身に まとったピカチュウが 全力で 相手に 飛び掛る。"
   },
   shoreUp: {
     name: "すなあつめ",
-    effect: "The user regains up to half of its max HP. It restores more HP in a sandstorm."
+    effect: "最大ＨＰの 半分 自分の ＨＰを 回復する。 すなあらしの時は 多く 回復。"
   },
   firstImpression: {
     name: "であいがしら",
-    effect: "Although this move has great power, it only works the first turn each time the user enters battle."
+    effect: "威力が 高い 技 だが 戦闘に 出たら すぐに 出さないと 成功 しない。"
   },
   banefulBunker: {
     name: "トーチカ",
-    effect: "In addition to protecting the user from attacks, this move also poisons any attacker that makes direct contact."
+    effect: "相手の 攻撃を 防ぐと 同時に 触れた 相手に 毒を 与えてしまう。"
   },
   spiritShackle: {
     name: "かげぬい",
-    effect: "The user attacks while simultaneously stitching the target's shadow to the ground to prevent the target from escaping."
+    effect: "攻撃と 同時に 相手の 影を 縫い付けて 逃げられなくする。"
   },
   darkestLariat: {
     name: "ＤＤラリアット",
-    effect: "The user swings both arms and hits the target. The target's stat changes don't affect this attack's damage."
+    effect: "両腕を 回し 相手に 当てる。 相手の 能力変化に 関係なく ダメージを 与える。"
   },
   sparklingAria: {
     name: "うたかたのアリア",
-    effect: "The user bursts into song, emitting many bubbles. Any Pokémon suffering from a burn will be healed by the touch of these bubbles."
+    effect: "歌うことによって たくさんの バルーンを 放出する。 技を 受けると やけどが 治る。"
   },
   iceHammer: {
     name: "アイスハンマー",
-    effect: "The user swings and hits with its strong, heavy fist. It lowers the user's Speed, however."
+    effect: "強くて 重い こぶしを ふるって ダメージを 与える。 自分の 素早さが さがる。"
   },
   floralHealing: {
     name: "フラワーヒール",
-    effect: "The user restores the target's HP by up to half of its max HP. It restores more HP when the terrain is grass."
+    effect: "最大ＨＰの 半分 相手の ＨＰを 回復する。 グラスフィールドの時 効果が あがる。"
   },
   highHorsepower: {
     name: "１０まんばりき",
-    effect: "The user fiercely attacks the target using its entire body."
+    effect: "全身を 使って 相手に 猛アタックする。"
   },
   strengthSap: {
     name: "ちからをすいとる",
-    effect: "The user restores its HP by the same amount as the target's Attack stat. It also lowers the target's Attack stat."
+    effect: "相手の 攻撃力と 同じだけ 自分の ＨＰを 回復する。 そして 相手の 攻撃を さげる。"
   },
   solarBlade: {
     name: "ソーラーブレード",
-    effect: "In this two-turn attack, the user gathers light and fills a blade with the light's energy, attacking the target on the next turn."
+    effect: "１ターン目に 光を いっぱいに 集め ２ターン目に その 力を 剣に 込めて 攻撃する。"
   },
   leafage: {
     name: "このは",
-    effect: "The user attacks by pelting the target with leaves."
+    effect: "はっぱを 相手に 当てて 攻撃する。"
   },
   spotlight: {
     name: "スポットライト",
-    effect: "The user shines a spotlight on the target so that only the target will be attacked during the turn."
+    effect: "ポケモンに スポットライトを 当て そのターンに そのポケモンしか 狙えない ようにする。"
   },
   toxicThread: {
     name: "どくのいと",
-    effect: "The user shoots poisonous threads to poison the target and lower the target's Speed stat."
+    effect: "毒の 混じった 糸を 吹き付ける。 相手を 毒にして 素早さを さげる。"
   },
   laserFocus: {
     name: "とぎすます",
-    effect: "The user concentrates intensely. The attack on the next turn always results in a critical hit."
+    effect: "精神を 集中して 次の 攻撃を 必ず 急所に 当てる。"
   },
   gearUp: {
     name: "アシストギア",
-    effect: "The user engages its gears to raise the Attack and Sp. Atk stats of ally Pokémon with the Plus or Minus Ability."
+    effect: "ギアを 入れる ことによって 特性 プラスと マイナスの 攻撃と 特攻が あがる。"
   },
   throatChop: {
     name: "じごくづき",
-    effect: "The user attacks the target's throat, and the resultant suffering prevents the target from using moves that emit sound for two turns."
+    effect: "この 技を 受けた 相手は 地獄の 苦しみから ２ターンの間 音の 技を 出すことが できなくなる。"
   },
   pollenPuff: {
     name: "かふんだんご",
-    effect: "The user attacks the enemy with a pollen puff that explodes. If the target is an ally, it gives the ally a pollen puff that restores its HP instead."
+    effect: "敵には 爆発する だんごを 使って 攻撃。 味方には 回復する だんごを 与える。"
   },
   anchorShot: {
     name: "アンカーショット",
-    effect: "The user entangles the target with its anchor chain while attacking. The target becomes unable to flee."
+    effect: "アンカーを 相手に からませて 攻撃する。 相手は 逃げることが できなくなる。"
   },
   psychicTerrain: {
     name: "サイコフィールド",
-    effect: "This protects Pokémon on the ground from priority moves and powers up Psychic-type moves for five turns."
+    effect: "５ターンの間 地面にいると 先制技を 受けない。 エスパータイプの 威力が あがる。"
   },
   lunge: {
     name: "とびかかる",
-    effect: "The user makes a lunge at the target, attacking with full force. This also lowers the target's Attack stat."
+    effect: "全力で 相手に 飛びかかって 攻撃。 相手の 攻撃を さげる。"
   },
   fireLash: {
     name: "ほのおのムチ",
-    effect: "The user strikes the target with a burning lash. This also lowers the target's Defense stat."
+    effect: "焼けたムチで 相手を 打ちつける。 攻撃を 受けた 相手は 防御が さがる。"
   },
   powerTrip: {
     name: "つけあがる",
-    effect: "The user boasts its strength and attacks the target. The more the user's stats are raised, the greater the move's power."
+    effect: "自分の 強さを 鼻高々に 攻撃する。自分の 能力が あがって いるほど 威力が あがる。"
   },
   burnUp: {
     name: "もえつきる",
-    effect: "To inflict massive damage, the user burns itself out. After using this move, the user will no longer be Fire type."
+    effect: "全身の ほのおを すべて 燃やして 大ダメージを 与える。 自分の ほのおタイプが なくなる。"
   },
   speedSwap: {
     name: "スピードスワップ",
-    effect: "The user exchanges Speed stats with the target."
+    effect: "相手の 素早さと 自分の 素早さを 入れ替えてしまう。"
   },
   smartStrike: {
     name: "スマートホーン",
-    effect: "The user stabs the target with a sharp horn. This attack never misses."
+    effect: "とがった つので 相手を 突き刺して 攻撃する。 攻撃は 必ず 命中する。"
   },
   purify: {
     name: "じょうか",
-    effect: "The user heals the target's status condition. If the move succeeds, it also restores the user's own HP."
+    effect: "相手の 状態異常を 治す。 治すと 自分は ＨＰを 回復 することが できる。"
   },
   revelationDance: {
     name: "めざめるダンス",
-    effect: "The user attacks the target by dancing very hard. The user's type determines the type of this move."
+    effect: "全力で 踊って 攻撃する。 この 技の タイプは 自分の タイプと 同じになる。"
   },
   coreEnforcer: {
     name: "コアパニッシャー",
-    effect: "If the Pokémon the user has inflicted damage on have already used their moves, this move eliminates the effect of the target's Ability."
+    effect: "ダメージを 与えた 相手が すでに 行動を 終えていたら 相手の 特性を 消してしまう。"
   },
   tropKick: {
     name: "トロピカルキック",
-    effect: "The user lands an intense kick of tropical origins on the target. This also lowers the target's Attack stat."
+    effect: "南国 由来の 熱い キックを 相手に 浴びせる。 相手の 攻撃を さげる。"
   },
   instruct: {
     name: "さいはい",
-    effect: "The user instructs the target to use the target's last move again."
+    effect: "相手が 出した 技を 指示して もう一度 出させることが できる。"
   },
   beakBlast: {
     name: "くちばしキャノン",
-    effect: "The user first heats up its beak, and then it attacks the target. Making direct contact with the Pokémon while it's heating up its beak results in a burn."
+    effect: "最初に クチバシを 加熱してから 攻撃を くりだす。 加熱中に さわると やけどする。"
   },
   clangingScales: {
     name: "スケイルノイズ",
-    effect: "The user rubs the scales on its entire body and makes a huge noise to attack opposing Pokémon. The user's Defense stat goes down after the attack."
+    effect: "全身の うろこを こすり 大きな 音を 出して 攻撃する。 攻撃後 自分の 防御が さがる。"
   },
   dragonHammer: {
     name: "ドラゴンハンマー",
-    effect: "The user uses its body like a hammer to attack the target and inflict damage."
+    effect: "体を ハンマーのように 使って 相手に 襲いかかり ダメージを 与える。"
   },
   brutalSwing: {
     name: "ぶんまわす",
-    effect: "The user swings its body around violently to inflict damage on everything in its vicinity."
+    effect: "自分の 体を ぶんまわして 相手に ダメージを 与える。"
   },
   auroraVeil: {
     name: "オーロラベール",
@@ -2779,115 +2779,115 @@ export const move: MoveTranslationEntries = {
   },
   sinisterArrowRaid: {
     name: "シャドーアローズストライク",
-    effect: "The user, Decidueye, creates countless arrows using its Z-Power and shoots the target with full force."
+    effect: "Ｚパワーで 無数の 矢を 作りだした ジュナイパーが 全力で 相手を 射抜く 攻撃。"
   },
   maliciousMoonsault: {
     name: "ハイパーダーククラッシャー",
-    effect: "The user, Incineroar, strengthens its body using its Z-Power and crashes into the target with full force."
+    effect: "Ｚパワーで タフな 肉体を 得た ガオガエンが 全力で 相手に ぶつかって 攻撃する。"
   },
   oceanicOperetta: {
     name: "わだつみのシンフォニア",
-    effect: "The user, Primarina, summons a massive amount of  water using its Z-Power and attacks the target with  full force."
+    effect: "Ｚパワーで 大量の 水を 呼んだ アシレーヌが 全力で 相手を 攻撃する。"
   },
   guardianOfAlola: {
     name: "ガーディアン・デ・アローラ",
-    effect: "The user, the Land Spirit Pokémon, obtains Alola's energy using its Z-Power and attacks the target with full force. This reduces the target's HP greatly."
+    effect: "Ｚパワーで アローラの 力を 得た とちがみポケモン 全力の 攻撃。 相手の 残りＨＰを たくさん 減らす。"
   },
   soulStealing7StarStrike: {
     name: "しちせいだっこんたい",
-    effect: "After obtaining Z-Power, the user, Marshadow, punches and kicks the target consecutively with full force."
+    effect: "Ｚパワーを 得た マーシャドーが パンチと キックの 連続技を 全力で 相手に 叩き込む。"
   },
   stokedSparksurfer: {
     name: "ライトニングサーフライド",
-    effect: "After obtaining Z-Power, the user, Alolan Raichu, attacks the target with full force. This move leaves the target with paralysis."
+    effect: "Ｚパワーを 得た アローラ地方の ライチュウが 全力で 攻撃する。 相手を まひ 状態に する。"
   },
   pulverizingPancake: {
-    name: "ほんきをだす　こうげき",
-    effect: "Z-Power brings out the true capabilities of the user, Snorlax. The Pokémon moves its enormous body energetically and attacks the target with full force."
+    name: "ほんきをだす こうげき",
+    effect: "Ｚパワーで 本気を 出した カビゴンが 巨体を 躍動させて 全力で 相手に 襲いかかる。"
   },
   extremeEvoboost: {
     name: "ナインエボルブースト",
-    effect: "After obtaining Z-Power, the user, Eevee, gets energy from its evolved friends and boosts its stats sharply."
+    effect: "Ｚパワーを 得た イーブイが 進化した 仲間たちの 力を 借りて 能力を ぐーんと 上げる。"
   },
   genesisSupernova: {
     name: "オリジンズスーパーノヴァ",
-    effect: "After obtaining Z-Power, the user, Mew, attacks the target with full force. The terrain will be charged with psychic energy."
+    effect: "Ｚパワーを 得た ミュウが 全力で 相手を 攻撃する。 足元が サイコフィールドになる。"
   },
   shellTrap: {
     name: "トラップシェル",
-    effect: "The user sets a shell trap. If the user is hit by a physical move, the trap will explode and inflict damage on opposing Pokémon."
+    effect: "こうらの トラップを しかける。 相手が 物理技を 出すと 爆発して ダメージを 与える。"
   },
   fleurCannon: {
     name: "フルールカノン",
-    effect: "The user unleashes a strong beam. The attack's recoil harshly lowers the user's Sp. Atk stat."
+    effect: "強力な ビームを 放ったあと 自分の 特攻が がくっと さがる。"
   },
   psychicFangs: {
     name: "サイコファング",
-    effect: "The user bites the target with its psychic capabilities. This can also destroy Light Screen and Reflect."
+    effect: "サイコパワーで かみついて 相手を 攻撃する。 ひかりのかべや リフレクター なども 破壊できる。"
   },
   stompingTantrum: {
     name: "じだんだ",
-    effect: "Driven by frustration, the user attacks the target. If the user's previous move has failed, the power of this move doubles."
+    effect: "悔しさを バネにして 攻撃する。 前の ターンに 技を 外していると 威力が 倍に なる。"
   },
   shadowBone: {
     name: "シャドーボーン",
-    effect: "The user attacks by beating the target with a bone that contains a spirit. This may also lower the target's Defense stat."
+    effect: "魂の 宿った ホネで 相手を なぐりつけて 攻撃する。 相手の 防御を さげる ことがある。"
   },
   accelerock: {
     name: "アクセルロック",
-    effect: "The user smashes into the target at high speed. This move always goes first."
+    effect: "素早い スピードで 相手に ぶつかって 攻撃する。 必ず 先制攻撃 できる。"
   },
   liquidation: {
     name: "アクアブレイク",
-    effect: "The user slams into the target using a full-force blast of water. This may also lower the target's Defense stat."
+    effect: "水の 力で 相手に ぶつかって 攻撃する。 相手の 防御を さげる ことがある。"
   },
   prismaticLaser: {
     name: "プリズムレーザー",
-    effect: "The user shoots powerful lasers using the power of a prism. The user can't move on the next turn."
+    effect: "プリズムの 力で 強力な 光線を 発射する。 次の ターンは 動けなくなる。"
   },
   spectralThief: {
     name: "シャドースチール",
-    effect: "The user hides in the target's shadow, steals the target's stat boosts, and then attacks."
+    effect: "相手の 影に 潜り込み 相手の 能力アップを 奪って 攻撃する。"
   },
   sunsteelStrike: {
     name: "メテオドライブ",
-    effect: "The user slams into the target with the force of a meteor. This move can be used on the target regardless of its Abilities."
+    effect: "流星の ような 勢いで 突進する。 相手の 特性を 無視して 攻撃 することが できる。"
   },
   moongeistBeam: {
     name: "シャドーレイ",
-    effect: "The user emits a sinister ray to attack the target. This move can be used on the target regardless of its Abilities."
+    effect: "怪しい 光線を 放って 攻撃する。相手の 特性を 無視して 攻撃 することが できる。"
   },
   tearfulLook: {
     name: "なみだめ",
-    effect: "The user gets teary eyed to make the target lose its combative spirit. This lowers the target's Attack and Sp. Atk stats."
+    effect: "なみだめに なって 相手の 戦力を 喪失させる。 相手の 攻撃と 特攻が さがる。"
   },
   zingZap: {
     name: "びりびりちくちく",
-    effect: "A strong electric blast crashes down on the target, giving it an electric shock. This may also make the target flinch."
+    effect: "相手に ぶつかって 強力な 電気を浴びせ びりびりちくちく させる。 相手を ひるませる ことが ある。"
   },
   naturesMadness: {
     name: "しぜんのいかり",
-    effect: "The user hits the target with the force of nature. It halves the target's HP."
+    effect: "自然の 怒りを 相手に ぶつける。 相手の ＨＰは 半分に なる。"
   },
   multiAttack: {
     name: "マルチアタック",
-    effect: "Cloaking itself in high energy, the user slams into the target. The memory held determines the move's type."
+    effect: "高い エネルギーを まといつつ 相手に ぶつかって 攻撃する。 メモリに より タイプが 変わる。"
   },
   tenMillionVoltThunderbolt: {
     name: "１０００まんボルト",
-    effect: "The user, Pikachu wearing a cap, powers up a jolt of electricity using its Z-Power and unleashes it. Critical hits land more easily."
+    effect: "帽子を かぶった ピカチュウが Ｚパワーで パワーアップした 電撃を 放つ。 急所に 当たりやすい。"
   },
   mindBlown: {
     name: "ビックリヘッド",
-    effect: "The user attacks everything around it by causing its own head to explode. This also damages the user."
+    effect: "自分の 頭を 爆発 させて 周りの すべてを 攻撃する。 自分も ダメージを 受けてしまう。"
   },
   plasmaFists: {
     name: "プラズマフィスト",
-    effect: "The user attacks with electrically charged fists. This move changes Normal-type moves to Electric-type moves."
+    effect: "電気を まとった こぶしで 攻撃。 ノーマルタイプの 技を でんきタイプに してしまう。"
   },
   photonGeyser: {
     name: "フォトンゲイザー",
-    effect: "The user attacks a target with a pillar of light. This move inflicts Attack or Sp. Atk damage—whichever stat is higher for the user."
+    effect: "光の 柱で 攻撃する。 攻撃と 特攻を 比べて 高いほうで ダメージを 与える。"
   },
   lightThatBurnsTheSky: {
     name: "てんこがすめつぼうのひかり",
@@ -2895,83 +2895,83 @@ export const move: MoveTranslationEntries = {
   },
   searingSunrazeSmash: {
     name: "サンシャインスマッシャー",
-    effect: "After obtaining Z-Power, the user, Solgaleo, attacks the target with full force. This move can ignore the effect of the target's Ability."
+    effect: "Ｚパワーを 得た ソルガレオが 全力で 攻撃する。 相手の 特性の 効果を 無視できる。"
   },
   menacingMoonrazeMaelstrom: {
     name: "ムーンライトブラスター",
-    effect: "After obtaining Z-Power, the user, Lunala, attacks the target with full force. This move can ignore the effect of the target's Ability."
+    effect: "Ｚパワーを 得た ルナアーラが 全力で 攻撃する。 相手の 特性の 効果を 無視できる。"
   },
   letsSnuggleForever: {
     name: "ぽかぼかフレンドタイム",
-    effect: "After obtaining Z-Power, the user, Mimikyu, punches the target with full force."
+    effect: "Ｚパワーを 得た ミミッキュが 全力で ぽかぽか 攻撃。"
   },
   splinteredStormshards: {
     name: "ラジアルエッジストーム",
-    effect: "After obtaining Z-Power, the user, Lycanroc, attacks the target with full force. This move negates the effect on the battlefield."
+    effect: "Ｚパワーを 得た ルガルガンが 全力で 攻撃する。 追加で フィールド状態を 打ち消す。"
   },
   clangorousSoulblaze: {
     name: "ブレイジングソウルビート",
-    effect: "After obtaining Z-Power, the user, Kommo-o, attacks the opposing Pokémon with full force. This move boosts the user's stats."
+    effect: "Ｚパワーを 得た ジャラランガが 全力で 相手を 攻撃する。 追加で 自分の 能力が 上がる。"
   },
   zippyZap: {
     name: "ばちばちアクセル",
-    effect: "The user attacks the target with bursts of electricity at high speed. This move always goes first and results in a critical hit."
+    effect: "猛スピードの 電撃 アタック。 必ず 先制攻撃 できて 急所に あたる。"
   },
   splishySplash: {
     name: "ざぶざぶサーフ",
-    effect: "The user charges a huge wave with electricity and hits the opposing Pokémon with the wave. This may also leave the opposing Pokémon with paralysis."
+    effect: "大きな 波に 電気を あびせ 相手に ぶつけて 攻撃する。 まひ状態に することが ある。"
   },
   floatyFall: {
     name: "ふわふわフォール",
-    effect: "The user floats in the air, and then dives at a steep angle to attack the target. This may also make the target flinch."
+    effect: "ふんわりと 浮かび あがり 一気に 急降下して 攻撃。 相手を ひるませることが ある。"
   },
   pikaPapow: {
     name: "ピカピカサンダー",
-    effect: "The more Pikachu loves its Trainer, the greater the move's power. It never misses."
+    effect: "ピカチュウの トレーナーへの 大好きな 気持ちが 強いほど 威力が あがる 電撃。 必ず 命中する。"
   },
   bouncyBubble: {
     name: "いきいきバブル",
-    effect: "The user attacks by shooting water bubbles at the target. It then absorbs water and restores its HP by half the damage taken by the target."
+    effect: "水のかたまりを ぶつけて 攻撃。 水を 吸いとり ダメージの 半分の HPを 回復する。"
   },
   buzzyBuzz: {
     name: "びりびりエレキ",
-    effect: "The user shoots a jolt of electricity to attack the target. This also leaves the target with paralysis."
+    effect: "電気を 飛ばし 相手に あびせて 攻撃する。  相手を まひ状態に する。"
   },
   sizzlySlide: {
     name: "めらめらバーン",
-    effect: "The user cloaks itself in fire and charges at the target. This also leaves the target with a burn."
+    effect: "炎を まとった 体で 勢いよく 相手に ぶつかる。 相手を やけど状態に する。"
   },
   glitzyGlow: {
     name: "どばどばオーラ",
-    effect: "The user bombards the target with telekinetic force. A wondrous wall of light is put up to weaken the power of the opposing Pokémon's special moves."
+    effect: "念力を これでもかと あびせる。 相手の 特殊攻撃を 弱める 不思議な かべを つくりだす。"
   },
   baddyBad: {
     name: "わるわるゾーン",
-    effect: "The user acts bad and attacks the target. A wondrous wall of light is put up to weaken the power of the opposing Pokémon's physical moves."
+    effect: "わるさを アピールして 攻撃。 相手の 物理攻撃を 弱める 不思議な かべを つくりだす。"
   },
   sappySeed: {
     name: "すくすくボンバー",
-    effect: "The user grows a gigantic stalk that scatters seeds to attack the target. The seeds drain the target's HP every turn."
+    effect: "巨大な ツルを 生やし タネを 撒きちらかして 攻撃する。 タネは 毎ターン 相手の HPを 吸いとる。"
   },
   freezyFrost: {
     name: "こちこちフロスト",
-    effect: "The user attacks with a crystal made of cold frozen haze. It eliminates every stat change among all the Pokémon engaged in battle."
+    effect: "冷たく 凍った くろいきりの 結晶で 攻撃。 全員の 能力変化を もとに もどす。"
   },
   sparklySwirl: {
     name: "きらきらストーム",
-    effect: "The user attacks the target by wrapping it with a whirlwind of an overpowering scent. This also heals all status conditions of the user's party."
+    effect: "むせかえる ような 香りの 竜巻で 相手を つつんで 攻撃。 味方の 状態異常を 回復する。"
   },
   veeveeVolley: {
     name: "ブイブイブレイク",
-    effect: "The more Eevee loves its Trainer, the greater the move's power. It never misses."
+    effect: "イーブイの トレーナーへの 大好きな 気持ちが 強いほど 威力が あがる 体当たり。 必ず 命中する。"
   },
   doubleIronBash: {
     name: "ダブルパンツァー",
-    effect: "The user rotates, centering the hex nut in its chest, and then strikes with its arms twice in a row. This may also make the target flinch."
+    effect: "胸の ナットを 軸に 回転して ２回 続けて うでを たたきつける。 相手を ひるませる ことが ある。"
   },
   maxGuard: {
     name: "ダイウォール",
-    effect: "This move enables the user to protect itself from all attacks. Its chance of failing rises if it is used in succession."
+    effect: "相手の 攻撃を まったく 受けない。 連続で だすと 失敗しやすい。"
   },
   dynamaxCannon: {
     name: "ダイマックスほう",
@@ -2979,147 +2979,147 @@ export const move: MoveTranslationEntries = {
   },
   snipeShot: {
     name: "ねらいうち",
-    effect: "The user ignores the effects of opposing Pokémon's moves and Abilities that draw in moves, allowing this move to hit the chosen target."
+    effect: "相手の 技を 引き受ける 特性や 技の 影響を 無視して 選んだ 相手を 攻撃 できる。"
   },
   jawLock: {
     name: "くらいつく",
-    effect: "This move prevents the user and the target from switching out until either of them faints. The effect goes away if either of the Pokémon leaves the field."
+    effect: "お互い ひんしに なるまで 交代が できなくなる。 どちらかの ポケモンが いなくなると 効果は消える。"
   },
   stuffCheeks: {
     name: "ほおばる",
-    effect: "The user eats its held Berry, then sharply raises its Defense stat."
+    effect: "持っている きのみを 食べて 防御を ぐーんと あげる。"
   },
   noRetreat: {
     name: "はいすいのじん",
-    effect: "This move raises all the user's stats but prevents the user from switching out or fleeing."
+    effect: "自分の すべての 能力が 上がるが 交代 したり 逃げることが できなくなる。"
   },
   tarShot: {
     name: "タールショット",
-    effect: "The user pours sticky tar over the target, lowering the target's Speed stat. The target becomes weaker to Fire-type moves."
+    effect: "ねばねばの タールを 浴びせて 相手の 素早さを 下げる。 相手は ほのおが 弱点に なる。"
   },
   magicPowder: {
     name: "まほうのこな",
-    effect: "The user scatters a cloud of magic powder that changes the target to Psychic type."
+    effect: "まほうのこなを 浴びせて 相手を エスパータイプに 変化させる。"
   },
   dragonDarts: {
     name: "ドラゴンアロー",
-    effect: "The user attacks twice using Dreepy. If there are two targets, this move hits each target once."
+    effect: "ドラメシヤで ２回 攻撃。 相手が ２匹 いるときは それぞれに １回ずつ 攻撃する。"
   },
   teatime: {
     name: "おちゃかい",
-    effect: "The user has teatime with all the Pokémon in the battle. Each Pokémon eats its held Berry."
+    effect: "おちゃかいを ひらいて 場にいる ポケモンが それぞれ 持っている きのみを 食べる。"
   },
   octolock: {
     name: "たこがため",
-    effect: "The user locks the target in and prevents it from fleeing. This move also lowers the target's Defense and Sp. Def every turn."
+    effect: "相手を 逃げられなくする。 かためられた 相手は 毎ターン 防御と 特防が 下がる。"
   },
   boltBeak: {
     name: "でんげきくちばし",
-    effect: "The user stabs the target with its electrified beak. If the user attacks before the target, the power of this move is doubled."
+    effect: "電気を まとった くちばしで 刺す。 相手より 先に 攻撃できると 技の 威力は ２倍に なる。"
   },
   fishiousRend: {
     name: "エラがみ",
-    effect: "The user rends the target with its hard gills. If the user attacks before the target, the power of this move is doubled."
+    effect: "かたい エラで かみつく。 相手より 先に 攻撃できると 技の 威力は ２倍に なる。"
   },
   courtChange: {
     name: "コートチェンジ",
-    effect: "With its mysterious power, the user swaps the effects on either side of the field."
+    effect: "不思議な 力で お互いの 場の 効果を 入れ替える。"
   },
   maxFlare: {
     name: "ダイバーン",
-    effect: "This is a Fire-type attack Dynamax Pokémon use. The user intensifies the sun for five turns."
+    effect: "ダイマックスした ポケモンが 繰りだす ほのおタイプの 攻撃。 ５ターンの 間 日差しを 強くする。"
   },
   maxFlutterby: {
     name: "ダイワーム",
-    effect: "This is a Bug-type attack Dynamax Pokémon use. This lowers the target's Sp. Atk stat."
+    effect: "ダイマックスした ポケモンが 繰りだす むしタイプの 攻撃。 相手の 特攻を 下げる。"
   },
   maxLightning: {
     name: "ダイサンダー",
-    effect: "This is an Electric-type attack Dynamax Pokémon use. The user turns the ground into Electric Terrain for five turns."
+    effect: "ダイマックスした ポケモンが 繰りだす でんきタイプの 攻撃。 ５ターンの 間 エレキフィールドにする。"
   },
   maxStrike: {
     name: "ダイアタック",
-    effect: "This is a Normal-type attack Dynamax Pokémon use. This lowers the target's Speed stat."
+    effect: "ダイマックスした ポケモンが 繰りだす ノーマルタイプの 攻撃。 相手の 素早さを 下げる。"
   },
   maxKnuckle: {
     name: "ダイナックル",
-    effect: "This is a Fighting-type attack Dynamax Pokémon use. This raises ally Pokémon's Attack stats."
+    effect: "ダイマックスした ポケモンが 繰りだす かくとうタイプの 攻撃。 味方の 攻撃を 上げる。"
   },
   maxPhantasm: {
     name: "ダイホロウ",
-    effect: "This is a Ghost-type attack Dynamax Pokémon use. This lowers the target's Defense stat."
+    effect: "ダイマックスした ポケモンが 繰りだす ゴーストタイプの 攻撃。 相手の 防御を 下げる。"
   },
   maxHailstorm: {
     name: "ダイアイス",
-    effect: "This is an Ice-type attack Dynamax Pokémon use. The user summons a hailstorm lasting five turns."
+    effect: "ダイマックスした ポケモンが 繰りだす こおりタイプの 攻撃。 ５ターンの 間 あられを 降らす。"
   },
   maxOoze: {
     name: "ダイアシッド",
-    effect: "This is a Poison-type attack Dynamax Pokémon use. This raises ally Pokémon's Sp. Atk stats."
+    effect: "ダイマックスした ポケモンが 繰りだす どくタイプの 攻撃。 味方の 特攻を 上げる。"
   },
   maxGeyser: {
     name: "ダイストリーム",
-    effect: "This is a Water-type attack Dynamax Pokémon use. The user summons a heavy rain that falls for five turns."
+    effect: "ダイマックスした ポケモンが 繰りだす みずタイプの 攻撃。 ５ターンの 間 雨を 降らせる。"
   },
   maxAirstream: {
     name: "ダイジェット",
-    effect: "This is a Flying-type attack Dynamax Pokémon use. This raises ally Pokémon's Speed stats."
+    effect: "ダイマックスした ポケモンが 繰りだす ひこうタイプの 攻撃。 味方の 素早さを 上げる。"
   },
   maxStarfall: {
     name: "ダイフェアリー",
-    effect: "This is a Fairy-type attack Dynamax Pokémon use. The user turns the ground into Misty Terrain for five turns."
+    effect: "ダイマックスした ポケモンが 繰りだす フェアリータイプの 攻撃。 ５ターンの 間 ミストフィールドにする。"
   },
   maxWyrmwind: {
     name: "ダイドラグーン",
-    effect: "This is a Dragon-type attack Dynamax Pokémon use. This lowers the target's Attack stat."
+    effect: "ダイマックスした ポケモンが 繰りだす ドラゴンタイプの 攻撃。 相手の 攻撃を 下げる。"
   },
   maxMindstorm: {
     name: "ダイサイコ",
-    effect: "This is a Psychic-type attack Dynamax Pokémon use. The user turns the ground into Psychic Terrain for five turns."
+    effect: "ダイマックスした ポケモンが 繰りだす エスパータイプの 攻撃。 ５ターンの 間 サイコフィールドにする。"
   },
   maxRockfall: {
     name: "ダイロック",
-    effect: "This is a Rock-type attack Dynamax Pokémon use. The user summons a sandstorm lasting five turns."
+    effect: "ダイマックスした ポケモンが 繰りだす いわタイプの 攻撃。 ５ターンの 間 砂あらしにする。"
   },
   maxQuake: {
     name: "ダイアース",
-    effect: "This is a Ground-type attack Dynamax Pokémon use. This raises ally Pokémon's Sp. Def stats."
+    effect: "ダイマックスした ポケモンが 繰りだす じめんタイプの 攻撃。 味方の 特防を 上げる。"
   },
   maxDarkness: {
     name: "ダイアーク",
-    effect: "This is a Dark-type attack Dynamax Pokémon use. This lowers the target's Sp. Def stat."
+    effect: "ダイマックスした ポケモンが 繰りだす あくタイプの 攻撃。 相手の 特防を 下げる。"
   },
   maxOvergrowth: {
     name: "ダイソウゲン",
-    effect: "This is a Grass-type attack Dynamax Pokémon use. The user turns the ground into Grassy Terrain for five turns."
+    effect: "ダイマックスした ポケモンが 繰りだす くさタイプの 攻撃。 ５ターンの 間 グラスフィールドにする。"
   },
   maxSteelspike: {
     name: "ダイスチル",
-    effect: "This is a Steel-type attack Dynamax Pokémon use. This raises ally Pokémon's Defense stats."
+    effect: "ダイマックスした ポケモンが 繰りだす はがねタイプの 攻撃。 味方の 防御を 上げる。"
   },
   clangorousSoul: {
     name: "ソウルビート",
-    effect: "The user raises all its stats by using some of its HP."
+    effect: "自分の ＨＰを 少し 削って すべての 能力を 上げる。"
   },
   bodyPress: {
     name: "ボディプレス",
-    effect: "The user attacks by slamming its body into the target. The higher the user's Defense, the more damage it can inflict on the target."
+    effect: "体を ぶつけて 攻撃。 防御が 高いほど 与える ダメージが 増える。"
   },
   decorate: {
     name: "デコレーション",
-    effect: "The user sharply raises the target's Attack and Sp. Atk stats by decorating the target."
+    effect: "かざりつけを することで 相手の 攻撃と 特攻を ぐーんと 上げる。"
   },
   drumBeating: {
     name: "ドラムアタック",
-    effect: "The user plays its drum, controlling the drum's roots to attack the target. This also lowers the target's Speed stat."
+    effect: "ドラムの 根っこを ドラミングで コントロールして こうげき することで 相手の 素早さを 下げる。"
   },
   snapTrap: {
     name: "トラバサミ",
-    effect: "The user snares the target in a snap trap for four to five turns."
+    effect: "トラバサミで 捕らえて ４－５ターンの 間 相手を はさんで 攻撃する。"
   },
   pyroBall: {
     name: "かえんボール",
-    effect: "The user attacks by igniting a small stone and launching it as a fiery ball at the target. This may also leave the target with a burn."
+    effect: "小石を 燃やした 炎の ボールで 相手を 攻撃する。 やけど 状態に することが ある。"
   },
   behemothBlade: {
     name: "きょじゅうざん",
@@ -3131,179 +3131,179 @@ export const move: MoveTranslationEntries = {
   },
   auraWheel: {
     name: "オーラぐるま",
-    effect: "Morpeko attacks and raises its Speed with the energy stored in its cheeks. This move's type changes depending on the user's form."
+    effect: "ほほぶくろに 溜めた エネルギーで 攻撃し 自分の 素早さを あげる。 モルペコの 姿で タイプが 変わる。"
   },
   breakingSwipe: {
     name: "ワイドブレイカー",
-    effect: "The user swings its tough tail wildly and attacks opposing Pokémon. This also lowers their Attack stats."
+    effect: "きょうじんな しっぽを 激しく ふりはらって 相手を 攻撃する。 相手の 攻撃を 下げる。"
   },
   branchPoke: {
     name: "えだづき",
-    effect: "The user attacks the target by poking it with a sharply pointed branch."
+    effect: "するどく とがった 枝で 相手を 突いて 攻撃する。"
   },
   overdrive: {
     name: "オーバードライブ",
-    effect: "The user attacks opposing Pokémon by twanging a guitar or bass guitar, causing a huge echo and strong vibration."
+    effect: "ギターや ベースを かきならして 激しく 響く 大きな 振動を 相手に 与えて 攻撃する。"
   },
   appleAcid: {
     name: "りんごさん",
-    effect: "The user attacks the target with an acidic liquid created from tart apples. This also lowers the target's Sp. Def stat."
+    effect: "すっぱい りんごから つくりだした 酸性の 液体で 攻撃。 相手の 特防を 下げる。"
   },
   gravApple: {
     name: "Ｇのちから",
-    effect: "The user inflicts damage by dropping an apple from high above. This also lowers the target's Defense stat."
+    effect: "高いところから りんごを 落として ダメージを 与える。 相手の 防御を 下げる。"
   },
   spiritBreak: {
     name: "ソウルクラッシュ",
-    effect: "The user attacks the target with so much force that it could break the target's spirit. This also lowers the target's Sp. Atk stat."
+    effect: "食らうと くじけるほどの 勢いで 攻撃。 相手の 特攻を 下げる。"
   },
   strangeSteam: {
     name: "ワンダースチーム",
-    effect: "The user attacks the target by emitting steam. This may also confuse the target."
+    effect: "煙を 噴出して 相手を 攻撃。 混乱 させることが ある。"
   },
   lifeDew: {
     name: "いのちのしずく",
-    effect: "The user scatters mysterious water around and restores the HP of itself and its ally Pokémon in the battle."
+    effect: "不思議な 水を ふりまいて 自分と 場にいる 味方の ＨＰを 回復する。"
   },
   obstruct: {
     name: "ブロッキング",
-    effect: "This move enables the user to protect itself from all attacks. Its chance of failing rises if it is used in succession. Direct contact harshly lowers the attacker's Defense stat."
+    effect: "相手の 攻撃を まったく 受けない。 連続で だすと 失敗しやすい。 触れると 防御が がくっと 下がる。"
   },
   falseSurrender: {
     name: "どげざつき",
-    effect: "The user pretends to bow its head, but then it stabs the target with its disheveled hair. This attack never misses."
+    effect: "頭を 下げる ふりを しながら 振りみだした 髪の毛を 突き刺す。 攻撃は 必ず 命中する。"
   },
   meteorAssault: {
     name: "スターアサルト",
-    effect: "The user attacks wildly with its thick leek. The user can't move on the next turn, because the force of this move makes it stagger."
+    effect: "太い クキを ふりまわして 攻撃。 ただし 自分も よろめいてしまうため 次の ターンは 動けなくなる。"
   },
   eternabeam: {
     name: "ムゲンダイビーム",
-    effect: "This is Eternatus's most powerful attack in its original form. The user can't move on the next turn."
+    effect: "本来の 姿と なった ムゲンダイナ 最大の 攻撃。 次の ターンは 動けなくなる。"
   },
   steelBeam: {
     name: "てっていこうせん",
-    effect: "The user fires a beam of steel that it collected from its entire body. This also damages the user."
+    effect: "全身から 集めた はがねを ビームとして 激しく 撃ちだす。 自分も ダメージを 受けてしまう。"
   },
   expandingForce: {
     name: "ワイドフォース",
-    effect: "The user attacks the target with its psychic power. This move's power goes up and damages all opposing Pokémon on Psychic Terrain."
+    effect: "サイコパワーで 相手を 攻撃する。 サイコフィールドの時 威力が あがり すべての 相手に ダメージを 与える。"
   },
   steelRoller: {
     name: "アイアンローラー",
-    effect: "The user attacks while destroying the terrain. This move fails when the ground hasn't turned into a terrain."
+    effect: "フィールドを 破壊しながら 攻撃。 なんらかの フィールド状態に 変わっていないと 技は 失敗する。"
   },
   scaleShot: {
     name: "スケイルショット",
-    effect: "The user attacks by shooting scales two to five times in a row. This move boosts the user's Speed stat but lowers its Defense stat."
+    effect: "ウロコを 撃ちだして 攻撃する。 ２ー５回の 間 連続で だす。 素早さが あがるが 防御が さがる。"
   },
   meteorBeam: {
     name: "メテオビーム",
-    effect: "In this two-turn attack, the user gathers space power and boosts its Sp. Atk stat, then attacks the target on the next turn."
+    effect: "１ターン目に 宇宙の 力を 集めることで 特攻が あがり ２ターン目に 相手を 攻撃する。"
   },
   shellSideArm: {
     name: "シェルアームズ",
-    effect: "This move inflicts physical or special damage, whichever will be more effective. This may also poison the target."
+    effect: "物理か 特殊か より多く ダメージを 与えられる 能力で 攻撃する。 毒状態に することが ある。"
   },
   mistyExplosion: {
     name: "ミストバースト",
-    effect: "The user attacks everything around it and faints upon using this move. This move's power is increased on Misty Terrain."
+    effect: "自分の 周りに いる すべてを 攻撃するが 使うと 瀕死になる。 ミストフィールドで 威力が あがる。"
   },
   grassyGlide: {
     name: "グラススライダー",
-    effect: "Gliding on the ground, the user attacks the target. This move always goes first on Grassy Terrain."
+    effect: "地面を 滑るように 相手を 攻撃。 グラスフィールドの時 必ず 先制攻撃 できる。"
   },
   risingVoltage: {
     name: "ライジングボルト",
-    effect: "The user attacks with electric voltage rising from the ground. This move's power doubles when the target is on Electric Terrain."
+    effect: "地面から 立ちのぼる 電撃で 攻撃。 相手が エレキフィールドに いる時 技の 威力が ２倍に なる。"
   },
   terrainPulse: {
     name: "だいちのはどう",
-    effect: "The user utilizes the power of the terrain to attack. This move's type and power changes depending on the terrain when it's used."
+    effect: "フィールドの力を 借りて 攻撃。 使った時の フィールドの状態に よって 技の タイプと 威力が 変わる。"
   },
   skitterSmack: {
     name: "はいよるいちげき",
-    effect: "The user skitters behind the target to attack. This also lowers the target's Sp. Atk stat."
+    effect: "背後から はいより 攻撃する。 相手の 特攻を さげる。"
   },
   burningJealousy: {
     name: "しっとのほのお",
-    effect: "The user attacks with energy from jealousy. This leaves all opposing Pokémon that have had their stats boosted during the turn with a burn."
+    effect: "しっとの エネルギーで 相手を 攻撃。 そのターン 能力が あがった ポケモンを やけどの 状態に する。"
   },
   lashOut: {
     name: "うっぷんばらし",
-    effect: "The user lashes out to vent its frustration toward the target. If the user's stats were lowered during this turn, the power of this move is doubled."
+    effect: "相手への いらだちを ぶつけて 攻撃。 そのターンに 能力を さげられていると 技の 威力が ２倍に なる。"
   },
   poltergeist: {
     name: "ポルターガイスト",
-    effect: "The user attacks the target by controlling the target's item. The move fails if the target doesn't have an item."
+    effect: "相手の 持ち物を あやつって 攻撃。 相手が 道具を 持っていない 場合は 失敗する。"
   },
   corrosiveGas: {
     name: "ふしょくガス",
-    effect: "The user surrounds everything around it with highly acidic gas and melts away items they hold."
+    effect: "強い 酸性の ガスで 周りに いるものを 包みこみ 持っている 道具を 溶かしてしまう。"
   },
   coaching: {
     name: "コーチング",
-    effect: "The user properly coaches its ally Pokémon, boosting their Attack and Defense stats."
+    effect: "的確な 指導を おこなうことで  味方 全員の 攻撃と 防御を 上げる。"
   },
   flipTurn: {
     name: "クイックターン",
-    effect: "After making its attack, the user rushes back to switch places with a party Pokémon in waiting."
+    effect: "攻撃したあと ものすごい スピードで もどってきて 控えの ポケモンと 入れ替わる。"
   },
   tripleAxel: {
     name: "トリプルアクセル",
-    effect: "A consecutive three-kick attack that becomes more powerful with each successful hit."
+    effect: "３回連続で キックを くりだして 攻撃する。 技が 当たるたびに 威力は あがる。"
   },
   dualWingbeat: {
     name: "ダブルウイング",
-    effect: "The user slams the target with its wings. The target is hit twice in a row."
+    effect: "翼を 相手に ぶつけて 攻撃する。 ２回連続で ダメージを 与える。"
   },
   scorchingSands: {
     name: "ねっさのだいち",
-    effect: "The user throws scorching sand at the target to attack. This may also leave the target with a burn."
+    effect: "熱く 焼けた 砂を 相手に ぶつけて 攻撃する。 やけど状態に することが ある。"
   },
   jungleHealing: {
     name: "ジャングルヒール",
-    effect: "The user becomes one with the jungle, restoring HP and healing any status conditions of itself and its ally Pokémon in battle."
+    effect: "ジャングルと 一体化して 自分と 場にいる 味方の ＨＰと 状態を 回復する。"
   },
   wickedBlow: {
     name: "あんこくきょうだ",
-    effect: "The user, having mastered the Dark style, strikes the target with a fierce blow. This attack always results in a critical hit."
+    effect: "あくの型を 極めし 強烈な 一撃。 必ず 急所に 当たる。"
   },
   surgingStrikes: {
     name: "すいりゅうれんだ",
-    effect: "The user, having mastered the Water style, strikes the target with a flowing motion three times in a row. This attack always results in a critical hit."
+    effect: "みずの型を 極めし 流れるような ３回の 連撃。 必ず 急所に 当たる。"
   },
   thunderCage: {
     name: "サンダープリズン",
-    effect: "The user traps the target in a cage of sparking electricity for four to five turns."
+    effect: "ほとばしる 電気の おりの 中に ４ー５ターンの 間 相手を 閉じこめて 攻撃する。"
   },
   dragonEnergy: {
     name: "ドラゴンエナジー",
-    effect: "Converting its life-force into power, the user attacks opposing Pokémon. The lower the user's HP, the lower the move's power."
+    effect: "生命力を パワーに 変え 相手を 攻撃する。 自分の ＨＰが 少ないほど 技の 威力は さがる。"
   },
   freezingGlare: {
     name: "いてつくしせん",
-    effect: "The user shoots its psychic power from its eyes to attack. This may also leave the target frozen."
+    effect: "両目から サイコパワーを 撃ちだして 攻撃する。 こおり状態に することが ある。"
   },
   fieryWrath: {
     name: "もえあがるいかり",
-    effect: "The user transforms its wrath into a fire-like aura to attack. This may also make opposing Pokémon flinch."
+    effect: "怒りを 炎の ような オーラに 変えて 攻撃する。 相手を ひるませることが ある。"
   },
   thunderousKick: {
     name: "らいめいげり",
-    effect: "The user overwhelms the target with lightning-like movement before delivering a kick. This also lowers the target's Defense stat."
+    effect: "雷の ような 動きで 相手を 翻弄しながら キックする。 相手の 防御を さげる。"
   },
   glacialLance: {
     name: "ブリザードランス",
-    effect: "The user attacks by hurling a blizzard-cloaked icicle lance at opposing Pokémon."
+    effect: "吹雪を まとった 氷の 槍を 相手に 投げつけて 攻撃する。"
   },
   astralBarrage: {
     name: "アストラルビット",
-    effect: "The user attacks by sending a frightful amount of small ghosts at opposing Pokémon."
+    effect: "たくさんの 小さな 霊体を 相手に ぶつけて 攻撃する。"
   },
   eerieSpell: {
     name: "ぶきみなじゅもん",
-    effect: "The user attacks with its tremendous psychic power. This also removes 3 PP from the target's last move."
+    effect: "強力な サイコパワーで 攻撃。 相手が 最後に 使った技の ＰＰを ３だけ 減らす。"
   },
   direClaw: {
     name: "フェイタルクロー",
@@ -3707,7 +3707,7 @@ export const move: MoveTranslationEntries = {
   },
   comeuppance: {
     name: "ほうふく",
-    effect: "The user retaliates with much greater force against the opponent that last inflicted damage on it."
+    effect: "技を だす前に 最後に 受けた 技の ダメージを 大きくして だした 相手に 返す。"
   },
   aquaCutter: {
     name: "アクアカッター",
@@ -3808,5 +3808,5 @@ export const move: MoveTranslationEntries = {
   malignantChain: {
     name: "じゃどくのくさり",
     effect: "The user pours toxins into the target by wrapping them in a toxic, corrosive chain. This may also leave the target badly poisoned."
-  }
+  },
 } as const;
