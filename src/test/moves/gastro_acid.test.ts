@@ -9,6 +9,7 @@ import { BattlerIndex } from "#app/battle.js";
 import { getMovePosition } from "../utils/gameManagerUtils";
 import { MoveResult } from "#app/field/pokemon.js";
 import { Stat } from "#app/data/pokemon-stat.js";
+import { Species } from "#app/enums/species.js";
 
 const TIMEOUT = 20 * 1000;
 
@@ -71,6 +72,7 @@ describe("Moves - Gastro Acid", () => {
 
   it("fails if used on an enemy with an already-suppressed ability", async () => {
     vi.spyOn(overrides, "DOUBLE_BATTLE_OVERRIDE", "get").mockReturnValue(false);
+    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.BIDOOF);
 
     await game.startBattle();
 
