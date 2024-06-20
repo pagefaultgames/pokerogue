@@ -2231,7 +2231,7 @@ export function initSpecies() {
     new PokemonSpecies(Species.DOTTLER, 8, false, false, false, "Radome Pokémon", Type.BUG, Type.PSYCHIC, 0.4, 19.5, Abilities.SWARM, Abilities.COMPOUND_EYES, Abilities.TELEPATHY, 335, 50, 35, 80, 50, 90, 30, 120, 50, 117, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.ORBEETLE, 8, false, false, false, "Seven Spot Pokémon", Type.BUG, Type.PSYCHIC, 0.4, 40.8, Abilities.SWARM, Abilities.FRISK, Abilities.TELEPATHY, 505, 60, 45, 110, 80, 120, 90, 45, 50, 253, GrowthRate.MEDIUM_FAST, 50, false, true,
       new PokemonForm("Normal", "", Type.BUG, Type.PSYCHIC, 0.4, 40.8, Abilities.SWARM, Abilities.FRISK, Abilities.TELEPATHY, 505, 60, 45, 110, 80, 120, 90, 45, 50, 253, false, null, true),
-      new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX, Type.BUG, Type.PSYCHIC, 14, 40.8, Abilities.OVERCOAT, Abilities.OVERCOAT, Abilities.OVERCOAT, 605, 90, 35, 135, 120, 145, 80, 45, 50, 253),
+      new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX, Type.BUG, Type.PSYCHIC, 14, 40.8, Abilities.TRACE, Abilities.TRACE, Abilities.TRACE, 605, 90, 35, 135, 120, 145, 80, 45, 50, 253),
     ),
     new PokemonSpecies(Species.NICKIT, 8, false, false, false, "Fox Pokémon", Type.DARK, null, 0.6, 8.9, Abilities.RUN_AWAY, Abilities.UNBURDEN, Abilities.STAKEOUT, 245, 40, 28, 28, 47, 52, 50, 255, 50, 49, GrowthRate.FAST, 50, false),
     new PokemonSpecies(Species.THIEVUL, 8, false, false, false, "Fox Pokémon", Type.DARK, null, 1.2, 19.9, Abilities.RUN_AWAY, Abilities.UNBURDEN, Abilities.STAKEOUT, 455, 70, 58, 58, 87, 92, 90, 127, 50, 159, GrowthRate.FAST, 50, false),
