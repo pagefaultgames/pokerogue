@@ -1141,25 +1141,24 @@ export class GameData {
         if ( Object.keys(cachedRHData).length >= Object.keys(data).length ) {
           return cachedRHData;
         }
-      }
-      else {
+      } else {
         localStorage.setItem(`runHistoryData_${loggedInUser.username}`, JSON.parse(encrypt({}, true)));
         return {};
       }
       return data;
-  } else {
+    } else {
       let cachedResponse = localStorage.getItem(`runHistoryData_${loggedInUser.username}`, true);
       if (cachedResponse) {
         cachedResponse = JSON.parse(decrypt(cachedResponse, true));
       }
       const cachedRHData = cachedResponse ?? {};
       return cachedRHData;
+    }
   }
-}
 
   async saveRunHistory(scene: BattleScene, runEntry : SessionSaveData, victory: boolean): Promise<boolean> {
 
-    var runHistoryData = await this.getRunHistoryData(scene);
+    let runHistoryData = await this.getRunHistoryData(scene);
     if (!runHistoryData) {
       runHistoryData = {};
     }
