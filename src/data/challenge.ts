@@ -49,7 +49,8 @@ export enum ChallengeType {
   FIXED_BATTLES,
   NO_HEAL_PHASE,
   SHOP_ITEM_BLACKLIST,
-  RANDOM_ITEM_BLACKLIST
+  RANDOM_ITEM_BLACKLIST,
+  ADD_POKEMON_TO_PARTY
 }
 
 /**
@@ -65,6 +66,8 @@ export abstract class Challenge {
 
   public conditions: ChallengeCondition[];
   public challengeTypes: ChallengeType[];
+
+  public additionalData: {[x: string]: any};
 
   /**
    * @param {Challenges} id The enum value for the challenge
@@ -579,14 +582,29 @@ export class LowerStarterPointsChallenge extends Challenge {
 }
 
 /**
- * Lowers the maximum cost of starters available.
+ * No Heal Phase
+ * No revive items
+ * Catch only one pokemon each biome or just the first one?
+ * additional rules?
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
  */
 export class NuzlockeChallenge extends Challenge {
+  //lastCatchAtWave: number = -10;
   constructor() {
     super(Challenges.NUZLOCKE, 1);
     this.addChallengeType(ChallengeType.NO_HEAL_PHASE);
     this.addChallengeType(ChallengeType.RANDOM_ITEM_BLACKLIST);
     this.addChallengeType(ChallengeType.SHOP_ITEM_BLACKLIST);
+    this.addChallengeType(ChallengeType.ADD_POKEMON_TO_PARTY);
   }
 
   apply(challengeType: ChallengeType, args: any[]): boolean {
@@ -604,21 +622,24 @@ export class NuzlockeChallenge extends Challenge {
       const isShopItemValid = args[1] as Utils.BooleanHolder;
       const shopItemBlackList = ["modifierType:ModifierType.REVIVE", "modifierType:ModifierType.MAX_REVIVE", "modifierType:ModifierType.SACRED_ASH", "modifierType:ModifierType.REVIVER_SEED"];
 
-      if (shopItemBlackList.includes(shopItem.type.localeKey)) {
-        isShopItemValid.value = false;
-      } else {
-        isShopItemValid.value = true;
-      }
+      isShopItemValid.value = !shopItemBlackList.includes(shopItem.type.localeKey);
       return true;
     case ChallengeType.RANDOM_ITEM_BLACKLIST:
       const randomItem: ModifierTypeOption = args[0];
       const isRandomItemValid = args[1] as Utils.BooleanHolder;
       const randomItemBlackList = ["modifierType:ModifierType.REVIVE", "modifierType:ModifierType.MAX_REVIVE", "modifierType:ModifierType.SACRED_ASH", "modifierType:ModifierType.REVIVER_SEED"];
 
-      if (randomItemBlackList.includes(randomItem.type.localeKey)) {
-        isRandomItemValid.value = false;
+      isRandomItemValid.value = !randomItemBlackList.includes(randomItem.type.localeKey);
+      return true;
+    case ChallengeType.ADD_POKEMON_TO_PARTY:
+      const currentWave: number = args[0];
+      const canAddToParty = args[1] as Utils.BooleanHolder;
+
+      if (Math.floor((this.additionalData.lastCatchAtWave - 1) / 10) < Math.floor((currentWave - 1) / 10)) {
+        canAddToParty.value = true;
+        this.additionalData.lastCatchAtWave = currentWave;
       } else {
-        isRandomItemValid.value = true;
+        canAddToParty.value = false;
       }
       return true;
     }
@@ -629,6 +650,7 @@ export class NuzlockeChallenge extends Challenge {
     const newChallenge = new NuzlockeChallenge();
     newChallenge.value = source.value;
     newChallenge.severity = source.severity;
+    newChallenge.additionalData = source.additionalData ?? { lastCatchAtWave: -10 };
     return newChallenge;
   }
 }

@@ -4946,6 +4946,13 @@ export class AttemptCapturePhase extends PokemonPhase {
         });
       };
       Promise.all([pokemon.hideInfo(), this.scene.gameData.setPokemonCaught(pokemon)]).then(() => {
+        const challengeCanAddToParty = new Utils.BooleanHolder(true);
+        applyChallenges(this.scene.gameMode, ChallengeType.ADD_POKEMON_TO_PARTY, this.scene.currentBattle.waveIndex, challengeCanAddToParty);
+        if (!challengeCanAddToParty.value) {
+          removePokemon();
+          end();
+          return;
+        }
         if (this.scene.getParty().length === 6) {
           const promptRelease = () => {
             this.scene.ui.showText(i18next.t("battle:partyFull", { pokemonName: pokemon.name }), null, () => {
@@ -5354,7 +5361,6 @@ export class PartyHealPhase extends BattlePhase {
 
     const isHealPhaseActive = new Utils.BooleanHolder(true);
     applyChallenges(this.scene.gameMode, ChallengeType.NO_HEAL_PHASE, isHealPhaseActive);
-    console.log("HEAL PHASE CHALLENGE???", isHealPhaseActive.value);
     if (!isHealPhaseActive.value) {
       this.end();
       return;
