@@ -53,7 +53,7 @@ export const battle: SimpleTranslationEntries = {
   "escapeVerbSwitch": "cambiar",
   "escapeVerbFlee": "huir",
   "notDisabled": "¡El movimiento {{moveName}} de {{pokemonName}}\nya no está anulado!",
-  "hpRestored": "{{pokemonName}}'s HP was restored.",
+  "turnEndHpRestore": "{{pokemonName}}'s HP was restored.",
   "hpIsFull": "{{pokemonName}}'s\nHP is full!",
   "skipItemQuestion": "¿Estás seguro de que no quieres coger un objeto?",
   "eggHatching": "¿Y esto?",
