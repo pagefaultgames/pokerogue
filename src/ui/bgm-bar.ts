@@ -39,7 +39,6 @@ export default class BgmBar extends Phaser.GameObjects.Container {
   }
 
   showBgm(bgmName: string): void {
-    this.musicText.setText(`♫ : ${(this.scene as BattleScene).getRealBgmName(bgmName)}`);
     console.log("showBgm", bgmName);
     if (this.shown) {
       this.queue.push(bgmName);
@@ -47,6 +46,7 @@ export default class BgmBar extends Phaser.GameObjects.Container {
     }
     (this.scene as BattleScene).fieldUI.bringToTop(this);
 
+    this.musicText.setText(`♫ : ${(this.scene as BattleScene).getRealBgmName(bgmName)}`);
 
 
     let offset = -25;
