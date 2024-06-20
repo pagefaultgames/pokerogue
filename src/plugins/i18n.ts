@@ -12,11 +12,44 @@ import { ptBrConfig } from "#app/locales/pt_BR/config.js";
 import { zhCnConfig } from "#app/locales/zh_CN/config.js";
 import { zhTwConfig } from "#app/locales/zh_TW/config.js";
 
+const unicodeHalfAndFullWidthForms = [
+  "U+FF00-FFEF"
+];
+
+const unicodeCJK = [
+  "U+2E80-2EFF",
+  "U+3000-303F",
+  "U+31C0-31EF",
+  "U+3200-32FF",
+  "U+3400-4DBF",
+  "U+4E00-9FFF",
+  "U+F900-FAFF",
+  "U+FE30-FE4F",
+].join(",");
+
+const unicodeHangul = [
+  "U+1100-11FF",
+  "U+3130-318F",
+  "U+A960-A97F",
+  "U+AC00-D7AF",
+  "U+D7B0-D7FF",
+].join(",");
+
 const fonts = [
-  new FontFace("emerald", "url(./fonts/PokePT_Wansung.ttf)", { unicodeRange: "U+AC00-D7AC"}),
+  // korean
+  new FontFace("emerald", "url(./fonts/PokePT_Wansung.ttf)", { unicodeRange: unicodeHangul}),
   Object.assign(
-    new FontFace("pkmnems", "url(./fonts/PokePT_Wansung.ttf)", { unicodeRange: "U+AC00-D7AC"}),
+    new FontFace("pkmnems", "url(./fonts/PokePT_Wansung.ttf)", { unicodeRange: unicodeHangul}),
     { sizeAdjust: "133%" }
+  ),
+  // unicode
+  Object.assign(
+    new FontFace("emerald", "url(./fonts/unifont-15.1.05.otf)", { unicodeRange: [unicodeCJK, unicodeHalfAndFullWidthForms].join(",") }),
+    { sizeAdjust: "70%", format: "opentype" }
+  ),
+  Object.assign(
+    new FontFace("pkmnems", "url(./fonts/unifont-15.1.05.otf)", { unicodeRange: [unicodeCJK, unicodeHalfAndFullWidthForms].join(",") }),
+    { sizeAdjust: "70%", format: "opentype" }
   ),
 ];
 
