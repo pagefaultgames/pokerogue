@@ -59,7 +59,7 @@ export const battle: SimpleTranslationEntries = {
   "wildPokemonWithAffix": "{{pokemonName}} sauvage",
   "foePokemonWithAffix": "{{pokemonName}} ennemi",
   "useMove": "{{pokemonNameWithAffix}} utilise\n{{moveName}} !",
-  "stealEatBerry": "{{pokemonName}} stole and ate\n{{targetName}}'s {{berryName}}!",
+  "stealEatBerry": "{{pokemonName}} vole et mange\nla {{berryName}} de {{targetName}} !",
   "drainMessage": "L’énergie de {{pokemonName}}\nest drainée !",
   "regainHealth": "{{pokemonName}} récupère\ndes PV !",
   "fainted": "{{pokemonNameWithAffix}}\nest K.O. !",
