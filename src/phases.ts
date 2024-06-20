@@ -51,7 +51,7 @@ import { GameMode, GameModes, getGameMode } from "./game-mode";
 import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "./data/pokemon-species";
 import i18next from "./plugins/i18n";
 import * as Overrides from "./overrides";
-import { TextStyle, addTextObject } from "./ui/text";
+import { TextStyle, addTextObject, getTextColor } from "./ui/text";
 import { Type } from "./data/type";
 import { BerryUsedEvent, EncounterPhaseEvent, MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./events/battle-scene";
 import { Abilities } from "#enums/abilities";
@@ -5406,6 +5406,28 @@ export class ScanIvsPhase extends PokemonPhase {
     }
 
     const pokemon = this.getPokemon();
+
+    let enemyIvs = [];
+    let statsContainer = [];
+    let statsContainerLabels = [];
+    const enemyField = this.scene.getEnemyField();
+    const uiTheme = (this.scene as BattleScene).uiTheme; // Assuming uiTheme is accessible
+    for (let e = 0; e < enemyField.length; e++) {
+      enemyIvs = enemyField[e].ivs;
+      const currentIvs = this.scene.gameData.dexData[pokemon.species.speciesId].ivs;
+      const ivsToShow = this.scene.ui.getMessageHandler().topIvs(enemyIvs, this.shownIvs);
+      statsContainer = enemyField[e].getBattleInfo().statsContainer.list[1].list; // need to find a better way to find the "Container" used here instead of [1]
+      statsContainerLabels = statsContainer.filter(m => m.name.indexOf("icon_stat_label") >= 0);
+      for (let s = 0; s < statsContainerLabels.length; s++) {
+        const ivStat = Stat[statsContainerLabels[s].frame.name];
+        if (enemyIvs[ivStat] > currentIvs[ivStat] && ivsToShow.indexOf(ivStat) >= 0) {
+          const hexColour = enemyIvs[ivStat] === 31 ? getTextColor(TextStyle.SUMMARY_GOLD, false, uiTheme) : getTextColor(TextStyle.SUMMARY_GREEN, false, uiTheme);
+          const hexTextColour = Phaser.Display.Color.HexStringToColor(hexColour).color;
+          statsContainerLabels[s].setTint(hexTextColour);
+        }
+      }
+    }
+
 
     this.scene.ui.showText(i18next.t("battle:ivScannerUseQuestion", { pokemonName: pokemon.name }), null, () => {
       this.scene.ui.setMode(Mode.CONFIRM, () => {
