@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/interfaces/locales";
+import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const tutorial: SimpleTranslationEntries = {
   "intro": `ยินดีต้อนรับสู่ PokéRogue! เกมแฟนโฟกัสที่เน้นการต่อสู้โปเกมอนพร้อมคุณลักษณะของเกมแนวโรแกไลท์

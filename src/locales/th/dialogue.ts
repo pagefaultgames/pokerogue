@@ -1,4 +1,4 @@
-import { DialogueTranslationEntries, SimpleTranslationEntries } from "#app/interfaces/locales";
+import { DialogueTranslationEntries, SimpleTranslationEntries } from "#app/plugins/i18n";
 
 // Dialogue of the NPCs in the game when the player character is male (or unset)
 export const PGMdialogue: DialogueTranslationEntries = {
