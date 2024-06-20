@@ -44,9 +44,6 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
 
     (this.scene as BattleScene).fieldUI.bringToTop(this);
 
-    if (this.tween) {
-      this.tween.stop();
-    }
 
     this.y = baseY + ((this.scene as BattleScene).currentBattle.double ? 14 : 0);
     this.tween = this.scene.tweens.add({
@@ -59,6 +56,7 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
         this.resetAutoHideTimer();
       }
     });
+    console.log("Ability Bar: Position and Size", this.x, this.y, this.width, this.height);
 
     this.setVisible(true);
     this.shown = true;

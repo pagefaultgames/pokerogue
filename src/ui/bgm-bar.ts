@@ -15,7 +15,7 @@ export default class BgmBar extends Phaser.GameObjects.Container {
 
   public shown: boolean;
 
-  constructor(scene: BattleScene) {
+  constructor(scene: Scene) {
     super(scene, hiddenX, baseY);
   }
 
@@ -35,20 +35,21 @@ export default class BgmBar extends Phaser.GameObjects.Container {
   }
 
   showBgm(bgmName: string): void {
+    this.musicText.setText(bgmName);
     console.log("showBgm", bgmName);
     if (this.shown) {
       return;
     }
-
-
-    this.bg.setTexture("achv_bar");
-    this.musicText.setText(bgmName);
-
     (this.scene as BattleScene).fieldUI.bringToTop(this);
+
+    // Remove this onces it actually works. This is just for testing and hearing that the method is called
+    (this.scene as BattleScene).playSound("achv");
+
     let offset = 0;
     if ((this.scene as BattleScene)?.currentBattle?.double) {
       offset = 14;
     }
+    console.log("Offset is", offset);
     this.y = baseY + offset;
     this.tween = this.scene.tweens.add({
       targets: this,
@@ -61,7 +62,11 @@ export default class BgmBar extends Phaser.GameObjects.Container {
       }
     });
 
+    console.log(this.visible);
     this.setVisible(true);
+    console.log(this.visible);
+
+    console.log("BgmBar: Position and Size", this.x, this.y, this.width, this.height);
     this.shown = true;
   }
 
