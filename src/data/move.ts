@@ -5290,7 +5290,16 @@ export class SwitchAbilitiesAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * Attribute used for moves that suppress abilities like {@linkcode Moves.GASTRO_ACID}.
+ * A suppressed ability cannot be activated.
+ *
+ * @extends MoveEffectAttr
+ * @see {@linkcode apply}
+ * @see {@linkcode getCondition}
+ */
 export class SuppressAbilitiesAttr extends MoveEffectAttr {
+  /** Sets ability suppression for the target pokemon and displays a message. */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
       return false;
@@ -5303,6 +5312,7 @@ export class SuppressAbilitiesAttr extends MoveEffectAttr {
     return true;
   }
 
+  /** Causes the effect to fail when the target's ability is unsupressable or already suppressed. */
   getCondition(): MoveConditionFunc {
     return (user, target, move) => !target.getAbility().hasAttr(UnsuppressableAbilityAbAttr) && !target.summonData.abilitySuppressed;
   }
