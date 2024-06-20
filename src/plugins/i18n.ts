@@ -49,7 +49,7 @@ const fonts = [
   ),
   Object.assign(
     new FontFace("pkmnems", "url(./fonts/unifont-15.1.05.otf)", { unicodeRange: [unicodeCJK, unicodeHalfAndFullWidthForms].join(",") }),
-    { sizeAdjust: "70%", format: "opentype" }
+    { format: "opentype" }
   ),
 ];
 
