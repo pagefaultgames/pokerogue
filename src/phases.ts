@@ -2596,11 +2596,15 @@ export class MovePhase extends BattlePhase {
       this.targets[0] = moveTarget.value;
     }
 
+    // Check for counterattack moves to switch target
     if (this.targets.length === 1 && this.targets[0] === BattlerIndex.ATTACKER) {
       if (this.pokemon.turnData.attacksReceived.length) {
         const attack = this.pokemon.turnData.attacksReceived[0];
         this.targets[0] = attack.attackingPosition;
-        if (this.scene.currentBattle.double) { // && (moves.metal_burst || moves.comeuppance) to account for metal burst and comeuppance hitting remaining targets
+
+        // account for metal burst and comeuppance hitting remaining targets in double battles
+        // counterattack will redirect to remaining ally if original attacker faints
+        if (this.scene.currentBattle.double && (this.move.getMove().hasFlag(MoveFlags.REDIRECT_COUNTER))) {
           if (!this.scene.getEnemyField()[this.targets[0]]) {
             this.targets[0] = this.scene.getEnemyField().find(p => p.isActive(true)).getBattlerIndex();
           }
