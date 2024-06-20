@@ -1553,7 +1553,8 @@ export class GameData {
 
       this.scene.playSound("level_up_fanfare");
 
-      this.scene.ui.showText(`${eggMoveIndex === 3 ? i18next.t("egg:rareEggMoveUnlock") : i18next.t("egg:eggMoveUnlock")}: ${allMoves[speciesEggMoves[speciesId][eggMoveIndex]].name}`, null, () => resolve(true), null, true);
+      const moveName = allMoves[speciesEggMoves[speciesId][eggMoveIndex]].name;
+      this.scene.ui.showText(eggMoveIndex === 3 ? i18next.t("egg:rareEggMoveUnlock", { moveName: moveName }) : i18next.t("egg:eggMoveUnlock", { moveName: moveName }), null, () => resolve(true), null, true);
     });
   }
 
