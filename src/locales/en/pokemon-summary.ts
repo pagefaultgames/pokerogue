@@ -1,6 +1,6 @@
-import { SimpleTranslationEntries } from "#app/interfaces/locales.js";
+import { PokemonSummaryEntries } from "#app/interfaces/locales.js";
 
-export const pokemonSummary: SimpleTranslationEntries = {
+export const pokemonSummary: PokemonSummaryEntries = {
   "pokemonInfo": "Pokémon Info",
   "status": "Status",
   "powerAccuracyCategory": "Power\nAccuracy\nCategory",
