@@ -4,6 +4,7 @@ import GameManager from "#app/test/utils/gameManager";
 import * as overrides from "#app/overrides";
 import { Species } from "#enums/species";
 import {
+  MoveEffectPhase,
   MoveEndPhase,
   TurnEndPhase,
   TurnInitPhase,
@@ -50,6 +51,34 @@ describe("Abilities - Ice Face", () => {
     expect(eiscue.hp).equals(eiscue.getMaxHp());
     expect(eiscue.formIndex).toBe(noiceForm);
     expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBe(undefined);
+  });
+
+  it("takes no damage from the first hit of multihit physical move and transforms to Noice", async () => {
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SURGING_STRIKES]);
+    vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(5);
+    await game.startBattle([Species.HITMONLEE]);
+
+    game.doAttack(getMovePosition(game.scene, 0, Moves.SURGING_STRIKES));
+
+    const eiscue = game.scene.getEnemyPokemon();
+    expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeDefined();
+
+    // First hit
+    await game.phaseInterceptor.to(MoveEffectPhase);
+    expect(eiscue.hp).equals(eiscue.getMaxHp());
+    expect(eiscue.formIndex).toBe(icefaceForm);
+    expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeUndefined();
+
+    // Second hit
+    await game.phaseInterceptor.to(MoveEffectPhase);
+    expect(eiscue.hp).lessThan(eiscue.getMaxHp());
+    expect(eiscue.formIndex).toBe(noiceForm);
+
+    await game.phaseInterceptor.to(MoveEndPhase);
+
+    expect(eiscue.hp).lessThan(eiscue.getMaxHp());
+    expect(eiscue.formIndex).toBe(noiceForm);
+    expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeUndefined();
   });
 
   it("takes damage from special moves", async () => {

@@ -40,6 +40,7 @@ import { voucher } from "./voucher";
 import { weather } from "./weather";
 import { partyUiHandler } from "./party-ui-handler";
 import { settings } from "#app/locales/es/settings.js";
+import { common } from "#app/locales/es/common.js";
 
 export const esConfig = {
   ability: ability,
@@ -50,6 +51,7 @@ export const esConfig = {
   biome: biome,
   challenges: challenges,
   commandUiHandler: commandUiHandler,
+  common: common,
   PGMachv: PGMachv,
   PGFachv: PGFachv,
   PGMdialogue: PGMdialogue,

@@ -53,7 +53,7 @@ export const settings: SimpleTranslationEntries = {
   "showTimeOfDayWidget": "시간 위젯",
   "timeOfDayAnimation": "시간 애니메이션",
   "bounce": "흔들림",
-  "back": "고정",
+  "timeOfDay_back": "고정",
   "spriteSet": "스프라이트 표시",
   "consistent": "기본",
   "mixedAnimated": "믹스",
@@ -71,6 +71,7 @@ export const settings: SimpleTranslationEntries = {
   "reset": "리셋",
   "requireReload": "새로고침 필요",
   "action": "액션",
+  "back": "고정",
   "pressToBind": "할당을 위해 입력하세요",
   "pressButton": "버튼을 입력하세요",
   "buttonUp": "위",
@@ -91,7 +92,7 @@ export const settings: SimpleTranslationEntries = {
   "buttonSpeedUp": "속도 올리기",
   "buttonSlowDown": "속도 내리기",
   "alt": " (대체)",
-  "mute": "Mute",
-  "controller": "Controller",
-  "gamepadSupport": "Gamepad Support"
+  "mute": "음소거",
+  "controller": "컨트롤러",
+  "gamepadSupport": "게임패드 지원"
 } as const;
