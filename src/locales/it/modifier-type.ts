@@ -229,6 +229,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "GOLDEN_POKEBALL": { name: "Poké Ball Oro", description: "Aggiunge 1 opzione di oggetto extra alla fine di ogni battaglia." },
 
+    "QUICK_BALL": { name: "Quick Ball", description: "A somewhat different Poké Ball that makes all Balls more effective at catching Pokémon when used first thing in a battle." },
+    "TIMER_BALL": { name: "Timer Ball", description: "A somewhat different Poké Ball that makes all Balls more effective at catching Pokémon the more turns that are taken in battle." },
+
     "ENEMY_DAMAGE_BOOSTER": { name: "Gettone del Danno", description: "Aumenta il danno del 5%." },
     "ENEMY_DAMAGE_REDUCTION": { name: "Gettone della Protezione", description: "Riduce i danni ricevuti del 2.5%." },
     "ENEMY_HEAL": { name: "Gettone del Recupero", description: "Cura il 2% dei PS massimi ogni turno." },

@@ -229,6 +229,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "GOLDEN_POKEBALL": { name: "황금몬스터볼", description: "전투 후 획득하는 아이템의 선택지가 하나 더 늘어난다." },
 
+    "QUICK_BALL": { name: "Quick Ball", description: "A somewhat different Poké Ball that makes all Balls more effective at catching Pokémon when used first thing in a battle." },
+    "TIMER_BALL": { name: "Timer Ball", description: "A somewhat different Poké Ball that makes all Balls more effective at catching Pokémon the more turns that are taken in battle." },
+
     "ENEMY_DAMAGE_BOOSTER": { name: "데미지 토큰", description: "주는 데미지를 5% 증가시킨다." },
     "ENEMY_DAMAGE_REDUCTION": { name: "보호 토큰", description: "받는 데미지를 2.5% 감소시킨다." },
     "ENEMY_HEAL": { name: "회복 토큰", description: "매 턴 최대 체력의 2%를 회복한다." },
