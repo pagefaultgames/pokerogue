@@ -350,51 +350,51 @@ class RunEntry extends Phaser.GameObjects.Container {
       break;
     case GameModes.CHALLENGE:
       const runChallenges = data.challenges;
-      for (var i = 0; i < runChallenges.length; i++) {
+      for (let i = 0; i < runChallenges.length; i++) {
         if (runChallenges[i].id === Challenges.SINGLE_GENERATION && runChallenges[i].value !== 0) {
-            const gen = runChallenges[i].value;
-            const genLabel = addTextObject(this.scene, 240, 5, `${i18next.t("runHistory:challengeMonoGen"+gen)}`, TextStyle.WINDOW);
-            switch(gen) {
-              case 1:
-                //Colors represent Gen I games - Red, Blue, Yellow
-                //Undecided if it should be fire red/leaf green colors though...
-                const gen1Gradient = genLabel.context.createLinearGradient(0, 0, genLabel.width, genLabel.height);
-                gen1Gradient.addColorStop(0.45, '#F15C01');
-                gen1Gradient.addColorStop(0.46, '#9FDC00');
-                genLabel.setFill(gen1Gradient);
-                this.add(genLabel);
-                break;
-              case 2:
-                const gen2Gradient = genLabel.context.createLinearGradient(0, 0, 0, genLabel.height);
-                gen2Gradient.addColorStop(0.52, '#FFD700');
-                gen2Gradient.addColorStop(0.53, '#C0C0C0');
-                genLabel.setFill(gen2Gradient);
-                genLabel.preFX.addShine(0.7, 0.5, 3);
-                this.add(genLabel);
-                break;
-              case 3:
-                const gen3Gradient = genLabel.context.createLinearGradient(0, 0, 0, genLabel.height);
-                gen3Gradient.addColorStop(0.32, '#e0115f');
-                gen3Gradient.addColorStop(0.46, '#0F52BA');
-                gen3Gradient.addColorStop(0.76, '#50C878');
-                genLabel.setFill(gen3Gradient);
-                this.add(genLabel);
-                break;
-              case 4:
-                const diamond = new Phaser.Display.Color(120, 120, 255);
-                const pearl = new Phaser.Display.Color(0, 0, 0);
-                const gen4Colors = Phaser.Display.Color.Interpolate.ColorWithColor(diamond, pearl, 0.5, 0);
-                const gen4Glow = Phaser.Display.Color.Interpolate.ColorWithColor('pink', 'white', 0.5, 1);
-                genLabel.setBackgroundColor(gen4Colors);
-                this.add(genLabel);
-                break;
-              case 5:
-              case 6:
-              case 7:
-              case 8:
-              case 9:
-                this.add(genLabel);
-                break;
+          const gen = runChallenges[i].value;
+          const genLabel = addTextObject(this.scene, 240, 5, `${i18next.t("runHistory:challengeMonoGen"+gen)}`, TextStyle.WINDOW);
+          switch (gen) {
+          case 1:
+            //Colors represent Gen I games - Red, Blue, Yellow
+            //Undecided if it should be fire red/leaf green colors though...
+            const gen1Gradient = genLabel.context.createLinearGradient(0, 0, genLabel.width, genLabel.height);
+            gen1Gradient.addColorStop(0.45, "#F15C01");
+            gen1Gradient.addColorStop(0.46, "#9FDC00");
+            genLabel.setFill(gen1Gradient);
+            this.add(genLabel);
+            break;
+          case 2:
+            const gen2Gradient = genLabel.context.createLinearGradient(0, 0, 0, genLabel.height);
+            gen2Gradient.addColorStop(0.52, "#FFD700");
+            gen2Gradient.addColorStop(0.53, "#C0C0C0");
+            genLabel.setFill(gen2Gradient);
+            genLabel.preFX.addShine(0.7, 0.5, 3);
+            this.add(genLabel);
+            break;
+          case 3:
+            const gen3Gradient = genLabel.context.createLinearGradient(0, 0, 0, genLabel.height);
+            gen3Gradient.addColorStop(0.32, "#e0115f");
+            gen3Gradient.addColorStop(0.46, "#0F52BA");
+            gen3Gradient.addColorStop(0.76, "#50C878");
+            genLabel.setFill(gen3Gradient);
+            this.add(genLabel);
+            break;
+          case 4:
+            const diamond = new Phaser.Display.Color(120, 120, 255);
+            const pearl = new Phaser.Display.Color(0, 0, 0);
+            const gen4Colors = Phaser.Display.Color.Interpolate.ColorWithColor(diamond, pearl, 0.5, 0);
+            const gen4Glow = Phaser.Display.Color.Interpolate.ColorWithColor("pink", "white", 0.5, 1);
+            genLabel.setBackgroundColor(gen4Colors);
+            this.add(genLabel);
+            break;
+          case 5:
+          case 6:
+          case 7:
+          case 8:
+          case 9:
+            this.add(genLabel);
+            break;
           }
         }
       }
