@@ -64,10 +64,10 @@ describe("Items - Assault Vest", () => {
     opponent.ivs = [0, 0, 0, 0, 0, 0];
     pokemon.setNature(Nature.CALM);
     opponent.setNature(Nature.CALM);
-    expect(game.scene.modifiers[0].type.id).toBe("ASSAULT_VEST");
     expect(pokemon.nature).toBe(Nature.CALM);
     expect(opponent.nature).toBe(Nature.CALM);
     await game.phaseInterceptor.to(CommandPhase);
+    expect(game.scene.modifiers[0].type.id).toBe("ASSAULT_VEST");
     const oppSpDef = opponent.stats[Stat.SPDEF];
     const spDef = pokemon.stats[Stat.SPDEF];
     // Check Special Defense stat boost
@@ -145,13 +145,14 @@ describe("Items - Assault Vest", () => {
       Species.MIGHTYENA,
       Species.POOCHYENA,
     ]);
-    await game.phaseInterceptor.run(SummonPhase);
     let pokemon = game.scene.getParty()[0];
-    pokemon.setNature(Nature.CALM);
-    expect(pokemon.nature).toBe(Nature.CALM);
     addModifierToPokemon([{
       name: "ASSAULT_VEST",
     }], game.scene, pokemon, true);
+    await game.phaseInterceptor.run(SummonPhase);
+    pokemon.setNature(Nature.CALM);
+    expect(pokemon.nature).toBe(Nature.CALM);
+    await game.phaseInterceptor.to(CommandPhase);
     expect(game.scene.modifiers[0].type.id).toBe("ASSAULT_VEST");
     expect(pokemon.summonData.attack_move_restriction).toBe(true);
     const spDef = pokemon.stats[Stat.SPDEF];
@@ -164,7 +165,6 @@ describe("Items - Assault Vest", () => {
     opponent.ivs = [0, 0, 0, 0, 0, 0];
     opponent.setNature(Nature.CALM);
     expect(opponent.nature).toBe(Nature.CALM);
-    await game.phaseInterceptor.to(CommandPhase);
     game.doAttack(1);
     await game.doKillOpponents();
     game.onNextPrompt("SelectModifierPhase", Mode.MODIFIER_SELECT, () => {
@@ -241,10 +241,11 @@ describe("Items - Assault Vest", () => {
     opponent.ivs = [0, 0, 0, 0, 0, 0];
     pokemon.setNature(Nature.CALM);
     opponent.setNature(Nature.CALM);
-    expect(game.scene.modifiers[0].type.id).toBe("ASSAULT_VEST");
     expect(pokemon.nature).toBe(Nature.CALM);
     expect(opponent.nature).toBe(Nature.CALM);
     await game.phaseInterceptor.to(CommandPhase);
+    expect(pokemon.stats[Stat.SPDEF]).toBe(207); // 138 * 1.5
+    expect(game.scene.modifiers[0].type.id).toBe("ASSAULT_VEST");
     game.doAttack(1);
     await game.doKillOpponents();
     game.onNextPrompt("SelectModifierPhase", Mode.MODIFIER_SELECT, () => {
@@ -375,19 +376,22 @@ describe("Items - Assault Vest", () => {
     pokemon.moveset[3].getMove().pp = 0;
     pokemon.setNature(Nature.CALM);
     opponent.setNature(Nature.CALM);
-    // expect(game.scene.modifiers[0].type.id).toBe("ASSAULT_VEST");
     expect(pokemon.nature).toBe(Nature.CALM);
     expect(opponent.nature).toBe(Nature.CALM);
     await game.phaseInterceptor.to(CommandPhase);
+    expect(pokemon.summonData.attack_move_restriction).toBe(false);
     game.doAttack(0);
     await game.phaseInterceptor.to(TurnEndPhase);
-    const battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
-    expect(battleStatsPokemon[BattleStat.SPATK]).toBe(1);
     addModifierToPokemon([{
       name: "ASSAULT_VEST",
     }], game.scene, pokemon, true);
+    await game.phaseInterceptor.to(CommandPhase);
     expect(game.scene.modifiers[0].type.id).toBe("ASSAULT_VEST");
+    // small hack for this test because the pokemon is already summoned, and so it will not re-trigger post summon effect
+    pokemon.summonData.attack_move_restriction = true;
     expect(pokemon.summonData.attack_move_restriction).toBe(true);
+    const battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
+    expect(battleStatsPokemon[BattleStat.SPATK]).toBe(1);
     game.doAttack(0);
     await game.phaseInterceptor.to(TurnEndPhase);
     const messages = game.textInterceptor.logs;
