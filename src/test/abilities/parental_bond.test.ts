@@ -329,4 +329,88 @@ describe("Abilities - Parental Bond", () => {
       expect(leadPokemon.isOfType(Type.FIRE)).toBe(false);
     }, TIMEOUT
   );
+
+  test(
+    "Moves boosted by this ability and Multi-Lens should strike 4 times",
+    async () => {
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
+      vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "MULTI_LENS", count: 1}]);
+
+      await game.startBattle([Species.CHARIZARD]);
+
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).not.toBe(undefined);
+
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).not.toBe(undefined);
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+
+      await game.phaseInterceptor.to(DamagePhase);
+
+      expect(leadPokemon.turnData.hitCount).toBe(4);
+    }, TIMEOUT
+  );
+
+  test(
+    "Super Fang boosted by this ability and Multi-Lens should strike twice",
+    async () => {
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SUPER_FANG]);
+      vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "MULTI_LENS", count: 1}]);
+
+      await game.startBattle([Species.CHARIZARD]);
+
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).not.toBe(undefined);
+
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).not.toBe(undefined);
+
+      const enemyStartingHp = enemyPokemon.hp;
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.SUPER_FANG));
+
+      await game.phaseInterceptor.to(MoveEffectPhase, false);
+      vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
+
+      await game.phaseInterceptor.to(DamagePhase);
+
+      expect(leadPokemon.turnData.hitCount).toBe(2);
+
+      await game.phaseInterceptor.to(TurnEndPhase);
+
+      expect(enemyPokemon.hp).toBe(Math.ceil(enemyStartingHp * 0.25));
+    }, TIMEOUT
+  );
+
+  test(
+    "Seismic Toss boosted by this ability and Multi-Lens should strike twice",
+    async () => {
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SEISMIC_TOSS]);
+      vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "MULTI_LENS", count: 1}]);
+
+      await game.startBattle([Species.CHARIZARD]);
+
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).not.toBe(undefined);
+
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).not.toBe(undefined);
+
+      const enemyStartingHp = enemyPokemon.hp;
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.SEISMIC_TOSS));
+
+      await game.phaseInterceptor.to(MoveEffectPhase, false);
+      vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
+
+      await game.phaseInterceptor.to(DamagePhase);
+
+      expect(leadPokemon.turnData.hitCount).toBe(2);
+
+      await game.phaseInterceptor.to(TurnEndPhase);
+
+      expect(enemyPokemon.hp).toBe(enemyStartingHp - 200);
+    }, TIMEOUT
+  );
 });
