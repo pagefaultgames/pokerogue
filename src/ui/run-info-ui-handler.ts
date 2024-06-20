@@ -12,8 +12,7 @@ import { formatLargeNumber } from "../utils";
 
 interface DisplayStat {
   labelKey?: string;
-  rightPaddingPx: integer;
-  centerAlign: boolean;
+  additionalBottomPaddingPx?: integer;
   setupFunc: (scene: BattleScene, x: integer, y: integer) => Phaser.GameObjects.Sprite | Phaser.GameObjects.Text;
   sourceFunc: (element: Phaser.GameObjects.Sprite | Phaser.GameObjects.Text, pokemon: PlayerPokemon) => void;
 }
@@ -24,16 +23,15 @@ const defaultTextSetupFunc = (scene, x, y) => {
   return text;
 };
 
-const DEFAULT_RIGHT_PADDING_PX = 7;
+const DEFAULT_RIGHT_PADDING_PX = 9;
 
-const displayStats: DisplayStat[] = [
+const rowData: DisplayStat[] = [
   {
-    rightPaddingPx: 0.5*DEFAULT_RIGHT_PADDING_PX,
-    centerAlign: true,
+    additionalBottomPaddingPx: 6,
     setupFunc: (scene, x, y) => {
       const spriteIcon = scene.add.sprite(x, y, "pkmn__sub");
       spriteIcon.setOrigin(0, 0.25);
-      spriteIcon.setScale(0.5);
+      spriteIcon.setScale(0.70);
       spriteIcon.setPipeline(scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });
       return spriteIcon;
     },
@@ -42,19 +40,20 @@ const displayStats: DisplayStat[] = [
       element.setFrame(pokemon.getIconId());
     }
   },
+  /*
   {
-    labelKey: "pokemonName",
-    rightPaddingPx: DEFAULT_RIGHT_PADDING_PX,
-    centerAlign: false,
-    setupFunc: defaultTextSetupFunc,
+    setupFunc: (scene, x, y) => {
+      const text = addTextObject(scene, x, y, "", TextStyle.TOOLTIP_TITLE);
+      text.setOrigin(0, 0);
+      return text;
+    },
     sourceFunc: (element: Phaser.GameObjects.Text, pokemon) => {
       element.setText(pokemon.name.trim());
     }
   },
+  */
   {
     labelKey: "level",
-    rightPaddingPx: 1.5*DEFAULT_RIGHT_PADDING_PX,
-    centerAlign: true,
     setupFunc: defaultTextSetupFunc,
     sourceFunc: (element: Phaser.GameObjects.Text, pokemon) => {
       element.setText(formatLargeNumber(pokemon.level, 100000));
@@ -62,8 +61,6 @@ const displayStats: DisplayStat[] = [
   },
   {
     labelKey: "metOnWave",
-    rightPaddingPx: 1.5*DEFAULT_RIGHT_PADDING_PX,
-    centerAlign: true,
     setupFunc: defaultTextSetupFunc,
     sourceFunc: (element: Phaser.GameObjects.Text, pokemon) => {
       element.setText(pokemon.metWave !== 0 ? pokemon.metWave.toString() : i18next.t("runInfoUiHandler:starter"));
@@ -71,8 +68,6 @@ const displayStats: DisplayStat[] = [
   },
   {
     labelKey: "knockouts",
-    rightPaddingPx: DEFAULT_RIGHT_PADDING_PX,
-    centerAlign: true,
     setupFunc: defaultTextSetupFunc,
     sourceFunc: (element: Phaser.GameObjects.Text, pokemon) => {
       element.setText(formatLargeNumber(pokemon.runData.knockouts, 100000));
@@ -80,8 +75,6 @@ const displayStats: DisplayStat[] = [
   },
   {
     labelKey: "assists",
-    rightPaddingPx: DEFAULT_RIGHT_PADDING_PX,
-    centerAlign: true,
     setupFunc: defaultTextSetupFunc,
     sourceFunc: (element: Phaser.GameObjects.Text, pokemon) => {
       element.setText(formatLargeNumber(pokemon.runData.assists, 100000));
@@ -89,8 +82,6 @@ const displayStats: DisplayStat[] = [
   },
   {
     labelKey: "faints",
-    rightPaddingPx: DEFAULT_RIGHT_PADDING_PX,
-    centerAlign: true,
     setupFunc: defaultTextSetupFunc,
     sourceFunc: (element: Phaser.GameObjects.Text, pokemon) => {
       element.setText(formatLargeNumber(pokemon.runData.faints, 100000));
@@ -98,8 +89,6 @@ const displayStats: DisplayStat[] = [
   },
   {
     labelKey: "damageDealt",
-    rightPaddingPx: DEFAULT_RIGHT_PADDING_PX,
-    centerAlign: true,
     setupFunc: defaultTextSetupFunc,
     sourceFunc: (element: Phaser.GameObjects.Text, pokemon) => {
       element.setText(formatLargeNumber(pokemon.runData.damageDealt, 100000));
@@ -107,8 +96,6 @@ const displayStats: DisplayStat[] = [
   },
   {
     labelKey: "damageTaken",
-    rightPaddingPx: DEFAULT_RIGHT_PADDING_PX,
-    centerAlign: true,
     setupFunc: defaultTextSetupFunc,
     sourceFunc: (element: Phaser.GameObjects.Text, pokemon) => {
       element.setText(formatLargeNumber(pokemon.runData.damageTaken, 100000));
@@ -120,14 +107,13 @@ export default class runInfoUiHandler extends UiHandler {
   private runInfoContainer: Phaser.GameObjects.Container;
   private statsContainer: Phaser.GameObjects.Container;
 
-  private statLabels: Phaser.GameObjects.Text[];
-  private statValues: (Phaser.GameObjects.Sprite | Phaser.GameObjects.Text)[][];
+  private cells: (Phaser.GameObjects.Sprite | Phaser.GameObjects.Text)[][];
 
   constructor(scene: BattleScene, mode?: Mode) {
     super(scene, mode);
 
-    this.statLabels = new Array(displayStats.length);
-    this.statValues = new Array(6).fill(undefined).map(x => Array(displayStats.length).fill(undefined));
+    // rows, columns. the first column is reserved for labels.
+    this.cells = new Array(rowData.length).fill(undefined).map(x => Array(6+1).fill(undefined));
   }
 
   setup() {
@@ -150,32 +136,25 @@ export default class runInfoUiHandler extends UiHandler {
 
     this.statsContainer = this.scene.add.container(0, 0);
 
-    for (let row = 0; row < 6+1; ++row) {
-      for (let col = 0; col < displayStats.length; ++col) {
-        // x values are computed later
+    for (let col = 0; col < 6+1; ++col) {
+      let culmulativeY = 34;
 
-        let y = (row === 0) ? 30 : (38 + (row * 16));
-
-        if (row === 0) {
-          const statLabelKey = displayStats[col].labelKey;
-          const statLabelText = statLabelKey ? i18next.t(`runInfoUiHandler:${statLabelKey}`) : "";
-
-          // one label has a newline. vertically align the others accordingly
-          if (!statLabelText.includes("\n")) {
-            y += 4;
-          }
-
-          const statLabel = addTextObject(this.scene, 0, y, statLabelText, TextStyle.TOOLTIP_TITLE);
+      for (let row = 0; row < rowData.length; ++row) {
+        // x offsets are computed in alignStats()
+        if (col === 0) {
+          const statLabelKey = rowData[row].labelKey;
+          // subtract a bit off the y offset to compensate for the larger font
+          const statLabel = addTextObject(this.scene, 0, culmulativeY-1, (statLabelKey ? i18next.t(`runInfoUiHandler:${statLabelKey}`) : ""), TextStyle.TOOLTIP_TITLE);
           statLabel.setOrigin(0, 0);
-          statLabel.setLineSpacing(-10);
-          statLabel.setAlign("center");
-          this.statLabels[col] = statLabel;
+          this.cells[row][col] = statLabel;
           this.statsContainer.add(statLabel);
         } else {
-          const statValue = displayStats[col].setupFunc(this.scene, 0, y);
-          this.statValues[row-1][col] = statValue;
+          const statValue = rowData[row].setupFunc(this.scene, 0, culmulativeY);
+          this.cells[row][col] = statValue;
           this.statsContainer.add(statValue);
         }
+
+        culmulativeY += 14 + (rowData[row].additionalBottomPaddingPx ?? 0);
       }
     }
 
@@ -213,13 +192,16 @@ export default class runInfoUiHandler extends UiHandler {
     const playerParty = this.scene.getParty();
     const sortedPlayerParty = [...playerParty].sort((a, b) => b.runData.knockouts - a.runData.knockouts);
 
-    for (let row = 0; row < 6; ++row) {
-      for (let col = 0; col < displayStats.length; ++col) {
-        if (row < sortedPlayerParty.length) {
-          displayStats[col].sourceFunc(this.statValues[row][col], sortedPlayerParty[row]);
-          this.statValues[row][col].setVisible(true);
+    for (let row = 0; row < rowData.length; ++row) {
+      // the first column holds the labels
+      this.cells[row][0].setVisible(true);
+
+      for (let col = 1; col < 6+1; ++col) {
+        if (col-1 < sortedPlayerParty.length) {
+          rowData[row].sourceFunc(this.cells[row][col], sortedPlayerParty[col-1]);
+          this.cells[row][col].setVisible(true);
         } else {
-          this.statValues[row][col].setVisible(false);
+          this.cells[row][col].setVisible(false);
         }
       }
     }
@@ -228,37 +210,35 @@ export default class runInfoUiHandler extends UiHandler {
   alignStats(): void {
     let culmulativeDisplayWidth = 0;
 
-    for (let col = 0; col < displayStats.length; ++col) {
+    for (let col = 0; col < 6+1; ++col) {
       // left-align columns together by setting the x of this column (and
       // subsequently the others) to the culmulative width of all previous columns
-      this.statLabels[col].x = culmulativeDisplayWidth;
-      for (let row = 0; row < 6; ++row) {
-        this.statValues[row][col].x = culmulativeDisplayWidth;
+      for (let row = 0; row < rowData.length; ++row) {
+        this.cells[row][col].x = culmulativeDisplayWidth;
       }
 
       let maxDisplayWidthOnColumn = 0;
-      maxDisplayWidthOnColumn = Math.max(maxDisplayWidthOnColumn, this.statLabels[col].displayWidth);
-      for (let row = 0; row < 6; ++row) {
-        maxDisplayWidthOnColumn = Math.max(maxDisplayWidthOnColumn, this.statValues[row][col].displayWidth);
+      for (let row = 0; row < rowData.length; ++row) {
+        maxDisplayWidthOnColumn = Math.max(maxDisplayWidthOnColumn, this.cells[row][col].displayWidth);
       }
 
-      // center-align column contents relative to the column
-      if (displayStats[col].centerAlign) {
-        this.statLabels[col].x += (maxDisplayWidthOnColumn - this.statLabels[col].displayWidth) / 2;
-        for (let row = 0; row < 6; ++row) {
-          this.statValues[row][col].x += (maxDisplayWidthOnColumn - this.statValues[row][col].displayWidth) / 2;
+      // center-align values relative to the column, but keep the labels left-aligned
+      if (col > 0) {
+        for (let row = 0; row < rowData.length; ++row) {
+          this.cells[row][col].x += (maxDisplayWidthOnColumn - this.cells[row][col].displayWidth) / 2;
         }
       }
 
-      culmulativeDisplayWidth += maxDisplayWidthOnColumn + displayStats[col].rightPaddingPx;
+      culmulativeDisplayWidth += maxDisplayWidthOnColumn + DEFAULT_RIGHT_PADDING_PX;
     }
+
+    culmulativeDisplayWidth -= DEFAULT_RIGHT_PADDING_PX;
 
     // center-align columns relative to the container
     const offsetToCenter = (((this.scene.game.canvas.width / 6) - 2) - culmulativeDisplayWidth) / 2;
-    for (let col = 0; col < displayStats.length; ++col) {
-      this.statLabels[col].x += offsetToCenter;
-      for (let row = 0; row < 6; ++row) {
-        this.statValues[row][col].x += offsetToCenter;
+    for (let col = 0; col < 6+1; ++col) {
+      for (let row = 0; row < rowData.length; ++row) {
+        this.cells[row][col].x += offsetToCenter;
       }
     }
   }

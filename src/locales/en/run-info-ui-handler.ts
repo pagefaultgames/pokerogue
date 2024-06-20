@@ -2,13 +2,12 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const runInfoUiHandler: SimpleTranslationEntries = {
   "title": "Run Info",
-  "pokemonName": "Pokémon",
-  "level": "Lv",
-  "metOnWave": "Met on\nwave",
+  "level": "Level",
+  "metOnWave": "Met on wave",
   "starter": "Starter",
-  "knockouts": "KOs",
+  "knockouts": "Knockouts",
   "assists": "Assists",
   "faints": "Faints",
-  "damageDealt": "Damage",
-  "damageTaken": "Blocked"
+  "damageDealt": "Damage dealt",
+  "damageTaken": "Damage taken"
 } as const;
