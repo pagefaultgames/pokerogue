@@ -197,10 +197,13 @@ export default class UI extends Phaser.GameObjects.Container {
     this.achvBar = new AchvBar(this.scene as BattleScene);
     this.achvBar.setup();
 
+    (this.scene as BattleScene).uiContainer.add(this.achvBar);
+
+
     this.bgmBar = new BgmBar(this.scene as BattleScene);
     this.bgmBar.setup();
 
-    (this.scene as BattleScene).uiContainer.add(this.achvBar);
+    (this.scene as BattleScene).fieldUI.add(this.bgmBar);
 
     this.savingIcon = new SavingIconHandler(this.scene as BattleScene);
     this.savingIcon.setup();

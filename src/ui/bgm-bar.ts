@@ -1,6 +1,7 @@
 import BattleScene from "../battle-scene";
 import { TextStyle, addTextObject } from "./text";
 
+
 const hiddenX = -118;
 const shownX = 0;
 const baseY = -116;
@@ -12,22 +13,25 @@ export default class BgmBar extends Phaser.GameObjects.Container {
 
   private tween: Phaser.Tweens.Tween;
   private autoHideTimer: NodeJS.Timeout;
+  private queue: (string)[] = [];
+
 
   public shown: boolean;
 
-  constructor(scene: Scene) {
+  constructor(scene: BattleScene) {
     super(scene, hiddenX, baseY);
   }
 
   setup(): void {
     this.bg = this.scene.add.image(0, 0, "ability_bar_left");
+
     this.bg.setOrigin(0, 0);
 
     this.add(this.bg);
 
     this.musicText = addTextObject(this.scene, 15, 3, "", TextStyle.MESSAGE, { fontSize: "72px" });
     this.musicText.setOrigin(0, 0);
-    this.musicText.setWordWrapWidth(600, true);
+    this.musicText.setWordWrapWidth(650, true);
     this.add(this.musicText);
 
     this.setVisible(false);
@@ -35,19 +39,21 @@ export default class BgmBar extends Phaser.GameObjects.Container {
   }
 
   showBgm(bgmName: string): void {
-    this.musicText.setText(bgmName);
+    this.musicText.setText(`♫ : ${(this.scene as BattleScene).getRealBgmName(bgmName)}`);
     console.log("showBgm", bgmName);
     if (this.shown) {
+      this.queue.push(bgmName);
       return;
     }
     (this.scene as BattleScene).fieldUI.bringToTop(this);
 
-    // Remove this onces it actually works. This is just for testing and hearing that the method is called
-    (this.scene as BattleScene).playSound("achv");
 
-    let offset = 0;
+
+    let offset = -25;
     if ((this.scene as BattleScene)?.currentBattle?.double) {
-      offset = 14;
+      offset = -10;
+    } else if ((this.scene as BattleScene)?.currentBattle) {
+      offset = -20;
     }
     console.log("Offset is", offset);
     this.y = baseY + offset;
@@ -92,6 +98,9 @@ export default class BgmBar extends Phaser.GameObjects.Container {
       onComplete: () => {
         this.tween = null;
         this.setVisible(false);
+        if (this.queue.length) {
+          this.showBgm(this.queue.shift());
+        }
       }
     });
 
