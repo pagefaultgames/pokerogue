@@ -1,4 +1,4 @@
-import {SimpleTranslationEntries} from "#app/plugins/i18n";
+import {SimpleTranslationEntries} from "#app/interfaces/locales";
 
 // Titles of special trainers like gym leaders, elite four, and the champion
 export const titles: SimpleTranslationEntries = {
@@ -250,8 +250,8 @@ export const trainerNames: SimpleTranslationEntries = {
   "amarys": "Amarys",
   "lacey": "Lacey",
   "drayton": "Drayton",
-  "blue": "Blue",
-  "red": "Red",
+  "blue": "น้ำเงิน",
+  "red": "แดง",
   "steven": "Steven",
   "wallace": "Wallace",
   "cynthia": "Cynthia",
@@ -272,8 +272,8 @@ export const trainerNames: SimpleTranslationEntries = {
   "lysandre": "Lysandre",
 
   // Double Names
-  "blue_red_double": "Blue & Red",
-  "red_blue_double": "Red & Blue",
+  "blue_red_double": "น้ำเงิน & แดง",
+  "red_blue_double": "แดง & น้ำเงิน",
   "tate_liza_double": "Tate & Liza",
   "liza_tate_double": "Liza & Tate",
   "steven_wallace_double": "Steven & Wallace",

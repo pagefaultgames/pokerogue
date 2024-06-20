@@ -1,6 +1,6 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
-export const abilityTriggers: SimpleTranslationEntries = {
+export const abilityTriggers: SimpleTranslationEntries= {
   "blockRecoilDamage": "{{pokemonName}} ของคุณใช้ {{abilityName}}\nป้องกันความเสียหายจากการกระเด้ง!",
   "badDreams": "{{pokemonName}} ถูกทรมาน!",
   "windPowerCharged": "ถูกโจมตีโดย {{moveName}} ชาร์จ {{pokemonName}} ด้วยพลัง!",

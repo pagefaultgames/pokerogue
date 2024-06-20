@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const saveSlotSelectUiHandler: SimpleTranslationEntries = {
   "overwriteData": "เขียนทับข้อมูลในช่องที่เลือกหรือไม่?",
