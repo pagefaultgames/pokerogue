@@ -55,7 +55,7 @@ describe("Moves - Rage Powder", () => {
       expect(enemyPokemon.length).toBe(2);
       enemyPokemon.forEach(p => expect(p).not.toBe(undefined));
 
-      enemyPokemon.forEach(p => p.hp = 200);
+      const enemyStartingHp = enemyPokemon.map(p => p.hp);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_ATTACK));
       await game.phaseInterceptor.to(SelectTargetPhase, false);
@@ -68,7 +68,8 @@ describe("Moves - Rage Powder", () => {
       await game.phaseInterceptor.to(TurnEndPhase, false);
 
       // If redirection was bypassed, both enemies should be damaged
-      enemyPokemon.forEach(p => expect(p.hp).toBeLessThan(200));
+      expect(enemyPokemon[0].hp).toBeLessThan(enemyStartingHp[0]);
+      expect(enemyPokemon[1].hp).toBeLessThan(enemyStartingHp[1]);
     }, TIMEOUT
   );
 
@@ -89,7 +90,7 @@ describe("Moves - Rage Powder", () => {
       expect(enemyPokemon.length).toBe(2);
       enemyPokemon.forEach(p => expect(p).not.toBe(undefined));
 
-      enemyPokemon.forEach(p => p.hp = 200);
+      const enemyStartingHp = enemyPokemon.map(p => p.hp);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_ATTACK));
       await game.phaseInterceptor.to(SelectTargetPhase, false);
@@ -102,7 +103,8 @@ describe("Moves - Rage Powder", () => {
       await game.phaseInterceptor.to(TurnEndPhase, false);
 
       // If redirection was bypassed, both enemies should be damaged
-      enemyPokemon.forEach(p => expect(p.hp).toBeLessThan(200));
+      expect(enemyPokemon[0].hp).toBeLessThan(enemyStartingHp[0]);
+      expect(enemyPokemon[1].hp).toBeLessThan(enemyStartingHp[1]);
     }, TIMEOUT
   );
 });
