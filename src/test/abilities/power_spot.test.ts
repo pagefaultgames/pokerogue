@@ -44,8 +44,6 @@ describe("Abilities - Power Spot", () => {
     const multiplier = getAttrPowerMultiplier(game.scene.getPlayerField()[1]);
     const appliedPower = getAppliedMovePower(game.scene.getEnemyField()[0], game.scene.getPlayerField()[0], allMoves[moveToBeUsed]);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
-
     expect(appliedPower).not.toBe(undefined);
     expect(appliedPower).not.toBe(basePower);
     expect(appliedPower).toBe(basePower * multiplier);
@@ -63,8 +61,6 @@ describe("Abilities - Power Spot", () => {
     const multiplier = getAttrPowerMultiplier(game.scene.getPlayerField()[1]);
     const appliedPower = getAppliedMovePower(game.scene.getEnemyField()[0], game.scene.getPlayerField()[0], allMoves[moveToBeUsed]);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
-
     expect(appliedPower).not.toBe(undefined);
     expect(appliedPower).not.toBe(basePower);
     expect(appliedPower).toBe(basePower * multiplier);
@@ -81,8 +77,6 @@ describe("Abilities - Power Spot", () => {
 
     const multiplier = getAttrPowerMultiplier(game.scene.getPlayerField()[0]);
     const appliedPower = getAppliedMovePower(game.scene.getEnemyField()[0], game.scene.getPlayerField()[0], allMoves[moveToBeUsed]);
-
-    await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(appliedPower).not.toBe(undefined);
     expect(appliedPower).toBe(basePower);
