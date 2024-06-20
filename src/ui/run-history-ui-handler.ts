@@ -15,6 +15,7 @@ import {Button} from "../enums/buttons";
 import { BattleType } from "../battle";
 import { TrainerType } from "../enums/trainer-type";
 import { TrainerVariant } from "../field/trainer";
+import { Challenges } from "#enums/challenges";
 import { getPartyLuckValue, getLuckString, getLuckTextTint } from "../modifier/modifier-type";
 
 export const runCount = 25;
@@ -96,7 +97,9 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
       const originalCallback = this.runSelectCallback;
       if (button === Button.ACTION) {
         const cursor = this.cursor + this.scrollCursor;
-        console.log("Action --> page with more detailed run information");
+        if (this.runs[cursor].hasData) {
+          this.scene.ui.setOverlayMode(Mode.RUN_INFO, this.runs[cursor].entryData, true);
+        }
         success = true;
         return success;
       } else {
@@ -215,14 +218,17 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
 class RunEntry extends Phaser.GameObjects.Container {
   public slotId: integer;
   public hasData: boolean;
+  public entryData: RunHistoryData;
   private loadingLabel: Phaser.GameObjects.Text;
 
   constructor(scene: BattleScene, runHistory: RunHistoryData, timestamp: string, slotId: integer) {
     super(scene, 0, slotId*56);
 
     this.slotId = slotId;
+    this.hasData = true;
+    this.entryData = runHistory[timestamp];
 
-    this.setup(runHistory[timestamp]);
+    this.setup(this.entryData);
 
   }
 
@@ -295,8 +301,6 @@ class RunEntry extends Phaser.GameObjects.Container {
       break;
     }
 
-    const date = new Date(data.timestamp);
-
     const timestampLabel = addTextObject(this.scene, 8, 33, new Date(data.timestamp).toLocaleString(), TextStyle.WINDOW);
     this.add(timestampLabel);
 
@@ -331,7 +335,7 @@ class RunEntry extends Phaser.GameObjects.Container {
     switch (data.gameMode) {
     case GameModes.DAILY:
       const runScore = data.score;
-      const scoreText = addTextObject(this.scene, 240, 5, `${i18next.t("runHistory:score")}: ${data.score}`, TextStyle.WINDOW, {color: "#f89890"});
+      const scoreText = addTextObject(this.scene, 230, 5, `${i18next.t("runHistory:score")}: ${data.score}`, TextStyle.WINDOW, {color: "#f89890"});
       this.add(scoreText);
       break;
     case GameModes.ENDLESS:
@@ -342,6 +346,60 @@ class RunEntry extends Phaser.GameObjects.Container {
       const luckTextTint = "#"+(getLuckTextTint(luckValue)).toString(16);
       const luckText = addTextObject(this.scene, 240, 5, `${i18next.t("runHistory:luck")}: ${getLuckString(luckValue)}`, TextStyle.WINDOW, {color: `${luckTextTint}`});
       this.add(luckText);
+      break;
+    case GameModes.CHALLENGE:
+      const runChallenges = data.challenges;
+      for (var i = 0; i < runChallenges.length; i++) {
+        if (runChallenges[i].id === Challenges.SINGLE_GENERATION && runChallenges[i].value !== 0) {
+            const gen = runChallenges[i].value;
+            const genLabel = addTextObject(this.scene, 240, 5, `${i18next.t("runHistory:challengeMonoGen"+gen)}`, TextStyle.WINDOW);
+            switch(gen) {
+              case 1:
+                //Colors represent Gen I games - Red, Blue, Yellow
+                //Undecided if it should be fire red/leaf green colors though...
+                const gen1Gradient = genLabel.context.createLinearGradient(0, 0, genLabel.width, genLabel.height);
+                gen1Gradient.addColorStop(0.45, '#F15C01');
+                gen1Gradient.addColorStop(0.46, '#9FDC00');
+                genLabel.setFill(gen1Gradient);
+                this.add(genLabel);
+                break;
+              case 2:
+                const gen2Gradient = genLabel.context.createLinearGradient(0, 0, 0, genLabel.height);
+                gen2Gradient.addColorStop(0.52, '#FFD700');
+                gen2Gradient.addColorStop(0.53, '#C0C0C0');
+                genLabel.setFill(gen2Gradient);
+                genLabel.preFX.addShine(0.7, 0.5, 3);
+                this.add(genLabel);
+                break;
+              case 3:
+                const gen3Gradient = genLabel.context.createLinearGradient(0, 0, 0, genLabel.height);
+                gen3Gradient.addColorStop(0.32, '#e0115f');
+                gen3Gradient.addColorStop(0.46, '#0F52BA');
+                gen3Gradient.addColorStop(0.76, '#50C878');
+                genLabel.setFill(gen3Gradient);
+                this.add(genLabel);
+                break;
+              case 4:
+                const diamond = new Phaser.Display.Color(120, 120, 255);
+                const pearl = new Phaser.Display.Color(0, 0, 0);
+                const gen4Colors = Phaser.Display.Color.Interpolate.ColorWithColor(diamond, pearl, 0.5, 0);
+                const gen4Glow = Phaser.Display.Color.Interpolate.ColorWithColor('pink', 'white', 0.5, 1);
+                genLabel.setBackgroundColor(gen4Colors);
+                this.add(genLabel);
+                break;
+              case 5:
+              case 6:
+              case 7:
+              case 8:
+              case 9:
+                this.add(genLabel);
+                break;
+          }
+        }
+      }
+      //MonoGen {id = 0, value = 0 (no challenge) / 1-9}
+      //MonoType {id = 1, value = 0 (no challenge) / see enum types in type.ts}
+      console.log(data.challenges);
       break;
     }
     /*
