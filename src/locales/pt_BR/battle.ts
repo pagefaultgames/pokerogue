@@ -53,6 +53,7 @@ export const battle: SimpleTranslationEntries = {
   "escapeVerbSwitch": "trocar",
   "escapeVerbFlee": "fugir",
   "notDisabled": "O movimento {{moveName}}\nnão está mais desabilitado!",
+  "assaultVestRestriction": "The assault vest prevents the use of any non-offensive moves.",
   "skipItemQuestion": "Tem certeza de que não quer escolher um item?",
   "eggHatching": "Opa?",
   "ivScannerUseQuestion": "Quer usar o Scanner de IVs em {{pokemonName}}?",

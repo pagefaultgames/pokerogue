@@ -252,6 +252,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description:
                 "It's a bizarre orb that gives off heat when touched and will affect the holder with a burn during battle"
     },
+    ASSAULT_VEST: {
+      name: "Assault Vest",
+      description: "Raises the holder's Special Defense by 50%, but also prevents the holder from selecting any non-offensive moves except Me First."
+    },
     BATON: {
       name: "接力棒",
       description: "允許在切換寶可夢時保留能力變化, 對陷阱\n同樣生效。",

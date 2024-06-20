@@ -54,6 +54,7 @@ export const battle: SimpleTranslationEntries = {
   "escapeVerbFlee": "huir",
   "notDisabled": "¡El movimiento {{moveName}} de {{pokemonName}}\nya no está anulado!",
   "skipItemQuestion": "¿Estás seguro de que no quieres coger un objeto?",
+  "assaultVestRestriction": "The assault vest prevents the use of any non-offensive moves.",
   "eggHatching": "¿Y esto?",
   "ivScannerUseQuestion": "¿Quieres usar el Escáner de IVs en {{pokemonName}}?",
   "wildPokemonWithAffix": "El {{pokemonName}} salvaje",

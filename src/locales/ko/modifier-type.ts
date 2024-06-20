@@ -215,6 +215,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "TOXIC_ORB": { name: "맹독구슬", description: "이 도구를 지닌 포켓몬은 턴이 끝나는 시점에 상태이상에 걸리지 않았다면 맹독 상태가 된다." },
     "FLAME_ORB": { name: "화염구슬", description: "이 도구를 지닌 포켓몬은 턴이 끝나는 시점에 상태이상에 걸리지 않았다면 화상 상태가 된다." },
+    "ASSAULT_VEST": { name: "Assault Vest", description: "Raises the holder's Special Defense by 50%, but also prevents the holder from selecting any non-offensive moves except Me First." },
 
     "BATON": { name: "바톤", description: "포켓몬을 교체할 때 효과를 넘겨줄 수 있으며, 함정의 영향을 받지 않게 함" },
 

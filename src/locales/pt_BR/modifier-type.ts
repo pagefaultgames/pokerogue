@@ -215,6 +215,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "TOXIC_ORB": { name: "Esfera Tóxica", description: "Uma esfera estranha que exala toxinas quando tocada e envenena seriamente quem a segurar." },
     "FLAME_ORB": { name: "Esfera da Chama", description: "Uma esfera estranha que aquece quando tocada e queima quem a segurar." },
+    "ASSAULT_VEST": { name: "Assault Vest", description: "Raises the holder's Special Defense by 50%, but also prevents the holder from selecting any non-offensive moves except Me First." },
 
     "BATON": { name: "Bastão", description: "Permite passar mudanças de atributo ao trocar Pokémon, ignorando armadilhas." },
 

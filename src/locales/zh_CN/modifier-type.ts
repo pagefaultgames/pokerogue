@@ -215,6 +215,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "TOXIC_ORB": { name: "剧毒宝珠", description: "触碰后会放出毒的神奇宝珠。携带后，在战斗时会变成剧毒状态。" },
     "FLAME_ORB": { name: "火焰宝珠", description: "触碰后会放出热量的神奇宝珠。携带后，在战斗时会变成灼伤状态。" },
+    "ASSAULT_VEST": { name: "Assault Vest", description: "Raises the holder's Special Defense by 50%, but also prevents the holder from selecting any non-offensive moves except Me First." },
 
     "BATON": { name: "接力棒", description: "允许在切换宝可梦时保留能力变化, 对陷阱\n同样生效。" },
 

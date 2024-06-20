@@ -53,6 +53,7 @@ export const battle: SimpleTranslationEntries = {
   "skipItemQuestion": "你要跳過拾取道具嗎?",
   "eggHatching": "咦?",
   "ivScannerUseQuestion": "對 {{pokemonName}} 使用個體值掃描?",
+  "assaultVestRestriction": "The assault vest prevents the use of any non-offensive moves.",
   "wildPokemonWithAffix": "Wild {{pokemonName}}",
   "foePokemonWithAffix": "Foe {{pokemonName}}",
   "useMove": "{{pokemonNameWithAffix}} used {{moveName}}!",

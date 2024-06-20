@@ -215,6 +215,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "TOXIC_ORB": { name: "Tossicsfera", description: "Sfera bizzarra che iperavvelena chi l’ha con sé in una lotta." },
     "FLAME_ORB": { name: "Fiammosfera", description: "Sfera bizzarra che procura una scottatura a chi l’ha con sé in una lotta." },
+    "ASSAULT_VEST": { name: "Assault Vest", description: "Raises the holder's Special Defense by 50%, but also prevents the holder from selecting any non-offensive moves except Me First." },
 
     "BATON": { name: "Staffetta", description: "Permette di trasmettere gli effetti quando si cambia Pokémon, aggirando anche le trappole." },
 
