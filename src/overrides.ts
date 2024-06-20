@@ -87,7 +87,7 @@ export const VARIANT_OVERRIDE: Variant = 0;
  * OPPONENT / ENEMY OVERRIDES
  */
 
-export const OPP_SPECIES_OVERRIDE: Species | integer = [Species.MEWTWO];
+export const OPP_SPECIES_OVERRIDE: Species | integer = 0;
 export const OPP_LEVEL_OVERRIDE: number = 0;
 export const OPP_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const OPP_PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
@@ -96,7 +96,7 @@ export const OPP_GENDER_OVERRIDE: Gender = null;
 export const OPP_MOVESET_OVERRIDE: Array<Moves> = [];
 export const OPP_SHINY_OVERRIDE: boolean = false;
 export const OPP_VARIANT_OVERRIDE: Variant = 0;
-export const OPP_IVS_OVERRIDE: integer | integer[] = [31, 30, 31, 0, 31, 31];
+export const OPP_IVS_OVERRIDE: integer | integer[] = [];
 
 /**
  * MODIFIER / ITEM OVERRIDES
@@ -118,7 +118,7 @@ interface ModifierOverride {
     count?: integer
     type?: TempBattleStat|Stat|Nature|Type|BerryType
 }
-export const STARTING_MODIFIER_OVERRIDE: Array<ModifierOverride> = [{name: "IV_SCANNER", count: 2}];
+export const STARTING_MODIFIER_OVERRIDE: Array<ModifierOverride> = [];
 export const OPP_MODIFIER_OVERRIDE: Array<ModifierOverride> = [];
 
 export const STARTING_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = [];
