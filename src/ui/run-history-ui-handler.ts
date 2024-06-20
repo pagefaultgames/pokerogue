@@ -17,6 +17,7 @@ import { TrainerType } from "../enums/trainer-type";
 import { TrainerVariant } from "../field/trainer";
 import { Challenges } from "#enums/challenges";
 import { getPartyLuckValue, getLuckString, getLuckTextTint } from "../modifier/modifier-type";
+import { Type } from "../data/type";
 
 export const runCount = 25;
 
