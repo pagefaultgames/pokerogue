@@ -25,6 +25,7 @@ export enum TextStyle {
   MONEY,
   STATS_LABEL,
   STATS_VALUE,
+  SETTINGS_VALUE,
   SETTINGS_LABEL,
   SETTINGS_SELECTED,
   SETTINGS_LOCKED,
@@ -138,9 +139,16 @@ export function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraSty
     break;
   case TextStyle.STATS_LABEL:
   case TextStyle.MESSAGE:
+    break;
+  case TextStyle.SETTINGS_VALUE:
   case TextStyle.SETTINGS_LABEL:
   case TextStyle.SETTINGS_LOCKED:
   case TextStyle.SETTINGS_SELECTED:
+    shadowXpos = 3;
+    shadowYpos = 3;
+    if (i18next.resolvedLanguage === "ja") {
+      styleOptions.fontSize = 116;
+    }
     break;
   case TextStyle.BATTLE_INFO:
   case TextStyle.MONEY:
@@ -191,6 +199,7 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
   case TextStyle.MOVE_INFO_CONTENT:
   case TextStyle.MOVE_PP_FULL:
   case TextStyle.TOOLTIP_CONTENT:
+  case TextStyle.SETTINGS_VALUE:
     if (uiTheme) {
       return !shadow ? "#484848" : "#d0d0c8";
     }
