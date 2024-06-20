@@ -3,7 +3,6 @@ import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
 import * as overrides from "#app/overrides";
 import { Species } from "#enums/species";
-import { TurnEndPhase, } from "#app/phases";
 import { Moves } from "#enums/moves";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import Move, { allMoves, MoveCategory } from "#app/data/move.js";
@@ -44,8 +43,6 @@ describe("Abilities - Power Spot", () => {
     const multiplier = getAttrPowerMultiplier(game.scene.getPlayerField()[1]);
     const appliedPower = getAppliedMovePower(game.scene.getEnemyField()[0], game.scene.getPlayerField()[0], allMoves[moveToBeUsed]);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
-
     expect(appliedPower).not.toBe(undefined);
     expect(appliedPower).not.toBe(basePower);
     expect(appliedPower).toBe(basePower * multiplier);
@@ -63,8 +60,6 @@ describe("Abilities - Power Spot", () => {
     const multiplier = getAttrPowerMultiplier(game.scene.getPlayerField()[1]);
     const appliedPower = getAppliedMovePower(game.scene.getEnemyField()[0], game.scene.getPlayerField()[0], allMoves[moveToBeUsed]);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
-
     expect(appliedPower).not.toBe(undefined);
     expect(appliedPower).not.toBe(basePower);
     expect(appliedPower).toBe(basePower * multiplier);
@@ -81,8 +76,6 @@ describe("Abilities - Power Spot", () => {
 
     const multiplier = getAttrPowerMultiplier(game.scene.getPlayerField()[0]);
     const appliedPower = getAppliedMovePower(game.scene.getEnemyField()[0], game.scene.getPlayerField()[0], allMoves[moveToBeUsed]);
-
-    await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(appliedPower).not.toBe(undefined);
     expect(appliedPower).toBe(basePower);
