@@ -1254,7 +1254,7 @@ export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
      * Parental Bond cannot apply to multi-hit moves, charging moves, or
      * moves that cause the user to faint.
      */
-    const exceptAttrs: { new(...args: any[]): MoveAttr }[] = [
+    const exceptAttrs: Constructor<MoveAttr>[] = [
       MultiHitAttr,
       ChargeAttr,
       SacrificialAttr,
