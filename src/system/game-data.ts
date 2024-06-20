@@ -1159,7 +1159,10 @@ export class GameData {
 
   async saveRunHistory(scene: BattleScene, runEntry : SessionSaveData, victory: boolean): Promise<boolean> {
 
-    const runHistoryData = await this.getRunHistoryData(scene);
+    var runHistoryData = await this.getRunHistoryData(scene);
+    if (!runHistoryData) {
+      runHistoryData = {};
+    }
     const timestamps = Object.keys(runHistoryData);
 
     //Arbitrary limit of 25 entries per User --> Can increase or decrease
