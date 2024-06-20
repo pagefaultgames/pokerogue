@@ -4670,7 +4670,7 @@ export const PGMmiscDialogue: SimpleTranslationEntries = {
         $@c{smile_wave}De qualquer forma,@d{64} está ficando tarde…@d{96} Eu acho?\nÉ difícil dizer neste lugar.
         $Vamos para casa. @c{smile_wave_wink}Talvez amanhã possamos ter outra batalha, pelos velhos tempos?`,
   "ending_endless": "Parabéns por alcançar o final atual!\nMais conteúdo chegará em breve.",
-  "ending_name": "Devs"
+  "ending_name": "Desenvolvedores"
 };
 
 // Diálogo que não se enquadra em nenhuma outra categoria (por exemplo, mensagens de tutorial ou o final do jogo). Para quando o personagem do jogador é feminino. Para idiomas que não possuem pronomes de gênero, isso pode ser definido como PGMmiscDialogue.
@@ -4692,7 +4692,7 @@ export const PGFmiscDialogue: SimpleTranslationEntries = {
         $@c{smile_wave}De qualquer forma,@d{64} está ficando tarde…@d{96} Eu acho?\nÉ difícil dizer neste lugar.
         $Vamos para casa. @c{smile_wave_wink}Talvez amanhã possamos ter outra batalha, pelos velhos tempos?`,
   "ending_endless": "Parabéns por alcançar o final atual!\nMais conteúdo chegará em breve.",
-  "ending_name": "Devs"
+  "ending_name": "Desenvolvedores"
 };
 
 
