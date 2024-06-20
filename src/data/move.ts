@@ -3964,6 +3964,8 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
       return -3;
     case BattlerTagType.ENCORE:
       return -2;
+    case BattlerTagType.MINIMIZED:
+      return 0;
     case BattlerTagType.INGRAIN:
     case BattlerTagType.IGNORE_ACCURACY:
     case BattlerTagType.AQUA_RING:
