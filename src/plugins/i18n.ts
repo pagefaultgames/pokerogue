@@ -36,11 +36,16 @@ const unicodeHangul = [
   "U+D7B0-D7FF",
 ].join(",");
 
+const unicodeGana = "U+3040-30FF";
+
+// Common letters both Japanese and Chinese
+const unifiedIdeographsCJK = "U+4E00-9FFF";
+
 const fonts = [
   // korean
-  new FontFace("emerald", "url(./fonts/PokePT_Wansung.ttf)", { unicodeRange: unicodeHangul}),
+  new FontFace("emerald", "url(./fonts/PokePT_Wansung.ttf)", { unicodeRange: unicodeHangul }),
   Object.assign(
-    new FontFace("pkmnems", "url(./fonts/PokePT_Wansung.ttf)", { unicodeRange: unicodeHangul}),
+    new FontFace("pkmnems", "url(./fonts/PokePT_Wansung.ttf)", { unicodeRange: unicodeHangul }),
     { sizeAdjust: "133%" }
   ),
   // unicode
@@ -53,7 +58,7 @@ const fonts = [
     { format: "opentype" }
   ),
   Object.assign(
-    new FontFace("japanese", "url(./fonts/Galmuri11.ttf)", { unicodeRange: "U+3040-30FF, U+4E00-9FFF"}),
+    new FontFace("emerald", "url(./fonts/Galmuri11.ttf)", { unicodeRange: [unicodeGana, unifiedIdeographsCJK].join(",") }),
     { sizeAdjust: "66%" }
   ),
 ];
