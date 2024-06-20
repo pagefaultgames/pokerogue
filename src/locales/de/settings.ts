@@ -15,6 +15,7 @@ export const settings: SimpleTranslationEntries = {
   "skipSeenDialogues": "Gesehenen Dialog überspringen",
   "battleStyle": "Kampfstil",
   "enableRetries": "Erneut versuchen aktivieren",
+  "hideIvs": "Hide IV scanner",
   "tutorials": "Tutorials",
   "touchControls": "Touch Steuerung",
   "vibrations": "Vibration",
