@@ -39,6 +39,8 @@ import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { weather } from "./weather";
 import { partyUiHandler } from "./party-ui-handler";
+import { settings } from "#app/locales/pt_BR/settings.js";
+import { common } from "#app/locales/pt_BR/common.js";
 
 export const ptBrConfig = {
   ability: ability,
@@ -49,6 +51,7 @@ export const ptBrConfig = {
   biome: biome,
   challenges: challenges,
   commandUiHandler: commandUiHandler,
+  common: common,
   PGMachv: PGMachv,
   PGFachv: PGFachv,
   PGMdialogue: PGMdialogue,
@@ -75,6 +78,7 @@ export const ptBrConfig = {
   pokemonInfo: pokemonInfo,
   pokemonInfoContainer: pokemonInfoContainer,
   saveSlotSelectUiHandler: saveSlotSelectUiHandler,
+  settings: settings,
   splashMessages: splashMessages,
   starterSelectUiHandler: starterSelectUiHandler,
   titles: titles,
