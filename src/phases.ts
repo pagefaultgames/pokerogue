@@ -5414,7 +5414,7 @@ export class ScanIvsPhase extends PokemonPhase {
     const uiTheme = (this.scene as BattleScene).uiTheme; // Assuming uiTheme is accessible
     for (let e = 0; e < enemyField.length; e++) {
       enemyIvs = enemyField[e].ivs;
-      const currentIvs = this.scene.gameData.dexData[pokemon.species.speciesId].ivs;
+      const currentIvs = this.scene.gameData.dexData[enemyField[e].species.speciesId].ivs;
       const ivsToShow = this.scene.ui.getMessageHandler().topIvs(enemyIvs, this.shownIvs);
       statsContainer = enemyField[e].getBattleInfo().statsContainer.list[1].list; // need to find a better way to find the "Container" used here instead of [1]
       statsContainerLabels = statsContainer.filter(m => m.name.indexOf("icon_stat_label") >= 0);
