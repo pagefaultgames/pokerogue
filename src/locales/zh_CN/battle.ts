@@ -88,7 +88,7 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsInfatuatedLapseImmobilize": "{{pokemonNameWithAffix}} 不会着迷！",
   "battlerTagsInfatuatedOnRemove": "{{pokemonNameWithAffix}} 治愈了着迷状态！",
   "battlerTagsSeededOnAdd": "将种子种植在了{{pokemonNameWithAffix}}身上！",
-  "battlerTagsSeededLapse": "{{pokemonNameWithAffix}}用寄生种子回复了体力！",
+  "battlerTagsSeededLapse": "{{pokemonNameWithAffix}}被寄生种子吸取了体力！",
   "battlerTagsSeededLapseShed": "{{pokemonNameWithAffix}}吸到了污泥浆！",
   "battlerTagsNightmareOnAdd": "{{pokemonNameWithAffix}}开始做恶梦了！",
   "battlerTagsNightmareOnOverlap": "{{pokemonNameWithAffix}}已经被恶梦缠身！",
