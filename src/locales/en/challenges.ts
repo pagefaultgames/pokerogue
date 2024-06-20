@@ -64,4 +64,10 @@ export const challenges: SimpleTranslationEntries = {
   "singleType.desc.17": "You can only use pokemon with the Dark type.",
   "singleType.value.18": "Fairy",
   "singleType.desc.18": "You can only use pokemon with the Fairy type.",
+  "nuzlocke.name": "Nuzlocke",
+  "nuzlocke.value.0": "Off",
+  "nuzlocke.desc.0": "Nuzlocke Ruleset:\n- No revives.\n- Only one Pokémon every 10th waves can be added to the party.\n- No heal at the end of every 10th wave.",
+  "nuzlocke.value.1": "On",
+  "nuzlocke.desc.1": "Nuzlocke Ruleset:\n- No revives.\n- Only one Pokémon every 10th waves can be added to the party.\n- No heal at the end of every 10th wave.",
+
 } as const;

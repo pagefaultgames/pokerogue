@@ -598,7 +598,6 @@ export class LowerStarterPointsChallenge extends Challenge {
  *
  */
 export class NuzlockeChallenge extends Challenge {
-  //lastCatchAtWave: number = -10;
   constructor() {
     super(Challenges.NUZLOCKE, 1);
     this.addChallengeType(ChallengeType.NO_HEAL_PHASE);
