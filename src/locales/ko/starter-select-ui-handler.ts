@@ -6,7 +6,7 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
  * account interactions, descriptive text, etc.
  */
 export const starterSelectUiHandler: SimpleTranslationEntries = {
-  "confirmStartTeam":"이 포켓몬들로 시작하시겠습니까?",
+  "confirmStartTeam": "이 포켓몬들로 시작하시겠습니까?",
   "gen1": "1세대",
   "gen2": "2세대",
   "gen3": "3세대",
@@ -21,11 +21,12 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "passive": "패시브:",
   "nature": "성격:",
   "eggMoves": "알 기술",
-  "start": "시작",
   "addToParty": "파티에 추가",
   "toggleIVs": "개체값 토글",
   "manageMoves": "기술 관리",
+  "manageNature": "성격 관리",
   "useCandies": "사탕 사용",
+  "selectNature": "교체할 성격을 선택해주세요.",
   "selectMoveSwapOut": "교체할 기술을 선택해주세요.",
   "selectMoveSwapWith": "교체될 기술을 선택해주세요. 대상:",
   "unlockPassive": "패시브 해금",

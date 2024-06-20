@@ -2,10 +2,11 @@ import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./
 import { BattleEndPhase, MovePhase, NewBattlePhase, PartyStatusCurePhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../phases";
 import { BattleStat, getBattleStatName } from "./battle-stat";
 import { EncoreTag } from "./battler-tags";
-import { getPokemonMessage } from "../messages";
+import { getPokemonMessage, getPokemonNameWithAffix } from "../messages";
 import Pokemon, { AttackMoveResult, EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../field/pokemon";
 import { StatusEffect, getStatusEffectHealText, isNonVolatileStatusEffect, getNonVolatileStatusEffects} from "./status-effect";
 import { Type } from "./type";
+import { Constructor } from "#app/utils";
 import * as Utils from "../utils";
 import { WeatherType } from "./weather";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
@@ -156,7 +157,7 @@ export default class Move implements Localizable {
    * @param attrType any attribute that extends {@linkcode MoveAttr}
    * @returns Array of attributes that match `attrType`, Empty Array if none match.
    */
-  getAttrs<T extends MoveAttr>(attrType: new(...args: any[]) => T): T[] {
+  getAttrs<T extends MoveAttr>(attrType: Constructor<T>): T[] {
     return this.attrs.filter((a): a is T => a instanceof attrType);
   }
 
@@ -165,7 +166,7 @@ export default class Move implements Localizable {
    * @param attrType any attribute that extends {@linkcode MoveAttr}
    * @returns true if the move has attribute `attrType`
    */
-  hasAttr<T extends MoveAttr>(attrType: new(...args: any[]) => T): boolean {
+  hasAttr<T extends MoveAttr>(attrType: Constructor<T>): boolean {
     return this.attrs.some((attr) => attr instanceof attrType);
   }
 
@@ -185,7 +186,7 @@ export default class Move implements Localizable {
    * @param args the args needed to instantiate a the given class
    * @returns the called object {@linkcode Move}
    */
-  attr<T extends new (...args: any[]) => MoveAttr>(AttrType: T, ...args: ConstructorParameters<T>): this {
+  attr<T extends Constructor<MoveAttr>>(AttrType: T, ...args: ConstructorParameters<T>): this {
     const attr = new AttrType(...args);
     this.attrs.push(attr);
     let attrCondition = attr.getCondition();
@@ -3992,7 +3993,13 @@ export class CurseAttr extends MoveEffectAttr {
       }
       const curseRecoilDamage = Math.max(1, Math.floor(user.getMaxHp() / 2));
       user.damageAndUpdate(curseRecoilDamage, HitResult.OTHER, user, false, true, true);
-      user.scene.queueMessage(getPokemonMessage(user, ` cut its own HP\nand laid a curse on the ${target.name}!`));
+      user.scene.queueMessage(
+        i18next.t("battle:battlerTagsCursedOnAdd", {
+          pokemonNameWithAffix: getPokemonNameWithAffix(user),
+          pokemonName: target.name
+        })
+      );
+
       target.addTag(BattlerTagType.CURSED, 0, move.id, user.id);
       return true;
     } else {
@@ -5281,7 +5288,16 @@ export class SwitchAbilitiesAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * Attribute used for moves that suppress abilities like {@linkcode Moves.GASTRO_ACID}.
+ * A suppressed ability cannot be activated.
+ *
+ * @extends MoveEffectAttr
+ * @see {@linkcode apply}
+ * @see {@linkcode getCondition}
+ */
 export class SuppressAbilitiesAttr extends MoveEffectAttr {
+  /** Sets ability suppression for the target pokemon and displays a message. */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
       return false;
@@ -5294,8 +5310,9 @@ export class SuppressAbilitiesAttr extends MoveEffectAttr {
     return true;
   }
 
+  /** Causes the effect to fail when the target's ability is unsupressable or already suppressed. */
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => !target.getAbility().hasAttr(UnsuppressableAbilityAbAttr);
+    return (user, target, move) => !target.getAbility().hasAttr(UnsuppressableAbilityAbAttr) && !target.summonData.abilitySuppressed;
   }
 }
 
@@ -5310,7 +5327,7 @@ export class SuppressAbilitiesIfActedAttr extends MoveEffectAttr {
    * abillity cannot be suppressed. This is a secondary effect and has no bearing on the success or failure of the move.
    *
    * @returns True if the move occurred, otherwise false. Note that true will be returned even if the target has not
-   * yet moved or if the target's abiilty is un-suppressable.
+   * yet moved or if the suppression failed to apply.
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
@@ -5499,7 +5516,7 @@ function applyMoveAttrsInternal(attrFilter: MoveAttrFilter, user: Pokemon, targe
   });
 }
 
-export function applyMoveAttrs(attrType: { new(...args: any[]): MoveAttr }, user: Pokemon, target: Pokemon, move: Move, ...args: any[]): Promise<void> {
+export function applyMoveAttrs(attrType: Constructor<MoveAttr>, user: Pokemon, target: Pokemon, move: Move, ...args: any[]): Promise<void> {
   return applyMoveAttrsInternal((attr: MoveAttr) => attr instanceof attrType, user, target, move, args);
 }
 
