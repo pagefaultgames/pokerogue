@@ -45,6 +45,7 @@ import KeyboardBindingUiHandler from "#app/ui/settings/keyboard-binding-ui-handl
 import SettingsDisplayUiHandler from "./settings/settings-display-ui-handler";
 import SettingsAudioUiHandler from "./settings/settings-audio-ui-handler";
 import RunHistoryUiHandler from "./run-history-ui-handler";
+import RunInfoUiHandler from "./run-info-ui-handler";
 import { PlayerGender } from "#enums/player-gender";
 
 export enum Mode {
@@ -74,6 +75,7 @@ export enum Mode {
   KEYBOARD_BINDING,
   ACHIEVEMENTS,
   RUN_HISTORY,
+  RUN_INFO,
   GAME_STATS,
   VOUCHERS,
   EGG_LIST,
@@ -171,6 +173,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new KeyboardBindingUiHandler(scene),
       new AchvsUiHandler(scene),
       new RunHistoryUiHandler(scene),
+      new RunInfoUiHandler(scene),
       new GameStatsUiHandler(scene),
       new VouchersUiHandler(scene),
       new EggListUiHandler(scene),
