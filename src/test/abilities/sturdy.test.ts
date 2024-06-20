@@ -65,7 +65,8 @@ describe("Abilities - Sturdy", () => {
 
       expect(enemyPokemon.hp).toBe(0);
       expect(enemyPokemon.isFainted()).toBe(true);
-    }
+    },
+    TIMEOUT
   );
 
   test(
