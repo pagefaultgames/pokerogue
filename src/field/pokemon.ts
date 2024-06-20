@@ -3936,7 +3936,7 @@ export class PokemonMove {
     }
     if (pokemon.summonData?.attack_move_restriction && !followUp) {
       const move = this.getMove();
-      if (move.power === -1) {
+      if (!(move instanceof AttackMove)) {
         return false;
       }
     }
