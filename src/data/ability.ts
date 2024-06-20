@@ -498,7 +498,7 @@ export class PostDefendDisguiseAbAttr extends PostDefendAbAttr {
       if (!recoilDamage) {
         return false;
       }
-      pokemon.damageAndUpdate(recoilDamage, HitResult.OTHER, attacker);
+      pokemon.damageAndUpdate(recoilDamage, attacker, HitResult.OTHER);
       pokemon.turnData.damageTaken += recoilDamage;
       pokemon.scene.queueMessage(getPokemonMessage(pokemon, "'s disguise was busted!"));
       return true;
@@ -879,7 +879,7 @@ export class PostDefendContactDamageAbAttr extends PostDefendAbAttr {
 
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
     if (move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) {
-      attacker.damageAndUpdate(Math.ceil(attacker.getMaxHp() * (1 / this.damageRatio)), HitResult.OTHER, pokemon);
+      attacker.damageAndUpdate(Math.ceil(attacker.getMaxHp() * (1 / this.damageRatio)), pokemon, HitResult.OTHER);
       attacker.turnData.damageTaken += Math.ceil(attacker.getMaxHp() * (1 / this.damageRatio));
       return true;
     }
@@ -2676,7 +2676,7 @@ export class PostWeatherLapseDamageAbAttr extends PostWeatherLapseAbAttr {
       const scene = pokemon.scene;
       const abilityName = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name;
       scene.queueMessage(getPokemonMessage(pokemon, ` is hurt\nby its ${abilityName}!`));
-      pokemon.damageAndUpdate(Math.ceil(pokemon.getMaxHp() / (16 / this.damageFactor)), HitResult.OTHER, pokemon.scene.getPokemonById(weather.sourceId));
+      pokemon.damageAndUpdate(Math.ceil(pokemon.getMaxHp() / (16 / this.damageFactor)), pokemon.scene.getPokemonById(weather.sourceId), HitResult.OTHER);
       return true;
     }
 
@@ -2950,7 +2950,7 @@ export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
     let hadEffect: boolean = false;
     for (const opp of pokemon.getOpponents()) {
       if (opp.status?.effect === StatusEffect.SLEEP || opp.hasAbility(Abilities.COMATOSE)) {
-        opp.damageAndUpdate(Math.floor(Math.max(1, opp.getMaxHp() / 8)), HitResult.OTHER, pokemon);
+        opp.damageAndUpdate(Math.floor(Math.max(1, opp.getMaxHp() / 8)), pokemon, HitResult.OTHER);
         pokemon.scene.queueMessage(i18next.t("abilityTriggers:badDreams", {pokemonName: getPokemonNameWithAffix(opp)}));
         hadEffect = true;
       }
@@ -3341,7 +3341,7 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
       if (cancelled.value) {
         return false;
       }
-      attacker.damageAndUpdate(Math.ceil(attacker.getMaxHp() * (1 / this.damageRatio)), HitResult.OTHER, pokemon);
+      attacker.damageAndUpdate(Math.ceil(attacker.getMaxHp() * (1 / this.damageRatio)), pokemon, HitResult.OTHER);
       attacker.turnData.damageTaken += Math.ceil(attacker.getMaxHp() * (1 / this.damageRatio));
       return true;
     }
@@ -3364,7 +3364,7 @@ export class PostFaintHPDamageAbAttr extends PostFaintAbAttr {
 
   applyPostFaint(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
     const damage = pokemon.turnData.attacksReceived[0].damage;
-    attacker.damageAndUpdate((damage), HitResult.OTHER, pokemon);
+    attacker.damageAndUpdate((damage), pokemon, HitResult.OTHER);
     attacker.turnData.damageTaken += damage;
     return true;
   }

@@ -1962,7 +1962,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
              * We explicitly require to ignore the faint phase here, as we want to show the messages
              * about the critical hit and the super effective/not very effective messages before the faint phase.
              */
-          damage.value = this.damageAndUpdate(damage.value, result as DamageResult, source, isCritical, oneHitKo, oneHitKo, true);
+          damage.value = this.damageAndUpdate(damage.value, source, result as DamageResult, isCritical, oneHitKo, oneHitKo, true);
           this.turnData.damageTaken += damage.value;
           if (isCritical) {
             this.scene.queueMessage(i18next.t("battle:hitResultCriticalHit"));
@@ -2109,7 +2109,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return damage;
   }
 
-  damageAndUpdate(damage: integer, result?: DamageResult, sourcePokemon?: Pokemon, critical: boolean = false, ignoreSegments: boolean = false, preventEndure: boolean = false, ignoreFaintPhase: boolean = false): integer {
+  damageAndUpdate(damage: integer, sourcePokemon: Pokemon, result?: DamageResult, critical: boolean = false, ignoreSegments: boolean = false, preventEndure: boolean = false, ignoreFaintPhase: boolean = false): integer {
     const damagePhase = new DamagePhase(this.scene, this.getBattlerIndex(), damage, result as DamageResult, critical);
     this.scene.unshiftPhase(damagePhase);
     damage = this.damage(damage, sourcePokemon, ignoreSegments, preventEndure, ignoreFaintPhase);
