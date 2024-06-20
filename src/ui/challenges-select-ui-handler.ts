@@ -82,7 +82,7 @@ export default class GameChallengesUiHandler extends UiHandler {
     descriptionBg.setPositionRelative(this.optionsBg, this.optionsBg.width, 0);
 
     this.descriptionText = new BBCodeText(this.scene, descriptionBg.x + 6, descriptionBg.y + 4, "", {
-      fontFamily: "emerald, unifont",
+      fontFamily: "emerald",
       fontSize: 96,
       color: Color.ORANGE,
       padding: {
