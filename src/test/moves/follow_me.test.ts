@@ -36,6 +36,7 @@ describe("Moves - Follow Me", () => {
     vi.spyOn(overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.AMOONGUSS);
     vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SNORLAX);
     vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
     vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.FOLLOW_ME, Moves.RAGE_POWDER, Moves.SPOTLIGHT, Moves.QUICK_ATTACK ]);
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
   });
@@ -62,7 +63,7 @@ describe("Moves - Follow Me", () => {
       await game.phaseInterceptor.to(SelectTargetPhase, false);
 
       game.doSelectTarget(BattlerIndex.ENEMY);
-      await game.phaseInterceptor.to(TurnEndPhase);
+      await game.phaseInterceptor.to(TurnEndPhase, false);
 
       expect(playerPokemon[0].hp).toBeLessThan(200);
       expect(playerPokemon[1].hp).toBe(200);
@@ -88,7 +89,7 @@ describe("Moves - Follow Me", () => {
       await game.phaseInterceptor.to(CommandPhase);
 
       game.doAttack(getMovePosition(game.scene, 1, Moves.FOLLOW_ME));
-      await game.phaseInterceptor.to(TurnEndPhase);
+      await game.phaseInterceptor.to(TurnEndPhase, false);
 
       playerPokemon.sort((a, b) => a.getBattleStat(Stat.SPD) - b.getBattleStat(Stat.SPD));
 
@@ -124,7 +125,7 @@ describe("Moves - Follow Me", () => {
       game.doAttack(getMovePosition(game.scene, 1, Moves.QUICK_ATTACK));
       await game.phaseInterceptor.to(SelectTargetPhase, false);
       game.doSelectTarget(BattlerIndex.ENEMY_2);
-      await game.phaseInterceptor.to(TurnEndPhase);
+      await game.phaseInterceptor.to(TurnEndPhase, false);
 
       // If redirection was bypassed, both enemies should be damaged
       enemyPokemon.forEach(p => expect(p.hp).toBeLessThan(200));
@@ -157,7 +158,7 @@ describe("Moves - Follow Me", () => {
       game.doAttack(getMovePosition(game.scene, 1, Moves.SNIPE_SHOT));
       await game.phaseInterceptor.to(SelectTargetPhase, false);
       game.doSelectTarget(BattlerIndex.ENEMY_2);
-      await game.phaseInterceptor.to(TurnEndPhase);
+      await game.phaseInterceptor.to(TurnEndPhase, false);
 
       // If redirection was bypassed, both enemies should be damaged
       enemyPokemon.forEach(p => expect(p.hp).toBeLessThan(200));
