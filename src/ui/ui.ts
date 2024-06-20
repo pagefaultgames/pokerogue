@@ -182,7 +182,7 @@ export default class UI extends Phaser.GameObjects.Container {
   }
 
   setup(): void {
-    this.setName("container-ui");
+    this.setName(`container-ui-${Mode[this.mode]}`);
     for (const handler of this.handlers) {
       handler.setup();
     }
