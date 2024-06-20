@@ -8,10 +8,13 @@ export const pokemonSummary: SimpleTranslationEntries = {
   "unknownTrainer": "Unknown",
   "ot": "OT",
   "luck": "Luck",
-  "nature": "nature",
-  "apparently": "apparently",
-  "metAtLv": "met at Lv.",
   "expPoints": "Exp. Points",
   "nextLv": "Next Lv.",
   "cancel": "Cancel",
+
+  "memoString": "{{natureFragment}} nature,\n{{metFragment}}",
+  "metFragment": {
+    "normal": "met at Lv{{level}},\n{{biome}}.",
+    "apparently": "apparently met at Lv{{level}},\n{{biome}}.",
+  }
 } as const;

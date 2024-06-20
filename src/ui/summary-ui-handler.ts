@@ -15,7 +15,7 @@ import { Stat, getStatName } from "../data/pokemon-stat";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { StatusEffect } from "../data/status-effect";
 import { getBiomeName } from "../data/biomes";
-import { getNatureName, getNatureStatMultiplier } from "../data/nature";
+import { Nature, getNatureName, getNatureStatMultiplier } from "../data/nature";
 import { loggedInUser } from "../account";
 import { Variant, getVariantTint } from "#app/data/variant";
 import {Button} from "#enums/buttons";
@@ -796,7 +796,20 @@ export default class SummaryUiHandler extends UiHandler {
       this.passiveContainer?.nameText.setVisible(false);
       this.passiveContainer?.descriptionText.setVisible(false);
 
-      const memoString = `${getBBCodeFrag(Utils.toReadableString(getNatureName(this.pokemon.getNature())), TextStyle.SUMMARY_RED)}${getBBCodeFrag(` ${i18next.t("pokemonSummary:nature")},`, TextStyle.WINDOW_ALT)}\n${getBBCodeFrag(`${this.pokemon.metBiome === -1 ? `${i18next.t("pokemonSummary:apparently")} ` : ""}${i18next.t("pokemonSummary:metAtLv")}`, TextStyle.WINDOW_ALT)}${getBBCodeFrag(this.pokemon.metLevel.toString(), TextStyle.SUMMARY_RED)}${getBBCodeFrag(",", TextStyle.WINDOW_ALT)}\n${getBBCodeFrag(getBiomeName(this.pokemon.metBiome), TextStyle.SUMMARY_RED)}${getBBCodeFrag(".", TextStyle.WINDOW_ALT)}`;
+      const closeFragment = getBBCodeFrag("", TextStyle.WINDOW_ALT);
+      const rawNature = Utils.toReadableString(Nature[this.pokemon.getNature()]);
+      const nature = `${getBBCodeFrag(Utils.toReadableString(getNatureName(this.pokemon.getNature())), TextStyle.SUMMARY_RED)}${closeFragment}`;
+
+      const memoString = i18next.t("pokemonSummary:memoString", {
+        metFragment: i18next.t(`pokemonSummary:metFragment.${this.pokemon.metBiome === -1? "apparently": "normal"}`, {
+          biome: `${getBBCodeFrag(getBiomeName(this.pokemon.metBiome), TextStyle.SUMMARY_RED)}${closeFragment}`,
+          level: `${getBBCodeFrag(this.pokemon.metLevel.toString(), TextStyle.SUMMARY_RED)}${closeFragment}`,
+        }),
+        natureFragment:
+          i18next.exists(`pokemonSummary:natureFragment.${rawNature}`) ?
+            i18next.t(`pokemonSummary:natureFragment.${rawNature}`, { nature: nature }) :
+            nature,
+      });
 
       const memoText = addBBCodeTextObject(this.scene, 7, 113, memoString, TextStyle.WINDOW_ALT);
       memoText.setOrigin(0, 0);
