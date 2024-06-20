@@ -876,7 +876,7 @@ export function initSpecies() {
     new PokemonSpecies(Species.VENUSAUR, 1, false, false, false, "Seed Pokémon", Type.GRASS, Type.POISON, 2, 100, Abilities.OVERGROW, Abilities.NONE, Abilities.CHLOROPHYLL, 525, 80, 82, 83, 100, 100, 80, 45, 50, 263, GrowthRate.MEDIUM_SLOW, 87.5, true, true,
       new PokemonForm("Normal", "", Type.GRASS, Type.POISON, 2, 100, Abilities.OVERGROW, Abilities.NONE, Abilities.CHLOROPHYLL, 525, 80, 82, 83, 100, 100, 80, 45, 50, 263, true, null, true),
       new PokemonForm("Mega", SpeciesFormKey.MEGA, Type.GRASS, Type.POISON, 2.4, 155.5, Abilities.THICK_FAT, Abilities.THICK_FAT, Abilities.THICK_FAT, 625, 80, 100, 123, 122, 120, 80, 45, 50, 263, true),
-      new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX, Type.GRASS, Type.POISON, 24, 100, Abilities.CHLOROPHYLL, Abilities.CHLORPHYLL, Abilities.CHLOROPHYLL, 625, 122, 60, 108, 130, 115, 90, 45, 50, 263, true),
+      new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX, Type.GRASS, Type.POISON, 24, 100, Abilities.CHLOROPHYLL, Abilities.CHLOROPHYLL, Abilities.CHLOROPHYLL, 625, 122, 60, 108, 130, 115, 90, 45, 50, 263, true),
     ),
     new PokemonSpecies(Species.CHARMANDER, 1, false, false, false, "Lizard Pokémon", Type.FIRE, null, 0.6, 8.5, Abilities.BLAZE, Abilities.NONE, Abilities.SOLAR_POWER, 309, 39, 52, 43, 60, 50, 65, 45, 50, 62, GrowthRate.MEDIUM_SLOW, 87.5, false),
     new PokemonSpecies(Species.CHARMELEON, 1, false, false, false, "Flame Pokémon", Type.FIRE, null, 1.1, 19, Abilities.BLAZE, Abilities.NONE, Abilities.SOLAR_POWER, 405, 58, 64, 58, 80, 65, 80, 45, 50, 142, GrowthRate.MEDIUM_SLOW, 87.5, false),
