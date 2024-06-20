@@ -19,7 +19,7 @@ import { TrainerVariant } from "../field/trainer";
 import { Challenges } from "#enums/challenges";
 import { Type } from "../data/type";
 import { getPartyLuckValue, getLuckString, getLuckTextTint } from "../modifier/modifier-type";
-import RoundRectangle from 'phaser3-rex-plugins/plugins/roundrectangle.js';
+import RoundRectangle from "phaser3-rex-plugins/plugins/roundrectangle.js";
 import { Type, getTypeRgb } from "../data/type";
 import { Species } from "#enums/species";
 import PokemonSpecies, { allSpecies, starterPassiveAbilities, getFusedSpeciesName } from "../data/pokemon-species";
@@ -27,6 +27,7 @@ import { Nature, getNatureStatMultiplier, getNatureName } from "../data/nature";
 import Ability, { allAbilities } from "../data/ability";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import Modifier, { getPartyLuckValue, modifierTypes } from "../modifier/modifier-type";
+import { getVariantTint } from "#app/data/variant";
 
 enum Page {
   GENERAL,
@@ -40,7 +41,7 @@ export enum RunVictory {
 }
 
 export default class GameInfoUiHandler extends UiHandler {
-	private gameStatsContainer: Phaser.GameObjects.Container;
+  private gameStatsContainer: Phaser.GameObjects.Container;
   	private statsContainer: Phaser.GameObjects.Container;
 
   	private runInfoContainer: Phaser.GameObjects.Container;
@@ -52,40 +53,40 @@ export default class GameInfoUiHandler extends UiHandler {
 
   	private statValues: Phaser.GameObjects.Text[];
 
-	constructor(scene: BattleScene) {
-     super(scene, Mode.RUN_INFO);
+  constructor(scene: BattleScene) {
+    super(scene, Mode.RUN_INFO);
   }
 
   	setup() {
-    	
-      const ui = this.getUi();
- 		  const page = 0; 
+
+    const ui = this.getUi();
+ 		  const page = 0;
 
  		  this.gameStatsContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
 
-      this.gameStatsContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
+    this.gameStatsContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
 
-      const headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6) - 2, 24);
-      headerBg.setOrigin(0, 0);
+    const headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6) - 2, 24);
+    headerBg.setOrigin(0, 0);
 
-      const headerText = addTextObject(this.scene, 0, 0, i18next.t("runHistory:runInfo"), TextStyle.SETTINGS_LABEL);
-      headerText.setOrigin(0, 0);
-      headerText.setPositionRelative(headerBg, 8, 4);
+    const headerText = addTextObject(this.scene, 0, 0, i18next.t("runHistory:runInfo"), TextStyle.SETTINGS_LABEL);
+    headerText.setOrigin(0, 0);
+    headerText.setPositionRelative(headerBg, 8, 4);
 
-      this.statsBgWidth = ((this.scene.game.canvas.width / 6) - 2) / 3;
-        
-      this.runInfoContainer = this.scene.add.container(0, 24);
+    this.statsBgWidth = ((this.scene.game.canvas.width / 6) - 2) / 3;
+
+    this.runInfoContainer = this.scene.add.container(0, 24);
 		  const runInfoWindow = addWindow(this.scene, 0, 0, this.statsBgWidth-10, (this.scene.game.canvas.height / 6) - 25);
-      runInfoWindow.setOrigin(0, 0);
-      this.runInfoContainer.add(runInfoWindow);
-        
-      this.partyContainer = this.scene.add.container(this.statsBgWidth-10, 24);
-      this.partyContainerWidth = (this.statsBgWidth*2)+10;
-      this.partyContainerHeight = (this.scene.game.canvas / 6) - 25;
-      const partyInfoWindow = addWindow(this.scene, 0, 0, (this.statsBgWidth*2)+10, (this.scene.game.canvas.height / 6) - 25);
-      partyInfoWindow.setOrigin(0,0);
+    runInfoWindow.setOrigin(0, 0);
+    this.runInfoContainer.add(runInfoWindow);
 
-      this.partyContainer.add(partyInfoWindow); 
+    this.partyContainer = this.scene.add.container(this.statsBgWidth-10, 24);
+    this.partyContainerWidth = (this.statsBgWidth*2)+10;
+    this.partyContainerHeight = (this.scene.game.canvas / 6) - 25;
+    const partyInfoWindow = addWindow(this.scene, 0, 0, (this.statsBgWidth*2)+10, (this.scene.game.canvas.height / 6) - 25);
+    partyInfoWindow.setOrigin(0,0);
+
+    this.partyContainer.add(partyInfoWindow);
 
     	this.gameStatsContainer.add(headerBg);
     	this.gameStatsContainer.add(headerText);
@@ -109,21 +110,21 @@ export default class GameInfoUiHandler extends UiHandler {
 
  		this.parseRunInfo(runData, runHistoryOrigin, run.victory);
 
-        const partyData = runHistoryOrigin ? runData.party : {};
-        this.parsePartyInfo(partyData);
+    const partyData = runHistoryOrigin ? runData.party : {};
+    this.parsePartyInfo(partyData);
 
-        
-        this.getUi().bringToTop(this.gameStatsContainer);
-        this.gameStatsContainer.setVisible(true);
 
-        this.setCursor(0);
+    this.getUi().bringToTop(this.gameStatsContainer);
+    this.gameStatsContainer.setVisible(true);
 
-        //this.updateStats();
-        
+    this.setCursor(0);
 
-        this.getUi().hideTooltip();
+    //this.updateStats();
 
-        return true;
+
+    this.getUi().hideTooltip();
+
+    return true;
  	}
 
  	async parseRunInfo(runData:any, runHistoryOrigin: boolean, runResult: boolean = false) {
@@ -145,19 +146,18 @@ export default class GameInfoUiHandler extends UiHandler {
     		case GameModes.CHALLENGE:
     			genInfoText.appendText(`${i18next.t("gameMode:"+GameModes[runData.gameMode].toLowerCase())}`, false);
     			genInfoText.appendText(`\t${i18next.t("runHistory:challengeRules")}: `);
-          const runChallenges = runData.challenges;
-          const rules = [];
-          for (var i = 0; i < runChallenges.length; i++) {
-          if (runChallenges[i].id === Challenges.SINGLE_GENERATION && runChallenges[i].value !== 0) {
-            rules.push(i18next.t("runHistory:challengeMonoGen"+runChallenges[i].value));
-          }
-          else if (runChallenges[i].id === Challenges.SINGLE_TYPE && runChallenges[i].value !== 0) {
-            rules.push(Type[runChallenges[i].value-1]);
-          }
-          }
-          if (rules) {
-            genInfoText.appendText(rules, false);
-          }
+      const runChallenges = runData.challenges;
+      const rules = [];
+      for (let i = 0; i < runChallenges.length; i++) {
+        if (runChallenges[i].id === Challenges.SINGLE_GENERATION && runChallenges[i].value !== 0) {
+          rules.push(i18next.t("runHistory:challengeMonoGen"+runChallenges[i].value));
+        } else if (runChallenges[i].id === Challenges.SINGLE_TYPE && runChallenges[i].value !== 0) {
+          rules.push(Type[runChallenges[i].value-1]);
+        }
+      }
+      if (rules) {
+        genInfoText.appendText(rules, false);
+      }
     			break;
     		case GameModes.ENDLESS:
     		case GameModes.CLASSIC:
@@ -171,7 +171,7 @@ export default class GameInfoUiHandler extends UiHandler {
     	genInfoText.appendText(`${i18next.t("runHistory:score")}: ${runData.score}`);
 
     	genInfoText.appendText(`${i18next.t("runHistory:money")}: ${Utils.formatLargeNumber(runData.money, 1000)}`);
-    	
+
 
     	if (runHistoryOrigin && !runResult) {
     		const enemyContainer = this.scene.add.container(8, -40);
@@ -203,7 +203,7 @@ export default class GameInfoUiHandler extends UiHandler {
     			//e = (e>2) ? e : e/2;
           		const enemyIconContainer = this.scene.add.container(8+(e*12), 66);
           		enemyIconContainer.setScale(0.5);
-              const isBoss = enemyData.boss;
+          const isBoss = enemyData.boss;
           		enemyData.boss = false;
           		const enemy = enemyData.toPokemon(this.scene);
           		const enemyIcon = this.scene.addPokemonIcon(enemy, 0, 0, 0, 0);
@@ -221,20 +221,20 @@ export default class GameInfoUiHandler extends UiHandler {
     		this.runInfoContainer.add(enemyContainer);
     		genInfoText.setPosition(6,35);
     	}
- 		
-    	if (runData.modifiers) {
-        genInfoText.appendText(i18next.t("runHistory:playerItems")+": ");
-        const modifiersModule = await import("../modifier/modifier");
-        
-        let visibleModifierIndex = 0;
-        
-        const modifierIconsContainer = this.scene.add.container(8, 65);
-        modifierIconsContainer.setScale(0.45);
-        for (const m of runData.modifiers) {
-          const modifier = m.toModifier(this.scene, modifiersModule[m.className]);
-          if (modifier instanceof PokemonHeldItemModifier) {
-            continue;
-          }
+
+    	if (runData.modifiers.length) {
+      genInfoText.appendText(i18next.t("runHistory:playerItems")+": ");
+      const modifiersModule = await import("../modifier/modifier");
+
+      let visibleModifierIndex = 0;
+
+      const modifierIconsContainer = this.scene.add.container(8, 65);
+      modifierIconsContainer.setScale(0.45);
+      for (const m of runData.modifiers) {
+        const modifier = m.toModifier(this.scene, modifiersModule[m.className]);
+        if (modifier instanceof PokemonHeldItemModifier) {
+          continue;
+        }
         const item = this.scene.add.sprite(0, 12, "items");
         item.setFrame(modifier.type.iconImage);
 
@@ -251,59 +251,46 @@ export default class GameInfoUiHandler extends UiHandler {
       modifierIconsContainer.setPosition(7, 110);
       this.runInfoContainer.add(modifierIconsContainer);
     }
- 			//Defeat Handler 
- 			//Defeated...
- 			//Date:
- 			//Mode:
- 			//Luck:
- 			//Score:	
- 			//Enemy Party: (Wild Pokemon + Level - same for single/double) (Single Trainer - sprite + two rows of 3 pokemon at max) (Double Trainer - sprite/1 row + sprite/1 row)
- 			//Wave - Biome:
- 			//Player Items: (player modifiers)
-    		
- 			//genInfoText.setWordWrapCallback(() => '\n');
  		  this.runInfoContainer.add(genInfoText);
-      
+
 
  	}
 
  	parsePartyInfo(party: any) {
 
  		const windowHeight = ((this.scene.game.canvas.height / 6) - 23)/3;
- 		
+
  		const infoWidth = (this.statsBgWidth/2);
 
- 		const pokemonPos = [[infoWidth+4, 28], [(infoWidth*3)+5, 28], [infoWidth+4, 78], [(infoWidth*3)+5, 78], [infoWidth+4, 128], [(infoWidth*3)+5, 128]]
+ 		const pokemonPos = [[infoWidth+4, 28], [(infoWidth*3)+5, 28], [infoWidth+4, 78], [(infoWidth*3)+5, 78], [infoWidth+4, 128], [(infoWidth*3)+5, 128]];
  		party.forEach((p: PokemonData, i: integer) => {
       		const pokemonInfoWindow = new RoundRectangle(this.scene, 0, 0, infoWidth*2, windowHeight-3, 3);
  			pokemonInfoWindow.setStrokeStyle(1, 0x4b4b4b, 0.85);
  			const pokemonSpriteWindow = this.scene.add.rectangle(0, 0, 21, 21, 0xFFFFFF, 0.4);
 
  			const pokemon = p.toPokemon(this.scene);
-      console.log(pokemon);
  			const pokemonInfoContainer = this.scene.add.container(pokemonPos[i][0], pokemonPos[i][1]);
  			pokemonInfoWindow.setStrokeStyle(1, 0x4b4b4b, 0.95);
- 			
+
  			const types = pokemon.getTypes();
- 			var typeColor = getTypeRgb(types[0]);
+ 			let typeColor = getTypeRgb(types[0]);
  			const type1Color = new Phaser.Display.Color(typeColor[0], typeColor[1], typeColor[2]);
  			if (types[1]) {
  				typeColor = getTypeRgb(types[1]);
  				const type2Color = new Phaser.Display.Color(typeColor[0], typeColor[1], typeColor[2]);
  				pokemonSpriteWindow.setFillStyle(type2Color.color, 0.7);
- 			} 
- 			type1Color.darken(25);
+ 			}
+ 			type1Color.darken(45);
       pokemonInfoWindow.setFillStyle(type1Color.color);
       //pokemonInfoWindow.setBlendMode(Phaser.BlendModes.MULTIPLY);
 
- 			const factors = i%2 ? [1,1] : [-1,-1];
       		const iconContainer = this.scene.add.container(-55, -29);
       		pokemonSpriteWindow.setOrigin(-0.3, -0.25);
       		const icon = this.scene.addPokemonIcon(pokemon, 0, 0, 0, 0);
           icon.setScale(0.75);
           icon.setPosition(14, 5);
           pokemonSpriteWindow.setPosition(-2,2);
-      		icon.add(pokemonSpriteWindow)
+      		icon.add(pokemonSpriteWindow);
       		this.getUi().bringToTop(icon);
 
       		const textContainer = this.scene.add.container(-26, -25);
@@ -312,7 +299,7 @@ export default class GameInfoUiHandler extends UiHandler {
           const pName = pokemon.fusionSpecies ? pokemon.name : pSpecies.name;
       		const textNameNatureLevel = addTextObject(this.scene, -2, 1, `${pName} - ${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatFancyLargeNumber(pokemon.level, 1)} - ${pNature}`, TextStyle.SUMMARY, { fontSize: "33px", color: "#f8f8f8" });
       		textContainer.add(textNameNatureLevel);
-      		
+
       		const pPassiveInfo = pokemon.passive ? `${i18next.t("starterSelectUiHandler:passive")+" "+allAbilities[starterPassiveAbilities[pSpecies.speciesId]].name}` : "";
       		const pHasHA = (pSpecies.hiddenAbility === pSpecies.getAbility(pokemon.AbilityIndex)) ? ["[color=#e8e8a8]","[/color]"] : ["",""];
       		const pAbilityInfo = i18next.t("starterSelectUiHandler:ability")+" "+pHasHA[0] + allAbilities[pSpecies.getAbility(pokemon.AbilityIndex)].name + pHasHA[1];
@@ -336,6 +323,37 @@ export default class GameInfoUiHandler extends UiHandler {
       		textContainer.add(textStats1);
       		const textStats2 = addBBCodeTextObject(this.scene, -2, 21, pStatsInfo2, TextStyle.SUMMARY, { fontSize: "34px"});
       		textContainer.add(textStats2);
+
+          if (pokemon.fusionSpecies) {
+            const splicedIcon = this.scene.add.image(0, 0, "icon_spliced");
+            splicedIcon.setScale(0.35);
+            splicedIcon.setOrigin(0, 0);
+            splicedIcon.setPositionRelative(textContainer, 121, 32);
+            iconContainer.add(splicedIcon);
+            this.getUi().bringToTop(splicedIcon);
+          }
+
+          if (pokemon.isShiny()) {
+            const doubleShiny = pokemon.isFusion() && pokemon.shiny && pokemon.fusionShiny;
+
+            const shinyStar = this.scene.add.image(0, 0, `shiny_star_small${doubleShiny ? "_1" : ""}`);
+            shinyStar.setOrigin(0, 0);
+            shinyStar.setScale(0.65)
+            shinyStar.setPositionRelative(textContainer, 127, 32);
+            shinyStar.setTint(getVariantTint(!doubleShiny ? pokemon.getVariant() : pokemon.variant));
+            iconContainer.add(shinyStar);
+            this.getUi().bringToTop(shinyStar);
+
+            if (doubleShiny) {
+              const fusionShinyStar = this.scene.add.image(0, 0, "shiny_star_small_2");
+              fusionShinyStar.setOrigin(0, 0);
+              fusionShinyStar.setScale(0.5);
+              fusionShinyStar.setPosition(shinyStar.x, shinyStar.y);
+              fusionShinyStar.setTint(getVariantTint(pokemon.fusionVariant));
+              iconContainer.add(fusionShinyStar);
+              this.getUi().bringToTop(fusionShinyStar);
+          }
+        }
 
       		const pokemonMoveset = pokemon.getMoveset();
       		const movesetContainer = this.scene.add.container(5.5, -30);
