@@ -41,8 +41,8 @@ describe("Abilities - Wind Rider", () => {
     const magikarpSpd = magikarp.getStat(Stat.SPD);
     const meowthSpd = meowth.getStat(Stat.SPD);
 
-    expect(magikarp.getStat(Stat.SPD)).toBe(magikarpSpd);
-    expect(meowth.getStat(Stat.SPD)).toBe(meowthSpd);
+    expect(magikarp.getBattleStat(Stat.SPD)).equal(magikarpSpd);
+    expect(meowth.getBattleStat(Stat.SPD)).equal(meowthSpd);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.TAILWIND));
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
@@ -76,5 +76,33 @@ describe("Abilities - Wind Rider", () => {
     await game.toNextTurn();
 
     expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER)).toBeUndefined();
+  });
+
+  it("does not affect the opposing side", async () => {
+    vi.spyOn(overrides, "DOUBLE_BATTLE_OVERRIDE", "get").mockReturnValue(false);
+    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+
+    await game.startBattle([Species.MAGIKARP]);
+
+    const ally = game.scene.getPlayerPokemon();
+    const enemy = game.scene.getEnemyPokemon();
+
+    const allySpd = ally.getStat(Stat.SPD);
+    const enemySpd = enemy.getStat(Stat.SPD);
+
+
+    expect(ally.getBattleStat(Stat.SPD)).equal(allySpd);
+    expect(enemy.getBattleStat(Stat.SPD)).equal(enemySpd);
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER)).toBeUndefined();
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.ENEMY)).toBeUndefined();
+
+    game.doAttack(getMovePosition(game.scene, 0, Moves.TAILWIND));
+
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    expect(ally.getBattleStat(Stat.SPD)).toBe(allySpd * 2);
+    expect(enemy.getBattleStat(Stat.SPD)).equal(enemySpd);
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER)).toBeDefined();
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.ENEMY)).toBeUndefined();
   });
 });
