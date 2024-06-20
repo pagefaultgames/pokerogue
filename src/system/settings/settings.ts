@@ -72,6 +72,7 @@ export const SettingKeys = {
   Skip_Seen_Dialogues: "SKIP_SEEN_DIALOGUES",
   Battle_Style: "BATTLE_STYLE",
   Enable_Retries: "ENABLE_RETRIES",
+  Hide_IVs: "HIDE_IVS",
   Tutorials: "TUTORIALS",
   Touch_Controls: "TOUCH_CONTROLS",
   Vibration: "VIBRATION",
@@ -237,6 +238,13 @@ export const Setting: Array<Setting> = [
   {
     key: SettingKeys.Enable_Retries,
     label: i18next.t("settings:enableRetries"),
+    options: OFF_ON,
+    default: 0,
+    type: SettingType.GENERAL
+  },
+  {
+    key: SettingKeys.Hide_IVs,
+    label: i18next.t("settings:hideIvs"),
     options: OFF_ON,
     default: 0,
     type: SettingType.GENERAL
@@ -593,6 +601,9 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     break;
   case SettingKeys.Enable_Retries:
     scene.enableRetries = Setting[index].options[value].value === "On";
+    break;
+  case SettingKeys.Hide_IVs:
+    scene.hideIvs = Setting[index].options[value].value === "On";
     break;
   case SettingKeys.Skip_Seen_Dialogues:
     scene.skipSeenDialogues = Setting[index].options[value].value === "On";

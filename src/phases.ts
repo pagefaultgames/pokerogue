@@ -5428,20 +5428,23 @@ export class ScanIvsPhase extends PokemonPhase {
       }
     }
 
-
-    this.scene.ui.showText(i18next.t("battle:ivScannerUseQuestion", { pokemonName: pokemon.name }), null, () => {
-      this.scene.ui.setMode(Mode.CONFIRM, () => {
-        this.scene.ui.setMode(Mode.MESSAGE);
-        this.scene.ui.clearText();
-        new CommonBattleAnim(CommonAnim.LOCK_ON, pokemon, pokemon).play(this.scene, () => {
-          this.scene.ui.getMessageHandler().promptIvs(pokemon.id, pokemon.ivs, this.shownIvs).then(() => this.end());
+    if (!this.scene.hideIvs) {
+      this.scene.ui.showText(i18next.t("battle:ivScannerUseQuestion", { pokemonName: pokemon.name }), null, () => {
+        this.scene.ui.setMode(Mode.CONFIRM, () => {
+          this.scene.ui.setMode(Mode.MESSAGE);
+          this.scene.ui.clearText();
+          new CommonBattleAnim(CommonAnim.LOCK_ON, pokemon, pokemon).play(this.scene, () => {
+            this.scene.ui.getMessageHandler().promptIvs(pokemon.id, pokemon.ivs, this.shownIvs).then(() => this.end());
+          });
+        }, () => {
+          this.scene.ui.setMode(Mode.MESSAGE);
+          this.scene.ui.clearText();
+          this.end();
         });
-      }, () => {
-        this.scene.ui.setMode(Mode.MESSAGE);
-        this.scene.ui.clearText();
-        this.end();
       });
-    });
+    } else {
+      this.end();
+    }
   }
 }
 
