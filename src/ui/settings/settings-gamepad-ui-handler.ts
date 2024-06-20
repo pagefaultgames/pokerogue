@@ -55,7 +55,7 @@ export default class SettingsGamepadUiHandler extends AbstractControlSettingsUiH
     this.layout["noGamepads"] = new Map();
     const optionsContainer = this.scene.add.container(0, 0);
     optionsContainer.setVisible(false); // Initially hide the container as no gamepads are connected.
-    const label = addTextObject(this.scene, 8, 28, i18next.t("menu:gamepadPleasePlug"), TextStyle.SETTINGS_LABEL);
+    const label = addTextObject(this.scene, 8, 28, i18next.t("settings:gamepadPleasePlug"), TextStyle.SETTINGS_LABEL);
     label.setOrigin(0, 0);
     optionsContainer.add(label);
     this.settingsContainer.add(optionsContainer);

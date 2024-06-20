@@ -79,7 +79,7 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
     this.actionsContainer.add(this.actionBg);
 
     // Text prompts and instructions for the user.
-    this.unlockText = addTextObject(this.scene, 0, 0, i18next.t("menu:pressButton"), TextStyle.WINDOW);
+    this.unlockText = addTextObject(this.scene, 0, 0, i18next.t("settings:pressButton"), TextStyle.WINDOW);
     this.unlockText.setOrigin(0, 0);
     this.unlockText.setPositionRelative(this.titleBg, 36, 4);
     this.optionSelectContainer.add(this.unlockText);
@@ -93,7 +93,7 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
     this.optionSelectBg.setOrigin(0.5);
     this.optionSelectContainer.add(this.optionSelectBg);
 
-    this.cancelLabel = addTextObject(this.scene, 0, 0, i18next.t("menu:back"), TextStyle.SETTINGS_LABEL);
+    this.cancelLabel = addTextObject(this.scene, 0, 0, i18next.t("settings:back"), TextStyle.SETTINGS_LABEL);
     this.cancelLabel.setOrigin(0, 0.5);
     this.cancelLabel.setPositionRelative(this.actionBg, 10, this.actionBg.height / 2);
     this.actionsContainer.add(this.cancelLabel);
