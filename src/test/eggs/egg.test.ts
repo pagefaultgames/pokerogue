@@ -7,6 +7,7 @@ import { EggSourceType } from "#app/enums/egg-source-types.js";
 import { EggTier } from "#app/enums/egg-type.js";
 import { VariantTier } from "#app/enums/variant-tiers.js";
 import GameManager from "../utils/gameManager";
+import EggData from "#app/system/egg-data.js";
 
 describe("Egg Generation Tests", () => {
   let phaserGame: Phaser.Game;
@@ -201,5 +202,21 @@ describe("Egg Generation Tests", () => {
     const result = new Egg({scene, tier: EggTier.MASTER, species: Species.BULBASAUR}).hatchWaves;
 
     expect(result).toBe(expectedHatchWaves);
+  });
+  it("should correctly load a legacy egg", () => {
+    const legacyEgg = {
+      gachaType: 1,
+      hatchWaves: 25,
+      id: 2077000788,
+      timestamp: 1718908955085
+    };
+
+    const result = new EggData(legacyEgg);
+
+    expect(result.tier).toBe(EggTier.GREAT);
+    expect(result.id).toBe(legacyEgg.id);
+    expect(result.timestamp).toBe(legacyEgg.timestamp);
+    expect(result.hatchWaves).toBe(legacyEgg.hatchWaves);
+    expect(result.sourceType).toBe(legacyEgg.gachaType);
   });
 });
