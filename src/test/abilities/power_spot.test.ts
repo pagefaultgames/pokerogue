@@ -3,7 +3,6 @@ import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
 import * as overrides from "#app/overrides";
 import { Species } from "#enums/species";
-import { TurnEndPhase, } from "#app/phases";
 import { Moves } from "#enums/moves";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import Move, { allMoves, MoveCategory } from "#app/data/move.js";
