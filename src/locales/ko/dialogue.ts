@@ -928,19 +928,19 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "marlon": {
     "encounter": {
-      1: "You look strong! Shoots! Let's start!",
-      2: "I'm strong like the ocean's wide. You're gonna get swept away, fo' sho'.",
-      3: "Oh ho, so I'm facing you! That's off the wall."
+      1: "너 강해보이네! 받아라! 승부 시작이야!",
+      2: "난 넓은 대양처럼 강인하다고. 너 분명히 휩쓸려 갈거야.",
+      3: "오, 내가 너를 마주 보고 있군! 둘다 파도에서 떨어지겠어."
     },
     "victory": {
-      1: "You totally rocked that! You're raising some wicked Pokémon. You got this Trainer thing down!",
-      2: "You don't just look strong, you're strong fo' reals! Eh, I was swept away, too!",
-      3: "You're strong as a gnarly wave!"
+      1: "너… 좋은 포켓몬을 키우고 있구나! 꽤 하는군! 끝내주는 트레이너야!",
+      2: "강해 보이는 게 아니고 진짜 강하구나! 에-, 나도 휩쓸려버렸어!",
+      3: "넌 거친 파도처럼 강인하구나!"
     },
     "defeat": {
-      1: "You're tough, but it's not enough to sway the sea, 'K!",
-      2: "Hee! Looks like I went and won again!",
-      3: "Sweet, sweet victory!"
+      1: "넌 강하지만, 바다를 흔들기에는 역부족이네, 그치!",
+      2: "아하핫! 내가 또 이긴 것 같네!",
+      3: "달콤하네, 승리 역시 달콤하고!"
     }
   },
   "shauntal": {
@@ -979,20 +979,20 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "cheren": {
     "encounter": {
-      1: "You remind me of an old friend. That makes me excited about this Pokémon battle!",
-      2: `Pokémon battles have no meaning if you don't think why you battle. 
-      $Or better said, it makes battling together with Pokémon meaningless.`,
-      3: "My name's Cheren! I'm a Gym Leader and a teacher! Pleasure to meet you."
+      1: "넌 내 오랜 친구가 생각나게 하는군. 그 덕분에 이 배틀이 기대 돼!",
+      2: `왜 하고 있는지 생각하지 않으면, 포켓몬 배틀은 의미가 없어 . 
+      $좋게 말하면, 함께 포켓몬과 승부하는 것이 무의미해 지는 것이지.`,
+      3: "내 이름은 체렌! 체육관 관장이자 선생님을 하고 있지! 널 만나게 되서 기쁘군."
     },
     "victory": {
-      1: "Thank you! I saw what was missing in me.",
-      2: "Thank you! I feel like I saw a little of the way toward my ideals.",
-      3: "Hmm… This is problematic."
+      1: "고마워! 내 안에 무엇이 부족했는지 알게 됐네.",
+      2: "고마워! 내가 추구하는 이상에 조금 다가간 것 같아.",
+      3: "으음… 이건 문제가 있군."
     },
     "defeat": {
-      1: "As a Gym Leader, I aim to be a wall for you to overcome.",
-      2: "All right!",
-      3: "I made it where I am because Pokémon were by my side.\nPerhaps we need to think about why Pokémon help us not in terms of Pokémon and Trainers but as a relationship between living beings."
+      1: "체육관 관장으로서, 나는 넘어야할 벽이 되고자 하고 있거든.",
+      2: "좋았어!",
+      3: "포켓몬이 곁에 있었기 때문에 여기까지 올 수 있었어.\n생명체와 생명체라는 동등한 관계에서 포켓몬이 우리에게 도움을 주는 이유를 생각해 볼 필요는 있지."
     }
   },
   "chili": {
@@ -1226,14 +1226,14 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "clay": {
     "encounter": {
-      1: "Harrumph! Kept me waitin', didn't ya, kid? All right, time to see what ya can do!"
+      1: "실망스럽군! 나를 기다리게 하다니, 이 꼬마가. 아무튼 실력을 확인해 볼까!"
     },
     "victory": {
-      1: "Man oh man… It feels good to go all out and still be defeated!"
+      1: "이런 이런… 진심으로 싸워서 진 거라 오히려 시원한 기분이군!"
     },
     "defeat": {
-      1: `What's important is how ya react to losin'. 
-                $That's why folks who use losin' as fuel to get better are tough.`,
+      1: `중요한 것은 패배에 어떻게 반응하는 거다. 
+                $그렇기 때문에 패배를 연료로 삼아 나아가는 사람들은 강인하지.`,
     }
   },
   "kofu": {
@@ -1442,13 +1442,13 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "lenora": {
     "encounter": {
-      1: "Well then, challenger, I'm going to research how you battle with the Pokémon you've so lovingly raised!"
+      1: "자 그럼 도전자여, 애정을 담아 키운 포켓몬으로 어떤 방식으로 싸우는지 연구해 보겠다!"
     },
     "victory": {
-      1: "My theory about you was correct. You're more than just talented… You're motivated! I salute you!"
+      1: "너에 대한 내 가설이 맞았네. 재능만 있는 게 아니라… 대단한 녀석이구나! 너 반할것 같잖아!"
     },
     "defeat": {
-      1: "Ah ha ha! If you lose, make sure to analyze why, and use that knowledge in your next battle!"
+      1: "아 하 하! 패배했다면, 그 이유를 분석하고,다음 승부에서 그 지식을 활용하도록!"
     }
   },
   "siebold": {
@@ -1465,13 +1465,13 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "roxie": {
     "encounter": {
-      1: "Get ready! I'm gonna knock some sense outta ya!"
+      1: "간다! 너의 이성을 싹 날려줄 거야!!"
     },
     "victory": {
-      1: "Wild! Your reason's already more toxic than mine!"
+      1: "굉-장해! 네 이성, 이미 나보다 TOXIC해버렸잖아!"
     },
     "defeat": {
-      1: "Hey, c'mon! Get serious! You gotta put more out there!"
+      1: "헤이, 잠깐-! 좀 더 진지해져! 넌 더 날아가야한다구!"
     }
   },
   "olivia": {
