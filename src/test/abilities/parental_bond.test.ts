@@ -54,6 +54,9 @@ describe("Abilities - Parental Bond", () => {
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
 
+      await game.phaseInterceptor.to(MoveEffectPhase, false);
+      vi.spyOn(game.scene, "randBattleSeedInt").mockReturnValue(15);
+
       await game.phaseInterceptor.to(DamagePhase);
       const firstStrikeDamage = enemyStartingHp - enemyPokemon.hp;
       enemyStartingHp = enemyPokemon.hp;
