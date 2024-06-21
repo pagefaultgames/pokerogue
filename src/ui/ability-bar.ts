@@ -56,7 +56,6 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
         this.resetAutoHideTimer();
       }
     });
-    console.log("Ability Bar: Position and Size", this.x, this.y, this.width, this.height);
 
     this.setVisible(true);
     this.shown = true;
