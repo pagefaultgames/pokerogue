@@ -1019,7 +1019,7 @@ export function initSpecies() {
     new PokemonSpecies(Species.KRABBY, 1, false, false, false, "River Crab Pokémon", Type.WATER, null, 0.4, 6.5, Abilities.HYPER_CUTTER, Abilities.SHELL_ARMOR, Abilities.SHEER_FORCE, 325, 30, 105, 90, 25, 25, 50, 225, 50, 65, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.KINGLER, 1, false, false, false, "Pincer Pokémon", Type.WATER, null, 1.3, 60, Abilities.HYPER_CUTTER, Abilities.SHELL_ARMOR, Abilities.SHEER_FORCE, 475, 55, 130, 115, 50, 50, 75, 60, 50, 166, GrowthRate.MEDIUM_FAST, 50, false, true,
       new PokemonForm("Normal", "", Type.WATER, null, 1.3, 60, Abilities.HYPER_CUTTER, Abilities.SHELL_ARMOR, Abilities.SHEER_FORCE, 475, 55, 130, 115, 50, 50, 75, 60, 50, 166, false, null, true),
-      new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX, Type.WATER, null, 19, 60, Abilities.SHEER_FORCE, Abilities.SHEER_FORCE, Abilities.SHEER_FORCE, 575, 90, 150, 140, 50, 85, 70, 60, 50, 166),
+      new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX, Type.WATER, null, 19, 60, Abilities.TOUGH_CLAWS, Abilities.TOUGH_CLAWS, Abilities.TOUGH_CLAWS, 575, 90, 150, 140, 50, 85, 70, 60, 50, 166),
     ),
     new PokemonSpecies(Species.VOLTORB, 1, false, false, false, "Ball Pokémon", Type.ELECTRIC, null, 0.5, 10.4, Abilities.SOUNDPROOF, Abilities.STATIC, Abilities.AFTERMATH, 330, 40, 30, 50, 55, 55, 100, 190, 70, 66, GrowthRate.MEDIUM_FAST, null, false),
     new PokemonSpecies(Species.ELECTRODE, 1, false, false, false, "Ball Pokémon", Type.ELECTRIC, null, 1.2, 66.6, Abilities.SOUNDPROOF, Abilities.STATIC, Abilities.AFTERMATH, 490, 60, 50, 70, 80, 80, 150, 60, 70, 172, GrowthRate.MEDIUM_FAST, null, false),
@@ -1069,7 +1069,7 @@ export function initSpecies() {
     new PokemonSpecies(Species.EEVEE, 1, false, false, false, "Evolution Pokémon", Type.NORMAL, null, 0.3, 6.5, Abilities.RUN_AWAY, Abilities.ADAPTABILITY, Abilities.ANTICIPATION, 325, 55, 55, 50, 45, 65, 55, 45, 50, 65, GrowthRate.MEDIUM_FAST, 87.5, false, true,
       new PokemonForm("Normal", "", Type.NORMAL, null, 0.3, 6.5, Abilities.RUN_AWAY, Abilities.ADAPTABILITY, Abilities.ANTICIPATION, 325, 55, 55, 50, 45, 65, 55, 45, 50, 65, false, null, true),
       new PokemonForm("Partner", "partner", Type.NORMAL, null, 0.3, 6.5, Abilities.RUN_AWAY, Abilities.ADAPTABILITY, Abilities.ANTICIPATION, 435, 65, 75, 70, 65, 85, 75, 45, 50, 65, false, null, true),
-      new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX, Type.NORMAL, null, 18, 6.5, Abilities.ADAPTABILITY, Abilities.ADAPTABILITY, Abilities.ADAPTABILITY, 535, 105, 95, 70, 95, 85, 85, 45, 50, 65), //+100 BST from Partner Form
+      new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX, Type.NORMAL, null, 18, 6.5, Abilities.PROTEAN, Abilities.PROTEAN, Abilities.PROTEAN, 535, 105, 95, 70, 95, 85, 85, 45, 50, 65), //+100 BST from Partner Form
     ),
     new PokemonSpecies(Species.VAPOREON, 1, false, false, false, "Bubble Jet Pokémon", Type.WATER, null, 1, 29, Abilities.WATER_ABSORB, Abilities.NONE, Abilities.HYDRATION, 525, 130, 65, 60, 110, 95, 65, 45, 50, 184, GrowthRate.MEDIUM_FAST, 87.5, false),
     new PokemonSpecies(Species.JOLTEON, 1, false, false, false, "Lightning Pokémon", Type.ELECTRIC, null, 0.8, 24.5, Abilities.VOLT_ABSORB, Abilities.NONE, Abilities.QUICK_FEET, 525, 65, 65, 60, 110, 95, 130, 45, 50, 184, GrowthRate.MEDIUM_FAST, 87.5, false),
