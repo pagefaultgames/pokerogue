@@ -274,15 +274,16 @@ class RunEntry extends Phaser.GameObjects.Container {
           const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `${i18next.t("runHistory:defeatedRival")}`, TextStyle.WINDOW);
           //otherwise it becomes Rival_5 in Ivy's case
           this.add(gameOutcomeLabel);
-        } else {
-          if (tObj.variant === TrainerVariant.DOUBLE) {
-            const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `${i18next.t("runHistory:defeatedTrainerDouble")}`, TextStyle.WINDOW);
+        } else if (data.trainer.variant === TrainerVariant.DOUBLE) {
+            const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `${i18next.t("runHistory:defeatedTrainer")+tObj.config.nameDouble+" "+tObj.getName(0, false)}`, TextStyle.WINDOW);
+            this.add(gameOutcomeLabel);
           }
-          const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `${i18next.t("runHistory:defeatedTrainer")+tObj.getName(0, true)}`, TextStyle.WINDOW);
-          this.add(gameOutcomeLabel);
+          else {
+            const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `${i18next.t("runHistory:defeatedTrainer")+tObj.getName(0, true)}`, TextStyle.WINDOW);
+            this.add(gameOutcomeLabel);
+          }
         }
       }
-    }
 
 
     switch (data.gameMode) {
