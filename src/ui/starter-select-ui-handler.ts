@@ -1039,6 +1039,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         success = true;
       }
     } else if (this.startCursorObj.visible) {
+      const genStarters = this.starterSelectGenIconContainers[this.getGenCursorWithScroll()].getAll().length;
+      const rows = Math.ceil(genStarters / 9);
       switch (button) {
       case Button.ACTION:
         if (this.tryStart(true)) {
@@ -1057,23 +1059,33 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
         success = true;
         break;
+      case Button.DOWN:
+        this.startCursorObj.setVisible(false);
+        this.setGenMode(true);
+        success = true;
+        break;
       case Button.LEFT:
         this.startCursorObj.setVisible(false);
         this.setGenMode(false);
-        this.setCursor(this.cursor + 8);
+        this.setCursor(genStarters - 1);
         success = true;
         break;
       case Button.RIGHT:
         this.startCursorObj.setVisible(false);
         this.setGenMode(false);
+        this.setCursor((rows - 1) * 9);
         success = true;
         break;
       }
     } else if (this.genMode && this.genCursorObj.visible) {
       switch (button) {
       case Button.UP:
-        if (this.genCursor) {
+        if (this.genCursor > 0) {
           success = this.setCursor(this.genCursor - 1);
+        } else {
+          this.startCursorObj.setVisible(true);
+          this.setGenMode(true);
+          success = true;
         }
         break;
       case Button.DOWN:
@@ -1153,19 +1165,23 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                     if (this.speciesLoaded.get(species.speciesId)) {
                       getPokemonSpeciesForm(species.speciesId, props.formIndex).cry(this.scene);
                     }
+                    /*
                     if (this.starterCursors.length === 6 || this.value === this.getValueLimit()) {
                       this.tryStart();
                     }
+                    */
                     this.updateInstructions();
 
                     /**
                     * If the user can't select a pokemon anymore,
                     * go to start button.
                     */
+                    /*
                     if (!this.canAddParty) {
                       this.startCursorObj.setVisible(true);
                       this.setGenMode(true);
                     }
+                    */
 
                     ui.playSelect();
                   } else {
@@ -1635,7 +1651,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 if (row >= rows - 1) { // the last row will always go to the starter button
                   this.startCursorObj.setVisible(true);
                 } else if (row > 2) { // the first three rows will always go to the gen select, so anything else will go to the starterIcons party section
-                  this.starterIconsCursorIndex = 0;
+                  if (this.starterCursors.length >= row - 2) {
+                    this.starterIconsCursorIndex = row - 3;
+                  } else {
+                    this.starterIconsCursorIndex = this.starterCursors.length - 1;
+                  }
                   this.moveStarterIconsCursor(this.starterIconsCursorIndex);
                 }
                 success = this.setGenMode(true);
@@ -1644,7 +1664,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           } else {
             this.starterIconsCursorObj.setVisible(false);
             this.setGenMode(false);
-            this.setCursor(this.cursor + 8);
+            const rowToUse = Math.min(this.starterIconsCursorIndex + 3, rows - 1);
+            this.setCursor(Math.min((rowToUse * 9) + 8, genStarters - 1));
             success = true;
           }
           break;
@@ -1662,7 +1683,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 if (row >= rows - 1) { // the last row will always go to the starter button
                   this.startCursorObj.setVisible(true);
                 } else if (row > 2) { // the first three rows will always go to the gen select, so anything else will go to the starterIcons party section
-                  this.starterIconsCursorIndex = 0;
+                  if (this.starterCursors.length >= row - 2) {
+                    this.starterIconsCursorIndex = row - 3;
+                  } else {
+                    this.starterIconsCursorIndex = this.starterCursors.length - 1;
+                  }
                   this.moveStarterIconsCursor(this.starterIconsCursorIndex);
                 }
                 success = this.setGenMode(true);
@@ -1671,6 +1696,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           } else {
             this.starterIconsCursorObj.setVisible(false);
             this.setGenMode(false);
+            const rowToUse = Math.min(this.starterIconsCursorIndex + 3, rows - 1);
+            this.setCursor(Math.min((rowToUse * 9), genStarters - 1));
             this.setSpecies(this.genSpecies[this.getGenCursorWithScroll()][this.cursor]);
             success = true;
           }
