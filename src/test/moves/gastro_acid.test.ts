@@ -9,6 +9,7 @@ import { BattlerIndex } from "#app/battle.js";
 import { getMovePosition } from "../utils/gameManagerUtils";
 import { MoveResult } from "#app/field/pokemon.js";
 import { Stat } from "#app/data/pokemon-stat.js";
+import { Species } from "#app/enums/species.js";
 
 const TIMEOUT = 20 * 1000;
 
@@ -33,6 +34,7 @@ describe("Moves - Gastro Acid", () => {
     vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
     vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
     vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.GASTRO_ACID, Moves.WATER_GUN, Moves.SPLASH, Moves.CORE_ENFORCER]);
+    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.BIDOOF);
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
     vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.WATER_ABSORB);
   });
