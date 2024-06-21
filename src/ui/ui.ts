@@ -182,7 +182,7 @@ export default class UI extends Phaser.GameObjects.Container {
   }
 
   setup(): void {
-    this.setName("container-ui");
+    this.setName(`container-ui-${Mode[this.mode]}`);
     for (const handler of this.handlers) {
       handler.setup();
     }
@@ -443,7 +443,7 @@ export default class UI extends Phaser.GameObjects.Container {
             this.modeChain.push(this.mode);
           }
           this.mode = mode;
-          const touchControls = document.getElementById("touchControls");
+          const touchControls = document?.getElementById("touchControls");
           if (touchControls) {
             touchControls.dataset.uiMode = Mode[mode];
           }

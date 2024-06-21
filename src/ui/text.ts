@@ -109,7 +109,7 @@ export function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraSty
   const defaultFontSize = 96;
 
   let styleOptions: Phaser.Types.GameObjects.Text.TextStyle = {
-    fontFamily: "emerald, japanese, unifont",
+    fontFamily: "emerald",
     fontSize: 96,
     color: getTextColor(style, false, uiTheme),
     padding: {

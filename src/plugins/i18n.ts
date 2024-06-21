@@ -13,20 +13,75 @@ import { ptBrConfig } from "#app/locales/pt_BR/config.js";
 import { zhCnConfig } from "#app/locales/zh_CN/config.js";
 import { zhTwConfig } from "#app/locales/zh_TW/config.js";
 
-const fonts = [
-  new FontFace("emerald", "url(./fonts/PokePT_Wansung.ttf)", { unicodeRange: "U+AC00-D7AC"}),
-  Object.assign(
-    new FontFace("pkmnems", "url(./fonts/PokePT_Wansung.ttf)", { unicodeRange: "U+AC00-D7AC"}),
-    { sizeAdjust: "133%" }
-  ),
-  Object.assign(
-    new FontFace("japanese", "url(./fonts/Galmuri11.ttf)", { unicodeRange: "U+3040-30FF, U+4E00-9FFF"}),
-    { sizeAdjust: "66%" }
-  ),
+interface LoadingFontFaceProperty {
+  face: FontFace,
+  extraOptions?: { [key:string]: any },
+  only?: Array<string>
+}
+
+const unicodeHalfAndFullWidthForms = [
+  "U+FF00-FFEF"
 ];
 
-async function initFonts() {
-  const results = await Promise.allSettled(fonts.map(font => font.load()));
+const unicodeCJK = [
+  "U+2E80-2EFF",
+  "U+3000-303F",
+  "U+31C0-31EF",
+  "U+3200-32FF",
+  "U+3400-4DBF",
+  "U+F900-FAFF",
+  "U+FE30-FE4F",
+].join(",");
+
+const unicodeHangul = [
+  "U+1100-11FF",
+  "U+3130-318F",
+  "U+A960-A97F",
+  "U+AC00-D7AF",
+  "U+D7B0-D7FF",
+].join(",");
+
+const unicodeGana = "U+3040-30FF";
+
+// Common letters both Japanese and Chinese
+const unifiedIdeographsCJK = "U+4E00-9FFF";
+
+const fonts: Array<LoadingFontFaceProperty> = [
+  // korean
+  { face: new FontFace("emerald", "url(./fonts/PokePT_Wansung.ttf)", { unicodeRange: unicodeHangul }) },
+  {
+    face: new FontFace("pkmnems", "url(./fonts/PokePT_Wansung.ttf)", { unicodeRange: unicodeHangul }),
+    extraOptions: { sizeAdjust: "133%" },
+  },
+  // unicode
+  {
+    face: new FontFace("emerald", "url(./fonts/unifont-15.1.05.otf)", { unicodeRange: [unicodeCJK, unicodeHalfAndFullWidthForms, unifiedIdeographsCJK].join(",") }),
+    extraOptions: { sizeAdjust: "70%", format: "opentype" },
+  },
+  {
+    face: new FontFace("pkmnems", "url(./fonts/unifont-15.1.05.otf)", { unicodeRange: [unicodeCJK, unicodeHalfAndFullWidthForms, unifiedIdeographsCJK].join(",") }),
+    extraOptions: { format: "opentype" },
+  },
+  // japanese
+  {
+    face: new FontFace("emerald", "url(./fonts/Galmuri11.ttf)", { unicodeRange: [unicodeGana, unifiedIdeographsCJK].join(",") }),
+    extraOptions: { sizeAdjust: "66%" },
+    only: [ "ja" ],
+  },
+  {
+    face: new FontFace("pkmnems", "url(./fonts/Galmuri11.ttf)", { unicodeRange: [unicodeGana, unifiedIdeographsCJK].join(",") }),
+    only: [ "ja" ],
+  },
+];
+
+async function initFonts(language: string | undefined) {
+  const results = await Promise.allSettled(fonts .filter(font => !font.only || font.only.some(exclude => language?.indexOf(exclude) === 0)).map(font => {
+    if (font.extraOptions) {
+      return Object.assign(font.face, font.extraOptions).load();
+    } else {
+      return font.face.load();
+    }
+  }));
   for (const result of results) {
     if (result.status === "fulfilled") {
       document.fonts?.add(result.value);
@@ -111,7 +166,7 @@ export async function initI18n(): Promise<void> {
     postProcess: ["korean-postposition"],
   });
 
-  await initFonts();
+  await initFonts(localStorage.getItem("prLang"));
 }
 
 export default i18next;
