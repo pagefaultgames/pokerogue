@@ -260,6 +260,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private classicWinIcons: Phaser.GameObjects.Image[];
   private candyUpgradeIcon: Phaser.GameObjects.Image[];
   private candyUpgradeOverlayIcon: Phaser.GameObjects.Image[];
+  private starterPassiveBgs: Phaser.GameObjects.Image[];
 
   private iconAnimHandler: PokemonIconAnimHandler;
 
@@ -389,6 +390,16 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.starterSelectContainer.add(this.genOptionsText);
 
     this.updateGenOptions();
+
+    this.starterPassiveBgs = new Array(81).fill(null).map((_, i) => {
+      const position = calcIconPosition(i);
+      const ret = this.scene.add.image(position.x + 153, position.y+14, "passive_bg");
+      ret.setOrigin(0, 0);
+      ret.setScale(0.75);
+      ret.setVisible(false);
+      this.starterSelectContainer.add(ret);
+      return ret;
+    });
 
     this.starterSelectGenIconContainers = new Array(gens.length).fill(null).map((_, i) => {
       const container = this.scene.add.container(151, 9);
@@ -1764,6 +1775,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             this.shinyIcons[s][v].setTint(getVariantTint(speciesVariants[v] === DexAttr.DEFAULT_VARIANT ? 0 : speciesVariants[v] === DexAttr.VARIANT_2 ? 1 : 2));
           }
         }
+        this.starterPassiveBgs[s].setVisible(slotVisible && !!this.scene.gameData.starterData[speciesId].passiveAttr);
         this.hiddenAbilityIcons[s].setVisible(slotVisible && !!this.scene.gameData.dexData[speciesId].caughtAttr && !!(this.scene.gameData.starterData[speciesId].abilityAttr & 4));
         this.classicWinIcons[s].setVisible(slotVisible && this.scene.gameData.starterData[speciesId].classicWinCount > 0);
 
