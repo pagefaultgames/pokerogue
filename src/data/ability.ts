@@ -1063,7 +1063,7 @@ export class MoveEffectChanceMultiplierAbAttr extends AbAttr {
    *             [1]: {@linkcode Moves } Move used by the ability user.
    */
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-
+    this.showAbility = args[4];
     if ((args[0] as Utils.NumberHolder).value <= 0 || (args[1] as Move).id === Moves.ORDER_UP) {
       return false;
     }
