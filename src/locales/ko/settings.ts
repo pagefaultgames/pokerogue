@@ -92,7 +92,7 @@ export const settings: SimpleTranslationEntries = {
   "buttonSpeedUp": "속도 올리기",
   "buttonSlowDown": "속도 내리기",
   "alt": " (대체)",
-  "mute": "Mute",
-  "controller": "Controller",
-  "gamepadSupport": "Gamepad Support"
+  "mute": "음소거",
+  "controller": "컨트롤러",
+  "gamepadSupport": "게임패드 지원"
 } as const;

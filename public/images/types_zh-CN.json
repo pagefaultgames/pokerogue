@@ -1,7 +1,7 @@
 {
 	"textures": [
 		{
-			"image": "types_pt_BR.png",
+			"image": "types_zh-CN.png",
 			"format": "RGBA8888",
 			"size": {
 				"w": 32,

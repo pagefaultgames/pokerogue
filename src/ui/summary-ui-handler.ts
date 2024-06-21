@@ -677,12 +677,7 @@ export default class SummaryUiHandler extends UiHandler {
       const profileContainer = this.scene.add.container(0, -pageBg.height);
       pageContainer.add(profileContainer);
 
-      const trainerLabel = addTextObject(this.scene, 7, 12, `${i18next.t("pokemonSummary:ot")}/`, TextStyle.SUMMARY_ALT);
-      trainerLabel.setOrigin(0, 0);
-      profileContainer.add(trainerLabel);
-
-      const trainerText = addTextObject(this.scene, 25, 12, loggedInUser?.username || i18next.t("pokemonSummary:unknown"),
-        this.scene.gameData.gender === PlayerGender.FEMALE ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE);
+      const trainerText = addBBCodeTextObject(this.scene, 7, 12, `${i18next.t("pokemonSummary:ot")}/${getBBCodeFrag(loggedInUser?.username || i18next.t("pokemonSummary:unknown"), this.scene.gameData.gender === PlayerGender.FEMALE ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE)}`, TextStyle.SUMMARY_ALT);
       trainerText.setOrigin(0, 0);
       profileContainer.add(trainerText);
 
@@ -695,7 +690,7 @@ export default class SummaryUiHandler extends UiHandler {
       profileContainer.add(typeLabel);
 
       const getTypeIcon = (index: integer, type: Type, tera: boolean = false) => {
-        const xCoord = 39 + 34 * index;
+        const xCoord = typeLabel.width * typeLabel.scale + 9 + 34 * index;
         const typeIcon = !tera
           ? this.scene.add.sprite(xCoord, 42, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`, Type[type].toLowerCase())          : this.scene.add.sprite(xCoord, 42, "type_tera");
         if (tera) {

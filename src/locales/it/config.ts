@@ -41,6 +41,7 @@ import { weather } from "./weather";
 import { partyUiHandler } from "./party-ui-handler";
 import { settings } from "#app/locales/it/settings.js";
 import { pokemonSummary } from "./pokemon-summary";
+import { common } from "#app/locales/it/common.js";
 
 export const itConfig = {
   ability: ability,
@@ -51,6 +52,7 @@ export const itConfig = {
   biome: biome,
   challenges: challenges,
   commandUiHandler: commandUiHandler,
+  common: common,
   PGMachv: PGMachv,
   PGFachv: PGFachv,
   PGMdialogue: PGMdialogue,
