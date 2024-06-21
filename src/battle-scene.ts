@@ -219,6 +219,7 @@ export default class BattleScene extends SceneBase {
   public arenaFlyout: ArenaFlyout;
 
   private fieldOverlay: Phaser.GameObjects.Rectangle;
+  private shopOverlay: Phaser.GameObjects.Rectangle;
   public modifiers: PersistentModifier[];
   private enemyModifiers: PersistentModifier[];
   public uiContainer: Phaser.GameObjects.Container;
@@ -385,6 +386,12 @@ export default class BattleScene extends SceneBase {
     this.fieldOverlay.setOrigin(0, 0);
     this.fieldOverlay.setAlpha(0);
     this.fieldUI.add(this.fieldOverlay);
+
+    this.shopOverlay = this.add.rectangle(0, overlayHeight * -1 - 48, overlayWidth, overlayHeight, 0x070707);
+    this.shopOverlay.setName("rect-shop-overlay");
+    this.shopOverlay.setOrigin(0, 0);
+    this.shopOverlay.setAlpha(0);
+    this.fieldUI.add(this.shopOverlay);
 
     this.modifiers = [];
     this.enemyModifiers = [];
@@ -735,6 +742,14 @@ export default class BattleScene extends SceneBase {
     return activeOnly
       ? ret.filter(p => p?.isActive())
       : ret;
+  }
+
+  /**
+   * Returns the ModifierBar of this scene, which is declared private and therefore not accessible elsewhere
+   * @returns {ModifierBar}
+   */
+  getModifierBar(): ModifierBar {
+    return this.modifierBar;
   }
 
   // store info toggles to be accessible by the ui
@@ -1389,6 +1404,30 @@ export default class BattleScene extends SceneBase {
     return new Promise(resolve => {
       this.tweens.add({
         targets: this.fieldOverlay,
+        alpha: 0,
+        duration: duration,
+        ease: "Cubic.easeIn",
+        onComplete: () => resolve()
+      });
+    });
+  }
+
+  showShopOverlay(duration: integer): Promise<void> {
+    return new Promise(resolve => {
+      this.tweens.add({
+        targets: this.shopOverlay,
+        alpha: 0.95,
+        ease: "Sine.easeOut",
+        duration: duration,
+        onComplete: () => resolve()
+      });
+    });
+  }
+
+  hideShopOverlay(duration: integer): Promise<void> {
+    return new Promise(resolve => {
+      this.tweens.add({
+        targets: this.shopOverlay,
         alpha: 0,
         duration: duration,
         ease: "Cubic.easeIn",
