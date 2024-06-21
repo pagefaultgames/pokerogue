@@ -1,4 +1,4 @@
-import { AchievementTranslationEntries } from "#app/plugins/i18n.js";
+import { AchievementTranslationEntries } from "#app/interfaces/locales.js";
 
 // Achievement translations for the when the player character is male
 export const PGMachv: AchievementTranslationEntries = {
@@ -212,7 +212,7 @@ export const PGMachv: AchievementTranslationEntries = {
     description: "Complete o desafio de monotipo {{type}}.",
   },
   "MONO_NORMAL": {
-    name: "Tenho medo de fantasma",
+    name: "Extra Ordinário",
   },
   "MONO_FIGHTING": {
     name: "Briga de Rua",
@@ -224,16 +224,16 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "Menina Veneno",
   },
   "MONO_GROUND": {
-    name: "Deixou eles comendo poeira!",
+    name: "Comendo Poeira",
   },
   "MONO_ROCK": {
-    name: "Duro como Pedra",
+    name: "Duro Como Pedra",
   },
   "MONO_BUG": {
     name: "Vida de Inseto",
   },
   "MONO_GHOST": {
-    name: "Posso dormir com você hoje, mamãe?",
+    name: "Fantasminha Camarada",
   },
   "MONO_STEEL": {
     name: "Levantando Ferro",
@@ -242,7 +242,7 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "Tá Pegando Fogo, Bicho!",
   },
   "MONO_WATER": {
-    name: "Água mole em pedra dura...",
+    name: "Água Mole em Pedra Dura...",
   },
   "MONO_GRASS": {
     name: "Jardim Botânico",
@@ -260,7 +260,7 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "Caverna do Dragão",
   },
   "MONO_DARK": {
-    name: "É só uma fase",
+    name: "É Só Uma Fase",
   },
   "MONO_FAIRY": {
     name: "Clube das Winx",
@@ -530,6 +530,6 @@ export const PGFachv: AchievementTranslationEntries = {
     name: "É Só Uma Fase",
   },
   "MONO_FAIRY": {
-    name: "O Clube das Winx",
+    name: "Clube das Winx",
   },
 } as const;
