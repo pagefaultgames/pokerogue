@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const tutorial: SimpleTranslationEntries = {
   "intro": `Bem-vindo ao PokéRogue! Este é um jogo Pokémon feito por fãs focado em batalhas com elementos roguelite.
@@ -9,7 +9,7 @@ export const tutorial: SimpleTranslationEntries = {
     $Se o jogo estiver rodando lentamente, certifique-se de que a 'Aceleração de hardware' esteja ativada 
     $nas configurações do seu navegador.`,
 
-  "accessMenu": `Para acessar o menu, aperte M ou Esc.
+  "accessMenu": `Para acessar o menu, pressione M ou Esc.
     $O menu contém configurações e diversas funções.`,
 
   "menu": `A partir deste menu, você pode acessar as configurações. 

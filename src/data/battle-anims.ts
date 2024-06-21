@@ -5,7 +5,7 @@ import Pokemon from "../field/pokemon";
 import * as Utils from "../utils";
 import { BattlerIndex } from "../battle";
 import { Element } from "json-stable-stringify";
-import { Moves } from "./enums/moves";
+import { Moves } from "#enums/moves";
 //import fs from 'vite-plugin-fs/browser';
 
 export enum AnimFrameTarget {
@@ -468,7 +468,7 @@ export function initMoveAnim(scene: BattleScene, move: Moves): Promise<void> {
       } else {
         const loadedCheckTimer = setInterval(() => {
           if (moveAnims.get(move) !== null) {
-            const chargeAttr = allMoves[move].getAttrs(ChargeAttr).find(() => true) as ChargeAttr || allMoves[move].getAttrs(DelayedAttackAttr).find(() => true) as DelayedAttackAttr;
+            const chargeAttr = allMoves[move].getAttrs(ChargeAttr)[0] || allMoves[move].getAttrs(DelayedAttackAttr)[0];
             if (chargeAttr && chargeAnims.get(chargeAttr.chargeAnim) === null) {
               return;
             }
@@ -498,7 +498,7 @@ export function initMoveAnim(scene: BattleScene, move: Moves): Promise<void> {
             } else {
               populateMoveAnim(move, ba);
             }
-            const chargeAttr = allMoves[move].getAttrs(ChargeAttr).find(() => true) as ChargeAttr || allMoves[move].getAttrs(DelayedAttackAttr).find(() => true) as DelayedAttackAttr;
+            const chargeAttr = allMoves[move].getAttrs(ChargeAttr)[0] || allMoves[move].getAttrs(DelayedAttackAttr)[0];
             if (chargeAttr) {
               initMoveChargeAnim(scene, chargeAttr.chargeAnim).then(() => resolve());
             } else {
@@ -569,7 +569,7 @@ export function loadMoveAnimAssets(scene: BattleScene, moveIds: Moves[], startLo
   return new Promise(resolve => {
     const moveAnimations = moveIds.map(m => moveAnims.get(m) as AnimConfig).flat();
     for (const moveId of moveIds) {
-      const chargeAttr = allMoves[moveId].getAttrs(ChargeAttr).find(() => true) as ChargeAttr || allMoves[moveId].getAttrs(DelayedAttackAttr).find(() => true) as DelayedAttackAttr;
+      const chargeAttr = allMoves[moveId].getAttrs(ChargeAttr)[0] || allMoves[moveId].getAttrs(DelayedAttackAttr)[0];
       if (chargeAttr) {
         const moveChargeAnims = chargeAnims.get(chargeAttr.chargeAnim);
         moveAnimations.push(moveChargeAnims instanceof AnimConfig ? moveChargeAnims : moveChargeAnims[0]);
