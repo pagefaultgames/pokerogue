@@ -3665,10 +3665,23 @@ export class NeutralDamageAgainstFlyingTypeMultiplierAttr extends VariableMoveTy
       if (target.isOfType(Type.FLYING)) {
         multiplier.value = 1;
       }
-      target.addTag(BattlerTagType.IGNORE_FLYING, 20, move.id, user.id); //TODO: Grounded effect should not have turn limit
       return true;
     }
 
+    return false;
+  }
+}
+
+export class AddIgnoreFlyingTagAttr extends MoveEffectAttr {
+  constructor() {
+    super(false, MoveEffectTrigger.PRE_APPLY, true);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!target.getTag(BattlerTagType.IGNORE_FLYING)) {
+      target.addTag(BattlerTagType.IGNORE_FLYING, 20, move.id, user.id); //TODO: Grounded effect should not have turn limit
+      return true;
+    }
     return false;
   }
 }
@@ -7332,6 +7345,7 @@ export function initMoves() {
       .triageMove(),
     new AttackMove(Moves.THOUSAND_ARROWS, Type.GROUND, MoveCategory.PHYSICAL, 90, 100, 10, -1, 0, 6)
       .attr(NeutralDamageAgainstFlyingTypeMultiplierAttr)
+      .attr(AddIgnoreFlyingTagAttr)
       .attr(HitsTagAttr, BattlerTagType.FLYING, false)
       .attr(AddBattlerTagAttr, BattlerTagType.INTERRUPTED)
       .attr(RemoveBattlerTagAttr, [BattlerTagType.FLYING, BattlerTagType.MAGNET_RISEN])
