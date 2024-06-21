@@ -1416,7 +1416,7 @@ export default class BattleScene extends SceneBase {
     return new Promise(resolve => {
       this.tweens.add({
         targets: this.shopOverlay,
-        alpha: 0.95,
+        alpha: 0.8,
         ease: "Sine.easeOut",
         duration: duration,
         onComplete: () => resolve()
