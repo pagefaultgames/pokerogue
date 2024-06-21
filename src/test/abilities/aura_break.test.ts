@@ -67,7 +67,21 @@ describe("Abilities - Aura Break", () => {
   });
 });
 
-const getMockedMovePower = (defender: Pokemon, attacker: Pokemon, move: Move) => {
+/**
+ * Calculates the mocked power of a move in a Pokémon battle, taking into account certain abilities.
+ *
+ * @param defender - The defending Pokémon.
+ * @param attacker - The attacking Pokémon.
+ * @param move - The move being used in the attack.
+ * @returns The calculated power of the move after applying any relevant ability effects.
+ *
+ * @remarks
+ * This function creates a NumberHolder with the initial power of the move.
+ * It then checks if the defender has an ability with the FieldMoveTypePowerBoostAbAttr.
+ * If so, it applies a power modification of 9/16 using an instance of FieldMoveTypePowerBoostAbAttr.
+ * The final calculated power is then returned.
+ */
+const getMockedMovePower = (defender: Pokemon, attacker: Pokemon, move: Move): number => {
   const powerHolder = new NumberHolder(move.power);
 
   if (defender.hasAbilityWithAttr(FieldMoveTypePowerBoostAbAttr)) {
