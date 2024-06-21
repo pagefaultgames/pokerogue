@@ -1,4 +1,4 @@
-import { MoveTranslationEntries } from "#app/plugins/i18n";
+import { MoveTranslationEntries } from "#app/interfaces/locales";
 
 export const move: MoveTranslationEntries = {
   "pound": {
@@ -1943,7 +1943,7 @@ export const move: MoveTranslationEntries = {
   },
   "electroBall": {
     name: "Electro Ball",
-    effect: "O usuário arremessa uma orbe elétrica no alvo. Quanto mais rápido for o usuário comparado ao alvo, maior será o poder do movimento."
+    effect: "O usuário arremessa uma esfera elétrica no alvo. Quanto mais rápido for o usuário comparado ao alvo, maior será o poder do movimento."
   },
   "soak": {
     name: "Soak",
@@ -2495,7 +2495,7 @@ export const move: MoveTranslationEntries = {
   },
   "allOutPummelingPhysical": {
     name: "All-Out Pummeling",
-    effect: "Utilizando o Poder Z, o usuário cria e arremessa um orbe de energia no alvo com força total. Seu poder varia dependendo do movimento original."
+    effect: "Utilizando o Poder Z, o usuário cria e arremessa uma esfera de energia no alvo com força total. Seu poder varia dependendo do movimento original."
   },
   "allOutPummelingSpecial": {
     name: "All-Out Pummeling",
@@ -2931,7 +2931,7 @@ export const move: MoveTranslationEntries = {
   },
   bouncyBubble: {
     name: "Bouncy Bubble",
-    effect: "O usuário ataca atirando bolhas de água no alvo. Em seguida, absorve água e restaura seu HP pela metade do dano causado ao alvo."
+    effect: "O usuário ataca atirando bolhas de água no alvo. Em seguida, absorve água e restaura seu HP pelo mesmo valor de dano causado ao alvo."
   },
   buzzyBuzz: {
     name: "Buzzy Buzz",

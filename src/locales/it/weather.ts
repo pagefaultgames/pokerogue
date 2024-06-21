@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 /**
  * The weather namespace holds text displayed when weather is active during a battle
@@ -15,12 +15,12 @@ export const weather: SimpleTranslationEntries = {
   "sandstormStartMessage": "Si è scatenata una tempesta di sabbia!",
   "sandstormLapseMessage": "La tempesta di sabbia infuria.",
   "sandstormClearMessage": "La tempesta di sabbia si è placata.",
-  "sandstormDamageMessage": "{{pokemonPrefix}}{{pokemonName}} è stato colpito\ndalla tempesta di sabbia!",
+  "sandstormDamageMessage": "{{pokemonNameWithAffix}} è stato colpito\ndalla tempesta di sabbia!",
 
   "hailStartMessage": "Ha iniziato a grandinare!",
   "hailLapseMessage": "La grandine continua a cadere.",
   "hailClearMessage": "Ha smesso di grandinare.",
-  "hailDamageMessage": "{{pokemonPrefix}}{{pokemonName}} è stato colpito\ndalla grandine!",
+  "hailDamageMessage": "{{pokemonNameWithAffix}} è stato colpito\ndalla grandine!",
 
   "snowStartMessage": "Ha iniziato a nevicare!",
   "snowLapseMessage": "La neve sta continuando a cadere.",

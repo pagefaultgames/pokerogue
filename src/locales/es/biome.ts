@@ -1,20 +1,20 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const biome: SimpleTranslationEntries = {
   "unknownLocation": "En algún lugar que no puedes recordar",
-  "TOWN": "Ciudad",
+  "TOWN": "Pueblo",
   "PLAINS": "Valle",
   "GRASS": "Campo",
-  "TALL_GRASS": "Pradera de Hierba Alta",
+  "TALL_GRASS": "Hierba Alta",
   "METROPOLIS": "Metrópolis",
   "FOREST": "Bosque",
   "SEA": "Mar",
   "SWAMP": "Pantano",
   "BEACH": "Playa",
   "LAKE": "Lago",
-  "SEABED": "Fondo del mar",
+  "SEABED": "Lecho marino",
   "MOUNTAIN": "Montaña",
-  "BADLANDS": "Badlands",
+  "BADLANDS": "Tierras Baldías",
   "CAVE": "Cueva",
   "DESERT": "Desierto",
   "ICE_CAVE": "Cueva Helada",

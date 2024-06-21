@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "aqua_grunt_m.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 73,
+				"h": 73
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 80,
+						"h": 80
+					},
+					"spriteSourceSize": {
+						"x": 17,
+						"y": 6,
+						"w": 46,
+						"h": 73
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 46,
+						"h": 73
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:efd07ff3ed1e610150a4b8ca18974343:d9b85b9eb11182e9e4669e2bd8b08694:72b7b50231708a9486d5f315824e4df1$"
+	}
+}
