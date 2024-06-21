@@ -5,8 +5,8 @@ import { TextStyle, addTextObject } from "./text";
 import MessageUiHandler from "./message-ui-handler";
 import { Egg, getEggGachaTypeDescriptor, getEggHatchWavesMessage, getEggDescriptor } from "../data/egg";
 import { addWindow } from "./ui-theme";
-import {Button} from "../enums/buttons";
-import i18next from "../plugins/i18n";
+import {Button} from "#enums/buttons";
+import i18next from "i18next";
 
 export default class EggListUiHandler extends MessageUiHandler {
   private eggListContainer: Phaser.GameObjects.Container;

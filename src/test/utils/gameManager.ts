@@ -5,9 +5,11 @@ import {
   CommandPhase,
   EncounterPhase,
   FaintPhase,
-  LoginPhase, NewBattlePhase,
+  LoginPhase,
+  NewBattlePhase,
   SelectStarterPhase,
   TitlePhase, TurnInitPhase,
+  TurnStartPhase,
 } from "#app/phases";
 import BattleScene from "#app/battle-scene.js";
 import PhaseInterceptor from "#app/test/utils/phaseInterceptor";
@@ -16,19 +18,21 @@ import {GameModes, getGameMode} from "#app/game-mode";
 import fs from "fs";
 import {AES, enc} from "crypto-js";
 import {updateUserInfo} from "#app/account";
-import {Species} from "#app/data/enums/species";
-import {PlayerGender} from "#app/data/enums/player-gender";
-import {GameDataType} from "#app/data/enums/game-data-type";
 import InputsHandler from "#app/test/utils/inputsHandler";
-import {ExpNotification} from "#app/enums/exp-notification";
 import ErrorInterceptor from "#app/test/utils/errorInterceptor";
 import {EnemyPokemon, PlayerPokemon} from "#app/field/pokemon";
 import {MockClock} from "#app/test/utils/mocks/mockClock";
 import {Command} from "#app/ui/command-ui-handler";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
-import {Button} from "#app/enums/buttons";
 import PartyUiHandler, {PartyUiMode} from "#app/ui/party-ui-handler";
 import Trainer from "#app/field/trainer";
+import { ExpNotification } from "#enums/exp-notification";
+import { GameDataType } from "#enums/game-data-type";
+import { PlayerGender } from "#enums/player-gender";
+import { Species } from "#enums/species";
+import { Button } from "#enums/buttons";
+import { BattlerIndex } from "#app/battle.js";
+import TargetSelectUiHandler from "#app/ui/target-select-ui-handler.js";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -166,6 +170,19 @@ export default class GameManager {
     this.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
       (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
     });
+  }
+
+  /**
+   * Emulate a player's target selection after an attack is chosen,
+   * usually called after {@linkcode doAttack} in a double battle.
+   * @param {BattlerIndex} targetIndex the index of the attack target
+   */
+  doSelectTarget(targetIndex: BattlerIndex) {
+    this.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
+      const handler = this.scene.ui.getHandler() as TargetSelectUiHandler;
+      handler.setCursor(targetIndex);
+      handler.processInput(Button.ACTION);
+    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnStartPhase));
   }
 
   /** Faint all opponents currently on the field */

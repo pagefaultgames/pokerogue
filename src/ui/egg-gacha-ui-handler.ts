@@ -8,9 +8,9 @@ import { VoucherType, getVoucherTypeIcon } from "../system/voucher";
 import { getPokemonSpecies } from "../data/pokemon-species";
 import { addWindow } from "./ui-theme";
 import { Tutorial, handleTutorial } from "../tutorial";
-import { EggTier } from "../data/enums/egg-type";
-import {Button} from "../enums/buttons";
-import i18next from "../plugins/i18n";
+import {Button} from "#enums/buttons";
+import i18next from "i18next";
+import { EggTier } from "#enums/egg-type";
 
 export default class EggGachaUiHandler extends MessageUiHandler {
   private eggGachaContainer: Phaser.GameObjects.Container;
