@@ -1261,9 +1261,7 @@ export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
       SacrificialAttrOnHit
     ];
 
-    /**
-     * Parental Bond cannot apply to these specific moves
-     */
+    /** Parental Bond cannot apply to these specific moves */
     const exceptMoves: Moves[] = [
       Moves.FLING,
       Moves.UPROAR,
@@ -1297,11 +1295,11 @@ export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
     const multiplier = args[2] as Utils.NumberHolder;
 
     if (this.canApplyPreAttack(move, numTargets)) {
-      if (!!hitCount.value) {
+      if (!!hitCount?.value) {
         hitCount.value *= 2;
       }
 
-      if (!!multiplier.value && pokemon.turnData.hitsLeft % 2 === 1) {
+      if (!!multiplier?.value && pokemon.turnData.hitsLeft % 2 === 1) {
         multiplier.value *= this.damageMultiplier;
       }
       return true;
