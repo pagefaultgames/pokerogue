@@ -1950,68 +1950,68 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "burgh": {
     "encounter": {
-      1: `M'hm… If I win this battle, I feel like I can draw a picture unlike any before it. 
-                    $OK! I can hear my battle muse loud and clear. Let's get straight to it!`,
-      2: `Of course, I'm really proud of all of my Pokémon! 
-                    $Well now… Let's get right to it!`
+      1: `으-음… 이번 배틀에서 이기면, 예전과는 다른 그림을 그릴 수 있을 것 같아. 
+                    $맞아! 난 승리 뮤즈의 목소리를 선명하게 들을 수 있거든. 그럼 승부다!`,
+      2: `물론, 난 내 포켓몬을 자랑스럽게 생각하거든! 
+                    $자 그럼… 바로 승부할까!`
     },
     "victory": {
-      1: "Is it over? Has my muse abandoned me?",
-      2: "Hmm… It's over! You're incredible!"
+      1: "벌써 끝이라고? 뮤즈가 나를 버리고 떠나버렸나?",
+      2: "아우… 져버렸네! 너 굉장히 강하잖아!"
     },
     "defeat": {
-      1: "Wow… It's beautiful somehow, isn't it…",
-      2: `Sometimes I hear people say something was an ugly win. 
-                    $I think if you're trying your best, any win is beautiful.`
+      1: "우와… 왠지 뭔가 아름답네, 그치…",
+      2: `가끔 사람들이 못난 승리라고 말하는 걸 듣곤 해. 
+                    $그치만 난 최선을 다했다면, 어떤 승리든 아름답다고 생각하거든.`
     }
   },
   "elesa": {
     "encounter": {
-      1: `C'est fini! When I'm certain of that, I feel an electric jolt run through my body! 
-                    $I want to feel the sensation, so now my beloved Pokémon are going to make your head spin!`,
+      1: `컴플리트…! 확신이 들때면, 내 몸을 통하는 전기가 짜릿짜릿하게 느껴져! 
+                    $그 감각을 느끼고 싶으니까…, 다음은 사랑스러운 포켓몬들로 너를 어질어질하게 할게!`,
     },
     "victory": {
-      1: "I meant to make your head spin, but you shocked me instead."
+      1: "어질어질하게 만들 셈이였는데, 너한테는 짜릿짜릿하게 당해버렸네."
     },
     "defeat": {
-      1: "That was unsatisfying somehow… Will you give it your all next time?"
+      1: "왠지 부족한 기분이야… 다음에는 최선을 다할 수 있지?"
     }
   },
   "skyla": {
     "encounter": {
-      1: `It's finally time for a showdown! That means the Pokémon battle that decides who's at the top, right? 
-                    $I love being on the summit! 'Cause you can see forever and ever from high places! 
-                    $So, how about you and I have some fun?`,
+      1: `드디어 대결의 시간이야! 누가 정상에 오를지 결정짓는 포켓몬 배틀-, 그치? 
+                    $난 정상에 있는 게 좋아! 높은 곳에서는 항상 멀리 볼 수 있으니까! 
+                    $그럼, 다음은 나랑 더욱 즐거운 것을 할까?`,
     },
     "victory": {
-      1: "Being your opponent in battle is a new source of strength to me. Thank you!"
+      1: "배틀에서 네 상대가 되는 거, 뭔가 새로운 모티브가 되네. 고마워!"
     },
     "defeat": {
-      1: "Win or lose, you always gain something from a battle, right?"
+      1: "이기든 지든, 항상 무언가를 얻게 돼, 그치?"
     }
   },
   "brycen": {
     "encounter": {
-      1: `There is also strength in being with other people and Pokémon. 
-                    $Receiving their support makes you stronger. I'll show you this power!`,
+      1: `다른사람이나 포켓몬과 함께 있을 때도 힘이 생긴다. 
+                    $그 도움을 받는 것이 너를 강하게 만들었겠지. 그 힘을 보이거라!`,
     },
     "victory": {
-      1: "The wonderful combination of you and your Pokémon! What a beautiful friendship!"
+      1: "너와 포켓몬과! 멋진 콤비네이션! 아름다운 우정!"
     },
     "defeat": {
-      1: "Extreme conditions really test you and train you!"
+      1: "극한에서 시험받고 단련하도록!"
     }
   },
   "drayden": {
     "encounter": {
-      1: `What I want to find is a young Trainer who can show me a bright future. 
-                    $Let's battle with everything we have: your skill, my experience, and the love we've raised our Pokémon with!`,
+      1: `지금 찾는 것은 밝은 미래를 보여줄 젋은 트레이너의 존재. 
+                    $승부에서 모든 걸 보이도록. 네 기술, 내 경험, 그리고 포켓몬을 키워온 사랑도 함께!`,
     },
     "victory": {
-      1: "This intense feeling that floods me after a defeat… I don't know how to describe it."
+      1: "패배하여 끓어오르는 이 마음… 뭐라고 표현해야 좋을까."
     },
     "defeat": {
-      1: "Harrumph! I know your ability is greater than that!"
+      1: "실망스럽군!난 자네의 능력이 그보다 더 크다는 걸 알고있네!"
     }
   },
   "grant": {
