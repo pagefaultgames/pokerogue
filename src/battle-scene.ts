@@ -182,11 +182,11 @@ export default class BattleScene extends SceneBase {
 	 */
 
   /** PhaseQueue: dequeue/remove the first element to get the next phase */
-  private phaseQueue: Phase[];
+  public phaseQueue: Phase[];
+  public conditionalQueue: Array<[() => boolean, Phase]>;
   /** PhaseQueuePrepend: is a temp storage of what will be added to PhaseQueue */
   private phaseQueuePrepend: Phase[];
 
-  public conditionalQueue: Array<[() => boolean, Phase]>;
   /** overrides default of inserting phases to end of phaseQueuePrepend array, useful or inserting Phases "out of order" */
   private phaseQueuePrependSpliceIndex: integer;
   private nextCommandPhaseQueue: Phase[];
