@@ -3,7 +3,7 @@ import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
 import * as overrides from "#app/overrides";
 import { Species } from "#enums/species";
-import { TurnEndPhase, } from "#app/phases";
+import { MoveEffectPhase } from "#app/phases";
 import { Moves } from "#enums/moves";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
@@ -11,8 +11,6 @@ import Move, { allMoves } from "#app/data/move.js";
 import Pokemon from "#app/field/pokemon.js";
 import { FieldMoveTypePowerBoostAbAttr } from "#app/data/ability.js";
 import { NumberHolder } from "#app/utils.js";
-
-
 
 describe("Abilities - Aura Break", () => {
   let phaserGame: Phaser.Game;
@@ -43,10 +41,9 @@ describe("Abilities - Aura Break", () => {
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.MOONBLAST));
 
-    const appliedPower = getAppliedMovePower(game.scene.getEnemyField()[0], game.scene.getPlayerField()[0], allMoves[Moves.MOONBLAST]);
+    const appliedPower = getMockedMovePower(game.scene.getEnemyField()[0], game.scene.getPlayerField()[0], allMoves[Moves.MOONBLAST]);
 
-
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(appliedPower).not.toBe(undefined);
     expect(appliedPower).not.toBe(basePower);
@@ -60,9 +57,9 @@ describe("Abilities - Aura Break", () => {
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.DARK_PULSE));
 
-    const appliedPower = getAppliedMovePower(game.scene.getEnemyField()[0], game.scene.getPlayerField()[0], allMoves[Moves.DARK_PULSE]);
+    const appliedPower = getMockedMovePower(game.scene.getEnemyField()[0], game.scene.getPlayerField()[0], allMoves[Moves.DARK_PULSE]);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(appliedPower).not.toBe(undefined);
     expect(appliedPower).not.toBe(basePower);
@@ -70,7 +67,7 @@ describe("Abilities - Aura Break", () => {
   });
 });
 
-const getAppliedMovePower = (defender: Pokemon, attacker: Pokemon, move: Move) => {
+const getMockedMovePower = (defender: Pokemon, attacker: Pokemon, move: Move) => {
   const powerHolder = new NumberHolder(move.power);
 
   if (defender.hasAbilityWithAttr(FieldMoveTypePowerBoostAbAttr)) {
