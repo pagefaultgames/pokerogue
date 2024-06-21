@@ -21,7 +21,6 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "passive": "Passiva:",
   "nature": "Natura:",
   "eggMoves": "Mosse da uova",
-  "start": "Inizia",
   "addToParty": "Aggiungi al gruppo",
   "toggleIVs": "Vedi/Nascondi IV",
   "manageMoves": "Gestisci mosse",
