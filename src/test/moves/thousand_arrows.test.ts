@@ -3,8 +3,8 @@ import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
 import * as overrides from "#app/overrides";
 import {
-  DamagePhase,
-  MoveEffectPhase
+  MoveEffectPhase,
+  TurnEndPhase
 } from "#app/phases";
 import {getMovePosition} from "#app/test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
@@ -56,11 +56,9 @@ describe("Moves - Thousand Arrows", () => {
       // Enemy should not be grounded before move effect is applied
       expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeUndefined();
 
-      await game.phaseInterceptor.to(DamagePhase, false);
-      // Enemy should be grounded before damage is applied
-      expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeDefined();
+      await game.phaseInterceptor.to(TurnEndPhase, false);
 
-      await game.phaseInterceptor.to(DamagePhase);
+      expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeDefined();
       expect(enemyPokemon.hp).toBeLessThan(enemyStartingHp);
     }, TIMEOUT
   );
