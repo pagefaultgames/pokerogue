@@ -35,33 +35,33 @@ const rangesByLanguage = {
 const fonts: Array<LoadingFontFaceProperty> = [
   // korean
   {
-    face: new FontFace("emerald", "url(./fonts/PokePT_Wansung.ttf)", { unicodeRange: rangesByLanguage.korean }),
+    face: new FontFace("emerald", "url(./fonts/PokePT_Wansung.woff2)", { unicodeRange: rangesByLanguage.korean }),
     only: [ "ko" ],
   },
   {
-    face: new FontFace("pkmnems", "url(./fonts/PokePT_Wansung.ttf)", { unicodeRange: rangesByLanguage.korean }),
+    face: new FontFace("pkmnems", "url(./fonts/PokePT_Wansung.woff2)", { unicodeRange: rangesByLanguage.korean }),
     extraOptions: { sizeAdjust: "133%" },
-    only: ["ko"],
+    only: [ "ko" ],
   },
   // unicode (chinese)
   {
-    face: new FontFace("emerald", "url(./fonts/unifont-15.1.05.otf)", { unicodeRange: rangesByLanguage.chinese }),
-    extraOptions: { sizeAdjust: "70%", format: "opentype" },
-    only: ["zh-CN", "zh-TW"]
+    face: new FontFace("emerald", "url(./fonts/unifont-15.1.05.subset.woff2)", { unicodeRange: rangesByLanguage.chinese }),
+    extraOptions: { sizeAdjust: "70%", format: "woff2" },
+    only: [ "zh-CN", "zh-TW" ],
   },
   {
-    face: new FontFace("pkmnems", "url(./fonts/unifont-15.1.05.otf)", { unicodeRange: rangesByLanguage.chinese }),
-    extraOptions: { format: "opentype" },
-    only: ["zh-CN", "zh-TW"]
+    face: new FontFace("pkmnems", "url(./fonts/unifont-15.1.05.subset.woff2)", { unicodeRange: rangesByLanguage.chinese }),
+    extraOptions: { format: "woff2" },
+    only: [ "zh-CN", "zh-TW" ],
   },
   // japanese
   {
-    face: new FontFace("emerald", "url(./fonts/Galmuri11.ttf)", { unicodeRange: rangesByLanguage.japanese }),
+    face: new FontFace("emerald", "url(./fonts/Galmuri11.subset.woff2)", { unicodeRange: rangesByLanguage.japanese }),
     extraOptions: { sizeAdjust: "66%" },
     only: [ "ja" ],
   },
   {
-    face: new FontFace("pkmnems", "url(./fonts/Galmuri11.ttf)", { unicodeRange: rangesByLanguage.japanese }),
+    face: new FontFace("pkmnems", "url(./fonts/Galmuri9.subset.woff2)", { unicodeRange: rangesByLanguage.japanese }),
     only: [ "ja" ],
   },
 ];
