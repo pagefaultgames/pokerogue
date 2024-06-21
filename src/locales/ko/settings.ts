@@ -95,5 +95,5 @@ export const settings: SimpleTranslationEntries = {
   "mute": "음소거",
   "controller": "컨트롤러",
   "gamepadSupport": "게임패드 지원",
-  "showBgmBar": "Show Music Names",
+  "showBgmBar": "BGM 제목 보여주기",
 } as const;
