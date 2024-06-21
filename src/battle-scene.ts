@@ -743,6 +743,10 @@ export default class BattleScene extends SceneBase {
       : ret;
   }
 
+  /**
+   * Returns the ModifierBar of this scene, which is declared private and therefore not accessible elsewhere
+   * @returns {@linkcode ModifierBar}
+   */
   getModifierBar(): ModifierBar {
     return this.modifierBar;
   }
