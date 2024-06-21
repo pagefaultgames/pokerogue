@@ -36,33 +36,29 @@ const fonts: Array<LoadingFontFaceProperty> = [
   // korean
   {
     face: new FontFace("emerald", "url(./fonts/PokePT_Wansung.woff2)", { unicodeRange: rangesByLanguage.korean }),
-    only: [ "ko" ],
   },
   {
     face: new FontFace("pkmnems", "url(./fonts/PokePT_Wansung.woff2)", { unicodeRange: rangesByLanguage.korean }),
     extraOptions: { sizeAdjust: "133%" },
-    only: [ "ko" ],
   },
   // unicode (chinese)
   {
     face: new FontFace("emerald", "url(./fonts/unifont-15.1.05.subset.woff2)", { unicodeRange: rangesByLanguage.chinese }),
     extraOptions: { sizeAdjust: "70%", format: "woff2" },
-    only: [ "zh-CN", "zh-TW" ],
+    only: [ "zh" ],
   },
   {
     face: new FontFace("pkmnems", "url(./fonts/unifont-15.1.05.subset.woff2)", { unicodeRange: rangesByLanguage.chinese }),
     extraOptions: { format: "woff2" },
-    only: [ "zh-CN", "zh-TW" ],
+    only: [ "zh" ],
   },
   // japanese
   {
     face: new FontFace("emerald", "url(./fonts/Galmuri11.subset.woff2)", { unicodeRange: rangesByLanguage.japanese }),
     extraOptions: { sizeAdjust: "66%" },
-    only: [ "ja" ],
   },
   {
     face: new FontFace("pkmnems", "url(./fonts/Galmuri9.subset.woff2)", { unicodeRange: rangesByLanguage.japanese }),
-    only: [ "ja" ],
   },
 ];
 
