@@ -2160,7 +2160,6 @@ type BaseModifierOverride = {
 };
 
 type GeneratorModifierOverride = {
-    /** Quantity of the held item or modifier desired */
     count?: number
   } & (
   | {
