@@ -1,6 +1,6 @@
-import { SimpleTranslationEntries } from "#app/interfaces/locales.js";
+import { TranslationEntries } from "#app/interfaces/locales";
 
-export const pokemonSummary: SimpleTranslationEntries = {
+export const pokemonSummary: TranslationEntries = {
   "pokemonInfo": "Info Pokémon",
   "status": "Résumé",
   "powerAccuracyCategory": "Puissance\nPrécision\nCatégorie",
@@ -8,10 +8,13 @@ export const pokemonSummary: SimpleTranslationEntries = {
   "unknownTrainer": "Inconnu",
   "ot": "D.O.",
   "luck": "Chance",
-  "nature": "de nature",
-  "apparently": "apparemment",
-  "metAtLv": "rencontré au N.",
   "expPoints": "Points Exp.",
   "nextLv": "N. suivant",
   "cancel": "Annuler",
+
+  "memoString": "{{natureFragment}} de nature,\n{{metFragment}}",
+  "metFragment": {
+    "normal": "rencontré au N.{{level}},\n{{biome}}.",
+    "apparently": "apparemment rencontré au N.{{level}},\n{{biome}}.",
+  },
 } as const;

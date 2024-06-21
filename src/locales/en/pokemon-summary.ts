@@ -1,6 +1,6 @@
-import { PokemonSummaryEntries } from "#app/interfaces/locales.js";
+import { TranslationEntries } from "#app/interfaces/locales";
 
-export const pokemonSummary: PokemonSummaryEntries = {
+export const pokemonSummary: TranslationEntries = {
   "pokemonInfo": "Pokémon Info",
   "status": "Status",
   "powerAccuracyCategory": "Power\nAccuracy\nCategory",
@@ -16,5 +16,5 @@ export const pokemonSummary: PokemonSummaryEntries = {
   "metFragment": {
     "normal": "met at Lv{{level}},\n{{biome}}.",
     "apparently": "apparently met at Lv{{level}},\n{{biome}}.",
-  }
+  },
 } as const;
