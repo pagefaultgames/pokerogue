@@ -743,6 +743,14 @@ export default class BattleScene extends SceneBase {
       : ret;
   }
 
+  /**
+   * Returns the ModifierBar of this scene, which is declared private and therefore not accessible elsewhere
+   * @returns {ModifierBar}
+   */
+  getModifierBar(): ModifierBar {
+    return this.modifierBar;
+  }
+
   // store info toggles to be accessible by the ui
   addInfoToggle(infoToggle: InfoToggle): void {
     this.infoToggles.push(infoToggle);
