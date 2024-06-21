@@ -1857,7 +1857,7 @@ export default class BattleScene extends SceneBase {
   }
 
   getRealBgmName(bgmName: string): string {
-    return i18next.t([`bgmName:${bgmName}`, "bgmName:missing_entries"], {name: bgmName});
+    return i18next.t([`bgmName:${bgmName}`, "bgmName:missing_entries"], {name: Utils.formatText(bgmName)});
   }
 
   toggleInvert(invert: boolean): void {
