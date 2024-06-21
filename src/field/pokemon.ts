@@ -82,6 +82,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public friendship: integer;
   public metLevel: integer;
   public metBiome: Biome | -1;
+  public metSpecies: Species;
   public luck: integer;
   public pauseEvolutions: boolean;
   public pokerus: boolean;
@@ -160,6 +161,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.metLevel = dataSource.metLevel || 5;
       this.luck = dataSource.luck;
       this.metBiome = dataSource.metBiome;
+      this.metSpecies = dataSource.metSpecies || (this.metBiome !== -1 ? this.species.speciesId : this.species.getRootSpeciesId(true));
       this.pauseEvolutions = dataSource.pauseEvolutions;
       this.pokerus = !!dataSource.pokerus;
       this.fusionSpecies = dataSource.fusionSpecies instanceof PokemonSpecies ? dataSource.fusionSpecies : getPokemonSpecies(dataSource.fusionSpecies);
@@ -200,6 +202,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.friendship = species.baseFriendship;
       this.metLevel = level;
       this.metBiome = scene.currentBattle ? scene.arena.biomeType : -1;
+      this.metSpecies = species.speciesId;
       this.pokerus = false;
 
       if (level > 1) {
@@ -850,11 +853,40 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * All moves that could be relearned by this pokemon at this point. Used for memory mushrooms.
-   * @returns {Moves[]} The valid moves
+   * Checks which egg moves have been unlocked for the {@linkcode Pokemon} based
+   * on the species it was met at or by the first {@linkcode Pokemon} in its evolution
+   * line that can act as a starter and provides those egg moves.
+   * @returns an array of {@linkcode Moves}, the length of which is determined by how many
+   * egg moves are unlocked for that species
+   */
+  getUnlockedEggMoves(): Moves[] {
+    const moves: Moves[] = [];
+    const species = this.metSpecies in speciesEggMoves ? this.metSpecies : this.getSpeciesForm(true).getRootSpeciesId(true);
+    if (species in speciesEggMoves) {
+      for (let i = 0; i < 4; i++) {
+        if (this.scene.gameData.starterData[species].eggMoves & (1 << i)) {
+          moves.push(speciesEggMoves[species][i]);
+        }
+      }
+    }
+    return moves;
+  }
+
+  /**
+   * Gets all possible learnable level moves for the {@linkcode Pokemon},
+   * excluding any moves already known.
+   *
+   * Available egg moves are only included if the {@linkcode Pokemon} was
+   * in the starting party of the run.
+   * @returns an array of {@linkcode Moves}, the length of which is determined
+   * by how many learnable moves
    */
   getLearnableLevelMoves(): Moves[] {
-    return this.getLevelMoves(1, true, false, true).map(lm => lm[1]).filter(lm => !this.moveset.filter(m => m.moveId === lm).length).filter((move: Moves, i: integer, array: Moves[]) => array.indexOf(move) === i);
+    let levelMoves = this.getLevelMoves(1, true).map(lm => lm[1]);
+    if (this.metBiome === -1) {
+      levelMoves = this.getUnlockedEggMoves().concat(levelMoves);
+    }
+    return levelMoves.filter(lm => !this.moveset.some(m => m.moveId === lm));
   }
 
   /**
@@ -3910,6 +3942,7 @@ export class EnemyPokemon extends Pokemon {
       this.pokeball = pokeballType;
       this.metLevel = this.level;
       this.metBiome = this.scene.arena.biomeType;
+      this.metSpecies = this.species.speciesId;
       const newPokemon = this.scene.addPlayerPokemon(this.species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.variant, this.ivs, this.nature, this);
       party.push(newPokemon);
       ret = newPokemon;
