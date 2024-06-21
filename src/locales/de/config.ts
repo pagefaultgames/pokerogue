@@ -1,6 +1,6 @@
 import { ability } from "./ability";
 import { abilityTriggers } from "./ability-trigger";
-import { achv } from "./achv";
+import { PGFachv, PGMachv } from "./achv";
 import { battle } from "./battle";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
 import { berry } from "./berry";
@@ -39,17 +39,21 @@ import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { weather } from "./weather";
 import { partyUiHandler } from "./party-ui-handler";
+import { settings } from "#app/locales/de/settings.js";
+import { common } from "#app/locales/de/common.js";
 
 export const deConfig = {
   ability: ability,
   abilityTriggers: abilityTriggers,
-  achv: achv,
   battle: battle,
   battleMessageUiHandler: battleMessageUiHandler,
   berry: berry,
   biome: biome,
   challenges: challenges,
   commandUiHandler: commandUiHandler,
+  common: common,
+  PGMachv: PGMachv,
+  PGFachv: PGFachv,
   PGMdialogue: PGMdialogue,
   PGFdialogue: PGFdialogue,
   PGMbattleSpecDialogue: PGMbattleSpecDialogue,
@@ -73,6 +77,7 @@ export const deConfig = {
   pokemonInfo: pokemonInfo,
   pokemonInfoContainer: pokemonInfoContainer,
   saveSlotSelectUiHandler: saveSlotSelectUiHandler,
+  settings: settings,
   splashMessages: splashMessages,
   starterSelectUiHandler: starterSelectUiHandler,
   titles: titles,

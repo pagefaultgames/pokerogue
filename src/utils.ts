@@ -1,5 +1,5 @@
 import i18next from "i18next";
-import { MoneyFormat } from "./enums/money-format";
+import { MoneyFormat } from "#enums/money-format";
 
 export const MissingTextureKey = "__MISSING";
 
@@ -296,7 +296,7 @@ export let isLocalServerConnected = true;
 export function setCookie(cName: string, cValue: string): void {
   const expiration = new Date();
   expiration.setTime(new Date().getTime() + 3600000 * 24 * 30 * 3/*7*/);
-  document.cookie = `${cName}=${cValue};SameSite=Strict;path=/;expires=${expiration.toUTCString()}`;
+  document.cookie = `${cName}=${cValue};Secure;SameSite=Strict;Path=/;Expires=${expiration.toUTCString()}`;
 }
 
 export function getCookie(cName: string): string {
@@ -360,6 +360,9 @@ export function apiPost(path: string, data?: any, contentType: string = "applica
       .catch(err => reject(err));
   }) : new Promise(() => {});
 }
+
+/** Alias for the constructor of a class */
+export type Constructor<T> = new(...args: unknown[]) => T;
 
 export class BooleanHolder {
   public value: boolean;
@@ -447,9 +450,9 @@ export function verifyLang(lang?: string): boolean {
   case "fr":
   case "de":
   case "it":
-  case "zh_CN":
-  case "zh_TW":
-  case "pt_BR":
+  case "zh-CN":
+  case "zh-TW":
+  case "pt-BR":
   case "ko":
     return true;
   default:

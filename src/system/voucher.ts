@@ -1,7 +1,8 @@
 import BattleScene from "../battle-scene";
-import { TrainerType } from "../data/enums/trainer-type";
-import i18next from "../plugins/i18n";
+import i18next from "i18next";
 import { Achv, AchvTier, achvs, getAchievementDescription } from "./achv";
+import { PlayerGender } from "#enums/player-gender";
+import { TrainerType } from "#enums/trainer-type";
 
 export enum VoucherType {
   REGULAR,
@@ -27,7 +28,12 @@ export class Voucher {
     return !this.conditionFunc || this.conditionFunc(scene, args);
   }
 
-  getName(): string {
+  /**
+   * Get the name of the voucher
+   * @param playerGender - this is ignored here. It's only there to match the signature of the function in the Achv class
+   * @returns the name of the voucher
+   */
+  getName(playerGender: PlayerGender): string {
     return getVoucherTypeName(this.voucherType);
   }
 

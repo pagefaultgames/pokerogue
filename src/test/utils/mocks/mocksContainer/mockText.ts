@@ -7,9 +7,12 @@ export default class MockText {
   private scene;
   private textureManager;
   public list = [];
+  public style;
+
   constructor(textureManager, x, y, content, styleOptions) {
     this.scene = textureManager.scene;
     this.textureManager = textureManager;
+    this.style = {};
     // Phaser.GameObjects.TextStyle.prototype.setStyle = () => null;
     // Phaser.GameObjects.Text.prototype.updateText = () => null;
     // Phaser.Textures.TextureManager.prototype.addCanvas = () => {};
@@ -135,6 +138,15 @@ export default class MockText {
   setX(x) {
     // return this.phaserText.setX(x);
   }
+
+  /**
+   * Sets the position of this Game Object.
+   * @param x The x position of this Game Object. Default 0.
+   * @param y The y position of this Game Object. If not set it will use the `x` value. Default x.
+   * @param z The z position of this Game Object. Default 0.
+   * @param w The w position of this Game Object. Default 0.
+   */
+  setPosition(x?: number, y?: number, z?: number, w?: number) { }
 
   setText(text) {
     // Sets the text this Game Object will display.

@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 /**
  * The menu namespace holds most miscellaneous text that isn't directly part of the game's
@@ -21,21 +21,22 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "passive": "Pasiva:",
   "nature": "Natur:",
   "eggMoves": "Mov. Huevo",
-  "start": "Iniciar",
   "addToParty": "Añadir a Equipo",
   "toggleIVs": "Mostrar IVs",
   "manageMoves": "Gestionar Movs.",
+  "manageNature": "Gestionar Natur",
   "useCandies": "Usar Caramelos",
+  "selectNature": "Elige Natur.",
   "selectMoveSwapOut": "Elige el movimiento que sustituir.",
   "selectMoveSwapWith": "Elige el movimiento que sustituirá a",
   "unlockPassive": "Añadir Pasiva",
   "reduceCost": "Reducir Coste",
-  "cycleShiny": "R: Cambiar Shiny",
-  "cycleForm": "F: Cambiar Forma",
-  "cycleGender": "G: Cambiar Género",
-  "cycleAbility": "E: Cambiar Habilidad",
-  "cycleNature": "N: Cambiar Naturaleza",
-  "cycleVariant": "V: Cambiar Variante",
+  "cycleShiny": ": Shiny",
+  "cycleForm": ": Forma",
+  "cycleGender": ": Género",
+  "cycleAbility": ": Habilidad",
+  "cycleNature": ": Naturaleza",
+  "cycleVariant": ": Variante",
   "enablePassive": "Activar Pasiva",
   "disablePassive": "Desactivar Pasiva",
   "locked": "Bloqueado",

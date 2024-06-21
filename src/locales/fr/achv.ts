@@ -1,6 +1,7 @@
-import { AchievementTranslationEntries } from "#app/plugins/i18n.js";
+import { AchievementTranslationEntries } from "#app/interfaces/locales.js";
 
-export const achv: AchievementTranslationEntries = {
+// Achievement translations for the when the player character is male
+export const PGMachv: AchievementTranslationEntries = {
   "Achievements": {
     name: "Succès",
   },
@@ -161,11 +162,109 @@ export const achv: AchievementTranslationEntries = {
     description: "Capturer un Pokémon possédant un talent caché",
   },
   "PERFECT_IVS": {
-    name: "Certificat d’Authenticité",
+    name: "Certificat d’authenticité",
     description: "Avoir des IV parfaits sur un Pokémon",
   },
   "CLASSIC_VICTORY": {
     name: "Invaincu·e",
     description: "Terminer le jeu en mode classique",
   },
+
+  "MONO_GEN_ONE": {
+    name: "Le rival originel",
+    description: "Terminer un challenge avec uniquement des Pokémon de 1re génération.",
+  },
+  "MONO_GEN_TWO": {
+    name: "Entre tradition et modernité",
+    description: "Terminer un challenge avec uniquement des Pokémon de 2e génération.",
+  },
+  "MONO_GEN_THREE": {
+    name: "Too much water ?",
+    description: "Terminer un challenge avec uniquement des Pokémon de 3e génération.",
+  },
+  "MONO_GEN_FOUR": {
+    name: "Réellement la plus difficile ?",
+    description: "Terminer un challenge avec uniquement des Pokémon de 4e génération.",
+  },
+  "MONO_GEN_FIVE": {
+    name: "Recast complet",
+    description: "Terminer un challenge avec uniquement des Pokémon de 5e génération.",
+  },
+  "MONO_GEN_SIX": {
+    name: "Aristocrate",
+    description: "Terminer un challenge avec uniquement des Pokémon de 6e génération.",
+  },
+  "MONO_GEN_SEVEN": {
+    name: "Seulement techniquement",
+    description: "Terminer un challenge avec uniquement des Pokémon de 7e génération.",
+  },
+  "MONO_GEN_EIGHT": {
+    name: "L’heure de gloire",
+    description: "Terminer un challenge avec uniquement des Pokémon de 8e génération.",
+  },
+  "MONO_GEN_NINE": {
+    name: "Ça va, c’était EZ",
+    description: "Terminer un challenge avec uniquement des Pokémon de 9e génération.",
+  },
+
+  "MonoType": {
+    description: "Terminer un challenge en monotype {{type}}.",
+  },
+  "MONO_NORMAL": {
+    name: "Extraordinairement banal",
+  },
+  "MONO_FIGHTING": {
+    name: "Je connais le kung-fu",
+  },
+  "MONO_FLYING": {
+    name: "Angry Birds",
+  },
+  "MONO_POISON": {
+    name: "Touche moi je t’empoisonne !",
+  },
+  "MONO_GROUND": {
+    name: "Prévisions : Séisme",
+  },
+  "MONO_ROCK": {
+    name: "Comme un roc",
+  },
+  "MONO_BUG": {
+    name: "Une chenille !",
+  },
+  "MONO_GHOST": {
+    name: "SOS Fantômes",
+  },
+  "MONO_STEEL": {
+    name: "De type Acier !",
+  },
+  "MONO_FIRE": {
+    name: "Allumer le feu",
+  },
+  "MONO_WATER": {
+    name: "Vacances en Bretagne",
+  },
+  "MONO_GRASS": {
+    name: "Ne pas toucher !",
+  },
+  "MONO_ELECTRIC": {
+    name: "À la masse",
+  },
+  "MONO_PSYCHIC": {
+    name: "Grocervo",
+  },
+  "MONO_ICE": {
+    name: "Froid comme la glace",
+  },
+  "MONO_DRAGON": {
+    name: "Légendes du club, ou presque",
+  },
+  "MONO_DARK": {
+    name: "Ça va lui passer",
+  },
+  "MONO_FAIRY": {
+    name: "Hey ! Listen !",
+  },
 } as const;
+
+// Achievement translations for the when the player character is female (it for now uses the same translations as the male version)
+export const PGFachv: AchievementTranslationEntries = PGMachv;

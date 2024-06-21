@@ -1,6 +1,7 @@
-import { AchievementTranslationEntries } from "#app/plugins/i18n.js";
+import { AchievementTranslationEntries } from "#app/interfaces/locales.js";
 
-export const achv: AchievementTranslationEntries = {
+// Achievement translations for the when the player character is male
+export const PGMachv: AchievementTranslationEntries = {
   "Achievements": {
     name: "Achievements",
   },
@@ -210,57 +211,60 @@ export const achv: AchievementTranslationEntries = {
     description: "Complete the {{type}} monotype challenge.",
   },
   "MONO_NORMAL": {
-    name: "Mono NORMAL",
+    name: "Extra Ordinary",
   },
   "MONO_FIGHTING": {
     name: "I Know Kung Fu",
   },
   "MONO_FLYING": {
-    name: "Mono FLYING",
+    name: "Angry Birds",
   },
   "MONO_POISON": {
     name: "Kanto's Favourite",
   },
   "MONO_GROUND": {
-    name: "Mono GROUND",
+    name: "Forecast: Earthquakes",
   },
   "MONO_ROCK": {
     name: "Brock Hard",
   },
   "MONO_BUG": {
-    name: "Sting Like A Beedrill",
+    name: "You Like Jazz?",
   },
   "MONO_GHOST": {
-    name: "Who you gonna call?",
+    name: "Who You Gonna Call?",
   },
   "MONO_STEEL": {
-    name: "Mono STEEL",
+    name: "Iron Giant",
   },
   "MONO_FIRE": {
-    name: "Mono FIRE",
+    name: "I Cast Fireball!",
   },
   "MONO_WATER": {
     name: "When It Rains, It Pours",
   },
   "MONO_GRASS": {
-    name: "Mono GRASS",
+    name: "Can't Touch This",
   },
   "MONO_ELECTRIC": {
-    name: "Mono ELECTRIC",
+    name: "Aim For The Horn!",
   },
   "MONO_PSYCHIC": {
-    name: "Mono PSYCHIC",
+    name: "Big Brain Energy",
   },
   "MONO_ICE": {
-    name: "Mono ICE",
+    name: "Walking On Thin Ice",
   },
   "MONO_DRAGON": {
-    name: "Mono DRAGON",
+    name: "Pseudo-Legend Club",
   },
   "MONO_DARK": {
-    name: "It's just a phase",
+    name: "It's Just A Phase",
   },
   "MONO_FAIRY": {
-    name: "Mono FAIRY",
+    name: "Hey! Listen!",
   },
 } as const;
+
+// Achievement translations for the when the player character is female (it for now uses the same translations as the male version)
+export const PGFachv: AchievementTranslationEntries = PGMachv;
