@@ -24,7 +24,7 @@ export enum MenuOptions {
   LOG_OUT
 }
 
-const wikiUrl = "https://wiki.pokerogue.net/start";
+let wikiUrl = "https://wiki.pokerogue.net/start";
 const discordUrl = "https://discord.gg/uWpTfdKG49";
 const githubUrl = "https://github.com/pagefaultgames/pokerogue";
 const redditUrl = "https://www.reddit.com/r/pokerogue";
@@ -55,6 +55,11 @@ export default class MenuUiHandler extends MessageUiHandler {
 
   setup() {
     const ui = this.getUi();
+    // wiki url directs based on languges available on wiki
+    const lang = i18next.resolvedLanguage.substring(0,2);
+    if (["de", "fr", "ko", "zh"].includes(lang)) {
+      wikiUrl = `https://wiki.pokerogue.net/${lang}:start`;
+    }
 
     this.menuContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
 

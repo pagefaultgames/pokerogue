@@ -3964,6 +3964,8 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
       return -3;
     case BattlerTagType.ENCORE:
       return -2;
+    case BattlerTagType.MINIMIZED:
+      return 0;
     case BattlerTagType.INGRAIN:
     case BattlerTagType.IGNORE_ACCURACY:
     case BattlerTagType.AQUA_RING:
@@ -5290,7 +5292,16 @@ export class SwitchAbilitiesAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * Attribute used for moves that suppress abilities like {@linkcode Moves.GASTRO_ACID}.
+ * A suppressed ability cannot be activated.
+ *
+ * @extends MoveEffectAttr
+ * @see {@linkcode apply}
+ * @see {@linkcode getCondition}
+ */
 export class SuppressAbilitiesAttr extends MoveEffectAttr {
+  /** Sets ability suppression for the target pokemon and displays a message. */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
       return false;
@@ -5303,8 +5314,9 @@ export class SuppressAbilitiesAttr extends MoveEffectAttr {
     return true;
   }
 
+  /** Causes the effect to fail when the target's ability is unsupressable or already suppressed. */
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => !target.getAbility().hasAttr(UnsuppressableAbilityAbAttr);
+    return (user, target, move) => !target.getAbility().hasAttr(UnsuppressableAbilityAbAttr) && !target.summonData.abilitySuppressed;
   }
 }
 
@@ -5319,7 +5331,7 @@ export class SuppressAbilitiesIfActedAttr extends MoveEffectAttr {
    * abillity cannot be suppressed. This is a secondary effect and has no bearing on the success or failure of the move.
    *
    * @returns True if the move occurred, otherwise false. Note that true will be returned even if the target has not
-   * yet moved or if the target's abiilty is un-suppressable.
+   * yet moved or if the suppression failed to apply.
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
@@ -8003,6 +8015,7 @@ export function initMoves() {
     new AttackMove(Moves.CHLOROBLAST, Type.GRASS, MoveCategory.SPECIAL, 150, 95, 5, -1, 0, 8)
       .attr(RecoilAttr, true, 0.5),
     new AttackMove(Moves.MOUNTAIN_GALE, Type.ICE, MoveCategory.PHYSICAL, 100, 85, 10, 30, 0, 8)
+      .makesContact(false)
       .attr(FlinchAttr),
     new SelfStatusMove(Moves.VICTORY_DANCE, Type.FIGHTING, -1, 10, -1, 0, 8)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPD ], 1, true)
