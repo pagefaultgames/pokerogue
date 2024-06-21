@@ -968,7 +968,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     },
     "victory": {
       1: "후우! 잘 싸웠다!",
-      2: "역시 대단하구나!  싸워서 더욱더 높은 곳을 노려라…!",
+      2: "역시 대단하구나! 싸워서 더욱더 높은 곳을 노려라…!",
       3: "너와 네 포켓몬이 보여준 그 힘, 감명 깊군…"
     },
     "defeat": {
