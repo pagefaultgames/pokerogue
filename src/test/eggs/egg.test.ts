@@ -208,10 +208,17 @@ describe("Egg Generation Tests", () => {
       gachaType: 1,
       hatchWaves: 25,
       id: 2077000788,
-      timestamp: 1718908955085
+      timestamp: 1718908955085,
+      isShiny: false,
+      overrideHiddenAbility: false,
+      sourceType: 0,
+      species: 0,
+      tier: 0,
+      variantTier: 0,
+      eggMoveIndex: 0,
     };
 
-    const result = new EggData(legacyEgg);
+    const result = new EggData(legacyEgg).toEgg();
 
     expect(result.tier).toBe(EggTier.GREAT);
     expect(result.id).toBe(legacyEgg.id);

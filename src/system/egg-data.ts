@@ -31,8 +31,13 @@ export default class EggData {
   }
 
   toEgg(): Egg {
-    return new Egg({id: this.id, tier: this.tier, sourceType: this.sourceType, hatchWaves: this.hatchWaves,
-      timestamp: this.timestamp, variantTier: this.variantTier, isShiny: this.isShiny, species: this.species,
-      eggMoveIndex: this.eggMoveIndex, overrideHiddenAbility: this.overrideHiddenAbility });
+    // Species will be 0 if an old legacy is loaded from DB
+    if (!this.species) {
+      return new Egg({ id: this.id, hatchWaves: this.hatchWaves, sourceType: this.sourceType, timestamp: this.timestamp, tier: Math.floor(this.id / EGG_SEED) });
+    } else {
+      return new Egg({id: this.id, tier: this.tier, sourceType: this.sourceType, hatchWaves: this.hatchWaves,
+        timestamp: this.timestamp, variantTier: this.variantTier, isShiny: this.isShiny, species: this.species,
+        eggMoveIndex: this.eggMoveIndex, overrideHiddenAbility: this.overrideHiddenAbility });
+    }
   }
 }
