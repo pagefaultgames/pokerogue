@@ -1971,7 +1971,6 @@ export class EatBerryAttr extends MoveEffectAttr {
     applyAbAttrs(HealFromBerryUseAbAttr, consumer, new Utils.BooleanHolder(false));
     return true;
   }
-
 }
 
 /**
