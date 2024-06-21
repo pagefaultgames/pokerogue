@@ -8,6 +8,7 @@ import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
+import { WeatherType } from "./weather";
 
 export enum FormChangeItem {
   NONE,
@@ -270,6 +271,73 @@ export class SpeciesFormChangeTimeOfDayTrigger extends SpeciesFormChangeTrigger 
   }
 }
 
+/**
+ * Class used for reverting to the original form based on weather.
+ * Used in cases where the weather runs out or is suppressed
+ * Used for Castform and Cherrim
+ */
+export class SpeciesFormChangeWeatherOriginalFormTrigger extends SpeciesFormChangeTrigger {
+  /** The ability that  triggers the form change*/
+  public ability: Abilities;
+  /** The list of weathers that will also trigger a form change to original form */
+  public weathers: WeatherType[];
+
+  constructor(ability: Abilities, weathers: WeatherType[]) {
+    super();
+    this.ability = ability;
+    this.weathers = weathers;
+  }
+
+  /**
+   * Checks if the Pokemon has the required ability and the weather is one that will revert
+   * the Pokemon to its original form or the weather is suppressed
+   * @param pokemon The pokemon that is trying to do the form change
+   * @returns true if the Pokemon will revert to its original form, false otherwise
+   */
+  canChange(pokemon: Pokemon): boolean {
+    if (pokemon.hasAbility(this.ability)) {
+      const currentWeather = pokemon.scene.arena.weather?.weatherType ?? WeatherType.NONE;
+      const isWeatherSuppressed = pokemon.scene.arena.weather?.isEffectSuppressed(pokemon.scene);
+
+      if (this.weathers.includes(currentWeather) || isWeatherSuppressed) {
+        return true;
+      }
+    }
+    return false;
+  }
+}
+
+/**
+ * Class used for triggering form changes based on weather.
+ * Used for Castform and Cherrim
+ */
+export class SpeciesFormChangeWeatherTrigger extends SpeciesFormChangeTrigger {
+  /** The ability that  triggers the form change*/
+  public ability: Abilities;
+  /** The list of weathers that trigger the form change */
+  public weathers: WeatherType[];
+
+  constructor(ability: Abilities, weathers: WeatherType[]) {
+    super();
+    this.ability = ability;
+    this.weathers = weathers;
+  }
+
+  /**
+   * Checks if the Pokemon has the required ability and is in the correct weather while
+   * the weather is also not suppressed.
+   * The weather being suppressed is okay for the case of weather clearing up
+   * @param pokemon The pokemon that is trying to do the form change
+   * @returns true if the Pokemon can change forms, false otherwise
+   */
+  canChange(pokemon: Pokemon): boolean {
+    const currentWeather = pokemon.scene.arena.weather?.weatherType ?? WeatherType.NONE;
+    const isWeatherSuppressed = pokemon.scene.arena.weather?.isEffectSuppressed(pokemon.scene);
+
+    return !isWeatherSuppressed && (pokemon.hasAbility(this.ability) && this.weathers.includes(currentWeather));
+  }
+}
+
 export class SpeciesFormChangeActiveTrigger extends SpeciesFormChangeTrigger {
   public active: boolean;
 
@@ -503,6 +571,20 @@ export const pokemonFormChanges: PokemonFormChanges = {
   ],
   [Species.ALTARIA]: [
     new SpeciesFormChange(Species.ALTARIA, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.ALTARIANITE))
+  ],
+  [Species.CASTFORM]: [
+    new SpeciesFormChange(Species.CASTFORM, "", "sunny", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.SUNNY, WeatherType.HARSH_SUN])),
+    new SpeciesFormChange(Species.CASTFORM, "rainy", "sunny", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.SUNNY, WeatherType.HARSH_SUN])),
+    new SpeciesFormChange(Species.CASTFORM, "snowy", "sunny", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.SUNNY, WeatherType.HARSH_SUN])),
+    new SpeciesFormChange(Species.CASTFORM, "", "rainy", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.RAIN, WeatherType.HEAVY_RAIN])),
+    new SpeciesFormChange(Species.CASTFORM, "sunny", "rainy", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.RAIN, WeatherType.HEAVY_RAIN])),
+    new SpeciesFormChange(Species.CASTFORM, "snowy", "rainy", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.RAIN, WeatherType.HEAVY_RAIN])),
+    new SpeciesFormChange(Species.CASTFORM, "", "snowy", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.HAIL, WeatherType.SNOW])),
+    new SpeciesFormChange(Species.CASTFORM, "sunny", "snowy", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.HAIL, WeatherType.SNOW])),
+    new SpeciesFormChange(Species.CASTFORM, "rainy", "snowy", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.HAIL, WeatherType.SNOW])),
+    new SpeciesFormChange(Species.CASTFORM, "sunny", "", new SpeciesFormChangeWeatherOriginalFormTrigger(Abilities.FORECAST, [WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS])),
+    new SpeciesFormChange(Species.CASTFORM, "rainy", "", new SpeciesFormChangeWeatherOriginalFormTrigger(Abilities.FORECAST, [WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS])),
+    new SpeciesFormChange(Species.CASTFORM, "snowy", "", new SpeciesFormChangeWeatherOriginalFormTrigger(Abilities.FORECAST, [WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS])),
   ],
   [Species.BANETTE]: [
     new SpeciesFormChange(Species.BANETTE, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.BANETTITE))

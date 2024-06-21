@@ -14,7 +14,7 @@ import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { Stat, getStatName } from "./pokemon-stat";
 import { BerryModifier, PokemonHeldItemModifier } from "../modifier/modifier";
 import { TerrainType } from "./terrain";
-import { SpeciesFormChangeManualTrigger } from "./pokemon-forms";
+import { SpeciesFormChangeManualTrigger, SpeciesFormChangeWeatherOriginalFormTrigger, SpeciesFormChangeWeatherTrigger } from "./pokemon-forms";
 import i18next from "i18next";
 import { Localizable } from "#app/interfaces/locales.js";
 import { Command } from "../ui/command-ui-handler";
@@ -1974,6 +1974,56 @@ export class PostSummonFormChangeAbAttr extends PostSummonAbAttr {
   }
 }
 
+/**
+ * Ability attribute for all PostSummon abilities that affect the weather
+ * Used in cloud nine and air lock
+ */
+export class PostSummonTriggerWeatherSuppressedFormChangesForAllAbAttr extends PostSummonAbAttr {
+  /**
+   * Tries to make all Pokemon trigger a form change based on weather when summoned
+   * @param pokemon n/a
+   * @param passive n/a
+   * @param args n/a
+   * @returns true
+   */
+  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]) {
+    pokemon.scene.arena.triggerWeatherBasedFormChangesToOriginal();
+    return true;
+  }
+}
+
+/**
+ * Ability attribute that allows for triggering a form change based on the weather on summon
+ * Used for Forecast and Flower Gift
+ */
+export class PostSummonFormChangeByWeatherAbAttr extends PostSummonAbAttr {
+  private ability: Abilities;
+
+  constructor(ability: Abilities) {
+    super(true);
+
+    this.ability = ability;
+  }
+
+  /**
+   * Calls the speciesFormChangeWeatherTrigger and SpeciesFormChangeWeatherOriginalFormTrigger
+   * if it is the specific Pokemon and ability
+   * @param pokemon the Pokemon with this ability
+   * @param passive n/a
+   * @param args n/a
+   * @returns true if a form change was attempted, false otherwise
+   */
+  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+    if ((pokemon.species.speciesId === Species.CASTFORM && this.ability === Abilities.FORECAST) ||
+        (pokemon.species.speciesId === Species.CASTFORM && this.ability === Abilities.FORECAST /** Replace with Cherrim later */)) {
+      pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeWeatherTrigger);
+      pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeWeatherOriginalFormTrigger);
+      return true;
+    }
+    return false;
+  }
+}
+
 export class TraceAbAttr extends PostSummonAbAttr {
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     const targets = pokemon.getOpponents();
@@ -2105,6 +2155,26 @@ export class PreSwitchOutClearWeatherAbAttr extends PreSwitchOutAbAttr {
     }
 
     return false;
+  }
+}
+
+/**
+ * Used for weather suppressing abilities to trigger weather based form changes upon being switched out
+ */
+export class PreSwitchOutWeatherNoLongerSuppressedAbAttr extends PreSwitchOutAbAttr {
+  /**
+   * Tries to trigger weather based form changes upon pre switch out
+   * @param pokemon n/a
+   * @param passive n/a
+   * @param args n/a
+   * @returns n/a
+   */
+  applyPreSwitchOut(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
+    // THIS WILL NOT WORK SINCE THE WEATHER SUPRESSION WILL STILL BE IN EFFECT
+    // TODO: NEED TO FIGURE OUT HOW TO TURN IT OFF PRIOR TO LEAVING
+    pokemon.summonData.abilitySuppressed = true;
+    pokemon.scene.arena.triggerWeatherBasedFormChanges();
+    return true;
   }
 }
 
@@ -3325,6 +3395,28 @@ export class PostFaintClearWeatherAbAttr extends PostFaintAbAttr {
   }
 }
 
+/**
+ * Used for weather suppressing abilities to trigger weather based form changes upon being fainted
+ */
+export class PostFaintWeatherNoLongerSuppressedAbAttr extends PostFaintAbAttr {
+  /**
+   * Tries to trigger weather based form changes upon fainting
+   * @param pokemon n/a
+   * @param passive n/a
+   * @param attacker n/a
+   * @param move n/a
+   * @param hitResult n/a
+   * @param args n/a
+   * @returns true
+   */
+  applyPostFaint(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
+    // THIS DOES NOT TRIGGER ON SELF-KO MOVES LIKE MEMENTO
+    pokemon.summonData.abilitySuppressed = true;
+    pokemon.scene.arena.triggerWeatherBasedFormChanges();
+    return true;
+  }
+}
+
 export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
   private damageRatio: integer;
 
@@ -4012,7 +4104,11 @@ export function initAbilities() {
       .attr(IntimidateImmunityAbAttr)
       .ignorable(),
     new Ability(Abilities.CLOUD_NINE, 3)
-      .attr(SuppressWeatherEffectAbAttr, true),
+      .attr(SuppressWeatherEffectAbAttr, true)
+      .attr(PostSummonTriggerWeatherSuppressedFormChangesForAllAbAttr)
+      .attr(PreSwitchOutWeatherNoLongerSuppressedAbAttr)
+      .attr(PostFaintWeatherNoLongerSuppressedAbAttr)
+      .bypassFaint(),
     new Ability(Abilities.COMPOUND_EYES, 3)
       .attr(BattleStatMultiplierAbAttr, BattleStat.ACC, 1.3),
     new Ability(Abilities.INSOMNIA, 3)
@@ -4156,8 +4252,9 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.FORECAST, 3)
       .attr(UncopiableAbilityAbAttr)
+      .attr(UnswappableAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
-      .unimplemented(),
+      .attr(PostSummonFormChangeByWeatherAbAttr, Abilities.FORECAST),
     new Ability(Abilities.STICKY_HOLD, 3)
       .attr(BlockItemTheftAbAttr)
       .bypassFaint()
@@ -4207,7 +4304,11 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.AIR_LOCK, 3)
       .attr(SuppressWeatherEffectAbAttr, true)
-      .attr(PostSummonUnnamedMessageAbAttr, "The effects of the weather disappeared."),
+      .attr(PostSummonUnnamedMessageAbAttr, "The effects of the weather disappeared.")
+      .attr(PostSummonTriggerWeatherSuppressedFormChangesForAllAbAttr)
+      .attr(PreSwitchOutWeatherNoLongerSuppressedAbAttr)
+      .attr(PostFaintWeatherNoLongerSuppressedAbAttr)
+      .bypassFaint(),
     new Ability(Abilities.TANGLED_FEET, 4)
       .conditionalAttr(pokemon => !!pokemon.getTag(BattlerTagType.CONFUSED), BattleStatMultiplierAbAttr, BattleStat.EVA, 2)
       .ignorable(),
