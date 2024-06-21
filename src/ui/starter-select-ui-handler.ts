@@ -1,6 +1,6 @@
 import { BattleSceneEventType, CandyUpgradeNotificationChangedEvent } from "../events/battle-scene";
 import { pokemonPrevolutions } from "#app/data/pokemon-evolutions";
-import { Variant, getVariantTint } from "#app/data/variant";
+import { Variant, getVariantTint, getVariantIcon } from "#app/data/variant";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
@@ -569,7 +569,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonCandyIcon.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonCandyIcon);
 
-    this.pokemonFormText = addTextObject(this.scene, 6, 48, "Form", TextStyle.WINDOW_ALT, { fontSize: "42px" });
+    this.pokemonFormText = addTextObject(this.scene, 6, 42, "Form", TextStyle.WINDOW_ALT, { fontSize: "42px" });
     this.pokemonFormText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonFormText);
 
@@ -608,9 +608,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonHatchedIcon.setScale(0.8);
     this.pokemonCaughtHatchedContainer.add(this.pokemonHatchedIcon);
 
-    this.pokemonShinyIcon = this.scene.add.sprite(8, 36, "shiny_star");
+    this.pokemonShinyIcon = this.scene.add.sprite(14, 76, "shiny_icons");
     this.pokemonShinyIcon.setOrigin(0.15, 0.2);
-    this.pokemonShinyIcon.setScale(0.8);
+    this.pokemonShinyIcon.setScale(1);
     this.pokemonCaughtHatchedContainer.add ((this.pokemonShinyIcon));
 
     this.pokemonHatchedCountText = addTextObject(this.scene, 24, 19, "0", TextStyle.SUMMARY_ALT);
@@ -1437,12 +1437,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               this.scene.playSound("sparkle");
               // Set the variant label to the shiny tint
               const tint = getVariantTint(newVariant);
+              this.pokemonShinyIcon.setFrame(getVariantIcon(newVariant));
               this.pokemonShinyIcon.setTint(tint);
               this.pokemonShinyIcon.setVisible(true);
-              this.pokemonFormText.setY(48);
             } else {
               this.pokemonShinyIcon.setVisible(false);
-              this.pokemonFormText.setY(42);
               success = true;
             }
           }
@@ -1806,7 +1805,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       const tint = getVariantTint(variant);
 
       this.pokemonShinyIcon.setTint(tint);
-      this.pokemonFormText.setY(48);
       this.setSpecies(species);
       this.updateInstructions();
     }
@@ -1985,7 +1983,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonCaughtHatchedContainer.setVisible(true);
         if (pokemonPrevolutions.hasOwnProperty(species.speciesId)) {
           this.pokemonCaughtHatchedContainer.setY(16);
-          this.pokemonShinyIcon.setY(23);
+          this.pokemonShinyIcon.setY(136);
           [
             this.pokemonCandyIcon,
             this.pokemonCandyOverlayIcon,
@@ -1999,7 +1997,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.pokemonHatchedCountText.setVisible(false);
         } else {
           this.pokemonCaughtHatchedContainer.setY(25);
-          this.pokemonShinyIcon.setY(36);
+          this.pokemonShinyIcon.setY(117);
           this.pokemonCandyIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(colorScheme[0])));
           this.pokemonCandyIcon.setVisible(true);
           this.pokemonCandyOverlayIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(colorScheme[1])));
