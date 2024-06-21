@@ -1085,7 +1085,7 @@ export function initSpecies() {
     ),
     new PokemonSpecies(Species.SNORLAX, 1, false, false, false, "Sleeping Pokémon", Type.NORMAL, null, 2.1, 460, Abilities.IMMUNITY, Abilities.THICK_FAT, Abilities.GLUTTONY, 540, 160, 110, 65, 65, 110, 30, 25, 50, 189, GrowthRate.SLOW, 87.5, false, true,
       new PokemonForm("Normal", "", Type.NORMAL, null, 2.1, 460, Abilities.IMMUNITY, Abilities.THICK_FAT, Abilities.GLUTTONY, 540, 160, 110, 65, 65, 110, 30, 25, 50, 189, false, null, true),
-      new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX, Type.NORMAL, null, 35, 460, Abilities.THICK_FAT, Abilities.THICK_FAT, Abilities.THICK_FAT, 640, 200, 135, 80, 65, 135, 25, 25, 50, 189),
+      new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX, Type.STELLAR, Type.NORMAL, 35, 460, Abilities.THICK_FAT, Abilities.THICK_FAT, Abilities.THICK_FAT, 640, 200, 135, 80, 65, 135, 25, 25, 50, 189),
     ),
     new PokemonSpecies(Species.ARTICUNO, 1, true, false, false, "Freeze Pokémon", Type.ICE, Type.FLYING, 1.7, 55.4, Abilities.PRESSURE, Abilities.NONE, Abilities.SNOW_CLOAK, 580, 90, 85, 100, 95, 125, 85, 3, 35, 290, GrowthRate.SLOW, null, false),
     new PokemonSpecies(Species.ZAPDOS, 1, true, false, false, "Electric Pokémon", Type.ELECTRIC, Type.FLYING, 1.6, 52.6, Abilities.PRESSURE, Abilities.NONE, Abilities.STATIC, 580, 90, 90, 85, 125, 90, 100, 3, 35, 290, GrowthRate.SLOW, null, false),
