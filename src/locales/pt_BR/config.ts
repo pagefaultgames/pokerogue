@@ -34,13 +34,14 @@ import { pokemonInfoContainer } from "./pokemon-info-container";
 import { saveSlotSelectUiHandler } from "./save-slot-select-ui-handler";
 import { splashMessages } from "./splash-messages";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
+import { statusEffect } from "./status-effect";
 import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { weather } from "./weather";
 import { partyUiHandler } from "./party-ui-handler";
-import { settings } from "#app/locales/pt_BR/settings.js";
-import { common } from "#app/locales/pt_BR/common.js";
+import { settings } from "./settings.js";
+import { common } from "./common.js";
 
 export const ptBrConfig = {
   ability: ability,
@@ -78,6 +79,7 @@ export const ptBrConfig = {
   pokemonInfo: pokemonInfo,
   pokemonInfoContainer: pokemonInfoContainer,
   saveSlotSelectUiHandler: saveSlotSelectUiHandler,
+  statusEffect: statusEffect,
   settings: settings,
   splashMessages: splashMessages,
   starterSelectUiHandler: starterSelectUiHandler,
