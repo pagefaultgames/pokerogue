@@ -18721,6 +18721,32 @@ export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
       [ 53, Moves.SPARKLY_SWIRL ], //Custom
       [ 55, Moves.LAST_RESORT ],
     ],
+    2: [
+      [ 1, Moves.TACKLE ],
+      [ 1, Moves.TAIL_WHIP ],
+      [ 1, Moves.GROWL ],
+      [ 1, Moves.HELPING_HAND ],
+      [ 1, Moves.COVET ],
+      [ 5, Moves.SAND_ATTACK ],
+      [ 10, Moves.QUICK_ATTACK ],
+      [ 15, Moves.BABY_DOLL_EYES ],
+      [ 18, Moves.BOUNCY_BUBBLE ], //Custom
+      [ 18, Moves.SIZZLY_SLIDE ], //Custom
+      [ 18, Moves.BUZZY_BUZZ ], //Custom
+      [ 20, Moves.SWIFT ],
+      [ 25, Moves.BITE ],
+      [ 30, Moves.COPYCAT ],
+      [ 33, Moves.BADDY_BAD ], //Custom
+      [ 33, Moves.GLITZY_GLOW ], //Custom
+      [ 35, Moves.BATON_PASS ],
+      [ 40, Moves.VEEVEE_VOLLEY ], //Custom, replaces Take Down
+      [ 43, Moves.FREEZY_FROST ], //Custom
+      [ 43, Moves.SAPPY_SEED ], //Custom
+      [ 45, Moves.CHARM ],
+      [ 50, Moves.DOUBLE_EDGE ],
+      [ 53, Moves.SPARKLY_SWIRL ], //Custom
+      [ 55, Moves.LAST_RESORT ],
+    ],
   },
   [Species.DEOXYS]: {
     1: [
