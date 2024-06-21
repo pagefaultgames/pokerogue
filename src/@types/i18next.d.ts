@@ -11,6 +11,7 @@ declare module "i18next" {
         battle: SimpleTranslationEntries;
         battleMessageUiHandler: SimpleTranslationEntries;
         berry: BerryTranslationEntries;
+        bgmName: SimpleTranslationEntries;
         biome: SimpleTranslationEntries;
         challenges: SimpleTranslationEntries;
         commandUiHandler: SimpleTranslationEntries;
