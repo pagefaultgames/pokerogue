@@ -215,7 +215,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "TOXIC_ORB": { name: "Orbe Toxique", description: "Un orbe bizarre qui empoisonne gravement son porteur durant le combat." },
     "FLAME_ORB": { name: "Orbe Flamme", description: "Un orbe bizarre qui brûle son porteur durant le combat." },
-    "ASSAULT_VEST": { name: "Assault Vest", description: "Raises the holder's Special Defense by 50%, but also prevents the holder from selecting any non-offensive moves except Me First." },
+    "ASSAULT_VEST": { name: "Assault Vest", description: "Augmente de 50% la Défense Spéciale du porteur, mais le contraint à ne pas utiliser de capacités non offensives (à l’exception de Moi d’Abord)." },
 
     "BATON": { name: "Bâton", description: "Permet de transmettre les effets en cas de changement de Pokémon. Ignore les pièges." },
 
