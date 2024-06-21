@@ -39,7 +39,9 @@ export default class BgmBar extends Phaser.GameObjects.Container {
   }
 
   showBgm(bgmName: string): void {
-    console.log("showBgm", bgmName);
+    if (!(this.scene as BattleScene).showBgmBar) {
+      return;
+    }
     if (this.shown) {
       this.queue.push(bgmName);
       return;
@@ -68,11 +70,8 @@ export default class BgmBar extends Phaser.GameObjects.Container {
       }
     });
 
-    console.log(this.visible);
     this.setVisible(true);
-    console.log(this.visible);
 
-    console.log("BgmBar: Position and Size", this.x, this.y, this.width, this.height);
     this.shown = true;
   }
 
