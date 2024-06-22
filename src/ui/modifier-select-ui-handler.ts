@@ -183,7 +183,8 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     /* Force updateModifiers without pokemonSpecificModifiers */
     this.scene.getModifierBar().updateModifiers(this.scene.modifiers, true);
 
-    this.scene.showShopOverlay(750);
+    /* Multiplies the appearance duration by the speed parameter so that it is always constant, and avoids "flashbangs" at game speed x5 */
+    this.scene.showShopOverlay(750 * this.scene.gameSpeed);
     this.scene.updateAndShowText(750);
     this.scene.updateBiomeWaveText();
     this.scene.updateMoneyText();
@@ -476,7 +477,8 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.getUi().clearText();
     this.eraseCursor();
 
-    this.scene.hideShopOverlay(750);
+    /* Multiplies the fade time duration by the speed parameter so that it is always constant, and avoids "flashbangs" at game speed x5 */
+    this.scene.hideShopOverlay(750 * this.scene.gameSpeed);
     this.scene.hideLuckText(250);
 
     /* Normally already called just after the shop, but not sure if it happens in 100% of cases */
