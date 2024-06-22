@@ -40,6 +40,6 @@ export const weather: SimpleTranslationEntries = {
 
   "strongWindsStartMessage": "¡Comenzó un fuerte viento!",
   "strongWindsLapseMessage": "El viento sopla intensamente.",
-  "strongWindsEffectMessage": "The mysterious air current weakened the attack!",
+  "strongWindsEffectMessage": "¡Las misteriosas turbulencias atenúan el ataque!",
   "strongWindsClearMessage": "El fuerte viento cesó."
 };
