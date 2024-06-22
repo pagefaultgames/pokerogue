@@ -8,8 +8,12 @@ const baseY = 0;
 
 
 export default class BgmBar extends Phaser.GameObjects.Container {
+  private defaultWidth: number;
+  private defaultHeight: number;
+
   private bg: Phaser.GameObjects.NineSlice;
   private musicText: Phaser.GameObjects.Text;
+  private noteText: Phaser.GameObjects.Text;
 
   private tween: Phaser.Tweens.Tween;
   private autoHideTimer: NodeJS.Timeout;
@@ -23,16 +27,22 @@ export default class BgmBar extends Phaser.GameObjects.Container {
   }
 
   setup(): void {
-    this.bg = this.scene.add.nineslice(0, -5, "ability_bar_left", null, 120, 50, 0, 0, 16, 4);
+    this.defaultWidth = 200;
+    this.defaultHeight = 100;
 
-
+    this.bg = this.scene.add.nineslice(0, -5, "ability_bar_left", null, this.defaultWidth,this.defaultHeight, 0, 0, 10, 10);
     this.bg.setOrigin(0, 0);
 
     this.add(this.bg);
 
-    this.musicText = addTextObject(this.scene, 5, 5, "", TextStyle.MESSAGE, { fontSize: "72px" });
+    this.noteText = addTextObject(this.scene, 5, 5, "♫ :", TextStyle.MESSAGE, { fontSize: "72px" });
+    this.noteText.setOrigin(0, 0);
+    this.add(this.noteText);
+
+    this.musicText = addTextObject(this.scene, 15, 5, "", TextStyle.MESSAGE, { fontSize: "72px" });
     this.musicText.setOrigin(0, 0);
     this.musicText.setWordWrapWidth(650, true);
+
     this.add(this.musicText);
 
     this.setVisible(false);
@@ -48,9 +58,14 @@ export default class BgmBar extends Phaser.GameObjects.Container {
       return;
     }
 
-    (this.scene as BattleScene).fieldUI.bringToTop(this);
+    this.musicText.setText(`${(this.scene as BattleScene).getRealBgmName(bgmName)}`);
+    this.musicText.width = this.bg.width - 20;
+    this.musicText.setWordWrapWidth(this.defaultWidth*4);
+    this.bg.width= Math.min(this.defaultWidth, this.noteText.displayWidth+this.musicText.displayWidth+20);
 
-    this.musicText.setText(`♫ : ${(this.scene as BattleScene).getRealBgmName(bgmName)}`);
+    this.bg.height = Math.min(this.defaultHeight, this.musicText.displayHeight+20);
+
+    (this.scene as BattleScene).fieldUI.bringToTop(this);
 
 
     let offset = 0;
