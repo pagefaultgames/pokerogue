@@ -1878,7 +1878,7 @@ export const trainerConfigs: TrainerConfigs = {
         }
       }
     }))
-    .setPartyMemberFunc(5,getRandomPartyMemberFunc([Species.ENTEI],TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(5,getRandomPartyMemberFunc([Species.ENTEI,Species.GOUGING_FIRE],TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.MASTER_BALL; // If we ever add Shadow Balls, this should be a Shadow Ball
@@ -1903,7 +1903,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(4, getRandomPartyMemberFunc(getCipherSignatureSpecies("VENUS"),TrainerSlot.TRAINER,true, p => {
       p.generateAndPopulateMoveset();
     }))
-    .setPartyMemberFunc(5,getRandomPartyMemberFunc([Species.SUICUNE],TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(5,getRandomPartyMemberFunc([Species.SUICUNE,Species.WALKING_WAKE],TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.MASTER_BALL; // If we ever add Shadow Balls, this should be a Shadow Ball
@@ -1929,7 +1929,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(4, getRandomPartyMemberFunc(getCipherSignatureSpecies("EIN"),TrainerSlot.TRAINER,true, p => {
       p.generateAndPopulateMoveset();
     }))
-    .setPartyMemberFunc(5,getRandomPartyMemberFunc([Species.RAIKOU], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(5,getRandomPartyMemberFunc([Species.RAIKOU,Species.RAGING_BOLT], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.MASTER_BALL; // If we ever add Shadow Balls, this should be a Shadow Ball
