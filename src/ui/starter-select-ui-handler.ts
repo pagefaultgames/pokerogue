@@ -1414,15 +1414,15 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                       starterData.candyCount -= sameSpeciesEggCost;
                     }
                     this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
+
+                    const egg = new Egg({scene: this.scene, species: this.lastSpecies.speciesId, sourceType: EggSourceType.SAME_SPECIES_EGG});
+                    egg.addEggToGameData(this.scene);
+
                     this.scene.gameData.saveSystem().then(success => {
                       if (!success) {
                         return this.scene.reset(true);
                       }
                     });
-
-                    const egg = new Egg({scene: this.scene, species: this.lastSpecies.speciesId, sourceType: EggSourceType.SAME_SPECIES_EGG});
-                    egg.addEggToGameData(this.scene);
-
                     ui.setMode(Mode.STARTER_SELECT);
                     this.scene.playSound("buy");
 
