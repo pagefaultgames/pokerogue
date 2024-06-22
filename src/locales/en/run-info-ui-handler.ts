@@ -5,7 +5,7 @@ export const runInfoUiHandler: SimpleTranslationEntries = {
   "level": "Level",
   "metOnWave": "Met on wave",
   "starter": "Starter",
-  "knockouts": "Knockouts",
+  "knockouts": "K.O.",
   "assists": "Assists",
   "faints": "Faints",
   "damageDealt": "Damage dealt",
