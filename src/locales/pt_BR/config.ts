@@ -41,6 +41,7 @@ import { weather } from "./weather";
 import { partyUiHandler } from "./party-ui-handler";
 import { settings } from "#app/locales/pt_BR/settings.js";
 import { common } from "#app/locales/pt_BR/common.js";
+import { modifierSelectUiHandler } from "./modifier-select-ui-handler";
 
 export const ptBrConfig = {
   ability: ability,
@@ -86,5 +87,6 @@ export const ptBrConfig = {
   trainerNames: trainerNames,
   tutorial: tutorial,
   voucher: voucher,
-  weather: weather
+  weather: weather,
+  modifierSelectUiHandler: modifierSelectUiHandler
 };
