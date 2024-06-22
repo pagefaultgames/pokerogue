@@ -40,13 +40,13 @@ export const IMMEDIATE_HATCH_EGGS_OVERRIDE: boolean = false;
 // default 1000
 export const STARTING_MONEY_OVERRIDE: integer = 0;
 export const POKEBALL_OVERRIDE: { active: boolean, pokeballs: PokeballCounts } = {
-  active: true,
+  active: false,
   pokeballs: {
     [PokeballType.POKEBALL]: 5,
     [PokeballType.GREAT_BALL]: 0,
     [PokeballType.ULTRA_BALL]: 0,
     [PokeballType.ROGUE_BALL]: 0,
-    [PokeballType.MASTER_BALL]: 99,
+    [PokeballType.MASTER_BALL]: 0,
   }
 };
 
@@ -88,15 +88,15 @@ export const VARIANT_OVERRIDE: Variant = 0;
  */
 
 export const OPP_SPECIES_OVERRIDE: Species | integer = 0;
-export const OPP_LEVEL_OVERRIDE: number = 100;
+export const OPP_LEVEL_OVERRIDE: number = 0;
 export const OPP_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const OPP_PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const OPP_STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
 export const OPP_GENDER_OVERRIDE: Gender = null;
-export const OPP_MOVESET_OVERRIDE: Array<Moves> = [Moves.NO_RETREAT, Moves.SHELL_SMASH, Moves.SHELL_SMASH, Moves.SHELL_SMASH];
+export const OPP_MOVESET_OVERRIDE: Array<Moves> = [];
 export const OPP_SHINY_OVERRIDE: boolean = false;
 export const OPP_VARIANT_OVERRIDE: Variant = 0;
-export const OPP_IVS_OVERRIDE: integer | integer[] = [20, 30, 21, 31, 4, 16];
+export const OPP_IVS_OVERRIDE: integer | integer[] = [];
 
 /**
  * MODIFIER / ITEM OVERRIDES
@@ -131,4 +131,4 @@ export const NEVER_CRIT_OVERRIDE: boolean = false;
  * If less items are listed than rolled, only some items will be replaced
  * If more items are listed than rolled, only the first X items will be shown, where X is the number of items rolled.
  */
-export const ITEM_REWARD_OVERRIDE: Array<String> = ["IV_SCANNER"];
+export const ITEM_REWARD_OVERRIDE: Array<String> = [];
