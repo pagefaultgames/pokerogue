@@ -42,7 +42,7 @@ describe("Abilities - Parental Bond", () => {
     async () => {
       vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
 
-      await game.startBattle();
+      await game.startBattle([Species.CHARIZARD]);
 
       const leadPokemon = game.scene.getPlayerPokemon();
       expect(leadPokemon).not.toBe(undefined);
