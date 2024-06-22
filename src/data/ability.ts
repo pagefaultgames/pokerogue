@@ -1987,7 +1987,7 @@ export class PostSummonFormChangeAbAttr extends PostSummonAbAttr {
 
 /** Attempts to copy a pokemon's ability */
 export class PostSummonCopyAbilityAbAttr extends PostSummonAbAttr {
-  private targetName: string;
+  private target: Pokemon;
   private targetAbilityName: string;
 
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
@@ -2011,7 +2011,7 @@ export class PostSummonCopyAbilityAbAttr extends PostSummonAbAttr {
       return false;
     }
 
-    this.targetName = target.name;
+    this.target = target;
     this.targetAbilityName = allAbilities[target.getAbility().id].name;
     pokemon.summonData.ability = target.getAbility().id;
     setAbilityRevealed(target);
@@ -2021,15 +2021,17 @@ export class PostSummonCopyAbilityAbAttr extends PostSummonAbAttr {
   }
 
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
-    return getPokemonMessage(pokemon, ` copied ${this.targetName}'s\n${this.targetAbilityName}!`);
+    return i18next.t("abilityTriggers:trace", {
+      pokemonName: getPokemonNameWithAffix(pokemon),
+      targetName: getPokemonNameWithAffix(this.target),
+      abilityName: this.targetAbilityName,
+    });
   }
 }
 
 
 /** Attempt to copy the stat changes on an ally pokemon */
 export class PostSummonCopyAllyStatsAbAttr extends PostSummonAbAttr {
-  private allyName: string;
-
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     if (!pokemon.scene.currentBattle.double) {
       return false;
@@ -2040,7 +2042,6 @@ export class PostSummonCopyAllyStatsAbAttr extends PostSummonAbAttr {
       return false;
     }
 
-    this.allyName = ally.name;
     pokemon.summonData.battleStats = ally.summonData.battleStats;
     pokemon.updateInfo();
 
@@ -2048,7 +2049,10 @@ export class PostSummonCopyAllyStatsAbAttr extends PostSummonAbAttr {
   }
 
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
-    return getPokemonMessage(pokemon, ` copied ${this.allyName}'s stat changes!`);
+    return i18next.t("abilityTriggers:costar", {
+      pokemonName: getPokemonNameWithAffix(pokemon),
+      allyName: getPokemonNameWithAffix(pokemon.getAlly()),
+    });
   }
 }
 
