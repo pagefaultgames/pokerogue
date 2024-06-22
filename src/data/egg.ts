@@ -163,7 +163,6 @@ export class Egg {
 
     this._overrideHiddenAbility = eggOptions.overrideHiddenAbility ?? false;
 
-
     // Override egg tier and hatchwaves if species was given
     if (eggOptions.species) {
       this._tier = this.getEggTierFromSpeciesStarterValue();
