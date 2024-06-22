@@ -253,14 +253,14 @@ export class Egg {
 
   public getEggTypeDescriptor(scene: BattleScene): string {
     switch (this.sourceType) {
-    case EggSourceType.GACHA_LEGENDARY:
-      return `${i18next.t("egg:gachaTypeLegendary")} (${getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(scene, this.timestamp)).getName()})`;
-    case EggSourceType.GACHA_MOVE:
-      return i18next.t("egg:gachaTypeMove");
-    case EggSourceType.GACHA_SHINY:
-      return i18next.t("egg:gachaTypeShiny");
     case EggSourceType.SAME_SPECIES_EGG:
       return i18next.t("egg:sameSpeciesEgg", { species: getPokemonSpecies(this._species).getName()});
+    case EggSourceType.GACHA_LEGENDARY:
+      return `${i18next.t("egg:gachaTypeLegendary")} (${getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(scene, this.timestamp)).getName()})`;
+    case EggSourceType.GACHA_SHINY:
+      return i18next.t("egg:gachaTypeShiny");
+    case EggSourceType.GACHA_MOVE:
+      return i18next.t("egg:gachaTypeMove");
     }
   }
 
@@ -275,11 +275,11 @@ export class Egg {
   private rollEggMoveIndex() {
     let baseChance = DEFAULT_RARE_EGGMOVE_RATE;
     switch (this._sourceType) {
-    case EggSourceType.GACHA_MOVE:
-      baseChance = GACHA_MOVE_UP_RARE_EGGMOVE_RATE;
-      break;
     case EggSourceType.SAME_SPECIES_EGG:
       baseChance = SAME_SPECIES_EGG_RARE_EGGMOVE_RATE;
+      break;
+    case EggSourceType.GACHA_MOVE:
+      baseChance = GACHA_MOVE_UP_RARE_EGGMOVE_RATE;
       break;
     default:
       break;
