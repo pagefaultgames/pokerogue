@@ -40,6 +40,6 @@ export const weather: SimpleTranslationEntries = {
 
   "strongWindsStartMessage": "È apparsa una corrente d'aria misteriosa!",
   "strongWindsLapseMessage": "La corrente d'aria soffia intensamente.",
-  "strongWindsEffectMessage": "The mysterious air current weakened the attack!",
+  "strongWindsEffectMessage": "La corrente misteriosa indebolisce l’attacco!",
   "strongWindsClearMessage": "La corrente d'aria è cessata."
 };
