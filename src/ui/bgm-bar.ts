@@ -2,7 +2,7 @@ import BattleScene from "../battle-scene";
 import { TextStyle, addTextObject } from "./text";
 
 
-const hiddenX = -118;
+const hiddenX = -150;
 const shownX = 0;
 const baseY = 0;
 
@@ -50,15 +50,12 @@ export default class BgmBar extends Phaser.GameObjects.Container {
   }
 
   showBgm(bgmName: string): void {
+    this.musicText.setText(`${(this.scene as BattleScene).getRealBgmName(bgmName)}`);
     if (!(this.scene as BattleScene).showBgmBar) {
       return;
     }
-    if (this.shown) {
-      this.queue.push(bgmName);
-      return;
-    }
 
-    this.musicText.setText(`${(this.scene as BattleScene).getRealBgmName(bgmName)}`);
+
     this.musicText.width = this.bg.width - 20;
     this.musicText.setWordWrapWidth(this.defaultWidth*4);
     this.bg.width= Math.min(this.defaultWidth, this.noteText.displayWidth+this.musicText.displayWidth+20);
@@ -67,31 +64,27 @@ export default class BgmBar extends Phaser.GameObjects.Container {
 
     (this.scene as BattleScene).fieldUI.bringToTop(this);
 
+    this.y = baseY;
 
-    let offset = 0;
-    if ((this.scene as BattleScene)?.currentBattle?.double) {
-      offset = 0;
-    } else if ((this.scene as BattleScene)?.currentBattle) {
-      offset = 0;
+
+
+  }
+
+  public toggleBgmBar(visible:boolean): void {
+    if (!(this.scene as BattleScene).showBgmBar) {
+      return;
     }
-    console.log("Offset is", offset);
-    this.y = baseY + offset;
-    this.tween = this.scene.tweens.add({
+    this.scene.tweens.add({
       targets: this,
-      x: shownX,
-      y: 0,
+      x: visible ? shownX : hiddenX,
       duration: 500,
-      ease: "Sine.easeOut",
+      ease: "Sine.easeInOut",
       onComplete: () => {
-        this.tween = null;
-        this.resetAutoHideTimer();
+        this.setVisible(true);
       }
     });
-
-    this.setVisible(true);
-
-    this.shown = true;
   }
+
 
 
   hide(): void {

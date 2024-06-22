@@ -240,6 +240,7 @@ export default class UI extends Phaser.GameObjects.Container {
   }
 
   processInfoButton(pressed: boolean) {
+    this.bgmBar.toggleBgmBar(pressed);
     if (this.overlayActive) {
       return false;
     }
@@ -249,7 +250,6 @@ export default class UI extends Phaser.GameObjects.Container {
       battleScene?.processInfoButton(pressed);
       return true;
     }
-
     battleScene?.processInfoButton(false);
     return true;
   }

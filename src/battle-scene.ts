@@ -67,6 +67,7 @@ import { Species } from "#enums/species";
 import { UiTheme } from "#enums/ui-theme";
 import { TimedEventManager } from "#app/timed-event-manager.js";
 import i18next from "i18next";
+import BgmBar from "#app/ui/bgm-bar";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -220,6 +221,7 @@ export default class BattleScene extends SceneBase {
   private modifierBar: ModifierBar;
   private enemyModifierBar: ModifierBar;
   public arenaFlyout: ArenaFlyout;
+  public bgmBar: BgmBar;
 
   private fieldOverlay: Phaser.GameObjects.Rectangle;
   public modifiers: PersistentModifier[];
