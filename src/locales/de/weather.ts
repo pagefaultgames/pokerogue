@@ -40,5 +40,6 @@ export const weather: SimpleTranslationEntries = {
 
   "strongWindsStartMessage": "Alle Flug-Pokémon werden von rätselhaften Luftströmungen geschützt!",
   "strongWindsLapseMessage": "Die rätselhafte Luftströmung hält an.",
+  "strongWindsEffectMessage": "The mysterious air current weakened the attack!",
   "strongWindsClearMessage": "Die rätselhafte Luftströmung hat sich wieder geleget.",
 };

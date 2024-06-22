@@ -41,5 +41,6 @@ export const weather: SimpleTranslationEntries = {
 
   "strongWindsStartMessage": "수수께끼의 난기류가\n비행포켓몬을 지킨다!",
   "strongWindsLapseMessage": "수수께끼의 난기류가 강렬하게 불고 있다",
+  "strongWindsEffectMessage": "The mysterious air current weakened the attack!",
   "strongWindsClearMessage": "수수께끼의 난기류가 멈췄다!" // 임의번역
 };

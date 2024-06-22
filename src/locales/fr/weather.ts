@@ -40,5 +40,6 @@ export const weather: SimpleTranslationEntries = {
 
   "strongWindsStartMessage": "Un vent mystérieux se lève !",
   "strongWindsLapseMessage": "Le vent mystérieux souffle violemment !",
+  "strongWindsEffectMessage": "The mysterious air current weakened the attack!",
   "strongWindsClearMessage": "Le vent mystérieux s’est dissipé…"
 };
