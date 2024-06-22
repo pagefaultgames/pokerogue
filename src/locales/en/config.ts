@@ -1,3 +1,4 @@
+import { common } from "#app/locales/en/common.js";
 import { settings } from "#app/locales/en/settings.js";
 import { ability } from "./ability";
 import { abilityTriggers } from "./ability-trigger";
@@ -50,6 +51,7 @@ export const enConfig = {
   biome: biome,
   challenges: challenges,
   commandUiHandler: commandUiHandler,
+  common: common,
   PGMachv: PGMachv,
   PGFachv: PGFachv,
   PGMdialogue: PGMdialogue,
