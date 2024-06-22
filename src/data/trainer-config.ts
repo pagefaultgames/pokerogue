@@ -1957,7 +1957,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.MASTER_BALL; // If we ever add Shadow Balls, this should be a Shadow Ball
     }))
-    .setPartyMemberFunc(4,getRandomPartyMemberFunc([Species.GALAR_MOLTRES], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(5,getRandomPartyMemberFunc([Species.GALAR_MOLTRES], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 3);
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.MASTER_BALL; // If we ever add Shadow Balls, this should be a Shadow Ball
