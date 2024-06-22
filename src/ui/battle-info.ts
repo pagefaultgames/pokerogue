@@ -11,7 +11,7 @@ import { BattleStat } from "#app/data/battle-stat";
 import BattleFlyout from "./battle-flyout";
 import { WindowVariant, addWindow } from "./ui-theme";
 
-const battleStatOrder = [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.ACC, BattleStat.EVA, BattleStat.SPD ];
+const battleStatOrder = [BattleStat.HP, BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.ACC, BattleStat.EVA, BattleStat.SPD ];
 
 export default class BattleInfo extends Phaser.GameObjects.Container {
   private baseY: number;
@@ -222,19 +222,35 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.statsContainer.add(this.statValuesContainer);
 
     battleStatOrder.map((s, i) => {
-      const statX = i > 1 ? this.statNumbers[i - 2].x + this.statNumbers[i - 2].width + 4 : -this.statsBox.width + 8;
-      const statY = -this.statsBox.height / 2 + 4 + (i < battleStatOrder.length - 1 ? (i % 2 ? 10 : 0) : 5);
+      //if (battleStatOrder[i] !== BattleStat.HP) { // this keeps the same formula to figure out where things need to go along the x-axis
+      const statX = i > 0 ? this.statNumbers[Math.max(i - 2, 0)].x + this.statNumbers[Math.max(i - 2, 0)].width + 2 : -this.statsBox.width + 5; // we have the Math.max(i - 2, 0) in there so for i===1 to not return a negative number; since this is now based on anything >0 instead of >1, we need to allow for i-2 < 0
+
+      const baseY = -this.statsBox.height / 2 + 4; // this is the baseline for the y-axis
+      let statY: number; // this will be the y-axis placement for the labels
+      if (battleStatOrder[i] === BattleStat.SPD || battleStatOrder[i] === BattleStat.HP) {
+        statY = baseY + 5;
+      } else {
+        statY = baseY + (i % 2 === 0 ? 10 : 0);
+      }
+      //const statY = baseY + (i < battleStatOrder.length - 1 ? (i % 2 ? 10 : 0) : 5);
+
       const statLabel = this.scene.add.sprite(statX, statY, "pbinfo_stat", BattleStat[s]);
       statLabel.setName("icon_stat_label_" + i.toString());
       statLabel.setOrigin(0, 0);
       statLabels.push(statLabel);
       this.statValuesContainer.add(statLabel);
 
-      const statNumber = this.scene.add.sprite(statX + statLabel.width, statY, "pbinfo_stat_numbers", "3");
+      const statNumber = this.scene.add.sprite(statX + statLabel.width, statY, "pbinfo_stat_numbers", battleStatOrder[i] !== BattleStat.HP ? "3" : "empty");
       statNumber.setName("icon_stat_number_" + i.toString());
       statNumber.setOrigin(0, 0);
       this.statNumbers.push(statNumber);
       this.statValuesContainer.add(statNumber);
+
+      if (battleStatOrder[i] === BattleStat.HP) {
+        statLabel.setVisible(false);
+        statNumber.setVisible(false);
+      }
+
     });
 
     if (!this.player) {
@@ -732,7 +748,9 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
   updateBattleStats(battleStats: integer[]): void {
     battleStatOrder.map((s, i) => {
-      this.statNumbers[i].setFrame(battleStats[s].toString());
+      if (s !== BattleStat.HP) {
+        this.statNumbers[i].setFrame(battleStats[s].toString());
+      }
     });
   }
 
