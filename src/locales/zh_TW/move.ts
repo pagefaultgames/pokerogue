@@ -1,4 +1,4 @@
-import { MoveTranslationEntries } from "#app/plugins/i18n";
+import { MoveTranslationEntries } from "#app/interfaces/locales";
 
 export const move: MoveTranslationEntries = {
   pound: { name: "拍擊", effect: "使用長長的尾巴或手等拍打\n對手進行攻擊" },
