@@ -141,12 +141,17 @@ export class Egg {
     //if (eggOptions.tier && eggOptions.species) throw Error("Error egg can't have species and tier as option. only choose one of them.")
 
     this._tier = eggOptions.tier ?? (Overrides.EGG_TIER_OVERRIDE ?? this.rollEggTier());
+    // If egg was pulled, check if egg pity needs to override the egg tier
     if (eggOptions.pulled) {
       this.checkForPityTierOverrides(eggOptions.scene);
-      this.increasePullStatistic(eggOptions.scene);
     }
 
     this._id = eggOptions.id ?? Utils.randInt(EGG_SEED, EGG_SEED * this._tier);
+
+    // Increase pull statistics AFTER the ID was generated beacuse it will be used to check for mahnaphy egg
+    if (eggOptions.pulled) {
+      this.increasePullStatistic(eggOptions.scene);
+    }
     this._sourceType = eggOptions.sourceType ?? undefined;
     this._hatchWaves = eggOptions.hatchWaves ?? this.getEggTierDefaultHatchWaves();
     this._timestamp = eggOptions.timestamp ?? new Date().getTime();
@@ -163,6 +168,12 @@ export class Egg {
     if (eggOptions.species) {
       this._tier = this.getEggTierFromSpeciesStarterValue();
       this._hatchWaves = eggOptions.hatchWaves ?? this.getEggTierDefaultHatchWaves();
+      // If species has no variant, set variantTier to common. This needs to
+      // be done because species with no variants get filtered at rollSpecies but since the
+      // species is set the check never happens
+      if (!getPokemonSpecies(this.species).hasVariants()) {
+        this._variantTier = VariantTier.COMMON;
+      }
     }
     if (eggOptions.pulled) {
       this.addEggToGameData(eggOptions.scene);
@@ -175,7 +186,7 @@ export class Egg {
 
   public isManaphyEgg(): boolean {
     return (this._species === Species.PHIONE || this._species === Species.MANAPHY) ||
-       this._tier === EggTier.COMMON && !(this._id % 204);
+       this._tier === EggTier.COMMON && !(this._id % 204) && !this._species;
   }
 
   public getKey(): string {
