@@ -12,7 +12,8 @@ import { Abilities } from "#app/enums/abilities.js";
 import Pokemon from "#app/field/pokemon.js";
 import Move, { allMoves } from "#app/data/move.js";
 import { NumberHolder } from "#app/utils.js";
-import { ArenaTagSide, WeakenMoveScreenTag } from "#app/data/arena-tag.js";
+import { ArenaTagSide } from "#app/data/arena-tag.js";
+import { ArenaTagType } from "#app/enums/arena-tag-type.js";
 
 
 describe("Moves - Reflect", () => {
@@ -97,8 +98,8 @@ const getMockedMoveDamage = (defender: Pokemon, attacker: Pokemon, move: Move) =
   const multiplierHolder = new NumberHolder(1);
   const side = defender.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
 
-  if (defender.scene.arena.getTagOnSide(WeakenMoveScreenTag, side)) {
-    defender.scene.arena.applyTagsForSide(WeakenMoveScreenTag, side, move.category, defender.scene.currentBattle.double, multiplierHolder);
+  if (defender.scene.arena.getTagOnSide(ArenaTagType.REFLECT, side)) {
+    defender.scene.arena.applyTagsForSide(ArenaTagType.REFLECT, side, move.category, defender.scene.currentBattle.double, multiplierHolder);
   }
 
   return move.power * multiplierHolder.value;
