@@ -1989,7 +1989,7 @@ export const trainerConfigs: TrainerConfigs = {
     }))
     .setPartyMemberFunc(5,getRandomPartyMemberFunc([Species.LUGIA], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
-      p.setBoss(true, 2);
+      p.setBoss(true, 4);
       p.name = `XD001 (${p.name})`;
       p.shiny = true;
       p.variant = 2;
