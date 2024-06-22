@@ -286,7 +286,7 @@ export default class PartyUiHandler extends MessageUiHandler {
               const getTransferrableItemsFromPokemon = (newPokemon: PlayerPokemon) =>
                 this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && (m as PokemonHeldItemModifier).getTransferrable(true) && (m as PokemonHeldItemModifier).pokemonId === newPokemon.id) as PokemonHeldItemModifier[];
               const matchingModifier = newPokemon.scene.findModifier(m => m instanceof PokemonHeldItemModifier && m.pokemonId === newPokemon.id && m.matchType(getTransferrableItemsFromPokemon(pokemon)[this.transferOptionCursor])) as PokemonHeldItemModifier;
-              const partySlot = this.partySlots.filter(m => m.pokemon === newPokemon)[0];
+              const partySlot = this.partySlots.filter(m => m.getPokemon() === newPokemon)[0];
               if (matchingModifier) {
                 if (matchingModifier.getMaxStackCount(this.scene) === matchingModifier.stackCount) {
                   partySlot.slotName.setColor(getTextColor(TextStyle.PARTY_RED, false, this.scene.uiTheme));
@@ -296,9 +296,6 @@ export default class PartyUiHandler extends MessageUiHandler {
                   partySlot.slotName.setShadowColor(getTextColor(TextStyle.MESSAGE, true, this.scene.uiTheme));
                 }
               }
-              console.log(newPokemon.name);
-              console.log(matchingModifier);
-              console.log("-------------------");
             }
           }
 
@@ -1039,6 +1036,10 @@ class PartySlot extends Phaser.GameObjects.Container {
     this.iconAnimHandler = iconAnimHandler;
 
     this.setup(partyUiMode, tmMoveId);
+  }
+
+  getPokemon(): PlayerPokemon {
+    return this.pokemon;
   }
 
   setup(partyUiMode: PartyUiMode, tmMoveId: Moves) {
