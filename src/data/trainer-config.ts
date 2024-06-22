@@ -1988,7 +1988,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.pokeball = PokeballType.MASTER_BALL;
     }))
     .setPartyMemberFunc(5,getRandomPartyMemberFunc([Species.LUGIA], TrainerSlot.TRAINER, true, p => {
-      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.AEROBLAST)),new PokemonMove(Moves.PSYCHIC), new PokemonMove(Moves.ROOST), new PokemonMove(Moves.LIQUIDATION)];
+      p.generateAndPopulateMoveset();
       p.setBoss(true, 2);
       p.name = `XD001 (${p.name})`;
       p.shiny = true;
