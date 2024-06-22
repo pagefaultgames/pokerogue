@@ -41,6 +41,7 @@ import { weather } from "./weather";
 import { partyUiHandler } from "./party-ui-handler";
 import { settings } from "#app/locales/zh_CN/settings.js";
 import { common } from "#app/locales/zh_CN/common.js";
+import { modifierSelectUiHandler } from "./modifier-select-ui-handler";
 
 export const zhCnConfig = {
   ability: ability,
@@ -86,5 +87,6 @@ export const zhCnConfig = {
   tutorial: tutorial,
   voucher: voucher,
   weather: weather,
-  partyUiHandler: partyUiHandler
+  partyUiHandler: partyUiHandler,
+  modifierSelectUiHandler: modifierSelectUiHandler
 };
