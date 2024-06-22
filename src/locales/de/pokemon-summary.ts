@@ -14,7 +14,7 @@ export const pokemonSummary: TranslationEntries = {
 
   "memoString": "Wesen: {{natureFragment}}\n{{metFragment}}",
   "metFragment": {
-    "normal": "{{biome}}\nGetroffen auf Lvl. {{level}}.",
-    "apparently": "{{biome}}\nWahrscheinlich getroffen auf Lvl. {{level}}.",
+    "normal": "Herkunft: {{biome}}\nMit Lv. {{level}} erhalten.",
+    "apparently": "Herkunft: {{biome}}\nOffenbar mit Lv. {{level}} erhalten.",
   },
 } as const;
