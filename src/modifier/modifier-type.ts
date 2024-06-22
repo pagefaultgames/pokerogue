@@ -968,7 +968,10 @@ class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
 
 class TmModifierTypeGenerator extends ModifierTypeGenerator {
   constructor(tier: ModifierTier) {
-    super((party: Pokemon[]) => {
+    super((party: Pokemon[], pregenArgs?: any[]) => {
+      if (pregenArgs) {
+        return new TmModifierType(pregenArgs[0] as Moves);
+      }
       const partyMemberCompatibleTms = party.map(p => (p as PlayerPokemon).compatibleTms.filter(tm => !p.moveset.find(m => m.moveId === tm)));
       const tierUniqueCompatibleTms = partyMemberCompatibleTms.flat().filter(tm => tmPoolTiers[tm] === tier).filter(tm => !allMoves[tm].name.endsWith(" (N)")).filter((tm, i, array) => array.indexOf(tm) === i);
       if (!tierUniqueCompatibleTms.length) {
@@ -2192,6 +2195,7 @@ type GeneratorModifierOverride = {
     }
   | {
       name: "TM_COMMON" | "TM_GREAT" | "TM_ULTRA";
+      type?: Moves;
     }
 );
 
