@@ -67,7 +67,7 @@ export const POKEBALL_OVERRIDE: { active: boolean, pokeballs: PokeballCounts } =
 export const STARTER_FORM_OVERRIDES: Partial<Record<Species, number>> = {};
 
 // default 5 or 20 for Daily
-export const STARTING_LEVEL_OVERRIDE: integer = 1000;
+export const STARTING_LEVEL_OVERRIDE: integer = 0;
 /**
  * SPECIES OVERRIDE
  * will only apply to the first starter in your party or each enemy pokemon
