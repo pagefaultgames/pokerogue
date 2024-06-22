@@ -273,6 +273,10 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     }
   }
 
+  getStatsValueContainer(): Phaser.GameObjects.Container {
+    return this.statValuesContainer;
+  }
+
   initInfo(pokemon: Pokemon) {
     this.updateNameText(pokemon);
     const nameTextWidth = this.nameText.displayWidth;

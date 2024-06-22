@@ -5416,11 +5416,11 @@ export class ScanIvsPhase extends PokemonPhase {
       enemyIvs = enemyField[e].ivs;
       const currentIvs = this.scene.gameData.dexData[enemyField[e].species.speciesId].ivs;
       const ivsToShow = this.scene.ui.getMessageHandler().topIvs(enemyIvs, this.shownIvs);
-      statsContainer = enemyField[e].getBattleInfo().statsContainer.list[1].list; // need to find a better way to find the "Container" used here instead of [1]
+      statsContainer = enemyField[e].getBattleInfo().getStatsValueContainer().list;
       statsContainerLabels = statsContainer.filter(m => m.name.indexOf("icon_stat_label") >= 0);
       for (let s = 0; s < statsContainerLabels.length; s++) {
         const ivStat = Stat[statsContainerLabels[s].frame.name];
-        if (enemyIvs[ivStat] > currentIvs[ivStat] && ivsToShow.indexOf(ivStat) >= 0) {
+        if (enemyIvs[ivStat] > currentIvs[ivStat] && ivsToShow.indexOf(Number(ivStat)) >= 0) {
           const hexColour = enemyIvs[ivStat] === 31 ? getTextColor(TextStyle.SUMMARY_GOLD, false, uiTheme) : getTextColor(TextStyle.SUMMARY_GREEN, false, uiTheme);
           const hexTextColour = Phaser.Display.Color.HexStringToColor(hexColour).color;
           statsContainerLabels[s].setTint(hexTextColour);
