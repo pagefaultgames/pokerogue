@@ -27,6 +27,8 @@ import { StatsContainer } from "./stats-container";
 import { TextStyle, addBBCodeTextObject, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
+import { Egg } from "#app/data/egg";
+import * as Overrides from "../overrides";
 import {SettingKeyboard} from "#app/system/settings/settings-keyboard";
 import {Passive as PassiveAttr} from "#enums/passive";
 import * as Challenge from "../data/challenge";
@@ -36,6 +38,7 @@ import { Device } from "#enums/devices";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import {Button} from "#enums/buttons";
+import { EggSourceType } from "#app/enums/egg-source-types.js";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -98,17 +101,17 @@ const languageSettings: { [key: string]: LanguageSetting } = {
   }
 };
 
-const starterCandyCosts: { passive: integer, costReduction: [integer, integer] }[] = [
-  { passive: 50, costReduction: [30, 75] }, // 1
-  { passive: 45, costReduction: [25, 60] }, // 2
-  { passive: 40, costReduction: [20, 50] }, // 3
-  { passive: 30, costReduction: [15, 40] }, // 4
-  { passive: 25, costReduction: [12, 35] }, // 5
-  { passive: 20, costReduction: [10, 30] }, // 6
-  { passive: 15, costReduction: [8, 20] },  // 7
-  { passive: 10, costReduction: [5, 15] },  // 8
-  { passive: 10, costReduction: [3, 10] },  // 9
-  { passive: 10, costReduction: [3, 10] },  // 10
+const starterCandyCosts: { passive: integer, costReduction: [integer, integer], egg: integer }[] = [
+  { passive: 50, costReduction: [30, 75], egg: 35 }, // 1
+  { passive: 45, costReduction: [25, 60], egg: 35 }, // 2
+  { passive: 40, costReduction: [20, 50], egg: 35 }, // 3
+  { passive: 30, costReduction: [15, 40], egg: 30 }, // 4
+  { passive: 25, costReduction: [12, 35], egg: 25 }, // 5
+  { passive: 20, costReduction: [10, 30], egg: 20 }, // 6
+  { passive: 15, costReduction: [8, 20], egg: 15 },  // 7
+  { passive: 10, costReduction: [5, 15], egg: 10 },  // 8
+  { passive: 10, costReduction: [3, 10], egg: 10 },  // 9
+  { passive: 10, costReduction: [3, 10], egg: 10 },  // 10
 ];
 
 function getPassiveCandyCount(baseValue: integer): integer {
@@ -117,6 +120,10 @@ function getPassiveCandyCount(baseValue: integer): integer {
 
 function getValueReductionCandyCounts(baseValue: integer): [integer, integer] {
   return starterCandyCosts[baseValue - 1].costReduction;
+}
+
+function getSameSpeciesEggCandyCounts(baseValue: integer): integer {
+  return starterCandyCosts[baseValue - 1].egg;
 }
 
 /**
@@ -432,7 +439,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.valueLimitLabel.setOrigin(0.5, 0);
     this.starterSelectContainer.add(this.valueLimitLabel);
 
-    const startLabel = addTextObject(this.scene, 124, 162, i18next.t("starterSelectUiHandler:start"), TextStyle.TOOLTIP_CONTENT);
+    const startLabel = addTextObject(this.scene, 124, 162, i18next.t("common:start"), TextStyle.TOOLTIP_CONTENT);
     startLabel.setOrigin(0.5, 0);
     this.starterSelectContainer.add(startLabel);
 
@@ -547,11 +554,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonSprite.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });
     this.starterSelectContainer.add(this.pokemonSprite);
 
-    this.type1Icon = this.scene.add.sprite(8, 98, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`);    this.type1Icon.setScale(0.5);
+    this.type1Icon = this.scene.add.sprite(8, 98, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`);
+    this.type1Icon.setScale(0.5);
     this.type1Icon.setOrigin(0, 0);
     this.starterSelectContainer.add(this.type1Icon);
 
-    this.type2Icon = this.scene.add.sprite(26, 98, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`);    this.type2Icon.setScale(0.5);
+    this.type2Icon = this.scene.add.sprite(26, 98, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`);
+    this.type2Icon.setScale(0.5);
     this.type2Icon.setOrigin(0, 0);
     this.starterSelectContainer.add(this.type2Icon);
 
@@ -879,6 +888,18 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   /**
+   * Determines if an same species egg can be baught for the given species ID
+   * @param speciesId The ID of the species to check the value reduction of
+   * @returns true if the user has enough candies
+   */
+  isSameSpeciesEggAvailable(speciesId: number): boolean {
+    // Get this species ID's starter data
+    const starterData = this.scene.gameData.starterData[speciesId];
+
+    return starterData.candyCount >= getSameSpeciesEggCandyCounts(speciesStarters[speciesId]);
+  }
+
+  /**
    * Sets a bounce animation if enabled and the Pokemon has an upgrade
    * @param icon {@linkcode Phaser.GameObjects.GameObject} to animate
    * @param species {@linkcode PokemonSpecies} of the icon used to check for upgrades
@@ -1097,7 +1118,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 const species = this.genSpecies[this.getGenCursorWithScroll()][this.cursor];
 
                 const isValidForChallenge = new Utils.BooleanHolder(true);
-                Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge);
+                Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor), this.starterGens.length);
 
                 if (!isDupe && isValidForChallenge.value && this.tryUpdateValue(this.scene.gameData.getSpeciesStarterValue(species.speciesId))) {
                   const cursorObj = this.starterCursorObjs[this.starterCursors.length];
@@ -1309,9 +1330,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               options.push({
                 label: `x${passiveCost} ${i18next.t("starterSelectUiHandler:unlockPassive")} (${allAbilities[starterPassiveAbilities[this.lastSpecies.speciesId]].name})`,
                 handler: () => {
-                  if (candyCount >= passiveCost) {
+                  if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= passiveCost) {
                     starterData.passiveAttr |= PassiveAttr.UNLOCKED | PassiveAttr.ENABLED;
-                    starterData.candyCount -= passiveCost;
+                    if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
+                      starterData.candyCount -= passiveCost;
+                    }
                     this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
                     this.scene.gameData.saveSystem().then(success => {
                       if (!success) {
@@ -1344,9 +1367,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               options.push({
                 label: `x${reductionCost} ${i18next.t("starterSelectUiHandler:reduceCost")}`,
                 handler: () => {
-                  if (candyCount >= reductionCost) {
+                  if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= reductionCost) {
                     starterData.valueReduction++;
-                    starterData.candyCount -= reductionCost;
+                    if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
+                      starterData.candyCount -= reductionCost;
+                    }
                     this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
                     this.scene.gameData.saveSystem().then(success => {
                       if (!success) {
@@ -1368,6 +1393,49 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                         this.setUpgradeAnimation(this.starterSelectGenIconContainers[this.lastSpecies.generation - 1].getAt(genSpecies.indexOf(this.lastSpecies)), this.lastSpecies, true);
                       }
                     }
+
+                    return true;
+                  }
+                  return false;
+                },
+                item: "candy",
+                itemArgs: starterColors[this.lastSpecies.speciesId]
+              });
+            }
+
+            // Same species egg menu option. Only visible if passive is bought
+            if (passiveAttr & PassiveAttr.UNLOCKED) {
+              const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(speciesStarters[this.lastSpecies.speciesId]);
+              options.push({
+                label: `x${sameSpeciesEggCost} ${i18next.t("starterSelectUiHandler:sameSpeciesEgg")}`,
+                handler: () => {
+                  if (this.scene.gameData.eggs.length < 99 && (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= sameSpeciesEggCost)) {
+                    if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
+                      starterData.candyCount -= sameSpeciesEggCost;
+                    }
+                    this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
+
+                    const egg = new Egg({scene: this.scene, species: this.lastSpecies.speciesId, sourceType: EggSourceType.SAME_SPECIES_EGG});
+                    egg.addEggToGameData(this.scene);
+
+                    this.scene.gameData.saveSystem().then(success => {
+                      if (!success) {
+                        return this.scene.reset(true);
+                      }
+                    });
+                    ui.setMode(Mode.STARTER_SELECT);
+                    this.scene.playSound("buy");
+
+                    // If the notification setting is set to 'On', update the candy upgrade display
+                    // if (this.scene.candyUpgradeNotification === 2) {
+                    //   if (this.isUpgradeIconEnabled() ) {
+                    //     this.setUpgradeIcon(this.cursor);
+                    //   }
+                    //   if (this.isUpgradeAnimationEnabled()) {
+                    //     const genSpecies = this.genSpecies[this.lastSpecies.generation - 1];
+                    //     this.setUpgradeAnimation(this.starterSelectGenIconContainers[this.lastSpecies.generation - 1].getAt(genSpecies.indexOf(this.lastSpecies)), this.lastSpecies, true);
+                    //   }
+                    // }
 
                     return true;
                   }
@@ -1975,6 +2043,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             this.pokemonHatchedIcon,
             this.pokemonHatchedCountText
           ].map(c => c.setVisible(false));
+          this.pokemonFormText.setY(25);
         } else if (species.speciesId === Species.ETERNATUS) {
           this.pokemonHatchedIcon.setVisible(false);
           this.pokemonHatchedCountText.setVisible(false);
@@ -1988,6 +2057,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.pokemonCandyCountText.setText(`x${this.scene.gameData.starterData[species.speciesId].candyCount}`);
           this.pokemonCandyCountText.setVisible(true);
           this.pokemonFormText.setVisible(true);
+          this.pokemonFormText.setY(42);
           this.pokemonHatchedIcon.setVisible(true);
           this.pokemonHatchedCountText.setVisible(true);
 
@@ -2214,8 +2284,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.pokemonSprite.setVisible(!this.statsMode);
         });
 
-        (this.starterSelectGenIconContainers[this.getGenCursorWithScroll()].getAt(this.cursor) as Phaser.GameObjects.Sprite)
-          .setTexture(species.getIconAtlasKey(formIndex, shiny, variant), species.getIconId(female, formIndex, shiny, variant));
+
+        const isValidForChallenge = new Utils.BooleanHolder(true);
+        Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor), this.starterGens.length);
+        const starterSprite = this.starterSelectGenIconContainers[this.getGenCursorWithScroll()].getAt(this.cursor) as Phaser.GameObjects.Sprite;
+        starterSprite.setTexture(species.getIconAtlasKey(formIndex, shiny, variant), species.getIconId(female, formIndex, shiny, variant));
+        starterSprite.setAlpha(isValidForChallenge.value ? 1 : 0.375);
         this.checkIconId((this.starterSelectGenIconContainers[this.getGenCursorWithScroll()].getAt(this.cursor) as Phaser.GameObjects.Sprite), species, female, formIndex, shiny, variant);
         this.canCycleShiny = !!(dexEntry.caughtAttr & DexAttr.NON_SHINY && dexEntry.caughtAttr & DexAttr.SHINY);
         this.canCycleGender = !!(dexEntry.caughtAttr & DexAttr.MALE && dexEntry.caughtAttr & DexAttr.FEMALE);
@@ -2432,7 +2506,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
          * we change to can AddParty value to true since the user has enough cost to choose this pokemon and this pokemon registered too.
          */
         const isValidForChallenge = new Utils.BooleanHolder(true);
-        Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, this.genSpecies[g][s], isValidForChallenge);
+        Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, this.genSpecies[g][s], isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(this.genSpecies[g][s], this.scene.gameData.getSpeciesDefaultDexAttr(this.genSpecies[g][s], false, true)), this.starterGens.length + (add ? 1 : 0));
 
         const canBeChosen = remainValue >= speciesStarterValue && isValidForChallenge.value;
 

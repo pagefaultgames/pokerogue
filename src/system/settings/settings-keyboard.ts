@@ -42,7 +42,7 @@ export enum SettingKeyboard {
     Alt_Button_Submit = "ALT_BUTTON_SUBMIT",
 }
 
-const pressAction = i18next.t("menu:pressToBind");
+const pressAction = i18next.t("settings:pressToBind");
 
 export const settingKeyboardOptions = {
   // [SettingKeyboard.Default_Layout]: ['Default'],

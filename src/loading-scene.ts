@@ -1,4 +1,4 @@
-import { GachaType } from "./data/egg";
+import { GachaType } from "./enums/gacha-types";
 import { trainerConfigs } from "./data/trainer-config";
 import { getBiomeHasProps } from "./field/arena";
 import CacheBustedLoaderPlugin from "./plugins/cache-busted-loader-plugin";
