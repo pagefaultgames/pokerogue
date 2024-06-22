@@ -392,7 +392,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
         // if not, override the egg tier
         if (i === pullCount) {
           const guaranteedEggTier = this.getGuaranteedEggTierFromPullCount(pullCount);
-          if (!eggs.some(egg => egg.tier >= guaranteedEggTier)) {
+          if (!eggs.some(egg => egg.tier >= guaranteedEggTier) && guaranteedEggTier !== EggTier.COMMON) {
             eggOptions.tier = guaranteedEggTier;
           }
         }
