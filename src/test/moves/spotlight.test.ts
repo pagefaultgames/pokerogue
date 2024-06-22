@@ -53,7 +53,7 @@ describe("Moves - Spotlight", () => {
       expect(enemyPokemon.length).toBe(2);
       enemyPokemon.forEach(p => expect(p).not.toBe(undefined));
 
-      enemyPokemon.forEach(p => p.hp = 200);
+      const enemyStartingHp = enemyPokemon.map(p => p.hp);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SPOTLIGHT));
       await game.phaseInterceptor.to(SelectTargetPhase, false);
@@ -65,8 +65,8 @@ describe("Moves - Spotlight", () => {
       game.doSelectTarget(BattlerIndex.ENEMY_2);
       await game.phaseInterceptor.to(TurnEndPhase, false);
 
-      expect(enemyPokemon[0].hp).toBeLessThan(200);
-      expect(enemyPokemon[1].hp).toBe(200);
+      expect(enemyPokemon[0].hp).toBeLessThan(enemyStartingHp[0]);
+      expect(enemyPokemon[1].hp).toBe(enemyStartingHp[1]);
     }, TIMEOUT
   );
 
@@ -85,8 +85,6 @@ describe("Moves - Spotlight", () => {
       expect(enemyPokemon.length).toBe(2);
       enemyPokemon.forEach(p => expect(p).not.toBe(undefined));
 
-      enemyPokemon.forEach(p => p.hp = 200);
-
       /**
        * Spotlight will target the slower enemy. In this situation without Spotlight being used,
        * the faster enemy would normally end up with the Center of Attention tag.
@@ -94,6 +92,8 @@ describe("Moves - Spotlight", () => {
       enemyPokemon.sort((a, b) => b.getBattleStat(Stat.SPD) - a.getBattleStat(Stat.SPD));
       const spotTarget = enemyPokemon[1].getBattlerIndex();
       const attackTarget = enemyPokemon[0].getBattlerIndex();
+
+      const enemyStartingHp = enemyPokemon.map(p => p.hp);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SPOTLIGHT));
       await game.phaseInterceptor.to(SelectTargetPhase, false);
@@ -105,8 +105,8 @@ describe("Moves - Spotlight", () => {
       game.doSelectTarget(attackTarget);
       await game.phaseInterceptor.to(TurnEndPhase, false);
 
-      expect(enemyPokemon[1].hp).toBeLessThan(200);
-      expect(enemyPokemon[0].hp).toBe(200);
+      expect(enemyPokemon[1].hp).toBeLessThan(enemyStartingHp[1]);
+      expect(enemyPokemon[0].hp).toBe(enemyStartingHp[0]);
     }, TIMEOUT
   );
 });

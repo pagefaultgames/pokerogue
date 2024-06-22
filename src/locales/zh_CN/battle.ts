@@ -53,6 +53,8 @@ export const battle: SimpleTranslationEntries = {
   "escapeVerbSwitch": "切换",
   "escapeVerbFlee": "逃跑",
   "notDisabled": "{{moveName}} 不再被禁用！",
+  "turnEndHpRestore": "{{pokemonName}}'s HP was restored.",
+  "hpIsFull": "{{pokemonName}}'s\nHP is full!",
   "skipItemQuestion": "你确定要跳过拾取道具吗？",
   "eggHatching": "咦？",
   "ivScannerUseQuestion": "对 {{pokemonName}} 使用个体值扫描仪？",

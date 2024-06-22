@@ -53,6 +53,8 @@ export const battle: SimpleTranslationEntries = {
   "escapeVerbSwitch": "교체할",
   "escapeVerbFlee": "도망칠",
   "notDisabled": "{{pokemonName}}의\n{{moveName}} 사슬묶기가 풀렸다!",
+  "turnEndHpRestore": "{{pokemonName}}의\n체력이 회복되었다!",
+  "hpIsFull": "그러나 {{pokemonName}}의\n체력이 가득 찬 상태다!",
   "skipItemQuestion": "아이템을 받지 않고 넘어가시겠습니까?",
   "eggHatching": "어라…?",
   "ivScannerUseQuestion": "{{pokemonName}}에게 개체값탐지기를 사용하시겠습니까?",

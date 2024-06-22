@@ -54,6 +54,8 @@ export const battle: SimpleTranslationEntries = {
   "escapeVerbFlee": "flucht",
   "skipItemQuestion": "Bist du sicher, dass du kein Item nehmen willst?",
   "notDisabled": "{{pokemonName}}'s {{moveName}} ist\nnicht mehr deaktiviert!",
+  "turnEndHpRestore": "{{pokemonName}}'s HP was restored.",
+  "hpIsFull": "{{pokemonName}}'s\nHP is full!",
   "eggHatching": "Oh?",
   "ivScannerUseQuestion": "IV-Scanner auf {{pokemonName}} benutzen?",
   "wildPokemonWithAffix": "{{pokemonName}} (wild)",

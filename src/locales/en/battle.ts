@@ -53,6 +53,8 @@ export const battle: SimpleTranslationEntries = {
   "escapeVerbSwitch": "switching",
   "escapeVerbFlee": "fleeing",
   "notDisabled": "{{pokemonName}}'s {{moveName}} is disabled\nno more!",
+  "turnEndHpRestore": "{{pokemonName}}'s HP was restored.",
+  "hpIsFull": "{{pokemonName}}'s\nHP is full!",
   "skipItemQuestion": "Are you sure you want to skip taking an item?",
   "eggHatching": "Oh?",
   "ivScannerUseQuestion": "Use IV Scanner on {{pokemonName}}?",

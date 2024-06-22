@@ -53,6 +53,8 @@ export const battle: SimpleTranslationEntries = {
   "escapeVerbSwitch": "le changement",
   "escapeVerbFlee": "la fuite",
   "notDisabled": "La capacité {{moveName}}\nde {{pokemonName}} n’est plus sous entrave !",
+  "turnEndHpRestore": "{{pokemonName}} récupère des PV !",
+  "hpIsFull": "Les PV de {{pokemonName}}\nsont au maximum !",
   "skipItemQuestion": "Êtes-vous sûr·e de ne pas vouloir prendre d’objet ?",
   "eggHatching": "Hein ?",
   "ivScannerUseQuestion": "Utiliser le Scanner d’IV sur {{pokemonName}} ?",
