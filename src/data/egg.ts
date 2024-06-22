@@ -162,7 +162,6 @@ export class Egg {
     this._species = eggOptions.species ?? this.rollSpecies(eggOptions.scene);
 
     this._overrideHiddenAbility = eggOptions.overrideHiddenAbility ?? false;
-    this._eggMoveIndex = eggOptions.eggMoveIndex ?? this.rollEggMoveIndex();
 
     // Override egg tier and hatchwaves if species was given
     if (eggOptions.species) {
@@ -175,6 +174,8 @@ export class Egg {
         this._variantTier = VariantTier.COMMON;
       }
     }
+    // Needs this._tier so it needs to be generated afer the tier override if bought from same species
+    this._eggMoveIndex = eggOptions.eggMoveIndex ?? this.rollEggMoveIndex();
     if (eggOptions.pulled) {
       this.addEggToGameData(eggOptions.scene);
     }
