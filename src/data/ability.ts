@@ -2350,7 +2350,7 @@ export class BlockNonDirectDamageAbAttr extends AbAttr {
 /**
  * This attribute will block any status damage that you put in the parameter.
  */
-export class BlockStatusDamageAbAttr extends BlockNonDirectDamageAbAttr {
+export class BlockStatusDamageAbAttr extends AbAttr {
   private effects: StatusEffect[];
 
   /**
@@ -2370,7 +2370,7 @@ export class BlockStatusDamageAbAttr extends BlockNonDirectDamageAbAttr {
    * @returns Returns true if status damage is blocked
    */
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (this.effects.includes(pokemon.status.effect)) {
+    if (this.effects.includes(pokemon.status?.effect)) {
       cancelled.value = true;
       return true;
     }
