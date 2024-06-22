@@ -11,7 +11,7 @@ import i18next from "i18next";
 import {Button} from "#enums/buttons";
 import { GameDataType } from "#enums/game-data-type";
 
-export enum MenuOptions {
+enum MenuOptions {
   GAME_SETTINGS,
   ACHIEVEMENTS,
   STATS,
@@ -32,6 +32,7 @@ const redditUrl = "https://www.reddit.com/r/pokerogue";
 export default class MenuUiHandler extends MessageUiHandler {
   private menuContainer: Phaser.GameObjects.Container;
   private menuMessageBoxContainer: Phaser.GameObjects.Container;
+  private menuOverlay: Phaser.GameObjects.Rectangle;
 
   private menuBg: Phaser.GameObjects.NineSlice;
   protected optionSelectText: Phaser.GameObjects.Text;
@@ -62,10 +63,16 @@ export default class MenuUiHandler extends MessageUiHandler {
     }
 
     this.menuContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
-
+    this.menuContainer.setName("menu");
     this.menuContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
 
+    this.menuOverlay = new Phaser.GameObjects.Rectangle(this.scene, -1, -1, this.scene.scaledCanvas.width, this.scene.scaledCanvas.height, 0xffffff, 0.3);
+    this.menuOverlay.setName("menu-overlay");
+    this.menuOverlay.setOrigin(0,0);
+    this.menuContainer.add(this.menuOverlay);
+
     const menuMessageText = addTextObject(this.scene, 8, 8, "", TextStyle.WINDOW, { maxLines: 2 });
+    menuMessageText.setName("menu-message");
     menuMessageText.setWordWrapWidth(1224);
     menuMessageText.setOrigin(0, 0);
 
@@ -84,6 +91,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     ui.add(this.menuContainer);
 
     this.menuMessageBoxContainer = this.scene.add.container(0, 130);
+    this.menuMessageBoxContainer.setName("menu-message-box");
     this.menuMessageBoxContainer.setVisible(false);
     this.menuContainer.add(this.menuMessageBoxContainer);
 
