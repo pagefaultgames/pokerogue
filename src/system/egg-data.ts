@@ -20,7 +20,13 @@ export default class EggData {
     const sourceEgg = source instanceof Egg ? source as Egg : null;
     this.id = sourceEgg ? sourceEgg.id : source.id;
     this.tier = sourceEgg ? sourceEgg.tier : (source.tier  ?? Math.floor(this.id / EGG_SEED));
-    this.sourceType = !source.species ? source.gachaType : sourceEgg ? sourceEgg.sourceType : (source.gachaType ?? source.sourceType);
+    // legacy egg
+    if (source.species === 0) {
+      // check if it has a gachaType (deprecated)
+      this.sourceType = source.gachaType ?? source.sourceType;
+    } else {
+      this.sourceType = sourceEgg ? sourceEgg.sourceType : source.sourceType;
+    }
     this.hatchWaves = sourceEgg ? sourceEgg.hatchWaves : source.hatchWaves;
     this.timestamp = sourceEgg ? sourceEgg.timestamp : source.timestamp;
     this.variantTier = sourceEgg ? sourceEgg.variantTier : source.variantTier;
