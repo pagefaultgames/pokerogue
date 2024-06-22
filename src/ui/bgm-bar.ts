@@ -30,16 +30,16 @@ export default class BgmBar extends Phaser.GameObjects.Container {
     this.defaultWidth = 200;
     this.defaultHeight = 100;
 
-    this.bg = this.scene.add.nineslice(0, -5, "ability_bar_left", null, this.defaultWidth,this.defaultHeight, 0, 0, 10, 10);
+    this.bg = this.scene.add.nineslice(0, -5, "ability_bar_left", null, this.defaultWidth, this.defaultHeight, 0, 0, 10, 10);
     this.bg.setOrigin(0, 0);
 
     this.add(this.bg);
 
-    this.noteText = addTextObject(this.scene, 5, 5, "♫ :", TextStyle.MESSAGE, { fontSize: "72px" });
+    this.noteText = addTextObject(this.scene, 5, 5, "♫ :", TextStyle.MESSAGE, {fontSize: "72px"});
     this.noteText.setOrigin(0, 0);
     this.add(this.noteText);
 
-    this.musicText = addTextObject(this.scene, 15, 5, "", TextStyle.MESSAGE, { fontSize: "72px" });
+    this.musicText = addTextObject(this.scene, 15, 5, "", TextStyle.MESSAGE, {fontSize: "72px"});
     this.musicText.setOrigin(0, 0);
     this.musicText.setWordWrapWidth(650, true);
 
@@ -49,28 +49,32 @@ export default class BgmBar extends Phaser.GameObjects.Container {
     this.shown = false;
   }
 
-  showBgm(bgmName: string): void {
+  /*
+    * Set the BGM Name to the BGM bar.
+    * @param {string} bgmName The name of the BGM to set.
+   */
+  setBgmToBgmBar(bgmName: string): void {
     this.musicText.setText(`${(this.scene as BattleScene).getRealBgmName(bgmName)}`);
     if (!(this.scene as BattleScene).showBgmBar) {
       return;
     }
 
-
     this.musicText.width = this.bg.width - 20;
-    this.musicText.setWordWrapWidth(this.defaultWidth*4);
-    this.bg.width= Math.min(this.defaultWidth, this.noteText.displayWidth+this.musicText.displayWidth+20);
+    this.musicText.setWordWrapWidth(this.defaultWidth * 4);
+    this.bg.width = Math.min(this.defaultWidth, this.noteText.displayWidth + this.musicText.displayWidth + 20);
 
-    this.bg.height = Math.min(this.defaultHeight, this.musicText.displayHeight+20);
+    this.bg.height = Math.min(this.defaultHeight, this.musicText.displayHeight + 20);
 
     (this.scene as BattleScene).fieldUI.bringToTop(this);
 
     this.y = baseY;
-
-
-
   }
 
-  public toggleBgmBar(visible:boolean): void {
+  /*
+    Show or hide the BGM bar.
+    @param {boolean} visible Whether to show or hide the BGM bar.
+   */
+  public toggleBgmBar(visible: boolean): void {
     if (!(this.scene as BattleScene).showBgmBar) {
       return;
     }
@@ -83,47 +87,5 @@ export default class BgmBar extends Phaser.GameObjects.Container {
         this.setVisible(true);
       }
     });
-  }
-
-
-
-  hide(): void {
-    if (!this.shown) {
-      return;
-    }
-
-    if (this.autoHideTimer) {
-      clearInterval(this.autoHideTimer);
-    }
-
-    if (this.tween) {
-      this.tween.stop();
-    }
-
-    this.tween = this.scene.tweens.add({
-      targets: this,
-      x: -91,
-      duration: 500,
-      ease: "Sine.easeIn",
-      onComplete: () => {
-        this.tween = null;
-        this.setVisible(false);
-        if (this.queue.length) {
-          this.showBgm(this.queue.shift());
-        }
-      }
-    });
-
-    this.shown = false;
-  }
-
-  resetAutoHideTimer(): void {
-    if (this.autoHideTimer) {
-      clearInterval(this.autoHideTimer);
-    }
-    this.autoHideTimer = setTimeout(() => {
-      this.hide();
-      this.autoHideTimer = null;
-    }, 2500);
   }
 }
