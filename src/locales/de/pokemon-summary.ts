@@ -12,9 +12,9 @@ export const pokemonSummary: TranslationEntries = {
   "nextLv": "Nächstes Lvl.",
   "cancel": "Abbrechen",
 
-  "memoString": "{{natureFragment}} Wesen,\n{{metFragment}}",
+  "memoString": "Wesen: {{natureFragment}}\n{{metFragment}}",
   "metFragment": {
-    "normal": "getroffen auf Lvl. {{level}},\n{{biome}}.",
-    "apparently": "Wahrscheinlich getroffen auf Lvl. {{level}},\n{{biome}}.",
+    "normal": "{{biome}}\nGetroffen auf Lvl. {{level}}.",
+    "apparently": "{{biome}}\nWahrscheinlich getroffen auf Lvl. {{level}}.",
   },
 } as const;
