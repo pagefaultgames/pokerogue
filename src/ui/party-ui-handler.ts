@@ -21,7 +21,7 @@ import MoveInfoOverlay from "./move-info-overlay";
 import i18next from "i18next";
 import { Moves } from "#enums/moves";
 
-const defaultMessage = "Choose a Pokémon.";
+const defaultMessage = i18next.t("partyUiHandler:chooseAPokemon");
 
 export enum PartyUiMode {
   SWITCH,
@@ -645,20 +645,20 @@ export default class PartyUiHandler extends MessageUiHandler {
 
     this.optionsMode = true;
 
-    let optionsMessage = "Do what with this Pokémon?";
+    let optionsMessage = i18next.t("partyUiHandler:doWhatWithPokemon");
 
     switch (this.partyUiMode) {
     case PartyUiMode.MOVE_MODIFIER:
-      optionsMessage = "Select a move.";
+      optionsMessage = i18next.t("partyUiHandler:selectMove");
       break;
     case PartyUiMode.MODIFIER_TRANSFER:
       if (!this.transferMode) {
-        optionsMessage = "Select a held item to transfer.\nUse < and > to change the quantity.";
+        optionsMessage = i18next.t("partyUiHandler:selectItemTransfer");
       }
       break;
     case PartyUiMode.SPLICE:
       if (!this.transferMode) {
-        optionsMessage = "Select another Pokémon to splice.";
+        optionsMessage = i18next.t("partyUiHandler:selectPokemonSplice");
       }
       break;
     }
@@ -1224,7 +1224,7 @@ class PartyCancelButton extends Phaser.GameObjects.Container {
 
     this.partyCancelPb = partyCancelPb;
 
-    const partyCancelText = addTextObject(this.scene, -7, -6, "Cancel", TextStyle.PARTY);
+    const partyCancelText = addTextObject(this.scene, -7, -6, i18next.t("partyUiHandler:cancelButton"), TextStyle.PARTY);
     this.add(partyCancelText);
   }
 

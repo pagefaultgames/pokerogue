@@ -6,5 +6,11 @@ export const partyUiHandler: SimpleTranslationEntries = {
   "CANCEL": "Cancel",
   "RELEASE": "Release",
   "APPLY": "Apply",
-  "TEACH": "Teach"
+  "TEACH": "Teach",
+  "chooseAPokemon": "Elige un Pokémon.",
+  "doWhatWithPokemon": "¿Que quieres hacer con el Pokémon?",
+  "selectMove": "Selecciona un movimiento.",
+  "selectItemTransfer": "Selecciona un objeto equipado para transferir.\nUsa < y > para cambiar la cantidad.",
+  "selectPokemonSplice": "Selecciona otro Pokémon para fusionar.",
+  "cancelButton": "Salir",
 } as const;
