@@ -2,7 +2,7 @@ import { FormModalUiHandler } from "./form-modal-ui-handler";
 import { ModalConfig } from "./modal-ui-handler";
 import * as Utils from "../utils";
 import { Mode } from "./ui";
-import i18next from "../plugins/i18n";
+import i18next from "i18next";
 
 export default class LoginFormUiHandler extends FormModalUiHandler {
   getModalTitle(config?: ModalConfig): string {

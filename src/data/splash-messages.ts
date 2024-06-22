@@ -1,4 +1,4 @@
-import i18next from "../plugins/i18n";
+import i18next from "i18next";
 
 export function getBattleCountSplashMessage(): string {
   return `{COUNT} ${i18next.t("splashMessages:battlesWon")}`;

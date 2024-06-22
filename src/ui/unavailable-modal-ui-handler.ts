@@ -3,6 +3,7 @@ import { ModalConfig, ModalUiHandler } from "./modal-ui-handler";
 import { addTextObject, TextStyle } from "./text";
 import { Mode } from "./ui";
 import { updateUserInfo } from "#app/account";
+import * as Utils from "#app/utils";
 
 export default class UnavailableModalUiHandler extends ModalUiHandler {
   private reconnectTimer: NodeJS.Timeout;
@@ -55,6 +56,9 @@ export default class UnavailableModalUiHandler extends ModalUiHandler {
         this.reconnectDuration = this.minTime;
         this.scene.playSound("pb_bounce_1");
         this.reconnectCallback();
+      } else if (response[1] === 401) {
+        Utils.setCookie(Utils.sessionIdKey, "");
+        this.scene.reset(true, true);
       } else {
         this.reconnectDuration = Math.min(this.reconnectDuration * 2, this.maxTime); // Set a max delay so it isn't infinite
         this.reconnectTimer =
