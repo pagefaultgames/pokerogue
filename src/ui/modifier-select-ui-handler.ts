@@ -185,6 +185,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     this.scene.showShopOverlay(750);
     this.scene.updateAndShowText(750);
+    this.scene.updateBiomeWaveText();
     this.scene.updateMoneyText();
 
     let i = 0;
