@@ -2976,7 +2976,7 @@ export class MoveEffectPhase extends PokemonPhase {
           }));
         }
         // Trigger effect which should only apply one time on the last hit after all targeted effects have already applied
-        const postTarget = (user.turnData.hitsLeft === 1) ?
+        const postTarget = (user.turnData.hitsLeft === 1 || !this.getTarget()?.isActive()) ?
           applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && attr.trigger === MoveEffectTrigger.POST_TARGET, user, null, move) :
           null;
 
