@@ -1951,13 +1951,15 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(3, getRandomPartyMemberFunc(getCipherSignatureSpecies("NASCOUR"),TrainerSlot.TRAINER,true, p => {
       p.generateAndPopulateMoveset();
     }))
-    .setPartyMemberFunc(4, getRandomPartyMemberFunc(getCipherSignatureSpecies("NASCOUR"),TrainerSlot.TRAINER,true, p => {
+
+    .setPartyMemberFunc(4,getRandomPartyMemberFunc([Species.TYRANITAR], TrainerSlot.TRAINER, true, p => {
+      p.setBoss(true, 2);
       p.generateAndPopulateMoveset();
+      p.pokeball = PokeballType.MASTER_BALL; // If we ever add Shadow Balls, this should be a Shadow Ball
     }))
-    .setPartyMemberFunc(5,getRandomPartyMemberFunc([Species.TYRANITAR], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(4,getRandomPartyMemberFunc([Species.GALAR_MOLTRES], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 3);
       p.generateAndPopulateMoveset();
-      p.formIndex = 1; // Mega Tyranitar
       p.pokeball = PokeballType.MASTER_BALL; // If we ever add Shadow Balls, this should be a Shadow Ball
     })),
   [TrainerType.EVICE]: new TrainerConfig(++t).setName("Evice").initForEvilTeamLeader("Cipher Head",getCipherSignatureSpecies("EVICE")).setBattleBgm("battle_cipher_boss").setMixedBattleBgm("battle_cipher_boss")
