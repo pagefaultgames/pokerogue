@@ -6,7 +6,7 @@ import AwaitableUiHandler from "./awaitable-ui-handler";
 import { Mode } from "./ui";
 import { LockModifierTiersModifier, PokemonHeldItemModifier } from "../modifier/modifier";
 import { handleTutorial, Tutorial } from "../tutorial";
-import {Button} from "../enums/buttons";
+import {Button} from "#enums/buttons";
 import MoveInfoOverlay from "./move-info-overlay";
 import { allMoves } from "../data/move";
 import * as Utils from "./../utils";
@@ -180,7 +180,10 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     const maxUpgradeCount = typeOptions.map(to => to.upgradeCount).reduce((max, current) => Math.max(current, max), 0);
 
-    this.scene.showFieldOverlay(750);
+    /* Force updateModifiers without pokemonSpecificModifiers */
+    this.scene.getModifierBar().updateModifiers(this.scene.modifiers, true);
+
+    this.scene.showShopOverlay(750);
     this.scene.updateAndShowText(750);
     this.scene.updateMoneyText();
 
@@ -472,8 +475,11 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.getUi().clearText();
     this.eraseCursor();
 
-    this.scene.hideFieldOverlay(250);
+    this.scene.hideShopOverlay(750);
     this.scene.hideLuckText(250);
+
+    /* Normally already called just after the shop, but not sure if it happens in 100% of cases */
+    this.scene.getModifierBar().updateModifiers(this.scene.modifiers);
 
     const options = this.options.concat(this.shopOptionsRows.flat());
     this.options.splice(0, this.options.length);

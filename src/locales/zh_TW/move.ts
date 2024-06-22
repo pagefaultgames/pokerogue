@@ -1,4 +1,4 @@
-import { MoveTranslationEntries } from "#app/plugins/i18n";
+import { MoveTranslationEntries } from "#app/interfaces/locales";
 
 export const move: MoveTranslationEntries = {
   pound: { name: "拍擊", effect: "使用長長的尾巴或手等拍打\n對手進行攻擊" },
@@ -2817,7 +2817,7 @@ export const move: MoveTranslationEntries = {
   },
   bouncyBubble: {
     name: "活活氣泡",
-    effect: "投擲水球進行攻擊。吸水後\n能回覆等同於造成的傷害一\n半的HP",
+    effect: "投擲水球進行攻擊。吸水後\n能回覆等同於造成的傷害\n的HP",
   },
   buzzyBuzz: {
     name: "麻麻電擊",

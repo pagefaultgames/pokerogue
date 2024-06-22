@@ -4,10 +4,11 @@ import {Mode} from "../ui";
 import {InterfaceConfig} from "../../inputs-controller";
 import {addWindow} from "../ui-theme";
 import {addTextObject, TextStyle} from "../text";
-import {Button} from "../../enums/buttons";
 import {getIconWithSettingName} from "#app/configs/inputs/configHandler";
 import NavigationMenu, {NavigationManager} from "#app/ui/settings/navigationMenu";
-import { Device } from "#app/enums/devices.js";
+import { Device } from "#enums/devices";
+import { Button } from "#enums/buttons";
+import i18next from "i18next";
 
 export interface InputsIcons {
     [key: string]: Phaser.GameObjects.Sprite;
@@ -83,6 +84,12 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
     return settings;
   }
 
+  private camelize(string: string): string {
+    return string.replace(/(?:^\w|[A-Z]|\b\w)/g, function(word, index) {
+      return index === 0 ? word.toLowerCase() : word.toUpperCase();
+    }).replace(/\s+/g, "");
+  }
+
   /**
    * Setup UI elements.
    */
@@ -108,7 +115,7 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
     iconAction.setPositionRelative(this.actionsBg, this.navigationContainer.width - 32, 4);
     this.navigationIcons["BUTTON_ACTION"] = iconAction;
 
-    const actionText = addTextObject(this.scene, 0, 0, "Action", TextStyle.SETTINGS_LABEL);
+    const actionText = addTextObject(this.scene, 0, 0, i18next.t("settings:action"), TextStyle.SETTINGS_LABEL);
     actionText.setOrigin(0, 0.15);
     actionText.setPositionRelative(iconAction, -actionText.width/6-2, 0);
 
@@ -117,7 +124,7 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
     iconCancel.setPositionRelative(this.actionsBg, this.navigationContainer.width - 100, 4);
     this.navigationIcons["BUTTON_CANCEL"] = iconCancel;
 
-    const cancelText = addTextObject(this.scene, 0, 0, "Cancel", TextStyle.SETTINGS_LABEL);
+    const cancelText = addTextObject(this.scene, 0, 0, i18next.t("settings:back"), TextStyle.SETTINGS_LABEL);
     cancelText.setOrigin(0, 0.15);
     cancelText.setPositionRelative(iconCancel, -cancelText.width/6-2, 0);
 
@@ -126,7 +133,7 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
     iconReset.setPositionRelative(this.actionsBg, this.navigationContainer.width - 180, 4);
     this.navigationIcons["BUTTON_HOME"] = iconReset;
 
-    const resetText = addTextObject(this.scene, 0, 0, "Reset all", TextStyle.SETTINGS_LABEL);
+    const resetText = addTextObject(this.scene, 0, 0, i18next.t("settings:reset"), TextStyle.SETTINGS_LABEL);
     resetText.setOrigin(0, 0.15);
     resetText.setPositionRelative(iconReset, -resetText.width/6-2, 0);
 
@@ -178,7 +185,14 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
         // Create and add a text object for the setting name to the scene.
         const isLock = this.settingBlacklisted.includes(this.setting[setting]);
         const labelStyle = isLock ? TextStyle.SETTINGS_LOCKED : TextStyle.SETTINGS_LABEL;
-        settingLabels[s] = addTextObject(this.scene, 8, 28 + s * 16, settingName, labelStyle);
+        let labelText: string;
+        const i18nKey = this.camelize(settingName.replace("Alt ", ""));
+        if (settingName.toLowerCase().includes("alt")) {
+          labelText = `${i18next.t(`settings:${i18nKey}`)}${i18next.t("settings:alt")}`;
+        } else {
+          labelText = i18next.t(`settings:${i18nKey}`);
+        }
+        settingLabels[s] = addTextObject(this.scene, 8, 28 + s * 16, labelText, labelStyle);
         settingLabels[s].setOrigin(0, 0);
         optionsContainer.add(settingLabels[s]);
 
