@@ -27,6 +27,8 @@ import { StatsContainer } from "./stats-container";
 import { TextStyle, addBBCodeTextObject, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
+import { Egg } from "#app/data/egg";
+import * as Overrides from "../overrides";
 import {SettingKeyboard} from "#app/system/settings/settings-keyboard";
 import {Passive as PassiveAttr} from "#enums/passive";
 import * as Challenge from "../data/challenge";
@@ -36,6 +38,7 @@ import { Device } from "#enums/devices";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import {Button} from "#enums/buttons";
+import { EggSourceType } from "#app/enums/egg-source-types.js";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -98,17 +101,17 @@ const languageSettings: { [key: string]: LanguageSetting } = {
   }
 };
 
-const starterCandyCosts: { passive: integer, costReduction: [integer, integer] }[] = [
-  { passive: 50, costReduction: [30, 75] }, // 1
-  { passive: 45, costReduction: [25, 60] }, // 2
-  { passive: 40, costReduction: [20, 50] }, // 3
-  { passive: 30, costReduction: [15, 40] }, // 4
-  { passive: 25, costReduction: [12, 35] }, // 5
-  { passive: 20, costReduction: [10, 30] }, // 6
-  { passive: 15, costReduction: [8, 20] },  // 7
-  { passive: 10, costReduction: [5, 15] },  // 8
-  { passive: 10, costReduction: [3, 10] },  // 9
-  { passive: 10, costReduction: [3, 10] },  // 10
+const starterCandyCosts: { passive: integer, costReduction: [integer, integer], egg: integer }[] = [
+  { passive: 50, costReduction: [30, 75], egg: 35 }, // 1
+  { passive: 45, costReduction: [25, 60], egg: 35 }, // 2
+  { passive: 40, costReduction: [20, 50], egg: 35 }, // 3
+  { passive: 30, costReduction: [15, 40], egg: 30 }, // 4
+  { passive: 25, costReduction: [12, 35], egg: 25 }, // 5
+  { passive: 20, costReduction: [10, 30], egg: 20 }, // 6
+  { passive: 15, costReduction: [8, 20], egg: 15 },  // 7
+  { passive: 10, costReduction: [5, 15], egg: 10 },  // 8
+  { passive: 10, costReduction: [3, 10], egg: 10 },  // 9
+  { passive: 10, costReduction: [3, 10], egg: 10 },  // 10
 ];
 
 function getPassiveCandyCount(baseValue: integer): integer {
@@ -117,6 +120,10 @@ function getPassiveCandyCount(baseValue: integer): integer {
 
 function getValueReductionCandyCounts(baseValue: integer): [integer, integer] {
   return starterCandyCosts[baseValue - 1].costReduction;
+}
+
+function getSameSpeciesEggCandyCounts(baseValue: integer): integer {
+  return starterCandyCosts[baseValue - 1].egg;
 }
 
 /**
@@ -881,6 +888,18 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   /**
+   * Determines if an same species egg can be baught for the given species ID
+   * @param speciesId The ID of the species to check the value reduction of
+   * @returns true if the user has enough candies
+   */
+  isSameSpeciesEggAvailable(speciesId: number): boolean {
+    // Get this species ID's starter data
+    const starterData = this.scene.gameData.starterData[speciesId];
+
+    return starterData.candyCount >= getSameSpeciesEggCandyCounts(speciesStarters[speciesId]);
+  }
+
+  /**
    * Sets a bounce animation if enabled and the Pokemon has an upgrade
    * @param icon {@linkcode Phaser.GameObjects.GameObject} to animate
    * @param species {@linkcode PokemonSpecies} of the icon used to check for upgrades
@@ -1311,9 +1330,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               options.push({
                 label: `x${passiveCost} ${i18next.t("starterSelectUiHandler:unlockPassive")} (${allAbilities[starterPassiveAbilities[this.lastSpecies.speciesId]].name})`,
                 handler: () => {
-                  if (candyCount >= passiveCost) {
+                  if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= passiveCost) {
                     starterData.passiveAttr |= PassiveAttr.UNLOCKED | PassiveAttr.ENABLED;
-                    starterData.candyCount -= passiveCost;
+                    if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
+                      starterData.candyCount -= passiveCost;
+                    }
                     this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
                     this.scene.gameData.saveSystem().then(success => {
                       if (!success) {
@@ -1346,9 +1367,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               options.push({
                 label: `x${reductionCost} ${i18next.t("starterSelectUiHandler:reduceCost")}`,
                 handler: () => {
-                  if (candyCount >= reductionCost) {
+                  if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= reductionCost) {
                     starterData.valueReduction++;
-                    starterData.candyCount -= reductionCost;
+                    if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
+                      starterData.candyCount -= reductionCost;
+                    }
                     this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
                     this.scene.gameData.saveSystem().then(success => {
                       if (!success) {
@@ -1370,6 +1393,49 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                         this.setUpgradeAnimation(this.starterSelectGenIconContainers[this.lastSpecies.generation - 1].getAt(genSpecies.indexOf(this.lastSpecies)), this.lastSpecies, true);
                       }
                     }
+
+                    return true;
+                  }
+                  return false;
+                },
+                item: "candy",
+                itemArgs: starterColors[this.lastSpecies.speciesId]
+              });
+            }
+
+            // Same species egg menu option. Only visible if passive is bought
+            if (passiveAttr & PassiveAttr.UNLOCKED) {
+              const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(speciesStarters[this.lastSpecies.speciesId]);
+              options.push({
+                label: `x${sameSpeciesEggCost} ${i18next.t("starterSelectUiHandler:sameSpeciesEgg")}`,
+                handler: () => {
+                  if (this.scene.gameData.eggs.length < 99 && (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= sameSpeciesEggCost)) {
+                    if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
+                      starterData.candyCount -= sameSpeciesEggCost;
+                    }
+                    this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
+                    this.scene.gameData.saveSystem().then(success => {
+                      if (!success) {
+                        return this.scene.reset(true);
+                      }
+                    });
+
+                    const egg = new Egg({scene: this.scene, species: this.lastSpecies.speciesId, sourceType: EggSourceType.SAME_SPECIES_EGG});
+                    egg.addEggToGameData(this.scene);
+
+                    ui.setMode(Mode.STARTER_SELECT);
+                    this.scene.playSound("buy");
+
+                    // If the notification setting is set to 'On', update the candy upgrade display
+                    // if (this.scene.candyUpgradeNotification === 2) {
+                    //   if (this.isUpgradeIconEnabled() ) {
+                    //     this.setUpgradeIcon(this.cursor);
+                    //   }
+                    //   if (this.isUpgradeAnimationEnabled()) {
+                    //     const genSpecies = this.genSpecies[this.lastSpecies.generation - 1];
+                    //     this.setUpgradeAnimation(this.starterSelectGenIconContainers[this.lastSpecies.generation - 1].getAt(genSpecies.indexOf(this.lastSpecies)), this.lastSpecies, true);
+                    //   }
+                    // }
 
                     return true;
                   }

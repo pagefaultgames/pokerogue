@@ -3,12 +3,14 @@ import { Mode } from "./ui";
 import { TextStyle, addTextObject, getEggTierTextTint } from "./text";
 import MessageUiHandler from "./message-ui-handler";
 import * as Utils from "../utils";
-import { EGG_SEED, Egg, GachaType, getEggTierDefaultHatchWaves, getEggDescriptor, getLegendaryGachaSpeciesForTimestamp } from "../data/egg";
+import { Egg, getLegendaryGachaSpeciesForTimestamp, IEggOptions } from "../data/egg";
 import { VoucherType, getVoucherTypeIcon } from "../system/voucher";
 import { getPokemonSpecies } from "../data/pokemon-species";
 import { addWindow } from "./ui-theme";
 import { Tutorial, handleTutorial } from "../tutorial";
 import {Button} from "#enums/buttons";
+import * as Overrides from "../overrides";
+import { GachaType } from "#app/enums/gacha-types";
 import i18next from "i18next";
 import { EggTier } from "#enums/egg-type";
 
@@ -285,6 +287,10 @@ export default class EggGachaUiHandler extends MessageUiHandler {
   }
 
   pull(pullCount?: integer, count?: integer, eggs?: Egg[]): void {
+    if (Overrides.EGG_GACHA_PULL_COUNT_OVERRIDE && !count) {
+      pullCount = Overrides.EGG_GACHA_PULL_COUNT_OVERRIDE;
+    }
+
     this.eggGachaOptionsContainer.setVisible(false);
     this.setTransitioning(true);
 
@@ -379,56 +385,24 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     }
     if (!eggs) {
       eggs = [];
-      const tierValueOffset = this.gachaCursor === GachaType.LEGENDARY ? 1 : 0;
-      const tiers = new Array(pullCount).fill(null).map(() => {
-        const tierValue = Utils.randInt(256);
-        return tierValue >= 52 + tierValueOffset ? EggTier.COMMON : tierValue >= 8 + tierValueOffset ? EggTier.GREAT : tierValue >= 1 + tierValueOffset ? EggTier.ULTRA : EggTier.MASTER;
-      });
-      if (pullCount >= 25 && !tiers.filter(t => t >= EggTier.ULTRA).length) {
-        tiers[Utils.randInt(tiers.length)] = EggTier.ULTRA;
-      } else if (pullCount >= 10 && !tiers.filter(t => t >= EggTier.GREAT).length) {
-        tiers[Utils.randInt(tiers.length)] = EggTier.GREAT;
-      }
-      for (let i = 0; i < pullCount; i++) {
-        this.scene.gameData.eggPity[EggTier.GREAT] += 1;
-        this.scene.gameData.eggPity[EggTier.ULTRA] += 1;
-        this.scene.gameData.eggPity[EggTier.MASTER] += 1 + tierValueOffset;
-        // These numbers are roughly the 80% mark. That is, 80% of the time you'll get an egg before this gets triggered.
-        if (this.scene.gameData.eggPity[EggTier.MASTER] >= 412 && tiers[i] === EggTier.COMMON) {
-          tiers[i] = EggTier.MASTER;
-        } else if (this.scene.gameData.eggPity[EggTier.ULTRA] >= 59 && tiers[i] === EggTier.COMMON) {
-          tiers[i] = EggTier.ULTRA;
-        } else if (this.scene.gameData.eggPity[EggTier.GREAT] >= 9 && tiers[i] === EggTier.COMMON) {
-          tiers[i] = EggTier.GREAT;
-        }
-        this.scene.gameData.eggPity[tiers[i]] = 0;
-      }
+      for (let i = 1; i <= pullCount; i++) {
+        const eggOptions: IEggOptions = { scene: this.scene, pulled: true, sourceType: this.gachaCursor };
 
-      const timestamp = new Date().getTime();
-
-      for (const tier of tiers) {
-        const eggId = Utils.randInt(EGG_SEED, EGG_SEED * tier);
-        const egg = new Egg(eggId, this.gachaCursor, getEggTierDefaultHatchWaves(tier), timestamp);
-        if (egg.isManaphyEgg()) {
-          this.scene.gameData.gameStats.manaphyEggsPulled++;
-          egg.hatchWaves = getEggTierDefaultHatchWaves(EggTier.ULTRA);
-        } else {
-          switch (tier) {
-          case EggTier.GREAT:
-            this.scene.gameData.gameStats.rareEggsPulled++;
-            break;
-          case EggTier.ULTRA:
-            this.scene.gameData.gameStats.epicEggsPulled++;
-            break;
-          case EggTier.MASTER:
-            this.scene.gameData.gameStats.legendaryEggsPulled++;
-            break;
+        // Before creating the last egg, check if the guaranteed egg tier was already generated
+        // if not, override the egg tier
+        if (i === pullCount) {
+          const guaranteedEggTier = this.getGuaranteedEggTierFromPullCount(pullCount);
+          if (!eggs.some(egg => egg.tier >= guaranteedEggTier)) {
+            eggOptions.tier = guaranteedEggTier;
           }
         }
+
+        const egg = new Egg(eggOptions);
         eggs.push(egg);
-        this.scene.gameData.eggs.push(egg);
-        this.scene.gameData.gameStats.eggsPulled++;
       }
+      // Shuffle the eggs in case the guaranteed one got added as last egg
+      eggs = Utils.randSeedShuffle<Egg>(eggs);
+
 
       (this.scene.currentBattle ? this.scene.gameData.saveAll(this.scene, true, true, true) : this.scene.gameData.saveSystem()).then(success => {
         if (!success) {
@@ -440,6 +414,17 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     }
 
     doPull();
+  }
+
+  getGuaranteedEggTierFromPullCount(pullCount: number): EggTier {
+    switch (pullCount) {
+    case 10:
+      return EggTier.GREAT;
+    case 25:
+      return EggTier.ULTRA;
+    default:
+      return EggTier.COMMON;
+    }
   }
 
   showSummary(eggs: Egg[]): void {
@@ -470,7 +455,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
           const eggSprite = this.scene.add.sprite(0, 0, "egg", `egg_${egg.getKey()}`);
           ret.add(eggSprite);
 
-          const eggText = addTextObject(this.scene, 0, 14, getEggDescriptor(egg), TextStyle.PARTY, { align: "center" });
+          const eggText = addTextObject(this.scene, 0, 14, egg.getEggDescriptor(), TextStyle.PARTY, { align: "center" });
           eggText.setOrigin(0.5, 0);
           eggText.setTint(getEggTierTextTint(!egg.isManaphyEgg() ? egg.tier : EggTier.ULTRA));
           ret.add(eggText);
@@ -586,11 +571,13 @@ export default class EggGachaUiHandler extends MessageUiHandler {
         case Button.ACTION:
           switch (this.cursor) {
           case 0:
-            if (!this.scene.gameData.voucherCounts[VoucherType.REGULAR]) {
+            if (!this.scene.gameData.voucherCounts[VoucherType.REGULAR] && !Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) {
               error = true;
               this.showError(i18next.t("egg:notEnoughVouchers"));
             } else if (this.scene.gameData.eggs.length < 99) {
-              this.consumeVouchers(VoucherType.REGULAR, 1);
+              if (!Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) {
+                this.consumeVouchers(VoucherType.REGULAR, 1);
+              }
               this.pull();
               success = true;
             } else {
@@ -599,11 +586,13 @@ export default class EggGachaUiHandler extends MessageUiHandler {
             }
             break;
           case 2:
-            if (!this.scene.gameData.voucherCounts[VoucherType.PLUS]) {
+            if (!this.scene.gameData.voucherCounts[VoucherType.PLUS] && !Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) {
               error = true;
               this.showError(i18next.t("egg:notEnoughVouchers"));
             } else if (this.scene.gameData.eggs.length < 95) {
-              this.consumeVouchers(VoucherType.PLUS, 1);
+              if (!Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) {
+                this.consumeVouchers(VoucherType.PLUS, 1);
+              }
               this.pull(5);
               success = true;
             } else {
@@ -613,15 +602,19 @@ export default class EggGachaUiHandler extends MessageUiHandler {
             break;
           case 1:
           case 3:
-            if ((this.cursor === 1 && this.scene.gameData.voucherCounts[VoucherType.REGULAR] < 10)
-                  || (this.cursor === 3 && !this.scene.gameData.voucherCounts[VoucherType.PREMIUM])) {
+            if ((this.cursor === 1 && this.scene.gameData.voucherCounts[VoucherType.REGULAR] < 10 && !Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE)
+                  || (this.cursor === 3 && !this.scene.gameData.voucherCounts[VoucherType.PREMIUM] && !Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE)) {
               error = true;
               this.showError(i18next.t("egg:notEnoughVouchers"));
             } else if (this.scene.gameData.eggs.length < 90) {
               if (this.cursor === 3) {
-                this.consumeVouchers(VoucherType.PREMIUM, 1);
+                if (!Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) {
+                  this.consumeVouchers(VoucherType.PREMIUM, 1);
+                }
               } else {
-                this.consumeVouchers(VoucherType.REGULAR, 10);
+                if (!Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) {
+                  this.consumeVouchers(VoucherType.REGULAR, 10);
+                }
               }
               this.pull(10);
               success = true;
@@ -631,11 +624,13 @@ export default class EggGachaUiHandler extends MessageUiHandler {
             }
             break;
           case 4:
-            if (!this.scene.gameData.voucherCounts[VoucherType.GOLDEN]) {
+            if (!this.scene.gameData.voucherCounts[VoucherType.GOLDEN] && !Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) {
               error = true;
               this.showError(i18next.t("egg:notEnoughVouchers"));
             } else if (this.scene.gameData.eggs.length < 75) {
-              this.consumeVouchers(VoucherType.GOLDEN, 1);
+              if (!Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) {
+                this.consumeVouchers(VoucherType.GOLDEN, 1);
+              }
               this.pull(25);
               success = true;
             } else {
