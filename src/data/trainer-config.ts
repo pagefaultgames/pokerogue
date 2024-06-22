@@ -12,12 +12,11 @@ import {PersistentModifier} from "../modifier/modifier";
 import {TrainerVariant} from "../field/trainer";
 import {getIsInitialized, initI18n} from "#app/plugins/i18n";
 import i18next from "i18next";
-import { Moves } from "#enums/moves";
-import { PartyMemberStrength } from "#enums/party-member-strength";
-import { Species } from "#enums/species";
-import { TrainerType } from "#enums/trainer-type";
-import {Gender} from "#app/data/gender";
-import {Nature} from "#app/data/nature";
+import {Moves} from "#enums/moves";
+import {PartyMemberStrength} from "#enums/party-member-strength";
+import {Species} from "#enums/species";
+import {TrainerType} from "#enums/trainer-type";
+
 
 export enum TrainerPoolTier {
   COMMON,
@@ -1026,6 +1025,63 @@ export const signatureSpecies: SignatureSpecies = {
   KIERAN: [[Species.GRIMMSNARL, Species.INCINEROAR, Species.PORYGON_Z], Species.OGERPON, Species.TERAPAGOS, Species.HYDRAPPLE], // Poliwrath/Politoed lead
 };
 
+
+/*
+  The species pools for each Cipher Admin from which they pick random pokemon in addition to their signature species
+ */
+const cipherPools = {
+  MIRROR_B: [Species.PRIMARINA,Species.ROSERADE,Species.BELLOSSOM,Species.POLITOED,Species.HITMONTOP,Species.QUAQUAVAL,Species.ORICORIO], // He also has 2 ludicolos and a sudowoode
+  DAKIM: [Species.FLYGON,Species.GLISCOR,Species.AERODACTYL,Species.DRAGONITE,Species.MANTINE,Species.ALTARIA,Species.TROPIUS,Species.ARCHEOPS,Species.CLAYDOL,Species.BRONZONG,Species.HYDREIGON,Species.ORTHWORM], // He also has a (ALOLA) Golem and a Entei/ Gouging Fire
+  VENUS: [Species.CLEFABLE,Species.WIGGLYTUFF,Species.MILOTIC,Species.LOPUNNY,Species.CINCCINO,Species.SYLVEON,Species.TOGEKISS,Species.PURUGLY,Species.WHIMSICOTT,Species.LILLIGANT,Species.NIDOQUEEN,Species.VILEPLUME,Species.GALAR_RAPIDASH,Species.BLISSEY,Species.MEGANIUM,Species.FROSLASS,Species.HATTERENE,Species.GARDEVOIR,Species.STEELIX], // She also has a Delcatty and a Suicune/Walking Wak
+  EIN: [Species.LANTURN,Species.ELECTIVIRE,Species.KILOWATTREL,Species.MAGNEZONE,Species.MANECTRIC,Species.EELEKTROSS,Species.LUXRAY,Species.AMPHAROS,Species.ROTOM], // He also has a Raikou/Raging Bolt
+  NASCOUR: [Species.ALOLA_PERSIAN,Species.ABSOL,Species.LIEPARD,Species.ZOROARK,Species.HOUNDOOM,Species.HONCHKROW,Species.WEAVILE,Species.SCRAFTY,Species.KINGAMBIT,Species.HYDREIGON,Species.ALOLA_MUK,Species.SHIFTRY,Species.SHARPEDO,Species.CACTURNE,Species.SHARPEDO,Species.CRAWDAUNT,Species.SKUNTANK,Species.DRAPION,Species.KROOKODILE,Species.LOKIX], // He also has a Tyranitar and a Galar Moltres
+  EVICE: [Species.GARCHOMP,Species.DRAGONITE,Species.SALAMENCE,Species.GOODRA,Species.DRAGAPULT,Species.VOLCARONA,Species.KINGDRA,Species.ARCHALUDON,Species.LUCARIO,Species.ARCANINE,Species.CHANDELURE,Species.EXCADRILL,Species.RHYPERIOR,Species.TOXTRICITY,Species.CROBAT,Species.GALVANTULA] // He also has a Slakng and XD001 (Lugia)
+};
+
+/*
+    The species that have been used as signature species for each Cipher Admin so that they are not used again (no duplicates)
+ */
+const usedCipherSpecies = {
+  MIRROR_B: [],
+  DAKIM: [],
+  VENUS: [],
+  EIN: [],
+  NASCOUR: [],
+  EVICE: [],
+};
+
+/*
+    * The function to get the signature species for each Cipher Admin by choosing a random species from their pool that has not been used before
+    * @param {string} trainerName - The name of the Cipher Admin
+    * @returns {Species[]} - A random species from the pool that has not been used before
+ */
+function getCipherSignatureSpecies(trainerName: string): Species[] {
+  const cipherPool = cipherPools[trainerName];
+  if (!cipherPool) {
+    console.error(`No cipher pool found for trainer ${trainerName}`);
+    return [];
+  }
+  // Get amount unique random species from the pool
+
+  // Shuffle the pool to randomize the order
+  const pool =cipherPool.sort(() => 0.5 - Math.random());
+
+  // Get the first species from the pool
+  const species = pool[0];
+
+  if (usedCipherSpecies[trainerName].includes(species)) {
+    // If the species has already been used, try again
+    return getCipherSignatureSpecies(trainerName);
+  }
+
+  // Add the species to the used species list
+  usedCipherSpecies[trainerName].push(species);
+
+  return [species];
+}
+
+
+
 export const trainerConfigs: TrainerConfigs = {
   [TrainerType.UNKNOWN]: new TrainerConfig(0).setHasGenders(),
   [TrainerType.ACE_TRAINER]: new TrainerConfig(++t).setHasGenders("Ace Trainer Female").setHasDouble("Ace Duo").setMoneyMultiplier(2.25).setEncounterBgm(TrainerType.ACE_TRAINER)
@@ -1724,183 +1780,210 @@ export const trainerConfigs: TrainerConfigs = {
       p.pokeball = PokeballType.ULTRA_BALL;
       p.formIndex = 1;
     })),
-  [TrainerType.MIRROR_B]: new TrainerConfig(++t).setName("Mirror B").initForEvilTeamLeader("Cipher Admin",[]).setBattleBgm("battle_mirror_b").setMixedBattleBgm("battle_mirror_b")
-    .setPartyMemberFunc(0,getRandomPartyMemberFunc([Species.PELIPPER], TrainerSlot.TRAINER, true,  p => {
-      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.HURRICANE)),new PokemonMove(Moves.ROOST), new PokemonMove(Moves.SURF), new PokemonMove(Moves.ICE_BEAM)];
-      p.abilityIndex = 1; // Drizzle
-    }))
-    .setPartyMemberFunc(1,getRandomPartyMemberFunc([Species.LUDICOLO],TrainerSlot.TRAINER,true, p => {
-      p.abilityIndex = 1; // Rain Dish
-    }))
-    .setPartyMemberFunc(2,getRandomPartyMemberFunc([Species.LUDICOLO],TrainerSlot.TRAINER,true, p => {
+  [TrainerType.MIRROR_B]: new TrainerConfig(++t).setName("Mirror B").initForEvilTeamLeader("Cipher Admin",getCipherSignatureSpecies("MIRROR_B")).setBattleBgm("battle_mirror_b").setMixedBattleBgm("battle_mirror_b")
+    .setPartyMemberFunc(0,getRandomPartyMemberFunc(getCipherSignatureSpecies("MIRROR_B"), TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
-      p.abilityIndex = 0; // Swift Swim
     }))
-    .setPartyMemberFunc(3,getRandomPartyMemberFunc([Species.LUDICOLO], TrainerSlot.TRAINER,true, p => {
-      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.HYDRO_PUMP)),new PokemonMove(Moves.ICE_BEAM), new PokemonMove(Moves.GIGA_DRAIN), new PokemonMove(Moves.RAIN_DANCE)];
-      // This one gets a random ability but is the alternative rain setter
+    .setPartyMemberFunc(1,getRandomPartyMemberFunc(getCipherSignatureSpecies("MIRROR_B"), TrainerSlot.TRAINER, true, p => {
+      p.generateAndPopulateMoveset();
     }))
-    .setPartyMemberFunc(4,getRandomPartyMemberFunc([Species.REGIELEKI],TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(2,getRandomPartyMemberFunc(getCipherSignatureSpecies("MIRROR_B"), TrainerSlot.TRAINER, true, p => {
+      p.generateAndPopulateMoveset();
+    }))
+    .setPartyMemberFunc(3,getRandomPartyMemberFunc([Species.LUDICOLO],TrainerSlot.TRAINER,true, p => {
+      p.generateAndPopulateMoveset();
+    }))
+    .setPartyMemberFunc(4,getRandomPartyMemberFunc([Species.LUDICOLO], TrainerSlot.TRAINER,true, p => {
+      p.generateAndPopulateMoveset();
+    }))
+    .setPartyMemberFunc(5,getRandomPartyMemberFunc([Species.SUDOWOODO],TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.MASTER_BALL; // If we ever add Shadow Balls, this should be a Shadow Ball
+      p.name = `"${getPokemonSpecies(Species.LUDICOLO).getName()}"`; // This shows "Ludicolo" in the battle text as a joke that the Sudowoodo is pretending to be a Ludicolo with its terra type
     })).setGenModifiersFunc(party => {
-      // Set Regieleki to terra electric
-      const regieleki = party[4];
-      return [modifierTypes.TERA_SHARD().generateType(null, [Type.ELECTRIC]).withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(regieleki) as PersistentModifier];
-    })
-    .setPartyMemberFunc(5,getRandomPartyMemberFunc([Species.ARMALDO],TrainerSlot.TRAINER,true)),
-  [TrainerType.DAKIM]: new TrainerConfig(++t).setName("Dakim").initForEvilTeamLeader("Cipher Admin",[]).setBattleBgm("battle_cipher_admin").setMixedBattleBgm("battle_cipher_admin")
-    .setPartyMemberFunc(0,getRandomPartyMemberFunc([Species.GOLEM], TrainerSlot.TRAINER, true, p => {
-      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.EARTHQUAKE)),new PokemonMove(Moves.PROTECT), new PokemonMove(Moves.STONE_EDGE), new PokemonMove(Moves.HEAVY_SLAM)];
-      p.abilityIndex = 1; // Sturdy
+      // Set sudowodoo to terra electric
+      const sudowodoo = party[5];
+      const terraType = Utils.randInt(2) === 0 ? Type.WATER : Type.GRASS;
+      return [modifierTypes.TERA_SHARD().generateType(null, [terraType]).withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(sudowodoo) as PersistentModifier];
+    }),
+  [TrainerType.DAKIM]: new TrainerConfig(++t).setName("Dakim").initForEvilTeamLeader("Cipher Admin",getCipherSignatureSpecies("DAKIM")).setBattleBgm("battle_cipher_admin").setMixedBattleBgm("battle_cipher_admin")
+    .setPartyMemberFunc(0,getRandomPartyMemberFunc([Species.GOLEM,Species.ALOLA_GOLEM], TrainerSlot.TRAINER, true, p => {
+      p.generateAndPopulateMoveset();
+      // Guarantee Earthquake
+      for (const move of p.moveset) {
+        let earthQuake = false;
+        if (move.moveId === Moves.EARTHQUAKE) {
+          earthQuake = true;
+          break;
+        }
+        if (!earthQuake) {
+          p.moveset[0] = new PokemonMove(Moves.EARTHQUAKE);
+        }
+      }
     }))
-    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.SWAMPERT ],TrainerSlot.TRAINER,true, p => {
-      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.EARTHQUAKE)),new PokemonMove(Moves.PROTECT), new PokemonMove(Moves.HYDRO_PUMP), new PokemonMove(Moves.HAMMER_ARM)];
+    .setPartyMemberFunc(1,getRandomPartyMemberFunc(getCipherSignatureSpecies("DAKIM"), TrainerSlot.TRAINER, true, p => {
+      p.generateAndPopulateMoveset();
+      // Guarantee Earthquake
+      for (const move of p.moveset) {
+        let earthQuake = false;
+        if (move.moveId === Moves.EARTHQUAKE) {
+          earthQuake = true;
+          break;
+        }
+        if (!earthQuake) {
+          p.moveset[0] = new PokemonMove(Moves.EARTHQUAKE);
+        }
+      }
     }))
-    .setPartyMemberFunc(2,getRandomPartyMemberFunc([Species.CLAYDOL], TrainerSlot.TRAINER, true, p => {
-      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.EARTHQUAKE)),new PokemonMove(Moves.PROTECT), new PokemonMove(Moves.PSYCHIC), new PokemonMove(Moves.ICE_BEAM)];
+    .setPartyMemberFunc(2,getRandomPartyMemberFunc(getCipherSignatureSpecies("DAKIM"), TrainerSlot.TRAINER, true, p => {
+      p.generateAndPopulateMoveset();
+      // Guarantee Earthquake
+      for (const move of p.moveset) {
+        let earthQuake = false;
+        if (move.moveId === Moves.EARTHQUAKE) {
+          earthQuake = true;
+          break;
+        }
+        if (!earthQuake) {
+          p.moveset[0] = new PokemonMove(Moves.EARTHQUAKE);
+        }
+      }
     }))
-    .setPartyMemberFunc(3,getRandomPartyMemberFunc([Species.ENTEI],TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(3,getRandomPartyMemberFunc(getCipherSignatureSpecies("DAKIM"), TrainerSlot.TRAINER, true, p => {
+      p.generateAndPopulateMoveset();
+      // Guarantee Earthquake
+      for (const move of p.moveset) {
+        let earthQuake = false;
+        if (move.moveId === Moves.EARTHQUAKE) {
+          earthQuake = true;
+          break;
+        }
+        if (!earthQuake) {
+          p.moveset[0] = new PokemonMove(Moves.EARTHQUAKE);
+        }
+      }
+    }))
+    .setPartyMemberFunc(4,getRandomPartyMemberFunc(getCipherSignatureSpecies("DAKIM"), TrainerSlot.TRAINER, true, p => {
+      p.generateAndPopulateMoveset();
+      // Guarantee Earthquake
+      for (const move of p.moveset) {
+        let earthQuake = false;
+        if (move.moveId === Moves.EARTHQUAKE) {
+          earthQuake = true;
+          break;
+        }
+        if (!earthQuake) {
+          p.moveset[0] = new PokemonMove(Moves.EARTHQUAKE);
+        }
+      }
+    }))
+    .setPartyMemberFunc(5,getRandomPartyMemberFunc([Species.ENTEI],TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
-      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.SACRED_FIRE)),new PokemonMove(Moves.EXTREME_SPEED), new PokemonMove(Moves.CRUNCH), new PokemonMove(Moves.ERUPTION)];
+      p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.MASTER_BALL; // If we ever add Shadow Balls, this should be a Shadow Ball
-      p.abilityIndex = 2; // Inner Focus
     })).setGenModifiersFunc(party => {
       // Set Entei to terra fire
-      const entei = party[3];
+      const entei = party[5];
       return [modifierTypes.TERA_SHARD().generateType(null, [Type.FIRE]).withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(entei) as PersistentModifier];
-    })
-    .setPartyMemberFunc(4,getRandomPartyMemberFunc([Species.FLYGON],TrainerSlot.TRAINER,true, p =>{
-      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.EARTHQUAKE)),new PokemonMove(Moves.PROTECT), new PokemonMove(Moves.DRACO_METEOR), new PokemonMove(Moves.BOOMBURST)];
-    }))
-    .setPartyMemberFunc(5,getRandomPartyMemberFunc([Species.CAMERUPT],TrainerSlot.TRAINER,true, p => {
-      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.EARTHQUAKE)),new PokemonMove(Moves.PROTECT), new PokemonMove(Moves.LAVA_PLUME), new PokemonMove(Moves.IRON_HEAD)];
-    })),
+    }),
   [TrainerType.VENUS]: new TrainerConfig(++t).setName("Venus").initForEvilTeamLeader("Cipher Admin",[]).setBattleBgm("battle_cipher_admin").setMixedBattleBgm("battle_cipher_admin")
     .setPartyMemberFunc(0,getRandomPartyMemberFunc([Species.DELCATTY], TrainerSlot.TRAINER, true, p => {
-      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.ATTRACT)),new PokemonMove(Moves.DOUBLE_EDGE), new PokemonMove(Moves.THUNDERBOLT), new PokemonMove(Moves.WATER_PULSE)];
-      p.gender = Gender.FEMALE;
-      p.abilityIndex = 0; // Cute Charm
+      p.generateAndPopulateMoveset();
     }))
-    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.STEELIX ],TrainerSlot.TRAINER,true, p => {
-      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.ATTRACT)),new PokemonMove(Moves.EARTHQUAKE), new PokemonMove(Moves.IRON_HEAD), new PokemonMove(Moves.DRAGON_TAIL)];
-      p.gender = Gender.MALE;
-      p.abilityIndex = 1; // Sturdy
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc(getCipherSignatureSpecies("VENUS"),TrainerSlot.TRAINER,true, p => {
+      p.generateAndPopulateMoveset();
     }))
-    .setPartyMemberFunc(2,getRandomPartyMemberFunc([Species.BANETTE], TrainerSlot.TRAINER, true, p => {
-      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.ATTRACT)),new PokemonMove(Moves.SHADOW_BALL), new PokemonMove(Moves.THUNDERBOLT), new PokemonMove(Moves.WILL_O_WISP)];
-      p.gender = Gender.MALE;
-      p.abilityIndex = 2; // Curse Body
+    .setPartyMemberFunc(2, getRandomPartyMemberFunc(getCipherSignatureSpecies("VENUS"),TrainerSlot.TRAINER,true, p => {
+      p.generateAndPopulateMoveset();
     }))
-    .setPartyMemberFunc(3,getRandomPartyMemberFunc([Species.SUICUNE],TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc(getCipherSignatureSpecies("VENUS"),TrainerSlot.TRAINER,true, p => {
+      p.generateAndPopulateMoveset();
+    }))
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc(getCipherSignatureSpecies("VENUS"),TrainerSlot.TRAINER,true, p => {
+      p.generateAndPopulateMoveset();
+    }))
+    .setPartyMemberFunc(5,getRandomPartyMemberFunc([Species.SUICUNE],TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
-      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.HYDRO_PUMP)),new PokemonMove(Moves.AIR_SLASH), new PokemonMove(Moves.CALM_MIND), new PokemonMove(Moves.ICE_BEAM)];
+      p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.MASTER_BALL; // If we ever add Shadow Balls, this should be a Shadow Ball
-      p.abilityIndex = 2; // Inner Focus
     })).setGenModifiersFunc(party => {
       // Set Suicune to terra water
-      const suicune = party[3];
+      const suicune = party[5];
       return [modifierTypes.TERA_SHARD().generateType(null, [Type.WATER]).withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(suicune) as PersistentModifier];
-    })
-    .setPartyMemberFunc(4,getRandomPartyMemberFunc([Species.VILEPLUME],TrainerSlot.TRAINER,true, p => {
-      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.ATTRACT)),new PokemonMove(Moves.SLUDGE_BOMB), new PokemonMove(Moves.PETAL_BLIZZARD), new PokemonMove(Moves.TOXIC)];
-      p.gender = Gender.FEMALE;
-      p.abilityIndex = 2; // Effect Spore
-    }))
-    .setPartyMemberFunc(5,getRandomPartyMemberFunc([Species.BLISSEY],TrainerSlot.TRAINER,true, p => {
-      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.ATTRACT)),new PokemonMove(Moves.ZEN_HEADBUTT), new PokemonMove(Moves.SOFT_BOILED), new PokemonMove(Moves.FIRE_PUNCH)];
-      p.gender = Gender.FEMALE;
-      p.abilityIndex = 1; // Serene Grace
-    })),
+    }),
+
   [TrainerType.EIN]: new TrainerConfig(++t).setName("Ein").initForEvilTeamLeader("Cipher Admin",[]).setBattleBgm("battle_cipher_admin").setMixedBattleBgm("battle_cipher_admin")
-    .setPartyMemberFunc(0,getRandomPartyMemberFunc([Species.POLITOED], TrainerSlot.TRAINER, true, p => {
-      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.HYDRO_PUMP)),new PokemonMove(Moves.ICE_BEAM), new PokemonMove(Moves.WATERFALL), new PokemonMove(Moves.PSYCHIC)];
-      p.abilityIndex = 2; // Drizzle
+    .setPartyMemberFunc(0,getRandomPartyMemberFunc(getCipherSignatureSpecies("EIN"), TrainerSlot.TRAINER, true, p => {
+      p.generateAndPopulateMoveset();
     }))
-    .setPartyMemberFunc(1,getRandomPartyMemberFunc([Species.RHYPERIOR], TrainerSlot.TRAINER, true, p => {
-      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.EARTHQUAKE)),new PokemonMove(Moves.ROCK_SLIDE), new PokemonMove(Moves.RAIN_DANCE), new PokemonMove(Moves.THUNDER)];
-      p.abilityIndex = 0; // Lightning Rod
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc(getCipherSignatureSpecies("EIN"),TrainerSlot.TRAINER,true, p => {
+      p.generateAndPopulateMoveset();
     }))
-    .setPartyMemberFunc(2,getRandomPartyMemberFunc([Species.LANTURN], TrainerSlot.TRAINER, true, p => {
-      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.SCALD)),new PokemonMove(Moves.THUNDERBOLT), new PokemonMove(Moves.ICE_BEAM), new PokemonMove(Moves.VOLT_SWITCH)];
-      p.abilityIndex = 2; // Volt Absorb
+    .setPartyMemberFunc(2, getRandomPartyMemberFunc(getCipherSignatureSpecies("EIN"),TrainerSlot.TRAINER,true, p => {
+      p.generateAndPopulateMoveset();
     }))
-    .setPartyMemberFunc(3,getRandomPartyMemberFunc([Species.RAIKOU], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc(getCipherSignatureSpecies("EIN"),TrainerSlot.TRAINER,true, p => {
+      p.generateAndPopulateMoveset();
+    }))
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc(getCipherSignatureSpecies("EIN"),TrainerSlot.TRAINER,true, p => {
+      p.generateAndPopulateMoveset();
+    }))
+    .setPartyMemberFunc(5,getRandomPartyMemberFunc([Species.RAIKOU], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
-      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.THUNDER)),new PokemonMove(Moves.AURA_SPHERE), new PokemonMove(Moves.CALM_MIND), new PokemonMove(Moves.CRUNCH)];
+      p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.MASTER_BALL; // If we ever add Shadow Balls, this should be a Shadow Ball
-      p.abilityIndex = 2; // Pressure
     })).setGenModifiersFunc(party => {
       // Set Raikou to terra electric
-      const raikou = party[3];
+      const raikou = party[5];
       return [modifierTypes.TERA_SHARD().generateType(null, [Type.ELECTRIC]).withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(raikou) as PersistentModifier];
-    })
-    .setPartyMemberFunc(4,getRandomPartyMemberFunc([Species.QUAGSIRE], TrainerSlot.TRAINER, true, p => {
-      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.EARTHQUAKE)),new PokemonMove(Moves.WATERFALL), new PokemonMove(Moves.ICE_BEAM), new PokemonMove(Moves.RAIN_DANCE)];
-      p.abilityIndex = 2; // Unaware
-    }))
-    .setPartyMemberFunc(5,getRandomPartyMemberFunc([Species.GOODRA], TrainerSlot.TRAINER, true, p => {
-      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.DRAGON_PULSE)),new PokemonMove(Moves.THUNDERBOLT), new PokemonMove(Moves.FLAMETHROWER), new PokemonMove(Moves.ICE_BEAM)];
-      p.abilityIndex = 1; // Hydration
-    })),
-  [TrainerType.NASCOUR]: new TrainerConfig(++t).setName("Nascour").initForEvilTeamLeader("Cipher",[]).setBattleBgm("battle_cipher_admin").setMixedBattleBgm("battle_cipher_admin")
-    .setPartyMemberFunc(0,getRandomPartyMemberFunc([Species.DUSKNOIR], TrainerSlot.TRAINER, true, p => {
-      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.SHADOW_PUNCH)),new PokemonMove(Moves.WILL_O_WISP), new PokemonMove(Moves.PAYBACK), new PokemonMove(Moves.ICE_PUNCH)];
-      p.abilityIndex = 0; // Pressure
-    }))
-    .setPartyMemberFunc(1,getRandomPartyMemberFunc([Species.GARDEVOIR], TrainerSlot.TRAINER, true, p => {
-      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.PSYCHIC)),new PokemonMove(Moves.SHADOW_BALL), new PokemonMove(Moves.THUNDERBOLT), new PokemonMove(Moves.CALM_MIND)];
-      p.abilityIndex = 2; // Telepathy
-    }))
-    .setPartyMemberFunc(2,getRandomPartyMemberFunc([Species.BLAZIKEN], TrainerSlot.TRAINER, true, p => {
-      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.FLARE_BLITZ)),new PokemonMove(Moves.BRAVE_BIRD), new PokemonMove(Moves.CLOSE_COMBAT), new PokemonMove(Moves.SWORDS_DANCE)];
-      p.abilityIndex = 2; // Speed Boost
-    }))
-    .setPartyMemberFunc(3,getRandomPartyMemberFunc([Species.WALREIN], TrainerSlot.TRAINER, true, p => {
-      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.ICE_BEAM)),new PokemonMove(Moves.SURF), new PokemonMove(Moves.ROCK_SLIDE), new PokemonMove(Moves.HYPER_BEAM)];
-      p.abilityIndex = 0; // Thick Fat
-    }))
-    .setPartyMemberFunc(4,getRandomPartyMemberFunc([Species.TYRANITAR], TrainerSlot.TRAINER, true, p => {
-      p.setBoss(true,2);
-      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.STONE_EDGE)),new PokemonMove(Moves.CRUNCH), new PokemonMove(Moves.EARTHQUAKE), new PokemonMove(Moves.DRAGON_DANCE)];
-      p.abilityIndex = 2; // Unnerve
-    }))
-  // This arcanine is buffed to be a boss and equal to the legis of the admins
-    .setPartyMemberFunc(5,getRandomPartyMemberFunc([Species.ARCANINE], TrainerSlot.TRAINER, true, p => {
-      p.setBoss(true, 3);
-      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.MORNING_SUN)),new PokemonMove(Moves.WILL_O_WISP), new PokemonMove(Moves.CLOSE_COMBAT), new PokemonMove(Moves.EXTREME_SPEED)];
-      p.setNature(Nature.SASSY);
-      p.passive = true;
-      p.pokeball = PokeballType.MASTER_BALL; // If we ever add Shadow Balls, this should be a Shadow Ball
-      p.gender = Gender.MALE;
-      p.ivs = [31,31,31,31,31,31];
-      p.abilityIndex = 0; // Intimidate
-    })).setGenModifiersFunc(party => {
-      // Set Arcanine to terra fire
-      const arcanine = party[5];
-      return [modifierTypes.TERA_SHARD().generateType(null, [Type.FIRE]).withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(arcanine) as PersistentModifier];
     }),
-  [TrainerType.EVICE]: new TrainerConfig(++t).setName("Evice").initForEvilTeamLeader("Cipher Head",[]).setBattleBgm("battle_cipher_boss").setMixedBattleBgm("battle_cipher_boss")
-    .setPartyMemberFunc(0,getRandomPartyMemberFunc([Species.SLOWKING], TrainerSlot.TRAINER, true, p => {
-      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.SKILL_SWAP)),new PokemonMove(Moves.SHADOW_BALL), new PokemonMove(Moves.PSYCHIC), new PokemonMove(Moves.WATER_PULSE)];
-      p.abilityIndex = 2; // Regenerator
+  [TrainerType.NASCOUR]: new TrainerConfig(++t).setName("Nascour").initForEvilTeamLeader("Cipher",[]).setBattleBgm("battle_cipher_admin").setMixedBattleBgm("battle_cipher_admin")
+    .setPartyMemberFunc(0, getRandomPartyMemberFunc(getCipherSignatureSpecies("NASCOUR"),TrainerSlot.TRAINER,true, p => {
+      p.generateAndPopulateMoveset();
     }))
-    .setPartyMemberFunc(1,getRandomPartyMemberFunc([Species.SLAKING], TrainerSlot.TRAINER, true, p => {
-      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.DRAIN_PUNCH)),new PokemonMove(Moves.CRUSH_CLAW), new PokemonMove(Moves.GIGA_IMPACT), new PokemonMove(Moves.FIRE_BLAST)];
-      p.abilityIndex = 0; // Truant
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc(getCipherSignatureSpecies("NASCOUR"),TrainerSlot.TRAINER,true, p => {
+      p.generateAndPopulateMoveset();
     }))
-    .setPartyMemberFunc(2,getRandomPartyMemberFunc([Species.SCIZOR], TrainerSlot.TRAINER, true, p => {
-      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.SWORDS_DANCE)),new PokemonMove(Moves.IRON_HEAD), new PokemonMove(Moves.X_SCISSOR), new PokemonMove(Moves.BATON_PASS)];
-      p.abilityIndex = 0; // Swarm
+    .setPartyMemberFunc(2, getRandomPartyMemberFunc(getCipherSignatureSpecies("NASCOUR"),TrainerSlot.TRAINER,true, p => {
+      p.generateAndPopulateMoveset();
     }))
-    .setPartyMemberFunc(3,getRandomPartyMemberFunc([Species.MACHAMP], TrainerSlot.TRAINER, true, p => {
-      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.CROSS_CHOP)),new PokemonMove(Moves.ROCK_SLIDE), new PokemonMove(Moves.EARTHQUAKE), new PokemonMove(Moves.BULK_UP)];
-      p.abilityIndex = 1; // No Guard
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc(getCipherSignatureSpecies("NASCOUR"),TrainerSlot.TRAINER,true, p => {
+      p.generateAndPopulateMoveset();
     }))
-    .setPartyMemberFunc(4,getRandomPartyMemberFunc([Species.SALAMENCE], TrainerSlot.TRAINER, true, p => {
-      p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.DRAGON_DANCE)),new PokemonMove(Moves.DRAGON_CLAW), new PokemonMove(Moves.CRUNCH), new PokemonMove(Moves.FLAMETHROWER)];
-      p.abilityIndex = 2; // Moxie
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc(getCipherSignatureSpecies("NASCOUR"),TrainerSlot.TRAINER,true, p => {
+      p.generateAndPopulateMoveset();
+    }))
+    .setPartyMemberFunc(5,getRandomPartyMemberFunc([Species.TYRANITAR], TrainerSlot.TRAINER, true, p => {
+      p.setBoss(true, 3);
+      p.generateAndPopulateMoveset();
+      p.formIndex = 1; // Mega Tyranitar
+      p.pokeball = PokeballType.MASTER_BALL; // If we ever add Shadow Balls, this should be a Shadow Ball
+    })),
+  [TrainerType.EVICE]: new TrainerConfig(++t).setName("Evice").initForEvilTeamLeader("Cipher Head",getCipherSignatureSpecies("EVICE")).setBattleBgm("battle_cipher_boss").setMixedBattleBgm("battle_cipher_boss")
+    .setPartyMemberFunc(0,getRandomPartyMemberFunc([Species.SLAKING], TrainerSlot.TRAINER, true, p => {
+      p.generateAndPopulateMoveset();
+      p.pokeball = PokeballType.MASTER_BALL;
+    }))
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc(getCipherSignatureSpecies("EVICE"),TrainerSlot.TRAINER,true, p => {
+      p.generateAndPopulateMoveset();
+      p.pokeball = PokeballType.MASTER_BALL;
+    }))
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc(getCipherSignatureSpecies("EVICE"),TrainerSlot.TRAINER,true, p => {
+      p.generateAndPopulateMoveset();
+      p.pokeball = PokeballType.MASTER_BALL;
+    }))
+    .setPartyMemberFunc(2, getRandomPartyMemberFunc(getCipherSignatureSpecies("EVICE"),TrainerSlot.TRAINER,true, p => {
+      p.generateAndPopulateMoveset();
+      p.pokeball = PokeballType.MASTER_BALL;
+    }))
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc(getCipherSignatureSpecies("EVICE"),TrainerSlot.TRAINER,true, p => {
+      p.generateAndPopulateMoveset();
+      p.pokeball = PokeballType.MASTER_BALL;
+    }))
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc(getCipherSignatureSpecies("EVICE"),TrainerSlot.TRAINER,true, p => {
+      p.generateAndPopulateMoveset();
+      p.pokeball = PokeballType.MASTER_BALL;
     }))
     .setPartyMemberFunc(5,getRandomPartyMemberFunc([Species.LUGIA], TrainerSlot.TRAINER, true, p => {
       p.moveset = [PokemonMove.loadMove(new PokemonMove(Moves.AEROBLAST)),new PokemonMove(Moves.PSYCHIC), new PokemonMove(Moves.ROOST), new PokemonMove(Moves.LIQUIDATION)];
@@ -1909,10 +1992,6 @@ export const trainerConfigs: TrainerConfigs = {
       p.shiny = true;
       p.variant = 2;
       p.pokeball = PokeballType.MASTER_BALL; // If we ever add Shadow Balls, this should be a Shadow Ball
-    }))
-  ,
-
-
-
-
+    })),
 };
+

@@ -599,7 +599,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   "mirror_b": {
     "encounter": {
       1: `Hallo meine Täubchen! Schön, dass ihr hier seid. Ich hatte euch bereits erwartet!
-            $Ich bin D. Queen, der wunderschöne, der einzigartige, der unvergleichliche… Musik ab!`
+            $Ich bin D. Queen, der Wunderschöne, der Einzigartige, der Unvergleichliche… Musik ab!`
     },
     "victory": {
       1: "Ich bin aus dem Takt! Nein! Das hätte nicht passieren dürfen!"
@@ -617,12 +617,12 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "Grrr... Du miese kleine Ratte! Der Crypto-Pokémon-Plan wird trotzdem vollendet werden!"
     },
     "defeat": {
-      1: "Meine meisterhaften Moves haben dich in die Knie gezwungen!"
+      1: "Meine meisterhaften Angriffe haben dich in die Knie gezwungen!"
     }
   },
   "venus": {
     "encounter": {
-      1: `Hallo! Ich, Venus - euer aller Venus - grüße euch herzlich! 
+      1: `Hallo! Ich, Venus – euer aller Venus – grüße euch herzlich! 
           $Heute habe ich eine wichtige Mitteilung für euch alle! Es gibt schreckliche Neuigkeiten!
           $Ihr werdet jetzt ausgelöscht!`
     },
@@ -653,7 +653,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
          $Ich werde wohl ein ernstes Gespräch mit den Vorständen führen müssen!`
     },
     "victory": {
-      1: "Aaaah! Pass auf! Wir sind noch lange nicht... Es tut mir leid Erhabener"
+      1: "Aaaah! Pass auf! Wir sind noch lange nicht... Es tut mir leid, Erhabener"
     },
     "defeat": {
       1: "Team Crypto wird niemals besiegt werden! XD001 wird die Welt erobern!"
@@ -661,10 +661,10 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "evice": {
     "encounter": {
-      1: `Dachtest du wirklich Jakira wäre der Anführer von Team Crypto? Du hast dich geirrt!
-         $Er ist nur unser Aushängeschild. Damit ich im Verborgenen arbeiten kann! 
-         $Mein Name ist Maskad, nein das ist mein Deckname. Mein richtiger Name ist Intrigo!
-         $Auch bekannt als "Obercrypto". Wir haben es vollbracht. Mit der Hilfe von Professor Culpa
+      1: `Dachtest du wirklich, Jakira wäre der Anführer von Team Crypto? Du hast dich geirrt!
+         $Er ist nur unser Aushängeschild, damit ich im Verborgenen arbeiten kann! 
+         $Mein Name ist Maskad. Nein, das ist mein Deckname. Mein richtiger Name ist Intrigo!
+         $Auch bekannt als "Obercrypto". Wir haben es vollbracht. Mit der Hilfe von Professor Culpa...
          $XD001 ist vollendet. Und ich werde dir jetzt dessen Macht zeigen. Das ULTIMATIVE Crypto-Pokémon!`
     },
     "victory": {
