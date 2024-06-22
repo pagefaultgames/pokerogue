@@ -203,7 +203,7 @@ export default class UI extends Phaser.GameObjects.Container {
     this.bgmBar = new BgmBar(this.scene as BattleScene);
     this.bgmBar.setup();
 
-    (this.scene as BattleScene).fieldUI.add(this.bgmBar);
+    (this.scene as BattleScene).uiContainer.add(this.bgmBar);
 
     this.savingIcon = new SavingIconHandler(this.scene as BattleScene);
     this.savingIcon.setup();

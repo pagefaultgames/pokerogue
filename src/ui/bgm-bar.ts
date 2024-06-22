@@ -4,11 +4,11 @@ import { TextStyle, addTextObject } from "./text";
 
 const hiddenX = -118;
 const shownX = 0;
-const baseY = -116;
+const baseY = 0;
 
 
 export default class BgmBar extends Phaser.GameObjects.Container {
-  private bg: Phaser.GameObjects.Image;
+  private bg: Phaser.GameObjects.NineSlice;
   private musicText: Phaser.GameObjects.Text;
 
   private tween: Phaser.Tweens.Tween;
@@ -23,13 +23,14 @@ export default class BgmBar extends Phaser.GameObjects.Container {
   }
 
   setup(): void {
-    this.bg = this.scene.add.image(0, 0, "ability_bar_left");
+    this.bg = this.scene.add.nineslice(0, -5, "ability_bar_left", null, 120, 50, 0, 0, 16, 4);
+
 
     this.bg.setOrigin(0, 0);
 
     this.add(this.bg);
 
-    this.musicText = addTextObject(this.scene, 15, 3, "", TextStyle.MESSAGE, { fontSize: "72px" });
+    this.musicText = addTextObject(this.scene, 5, 5, "", TextStyle.MESSAGE, { fontSize: "72px" });
     this.musicText.setOrigin(0, 0);
     this.musicText.setWordWrapWidth(650, true);
     this.add(this.musicText);
@@ -46,22 +47,24 @@ export default class BgmBar extends Phaser.GameObjects.Container {
       this.queue.push(bgmName);
       return;
     }
+
     (this.scene as BattleScene).fieldUI.bringToTop(this);
 
     this.musicText.setText(`♫ : ${(this.scene as BattleScene).getRealBgmName(bgmName)}`);
 
 
-    let offset = -25;
+    let offset = 0;
     if ((this.scene as BattleScene)?.currentBattle?.double) {
-      offset = -10;
+      offset = 0;
     } else if ((this.scene as BattleScene)?.currentBattle) {
-      offset = -20;
+      offset = 0;
     }
     console.log("Offset is", offset);
     this.y = baseY + offset;
     this.tween = this.scene.tweens.add({
       targets: this,
       x: shownX,
+      y: 0,
       duration: 500,
       ease: "Sine.easeOut",
       onComplete: () => {
