@@ -1,7 +1,7 @@
 import { TranslationEntries } from "#app/interfaces/locales";
 
 export const pokemonSummary: TranslationEntries = {
-  "pokemonInfo": "포켓몬 정보",
+  "pokemonInfo": "스테이터스",
   "status": "상태 이상",
   "powerAccuracyCategory": "위력\n명중\n분류",
   "type": "타입",
