@@ -3,17 +3,13 @@ import { Phase } from "./phase";
 import BattleScene, { AnySound } from "./battle-scene";
 import * as Utils from "./utils";
 import { Mode } from "./ui/ui";
-import { EGG_SEED, Egg, GachaType, getLegendaryGachaSpeciesForTimestamp } from "./data/egg";
+import { EGG_SEED, Egg } from "./data/egg";
 import EggHatchSceneHandler from "./ui/egg-hatch-scene-handler";
 import { PlayerPokemon } from "./field/pokemon";
-import { getPokemonSpecies, speciesStarters } from "./data/pokemon-species";
 import { achvs } from "./system/achv";
-import { pokemonPrevolutions } from "./data/pokemon-evolutions";
 import PokemonInfoContainer from "./ui/pokemon-info-container";
 import EggCounterContainer from "./ui/egg-counter-container";
 import { EggCountChangedEvent } from "./events/egg";
-import { EggTier } from "#enums/egg-type";
-import { Species } from "#enums/species";
 
 /**
  * Class that represents egg hatching
@@ -442,135 +438,10 @@ export class EggHatchPhase extends Phase {
    */
   generatePokemon(): PlayerPokemon {
     let ret: PlayerPokemon;
-    let speciesOverride: Species; // SpeciesOverride should probably be a passed in parameter for future species-eggs
 
     this.scene.executeWithSeedOffset(() => {
-
-      /**
-       * Manaphy eggs have a 1/8 chance of being Manaphy and 7/8 chance of being Phione
-       * Legendary eggs pulled from the legendary gacha have a 50% of being converted into
-       * the species that was the legendary focus at the time
-       */
-      if (this.egg.isManaphyEgg()) {
-        const rand = Utils.randSeedInt(8);
-
-        speciesOverride = rand ? Species.PHIONE : Species.MANAPHY;
-      } else if (this.egg.tier === EggTier.MASTER
-        && this.egg.gachaType === GachaType.LEGENDARY) {
-        if (!Utils.randSeedInt(2)) {
-          speciesOverride = getLegendaryGachaSpeciesForTimestamp(this.scene, this.egg.timestamp);
-        }
-      }
-
-      if (speciesOverride) {
-        const pokemonSpecies = getPokemonSpecies(speciesOverride);
-        ret = this.scene.addPlayerPokemon(pokemonSpecies, 1, undefined, undefined, undefined, false);
-      } else {
-        let minStarterValue: integer;
-        let maxStarterValue: integer;
-
-        switch (this.egg.tier) {
-        case EggTier.GREAT:
-          minStarterValue = 4;
-          maxStarterValue = 5;
-          break;
-        case EggTier.ULTRA:
-          minStarterValue = 6;
-          maxStarterValue = 7;
-          break;
-        case EggTier.MASTER:
-          minStarterValue = 8;
-          maxStarterValue = 9;
-          break;
-        default:
-          minStarterValue = 1;
-          maxStarterValue = 3;
-          break;
-        }
-
-        const ignoredSpecies = [ Species.PHIONE, Species.MANAPHY, Species.ETERNATUS ];
-
-        let speciesPool = Object.keys(speciesStarters)
-          .filter(s => speciesStarters[s] >= minStarterValue && speciesStarters[s] <= maxStarterValue)
-          .map(s => parseInt(s) as Species)
-          .filter(s => !pokemonPrevolutions.hasOwnProperty(s) && getPokemonSpecies(s).isObtainable() && ignoredSpecies.indexOf(s) === -1);
-
-        // If this is the 10th egg without unlocking something new, attempt to force it.
-        if (this.scene.gameData.unlockPity[this.egg.tier] >= 9) {
-          const lockedPool = speciesPool.filter(s => !this.scene.gameData.dexData[s].caughtAttr);
-          if (lockedPool.length) { // Skip this if everything is unlocked
-            speciesPool = lockedPool;
-          }
-        }
-
-        /**
-         * Pokemon that are cheaper in their tier get a weight boost. Regionals get a weight penalty
-         * 1 cost mons get 2x
-         * 2 cost mons get 1.5x
-         * 4, 6, 8 cost mons get 1.75x
-         * 3, 5, 7, 9 cost mons get 1x
-         * Alolan, Galarian, and Paldean mons get 0.5x
-         * Hisui mons get 0.125x
-         *
-         * The total weight is also being calculated EACH time there is an egg hatch instead of being generated once
-         * and being the same each time
-         */
-        let totalWeight = 0;
-        const speciesWeights = [];
-        for (const speciesId of speciesPool) {
-          let weight = Math.floor((((maxStarterValue - speciesStarters[speciesId]) / ((maxStarterValue - minStarterValue) + 1)) * 1.5 + 1) * 100);
-          const species = getPokemonSpecies(speciesId);
-          if (species.isRegional()) {
-            weight = Math.floor(weight / (species.isRareRegional() ? 8 : 2));
-          }
-          speciesWeights.push(totalWeight + weight);
-          totalWeight += weight;
-        }
-
-        let species: Species;
-
-        const rand = Utils.randSeedInt(totalWeight);
-        for (let s = 0; s < speciesWeights.length; s++) {
-          if (rand < speciesWeights[s]) {
-            species = speciesPool[s];
-            break;
-          }
-        }
-
-        if (!!this.scene.gameData.dexData[species].caughtAttr) {
-          this.scene.gameData.unlockPity[this.egg.tier] = Math.min(this.scene.gameData.unlockPity[this.egg.tier] + 1, 10);
-        } else {
-          this.scene.gameData.unlockPity[this.egg.tier] = 0;
-        }
-
-        const pokemonSpecies = getPokemonSpecies(species);
-
-        ret = this.scene.addPlayerPokemon(pokemonSpecies, 1, undefined, undefined, undefined, false);
-      }
-
-      /**
-       * Non Shiny gacha Pokemon have a 1/128 chance of being shiny
-       * Shiny gacha Pokemon have a 1/64 chance of being shiny
-       * IVs are rolled twice and the higher of each stat's IV is taken
-       * The egg move gacha doubles the rate of rare egg moves but the base rates are
-       * Common: 1/48
-       * Rare: 1/24
-       * Epic: 1/12
-       * Legendary: 1/6
-       */
-      ret.trySetShiny(this.egg.gachaType === GachaType.SHINY ? 1024 : 512);
-      ret.variant = ret.shiny ? ret.generateVariant() : 0;
-
-      const secondaryIvs = Utils.getIvsFromId(Utils.randSeedInt(4294967295));
-
-      for (let s = 0; s < ret.ivs.length; s++) {
-        ret.ivs[s] = Math.max(ret.ivs[s], secondaryIvs[s]);
-      }
-
-      const baseChance = this.egg.gachaType === GachaType.MOVE ? 3 : 6;
-      this.eggMoveIndex = Utils.randSeedInt(baseChance * Math.pow(2, 3 - this.egg.tier))
-        ? Utils.randSeedInt(3)
-        : 3;
+      ret = this.egg.generatePlayerPokemon(this.scene);
+      this.eggMoveIndex = this.egg.eggMoveIndex;
 
     }, this.egg.id, EGG_SEED.toString());
 
