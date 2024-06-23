@@ -7,6 +7,7 @@ import { GameMode } from "./game-mode";
 import { MoneyMultiplierModifier, PokemonHeldItemModifier } from "./modifier/modifier";
 import { PokeballType } from "./data/pokeball";
 import {trainerConfigs} from "#app/data/trainer-config";
+import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleSpec } from "#enums/battle-spec";
 import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
@@ -165,6 +166,10 @@ export default class Battle {
   pickUpScatteredMoney(scene: BattleScene): void {
     const moneyAmount = new Utils.IntegerHolder(scene.currentBattle.moneyScattered);
     scene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
+
+    if (scene.arena.getTag(ArenaTagType.HAPPY_HOUR)) {
+      moneyAmount.value *= 2;
+    }
 
     scene.addMoney(moneyAmount.value);
 
