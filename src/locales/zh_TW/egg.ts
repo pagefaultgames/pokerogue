@@ -18,5 +18,5 @@ export const egg: SimpleTranslationEntries = {
   "tooManyEggs": "你的蛋太多啦！",
   "pull": "抽",
   "pulls": "抽",
-  "sameSpeciesEgg": "{{species}} will hatch from this egg!",
+  "sameSpeciesEgg": "{{species}} 會從這個蛋裡孵化！"
 } as const;
