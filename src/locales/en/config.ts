@@ -32,6 +32,7 @@ import { nature } from "./nature";
 import { partyUiHandler } from "./party-ui-handler";
 import { pokeball } from "./pokeball";
 import { pokemon } from "./pokemon";
+import { fusionAffixes } from "./pokemon-fusion-affixes";
 import { pokemonInfo } from "./pokemon-info";
 import { pokemonInfoContainer } from "./pokemon-info-container";
 import { saveSlotSelectUiHandler } from "./save-slot-select-ui-handler";
@@ -75,6 +76,7 @@ export const enConfig = {
   partyUiHandler: partyUiHandler,
   pokeball: pokeball,
   pokemon: pokemon,
+  fusionAffixes: fusionAffixes,
   pokemonInfo: pokemonInfo,
   pokemonInfoContainer: pokemonInfoContainer,
   saveSlotSelectUiHandler: saveSlotSelectUiHandler,
