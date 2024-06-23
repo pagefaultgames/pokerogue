@@ -851,6 +851,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.getLevelMoves(1, true).map(lm => lm[1]).filter(lm => !this.moveset.filter(m => m.moveId === lm).length).filter((move: Moves, i: integer, array: Moves[]) => array.indexOf(move) === i);
   }
 
+  /**
+   * Gets the types of a pokemon
+   * @param includeTeraType boolean to include tera-formed type, default false
+   * @param forDefend boolean if the pokemon is defending from an attack
+   * @param ignoreOverride boolean if true, ignore ability changing effects
+   * @returns array of {@linkcode Type}
+   */
   getTypes(includeTeraType = false, forDefend: boolean = false, ignoreOverride?: boolean): Type[] {
     const types = [];
 
@@ -1084,8 +1091,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return weight.value;
   }
 
+  /**
+   * Gets the tera-formed type of the pokemon, or UNKNOWN if not present
+   * @returns the {@linkcode Type}
+   */
   getTeraType(): Type {
-
     // this.scene can be undefined for a fainted mon in doubles
     // use nullish coalescing to auto-set to false to avoid runtime errors
     const teraModifier = false ?? this.scene.findModifier(m => m instanceof TerastallizeModifier
