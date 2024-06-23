@@ -2975,7 +2975,7 @@ export const move: MoveTranslationEntries = {
   },
   "dynamaxCannon": {
     name: "Dynamax-Kanone",
-    effect: "Der Anwender schießt einen Strahl aus seinem Kern ab. Dynamaximierte Ziele erleiden doppelten Schaden." // Check new EN locale
+    effect: "Der Anwender schießt einen Strahl aus seinem Kern ab. Verursacht bis zu doppelt so viel Schaden, wenn der Gegner ein höheres Level als der Anwender hat."
   },
   "snipeShot": {
     name: "Präzisionsschuss",
