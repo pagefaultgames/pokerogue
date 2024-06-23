@@ -540,15 +540,17 @@ export class AttackTypeBoosterModifierType extends PokemonHeldItemModifierType i
   }
 }
 
+export type SpeciesStatBoosterItem = keyof typeof SpeciesStatBoosterModifierTypeGenerator.items;
+
 /**
  * Modifier type for {@linkcode Modifiers.SpeciesStatBoosterModifier}
  * @extends PokemonHeldItemModifierType
  * @implements GeneratedPersistentModifierType
  */
 export class SpeciesStatBoosterModifierType extends PokemonHeldItemModifierType implements GeneratedPersistentModifierType {
-  private key: string;
+  private key: SpeciesStatBoosterItem;
 
-  constructor(key: string) {
+  constructor(key: SpeciesStatBoosterItem) {
     const item = SpeciesStatBoosterModifierTypeGenerator.items[key];
     super(`modifierType:SpeciesBoosterItem.${key}`, key.toLowerCase(), (type, args) => new Modifiers.SpeciesStatBoosterModifier(type, (args[0] as Pokemon).id, item.stats, item.multiplier, item.species));
 
@@ -891,7 +893,6 @@ class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
   }
 }
 
-
 /**
  * Modifier type generator for {@linkcode SpeciesStatBoosterModifierType}, which
  * encapsulates the logic for weighting the most useful held item from
@@ -910,7 +911,7 @@ class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
   constructor() {
     super((party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs) {
-        return new SpeciesStatBoosterModifierType(pregenArgs[0] as string);
+        return new SpeciesStatBoosterModifierType(pregenArgs[0] as SpeciesStatBoosterItem);
       }
 
       const values = Object.values(SpeciesStatBoosterModifierTypeGenerator.items);
@@ -955,7 +956,7 @@ class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
           if (weights[i] !== 0) {
             const curWeight = weight + weights[i];
             if (randInt <= weight + weights[i]) {
-              return new SpeciesStatBoosterModifierType(keys[i]);
+              return new SpeciesStatBoosterModifierType(keys[i] as SpeciesStatBoosterItem);
             }
             weight = curWeight;
           }
