@@ -14,7 +14,7 @@ import { GameMode } from "../game-mode";
 import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from "@material/material-color-utilities";
 import { VariantSet } from "./variant";
 import i18next from "i18next";
-import { FusionTranslationEntry, Localizable } from "#app/interfaces/locales";
+import { Localizable } from "#app/interfaces/locales";
 import { Stat } from "./pokemon-stat";
 import { Abilities } from "#enums/abilities";
 import { PartyMemberStrength } from "#enums/party-member-strength";
@@ -51,15 +51,8 @@ export function getPokemonSpeciesForm(species: Species, formIndex: integer): Pok
 }
 
 export function getFusedSpeciesName(speciesAName: string, speciesBName: string): string {
-  const speciesA = i18next.t(`fusionAffixes:${speciesAName}`) as FusionTranslationEntry;
-  const speciesB = i18next.t(`fusionAffixes:${speciesBName}`) as FusionTranslationEntry;
-
-  if (!speciesA || !speciesB) {
-    throw new Error(`One or both species not found: ${speciesAName}, ${speciesBName}`);
-  }
-
-  // Combine the fusionPrefix of speciesA with the fusionSuffix of speciesB using template literals
-  return `${speciesA.fusionPrefix}${speciesB.fusionSuffix}`;
+//I WAS HERE, DON'T KNOW HOW TO MAKE THIS WORK
+  return `${speciesAPrefix}${speciesBSuffix}`;
 }
 
 export type PokemonSpeciesFilter = (species: PokemonSpecies) => boolean;
