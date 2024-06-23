@@ -78,7 +78,7 @@ describe("Moves - Flower Shield", () => {
   });
 
   /**
-   * See semi-vulnerable state tags. {@see Pokemon.isInSemiVulnerableState }
+   * See semi-vulnerable state tags. {@linkcode HideSpriteTag}
   */
   it("does not increase defense of a pokemon in semi-vulnerable state", async () => {
     vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.PARAS);
