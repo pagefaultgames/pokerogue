@@ -457,7 +457,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     const formattedMoney = Utils.formatMoney(this.scene.moneyFormat, this.rerollCost);
 
-	this.rerollCostText.setText(i18next.t("modifierSelectUiHandler:rerollCost", { formattedMoney }));
+    this.rerollCostText.setText(i18next.t("modifierSelectUiHandler:rerollCost", { formattedMoney }));
     this.rerollCostText.setColor(this.getTextColor(canReroll ? TextStyle.MONEY : TextStyle.PARTY_RED));
     this.rerollCostText.setShadowColor(this.getTextColor(canReroll ? TextStyle.MONEY : TextStyle.PARTY_RED, true));
   }
@@ -721,7 +721,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
 
     const formattedMoney = Utils.formatMoney(scene.moneyFormat, this.modifierTypeOption.cost);
 
-	this.itemCostText.setText(i18next.t("modifierSelectUiHandler:itemCost", { formattedMoney }));
+    this.itemCostText.setText(i18next.t("modifierSelectUiHandler:itemCost", { formattedMoney }));
     this.itemCostText.setColor(getTextColor(textStyle, false, scene.uiTheme));
     this.itemCostText.setShadowColor(getTextColor(textStyle, true, scene.uiTheme));
   }
