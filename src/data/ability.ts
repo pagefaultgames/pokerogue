@@ -3794,17 +3794,23 @@ export class IceFaceBlockPhysicalAbAttr extends ReceivedMoveDamageMultiplierAbAt
 export class BypassSpeedChanceAbAttr extends AbAttr {
   public chance: integer;
 
+  /**
+   * @param {integer} chance probability of ability being active.
+   */
   constructor(chance: integer) {
     super(true);
     this.chance = chance;
   }
 
-  apply(
-    pokemon: Pokemon,
-    passive: boolean,
-    cancelled: Utils.BooleanHolder,
-    args: any[]
-  ): boolean {
+  /**
+   * bypass move order in their priority bracket when pokemon choose damaging move
+   * @param {Pokemon} pokemon {@linkcode Pokemon}  the Pokemon applying this ability
+   * @param {boolean} passive N/A
+   * @param {Utils.BooleanHolder} cancelled N/A
+   * @param {any[]} args [0] {@linkcode Utils.BooleanHolder} set to true when the ability activated
+   * @returns {boolean} - whether the ability was activated.
+   */
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     const bypassSpeed = args[0] as Utils.BooleanHolder;
 
     if (!bypassSpeed.value && pokemon.randSeedInt(100) < this.chance) {
@@ -3812,9 +3818,9 @@ export class BypassSpeedChanceAbAttr extends AbAttr {
         pokemon.scene.currentBattle.turnCommands[pokemon.getBattlerIndex()];
       const isCommandFight = turnCommand?.command === Command.FIGHT;
       const move = allMoves[turnCommand.move?.move];
-      const hasPower = move?.power !== -1;
+      const isDamageMove = move?.category === MoveCategory.PHYSICAL || move?.category === MoveCategory.SPECIAL;
 
-      if (isCommandFight && hasPower) {
+      if (isCommandFight && isDamageMove) {
         bypassSpeed.value = true;
         return true;
       }
@@ -3823,14 +3829,8 @@ export class BypassSpeedChanceAbAttr extends AbAttr {
     return false;
   }
 
-  getTriggerMessage(
-    pokemon: Pokemon,
-    abilityName: string,
-    ...args: any[]
-  ): string {
-    return i18next.t("abilityTriggers:quickDraw", {
-      pokemonName: getPokemonNameWithAffix(pokemon),
-    });
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
+    return i18next.t("abilityTriggers:quickDraw", {pokemonName: getPokemonNameWithAffix(pokemon)});
   }
 }
 
@@ -4918,7 +4918,7 @@ export function initAbilities() {
       .attr(NoFusionAbilityAbAttr)
       .condition((pokemon) => !pokemon.isTerastallized()),
     new Ability(Abilities.QUICK_DRAW, 8)
-      .attr(BypassSpeedChanceAbAttr,30),
+      .attr(BypassSpeedChanceAbAttr, 30),
     new Ability(Abilities.UNSEEN_FIST, 8)
       .attr(IgnoreProtectOnContactAbAttr),
     new Ability(Abilities.CURIOUS_MEDICINE, 8)
