@@ -76,26 +76,10 @@ describe("Moves - Flower Shield", () => {
     nonGrassPokemons.forEach(p => expect(p.summonData.battleStats[BattleStat.DEF]).toBe(0));
   });
 
-  it("does not increase defense of a pokemon in semi-vulnerable state - BattlerTagType.FLYING", async () => {
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.TROPIUS);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.FLY, Moves.FLY, Moves.FLY, Moves.FLY]);
-    vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(50);
-
-    await game.startBattle([Species.CHERRIM]);
-    const tropius = game.scene.getEnemyPokemon();
-    const cherrim = game.scene.getPlayerPokemon();
-
-    expect(tropius.summonData.battleStats[BattleStat.DEF]).toBe(0);
-    expect(cherrim.summonData.battleStats[BattleStat.DEF]).toBe(0);
-
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FLOWER_SHIELD));
-    await game.phaseInterceptor.to(TurnEndPhase);
-
-    expect(tropius.summonData.battleStats[BattleStat.DEF]).toBe(0);
-    expect(cherrim.summonData.battleStats[BattleStat.DEF]).toBe(1);
-  });
-
-  it("does not increase defense of a pokemon in semi-vulnerable state - BattlerTagType.UNDERGROUND", async () => {
+  /**
+   * See semi-vulnerable state tags. {@see Pokemon.isInSemiVulnerableState }
+  */
+  it("does not increase defense of a pokemon in semi-vulnerable state", async () => {
     vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.PARAS);
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.DIG, Moves.DIG, Moves.DIG, Moves.DIG]);
     vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(50);
@@ -106,11 +90,30 @@ describe("Moves - Flower Shield", () => {
 
     expect(paras.summonData.battleStats[BattleStat.DEF]).toBe(0);
     expect(cherrim.summonData.battleStats[BattleStat.DEF]).toBe(0);
+    expect(paras.isInSemiVulnerableState()).toBe(false);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.FLOWER_SHIELD));
     await game.phaseInterceptor.to(TurnEndPhase);
 
+    expect(paras.isInSemiVulnerableState()).toBe(true);
     expect(paras.summonData.battleStats[BattleStat.DEF]).toBe(0);
     expect(cherrim.summonData.battleStats[BattleStat.DEF]).toBe(1);
+  });
+
+  it("does nothing if there are no Grass-type pokemon on the field", async () => {
+    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
+
+    await game.startBattle([Species.MAGIKARP]);
+    const enemy = game.scene.getEnemyPokemon();
+    const ally = game.scene.getPlayerPokemon();
+
+    expect(enemy.summonData.battleStats[BattleStat.DEF]).toBe(0);
+    expect(ally.summonData.battleStats[BattleStat.DEF]).toBe(0);
+
+    game.doAttack(getMovePosition(game.scene, 0, Moves.FLOWER_SHIELD));
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    expect(enemy.summonData.battleStats[BattleStat.DEF]).toBe(0);
+    expect(ally.summonData.battleStats[BattleStat.DEF]).toBe(0);
   });
 });

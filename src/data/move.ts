@@ -7238,7 +7238,7 @@ export function initMoves() {
       .attr(AddArenaTagAttr, ArenaTagType.CRAFTY_SHIELD, 1, true, true),
     new StatusMove(Moves.FLOWER_SHIELD, Type.FAIRY, -1, 10, -1, 0, 6)
       .target(MoveTarget.ALL)
-      .attr(StatChangeAttr, BattleStat.DEF, 1, false, (user, target, move) => target.getTypes().includes(Type.GRASS) && !target.getTag(BattlerTagType.FLYING) && !target.getTag(BattlerTagType.UNDERGROUND)),
+      .attr(StatChangeAttr, BattleStat.DEF, 1, false, (user, target, move) => target.getTypes().includes(Type.GRASS) && !target.isInSemiVulnerableState()),
     new StatusMove(Moves.GRASSY_TERRAIN, Type.GRASS, -1, 10, -1, 0, 6)
       .attr(TerrainChangeAttr, TerrainType.GRASSY)
       .target(MoveTarget.BOTH_SIDES),
