@@ -1467,6 +1467,11 @@ export class CursedTag extends BattlerTag {
   }
 }
 
+/**
+ * Battler tag for effects that ground the source, allowing Ground-type moves to hit them. Encompasses two tag types:
+ * @item IGNORE_FLYING: Persistent grounding effects (i.e. from Smack Down and Thousand Waves)
+ * @item GROUNDED: One-turn grounding effects (i.e. from Roost)
+ */
 export class GroundedTag extends BattlerTag {
   constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, sourceMove: Moves) {
     super(tagType, lapseType, 1, sourceMove);
