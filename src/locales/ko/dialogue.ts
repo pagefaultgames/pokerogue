@@ -1924,13 +1924,13 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "olympia": {
     "encounter": {
-      1: "An ancient custom deciding one's destiny. The battle begins!"
+      1: "이 의식은 앞으로의 길을 정하는 것입니다. 포켓몬 승부를 시작해볼까요!"
     },
     "victory": {
-      1: "Create your own path. Let nothing get in your way. Your fate, your future."
+      1: "당신이라면 별이라도 움직여서 가야 할 길을 만들어 낼 것 같습니다."
     },
     "defeat": {
-      1: "Our path is clear now."
+      1: "우리의 길은 이제 분명해졌습니다."
     }
   },
   "volkner": {
@@ -2016,38 +2016,38 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "grant": {
     "encounter": {
-      1: `There is only one thing I wish for. 
-                    $That by surpassing one another, we find a way to even greater heights.`,
+      1: `제가 바라는 것은 단 하나뿐입니다. 
+                    $서로가 서로를 뛰어넘어, 더 높은 벽에 도달하는 것입니다.`,
     },
     "victory": {
-      1: "You are a wall that I am unable to surmount!"
+      1: "내 앞에 솟아 있는 높은 벽… 그건 바로 당신입니다."
     },
     "defeat": {
-      1: `Do not give up. 
-                    $That is all there really is to it. 
-                    $The most important lessons in life are simple.`,
+      1: `인생에서 중요한 교훈은 간단합니다.
+                    $포기하지 않는 것.
+                    $이것이 전부입니다.`,
     }
   },
   "korrina": {
     "encounter": {
-      1: "Time for Lady Korrina's big appearance!"
+      1: "코르니 납시오!"
     },
     "victory": {
-      1: "It's your very being that allows your Pokémon to evolve!"
+      1: "네 존재가 너의 포켓몬을 점점 진화시키고 있어!"
     },
     "defeat": {
-      1: "What an explosive battle!"
+      1: "정말 멋진 배틀이었어!"
     }
   },
   "clemont": {
     "encounter": {
-      1: "Oh! I'm glad that we got to meet!"
+      1: "아앗! 잘 부탁드립니다!"
     },
     "victory": {
-      1: "Your passion for battle inspires me!"
+      1: "당신들의 승부를 향한 마음에 자극을 받았습니다!"
     },
     "defeat": {
-      1: "Looks like my Trainer-Grow-Stronger Machine, Mach 2 is really working!"
+      1: "저의 슈퍼트레이닝 발명품이 효과가 있는 것 같군요!"
     }
   },
   "valerie": {

@@ -1468,6 +1468,17 @@ export class CursedTag extends BattlerTag {
 }
 
 /**
+ * Battler tag for effects that ground the source, allowing Ground-type moves to hit them. Encompasses two tag types:
+ * @item IGNORE_FLYING: Persistent grounding effects (i.e. from Smack Down and Thousand Waves)
+ * @item ROOSTED: One-turn grounding effects (i.e. from Roost)
+ */
+export class GroundedTag extends BattlerTag {
+  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, sourceMove: Moves) {
+    super(tagType, lapseType, 1, sourceMove);
+  }
+}
+
+/**
  * Provides the Ice Face ability's effects.
  */
 export class IceFaceTag extends BattlerTag {
@@ -1618,9 +1629,9 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
   case BattlerTagType.BYPASS_SLEEP:
     return new BattlerTag(BattlerTagType.BYPASS_SLEEP, BattlerTagLapseType.TURN_END, turnCount, sourceMove);
   case BattlerTagType.IGNORE_FLYING:
-    return new BattlerTag(tagType, BattlerTagLapseType.TURN_END, turnCount, sourceMove);
-  case BattlerTagType.GROUNDED:
-    return new BattlerTag(tagType, BattlerTagLapseType.TURN_END, turnCount - 1, sourceMove);
+    return new GroundedTag(tagType, BattlerTagLapseType.CUSTOM, sourceMove);
+  case BattlerTagType.ROOSTED:
+    return new GroundedTag(tagType, BattlerTagLapseType.TURN_END, sourceMove);
   case BattlerTagType.SALT_CURED:
     return new SaltCuredTag(sourceId);
   case BattlerTagType.CURSED:

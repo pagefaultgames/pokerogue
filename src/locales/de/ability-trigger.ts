@@ -1,10 +1,10 @@
 import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const abilityTriggers: SimpleTranslationEntries = {
-  "blockRecoilDamage" : "{{pokemonName}} wurde durch {{abilityName}}\nvor Rückstoß geschützt!",
+  "blockRecoilDamage" : "{{pokemonName}} wurde durch {{abilityName}} vor Rückstoß geschützt!",
   "badDreams": "{{pokemonName}} ist in einem Alptraum gefangen!",
-  "costar": "{{pokemonName}} copied {{allyName}}'s stat changes!",
-  "iceFaceAvoidedDamage": "{{pokemonName}} wehrt Schaden\nmit {{abilityName}} ab!",
-  "trace": "{{pokemonName}} copied {{targetName}}'s\n{{abilityName}}!",
+  "costar": "{{pokemonName}} kopiert die Statusveränderungen von {{allyName}}!",
+  "iceFaceAvoidedDamage": "{{pokemonName}} wehrt Schaden mit {{abilityName}} ab!",
+  "trace": "{{pokemonName}} kopiert {{abilityName}} von {{targetName}}!",
   "windPowerCharged": "Der Treffer durch {{moveName}} läd die Stärke von {{pokemonName}} auf!",
 } as const;

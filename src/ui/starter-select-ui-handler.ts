@@ -687,35 +687,48 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.starterSelectContainer.add(this.instructionsContainer);
 
     // instruction rows that will be pushed into the container dynamically based on need
-    this.shinyIconElement = this.scene.add.sprite(this.instructionRowX, this.instructionRowY, "keyboard", "R.png");
+    // creating new sprites since they will be added to the scene later
+    this.shinyIconElement = new Phaser.GameObjects.Sprite(this.scene, this.instructionRowX, this.instructionRowY, "keyboard", "R.png");
+    this.shinyIconElement.setName("sprite-shiny-icon-element");
     this.shinyIconElement.setScale(0.675);
     this.shinyIconElement.setOrigin(0.0, 0.0);
     this.shinyLabel = addTextObject(this.scene, this.instructionRowX + this.instructionRowTextOffset, this.instructionRowY, i18next.t("starterSelectUiHandler:cycleShiny"), TextStyle.PARTY, { fontSize: instructionTextSize });
+    this.shinyLabel.setName("text-shiny-label");
 
-    this.formIconElement = this.scene.add.sprite(this.instructionRowX, this.instructionRowY, "keyboard", "F.png");
+    this.formIconElement = new Phaser.GameObjects.Sprite(this.scene, this.instructionRowX, this.instructionRowY, "keyboard", "F.png");
+    this.formIconElement.setName("sprite-form-icon-element");
     this.formIconElement.setScale(0.675);
     this.formIconElement.setOrigin(0.0, 0.0);
     this.formLabel = addTextObject(this.scene, this.instructionRowX + this.instructionRowTextOffset, this.instructionRowY, i18next.t("starterSelectUiHandler:cycleForm"), TextStyle.PARTY, { fontSize: instructionTextSize });
+    this.formLabel.setName("text-form-label");
 
-    this.genderIconElement = this.scene.add.sprite(this.instructionRowX, this.instructionRowY, "keyboard", "G.png");
+    this.genderIconElement = new Phaser.GameObjects.Sprite(this.scene, this.instructionRowX, this.instructionRowY, "keyboard", "G.png");
+    this.genderIconElement.setName("sprite-gender-icon-element");
     this.genderIconElement.setScale(0.675);
     this.genderIconElement.setOrigin(0.0, 0.0);
     this.genderLabel = addTextObject(this.scene, this.instructionRowX + this.instructionRowTextOffset, this.instructionRowY, i18next.t("starterSelectUiHandler:cycleGender"), TextStyle.PARTY, { fontSize: instructionTextSize });
+    this.genderLabel.setName("text-gender-label");
 
-    this.abilityIconElement = this.scene.add.sprite(this.instructionRowX, this.instructionRowY, "keyboard", "E.png");
+    this.abilityIconElement = new Phaser.GameObjects.Sprite(this.scene, this.instructionRowX, this.instructionRowY, "keyboard", "E.png");
+    this.abilityIconElement.setName("sprite-ability-icon-element");
     this.abilityIconElement.setScale(0.675);
     this.abilityIconElement.setOrigin(0.0, 0.0);
     this.abilityLabel = addTextObject(this.scene, this.instructionRowX + this.instructionRowTextOffset, this.instructionRowY, i18next.t("starterSelectUiHandler:cycleAbility"), TextStyle.PARTY, { fontSize: instructionTextSize });
+    this.abilityLabel.setName("text-ability-label");
 
-    this.natureIconElement = this.scene.add.sprite(this.instructionRowX, this.instructionRowY, "keyboard", "N.png");
+    this.natureIconElement = new Phaser.GameObjects.Sprite(this.scene, this.instructionRowX, this.instructionRowY, "keyboard", "N.png");
+    this.natureIconElement.setName("sprite-nature-icon-element");
     this.natureIconElement.setScale(0.675);
     this.natureIconElement.setOrigin(0.0, 0.0);
     this.natureLabel = addTextObject(this.scene, this.instructionRowX + this.instructionRowTextOffset, this.instructionRowY, i18next.t("starterSelectUiHandler:cycleNature"), TextStyle.PARTY, { fontSize: instructionTextSize });
+    this.natureLabel.setName("text-nature-label");
 
-    this.variantIconElement = this.scene.add.sprite(this.instructionRowX, this.instructionRowY, "keyboard", "V.png");
+    this.variantIconElement = new Phaser.GameObjects.Sprite(this.scene, this.instructionRowX, this.instructionRowY, "keyboard", "V.png");
+    this.variantIconElement.setName("sprite-variant-icon-element");
     this.variantIconElement.setScale(0.675);
     this.variantIconElement.setOrigin(0.0, 0.0);
     this.variantLabel = addTextObject(this.scene, this.instructionRowX + this.instructionRowTextOffset, this.instructionRowY, i18next.t("starterSelectUiHandler:cycleVariant"), TextStyle.PARTY, { fontSize: instructionTextSize });
+    this.variantLabel.setName("text-variant-label");
 
     this.hideInstructions();
 

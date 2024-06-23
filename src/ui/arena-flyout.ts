@@ -89,6 +89,7 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
 
   constructor(scene: Phaser.Scene) {
     super(scene, 0, 0);
+    this.setName("arena-flyout");
     this.battleScene = this.scene as BattleScene;
 
     this.translationX = this.flyoutWidth;
