@@ -41,7 +41,7 @@ function testBattleStatName(stat: BattleStat, expectMessage: string) {
 }
 
 function testBattleStatLevelChangeDescription(levels: integer, up: boolean, expectMessage: string) {
-  const message = getBattleStatLevelChangeDescription(levels, up);
+  const message = getBattleStatLevelChangeDescription("{{pokemonNameWithAffix}}", "{{stats}}", levels, up);
   console.log(`message ${message}, expected ${expectMessage}`);
   expect(message).toBe(expectMessage);
 }
