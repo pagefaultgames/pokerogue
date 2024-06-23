@@ -48,5 +48,5 @@ export const menu: SimpleTranslationEntries = {
   "no":"Non",
   "disclaimer": "AVERTISSEMENT",
   "disclaimerDescription": "Ce jeu n’est pas un produit fini et peut contenir des problèmes de jouabilité, dont de possibles pertes de sauvegardes,\ndes modifications sans avertissement et pourrait ou non encore être mis à jour ou terminé.",
-  "choosePokemon": "Choose a Pokémon.",
+  "choosePokemon": "Sélectionnez un Pokémon.",
 } as const;
