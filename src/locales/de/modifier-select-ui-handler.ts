@@ -11,5 +11,4 @@ export const modifierSelectUiHandler: SimpleTranslationEntries = {
   "checkTeamDesc": "Überprüfe dein Team or nutze Formänderungsitems.",
   "rerollCost": "{{formattedMoney}}₽",
   "itemCost": "{{formattedMoney}}₽"
-
 } as const;
