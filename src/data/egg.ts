@@ -141,8 +141,10 @@ export class Egg {
     //if (eggOptions.tier && eggOptions.species) throw Error("Error egg can't have species and tier as option. only choose one of them.")
 
     this._tier = eggOptions.tier ?? (Overrides.EGG_TIER_OVERRIDE ?? this.rollEggTier());
+    this._sourceType = eggOptions.sourceType ?? undefined;
     // If egg was pulled, check if egg pity needs to override the egg tier
     if (eggOptions.pulled) {
+      // Needs this._tier and this._sourceType to work
       this.checkForPityTierOverrides(eggOptions.scene);
     }
 
@@ -152,7 +154,6 @@ export class Egg {
     if (eggOptions.pulled) {
       this.increasePullStatistic(eggOptions.scene);
     }
-    this._sourceType = eggOptions.sourceType ?? undefined;
     this._hatchWaves = eggOptions.hatchWaves ?? this.getEggTierDefaultHatchWaves();
     this._timestamp = eggOptions.timestamp ?? new Date().getTime();
 
@@ -464,6 +465,8 @@ export class Egg {
   }
 
   private checkForPityTierOverrides(scene: BattleScene): void {
+    console.log("Before", scene.gameData.eggPity);
+
     const tierValueOffset = this._sourceType === EggSourceType.GACHA_LEGENDARY ? 1 : 0;
     scene.gameData.eggPity[EggTier.GREAT] += 1;
     scene.gameData.eggPity[EggTier.ULTRA] += 1;
@@ -477,6 +480,7 @@ export class Egg {
       this._tier = EggTier.GREAT;
     }
     scene.gameData.eggPity[this._tier] = 0;
+    console.log("After", scene.gameData.eggPity);
   }
 
   private increasePullStatistic(scene: BattleScene): void {
