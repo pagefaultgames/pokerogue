@@ -4448,7 +4448,7 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
         }
         resolve(true);
       } else {
-        user.scene.queueMessage(i18next.t("battle:moveFailed"));
+        user.scene.queueMessage(i18next.t("battle:attackFailed"));
         resolve(false);
       }
     });
