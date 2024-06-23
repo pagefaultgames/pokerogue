@@ -14,7 +14,7 @@ import { GameMode } from "../game-mode";
 import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from "@material/material-color-utilities";
 import { VariantSet } from "./variant";
 import i18next from "i18next";
-import { Localizable } from "#app/interfaces/locales";
+import { FusionTranslationEntry, Localizable } from "#app/interfaces/locales";
 import { Stat } from "./pokemon-stat";
 import { Abilities } from "#enums/abilities";
 import { PartyMemberStrength } from "#enums/party-member-strength";
@@ -51,18 +51,15 @@ export function getPokemonSpeciesForm(species: Species, formIndex: integer): Pok
 }
 
 export function getFusedSpeciesName(speciesAName: string, speciesBName: string): string {
-  // Get the fusion affixes for the species
-  const speciesAFusionAffixes = fusionAffixes[speciesAName];
-  const speciesBFusionAffixes = fusionAffixes[speciesBName];
+  const speciesA = i18next.t(`fusionAffixes:${speciesAName}`) as FusionTranslationEntry;
+  const speciesB = i18next.t(`fusionAffixes:${speciesBName}`) as FusionTranslationEntry;
 
-  // Get the fusion prefix and suffix for each species
-  const speciesAPrefix = speciesAFusionAffixes.fusionPrefix;
-  const speciesBSuffix = speciesBFusionAffixes.fusionSuffix;
+  if (!speciesA || !speciesB) {
+    throw new Error(`One or both species not found: ${speciesAName}, ${speciesBName}`);
+  }
 
-  // Construct the fused species name
-  const fusedSpeciesName = `${speciesAPrefix}${speciesBSuffix}`;
-
-  return fusedSpeciesName;
+  // Combine the fusionPrefix of speciesA with the fusionSuffix of speciesB using template literals
+  return `${speciesA.fusionPrefix}${speciesB.fusionSuffix}`;
 }
 
 export type PokemonSpeciesFilter = (species: PokemonSpecies) => boolean;
