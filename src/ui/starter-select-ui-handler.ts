@@ -2066,7 +2066,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonCaughtHatchedContainer.setVisible(true);
         if (pokemonPrevolutions.hasOwnProperty(species.speciesId)) {
           this.pokemonCaughtHatchedContainer.setY(16);
-          this.pokemonShinyIcon.setY(136);
+          this.pokemonShinyIcon.setY(135);
+          this.pokemonShinyIcon.setFrame(getVariantIcon(variant));
           [
             this.pokemonCandyIcon,
             this.pokemonCandyOverlayIcon,
