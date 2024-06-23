@@ -1357,7 +1357,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "도전자가… 사천왕 파키라에게서 멋지게 승리를 쟁취했습니다!"
     },
     "defeat": {
-      1: "기쁘네요! 그렇죠, 당신을 밑에서 짓밟을 수 있게 될줄이야."
+      1: "기쁘네요! 그렇죠, 당신을 밑에서 짓밟을 수 있게 될 줄은 몰랐으니까."
     }
   },
   "hala": {
@@ -1453,7 +1453,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "siebold": {
     "encounter": {
-      1: "살아가는 동안, 궁극적인 요리와 강력한 상대를 찾기 위해… 열과 성을 다할 것 입니다!"
+      1: "살아가는 동안, 궁극적인 요리와 강력한 상대를 찾기 위해… 열과 성을 다할 것입니다!"
     },
     "victory": {
       1: "당신에 대한 기억을 제 가슴 속에 담아두겠습니다."
@@ -1559,7 +1559,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   "wikstrom": {
     "encounter": {
       1: `잘 왔네, 젊은 도전자여! 이 몸은 사천왕 중 한 명인 강철의 남자 간피다! 
-                $자 그럼 간다 간다! 간닷!`,
+                $자 그럼 간다, 간다! 간닷!`,
     },
     "victory": {
       1: "정말 영광이군! 자네의 포켓몬과 서로 신뢰하는 힘, 날 능가하는군!!"
@@ -2052,7 +2052,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "valerie": {
     "encounter": {
-      1: `어라,트레이너님… 슝슝 워프해서… 이렇게 만나게 되서 반갑네. 
+      1: `어라,트레이너님… 슝슝 워프해서… 이렇게 만나서 반갑네. 
                     $그리고 내가 보기엔 당신은 노력했기에, 이 승부에 참가할 수 있게 된 것 같아. 
                     $찾기 힘든 요정 같은 페어리 타입, 우리 포켓몬들 사뿐하고 화사하지만 강하다구.`,
     },
