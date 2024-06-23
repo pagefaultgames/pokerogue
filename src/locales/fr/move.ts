@@ -2975,7 +2975,7 @@ export const move: MoveTranslationEntries = {
   },
   "dynamaxCannon": {
     name: "Canon Dynamax",
-    effect: "Le lanceur attaque en émettant un laser depuis son noyau. Cette capacité inflige deux fois plus de dégâts si l’adversaire est level 200."
+    effect: "Le lanceur attaque en émettant un laser depuis son noyau. Cette capacité inflige deux fois plus de dégâts si l’adversaire est level 200." // Check new EN locale
   },
   "snipeShot": {
     name: "Tir de Précision",

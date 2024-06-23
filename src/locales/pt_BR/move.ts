@@ -2975,7 +2975,7 @@ export const move: MoveTranslationEntries = {
   },
   dynamaxCannon: {
     name: "Dynamax Cannon",
-    effect: "O usuário libera um forte feixe de seu núcleo. Este movimento causa o dobro do dano se o alvo estiver acima do nível 200."
+    effect: "O usuário libera um forte feixe de seu núcleo. Este movimento causa o dobro do dano se o alvo estiver acima do nível 200." // Check new EN locale
   },
   snipeShot: {
     name: "Snipe Shot",

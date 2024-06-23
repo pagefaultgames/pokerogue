@@ -7723,7 +7723,8 @@ export function initMoves() {
       .ignoresVirtual(),
     /* End Unused */
     new AttackMove(Moves.DYNAMAX_CANNON, Type.DRAGON, MoveCategory.SPECIAL, 100, 100, 5, -1, 0, 8)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => target.level > 200 ? 2 : 1)
+      .attr(MovePowerMultiplierAttr, (user, target, move) =>
+        target.level > user.level ? 1 + Math.min(1, (target.level - user.level)/10) : 1)
       .attr(DiscourageFrequentUseAttr)
       .ignoresVirtual(),
     new AttackMove(Moves.SNIPE_SHOT, Type.WATER, MoveCategory.SPECIAL, 80, 100, 15, -1, 0, 8)
