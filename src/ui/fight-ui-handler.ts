@@ -243,7 +243,7 @@ export default class FightUiHandler extends UiHandler {
 
     for (let moveIndex = 0; moveIndex < 4; moveIndex++) {
       const moveText = addTextObject(this.scene, moveIndex % 2 === 0 ? 0 : 100, moveIndex < 2 ? 0 : 16, "-", TextStyle.WINDOW);
-      moveText.setName("-");
+      moveText.setName("text-empty-move");
 
       if (moveIndex < moveset.length) {
         const pokemonMove = moveset[moveIndex];
