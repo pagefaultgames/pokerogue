@@ -6606,7 +6606,7 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPATK, -2, true),
     new SelfStatusMove(Moves.ROOST, Type.FLYING, -1, 5, -1, 0, 4)
       .attr(HealAttr, 0.5)
-      .attr(AddBattlerTagAttr, BattlerTagType.GROUNDED, true, false, 1)
+      .attr(AddBattlerTagAttr, BattlerTagType.ROOSTED, true, false)
       .triageMove(),
     new StatusMove(Moves.GRAVITY, Type.PSYCHIC, -1, 5, -1, 0, 4)
       .attr(AddArenaTagAttr, ArenaTagType.GRAVITY, 5)
@@ -6947,7 +6947,7 @@ export function initMoves() {
       .target(MoveTarget.BOTH_SIDES)
       .unimplemented(),
     new AttackMove(Moves.SMACK_DOWN, Type.ROCK, MoveCategory.PHYSICAL, 50, 100, 15, 100, 0, 5)
-      .attr(AddBattlerTagAttr, BattlerTagType.IGNORE_FLYING, false, false, 5)
+      .attr(AddBattlerTagAttr, BattlerTagType.IGNORE_FLYING, false, false)
       .attr(AddBattlerTagAttr, BattlerTagType.INTERRUPTED)
       .attr(RemoveBattlerTagAttr, [BattlerTagType.FLYING, BattlerTagType.MAGNET_RISEN])
       .attr(HitsTagAttr, BattlerTagType.FLYING, false)
@@ -7331,7 +7331,7 @@ export function initMoves() {
       .triageMove(),
     new AttackMove(Moves.THOUSAND_ARROWS, Type.GROUND, MoveCategory.PHYSICAL, 90, 100, 10, -1, 0, 6)
       .attr(NeutralDamageAgainstFlyingTypeMultiplierAttr)
-      .attr(AddBattlerTagAttr, BattlerTagType.IGNORE_FLYING, false, false, 20) // TODO: remove this turn count
+      .attr(AddBattlerTagAttr, BattlerTagType.IGNORE_FLYING, false, false)
       .attr(HitsTagAttr, BattlerTagType.FLYING, false)
       .attr(AddBattlerTagAttr, BattlerTagType.INTERRUPTED)
       .attr(RemoveBattlerTagAttr, [BattlerTagType.FLYING, BattlerTagType.MAGNET_RISEN])
