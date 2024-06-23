@@ -884,7 +884,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
 
-    if (forDefend && (this.getTag(GroundedTag) || this.scene.arena.getTag(ArenaTagType.GRAVITY))) {
+    // this.scene potentially can be undefined for a fainted pokemon in doubles
+    // use optional chaining to avoid runtime errors
+    if (forDefend && (this.getTag(GroundedTag) || this.scene?.arena.getTag(ArenaTagType.GRAVITY))) {
       const flyingIndex = types.indexOf(Type.FLYING);
       if (flyingIndex > -1) {
         types.splice(flyingIndex, 1);
@@ -1083,7 +1085,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getTeraType(): Type {
-    const teraModifier = this.scene.findModifier(m => m instanceof TerastallizeModifier
+
+    // this.scene can be undefined for a fainted mon in doubles
+    // use nullish coalescing to auto-set to false to avoid runtime errors
+    const teraModifier = false ?? this.scene.findModifier(m => m instanceof TerastallizeModifier
       && m.pokemonId === this.id && !!m.getBattlesLeft(), this.isPlayer()) as TerastallizeModifier;
     if (teraModifier) {
       return teraModifier.teraType;
