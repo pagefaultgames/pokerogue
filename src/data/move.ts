@@ -3662,10 +3662,9 @@ export class NeutralDamageAgainstFlyingTypeMultiplierAttr extends VariableMoveTy
     if (!target.getTag(BattlerTagType.IGNORE_FLYING)) {
       const multiplier = args[0] as Utils.NumberHolder;
       //When a flying type is hit, the first hit is always 1x multiplier. Levitating pokemon are instantly affected by typing
-      if (target.isOfType(Type.FLYING)) {
+      if (target.isOfType(Type.FLYING) || target.hasAbility(Abilities.LEVITATE)) {
         multiplier.value = 1;
       }
-      target.addTag(BattlerTagType.IGNORE_FLYING, 20, move.id, user.id); //TODO: Grounded effect should not have turn limit
       return true;
     }
 
@@ -7305,8 +7304,8 @@ export function initMoves() {
       .target(MoveTarget.USER_AND_ALLIES)
       .condition((user, target, move) => !![ user, user.getAlly() ].filter(p => p?.isActive()).find(p => !![ Abilities.PLUS, Abilities.MINUS].find(a => p.hasAbility(a, false)))),
     new StatusMove(Moves.HAPPY_HOUR, Type.NORMAL, -1, 30, -1, 0, 6) // No animation
-      .target(MoveTarget.USER_SIDE)
-      .unimplemented(),
+      .attr(AddArenaTagAttr, ArenaTagType.HAPPY_HOUR, null, true)
+      .target(MoveTarget.USER_SIDE),
     new StatusMove(Moves.ELECTRIC_TERRAIN, Type.ELECTRIC, -1, 10, -1, 0, 6)
       .attr(TerrainChangeAttr, TerrainType.ELECTRIC)
       .target(MoveTarget.BOTH_SIDES),
@@ -7332,6 +7331,7 @@ export function initMoves() {
       .triageMove(),
     new AttackMove(Moves.THOUSAND_ARROWS, Type.GROUND, MoveCategory.PHYSICAL, 90, 100, 10, -1, 0, 6)
       .attr(NeutralDamageAgainstFlyingTypeMultiplierAttr)
+      .attr(AddBattlerTagAttr, BattlerTagType.IGNORE_FLYING, false, false, 20) // TODO: remove this turn count
       .attr(HitsTagAttr, BattlerTagType.FLYING, false)
       .attr(AddBattlerTagAttr, BattlerTagType.INTERRUPTED)
       .attr(RemoveBattlerTagAttr, [BattlerTagType.FLYING, BattlerTagType.MAGNET_RISEN])

@@ -55,7 +55,7 @@ describe("Abilities - Ice Face", () => {
 
   it("takes no damage from the first hit of multihit physical move and transforms to Noice", async () => {
     vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SURGING_STRIKES]);
-    vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(5);
+    vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(1);
     await game.startBattle([Species.HITMONLEE]);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.SURGING_STRIKES));

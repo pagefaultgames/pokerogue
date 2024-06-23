@@ -4,7 +4,7 @@ import * as Utils from "../utils";
 import { MoveCategory, allMoves, MoveTarget } from "./move";
 import { getPokemonMessage } from "../messages";
 import Pokemon, { HitResult, PokemonMove } from "../field/pokemon";
-import { MoveEffectPhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase} from "../phases";
+import { MoveEffectPhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
 import { StatusEffect } from "./status-effect";
 import { BattlerIndex } from "../battle";
 import { BlockNonDirectDamageAbAttr, ProtectStatAbAttr, applyAbAttrs } from "./ability";
@@ -86,36 +86,56 @@ export class MistTag extends ArenaTag {
   }
 }
 
+/**
+ * Reduces the damage of specific move categories in the arena.
+ * @extends ArenaTag
+ */
 export class WeakenMoveScreenTag extends ArenaTag {
-  constructor(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId: integer, side: ArenaTagSide) {
+  protected weakenedCategories: MoveCategory[];
+
+  /**
+   * Creates a new instance of the WeakenMoveScreenTag class.
+   *
+   * @param tagType - The type of the arena tag.
+   * @param turnCount - The number of turns the tag is active.
+   * @param sourceMove - The move that created the tag.
+   * @param sourceId - The ID of the source of the tag.
+   * @param side - The side (player or enemy) the tag affects.
+   * @param weakenedCategories - The categories of moves that are weakened by this tag.
+   */
+  constructor(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId: integer, side: ArenaTagSide, weakenedCategories: MoveCategory[]) {
     super(tagType, turnCount, sourceMove, sourceId, side);
+
+    this.weakenedCategories = weakenedCategories;
   }
 
+  /**
+   * Applies the weakening effect to the move.
+   *
+   * @param arena - The arena where the move is applied.
+   * @param args - The arguments for the move application.
+   * @param args[0] - The category of the move.
+   * @param args[1] - A boolean indicating whether it is a double battle.
+   * @param args[2] - An object of type `Utils.NumberHolder` that holds the damage multiplier
+   *
+   * @returns True if the move was weakened, otherwise false.
+   */
   apply(arena: Arena, args: any[]): boolean {
-    if ((args[1] as boolean)) {
-      (args[2] as Utils.NumberHolder).value = 2732/4096;
-    } else {
-      (args[2] as Utils.NumberHolder).value = 0.5;
-    }
-    return true;
-  }
-}
-
-class ReflectTag extends WeakenMoveScreenTag {
-  constructor(turnCount: integer, sourceId: integer, side: ArenaTagSide) {
-    super(ArenaTagType.REFLECT, turnCount, Moves.REFLECT, sourceId, side);
-  }
-
-  apply(arena: Arena, args: any[]): boolean {
-    if ((args[0] as MoveCategory) === MoveCategory.PHYSICAL) {
-      if ((args[1] as boolean)) {
-        (args[2] as Utils.NumberHolder).value = 2732/4096;
-      } else {
-        (args[2] as Utils.NumberHolder).value = 0.5;
-      }
+    if (this.weakenedCategories.includes((args[0] as MoveCategory))) {
+      (args[2] as Utils.NumberHolder).value = (args[1] as boolean) ? 2732/4096 : 0.5;
       return true;
     }
     return false;
+  }
+}
+
+/**
+ * Reduces the damage of physical moves.
+ * Used by {@linkcode Moves.REFLECT}
+ */
+class ReflectTag extends WeakenMoveScreenTag {
+  constructor(turnCount: integer, sourceId: integer, side: ArenaTagSide) {
+    super(ArenaTagType.REFLECT, turnCount, Moves.REFLECT, sourceId, side, [MoveCategory.PHYSICAL]);
   }
 
   onAdd(arena: Arena, quiet: boolean = false): void {
@@ -125,21 +145,13 @@ class ReflectTag extends WeakenMoveScreenTag {
   }
 }
 
+/**
+ * Reduces the damage of special moves.
+ * Used by {@linkcode Moves.LIGHT_SCREEN}
+ */
 class LightScreenTag extends WeakenMoveScreenTag {
   constructor(turnCount: integer, sourceId: integer, side: ArenaTagSide) {
-    super(ArenaTagType.LIGHT_SCREEN, turnCount, Moves.LIGHT_SCREEN, sourceId, side);
-  }
-
-  apply(arena: Arena, args: any[]): boolean {
-    if ((args[0] as MoveCategory) === MoveCategory.SPECIAL) {
-      if ((args[1] as boolean)) {
-        (args[2] as Utils.NumberHolder).value = 2732/4096;
-      } else {
-        (args[2] as Utils.NumberHolder).value = 0.5;
-      }
-      return true;
-    }
-    return false;
+    super(ArenaTagType.LIGHT_SCREEN, turnCount, Moves.LIGHT_SCREEN, sourceId, side, [MoveCategory.SPECIAL]);
   }
 
   onAdd(arena: Arena, quiet: boolean = false): void {
@@ -149,9 +161,13 @@ class LightScreenTag extends WeakenMoveScreenTag {
   }
 }
 
+/**
+ * Reduces the damage of physical and special moves.
+ * Used by {@linkcode Moves.AURORA_VEIL}
+ */
 class AuroraVeilTag extends WeakenMoveScreenTag {
   constructor(turnCount: integer, sourceId: integer, side: ArenaTagSide) {
-    super(ArenaTagType.AURORA_VEIL, turnCount, Moves.AURORA_VEIL, sourceId, side);
+    super(ArenaTagType.AURORA_VEIL, turnCount, Moves.AURORA_VEIL, sourceId, side, [MoveCategory.SPECIAL, MoveCategory.PHYSICAL]);
   }
 
   onAdd(arena: Arena, quiet: boolean = false): void {
@@ -679,6 +695,20 @@ class TailwindTag extends ArenaTag {
   }
 }
 
+class HappyHourTag extends ArenaTag {
+  constructor(turnCount: integer, sourceId: integer, side: ArenaTagSide) {
+    super(ArenaTagType.HAPPY_HOUR, turnCount, Moves.HAPPY_HOUR, sourceId, side);
+  }
+
+  onAdd(arena: Arena): void {
+    arena.scene.queueMessage("Everyone is caught up in the happy atmosphere!");
+  }
+
+  onRemove(arena: Arena): void {
+    arena.scene.queueMessage("The atmosphere returned to normal.");
+  }
+}
+
 export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId: integer, targetIndex?: BattlerIndex, side: ArenaTagSide = ArenaTagSide.BOTH): ArenaTag {
   switch (tagType) {
   case ArenaTagType.MIST:
@@ -720,5 +750,7 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMov
     return new AuroraVeilTag(turnCount, sourceId, side);
   case ArenaTagType.TAILWIND:
     return new TailwindTag(turnCount, sourceId, side);
+  case ArenaTagType.HAPPY_HOUR:
+    return new HappyHourTag(turnCount, sourceId, side);
   }
 }
