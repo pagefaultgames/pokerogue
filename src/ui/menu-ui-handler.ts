@@ -280,6 +280,7 @@ export default class MenuUiHandler extends MessageUiHandler {
 
     this.bgmBar.toggleBgmBar(true);
 
+
     return true;
   }
 
@@ -435,6 +436,7 @@ export default class MenuUiHandler extends MessageUiHandler {
   clear() {
     super.clear();
     this.menuContainer.setVisible(false);
+    this.bgmBar.toggleBgmBar(false);
     this.eraseCursor();
   }
 

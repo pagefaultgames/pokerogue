@@ -79,6 +79,7 @@ export default class BgmBar extends Phaser.GameObjects.Container {
    */
   public toggleBgmBar(visible: boolean): void {
     if (!(this.scene as BattleScene).showBgmBar) {
+      this.setVisible(false);
       return;
     }
     this.scene.tweens.add({
