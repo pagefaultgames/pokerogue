@@ -1527,6 +1527,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, newVariant, undefined, undefined);
             // Cycle tint based on current sprite tint
             const tint = getVariantTint(newVariant);
+            this.pokemonShinyIcon.setFrame(getVariantIcon(newVariant));
             this.pokemonShinyIcon.setTint(tint);
             success = true;
           }
@@ -1803,7 +1804,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       const defaultProps = this.scene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
       const variant = defaultProps.variant;
       const tint = getVariantTint(variant);
-
+      this.pokemonShinyIcon.setFrame(getVariantIcon(variant));
       this.pokemonShinyIcon.setTint(tint);
       this.setSpecies(species);
       this.updateInstructions();
@@ -1979,6 +1980,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         const defaultProps = this.scene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
         const variant = defaultProps.variant;
         const tint = getVariantTint(variant);
+        this.pokemonShinyIcon.setFrame(getVariantIcon(variant));
         this.pokemonShinyIcon.setTint(tint);
         this.pokemonCaughtHatchedContainer.setVisible(true);
         if (pokemonPrevolutions.hasOwnProperty(species.speciesId)) {
