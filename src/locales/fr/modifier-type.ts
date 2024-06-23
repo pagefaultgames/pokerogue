@@ -4,7 +4,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
   ModifierType: {
     "AddPokeballModifierType": {
       name: "{{pokeballName}} x{{modifierCount}}",
-      description: "Recevez {{modifierCount}} {{pokeballName}}·s (Inventaire : {{pokeballAmount}}) \nTaux de capture : {{catchRate}}.",
+      description: "Recevez {{modifierCount}} {{pokeballName}}·s (Inventaire : {{pokeballAmount}})\nTaux de capture : {{catchRate}}.",
     },
     "AddVoucherModifierType": {
       name: "{{voucherTypeName}} x{{modifierCount}}",
