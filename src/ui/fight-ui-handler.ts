@@ -282,6 +282,7 @@ export default class FightUiHandler extends UiHandler {
 
   clear() {
     super.clear();
+    const messageHandler = this.getUi().getMessageHandler();
     this.clearMoves();
     this.typeIcon.setVisible(false);
     this.ppLabel.setVisible(false);
@@ -291,6 +292,7 @@ export default class FightUiHandler extends UiHandler {
     this.accuracyLabel.setVisible(false);
     this.accuracyText.setVisible(false);
     this.moveCategoryIcon.setVisible(false);
+    messageHandler.bg.setVisible(true);
     this.eraseCursor();
   }
 
