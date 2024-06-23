@@ -147,7 +147,7 @@ export const PGMachv: AchievementTranslationEntries = {
   },
   "HATCH_SUB_LEGENDARY": {
     name: "二級傳說蛋",
-    description: "從蛋中孵化出一隻二級傳說寶可夢",
+    description: "從蛋中孵化出一隻準傳說寶可夢",
   },
   "HATCH_LEGENDARY": {
     name: "傳說蛋",
