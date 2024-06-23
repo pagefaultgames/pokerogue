@@ -4,7 +4,7 @@ import * as Utils from "../utils";
 import { MoveCategory, allMoves, MoveTarget } from "./move";
 import { getPokemonMessage } from "../messages";
 import Pokemon, { HitResult, PokemonMove } from "../field/pokemon";
-import { MoveEffectPhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase} from "../phases";
+import { MoveEffectPhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
 import { StatusEffect } from "./status-effect";
 import { BattlerIndex } from "../battle";
 import { BlockNonDirectDamageAbAttr, ProtectStatAbAttr, applyAbAttrs } from "./ability";
@@ -695,6 +695,20 @@ class TailwindTag extends ArenaTag {
   }
 }
 
+class HappyHourTag extends ArenaTag {
+  constructor(turnCount: integer, sourceId: integer, side: ArenaTagSide) {
+    super(ArenaTagType.HAPPY_HOUR, turnCount, Moves.HAPPY_HOUR, sourceId, side);
+  }
+
+  onAdd(arena: Arena): void {
+    arena.scene.queueMessage("Everyone is caught up in the happy atmosphere!");
+  }
+
+  onRemove(arena: Arena): void {
+    arena.scene.queueMessage("The atmosphere returned to normal.");
+  }
+}
+
 export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId: integer, targetIndex?: BattlerIndex, side: ArenaTagSide = ArenaTagSide.BOTH): ArenaTag {
   switch (tagType) {
   case ArenaTagType.MIST:
@@ -736,5 +750,7 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMov
     return new AuroraVeilTag(turnCount, sourceId, side);
   case ArenaTagType.TAILWIND:
     return new TailwindTag(turnCount, sourceId, side);
+  case ArenaTagType.HAPPY_HOUR:
+    return new HappyHourTag(turnCount, sourceId, side);
   }
 }
