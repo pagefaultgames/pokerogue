@@ -47,10 +47,10 @@ export const menu: SimpleTranslationEntries = {
   "score": "Punkte",
   "wave": "Welle",
   "loading": "Lade…",
-  "loadingAsset": "Loading asset: {{assetName}}",
+  "loadingAsset": "Lade Asset: {{assetName}}",
   "playersOnline": "Spieler Online",
   "yes":"Ja",
   "no":"Nein",
-  "disclaimer": "DISCLAIMER",
+  "disclaimer": "HAFTUNGSAUSSCHLUSS",
   "disclaimerDescription": "Dieses Spiel ist ein unfertiges Produkt. Es kann spielbeinträchtigende Fehler (bis hin zum Verlust des Speicherstandes)\n aufweisen, sich ohne Vorankündigung ändern und es gibt keine Garantie dass es weiterentwickelt oder fertiggestellt wird.",
 } as const;
