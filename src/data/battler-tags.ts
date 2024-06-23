@@ -1470,7 +1470,7 @@ export class CursedTag extends BattlerTag {
 /**
  * Battler tag for effects that ground the source, allowing Ground-type moves to hit them. Encompasses two tag types:
  * @item IGNORE_FLYING: Persistent grounding effects (i.e. from Smack Down and Thousand Waves)
- * @item GROUNDED: One-turn grounding effects (i.e. from Roost)
+ * @item ROOSTED: One-turn grounding effects (i.e. from Roost)
  */
 export class GroundedTag extends BattlerTag {
   constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, sourceMove: Moves) {
@@ -1630,7 +1630,7 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
     return new BattlerTag(BattlerTagType.BYPASS_SLEEP, BattlerTagLapseType.TURN_END, turnCount, sourceMove);
   case BattlerTagType.IGNORE_FLYING:
     return new GroundedTag(tagType, BattlerTagLapseType.CUSTOM, sourceMove);
-  case BattlerTagType.GROUNDED:
+  case BattlerTagType.ROOSTED:
     return new GroundedTag(tagType, BattlerTagLapseType.TURN_END, sourceMove);
   case BattlerTagType.SALT_CURED:
     return new SaltCuredTag(sourceId);

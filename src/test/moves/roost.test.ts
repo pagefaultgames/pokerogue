@@ -53,12 +53,12 @@ describe("Moves - Roost", () => {
 
       await game.phaseInterceptor.to(MoveEffectPhase);
 
-      expect(enemyPokemon.getTag(BattlerTagType.GROUNDED)).toBeDefined();
+      expect(enemyPokemon.getTag(BattlerTagType.ROOSTED)).toBeDefined();
 
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(enemyPokemon.hp).toBeLessThan(enemyStartingHp);
-      expect(enemyPokemon.getTag(BattlerTagType.GROUNDED)).toBeUndefined();
+      expect(enemyPokemon.getTag(BattlerTagType.ROOSTED)).toBeUndefined();
     }, TIMEOUT
   );
 });
