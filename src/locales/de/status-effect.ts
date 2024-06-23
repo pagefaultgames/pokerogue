@@ -61,8 +61,7 @@ export const statusEffect: StatusEffectTranslationEntries = {
     obtain: "{{pokemonNameWithAffix}} erleidet Verbrennungen!",
     obtainSource: "{{pokemonNameWithAffix}} erleidet durch {{sourceText}} Verbrennungen!",
     activation: "Die Verbrennungen schaden {{pokemonNameWithAffix}}!",
-    overlap: "{{pokemonNameWithAffix}} leidet bereits unter
-Verbrennungen!",
+    overlap: "{{pokemonNameWithAffix}} leidet bereits unter Verbrennungen!",
     heal: "Die Verbrennungen von {{pokemonNameWithAffix}}  wurden geheilt!"
   },
 } as const;
