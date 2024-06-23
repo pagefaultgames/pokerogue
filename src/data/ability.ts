@@ -6,7 +6,7 @@ import { BattleStat, getBattleStatName } from "./battle-stat";
 import { MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
 import { getPokemonMessage, getPokemonNameWithAffix } from "../messages";
 import { Weather, WeatherType } from "./weather";
-import { BattlerTag } from "./battler-tags";
+import { BattlerTag, GroundedTag } from "./battler-tags";
 import { StatusEffect, getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
 import { Gender } from "./gender";
 import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, FlinchAttr, OneHitKOAttr, HitHealAttr, allMoves, StatusMove, SelfStatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr, VariableMoveTypeAttr, RandomMovesetMoveAttr, RandomMoveAttr, NaturePowerAttr, CopyMoveAttr  } from "./move";
@@ -4110,7 +4110,7 @@ export function initAbilities() {
       .attr(UnswappableAbilityAbAttr)
       .ignorable(),
     new Ability(Abilities.LEVITATE, 3)
-      .attr(TypeImmunityAbAttr, Type.GROUND, (pokemon: Pokemon) => !pokemon.getTag(BattlerTagType.IGNORE_FLYING) && !pokemon.scene.arena.getTag(ArenaTagType.GRAVITY) && !pokemon.getTag(BattlerTagType.GROUNDED))
+      .attr(TypeImmunityAbAttr, Type.GROUND, (pokemon: Pokemon) => !pokemon.getTag(GroundedTag) && !pokemon.scene.arena.getTag(ArenaTagType.GRAVITY))
       .ignorable(),
     new Ability(Abilities.EFFECT_SPORE, 3)
       .attr(EffectSporeAbAttr),

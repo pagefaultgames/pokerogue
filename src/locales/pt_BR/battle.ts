@@ -75,7 +75,7 @@ export const battle: SimpleTranslationEntries = {
   "ppReduced": "O PP do movimento {{moveName}} de\n{{targetName}} foi reduzido em {{reduction}}!",
   "battlerTagsRechargingLapse": "{{pokemonNameWithAffix}} precisa\nrecarregar!",
   "battlerTagsTrappedOnAdd": "{{pokemonNameWithAffix}} não pode\nmais escapar!",
-  "battlerTagsTrappedOnRemove": "{{pokemonNameWithAffix}} foi liberto\nde {{moveName}}",
+  "battlerTagsTrappedOnRemove": "{{pokemonNameWithAffix}} foi liberto\nde {{moveName}}!",
   "battlerTagsFlinchedLapse": "{{pokemonNameWithAffix}} hesitou!",
   "battlerTagsConfusedOnAdd": "{{pokemonNameWithAffix}} ficou\nconfuso!",
   "battlerTagsConfusedOnRemove": "{{pokemonNameWithAffix}} saiu\nde sua confusão!",

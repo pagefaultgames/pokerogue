@@ -226,4 +226,66 @@ describe("Egg Generation Tests", () => {
     expect(result.hatchWaves).toBe(legacyEgg.hatchWaves);
     expect(result.sourceType).toBe(legacyEgg.gachaType);
   });
+  it("should increase egg pity", () => {
+    const scene = game.scene;
+    const startPityValues = [...scene.gameData.eggPity];
+
+    new Egg({scene, sourceType: EggSourceType.GACHA_MOVE, pulled: true, tier: EggTier.COMMON});
+
+    expect(scene.gameData.eggPity[EggTier.GREAT]).toBe(startPityValues[EggTier.GREAT] + 1);
+    expect(scene.gameData.eggPity[EggTier.ULTRA]).toBe(startPityValues[EggTier.ULTRA] + 1);
+    expect(scene.gameData.eggPity[EggTier.MASTER]).toBe(startPityValues[EggTier.MASTER] + 1);
+  });
+  it("should increase legendary egg pity by two", () => {
+    const scene = game.scene;
+    const startPityValues = [...scene.gameData.eggPity];
+
+    new Egg({scene, sourceType: EggSourceType.GACHA_LEGENDARY, pulled: true, tier: EggTier.COMMON});
+
+    expect(scene.gameData.eggPity[EggTier.GREAT]).toBe(startPityValues[EggTier.GREAT] + 1);
+    expect(scene.gameData.eggPity[EggTier.ULTRA]).toBe(startPityValues[EggTier.ULTRA] + 1);
+    expect(scene.gameData.eggPity[EggTier.MASTER]).toBe(startPityValues[EggTier.MASTER] + 2);
+  });
+  it("should not increase manaphy egg count if bulbasaurs are pulled", () => {
+    const scene = game.scene;
+    const startingManaphyEggCount = scene.gameData.gameStats.manaphyEggsPulled;
+
+    for (let i = 0; i < 200; i++) {
+      new Egg({scene, sourceType: EggSourceType.GACHA_MOVE, pulled: true, species: Species.BULBASAUR});
+    }
+
+    expect(scene.gameData.gameStats.manaphyEggsPulled).toBe(startingManaphyEggCount);
+  });
+  it("should increase manaphy egg count", () => {
+    const scene = game.scene;
+    const startingManaphyEggCount = scene.gameData.gameStats.manaphyEggsPulled;
+
+    new Egg({scene, sourceType: EggSourceType.GACHA_MOVE, pulled: true, id: 204, tier: EggTier.COMMON});
+
+    expect(scene.gameData.gameStats.manaphyEggsPulled).toBe(startingManaphyEggCount + 1);
+  });
+  it("should increase rare eggs pulled statistic", () => {
+    const scene = game.scene;
+    const startingRareEggsPulled = scene.gameData.gameStats.rareEggsPulled;
+
+    new Egg({scene, sourceType: EggSourceType.GACHA_MOVE, pulled: true, tier: EggTier.GREAT});
+
+    expect(scene.gameData.gameStats.rareEggsPulled).toBe(startingRareEggsPulled + 1);
+  });
+  it("should increase epic eggs pulled statistic", () => {
+    const scene = game.scene;
+    const startingEpicEggsPulled = scene.gameData.gameStats.epicEggsPulled;
+
+    new Egg({scene, sourceType: EggSourceType.GACHA_MOVE, pulled: true, tier: EggTier.ULTRA});
+
+    expect(scene.gameData.gameStats.epicEggsPulled).toBe(startingEpicEggsPulled + 1);
+  });
+  it("should increase legendary eggs pulled statistic", () => {
+    const scene = game.scene;
+    const startingLegendaryEggsPulled = scene.gameData.gameStats.legendaryEggsPulled;
+
+    new Egg({scene, sourceType: EggSourceType.GACHA_MOVE, pulled: true, tier: EggTier.MASTER});
+
+    expect(scene.gameData.gameStats.legendaryEggsPulled).toBe(startingLegendaryEggsPulled + 1);
+  });
 });
