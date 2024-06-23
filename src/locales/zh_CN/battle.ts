@@ -75,7 +75,7 @@ export const battle: SimpleTranslationEntries = {
   "ppReduced": "降低了 {{targetName}} 的\n{{moveName}} 的PP{{reduction}}点！",
   "battlerTagsRechargingLapse": "{{pokemonNameWithAffix}}因攻击的反作用力而无法动弹！",
   "battlerTagsTrappedOnAdd": "{{pokemonNameWithAffix}}不能逃跑！",
-  "battlerTagsTrappedOnRemove": "{{pokemonNameWithAffix}}摆脱了{{moveName}}",
+  "battlerTagsTrappedOnRemove": "{{pokemonNameWithAffix}}摆脱了{{moveName}}！",
   "battlerTagsFlinchedLapse": "{{pokemonNameWithAffix}}畏缩了！",
   "battlerTagsConfusedOnAdd": "{{pokemonNameWithAffix}}混乱了！",
   "battlerTagsConfusedOnRemove": "{{pokemonNameWithAffix}}的混乱解除了！",
