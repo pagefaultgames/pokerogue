@@ -495,7 +495,7 @@ export const Setting: Array<Setting> = [
     options: OFF_ON,
     default: 0,
     type: SettingType.DISPLAY,
-    requireReload: false
+    requireReload: true
   },
   {
     key: SettingKeys.Master_Volume,
