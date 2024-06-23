@@ -11,7 +11,9 @@ import { BattleStat } from "#app/data/battle-stat";
 import BattleFlyout from "./battle-flyout";
 import { WindowVariant, addWindow } from "./ui-theme";
 
-const battleStatOrder = [BattleStat.HP, BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.ACC, BattleStat.EVA, BattleStat.SPD ];
+let battleStatOrder = [];
+const battleStatOrderPlayer = [BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.ACC, BattleStat.EVA, BattleStat.SPD];
+const battleStatOrderEnemy = [BattleStat.HP, BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.ACC, BattleStat.EVA, BattleStat.SPD];
 
 export default class BattleInfo extends Phaser.GameObjects.Container {
   private baseY: number;
@@ -221,9 +223,18 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.statValuesContainer = this.scene.add.container(0, 0);
     this.statsContainer.add(this.statValuesContainer);
 
+    // this gives us a different starting location from the left of the label and padding between stats for a player vs enemy
+    // since the player won't have HP to show, it doesn't need to change from the current version
+    const startingX = this.player ? -this.statsBox.width + 8 : -this.statsBox.width + 5;
+    const paddingX = this.player ? 4 : 2;
+    const statOverflow = this.player ? 1 : 0;
+    battleStatOrder = this.player ? battleStatOrderPlayer : battleStatOrderEnemy; // this tells us whether or not to use the player or enemy battle stat order
+
     battleStatOrder.map((s, i) => {
-      //if (battleStatOrder[i] !== BattleStat.HP) { // this keeps the same formula to figure out where things need to go along the x-axis
-      const statX = i > 0 ? this.statNumbers[Math.max(i - 2, 0)].x + this.statNumbers[Math.max(i - 2, 0)].width + 2 : -this.statsBox.width + 5; // we have the Math.max(i - 2, 0) in there so for i===1 to not return a negative number; since this is now based on anything >0 instead of >1, we need to allow for i-2 < 0
+      // we do a check for i > statOverflow to see when the stat labels go onto the next column
+      // For enemies, we have HP (i=0) by itself then a new column, so we check for i > 0
+      // For players, we don't have HP, so we start with i = 0 and i = 1 for our first column, and so need to check for i > 1
+      const statX = i > statOverflow ? this.statNumbers[Math.max(i - 2, 0)].x + this.statNumbers[Math.max(i - 2, 0)].width + paddingX : startingX; // we have the Math.max(i - 2, 0) in there so for i===1 to not return a negative number; since this is now based on anything >0 instead of >1, we need to allow for i-2 < 0
 
       const baseY = -this.statsBox.height / 2 + 4; // this is the baseline for the y-axis
       let statY: number; // this will be the y-axis placement for the labels
@@ -232,7 +243,6 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       } else {
         statY = baseY + (i % 2 === 0 ? 10 : 0);
       }
-      //const statY = baseY + (i < battleStatOrder.length - 1 ? (i % 2 ? 10 : 0) : 5);
 
       const statLabel = this.scene.add.sprite(statX, statY, "pbinfo_stat", BattleStat[s]);
       statLabel.setName("icon_stat_label_" + i.toString());

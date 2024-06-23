@@ -5424,10 +5424,6 @@ export class ScanIvsPhase extends PokemonPhase {
           const hexColour = enemyIvs[ivStat] === 31 ? "#f8c020" : getTextColor(TextStyle.SUMMARY_GREEN, false, uiTheme);
           const hexTextColour = Phaser.Display.Color.HexStringToColor(hexColour).color;
           statsContainerLabels[s].setTint(hexTextColour);
-        } else if (ivsToShow.indexOf(Number(ivStat)) === -1 && !(statsContainerLabels[s].frame.name === "ACC" || statsContainerLabels[s].frame.name === "EVA")) { // it doesn't look like there's a way to call ACC or EVA from locale files - might have to look into changing that
-          const hexColour = "#bfbfbf"; // getTextColor(TextStyle.SUMMARY_GRAY, false, uiTheme); // need to find a good colour of grey to use here. Used summary gray and it may have been too dark, so trying this one which may be too light?
-          const hexTextColour = Phaser.Display.Color.HexStringToColor(hexColour).color;
-          statsContainerLabels[s].setTint(hexTextColour);
         }
         statsContainerLabels[s].setVisible(true);
       }
