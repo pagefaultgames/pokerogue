@@ -9,6 +9,8 @@ import { PokeballType } from "./data/pokeball";
 import { Gender } from "./data/gender";
 import { StatusEffect } from "./data/status-effect";
 import { modifierTypes } from "./modifier/modifier-type";
+import { VariantTier } from "./enums/variant-tiers";
+import { EggTier } from "#enums/egg-type";
 import { allSpecies } from "./data/pokemon-species"; // eslint-disable-line @typescript-eslint/no-unused-vars
 import { Abilities } from "#enums/abilities";
 import { BerryType } from "#enums/berry-type";
@@ -36,9 +38,9 @@ export const STARTING_BIOME_OVERRIDE: Biome = Biome.TOWN;
 export const ARENA_TINT_OVERRIDE: TimeOfDay = null;
 // Multiplies XP gained by this value including 0. Set to null to ignore the override
 export const XP_MULTIPLIER_OVERRIDE: number = null;
-export const IMMEDIATE_HATCH_EGGS_OVERRIDE: boolean = false;
 // default 1000
 export const STARTING_MONEY_OVERRIDE: integer = 0;
+export const FREE_CANDY_UPGRADE_OVERRIDE: boolean = false;
 export const POKEBALL_OVERRIDE: { active: boolean, pokeballs: PokeballCounts } = {
   active: false,
   pokeballs: {
@@ -97,6 +99,17 @@ export const OPP_MOVESET_OVERRIDE: Array<Moves> = [];
 export const OPP_SHINY_OVERRIDE: boolean = false;
 export const OPP_VARIANT_OVERRIDE: Variant = 0;
 export const OPP_IVS_OVERRIDE: integer | integer[] = [];
+
+/**
+ * EGG OVERRIDES
+ */
+
+export const EGG_IMMEDIATE_HATCH_OVERRIDE: boolean = false;
+export const EGG_TIER_OVERRIDE: EggTier = null;
+export const EGG_SHINY_OVERRIDE: boolean = false;
+export const EGG_VARIANT_OVERRIDE: VariantTier = null;
+export const EGG_FREE_GACHA_PULLS_OVERRIDE: boolean = false;
+export const EGG_GACHA_PULL_COUNT_OVERRIDE: number = 0;
 
 /**
  * MODIFIER / ITEM OVERRIDES

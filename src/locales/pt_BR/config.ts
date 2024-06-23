@@ -1,3 +1,5 @@
+import { common } from "#app/locales/pt_BR/common.js";
+import { settings } from "#app/locales/pt_BR/settings.js";
 import { ability } from "./ability";
 import { abilityTriggers } from "./ability-trigger";
 import { PGFachv, PGMachv } from "./achv";
@@ -49,6 +51,7 @@ export const ptBrConfig = {
   biome: biome,
   challenges: challenges,
   commandUiHandler: commandUiHandler,
+  common: common,
   PGMachv: PGMachv,
   PGFachv: PGFachv,
   PGMdialogue: PGMdialogue,
@@ -75,6 +78,7 @@ export const ptBrConfig = {
   pokemonInfo: pokemonInfo,
   pokemonInfoContainer: pokemonInfoContainer,
   saveSlotSelectUiHandler: saveSlotSelectUiHandler,
+  settings: settings,
   splashMessages: splashMessages,
   starterSelectUiHandler: starterSelectUiHandler,
   titles: titles,
@@ -82,5 +86,5 @@ export const ptBrConfig = {
   trainerNames: trainerNames,
   tutorial: tutorial,
   voucher: voucher,
-  weather: weather,
+  weather: weather
 };

@@ -1,4 +1,4 @@
-import {DialogueTranslationEntries, SimpleTranslationEntries} from "#app/plugins/i18n";
+import {DialogueTranslationEntries, SimpleTranslationEntries} from "#app/interfaces/locales";
 
 // Dialogue of the NPCs in the game when the player character is male (or unset)
 export const PGMdialogue: DialogueTranslationEntries = {
@@ -942,7 +942,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "ramos": {
     "encounter": {
-      1: "我用那些强壮的植物\n盖出来的游乐场精彩吗？$它们的力量象征著我这个园丁兼道馆馆主的实力，\n你真的确定能够与之抗衡吗？",
+      1: "我用那些强壮的植物\n盖出来的游乐场精彩吗？$它们的力量象征着我这个园丁兼道馆馆主的实力，\n你真的确定能够与之抗衡吗？",
     },
     "victory": {
       1: "你信任你的宝可梦，\n它们也信任你…不错的战斗，小豆芽。",
@@ -1278,13 +1278,13 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "agatha": {
     "encounter": {
-      1: "Pokémon are for battling! I'll show you how a real Trainer battles!"
+      1: "宝可梦是为战斗而生的！ \n让我来告诉你什么是真正的战斗吧！"
     },
     "victory": {
-      1: "Oh my! You're something special, child!"
+      1: "呵呵！你可真是了不起！"
     },
     "defeat": {
-      1: "Bahaha. That's how a proper battle's done!"
+      1: "额哈哈哈，真正的战斗就是该这样。"
     }
   },
   "flint": {
@@ -2007,6 +2007,32 @@ export const PGMdialogue: DialogueTranslationEntries = {
       2: "你被我的风暴卷入了！祝你下次好运！",
     }
   },
+  "alder": {
+    "encounter": {
+      1: "准备好和合众最强的训练家交手吧！"
+    },
+    "victory": {
+      1: "精彩！简直就是天下无双！"
+    },
+    "defeat": {
+      1: `战斗结束后，我的心像是吹过了温和的风……
+          $真是厉害！`
+    }
+  },
+  "kieran": {
+    "encounter": {
+      1: `我的努力让我越来越强！
+          $所以我不会输。`
+    },
+    "victory": {
+      1: `不可能……
+          $真是一场有趣又激动人心的战斗啊！`
+    },
+    "defeat": {
+      1: `哇塞，好一场战斗！
+          $你得多练练了。`
+    }
+  },
   "rival": {
     "encounter": {
       1: "@c{smile}嘿，我在找你呢！我知道你急着上路，\n但至少说个再见吧…$@c{smile_eclosed}所以你终于要开始追逐梦想了？\n我几乎不敢相信。$@c{serious_smile_fists}来都来了，来一场对战怎么样？\n毕竟，我想看看你是不是准备周全了。$@c{serious_mopen_fists}不要手下留情，我想让你全力以赴！",
@@ -2036,7 +2062,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "@c{smile_wave}哦，真巧，在这里遇见你。\n看来你还没输过嘛。@c{angry_mopen}哈……好家伙！$@c{angry_mopen}我知道你在想什么，\n不，我才不会跟踪你什么呢。 @c{smile_eclosed}我只是碰巧在附近。$@c{smile_ehalf}我为你感到高兴，但我只想让你知道\n有时输了是可以接受的。$@c{smile}我们从错误中学到的东西\n往往比我们一直成功时学到的还要多。$@c{angry_mopen}无论如何，我为了我们的复赛已经努力训练了\n所以你最好全力以赴！",
     },
     "victory": {
-      1: "@c{neutral}我……没打算会输来着……$@c{smile}嗷……好吧。看来我要再更加努力训练了！$@c{smile_wave}我还给你带了个这个$@c{smile_wave_wink}不用谢我哦~.$@c{angry_mopen}不过，这是最后一个啦！\n 你可别想再从我这赚小便宜了~$@c{smile_wave}要保重哦！",
+      1: "@c{neutral}我……没打算会输来着……$@c{smile}嗷……好吧。看来我要再更加努力训练了！$@c{smile_wave}我还给你带了个这个$@c{smile_wave_wink}不用谢我哦~.$@c{angry_mopen}不过，这是最后一个啦！\n你可别想再从我这赚小便宜了~$@c{smile_wave}要保重哦！",
     },
     "defeat": {
       1: "输了有时候也不要紧的…",
@@ -2044,7 +2070,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "rival_3": {
     "encounter": {
-      1: "@c{smile}}嘿，看看这是谁！好久不见啊。$@c{neutral}你……还是没输过？哈…$@c{neutral_eclosed}这有点……不太对劲。$没有你一起，回家的感觉有很不一样。$@c{serious}虽然我知道这挺别扭的，但我就直说了。$@c{neutral_eclosed}我觉得你有点儿难以理喻。$@c{serious}没有人能够战无不胜。$失败乃成功之母。$@c{neutral_eclosed}你已经赢得了够好的成绩，\n但前面道阻且长，只会愈发艰难。 @c{neutral}你做好准备了没？$@c{serious_mopen_fists}如果做好了，证明给我看吧。",
+      1: "@c{smile}嘿，看看这是谁！好久不见啊。$@c{neutral}你……还是没输过？哈…$@c{neutral_eclosed}这有点……不太对劲。$没有你一起，回家的感觉有很不一样。$@c{serious}虽然我知道这挺别扭的，但我就直说了。$@c{neutral_eclosed}我觉得你有点儿难以理喻。$@c{serious}没有人能够战无不胜。$失败乃成功之母。$@c{neutral_eclosed}你已经赢得了够好的成绩，\n但前面道阻且长，只会愈发艰难。 @c{neutral}你做好准备了没？$@c{serious_mopen_fists}如果做好了，证明给我看吧。",
     },
     "victory": {
       1: "@c{angry_mhalf}这太离谱了……我几乎从没停下训练……$我们之间的差距怎么还是这么大？",
@@ -2052,7 +2078,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "rival_3_female": {
     "encounter": {
-      1: "@c{smile_wave}好久不见！还没输过，对吧。$@c{angry}我觉得你点烦了。@c{smile_wave_wink}开玩笑啦！$@c{smile_ehalf}但说真的，你现在不想家吗？\n 不想…我吗?$我……我的意思是，我们真的很想你。$@c{smile_eclosed}我支持你的一切，包括你的梦想。\n但现实就是你早晚会经历失败。$@c{smile}当你失败的时候，我想像往常一样陪在你身边。$@c{angry_mopen}}现在，给你看看我变得多强了吧！",
+      1: "@c{smile_wave}好久不见！还没输过，对吧。$@c{angry}我觉得你点烦了。@c{smile_wave_wink}开玩笑啦！$@c{smile_ehalf}但说真的，你现在不想家吗？\n不想…我吗?$我……我的意思是，我们真的很想你。$@c{smile_eclosed}我支持你的一切，包括你的梦想。\n但现实就是你早晚会经历失败。$@c{smile}当你失败的时候，我想像往常一样陪在你身边。$@c{angry_mopen}现在，给你看看我变得多强了吧！",
     },
     "victory": {
       1: "@c{shock}都这样了……还是不够吗？$这样下去，你就永远不会回来了……",
@@ -2110,7 +2136,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "rival_6_female": {
     "encounter": {
-      1: "@c{smile_ehalf}又只有我们两个人了。$@c{smile_eclosed}你知道吗，我在心里想啊想，\n想了好久……$@c{smile_ehalf}这一切背后是有什么原因吗，\n为什么一切现在看起来都这么奇怪……$@c{smile}你有你的梦想，而我内心有这个抱负……$我不禁感觉这一切背后有一个更庞大的力量，$掌控者我们所做的一切，你和我之间。$@c{smile_eclosed}}我想我注定要推动你……到你的极限。$@c{smile_ehalf}我不清楚我是否一直做得很好，\n但到现在为止，我已经尽力了。$这个奇怪而可怕的地方……\n一切看起来都那么清晰……$这是世界早已记录的一切。$@c{smile_eclosed}我好像记不清我们一起度过的日子了。$@c{smile_ehalf}那些回忆到底是真的吗？\n怎么感觉这么久远……$@c{angry_mopen}你得继续前进，不然的话，这一切将永无止境。\n你是唯一能做到这件事的。$@c{smile_ehalf}}我……不知道这一切意味着什么……\n但我明白$@c{neutral}如果你现在不能就此击败我，\n你将毫无机会可言。",
+      1: "@c{smile_ehalf}又只有我们两个人了。$@c{smile_eclosed}你知道吗，我在心里想啊想，\n想了好久……$@c{smile_ehalf}这一切背后是有什么原因吗，\n为什么一切现在看起来都这么奇怪……$@c{smile}你有你的梦想，而我内心有这个抱负……$我不禁感觉这一切背后有一个更庞大的力量，$掌控者我们所做的一切，你和我之间。$@c{smile_eclosed}我想我注定要推动你……到你的极限。$@c{smile_ehalf}我不清楚我是否一直做得很好，\n但到现在为止，我已经尽力了。$这个奇怪而可怕的地方……\n一切看起来都那么清晰……$这是世界早已记录的一切。$@c{smile_eclosed}我好像记不清我们一起度过的日子了。$@c{smile_ehalf}那些回忆到底是真的吗？\n怎么感觉这么久远……$@c{angry_mopen}你得继续前进，不然的话，这一切将永无止境。\n你是唯一能做到这件事的。$@c{smile_ehalf}我……不知道这一切意味着什么……\n但我明白$@c{neutral}如果你现在不能就此击败我，\n你将毫无机会可言。",
     },
     "victory": {
       1: "@c{smile_ehalf}我……\n我想我完成了我的使命……$@c{smile_eclosed}答应我……在你拯救世界之后\n……要……平安到家。$@c{smile_ehalf}……谢谢你。",
@@ -2129,7 +2155,7 @@ export const PGMbattleSpecDialogue: SimpleTranslationEntries = {
     $你被吸引到这里，因为你以前就来过这里。\n无数次。
     $尽管，或许可以数一数。\n准确地说，这实际上是你的第5,643,853次循环。
     $每一次循环，你的思想都会恢复到之前的状态。\n即便如此，不知何故，你之前自我的残留仍然存在。
-    $直到现在，你仍未成功，但我感觉这次你身上有一种异样的气息。\n
+    $直到现在，你仍未成功，\n但我感觉这次你身上有一种异样的气息。
     $你是这里唯一的人，尽管感觉上还有……另一个人。
     $你最终会成为对我来的一个硬茬吗？\n我渴望了数千年的挑战？
     $我们，开始。`,
