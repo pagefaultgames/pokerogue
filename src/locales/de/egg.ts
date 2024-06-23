@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const egg: SimpleTranslationEntries = {
   "egg": "Ei",
@@ -17,5 +17,6 @@ export const egg: SimpleTranslationEntries = {
   "notEnoughVouchers": "Du hast nicht genug Ei-Gutscheine!",
   "tooManyEggs": "Du hast schon zu viele Eier!",
   "pull": "Pull",
-  "pulls": "Pulls"
+  "pulls": "Pulls",
+  "sameSpeciesEgg": "{{species}} wird aus dem Ei schlüpfen!",
 } as const;

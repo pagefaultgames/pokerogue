@@ -24,6 +24,9 @@ import * as Overrides from "../overrides";
 import { ModifierType, modifierTypes } from "./modifier-type";
 import { Command } from "#app/ui/command-ui-handler.js";
 
+import { allMoves } from "#app/data/move.js";
+import { Abilities } from "#app/enums/abilities.js";
+
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 
 const iconOverflowIndex = 24;
@@ -61,13 +64,19 @@ export class ModifierBar extends Phaser.GameObjects.Container {
     this.setScale(0.5);
   }
 
-  updateModifiers(modifiers: PersistentModifier[]) {
+  /**
+   * Method to update content displayed in {@linkcode ModifierBar}
+   * @param {PersistentModifier[]} modifiers - The list of modifiers to be displayed in the {@linkcode ModifierBar}
+   * @param {boolean} hideHeldItems - If set to "true", only modifiers not assigned to a Pokémon are displayed
+   */
+  updateModifiers(modifiers: PersistentModifier[], hideHeldItems: boolean = false) {
     this.removeAll(true);
 
     const visibleIconModifiers = modifiers.filter(m => m.isIconVisible(this.scene as BattleScene));
     const nonPokemonSpecificModifiers = visibleIconModifiers.filter(m => !(m as PokemonHeldItemModifier).pokemonId).sort(modifierSortFunc);
     const pokemonSpecificModifiers = visibleIconModifiers.filter(m => (m as PokemonHeldItemModifier).pokemonId).sort(modifierSortFunc);
-    const sortedVisibleIconModifiers = nonPokemonSpecificModifiers.concat(pokemonSpecificModifiers);
+
+    const sortedVisibleIconModifiers = hideHeldItems ? nonPokemonSpecificModifiers : nonPokemonSpecificModifiers.concat(pokemonSpecificModifiers);
 
     const thisArg = this;
 
@@ -520,6 +529,22 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
     return 1;
   }
 
+  //Applies to items with chance of activating secondary effects ie Kings Rock
+  getSecondaryChanceMultiplier(pokemon: Pokemon): integer {
+    // Temporary quickfix to stop game from freezing when the opponet uses u-turn while holding on to king's rock
+    if (!pokemon.getLastXMoves(0)[0]) {
+      return 1;
+    }
+    const sheerForceAffected = allMoves[pokemon.getLastXMoves(0)[0].move].chance >= 0 && pokemon.hasAbility(Abilities.SHEER_FORCE);
+
+    if (sheerForceAffected) {
+      return 0;
+    } else if (pokemon.hasAbility(Abilities.SERENE_GRACE)) {
+      return 2;
+    }
+    return 1;
+  }
+
   getMaxStackCount(scene: BattleScene, forThreshold?: boolean): integer {
     const pokemon = this.getPokemon(scene);
     if (!pokemon) {
@@ -731,9 +756,9 @@ export class EvolutionStatBoosterModifier extends PokemonHeldItemModifier {
   apply(args: any[]): boolean {
     const holder = args[0] as Pokemon;
     const statValue = args[2] as Utils.NumberHolder;
-    const isUnevolved = pokemonEvolutions.hasOwnProperty(holder.getSpeciesForm(true).speciesId);
+    const isUnevolved = holder.getSpeciesForm(true).speciesId in pokemonEvolutions;
 
-    if (holder.isFusion() && (pokemonEvolutions.hasOwnProperty(holder.getFusionSpeciesForm(true).speciesId) !== isUnevolved)) {
+    if (holder.isFusion() && (holder.getFusionSpeciesForm(true).speciesId in pokemonEvolutions) !== isUnevolved) {
       // Half boost applied if holder is fused and either part of fusion is fully evolved
       statValue.value *= 1 + (this.multiplier - 1) / 2;
       return true;
@@ -746,7 +771,7 @@ export class EvolutionStatBoosterModifier extends PokemonHeldItemModifier {
     return false;
   }
 
-  getMaxHeldItemCount(pokemon: Pokemon): integer {
+  getMaxHeldItemCount(_pokemon: Pokemon): integer {
     return 1;
   }
 }
@@ -908,7 +933,7 @@ export class FlinchChanceModifier extends PokemonHeldItemModifier {
     const pokemon = args[0] as Pokemon;
     const flinched = args[1] as Utils.BooleanHolder;
 
-    if (!flinched.value && pokemon.randSeedInt(10) < this.getStackCount()) {
+    if (!flinched.value && pokemon.randSeedInt(10) < (this.getStackCount() * this.getSecondaryChanceMultiplier(pokemon))) {
       flinched.value = true;
       return true;
     }
