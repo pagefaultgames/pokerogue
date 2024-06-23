@@ -1,4 +1,4 @@
-import {DialogueTranslationEntries, SimpleTranslationEntries} from "#app/plugins/i18n";
+import {DialogueTranslationEntries, SimpleTranslationEntries} from "#app/interfaces/locales";
 
 // Dialogue of the NPCs in the game when the player character is male (or unset)
 export const PGMdialogue: DialogueTranslationEntries = {
@@ -2105,6 +2105,32 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "defeat": {
       1: "Another storm weathered, another victory claimed! Well fought!",
       2: "You got caught in my storm! Better luck next time!"
+    }
+  },
+  "alder": {
+    "encounter": {
+      1: "Prépare-toi pour un combat contre le meilleur Dresseur d'Unys !",
+    },
+    "victory": {
+      1: "Bien joué ! Tu as sans aucun doute un talent inégalé.",
+    },
+    "defeat": {
+      1: `Une brise fraîche traverse mon cœur…
+          $Quel effort extraordinaire !`,
+    }
+  },
+  "kieran": {
+    "encounter": {
+      1: `Grâce à un travail acharné, je deviens de plus en plus fort !
+          $Je ne perdrai pas.`,
+    },
+    "victory": {
+      1: `Je n'y crois pas…
+          $Quel combat amusant et palpitant !`
+    },
+    "defeat": {
+      1: `Eh beh, quel combat !
+          $Il est temps pour toi de t'entraîner encore plus dur.`,
     }
   },
   "rival": {

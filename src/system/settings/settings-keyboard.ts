@@ -2,6 +2,7 @@ import {Button} from "#enums/buttons";
 import BattleScene from "#app/battle-scene";
 import {Mode} from "#app/ui/ui";
 import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";
+import i18next from "i18next";
 
 export enum SettingKeyboard {
     // Default_Layout = "DEFAULT_LAYOUT",
@@ -41,7 +42,7 @@ export enum SettingKeyboard {
     Alt_Button_Submit = "ALT_BUTTON_SUBMIT",
 }
 
-const pressAction = "Press action to assign";
+const pressAction = i18next.t("settings:pressToBind");
 
 export const settingKeyboardOptions = {
   // [SettingKeyboard.Default_Layout]: ['Default'],

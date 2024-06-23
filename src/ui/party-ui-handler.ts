@@ -57,7 +57,8 @@ export enum PartyOption {
   MOVE_1 = 3000,
   MOVE_2,
   MOVE_3,
-  MOVE_4
+  MOVE_4,
+  ALL = 4000
 }
 
 export type PartySelectCallback = (cursor: integer, option: PartyOption) => void;
@@ -96,6 +97,8 @@ export default class PartyUiHandler extends MessageUiHandler {
   private transferQuantities: integer[];
   /** Stack size of every item that the selected pokemon is holding */
   private transferQuantitiesMax: integer[];
+  /** Whether to transfer all items */
+  private transferAll: boolean;
 
   private lastCursor: integer = 0;
   private selectCallback: PartySelectCallback | PartyModifierTransferSelectCallback;
@@ -294,6 +297,8 @@ export default class PartyUiHandler extends MessageUiHandler {
         } else if ((option !== PartyOption.SUMMARY && option !== PartyOption.UNPAUSE_EVOLUTION && option !== PartyOption.UNSPLICE && option !== PartyOption.RELEASE && option !== PartyOption.CANCEL)
           || (option === PartyOption.RELEASE && this.partyUiMode === PartyUiMode.RELEASE)) {
           let filterResult: string;
+          const getTransferrableItemsFromPokemon = (pokemon: PlayerPokemon) =>
+            this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && (m as PokemonHeldItemModifier).getTransferrable(true) && (m as PokemonHeldItemModifier).pokemonId === pokemon.id) as PokemonHeldItemModifier[];
           if (option !== PartyOption.TRANSFER && option !== PartyOption.SPLICE) {
             filterResult = (this.selectFilter as PokemonSelectFilter)(pokemon);
             if (filterResult === null && (option === PartyOption.SEND_OUT || option === PartyOption.PASS_BATON)) {
@@ -303,10 +308,7 @@ export default class PartyUiHandler extends MessageUiHandler {
               filterResult = this.moveSelectFilter(pokemon.moveset[this.optionsCursor]);
             }
           } else {
-            const transferPokemon = this.scene.getParty()[this.transferCursor];
-            const itemModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-                && (m as PokemonHeldItemModifier).getTransferrable(true) && (m as PokemonHeldItemModifier).pokemonId === transferPokemon.id) as PokemonHeldItemModifier[];
-            filterResult = (this.selectFilter as PokemonModifierTransferSelectFilter)(pokemon, itemModifiers[this.transferOptionCursor]);
+            filterResult = (this.selectFilter as PokemonModifierTransferSelectFilter)(pokemon, getTransferrableItemsFromPokemon(this.scene.getParty()[this.transferCursor])[this.transferOptionCursor]);
           }
           if (filterResult === null) {
             if (this.partyUiMode !== PartyUiMode.SPLICE) {
@@ -315,7 +317,11 @@ export default class PartyUiHandler extends MessageUiHandler {
             if (this.selectCallback && this.partyUiMode !== PartyUiMode.CHECK) {
               if (option === PartyOption.TRANSFER) {
                 if (this.transferCursor !== this.cursor) {
-                  (this.selectCallback as PartyModifierTransferSelectCallback)(this.transferCursor, this.transferOptionCursor, this.transferQuantities[this.transferOptionCursor], this.cursor);
+                  if (this.transferAll) {
+                    getTransferrableItemsFromPokemon(this.scene.getParty()[this.transferCursor]).forEach((_, i) => (this.selectCallback as PartyModifierTransferSelectCallback)(this.transferCursor, i, this.transferQuantitiesMax[i], this.cursor));
+                  } else {
+                    (this.selectCallback as PartyModifierTransferSelectCallback)(this.transferCursor, this.transferOptionCursor, this.transferQuantities[this.transferOptionCursor], this.cursor);
+                  }
                 }
                 this.clearTransfer();
               } else if (this.partyUiMode === PartyUiMode.SPLICE) {
@@ -430,7 +436,9 @@ export default class PartyUiHandler extends MessageUiHandler {
         case Button.UP:
           /** If currently selecting items to transfer, reset quantity selection */
           if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
-            this.transferQuantities[option] = this.transferQuantitiesMax[option];
+            if (option !== PartyOption.ALL) {
+              this.transferQuantities[option] = this.transferQuantitiesMax[option];
+            }
             this.updateOptions();
           }
           success = this.setCursor(this.optionsCursor ? this.optionsCursor - 1 : this.options.length - 1); /** Move cursor */
@@ -438,7 +446,9 @@ export default class PartyUiHandler extends MessageUiHandler {
         case Button.DOWN:
           /** If currently selecting items to transfer, reset quantity selection */
           if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
-            this.transferQuantities[option] = this.transferQuantitiesMax[option];
+            if (option !== PartyOption.ALL) {
+              this.transferQuantities[option] = this.transferQuantitiesMax[option];
+            }
             this.updateOptions();
           }
           success = this.setCursor(this.optionsCursor < this.options.length - 1 ? this.optionsCursor + 1 : 0); /** Move cursor */
@@ -770,6 +780,9 @@ export default class PartyUiHandler extends MessageUiHandler {
       for (let im = 0; im < itemModifiers.length; im++) {
         this.options.push(im);
       }
+      if (itemModifiers.length > 1) {
+        this.options.push(PartyOption.ALL);
+      }
     }
 
     this.optionsScrollTotal = this.options.length;
@@ -843,11 +856,15 @@ export default class PartyUiHandler extends MessageUiHandler {
         optionName = allMoves[move].name;
         altText = !pokemon.getSpeciesForm().getLevelMoves().find(plm => plm[1] === move);
       } else {
-        const itemModifier = itemModifiers[option];
-        optionName = itemModifier.type.name;
-        /** For every item that has stack bigger than 1, display the current quantity selection */
-        if (this.transferQuantitiesMax[option] > 1) {
-          optionName += ` (${this.transferQuantities[option]})`;
+        if (option === PartyOption.ALL) {
+          optionName = i18next.t("partyUiHandler:ALL");
+        } else {
+          const itemModifier = itemModifiers[option];
+          optionName = itemModifier.type.name;
+          /** For every item that has stack bigger than 1, display the current quantity selection */
+          if (this.transferQuantitiesMax[option] > 1) {
+            optionName += ` (${this.transferQuantities[option]})`;
+          }
         }
       }
 
@@ -876,12 +893,14 @@ export default class PartyUiHandler extends MessageUiHandler {
     this.transferMode = true;
     this.transferCursor = this.cursor;
     this.transferOptionCursor = this.getOptionsCursorWithScroll();
+    this.transferAll = this.options[this.optionsCursor] === PartyOption.ALL;
 
     this.partySlots[this.transferCursor].setTransfer(true);
   }
 
   clearTransfer(): void {
     this.transferMode = false;
+    this.transferAll = false;
     this.partySlots[this.transferCursor].setTransfer(false);
   }
 

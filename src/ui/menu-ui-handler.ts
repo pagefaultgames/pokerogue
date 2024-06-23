@@ -7,7 +7,7 @@ import MessageUiHandler from "./message-ui-handler";
 import { OptionSelectConfig, OptionSelectItem } from "./abstact-option-select-ui-handler";
 import { Tutorial, handleTutorial } from "../tutorial";
 import { updateUserInfo } from "../account";
-import i18next from "../plugins/i18n";
+import i18next from "i18next";
 import {Button} from "#enums/buttons";
 import { GameDataType } from "#enums/game-data-type";
 
@@ -24,9 +24,10 @@ export enum MenuOptions {
   LOG_OUT
 }
 
-const wikiUrl = "https://wiki.pokerogue.net";
+let wikiUrl = "https://wiki.pokerogue.net/start";
 const discordUrl = "https://discord.gg/uWpTfdKG49";
 const githubUrl = "https://github.com/pagefaultgames/pokerogue";
+const redditUrl = "https://www.reddit.com/r/pokerogue";
 
 export default class MenuUiHandler extends MessageUiHandler {
   private menuContainer: Phaser.GameObjects.Container;
@@ -54,6 +55,11 @@ export default class MenuUiHandler extends MessageUiHandler {
 
   setup() {
     const ui = this.getUi();
+    // wiki url directs based on languges available on wiki
+    const lang = i18next.resolvedLanguage.substring(0,2);
+    if (["de", "fr", "ko", "zh"].includes(lang)) {
+      wikiUrl = `https://wiki.pokerogue.net/${lang}:start`;
+    }
 
     this.menuContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
 
@@ -207,6 +213,14 @@ export default class MenuUiHandler extends MessageUiHandler {
         label: "GitHub",
         handler: () => {
           window.open(githubUrl, "_blank").focus();
+          return true;
+        },
+        keepOpen: true
+      },
+      {
+        label: "Reddit",
+        handler: () => {
+          window.open(redditUrl, "_blank").focus();
           return true;
         },
         keepOpen: true

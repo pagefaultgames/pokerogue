@@ -5,9 +5,11 @@ import {
   CommandPhase,
   EncounterPhase,
   FaintPhase,
-  LoginPhase, NewBattlePhase,
+  LoginPhase,
+  NewBattlePhase,
   SelectStarterPhase,
   TitlePhase, TurnInitPhase,
+  TurnStartPhase,
 } from "#app/phases";
 import BattleScene from "#app/battle-scene.js";
 import PhaseInterceptor from "#app/test/utils/phaseInterceptor";
@@ -29,6 +31,8 @@ import { GameDataType } from "#enums/game-data-type";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { Button } from "#enums/buttons";
+import { BattlerIndex } from "#app/battle.js";
+import TargetSelectUiHandler from "#app/ui/target-select-ui-handler.js";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -166,6 +170,19 @@ export default class GameManager {
     this.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
       (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
     });
+  }
+
+  /**
+   * Emulate a player's target selection after an attack is chosen,
+   * usually called after {@linkcode doAttack} in a double battle.
+   * @param {BattlerIndex} targetIndex the index of the attack target
+   */
+  doSelectTarget(targetIndex: BattlerIndex) {
+    this.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
+      const handler = this.scene.ui.getHandler() as TargetSelectUiHandler;
+      handler.setCursor(targetIndex);
+      handler.processInput(Button.ACTION);
+    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnStartPhase));
   }
 
   /** Faint all opponents currently on the field */

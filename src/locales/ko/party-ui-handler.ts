@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const partyUiHandler: SimpleTranslationEntries = {
   "SEND_OUT": "교체한다",
