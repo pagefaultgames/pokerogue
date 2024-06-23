@@ -7,5 +7,5 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "iceFaceAvoidedDamage": "{{pokemonName}} wehrt Schaden\nmit {{abilityName}} ab!",
   "trace": "{{pokemonName}} copied {{targetName}}'s\n{{abilityName}}!",
   "windPowerCharged": "Der Treffer durch {{moveName}} läd die Stärke von {{pokemonName}} auf!",
-  "quickDraw": "{{pokemonName}} can act faster than normal, thanks to its Quick Draw!"
+  "quickDraw": "{{pokemonName}} can act faster than normal, thanks to its Quick Draw!",
 } as const;
