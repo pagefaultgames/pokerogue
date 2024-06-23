@@ -286,26 +286,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.isAllowedInBattle() && !!this.scene && (!onField || this.isOnField());
   }
 
-  /**
-   * Checks if the Pokémon is in a semi-invulnerable state due to certain tags.
-   *
-   * @returns `true` if the Pokémon is in a semi-invulnerable state, otherwise `false`.
-   */
-  isInSemiVulnerableState(): boolean {
-    if (!this.scene) {
-      return false;
-    }
-
-    const semiInvulnerableTags = [
-      BattlerTagType.UNDERGROUND,
-      BattlerTagType.UNDERWATER,
-      BattlerTagType.HIDDEN,
-      BattlerTagType.FLYING
-    ];
-
-    return semiInvulnerableTags.some(tag => !!this.getTag(tag));
-  }
-
   getDexAttr(): bigint {
     let ret = 0n;
     ret |= this.gender !== Gender.FEMALE ? DexAttr.MALE : DexAttr.FEMALE;

@@ -12,6 +12,7 @@ import { Abilities } from "#enums/abilities";
 import { BattleStat } from "#app/data/battle-stat.js";
 import { Biome } from "#app/enums/biome.js";
 import { Type } from "#app/data/type.js";
+import { HideSpriteTag as SemiInvulnerableTag } from "#app/data/battler-tags.js";
 
 describe("Moves - Flower Shield", () => {
   let phaserGame: Phaser.Game;
@@ -90,12 +91,12 @@ describe("Moves - Flower Shield", () => {
 
     expect(paras.summonData.battleStats[BattleStat.DEF]).toBe(0);
     expect(cherrim.summonData.battleStats[BattleStat.DEF]).toBe(0);
-    expect(paras.isInSemiVulnerableState()).toBe(false);
+    expect(paras.getTag(SemiInvulnerableTag)).toBeUndefined;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.FLOWER_SHIELD));
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(paras.isInSemiVulnerableState()).toBe(true);
+    expect(paras.getTag(SemiInvulnerableTag)).toBeDefined();
     expect(paras.summonData.battleStats[BattleStat.DEF]).toBe(0);
     expect(cherrim.summonData.battleStats[BattleStat.DEF]).toBe(1);
   });
