@@ -1,5 +1,5 @@
 import * as Utils from "../utils";
-import i18next, {ParseKeys} from "i18next";
+import i18next, { ParseKeys } from "i18next";
 
 export enum StatusEffect {
   NONE,
@@ -52,7 +52,11 @@ function getStatusEffectMessageKey(statusEffect: StatusEffect): string {
 }
 
 export function getStatusEffectObtainText(statusEffect: StatusEffect, pokemonNameWithAffix: string, sourceText?: string): string {
-  const i18nKey = `${getStatusEffectMessageKey(statusEffect)}.obtain`as ParseKeys;
+  if (!sourceText) {
+    const i18nKey = `${getStatusEffectMessageKey(statusEffect)}.obtain`as ParseKeys;
+    return i18next.t(i18nKey, { pokemonNameWithAffix: pokemonNameWithAffix });
+  }
+  const i18nKey = `${getStatusEffectMessageKey(statusEffect)}.obtainSource`as ParseKeys;
   return !sourceText ? i18next.t(i18nKey, { pokemonNameWithAffix: pokemonNameWithAffix }) : i18next.t(i18nKey, { pokemonNameWithAffix: pokemonNameWithAffix, sourceText: sourceText });
 }
 
