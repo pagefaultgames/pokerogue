@@ -32,12 +32,6 @@ describe("Abilities - Quick Draw", () => {
     vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(
       Abilities.QUICK_DRAW
     );
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([
-      Moves.TACKLE,
-      Moves.TACKLE,
-      Moves.TACKLE,
-      Moves.TACKLE,
-    ]);
     vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(
       Species.RATTATA
     );
@@ -75,13 +69,6 @@ describe("Abilities - Quick Draw", () => {
   }, 20000);
 
   it("does not triggered by non damage moves", async () => {
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([
-      Moves.COUNTER,
-      Moves.COUNTER,
-      Moves.COUNTER,
-      Moves.COUNTER,
-    ]);
-
     await game.startBattle([Species.SLOWBRO]);
 
     const pokemon = game.scene.getParty()[0];
@@ -92,7 +79,7 @@ describe("Abilities - Quick Draw", () => {
     pokemon.hp = 1;
     enemy.hp = 1;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+    game.doAttack(getMovePosition(game.scene, 0, Moves.TOXIC));
 
     await game.phaseInterceptor.run(EnemyCommandPhase);
     await game.phaseInterceptor.run(TurnStartPhase);
