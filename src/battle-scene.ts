@@ -66,8 +66,6 @@ import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { UiTheme } from "#enums/ui-theme";
 import { TimedEventManager } from "#app/timed-event-manager.js";
-import i18next from "i18next";
-import BgmBar from "#app/ui/bgm-bar";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -221,7 +219,6 @@ export default class BattleScene extends SceneBase {
   private modifierBar: ModifierBar;
   private enemyModifierBar: ModifierBar;
   public arenaFlyout: ArenaFlyout;
-  public bgmBar: BgmBar;
 
   private fieldOverlay: Phaser.GameObjects.Rectangle;
   private shopOverlay: Phaser.GameObjects.Rectangle;
@@ -1903,10 +1900,6 @@ export default class BattleScene extends SceneBase {
     }
 
     return 0;
-  }
-
-  getRealBgmName(bgmName: string): string {
-    return i18next.t([`bgmName:${bgmName}`, "bgmName:missing_entries"], {name: Utils.formatText(bgmName)});
   }
 
   toggleInvert(invert: boolean): void {

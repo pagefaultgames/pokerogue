@@ -1,6 +1,7 @@
 import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const bgmName: SimpleTranslationEntries = {
+  "music": "Music",
   "missing_entries" : "{{name}}",
   "battle_kanto_champion": "BW2 관동 챔피언 배틀",
   "battle_johto_champion": "BW2 성도 챔피언 배틀",

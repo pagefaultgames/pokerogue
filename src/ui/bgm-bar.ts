@@ -1,5 +1,7 @@
 import BattleScene from "../battle-scene";
-import { TextStyle, addTextObject } from "./text";
+import {addTextObject, TextStyle} from "./text";
+import i18next from "i18next";
+import * as Utils from "#app/utils";
 
 
 const hiddenX = -150;
@@ -30,16 +32,16 @@ export default class BgmBar extends Phaser.GameObjects.Container {
     this.defaultWidth = 200;
     this.defaultHeight = 100;
 
-    this.bg = this.scene.add.nineslice(0, -5, "ability_bar_left", null, this.defaultWidth, this.defaultHeight, 0, 0, 10, 10);
+    this.bg = this.scene.add.nineslice(-5, -5, "ability_bar_left", null, this.defaultWidth, this.defaultHeight, 0, 0, 10, 10);
     this.bg.setOrigin(0, 0);
 
     this.add(this.bg);
 
-    this.noteText = addTextObject(this.scene, 5, 5, "♫ :", TextStyle.MESSAGE, {fontSize: "72px"});
+    this.noteText = addTextObject(this.scene, 5, 5, "", TextStyle.MESSAGE, {fontSize: "72px"});
     this.noteText.setOrigin(0, 0);
     this.add(this.noteText);
 
-    this.musicText = addTextObject(this.scene, 15, 5, "", TextStyle.MESSAGE, {fontSize: "72px"});
+    this.musicText = addTextObject(this.scene, 30, 5, "", TextStyle.MESSAGE, {fontSize: "72px"});
     this.musicText.setOrigin(0, 0);
     this.musicText.setWordWrapWidth(650, true);
 
@@ -54,14 +56,15 @@ export default class BgmBar extends Phaser.GameObjects.Container {
     * @param {string} bgmName The name of the BGM to set.
    */
   setBgmToBgmBar(bgmName: string): void {
-    this.musicText.setText(`${(this.scene as BattleScene).getRealBgmName(bgmName)}`);
+    this.noteText.setText(`${i18next.t("bgmName:music")}:`);
+    this.musicText.setText(`${this.getRealBgmName(bgmName)}`);
     if (!(this.scene as BattleScene).showBgmBar) {
       return;
     }
 
     this.musicText.width = this.bg.width - 20;
     this.musicText.setWordWrapWidth(this.defaultWidth * 4);
-    this.bg.width = Math.min(this.defaultWidth, this.noteText.displayWidth + this.musicText.displayWidth + 20);
+    this.bg.width = Math.min(this.defaultWidth, this.noteText.displayWidth + this.musicText.displayWidth + 30);
 
     this.bg.height = Math.min(this.defaultHeight, this.musicText.displayHeight + 20);
 
@@ -88,4 +91,10 @@ export default class BgmBar extends Phaser.GameObjects.Container {
       }
     });
   }
+
+  getRealBgmName(bgmName: string): string {
+    return i18next.t([`bgmName:${bgmName}`, "bgmName:missing_entries"], {name: Utils.formatText(bgmName)});
+  }
 }
+
+
