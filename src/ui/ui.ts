@@ -443,7 +443,7 @@ export default class UI extends Phaser.GameObjects.Container {
             this.modeChain.push(this.mode);
           }
           this.mode = mode;
-          const touchControls = document.getElementById("touchControls");
+          const touchControls = document?.getElementById("touchControls");
           if (touchControls) {
             touchControls.dataset.uiMode = Mode[mode];
           }

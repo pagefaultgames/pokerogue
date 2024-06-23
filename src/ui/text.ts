@@ -5,6 +5,7 @@ import { ModifierTier } from "../modifier/modifier-tier";
 import Phaser from "phaser";
 import { EggTier } from "#enums/egg-type";
 import { UiTheme } from "#enums/ui-theme";
+import i18next from "i18next";
 
 export enum TextStyle {
   MESSAGE,
@@ -24,6 +25,7 @@ export enum TextStyle {
   MONEY,
   STATS_LABEL,
   STATS_VALUE,
+  SETTINGS_VALUE,
   SETTINGS_LABEL,
   SETTINGS_SELECTED,
   SETTINGS_LOCKED,
@@ -36,44 +38,62 @@ export enum TextStyle {
   MOVE_PP_EMPTY
 }
 
+export interface TextStyleOptions {
+  scale: number,
+  styleOptions: Phaser.Types.GameObjects.Text.TextStyle | InputText.IConfig,
+  shadowColor: string,
+  shadowXpos: number,
+  shadowYpos: number
+}
+
 export function addTextObject(scene: Phaser.Scene, x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): Phaser.GameObjects.Text {
-  const [ scale, styleOptions, shadowColor, shadowXpos, shadowYpos ] = getTextStyleOptions(style, (scene as BattleScene).uiTheme, extraStyleOptions);
+  const { scale, styleOptions, shadowColor, shadowXpos, shadowYpos } = getTextStyleOptions(style, (scene as BattleScene).uiTheme, extraStyleOptions);
 
   const ret = scene.add.text(x, y, content, styleOptions);
   ret.setScale(scale);
   ret.setShadow(shadowXpos, shadowYpos, shadowColor);
   if (!(styleOptions as Phaser.Types.GameObjects.Text.TextStyle).lineSpacing) {
-    ret.setLineSpacing(5);
+    ret.setLineSpacing(scale * 30);
   }
 
+  if (ret.lineSpacing < 12 && i18next.resolvedLanguage === "ja") {
+    ret.setLineSpacing(ret.lineSpacing + 35);
+  }
   return ret;
 }
 
 export function setTextStyle(obj: Phaser.GameObjects.Text, scene: Phaser.Scene, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle) {
-  const [ scale, styleOptions, shadowColor, shadowXpos, shadowYpos ] = getTextStyleOptions(style, (scene as BattleScene).uiTheme, extraStyleOptions);
+  const { scale, styleOptions, shadowColor, shadowXpos, shadowYpos } = getTextStyleOptions(style, (scene as BattleScene).uiTheme, extraStyleOptions);
   obj.setScale(scale);
   obj.setShadow(shadowXpos, shadowYpos, shadowColor);
   if (!(styleOptions as Phaser.Types.GameObjects.Text.TextStyle).lineSpacing) {
-    obj.setLineSpacing(5);
+    obj.setLineSpacing(scale * 30);
+  }
+
+  if (obj.lineSpacing < 12 && i18next.resolvedLanguage === "ja") {
+    obj.setLineSpacing(obj.lineSpacing + 35);
   }
 }
 
 export function addBBCodeTextObject(scene: Phaser.Scene, x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): BBCodeText {
-  const [ scale, styleOptions, shadowColor, shadowXpos, shadowYpos ] = getTextStyleOptions(style, (scene as BattleScene).uiTheme, extraStyleOptions);
+  const { scale, styleOptions, shadowColor, shadowXpos, shadowYpos } = getTextStyleOptions(style, (scene as BattleScene).uiTheme, extraStyleOptions);
 
   const ret = new BBCodeText(scene, x, y, content, styleOptions as BBCodeText.TextStyle);
   scene.add.existing(ret);
   ret.setScale(scale);
   ret.setShadow(shadowXpos, shadowYpos, shadowColor);
   if (!(styleOptions as BBCodeText.TextStyle).lineSpacing) {
-    ret.setLineSpacing(10);
+    ret.setLineSpacing(scale * 60);
   }
 
+  if (ret.lineSpacing < 12 && i18next.resolvedLanguage === "ja") {
+    ret.setLineSpacing(ret.lineSpacing + 35);
+  }
   return ret;
 }
 
 export function addTextInputObject(scene: Phaser.Scene, x: number, y: number, width: number, height: number, style: TextStyle, extraStyleOptions?: InputText.IConfig): InputText {
-  const [ scale, styleOptions ] = getTextStyleOptions(style, (scene as BattleScene).uiTheme, extraStyleOptions);
+  const { scale, styleOptions } = getTextStyleOptions(style, (scene as BattleScene).uiTheme, extraStyleOptions);
 
   const ret = new InputText(scene, x, y, width, height, styleOptions as InputText.IConfig);
   scene.add.existing(ret);
@@ -82,10 +102,10 @@ export function addTextInputObject(scene: Phaser.Scene, x: number, y: number, wi
   return ret;
 }
 
-function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): [ number, Phaser.Types.GameObjects.Text.TextStyle | InputText.IConfig, string, number, number ] {
+export function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): TextStyleOptions {
   let shadowXpos = 4;
   let shadowYpos = 5;
-  const scale = 0.1666666667;
+  let scale = 0.1666666667;
   const defaultFontSize = 96;
 
   let styleOptions: Phaser.Types.GameObjects.Text.TextStyle = {
@@ -96,6 +116,11 @@ function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptio
       bottom: 6
     }
   };
+
+  if (i18next.resolvedLanguage === "ja") {
+    scale = 0.1388888889;
+    styleOptions.padding = { top:2, bottom:4 };
+  }
 
   switch (style) {
   case TextStyle.SUMMARY:
@@ -114,9 +139,16 @@ function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptio
     break;
   case TextStyle.STATS_LABEL:
   case TextStyle.MESSAGE:
+    break;
+  case TextStyle.SETTINGS_VALUE:
   case TextStyle.SETTINGS_LABEL:
   case TextStyle.SETTINGS_LOCKED:
   case TextStyle.SETTINGS_SELECTED:
+    shadowXpos = 3;
+    shadowYpos = 3;
+    if (i18next.resolvedLanguage === "ja") {
+      styleOptions.fontSize = 116;
+    }
     break;
   case TextStyle.BATTLE_INFO:
   case TextStyle.MONEY:
@@ -152,7 +184,7 @@ function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptio
     styleOptions = Object.assign(styleOptions, extraStyleOptions);
   }
 
-  return [ scale, styleOptions, shadowColor, shadowXpos, shadowYpos ];
+  return { scale, styleOptions, shadowColor, shadowXpos, shadowYpos };
 }
 
 export function getBBCodeFrag(content: string, textStyle: TextStyle, uiTheme: UiTheme = UiTheme.DEFAULT): string {
@@ -167,6 +199,7 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
   case TextStyle.MOVE_INFO_CONTENT:
   case TextStyle.MOVE_PP_FULL:
   case TextStyle.TOOLTIP_CONTENT:
+  case TextStyle.SETTINGS_VALUE:
     if (uiTheme) {
       return !shadow ? "#484848" : "#d0d0c8";
     }

@@ -104,7 +104,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
 
         this.optionsContainer.add(this.settingLabels[s]);
         this.optionValueLabels.push(setting.options.map((option, o) => {
-          const valueLabel = addTextObject(this.scene, 0, 0, option.label, setting.default === o ? TextStyle.SETTINGS_SELECTED : TextStyle.WINDOW);
+          const valueLabel = addTextObject(this.scene, 0, 0, option.label, setting.default === o ? TextStyle.SETTINGS_SELECTED : TextStyle.SETTINGS_VALUE);
           valueLabel.setOrigin(0, 0);
 
           this.optionsContainer.add(valueLabel);
@@ -313,8 +313,8 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     const lastCursor = this.optionCursors[settingIndex];
 
     const lastValueLabel = this.optionValueLabels[settingIndex][lastCursor];
-    lastValueLabel.setColor(this.getTextColor(TextStyle.WINDOW));
-    lastValueLabel.setShadowColor(this.getTextColor(TextStyle.WINDOW, true));
+    lastValueLabel.setColor(this.getTextColor(TextStyle.SETTINGS_VALUE));
+    lastValueLabel.setShadowColor(this.getTextColor(TextStyle.SETTINGS_VALUE, true));
 
     this.optionCursors[settingIndex] = cursor;
 
