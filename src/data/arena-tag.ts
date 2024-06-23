@@ -63,6 +63,10 @@ export abstract class ArenaTag {
   }
 }
 
+/**
+ * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Mist_(move) Mist}.
+ * Prevents Pokémon on the opposing side from lowering the stats of the Pokémon in the Mist.
+ */
 export class MistTag extends ArenaTag {
   constructor(turnCount: integer, sourceId: integer, side: ArenaTagSide) {
     super(ArenaTagType.MIST, turnCount, Moves.MIST, sourceId, side);
@@ -299,6 +303,10 @@ class CraftyShieldTag extends ConditionalProtectTag {
   }
 }
 
+/**
+ * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Wish_(move) Wish}.
+ * Heals the Pokémon in the user's position the turn after Wish is used.
+ */
 class WishTag extends ArenaTag {
   private battlerIndex: BattlerIndex;
   private triggerMessage: string;
@@ -324,9 +332,21 @@ class WishTag extends ArenaTag {
   }
 }
 
+/**
+ * Abstract class to implement weakened moves of a specific type.
+ */
 export class WeakenMoveTypeTag extends ArenaTag {
   private weakenedType: Type;
 
+  /**
+   * Creates a new instance of the WeakenMoveTypeTag class.
+   *
+   * @param tagType - The type of the arena tag.
+   * @param turnCount - The number of turns the tag is active.
+   * @param type - The type being weakened from this tag.
+   * @param sourceMove - The move that created the tag.
+   * @param sourceId - The ID of the source of the tag.
+   */
   constructor(tagType: ArenaTagType, turnCount: integer, type: Type, sourceMove: Moves, sourceId: integer) {
     super(tagType, turnCount, sourceMove, sourceId);
 
@@ -343,6 +363,10 @@ export class WeakenMoveTypeTag extends ArenaTag {
   }
 }
 
+/**
+ * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Mud_Sport_(move) Mud Sport}.
+ * Weakens Electric type moves for a set amount of turns, usually 5.
+ */
 class MudSportTag extends WeakenMoveTypeTag {
   constructor(turnCount: integer, sourceId: integer) {
     super(ArenaTagType.MUD_SPORT, turnCount, Type.ELECTRIC, Moves.MUD_SPORT, sourceId);
@@ -357,6 +381,10 @@ class MudSportTag extends WeakenMoveTypeTag {
   }
 }
 
+/**
+ * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Water_Sport_(move) Water Sport}.
+ * Weakens Fire type moves for a set amount of turns, usually 5.
+ */
 class WaterSportTag extends WeakenMoveTypeTag {
   constructor(turnCount: integer, sourceId: integer) {
     super(ArenaTagType.WATER_SPORT, turnCount, Type.FIRE, Moves.WATER_SPORT, sourceId);
@@ -371,10 +399,22 @@ class WaterSportTag extends WeakenMoveTypeTag {
   }
 }
 
+/**
+ * Abstract class to implement arena traps.
+ */
 export class ArenaTrapTag extends ArenaTag {
   public layers: integer;
   public maxLayers: integer;
 
+  /**
+   * Creates a new instance of the ArenaTrapTag class.
+   *
+   * @param tagType - The type of the arena tag.
+   * @param sourceMove - The move that created the tag.
+   * @param sourceId - The ID of the source of the tag.
+   * @param side - The side (player or enemy) the tag affects.
+   * @param maxLayers - The maximum amount of layers this tag can have.
+   */
   constructor(tagType: ArenaTagType, sourceMove: Moves, sourceId: integer, side: ArenaTagSide, maxLayers: integer) {
     super(tagType, 0, sourceMove, sourceId, side);
 
@@ -408,6 +448,11 @@ export class ArenaTrapTag extends ArenaTag {
   }
 }
 
+/**
+ * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Spikes_(move) Spikes}.
+ * Applies up to 3 layers of Spikes, dealing 1/8th, 1/6th, or 1/4th of the the Pokémon's HP
+ * in damage for 1, 2, or 3 layers of Spikes respectively if they are summoned into this trap.
+ */
 class SpikesTag extends ArenaTrapTag {
   constructor(sourceId: integer, side: ArenaTagSide) {
     super(ArenaTagType.SPIKES, Moves.SPIKES, sourceId, side, 3);
@@ -444,6 +489,12 @@ class SpikesTag extends ArenaTrapTag {
   }
 }
 
+/**
+ * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Toxic_Spikes_(move) Toxic Spikes}.
+ * Applies up to 2 layers of Toxic Spikes, poisoning or badly poisoning any Pokémon who is
+ * summoned into this trap if 1 or 2 layers of Toxic Spikes respectively are up. Poison-type
+ * Pokémon summoned into this trap remove it entirely.
+ */
 class ToxicSpikesTag extends ArenaTrapTag {
   private neutralized: boolean;
 
@@ -497,6 +548,11 @@ class ToxicSpikesTag extends ArenaTrapTag {
   }
 }
 
+/**
+ * Arena Tag class for delayed attacks, such as {@linkcode Moves.FUTURE_SIGHT} or {@linkcode Moves.DOOM_DESIRE}.
+ * Delays the attack's effect by a set amount of turns, usually 3 (including the turn the move is used),
+ * and deals damage after the turn count is reached.
+ */
 class DelayedAttackTag extends ArenaTag {
   public targetIndex: BattlerIndex;
 
@@ -519,6 +575,11 @@ class DelayedAttackTag extends ArenaTag {
   onRemove(arena: Arena): void { }
 }
 
+/**
+ * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Stealth_Rock_(move) Stealth Rock}.
+ * Applies up to 1 layer of Stealth Rocks, dealing percentage-based damage to any Pokémon
+ * who is summoned into the trap, based on the Rock type's type effectiveness.
+ */
 class StealthRockTag extends ArenaTrapTag {
   constructor(sourceId: integer, side: ArenaTagSide) {
     super(ArenaTagType.STEALTH_ROCK, Moves.STEALTH_ROCK, sourceId, side, 1);
@@ -590,6 +651,11 @@ class StealthRockTag extends ArenaTrapTag {
   }
 }
 
+/**
+ * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Sticky_Web_(move) Sticky Web}.
+ * Applies up to 1 layer of Sticky Web, which lowers the Speed by one stage
+ * to any Pokémon who is summoned into this trap.
+ */
 class StickyWebTag extends ArenaTrapTag {
   constructor(sourceId: integer, side: ArenaTagSide) {
     super(ArenaTagType.STICKY_WEB, Moves.STICKY_WEB, sourceId, side, 1);
@@ -622,6 +688,11 @@ class StickyWebTag extends ArenaTrapTag {
 
 }
 
+/**
+ * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Trick_Room_(move) Trick Room}.
+ * Reverses the Speed stats for all Pokémon on the field as long as this arena tag is up,
+ * also reversing the turn order for all Pokémon on the field as well.
+ */
 export class TrickRoomTag extends ArenaTag {
   constructor(turnCount: integer, sourceId: integer) {
     super(ArenaTagType.TRICK_ROOM, turnCount, Moves.TRICK_ROOM, sourceId);
@@ -642,6 +713,11 @@ export class TrickRoomTag extends ArenaTag {
   }
 }
 
+/**
+ * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Gravity_(move) Gravity}.
+ * Grounds all Pokémon on the field, including Flying-types and those with
+ * {@linkcode Abilities.LEVITATE} for the duration of the arena tag, usually 5 turns.
+ */
 export class GravityTag extends ArenaTag {
   constructor(turnCount: integer) {
     super(ArenaTagType.GRAVITY, turnCount, Moves.GRAVITY);
@@ -661,6 +737,11 @@ export class GravityTag extends ArenaTag {
   }
 }
 
+/**
+ * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Tailwind_(move) Tailwind}.
+ * Doubles the Speed of the Pokémon who created this arena tag, as well as all allied Pokémon.
+ * Applies this arena tag for 4 turns (including the turn the move was used).
+ */
 class TailwindTag extends ArenaTag {
   constructor(turnCount: integer, sourceId: integer, side: ArenaTagSide) {
     super(ArenaTagType.TAILWIND, turnCount, Moves.TAILWIND, sourceId, side);
@@ -695,6 +776,10 @@ class TailwindTag extends ArenaTag {
   }
 }
 
+/**
+ * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Happy_Hour_(move) Happy Hour}.
+ * Doubles the prize money from trainers and money moves like {@linkcode Moves.PAY_DAY} and {@linkcode Moves.MAKE_IT_RAIN}.
+ */
 class HappyHourTag extends ArenaTag {
   constructor(turnCount: integer, sourceId: integer, side: ArenaTagSide) {
     super(ArenaTagType.HAPPY_HOUR, turnCount, Moves.HAPPY_HOUR, sourceId, side);
