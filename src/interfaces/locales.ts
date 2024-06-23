@@ -9,6 +9,15 @@ export interface SimpleTranslationEntries {
     [key: string]: string
   }
 
+export interface FusionTranslationEntries {
+    [key: string]: FusionTranslationEntry,
+  }
+
+export interface FusionTranslationEntry {
+    fusionPrefix: string,
+    fusionSuffix: string,
+  }
+
 export interface MoveTranslationEntry {
     name: string,
     effect: string
