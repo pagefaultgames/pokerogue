@@ -12,11 +12,9 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
   private playerCountLabel: Phaser.GameObjects.Text;
   private splashMessage: string;
   private splashMessageText: Phaser.GameObjects.Text;
-  private eventTimerText: Phaser.GameObjects.Text;
   private eventDisplay: TimedEventDisplay;
 
   private titleStatsTimer: NodeJS.Timeout;
-  private eventTimer: NodeJS.Timeout;
 
   constructor(scene: BattleScene, mode: Mode = Mode.TITLE) {
     super(scene, mode);
@@ -85,8 +83,6 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
 
       const ui = this.getUi();
 
-      // this.dailyRunScoreboard.update();
-
       if (this.scene.eventManager.isEventActive()) {
         this.eventDisplay.show();
       }
@@ -113,7 +109,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
 
     const ui = this.getUi();
 
-    this.eventDisplay.clear();
+    this.eventDisplay?.clear();
 
     clearInterval(this.titleStatsTimer);
     this.titleStatsTimer = null;
