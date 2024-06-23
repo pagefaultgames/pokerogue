@@ -40,6 +40,7 @@ import { voucher } from "./voucher";
 import { weather } from "./weather";
 import { partyUiHandler } from "./party-ui-handler";
 import { settings } from "#app/locales/zh_TW/settings.js";
+import { common } from "#app/locales/zh_TW/common.js";
 
 export const zhTwConfig = {
   ability: ability,
@@ -50,6 +51,7 @@ export const zhTwConfig = {
   biome: biome,
   challenges: challenges,
   commandUiHandler: commandUiHandler,
+  common: common,
   PGMachv: PGMachv,
   PGFachv: PGFachv,
   PGMdialogue: PGMdialogue,

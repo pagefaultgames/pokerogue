@@ -3,7 +3,6 @@ import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
 import * as overrides from "#app/overrides";
 import { Species } from "#enums/species";
-import { TurnEndPhase, } from "#app/phases";
 import { Moves } from "#enums/moves";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import Move, { allMoves, MoveCategory } from "#app/data/move.js";
@@ -42,13 +41,11 @@ describe("Abilities - Battery", () => {
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
     const multiplier = getAttrPowerMultiplier(game.scene.getPlayerField()[1]);
-    const appliedPower = getAppliedMovePower(game.scene.getEnemyField()[0], game.scene.getPlayerField()[0], allMoves[moveToBeUsed]);
+    const mockedPower = getMockedMovePower(game.scene.getEnemyField()[0], game.scene.getPlayerField()[0], allMoves[moveToBeUsed]);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
-
-    expect(appliedPower).not.toBe(undefined);
-    expect(appliedPower).not.toBe(basePower);
-    expect(appliedPower).toBe(basePower * multiplier);
+    expect(mockedPower).not.toBe(undefined);
+    expect(mockedPower).not.toBe(basePower);
+    expect(mockedPower).toBe(basePower * multiplier);
   });
 
   it("does not raise the power of allies' non-special moves", async () => {
@@ -61,13 +58,11 @@ describe("Abilities - Battery", () => {
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
     const multiplier = getAttrPowerMultiplier(game.scene.getPlayerField()[1]);
-    const appliedPower = getAppliedMovePower(game.scene.getEnemyField()[0], game.scene.getPlayerField()[0], allMoves[moveToBeUsed]);
+    const mockedPower = getMockedMovePower(game.scene.getEnemyField()[0], game.scene.getPlayerField()[0], allMoves[moveToBeUsed]);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
-
-    expect(appliedPower).not.toBe(undefined);
-    expect(appliedPower).toBe(basePower);
-    expect(appliedPower).not.toBe(basePower * multiplier);
+    expect(mockedPower).not.toBe(undefined);
+    expect(mockedPower).toBe(basePower);
+    expect(mockedPower).not.toBe(basePower * multiplier);
   });
 
   it("does not raise the power of the ability owner's special moves", async () => {
@@ -80,25 +75,25 @@ describe("Abilities - Battery", () => {
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
     const multiplier = getAttrPowerMultiplier(game.scene.getPlayerField()[0]);
-    const appliedPower = getAppliedMovePower(game.scene.getEnemyField()[0], game.scene.getPlayerField()[0], allMoves[moveToBeUsed]);
+    const mockedPower = getMockedMovePower(game.scene.getEnemyField()[0], game.scene.getPlayerField()[0], allMoves[moveToBeUsed]);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
-
-    expect(appliedPower).not.toBe(undefined);
-    expect(appliedPower).toBe(basePower);
-    expect(appliedPower).not.toBe(basePower * multiplier);
+    expect(mockedPower).not.toBe(undefined);
+    expect(mockedPower).toBe(basePower);
+    expect(mockedPower).not.toBe(basePower * multiplier);
   });
 });
 
 /**
- * Calculates the adjusted applied power of a move.
+ * Calculates the mocked power of a move.
+ * Note this does not consider other damage calculations
+ * except the power multiplier from Battery.
  *
  * @param defender - The defending Pokémon.
  * @param attacker - The attacking Pokémon.
  * @param move - The move being used by the attacker.
  * @returns The adjusted power of the move.
  */
-const getAppliedMovePower = (defender: Pokemon, attacker: Pokemon, move: Move) => {
+const getMockedMovePower = (defender: Pokemon, attacker: Pokemon, move: Move) => {
   const powerHolder = new NumberHolder(move.power);
 
   /**

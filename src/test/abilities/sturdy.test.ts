@@ -3,7 +3,8 @@ import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
 import * as overrides from "#app/overrides";
 import {
-  TurnEndPhase,
+  DamagePhase,
+  MoveEndPhase,
 } from "#app/phases";
 import {getMovePosition} from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
@@ -45,7 +46,7 @@ describe("Abilities - Sturdy", () => {
     async () => {
       await game.startBattle();
       game.doAttack(getMovePosition(game.scene, 0, Moves.CLOSE_COMBAT));
-      await game.phaseInterceptor.to(TurnEndPhase);
+      await game.phaseInterceptor.to(MoveEndPhase);
       expect(game.scene.getEnemyParty()[0].hp).toBe(1);
     },
     TIMEOUT
@@ -55,10 +56,13 @@ describe("Abilities - Sturdy", () => {
     "Sturdy doesn't activate when user is not at full HP",
     async () => {
       await game.startBattle();
+
       const enemyPokemon: EnemyPokemon = game.scene.getEnemyParty()[0];
       enemyPokemon.hp = enemyPokemon.getMaxHp() - 1;
+
       game.doAttack(getMovePosition(game.scene, 0, Moves.CLOSE_COMBAT));
-      await game.phaseInterceptor.to(TurnEndPhase);
+      await game.phaseInterceptor.to(DamagePhase);
+
       expect(enemyPokemon.hp).toBe(0);
       expect(enemyPokemon.isFainted()).toBe(true);
     },
@@ -66,11 +70,12 @@ describe("Abilities - Sturdy", () => {
   );
 
   test(
-    "Sturdy pokemon should be inmune to OHKO moves",
+    "Sturdy pokemon should be immune to OHKO moves",
     async () => {
       await game.startBattle();
       game.doAttack(getMovePosition(game.scene, 0, Moves.FISSURE));
-      await game.phaseInterceptor.to(TurnEndPhase);
+      await game.phaseInterceptor.to(MoveEndPhase);
+
       const enemyPokemon: EnemyPokemon = game.scene.getEnemyParty()[0];
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
     },
@@ -84,7 +89,8 @@ describe("Abilities - Sturdy", () => {
 
       await game.startBattle();
       game.doAttack(getMovePosition(game.scene, 0, Moves.CLOSE_COMBAT));
-      await game.phaseInterceptor.to(TurnEndPhase);
+      await game.phaseInterceptor.to(DamagePhase);
+
       const enemyPokemon: EnemyPokemon = game.scene.getEnemyParty()[0];
       expect(enemyPokemon.hp).toBe(0);
       expect(enemyPokemon.isFainted()).toBe(true);

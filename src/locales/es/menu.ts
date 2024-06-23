@@ -53,4 +53,5 @@ export const menu: SimpleTranslationEntries = {
   "no":"No",
   "disclaimer": "AVISO",
   "disclaimerDescription": "Este juego es un producto inacabado; puede tener problemas de jugabilidad (incluyendo la posible pérdida\n de datos de guardado),cambiar sin avisar, y puede o no puede ser actualizado hasta ser completado.",
+  "choosePokemon": "Choose a Pokémon.",
 } as const;

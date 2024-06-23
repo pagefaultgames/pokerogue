@@ -1,4 +1,4 @@
-import { GachaType } from "./data/egg";
+import { GachaType } from "./enums/gacha-types";
 import { trainerConfigs } from "./data/trainer-config";
 import { getBiomeHasProps } from "./field/arena";
 import CacheBustedLoaderPlugin from "./plugins/cache-busted-loader-plugin";
@@ -43,7 +43,6 @@ export class LoadingScene extends SceneBase {
 
     // Load menu images
     this.loadAtlas("bg", "ui");
-    this.loadImage("command_fight_labels", "ui");
     this.loadAtlas("prompt", "ui");
     this.loadImage("candy", "ui");
     this.loadImage("candy_overlay", "ui");

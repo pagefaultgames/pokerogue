@@ -93,7 +93,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "招式命中率增加{{accuracyAmount}} (最大100)。",
     },
     "PokemonMultiHitModifierType": {
-      description: "攻击造成一次额外伤害，\n每堆叠一件会让攻击伤害\n衰减60/75/82.5%。",
+      description: "攻击以40/25/12.5%的伤害造成2/3/4次伤害",
     },
     "TmModifierType": {
       name: "招式学习器 {{moveId}} - {{moveName}}",

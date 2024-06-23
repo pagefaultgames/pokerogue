@@ -53,4 +53,5 @@ export const menu: SimpleTranslationEntries = {
   "no":"No",
   "disclaimer": "DISCLAIMER",
   "disclaimerDescription": "Questo gioco è un prodotto incompleto; si potrebbero riscontrare errori (inclusa la perdita dei dati di salvataggio),\ncambiamenti impercettibili, e non è detto che venga aggiornato nel tempo o mai completato del tutto.",
+  "choosePokemon": "Choose a Pokémon.",
 } as const;

@@ -40,6 +40,7 @@ import { voucher } from "./voucher";
 import { weather } from "./weather";
 import { partyUiHandler } from "./party-ui-handler";
 import { settings } from "#app/locales/zh_CN/settings.js";
+import { common } from "#app/locales/zh_CN/common.js";
 
 export const zhCnConfig = {
   ability: ability,
@@ -50,6 +51,7 @@ export const zhCnConfig = {
   biome: biome,
   challenges: challenges,
   commandUiHandler: commandUiHandler,
+  common: common,
   PGMachv: PGMachv,
   PGFachv: PGFachv,
   PGMdialogue: PGMdialogue,
