@@ -51,71 +51,18 @@ export function getPokemonSpeciesForm(species: Species, formIndex: integer): Pok
 }
 
 export function getFusedSpeciesName(speciesAName: string, speciesBName: string): string {
-  const fragAPattern = /([a-z]{2}.*?[aeiou(?:y$)\-\']+)(.*?)$/i;
-  const fragBPattern = /([a-z]{2}.*?[aeiou(?:y$)\-\'])(.*?)$/i;
+  // Get the fusion affixes for the species
+  const speciesAFusionAffixes = fusionAffixes[speciesAName];
+  const speciesBFusionAffixes = fusionAffixes[speciesBName];
 
-  const [ speciesAPrefixMatch, speciesBPrefixMatch ] = [ speciesAName, speciesBName ].map(n => /^(?:[^ ]+) /.exec(n));
-  const [ speciesAPrefix, speciesBPrefix ] = [ speciesAPrefixMatch, speciesBPrefixMatch ].map(m => m ? m[0] : "");
+  // Get the fusion prefix and suffix for each species
+  const speciesAPrefix = speciesAFusionAffixes.fusionPrefix;
+  const speciesBSuffix = speciesBFusionAffixes.fusionSuffix;
 
-  if (speciesAPrefix) {
-    speciesAName = speciesAName.slice(speciesAPrefix.length);
-  }
-  if (speciesBPrefix) {
-    speciesBName = speciesBName.slice(speciesBPrefix.length);
-  }
+  // Construct the fused species name
+  const fusedSpeciesName = `${speciesAPrefix}${speciesBSuffix}`;
 
-  const [ speciesASuffixMatch, speciesBSuffixMatch ] = [ speciesAName, speciesBName ].map(n => / (?:[^ ]+)$/.exec(n));
-  const [ speciesASuffix, speciesBSuffix ] = [ speciesASuffixMatch, speciesBSuffixMatch ].map(m => m ? m[0] : "");
-
-  if (speciesASuffix) {
-    speciesAName = speciesAName.slice(0, -speciesASuffix.length);
-  }
-  if (speciesBSuffix) {
-    speciesBName = speciesBName.slice(0, -speciesBSuffix.length);
-  }
-
-  const splitNameA = speciesAName.split(/ /g);
-  const splitNameB = speciesBName.split(/ /g);
-
-  const fragAMatch = fragAPattern.exec(speciesAName);
-  const fragBMatch = fragBPattern.exec(speciesBName);
-
-  let fragA: string;
-  let fragB: string;
-
-  fragA = splitNameA.length === 1
-    ? fragAMatch ? fragAMatch[1] : speciesAName
-    : splitNameA[splitNameA.length - 1];
-
-  if (splitNameB.length === 1) {
-    if (fragBMatch) {
-      const lastCharA = fragA.slice(fragA.length - 1);
-      const prevCharB = fragBMatch[1].slice(fragBMatch.length - 1);
-      fragB = (/[\-']/.test(prevCharB) ? prevCharB : "") + fragBMatch[2] || prevCharB;
-      if (lastCharA === fragB[0]) {
-        if (/[aiu]/.test(lastCharA)) {
-          fragB = fragB.slice(1);
-        } else {
-          const newCharMatch = new RegExp(`[^${lastCharA}]`).exec(fragB);
-          if (newCharMatch?.index > 0) {
-            fragB = fragB.slice(newCharMatch.index);
-          }
-        }
-      }
-    } else {
-      fragB = speciesBName;
-    }
-  } else {
-    fragB = splitNameB[splitNameB.length - 1];
-  }
-
-  if (splitNameA.length > 1) {
-    fragA = `${splitNameA.slice(0, splitNameA.length - 1).join(" ")} ${fragA}`;
-  }
-
-  fragB = `${fragB.slice(0, 1).toLowerCase()}${fragB.slice(1)}`;
-
-  return `${speciesAPrefix || speciesBPrefix}${fragA}${fragB}${speciesBSuffix || speciesASuffix}`;
+  return fusedSpeciesName;
 }
 
 export type PokemonSpeciesFilter = (species: PokemonSpecies) => boolean;
