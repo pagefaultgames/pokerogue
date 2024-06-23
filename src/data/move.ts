@@ -2,10 +2,11 @@ import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./
 import { BattleEndPhase, MovePhase, NewBattlePhase, PartyStatusCurePhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../phases";
 import { BattleStat, getBattleStatName } from "./battle-stat";
 import { EncoreTag } from "./battler-tags";
-import { getPokemonMessage } from "../messages";
+import { getPokemonMessage, getPokemonNameWithAffix } from "../messages";
 import Pokemon, { AttackMoveResult, EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../field/pokemon";
 import { StatusEffect, getStatusEffectHealText, isNonVolatileStatusEffect, getNonVolatileStatusEffects} from "./status-effect";
 import { Type } from "./type";
+import { Constructor } from "#app/utils";
 import * as Utils from "../utils";
 import { WeatherType } from "./weather";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
@@ -156,7 +157,7 @@ export default class Move implements Localizable {
    * @param attrType any attribute that extends {@linkcode MoveAttr}
    * @returns Array of attributes that match `attrType`, Empty Array if none match.
    */
-  getAttrs<T extends MoveAttr>(attrType: new(...args: any[]) => T): T[] {
+  getAttrs<T extends MoveAttr>(attrType: Constructor<T>): T[] {
     return this.attrs.filter((a): a is T => a instanceof attrType);
   }
 
@@ -165,7 +166,7 @@ export default class Move implements Localizable {
    * @param attrType any attribute that extends {@linkcode MoveAttr}
    * @returns true if the move has attribute `attrType`
    */
-  hasAttr<T extends MoveAttr>(attrType: new(...args: any[]) => T): boolean {
+  hasAttr<T extends MoveAttr>(attrType: Constructor<T>): boolean {
     return this.attrs.some((attr) => attr instanceof attrType);
   }
 
@@ -185,7 +186,7 @@ export default class Move implements Localizable {
    * @param args the args needed to instantiate a the given class
    * @returns the called object {@linkcode Move}
    */
-  attr<T extends new (...args: any[]) => MoveAttr>(AttrType: T, ...args: ConstructorParameters<T>): this {
+  attr<T extends Constructor<MoveAttr>>(AttrType: T, ...args: ConstructorParameters<T>): this {
     const attr = new AttrType(...args);
     this.attrs.push(attr);
     let attrCondition = attr.getCondition();
@@ -278,12 +279,14 @@ export default class Move implements Localizable {
   }
 
   /**
-   * Checks if the move is immune to certain types
-   * currently only look at case of Grass types and powder moves
-   * @param type {@linkcode Type} enum
+   * Checks if the move is immune to certain types.
+   * Currently looks at cases of Grass types with powder moves and Dark types with moves affected by Prankster.
+   * @param {Pokemon} user the source of this move
+   * @param {Pokemon} target the target of this move
+   * @param {Type} type the type of the move's target
    * @returns boolean
    */
-  isTypeImmune(type: Type): boolean {
+  isTypeImmune(user: Pokemon, target: Pokemon, type: Type): boolean {
     if (this.moveTarget === MoveTarget.USER) {
       return false;
     }
@@ -291,6 +294,11 @@ export default class Move implements Localizable {
     switch (type) {
     case Type.GRASS:
       if (this.hasFlag(MoveFlags.POWDER_MOVE)) {
+        return true;
+      }
+      break;
+    case Type.DARK:
+      if (user.hasAbility(Abilities.PRANKSTER) && this.category === MoveCategory.STATUS && (user.isPlayer() !== target.isPlayer())) {
         return true;
       }
       break;
@@ -3654,10 +3662,9 @@ export class NeutralDamageAgainstFlyingTypeMultiplierAttr extends VariableMoveTy
     if (!target.getTag(BattlerTagType.IGNORE_FLYING)) {
       const multiplier = args[0] as Utils.NumberHolder;
       //When a flying type is hit, the first hit is always 1x multiplier. Levitating pokemon are instantly affected by typing
-      if (target.isOfType(Type.FLYING)) {
+      if (target.isOfType(Type.FLYING) || target.hasAbility(Abilities.LEVITATE)) {
         multiplier.value = 1;
       }
-      target.addTag(BattlerTagType.IGNORE_FLYING, 20, move.id, user.id); //TODO: Grounded effect should not have turn limit
       return true;
     }
 
@@ -3956,6 +3963,8 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
       return -3;
     case BattlerTagType.ENCORE:
       return -2;
+    case BattlerTagType.MINIMIZED:
+      return 0;
     case BattlerTagType.INGRAIN:
     case BattlerTagType.IGNORE_ACCURACY:
     case BattlerTagType.AQUA_RING:
@@ -3987,7 +3996,13 @@ export class CurseAttr extends MoveEffectAttr {
       }
       const curseRecoilDamage = Math.max(1, Math.floor(user.getMaxHp() / 2));
       user.damageAndUpdate(curseRecoilDamage, HitResult.OTHER, false, true, true);
-      user.scene.queueMessage(getPokemonMessage(user, ` cut its own HP\nand laid a curse on the ${target.name}!`));
+      user.scene.queueMessage(
+        i18next.t("battle:battlerTagsCursedOnAdd", {
+          pokemonNameWithAffix: getPokemonNameWithAffix(user),
+          pokemonName: target.name
+        })
+      );
+
       target.addTag(BattlerTagType.CURSED, 0, move.id, user.id);
       return true;
     } else {
@@ -4599,7 +4614,7 @@ export class RemoveTypeAttr extends MoveEffectAttr {
 
 export class CopyTypeAttr extends MoveEffectAttr {
   constructor() {
-    super(true);
+    super(false);
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -5276,7 +5291,16 @@ export class SwitchAbilitiesAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * Attribute used for moves that suppress abilities like {@linkcode Moves.GASTRO_ACID}.
+ * A suppressed ability cannot be activated.
+ *
+ * @extends MoveEffectAttr
+ * @see {@linkcode apply}
+ * @see {@linkcode getCondition}
+ */
 export class SuppressAbilitiesAttr extends MoveEffectAttr {
+  /** Sets ability suppression for the target pokemon and displays a message. */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
       return false;
@@ -5289,8 +5313,9 @@ export class SuppressAbilitiesAttr extends MoveEffectAttr {
     return true;
   }
 
+  /** Causes the effect to fail when the target's ability is unsupressable or already suppressed. */
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => !target.getAbility().hasAttr(UnsuppressableAbilityAbAttr);
+    return (user, target, move) => !target.getAbility().hasAttr(UnsuppressableAbilityAbAttr) && !target.summonData.abilitySuppressed;
   }
 }
 
@@ -5305,7 +5330,7 @@ export class SuppressAbilitiesIfActedAttr extends MoveEffectAttr {
    * abillity cannot be suppressed. This is a secondary effect and has no bearing on the success or failure of the move.
    *
    * @returns True if the move occurred, otherwise false. Note that true will be returned even if the target has not
-   * yet moved or if the target's abiilty is un-suppressable.
+   * yet moved or if the suppression failed to apply.
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
@@ -5494,7 +5519,7 @@ function applyMoveAttrsInternal(attrFilter: MoveAttrFilter, user: Pokemon, targe
   });
 }
 
-export function applyMoveAttrs(attrType: { new(...args: any[]): MoveAttr }, user: Pokemon, target: Pokemon, move: Move, ...args: any[]): Promise<void> {
+export function applyMoveAttrs(attrType: Constructor<MoveAttr>, user: Pokemon, target: Pokemon, move: Move, ...args: any[]): Promise<void> {
   return applyMoveAttrsInternal((attr: MoveAttr) => attr instanceof attrType, user, target, move, args);
 }
 
@@ -7279,8 +7304,8 @@ export function initMoves() {
       .target(MoveTarget.USER_AND_ALLIES)
       .condition((user, target, move) => !![ user, user.getAlly() ].filter(p => p?.isActive()).find(p => !![ Abilities.PLUS, Abilities.MINUS].find(a => p.hasAbility(a, false)))),
     new StatusMove(Moves.HAPPY_HOUR, Type.NORMAL, -1, 30, -1, 0, 6) // No animation
-      .target(MoveTarget.USER_SIDE)
-      .unimplemented(),
+      .attr(AddArenaTagAttr, ArenaTagType.HAPPY_HOUR, null, true)
+      .target(MoveTarget.USER_SIDE),
     new StatusMove(Moves.ELECTRIC_TERRAIN, Type.ELECTRIC, -1, 10, -1, 0, 6)
       .attr(TerrainChangeAttr, TerrainType.ELECTRIC)
       .target(MoveTarget.BOTH_SIDES),
@@ -7306,6 +7331,7 @@ export function initMoves() {
       .triageMove(),
     new AttackMove(Moves.THOUSAND_ARROWS, Type.GROUND, MoveCategory.PHYSICAL, 90, 100, 10, -1, 0, 6)
       .attr(NeutralDamageAgainstFlyingTypeMultiplierAttr)
+      .attr(AddBattlerTagAttr, BattlerTagType.IGNORE_FLYING, false, false, 20) // TODO: remove this turn count
       .attr(HitsTagAttr, BattlerTagType.FLYING, false)
       .attr(AddBattlerTagAttr, BattlerTagType.INTERRUPTED)
       .attr(RemoveBattlerTagAttr, [BattlerTagType.FLYING, BattlerTagType.MAGNET_RISEN])
@@ -7989,6 +8015,7 @@ export function initMoves() {
     new AttackMove(Moves.CHLOROBLAST, Type.GRASS, MoveCategory.SPECIAL, 150, 95, 5, -1, 0, 8)
       .attr(RecoilAttr, true, 0.5),
     new AttackMove(Moves.MOUNTAIN_GALE, Type.ICE, MoveCategory.PHYSICAL, 100, 85, 10, 30, 0, 8)
+      .makesContact(false)
       .attr(FlinchAttr),
     new SelfStatusMove(Moves.VICTORY_DANCE, Type.FIGHTING, -1, 10, -1, 0, 8)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPD ], 1, true)
@@ -8314,8 +8341,7 @@ export function initMoves() {
       .attr(HealStatusEffectAttr, false, StatusEffect.FREEZE)
       .attr(StatusEffectAttr, StatusEffect.BURN)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
-      .triageMove()
-      .partial(),
+      .triageMove(),
     new AttackMove(Moves.SYRUP_BOMB, Type.GRASS, MoveCategory.SPECIAL, 60, 85, 10, -1, 0, 9)
       .attr(StatChangeAttr, BattleStat.SPD, -1) //Temporary
       .ballBombMove()
