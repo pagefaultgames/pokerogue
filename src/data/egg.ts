@@ -465,8 +465,6 @@ export class Egg {
   }
 
   private checkForPityTierOverrides(scene: BattleScene): void {
-    console.log("Before", scene.gameData.eggPity);
-
     const tierValueOffset = this._sourceType === EggSourceType.GACHA_LEGENDARY ? 1 : 0;
     scene.gameData.eggPity[EggTier.GREAT] += 1;
     scene.gameData.eggPity[EggTier.ULTRA] += 1;
@@ -480,7 +478,6 @@ export class Egg {
       this._tier = EggTier.GREAT;
     }
     scene.gameData.eggPity[this._tier] = 0;
-    console.log("After", scene.gameData.eggPity);
   }
 
   private increasePullStatistic(scene: BattleScene): void {
