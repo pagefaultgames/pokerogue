@@ -10,7 +10,7 @@ export enum Stat {
 }
 
 export function getStatName(stat: Stat, shorten: boolean = false) {
-  let ret: string;
+  let ret: string = "";
   switch (stat) {
   case Stat.HP:
     ret = !shorten ? i18next.t("pokemonInfo:Stat.HP") : i18next.t("pokemonInfo:Stat.HPshortened");
