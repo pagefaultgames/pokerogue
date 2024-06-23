@@ -211,7 +211,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "KINGS_ROCK": { name: "Roche Royale", description: "Ajoute 10% de chances qu’une capacité offensive apeure l’adversaire." },
 
     "LEFTOVERS": { name: "Restes", description: "Soigne à chaque tour 1/16 des PV max d’un Pokémon." },
-    "SHELL_BELL": { name: "Grelot Coque", description: "Soigne le porteur d’1/8 des dégâts qu’il inflige à un Pokémon." },
+    "SHELL_BELL": { name: "Grelot Coque", description: "Soigne son porteur avec 1/8 des dégâts qu’il inflige à un Pokémon." },
 
     "TOXIC_ORB": { name: "Orbe Toxique", description: "Un orbe bizarre qui empoisonne gravement son porteur durant le combat." },
     "FLAME_ORB": { name: "Orbe Flamme", description: "Un orbe bizarre qui brule son porteur durant le combat." },
