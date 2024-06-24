@@ -5,8 +5,8 @@ export const challenges: TranslationEntries = {
   "illegalEvolution": "{{pokemon}} changed into an ineligble pokémon\nfor this challenge!",
   "singleGeneration": {
     "name": "单一世代",
-    "desc": "你只能使用第{{gen}}世代的宝可梦",
-    "desc_default": "你只能使用所选世代的宝可梦",
+    "desc": "你只能使用第{{gen}}\n世代的宝可梦",
+    "desc_default": "你只能使用所选\n世代的宝可梦",
     "gen_1": "一",
     "gen_2": "二",
     "gen_3": "三",
@@ -19,7 +19,7 @@ export const challenges: TranslationEntries = {
   },
   "singleType": {
     "name": "单属性",
-    "desc": "你只能使用{{type}}属性的宝可梦",
-    "desc_default": "你只能使用所选属性的宝可梦"
+    "desc": "你只能使用{{type}}\n属性的宝可梦",
+    "desc_default": "你只能使用所选\n属性的宝可梦"
   },
 } as const;
