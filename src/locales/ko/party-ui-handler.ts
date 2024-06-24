@@ -7,9 +7,11 @@ export const partyUiHandler: SimpleTranslationEntries = {
   "RELEASE": "놓아준다",
   "APPLY": "사용한다",
   "TEACH": "가르친다",
+  "UNSPLICE": "Unsplice",
   "ACTIVATE": "Activate",
   "DEACTIVATE": "Deactivate",
 
+  "choosePokemon": "포켓몬을 선택하세요.",
   "noEnergy": "{{pokemonName}} has no energy\nleft to battle!",
   "hasEnergy": "{{pokemonName}} still has energy\nto battle!",
   "cantBeUsed": "{{pokemonName}} can't be used in\nthis challenge!",

@@ -21,7 +21,7 @@ import MoveInfoOverlay from "./move-info-overlay";
 import i18next from "i18next";
 import { Moves } from "#enums/moves";
 
-const defaultMessage = i18next.t("menu:choosePokemon");
+const defaultMessage = i18next.t("partyUiHandler:choosePokemon");
 
 export enum PartyUiMode {
   SWITCH,
@@ -151,7 +151,7 @@ export default class PartyUiHandler extends MessageUiHandler {
 
   public static NoEffectMessage = i18next.t("partyUiHandler:anyEffect");
 
-  private localizedOptions = [PartyOption.SEND_OUT, PartyOption.SUMMARY, PartyOption.CANCEL, PartyOption.APPLY, PartyOption.RELEASE, PartyOption.TEACH];
+  private localizedOptions = [PartyOption.SEND_OUT, PartyOption.SUMMARY, PartyOption.CANCEL, PartyOption.APPLY, PartyOption.RELEASE, PartyOption.TEACH, PartyOption.UNSPLICE];
 
   constructor(scene: BattleScene) {
     super(scene, Mode.PARTY);
