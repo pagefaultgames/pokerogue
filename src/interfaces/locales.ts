@@ -10,7 +10,7 @@ export interface SimpleTranslationEntries {
   }
 
 export interface FusionTranslationEntries {
-  shouldReverse: string,
+  shouldReverse?: string,
   [key: string]: FusionTranslationEntry | string,
   }
 
