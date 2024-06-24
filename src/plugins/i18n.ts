@@ -229,6 +229,7 @@ declare module "i18next" {
       voucher: SimpleTranslationEntries;
       weather: SimpleTranslationEntries;
       battleStat: SimpleTranslationEntries;
+      runHistory: SimpleTranslationEntries;
     };
   }
 }
