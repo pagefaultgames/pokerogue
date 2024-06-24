@@ -383,6 +383,30 @@ export const PGMdialogue: DialogueTranslationEntries = {
       3: "Creo que soy yo quien está mareado..."
     },
   },
+  "camper": {
+    "encounter": {
+      1: "¡Eh, mira dónde pisas! ¡Casi pisas mi saco de dormir!",
+      2: "¿Eh? ¿Quieres hablar conmigo?",
+      3: "Soy un tío molón. ¡Tengo novia!"
+    },
+    "victory": {
+      1: "¡Venga ya, esta batalla arruinó mi tienda!",
+      2: "No mola... No pude vencer a tus Pokémon...",
+      3: "Por fa, no se lo digas a mi novia..."
+    },
+  },
+  "picknicker": {
+    "encounter": {
+      1: "¡Otro entrenador! Pareces cuidadoso, así que creo que te venceré.",
+      2: "¿Yo? Vale, ¡jugaré!",
+      3: "Soy una chica molona. ¡Tengo novio!"
+    },
+    "victory": {
+      1: "¡Incluso más fuerte que la Entrenadora del pelo verde de antes!",
+      2: "Las cosas simplemente no funcionan...",
+      3: "Por fa, no se lo digas a mi novio..."
+    },
+  },
   "brock": {
     "encounter": {
       1: "My expertise on Rock-type Pokémon will take you down! Come on!",

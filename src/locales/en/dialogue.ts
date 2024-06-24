@@ -383,6 +383,30 @@ export const PGMdialogue: DialogueTranslationEntries = {
       3: "I think it's me that's seasick..."
     },
   },
+  "camper": {
+    "encounter": {
+      1: "Hey, watch it! You almost stepped on my sleeping bag!",
+      2: "Huh? You want to talk to me?",
+      3: "I'm a cool guy. I've got a girlfriend!"
+    },
+    "victory": {
+      1: "Oh come on! Our battle ruined my tent...",
+      2: "This stinks... I couldn't beat your challenge...",
+      3: "Please don't tell my girlfriend..."
+    },
+  },
+  "picknicker": {
+    "encounter": {
+      1: "Oh! Another trainer! You look gentle, so I think I can beat you.",
+      2: "Me? Well, okay. I'll play!",
+      3: "I'm a cool girl. I've got a boyfriend!"
+    },
+    "victory": {
+      1: "Darn, even stronger than the green-haired trainer from earlier...",
+      2: "Things just didn't work...",
+      3: "Please don't tell my boyfriend..."
+    },
+  },
   "rocket_grunt": {
     "encounter": {
       1: "Prepare for trouble!"
