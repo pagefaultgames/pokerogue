@@ -51,12 +51,17 @@ export function getPokemonSpeciesForm(species: Species, formIndex: integer): Pok
 }
 
 export function getFusedSpeciesName(speciesA: PokemonSpecies, speciesB: PokemonSpecies): string {
-  const prefix = i18next.t(`fusionAffixes:${Species[speciesA.speciesId].toLowerCase()}.fusionPrefix`);
-  const suffix = i18next.t(`fusionAffixes:${Species[speciesB.speciesId].toLowerCase()}.fusionSuffix`);
+  let firstKey = "fusionPrefix";
+  let secondKey = "fusionSuffix";
+  if (i18next.t("fusionAffixes:shouldReverse") === "true") {
+    firstKey = "fusionSuffix";
+    secondKey = "fusionPrefix";
+  }
+
+  const prefix = i18next.t(`fusionAffixes:${Species[speciesA.speciesId].toLowerCase()}.${firstKey}`);
+  const suffix = i18next.t(`fusionAffixes:${Species[speciesB.speciesId].toLowerCase()}.${secondKey}`);
 
   return `${prefix}${suffix}`;
-}
-
 }
 
 export type PokemonSpeciesFilter = (species: PokemonSpecies) => boolean;

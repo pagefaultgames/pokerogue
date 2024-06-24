@@ -10,13 +10,14 @@ export interface SimpleTranslationEntries {
   }
 
 export interface FusionTranslationEntries {
-    [key: string]: FusionTranslationEntry,
+  shouldReverse: string,
+  [key: string]: FusionTranslationEntry | string,
   }
 
 export interface FusionTranslationEntry {
     fusionPrefix: string,
     fusionSuffix: string,
-}
+    }
 
 export interface MoveTranslationEntry {
     name: string,

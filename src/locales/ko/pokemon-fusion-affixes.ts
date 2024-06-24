@@ -1,6 +1,7 @@
 import { FusionTranslationEntries } from "#app/interfaces/locales";
 
 export const fusionAffixes: FusionTranslationEntries = {
+  shouldReverse: "false",
   bulbasaur: {
     fusionPrefix: "이상해씨",
     fusionSuffix: "씨",
