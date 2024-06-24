@@ -382,7 +382,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       3: "好像是我晕船了…"
     },
   },
- "rocket_grunt": {
+  "rocket_grunt": {
     "encounter": {
       1: "你要有麻烦了！"
     },
