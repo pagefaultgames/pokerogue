@@ -264,6 +264,10 @@ export const PGMachv: AchievementTranslationEntries = {
   "MONO_FAIRY": {
     name: "Hey! Listen!",
   },
+  "NUZLOCKE": {
+    name: "Unfaintable",
+    description: "Complete the nuzlocke challenge.",
+  },
 } as const;
 
 // Achievement translations for the when the player character is female (it for now uses the same translations as the male version)
