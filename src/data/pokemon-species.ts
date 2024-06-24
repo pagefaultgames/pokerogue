@@ -50,7 +50,7 @@ export function getPokemonSpeciesForm(species: Species, formIndex: integer): Pok
   return retSpecies;
 }
 
-export function getFusedSpeciesName(speciesAName: string, speciesBName: string): string {
+export function getFusedSpeciesName(speciesA: PokemonSpecies, speciesB: PokemonSpecies): string {
 //I WAS HERE, DON'T KNOW HOW TO MAKE THIS WORK
 // Basically the only thing missing is now to get the non local species name in lowercase
 return i18next.t(fusionAffixes:${speciesA}.fusionPrefix)+i18next.t(fusionAffixes:${speciesB}.fusionSuffix)
