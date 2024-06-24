@@ -19,7 +19,7 @@ import { biomeLinks, getBiomeName } from "./data/biomes";
 import { ModifierTier } from "./modifier/modifier-tier";
 import { FusePokemonModifierType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, PokemonPpRestoreModifierType, PokemonPpUpModifierType, RememberMoveModifierType, TmModifierType, getDailyRunStarterModifiers, getEnemyBuffModifierForWave, getModifierType, getPlayerModifierTypeOptions, getPlayerShopModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { BattlerTagLapseType, CenterOfAttentionTag, EncoreTag, HideSpriteTag as HiddenTag, ProtectedTag, TrappedTag } from "./data/battler-tags";
+import { BattlerTagLapseType, CenterOfAttentionTag, EncoreTag, ProtectedTag, SemiInvulnerableTag, TrappedTag } from "./data/battler-tags";
 import { getPokemonMessage, getPokemonNameWithAffix } from "./messages";
 import { Starter } from "./ui/starter-select-ui-handler";
 import { Gender } from "./data/gender";
@@ -3033,7 +3033,7 @@ export class MoveEffectPhase extends PokemonPhase {
       return true;
     }
 
-    const hiddenTag = target.getTag(HiddenTag);
+    const hiddenTag = target.getTag(SemiInvulnerableTag);
     if (hiddenTag && !this.move.getMove().getAttrs(HitsTagAttr).some(hta => hta.tagType === hiddenTag.tagType)) {
       return false;
     }

@@ -1,7 +1,7 @@
 import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
 import { BattleEndPhase, MovePhase, NewBattlePhase, PartyStatusCurePhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../phases";
 import { BattleStat, getBattleStatName } from "./battle-stat";
-import { EncoreTag, HideSpriteTag as SemiInvulnerableTag } from "./battler-tags";
+import { EncoreTag, SemiInvulnerableTag } from "./battler-tags";
 import { getPokemonMessage, getPokemonNameWithAffix } from "../messages";
 import Pokemon, { AttackMoveResult, EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../field/pokemon";
 import { StatusEffect, getStatusEffectHealText, isNonVolatileStatusEffect, getNonVolatileStatusEffects} from "./status-effect";

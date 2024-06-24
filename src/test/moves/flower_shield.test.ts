@@ -12,7 +12,7 @@ import { Abilities } from "#enums/abilities";
 import { BattleStat } from "#app/data/battle-stat.js";
 import { Biome } from "#app/enums/biome.js";
 import { Type } from "#app/data/type.js";
-import { HideSpriteTag as SemiInvulnerableTag } from "#app/data/battler-tags.js";
+import { SemiInvulnerableTag } from "#app/data/battler-tags.js";
 
 describe("Moves - Flower Shield", () => {
   let phaserGame: Phaser.Game;
@@ -78,7 +78,7 @@ describe("Moves - Flower Shield", () => {
   });
 
   /**
-   * See semi-vulnerable state tags. {@linkcode HideSpriteTag}
+   * See semi-vulnerable state tags. {@linkcode SemiInvulnerableTag}
   */
   it("does not increase defense of a pokemon in semi-vulnerable state", async () => {
     vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.PARAS);
