@@ -1,7 +1,7 @@
 import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
 import { BattleEndPhase, MovePhase, NewBattlePhase, PartyStatusCurePhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../phases";
 import { BattleStat, getBattleStatName } from "./battle-stat";
-import { EncoreTag } from "./battler-tags";
+import { EncoreTag, SemiInvulnerableTag } from "./battler-tags";
 import { getPokemonMessage, getPokemonNameWithAffix } from "../messages";
 import Pokemon, { AttackMoveResult, EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../field/pokemon";
 import { StatusEffect, getStatusEffectHealText, isNonVolatileStatusEffect, getNonVolatileStatusEffects} from "./status-effect";
@@ -3965,7 +3965,7 @@ export class CurseAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move:Move, args: any[]): boolean {
     if (user.getTypes(true).includes(Type.GHOST)) {
       if (target.getTag(BattlerTagType.CURSED)) {
-        user.scene.queueMessage("But it failed!");
+        user.scene.queueMessage(i18next.t("battle:attackFailed"));
         return false;
       }
       const curseRecoilDamage = Math.max(1, Math.floor(user.getMaxHp() / 2));
@@ -4422,7 +4422,7 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
         }
         resolve(true);
       } else {
-        user.scene.queueMessage("But it failed!");
+        user.scene.queueMessage(i18next.t("battle:attackFailed"));
         resolve(false);
       }
     });
@@ -6580,7 +6580,7 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPATK, -2, true),
     new SelfStatusMove(Moves.ROOST, Type.FLYING, -1, 5, -1, 0, 4)
       .attr(HealAttr, 0.5)
-      .attr(AddBattlerTagAttr, BattlerTagType.GROUNDED, true, false, 1)
+      .attr(AddBattlerTagAttr, BattlerTagType.ROOSTED, true, false)
       .triageMove(),
     new StatusMove(Moves.GRAVITY, Type.PSYCHIC, -1, 5, -1, 0, 4)
       .attr(AddArenaTagAttr, ArenaTagType.GRAVITY, 5)
@@ -6921,7 +6921,7 @@ export function initMoves() {
       .target(MoveTarget.BOTH_SIDES)
       .unimplemented(),
     new AttackMove(Moves.SMACK_DOWN, Type.ROCK, MoveCategory.PHYSICAL, 50, 100, 15, 100, 0, 5)
-      .attr(AddBattlerTagAttr, BattlerTagType.IGNORE_FLYING, false, false, 5)
+      .attr(AddBattlerTagAttr, BattlerTagType.IGNORE_FLYING, false, false)
       .attr(AddBattlerTagAttr, BattlerTagType.INTERRUPTED)
       .attr(RemoveBattlerTagAttr, [BattlerTagType.FLYING, BattlerTagType.MAGNET_RISEN])
       .attr(HitsTagAttr, BattlerTagType.FLYING, false)
@@ -7212,7 +7212,7 @@ export function initMoves() {
       .attr(AddArenaTagAttr, ArenaTagType.CRAFTY_SHIELD, 1, true, true),
     new StatusMove(Moves.FLOWER_SHIELD, Type.FAIRY, -1, 10, -1, 0, 6)
       .target(MoveTarget.ALL)
-      .unimplemented(),
+      .attr(StatChangeAttr, BattleStat.DEF, 1, false, (user, target, move) => target.getTypes().includes(Type.GRASS) && !target.getTag(SemiInvulnerableTag)),
     new StatusMove(Moves.GRASSY_TERRAIN, Type.GRASS, -1, 10, -1, 0, 6)
       .attr(TerrainChangeAttr, TerrainType.GRASSY)
       .target(MoveTarget.BOTH_SIDES),
@@ -7278,8 +7278,8 @@ export function initMoves() {
       .target(MoveTarget.USER_AND_ALLIES)
       .condition((user, target, move) => !![ user, user.getAlly() ].filter(p => p?.isActive()).find(p => !![ Abilities.PLUS, Abilities.MINUS].find(a => p.hasAbility(a, false)))),
     new StatusMove(Moves.HAPPY_HOUR, Type.NORMAL, -1, 30, -1, 0, 6) // No animation
-      .target(MoveTarget.USER_SIDE)
-      .unimplemented(),
+      .attr(AddArenaTagAttr, ArenaTagType.HAPPY_HOUR, null, true)
+      .target(MoveTarget.USER_SIDE),
     new StatusMove(Moves.ELECTRIC_TERRAIN, Type.ELECTRIC, -1, 10, -1, 0, 6)
       .attr(TerrainChangeAttr, TerrainType.ELECTRIC)
       .target(MoveTarget.BOTH_SIDES),
@@ -7305,7 +7305,7 @@ export function initMoves() {
       .triageMove(),
     new AttackMove(Moves.THOUSAND_ARROWS, Type.GROUND, MoveCategory.PHYSICAL, 90, 100, 10, -1, 0, 6)
       .attr(NeutralDamageAgainstFlyingTypeMultiplierAttr)
-      .attr(AddBattlerTagAttr, BattlerTagType.IGNORE_FLYING, false, false, 20) // TODO: remove this turn count
+      .attr(AddBattlerTagAttr, BattlerTagType.IGNORE_FLYING, false, false)
       .attr(HitsTagAttr, BattlerTagType.FLYING, false)
       .attr(AddBattlerTagAttr, BattlerTagType.INTERRUPTED)
       .attr(RemoveBattlerTagAttr, [BattlerTagType.FLYING, BattlerTagType.MAGNET_RISEN])
