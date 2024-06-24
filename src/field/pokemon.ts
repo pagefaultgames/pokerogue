@@ -1070,7 +1070,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * in effect, and both passive and non-passive. This is one of the two primary ways to check
    * whether a pokemon has a particular ability.
    * @param {AbAttr} attrType The ability attribute to check for
-   * @param {boolean} canApply If false, it doesn't check whether the abiltiy is currently active
+   * @param {boolean} canApply If false, it doesn't check whether the ability is currently active
    * @param {boolean} ignoreOverride If true, it ignores ability changing effects
    * @returns {boolean} Whether an ability with that attribute is present and active
    */
@@ -1097,13 +1097,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   getTeraType(): Type {
     // this.scene can be undefined for a fainted mon in doubles
-    // use nullish coalescing to auto-set to false to avoid runtime errors
-    const teraModifier = false ?? this.scene.findModifier(m => m instanceof TerastallizeModifier
-      && m.pokemonId === this.id && !!m.getBattlesLeft(), this.isPlayer()) as TerastallizeModifier;
-    if (teraModifier) {
-      return teraModifier.teraType;
+    if (this.scene !== undefined) {
+      const teraModifier = false ?? this.scene.findModifier(m => m instanceof TerastallizeModifier
+        && m.pokemonId === this.id && !!m.getBattlesLeft(), this.isPlayer()) as TerastallizeModifier;
+      // return teraType
+      if (teraModifier) {
+        return teraModifier.teraType;
+      }
     }
-
+    // if scene is undefined, or if teraModifier is considered false, then return unknown type
     return Type.UNKNOWN;
   }
 
