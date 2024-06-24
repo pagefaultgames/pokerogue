@@ -8,7 +8,7 @@ export const partyUiHandler: SimpleTranslationEntries = {
   "RELEASE": "Soltar",
   "APPLY": "Aplicar",
   "TEACH": "Ensinar",
-  "UNSPLICE": "Desfazer Fusão",
+  "UNSPLICE": "Separar",
   "ACTIVATE": "Ativar",
   "DEACTIVATE": "Desativar",
 
