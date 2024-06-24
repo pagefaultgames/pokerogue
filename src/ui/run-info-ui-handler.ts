@@ -9,7 +9,7 @@ import * as Utils from "../utils";
 import { PokemonData } from "../system/pokemon-data";
 import { TrainerData } from "../system/trainer-data";
 import Pokemon, { EnemyPokemon, PlayerPokemon } from "../field/pokemon";
-import { PokemonHeldItemModifier } from "../modifier/modifier";
+import { PokemonHeldItemModifier, TerastallizeModifier } from "../modifier/modifier";
 import MessageUiHandler from "./message-ui-handler";
 import i18next from "i18next";
 import {Button} from "../enums/buttons";
@@ -41,6 +41,9 @@ export enum RunVictory {
 }
 
 export default class GameInfoUiHandler extends UiHandler {
+    private runInfo: RunEntries;
+    private victory: Boolean;
+
     private gameStatsContainer: Phaser.GameObjects.Container;
   	private statsContainer: Phaser.GameObjects.Container;
 
@@ -48,6 +51,8 @@ export default class GameInfoUiHandler extends UiHandler {
   	private partyContainer: Phaser.GameObjects.Container;
   	private statsBgWidth: integer;
   	private partyContainerHeight: integer;
+
+    private hallofFameContainer: Phaser.GameObjects.Container;
 
   	private partyInfo: Phaser.GameObjects.Container[];
 
@@ -64,21 +69,20 @@ export default class GameInfoUiHandler extends UiHandler {
 
  		  this.gameStatsContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
 
-      
-    
-      this.statsBgWidth = ((this.scene.game.canvas.width / 6) - 2) / 3;
+      this.hallOfFameContainer = this.scene.add.container(1, -(this.scene.game.canvas.height/6)+1);
 
-      this.runInfoContainer = this.scene.add.container(0, 24);
+    this.statsBgWidth = ((this.scene.game.canvas.width / 6) - 2) / 3;
 
-      this.partyContainer = this.scene.add.container(this.statsBgWidth-10, 24);
+    this.runInfoContainer = this.scene.add.container(0, 24);
 
-    
+    this.partyContainer = this.scene.add.container(this.statsBgWidth-10, 24);
 
-      
 
-      this.setCursor(0);
 
-      this.gameStatsContainer.setVisible(false);
+
+    this.setCursor(0);
+
+    this.gameStatsContainer.setVisible(false);
  	}
 
  	show(args: any[]): boolean {
@@ -108,11 +112,12 @@ export default class GameInfoUiHandler extends UiHandler {
  		const run = args[0];
  		const runHistoryOrigin = args[1] ? true : false;
 
- 		const runData = this.scene.gameData.parseSessionData(JSON.stringify(run.entry));
+ 		this.runInfo = this.scene.gameData.parseSessionData(JSON.stringify(run.entry));
+    this.victory = run.victory;
 
- 		this.parseRunInfo(runData, runHistoryOrigin, run.victory);
+ 		this.parseRunInfo(this.runInfo, runHistoryOrigin, run.victory);
 
-    const partyData = runHistoryOrigin ? runData.party : {};
+    const partyData = runHistoryOrigin ? this.runInfo.party : {};
     this.parsePartyInfo(partyData);
 
     this.gameStatsContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
@@ -163,7 +168,7 @@ export default class GameInfoUiHandler extends UiHandler {
         }
       }
       if (rules) {
-        for (var r in rules) {
+        for (const r in rules) {
           if (r > 0) {
             genInfoText.appendText(" + ", false);
           }
@@ -204,32 +209,32 @@ export default class GameInfoUiHandler extends UiHandler {
           		enemyContainer.add(enemyIconContainer);
          		enemy.destroy();
        		});
-          genInfoText.setPosition(6,40);
+        genInfoText.setPosition(6,40);
     		}
-    		//Trainer - Single
+    		//Trainer - Single and Double
     		else if (runData.battleType === BattleType.TRAINER) {
     			const tObj = runData.trainer.toTrainer(this.scene);
-          const tObjSpriteKey = tObj.config.getSpriteKey(runData.trainer.variant === TrainerVariant.FEMALE, false);
-          const tObjSprite = this.scene.add.sprite(3, 75, tObjSpriteKey);
-          if (runData.trainer.variant === TrainerVariant.DOUBLE) {
-            const doubleContainer = this.scene.add.container(3, 80);
-            tObjSprite.setPosition(-3, -3);
-            const tObjPartnerSpriteKey = tObj.config.getSpriteKey(true, true); 
-            console.log(tObjPartnerSpriteKey);
-            const tObjPartnerSprite = this.scene.add.sprite(5, -3, tObjPartnerSpriteKey);
-            tObjPartnerSprite.setScale(0.20);
-            tObjSprite.setScale(0.20);
-            doubleContainer.add(tObjSprite);
-            doubleContainer.add(tObjPartnerSprite);
-            enemyContainer.add(doubleContainer);
+        const tObjSpriteKey = tObj.config.getSpriteKey(runData.trainer.variant === TrainerVariant.FEMALE, false);
+        const tObjSprite = this.scene.add.sprite(3, 75, tObjSpriteKey);
+        if (runData.trainer.variant === TrainerVariant.DOUBLE) {
+          const doubleContainer = this.scene.add.container(3, 80);
+          tObjSprite.setPosition(-3, -3);
+          const tObjPartnerSpriteKey = tObj.config.getSpriteKey(true, true);
+          const tObjPartnerSprite = this.scene.add.sprite(5, -3, tObjPartnerSpriteKey);
+          tObjPartnerSprite.setScale(0.20);
+          tObjSprite.setScale(0.20);
+          doubleContainer.add(tObjSprite);
+          doubleContainer.add(tObjPartnerSprite);
+          enemyContainer.add(doubleContainer);
 
-          }
-          else {
-            tObjSprite.setScale(0.25, 0.25);
-            tObjSprite.setPosition(3, 80);
-            enemyContainer.add(tObjSprite);
-          }
-          console.log(runData.enemyParty);
+        } else {
+          tObjSprite.setScale(0.25, 0.25);
+          tObjSprite.setPosition(3, 80);
+          enemyContainer.add(tObjSprite);
+        }
+
+        const teraPokemon = {};
+        runData.enemyModifiers.forEach((m) => {if (m.className === "TerastallizeModifier") {teraPokemon[m.args[0]] = m.args[1];}});
     			runData.enemyParty.forEach((enemyData, e) => {
     			//e = (e>2) ? e : e/2;
               const pokemonRowHeight = Math.floor(e/3);
@@ -239,22 +244,28 @@ export default class GameInfoUiHandler extends UiHandler {
           		enemyData.boss = false;
           		const enemy = enemyData.toPokemon(this.scene);
           		const enemyIcon = this.scene.addPokemonIcon(enemy, 0, 0, 0, 0);
+              if (teraPokemon[enemyData.id]) {
+               const teraTint = getTypeRgb(teraPokemon[enemyData.id]); 
+               const teraColor = new Phaser.Display.Color(teraTint[0], teraTint[1], teraTint[2]);
+               enemyIcon.list[0].setTint(teraColor.color);
+              }
+              
               enemyIcon.setPosition(16+(24 * (e%3)), 0+(35*pokemonRowHeight));
           		const enemyLevel = addTextObject(this.scene, (24*(e%3))+35, 22+(35*pokemonRowHeight), `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`, isBoss ? TextStyle.PARTY_RED : TextStyle.PARTY, { fontSize: "54px" });
           		enemyLevel.setShadow(0, 0, null);
           		enemyLevel.setStroke("#424242", 14);
           		enemyLevel.setOrigin(1, 0);
+              
           		enemyIconContainer.add(enemyIcon);
           		enemyIconContainer.add(enemyLevel);
           		enemyContainer.add(enemyIconContainer);
          		enemy.destroy();
        		});
-          if (runData.enemyParty.length > 3) {
-            genInfoText.setPosition(6,52);
-          }
-          else {
-            genInfoText.setPosition(6,40);
-          }
+        if (runData.enemyParty.length > 3) {
+          genInfoText.setPosition(6,52);
+        } else {
+          genInfoText.setPosition(6,40);
+        }
     		}
     		this.runInfoContainer.add(enemyContainer);
     	}
@@ -282,16 +293,16 @@ export default class GameInfoUiHandler extends UiHandler {
         modifierIconsContainer.add(item);
         modifierIconsContainer.add(itemStackCount);
         if (++visibleModifierIndex === 22) {
+          const maxItems = addTextObject(this.scene, 45, 80, "+", TextStyle.WINDOW);
           break;
         }
       }
       if (runData.gameMode === GameModes.CHALLENGE) {
         modifierIconsContainer.setPositionRelative(genInfoText, 2, 75);
-      }
-      else {
+      } else {
         modifierIconsContainer.setPositionRelative(genInfoText, 2, 65);
       }
-      
+
       this.runInfoContainer.add(modifierIconsContainer);
     }
 
@@ -351,21 +362,35 @@ export default class GameInfoUiHandler extends UiHandler {
       		const textPassive = addBBCodeTextObject(this.scene, -2, 11, pPassiveInfo, TextStyle.SUMMARY, {fontSize: "34px"});
       		textContainer.add(textPassive);
 
-      		const pStats = pokemon.stats;
-      		const pStatsArray = [i18next.t("pokemonInfo:Stat.HPshortened")+": ", i18next.t("pokemonInfo:Stat.ATKshortened")+": ", i18next.t("pokemonInfo:Stat.DEFshortened")+": ", i18next.t("pokemonInfo:Stat.SPATKshortened")+": ", i18next.t("pokemonInfo:Stat.SPDEFshortened")+": ", i18next.t("pokemonInfo:Stat.SPDshortened")+": "];
-      		pStatsArray[0] = pStatsArray[0] + Utils.formatFancyLargeNumber(pStats[0], 1);
-      		for (var i = 1; i < pStats.length; i++ ) {
-      			const isMult = getNatureStatMultiplier(pokemon.nature, i);
-      			pStatsArray[i] = pStatsArray[i] + Utils.formatFancyLargeNumber(pStats[i], 1);
-      			pStatsArray[i] = (isMult < 1) ? "[b]" + pStatsArray[i] + "↓[/b]" : pStatsArray[i];
-      			pStatsArray[i] = (isMult > 1) ? "[b]" + pStatsArray[i] + "↑[/b]" : pStatsArray[i];
-      		}
-      		const pStatsInfo1 = `${pStatsArray[0]} | ${pStatsArray[1]} | ${pStatsArray[2]}`;
-      		const pStatsInfo2 = `${pStatsArray[3]} | ${pStatsArray[4]} | ${pStatsArray[5]}`;
-      		const textStats1 = addBBCodeTextObject(this.scene, -2, 16, pStatsInfo1, TextStyle.SUMMARY, { fontSize: "34px" });
-      		textContainer.add(textStats1);
-      		const textStats2 = addBBCodeTextObject(this.scene, -2, 21, pStatsInfo2, TextStyle.SUMMARY, { fontSize: "34px"});
-      		textContainer.add(textStats2);
+      		const pStats = [];
+          pokemon.stats.forEach((element) => pStats.push(Utils.formatFancyLargeNumber(element,1)));
+          const currentLanguage = i18next.resolvedLanguage;
+          //pStats[0] = Utils.formatFancyLargeNumber(pStats[0], 1);
+          for (var i = 0; i < pStats.length; i++) {
+            const isMult = getNatureStatMultiplier(pokemon.nature, i);
+            pStats[i] = (isMult < 1) ? "[b]" + pStats[i] + "↓[/b]" : pStats[i];
+            pStats[i] = (isMult > 1) ? "[b]" + pStats[i] + "↑[/b]" : pStats[i];
+          }
+          //Row 1: HP, Atk, Def
+          const textStats1 = addBBCodeTextObject(this.scene, -2, 18, "", TextStyle.SUMMARY, { fontSize: "34px" });
+          //HP
+          textStats1.appendText(i18next.t("pokemonInfo:Stat.HPshortened")+": "+pStats[0], false);
+      		//Attack
+          textStats1.appendText(" | "+i18next.t("pokemonInfo:Stat.ATKshortened")+": "+pStats[1], false);
+          //Defense
+          textStats1.appendText(" | "+i18next.t("pokemonInfo:Stat.DEFshortened")+": "+pStats[2], false);
+          textContainer.add(textStats1);
+          //Row 2: SpAtk, SpDef, Speed
+          const textStats2 = addBBCodeTextObject(this.scene, -2, 17, "", TextStyle.SUMMARY, { fontSize: "34px"});
+          //Special Attack 
+          textStats2.appendText(i18next.t("pokemonInfo:Stat.SPATKshortened")+": "+pStats[3], true);
+          //Special Defense
+          textStats2.appendText(" | "+i18next.t("pokemonInfo:Stat.SPDEFshortened")+": "+pStats[4], false);
+          //Speed
+          const speedLabel = (currentLanguage==='es'||currentLanguage==='pt_BR') ? i18next.t("runHistory:SPDshortened") : i18next.t("pokemonInfo:Stat.SPDshortened");
+          textStats2.appendText(" | "+speedLabel+": "+pStats[5], false);
+          //End of Text
+          textContainer.add(textStats2);
 
       if (pokemon.fusionSpecies) {
         const splicedIcon = this.scene.add.image(0, 0, "icon_spliced");
@@ -399,7 +424,7 @@ export default class GameInfoUiHandler extends UiHandler {
       }
 
       		const pokemonMoveset = pokemon.getMoveset();
-      		const movesetContainer = this.scene.add.container(5.5, -30);
+      		const movesetContainer = this.scene.add.container(5.5, -28);
       		const pokemonMoveBgs = [];
       		const pokemonMoveLabels = [];
       		const movePos = [[-6,33],[41,33],[-6,43],[41,43]];
@@ -441,27 +466,50 @@ export default class GameInfoUiHandler extends UiHandler {
  		});
  	}
 
+  showHallOfFame(runInfo: RunEntries) {
+    const partyPokemon = runInfo.party;
+    const pkmn = partyPokemon[0].toPokemon(this.scene);
+    const pkmnSprite = pkmn.getSprite();
+    pkmnSprite.setPosition(10, 20);
+    this.hallOfFameContainer.add(pkmnSprite);
+    this.hallOfFameContainer.setVisible(true);
+  }
+
  	processInput(button: Button): boolean {
     const ui = this.getUi();
 
     let success = false;
 
     if (button === Button.CANCEL) {
-      success = true;
-      this.runInfoContainer.removeAll();
-      this.partyContainer.removeAll();
-      this.gameStatsContainer.removeAll();
-      this.gameStatsContainer.setVisible(false);
-      ui.revertMode();
+      if (this.hallOfFameContainer.isVisible) {
+        this.hallofFameContainer.removeAll();
+        this.hallOfFameContainer.setVisible(false);
+        this.gameStatsContainer.setVisible(true);
+      }
+      else {
+        success = true;
+        this.runInfoContainer.removeAll();
+        this.partyContainer.removeAll();
+        this.gameStatsContainer.removeAll();
+        this.gameStatsContainer.setVisible(false);
+        ui.revertMode();
+      }
     } else {
       switch (button) {
-      case Button.UP:
-        if (this.cursor) {
-          success = this.setCursor(this.cursor - 1);
-        }
-        break;
       case Button.DOWN:
         break;
+      case Button.UP:
+        console.log(this.runInfo);
+        if (this.victory) {
+          this.gameStatsContainer.setVisible(false);
+          this.showHallOfFame(this.runInfo);
+          success = true;
+          break;
+        } 
+        else {
+          break;
+        }
+
       }
     }
 
@@ -471,6 +519,6 @@ export default class GameInfoUiHandler extends UiHandler {
       ui.playError();
     }
     return success || error;
-}
+  }
 }
 
