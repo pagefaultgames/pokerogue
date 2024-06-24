@@ -10,13 +10,11 @@ export interface SimpleTranslationEntries {
   }
 
 export interface FusionTranslationEntries {
-    [key: string]: FusionTranslationEntry,
-  }
-
-export interface FusionTranslationEntry {
-    fusionPrefix: string,
-    fusionSuffix: string,
-  }
+      [key: string]: {
+        fusionPrefix: string;
+        fusionSuffix: string;
+      };
+    }
 
 export interface MoveTranslationEntry {
     name: string,
