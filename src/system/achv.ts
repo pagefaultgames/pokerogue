@@ -276,8 +276,10 @@ export function getAchievementDescription(localizationKey: string): string {
   case "MONO_DARK":
   case "MONO_FAIRY":
     return i18next.t(`${genderPrefix}achv:MonoType.description` as ParseKeys, {"type": i18next.t(`pokemonInfo:Type.${localizationKey.slice(5)}`)});
-  case "NUZLOCKE":
-    return i18next.t(`${genderPrefix}achv:NUZLOCKE.description` as ParseKeys);
+  case "NUZLOCKE_REGULAR":
+    return i18next.t(`${genderPrefix}achv:NUZLOCKE_REGULAR.description` as ParseKeys);
+  case "NUZLOCKE_HARDCORE":
+    return i18next.t(`${genderPrefix}achv:NUZLOCKE_HARDCORE.description` as ParseKeys);
   default:
     return "";
   }
