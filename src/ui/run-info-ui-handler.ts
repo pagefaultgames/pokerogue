@@ -41,10 +41,10 @@ export enum RunVictory {
 }
 
 export default class GameInfoUiHandler extends UiHandler {
-    private runInfo: RunEntries;
-    private victory: Boolean;
+  private runInfo: RunEntries;
+  private victory: Boolean;
 
-    private gameStatsContainer: Phaser.GameObjects.Container;
+  private gameStatsContainer: Phaser.GameObjects.Container;
   	private statsContainer: Phaser.GameObjects.Container;
 
   	private runInfoContainer: Phaser.GameObjects.Container;
@@ -52,7 +52,7 @@ export default class GameInfoUiHandler extends UiHandler {
   	private statsBgWidth: integer;
   	private partyContainerHeight: integer;
 
-    private hallofFameContainer: Phaser.GameObjects.Container;
+  private hallofFameContainer: Phaser.GameObjects.Container;
 
   	private partyInfo: Phaser.GameObjects.Container[];
 
@@ -69,7 +69,7 @@ export default class GameInfoUiHandler extends UiHandler {
 
  		  this.gameStatsContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
 
-      this.hallOfFameContainer = this.scene.add.container(1, -(this.scene.game.canvas.height/6)+1);
+    this.hallOfFameContainer = this.scene.add.container(1, -(this.scene.game.canvas.height/6)+1);
 
     this.statsBgWidth = ((this.scene.game.canvas.width / 6) - 2) / 3;
 
@@ -181,14 +181,22 @@ export default class GameInfoUiHandler extends UiHandler {
     			genInfoText.appendText(`${i18next.t("gameMode:"+GameModes[runData.gameMode].toLowerCase())}`, false);
     			break;
     	}
-    	const luckValue = Phaser.Math.Clamp(runData.party.map(p => p.toPokemon(this.scene).getLuck()).reduce((total: integer, value: integer) => total += value, 0), 0, 14);
-    	const luckTextTint = "[color=#"+(getLuckTextTint(luckValue)).toString(16)+"]";
-    	genInfoText.appendText(`${luckTextTint}${i18next.t("runHistory:luck")}: ${getLuckString(luckValue)}[/color]`);
 
     	genInfoText.appendText(`${i18next.t("runHistory:score")}: ${runData.score}`);
 
     	genInfoText.appendText(`${i18next.t("runHistory:money")}: ${Utils.formatLargeNumber(runData.money, 1000)}`);
 
+      const luckValue = Phaser.Math.Clamp(runData.party.map(p => p.toPokemon(this.scene).getLuck()).reduce((total: integer, value: integer) => total += value, 0), 0, 14);
+      if (luckValue < 14) {
+        const luckTextTint = "[color=#"+(getLuckTextTint(luckValue)).toString(16)+"]";
+        genInfoText.appendText(`${luckTextTint}${i18next.t("runHistory:luck")}: ${getLuckString(luckValue)}[/color]`);
+      }
+      else {
+        const sssLuckText = addTextObject(this.scene, 0, 0, `${i18next.t("runHistory:luck")}: ${getLuckString(luckValue)}`, TextStyle.WINDOW, {fontSize: "55px"})
+        sssLuckText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
+        sssLuckText.setPosition(6, 79);
+        this.runInfoContainer.add(sssLuckText);
+      }
 
     	if (runHistoryOrigin && !runResult) {
     		const enemyContainer = this.scene.add.container(8, -40);
@@ -234,28 +242,32 @@ export default class GameInfoUiHandler extends UiHandler {
         }
 
         const teraPokemon = {};
-        runData.enemyModifiers.forEach((m) => {if (m.className === "TerastallizeModifier") {teraPokemon[m.args[0]] = m.args[1];}});
+        runData.enemyModifiers.forEach((m) => {
+          if (m.className === "TerastallizeModifier") {
+            teraPokemon[m.args[0]] = m.args[1];
+          }
+        });
     			runData.enemyParty.forEach((enemyData, e) => {
     			//e = (e>2) ? e : e/2;
-              const pokemonRowHeight = Math.floor(e/3);
+          const pokemonRowHeight = Math.floor(e/3);
           		const enemyIconContainer = this.scene.add.container(8+((e%3)*12), 66);
           		enemyIconContainer.setScale(0.5);
-              const isBoss = enemyData.boss;
+          const isBoss = enemyData.boss;
           		enemyData.boss = false;
           		const enemy = enemyData.toPokemon(this.scene);
           		const enemyIcon = this.scene.addPokemonIcon(enemy, 0, 0, 0, 0);
-              if (teraPokemon[enemyData.id]) {
-               const teraTint = getTypeRgb(teraPokemon[enemyData.id]); 
-               const teraColor = new Phaser.Display.Color(teraTint[0], teraTint[1], teraTint[2]);
-               enemyIcon.list[0].setTint(teraColor.color);
-              }
-              
-              enemyIcon.setPosition(16+(24 * (e%3)), 0+(35*pokemonRowHeight));
+          if (teraPokemon[enemyData.id]) {
+            const teraTint = getTypeRgb(teraPokemon[enemyData.id]);
+            const teraColor = new Phaser.Display.Color(teraTint[0], teraTint[1], teraTint[2]);
+            enemyIcon.list[0].setTint(teraColor.color);
+          }
+
+          enemyIcon.setPosition(16+(24 * (e%3)), 0+(35*pokemonRowHeight));
           		const enemyLevel = addTextObject(this.scene, (24*(e%3))+35, 22+(35*pokemonRowHeight), `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`, isBoss ? TextStyle.PARTY_RED : TextStyle.PARTY, { fontSize: "54px" });
           		enemyLevel.setShadow(0, 0, null);
           		enemyLevel.setStroke("#424242", 14);
           		enemyLevel.setOrigin(1, 0);
-              
+
           		enemyIconContainer.add(enemyIcon);
           		enemyIconContainer.add(enemyLevel);
           		enemyContainer.add(enemyIconContainer);
@@ -271,7 +283,7 @@ export default class GameInfoUiHandler extends UiHandler {
     	}
 
     	if (runData.modifiers.length) {
-      genInfoText.appendText(i18next.t("runHistory:playerItems")+": ");
+      genInfoText.appendText((luckValue < 14) ? i18next.t("runHistory:playerItems")+": " : "\n"+i18next.t("runHistory:playerItems")+": ");
       const modifiersModule = await import("../modifier/modifier");
 
       let visibleModifierIndex = 0;
@@ -363,34 +375,34 @@ export default class GameInfoUiHandler extends UiHandler {
       		textContainer.add(textPassive);
 
       		const pStats = [];
-          pokemon.stats.forEach((element) => pStats.push(Utils.formatFancyLargeNumber(element,1)));
-          const currentLanguage = i18next.resolvedLanguage;
-          //pStats[0] = Utils.formatFancyLargeNumber(pStats[0], 1);
-          for (var i = 0; i < pStats.length; i++) {
-            const isMult = getNatureStatMultiplier(pokemon.nature, i);
-            pStats[i] = (isMult < 1) ? "[b]" + pStats[i] + "↓[/b]" : pStats[i];
-            pStats[i] = (isMult > 1) ? "[b]" + pStats[i] + "↑[/b]" : pStats[i];
-          }
-          //Row 1: HP, Atk, Def
-          const textStats1 = addBBCodeTextObject(this.scene, -2, 18, "", TextStyle.SUMMARY, { fontSize: "34px" });
-          //HP
-          textStats1.appendText(i18next.t("pokemonInfo:Stat.HPshortened")+": "+pStats[0], false);
+      pokemon.stats.forEach((element) => pStats.push(Utils.formatFancyLargeNumber(element,1)));
+      const currentLanguage = i18next.resolvedLanguage;
+      //pStats[0] = Utils.formatFancyLargeNumber(pStats[0], 1);
+      for (var i = 0; i < pStats.length; i++) {
+        const isMult = getNatureStatMultiplier(pokemon.nature, i);
+        pStats[i] = (isMult < 1) ? "[b]" + pStats[i] + "↓[/b]" : pStats[i];
+        pStats[i] = (isMult > 1) ? "[b]" + pStats[i] + "↑[/b]" : pStats[i];
+      }
+      //Row 1: HP, Atk, Def
+      const textStats1 = addBBCodeTextObject(this.scene, -2, 18, "", TextStyle.SUMMARY, { fontSize: "34px" });
+      //HP
+      textStats1.appendText(i18next.t("pokemonInfo:Stat.HPshortened")+": "+pStats[0], false);
       		//Attack
-          textStats1.appendText(" | "+i18next.t("pokemonInfo:Stat.ATKshortened")+": "+pStats[1], false);
-          //Defense
-          textStats1.appendText(" | "+i18next.t("pokemonInfo:Stat.DEFshortened")+": "+pStats[2], false);
-          textContainer.add(textStats1);
-          //Row 2: SpAtk, SpDef, Speed
-          const textStats2 = addBBCodeTextObject(this.scene, -2, 17, "", TextStyle.SUMMARY, { fontSize: "34px"});
-          //Special Attack 
-          textStats2.appendText(i18next.t("pokemonInfo:Stat.SPATKshortened")+": "+pStats[3], true);
-          //Special Defense
-          textStats2.appendText(" | "+i18next.t("pokemonInfo:Stat.SPDEFshortened")+": "+pStats[4], false);
-          //Speed
-          const speedLabel = (currentLanguage==='es'||currentLanguage==='pt_BR') ? i18next.t("runHistory:SPDshortened") : i18next.t("pokemonInfo:Stat.SPDshortened");
-          textStats2.appendText(" | "+speedLabel+": "+pStats[5], false);
-          //End of Text
-          textContainer.add(textStats2);
+      textStats1.appendText(" | "+i18next.t("pokemonInfo:Stat.ATKshortened")+": "+pStats[1], false);
+      //Defense
+      textStats1.appendText(" | "+i18next.t("pokemonInfo:Stat.DEFshortened")+": "+pStats[2], false);
+      textContainer.add(textStats1);
+      //Row 2: SpAtk, SpDef, Speed
+      const textStats2 = addBBCodeTextObject(this.scene, -2, 17, "", TextStyle.SUMMARY, { fontSize: "34px"});
+      //Special Attack
+      textStats2.appendText(i18next.t("pokemonInfo:Stat.SPATKshortened")+": "+pStats[3], true);
+      //Special Defense
+      textStats2.appendText(" | "+i18next.t("pokemonInfo:Stat.SPDEFshortened")+": "+pStats[4], false);
+      //Speed
+      const speedLabel = (currentLanguage==="es"||currentLanguage==="pt_BR") ? i18next.t("runHistory:SPDshortened") : i18next.t("pokemonInfo:Stat.SPDshortened");
+      textStats2.appendText(" | "+speedLabel+": "+pStats[5], false);
+      //End of Text
+      textContainer.add(textStats2);
 
       if (pokemon.fusionSpecies) {
         const splicedIcon = this.scene.add.image(0, 0, "icon_spliced");
@@ -485,8 +497,7 @@ export default class GameInfoUiHandler extends UiHandler {
         this.hallofFameContainer.removeAll();
         this.hallOfFameContainer.setVisible(false);
         this.gameStatsContainer.setVisible(true);
-      }
-      else {
+      } else {
         success = true;
         this.runInfoContainer.removeAll();
         this.partyContainer.removeAll();
@@ -505,8 +516,7 @@ export default class GameInfoUiHandler extends UiHandler {
           this.showHallOfFame(this.runInfo);
           success = true;
           break;
-        } 
-        else {
+        } else {
           break;
         }
 
