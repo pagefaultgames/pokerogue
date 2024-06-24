@@ -142,7 +142,9 @@ export default class PokemonData {
     const species = getPokemonSpecies(this.species);
     const ret: Pokemon = this.player
       ? scene.addPlayerPokemon(species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.variant, this.ivs, this.nature, this, (playerPokemon) => {
-        playerPokemon.name = this.name;
+        if (this.name) {
+          playerPokemon.name = this.name;
+        }
       })
       : scene.addEnemyPokemon(species, this.level, battleType === BattleType.TRAINER ? !double || !(partyMemberIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER : TrainerSlot.NONE, this.boss, this);
     if (this.summonData) {
