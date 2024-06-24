@@ -1,7 +1,7 @@
 import BattleScene from "../../battle-scene";
 import AbstractBindingUiHandler from "./abstract-binding-ui-handler";
 import {Mode} from "../ui";
-import { getKeyWithKeycode} from "#app/configs/inputs/configHandler";
+import {getIconWithSettingName, getKeyWithKeycode} from "#app/configs/inputs/configHandler";
 import {Device} from "#enums/devices";
 import {addTextObject, TextStyle} from "#app/ui/text";
 
@@ -18,9 +18,19 @@ export default class KeyboardBindingUiHandler extends AbstractBindingUiHandler {
 
     // New button icon setup.
     this.newButtonIcon = this.scene.add.sprite(0, 0, "keyboard");
-    this.newButtonIcon.setPositionRelative(this.optionSelectBg, 78, 32);
+    this.newButtonIcon.setPositionRelative(this.optionSelectBg, 78, 16);
     this.newButtonIcon.setOrigin(0.5);
     this.newButtonIcon.setVisible(false);
+
+    this.swapText = addTextObject(this.scene, 0, 0, "will swap with", TextStyle.WINDOW);
+    this.swapText.setOrigin(0.5);
+    this.swapText.setPositionRelative(this.optionSelectBg, this.optionSelectBg.width / 2 - 2, this.optionSelectBg.height / 2 - 2);
+    this.swapText.setVisible(false);
+
+    this.targetButtonIcon = this.scene.add.sprite(0, 0, "keyboard");
+    this.targetButtonIcon.setPositionRelative(this.optionSelectBg, 78, 48);
+    this.targetButtonIcon.setOrigin(0.5);
+    this.targetButtonIcon.setVisible(false);
 
     this.actionLabel = addTextObject(this.scene, 0, 0, "Assign button", TextStyle.SETTINGS_LABEL);
     this.actionLabel.setOrigin(0, 0.5);
@@ -28,6 +38,8 @@ export default class KeyboardBindingUiHandler extends AbstractBindingUiHandler {
     this.actionsContainer.add(this.actionLabel);
 
     this.optionSelectContainer.add(this.newButtonIcon);
+    this.optionSelectContainer.add(this.swapText);
+    this.optionSelectContainer.add(this.targetButtonIcon);
   }
 
   getSelectedDevice() {
@@ -57,8 +69,8 @@ export default class KeyboardBindingUiHandler extends AbstractBindingUiHandler {
       return;
     }
     this.buttonPressed = key;
-    // const assignedButtonIcon = getIconWithSettingName(activeConfig, this.target);
-    this.onInputDown(buttonIcon, null, "keyboard");
+    const assignedButtonIcon = getIconWithSettingName(activeConfig, this.target);
+    this.onInputDown(buttonIcon, assignedButtonIcon, "keyboard");
   }
 
   swapAction(): boolean {
@@ -68,6 +80,15 @@ export default class KeyboardBindingUiHandler extends AbstractBindingUiHandler {
       return true;
     }
     return false;
+  }
+
+  /**
+     * Clear the UI elements and state.
+     */
+  clear() {
+    super.clear();
+    this.swapText.setVisible(false);
+    this.targetButtonIcon.setVisible(false);
   }
 
 }

@@ -118,17 +118,25 @@ export function assign(config, settingNameTarget, keycode): boolean {
   if (!canIAssignThisKey(config, getKeyWithKeycode(config, keycode)) || !canIOverrideThisSetting(config, settingNameTarget)) {
     return false;
   }
+
+  // Check if the new key pressed already exists for a keybind
   const previousSettingName = getSettingNameWithKeycode(config, keycode);
-  // if it was already bound, we delete the bind
-  if (previousSettingName) {
-    const previousKey = getKeyWithSettingName(config, previousSettingName);
-    config.custom[previousKey] = -1;
-  }
-  // then, we need to delete the current key for this settingName
+  const previousKey = getKeyWithSettingName(config, previousSettingName);
+
+  // This is key currently assigned to the keybind we want to change
   const currentKey = getKeyWithSettingName(config, settingNameTarget);
+
+  // If the new key pressed is already assigned to another settingName, swap them
+  if (previousSettingName !== -1) {
+    config.custom[previousKey] = settingNameTarget;
+    config.custom[currentKey] = previousSettingName;
+    return true;
+  }
+
+  // Unbind the current key
   config.custom[currentKey] = -1;
 
-  // then, the new key is assigned to the new settingName
+  // Assign the new key to the settingNameTarget
   const newKey = getKeyWithKeycode(config, keycode);
   config.custom[newKey] = settingNameTarget;
   return true;
