@@ -851,6 +851,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.getLevelMoves(1, true).map(lm => lm[1]).filter(lm => !this.moveset.filter(m => m.moveId === lm).length).filter((move: Moves, i: integer, array: Moves[]) => array.indexOf(move) === i);
   }
 
+  /**
+   * Gets the types of a pokemon
+   * @param includeTeraType boolean to include tera-formed type, default false
+   * @param forDefend boolean if the pokemon is defending from an attack
+   * @param ignoreOverride boolean if true, ignore ability changing effects
+   * @returns array of {@linkcode Type}
+   */
   getTypes(includeTeraType = false, forDefend: boolean = false, ignoreOverride?: boolean): Type[] {
     const types = [];
 
@@ -884,7 +891,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
 
-    if (forDefend && (this.getTag(GroundedTag) || this.scene.arena.getTag(ArenaTagType.GRAVITY))) {
+    // this.scene potentially can be undefined for a fainted pokemon in doubles
+    // use optional chaining to avoid runtime errors
+    if (forDefend && (this.getTag(GroundedTag) || this.scene?.arena.getTag(ArenaTagType.GRAVITY))) {
       const flyingIndex = types.indexOf(Type.FLYING);
       if (flyingIndex > -1) {
         types.splice(flyingIndex, 1);
@@ -1061,7 +1070,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * in effect, and both passive and non-passive. This is one of the two primary ways to check
    * whether a pokemon has a particular ability.
    * @param {AbAttr} attrType The ability attribute to check for
-   * @param {boolean} canApply If false, it doesn't check whether the abiltiy is currently active
+   * @param {boolean} canApply If false, it doesn't check whether the ability is currently active
    * @param {boolean} ignoreOverride If true, it ignores ability changing effects
    * @returns {boolean} Whether an ability with that attribute is present and active
    */
@@ -1082,13 +1091,21 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return weight.value;
   }
 
+  /**
+   * Gets the tera-formed type of the pokemon, or UNKNOWN if not present
+   * @returns the {@linkcode Type}
+   */
   getTeraType(): Type {
-    const teraModifier = this.scene.findModifier(m => m instanceof TerastallizeModifier
-      && m.pokemonId === this.id && !!m.getBattlesLeft(), this.isPlayer()) as TerastallizeModifier;
-    if (teraModifier) {
-      return teraModifier.teraType;
+    // this.scene can be undefined for a fainted mon in doubles
+    if (this.scene !== undefined) {
+      const teraModifier = this.scene.findModifier(m => m instanceof TerastallizeModifier
+        && m.pokemonId === this.id && !!m.getBattlesLeft(), this.isPlayer()) as TerastallizeModifier;
+      // return teraType
+      if (teraModifier) {
+        return teraModifier.teraType;
+      }
     }
-
+    // if scene is undefined, or if teraModifier is considered false, then return unknown type
     return Type.UNKNOWN;
   }
 

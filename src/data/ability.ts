@@ -3786,6 +3786,54 @@ export class IceFaceBlockPhysicalAbAttr extends ReceivedMoveDamageMultiplierAbAt
   }
 }
 
+/**
+ * If a Pokémon with this Ability selects a damaging move, it has a 30% chance of going first in its priority bracket. If the Ability activates, this is announced at the start of the turn (after move selection).
+ *
+ * @extends AbAttr
+ */
+export class BypassSpeedChanceAbAttr extends AbAttr {
+  public chance: integer;
+
+  /**
+   * @param {integer} chance probability of ability being active.
+   */
+  constructor(chance: integer) {
+    super(true);
+    this.chance = chance;
+  }
+
+  /**
+   * bypass move order in their priority bracket when pokemon choose damaging move
+   * @param {Pokemon} pokemon {@linkcode Pokemon}  the Pokemon applying this ability
+   * @param {boolean} passive N/A
+   * @param {Utils.BooleanHolder} cancelled N/A
+   * @param {any[]} args [0] {@linkcode Utils.BooleanHolder} set to true when the ability activated
+   * @returns {boolean} - whether the ability was activated.
+   */
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    const bypassSpeed = args[0] as Utils.BooleanHolder;
+
+    if (!bypassSpeed.value && pokemon.randSeedInt(100) < this.chance) {
+      const turnCommand =
+        pokemon.scene.currentBattle.turnCommands[pokemon.getBattlerIndex()];
+      const isCommandFight = turnCommand?.command === Command.FIGHT;
+      const move = allMoves[turnCommand.move?.move];
+      const isDamageMove = move?.category === MoveCategory.PHYSICAL || move?.category === MoveCategory.SPECIAL;
+
+      if (isCommandFight && isDamageMove) {
+        bypassSpeed.value = true;
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
+    return i18next.t("abilityTriggers:quickDraw", {pokemonName: getPokemonNameWithAffix(pokemon)});
+  }
+}
+
 function applyAbAttrsInternal<TAttr extends AbAttr>(attrType: Constructor<TAttr>,
   pokemon: Pokemon, applyFunc: AbAttrApplyFunc<TAttr>, args: any[], isAsync: boolean = false, showAbilityInstant: boolean = false, quiet: boolean = false, passive: boolean = false): Promise<void> {
   return new Promise(resolve => {
@@ -4870,7 +4918,7 @@ export function initAbilities() {
       .attr(NoFusionAbilityAbAttr)
       .condition((pokemon) => !pokemon.isTerastallized()),
     new Ability(Abilities.QUICK_DRAW, 8)
-      .unimplemented(),
+      .attr(BypassSpeedChanceAbAttr, 30),
     new Ability(Abilities.UNSEEN_FIST, 8)
       .attr(IgnoreProtectOnContactAbAttr),
     new Ability(Abilities.CURIOUS_MEDICINE, 8)

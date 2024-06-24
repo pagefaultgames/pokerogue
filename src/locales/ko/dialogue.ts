@@ -1350,14 +1350,14 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "malva": {
     "encounter": {
-      1: `I feel like my heart might just burst into flames. 
-                $I'm burning up with my hatred for you, runt!`,
+      1: `심장이 불에 타버릴 것만 같아요. 
+                $당신에 대한 증오로 불타고 있거든요, 얄미운 트레이너!`,
     },
     "victory": {
-      1: "What news… So a new challenger has defeated Malva!"
+      1: "도전자가… 사천왕 파키라에게서 멋지게 승리를 쟁취했습니다!"
     },
     "defeat": {
-      1: "I am delighted! Yes, delighted that I could squash you beneath my heel."
+      1: "기쁘네요! 당신을 짓밟을 수 있어서 말이죠!"
     }
   },
   "hala": {
@@ -1453,14 +1453,14 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "siebold": {
     "encounter": {
-      1: "As long as I am alive, I shall strive onward to seek the ultimate cuisine... and the strongest opponents in battle!"
+      1: "살아가는 동안, 궁극적인 요리와 강력한 상대를 찾기 위해… 열과 성을 다할 것입니다!"
     },
     "victory": {
-      1: "I shall store my memory of you and your Pokémon forever away within my heart."
+      1: "당신에 대한 기억을 제 가슴 속에 담아두겠습니다."
     },
     "defeat": {
-      1: `Our Pokémon battle was like food for my soul. It shall keep me going. 
-                $That is how I will pay my respects to you for giving your all in battle!`,
+      1: `우리의 포켓몬 배틀은 영혼의 양식과 같습니다. 그건 저를 계속 지탱할 거예요. 
+                $이것이 제가 전투에서 모든 것을 바친 당신에게, 경의를 표하는 방법입니다!`,
     }
   },
   "roxie": {
@@ -1546,27 +1546,27 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "diantha": {
     "encounter": {
-      1: `Battling against you and your Pokémon, all of you brimming with hope for the future… 
-                $Honestly, it just fills me up with energy I need to keep facing each new day! It does!`,
+      1: `미래를 향한 희망으로 빛나는 당신과, 당신의 포켓몬을 상대로 승부하는 것…
+                $솔직히, 매일매일 새로운 날을 위해 필요한 에너지가 채워지는 것 같아요! 정말로요!`,
     },
     "victory": {
-      1: "Witnessing the noble spirits of you and your Pokémon in battle has really touched my heart…"
+      1: "고귀한 영혼을 지닌 포켓몬과 트레이너의 모습에 격하게 마음이 흔들려서…"
     },
     "defeat": {
-      1: "Oh, fantastic! What did you think? My team was pretty cool, right?"
+      1: "정말, 환상적이야! 어떻게 생각하시나요? 저의 포켓몬들, 꽤 멋있었죠?"
     }
   },
   "wikstrom": {
     "encounter": {
-      1: `Well met, young challenger! Verily am I the famed blade of hardened steel, Duke Wikstrom! 
-                $Let the battle begin! En garde!`,
+      1: `잘 왔네, 젊은 도전자여! 이 몸은 사천왕 중 한 명인 강철의 남자 간피다! 
+                $자 그럼 간다, 간다! 간닷!`,
     },
     "victory": {
-      1: "Glorious! The trust that you share with your honorable Pokémon surpasses even mine!"
+      1: "정말 영광이군! 자네의 포켓몬과 서로 신뢰하는 힘, 날 능가하는군!!"
     },
     "defeat": {
-      1: `What manner of magic is this? My heart, it doth hammer ceaselessly in my breast! 
-                $Winning against such a worthy opponent doth give my soul wings--thus do I soar!`,
+      1: `이게 무슨 마법이지? 내 마음의 떨림이 멈추질 않는군! 
+                $가치 있는 상대를 이기는 것은 영혼에 날개를 달아주는 것과 같지--그런 내가 비상하는 것일까!`,
     }
   },
   "acerola": {
@@ -1652,14 +1652,14 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "drasna": {
     "encounter": {
-      1: `You must be a strong Trainer. Yes, quite strong indeed…
-                $That's just wonderful news! Facing opponents like you and your team will make my Pokémon grow like weeds!`
+      1: `당신 강하시죠? 그것도 상당히 꽤 말이에요…
+                $어머 기뻐라! 그런 상대와 놀면 포켓몬들도 쑥쑥 크겠어요!`
     },
     "victory": {
-      1: "Oh, dear me. That sure was a quick battle… I do hope you'll come back again sometime!"
+      1: "어머머 벌써 끝나버리다니… 미안해요, 괜찮으면 또 오세요!"
     },
     "defeat": {
-      1: "How can this be?"
+      1: "어머, 웬일이야?"
     }
   },
   "kahili": {
@@ -2052,28 +2052,28 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "valerie": {
     "encounter": {
-      1: `Oh, if it isn't a young Trainer… It is lovely to get to meet you like this. 
-                    $Then I suppose you have earned yourself the right to a battle, as a reward for your efforts. 
-                    $The elusive Fairy may appear frail as the breeze and delicate as a bloom, but it is strong.`,
+      1: `어라,트레이너님… 슝슝 워프해서… 이렇게 만나서 반갑네. 
+                    $그리고 내가 보기엔 당신은 노력했기에, 이 승부에 참가할 수 있게 된 것 같아. 
+                    $찾기 힘든 요정 같은 페어리 타입, 우리 포켓몬들 사뿐하고 화사하지만 강하다구.`,
     },
     "victory": {
-      1: "I hope that you will find things worth smiling about tomorrow…"
+      1: "난 당신이 내일을 생각하며 웃을 수 있는 것들을 찾길 바라고 있을게…"
     },
     "defeat": {
-      1: "Oh goodness, what a pity…"
+      1: "앗 이런, 가엾어라…"
     }
   },
   "wulfric": {
     "encounter": {
-      1: `You know what? We all talk big about what you learn from battling and bonds and all that…
-                    $But really, I just do it 'cause it's fun. 
-                    $Who cares about the grandstanding? Let's get to battling!`,
+      1: `그거 알아? 그거… 전투와 유대감을 통해 배운다거나 하는… 거 뭐더라, 음.
+                    $여튼 말이지, 난 그냥 재밌어서 하는 거야. 
+                    $내 자랑은 별로 듣고 싶지 않으려나? 자, 포켓몬을 꺼내자!`,
     },
     "victory": {
-      1: "Outstanding! I'm tough as an iceberg, but you smashed me through and through!"
+      1: "그거야, 바로 그거! 멋지다고. 단단한 얼음을 깨부쉈구나!"
     },
     "defeat": {
-      1: "Tussle with me and this is what happens!"
+      1: "나와 싸우면 그런 일이 벌어진다니까!"
     }
   },
   "kabu": {

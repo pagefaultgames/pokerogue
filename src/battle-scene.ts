@@ -37,7 +37,7 @@ import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 import { addUiThemeOverrides } from "./ui/ui-theme";
 import PokemonData from "./system/pokemon-data";
 import { Nature } from "./data/nature";
-import { SpeciesFormChangeTimeOfDayTrigger, SpeciesFormChangeTrigger, pokemonFormChanges } from "./data/pokemon-forms";
+import { SpeciesFormChangeManualTrigger, SpeciesFormChangeTimeOfDayTrigger, SpeciesFormChangeTrigger, pokemonFormChanges } from "./data/pokemon-forms";
 import { FormChangePhase, QuietFormChangePhase } from "./form-change-phase";
 import { getTypeRgb } from "./data/type";
 import PokemonSpriteSparkleHandler from "./field/pokemon-sprite-sparkle-handler";
@@ -157,6 +157,8 @@ export default class BattleScene extends SceneBase {
   public fusionPaletteSwaps: boolean = true;
   public enableTouchControls: boolean = false;
   public enableVibration: boolean = false;
+  public showBgmBar: boolean = true;
+
   /**
    * Determines the selected battle style.
    * - 0 = 'Switch'
@@ -1120,8 +1122,10 @@ export default class BattleScene extends SceneBase {
         playerField.forEach((_, p) => this.unshiftPhase(new ReturnPhase(this, p)));
 
         for (const pokemon of this.getParty()) {
-          if (pokemon.hasAbility(Abilities.ICE_FACE)) {
-            pokemon.formIndex = 0;
+          // Only trigger form change when Eiscue is in Noice form
+          // Hardcoded Eiscue for now in case it is fused with another pokemon
+          if (pokemon.species.speciesId === Species.EISCUE && pokemon.hasAbility(Abilities.ICE_FACE) && pokemon.formIndex === 1) {
+            this.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
           }
 
           pokemon.resetBattleData();
@@ -1637,6 +1641,7 @@ export default class BattleScene extends SceneBase {
       : this.getBgmLoopPoint(bgmName);
     let loaded = false;
     const playNewBgm = () => {
+      this.ui.bgmBar.setBgmToBgmBar(bgmName);
       if (bgmName === null && this.bgm && !this.bgm.pendingRemove) {
         this.bgm.play({
           volume: this.masterVolume * this.bgmVolume
