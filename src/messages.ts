@@ -1,6 +1,6 @@
 import { BattleSpec } from "#enums/battle-spec";
 import Pokemon from "./field/pokemon";
-import i18next from "./plugins/i18n";
+import i18next from "i18next";
 
 /**
  * Builds a message by concatenating the Pokemon name with its potential affix and the given text

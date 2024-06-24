@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const tutorial: SimpleTranslationEntries = {
   intro: `포켓로그에 오신 것을 환영합니다! 로그라이트 요소가 가미된 전투 중심의 포켓몬 팬게임입니다.
