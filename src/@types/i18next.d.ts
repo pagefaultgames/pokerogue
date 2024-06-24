@@ -39,6 +39,7 @@ declare module "i18next" {
         pokeball: SimpleTranslationEntries;
         pokemon: SimpleTranslationEntries;
         fusionAffixes: FusionTranslationEntries;
+        shouldReverse: FusionTranslationEntries;
         pokemonInfo: PokemonInfoTranslationEntries;
         pokemonInfoContainer: SimpleTranslationEntries;
         saveSlotSelectUiHandler: SimpleTranslationEntries;
