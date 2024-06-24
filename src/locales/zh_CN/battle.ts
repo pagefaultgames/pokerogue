@@ -15,6 +15,7 @@ export const battle: SimpleTranslationEntries = {
   "trainerDefeated": "你击败了\n{{trainerName}}！",
   "moneyWon": "你赢得了\n₽{{moneyAmount}}！",
   "pokemonCaught": "{{pokemonName}} 被抓住了！",
+  "addedAsAStarter": "{{pokemonName}} has been\nadded as a starter!",
   "partyFull": "你的队伍已满员.是否放生其他宝可梦\n为 {{pokemonName}} 腾出空间?",
   "pokemon": "宝可梦",
   "sendOutPokemon": "上吧！\n{{pokemonName}}！",

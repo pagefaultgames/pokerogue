@@ -13,6 +13,7 @@ export const battle: SimpleTranslationEntries = {
   "switchQuestion": "要更換\n{{pokemonName}}嗎？",
   "trainerDefeated": "你擊敗了\n{{trainerName}}！",
   "pokemonCaught": "{{pokemonName}} 被抓住了！",
+  "addedAsAStarter": "{{pokemonName}} has been\nadded as a starter!",
   "pokemon": "寶可夢",
   "sendOutPokemon": "上吧！ {{pokemonName}}！",
   "hitResultCriticalHit": "擊中了要害！",
