@@ -385,39 +385,39 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "rocket_grunt": {
     "encounter": {
-      1: "Prepare for trouble!"
+      1: "Se prepara pra encrenca!"
     },
     "victory": {
-      1: "Team Rocket blasting off again!"
+      1: "Equipe Rocket decolando de novo!"
     },
   },
   "magma_grunt": {
     "encounter": {
-      1: " If you get in the way of Team Magma, don’t expect any mercy!"
+      1: "Se você se meter com a Equipe Magma, não teremos piedade!"
     },
     "victory": {
-      1: "Huh? I lost?!"
+      1: "Ahn? Eu perdi?!"
     },
   },
   "aqua_grunt": {
     "encounter": {
-      1: "No one who crosses Team Aqua gets any mercy, not even kids!"
+      1: "Não pegamos leve com quem se mete com a Equipe Aqua, nem mesmo crianças!"
     },
     "victory": {
-      1: "You're kidding me!"
+      1: "Tá de brincadeira!"
     },
   },
   "galactic_grunt": {
     "encounter": {
-      1: "Don't mess with Team Galactic!"
+      1: "Não mexe com a Equipe Galáctica!"
     },
     "victory": {
-      1: "Shut down..."
+      1: "Fui amassado..."
     },
   },
   "plasma_grunt": {
     "encounter": {
-      1: "We won't tolerate people who have different ideas!"
+      1: "Não toleramos pessoas que pensam diferente de nós!"
     },
     "victory": {
       1: "Plasmaaaaaaaaa!"
@@ -425,117 +425,117 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "flare_grunt": {
     "encounter": {
-      1: "Fashion is most important to us!"
+      1: "A moda é a coisa mais importante pra gente!"
     },
     "victory": {
-      1: "The future doesn't look bright for me."
+      1: "O futuro não parece brilhante pra mim."
     },
   },
   "rocket_boss_giovanni_1": {
     "encounter": {
-      1: "So! I must say, I am impressed you got here!"
+      1: "Tenho que admitir, estou impressionado que tenha chegado até aqui!"
     },
     "victory": {
-      1: "WHAT! This cannot be!"
+      1: "QUÊ! Isso não é possível!"
     },
     "defeat": {
-      1: "Mark my words. Not being able to measure your own strength shows that you are still a child."
+      1: "Guarde minhas palavras.\nNão ser capaz de medir sua própria força mostra que você ainda é uma criança."
     }
   },
   "rocket_boss_giovanni_2": {
     "encounter": {
-      1: "My old associates need me... Are you going to get in my way?"
+      1: "Meus antigos associados precisam de mim... Você vai ficar no meu caminho?"
     },
     "victory": {
-      1: "How is this possible...?\nThe precious dream of Team Rocket has become little more than an illusion..."
+      1: "Como isso é possível...?\nO precioso sonho da Equipe Rocket se tornou pouco mais que uma ilusão..."
     },
     "defeat": {
-      1: "Team Rocket will be reborn again, and I will rule the world!"
+      1: "A Equipe Rocket renascerá, e eu dominarei o mundo!"
     }
   },
   "magma_boss_maxie_1": {
     "encounter": {
-      1: "I will bury you by my own hand. I hope you appreciate this honor!"
+      1: "Eu vou te enterrar com minhas próprias mãos.\nEspero que você aprecie essa honra!"
     },
     "victory": {
-      1: "Ugh! You are... quite capable...\nI fell behind, but only by an inch..."
+      1: "Ugh! Você é... bastante capaz...\nEu fiquei para trás, mas apenas por um triz..."
     },
     "defeat": {
-      1: "Team Magma will prevail!"
+      1: "A Equipe Magma vai prevalecer!"
     }
   },
   "magma_boss_maxie_2": {
     "encounter": {
-      1: "You are the final obstacle remaining between me and my goals.\nBrace yourself for my ultimate attack! Fuhahaha!"
+      1: "Você é o último obstáculo entre mim e meus objetivos.\nPrepare-se para meu ataque final! Fuhahaha!"
     },
     "victory": {
-      1: "This... This is not.. Ngh..."
+      1: "Isso... Isso não é... Ngh..."
     },
     "defeat": {
-      1: "And now... I will transform this planet to a land ideal for humanity."
+      1: "E agora... Eu transformarei este planeta em uma terra ideal para a humanidade."
     }
   },
   "aqua_boss_archie_1": {
     "encounter": {
-      1: "I'm leader of Team Aqua, so I'm afraid it's the rope's end for you."
+      1: "Eu sou o líder da Equipe Aqua, então temo que esse seja o fim da linha para você."
     },
     "victory": {
-      1: "Let's meet again somewhere. I'll be sure to remember that face."
+      1: "Vamos nos encontrar de novo em algum lugar. Eu vou ter certeza de lembrar desse rosto."
     },
     "defeat": {
-      1: "Brilliant! My team won't hold back now!"
+      1: "Brilhante! Nada vai parar minha equipe agora!"
     }
   },
   "aqua_boss_archie_2": {
     "encounter": {
-      1: "I've been waiting so long for this day to come.\nThis is the true power of my team!"
+      1: "Estive esperando tanto tempo por este dia.\nEste é o verdadeiro poder da minha equipe!"
     },
     "victory": {
-      1: "Like I figured..."
+      1: "Como eu suspeitava..."
     },
     "defeat": {
-      1: "I'll return everything in this world to its original, pure state!!"
+      1: "Eu vou voltar tudo neste mundo ao seu estado puro e original!!"
     }
   },
   "galactic_boss_cyrus_1": {
     "encounter": {
-      1: "You were compelled to come here by such vacuous sentimentality\nI will make you regret paying heed to your heart!"
+      1: "Você foi compelido a vir aqui por tal sentimentalismo vazio\nEu farei você se arrepender de ter ouvido seu coração!"
     },
     "victory": {
-      1: "Interesting. And quite curious."
+      1: "Interessante. E bastante curioso."
     },
     "defeat": {
-      1: "I will create my new world..."
+      1: "Eu criarei meu novo mundo..."
     }
   },
   "galactic_boss_cyrus_2": {
     "encounter": {
-      1: "So we meet again. It seems our fates have become intertwined.\nBut here and now, I will finally break that bond!"
+      1: "Nos encontramos novamente. Parece que nossos destinos estão entrelaçados.\nMas aqui e agora, eu finalmente quebrarei esse vínculo!"
     },
     "victory": {
-      1: "How? How? HOW?!"
+      1: "Como? Como? COMO?!"
     },
     "defeat": {
-      1: "Farewell."
+      1: "Até logo."
     }
   },
   "plasma_boss_ghetsis_1": {
     "encounter": {
-      1: "I won't allow anyone to stop me! No matter who does what!"
+      1: "Ninguém pode me deter! Não importa quem seja ou o que faça!"
     },
     "victory": {
-      1: "How can this be? I'm the creator of Team Plasma! I'm perfect!"
+      1: "Como isso é possível? Eu sou o criador da Equipe Plasma! Eu sou perfeito!"
     },
     "defeat": {
-      1: "I am the perfect ruler of a perfect new world! Mwa ha ha!"
+      1: "Eu sou o governante perfeito de um novo mundo perfeito! Mwa ha ha!"
     }
   },
   "plasma_boss_ghetsis_2": {
     "encounter": {
-      1: "Come now! I want to see your face at the moment you lose all hope!"
+      1: "Vamos! Eu quero ver sua cara depois que você perder toda a esperança!"
     },
     "victory": {
-      1: "My calculations... No! My careful schemes! The world should be mine!"
+      1: "Meus cálculos... Não! Meus planos cuidadosos! O mundo deveria ser meu!"
     },
     "defeat": {
       1: "Kyurem! Use Absofusion!"
@@ -543,24 +543,24 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "flare_boss_lysandre_1": {
     "encounter": {
-      1: "Do you want to stop me? Show me in battle."
+      1: "Você está aqui para me deter? Mostre-me em batalha."
     },
     "victory": {
-      1: "You are here to stop me. But I ask you to wait. "
+      1: "Você está aqui para me deter. Mas eu peço que você espere."
     },
     "defeat": {
-      1: "Pokemon...Shall no longer exist."
+      1: "Pokémon... não devem mais existir."
     }
   },
   "flare_boss_lysandre_2": {
     "encounter": {
-      1: "The future you want, or the future I want... Let us see which one is more deserving, shall we?"
+      1: "O futuro que você quer, ou o futuro que eu quero... Vamos ver qual é o mais merecedor, não é mesmo?"
     },
     "victory": {
-      1: "Whaugh!"
+      1: "Uau!"
     },
     "defeat": {
-      1: "Fools with no vision will continue to befoul this beautiful world."
+      1: "Tolos sem visão continuarão a poluir este belo mundo."
     }
   },
   "brock": {
