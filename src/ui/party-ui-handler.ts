@@ -423,6 +423,7 @@ export default class PartyUiHandler extends MessageUiHandler {
               (nickname: string) => {
                 ui.playSelect();
                 pokemon.name = nickname;
+                pokemon.updateInfo();
                 this.clearPartySlots();
                 this.populatePartySlots();
                 ui.setMode(Mode.PARTY);
