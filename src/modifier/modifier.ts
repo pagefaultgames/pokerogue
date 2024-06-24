@@ -342,19 +342,9 @@ export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier
     return [ this.battlesLeft ];
   }
 
-  /**
-   * Modifies the chance of a double battle occurring
-   * @param args A single element array containing the double battle chance as a NumberHolder
-   * @returns {boolean} Returns true if the modifier was applied
-   */
   apply(args: any[]): boolean {
-    // Use Math.max to ensure no dividing by 0
-    const chanceMultiplier = 2 * Math.max(1, this.getStackCount());
-
     const doubleBattleChance = args[0] as Utils.NumberHolder;
-    // This is divided because the chance is generated as a number from 0 to doubleBattleChance.value using Utils.randSeedInt
-    // A double battle will initiate if the generated number is 0
-    doubleBattleChance.value = Math.ceil(doubleBattleChance.value / chanceMultiplier);
+    doubleBattleChance.value = Math.ceil(doubleBattleChance.value / 2);
 
     return true;
   }
