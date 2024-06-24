@@ -141,17 +141,15 @@ export class Egg {
     //if (eggOptions.tier && eggOptions.species) throw Error("Error egg can't have species and tier as option. only choose one of them.")
 
     this._tier = eggOptions.tier ?? (Overrides.EGG_TIER_OVERRIDE ?? this.rollEggTier());
+    this._sourceType = eggOptions.sourceType ?? undefined;
     // If egg was pulled, check if egg pity needs to override the egg tier
     if (eggOptions.pulled) {
+      // Needs this._tier and this._sourceType to work
       this.checkForPityTierOverrides(eggOptions.scene);
     }
 
     this._id = eggOptions.id ?? Utils.randInt(EGG_SEED, EGG_SEED * this._tier);
 
-    // Increase pull statistics AFTER the ID was generated beacuse it will be used to check for mahnaphy egg
-    if (eggOptions.pulled) {
-      this.increasePullStatistic(eggOptions.scene);
-    }
     this._sourceType = eggOptions.sourceType ?? undefined;
     this._hatchWaves = eggOptions.hatchWaves ?? this.getEggTierDefaultHatchWaves();
     this._timestamp = eggOptions.timestamp ?? new Date().getTime();
@@ -177,6 +175,7 @@ export class Egg {
     // Needs this._tier so it needs to be generated afer the tier override if bought from same species
     this._eggMoveIndex = eggOptions.eggMoveIndex ?? this.rollEggMoveIndex();
     if (eggOptions.pulled) {
+      this.increasePullStatistic(eggOptions.scene);
       this.addEggToGameData(eggOptions.scene);
     }
   }
