@@ -48,9 +48,29 @@ export enum ChallengeType {
    *             [1] {@link FixedBattleConfig} A new fixed battle. It'll be modified if a battle exists.
   */
   FIXED_BATTLES,
+  /**
+   * Checks if the heal phase should be run
+   * @param args [1] {@link Utils.BooleanHolder} Sets to false if illegal, pass in true.
+  */
   NO_HEAL_PHASE,
+  /**
+   * Checks if the shop item is blacklisted
+   * @param args [0] {@link ModifierTypeOption} the shop item
+   *             [1] {@link Utils.BooleanHolder} Sets to false if illegal, pass in true.
+  */
   SHOP_ITEM_BLACKLIST,
+  /**
+   * Checks if the random item is blacklisted
+   * @param args [0] {@link ModifierTypeOption} the random item
+   *             [1] {@link Utils.BooleanHolder} Sets to false if illegal, pass in true.
+  */
   RANDOM_ITEM_BLACKLIST,
+  /**
+   * Checks if the cought pokemon can be add to the team
+   * @param args [0] {@link EnemyPokemon} the pokemon cought
+   *             [1] {@link number} Current wave index
+   *             [2] {@link Utils.BooleanHolder} Sets to false if illegal, pass in true.
+  */
   ADD_POKEMON_TO_PARTY
 }
 
@@ -691,8 +711,8 @@ export class NuzlockeChallenge extends Challenge {
       isRandomItemValid.value = !randomItemBlackList.includes(randomItem.type.localeKey);
       return true;
     case ChallengeType.ADD_POKEMON_TO_PARTY:
-      const currentWave: number = args[0];
-      const canAddToParty = args[1] as Utils.BooleanHolder;
+      const currentWave: number = args[1];
+      const canAddToParty = args[2] as Utils.BooleanHolder;
 
       if (Math.floor((this.additionalData.lastCatchAtWave - 1) / 10) < Math.floor((currentWave - 1) / 10)) {
         canAddToParty.value = true;
@@ -703,6 +723,26 @@ export class NuzlockeChallenge extends Challenge {
       return true;
     }
     return false;
+  }
+
+  /**
+   * @overrides
+   */
+  getDifficulty(): number {
+    return this.value > 0 ? 1 : 0;
+  }
+
+
+  /**
+   * Returns the description of a challenge's current value.
+   * @param {value} overrideValue The value to check for. If undefined, gets the current value.
+   * @returns {string} The localised description for the current value.
+   */
+  getDescription(overrideValue?: integer): string {
+    if (overrideValue === undefined) {
+      overrideValue = this.value;
+    }
+    return i18next.t("challenges:nuzlocke.desc");
   }
 
   static loadChallenge(source: NuzlockeChallenge | any): NuzlockeChallenge {

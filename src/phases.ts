@@ -4952,7 +4952,7 @@ export class AttemptCapturePhase extends PokemonPhase {
       };
       Promise.all([pokemon.hideInfo(), this.scene.gameData.setPokemonCaught(pokemon)]).then(() => {
         const challengeCanAddToParty = new Utils.BooleanHolder(true);
-        applyChallenges(this.scene.gameMode, ChallengeType.ADD_POKEMON_TO_PARTY, this.scene.currentBattle.waveIndex, challengeCanAddToParty);
+        applyChallenges(this.scene.gameMode, ChallengeType.ADD_POKEMON_TO_PARTY, pokemon, this.scene.currentBattle.waveIndex, challengeCanAddToParty);
         if (!challengeCanAddToParty.value) {
           removePokemon();
           end();
