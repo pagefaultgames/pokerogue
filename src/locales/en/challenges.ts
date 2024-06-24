@@ -27,8 +27,10 @@ export const challenges: TranslationEntries = {
   },
   "nuzlocke": {
     "name": "Nuzlocke",
-    "desc": "Nuzlocke Ruleset:\n- No revives.\n- Only one Pokémon every 10th waves can be added to the party.\n- No heal at the end of every 10th wave.",
-    "value.0": "Disabled",
-    "value.1": "Enabled",
+    "desc": "Nuzlocke Ruleset:\n- No revives.\n- Only one Pokémon every 10th waves can be added to the party.\n",
+    "desc.2": "- No heal at the end of every 10th wave.\n - No legendary starters.",
+    "value.0": "Off",
+    "value.1": "Regular",
+    "value.2": "Hardcore",
   }
 } as const;

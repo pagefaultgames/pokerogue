@@ -686,12 +686,13 @@ export class LowerStarterPointsChallenge extends Challenge {
  */
 export class NuzlockeChallenge extends Challenge {
   constructor() {
-    super(Challenges.NUZLOCKE, 1);
+    super(Challenges.NUZLOCKE, 2);
     this.addChallengeType(ChallengeType.NO_HEAL_PHASE);
     this.addChallengeType(ChallengeType.RANDOM_ITEM_BLACKLIST);
     this.addChallengeType(ChallengeType.SHOP_ITEM_BLACKLIST);
     this.addChallengeType(ChallengeType.ADD_POKEMON_TO_PARTY);
     this.addChallengeType(ChallengeType.MOVE_BLACKLIST);
+    this.addChallengeType(ChallengeType.STARTER_CHOICE);
   }
 
   apply(challengeType: ChallengeType, args: any[]): boolean {
@@ -700,10 +701,6 @@ export class NuzlockeChallenge extends Challenge {
     }
 
     switch (challengeType) {
-    case ChallengeType.NO_HEAL_PHASE:
-      const isHealPhaseActive = args[0] as Utils.BooleanHolder;
-      isHealPhaseActive.value = false;
-      return true;
     case ChallengeType.SHOP_ITEM_BLACKLIST:
       const shopItem: ModifierTypeOption = args[0];
       const isShopItemValid = args[1] as Utils.BooleanHolder;
@@ -736,6 +733,21 @@ export class NuzlockeChallenge extends Challenge {
 
       isMoveValid.value = !moveBlacklist.includes(move.moveId);
       return true;
+    case ChallengeType.NO_HEAL_PHASE:
+      if (this.value === 1) {
+        return false;
+      }
+      const isHealPhaseActive = args[0] as Utils.BooleanHolder;
+      isHealPhaseActive.value = false;
+      return true;
+    case ChallengeType.STARTER_CHOICE:
+      if (this.value === 1) {
+        return false;
+      }
+      const species = args[0] as PokemonSpecies;
+      const isValidStarter = args[1] as Utils.BooleanHolder;
+      isValidStarter.value = !species.legendary;
+      return true;
     }
     return false;
   }
@@ -757,7 +769,11 @@ export class NuzlockeChallenge extends Challenge {
     if (overrideValue === undefined) {
       overrideValue = this.value;
     }
-    return i18next.t("challenges:nuzlocke.desc");
+    let desc: string = i18next.t("challenges:nuzlocke.desc");
+    if (overrideValue === 2) {
+      desc += i18next.t("challenges:nuzlocke.desc.2");
+    }
+    return desc;
   }
 
   static loadChallenge(source: NuzlockeChallenge | any): NuzlockeChallenge {
