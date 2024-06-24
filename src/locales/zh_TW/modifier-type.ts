@@ -276,8 +276,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "在每場戰鬥結束後增加一個額外物品選項。",
     },
 
-    "QUICK_BALL": { name: "Quick Ball", description: "A somewhat different Poké Ball that makes all Balls more effective at catching Pokémon when used first thing in a battle." },
-    "TIMER_BALL": { name: "Timer Ball", description: "A somewhat different Poké Ball that makes all Balls more effective at catching Pokémon the more turns that are taken in battle." },
+    "QUICK_BALL": { name: "Quick Ball", description: "A somewhat different Poké Ball that makes all Balls more effective at catching Pokémon when used first thing in a battle.\n\nCurrent Multiplier: {{currentMultiplier}}" },
+    "TIMER_BALL": { name: "Timer Ball", description: "A somewhat different Poké Ball that makes all Balls more effective at catching Pokémon the more turns that are taken in battle.\n\nCurrent Multiplier: {{currentMultiplier}}" },
 
     ENEMY_DAMAGE_BOOSTER: {
       name: "傷害硬幣",

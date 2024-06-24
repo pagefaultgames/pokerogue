@@ -229,8 +229,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "GOLDEN_POKEBALL": { name: "Golden Poké Ball", description: "Adds 1 extra item option at the end of every battle." },
 
-    "QUICK_BALL": { name: "Quick Ball", description: "A somewhat different Poké Ball that makes all Balls more effective at catching Pokémon when used first thing in a battle." },
-    "TIMER_BALL": { name: "Timer Ball", description: "A somewhat different Poké Ball that makes all Balls more effective at catching Pokémon the more turns that are taken in battle." },
+    "QUICK_BALL": { name: "Quick Ball", description: "A somewhat different Poké Ball that makes all Balls more effective at catching Pokémon when used first thing in a battle.\n\nCurrent Multiplier: {{currentMultiplier}}" },
+    "TIMER_BALL": { name: "Timer Ball", description: "A somewhat different Poké Ball that makes all Balls more effective at catching Pokémon the more turns that are taken in battle.\n\nCurrent Multiplier: {{currentMultiplier}}" },
 
     "ENEMY_DAMAGE_BOOSTER": { name: "Damage Token", description: "Increases damage by 5%." },
     "ENEMY_DAMAGE_REDUCTION": { name: "Protection Token", description: "Reduces incoming damage by 2.5%." },

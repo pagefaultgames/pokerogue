@@ -981,6 +981,20 @@ export class TurnHeldItemTransferModifierType extends PokemonHeldItemModifierTyp
   }
 }
 
+export class BallEffectivenessModifierType extends ModifierType {
+  public ballType: typeof Modifiers.BallEffectivenessModifier;
+
+  constructor(localeKey: string, iconImage: string, ballType: typeof Modifiers.BallEffectivenessModifier, group?: string, soundName?: string) {
+    super(localeKey, iconImage, (type, _args) => new ballType(type), group, soundName);
+
+    this.ballType = ballType;
+  }
+
+  getDescription(scene: BattleScene): string {
+    return i18next.t(`${this.localeKey}.description` as any, { currentMultiplier: this.ballType.getMultiplier(scene) }).toString();
+  }
+}
+
 export class EnemyAttackStatusEffectChanceModifierType extends ModifierType {
   private chancePercent: integer;
   private effect: StatusEffect;
@@ -1244,8 +1258,8 @@ export const modifierTypes = {
 
   GOLDEN_POKEBALL: () => new ModifierType("modifierType:ModifierType.GOLDEN_POKEBALL", "pb_gold", (type, _args) => new Modifiers.ExtraModifierModifier(type), null, "pb_bounce_1"),
 
-  QUICK_BALL: () => new ModifierType("modifierType:ModifierType.QUICK_BALL", "qb", (type, _args) => new Modifiers.QuickBallModifier(type)),
-  TIMER_BALL: () => new ModifierType("modifierType:ModifierType.TIMER_BALL", "tb", (type, _args) => new Modifiers.TimerBallModifier(type)),
+  QUICK_BALL: () => new BallEffectivenessModifierType("modifierType:ModifierType.QUICK_BALL", "qb", Modifiers.QuickBallModifier),
+  TIMER_BALL: () => new BallEffectivenessModifierType("modifierType:ModifierType.TIMER_BALL", "tb", Modifiers.TimerBallModifier),
 
   ENEMY_DAMAGE_BOOSTER: () => new ModifierType("modifierType:ModifierType.ENEMY_DAMAGE_BOOSTER", "wl_item_drop", (type, _args) => new Modifiers.EnemyDamageBoosterModifier(type, 5)),
   ENEMY_DAMAGE_REDUCTION: () => new ModifierType("modifierType:ModifierType.ENEMY_DAMAGE_REDUCTION", "wl_guard_spec", (type, _args) => new Modifiers.EnemyDamageReducerModifier(type, 2.5)),

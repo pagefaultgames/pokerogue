@@ -229,8 +229,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "GOLDEN_POKEBALL": { name: "黄金精灵球", description: "在每场战斗结束后增加一个额外物品选项。" },
 
-    "QUICK_BALL": { name: "Quick Ball", description: "A somewhat different Poké Ball that makes all Balls more effective at catching Pokémon when used first thing in a battle." },
-    "TIMER_BALL": { name: "Timer Ball", description: "A somewhat different Poké Ball that makes all Balls more effective at catching Pokémon the more turns that are taken in battle." },
+    "QUICK_BALL": { name: "Quick Ball", description: "A somewhat different Poké Ball that makes all Balls more effective at catching Pokémon when used first thing in a battle.\n\nCurrent Multiplier: {{currentMultiplier}}" },
+    "TIMER_BALL": { name: "Timer Ball", description: "A somewhat different Poké Ball that makes all Balls more effective at catching Pokémon the more turns that are taken in battle.\n\nCurrent Multiplier: {{currentMultiplier}}" },
 
     "ENEMY_DAMAGE_BOOSTER": { name: "伤害硬币", description: "造成5%额外伤害（乘算）。" },
     "ENEMY_DAMAGE_REDUCTION": { name: "防御硬币", description: "受到2.5%更少伤害（乘算）。" },

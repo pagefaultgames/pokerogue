@@ -5,7 +5,7 @@ import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMov
 import { Mode } from "./ui/ui";
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
-import { BerryModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyPersistentModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HitHealModifier, LapsingPersistentModifier, MapModifier, Modifier, MultipleParticipantExpBonusModifier, PersistentModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, SwitchEffectTransferModifier, TempBattleStatBoosterModifier, TurnHealModifier, TurnHeldItemTransferModifier, MoneyMultiplierModifier, MoneyInterestModifier, IvScannerModifier, LapsingPokemonHeldItemModifier, PokemonMultiHitModifier, PokemonMoveAccuracyBoosterModifier, overrideModifiers, overrideHeldItems, BypassSpeedChanceModifier, TurnStatusEffectModifier, BallEffectivenessModifier, QuickBallModifier, TimerBallModifier } from "./modifier/modifier";
+import { BerryModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyPersistentModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HitHealModifier, LapsingPersistentModifier, MapModifier, Modifier, MultipleParticipantExpBonusModifier, PersistentModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, SwitchEffectTransferModifier, TempBattleStatBoosterModifier, TurnHealModifier, TurnHeldItemTransferModifier, MoneyMultiplierModifier, MoneyInterestModifier, IvScannerModifier, LapsingPokemonHeldItemModifier, PokemonMultiHitModifier, PokemonMoveAccuracyBoosterModifier, overrideModifiers, overrideHeldItems, BypassSpeedChanceModifier, TurnStatusEffectModifier, BallEffectivenessModifier } from "./modifier/modifier";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./data/pokeball";
 import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from "./data/battle-anims";
@@ -4764,22 +4764,14 @@ export class AttemptCapturePhase extends PokemonPhase {
     let boostedBallMultiplier = pokeballMultiplier;
     let showOverlayBall = false;
     let overlayBallKey: string;
-    const ballEffectivenessModifier = this.scene.findModifier(m => m instanceof BallEffectivenessModifier);
+    const ballEffectivenessModifier = this.scene.findModifier(m => m instanceof BallEffectivenessModifier) as BallEffectivenessModifier;
     // When the player has a matching modifier and is not using a Master Ball
     if (ballEffectivenessModifier && this.pokeballType !== PokeballType.MASTER_BALL) {
-      if (ballEffectivenessModifier instanceof QuickBallModifier) {
-        if (this.scene.currentBattle.turn === 1) { // Only applies on the first turn of battle
-          boostedBallMultiplier *= 5;
-          showOverlayBall = true;
-          overlayBallKey = "qb";
-        }
-      }
-      if (ballEffectivenessModifier instanceof TimerBallModifier) {
-        // Increases the multiplier each turn up to a cap
-        boostedBallMultiplier *= Math.min(1 + 0.3 * this.scene.currentBattle.turn, 4);
-        showOverlayBall = this.scene.currentBattle.turn > 1;
-        overlayBallKey = "tb";
-      }
+      const multiplier = ballEffectivenessModifier.getMultiplier(this.scene);
+
+      boostedBallMultiplier *= multiplier;
+      showOverlayBall = multiplier > 1;
+      overlayBallKey = ballEffectivenessModifier.type.iconImage;
     }
 
     const statusMultiplier = pokemon.status ? getStatusEffectCatchRateMultiplier(pokemon.status.effect) : 1;
@@ -4788,7 +4780,9 @@ export class AttemptCapturePhase extends PokemonPhase {
     const x = Math.round((((_3m - _2h) * catchRate * pokeballMultiplier) / _3m) * statusMultiplier);
     const boostedX = Math.round((((_3m - _2h) * catchRate * boostedBallMultiplier) / _3m) * statusMultiplier);
 
+    /** Unmodified catch value */
     const y = Math.round(65536 / Math.sqrt(Math.sqrt(255 / x)));
+    /** Boosted catch value */
     const boostedY = Math.round(65536 / Math.sqrt(Math.sqrt(255 / boostedX)));
 
     const fpOffset = pokemon.getFieldPositionOffset();

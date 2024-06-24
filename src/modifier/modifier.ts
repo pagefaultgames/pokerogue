@@ -2383,6 +2383,18 @@ export class EnemyFusionChanceModifier extends EnemyPersistentModifier {
  * @extends PersistentModifier
  */
 export class BallEffectivenessModifier extends PersistentModifier {
+  /**
+   * Calculates a Poke Ball multiplier based on a given {@linkcode BattleScene}
+   * @param scene {@linkcode BattleScene} used to calculate against
+   * @returns the calculated multiplier
+   */
+  public static getMultiplier(scene: BattleScene): number {
+    return 1;
+  }
+
+  /** alias for the static method {@linkcode getMultiplier} */
+  public getMultiplier = BallEffectivenessModifier.getMultiplier;
+
   constructor(type: ModifierType, stackCount?: integer) {
     super(type, stackCount);
   }
@@ -2409,9 +2421,11 @@ export class BallEffectivenessModifier extends PersistentModifier {
  * @extends BallEffectivenessModifier
  */
 export class QuickBallModifier extends BallEffectivenessModifier {
-  constructor(type: ModifierType, stackCount?: integer) {
-    super(type, stackCount);
+  public static getMultiplier(scene: BattleScene): number {
+    return scene.currentBattle.turn === 1 ? 2 : 1; // Only works on the first turn of battle
   }
+
+  public getMultiplier = QuickBallModifier.getMultiplier;
 }
 
 /**
@@ -2419,9 +2433,11 @@ export class QuickBallModifier extends BallEffectivenessModifier {
  * @extends BallEffectivenessModifier
  */
 export class TimerBallModifier extends BallEffectivenessModifier {
-  constructor(type: ModifierType, stackCount?: integer) {
-    super(type, stackCount);
+  public static getMultiplier(scene: BattleScene): number {
+    return Math.min(1 + 0.05 * (scene.currentBattle.turn - 1), 1.5); // Increases the multiplier each turn up to a cap
   }
+
+  public getMultiplier = TimerBallModifier.getMultiplier;
 }
 
 /**
