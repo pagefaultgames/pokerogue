@@ -1122,7 +1122,9 @@ export default class BattleScene extends SceneBase {
         playerField.forEach((_, p) => this.unshiftPhase(new ReturnPhase(this, p)));
 
         for (const pokemon of this.getParty()) {
-          if (pokemon.hasAbility(Abilities.ICE_FACE)) {
+          // Only trigger form change when Eiscue is in Noice form
+          // Hardcoded Eiscue for now in case it is fused with another pokemon
+          if (pokemon.species.speciesId === Species.EISCUE && pokemon.hasAbility(Abilities.ICE_FACE) && pokemon.formIndex === 1) {
             this.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
           }
 
