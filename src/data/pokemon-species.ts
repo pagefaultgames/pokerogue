@@ -13,7 +13,8 @@ import { speciesEggMoves } from "./egg-moves";
 import { GameMode } from "../game-mode";
 import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from "@material/material-color-utilities";
 import { VariantSet } from "./variant";
-import i18next, { Localizable } from "../plugins/i18n";
+import i18next from "i18next";
+import { Localizable } from "#app/interfaces/locales";
 import { Stat } from "./pokemon-stat";
 import { Abilities } from "#enums/abilities";
 import { PartyMemberStrength } from "#enums/party-member-strength";
@@ -816,6 +817,10 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
 
   isObtainable() {
     return super.isObtainable();
+  }
+
+  hasVariants() {
+    return variantData.hasOwnProperty(this.speciesId);
   }
 
   getFormSpriteKey(formIndex?: integer) {
@@ -3634,7 +3639,7 @@ export const starterPassiveAbilities = {
   [Species.HAWLUCHA]: Abilities.MOXIE,
   [Species.DEDENNE]: Abilities.PIXILATE,
   [Species.CARBINK]: Abilities.SOLID_ROCK,
-  [Species.GOOMY]: Abilities.DRIZZLE,
+  [Species.GOOMY]: Abilities.REGENERATOR,
   [Species.KLEFKI]: Abilities.LEVITATE,
   [Species.PHANTUMP]: Abilities.RIPEN,
   [Species.PUMPKABOO]: Abilities.WELL_BAKED_BODY,
@@ -3795,7 +3800,7 @@ export const starterPassiveAbilities = {
   [Species.IRON_TREADS]: Abilities.STEELY_SPIRIT,
   [Species.IRON_BUNDLE]: Abilities.SNOW_WARNING,
   [Species.IRON_HANDS]: Abilities.IRON_FIST,
-  [Species.IRON_JUGULIS]: Abilities.AERILATE,
+  [Species.IRON_JUGULIS]: Abilities.LIGHTNING_ROD,
   [Species.IRON_MOTH]: Abilities.LEVITATE,
   [Species.IRON_THORNS]: Abilities.SAND_STREAM,
   [Species.FRIGIBAX]: Abilities.SNOW_WARNING,
