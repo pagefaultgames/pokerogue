@@ -6,6 +6,7 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "STATS": "Stats",
   "VOUCHERS": "Vouchers",
   "POKEDEX": "Pokédex",
+  "POKEDEX2": "Pokédex",
   "EGG_LIST": "Egg List",
   "EGG_GACHA": "Egg Gacha",
   "MANAGE_DATA": "Manage Data",
