@@ -10,6 +10,7 @@ import { updateUserInfo } from "../account";
 import i18next from "i18next";
 import {Button} from "#enums/buttons";
 import { GameDataType } from "#enums/game-data-type";
+import BgmBar from "#app/ui/bgm-bar";
 
 enum MenuOptions {
   GAME_SETTINGS,
@@ -45,6 +46,9 @@ export default class MenuUiHandler extends MessageUiHandler {
   protected manageDataConfig: OptionSelectConfig;
   protected communityConfig: OptionSelectConfig;
 
+  public bgmBar: BgmBar;
+
+
   constructor(scene: BattleScene, mode?: Mode) {
     super(scene, mode);
 
@@ -61,6 +65,11 @@ export default class MenuUiHandler extends MessageUiHandler {
     if (["de", "fr", "ko", "zh"].includes(lang)) {
       wikiUrl = `https://wiki.pokerogue.net/${lang}:start`;
     }
+
+    this.bgmBar = new BgmBar(this.scene);
+    this.bgmBar.setup();
+
+    ui.bgmBar = this.bgmBar;
 
     this.menuContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
     this.menuContainer.setName("menu");
@@ -100,6 +109,8 @@ export default class MenuUiHandler extends MessageUiHandler {
     this.menuMessageBoxContainer.add(menuMessageBox);
 
     this.menuMessageBoxContainer.add(menuMessageText);
+
+    this.menuContainer.add(this.bgmBar);
 
     this.message = menuMessageText;
 
@@ -253,6 +264,7 @@ export default class MenuUiHandler extends MessageUiHandler {
   }
 
   show(args: any[]): boolean {
+
     super.show(args);
 
     this.menuContainer.setVisible(true);
@@ -265,6 +277,9 @@ export default class MenuUiHandler extends MessageUiHandler {
     this.scene.playSound("menu_open");
 
     handleTutorial(this.scene, Tutorial.Menu);
+
+    this.bgmBar.toggleBgmBar(true);
+
 
     return true;
   }
@@ -421,6 +436,7 @@ export default class MenuUiHandler extends MessageUiHandler {
   clear() {
     super.clear();
     this.menuContainer.setVisible(false);
+    this.bgmBar.toggleBgmBar(false);
     this.eraseCursor();
   }
 

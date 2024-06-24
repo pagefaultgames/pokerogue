@@ -157,6 +157,8 @@ export default class BattleScene extends SceneBase {
   public fusionPaletteSwaps: boolean = true;
   public enableTouchControls: boolean = false;
   public enableVibration: boolean = false;
+  public showBgmBar: boolean = true;
+
   /**
    * Determines the selected battle style.
    * - 0 = 'Switch'
@@ -1637,6 +1639,7 @@ export default class BattleScene extends SceneBase {
       : this.getBgmLoopPoint(bgmName);
     let loaded = false;
     const playNewBgm = () => {
+      this.ui.bgmBar.setBgmToBgmBar(bgmName);
       if (bgmName === null && this.bgm && !this.bgm.pendingRemove) {
         this.bgm.play({
           volume: this.masterVolume * this.bgmVolume
