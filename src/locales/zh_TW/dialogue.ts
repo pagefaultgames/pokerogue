@@ -1,4 +1,4 @@
-import {DialogueTranslationEntries, SimpleTranslationEntries} from "#app/plugins/i18n";
+import {DialogueTranslationEntries, SimpleTranslationEntries} from "#app/interfaces/locales";
 
 // Dialogue of the NPCs in the game when the player character is male (or unset)
 export const PGMdialogue: DialogueTranslationEntries = {
@@ -2007,6 +2007,32 @@ export const PGMdialogue: DialogueTranslationEntries = {
       2: "你被我的風暴捲入了！祝你下次好運！",
     }
   },
+  "alder": {
+    "encounter": {
+      1: "準備好和合眾最強的訓練家交手吧！"
+    },
+    "victory": {
+      1: "精彩！簡直就是天下無雙！"
+    },
+    "defeat": {
+      1: `戰鬥結束後，我的心像是吹過了溫和的風…
+	  	$真是厲害！`
+    }
+  },
+  "kieran": {
+    "encounter": {
+      1: `我的努力讓我越來越強！
+	  	$所以我不會輸。`
+    },
+    "victory": {
+      1: `不可能…
+	  	$真是一場有趣又激動人心的戰鬥啊！`
+    },
+    "defeat": {
+      1: `哇塞，好一場戰鬥！
+	  	$你得多練練了。`
+    }
+  },
   "rival": {
     "encounter": {
       1: "@c{smile}嘿，我在找你呢！我知道你急著上路，\n但至少說個再見吧…$@c{smile_eclosed}所以你終於要開始追逐夢想了？\n我幾乎不敢相信。$@c{serious_smile_fists}來都來了，來一場對戰怎麼樣？\n畢竟，我想看看你是不是準備周全了。$@c{serious_mopen_fists}不要手下留情，我想讓你全力以赴！",
@@ -2110,7 +2136,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "rival_6_female": {
     "encounter": {
-      1: "@c{smile_ehalf}又只有我們兩個人了。$@c{smile_eclosed}你知道嗎，我在心裡想啊想，\n想了好久……$@c{smile_ehalf}這一切背後是有什麼原因嗎，\n為什麼一切現在看起來都這麼奇怪……$@c{smile}你有你的夢想，而我內心有這個抱負……$我不禁感覺這一切背後有一個更龐大的力量，$掌控者我們所做的一切，你和我之間。$@c{smile_eclosed}}我想我注定要推動你……到你的極限。$@c{smile_ehalf}我不清楚我是否一直做得很好，\n但到現在為止，我已經盡力了。$這個奇怪而可怕的地方……\n一切看起來都那麼清晰……$這是世界早已記錄的一切。$@c{smile_eclosed}我好像記不清我們一起度過的日子了。$@c{smile_ehalf}那些回憶到底是真的嗎？\n怎麼感覺這麼久遠……$@c{angry_mopen}你得繼續前進，不然的話，這一切將永無止境。\n你是唯一能做到這件事的。$@c{smile_ehalf}}我……不知道這一切意味著什麼……\n但我明白$@c{neutral}如果你現在不能就此擊敗我，\n你將毫無機會可言。",
+      1: "@c{smile_ehalf}又只有我們兩個人了。$@c{smile_eclosed}你知道嗎，我在心裡想啊想，\n想了好久……$@c{smile_ehalf}這一切背後是有什麼原因嗎，\n為什麼一切現在看起來都這麼奇怪……$@c{smile}你有你的夢想，而我內心有這個抱負……$我不禁感覺這一切背後有一個更龐大的力量，$掌控者我們所做的一切，你和我之間。$@c{smile_eclosed}我想我注定要推動你……到你的極限。$@c{smile_ehalf}我不清楚我是否一直做得很好，\n但到現在為止，我已經盡力了。$這個奇怪而可怕的地方……\n一切看起來都那麼清晰……$這是世界早已記錄的一切。$@c{smile_eclosed}我好像記不清我們一起度過的日子了。$@c{smile_ehalf}那些回憶到底是真的嗎？\n怎麼感覺這麼久遠……$@c{angry_mopen}你得繼續前進，不然的話，這一切將永無止境。\n你是唯一能做到這件事的。$@c{smile_ehalf}我……不知道這一切意味著什麼……\n但我明白$@c{neutral}如果你現在不能就此擊敗我，\n你將毫無機會可言。",
     },
     "victory": {
       1: "@c{smile_ehalf}我……\n我想我完成了我的使命……$@c{smile_eclosed}答應我……在你拯救世界之後\n……要……平安到家。$@c{smile_ehalf}……謝謝你。",
