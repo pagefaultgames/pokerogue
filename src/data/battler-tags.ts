@@ -1563,7 +1563,7 @@ export class SubstituteTag extends BattlerTag {
     if (ret) {
       pokemon.scene.queueMessage(`The substitute took damage for ${pokemon.name}!`);
     }
-    
+
     return ret;
   }
 }

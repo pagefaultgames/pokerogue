@@ -2008,7 +2008,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           if (source.isPlayer() && !this.isPlayer()) {
             this.scene.applyModifiers(DamageMoneyRewardModifier, true, source, damage);
           }
-          
+
           if (subTag?.substituteHp <= 0) {
             this.lapseTag(BattlerTagType.SUBSTITUTE);
           }
