@@ -14,7 +14,8 @@ export const tutorial: SimpleTranslationEntries = {
     $Dort kannst du u. A. die Spielgeschwin-\ndigkeit und das Fensterdesign ändern.
     $Das Menü verbirgt noch andere Funktionen - probier' sie gerne aus!`,
 
-  "starterSelect": `Hier kannst du deine Starter-Pokémon auswählen.\nSie begleiten dich am Anfang deines Abenteuers.
+  "starterSelect": `In diesem Bildschirm kannst du mit Z oder Leertaste deine\nStarter auswählen.
+    $Sie begleiten dich am Anfang deines Abenteuers.
     $Jeder Starter hat einen Preis. Dein Team kann bis zu sechs\nMitglieder haben, solange der Gesamtpreis max. 10 beträgt.
     $Du kannst Geschlecht, Fähigkeit und Form beliebig auswählen,\nsobald du sie mindestens einmal gefangen hast.
     $Die DVs ergeben sich aus den Höchstwerten aller Pokémon,\ndie du bereits gefangen hast. 

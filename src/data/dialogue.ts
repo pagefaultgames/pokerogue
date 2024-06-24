@@ -9,14 +9,14 @@ export interface TrainerTypeMessages {
 }
 
 export interface TrainerTypeDialogue {
-    [key: integer]: TrainerTypeMessages | [TrainerTypeMessages, TrainerTypeMessages]
+    [key: integer]: TrainerTypeMessages | Array<TrainerTypeMessages>
 }
 
 export function getTrainerTypeDialogue(): TrainerTypeDialogue {
   return trainerTypeDialogue;
 }
 
-export const trainerTypeDialogue = {
+export const trainerTypeDialogue: TrainerTypeDialogue = {
   [TrainerType.YOUNGSTER]: [
     {
       encounter: [

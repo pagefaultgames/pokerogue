@@ -145,7 +145,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "FULL_HEAL": { name: "Total Soin" },
 
-    "SACRED_ASH": { name: "Cendres Sacrées" },
+    "SACRED_ASH": { name: "Cendre Sacrée" },
 
     "REVIVER_SEED": { name: "Résugraine", description: "Réanime et restaure la moitié des PV de son porteur s’il tombe K.O." },
 
@@ -193,10 +193,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "GRIP_CLAW": { name: "Accro Griffe" },
     "WIDE_LENS": { name: "Loupe" },
 
-    "MULTI_LENS": { name: "Multi Loupe" },
+    "MULTI_LENS": { name: "Lentille Multi" },
 
     "HEALING_CHARM": { name: "Charme Soin", description: "Augmente de 10% l’efficacité des capacités et objets de soin de PV (hors Rappels)" },
-    "CANDY_JAR": { name: "Jarre de Bonbons", description: "Augmente de 1 le nombre de niveaux gagnés à l’utilisation d’un Super Bonbon" },
+    "CANDY_JAR": { name: "Bonbonnière", description: "Augmente de 1 le nombre de niveaux gagnés à l’utilisation d’un Super Bonbon" },
 
     "BERRY_POUCH": { name: "Sac à Baies", description: "Ajoute 33% de chances qu’une Baie utilisée ne soit pas consommée" },
 

@@ -18,7 +18,8 @@ export const tutorial: SimpleTranslationEntries = {
     $Existem também vários outros recursos disponíveis aqui.
     $Não deixe de conferir todos eles!`,
 
-  "starterSelect": `Aqui você pode escolher seus iniciais.\nEsses serão os primeiro Pokémon da sua equipe. 
+  "starterSelect": `Aqui você pode escolher seus iniciais apertando a tecla Z ou\na Barra de Espaço.
+    $Esses serão os primeiro Pokémon da sua equipe.
     $Cada inicial tem seu custo. Sua equipe pode ter até 6\nmembros, desde que a soma dos custos não ultrapasse 10. 
     $Você pode escolher o gênero, a habilidade\ne até a forma do seu inicial.
     $Essas opções dependem das variantes dessa\nespécie que você já capturou ou chocou. 

@@ -321,7 +321,7 @@ export function getSpeciesFormChangeMessage(pokemon: Pokemon, formChange: Specie
   const isRevert = !isMega && formChange.formKey === pokemon.species.forms[0].formKey;
   const prefix = !pokemon.isPlayer() ? pokemon.hasTrainer() ? "Foe " : "Wild " : "Your ";
   if (isMega) {
-    return `${prefix}${preName} mega-evolved\ninto ${pokemon.name}!`;
+    return `${prefix}${preName} Mega Evolved\ninto ${pokemon.name}!`;
   }
   if (isGmax) {
     return `${prefix}${preName} Gigantamaxed\ninto ${pokemon.name}!`;

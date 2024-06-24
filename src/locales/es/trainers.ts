@@ -2,17 +2,17 @@ import {SimpleTranslationEntries} from "#app/plugins/i18n";
 
 // Titles of special trainers like gym leaders, elite four, and the champion
 export const titles: SimpleTranslationEntries = {
-  "elite_four": "Elite Four",
-  "elite_four_female": "Elite Four",
-  "gym_leader": "Gym Leader",
-  "gym_leader_female": "Gym Leader",
-  "gym_leader_double": "Gym Leader Duo",
-  "champion": "Champion",
-  "champion_female": "Champion",
-  "champion_double": "Champion Duo",
+  "elite_four": "Alto Mando",
+  "elite_four_female": "Alto Mando",
+  "gym_leader": "Líder de gimnasio",
+  "gym_leader_female": "Líder de gimnasio",
+  "gym_leader_double": "Líderes de Gimnasio",
+  "champion": "Campeón",
+  "champion_female": "Campeona",
+  "champion_double": "Campeones",
   "rival": "Rival",
-  "professor": "Professor",
-  "frontier_brain": "Frontier Brain",
+  "professor": "Profesor",
+  "frontier_brain": "As del Frente Batalla",
   // Maybe if we add the evil teams we can add "Team Rocket" and "Team Aqua" etc. here as well as "Team Rocket Boss" and "Team Aqua Admin" etc.
 } as const;
 

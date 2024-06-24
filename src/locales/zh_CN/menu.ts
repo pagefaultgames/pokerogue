@@ -11,6 +11,7 @@ export const menu: SimpleTranslationEntries = {
   "dailyRun": "每日挑战 (Beta)",
   "loadGame": "加载游戏",
   "newGame": "新游戏",
+  "settings": "设置",
   "selectGameMode": "选择一个游戏模式",
   "logInOrCreateAccount": "登录或创建账户以开始游戏。无需邮箱！",
   "username": "用户名",
