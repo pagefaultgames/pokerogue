@@ -1729,7 +1729,7 @@ export function initSpecies() {
     new PokemonSpecies(Species.TRUBBISH, 5, false, false, false, "Trash Bag Pokémon", Type.POISON, null, 0.6, 31, Abilities.STENCH, Abilities.STICKY_HOLD, Abilities.AFTERMATH, 329, 50, 50, 62, 40, 62, 65, 190, 50, 66, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.GARBODOR, 5, false, false, false, "Trash Heap Pokémon", Type.POISON, null, 1.9, 107.3, Abilities.STENCH, Abilities.WEAK_ARMOR, Abilities.AFTERMATH, 474, 80, 95, 82, 60, 82, 75, 60, 50, 166, GrowthRate.MEDIUM_FAST, 50, false, true,
       new PokemonForm("Normal", "", Type.POISON, null, 1.9, 107.3, Abilities.STENCH, Abilities.WEAK_ARMOR, Abilities.AFTERMATH, 474, 80, 95, 82, 60, 82, 75, 60, 50, 166, false, null, true),
-      new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX, Type.POISON, Type.STEEL, 21, 107.3, Abilities.CORROSION, Abilities.CORROSION, Abilities.CORROSION, 574, 135, 125, 102, 60, 102, 50, 60, 50, 166),
+      new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX, Type.POISON, Type.STEEL, 21, 107.3, Abilities.TOXIC_DEBRIS, Abilities.TOXIC_DEBRIS, Abilities.TOXIC_DEBRIS, 574, 135, 125, 102, 60, 102, 50, 60, 50, 166),
     ),
     new PokemonSpecies(Species.ZORUA, 5, false, false, false, "Tricky Fox Pokémon", Type.DARK, null, 0.7, 12.5, Abilities.ILLUSION, Abilities.NONE, Abilities.NONE, 330, 40, 65, 40, 80, 40, 65, 75, 50, 66, GrowthRate.MEDIUM_SLOW, 87.5, false),
     new PokemonSpecies(Species.ZOROARK, 5, false, false, false, "Illusion Fox Pokémon", Type.DARK, null, 1.6, 81.1, Abilities.ILLUSION, Abilities.NONE, Abilities.NONE, 510, 60, 105, 60, 120, 60, 105, 45, 50, 179, GrowthRate.MEDIUM_SLOW, 87.5, false),
