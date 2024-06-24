@@ -1098,7 +1098,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   getTeraType(): Type {
     // this.scene can be undefined for a fainted mon in doubles
     if (this.scene !== undefined) {
-      const teraModifier = false ?? this.scene.findModifier(m => m instanceof TerastallizeModifier
+      const teraModifier = this.scene.findModifier(m => m instanceof TerastallizeModifier
         && m.pokemonId === this.id && !!m.getBattlesLeft(), this.isPlayer()) as TerastallizeModifier;
       // return teraType
       if (teraModifier) {
