@@ -26,7 +26,8 @@ export enum BattlerTagLapseType {
   AFTER_MOVE,
   MOVE_EFFECT,
   TURN_END,
-  CUSTOM
+  CUSTOM,
+  HIT
 }
 
 export class BattlerTag {
@@ -1535,6 +1536,38 @@ export class IceFaceTag extends BattlerTag {
   }
 }
 
+export class SubstituteTag extends BattlerTag {
+  public substituteHp: integer;
+
+  constructor(sourceMove: Moves, sourceId: integer) {
+    super(BattlerTagType.SUBSTITUTE, BattlerTagLapseType.HIT, 0, sourceMove, sourceId);
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    // Should queue message and change Pokemon's form to Substitute doll
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, " put in a substitute!"));
+
+    this.substituteHp = Math.ceil(pokemon.scene.getPokemonById(this.sourceId).getMaxHp() / 4);
+  }
+
+  onRemove(pokemon: Pokemon): void {
+    // Should revert Pokemon's form to its original
+    if (this.substituteHp <= 0) {
+      pokemon.scene.queueMessage(getPokemonMessage(pokemon, "'s substitute faded!"));
+    }
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    const ret = lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
+
+    if (ret) {
+      pokemon.scene.queueMessage(`The substitute took damage for ${pokemon.name}!`);
+    }
+    
+    return ret;
+  }
+}
+
 export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourceMove: Moves, sourceId: integer): BattlerTag {
   switch (tagType) {
   case BattlerTagType.RECHARGING:
@@ -1652,6 +1685,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
     return new DestinyBondTag(sourceMove, sourceId);
   case BattlerTagType.ICE_FACE:
     return new IceFaceTag(sourceMove);
+  case BattlerTagType.SUBSTITUTE:
+    return new SubstituteTag(sourceMove, sourceId);
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);

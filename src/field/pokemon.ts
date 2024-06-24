@@ -19,7 +19,7 @@ import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEv
 import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "../data/tms";
 import { DamagePhase, FaintPhase, LearnMovePhase, MoveEffectPhase, ObtainStatusEffectPhase, StatChangePhase, SwitchSummonPhase, ToggleDoublePositionPhase  } from "../phases";
 import { BattleStat } from "../data/battle-stat";
-import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HelpingHandTag, HighestStatBoostTag, TypeBoostTag, TypeImmuneTag, getBattlerTag } from "../data/battler-tags";
+import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HelpingHandTag, HighestStatBoostTag, SubstituteTag, TypeBoostTag, TypeImmuneTag, getBattlerTag } from "../data/battler-tags";
 import { WeatherType } from "../data/weather";
 import { TempBattleStat } from "../data/temp-battle-stat";
 import { ArenaTagSide, WeakenMoveScreenTag, WeakenMoveTypeTag } from "../data/arena-tag";
@@ -1972,6 +1972,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
         const oneHitKo = result === HitResult.ONE_HIT_KO;
         if (damage.value) {
+          this.lapseTags(BattlerTagLapseType.HIT);
+          const subTag = this.getTag(SubstituteTag) as SubstituteTag;
+
+          if (subTag && !move.bypassesSubstitute(source)) { // TODO: Make this also check if the source has Infiltrator
+            subTag.substituteHp -= damage.value;
+            damage.value = 0;
+          }
           if (this.getHpRatio() === 1) {
             applyPreDefendAbAttrs(PreDefendFullHpEndureAbAttr, this, source, move, cancelled, damage);
           } else if (!this.isPlayer() && damage.value >= this.hp) {
@@ -2000,6 +2007,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           this.turnData.attacksReceived.unshift(attackResult);
           if (source.isPlayer() && !this.isPlayer()) {
             this.scene.applyModifiers(DamageMoneyRewardModifier, true, source, damage);
+          }
+          
+          if (subTag?.substituteHp <= 0) {
+            this.lapseTag(BattlerTagType.SUBSTITUTE);
           }
         }
 
@@ -2039,6 +2050,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     case MoveCategory.STATUS:
       if (!typeless) {
         applyPreDefendAbAttrs(TypeImmunityAbAttr, this, source, move, cancelled, typeMultiplier);
+      }
+      if (!!this.getTag(SubstituteTag) && !move.bypassesSubstitute(source)) {
+        cancelled.value = true;
       }
       if (!cancelled.value) {
         applyPreDefendAbAttrs(MoveImmunityAbAttr, this, source, move, cancelled, typeMultiplier);
