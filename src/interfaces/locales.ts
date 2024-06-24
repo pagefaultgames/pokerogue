@@ -77,3 +77,12 @@ export interface DialogueTranslationCategory {
 export interface DialogueTranslationEntries {
     [trainertype: string]: DialogueTranslationCategory;
   }
+
+export interface ShopTranslationEntry {
+    name: string,
+    description: string,
+  }
+
+export interface ShopTranslationEntries {
+  [key: string]: ShopTranslationEntry;
+}
