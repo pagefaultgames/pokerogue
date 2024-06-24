@@ -243,14 +243,14 @@ export const modifierType: ModifierTypeTranslationEntries = {
                 "攜帶該道具的寶可夢在攻擊對方成功造成傷\n害時，攜帶者的HP會恢復其所造成傷害\n的1/8。",
     },
     TOXIC_ORB: {
-      name: "Toxic Orb",
+      name: "劇毒寶珠",
       description:
-                "It's a bizarre orb that exudes toxins when touched and will badly poison the holder during battle"
+                "觸碰後會放出毒的神奇寶珠。\n攜帶後，在戰鬥時會變成劇毒狀態。"
     },
     FLAME_ORB: {
-      name: "Flame Orb",
+      name: "火焰寶珠",
       description:
-                "It's a bizarre orb that gives off heat when touched and will affect the holder with a burn during battle"
+                "觸碰後會放出熱量的神奇寶珠。\n攜帶後，在戰鬥時會變成灼傷狀態。"
     },
     BATON: {
       name: "接力棒",
@@ -308,14 +308,14 @@ export const modifierType: ModifierTypeTranslationEntries = {
   },
 
   TempBattleStatBoosterStatName: {
-    "ATK": "Attack",
-    "DEF": "Defense",
-    "SPATK": "Sp. Atk",
-    "SPDEF": "Sp. Def",
-    "SPD": "Speed",
-    "ACC": "Accuracy",
-    "CRIT": "Critical Hit Ratio",
-    "EVA": "Evasiveness",
+    "ATK": "攻擊",
+    "DEF": "防禦",
+    "SPATK": "特攻",
+    "SPDEF": "特防",
+    "SPD": "速度",
+    "ACC": "命中",
+    "CRIT": "會心",
+    "EVA": "閃避",
     "DEFAULT": "???",
   },
 

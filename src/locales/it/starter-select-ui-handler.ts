@@ -29,6 +29,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "selectNature": "Seleziona natura.",
   "selectMoveSwapOut": "Seleziona una mossa da scambiare.",
   "selectMoveSwapWith": "Seleziona una mossa da scambiare con",
+  "sameSpeciesEgg": "Buy an Egg",
   "unlockPassive": "Sblocca passiva",
   "reduceCost": "Riduci costo",
   "cycleShiny": ": Shiny",
