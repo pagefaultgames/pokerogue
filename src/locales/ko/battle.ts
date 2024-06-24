@@ -15,6 +15,7 @@ export const battle: SimpleTranslationEntries = {
   "trainerDefeated": "{{trainerName}}[[와]]의\n승부에서 이겼다!",
   "moneyWon": "상금으로\n₽{{moneyAmount}}을 손에 넣었다!",
   "pokemonCaught": "신난다-!\n{{pokemonName}}[[를]] 잡았다!",
+  "addedAsAStarter": "{{pokemonName}}[[가]]\n스타팅 포켓몬에 추가되었다!",
   "partyFull": "지닌 포켓몬이 가득 찼습니다. {{pokemonName}}[[를]]\n대신해 포켓몬을 놓아주시겠습니까?",
   "pokemon": "포켓몬",
   "sendOutPokemon": "가랏! {{pokemonName}}!",
