@@ -26,8 +26,8 @@ export enum BattlerTagLapseType {
   AFTER_MOVE,
   MOVE_EFFECT,
   TURN_END,
-  CUSTOM,
-  HIT
+  HIT,
+  CUSTOM
 }
 
 export class BattlerTag {
@@ -1537,7 +1537,7 @@ export class IceFaceTag extends BattlerTag {
 }
 
 export class SubstituteTag extends BattlerTag {
-  public substituteHp: integer;
+  public substituteHp: number;
 
   constructor(sourceMove: Moves, sourceId: integer) {
     super(BattlerTagType.SUBSTITUTE, BattlerTagLapseType.HIT, 0, sourceMove, sourceId);
@@ -1558,7 +1558,7 @@ export class SubstituteTag extends BattlerTag {
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    const ret = lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
+    const ret = (lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType));
 
     if (ret) {
       pokemon.scene.queueMessage(`The substitute took damage for ${pokemon.name}!`);

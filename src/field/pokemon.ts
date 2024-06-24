@@ -1972,7 +1972,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
         const oneHitKo = result === HitResult.ONE_HIT_KO;
         if (damage.value) {
-          this.lapseTags(BattlerTagLapseType.HIT);
+          if (source.turnData.hitsLeft === source.turnData.hitCount) {
+            this.lapseTags(BattlerTagLapseType.HIT);
+          }
           const subTag = this.getTag(SubstituteTag) as SubstituteTag;
 
           if (subTag && !move.bypassesSubstitute(source)) { // TODO: Make this also check if the source has Infiltrator

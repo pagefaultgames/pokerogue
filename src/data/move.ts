@@ -1259,7 +1259,12 @@ export class AddSubstituteAttr extends MoveEffectAttr {
       return false;
     }
 
-    const hpCost = Math.ceil(user.getMaxHp() / 4);
+    const blockSelfDamage = new Utils.BooleanHolder(false);
+    applyAbAttrs(BlockNonDirectDamageAbAttr, user, blockSelfDamage);
+
+    const hpCost = blockSelfDamage.value
+      ? Math.ceil(user.getMaxHp() / 4)
+      : 0;
     if (user.hp > hpCost) {
       user.damageAndUpdate(hpCost, HitResult.OTHER, false, true, true);
       user.addTag(BattlerTagType.SUBSTITUTE, 0, move.id, user.id);
@@ -1269,10 +1274,10 @@ export class AddSubstituteAttr extends MoveEffectAttr {
   }
 
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    if (user.isBoss()) {
+    if (user.isBoss() || user.getHpRatio() < 0.25) {
       return -10;
     }
-    return Math.ceil((user.getHpRatio() - 0.25) * 4/3 * 10 - 5);
+    return Math.ceil(user.getHpRatio() * 10);
   }
 }
 
