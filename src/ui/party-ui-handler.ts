@@ -279,19 +279,20 @@ export default class PartyUiHandler extends MessageUiHandler {
         if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER && !this.transferMode && option !== PartyOption.CANCEL) {
           this.startTransfer();
 
-          let newPokemon: PlayerPokemon;
-          for (let p = 0; p < this.scene.getParty().length; p++) {
-            if (p !== this.transferCursor) {
-              newPokemon = this.scene.getParty()[p];
+          for (let p = 0; p < this.scene.getParty().length; p++) { // this fore look goes through each of the party pokemon
+            if (p !== this.transferCursor) { // this skips the pokemon doing the transfer; there's no point checking to see if that's at max capacity since we can't transfer to it
+              const newPokemon = this.scene.getParty()[p];
+              // this next line gets all of the transferable items from pokemon [p]; it does this by getting all the held modifiers that are transferable and checking to see if they belong to pokemon [p]
               const getTransferrableItemsFromPokemon = (newPokemon: PlayerPokemon) =>
                 this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && (m as PokemonHeldItemModifier).getTransferrable(true) && (m as PokemonHeldItemModifier).pokemonId === newPokemon.id) as PokemonHeldItemModifier[];
+              // this next bit checks to see if the the selected item from the original transfer pokemon exists on the new pokemon [p]; this returns undefined if the new pokemon doesn't have the item at all, otherwise it returns the pokemonHeldItemModifier for that item
               const matchingModifier = newPokemon.scene.findModifier(m => m instanceof PokemonHeldItemModifier && m.pokemonId === newPokemon.id && m.matchType(getTransferrableItemsFromPokemon(pokemon)[this.transferOptionCursor])) as PokemonHeldItemModifier;
-              const partySlot = this.partySlots.filter(m => m.getPokemon() === newPokemon)[0];
-              if (matchingModifier) {
-                if (matchingModifier.getMaxStackCount(this.scene) === matchingModifier.stackCount) {
+              const partySlot = this.partySlots.filter(m => m.getPokemon() === newPokemon)[0]; // this gets pokemon [p] for us
+              if (matchingModifier) { // if matchingModifier exists then the item exists on the new pokemon
+                if (matchingModifier.getMaxStackCount(this.scene) === matchingModifier.stackCount) { // checks to see if the stack of items is at max stack; if so, turn the name red
                   partySlot.slotName.setColor(getTextColor(TextStyle.PARTY_RED, false, this.scene.uiTheme));
                   partySlot.slotName.setShadowColor(getTextColor(TextStyle.PARTY_RED, true, this.scene.uiTheme));
-                } else {
+                } else { // if the pokemon isn't at max stack, keep the name the standard white
                   partySlot.slotName.setColor(getTextColor(TextStyle.MESSAGE, false, this.scene.uiTheme));
                   partySlot.slotName.setShadowColor(getTextColor(TextStyle.MESSAGE, true, this.scene.uiTheme));
                 }
