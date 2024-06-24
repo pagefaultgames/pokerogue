@@ -4,11 +4,11 @@ export const modifierType: ModifierTypeTranslationEntries = {
   ModifierType: {
     "AddPokeballModifierType": {
       name: "{{modifierCount}}x {{pokeballName}}",
-      description: "Ganhe x{{modifierCount}} {{pokeballName}} (Mochila: {{pokeballAmount}}) \nChance de captura: {{catchRate}}.",
+      description: "Ganhe {{modifierCount}}x {{pokeballName}} (Mochila: {{pokeballAmount}}) \nChance de captura: {{catchRate}}.",
     },
     "AddVoucherModifierType": {
       name: "{{modifierCount}}x {{voucherTypeName}}",
-      description: "Ganhe x{{modifierCount}} {{voucherTypeName}}.",
+      description: "Ganhe {{modifierCount}}x {{voucherTypeName}}.",
     },
     "PokemonHeldItemModifierType": {
       extra: {
@@ -402,7 +402,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "CHILL_DRIVE": "CrioDisco",
     "DOUSE_DRIVE": "HidroDisco",
 
-    "FIST_PLATE": "Placa de Punho",
+    "FIST_PLATE": "Placa do Punho",
     "SKY_PLATE": "Placa do Céu",
     "TOXIC_PLATE": "Placa Tóxica",
     "EARTH_PLATE": "Placa Terrestre",
@@ -412,15 +412,15 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "IRON_PLATE": "Placa de Ferro",
     "FLAME_PLATE": "Placa da Chama",
     "SPLASH_PLATE": "Placa de Respingo",
-    "MEADOW_PLATE": "Placa de Prado",
+    "MEADOW_PLATE": "Placa da Planície",
     "ZAP_PLATE": "Placa Elétrica",
     "MIND_PLATE": "Placa Mental",
     "ICICLE_PLATE": "Placa de Gelo",
-    "DRACO_PLATE": "Placa de Draco",
-    "DREAD_PLATE": "Placa do Pavor",
-    "PIXIE_PLATE": "Placa Duende",
+    "DRACO_PLATE": "Placa do Dragão",
+    "DREAD_PLATE": "Placa Sombria",
+    "PIXIE_PLATE": "Placa de Fada",
     "BLANK_PLATE": "Placa em Branco",
-    "LEGEND_PLATE": "Placa de Legenda",
+    "LEGEND_PLATE": "Placa Lendária",
     "FIGHTING_MEMORY": "Memória de Lutador",
     "FLYING_MEMORY": "Memória Voadora",
     "POISON_MEMORY": "Memória Venenosa",
@@ -436,7 +436,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "PSYCHIC_MEMORY": "Memória Psíquica",
     "ICE_MEMORY": "Memória de Gelo",
     "DRAGON_MEMORY": "Memória do Dragão",
-    "DARK_MEMORY": "Memória Negra",
+    "DARK_MEMORY": "Memória Sombria",
     "FAIRY_MEMORY": "Memória de Fada",
     "BLANK_MEMORY": "Memória Vazia",
   },
