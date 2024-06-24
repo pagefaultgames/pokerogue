@@ -241,7 +241,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       if (battleStatOrder[i] === BattleStat.SPD || battleStatOrder[i] === BattleStat.HP) {
         statY = baseY + 5;
       } else {
-        statY = baseY + (i % 2 === 0 ? 10 : 0);
+        statY = baseY + (!!(i % 2) === this.player ? 10 : 0); // we compare i % 2 against this.player to tell us where to place the label; because battleStatOrder for enemies has HP, battleStatOrder[1]=ATK, but for players battleStatOrder[0]=ATK, so this comparing i % 2 to this.player fixes this issue for us
       }
 
       const statLabel = this.scene.add.sprite(statX, statY, "pbinfo_stat", BattleStat[s]);
@@ -424,6 +424,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       this.statValuesContainer.setPosition(8, 7);
     }
 
+    battleStatOrder = this.player ? battleStatOrderPlayer : battleStatOrderEnemy; // this tells us whether or not to use the player or enemy battle stat order
     const battleStats = battleStatOrder.map(() => 0);
 
     this.lastBattleStats = battleStats.join("");
@@ -641,6 +642,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         this.lastLevel = pokemon.level;
       }
 
+      battleStatOrder = this.player ? battleStatOrderPlayer : battleStatOrderEnemy; // this tells us whether or not to use the player or enemy battle stat order
       const battleStats = pokemon.summonData
         ? pokemon.summonData.battleStats
         : battleStatOrder.map(() => 0);
