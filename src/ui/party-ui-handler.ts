@@ -1110,7 +1110,7 @@ class PartySlot extends Phaser.GameObjects.Container {
       if (this.slotIndex >= battlerCount) {
         slotGenderText.setPositionRelative(slotLevelLabel, 36, 0);
       } else {
-        slotGenderText.setPositionRelative(slotName, 76 - (this.pokemon.fusionSpecies ? 8 : 0), 3);
+        slotGenderText.setPositionRelative(this.slotName, 76 - (this.pokemon.fusionSpecies ? 8 : 0), 3);
       }
       slotGenderText.setOrigin(0, 0.25);
 
@@ -1124,7 +1124,7 @@ class PartySlot extends Phaser.GameObjects.Container {
       if (this.slotIndex >= battlerCount) {
         splicedIcon.setPositionRelative(slotLevelLabel, 36 + (genderSymbol ? 8 : 0), 0.5);
       } else {
-        splicedIcon.setPositionRelative(slotName, 76, 3.5);
+        splicedIcon.setPositionRelative(this.slotName, 76, 3.5);
       }
 
       slotInfoContainer.add(splicedIcon);
