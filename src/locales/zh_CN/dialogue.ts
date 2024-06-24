@@ -382,184 +382,184 @@ export const PGMdialogue: DialogueTranslationEntries = {
       3: "好像是我晕船了…"
     },
   },
-  "rocket_grunt": {
+ "rocket_grunt": {
     "encounter": {
-      1: "Prepare for trouble!"
+      1: "你要有麻烦了！"
     },
     "victory": {
-      1: "Team Rocket blasting off again!"
+      1: "火箭队又起飞了！"
     },
   },
   "magma_grunt": {
     "encounter": {
-      1: " If you get in the way of Team Magma, don’t expect any mercy!"
+      1: "如果你挡在熔岩队路上，那就别指望我们手下留情！"
     },
     "victory": {
-      1: "Huh? I lost?!"
+      1: "哈？我输了？！"
     },
   },
   "aqua_grunt": {
     "encounter": {
-      1: "No one who crosses Team Aqua gets any mercy, not even kids!"
+      1: "即使是小孩，如果要和海洋队作对，也别指望我们手下留情！"
     },
     "victory": {
-      1: "You're kidding me!"
+      1: "你在开玩笑吧？"
     },
   },
   "galactic_grunt": {
     "encounter": {
-      1: "Don't mess with Team Galactic!"
+      1: "别惹银河队！"
     },
     "victory": {
-      1: "Shut down..."
+      1: "停机了…"
     },
   },
   "plasma_grunt": {
     "encounter": {
-      1: "We won't tolerate people who have different ideas!"
+      1: "异端不共戴天！"
     },
     "victory": {
-      1: "Plasmaaaaaaaaa!"
+      1: "等离子子子子子子！"
     },
   },
   "flare_grunt": {
     "encounter": {
-      1: "Fashion is most important to us!"
+      1: "时尚最重要！"
     },
     "victory": {
-      1: "The future doesn't look bright for me."
+      1: "未来一片黑暗啊…"
     },
   },
   "rocket_boss_giovanni_1": {
     "encounter": {
-      1: "So! I must say, I am impressed you got here!"
+      1: "我不得不说，能来到这里，你的确很不简单！"
     },
     "victory": {
-      1: "WHAT! This cannot be!"
+      1: "什么！这不可能！"
     },
     "defeat": {
-      1: "Mark my words. Not being able to measure your own strength shows that you are still a child."
+      1: "记住我的话。无法衡量自己的力量，说明你还是个孩子。"
     }
   },
   "rocket_boss_giovanni_2": {
     "encounter": {
-      1: "My old associates need me... Are you going to get in my way?"
+      1: "我的老伙计还需要我…你要挡我的路吗？"
     },
     "victory": {
-      1: "How is this possible...?\nThe precious dream of Team Rocket has become little more than an illusion..."
+      1: "这怎么可能…？\n火箭队的梦想…就这么成为泡影了…"
     },
     "defeat": {
-      1: "Team Rocket will be reborn again, and I will rule the world!"
+      1: "火箭队会重生，而我会统治世界！"
     }
   },
   "magma_boss_maxie_1": {
     "encounter": {
-      1: "I will bury you by my own hand. I hope you appreciate this honor!"
+      1: "我会亲手埋葬你，希望你能喜欢！"
     },
     "victory": {
-      1: "Ugh! You are... quite capable...\nI fell behind, but only by an inch..."
+      1: "啊！你…很厉害…我落后了…一点…"
     },
     "defeat": {
-      1: "Team Magma will prevail!"
+      1: "熔岩队必胜！"
     }
   },
   "magma_boss_maxie_2": {
     "encounter": {
-      1: "You are the final obstacle remaining between me and my goals.\nBrace yourself for my ultimate attack! Fuhahaha!"
+      1: "你是我实现目标最后的障碍。\n准备好迎接我最强的一击吧！哈哈哈哈！"
     },
     "victory": {
-      1: "This... This is not.. Ngh..."
+      1: "这…这不…呃"
     },
     "defeat": {
-      1: "And now... I will transform this planet to a land ideal for humanity."
+      1: "现在…我要把这个星球变成人类的理想国度！"
     }
   },
   "aqua_boss_archie_1": {
     "encounter": {
-      1: "I'm leader of Team Aqua, so I'm afraid it's the rope's end for you."
+      1: "我是海洋队的老大，所以，你的路大概走到头了。"
     },
     "victory": {
-      1: "Let's meet again somewhere. I'll be sure to remember that face."
+      1: "下次再见吧。我会记住你的脸的。"
     },
     "defeat": {
-      1: "Brilliant! My team won't hold back now!"
+      1: "天才！我的队伍不会再退缩了！"
     }
   },
   "aqua_boss_archie_2": {
     "encounter": {
-      1: "I've been waiting so long for this day to come.\nThis is the true power of my team!"
+      1: "我等这一天很久了。\n这就是我的真实力量！"
     },
     "victory": {
-      1: "Like I figured..."
+      1: "果然很强……啊！"
     },
     "defeat": {
-      1: "I'll return everything in this world to its original, pure state!!"
+      1: "我会让这世界上的一切回归到最初的纯净状态！！"
     }
   },
   "galactic_boss_cyrus_1": {
     "encounter": {
-      1: "You were compelled to come here by such vacuous sentimentality\nI will make you regret paying heed to your heart!"
+      1: "但在这之前，让我见识见识你那敢向银河队叫板的实力吧。"
     },
     "victory": {
-      1: "Interesting. And quite curious."
+      1: "有意思，简直太有意思了。"
     },
     "defeat": {
-      1: "I will create my new world..."
+      1: "我要创造我的新世界…"
     }
   },
   "galactic_boss_cyrus_2": {
     "encounter": {
-      1: "So we meet again. It seems our fates have become intertwined.\nBut here and now, I will finally break that bond!"
+      1: "是啊，我和你还真是有缘呢。\n不过，这段孽缘…就让我在此斩断吧！"
     },
     "victory": {
-      1: "How? How? HOW?!"
+      1: "怎么可能！怎么可能！怎么可能！"
     },
     "defeat": {
-      1: "Farewell."
+      1: "永别了。"
     }
   },
   "plasma_boss_ghetsis_1": {
     "encounter": {
-      1: "I won't allow anyone to stop me! No matter who does what!"
+      1: "无论是谁做了什么！都无法阻止我！"
     },
     "victory": {
-      1: "How can this be? I'm the creator of Team Plasma! I'm perfect!"
+      1: "怎么回事？我可是建立了等离子队的完美的人啊！\n是要改变世界的完美的统治者！"
     },
     "defeat": {
-      1: "I am the perfect ruler of a perfect new world! Mwa ha ha!"
+      1: "我是坐拥世界的完美统治者！哇哈哈哈！"
     }
   },
   "plasma_boss_ghetsis_2": {
     "encounter": {
-      1: "Come now! I want to see your face at the moment you lose all hope!"
+      1: "来吧！让我看看你彻底绝望时的那张脸！"
     },
     "victory": {
-      1: "My calculations... No! My careful schemes! The world should be mine!"
+      1: "不！我的伟大目标！我要完全支配世界啊！"
     },
     "defeat": {
-      1: "Kyurem! Use Absofusion!"
+      1: "酋雷姆！融合吧！"
     }
   },
   "flare_boss_lysandre_1": {
     "encounter": {
-      1: "Do you want to stop me? Show me in battle."
+      1: "你想要阻止我？在对战中展示给我看吧！"
     },
     "victory": {
-      1: "You are here to stop me. But I ask you to wait. "
+      1: "看来你的确是想要阻止我。但是，先等一下。"
     },
     "defeat": {
-      1: "Pokemon...Shall no longer exist."
+      1: "宝可梦…不该存在。"
     }
   },
   "flare_boss_lysandre_2": {
     "encounter": {
-      1: "The future you want, or the future I want... Let us see which one is more deserving, shall we?"
+      1: "你我的未来…究竟哪个才正确，\n就让我们来问问各自的宝可梦吧！"
     },
     "victory": {
-      1: "Whaugh!"
+      1: "哇啊啊啊！"
     },
     "defeat": {
-      1: "Fools with no vision will continue to befoul this beautiful world."
+      1: "没有远见的蠢货会继续玷污这个美丽的世界。"
     }
   },
   "brock": {
