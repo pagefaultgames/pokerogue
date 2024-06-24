@@ -25,7 +25,7 @@ export const battle: SimpleTranslationEntries = {
   "hitResultOneHitKO": "Ein K.O.-Treffer!",
   "attackFailed": "Es ist fehlgeschlagen!",
   "attackHitsCount": "{{count}}-mal getroffen!",
-  "rewardGain": "You received\n{{modifierName}}!",
+  "rewardGain": "Du erhältst\n{{modifierName}}!",
   "expGain": "{{pokemonName}} erhält\n{{exp}} Erfahrungspunkte!",
   "levelUp": "{{pokemonName}} erreicht\nLv. {{level}}!",
   "learnMove": "{{pokemonName}} erlernt\n{{moveName}}!",
