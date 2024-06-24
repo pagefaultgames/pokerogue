@@ -328,7 +328,8 @@ export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier
 
   match(modifier: Modifier): boolean {
     if (modifier instanceof DoubleBattleChanceBoosterModifier) {
-      return (modifier as DoubleBattleChanceBoosterModifier).battlesLeft === this.battlesLeft;
+      // Check type id to not match different tiers of lures
+      return modifier.type.id === this.type.id && modifier.battlesLeft === this.battlesLeft;
     }
     return false;
   }
@@ -340,9 +341,15 @@ export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier
   getArgs(): any[] {
     return [ this.battlesLeft ];
   }
-
+  /**
+   * Modifies the chance of a double battle occurring
+   * @param args A single element array containing the double battle chance as a NumberHolder
+   * @returns {boolean} Returns true if the modifier was applied
+   */
   apply(args: any[]): boolean {
     const doubleBattleChance = args[0] as Utils.NumberHolder;
+    // This is divided because the chance is generated as a number from 0 to doubleBattleChance.value using Utils.randSeedInt
+    // A double battle will initiate if the generated number is 0
     doubleBattleChance.value = Math.ceil(doubleBattleChance.value / 2);
 
     return true;

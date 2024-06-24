@@ -2,7 +2,7 @@ import { TranslationEntries } from "#app/interfaces/locales";
 
 export const challenges: TranslationEntries = {
   "title": "適用挑戰條件",
-  "illegalEvolution": "{{pokemon}} changed into an ineligble pokémon\nfor this challenge!",
+  "illegalEvolution": "{{pokemon}} 進化成了不符合\n挑戰條件的寶可夢！",
   "singleGeneration": {
     "name": "單一世代",
     "desc": "你只能使用第{{gen}}\n世代的寶可夢",

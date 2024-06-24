@@ -2219,7 +2219,7 @@ export const move: MoveTranslationEntries = {
   },
   "snarl": {
     name: "Snarl",
-    effect: "O usuário grita como se ele estivesse reclamando de algo, diminuindo a Defesa Especial do Pokémon oponente."
+    effect: "O usuário grita como se ele estivesse reclamando de algo, diminuindo o Ataque Especial do Pokémon oponente."
   },
   "icicleCrash": {
     name: "Icicle Crash",

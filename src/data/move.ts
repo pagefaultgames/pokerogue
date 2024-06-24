@@ -1,7 +1,7 @@
 import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
 import { BattleEndPhase, MovePhase, NewBattlePhase, PartyStatusCurePhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../phases";
 import { BattleStat, getBattleStatName } from "./battle-stat";
-import { EncoreTag } from "./battler-tags";
+import { EncoreTag, SemiInvulnerableTag } from "./battler-tags";
 import { getPokemonMessage, getPokemonNameWithAffix } from "../messages";
 import Pokemon, { AttackMoveResult, EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../field/pokemon";
 import { StatusEffect, getStatusEffectHealText, isNonVolatileStatusEffect, getNonVolatileStatusEffects} from "./status-effect";
@@ -7238,7 +7238,7 @@ export function initMoves() {
       .attr(AddArenaTagAttr, ArenaTagType.CRAFTY_SHIELD, 1, true, true),
     new StatusMove(Moves.FLOWER_SHIELD, Type.FAIRY, -1, 10, -1, 0, 6)
       .target(MoveTarget.ALL)
-      .unimplemented(),
+      .attr(StatChangeAttr, BattleStat.DEF, 1, false, (user, target, move) => target.getTypes().includes(Type.GRASS) && !target.getTag(SemiInvulnerableTag)),
     new StatusMove(Moves.GRASSY_TERRAIN, Type.GRASS, -1, 10, -1, 0, 6)
       .attr(TerrainChangeAttr, TerrainType.GRASSY)
       .target(MoveTarget.BOTH_SIDES),
