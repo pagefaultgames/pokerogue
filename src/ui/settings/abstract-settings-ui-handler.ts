@@ -54,7 +54,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     const ui = this.getUi();
 
     this.settingsContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / this.scene.resolutionScale) + 1);
-
+    this.settingsContainer.setName(`settings-${this.title}`);
     this.settingsContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / this.scene.resolutionScale, this.scene.game.canvas.height / this.scene.resolutionScale - 20), Phaser.Geom.Rectangle.Contains);
 
     this.navigationIcons = {};
@@ -62,6 +62,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     this.navigationContainer = new NavigationMenu(this.scene, 0, 0);
 
     this.optionsBg = addWindow(this.scene, 0, this.navigationContainer.height, (this.scene.game.canvas.width / this.scene.resolutionScale) - 2, (this.scene.game.canvas.height / this.scene.resolutionScale) - 16 - this.navigationContainer.height - 2);
+    this.optionsBg.setName("window-options-bg");
     this.optionsBg.setOrigin(0, 0);
 
     const actionsBg = addWindow(this.scene, 0, (this.scene.game.canvas.height / this.scene.resolutionScale) - this.navigationContainer.height, (this.scene.game.canvas.width / this.scene.resolutionScale) - 2, 22);

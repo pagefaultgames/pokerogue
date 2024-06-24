@@ -450,9 +450,9 @@ export function verifyLang(lang?: string): boolean {
   case "fr":
   case "de":
   case "it":
-  case "zh_CN":
-  case "zh_TW":
-  case "pt_BR":
+  case "zh-CN":
+  case "zh-TW":
+  case "pt-BR":
   case "ko":
     return true;
   default:
