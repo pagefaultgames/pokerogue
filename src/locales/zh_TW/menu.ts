@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 /**
  * The menu namespace holds most miscellaneous text that isn't directly part of the game's
@@ -11,7 +11,7 @@ export const menu: SimpleTranslationEntries = {
   "dailyRun": "每日挑戰 (Beta)",
   "loadGame": "加載遊戲",
   "newGame": "新遊戲",
-  "settings": "Settings",
+  "settings": "設定",
   "selectGameMode": "選擇遊戲模式",
   "logInOrCreateAccount": "登入或註冊即可開始遊戲，無需郵箱！",
   "username": "用戶名",
@@ -34,8 +34,6 @@ export const menu: SimpleTranslationEntries = {
   "sessionSuccess": "工作階段加載成功.",
   "failedToLoadSession": "無法加載您的工作階段數據。它可能已損壞。",
   "boyOrGirl": "你是男孩還是女孩?",
-  "boy": "男孩",
-  "girl": "女孩",
   "evolving": "甚麼?\n{{pokemonName}} 要進化了!",
   "stoppedEvolving": "{{pokemonName}} 停止了進化。",
   "pauseEvolutionsQuestion": "你確定要停止 {{pokemonName}} 的進化嗎?\n你可以在隊伍畫面中重新啟用進化。",
@@ -44,11 +42,16 @@ export const menu: SimpleTranslationEntries = {
   "dailyRankings": "每日排名",
   "weeklyRankings": "每週排名",
   "noRankings": "無排名",
+  "positionIcon": "#",
+  "usernameScoreboard": "Username",
+  "score": "Score",
+  "wave": "Wave",
   "loading": "加載中…",
+  "loadingAsset": "Loading asset: {{assetName}}",
   "playersOnline": "在線玩家",
-  "empty":"空",
   "yes":"是",
   "no":"否",
   "disclaimer": "DISCLAIMER",
-  "disclaimerDescription": "This game is an unfinished product; it might have playability issues (including the potential loss of save data),\n change without notice, and may or may not be updated further or completed."
+  "disclaimerDescription": "This game is an unfinished product; it might have playability issues (including the potential loss of save data),\n change without notice, and may or may not be updated further or completed.",
+  "choosePokemon": "Choose a Pokémon.",
 } as const;

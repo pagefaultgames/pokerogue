@@ -1,4 +1,4 @@
-import {SimpleTranslationEntries} from "#app/plugins/i18n";
+import {SimpleTranslationEntries} from "#app/interfaces/locales";
 
 // Titles of special trainers like gym leaders, elite four, and the champion
 export const titles: SimpleTranslationEntries = {
@@ -48,7 +48,7 @@ export const trainerClasses: SimpleTranslationEntries = {
   "depot_agent": "铁路员工",
   "doctor": "医生",
   "doctor_female": "医生",
-  "firebreather": "Firebreather",
+  "firebreather": "吹火人",
   "fisherman": "垂钓者",
   "fisherman_female": "垂钓者",
   "gentleman": "绅士",
@@ -87,14 +87,15 @@ export const trainerClasses: SimpleTranslationEntries = {
   "pokémon_rangers": "宝可梦巡护员组合",
   "ranger": "巡护员",
   "restaurant_staff": "服务生组合",
-  "rich": "Rich",
-  "rich_female": "Rich",
+  "rich": "富豪",
+  "rich_female": "富豪太太",
   "rich_boy": "富家少爷",
   "rich_couple": "富豪夫妇",
-  "rich_kid": "Rich Kid",
-  "rich_kid_female": "Rich Kid",
-  "rich_kids": "富二代组合",
+  "rich_kid": "富家小孩",
+  "rich_kid_female": "富家小孩",
+  "rich_kids": "富家小孩组合",
   "roughneck": "光头男",
+  "sailor": "水手",
   "scientist": "研究员",
   "scientist_female": "研究员",
   "scientists": "研究员组合",

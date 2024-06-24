@@ -13,26 +13,44 @@ import { getPokemonMessage } from "../messages";
 import * as Utils from "../utils";
 import { TempBattleStat } from "../data/temp-battle-stat";
 import { getBerryEffectFunc, getBerryPredicate } from "../data/berry";
-import { BerryType } from "../data/enums/berry-type";
+import { BattlerTagType} from "#enums/battler-tag-type";
+import { BerryType } from "#enums/berry-type";
 import { StatusEffect, getStatusEffectHealText } from "../data/status-effect";
 import { achvs } from "../system/achv";
 import { VoucherType } from "../system/voucher";
 import { FormChangeItem, SpeciesFormChangeItemTrigger } from "../data/pokemon-forms";
 import { Nature } from "#app/data/nature";
-import { BattlerTagType } from "#app/data/enums/battler-tag-type";
 import * as Overrides from "../overrides";
 import { ModifierType, modifierTypes } from "./modifier-type";
 import { Command } from "#app/ui/command-ui-handler.js";
+
+import { allMoves } from "#app/data/move.js";
+import { Abilities } from "#app/enums/abilities.js";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 
 const iconOverflowIndex = 24;
 
 export const modifierSortFunc = (a: Modifier, b: Modifier) => {
+  const itemNameMatch = a.type.name.localeCompare(b.type.name);
+  const typeNameMatch = a.constructor.name.localeCompare(b.constructor.name);
   const aId = a instanceof PokemonHeldItemModifier ? a.pokemonId : 4294967295;
   const bId = b instanceof PokemonHeldItemModifier ? b.pokemonId : 4294967295;
 
-  return aId < bId ? 1 : aId > bId ? -1 : 0;
+  //First sort by pokemonID
+  if (aId < bId) {
+    return 1;
+  } else if (aId>bId) {
+    return -1;
+  } else if (aId === bId) {
+    //Then sort by item type
+    if (typeNameMatch === 0) {
+      return itemNameMatch;
+      //Finally sort by item name
+    } else {
+      return typeNameMatch;
+    }
+  }
 };
 
 export class ModifierBar extends Phaser.GameObjects.Container {
@@ -46,22 +64,29 @@ export class ModifierBar extends Phaser.GameObjects.Container {
     this.setScale(0.5);
   }
 
-  updateModifiers(modifiers: PersistentModifier[]) {
+  /**
+   * Method to update content displayed in {@linkcode ModifierBar}
+   * @param {PersistentModifier[]} modifiers - The list of modifiers to be displayed in the {@linkcode ModifierBar}
+   * @param {boolean} hideHeldItems - If set to "true", only modifiers not assigned to a Pokémon are displayed
+   */
+  updateModifiers(modifiers: PersistentModifier[], hideHeldItems: boolean = false) {
     this.removeAll(true);
 
     const visibleIconModifiers = modifiers.filter(m => m.isIconVisible(this.scene as BattleScene));
+    const nonPokemonSpecificModifiers = visibleIconModifiers.filter(m => !(m as PokemonHeldItemModifier).pokemonId).sort(modifierSortFunc);
+    const pokemonSpecificModifiers = visibleIconModifiers.filter(m => (m as PokemonHeldItemModifier).pokemonId).sort(modifierSortFunc);
 
-    visibleIconModifiers.sort(modifierSortFunc);
+    const sortedVisibleIconModifiers = hideHeldItems ? nonPokemonSpecificModifiers : nonPokemonSpecificModifiers.concat(pokemonSpecificModifiers);
 
     const thisArg = this;
 
-    visibleIconModifiers.forEach((modifier: PersistentModifier, i: integer) => {
+    sortedVisibleIconModifiers.forEach((modifier: PersistentModifier, i: integer) => {
       const icon = modifier.getIcon(this.scene as BattleScene);
       if (i >= iconOverflowIndex) {
         icon.setVisible(false);
       }
       this.add(icon);
-      this.setModifierIconPosition(icon, visibleIconModifiers.length);
+      this.setModifierIconPosition(icon, sortedVisibleIconModifiers.length);
       icon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 32, 24), Phaser.Geom.Rectangle.Contains);
       icon.on("pointerover", () => {
         (this.scene as BattleScene).ui.showTooltip(modifier.type.name, modifier.type.getDescription(this.scene as BattleScene));
@@ -303,7 +328,8 @@ export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier
 
   match(modifier: Modifier): boolean {
     if (modifier instanceof DoubleBattleChanceBoosterModifier) {
-      return (modifier as DoubleBattleChanceBoosterModifier).battlesLeft === this.battlesLeft;
+      // Check type id to not match different tiers of lures
+      return modifier.type.id === this.type.id && modifier.battlesLeft === this.battlesLeft;
     }
     return false;
   }
@@ -315,9 +341,15 @@ export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier
   getArgs(): any[] {
     return [ this.battlesLeft ];
   }
-
+  /**
+   * Modifies the chance of a double battle occurring
+   * @param args A single element array containing the double battle chance as a NumberHolder
+   * @returns {boolean} Returns true if the modifier was applied
+   */
   apply(args: any[]): boolean {
     const doubleBattleChance = args[0] as Utils.NumberHolder;
+    // This is divided because the chance is generated as a number from 0 to doubleBattleChance.value using Utils.randSeedInt
+    // A double battle will initiate if the generated number is 0
     doubleBattleChance.value = Math.ceil(doubleBattleChance.value / 2);
 
     return true;
@@ -501,6 +533,22 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
   }
 
   getScoreMultiplier(): number {
+    return 1;
+  }
+
+  //Applies to items with chance of activating secondary effects ie Kings Rock
+  getSecondaryChanceMultiplier(pokemon: Pokemon): integer {
+    // Temporary quickfix to stop game from freezing when the opponet uses u-turn while holding on to king's rock
+    if (!pokemon.getLastXMoves(0)[0]) {
+      return 1;
+    }
+    const sheerForceAffected = allMoves[pokemon.getLastXMoves(0)[0].move].chance >= 0 && pokemon.hasAbility(Abilities.SHEER_FORCE);
+
+    if (sheerForceAffected) {
+      return 0;
+    } else if (pokemon.hasAbility(Abilities.SERENE_GRACE)) {
+      return 2;
+    }
     return 1;
   }
 
@@ -781,7 +829,7 @@ export class BypassSpeedChanceModifier extends PokemonHeldItemModifier {
       const hasQuickClaw = this.type instanceof ModifierTypes.PokemonHeldItemModifierType && this.type.id === "QUICK_CLAW";
 
       if (isCommandFight && hasQuickClaw) {
-        pokemon.scene.queueMessage(getPokemonMessage(pokemon, " used its quick claw to move faster!"));
+        pokemon.scene.queueMessage(getPokemonMessage(pokemon, " used its Quick Claw to move faster!"));
       }
       return true;
     }
@@ -815,7 +863,7 @@ export class FlinchChanceModifier extends PokemonHeldItemModifier {
     const pokemon = args[0] as Pokemon;
     const flinched = args[1] as Utils.BooleanHolder;
 
-    if (!flinched.value && pokemon.randSeedInt(10) < this.getStackCount()) {
+    if (!flinched.value && pokemon.randSeedInt(10) < (this.getStackCount() * this.getSecondaryChanceMultiplier(pokemon))) {
       flinched.value = true;
       return true;
     }
@@ -1075,8 +1123,7 @@ export class PokemonInstantReviveModifier extends PokemonHeldItemModifier {
     pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.getBattlerIndex(),
       Math.max(Math.floor(pokemon.getMaxHp() / 2), 1), getPokemonMessage(pokemon, ` was revived\nby its ${this.type.name}!`), false, false, true));
 
-    pokemon.resetStatus();
-
+    pokemon.resetStatus(true, false, true);
     return true;
   }
 
@@ -1130,13 +1177,11 @@ export class PokemonHpRestoreModifier extends ConsumablePokemonModifier {
         restorePoints = Math.floor(restorePoints * (args[1] as number));
       }
       if (this.fainted || this.healStatus) {
-        pokemon.resetStatus();
+        pokemon.resetStatus(true, true);
       }
       pokemon.hp = Math.min(pokemon.hp + Math.max(Math.ceil(Math.max(Math.floor((this.restorePercent * 0.01) * pokemon.getMaxHp()), restorePoints)), 1), pokemon.getMaxHp());
-
       return true;
     }
-
     return false;
   }
 }
@@ -1148,8 +1193,7 @@ export class PokemonStatusHealModifier extends ConsumablePokemonModifier {
 
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
-    pokemon.resetStatus();
-
+    pokemon.resetStatus(true, true);
     return true;
   }
 }
@@ -2195,7 +2239,8 @@ export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModifi
     super(type, stackCount);
 
     this.effect = effect;
-    this.chance = (chancePercent || 5) / 100;
+    //Hardcode temporarily
+    this.chance = .025 * ((this.effect === StatusEffect.BURN || this.effect === StatusEffect.POISON) ? 2 : 1);
   }
 
   match(modifier: Modifier): boolean {
@@ -2230,7 +2275,8 @@ export class EnemyStatusEffectHealChanceModifier extends EnemyPersistentModifier
   constructor(type: ModifierType, chancePercent: number, stackCount?: integer) {
     super(type, stackCount);
 
-    this.chance = (chancePercent || 2.5) / 100;
+    //Hardcode temporarily
+    this.chance = .025;
   }
 
   match(modifier: Modifier): boolean {
@@ -2268,7 +2314,8 @@ export class EnemyEndureChanceModifier extends EnemyPersistentModifier {
   constructor(type: ModifierType, chancePercent?: number, stackCount?: integer) {
     super(type, stackCount || 10);
 
-    this.chance = (chancePercent || 2) / 100;
+    //Hardcode temporarily
+    this.chance = .02;
   }
 
   match(modifier: Modifier) {
