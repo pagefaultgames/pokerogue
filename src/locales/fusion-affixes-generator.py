@@ -2,7 +2,8 @@
 # Run it from the folder in which the pokemon.ts file is located, ex. "src\locales\de\"
 # If the language doesn't use roman characters but uses an alphabet, it's possible to include the vowel/consonant characters to the script and use it's functionalities
 # For ideographic languages, a different approach is needed. For now, the "universal-fusion-affixes-generator" is how I made it work (found at the bottom)
-# The zh affixes have all been manually fixed so replace it with care. In case a new zh file is needed, prefixes and suffixes also need to be swapped due to differences in syntax. For that, use the very last script
+# The zh affixes have all been manually fixed so replace it with care.
+# The very last script is meant to swap prefixes with suffixes in the language in case it's needed (was requested due to misunderstanding, but it exists, so...)
 
 import re
 import unicodedata
@@ -100,6 +101,7 @@ def combine_scripts(file_path):
 
     output = "import { FusionTranslationEntries } from \"#app/interfaces/locales\";\n\n"
     output += "export const fusionAffixes: FusionTranslationEntries = {\n"
+    output += "  shouldReverse: \"true\",\n"
 
     for word, prefix, suffix in zip(pokemon_dict.keys(), prefixes, suffixes):
         output += f"  {word}: {{\n"
@@ -210,6 +212,7 @@ file_path = r"pokemon.ts"
 combine_scripts(file_path)"""
 
 #change the order of affixes and suffixes (requested for zh translations)
+# TURNED OUT TO BE UNNECESSARY, BUT IT'S HERE IF ANYONE NEEDS IT...
 """import re
 
 def swap_fusion_entries(file_path):

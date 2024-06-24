@@ -1,416 +1,417 @@
 import { FusionTranslationEntries } from "#app/interfaces/locales";
 
 export const fusionAffixes: FusionTranslationEntries = {
+  shouldReverse: "true",
   bulbasaur: {
-    fusionPrefix: "妙蛙种",
-    fusionSuffix: "蛙种子",
+    fusionPrefix: "妙蛙",
+    fusionSuffix: "种子",
   },
   ivysaur: {
-    fusionPrefix: "妙蛙草",
-    fusionSuffix: "蛙草",
+    fusionPrefix: "妙蛙",
+    fusionSuffix: "草",
   },
   venusaur: {
-    fusionPrefix: "妙蛙花",
-    fusionSuffix: "蛙花",
+    fusionPrefix: "妙蛙",
+    fusionSuffix: "花",
   },
   charmander: {
-    fusionPrefix: "小火龙",
-    fusionSuffix: "小火龙",
+    fusionPrefix: "小火",
+    fusionSuffix: "龙",
   },
   charmeleon: {
-    fusionPrefix: "火恐",
+    fusionPrefix: "火",
     fusionSuffix: "恐龙",
   },
   charizard: {
-    fusionPrefix: "喷火龙",
-    fusionSuffix: "喷火龙",
+    fusionPrefix: "喷火",
+    fusionSuffix: "龙",
   },
   squirtle: {
-    fusionPrefix: "杰",
-    fusionSuffix: "尼龟",
+    fusionPrefix: "杰尼",
+    fusionSuffix: "龟",
   },
   wartortle: {
     fusionPrefix: "卡咪",
-    fusionSuffix: "咪龟",
+    fusionSuffix: "龟",
   },
   blastoise: {
     fusionPrefix: "水箭",
-    fusionSuffix: "箭龟",
+    fusionSuffix: "龟",
   },
   caterpie: {
-    fusionPrefix: "绿",
-    fusionSuffix: "毛虫",
+    fusionPrefix: "绿毛",
+    fusionSuffix: "虫",
   },
   metapod: {
     fusionPrefix: "铁甲",
-    fusionSuffix: "甲蛹",
+    fusionSuffix: "蛹",
   },
   butterfree: {
     fusionPrefix: "巴大",
-    fusionSuffix: "大蝶",
+    fusionSuffix: "蝶",
   },
   weedle: {
-    fusionPrefix: "独角虫",
-    fusionSuffix: "角虫",
+    fusionPrefix: "独角",
+    fusionSuffix: "虫",
   },
   kakuna: {
     fusionPrefix: "铁壳",
-    fusionSuffix: "壳蛹",
+    fusionSuffix: "蛹",
   },
   beedrill: {
     fusionPrefix: "大针",
-    fusionSuffix: "针蜂",
+    fusionSuffix: "蜂",
   },
   pidgey: {
-    fusionPrefix: "波波",
-    fusionSuffix: "波波",
+    fusionPrefix: "波",
+    fusionSuffix: "波",
   },
   pidgeotto: {
     fusionPrefix: "比比",
-    fusionSuffix: "比比鸟",
+    fusionSuffix: "鸟",
   },
   pidgeot: {
     fusionPrefix: "大比",
-    fusionSuffix: "大比鸟",
+    fusionSuffix: "鸟",
   },
   rattata: {
     fusionPrefix: "小拉",
-    fusionSuffix: "小拉达",
+    fusionSuffix: "达",
   },
   raticate: {
-    fusionPrefix: "拉达",
-    fusionSuffix: "拉达",
+    fusionPrefix: "拉",
+    fusionSuffix: "达",
   },
   spearow: {
-    fusionPrefix: "烈雀",
-    fusionSuffix: "烈雀",
+    fusionPrefix: "烈",
+    fusionSuffix: "雀",
   },
   fearow: {
-    fusionPrefix: "大嘴雀",
-    fusionSuffix: "嘴雀",
+    fusionPrefix: "大嘴",
+    fusionSuffix: "雀",
   },
   ekans: {
-    fusionPrefix: "阿柏蛇",
-    fusionSuffix: "柏蛇",
+    fusionPrefix: "阿柏",
+    fusionSuffix: "蛇",
   },
   arbok: {
-    fusionPrefix: "阿柏怪",
-    fusionSuffix: "柏怪",
+    fusionPrefix: "阿柏",
+    fusionSuffix: "怪",
   },
   pikachu: {
     fusionPrefix: "皮卡",
-    fusionSuffix: "卡丘",
+    fusionSuffix: "丘",
   },
   raichu: {
-    fusionPrefix: "雷丘",
-    fusionSuffix: "雷丘",
+    fusionPrefix: "雷",
+    fusionSuffix: "丘",
   },
   sandshrew: {
-    fusionPrefix: "穿山鼠",
-    fusionSuffix: "山鼠",
+    fusionPrefix: "穿山",
+    fusionSuffix: "鼠",
   },
   sandslash: {
-    fusionPrefix: "穿山王",
-    fusionSuffix: "山王",
+    fusionPrefix: "穿山",
+    fusionSuffix: "王",
   },
   nidoran_f: {
-    fusionPrefix: "尼多兰",
+    fusionPrefix: "尼多",
     fusionSuffix: "兰",
   },
   nidorina: {
-    fusionPrefix: "尼多娜",
-    fusionSuffix: "多娜",
+    fusionPrefix: "尼多",
+    fusionSuffix: "娜",
   },
   nidoqueen: {
-    fusionPrefix: "尼多后",
-    fusionSuffix: "多后",
+    fusionPrefix: "尼多",
+    fusionSuffix: "后",
   },
   nidoran_m: {
-    fusionPrefix: "尼多朗",
+    fusionPrefix: "尼多",
     fusionSuffix: "朗",
   },
   nidorino: {
-    fusionPrefix: "尼多力",
-    fusionSuffix: "诺",
+    fusionPrefix: "尼多",
+    fusionSuffix: "力诺",
   },
   nidoking: {
-    fusionPrefix: "尼多王",
-    fusionSuffix: "多王",
+    fusionPrefix: "尼多",
+    fusionSuffix: "王",
   },
   clefairy: {
-    fusionPrefix: "皮皮",
-    fusionSuffix: "皮皮",
+    fusionPrefix: "皮",
+    fusionSuffix: "皮",
   },
   clefable: {
-    fusionPrefix: "皮可",
+    fusionPrefix: "皮",
     fusionSuffix: "可西",
   },
   vulpix: {
     fusionPrefix: "六",
-    fusionSuffix: "六尾",
+    fusionSuffix: "尾",
   },
   ninetales: {
     fusionPrefix: "九",
-    fusionSuffix: "九尾",
+    fusionSuffix: "尾",
   },
   jigglypuff: {
-    fusionPrefix: "胖丁",
-    fusionSuffix: "胖丁",
+    fusionPrefix: "胖",
+    fusionSuffix: "丁",
   },
   wigglytuff: {
     fusionPrefix: "胖可",
-    fusionSuffix: "可丁",
+    fusionSuffix: "丁",
   },
   zubat: {
-    fusionPrefix: "超音蝠",
-    fusionSuffix: "音蝠",
+    fusionPrefix: "超音",
+    fusionSuffix: "蝠",
   },
   golbat: {
-    fusionPrefix: "大嘴蝠",
-    fusionSuffix: "嘴蝠",
+    fusionPrefix: "大嘴",
+    fusionSuffix: "蝠",
   },
   oddish: {
     fusionPrefix: "走路",
-    fusionSuffix: "路草",
+    fusionSuffix: "草",
   },
   gloom: {
-    fusionPrefix: "臭臭花",
-    fusionSuffix: "臭花",
+    fusionPrefix: "臭臭",
+    fusionSuffix: "花",
   },
   vileplume: {
     fusionPrefix: "霸王",
-    fusionSuffix: "王花",
+    fusionSuffix: "花",
   },
   paras: {
-    fusionPrefix: "派拉斯",
-    fusionSuffix: "派拉斯",
+    fusionPrefix: "派拉",
+    fusionSuffix: "斯",
   },
   parasect: {
-    fusionPrefix: "派拉斯特",
+    fusionPrefix: "派拉",
     fusionSuffix: "斯特",
   },
   venonat: {
-    fusionPrefix: "毛球",
-    fusionSuffix: "毛球",
+    fusionPrefix: "毛",
+    fusionSuffix: "球",
   },
   venomoth: {
     fusionPrefix: "摩鲁",
-    fusionSuffix: "鲁蛾",
+    fusionSuffix: "蛾",
   },
   diglett: {
-    fusionPrefix: "地鼠",
-    fusionSuffix: "地鼠",
+    fusionPrefix: "地",
+    fusionSuffix: "鼠",
   },
   dugtrio: {
     fusionPrefix: "三地",
-    fusionSuffix: "三地鼠",
+    fusionSuffix: "鼠",
   },
   meowth: {
-    fusionPrefix: "喵喵",
-    fusionSuffix: "喵喵",
+    fusionPrefix: "喵",
+    fusionSuffix: "喵",
   },
   persian: {
-    fusionPrefix: "猫老",
-    fusionSuffix: "大",
+    fusionPrefix: "猫",
+    fusionSuffix: "老大",
   },
   psyduck: {
     fusionPrefix: "可达",
-    fusionSuffix: "可达鸭",
+    fusionSuffix: "鸭",
   },
   golduck: {
     fusionPrefix: "哥达",
-    fusionSuffix: "哥达鸭",
+    fusionSuffix: "鸭",
   },
   mankey: {
     fusionPrefix: "猴",
-    fusionSuffix: "猴怪",
+    fusionSuffix: "怪",
   },
   primeape: {
-    fusionPrefix: "火暴猴",
-    fusionSuffix: "暴猴",
+    fusionPrefix: "火暴",
+    fusionSuffix: "猴",
   },
   growlithe: {
     fusionPrefix: "卡蒂",
-    fusionSuffix: "蒂狗",
+    fusionSuffix: "狗",
   },
   arcanine: {
     fusionPrefix: "风速",
-    fusionSuffix: "速狗",
+    fusionSuffix: "狗",
   },
   poliwag: {
-    fusionPrefix: "蚊香蝌",
-    fusionSuffix: "香蝌蚪",
+    fusionPrefix: "蚊香",
+    fusionSuffix: "蝌蚪",
   },
   poliwhirl: {
-    fusionPrefix: "蚊香君",
-    fusionSuffix: "香君",
+    fusionPrefix: "蚊香",
+    fusionSuffix: "君",
   },
   poliwrath: {
-    fusionPrefix: "蚊香泳",
+    fusionPrefix: "蚊香",
     fusionSuffix: "泳士",
   },
   abra: {
-    fusionPrefix: "凯西",
-    fusionSuffix: "凯西",
+    fusionPrefix: "凯",
+    fusionSuffix: "西",
   },
   kadabra: {
     fusionPrefix: "勇基",
-    fusionSuffix: "基拉",
+    fusionSuffix: "拉",
   },
   alakazam: {
-    fusionPrefix: "胡地",
+    fusionPrefix: "胡",
     fusionSuffix: "地",
   },
   machop: {
     fusionPrefix: "腕",
-    fusionSuffix: "腕力",
+    fusionSuffix: "力",
   },
   machoke: {
     fusionPrefix: "豪",
-    fusionSuffix: "豪力",
+    fusionSuffix: "力",
   },
   machamp: {
-    fusionPrefix: "怪力",
-    fusionSuffix: "怪力",
+    fusionPrefix: "怪",
+    fusionSuffix: "力",
   },
   bellsprout: {
-    fusionPrefix: "喇叭芽",
-    fusionSuffix: "叭芽",
+    fusionPrefix: "喇叭",
+    fusionSuffix: "芽",
   },
   weepinbell: {
-    fusionPrefix: "口",
-    fusionSuffix: "呆花",
+    fusionPrefix: "口呆",
+    fusionSuffix: "花",
   },
   victreebel: {
     fusionPrefix: "大食",
-    fusionSuffix: "食花",
+    fusionSuffix: "花",
   },
   tentacool: {
     fusionPrefix: "玛瑙",
-    fusionSuffix: "瑙水母",
+    fusionSuffix: "水母",
   },
   tentacruel: {
     fusionPrefix: "毒刺",
-    fusionSuffix: "刺水母",
+    fusionSuffix: "水母",
   },
   geodude: {
     fusionPrefix: "小拳",
-    fusionSuffix: "拳石",
+    fusionSuffix: "石",
   },
   graveler: {
     fusionPrefix: "隆隆石",
-    fusionSuffix: "隆石",
+    fusionSuffix: "石",
   },
   golem: {
-    fusionPrefix: "隆隆岩",
-    fusionSuffix: "隆岩",
+    fusionPrefix: "隆隆",
+    fusionSuffix: "岩",
   },
   ponyta: {
-    fusionPrefix: "小火马",
-    fusionSuffix: "火马",
+    fusionPrefix: "小火",
+    fusionSuffix: "马",
   },
   rapidash: {
-    fusionPrefix: "烈焰马",
-    fusionSuffix: "焰马",
+    fusionPrefix: "烈焰",
+    fusionSuffix: "马",
   },
   slowpoke: {
-    fusionPrefix: "呆呆兽",
-    fusionSuffix: "呆兽",
+    fusionPrefix: "呆呆",
+    fusionSuffix: "兽",
   },
   slowbro: {
     fusionPrefix: "呆壳",
-    fusionSuffix: "壳兽",
+    fusionSuffix: "兽",
   },
   magnemite: {
     fusionPrefix: "小磁",
-    fusionSuffix: "小磁怪",
+    fusionSuffix: "怪",
   },
   magneton: {
-    fusionPrefix: "三合",
-    fusionSuffix: "一磁怪",
+    fusionPrefix: "三合一",
+    fusionSuffix: "磁怪",
   },
   farfetchd: {
     fusionPrefix: "大葱",
-    fusionSuffix: "葱鸭",
+    fusionSuffix: "鸭",
   },
   doduo: {
-    fusionPrefix: "嘟嘟",
-    fusionSuffix: "嘟嘟",
+    fusionPrefix: "嘟",
+    fusionSuffix: "嘟",
   },
   dodrio: {
-    fusionPrefix: "嘟嘟利",
+    fusionPrefix: "嘟嘟",
     fusionSuffix: "利",
   },
   seel: {
-    fusionPrefix: "小海",
-    fusionSuffix: "小海狮",
+    fusionPrefix: "小",
+    fusionSuffix: "海狮",
   },
   dewgong: {
-    fusionPrefix: "白海",
-    fusionSuffix: "白海狮",
+    fusionPrefix: "白",
+    fusionSuffix: "海狮",
   },
   grimer: {
-    fusionPrefix: "臭泥",
-    fusionSuffix: "臭泥",
+    fusionPrefix: "臭",
+    fusionSuffix: "泥",
   },
   muk: {
-    fusionPrefix: "臭臭泥",
-    fusionSuffix: "臭臭泥",
+    fusionPrefix: "臭臭",
+    fusionSuffix: "泥",
   },
   shellder: {
-    fusionPrefix: "大舌贝",
-    fusionSuffix: "舌贝",
+    fusionPrefix: "大舌",
+    fusionSuffix: "贝",
   },
   cloyster: {
     fusionPrefix: "刺甲",
-    fusionSuffix: "甲贝",
+    fusionSuffix: "贝",
   },
   gastly: {
-    fusionPrefix: "鬼斯",
-    fusionSuffix: "鬼斯",
+    fusionPrefix: "鬼",
+    fusionSuffix: "斯",
   },
   haunter: {
-    fusionPrefix: "鬼斯通",
-    fusionSuffix: "通",
+    fusionPrefix: "鬼",
+    fusionSuffix: "斯通",
   },
   gengar: {
     fusionPrefix: "耿",
-    fusionSuffix: "耿鬼",
+    fusionSuffix: "鬼",
   },
   onix: {
     fusionPrefix: "大岩",
-    fusionSuffix: "岩蛇",
+    fusionSuffix: "蛇",
   },
   drowzee: {
-    fusionPrefix: "催",
+    fusionPrefix: "催眠",
     fusionSuffix: "貘",
   },
   hypno: {
-    fusionPrefix: "引",
+    fusionPrefix: "引梦",
     fusionSuffix: "貘人",
   },
   krabby: {
     fusionPrefix: "大钳",
-    fusionSuffix: "大钳蟹",
+    fusionSuffix: "蟹",
   },
   kingler: {
-    fusionPrefix: "巨钳蟹",
-    fusionSuffix: "巨钳蟹",
+    fusionPrefix: "巨钳",
+    fusionSuffix: "蟹",
   },
   voltorb: {
-    fusionPrefix: "霹",
+    fusionPrefix: "霹雳",
     fusionSuffix: "电球",
   },
   electrode: {
-    fusionPrefix: "顽皮雷",
+    fusionPrefix: "顽皮",
     fusionSuffix: "雷弹",
   },
   exeggcute: {
     fusionPrefix: "蛋",
-    fusionSuffix: "蛋蛋",
+    fusionSuffix: "蛋",
   },
   exeggutor: {
-    fusionPrefix: "椰",
+    fusionPrefix: "椰蛋",
     fusionSuffix: "树",
   },
   cubone: {
@@ -418,35 +419,35 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "卡拉",
   },
   marowak: {
-    fusionPrefix: "嘎",
-    fusionSuffix: "啦",
+    fusionPrefix: "嘎啦",
+    fusionSuffix: "嘎啦",
   },
   hitmonlee: {
     fusionPrefix: "飞腿",
-    fusionSuffix: "腿郎",
+    fusionSuffix: "郎",
   },
   hitmonchan: {
     fusionPrefix: "快拳",
-    fusionSuffix: "拳郎",
+    fusionSuffix: "郎",
   },
   lickitung: {
-    fusionPrefix: "大舌头",
-    fusionSuffix: "舌头",
+    fusionPrefix: "大舌",
+    fusionSuffix: "头",
   },
   koffing: {
-    fusionPrefix: "瓦",
-    fusionSuffix: "斯弹",
+    fusionPrefix: "瓦斯",
+    fusionSuffix: "弹",
   },
   weezing: {
     fusionPrefix: "双弹",
     fusionSuffix: "瓦斯",
   },
   rhyhorn: {
-    fusionPrefix: "独角犀",
+    fusionPrefix: "独角",
     fusionSuffix: "犀牛",
   },
   rhydon: {
-    fusionPrefix: "钻",
+    fusionPrefix: "钻角",
     fusionSuffix: "犀兽",
   },
   chansey: {
@@ -454,12 +455,12 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "利蛋",
   },
   tangela: {
-    fusionPrefix: "蔓",
-    fusionSuffix: "藤怪",
+    fusionPrefix: "蔓藤",
+    fusionSuffix: "怪",
   },
   kangaskhan: {
     fusionPrefix: "袋",
-    fusionSuffix: "袋兽",
+    fusionSuffix: "兽",
   },
   horsea: {
     fusionPrefix: "墨",
@@ -467,7 +468,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   seadra: {
     fusionPrefix: "海刺",
-    fusionSuffix: "刺龙",
+    fusionSuffix: "龙",
   },
   goldeen: {
     fusionPrefix: "角",
@@ -475,10 +476,10 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   seaking: {
     fusionPrefix: "金鱼",
-    fusionSuffix: "金鱼王",
+    fusionSuffix: "王",
   },
   staryu: {
-    fusionPrefix: "海星",
+    fusionPrefix: "海",
     fusionSuffix: "星星",
   },
   starmie: {
@@ -487,131 +488,131 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   mr_mime: {
     fusionPrefix: "魔墙",
-    fusionSuffix: "墙人偶",
+    fusionSuffix: "人偶",
   },
   scyther: {
     fusionPrefix: "飞天",
-    fusionSuffix: "天螳螂",
+    fusionSuffix: "螳螂",
   },
   jynx: {
-    fusionPrefix: "迷唇姐",
-    fusionSuffix: "唇姐",
+    fusionPrefix: "迷唇",
+    fusionSuffix: "姐",
   },
   electabuzz: {
-    fusionPrefix: "电击兽",
-    fusionSuffix: "击兽",
+    fusionPrefix: "电击",
+    fusionSuffix: "兽",
   },
   magmar: {
-    fusionPrefix: "鸭嘴火",
+    fusionPrefix: "鸭嘴",
     fusionSuffix: "火兽",
   },
   pinsir: {
     fusionPrefix: "凯罗",
-    fusionSuffix: "凯罗斯",
+    fusionSuffix: "斯",
   },
   tauros: {
     fusionPrefix: "肯",
-    fusionSuffix: "罗",
+    fusionSuffix: "泰罗",
   },
   magikarp: {
-    fusionPrefix: "鲤",
-    fusionSuffix: "鲤鱼王",
+    fusionPrefix: "鲤鱼",
+    fusionSuffix: "王",
   },
   gyarados: {
     fusionPrefix: "暴鲤",
-    fusionSuffix: "鲤龙",
+    fusionSuffix: "龙",
   },
   lapras: {
     fusionPrefix: "拉普",
-    fusionSuffix: "普拉斯",
+    fusionSuffix: "拉斯",
   },
   ditto: {
     fusionPrefix: "百变",
-    fusionSuffix: "变怪",
+    fusionSuffix: "怪",
   },
   eevee: {
-    fusionPrefix: "伊布",
-    fusionSuffix: "伊布",
+    fusionPrefix: "伊",
+    fusionSuffix: "布",
   },
   vaporeon: {
     fusionPrefix: "水伊",
-    fusionSuffix: "水伊布",
+    fusionSuffix: "水布",
   },
   jolteon: {
     fusionPrefix: "雷伊",
-    fusionSuffix: "雷伊布",
+    fusionSuffix: "雷布",
   },
   flareon: {
     fusionPrefix: "火伊",
-    fusionSuffix: "火伊布",
+    fusionSuffix: "火布",
   },
   porygon: {
-    fusionPrefix: "多边兽",
-    fusionSuffix: "边兽",
+    fusionPrefix: "多边",
+    fusionSuffix: "兽",
   },
   omanyte: {
     fusionPrefix: "菊石",
-    fusionSuffix: "菊石兽",
+    fusionSuffix: "兽",
   },
   omastar: {
     fusionPrefix: "多刺",
-    fusionSuffix: "刺菊石兽",
+    fusionSuffix: "菊石兽",
   },
   kabuto: {
-    fusionPrefix: "化石盔",
-    fusionSuffix: "石盔",
+    fusionPrefix: "化石",
+    fusionSuffix: "盔",
   },
   kabutops: {
     fusionPrefix: "镰",
     fusionSuffix: "刀盔",
   },
   aerodactyl: {
-    fusionPrefix: "化石翼",
+    fusionPrefix: "化石",
     fusionSuffix: "翼龙",
   },
   snorlax: {
     fusionPrefix: "卡比",
-    fusionSuffix: "卡比兽",
+    fusionSuffix: "兽",
   },
   articuno: {
-    fusionPrefix: "急",
-    fusionSuffix: "冻鸟",
+    fusionPrefix: "急冻",
+    fusionSuffix: "鸟",
   },
   zapdos: {
     fusionPrefix: "闪电",
-    fusionSuffix: "电鸟",
+    fusionSuffix: "鸟",
   },
   moltres: {
-    fusionPrefix: "火焰鸟",
-    fusionSuffix: "焰鸟",
+    fusionPrefix: "火焰",
+    fusionSuffix: "鸟",
   },
   dratini: {
-    fusionPrefix: "迷你龙",
-    fusionSuffix: "你龙",
+    fusionPrefix: "迷你",
+    fusionSuffix: "龙",
   },
   dragonair: {
     fusionPrefix: "哈克",
-    fusionSuffix: "克龙",
+    fusionSuffix: "龙",
   },
   dragonite: {
-    fusionPrefix: "快龙",
-    fusionSuffix: "快龙",
+    fusionPrefix: "快",
+    fusionSuffix: "龙",
   },
   mewtwo: {
-    fusionPrefix: "超梦",
-    fusionSuffix: "超梦",
+    fusionPrefix: "超",
+    fusionSuffix: "梦",
   },
   mew: {
-    fusionPrefix: "梦幻",
+    fusionPrefix: "梦",
     fusionSuffix: "幻",
   },
   chikorita: {
     fusionPrefix: "菊草",
-    fusionSuffix: "草叶",
+    fusionSuffix: "叶",
   },
   bayleef: {
     fusionPrefix: "月桂",
-    fusionSuffix: "桂叶",
+    fusionSuffix: "叶",
   },
   meganium: {
     fusionPrefix: "大竺",
@@ -619,38 +620,38 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   cyndaquil: {
     fusionPrefix: "火球",
-    fusionSuffix: "球鼠",
+    fusionSuffix: "鼠",
   },
   quilava: {
     fusionPrefix: "火岩",
-    fusionSuffix: "岩鼠",
+    fusionSuffix: "鼠",
   },
   typhlosion: {
-    fusionPrefix: "火暴兽",
-    fusionSuffix: "暴兽",
+    fusionPrefix: "火暴",
+    fusionSuffix: "兽",
   },
   totodile: {
     fusionPrefix: "小锯",
-    fusionSuffix: "锯鳄",
+    fusionSuffix: "鳄",
   },
   croconaw: {
     fusionPrefix: "蓝鳄",
-    fusionSuffix: "蓝鳄",
+    fusionSuffix: "鳄",
   },
   feraligatr: {
     fusionPrefix: "大力",
-    fusionSuffix: "力鳄",
+    fusionSuffix: "鳄",
   },
   sentret: {
     fusionPrefix: "尾",
-    fusionSuffix: "尾立",
+    fusionSuffix: "立",
   },
   furret: {
-    fusionPrefix: "大尾立",
-    fusionSuffix: "大尾立",
+    fusionPrefix: "大",
+    fusionSuffix: "尾立",
   },
   hoothoot: {
-    fusionPrefix: "咕咕",
+    fusionPrefix: "咕",
     fusionSuffix: "咕",
   },
   noctowl: {
@@ -659,259 +660,259 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   ledyba: {
     fusionPrefix: "芭",
-    fusionSuffix: "芭瓢虫",
+    fusionSuffix: "瓢虫",
   },
   ledian: {
     fusionPrefix: "安",
-    fusionSuffix: "安瓢虫",
+    fusionSuffix: "瓢虫",
   },
   spinarak: {
     fusionPrefix: "圆丝",
-    fusionSuffix: "丝蛛",
+    fusionSuffix: "蛛",
   },
   ariados: {
     fusionPrefix: "阿利",
     fusionSuffix: "多斯",
   },
   crobat: {
-    fusionPrefix: "叉",
-    fusionSuffix: "字蝠",
+    fusionPrefix: "叉字",
+    fusionSuffix: "蝠",
   },
   chinchou: {
     fusionPrefix: "灯笼",
-    fusionSuffix: "笼鱼",
+    fusionSuffix: "鱼",
   },
   lanturn: {
     fusionPrefix: "电灯",
-    fusionSuffix: "灯怪",
+    fusionSuffix: "怪",
   },
   pichu: {
-    fusionPrefix: "皮丘",
-    fusionSuffix: "皮丘",
+    fusionPrefix: "皮",
+    fusionSuffix: "丘",
   },
   cleffa: {
-    fusionPrefix: "皮宝",
-    fusionSuffix: "皮宝宝",
+    fusionPrefix: "皮",
+    fusionSuffix: "宝宝",
   },
   igglybuff: {
-    fusionPrefix: "宝宝丁",
-    fusionSuffix: "宝丁",
+    fusionPrefix: "宝宝",
+    fusionSuffix: "丁",
   },
   togepi: {
-    fusionPrefix: "波克比",
-    fusionSuffix: "克比",
+    fusionPrefix: "波克",
+    fusionSuffix: "比",
   },
   togetic: {
-    fusionPrefix: "波克基古",
+    fusionPrefix: "波克",
     fusionSuffix: "基古",
   },
   natu: {
-    fusionPrefix: "天然雀",
-    fusionSuffix: "然雀",
+    fusionPrefix: "天然",
+    fusionSuffix: "雀",
   },
   xatu: {
-    fusionPrefix: "天然鸟",
-    fusionSuffix: "然鸟",
+    fusionPrefix: "天然",
+    fusionSuffix: "鸟",
   },
   mareep: {
-    fusionPrefix: "咩",
-    fusionSuffix: "利羊",
+    fusionPrefix: "咩利",
+    fusionSuffix: "羊",
   },
   flaaffy: {
-    fusionPrefix: "茸",
-    fusionSuffix: "茸羊",
+    fusionPrefix: "茸茸",
+    fusionSuffix: "羊",
   },
   ampharos: {
-    fusionPrefix: "电龙",
-    fusionSuffix: "电龙",
+    fusionPrefix: "电",
+    fusionSuffix: "龙",
   },
   bellossom: {
     fusionPrefix: "美丽",
-    fusionSuffix: "丽花",
+    fusionSuffix: "花",
   },
   marill: {
-    fusionPrefix: "玛力露",
+    fusionPrefix: "玛力",
     fusionSuffix: "露",
   },
   azumarill: {
-    fusionPrefix: "玛力露丽",
+    fusionPrefix: "玛力",
     fusionSuffix: "露丽",
   },
   sudowoodo: {
     fusionPrefix: "树才",
-    fusionSuffix: "树才怪",
+    fusionSuffix: "怪",
   },
   politoed: {
-    fusionPrefix: "蚊香蛙",
+    fusionPrefix: "蚊香",
     fusionSuffix: "蛙皇",
   },
   hoppip: {
-    fusionPrefix: "毽子草",
-    fusionSuffix: "子草",
+    fusionPrefix: "毽子",
+    fusionSuffix: "草",
   },
   skiploom: {
-    fusionPrefix: "毽子花",
-    fusionSuffix: "子花",
+    fusionPrefix: "毽子",
+    fusionSuffix: "花",
   },
   jumpluff: {
-    fusionPrefix: "毽子棉",
-    fusionSuffix: "子棉",
+    fusionPrefix: "毽子",
+    fusionSuffix: "棉",
   },
   aipom: {
-    fusionPrefix: "长尾怪",
-    fusionSuffix: "长尾怪手",
+    fusionPrefix: "长尾",
+    fusionSuffix: "怪手",
   },
   sunkern: {
-    fusionPrefix: "向日种",
-    fusionSuffix: "日种子",
+    fusionPrefix: "向日",
+    fusionSuffix: "种子",
   },
   sunflora: {
-    fusionPrefix: "向日花",
+    fusionPrefix: "向日",
     fusionSuffix: "花怪",
   },
   yanma: {
-    fusionPrefix: "蜻",
-    fusionSuffix: "蜻蜻蜓",
+    fusionPrefix: "蜻蜻",
+    fusionSuffix: "蜓",
   },
   wooper: {
-    fusionPrefix: "乌波",
-    fusionSuffix: "乌波",
+    fusionPrefix: "乌",
+    fusionSuffix: "波",
   },
   quagsire: {
-    fusionPrefix: "沼王",
-    fusionSuffix: "沼王",
+    fusionPrefix: "沼",
+    fusionSuffix: "王",
   },
   espeon: {
-    fusionPrefix: "太阳伊",
-    fusionSuffix: "阳伊布",
+    fusionPrefix: "太阳",
+    fusionSuffix: "日布",
   },
   umbreon: {
     fusionPrefix: "月亮",
-    fusionSuffix: "亮伊布",
+    fusionSuffix: "月布",
   },
   murkrow: {
     fusionPrefix: "黑暗",
-    fusionSuffix: "暗鸦",
+    fusionSuffix: "鸦",
   },
   slowking: {
-    fusionPrefix: "呆呆王",
-    fusionSuffix: "呆王",
+    fusionPrefix: "呆呆",
+    fusionSuffix: "王",
   },
   misdreavus: {
-    fusionPrefix: "梦妖",
-    fusionSuffix: "梦妖",
+    fusionPrefix: "梦",
+    fusionSuffix: "妖",
   },
   unown: {
-    fusionPrefix: "未",
-    fusionSuffix: "腾",
+    fusionPrefix: "未知",
+    fusionSuffix: "图腾",
   },
   wobbuffet: {
-    fusionPrefix: "果",
-    fusionSuffix: "然翁",
+    fusionPrefix: "果然",
+    fusionSuffix: "翁",
   },
   girafarig: {
-    fusionPrefix: "麒",
-    fusionSuffix: "麟奇",
+    fusionPrefix: "麒麟",
+    fusionSuffix: "奇",
   },
   pineco: {
-    fusionPrefix: "榛",
-    fusionSuffix: "果球",
+    fusionPrefix: "榛果",
+    fusionSuffix: "球",
   },
   forretress: {
-    fusionPrefix: "佛",
+    fusionPrefix: "佛烈",
     fusionSuffix: "托斯",
   },
   dunsparce: {
-    fusionPrefix: "土龙弟",
+    fusionPrefix: "土龙",
     fusionSuffix: "弟弟",
   },
   gligar: {
-    fusionPrefix: "天蝎",
-    fusionSuffix: "天蝎",
+    fusionPrefix: "天",
+    fusionSuffix: "蝎",
   },
   steelix: {
     fusionPrefix: "大钢",
     fusionSuffix: "钢蛇",
   },
   snubbull: {
-    fusionPrefix: "布鲁",
-    fusionSuffix: "布鲁",
+    fusionPrefix: "布",
+    fusionSuffix: "鲁",
   },
   granbull: {
-    fusionPrefix: "布鲁皇",
-    fusionSuffix: "鲁皇",
+    fusionPrefix: "布鲁",
+    fusionSuffix: "皇",
   },
   qwilfish: {
     fusionPrefix: "千针",
-    fusionSuffix: "千针鱼",
+    fusionSuffix: "针鱼",
   },
   scizor: {
-    fusionPrefix: "巨钳螳",
+    fusionPrefix: "巨钳",
     fusionSuffix: "钳螳螂",
   },
   shuckle: {
     fusionPrefix: "壶",
-    fusionSuffix: "壶壶",
+    fusionSuffix: "壶",
   },
   heracross: {
-    fusionPrefix: "赫",
+    fusionPrefix: "赫拉",
     fusionSuffix: "克罗斯",
   },
   sneasel: {
     fusionPrefix: "狃",
-    fusionSuffix: "狃拉",
+    fusionSuffix: "拉",
   },
   teddiursa: {
-    fusionPrefix: "熊宝",
-    fusionSuffix: "熊宝宝",
+    fusionPrefix: "熊",
+    fusionSuffix: "宝宝",
   },
   ursaring: {
-    fusionPrefix: "圈",
-    fusionSuffix: "圈熊",
+    fusionPrefix: "圈圈",
+    fusionSuffix: "熊",
   },
   slugma: {
-    fusionPrefix: "熔岩虫",
+    fusionPrefix: "熔岩",
     fusionSuffix: "岩虫",
   },
   magcargo: {
-    fusionPrefix: "熔岩蜗",
-    fusionSuffix: "岩蜗牛",
+    fusionPrefix: "熔岩",
+    fusionSuffix: "蜗牛",
   },
   swinub: {
     fusionPrefix: "小山",
     fusionSuffix: "山猪",
   },
   piloswine: {
-    fusionPrefix: "长毛猪",
+    fusionPrefix: "长毛",
     fusionSuffix: "毛猪",
   },
   corsola: {
-    fusionPrefix: "太阳珊",
-    fusionSuffix: "阳珊瑚",
+    fusionPrefix: "太阳",
+    fusionSuffix: "珊瑚",
   },
   remoraid: {
     fusionPrefix: "铁炮",
     fusionSuffix: "炮鱼",
   },
   octillery: {
-    fusionPrefix: "章",
+    fusionPrefix: "章鱼",
     fusionSuffix: "桶",
   },
   delibird: {
-    fusionPrefix: "信",
-    fusionSuffix: "使鸟",
+    fusionPrefix: "信使",
+    fusionSuffix: "鸟",
   },
   mantine: {
     fusionPrefix: "巨翅",
-    fusionSuffix: "翅飞鱼",
+    fusionSuffix: "飞鱼",
   },
   skarmory: {
-    fusionPrefix: "盔",
+    fusionPrefix: "盔甲",
     fusionSuffix: "甲鸟",
   },
   houndour: {
-    fusionPrefix: "戴",
-    fusionSuffix: "鲁比",
+    fusionPrefix: "戴鲁",
+    fusionSuffix: "比",
   },
   houndoom: {
     fusionPrefix: "黑鲁",
@@ -927,115 +928,115 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   donphan: {
     fusionPrefix: "顿",
-    fusionSuffix: "顿甲",
+    fusionSuffix: "甲",
   },
   porygon2: {
-    fusionPrefix: "多边兽2",
+    fusionPrefix: "多边兽",
     fusionSuffix: "2型",
   },
   stantler: {
-    fusionPrefix: "惊",
-    fusionSuffix: "惊角鹿",
+    fusionPrefix: "惊角",
+    fusionSuffix: "角鹿",
   },
   smeargle: {
-    fusionPrefix: "图",
-    fusionSuffix: "图犬",
+    fusionPrefix: "图图",
+    fusionSuffix: "犬",
   },
   tyrogue: {
     fusionPrefix: "无畏",
-    fusionSuffix: "畏小子",
+    fusionSuffix: "小子",
   },
   hitmontop: {
     fusionPrefix: "战舞",
     fusionSuffix: "舞郎",
   },
   smoochum: {
-    fusionPrefix: "迷唇娃",
+    fusionPrefix: "迷唇",
     fusionSuffix: "唇娃",
   },
   elekid: {
-    fusionPrefix: "电击怪",
+    fusionPrefix: "电击",
     fusionSuffix: "击怪",
   },
   magby: {
-    fusionPrefix: "鸭嘴宝",
-    fusionSuffix: "嘴宝宝",
+    fusionPrefix: "鸭嘴",
+    fusionSuffix: "宝宝",
   },
   miltank: {
     fusionPrefix: "大奶",
     fusionSuffix: "罐",
   },
   blissey: {
-    fusionPrefix: "幸",
-    fusionSuffix: "幸福蛋",
+    fusionPrefix: "幸福",
+    fusionSuffix: "蛋",
   },
   raikou: {
-    fusionPrefix: "雷公",
+    fusionPrefix: "雷",
     fusionSuffix: "公",
   },
   entei: {
-    fusionPrefix: "炎帝",
+    fusionPrefix: "炎",
     fusionSuffix: "帝",
   },
   suicune: {
-    fusionPrefix: "水君",
-    fusionSuffix: "水君",
+    fusionPrefix: "水",
+    fusionSuffix: "君",
   },
   larvitar: {
     fusionPrefix: "幼基",
-    fusionSuffix: "幼基拉斯",
+    fusionSuffix: "拉斯",
   },
   pupitar: {
     fusionPrefix: "沙基",
-    fusionSuffix: "沙基拉斯",
+    fusionSuffix: "拉斯",
   },
   tyranitar: {
-    fusionPrefix: "班",
-    fusionSuffix: "班基拉斯",
+    fusionPrefix: "班基",
+    fusionSuffix: "拉斯",
   },
   lugia: {
     fusionPrefix: "洛奇",
-    fusionSuffix: "洛奇亚",
+    fusionSuffix: "奇亚",
   },
   ho_oh: {
     fusionPrefix: "凤",
-    fusionSuffix: "凤王",
+    fusionSuffix: "王",
   },
   celebi: {
     fusionPrefix: "时",
     fusionSuffix: "拉比",
   },
   treecko: {
-    fusionPrefix: "木守",
-    fusionSuffix: "宫",
+    fusionPrefix: "木",
+    fusionSuffix: "守宫",
   },
   grovyle: {
-    fusionPrefix: "森",
-    fusionSuffix: "蜴",
+    fusionPrefix: "森林",
+    fusionSuffix: "蜥蜴",
   },
   sceptile: {
-    fusionPrefix: "蜥",
-    fusionSuffix: "蜴王",
+    fusionPrefix: "蜥蜴",
+    fusionSuffix: "王",
   },
   torchic: {
     fusionPrefix: "火稚",
     fusionSuffix: "稚鸡",
   },
   combusken: {
-    fusionPrefix: "力",
+    fusionPrefix: "力壮",
     fusionSuffix: "壮鸡",
   },
   blaziken: {
-    fusionPrefix: "火焰鸡",
+    fusionPrefix: "火焰",
     fusionSuffix: "焰鸡",
   },
   mudkip: {
     fusionPrefix: "水跃",
-    fusionSuffix: "水跃鱼",
+    fusionSuffix: "跃鱼",
   },
   marshtomp: {
     fusionPrefix: "沼跃",
-    fusionSuffix: "沼跃鱼",
+    fusionSuffix: "跃鱼",
   },
   swampert: {
     fusionPrefix: "巨沼",
@@ -1043,18 +1044,18 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   poochyena: {
     fusionPrefix: "土狼",
-    fusionSuffix: "土狼犬",
+    fusionSuffix: "狼犬",
   },
   mightyena: {
     fusionPrefix: "大狼",
-    fusionSuffix: "大狼犬",
+    fusionSuffix: "狼犬",
   },
   zigzagoon: {
-    fusionPrefix: "蛇",
+    fusionPrefix: "蛇纹",
     fusionSuffix: "纹熊",
   },
   linoone: {
-    fusionPrefix: "直",
+    fusionPrefix: "直冲",
     fusionSuffix: "冲熊",
   },
   wurmple: {
@@ -1062,15 +1063,15 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "尾虫",
   },
   silcoon: {
-    fusionPrefix: "甲壳茧",
+    fusionPrefix: "甲壳",
     fusionSuffix: "壳茧",
   },
   beautifly: {
-    fusionPrefix: "狩",
+    fusionPrefix: "狩猎",
     fusionSuffix: "凤蝶",
   },
   cascoon: {
-    fusionPrefix: "盾甲茧",
+    fusionPrefix: "盾甲",
     fusionSuffix: "甲茧",
   },
   dustox: {
@@ -1079,19 +1080,19 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   lotad: {
     fusionPrefix: "莲叶",
-    fusionSuffix: "叶童子",
+    fusionSuffix: "童子",
   },
   lombre: {
     fusionPrefix: "莲帽",
-    fusionSuffix: "帽小童",
+    fusionSuffix: "小童",
   },
   ludicolo: {
-    fusionPrefix: "乐",
+    fusionPrefix: "乐天",
     fusionSuffix: "河童",
   },
   seedot: {
-    fusionPrefix: "橡",
-    fusionSuffix: "果",
+    fusionPrefix: " 橡实",
+    fusionSuffix: "实果",
   },
   nuzleaf: {
     fusionPrefix: "长鼻",
@@ -1102,11 +1103,11 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "天狗",
   },
   taillow: {
-    fusionPrefix: "傲",
-    fusionSuffix: "骨燕",
+    fusionPrefix: "傲骨",
+    fusionSuffix: "燕",
   },
   swellow: {
-    fusionPrefix: "大王燕",
+    fusionPrefix: "大王",
     fusionSuffix: "王燕",
   },
   wingull: {
@@ -1114,48 +1115,48 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "翅鸥",
   },
   pelipper: {
-    fusionPrefix: "大嘴鸥",
-    fusionSuffix: "嘴鸥",
+    fusionPrefix: "大嘴",
+    fusionSuffix: "鸥",
   },
   ralts: {
     fusionPrefix: "拉鲁",
-    fusionSuffix: "丝",
+    fusionSuffix: "拉丝",
   },
   kirlia: {
     fusionPrefix: "奇鲁",
-    fusionSuffix: "安",
+    fusionSuffix: "莉安",
   },
   gardevoir: {
     fusionPrefix: "沙奈",
-    fusionSuffix: "奈朵",
+    fusionSuffix: "朵",
   },
   surskit: {
-    fusionPrefix: "溜",
+    fusionPrefix: "溜溜",
     fusionSuffix: "糖球",
   },
   masquerain: {
-    fusionPrefix: "雨",
+    fusionPrefix: "雨翅",
     fusionSuffix: "翅蛾",
   },
   shroomish: {
-    fusionPrefix: "蘑",
+    fusionPrefix: "蘑蘑",
     fusionSuffix: "蘑菇",
   },
   breloom: {
-    fusionPrefix: "斗",
+    fusionPrefix: "斗笠",
     fusionSuffix: "笠菇",
   },
   slakoth: {
-    fusionPrefix: "懒",
-    fusionSuffix: "人獭",
+    fusionPrefix: "懒人",
+    fusionSuffix: "獭",
   },
   vigoroth: {
-    fusionPrefix: "过",
-    fusionSuffix: "动猿",
+    fusionPrefix: "过动",
+    fusionSuffix: "猿",
   },
   slaking: {
-    fusionPrefix: "请",
-    fusionSuffix: "假王",
+    fusionPrefix: "请假",
+    fusionSuffix: "王",
   },
   nincada: {
     fusionPrefix: "土居",
@@ -1163,15 +1164,15 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   ninjask: {
     fusionPrefix: "铁面",
-    fusionSuffix: "面忍者",
+    fusionSuffix: "忍者",
   },
   shedinja: {
-    fusionPrefix: "脱",
-    fusionSuffix: "壳忍者",
+    fusionPrefix: "脱壳",
+    fusionSuffix: "忍者",
   },
   whismur: {
     fusionPrefix: "咕妞",
-    fusionSuffix: "妞",
+    fusionSuffix: "妞妞",
   },
   loudred: {
     fusionPrefix: "吼爆",
@@ -1182,48 +1183,48 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "音怪",
   },
   makuhita: {
-    fusionPrefix: "幕",
-    fusionSuffix: "下力士",
+    fusionPrefix: "幕下",
+    fusionSuffix: "力士",
   },
   hariyama: {
     fusionPrefix: "铁掌",
-    fusionSuffix: "掌力士",
+    fusionSuffix: "力士",
   },
   azurill: {
     fusionPrefix: "露力",
     fusionSuffix: "力丽",
   },
   nosepass: {
-    fusionPrefix: "朝",
-    fusionSuffix: "朝北鼻",
+    fusionPrefix: "朝北",
+    fusionSuffix: "鼻",
   },
   skitty: {
     fusionPrefix: "向尾",
-    fusionSuffix: "尾喵",
+    fusionSuffix: "喵",
   },
   delcatty: {
-    fusionPrefix: "优",
-    fusionSuffix: "雅猫",
+    fusionPrefix: "优雅",
+    fusionSuffix: "猫",
   },
   sableye: {
     fusionPrefix: "勾魂",
     fusionSuffix: "眼",
   },
   mawile: {
-    fusionPrefix: "大嘴娃",
-    fusionSuffix: "嘴娃",
+    fusionPrefix: "大嘴",
+    fusionSuffix: "娃",
   },
   aron: {
     fusionPrefix: "可可",
-    fusionSuffix: "可可多拉",
+    fusionSuffix: "多拉",
   },
   lairon: {
-    fusionPrefix: "可多",
-    fusionSuffix: "可多拉",
+    fusionPrefix: "可",
+    fusionSuffix: "多拉",
   },
   aggron: {
-    fusionPrefix: "波士",
-    fusionSuffix: "士可多拉",
+    fusionPrefix: "波士可",
+    fusionSuffix: "多拉",
   },
   meditite: {
     fusionPrefix: "玛沙",
@@ -1231,23 +1232,23 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   medicham: {
     fusionPrefix: "恰",
-    fusionSuffix: "恰雷姆",
+    fusionSuffix: "雷姆",
   },
   electrike: {
-    fusionPrefix: "落",
+    fusionPrefix: "落雷",
     fusionSuffix: "雷兽",
   },
   manectric: {
-    fusionPrefix: "雷电兽",
+    fusionPrefix: "雷电",
     fusionSuffix: "电兽",
   },
   plusle: {
-    fusionPrefix: "正",
-    fusionSuffix: "正电拍拍",
+    fusionPrefix: "正电",
+    fusionSuffix: "拍拍",
   },
   minun: {
-    fusionPrefix: "负",
-    fusionSuffix: "负电拍拍",
+    fusionPrefix: "负电",
+    fusionSuffix: "拍拍",
   },
   volbeat: {
     fusionPrefix: "电萤",
@@ -1255,19 +1256,19 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   illumise: {
     fusionPrefix: "甜甜",
-    fusionSuffix: "萤",
+    fusionSuffix: "甜萤",
   },
   roselia: {
     fusionPrefix: "毒蔷",
-    fusionSuffix: "薇",
+    fusionSuffix: "蔷薇",
   },
   gulpin: {
     fusionPrefix: "溶",
-    fusionSuffix: "溶食兽",
+    fusionSuffix: "食兽",
   },
   swalot: {
     fusionPrefix: "吞",
-    fusionSuffix: "吞食兽",
+    fusionSuffix: "食兽",
   },
   carvanha: {
     fusionPrefix: "利牙",
@@ -1286,27 +1287,27 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "鲸王",
   },
   numel: {
-    fusionPrefix: "呆火驼",
-    fusionSuffix: "呆火驼",
+    fusionPrefix: "呆火",
+    fusionSuffix: "驼",
   },
   camerupt: {
-    fusionPrefix: "喷火驼",
-    fusionSuffix: "喷火驼",
+    fusionPrefix: "喷火",
+    fusionSuffix: "驼",
   },
   torkoal: {
-    fusionPrefix: "煤",
-    fusionSuffix: "炭龟",
+    fusionPrefix: "煤炭",
+    fusionSuffix: "龟",
   },
   spoink: {
-    fusionPrefix: "跳",
-    fusionSuffix: "跳猪",
+    fusionPrefix: "跳跳",
+    fusionSuffix: "猪",
   },
   grumpig: {
     fusionPrefix: "噗噗",
-    fusionSuffix: "噗猪",
+    fusionSuffix: "猪",
   },
   spinda: {
-    fusionPrefix: "晃",
+    fusionPrefix: "晃晃",
     fusionSuffix: "斑",
   },
   trapinch: {
@@ -1319,51 +1320,51 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   flygon: {
     fusionPrefix: "沙漠",
-    fusionSuffix: "漠蜻蜓",
+    fusionSuffix: "蜻蜓",
   },
   cacnea: {
     fusionPrefix: "刺球",
-    fusionSuffix: "球仙人掌",
+    fusionSuffix: "仙人掌",
   },
   cacturne: {
     fusionPrefix: "梦歌",
-    fusionSuffix: "歌仙人掌",
+    fusionSuffix: "仙人掌",
   },
   swablu: {
     fusionPrefix: "青绵",
     fusionSuffix: "绵鸟",
   },
   altaria: {
-    fusionPrefix: "七",
+    fusionPrefix: "七夕",
     fusionSuffix: "青鸟",
   },
   zangoose: {
-    fusionPrefix: "猫鼬斩",
+    fusionPrefix: "猫鼬",
     fusionSuffix: "斩",
   },
   seviper: {
-    fusionPrefix: "饭",
-    fusionSuffix: "匙蛇",
+    fusionPrefix: "饭匙",
+    fusionSuffix: "蛇",
   },
   lunatone: {
-    fusionPrefix: "月石",
-    fusionSuffix: "月石",
+    fusionPrefix: "月",
+    fusionSuffix: "石",
   },
   solrock: {
-    fusionPrefix: "太阳岩",
-    fusionSuffix: "阳岩",
+    fusionPrefix: "太阳",
+    fusionSuffix: "岩",
   },
   barboach: {
     fusionPrefix: "泥泥",
     fusionSuffix: "鳅",
   },
   whiscash: {
-    fusionPrefix: "鲶",
-    fusionSuffix: "鲶鱼王",
+    fusionPrefix: "鲶鱼",
+    fusionSuffix: "鲶王",
   },
   corphish: {
     fusionPrefix: "龙虾",
-    fusionSuffix: "虾小兵",
+    fusionSuffix: "小兵",
   },
   crawdaunt: {
     fusionPrefix: "铁螯",
@@ -1374,55 +1375,55 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "秤偶",
   },
   claydol: {
-    fusionPrefix: "念",
+    fusionPrefix: "念力",
     fusionSuffix: "土偶",
   },
   lileep: {
-    fusionPrefix: "触",
-    fusionSuffix: "手百合",
+    fusionPrefix: "触手",
+    fusionSuffix: "百合",
   },
   cradily: {
-    fusionPrefix: "摇",
-    fusionSuffix: "篮百合",
+    fusionPrefix: "摇篮",
+    fusionSuffix: "百合",
   },
   anorith: {
-    fusionPrefix: "太古羽",
+    fusionPrefix: "太古",
     fusionSuffix: "羽虫",
   },
   armaldo: {
-    fusionPrefix: "太古盔",
+    fusionPrefix: "太古",
     fusionSuffix: "盔甲",
   },
   feebas: {
-    fusionPrefix: "丑",
+    fusionPrefix: "丑丑",
     fusionSuffix: "丑鱼",
   },
   milotic: {
-    fusionPrefix: "美纳",
+    fusionPrefix: "美",
     fusionSuffix: "纳斯",
   },
   castform: {
     fusionPrefix: "飘浮",
-    fusionSuffix: "泡",
+    fusionSuffix: "泡泡",
   },
   kecleon: {
     fusionPrefix: "变隐",
     fusionSuffix: "隐龙",
   },
   shuppet: {
-    fusionPrefix: "怨",
-    fusionSuffix: "影娃娃",
+    fusionPrefix: "怨影",
+    fusionSuffix: "娃娃",
   },
   banette: {
-    fusionPrefix: "诅",
-    fusionSuffix: "咒娃娃",
+    fusionPrefix: "诅咒",
+    fusionSuffix: "娃娃",
   },
   duskull: {
     fusionPrefix: "夜巡",
-    fusionSuffix: "巡灵",
+    fusionSuffix: "灵",
   },
   dusclops: {
-    fusionPrefix: "彷",
+    fusionPrefix: "仿徨",
     fusionSuffix: "夜灵",
   },
   tropius: {
@@ -1439,15 +1440,15 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   wynaut: {
     fusionPrefix: "小果",
-    fusionSuffix: "然",
+    fusionSuffix: "果然",
   },
   snorunt: {
-    fusionPrefix: "雪童",
-    fusionSuffix: "雪童子",
+    fusionPrefix: "雪",
+    fusionSuffix: "童子",
   },
   glalie: {
-    fusionPrefix: "冰鬼",
-    fusionSuffix: "护",
+    fusionPrefix: "冰",
+    fusionSuffix: "鬼护",
   },
   spheal: {
     fusionPrefix: "海豹",
@@ -1458,19 +1459,19 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "魔狮",
   },
   walrein: {
-    fusionPrefix: "帝牙海",
-    fusionSuffix: "牙海狮",
+    fusionPrefix: "帝牙",
+    fusionSuffix: "海狮",
   },
   clamperl: {
-    fusionPrefix: "珍",
-    fusionSuffix: "珠贝",
+    fusionPrefix: "珍珠",
+    fusionSuffix: "贝",
   },
   huntail: {
-    fusionPrefix: "猎",
+    fusionPrefix: "猎斑",
     fusionSuffix: "斑鱼",
   },
   gorebyss: {
-    fusionPrefix: "樱花鱼",
+    fusionPrefix: "樱花",
     fusionSuffix: "花鱼",
   },
   relicanth: {
@@ -1486,7 +1487,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "贝龙",
   },
   shelgon: {
-    fusionPrefix: "甲壳龙",
+    fusionPrefix: "甲壳",
     fusionSuffix: "壳龙",
   },
   salamence: {
@@ -1494,35 +1495,35 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "飞龙",
   },
   beldum: {
-    fusionPrefix: "铁哑",
-    fusionSuffix: "铁哑铃",
+    fusionPrefix: "铁",
+    fusionSuffix: "哑铃",
   },
   metang: {
     fusionPrefix: "金属",
-    fusionSuffix: "属怪",
+    fusionSuffix: "怪",
   },
   metagross: {
     fusionPrefix: "巨金",
     fusionSuffix: "金怪",
   },
   regirock: {
-    fusionPrefix: "雷吉洛",
+    fusionPrefix: "雷吉",
     fusionSuffix: "洛克",
   },
   regice: {
-    fusionPrefix: "雷吉艾斯",
+    fusionPrefix: "雷吉",
     fusionSuffix: "艾斯",
   },
   registeel: {
-    fusionPrefix: "雷吉斯",
-    fusionSuffix: "奇鲁",
+    fusionPrefix: "雷吉",
+    fusionSuffix: "斯奇鲁",
   },
   latias: {
-    fusionPrefix: "拉帝亚",
-    fusionSuffix: "帝亚斯",
+    fusionPrefix: "拉帝",
+    fusionSuffix: "亚斯",
   },
   latios: {
-    fusionPrefix: "拉帝欧",
+    fusionPrefix: "拉帝",
     fusionSuffix: "欧斯",
   },
   kyogre: {
@@ -1530,7 +1531,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "欧卡",
   },
   groudon: {
-    fusionPrefix: "固",
+    fusionPrefix: "固拉",
     fusionSuffix: "拉多",
   },
   rayquaza: {
@@ -1543,10 +1544,10 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   deoxys: {
     fusionPrefix: "代欧",
-    fusionSuffix: "希斯",
+    fusionSuffix: "奇希斯",
   },
   turtwig: {
-    fusionPrefix: "草",
+    fusionPrefix: "草苗",
     fusionSuffix: "苗龟",
   },
   grotle: {
@@ -1559,15 +1560,15 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   chimchar: {
     fusionPrefix: "小火焰",
-    fusionSuffix: "火焰猴",
+    fusionSuffix: "焰猴",
   },
   monferno: {
     fusionPrefix: "猛火",
     fusionSuffix: "火猴",
   },
   infernape: {
-    fusionPrefix: "烈焰猴",
-    fusionSuffix: "烈焰猴",
+    fusionPrefix: "烈焰",
+    fusionSuffix: "焰猴",
   },
   piplup: {
     fusionPrefix: "波加",
@@ -1582,15 +1583,15 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "拿波",
   },
   starly: {
-    fusionPrefix: "姆克儿",
+    fusionPrefix: "姆克",
     fusionSuffix: "克儿",
   },
   staravia: {
-    fusionPrefix: "姆克鸟",
+    fusionPrefix: "姆克",
     fusionSuffix: "克鸟",
   },
   staraptor: {
-    fusionPrefix: "姆克鹰",
+    fusionPrefix: "姆克",
     fusionSuffix: "克鹰",
   },
   bidoof: {
@@ -1598,7 +1599,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "牙狸",
   },
   bibarel: {
-    fusionPrefix: "大尾狸",
+    fusionPrefix: "大尾",
     fusionSuffix: "尾狸",
   },
   kricketot: {
@@ -1607,27 +1608,27 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   kricketune: {
     fusionPrefix: "音箱",
-    fusionSuffix: "箱蟀",
+    fusionSuffix: "蟀侠",
   },
   shinx: {
     fusionPrefix: "小猫",
     fusionSuffix: "猫怪",
   },
   luxio: {
-    fusionPrefix: "勒",
+    fusionPrefix: "勒克",
     fusionSuffix: "克猫",
   },
   luxray: {
-    fusionPrefix: "伦",
+    fusionPrefix: "伦琴",
     fusionSuffix: "琴猫",
   },
   budew: {
-    fusionPrefix: "含",
+    fusionPrefix: "含羞",
     fusionSuffix: "苞",
   },
   roserade: {
-    fusionPrefix: "罗",
-    fusionSuffix: "丝雷朵",
+    fusionPrefix: "罗丝",
+    fusionSuffix: "雷朵",
   },
   cranidos: {
     fusionPrefix: "头盖",
@@ -1638,23 +1639,23 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "槌龙",
   },
   shieldon: {
-    fusionPrefix: "盾甲龙",
-    fusionSuffix: "盾甲龙",
+    fusionPrefix: "盾甲",
+    fusionSuffix: "甲龙",
   },
   bastiodon: {
-    fusionPrefix: "护",
+    fusionPrefix: "护城",
     fusionSuffix: "城龙",
   },
   burmy: {
-    fusionPrefix: "结草儿",
+    fusionPrefix: "结草",
     fusionSuffix: "草儿",
   },
   wormadam: {
-    fusionPrefix: "结草贵",
-    fusionSuffix: "妇",
+    fusionPrefix: "结草",
+    fusionSuffix: "贵妇",
   },
   mothim: {
-    fusionPrefix: "绅",
+    fusionPrefix: "绅士",
     fusionSuffix: "士蛾",
   },
   combee: {
@@ -1667,22 +1668,22 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   pachirisu: {
     fusionPrefix: "帕奇",
-    fusionSuffix: "兹",
+    fusionSuffix: "利兹",
   },
   buizel: {
-    fusionPrefix: "泳",
-    fusionSuffix: "圈鼬",
+    fusionPrefix: "泳圈",
+    fusionSuffix: "鼬",
   },
   floatzel: {
-    fusionPrefix: "浮",
-    fusionSuffix: "潜鼬",
+    fusionPrefix: "浮潜",
+    fusionSuffix: "鼬",
   },
   cherubi: {
-    fusionPrefix: "樱花宝",
+    fusionPrefix: "樱花",
     fusionSuffix: "花宝",
   },
   cherrim: {
-    fusionPrefix: "樱花儿",
+    fusionPrefix: "樱花",
     fusionSuffix: "花儿",
   },
   shellos: {
@@ -1695,18 +1696,18 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   ambipom: {
     fusionPrefix: "双尾",
-    fusionSuffix: "双尾怪手",
+    fusionSuffix: "怪手",
   },
   drifloon: {
-    fusionPrefix: "飘飘球",
-    fusionSuffix: "飘球",
+    fusionPrefix: "飘飘",
+    fusionSuffix: "球",
   },
   drifblim: {
-    fusionPrefix: "随",
-    fusionSuffix: "风球",
+    fusionPrefix: "随风",
+    fusionSuffix: "球",
   },
   buneary: {
-    fusionPrefix: "卷",
+    fusionPrefix: "卷卷",
     fusionSuffix: "耳",
   },
   lopunny: {
@@ -1714,7 +1715,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "耳兔",
   },
   mismagius: {
-    fusionPrefix: "梦妖魔",
+    fusionPrefix: "梦妖",
     fusionSuffix: "妖魔",
   },
   honchkrow: {
@@ -1722,23 +1723,23 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "头头",
   },
   glameow: {
-    fusionPrefix: "魅",
-    fusionSuffix: "力喵",
+    fusionPrefix: "魅力",
+    fusionSuffix: "喵",
   },
   purugly: {
-    fusionPrefix: "东",
-    fusionSuffix: "施喵",
+    fusionPrefix: "东施",
+    fusionSuffix: "喵",
   },
   chingling: {
-    fusionPrefix: "铃",
-    fusionSuffix: "铛响",
+    fusionPrefix: "铃铛",
+    fusionSuffix: "响",
   },
   stunky: {
     fusionPrefix: "臭鼬",
     fusionSuffix: "噗",
   },
   skuntank: {
-    fusionPrefix: "坦",
+    fusionPrefix: "坦克",
     fusionSuffix: "臭鼬",
   },
   bronzor: {
@@ -1751,7 +1752,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   bonsly: {
     fusionPrefix: "盆",
-    fusionSuffix: "盆才怪",
+    fusionSuffix: "才怪",
   },
   mime_jr: {
     fusionPrefix: "魔尼",
@@ -1759,50 +1760,50 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   happiny: {
     fusionPrefix: "小福",
-    fusionSuffix: "小福蛋",
+    fusionSuffix: "福蛋",
   },
   chatot: {
-    fusionPrefix: "聒",
+    fusionPrefix: "聒噪",
     fusionSuffix: "噪鸟",
   },
   spiritomb: {
     fusionPrefix: "花岩",
-    fusionSuffix: "花岩怪",
+    fusionSuffix: "怪",
   },
   gible: {
     fusionPrefix: "圆陆",
-    fusionSuffix: "圆陆鲨",
+    fusionSuffix: "陆鲨",
   },
   gabite: {
-    fusionPrefix: "尖牙陆",
-    fusionSuffix: "牙陆鲨",
+    fusionPrefix: "尖牙",
+    fusionSuffix: "陆鲨",
   },
   garchomp: {
     fusionPrefix: "烈咬",
-    fusionSuffix: "咬陆鲨",
+    fusionSuffix: "陆鲨",
   },
   munchlax: {
     fusionPrefix: "小卡",
-    fusionSuffix: "小卡比兽",
+    fusionSuffix: "比兽",
   },
   riolu: {
     fusionPrefix: "利欧",
     fusionSuffix: "路",
   },
   lucario: {
-    fusionPrefix: "路",
+    fusionPrefix: "路卡",
     fusionSuffix: "利欧",
   },
   hippopotas: {
-    fusionPrefix: "沙河",
+    fusionPrefix: "沙",
     fusionSuffix: "河马",
   },
   hippowdon: {
-    fusionPrefix: "河",
+    fusionPrefix: "河马",
     fusionSuffix: "马兽",
   },
   skorupi: {
-    fusionPrefix: "钳",
+    fusionPrefix: "钳尾",
     fusionSuffix: "尾蝎",
   },
   drapion: {
@@ -1810,7 +1811,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "王蝎",
   },
   croagunk: {
-    fusionPrefix: "不",
+    fusionPrefix: "不良",
     fusionSuffix: "良蛙",
   },
   toxicroak: {
@@ -1818,20 +1819,20 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "骷蛙",
   },
   carnivine: {
-    fusionPrefix: "尖牙笼",
+    fusionPrefix: "尖牙",
     fusionSuffix: "笼",
   },
   finneon: {
-    fusionPrefix: "荧",
-    fusionSuffix: "光鱼",
+    fusionPrefix: "荧光",
+    fusionSuffix: "鱼",
   },
   lumineon: {
-    fusionPrefix: "霓",
-    fusionSuffix: "虹鱼",
+    fusionPrefix: "霓虹",
+    fusionSuffix: "鱼",
   },
   mantyke: {
     fusionPrefix: "小球",
-    fusionSuffix: "球飞鱼",
+    fusionSuffix: "飞鱼",
   },
   snover: {
     fusionPrefix: "雪笠",
@@ -1842,51 +1843,51 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "雪王",
   },
   weavile: {
-    fusionPrefix: "玛狃",
-    fusionSuffix: "玛狃拉",
+    fusionPrefix: "玛",
+    fusionSuffix: "狃拉",
   },
   magnezone: {
-    fusionPrefix: "自",
-    fusionSuffix: "爆磁怪",
+    fusionPrefix: "自爆",
+    fusionSuffix: "磁怪",
   },
   lickilicky: {
-    fusionPrefix: "大舌舔",
+    fusionPrefix: "大舌",
     fusionSuffix: "舔",
   },
   rhyperior: {
     fusionPrefix: "超甲",
-    fusionSuffix: "犀",
+    fusionSuffix: "狂犀",
   },
   tangrowth: {
     fusionPrefix: "巨蔓",
-    fusionSuffix: "藤",
+    fusionSuffix: "蔓藤",
   },
   electivire: {
-    fusionPrefix: "电击魔",
+    fusionPrefix: "电击",
     fusionSuffix: "魔兽",
   },
   magmortar: {
-    fusionPrefix: "鸭嘴炎",
+    fusionPrefix: "鸭嘴",
     fusionSuffix: "炎兽",
   },
   togekiss: {
-    fusionPrefix: "波克基斯",
+    fusionPrefix: "波克",
     fusionSuffix: "基斯",
   },
   yanmega: {
-    fusionPrefix: "远",
+    fusionPrefix: "远古",
     fusionSuffix: "巨蜓",
   },
   leafeon: {
     fusionPrefix: "叶",
-    fusionSuffix: "叶伊布",
+    fusionSuffix: "叶布",
   },
   glaceon: {
-    fusionPrefix: "冰伊",
-    fusionSuffix: "冰伊布",
+    fusionPrefix: "冰",
+    fusionSuffix: "冰布",
   },
   gliscor: {
-    fusionPrefix: "天蝎王",
+    fusionPrefix: "天蝎",
     fusionSuffix: "蝎王",
   },
   mamoswine: {
@@ -1894,16 +1895,16 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "牙猪",
   },
   porygon_z: {
-    fusionPrefix: "多边兽乙",
+    fusionPrefix: "多边兽",
     fusionSuffix: "乙型",
   },
   gallade: {
     fusionPrefix: "艾路",
-    fusionSuffix: "路雷朵",
+    fusionSuffix: "雷朵",
   },
   probopass: {
-    fusionPrefix: "大朝",
-    fusionSuffix: "大朝北鼻",
+    fusionPrefix: "大朝北",
+    fusionSuffix: "鼻",
   },
   dusknoir: {
     fusionPrefix: "黑夜",
@@ -1915,7 +1916,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   rotom: {
     fusionPrefix: "洛托",
-    fusionSuffix: "托姆",
+    fusionSuffix: "姆",
   },
   uxie: {
     fusionPrefix: "由",
@@ -1926,32 +1927,32 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "利多",
   },
   azelf: {
-    fusionPrefix: "亚",
+    fusionPrefix: "亚克",
     fusionSuffix: "诺姆",
   },
   dialga: {
-    fusionPrefix: "帝牙卢",
+    fusionPrefix: "帝牙",
     fusionSuffix: "卢卡",
   },
   palkia: {
     fusionPrefix: "帕路",
-    fusionSuffix: "路奇亚",
+    fusionSuffix: "奇亚",
   },
   heatran: {
-    fusionPrefix: "席",
+    fusionPrefix: "席多",
     fusionSuffix: "蓝恩",
   },
   regigigas: {
-    fusionPrefix: "雷吉奇",
-    fusionSuffix: "卡斯",
+    fusionPrefix: "雷吉",
+    fusionSuffix: "奇卡斯",
   },
   giratina: {
     fusionPrefix: "骑拉",
     fusionSuffix: "帝纳",
   },
   cresselia: {
-    fusionPrefix: "克",
-    fusionSuffix: "利亚",
+    fusionPrefix: "克雷",
+    fusionSuffix: "色利亚",
   },
   phione: {
     fusionPrefix: "霏",
@@ -1963,7 +1964,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   darkrai: {
     fusionPrefix: "达克",
-    fusionSuffix: "伊",
+    fusionSuffix: "莱伊",
   },
   shaymin: {
     fusionPrefix: "谢",
@@ -1978,23 +1979,23 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "提尼",
   },
   snivy: {
-    fusionPrefix: "藤",
-    fusionSuffix: "藤藤蛇",
+    fusionPrefix: "藤藤",
+    fusionSuffix: "藤蛇",
   },
   servine: {
     fusionPrefix: "青藤",
-    fusionSuffix: "青藤蛇",
+    fusionSuffix: "藤蛇",
   },
   serperior: {
-    fusionPrefix: "君",
-    fusionSuffix: "主蛇",
+    fusionPrefix: "君主",
+    fusionSuffix: "藤蛇",
   },
   tepig: {
-    fusionPrefix: "暖",
+    fusionPrefix: "暖暖",
     fusionSuffix: "暖猪",
   },
   pignite: {
-    fusionPrefix: "炒",
+    fusionPrefix: "炒炒",
     fusionSuffix: "炒猪",
   },
   emboar: {
@@ -2003,7 +2004,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   oshawott: {
     fusionPrefix: "水水",
-    fusionSuffix: "水獭",
+    fusionSuffix: "獭",
   },
   dewott: {
     fusionPrefix: "双刃",
@@ -2014,55 +2015,55 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "剑鬼",
   },
   patrat: {
-    fusionPrefix: "探",
-    fusionSuffix: "探鼠",
+    fusionPrefix: "探探",
+    fusionSuffix: "鼠",
   },
   watchog: {
-    fusionPrefix: "步",
-    fusionSuffix: "哨鼠",
+    fusionPrefix: "步哨",
+    fusionSuffix: "鼠",
   },
   lillipup: {
     fusionPrefix: "小约",
-    fusionSuffix: "小约克",
+    fusionSuffix: "约克",
   },
   herdier: {
     fusionPrefix: "哈约",
-    fusionSuffix: "哈约克",
+    fusionSuffix: "约克",
   },
   stoutland: {
-    fusionPrefix: "长毛狗",
+    fusionPrefix: "长毛",
     fusionSuffix: "毛狗",
   },
   purrloin: {
-    fusionPrefix: "扒",
-    fusionSuffix: "手猫",
+    fusionPrefix: "扒手",
+    fusionSuffix: "猫",
   },
   liepard: {
     fusionPrefix: "酷",
-    fusionSuffix: "酷豹",
+    fusionSuffix: "豹",
   },
   pansage: {
-    fusionPrefix: "花椰猴",
+    fusionPrefix: "花椰",
     fusionSuffix: "椰猴",
   },
   simisage: {
-    fusionPrefix: "花椰猿",
+    fusionPrefix: "花椰",
     fusionSuffix: "椰猿",
   },
   pansear: {
-    fusionPrefix: "爆香猴",
+    fusionPrefix: "爆香",
     fusionSuffix: "香猴",
   },
   simisear: {
-    fusionPrefix: "爆香猿",
+    fusionPrefix: "爆香",
     fusionSuffix: "香猿",
   },
   panpour: {
-    fusionPrefix: "冷水猴",
+    fusionPrefix: "冷水",
     fusionSuffix: "水猴",
   },
   simipour: {
-    fusionPrefix: "冷水猿",
+    fusionPrefix: "冷水",
     fusionSuffix: "水猿",
   },
   munna: {
@@ -2078,20 +2079,20 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "豆鸽",
   },
   tranquill: {
-    fusionPrefix: "咕咕鸽",
+    fusionPrefix: "咕咕",
     fusionSuffix: "咕鸽",
   },
   unfezant: {
-    fusionPrefix: "高",
-    fusionSuffix: "傲雉鸡",
+    fusionPrefix: "高傲",
+    fusionSuffix: "雉鸡",
   },
   blitzle: {
-    fusionPrefix: "斑",
-    fusionSuffix: "斑斑马",
+    fusionPrefix: "斑斑",
+    fusionSuffix: "斑马",
   },
   zebstrika: {
-    fusionPrefix: "雷电斑",
-    fusionSuffix: "电斑马",
+    fusionPrefix: "雷电",
+    fusionSuffix: "斑马",
   },
   roggenrola: {
     fusionPrefix: "石丸",
@@ -2102,31 +2103,31 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "幔岩",
   },
   gigalith: {
-    fusionPrefix: "庞",
-    fusionSuffix: "庞岩怪",
+    fusionPrefix: "庞岩",
+    fusionSuffix: "岩怪",
   },
   woobat: {
-    fusionPrefix: "滚",
-    fusionSuffix: "滚蝙蝠",
+    fusionPrefix: "滚滚",
+    fusionSuffix: "蝙蝠",
   },
   swoobat: {
-    fusionPrefix: "心蝙",
-    fusionSuffix: "心蝙蝠",
+    fusionPrefix: "心",
+    fusionSuffix: "蝙蝠",
   },
   drilbur: {
-    fusionPrefix: "螺",
-    fusionSuffix: "钉地鼠",
+    fusionPrefix: "螺钉",
+    fusionSuffix: "地鼠",
   },
   excadrill: {
     fusionPrefix: "龙头",
-    fusionSuffix: "头地鼠",
+    fusionSuffix: "地鼠",
   },
   audino: {
-    fusionPrefix: "差",
-    fusionSuffix: "多娃娃",
+    fusionPrefix: "差不多",
+    fusionSuffix: "娃娃",
   },
   timburr: {
-    fusionPrefix: "搬",
+    fusionPrefix: "搬运",
     fusionSuffix: "小匠",
   },
   gurdurr: {
@@ -2134,27 +2135,27 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "土人",
   },
   conkeldurr: {
-    fusionPrefix: "修",
+    fusionPrefix: "修建",
     fusionSuffix: "老匠",
   },
   tympole: {
     fusionPrefix: "圆蝌",
-    fusionSuffix: "圆蝌蚪",
+    fusionSuffix: "蝌蚪",
   },
   palpitoad: {
-    fusionPrefix: "蓝蟾",
-    fusionSuffix: "蜍",
+    fusionPrefix: "蓝",
+    fusionSuffix: "蟾蜍",
   },
   seismitoad: {
-    fusionPrefix: "蟾",
-    fusionSuffix: "蜍王",
+    fusionPrefix: "蟾蜍",
+    fusionSuffix: "蟾王",
   },
   throh: {
     fusionPrefix: "投摔",
     fusionSuffix: "摔鬼",
   },
   sawk: {
-    fusionPrefix: "打",
+    fusionPrefix: "打击",
     fusionSuffix: "击鬼",
   },
   sewaddle: {
@@ -2166,7 +2167,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "包茧",
   },
   leavanny: {
-    fusionPrefix: "保姆虫",
+    fusionPrefix: "保姆",
     fusionSuffix: "姆虫",
   },
   venipede: {
@@ -2174,11 +2175,11 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "蜈蚣",
   },
   whirlipede: {
-    fusionPrefix: "车",
-    fusionSuffix: "轮球",
+    fusionPrefix: "车轮",
+    fusionSuffix: "球",
   },
   scolipede: {
-    fusionPrefix: "蜈",
+    fusionPrefix: "蜈蚣",
     fusionSuffix: "蚣王",
   },
   cottonee: {
@@ -2190,136 +2191,136 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "妖精",
   },
   petilil: {
-    fusionPrefix: "百合",
-    fusionSuffix: "根娃娃",
+    fusionPrefix: "百合根",
+    fusionSuffix: "娃娃",
   },
   lilligant: {
-    fusionPrefix: "裙",
-    fusionSuffix: "儿小姐",
+    fusionPrefix: "裙儿",
+    fusionSuffix: "小姐",
   },
   basculin: {
-    fusionPrefix: "野",
+    fusionPrefix: "野蛮",
     fusionSuffix: "鲈鱼",
   },
   sandile: {
     fusionPrefix: "黑眼",
-    fusionSuffix: "眼鳄",
+    fusionSuffix: "鳄",
   },
   krokorok: {
-    fusionPrefix: "混",
-    fusionSuffix: "混鳄",
+    fusionPrefix: "混混",
+    fusionSuffix: "鳄",
   },
   krookodile: {
-    fusionPrefix: "流",
-    fusionSuffix: "氓鳄",
+    fusionPrefix: "流氓",
+    fusionSuffix: "鳄",
   },
   darumaka: {
     fusionPrefix: "火红",
-    fusionSuffix: "倒翁",
+    fusionSuffix: "不倒翁",
   },
   darmanitan: {
     fusionPrefix: "达摩",
-    fusionSuffix: "狒",
+    fusionSuffix: "狒狒",
   },
   maractus: {
     fusionPrefix: "沙铃",
-    fusionSuffix: "铃仙人掌",
+    fusionSuffix: "仙人掌",
   },
   dwebble: {
     fusionPrefix: "石居",
-    fusionSuffix: "石居蟹",
+    fusionSuffix: "居蟹",
   },
   crustle: {
     fusionPrefix: "岩殿",
-    fusionSuffix: "殿居蟹",
+    fusionSuffix: "居蟹",
   },
   scraggy: {
-    fusionPrefix: "滑",
-    fusionSuffix: "滑小子",
+    fusionPrefix: "滑滑",
+    fusionSuffix: "小子",
   },
   scrafty: {
     fusionPrefix: "头巾",
-    fusionSuffix: "混",
+    fusionSuffix: "混混",
   },
   sigilyph: {
     fusionPrefix: "象征",
     fusionSuffix: "征鸟",
   },
   yamask: {
-    fusionPrefix: "哭",
-    fusionSuffix: "具",
+    fusionPrefix: "哭哭",
+    fusionSuffix: "面具",
   },
   cofagrigus: {
-    fusionPrefix: "迭失棺",
+    fusionPrefix: "迭失",
     fusionSuffix: "棺",
   },
   tirtouga: {
     fusionPrefix: "原盖",
-    fusionSuffix: "盖海龟",
+    fusionSuffix: "海龟",
   },
   carracosta: {
-    fusionPrefix: "肋",
-    fusionSuffix: "骨海龟",
+    fusionPrefix: "肋骨",
+    fusionSuffix: "海龟",
   },
   archen: {
-    fusionPrefix: "始祖小",
+    fusionPrefix: "始祖",
     fusionSuffix: "小鸟",
   },
   archeops: {
-    fusionPrefix: "始祖大",
-    fusionSuffix: "祖大鸟",
+    fusionPrefix: "始祖",
+    fusionSuffix: "大鸟",
   },
   trubbish: {
-    fusionPrefix: "破破袋",
+    fusionPrefix: "破破",
     fusionSuffix: "袋",
   },
   garbodor: {
-    fusionPrefix: "灰",
-    fusionSuffix: "尘山",
+    fusionPrefix: "灰尘",
+    fusionSuffix: "山",
   },
   zorua: {
-    fusionPrefix: "索罗亚",
+    fusionPrefix: "索罗",
     fusionSuffix: "罗亚",
   },
   zoroark: {
-    fusionPrefix: "索罗亚克",
+    fusionPrefix: "索罗",
     fusionSuffix: "亚克",
   },
   minccino: {
-    fusionPrefix: "泡",
-    fusionSuffix: "沫栗鼠",
+    fusionPrefix: "泡沫",
+    fusionSuffix: "栗鼠",
   },
   cinccino: {
     fusionPrefix: "奇诺",
-    fusionSuffix: "诺栗鼠",
+    fusionSuffix: "栗鼠",
   },
   gothita: {
-    fusionPrefix: "哥德宝",
-    fusionSuffix: "德宝宝",
+    fusionPrefix: "哥德",
+    fusionSuffix: "宝宝",
   },
   gothorita: {
-    fusionPrefix: "哥德小童",
-    fusionSuffix: "德小童",
+    fusionPrefix: "哥德",
+    fusionSuffix: "小童",
   },
   gothitelle: {
-    fusionPrefix: "哥德小姐",
-    fusionSuffix: "德小姐",
+    fusionPrefix: "哥德",
+    fusionSuffix: "小姐",
   },
   solosis: {
     fusionPrefix: "单卵",
-    fusionSuffix: "单卵细胞球",
+    fusionSuffix: "细胞球",
   },
   duosion: {
     fusionPrefix: "双卵",
-    fusionSuffix: "双卵细胞球",
+    fusionSuffix: "细胞球",
   },
   reuniclus: {
-    fusionPrefix: "人",
-    fusionSuffix: "卵",
+    fusionPrefix: "人造",
+    fusionSuffix: "细胞卵",
   },
   ducklett: {
-    fusionPrefix: "鸭宝",
-    fusionSuffix: "鸭宝宝",
+    fusionPrefix: "鸭",
+    fusionSuffix: "鸭宝",
   },
   swanna: {
     fusionPrefix: "舞",
@@ -2327,15 +2328,15 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   vanillite: {
     fusionPrefix: "迷你冰",
-    fusionSuffix: "你冰",
+    fusionSuffix: "冰",
   },
   vanillish: {
     fusionPrefix: "多多",
-    fusionSuffix: "多多冰",
+    fusionSuffix: "冰",
   },
   vanilluxe: {
     fusionPrefix: "双倍",
-    fusionSuffix: "倍多多冰",
+    fusionSuffix: "多冰",
   },
   deerling: {
     fusionPrefix: "四季",
@@ -2355,26 +2356,26 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   escavalier: {
     fusionPrefix: "骑士",
-    fusionSuffix: "士蜗牛",
+    fusionSuffix: "蜗牛",
   },
   foongus: {
-    fusionPrefix: "哎",
-    fusionSuffix: "呀球菇",
+    fusionPrefix: "哎呀",
+    fusionSuffix: "球菇",
   },
   amoonguss: {
-    fusionPrefix: "败",
-    fusionSuffix: "露球菇",
+    fusionPrefix: "败露",
+    fusionSuffix: "球菇",
   },
   frillish: {
     fusionPrefix: "轻飘",
-    fusionSuffix: "飘",
+    fusionSuffix: "飘飘",
   },
   jellicent: {
     fusionPrefix: "胖嘟",
-    fusionSuffix: "胖嘟嘟",
+    fusionSuffix: "嘟嘟",
   },
   alomomola: {
-    fusionPrefix: "保姆曼",
+    fusionPrefix: "保姆",
     fusionSuffix: "曼波",
   },
   joltik: {
@@ -2386,35 +2387,35 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "蜘蛛",
   },
   ferroseed: {
-    fusionPrefix: "种",
+    fusionPrefix: "种子",
     fusionSuffix: "铁球",
   },
   ferrothorn: {
     fusionPrefix: "坚果",
-    fusionSuffix: "果哑铃",
+    fusionSuffix: "哑铃",
   },
   klink: {
-    fusionPrefix: "齿轮儿",
+    fusionPrefix: "齿轮",
     fusionSuffix: "轮儿",
   },
   klang: {
-    fusionPrefix: "齿轮组",
+    fusionPrefix: "齿轮",
     fusionSuffix: "组",
   },
   klinklang: {
-    fusionPrefix: "齿轮怪",
+    fusionPrefix: "齿轮",
     fusionSuffix: "轮怪",
   },
   tynamo: {
-    fusionPrefix: "麻麻小",
+    fusionPrefix: "麻麻",
     fusionSuffix: "小鱼",
   },
   eelektrik: {
-    fusionPrefix: "麻麻鳗",
+    fusionPrefix: "麻麻",
     fusionSuffix: "鳗",
   },
   eelektross: {
-    fusionPrefix: "麻麻鳗鱼",
+    fusionPrefix: "麻麻",
     fusionSuffix: "鳗鱼王",
   },
   elgyem: {
@@ -2426,8 +2427,8 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "宇怪",
   },
   litwick: {
-    fusionPrefix: "烛",
-    fusionSuffix: "光灵",
+    fusionPrefix: "烛光",
+    fusionSuffix: "灵",
   },
   lampent: {
     fusionPrefix: "灯火",
@@ -2435,14 +2436,14 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   chandelure: {
     fusionPrefix: "水晶",
-    fusionSuffix: "火灵",
+    fusionSuffix: "灯火灵",
   },
   axew: {
     fusionPrefix: "牙",
-    fusionSuffix: "牙牙",
+    fusionSuffix: "牙",
   },
   fraxure: {
-    fusionPrefix: "斧",
+    fusionPrefix: "斧牙",
     fusionSuffix: "牙龙",
   },
   haxorus: {
@@ -2451,14 +2452,14 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   cubchoo: {
     fusionPrefix: "喷嚏",
-    fusionSuffix: "嚏熊",
+    fusionSuffix: "熊",
   },
   beartic: {
     fusionPrefix: "冻原",
-    fusionSuffix: "原熊",
+    fusionSuffix: "熊",
   },
   cryogonal: {
-    fusionPrefix: "几",
+    fusionPrefix: "几何",
     fusionSuffix: "雪花",
   },
   shelmet: {
@@ -2466,43 +2467,43 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "嘴蜗",
   },
   accelgor: {
-    fusionPrefix: "敏",
-    fusionSuffix: "捷虫",
+    fusionPrefix: "敏捷",
+    fusionSuffix: "敏捷虫",
   },
   stunfisk: {
     fusionPrefix: "泥巴",
-    fusionSuffix: "巴鱼",
+    fusionSuffix: "泥鱼",
   },
   mienfoo: {
-    fusionPrefix: "功",
-    fusionSuffix: "夫鼬",
+    fusionPrefix: "功夫",
+    fusionSuffix: "鼬",
   },
   mienshao: {
-    fusionPrefix: "师",
-    fusionSuffix: "父鼬",
+    fusionPrefix: "师父",
+    fusionSuffix: "鼬",
   },
   druddigon: {
-    fusionPrefix: "赤",
+    fusionPrefix: "赤面",
     fusionSuffix: "面龙",
   },
   golett: {
-    fusionPrefix: "泥偶小",
+    fusionPrefix: "泥偶",
     fusionSuffix: "小人",
   },
   golurk: {
-    fusionPrefix: "泥偶巨",
+    fusionPrefix: "泥偶",
     fusionSuffix: "巨人",
   },
   pawniard: {
-    fusionPrefix: "驹",
-    fusionSuffix: "刀小兵",
+    fusionPrefix: "驹刀",
+    fusionSuffix: "小兵",
   },
   bisharp: {
     fusionPrefix: "劈斩",
-    fusionSuffix: "令",
+    fusionSuffix: "司令",
   },
   bouffalant: {
-    fusionPrefix: "爆炸",
+    fusionPrefix: "爆炸头",
     fusionSuffix: "水牛",
   },
   rufflet: {
@@ -2514,20 +2515,20 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "雄鹰",
   },
   vullaby: {
-    fusionPrefix: "秃鹰丫",
+    fusionPrefix: "秃鹰",
     fusionSuffix: "丫头",
   },
   mandibuzz: {
-    fusionPrefix: "秃鹰娜",
-    fusionSuffix: "鹰娜",
+    fusionPrefix: "秃鹰",
+    fusionSuffix: "娜",
   },
   heatmor: {
     fusionPrefix: "熔蚁",
     fusionSuffix: "蚁兽",
   },
   durant: {
-    fusionPrefix: "铁蚁",
-    fusionSuffix: "铁蚁",
+    fusionPrefix: "铁",
+    fusionSuffix: "蚁",
   },
   deino: {
     fusionPrefix: "单首",
@@ -2535,14 +2536,14 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   zweilous: {
     fusionPrefix: "双首",
-    fusionSuffix: "首暴龙",
+    fusionSuffix: "暴龙",
   },
   hydreigon: {
     fusionPrefix: "三首",
     fusionSuffix: "恶龙",
   },
   larvesta: {
-    fusionPrefix: "燃",
+    fusionPrefix: "燃烧",
     fusionSuffix: "烧虫",
   },
   volcarona: {
@@ -2558,7 +2559,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "基翁",
   },
   virizion: {
-    fusionPrefix: "毕",
+    fusionPrefix: "毕力",
     fusionSuffix: "吉翁",
   },
   tornadus: {
@@ -2566,11 +2567,11 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "卷云",
   },
   thundurus: {
-    fusionPrefix: "雷电云",
+    fusionPrefix: "雷电",
     fusionSuffix: "电云",
   },
   reshiram: {
-    fusionPrefix: "莱",
+    fusionPrefix: "莱西",
     fusionSuffix: "拉姆",
   },
   zekrom: {
@@ -2583,7 +2584,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   kyurem: {
     fusionPrefix: "酋",
-    fusionSuffix: "酋雷姆",
+    fusionSuffix: "雷姆",
   },
   keldeo: {
     fusionPrefix: "凯路",
@@ -2595,7 +2596,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   genesect: {
     fusionPrefix: "盖诺",
-    fusionSuffix: "克特",
+    fusionSuffix: "赛克特",
   },
   chespin: {
     fusionPrefix: "哈力",
@@ -2614,11 +2615,11 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "狐狸",
   },
   braixen: {
-    fusionPrefix: "长尾火",
+    fusionPrefix: "长尾",
     fusionSuffix: "火狐",
   },
   delphox: {
-    fusionPrefix: "妖",
+    fusionPrefix: "妖火",
     fusionSuffix: "红狐",
   },
   froakie: {
@@ -2643,26 +2644,26 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   fletchling: {
     fusionPrefix: "小箭",
-    fusionSuffix: "小箭雀",
+    fusionSuffix: "箭雀",
   },
   fletchinder: {
     fusionPrefix: "火箭",
-    fusionSuffix: "火箭雀",
+    fusionSuffix: "箭雀",
   },
   talonflame: {
     fusionPrefix: "烈箭",
     fusionSuffix: "箭鹰",
   },
   scatterbug: {
-    fusionPrefix: "粉蝶虫",
+    fusionPrefix: "粉蝶",
     fusionSuffix: "蝶虫",
   },
   spewpa: {
-    fusionPrefix: "粉蝶蛹",
+    fusionPrefix: "粉蝶",
     fusionSuffix: "蝶蛹",
   },
   vivillon: {
-    fusionPrefix: "彩",
+    fusionPrefix: "彩粉",
     fusionSuffix: "粉蝶",
   },
   litleo: {
@@ -2675,7 +2676,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   flabebe: {
     fusionPrefix: "花蓓",
-    fusionSuffix: "蓓",
+    fusionSuffix: "蓓蓓",
   },
   floette: {
     fusionPrefix: "花叶",
@@ -2686,40 +2687,40 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "夫人",
   },
   skiddo: {
-    fusionPrefix: "坐骑小",
+    fusionPrefix: "坐骑",
     fusionSuffix: "小羊",
   },
   gogoat: {
-    fusionPrefix: "坐骑山",
+    fusionPrefix: "坐骑",
     fusionSuffix: "山羊",
   },
   pancham: {
-    fusionPrefix: "顽皮熊",
-    fusionSuffix: "皮熊猫",
+    fusionPrefix: "顽皮",
+    fusionSuffix: "熊猫",
   },
   pangoro: {
     fusionPrefix: "霸道",
-    fusionSuffix: "道熊猫",
+    fusionSuffix: "熊猫",
   },
   furfrou: {
     fusionPrefix: "多丽",
     fusionSuffix: "米亚",
   },
   espurr: {
-    fusionPrefix: "妙喵",
-    fusionSuffix: "妙喵",
+    fusionPrefix: "妙",
+    fusionSuffix: "喵",
   },
   meowstic: {
-    fusionPrefix: "超能妙",
-    fusionSuffix: "能妙喵",
+    fusionPrefix: "超能",
+    fusionSuffix: "妙喵",
   },
   honedge: {
     fusionPrefix: "独剑",
-    fusionSuffix: "独剑鞘",
+    fusionSuffix: "剑鞘",
   },
   doublade: {
     fusionPrefix: "双剑",
-    fusionSuffix: "双剑鞘",
+    fusionSuffix: "剑鞘",
   },
   aegislash: {
     fusionPrefix: "坚盾",
@@ -2751,14 +2752,14 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   binacle: {
     fusionPrefix: "龟脚",
-    fusionSuffix: "脚",
+    fusionSuffix: "脚脚",
   },
   barbaracle: {
     fusionPrefix: "龟足",
-    fusionSuffix: "铠",
+    fusionSuffix: "巨铠",
   },
   skrelp: {
-    fusionPrefix: "垃",
+    fusionPrefix: "垃垃",
     fusionSuffix: "藻",
   },
   dragalge: {
@@ -2766,7 +2767,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "藻龙",
   },
   clauncher: {
-    fusionPrefix: "铁臂枪",
+    fusionPrefix: "铁臂",
     fusionSuffix: "枪虾",
   },
   clawitzer: {
@@ -2782,31 +2783,31 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "伞蜥",
   },
   tyrunt: {
-    fusionPrefix: "宝宝暴",
-    fusionSuffix: "宝暴龙",
+    fusionPrefix: "宝宝",
+    fusionSuffix: "暴龙",
   },
   tyrantrum: {
     fusionPrefix: "怪颚",
     fusionSuffix: "颚龙",
   },
   amaura: {
-    fusionPrefix: "冰雪龙",
+    fusionPrefix: "冰雪",
     fusionSuffix: "雪龙",
   },
   aurorus: {
-    fusionPrefix: "冰雪巨",
+    fusionPrefix: "冰雪",
     fusionSuffix: "巨龙",
   },
   sylveon: {
-    fusionPrefix: "仙",
-    fusionSuffix: "子伊布",
+    fusionPrefix: "仙子",
+    fusionSuffix: "仙布",
   },
   hawlucha: {
-    fusionPrefix: "摔",
+    fusionPrefix: "摔角",
     fusionSuffix: "鹰人",
   },
   dedenne: {
-    fusionPrefix: "咚",
+    fusionPrefix: "咚咚",
     fusionSuffix: "咚鼠",
   },
   carbink: {
@@ -2814,15 +2815,15 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "钻",
   },
   goomy: {
-    fusionPrefix: "黏黏",
+    fusionPrefix: "黏",
     fusionSuffix: "黏宝",
   },
   sliggoo: {
-    fusionPrefix: "黏美儿",
+    fusionPrefix: "黏",
     fusionSuffix: "美儿",
   },
   goodra: {
-    fusionPrefix: "黏美龙",
+    fusionPrefix: "黏",
     fusionSuffix: "美龙",
   },
   klefki: {
@@ -2834,39 +2835,39 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "木灵",
   },
   trevenant: {
-    fusionPrefix: "朽",
+    fusionPrefix: "朽木",
     fusionSuffix: "木妖",
   },
   pumpkaboo: {
-    fusionPrefix: "南瓜精",
-    fusionSuffix: "瓜精",
+    fusionPrefix: "南瓜",
+    fusionSuffix: "精",
   },
   gourgeist: {
-    fusionPrefix: "南瓜怪",
+    fusionPrefix: "南瓜",
     fusionSuffix: "怪人",
   },
   bergmite: {
-    fusionPrefix: "冰宝",
-    fusionSuffix: "冰宝",
+    fusionPrefix: "冰",
+    fusionSuffix: "宝",
   },
   avalugg: {
     fusionPrefix: "冰岩",
-    fusionSuffix: "冰岩怪",
+    fusionSuffix: "岩怪",
   },
   noibat: {
     fusionPrefix: "嗡",
-    fusionSuffix: "嗡蝠",
+    fusionSuffix: "蝠",
   },
   noivern: {
     fusionPrefix: "音波",
     fusionSuffix: "波龙",
   },
   xerneas: {
-    fusionPrefix: "哲",
+    fusionPrefix: "哲尔",
     fusionSuffix: "尼亚斯",
   },
   yveltal: {
-    fusionPrefix: "伊裴",
+    fusionPrefix: "伊裴尔",
     fusionSuffix: "塔尔",
   },
   zygarde: {
@@ -2875,15 +2876,15 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   diancie: {
     fusionPrefix: "蒂安",
-    fusionSuffix: "安希",
+    fusionSuffix: "希",
   },
   hoopa: {
-    fusionPrefix: "胡帕",
+    fusionPrefix: "胡",
     fusionSuffix: "帕",
   },
   volcanion: {
     fusionPrefix: "波尔",
-    fusionSuffix: "尼恩",
+    fusionSuffix: "凯尼恩",
   },
   rowlet: {
     fusionPrefix: "木木",
@@ -2894,7 +2895,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "羽枭",
   },
   decidueye: {
-    fusionPrefix: "狙",
+    fusionPrefix: "狙射",
     fusionSuffix: "树枭",
   },
   litten: {
@@ -2906,59 +2907,59 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "热喵",
   },
   incineroar: {
-    fusionPrefix: "炽",
-    fusionSuffix: "虎",
+    fusionPrefix: "炽焰",
+    fusionSuffix: "咆哮虎",
   },
   popplio: {
-    fusionPrefix: "球",
-    fusionSuffix: "球海狮",
+    fusionPrefix: "球球",
+    fusionSuffix: "海狮",
   },
   brionne: {
     fusionPrefix: "花漾",
-    fusionSuffix: "漾海狮",
+    fusionSuffix: "海狮",
   },
   primarina: {
-    fusionPrefix: "西",
-    fusionSuffix: "壬",
+    fusionPrefix: "西狮",
+    fusionSuffix: "海壬",
   },
   pikipek: {
     fusionPrefix: "小笃",
     fusionSuffix: "笃儿",
   },
   trumbeak: {
-    fusionPrefix: "喇叭啄",
+    fusionPrefix: "喇叭",
     fusionSuffix: "啄鸟",
   },
   toucannon: {
-    fusionPrefix: "铳",
-    fusionSuffix: "嘴大鸟",
+    fusionPrefix: "铳嘴",
+    fusionSuffix: "大鸟",
   },
   yungoos: {
-    fusionPrefix: "猫鼬少",
+    fusionPrefix: "猫鼬",
     fusionSuffix: "少",
   },
   gumshoos: {
-    fusionPrefix: "猫鼬探",
-    fusionSuffix: "长",
+    fusionPrefix: "猫鼬",
+    fusionSuffix: "探长",
   },
   grubbin: {
-    fusionPrefix: "强",
-    fusionSuffix: "母虫",
+    fusionPrefix: "强颚",
+    fusionSuffix: "鸡母虫",
   },
   charjabug: {
     fusionPrefix: "虫电",
     fusionSuffix: "电宝",
   },
   vikavolt: {
-    fusionPrefix: "锹",
+    fusionPrefix: "锹农",
     fusionSuffix: "炮虫",
   },
   crabrawler: {
-    fusionPrefix: "好胜蟹",
+    fusionPrefix: "好胜",
     fusionSuffix: "胜蟹",
   },
   crabominable: {
-    fusionPrefix: "好胜毛",
+    fusionPrefix: "好胜",
     fusionSuffix: "毛蟹",
   },
   oricorio: {
@@ -2966,47 +2967,47 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "舞鸟",
   },
   cutiefly: {
-    fusionPrefix: "萌虻",
-    fusionSuffix: "萌虻",
+    fusionPrefix: "萌",
+    fusionSuffix: "虻",
   },
   ribombee: {
-    fusionPrefix: "蝶",
-    fusionSuffix: "结萌虻",
+    fusionPrefix: "蝶结",
+    fusionSuffix: "萌虻",
   },
   rockruff: {
     fusionPrefix: "岩狗",
     fusionSuffix: "狗狗",
   },
   lycanroc: {
-    fusionPrefix: "鬃",
+    fusionPrefix: "鬃岩",
     fusionSuffix: "狼人",
   },
   wishiwashi: {
-    fusionPrefix: "弱",
+    fusionPrefix: "弱丁",
     fusionSuffix: "丁鱼",
   },
   mareanie: {
     fusionPrefix: "好坏",
-    fusionSuffix: "好坏星",
+    fusionSuffix: "坏星",
   },
   toxapex: {
     fusionPrefix: "超坏",
-    fusionSuffix: "超坏星",
+    fusionSuffix: "坏星",
   },
   mudbray: {
     fusionPrefix: "泥驴",
-    fusionSuffix: "驴仔",
+    fusionSuffix: "仔",
   },
   mudsdale: {
-    fusionPrefix: "重",
+    fusionPrefix: "重泥",
     fusionSuffix: "挽马",
   },
   dewpider: {
-    fusionPrefix: "滴蛛",
-    fusionSuffix: "滴蛛",
+    fusionPrefix: "滴",
+    fusionSuffix: "蛛",
   },
   araquanid: {
-    fusionPrefix: "滴蛛霸",
+    fusionPrefix: "滴",
     fusionSuffix: "蛛霸",
   },
   fomantis: {
@@ -3030,23 +3031,23 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "火蜥",
   },
   salazzle: {
-    fusionPrefix: "焰",
-    fusionSuffix: "后蜥",
+    fusionPrefix: "焰后",
+    fusionSuffix: "蜥",
   },
   stufful: {
-    fusionPrefix: "童",
-    fusionSuffix: "偶熊",
+    fusionPrefix: "童偶",
+    fusionSuffix: "熊",
   },
   bewear: {
     fusionPrefix: "穿着",
-    fusionSuffix: "着熊",
+    fusionSuffix: "熊",
   },
   bounsweet: {
-    fusionPrefix: "甜竹",
-    fusionSuffix: "竹",
+    fusionPrefix: "甜",
+    fusionSuffix: "竹竹",
   },
   steenee: {
-    fusionPrefix: "甜舞",
+    fusionPrefix: "甜",
     fusionSuffix: "舞妮",
   },
   tsareena: {
@@ -3055,47 +3056,47 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   comfey: {
     fusionPrefix: "花疗",
-    fusionSuffix: "环",
+    fusionSuffix: "环环",
   },
   oranguru: {
-    fusionPrefix: "智",
-    fusionSuffix: "挥猩",
+    fusionPrefix: "智挥",
+    fusionSuffix: "猩",
   },
   passimian: {
     fusionPrefix: "投掷",
-    fusionSuffix: "掷猴",
+    fusionSuffix: "猴",
   },
   wimpod: {
-    fusionPrefix: "胆",
-    fusionSuffix: "小虫",
+    fusionPrefix: "胆小",
+    fusionSuffix: "虫",
   },
   golisopod: {
-    fusionPrefix: "具",
-    fusionSuffix: "甲武者",
+    fusionPrefix: "具甲",
+    fusionSuffix: "武者",
   },
   sandygast: {
     fusionPrefix: "沙丘",
-    fusionSuffix: "丘娃",
+    fusionSuffix: "娃",
   },
   palossand: {
-    fusionPrefix: "噬",
-    fusionSuffix: "爷",
+    fusionPrefix: "噬沙",
+    fusionSuffix: "堡爷",
   },
   pyukumuku: {
-    fusionPrefix: "拳海",
-    fusionSuffix: "参",
+    fusionPrefix: "拳",
+    fusionSuffix: "海参",
   },
   type_null: {
-    fusionPrefix: "属",
-    fusionSuffix: "空",
+    fusionPrefix: "属性：",
+    fusionSuffix: "：空",
   },
   silvally: {
-    fusionPrefix: "银",
+    fusionPrefix: "银伴",
     fusionSuffix: "战兽",
   },
   minior: {
     fusionPrefix: "小陨",
-    fusionSuffix: "陨星",
+    fusionSuffix: "星",
   },
   komala: {
     fusionPrefix: "树枕",
@@ -3106,63 +3107,63 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "龟兽",
   },
   togedemaru: {
-    fusionPrefix: "托",
+    fusionPrefix: "托戈德",
     fusionSuffix: "玛尔",
   },
   mimikyu: {
-    fusionPrefix: "谜",
+    fusionPrefix: "谜拟",
     fusionSuffix: "拟丘",
   },
   bruxish: {
-    fusionPrefix: "磨",
-    fusionSuffix: "皮鱼",
+    fusionPrefix: "磨牙",
+    fusionSuffix: "彩皮鱼",
   },
   drampa: {
-    fusionPrefix: "老",
+    fusionPrefix: "老翁",
     fusionSuffix: "翁龙",
   },
   dhelmise: {
-    fusionPrefix: "破破舵",
-    fusionSuffix: "轮",
+    fusionPrefix: "破破",
+    fusionSuffix: "舵轮",
   },
   jangmo_o: {
     fusionPrefix: "心鳞",
     fusionSuffix: "鳞宝",
   },
   hakamo_o: {
-    fusionPrefix: "鳞",
-    fusionSuffix: "鳞甲龙",
+    fusionPrefix: "鳞甲",
+    fusionSuffix: "甲龙",
   },
   kommo_o: {
-    fusionPrefix: "杖",
-    fusionSuffix: "尾鳞甲龙",
+    fusionPrefix: "杖尾",
+    fusionSuffix: "鳞甲龙",
   },
   tapu_koko: {
-    fusionPrefix: "卡璞・鸣",
-    fusionSuffix: "鸣",
+    fusionPrefix: "卡璞・",
+    fusionSuffix: "鸣鸣",
   },
   tapu_lele: {
-    fusionPrefix: "卡璞・蝶",
+    fusionPrefix: "卡璞・",
     fusionSuffix: "蝶蝶",
   },
   tapu_bulu: {
-    fusionPrefix: "卡璞・哞",
-    fusionSuffix: "哞",
+    fusionPrefix: "卡璞・",
+    fusionSuffix: "哞哞",
   },
   tapu_fini: {
-    fusionPrefix: "卡璞・鳍",
-    fusionSuffix: "鳍",
+    fusionPrefix: "卡璞・",
+    fusionSuffix: "鳍鳍",
   },
   cosmog: {
-    fusionPrefix: "科斯莫古",
+    fusionPrefix: "科斯",
     fusionSuffix: "莫古",
   },
   cosmoem: {
-    fusionPrefix: "科斯莫姆",
+    fusionPrefix: "科斯",
     fusionSuffix: "莫姆",
   },
   solgaleo: {
-    fusionPrefix: "索尔",
+    fusionPrefix: "索尔加",
     fusionSuffix: "雷欧",
   },
   lunala: {
@@ -3170,7 +3171,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "雅拉",
   },
   nihilego: {
-    fusionPrefix: "虚",
+    fusionPrefix: "虚吾",
     fusionSuffix: "伊德",
   },
   buzzwole: {
@@ -3178,7 +3179,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "蚊",
   },
   pheromosa: {
-    fusionPrefix: "费",
+    fusionPrefix: "费洛",
     fusionSuffix: "美螂",
   },
   xurkitree: {
@@ -3187,19 +3188,19 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   celesteela: {
     fusionPrefix: "铁火",
-    fusionSuffix: "夜",
+    fusionSuffix: "辉夜",
   },
   kartana: {
     fusionPrefix: "纸",
-    fusionSuffix: "剑",
+    fusionSuffix: "御剑",
   },
   guzzlord: {
-    fusionPrefix: "恶",
+    fusionPrefix: "恶食",
     fusionSuffix: "大王",
   },
   necrozma: {
-    fusionPrefix: "奈",
-    fusionSuffix: "玛",
+    fusionPrefix: "奈克洛",
+    fusionSuffix: "兹玛",
   },
   magearna: {
     fusionPrefix: "玛机",
@@ -3207,10 +3208,10 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   marshadow: {
     fusionPrefix: "玛夏",
-    fusionSuffix: "夏多",
+    fusionSuffix: "多",
   },
   poipole: {
-    fusionPrefix: "毒贝",
+    fusionPrefix: "毒",
     fusionSuffix: "贝比",
   },
   naganadel: {
@@ -3218,76 +3219,76 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "针龙",
   },
   stakataka: {
-    fusionPrefix: "垒",
-    fusionSuffix: "磊石",
+    fusionPrefix: "垒磊",
+    fusionSuffix: "石",
   },
   blacephalon: {
-    fusionPrefix: "砰",
-    fusionSuffix: "丑",
+    fusionPrefix: "砰砰",
+    fusionSuffix: "小丑",
   },
   zeraora: {
     fusionPrefix: "捷拉",
     fusionSuffix: "奥拉",
   },
   meltan: {
-    fusionPrefix: "美录坦",
+    fusionPrefix: "美录",
     fusionSuffix: "坦",
   },
   melmetal: {
-    fusionPrefix: "美录梅",
+    fusionPrefix: "美录",
     fusionSuffix: "梅塔",
   },
   grookey: {
-    fusionPrefix: "敲",
-    fusionSuffix: "音猴",
+    fusionPrefix: "敲音",
+    fusionSuffix: "猴",
   },
   thwackey: {
     fusionPrefix: "啪咚",
-    fusionSuffix: "咚猴",
+    fusionSuffix: "猴",
   },
   rillaboom: {
     fusionPrefix: "轰擂",
-    fusionSuffix: "刚猩",
+    fusionSuffix: "金刚猩",
   },
   scorbunny: {
     fusionPrefix: "炎兔",
     fusionSuffix: "兔儿",
   },
   raboot: {
-    fusionPrefix: "腾",
-    fusionSuffix: "将",
+    fusionPrefix: "腾蹴",
+    fusionSuffix: "小将",
   },
   cinderace: {
     fusionPrefix: "闪焰",
-    fusionSuffix: "牌",
+    fusionSuffix: "王牌",
   },
   sobble: {
-    fusionPrefix: "泪",
-    fusionSuffix: "眼蜥",
+    fusionPrefix: "泪眼",
+    fusionSuffix: "蜥",
   },
   drizzile: {
     fusionPrefix: "变涩",
-    fusionSuffix: "涩蜥",
+    fusionSuffix: "蜥",
   },
   inteleon: {
     fusionPrefix: "千面",
-    fusionSuffix: "役",
+    fusionSuffix: "避役",
   },
   skwovet: {
-    fusionPrefix: "贪",
-    fusionSuffix: "心栗鼠",
+    fusionPrefix: "贪心",
+    fusionSuffix: "栗鼠",
   },
   greedent: {
     fusionPrefix: "藏饱",
-    fusionSuffix: "饱栗鼠",
+    fusionSuffix: "栗鼠",
   },
   rookidee: {
-    fusionPrefix: "稚",
-    fusionSuffix: "山雀",
+    fusionPrefix: "稚山",
+    fusionSuffix: "雀",
   },
   corvisquire: {
-    fusionPrefix: "蓝鸦",
-    fusionSuffix: "蓝鸦",
+    fusionPrefix: "蓝",
+    fusionSuffix: "鸦",
   },
   corviknight: {
     fusionPrefix: "钢铠",
@@ -3302,11 +3303,11 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "罩虫",
   },
   orbeetle: {
-    fusionPrefix: "以",
-    fusionSuffix: "普",
+    fusionPrefix: "以欧",
+    fusionSuffix: "路普",
   },
   nickit: {
-    fusionPrefix: "狡小",
+    fusionPrefix: "狡",
     fusionSuffix: "小狐",
   },
   thievul: {
@@ -3319,7 +3320,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   eldegoss: {
     fusionPrefix: "白蓬",
-    fusionSuffix: "蓬",
+    fusionSuffix: "蓬蓬",
   },
   wooloo: {
     fusionPrefix: "毛辫",
@@ -3330,7 +3331,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "角羊",
   },
   chewtle: {
-    fusionPrefix: "咬",
+    fusionPrefix: "咬咬",
     fusionSuffix: "咬龟",
   },
   drednaw: {
@@ -3342,12 +3343,12 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "汪",
   },
   boltund: {
-    fusionPrefix: "逐",
-    fusionSuffix: "电犬",
+    fusionPrefix: "逐电",
+    fusionSuffix: "犬",
   },
   rolycoly: {
     fusionPrefix: "小炭",
-    fusionSuffix: "炭仔",
+    fusionSuffix: "仔",
   },
   carkol: {
     fusionPrefix: "大炭",
@@ -3358,15 +3359,15 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "炭山",
   },
   applin: {
-    fusionPrefix: "啃",
+    fusionPrefix: "啃果",
     fusionSuffix: "果虫",
   },
   flapple: {
-    fusionPrefix: "苹",
+    fusionPrefix: "苹裹",
     fusionSuffix: "裹龙",
   },
   appletun: {
-    fusionPrefix: "丰",
+    fusionPrefix: "丰蜜",
     fusionSuffix: "蜜龙",
   },
   silicobra: {
@@ -3386,35 +3387,35 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "梭鱼",
   },
   barraskewda: {
-    fusionPrefix: "戽",
-    fusionSuffix: "梭",
+    fusionPrefix: "戽斗",
+    fusionSuffix: "尖梭",
   },
   toxel: {
     fusionPrefix: "电音",
     fusionSuffix: "婴",
   },
   toxtricity: {
-    fusionPrefix: "颤",
-    fusionSuffix: "螈",
+    fusionPrefix: "颤弦",
+    fusionSuffix: "蝾螈",
   },
   sizzlipede: {
-    fusionPrefix: "烧",
-    fusionSuffix: "火蚣",
+    fusionPrefix: "烧火",
+    fusionSuffix: "蚣",
   },
   centiskorch: {
-    fusionPrefix: "焚",
-    fusionSuffix: "焰蚣",
+    fusionPrefix: "焚焰",
+    fusionSuffix: "蚣",
   },
   clobbopus: {
     fusionPrefix: "拳拳",
     fusionSuffix: "蛸",
   },
   grapploct: {
-    fusionPrefix: "八",
+    fusionPrefix: "八爪",
     fusionSuffix: "武师",
   },
   sinistea: {
-    fusionPrefix: "来悲茶",
+    fusionPrefix: "来悲",
     fusionSuffix: "悲茶",
   },
   polteageist: {
@@ -3423,70 +3424,70 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   hatenna: {
     fusionPrefix: "迷布",
-    fusionSuffix: "迷布莉姆",
+    fusionSuffix: "莉姆",
   },
   hattrem: {
-    fusionPrefix: "提",
-    fusionSuffix: "提布莉姆",
+    fusionPrefix: "提布",
+    fusionSuffix: "莉姆",
   },
   hatterene: {
     fusionPrefix: "布莉",
-    fusionSuffix: "温",
+    fusionSuffix: "姆温",
   },
   impidimp: {
     fusionPrefix: "捣",
     fusionSuffix: "小妖",
   },
   morgrem: {
-    fusionPrefix: "诈",
-    fusionSuffix: "唬魔",
+    fusionPrefix: "诈唬",
+    fusionSuffix: "魔",
   },
   grimmsnarl: {
-    fusionPrefix: "长毛巨",
+    fusionPrefix: "长毛",
     fusionSuffix: "巨魔",
   },
   obstagoon: {
-    fusionPrefix: "堵",
-    fusionSuffix: "拦熊",
+    fusionPrefix: "堵拦",
+    fusionSuffix: "熊",
   },
   perrserker: {
-    fusionPrefix: "喵头",
-    fusionSuffix: "目",
+    fusionPrefix: "喵",
+    fusionSuffix: "头目",
   },
   cursola: {
     fusionPrefix: "魔灵",
-    fusionSuffix: "灵珊瑚",
+    fusionSuffix: "珊瑚",
   },
   sirfetchd: {
-    fusionPrefix: "葱",
-    fusionSuffix: "游兵",
+    fusionPrefix: "葱游",
+    fusionSuffix: "兵",
   },
   mr_rime: {
-    fusionPrefix: "踏",
-    fusionSuffix: "冰人偶",
+    fusionPrefix: "踏冰",
+    fusionSuffix: "人偶",
   },
   runerigus: {
-    fusionPrefix: "迭失板",
+    fusionPrefix: "迭失",
     fusionSuffix: "板",
   },
   milcery: {
     fusionPrefix: "小仙",
-    fusionSuffix: "奶",
+    fusionSuffix: "仙奶",
   },
   alcremie: {
-    fusionPrefix: "霜",
-    fusionSuffix: "仙",
+    fusionPrefix: "霜奶",
+    fusionSuffix: "奶仙",
   },
   falinks: {
-    fusionPrefix: "列",
-    fusionSuffix: "阵兵",
+    fusionPrefix: "列阵",
+    fusionSuffix: "兵",
   },
   pincurchin: {
     fusionPrefix: "啪嚓",
-    fusionSuffix: "胆",
+    fusionSuffix: "海胆",
   },
   snom: {
-    fusionPrefix: "雪吞",
+    fusionPrefix: "雪",
     fusionSuffix: "吞虫",
   },
   frosmoth: {
@@ -3499,59 +3500,59 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   eiscue: {
     fusionPrefix: "冰砌",
-    fusionSuffix: "砌鹅",
+    fusionSuffix: "鹅",
   },
   indeedee: {
-    fusionPrefix: "爱管",
+    fusionPrefix: "爱",
     fusionSuffix: "管侍",
   },
   morpeko: {
-    fusionPrefix: "莫",
-    fusionSuffix: "可",
+    fusionPrefix: "莫鲁",
+    fusionSuffix: "贝可",
   },
   cufant: {
-    fusionPrefix: "铜象",
-    fusionSuffix: "铜象",
+    fusionPrefix: "铜",
+    fusionSuffix: "象",
   },
   copperajah: {
-    fusionPrefix: "大王铜",
-    fusionSuffix: "王铜象",
+    fusionPrefix: "大王",
+    fusionSuffix: "铜象",
   },
   dracozolt: {
-    fusionPrefix: "雷鸟龙",
+    fusionPrefix: "雷鸟",
     fusionSuffix: "鸟龙",
   },
   arctozolt: {
-    fusionPrefix: "雷鸟海",
-    fusionSuffix: "鸟海兽",
+    fusionPrefix: "雷鸟",
+    fusionSuffix: "海兽",
   },
   dracovish: {
-    fusionPrefix: "鳃鱼龙",
+    fusionPrefix: "鳃鱼",
     fusionSuffix: "鱼龙",
   },
   arctovish: {
-    fusionPrefix: "鳃鱼海",
-    fusionSuffix: "鱼海兽",
+    fusionPrefix: "鳃鱼",
+    fusionSuffix: "海兽",
   },
   duraludon: {
-    fusionPrefix: "铝钢龙",
+    fusionPrefix: "铝钢",
     fusionSuffix: "钢龙",
   },
   dreepy: {
-    fusionPrefix: "多龙梅",
-    fusionSuffix: "西亚",
+    fusionPrefix: "多龙",
+    fusionSuffix: "梅西亚",
   },
   drakloak: {
-    fusionPrefix: "多龙奇",
-    fusionSuffix: "龙奇",
+    fusionPrefix: "多龙",
+    fusionSuffix: "奇",
   },
   dragapult: {
-    fusionPrefix: "多龙巴",
-    fusionSuffix: "托",
+    fusionPrefix: "多龙",
+    fusionSuffix: "巴鲁托",
   },
   zacian: {
-    fusionPrefix: "苍响",
-    fusionSuffix: "苍响",
+    fusionPrefix: "苍",
+    fusionSuffix: "响",
   },
   zamazenta: {
     fusionPrefix: "藏玛",
@@ -3562,40 +3563,40 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "汰那",
   },
   kubfu: {
-    fusionPrefix: "熊徒",
+    fusionPrefix: "熊",
     fusionSuffix: "徒弟",
   },
   urshifu: {
-    fusionPrefix: "武",
+    fusionPrefix: "武道",
     fusionSuffix: "熊师",
   },
   zarude: {
-    fusionPrefix: "萨",
-    fusionSuffix: "戮德",
+    fusionPrefix: "萨戮",
+    fusionSuffix: "德",
   },
   regieleki: {
-    fusionPrefix: "雷吉艾勒",
-    fusionSuffix: "勒奇",
+    fusionPrefix: "雷吉",
+    fusionSuffix: "艾勒奇",
   },
   regidrago: {
-    fusionPrefix: "雷吉铎",
-    fusionSuffix: "戈",
+    fusionPrefix: "雷吉",
+    fusionSuffix: "铎拉戈",
   },
   glastrier: {
     fusionPrefix: "雪暴",
     fusionSuffix: "暴马",
   },
   spectrier: {
-    fusionPrefix: "灵",
+    fusionPrefix: "灵幽",
     fusionSuffix: "幽马",
   },
   calyrex: {
-    fusionPrefix: "蕾",
+    fusionPrefix: "蕾冠",
     fusionSuffix: "冠王",
   },
   wyrdeer: {
-    fusionPrefix: "诡",
-    fusionSuffix: "诡角鹿",
+    fusionPrefix: "诡角",
+    fusionSuffix: "角鹿",
   },
   kleavor: {
     fusionPrefix: "劈斧",
@@ -3606,75 +3607,75 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "月熊",
   },
   basculegion: {
-    fusionPrefix: "幽",
+    fusionPrefix: "幽尾",
     fusionSuffix: "玄鱼",
   },
   sneasler: {
     fusionPrefix: "大狃",
-    fusionSuffix: "大狃拉",
+    fusionSuffix: "狃拉",
   },
   overqwil: {
-    fusionPrefix: "万",
-    fusionSuffix: "万针鱼",
+    fusionPrefix: "万针",
+    fusionSuffix: "针鱼",
   },
   enamorus: {
-    fusionPrefix: "眷",
+    fusionPrefix: "眷恋",
     fusionSuffix: "恋云",
   },
   sprigatito: {
-    fusionPrefix: "新",
-    fusionSuffix: "叶喵",
+    fusionPrefix: "新叶",
+    fusionSuffix: "喵",
   },
   floragato: {
     fusionPrefix: "蒂蕾",
-    fusionSuffix: "蕾喵",
+    fusionSuffix: "喵",
   },
   meowscarada: {
     fusionPrefix: "魔幻",
-    fusionSuffix: "面喵",
+    fusionSuffix: "假面喵",
   },
   fuecoco: {
-    fusionPrefix: "呆火鳄",
-    fusionSuffix: "火鳄",
+    fusionPrefix: "呆火",
+    fusionSuffix: "鳄",
   },
   crocalor: {
-    fusionPrefix: "炙",
-    fusionSuffix: "烫鳄",
+    fusionPrefix: "炙烫",
+    fusionSuffix: "鳄",
   },
   skeledirge: {
-    fusionPrefix: "骨",
-    fusionSuffix: "声鳄",
+    fusionPrefix: "骨纹",
+    fusionSuffix: "巨声鳄",
   },
   quaxly: {
-    fusionPrefix: "润",
-    fusionSuffix: "水鸭",
+    fusionPrefix: "润水",
+    fusionSuffix: "鸭",
   },
   quaxwell: {
-    fusionPrefix: "涌",
-    fusionSuffix: "跃鸭",
+    fusionPrefix: "涌跃",
+    fusionSuffix: "鸭",
   },
   quaquaval: {
-    fusionPrefix: "狂",
-    fusionSuffix: "舞鸭",
+    fusionPrefix: "狂欢",
+    fusionSuffix: "浪舞鸭",
   },
   lechonk: {
     fusionPrefix: "爱吃",
-    fusionSuffix: "吃豚",
+    fusionSuffix: "豚",
   },
   oinkologne: {
     fusionPrefix: "飘香",
-    fusionSuffix: "香豚",
+    fusionSuffix: "豚",
   },
   tarountula: {
-    fusionPrefix: "团",
-    fusionSuffix: "珠蛛",
+    fusionPrefix: "团珠",
+    fusionSuffix: "蛛",
   },
   spidops: {
-    fusionPrefix: "操",
-    fusionSuffix: "陷蛛",
+    fusionPrefix: "操陷",
+    fusionSuffix: "蛛",
   },
   nymble: {
-    fusionPrefix: "豆蟋",
+    fusionPrefix: "豆",
     fusionSuffix: "蟋蟀",
   },
   lokix: {
@@ -3682,16 +3683,16 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "蝗",
   },
   pawmi: {
-    fusionPrefix: "布拨",
-    fusionSuffix: "布拨",
+    fusionPrefix: "布",
+    fusionSuffix: "拨",
   },
   pawmo: {
-    fusionPrefix: "布土",
-    fusionSuffix: "布土拨",
+    fusionPrefix: "布",
+    fusionSuffix: "土拨",
   },
   pawmot: {
     fusionPrefix: "巴布",
-    fusionSuffix: "巴布土拨",
+    fusionSuffix: "土拨",
   },
   tandemaus: {
     fusionPrefix: "一对",
@@ -3702,39 +3703,39 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "家鼠",
   },
   fidough: {
-    fusionPrefix: "狗",
-    fusionSuffix: "仔包",
+    fusionPrefix: "狗仔",
+    fusionSuffix: "包",
   },
   dachsbun: {
     fusionPrefix: "麻花",
-    fusionSuffix: "花犬",
+    fusionSuffix: "犬",
   },
   smoliv: {
-    fusionPrefix: "迷你芙",
-    fusionSuffix: "你芙",
+    fusionPrefix: "迷你",
+    fusionSuffix: "芙",
   },
   dolliv: {
-    fusionPrefix: "奥利纽",
+    fusionPrefix: "奥利",
     fusionSuffix: "纽",
   },
   arboliva: {
-    fusionPrefix: "奥利瓦",
+    fusionPrefix: "奥利",
     fusionSuffix: "瓦",
   },
   squawkabilly: {
-    fusionPrefix: "怒",
+    fusionPrefix: "怒鹦",
     fusionSuffix: "哥",
   },
   nacli: {
-    fusionPrefix: "盐石宝",
+    fusionPrefix: "盐石",
     fusionSuffix: "石宝",
   },
   naclstack: {
-    fusionPrefix: "盐石垒",
+    fusionPrefix: "盐石",
     fusionSuffix: "垒",
   },
   garganacl: {
-    fusionPrefix: "盐石巨",
+    fusionPrefix: "盐石",
     fusionSuffix: "巨灵",
   },
   charcadet: {
@@ -3742,8 +3743,8 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "小侍",
   },
   armarouge: {
-    fusionPrefix: "红",
-    fusionSuffix: "骑",
+    fusionPrefix: "红莲",
+    fusionSuffix: "铠骑",
   },
   ceruledge: {
     fusionPrefix: "苍炎",
@@ -3751,55 +3752,55 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   tadbulb: {
     fusionPrefix: "光蚪",
-    fusionSuffix: "蚪仔",
+    fusionSuffix: "仔",
   },
   bellibolt: {
     fusionPrefix: "电肚",
     fusionSuffix: "肚蛙",
   },
   wattrel: {
-    fusionPrefix: "电海",
-    fusionSuffix: "电海燕",
+    fusionPrefix: "电",
+    fusionSuffix: "海燕",
   },
   kilowattrel: {
     fusionPrefix: "大电",
-    fusionSuffix: "大电海燕",
+    fusionSuffix: "海燕",
   },
   maschiff: {
-    fusionPrefix: "偶",
+    fusionPrefix: "偶叫",
     fusionSuffix: "獒",
   },
   mabosstiff: {
     fusionPrefix: "獒",
-    fusionSuffix: "父",
+    fusionSuffix: "教父",
   },
   shroodle: {
-    fusionPrefix: "滋",
+    fusionPrefix: "滋汁",
     fusionSuffix: "鼹",
   },
   grafaiai: {
-    fusionPrefix: "涂",
+    fusionPrefix: "涂标",
     fusionSuffix: "客",
   },
   bramblin: {
-    fusionPrefix: "纳",
-    fusionSuffix: "纳噬草",
+    fusionPrefix: "纳噬",
+    fusionSuffix: "噬草",
   },
   brambleghast: {
     fusionPrefix: "怖纳",
-    fusionSuffix: "怖纳噬草",
+    fusionSuffix: "噬草",
   },
   toedscool: {
     fusionPrefix: "原野",
-    fusionSuffix: "野水母",
+    fusionSuffix: "水母",
   },
   toedscruel: {
-    fusionPrefix: "陆",
-    fusionSuffix: "地水母",
+    fusionPrefix: "陆地",
+    fusionSuffix: "水母",
   },
   klawf: {
     fusionPrefix: "毛崖",
-    fusionSuffix: "崖蟹",
+    fusionSuffix: "蟹",
   },
   capsakid: {
     fusionPrefix: "热辣",
@@ -3807,46 +3808,46 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   scovillain: {
     fusionPrefix: "狠",
-    fusionSuffix: "椒",
+    fusionSuffix: "辣椒",
   },
   rellor: {
     fusionPrefix: "虫滚",
-    fusionSuffix: "滚泥",
+    fusionSuffix: "泥",
   },
   rabsca: {
     fusionPrefix: "虫甲",
     fusionSuffix: "圣",
   },
   flittle: {
-    fusionPrefix: "飘飘雏",
+    fusionPrefix: "飘飘",
     fusionSuffix: "雏",
   },
   espathra: {
-    fusionPrefix: "超能艳",
-    fusionSuffix: "鸵",
+    fusionPrefix: "超能",
+    fusionSuffix: "艳鸵",
   },
   tinkatink: {
     fusionPrefix: "小锻",
-    fusionSuffix: "小锻匠",
+    fusionSuffix: "锻匠",
   },
   tinkatuff: {
-    fusionPrefix: "巧",
-    fusionSuffix: "巧锻匠",
+    fusionPrefix: "巧锻",
+    fusionSuffix: "匠",
   },
   tinkaton: {
     fusionPrefix: "巨锻",
-    fusionSuffix: "巨锻匠",
+    fusionSuffix: "匠",
   },
   wiglett: {
-    fusionPrefix: "海地",
-    fusionSuffix: "海地鼠",
+    fusionPrefix: "海",
+    fusionSuffix: "地鼠",
   },
   wugtrio: {
     fusionPrefix: "三海",
-    fusionSuffix: "三海地鼠",
+    fusionSuffix: "地鼠",
   },
   bombirdier: {
-    fusionPrefix: "下",
+    fusionPrefix: "下石",
     fusionSuffix: "石鸟",
   },
   finizen: {
@@ -3862,44 +3863,44 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "隆隆",
   },
   revavroom: {
-    fusionPrefix: "普",
+    fusionPrefix: "普隆",
     fusionSuffix: "隆姆",
   },
   cyclizar: {
     fusionPrefix: "摩托",
-    fusionSuffix: "托蜥",
+    fusionSuffix: "蜥",
   },
   orthworm: {
-    fusionPrefix: "拖",
+    fusionPrefix: "拖拖",
     fusionSuffix: "蚓",
   },
   glimmet: {
-    fusionPrefix: "晶光芽",
-    fusionSuffix: "光芽",
+    fusionPrefix: "晶光",
+    fusionSuffix: "芽",
   },
   glimmora: {
-    fusionPrefix: "晶光花",
+    fusionPrefix: "晶光",
     fusionSuffix: "光花",
   },
   greavard: {
     fusionPrefix: "墓仔",
-    fusionSuffix: "仔狗",
+    fusionSuffix: "狗",
   },
   houndstone: {
     fusionPrefix: "墓扬",
-    fusionSuffix: "扬犬",
+    fusionSuffix: "犬",
   },
   flamigo: {
-    fusionPrefix: "缠",
+    fusionPrefix: "缠红",
     fusionSuffix: "鹤",
   },
   cetoddle: {
-    fusionPrefix: "走鲸",
-    fusionSuffix: "走鲸",
+    fusionPrefix: "走",
+    fusionSuffix: "鲸",
   },
   cetitan: {
-    fusionPrefix: "浩",
-    fusionSuffix: "大鲸",
+    fusionPrefix: "浩大",
+    fusionSuffix: "鲸",
   },
   veluza: {
     fusionPrefix: "轻身",
@@ -3910,68 +3911,68 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "吼霸",
   },
   tatsugiri: {
-    fusionPrefix: "米",
-    fusionSuffix: "立龙",
+    fusionPrefix: "米立",
+    fusionSuffix: "龙",
   },
   annihilape: {
-    fusionPrefix: "弃",
-    fusionSuffix: "世猴",
+    fusionPrefix: "弃世",
+    fusionSuffix: "猴",
   },
   clodsire: {
-    fusionPrefix: "土王",
-    fusionSuffix: "土王",
+    fusionPrefix: "土",
+    fusionSuffix: "王",
   },
   farigiraf: {
-    fusionPrefix: "奇麒",
-    fusionSuffix: "麟",
+    fusionPrefix: "奇",
+    fusionSuffix: "麒麟",
   },
   dudunsparce: {
-    fusionPrefix: "土龙节",
-    fusionSuffix: "节",
+    fusionPrefix: "土龙",
+    fusionSuffix: "节节",
   },
   kingambit: {
-    fusionPrefix: "仆",
-    fusionSuffix: "军",
+    fusionPrefix: "仆刀",
+    fusionSuffix: "将军",
   },
   great_tusk: {
-    fusionPrefix: "雄",
+    fusionPrefix: "雄尾",
     fusionSuffix: "伟牙",
   },
   scream_tail: {
     fusionPrefix: "吼叫",
-    fusionSuffix: "叫尾",
+    fusionSuffix: "尾",
   },
   brute_bonnet: {
     fusionPrefix: "猛恶",
-    fusionSuffix: "恶菇",
+    fusionSuffix: "菇",
   },
   flutter_mane: {
-    fusionPrefix: "振",
+    fusionPrefix: "振翼",
     fusionSuffix: "发",
   },
   slither_wing: {
-    fusionPrefix: "爬",
+    fusionPrefix: "爬地",
     fusionSuffix: "翅",
   },
   sandy_shocks: {
     fusionPrefix: "沙铁",
-    fusionSuffix: "铁皮",
+    fusionSuffix: "皮",
   },
   iron_treads: {
     fusionPrefix: "铁辙",
-    fusionSuffix: "迹",
+    fusionSuffix: "辙迹",
   },
   iron_bundle: {
     fusionPrefix: "铁包",
-    fusionSuffix: "袱",
+    fusionSuffix: "包袱",
   },
   iron_hands: {
-    fusionPrefix: "铁臂膀",
-    fusionSuffix: "膀",
+    fusionPrefix: "铁臂",
+    fusionSuffix: "臂膀",
   },
   iron_jugulis: {
     fusionPrefix: "铁脖",
-    fusionSuffix: "颈",
+    fusionSuffix: "脖颈",
   },
   iron_moth: {
     fusionPrefix: "铁毒",
@@ -3979,19 +3980,19 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   iron_thorns: {
     fusionPrefix: "铁荆",
-    fusionSuffix: "棘",
+    fusionSuffix: "荆棘",
   },
   frigibax: {
     fusionPrefix: "凉",
-    fusionSuffix: "凉脊龙",
+    fusionSuffix: "脊龙",
   },
   arctibax: {
-    fusionPrefix: "冻脊",
-    fusionSuffix: "冻脊龙",
+    fusionPrefix: "冻",
+    fusionSuffix: "脊龙",
   },
   baxcalibur: {
     fusionPrefix: "戟",
-    fusionSuffix: "戟脊龙",
+    fusionSuffix: "脊龙",
   },
   gimmighoul: {
     fusionPrefix: "索财",
@@ -3999,7 +4000,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   gholdengo: {
     fusionPrefix: "赛",
-    fusionSuffix: "豪",
+    fusionSuffix: "富豪",
   },
   wo_chien: {
     fusionPrefix: "古简",
@@ -4023,15 +4024,15 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   iron_valiant: {
     fusionPrefix: "铁武",
-    fusionSuffix: "铁武者",
+    fusionSuffix: "武者",
   },
   koraidon: {
     fusionPrefix: "故",
-    fusionSuffix: "故勒顿",
+    fusionSuffix: "勒顿",
   },
   miraidon: {
     fusionPrefix: "密",
-    fusionSuffix: "密勒顿",
+    fusionSuffix: "勒顿",
   },
   walking_wake: {
     fusionPrefix: "波荡",
@@ -4039,10 +4040,10 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   iron_leaves: {
     fusionPrefix: "铁斑",
-    fusionSuffix: "斑叶",
+    fusionSuffix: "叶",
   },
   dipplin: {
-    fusionPrefix: "裹",
+    fusionPrefix: "裹蜜",
     fusionSuffix: "蜜虫",
   },
   poltchageist: {
@@ -4050,23 +4051,23 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "魔茶",
   },
   sinistcha: {
-    fusionPrefix: "来悲粗",
+    fusionPrefix: "来悲",
     fusionSuffix: "粗茶",
   },
   okidogi: {
-    fusionPrefix: "够",
-    fusionSuffix: "赞狗",
+    fusionPrefix: "够赞",
+    fusionSuffix: "狗",
   },
   munkidori: {
-    fusionPrefix: "愿",
-    fusionSuffix: "增猿",
+    fusionPrefix: "愿增",
+    fusionSuffix: "猿",
   },
   fezandipiti: {
     fusionPrefix: "吉雉",
-    fusionSuffix: "吉雉鸡",
+    fusionSuffix: "鸡",
   },
   ogerpon: {
-    fusionPrefix: "厄",
+    fusionPrefix: "厄鬼",
     fusionSuffix: "椪",
   },
   archaludon: {
@@ -4074,7 +4075,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "桥龙",
   },
   hydrapple: {
-    fusionPrefix: "蜜",
+    fusionPrefix: "蜜集",
     fusionSuffix: "大蛇",
   },
   gouging_fire: {
@@ -4091,11 +4092,11 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   iron_crown: {
     fusionPrefix: "铁头",
-    fusionSuffix: "壳",
+    fusionSuffix: "头壳",
   },
   terapagos: {
     fusionPrefix: "太乐",
-    fusionSuffix: "戈斯",
+    fusionSuffix: "巴戈斯",
   },
   pecharunt: {
     fusionPrefix: "桃",
@@ -4103,94 +4104,94 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   alola_rattata: {
     fusionPrefix: "小拉",
-    fusionSuffix: "小拉达",
+    fusionSuffix: "达",
   },
   alola_raticate: {
-    fusionPrefix: "拉达",
-    fusionSuffix: "拉达",
+    fusionPrefix: "拉",
+    fusionSuffix: "达",
   },
   alola_raichu: {
-    fusionPrefix: "雷丘",
-    fusionSuffix: "雷丘",
+    fusionPrefix: "雷",
+    fusionSuffix: "丘",
   },
   alola_sandshrew: {
-    fusionPrefix: "穿山鼠",
-    fusionSuffix: "山鼠",
+    fusionPrefix: "穿山",
+    fusionSuffix: "鼠",
   },
   alola_sandslash: {
-    fusionPrefix: "穿山王",
-    fusionSuffix: "山王",
+    fusionPrefix: "穿山",
+    fusionSuffix: "王",
   },
   alola_vulpix: {
     fusionPrefix: "六",
-    fusionSuffix: "六尾",
+    fusionSuffix: "尾",
   },
   alola_ninetales: {
     fusionPrefix: "九",
-    fusionSuffix: "九尾",
+    fusionSuffix: "尾",
   },
   alola_diglett: {
-    fusionPrefix: "地鼠",
-    fusionSuffix: "地鼠",
+    fusionPrefix: "地",
+    fusionSuffix: "鼠",
   },
   alola_dugtrio: {
     fusionPrefix: "三地",
-    fusionSuffix: "三地鼠",
+    fusionSuffix: "鼠",
   },
   alola_meowth: {
-    fusionPrefix: "喵喵",
-    fusionSuffix: "喵喵",
+    fusionPrefix: "喵",
+    fusionSuffix: "喵",
   },
   alola_persian: {
-    fusionPrefix: "猫老",
-    fusionSuffix: "大",
+    fusionPrefix: "猫",
+    fusionSuffix: "老大",
   },
   alola_geodude: {
     fusionPrefix: "小拳",
-    fusionSuffix: "拳石",
+    fusionSuffix: "石",
   },
   alola_graveler: {
-    fusionPrefix: "隆隆石",
-    fusionSuffix: "隆石",
+    fusionPrefix: "隆隆",
+    fusionSuffix: "石",
   },
   alola_golem: {
-    fusionPrefix: "隆隆岩",
-    fusionSuffix: "隆岩",
+    fusionPrefix: "隆隆",
+    fusionSuffix: "岩",
   },
   alola_grimer: {
-    fusionPrefix: "臭泥",
-    fusionSuffix: "臭泥",
+    fusionPrefix: "臭",
+    fusionSuffix: "泥",
   },
   alola_muk: {
-    fusionPrefix: "臭臭泥",
-    fusionSuffix: "臭臭泥",
+    fusionPrefix: "臭臭",
+    fusionSuffix: "泥",
   },
   alola_exeggutor: {
-    fusionPrefix: "椰",
+    fusionPrefix: "椰蛋",
     fusionSuffix: "树",
   },
   alola_marowak: {
-    fusionPrefix: "嘎",
-    fusionSuffix: "啦",
+    fusionPrefix: "嘎啦",
+    fusionSuffix: "嘎啦",
   },
   eternal_floette: {
     fusionPrefix: "花叶",
     fusionSuffix: "蒂",
   },
   galar_meowth: {
-    fusionPrefix: "喵喵",
-    fusionSuffix: "喵喵",
+    fusionPrefix: "喵",
+    fusionSuffix: "喵",
   },
   galar_ponyta: {
-    fusionPrefix: "小火马",
-    fusionSuffix: "火马",
+    fusionPrefix: "小火",
+    fusionSuffix: "马",
   },
   galar_rapidash: {
-    fusionPrefix: "烈焰马",
-    fusionSuffix: "焰马",
+    fusionPrefix: "烈焰",
+    fusionSuffix: "马",
   },
   galar_slowpoke: {
-    fusionPrefix: "呆呆兽",
+    fusionPrefix: "呆呆",
     fusionSuffix: "呆兽",
   },
   galar_slowbro: {
@@ -4207,94 +4208,94 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   galar_mr_mime: {
     fusionPrefix: "魔墙",
-    fusionSuffix: "墙人偶",
+    fusionSuffix: "人偶",
   },
   galar_articuno: {
-    fusionPrefix: "急",
-    fusionSuffix: "冻鸟",
+    fusionPrefix: "急冻",
+    fusionSuffix: "鸟",
   },
   galar_zapdos: {
     fusionPrefix: "闪电",
-    fusionSuffix: "电鸟",
+    fusionSuffix: "鸟",
   },
   galar_moltres: {
-    fusionPrefix: "火焰鸟",
-    fusionSuffix: "焰鸟",
+    fusionPrefix: "火焰",
+    fusionSuffix: "鸟",
   },
   galar_slowking: {
-    fusionPrefix: "呆呆王",
+    fusionPrefix: "呆呆",
     fusionSuffix: "呆王",
   },
   galar_corsola: {
-    fusionPrefix: "太阳珊",
-    fusionSuffix: "阳珊瑚",
+    fusionPrefix: "太阳",
+    fusionSuffix: "珊瑚",
   },
   galar_zigzagoon: {
-    fusionPrefix: "蛇",
-    fusionSuffix: "纹熊",
+    fusionPrefix: "蛇纹",
+    fusionSuffix: "熊",
   },
   galar_linoone: {
-    fusionPrefix: "直",
-    fusionSuffix: "冲熊",
+    fusionPrefix: "直冲",
+    fusionSuffix: "熊",
   },
   galar_darumaka: {
     fusionPrefix: "火红",
-    fusionSuffix: "倒翁",
+    fusionSuffix: "不倒翁",
   },
   galar_darmanitan: {
     fusionPrefix: "达摩",
-    fusionSuffix: "狒",
+    fusionSuffix: "狒狒",
   },
   galar_yamask: {
-    fusionPrefix: "哭",
-    fusionSuffix: "具",
+    fusionPrefix: "哭哭",
+    fusionSuffix: "面具",
   },
   galar_stunfisk: {
     fusionPrefix: "泥巴",
-    fusionSuffix: "巴鱼",
+    fusionSuffix: "泥鱼",
   },
   hisui_growlithe: {
     fusionPrefix: "卡蒂",
-    fusionSuffix: "蒂狗",
+    fusionSuffix: "狗",
   },
   hisui_arcanine: {
     fusionPrefix: "风速",
-    fusionSuffix: "速狗",
+    fusionSuffix: "狗",
   },
   hisui_voltorb: {
-    fusionPrefix: "霹",
+    fusionPrefix: "霹雳",
     fusionSuffix: "电球",
   },
   hisui_electrode: {
-    fusionPrefix: "顽皮雷",
+    fusionPrefix: "顽皮",
     fusionSuffix: "雷弹",
   },
   hisui_typhlosion: {
-    fusionPrefix: "火暴兽",
+    fusionPrefix: "火暴",
     fusionSuffix: "暴兽",
   },
   hisui_qwilfish: {
     fusionPrefix: "千针",
-    fusionSuffix: "千针鱼",
+    fusionSuffix: "针鱼",
   },
   hisui_sneasel: {
     fusionPrefix: "狃",
-    fusionSuffix: "狃拉",
+    fusionSuffix: "拉",
   },
   hisui_samurott: {
     fusionPrefix: "大剑",
     fusionSuffix: "剑鬼",
   },
   hisui_lilligant: {
-    fusionPrefix: "裙",
-    fusionSuffix: "儿小姐",
+    fusionPrefix: "裙儿",
+    fusionSuffix: "小姐",
   },
   hisui_zorua: {
-    fusionPrefix: "索罗亚",
-    fusionSuffix: "罗亚",
+    fusionPrefix: "索罗",
+    fusionSuffix: "亚",
   },
   hisui_zoroark: {
-    fusionPrefix: "索罗亚克",
+    fusionPrefix: "索罗",
     fusionSuffix: "亚克",
   },
   hisui_braviary: {
@@ -4302,28 +4303,28 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "雄鹰",
   },
   hisui_sliggoo: {
-    fusionPrefix: "黏美儿",
+    fusionPrefix: "黏",
     fusionSuffix: "美儿",
   },
   hisui_goodra: {
-    fusionPrefix: "黏美龙",
+    fusionPrefix: "黏",
     fusionSuffix: "美龙",
   },
   hisui_avalugg: {
-    fusionPrefix: "冰岩",
-    fusionSuffix: "冰岩怪",
+    fusionPrefix: "冰",
+    fusionSuffix: "岩怪",
   },
   hisui_decidueye: {
-    fusionPrefix: "狙",
+    fusionPrefix: "狙射",
     fusionSuffix: "树枭",
   },
   paldea_tauros: {
     fusionPrefix: "肯",
-    fusionSuffix: "罗",
+    fusionSuffix: "泰罗",
   },
   paldea_wooper: {
-    fusionPrefix: "乌波",
-    fusionSuffix: "乌波",
+    fusionPrefix: "乌",
+    fusionSuffix: "波",
   },
   bloodmoon_ursaluna: {
     fusionPrefix: "月月",
