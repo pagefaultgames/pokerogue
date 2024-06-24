@@ -6,7 +6,7 @@ import { PlayerPokemon } from "#app/field/pokemon.js";
 
 export default class RenameFormUiHandler extends FormModalUiHandler {
   getModalTitle(config?: ModalConfig): string {
-    return i18next.t("menu:rename");
+    return i18next.t("menu:renamePokemon");
   }
 
   getFields(config?: ModalConfig): string[] {
@@ -22,7 +22,7 @@ export default class RenameFormUiHandler extends FormModalUiHandler {
   }
 
   getButtonLabels(config?: ModalConfig): string[] {
-    return [ i18next.t("menu:ok") ];
+    return [ i18next.t("menu:rename"), i18next.t("menu:cancel") ];
   }
 
   getReadableErrorMessage(error: string): string {
@@ -30,16 +30,6 @@ export default class RenameFormUiHandler extends FormModalUiHandler {
     if (colonIndex > 0) {
       error = error.slice(0, colonIndex);
     }
-    // switch (error) {
-    // case "invalid username":
-    //   return i18next.t("menu:invalidLoginUsername");
-    // case "invalid password":
-    //   return i18next.t("menu:invalidLoginPassword");
-    // case "account doesn't exist":
-    //   return i18next.t("menu:accountNonExistent");
-    // case "password doesn't match":
-    //   return i18next.t("menu:unmatchingPassword");
-    // }
 
     return super.getReadableErrorMessage(error);
   }
@@ -51,12 +41,12 @@ export default class RenameFormUiHandler extends FormModalUiHandler {
 
       this.submitAction = (_) => {
         this.sanitizeInputs();
-        const onFail = error => {
-          this.scene.ui.setModeWithoutClear(Mode.RENAME_POKEMON, Object.assign(config, { errorMessage: error?.trim() }));
+        const onFail = () => {
+          this.scene.ui.setModeWithoutClear(Mode.RENAME_POKEMON, Object.assign(config));
           this.scene.ui.playError();
         };
         if (!this.inputs[0].text) {
-          return onFail(i18next.t("menu:emptyNickname"));
+          return onFail();
         }
 
         config.buttonActions[0](this.inputs[0].text);

@@ -54,6 +54,7 @@ export const menu: SimpleTranslationEntries = {
   "disclaimer": "DISCLAIMER",
   "disclaimerDescription": "This game is an unfinished product; it might have playability issues (including the potential loss of save data),\n change without notice, and may or may not be updated further or completed.",
   "choosePokemon": "Choose a Pokémon.",
-  "rename": "Rename Pokémon",
+  "renamePokemon": "Rename Pokémon",
+  "rename": "Rename",
   "nickname": "Nickname"
 } as const;

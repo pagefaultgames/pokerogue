@@ -426,6 +426,9 @@ export default class PartyUiHandler extends MessageUiHandler {
                 this.clearPartySlots();
                 this.populatePartySlots();
                 ui.setMode(Mode.PARTY);
+              },
+              () => {
+                ui.setMode(Mode.PARTY);
               }
             ]
           }, pokemon);
