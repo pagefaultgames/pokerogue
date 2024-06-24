@@ -1949,6 +1949,18 @@ export class CommandPhase extends FieldPhase {
 
     switch (command) {
     case Command.FIGHT:
+      // Check if move can be used in challenge
+      const isValidForChallenge = new Utils.BooleanHolder(true);
+      applyChallenges(this.scene.gameMode, ChallengeType.MOVE_BLACKLIST, playerPokemon.getMoveset()[cursor], isValidForChallenge);
+      if (!isValidForChallenge.value) {
+        const moveName = playerPokemon.getMoveset()[cursor].getName();
+        this.scene.ui.setMode(Mode.MESSAGE);
+        this.scene.ui.showText(i18next.t("challenges:illegalMove", { moveName: moveName }), null, () => {
+          this.scene.ui.clearText();
+          this.scene.ui.setMode(Mode.FIGHT, this.fieldIndex);
+        }, null, true);
+        break;
+      }
       let useStruggle = false;
       if (cursor === -1 ||
           playerPokemon.trySelectMove(cursor, args[0] as boolean) ||

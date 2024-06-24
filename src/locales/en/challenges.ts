@@ -4,6 +4,7 @@ export const challenges: TranslationEntries = {
   "title": "Challenge Modifiers",
   "start": "Start",
   "illegalEvolution": "{{pokemon}} changed into an ineligble pokémon\nfor this challenge!",
+  "illegalMove": "{{moveName}} is not a valid move for this challenge!",
   "singleGeneration": {
     "name": "Mono Gen",
     "desc": "You can only use Pokémon from Generation {{gen}}.",

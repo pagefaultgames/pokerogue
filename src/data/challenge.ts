@@ -2,7 +2,7 @@ import * as Utils from "../utils";
 import i18next from "i18next";
 import { DexAttrProps, GameData } from "#app/system/game-data.js";
 import PokemonSpecies, { getPokemonSpecies, getPokemonSpeciesForm, speciesStarters } from "./pokemon-species";
-import Pokemon from "#app/field/pokemon.js";
+import Pokemon, { PokemonMove } from "#app/field/pokemon.js";
 import { BattleType, FixedBattleConfig } from "#app/battle.js";
 import Trainer, { TrainerVariant } from "#app/field/trainer.js";
 import { GameMode } from "#app/game-mode.js";
@@ -14,6 +14,7 @@ import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 import { ModifierTypeOption } from "#app/modifier/modifier-type.js";
 import { TypeColor, TypeShadow } from "#app/enums/color.js";
+import { Moves } from "#app/enums/moves.js";
 
 /**
  * An enum for all the challenge types. The parameter entries on these describe the
@@ -55,23 +56,29 @@ export enum ChallengeType {
   NO_HEAL_PHASE,
   /**
    * Checks if the shop item is blacklisted
-   * @param args [0] {@link ModifierTypeOption} the shop item
+   * @param args [0] {@link ModifierTypeOption} The shop item
    *             [1] {@link Utils.BooleanHolder} Sets to false if illegal, pass in true.
   */
   SHOP_ITEM_BLACKLIST,
   /**
    * Checks if the random item is blacklisted
-   * @param args [0] {@link ModifierTypeOption} the random item
+   * @param args [0] {@link ModifierTypeOption} The random item
    *             [1] {@link Utils.BooleanHolder} Sets to false if illegal, pass in true.
   */
   RANDOM_ITEM_BLACKLIST,
   /**
    * Checks if the cought pokemon can be add to the team
-   * @param args [0] {@link EnemyPokemon} the pokemon cought
+   * @param args [0] {@link EnemyPokemon} The pokemon cought
    *             [1] {@link number} Current wave index
    *             [2] {@link Utils.BooleanHolder} Sets to false if illegal, pass in true.
   */
-  ADD_POKEMON_TO_PARTY
+  ADD_POKEMON_TO_PARTY,
+  /**
+   * Checks if the move is blacklisted
+   * @param args [0] {@link PokemonMove} The move thats tryed to be used
+   *             [1] {@link Utils.BooleanHolder} Sets to false if illegal, pass in true.
+  */
+  MOVE_BLACKLIST
 }
 
 /**
@@ -684,6 +691,7 @@ export class NuzlockeChallenge extends Challenge {
     this.addChallengeType(ChallengeType.RANDOM_ITEM_BLACKLIST);
     this.addChallengeType(ChallengeType.SHOP_ITEM_BLACKLIST);
     this.addChallengeType(ChallengeType.ADD_POKEMON_TO_PARTY);
+    this.addChallengeType(ChallengeType.MOVE_BLACKLIST);
   }
 
   apply(challengeType: ChallengeType, args: any[]): boolean {
@@ -720,6 +728,13 @@ export class NuzlockeChallenge extends Challenge {
       } else {
         canAddToParty.value = false;
       }
+      return true;
+    case ChallengeType.MOVE_BLACKLIST:
+      const move = args[0] as PokemonMove;
+      const isMoveValid = args[1] as Utils.BooleanHolder;
+      const moveBlacklist = [Moves.REVIVAL_BLESSING];
+
+      isMoveValid.value = !moveBlacklist.includes(move.moveId);
       return true;
     }
     return false;
