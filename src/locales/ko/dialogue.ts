@@ -1357,7 +1357,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "도전자가… 사천왕 파키라에게서 멋지게 승리를 쟁취했습니다!"
     },
     "defeat": {
-      1: "기쁘네요! 그렇죠, 당신을 밑에서 짓밟을 수 있게 될 줄은 몰랐으니까."
+      1: "기쁘네요! 당신을 짓밟을 수 있어서 말이죠!"
     }
   },
   "hala": {
