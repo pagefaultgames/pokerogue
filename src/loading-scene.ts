@@ -43,7 +43,6 @@ export class LoadingScene extends SceneBase {
 
     // Load menu images
     this.loadAtlas("bg", "ui");
-    this.loadImage("command_fight_labels", "ui");
     this.loadAtlas("prompt", "ui");
     this.loadImage("candy", "ui");
     this.loadImage("candy_overlay", "ui");
