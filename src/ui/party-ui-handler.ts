@@ -51,6 +51,7 @@ export enum PartyOption {
   SPLICE,
   UNSPLICE,
   RELEASE,
+  RENAME,
   SCROLL_UP = 1000,
   SCROLL_DOWN = 1001,
   FORM_CHANGE_ITEM = 2000,
@@ -58,7 +59,7 @@ export enum PartyOption {
   MOVE_2,
   MOVE_3,
   MOVE_4,
-  ALL = 4000
+  ALL = 4000,
 }
 
 export type PartySelectCallback = (cursor: integer, option: PartyOption) => void;
@@ -300,7 +301,7 @@ export default class PartyUiHandler extends MessageUiHandler {
           }
           ui.playSelect();
           return true;
-        } else if ((option !== PartyOption.SUMMARY && option !== PartyOption.UNPAUSE_EVOLUTION && option !== PartyOption.UNSPLICE && option !== PartyOption.RELEASE && option !== PartyOption.CANCEL)
+        } else if ((option !== PartyOption.SUMMARY && option !== PartyOption.UNPAUSE_EVOLUTION && option !== PartyOption.UNSPLICE && option !== PartyOption.RELEASE && option !== PartyOption.CANCEL && option !== PartyOption.RENAME)
           || (option === PartyOption.RELEASE && this.partyUiMode === PartyUiMode.RELEASE)) {
           let filterResult: string;
           const getTransferrableItemsFromPokemon = (pokemon: PlayerPokemon) =>
@@ -413,6 +414,21 @@ export default class PartyUiHandler extends MessageUiHandler {
           } else {
             this.showText("You can't release a Pokémon that's in battle!", null, () => this.showText(null, 0), null, true);
           }
+          return true;
+        } else if (option === PartyOption.RENAME) {
+          this.clearOptions();
+          ui.playSelect();
+          ui.setModeWithoutClear(Mode.RENAME_POKEMON, {
+            buttonActions: [
+              (nickname: string) => {
+                ui.playSelect();
+                pokemon.name = nickname;
+                this.clearPartySlots();
+                this.populatePartySlots();
+                ui.setMode(Mode.PARTY);
+              }
+            ]
+          }, pokemon);
           return true;
         } else if (option === PartyOption.CANCEL) {
           return this.processInput(Button.CANCEL);
@@ -760,6 +776,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       }
 
       this.options.push(PartyOption.SUMMARY);
+      this.options.push(PartyOption.RENAME);
 
       if (pokemon.pauseEvolutions && pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId)) {
         this.options.push(PartyOption.UNPAUSE_EVOLUTION);
