@@ -6,7 +6,7 @@ import { BattleStat, getBattleStatName } from "./battle-stat";
 import { MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
 import { getPokemonMessage, getPokemonNameWithAffix } from "../messages";
 import { Weather, WeatherType } from "./weather";
-import { BattlerTag } from "./battler-tags";
+import { BattlerTag, GroundedTag } from "./battler-tags";
 import { StatusEffect, getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
 import { Gender } from "./gender";
 import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, FlinchAttr, OneHitKOAttr, HitHealAttr, allMoves, StatusMove, SelfStatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr, VariableMoveTypeAttr, RandomMovesetMoveAttr, RandomMoveAttr, NaturePowerAttr, CopyMoveAttr  } from "./move";
@@ -1695,7 +1695,18 @@ export class PostIntimidateStatChangeAbAttr extends AbAttr {
   }
 }
 
+/**
+ * Base class for defining all {@linkcode Ability} Attributes post summon
+ * @see {@linkcode applyPostSummon()}
+ */
 export class PostSummonAbAttr extends AbAttr {
+  /**
+   * Applies ability post summon (after switching in)
+   * @param pokemon {@linkcode Pokemon} with this ability
+   * @param passive Whether this ability is a passive
+   * @param args Set of unique arguments needed by this attribute
+   * @returns true if application of the ability succeeds
+   */
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
     return false;
   }
@@ -1967,7 +1978,11 @@ export class PostSummonFormChangeAbAttr extends PostSummonAbAttr {
   }
 }
 
-export class TraceAbAttr extends PostSummonAbAttr {
+/** Attempts to copy a pokemon's ability */
+export class PostSummonCopyAbilityAbAttr extends PostSummonAbAttr {
+  private target: Pokemon;
+  private targetAbilityName: string;
+
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     const targets = pokemon.getOpponents();
     if (!targets.length) {
@@ -1981,17 +1996,56 @@ export class TraceAbAttr extends PostSummonAbAttr {
       target = targets[0];
     }
 
-    // Wonder Guard is normally uncopiable so has the attribute, but trace specifically can copy it
-    if (target.getAbility().hasAttr(UncopiableAbilityAbAttr) && target.getAbility().id !== Abilities.WONDER_GUARD) {
+    if (
+      target.getAbility().hasAttr(UncopiableAbilityAbAttr) &&
+      // Wonder Guard is normally uncopiable so has the attribute, but Trace specifically can copy it
+      !(pokemon.hasAbility(Abilities.TRACE) && target.getAbility().id === Abilities.WONDER_GUARD)
+    ) {
       return false;
     }
 
+    this.target = target;
+    this.targetAbilityName = allAbilities[target.getAbility().id].name;
     pokemon.summonData.ability = target.getAbility().id;
-
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` traced ${target.name}'s\n${allAbilities[target.getAbility().id].name}!`));
     setAbilityRevealed(target);
+    pokemon.updateInfo();
 
     return true;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
+    return i18next.t("abilityTriggers:trace", {
+      pokemonName: getPokemonNameWithAffix(pokemon),
+      targetName: getPokemonNameWithAffix(this.target),
+      abilityName: this.targetAbilityName,
+    });
+  }
+}
+
+
+/** Attempt to copy the stat changes on an ally pokemon */
+export class PostSummonCopyAllyStatsAbAttr extends PostSummonAbAttr {
+  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+    if (!pokemon.scene.currentBattle.double) {
+      return false;
+    }
+
+    const ally = pokemon.getAlly();
+    if (!ally || ally.summonData.battleStats.every((change) => change === 0)) {
+      return false;
+    }
+
+    pokemon.summonData.battleStats = ally.summonData.battleStats;
+    pokemon.updateInfo();
+
+    return true;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
+    return i18next.t("abilityTriggers:costar", {
+      pokemonName: getPokemonNameWithAffix(pokemon),
+      allyName: getPokemonNameWithAffix(pokemon.getAlly()),
+    });
   }
 }
 
@@ -4095,7 +4149,7 @@ export function initAbilities() {
       .attr(UnswappableAbilityAbAttr)
       .ignorable(),
     new Ability(Abilities.LEVITATE, 3)
-      .attr(TypeImmunityAbAttr, Type.GROUND, (pokemon: Pokemon) => !pokemon.getTag(BattlerTagType.IGNORE_FLYING) && !pokemon.scene.arena.getTag(ArenaTagType.GRAVITY) && !pokemon.getTag(BattlerTagType.GROUNDED))
+      .attr(TypeImmunityAbAttr, Type.GROUND, (pokemon: Pokemon) => !pokemon.getTag(GroundedTag) && !pokemon.scene.arena.getTag(ArenaTagType.GRAVITY))
       .ignorable(),
     new Ability(Abilities.EFFECT_SPORE, 3)
       .attr(EffectSporeAbAttr),
@@ -4125,7 +4179,7 @@ export function initAbilities() {
       .attr(DoubleBattleChanceAbAttr)
       .ignorable(),
     new Ability(Abilities.TRACE, 3)
-      .attr(TraceAbAttr)
+      .attr(PostSummonCopyAbilityAbAttr)
       .attr(UncopiableAbilityAbAttr),
     new Ability(Abilities.HUGE_POWER, 3)
       .attr(BattleStatMultiplierAbAttr, BattleStat.ATK, 2),
@@ -4581,7 +4635,8 @@ export function initAbilities() {
       .attr(FieldMoveTypePowerBoostAbAttr, Type.FAIRY, 4 / 3),
     new Ability(Abilities.AURA_BREAK, 6)
       .ignorable()
-      .unimplemented(),
+      .conditionalAttr(target => target.hasAbility(Abilities.DARK_AURA), FieldMoveTypePowerBoostAbAttr, Type.DARK, 9 / 16)
+      .conditionalAttr(target => target.hasAbility(Abilities.FAIRY_AURA), FieldMoveTypePowerBoostAbAttr, Type.FAIRY, 9 / 16),
     new Ability(Abilities.PRIMORDIAL_SEA, 6)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.HEAVY_RAIN)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.HEAVY_RAIN)
@@ -4980,7 +5035,7 @@ export function initAbilities() {
       .attr(VariableMovePowerBoostAbAttr, (user, target, move) => 1 + 0.1 * Math.min(user.isPlayer() ? user.scene.currentBattle.playerFaints : user.scene.currentBattle.enemyFaints, 5))
       .partial(),
     new Ability(Abilities.COSTAR, 9)
-      .unimplemented(),
+      .attr(PostSummonCopyAllyStatsAbAttr),
     new Ability(Abilities.TOXIC_DEBRIS, 9)
       .attr(PostDefendApplyArenaTrapTagAbAttr, (target, user, move) => move.category === MoveCategory.PHYSICAL, ArenaTagType.TOXIC_SPIKES)
       .bypassFaint(),

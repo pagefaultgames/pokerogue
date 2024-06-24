@@ -1,11 +1,14 @@
 import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const abilityTriggers: SimpleTranslationEntries = {
-  "blockRecoilDamage" : "{{pokemonName}}'s {{abilityName}}\nprotected it from recoil!",
+  "blockRecoilDamage": "{{pokemonName}}'s {{abilityName}}\nprotected it from recoil!",
   "badDreams": "{{pokemonName}} is tormented!",
-  "windPowerCharged": "Being hit by {{moveName}} charged {{pokemonName}} with power!",
+  "costar": "{{pokemonName}} copied {{allyName}}'s stat changes!",
+  "iceFaceAvoidedDamage": "{{pokemonName}} avoided\ndamage with {{abilityName}}!",
   "perishBody": "{{pokemonName}}'s {{abilityName}}\nwill faint both pokemon in 3 turns!",
   "poisonHeal": "{{pokemonName}}'s {{abilityName}}\nrestored its HP a little!",
   "iceFaceAvoidedDamage": "{{pokemonName}} avoided\ndamage with {{abilityName}}!",
-  "movePrevented": "{{moveUser}} cannot use {{moveName}}!"
+  "movePrevented": "{{moveUser}} cannot use {{moveName}}!",
+  "trace": "{{pokemonName}} copied {{targetName}}'s\n{{abilityName}}!",
+  "windPowerCharged": "Being hit by {{moveName}} charged {{pokemonName}} with power!"
 } as const;

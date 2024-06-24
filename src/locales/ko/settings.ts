@@ -36,7 +36,7 @@ export const settings: SimpleTranslationEntries = {
   "legacy": "레거시",
   "windowType": "윈도우 타입",
   "moneyFormat": "소지금 표시",
-  "damageNumbers": "대미지 숫자 표시",
+  "damageNumbers": "데미지 숫자 표시",
   "simple": "심플",
   "fancy": "팬시",
   "abbreviated": "축약",

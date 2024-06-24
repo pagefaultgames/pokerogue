@@ -31,6 +31,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "selectMoveSwapWith": "选择要替换成的招式",
   "unlockPassive": "解锁被动",
   "reduceCost": "降低花费",
+  "sameSpeciesEgg": "Buy an Egg",
   "cycleShiny": ": 闪光",
   "cycleForm": ": 形态",
   "cycleGender": ": 性别",
