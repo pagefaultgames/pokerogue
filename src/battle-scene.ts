@@ -219,6 +219,7 @@ export default class BattleScene extends SceneBase {
   public arenaFlyout: ArenaFlyout;
 
   private fieldOverlay: Phaser.GameObjects.Rectangle;
+  private shopOverlay: Phaser.GameObjects.Rectangle;
   public modifiers: PersistentModifier[];
   private enemyModifiers: PersistentModifier[];
   public uiContainer: Phaser.GameObjects.Container;
@@ -332,7 +333,9 @@ export default class BattleScene extends SceneBase {
 
   launchBattle() {
     this.arenaBg = this.add.sprite(0, 0, "plains_bg");
+    this.arenaBg.setName("sprite-arena-bg");
     this.arenaBgTransition = this.add.sprite(0, 0, "plains_bg");
+    this.arenaBgTransition.setName("sprite-arena-bg-transition");
 
     [ this.arenaBgTransition, this.arenaBg ].forEach(a => {
       a.setPipeline(this.fieldSpritePipeline);
@@ -342,13 +345,13 @@ export default class BattleScene extends SceneBase {
     });
 
     const field = this.add.container(0, 0);
+    field.setName("field");
     field.setScale(6);
-    field.setName("container-field");
 
     this.field = field;
 
     const fieldUI = this.add.container(0, this.game.canvas.height);
-    fieldUI.setName("container-field-ui");
+    fieldUI.setName("field-ui");
     fieldUI.setDepth(1);
     fieldUI.setScale(6);
 
@@ -372,7 +375,7 @@ export default class BattleScene extends SceneBase {
     this.add.existing(transition);
 
     const uiContainer = this.add.container(0, 0);
-    uiContainer.setName("container-ui");
+    uiContainer.setName("ui");
     uiContainer.setDepth(2);
     uiContainer.setScale(6);
 
@@ -386,16 +389,22 @@ export default class BattleScene extends SceneBase {
     this.fieldOverlay.setAlpha(0);
     this.fieldUI.add(this.fieldOverlay);
 
+    this.shopOverlay = this.add.rectangle(0, overlayHeight * -1 - 48, overlayWidth, overlayHeight, 0x070707);
+    this.shopOverlay.setName("rect-shop-overlay");
+    this.shopOverlay.setOrigin(0, 0);
+    this.shopOverlay.setAlpha(0);
+    this.fieldUI.add(this.shopOverlay);
+
     this.modifiers = [];
     this.enemyModifiers = [];
 
     this.modifierBar = new ModifierBar(this);
-    this.modifierBar.setName("container-modifier-bar");
+    this.modifierBar.setName("modifier-bar");
     this.add.existing(this.modifierBar);
     uiContainer.add(this.modifierBar);
 
     this.enemyModifierBar = new ModifierBar(this, true);
-    this.enemyModifierBar.setName("container-enemy-modifier-bar");
+    this.enemyModifierBar.setName("enemy-modifier-bar");
     this.add.existing(this.enemyModifierBar);
     uiContainer.add(this.enemyModifierBar);
 
@@ -406,28 +415,28 @@ export default class BattleScene extends SceneBase {
     this.fieldUI.add(this.charSprite);
 
     this.pbTray = new PokeballTray(this, true);
-    this.pbTray.setName("container-pb-tray");
+    this.pbTray.setName("pb-tray");
     this.pbTray.setup();
 
     this.pbTrayEnemy = new PokeballTray(this, false);
-    this.pbTrayEnemy.setName("container-enemy-pb-tray");
+    this.pbTrayEnemy.setName("enemy-pb-tray");
     this.pbTrayEnemy.setup();
 
     this.fieldUI.add(this.pbTray);
     this.fieldUI.add(this.pbTrayEnemy);
 
     this.abilityBar = new AbilityBar(this);
-    this.abilityBar.setName("container-ability-bar");
+    this.abilityBar.setName("ability-bar");
     this.abilityBar.setup();
     this.fieldUI.add(this.abilityBar);
 
     this.partyExpBar = new PartyExpBar(this);
-    this.partyExpBar.setName("container-party-exp-bar");
+    this.partyExpBar.setName("party-exp-bar");
     this.partyExpBar.setup();
     this.fieldUI.add(this.partyExpBar);
 
     this.candyBar = new CandyBar(this);
-    this.candyBar.setName("container-candy-bar");
+    this.candyBar.setName("candy-bar");
     this.candyBar.setup();
     this.fieldUI.add(this.candyBar);
 
@@ -479,13 +488,13 @@ export default class BattleScene extends SceneBase {
     const loadPokemonAssets = [];
 
     this.arenaPlayer = new ArenaBase(this, true);
-    this.arenaPlayer.setName("container-arena-player");
+    this.arenaPlayer.setName("arena-player");
     this.arenaPlayerTransition = new ArenaBase(this, true);
-    this.arenaPlayerTransition.setName("container-arena-player-transition");
+    this.arenaPlayerTransition.setName("arena-player-transition");
     this.arenaEnemy = new ArenaBase(this, false);
-    this.arenaEnemy.setName("container-arena-enemy");
+    this.arenaEnemy.setName("arena-enemy");
     this.arenaNextEnemy = new ArenaBase(this, false);
-    this.arenaNextEnemy.setName("container-arena-next-enemy");
+    this.arenaNextEnemy.setName("arena-next-enemy");
 
     this.arenaBgTransition.setVisible(false);
     this.arenaPlayerTransition.setVisible(false);
@@ -737,6 +746,14 @@ export default class BattleScene extends SceneBase {
       : ret;
   }
 
+  /**
+   * Returns the ModifierBar of this scene, which is declared private and therefore not accessible elsewhere
+   * @returns {ModifierBar}
+   */
+  getModifierBar(): ModifierBar {
+    return this.modifierBar;
+  }
+
   // store info toggles to be accessible by the ui
   addInfoToggle(infoToggle: InfoToggle): void {
     this.infoToggles.push(infoToggle);
@@ -798,8 +815,10 @@ export default class BattleScene extends SceneBase {
 
   addPokemonIcon(pokemon: Pokemon, x: number, y: number, originX: number = 0.5, originY: number = 0.5, ignoreOverride: boolean = false): Phaser.GameObjects.Container {
     const container = this.add.container(x, y);
+    container.setName(`${pokemon.name}-icon`);
 
     const icon = this.add.sprite(0, 0, pokemon.getIconAtlasKey(ignoreOverride));
+    icon.setName(`sprite-${pokemon.name}-icon`);
     icon.setFrame(pokemon.getIconId(true));
     // Temporary fix to show pokemon's default icon if variant icon doesn't exist
     if (icon.frame.name !== pokemon.getIconId(true)) {
@@ -816,6 +835,7 @@ export default class BattleScene extends SceneBase {
 
     if (pokemon.isFusion()) {
       const fusionIcon = this.add.sprite(0, 0, pokemon.getFusionIconAtlasKey(ignoreOverride));
+      fusionIcon.setName("sprite-fusion-icon");
       fusionIcon.setOrigin(0.5, 0);
       fusionIcon.setFrame(pokemon.getFusionIconId(true));
 
@@ -1397,6 +1417,30 @@ export default class BattleScene extends SceneBase {
     });
   }
 
+  showShopOverlay(duration: integer): Promise<void> {
+    return new Promise(resolve => {
+      this.tweens.add({
+        targets: this.shopOverlay,
+        alpha: 0.8,
+        ease: "Sine.easeOut",
+        duration: duration,
+        onComplete: () => resolve()
+      });
+    });
+  }
+
+  hideShopOverlay(duration: integer): Promise<void> {
+    return new Promise(resolve => {
+      this.tweens.add({
+        targets: this.shopOverlay,
+        alpha: 0,
+        duration: duration,
+        ease: "Cubic.easeIn",
+        onComplete: () => resolve()
+      });
+    });
+  }
+
   showEnemyModifierBar(): void {
     this.enemyModifierBar.setVisible(true);
   }
@@ -1408,6 +1452,7 @@ export default class BattleScene extends SceneBase {
   updateBiomeWaveText(): void {
     const isBoss = !(this.currentBattle.waveIndex % 10);
     const biomeString: string = getBiomeName(this.arena.biomeType);
+    this.fieldUI.moveAbove(this.biomeWaveText, this.luckText);
     this.biomeWaveText.setText( biomeString + " - " + this.currentBattle.waveIndex.toString());
     this.biomeWaveText.setColor(!isBoss ? "#ffffff" : "#f89890");
     this.biomeWaveText.setShadowColor(!isBoss ? "#636363" : "#984038");
