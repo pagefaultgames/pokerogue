@@ -53,9 +53,6 @@ import i18next from "./plugins/i18n";
 import * as Overrides from "./overrides";
 import { TextStyle, addTextObject } from "./ui/text";
 import { Type } from "./data/type";
-import { BerryUsedEvent, EncounterPhaseEvent, MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./battle-scene-events";
-import { ExpNotification } from "./enums/exp-notification";
-import { MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./battle-scene-events";
 import { BerryUsedEvent, EncounterPhaseEvent, MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./events/battle-scene";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
@@ -4140,6 +4137,8 @@ export class GameOverPhase extends BattlePhase {
 
         this.scene.gameData.getSession(this.scene.sessionSlotId).then(sessionData => {
           if (sessionData) {
+            console.log(this.scene.getEnemyPokemon());
+            //sessionData.enemyParty = this.scene.getEnemyParty();
             this.scene.gameData.saveRunHistory(this.scene, sessionData, this.victory, true);
           }
         }).catch(err => {
