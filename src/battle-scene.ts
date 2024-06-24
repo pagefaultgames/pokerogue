@@ -157,7 +157,7 @@ export default class BattleScene extends SceneBase {
   public fusionPaletteSwaps: boolean = true;
   public enableTouchControls: boolean = false;
   public enableVibration: boolean = false;
-  public showBgmBar: boolean = false;
+  public showBgmBar: boolean = true;
 
   /**
    * Determines the selected battle style.
