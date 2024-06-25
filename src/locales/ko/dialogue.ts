@@ -1784,37 +1784,37 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "hau": {
     "encounter": {
-      1: `I wonder if a Trainer battles differently depending on whether they're from a warm region or a cold region.
-                $Let's test it out!`,
+      1: `트레이너가 따뜻한 지역 출신인지 추운 지역 출신인지에 따라 배틀 스타일이 달라지는지 궁금해졌어.
+                $그럼 테스트 해볼게~!`,
     },
     "victory": {
-      1: "That was awesome! I think I kinda understand your vibe a little better now!"
+      1: "멋진데~! 이제 너의 스타일을 조금 더 잘 알게된 것 같아!"
     },
     "defeat": {
-      1: "Ma-an, that was some kinda battle!"
+      1: "이런, 그건 그냥 승부였는데~!"
     }
   },
   "geeta": {
     "encounter": {
-      1: `I decided to throw my hat in the ring once more. 
-                $Come now… Show me the fruits of your training.`,
+      1: `그 도전장, 한 번 더 승낙하도록 하죠. 
+                $자… 훈련의 결실을 보여주세요.`,
     },
     "victory": {
-      1: "I eagerly await news of all your achievements!"
+      1: "당신이 이룰 업적에 대한 소식들, 기다리고 있겠습니다!"
     },
     "defeat": {
-      1: "What's the matter? This isn't all, is it?"
+      1: "무슨 문제라도 있나요? 이게 전부라니, 그럴리 없잖아요?"
     }
   },
   "nemona": {
     "encounter": {
-      1: "Yesss! I'm so psyched! Time for us to let loose!"
+      1: "만세! 나 너무 기대돼! 이제 전력으로 승부하는거야~!"
     },
     "victory": {
-      1: "Well, that stinks, but I still had fun! I'll getcha next time!"
+      1: "우와, 조금 문제 있지만, 그래도 너무 재밌었어! 다음에는 지지 않을거야!"
     },
     "defeat": {
-      1: "Well, that was a great battle! Fruitful for sure."
+      1: "우와, 너무 멋진 승부였어! 정말로 강하네."
     }
   },
   "leon": {
