@@ -433,6 +433,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.starterSelectContainer.add(this.genCursorObj);
 
     this.starterIconsCursorObj = this.scene.add.image(this.genCursorObj.x, 64, "select_gen_cursor");
+    this.starterIconsCursorObj.setName("starter-icons-cursor");
     this.starterIconsCursorObj.setVisible(false);
     this.starterIconsCursorObj.setOrigin(0, 0);
     this.starterSelectContainer.add(this.starterIconsCursorObj);
@@ -1038,7 +1039,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.scene.getCurrentPhase().end();
         success = true;
       }
-    } else if (this.startCursorObj.visible) {
+    } else if (this.startCursorObj.visible) { // this checks to see if the start button is selected
       const genStarters = this.starterSelectGenIconContainers[this.getGenCursorWithScroll()].getAll().length;
       const rows = Math.ceil(genStarters / 9);
       switch (button) {
@@ -1077,7 +1078,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         success = true;
         break;
       }
-    } else if (this.genMode && this.genCursorObj.visible) {
+    } else if (this.genMode && this.genCursorObj.visible) { // this checks to see if the generation selection icons are selected
       switch (button) {
       case Button.UP:
         if (this.genCursor > 0) {
@@ -1111,12 +1112,20 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         break;
       }
     } else {
+      /**
+       * This code generates the menu for a pokemon when you press the action button
+       * This works in modules; it does a check for each option to see if it's valid, and if so, will add that option to the menu
+       * As an example, if you try to add an invalid pokemon, the "Add to Party" option won't show up
+       * But if you can still use candies or change natures, those menu items will be added
+       * Once it's all done, it displays the menu for you
+      **/
       if (button === Button.ACTION) {
         if (!this.speciesStarterDexEntry?.caughtAttr) {
           error = true;
-        } else if (this.starterCursors.length < 6) {
+        } else if (this.starterCursors.length < 6) { // checks to see you have less than 6 pokemon in your party
           let pokemonGen;
           let pokemonCursor;
+          // this gets the correct generation and pokemon cursor depending on whether you're in the starter screen or the party icons
           if (!this.starterIconsCursorObj.visible) {
             pokemonGen = this.getGenCursorWithScroll();
             pokemonCursor = this.cursor;
@@ -1126,22 +1135,16 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           }
           const ui = this.getUi();
           let options = [];
-          let removeIndex = 0;
-          let isDupe = false;
-          for (let s = 0; s < this.starterCursors.length; s++) {
-            if (this.starterGens[s] === pokemonGen && this.starterCursors[s] === pokemonCursor) {
-              isDupe = true;
-              removeIndex = s;
-              break;
-            }
-          }
+
+          const [isDupe, removeIndex]: [boolean, number] = this.isInParty(pokemonGen, pokemonCursor); // checks to see if the pokemon is a duplicate; if it is, returns the index that will be removed
+
           const species = this.genSpecies[pokemonGen][pokemonCursor];
 
           const isValidForChallenge = new Utils.BooleanHolder(true);
           Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor), this.starterGens.length);
           const currentPartyValue = this.starterGens.reduce((total: number, gen: number, i: number) => total += this.scene.gameData.getSpeciesStarterValue(this.genSpecies[gen][this.starterCursors[i]].speciesId), 0);
           const newCost = this.scene.gameData.getSpeciesStarterValue(species.speciesId);
-          if (!isDupe && isValidForChallenge.value && currentPartyValue + newCost <= this.getValueLimit()) {
+          if (!isDupe && isValidForChallenge.value && currentPartyValue + newCost <= this.getValueLimit()) { // this checks to make sure the pokemon doesn't exist in your party, it's valid for the challenge and that it won't go over the cost limit; if it meets all these criteria it will add it to your party
             options = [
               {
                 label: i18next.t("starterSelectUiHandler:addToParty"),
@@ -1149,40 +1152,24 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                   ui.setMode(Mode.STARTER_SELECT);
 
                   if (!isDupe && isValidForChallenge.value && this.tryUpdateValue(this.scene.gameData.getSpeciesStarterValue(species.speciesId))) {
-                    const cursorObj = this.starterCursorObjs[this.starterCursors.length];
-                    cursorObj.setVisible(true);
-                    cursorObj.setPosition(this.cursorObj.x, this.cursorObj.y);
-                    const props = this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor);
-                    this.starterIcons[this.starterCursors.length].setTexture(species.getIconAtlasKey(props.formIndex, props.shiny, props.variant));
-                    this.starterIcons[this.starterCursors.length].setFrame(species.getIconId(props.female, props.formIndex, props.shiny, props.variant));
-                    this.checkIconId(this.starterIcons[this.starterCursors.length], species, props.female, props.formIndex, props.shiny, props.variant);
-                    this.starterGens.push(pokemonGen);
-                    this.starterCursors.push(pokemonCursor);
-                    this.starterAttr.push(this.dexAttrCursor);
-                    this.starterAbilityIndexes.push(this.abilityCursor);
-                    this.starterNatures.push(this.natureCursor as unknown as Nature);
-                    this.starterMovesets.push(this.starterMoveset.slice(0) as StarterMoveset);
-                    if (this.speciesLoaded.get(species.speciesId)) {
-                      getPokemonSpeciesForm(species.speciesId, props.formIndex).cry(this.scene);
-                    }
-                    /*
-                    if (this.starterCursors.length === 6 || this.value === this.getValueLimit()) {
-                      this.tryStart();
-                    }
-                    */
-                    this.updateInstructions();
-
-                    /**
-                    * If the user can't select a pokemon anymore,
-                    * go to start button.
-                    */
-                    /*
-                    if (!this.canAddParty) {
-                      this.startCursorObj.setVisible(true);
-                      this.setGenMode(true);
-                    }
-                    */
-
+                  //  const cursorObj = this.starterCursorObjs[this.starterCursors.length];
+                  //  cursorObj.setVisible(true);
+                  //  cursorObj.setPosition(this.cursorObj.x, this.cursorObj.y);
+                  //  const props = this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor);
+                  //  this.starterIcons[this.starterCursors.length].setTexture(species.getIconAtlasKey(props.formIndex, props.shiny, props.variant));
+                  //  this.starterIcons[this.starterCursors.length].setFrame(species.getIconId(props.female, props.formIndex, props.shiny, props.variant));
+                  //  this.checkIconId(this.starterIcons[this.starterCursors.length], species, props.female, props.formIndex, props.shiny, props.variant);
+                  //  this.starterGens.push(pokemonGen);
+                  //  this.starterCursors.push(pokemonCursor);
+                  //  this.starterAttr.push(this.dexAttrCursor);
+                  //  this.starterAbilityIndexes.push(this.abilityCursor);
+                  //  this.starterNatures.push(this.natureCursor as unknown as Nature);
+                  //  this.starterMovesets.push(this.starterMoveset.slice(0) as StarterMoveset);
+                  //  if (this.speciesLoaded.get(species.speciesId)) {
+                  //    getPokemonSpeciesForm(species.speciesId, props.formIndex).cry(this.scene);
+                  //  }
+                  //  this.updateInstructions();
+                    this.addToParty(species, pokemonGen, pokemonCursor);
                     ui.playSelect();
                   } else {
                     ui.playError(); // this should be redundant as there is now a trigger for when a pokemon can't be added to party
@@ -1191,7 +1178,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 },
                 overrideSound: true
               }];
-          } else if (isDupe) {
+          } else if (isDupe) { // if it already exists in your party, it will give you the option to remove from your party
             options = [{
               label: i18next.t("starterSelectUiHandler:removeFromParty"),
               handler: () => {
@@ -1202,7 +1189,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             }];
           }
 
-          options.push(
+          options.push( // this shows the IVs for the pokemon
             {
               label: i18next.t("starterSelectUiHandler:toggleIVs"),
               handler: () => {
@@ -1211,7 +1198,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 return true;
               }
             });
-          if (this.speciesStarterMoves.length > 1) {
+          if (this.speciesStarterMoves.length > 1) { // this lets you change the pokemon moves
             const showSwapOptions = (moveset: StarterMoveset) => {
               ui.setMode(Mode.STARTER_SELECT).then(() => {
                 ui.showText(i18next.t("starterSelectUiHandler:selectMoveSwapOut"), null, () => {
@@ -1343,7 +1330,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           }
           const candyCount = starterData.candyCount;
           const passiveAttr = starterData.passiveAttr;
-          if (passiveAttr & PassiveAttr.UNLOCKED) {
+          if (passiveAttr & PassiveAttr.UNLOCKED) { // this is for enabling and disabling the passive
             if (!(passiveAttr & PassiveAttr.ENABLED)) {
               options.push({
                 label: i18next.t("starterSelectUiHandler:enablePassive"),
@@ -1366,7 +1353,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               });
             }
           }
-          const showUseCandies = () => {
+          const showUseCandies = () => { // this lets you use your candies
             const options = [];
             if (!(passiveAttr & PassiveAttr.UNLOCKED)) {
               const passiveCost = getPassiveCandyCount(speciesStarters[this.lastSpecies.speciesId]);
@@ -1713,6 +1700,39 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     }
 
     return success || error;
+  }
+
+  isInParty(pokemonGen: number, pokemonCursor: number): [boolean, number] {
+    let removeIndex = 0;
+    let isDupe = false;
+    for (let s = 0; s < this.starterCursors.length; s++) {
+      if (this.starterGens[s] === pokemonGen && this.starterCursors[s] === pokemonCursor) {
+        isDupe = true;
+        removeIndex = s;
+        break;
+      }
+    }
+    return [isDupe, removeIndex];
+  }
+
+  addToParty(species: PokemonSpecies, pokemonGen: number, pokemonCursor: number) {
+    const cursorObj = this.starterCursorObjs[this.starterCursors.length];
+    cursorObj.setVisible(true);
+    cursorObj.setPosition(this.cursorObj.x, this.cursorObj.y);
+    const props = this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor);
+    this.starterIcons[this.starterCursors.length].setTexture(species.getIconAtlasKey(props.formIndex, props.shiny, props.variant));
+    this.starterIcons[this.starterCursors.length].setFrame(species.getIconId(props.female, props.formIndex, props.shiny, props.variant));
+    this.checkIconId(this.starterIcons[this.starterCursors.length], species, props.female, props.formIndex, props.shiny, props.variant);
+    this.starterGens.push(pokemonGen);
+    this.starterCursors.push(pokemonCursor);
+    this.starterAttr.push(this.dexAttrCursor);
+    this.starterAbilityIndexes.push(this.abilityCursor);
+    this.starterNatures.push(this.natureCursor as unknown as Nature);
+    this.starterMovesets.push(this.starterMoveset.slice(0) as StarterMoveset);
+    if (this.speciesLoaded.get(species.speciesId)) {
+      getPokemonSpeciesForm(species.speciesId, props.formIndex).cry(this.scene);
+    }
+    this.updateInstructions();
   }
 
   switchMoveHandler(i: number, newMove: Moves, move: Moves) {
