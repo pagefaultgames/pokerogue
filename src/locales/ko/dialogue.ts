@@ -1742,14 +1742,14 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "steven": {
     "encounter": {
-      1: `Tell me… What have you seen on your journey with your Pokémon? 
-                $What have you felt, meeting so many other Trainers out there? 
-                $Traveling this rich land… Has it awoken something inside you? 
-                $I want you to come at me with all that you've learned. 
-                $My Pokémon and I will respond in turn with all that we know!`,
+      1: `넌… 포켓몬과 함께 모험을 하면서 무엇을 봤지? 
+                $많은 트레이너와 만나면서 무엇을 느꼈지? 
+                $풍요로운 이 지역을 돌아다니면서, 네 안에서 눈뜨기 시작한 무언가… 
+                $그 모든 것을 나에게 쏟아부었으면 좋겠어. 
+                $나와 내 포켓몬들도 전력을 다해 상대해줄 테니까!`,
     },
     "victory": {
-      1: "So I, the Champion, fall in defeat…"
+      1: "챔피언인 내가 질 줄이야…"
     },
     "defeat": {
       1: "That was time well spent! Thank you!"
