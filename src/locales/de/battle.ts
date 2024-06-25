@@ -96,7 +96,7 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsNightmareOnAdd": "Nachtmahr sucht {{pokemonNameWithAffix}} heim!",
   "battlerTagsNightmareOnOverlap": "{{pokemonNameWithAffix}} wird bereits von Nachtmahr heimgesucht!",
   "battlerTagsNightmareLapse": "Nachtmahr schadet {{pokemonNameWithAffix}}!",
-  "battlerTagsEncoreOnAdd": "({{pokemonNameWithAffix}} gibt eine Zugabe",
+  "battlerTagsEncoreOnAdd": "{{pokemonNameWithAffix}} gibt eine Zugabe",
   "battlerTagsEncoreOnRemove": "Die Zugabe von {{pokemonNameWithAffix}} ist beendet!",
   "battlerTagsHelpingHandOnAdd": "{{pokemonNameWithAffix}} will {{pokemonName}} helfen!",
   "battlerTagsIngrainLapse": "{{pokemonNameWithAffix}} nimmt über seine Wurzeln Nährstoffe auf!",

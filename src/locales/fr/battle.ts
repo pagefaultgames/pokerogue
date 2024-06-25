@@ -96,7 +96,7 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsNightmareOnAdd": "{{pokemonNameWithAffix}} commence à cauchemarder !",
   "battlerTagsNightmareOnOverlap": "{{pokemonNameWithAffix}} est\ndéjà prisonnier d’un cauchemar !",
   "battlerTagsNightmareLapse": "{{pokemonNameWithAffix}}est\nprisonnier d’un cauchemar !",
-  "battlerTagsEncoreOnAdd": "({{pokemonNameWithAffix}} !\nEncore une fois !",
+  "battlerTagsEncoreOnAdd": "{{pokemonNameWithAffix}} !\nEncore une fois !",
   "battlerTagsEncoreOnRemove": "{{pokemonNameWithAffix}} n’est\nplus obligé d’utiliser la même capacité !",
   "battlerTagsHelpingHandOnAdd": "{{pokemonNameWithAffix}} est prêt\nà aider {{pokemonName}} !",
   "battlerTagsIngrainLapse": "{{pokemonNameWithAffix}} absorbe\ndes nutriments avec ses racines !",

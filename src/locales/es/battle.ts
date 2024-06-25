@@ -96,7 +96,7 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsNightmareOnAdd": "{{pokemonNameWithAffix}} began\nhaving a Nightmare!",
   "battlerTagsNightmareOnOverlap": "{{pokemonNameWithAffix}} is\nalready locked in a Nightmare!",
   "battlerTagsNightmareLapse": "{{pokemonNameWithAffix}} is locked\nin a Nightmare!",
-  "battlerTagsEncoreOnAdd": "({{pokemonNameWithAffix}} got\nan Encore!",
+  "battlerTagsEncoreOnAdd": "{{pokemonNameWithAffix}} got\nan Encore!",
   "battlerTagsEncoreOnRemove": "{{pokemonNameWithAffix}}'s Encore\nended!",
   "battlerTagsHelpingHandOnAdd": "{{pokemonNameWithAffix}} is ready to\nhelp {{pokemonName}}!",
   "battlerTagsIngrainLapse": "{{pokemonNameWithAffix}} absorbed\nnutrients with its roots!",

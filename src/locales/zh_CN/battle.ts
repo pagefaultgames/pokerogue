@@ -96,7 +96,7 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsNightmareOnAdd": "{{pokemonNameWithAffix}}开始做恶梦了！",
   "battlerTagsNightmareOnOverlap": "{{pokemonNameWithAffix}}已经被恶梦缠身！",
   "battlerTagsNightmareLapse": "{{pokemonNameWithAffix}}正被恶梦缠身！",
-  "battlerTagsEncoreOnAdd": "({{pokemonNameWithAffix}}接受了再来一次！",
+  "battlerTagsEncoreOnAdd": "{{pokemonNameWithAffix}}接受了再来一次！",
   "battlerTagsEncoreOnRemove": "{{pokemonNameWithAffix}}的再来一次状态解除了！",
   "battlerTagsHelpingHandOnAdd": "{{pokemonNameWithAffix}}摆出了帮助{{pokemonName}} 的架势！",
   "battlerTagsIngrainLapse": "{{pokemonNameWithAffix}}用扎根回复了体力！",
