@@ -477,7 +477,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "aqua_boss_archie_1": {
     "encounter": {
-      1: "Je suis le Leader de la Team Aqua.\nJ’ai bien peu que pour toi, ce soit fin de parcours."
+      1: "Je suis le Leader de la Team Aqua.\nJ’ai bien peur que pour toi, ce soit fin de parcours."
     },
     "victory": {
       1: "Retrouvons-nous.\nJe me souviendrai de ton visage."
@@ -510,7 +510,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "galactic_boss_cyrus_2": {
     "encounter": {
-      1: "Nous y revoilà. Il semblerait que nos destinées soient entremêlées.\nIl est l’heure d’y mettre un terme ."
+      1: "Nous y revoilà. Il semblerait que nos destinées soient entremêlées.\nIl est l’heure d’y mettre un terme."
     },
     "victory": {
       1: "Comment. Comment ?\nCOMMENT ?!"
@@ -527,7 +527,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "Comment ? Je suis le leader de la Team Plasma !\nJe suis parfait !"
     },
     "defeat": {
-      1: "Je suis le parfait monarque pour d’un monde parfait !\nHahaha !"
+      1: "Je suis le parfait monarque d’un monde parfait !\nHahaha !"
     }
   },
   "plasma_boss_ghetsis_2": {
@@ -2984,7 +2984,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
   },
   "aqua_boss_archie_1": {
     "encounter": {
-      1: "Je suis le Leader de la Team Aqua.\nJ’ai bien peu que pour toi, ce soit fin de parcours."
+      1: "Je suis le Leader de la Team Aqua.\nJ’ai bien peur que pour toi, ce soit fin de parcours."
     },
     "victory": {
       1: "Retrouvons-nous.\nJe me souviendrai de ton visage."
@@ -3017,7 +3017,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
   },
   "galactic_boss_cyrus_2": {
     "encounter": {
-      1: "Nous y revoilà. Il semblerait que nos destinées soient entremêlées.\nIl est l’heure d’y mettre un terme ."
+      1: "Nous y revoilà. Il semblerait que nos destinées soient entremêlées.\nIl est l’heure d’y mettre un terme."
     },
     "victory": {
       1: "Comment. Comment ?\nCOMMENT ?!"
@@ -3034,7 +3034,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
       1: "Comment ? Je suis le leader de la Team Plasma !\nJe suis parfait !"
     },
     "defeat": {
-      1: "Je suis le parfait monarque pour d’un monde parfait !\nHahaha !"
+      1: "Je suis le parfait monarque d’un monde parfait !\nHahaha !"
     }
   },
   "plasma_boss_ghetsis_2": {
