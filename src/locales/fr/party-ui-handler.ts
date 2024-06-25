@@ -1,16 +1,21 @@
 import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const partyUiHandler: SimpleTranslationEntries = {
-  "ALL": "Tout",
   "SEND_OUT": "Envoyer",
   "SUMMARY": "Résumé",
   "CANCEL": "Annuler",
   "RELEASE": "Relâcher",
   "APPLY": "Appliquer",
   "TEACH": "Apprendre",
+  "SPLICE": "Splice",
   "UNSPLICE": "Séparer",
   "ACTIVATE": "Activer",
   "DEACTIVATE": "Désactiver",
+  "TRANSFER": "Transfer",
+  "ALL": "Tout",
+  "PASS_BATON": "Pass Baton",
+  "UNPAUSE_EVOLUTION": "Unpause Evolution",
+  "REVIVE": "Revive",
 
   "choosePokemon": "Sélectionnez un Pokémon.",
   "doWhatWithThisPokemon": "Que faire avec ce Pokémon ?",
