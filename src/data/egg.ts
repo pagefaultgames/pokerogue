@@ -372,7 +372,7 @@ export class Egg {
 
     // If this is the 10th egg without unlocking something new, attempt to force it.
     if (scene.gameData.unlockPity[this.tier] >= 9) {
-      const lockedPool = speciesPool.filter(s => !scene.gameData.dexData[s].caughtAttr);
+      const lockedPool = speciesPool.filter(s => !scene.gameData.dexData[s].caughtAttr && !scene.gameData.eggs.some(e => e.species === s));
       if (lockedPool.length) { // Skip this if everything is unlocked
         speciesPool = lockedPool;
       }
@@ -417,7 +417,7 @@ export class Egg {
       }
     }
 
-    if (!!scene.gameData.dexData[species].caughtAttr) {
+    if (!!scene.gameData.dexData[species].caughtAttr || scene.gameData.eggs.some(e => e.species === species)) {
       scene.gameData.unlockPity[this.tier] = Math.min(scene.gameData.unlockPity[this.tier] + 1, 10);
     } else {
       scene.gameData.unlockPity[this.tier] = 0;
