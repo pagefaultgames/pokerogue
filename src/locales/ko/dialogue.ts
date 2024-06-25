@@ -1362,25 +1362,25 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "hala": {
     "encounter": {
-      1: "Old Hala is here to make you holler!"
+      1: "그럼…진심을 담아서 진지한 할라로 임하겠다!"
     },
     "victory": {
-      1: "I could feel the power you gained on your journey."
+      1: "네가 순례하면서 갖추게 된 강함을 느낄 수 있었다."
     },
     "defeat": {
-      1: "Haha! What a delightful battle!"
+      1: "하하! 경쾌한 승부였구나!"
     }
   },
   "molayne": {
     "encounter": {
-      1: `I gave the captain position to my cousin Sophocles, but I'm confident in my ability. 
-                $My strength is like that of a supernova!`,
+      1: `사촌인 마마네에게 캡틴 자리는 줬지만, 아직 실력에는 자신 있어요. 
+                $제 실력은 초신성처럼 빛나니까요!`,
     },
     "victory": {
-      1: "I certainly found an interesting Trainer to face!"
+      1: "확실히 겨룰 흥미로운 트레이너를 찾았네요!"
     },
     "defeat": {
-      1: "Ahaha. What an interesting battle."
+      1: "아하하. 흥미로운 배틀이었네요."
     }
   },
   "rika": {
@@ -1476,13 +1476,13 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "olivia": {
     "encounter": {
-      1: "No introduction needed here. Time to battle me, Olivia!"
+      1: "여기에 소개는 필요 없지. 자, 라이치님과 승부할 시간이다!"
     },
     "victory": {
-      1: "Really lovely… Both you and your Pokémon…"
+      1: "정말 훌륭하군… 당신과 포켓몬 둘 다…"
     },
     "defeat": {
-      1: "Mmm-hmm."
+      1: "흐-음."
     }
   },
   "poppy": {
@@ -1571,13 +1571,13 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "acerola": {
     "encounter": {
-      1: "Battling is just plain fun! Come on, I can take you!"
+      1: "포켓몬 배틀은 언제나 재미있지! 자, 내가 상대해줄게!"
     },
     "victory": {
-      1: "I'm… I'm speechless! How did you do it?!"
+      1: "아세로라… 입이 딱 벌어졌어! 어떻게 해낸 거야?!"
     },
     "defeat": {
-      1: "Ehaha! What an amazing victory!"
+      1: "후아~! 놀라운 승리네!"
     }
   },
   "larry_elite": {
@@ -1664,13 +1664,13 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "kahili": {
     "encounter": {
-      1: "So, here you are… Why don't we see who the winds favor today, you… Or me?"
+      1: "자, 여기에서… 승리의 바람이 부는 쪽은 당신과 저 중에 어느 쪽일까요?"
     },
     "victory": {
-      1: "It's frustrating to me as a member of the Elite Four, but it seems your strength is the real deal."
+      1: "사천왕으로서 분하지만 당신들의 강함은 진정한 강함이군요."
     },
     "defeat": {
-      1: "That was an ace!"
+      1: "이것이 에이스니까요!"
     }
   },
   "hassel": {
