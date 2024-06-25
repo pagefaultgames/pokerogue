@@ -44,5 +44,5 @@ export const partyUiHandler: SimpleTranslationEntries = {
   "illNeverForgetYou": "Je ne t’oublierai pas, {{pokemonName}} !",
   "untilWeMeetAgain": "À la prochaine, {{pokemonName}} !",
   "sayonara": "Sayonara, {{pokemonName}} !",
-  "smellYaLater": "À plus tard, {{pokemonName}}!",
+  "smellYaLater": "À la revoyure, {{pokemonName}} !",
 } as const;
