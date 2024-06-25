@@ -17,7 +17,7 @@ export default class PokemonData {
   public id: integer;
   public player: boolean;
   public species: Species;
-  public name: string;
+  public nickname: string;
   public formIndex: integer;
   public abilityIndex: integer;
   public passive: boolean;
@@ -56,10 +56,13 @@ export default class PokemonData {
 
   constructor(source: Pokemon | any, forHistory: boolean = false) {
     const sourcePokemon = source instanceof Pokemon ? source : null;
+    console.log("source", source);
+    console.log("Nickname source", source.nickname);
+
     this.id = source.id;
     this.player = sourcePokemon ? sourcePokemon.isPlayer() : source.player;
     this.species = sourcePokemon ? sourcePokemon.species.speciesId : source.species;
-    this.name = sourcePokemon ? sourcePokemon.name : source.name;
+    this.nickname = sourcePokemon ? sourcePokemon.nickname : source.nickname;
     this.formIndex = Math.max(Math.min(source.formIndex, getPokemonSpecies(this.species).forms.length - 1), 0);
     this.abilityIndex = source.abilityIndex;
     this.passive = source.passive;
@@ -142,9 +145,11 @@ export default class PokemonData {
     const species = getPokemonSpecies(this.species);
     const ret: Pokemon = this.player
       ? scene.addPlayerPokemon(species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.variant, this.ivs, this.nature, this, (playerPokemon) => {
-        if (this.name) {
-          playerPokemon.name = this.name;
+        if (this.nickname) {
+          playerPokemon.nickname = this.nickname;
         }
+        console.log(playerPokemon);
+
       })
       : scene.addEnemyPokemon(species, this.level, battleType === BattleType.TRAINER ? !double || !(partyMemberIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER : TrainerSlot.NONE, this.boss, this);
     if (this.summonData) {

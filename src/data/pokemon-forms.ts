@@ -369,7 +369,7 @@ export function getSpeciesFormChangeMessage(pokemon: Pokemon, formChange: Specie
     return `${prefix}${preName} Eternamaxed\ninto ${pokemon.name}!`;
   }
   if (isRevert) {
-    return `${prefix}${pokemon.name} reverted\nto its original form!`;
+    return `${prefix}${pokemon.getNameToRender()} reverted\nto its original form!`;
   }
   return `${prefix}${preName} changed form!`;
 }

@@ -113,8 +113,8 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
   initInfo(pokemon: Pokemon) {
     this.pokemon = pokemon;
 
-    this.name = `Flyout ${this.pokemon.name}`;
-    this.flyoutParent.name = `Flyout Parent ${this.pokemon.name}`;
+    this.name = `Flyout ${this.pokemon.getNameToRender()}`;
+    this.flyoutParent.name = `Flyout Parent ${this.pokemon.getNameToRender()}`;
 
     this.battleScene.eventTarget.addEventListener(BattleSceneEventType.MOVE_USED, this.onMoveUsedEvent);
     this.battleScene.eventTarget.addEventListener(BattleSceneEventType.BERRY_USED, this.onBerryUsedEvent);

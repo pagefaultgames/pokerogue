@@ -1151,6 +1151,7 @@ export class GameData {
 
   saveAll(scene: BattleScene, skipVerification: boolean = false, sync: boolean = false, useCachedSession: boolean = false, useCachedSystem: boolean = false): Promise<boolean> {
     return new Promise<boolean>(resolve => {
+
       Utils.executeIf(!skipVerification, updateUserInfo).then(success => {
         if (success !== null && !success) {
           return resolve(false);
@@ -1159,6 +1160,8 @@ export class GameData {
           this.scene.ui.savingIcon.show();
         }
         const sessionData = useCachedSession ? this.parseSessionData(decrypt(localStorage.getItem(`sessionData${scene.sessionSlotId ? scene.sessionSlotId : ""}_${loggedInUser.username}`), bypassLogin)) : this.getSessionSaveData(scene);
+
+        console.log("Session data:", sessionData);
 
         const maxIntAttrValue = Math.pow(2, 31);
         const systemData = useCachedSystem ? this.parseSystemData(decrypt(localStorage.getItem(`data_${loggedInUser.username}`), bypassLogin)) : this.getSystemSaveData();
@@ -1171,6 +1174,7 @@ export class GameData {
         };
 
         localStorage.setItem(`data_${loggedInUser.username}`, encrypt(JSON.stringify(systemData, (k: any, v: any) => typeof v === "bigint" ? v <= maxIntAttrValue ? Number(v) : v.toString() : v), bypassLogin));
+
 
         localStorage.setItem(`sessionData${scene.sessionSlotId ? scene.sessionSlotId : ""}_${loggedInUser.username}`, encrypt(JSON.stringify(sessionData), bypassLogin));
 

@@ -34,7 +34,7 @@ export class FormChangePhase extends EvolutionPhase {
   }
 
   doEvolution(): void {
-    const preName = this.pokemon.name;
+    const preName = this.pokemon.getNameToRender();
 
     this.pokemon.getPossibleForm(this.formChange).then(transformedPokemon => {
 
@@ -191,7 +191,7 @@ export class QuietFormChangePhase extends BattlePhase {
       return this.end();
     }
 
-    const preName = this.pokemon.name;
+    const preName = this.pokemon.getNameToRender();
 
     if (!this.pokemon.isOnField()) {
       this.pokemon.changeForm(this.formChange).then(() => {

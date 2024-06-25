@@ -1,6 +1,5 @@
 import { FormModalUiHandler } from "./form-modal-ui-handler";
 import { ModalConfig } from "./modal-ui-handler";
-import { Mode } from "./ui";
 import i18next from "i18next";
 import { PlayerPokemon } from "#app/field/pokemon.js";
 
@@ -37,17 +36,17 @@ export default class RenameFormUiHandler extends FormModalUiHandler {
   show(args: any[]): boolean {
     if (super.show(args)) {
       const config = args[0] as ModalConfig;
-      this.inputs[0].text = (args[1] as PlayerPokemon).name;
+      this.inputs[0].text = (args[1] as PlayerPokemon).getNameToRender();
 
       this.submitAction = (_) => {
         this.sanitizeInputs();
-        const onFail = () => {
-          this.scene.ui.setModeWithoutClear(Mode.RENAME_POKEMON, Object.assign(config));
-          this.scene.ui.playError();
-        };
-        if (!this.inputs[0].text) {
-          return onFail();
-        }
+        // const onFail = () => {
+        //   this.scene.ui.setModeWithoutClear(Mode.RENAME_POKEMON, Object.assign(config));
+        //   this.scene.ui.playError();
+        // };
+        // if (!this.inputs[0].text) {
+        //   return onFail();
+        // }
 
         config.buttonActions[0](this.inputs[0].text);
         return true;
