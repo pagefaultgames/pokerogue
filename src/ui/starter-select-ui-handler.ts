@@ -1152,23 +1152,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                   ui.setMode(Mode.STARTER_SELECT);
 
                   if (!isDupe && isValidForChallenge.value && this.tryUpdateValue(this.scene.gameData.getSpeciesStarterValue(species.speciesId))) {
-                  //  const cursorObj = this.starterCursorObjs[this.starterCursors.length];
-                  //  cursorObj.setVisible(true);
-                  //  cursorObj.setPosition(this.cursorObj.x, this.cursorObj.y);
-                  //  const props = this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor);
-                  //  this.starterIcons[this.starterCursors.length].setTexture(species.getIconAtlasKey(props.formIndex, props.shiny, props.variant));
-                  //  this.starterIcons[this.starterCursors.length].setFrame(species.getIconId(props.female, props.formIndex, props.shiny, props.variant));
-                  //  this.checkIconId(this.starterIcons[this.starterCursors.length], species, props.female, props.formIndex, props.shiny, props.variant);
-                  //  this.starterGens.push(pokemonGen);
-                  //  this.starterCursors.push(pokemonCursor);
-                  //  this.starterAttr.push(this.dexAttrCursor);
-                  //  this.starterAbilityIndexes.push(this.abilityCursor);
-                  //  this.starterNatures.push(this.natureCursor as unknown as Nature);
-                  //  this.starterMovesets.push(this.starterMoveset.slice(0) as StarterMoveset);
-                  //  if (this.speciesLoaded.get(species.speciesId)) {
-                  //    getPokemonSpeciesForm(species.speciesId, props.formIndex).cry(this.scene);
-                  //  }
-                  //  this.updateInstructions();
                     this.addToParty(species, pokemonGen, pokemonCursor);
                     ui.playSelect();
                   } else {
