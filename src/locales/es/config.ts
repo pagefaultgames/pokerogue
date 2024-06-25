@@ -1,3 +1,5 @@
+import { common } from "#app/locales/es/common.js";
+import { settings } from "#app/locales/es/settings.js";
 import { ability } from "./ability";
 import { abilityTriggers } from "./ability-trigger";
 import { PGFachv, PGMachv } from "./achv";
@@ -20,6 +22,7 @@ import {
 } from "./dialogue";
 import { egg } from "./egg";
 import { fightUiHandler } from "./fight-ui-handler";
+import { gameData } from "./game-data";
 import { gameMode } from "./game-mode";
 import { gameStatsUiHandler } from "./game-stats-ui-handler";
 import { growth } from "./growth";
@@ -28,6 +31,7 @@ import { menuUiHandler } from "./menu-ui-handler";
 import { modifierType } from "./modifier-type";
 import { move } from "./move";
 import { nature } from "./nature";
+import { partyUiHandler } from "./party-ui-handler";
 import { pokeball } from "./pokeball";
 import { pokemon } from "./pokemon";
 import { pokemonInfo } from "./pokemon-info";
@@ -39,9 +43,6 @@ import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { weather } from "./weather";
-import { partyUiHandler } from "./party-ui-handler";
-import { settings } from "#app/locales/es/settings.js";
-import { common } from "#app/locales/es/common.js";
 
 export const esConfig = {
   ability: ability,
@@ -66,6 +67,7 @@ export const esConfig = {
   PGFdoubleBattleDialogue: PGFdoubleBattleDialogue,
   egg: egg,
   fightUiHandler: fightUiHandler,
+  gameData: gameData,
   gameMode: gameMode,
   gameStatsUiHandler: gameStatsUiHandler,
   growth: growth,

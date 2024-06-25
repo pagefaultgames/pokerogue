@@ -1267,6 +1267,7 @@ export class GameData {
         reader.onload = (_ => {
           return e => {
             let dataName: string;
+            let localizedDataName: string;
             let dataStr = AES.decrypt(e.target.result.toString(), saveKey).toString(enc.Utf8);
             let valid = false;
             try {
@@ -1292,18 +1293,38 @@ export class GameData {
 
             const displayError = (error: string) => this.scene.ui.showText(error, null, () => this.scene.ui.showText(null, 0), Utils.fixedInt(1500));
 
-            if (!valid) {
-              return this.scene.ui.showText(`Your ${dataName} data could not be loaded. It may be corrupted.`, null, () => this.scene.ui.showText(null, 0), Utils.fixedInt(1500));
+            switch (dataName) {
+            case "system":
+              localizedDataName = i18next.t("gameData:systemData");
+              break;
+            case "session":
+              localizedDataName = i18next.t("gameData:sessionData");
+              break;
+            case "settings":
+              localizedDataName = i18next.t("gameData:settingsData");
+              break;
+            case "tutorials":
+              localizedDataName = i18next.t("gameData:tutorialsData");
+              break;
+            case "seen_dialogues":
+              localizedDataName = i18next.t("gameData:seenDialoguesData");
+              break;
+            default:
+              localizedDataName = dataName;
             }
 
-            this.scene.ui.showText(`Your ${dataName} data will be overridden and the page will reload. Proceed?`, null, () => {
+            if (!valid) {
+              return this.scene.ui.showText(i18next.t("gameData:dataCouldNotBeLoaded", { dataName: localizedDataName }), null, () => this.scene.ui.showText(null, 0), Utils.fixedInt(1500));
+            }
+
+            this.scene.ui.showText(i18next.t("gameData:dataWillBeOverridden", { dataName: localizedDataName }), null, () => {
               this.scene.ui.setOverlayMode(Mode.CONFIRM, () => {
                 localStorage.setItem(dataKey, encrypt(dataStr, bypassLogin));
 
                 if (!bypassLogin && dataType < GameDataType.SETTINGS) {
                   updateUserInfo().then(success => {
                     if (!success[0]) {
-                      return displayError(`Could not contact the server. Your ${dataName} data could not be imported.`);
+                      return displayError(i18next.t("gameData:errorContactServer", { dataName: localizedDataName }));
                     }
                     let url: string;
                     if (dataType === GameDataType.SESSION) {
@@ -1316,7 +1337,7 @@ export class GameData {
                       .then(error => {
                         if (error) {
                           console.error(error);
-                          return displayError(`An error occurred while updating ${dataName} data. Please contact the administrator.`);
+                          return displayError(i18next.t("gameData:errorUpdating", { dataName: localizedDataName }));
                         }
                         window.location = window.location;
                       });

@@ -22,6 +22,7 @@ import {
 } from "./dialogue";
 import { egg } from "./egg";
 import { fightUiHandler } from "./fight-ui-handler";
+import { gameData } from "./game-data";
 import { gameMode } from "./game-mode";
 import { gameStatsUiHandler } from "./game-stats-ui-handler";
 import { growth } from "./growth";
@@ -66,6 +67,7 @@ export const enConfig = {
   PGFdoubleBattleDialogue: PGFdoubleBattleDialogue,
   egg: egg,
   fightUiHandler: fightUiHandler,
+  gameData: gameData,
   gameMode: gameMode,
   gameStatsUiHandler: gameStatsUiHandler,
   growth: growth,
