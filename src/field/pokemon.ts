@@ -1954,11 +1954,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         }
 
         applyMoveAttrs(ModifiedDamageAttr, source, this, move, damage);
-        applyPreDefendAbAttrs(ReceivedMoveDamageMultiplierAbAttr, this, source, move, cancelled, power);
-
-        if (power.value === 0) {
-          damage.value = 0;
-        }
+        applyPreDefendAbAttrs(ReceivedMoveDamageMultiplierAbAttr, this, source, move, cancelled, damage);
 
         console.log("damage", damage.value, move.name, power.value, sourceAtk, targetDef);
 
