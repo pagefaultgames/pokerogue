@@ -32,7 +32,7 @@ export const partyUiHandler: SimpleTranslationEntries = {
   "selectAMove": "Selecione um movimento.",
   "changeQuantity": "Selecione um item para transferir.\nUse < e > para mudar a quantidade.",
   "selectAnotherPokemonToSplice": "Selecione outro Pokémon para fundir.",
-  "cancel": "Cancelar",
+  "cancel": "Voltar",
 
   // Slot TM text
   "able": "Capaz",
