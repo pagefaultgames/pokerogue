@@ -24,7 +24,7 @@ export default class BgmBar extends Phaser.GameObjects.Container {
     this.defaultWidth = 200;
     this.defaultHeight = 100;
 
-    this.bg = this.scene.add.nineslice(-5, -5, "ability_bar_left", null, this.defaultWidth, this.defaultHeight, 0, 0, 10, 10);
+    this.bg = this.scene.add.nineslice(-5, -5, "bgm_bar", null, this.defaultWidth, this.defaultHeight, 0, 0, 10, 10);
     this.bg.setOrigin(0, 0);
 
     this.add(this.bg);
