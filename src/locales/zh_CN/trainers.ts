@@ -321,7 +321,7 @@ export const trainerNames: SimpleTranslationEntries = {
   // 劲敌 rival
   "rival": "芬恩",
   "rival_female": "艾薇",
-  
+
   // ---- 组织老大 Bosses ----
   "maxie": "赤焰松",
   "archie": "水梧桐",
