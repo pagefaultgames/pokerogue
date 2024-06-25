@@ -6,9 +6,10 @@ import { Species } from "#enums/species";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { getMovePosition } from "../utils/gameManagerUtils";
-import { CommandPhase, DamagePhase, MoveEffectPhase, TurnEndPhase } from "#app/phases.js";
+import { CommandPhase, DamagePhase, MoveEffectPhase, MoveEndPhase, TurnEndPhase } from "#app/phases.js";
 import { BattleStat } from "#app/data/battle-stat.js";
 import { Type } from "#app/data/type.js";
+import { BattlerTagType } from "#app/enums/battler-tag-type.js";
 
 const TIMEOUT = 20 * 1000;
 
@@ -414,6 +415,123 @@ describe("Abilities - Parental Bond", () => {
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(enemyPokemon.hp).toBe(enemyStartingHp - 200);
+    }, TIMEOUT
+  );
+
+  test(
+    "Hyper Beam boosted by this ability should strike twice, then recharge",
+    async () => {
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.HYPER_BEAM]);
+
+      await game.startBattle([Species.CHARIZARD]);
+
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).not.toBe(undefined);
+
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).not.toBe(undefined);
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.HYPER_BEAM));
+
+      await game.phaseInterceptor.to(MoveEffectPhase, false);
+      vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
+
+      await game.phaseInterceptor.to(DamagePhase);
+
+      expect(leadPokemon.turnData.hitCount).toBe(2);
+      expect(leadPokemon.getTag(BattlerTagType.RECHARGING)).toBeUndefined();
+
+      await game.phaseInterceptor.to(TurnEndPhase);
+
+      expect(leadPokemon.getTag(BattlerTagType.RECHARGING)).toBeDefined();
+    }, TIMEOUT
+  );
+
+  /** TODO: Fix TRAPPED tag lapsing incorrectly, then run this test */
+  test.skip(
+    "Anchor Shot boosted by this ability should only trap the target after the second hit",
+    async () => {
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.ANCHOR_SHOT]);
+
+      await game.startBattle([Species.CHARIZARD]);
+
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).not.toBe(undefined);
+
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).not.toBe(undefined);
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.ANCHOR_SHOT));
+
+      await game.phaseInterceptor.to(MoveEffectPhase, false);
+      vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
+
+      await game.phaseInterceptor.to(DamagePhase);
+
+      expect(leadPokemon.turnData.hitCount).toBe(2);
+      expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined(); // Passes
+
+      await game.phaseInterceptor.to(MoveEndPhase);
+      expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeDefined(); // Passes
+
+      await game.phaseInterceptor.to(TurnEndPhase);
+
+      expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeDefined(); // Fails :(
+    }, TIMEOUT
+  );
+
+  test(
+    "Smack Down boosted by this ability should only ground the target after the second hit",
+    async () => {
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SMACK_DOWN]);
+
+      await game.startBattle([Species.CHARIZARD]);
+
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).not.toBe(undefined);
+
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).not.toBe(undefined);
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.SMACK_DOWN));
+
+      await game.phaseInterceptor.to(MoveEffectPhase, false);
+      vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
+
+      await game.phaseInterceptor.to(DamagePhase);
+
+      expect(leadPokemon.turnData.hitCount).toBe(2);
+      expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeUndefined();
+
+      await game.phaseInterceptor.to(TurnEndPhase);
+
+      expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeDefined();
+    }, TIMEOUT
+  );
+
+  test(
+    "U-turn boosted by this ability should strike twice before forcing a switch",
+    async () => {
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.U_TURN]);
+
+      await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).not.toBe(undefined);
+
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).not.toBe(undefined);
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.U_TURN));
+
+      await game.phaseInterceptor.to(MoveEffectPhase, false);
+      vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
+
+      await game.phaseInterceptor.to(MoveEffectPhase);
+      expect(leadPokemon.turnData.hitCount).toBe(2);
+
+      // This will cause this test to time out if the switch was forced on the first hit.
+      await game.phaseInterceptor.to(MoveEffectPhase, false);
     }, TIMEOUT
   );
 });
