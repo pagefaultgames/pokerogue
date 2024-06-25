@@ -1260,25 +1260,25 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "sidney": {
     "encounter": {
-      1: `I like that look you're giving me. I guess you'll give me a good match.
-                $That's good! Looking real good! All right!
-                $You and me, let's enjoy a battle that can only be staged here!`,
+      1: `음, 좋은 표정이야. 꽤나 즐길 수 있겠는데.
+                $좋아! 아주 좋아! 좋았어!
+                $우리 함께, 포켓몬리그에서만 맛볼 수 있는 배틀을 즐겨보도록 하자!`,
     },
     "victory": {
-      1: "Well, how do you like that? I lost! Eh, it was fun, so it doesn't matter."
+      1: "이런, 이런 져버렸군? 뭐, 꽤 즐겼으니 상관없지만."
     },
     "defeat": {
-      1: "No hard feelings, alright?"
+      1: "기분 나빠하지 마, 알겠지?"
     }
   },
   "phoebe": {
     "encounter": {
-      1: `While I trained, I gained the ability to commune with Ghost-type Pokémon. 
-                $Yes, the bond I developed with Pokémon is extremely tight. 
-                $So, come on, just try and see if you can even inflict damage on my Pokémon!`,
+      1: `송화산에서 수행하면서, 고스트 타입 포켓몬과 마음이 통하게 됐어. 
+                $응, 나와 내 포켓몬의 유대감은 정말 강해! 
+                $이런 내 포켓몬들에게 과연 데미지를 줄 수 있을지 한번 시험해봐!`,
     },
     "victory": {
-      1: "Oh, darn. I've gone and lost."
+      1: "아- 아, 내가 져버렸다."
     },
     "defeat": {
       1: "I look forward to battling you again sometime!"
@@ -1286,11 +1286,11 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "glacia": {
     "encounter": {
-      1: `All I have seen are challenges by weak Trainers and their Pokémon. 
-                $What about you? It would please me to no end if I could go all out against you!`,
+      1: `이곳에 도전하러 오는 건 모두 어설픈 트레이너와 포켓몬뿐…. 
+                $당신은 어떤가요? 제 진짜 실력을 발휘해도 괜찮을 정도라면 정말 기쁠텐데 말이죠…!`,
     },
     "victory": {
-      1: `You and your Pokémon… How hot your spirits burn!
+      1: `당신과… 당신 포켓몬들의 뜨거운 혼!
                 $The all-consuming heat overwhelms. 
                 $It's no surprise that my icy skills failed to harm you.`,
     },
@@ -1300,11 +1300,11 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "drake": {
     "encounter": {
-      1: `For us to battle with Pokémon as partners, do you know what it takes? Do you know what is needed? 
-                $If you don't, then you will never prevail over me!`,
+      1: `파트너로 포켓몬과 함께하는 승부에 무엇이 필요한지 넌 알고 있는가? 
+                $그걸 모른다면 넌 이 몸을 이길 수 없다!`,
     },
     "victory": {
-      1: "Superb, it should be said."
+      1: "훌륭하다, 라고 할 만 하군!"
     },
     "defeat": {
       1: "I gave my all for that battle!"
