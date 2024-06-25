@@ -2656,31 +2656,48 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.clearText();
     };
 
-    ui.showText(i18next.t("starterSelectUiHandler:confirmStartTeam"), null, () => {
-      ui.setModeWithoutClear(Mode.CONFIRM, () => {
-        const startRun = () => {
-          this.scene.money = this.scene.gameMode.getStartingMoney();
-          ui.setMode(Mode.STARTER_SELECT);
-          const thisObj = this;
-          const originalStarterSelectCallback = this.starterSelectCallback;
-          this.starterSelectCallback = null;
-          originalStarterSelectCallback(new Array(this.starterGens.length).fill(0).map(function (_, i) {
-            const starterSpecies = thisObj.genSpecies[thisObj.starterGens[i]][thisObj.starterCursors[i]];
-            return {
-              species: starterSpecies,
-              dexAttr: thisObj.starterAttr[i],
-              abilityIndex: thisObj.starterAbilityIndexes[i],
-              passive: !(thisObj.scene.gameData.starterData[starterSpecies.speciesId].passiveAttr ^ (PassiveAttr.ENABLED | PassiveAttr.UNLOCKED)),
-              nature: thisObj.starterNatures[i] as Nature,
-              moveset: thisObj.starterMovesets[i],
-              pokerus: !![ 0, 1, 2 ].filter(n => thisObj.pokerusGens[n] === starterSpecies.generation - 1 && thisObj.pokerusCursors[n] === thisObj.genSpecies[starterSpecies.generation - 1].indexOf(starterSpecies)).length
-            };
-          }));
-        };
-        startRun();
-      }, cancel, null, null, 19);
-    });
+    let canStart = false;
+    for (let s = 0; s < this.starterGens.length; s++) {
+      const isValidForChallenge = new Utils.BooleanHolder(true);
+      const species = this.genSpecies[this.starterGens[s]][this.starterCursors[s]];
+      Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor), this.starterGens.length, false);
+      canStart = canStart || isValidForChallenge.value;
+    }
 
+    if (canStart) {
+      ui.showText(i18next.t("starterSelectUiHandler:confirmStartTeam"), null, () => {
+        ui.setModeWithoutClear(Mode.CONFIRM, () => {
+          const startRun = () => {
+            this.scene.money = this.scene.gameMode.getStartingMoney();
+            ui.setMode(Mode.STARTER_SELECT);
+            const thisObj = this;
+            const originalStarterSelectCallback = this.starterSelectCallback;
+            this.starterSelectCallback = null;
+            originalStarterSelectCallback(new Array(this.starterGens.length).fill(0).map(function (_, i) {
+              const starterSpecies = thisObj.genSpecies[thisObj.starterGens[i]][thisObj.starterCursors[i]];
+              return {
+                species: starterSpecies,
+                dexAttr: thisObj.starterAttr[i],
+                abilityIndex: thisObj.starterAbilityIndexes[i],
+                passive: !(thisObj.scene.gameData.starterData[starterSpecies.speciesId].passiveAttr ^ (PassiveAttr.ENABLED | PassiveAttr.UNLOCKED)),
+                nature: thisObj.starterNatures[i] as Nature,
+                moveset: thisObj.starterMovesets[i],
+                pokerus: !![0, 1, 2].filter(n => thisObj.pokerusGens[n] === starterSpecies.generation - 1 && thisObj.pokerusCursors[n] === thisObj.genSpecies[starterSpecies.generation - 1].indexOf(starterSpecies)).length
+              };
+            }));
+          };
+          startRun();
+        }, cancel, null, null, 19);
+      });
+    } else {
+      //this.scene.ui.setMode(Mode.MESSAGE);
+      this.scene.ui.showText("This is not a valid starting party!", null, () => this.scene.ui.showText(null, 0), null, true);
+
+      //this.scene.ui.showText("This is not a valie starting party!", null, null, null, true);
+      //this.scene.ui.showText("This is not a valid starting party!", null, () => { ui.setMode(Mode.MESSAGE) }, cancel, null, null, 19);
+      //this.scene.ui.setMode(Mode.MESSAGE);
+      //this.scene.ui.showText("This is not a valid starting party");
+    }
     return true;
   }
 

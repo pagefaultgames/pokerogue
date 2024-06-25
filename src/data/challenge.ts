@@ -422,13 +422,14 @@ export class SingleTypeChallenge extends Challenge {
       const isValidStarter = args[1] as Utils.BooleanHolder;
       const dexAttr = args[2] as DexAttrProps;
       const amountOfPokemon = args[3] as number;
+      const checkEvolutions = args[4] ?? true as boolean;
       const speciesForm = getPokemonSpeciesForm(species.speciesId, dexAttr.formIndex);
       const types = [speciesForm.type1, speciesForm.type2];
       if (amountOfPokemon > 0) {
         const speciesToCheck = [species.speciesId];
         while (speciesToCheck.length) {
           const checking = speciesToCheck.pop();
-          if (pokemonEvolutions.hasOwnProperty(checking)) {
+          if (pokemonEvolutions.hasOwnProperty(checking) && checkEvolutions) {
             pokemonEvolutions[checking].forEach(e => {
               speciesToCheck.push(e.speciesId);
               types.push(getPokemonSpecies(e.speciesId).type1, getPokemonSpecies(e.speciesId).type2);
