@@ -707,6 +707,83 @@ export class PokemonBaseStatModifier extends PokemonHeldItemModifier {
 }
 
 /**
+ * Modifier used for held items, specifically Eviolite, that apply
+ * {@linkcode Stat} boost(s) using a multiplier if the holder can evolve.
+ * @extends PokemonHeldItemModifier
+ * @see {@linkcode apply}
+ */
+export class EvolutionStatBoosterModifier extends PokemonHeldItemModifier {
+  /** The stats that the held item boosts */
+  private stats: Stat[];
+  /** The multiplier used to increase the relevant stat(s) */
+  private multiplier: number;
+
+  constructor(type: ModifierType, pokemonId: integer, stats: Stat[], multiplier: number, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+
+    this.stats = stats;
+    this.multiplier = multiplier;
+  }
+
+  clone() {
+    return new EvolutionStatBoosterModifier(this.type, this.pokemonId, this.stats, this.multiplier, this.stackCount);
+  }
+
+  getArgs(): any[] {
+    return [ ...super.getArgs(), this.stats, this.multiplier ];
+  }
+
+  matchType(modifier: Modifier): boolean {
+    return modifier instanceof EvolutionStatBoosterModifier;
+  }
+
+  /**
+   * Checks if the incoming stat is listed in {@linkcode stats}
+   * @param args [0] {@linkcode Pokemon} N/A
+   *             [1] {@linkcode Stat} being checked at the time
+   *             [2] {@linkcode Utils.NumberHolder} N/A
+   * @returns true if the stat could be boosted, false otherwise
+   */
+  shouldApply(args: any[]): boolean {
+    return this.stats.includes(args[1] as Stat);
+  }
+
+  /**
+   * Boosts the incoming stat value by a {@linkcode multiplier} if the holder
+   * can evolve. Note that, if the holder is a fusion, they will receive
+   * only half of the boost if either of the fused members are fully
+   * evolved. However, if they are both unevolved, the full boost
+   * will apply.
+   * @param args [0] {@linkcode Pokemon} that holds the held item
+   *             [1] {@linkcode Stat} N/A
+   *             [2] {@linkcode Utils.NumberHolder} that holds the resulting value of the stat
+   * @returns true if the stat boost applies successfully, false otherwise
+   * @see shouldApply
+   */
+  apply(args: any[]): boolean {
+    const holder = args[0] as Pokemon;
+    const statValue = args[2] as Utils.NumberHolder;
+    const isUnevolved = holder.getSpeciesForm(true).speciesId in pokemonEvolutions;
+
+    if (holder.isFusion() && (holder.getFusionSpeciesForm(true).speciesId in pokemonEvolutions) !== isUnevolved) {
+      // Half boost applied if holder is fused and either part of fusion is fully evolved
+      statValue.value *= 1 + (this.multiplier - 1) / 2;
+      return true;
+    } else if (isUnevolved) {
+      // Full boost applied if holder is unfused and unevolved or, if fused, both parts of fusion are unevolved
+      statValue.value *= this.multiplier;
+      return true;
+    }
+
+    return false;
+  }
+
+  getMaxHeldItemCount(_pokemon: Pokemon): integer {
+    return 1;
+  }
+}
+
+/**
  * Applies Specific Type item boosts (e.g., Magnet)
  */
 export class AttackTypeBoosterModifier extends PokemonHeldItemModifier {
