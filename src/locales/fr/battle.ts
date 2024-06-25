@@ -87,7 +87,7 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsDestinyBondLapse": "{{pokemonNameWithAffix}} entraine\n{{pokemonNameWithAffix2}} dans sa chute !",
   "battlerTagsInfatuatedOnAdd": "{{pokemonNameWithAffix}} est amoureux\nde {{sourcePokemonName}} !",
   "battlerTagsInfatuatedOnOverlap": "{{pokemonNameWithAffix}} est\ndéjà amoureux !",
-  "battlerTagsInfatuatedLapse": "{{pokemonNameWithAffix}}] est amoureux\nde {{sourcePokemonName}} !",
+  "battlerTagsInfatuatedLapse": "{{pokemonNameWithAffix}} est amoureux\nde {{sourcePokemonName}} !",
   "battlerTagsInfatuatedLapseImmobilize": "L’amour empêche {{pokemonNameWithAffix}}\nd’agir !",
   "battlerTagsInfatuatedOnRemove": "{{pokemonNameWithAffix}}\nn’est plus amoureux !",
   "battlerTagsSeededOnAdd": "{{pokemonNameWithAffix}} est infecté !",
