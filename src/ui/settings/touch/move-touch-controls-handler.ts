@@ -84,7 +84,12 @@ export default class MoveTouchControlsHandler {
    * Initializes the toolbar of the configuration mode.
    */
   private initToolbar() {
-    const { saveButton, resetButton, cancelButton } = this.getConfigToolbarRefs();
+    const refs = this.getConfigToolbarRefs();
+    if (!refs) {
+      return;
+    }
+    const { saveButton, resetButton, cancelButton } = refs;
+
     saveButton.addEventListener("click", () => {
       this.saveCurrentPositions();
       this.disableConfigurationMode();
@@ -101,10 +106,14 @@ export default class MoveTouchControlsHandler {
 
   /**
    * Returns the references to the elements of the configuration toolbar.
-   * @returns The references to the elements of the configuration toolbar.
+   * @returns The references to the elements of the configuration toolbar
+   *          or undefined if the elements can not be found (e.g. during tests)
    */
-  private getConfigToolbarRefs(): ToolbarRefs {
+  private getConfigToolbarRefs(): ToolbarRefs | undefined {
     const toolbar = document.querySelector("#touchControls #configToolbar") as HTMLDivElement;
+    if (!toolbar) {
+      return;
+    }
     return {
       toolbar,
       saveButton: toolbar.querySelector("#saveButton"),
