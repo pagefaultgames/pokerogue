@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 /**
  * The menu namespace holds most miscellaneous text that isn't directly part of the game's
@@ -21,7 +21,6 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "passive": "Passive:",
   "nature": "Nature:",
   "eggMoves": "Egg Moves",
-  "start": "Start",
   "addToParty": "Add to Party",
   "toggleIVs": "Toggle IVs",
   "manageMoves": "Manage Moves",
@@ -32,6 +31,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "selectMoveSwapWith": "Select a move to swap with",
   "unlockPassive": "Unlock Passive",
   "reduceCost": "Reduce Cost",
+  "sameSpeciesEgg": "Buy an Egg",
   "cycleShiny": ": Shiny",
   "cycleForm": ": Form",
   "cycleGender": ": Gender",
