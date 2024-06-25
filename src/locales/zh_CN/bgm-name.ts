@@ -43,7 +43,7 @@ export const bgmName: SimpleTranslationEntries = {
   "battle_legendary_gro_kyo": "Ω红宝石α蓝宝石「战斗！原始回归」",
   "battle_legendary_rayquaza": "Ω红宝石α蓝宝石「战斗！超古代宝可梦」",
   "battle_legendary_deoxys": "Ω红宝石α蓝宝石「战斗！代欧奇希斯」",
-  "battle_legendary_lake_trio": "Ω红宝石α蓝宝石「战斗！湖之守护神」",
+  "battle_legendary_lake_trio": "Ω红宝石α蓝宝石「战斗！由克希・艾姆利多・亚克诺姆」",
   "battle_legendary_sinnoh": "Ω红宝石α蓝宝石「战斗！传说的宝可梦」",
   "battle_legendary_dia_pal": "Ω红宝石α蓝宝石「战斗！帝牙卢卡・帕路奇亚」",
   "battle_legendary_giratina": "Ω红宝石α蓝宝石「战斗！骑拉帝纳」",
