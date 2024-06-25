@@ -73,7 +73,16 @@ export const bgmName: SimpleTranslationEntries = {
   "battle_wild": "黑白「战斗！野生宝可梦」",
   "battle_wild_strong": "黑白「战斗！强大野生宝可梦」",
   "end_summit": "探险队DX 「天空之柱 顶层」",
+  "battle_rocket_grunt": "HGSS Team Rocket Battle",
+  "battle_aqua_magma_grunt": "ORAS Team Aqua & Magma Battle",
+  "battle_galactic_grunt": "BDSP Team Galactic Battle",
   "battle_plasma_grunt": "黑白「战斗！等离子团」",
+  "battle_flare_grunt": "XY Team Flare Battle",
+  "battle_rocket_boss": "USUM Giovanni Battle",
+  "battle_aqua_magma_boss": "ORAS Archie & Maxie Battle",
+  "battle_galactic_boss": "BDSP Cyrus Battle",
+  "battle_plasma_boss": "B2W2 Ghetsis Battle",
+  "battle_flare_boss": "XY Lysandre Battle",
 
   // Biome Music
   "abyss": "空之探险队「黑暗小丘」",

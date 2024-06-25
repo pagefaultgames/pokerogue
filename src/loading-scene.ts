@@ -320,6 +320,7 @@ export class LoadingScene extends SceneBase {
     this.loadBgm("minor_fanfare", "bw/minor_fanfare.mp3");
     this.loadBgm("heal", "bw/heal.mp3");
     this.loadBgm("victory_trainer", "bw/victory_trainer.mp3");
+    this.loadBgm("victory_team_plasma", "bw/victory_team_plasma.mp3");
     this.loadBgm("victory_gym", "bw/victory_gym.mp3");
     this.loadBgm("victory_champion", "bw/victory_champion.mp3");
     this.loadBgm("evolution", "bw/evolution.mp3");
