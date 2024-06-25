@@ -62,6 +62,7 @@ export const battle: SimpleTranslationEntries = {
   "drainMessage": "{{pokemonName}} 吸取了體力！",
   "regainHealth": "{{pokemonName}} 回復了體力！",
   "fainted": "{{pokemonNameWithAffix}} 倒下了！",
+  "statsAnd": "and",
   "stats": "Stats",
   "statRose": "{{pokemonNameWithAffix}} 的 {{stats}} 提高了！",
   "statSharplyRose": "{{pokemonNameWithAffix}} 的 {{stats}} 大幅提高了！",
