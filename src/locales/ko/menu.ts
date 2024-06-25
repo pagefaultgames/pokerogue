@@ -54,4 +54,5 @@ export const menu: SimpleTranslationEntries = {
   "disclaimer": "면책 조항",
   "disclaimerDescription": "이 게임은 완전히 개발되지 않았습니다- (세이브 데이터 소실을 포함) 플레이에 지장을 주는 문제가 생길 수 있으며,\n공지 없이 업데이트가 진행 혹은 중지될 수 있습니다.",
   "choosePokemon": "포켓몬을 선택하세요.",
+  "errorServerDown": "Oops! There was an issue contacting the server.\n\nYou may leave this window open,\nthe game will automatically reconnect.",
 } as const;

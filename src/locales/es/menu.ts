@@ -54,4 +54,5 @@ export const menu: SimpleTranslationEntries = {
   "disclaimer": "AVISO",
   "disclaimerDescription": "Este juego es un producto inacabado; puede tener problemas de jugabilidad (incluyendo la posible pérdida\n de datos de guardado),cambiar sin avisar, y puede o no puede ser actualizado hasta ser completado.",
   "choosePokemon": "Choose a Pokémon.",
+  "errorServerDown": "Oops! There was an issue contacting the server.\n\nYou may leave this window open,\nthe game will automatically reconnect.",
 } as const;
