@@ -2034,6 +2034,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonLuckText.setText(luck.toString());
         this.pokemonLuckText.setTint(getVariantTint(Math.min(luck - 1, 2) as Variant));
         this.pokemonLuckLabelText.setVisible(this.pokemonLuckText.visible);
+        this.pokemonShinyIcon.setVisible(this.pokemonLuckText.visible);
 
         //Growth translate
         let growthReadable = Utils.toReadableString(GrowthRate[species.growthRate]);
@@ -2091,7 +2092,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.pokemonCandyCountText.setVisible(true);
           this.pokemonFormText.setVisible(true);
           this.pokemonHatchedIcon.setVisible(true);
-          this.pokemonShinyIcon.setVisible(true);
           this.pokemonHatchedCountText.setVisible(true);
 
           let currentFriendship = this.scene.gameData.starterData[this.lastSpecies.speciesId].friendship;
@@ -2173,6 +2173,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.type2Icon.setVisible(false);
         this.pokemonLuckLabelText.setVisible(false);
         this.pokemonLuckText.setVisible(false);
+        this.pokemonShinyIcon.setVisible(false);
         this.pokemonUncaughtText.setVisible(true);
         this.pokemonAbilityLabelText.setVisible(false);
         this.pokemonPassiveLabelText.setVisible(false);
@@ -2201,6 +2202,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.type2Icon.setVisible(false);
       this.pokemonLuckLabelText.setVisible(false);
       this.pokemonLuckText.setVisible(false);
+      this.pokemonShinyIcon.setVisible(false);
       this.pokemonUncaughtText.setVisible(!!species);
       this.pokemonAbilityLabelText.setVisible(false);
       this.pokemonPassiveLabelText.setVisible(false);
