@@ -2691,7 +2691,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       });
     } else {
       //this.scene.ui.setMode(Mode.MESSAGE);
-      this.scene.ui.showText("This is not a valid starting party!", null, () => this.scene.ui.showText(null, 0), null, true);
+      //this.scene.ui.showText("This is not a valid starting party!", null, () => this.scene.ui.showText(null, 0), null, true);
+
+      const handler = this.scene.ui.getHandler() as AwaitableUiHandler;
+      handler.tutorialActive = true;
+      this.scene.ui.showText("This is not a valid starting party!", null, () => this.scene.ui.showText(null, 0, () => handler.tutorialActive = false), null, true);
 
       //this.scene.ui.showText("This is not a valie starting party!", null, null, null, true);
       //this.scene.ui.showText("This is not a valid starting party!", null, () => { ui.setMode(Mode.MESSAGE) }, cancel, null, null, 19);
