@@ -142,7 +142,9 @@ function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptio
     shadowYpos = 3;
     break;
   case TextStyle.BGM_BAR:
-    styleOptions.fontSize = 72;
+    styleOptions.fontSize = defaultFontSize - 24;
+    shadowXpos = 3;
+    shadowYpos = 3;
     break;
   }
 
