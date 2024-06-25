@@ -96,7 +96,7 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsNightmareOnAdd": "{{pokemonNameWithAffix}} sta\navendo un Incubo!",
   "battlerTagsNightmareOnOverlap": "{{pokemonNameWithAffix}} sta\ngià avendo un Incubo!",
   "battlerTagsNightmareLapse": "{{pokemonNameWithAffix}} è bloccato\nin un Incubo!",
-  "battlerTagsEncoreOnAdd": "({{pokemonNameWithAffix}} ha\nsubito Ripeti!",
+  "battlerTagsEncoreOnAdd": "{{pokemonNameWithAffix}} ha\nsubito Ripeti!",
   "battlerTagsEncoreOnRemove": "L'effetto di Ripeti su {{pokemonNameWithAffix}}\n è terminato!",
   "battlerTagsHelpingHandOnAdd": "{{pokemonNameWithAffix}} è pronto ad\naiutare {{pokemonName}}!",
   "battlerTagsIngrainLapse": "{{pokemonNameWithAffix}} assorbe\nnutrienti dalle sue radici!",

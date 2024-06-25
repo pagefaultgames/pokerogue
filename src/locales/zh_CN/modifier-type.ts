@@ -182,6 +182,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SOOTHE_BELL": { name: "安抚之铃" },
 
+    "EVIOLITE": { name: "进化奇石", description: "进化的神奇石块。携带后，还能进化的宝可梦的 防御和特防就会提高。" },
+
     "SOUL_DEW": { name: "心之水滴", description: "增加宝可梦性格影响10% (加算)。" },
 
     "NUGGET": { name: "金珠" },

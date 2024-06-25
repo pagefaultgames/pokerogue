@@ -182,6 +182,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SOOTHE_BELL": { name: "Guizo" },
 
+    "EVIOLITE": { name: "Eviolita", description: "Esse misterioso caroço evolutivo aumenta os atributos de Defesa e Def. Esp. quando segurado por um Pokémon que ainda pode evoluir." },
+
     "SOUL_DEW": { name: "Joia da Alma", description: "Aumenta a influência da natureza de um Pokémon em seus atributos em 10% (cumulativo)." },
 
     "NUGGET": { name: "Pepita" },

@@ -73,7 +73,16 @@ export const bgmName: SimpleTranslationEntries = {
   "battle_wild": "SW Vs. Wilde Pokémon",
   "battle_wild_strong": "SW Vs. Starke Wilde Pokémon",
   "end_summit": "PMDDX Gipfel des Himmelturms",
+  "battle_rocket_grunt": "HGSS Team Rocket Battle",
+  "battle_aqua_magma_grunt": "ORAS Team Aqua & Magma Battle",
+  "battle_galactic_grunt": "BDSP Team Galactic Battle",
   "battle_plasma_grunt": "SW Vs. Team Plasma Rüpel",
+  "battle_flare_grunt": "XY Team Flare Battle",
+  "battle_rocket_boss": "USUM Giovanni Battle",
+  "battle_aqua_magma_boss": "ORAS Archie & Maxie Battle",
+  "battle_galactic_boss": "BDSP Cyrus Battle",
+  "battle_plasma_boss": "B2W2 Ghetsis Battle",
+  "battle_flare_boss": "XY Lysandre Battle",
 
   // Biome Music
   "abyss": "PMD Erkundungsteam Himmel Dunkelkrater",
