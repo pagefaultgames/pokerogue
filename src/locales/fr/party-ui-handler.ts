@@ -13,6 +13,7 @@ export const partyUiHandler: SimpleTranslationEntries = {
   "DEACTIVATE": "Désactiver",
 
   "choosePokemon": "Sélectionnez un Pokémon.",
+  "doWhatWithThisPokemon": "Que faire avec ce Pokémon ?",
   "noEnergy": "{{pokemonName}} n’a plus l’énergie\nde se battre !",
   "hasEnergy": "{{pokemonName}} peut toujours\nse battre !",
   "cantBeUsed": "{{pokemonName}} ne peut pas\nse battre pour ce challenge !",
@@ -23,7 +24,6 @@ export const partyUiHandler: SimpleTranslationEntries = {
   "wasReverted": "{{fusionName}} est redevenu {{pokemonName}}.",
   "releaseConfirmation": "Voulez-vous relâcher {{pokemonName}} ?",
   "releaseInBattle": "Vous ne pouvez pas relâcher Pokémon en combat !",
-  "doWhat": "Que faire avec ce Pokémon ?",
   "selectAMove": "Sélectionnez une capacité.",
   "changeQuantity": "Sélect. un objet à transférer.\nChangez la quantité avec < et >.",
   "selectAnotherPokemonToSplice": "Sélectionnez un autre Pokémon à séparer.",

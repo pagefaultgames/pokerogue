@@ -12,6 +12,7 @@ export const partyUiHandler: SimpleTranslationEntries = {
   "DEACTIVATE": "Deaktivieren",
 
   "choosePokemon": "Wähle ein Pokémon.",
+  "doWhatWithThisPokemon": "Was soll mit diesem Pokémon geschehen?",
   "noEnergy": "{{pokemonName}} ist nicht fit genug, um zu kämpfen!",
   "hasEnergy": "{{pokemonName}} steckt noch voller Energie",
   "cantBeUsed": "{{pokemonName}} kann in dieser Herausforderung nicht verwendet werden!",
@@ -22,7 +23,6 @@ export const partyUiHandler: SimpleTranslationEntries = {
   "wasReverted": "{{fusionName}} verwandelt sich in {{pokemonName}} zurück.",
   "releaseConfirmation": "Möchtest du {{pokemonName}} wirklich freilassen?",
   "releaseInBattle": "Pokémon, die aktuell im Kampf sind, können nicht freigelassen werden.",
-  "doWhat": "Was soll mit diesem Pokémon geschehen?",
   "selectAMove": "Wähle eine Attacke.",
   "changeQuantity": "Wähle ein getragenes Item aus, das übertragen werden soll. Nutze < und > um die Anzahl zu ändern.",
   "selectAnotherPokemonToSplice": "Wähle ein anderes Pokémon mit dem fusioniert werden soll aus.",

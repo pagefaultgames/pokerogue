@@ -1,25 +1,25 @@
-import { CommandPhase, SelectModifierPhase } from "../phases";
+import { ChallengeType, applyChallenges } from "#app/data/challenge.js";
+import { getVariantTint } from "#app/data/variant";
+import { Button } from "#enums/buttons";
+import { Moves } from "#enums/moves";
+import i18next from "i18next";
 import BattleScene from "../battle-scene";
+import { getGenderColor, getGenderSymbol } from "../data/gender";
+import { allMoves } from "../data/move";
+import { pokemonEvolutions } from "../data/pokemon-evolutions";
+import { SpeciesFormChangeItemTrigger } from "../data/pokemon-forms";
+import { StatusEffect } from "../data/status-effect";
 import { PlayerPokemon, PokemonMove } from "../field/pokemon";
-import { addTextObject, TextStyle } from "./text";
+import { PokemonFormChangeItemModifier, PokemonHeldItemModifier, SwitchEffectTransferModifier } from "../modifier/modifier";
+import { CommandPhase, SelectModifierPhase } from "../phases";
+import * as Utils from "../utils";
 import { Command } from "./command-ui-handler";
 import MessageUiHandler from "./message-ui-handler";
-import { Mode } from "./ui";
-import * as Utils from "../utils";
-import { PokemonFormChangeItemModifier, PokemonHeldItemModifier, SwitchEffectTransferModifier } from "../modifier/modifier";
-import { allMoves } from "../data/move";
-import { getGenderColor, getGenderSymbol } from "../data/gender";
-import { StatusEffect } from "../data/status-effect";
-import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
-import { pokemonEvolutions } from "../data/pokemon-evolutions";
-import { addWindow } from "./ui-theme";
-import { SpeciesFormChangeItemTrigger } from "../data/pokemon-forms";
-import { getVariantTint } from "#app/data/variant";
-import {Button} from "#enums/buttons";
-import { applyChallenges, ChallengeType } from "#app/data/challenge.js";
 import MoveInfoOverlay from "./move-info-overlay";
-import i18next from "i18next";
-import { Moves } from "#enums/moves";
+import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
+import { TextStyle, addTextObject } from "./text";
+import { Mode } from "./ui";
+import { addWindow } from "./ui-theme";
 
 const defaultMessage = i18next.t("partyUiHandler:choosePokemon");
 
@@ -651,7 +651,7 @@ export default class PartyUiHandler extends MessageUiHandler {
 
     this.optionsMode = true;
 
-    let optionsMessage = i18next.t("partyUiHandler:doWhat");
+    let optionsMessage = i18next.t("partyUiHandler:doWhatWithThisPokemon");
 
     switch (this.partyUiMode) {
     case PartyUiMode.MOVE_MODIFIER:
