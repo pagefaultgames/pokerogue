@@ -1281,7 +1281,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "아- 아, 내가 져버렸다."
     },
     "defeat": {
-      1: "I look forward to battling you again sometime!"
+      1: "언젠가 다시 승부할 수 있기를 기대할게!"
     }
   },
   "glacia": {
@@ -1291,11 +1291,11 @@ export const PGMdialogue: DialogueTranslationEntries = {
     },
     "victory": {
       1: `당신과… 당신 포켓몬들의 뜨거운 혼!
-                $The all-consuming heat overwhelms. 
-                $It's no surprise that my icy skills failed to harm you.`,
+                $정말로 압도적인 뜨거움이네요. 
+                $내 얼음 기술로 피해를 주지 못한 것도 놀랍지 않을정도로요!`,
     },
     "defeat": {
-      1: "A fiercely passionate battle, indeed."
+      1: "저런, 정말로 치열한 승부였네요."
     }
   },
   "drake": {
@@ -1307,21 +1307,21 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "훌륭하다, 라고 할 만 하군!"
     },
     "defeat": {
-      1: "I gave my all for that battle!"
+      1: "난 승부에서 최선을 다했으니까!"
     }
   },
   "wallace": {
     "encounter": {
-      1: `There's something about you… A difference in your demeanor. 
-                $I think I sense that in you. Now, show me. Show me the power you wield with your Pokémon. 
-                $And I, in turn, shall present you with a performance of illusions in water by me and my Pokémon!`,
+      1: `뭐랄까, 너의 분위기가 조금 변한 것 같은… 
+                $그런 느낌이 드는군. 자, 그럼 한번 확인해볼까? 너와 포켓몬의 힘을. 
+                $그리고 확실하게 보여주도록 하지. 나와 포켓몬에 의한 물의 일루전을!`,
     },
     "victory": {
-      1: `Bravo. I realize now your authenticity and magnificence as a Pokémon Trainer. 
-                    $I find much joy in having met you and your Pokémon. You have proven yourself worthy.`,
+      1: `훌륭하군. 넌 정말 굉장한 포켓몬 트레이너다. 
+                    $그런 너와 너의 포켓몬을 만나게 된 걸 기쁘게 생각해. 스스로 그 가치를 증명하다니!`,
     },
     "defeat": {
-      1: "A grand illusion!"
+      1: "거대한 일루전이로군!"
     }
   },
   "lorelei": {
@@ -1752,7 +1752,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "챔피언인 내가 질 줄이야…"
     },
     "defeat": {
-      1: "That was time well spent! Thank you!"
+      1: "덕분에 즐거웠어! 고마워!"
     }
   },
   "cynthia": {
