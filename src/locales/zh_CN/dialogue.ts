@@ -387,7 +387,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "你要有麻烦了！"
     },
     "victory": {
-      1: "火箭队又起飞了！"
+      1: "好讨厌的感觉啊！"
     },
   },
   "magma_grunt": {
