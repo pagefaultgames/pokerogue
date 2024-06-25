@@ -115,7 +115,7 @@ describe("Abilities - Dry Skin", () => {
     expect(enemy.hp).toBeGreaterThan(1);
   });
 
-  it("opposing water attacks do not yield the above affect if they were protected from", async () => {
+  it("opposing water attacks do not heal if they were protected from", async () => {
     vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.WATER_GUN]);
 
     await game.startBattle();
@@ -131,7 +131,7 @@ describe("Abilities - Dry Skin", () => {
     expect(enemy.hp).toBe(1);
   });
 
-  it("multi-strike water attacks only proc the above affect once", async () => {
+  it("multi-strike water attacks only heal once", async () => {
     vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.WATER_GUN, Moves.WATER_SHURIKEN]);
 
     await game.startBattle();
