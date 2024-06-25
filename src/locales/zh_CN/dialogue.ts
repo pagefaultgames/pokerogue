@@ -387,7 +387,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "你要有麻烦了！"
     },
     "victory": {
-      1: "火箭队又起飞了！"
+      1: "好讨厌的感觉啊！"
     },
   },
   "magma_grunt": {
@@ -1624,10 +1624,10 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "让你亲身感受一下什么叫做猛烈的对战气息吧！",
     },
     "victory": {
-      1: "这次幸运之神对我微笑了，但是……$谁知道我下次会不会这么幸运。",
+      1: "这次幸运之神对你微笑了，但是……$谁知道你下次还会不会这么幸运。",
     },
     "defeat": {
-      1: "那可真厉害！",
+      1: "那挺厉害的吧！",
     }
   },
   "blue": {
