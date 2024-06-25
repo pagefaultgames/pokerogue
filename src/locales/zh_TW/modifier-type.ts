@@ -187,6 +187,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
     LUCKY_EGG: { name: "幸運蛋" },
     GOLDEN_EGG: { name: "金蛋" },
     SOOTHE_BELL: { name: "安撫之鈴" },
+    EVIOLITE: {
+      name: "進化奇石",
+      description: "進化的神奇石塊。攜帶後，還能進化的寶可夢的 防禦和特防就會提高。"
+    },
     SOUL_DEW: {
       name: "心之水滴",
       description: "增加寶可夢性格影響10% (加算)。",

@@ -10,7 +10,7 @@ import * as Utils from "../utils";
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from "../data/type";
 import { getLevelTotalExp } from "../data/exp";
 import { Stat } from "../data/pokemon-stat";
-import { AttackTypeBoosterModifier, DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, PokemonBaseStatModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonMultiHitModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempBattleStatBoosterModifier, TerastallizeModifier } from "../modifier/modifier";
+import { AttackTypeBoosterModifier, DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, PokemonBaseStatModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonMultiHitModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempBattleStatBoosterModifier, EvolutionStatBoosterModifier, TerastallizeModifier } from "../modifier/modifier";
 import { PokeballType } from "../data/pokeball";
 import { Gender } from "../data/gender";
 import { initMoveAnim, loadMoveAnimAssets } from "../data/battle-anims";
@@ -657,6 +657,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.scene.applyModifiers(TempBattleStatBoosterModifier, this.isPlayer(), battleStat as integer as TempBattleStat, statLevel);
     }
     const statValue = new Utils.NumberHolder(this.getStat(stat));
+    this.scene.applyModifiers(EvolutionStatBoosterModifier, this.isPlayer(), this, stat, statValue);
+
     const fieldApplied = new Utils.BooleanHolder(false);
     for (const pokemon of this.scene.getField(true)) {
       applyFieldBattleStatMultiplierAbAttrs(FieldMultiplyBattleStatAbAttr, pokemon, stat, statValue, this, fieldApplied);
