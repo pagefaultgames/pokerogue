@@ -37,7 +37,7 @@ import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 import { addUiThemeOverrides } from "./ui/ui-theme";
 import PokemonData from "./system/pokemon-data";
 import { Nature } from "./data/nature";
-import { SpeciesFormChangeTimeOfDayTrigger, SpeciesFormChangeTrigger, pokemonFormChanges } from "./data/pokemon-forms";
+import { SpeciesFormChangeManualTrigger, SpeciesFormChangeTimeOfDayTrigger, SpeciesFormChangeTrigger, pokemonFormChanges } from "./data/pokemon-forms";
 import { FormChangePhase, QuietFormChangePhase } from "./form-change-phase";
 import { getTypeRgb } from "./data/type";
 import PokemonSpriteSparkleHandler from "./field/pokemon-sprite-sparkle-handler";
@@ -1122,8 +1122,10 @@ export default class BattleScene extends SceneBase {
         playerField.forEach((_, p) => this.unshiftPhase(new ReturnPhase(this, p)));
 
         for (const pokemon of this.getParty()) {
-          if (pokemon.hasAbility(Abilities.ICE_FACE)) {
-            pokemon.formIndex = 0;
+          // Only trigger form change when Eiscue is in Noice form
+          // Hardcoded Eiscue for now in case it is fused with another pokemon
+          if (pokemon.species.speciesId === Species.EISCUE && pokemon.hasAbility(Abilities.ICE_FACE) && pokemon.formIndex === 1) {
+            this.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
           }
 
           pokemon.resetBattleData();
@@ -1895,8 +1897,26 @@ export default class BattleScene extends SceneBase {
       return 13.940;
     case "end_summit": //PMD RTDX Sky Tower Summit
       return 30.025;
+    case "battle_rocket_grunt": //HGSS Team Rocket Battle
+      return 12.707;
+    case "battle_aqua_magma_grunt": //ORAS Team Aqua & Magma Battle
+      return 12.062;
+    case "battle_galactic_grunt": //BDSP Team Galactic Battle
+      return 13.043;
     case "battle_plasma_grunt": //BW Team Plasma Battle
       return 12.974;
+    case "battle_flare_grunt": //XY Team Flare Battle
+      return 4.228;
+    case "battle_rocket_boss": //USUM Giovanni Battle
+      return 9.115;
+    case "battle_aqua_magma_boss": //ORAS Archie & Maxie Battle
+      return 14.847;
+    case "battle_galactic_boss": //BDSP Cyrus Battle
+      return 106.962;
+    case "battle_plasma_boss": //B2W2 Ghetsis Battle
+      return 25.624;
+    case "battle_flare_boss": //XY Lysandre Battle
+      return 8.085;
     }
 
     return 0;
