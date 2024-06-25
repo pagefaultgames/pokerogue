@@ -1,4 +1,4 @@
-import { AchievementTranslationEntries } from "#app/plugins/i18n.js";
+import { AchievementTranslationEntries } from "#app/interfaces/locales.js";
 
 // Achievement translations for the when the player character is male
 export const PGMachv: AchievementTranslationEntries = {
@@ -229,7 +229,7 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "Forte come una roccia!",
   },
   "MONO_BUG": {
-    name: "Pungi come un Beedrill",
+    name: "Metodo Guzma",
   },
   "MONO_GHOST": {
     name: "Sono fantasmi, caro Watson",
@@ -262,7 +262,7 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "Solo una fase",
   },
   "MONO_FAIRY": {
-    name: "Fatina dei denti",
+    name: "Follettini e follettine",
   },
 } as const;
 
