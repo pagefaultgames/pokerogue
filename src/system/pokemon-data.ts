@@ -56,9 +56,6 @@ export default class PokemonData {
 
   constructor(source: Pokemon | any, forHistory: boolean = false) {
     const sourcePokemon = source instanceof Pokemon ? source : null;
-    console.log("source", source);
-    console.log("Nickname source", source.nickname);
-
     this.id = source.id;
     this.player = sourcePokemon ? sourcePokemon.isPlayer() : source.player;
     this.species = sourcePokemon ? sourcePokemon.species.speciesId : source.species;
@@ -148,8 +145,6 @@ export default class PokemonData {
         if (this.nickname) {
           playerPokemon.nickname = this.nickname;
         }
-        console.log(playerPokemon);
-
       })
       : scene.addEnemyPokemon(species, this.level, battleType === BattleType.TRAINER ? !double || !(partyMemberIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER : TrainerSlot.NONE, this.boss, this);
     if (this.summonData) {

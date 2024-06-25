@@ -254,7 +254,7 @@ export class EvolutionPhase extends Phase {
                                             this.scene.playSoundWithoutBgm("evolution_fanfare");
 
                                             evolvedPokemon.destroy();
-                                            this.scene.ui.showText(i18next.t("menu:evolutionDone", { pokemonName: preName, evolvedPokemonName: this.pokemon.getNameToRender() }), null, () => this.end(), null, true, Utils.fixedInt(4000));
+                                            this.scene.ui.showText(i18next.t("menu:evolutionDone", { pokemonName: preName, evolvedPokemonName: this.pokemon.name }), null, () => this.end(), null, true, Utils.fixedInt(4000));
                                             this.scene.time.delayedCall(Utils.fixedInt(4250), () => this.scene.playBgm());
                                           });
                                         });
