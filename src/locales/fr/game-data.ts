@@ -1,14 +1,14 @@
 import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const gameData: SimpleTranslationEntries = {
-  "systemData": "system",
-  "sessionData": "session",
-  "settingsData": "settings",
-  "tutorialsData": "tutorials",
-  "seenDialoguesData": "seen dialogues",
+  "systemData": "système",
+  "sessionData": "de session",
+  "settingsData": "des paramètres",
+  "tutorialsData": "des tutoriels",
+  "seenDialoguesData": "des dialogues connus",
 
-  "dataCouldNotBeLoaded": "Your {{dataName}} data could not be loaded. It may be corrupted.",
-  "dataWillBeOverridden": "Your {{dataName}} data will be overridden and the page will reload. Proceed?",
-  "errorContactServer": "Could not contact the server. Your {{dataName}} data could not be imported.",
-  "errorUpdating": "An error occurred while updating {{dataName}} data. Please contact the administrator.",
+  "dataCouldNotBeLoaded": "Impossible de charger les données {{dataName}}. Elles sont peut-être corrompues.",
+  "dataWillBeOverridden": "Les données {{dataName}} seront effacées et la page rafraichie. Continuer ?",
+  "errorContactServer": "Connexion au serveur impossible. Les données {{dataName}} n’ont pas eu être importées.",
+  "errorUpdating": "Une erreur est survenue pendant le chargement des données {{dataName}}. Contactez un administrateur.",
 } as const;
