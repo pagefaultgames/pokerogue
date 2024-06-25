@@ -4,7 +4,7 @@ import { PokeballCounts } from "./battle-scene";
 import { PokeballType } from "./data/pokeball";
 import { Gender } from "./data/gender";
 import { StatusEffect } from "./data/status-effect";
-import { ModifierOverride } from "./modifier/modifier-type";
+import { type ModifierOverride } from "#app/modifier/modifier-type";
 import { VariantTier } from "./enums/variant-tiers";
 import { EggTier } from "#enums/egg-type";
 import { allSpecies } from "./data/pokemon-species"; // eslint-disable-line @typescript-eslint/no-unused-vars
