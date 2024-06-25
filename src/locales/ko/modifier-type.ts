@@ -182,6 +182,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SOOTHE_BELL": { name: "평온의방울" },
 
+    "EVIOLITE": { name: "진화의휘석", description: "진화의 이상한 덩어리. 지니게 하면 진화 전 포켓몬의 방어와 특수방어가 올라간다." },
+
     "SOUL_DEW": { name: "마음의물방울", description: "지닌 포켓몬의 성격의 효과가 10% 증가한다 (합연산)." },
 
     "NUGGET": { name: "금구슬" },

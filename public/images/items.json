@@ -6163,6 +6163,27 @@
 					}
 				},
 				{
+					"filename": "eviolite",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 8,
+						"y": 8,
+						"w": 15,
+						"h": 15
+					},
+					"frame": {
+						"x": 400,
+						"y": 296,
+						"w": 15,
+						"h": 15
+					}
+				},
+				{
 					"filename": "prism_scale",
 					"rotated": false,
 					"trimmed": true,
@@ -6178,7 +6199,7 @@
 					},
 					"frame": {
 						"x": 400,
-						"y": 296,
+						"y": 311,
 						"w": 15,
 						"h": 15
 					}
@@ -6241,7 +6262,7 @@
 					},
 					"frame": {
 						"x": 399,
-						"y": 314,
+						"y": 326,
 						"w": 16,
 						"h": 16
 					}
@@ -7752,8 +7773,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 365,
-						"y": 346,
+						"x": 381,
+						"y": 330,
 						"w": 16,
 						"h": 16
 					}
@@ -7773,8 +7794,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 381,
-						"y": 330,
+						"x": 365,
+						"y": 346,
 						"w": 16,
 						"h": 16
 					}
@@ -7836,8 +7857,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 397,
-						"y": 330,
+						"x": 381,
+						"y": 362,
 						"w": 16,
 						"h": 16
 					}
@@ -7857,8 +7878,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 381,
-						"y": 362,
+						"x": 397,
+						"y": 342,
 						"w": 16,
 						"h": 16
 					}
@@ -7879,7 +7900,7 @@
 					},
 					"frame": {
 						"x": 397,
-						"y": 346,
+						"y": 358,
 						"w": 16,
 						"h": 16
 					}
@@ -7900,7 +7921,7 @@
 					},
 					"frame": {
 						"x": 397,
-						"y": 362,
+						"y": 374,
 						"w": 16,
 						"h": 16
 					}
@@ -7932,6 +7953,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:04b79ef611307e2e75d66659df20dc86:348c39cb349653eed5de7dd4322f999a:110e074689c9edd2c54833ce2e4d9270$"
+		"smartupdate": "$TexturePacker:SmartUpdate:60db8f4653a650759cd9189e91c38a40:439307cbef9c000f6c45603b2d82d107:110e074689c9edd2c54833ce2e4d9270$"
 	}
 }

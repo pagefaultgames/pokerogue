@@ -1258,7 +1258,7 @@ export class TerrainHighestStatBoostTag extends HighestStatBoostTag implements T
   }
 }
 
-export class HideSpriteTag extends BattlerTag {
+export class SemiInvulnerableTag extends BattlerTag {
   constructor(tagType: BattlerTagType, turnCount: integer, sourceMove: Moves) {
     super(tagType, BattlerTagLapseType.MOVE_EFFECT, turnCount, sourceMove);
   }
@@ -1615,7 +1615,7 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
   case BattlerTagType.UNDERGROUND:
   case BattlerTagType.UNDERWATER:
   case BattlerTagType.HIDDEN:
-    return new HideSpriteTag(tagType, turnCount, sourceMove);
+    return new SemiInvulnerableTag(tagType, turnCount, sourceMove);
   case BattlerTagType.FIRE_BOOST:
     return new TypeBoostTag(tagType, sourceMove, Type.FIRE, 1.5, false);
   case BattlerTagType.CRIT_BOOST:
