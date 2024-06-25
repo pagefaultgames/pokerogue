@@ -416,7 +416,7 @@ export class Egg {
       }
     }
 
-    if (!!scene.gameData.dexData[species].caughtAttr) {
+    if (!!scene.gameData.dexData[species].caughtAttr || scene.gameData.eggs.some(e => e.species === species)) {
       scene.gameData.unlockPity[this.tier] = Math.min(scene.gameData.unlockPity[this.tier] + 1, 10);
     } else {
       scene.gameData.unlockPity[this.tier] = 0;
