@@ -93,7 +93,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "招式命中率增加{{accuracyAmount}} (最大100)。",
     },
     "PokemonMultiHitModifierType": {
-      description: "攻击造成一次额外伤害，\n每堆叠一件会让攻击伤害\n衰减60/75/82.5%。",
+      description: "攻击以40/25/12.5%的伤害造成2/3/4次伤害",
     },
     "TmModifierType": {
       name: "招式学习器 {{moveId}} - {{moveName}}",
@@ -181,6 +181,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "GOLDEN_EGG": { name: "金蛋" },
 
     "SOOTHE_BELL": { name: "安抚之铃" },
+
+    "EVIOLITE": { name: "进化奇石", description: "进化的神奇石块。携带后，还能进化的宝可梦的 防御和特防就会提高。" },
 
     "SOUL_DEW": { name: "心之水滴", description: "增加宝可梦性格影响10% (加算)。" },
 

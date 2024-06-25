@@ -182,6 +182,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SOOTHE_BELL": { name: "평온의방울" },
 
+    "EVIOLITE": { name: "진화의휘석", description: "진화의 이상한 덩어리. 지니게 하면 진화 전 포켓몬의 방어와 특수방어가 올라간다." },
+
     "SOUL_DEW": { name: "마음의물방울", description: "지닌 포켓몬의 성격의 효과가 10% 증가한다 (합연산)." },
 
     "NUGGET": { name: "금구슬" },
@@ -199,7 +201,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "MULTI_LENS": { name: "멀티렌즈" },
 
-    "HEALING_CHARM": { name: "치유의부적", description: "HP를 회복하는 기술을 썼을 때 효율이 10% 증가한다 (부활 제외)." },
+    "HEALING_CHARM": { name: "치유의부적", description: "HP를 회복하는 기술이나 도구를 썼을 때 효율이 10% 증가한다 (부활 제외)." },
     "CANDY_JAR": { name: "사탕단지", description: "이상한사탕 종류의 아이템이 올려주는 레벨이 1 증가한다." },
 
     "BERRY_POUCH": { name: "열매주머니", description: "사용한 나무열매가 소모되지 않을 확률이 30% 추가된다." },
