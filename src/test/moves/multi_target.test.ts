@@ -33,9 +33,9 @@ describe("Moves - Multi target", () => {
 
   it("2v2 - target all near others - all alive", () => checkTargetCount(game, Moves.EARTHQUAKE, false, false, 3), TIMEOUT);
 
-  it("2v2 - target all near others - one enemy dead", () => checkTargetCount(game, Moves.EARTHQUAKE, false, true, 2), TIMEOUT);
+  it("2v1 - target all near others - one enemy dead", () => checkTargetCount(game, Moves.EARTHQUAKE, false, true, 2), TIMEOUT);
 
-  it("2v2 - target all near others - ally dead", () => checkTargetCount(game, Moves.EARTHQUAKE, true, false, 2), TIMEOUT);
+  it("1v2 - target all near others - ally dead", () => checkTargetCount(game, Moves.EARTHQUAKE, true, false, 2), TIMEOUT);
 
   it("1v1 - target all near others - one enemy and the ally dead", () => checkTargetCount(game, Moves.EARTHQUAKE, true, true, 1), TIMEOUT);
 
@@ -46,9 +46,9 @@ describe("Moves - Multi target", () => {
 
   it("2v2 - target all near enemies - all alive", () => checkTargetCount(game, Moves.HYPER_VOICE, false, false, 2), TIMEOUT);
 
-  it("2v2 - target all near enemies - one enemy dead", () => checkTargetCount(game, Moves.HYPER_VOICE, false, true, 1), TIMEOUT);
+  it("2v1 - target all near enemies - one enemy dead", () => checkTargetCount(game, Moves.HYPER_VOICE, false, true, 1), TIMEOUT);
 
-  it("2v2 - target all near enemies - ally dead", () => checkTargetCount(game, Moves.HYPER_VOICE, true, false, 2), TIMEOUT);
+  it("1v2 - target all near enemies - ally dead", () => checkTargetCount(game, Moves.HYPER_VOICE, true, false, 2), TIMEOUT);
 
   it("1v1 - target all near enemies - one enemy and the ally dead", () => checkTargetCount(game, Moves.HYPER_VOICE, true, true, 1), TIMEOUT);
 
