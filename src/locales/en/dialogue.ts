@@ -477,7 +477,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "aqua_boss_archie_1": {
     "encounter": {
-      1: "I'm leader of Team Aqua, so I'm afraid it's the rope's end for you."
+      1: "I'm the leader of Team Aqua, so I'm afraid it's the rope's end for you."
     },
     "victory": {
       1: "Let's meet again somewhere. I'll be sure to remember that face."
