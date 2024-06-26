@@ -10,6 +10,7 @@ import { CommandPhase, DamagePhase, MoveEffectPhase, MoveEndPhase, TurnEndPhase 
 import { BattleStat } from "#app/data/battle-stat.js";
 import { Type } from "#app/data/type.js";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
+import { StatusEffect } from "#app/data/status-effect.js";
 
 const TIMEOUT = 20 * 1000;
 
@@ -532,6 +533,36 @@ describe("Abilities - Parental Bond", () => {
 
       // This will cause this test to time out if the switch was forced on the first hit.
       await game.phaseInterceptor.to(MoveEffectPhase, false);
+    }, TIMEOUT
+  );
+
+  test(
+    "Wake-Up Slap boosted by this ability should only wake up the target after the second hit",
+    async () => {
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.WAKE_UP_SLAP]);
+      vi.spyOn(Overrides, "OPP_STATUS_OVERRIDE", "get").mockReturnValue(StatusEffect.SLEEP);
+
+      await game.startBattle([Species.CHARIZARD]);
+
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).not.toBe(undefined);
+
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).not.toBe(undefined);
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.WAKE_UP_SLAP));
+
+      await game.phaseInterceptor.to(MoveEffectPhase, false);
+      vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
+
+      await game.phaseInterceptor.to(DamagePhase);
+
+      expect(leadPokemon.turnData.hitCount).toBe(2);
+      expect(enemyPokemon.status?.effect).toBe(StatusEffect.SLEEP);
+
+      await game.phaseInterceptor.to(TurnEndPhase);
+
+      expect(enemyPokemon.status?.effect).toBeUndefined();
     }, TIMEOUT
   );
 });
