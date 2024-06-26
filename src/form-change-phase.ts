@@ -7,8 +7,8 @@ import { EndEvolutionPhase, EvolutionPhase } from "./evolution-phase";
 import Pokemon, { EnemyPokemon, PlayerPokemon } from "./field/pokemon";
 import { Mode } from "./ui/ui";
 import PartyUiHandler from "./ui/party-ui-handler";
-import { BattleSpec } from "./enums/battle-spec";
-import { MovePhase, PokemonHealPhase } from "./phases";
+import { BattleSpec } from "#enums/battle-spec";
+import { BattlePhase, MovePhase, PokemonHealPhase } from "./phases";
 import { getTypeRgb } from "./data/type";
 import {BattlePhase} from "#app/phases/battle-phase";
 
@@ -279,7 +279,7 @@ export class QuietFormChangePhase extends BattlePhase {
   }
 
   end(): void {
-    if (this.pokemon.scene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS && this.pokemon instanceof EnemyPokemon) {
+    if (this.pokemon.scene?.currentBattle.battleSpec === BattleSpec.FINAL_BOSS && this.pokemon instanceof EnemyPokemon) {
       this.scene.playBgm();
       this.pokemon.summonData.battleStats = [ 0, 0, 0, 0, 0, 0, 0 ];
       this.scene.unshiftPhase(new PokemonHealPhase(this.scene, this.pokemon.getBattlerIndex(), this.pokemon.getMaxHp(), null, false, false, false, true));

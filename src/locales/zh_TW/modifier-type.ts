@@ -1,4 +1,4 @@
-import { ModifierTypeTranslationEntries } from "#app/plugins/i18n";
+import { ModifierTypeTranslationEntries } from "#app/interfaces/locales";
 
 export const modifierType: ModifierTypeTranslationEntries = {
   ModifierType: {
@@ -153,7 +153,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     SACRED_ASH: { name: "聖灰" },
     REVIVER_SEED: {
       name: "復活種子",
-      description: "恢復1只瀕死寶可夢的HP至1/2。",
+      description: "恢復1隻瀕死寶可夢的HP至1/2。",
     },
     ETHER: { name: "PP單項小補劑" },
     MAX_ETHER: { name: "PP單項全補劑" },
@@ -187,6 +187,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
     LUCKY_EGG: { name: "幸運蛋" },
     GOLDEN_EGG: { name: "金蛋" },
     SOOTHE_BELL: { name: "安撫之鈴" },
+    EVIOLITE: {
+      name: "進化奇石",
+      description: "進化的神奇石塊。攜帶後，還能進化的寶可夢的 防禦和特防就會提高。"
+    },
     SOUL_DEW: {
       name: "心之水滴",
       description: "增加寶可夢性格影響10% (加算)。",
@@ -243,14 +247,14 @@ export const modifierType: ModifierTypeTranslationEntries = {
                 "攜帶該道具的寶可夢在攻擊對方成功造成傷\n害時，攜帶者的HP會恢復其所造成傷害\n的1/8。",
     },
     TOXIC_ORB: {
-      name: "Toxic Orb",
+      name: "劇毒寶珠",
       description:
-                "It's a bizarre orb that exudes toxins when touched and will badly poison the holder during battle"
+                "觸碰後會放出毒的神奇寶珠。\n攜帶後，在戰鬥時會變成劇毒狀態。"
     },
     FLAME_ORB: {
-      name: "Flame Orb",
+      name: "火焰寶珠",
       description:
-                "It's a bizarre orb that gives off heat when touched and will affect the holder with a burn during battle"
+                "觸碰後會放出熱量的神奇寶珠。\n攜帶後，在戰鬥時會變成灼傷狀態。"
     },
     BATON: {
       name: "接力棒",
@@ -306,6 +310,19 @@ export const modifierType: ModifierTypeTranslationEntries = {
     x_accuracy: "命中強化",
     dire_hit: "要害攻擊",
   },
+
+  TempBattleStatBoosterStatName: {
+    "ATK": "攻擊",
+    "DEF": "防禦",
+    "SPATK": "特攻",
+    "SPDEF": "特防",
+    "SPD": "速度",
+    "ACC": "命中",
+    "CRIT": "會心",
+    "EVA": "閃避",
+    "DEFAULT": "???",
+  },
+
   AttackTypeBoosterItem: {
     silk_scarf: "絲綢圍巾",
     black_belt: "黑帶",

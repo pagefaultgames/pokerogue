@@ -1,15 +1,15 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
+import {afterEach, beforeAll, beforeEach, describe, it, vi, expect} from "vitest";
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
 import {initSceneWithoutEncounterPhase} from "#app/test/utils/gameManagerUtils";
-import {Species} from "#app/data/enums/species";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import {ModifierTier} from "#app/modifier/modifier-tier";
 import * as Utils from "#app/utils";
 import {CustomModifierSettings, modifierTypes} from "#app/modifier/modifier-type";
 import BattleScene from "#app/battle-scene";
-import {Mode} from "#app/ui/ui";
 import {SelectModifierPhase} from "#app/phases/select-modifier-phase";
+import {Species} from "#enums/species";
+import {Mode} from "#app/ui/ui";
 
 describe("SelectModifierPhase", () => {
   let phaserGame: Phaser.Game;
@@ -108,6 +108,7 @@ describe("SelectModifierPhase", () => {
 
     // Simulate selecting reroll with lock
     scene.lockModifierTiers = true;
+    scene.reroll = true;
     selectModifierPhase = new SelectModifierPhase(scene, 1, firstRollTiers);
     scene.unshiftPhase(selectModifierPhase);
     scene.ui.setMode(Mode.MESSAGE).then(() => game.endPhase());
