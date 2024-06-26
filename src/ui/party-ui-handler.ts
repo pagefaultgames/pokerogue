@@ -110,14 +110,14 @@ export default class PartyUiHandler extends MessageUiHandler {
 
   public static FilterNonFainted = (pokemon: PlayerPokemon) => {
     if (pokemon.isFainted()) {
-      return `${pokemon.name} has no energy\nleft to battle!`;
+      return `${pokemon.getName(false)} has no energy\nleft to battle!`;
     }
     return null;
   };
 
   public static FilterFainted = (pokemon: PlayerPokemon) => {
     if (!pokemon.isFainted()) {
-      return `${pokemon.name} still has energy\nto battle!`;
+      return `${pokemon.getName(false)} still has energy\nto battle!`;
     }
     return null;
   };
@@ -131,7 +131,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     const challengeAllowed = new Utils.BooleanHolder(true);
     applyChallenges(this.scene.gameMode, ChallengeType.POKEMON_IN_BATTLE, pokemon, challengeAllowed);
     if (!challengeAllowed.value) {
-      return `${pokemon.name} can't be used in\nthis challenge!`;
+      return `${pokemon.getName(false)} can't be used in\nthis challenge!`;
     }
     return null;
   };
@@ -141,7 +141,7 @@ export default class PartyUiHandler extends MessageUiHandler {
   public static FilterItemMaxStacks = (pokemon: PlayerPokemon, modifier: PokemonHeldItemModifier) => {
     const matchingModifier = pokemon.scene.findModifier(m => m instanceof PokemonHeldItemModifier && m.pokemonId === pokemon.id && m.matchType(modifier)) as PokemonHeldItemModifier;
     if (matchingModifier && matchingModifier.stackCount === matchingModifier.getMaxStackCount(pokemon.scene)) {
-      return `${pokemon.name} has too many\nof this item!`;
+      return `${pokemon.getName(false)} has too many\nof this item!`;
     }
     return null;
   };
@@ -364,18 +364,18 @@ export default class PartyUiHandler extends MessageUiHandler {
           this.clearOptions();
           ui.playSelect();
           pokemon.pauseEvolutions = false;
-          this.showText(`Evolutions have been unpaused for ${pokemon.name}.`, null, () => this.showText(null, 0), null, true);
+          this.showText(`Evolutions have been unpaused for ${pokemon.getName(false)}.`, null, () => this.showText(null, 0), null, true);
         } else if (option === PartyOption.UNSPLICE) {
           this.clearOptions();
           ui.playSelect();
-          this.showText(`Do you really want to unsplice ${pokemon.fusionSpecies.name}\nfrom ${pokemon.name}? ${pokemon.fusionSpecies.name} will be lost.`, null, () => {
+          this.showText(`Do you really want to unsplice ${pokemon.fusionSpecies.name}\nfrom ${pokemon.getName(false)}? ${pokemon.fusionSpecies.name} will be lost.`, null, () => {
             ui.setModeWithoutClear(Mode.CONFIRM, () => {
-              const fusionName = pokemon.name;
+              const fusionName = pokemon.getName(false);
               pokemon.unfuse().then(() => {
                 this.clearPartySlots();
                 this.populatePartySlots();
                 ui.setMode(Mode.PARTY);
-                this.showText(`${fusionName} was reverted to ${pokemon.name}.`, null, () => {
+                this.showText(`${fusionName} was reverted to ${pokemon.getName(false)}.`, null, () => {
                   ui.setMode(Mode.PARTY);
                   this.showText(null, 0);
                 }, null, true);
@@ -389,7 +389,7 @@ export default class PartyUiHandler extends MessageUiHandler {
           this.clearOptions();
           ui.playSelect();
           if (this.cursor >= this.scene.currentBattle.getBattlerCount() || !pokemon.isAllowedInBattle()) {
-            this.showText(`Do you really want to release ${pokemon.name}?`, null, () => {
+            this.showText(`Do you really want to release ${pokemon.getName(false)}?`, null, () => {
               ui.setModeWithoutClear(Mode.CONFIRM, () => {
                 ui.setMode(Mode.PARTY);
                 this.doRelease(this.cursor);
@@ -1017,7 +1017,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     const slotInfoContainer = this.scene.add.container(0, 0);
     this.add(slotInfoContainer);
 
-    let displayName = this.pokemon.name;
+    let displayName = this.pokemon.getName(false);
     let nameTextWidth: number;
 
     const nameSizeTest = addTextObject(this.scene, 0, 0, displayName, TextStyle.PARTY);
@@ -1089,7 +1089,7 @@ class PartySlot extends Phaser.GameObjects.Container {
       const shinyStar = this.scene.add.image(0, 0, `shiny_star_small${doubleShiny ? "_1" : ""}`);
       shinyStar.setOrigin(0, 0);
       shinyStar.setPositionRelative(slotName, -9, 3);
-      shinyStar.setTint(getVariantTint(!doubleShiny ? this.pokemon.getVariant() : this.pokemon.variant));
+      shinyStar.setTint(getVariantTint(this.pokemon.getBaseVariant(doubleShiny)));
 
       slotInfoContainer.add(shinyStar);
 

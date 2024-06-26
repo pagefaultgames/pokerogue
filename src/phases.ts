@@ -1031,7 +1031,7 @@ export class EncounterPhase extends BattlePhase {
     const enemyField = this.scene.getEnemyField();
 
     enemyField.forEach((enemyPokemon, e) => {
-      if (enemyPokemon.isShiny()) {
+      if (enemyPokemon.isShiny() || (enemyPokemon.illusion.active && enemyPokemon.illusion.shiny)) {
         this.scene.unshiftPhase(new ShinySparklePhase(this.scene, BattlerIndex.ENEMY + e));
       }
     });
@@ -1500,7 +1500,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
   onEnd(): void {
     const pokemon = this.getPokemon();
 
-    if (pokemon.isShiny()) {
+    if (pokemon.isShiny() || (pokemon.illusion.active && pokemon.illusion.shiny)) {
       this.scene.unshiftPhase(new ShinySparklePhase(this.scene, pokemon.getBattlerIndex()));
     }
 
@@ -1592,8 +1592,11 @@ export class SwitchSummonPhase extends SummonPhase {
 
   switchAndSummon() {
     const party = this.player ? this.getParty() : this.scene.getEnemyParty();
+    const allowedParty: Pokemon[] = this.player ? this.getParty().filter(p => p.isAllowedInBattle()) : this.scene.getEnemyParty().filter(p => p.isAllowedInBattle());
     const switchedPokemon = party[this.slotIndex];
     this.lastPokemon = this.getPokemon();
+
+    applyPreSummonAbAttrs(PreSummonAbAttr, switchedPokemon, allowedParty);
     applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, this.lastPokemon);
     if (this.batonPass && switchedPokemon) {
       (this.player ? this.scene.getEnemyField() : this.scene.getPlayerField()).forEach(enemyPokemon => enemyPokemon.transferTagsBySourceId(this.lastPokemon.id, switchedPokemon.id));
@@ -4372,6 +4375,7 @@ export class SwitchPhase extends BattlePhase {
       }
       this.scene.ui.setMode(Mode.MESSAGE).then(() => super.end());
     }, PartyUiHandler.FilterNonFainted);
+
   }
 }
 

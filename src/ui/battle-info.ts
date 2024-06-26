@@ -307,7 +307,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     }
 
     const doubleShiny = isFusion && pokemon.shiny && pokemon.fusionShiny;
-    const baseVariant = !doubleShiny ? pokemon.getVariant() : pokemon.variant;
+    const baseVariant = !doubleShiny ? pokemon.getVariant(true) : pokemon.variant;
 
     this.shinyIcon.setPositionRelative(this.nameText, nameTextWidth + this.genderText.displayWidth + 1 + (this.teraIcon.visible ? this.teraIcon.displayWidth + 1 : 0) + (this.splicedIcon.visible ? this.splicedIcon.displayWidth + 1 : 0), 2.5);
     this.shinyIcon.setTexture(`shiny_star${doubleShiny ? "_1" : ""}`);
@@ -621,7 +621,17 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         this.lastBattleStats = battleStatsStr;
       }
 
-      this.shinyIcon.setVisible(pokemon.isShiny());
+      this.shinyIcon.setVisible(pokemon.isShiny(true));
+
+      const isFusion = pokemon.isFusion();
+      const doubleShiny = isFusion && pokemon.shiny && pokemon.fusionShiny;
+      const baseVariant = !doubleShiny ? pokemon.getVariant(true) : pokemon.variant;
+      this.shinyIcon.setTint(getVariantTint(baseVariant));
+
+      this.fusionShinyIcon.setVisible(doubleShiny);
+      if (isFusion) {
+        this.fusionShinyIcon.setTint(getVariantTint(pokemon.fusionVariant));
+      }
 
       resolve();
     });
