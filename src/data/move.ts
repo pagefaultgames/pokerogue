@@ -1284,13 +1284,13 @@ export class SwallowHealAttr extends HealAttr {
 
   /**
    * Sets the healing ratio based on stock in STOCKPILE BattlerTag
-   * 
+   *
    * Amount of STOCKPILE BattlerTags on user is stored in the variable stock
    * Then stock is checked; if stock is:
    *   1, then healing is 0.25 of health (0.25 * 2^0)
    *   2, then healing is 0.50 of health (0.25 * 2^1)
    *   3, then healing is 1.00 of health (0.25 * 2^2)
-   * 
+   *
    * @param user {@linkcode Pokemon} using this move
    * @param target {@linkcode Pokemon} target of this move
    * @param move {@linkcode Move} being used
@@ -1299,8 +1299,8 @@ export class SwallowHealAttr extends HealAttr {
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     let stock: integer = 0;
-    if (!!user.getTag(BattlerTagType.STOCKPILE)){
-      let battlerTag: StockpileTag = user.getTag(BattlerTagType.STOCKPILE) as StockpileTag;
+    if (!!user.getTag(BattlerTagType.STOCKPILE)) {
+      const battlerTag: StockpileTag = user.getTag(BattlerTagType.STOCKPILE) as StockpileTag;
       stock = battlerTag.stock;
     }
 
@@ -3217,7 +3217,7 @@ export class SpitUpPowerAttr extends VariablePowerAttr {
   /**
    * This sets the power based on number of STOCKPILE BattlerTags on the user
    * Power is number of stock multiplied by 100
-   * 
+   *
    * @param user {@linkcode Pokemon} using this move
    * @param target {@linkcode Pokemon} target of this move
    * @param move {@linkcode Move} being used
@@ -3226,8 +3226,8 @@ export class SpitUpPowerAttr extends VariablePowerAttr {
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     let stock: integer = 0;
-    if (!!user.getTag(BattlerTagType.STOCKPILE)){
-      let battlerTag: StockpileTag = user.getTag(BattlerTagType.STOCKPILE) as StockpileTag;
+    if (!!user.getTag(BattlerTagType.STOCKPILE)) {
+      const battlerTag: StockpileTag = user.getTag(BattlerTagType.STOCKPILE) as StockpileTag;
       stock = battlerTag.stock;
     }
 
@@ -4117,7 +4117,9 @@ export class RemoveBattlerTagAttr extends MoveEffectAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    console.log("Trying to remove BattlerTag", this.tagTypes[0]);
     if (!super.apply(user, target, move, args)) {
+      console.log("Could not remove BattlerTag", this.tagTypes[0]);
       return false;
     }
 
@@ -4125,6 +4127,7 @@ export class RemoveBattlerTagAttr extends MoveEffectAttr {
       (this.selfTarget ? user : target).removeTag(tagType);
     }
 
+    console.log("Removed BattlerTag", this.tagTypes[0]);
     return true;
   }
 }
@@ -4250,7 +4253,7 @@ export class StockpileAttr extends AddBattlerTagAttr {
 
   /**
    * {@link stock} is checked for the localised message
-   * 
+   *
    * @param user {@linkcode Pokemon} using this move. It's needed to retrieve
    *   how much stockpile the Pokemon has as well as its name for the message
    * @param target {@linkcode Pokemon} target of this move
@@ -4260,33 +4263,34 @@ export class StockpileAttr extends AddBattlerTagAttr {
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     let stock: integer = 0;
-    if (!!user.getTag(BattlerTagType.STOCKPILE)){
-      let battlerTag: StockpileTag = user.getTag(BattlerTagType.STOCKPILE) as StockpileTag;
+    if (!!user.getTag(BattlerTagType.STOCKPILE)) {
+      const battlerTag: StockpileTag = user.getTag(BattlerTagType.STOCKPILE) as StockpileTag;
       stock = battlerTag.stock;
     }
 
-    if (!super.apply(user, target, move, args))
+    if (!super.apply(user, target, move, args)) {
       return false;
+    }
 
     user.scene.queueMessage(this.getTriggerMessage(user, (stock+1)));
 
     return true;
   }
-  
+
   /**
    * This is used to get the localised trigger message
-   * 
+   *
    * @param pokemon the user of the move
    * @param stockpileNumber stock calculated from {@linkcode apply}
-   * @param args 
+   * @param args
    * @returns localised trigger message
    */
   getTriggerMessage(pokemon: Pokemon, stockpileNumber: integer, ...args: any[]) {
-    return i18next.t('abilityTriggers:stockpile', {pokemonName: `${pokemon.name}`, stockpileNumber: stockpileNumber});
+    return i18next.t("abilityTriggers:stockpile", {pokemonName: `${pokemon.name}`, stockpileNumber: stockpileNumber});
   }
 }
 
-/** 
+/**
  * Attribute used when a move hits a {@linkcode BattlerTagType} for double damage
  * @extends MoveAttr
 */
@@ -5615,12 +5619,12 @@ const failOnBossCondition: MoveConditionFunc = (user, target, move) => !target.i
 const failOnMaxCondition: MoveConditionFunc = (user, target, move) => !target.isMax();
 
 const failOnMaxStockCondition: MoveConditionFunc = (user, target, move) => {
-  if (!!user.getTag(BattlerTagType.STOCKPILE)){
-    let battlerTag: StockpileTag = user.getTag(BattlerTagType.STOCKPILE) as StockpileTag;
+  if (!!user.getTag(BattlerTagType.STOCKPILE)) {
+    const battlerTag: StockpileTag = user.getTag(BattlerTagType.STOCKPILE) as StockpileTag;
     return battlerTag.stock < 3;
   }
-  return false;
-}
+  return true;
+};
 
 const failOnNoStockCondition: MoveConditionFunc = (user, target, move) => !!user.getTag(BattlerTagType.STOCKPILE);
 
@@ -6476,11 +6480,11 @@ export function initMoves() {
       .condition(failOnMaxStockCondition),
     new AttackMove(Moves.SPIT_UP, Type.NORMAL, MoveCategory.SPECIAL, -1, 100, 10, -1, 0, 3)
       .attr(SpitUpPowerAttr)
-      .attr(RemoveBattlerTagAttr, [BattlerTagType.STOCKPILE])
+      .attr(RemoveBattlerTagAttr, [BattlerTagType.STOCKPILE], true)
       .condition(failOnNoStockCondition),
     new SelfStatusMove(Moves.SWALLOW, Type.NORMAL, -1, 10, -1, 0, 3)
       .attr(SwallowHealAttr)
-      .attr(RemoveBattlerTagAttr, [BattlerTagType.STOCKPILE])
+      .attr(RemoveBattlerTagAttr, [BattlerTagType.STOCKPILE], true)
       .condition(failOnNoStockCondition)
       .triageMove(),
     new AttackMove(Moves.HEAT_WAVE, Type.FIRE, MoveCategory.SPECIAL, 95, 90, 10, 10, 0, 3)
