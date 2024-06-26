@@ -194,21 +194,22 @@ export default class GameInfoUiHandler extends UiHandler {
       else {
         const sssLuckText = addTextObject(this.scene, 0, 0, `${i18next.t("runHistory:luck")}: ${getLuckString(luckValue)}`, TextStyle.WINDOW, {fontSize: "55px"})
         sssLuckText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
-        sssLuckText.setPosition(6, 79);
+        sssLuckText.setPosition(6, 77);
         this.runInfoContainer.add(sssLuckText);
       }
 
     	if (runHistoryOrigin && !runResult) {
-    		const enemyContainer = this.scene.add.container(8, -40);
+    		const enemyContainer = this.scene.add.container(8, -42);
     		//Wild - Single and Doubles
     		if (runData.battleType === BattleType.WILD) {
     			runData.enemyParty.forEach((enemyData, e) => {
-          		const enemyIconContainer = this.scene.add.container(8+(e*23),62);
+          		const enemyIconContainer = this.scene.add.container(12+(e*24),63);
           		enemyIconContainer.setScale(0.75);
+              const bossStatus = enemyData.boss;
           		enemyData.boss = false;
           		const enemy = enemyData.toPokemon(this.scene);
           		const enemyIcon = this.scene.addPokemonIcon(enemy, 0, 0, 0, 0);
-          		const enemyLevel = addTextObject(this.scene, 32+(e*12), 20, `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
+          		const enemyLevel = addTextObject(this.scene, 32, 24, `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`, bossStatus ? TextStyle.PARTY_RED : TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
           		enemyLevel.setShadow(0, 0, null);
           		enemyLevel.setStroke("#424242", 14);
           		enemyLevel.setOrigin(1, 0);
@@ -217,7 +218,7 @@ export default class GameInfoUiHandler extends UiHandler {
           		enemyContainer.add(enemyIconContainer);
          		enemy.destroy();
        		});
-        genInfoText.setPosition(6,40);
+        genInfoText.setPosition(6,38);
     		}
     		//Trainer - Single and Double
     		else if (runData.battleType === BattleType.TRAINER) {
@@ -225,7 +226,7 @@ export default class GameInfoUiHandler extends UiHandler {
         const tObjSpriteKey = tObj.config.getSpriteKey(runData.trainer.variant === TrainerVariant.FEMALE, false);
         const tObjSprite = this.scene.add.sprite(3, 75, tObjSpriteKey);
         if (runData.trainer.variant === TrainerVariant.DOUBLE) {
-          const doubleContainer = this.scene.add.container(3, 80);
+          const doubleContainer = this.scene.add.container(5, 80);
           tObjSprite.setPosition(-3, -3);
           const tObjPartnerSpriteKey = tObj.config.getSpriteKey(true, true);
           const tObjPartnerSprite = this.scene.add.sprite(5, -3, tObjPartnerSpriteKey);
@@ -237,7 +238,7 @@ export default class GameInfoUiHandler extends UiHandler {
 
         } else {
           tObjSprite.setScale(0.25, 0.25);
-          tObjSprite.setPosition(3, 80);
+          tObjSprite.setPosition(6, 82);
           enemyContainer.add(tObjSprite);
         }
 
@@ -262,8 +263,8 @@ export default class GameInfoUiHandler extends UiHandler {
             enemyIcon.list[0].setTint(teraColor.color);
           }
 
-          enemyIcon.setPosition(16+(24 * (e%3)), 0+(35*pokemonRowHeight));
-          		const enemyLevel = addTextObject(this.scene, (24*(e%3))+35, 22+(35*pokemonRowHeight), `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`, isBoss ? TextStyle.PARTY_RED : TextStyle.PARTY, { fontSize: "54px" });
+          enemyIcon.setPosition(34+(24 * (e%3)), 0+(35*pokemonRowHeight));
+          		const enemyLevel = addTextObject(this.scene, (26*(e%3))+44, 26+(35*pokemonRowHeight), `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`, isBoss ? TextStyle.PARTY_RED : TextStyle.PARTY, { fontSize: "54px" });
           		enemyLevel.setShadow(0, 0, null);
           		enemyLevel.setStroke("#424242", 14);
           		enemyLevel.setOrigin(1, 0);
@@ -353,9 +354,12 @@ export default class GameInfoUiHandler extends UiHandler {
       		const iconContainer = this.scene.add.container(-55, -29);
       		pokemonSpriteWindow.setOrigin(-0.3, -0.25);
       		const icon = this.scene.addPokemonIcon(pokemon, 0, 0, 0, 0);
-      icon.setScale(0.75);
-      icon.setPosition(14, 5);
-      pokemonSpriteWindow.setPosition(-2,2);
+          icon.setScale(0.75);
+          icon.setPosition(14, 5.5);
+          const spriteAnimKey = icon.list[0].anims.key;
+          console.log(icon.list[0].anims);
+          const iconShadow = icon.list[0].preFX.addShadow(-1, -1, 0.1, 1, type1Color.color);
+          pokemonSpriteWindow.setPosition(-2,1.5);
       		icon.add(pokemonSpriteWindow);
       		this.getUi().bringToTop(icon);
 
