@@ -554,12 +554,12 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
 /**
  * Apply all challenges that modify what fixed battles there are.
  * @param gameMode {@link GameMode} The current gameMode
- * @param challengeType {@link ChallengeType} ChallengeType.STARTER_CHOICE
+ * @param challengeType {@link ChallengeType} ChallengeType.FIXED_BATTLES
  * @param waveIndex {@link Number} The current wave index.
  * @param battleConfig {@link FixedBattleConfig} The battle config to modify.
  * @returns True if any challenge was successfully applied.
  */
-export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.STARTER_CHOICE, waveIndex: Number, battleConfig: FixedBattleConfig): boolean;
+export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.FIXED_BATTLES, waveIndex: Number, battleConfig: FixedBattleConfig): boolean;
 export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType, ...args: any[]): boolean {
   let ret = false;
   gameMode.challenges.forEach(c => {
@@ -586,6 +586,11 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
   return ret;
 }
 
+/**
+ *
+ * @param source A challenge to copy, or an object of a challenge's properties. Missing values are treated as defaults.
+ * @returns The challenge in question.
+ */
 export function copyChallenge(source: Challenge | any): Challenge {
   switch (source.id) {
   case Challenges.SINGLE_GENERATION:
