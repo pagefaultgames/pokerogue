@@ -222,6 +222,7 @@ export default class BattleScene extends SceneBase {
 
   private fieldOverlay: Phaser.GameObjects.Rectangle;
   private shopOverlay: Phaser.GameObjects.Rectangle;
+  private shopOverlayShown: boolean = false;
   private shopOverlayOpacity: number = .80;
 
   public modifiers: PersistentModifier[];
@@ -1426,12 +1427,13 @@ export default class BattleScene extends SceneBase {
   updateShopOverlayOpacity(value: number): void {
     this.shopOverlayOpacity = value;
 
-    if (this.shopOverlay) {
+    if (this.shopOverlayShown) {
       this.shopOverlay.setAlpha(this.shopOverlayOpacity);
     }
   }
 
   showShopOverlay(duration: integer): Promise<void> {
+    this.shopOverlayShown = true;
     return new Promise(resolve => {
       this.tweens.add({
         targets: this.shopOverlay,
@@ -1444,6 +1446,7 @@ export default class BattleScene extends SceneBase {
   }
 
   hideShopOverlay(duration: integer): Promise<void> {
+    this.shopOverlayShown = false;
     return new Promise(resolve => {
       this.tweens.add({
         targets: this.shopOverlay,
