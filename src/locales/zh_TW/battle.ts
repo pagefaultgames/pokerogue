@@ -23,6 +23,7 @@ export const battle: SimpleTranslationEntries = {
   "hitResultOneHitKO": "一擊切殺！",
   "attackFailed": "但是失敗了！",
   "attackHitsCount": "擊中 {{count}} 次！",
+  "rewardGain": "You received\n{{modifierName}}!",
   "expGain": "{{pokemonName}} 獲得了 {{exp}} 經驗值！",
   "levelUp": "{{pokemonName}} 升級到 Lv. {{level}}！",
   "learnMove": "{{pokemonName}} 學會了{{moveName}}！",
