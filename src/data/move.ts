@@ -1067,7 +1067,7 @@ export class RecoilAttr extends MoveEffectAttr {
   private unblockable: boolean;
 
   constructor(useHp: boolean = false, damageRatio: number = 0.25, unblockable: boolean = false) {
-    super(true);
+    super(true, MoveEffectTrigger.POST_APPLY, false, true);
 
     this.useHp = useHp;
     this.damageRatio = damageRatio;
@@ -1088,8 +1088,8 @@ export class RecoilAttr extends MoveEffectAttr {
       return false;
     }
 
-    const recoilDamage = Math.max(Math.floor((!this.useHp ? user.turnData.currDamageDealt : user.getMaxHp()) * this.damageRatio),
-      user.turnData.currDamageDealt ? 1 : 0);
+    const recoilDamage = Math.max(Math.floor((!this.useHp ? user.turnData.damageDealt : user.getMaxHp()) * this.damageRatio),
+      user.turnData.damageDealt ? 1 : 0);
     if (!recoilDamage) {
       return false;
     }
