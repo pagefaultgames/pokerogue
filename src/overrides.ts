@@ -77,6 +77,14 @@ export const STARTING_LEVEL_OVERRIDE: integer = 0;
  * @example SPECIES_OVERRIDE = Species.Bulbasaur;
  */
 export const STARTER_SPECIES_OVERRIDE: Species | integer = 0;
+/**
+ * This will force your starter to be a random fusion
+ */
+export const STARTER_FUSION_OVERRIDE: boolean = false;
+/**
+ * This will override the species of the fusion
+ */
+export const STARTER_FUSION_SPECIES_OVERRIDE: Species | integer = 0;
 export const ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
@@ -90,6 +98,14 @@ export const VARIANT_OVERRIDE: Variant = 0;
  */
 
 export const OPP_SPECIES_OVERRIDE: Species | integer = 0;
+/**
+ * This will make all opponents fused Pokemon
+ */
+export const OPP_FUSION_OVERRIDE: boolean = false;
+/**
+ * This will override the species of the fusion only when the opponent is already a fusion
+ */
+export const OPP_FUSION_SPECIES_OVERRIDE: Species | integer = 0;
 export const OPP_LEVEL_OVERRIDE: number = 0;
 export const OPP_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const OPP_PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;

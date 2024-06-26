@@ -610,7 +610,7 @@ export class SelectStarterPhase extends Phase {
       if (starter.pokerus) {
         starterPokemon.pokerus = true;
       }
-      if (this.scene.gameMode.isSplicedOnly) {
+      if (this.scene.gameMode.isSplicedOnly || Overrides.STARTER_FUSION_OVERRIDE) {
         starterPokemon.generateFusionSpecies(true);
       }
       starterPokemon.setVisible(false);
