@@ -1903,52 +1903,37 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
 }
 
 /**
- * Attribute that causes targets of the move to eat a berry. Used for Teatime, Stuff Cheeks, Bug Bite, and Pluck
- * stealBerry is used to indicate that the move is stealing from the target and should not preserve with berry pouch
+ * Attribute that causes targets of the move to eat a berry. Used for Teatime, Stuff Cheeks
  */
 export class EatBerryAttr extends MoveEffectAttr {
   protected chosenBerry: BerryModifier;
-  protected stealBerry: boolean;
-  constructor(stealBerry: boolean = false ) {
+  constructor() {
     super(true, MoveEffectTrigger.HIT);
     this.chosenBerry = undefined;
-    this.stealBerry = stealBerry;
   }
   /**
- * Causes the target to eat a berry.
- * @param user {@linkcode Pokemon} Pokemon that used the move
- * @param target {@linkcode Pokemon} Pokemon that will eat a berry; this can be the user or a target pokemon being stolen from
- * @param move {@linkcode Move} The move being used
- * @param args Unused
- * @returns {boolean} true if the function succeeds
- */
+   * Causes the target to eat a berry.
+   * @param user {@linkcode Pokemon} Pokemon that used the move
+   * @param target {@linkcode Pokemon} Pokemon that will eat a berry
+   * @param move {@linkcode Move} The move being used
+   * @param args Unused
+   * @returns {boolean} true if the function succeeds
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
       return false;
-    }
-
-    if (this.stealBerry) {
-      const cancelled = new Utils.BooleanHolder(false);
-      applyAbAttrs(BlockItemTheftAbAttr, target, cancelled); // check for abilities that block item theft
-      if (cancelled.value === true) {
-        return false;
-      }
     }
 
     const heldBerries = this.getTargetHeldBerries(target);
     if (heldBerries.length) {
       this.chosenBerry = heldBerries[user.randSeedInt(heldBerries.length)];
       const preserve = new Utils.BooleanHolder(false);
-      let consumer: Pokemon; // consumer will either be the user or the target depending on the move
-      if (!this.stealBerry) {
-        target.scene.applyModifiers(PreserveBerryModifier, target.isPlayer(), target, preserve);
-        consumer = target; // target eats the berry
-      } else {
-        const message = i18next.t("battle:stealEatBerry", {pokemonName: user.name, targetName: target.name, berryName: this.chosenBerry.type.name});
-        user.scene.queueMessage(message);
-        consumer = user; // user eats the stolen berry
+      target.scene.applyModifiers(PreserveBerryModifier, target.isPlayer(), target, preserve); // check for berry pouch preservation
+      if (!preserve.value) {
+        this.reduceBerryModifier(target);
       }
-      return this.eatBerry(consumer, target, preserve.value); // target is the berry holder
+      this.eatBerry(target);
+      return true;
     }
     return false;
   }
@@ -1958,18 +1943,53 @@ export class EatBerryAttr extends MoveEffectAttr {
       && (m as BerryModifier).pokemonId === target.id, target.isPlayer()) as BerryModifier[];
   }
 
-  eatBerry(consumer: Pokemon, berryHolder: Pokemon, preserve: boolean = false,): boolean {
-    if (!preserve) { // check if berry pouch preserves the berry (will be false if the berry is being stolen or berry pouch did not succeed)
-      if (this.chosenBerry.stackCount === 1) {
-        berryHolder.scene.removeModifier(this.chosenBerry, !berryHolder.isPlayer());
-      } else {
-        this.chosenBerry.stackCount--;
-      }
-      berryHolder.scene.updateModifiers(berryHolder.isPlayer());
+  reduceBerryModifier(target: Pokemon) {
+    if (this.chosenBerry.stackCount === 1) {
+      target.scene.removeModifier(this.chosenBerry, !target.isPlayer());
+    } else {
+      this.chosenBerry.stackCount--;
     }
+    target.scene.updateModifiers(target.isPlayer());
+  }
+
+  eatBerry(consumer: Pokemon) {
     getBerryEffectFunc(this.chosenBerry.berryType)(consumer); // consumer eats the berry
     applyAbAttrs(HealFromBerryUseAbAttr, consumer, new Utils.BooleanHolder(false));
-    return true;
+  }
+}
+
+/**
+ *  Attribute used for moves that steal a random berry from the target. The user then eats the stolen berry.
+ *  Used for Pluck & Bug Bite.
+ */
+export class StealEatBerryAttr extends EatBerryAttr {
+  constructor() {
+    super();
+  }
+  /**
+   * User steals a random berry from the target and then eats it.
+   * @param {Pokemon} user Pokemon that used the move and will eat the stolen berry
+   * @param {Pokemon} target Pokemon that will have its berry stolen
+   * @param {Move} move Move being used
+   * @param {any[]} args Unused
+   * @returns {boolean} true if the function succeeds
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const cancelled = new Utils.BooleanHolder(false);
+    applyAbAttrs(BlockItemTheftAbAttr, target, cancelled); // check for abilities that block item theft
+    if (cancelled.value === true) {
+      return false;
+    }
+    const heldBerries = this.getTargetHeldBerries(target).filter(i => i.getTransferrable(false));
+    if (heldBerries.length) { // if the target has berries, pick a random berry and steal it
+      this.chosenBerry = heldBerries[user.randSeedInt(heldBerries.length)];
+      const message = i18next.t("battle:stealEatBerry", {pokemonName: user.name, targetName: target.name, berryName: this.chosenBerry.type.name});
+      user.scene.queueMessage(message);
+      this.reduceBerryModifier(target);
+      this.eatBerry(user);
+      return true;
+    }
+    return false;
   }
 }
 
@@ -6610,7 +6630,7 @@ export function initMoves() {
       .makesContact(false)
       .ignoresProtect(),
     new AttackMove(Moves.PLUCK, Type.FLYING, MoveCategory.PHYSICAL, 60, 100, 20, -1, 0, 4)
-      .attr(EatBerryAttr, true),
+      .attr(StealEatBerryAttr),
     new StatusMove(Moves.TAILWIND, Type.FLYING, -1, 15, -1, 0, 4)
       .windMove()
       .attr(AddArenaTagAttr, ArenaTagType.TAILWIND, 4, true)
@@ -6845,7 +6865,7 @@ export function initMoves() {
     new AttackMove(Moves.JUDGMENT, Type.NORMAL, MoveCategory.SPECIAL, 100, 100, 10, -1, 0, 4)
       .attr(FormChangeItemTypeAttr),
     new AttackMove(Moves.BUG_BITE, Type.BUG, MoveCategory.PHYSICAL, 60, 100, 20, -1, 0, 4)
-      .attr(EatBerryAttr, true),
+      .attr(StealEatBerryAttr),
     new AttackMove(Moves.CHARGE_BEAM, Type.ELECTRIC, MoveCategory.SPECIAL, 50, 90, 10, 70, 0, 4)
       .attr(StatChangeAttr, BattleStat.SPATK, 1, true),
     new AttackMove(Moves.WOOD_HAMMER, Type.GRASS, MoveCategory.PHYSICAL, 120, 100, 15, -1, 0, 4)
