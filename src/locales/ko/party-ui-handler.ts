@@ -11,7 +11,7 @@ export const partyUiHandler: SimpleTranslationEntries = {
   "UNSPLICE": "융합 해제",
   "ACTIVATE": "발동",
   "DEACTIVATE": "해제",
-  "TRANSFER": "건네다",
+  "TRANSFER": "건넨다",
   "ALL": "전부",
   "PASS_BATON": "배턴터치한다",
   "UNPAUSE_EVOLUTION": "진화 재개",
