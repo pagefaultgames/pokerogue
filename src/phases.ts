@@ -26,7 +26,7 @@ import { Gender } from "./data/gender";
 import { Weather, WeatherType, getRandomWeatherType, getTerrainBlockMessage, getWeatherDamageMessage, getWeatherLapseMessage } from "./data/weather";
 import { TempBattleStat } from "./data/temp-battle-stat";
 import { ArenaTagSide, ArenaTrapTag, MistTag, TrickRoomTag } from "./data/arena-tag";
-import { CheckTrappedAbAttr, IgnoreOpponentStatChangesAbAttr, IgnoreOpponentEvasionAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, BlockRedirectAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, BattleStatMultiplierAbAttr, applyBattleStatMultiplierAbAttrs, IncrementMovePriorityAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr, BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, PostBiomeChangeAbAttr, applyPostFaintAbAttrs, PostFaintAbAttr, IncreasePpAbAttr, PostStatChangeAbAttr, applyPostStatChangeAbAttrs, AlwaysHitAbAttr, PreventBerryUseAbAttr, StatChangeCopyAbAttr, PokemonTypeChangeAbAttr, applyPreAttackAbAttrs, applyPostMoveUsedAbAttrs, PostMoveUsedAbAttr, MaxMultiHitAbAttr, HealFromBerryUseAbAttr, WonderSkinAbAttr, applyPreDefendAbAttrs, IgnoreMoveEffectsAbAttr, BlockStatusDamageAbAttr, BypassSpeedChanceAbAttr } from "./data/ability";
+import { CheckTrappedAbAttr, IgnoreOpponentStatChangesAbAttr, IgnoreOpponentEvasionAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, BlockRedirectAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, BattleStatMultiplierAbAttr, applyBattleStatMultiplierAbAttrs, IncrementMovePriorityAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr, BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, PostBiomeChangeAbAttr, applyPostFaintAbAttrs, PostFaintAbAttr, IncreasePpAbAttr, PostStatChangeAbAttr, applyPostStatChangeAbAttrs, AlwaysHitAbAttr, PreventBerryUseAbAttr, StatChangeCopyAbAttr, PokemonTypeChangeAbAttr, applyPreAttackAbAttrs, applyPostMoveUsedAbAttrs, PostMoveUsedAbAttr, MaxMultiHitAbAttr, HealFromBerryUseAbAttr, WonderSkinAbAttr, applyPreDefendAbAttrs, IgnoreMoveEffectsAbAttr, BlockStatusDamageAbAttr, BypassSpeedChanceAbAttr, AddSecondStrikeAbAttr } from "./data/ability";
 import { Unlockables, getUnlockableName } from "./system/unlockables";
 import { getBiomeKey } from "./field/arena";
 import { BattleType, BattlerIndex, TurnCommand } from "./battle";
@@ -2878,6 +2878,7 @@ export class MoveEffectPhase extends PokemonPhase {
         const hitCount = new Utils.IntegerHolder(1);
         // Assume single target for multi hit
         applyMoveAttrs(MultiHitAttr, user, this.getTarget(), move, hitCount);
+        applyPreAttackAbAttrs(AddSecondStrikeAbAttr, user, null, move, targets.length, hitCount, new Utils.IntegerHolder(0));
         if (move instanceof AttackMove && !move.hasAttr(FixedDamageAttr)) {
           this.scene.applyModifiers(PokemonMultiHitModifier, user.isPlayer(), user, hitCount, new Utils.IntegerHolder(0));
         }
@@ -2885,7 +2886,6 @@ export class MoveEffectPhase extends PokemonPhase {
       }
 
       const moveHistoryEntry = { move: this.move.moveId, targets: this.targets, result: MoveResult.PENDING, virtual: this.move.virtual };
-      user.pushMoveHistory(moveHistoryEntry);
 
       const targetHitChecks = Object.fromEntries(targets.map(p => [p.getBattlerIndex(), this.hitCheck(p)]));
       const activeTargets = targets.map(t => t.isActive(true));
@@ -2900,6 +2900,7 @@ export class MoveEffectPhase extends PokemonPhase {
           this.scene.queueMessage(i18next.t("battle:attackFailed"));
           moveHistoryEntry.result = MoveResult.FAIL;
         }
+        user.pushMoveHistory(moveHistoryEntry);
         return this.end();
       }
 
@@ -2921,25 +2922,33 @@ export class MoveEffectPhase extends PokemonPhase {
 
           const isProtected = !this.move.getMove().checkFlag(MoveFlags.IGNORE_PROTECT, user, target) && target.findTags(t => t instanceof ProtectedTag).find(t => target.lapseTag(t.tagType));
 
-          const firstHit = moveHistoryEntry.result !== MoveResult.SUCCESS;
+          const firstHit = (user.turnData.hitsLeft === user.turnData.hitCount);
+
+          if (firstHit) {
+            user.pushMoveHistory(moveHistoryEntry);
+          }
 
           moveHistoryEntry.result = MoveResult.SUCCESS;
 
           const hitResult = !isProtected ? target.apply(user, move) : HitResult.NO_EFFECT;
 
-          this.scene.triggerPokemonFormChange(user, SpeciesFormChangePostMoveTrigger);
+          const lastHit = (user.turnData.hitsLeft === 1 || !this.getTarget()?.isActive());
+
+          if (lastHit) {
+            this.scene.triggerPokemonFormChange(user, SpeciesFormChangePostMoveTrigger);
+          }
 
           applyAttrs.push(new Promise(resolve => {
-            applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && attr.trigger === MoveEffectTrigger.PRE_APPLY && (!attr.firstHitOnly || firstHit),
+            applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && attr.trigger === MoveEffectTrigger.PRE_APPLY && (!attr.firstHitOnly || firstHit) && (!attr.lastHitOnly || lastHit),
               user, target, move).then(() => {
               if (hitResult !== HitResult.FAIL) {
                 const chargeEffect = !!move.getAttrs(ChargeAttr).find(ca => ca.usedChargeEffect(user, this.getTarget(), move));
                 // Charge attribute with charge effect takes all effect attributes and applies them to charge stage, so ignore them if this is present
                 Utils.executeIf(!chargeEffect, () => applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && attr.trigger === MoveEffectTrigger.POST_APPLY
-                    && attr.selfTarget && (!attr.firstHitOnly || firstHit), user, target, move)).then(() => {
+                    && attr.selfTarget && (!attr.firstHitOnly || firstHit) && (!attr.lastHitOnly || lastHit), user, target, move)).then(() => {
                   if (hitResult !== HitResult.NO_EFFECT) {
                     applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.POST_APPLY
-                      && !(attr as MoveEffectAttr).selfTarget && (!attr.firstHitOnly || firstHit), user, target, this.move.getMove()).then(() => {
+                      && !(attr as MoveEffectAttr).selfTarget && (!attr.firstHitOnly || firstHit) && (!attr.lastHitOnly || lastHit), user, target, this.move.getMove()).then(() => {
                       if (hitResult < HitResult.NO_EFFECT && !target.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr)) {
                         const flinched = new Utils.BooleanHolder(false);
                         user.scene.applyModifiers(FlinchChanceModifier, user.isPlayer(), user, flinched);
@@ -2947,7 +2956,7 @@ export class MoveEffectPhase extends PokemonPhase {
                           target.addTag(BattlerTagType.FLINCHED, undefined, this.move.moveId, user.id);
                         }
                       }
-                      Utils.executeIf(!isProtected && !chargeEffect, () => applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.HIT && (!attr.firstHitOnly || firstHit),
+                      Utils.executeIf(!isProtected && !chargeEffect, () => applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.HIT && (!attr.firstHitOnly || firstHit) && (!attr.lastHitOnly || lastHit),
                         user, target, this.move.getMove()).then(() => {
                         return Utils.executeIf(!target.isFainted() || target.canApplyAbility(), () => applyPostDefendAbAttrs(PostDefendAbAttr, target, user, this.move.getMove(), hitResult).then(() => {
                           if (!user.isPlayer() && this.move.getMove() instanceof AttackMove) {
@@ -2974,14 +2983,17 @@ export class MoveEffectPhase extends PokemonPhase {
             });
           }));
         }
-        // Trigger effect which should only apply one time after all targeted effects have already applied
-        const postTarget = applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && attr.trigger === MoveEffectTrigger.POST_TARGET,
-          user, null, move);
+        // Trigger effect which should only apply one time on the last hit after all targeted effects have already applied
+        const postTarget = (user.turnData.hitsLeft === 1 || !this.getTarget()?.isActive()) ?
+          applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && attr.trigger === MoveEffectTrigger.POST_TARGET, user, null, move) :
+          null;
 
-        if (applyAttrs.length) { // If there is a pending asynchronous move effect, do this after
-          applyAttrs[applyAttrs.length - 1]?.then(() => postTarget);
-        } else { // Otherwise, push a new asynchronous move effect
-          applyAttrs.push(postTarget);
+        if (!!postTarget) {
+          if (applyAttrs.length) { // If there is a pending asynchronous move effect, do this after
+            applyAttrs[applyAttrs.length - 1]?.then(() => postTarget);
+          } else { // Otherwise, push a new asynchronous move effect
+            applyAttrs.push(postTarget);
+          }
         }
 
         Promise.allSettled(applyAttrs).then(() => this.end());

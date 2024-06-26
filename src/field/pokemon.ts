@@ -23,7 +23,7 @@ import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HelpingHandTag
 import { WeatherType } from "../data/weather";
 import { TempBattleStat } from "../data/temp-battle-stat";
 import { ArenaTagSide, WeakenMoveScreenTag, WeakenMoveTypeTag } from "../data/arena-tag";
-import { Ability, AbAttr, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, MoveTypeChangeAttr, PreApplyBattlerTagAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldBattleStatMultiplierAbAttrs, FieldMultiplyBattleStatAbAttr, AllyMoveCategoryPowerBoostAbAttr, FieldMoveTypePowerBoostAbAttr } from "../data/ability";
+import { Ability, AbAttr, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, MoveTypeChangeAttr, PreApplyBattlerTagAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldBattleStatMultiplierAbAttrs, FieldMultiplyBattleStatAbAttr, AllyMoveCategoryPowerBoostAbAttr, FieldMoveTypePowerBoostAbAttr, AddSecondStrikeAbAttr } from "../data/ability";
 import PokemonData from "../system/pokemon-data";
 import { BattlerIndex } from "../battle";
 import { Mode } from "../ui/ui";
@@ -1800,6 +1800,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
 
       if (cancelled.value) {
+        source.stopMultiHit();
         result = HitResult.NO_EFFECT;
       } else {
         const typeBoost = source.findTag(t => t instanceof TypeBoostTag && t.boostedType === move.type) as TypeBoostTag;
@@ -1885,8 +1886,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         applyMoveAttrs(VariableAtkAttr, source, this, move, sourceAtk);
         applyMoveAttrs(VariableDefAttr, source, this, move, targetDef);
 
+        const twoStrikeMultiplier = new Utils.NumberHolder(1);
+        applyPreAttackAbAttrs(AddSecondStrikeAbAttr, source, this, move, 1, new Utils.IntegerHolder(0), twoStrikeMultiplier);
+
         if (!isTypeImmune) {
-          damage.value = Math.ceil(((((2 * source.level / 5 + 2) * power.value * sourceAtk.value / targetDef.value) / 50) + 2) * stabMultiplier.value * typeMultiplier.value * arenaAttackTypeMultiplier.value * screenMultiplier.value * ((this.scene.randBattleSeedInt(15) + 85) / 100) * criticalMultiplier.value);
+          damage.value = Math.ceil(((((2 * source.level / 5 + 2) * power.value * sourceAtk.value / targetDef.value) / 50) + 2) * stabMultiplier.value * typeMultiplier.value * arenaAttackTypeMultiplier.value * screenMultiplier.value * twoStrikeMultiplier.value * ((this.scene.randBattleSeedInt(15) + 85) / 100) * criticalMultiplier.value);
           if (isPhysical && source.status && source.status.effect === StatusEffect.BURN) {
             if (!move.hasAttr(BypassBurnDamageReductionAttr)) {
               const burnDamageReductionCancelled = new Utils.BooleanHolder(false);
@@ -2249,6 +2253,18 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   getMoveQueue(): QueuedMove[] {
     return this.summonData.moveQueue;
+  }
+
+  /**
+   * If this Pokemon is using a multi-hit move, stop the move
+   * after the next hit resolves.
+   */
+  stopMultiHit(): void {
+    if (!this.turnData) {
+      return;
+    }
+    this.turnData.hitCount = 1;
+    this.turnData.hitsLeft = 1;
   }
 
   changeForm(formChange: SpeciesFormChange): Promise<void> {

@@ -896,6 +896,13 @@ export class ProtectedTag extends BattlerTag {
     if (lapseType === BattlerTagLapseType.CUSTOM) {
       new CommonBattleAnim(CommonAnim.PROTECT, pokemon).play(pokemon.scene);
       pokemon.scene.queueMessage(i18next.t("battle:battlerTagsProtectedLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+
+      // Stop multi-hit moves early
+      const effectPhase = pokemon.scene.getCurrentPhase();
+      if (effectPhase instanceof MoveEffectPhase) {
+        const attacker = effectPhase.getPokemon();
+        attacker.stopMultiHit();
+      }
       return true;
     }
 
