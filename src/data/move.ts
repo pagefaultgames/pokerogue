@@ -2773,7 +2773,7 @@ export class DoublePowerChanceAttr extends VariablePowerAttr {
 export abstract class ConsecutiveUsePowerMultiplierAttr extends MovePowerMultiplierAttr {
   constructor(limit: integer, resetOnFail: boolean, resetOnLimit?: boolean, ...comboMoves: Moves[]) {
     super((user: Pokemon, target: Pokemon, move: Move): number => {
-      const moveHistory = user.getMoveHistory().slice().reverse();
+      const moveHistory = user.getLastXMoves(limit + 1).slice(1);
 
       let count = 0;
       let turnMove: TurnMove;

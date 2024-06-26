@@ -2922,14 +2922,20 @@ export class MoveEffectPhase extends PokemonPhase {
 
           const isProtected = !this.move.getMove().checkFlag(MoveFlags.IGNORE_PROTECT, user, target) && target.findTags(t => t instanceof ProtectedTag).find(t => target.lapseTag(t.tagType));
 
-          const firstHit = moveHistoryEntry.result !== MoveResult.SUCCESS;
+          const firstHit = (user.turnData.hitsLeft === user.turnData.hitCount);
           const lastHit = (user.turnData.hitsLeft === 1);
+
+          if (firstHit) {
+            user.pushMoveHistory(moveHistoryEntry);
+          }
 
           moveHistoryEntry.result = MoveResult.SUCCESS;
 
           const hitResult = !isProtected ? target.apply(user, move) : HitResult.NO_EFFECT;
 
-          this.scene.triggerPokemonFormChange(user, SpeciesFormChangePostMoveTrigger);
+          if (lastHit || !this.getTarget()?.isActive()) {
+            this.scene.triggerPokemonFormChange(user, SpeciesFormChangePostMoveTrigger);
+          }
 
           applyAttrs.push(new Promise(resolve => {
             applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && attr.trigger === MoveEffectTrigger.PRE_APPLY && (!attr.firstHitOnly || firstHit) && (!attr.lastHitOnly || lastHit),
@@ -2980,10 +2986,6 @@ export class MoveEffectPhase extends PokemonPhase {
         const postTarget = (user.turnData.hitsLeft === 1 || !this.getTarget()?.isActive()) ?
           applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && attr.trigger === MoveEffectTrigger.POST_TARGET, user, null, move) :
           null;
-
-        if (user.turnData.hitsLeft === 1 || !this.getTarget()?.isActive()) {
-          user.pushMoveHistory(moveHistoryEntry);
-        }
 
         if (!!postTarget) {
           if (applyAttrs.length) { // If there is a pending asynchronous move effect, do this after
