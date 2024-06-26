@@ -1,9 +1,12 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const abilityTriggers: SimpleTranslationEntries = {
-  "blockRecoilDamage" : "{{pokemonName}} wurde durch {{abilityName}}\nvor Rückstoß geschützt!",
+  "blockRecoilDamage" : "{{pokemonName}} wurde durch {{abilityName}} vor Rückstoß geschützt!",
   "stockpile" : "{{pokemonName}}\nhat {{stockpileNumber}} gehortet!",
   "badDreams": "{{pokemonName}} ist in einem Alptraum gefangen!",
+  "costar": "{{pokemonName}} kopiert die Statusveränderungen von {{allyName}}!",
+  "iceFaceAvoidedDamage": "{{pokemonName}} wehrt Schaden mit {{abilityName}} ab!",
+  "trace": "{{pokemonName}} kopiert {{abilityName}} von {{targetName}}!",
   "windPowerCharged": "Der Treffer durch {{moveName}} läd die Stärke von {{pokemonName}} auf!",
-  "iceFaceAvoidedDamage": "{{pokemonName}} avoided\ndamage with {{abilityName}}!",
+  "quickDraw": "{{pokemonName}} can act faster than normal, thanks to its Quick Draw!",
 } as const;

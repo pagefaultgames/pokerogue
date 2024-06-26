@@ -1,9 +1,12 @@
+import { common } from "#app/locales/pt_BR/common.js";
+import { settings } from "#app/locales/pt_BR/settings.js";
 import { ability } from "./ability";
 import { abilityTriggers } from "./ability-trigger";
 import { PGFachv, PGMachv } from "./achv";
 import { battle } from "./battle";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
 import { berry } from "./berry";
+import { bgmName } from "./bgm-name";
 import { biome } from "./biome";
 import { challenges } from "./challenges";
 import { commandUiHandler } from "./command-ui-handler";
@@ -46,9 +49,11 @@ export const ptBrConfig = {
   battle: battle,
   battleMessageUiHandler: battleMessageUiHandler,
   berry: berry,
+  bgmName: bgmName,
   biome: biome,
   challenges: challenges,
   commandUiHandler: commandUiHandler,
+  common: common,
   PGMachv: PGMachv,
   PGFachv: PGFachv,
   PGMdialogue: PGMdialogue,
@@ -75,6 +80,7 @@ export const ptBrConfig = {
   pokemonInfo: pokemonInfo,
   pokemonInfoContainer: pokemonInfoContainer,
   saveSlotSelectUiHandler: saveSlotSelectUiHandler,
+  settings: settings,
   splashMessages: splashMessages,
   starterSelectUiHandler: starterSelectUiHandler,
   titles: titles,
@@ -82,5 +88,5 @@ export const ptBrConfig = {
   trainerNames: trainerNames,
   tutorial: tutorial,
   voucher: voucher,
-  weather: weather,
+  weather: weather
 };
