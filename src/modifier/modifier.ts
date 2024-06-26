@@ -7,7 +7,7 @@ import Pokemon, { PlayerPokemon } from "../field/pokemon";
 import { Stat } from "../data/pokemon-stat";
 import { addTextObject, TextStyle } from "../ui/text";
 import { Type } from "../data/type";
-import { EvolutionPhase } from "../phases/evolution-phase";
+import { EvolutionPhase } from "../evolution-phase";
 import { FusionSpeciesFormEvolution, pokemonEvolutions, pokemonPrevolutions } from "../data/pokemon-evolutions";
 import { getPokemonMessage } from "../messages";
 import * as Utils from "../utils";

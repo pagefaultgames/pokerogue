@@ -41,7 +41,7 @@ import { addUiThemeOverrides } from "./ui/ui-theme";
 import PokemonData from "./system/pokemon-data";
 import { Nature } from "./data/nature";
 import { SpeciesFormChangeTimeOfDayTrigger, SpeciesFormChangeTrigger, pokemonFormChanges } from "./data/pokemon-forms";
-import { FormChangePhase, QuietFormChangePhase } from "./phases/form-change-phase";
+import { FormChangePhase, QuietFormChangePhase } from "./form-change-phase";
 import { BattleSpec } from "./enums/battle-spec";
 import { getTypeRgb } from "./data/type";
 import PokemonSpriteSparkleHandler from "./field/pokemon-sprite-sparkle-handler";

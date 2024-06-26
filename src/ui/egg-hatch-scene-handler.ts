@@ -1,5 +1,5 @@
 import BattleScene from "../battle-scene";
-import { EggHatchPhase } from "../phases/egg-hatch-phase";
+import { EggHatchPhase } from "../egg-hatch-phase";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import {Button} from "../enums/buttons";

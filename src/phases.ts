@@ -13,7 +13,7 @@ import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAsset
 import { StatusEffect, getStatusEffectActivationText, getStatusEffectCatchRateMultiplier, getStatusEffectHealText, getStatusEffectObtainText, getStatusEffectOverlapText } from "./data/status-effect";
 import { SummaryUiMode } from "./ui/summary-ui-handler";
 import EvolutionSceneHandler from "./ui/evolution-scene-handler";
-import { EvolutionPhase } from "./phases/evolution-phase";
+import { EvolutionPhase } from "./evolution-phase";
 import { Phase } from "./phase";
 import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "./data/battle-stat";
 import { biomeLinks, getBiomeName } from "./data/biomes";
@@ -48,7 +48,7 @@ import { Species } from "./data/enums/species";
 import { ChallengeAchv, HealAchv, LevelAchv, achvs } from "./system/achv";
 import { TrainerSlot, trainerConfigs } from "./data/trainer-config";
 import { TrainerType } from "./data/enums/trainer-type";
-import { EggHatchPhase } from "./phases/egg-hatch-phase";
+import { EggHatchPhase } from "./egg-hatch-phase";
 import { Egg } from "./data/egg";
 import { vouchers } from "./system/voucher";
 import { loggedInUser, updateUserInfo } from "./account";

@@ -20,7 +20,7 @@ import {Stat} from "#app/data/pokemon-stat";
 import {Moves} from "#app/data/enums/moves";
 import {getMovePosition} from "#app/test/utils/gameManagerUtils";
 import {Command} from "#app/ui/command-ui-handler";
-import {QuietFormChangePhase} from "#app/phases/form-change-phase";
+import {QuietFormChangePhase} from "#app/form-change-phase";
 
 
 describe("Abilities - Zen mode", () => {
