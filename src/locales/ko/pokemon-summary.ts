@@ -2,7 +2,7 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales.js";
 
 export const pokemonSummary: SimpleTranslationEntries = {
   "pokemonInfo": "포켓몬 정보",
-  "status": "능력치",
+  "status": "스테이터스",
   "powerAccuracyCategory": "위력\n명중\n분류",
   "type": "타입",
   "unknownTrainer": "알수없음",
