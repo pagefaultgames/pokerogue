@@ -10,7 +10,7 @@ export const pokemonSummary: SimpleTranslationEntries = {
   "luck": "행운",
   "nature": "성격",
   "apparently": "apparently",
-  "metAtLv": "met at Lv.",
+  "metAtLv": "만났을 때 Lv.",
   "expPoints": "현재 경험치",
   "nextLv": "다음 레벨까지",
   "cancel": "그만둔다",
