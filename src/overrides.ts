@@ -33,7 +33,7 @@ export const SEED_OVERRIDE: string = "";
 export const WEATHER_OVERRIDE: WeatherType = WeatherType.NONE;
 export const DOUBLE_BATTLE_OVERRIDE: boolean = false;
 export const SINGLE_BATTLE_OVERRIDE: boolean = false;
-export const STARTING_WAVE_OVERRIDE: integer = 121;
+export const STARTING_WAVE_OVERRIDE: integer = 0;
 export const STARTING_BIOME_OVERRIDE: Biome = Biome.TOWN;
 export const ARENA_TINT_OVERRIDE: TimeOfDay = null;
 // Multiplies XP gained by this value including 0. Set to null to ignore the override
@@ -69,19 +69,19 @@ export const POKEBALL_OVERRIDE: { active: boolean, pokeballs: PokeballCounts } =
 export const STARTER_FORM_OVERRIDES: Partial<Record<Species, number>> = {};
 
 // default 5 or 20 for Daily
-export const STARTING_LEVEL_OVERRIDE: integer = 100;
+export const STARTING_LEVEL_OVERRIDE: integer = 0;
 /**
  * SPECIES OVERRIDE
  * will only apply to the first starter in your party or each enemy pokemon
  * default is 0 to not override
  * @example SPECIES_OVERRIDE = Species.BULBASAUR;
  */
-export const STARTER_SPECIES_OVERRIDE: Species | integer = Species.MUNCHLAX;
+export const STARTER_SPECIES_OVERRIDE: Species | integer = 0;
 export const ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
 export const GENDER_OVERRIDE: Gender = null;
-export const MOVESET_OVERRIDE: Array<Moves> = [Moves.STOCKPILE, Moves.SPIT_UP, Moves.SWALLOW, Moves.AMNESIA];
+export const MOVESET_OVERRIDE: Array<Moves> = [];
 export const SHINY_OVERRIDE: boolean = false;
 export const VARIANT_OVERRIDE: Variant = 0;
 
@@ -89,7 +89,7 @@ export const VARIANT_OVERRIDE: Variant = 0;
  * OPPONENT / ENEMY OVERRIDES
  */
 
-export const OPP_SPECIES_OVERRIDE: Species | integer = Species.MAGIKARP;
+export const OPP_SPECIES_OVERRIDE: Species | integer = 0;
 export const OPP_LEVEL_OVERRIDE: number = 0;
 export const OPP_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const OPP_PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
