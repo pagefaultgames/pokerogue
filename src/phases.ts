@@ -2886,9 +2886,6 @@ export class MoveEffectPhase extends PokemonPhase {
       }
 
       const moveHistoryEntry = { move: this.move.moveId, targets: this.targets, result: MoveResult.PENDING, virtual: this.move.virtual };
-      if (user.turnData.hitsLeft === user.turnData.hitCount) {
-        user.pushMoveHistory(moveHistoryEntry);
-      }
 
       const targetHitChecks = Object.fromEntries(targets.map(p => [p.getBattlerIndex(), this.hitCheck(p)]));
       const activeTargets = targets.map(t => t.isActive(true));
@@ -2903,6 +2900,7 @@ export class MoveEffectPhase extends PokemonPhase {
           this.scene.queueMessage(i18next.t("battle:attackFailed"));
           moveHistoryEntry.result = MoveResult.FAIL;
         }
+        user.pushMoveHistory(moveHistoryEntry);
         return this.end();
       }
 
@@ -2982,6 +2980,10 @@ export class MoveEffectPhase extends PokemonPhase {
         const postTarget = (user.turnData.hitsLeft === 1 || !this.getTarget()?.isActive()) ?
           applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && attr.trigger === MoveEffectTrigger.POST_TARGET, user, null, move) :
           null;
+
+        if (user.turnData.hitsLeft === 1 || !this.getTarget()?.isActive()) {
+          user.pushMoveHistory(moveHistoryEntry);
+        }
 
         if (!!postTarget) {
           if (applyAttrs.length) { // If there is a pending asynchronous move effect, do this after
