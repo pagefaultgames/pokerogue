@@ -26,6 +26,7 @@ import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
 import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
@@ -539,6 +540,28 @@ export class AttackTypeBoosterModifierType extends PokemonHeldItemModifierType i
   }
 }
 
+export type SpeciesStatBoosterItem = keyof typeof SpeciesStatBoosterModifierTypeGenerator.items;
+
+/**
+ * Modifier type for {@linkcode Modifiers.SpeciesStatBoosterModifier}
+ * @extends PokemonHeldItemModifierType
+ * @implements GeneratedPersistentModifierType
+ */
+export class SpeciesStatBoosterModifierType extends PokemonHeldItemModifierType implements GeneratedPersistentModifierType {
+  private key: SpeciesStatBoosterItem;
+
+  constructor(key: SpeciesStatBoosterItem) {
+    const item = SpeciesStatBoosterModifierTypeGenerator.items[key];
+    super(`modifierType:SpeciesBoosterItem.${key}`, key.toLowerCase(), (type, args) => new Modifiers.SpeciesStatBoosterModifier(type, (args[0] as Pokemon).id, item.stats, item.multiplier, item.species));
+
+    this.id = this.key = key;
+  }
+
+  getPregenArgs(): any[] {
+    return [ this.key ];
+  }
+}
+
 export class PokemonLevelIncrementModifierType extends PokemonModifierType {
   constructor(localeKey: string, iconImage: string) {
     super(localeKey, iconImage, (_type, args) => new Modifiers.PokemonLevelIncrementModifier(this, (args[0] as PlayerPokemon).id), (_pokemon: PlayerPokemon) => null);
@@ -870,6 +893,81 @@ class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
   }
 }
 
+/**
+ * Modifier type generator for {@linkcode SpeciesStatBoosterModifierType}, which
+ * encapsulates the logic for weighting the most useful held item from
+ * the current list of {@linkcode items}.
+ * @extends ModifierTypeGenerator
+ */
+class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
+  /** Object comprised of the currently available species-based stat boosting held items */
+  public static items = {
+    LIGHT_BALL: { stats: [Stat.ATK, Stat.SPATK], multiplier: 2, species: [Species.PIKACHU] },
+    THICK_CLUB: { stats: [Stat.ATK], multiplier: 2, species: [Species.CUBONE, Species.MAROWAK, Species.ALOLA_MAROWAK] },
+    METAL_POWDER: { stats: [Stat.DEF], multiplier: 2, species: [Species.DITTO] },
+    QUICK_POWDER: { stats: [Stat.SPD], multiplier: 2, species: [Species.DITTO] },
+  };
+
+  constructor() {
+    super((party: Pokemon[], pregenArgs?: any[]) => {
+      if (pregenArgs) {
+        return new SpeciesStatBoosterModifierType(pregenArgs[0] as SpeciesStatBoosterItem);
+      }
+
+      const values = Object.values(SpeciesStatBoosterModifierTypeGenerator.items);
+      const keys = Object.keys(SpeciesStatBoosterModifierTypeGenerator.items);
+      const weights = keys.map(() => 0);
+
+      for (const p of party) {
+        const speciesId = p.getSpeciesForm(true).speciesId;
+        const fusionSpeciesId = p.isFusion() ? p.getFusionSpeciesForm(true).speciesId : null;
+        const hasFling = p.getMoveset(true).some(m => m.moveId === Moves.FLING);
+
+        for (const i in values) {
+          const checkedSpecies = values[i].species;
+          const checkedStats = values[i].stats;
+
+          // If party member already has the item being weighted currently, skip to the next item
+          const hasItem = p.getHeldItems().some(m => m instanceof Modifiers.SpeciesStatBoosterModifier
+            && (m as Modifiers.SpeciesStatBoosterModifier).contains(checkedSpecies[0], checkedStats[0]));
+
+          if (!hasItem) {
+            if (checkedSpecies.includes(speciesId) || (!!fusionSpeciesId && checkedSpecies.includes(fusionSpeciesId))) {
+              // Add weight if party member has a matching species or, if applicable, a matching fusion species
+              weights[i]++;
+            } else if (checkedSpecies.includes(Species.PIKACHU) && hasFling) {
+              // Add weight to Light Ball if party member has Fling
+              weights[i]++;
+            }
+          }
+        }
+      }
+
+      let totalWeight = 0;
+      for (const weight of weights) {
+        totalWeight += weight;
+      }
+
+      if (totalWeight !== 0) {
+        const randInt = Utils.randSeedInt(totalWeight, 1);
+        let weight = 0;
+
+        for (const i in weights) {
+          if (weights[i] !== 0) {
+            const curWeight = weight + weights[i];
+            if (randInt <= weight + weights[i]) {
+              return new SpeciesStatBoosterModifierType(keys[i] as SpeciesStatBoosterItem);
+            }
+            weight = curWeight;
+          }
+        }
+      }
+
+      return null;
+    });
+  }
+}
+
 class TmModifierTypeGenerator extends ModifierTypeGenerator {
   constructor(tier: ModifierTier) {
     super((party: Pokemon[]) => {
@@ -1109,6 +1207,8 @@ export const modifierTypes = {
   LURE: () => new DoubleBattleChanceBoosterModifierType("modifierType:ModifierType.LURE", "lure", 5),
   SUPER_LURE: () => new DoubleBattleChanceBoosterModifierType("modifierType:ModifierType.SUPER_LURE", "super_lure", 10),
   MAX_LURE: () => new DoubleBattleChanceBoosterModifierType("modifierType:ModifierType.MAX_LURE", "max_lure", 25),
+
+  SPECIES_STAT_BOOSTER: () => new SpeciesStatBoosterModifierTypeGenerator(),
 
   TEMP_STAT_BOOSTER: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
     if (pregenArgs) {
@@ -1369,6 +1469,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.RARE_EVOLUTION_ITEM, (party: Pokemon[]) => Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 15) * 4, 32), 32),
     new WeightedModifierType(modifierTypes.AMULET_COIN, 3),
     //new WeightedModifierType(modifierTypes.EVIOLITE, (party: Pokemon[]) => party.some(p => ((p.getSpeciesForm(true).speciesId in pokemonEvolutions) || (p.isFusion() && (p.getFusionSpeciesForm(true).speciesId in pokemonEvolutions))) && !p.getHeldItems().some(i => i instanceof Modifiers.EvolutionStatBoosterModifier)) ? 10 : 0),
+    new WeightedModifierType(modifierTypes.SPECIES_STAT_BOOSTER, 12),
     new WeightedModifierType(modifierTypes.TOXIC_ORB, (party: Pokemon[]) => {
       const checkedAbilities = [Abilities.QUICK_FEET, Abilities.GUTS, Abilities.MARVEL_SCALE, Abilities.TOXIC_BOOST, Abilities.POISON_HEAL, Abilities.MAGIC_GUARD];
       const checkedMoves = [Moves.FACADE, Moves.TRICK, Moves.FLING, Moves.SWITCHEROO, Moves.PSYCHO_SHIFT];
