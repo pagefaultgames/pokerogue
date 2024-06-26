@@ -84,7 +84,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public luck: integer;
   public pauseEvolutions: boolean;
   public pokerus: boolean;
-  public stockpileStats: integer[] = [0, 0];
 
   public fusionSpecies: PokemonSpecies;
   public fusionFormIndex: integer;

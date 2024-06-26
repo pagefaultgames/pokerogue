@@ -1407,6 +1407,58 @@ export class IceFaceTag extends BattlerTag {
   }
 }
 
+/**
+ * Provides the Stockpile move's effects.
+ */
+export class StockpileTag extends BattlerTag {
+  public stock: number = 0;
+  statIncreases: { [id: string]: number } = { };
+
+  constructor(sourceMove: Moves) {
+    super(BattlerTagType.STOCKPILE, BattlerTagLapseType.CUSTOM, 1, sourceMove);
+  }
+
+  /**
+   * When this battler tag is added, add to stacks and add stat increase
+   * 
+   * @param pokemon 
+   */
+  onAdd(pokemon: Pokemon): void {
+    if (this.stock >= 3) {
+      return;
+    }
+
+    this.stock++;
+    pokemon.scene.queueMessage(`${pokemon.name}\nstockpiled ${this.stock}!`);
+
+    for (const stat of [ BattleStat.SPDEF, BattleStat.DEF ]) {
+      if (pokemon.summonData.battleStats[stat] < 6) {
+        if (!(stat in this.statIncreases)) {
+          this.statIncreases[stat] = 0;
+        }
+        this.statIncreases[stat]++;
+        pokemon.scene.phaseQueue.splice(0, 0, new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [stat], 1, true));
+      }
+    }
+  }
+
+  onOverlap(pokemon: Pokemon): void {
+    this.onAdd(pokemon);
+  }
+
+  onRemove(pokemon: Pokemon): void {
+    for (const stat of [ BattleStat.SPDEF, BattleStat.DEF ]) {
+      if (pokemon.summonData.battleStats[stat] < 6) {
+        if (!(stat in this.statIncreases)) {
+          this.statIncreases[stat] = 0;
+        }
+        this.statIncreases[stat]++;
+        pokemon.scene.phaseQueue.splice(0, 0, new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [stat], -this.statIncreases[stat], true));
+      }
+    }
+  }
+}
+
 export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourceMove: Moves, sourceId: integer): BattlerTag {
   switch (tagType) {
   case BattlerTagType.RECHARGING:
@@ -1516,6 +1568,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
     return new TypeBoostTag(tagType, sourceMove, Type.ELECTRIC, 2, true);
   case BattlerTagType.MAGNET_RISEN:
     return new MagnetRisenTag(tagType, sourceMove);
+  case BattlerTagType.STOCKPILE:
+    return new StockpileTag(sourceMove);
   case BattlerTagType.MINIMIZED:
     return new MinimizeTag();
   case BattlerTagType.DESTINY_BOND:
