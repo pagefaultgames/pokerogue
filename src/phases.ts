@@ -2923,7 +2923,6 @@ export class MoveEffectPhase extends PokemonPhase {
           const isProtected = !this.move.getMove().checkFlag(MoveFlags.IGNORE_PROTECT, user, target) && target.findTags(t => t instanceof ProtectedTag).find(t => target.lapseTag(t.tagType));
 
           const firstHit = (user.turnData.hitsLeft === user.turnData.hitCount);
-          const lastHit = (user.turnData.hitsLeft === 1);
 
           if (firstHit) {
             user.pushMoveHistory(moveHistoryEntry);
@@ -2933,7 +2932,9 @@ export class MoveEffectPhase extends PokemonPhase {
 
           const hitResult = !isProtected ? target.apply(user, move) : HitResult.NO_EFFECT;
 
-          if (lastHit || !this.getTarget()?.isActive()) {
+          const lastHit = (user.turnData.hitsLeft === 1 || !this.getTarget()?.isActive());
+
+          if (lastHit) {
             this.scene.triggerPokemonFormChange(user, SpeciesFormChangePostMoveTrigger);
           }
 
