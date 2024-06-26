@@ -99,7 +99,7 @@ export const pokemonForm: SimpleTranslationEntries = {
   "flabebeOrange": "Orange",
   "flabebeBlue": "Bleu",
   "flabebeWhite": "Blanc",
-  "furfrouHeart": "Heart",
+  "furfrouHeart": "Cœur",
   "furfrouStar": "Étoile",
   "furfrouDiamond": "Diamant",
   "furfrouDebutante": "Demoiselle",
