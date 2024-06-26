@@ -279,6 +279,17 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return !this.isFainted() && challengeAllowed.value;
   }
 
+  /**
+   * Check if this pokemon, or one of its evolutions/forms is usable in the current challenge.
+   * @returns {boolean} True if pokemon is usable in the challenge
+   */
+  isUsableInChallenge(): boolean {
+    const challengeAllowed = new Utils.BooleanHolder(true);
+    applyChallenges(this.scene.gameMode, ChallengeType.STARTER_CHOICE, this.species, challengeAllowed, this.scene.gameData.getSpeciesDexAttrProps(this.species, this.scene.gameData.getSpeciesDefaultDexAttr(this.species, false, true)), 1);
+    return challengeAllowed.value;
+  }
+
+
   isActive(onField?: boolean): boolean {
     if (!this.scene) {
       return false;
