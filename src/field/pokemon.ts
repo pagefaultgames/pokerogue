@@ -3385,7 +3385,7 @@ export class EnemyPokemon extends Pokemon {
 
     this.trainerSlot = trainerSlot;
     if (boss) {
-      this.setBoss();
+      this.setBoss(boss, dataSource?.bossSegments);
     }
 
     if (Overrides.OPP_STATUS_OVERRIDE) {
