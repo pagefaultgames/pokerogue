@@ -21,7 +21,7 @@ const SHOP_OVERLAY_OPACITY_OPTIONS: SettingOption[] = new Array(10).fill(null).m
   label: (i * 10).toString(),
 } : {
   value: "None",
-  label: "None"
+  label: i18next.t("settings:none")
 });
 const OFF_ON: SettingOption[] = [
   {
@@ -545,7 +545,7 @@ export const Setting: Array<Setting> = [
   },
   {
     key: SettingKeys.Shop_Overlay_Opacity,
-    label: "Shop Overlay Opacity", // TODO: add localization
+    label: i18next.t("settings:shopOverlayOpacity"),
     options: SHOP_OVERLAY_OPACITY_OPTIONS,
     default: 4,
     type: SettingType.DISPLAY,
