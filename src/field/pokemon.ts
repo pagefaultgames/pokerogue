@@ -1955,6 +1955,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           }
         }
 
+        // TODO i suspect this may be bugged for ohko moves since "!fixedDamage.value" doesn't guard against those.
+        // in any case, i think we can move this to where ReceivedMoveDamageMultiplierAbAttr is now, which
+        // should allow its damage changes to be overriden by fixed damage and OHKO moves. we could
+        // subsequently remove this "!fixedDamage.value". i'll explore this in the unit tests.
         if (!fixedDamage.value) {
           if (!source.isPlayer()) {
             this.scene.applyModifiers(EnemyDamageBoosterModifier, false, damage);
