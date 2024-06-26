@@ -14,8 +14,8 @@ export const partyUiHandler: SimpleTranslationEntries = {
   "TRANSFER": "건네다",
   "ALL": "전부",
   "PASS_BATON": "배턴터치한다",
-  "UNPAUSE_EVOLUTION": "Unpause Evolution",
-  "REVIVE": "Revive",
+  "UNPAUSE_EVOLUTION": "진화 재개",
+  "REVIVE": "되살린다",
 
   "choosePokemon": "포켓몬을 선택하세요.",
   "doWhatWithThisPokemon": "포켓몬을 어떻게 하겠습니까?",
