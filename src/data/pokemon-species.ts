@@ -3567,7 +3567,7 @@ export const starterPassiveAbilities = {
   [Species.YAMASK]: Abilities.PURIFYING_SALT,
   [Species.TIRTOUGA]: Abilities.ANGER_SHELL,
   [Species.ARCHEN]: Abilities.MULTISCALE,
-  [Species.TRUBBISH]: Abilities.TOXIC_DEBRIS,
+  [Species.TRUBBISH]: Abilities.NEUTRALIZING_GAS,
   [Species.ZORUA]: Abilities.DARK_AURA,
   [Species.MINCCINO]: Abilities.FUR_COAT,
   [Species.GOTHITA]: Abilities.UNNERVE,
