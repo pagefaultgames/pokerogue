@@ -3433,10 +3433,54 @@ export class EnemyPokemon extends Pokemon {
     }
   }
 
+  /**
+   * Sets the boss HP bars to persist through refresh/retry for classic mode
+   * 4: 195 Mega Rayquaza
+   * 3: 145 Rayquaza, 195 Starter
+   * 2: all else (195 rival bird, all evil team bosses)
+   */
+  setBossForClassic(): void {
+    const waveIndex = this.scene.currentBattle.waveIndex;
+    const rivalStarters = [Species.VENUSAUR, Species.CHARIZARD, Species.BLASTOISE,
+      Species.MEGANIUM, Species.TYPHLOSION, Species.FERALIGATR,
+      Species.SCEPTILE, Species.BLAZIKEN, Species.SWAMPERT,
+      Species.TORTERRA, Species.INFERNAPE, Species.EMPOLEON,
+      Species.SERPERIOR, Species.EMBOAR, Species.SAMUROTT,
+      Species.CHESNAUGHT, Species.DELPHOX, Species.GRENINJA,
+      Species.DECIDUEYE, Species.INCINEROAR, Species.PRIMARINA,
+      Species.RILLABOOM, Species.CINDERACE, Species.INTELEON,
+      Species.MEOWSCARADA, Species.SKELEDIRGE, Species.QUAQUAVAL];
+    let bossSegments = 2;
+    if ((waveIndex === 145 && this.species.speciesId === Species.RAYQUAZA)
+        || (waveIndex === 195 && rivalStarters.includes(this.species.speciesId))) {
+      bossSegments = 3;
+    }
+    if (waveIndex === 195 && this.species.speciesId === Species.RAYQUAZA) {
+      bossSegments = 4;
+    }
+    this.bossSegments = bossSegments;
+    this.bossSegmentIndex = bossSegments - 1;
+  }
+
+  /**
+   * Sets boss HP segments
+   * @param boss whether or not the Pokemon is a boss
+   * @param bossSegments how many boss segments the Pokemon should have
+   */
   setBoss(boss: boolean = true, bossSegments: integer = 0): void {
     if (boss) {
-      this.bossSegments = bossSegments || this.scene.getEncounterBossSegments(this.scene.currentBattle.waveIndex, this.level, this.species, true);
-      this.bossSegmentIndex = this.bossSegments - 1;
+      /**
+       * bossSegments is not saved in the Pokemon savedata so it will be set to 0
+       * whenever a refresh or retry is done. This means that classic trainers with
+       * boss Pokemon will have their HP bar segments recalculated and usually end up
+       * higher than the intended number
+       */
+      if (this.scene.gameMode.isClassic) {
+        this.setBossForClassic();
+      } else {
+        this.bossSegments = bossSegments || this.scene.getEncounterBossSegments(this.scene.currentBattle.waveIndex, this.level, this.species, true);
+        this.bossSegmentIndex = this.bossSegments - 1;
+      }
     } else {
       this.bossSegments = 0;
       this.bossSegmentIndex = 0;
