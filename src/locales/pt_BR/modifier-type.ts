@@ -241,6 +241,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_ENDURE_CHANCE": { name: "Token de Persistência" },
     "ENEMY_FUSED_CHANCE": { name: "Token de Fusão", description: "Adiciona uma chance de 1% de que um Pokémon selvagem seja uma fusão." },
   },
+  SpeciesBoosterItem: {
+  },
   TempBattleStatBoosterItem: {
     "x_attack": "Ataque X",
     "x_defense": "Defesa X",

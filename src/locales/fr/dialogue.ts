@@ -2367,7 +2367,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     },
     "victory": {
 	  1: `@c{neutral}Je… J’étais pas encore supposée perdre…
-				$@c{smile}Bon. Ça veut juste dire que je vois devoir encore plus m’entrainer !
+				$@c{smile}Bon. Ça veut juste dire que je vais devoir encore plus m’entrainer !
 				$@c{smile_wave}J’ai aussi ça en rab pour toi !\n@c{smile_wave_wink}Inutile de me remercier ~.
                 $@c{angry_mopen}C’était le dernier, terminé les cadeaux après celui-là !
                 $@c{smile_wave}Allez, tiens le coup !`
@@ -4849,7 +4849,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
     },
     "victory": {
 	  1: `@c{neutral}Je… J’étais pas encore supposée perdre…
-				$@c{smile}Bon. Ça veut juste dire que je vois devoir encore plus m’entrainer !
+				$@c{smile}Bon. Ça veut juste dire que je vais devoir encore plus m’entrainer !
 				$@c{smile_wave}J’ai aussi ça en rab pour toi !\n@c{smile_wave_wink}Inutile de me remercier ~.
                 $@c{angry_mopen}C’était le dernier, terminé les cadeaux après celui-là !
                 $@c{smile_wave}Allez, tiens le coup !`
