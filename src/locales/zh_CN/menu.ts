@@ -53,5 +53,5 @@ export const menu: SimpleTranslationEntries = {
   "no": "否",
   "disclaimer": "免责声明",
   "disclaimerDescription": "这个游戏尚未完成; 可能存在游戏性问题（包括潜在的丢档风险）、\n 不经通知的调整、 未来可能会更新或完成更多内容",
-  "choosePokemon": "Choose a Pokémon.",
+  "choosePokemon": "选择一只宝可梦。",
 } as const;

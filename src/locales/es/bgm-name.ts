@@ -73,7 +73,16 @@ export const bgmName: SimpleTranslationEntries = {
   "battle_wild": "BW - ¡Vs Pokémon Salvaje!",
   "battle_wild_strong": "BW - ¡Vs Pokémon Salvaje Raro!",
   "end_summit": "PMD RTDX - Techo del Cielo",
+  "battle_rocket_grunt": "HGSS Team Rocket Battle",
+  "battle_aqua_magma_grunt": "ORAS Team Aqua & Magma Battle",
+  "battle_galactic_grunt": "BDSP Team Galactic Battle",
   "battle_plasma_grunt": "BW - ¡Vs Equipo Plasma!",
+  "battle_flare_grunt": "XY Team Flare Battle",
+  "battle_rocket_boss": "USUM Giovanni Battle",
+  "battle_aqua_magma_boss": "ORAS Archie & Maxie Battle",
+  "battle_galactic_boss": "BDSP Cyrus Battle",
+  "battle_plasma_boss": "B2W2 Ghetsis Battle",
+  "battle_flare_boss": "XY Lysandre Battle",
 
   // Biome Music
   "abyss": "PMD EoS - Cráter Oscuro",
@@ -130,6 +139,6 @@ export const bgmName: SimpleTranslationEntries = {
 
   // Other
   "heal": "BW - Cura Pokémon",
-  "menu": "PMD Eos - ¡Bienvenidos al mundo de los Pokémon!",
+  "menu": "PMD EoS - ¡Bienvenidos al mundo de los Pokémon!",
   "title": "PMD EoS - Tema del menú principal",
 } as const;

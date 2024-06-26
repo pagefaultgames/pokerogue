@@ -436,16 +436,20 @@ export default class Trainer extends Phaser.GameObjects.Container {
     const partyMemberScores = nonFaintedLegalPartyMembers.map(p => {
       const playerField = this.scene.getPlayerField().filter(p => p.isAllowedInBattle());
       let score = 0;
-      for (const playerPokemon of playerField) {
-        score += p.getMatchupScore(playerPokemon);
-        if (playerPokemon.species.legendary) {
-          score /= 2;
+
+      if (playerField.length > 0) {
+        for (const playerPokemon of playerField) {
+          score += p.getMatchupScore(playerPokemon);
+          if (playerPokemon.species.legendary) {
+            score /= 2;
+          }
+        }
+        score /= playerField.length;
+        if (forSwitch && !p.isOnField()) {
+          this.scene.arena.findTagsOnSide(t => t instanceof ArenaTrapTag, ArenaTagSide.ENEMY).map(t => score *= (t as ArenaTrapTag).getMatchupScoreMultiplier(p));
         }
       }
-      score /= playerField.length;
-      if (forSwitch && !p.isOnField()) {
-        this.scene.arena.findTagsOnSide(t => t instanceof ArenaTrapTag, ArenaTagSide.ENEMY).map(t => score *= (t as ArenaTrapTag).getMatchupScoreMultiplier(p));
-      }
+
       return [party.indexOf(p), score];
     }) as [integer, integer][];
 

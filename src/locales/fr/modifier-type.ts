@@ -182,6 +182,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SOOTHE_BELL": { name: "Grelot Zen" },
 
+    "EVIOLITE": { name: "Évoluroc", description: "Un étrange concentré d’évolution qui augmente la Défense et la Défense Spéciale d’un Pokémon pouvant évoluer." },
+
     "SOUL_DEW": { name: "Rosée Âme", description: "Augmente de 10% l’influence de la nature d’un Pokémon sur ses statistiques (cumulatif)." },
 
     "NUGGET": { name: "Pépite" },
@@ -238,6 +240,12 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "Jeton Total Soin", description: "Ajoute 2.5% de chances à chaque tour de se soigner d’un problème de statut." },
     "ENEMY_ENDURE_CHANCE": { name: "Jeton Ténacité" },
     "ENEMY_FUSED_CHANCE": { name: "Jeton Fusion", description: "Ajoute 1% de chances qu’un Pokémon sauvage soit une fusion." },
+  },
+  SpeciesBoosterItem: {
+    "LIGHT_BALL": { name: "Balle Lumière", description: "Objet à faire tenir à Pikachu. Un orbe énigmatique qui augmente son Attaque et son Attaque Spéciale." },
+    "THICK_CLUB": { name: "Masse Os", description: "Objet à faire tenir à Osselait ou Ossatueur. Un os dur qui augmente leur Attaque." },
+    "METAL_POWDER": { name: "Poudre Métal", description: "Objet à faire tenir à Métamorph. Cette poudre étrange, très fine mais résistante, augmente sa Défense." },
+    "QUICK_POWDER": { name: "Poudre Vite", description: "Objet à faire tenir à Métamorph. Cette poudre étrange, très fine mais résistante, augmente sa Vitesse." }
   },
   TempBattleStatBoosterItem: {
     "x_attack": "Attaque +",
