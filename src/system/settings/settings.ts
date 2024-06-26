@@ -547,7 +547,7 @@ export const Setting: Array<Setting> = [
     key: SettingKeys.Shop_Overlay_Opacity,
     label: i18next.t("settings:shopOverlayOpacity"),
     options: SHOP_OVERLAY_OPACITY_OPTIONS,
-    default: 4,
+    default: 8,
     type: SettingType.DISPLAY,
     requireReload: false
   },
