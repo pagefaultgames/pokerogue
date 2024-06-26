@@ -16,8 +16,8 @@ const VOLUME_OPTIONS: SettingOption[] = new Array(11).fill(null).map((_, i) => i
   value: "Mute",
   label: i18next.t("settings:mute")
 });
-const SHOP_OVERLAY_OPACITY_OPTIONS: SettingOption[] = new Array(8).fill(null).map((_, i) => {
-  const value = ((i + 2) * 10).toString();
+const SHOP_OVERLAY_OPACITY_OPTIONS: SettingOption[] = new Array(9).fill(null).map((_, i) => {
+  const value = ((i + 1) * 10).toString();
   return {
     value,
     label: value,
@@ -547,7 +547,7 @@ export const Setting: Array<Setting> = [
     key: SettingKeys.Shop_Overlay_Opacity,
     label: i18next.t("settings:shopOverlayOpacity"),
     options: SHOP_OVERLAY_OPACITY_OPTIONS,
-    default: 6,
+    default: 7,
     type: SettingType.DISPLAY,
     requireReload: false
   },
