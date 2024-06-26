@@ -3196,9 +3196,8 @@ export class StatChangePhase extends PokemonPhase {
   private showMessage: boolean;
   private ignoreAbilities: boolean;
   private canBeCopied: boolean;
-  private moveSource: string;
 
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex, selfTarget: boolean, stats: BattleStat[], levels: integer, showMessage: boolean = true, ignoreAbilities: boolean = false, canBeCopied: boolean = true, moveSource?: string) {
+  constructor(scene: BattleScene, battlerIndex: BattlerIndex, selfTarget: boolean, stats: BattleStat[], levels: integer, showMessage: boolean = true, ignoreAbilities: boolean = false, canBeCopied: boolean = true) {
     super(scene, battlerIndex);
 
     this.selfTarget = selfTarget;
@@ -3207,7 +3206,6 @@ export class StatChangePhase extends PokemonPhase {
     this.showMessage = showMessage;
     this.ignoreAbilities = ignoreAbilities;
     this.canBeCopied = canBeCopied;
-    this.moveSource = moveSource || null;
   }
 
   start() {
@@ -3248,24 +3246,6 @@ export class StatChangePhase extends PokemonPhase {
 
     const battleStats = this.getPokemon().summonData.battleStats;
     const relLevels = filteredStats.map(stat => (levels.value >= 1 ? Math.min(battleStats[stat] + levels.value, 6) : Math.max(battleStats[stat] + levels.value, -6)) - battleStats[stat]);
-
-    switch (this.moveSource){
-      case "Stockpile":
-        // check if stats are being added or not
-        const gettingDef: integer = relLevels[0] > 0 ? 1 : 0;
-        const gettingSpDef: integer = relLevels[1] > 0 ? 1 : 0;
-
-        // add to the appropriate stockpile stat change counters
-        this.getPokemon().stockpileStats[0] += gettingDef;
-        this.getPokemon().stockpileStats[1] += gettingSpDef;
-        break;
-      case ("Spit Up" || "Swallow"):
-        // clear out stockpile stat change counters
-        this.getPokemon().stockpileStats = [0, 0];
-        break;
-      default:
-        // do nothing
-    }
 
     const end = () => {
       if (this.showMessage) {
