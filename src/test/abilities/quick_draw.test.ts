@@ -5,7 +5,6 @@ import { Abilities } from "#enums/abilities";
 import { Species } from "#enums/species";
 import { FaintPhase } from "#app/phases";
 import { Moves } from "#enums/moves";
-import { Stat } from "#app/data/pokemon-stat";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { allAbilities, BypassSpeedChanceAbAttr } from "#app/data/ability";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -29,6 +28,7 @@ describe("Abilities - Quick Draw", () => {
     vi.spyOn(Overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.QUICK_DRAW);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.TAIL_WHIP]);
+    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
     vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
     vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
 
@@ -41,8 +41,6 @@ describe("Abilities - Quick Draw", () => {
     const pokemon = game.scene.getPlayerPokemon();
     const enemy = game.scene.getEnemyPokemon();
 
-    pokemon.stats[Stat.SPD] = 50;
-    enemy.stats[Stat.SPD] = 150;
     pokemon.hp = 1;
     enemy.hp = 1;
 
@@ -60,8 +58,6 @@ describe("Abilities - Quick Draw", () => {
     const pokemon = game.scene.getPlayerPokemon();
     const enemy = game.scene.getEnemyPokemon();
 
-    pokemon.stats[Stat.SPD] = 50;
-    enemy.stats[Stat.SPD] = 150;
     pokemon.hp = 1;
     enemy.hp = 1;
 
@@ -81,8 +77,6 @@ describe("Abilities - Quick Draw", () => {
     const pokemon = game.scene.getPlayerPokemon();
     const enemy = game.scene.getEnemyPokemon();
 
-    pokemon.stats[Stat.SPD] = 50;
-    enemy.stats[Stat.SPD] = 150;
     pokemon.hp = 1;
     enemy.hp = 1;
 
