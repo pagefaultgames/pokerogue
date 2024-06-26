@@ -2325,6 +2325,10 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
    * for overridden, and a boolean for virtual
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
+    // Edge case for the move applied on a pokemon that has fainted
+    if (!target) {
+      return new Promise(resolve => resolve(true));
+    }
     const side = target.isPlayer() ? ArenaTagSide.PLAYER: ArenaTagSide.ENEMY;
     return new Promise(resolve => {
       if (args.length < 2 || !args[1]) {
