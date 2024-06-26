@@ -565,4 +565,48 @@ describe("Abilities - Parental Bond", () => {
       expect(enemyPokemon.status?.effect).toBeUndefined();
     }, TIMEOUT
   );
+
+  test(
+    "ability should not cause user to hit into King's Shield more than once",
+    async () => {
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
+      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.KINGS_SHIELD,Moves.KINGS_SHIELD,Moves.KINGS_SHIELD,Moves.KINGS_SHIELD]);
+
+      await game.startBattle([Species.CHARIZARD]);
+
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).not.toBe(undefined);
+
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).not.toBe(undefined);
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+
+      await game.phaseInterceptor.to(TurnEndPhase, false);
+
+      expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(-1);
+    }, TIMEOUT
+  );
+
+  test(
+    "ability should not cause user to hit into Storm Drain more than once",
+    async () => {
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.WATER_GUN]);
+      vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.STORM_DRAIN);
+
+      await game.startBattle([Species.CHARIZARD]);
+
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).not.toBe(undefined);
+
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).not.toBe(undefined);
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.WATER_GUN));
+
+      await game.phaseInterceptor.to(TurnEndPhase, false);
+
+      expect(enemyPokemon.summonData.battleStats[BattleStat.SPATK]).toBe(1);
+    }, TIMEOUT
+  );
 });

@@ -3142,8 +3142,13 @@ export class PunishmentPowerAttr extends VariablePowerAttr {
 
 export class PresentPowerAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    /**
+     * If this move is multi-hit, and this attribute is applied to any hit
+     * other than the first, this move cannot result in a heal.
+     */
+    const firstHit = (user.turnData.hitCount === user.turnData.hitsLeft);
 
-    const powerSeed = Utils.randSeedInt(100);
+    const powerSeed = Utils.randSeedInt(firstHit ? 100 : 80);
     if (powerSeed <= 40) {
       (args[0] as Utils.NumberHolder).value = 40;
     } else if (40 < powerSeed && powerSeed <= 70) {
@@ -3151,6 +3156,8 @@ export class PresentPowerAttr extends VariablePowerAttr {
     } else if (70 < powerSeed && powerSeed <= 80) {
       (args[0] as Utils.NumberHolder).value = 120;
     } else if (80 < powerSeed && powerSeed <= 100) {
+      // If this move is multi-hit, disable all other hits
+      user.stopMultiHit();
       target.scene.unshiftPhase(new PokemonHealPhase(target.scene, target.getBattlerIndex(),
         Math.max(Math.floor(target.getMaxHp() / 4), 1), getPokemonMessage(target, " regained\nhealth!"), true));
     }
