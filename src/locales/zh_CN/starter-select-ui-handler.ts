@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 /**
  * The menu namespace holds most miscellaneous text that isn't directly part of the game's
@@ -21,7 +21,6 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "passive": "被动：",
   "nature": "性格：",
   "eggMoves": "蛋招式",
-  "start": "开始",
   "addToParty": "加入队伍",
   "toggleIVs": "切换个体值",
   "manageMoves": "管理招式",
@@ -32,6 +31,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "selectMoveSwapWith": "选择要替换成的招式",
   "unlockPassive": "解锁被动",
   "reduceCost": "降低花费",
+  "sameSpeciesEgg": "兑换一颗蛋",
   "cycleShiny": ": 闪光",
   "cycleForm": ": 形态",
   "cycleGender": ": 性别",

@@ -1,4 +1,4 @@
-import { ModifierTypeTranslationEntries } from "#app/plugins/i18n";
+import { ModifierTypeTranslationEntries } from "#app/interfaces/locales";
 
 export const modifierType: ModifierTypeTranslationEntries = {
   ModifierType: {
@@ -181,6 +181,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "GOLDEN_EGG": { name: "Uovo d'Oro" },
 
     "SOOTHE_BELL": { name: "Calmanella" },
+
+    "EVIOLITE": { name: "Evolcondensa", description: "Misteriosa materia evolutiva. Aumenta la Difesa e la Difesa Speciale di un Pokémon che può ancora evolversi." },
 
     "SOUL_DEW": { name: "Cuorugiada", description: "Aumenta del 10% l'influenza della natura di un Pokémon sulle sue statistiche (Aggiuntivo)." },
 

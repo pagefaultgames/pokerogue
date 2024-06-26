@@ -13,7 +13,8 @@ import { speciesEggMoves } from "./egg-moves";
 import { GameMode } from "../game-mode";
 import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from "@material/material-color-utilities";
 import { VariantSet } from "./variant";
-import i18next, { Localizable } from "../plugins/i18n";
+import i18next from "i18next";
+import { Localizable } from "#app/interfaces/locales";
 import { Stat } from "./pokemon-stat";
 import { Abilities } from "#enums/abilities";
 import { PartyMemberStrength } from "#enums/party-member-strength";
@@ -816,6 +817,10 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
 
   isObtainable() {
     return super.isObtainable();
+  }
+
+  hasVariants() {
+    return variantData.hasOwnProperty(this.speciesId);
   }
 
   getFormSpriteKey(formIndex?: integer) {

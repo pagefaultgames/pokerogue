@@ -47,7 +47,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     ui.add(this.modifierContainer);
 
     this.transferButtonContainer = this.scene.add.container((this.scene.game.canvas.width / 6) - 71, -64);
-    this.transferButtonContainer.setName("container-transfer-btn");
+    this.transferButtonContainer.setName("transfer-btn");
     this.transferButtonContainer.setVisible(false);
     ui.add(this.transferButtonContainer);
 
@@ -57,7 +57,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.transferButtonContainer.add(transferButtonText);
 
     this.checkButtonContainer = this.scene.add.container((this.scene.game.canvas.width / 6) - 1, -64);
-    this.checkButtonContainer.setName("container-use-btn");
+    this.checkButtonContainer.setName("use-btn");
     this.checkButtonContainer.setVisible(false);
     ui.add(this.checkButtonContainer);
 
@@ -67,7 +67,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.checkButtonContainer.add(checkButtonText);
 
     this.rerollButtonContainer = this.scene.add.container(16, -64);
-    this.rerollButtonContainer.setName("container-reroll-brn");
+    this.rerollButtonContainer.setName("reroll-brn");
     this.rerollButtonContainer.setVisible(false);
     ui.add(this.rerollButtonContainer);
 
@@ -180,8 +180,13 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     const maxUpgradeCount = typeOptions.map(to => to.upgradeCount).reduce((max, current) => Math.max(current, max), 0);
 
-    this.scene.showFieldOverlay(750);
+    /* Force updateModifiers without pokemonSpecificModifiers */
+    this.scene.getModifierBar().updateModifiers(this.scene.modifiers, true);
+
+    /* Multiplies the appearance duration by the speed parameter so that it is always constant, and avoids "flashbangs" at game speed x5 */
+    this.scene.showShopOverlay(750 * this.scene.gameSpeed);
     this.scene.updateAndShowText(750);
+    this.scene.updateBiomeWaveText();
     this.scene.updateMoneyText();
 
     let i = 0;
@@ -472,8 +477,12 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.getUi().clearText();
     this.eraseCursor();
 
-    this.scene.hideFieldOverlay(250);
+    /* Multiplies the fade time duration by the speed parameter so that it is always constant, and avoids "flashbangs" at game speed x5 */
+    this.scene.hideShopOverlay(750 * this.scene.gameSpeed);
     this.scene.hideLuckText(250);
+
+    /* Normally already called just after the shop, but not sure if it happens in 100% of cases */
+    this.scene.getModifierBar().updateModifiers(this.scene.modifiers);
 
     const options = this.options.concat(this.shopOptionsRows.flat());
     this.options.splice(0, this.options.length);
