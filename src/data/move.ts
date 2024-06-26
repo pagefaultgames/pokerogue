@@ -4268,11 +4268,13 @@ export class StockpileAttr extends AddBattlerTagAttr {
       stock = battlerTag.stock;
     }
 
+    if (stock >= 0 && stock <= 2) {
+      user.scene.queueMessage(this.getTriggerMessage(user, (stock+1)));
+    }
+
     if (!super.apply(user, target, move, args)) {
       return false;
     }
-
-    user.scene.queueMessage(this.getTriggerMessage(user, (stock+1)));
 
     return true;
   }
