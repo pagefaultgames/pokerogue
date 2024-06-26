@@ -16,6 +16,13 @@ const VOLUME_OPTIONS: SettingOption[] = new Array(11).fill(null).map((_, i) => i
   value: "Mute",
   label: i18next.t("settings:mute")
 });
+const SHOP_OVERLAY_OPACITY_OPTIONS: SettingOption[] = new Array(10).fill(null).map((_, i) => i ? {
+  value: (i * 10).toString(),
+  label: (i * 10).toString(),
+} : {
+  value: "None",
+  label: "None"
+});
 const OFF_ON: SettingOption[] = [
   {
     value: "Off",
@@ -98,6 +105,7 @@ export const SettingKeys = {
   SE_Volume: "SE_VOLUME",
   Music_Preference: "MUSIC_PREFERENCE",
   Show_BGM_Bar: "SHOW_BGM_BAR",
+  Shop_Overlay_Opacity: "SHOP_OVERLAY_OPACITY"
 };
 
 /**
@@ -535,7 +543,14 @@ export const Setting: Array<Setting> = [
     type: SettingType.AUDIO,
     requireReload: true
   },
-
+  {
+    key: SettingKeys.Shop_Overlay_Opacity,
+    label: "Shop Overlay Opacity", // TODO: add localization
+    options: SHOP_OVERLAY_OPACITY_OPTIONS,
+    default: 4,
+    type: SettingType.DISPLAY,
+    requireReload: false
+  },
 ];
 
 /**
@@ -759,6 +774,10 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
         return false;
       }
     }
+    break;
+  case SettingKeys.Shop_Overlay_Opacity:
+    const settingVal = parseInt(Setting[index].options[value].value);
+    scene.updateShopOverlayOpacity(Number.isNaN(settingVal) ? 0 : settingVal * .01);
     break;
   }
 

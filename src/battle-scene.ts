@@ -222,6 +222,8 @@ export default class BattleScene extends SceneBase {
 
   private fieldOverlay: Phaser.GameObjects.Rectangle;
   private shopOverlay: Phaser.GameObjects.Rectangle;
+  private shopOverlayOpacity: number = .80;
+
   public modifiers: PersistentModifier[];
   private enemyModifiers: PersistentModifier[];
   public uiContainer: Phaser.GameObjects.Container;
@@ -1421,13 +1423,21 @@ export default class BattleScene extends SceneBase {
     });
   }
 
+  updateShopOverlayOpacity(value: number): void {
+    this.shopOverlayOpacity = value;
+
+    if (this.shopOverlay) {
+      this.shopOverlay.setAlpha(this.shopOverlayOpacity);
+    }
+  }
+
   showShopOverlay(duration: integer): Promise<void> {
     return new Promise(resolve => {
       this.tweens.add({
         targets: this.shopOverlay,
-        alpha: 0.8,
+        alpha: this.shopOverlayOpacity,
         ease: "Sine.easeOut",
-        duration: duration,
+        duration,
         onComplete: () => resolve()
       });
     });
