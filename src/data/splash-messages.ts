@@ -39,6 +39,7 @@ export function getSplashMessages(): string[] {
     i18next.t("splashMessages:alsoTryRadicalRed"),
     i18next.t("splashMessages:eeveeExpo"),
     i18next.t("splashMessages:ynoproject"),
+    i18next.t("splashMessages:spaceBreeders"),
   ]);
 
   return splashMessages;
