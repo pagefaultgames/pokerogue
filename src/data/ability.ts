@@ -1,4 +1,4 @@
-import Pokemon, { HitResult, PokemonMove } from "../field/pokemon";
+import Pokemon, { HitResult, PlayerPokemon, PokemonMove } from "../field/pokemon";
 import { Type } from "./type";
 import { Constructor } from "#app/utils";
 import * as Utils from "../utils";
@@ -2030,6 +2030,35 @@ export class PostSummonCopyAbilityAbAttr extends PostSummonAbAttr {
   }
 }
 
+export class PostSummonUserFieldRemoveStatusEffectAbAttr extends PostSummonAbAttr {
+  private statusEffect: StatusEffect[];
+
+  constructor(...statusEffect: StatusEffect[]) {
+    super(false);
+
+    this.statusEffect = statusEffect;
+  }
+
+  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
+    const party = pokemon instanceof PlayerPokemon ? pokemon.scene.getPlayerField() : pokemon.scene.getEnemyField();
+    const allowedParty = party.filter(p => p.isAllowedInBattle());
+
+    if (allowedParty.length < 1) {
+      return false;
+    }
+
+    for (const pokemon of allowedParty) {
+      if (this.statusEffect.includes(pokemon.status?.effect)) {
+        pokemon.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectHealText(pokemon.status.effect)));
+        pokemon.resetStatus(false);
+        pokemon.updateInfo();
+      }
+    }
+
+    return true;
+  }
+}
+
 
 /** Attempt to copy the stat changes on an ally pokemon */
 export class PostSummonCopyAllyStatsAbAttr extends PostSummonAbAttr {
@@ -2287,7 +2316,9 @@ export class StatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
   }
 
   applyPreSetStatus(pokemon: Pokemon, passive: boolean, effect: StatusEffect, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (!this.immuneEffects.length || this.immuneEffects.indexOf(effect) > -1) {
+    const allyHasPastelVeil = pokemon.getAlly()?.hasAbility(Abilities.PASTEL_VEIL);
+
+    if (!this.immuneEffects.length || this.immuneEffects.indexOf(effect) > -1 || (allyHasPastelVeil && effect === StatusEffect.POISON)) {
       cancelled.value = true;
       return true;
     }
@@ -4905,6 +4936,7 @@ export function initAbilities() {
       .partial(),
     new Ability(Abilities.PASTEL_VEIL, 8)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
+      .attr(PostSummonUserFieldRemoveStatusEffectAbAttr, StatusEffect.POISON)
       .ignorable(),
     new Ability(Abilities.HUNGER_SWITCH, 8)
       .attr(PostTurnFormChangeAbAttr, p => p.getFormKey ? 0 : 1)
