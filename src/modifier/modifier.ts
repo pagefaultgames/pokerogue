@@ -1938,9 +1938,6 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
         && (m as PokemonHeldItemModifier).pokemonId === targetPokemon.id && m.getTransferrable(withinParty), targetPokemon.isPlayer()) as PokemonHeldItemModifier[];
     let highestItemTier = itemModifiers.map(m => m.type.getOrInferTier(poolType)).reduce((highestTier, tier) => Math.max(tier, highestTier), 0);
     let tierItemModifiers = itemModifiers.filter(m => m.type.getOrInferTier(poolType) === highestItemTier);
-
-    const heldItemTransferPromises: Promise<void>[] = [];
-
     for (let i = 0; i < transferredItemCount; i++) {
       if (!tierItemModifiers.length) {
         while (highestItemTier-- && !tierItemModifiers.length) {
@@ -1952,19 +1949,15 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
       }
       const randItemIndex = pokemon.randSeedInt(itemModifiers.length);
       const randItem = itemModifiers[randItemIndex];
-      heldItemTransferPromises.push(pokemon.scene.tryTransferHeldItemModifier(randItem, pokemon, false).then(success => {
-        if (success) {
-          transferredModifierTypes.push(randItem.type);
-          itemModifiers.splice(randItemIndex, 1);
-        }
-      }));
+      if (pokemon.scene.tryTransferHeldItemModifier(randItem, pokemon, false)) {
+        transferredModifierTypes.push(randItem.type);
+        itemModifiers.splice(randItemIndex, 1);
+      }
     }
 
-    Promise.all(heldItemTransferPromises).then(() => {
-      for (const mt of transferredModifierTypes) {
-        pokemon.scene.queueMessage(this.getTransferMessage(pokemon, targetPokemon, mt));
-      }
-    });
+    for (const mt of transferredModifierTypes) {
+      pokemon.scene.queueMessage(this.getTransferMessage(pokemon, targetPokemon, mt));
+    }
 
     return !!transferredModifierTypes.length;
   }

@@ -3280,20 +3280,17 @@ export class PlayerPokemon extends Pokemon {
       }
       const fusedPartyMemberHeldModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
         && (m as PokemonHeldItemModifier).pokemonId === pokemon.id, true) as PokemonHeldItemModifier[];
-      const transferModifiers: Promise<boolean>[] = [];
       for (const modifier of fusedPartyMemberHeldModifiers) {
-        transferModifiers.push(this.scene.tryTransferHeldItemModifier(modifier, this, false, modifier.getStackCount(), true, true));
+        this.scene.tryTransferHeldItemModifier(modifier, this, false, modifier.getStackCount(), true, true);
       }
-      Promise.allSettled(transferModifiers).then(() => {
-        this.scene.updateModifiers(true, true).then(() => {
-          this.scene.removePartyMemberModifiers(fusedPartyMemberIndex);
-          this.scene.getParty().splice(fusedPartyMemberIndex, 1)[0];
-          const newPartyMemberIndex = this.scene.getParty().indexOf(this);
-          pokemon.getMoveset(true).map(m => this.scene.unshiftPhase(new LearnMovePhase(this.scene, newPartyMemberIndex, m.getMove().id)));
-          pokemon.destroy();
-          this.updateFusionPalette();
-          resolve();
-        });
+      this.scene.updateModifiers(true, true).then(() => {
+        this.scene.removePartyMemberModifiers(fusedPartyMemberIndex);
+        this.scene.getParty().splice(fusedPartyMemberIndex, 1)[0];
+        const newPartyMemberIndex = this.scene.getParty().indexOf(this);
+        pokemon.getMoveset(true).map(m => this.scene.unshiftPhase(new LearnMovePhase(this.scene, newPartyMemberIndex, m.getMove().id)));
+        pokemon.destroy();
+        this.updateFusionPalette();
+        resolve();
       });
     });
   }
