@@ -1542,16 +1542,17 @@ export class StockpileTag extends BattlerTag {
 
   /**
    * When this battler tag is added, add to stacks and add stat increase
-   * 
-   * @param pokemon 
+   *
+   * @param pokemon
    */
   onAdd(pokemon: Pokemon): void {
+    console.log("trying to add STOCKPILE");
     if (this.stock >= 3) {
       return;
     }
 
     this.stock++;
-    pokemon.scene.queueMessage(`${pokemon.name}\nstockpiled ${this.stock}!`);
+    console.log("STOCKPILE is going up to", this.stock);
 
     for (const stat of [ BattleStat.SPDEF, BattleStat.DEF ]) {
       if (pokemon.summonData.battleStats[stat] < 6) {
