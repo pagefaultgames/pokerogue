@@ -2316,9 +2316,7 @@ export class StatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
   }
 
   applyPreSetStatus(pokemon: Pokemon, passive: boolean, effect: StatusEffect, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    const allyHasPastelVeil = pokemon.getAlly()?.hasAbility(Abilities.PASTEL_VEIL);
-
-    if (!this.immuneEffects.length || this.immuneEffects.indexOf(effect) > -1 || (allyHasPastelVeil && effect === StatusEffect.POISON)) {
+    if (!this.immuneEffects.length || this.immuneEffects.includes(effect)) {
       cancelled.value = true;
       return true;
     }
@@ -2328,6 +2326,12 @@ export class StatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
 
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
     return getPokemonMessage(pokemon, `'s ${abilityName}\nprevents ${this.immuneEffects.length ? getStatusEffectDescriptor(args[0] as StatusEffect) : "status problems"}!`);
+  }
+}
+
+export class PastelVeilPoisonEffectImmunityAbAttr extends StatusEffectImmunityAbAttr {
+  constructor() {
+    super(StatusEffect.POISON, StatusEffect.TOXIC);
   }
 }
 
@@ -4937,6 +4941,7 @@ export function initAbilities() {
     new Ability(Abilities.PASTEL_VEIL, 8)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
       .attr(PostSummonUserFieldRemoveStatusEffectAbAttr, StatusEffect.POISON)
+      .attr(PastelVeilPoisonEffectImmunityAbAttr)
       .ignorable(),
     new Ability(Abilities.HUNGER_SWITCH, 8)
       .attr(PostTurnFormChangeAbAttr, p => p.getFormKey ? 0 : 1)
