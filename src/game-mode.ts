@@ -107,13 +107,28 @@ export class GameMode implements GameModeConfig {
     }
   }
 
+  /**
+   * Determines whether or not to generate a trainer
+   * @param waveIndex the current floor the player is on (trainer sprites fail to generate on X1 floors)
+   * @param arena the arena that contains the scene and functions
+   * @returns true if a trainer should be generated, false otherwise
+   */
   isWaveTrainer(waveIndex: integer, arena: Arena): boolean {
+    /**
+     * Daily spawns trainers on floors 5, 15, 20, 25, 30, 35, 40, and 45
+     */
     if (this.isDaily) {
       return waveIndex % 10 === 5 || (!(waveIndex % 10) && waveIndex > 10 && !this.isWaveFinal(waveIndex));
     }
     if ((waveIndex % 30) === (arena.scene.offsetGym ? 0 : 20) && !this.isWaveFinal(waveIndex)) {
       return true;
     } else if (waveIndex % 10 !== 1 && waveIndex % 10) {
+      // Do not spawn trainers on the two evil team floors and also the E4 floors
+      const forbiddenSpawnWaves = [63, 65, 67, 68, 69, 113, 116, 117, 118, 119, 183, 185, 187, 189];
+      if (forbiddenSpawnWaves.includes(waveIndex)) {
+        return false;
+      }
+
       const trainerChance = arena.getTrainerChance();
       let allowTrainerBattle = true;
       if (trainerChance) {
