@@ -1883,7 +1883,7 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
         user.scene.queueMessage(getPokemonMessage(user, ` knocked off\n${target.name}'s ${removedItem.type.name}!`));
       }
     }
-
+    target.summonData.itemLost = true;
     return true;
   }
 
