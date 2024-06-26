@@ -242,6 +242,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_FUSED_CHANCE": { name: "Token de Fusão", description: "Adiciona uma chance de 1% de que um Pokémon selvagem seja uma fusão." },
   },
   SpeciesBoosterItem: {
+    "LIGHT_BALL": { name: "Bola de Luz", description: "Orbe intrigante que aumenta os atributos de Ataque e Ataque Esp. de Pikachu." },
+    "THICK_CLUB": { name: "Osso Grosso", description: "Este duro osso de origem desconhecida aumenta o atributo de Ataque de Cubone ou Marowak." },
+    "METAL_POWDER": { name: "Pó Metálico", description: "Extremamente fino, porém duro, este pó estranho aumenta o atributo de Defesa de Ditto." },
+    "QUICK_POWDER": { name: "Pó Veloz", description: "Extremamente fino, porém duro, este pó estranho aumenta o atributo de Velocidade de Ditto." }
   },
   TempBattleStatBoosterItem: {
     "x_attack": "Ataque X",
