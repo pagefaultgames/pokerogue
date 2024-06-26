@@ -1,4 +1,4 @@
-import { ModifierTypeTranslationEntries } from "#app/plugins/i18n";
+import { ModifierTypeTranslationEntries } from "#app/interfaces/locales";
 
 export const modifierType: ModifierTypeTranslationEntries = {
   ModifierType: {
@@ -182,6 +182,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SOOTHE_BELL": { name: "Sanftglocke" },
 
+    "EVIOLITE": { name: "Evolith", description: "Ein mysteriöser Klumpen, der die Vert. u. Spez.-Vert. von Pokémon erhöht, die sich noch entwickeln können." },
+
     "SOUL_DEW": { name: "Seelentau", description: "Erhöht den Einfluss des Wesens eines Pokemon auf seine Werte um 10% (additiv)." },
 
     "NUGGET": { name: "Nugget" },
@@ -249,6 +251,20 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "x_accuracy": "X-Treffer",
     "dire_hit": "X-Volltreffer",
   },
+
+  TempBattleStatBoosterStatName: {
+    "ATK": "Angriff",
+    "DEF": "Verteidigung",
+    "SPATK": "Sp. Ang",
+    "SPDEF": "Sp. Vert",
+    "SPD": "Initiative",
+    "ACC": "Genauigkeit",
+    "CRIT": "Volltrefferquote",
+    "EVA": "Fluchtwert",
+    "DEFAULT": "???",
+  },
+
+
   AttackTypeBoosterItem: {
     "silk_scarf": "Seidenschal",
     "black_belt": "Schwarzgurt",

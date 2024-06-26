@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const pokemonInfoContainer: SimpleTranslationEntries = {
   "moveset": "Capacités",
@@ -8,5 +8,5 @@ export const pokemonInfoContainer: SimpleTranslationEntries = {
   "epic": "Épique",
   "rare": "Rare",
   "common": "Commun",
-  "form": "Forme:"
+  "form": "Forme :"
 } as const;
