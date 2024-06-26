@@ -885,7 +885,7 @@ export class SpeciesStatBoosterModifier extends StatBoosterModifier {
  * Applies Specific Type item boosts (e.g., Magnet)
  */
 export class AttackTypeBoosterModifier extends PokemonHeldItemModifier {
-  private moveType: Type;
+  public moveType: Type;
   private boostMultiplier: number;
 
   constructor(type: ModifierType, pokemonId: integer, moveType: Type, boostPercent: number, stackCount?: integer) {
