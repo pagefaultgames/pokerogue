@@ -1886,7 +1886,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         applyMoveAttrs(VariableDefAttr, source, this, move, targetDef);
 
         if (!isTypeImmune) {
-          damage.value = Math.ceil(((((2 * source.level / 5 + 2) * power.value * sourceAtk.value / targetDef.value) / 50) + 2) * stabMultiplier.value * typeMultiplier.value * arenaAttackTypeMultiplier.value * screenMultiplier.value * ((this.scene.randBattleSeedInt(15) + 85) / 100) * criticalMultiplier.value);
+          const levelMultiplier = ((2 * source.level / 5) + 2);
+          const randomDamageFactor = ((this.scene.randBattleSeedInt(15) + 85) / 100);
+          damage.value = Math.ceil((((levelMultiplier * power.value * sourceAtk.value / targetDef.value) / 50) + 2)
+                                   * stabMultiplier.value
+                                   * typeMultiplier.value
+                                   * arenaAttackTypeMultiplier.value
+                                   * screenMultiplier.value
+                                   * randomDamageFactor
+                                   * criticalMultiplier.value);
+
           if (isPhysical && source.status && source.status.effect === StatusEffect.BURN) {
             if (!move.hasAttr(BypassBurnDamageReductionAttr)) {
               const burnDamageReductionCancelled = new Utils.BooleanHolder(false);
@@ -1915,6 +1924,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         if (this.scene.arena.terrain?.terrainType === TerrainType.MISTY && this.isGrounded() && move.type === Type.DRAGON) {
           damage.value = Math.floor(damage.value / 2);
         }
+
+        applyPreDefendAbAttrs(ReceivedMoveDamageMultiplierAbAttr, this, source, move, cancelled, damage);
 
         const fixedDamage = new Utils.IntegerHolder(0);
         applyMoveAttrs(FixedDamageAttr, source, this, move, fixedDamage);
@@ -1954,7 +1965,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         }
 
         applyMoveAttrs(ModifiedDamageAttr, source, this, move, damage);
-        applyPreDefendAbAttrs(ReceivedMoveDamageMultiplierAbAttr, this, source, move, cancelled, damage);
 
         console.log("damage", damage.value, move.name, power.value, sourceAtk, targetDef);
 
