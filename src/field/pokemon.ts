@@ -252,7 +252,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.addAt(sprite, 0);
     this.addAt(tintSprite, 1);
 
-    if (this.isShiny() && !this.shinySparkle) {
+    if (this.isShiny(true) && !this.shinySparkle) {
       this.initShinySparkle();
     }
   }
@@ -314,40 +314,59 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param {Pokemon} pokemon - The Pokemon that will create an illusion.
    * @param {Pokemon[]} party - The party of the trainer's pokemon.
    */
-  generateIllusion(pokemon: Pokemon, party: Pokemon[]): boolean {
-    if (pokemon.hasTrainer()) {
+  generateIllusion(party: Pokemon[]): boolean {
+    if (this.hasTrainer()) {
       const lastPokemon: Pokemon = party.slice(-1)[0];
-      if (lastPokemon === pokemon || pokemon.illusion.active) {
+      if (lastPokemon === this || this.illusion.active) {
         return false;
       }
       const speciesId = lastPokemon.species.speciesId;
-      pokemon.illusion = {
+      this.illusion = {
         active: true,
         available: true,
-        name: pokemon.name,
+        name: this.name,
+        formIndex: lastPokemon.formIndex,
         species: getPokemonSpecies(speciesId),
         fusionSpecies: lastPokemon.fusionSpecies,
-        shiny: pokemon.shiny,
-        shinySparkle: lastPokemon.shinySparkle,
-        variant: pokemon.variant,
-        fusionVariant: pokemon.fusionVariant
+        shiny: this.shiny,
+        shinySparkle: this.shinySparkle,
+        variant: this.variant,
+        fusionVariant: this.fusionVariant
       };
 
-      pokemon.name = lastPokemon.name;
-      pokemon.shiny = lastPokemon.shiny;
-      pokemon.variant = lastPokemon.variant;
-      pokemon.fusionVariant = lastPokemon.fusionVariant;
+      this.name = lastPokemon.name;
+      this.shiny = lastPokemon.shiny;
+      this.variant = lastPokemon.variant;
+      this.fusionVariant = lastPokemon.fusionVariant;
+      if (this.shiny) {
+        this.initShinySparkle();
+      }
 
       //Icito
-      pokemon.loadAssets(false).then(() => pokemon.playAnim());
+      this.loadAssets(false).then(() => this.playAnim());
     } else {
       const availables = [Species.ENTEI, Species.RAIKOU, Species.SUICUNE];
       const randomIllusion: PokemonSpecies = getPokemonSpecies(availables[this.randSeedInt(3)]);
-      pokemon.illusion = {active: true, available: true, species: randomIllusion, name: pokemon.name, shiny: true};
-      pokemon.name = randomIllusion.name;
-      pokemon.loadAssets(false).then(() => pokemon.playAnim());
+      this.illusion = {active: true, available: true, species: randomIllusion, name: this.name, shiny: true};
+      this.name = randomIllusion.name;
+      this.loadAssets(false).then(() => this.playAnim());
     }
     return true;
+  }
+
+  breakIllusion(): void {
+    this.illusion.active = false;
+
+    this.name = this.illusion.name;
+    this.shiny = this.illusion.shiny;
+    this.variant = this.illusion.variant;
+    this.fusionVariant = this.illusion.fusionVariant;
+
+    if (this.isOnField) {
+      this.scene.playSound("PRSFX- Transform");
+    }
+    this.loadAssets(false).then(() => this.playAnim());
+    this.updateInfo(true);
   }
 
   abstract isPlayer(): boolean;
@@ -469,18 +488,18 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getSpriteId(ignoreOverride?: boolean): string {
-    if (this.illusion.active) {
-      return this.getSpeciesForm(ignoreOverride, true).getSpriteId(this.getGender(ignoreOverride) === Gender.FEMALE, this.formIndex, this.illusion.shiny, this.illusion.variant);
-    } else {
-      return this.getSpeciesForm(ignoreOverride, false).getSpriteId(this.getGender(ignoreOverride) === Gender.FEMALE, this.formIndex, this.shiny, this.variant);
-    }
+    const formIndex: integer = this.illusion.active ?  this.illusion.formIndex : this.formIndex;
+    return this.getSpeciesForm(ignoreOverride, false).getSpriteId(this.getGender(ignoreOverride) === Gender.FEMALE, formIndex, this.shiny, this.variant);
   }
 
   getBattleSpriteId(back?: boolean, ignoreOverride?: boolean): string {
     if (back === undefined) {
       back = this.isPlayer();
     }
-    return this.getSpeciesForm(ignoreOverride, true).getSpriteId(this.getGender(ignoreOverride) === Gender.FEMALE, this.formIndex, this.shiny, this.variant, back);
+
+    const formIndex: integer = this.illusion.active ?  this.illusion.formIndex : this.formIndex;
+
+    return this.getSpeciesForm(ignoreOverride, true).getSpriteId(this.getGender(ignoreOverride) === Gender.FEMALE, formIndex, this.shiny, this.variant, back);
   }
 
   getSpriteKey(ignoreOverride?: boolean): string {
@@ -516,13 +535,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getIconAtlasKey(ignoreOverride?: boolean): string {
-    return this.getSpeciesForm(ignoreOverride, true).getIconAtlasKey(this.formIndex, this.shiny, this.variant);
-    if (this.illusion.active) {
-      return this.getSpeciesForm(ignoreOverride, true).getIconAtlasKey(this.formIndex, this.illusion.shiny, this.illusion.variant);
-    } else {
-      return this.getSpeciesForm(ignoreOverride, false).getIconAtlasKey(this.formIndex, this.shiny, this.variant);
-    }
-
+    const formIndex: integer = this.illusion.active ?  this.illusion.formIndex : this.formIndex;
+    return this.getSpeciesForm(ignoreOverride, true).getIconAtlasKey(formIndex, this.shiny, this.variant);
   }
 
   getFusionIconAtlasKey(ignoreOverride?: boolean): string {
@@ -530,13 +544,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getIconId(ignoreOverride?: boolean): string {
-    return this.getSpeciesForm(ignoreOverride, true).getIconId(this.getGender(ignoreOverride) === Gender.FEMALE, this.formIndex, this.shiny, this.variant);
-    if (this.illusion.active) {
-      return this.getSpeciesForm(ignoreOverride, true).getIconId(this.getGender(ignoreOverride) === Gender.FEMALE, this.formIndex, this.illusion.shiny, this.illusion.variant);
-    } else {
-      return this.getSpeciesForm(ignoreOverride, false).getIconId(this.getGender(ignoreOverride) === Gender.FEMALE, this.formIndex, this.shiny, this.variant);
-    }
-
+    const formIndex: integer = this.illusion.active ?  this.illusion.formIndex : this.formIndex;
+    return this.getSpeciesForm(ignoreOverride, true).getIconId(this.getGender(ignoreOverride) === Gender.FEMALE, formIndex, this.shiny, this.variant);
   }
 
   getFusionIconId(ignoreOverride?: boolean): string {
@@ -552,6 +561,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       */
 
     const species: PokemonSpecies = illusion && this.illusion.active ? this.illusion.species : this.species;
+    const formIndex: integer = illusion && this.illusion.active ? this.illusion.formIndex : this.formIndex;
+
     if (!ignoreOverride && this.summonData?.speciesForm) {
       return this.summonData.speciesForm;
     }
@@ -559,11 +570,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!species.forms?.length) {
       return species;
     }
-    return species.forms[this.formIndex];
+    return species.forms[formIndex];
   }
 
   getFusionSpeciesForm(ignoreOverride?: boolean, illusion: boolean = false): PokemonSpeciesForm {
-    const fusionSpecies: PokemonSpecies = illusion && this.illusion.active ? (this.illusion.fusionSpecies ?? this.illusion.species) : this.fusionSpecies;
+    const fusionSpecies: PokemonSpecies = illusion && this.illusion.active ? this.illusion.fusionSpecies : this.fusionSpecies;
     if (!ignoreOverride && this.summonData?.speciesForm) {
       return this.summonData.fusionSpeciesForm;
     }
@@ -922,7 +933,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getName(illusion: boolean = false): string {
-    console.log("getName() - ", this.name, this.illusion);
     return (!illusion && this.illusion.active) ? this.illusion.name : this.name;
   }
 
@@ -2765,8 +2775,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   sparkle(): void {
-    this.shinySparkle.play(`sparkle${this.variant ? `_${this.variant + 1}` : ""}`);
-    this.scene.playSound("sparkle");
+    //icito
+    console.log("ALLO");
+    if (this.shinySparkle) {
+      console.log("AAAAAAAAAAAAAAA");
+      this.shinySparkle.play(`sparkle${this.variant ? `_${this.variant + 1}` : ""}`);
+      this.scene.playSound("sparkle");
+    }
     /*
     if(this.illusion.active){
       if(this.illusion.shinySparkle){
@@ -3364,6 +3379,7 @@ export class PlayerPokemon extends Pokemon {
   * @param pokemon The PlayerPokemon to fuse to this one
   */
   fuse(pokemon: PlayerPokemon): Promise<void> {
+    //icito
     return new Promise(resolve => {
       this.fusionSpecies = pokemon.species;
       this.fusionFormIndex = pokemon.formIndex;
@@ -3898,57 +3914,53 @@ interface Illusion {
    * @type {boolean}
    */
   active: boolean;
-
   /**
    * Whether the pokemon can generate an illusion or not.
    * @type {boolean}
    */
   available: boolean;
-
   /**
-   * The species of the illusion
+   * The species of the illusion.
    * @type {PokemonSpecies}
    */
   species?: PokemonSpecies;
-
+  /**
+   * The formIndex of the illusion
+   * @type {integer}
+   */
+  formIndex?: integer;
   /**
    * The stored name of the pokemon.
    * @type {string}
    */
   name?: string;
-
   /**
-   * Whether the illusion is shiny or not
+   * Whether the base pokemon is shiny or not.
    * @type {boolean}
    */
   shiny?: boolean;
-
   /**
-   * The shiny variant of the illusion
+   * The shiny variant of the base pokemon.
    * @type {Variant}
    */
   variant?: Variant;
-
   /**
-   * The shinysparkles of the illusion
+   * The shinysparkles of the base pokemon.
    * @type {Phaser.GameObjects.Sprite}
    */
   shinySparkle?: Phaser.GameObjects.Sprite;
-
   /**
    * The fusionned species of the illusion if it's a fusion.
    * @type {PokemonSpecies}
    */
   fusionSpecies?: PokemonSpecies;
-
   /**
-   * Whether the fusionned species of the illusion is shiny or not.
+   * Whether the fusionned species of the base pokemon is shiny or not.
    * @type {PokemonSpecies}
    */
   fusionShiny?: boolean;
-
   /**
-   * The variant of the fusionned species of the illusion.
+   * The variant of the fusionned species of the base pokemon.
    * @type {Variant}
    */
   fusionVariant?: Variant;

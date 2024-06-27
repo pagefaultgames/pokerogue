@@ -3593,7 +3593,7 @@ export class IllusionPreSummonAbAttr extends PreSummonAbAttr {
    */
   applyPreSummon(pokemon: Pokemon, passive: boolean, party: Pokemon[], args: any[]): boolean | Promise<boolean> {
     if (pokemon.illusion.available) {
-      return pokemon.generateIllusion(pokemon, party);
+      return pokemon.generateIllusion(party);
     } else {
       return false;
     }
@@ -3612,7 +3612,7 @@ export class IllusionPostTurnAbAttr extends PostTurnAbAttr {
    */
   applyPostTurn(pokemon: Pokemon, passive: boolean, party: Pokemon[]) {
     if (pokemon.hasTrainer() && !pokemon.isOnField() && pokemon.illusion.available) {
-      pokemon.generateIllusion(pokemon, party);
+      pokemon.generateIllusion(party);
       return true;
     } else {
       return false;
@@ -3636,6 +3636,8 @@ export class IllusionBreakAbAttr extends PostDefendAbAttr {
     if (hitResult > 4) {
       return false;
     }
+    //icito
+    /*
     pokemon.illusion.active = false;
     pokemon.name = pokemon.illusion.name;
     pokemon.shiny = pokemon.illusion.shiny;
@@ -3643,8 +3645,10 @@ export class IllusionBreakAbAttr extends PostDefendAbAttr {
     pokemon.fusionVariant = pokemon.illusion.fusionVariant;
     pokemon.scene.playSound("PRSFX- Transform");
     pokemon.loadAssets(false).then(() => pokemon.playAnim());
+    */
+    pokemon.breakIllusion();
     pokemon.scene.queueMessage(getPokemonMessage(pokemon, "'s illusion wore off!"));
-    pokemon.updateInfo(true);
+    //pokemon.updateInfo(true);
     return true;
   }
 }
@@ -3668,14 +3672,8 @@ export class IllusionAfterBattle extends PostBattleAbAttr {
       pokemon.illusion.available = false;
     }
     */
-    pokemon.illusion.active = false;
-    pokemon.name = pokemon.illusion.name;
-    pokemon.shiny = pokemon.illusion.shiny;
-    pokemon.variant = pokemon.illusion.variant;
-    pokemon.fusionVariant = pokemon.illusion.fusionVariant;
+    pokemon.breakIllusion();
     pokemon.illusion.available = true;
-    pokemon.updateInfo(true);
-    pokemon.loadAssets(false).then(() => pokemon.playAnim());
     return true;
   }
 }

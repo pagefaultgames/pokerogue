@@ -623,6 +623,8 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
       this.shinyIcon.setVisible(pokemon.isShiny(true));
 
+      //icito
+      console.log("updateInfo() - ", pokemon.isShiny(true));
       const isFusion = pokemon.isFusion();
       const doubleShiny = isFusion && pokemon.shiny && pokemon.fusionShiny;
       const baseVariant = !doubleShiny ? pokemon.getVariant(true) : pokemon.variant;

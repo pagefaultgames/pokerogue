@@ -1031,7 +1031,7 @@ export class EncounterPhase extends BattlePhase {
     const enemyField = this.scene.getEnemyField();
 
     enemyField.forEach((enemyPokemon, e) => {
-      if (enemyPokemon.isShiny() || (enemyPokemon.illusion.active && enemyPokemon.illusion.shiny)) {
+      if (enemyPokemon.isShiny(true)) {
         this.scene.unshiftPhase(new ShinySparklePhase(this.scene, BattlerIndex.ENEMY + e));
       }
     });
@@ -1500,7 +1500,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
   onEnd(): void {
     const pokemon = this.getPokemon();
 
-    if (pokemon.isShiny() || (pokemon.illusion.active && pokemon.illusion.shiny)) {
+    if (pokemon.isShiny(true)) {
       this.scene.unshiftPhase(new ShinySparklePhase(this.scene, pokemon.getBattlerIndex()));
     }
 
