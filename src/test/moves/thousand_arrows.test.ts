@@ -57,7 +57,7 @@ describe("Moves - Thousand Arrows", () => {
       // Enemy should not be grounded before move effect is applied
       expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeUndefined();
 
-      await game.phaseInterceptor.to(TurnEndPhase, false);
+      await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeDefined();
       expect(enemyPokemon.hp).toBeLessThan(enemyStartingHp);

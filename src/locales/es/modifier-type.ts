@@ -182,6 +182,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SOOTHE_BELL": { name: "Camp. Alivio" },
 
+    "EVIOLITE": { name: "Mineral Evolutivo", description: "Roca misteriosa. El Pokémon portador aumentará su Defensa y su Defensa Especial si aún puede evolucionar." },
+
     "SOUL_DEW": { name: "Rocío bondad", description: "Aumenta la influencia de la naturaleza de un Pokémon en sus estadísticas en un 10% (aditivo)." },
 
     "NUGGET": { name: "Pepita" },
@@ -238,6 +240,12 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "Ficha Cura Total", description: "Agrega un 2.5% de probabilidad cada turno de curar un problema de estado." },
     "ENEMY_ENDURE_CHANCE": { name: "Ficha Aguante" },
     "ENEMY_FUSED_CHANCE": { name: "Ficha Fusión", description: "Agrega un 1% de probabilidad de que un Pokémon salvaje sea una fusión." },
+  },
+  SpeciesBoosterItem: {
+    "LIGHT_BALL": { name: "Bola Luminosa", description: "Asombrosa esfera que aumenta el Ataque y el Ataque Especial. Debe llevarla Pikachu." },
+    "THICK_CLUB": { name: "Hueso Grueso", description: "Extraño tipo de hueso que potencia los ataques físicos. Debe llevarlo Cubone o Marowak." },
+    "METAL_POWDER": { name: "Polvo Metálico", description: "Polvo muy fino, pero a la vez poderoso, que aumenta la Defensa. Debe llevarlo Ditto." },
+    "QUICK_POWDER": { name: "Polvo Veloz", description: "Polvo muy fino, pero a la vez poderoso, que aumenta la Velocidad. Debe llevarlo Ditto." }
   },
   TempBattleStatBoosterItem: {
     "x_attack": "Ataque X",

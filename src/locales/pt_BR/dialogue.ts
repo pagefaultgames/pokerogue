@@ -383,6 +383,186 @@ export const PGMdialogue: DialogueTranslationEntries = {
       3: "Estou achando que quem tá enjoado sou eu..."
     },
   },
+  "rocket_grunt": {
+    "encounter": {
+      1: "Se prepara pra encrenca!"
+    },
+    "victory": {
+      1: "Equipe Rocket decolando de novo!"
+    },
+  },
+  "magma_grunt": {
+    "encounter": {
+      1: "Se você se meter com a Equipe Magma, não teremos piedade!"
+    },
+    "victory": {
+      1: "Ahn? Eu perdi?!"
+    },
+  },
+  "aqua_grunt": {
+    "encounter": {
+      1: "Não pegamos leve com quem se mete com a Equipe Aqua, nem mesmo crianças!"
+    },
+    "victory": {
+      1: "Tá de brincadeira!"
+    },
+  },
+  "galactic_grunt": {
+    "encounter": {
+      1: "Não mexe com a Equipe Galáctica!"
+    },
+    "victory": {
+      1: "Fui amassado..."
+    },
+  },
+  "plasma_grunt": {
+    "encounter": {
+      1: "Não toleramos pessoas que pensam diferente de nós!"
+    },
+    "victory": {
+      1: "Plasmaaaaaaaaa!"
+    },
+  },
+  "flare_grunt": {
+    "encounter": {
+      1: "A moda é a coisa mais importante pra gente!"
+    },
+    "victory": {
+      1: "O futuro não parece brilhante pra mim."
+    },
+  },
+  "rocket_boss_giovanni_1": {
+    "encounter": {
+      1: "Tenho que admitir, estou impressionado que tenha chegado até aqui!"
+    },
+    "victory": {
+      1: "QUÊ! Isso não é possível!"
+    },
+    "defeat": {
+      1: "Guarde minhas palavras.\nNão ser capaz de medir sua própria força mostra que você ainda é uma criança."
+    }
+  },
+  "rocket_boss_giovanni_2": {
+    "encounter": {
+      1: "Meus antigos associados precisam de mim... Você vai ficar no meu caminho?"
+    },
+    "victory": {
+      1: "Como isso é possível...?\nO precioso sonho da Equipe Rocket se tornou pouco mais que uma ilusão..."
+    },
+    "defeat": {
+      1: "A Equipe Rocket renascerá, e eu dominarei o mundo!"
+    }
+  },
+  "magma_boss_maxie_1": {
+    "encounter": {
+      1: "Eu vou te enterrar com minhas próprias mãos.\nEspero que você aprecie essa honra!"
+    },
+    "victory": {
+      1: "Ugh! Você é... bastante capaz...\nEu fiquei para trás, mas apenas por um triz..."
+    },
+    "defeat": {
+      1: "A Equipe Magma vai prevalecer!"
+    }
+  },
+  "magma_boss_maxie_2": {
+    "encounter": {
+      1: "Você é o último obstáculo entre mim e meus objetivos.\nPrepare-se para meu ataque final! Fuhahaha!"
+    },
+    "victory": {
+      1: "Isso... Isso não é... Ngh..."
+    },
+    "defeat": {
+      1: "E agora... Eu transformarei este planeta em uma terra ideal para a humanidade."
+    }
+  },
+  "aqua_boss_archie_1": {
+    "encounter": {
+      1: "Eu sou o líder da Equipe Aqua, então temo que esse seja o fim da linha para você."
+    },
+    "victory": {
+      1: "Vamos nos encontrar de novo em algum lugar. Eu vou ter certeza de lembrar desse rosto."
+    },
+    "defeat": {
+      1: "Brilhante! Nada vai parar minha equipe agora!"
+    }
+  },
+  "aqua_boss_archie_2": {
+    "encounter": {
+      1: "Estive esperando tanto tempo por este dia.\nEste é o verdadeiro poder da minha equipe!"
+    },
+    "victory": {
+      1: "Como eu suspeitava..."
+    },
+    "defeat": {
+      1: "Eu vou voltar tudo neste mundo ao seu estado puro e original!!"
+    }
+  },
+  "galactic_boss_cyrus_1": {
+    "encounter": {
+      1: "Você foi compelido a vir aqui por tal sentimentalismo vazio\nEu farei você se arrepender de ter ouvido seu coração!"
+    },
+    "victory": {
+      1: "Interessante. E bastante curioso."
+    },
+    "defeat": {
+      1: "Eu criarei meu novo mundo..."
+    }
+  },
+  "galactic_boss_cyrus_2": {
+    "encounter": {
+      1: "Nos encontramos novamente. Parece que nossos destinos estão entrelaçados.\nMas aqui e agora, eu finalmente quebrarei esse vínculo!"
+    },
+    "victory": {
+      1: "Como? Como? COMO?!"
+    },
+    "defeat": {
+      1: "Até logo."
+    }
+  },
+  "plasma_boss_ghetsis_1": {
+    "encounter": {
+      1: "Ninguém pode me deter! Não importa quem seja ou o que faça!"
+    },
+    "victory": {
+      1: "Como isso é possível? Eu sou o criador da Equipe Plasma! Eu sou perfeito!"
+    },
+    "defeat": {
+      1: "Eu sou o governante perfeito de um novo mundo perfeito! Mwa ha ha!"
+    }
+  },
+  "plasma_boss_ghetsis_2": {
+    "encounter": {
+      1: "Vamos! Eu quero ver sua cara depois que você perder toda a esperança!"
+    },
+    "victory": {
+      1: "Meus cálculos... Não! Meus planos cuidadosos! O mundo deveria ser meu!"
+    },
+    "defeat": {
+      1: "Kyurem! Use Absofusion!"
+    }
+  },
+  "flare_boss_lysandre_1": {
+    "encounter": {
+      1: "Você está aqui para me deter? Mostre-me em batalha."
+    },
+    "victory": {
+      1: "Você está aqui para me deter. Mas eu peço que você espere."
+    },
+    "defeat": {
+      1: "Pokémon... não devem mais existir."
+    }
+  },
+  "flare_boss_lysandre_2": {
+    "encounter": {
+      1: "O futuro que você quer, ou o futuro que eu quero... Vamos ver qual é o mais merecedor, não é mesmo?"
+    },
+    "victory": {
+      1: "Uau!"
+    },
+    "defeat": {
+      1: "Tolos sem visão continuarão a poluir este belo mundo."
+    }
+  },
   "brock": {
     "encounter": {
       1: "Minha especialidade em Pokémon do tipo Pedra vai te derrubar! Vamos lá!",

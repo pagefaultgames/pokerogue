@@ -39,13 +39,13 @@ describe("Abilities - Wonder Skin", () => {
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.CHARM));
 
-    const appliedAccuracy = getAppliedMoveAccuracy(game.scene.getEnemyPokemon(), game.scene.getPlayerPokemon(), allMoves[Moves.CHARM]);
+    const mockedAccuracy = getMockedMoveAccuracy(game.scene.getEnemyPokemon(), game.scene.getPlayerPokemon(), allMoves[Moves.CHARM]);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(appliedAccuracy).not.toBe(undefined);
-    expect(appliedAccuracy).not.toBe(100);
-    expect(appliedAccuracy).toBe(50);
+    expect(mockedAccuracy).not.toBe(undefined);
+    expect(mockedAccuracy).not.toBe(100);
+    expect(mockedAccuracy).toBe(50);
   });
 
   it("does not lower accuracy of non-status moves", async () => {
@@ -53,13 +53,13 @@ describe("Abilities - Wonder Skin", () => {
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
 
-    const appliedAccuracy = getAppliedMoveAccuracy(game.scene.getEnemyPokemon(), game.scene.getPlayerPokemon(), allMoves[Moves.TACKLE]);
+    const mockedAccuracy = getMockedMoveAccuracy(game.scene.getEnemyPokemon(), game.scene.getPlayerPokemon(), allMoves[Moves.TACKLE]);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(appliedAccuracy).not.toBe(undefined);
-    expect(appliedAccuracy).toBe(100);
-    expect(appliedAccuracy).not.toBe(50);
+    expect(mockedAccuracy).not.toBe(undefined);
+    expect(mockedAccuracy).toBe(100);
+    expect(mockedAccuracy).not.toBe(50);
   });
 
   it("does not affect pokemon with Mold Breaker", async () => {
@@ -69,13 +69,13 @@ describe("Abilities - Wonder Skin", () => {
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.CHARM));
 
-    const appliedAccuracy = getAppliedMoveAccuracy(game.scene.getEnemyPokemon(), game.scene.getPlayerPokemon(), allMoves[Moves.CHARM]);
+    const mockedAccuracy = getMockedMoveAccuracy(game.scene.getEnemyPokemon(), game.scene.getPlayerPokemon(), allMoves[Moves.CHARM]);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(appliedAccuracy).not.toBe(undefined);
-    expect(appliedAccuracy).toBe(100);
-    expect(appliedAccuracy).not.toBe(50);
+    expect(mockedAccuracy).not.toBe(undefined);
+    expect(mockedAccuracy).toBe(100);
+    expect(mockedAccuracy).not.toBe(50);
   });
 
   it("does not affect pokemon with Teravolt", async () => {
@@ -85,13 +85,13 @@ describe("Abilities - Wonder Skin", () => {
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.CHARM));
 
-    const appliedAccuracy = getAppliedMoveAccuracy(game.scene.getEnemyPokemon(), game.scene.getPlayerPokemon(), allMoves[Moves.CHARM]);
+    const mockedAccuracy = getMockedMoveAccuracy(game.scene.getEnemyPokemon(), game.scene.getPlayerPokemon(), allMoves[Moves.CHARM]);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(appliedAccuracy).not.toBe(undefined);
-    expect(appliedAccuracy).toBe(100);
-    expect(appliedAccuracy).not.toBe(50);
+    expect(mockedAccuracy).not.toBe(undefined);
+    expect(mockedAccuracy).toBe(100);
+    expect(mockedAccuracy).not.toBe(50);
   });
 
   it("does not affect pokemon with Turboblaze", async () => {
@@ -101,25 +101,28 @@ describe("Abilities - Wonder Skin", () => {
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.CHARM));
 
-    const appliedAccuracy = getAppliedMoveAccuracy(game.scene.getEnemyPokemon(), game.scene.getPlayerPokemon(), allMoves[Moves.CHARM]);
+    const mockedAccuracy = getMockedMoveAccuracy(game.scene.getEnemyPokemon(), game.scene.getPlayerPokemon(), allMoves[Moves.CHARM]);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(appliedAccuracy).not.toBe(undefined);
-    expect(appliedAccuracy).toBe(100);
-    expect(appliedAccuracy).not.toBe(50);
+    expect(mockedAccuracy).not.toBe(undefined);
+    expect(mockedAccuracy).toBe(100);
+    expect(mockedAccuracy).not.toBe(50);
   });
 });
 
 /**
- * Calculates the adjusted applied accuracy of a move.
+ * Calculates the mocked accuracy of a move.
+ * Note this does not consider other accuracy calculations
+ * except the power multiplier from Wonder Skin.
+ * Bypassed by MoveAbilityBypassAbAttr {@linkcode MoveAbilityBypassAbAttr}
  *
  * @param defender - The defending Pokémon.
  * @param attacker - The attacking Pokémon.
  * @param move - The move being used by the attacker.
  * @returns The adjusted accuracy of the move.
  */
-const getAppliedMoveAccuracy = (defender: Pokemon, attacker: Pokemon, move: Move) => {
+const getMockedMoveAccuracy = (defender: Pokemon, attacker: Pokemon, move: Move) => {
   const accuracyHolder = new NumberHolder(move.accuracy);
 
   /**
