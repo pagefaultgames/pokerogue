@@ -241,6 +241,12 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_ENDURE_CHANCE": { name: "忍受硬币" },
     "ENEMY_FUSED_CHANCE": { name: "融合硬币", description: "增加1%野生融合宝可梦出现概率。" },
   },
+  SpeciesBoosterItem: {
+    "LIGHT_BALL": { name: "电气球", description: "让皮卡丘携带后，攻击和特攻就会 提高的神奇之球。" },
+    "THICK_CLUB": { name: "粗骨头", description: "某种坚硬的骨头。让卡拉卡拉或嘎啦嘎啦携带后，攻击就会提高。" },
+    "METAL_POWDER": { name: "金属粉", description: "让百变怪携带后，防御就会提高的神奇粉末。非常细腻坚硬。" },
+    "QUICK_POWDER": { name: "速度粉", description: "让百变怪携带后，速度就会提高的神奇粉末。非常细腻坚硬。" }
+  },
   TempBattleStatBoosterItem: {
     "x_attack": "力量强化",
     "x_defense": "防御强化",
