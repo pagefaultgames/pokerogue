@@ -2599,6 +2599,42 @@ export class SwapStatsAttr extends MoveEffectAttr {
   }
 }
 
+/**Attribute used for moves which steal the target's positive stat changes.
+ * Triggers on {@linkcode MoveEffectTrigger.PRE_APPLY}, as stats need to be stolen before foe faints.
+ * PRE_APPLY is also intended to make stat changes occur before damage is calculated, but that currently does not work properly.
+ * This needs to be investigated going forward.
+ * @extends MoveEffectAttr
+ * @see {@linkcode apply}
+*/
+export class StealPositiveStatsAttr extends MoveEffectAttr {
+  constructor() {
+    super(false, MoveEffectTrigger.PRE_APPLY)
+    }
+  /**
+   * If the opponent has any boosted stats, steals them for the user and displays a message.
+   * @param user {@linkcode Pokemon} that used the move.
+   * @param target N/A
+   * @param move {@linkcode Moves.SPECTRAL_THIEF} is the only move with this effect.
+   * @param args N/A
+   * @returns true if the opponent has stat boosts stolen.
+   * */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    let StatRaised = false;
+    if (!super.apply(user, target, move, args))
+      return false;
+    for (let i = 0; i < 7; i++) {
+      if (target.summonData.battleStats[i] > 0) {
+        user.scene.unshiftPhase(new StatChangePhase(user.scene, user.getBattlerIndex(), true, [i], target.summonData.battleStats[i]));
+        target.summonData.battleStats[i] = 0;
+        StatRaised = true;
+      }
+    }
+    if (StatRaised)
+      user.scene.queueMessage(getPokemonMessage(user, ` stole\n${target.name}'s boosted stats!`));
+    target.updateInfo();
+  }
+}
+
 export class HpSplitAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
@@ -7646,6 +7682,7 @@ export function initMoves() {
     new AttackMove(Moves.PRISMATIC_LASER, Type.PSYCHIC, MoveCategory.SPECIAL, 160, 100, 10, -1, 0, 7)
       .attr(RechargeAttr),
     new AttackMove(Moves.SPECTRAL_THIEF, Type.GHOST, MoveCategory.PHYSICAL, 90, 100, 10, -1, 0, 7)
+      .attr(StealPositiveStatsAttr)
       .partial(),
     new AttackMove(Moves.SUNSTEEL_STRIKE, Type.STEEL, MoveCategory.PHYSICAL, 100, 100, 5, -1, 0, 7)
       .ignoresAbilities()
@@ -8373,7 +8410,8 @@ export function initMoves() {
       .makesContact(false),
     new AttackMove(Moves.ELECTRO_SHOT, Type.ELECTRIC, MoveCategory.SPECIAL, 130, 100, 10, 100, 0, 9)
       .attr(ElectroShotChargeAttr)
-      .ignoresVirtual(),
+      .ignoresVirtual()
+      .partial(),
     new AttackMove(Moves.TERA_STARSTORM, Type.NORMAL, MoveCategory.SPECIAL, 120, 100, 5, -1, 0, 9)
       .attr(TeraBlastCategoryAttr)
       .partial(),
