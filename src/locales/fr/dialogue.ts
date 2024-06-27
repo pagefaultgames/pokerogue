@@ -94,37 +94,37 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "fisherman": {
     "encounter": {
-      1: "Aack! You made me lose a bite!\nWhat are you going to do about it?",
-      2: "Go away! You're scaring the Pokémon!",
-      3: "Let's see if you can reel in a victory!",
+      1: "Aaah non ! J’avais une touche !\nTu comptes faire quoi pour arranger ça ?",
+      2: "Bouge de là ! Tu fais peur aux Pokémon !",
+      3: "Voyons si t'arrives à ferrer une victoire !",
     },
     "victory": {
-      1: "Just forget about it.",
-      2: "Next time, I'll be reelin' in the triumph!",
-      3: "Guess I underestimated the currents this time.",
+      1: "Vas-y là, oublie.",
+      2: "La prochaine fois, je vais me repêcher !",
+      3: "Je présume que j’ai sous-estimé les courants…",
     },
   },
   "fisherman_female": {
     "encounter": {
-      1: "Woah! I've hooked a big one!",
-      2: "Line's in, ready to reel in success!",
-      3: "Ready to make waves!"
+      1: "Oh la belle prise !",
+      2: "Ma ligne est en place, prête à ferrer le succès !",
+      3: "Prête à faire des vagues !"
     },
     "victory": {
-      1: "I'll be back with a stronger hook.",
-      2: "I'll reel in victory next time.",
-      3: "I'm just sharpening my hooks for the comeback!"
+      1: "Je suppose que je vais avoir besoin d’un plus gros hameçon.",
+      2: "La ligne s’est brisée, j’ai pas pu la ferrer…",
+      3: "Attends que j’aiguise mes hameçons pour la revanche !"
     },
   },
   "swimmer": {
     "encounter": {
-      1: "C'est l'heure de plonger dans le combat !",
-      2: "Je vais surfer sur les vagues de la victoire !",
-      3: "Je vais t'éclabousser de mon talent !",
+      1: "C’est l’heure de plonger dans le vif !",
+      2: "C’est le moment de surfer sur les vagues de la victoire !",
+      3: "Je vais t’éclabousser de mon talent !",
     },
     "victory": {
-      1: "Tu m'as complètement séché",
-      2: "Il semblerait que j'ai surfé sur les vagues de la défaite...",
+      1: "Tu m’as complètement séché",
+      2: "Il semblerait que ce soit celles de la défaite…",
       3: "Retour sur la terre ferme je suppose",
     },
   },
@@ -2601,38 +2601,38 @@ export const PGFdialogue: DialogueTranslationEntries = {
   },
   "fisherman": {
     "encounter": {
-      1: "Aack! You made me lose a bite!\nWhat are you going to do about it?",
-      2: "Go away! You're scaring the Pokémon!",
-      3: "Let's see if you can reel in a victory!",
+      1: "Aaah non ! J’avais une touche !\nTu comptes faire quoi pour arranger ça ?",
+      2: "Bouge de là ! Tu fais peur aux Pokémon !",
+      3: "Voyons si t’arrives à ferrer une victoire !",
     },
     "victory": {
-      1: "Just forget about it.",
-      2: "Next time, I'll be reelin' in the triumph!",
-      3: "Guess I underestimated the currents this time.",
+      1: "Vas-y là, oublie.",
+      2: "La prochaine fois, je vais me repêcher !",
+      3: "Je présume que j’ai sous-estimé les courants…",
     },
   },
   "fisherman_female": {
     "encounter": {
-      1: "Woah! I've hooked a big one!",
-      2: "Line's in, ready to reel in success!",
-      3: "Ready to make waves!"
+      1: "Oh la belle prise !",
+      2: "Ma ligne est en place, prête à ferrer le succès !",
+      3: "Prête à faire des vagues !"
     },
     "victory": {
-      1: "I'll be back with a stronger hook.",
-      2: "I'll reel in victory next time.",
-      3: "I'm just sharpening my hooks for the comeback!"
+      1: "Je suppose que je vais avoir besoin d’un plus gros hameçon.",
+      2: "La ligne s’est brisée, j’ai pas pu la ferrer…",
+      3: "Attends que j’aiguise mes hameçons pour la revanche !"
     },
   },
   "swimmer": {
     "encounter": {
-      1: "Time to dive in!",
-      2: "Let's ride the waves of victory!",
-      3: "Ready to make a splash!",
+      1: "C’est l’heure de plonger dans le vif !",
+      2: "C’est le moment de surfer sur les vagues de la victoire !",
+      3: "Je vais t’éclabousser de mon talent !",
     },
     "victory": {
-      1: "Drenched in defeat!",
-      2: "A wave of defeat!",
-      3: "Back to shore, I guess.",
+      1: "Tu m’as complètement séché",
+      2: "Il semblerait que ce soit celles de la défaite…",
+      3: "Retour sur la terre ferme je suppose",
     },
   },
   "backpacker": {
