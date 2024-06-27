@@ -2697,10 +2697,91 @@ export class LessPPMorePowerAttr extends VariablePowerAttr {
 export class FlingAttr extends VariablePowerAttr {
   protected randomItem: string;
 
+  private readonly flingPowerMap: { [power: number]: string[] } = {
+    10: [
+      "sitrus berry", "lum berry", "enigma berry", "liechi berry", "ganlon berry", "petaya berry", "apicot berry", "salac berry",
+      "lansat berry", "starf berry", "leppa berry", "choice band", "choice scarf", "choice specs", "air balloon", "absorb bulb", "amulet coin", "big root",
+      "destiny knot", "expert belt", "focus band", "focus sash", "lagging tail", "leftovers", "mental herb", "fairy feather",
+      "muscle band", "power herb", "red card", "shed shell", "silk scarf", "silver powder", "smooth rock", "soft sand",
+      "soothe bell", "white herb", "wide lens", "wise glasses", "zoom lens"
+    ],
+    20: [
+      "boiled egg", "fancy apple", "large leek", "moomoo cheese"
+    ],
+    30: [
+      "flame orb","yellow flute", "amulet coin", "binding band", "black belt", "black glasses", "black sludge", "cell battery",
+      "charcoal", "eject button", "escape rope", "exp. share",
+      "float stone", "heart scale", "king's rock", "life orb", "light ball", "light clay",
+      "lucky egg", "luminous moss", "magnet", "metal coat", "metronome", "miracle seed",
+      "mystic water", "never-melt ice", "pearl", "poké doll", "razor fang", "scope lens", "shell bell",
+      "smoke ball", "snowball", "spell tag", "stardust", "toxic orb",
+      "twisted spoon", "soul dew"
+    ],
+    40: ["eviolite", "icy rock"],
+    50: ["sharp beak"],
+    60: ["damp rock", "heat rock", "macho brace", "rocky helmet"],
+    70: [
+      "dragon fang", "poison barb", "power anklet", "power band", "power belt", "power bracer",
+      "power lens", "power weight"
+    ],
+    80: [
+      "assault vest", "quick claw", "razor claw",
+      "sachet", "safety goggles", "sticky barb",
+      "weakness policy"
+    ],
+    90: ["grip claw"],
+    100: ["hard stone"],
+    130: ["iron ball"]
+  };
+
+  /**
+   * @returns the {@linkcode MoveConditionFunc} for this {@linkcode Move}
+   */
+  getCondition(): MoveConditionFunc {
+    return (user: Pokemon, target: Pokemon, move: Move) => {
+      const heldItems = user.scene.findModifiers(
+        m => m instanceof PokemonHeldItemModifier && m.pokemonId === user.id,
+        user.isPlayer()
+      ) as PokemonHeldItemModifier[];
+
+      if (heldItems.length === 0) {
+        return false;
+      }
+
+      const allItems = Object.values(this.flingPowerMap).flat();
+      const validHeldItems = heldItems.filter(item => allItems.includes(item.type.name.toLowerCase().replace(/_/g, " ")));
+
+      return validHeldItems.length > 0;
+    };
+  }
+
+  /**
+   * Retrieves the failure text for the Fling move, indicating why it failed.
+   * @returns the failure message or null if the move does not fail
+   */
+  getFailedText(user: Pokemon, target: Pokemon, move: Move, cancelled: Utils.BooleanHolder): string | null {
+    const heldItems = user.scene.findModifiers(
+      m => m instanceof PokemonHeldItemModifier && m.pokemonId === user.id,
+      user.isPlayer()
+    ) as PokemonHeldItemModifier[];
+
+    if (heldItems.length === 0) {
+      return "But it failed!";
+    }
+
+    const allItems = Object.values(this.flingPowerMap).flat();
+    const validHeldItems = heldItems.filter(item => allItems.includes(item.type.name.toLowerCase().replace(/_/g, " ")));
+
+    if (validHeldItems.length === 0) {
+      return "No valid held items!";
+    }
+
+    return null;
+  }
+
   /**
    * Applies the Fling move logic to the given user and target Pokémon.
    * Determines the random item to be used, calculates power, and removes the item.
-   *
    * @param user - The Pokémon using the move.
    * @param target - The target Pokémon.
    * @param move - The move being used.
@@ -2713,63 +2794,22 @@ export class FlingAttr extends VariablePowerAttr {
 
     // Inline logic to retrieve the held items for the given Pokémon
     const heldItems = user.scene.findModifiers(
-      (m) => m instanceof PokemonHeldItemModifier && (m as PokemonHeldItemModifier).pokemonId === user.id,
+      m => m instanceof PokemonHeldItemModifier && m.pokemonId === user.id,
       user.isPlayer()
     ) as PokemonHeldItemModifier[];
 
     if (heldItems.length === 0) {
-      power.value = 0;
-      user.scene.queueMessage("But it failed!");
+      const failedText = this.getFailedText(user, target, move, new Utils.BooleanHolder(true));
+      user.scene.queueMessage(failedText);
       return false;
     }
 
-    const arr10i = [
-      "Sitrus Berry", "Lum Berry", "Enigma Berry", "Liechi Berry", "Ganlon Berry", "Petaya Berry", "Apicot Berry", "Salac Berry",
-      "Lansat Berry", "Starf Berry", "Leppa Berry", "Choice Band", "Choice Scarf", "Choice Specs", "Air Balloon", "Absorb Bulb", "Amulet Coin", "Big Root",
-      "Destiny Knot", "Expert Belt", "Focus Band", "Focus Sash", "Lagging Tail", "Leftovers", "Mental Herb",
-      "Muscle Band", "Power Herb", "Red Card", "Shed Shell", "Silk Scarf", "Silver Powder", "Smooth Rock", "Soft Sand",
-      "Soothe Bell", "White Herb", "Wide Lens", "Wise Glasses", "Zoom Lens"
-    ];
-    const arr30i = [
-      "Flame Orb", "Yellow Flute", "Amulet Coin", "Binding Band", "Black Belt", "Black Glasses", "Black Sludge", "Cell Battery",
-      "Charcoal", "Eject Button", "Escape Rope", "Exp. Share",
-      "Float Stone", "Heart Scale", "King's Rock", "Life Orb", "Light Ball", "Light Clay",
-      "Lucky Egg", "Luminous Moss", "Magnet", "Metal Coat", "Metronome", "Miracle Seed",
-      "Mystic Water", "NeverMeltIce", "Pearl", "Poké Doll", "Razor Fang", "Scope Lens", "Shell Bell",
-      "Smoke Ball", "Snowball", "Spell Tag", "Stardust", "Toxic Orb",
-      "Twisted Spoon"];
-    const arr40i = ["Eviolite", "Icy Rock"];
-    const arr50i = ["Sharp Beak"];
-    const arr60i = ["Damp Rock", "Heat Rock", "Macho Brace", "Rocky Helmet"];
-    const arr70i = ["Dragon Fang", "Poison Barb", "Power Anklet", "Power Band", "Power Belt", "Power Bracer",
-      "Power Lens", "Power Weight"];
-    const arr80i = [
-      "Assault Vest", "Quick Claw", "Razor Claw",
-      "Sachet", "Safety Goggles", "Sticky Barb",
-      "Weakness Policy"
-    ];
-    const arr90i = ["Grip Claw"];
-    const arr100i = ["Hard Stone"];
-    const arr130i = ["Iron Ball"];
-
-    // All items turned to lower case to match item name as in game code
-    const arr10 = arr10i.map(item => item.toLowerCase());
-    const arr30 = arr30i.map(item => item.toLowerCase());
-    const arr40 = arr40i.map(item => item.toLowerCase());
-    const arr50 = arr50i.map(item => item.toLowerCase());
-    const arr60 = arr60i.map(item => item.toLowerCase());
-    const arr70 = arr70i.map(item => item.toLowerCase());
-    const arr80 = arr80i.map(item => item.toLowerCase());
-    const arr90 = arr90i.map(item => item.toLowerCase());
-    const arr100 = arr100i.map(item => item.toLowerCase());
-    const arr130 = arr130i.map(item => item.toLowerCase());
-
-    const allItems = [...arr10, ...arr30, ...arr40, ...arr50, ...arr60, ...arr70, ...arr80, ...arr90, ...arr100, ...arr130];
-
+    const allItems = Object.values(this.flingPowerMap).flat();
     const validHeldItems = heldItems.filter(item => allItems.includes(item.type.name.toLowerCase().replace(/_/g, " ")));
-    if (validHeldItems.length === 0) { // user has no flingable held item
-      power.value = 0;
-      user.scene.queueMessage("No valid item found!");
+
+    if (validHeldItems.length === 0) {
+      const failedText = this.getFailedText(user, target, move, new Utils.BooleanHolder(true));
+      user.scene.queueMessage(failedText);
       return false;
     }
 
@@ -2777,66 +2817,20 @@ export class FlingAttr extends VariablePowerAttr {
     this.randomItem = randomHeldItemModifier.type.name;
     this.randomItem = this.randomItem.toLowerCase().replace(/_/g, " ");
 
-    if (this.randomItem) { // assigns value to power and removes item in possession
-      if (arr10.includes(this.randomItem)) {
-        power.value = 10;
-        user.scene.removeModifier(randomHeldItemModifier, !user.isPlayer());
-        user.scene.updateModifiers(user.isPlayer());
-        return true;
-      } else if (arr30.includes(this.randomItem)) {
-        power.value = 30;
-        user.scene.removeModifier(randomHeldItemModifier, !user.isPlayer());
-        user.scene.updateModifiers(user.isPlayer());
-        return true;
-      } else if (arr40.includes(this.randomItem)) {
-        power.value = 40;
-        user.scene.removeModifier(randomHeldItemModifier, !user.isPlayer());
-        user.scene.updateModifiers(user.isPlayer());
-        return true;
-      } else if (arr50.includes(this.randomItem)) {
-        power.value = 50;
-        user.scene.removeModifier(randomHeldItemModifier, !user.isPlayer());
-        user.scene.updateModifiers(user.isPlayer());
-        return true;
-      } else if (arr60.includes(this.randomItem)) {
-        power.value = 60;
-        user.scene.removeModifier(randomHeldItemModifier, !user.isPlayer());
-        user.scene.updateModifiers(user.isPlayer());
-        return true;
-      } else if (arr70.includes(this.randomItem)) {
-        power.value = 70;
-        user.scene.removeModifier(randomHeldItemModifier, !user.isPlayer());
-        user.scene.updateModifiers(user.isPlayer());
-        return true;
-      } else if (arr80.includes(this.randomItem)) {
-        power.value = 80;
-        user.scene.removeModifier(randomHeldItemModifier, !user.isPlayer());
-        user.scene.updateModifiers(user.isPlayer());
-        return true;
-      } else if (arr90.includes(this.randomItem)) {
-        power.value = 90;
-        user.scene.removeModifier(randomHeldItemModifier, !user.isPlayer());
-        user.scene.updateModifiers(user.isPlayer());
-        return true;
-      } else if (arr100.includes(this.randomItem)) {
-        power.value = 100;
-        user.scene.removeModifier(randomHeldItemModifier, !user.isPlayer());
-        user.scene.updateModifiers(user.isPlayer());
-        return true;
-      } else if (arr130.includes(this.randomItem)) {
-        power.value = 130;
+    for (const [flingPower, items] of Object.entries(this.flingPowerMap)) {
+      if (items.includes(this.randomItem)) {
+        power.value = parseInt(flingPower);
         user.scene.removeModifier(randomHeldItemModifier, !user.isPlayer());
         user.scene.updateModifiers(user.isPlayer());
         return true;
       }
     }
 
-    power.value = 0;
-    user.scene.queueMessage("But it failed!");
+    const failedText = this.getFailedText(user, target, move, new Utils.BooleanHolder(true));
+    user.scene.queueMessage(failedText);
     return false;
   }
 }
-
 
 export class MovePowerMultiplierAttr extends VariablePowerAttr {
   private powerMultiplierFunc: (user: Pokemon, target: Pokemon, move: Move) => number;
