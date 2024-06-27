@@ -54,9 +54,9 @@ export const pokemonForm: SimpleTranslationEntries = {
   "castformRainy": "Lluvia",
   "castformSnowy": "Nieve",
   // 4G
-  "burmyPlant": "Plant",
-  "burmySandy": "Sandy",
-  "burmyTrash": "Trash",
+  "burmyPlant": "Planta",
+  "burmySandy": "Arena",
+  "burmyTrash": "Basura",
   "shellosEast": "East",
   "shellosWest": "West",
   "rotomHeat": "Heat",
