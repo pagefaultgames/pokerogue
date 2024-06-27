@@ -2109,7 +2109,7 @@ export class PostSummonCopyAbilityAbAttr extends PostSummonAbAttr {
 }
 
 /**
- * Removes a status effect from the user's field.
+ * Removes supplied status effects from the user's field.
  */
 export class PostSummonUserFieldRemoveStatusEffectAbAttr extends PostSummonAbAttr {
   private statusEffect: StatusEffect[];
