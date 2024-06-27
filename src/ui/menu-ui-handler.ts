@@ -44,12 +44,16 @@ export default class MenuUiHandler extends MessageUiHandler {
   protected manageDataConfig: OptionSelectConfig;
   protected communityConfig: OptionSelectConfig;
 
+  private runHistoryCheck: boolean;
+
   constructor(scene: BattleScene, mode?: Mode) {
     super(scene, mode);
 
     this.ignoredMenuOptions = !bypassLogin
       ? [ ]
       : [ MenuOptions.LOG_OUT ];
+    this.ignoredMenuOptions.push(MenuOptions.RUN_HISTORY);
+    this.runHistoryCheck = false;
     this.menuOptions = Utils.getEnumKeys(MenuOptions).map(m => parseInt(MenuOptions[m]) as MenuOptions).filter(m => !this.ignoredMenuOptions.includes(m));
   }
 
@@ -66,6 +70,7 @@ export default class MenuUiHandler extends MessageUiHandler {
 
     this.optionSelectText = addTextObject(this.scene, 0, 0, this.menuOptions.map(o => `${i18next.t(`menuUiHandler:${MenuOptions[o]}`)}`).join("\n"), TextStyle.WINDOW, { maxLines: this.menuOptions.length });
     this.optionSelectText.setLineSpacing(12);
+    this.optionSelectText.setName("MenuOptions");
 
     this.menuBg = addWindow(this.scene, (this.scene.game.canvas.width / 6) - (this.optionSelectText.displayWidth + 25), 0, this.optionSelectText.displayWidth + 23, (this.scene.game.canvas.height / 6) - 2);
     this.menuBg.setOrigin(0, 0);
@@ -231,8 +236,23 @@ export default class MenuUiHandler extends MessageUiHandler {
     this.menuContainer.setVisible(false);
   }
 
-  show(args: any[]): boolean {
+  async show(args: any[]): boolean {
     super.show(args);
+
+    //This is here because the MenuUiConstructor is created before the user is assigned an username. Without an username, the player cannot access run history and check if it is present or not. Therefore, it is added here.
+    //I added a class variable runHistoryCheck so that the game does not need to poll getRunHistoryData every time the menu is open.
+    if (await this.scene.gameData.getRunHistoryData(this.scene) && !this.runHistoryCheck) {
+      this.ignoredMenuOptions.pop();
+      this.menuOptions = Utils.getEnumKeys(MenuOptions).map(m => parseInt(MenuOptions[m]) as MenuOptions).filter(m => !this.ignoredMenuOptions.includes(m));
+      this.optionSelectText.destroy();
+      this.optionSelectText = addTextObject(this.scene, 0, 0, this.menuOptions.map(o => `${i18next.t(`menuUiHandler:${MenuOptions[o]}`)}`).join("\n"), TextStyle.WINDOW, { maxLines: this.menuOptions.length });
+      this.optionSelectText.setLineSpacing(12);
+      this.optionSelectText.setPositionRelative(this.menuBg, 14, 6);
+      this.menuContainer.remove(this.menuContainer.getByName("MenuOptions"));
+      this.optionSelectText.setName("MenuOptions");
+      this.menuContainer.add(this.optionSelectText);
+      this.runHistoryCheck = true;
+    }
 
     this.menuContainer.setVisible(true);
     this.setCursor(0);
