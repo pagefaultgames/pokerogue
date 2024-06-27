@@ -17,6 +17,7 @@ export const menu: SimpleTranslationEntries = {
   "username": "Username",
   "password": "Password",
   "login": "Login",
+  "orUse": "Or use",
   "register": "Register",
   "emptyUsername": "Username must not be empty",
   "invalidLoginUsername": "The provided username is invalid",

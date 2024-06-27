@@ -17,6 +17,7 @@ export const menu: SimpleTranslationEntries = {
   "username": "用戶名",
   "password": "密碼",
   "login": "登入",
+  "orUse": "Or use",
   "register": "注冊",
   "emptyUsername": "用戶名不能為空",
   "invalidLoginUsername": "提供的用戶名無效",
