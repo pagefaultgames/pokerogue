@@ -148,7 +148,7 @@ export const pokemonForm: SimpleTranslationEntries = {
   "eiscueNoIce": "Cara Deshielo",
   "indeedeeMale": "Macho",
   "indeedeeFemale": "Hembra",
-  "zarudeDada": "Dada",
+  "zarudeDada": "Papá",
   // 9G
   "squawkabillyGreenPlumage": "Green Plumage",
   "squawkabillyBluePlumage": "Blue Plumage",
