@@ -60,19 +60,19 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "breeder": {
     "encounter": {
-      1: "Obedient Pokémon, selfish Pokémon… Pokémon have unique characteristics.",
-      2: "Even though my upbringing and behavior are poor, I've raised my Pokémon well.",
-      3: "Hmm, do you discipline your Pokémon? Pampering them too much is no good.",
+      1: "Qu’ils soit obéissants ou égoïstes… Les Pokémon ont des caractéristiques uniques.",
+      2: "Même si mes choix et ma personnalité ne sont pas fous, je pense quand même bien avoir élevé mes Pokémon.",
+      3: "Hum, t’es pas trop laxiste avec tes Pokémon ?\nTrop les chouchouter n’est pas bon.",
     },
     "victory": {
-      1: "It is important to nurture and train each Pokémon's characteristics.",
-      2: "Unlike my diabolical self, these are some good Pokémon.",
-      3: "Too much praise can spoil both Pokémon and people.",
+      1: "Il est primordial de nourir et développer toutes les caractéristiques de chaque Pokémon.",
+      2: "Contrairement à moi, ces Pokémon ont un bon fond.",
+      3: "Trop d’éloges peut ruiner les Pokémon et les gens.",
     },
     "defeat": {
-      1: "You should not get angry at your Pokémon, even if you lose a battle.",
-      2: "Right? Pretty good Pokémon, huh? I'm suited to raising things.",
-      3: "No matter how much you love your Pokémon, you still have to discipline them when they misbehave."
+      1: "Tu ne devrais pas t’énerver sur tes Pokémon, même après une défaite.",
+      2: "Alors ? Pas mal mes Pokémon, hein ? Je suis fait pour ça.",
+      3: "Peut importe à quel point t’aimes tes Pokémon, il faut toujours de la discipline s’ils se comportent mal."
     }
   },
   "breeder_female": {
@@ -2567,19 +2567,19 @@ export const PGFdialogue: DialogueTranslationEntries = {
   },
   "breeder": {
     "encounter": {
-      1: "Obedient Pokémon, selfish Pokémon… Pokémon have unique characteristics.",
-      2: "Even though my upbringing and behavior are poor, I've raised my Pokémon well.",
-      3: "Hmm, do you discipline your Pokémon? Pampering them too much is no good.",
+      1: "Qu’ils soit obéissants ou égoïstes… Les Pokémon ont des caractéristiques uniques.",
+      2: "Même si mes choix et ma personnalité ne sont pas fous, je pense quand même bien avoir élevé mes Pokémon.",
+      3: "Hum, t’es pas trop laxiste avec tes Pokémon ?\nTrop les chouchouter n’est pas bon.",
     },
     "victory": {
-      1: "It is important to nurture and train each Pokémon's characteristics.",
-      2: "Unlike my diabolical self, these are some good Pokémon.",
-      3: "Too much praise can spoil both Pokémon and people.",
+      1: "Il est primordial de nourir et développer toutes les caractéristiques de chaque Pokémon.",
+      2: "Contrairement à moi, ces Pokémon ont un bon fond.",
+      3: "Trop d’éloges peut ruiner les Pokémon et les gens.",
     },
     "defeat": {
-      1: "You should not get angry at your Pokémon, even if you lose a battle.",
-      2: "Right? Pretty good Pokémon, huh? I'm suited to raising things.",
-      3: "No matter how much you love your Pokémon, you still have to discipline them when they misbehave."
+      1: "Tu ne devrais pas t’énerver sur tes Pokémon, même après une défaite.",
+      2: "Alors ? Pas mal mes Pokémon, hein ? Je suis fait pour ça.",
+      3: "Peut importe à quel point t’aimes tes Pokémon, il faut toujours de la discipline s’ils se comportent mal."
     }
   },
   "breeder_female": {
