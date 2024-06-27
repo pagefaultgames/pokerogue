@@ -10,7 +10,7 @@ import * as Utils from "../utils";
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from "../data/type";
 import { getLevelTotalExp } from "../data/exp";
 import { Stat } from "../data/pokemon-stat";
-import { AttackTypeBoosterModifier, DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, PokemonBaseStatModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonMultiHitModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempBattleStatBoosterModifier, StatBoosterModifier, TerastallizeModifier } from "../modifier/modifier";
+import { AttackTypeBoosterModifier, DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, PokemonBaseStatModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonMultiHitModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempBattleStatBoosterModifier, StatBoosterModifier, CritBoosterModifier, TerastallizeModifier } from "../modifier/modifier";
 import { PokeballType } from "../data/pokeball";
 import { Gender } from "../data/gender";
 import { initMoveAnim, loadMoveAnimAssets } from "../data/battle-anims";
@@ -1858,6 +1858,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         } else {
           const critLevel = new Utils.IntegerHolder(0);
           applyMoveAttrs(HighCritAttr, source, this, move, critLevel);
+          this.scene.applyModifiers(CritBoosterModifier, source.isPlayer(), source, critLevel);
           this.scene.applyModifiers(TempBattleStatBoosterModifier, source.isPlayer(), TempBattleStat.CRIT, critLevel);
           const bonusCrit = new Utils.BooleanHolder(false);
           if (applyAbAttrs(BonusCritAbAttr, source, null, bonusCrit)) {
@@ -1868,6 +1869,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           if (source.getTag(BattlerTagType.CRIT_BOOST)) {
             critLevel.value += 2;
           }
+          console.log(`crit stage: +${critLevel.value}`);
           const critChance = [24, 8, 2, 1][Math.max(0, Math.min(critLevel.value, 3))];
           isCritical = !source.getTag(BattlerTagType.NO_CRIT) && (critChance === 1 || !this.scene.randBattleSeedInt(critChance));
           if (Overrides.NEVER_CRIT_OVERRIDE) {

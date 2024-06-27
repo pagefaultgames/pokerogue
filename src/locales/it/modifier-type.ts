@@ -181,6 +181,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "GOLDEN_EGG": { name: "Uovo dorato" },
 
     "SOOTHE_BELL": { name: "Calmanella" },
+
+    "SCOPE_LENS": { name: "Mirino", description: "Lente che aumenta la probabilità di sferrare brutti colpi." },
+    "LEEK": { name: "Porro", description: "Strumento da dare a Farfetch'd. Lungo gambo di porro che aumenta la probabilità di sferrare brutti colpi." },
+
     "EVIOLITE": { name: "Evolcondensa", description: "Misteriosa materia evolutiva. Aumenta la Difesa e la Difesa Speciale di un Pokémon che può ancora evolversi." },
 
     "SOUL_DEW": { name: "Cuorugiada", description: "Aumenta del 10% l'influenza della natura di un Pokémon sulle sue statistiche (cumulativo)." },
