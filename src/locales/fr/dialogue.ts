@@ -130,36 +130,36 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "backpacker": {
     "encounter": {
-      1: "Pack up, game on!",
-      2: "Let's see if you can keep pace!",
-      3: "Gear up, challenger!",
-      4: "I've spent 20 years trying to find myself… But where am I?"
+      1: "Fais ton sac, on y va !",
+      2: "Voyons si t’arrives à garder le rythme !",
+      3: "Accélère le pas, camarade !",
+      4: "J’ai passé 20 ans à la recherche de moi-même…\nMais où suis-je ?"
     },
     "victory": {
-      1: "Tripped up this time!",
-      2: "Oh, I think I'm lost.",
-      3: "Dead end!",
-      4: "Wait up a second! Hey! Don't you know who I am?"
+      1: "J’ai tébuché !",
+      2: "Ah, je crois que je me suis paumé.",
+      3: "Ah, une impasse !",
+      4: "Hé ! Attends un seconde…\nTu saurais pas qui je suis ?"
     },
   },
   "ace_trainer": {
     "encounter": {
-      1: "You seem quite confident.",
-      2: "Your Pokémon… Show them to me…",
-      3: "Because I'm an Ace Trainer, people think I'm strong.",
-      4: "Are you aware of what it takes to be an Ace Trainer?"
+      1: "T’as l’air plutôt confiant.",
+      2: "Tes Pokémon… Monte-les-moi…",
+      3: "Les gens pensent que je suis fort par que je suis un Topdresseur.",
+      4: "T’es au courant de ce que ça signifie d’être un Topdresseur ?"
     },
     "victory": {
-      1: "Yes… You have good Pokémon…",
-      2: "What?! But I'm a battling genius!",
-      3: "Of course, you are the main character!",
-      4: "OK! OK! You could be an Ace Trainer!"
+      1: "Très bien… T’as de bons Pokémon…",
+      2: "Quoi ?! Mais c'est moi le génie des combats !",
+      3: "Évidemment que t’es le personnage principal !",
+      4: "OK ! OK ! Tu pourrais être un Topdresseur !"
     },
     "defeat": {
-      1: "I am devoting my body and soul to Pokémon battles!",
-      2: "All within my expectations… Nothing to be surprised about…",
-      3: "I thought I'd grow up to be a frail person who looked like they would break if you squeezed them too hard.",
-      4: "Of course I'm strong and don't lose. It's important that I win gracefully."
+      1: "Je me dévoue corps et âme aux combats Pokémon !",
+      2: "Comme prévu… Vraiment aucune surprise…",
+      3: "Et moi qui pensais qu’en grandissant, j’allais rester frêle et fragile, à me se briser à la moindre étreinte.",
+      4: "Évidemment que je suis fort et encore moins un perdant. C’est important de gagner avec grâce."
     }
   },
   "parasol_lady": {
@@ -2637,36 +2637,36 @@ export const PGFdialogue: DialogueTranslationEntries = {
   },
   "backpacker": {
     "encounter": {
-      1: "Pack up, game on!",
-      2: "Let's see if you can keep pace!",
-      3: "Gear up, challenger!",
-      4: "I've spent 20 years trying to find myself… But where am I?"
+      1: "Fais ton sac, on y va !",
+      2: "Voyons si t’arrives à garder le rythme !",
+      3: "Accélère le pas, camarade !",
+      4: "J’ai passé 20 ans à la recherche de moi-même…\nMais où suis-je ?"
     },
     "victory": {
-      1: "Tripped up this time!",
-      2: "Oh, I think I'm lost.",
-      3: "Dead end!",
-      4: "Wait up a second! Hey! Don't you know who I am?"
+      1: "J’ai tébuché !",
+      2: "Ah, je crois que je me suis paumé.",
+      3: "Ah, une impasse !",
+      4: "Hé ! Attends un seconde…\nTu saurais pas qui je suis ?"
     },
   },
   "ace_trainer": {
     "encounter": {
-      1: "You seem quite confident.",
-      2: "Your Pokémon… Show them to me…",
-      3: "Because I'm an Ace Trainer, people think I'm strong.",
-      4: "Are you aware of what it takes to be an Ace Trainer?"
+      1: "T’as l’air plutôt confiante.",
+      2: "Tes Pokémon… Monte-les-moi…",
+      3: "Les gens pensent que je suis fort par que je suis un Topdresseur.",
+      4: "T’es au courant de ce que ça signifie d’être un Topdresseur ?"
     },
     "victory": {
-      1: "Yes… You have good Pokémon…",
-      2: "What?! But I'm a battling genius!",
-      3: "Of course, you are the main character!",
-      4: "OK! OK! You could be an Ace Trainer!"
+      1: "Très bien… T’as de bons Pokémon…",
+      2: "Quoi ?! Mais c'est moi le génie des combats !",
+      3: "Évidemment que t’es le personnage principal !",
+      4: "OK ! OK ! Tu pourrais être une Topdresseuse !"
     },
     "defeat": {
-      1: "I am devoting my body and soul to Pokémon battles!",
-      2: "All within my expectations… Nothing to be surprised about…",
-      3: "I thought I'd grow up to be a frail person who looked like they would break if you squeezed them too hard.",
-      4: "Of course I'm strong and don't lose. It's important that I win gracefully."
+      1: "Je me dévoue corps et âme aux combats Pokémon !",
+      2: "Comme prévu… Vraiment aucune surprise…",
+      3: "Et moi qui pensais qu’en grandissant, j’allais rester frêle et fragile, à me se briser à la moindre étreinte.",
+      4: "Évidemment que je suis fort et encore moins un perdant. C’est important de gagner avec grâce."
     }
   },
   "parasol_lady": {
