@@ -20,6 +20,7 @@ export default class DamageNumberHandler {
     const battlerIndex = target.getBattlerIndex();
     const baseScale = target.getSpriteScale() / 6;
     const damageNumber = addTextObject(scene, target.x, -(scene.game.canvas.height / 6) + target.y - target.getSprite().height / 2, Utils.formatStat(amount, true), TextStyle.SUMMARY);
+    damageNumber.setName("text-damage-number");
     damageNumber.setOrigin(0.5, 1);
     damageNumber.setScale(baseScale);
 
