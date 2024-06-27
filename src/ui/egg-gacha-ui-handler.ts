@@ -96,7 +96,13 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
       const gachaInfoContainer = this.scene.add.container(160, 46);
 
-      const gachaUpLabel = addTextObject(this.scene, 4, 0, i18next.t("egg:legendaryUPGacha"), TextStyle.WINDOW_ALT);
+      const currentLanguage = i18next.resolvedLanguage;
+      let gachaTextStyle = TextStyle.WINDOW_ALT;
+      if (currentLanguage === "de" || "pt-br") {
+        gachaTextStyle = TextStyle.SMALLER_WINDOW_ALT;
+      }
+
+      const gachaUpLabel = addTextObject(this.scene, 4, 0, i18next.t("egg:legendaryUPGacha"), gachaTextStyle);
       gachaUpLabel.setOrigin(0, 0);
       gachaInfoContainer.add(gachaUpLabel);
 
