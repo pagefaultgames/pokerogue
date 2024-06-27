@@ -4162,6 +4162,35 @@ export class FaintCountdownAttr extends AddBattlerTagAttr {
 }
 
 /**
+ * battle tag to exchange pokemon's raw attack stat and raw defense stat
+ * @extends AddBattlerTagAttr
+ */
+export class PowerTrickAttr extends AddBattlerTagAttr {
+  constructor() {
+    super(BattlerTagType.POWER_TRICK,true);
+  }
+
+  /**
+   * add battler tag to swap attack stat and defense stat.
+   * remove battler tag to reset stat change
+   * @param user {@linkcode Pokemon} Pokemon that used the move
+   * @param target {@linkcode Pokemon} N/A
+   * @param move {@linkcode Move} N/A
+   * @param args N/A
+   * @returns true if the function succeeds
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args)) {
+      user.removeTag(BattlerTagType.POWER_TRICK);
+    }
+
+    user.scene.queueMessage(i18next.t("battle:battlerTagsPowerTrickApply", { pokemonNameWithAffix: getPokemonNameWithAffix(user) }));
+
+    return true;
+  }
+}
+
+/**
  * Attribute used when a move hits a {@linkcode BattlerTagType} for double damage
  * @extends MoveAttr
 */
@@ -6680,7 +6709,7 @@ export function initMoves() {
       .attr(OpponentHighHpPowerAttr)
       .makesContact(),
     new SelfStatusMove(Moves.POWER_TRICK, Type.PSYCHIC, -1, 10, -1, 0, 4)
-      .unimplemented(),
+      .attr(PowerTrickAttr),
     new StatusMove(Moves.GASTRO_ACID, Type.POISON, 100, 10, -1, 0, 4)
       .attr(SuppressAbilitiesAttr),
     new StatusMove(Moves.LUCKY_CHANT, Type.NORMAL, -1, 30, -1, 0, 4)
