@@ -385,50 +385,150 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "rocket_grunt": {
     "encounter": {
-      1: "트러블에 대비하도록!"
+      1: "트러블에 대비하도록!",
+      2: "Come from Johto will they, mine allies, yes. Will revenge they are",
+      3: "You say what? Team Rocket bye-bye a go-go? Broken up it is says you?",
+      4: "To denounce the evils of truth and love!",
+      5: "We Team Rocket are Pokémon gangsters!",
+      6: "We're pulling a big job here! Get lost, kid!",
+      7: "You broke into our operation? You must be lost!",
     },
     "victory": {
-      1: "로켓단은 다시 떠오를 거니까!"
+      1: "로켓단은 다시 떠오를 거니까!",
+      2: "Winning is for winners.",
+      3: "You will regret this!",
+      4: "Blastin' off at the speed of light!",
+      5: "Blasting off again....",
+      6: "Stop! I give up! I'll leave quietly!",
+      7: "You made me mad! Team Rocket will blacklist you!",
+      8: "I blew it!",
+      9: "My associates won't stand for this!",
+      10: "So, you are good…",
+      11: "I'm steamed..."
     },
   },
   "magma_grunt": {
     "encounter": {
-      1: " 마그마단을 방해한다면, 자비는 없닷!"
+      1: " 마그마단을 방해한다면, 자비는 없닷!",
+      2: "I should've brought my Game Boy Advance SP to play some Pokémon Sapphire  instead.",
+      3: "Hey! You there! Which do you think is cooler? Team Aqua's uniform or Team Magma's?",
+      4: "Heh, I'd like to you see try!",
+      5: "Huh? What are you doing here?",
+      6: "Don't get any ideas about going easy on us just because you're a kid! We'll show you the power of Team Magma's amazing technology!",
+      7: "We, Team Magma, are working hard for everyone's sake. If there's more land, there'll be more places to live! Everyone would be happy!",
+      8: "You'd better not interfere with our plans! We're making the world a better place!",
+      9: "You're in the way! Team Magma has no time for kids like you!",
+      10: "Do you really think you can take on Team Magma? You're just a kid!",
+      11: "We're going to use the power of a volcano! It's gonna be... explosive! Get it? Heh heh!",
+      12: "Oh, you're here to stop us? Do you have any idea how much paperwork I'd have to do if you succeed?",
+      13: "I hope you brought marshmallows because things are about to heat up!",
+      14:  "You're here to stop our plans? Good luck! I've been practicing my 'evil laugh' all week!",
+      15: "Prepare to face my wrath... and my slightly underleveled Pokémon!"
     },
     "victory": {
-      1: "하? 내가 졌어?!"
+      1: "하? 내가 졌어?!",
+      2: "Urrrgh…I should've ducked into our hideout right away…",
+      3: "Okay, oh-kay! I admit it—you're strong!",
+      4: "Don't worry about me. Go wherever you want!",
+      5: "What, what, what?",
+      6: "I'm getting heat exhaustion…",
+      7: "I failed to win, I should've planned better...",
+      8: "I'm steamed...",
+      9: "Oof... you got me.",
+      10: "What?! I lost?! How could this be...?",
+      11: "No way! You're just a kid!",
+      12: "What? I lost? But... but I was supposed to win!",
+      13:  "I lost?! Now I'll never get promoted to Team Magma Senior Grunt!",
+      14: "You beat me... Do you think the boss will dock my pay for this?",
+      15: "I can't believe I lost! I even skipped lunch for this!",
+      16: "Defeated... I guess evil masterminds don't get sick days, huh?",
+      17: "I should have brought more potions... and a better strategy."
     },
   },
   "aqua_grunt": {
     "encounter": {
-      1: "아쿠아단을 넘본 사람에게는 자비는 없다, 꼬마도 마찬가지야!"
+      1: "아쿠아단을 넘본 사람에게는 자비는 없다, 꼬마도 마찬가지야!",
+      2: "I should've brought my Game Boy Advance SP to play some Pokémon Ruby instead.",
+      3: "I was going to ambush you, but you had to dawdle in Petalburg Woods forever, didn't you?",
+      4: "Grrr…You've got some nerve meddling with Team Aqua!",
+      5: "Hey, you there! Don't butt in!",
+      6: "Hey, there! Quit pushing! This is the line, can't you see?",
+      7: "We, Team Aqua, exist for the good of all!",
+      8: "Hey! You there! Which do you think is cooler? Team Aqua's uniform or Team Magma's?",
     },
     "victory": {
-      1: "말도 안돼!"
+      1: "말도 안돼!",
+      2: "Come on and battle me again!",
+      3: "I'll let you go today!",
+      4: "What?! I lost, too!",
+      5: "Arrgh, I didn't count on being meddled with by some meddling kid!",
+      6: "I lost?! Guess I'll have to swim back to the hideout now...",
+      7: "You beat me... Do you think the boss will make me walk the plank for this?",
+      8: "I lost?!"
     },
   },
   "galactic_grunt": {
     "encounter": {
-      1: "갤럭시단을 방해하지 마!"
+      1: "갤럭시단을 방해하지 마!",
+      2: "Our time has come!",
+      3: "It's team galactic's time now!",
+      4: "Hey, wanna join Team Galactic?",
+      5: "Get ready to lose!",
+      6: "You dare to challenge Team Galactic?",
+      7: "Team Galactic will conquer all!",
     },
     "victory": {
-      1: "사격 중지…… "
+      1: "사격 중지…… ",
+      2: "Not bad...",
+      3: "How?!",
+      4: "I'll be back..",
+      5: "I'm outta here!",
+      6: "Maybe we should stick to evil plans and leave battling to someone else.",
+      7: "Note to self: practice Pokémon battling, ASAP.",
+      8: "Oops, our evil was no match for your Pokémon.",
+      9: "This setback means nothing in the grand scheme.",
+      10: "Our plans are bigger than this defeat.",
+      11: "I knew I should have trained more and evil-planned less."
     },
   },
   "plasma_grunt": {
     "encounter": {
-      1: "다른 생각을 가진사람들은 용납하지 않겠다!"
+      1: "다른 생각을 가진사람들은 용납하지 않겠다!",
+      2: "Bad for Team Plasma! Or Plasbad, for short!",
+      3: "There's no room for obstacles like you getting in the way of Unova's new dawn!",
+      4: "Pokémon that work with humans might look happy, but they're suffering, count on it! No doubt about it!",
+      5: "If I win against you, release your Pokémon !",
+      6: "As a proud member of Team Plasma, I will gladly battle with you.",
+      7: "YOU! To please my Pokémon , lose!",
+      8: "Your Pokémon will serve a greater purpose under Lord N's vision.",
+      9: "Team Plasma will liberate Pokémon from selfish humans like you!"
     },
     "victory": {
-      1: "플라-스마-!"
+      1: "플라-스마-!",
+      2: "You daft codger, your mask's absurd!",
+      3: "If you try to mess with me, I'll shut you down with a Pokémon battle.",
+      4: "How could I lose...",
+      5: "I think Lord N would approve of a rematch clause.",
+      6: "I guess my Pokémon liberation degree needs updating.",
+      7: "Note to self: practice Pokémon battling, liberate Pokémon better."
     },
   },
   "flare_grunt": {
     "encounter": {
-      1: "패션이 우리한텐 가장 중요하다고!"
+      1: "패션이 우리한텐 가장 중요하다고!",
+      2: "Team Flare will cleanse the world of imperfection!",
+      3: "Prepare to face the brilliance of Team Flare!",
+      4: "Team Flare's style and grace will outshine any opponent!",
+      5: "Your Pokémon are no match for the elegance of Team Flare."
     },
     "victory": {
-      1: "미래가 밝아 보이질 않네."
+      1: "미래가 밝아 보이질 않네.",
+      2: "Gahh?! I lost?!",
+      3: "I guess our beauty treatments didn't include battling skills.",
+      4: "Your victory today won't stop Team Flare's quest for a beautiful world.",
+      5: "Even in defeat, Team Flare's elegance shines through.",
+      6: "Perhaps there's more to battling than I thought. Back to the drawing board."
+
     },
   },
   "rocket_boss_giovanni_1": {

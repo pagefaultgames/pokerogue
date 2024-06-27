@@ -452,60 +452,159 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
   [TrainerType.ROCKET_GRUNT]: [
     {
       encounter: [
-        "dialogue:rocket_grunt.encounter.1"
+        "dialogue:rocket_grunt.encounter.1",
+        "dialogue:rocket_grunt.encounter.2",
+        "dialogue:rocket_grunt.encounter.3",
+        "dialogue:rocket_grunt.encounter.4",
+        "dialogue:rocket_grunt.encounter.5",
+        "dialogue:rocket_grunt.encounter.6",
+        "dialogue:rocket_grunt.encounter.7"
       ],
       victory: [
-        "dialogue:rocket_grunt.victory.1"
+        "dialogue:rocket_grunt.victory.1",
+        "dialogue:rocket_grunt.victory.2",
+        "dialogue:rocket_grunt.victory.3",
+        "dialogue:rocket_grunt.victory.4",
+        "dialogue:rocket_grunt.victory.5",
+        "dialogue:rocket_grunt.victory.6",
+        "dialogue:rocket_grunt.victory.7",
+        "dialogue:rocket_grunt.victory.8",
+        "dialogue:rocket_grunt.victory.9",
+        "dialogue:rocket_grunt.victory.10",
+        "dialogue:rocket_grunt.victory.11",
       ]
     }
   ],
   [TrainerType.MAGMA_GRUNT]: [
     {
       encounter: [
-        "dialogue:magma_grunt.encounter.1"
+        "dialogue:magma_grunt.encounter.1",
+        "dialogue:magma_grunt.encounter.2",
+        "dialogue:magma_grunt.encounter.3",
+        "dialogue:magma_grunt.encounter.4",
+        "dialogue:magma_grunt.encounter.5",
+        "dialogue:magma_grunt.encounter.6",
+        "dialogue:magma_grunt.encounter.7",
+        "dialogue:magma_grunt.encounter.8",
+        "dialogue:magma_grunt.encounter.9",
+        "dialogue:magma_grunt.encounter.10",
+        "dialogue:magma_grunt.encounter.11",
+        "dialogue:magma_grunt.encounter.12",
+        "dialogue:magma_grunt.encounter.13",
+        "dialogue:magma_grunt.encounter.14",
+        "dialogue:magma_grunt.encounter.15",
       ],
       victory: [
-        "dialogue:magma_grunt.victory.1"
+        "dialogue:magma_grunt.victory.1",
+        "dialogue:magma_grunt.victory.2",
+        "dialogue:magma_grunt.victory.3",
+        "dialogue:magma_grunt.victory.4",
+        "dialogue:magma_grunt.victory.5",
+        "dialogue:magma_grunt.victory.6",
+        "dialogue:magma_grunt.victory.7",
+        "dialogue:magma_grunt.victory.8",
+        "dialogue:magma_grunt.victory.9",
+        "dialogue:magma_grunt.victory.10",
+        "dialogue:magma_grunt.victory.11",
+        "dialogue:magma_grunt.victory.12",
+        "dialogue:magma_grunt.victory.13",
+        "dialogue:magma_grunt.victory.14",
+        "dialogue:magma_grunt.victory.15",
+        "dialogue:magma_grunt.victory.16",
+        "dialogue:magma_grunt.victory.17",
       ]
     }
   ],
   [TrainerType.AQUA_GRUNT]: [
     {
       encounter: [
-        "dialogue:aqua_grunt.encounter.1"
+        "dialogue:aqua_grunt.encounter.1",
+        "dialogue:aqua_grunt.encounter.2",
+        "dialogue:aqua_grunt.encounter.3",
+        "dialogue:aqua_grunt.encounter.4",
+        "dialogue:aqua_grunt.encounter.5",
+        "dialogue:aqua_grunt.encounter.6",
+        "dialogue:aqua_grunt.encounter.7",
+        "dialogue:aqua_grunt.encounter.8",
       ],
       victory: [
-        "dialogue:aqua_grunt.victory.1"
+        "dialogue:aqua_grunt.victory.1",
+        "dialogue:aqua_grunt.victory.2",
+        "dialogue:aqua_grunt.victory.3",
+        "dialogue:aqua_grunt.victory.4",
+        "dialogue:aqua_grunt.victory.5",
+        "dialogue:aqua_grunt.victory.6",
+        "dialogue:aqua_grunt.victory.7",
+        "dialogue:aqua_grunt.victory.8",
       ]
     }
   ],
   [TrainerType.GALACTIC_GRUNT]: [
     {
       encounter: [
-        "dialogue:galactic_grunt.encounter.1"
+        "dialogue:galactic_grunt.encounter.1",
+        "dialogue:galactic_grunt.encounter.2",
+        "dialogue:galactic_grunt.encounter.3",
+        "dialogue:galactic_grunt.encounter.4",
+        "dialogue:galactic_grunt.encounter.5",
+        "dialogue:galactic_grunt.encounter.6",
+        "dialogue:galactic_grunt.encounter.7",
       ],
       victory: [
-        "dialogue:galactic_grunt.victory.1"
+        "dialogue:galactic_grunt.victory.1",
+        "dialogue:galactic_grunt.victory.2",
+        "dialogue:galactic_grunt.victory.3",
+        "dialogue:galactic_grunt.victory.4",
+        "dialogue:galactic_grunt.victory.5",
+        "dialogue:galactic_grunt.victory.6",
+        "dialogue:galactic_grunt.victory.7",
+        "dialogue:galactic_grunt.victory.8",
+        "dialogue:galactic_grunt.victory.9",
+        "dialogue:galactic_grunt.victory.10",
+        "dialogue:galactic_grunt.victory.11",
       ]
     }
   ],
   [TrainerType.PLASMA_GRUNT]: [
     {
       encounter: [
-        "dialogue:plasma_grunt.encounter.1"
+        "dialogue:plasma_grunt.encounter.1",
+        "dialogue:plasma_grunt.encounter.2",
+        "dialogue:plasma_grunt.encounter.3",
+        "dialogue:plasma_grunt.encounter.4",
+        "dialogue:plasma_grunt.encounter.5",
+        "dialogue:plasma_grunt.encounter.6",
+        "dialogue:plasma_grunt.encounter.7",
+        "dialogue:plasma_grunt.encounter.8",
+        "dialogue:plasma_grunt.encounter.9",
       ],
       victory: [
-        "dialogue:plasma_grunt.victory.1"
+        "dialogue:plasma_grunt.victory.1",
+        "dialogue:plasma_grunt.victory.2",
+        "dialogue:plasma_grunt.victory.3",
+        "dialogue:plasma_grunt.victory.4",
+        "dialogue:plasma_grunt.victory.5",
+        "dialogue:plasma_grunt.victory.6",
+        "dialogue:plasma_grunt.victory.7",
       ]
     }
   ],
   [TrainerType.FLARE_GRUNT]: [
     {
       encounter: [
-        "dialogue:flare_grunt.encounter.1"
+        "dialogue:flare_grunt.encounter.1",
+        "dialogue:flare_grunt.encounter.2",
+        "dialogue:flare_grunt.encounter.3",
+        "dialogue:flare_grunt.encounter.4",
+        "dialogue:flare_grunt.encounter.5",
       ],
       victory: [
-        "dialogue:flare_grunt.victory.1"
+        "dialogue:flare_grunt.victory.1",
+        "dialogue:flare_grunt.victory.2",
+        "dialogue:flare_grunt.victory.3",
+        "dialogue:flare_grunt.victory.4",
+        "dialogue:flare_grunt.victory.5",
+        "dialogue:flare_grunt.victory.6",
       ]
     }
   ],
