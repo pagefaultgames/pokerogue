@@ -182,6 +182,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SOOTHE_BELL": { name: "Grelot Zen" },
 
+    "SCOPE_LENS": { name: "Lentilscope", description: "Une lentille qui augmente le taux de critiques du porteur." },
+    "LEEK": { name: "Poireau", description: "Objet à faire tenir à Canarticho. Un poireau très long et solide qui augmente son taux de critiques." },
+
     "EVIOLITE": { name: "Évoluroc", description: "Un étrange concentré d’évolution qui augmente la Défense et la Défense Spéciale d’un Pokémon pouvant évoluer." },
 
     "SOUL_DEW": { name: "Rosée Âme", description: "Augmente de 10% l’influence de la nature d’un Pokémon sur ses statistiques (cumulatif)." },

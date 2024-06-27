@@ -182,6 +182,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SOOTHE_BELL": { name: "安抚之铃" },
 
+    "SCOPE_LENS": { name: "焦点镜", description: "能看见弱点的镜片。携带它的宝可梦的招式 会变得容易击中要害。" },
+    "LEEK": { name: "大葱", description: "非常长且坚硬的茎。让大葱鸭携带后，\n招式会变得容易击中要害。" },
+
     "EVIOLITE": { name: "进化奇石", description: "进化的神奇石块。携带后，还能进化的宝可梦的 防御和特防就会提高。" },
 
     "SOUL_DEW": { name: "心之水滴", description: "增加宝可梦性格影响10% (加算)。" },
