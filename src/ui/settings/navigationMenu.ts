@@ -1,9 +1,13 @@
 import BattleScene from "#app/battle-scene";
 import {Mode} from "#app/ui/ui";
-import {InputsIcons} from "#app/ui/settings/abstract-settings-ui-handler";
+import {InputsIcons} from "#app/ui/settings/abstract-control-settings-ui-handler.js";
 import {addTextObject, setTextStyle, TextStyle} from "#app/ui/text";
 import {addWindow} from "#app/ui/ui-theme";
-import {Button} from "#app/enums/buttons";
+import {Button} from "#enums/buttons";
+import i18next from "i18next";
+
+const LEFT = "LEFT";
+const RIGHT = "RIGHT";
 
 /**
  * Manages navigation and menus tabs within the setting menu.
@@ -24,14 +28,17 @@ export class NavigationManager {
   constructor() {
     this.modes = [
       Mode.SETTINGS,
+      Mode.SETTINGS_DISPLAY,
+      Mode.SETTINGS_AUDIO,
       Mode.SETTINGS_GAMEPAD,
       Mode.SETTINGS_KEYBOARD,
     ];
-    this.labels = ["General", "Gamepad", "Keyboard"];
+    this.labels = [i18next.t("settings:general"), i18next.t("settings:display"), i18next.t("settings:audio"), i18next.t("settings:gamepad"), i18next.t("settings:keyboard")];
   }
 
   public reset() {
     this.selectedMode = Mode.SETTINGS;
+    this.updateNavigationMenus();
   }
 
   /**
@@ -46,32 +53,20 @@ export class NavigationManager {
   }
 
   /**
-   * Navigates to the previous mode in the modes array.
-   * @param scene The current BattleScene instance.
+   * Navigates modes based on given direction
+   * @param scene The current BattleScene instance
+   * @param direction LEFT or RIGHT
    */
-  public navigateLeft(scene) {
+  public navigate(scene, direction) {
     const pos = this.modes.indexOf(this.selectedMode);
     const maxPos = this.modes.length - 1;
-    if (pos === 0) {
+    const increment = direction === LEFT ? -1 : 1;
+    if (pos === 0 && direction === LEFT) {
       this.selectedMode = this.modes[maxPos];
-    } else {
-      this.selectedMode = this.modes[pos - 1];
-    }
-    scene.ui.setMode(this.selectedMode);
-    this.updateNavigationMenus();
-  }
-
-  /**
-   * Navigates to the next mode in the modes array.
-   * @param scene The current BattleScene instance.
-   */
-  public navigateRight(scene) {
-    const pos = this.modes.indexOf(this.selectedMode);
-    const maxPos = this.modes.length - 1;
-    if (pos === maxPos) {
+    } else if (pos === maxPos && direction === RIGHT) {
       this.selectedMode = this.modes[0];
     } else {
-      this.selectedMode = this.modes[pos + 1];
+      this.selectedMode = this.modes[pos + increment];
     }
     scene.ui.setMode(this.selectedMode);
     this.updateNavigationMenus();
@@ -204,13 +199,11 @@ export default class NavigationMenu extends Phaser.GameObjects.Container {
     const navigationManager = NavigationManager.getInstance();
     switch (button) {
     case Button.CYCLE_FORM:
-      navigationManager.navigateLeft(this.scene);
+      navigationManager.navigate(this.scene, LEFT);
       return true;
-      break;
     case Button.CYCLE_SHINY:
-      navigationManager.navigateRight(this.scene);
+      navigationManager.navigate(this.scene, RIGHT);
       return true;
-      break;
     }
     return false;
   }

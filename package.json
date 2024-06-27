@@ -11,9 +11,12 @@
 		"test": "vitest run",
 		"test:cov": "vitest run --coverage",
 		"test:watch": "vitest watch --coverage",
+		"test:silent": "vitest run --silent",
 		"eslint": "eslint --fix .",
 		"eslint-ci": "eslint .",
-		"docs": "typedoc"
+		"docs": "typedoc",
+		"depcruise": "depcruise src",
+		"depcruise:graph": "depcruise src --output-type dot | node dependency-graph.js > dependency-graph.svg"
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.3.0",
@@ -35,14 +38,19 @@
 		"typescript-eslint": "^7.10.0",
 		"vite": "^4.5.0",
 		"vite-plugin-fs": "^0.4.4",
+		"vite-tsconfig-paths": "^4.3.2",
 		"vitest": "^1.4.0",
 		"vitest-canvas-mock": "^0.3.3"
 	},
 	"dependencies": {
+		"@hpcc-js/wasm": "^2.16.2",
 		"@material/material-color-utilities": "^0.2.7",
+		"@types/jsdom": "^21.1.7",
 		"crypto-js": "^4.2.0",
+		"dependency-cruiser": "^16.3.3",
 		"i18next": "^23.11.1",
 		"i18next-browser-languagedetector": "^7.2.1",
+		"i18next-korean-postposition-processor": "^1.0.0",
 		"json-stable-stringify": "^1.1.0",
 		"phaser": "^3.70.0",
 		"phaser3-rex-plugins": "^1.1.84"
@@ -51,7 +59,9 @@
 		"node": ">=20.0.0"
 	},
 	"imports": {
+		"#enums/*": "./enums/*",
 		"#app": "./src/main.js",
-		"#app/*": "./src/*"
+		"#app/*": "./src/*",
+		"#test/*": "./src/test/*"
 	}
 }

@@ -1,11 +1,11 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const biome: SimpleTranslationEntries = {
   "unknownLocation": "Em algum lugar do qual você não se lembra",
   "TOWN": "Cidade",
   "PLAINS": "Planície",
-  "GRASS": "Campo de Grama",
-  "TALL_GRASS": "Campo de Grama Alta",
+  "GRASS": "Grama",
+  "TALL_GRASS": "Grama Alta",
   "METROPOLIS": "Metrópole",
   "FOREST": "Floresta",
   "SEA": "Mar",
