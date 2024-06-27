@@ -538,6 +538,9 @@ export const Setting: Array<Setting> = [
 
 ];
 
+
+let battleScene;
+
 /**
  * Return the index of a Setting
  * @param key SettingKey
@@ -555,6 +558,12 @@ export function resetSettings(scene: BattleScene) {
   Setting.forEach(s => setSetting(scene, s.key, s.default));
 }
 
+export function getTouchControlSetting() {
+  if (battleScene) {
+    return battleScene.enableTouchControls;
+  }
+}
+
 /**
  * Updates a setting for current BattleScene
  * @param scene current BattleScene
@@ -563,6 +572,7 @@ export function resetSettings(scene: BattleScene) {
  * @returns true if successful, false if not
  */
 export function setSetting(scene: BattleScene, setting: string, value: integer): boolean {
+  battleScene = scene;
   const index: number = settingIndex(setting);
   if (index === -1) {
     return false;

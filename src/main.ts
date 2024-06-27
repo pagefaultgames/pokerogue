@@ -7,7 +7,8 @@ import BBCodeTextPlugin from "phaser3-rex-plugins/plugins/bbcodetext-plugin";
 import InputTextPlugin from "phaser3-rex-plugins/plugins/inputtext-plugin.js";
 import TransitionImagePackPlugin from "phaser3-rex-plugins/templates/transitionimagepack/transitionimagepack-plugin.js";
 import { LoadingScene } from "./loading-scene";
-
+import { isMobile } from "./touch-controls";
+import { getTouchControlSetting } from "./system/settings/settings";
 
 // Catch global errors and display them in an alert so users can report the issue.
 window.onerror = function (message, source, lineno, colno, error) {
@@ -23,6 +24,19 @@ window.addEventListener("unhandledrejection", (event) => {
   // const errorString = `Received unhandled promise rejection. Open browser console and click OK to see details.\nReason: ${event.reason}`;
   console.error(event.reason);
   //alert(errorString);
+});
+
+// Catch all touch events at the top level and perform a check on whether or not the touch controls are already visible.
+// If they are already visible, ignore the event, but otherwise, show the touch controls. This should allow for both gamepad and mobile support
+// without the need for the touch and gamepad settings.
+window.addEventListener("touchstart", (event) => {
+  const touchControlsEnabled = getTouchControlSetting();
+  if (isMobile() && touchControlsEnabled) {
+    const touchControls = document.getElementById("touchControls");
+    if (touchControls && !touchControls.classList.contains("visible")) {
+      touchControls.classList.toggle("visible");
+    }
+  }
 });
 
 const config: Phaser.Types.Core.GameConfig = {
