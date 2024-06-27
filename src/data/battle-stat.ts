@@ -32,7 +32,7 @@ export function getBattleStatName(stat: BattleStat) {
   }
 }
 
-export function getBattleStatLevelChangeDescription(pokemonNameWithAffix: string, stats: string, levels: integer, up: boolean,multiple: boolean = false) {
+export function getBattleStatLevelChangeDescription(pokemonNameWithAffix: string, stats: string, levels: integer, up: boolean, multiple: boolean = false) {
   let stringKey = (() => {
     if (up) {
       switch (levels) {
