@@ -2890,8 +2890,7 @@ export class MoveEffectPhase extends PokemonPhase {
       const targetHitChecks = Object.fromEntries(targets.map(p => [p.getBattlerIndex(), this.hitCheck(p)]));
       const activeTargets = targets.map(t => t.isActive(true));
       if (!activeTargets.length || (!move.hasAttr(VariableTargetAttr) && !move.isMultiTarget() && !targetHitChecks[this.targets[0]])) {
-        user.turnData.hitCount = 1;
-        user.turnData.hitsLeft = 1;
+        this.stopMultiHit();
         if (activeTargets.length) {
           this.scene.queueMessage(getPokemonMessage(user, "'s\nattack missed!"));
           moveHistoryEntry.result = MoveResult.MISS;
@@ -2910,8 +2909,7 @@ export class MoveEffectPhase extends PokemonPhase {
       new MoveAnim(move.id as Moves, user, this.getTarget()?.getBattlerIndex()).play(this.scene, () => {
         for (const target of targets) {
           if (!targetHitChecks[target.getBattlerIndex()]) {
-            user.turnData.hitCount = 1;
-            user.turnData.hitsLeft = 1;
+            this.stopMultiHit(target);
             this.scene.queueMessage(getPokemonMessage(user, "'s\nattack missed!"));
             if (moveHistoryEntry.result === MoveResult.PENDING) {
               moveHistoryEntry.result = MoveResult.MISS;
@@ -3114,6 +3112,28 @@ export class MoveEffectPhase extends PokemonPhase {
 
   getTarget(): Pokemon {
     return this.getTargets().find(() => true);
+  }
+
+  removeTarget(target: Pokemon): void {
+    const targetIndex = this.targets.findIndex(ind => ind === target.getBattlerIndex());
+    if (targetIndex !== -1) {
+      this.targets.splice(this.targets.findIndex(ind => ind === target.getBattlerIndex()), 1);
+    }
+  }
+
+  stopMultiHit(target?: Pokemon): void {
+    /** If given a specific target, remove the target from subsequent strikes */
+    if (target) {
+      this.removeTarget(target);
+    }
+    /**
+     * If no target specified, or the specified target was the last of this move's
+     * targets, completely cancel all subsequent strikes.
+    */
+    if (!target || this.targets.length === 0 ) {
+      this.getUserPokemon().turnData.hitCount = 1;
+      this.getUserPokemon().turnData.hitsLeft = 1;
+    }
   }
 
   getNewHitPhase() {
