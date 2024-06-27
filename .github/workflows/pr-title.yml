@@ -1,0 +1,21 @@
+name: PR Title Validation
+on:
+  pull_request:
+    types: [opened, edited, reopened]
+
+jobs:
+  lint-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm i --no-save @actions/core @actions/github tsx
+
+      - name: Lint PR
+        run: npx tsx ./.github/scripts/pr-title.ts
+        env:
+          INPUT_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
