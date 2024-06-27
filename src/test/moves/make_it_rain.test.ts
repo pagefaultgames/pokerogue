@@ -6,6 +6,7 @@ import { Species } from "#enums/species";
 import {
   CommandPhase,
   MoveEndPhase,
+  StatChangePhase,
 } from "#app/phases";
 import { Moves } from "#enums/moves";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
@@ -56,5 +57,26 @@ describe("Moves - Make It Rain", () => {
     await game.phaseInterceptor.to(MoveEndPhase);
 
     expect(playerPokemon[0].summonData.battleStats[BattleStat.SPATK]).toBe(-1);
+  });
+
+  it("should apply effects even if the target faints", async () => {
+    vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(1); // ensures the enemy will faint
+    vi.spyOn(overrides, "DOUBLE_BATTLE_OVERRIDE", "get").mockReturnValue(false);
+    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+
+    await game.startBattle([Species.CHARIZARD]);
+
+    const playerPokemon = game.scene.getPlayerPokemon();
+    expect(playerPokemon).toBeDefined();
+
+    const enemyPokemon = game.scene.getEnemyPokemon();
+    expect(enemyPokemon).toBeDefined();
+
+    game.doAttack(getMovePosition(game.scene, 0, Moves.MAKE_IT_RAIN));
+
+    await game.phaseInterceptor.to(StatChangePhase);
+
+    expect(enemyPokemon.isFainted()).toBe(true);
+    expect(playerPokemon.summonData.battleStats[BattleStat.SPATK]).toBe(-1);
   });
 });

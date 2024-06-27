@@ -5513,11 +5513,21 @@ const userSleptOrComatoseCondition: MoveConditionFunc = (user: Pokemon, target: 
 
 const targetSleptOrComatoseCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) =>  target.status?.effect === StatusEffect.SLEEP || target.hasAbility(Abilities.COMATOSE);
 
+/**
+ * Condition to apply effects only upon applying the move to its last target.
+ * Currently only used for Make It Rain.
+ * @param {Pokemon} user The user of the move.
+ * @param {Pokemon} target The current target of the move.
+ * @param {Move} move The move to which this condition applies.
+ * @returns true if the target is the last target to which the move applies.
+ */
 const lastTargetOnlyCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => {
   const effectPhase = user.scene.getCurrentPhase();
+  const targetIndex = target.getFieldIndex() + (target.isPlayer() ? 0 : BattlerIndex.ENEMY);
 
   if (effectPhase instanceof MoveEffectPhase) {
-    return target === effectPhase.getTargets().at(-1);
+    const activeTargets = effectPhase.getTargets();
+    return (activeTargets.length === 0 || targetIndex >= activeTargets.at(-1).getBattlerIndex());
   }
   return false;
 };
