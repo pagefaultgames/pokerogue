@@ -23,6 +23,7 @@ import { Nature } from "#app/data/nature";
 import * as Overrides from "../overrides";
 import { ModifierType, modifierTypes } from "./modifier-type";
 import { Command } from "#app/ui/command-ui-handler.js";
+import { Species } from "#enums/species";
 
 import { allMoves } from "#app/data/move.js";
 import { Abilities } from "#app/enums/abilities.js";
@@ -707,16 +708,16 @@ export class PokemonBaseStatModifier extends PokemonHeldItemModifier {
 }
 
 /**
- * Modifier used for held items, specifically Eviolite, that apply
- * {@linkcode Stat} boost(s) using a multiplier if the holder can evolve.
+ * Modifier used for held items that apply {@linkcode Stat} boost(s)
+ * using a multiplier.
  * @extends PokemonHeldItemModifier
  * @see {@linkcode apply}
  */
-export class EvolutionStatBoosterModifier extends PokemonHeldItemModifier {
+export class StatBoosterModifier extends PokemonHeldItemModifier {
   /** The stats that the held item boosts */
-  private stats: Stat[];
+  protected stats: Stat[];
   /** The multiplier used to increase the relevant stat(s) */
-  private multiplier: number;
+  protected multiplier: number;
 
   constructor(type: ModifierType, pokemonId: integer, stats: Stat[], multiplier: number, stackCount?: integer) {
     super(type, pokemonId, stackCount);
@@ -726,7 +727,7 @@ export class EvolutionStatBoosterModifier extends PokemonHeldItemModifier {
   }
 
   clone() {
-    return new EvolutionStatBoosterModifier(this.type, this.pokemonId, this.stats, this.multiplier, this.stackCount);
+    return new StatBoosterModifier(this.type, this.pokemonId, this.stats, this.multiplier, this.stackCount);
   }
 
   getArgs(): any[] {
@@ -734,7 +735,14 @@ export class EvolutionStatBoosterModifier extends PokemonHeldItemModifier {
   }
 
   matchType(modifier: Modifier): boolean {
-    return modifier instanceof EvolutionStatBoosterModifier;
+    if (modifier instanceof StatBoosterModifier) {
+      const modifierInstance = modifier as StatBoosterModifier;
+      if ((modifierInstance.multiplier === this.multiplier) && (modifierInstance.stats.length === this.stats.length)) {
+        return modifierInstance.stats.every((e, i) => e === this.stats[i]);
+      }
+    }
+
+    return false;
   }
 
   /**
@@ -746,6 +754,42 @@ export class EvolutionStatBoosterModifier extends PokemonHeldItemModifier {
    */
   shouldApply(args: any[]): boolean {
     return this.stats.includes(args[1] as Stat);
+  }
+
+  /**
+   * Boosts the incoming stat by a {@linkcode multiplier} if the stat is listed
+   * in {@linkcode stats}.
+   * @param args [0] {@linkcode Pokemon} N/A
+   *             [1] {@linkcode Stat} N/A
+   *             [2] {@linkcode Utils.NumberHolder} that holds the resulting value of the stat
+   * @returns true if the stat boost applies successfully, false otherwise
+   * @see shouldApply
+   */
+  apply(args: any[]): boolean {
+    const statValue = args[2] as Utils.NumberHolder;
+
+    statValue.value *= this.multiplier;
+    return true;
+  }
+
+  getMaxHeldItemCount(_pokemon: Pokemon): number {
+    return 1;
+  }
+}
+
+/**
+ * Modifier used for held items, specifically Eviolite, that apply
+ * {@linkcode Stat} boost(s) using a multiplier if the holder can evolve.
+ * @extends StatBoosterModifier
+ * @see {@linkcode apply}
+ */
+export class EvolutionStatBoosterModifier extends StatBoosterModifier {
+  clone() {
+    return super.clone() as EvolutionStatBoosterModifier;
+  }
+
+  matchType(modifier: Modifier): boolean {
+    return modifier instanceof EvolutionStatBoosterModifier;
   }
 
   /**
@@ -771,15 +815,69 @@ export class EvolutionStatBoosterModifier extends PokemonHeldItemModifier {
       return true;
     } else if (isUnevolved) {
       // Full boost applied if holder is unfused and unevolved or, if fused, both parts of fusion are unevolved
-      statValue.value *= this.multiplier;
-      return true;
+      return super.apply(args);
+    }
+
+    return false;
+  }
+}
+
+/**
+ * Modifier used for held items that apply {@linkcode Stat} boost(s) using a
+ * multiplier if the holder is of a specific {@linkcode Species}.
+ * @extends StatBoosterModifier
+ * @see {@linkcode apply}
+ */
+export class SpeciesStatBoosterModifier extends StatBoosterModifier {
+  /** The species that the held item's stat boost(s) apply to */
+  private species: Species[];
+
+  constructor(type: ModifierType, pokemonId: integer, stats: Stat[], multiplier: number, species: Species[], stackCount?: integer) {
+    super(type, pokemonId, stats, multiplier, stackCount);
+
+    this.species = species;
+  }
+
+  clone() {
+    return new SpeciesStatBoosterModifier(this.type, this.pokemonId, this.stats, this.multiplier, this.species, this.stackCount);
+  }
+
+  getArgs(): any[] {
+    return [ ...super.getArgs(), this.species ];
+  }
+
+  matchType(modifier: Modifier): boolean {
+    if (modifier instanceof SpeciesStatBoosterModifier) {
+      const modifierInstance = modifier as SpeciesStatBoosterModifier;
+      if (modifierInstance.species.length === this.species.length) {
+        return super.matchType(modifier) && modifierInstance.species.every((e, i) => e === this.species[i]);
+      }
     }
 
     return false;
   }
 
-  getMaxHeldItemCount(_pokemon: Pokemon): integer {
-    return 1;
+  /**
+   * Checks if the incoming stat is listed in {@linkcode stats} and if the holder's {@linkcode Species}
+   * (or its fused species) is listed in {@linkcode species}.
+   * @param args [0] {@linkcode Pokemon} that holds the held item
+   *             [1] {@linkcode Stat} being checked at the time
+   *             [2] {@linkcode Utils.NumberHolder} N/A
+   * @returns true if the stat could be boosted, false otherwise
+   */
+  shouldApply(args: any[]): boolean {
+    const holder = args[0] as Pokemon;
+    return super.shouldApply(args) && (this.species.includes(holder.getSpeciesForm(true).speciesId) || (holder.isFusion() && this.species.includes(holder.getFusionSpeciesForm(true).speciesId)));
+  }
+
+  /**
+   * Checks if either parameter is included in the corresponding lists
+   * @param speciesId {@linkcode Species} being checked
+   * @param stat {@linkcode Stat} being checked
+   * @returns true if both parameters are in {@linkcode species} and {@linkcode stats} respectively, false otherwise
+   */
+  contains(speciesId: Species, stat: Stat): boolean {
+    return this.species.includes(speciesId) && this.stats.includes(stat);
   }
 }
 
