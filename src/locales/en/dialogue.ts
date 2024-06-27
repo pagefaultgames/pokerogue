@@ -1644,7 +1644,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: `Just a moment, please. The book I'm reading has nearly reached its thrilling climax… 
                 $The hero has obtained a mystic sword and is about to face their final trial… Ah, never mind. 
                 $Since you've made it this far, I'll put that aside and battle you. 
-                $Let me see if you'll achieve as much glory as the hero of my book!,`
+                $Let me see if you'll achieve as much glory as the hero of my book!`
     },
     "victory": {
       1: "I see… It appears you've put me in checkmate."
