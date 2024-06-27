@@ -96,7 +96,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
       const gachaInfoContainer = this.scene.add.container(160, 46);
 
-      const gachaUpLabel = addTextObject(this.scene, 4, 0, "UP!", TextStyle.WINDOW_ALT);
+      const gachaUpLabel = addTextObject(this.scene, 4, 0, i18next.t("egg:legendaryUPGacha"), TextStyle.WINDOW_ALT);
       gachaUpLabel.setOrigin(0, 0);
       gachaInfoContainer.add(gachaUpLabel);
 
@@ -109,12 +109,12 @@ export default class EggGachaUiHandler extends MessageUiHandler {
         gachaInfoContainer.add(pokemonIcon);
         break;
       case GachaType.MOVE:
-        gachaUpLabel.setText("Move UP!");
+        gachaUpLabel.setText(i18next.t("egg:moveUPGacha"));
         gachaUpLabel.setX(0);
         gachaUpLabel.setOrigin(0.5, 0);
         break;
       case GachaType.SHINY:
-        gachaUpLabel.setText("Shiny UP!");
+        gachaUpLabel.setText(i18next.t("egg:shinyUPGacha"));
         gachaUpLabel.setX(0);
         gachaUpLabel.setOrigin(0.5, 0);
         break;
