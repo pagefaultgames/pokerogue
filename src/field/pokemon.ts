@@ -626,7 +626,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getStat(stat: Stat): integer {
-    if (this.findTag(t=>t instanceof PowerTrickTag)) {
+    if (this.findTag(t => t instanceof PowerTrickTag)) {
       switch (stat) {
       case Stat.ATK:
         return this.stats[Stat.DEF];
