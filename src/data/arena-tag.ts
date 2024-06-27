@@ -553,15 +553,29 @@ class ToxicSpikesTag extends ArenaTrapTag {
  * Delays the attack's effect by a set amount of turns, usually 3 (including the turn the move is used),
  * and deals damage after the turn count is reached.
  */
-class DelayedAttackTag extends ArenaTag {
+export class DelayedAttackTag extends ArenaTag {
   public targetIndex: BattlerIndex;
 
-  constructor(tagType: ArenaTagType, sourceMove: Moves, sourceId: integer, targetIndex: BattlerIndex) {
-    super(tagType, 3, sourceMove, sourceId);
+  /**
+   * @description - Creates the DelayedAttackTag
+   * @param {ArenaTagType} tagType - The Tag Type
+   * @param {Moves} sourceMove - The delayed attack move
+   * @param {integer} sourceId - the ID of the pokemon on the arena
+   * @param {BattlerIndex} targetIndex - The battler index of the pokemon that the move is being used on
+   * @param {ArenaTagSide} side - Enum of which side the tag should apply to
+   */
+  constructor(tagType: ArenaTagType, sourceMove: Moves, sourceId: integer, targetIndex: BattlerIndex, side: ArenaTagSide = ArenaTagSide.BOTH) {
+    super(tagType, 3, sourceMove, sourceId, side);
 
     this.targetIndex = targetIndex;
+    this.side = side;
   }
 
+  /**
+   * @param {Arena} arena - The arena that the battle is happening on
+   *
+   * Counts down the arena tag and moves to the MoveEffectPhase
+   */
   lapse(arena: Arena): boolean {
     const ret = super.lapse(arena);
 
@@ -816,7 +830,7 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMov
     return new ToxicSpikesTag(sourceId, side);
   case ArenaTagType.FUTURE_SIGHT:
   case ArenaTagType.DOOM_DESIRE:
-    return new DelayedAttackTag(tagType, sourceMove, sourceId, targetIndex);
+    return new DelayedAttackTag(tagType, sourceMove, sourceId, targetIndex, side);
   case ArenaTagType.WISH:
     return new WishTag(turnCount, sourceId, side);
   case ArenaTagType.STEALTH_ROCK:
