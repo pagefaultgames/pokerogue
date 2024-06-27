@@ -753,7 +753,7 @@ export class StatBoosterModifier extends PokemonHeldItemModifier {
    * @returns true if the stat could be boosted, false otherwise
    */
   shouldApply(args: any[]): boolean {
-    return this.stats.includes(args[1] as Stat);
+    return super.shouldApply(args) && this.stats.includes(args[1] as Stat);
   }
 
   /**
