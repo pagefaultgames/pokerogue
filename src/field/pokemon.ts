@@ -1800,7 +1800,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
 
       if (cancelled.value) {
-        source.stopMultiHit();
+        source.stopMultiHit(this);
         result = HitResult.NO_EFFECT;
       } else {
         const typeBoost = source.findTag(t => t instanceof TypeBoostTag && t.boostedType === move.type) as TypeBoostTag;
@@ -2261,15 +2261,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * If this Pokemon is using a multi-hit move, stop the move
-   * after the next hit resolves.
+   * If this Pokemon is using a multi-hit move, cancels all subsequent strikes
+   * @param {Pokemon} target If specified, this only cancels subsequent strikes against this Pokemon
    */
-  stopMultiHit(): void {
-    if (!this.turnData) {
-      return;
+  stopMultiHit(target?: Pokemon): void {
+    const effectPhase = this.scene.getCurrentPhase();
+    if (effectPhase instanceof MoveEffectPhase) {
+      effectPhase.stopMultiHit(target);
     }
-    this.turnData.hitCount = 1;
-    this.turnData.hitsLeft = 1;
   }
 
   changeForm(formChange: SpeciesFormChange): Promise<void> {
