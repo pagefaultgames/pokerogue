@@ -6830,6 +6830,7 @@ export function initMoves() {
       .attr(ClearTerrainAttr)
       .attr(RemoveScreensAttr, false)
       .attr(RemoveArenaTrapAttr, true),
+
     new StatusMove(Moves.TRICK_ROOM, Type.PSYCHIC, -1, 5, -1, -7, 4)
       .attr(AddArenaTagAttr, ArenaTagType.TRICK_ROOM, 5)
       .ignoresProtect()
