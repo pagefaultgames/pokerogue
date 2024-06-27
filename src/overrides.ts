@@ -56,34 +56,81 @@ export const POKEBALL_OVERRIDE: { active: boolean, pokeballs: PokeballCounts } =
  * PLAYER OVERRIDES
  */
 
-/**
+// default 5 or 20 for Daily
+export const STARTING_LEVEL_OVERRIDE: integer = 0;
+interface StarterOverride {
+    /**
+   * SPECIES OVERRIDE
+   * will apply to each starter in your party
+   * default is 0 to not override
+   * @example STARTER_OVERRIDE.species = Species.Bulbasaur;
+   */
+
+  /** override species of the starter
+  * @example Species.Bulbasaur
+  */
+  species?: Species | integer;
+  /**
  * Set the form index of any starter in the party whose `speciesId` is inside this override
  * @see {@link allSpecies} in `src/data/pokemon-species.ts` for form indexes
  * @example
  * ```
- * const STARTER_FORM_OVERRIDES = {
+ * {
  *   [Species.DARMANITAN]: 1
  * }
  * ```
  */
-export const STARTER_FORM_OVERRIDES: Partial<Record<Species, number>> = {};
-
-// default 5 or 20 for Daily
-export const STARTING_LEVEL_OVERRIDE: integer = 0;
-/**
- * SPECIES OVERRIDE
- * will only apply to the first starter in your party or each enemy pokemon
- * default is 0 to not override
- * @example SPECIES_OVERRIDE = Species.Bulbasaur;
- */
-export const STARTER_SPECIES_OVERRIDE: Species | integer = 0;
-export const ABILITY_OVERRIDE: Abilities = Abilities.NONE;
-export const PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
-export const STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
-export const GENDER_OVERRIDE: Gender = null;
-export const MOVESET_OVERRIDE: Array<Moves> = [];
-export const SHINY_OVERRIDE: boolean = false;
-export const VARIANT_OVERRIDE: Variant = 0;
+  form?: Partial<Record<Species, number>>;
+  /** override ability of the starter
+  * @example Abilities.ADAPTABILITY
+  */
+  ability?: Abilities;
+  /** override passive ability of the starter
+  * @example Abilities.AERILATE
+  */
+  passiveAbility?: Abilities;
+  /** override status of the starter
+  * @example StatusEffect.BURN
+  */
+  status?: StatusEffect;
+  /** override gender of the starter
+  * @example Gender.FEMALE
+  */
+  gender?: Gender;
+  /** override moveset of the starter
+  * @example [Moves.ABSORB, Moves.BABY_DOLL_EYES]
+  */
+  moveset?: Moves[];
+  /** override shiny of the starter
+  * @example true
+  */
+  shiny?: boolean;
+  /** override shiny variant of the starter
+  * @example 0 - standard shiny
+  * @example 1 - rare shiny
+  * @example 2 - epic shiny
+  */
+  shinyVariant?: Variant;
+}
+const starterOverrideDefault = {
+  species: 0,
+  form: {},
+  ability: Abilities.NONE,
+  passiveAbility: Abilities.NONE,
+  status: StatusEffect.NONE,
+  gender: null,
+  moveset: [],
+  shiny: false,
+  shinyVariant: 0 as Variant,
+};
+export const STARTER_OVERRIDE: StarterOverride[] = [
+  starterOverrideDefault,
+  starterOverrideDefault,
+  starterOverrideDefault,
+  starterOverrideDefault,
+  starterOverrideDefault,
+  starterOverrideDefault
+];
 
 /**
  * OPPONENT / ENEMY OVERRIDES

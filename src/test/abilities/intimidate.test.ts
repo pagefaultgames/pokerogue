@@ -38,7 +38,8 @@ describe("Abilities - Intimidate", () => {
     vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
     vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INTIMIDATE);
     vi.spyOn(overrides, "OPP_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INTIMIDATE);
+    vi.spyOn(overrides.STARTER_OVERRIDE[0], "ability", "get").mockReturnValue(Abilities.INTIMIDATE);
+    vi.spyOn(overrides.STARTER_OVERRIDE[1], "ability", "get").mockReturnValue(Abilities.INTIMIDATE);
     vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(3);
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH,Moves.SPLASH,Moves.SPLASH,Moves.SPLASH]);
   });
@@ -201,7 +202,8 @@ describe("Abilities - Intimidate", () => {
 
   it("single - wild next wave opp triger once, us: none", async() => {
     vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(2);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.AERIAL_ACE]);
+    vi.spyOn(overrides.STARTER_OVERRIDE[0], "moveset", "get").mockReturnValue([Moves.AERIAL_ACE]);
+    vi.spyOn(overrides.STARTER_OVERRIDE[1], "moveset", "get").mockReturnValue([Moves.AERIAL_ACE]);
     await game.startBattle([
       Species.MIGHTYENA,
       Species.POOCHYENA,
@@ -230,7 +232,8 @@ describe("Abilities - Intimidate", () => {
 
   it("single - wild next turn - no retrigger on next turn", async() => {
     vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(2);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH]);
+    vi.spyOn(overrides.STARTER_OVERRIDE[0], "moveset", "get").mockReturnValue([Moves.SPLASH]);
+    vi.spyOn(overrides.STARTER_OVERRIDE[1], "moveset", "get").mockReturnValue([Moves.SPLASH]);
     await game.startBattle([
       Species.MIGHTYENA,
       Species.POOCHYENA,
@@ -256,7 +259,8 @@ describe("Abilities - Intimidate", () => {
   }, 20000);
 
   it("single - trainer should only trigger once and each time he switch", async() => {
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH]);
+    vi.spyOn(overrides.STARTER_OVERRIDE[0], "moveset", "get").mockReturnValue([Moves.SPLASH]);
+    vi.spyOn(overrides.STARTER_OVERRIDE[1], "moveset", "get").mockReturnValue([Moves.SPLASH]);
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.VOLT_SWITCH,Moves.VOLT_SWITCH,Moves.VOLT_SWITCH,Moves.VOLT_SWITCH]);
     vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(5);
     await game.startBattle([
@@ -299,7 +303,8 @@ describe("Abilities - Intimidate", () => {
   }, 200000);
 
   it("single - trainer should only trigger once whatever turn we are", async() => {
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH]);
+    vi.spyOn(overrides.STARTER_OVERRIDE[0], "moveset", "get").mockReturnValue([Moves.SPLASH]);
+    vi.spyOn(overrides.STARTER_OVERRIDE[1], "moveset", "get").mockReturnValue([Moves.SPLASH]);
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH,Moves.SPLASH,Moves.SPLASH,Moves.SPLASH]);
     vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(5);
     await game.startBattle([
