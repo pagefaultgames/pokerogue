@@ -385,42 +385,86 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "rocket_grunt": {
     "encounter": {
-      1: "Prepare for trouble!"
+      1: "Prepare for trouble!",
+      2: "Come from Johto will they, mine allies, yes. Will revenge they are",
+      3: "You say what? Team Rocket bye-bye a go-go? Broken up it is says you?",
+      4: "To denounce the evils of truth and love!",
+      5: "Stop! I give up! I'll leave quietly!"
     },
     "victory": {
-      1: "Team Rocket blasting off again!"
+      1: "Team Rocket blasting off again!",
+      2: "Winning is for winners.",
+      3: "You will regret this!",
+      4: "Blastin' off at the speed of light!",
+      5: "Blasting off again...."
     },
   },
   "magma_grunt": {
     "encounter": {
-      1: " If you get in the way of Team Magma, don’t expect any mercy!"
+      1: "If you get in the way of Team Magma, don't expect any mercy!",
+      2: "I should've brought my Game Boy Advance SP to play some Pokémon Sapphire  instead.",
+      3: "Hey! You there! Which do you think is cooler? Team Aqua's uniform or Team Magma's?"
     },
     "victory": {
-      1: "Huh? I lost?!"
+      1: "Huh? I lost?!",
+      2: "Urrrgh…I should've ducked into our hideout right away…",
+      3: "Okay, oh-kay! I admit it—you're strong!",
+      4: "Don't worry about me. Go wherever you want!",
+      5: "What, what, what?",
+      6: " I'm getting heat exhaustion…"
     },
   },
   "aqua_grunt": {
     "encounter": {
-      1: "No one who crosses Team Aqua gets any mercy, not even kids!"
+      1: "No one who crosses Team Aqua gets any mercy, not even kids!",
+      2: "I should've brought my Game Boy Advance SP to play some Pokémon Ruby instead.",
+      3: "I was going to ambush you, but you had to dawdle in Petalburg Woods forever, didn't you?",
+      4: "Grrr…You've got some nerve meddling with Team Aqua!",
+      5: "Hey, you there! Don't butt in!",
+      6: "Hey, there! Quit pushing! This is the line, can't you see?",
+      7: "We, Team Aqua, exist for the good of all!",
+      8: "Hey! You there! Which do you think is cooler? Team Aqua's uniform or Team Magma's?"
     },
     "victory": {
-      1: "You're kidding me!"
+      1: "You're kidding me!",
+      2: "Come on and battle me again!",
+      3: "I'll let you go today!",
+      4: "What?! I lost, too!",
+      5: "Arrgh, I didn't count on being meddled with by some meddling kid!"
     },
   },
   "galactic_grunt": {
     "encounter": {
-      1: "Don't mess with Team Galactic!"
+      1: "Don't mess with Team Galactic!",
+      2: "Our time has come!",
+      3: "It's team galactic's time now!",
+      4: "Hey, wanna join Team Galactic?",
+      5: "Get ready to lose!"
+
     },
     "victory": {
-      1: "Shut down..."
+      1: "Shut down...",
+      2: "Not bad...",
+      3: "How?!",
+      4: "I'll be back..",
+      5: "I'm outta here!"
     },
   },
   "plasma_grunt": {
     "encounter": {
-      1: "We won't tolerate people who have different ideas!"
+      1: "We won't tolerate people who have different ideas!",
+      2: "Bad for Team Plasma! Or Plasbad, for short!",
+      3: "There's no room for obstacles like you getting in the way of Unova's new dawn!",
+      4: "Pokémon that work with humans might look happy, but they're suffering, count on it! No doubt about it!",
+      5: "If I win against you, release your Pokémon !",
+      6: "As a proud member of Team Plasma, I will gladly battle with you.",
+      7: "YOU! To please my Pokémon , lose!"
     },
     "victory": {
-      1: "Plasmaaaaaaaaa!"
+      1: "Plasmaaaaaaaaa!",
+      2: "You daft codger, your mask's absurd!",
+      3: "If you try to mess with me, I'll shut you down with a Pokémon battle.",
+      4: "How could I lose..."
     },
   },
   "flare_grunt": {
@@ -428,7 +472,8 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "Fashion is most important to us!"
     },
     "victory": {
-      1: "The future doesn't look bright for me."
+      1: "The future doesn't look bright for me.",
+      2: "Gahh?! I lost?!"
     },
   },
   "rocket_boss_giovanni_1": {
