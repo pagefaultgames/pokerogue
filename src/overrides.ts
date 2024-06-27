@@ -22,6 +22,7 @@ import { TimeOfDay } from "#enums/time-of-day";
 /**
  * Overrides for testing different in game situations
  * if an override name starts with "STARTING", it will apply when a new run begins
+ * This file should only contain values for overrides, any functions that apply these overrides should be added to overrides-functions.ts
  */
 
 /**
@@ -51,6 +52,29 @@ export const POKEBALL_OVERRIDE: { active: boolean, pokeballs: PokeballCounts } =
     [PokeballType.MASTER_BALL]: 0,
   }
 };
+
+/**
+ * REWARD SELECTION OVERRIDES
+ */
+// How many rewards to select from if not 0, will be constrained to between 3 and 6.
+export const REWARD_AMOUNT_OVERRIDE: integer = 0;
+/**
+ * Data for overriding the rewards in the post battle screen. Rewards overridden this way will appear as common tier regardless of its actual tier.
+ * name: The name of the reward to use. Should match one of the values in modifierTypes in modifier-type.ts,
+ *    with the exception of TM_COMMON, TM_GREAT or TM_ULTRA. For those, just use TM (any string starting with TM will work).
+ * type: Some types of rewards need a subtype specified for generation, they are:
+ * - TempBattleStat is for TEMP_STAT_BOOSTER / X Items (Dire hit is separate)
+ * - Stat is for BASE_STAT_BOOSTER / Vitamin
+ * - Nature is for MINT
+ * - Type is for TERA_SHARD or ATTACK_TYPE_BOOSTER (type boosting items i.e Silk Scarf)
+ * - BerryType is for BERRY
+ * - Moves is for TM. While you can choose moves that are not actually TMs, you should stick to them otherwise the number will appear as 000 and you will not be able to teach it to a Pokemon.
+ */
+interface RewardOverride {
+  name: string
+  type?: TempBattleStat|Stat|Nature|Type|BerryType|Moves
+}
+export const REWARD_OVERRIDES: Array<RewardOverride> = [];
 
 /**
  * PLAYER OVERRIDES
