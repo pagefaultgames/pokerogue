@@ -26,6 +26,7 @@ export const battle: SimpleTranslationEntries = {
   "hitResultOneHitKO": "일격필살!",
   "attackFailed": "하지만 실패했다!",
   "attackHitsCount": "{{count}}번 맞았다!",
+  "rewardGain": "{{modifierName}}[[를]] 받았다!",
   "expGain": "{{pokemonName}}[[는]]\n{{exp}} 경험치를 얻었다!",
   "levelUp": "{{pokemonName}}[[는]]\n레벨 {{level}}[[로]] 올랐다!",
   "learnMove": "{{pokemonName}}[[는]] 새로\n{{moveName}}[[를]] 배웠다!",
