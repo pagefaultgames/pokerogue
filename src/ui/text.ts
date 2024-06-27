@@ -142,7 +142,7 @@ function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptio
     shadowYpos = 3;
     break;
   case TextStyle.SMALLER_WINDOW_ALT:
-    styleOptions.fontSize = defaultFontSize - 30;
+    styleOptions.fontSize = defaultFontSize - 32;
     shadowXpos = 3;
     shadowYpos = 3;
     break;

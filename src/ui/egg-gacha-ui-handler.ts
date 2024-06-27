@@ -98,11 +98,15 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
       const currentLanguage = i18next.resolvedLanguage;
       let gachaTextStyle = TextStyle.WINDOW_ALT;
+      let gachaX = 4;
+      let gachaY = 0;
       if (currentLanguage === "de" || "pt-br") {
         gachaTextStyle = TextStyle.SMALLER_WINDOW_ALT;
+        gachaX = 2;
+        gachaY = 2;
       }
 
-      const gachaUpLabel = addTextObject(this.scene, 4, 0, i18next.t("egg:legendaryUPGacha"), gachaTextStyle);
+      const gachaUpLabel = addTextObject(this.scene, gachaX, gachaY, i18next.t("egg:legendaryUPGacha"), gachaTextStyle);
       gachaUpLabel.setOrigin(0, 0);
       gachaInfoContainer.add(gachaUpLabel);
 
@@ -115,11 +119,19 @@ export default class EggGachaUiHandler extends MessageUiHandler {
         gachaInfoContainer.add(pokemonIcon);
         break;
       case GachaType.MOVE:
+        if (currentLanguage === "de") {
+          gachaUpLabel.setAlign("center");
+          gachaUpLabel.setY(0);
+        }
         gachaUpLabel.setText(i18next.t("egg:moveUPGacha"));
         gachaUpLabel.setX(0);
         gachaUpLabel.setOrigin(0.5, 0);
         break;
       case GachaType.SHINY:
+        if (currentLanguage === "de") {
+          gachaUpLabel.setAlign("center");
+          gachaUpLabel.setY(0);
+        }
         gachaUpLabel.setText(i18next.t("egg:shinyUPGacha"));
         gachaUpLabel.setX(0);
         gachaUpLabel.setOrigin(0.5, 0);
