@@ -241,6 +241,12 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_ENDURE_CHANCE": { name: "Endure Token" },
     "ENEMY_FUSED_CHANCE": { name: "Fusion Token", description: "Adds a 1% chance that a wild Pokémon will be a fusion." },
   },
+  SpeciesBoosterItem: {
+    "LIGHT_BALL": { name: "Light Ball", description: "It's a mysterious orb that boosts Pikachu's Attack and Sp. Atk stats." },
+    "THICK_CLUB": { name: "Thick Club", description: "This hard bone of unknown origin boosts Cubone or Marowak's Attack stat." },
+    "METAL_POWDER": { name: "Metal Powder", description: "Extremely fine yet hard, this odd powder boosts Ditto's Defense stat." },
+    "QUICK_POWDER": { name: "Quick Powder", description: "Extremely fine yet hard, this odd powder boosts Ditto's Speed stat." }
+  },
   TempBattleStatBoosterItem: {
     "x_attack": "X Attack",
     "x_defense": "X Defense",
