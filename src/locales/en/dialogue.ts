@@ -447,7 +447,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "My old associates need me... Are you going to get in my way?"
     },
     "victory": {
-      1: "How is this possible...?\nThe precious dream of Team Rocket has become little more than an illusion..."
+      1: "How is this possible...? The precious dream of Team Rocket has become little more than an illusion..."
     },
     "defeat": {
       1: "Team Rocket will be reborn again, and I will rule the world!"
