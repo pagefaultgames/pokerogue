@@ -62,6 +62,7 @@ export const bgmName: SimpleTranslationEntries = {
   "battle_legendary_calyrex": "SWSH Calyrex Battle",
   "battle_legendary_birds_galar": "SWSH Galarian Legendary Birds Battle",
   "battle_legendary_ruinous": "SV Treasures of Ruin Battle",
+  "battle_legendary_kor_mir": "SV Depths of Area Zero Battle",
   "battle_legendary_loyal_three": "SV Loyal Three Battle",
   "battle_legendary_ogerpon": "SV Ogerpon Battle",
   "battle_legendary_terapagos": "SV Terapagos Battle",

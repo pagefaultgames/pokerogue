@@ -62,6 +62,7 @@ export const bgmName: SimpleTranslationEntries = {
   "battle_legendary_calyrex": "剑盾「战斗！蕾冠王」",
   "battle_legendary_birds_galar": "剑盾「战斗！传说的鸟宝可梦」",
   "battle_legendary_ruinous": "朱紫「战斗！灾厄宝可梦」",
+  "battle_legendary_kor_mir": "SV Depths of Area Zero Battle",
   "battle_legendary_loyal_three": "朱紫「战斗！宝伴」",
   "battle_legendary_ogerpon": "朱紫「战斗！厄鬼椪」",
   "battle_legendary_terapagos": "朱紫「战斗！太乐巴戈斯」",

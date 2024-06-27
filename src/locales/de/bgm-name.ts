@@ -62,6 +62,7 @@ export const bgmName: SimpleTranslationEntries = {
   "battle_legendary_calyrex": "SWSH Vs. Coronospa",
   "battle_legendary_birds_galar": "SWSH Vs. Legendäre Galar-Vögel",
   "battle_legendary_ruinous": "KAPU Vs. Schätze des Unheils",
+  "battle_legendary_kor_mir": "KAPU Die Tiefen von Zone Null",
   "battle_legendary_loyal_three": "KAPU Drei Gefährten",
   "battle_legendary_ogerpon": "KAPU Vs. Ogerpon",
   "battle_legendary_terapagos": "KAPU Vs. Terapagos",
