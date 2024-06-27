@@ -141,7 +141,7 @@ export const pokemonForm: SimpleTranslationEntries = {
   "mimikyuDisguised": "Disguised",
   "mimikyuBusted": "Busted",
   "magearnaOriginal": "Vetusto",
-  "marshadowZenith": "Zenith",
+  "marshadowZenith": "Cénit",
   // 8G
   "sinisteaPhony": "Phony",
   "sinisteaAntique": "Antique",
