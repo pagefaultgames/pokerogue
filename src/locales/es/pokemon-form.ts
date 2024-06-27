@@ -145,7 +145,7 @@ export const pokemonForm: SimpleTranslationEntries = {
   // 8G
   "sinisteaPhony": "Falsificada",
   "sinisteaAntique": "Auténtica",
-  "eiscueNoIce": "No Ice",
+  "eiscueNoIce": "Cara Deshielo",
   "indeedeeMale": "Male",
   "indeedeeFemale": "Female",
   "zarudeDada": "Dada",
