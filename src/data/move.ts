@@ -1925,17 +1925,17 @@ export class EatBerryAttr extends MoveEffectAttr {
     }
 
     const heldBerries = this.getTargetHeldBerries(target);
-    if (heldBerries.length) {
-      this.chosenBerry = heldBerries[user.randSeedInt(heldBerries.length)];
-      const preserve = new Utils.BooleanHolder(false);
-      target.scene.applyModifiers(PreserveBerryModifier, target.isPlayer(), target, preserve); // check for berry pouch preservation
-      if (!preserve.value) {
-        this.reduceBerryModifier(target);
-      }
-      this.eatBerry(target);
-      return true;
+    if (heldBerries.length <= 0) {
+      return false;
     }
-    return false;
+    this.chosenBerry = heldBerries[user.randSeedInt(heldBerries.length)];
+    const preserve = new Utils.BooleanHolder(false);
+    target.scene.applyModifiers(PreserveBerryModifier, target.isPlayer(), target, preserve); // check for berry pouch preservation
+    if (!preserve.value) {
+      this.reduceBerryModifier(target);
+    }
+    this.eatBerry(target);
+    return true;
   }
 
   getTargetHeldBerries(target: Pokemon): BerryModifier[] {
@@ -1981,15 +1981,16 @@ export class StealEatBerryAttr extends EatBerryAttr {
       return false;
     }
     const heldBerries = this.getTargetHeldBerries(target).filter(i => i.getTransferrable(false));
-    if (heldBerries.length) { // if the target has berries, pick a random berry and steal it
-      this.chosenBerry = heldBerries[user.randSeedInt(heldBerries.length)];
-      const message = i18next.t("battle:stealEatBerry", {pokemonName: user.name, targetName: target.name, berryName: this.chosenBerry.type.name});
-      user.scene.queueMessage(message);
-      this.reduceBerryModifier(target);
-      this.eatBerry(user);
-      return true;
+    if (heldBerries.length <= 0) {
+      return false;
     }
-    return false;
+    // if the target has berries, pick a random berry and steal it
+    this.chosenBerry = heldBerries[user.randSeedInt(heldBerries.length)];
+    const message = i18next.t("battle:stealEatBerry", {pokemonName: user.name, targetName: target.name, berryName: this.chosenBerry.type.name});
+    user.scene.queueMessage(message);
+    this.reduceBerryModifier(target);
+    this.eatBerry(user);
+    return true;
   }
 }
 
