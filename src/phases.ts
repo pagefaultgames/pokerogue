@@ -64,6 +64,7 @@ import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
+import { BattlerTagType } from "./enums/battler-tag-type";
 
 const { t } = i18next;
 
