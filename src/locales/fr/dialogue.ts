@@ -466,7 +466,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "magma_boss_maxie_2": {
     "encounter": {
-      1: `T’es le dernier rempart entravant mes objectifs.\nPrépare-toi à mon ultime riposte ! Hahahaha !`
+      1: "T’es le dernier rempart entravant mes objectifs.\nPrépare-toi à mon ultime riposte ! Hahahaha !"
     },
     "victory": {
       1: "Ce… Ce n'est pas… Gnn…"
