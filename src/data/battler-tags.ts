@@ -1529,6 +1529,12 @@ export class IceFaceTag extends BattlerTag {
   }
 }
 
+export class PowerTrickTag extends BattlerTag {
+  constructor(sourceMove: Moves) {
+    super(BattlerTagType.POWER_TRICK, BattlerTagLapseType.CUSTOM, 1, sourceMove);
+  }
+}
+
 export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourceMove: Moves, sourceId: integer): BattlerTag {
   switch (tagType) {
   case BattlerTagType.RECHARGING:
@@ -1646,6 +1652,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
     return new DestinyBondTag(sourceMove, sourceId);
   case BattlerTagType.ICE_FACE:
     return new IceFaceTag(sourceMove);
+  case BattlerTagType.POWER_TRICK:
+    return new PowerTrickTag(sourceMove);
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
