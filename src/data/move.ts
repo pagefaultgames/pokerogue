@@ -8282,9 +8282,8 @@ export function initMoves() {
       .attr(ForceSwitchOutAttr, true, false)
       .target(MoveTarget.BOTH_SIDES),
     new SelfStatusMove(Moves.TIDY_UP, Type.NORMAL, -1, 10, -1, 0, 9)
-      .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPD ], 1, true, ({ id }, target) => id === target.id, true, true)
-      .attr(RemoveArenaTrapAttr)
-      .target(MoveTarget.BOTH_SIDES),
+      .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPD ], 1, true, null, true, true)
+      .attr(RemoveArenaTrapAttr, true),
     new StatusMove(Moves.SNOWSCAPE, Type.ICE, -1, 10, -1, 0, 9)
       .attr(WeatherChangeAttr, WeatherType.SNOW)
       .target(MoveTarget.BOTH_SIDES),
