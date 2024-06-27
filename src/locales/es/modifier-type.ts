@@ -241,6 +241,12 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_ENDURE_CHANCE": { name: "Ficha Aguante" },
     "ENEMY_FUSED_CHANCE": { name: "Ficha Fusión", description: "Agrega un 1% de probabilidad de que un Pokémon salvaje sea una fusión." },
   },
+  SpeciesBoosterItem: {
+    "LIGHT_BALL": { name: "Bola Luminosa", description: "Asombrosa esfera que aumenta el Ataque y el Ataque Especial. Debe llevarla Pikachu." },
+    "THICK_CLUB": { name: "Hueso Grueso", description: "Extraño tipo de hueso que potencia los ataques físicos. Debe llevarlo Cubone o Marowak." },
+    "METAL_POWDER": { name: "Polvo Metálico", description: "Polvo muy fino, pero a la vez poderoso, que aumenta la Defensa. Debe llevarlo Ditto." },
+    "QUICK_POWDER": { name: "Polvo Veloz", description: "Polvo muy fino, pero a la vez poderoso, que aumenta la Velocidad. Debe llevarlo Ditto." }
+  },
   TempBattleStatBoosterItem: {
     "x_attack": "Ataque X",
     "x_defense": "Defensa X",

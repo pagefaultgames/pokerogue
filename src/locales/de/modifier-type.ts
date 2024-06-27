@@ -242,6 +242,12 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_FUSED_CHANCE": { "name": "Fusionsmarke", "description": "Fügt eine 1%ige Chance hinzu, dass ein wildes Pokémon eine Fusion ist." },
 
   },
+  SpeciesBoosterItem: {
+    "LIGHT_BALL": { name: "Kugelblitz", description: "Ein Item, das von Pikachu getragen werden kann. Es erhöht den Angriff und den Spezial-Angriff." },
+    "THICK_CLUB": { name: "Kampfknochen", description: "Ein Item, das von Tragosso oder Knogga getragen werden kann. Dieser harte Knochen erhöht den Angriff." },
+    "METAL_POWDER": { name: "Metallstaub", description: "Ein Item, das von Ditto getragen werden kann. Fein und doch hart, erhöht dieses sonderbare Pulver die Verteidigung." },
+    "QUICK_POWDER": { name: "Flottstaub", description: "Ein Item, das Ditto zum Tragen gegeben werden kann. Fein und doch hart, erhöht dieses sonderbare Pulver die Initiative." }
+  },
   TempBattleStatBoosterItem: {
     "x_attack": "X-Angriff",
     "x_defense": "X-Verteidigung",

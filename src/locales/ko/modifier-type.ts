@@ -241,6 +241,12 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_ENDURE_CHANCE": { name: "버티기 토큰" },
     "ENEMY_FUSED_CHANCE": { name: "합체 토큰", description: "야생 포켓몬이 합체되어 등장할 확률이 1% 추가된다." },
   },
+  SpeciesBoosterItem: {
+    "LIGHT_BALL": { name: "전기구슬", description: "피카츄에게 지니게 하면 공격과 특수공격이 올라가는 이상한 구슬." },
+    "THICK_CLUB": { name: "굵은뼈", description: "무언가의 단단한 뼈. 탕구리 혹은 텅구리에게 지니게 하면 공격이 올라간다." },
+    "METAL_POWDER": { name: "금속파우더", description: "메타몽에게 지니게 하면 방어가 올라가는 이상한 가루. 매우 잘고 단단하다." },
+    "QUICK_POWDER": { name: "스피드파우더", description: "메타몽에게 지니게 하면 스피드가 올라가는 이상한 가루. 매우 잘고 단단하다." }
+  },
   TempBattleStatBoosterItem: {
     "x_attack": "플러스파워",
     "x_defense": "디펜드업",
