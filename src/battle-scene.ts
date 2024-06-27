@@ -2381,6 +2381,8 @@ export default class BattleScene extends SceneBase {
         }
         resolve();
       });
+	  const event = new CustomEvent("modifiersUpdated");
+      window.dispatchEvent(event);
     });
   }
 
