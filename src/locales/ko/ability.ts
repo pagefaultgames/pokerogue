@@ -1,4 +1,4 @@
-import { AbilityTranslationEntries } from "#app/plugins/i18n.js";
+import { AbilityTranslationEntries } from "#app/interfaces/locales.js";
 
 /**
  * 본가 게임과 텍스트가 다를 경우 주석으로 표시
@@ -1154,7 +1154,7 @@ export const ability: AbilityTranslationEntries = {
   },
   beadsOfRuin: {
     name: "재앙의구슬",
-    description: "재앙을 부르는 곡옥의 힘으 자신을 제외한 모든 포켓몬의 특수방어를 약하게 만든다."
+    description: "재앙을 부르는 곡옥의 힘으로 자신을 제외한 모든 포켓몬의 특수방어를 약하게 만든다."
   },
   orichalcumPulse: {
     name: "진홍빛고동",
