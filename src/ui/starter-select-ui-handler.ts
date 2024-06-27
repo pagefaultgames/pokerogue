@@ -36,6 +36,7 @@ import { Device } from "#enums/devices";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import {Button} from "#enums/buttons";
+import AwaitableUiHandler from "./awaitable-ui-handler";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -1140,8 +1141,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
           const species = this.genSpecies[pokemonGen][pokemonCursor];
 
+          const isPartyValid = this.isPartyValid();
           const isValidForChallenge = new Utils.BooleanHolder(true);
-          Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor), this.starterGens.length);
+          if (isPartyValid) {
+            Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true)), this.starterGens.length + 1);
+          } else {
+            Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true)), this.starterGens.length + 1, false, false);
+          }
           const currentPartyValue = this.starterGens.reduce((total: number, gen: number, i: number) => total += this.scene.gameData.getSpeciesStarterValue(this.genSpecies[gen][this.starterCursors[i]].speciesId), 0);
           const newCost = this.scene.gameData.getSpeciesStarterValue(species.speciesId);
           if (!isDupe && isValidForChallenge.value && currentPartyValue + newCost <= this.getValueLimit()) { // this checks to make sure the pokemon doesn't exist in your party, it's valid for the challenge and that it won't go over the cost limit; if it meets all these criteria it will add it to your party
@@ -1151,7 +1157,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 handler: () => {
                   ui.setMode(Mode.STARTER_SELECT);
 
-                  if (!isDupe && isValidForChallenge.value && this.tryUpdateValue(this.scene.gameData.getSpeciesStarterValue(species.speciesId))) {
+                  if (!isDupe && isValidForChallenge.value && this.tryUpdateValue(this.scene.gameData.getSpeciesStarterValue(species.speciesId), true)) {
                     this.addToParty(species, pokemonGen, pokemonCursor);
                     ui.playSelect();
                   } else {
@@ -2579,7 +2585,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.starterValueLabels[cursor].setShadowColor(this.getTextColor(textStyle, true));
   }
 
-  tryUpdateValue(add?: integer): boolean {
+  tryUpdateValue(add?: integer, addingToParty?: boolean): boolean {
     const value = this.starterGens.reduce((total: integer, gen: integer, i: integer) => total += this.scene.gameData.getSpeciesStarterValue(this.genSpecies[gen][this.starterCursors[i]].speciesId), 0);
     const newValue = value + (add || 0);
     const valueLimit = this.getValueLimit();
@@ -2594,6 +2600,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     if (overLimit) {
       this.scene.time.delayedCall(Utils.fixedInt(500), () => this.tryUpdateValue());
       return false;
+    }
+
+    let isPartyValid: boolean = this.isPartyValid(); // this checks to see if the party is valid
+    if (addingToParty) { // this does a check to see if the pokemon being added is valid; if so, it will update the isPartyValid boolean
+      const isNewPokemonValid = new Utils.BooleanHolder(true);
+      Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, this.genSpecies[this.getGenCursorWithScroll()][this.cursor], isNewPokemonValid, this.scene.gameData.getSpeciesDexAttrProps(this.genSpecies[this.getGenCursorWithScroll()][this.cursor], this.scene.gameData.getSpeciesDefaultDexAttr(this.genSpecies[this.getGenCursorWithScroll()][this.cursor], false, true)), this.starterGens.length + (add ? 1 : 0), false, false);
+      isPartyValid = isPartyValid || isNewPokemonValid.value;
     }
 
     /**
@@ -2614,25 +2627,37 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
          * If remainValue greater than or equal pokemon species and the pokemon is legal for this challenge, the user can select.
          * so that the alpha value of pokemon sprite set 1.
          *
+         * However, if isPartyValid is false, that means none of the party members are valid for the run. In this case, we should
+         * check the challenge to make sure evolutions and forms aren't being checked for mono type runs.
+         * This will let us set the sprite's alpha to show it can't be selected
+         *
          * If speciesStarterDexEntry?.caughtAttr is true, this species registered in stater.
          * we change to can AddParty value to true since the user has enough cost to choose this pokemon and this pokemon registered too.
          */
         const isValidForChallenge = new Utils.BooleanHolder(true);
-        Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, this.genSpecies[g][s], isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(this.genSpecies[g][s], this.scene.gameData.getSpeciesDefaultDexAttr(this.genSpecies[g][s], false, true)), this.starterGens.length + (add ? 1 : 0));
+        if (isPartyValid) { // we have two checks here - one for the party being valid and one for not. This comes from mono type challenges - if the party is valid it will check pokemon's evolutions and forms, and if it's not valid it won't check their evolutions and forms
+          Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, this.genSpecies[g][s], isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(this.genSpecies[g][s], this.scene.gameData.getSpeciesDefaultDexAttr(this.genSpecies[g][s], false, true)), this.starterGens.length + (add ? 1 : 0));
+        } else {
+          Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, this.genSpecies[g][s], isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(this.genSpecies[g][s], this.scene.gameData.getSpeciesDefaultDexAttr(this.genSpecies[g][s], false, true)), this.starterGens.length + (add ? 1 : 0), false, false);
+        }
 
         const canBeChosen = remainValue >= speciesStarterValue && isValidForChallenge.value;
 
-        if (canBeChosen) {
-          speciesSprite.setAlpha(1);
-          if (speciesStarterDexEntry?.caughtAttr) {
-            this.canAddParty = true;
+        const isPokemonInParty = this.isInParty(g, s)[0]; // this will get the valud of isDupe from isInParty. This will let us see if the pokemon in question is in our party already so we don't grey out the sprites if they're invalid
+
+        if (!isPokemonInParty) { // this if statement checks to see if a pokemon is in our party or not. If it is, it doesn't update the sprite - this is to not confuse players who suddenly find sprites of party pokemon changing on them
+          if (canBeChosen) {
+            speciesSprite.setAlpha(1);
+            if (speciesStarterDexEntry?.caughtAttr) {
+              this.canAddParty = true;
+            }
+          } else {
+            /**
+             * If it can't be chosen, the user can't select.
+             * so that the alpha value of pokemon sprite set 0.375.
+             */
+            speciesSprite.setAlpha(0.375);
           }
-        } else {
-          /**
-           * If it can't be chosen, the user can't select.
-           * so that the alpha value of pokemon sprite set 0.375.
-           */
-          speciesSprite.setAlpha(0.375);
         }
       }
     }
@@ -2656,13 +2681,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.clearText();
     };
 
-    let canStart = false;
-    for (let s = 0; s < this.starterGens.length; s++) {
-      const isValidForChallenge = new Utils.BooleanHolder(true);
-      const species = this.genSpecies[this.starterGens[s]][this.starterCursors[s]];
-      Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor), this.starterGens.length, false);
-      canStart = canStart || isValidForChallenge.value;
-    }
+    const canStart = this.isPartyValid();
 
     if (canStart) {
       ui.showText(i18next.t("starterSelectUiHandler:confirmStartTeam"), null, () => {
@@ -2690,19 +2709,25 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }, cancel, null, null, 19);
       });
     } else {
-      //this.scene.ui.setMode(Mode.MESSAGE);
-      //this.scene.ui.showText("This is not a valid starting party!", null, () => this.scene.ui.showText(null, 0), null, true);
-
       const handler = this.scene.ui.getHandler() as AwaitableUiHandler;
       handler.tutorialActive = true;
-      this.scene.ui.showText("This is not a valid starting party!", null, () => this.scene.ui.showText(null, 0, () => handler.tutorialActive = false), null, true);
-
-      //this.scene.ui.showText("This is not a valie starting party!", null, null, null, true);
-      //this.scene.ui.showText("This is not a valid starting party!", null, () => { ui.setMode(Mode.MESSAGE) }, cancel, null, null, 19);
-      //this.scene.ui.setMode(Mode.MESSAGE);
-      //this.scene.ui.showText("This is not a valid starting party");
+      this.scene.ui.showText(i18next.t("starterSelectUiHandler:invalidParty"), null, () => this.scene.ui.showText(null, 0, () => handler.tutorialActive = false), null, true);
     }
     return true;
+  }
+
+  /* This block checks to see if your party is valid
+   * It checks each pokemon against the challenge - noting that due to monotype challenges it needs to check the pokemon while ignoring their evolutions/form change items
+  */
+  isPartyValid(): boolean {
+    let canStart = false;
+    for (let s = 0; s < this.starterGens.length; s++) {
+      const isValidForChallenge = new Utils.BooleanHolder(true);
+      const species = this.genSpecies[this.starterGens[s]][this.starterCursors[s]];
+      Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor), this.starterGens.length, false, false);
+      canStart = canStart || isValidForChallenge.value;
+    }
+    return canStart;
   }
 
   toggleStatsMode(on?: boolean): void {

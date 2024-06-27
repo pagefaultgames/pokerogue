@@ -423,6 +423,7 @@ export class SingleTypeChallenge extends Challenge {
       const dexAttr = args[2] as DexAttrProps;
       const amountOfPokemon = args[3] as number;
       const checkEvolutions = args[4] ?? true as boolean;
+      const checkForms = args[5] ?? true as boolean;
       const speciesForm = getPokemonSpeciesForm(species.speciesId, dexAttr.formIndex);
       const types = [speciesForm.type1, speciesForm.type2];
       if (amountOfPokemon > 0) {
@@ -435,7 +436,7 @@ export class SingleTypeChallenge extends Challenge {
               types.push(getPokemonSpecies(e.speciesId).type1, getPokemonSpecies(e.speciesId).type2);
             });
           }
-          if (pokemonFormChanges.hasOwnProperty(checking)) {
+          if (pokemonFormChanges.hasOwnProperty(checking) && checkForms) {
             pokemonFormChanges[checking].forEach(f1 => {
               getPokemonSpecies(checking).forms.forEach(f2 => {
                 if (f1.formKey === f2.formKey) {
