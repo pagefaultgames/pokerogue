@@ -2108,15 +2108,30 @@ export class PostSummonCopyAbilityAbAttr extends PostSummonAbAttr {
   }
 }
 
+/**
+ * Removes a status effect from the user's field.
+ */
 export class PostSummonUserFieldRemoveStatusEffectAbAttr extends PostSummonAbAttr {
   private statusEffect: StatusEffect[];
 
+  /**
+   *
+   * @param statusEffect - The status effects to be removed from the user's field.
+   */
   constructor(...statusEffect: StatusEffect[]) {
     super(false);
 
     this.statusEffect = statusEffect;
   }
 
+  /**
+   * Applies the post-summon ability.
+   *
+   * @param pokemon - The Pokémon that triggered the ability.
+   * @param passive - Whether the ability is applied passively.
+   * @param args - Additional arguments for the ability.
+   * @returns A boolean or a promise that resolves to a boolean indicating the result of the ability application.
+   */
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
     const party = pokemon instanceof PlayerPokemon ? pokemon.scene.getPlayerField() : pokemon.scene.getEnemyField();
     const allowedParty = party.filter(p => p.isAllowedInBattle());
