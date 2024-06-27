@@ -138,8 +138,8 @@ export const pokemonForm: SimpleTranslationEntries = {
   "miniorBlue": "Azul",
   "miniorIndigo": "Añil",
   "miniorViolet": "Violeta",
-  "mimikyuDisguised": "Disguised",
-  "mimikyuBusted": "Busted",
+  "mimikyuDisguised": "Encubierta",
+  "mimikyuBusted": "Descubierta",
   "magearnaOriginal": "Vetusto",
   "marshadowZenith": "Cénit",
   // 8G
