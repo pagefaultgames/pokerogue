@@ -23,6 +23,6 @@ export const egg: SimpleTranslationEntries = {
   "eggMoveUnlock": "蛋招式已解鎖： {{moveName}}",
   "rareEggMoveUnlock": "稀有蛋招式已解鎖： {{moveName}}",
   "moveUPGacha": "蛋招式UP!",
-  "shinyUPGacha": "闪光概率UP!,
+  "shinyUPGacha": "闪光概率UP!",
   "legendaryUPGacha": "UP!",
 } as const;
