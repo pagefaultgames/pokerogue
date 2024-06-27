@@ -65,9 +65,9 @@ export const pokemonForm: SimpleTranslationEntries = {
   "rotomFan": "Ventilador",
   "rotomMow": "Corte",
   // 5G
-  "basculinRedStriped": "Red Striped",
-  "basculinBlueStriped": "Blue Striped",
-  "basculinWhiteStriped": "White Striped",
+  "basculinRedStriped": "Raya Roja",
+  "basculinBlueStriped": "Raya Azul",
+  "basculinWhiteStriped": "Raya Blanca",
   "deerlingSpring": "Spring",
   "deerlingSummer": "Summer",
   "deerlingAutumn": "Autumn",
