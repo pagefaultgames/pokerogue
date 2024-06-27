@@ -77,19 +77,19 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "breeder_female": {
     "encounter": {
-      1: "Pokémon never betray you. They return all the love you give them.",
-      2: "Shall I give you a tip for training good Pokémon?",
-      3: "I have raised these very special Pokémon using a special method."
+      1: "Les Pokémon ne tahissent jamais. Ils te rendront toujours l’amour que tu leur donne.",
+      2: "Puis-je te donner une astuce pour mieux élever tes Pokémon ?",
+      3: "J’ai élevé mes Pokémon en utilisant une méthode très spéciale."
     },
     "victory": {
-      1: "Ugh… It wasn't supposed to be like this. Did I administer the wrong blend?",
-      2: "How could that happen to my Pokémon… What are you feeding your Pokémon?",
-      3: "If I lose, that tells you I was just killing time. It doesn't damage my ego at all."
+      1: "Arg… C’était pas supposé se passer comme ça. Leur ai-je administré la mauvaise préparation ?",
+      2: "Comment ça a pu arrver…\nAvec quoi nourris-tu tes Pokémon ?",
+      3: "Si je perds, c’est juste pour te dire que je tuais le temps. Mon ego n’est absolument pas touché…"
     },
     "defeat": {
-      1: "This proves my Pokémon have accepted my love.",
-      2: "The real trick behind training good Pokémon is catching good Pokémon.",
-      3: "Pokémon will be strong or weak depending on how you raise them."
+      1: "C’est la preuve que mes Pokémon reconnaissent tout mon amour.",
+      2: "Le seul secret derrière des Pokémon bien entrainés, c’est surtout d’en capturer des bons.",
+      3: "La force des Pokémon dépend de ta capacité à savoir les élever correctement."
     }
   },
   "fisherman": {
@@ -2584,19 +2584,19 @@ export const PGFdialogue: DialogueTranslationEntries = {
   },
   "breeder_female": {
     "encounter": {
-      1: "Pokémon never betray you. They return all the love you give them.",
-      2: "Shall I give you a tip for training good Pokémon?",
-      3: "I have raised these very special Pokémon using a special method."
+      1: "Les Pokémon ne tahissent jamais. Ils te rendront toujours l’amour que tu leur donne.",
+      2: "Puis-je te donner une astuce pour mieux élever tes Pokémon ?",
+      3: "J’ai élevé mes Pokémon en utilisant une méthode très spéciale."
     },
     "victory": {
-      1: "Ugh… It wasn't supposed to be like this. Did I administer the wrong blend?",
-      2: "How could that happen to my Pokémon… What are you feeding your Pokémon?",
-      3: "If I lose, that tells you I was just killing time. It doesn't damage my ego at all."
+      1: "Arg… C’était pas supposé se passer comme ça. Leur ai-je administré la mauvaise préparation ?",
+      2: "Comment ça a pu arrver…\nAvec quoi nourris-tu tes Pokémon ?",
+      3: "Si je perds, c’est juste pour te dire que je tuais le temps. Mon ego n’est absolument pas touché…"
     },
     "defeat": {
-      1: "This proves my Pokémon have accepted my love.",
-      2: "The real trick behind training good Pokémon is catching good Pokémon.",
-      3: "Pokémon will be strong or weak depending on how you raise them."
+      1: "C’est la preuve que mes Pokémon reconnaissent tout mon amour.",
+      2: "Le seul secret derrière des Pokémon bien entrainés, c’est surtout d’en capturer des bons.",
+      3: "La force des Pokémon dépend de ta capacité à savoir les élever correctement."
     }
   },
   "fisherman": {
