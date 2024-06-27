@@ -500,7 +500,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "galactic_boss_cyrus_1": {
     "encounter": {
-      1: `You were compelled to come here by such vacuous sentimentality
+      1: `You were compelled to come here by such vacuous sentimentality.
           $I will make you regret paying heed to your heart!`
     },
     "victory": {
