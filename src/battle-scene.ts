@@ -173,6 +173,14 @@ export default class BattleScene extends SceneBase {
    */
   public typeHints: boolean = false;
 
+  /**
+   * Determines when to show the generation tooltip
+   * - 0 = Never
+   * - 1 = During Challenges
+   * - 2 = Always
+   */
+  public generationTooltip: number = 0;
+
   public disableMenu: boolean = false;
 
   public gameData: GameData;

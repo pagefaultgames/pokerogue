@@ -29,6 +29,7 @@ export const settings: SimpleTranslationEntries = {
   "set": "토너먼트",
   "auto": "자동",
   "disabled": "비활성",
+  "challengeOnly": "Challenge Only",
   "language": "언어",
   "change": "변경",
   "uiTheme": "UI 테마",

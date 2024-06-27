@@ -29,6 +29,7 @@ export const settings: SimpleTranslationEntries = {
   "set": "Folge",
   "auto": "Auto",
   "disabled": "Deaktiviert",
+  "challengeOnly": "Challenge Only",
   "language": "Sprache",
   "change": "Ändern",
   "uiTheme": "UI Thema",
