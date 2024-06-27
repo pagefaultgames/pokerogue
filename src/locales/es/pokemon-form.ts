@@ -161,8 +161,8 @@ export const pokemonForm: SimpleTranslationEntries = {
   "gimmighoulRoaming": "Andante",
   "poltchageistCounterfeit": "Imitación",
   "poltchageistArtisan": "Original",
-  "paldeaTaurosCombat": "Combat",
-  "paldeaTaurosBlaze": "Blaze",
-  "paldeaTaurosAqua": "Aqua",
+  "paldeaTaurosCombat": "Combatiente",
+  "paldeaTaurosBlaze": "Ardiente",
+  "paldeaTaurosAqua": "Acuático",
 
 } as const;
