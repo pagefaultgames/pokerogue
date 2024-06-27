@@ -2278,6 +2278,7 @@ export class PreSetStatusAbAttr extends AbAttr {
 
 export class StatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
   private immuneEffects: StatusEffect[];
+  private immuneAgainst: StatusEffect;
 
   constructor(...immuneEffects: StatusEffect[]) {
     super();
@@ -2288,6 +2289,7 @@ export class StatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
   applyPreSetStatus(pokemon: Pokemon, passive: boolean, effect: StatusEffect, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     if (!this.immuneEffects.length || this.immuneEffects.indexOf(effect) > -1) {
       cancelled.value = true;
+      this.immuneAgainst = effect;
       return true;
     }
 
@@ -2295,7 +2297,7 @@ export class StatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
   }
 
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
-    return getPokemonMessage(pokemon, `'s ${abilityName}\nprevents ${this.immuneEffects.length ? getStatusEffectDescriptor(args[0] as StatusEffect) : "status problems"}!`);
+    return getPokemonMessage(pokemon, `'s ${abilityName}\nprevents ${this.immuneEffects.length ? getStatusEffectDescriptor(this.immuneAgainst) : "status problems"}!`);
   }
 }
 
@@ -3999,7 +4001,8 @@ export function applyPostStatChangeAbAttrs(attrType: Constructor<PostStatChangeA
 
 export function applyPreSetStatusAbAttrs(attrType: Constructor<PreSetStatusAbAttr>,
   pokemon: Pokemon, effect: StatusEffect, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PreSetStatusAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPreSetStatus(pokemon, passive, effect, cancelled, args), args, false, true, false);
+  const simulated = args.length > 1 && args[0];
+  return applyAbAttrsInternal<PreSetStatusAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPreSetStatus(pokemon, passive, effect, cancelled, args), args, false, false, simulated);
 }
 
 export function applyPreApplyBattlerTagAbAttrs(attrType: Constructor<PreApplyBattlerTagAbAttr>,
