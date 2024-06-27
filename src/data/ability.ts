@@ -2306,17 +2306,33 @@ export class PreSetStatusAbAttr extends AbAttr {
   }
 }
 
+/**
+ * Represents a status effect immunity ability attribute.
+ */
 export class StatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
   private immuneEffects: StatusEffect[];
 
+  /**
+   * @param immuneEffects - The status effects to which the Pokémon is immune.
+   */
   constructor(...immuneEffects: StatusEffect[]) {
     super();
 
     this.immuneEffects = immuneEffects;
   }
 
+  /**
+   * Applies a pre-set status to a Pokémon.
+   *
+   * @param pokemon - The Pokémon to which the status is being applied.
+   * @param passive - Whether the status is applied passively.
+   * @param effect - The status effect being applied.
+   * @param cancelled - A holder for a boolean value indicating if the status application was cancelled.
+   * @param args - Additional arguments for the status application.
+   * @returns A boolean indicating the result of the status application.
+   */
   applyPreSetStatus(pokemon: Pokemon, passive: boolean, effect: StatusEffect, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (!this.immuneEffects.length || this.immuneEffects.includes(effect)) {
+    if (this.immuneEffects.length < 1 || this.immuneEffects.includes(effect)) {
       cancelled.value = true;
       return true;
     }
@@ -2329,6 +2345,10 @@ export class StatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
   }
 }
 
+/**
+ * Provides immunity to poison and toxic status effects.
+ * Used by Pastel Veil. {@linkcode Abilities.PASTEL_VEIL}
+ */
 export class PastelVeilPoisonEffectImmunityAbAttr extends StatusEffectImmunityAbAttr {
   constructor() {
     super(StatusEffect.POISON, StatusEffect.TOXIC);

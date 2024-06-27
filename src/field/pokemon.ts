@@ -2512,6 +2512,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     const cancelled = new Utils.BooleanHolder(false);
     applyPreSetStatusAbAttrs(StatusEffectImmunityAbAttr, this, effect, cancelled, quiet);
+
     if (this.getAlly()) {
       applyPreSetStatusAbAttrs(PastelVeilPoisonEffectImmunityAbAttr, this.getAlly(), effect, cancelled, quiet);
     }
