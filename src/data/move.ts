@@ -5405,12 +5405,9 @@ export class MoneyAttr extends MoveEffectAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move): boolean {
-    if (lastTargetOnlyCondition(user, target, move)) {
-      user.scene.currentBattle.moneyScattered += user.scene.getWaveMoneyAmount(0.2);
-      user.scene.queueMessage("Coins were scattered everywhere!");
-      return true;
-    }
-    return false;
+    user.scene.currentBattle.moneyScattered += user.scene.getWaveMoneyAmount(0.2);
+    user.scene.queueMessage("Coins were scattered everywhere!");
+    return true;
   }
 }
 
