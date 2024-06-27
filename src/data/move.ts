@@ -1,7 +1,7 @@
 import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
 import { BattleEndPhase, MovePhase, NewBattlePhase, PartyStatusCurePhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../phases";
 import { BattleStat, getBattleStatName } from "./battle-stat";
-import { EncoreTag, SemiInvulnerableTag } from "./battler-tags";
+import { EncoreTag, PowerTrickTag, SemiInvulnerableTag } from "./battler-tags";
 import { getPokemonMessage, getPokemonNameWithAffix } from "../messages";
 import Pokemon, { AttackMoveResult, EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../field/pokemon";
 import { StatusEffect, getStatusEffectHealText, isNonVolatileStatusEffect, getNonVolatileStatusEffects} from "./status-effect";
@@ -4162,7 +4162,8 @@ export class FaintCountdownAttr extends AddBattlerTagAttr {
 }
 
 /**
- * battle tag to exchange pokemon's raw attack stat and raw defense stat
+ * Swap the Pokémon's base Attack stat with its base Defense stat.
+ * Pokémon with the Power Trick Tag will have their altered base stat values displayed.
  * @extends AddBattlerTagAttr
  */
 export class PowerTrickAttr extends AddBattlerTagAttr {
@@ -4171,17 +4172,23 @@ export class PowerTrickAttr extends AddBattlerTagAttr {
   }
 
   /**
-   * add battler tag to swap attack stat and defense stat.
-   * remove battler tag to reset stat change
-   * @param user {@linkcode Pokemon} Pokemon that used the move
+   * Add battler tag to swap attack stat and defense stat.
+   * Remove battler tag to reset stat change
+   * @param user {@linkcode Pokemon} Pokémon that used the move
    * @param target {@linkcode Pokemon} N/A
    * @param move {@linkcode Move} N/A
    * @param args N/A
    * @returns true if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!super.apply(user, target, move, args)) {
+    if (!super.canApply(user, target, move, args)) {
+      return false;
+    }
+
+    if (user.findTag(t => t instanceof PowerTrickTag)) {
       user.removeTag(BattlerTagType.POWER_TRICK);
+    } else {
+      super.apply(user, target, move, args);
     }
 
     user.scene.queueMessage(i18next.t("battle:battlerTagsPowerTrickApply", { pokemonNameWithAffix: getPokemonNameWithAffix(user) }));
