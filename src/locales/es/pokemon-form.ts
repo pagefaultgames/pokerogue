@@ -73,7 +73,7 @@ export const pokemonForm: SimpleTranslationEntries = {
   "deerlingAutumn": "Otoño",
   "deerlingWinter": "Invierno",
   // 6G
-  "froakieBattleBond": "Battle Bond",
+  "froakieBattleBond": "Fuerte Afecto",
   "scatterbugMeadow": "Meadow",
   "scatterbugIcySnow": "Icy Snow",
   "scatterbugPolar": "Polar",
