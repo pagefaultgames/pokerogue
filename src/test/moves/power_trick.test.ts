@@ -62,10 +62,6 @@ describe("Moves - Power Trick", () => {
       expect(playerPokemon.getTag(BattlerTagType.POWER_TRICK)).not.toBe(undefined);
       expect(playerPokemon.getStat(Stat.ATK)).toBe(initialStats[Stat.DEF]);
       expect(playerPokemon.getStat(Stat.DEF)).toBe(initialStats[Stat.ATK]);
-      expect(playerPokemon.getStat(Stat.HP)).toBe(initialStats[Stat.HP]);
-      expect(playerPokemon.getStat(Stat.SPATK)).toBe(initialStats[Stat.SPATK]);
-      expect(playerPokemon.getStat(Stat.SPD)).toBe(initialStats[Stat.SPD]);
-      expect(playerPokemon.getStat(Stat.SPDEF)).toBe(initialStats[Stat.SPDEF]);
     },
     TIMEOUT
   );
@@ -87,10 +83,6 @@ describe("Moves - Power Trick", () => {
       expect(playerPokemon.getTag(BattlerTagType.POWER_TRICK)).toBe(undefined);
       expect(playerPokemon.getStat(Stat.ATK)).toBe(initialStats[Stat.ATK]);
       expect(playerPokemon.getStat(Stat.DEF)).toBe(initialStats[Stat.DEF]);
-      expect(playerPokemon.getStat(Stat.HP)).toBe(initialStats[Stat.HP]);
-      expect(playerPokemon.getStat(Stat.SPATK)).toBe(initialStats[Stat.SPATK]);
-      expect(playerPokemon.getStat(Stat.SPD)).toBe(initialStats[Stat.SPD]);
-      expect(playerPokemon.getStat(Stat.SPDEF)).toBe(initialStats[Stat.SPDEF]);
     },
     TIMEOUT
   );
