@@ -5,9 +5,9 @@ export const pokemonForm: SimpleTranslationEntries = {
   "mega": "Mega {{pokemonName}}",
   "megaX": "Mega {{pokemonName}} X",
   "megaY": "Mega {{pokemonName}} Y",
-  "primal": "Primal {{pokemonName}}",
-  "gigantamax": "G-Max {{pokemonName}}",
-  "eternamax": "E-Max {{pokemonName}}",
+  "primal": "原始回归{{pokemonName}}",
+  "gigantamax": "超级巨{{pokemonName}}",
+  "eternamax": "无极巨{{pokemonName}}",
 
   // Starters forms
   // 1G
