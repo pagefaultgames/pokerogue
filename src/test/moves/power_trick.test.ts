@@ -35,8 +35,8 @@ describe("Moves - Power Trick", () => {
     vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(5);
     vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(6);
     vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([
-      Moves.TACKLE,
-      Moves.BATON_PASS,
+      Moves.POWER_TRICK,
+      Moves.POWER_TRICK,
       Moves.POWER_TRICK,
       Moves.POWER_TRICK,
     ]);
