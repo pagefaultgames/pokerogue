@@ -2746,19 +2746,24 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
         const isPokemonInParty = this.isInParty(g, s)[0]; // this will get the valud of isDupe from isInParty. This will let us see if the pokemon in question is in our party already so we don't grey out the sprites if they're invalid
 
-        if (!isPokemonInParty) { // this if statement checks to see if a pokemon is in our party or not. If it is, it doesn't update the sprite - this is to not confuse players who suddenly find sprites of party pokemon changing on them
-          if (canBeChosen) {
-            speciesSprite.setAlpha(1);
-            if (speciesStarterDexEntry?.caughtAttr) {
-              this.canAddParty = true;
-            }
-          } else {
-            /**
+        /* This code does a check to tell whether or not a sprite should be lit up or greyed out. There are 3 ways a pokemon's sprite should be lit up:
+         * 1) If it's in your party, it's a valid pokemon (i.e. for challenge) and you have enough points to have it
+         * 2) If it's in your party, it's not valid (i.e. for challenges), and you have enough points to have it
+         * 3) If it's not in your party, but it's a valid pokemon and you have enough points for it
+         * Any other time, the sprite should be greyed out.
+         * For example, if it's in your party, valid, but costs too much, or if it's not in your party and not valid, regardless of cost
+        */
+        if (canBeChosen || (isPokemonInParty && remainValue >= speciesStarterValue)) {
+          speciesSprite.setAlpha(1);
+          if (speciesStarterDexEntry?.caughtAttr) {
+            this.canAddParty = true;
+          }
+        } else {
+          /**
              * If it can't be chosen, the user can't select.
              * so that the alpha value of pokemon sprite set 0.375.
              */
-            speciesSprite.setAlpha(0.375);
-          }
+          speciesSprite.setAlpha(0.375);
         }
       }
     }
