@@ -24,14 +24,14 @@ export const partyUiHandler: SimpleTranslationEntries = {
   "cantBeUsed": "{{pokemonName}}[[는]] 이 챌린지에서는\n쓸 수 없습니다.",
   "tooManyItems": "{{pokemonName}}[[는]] 지닌 도구의 수가\n너무 많습니다",
   "anyEffect": "써도 효과가 없다.",
-  "unpausedEvolutions": "Evolutions have been unpaused for {{pokemonName}}.",
-  "unspliceConfirmation": "Do you really want to unsplice {{fusionName}}\nfrom {{pokemonName}}? {{fusionName}} will be lost.",
-  "wasReverted": "{{fusionName}} was reverted to {{pokemonName}}.",
+  "unpausedEvolutions": "{{pokemonName}}의 진화가 재개되었다.",
+  "unspliceConfirmation": "{{pokemonName}}로부터 {{fusionName}}의 융합을 해제하시겠습니까?\n{{fusionName}}는 사라지게 됩니다.",
+  "wasReverted": "{{fusionName}}은 {{pokemonName}}의 모습으로 돌아갔습니다!",
   "releaseConfirmation": "{{pokemonName}}[[를]]\n정말 놓아주겠습니까?",
   "releaseInBattle": "전투 중인 포켓몬은\n놓아줄 수 없습니다.",
   "selectAMove": "기술을 선택해 주십시오",
   "changeQuantity": "건네줄 지닌 도구를 선택해 주십시오.\n< 와 > 로 수량을 변경할 수 있습니다.",
-  "selectAnotherPokemonToSplice": "Select another Pokémon to splice.",
+  "selectAnotherPokemonToSplice": "융합할 포켓몬을 선택해 주십시오.",
   "cancel": "그만둔다",
 
   // Slot TM text
