@@ -60,7 +60,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "breeder": {
     "encounter": {
-      1: "Qu’ils soit obéissants ou égoïstes… Les Pokémon ont des caractéristiques uniques.",
+      1: "Qu’ils soient obéissants ou égoïstes… Les Pokémon ont des caractéristiques uniques.",
       2: "Même si mes choix et ma personnalité ne sont pas fous, je pense quand même bien avoir élevé mes Pokémon.",
       3: "Hum, t’es pas trop laxiste avec tes Pokémon ?\nTrop les chouchouter n’est pas bon.",
     },
@@ -2567,7 +2567,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
   },
   "breeder": {
     "encounter": {
-      1: "Qu’ils soit obéissants ou égoïstes… Les Pokémon ont des caractéristiques uniques.",
+      1: "Qu’ils soient obéissants ou égoïstes… Les Pokémon ont des caractéristiques uniques.",
       2: "Même si mes choix et ma personnalité ne sont pas fous, je pense quand même bien avoir élevé mes Pokémon.",
       3: "Hum, t’es pas trop laxiste avec tes Pokémon ?\nTrop les chouchouter n’est pas bon.",
     },
