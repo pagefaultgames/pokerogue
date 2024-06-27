@@ -3872,7 +3872,7 @@ export class DisableMoveAttr extends MoveEffectAttr {
 
 export class FrenzyAttr extends MoveEffectAttr {
   constructor() {
-    super(true, MoveEffectTrigger.HIT);
+    super(true, MoveEffectTrigger.HIT, false, true);
   }
 
   canApply(user: Pokemon, target: Pokemon, move: Move, args: any[]) {
