@@ -1,11 +1,10 @@
+import { PartyMemberStrength } from "#enums/party-member-strength";
+import { Species } from "#enums/species";
 import BattleScene from "../battle-scene";
 import { PlayerPokemon } from "../field/pokemon";
-import { GameModes, gameModes } from "../game-mode";
 import { Starter } from "../ui/starter-select-ui-handler";
 import * as Utils from "../utils";
-import { Species } from "./enums/species";
 import PokemonSpecies, { PokemonSpeciesForm, getPokemonSpecies, getPokemonSpeciesForm, speciesStarters } from "./pokemon-species";
-import { PartyMemberStrength } from "./enums/party-member-strength";
 
 export interface DailyRunConfig {
   seed: integer;
@@ -29,7 +28,7 @@ export function getDailyRunStarters(scene: BattleScene, seed: string): Starter[]
   const starters: Starter[] = [];
 
   scene.executeWithSeedOffset(() => {
-    const startingLevel = gameModes[GameModes.DAILY].getStartingLevel();
+    const startingLevel = scene.gameMode.getStartingLevel();
 
     if (/\d{18}$/.test(seed)) {
       for (let s = 0; s < 3; s++) {

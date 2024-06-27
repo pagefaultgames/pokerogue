@@ -3,8 +3,9 @@ import BattleScene from "../../battle-scene";
 import {Mode} from "../ui";
 import {addWindow} from "../ui-theme";
 import {addTextObject, TextStyle} from "../text";
-import {Button} from "../../enums/buttons";
+import {Button} from "#enums/buttons";
 import {NavigationManager} from "#app/ui/settings/navigationMenu";
+import i18next from "i18next";
 
 /**
  * Abstract class for handling UI elements related to button bindings.
@@ -78,7 +79,7 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
     this.actionsContainer.add(this.actionBg);
 
     // Text prompts and instructions for the user.
-    this.unlockText = addTextObject(this.scene, 0, 0, "Press a button...", TextStyle.WINDOW);
+    this.unlockText = addTextObject(this.scene, 0, 0, i18next.t("settings:pressButton"), TextStyle.WINDOW);
     this.unlockText.setOrigin(0, 0);
     this.unlockText.setPositionRelative(this.titleBg, 36, 4);
     this.optionSelectContainer.add(this.unlockText);
@@ -92,7 +93,7 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
     this.optionSelectBg.setOrigin(0.5);
     this.optionSelectContainer.add(this.optionSelectBg);
 
-    this.cancelLabel = addTextObject(this.scene, 0, 0, "Cancel", TextStyle.SETTINGS_LABEL);
+    this.cancelLabel = addTextObject(this.scene, 0, 0, i18next.t("settings:back"), TextStyle.SETTINGS_LABEL);
     this.cancelLabel.setOrigin(0, 0.5);
     this.cancelLabel.setPositionRelative(this.actionBg, 10, this.actionBg.height / 2);
     this.actionsContainer.add(this.cancelLabel);
