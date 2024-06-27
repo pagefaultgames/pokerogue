@@ -143,8 +143,8 @@ export const pokemonForm: SimpleTranslationEntries = {
   "magearnaOriginal": "Vetusto",
   "marshadowZenith": "Cénit",
   // 8G
-  "sinisteaPhony": "Phony",
-  "sinisteaAntique": "Antique",
+  "sinisteaPhony": "Falsificada",
+  "sinisteaAntique": "Auténtica",
   "eiscueNoIce": "No Ice",
   "indeedeeMale": "Male",
   "indeedeeFemale": "Female",
