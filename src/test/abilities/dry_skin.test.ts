@@ -6,6 +6,7 @@ import { TurnEndPhase } from "#app/phases";
 import { Moves } from "#enums/moves";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
+import { Species } from "#app/enums/species.js";
 
 describe("Abilities - Dry Skin", () => {
   let phaserGame: Phaser.Game;
@@ -26,7 +27,9 @@ describe("Abilities - Dry Skin", () => {
     vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
     vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.DRY_SKIN);
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.CHARMANDER);
     vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
+    vi.spyOn(overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.CHANDELURE);
   });
 
   it("during sunlight, lose 1/8 of maximum health at the end of each turn", async () => {
@@ -85,6 +88,7 @@ describe("Abilities - Dry Skin", () => {
     expect(enemy).not.toBe(undefined);
 
     // first turn
+    vi.spyOn(game.scene, "randBattleSeedInt").mockReturnValue(0); // this makes moves always deal 85% damage
     game.doAttack(getMovePosition(game.scene, 0, Moves.EMBER));
     await game.phaseInterceptor.to(TurnEndPhase);
     const fireDamageTakenWithDrySkin = enemy.getMaxHp() - enemy.hp;
