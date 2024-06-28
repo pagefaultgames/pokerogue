@@ -36,6 +36,8 @@ describe("Abilities - Pastel Veil", () => {
   it("prevents the user and its allies from being afflicted by poison", async () => {
     await game.startBattle([Species.GALAR_PONYTA, Species.MAGIKARP]);
 
+    game.scene.getPlayerField()[0].abilityIndex = 1;
+
     game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
