@@ -1,5 +1,13 @@
 import { GameMode, GameModes, getGameMode } from "#app/game-mode.js";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from "vitest";
 import GameManager from "./utils/gameManager";
 
 describe("game-mode", () => {
@@ -28,11 +36,12 @@ describe("game-mode", () => {
       classicGameMode = getGameMode(GameModes.CLASSIC);
     });
 
-
     it("does NOT spawn trainers within 3 waves of fixed battle", () => {
       const { arena } = game.scene;
       /** set wave 10 to be a trainer fight meaning wave 7-13 don't allow trainer spawns */
-      vi.spyOn(classicGameMode, "isFixedBattle").mockImplementation((n: number) => n === 10 ? true : false);
+      vi.spyOn(classicGameMode, "isFixedBattle").mockImplementation(
+        (n: number) => (n === 10 ? true : false)
+      );
       vi.spyOn(arena, "getTrainerChance").mockReturnValue(0);
 
       expect(classicGameMode.isWaveTrainer(5, arena)).not.toBeTruthy(); // just to be sure..
