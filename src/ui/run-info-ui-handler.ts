@@ -64,7 +64,13 @@ export default class GameInfoUiHandler extends UiHandler {
 
  		this.gameStatsContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
 
-    this.hallOfFameContainer = this.scene.add.container(1, -(this.scene.game.canvas.height/6)+1);
+
+
+    this.gameStatsContainer.setVisible(false);
+ 	}
+
+ 	show(args: any[]): boolean {
+ 		super.show(args);
 
     this.statsBgWidth = ((this.scene.game.canvas.width / 6) - 2) / 3;
 
@@ -73,12 +79,6 @@ export default class GameInfoUiHandler extends UiHandler {
     this.partyContainer = this.scene.add.container(this.statsBgWidth-10, 24);
 
     this.setCursor(0);
-
-    this.gameStatsContainer.setVisible(false);
- 	}
-
- 	show(args: any[]): boolean {
- 		super.show(args);
 
     const headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6) - 2, 24);
     headerBg.setOrigin(0, 0);
@@ -114,8 +114,7 @@ export default class GameInfoUiHandler extends UiHandler {
 
     this.gameStatsContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
 
-    this.gameStatsContainer.add(this.runInfoContainer);
-    this.gameStatsContainer.add(this.partyContainer);
+
     this.getUi().bringToTop(this.gameStatsContainer);
     this.gameStatsContainer.setVisible(true);
 
@@ -266,6 +265,7 @@ export default class GameInfoUiHandler extends UiHandler {
         }
     	  }
     	  this.runInfoContainer.add(enemyContainer);
+      this.gameStatsContainer.add(this.runInfoContainer);
     }
 
     	if (runData.modifiers.length) {
@@ -480,16 +480,8 @@ export default class GameInfoUiHandler extends UiHandler {
       this.partyContainer.add(pokemonInfoContainer);
       pokemon.destroy();
  		});
+    this.gameStatsContainer.add(this.partyContainer);
  	}
-
-  showHallOfFame(runInfo: RunEntries) {
-    const partyPokemon = runInfo.party;
-    const pkmn = partyPokemon[0].toPokemon(this.scene);
-    const pkmnSprite = pkmn.getSprite();
-    pkmnSprite.setPosition(10, 20);
-    this.hallOfFameContainer.add(pkmnSprite);
-    this.hallOfFameContainer.setVisible(true);
-  }
 
  	processInput(button: Button): boolean {
     const ui = this.getUi();
@@ -497,18 +489,13 @@ export default class GameInfoUiHandler extends UiHandler {
     let success = false;
 
     if (button === Button.CANCEL) {
-      if (this.hallOfFameContainer.isVisible) {
-        this.hallofFameContainer.removeAll();
-        this.hallOfFameContainer.setVisible(false);
-        this.gameStatsContainer.setVisible(true);
-      } else {
-        success = true;
-        this.runInfoContainer.removeAll();
-        this.partyContainer.removeAll();
-        this.gameStatsContainer.removeAll();
-        this.gameStatsContainer.setVisible(false);
-        ui.revertMode();
-      }
+      success = true;
+      this.runInfoContainer.removeAll(true);
+      this.partyContainer.removeAll(true);
+      this.gameStatsContainer.removeAll(true);
+      super.clear();
+      this.gameStatsContainer.setVisible(false);
+      ui.revertMode();
     } else {
       switch (button) {
       case Button.DOWN:
