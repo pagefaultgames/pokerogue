@@ -93,7 +93,6 @@ export const SettingKeys = {
   Fusion_Palette_Swaps: "FUSION_PALETTE_SWAPS",
   Player_Gender: "PLAYER_GENDER",
   Type_Hints: "TYPE_HINTS",
-  Generation_Tooltip: "GENERATION_TOOLTIP",
   Master_Volume: "MASTER_VOLUME",
   BGM_Volume: "BGM_VOLUME",
   SE_Volume: "SE_VOLUME",
@@ -491,26 +490,6 @@ export const Setting: Array<Setting> = [
     type: SettingType.DISPLAY
   },
   {
-    key: SettingKeys.Generation_Tooltip,
-    label: i18next.t("settings:generationTooltip"),
-    options: [
-      {
-        value: "Off",
-        label: i18next.t("settings:off")
-      },
-      {
-        value: "Challenge Only",
-        label: i18next.t("settings:challengeOnly")
-      },
-      {
-        value: "On",
-        label: i18next.t("settings:on")
-      }
-    ],
-    default: 0,
-    type: SettingType.DISPLAY
-  },
-  {
     key: SettingKeys.Show_BGM_Bar,
     label: i18next.t("settings:showBgmBar"),
     options: OFF_ON,
@@ -711,9 +690,6 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     break;
   case SettingKeys.Type_Hints:
     scene.typeHints = Setting[index].options[value].value === "On";
-    break;
-  case SettingKeys.Generation_Tooltip:
-    scene.generationTooltip = value;
     break;
   case SettingKeys.Language:
     if (value) {

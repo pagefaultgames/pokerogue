@@ -11,7 +11,6 @@ import { BattleStat } from "#app/data/battle-stat";
 import BattleFlyout from "./battle-flyout";
 import { WindowVariant, addWindow } from "./ui-theme";
 import i18next from "i18next";
-import { GenerationTooltip } from "#app/enums/generation-tooltip.js";
 
 const battleStatOrder = [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.ACC, BattleStat.EVA, BattleStat.SPD ];
 
@@ -330,10 +329,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     }
 
     if (!this.player) {
-      // First check is if the generationTooltip is on DURING_CHALLENGE, otherwise show it if it's enabled
-      const showGenerationTooltip = this.scene instanceof BattleScene &&
-        (this.scene.generationTooltip === GenerationTooltip.DURING_CHALLENGE ? this.scene.gameMode.isChallenge : this.scene.generationTooltip === GenerationTooltip.ALWAYS);
-      if (this.nameText.visible && showGenerationTooltip) {
+      if (this.nameText.visible) {
         this.nameText.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, i18next.t("battleInfo:generation", { generation: i18next.t(`starterSelectUiHandler:gen${pokemon.species.generation}`) })));
         this.nameText.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
       }
