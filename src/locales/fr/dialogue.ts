@@ -1,4 +1,4 @@
-import {DialogueTranslationEntries, SimpleTranslationEntries} from "#app/plugins/i18n";
+import {DialogueTranslationEntries, SimpleTranslationEntries} from "#app/interfaces/locales";
 
 // Dialogue of the NPCs in the game when the player character is male (or unset)
 export const PGMdialogue: DialogueTranslationEntries = {
@@ -36,26 +36,26 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "lass": {
     "encounter": {
-      1: "Let's have a battle, shall we?",
-      2: "You look like a new trainer. Let's have a battle!",
-      3: "I don't recognize you. How about a battle?",
-      4: "Let's have a fun Pokémon battle!",
-      5: "I'll show you the ropes of how to really use Pokémon!",
-      6: "A serious battle starts from a serious beginning! Are you sure you're ready?",
-      7: "You're only young once. And you only get one shot at a given battle. Soon, you'll be nothing but a memory.",
-      8: "You'd better go easy on me, OK? Though I'll be seriously fighting!",
-      9: "School is boring. I've got nothing to do. Yawn. I'm only battling to kill the time."
+      1: "Affrontons-nous, d'accord ?",
+      2: "Tu as l'air d'un nouveau dresseur. Battons nous !",
+      3: "Je ne te reconnais pas. Que dirais-tu de te battre ?",
+      4: "Amusons-nous pendant ce combat Pokémon !",
+      5: "Je vais t'apprendre à te battre avec des Pokémon !",
+      6: "Un combat doit être pris au sérieux. Es-tu prêt à te battre ?",
+      7: "Tu ne seras pas jeune éternellement. Tu n'auras qu'une chance pendant un combat. Bientôt, tu ne seras plus qu'un souvenir.",
+      8: "Tu ferais mieux d'y aller doucement avec moi. Mais je vais me battre sérieusement !",
+      9: "Je m'ennuie à l'école. Je n'ai rien à faire. *Baille*. Je me bats juste pour passer le temps."
     },
     "victory": {
-      1: "That was impressive! I've got a lot to learn.",
-      2: "I didn't think you'd beat me that bad…",
-      3: "I hope we get to have a rematch some day.",
-      4: "That was pretty amazingly fun! You've totally exhausted me…",
-      5: "You actually taught me a lesson! You're pretty amazing!",
-      6: "Seriously, I lost. That is, like, seriously depressing, but you were seriously cool.",
-      7: "I don't need memories like this. Deleting memory…",
-      8: "Hey! I told you to go easy on me! Still, you're pretty cool when you're serious.",
-      9: "I'm actually getting tired of battling… There's gotta be something new to do…"
+      1: "Wow, c'était impressionnant. J'ai beaucoup à apprendre.",
+      2: "Je ne pensais pas que je perdrais comme ça…",
+      3: "J'espère que j'aurai ma revanche un jour.",
+      4: "C'était super amusant ! Ce combat m'a épuisé…",
+      5: "Tu m'as appris une belle leçon ! Tu es vraiment incroyable !",
+      6: "Vraiment ? J'ai perdu… C'est des choses qui arrivent, ça me déprime mais tu es vraiment très cool.",
+      7: "Je n'ai pas besoin de souvenirs comme ça. *Suppression de la mémoire…*",
+      8: "Hé ! Je t'avais dit d'y aller doucement avec moi ! Mais tu es vraiment trop cool quand tu te bats sérieusement.",
+      9: "J'en ai marre des combats Pokémon… Il doit y avoir de nouvelles choses à faire…"
     }
   },
   "breeder": {
@@ -118,14 +118,14 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "swimmer": {
     "encounter": {
-      1: "Time to dive in!",
-      2: "Let's ride the waves of victory!",
-      3: "Ready to make a splash!",
+      1: "C'est l'heure de plonger dans le combat !",
+      2: "Je vais surfer sur les vagues de la victoire !",
+      3: "Je vais t'éclabousser de mon talent !",
     },
     "victory": {
-      1: "Drenched in defeat!",
-      2: "A wave of defeat!",
-      3: "Back to shore, I guess.",
+      1: "Tu m'as complètement séché",
+      2: "Il semblerait que j'ai surfé sur les vagues de la défaite...",
+      3: "Retour sur la terre ferme je suppose",
     },
   },
   "backpacker": {
@@ -382,6 +382,186 @@ export const PGMdialogue: DialogueTranslationEntries = {
       2: "Your spirit sank me!",
       3: "I think it's me that's seasick..."
     },
+  },
+  "rocket_grunt": {
+    "encounter": {
+      1: "Nous sommes de retour !"
+    },
+    "victory": {
+      1: "Une fois de plus la Team Rocket s’envole vers d’autres cieux !"
+    },
+  },
+  "magma_grunt": {
+    "encounter": {
+      1: "N’espère pas recevoir de la pitié si tu te mets sur le chemin de la Team Magma !"
+    },
+    "victory": {
+      1: "Je…?\nJ’ai perdu ?!"
+    },
+  },
+  "aqua_grunt": {
+    "encounter": {
+      1: "Aucune pitié si tu te mets sur le chemin de la Team Aqua, même pour un gamin !"
+    },
+    "victory": {
+      1: "Comment ça ?"
+    },
+  },
+  "galactic_grunt": {
+    "encounter": {
+      1: "Ne te mets pas en travers de la Team Galaxie !"
+    },
+    "victory": {
+      1: "Désactivation…"
+    },
+  },
+  "plasma_grunt": {
+    "encounter": {
+      1: "Pas de quatiers à ceux qui ne suivent pas notre idéal !"
+    },
+    "victory": {
+      1: "Plasmaaaaaaaaa !"
+    },
+  },
+  "flare_grunt": {
+    "encounter": {
+      1: "Le style et le bon gout, il n’y a que ça qui compte !"
+    },
+    "victory": {
+      1: "Mon futur me semble guère radieux."
+    },
+  },
+  "rocket_boss_giovanni_1": {
+    "encounter": {
+      1: "Bien. Je dois admettre que je suis impressionné de te voir ici !"
+    },
+    "victory": {
+      1: "QUOI ? IMPOSSIBLE !"
+    },
+    "defeat": {
+      1: "Retiens bien. Ton incapacité à évaluer ta propre force est\nla démonstration claire que tu n'es encore qu’un gamin."
+    }
+  },
+  "rocket_boss_giovanni_2": {
+    "encounter": {
+      1: "Mes anciens collaborateurs m’attendent.\nComptes-tu m’en empêcher ?"
+    },
+    "victory": {
+      1: "Comment c'est possible… ? Le grand dessein de la Team Rocket n’est plus qu’une illusion…"
+    },
+    "defeat": {
+      1: "La Team Rocket renaitra, et je dominerai le monde !"
+    }
+  },
+  "magma_boss_maxie_1": {
+    "encounter": {
+      1: "Je vais t’enterrer de mes propres mains.\nJ’espère que t’apprécieras cet honneur !"
+    },
+    "victory": {
+      1: "Gnn… ! Tu… T’as du répondant…\nCe sentiment d’être à la traine, de si peu…"
+    },
+    "defeat": {
+      1: "La Team Magma vaincra !"
+    }
+  },
+  "magma_boss_maxie_2": {
+    "encounter": {
+      1: "T’es le dernier rempart entravant mes objectifs.\nPrépare-toi à mon ultime riposte ! Hahahaha !"
+    },
+    "victory": {
+      1: "Ce… Ce n'est pas… Gnn…"
+    },
+    "defeat": {
+      1: "L'heure est venue…\nJe vais transformer cette planète en paradis pour l’humanité."
+    }
+  },
+  "aqua_boss_archie_1": {
+    "encounter": {
+      1: "Je suis le Leader de la Team Aqua.\nJ’ai bien peur que pour toi, ce soit fin de parcours."
+    },
+    "victory": {
+      1: "Retrouvons-nous.\nJe me souviendrai de ton visage."
+    },
+    "defeat": {
+      1: "Magnifique !\nPlus rien ne peut nous retenir !"
+    }
+  },
+  "aqua_boss_archie_2": {
+    "encounter": {
+      1: "J’ai attendu ce moment depuis si longtemps.\nVoici la vraie puissance de la Team Aqua !"
+    },
+    "victory": {
+      1: "Comme si j’y avait cru…"
+    },
+    "defeat": {
+      1: "Je rendrai à ce monde sa pureté originelle !"
+    }
+  },
+  "galactic_boss_cyrus_1": {
+    "encounter": {
+      1: "Tu t’es senti obligé de venir ici dans un acte vide de sens. Je vais te le faire regretter."
+    },
+    "victory": {
+      1: "Intéressant. Et plutôt curieux."
+    },
+    "defeat": {
+      1: "Je le créerai, mon nouveau monde…"
+    }
+  },
+  "galactic_boss_cyrus_2": {
+    "encounter": {
+      1: "Nous y revoilà. Il semblerait que nos destinées soient entremêlées. Il est l’heure d’y mettre un terme."
+    },
+    "victory": {
+      1: "Comment. Comment ?\nCOMMENT ?!"
+    },
+    "defeat": {
+      1: "Adieu."
+    }
+  },
+  "plasma_boss_ghetsis_1": {
+    "encounter": {
+      1: "Je n’accepterai pas qu’on me barre la route !\nPeu importe qui fait quoi !"
+    },
+    "victory": {
+      1: "Comment ? Je suis le leader de la Team Plasma !\nJe suis parfait !"
+    },
+    "defeat": {
+      1: "Je suis le parfait monarque d’un monde parfait !\nHahaha !"
+    }
+  },
+  "plasma_boss_ghetsis_2": {
+    "encounter": {
+	  1: "Viens ! Je veux voir ton visage à l’instant même où l’espoir quittera ton corps !"
+    },
+    "victory": {
+      1: "Mes calculs… Non ! Mes plans étaient parfaits !\nCe monde devrait être mien !"
+    },
+    "defeat": {
+      1: "Kyurem ! Fusiorption !!!"
+    }
+  },
+  "flare_boss_lysandre_1": {
+    "encounter": {
+      1: "Comptes-tu m’arrêter ? Prouve-le."
+    },
+    "victory": {
+      1: "T’es venu m’arrêter. Mais je te demande d’attendre."
+    },
+    "defeat": {
+      1: "Les Pokémon… Ne devraient plus exister."
+    }
+  },
+  "flare_boss_lysandre_2": {
+    "encounter": {
+      1: "Ton future ou le mien… Voyons lequel mérite plus."
+    },
+    "victory": {
+      1: "Ohhhh… !"
+    },
+    "defeat": {
+      1: "Les ignorants sans aucune vision n’auront donc de cesse de souiller ce monde."
+    }
   },
   "brock": {
     "encounter": {
@@ -2107,6 +2287,32 @@ export const PGMdialogue: DialogueTranslationEntries = {
       2: "You got caught in my storm! Better luck next time!"
     }
   },
+  "alder": {
+    "encounter": {
+      1: "Prépare-toi pour un combat contre le meilleur Dresseur d'Unys !",
+    },
+    "victory": {
+      1: "Bien joué ! Tu as sans aucun doute un talent inégalé.",
+    },
+    "defeat": {
+      1: `Une brise fraîche traverse mon cœur…
+          $Quel effort extraordinaire !`,
+    }
+  },
+  "kieran": {
+    "encounter": {
+      1: `Grâce à un travail acharné, je deviens de plus en plus fort !
+          $Je ne perdrai pas.`,
+    },
+    "victory": {
+      1: `Je n'y crois pas…
+          $Quel combat amusant et palpitant !`
+    },
+    "defeat": {
+      1: `Eh beh, quel combat !
+          $Il est temps pour toi de t'entraîner encore plus dur.`,
+    }
+  },
   "rival": {
     "encounter": {
 	  1: `@c{smile}Ah, je te cherchais ! Je savais que t’étais pressée de partir, mais je m’attendais quand même à un au revoir…
@@ -2161,7 +2367,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     },
     "victory": {
 	  1: `@c{neutral}Je… J’étais pas encore supposée perdre…
-				$@c{smile}Bon. Ça veut juste dire que je vois devoir encore plus m’entrainer !
+				$@c{smile}Bon. Ça veut juste dire que je vais devoir encore plus m’entrainer !
 				$@c{smile_wave}J’ai aussi ça en rab pour toi !\n@c{smile_wave_wink}Inutile de me remercier ~.
                 $@c{angry_mopen}C’était le dernier, terminé les cadeaux après celui-là !
                 $@c{smile_wave}Allez, tiens le coup !`
@@ -2262,7 +2468,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
 				$@c{neutral}Cet endroit est terrifiant… Et pourtant il m’a l’air familier, comme si j’y avais déjà mis les pieds.
                 $@c{serious_mhalf_fists}Tu ressens la même chose, pas vrai ?
 				$@c{serious}…et c’est comme si quelque chose ici me parlait.
-                                $Comme si c’était tout ce que ce monde avait toujours connu.
+                $Comme si c’était tout ce que ce monde avait toujours connu.
 				$Ces précieux moments ensemble semblent si proches ne sont rien de plus qu’un lointain souvenir.
 				$@c{neutral_eclosed}D’ailleurs, qui peut dire aujourd’hui qu’ils ont pu être réels ?
 				$@c{serious_mopen_fists}Il faut que tu persévères. Si tu t’arrêtes, ça n'aura jamais de fin et t’es la seule à en être capable.
@@ -2659,6 +2865,210 @@ export const PGFdialogue: DialogueTranslationEntries = {
     "victory": {
       1: "I'll tune up for the next race."
     },
+  },
+  "firebreather": {
+    "encounter": {
+      1: "My flames shall devour you!",
+      2: "My soul is on fire. I'll show you how hot it burns!",
+      3: "Step right up and take a look!"
+    },
+    "victory": {
+      1: "I burned down to ashes...",
+      2: "Yow! That's hot!",
+      3: "Ow! I scorched the tip of my nose!"
+    },
+  },
+  "sailor": {
+    "encounter": {
+      1: "Matey, you're walking the plank if you lose!",
+      2: "Come on then! My sailor's pride is at stake!",
+      3: "Ahoy there! Are you seasick?"
+    },
+    "victory": {
+      1: "Argh! Beaten by a kid!",
+      2: "Your spirit sank me!",
+      3: "I think it's me that's seasick..."
+    },
+  },
+  "rocket_grunt": {
+    "encounter": {
+      1: "Nous sommes de retour !"
+    },
+    "victory": {
+      1: "Une fois de plus la Team Rocket s’envole vers d’autres cieux !"
+    },
+  },
+  "magma_grunt": {
+    "encounter": {
+      1: "N’espère pas recevoir de la pitié si tu te mets sur le chemin de la Team Magma !"
+    },
+    "victory": {
+      1: "Je…?\nJ’ai perdu ?!"
+    },
+  },
+  "aqua_grunt": {
+    "encounter": {
+      1: "Aucune pitié si tu te mets sur le chemin de la Team Aqua, même pour une gamine !"
+    },
+    "victory": {
+      1: "Comment ça ?"
+    },
+  },
+  "galactic_grunt": {
+    "encounter": {
+      1: "Ne te mets pas en travers de la Team Galaxie !"
+    },
+    "victory": {
+      1: "Désactivation…"
+    },
+  },
+  "plasma_grunt": {
+    "encounter": {
+      1: "Pas de quatiers à ceux qui ne suivent pas notre idéal !"
+    },
+    "victory": {
+      1: "Plasmaaaaaaaaa !"
+    },
+  },
+  "flare_grunt": {
+    "encounter": {
+      1: "Le style et le bon gout, il n’y a que ça qui compte !"
+    },
+    "victory": {
+      1: "Mon futur me semble guère radieux."
+    },
+  },
+  "rocket_boss_giovanni_1": {
+    "encounter": {
+      1: "Bien. Je dois admettre que je suis impressionné de te voir ici !"
+    },
+    "victory": {
+      1: "QUOI ? IMPOSSIBLE !"
+    },
+    "defeat": {
+      1: "Retiens bien. Ton incapacité à évaluer ta propre force est\nla démonstration claire que tu n'es encore qu’une gamine."
+    }
+  },
+  "rocket_boss_giovanni_2": {
+    "encounter": {
+      1: "Mes anciens collaborateurs m’attendent.\nComptes-tu m’en empêcher ?"
+    },
+    "victory": {
+      1: "Comment c'est possible… ? Le grand dessein de la Team Rocket n’est plus qu’une illusion…"
+    },
+    "defeat": {
+      1: "La Team Rocket renaitra, et je dominerai le monde !"
+    }
+  },
+  "magma_boss_maxie_1": {
+    "encounter": {
+      1: "Je vais t’enterrer de mes propres mains.\nJ’espère que t’apprécieras cet honneur !"
+    },
+    "victory": {
+      1: "Gnn… ! Tu… T’as du répondant…\nCe sentiment d’être à la traine, de si peu…"
+    },
+    "defeat": {
+      1: "La Team Magma vaincra !"
+    }
+  },
+  "magma_boss_maxie_2": {
+    "encounter": {
+      1: "T’es le dernier rempart entravant mes objectifs.\nPrépare-toi à mon ultime riposte ! Hahahaha !"
+    },
+    "victory": {
+      1: "Ce… Ce n'est pas… Gnn…"
+    },
+    "defeat": {
+      1: "L'heure est venue…\nJe vais transformer cette planète en paradis pour l’humanité."
+    }
+  },
+  "aqua_boss_archie_1": {
+    "encounter": {
+      1: "Je suis le Leader de la Team Aqua.\nJ’ai bien peur que pour toi, ce soit fin de parcours."
+    },
+    "victory": {
+      1: "Retrouvons-nous.\nJe me souviendrai de ton visage."
+    },
+    "defeat": {
+      1: "Magnifique !\nPlus rien ne peut nous retenir !"
+    }
+  },
+  "aqua_boss_archie_2": {
+    "encounter": {
+      1: "J’ai attendu ce moment depuis si longtemps.\nVoici la vraie puissance de la Team Aqua !"
+    },
+    "victory": {
+      1: "Comme si j’y avait cru…"
+    },
+    "defeat": {
+      1: "Je rendrai à ce monde sa pureté originelle !"
+    }
+  },
+  "galactic_boss_cyrus_1": {
+    "encounter": {
+      1: "Tu t’es sentie obligée de venir ici dans un acte vide de sens. Je vais te le faire regretter."
+    },
+    "victory": {
+      1: "Intéressant. Et plutôt curieux."
+    },
+    "defeat": {
+      1: "Je le créerai, mon nouveau monde…"
+    }
+  },
+  "galactic_boss_cyrus_2": {
+    "encounter": {
+      1: "Nous y revoilà. Il semblerait que nos destinées soient entremêlées. Il est l’heure d’y mettre un terme."
+    },
+    "victory": {
+      1: "Comment. Comment ?\nCOMMENT ?!"
+    },
+    "defeat": {
+      1: "Adieu."
+    }
+  },
+  "plasma_boss_ghetsis_1": {
+    "encounter": {
+      1: "Je n’accepterai pas qu’on me barre la route !\nPeu importe qui fait quoi !"
+    },
+    "victory": {
+      1: "Comment ? Je suis le leader de la Team Plasma !\nJe suis parfait !"
+    },
+    "defeat": {
+      1: "Je suis le parfait monarque d’un monde parfait !\nHahaha !"
+    }
+  },
+  "plasma_boss_ghetsis_2": {
+    "encounter": {
+	  1: "Viens ! Je veux voir ton visage à l’instant même où l’espoir quittera ton corps !"
+    },
+    "victory": {
+      1: "Mes calculs… Non ! Mes plans étaient parfaits !\nCe monde devrait être mien !"
+    },
+    "defeat": {
+      1: "Kyurem ! Fusiorption !!!"
+    }
+  },
+  "flare_boss_lysandre_1": {
+    "encounter": {
+      1: "Comptes-tu m’arrêter ? Prouve-le."
+    },
+    "victory": {
+      1: "T’es venu m’arrêter. Mais je te demande d’attendre."
+    },
+    "defeat": {
+      1: "Les Pokémon… Ne devraient plus exister."
+    }
+  },
+  "flare_boss_lysandre_2": {
+    "encounter": {
+      1: "Ton future ou le mien… Voyons lequel mérite plus."
+    },
+    "victory": {
+      1: "Ohhhh… !"
+    },
+    "defeat": {
+      1: "Les ignorants sans aucune vision n’auront donc de cesse de souiller ce monde."
+    }
   },
   "brock": {
     "encounter": {
@@ -4439,7 +4849,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
     },
     "victory": {
 	  1: `@c{neutral}Je… J’étais pas encore supposée perdre…
-				$@c{smile}Bon. Ça veut juste dire que je vois devoir encore plus m’entrainer !
+				$@c{smile}Bon. Ça veut juste dire que je vais devoir encore plus m’entrainer !
 				$@c{smile_wave}J’ai aussi ça en rab pour toi !\n@c{smile_wave_wink}Inutile de me remercier ~.
                 $@c{angry_mopen}C’était le dernier, terminé les cadeaux après celui-là !
                 $@c{smile_wave}Allez, tiens le coup !`
@@ -4539,7 +4949,8 @@ export const PGFdialogue: DialogueTranslationEntries = {
 				$@c{neutral_eclosed}J’ignore si je serai capable de l’accomplir, mais je ferai tout ce qui est en mon pouvoir.
 				$@c{neutral}Cet endroit est terrifiant… Et pourtant il m’a l’air familier, comme si j’y avais déjà mis les pieds.
                 $@c{serious_mhalf_fists}Tu ressens la même chose, pas vrai ?
-				$@c{serious}…et c’est comme si quelque chose ici me parlait.\nComme si c’était tout ce que ce monde avait toujours connu.
+				$@c{serious}…et c’est comme si quelque chose ici me parlait.
+				$Comme si c’était tout ce que ce monde avait toujours connu.
 				$Ces précieux moments ensemble semblent si proches ne sont rien de plus qu’un lointain souvenir.
 				$@c{neutral_eclosed}D’ailleurs, qui peut dire aujourd’hui qu’ils ont pu être réels ?
 				$@c{serious_mopen_fists}Il faut que tu persévères. Si tu t’arrêtes, ça n'aura jamais de fin et t’es la seule à en être capable.
@@ -4566,7 +4977,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
 				$@c{smile_ehalf}Ont-ils au moins été réels ? Tout semble si loin maintenant…
                 $@c{angry_mopen}Il faut que tu persévères. Si tu t’arrêtes, ça n'aura jamais de fin et t’es le seul à en être capable.
                 $@c{smile_ehalf}Je… j’ignore le sens de tout ça… Mais je sais que c’est la réalité.
-                $@c{neutral}Si tu ne parviens à pas me battre ici et maintenant, tu n’as aucune chance.`
+                $@c{neutral}Si tu ne parviens pas à me battre ici et maintenant, tu n’as aucune chance.`
     },
     "victory": {
       1: `@c{smile_ehalf}Je… Je crois que j'ai rempli ma mission…

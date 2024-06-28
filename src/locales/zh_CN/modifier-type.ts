@@ -1,4 +1,4 @@
-import { ModifierTypeTranslationEntries } from "#app/plugins/i18n";
+import { ModifierTypeTranslationEntries } from "#app/interfaces/locales";
 
 export const modifierType: ModifierTypeTranslationEntries = {
   ModifierType: {
@@ -93,15 +93,15 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "招式命中率增加{{accuracyAmount}} (最大100)。",
     },
     "PokemonMultiHitModifierType": {
-      description: "攻击造成一次额外伤害，每次堆叠额外伤害\n分别衰减60/75/82.5%。",
+      description: "攻击以40/25/12.5%的伤害造成2/3/4次伤害",
     },
     "TmModifierType": {
-      name: "招式学习器 {{moveId}} - {{moveName}}",
+      name: "招式学习器\n{{moveId}} - {{moveName}}",
       description: "教会一只宝可梦{{moveName}}。",
     },
     "TmModifierTypeWithInfo": {
-      name: "招式学习器 {{moveId}} - {{moveName}}",
-      description: "教会一只宝可梦{{moveName}}\n(Hold C or Shift for more info)。",
+      name: "招式学习器\n{{moveId}} - {{moveName}}",
+      description: "教会一只宝可梦{{moveName}}\n(按住C或者Shift查看更多信息)。",
     },
     "EvolutionItemModifierType": {
       description: "使某些宝可梦进化。",
@@ -126,7 +126,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "攻击时{{chancePercent}}%概率造成{{statusEffect}}。",
     },
     "EnemyEndureChanceModifierType": {
-      description: "增加{{chancePercent}}%遭受攻击的概率。",
+      description: "敌方增加{{chancePercent}}%的概率在本回合不会倒下。",
     },
 
     "RARE_CANDY": { name: "神奇糖果" },
@@ -182,6 +182,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SOOTHE_BELL": { name: "安抚之铃" },
 
+    "EVIOLITE": { name: "进化奇石", description: "进化的神奇石块。携带后，还能进化的宝可梦的 防御和特防就会提高。" },
+
     "SOUL_DEW": { name: "心之水滴", description: "增加宝可梦性格影响10% (加算)。" },
 
     "NUGGET": { name: "金珠" },
@@ -213,8 +215,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "LEFTOVERS": { name: "吃剩的东西", description: "携带该道具的宝可梦在每个回合结束时恢复\n最大HP的1/16。" },
     "SHELL_BELL": { name: "贝壳之铃", description: "携带该道具的宝可梦在攻击对方成功造成伤\n害时，携带者的HP会恢复其所造成伤害\n的1/8。" },
 
-    "TOXIC_ORB": { name: "Toxic Orb", description: "触碰后会放出毒的神奇宝珠。携带后，在战斗时会变成剧毒状态。" },
-    "FLAME_ORB": { name: "Flame Orb", description: "触碰后会放出热量的神奇宝珠。携带后，在战斗时会变成灼伤状态。" },
+    "TOXIC_ORB": { name: "剧毒宝珠", description: "触碰后会放出毒的神奇宝珠。携带后，在战斗时会变成剧毒状态。" },
+    "FLAME_ORB": { name: "火焰宝珠", description: "触碰后会放出热量的神奇宝珠。携带后，在战斗时会变成灼伤状态。" },
 
     "BATON": { name: "接力棒", description: "允许在切换宝可梦时保留能力变化, 对陷阱\n同样生效。" },
 
@@ -229,8 +231,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "GOLDEN_POKEBALL": { name: "黄金精灵球", description: "在每场战斗结束后增加一个额外物品选项。" },
 
-    "ENEMY_DAMAGE_BOOSTER": { name: "伤害硬币", description: "增加5%造成伤害。" },
-    "ENEMY_DAMAGE_REDUCTION": { name: "防御硬币", description: "减少2.5%承受伤害。" },
+    "ENEMY_DAMAGE_BOOSTER": { name: "伤害硬币", description: "造成5%额外伤害（乘算）。" },
+    "ENEMY_DAMAGE_REDUCTION": { name: "防御硬币", description: "受到2.5%更少伤害（乘算）。" },
     "ENEMY_HEAL": { name: "回复硬币", description: "每回合回复2%最大HP。" },
     "ENEMY_ATTACK_POISON_CHANCE": { name: "剧毒硬币" },
     "ENEMY_ATTACK_PARALYZE_CHANCE": { name: "麻痹硬币" },
@@ -238,6 +240,12 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "万灵药硬币", description: "增加2.5%每回合治愈异常状态的概率。" },
     "ENEMY_ENDURE_CHANCE": { name: "忍受硬币" },
     "ENEMY_FUSED_CHANCE": { name: "融合硬币", description: "增加1%野生融合宝可梦出现概率。" },
+  },
+  SpeciesBoosterItem: {
+    "LIGHT_BALL": { name: "电气球", description: "让皮卡丘携带后，攻击和特攻就会 提高的神奇之球。" },
+    "THICK_CLUB": { name: "粗骨头", description: "某种坚硬的骨头。让卡拉卡拉或嘎啦嘎啦携带后，攻击就会提高。" },
+    "METAL_POWDER": { name: "金属粉", description: "让百变怪携带后，防御就会提高的神奇粉末。非常细腻坚硬。" },
+    "QUICK_POWDER": { name: "速度粉", description: "让百变怪携带后，速度就会提高的神奇粉末。非常细腻坚硬。" }
   },
   TempBattleStatBoosterItem: {
     "x_attack": "力量强化",
@@ -248,6 +256,19 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "x_accuracy": "命中强化",
     "dire_hit": "要害攻击",
   },
+
+  TempBattleStatBoosterStatName: {
+    "ATK": "攻击",
+    "DEF": "防御",
+    "SPATK": "特攻",
+    "SPDEF": "特防",
+    "SPD": "速度",
+    "ACC": "命中",
+    "CRIT": "会心",
+    "EVA": "闪避",
+    "DEFAULT": "???",
+  },
+
   AttackTypeBoosterItem: {
     "silk_scarf": "丝绸围巾",
     "black_belt": "黑带",
@@ -277,7 +298,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "carbos": "速度增强剂",
   },
   EvolutionItem: {
-    "NONE": "None",
+    "NONE": "无",
 
     "LINKING_CORD": "联系绳",
     "SUN_STONE": "日之石",
@@ -310,7 +331,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "SYRUPY_APPLE": "蜜汁苹果",
   },
   FormChangeItem: {
-    "NONE": "None",
+    "NONE": "无",
 
     "ABOMASITE": "暴雪王进化石",
     "ABSOLITE": "阿勃梭鲁进化石",

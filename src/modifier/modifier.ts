@@ -13,16 +13,20 @@ import { getPokemonMessage } from "../messages";
 import * as Utils from "../utils";
 import { TempBattleStat } from "../data/temp-battle-stat";
 import { getBerryEffectFunc, getBerryPredicate } from "../data/berry";
-import { BerryType } from "../data/enums/berry-type";
+import { BattlerTagType} from "#enums/battler-tag-type";
+import { BerryType } from "#enums/berry-type";
 import { StatusEffect, getStatusEffectHealText } from "../data/status-effect";
 import { achvs } from "../system/achv";
 import { VoucherType } from "../system/voucher";
 import { FormChangeItem, SpeciesFormChangeItemTrigger } from "../data/pokemon-forms";
 import { Nature } from "#app/data/nature";
-import { BattlerTagType } from "#app/data/enums/battler-tag-type";
 import * as Overrides from "../overrides";
 import { ModifierType, modifierTypes } from "./modifier-type";
 import { Command } from "#app/ui/command-ui-handler.js";
+import { Species } from "#enums/species";
+
+import { allMoves } from "#app/data/move.js";
+import { Abilities } from "#app/enums/abilities.js";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 
@@ -61,13 +65,19 @@ export class ModifierBar extends Phaser.GameObjects.Container {
     this.setScale(0.5);
   }
 
-  updateModifiers(modifiers: PersistentModifier[]) {
+  /**
+   * Method to update content displayed in {@linkcode ModifierBar}
+   * @param {PersistentModifier[]} modifiers - The list of modifiers to be displayed in the {@linkcode ModifierBar}
+   * @param {boolean} hideHeldItems - If set to "true", only modifiers not assigned to a Pokémon are displayed
+   */
+  updateModifiers(modifiers: PersistentModifier[], hideHeldItems: boolean = false) {
     this.removeAll(true);
 
     const visibleIconModifiers = modifiers.filter(m => m.isIconVisible(this.scene as BattleScene));
     const nonPokemonSpecificModifiers = visibleIconModifiers.filter(m => !(m as PokemonHeldItemModifier).pokemonId).sort(modifierSortFunc);
     const pokemonSpecificModifiers = visibleIconModifiers.filter(m => (m as PokemonHeldItemModifier).pokemonId).sort(modifierSortFunc);
-    const sortedVisibleIconModifiers = nonPokemonSpecificModifiers.concat(pokemonSpecificModifiers);
+
+    const sortedVisibleIconModifiers = hideHeldItems ? nonPokemonSpecificModifiers : nonPokemonSpecificModifiers.concat(pokemonSpecificModifiers);
 
     const thisArg = this;
 
@@ -319,7 +329,8 @@ export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier
 
   match(modifier: Modifier): boolean {
     if (modifier instanceof DoubleBattleChanceBoosterModifier) {
-      return (modifier as DoubleBattleChanceBoosterModifier).battlesLeft === this.battlesLeft;
+      // Check type id to not match different tiers of lures
+      return modifier.type.id === this.type.id && modifier.battlesLeft === this.battlesLeft;
     }
     return false;
   }
@@ -331,9 +342,15 @@ export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier
   getArgs(): any[] {
     return [ this.battlesLeft ];
   }
-
+  /**
+   * Modifies the chance of a double battle occurring
+   * @param args A single element array containing the double battle chance as a NumberHolder
+   * @returns {boolean} Returns true if the modifier was applied
+   */
   apply(args: any[]): boolean {
     const doubleBattleChance = args[0] as Utils.NumberHolder;
+    // This is divided because the chance is generated as a number from 0 to doubleBattleChance.value using Utils.randSeedInt
+    // A double battle will initiate if the generated number is 0
     doubleBattleChance.value = Math.ceil(doubleBattleChance.value / 2);
 
     return true;
@@ -520,6 +537,22 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
     return 1;
   }
 
+  //Applies to items with chance of activating secondary effects ie Kings Rock
+  getSecondaryChanceMultiplier(pokemon: Pokemon): integer {
+    // Temporary quickfix to stop game from freezing when the opponet uses u-turn while holding on to king's rock
+    if (!pokemon.getLastXMoves(0)[0]) {
+      return 1;
+    }
+    const sheerForceAffected = allMoves[pokemon.getLastXMoves(0)[0].move].chance >= 0 && pokemon.hasAbility(Abilities.SHEER_FORCE);
+
+    if (sheerForceAffected) {
+      return 0;
+    } else if (pokemon.hasAbility(Abilities.SERENE_GRACE)) {
+      return 2;
+    }
+    return 1;
+  }
+
   getMaxStackCount(scene: BattleScene, forThreshold?: boolean): integer {
     const pokemon = this.getPokemon(scene);
     if (!pokemon) {
@@ -671,6 +704,180 @@ export class PokemonBaseStatModifier extends PokemonHeldItemModifier {
 
   getMaxHeldItemCount(pokemon: Pokemon): integer {
     return pokemon.ivs[this.stat];
+  }
+}
+
+/**
+ * Modifier used for held items that apply {@linkcode Stat} boost(s)
+ * using a multiplier.
+ * @extends PokemonHeldItemModifier
+ * @see {@linkcode apply}
+ */
+export class StatBoosterModifier extends PokemonHeldItemModifier {
+  /** The stats that the held item boosts */
+  protected stats: Stat[];
+  /** The multiplier used to increase the relevant stat(s) */
+  protected multiplier: number;
+
+  constructor(type: ModifierType, pokemonId: integer, stats: Stat[], multiplier: number, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+
+    this.stats = stats;
+    this.multiplier = multiplier;
+  }
+
+  clone() {
+    return new StatBoosterModifier(this.type, this.pokemonId, this.stats, this.multiplier, this.stackCount);
+  }
+
+  getArgs(): any[] {
+    return [ ...super.getArgs(), this.stats, this.multiplier ];
+  }
+
+  matchType(modifier: Modifier): boolean {
+    if (modifier instanceof StatBoosterModifier) {
+      const modifierInstance = modifier as StatBoosterModifier;
+      if ((modifierInstance.multiplier === this.multiplier) && (modifierInstance.stats.length === this.stats.length)) {
+        return modifierInstance.stats.every((e, i) => e === this.stats[i]);
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * Checks if the incoming stat is listed in {@linkcode stats}
+   * @param args [0] {@linkcode Pokemon} N/A
+   *             [1] {@linkcode Stat} being checked at the time
+   *             [2] {@linkcode Utils.NumberHolder} N/A
+   * @returns true if the stat could be boosted, false otherwise
+   */
+  shouldApply(args: any[]): boolean {
+    return super.shouldApply(args) && this.stats.includes(args[1] as Stat);
+  }
+
+  /**
+   * Boosts the incoming stat by a {@linkcode multiplier} if the stat is listed
+   * in {@linkcode stats}.
+   * @param args [0] {@linkcode Pokemon} N/A
+   *             [1] {@linkcode Stat} N/A
+   *             [2] {@linkcode Utils.NumberHolder} that holds the resulting value of the stat
+   * @returns true if the stat boost applies successfully, false otherwise
+   * @see shouldApply
+   */
+  apply(args: any[]): boolean {
+    const statValue = args[2] as Utils.NumberHolder;
+
+    statValue.value *= this.multiplier;
+    return true;
+  }
+
+  getMaxHeldItemCount(_pokemon: Pokemon): number {
+    return 1;
+  }
+}
+
+/**
+ * Modifier used for held items, specifically Eviolite, that apply
+ * {@linkcode Stat} boost(s) using a multiplier if the holder can evolve.
+ * @extends StatBoosterModifier
+ * @see {@linkcode apply}
+ */
+export class EvolutionStatBoosterModifier extends StatBoosterModifier {
+  clone() {
+    return super.clone() as EvolutionStatBoosterModifier;
+  }
+
+  matchType(modifier: Modifier): boolean {
+    return modifier instanceof EvolutionStatBoosterModifier;
+  }
+
+  /**
+   * Boosts the incoming stat value by a {@linkcode multiplier} if the holder
+   * can evolve. Note that, if the holder is a fusion, they will receive
+   * only half of the boost if either of the fused members are fully
+   * evolved. However, if they are both unevolved, the full boost
+   * will apply.
+   * @param args [0] {@linkcode Pokemon} that holds the held item
+   *             [1] {@linkcode Stat} N/A
+   *             [2] {@linkcode Utils.NumberHolder} that holds the resulting value of the stat
+   * @returns true if the stat boost applies successfully, false otherwise
+   * @see shouldApply
+   */
+  apply(args: any[]): boolean {
+    const holder = args[0] as Pokemon;
+    const statValue = args[2] as Utils.NumberHolder;
+    const isUnevolved = holder.getSpeciesForm(true).speciesId in pokemonEvolutions;
+
+    if (holder.isFusion() && (holder.getFusionSpeciesForm(true).speciesId in pokemonEvolutions) !== isUnevolved) {
+      // Half boost applied if holder is fused and either part of fusion is fully evolved
+      statValue.value *= 1 + (this.multiplier - 1) / 2;
+      return true;
+    } else if (isUnevolved) {
+      // Full boost applied if holder is unfused and unevolved or, if fused, both parts of fusion are unevolved
+      return super.apply(args);
+    }
+
+    return false;
+  }
+}
+
+/**
+ * Modifier used for held items that apply {@linkcode Stat} boost(s) using a
+ * multiplier if the holder is of a specific {@linkcode Species}.
+ * @extends StatBoosterModifier
+ * @see {@linkcode apply}
+ */
+export class SpeciesStatBoosterModifier extends StatBoosterModifier {
+  /** The species that the held item's stat boost(s) apply to */
+  private species: Species[];
+
+  constructor(type: ModifierType, pokemonId: integer, stats: Stat[], multiplier: number, species: Species[], stackCount?: integer) {
+    super(type, pokemonId, stats, multiplier, stackCount);
+
+    this.species = species;
+  }
+
+  clone() {
+    return new SpeciesStatBoosterModifier(this.type, this.pokemonId, this.stats, this.multiplier, this.species, this.stackCount);
+  }
+
+  getArgs(): any[] {
+    return [ ...super.getArgs(), this.species ];
+  }
+
+  matchType(modifier: Modifier): boolean {
+    if (modifier instanceof SpeciesStatBoosterModifier) {
+      const modifierInstance = modifier as SpeciesStatBoosterModifier;
+      if (modifierInstance.species.length === this.species.length) {
+        return super.matchType(modifier) && modifierInstance.species.every((e, i) => e === this.species[i]);
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * Checks if the incoming stat is listed in {@linkcode stats} and if the holder's {@linkcode Species}
+   * (or its fused species) is listed in {@linkcode species}.
+   * @param args [0] {@linkcode Pokemon} that holds the held item
+   *             [1] {@linkcode Stat} being checked at the time
+   *             [2] {@linkcode Utils.NumberHolder} N/A
+   * @returns true if the stat could be boosted, false otherwise
+   */
+  shouldApply(args: any[]): boolean {
+    const holder = args[0] as Pokemon;
+    return super.shouldApply(args) && (this.species.includes(holder.getSpeciesForm(true).speciesId) || (holder.isFusion() && this.species.includes(holder.getFusionSpeciesForm(true).speciesId)));
+  }
+
+  /**
+   * Checks if either parameter is included in the corresponding lists
+   * @param speciesId {@linkcode Species} being checked
+   * @param stat {@linkcode Stat} being checked
+   * @returns true if both parameters are in {@linkcode species} and {@linkcode stats} respectively, false otherwise
+   */
+  contains(speciesId: Species, stat: Stat): boolean {
+    return this.species.includes(speciesId) && this.stats.includes(stat);
   }
 }
 
@@ -831,7 +1038,7 @@ export class FlinchChanceModifier extends PokemonHeldItemModifier {
     const pokemon = args[0] as Pokemon;
     const flinched = args[1] as Utils.BooleanHolder;
 
-    if (!flinched.value && pokemon.randSeedInt(10) < this.getStackCount()) {
+    if (!flinched.value && pokemon.randSeedInt(10) < (this.getStackCount() * this.getSecondaryChanceMultiplier(pokemon))) {
       flinched.value = true;
       return true;
     }
@@ -1091,8 +1298,7 @@ export class PokemonInstantReviveModifier extends PokemonHeldItemModifier {
     pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.getBattlerIndex(),
       Math.max(Math.floor(pokemon.getMaxHp() / 2), 1), getPokemonMessage(pokemon, ` was revived\nby its ${this.type.name}!`), false, false, true));
 
-    pokemon.resetStatus();
-
+    pokemon.resetStatus(true, false, true);
     return true;
   }
 

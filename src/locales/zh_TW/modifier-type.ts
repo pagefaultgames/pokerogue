@@ -1,4 +1,4 @@
-import { ModifierTypeTranslationEntries } from "#app/plugins/i18n";
+import { ModifierTypeTranslationEntries } from "#app/interfaces/locales";
 
 export const modifierType: ModifierTypeTranslationEntries = {
   ModifierType: {
@@ -187,6 +187,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
     LUCKY_EGG: { name: "幸運蛋" },
     GOLDEN_EGG: { name: "金蛋" },
     SOOTHE_BELL: { name: "安撫之鈴" },
+    EVIOLITE: {
+      name: "進化奇石",
+      description: "進化的神奇石塊。攜帶後，還能進化的寶可夢的 防禦和特防就會提高。"
+    },
     SOUL_DEW: {
       name: "心之水滴",
       description: "增加寶可夢性格影響10% (加算)。",
@@ -243,14 +247,14 @@ export const modifierType: ModifierTypeTranslationEntries = {
                 "攜帶該道具的寶可夢在攻擊對方成功造成傷\n害時，攜帶者的HP會恢復其所造成傷害\n的1/8。",
     },
     TOXIC_ORB: {
-      name: "Toxic Orb",
+      name: "劇毒寶珠",
       description:
-                "It's a bizarre orb that exudes toxins when touched and will badly poison the holder during battle"
+                "觸碰後會放出毒的神奇寶珠。\n攜帶後，在戰鬥時會變成劇毒狀態。"
     },
     FLAME_ORB: {
-      name: "Flame Orb",
+      name: "火焰寶珠",
       description:
-                "It's a bizarre orb that gives off heat when touched and will affect the holder with a burn during battle"
+                "觸碰後會放出熱量的神奇寶珠。\n攜帶後，在戰鬥時會變成灼傷狀態。"
     },
     BATON: {
       name: "接力棒",
@@ -297,6 +301,12 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "增加1%野生融合寶可夢出現概率。",
     },
   },
+  SpeciesBoosterItem: {
+    "LIGHT_BALL": { name: "電氣球", description: "讓皮卡丘攜帶後，攻擊和特攻就會 提高的神奇之球。" },
+    "THICK_CLUB": { name: "粗骨頭", description: "某種堅硬的骨頭。讓卡拉卡拉或嘎啦嘎啦攜帶後，攻擊就會提高。" },
+    "METAL_POWDER": { name: "金屬粉", description: "讓百變怪攜帶後，防禦就會提高的神奇粉末。非常細緻堅硬。" },
+    "QUICK_POWDER": { name: "速度粉", description: "讓百變怪攜帶後，速度就會提高的神奇粉末。非常細緻堅硬。" }
+  },
   TempBattleStatBoosterItem: {
     x_attack: "力量強化",
     x_defense: "防禦強化",
@@ -306,6 +316,19 @@ export const modifierType: ModifierTypeTranslationEntries = {
     x_accuracy: "命中強化",
     dire_hit: "要害攻擊",
   },
+
+  TempBattleStatBoosterStatName: {
+    "ATK": "攻擊",
+    "DEF": "防禦",
+    "SPATK": "特攻",
+    "SPDEF": "特防",
+    "SPD": "速度",
+    "ACC": "命中",
+    "CRIT": "會心",
+    "EVA": "閃避",
+    "DEFAULT": "???",
+  },
+
   AttackTypeBoosterItem: {
     silk_scarf: "絲綢圍巾",
     black_belt: "黑帶",
