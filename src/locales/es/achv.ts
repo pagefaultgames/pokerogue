@@ -172,39 +172,39 @@ export const PGMachv: AchievementTranslationEntries = {
 
   "MONO_GEN_ONE": {
     name: "The Original Rival",
-    description: "Complete the generation one only challenge.",
+    description: "Complete the generation I only challenge.",
   },
   "MONO_GEN_TWO": {
     name: "Generation 1.5",
-    description: "Complete the generation two only challenge.",
+    description: "Complete the generation II only challenge.",
   },
   "MONO_GEN_THREE": {
     name: "Too much water?",
-    description: "Complete the generation three only challenge.",
+    description: "Complete the generation III only challenge.",
   },
   "MONO_GEN_FOUR": {
     name: "Is she really the hardest?",
-    description: "Complete the generation four only challenge.",
+    description: "Complete the generation IV only challenge.",
   },
   "MONO_GEN_FIVE": {
     name: "All Original",
-    description: "Complete the generation five only challenge.",
+    description: "Complete the generation V only challenge.",
   },
   "MONO_GEN_SIX": {
     name: "Almost Royalty",
-    description: "Complete the generation six only challenge.",
+    description: "Complete the generation VI only challenge.",
   },
   "MONO_GEN_SEVEN": {
     name: "Only Technically",
-    description: "Complete the generation seven only challenge.",
+    description: "Complete the generation VII only challenge.",
   },
   "MONO_GEN_EIGHT": {
     name: "A Champion Time!",
-    description: "Complete the generation eight only challenge.",
+    description: "Complete the generation VIII only challenge.",
   },
   "MONO_GEN_NINE": {
     name: "She was going easy on you",
-    description: "Complete the generation nine only challenge.",
+    description: "Complete the generation IX only challenge.",
   },
 
   "MonoType": {

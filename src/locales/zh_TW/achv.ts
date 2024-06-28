@@ -1,268 +1,268 @@
-import { AchievementTranslationEntries } from "#app/interfaces/locales.js";
+import { AchievementTranslationEntries } from "#app/plugins/i18n.js";
 
 // Achievement translations for the when the player character is male
 export const PGMachv: AchievementTranslationEntries = {
   "Achievements": {
-    name: "成就",
+    name: "Achievements",
   },
   "Locked": {
-    name: "未解鎖",
+    name: "Locked",
   },
 
   "MoneyAchv": {
-    description: "累計獲得 ₽{{moneyAmount}}",
+    description: "Accumulate a total of ₽{{moneyAmount}}",
   },
   "10K_MONEY": {
-    name: "小有積蓄",
+    name: "Money Haver",
   },
   "100K_MONEY": {
-    name: "大戶人家",
+    name: "Rich",
   },
   "1M_MONEY": {
-    name: "百萬富翁",
+    name: "Millionaire",
   },
   "10M_MONEY": {
-    name: "暴發戶",
+    name: "One Percenter",
   },
 
   "DamageAchv": {
-    description: "在單次攻擊中造成 {{damageAmount}} 點傷害",
+    description: "Inflict {{damageAmount}} damage in one hit",
   },
   "250_DMG": {
-    name: "重拳出擊",
+    name: "Hard Hitter",
   },
   "1000_DMG": {
-    name: "神拳猛擊",
+    name: "Harder Hitter",
   },
   "2500_DMG": {
-    name: "奪少？",
+    name: "That's a Lotta Damage!",
   },
   "10000_DMG": {
-    name: "一拳超人",
+    name: "One Punch Man",
   },
 
   "HealAchv": {
-    description: "通過技能、能力或攜帶的道具一次性治療 {{healAmount}} {{HP}}點",
+    description: "Heal {{healAmount}} {{HP}} at once with a move, ability, or held item",
   },
   "250_HEAL": {
-    name: "新手奶媽",
+    name: "Novice Healer",
   },
   "1000_HEAL": {
-    name: "治療擔當",
+    name: "Big Healer",
   },
   "2500_HEAL": {
-    name: "牧師",
+    name: "Cleric",
   },
   "10000_HEAL": {
-    name: "泉水",
+    name: "Recovery Master",
   },
 
   "LevelAchv": {
-    description: "將一隻寶可夢提升到 Lv{{level}}",
+    description: "Level up a Pokémon to Lv{{level}}",
   },
   "LV_100": {
-    name: "别急，後面還有",
+    name: "But Wait, There's More!",
   },
   "LV_250": {
-    name: "精英",
+    name: "Elite",
   },
   "LV_1000": {
-    name: "天外有天",
+    name: "To Go Even Further Beyond",
   },
 
   "RibbonAchv": {
-    description: "累計獲得 {{ribbonAmount}} 個勛章",
+    description: "Accumulate a total of {{ribbonAmount}} Ribbons",
   },
   "10_RIBBONS": {
-    name: "寶可夢聯盟冠軍",
+    name: "Pokémon League Champion",
   },
   "25_RIBBONS": {
-    name: "超級球聯盟冠軍",
+    name: "Great League Champion",
   },
   "50_RIBBONS": {
-    name: "高級球聯盟冠軍",
+    name: "Ultra League Champion",
   },
   "75_RIBBONS": {
-    name: "肉鴿球聯盟冠軍",
+    name: "Rogue League Champion",
   },
   "100_RIBBONS": {
-    name: "大師球聯盟冠軍",
+    name: "Master League Champion",
   },
 
   "TRANSFER_MAX_BATTLE_STAT": {
-    name: "團隊協作",
-    description: "在一項屬性強化至最大時用接力棒傳遞給其他寶可夢",
+    name: "Teamwork",
+    description: "Baton pass to another party member with at least one stat maxed out",
   },
   "MAX_FRIENDSHIP": {
-    name: "親密無間",
-    description: "使一隻寶可夢的親密度達到最大值",
+    name: "Friendmaxxing",
+    description: "Reach max friendship on a Pokémon",
   },
   "MEGA_EVOLVE": {
-    name: "大變身",
-    description: "超級進化一隻寶可夢",
+    name: "Megamorph",
+    description: "Mega evolve a Pokémon",
   },
   "GIGANTAMAX": {
-    name: "這位更是重量級",
-    description: "極巨化一隻寶可夢",
+    name: "Absolute Unit",
+    description: "Gigantamax a Pokémon",
   },
   "TERASTALLIZE": {
-    name: "本系愛好者",
-    description: "太晶化一隻寶可夢",
+    name: "STAB Enthusiast",
+    description: "Terastallize a Pokémon",
   },
   "STELLAR_TERASTALLIZE": {
-    name: "隱藏屬性",
-    description: "星晶化一隻寶可夢",
+    name: "The Hidden Type",
+    description: "Stellar Terastallize a Pokémon",
   },
   "SPLICE": {
-    name: "無限融合",
-    description: "使用基因之楔將兩隻寶可夢融合在一起",
+    name: "Infinite Fusion",
+    description: "Splice two Pokémon together with DNA Splicers",
   },
   "MINI_BLACK_HOLE": {
-    name: "一大洞的道具",
-    description: "獲得一個迷你黑洞",
+    name: "A Hole Lot of Items",
+    description: "Acquire a Mini Black Hole",
   },
   "CATCH_MYTHICAL": {
-    name: "神秘禮物",
-    description: "捕捉一隻幻之寶可夢",
+    name: "Mythical",
+    description: "Catch a mythical Pokémon",
   },
   "CATCH_SUB_LEGENDARY": {
-    name: "二級傳說",
-    description: "捕捉一隻準傳說寶可夢",
+    name: "(Sub-)Legendary",
+    description: "Catch a sub-legendary Pokémon",
   },
   "CATCH_LEGENDARY": {
-    name: "傳說",
-    description: "捕捉一隻傳說寶可夢",
+    name: "Legendary",
+    description: "Catch a legendary Pokémon",
   },
   "SEE_SHINY": {
-    name: "閃耀奪目",
-    description: "在野外找到一隻閃光寶可夢",
+    name: "Shiny",
+    description: "Find a shiny Pokémon in the wild",
   },
   "SHINY_PARTY": {
-    name: "嘔心瀝血",
-    description: "擁有一支由閃光寶可夢組成的滿員隊伍",
+    name: "That's Dedication",
+    description: "Have a full party of shiny Pokémon",
   },
   "HATCH_MYTHICAL": {
-    name: "幻獸蛋",
-    description: "從蛋中孵化出一隻幻之寶可夢",
+    name: "Mythical Egg",
+    description: "Hatch a mythical Pokémon from an egg",
   },
   "HATCH_SUB_LEGENDARY": {
-    name: "二級傳說蛋",
-    description: "從蛋中孵化出一隻準傳說寶可夢",
+    name: "Sub-Legendary Egg",
+    description: "Hatch a sub-legendary Pokémon from an egg",
   },
   "HATCH_LEGENDARY": {
-    name: "傳說蛋",
-    description: "從蛋中孵化出一隻傳說寶可夢",
+    name: "Legendary Egg",
+    description: "Hatch a legendary Pokémon from an egg",
   },
   "HATCH_SHINY": {
-    name: "金色傳說！",
-    description: "從蛋中孵化出一隻閃光寶可夢",
+    name: "Shiny Egg",
+    description: "Hatch a shiny Pokémon from an egg",
   },
   "HIDDEN_ABILITY": {
-    name: "隱藏實力",
-    description: "捕捉一隻擁有隱藏特性的寶可夢",
+    name: "Hidden Potential",
+    description: "Catch a Pokémon with a hidden ability",
   },
   "PERFECT_IVS": {
-    name: "合格證",
-    description: "獲得一隻擁有完美個體值的寶可夢",
+    name: "Certificate of Authenticity",
+    description: "Get perfect IVs on a Pokémon",
   },
   "CLASSIC_VICTORY": {
-    name: "戰無不勝",
-    description: "在經典模式中通關遊戲",
+    name: "Undefeated",
+    description: "Beat the game in classic mode",
   },
 
   "MONO_GEN_ONE": {
-    name: "最初的勁敵",
-    description: "完成僅限第一世代的挑戰.",
+    name: "The Original Rival",
+    description: "Complete the generation I only challenge.",
   },
   "MONO_GEN_TWO": {
-    name: "1.5世代",
-    description: "完成僅限第二世代的挑戰.",
+    name: "Generation 1.5",
+    description: "Complete the generation II only challenge.",
   },
   "MONO_GEN_THREE": {
-    name: "“水太多了”",
-    description: "完成僅限第三世代的挑戰.",
+    name: "Too much water?",
+    description: "Complete the generation III only challenge.",
   },
   "MONO_GEN_FOUR": {
-    name: "她真是最強冠軍嗎？",
-    description: "完成僅限第四世代的挑戰.",
+    name: "Is she really the hardest?",
+    description: "Complete the generation IV only challenge.",
   },
   "MONO_GEN_FIVE": {
-    name: "完全原創",
-    description: "完成僅限第五世代的挑戰.",
+    name: "All Original",
+    description: "Complete the generation V only challenge.",
   },
   "MONO_GEN_SIX": {
-    name: "女大公",
-    description: "完成僅限第六世代的挑戰.",
+    name: "Almost Royalty",
+    description: "Complete the generation VI only challenge.",
   },
   "MONO_GEN_SEVEN": {
-    name: "首屆冠軍",
-    description: "完成僅限第七世代的挑戰.",
+    name: "Only Technically",
+    description: "Complete the generation VII only challenge.",
   },
   "MONO_GEN_EIGHT": {
-    name: "冠軍時刻！",
-    description: "完成僅限第八世代的挑戰.",
+    name: "A Champion Time!",
+    description: "Complete the generation VIII only challenge.",
   },
   "MONO_GEN_NINE": {
-    name: "她又放水了",
-    description: "完成僅限第九世代的挑戰.",
+    name: "She was going easy on you",
+    description: "Complete the generation IX only challenge.",
   },
 
   "MonoType": {
-    description: "完成 {{type}} 單屬性挑戰.",
+    description: "Complete the {{type}} monotype challenge.",
   },
   "MONO_NORMAL": {
-    name: "異乎尋常的尋常",
+    name: "Mono NORMAL",
   },
   "MONO_FIGHTING": {
-    name: "我有真功夫",
+    name: "I Know Kung Fu",
   },
   "MONO_FLYING": {
-    name: "憤怒的小鳥",
+    name: "Mono FLYING",
   },
   "MONO_POISON": {
-    name: "關都地區特色",
+    name: "Kanto's Favourite",
   },
   "MONO_GROUND": {
-    name: "地震預報",
+    name: "Mono GROUND",
   },
   "MONO_ROCK": {
-    name: "堅如磐石",
+    name: "Brock Hard",
   },
   "MONO_BUG": {
-    name: "音箱蟀俠",
+    name: "Sting Like A Beedrill",
   },
   "MONO_GHOST": {
-    name: "捉鬼敢死隊",
+    name: "Who you gonna call?",
   },
   "MONO_STEEL": {
-    name: "鐵巨人",
+    name: "Mono STEEL",
   },
   "MONO_FIRE": {
-    name: "搓火球解決一切",
+    name: "Mono FIRE",
   },
   "MONO_WATER": {
-    name: "當雨來臨，傾盆而下",
+    name: "When It Rains, It Pours",
   },
   "MONO_GRASS": {
-    name: "別踏這個青",
+    name: "Mono GRASS",
   },
   "MONO_ELECTRIC": {
-    name: "瞄準大岩蛇的角！",
+    name: "Mono ELECTRIC",
   },
   "MONO_PSYCHIC": {
-    name: "腦洞大開",
+    name: "Mono PSYCHIC",
   },
   "MONO_ICE": {
-    name: "如履薄冰",
+    name: "Mono ICE",
   },
   "MONO_DRAGON": {
-    name: "準神俱樂部",
+    name: "Mono DRAGON",
   },
   "MONO_DARK": {
-    name: "總有叛逆期",
+    name: "It's just a phase",
   },
   "MONO_FAIRY": {
-    name: "林克，醒醒！",
+    name: "Mono FAIRY",
   },
 } as const;
 
