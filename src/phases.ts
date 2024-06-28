@@ -4576,7 +4576,6 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
         this.scene.unshiftPhase(new EvolutionPhase(this.scene, pokemon as PlayerPokemon, evolution, this.lastLevel));
       }
     }
-
     if (pokemon.getTag(BattlerTagType.POWER_TRICK)) {
       [pokemon.stats[Stat.ATK], pokemon.stats[Stat.DEF]] = [pokemon.stats[Stat.DEF], pokemon.stats[Stat.ATK]];
     }
