@@ -47,6 +47,7 @@ import SettingsAudioUiHandler from "./settings/settings-audio-ui-handler";
 import RunHistoryUiHandler from "./run-history-ui-handler";
 import RunInfoUiHandler from "./run-info-ui-handler";
 import { PlayerGender } from "#enums/player-gender";
+import BgmBar from "#app/ui/bgm-bar";
 
 export enum Mode {
   MESSAGE,
@@ -132,6 +133,7 @@ export default class UI extends Phaser.GameObjects.Container {
   public handlers: UiHandler[];
   private overlay: Phaser.GameObjects.Rectangle;
   public achvBar: AchvBar;
+  public bgmBar: BgmBar;
   public savingIcon: SavingIconHandler;
 
   private tooltipContainer: Phaser.GameObjects.Container;
@@ -164,6 +166,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new OptionSelectUiHandler(scene),
       new MenuUiHandler(scene),
       new OptionSelectUiHandler(scene, Mode.MENU_OPTION_SELECT),
+      // settings
       new SettingsUiHandler(scene),
       new SettingsDisplayUiHandler(scene),
       new SettingsAudioUiHandler(scene),
@@ -189,11 +192,12 @@ export default class UI extends Phaser.GameObjects.Container {
   }
 
   setup(): void {
-    this.setName("container-ui");
+    this.setName(`ui-${Mode[this.mode]}`);
     for (const handler of this.handlers) {
       handler.setup();
     }
     this.overlay = this.scene.add.rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6, 0);
+    this.overlay.setName("rect-ui-overlay");
     this.overlay.setOrigin(0, 0);
     (this.scene as BattleScene).uiContainer.add(this.overlay);
     this.overlay.setVisible(false);
@@ -212,15 +216,19 @@ export default class UI extends Phaser.GameObjects.Container {
 
   private setupTooltip() {
     this.tooltipContainer = this.scene.add.container(0, 0);
+    this.tooltipContainer.setName("tooltip");
     this.tooltipContainer.setVisible(false);
 
     this.tooltipBg = addWindow(this.scene as BattleScene, 0, 0, 128, 31);
+    this.tooltipBg.setName("window-tooltip-bg");
     this.tooltipBg.setOrigin(0, 0);
 
     this.tooltipTitle = addTextObject(this.scene, 64, 4, "", TextStyle.TOOLTIP_TITLE);
+    this.tooltipTitle.setName("text-tooltip-title");
     this.tooltipTitle.setOrigin(0.5, 0);
 
     this.tooltipContent = addTextObject(this.scene, 6, 16, "", TextStyle.TOOLTIP_CONTENT);
+    this.tooltipContent.setName("text-tooltip-content");
     this.tooltipContent.setWordWrapWidth(696);
 
     this.tooltipContainer.add(this.tooltipBg);
@@ -248,7 +256,6 @@ export default class UI extends Phaser.GameObjects.Container {
       battleScene?.processInfoButton(pressed);
       return true;
     }
-
     battleScene?.processInfoButton(false);
     return true;
   }
