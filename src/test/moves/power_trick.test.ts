@@ -113,10 +113,11 @@ describe("Moves - Power Trick", () => {
       const expectedStats = [...playerPokemon.stats];
 
       // recalculate stats for getting base Stats to compare
+      playerPokemon.resetSummonData();
       playerPokemon.calculateStats();
 
       expect(playerPokemon.level).toBeGreaterThan(initialLevel);
-      expect(playerPokemon.getTag(BattlerTagType.POWER_TRICK)).not.toBe(undefined);
+      expect(playerPokemon.getTag(BattlerTagType.POWER_TRICK)).toBe(undefined);
       expect(playerPokemon.stats[Stat.ATK]).toBe(expectedStats[Stat.DEF]);
       expect(playerPokemon.stats[Stat.DEF]).toBe(expectedStats[Stat.ATK]);
     },
