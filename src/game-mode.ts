@@ -123,21 +123,21 @@ export class GameMode implements GameModeConfig {
     if ((waveIndex % 30) === (arena.scene.offsetGym ? 0 : 20) && !this.isWaveFinal(waveIndex)) {
       return true;
     } else if (waveIndex % 10 !== 1 && waveIndex % 10) {
-      // Do not spawn trainers on the two evil team floors and also the E4 floors
-      const forbiddenSpawnWaves = [63, 65, 67, 68, 69, 113, 116, 117, 118, 119, 183, 185, 187, 189];
-      if (forbiddenSpawnWaves.includes(waveIndex)) {
-        return false;
-      }
+      /**
+       * Do not check X1 floors since there's a bug that stops trainer sprites from appearing
+       * after a X0 full party heal
+       */
 
       const trainerChance = arena.getTrainerChance();
       let allowTrainerBattle = true;
       if (trainerChance) {
         const waveBase = Math.floor(waveIndex / 10) * 10;
+        // Stop generic trainers from spawning in within 3 floors of a fixed battle
         for (let w = Math.max(waveIndex - 3, waveBase + 2); w <= Math.min(waveIndex + 3, waveBase + 9); w++) {
           if (w === waveIndex) {
             continue;
           }
-          if ((w % 30) === (arena.scene.offsetGym ? 0 : 20) || this.isFixedBattle(waveIndex)) {
+          if ((w % 30) === (arena.scene.offsetGym ? 0 : 20) || this.isFixedBattle(w)) {
             allowTrainerBattle = false;
             break;
           } else if (w < waveIndex) {
