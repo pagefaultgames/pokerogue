@@ -92,7 +92,7 @@ export const bgmName: SimpleTranslationEntries = {
   "cave": "PMD EoS Sky Peak Cave",
   "construction_site": "PMD EoS Boulder Quarry",
   "desert": "PMD EoS Northern Desert",
-  "dojo": "PMD EoS Marowa Dojo",
+  "dojo": "PMD EoS Marowak Dojo",
   "end": "PMD RTDX Sky Tower",
   "factory": "PMD EoS Concealed Ruins",
   "fairy_cave": "PMD EoS Star Cave",
