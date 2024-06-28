@@ -101,20 +101,20 @@ export const bgmName: SimpleTranslationEntries = {
   "graveyard": "불가사의 던전 하늘의 탐험대 신비의 숲",
   "ice_cave": "불가사의 던전 하늘의 탐험대 광대한 얼음산",
   "island": "불가사의 던전 하늘의 탐험대 연안의 암반",
-  //"jungle": "jungle", // The composer thinks about a more creative name
-  //"labratory": "labratory", // The composer thinks about a more creative name
+  "jungle": "Lmz - Jungle", // The composer thinks about a more creative name
+  "laboratory": "Firel - Laboratory", // The composer thinks about a more creative name
   "lake": "불가사의 던전 하늘의 탐험대 수정 동굴",
   "meadow": "불가사의 던전 하늘의 탐험대 하늘 꼭대기 숲",
-  //"metropolis": "metropolis", // The composer thinks about a more creative name
+  "metropolis": "Firel - Metropolis", // The composer thinks about a more creative name
   "mountain": "불가사의 던전 하늘의 탐험대 뿔산",
   "plains": "불가사의 던전 하늘의 탐험대 하늘 꼭대기 초원",
   "power_plant": "불가사의 던전 하늘의 탐험대 일렉트릭 평원",
   "ruins": "불가사의 던전 하늘의 탐험대 봉인의 암반",
   "sea": "불가사의 던전 하늘의 탐험대 바닷가 동굴",
-  "seabed": "불가사의 던전 하늘의 탐험대 바닷가 동굴(저층)",
+  "seabed": "Firel - Seabed", // The composer thinks about a more creative name
   "slum": "불가사의 던전 하늘의 탐험대 하늘 꼭대기 해변",
   "snowy_forest": "불가사의 던전 하늘의 탐험대 하늘 꼭대기 설원",
-  "space": "불가사의 던전 하늘의 탐험대 행운 협곡",
+  "space": "Firel - Aether",
   "swamp": "불가사의 던전 하늘의 탐험대 폐쇄되어진 바다",
   "tall_grass": "불가사의 던전 하늘의 탐험대 짙은 안개의 숲",
   "temple": "불가사의 던전 하늘의 탐험대 파수꾼의 동굴",
