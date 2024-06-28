@@ -22,7 +22,7 @@ export const egg: SimpleTranslationEntries = {
   "hatchFromTheEgg": "{{pokemonName}} sort de l’Œuf !",
   "eggMoveUnlock": "Capacité Œuf débloquée :\n{{moveName}}",
   "rareEggMoveUnlock": "Capacité Œuf Rare débloquée :\n{{moveName}}",
-  "moveUPGacha": "Capa + !",
-  "shinyUPGacha": "Chroma + !",
-  "legendaryUPGacha": "+ !",
+  "moveUPGacha": "Bonus Capacité\nŒuf Rare !",
+  "shinyUPGacha": "Bonus\nChromatique !",
+  "legendaryUPGacha": "Bonus !",
 } as const;

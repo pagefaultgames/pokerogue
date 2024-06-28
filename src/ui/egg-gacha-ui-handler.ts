@@ -100,7 +100,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       let gachaTextStyle = TextStyle.WINDOW_ALT;
       let gachaX = 4;
       let gachaY = 0;
-      if (currentLanguage === "de" || "pt-br") {
+      if (currentLanguage === "de" || currentLanguage === "fr" || currentLanguage === "pt-BR") {
         gachaTextStyle = TextStyle.SMALLER_WINDOW_ALT;
         gachaX = 2;
         gachaY = 2;
@@ -119,19 +119,21 @@ export default class EggGachaUiHandler extends MessageUiHandler {
         gachaInfoContainer.add(pokemonIcon);
         break;
       case GachaType.MOVE:
-        if (currentLanguage === "de") {
+        if (currentLanguage === "de" || currentLanguage === "fr") {
           gachaUpLabel.setAlign("center");
           gachaUpLabel.setY(0);
         }
+
         gachaUpLabel.setText(i18next.t("egg:moveUPGacha"));
         gachaUpLabel.setX(0);
         gachaUpLabel.setOrigin(0.5, 0);
         break;
       case GachaType.SHINY:
-        if (currentLanguage === "de") {
+        if (currentLanguage === "de" || currentLanguage === "fr") {
           gachaUpLabel.setAlign("center");
           gachaUpLabel.setY(0);
         }
+
         gachaUpLabel.setText(i18next.t("egg:shinyUPGacha"));
         gachaUpLabel.setX(0);
         gachaUpLabel.setOrigin(0.5, 0);
