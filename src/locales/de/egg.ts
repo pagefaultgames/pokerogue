@@ -24,5 +24,5 @@ export const egg: SimpleTranslationEntries = {
   "rareEggMoveUnlock": "Seltene Ei-Attacke freigeschaltet: {{moveName}}",
   "moveUPGacha": "Mehr\nEi-Attacken!",
   "shinyUPGacha": "Mehr\nSchillernde!",
-  "legendaryUPGacha": "UP!",
+  "legendaryUPGacha": "erscheint\nöfter!",
 } as const;
