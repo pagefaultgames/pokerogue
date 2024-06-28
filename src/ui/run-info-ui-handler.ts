@@ -361,7 +361,6 @@ export default class GameInfoUiHandler extends UiHandler {
       }
       //pokemonSpriteWindow.setPosition(-2,1.5);
       //icon.add(pokemonSpriteWindow);
-      console.log(icon.list);
       this.getUi().bringToTop(icon);
 
       const textContainer = this.scene.add.container(-26, -25);
@@ -384,29 +383,21 @@ export default class GameInfoUiHandler extends UiHandler {
       const currentLanguage = i18next.resolvedLanguage;
       for (let i = 0; i < pStats.length; i++) {
         const isMult = getNatureStatMultiplier(pokemon.nature, i);
-        pStats[i] = (isMult < 1) ? "[b]" + pStats[i] + "↓[/b]" : pStats[i];
-        pStats[i] = (isMult > 1) ? "[b]" + pStats[i] + "↑[/b]" : pStats[i];
+        pStats[i] = (isMult < 1) ? pStats[i] + "↓" : pStats[i];
+        pStats[i] = (isMult > 1) ? pStats[i] + "↑" : pStats[i];
       }
       //Row 1: HP, Atk, Def
-      const textStats1 = addBBCodeTextObject(this.scene, -2, 18, "", TextStyle.SUMMARY, { fontSize: "34px" });
-      //HP
-      textStats1.appendText(i18next.t("pokemonInfo:Stat.HPshortened")+": "+pStats[0], false);
-      		//Attack
-      textStats1.appendText(" | "+i18next.t("pokemonInfo:Stat.ATKshortened")+": "+pStats[1], false);
-      //Defense
-      textStats1.appendText(" | "+i18next.t("pokemonInfo:Stat.DEFshortened")+": "+pStats[2], false);
-      textContainer.add(textStats1);
       //Row 2: SpAtk, SpDef, Speed
-      const textStats2 = addBBCodeTextObject(this.scene, -2, 17, "", TextStyle.SUMMARY, { fontSize: "34px"});
-      //Special Attack
-      textStats2.appendText(i18next.t("pokemonInfo:Stat.SPATKshortened")+": "+pStats[3], true);
-      //Special Defense
-      textStats2.appendText(" | "+i18next.t("pokemonInfo:Stat.SPDEFshortened")+": "+pStats[4], false);
-      //Speed
+      const hp = addBBCodeTextObject(this.scene, 0, 0, i18next.t("pokemonInfo:Stat.HPshortened")+": "+pStats[0], TextStyle.SUMMARY, { fontSize: "34px", align: "center" });
+      const atk = addBBCodeTextObject(this.scene, 0, 0, i18next.t("pokemonInfo:Stat.ATKshortened")+": "+pStats[1], TextStyle.SUMMARY, { fontSize: "34px", align: "center" });
+      const def = addBBCodeTextObject(this.scene, 0, 0, i18next.t("pokemonInfo:Stat.DEFshortened")+": "+pStats[2], TextStyle.SUMMARY, { fontSize: "34px", align: "center" });
+      const spatk = addBBCodeTextObject(this.scene, 0, 0, i18next.t("pokemonInfo:Stat.SPATKshortened")+": "+pStats[3], TextStyle.SUMMARY, { fontSize: "34px", align: "center" });
+      const spdef = addBBCodeTextObject(this.scene, 0, 0, i18next.t("pokemonInfo:Stat.SPDEFshortened")+": "+pStats[4], TextStyle.SUMMARY, { fontSize: "34px", align: "center" });
       const speedLabel = (currentLanguage==="es"||currentLanguage==="pt_BR") ? i18next.t("runHistory:SPDshortened") : i18next.t("pokemonInfo:Stat.SPDshortened");
-      textStats2.appendText(" | "+speedLabel+": "+pStats[5], false);
-      //End of Text
-      textContainer.add(textStats2);
+      const speed = addBBCodeTextObject(this.scene, 0, 0, speedLabel+": "+pStats[5], TextStyle.SUMMARY, { fontSize: "34px", align: "center" });
+
+      Phaser.Actions.GridAlign([hp, atk, def, spatk, spdef, speed], {width:3, height:2, cellWidth:28, cellHeight: 6.5, x: -2, y: 20, position: Phaser.Display.Align.TOP_LEFT});
+      textContainer.add([hp, atk, def, spatk, spdef, speed]);
 
       if (pokemon.fusionSpecies) {
         const splicedIcon = this.scene.add.image(0, 0, "icon_spliced");
@@ -443,7 +434,7 @@ export default class GameInfoUiHandler extends UiHandler {
       const movesetContainer = this.scene.add.container(5.5, -28);
       const pokemonMoveBgs = [];
       const pokemonMoveLabels = [];
-      const movePos = [[-6.5,35],[37,35],[-6.5,43],[37,43]];
+      const movePos = [[-6.5,35.5],[37,35.5],[-6.5,43.5],[37,43.5]];
       for (let m = 0; m < pokemonMoveset.length; m++) {
       	const moveContainer = this.scene.add.container(movePos[m][0], movePos[m][1]);
         moveContainer.setScale(0.5);
@@ -499,18 +490,8 @@ export default class GameInfoUiHandler extends UiHandler {
     } else {
       switch (button) {
       case Button.DOWN:
-        break;
       case Button.UP:
-        console.log(this.runInfo);
-        if (this.victory) {
-          this.gameStatsContainer.setVisible(false);
-          this.showHallOfFame(this.runInfo);
-          success = true;
-          break;
-        } else {
-          break;
-        }
-
+        break;
       }
     }
 
