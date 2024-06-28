@@ -35,7 +35,7 @@ export const statusEffect: StatusEffectTranslationEntries = {
     obtainSource: "¡{{pokemonNameWithAffix}} sufre parálisis por {{sourceText}}!\nQuizás no se pueda mover.",
     activation: "¡{{pokemonNameWithAffix}} está paralizado!\n¡No se puede mover!",
     overlap: "¡{{pokemonNameWithAffix}} ya\nestá paralizado!",
-    heal: "¡{{pokemonNameWithAffix}} se\ncuró de la parálisis !"
+    heal: "¡{{pokemonNameWithAffix}} ya no\nestá paralizado!"
   },
   sleep: {
     name: "Dormir",
