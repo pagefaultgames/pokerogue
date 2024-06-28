@@ -319,6 +319,7 @@ export abstract class PokemonSpeciesForm {
     case Species.UNFEZANT:
     case Species.FRILLISH:
     case Species.JELLICENT:
+    case Species.PYROAR:
       ret += female ? "-f" : "";
       break;
     }
@@ -3327,7 +3328,7 @@ export const starterPassiveAbilities = {
   [Species.KRABBY]: Abilities.UNBURDEN,
   [Species.VOLTORB]: Abilities.ELECTRIC_SURGE,
   [Species.EXEGGCUTE]: Abilities.RIPEN,
-  [Species.CUBONE]: Abilities.HUGE_POWER,
+  [Species.CUBONE]: Abilities.PARENTAL_BOND,
   [Species.LICKITUNG]: Abilities.THICK_FAT,
   [Species.KOFFING]: Abilities.PARENTAL_BOND,
   [Species.RHYHORN]: Abilities.FILTER,

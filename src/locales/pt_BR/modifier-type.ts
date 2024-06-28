@@ -182,6 +182,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SOOTHE_BELL": { name: "Guizo" },
 
+    "EVIOLITE": { name: "Eviolita", description: "Esse misterioso caroço evolutivo aumenta os atributos de Defesa e Def. Esp. quando segurado por um Pokémon que ainda pode evoluir." },
+
     "SOUL_DEW": { name: "Joia da Alma", description: "Aumenta a influência da natureza de um Pokémon em seus atributos em 10% (cumulativo)." },
 
     "NUGGET": { name: "Pepita" },
@@ -238,6 +240,12 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "Token de Cura Total", description: "Adiciona uma chance de 2.5% a cada turno de curar uma condição de status." },
     "ENEMY_ENDURE_CHANCE": { name: "Token de Persistência" },
     "ENEMY_FUSED_CHANCE": { name: "Token de Fusão", description: "Adiciona uma chance de 1% de que um Pokémon selvagem seja uma fusão." },
+  },
+  SpeciesBoosterItem: {
+    "LIGHT_BALL": { name: "Bola de Luz", description: "Orbe intrigante que aumenta os atributos de Ataque e Ataque Esp. de Pikachu." },
+    "THICK_CLUB": { name: "Osso Grosso", description: "Este duro osso de origem desconhecida aumenta o atributo de Ataque de Cubone ou Marowak." },
+    "METAL_POWDER": { name: "Pó Metálico", description: "Extremamente fino, porém duro, este pó estranho aumenta o atributo de Defesa de Ditto." },
+    "QUICK_POWDER": { name: "Pó Veloz", description: "Extremamente fino, porém duro, este pó estranho aumenta o atributo de Velocidade de Ditto." }
   },
   TempBattleStatBoosterItem: {
     "x_attack": "Ataque X",

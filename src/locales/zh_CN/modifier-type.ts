@@ -96,12 +96,12 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "攻击以40/25/12.5%的伤害造成2/3/4次伤害",
     },
     "TmModifierType": {
-      name: "招式学习器 {{moveId}} - {{moveName}}",
+      name: "招式学习器\n{{moveId}} - {{moveName}}",
       description: "教会一只宝可梦{{moveName}}。",
     },
     "TmModifierTypeWithInfo": {
-      name: "招式学习器 {{moveId}} - {{moveName}}",
-      description: "教会一只宝可梦{{moveName}}\n(Hold C or Shift for more info)。",
+      name: "招式学习器\n{{moveId}} - {{moveName}}",
+      description: "教会一只宝可梦{{moveName}}\n(按住C或者Shift查看更多信息)。",
     },
     "EvolutionItemModifierType": {
       description: "使某些宝可梦进化。",
@@ -182,6 +182,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SOOTHE_BELL": { name: "安抚之铃" },
 
+    "EVIOLITE": { name: "进化奇石", description: "进化的神奇石块。携带后，还能进化的宝可梦的 防御和特防就会提高。" },
+
     "SOUL_DEW": { name: "心之水滴", description: "增加宝可梦性格影响10% (加算)。" },
 
     "NUGGET": { name: "金珠" },
@@ -238,6 +240,12 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "万灵药硬币", description: "增加2.5%每回合治愈异常状态的概率。" },
     "ENEMY_ENDURE_CHANCE": { name: "忍受硬币" },
     "ENEMY_FUSED_CHANCE": { name: "融合硬币", description: "增加1%野生融合宝可梦出现概率。" },
+  },
+  SpeciesBoosterItem: {
+    "LIGHT_BALL": { name: "电气球", description: "让皮卡丘携带后，攻击和特攻就会 提高的神奇之球。" },
+    "THICK_CLUB": { name: "粗骨头", description: "某种坚硬的骨头。让卡拉卡拉或嘎啦嘎啦携带后，攻击就会提高。" },
+    "METAL_POWDER": { name: "金属粉", description: "让百变怪携带后，防御就会提高的神奇粉末。非常细腻坚硬。" },
+    "QUICK_POWDER": { name: "速度粉", description: "让百变怪携带后，速度就会提高的神奇粉末。非常细腻坚硬。" }
   },
   TempBattleStatBoosterItem: {
     "x_attack": "力量强化",
