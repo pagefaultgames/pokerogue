@@ -66,6 +66,8 @@ import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { UiTheme } from "#enums/ui-theme";
 import { TimedEventManager } from "#app/timed-event-manager.js";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { Stat } from "./data/pokemon-stat";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -2391,6 +2393,9 @@ export default class BattleScene extends SceneBase {
       Promise.allSettled(party.map(p => {
         if (p.scene) {
           p.calculateStats();
+          if (p.getTag(BattlerTagType.POWER_TRICK)) {
+            [p.stats[Stat.ATK], p.stats[Stat.DEF]] = [p.stats[Stat.DEF], p.stats[Stat.ATK]];
+          }
         }
         return p.updateInfo(instant);
       })).then(() => resolve());
