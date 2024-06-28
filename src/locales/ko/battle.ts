@@ -132,5 +132,5 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsSaltCuredLapse": "{{pokemonNameWithAffix}}[[는]] 소금절이의\n데미지를 입고 있다.",
   "battlerTagsCursedOnAdd": "{{pokemonNameWithAffix}}[[는]]\n자신의 체력을 깎아서\n{{pokemonName}}에게 저주를 걸었다!",
   "battlerTagsCursedLapse": "{{pokemonNameWithAffix}}[[는]]\n저주받고 있다!",
-  "battlerTagsPowerTrickApply": "{{pokemonNameWithAffix}} switched its Attack and Defense!"
+  "battlerTagsPowerTrickApply": "{{pokemonNameWithAffix}}[[는]]\n공격과 방어를 바꿨다!"
 } as const;
