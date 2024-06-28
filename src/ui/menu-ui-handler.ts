@@ -14,11 +14,11 @@ import BgmBar from "#app/ui/bgm-bar";
 
 enum MenuOptions {
   GAME_SETTINGS,
+  EGG_GACHA,
+  EGG_LIST,
   ACHIEVEMENTS,
   STATS,
   VOUCHERS,
-  EGG_LIST,
-  EGG_GACHA,
   MANAGE_DATA,
   COMMUNITY,
   SAVE_AND_QUIT,
