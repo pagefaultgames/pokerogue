@@ -1,8 +1,8 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const menuUiHandler: SimpleTranslationEntries = {
   "GAME_SETTINGS": "Impostazioni",
-  "ACHIEVEMENTS": "Risultati",
+  "ACHIEVEMENTS": "Trofei",
   "STATS": "Statistiche",
   "VOUCHERS": "Biglietti",
   "EGG_LIST": "Lista Uova",

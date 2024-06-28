@@ -1,4 +1,4 @@
-import {DialogueTranslationEntries, SimpleTranslationEntries} from "#app/plugins/i18n";
+import {DialogueTranslationEntries, SimpleTranslationEntries} from "#app/interfaces/locales";
 
 // Dialogue of the NPCs in the game when the player character is male (or unset)
 export const PGMdialogue: DialogueTranslationEntries = {
@@ -357,6 +357,30 @@ export const PGMdialogue: DialogueTranslationEntries = {
     },
     "victory": {
       1: "I'll tune up for the next race."
+    },
+  },
+  "firebreather": {
+    "encounter": {
+      1: "My flames shall devour you!",
+      2: "My soul is on fire. I'll show you how hot it burns!",
+      3: "Step right up and take a look!"
+    },
+    "victory": {
+      1: "I burned down to ashes...",
+      2: "Yow! That's hot!",
+      3: "Ow! I scorched the tip of my nose!"
+    },
+  },
+  "sailor": {
+    "encounter": {
+      1: "Matey, you're walking the plank if you lose!",
+      2: "Come on then! My sailor's pride is at stake!",
+      3: "Ahoy there! Are you seasick?"
+    },
+    "victory": {
+      1: "Argh! Beaten by a kid!",
+      2: "Your spirit sank me!",
+      3: "I think it's me that's seasick..."
     },
   },
   "brock": {
@@ -1203,8 +1227,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "bugsy": {
     "encounter": {
-      1: `Whoa, amazing! You're an expert on Pokémon! 
-                $My research isn't complete yet. OK, you win.`,
+      1: "I'm Bugsy! I never lose when it comes to bug Pokémon!"
     },
     "victory": {
       1: "Whoa, amazing! You're an expert on Pokémon!\nMy research isn't complete yet. OK, you win."
@@ -2082,6 +2105,32 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "defeat": {
       1: "Another storm weathered, another victory claimed! Well fought!",
       2: "You got caught in my storm! Better luck next time!"
+    }
+  },
+  "alder": {
+    "encounter": {
+      1: "Preparati ad affrontare l’allenatore più in gamba di Unima!"
+    },
+    "victory": {
+      1: "Ben fatto! Hai un talento invidiabile."
+    },
+    "defeat": {
+      1: `Un freddo vento attraversa il mio cuore...
+          $Che battaglia!`
+    }
+  },
+  "kieran": {
+    "encounter": {
+      1: `Attraverso il duro lavoro, divento sempre più forte!
+          $Non perdo mai.`
+    },
+    "victory": {
+      1: `Non posso crederci…
+          $Che battaglia mozzafiato!`
+    },
+    "defeat": {
+      1: `Cavoli, che scontro!
+          $È ora che tu ti alleni ancora più duramente.`
     }
   },
   "rival": {
