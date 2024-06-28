@@ -19,62 +19,100 @@ def is_latin(word):
             return False
     return True
 
-#Compare Name Prefixes (to first consonant)
-def find_prefixes(word_list):
+#Compare Name Prefixes (to consonant) -> Try to keep shorter than 6ch long
+def find_prefixes(pokemon_name):
     result = []
-    for word in word_list:
-        prefix = ""
-        for other_word in word_list:
-            if word != other_word:
-                temp_prefix = ""
-                for w, o in zip(word, other_word):
-                    if w == o:
-                        temp_prefix += w
+    processed = {}  # This dictionary will keep track of the names that have been processed
+    for word in pokemon_name:
+        base_word = word  # Treat regional variants as separate entries
+        if base_word not in processed:  # Only process the name if it hasn't been processed before
+            prefix = ""
+            for other_word in pokemon_name:
+                other_base_word = other_word
+                if base_word != other_base_word:
+                    temp_prefix = ""
+                    for w, o in zip(base_word, other_base_word):
+                        if w == o:
+                            temp_prefix += w
+                        else:
+                            break
+                    if len(temp_prefix) > len(prefix):
+                        prefix = temp_prefix
+            # Check if the longest shared prefix is the entire species name
+            if len(prefix) == len(base_word):
+                processed[base_word] = prefix
+            else:
+                # Add the next character in the name to the 'root' of the prefix
+                root = prefix + base_word[len(prefix)]
+                # If the root of the prefix ends in a consonant, that should be the result
+                if root[-1].lower() in "bcdfghjklmnpqrstvwxzçßñ":
+                    processed[base_word] = root
+                elif len(root) >= 6:  # Check if the 'root' is 6 characters or longer
+                    processed[base_word] = root
+                else:  # Try to create an extension to the next consonant
+                    extension = ""
+                    for char in base_word[len(root):]:
+                        extension += char
+                        if char.lower() in "bcdfghjklmnpqrstvwxzçßñ":
+                            break
+                    # Check if the root+extension will be longer than 6 characters
+                    if len(root + extension) > 6:
+                        processed[base_word] = root
                     else:
-                        break
-                if len(temp_prefix) > len(prefix):
-                    prefix = temp_prefix
-        # Find the first consonant after the prefix
-        suffix = ""
-        for i, char in enumerate(word[len(prefix):]):
-            suffix += char
-            if char.lower() in "bcdfghjklmnpqrstvwxzçßñ":
-                # Check if the next character is a hyphen
-                if i+1 < len(word[len(prefix):]) and word[len(prefix)+i+1] == '-':
-                    suffix += '-'
-                break
-        result.append(prefix + suffix)
+                        processed[base_word] = root + extension
+        result.append(processed[base_word])
     return result
 
-#Compare Name Suffixes (to vowel)
+
+#Compare Name Suffixes (to vowel) -> Try to keep shorter than 6ch long
 def find_suffixes(pokemon_name):
     result = []
+    processed = {}  # This dictionary will keep track of the names that have been processed
     for word in pokemon_name:
-        suffix = ""
-        for other_word in pokemon_name:
-            if word != other_word:
-                temp_suffix = ""
-                for w, o in zip(word[::-1], other_word[::-1]):
-                    if w == o:
-                        temp_suffix = w + temp_suffix
+        base_word = word  # Treat regional variants as separate entries
+        if base_word not in processed:  # Only process the name if it hasn't been processed before
+            suffix = ""
+            for other_word in pokemon_name:
+                other_base_word = other_word
+                if base_word != other_base_word:
+                    temp_suffix = ""
+                    for w, o in zip(base_word[::-1], other_base_word[::-1]):
+                        if w == o:
+                            temp_suffix = w + temp_suffix
+                        else:
+                            break
+                    if len(temp_suffix) > len(suffix):
+                        suffix = temp_suffix
+            # Check if the longest shared suffix is the entire species name
+            if len(suffix) == len(base_word):
+                processed[base_word] = suffix
+            else:
+                # Add the next character in the name to the 'root' of the suffix
+                root = base_word[len(base_word) - len(suffix) - 1] + suffix
+                # If the root of the suffix ends in a vowel, that should be the result
+                if root[0].lower() in "aeiouyáééíóúàèìòùâêîôûäëïöüãẽĩõũæœøýỳÿŷỹ":
+                    processed[base_word] = root
+                elif len(root) >= 6:  # Check if the 'root' is 6 characters or longer
+                    processed[base_word] = root
+                else:  # Try to create an extension to the next vowel
+                    extension = ""
+                    for char in base_word[len(base_word) - len(root) - 1::-1]:
+                        extension = char + extension
+                        if char.lower() in "aeiouyáééíóúàèìòùâêîôûäëïöüãẽĩõũæœøýỳÿŷỹ":
+                            break
+                    # Check if the root+extension will be longer than 6 characters
+                    if len(extension + root) > 6:
+                        processed[base_word] = root
                     else:
-                        break
-                if len(temp_suffix) > len(suffix):
-                    suffix = temp_suffix
-        # Find the first vowel before the suffix
-        prefix = ""
-        for i, char in enumerate(word[len(word)-len(suffix)-1::-1]):
-            prefix = char + prefix
-            if char.lower() in "aeiouyáééíóúàèìòùâêîôûäëïöüãẽĩõũæœøýỳÿŷỹ":
-                # Check if the next character is a hyphen
-                if i+1 < len(word) and word[len(word)-len(suffix)-i-2] == '-':
-                    prefix = '-' + prefix
-                break
-        # Make sure the first character is lowercase
-        output = (prefix + suffix)
-        output = output[0].lower() + output[1:]
-        result.append(output)
+                        processed[base_word] = extension + root
+        # Ensure the first character of the suffix is a lowercase letter
+        processed[base_word] = processed[base_word][0].lower() + processed[base_word][1:]
+        # Check if the character before the suffix is a hyphen
+        if len(base_word) > len(processed[base_word]) and base_word[len(base_word) - len(processed[base_word]) - 2] == '-':
+            processed[base_word] = '-' + processed[base_word]
+        result.append(processed[base_word])
     return result
+
 
 def generate_pokemon(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:  # Specify the encoding here
@@ -101,7 +139,7 @@ def combine_scripts(file_path):
 
     output = "import { FusionTranslationEntries } from \"#app/interfaces/locales\";\n\n"
     output += "export const fusionAffixes: FusionTranslationEntries = {\n"
-    output += "  shouldReverse: \"true\",\n"
+    output += "  shouldReverse: \"false\",\n"
 
     for word, prefix, suffix in zip(pokemon_dict.keys(), prefixes, suffixes):
         output += f"  {word}: {{\n"
@@ -122,6 +160,7 @@ file_path = r"pokemon.ts"
 
 # Call the combined function
 combine_scripts(file_path)
+
 
 #universal-fusion-affixes-generator
 """"import re
