@@ -101,20 +101,20 @@ export const bgmName: SimpleTranslationEntries = {
   "graveyard": "空之探险队「神秘森林」",
   "ice_cave": "空之探险队「大冰山」",
   "island": "空之探险队「沿岸岩地」",
-  //"jungle": "jungle", // The composer thinks about a more creative name
-  //"labratory": "labratory", // The composer thinks about a more creative name
+  "jungle": "Lmz - Jungle", // The composer thinks about a more creative name
+  "laboratory": "Firel - Laboratory", // The composer thinks about a more creative name
   "lake": "空之探险队「水晶洞窟」",
   "meadow": "空之探险队「天空顶端（森林）」",
-  //"metropolis": "metropolis", // The composer thinks about a more creative name
+  "metropolis": "Firel - Metropolis", // The composer thinks about a more creative name
   "mountain": "空之探险队「角山」",
   "plains": "空之探险队「天空顶端（草原）」",
   "power_plant": "空之探险队「电气平原 深处」",
   "ruins": "空之探险队「封印岩地 深处」",
   "sea": "空之探险队「石滩洞窟」",
-  "seabed": "空之探险队「石滩洞窟 下层」",
+  "seabed": "Firel - Seabed", // The composer thinks about a more creative name
   "slum": "空之探险队「天空顶端（岩场）」",
   "snowy_forest": "空之探险队「天空顶端（雪山）」",
-  "space": "空之探险队「财宝岩地」",
+  "space": "Firel - Aether",
   "swamp": "空之探险队「封闭之海」",
   "tall_grass": "空之探险队「浓雾森林」",
   "temple": "空之探险队「守护洞穴」",
