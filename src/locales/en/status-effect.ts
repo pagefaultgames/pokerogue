@@ -32,7 +32,7 @@ export const statusEffect: StatusEffectTranslationEntries = {
     name: "Paralysis",
     description: "paralysis",
     obtain: "{{pokemonNameWithAffix}} was paralyzed,\nIt may be unable to move!",
-    obtainSource: "{{pokemonNameWithAffix}} was paralyzed by {{sourceText}},\nIt may be unable to move!",
+    obtainSource: "{{pokemonNameWithAffix}} was paralyzed by {{sourceText}}!\nIt may be unable to move!",
     activation: "{{pokemonNameWithAffix}} is paralyzed!\nIt can't move!",
     overlap: "{{pokemonNameWithAffix}} is\nalready paralyzed!",
     heal: "{{pokemonNameWithAffix}} was\nhealed of paralysis!"
