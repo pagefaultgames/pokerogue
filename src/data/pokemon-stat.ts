@@ -1,4 +1,4 @@
-import i18next from "../plugins/i18n";
+import i18next from "i18next";
 
 export enum Stat {
   HP = 0,

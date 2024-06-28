@@ -146,3 +146,4 @@ export function getIsInitialized(): boolean {
 }
 
 let isInitialized = false;
+

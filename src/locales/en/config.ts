@@ -1,10 +1,14 @@
+import { common } from "#app/locales/en/common.js";
+import { settings } from "#app/locales/en/settings.js";
 import { ability } from "./ability";
 import { abilityTriggers } from "./ability-trigger";
-import { achv } from "./achv";
+import { PGFachv, PGMachv } from "./achv";
 import { battle } from "./battle";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
 import { berry } from "./berry";
+import { bgmName } from "./bgm-name";
 import { biome } from "./biome";
+import { challenges } from "./challenges";
 import { commandUiHandler } from "./command-ui-handler";
 import {
   PGFbattleSpecDialogue,
@@ -18,6 +22,7 @@ import {
 } from "./dialogue";
 import { egg } from "./egg";
 import { fightUiHandler } from "./fight-ui-handler";
+import { gameMode } from "./game-mode";
 import { gameStatsUiHandler } from "./game-stats-ui-handler";
 import { growth } from "./growth";
 import { menu } from "./menu";
@@ -25,11 +30,13 @@ import { menuUiHandler } from "./menu-ui-handler";
 import { modifierType } from "./modifier-type";
 import { move } from "./move";
 import { nature } from "./nature";
+import { partyUiHandler } from "./party-ui-handler";
 import { pokeball } from "./pokeball";
 import { pokemon } from "./pokemon";
 import { pokemonForm } from "./pokemon-form";
 import { pokemonInfo } from "./pokemon-info";
 import { pokemonInfoContainer } from "./pokemon-info-container";
+import { saveSlotSelectUiHandler } from "./save-slot-select-ui-handler";
 import { splashMessages } from "./splash-messages";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
 import { titles, trainerClasses, trainerNames } from "./trainers";
@@ -40,12 +47,16 @@ import { weather } from "./weather";
 export const enConfig = {
   ability: ability,
   abilityTriggers: abilityTriggers,
-  achv: achv,
   battle: battle,
   battleMessageUiHandler: battleMessageUiHandler,
   berry: berry,
+  bgmName: bgmName,
   biome: biome,
+  challenges: challenges,
   commandUiHandler: commandUiHandler,
+  common: common,
+  PGMachv: PGMachv,
+  PGFachv: PGFachv,
   PGMdialogue: PGMdialogue,
   PGFdialogue: PGFdialogue,
   PGMbattleSpecDialogue: PGMbattleSpecDialogue,
@@ -56,6 +67,7 @@ export const enConfig = {
   PGFdoubleBattleDialogue: PGFdoubleBattleDialogue,
   egg: egg,
   fightUiHandler: fightUiHandler,
+  gameMode: gameMode,
   gameStatsUiHandler: gameStatsUiHandler,
   growth: growth,
   menu: menu,
@@ -63,11 +75,14 @@ export const enConfig = {
   modifierType: modifierType,
   move: move,
   nature: nature,
+  partyUiHandler: partyUiHandler,
   pokeball: pokeball,
   pokemon: pokemon,
   pokemonForm: pokemonForm,
   pokemonInfo: pokemonInfo,
   pokemonInfoContainer: pokemonInfoContainer,
+  saveSlotSelectUiHandler: saveSlotSelectUiHandler,
+  settings: settings,
   splashMessages: splashMessages,
   starterSelectUiHandler: starterSelectUiHandler,
   titles: titles,
@@ -75,5 +90,5 @@ export const enConfig = {
   trainerNames: trainerNames,
   tutorial: tutorial,
   voucher: voucher,
-  weather: weather
+  weather: weather,
 };

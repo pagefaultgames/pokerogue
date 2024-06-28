@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "archie.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 80,
+				"h": 80
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 80,
+						"h": 80
+					},
+					"spriteSourceSize": {
+						"x": 21,
+						"y": 0,
+						"w": 42,
+						"h": 80
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 42,
+						"h": 80
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:bfa7fdd7b6ac9be68dc9dc562fb8339f:06f87a279450b21b19294ba956b69c26:4b7980be4e3ac1d20c9eaf970913ec63$"
+	}
+}
