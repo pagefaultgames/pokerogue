@@ -1255,7 +1255,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.CLOYSTER, 1, EvolutionItem.WATER_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.EXEGGCUTE]: [
-    new SpeciesEvolution(Species.ALOLA_EXEGGUTOR, 1, EvolutionItem.SUN_STONE, null, SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(Species.ALOLA_EXEGGUTOR, 1, EvolutionItem.SUN_STONE, null, SpeciesWildEvolutionDelay.LONG),
     new SpeciesEvolution(Species.EXEGGUTOR, 1, EvolutionItem.LEAF_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.TANGELA]: [
