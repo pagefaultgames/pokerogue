@@ -543,8 +543,13 @@ export const Setting: Array<Setting> = [
 
   {
     key: SettingKeys.Move_Touch_Controls,
-    label: "Move Touch Controls",
-    options: ["Configure"],
+    label: i18next.t("settings:moveTouchControls"),
+    options: [
+      {
+        value: "Configure",
+        label: i18next.t("settings:change")
+      }
+    ],
     default: 0,
     type: SettingType.GENERAL,
     activatable: true,
