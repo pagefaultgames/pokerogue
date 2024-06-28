@@ -11,7 +11,7 @@ export const statusEffect: StatusEffectTranslationEntries = {
     heal: ""
   },
   poison: {
-    name: "Envenenado",
+    name: "Envenenamiento",
     description: "envenenado ",
     obtain: "¡{{pokemonNameWithAffix}}\nha sido envenenado!",
     obtainSource: "¡{{pokemonNameWithAffix}}\nha sido envenenado por {{sourceText}}!",
