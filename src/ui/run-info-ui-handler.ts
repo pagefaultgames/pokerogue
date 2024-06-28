@@ -20,6 +20,7 @@ import { starterPassiveAbilities } from "../data/pokemon-species";
 import { getNatureStatMultiplier, getNatureName } from "../data/nature";
 import { allAbilities } from "../data/ability";
 import { getVariantTint } from "#app/data/variant";
+import { PokemonHeldItemModifier } from "../modifier/modifier";
 
 /*
 enum Page {
@@ -180,7 +181,7 @@ export default class GameInfoUiHandler extends UiHandler {
     } else {
       const sssLuckText = addTextObject(this.scene, 0, 0, `${i18next.t("runHistory:luck")}: ${getLuckString(luckValue)}`, TextStyle.WINDOW, {fontSize: "55px"});
       sssLuckText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
-      sssLuckText.setPosition(6, 77);
+      sssLuckText.setPosition(6, 67);
       this.runInfoContainer.add(sssLuckText);
     }
 
@@ -195,7 +196,7 @@ export default class GameInfoUiHandler extends UiHandler {
           enemyData.boss = false;
           const enemy = enemyData.toPokemon(this.scene);
           const enemyIcon = this.scene.addPokemonIcon(enemy, 0, 0, 0, 0);
-          const enemyLevel = addTextObject(this.scene, 32, 24, `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`, bossStatus ? TextStyle.PARTY_RED : TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
+          const enemyLevel = addTextObject(this.scene, 32, 24, `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`, bossStatus ? TextStyle.PARTY_RED : TextStyle.PARTY, { fontSize: "44px", color: "#f8f8f8" });
           enemyLevel.setShadow(0, 0, null);
           enemyLevel.setStroke("#424242", 14);
           enemyLevel.setOrigin(1, 0);
@@ -297,9 +298,9 @@ export default class GameInfoUiHandler extends UiHandler {
         }
       }
       if (runData.gameMode === GameModes.CHALLENGE) {
-        modifierIconsContainer.setPositionRelative(genInfoText, 2, 75);
+        modifierIconsContainer.setPositionRelative(genInfoText, 2, 55);
       } else {
-        modifierIconsContainer.setPositionRelative(genInfoText, 2, 65);
+        modifierIconsContainer.setPositionRelative(genInfoText, 2, 55);
       }
 
       this.runInfoContainer.add(modifierIconsContainer);
@@ -319,7 +320,7 @@ export default class GameInfoUiHandler extends UiHandler {
  		party.forEach((p: PokemonData, i: integer) => {
       const pokemonInfoWindow = new RoundRectangle(this.scene, 0, 0, infoWidth*2, windowHeight-3, 3);
  			pokemonInfoWindow.setStrokeStyle(1, 0x4b4b4b, 0.85);
- 			const pokemonSpriteWindow = this.scene.add.rectangle(0, 0, 21, 21, 0xFFFFFF, 0.4);
+ 			//const pokemonSpriteWindow = this.scene.add.rectangle(0, 0, 21, 21, 0xFFFFFF, 0.4);
 
  			const pokemon = p.toPokemon(this.scene);
  			const pokemonInfoContainer = this.scene.add.container(pokemonPos[i][0], pokemonPos[i][1]);
@@ -328,24 +329,39 @@ export default class GameInfoUiHandler extends UiHandler {
  			const types = pokemon.getTypes();
  			let typeColor = getTypeRgb(types[0]);
  			const type1Color = new Phaser.Display.Color(typeColor[0], typeColor[1], typeColor[2]);
- 			if (types[1]) {
- 				typeColor = getTypeRgb(types[1]);
- 				const type2Color = new Phaser.Display.Color(typeColor[0], typeColor[1], typeColor[2]);
- 				pokemonSpriteWindow.setFillStyle(type2Color.color, 0.7);
- 			}
- 			type1Color.darken(45);
-      pokemonInfoWindow.setFillStyle(type1Color.color);
+
+ 			const bgColor = type1Color.clone().darken(45);
+      pokemonInfoWindow.setFillStyle(bgColor.color);
       //pokemonInfoWindow.setBlendMode(Phaser.BlendModes.MULTIPLY);
 
       const iconContainer = this.scene.add.container(-55, -29);
-      pokemonSpriteWindow.setOrigin(-0.3, -0.25);
+      //pokemonSpriteWindow.setOrigin(-0.3, -0.25);
       const icon = this.scene.addPokemonIcon(pokemon, 0, 0, 0, 0);
       icon.setScale(0.75);
       icon.setPosition(14, 5.5);
       //const spriteAnimKey = icon.list[0].anims.key;
-      icon.list[0].preFX.addShadow(-1, -1, 0.1, 1, type1Color.color);
-      pokemonSpriteWindow.setPosition(-2,1.5);
-      icon.add(pokemonSpriteWindow);
+      typeColor = types[1] ? getTypeRgb(types[1]) : null;
+      const type2Color = typeColor ? new Phaser.Display.Color(typeColor[0], typeColor[1], typeColor[2]) : null;
+      if (type2Color && !pokemon.fusionSpecies) {
+        icon.list[0].preFX.addShadow(-1, -1, 0.1, 1, type1Color.color);
+        icon.list[0].preFX.addGlow(type2Color.color);
+        //pokemonSpriteWindow.setFillStyle(type2Color.color, 0.7);
+      } else if (type2Color && pokemon.fusionSpecies) {
+        icon.list[0].preFX.addShadow(-1, -1, 0.1, 1, type2Color.color);
+        icon.list[0].preFX.addGlow(type1Color.color);
+        icon.list[1].preFX.addShadow(-1, -1, 0.1, 1, type1Color.color);
+        icon.list[1].preFX.addGlow(type2Color.color);
+      } else {
+        icon.list[0].preFX.addShadow(-1, -1, 0.1, 1, type1Color.darken(10).color);
+        icon.list[0].preFX.addGlow(type1Color.color);
+        if (pokemon.fusionSpecies) {
+          icon.list[1].preFX.addShadow(-1, -1, 0.1, 1, type1Color.color);
+          icon.list[1].preFX.addGlow(type1Color.color);
+        }
+      }
+      //pokemonSpriteWindow.setPosition(-2,1.5);
+      //icon.add(pokemonSpriteWindow);
+      console.log(icon.list);
       this.getUi().bringToTop(icon);
 
       const textContainer = this.scene.add.container(-26, -25);
@@ -427,7 +443,7 @@ export default class GameInfoUiHandler extends UiHandler {
       const movesetContainer = this.scene.add.container(5.5, -28);
       const pokemonMoveBgs = [];
       const pokemonMoveLabels = [];
-      const movePos = [[-6,33],[41,33],[-6,43],[41,43]];
+      const movePos = [[-6.5,35],[37,35],[-6.5,43],[37,43]];
       for (let m = 0; m < pokemonMoveset.length; m++) {
       	const moveContainer = this.scene.add.container(movePos[m][0], movePos[m][1]);
         moveContainer.setScale(0.5);
@@ -455,7 +471,7 @@ export default class GameInfoUiHandler extends UiHandler {
       //pokemonSpriteWindow.setOrigin(0,0);
       //iconContainer.add(pokemonSpriteWindow);
       pokemonInfoContainer.add(pokemonInfoWindow);
-      iconContainer.add(pokemonSpriteWindow);
+      //iconContainer.add(pokemonSpriteWindow);
       iconContainer.add(icon);
       pokemonInfoContainer.add(iconContainer);
       pokemonInfoContainer.add(movesetContainer);

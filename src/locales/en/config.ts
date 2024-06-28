@@ -39,7 +39,7 @@ import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { weather } from "./weather";
-import { runHistory } from "./run-history-ui-handler.ts"
+import { runHistory } from "./run-history-ui-handler.ts";
 
 export const enConfig = {
   ability: ability,
