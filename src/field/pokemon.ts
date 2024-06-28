@@ -2242,9 +2242,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this instanceof PlayerPokemon && source.summonData.battleStats.find(bs => bs === 6)) {
       this.scene.validateAchv(achvs.TRANSFER_MAX_BATTLE_STAT);
     }
-    if (this.getTag(BattlerTagType.POWER_TRICK)) {
-      [this.stats[Stat.ATK], this.stats[Stat.DEF]] = [this.stats[Stat.DEF], this.stats[Stat.ATK]];
-    }
+    this.calculateStats();
     this.updateInfo();
   }
 

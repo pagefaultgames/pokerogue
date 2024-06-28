@@ -4201,7 +4201,7 @@ export class PowerTrickAttr extends AddBattlerTagAttr {
       super.apply(user, target, move, args);
     }
 
-    [user.stats[Stat.ATK], user.stats[Stat.DEF]] = [user.stats[Stat.DEF], user.stats[Stat.ATK]];
+    user.calculateStats();
 
     user.scene.queueMessage(i18next.t("battle:battlerTagsPowerTrickApply", { pokemonNameWithAffix: getPokemonNameWithAffix(user) }));
 
