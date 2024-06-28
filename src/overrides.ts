@@ -122,7 +122,7 @@ export const MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType = null;
  * MODIFIER / HELD ITEM OVERRIDES
  */
 
-/** Override array of {@linkcode ModifierOverride}s used to provide modifiers to the player when starting a new game */
+/** Override array of {@linkcode ModifierOverride}s used to provide modifiers to the player when starting a new game. */
 export const STARTING_MODIFIER_OVERRIDE: ModifierOverride[] = [];
 /**
  * Override array of {@linkcode ModifierOverride}s used to provide modifiers to enemies.
@@ -131,9 +131,9 @@ export const STARTING_MODIFIER_OVERRIDE: ModifierOverride[] = [];
  */
 export const OPP_MODIFIER_OVERRIDE: ModifierOverride[] = [];
 
-/** Override array of {@linkcode ModifierOverride}s used to provide held items to first party member when starting a new game*/
+/** Override array of {@linkcode ModifierOverride}s used to provide held items to first party member when starting a new game. */
 export const STARTING_HELD_ITEMS_OVERRIDE: ModifierOverride[] = [];
-/** Override array of {@linkcode ModifierOverride}s used to provide held items to enemies on spawn */
+/** Override array of {@linkcode ModifierOverride}s used to provide held items to enemies on spawn. */
 export const OPP_HELD_ITEMS_OVERRIDE: ModifierOverride[] = [];
 
 /**

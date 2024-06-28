@@ -1911,10 +1911,8 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
   }
 
   // Replace rolled options if any override entries are present
-  for (let i = 0; i < Overrides.ITEM_REWARD_OVERRIDE.length; i++) {
-    if (options.length <= i) {
-      break;
-    }
+  const minLength = Math.min(options.length, Overrides.ITEM_REWARD_OVERRIDE.length);
+  for (let i = 0; i < minLength; i++) {
     const override = Overrides.ITEM_REWARD_OVERRIDE[i];
     if (override.name in modifierTypes) {
       const modifierFunc = modifierTypes[override.name];
