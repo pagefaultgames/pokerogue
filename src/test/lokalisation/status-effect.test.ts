@@ -1,10 +1,9 @@
-import { beforeAll, describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 import {getStatusEffectMessageKey, StatusEffect} from "#app/data/status-effect";
 import { getStatusEffectObtainText, getStatusEffectActivationText, getStatusEffectOverlapText, getStatusEffectHealText, getStatusEffectDescriptor } from "#app/data/status-effect";
-import { statusEffect as enStatusEffect } from "#app/locales/en/status-effect.js";
 
 import i18next, {initI18n} from "#app/plugins/i18n";
-
+import { ParseKeys } from "i18next";
 
 interface StatusEffectTestUnit {
   stat: StatusEffect,
@@ -14,40 +13,46 @@ interface StatusEffectTestUnit {
 const testPokemonNameWithoutBinding = "{{pokemonNameWithAffix}}";
 const testSourceTextWithoutBinding = "{{sourceText}}";
 
-function testStatusEffectObtainText(stat: StatusEffect, expectMessage: string) {
+function testStatusEffectObtainText(stat: StatusEffect, expectKey: ParseKeys) {
+  const i18nextSpy = vi.spyOn(i18next, "t");
   const message = getStatusEffectObtainText(stat, testPokemonNameWithoutBinding);
-  console.log(`message ${message}, expected ${expectMessage}`);
-  expect(message).toBe(expectMessage);
+  console.log(`expectKey ${expectKey}, message ${message}`);
+  expect(i18nextSpy).toHaveBeenCalledWith(expectKey, { pokemonNameWithAffix: testPokemonNameWithoutBinding });
 }
 
-function testStatusEffectObtainTextWithSource(stat: StatusEffect, expectMessage: string) {
+function testStatusEffectObtainTextWithSource(stat: StatusEffect, expectKey: ParseKeys) {
+  const i18nextSpy = vi.spyOn(i18next, "t");
   const message = getStatusEffectObtainText(stat, testPokemonNameWithoutBinding, testSourceTextWithoutBinding);
-  console.log(`message ${message}, expected ${expectMessage}`);
-  expect(message).toBe(expectMessage);
+  console.log(`expectKey ${expectKey}, message ${message}`);
+  expect(i18nextSpy).toHaveBeenCalledWith(expectKey, { pokemonNameWithAffix: testPokemonNameWithoutBinding, sourceText: testSourceTextWithoutBinding });
 }
 
-function testStatusEffectActivationText(stat: StatusEffect, expectMessage: string) {
+function testStatusEffectActivationText(stat: StatusEffect, expectKey: ParseKeys) {
+  const i18nextSpy = vi.spyOn(i18next, "t");
   const message = getStatusEffectActivationText(stat, testPokemonNameWithoutBinding);
-  console.log(`message ${message}, expected ${expectMessage}`);
-  expect(message).toBe(expectMessage);
+  console.log(`expectKey ${expectKey}, message ${message}`);
+  expect(i18nextSpy).toHaveBeenCalledWith(expectKey, { pokemonNameWithAffix: testPokemonNameWithoutBinding });
 }
 
-function testStatusEffectOverlapText(stat: StatusEffect, expectMessage: string) {
+function testStatusEffectOverlapText(stat: StatusEffect, expectKey: ParseKeys) {
+  const i18nextSpy = vi.spyOn(i18next, "t");
   const message = getStatusEffectOverlapText(stat, testPokemonNameWithoutBinding);
-  console.log(`message ${message}, expected ${expectMessage}`);
-  expect(message).toBe(expectMessage);
+  console.log(`expectKey ${expectKey}, message ${message}`);
+  expect(i18nextSpy).toHaveBeenCalledWith(expectKey, { pokemonNameWithAffix: testPokemonNameWithoutBinding });
 }
 
-function testStatusEffectHealText(stat: StatusEffect, expectMessage: string) {
+function testStatusEffectHealText(stat: StatusEffect, expectKey: ParseKeys) {
+  const i18nextSpy = vi.spyOn(i18next, "t");
   const message = getStatusEffectHealText(stat, testPokemonNameWithoutBinding);
-  console.log(`message ${message}, expected ${expectMessage}`);
-  expect(message).toBe(expectMessage);
+  console.log(`expectKey ${expectKey}, message ${message}`);
+  expect(i18nextSpy).toHaveBeenCalledWith(expectKey, { pokemonNameWithAffix: testPokemonNameWithoutBinding });
 }
 
-function testStatusEffectDescriptor(stat: StatusEffect, expectMessage: string) {
+function testStatusEffectDescriptor(stat: StatusEffect, expectKey: ParseKeys) {
+  const i18nextSpy = vi.spyOn(i18next, "t");
   const message = getStatusEffectDescriptor(stat);
-  console.log(`message ${message}, expected ${expectMessage}`);
-  expect(message).toBe(expectMessage);
+  console.log(`expectKey ${expectKey}, message ${message}`);
+  expect(i18nextSpy).toHaveBeenCalledWith(expectKey);
 }
 
 describe("Test for StatusEffect Localization", () => {
@@ -74,15 +79,14 @@ describe("Test for StatusEffect Localization", () => {
     });
   });
 
-  it("Test getStatusEffectMessages in English", async () => {
-    await i18next.changeLanguage("en");
+  it("Test getStatusEffectMessages", async () => {
     statusEffectUnits.forEach(unit => {
-      testStatusEffectObtainText(unit.stat, enStatusEffect[unit.key].obtain);
-      testStatusEffectObtainTextWithSource(unit.stat, enStatusEffect[unit.key].obtainSource);
-      testStatusEffectActivationText(unit.stat, enStatusEffect[unit.key].activation);
-      testStatusEffectOverlapText(unit.stat, enStatusEffect[unit.key].overlap);
-      testStatusEffectHealText(unit.stat, enStatusEffect[unit.key].heal);
-      testStatusEffectDescriptor(unit.stat, enStatusEffect[unit.key].description);
+      testStatusEffectObtainText(unit.stat, `statusEffect:${unit.key}.obtain` as ParseKeys);
+      testStatusEffectObtainTextWithSource(unit.stat, `statusEffect:${unit.key}.obtainSource` as ParseKeys);
+      testStatusEffectActivationText(unit.stat, `statusEffect:${unit.key}.activation` as ParseKeys);
+      testStatusEffectOverlapText(unit.stat, `statusEffect:${unit.key}.overlap` as ParseKeys);
+      testStatusEffectHealText(unit.stat, `statusEffect:${unit.key}.heal` as ParseKeys);
+      testStatusEffectDescriptor(unit.stat, `statusEffect:${unit.key}.description` as ParseKeys);
     });
   });
 });
