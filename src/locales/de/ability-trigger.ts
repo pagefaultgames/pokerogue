@@ -13,7 +13,7 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "blockItemTheft": "{{abilityName}} von {{pokemonNameWithAffix}} verhindert Item-Diebstahl!",
   "typeImmunityHeal": "{{abilityName}} von {{pokemonNameWithAffix}} füllte einige KP auf!",
   "nonSuperEffectiveImmunity": "{{pokemonNameWithAffix}} vermeidet Schaden mit {{abilityName}}!",
-  "postDefendDisguise": "Die Tarnung von {{pokemonNameWithAffix}} ist aufgeflogen!!",
+  "disguiseAvoidedDamage": "Die Tarnung von {{pokemonNameWithAffix}} ist aufgeflogen!!",
   "moveImmunity": "Es hat keine Wirkung auf {{pokemonNameWithAffix}}...",
   "reverseDrain": "{{pokemonNameWithAffix}} saugt Kloakensoße auf!",
   "postDefendTypeChange": "{{abilityName}} von {{pokemonNameWithAffix}} macht es zu einem {{typeName}}-Typ!",

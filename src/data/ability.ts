@@ -245,25 +245,6 @@ export class PreDefendAbAttr extends AbAttr {
   }
 }
 
-export class PreDefendFormChangeAbAttr extends PreDefendAbAttr {
-  private formFunc: (p: Pokemon) => integer;
-
-  constructor(formFunc: ((p: Pokemon) => integer)) {
-    super(true);
-
-    this.formFunc = formFunc;
-  }
-
-  applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    const formIndex = this.formFunc(pokemon);
-    if (formIndex !== pokemon.formIndex) {
-      pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
-      return true;
-    }
-
-    return false;
-  }
-}
 export class PreDefendFullHpEndureAbAttr extends PreDefendAbAttr {
   applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     if (pokemon.isFullHp() &&
@@ -327,21 +308,6 @@ export class ReceivedMoveDamageMultiplierAbAttr extends PreDefendAbAttr {
 export class ReceivedTypeDamageMultiplierAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
   constructor(moveType: Type, damageMultiplier: number) {
     super((user, target, move) => move.type === moveType, damageMultiplier);
-  }
-}
-
-export class PreDefendMoveDamageToOneAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
-  constructor(condition: PokemonDefendCondition) {
-    super(condition, 1);
-  }
-
-  applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (this.condition(pokemon, attacker, move)) {
-      (args[0] as Utils.NumberHolder).value = Math.floor(pokemon.getMaxHp() / 8);
-      return true;
-    }
-
-    return false;
   }
 }
 
@@ -492,45 +458,6 @@ export class NonSuperEffectiveImmunityAbAttr extends TypeImmunityAbAttr {
 
 export class PostDefendAbAttr extends AbAttr {
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean | Promise<boolean> {
-    return false;
-  }
-}
-
-export class PostDefendDisguiseAbAttr extends PostDefendAbAttr {
-
-  applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
-    if (pokemon.formIndex === 0 && pokemon.battleData.hitCount !== 0 && (move.category === MoveCategory.SPECIAL || move.category === MoveCategory.PHYSICAL)) {
-
-      const recoilDamage = Math.ceil((pokemon.getMaxHp() / 8) - attacker.turnData.damageDealt);
-      if (!recoilDamage) {
-        return false;
-      }
-      pokemon.damageAndUpdate(recoilDamage, HitResult.OTHER);
-      pokemon.turnData.damageTaken += recoilDamage;
-      pokemon.scene.queueMessage(i18next.t("abilityTriggers:postDefendDisguise", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
-      return true;
-    }
-
-    return false;
-  }
-}
-
-export class PostDefendFormChangeAbAttr extends PostDefendAbAttr {
-  private formFunc: (p: Pokemon) => integer;
-
-  constructor(formFunc: ((p: Pokemon) => integer)) {
-    super(true);
-
-    this.formFunc = formFunc;
-  }
-
-  applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
-    const formIndex = this.formFunc(pokemon);
-    if (formIndex !== pokemon.formIndex) {
-      pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
-      return true;
-    }
-
     return false;
   }
 }
@@ -3879,34 +3806,44 @@ export class PostSummonStatChangeOnArenaAbAttr extends PostSummonStatChangeAbAtt
 }
 
 /**
- * Takes no damage from the first hit of a physical move.
- * This is used in Ice Face ability.
+ * Takes no damage from the first hit of a damaging move.
+ * This is used in the Disguise and Ice Face abilities.
+ * @extends ReceivedMoveDamageMultiplierAbAttr
  */
-export class IceFaceBlockPhysicalAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
+export class FormBlockDamageAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
   private multiplier: number;
+  private tagType: BattlerTagType;
+  private takesDamage: boolean;
+  private triggerMessage: (pokemon: Pokemon, abilityName: string) => string;
 
-  constructor(condition: PokemonDefendCondition, multiplier: number) {
+  constructor(condition: PokemonDefendCondition, multiplier: number, tagType: BattlerTagType, takesDamage: boolean, triggerMessage: (pokemon: Pokemon, abilityName: string) => string) {
     super(condition, multiplier);
 
     this.multiplier = multiplier;
+    this.tagType = tagType;
+    this.takesDamage = takesDamage;
+    this.triggerMessage = triggerMessage;
   }
 
   /**
-   * Applies the Ice Face pre-defense ability to the Pokémon.
-   * Removes BattlerTagType.ICE_FACE when hit by physical attack and is in Ice Face form.
+   * Applies the pre-defense ability to the Pokémon.
+   * Removes the appropriate `BattlerTagType` when hit by an attack and is in its defense form.
    *
-   * @param {Pokemon} pokemon - The Pokémon with the Ice Face ability.
-   * @param {boolean} passive - Whether the ability is passive.
-   * @param {Pokemon} attacker - The attacking Pokémon.
-   * @param {PokemonMove} move - The move being used.
-   * @param {Utils.BooleanHolder} cancelled - A holder for whether the move was cancelled.
-   * @param {any[]} args - Additional arguments.
-   * @returns {boolean} - Whether the immunity was applied.
+   * @param {Pokemon} pokemon The Pokémon with the ability.
+   * @param {boolean} passive Whether the ability is passive.
+   * @param {Pokemon} attacker The attacking Pokémon.
+   * @param {PokemonMove} move The move being used.
+   * @param {Utils.BooleanHolder} cancelled A holder for whether the move was cancelled.
+   * @param {any[]} args Additional arguments.
+   * @returns {boolean} Whether the immunity was applied.
    */
   applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     if (this.condition(pokemon, attacker, move)) {
       (args[0] as Utils.NumberHolder).value = this.multiplier;
-      pokemon.removeTag(BattlerTagType.ICE_FACE);
+      pokemon.removeTag(this.tagType);
+      if (this.takesDamage) {
+        pokemon.damageAndUpdate(Math.floor(pokemon.getMaxHp() / 8), HitResult.OTHER);
+      }
       return true;
     }
 
@@ -3914,14 +3851,14 @@ export class IceFaceBlockPhysicalAbAttr extends ReceivedMoveDamageMultiplierAbAt
   }
 
   /**
-   * Gets the message triggered when the Pokémon avoids damage using the Ice Face ability.
-   * @param {Pokemon} pokemon - The Pokémon with the Ice Face ability.
-   * @param {string} abilityName - The name of the ability.
-   * @param {...any} args - Additional arguments.
-   * @returns {string} - The trigger message.
+   * Gets the message triggered when the Pokémon avoids damage using the form-changing ability.
+   * @param {Pokemon} pokemon The Pokémon with the ability.
+   * @param {string} abilityName The name of the ability.
+   * @param {...any} args Additional arguments.
+   * @returns {string} The trigger message.
    */
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
-    return i18next.t("abilityTriggers:iceFaceAvoidedDamage", { pokemonName: getPokemonNameWithAffix(pokemon), abilityName });
+    return this.triggerMessage(pokemon, abilityName);
   }
 }
 
@@ -4835,20 +4772,16 @@ export function initAbilities() {
       .attr(NoFusionAbilityAbAttr)
       .bypassFaint(),
     new Ability(Abilities.DISGUISE, 7)
-      .attr(PreDefendMoveDamageToOneAbAttr, (target, user, move) => target.formIndex === 0 && target.getAttackTypeEffectiveness(move.type, user) > 0)
-      .attr(PostSummonFormChangeAbAttr, p => p.battleData.hitCount === 0 ? 0 : 1)
-      .attr(PostBattleInitFormChangeAbAttr, () => 0)
-      .attr(PostDefendFormChangeAbAttr, p => p.battleData.hitCount === 0 ? 0 : 1)
-      .attr(PreDefendFormChangeAbAttr, p => p.battleData.hitCount === 0 ? 0 : 1)
-      .attr(PostDefendDisguiseAbAttr)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       .attr(UnsuppressableAbilityAbAttr)
       .attr(NoTransformAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
-      .bypassFaint()
-      .ignorable()
-      .partial(),
+      // Add BattlerTagType.DISGUISE if the pokemon is in its disguised form
+      .conditionalAttr(pokemon => pokemon.formIndex === 0, PostSummonAddBattlerTagAbAttr, BattlerTagType.DISGUISE, 0, false)
+      .attr(FormBlockDamageAbAttr, (target, user, move) => !!target.getTag(BattlerTagType.DISGUISE) && target.getAttackTypeEffectiveness(move.type, user) > 0, 0, BattlerTagType.DISGUISE, true,
+        (pokemon, abilityName) => i18next.t("abilityTriggers:disguiseAvoidedDamage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName: abilityName }))
+      .ignorable(),
     new Ability(Abilities.BATTLE_BOND, 7)
       .attr(PostVictoryFormChangeAbAttr, () => 2)
       .attr(PostBattleInitFormChangeAbAttr, () => 1)
@@ -4994,7 +4927,8 @@ export function initAbilities() {
       .conditionalAttr(getWeatherCondition(WeatherType.HAIL, WeatherType.SNOW), PostSummonAddBattlerTagAbAttr, BattlerTagType.ICE_FACE, 0)
       // When weather changes to HAIL or SNOW while pokemon is fielded, add BattlerTagType.ICE_FACE
       .attr(PostWeatherChangeAddBattlerTagAttr, BattlerTagType.ICE_FACE, 0, WeatherType.HAIL, WeatherType.SNOW)
-      .attr(IceFaceBlockPhysicalAbAttr, (target, user, move) => move.category === MoveCategory.PHYSICAL && !!target.getTag(BattlerTagType.ICE_FACE), 0)
+      .attr(FormBlockDamageAbAttr, (target, user, move) => move.category === MoveCategory.PHYSICAL && !!target.getTag(BattlerTagType.ICE_FACE), 0, BattlerTagType.ICE_FACE, false,
+        (pokemon, abilityName) => i18next.t("abilityTriggers:iceFaceAvoidedDamage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName: abilityName }))
       .ignorable(),
     new Ability(Abilities.POWER_SPOT, 8)
       .attr(AllyMoveCategoryPowerBoostAbAttr, [MoveCategory.SPECIAL, MoveCategory.PHYSICAL], 1.3),

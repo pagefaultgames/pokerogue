@@ -1508,35 +1508,41 @@ export class GroundedTag extends BattlerTag {
 }
 
 /**
- * Provides the Ice Face ability's effects.
+ * Provides the effects of the Disguise and Ice Face abilities
  */
-export class IceFaceTag extends BattlerTag {
-  constructor(sourceMove: Moves) {
-    super(BattlerTagType.ICE_FACE, BattlerTagLapseType.CUSTOM, 1, sourceMove);
+export class FormBlockDamageTag extends BattlerTag {
+  constructor(tagType: BattlerTagType, sourceMove: Moves) {
+    super(tagType, BattlerTagLapseType.CUSTOM, 1, sourceMove);
   }
 
   /**
-   * Determines if the Ice Face tag can be added to the Pokémon.
-   * @param {Pokemon} pokemon - The Pokémon to which the tag might be added.
-   * @returns {boolean} - True if the tag can be added, false otherwise.
+   * Determines if the tag can be added to the Pokémon.
+   * @param {Pokemon} pokemon The Pokémon to which the tag might be added.
+   * @returns {boolean} True if the tag can be added, false otherwise.
    */
   canAdd(pokemon: Pokemon): boolean {
-    const weatherType = pokemon.scene.arena.weather?.weatherType;
-    const isWeatherSnowOrHail = weatherType === WeatherType.HAIL || weatherType === WeatherType.SNOW;
-    const isFormIceFace = pokemon.formIndex === 0;
+    const isDefenseForm = pokemon.formIndex === 0;
+    if (this.tagType === BattlerTagType.ICE_FACE) {
+      const weatherType = pokemon.scene.arena.weather?.weatherType;
+      const isWeatherSnowOrHail = weatherType === WeatherType.HAIL || weatherType === WeatherType.SNOW;
 
-
-    // Hard code Eiscue for now, this is to prevent the game from crashing if fused pokemon has Ice Face
-    if ((pokemon.species.speciesId === Species.EISCUE && isFormIceFace) ||  isWeatherSnowOrHail) {
-      return true;
+      // Hard code Eiscue for now, this is to prevent the game from crashing if fused pokemon has Ice Face
+      if ((pokemon.species.speciesId === Species.EISCUE && isDefenseForm) ||  isWeatherSnowOrHail) {
+        return true;
+      }
+    } else if (this.tagType === BattlerTagType.DISGUISE) {
+      // Hard code Mimikyu for now, this is to prevent the game from crashing if fused pokemon has Disguise
+      if (pokemon.species.speciesId === Species.MIMIKYU && isDefenseForm) {
+        return true;
+      }
     }
     return false;
   }
 
   /**
-   * Applies the Ice Face tag to the Pokémon.
-   * Triggers a form change to Ice Face if the Pokémon is not in its Ice Face form.
-   * @param {Pokemon} pokemon - The Pokémon to which the tag is added.
+   * Applies the tag to the Pokémon.
+   * Triggers a form change if the Pokémon is not in its defense form.
+   * @param {Pokemon} pokemon The Pokémon to which the tag is added.
    */
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
@@ -1547,9 +1553,9 @@ export class IceFaceTag extends BattlerTag {
   }
 
   /**
-   * Removes the Ice Face tag from the Pokémon.
-   * Triggers a form change to Noice when the tag is removed.
-   * @param {Pokemon} pokemon - The Pokémon from which the tag is removed.
+   * Removes the tag from the Pokémon.
+   * Triggers a form change when the tag is removed.
+   * @param {Pokemon} pokemon The Pokémon from which the tag is removed.
    */
   onRemove(pokemon: Pokemon): void {
     super.onRemove(pokemon);
@@ -1557,7 +1563,6 @@ export class IceFaceTag extends BattlerTag {
     pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
   }
 }
-
 
 /**
  * Battler tag enabling the Stockpile mechanic. This tag handles:
@@ -1765,7 +1770,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
   case BattlerTagType.DESTINY_BOND:
     return new DestinyBondTag(sourceMove, sourceId);
   case BattlerTagType.ICE_FACE:
-    return new IceFaceTag(sourceMove);
+  case BattlerTagType.DISGUISE:
+    return new FormBlockDamageTag(tagType, sourceMove);
   case BattlerTagType.STOCKPILING:
     return new StockpilingTag(sourceMove);
   case BattlerTagType.OCTOLOCK:
