@@ -1875,6 +1875,8 @@ export default class BattleScene extends SceneBase {
       return 0.175;
     case "battle_legendary_ruinous": //SV Treasures of Ruin Battle
       return 6.333;
+    case "battle_legendary_kor_mir": //SV Depths of Area Zero Battle
+      return 6.442;
     case "battle_legendary_loyal_three": //SV Loyal Three Battle
       return 6.500;
     case "battle_legendary_ogerpon": //SV Ogerpon Battle

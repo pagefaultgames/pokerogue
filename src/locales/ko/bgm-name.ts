@@ -62,6 +62,7 @@ export const bgmName: SimpleTranslationEntries = {
   "battle_legendary_calyrex": "SWSH 버드렉스 배틀",
   "battle_legendary_birds_galar": "SWSH 가라르 전설의 새 배틀",
   "battle_legendary_ruinous": "SV 재앙의 보물 배틀",
+  "battle_legendary_kor_mir": "SV Depths of Area Zero Battle",
   "battle_legendary_loyal_three": "SV 세벗들 배틀",
   "battle_legendary_ogerpon": "SV 오거폰 배틀",
   "battle_legendary_terapagos": "SV 테라파고스 배틀",

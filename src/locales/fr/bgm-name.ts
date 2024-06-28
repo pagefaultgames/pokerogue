@@ -62,6 +62,7 @@ export const bgmName: SimpleTranslationEntries = {
   "battle_legendary_calyrex": "ÉB - Vs. Sylveroy",
   "battle_legendary_birds_galar": "ÉB - Vs. Oiseaux Légendaires de Galar",
   "battle_legendary_ruinous": "ÉV - Vs. Trésors du fléau",
+  "battle_legendary_kor_mir": "ÉV - Profondeurs de la Zone Zéro (Combat)",
   "battle_legendary_loyal_three": "ÉV - Vs. Adoramis",
   "battle_legendary_ogerpon": "ÉV - Vs. Ogerpon",
   "battle_legendary_terapagos": "ÉV - Vs. Terapagos",

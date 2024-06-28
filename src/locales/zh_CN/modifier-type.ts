@@ -96,12 +96,12 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "攻击以40/25/12.5%的伤害造成2/3/4次伤害",
     },
     "TmModifierType": {
-      name: "招式学习器 {{moveId}} - {{moveName}}",
+      name: "招式学习器\n{{moveId}} - {{moveName}}",
       description: "教会一只宝可梦{{moveName}}。",
     },
     "TmModifierTypeWithInfo": {
-      name: "招式学习器 {{moveId}} - {{moveName}}",
-      description: "教会一只宝可梦{{moveName}}\n(Hold C or Shift for more info)。",
+      name: "招式学习器\n{{moveId}} - {{moveName}}",
+      description: "教会一只宝可梦{{moveName}}\n(按住C或者Shift查看更多信息)。",
     },
     "EvolutionItemModifierType": {
       description: "使某些宝可梦进化。",
