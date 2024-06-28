@@ -1,7 +1,7 @@
 import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
 import { BattleEndPhase, MoveEffectPhase, MovePhase, NewBattlePhase, PartyStatusCurePhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../phases";
 import { BattleStat, getBattleStatName } from "./battle-stat";
-import { EncoreTag, PowerTrickTag, SemiInvulnerableTag } from "./battler-tags";
+import { EncoreTag, SemiInvulnerableTag } from "./battler-tags";
 import { getPokemonMessage, getPokemonNameWithAffix } from "../messages";
 import Pokemon, { AttackMoveResult, EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../field/pokemon";
 import { StatusEffect, getStatusEffectHealText, isNonVolatileStatusEffect, getNonVolatileStatusEffects} from "./status-effect";
@@ -4173,7 +4173,7 @@ export class FaintCountdownAttr extends AddBattlerTagAttr {
 
 /**
  * Swap the Pokémon's base Attack stat with its base Defense stat.
- * Pokémon with the Power Trick Tag will have their altered base stat values displayed.
+ * Pokémon with the Power Trick Tag will have their altered base stat values.
  * @extends AddBattlerTagAttr
  */
 export class PowerTrickAttr extends AddBattlerTagAttr {
@@ -4195,11 +4195,13 @@ export class PowerTrickAttr extends AddBattlerTagAttr {
       return false;
     }
 
-    if (user.findTag(t => t instanceof PowerTrickTag)) {
+    if (user.getTag(BattlerTagType.POWER_TRICK)) {
       user.removeTag(BattlerTagType.POWER_TRICK);
     } else {
       super.apply(user, target, move, args);
     }
+
+    [user.stats[Stat.ATK], user.stats[Stat.DEF]] = [user.stats[Stat.DEF], user.stats[Stat.ATK]];
 
     user.scene.queueMessage(i18next.t("battle:battlerTagsPowerTrickApply", { pokemonNameWithAffix: getPokemonNameWithAffix(user) }));
 
