@@ -2247,6 +2247,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this instanceof PlayerPokemon && source.summonData.battleStats.find(bs => bs === 6)) {
       this.scene.validateAchv(achvs.TRANSFER_MAX_BATTLE_STAT);
     }
+
+    if (this.getTag(BattlerTagType.POWER_TRICK)) {
+      [this.stats[Stat.ATK], this.stats[Stat.DEF]] = [this.stats[Stat.DEF], this.stats[Stat.ATK]];
+    }
+
     this.updateInfo();
   }
 
@@ -2292,6 +2297,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.loadAssets().then(() => {
         this.calculateStats();
         this.scene.updateModifiers(this.isPlayer(), true);
+
+        if (this.getTag(BattlerTagType.POWER_TRICK)) {
+          [this.stats[Stat.ATK], this.stats[Stat.DEF]] = [this.stats[Stat.DEF], this.stats[Stat.ATK]];
+        }
+
         Promise.all([ this.updateInfo(), this.scene.updateFieldScale() ]).then(() => resolve());
       });
     });
@@ -3303,6 +3313,11 @@ export class PlayerPokemon extends Pokemon {
         this.loadAssets().then(() => {
           this.calculateStats();
           this.scene.updateModifiers(true, true);
+
+          if (this.getTag(BattlerTagType.POWER_TRICK)) {
+            [this.stats[Stat.ATK], this.stats[Stat.DEF]] = [this.stats[Stat.DEF], this.stats[Stat.ATK]];
+          }
+
           this.updateInfo(true).then(() => resolve());
         });
       };
