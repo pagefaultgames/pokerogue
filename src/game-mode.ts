@@ -153,7 +153,7 @@ export class GameMode implements GameModeConfig {
           }
         }
       }
-      return allowTrainerBattle && trainerChance && !Utils.randSeedInt(trainerChance);
+      return Boolean(allowTrainerBattle && trainerChance && !Utils.randSeedInt(trainerChance));
     }
     return false;
   }
