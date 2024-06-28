@@ -2399,10 +2399,7 @@ export class PreSetStatusAbAttr extends AbAttr {
   }
 }
 
-/**
- * Represents a status effect immunity ability attribute.
- */
-export class StatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
+export class PreSetStatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
   private immuneEffects: StatusEffect[];
 
   /**
@@ -2439,12 +2436,20 @@ export class StatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
 }
 
 /**
- * Provides immunity to poison and toxic status effects.
- * Used by Pastel Veil. {@linkcode Abilities.PASTEL_VEIL}
+ * Provides immunity to status effects to the user.
  */
-export class PastelVeilPoisonEffectImmunityAbAttr extends StatusEffectImmunityAbAttr {
-  constructor() {
-    super(StatusEffect.POISON, StatusEffect.TOXIC);
+export class StatusEffectImmunityAbAttr extends PreSetStatusEffectImmunityAbAttr {
+  constructor(...immuneEffects: StatusEffect[]) {
+    super(...immuneEffects);
+  }
+}
+
+/**
+ * Provides immunity to status effects to the user's field.
+ */
+export class UserFieldStatusEffectImmunityAbAttr extends PreSetStatusEffectImmunityAbAttr {
+  constructor(...immuneEffects: StatusEffect[]) {
+    super(...immuneEffects);
   }
 }
 
@@ -2474,6 +2479,12 @@ export class BattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
 
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
     return getPokemonMessage(pokemon, `'s ${abilityName}\nprevents ${(args[0] as BattlerTag).getDescriptor()}!`);
+  }
+}
+
+export class UserFieldBattlerTagImmunityAbAttr extends BattlerTagImmunityAbAttr {
+  constructor(immuneTagType: BattlerTagType) {
+    super(immuneTagType);
   }
 }
 
@@ -4753,7 +4764,7 @@ export function initAbilities() {
     new Ability(Abilities.REFRIGERATE, 6)
       .attr(MoveTypeChangeAttr, Type.ICE, 1.2, (user, target, move) => move.type === Type.NORMAL),
     new Ability(Abilities.SWEET_VEIL, 6)
-      .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
+      .attr(UserFieldStatusEffectImmunityAbAttr, StatusEffect.SLEEP)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
       .ignorable()
       .partial(),
@@ -5052,9 +5063,8 @@ export function initAbilities() {
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, "'s Neutralizing Gas filled the area!"))
       .partial(),
     new Ability(Abilities.PASTEL_VEIL, 8)
-      .attr(StatusEffectImmunityAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
       .attr(PostSummonUserFieldRemoveStatusEffectAbAttr, StatusEffect.POISON)
-      .attr(PastelVeilPoisonEffectImmunityAbAttr)
+      .attr(UserFieldStatusEffectImmunityAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
       .ignorable(),
     new Ability(Abilities.HUNGER_SWITCH, 8)
       .attr(PostTurnFormChangeAbAttr, p => p.getFormKey ? 0 : 1)
