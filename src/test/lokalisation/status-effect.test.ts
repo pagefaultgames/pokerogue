@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it } from "vitest";
-import { StatusEffect } from "#app/data/status-effect";
+import {getStatusEffectMessageKey, StatusEffect} from "#app/data/status-effect";
 import { getStatusEffectObtainText, getStatusEffectActivationText, getStatusEffectOverlapText, getStatusEffectHealText, getStatusEffectDescriptor } from "#app/data/status-effect";
 import { statusEffect as enStatusEffect } from "#app/locales/en/status-effect.js";
 import { statusEffect as deStatusEffect } from "#app/locales/de/status-effect.js";
@@ -74,8 +74,17 @@ describe("Test for StatusEffect Localization", () => {
     statusEffectUnits.push({ stat: StatusEffect.BURN, key: "burn" });
   });
 
+  it("Test i18n message key", async () => {
+    statusEffectUnits.forEach(unit => {
+      const text = getStatusEffectMessageKey(unit.stat);
+      const toBe = `statusEffect:${unit.key}`;
+      console.log(`message ${text}, expected ${toBe}`);
+      expect(text).toBe(toBe);
+    });
+  });
+
   it("Test getStatusEffectMessages in English", async () => {
-    i18next.changeLanguage("en");
+    await i18next.changeLanguage("en");
     statusEffectUnits.forEach(unit => {
       testStatusEffectObtainText(unit.stat, enStatusEffect[unit.key].obtain);
       testStatusEffectObtainTextWithSource(unit.stat, enStatusEffect[unit.key].obtainSource);
@@ -87,7 +96,7 @@ describe("Test for StatusEffect Localization", () => {
   });
 
   it("Test getStatusEffectMessages in Español", async () => {
-    i18next.changeLanguage("es");
+    await i18next.changeLanguage("es");
     statusEffectUnits.forEach(unit => {
       testStatusEffectObtainText(unit.stat, esStatusEffect[unit.key].obtain);
       testStatusEffectObtainTextWithSource(unit.stat, esStatusEffect[unit.key].obtainSource);
@@ -99,7 +108,7 @@ describe("Test for StatusEffect Localization", () => {
   });
 
   it("Test getStatusEffectMessages in Italiano", async () => {
-    i18next.changeLanguage("it");
+    await i18next.changeLanguage("it");
     statusEffectUnits.forEach(unit => {
       testStatusEffectObtainText(unit.stat, itStatusEffect[unit.key].obtain);
       testStatusEffectObtainTextWithSource(unit.stat, itStatusEffect[unit.key].obtainSource);
@@ -111,7 +120,7 @@ describe("Test for StatusEffect Localization", () => {
   });
 
   it("Test getStatusEffectMessages in Français", async () => {
-    i18next.changeLanguage("fr");
+    await i18next.changeLanguage("fr");
     statusEffectUnits.forEach(unit => {
       testStatusEffectObtainText(unit.stat, frStatusEffect[unit.key].obtain);
       testStatusEffectObtainTextWithSource(unit.stat, frStatusEffect[unit.key].obtainSource);
@@ -123,7 +132,7 @@ describe("Test for StatusEffect Localization", () => {
   });
 
   it("Test getStatusEffectMessages in Deutsch", async () => {
-    i18next.changeLanguage("de");
+    await i18next.changeLanguage("de");
     statusEffectUnits.forEach(unit => {
       testStatusEffectObtainText(unit.stat, deStatusEffect[unit.key].obtain);
       testStatusEffectObtainTextWithSource(unit.stat, deStatusEffect[unit.key].obtainSource);
@@ -135,7 +144,7 @@ describe("Test for StatusEffect Localization", () => {
   });
 
   it("Test getStatusEffectMessages in Português (BR)", async () => {
-    i18next.changeLanguage("pt-BR");
+    await i18next.changeLanguage("pt-BR");
     statusEffectUnits.forEach(unit => {
       testStatusEffectObtainText(unit.stat, ptBrStatusEffect[unit.key].obtain);
       testStatusEffectObtainTextWithSource(unit.stat, ptBrStatusEffect[unit.key].obtainSource);
@@ -147,7 +156,7 @@ describe("Test for StatusEffect Localization", () => {
   });
 
   it("Test getStatusEffectMessages in 简体中文", async () => {
-    i18next.changeLanguage("zh-CN");
+    await i18next.changeLanguage("zh-CN");
     statusEffectUnits.forEach(unit => {
       testStatusEffectObtainText(unit.stat, zhCnStatusEffect[unit.key].obtain);
       testStatusEffectObtainTextWithSource(unit.stat, zhCnStatusEffect[unit.key].obtainSource);
@@ -159,7 +168,7 @@ describe("Test for StatusEffect Localization", () => {
   });
 
   it("Test getStatusEffectMessages in 繁體中文", async () => {
-    i18next.changeLanguage("zh-TW");
+    await i18next.changeLanguage("zh-TW");
     statusEffectUnits.forEach(unit => {
       testStatusEffectObtainText(unit.stat, zhTwStatusEffect[unit.key].obtain);
       testStatusEffectObtainTextWithSource(unit.stat, zhTwStatusEffect[unit.key].obtainSource);
