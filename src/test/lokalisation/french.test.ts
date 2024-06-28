@@ -1,7 +1,7 @@
 import {afterEach, beforeAll, describe, expect, it} from "vitest";
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
-import {Species} from "#app/data/enums/species";
+import {Species} from "#enums/species";
 import i18next from "i18next";
 import {initI18n} from "#app/plugins/i18n";
 

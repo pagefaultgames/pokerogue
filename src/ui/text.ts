@@ -1,11 +1,10 @@
 import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import BattleScene from "../battle-scene";
-import { EggTier } from "../data/enums/egg-type";
-import { UiTheme } from "../enums/ui-theme";
 import { ModifierTier } from "../modifier/modifier-tier";
 import Phaser from "phaser";
-import i18next from "i18next";
+import { EggTier } from "#enums/egg-type";
+import { UiTheme } from "#enums/ui-theme";
 
 export enum TextStyle {
   MESSAGE,
@@ -84,14 +83,13 @@ export function addTextInputObject(scene: Phaser.Scene, x: number, y: number, wi
 }
 
 function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): [ number, Phaser.Types.GameObjects.Text.TextStyle | InputText.IConfig, string, number, number ] {
-  const {resolvedLanguage} = i18next;
   let shadowXpos = 4;
   let shadowYpos = 5;
   const scale = 0.1666666667;
   const defaultFontSize = 96;
 
   let styleOptions: Phaser.Types.GameObjects.Text.TextStyle = {
-    fontFamily: "emerald, unifont",
+    fontFamily: "emerald",
     fontSize: 96,
     color: getTextColor(style, false, uiTheme),
     padding: {
@@ -142,11 +140,6 @@ function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptio
     shadowXpos = 3;
     shadowYpos = 3;
     break;
-  }
-
-  if (["zh"].includes(resolvedLanguage.substring(0,2))) {
-    shadowXpos = 0;
-    shadowYpos = 0;
   }
 
   const shadowColor = getTextColor(style, true, uiTheme);
@@ -205,10 +198,10 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
   case TextStyle.PARTY_RED:
     return !shadow ? "#f89890" : "#984038";
   case TextStyle.SUMMARY:
-    return !shadow ? "#ffffff" : "#636363";
+    return !shadow ? "#f8f8f8" : "#636363";
   case TextStyle.SUMMARY_ALT:
     if (uiTheme) {
-      return !shadow ? "#ffffff" : "#636363";
+      return !shadow ? "#f8f8f8" : "#636363";
     }
     return !shadow ? "#484848" : "#d0d0c8";
   case TextStyle.SUMMARY_RED:
@@ -240,17 +233,17 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
 export function getModifierTierTextTint(tier: ModifierTier): integer {
   switch (tier) {
   case ModifierTier.COMMON:
-    return 0xffffff;
+    return 0xf8f8f8;
   case ModifierTier.GREAT:
-    return 0x3890f8;
+    return 0x4998f8;
   case ModifierTier.ULTRA:
     return 0xf8d038;
   case ModifierTier.ROGUE:
-    return 0xd52929;
+    return 0xdb4343;
   case ModifierTier.MASTER:
-    return 0xe020c0;
+    return 0xe331c5;
   case ModifierTier.LUXURY:
-    return 0xe64a18;
+    return 0xe74c18;
   }
 }
 
