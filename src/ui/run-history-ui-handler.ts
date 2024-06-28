@@ -1,22 +1,16 @@
 import BattleScene from "../battle-scene";
 import { GameModes } from "../game-mode";
-import { SessionSaveData, parseSessionData, getRunHistoryData, RunHistoryData, RunEntries, decrypt } from "../system/game-data";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
 import * as Utils from "../utils";
 import { PokemonData } from "../system/pokemon-data";
-import { TrainerData } from "../system/trainer-data";
-import Pokemon, { EnemyPokemon, PlayerPokemon } from "../field/pokemon";
-import { PokemonHeldItemModifier } from "../modifier/modifier";
 import MessageUiHandler from "./message-ui-handler";
 import i18next from "i18next";
 import {Button} from "../enums/buttons";
 import { BattleType } from "../battle";
-import { TrainerType } from "../enums/trainer-type";
 import { TrainerVariant } from "../field/trainer";
 import { Challenges } from "#enums/challenges";
-import { getPartyLuckValue, getLuckString, getLuckTextTint } from "../modifier/modifier-type";
 import { Type } from "../data/type";
 
 export const runCount = 25;
@@ -95,7 +89,6 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
     const error = false;
 
     if (button === Button.ACTION || button === Button.CANCEL) {
-      const originalCallback = this.runSelectCallback;
       if (button === Button.ACTION) {
         const cursor = this.cursor + this.scrollCursor;
         if (this.runs[cursor].hasData) {
@@ -269,7 +262,6 @@ class RunEntry extends Phaser.GameObjects.Container {
         this.add(enemyContainer);
       } else if (data.battleType === BattleType.TRAINER) {
         const tObj = data.trainer.toTrainer(this.scene);
-        const tType = TrainerType[data.trainer.trainerType];
         if (data.trainer.trainerType >= 375) {
           const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `${i18next.t("runHistory:defeatedRival")}`, TextStyle.WINDOW);
           //otherwise it becomes Rival_5 in Ivy's case
@@ -306,7 +298,6 @@ class RunEntry extends Phaser.GameObjects.Container {
     this.add(timestampLabel);
 
     const pokemonIconsContainer = this.scene.add.container(125, 17);
-    let luckValue = 0;
 
     data.party.forEach((p: PokemonData, i: integer) => {
       const iconContainer = this.scene.add.container(26 * i, 0);
@@ -324,106 +315,44 @@ class RunEntry extends Phaser.GameObjects.Container {
 
       pokemonIconsContainer.add(iconContainer);
 
-      luckValue += pokemon.getLuck();
-
       pokemon.destroy();
     });
 
     this.add(pokemonIconsContainer);
 
     //Display Score - only visible for Daily Mode
-    //Display Luck - only visible for Endless Modes
+    //Display Personal Best - only visible for Endless Modes
     switch (data.gameMode) {
     case GameModes.DAILY:
-      const runScore = data.score;
       const scoreText = addTextObject(this.scene, 230, 5, `${i18next.t("runHistory:score")}: ${data.score}`, TextStyle.WINDOW, {color: "#f89890"});
       this.add(scoreText);
       break;
     case GameModes.ENDLESS:
     case GameModes.SPLICED_ENDLESS:
-      if (luckValue > 14) {
-        luckValue = 14;
+      if (this.scene.gameData.gameStats.highestEndlessWave === data.waveIndex) {
+        const personalBestText = addTextObject(this.scene, 255, 5, `${i18next.t("runHistory:personalBest")}`, TextStyle.WINDOW, {fontSize: "44px"});
+        personalBestText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
+        this.add(personalBestText);
       }
-      const luckTextTint = "#"+(getLuckTextTint(luckValue)).toString(16);
-      const luckText = addTextObject(this.scene, 240, 5, `${i18next.t("runHistory:luck")}: ${getLuckString(luckValue)}`, TextStyle.WINDOW, {color: `${luckTextTint}`});
-      this.add(luckText);
       break;
     case GameModes.CHALLENGE:
       const runChallenges = data.challenges;
       for (let i = 0; i < runChallenges.length; i++) {
+        const challengeLabel = addTextObject(this.scene, 245, 5, "", TextStyle.WINDOW, {fontSize: "34px"});
         if (runChallenges[i].id === Challenges.SINGLE_GENERATION && runChallenges[i].value !== 0) {
-          const gen = runChallenges[i].value;
-          const genLabel = addTextObject(this.scene, 240, 5, `${i18next.t("runHistory:challengeMonoGen"+gen)}`, TextStyle.WINDOW);
-          switch (gen) {
-          case 1:
-            //Colors represent Gen I games - Red, Blue, Yellow
-            //Undecided if it should be fire red/leaf green colors though...
-            const gen1Gradient = genLabel.context.createLinearGradient(0, 0, genLabel.width, genLabel.height);
-            gen1Gradient.addColorStop(0.45, "#F15C01");
-            gen1Gradient.addColorStop(0.46, "#9FDC00");
-            genLabel.setFill(gen1Gradient);
-            this.add(genLabel);
-            break;
-          case 2:
-            const gen2Gradient = genLabel.context.createLinearGradient(0, 0, 0, genLabel.height);
-            gen2Gradient.addColorStop(0.52, "#FFD700");
-            gen2Gradient.addColorStop(0.53, "#C0C0C0");
-            genLabel.setFill(gen2Gradient);
-            genLabel.preFX.addShine(0.7, 0.5, 3);
-            this.add(genLabel);
-            break;
-          case 3:
-            const gen3Gradient = genLabel.context.createLinearGradient(0, 0, 0, genLabel.height);
-            gen3Gradient.addColorStop(0.32, "#e0115f");
-            gen3Gradient.addColorStop(0.46, "#0F52BA");
-            gen3Gradient.addColorStop(0.76, "#50C878");
-            genLabel.setFill(gen3Gradient);
-            this.add(genLabel);
-            break;
-          case 4:
-            const diamond = new Phaser.Display.Color(120, 120, 255);
-            const pearl = new Phaser.Display.Color(0, 0, 0);
-            const gen4Colors = Phaser.Display.Color.Interpolate.ColorWithColor(diamond, pearl, 0.5, 0);
-            const gen4Glow = Phaser.Display.Color.Interpolate.ColorWithColor("pink", "white", 0.5, 1);
-            genLabel.setBackgroundColor(gen4Colors);
-            this.add(genLabel);
-            break;
-          case 5:
-          case 6:
-          case 7:
-          case 8:
-          case 9:
-            this.add(genLabel);
-            break;
+          challengeLabel.appendText(`${i18next.t("runHistory:challengeMonoGen"+runChallenges[i].value)}`, false);
+        }
+        if (runChallenges[i].id === Challenges.SINGLE_TYPE && runChallenges[i].value !== 0) {
+          if (challengeLabel.text) {
+            challengeLabel.appendText(i18next.t("pokemonInfo:Type."+Type[runChallenges[i].value-1]));
+          } else {
+            challengeLabel.appendText(i18next.t("pokemonInfo:Type."+Type[runChallenges[i].value-1]), false);
           }
         }
       }
-      //MonoGen {id = 0, value = 0 (no challenge) / 1-9}
-      //MonoType {id = 1, value = 0 (no challenge) / see enum types in type.ts}
-      console.log(data.challenges);
+      this.add(challengeLabel);
       break;
     }
-    /*
-    const modifiersModule = import("../modifier/modifier");
-
-    const modifierIconsContainer = this.scene.add.container(148, 30);
-    modifierIconsContainer.setScale(0.5);
-    let visibleModifierIndex = 0;
-    for (const m of data.modifiers) {
-      const modifier = m.toModifier(this.scene, modifiersModule[m.className]);
-      if (modifier instanceof PokemonHeldItemModifier) {
-        continue;
-      }
-      const icon = modifier.getIcon(this.scene, false);
-      icon.setPosition(24 * visibleModifierIndex, 0);
-      modifierIconsContainer.add(icon);
-      if (++visibleModifierIndex === 12) {
-        break;
-      }
-    }
-
-    this.add(modifierIconsContainer);
-    */
   }
 }
 
