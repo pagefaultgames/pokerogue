@@ -1,7 +1,7 @@
 import { CommandPhase, SelectModifierPhase } from "../phases";
 import BattleScene from "../battle-scene";
 import { PlayerPokemon, PokemonMove } from "../field/pokemon";
-import { addTextObject, TextStyle, getTextColor } from "./text";
+import { addTextObject, TextStyle } from "./text";
 import { Command } from "./command-ui-handler";
 import MessageUiHandler from "./message-ui-handler";
 import { Mode } from "./ui";
@@ -285,25 +285,33 @@ export default class PartyUiHandler extends MessageUiHandler {
         if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER && !this.transferMode && option !== PartyOption.CANCEL) {
           this.startTransfer();
 
+          let ableToTransfer: string;
           for (let p = 0; p < this.scene.getParty().length; p++) { // this fore look goes through each of the party pokemon
-            if (p !== this.transferCursor) { // this skips the pokemon doing the transfer; there's no point checking to see if that's at max capacity since we can't transfer to it
-              const newPokemon = this.scene.getParty()[p];
-              // this next line gets all of the transferable items from pokemon [p]; it does this by getting all the held modifiers that are transferable and checking to see if they belong to pokemon [p]
-              const getTransferrableItemsFromPokemon = (newPokemon: PlayerPokemon) =>
-                this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && (m as PokemonHeldItemModifier).getTransferrable(true) && (m as PokemonHeldItemModifier).pokemonId === newPokemon.id) as PokemonHeldItemModifier[];
-              // this next bit checks to see if the the selected item from the original transfer pokemon exists on the new pokemon [p]; this returns undefined if the new pokemon doesn't have the item at all, otherwise it returns the pokemonHeldItemModifier for that item
-              const matchingModifier = newPokemon.scene.findModifier(m => m instanceof PokemonHeldItemModifier && m.pokemonId === newPokemon.id && m.matchType(getTransferrableItemsFromPokemon(pokemon)[this.transferOptionCursor])) as PokemonHeldItemModifier;
-              const partySlot = this.partySlots.filter(m => m.getPokemon() === newPokemon)[0]; // this gets pokemon [p] for us
+            const newPokemon = this.scene.getParty()[p];
+            // this next line gets all of the transferable items from pokemon [p]; it does this by getting all the held modifiers that are transferable and checking to see if they belong to pokemon [p]
+            const getTransferrableItemsFromPokemon = (newPokemon: PlayerPokemon) =>
+              this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && (m as PokemonHeldItemModifier).getTransferrable(true) && (m as PokemonHeldItemModifier).pokemonId === newPokemon.id) as PokemonHeldItemModifier[];
+            // this next bit checks to see if the the selected item from the original transfer pokemon exists on the new pokemon [p]; this returns undefined if the new pokemon doesn't have the item at all, otherwise it returns the pokemonHeldItemModifier for that item
+            const matchingModifier = newPokemon.scene.findModifier(m => m instanceof PokemonHeldItemModifier && m.pokemonId === newPokemon.id && m.matchType(getTransferrableItemsFromPokemon(pokemon)[this.transferOptionCursor])) as PokemonHeldItemModifier;
+            const partySlot = this.partySlots.filter(m => m.getPokemon() === newPokemon)[0]; // this gets pokemon [p] for us
+            if (p !== this.transferCursor) { // this skips adding the able/not able labels on the pokemon doing the transfer
               if (matchingModifier) { // if matchingModifier exists then the item exists on the new pokemon
-                if (matchingModifier.getMaxStackCount(this.scene) === matchingModifier.stackCount) { // checks to see if the stack of items is at max stack; if so, turn the name red
-                  partySlot.slotName.setColor(getTextColor(TextStyle.PARTY_RED, false, this.scene.uiTheme));
-                  partySlot.slotName.setShadowColor(getTextColor(TextStyle.PARTY_RED, true, this.scene.uiTheme));
-                } else { // if the pokemon isn't at max stack, keep the name the standard white
-                  partySlot.slotName.setColor(getTextColor(TextStyle.MESSAGE, false, this.scene.uiTheme));
-                  partySlot.slotName.setShadowColor(getTextColor(TextStyle.MESSAGE, true, this.scene.uiTheme));
+                if (matchingModifier.getMaxStackCount(this.scene) === matchingModifier.stackCount) { // checks to see if the stack of items is at max stack; if so, set the description label to "Not able"
+                  ableToTransfer = "Not able";
+                } else { // if the pokemon isn't at max stack, make the label "Able"
+                  ableToTransfer = "Able";
                 }
+              } else { // if matchingModifier doesn't exist, that means the pokemon doesn't have any of the item, and we need to show "Able"
+                ableToTransfer = "Able";
               }
+            } else { // this else relates to the transfer pokemon. We set the text to be blank so there's no "Able"/"Not able" text
+              ableToTransfer = "";
             }
+            partySlot.slotHpBar.setVisible(false);
+            partySlot.slotHpOverlay.setVisible(false);
+            partySlot.slotHpText.setVisible(false);
+            partySlot.slotDescriptionLabel.setText(ableToTransfer);
+            partySlot.slotDescriptionLabel.setVisible(true);
           }
 
           this.clearOptions();
@@ -931,8 +939,10 @@ export default class PartyUiHandler extends MessageUiHandler {
     this.transferAll = false;
     this.partySlots[this.transferCursor].setTransfer(false);
     for (let i = 0; i < this.partySlots.length; i++) {
-      this.partySlots[i].slotName.setColor(getTextColor(TextStyle.MESSAGE, false, this.scene.uiTheme));
-      this.partySlots[i].slotName.setShadowColor(getTextColor(TextStyle.MESSAGE, true, this.scene.uiTheme));
+      this.partySlots[i].slotDescriptionLabel.setVisible(false);
+      this.partySlots[i].slotHpBar.setVisible(true);
+      this.partySlots[i].slotHpOverlay.setVisible(true);
+      this.partySlots[i].slotHpText.setVisible(true);
     }
   }
 
@@ -1029,6 +1039,11 @@ class PartySlot extends Phaser.GameObjects.Container {
   private slotBg: Phaser.GameObjects.Image;
   private slotPb: Phaser.GameObjects.Sprite;
   public slotName: Phaser.GameObjects.Text;
+  public slotHpBar: Phaser.GameObjects.Image;
+  public slotHpOverlay: Phaser.GameObjects.Sprite;
+  public slotHpText: Phaser.GameObjects.Text;
+  public slotDescriptionLabel: Phaser.GameObjects.Text; // this is used to show text instead of the HP bar i.e. for showing "Able"/"Not Able" for TMs when you try to learn them
+
 
   private pokemonIcon: Phaser.GameObjects.Container;
   private iconAnimHandler: PokemonIconAnimHandler;
@@ -1159,24 +1174,40 @@ class PartySlot extends Phaser.GameObjects.Container {
       }
     }
 
+    this.slotHpBar = this.scene.add.image(0, 0, "party_slot_hp_bar");
+    this.slotHpBar.setPositionRelative(slotBg, this.slotIndex >= battlerCount ? 72 : 8, this.slotIndex >= battlerCount ? 6 : 31);
+    this.slotHpBar.setOrigin(0, 0);
+    this.slotHpBar.setVisible(false);
+
+    const hpRatio = this.pokemon.getHpRatio();
+
+    this.slotHpOverlay = this.scene.add.sprite(0, 0, "party_slot_hp_overlay", hpRatio > 0.5 ? "high" : hpRatio > 0.25 ? "medium" : "low");
+    this.slotHpOverlay.setPositionRelative(this.slotHpBar, 16, 2);
+    this.slotHpOverlay.setOrigin(0, 0);
+    this.slotHpOverlay.setScale(hpRatio, 1);
+    this.slotHpOverlay.setVisible(false);
+
+    this.slotHpText = addTextObject(this.scene, 0, 0, `${this.pokemon.hp}/${this.pokemon.getMaxHp()}`, TextStyle.PARTY);
+    this.slotHpText.setPositionRelative(this.slotHpBar, this.slotHpBar.width - 3, this.slotHpBar.height - 2);
+    this.slotHpText.setOrigin(1, 0);
+    this.slotHpText.setVisible(false);
+
+    this.slotDescriptionLabel = addTextObject(this.scene, 0, 0, "", TextStyle.MESSAGE);
+    this.slotDescriptionLabel.setPositionRelative(slotBg, this.slotIndex >= battlerCount ? 94 : 32, this.slotIndex >= battlerCount ? 16 : 46);
+    this.slotDescriptionLabel.setOrigin(0, 1);
+    this.slotDescriptionLabel.setVisible(false);
+
+    slotInfoContainer.add([this.slotHpBar, this.slotHpOverlay, this.slotHpText, this.slotDescriptionLabel]);
+
     if (partyUiMode !== PartyUiMode.TM_MODIFIER) {
-      const slotHpBar = this.scene.add.image(0, 0, "party_slot_hp_bar");
-      slotHpBar.setPositionRelative(slotBg, this.slotIndex >= battlerCount ? 72 : 8, this.slotIndex >= battlerCount ? 6 : 31);
-      slotHpBar.setOrigin(0, 0);
-
-      const hpRatio = this.pokemon.getHpRatio();
-
-      const slotHpOverlay = this.scene.add.sprite(0, 0, "party_slot_hp_overlay", hpRatio > 0.5 ? "high" : hpRatio > 0.25 ? "medium" : "low");
-      slotHpOverlay.setPositionRelative(slotHpBar, 16, 2);
-      slotHpOverlay.setOrigin(0, 0);
-      slotHpOverlay.setScale(hpRatio, 1);
-
-      const slotHpText = addTextObject(this.scene, 0, 0, `${this.pokemon.hp}/${this.pokemon.getMaxHp()}`, TextStyle.PARTY);
-      slotHpText.setPositionRelative(slotHpBar, slotHpBar.width - 3, slotHpBar.height - 2);
-      slotHpText.setOrigin(1, 0);
-
-      slotInfoContainer.add([ slotHpBar, slotHpOverlay, slotHpText ]);
+      this.slotDescriptionLabel.setVisible(false);
+      this.slotHpBar.setVisible(true);
+      this.slotHpOverlay.setVisible(true);
+      this.slotHpText.setVisible(true);
     } else {
+      this.slotHpBar.setVisible(false);
+      this.slotHpOverlay.setVisible(false);
+      this.slotHpText.setVisible(false);
       let slotTmText: string;
       switch (true) {
       case (this.pokemon.compatibleTms.indexOf(tmMoveId) === -1):
@@ -1190,11 +1221,9 @@ class PartySlot extends Phaser.GameObjects.Container {
         break;
       }
 
-      const slotTmLabel = addTextObject(this.scene, 0, 0, slotTmText, TextStyle.MESSAGE);
-      slotTmLabel.setPositionRelative(slotBg, this.slotIndex >= battlerCount ? 94 : 32, this.slotIndex >= battlerCount ? 16 : 46);
-      slotTmLabel.setOrigin(0, 1);
+      this.slotDescriptionLabel.setText(slotTmText);
+      this.slotDescriptionLabel.setVisible(true);
 
-      slotInfoContainer.add(slotTmLabel);
     }
   }
 
