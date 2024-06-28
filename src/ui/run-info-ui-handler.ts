@@ -364,18 +364,19 @@ export default class GameInfoUiHandler extends UiHandler {
       this.getUi().bringToTop(icon);
 
       const textContainer = this.scene.add.container(-26, -25);
+      const textContainerFontSize = "34px";
       const pSpecies = pokemon.species;
       const pNature = getNatureName(pokemon.nature);
       const pName = pokemon.fusionSpecies ? pokemon.name : pSpecies.name;
-      const textNameNatureLevel = addTextObject(this.scene, -2, 1, `${pName} - ${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatFancyLargeNumber(pokemon.level, 1)} - ${pNature}`, TextStyle.SUMMARY, { fontSize: "33px", color: "#f8f8f8" });
+      const textNameNatureLevel = addTextObject(this.scene, -2, 1, `${pName} - ${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatFancyLargeNumber(pokemon.level, 1)} - ${pNature}`, TextStyle.SUMMARY, { fontSize: textContainerFontSize, color: "#f8f8f8" });
       textContainer.add(textNameNatureLevel);
 
       const pPassiveInfo = pokemon.passive ? `${i18next.t("starterSelectUiHandler:passive")+" "+allAbilities[starterPassiveAbilities[pSpecies.speciesId]].name}` : "";
       const pHasHA = (pSpecies.hiddenAbility === pSpecies.getAbility(pokemon.AbilityIndex)) ? ["[color=#e8e8a8]","[/color]"] : ["",""];
       const pAbilityInfo = i18next.t("starterSelectUiHandler:ability")+" "+pHasHA[0] + allAbilities[pSpecies.getAbility(pokemon.AbilityIndex)].name + pHasHA[1];
-      const textAbility = addBBCodeTextObject(this.scene, -2, 6, `${pAbilityInfo}`, TextStyle.SUMMARY, { fontSize: "34px" });
+      const textAbility = addBBCodeTextObject(this.scene, -2, 6, `${pAbilityInfo}`, TextStyle.SUMMARY, { fontSize: textContainerFontSize });
       textContainer.add(textAbility);
-      const textPassive = addBBCodeTextObject(this.scene, -2, 11, pPassiveInfo, TextStyle.SUMMARY, {fontSize: "34px"});
+      const textPassive = addBBCodeTextObject(this.scene, -2, 11, pPassiveInfo, TextStyle.SUMMARY, {fontSize: textContainerFontSize});
       textContainer.add(textPassive);
 
       const pStats = [];
@@ -388,13 +389,13 @@ export default class GameInfoUiHandler extends UiHandler {
       }
       //Row 1: HP, Atk, Def
       //Row 2: SpAtk, SpDef, Speed
-      const hp = addBBCodeTextObject(this.scene, 0, 0, i18next.t("pokemonInfo:Stat.HPshortened")+": "+pStats[0], TextStyle.SUMMARY, { fontSize: "34px", align: "center" });
-      const atk = addBBCodeTextObject(this.scene, 0, 0, i18next.t("pokemonInfo:Stat.ATKshortened")+": "+pStats[1], TextStyle.SUMMARY, { fontSize: "34px", align: "center" });
-      const def = addBBCodeTextObject(this.scene, 0, 0, i18next.t("pokemonInfo:Stat.DEFshortened")+": "+pStats[2], TextStyle.SUMMARY, { fontSize: "34px", align: "center" });
-      const spatk = addBBCodeTextObject(this.scene, 0, 0, i18next.t("pokemonInfo:Stat.SPATKshortened")+": "+pStats[3], TextStyle.SUMMARY, { fontSize: "34px", align: "center" });
-      const spdef = addBBCodeTextObject(this.scene, 0, 0, i18next.t("pokemonInfo:Stat.SPDEFshortened")+": "+pStats[4], TextStyle.SUMMARY, { fontSize: "34px", align: "center" });
+      const hp = addBBCodeTextObject(this.scene, 0, 0, i18next.t("pokemonInfo:Stat.HPshortened")+": "+pStats[0], TextStyle.SUMMARY, { fontSize: textContainerFontSize, align: "center" });
+      const atk = addBBCodeTextObject(this.scene, 0, 0, i18next.t("pokemonInfo:Stat.ATKshortened")+": "+pStats[1], TextStyle.SUMMARY, { fontSize: textContainerFontSize, align: "center" });
+      const def = addBBCodeTextObject(this.scene, 0, 0, i18next.t("pokemonInfo:Stat.DEFshortened")+": "+pStats[2], TextStyle.SUMMARY, { fontSize: textContainerFontSize, align: "center" });
+      const spatk = addBBCodeTextObject(this.scene, 0, 0, i18next.t("pokemonInfo:Stat.SPATKshortened")+": "+pStats[3], TextStyle.SUMMARY, { fontSize: textContainerFontSize, align: "center" });
+      const spdef = addBBCodeTextObject(this.scene, 0, 0, i18next.t("pokemonInfo:Stat.SPDEFshortened")+": "+pStats[4], TextStyle.SUMMARY, { fontSize: textContainerFontSize, align: "center" });
       const speedLabel = (currentLanguage==="es"||currentLanguage==="pt_BR") ? i18next.t("runHistory:SPDshortened") : i18next.t("pokemonInfo:Stat.SPDshortened");
-      const speed = addBBCodeTextObject(this.scene, 0, 0, speedLabel+": "+pStats[5], TextStyle.SUMMARY, { fontSize: "34px", align: "center" });
+      const speed = addBBCodeTextObject(this.scene, 0, 0, speedLabel+": "+pStats[5], TextStyle.SUMMARY, { fontSize: textContainerFontSize, align: "center" });
 
       Phaser.Actions.GridAlign([hp, atk, def, spatk, spdef, speed], {width:3, height:2, cellWidth:28, cellHeight: 6.25, x: -2, y: 20, position: Phaser.Display.Align.TOP_LEFT});
       textContainer.add([hp, atk, def, spatk, spdef, speed]);
