@@ -1,10 +1,10 @@
+import { EggTier } from "#enums/egg-type";
+import { UiTheme } from "#enums/ui-theme";
+import Phaser from "phaser";
 import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import BattleScene from "../battle-scene";
 import { ModifierTier } from "../modifier/modifier-tier";
-import Phaser from "phaser";
-import { EggTier } from "#enums/egg-type";
-import { UiTheme } from "#enums/ui-theme";
 
 export enum TextStyle {
   MESSAGE,
@@ -142,7 +142,7 @@ function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptio
     shadowYpos = 3;
     break;
   case TextStyle.SMALLER_WINDOW_ALT:
-    styleOptions.fontSize = defaultFontSize - 32;
+    styleOptions.fontSize = defaultFontSize - 36;
     shadowXpos = 3;
     shadowYpos = 3;
     break;
