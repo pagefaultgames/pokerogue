@@ -57,7 +57,7 @@ export function getStatusEffectObtainText(statusEffect: StatusEffect, pokemonNam
     return i18next.t(i18nKey, { pokemonNameWithAffix: pokemonNameWithAffix });
   }
   const i18nKey = `${getStatusEffectMessageKey(statusEffect)}.obtainSource`as ParseKeys;
-  return !sourceText ? i18next.t(i18nKey, { pokemonNameWithAffix: pokemonNameWithAffix }) : i18next.t(i18nKey, { pokemonNameWithAffix: pokemonNameWithAffix, sourceText: sourceText });
+  return i18next.t(i18nKey, { pokemonNameWithAffix: pokemonNameWithAffix, sourceText: sourceText });
 }
 
 export function getStatusEffectActivationText(statusEffect: StatusEffect, pokemonNameWithAffix: string): string {

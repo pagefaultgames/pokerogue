@@ -1,92 +1,269 @@
 import { beforeAll, describe, expect, it, vi } from "vitest";
-import {getStatusEffectMessageKey, StatusEffect} from "#app/data/status-effect";
-import { getStatusEffectObtainText, getStatusEffectActivationText, getStatusEffectOverlapText, getStatusEffectHealText, getStatusEffectDescriptor } from "#app/data/status-effect";
+import {
+  StatusEffect,
+  getStatusEffectActivationText,
+  getStatusEffectDescriptor,
+  getStatusEffectHealText,
+  getStatusEffectObtainText,
+  getStatusEffectOverlapText,
+} from "#app/data/status-effect";
+import i18next, { ParseKeys } from "i18next";
+import { afterEach } from "node:test";
 
-import i18next, {initI18n} from "#app/plugins/i18n";
-import { ParseKeys } from "i18next";
+const tMock = (key: ParseKeys) => key;
+const pokemonName = "PKM";
+const sourceText = "SOURCE";
 
-interface StatusEffectTestUnit {
-  stat: StatusEffect,
-  key: string
-}
-
-const testPokemonNameWithoutBinding = "{{pokemonNameWithAffix}}";
-const testSourceTextWithoutBinding = "{{sourceText}}";
-
-function testStatusEffectObtainText(stat: StatusEffect, expectKey: ParseKeys) {
-  const i18nextSpy = vi.spyOn(i18next, "t");
-  const message = getStatusEffectObtainText(stat, testPokemonNameWithoutBinding);
-  console.log(`expectKey ${expectKey}, message ${message}`);
-  expect(i18nextSpy).toHaveBeenCalledWith(expectKey, { pokemonNameWithAffix: testPokemonNameWithoutBinding });
-}
-
-function testStatusEffectObtainTextWithSource(stat: StatusEffect, expectKey: ParseKeys) {
-  const i18nextSpy = vi.spyOn(i18next, "t");
-  const message = getStatusEffectObtainText(stat, testPokemonNameWithoutBinding, testSourceTextWithoutBinding);
-  console.log(`expectKey ${expectKey}, message ${message}`);
-  expect(i18nextSpy).toHaveBeenCalledWith(expectKey, { pokemonNameWithAffix: testPokemonNameWithoutBinding, sourceText: testSourceTextWithoutBinding });
-}
-
-function testStatusEffectActivationText(stat: StatusEffect, expectKey: ParseKeys) {
-  const i18nextSpy = vi.spyOn(i18next, "t");
-  const message = getStatusEffectActivationText(stat, testPokemonNameWithoutBinding);
-  console.log(`expectKey ${expectKey}, message ${message}`);
-  expect(i18nextSpy).toHaveBeenCalledWith(expectKey, { pokemonNameWithAffix: testPokemonNameWithoutBinding });
-}
-
-function testStatusEffectOverlapText(stat: StatusEffect, expectKey: ParseKeys) {
-  const i18nextSpy = vi.spyOn(i18next, "t");
-  const message = getStatusEffectOverlapText(stat, testPokemonNameWithoutBinding);
-  console.log(`expectKey ${expectKey}, message ${message}`);
-  expect(i18nextSpy).toHaveBeenCalledWith(expectKey, { pokemonNameWithAffix: testPokemonNameWithoutBinding });
-}
-
-function testStatusEffectHealText(stat: StatusEffect, expectKey: ParseKeys) {
-  const i18nextSpy = vi.spyOn(i18next, "t");
-  const message = getStatusEffectHealText(stat, testPokemonNameWithoutBinding);
-  console.log(`expectKey ${expectKey}, message ${message}`);
-  expect(i18nextSpy).toHaveBeenCalledWith(expectKey, { pokemonNameWithAffix: testPokemonNameWithoutBinding });
-}
-
-function testStatusEffectDescriptor(stat: StatusEffect, expectKey: ParseKeys) {
-  const i18nextSpy = vi.spyOn(i18next, "t");
-  const message = getStatusEffectDescriptor(stat);
-  console.log(`expectKey ${expectKey}, message ${message}`);
-  expect(i18nextSpy).toHaveBeenCalledWith(expectKey);
-}
-
-describe("Test for StatusEffect Localization", () => {
-  const statusEffectUnits: StatusEffectTestUnit[] = [];
-
+describe("status-effect", () => {
   beforeAll(() => {
-    initI18n();
-
-    statusEffectUnits.push({ stat: StatusEffect.NONE, key: "none" });
-    statusEffectUnits.push({ stat: StatusEffect.POISON, key: "poison" });
-    statusEffectUnits.push({ stat: StatusEffect.TOXIC, key: "toxic" });
-    statusEffectUnits.push({ stat: StatusEffect.PARALYSIS, key: "paralysis" });
-    statusEffectUnits.push({ stat: StatusEffect.SLEEP, key: "sleep" });
-    statusEffectUnits.push({ stat: StatusEffect.FREEZE, key: "freeze" });
-    statusEffectUnits.push({ stat: StatusEffect.BURN, key: "burn" });
+    i18next.init();
   });
 
-  it("Test i18n message key", async () => {
-    statusEffectUnits.forEach(unit => {
-      const text = getStatusEffectMessageKey(unit.stat);
-      const toBe = `statusEffect:${unit.key}`;
-      console.log(`message ${text}, expected ${toBe}`);
-      expect(text).toBe(toBe);
+  describe("NONE", () => {
+    const statusEffect = StatusEffect.NONE;
+
+    it("should return the obtain text", () => {
+      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      const text = getStatusEffectObtainText(statusEffect, pokemonName);
+      expect(text).toBe("statusEffect:none.obtain");
+    });
+
+    it("should return the source-obtain text", () => {
+      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      const text = getStatusEffectObtainText(statusEffect, pokemonName, sourceText);
+      expect(text).toBe("statusEffect:none.obtainSource");
+    });
+
+    it("should return the activation text", () => {
+      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      const text = getStatusEffectActivationText(statusEffect, pokemonName);
+      expect(text).toBe("statusEffect:none.activation");
+    });
+
+    it("should return the overlap text", () => {
+      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      const text = getStatusEffectOverlapText(statusEffect, pokemonName);
+      expect(text).toBe("statusEffect:none.overlap");
+    });
+
+    it("should return the heal text", () => {
+      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      const text = getStatusEffectHealText(statusEffect, pokemonName);
+      expect(text).toBe("statusEffect:none.heal");
+    });
+
+    it("should return the descriptor", () => {
+      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      const text = getStatusEffectDescriptor(statusEffect);
+      expect(text).toBe("statusEffect:none.description");
     });
   });
 
-  it("Test getStatusEffectMessages", async () => {
-    statusEffectUnits.forEach(unit => {
-      testStatusEffectObtainText(unit.stat, `statusEffect:${unit.key}.obtain` as ParseKeys);
-      testStatusEffectObtainTextWithSource(unit.stat, `statusEffect:${unit.key}.obtainSource` as ParseKeys);
-      testStatusEffectActivationText(unit.stat, `statusEffect:${unit.key}.activation` as ParseKeys);
-      testStatusEffectOverlapText(unit.stat, `statusEffect:${unit.key}.overlap` as ParseKeys);
-      testStatusEffectHealText(unit.stat, `statusEffect:${unit.key}.heal` as ParseKeys);
-      testStatusEffectDescriptor(unit.stat, `statusEffect:${unit.key}.description` as ParseKeys);
+  describe("POISON", () => {
+    const statusEffect = StatusEffect.POISON;
+
+    it("should return the obtain text", () => {
+      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      const text = getStatusEffectObtainText(statusEffect, pokemonName);
+      expect(text).toBe("statusEffect:poison.obtain");
     });
+
+    it("should return the activation text", () => {
+      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      const text = getStatusEffectActivationText(statusEffect, pokemonName);
+      expect(text).toBe("statusEffect:poison.activation");
+    });
+
+    it("should return the descriptor", () => {
+      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      const text = getStatusEffectDescriptor(statusEffect);
+      expect(text).toBe("statusEffect:poison.description");
+    });
+
+    it("should return the heal text", () => {
+      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      const text = getStatusEffectHealText(statusEffect, pokemonName);
+      expect(text).toBe("statusEffect:poison.heal");
+    });
+
+    it("should return the overlap text", () => {
+      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      const text = getStatusEffectOverlapText(statusEffect, pokemonName);
+      expect(text).toBe("statusEffect:poison.overlap");
+    });
+  });
+
+  describe("TOXIC", () => {
+    const statusEffect = StatusEffect.TOXIC;
+
+    it("should return the obtain text", () => {
+      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      const text = getStatusEffectObtainText(statusEffect, pokemonName);
+      expect(text).toBe("statusEffect:toxic.obtain");
+    });
+
+    it("should return the activation text", () => {
+      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      const text = getStatusEffectActivationText(statusEffect, pokemonName);
+      expect(text).toBe("statusEffect:toxic.activation");
+    });
+
+    it("should return the descriptor", () => {
+      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      const text = getStatusEffectDescriptor(statusEffect);
+      expect(text).toBe("statusEffect:toxic.description");
+    });
+
+    it("should return the heal text", () => {
+      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      const text = getStatusEffectHealText(statusEffect, pokemonName);
+      expect(text).toBe("statusEffect:toxic.heal");
+    });
+
+    it("should return the overlap text", () => {
+      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      const text = getStatusEffectOverlapText(statusEffect, pokemonName);
+      expect(text).toBe("statusEffect:toxic.overlap");
+    });
+  });
+
+  describe("PARALYSIS", () => {
+    const statusEffect = StatusEffect.PARALYSIS;
+
+    it("should return the obtain text", () => {
+      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      const text = getStatusEffectObtainText(statusEffect, pokemonName);
+      expect(text).toBe("statusEffect:paralysis.obtain");
+    });
+
+    it("should return the activation text", () => {
+      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      const text = getStatusEffectActivationText(statusEffect, pokemonName);
+      expect(text).toBe("statusEffect:paralysis.activation");
+    });
+
+    it("should return the descriptor", () => {
+      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      const text = getStatusEffectDescriptor(statusEffect);
+      expect(text).toBe("statusEffect:paralysis.description");
+    });
+
+    it("should return the heal text", () => {
+      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      const text = getStatusEffectHealText(statusEffect, pokemonName);
+      expect(text).toBe("statusEffect:paralysis.heal");
+    });
+
+    it("should return the overlap text", () => {
+      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      const text = getStatusEffectOverlapText(statusEffect, pokemonName);
+      expect(text).toBe("statusEffect:paralysis.overlap");
+    });
+  });
+
+  describe("SLEEP", () => {
+    const statusEffect = StatusEffect.SLEEP;
+
+    it("should return the obtain text", () => {
+      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      const text = getStatusEffectObtainText(statusEffect, pokemonName);
+      expect(text).toBe("statusEffect:sleep.obtain");
+    });
+
+    it("should return the activation text", () => {
+      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      const text = getStatusEffectActivationText(statusEffect, pokemonName);
+      expect(text).toBe("statusEffect:sleep.activation");
+    });
+
+    it("should return the descriptor", () => {
+      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      const text = getStatusEffectDescriptor(statusEffect);
+      expect(text).toBe("statusEffect:sleep.description");
+    });
+
+    it("should return the heal text", () => {
+      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      const text = getStatusEffectHealText(statusEffect, pokemonName);
+      expect(text).toBe("statusEffect:sleep.heal");
+    });
+
+    it("should return the overlap text", () => {
+      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      const text = getStatusEffectOverlapText(statusEffect, pokemonName);
+      expect(text).toBe("statusEffect:sleep.overlap");
+    });
+  });
+
+  describe("FREEZE", () => {
+    const statusEffect = StatusEffect.FREEZE;
+
+    it("should return the obtain text", () => {
+      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      const text = getStatusEffectObtainText(statusEffect, pokemonName);
+      expect(text).toBe("statusEffect:freeze.obtain");
+    });
+
+    it("should return the activation text", () => {
+      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      const text = getStatusEffectActivationText(statusEffect, pokemonName);
+      expect(text).toBe("statusEffect:freeze.activation");
+    });
+
+    it("should return the descriptor", () => {
+      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      const text = getStatusEffectDescriptor(statusEffect);
+      expect(text).toBe("statusEffect:freeze.description");
+    });
+
+    it("should return the heal text", () => {
+      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      const text = getStatusEffectHealText(statusEffect, pokemonName);
+      expect(text).toBe("statusEffect:freeze.heal");
+    });
+
+    it("should return the overlap text", () => {
+      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      const text = getStatusEffectOverlapText(statusEffect, pokemonName);
+      expect(text).toBe("statusEffect:freeze.overlap");
+    });
+  });
+
+  describe("BURN", () => {
+    const statusEffect = StatusEffect.BURN;
+
+    it("should return the obtain text", () => {
+      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      const text = getStatusEffectObtainText(statusEffect, pokemonName);
+      expect(text).toBe("statusEffect:burn.obtain");
+    });
+
+    it("should return the activation text", () => {
+      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      const text = getStatusEffectActivationText(statusEffect, pokemonName);
+      expect(text).toBe("statusEffect:burn.activation");
+    });
+
+    it("should return the descriptor", () => {
+      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      const text = getStatusEffectDescriptor(statusEffect);
+      expect(text).toBe("statusEffect:burn.description");
+    });
+
+    it("should return the heal text", () => {
+      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      const text = getStatusEffectHealText(statusEffect, pokemonName);
+      expect(text).toBe("statusEffect:burn.heal");
+    });
+
+    it("should return the overlap text", () => {
+      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      const text = getStatusEffectOverlapText(statusEffect, pokemonName);
+      expect(text).toBe("statusEffect:burn.overlap");
+    });
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
   });
 });
