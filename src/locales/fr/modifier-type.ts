@@ -1,10 +1,10 @@
-import { ModifierTypeTranslationEntries } from "#app/plugins/i18n";
+import { ModifierTypeTranslationEntries } from "#app/interfaces/locales";
 
 export const modifierType: ModifierTypeTranslationEntries = {
   ModifierType: {
     "AddPokeballModifierType": {
       name: "{{pokeballName}} x{{modifierCount}}",
-      description: "Recevez {{modifierCount}} {{pokeballName}}s (Inventaire : {{pokeballAmount}}) \nTaux de capture : {{catchRate}}.",
+      description: "Recevez {{modifierCount}} {{pokeballName}}·s (Inventaire : {{pokeballAmount}})\nTaux de capture : {{catchRate}}.",
     },
     "AddVoucherModifierType": {
       name: "{{voucherTypeName}} x{{modifierCount}}",
@@ -17,7 +17,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       }
     },
     "PokemonHpRestoreModifierType": {
-      description: "Restaure {{restorePoints}} PV ou {{restorePercent}}% des PV totaux d’un Pokémon, en fonction duquel des deux est le plus élevé",
+      description: "Restaure {{restorePoints}} PV ou {{restorePercent}}% des PV totaux d’un Pokémon, en fonction duquel des deux est le plus élevé.",
       extra: {
         "fully": "Restaure tous les PV d’un Pokémon.",
         "fullyWithStatus": "Restaure tous les PV d’un Pokémon et soigne tous ses problèmes de statut.",
@@ -73,7 +73,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "Réanime et restaure tous les PV de tous les Pokémon K.O.",
     },
     "MoneyRewardModifierType": {
-      description: "Octroie une {{moneyMultiplier}} somme d’argent ({{moneyAmount}}₽).",
+      description: "Octroie une {{moneyMultiplier}} somme d’argent.\n({{moneyAmount}} ₽)",
       extra: {
         "small": "petite",
         "moderate": "moyenne",
@@ -101,7 +101,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     },
     "TmModifierTypeWithInfo": {
       name: "CT{{moveId}} - {{moveName}}",
-      description: "Apprend la capacité {{moveName}} à un Pokémon\n(Hold C or Shift for more info).",
+      description: "Apprend la capacité {{moveName}} à un Pokémon\n(Maintenez C ou Maj pour plus d’infos).",
     },
     "EvolutionItemModifierType": {
       description: "Permet à certains Pokémon d’évoluer.",
@@ -110,7 +110,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "Permet à certains Pokémon de changer de forme.",
     },
     "FusePokemonModifierType": {
-      description: "Fusionne deux Pokémon (transfère le Talent, sépare les stats de base et les types, partage le movepool).",
+      description: "Fusionne deux Pokémon (transfère le talent, sépare les stats de base et les types, partage le movepool).",
     },
     "TerastallizeModifierType": {
       name: "Téra-Éclat {{teraType}}",
@@ -151,7 +151,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SACRED_ASH": { name: "Cendre Sacrée" },
 
-    "REVIVER_SEED": { name: "Résugraine", description: "Réanime et restaure la moitié des PV de son porteur s’il tombe K.O." },
+    "REVIVER_SEED": { name: "Résugraine", description: "Réanime et restaure la moitié des PV de son porteur s’il tombe K.O. ." },
 
     "ETHER": { name: "Huile" },
     "MAX_ETHER": { name: "Huile Max" },
@@ -182,6 +182,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SOOTHE_BELL": { name: "Grelot Zen" },
 
+    "EVIOLITE": { name: "Évoluroc", description: "Un étrange concentré d’évolution qui augmente la Défense et la Défense Spéciale d’un Pokémon pouvant évoluer." },
+
     "SOUL_DEW": { name: "Rosée Âme", description: "Augmente de 10% l’influence de la nature d’un Pokémon sur ses statistiques (cumulatif)." },
 
     "NUGGET": { name: "Pépite" },
@@ -211,10 +213,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "KINGS_ROCK": { name: "Roche Royale", description: "Ajoute 10% de chances qu’une capacité offensive apeure l’adversaire." },
 
     "LEFTOVERS": { name: "Restes", description: "Soigne à chaque tour 1/16 des PV max d’un Pokémon." },
-    "SHELL_BELL": { name: "Grelot Coque", description: "Soigne 1/8 des dégâts infligés par un Pokémon." },
+    "SHELL_BELL": { name: "Grelot Coque", description: "Soigne son porteur avec 1/8 des dégâts qu’il inflige à un Pokémon." },
 
     "TOXIC_ORB": { name: "Orbe Toxique", description: "Un orbe bizarre qui empoisonne gravement son porteur durant le combat." },
-    "FLAME_ORB": { name: "Orbe Flamme", description: "Un orbe bizarre qui brûle son porteur durant le combat." },
+    "FLAME_ORB": { name: "Orbe Flamme", description: "Un orbe bizarre qui brule son porteur durant le combat." },
 
     "BATON": { name: "Bâton", description: "Permet de transmettre les effets en cas de changement de Pokémon. Ignore les pièges." },
 
@@ -238,6 +240,12 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "Jeton Total Soin", description: "Ajoute 2.5% de chances à chaque tour de se soigner d’un problème de statut." },
     "ENEMY_ENDURE_CHANCE": { name: "Jeton Ténacité" },
     "ENEMY_FUSED_CHANCE": { name: "Jeton Fusion", description: "Ajoute 1% de chances qu’un Pokémon sauvage soit une fusion." },
+  },
+  SpeciesBoosterItem: {
+    "LIGHT_BALL": { name: "Balle Lumière", description: "Objet à faire tenir à Pikachu. Un orbe énigmatique qui augmente son Attaque et son Attaque Spéciale." },
+    "THICK_CLUB": { name: "Masse Os", description: "Objet à faire tenir à Osselait ou Ossatueur. Un os dur qui augmente leur Attaque." },
+    "METAL_POWDER": { name: "Poudre Métal", description: "Objet à faire tenir à Métamorph. Cette poudre étrange, très fine mais résistante, augmente sa Défense." },
+    "QUICK_POWDER": { name: "Poudre Vite", description: "Objet à faire tenir à Métamorph. Cette poudre étrange, très fine mais résistante, augmente sa Vitesse." }
   },
   TempBattleStatBoosterItem: {
     "x_attack": "Attaque +",
