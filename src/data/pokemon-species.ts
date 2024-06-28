@@ -319,6 +319,7 @@ export abstract class PokemonSpeciesForm {
     case Species.UNFEZANT:
     case Species.FRILLISH:
     case Species.JELLICENT:
+    case Species.PYROAR:
       ret += female ? "-f" : "";
       break;
     }
