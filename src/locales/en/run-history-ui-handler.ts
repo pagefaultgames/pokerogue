@@ -21,6 +21,7 @@ export const runHistory: SimpleTranslationEntries = {
   "challengeMonoGen8":"Gen VIII",
   "challengeMonoGen9":"Gen IX",
   "playerItems":"Player Items",
+  "personalBest":"Personal Best!",
   "SPDshortened":"Vel.",
   "runInfo":"Run Info",
   "money":"Money",

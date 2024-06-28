@@ -36,7 +36,7 @@ import { EggHatchPhase } from "./egg-hatch-phase";
 import { Egg } from "./data/egg";
 import { vouchers } from "./system/voucher";
 import { clientSessionId, loggedInUser, updateUserInfo } from "./account";
-import { SessionSaveData, saveRunHistory } from "./system/game-data";
+import { SessionSaveData } from "./system/game-data";
 import { addPokeballCaptureStars, addPokeballOpenParticles } from "./field/anims";
 import { SpeciesFormChangeActiveTrigger, SpeciesFormChangeManualTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangePreMoveTrigger } from "./data/pokemon-forms";
 import { battleSpecDialogue, getCharVariantFromDialogue, miscDialogue } from "./data/dialogue";
@@ -4137,8 +4137,6 @@ export class GameOverPhase extends BattlePhase {
 
         this.scene.gameData.getSession(this.scene.sessionSlotId).then(sessionData => {
           if (sessionData) {
-            console.log(this.scene.getEnemyPokemon());
-            //sessionData.enemyParty = this.scene.getEnemyParty();
             this.scene.gameData.saveRunHistory(this.scene, sessionData, this.victory, true);
           }
         }).catch(err => {
