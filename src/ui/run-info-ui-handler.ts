@@ -396,7 +396,7 @@ export default class GameInfoUiHandler extends UiHandler {
       const speedLabel = (currentLanguage==="es"||currentLanguage==="pt_BR") ? i18next.t("runHistory:SPDshortened") : i18next.t("pokemonInfo:Stat.SPDshortened");
       const speed = addBBCodeTextObject(this.scene, 0, 0, speedLabel+": "+pStats[5], TextStyle.SUMMARY, { fontSize: "34px", align: "center" });
 
-      Phaser.Actions.GridAlign([hp, atk, def, spatk, spdef, speed], {width:3, height:2, cellWidth:28, cellHeight: 6.5, x: -2, y: 20, position: Phaser.Display.Align.TOP_LEFT});
+      Phaser.Actions.GridAlign([hp, atk, def, spatk, spdef, speed], {width:3, height:2, cellWidth:28, cellHeight: 6.25, x: -2, y: 20, position: Phaser.Display.Align.TOP_LEFT});
       textContainer.add([hp, atk, def, spatk, spdef, speed]);
 
       if (pokemon.fusionSpecies) {
