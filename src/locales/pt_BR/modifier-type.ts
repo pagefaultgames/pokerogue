@@ -182,8 +182,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SOOTHE_BELL": { name: "Guizo" },
 
-    "SCOPE_LENS": { name: "Scope Lens", description: "It's a lens for scoping out weak points. It boosts the holder's critical-hit ratio."},
-    "LEEK": { name: "Leek", description: "This very long and stiff stalk of leek boosts the critical-hit ratio of Farfetch'd's moves."},
+    "SCOPE_LENS": { name: "Lentes de Mira", description: "Estas lentes facilitam o foco em pontos fracos. Aumenta a chance de acerto crítico de quem a segurar."},
+    "LEEK": { name: "Alho-poró", description: "Esse talo de alho-poró muito longo e rígido aumenta a taxa de acerto crítico dos movimentos do Farfetch'd."},
 
     "EVIOLITE": { name: "Eviolita", description: "Esse misterioso caroço evolutivo aumenta os atributos de Defesa e Def. Esp. quando segurado por um Pokémon que ainda pode evoluir." },
 
