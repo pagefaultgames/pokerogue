@@ -5183,7 +5183,7 @@ export class SelectModifierPhase extends BattlePhase {
         modifierType = typeOptions[cursor].type;
         break;
       default:
-        const shopOptions = getPlayerShopModifierTypeOptionsForWave(this.scene.currentBattle.waveIndex, this.scene.getWaveMoneyAmount(1));
+        const shopOptions = getPlayerShopModifierTypeOptionsForWave(this.scene.currentBattle.waveIndex, this.scene.getWaveMoneyAmount(1), this.scene.gameMode);
         const shopOption = shopOptions[rowCursor > 2 || shopOptions.length <= SHOP_OPTIONS_ROW_LIMIT ? cursor : cursor + SHOP_OPTIONS_ROW_LIMIT];
         modifierType = shopOption.type;
         cost = shopOption.cost;

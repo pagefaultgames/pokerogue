@@ -1819,7 +1819,7 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
     let r = 0;
     let isValidForChallenge = new Utils.BooleanHolder(true);
     applyChallenges(gameMode, ChallengeType.RANDOM_ITEM_BLACKLIST, candidate, isValidForChallenge);
-    while (options.length && ++r < retryCount && options.filter(o => o.type.name === candidate.type.name || o.type.group === candidate.type.group).length && !isValidForChallenge.value) {
+    while ((options.length && ++r < retryCount && options.filter(o => o.type.name === candidate.type.name || o.type.group === candidate.type.group).length) || !isValidForChallenge.value) {
       candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, candidate.type.tier, candidate.upgradeCount);
       isValidForChallenge = new Utils.BooleanHolder(true);
       applyChallenges(gameMode, ChallengeType.RANDOM_ITEM_BLACKLIST, candidate, isValidForChallenge);
@@ -1837,7 +1837,7 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
   return options;
 }
 
-export function getPlayerShopModifierTypeOptionsForWave(waveIndex: integer, baseCost: integer): ModifierTypeOption[] {
+export function getPlayerShopModifierTypeOptionsForWave(waveIndex: integer, baseCost: integer, gameMode: GameMode): ModifierTypeOption[] {
   if (!(waveIndex % 10)) {
     return [];
   }
@@ -1871,7 +1871,11 @@ export function getPlayerShopModifierTypeOptionsForWave(waveIndex: integer, base
       new ModifierTypeOption(modifierTypes.SACRED_ASH(), 0, baseCost * 10)
     ]
   ];
-  return options.slice(0, Math.ceil(Math.max(waveIndex + 10, 0) / 30)).flat();
+  return options.slice(0, Math.ceil(Math.max(waveIndex + 10, 0) / 30)).flat().filter(x => {
+    const isValidForChallenge = new Utils.BooleanHolder(true);
+    applyChallenges(gameMode, ChallengeType.SHOP_ITEM_BLACKLIST, x, isValidForChallenge);
+    return isValidForChallenge.value;
+  });
 }
 
 export function getEnemyBuffModifierForWave(tier: ModifierTier, enemyModifiers: Modifiers.PersistentModifier[], scene: BattleScene): Modifiers.EnemyPersistentModifier {

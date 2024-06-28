@@ -10,7 +10,6 @@ import {Button} from "#enums/buttons";
 import MoveInfoOverlay from "./move-info-overlay";
 import { allMoves } from "../data/move";
 import * as Utils from "./../utils";
-import { applyChallenges, ChallengeType } from "#app/data/challenge.js";
 
 export const SHOP_OPTIONS_ROW_LIMIT = 6;
 
@@ -150,11 +149,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     const typeOptions = args[1] as ModifierTypeOption[];
     const shopTypeOptions = !this.scene.gameMode.hasNoShop
-      ? getPlayerShopModifierTypeOptionsForWave(this.scene.currentBattle.waveIndex, this.scene.getWaveMoneyAmount(1)).filter(x => {
-        const isValidForChallenge = new Utils.BooleanHolder(true);
-        applyChallenges(this.scene.gameMode, ChallengeType.SHOP_ITEM_BLACKLIST, x, isValidForChallenge);
-        return isValidForChallenge.value;
-      })
+      ? getPlayerShopModifierTypeOptionsForWave(this.scene.currentBattle.waveIndex, this.scene.getWaveMoneyAmount(1), this.scene.gameMode)
       : [];
     const optionsYOffset = shopTypeOptions.length >= SHOP_OPTIONS_ROW_LIMIT ? -8 : -24;
 
