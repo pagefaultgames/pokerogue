@@ -18,10 +18,6 @@ describe("game-mode", () => {
   });
 
   beforeEach(() => {
-    // vi.spyOn(Overrides, "STARTING_BIOME_OVERRIDE", "get").mockReturnValue(
-    //   Biome.WASTELAND
-    // );
-
     game = new GameManager(phaserGame);
   });
 
