@@ -2622,7 +2622,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   resetSummonData(): void {
-    this.calculateStats();
     if (this.summonData?.speciesForm) {
       this.summonData.speciesForm = null;
       this.updateFusionPalette();
@@ -2640,6 +2639,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
       this.summonDataPrimer = null;
     }
+    this.calculateStats();
     this.updateInfo();
   }
 
