@@ -1364,9 +1364,8 @@ interface ModifierPool {
 
 const MAX_BALLS = 99;
 
-
 /**
- * Used to check if the player has max of a given ball type
+ * Used to check if the player has max of a given ball type in Classic
  * @param party The player's party, just used to access the scene
  * @param ballType The {@linkcode PokeballType} being checked
  * @returns boolean: true if the player has the maximum of a given ball type
