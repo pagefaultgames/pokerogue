@@ -1356,7 +1356,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     this.shiny = (E ^ F) < shinyThreshold.value;
-    if ((E ^ F) < 32) {
+    if ((E ^ F) < 64) {
       console.log("REAL SHINY!!");
     }
 
