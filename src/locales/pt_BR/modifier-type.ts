@@ -182,6 +182,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SOOTHE_BELL": { name: "Guizo" },
 
+    "SCOPE_LENS": { name: "Scope Lens", description: "It's a lens for scoping out weak points. It boosts the holder's critical-hit ratio."},
+    "LEEK": { name: "Leek", description: "This very long and stiff stalk of leek boosts the critical-hit ratio of Farfetch'd's moves."},
+
     "EVIOLITE": { name: "Eviolita", description: "Esse misterioso caroço evolutivo aumenta os atributos de Defesa e Def. Esp. quando segurado por um Pokémon que ainda pode evoluir." },
 
     "SOUL_DEW": { name: "Joia da Alma", description: "Aumenta a influência da natureza de um Pokémon em seus atributos em 10% (cumulativo)." },
