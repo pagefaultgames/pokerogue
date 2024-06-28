@@ -3398,6 +3398,7 @@ export class EnemyPokemon extends Pokemon {
   public aiType: AiType;
   public bossSegments: integer;
   public bossSegmentIndex: integer;
+  /** To indicate of the instance was populated with a dataSource -> e.g. loaded & populated from session data */
   public readonly isPopulatedFromDataSource: boolean;
 
   constructor(scene: BattleScene, species: PokemonSpecies, level: integer, trainerSlot: TrainerSlot, boss: boolean, dataSource: PokemonData) {
@@ -3405,7 +3406,7 @@ export class EnemyPokemon extends Pokemon {
       dataSource?.gender, dataSource ? dataSource.shiny : false, dataSource ? dataSource.variant : undefined, null, dataSource ? dataSource.nature : undefined, dataSource);
 
     this.trainerSlot = trainerSlot;
-    this.isPopulatedFromDataSource = !!dataSource;
+    this.isPopulatedFromDataSource = !!dataSource; // if a dataSource is provided, then it was populated from dataSource
     if (boss) {
       this.setBoss(boss, dataSource?.bossSegments);
     }
@@ -3455,6 +3456,13 @@ export class EnemyPokemon extends Pokemon {
     }
   }
 
+  /**
+   * Sets the pokemons boss status. If true initializes the boss segments either from the arguments
+   * or through the the Scene.getEncounterBossSegments function
+   *
+   * @param boss if the pokemon is a boss
+   * @param bossSegments amount of boss segments (health-bar segments)
+   */
   setBoss(boss: boolean = true, bossSegments: integer = 0): void {
     if (boss) {
       this.bossSegments = bossSegments || this.scene.getEncounterBossSegments(this.scene.currentBattle.waveIndex, this.level, this.species, true);
