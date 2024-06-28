@@ -57,4 +57,5 @@ export const menu: SimpleTranslationEntries = {
   "renamePokemon": "포켓몬의 닉네임은?",
   "rename": "닉네임 바꾸기",
   "nickname": "닉네임",
+  "errorServerDown": "서버 연결 중 문제가 발생했습니다.\n\n이 창을 종료하지 않고 두면,\n게임은 자동으로 재접속됩니다.",
 } as const;

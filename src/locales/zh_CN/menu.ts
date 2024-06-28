@@ -57,4 +57,5 @@ export const menu: SimpleTranslationEntries = {
   "renamePokemon": "给宝可梦起名",
   "rename": "起名",
   "nickname": "昵称",
+  "errorServerDown": "糟糕！访问服务器时发生了错误。\n\n你可以保持页面开启，\n游戏会自动重新连接。",
 } as const;

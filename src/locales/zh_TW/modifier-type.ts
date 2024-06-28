@@ -301,6 +301,12 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "增加1%野生融合寶可夢出現概率。",
     },
   },
+  SpeciesBoosterItem: {
+    "LIGHT_BALL": { name: "電氣球", description: "讓皮卡丘攜帶後，攻擊和特攻就會 提高的神奇之球。" },
+    "THICK_CLUB": { name: "粗骨頭", description: "某種堅硬的骨頭。讓卡拉卡拉或嘎啦嘎啦攜帶後，攻擊就會提高。" },
+    "METAL_POWDER": { name: "金屬粉", description: "讓百變怪攜帶後，防禦就會提高的神奇粉末。非常細緻堅硬。" },
+    "QUICK_POWDER": { name: "速度粉", description: "讓百變怪攜帶後，速度就會提高的神奇粉末。非常細緻堅硬。" }
+  },
   TempBattleStatBoosterItem: {
     x_attack: "力量強化",
     x_defense: "防禦強化",
