@@ -494,8 +494,7 @@ export const Setting: Array<Setting> = [
     label: i18next.t("settings:showBgmBar"),
     options: OFF_ON,
     default: 0,
-    type: SettingType.DISPLAY,
-    requireReload: true
+    type: SettingType.DISPLAY
   },
   {
     key: SettingKeys.Master_Volume,
