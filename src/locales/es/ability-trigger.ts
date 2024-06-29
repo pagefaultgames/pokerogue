@@ -5,8 +5,8 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "badDreams": "¡{{pokemonName}} está atormentado!",
   "costar": "{{pokemonName}} copied {{allyName}}'s stat changes!",
   "iceFaceAvoidedDamage": "¡{{pokemonNameWithAffix}} evitó\ndaño con {{abilityName}}!",
-  "trace": "{{pokemonName}} copied {{targetName}}'s\n{{abilityName}}!",
+  "trace": "¡{{pokemonName}} ha copiado la habilidad {{abilityName}} \nde {{targetName}}!",
   "windPowerCharged": "¡{{pokemonName}} se ha cargado de electricidad gracias a {{moveName}}!",
-  "quickDraw": "{{pokemonName}} can act faster than normal, thanks to its Quick Draw!",
-  "disguiseAvoidedDamage" : "{{pokemonName}}'s disguise was busted!",
+  "quickDraw": "¡{{pokemonName}} ataca primero gracias a la habilidad Mano Rápida!",
+  "disguiseAvoidedDamage" : "¡El disfraz de {{pokemonName}} se ha roto!",
 } as const;

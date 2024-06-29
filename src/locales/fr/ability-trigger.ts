@@ -8,7 +8,7 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "perishBody": "{{abilityName}} de {{pokemonName}}\nmettra les deux Pokémon K.O. dans trois tours !",
   "poisonHeal": "{{abilityName}} de {{pokemonName}}\nrestaure un peu ses PV !",
   "trace": "{{pokemonName}} copie le talent {{abilityName}}\nde {{targetName}} !",
-  "windPowerCharged": "{{pokemonName}} a été touché par la capacité {{moveName}} et se charge en électricité !",
-  "quickDraw": "{{pokemonName}} can act faster than normal, thanks to its Quick Draw!",
-  "disguiseAvoidedDamage" : "{{pokemonName}}'s disguise was busted!",
+  "windPowerCharged": "{{pokemonName}} a été touché par la capacité\n{{moveName}} et se charge en électricité !",
+  "quickDraw": "Le talent Tir Vif de {{pokemonName}}\nlui permet d’agir plus vite que d’habitude !",
+  "disguiseAvoidedDamage" : "Le déguisement de {{pokemonName}} tombe !",
 } as const;
