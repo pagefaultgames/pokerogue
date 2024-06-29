@@ -2,7 +2,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
 import * as overrides from "#app/overrides";
-import { DamagePhase } from "#app/phases";
+import { TurnEndPhase } from "#app/phases";
 import { Moves } from "#enums/moves";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
@@ -60,7 +60,7 @@ describe("Moves - Dragon Rage", () => {
     vi.spyOn(enemyPokemon, "getTypes").mockReturnValue([Type.DRAGON]);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_RAGE));
-    await game.phaseInterceptor.to(DamagePhase, true);
+    await game.phaseInterceptor.to(TurnEndPhase);
     const damageDealt = enemyPokemon.getMaxHp() - enemyPokemon.hp;
 
     expect(damageDealt).toBe(dragonRageDamage);
@@ -70,7 +70,7 @@ describe("Moves - Dragon Rage", () => {
     vi.spyOn(enemyPokemon, "getTypes").mockReturnValue([Type.STEEL]);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_RAGE));
-    await game.phaseInterceptor.to(DamagePhase, true);
+    await game.phaseInterceptor.to(TurnEndPhase);
     const damageDealt = enemyPokemon.getMaxHp() - enemyPokemon.hp;
 
     expect(damageDealt).toBe(dragonRageDamage);
@@ -80,7 +80,7 @@ describe("Moves - Dragon Rage", () => {
     partyPokemon.summonData.battleStats[BattleStat.SPATK] = 2;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_RAGE));
-    await game.phaseInterceptor.to(DamagePhase, true);
+    await game.phaseInterceptor.to(TurnEndPhase);
     const damageDealt = enemyPokemon.getMaxHp() - enemyPokemon.hp;
 
     expect(damageDealt).toBe(dragonRageDamage);
@@ -90,7 +90,7 @@ describe("Moves - Dragon Rage", () => {
     vi.spyOn(partyPokemon, "getTypes").mockReturnValue([Type.DRAGON]);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_RAGE));
-    await game.phaseInterceptor.to(DamagePhase, true);
+    await game.phaseInterceptor.to(TurnEndPhase);
     const damageDealt = enemyPokemon.getMaxHp() - enemyPokemon.hp;
 
     expect(damageDealt).toBe(dragonRageDamage);
@@ -101,7 +101,7 @@ describe("Moves - Dragon Rage", () => {
     partyPokemon.addTag(BattlerTagType.ALWAYS_CRIT, 99);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_RAGE));
-    await game.phaseInterceptor.to(DamagePhase, true);
+    await game.phaseInterceptor.to(TurnEndPhase);
     const damageDealt = enemyPokemon.getMaxHp() - enemyPokemon.hp;
 
     expect(damageDealt).toBe(dragonRageDamage);
@@ -111,7 +111,7 @@ describe("Moves - Dragon Rage", () => {
     vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.ICE_SCALES);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_RAGE));
-    await game.phaseInterceptor.to(DamagePhase, true);
+    await game.phaseInterceptor.to(TurnEndPhase);
     const damageDealt = enemyPokemon.getMaxHp() - enemyPokemon.hp;
 
     expect(damageDealt).toBe(dragonRageDamage);
@@ -121,7 +121,7 @@ describe("Moves - Dragon Rage", () => {
     game.scene.addModifier(modifierTypes.MULTI_LENS().newModifier(partyPokemon), false);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_RAGE));
-    await game.phaseInterceptor.to(DamagePhase, true);
+    await game.phaseInterceptor.to(TurnEndPhase);
     const damageDealt = enemyPokemon.getMaxHp() - enemyPokemon.hp;
 
     expect(damageDealt).toBe(dragonRageDamage);
