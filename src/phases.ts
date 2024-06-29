@@ -2691,6 +2691,7 @@ export class MovePhase extends BattlePhase {
 
       // This should only happen when there are no valid targets left on the field
       if ((moveQueue.length && moveQueue[0].move === Moves.NONE) || !targets.length) {
+        console.log("no valid targets");
         this.showFailedText();
         this.cancel();
 
@@ -2717,8 +2718,10 @@ export class MovePhase extends BattlePhase {
       const cancelled = new Utils.BooleanHolder(false);
       let failedText = this.move.getMove().getFailedText(this.pokemon, targets[0], this.move.getMove(), cancelled);
       if (success && this.scene.arena.isMoveWeatherCancelled(this.move.getMove())) {
+        console.log("weathercancelled");
         success = false;
       } else if (success && this.scene.arena.isMoveTerrainCancelled(this.pokemon, this.targets, this.move.getMove())) {
+        console.log("terraincancelled");
         success = false;
         if (failedText === null) {
           failedText = getTerrainBlockMessage(targets[0], this.scene.arena.terrain.terrainType);
@@ -2735,10 +2738,12 @@ export class MovePhase extends BattlePhase {
       }
 
       if (success) {
+        console.log("success");
         this.scene.unshiftPhase(this.getEffectPhase());
       } else {
         this.pokemon.pushMoveHistory({ move: this.move.moveId, targets: this.targets, result: MoveResult.FAIL, virtual: this.move.virtual });
         if (!cancelled.value) {
+          console.log("cancelled.value");
           this.showFailedText(failedText);
         }
       }
@@ -2898,6 +2903,7 @@ export class MoveEffectPhase extends PokemonPhase {
           moveHistoryEntry.result = MoveResult.MISS;
           applyMoveAttrs(MissEffectAttr, user, null, move);
         } else {
+          console.log("activetargets");
           this.scene.queueMessage(i18next.t("battle:attackFailed"));
           moveHistoryEntry.result = MoveResult.FAIL;
         }
@@ -3021,9 +3027,23 @@ export class MoveEffectPhase extends PokemonPhase {
   }
 
   hitCheck(target: Pokemon): boolean {
+    const moveAccuracy = this.getHitAccuracy(target);
+    return (moveAccuracy === -1)
+      ? true
+      : this.getUserPokemon().randSeedInt(100, 1) <= moveAccuracy;
+  }
+
+  /**
+   * Calculates the accuracy of the current move in this phase
+   * @param {Pokemon} target The target of the move
+   * @returns {boolean} The accuracy value, which is normally between 0-100 but
+   * may be -1 (to be treated as always-accurate) or higher (e.g. due to a
+   * boosted accuracy battle stat)
+   */
+  getHitAccuracy(target: Pokemon): number {
     // Moves targeting the user and entry hazards can't miss
     if ([MoveTarget.USER, MoveTarget.ENEMY_SIDE].includes(this.move.getMove().moveTarget)) {
-      return true;
+      return -1;
     }
 
     const user = this.getUserPokemon();
@@ -3033,22 +3053,22 @@ export class MoveEffectPhase extends PokemonPhase {
     // multi-hit move and proceed with all hits
     if (user.turnData.hitsLeft < user.turnData.hitCount) {
       if (!this.move.getMove().hasFlag(MoveFlags.CHECK_ALL_HITS) || user.hasAbilityWithAttr(MaxMultiHitAbAttr)) {
-        return true;
+        return -1;
       }
     }
 
     if (user.hasAbilityWithAttr(AlwaysHitAbAttr) || target.hasAbilityWithAttr(AlwaysHitAbAttr)) {
-      return true;
+      return -1;
     }
 
     // If the user should ignore accuracy on a target, check who the user targeted last turn and see if they match
-    if (user.getTag(BattlerTagType.IGNORE_ACCURACY) && (user.getLastXMoves().slice(1).find(() => true)?.targets || []).indexOf(target.getBattlerIndex()) !== -1) {
-      return true;
+    if (user.getTag(BattlerTagType.IGNORE_ACCURACY) && (user.getLastXMoves(0).find(() => true)?.targets || []).indexOf(target.getBattlerIndex()) !== -1) {
+      return -1;
     }
 
     const hiddenTag = target.getTag(SemiInvulnerableTag);
     if (hiddenTag && !this.move.getMove().getAttrs(HitsTagAttr).some(hta => hta.tagType === hiddenTag.tagType)) {
-      return false;
+      return 0;
     }
 
     const moveAccuracy = new Utils.NumberHolder(this.move.getMove().accuracy);
@@ -3057,14 +3077,15 @@ export class MoveEffectPhase extends PokemonPhase {
     applyPreDefendAbAttrs(WonderSkinAbAttr, target, user, this.move.getMove(), { value: false }, moveAccuracy);
 
     if (moveAccuracy.value === -1) {
-      return true;
+      return -1;
     }
 
     const isOhko = this.move.getMove().hasAttr(OneHitKOAccuracyAttr);
-
-    if (!isOhko) {
-      user.scene.applyModifiers(PokemonMoveAccuracyBoosterModifier, user.isPlayer(), user, moveAccuracy);
+    if (isOhko) {
+      return moveAccuracy.value;
     }
+
+    user.scene.applyModifiers(PokemonMoveAccuracyBoosterModifier, user.isPlayer(), user, moveAccuracy);
 
     if (this.scene.arena.weather?.weatherType === WeatherType.FOG) {
       moveAccuracy.value = Math.floor(moveAccuracy.value * 0.9);
@@ -3082,8 +3103,6 @@ export class MoveEffectPhase extends PokemonPhase {
     applyMoveAttrs(IgnoreOpponentStatChangesAttr, user, target, this.move.getMove(), targetEvasionLevel);
     this.scene.applyModifiers(TempBattleStatBoosterModifier, this.player, TempBattleStat.ACC, userAccuracyLevel);
 
-    const rand = user.randSeedInt(100, 1);
-
     const accuracyMultiplier = new Utils.NumberHolder(1);
     if (userAccuracyLevel.value !== targetEvasionLevel.value) {
       accuracyMultiplier.value = userAccuracyLevel.value > targetEvasionLevel.value
@@ -3098,7 +3117,7 @@ export class MoveEffectPhase extends PokemonPhase {
 
     accuracyMultiplier.value /= evasionMultiplier.value;
 
-    return rand <= moveAccuracy.value * accuracyMultiplier.value;
+    return moveAccuracy.value * accuracyMultiplier.value;
   }
 
   getUserPokemon(): Pokemon {

@@ -8,11 +8,9 @@ import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { Species } from "#app/enums/species.js";
 import { Type } from "#app/data/type";
-import * as Utils from "#app/utils";
 import { BattleStat } from "#app/data/battle-stat";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
-import { OneHitKOAccuracyAttr } from "#app/data/move";
 
 describe("Moves - Fissure", () => {
   let phaserGame: Phaser.Game;
@@ -60,10 +58,12 @@ describe("Moves - Fissure", () => {
   it("always hits with no guard", async () => {
     vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NO_GUARD);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FISSURE));
-    await game.phaseInterceptor.to(TurnEndPhase);
+    const fissurePokemonMove = partyPokemon.getMoveset()[getMovePosition(game.scene, 0, Moves.FISSURE)];
+    const moveEffectPhase = new MoveEffectPhase(game.scene, partyPokemon.getFieldIndex(), [enemyPokemon.getFieldIndex()], fissurePokemonMove);
 
-    expect(enemyPokemon.isFainted()).toBe(true);
+    const hitAccuracy = moveEffectPhase.getHitAccuracy(enemyPokemon);
+
+    expect(hitAccuracy).toBe(-1);
   });
 
   it("ignores resistances", async () => {
@@ -86,26 +86,26 @@ describe("Moves - Fissure", () => {
     expect(enemyPokemon.isFainted()).toBe(true);
   });
 
-  it("accuracy scales with level difference", async () => {
-    const oneHitKOAccuracyAttr = new OneHitKOAccuracyAttr();
-    const fissureMove = partyPokemon.getMoveset()[getMovePosition(game.scene, 0, Moves.FISSURE)].getMove();
-    const accuracy = new Utils.NumberHolder(0);
+  it("accuracy scales with the ratio of the user and target's levels", async () => {
+    const fissurePokemonMove = partyPokemon.getMoveset()[getMovePosition(game.scene, 0, Moves.FISSURE)];
+    const moveEffectPhase = new MoveEffectPhase(game.scene, partyPokemon.getFieldIndex(), [enemyPokemon.getFieldIndex()], fissurePokemonMove);
+    let hitAccuracy = 0;
 
     partyPokemon.level = 1;
     enemyPokemon.level = 1;
-    oneHitKOAccuracyAttr.apply(partyPokemon, enemyPokemon, fissureMove, [accuracy]);
-    expect(accuracy.value).toBe(30);
+    hitAccuracy = moveEffectPhase.getHitAccuracy(enemyPokemon);
+    expect(hitAccuracy).toBe(30);
 
     // we don't follow bulbapedia's formula. we use the ratio between the target and user's levels instead of the difference.
     partyPokemon.level = 100;
     enemyPokemon.level = 99;
-    oneHitKOAccuracyAttr.apply(partyPokemon, enemyPokemon, fissureMove, [accuracy]);
-    expect(accuracy.value).toBe(31);
+    hitAccuracy = moveEffectPhase.getHitAccuracy(enemyPokemon);
+    expect(hitAccuracy).toBe(31);
 
     partyPokemon.level = 1000;
     enemyPokemon.level = 1;
-    oneHitKOAccuracyAttr.apply(partyPokemon, enemyPokemon, fissureMove, [accuracy]);
-    expect(accuracy.value).toBe(100);
+    hitAccuracy = moveEffectPhase.getHitAccuracy(enemyPokemon);
+    expect(hitAccuracy).toBe(100);
   });
 
   it("ignores accuracy stat", async () => {
@@ -143,11 +143,11 @@ describe("Moves - Fissure", () => {
     vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.FISSURE, Moves.LOCK_ON]);
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.FLY, Moves.FLY, Moves.FLY, Moves.FLY]);
 
+    // make sure we go first so we catch the enemy before fly starts on the first turn and before fly lands on the second turn
+    partyPokemon.summonData.battleStats[BattleStat.SPD] = 6;
+
     game.doAttack(getMovePosition(game.scene, 0, Moves.LOCK_ON));
     await game.phaseInterceptor.to(TurnEndPhase);
-
-    // make sure we go first so we catch the enemy in fly
-    partyPokemon.summonData.battleStats[BattleStat.SPD] = 6;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.FISSURE));
     await game.phaseInterceptor.to(TurnEndPhase);
@@ -157,10 +157,9 @@ describe("Moves - Fissure", () => {
 
   it("can hit a pokemon using dig", async () => {
     vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NO_GUARD);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.FISSURE, Moves.SPLASH]);
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.DIG, Moves.DIG, Moves.DIG, Moves.DIG]);
 
-    // make sure we go second so we catch the enemy in dig
+    // make sure we go second so we catch the enemy in dig on the first turn
     partyPokemon.summonData.battleStats[BattleStat.SPD] = -6;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.FISSURE));
@@ -170,11 +169,10 @@ describe("Moves - Fissure", () => {
   });
 
   it("can't otherwise hit a pokemon in a semi-invulnerable state", async () => {
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NO_GUARD);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.FISSURE, Moves.SPLASH]);
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.FISSURE]);
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.FLY, Moves.FLY, Moves.FLY, Moves.FLY]);
 
-    // make sure we go second so we catch the enemy in fly
+    // make sure we go second so we catch the enemy in fly on the first turn
     partyPokemon.summonData.battleStats[BattleStat.SPD] = -6;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.FISSURE));
