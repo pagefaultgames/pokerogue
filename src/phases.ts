@@ -2329,7 +2329,7 @@ export class TurnStartPhase extends FieldPhase {
             // if only one pokemon is alive, use that one
           if (playerActivePokemon.length > 1) {
             // find which active pokemon has faster speed
-            const fasterPokemon = playerActivePokemon[0].getStat(Stat.SPD) > playerActivePokemon[1].getStat(Stat.SPD) ? playerActivePokemon[0] : playerActivePokemon[1];
+            const fasterPokemon = playerActivePokemon[0].getStat(Stat.SPD, true) > playerActivePokemon[1].getStat(Stat.SPD, true) ? playerActivePokemon[0] : playerActivePokemon[1];
             // check if either active pokemon has the ability "Run Away"
             const hasRunAway = playerActivePokemon.find(p => p.hasAbility(Abilities.RUN_AWAY));
             runningPokemon = hasRunAway !== undefined ? hasRunAway : fasterPokemon;
@@ -4998,9 +4998,9 @@ export class AttemptRunPhase extends PokemonPhase {
     const playerPokemon = this.getPokemon();
     const enemyField = this.scene.getEnemyField();
 
-    const enemySpeed = enemyField.reduce((total: integer, enemyPokemon: Pokemon) => total + enemyPokemon.getStat(Stat.SPD), 0) / enemyField.length;
+    const enemySpeed = enemyField.reduce((total: integer, enemyPokemon: Pokemon) => total + enemyPokemon.getStat(Stat.SPD, true), 0) / enemyField.length;
 
-    const escapeChance = new Utils.IntegerHolder((((playerPokemon.getStat(Stat.SPD) * 128) / enemySpeed) + (30 * this.scene.currentBattle.escapeAttempts++)) % 256);
+    const escapeChance = new Utils.IntegerHolder((((playerPokemon.getStat(Stat.SPD, true) * 128) / enemySpeed) + (30 * this.scene.currentBattle.escapeAttempts++)) % 256);
     applyAbAttrs(RunSuccessAbAttr, playerPokemon, null, escapeChance);
 
     if (playerPokemon.randSeedInt(256) < escapeChance.value) {

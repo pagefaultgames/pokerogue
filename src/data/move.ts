@@ -5342,7 +5342,9 @@ export class TransformAttr extends MoveEffectAttr {
       user.summonData.ability = target.getAbility().id;
       user.summonData.gender = target.getGender();
       user.summonData.fusionGender = target.getFusionGender();
-      user.summonData.stats = [ user.stats[Stat.HP] ].concat(target.stats.slice(1));
+      for (let s = Stat.ATK; s <= Stat.SPD; s++) {
+        user.setStat(s, target.getStat(s, true), true);
+      }
       user.summonData.battleStats = target.summonData.battleStats.slice(0);
       user.summonData.moveset = target.getMoveset().map(m => new PokemonMove(m.moveId, m.ppUsed, m.ppUp));
       user.summonData.types = target.getTypes();
@@ -5354,6 +5356,25 @@ export class TransformAttr extends MoveEffectAttr {
         resolve(true);
       });
     });
+  }
+}
+
+export class AverageStatAttr extends MoveEffectAttr {
+  private stat: Stat;
+
+  constructor(stat: Stat) {
+    super();
+
+    this.stat = stat;
+  }
+
+  apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
+    const avg = Math.floor((user.getStat(this.stat, true) + target.getStat(this.stat, true)) / 2);
+
+    user.setStat(this.stat, avg, true);
+    target.setStat(this.stat, avg, true);
+
+    return true;
   }
 }
 
@@ -6904,9 +6925,9 @@ export function initMoves() {
       .target(MoveTarget.USER_SIDE)
       .attr(AddArenaTagAttr, ArenaTagType.WIDE_GUARD, 1, true, true),
     new StatusMove(Moves.GUARD_SPLIT, Type.PSYCHIC, -1, 10, -1, 0, 5)
-      .unimplemented(),
+      .attr(AverageStatAttr, Stat.DEF),
     new StatusMove(Moves.POWER_SPLIT, Type.PSYCHIC, -1, 10, -1, 0, 5)
-      .unimplemented(),
+      .attr(AverageStatAttr, Stat.ATK),
     new StatusMove(Moves.WONDER_ROOM, Type.PSYCHIC, -1, 10, -1, 0, 5)
       .ignoresProtect()
       .target(MoveTarget.BOTH_SIDES)

@@ -246,9 +246,9 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.MAROWAK, 28, null, null)
   ],
   [Species.TYROGUE]: [
-    new SpeciesEvolution(Species.HITMONLEE, 20, null, new SpeciesEvolutionCondition(p => p.stats[Stat.ATK] > p.stats[Stat.DEF])),
-    new SpeciesEvolution(Species.HITMONCHAN, 20, null, new SpeciesEvolutionCondition(p => p.stats[Stat.ATK] < p.stats[Stat.DEF])),
-    new SpeciesEvolution(Species.HITMONTOP, 20, null, new SpeciesEvolutionCondition(p => p.stats[Stat.ATK] === p.stats[Stat.DEF]))
+    new SpeciesEvolution(Species.HITMONLEE, 20, null, new SpeciesEvolutionCondition(p => p.getStat(Stat.ATK) > p.getStat(Stat.DEF))),
+    new SpeciesEvolution(Species.HITMONCHAN, 20, null, new SpeciesEvolutionCondition(p => p.getStat(Stat.ATK) < p.getStat(Stat.DEF))),
+    new SpeciesEvolution(Species.HITMONTOP, 20, null, new SpeciesEvolutionCondition(p => p.getStat(Stat.ATK) === p.getStat(Stat.DEF)))
   ],
   [Species.KOFFING]: [
     new SpeciesEvolution(Species.GALAR_WEEZING, 35, null, new SpeciesEvolutionCondition(p => p.scene.arena.biomeType === Biome.METROPOLIS || p.scene.arena.biomeType === Biome.SLUM), SpeciesWildEvolutionDelay.MEDIUM),

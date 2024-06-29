@@ -2024,7 +2024,9 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
     pokemon.summonData.ability = target.getAbility().id;
     pokemon.summonData.gender = target.getGender();
     pokemon.summonData.fusionGender = target.getFusionGender();
-    pokemon.summonData.stats = [ pokemon.stats[Stat.HP] ].concat(target.stats.slice(1));
+    for (let s = Stat.ATK; s <= Stat.SPD; s++) {
+      pokemon.setStat(s, target.getStat(s, true), true);
+    }
     pokemon.summonData.battleStats = target.summonData.battleStats.slice(0);
     pokemon.summonData.moveset = target.getMoveset().map(m => new PokemonMove(m.moveId, m.ppUsed, m.ppUp));
     pokemon.summonData.types = target.getTypes();

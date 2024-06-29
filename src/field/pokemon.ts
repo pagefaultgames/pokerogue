@@ -624,13 +624,36 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     });
   }
 
-  getStat(stat: Stat): integer {
+  /**
+   * Retrieves the corresponding {@linkcode Stat} of the {@linkcode Pokemon}.
+   * @param stat the desired {@linkcode Stat}
+   * @param getOverride {@linkcode boolean} to prefer in-battle overridden stats (`true`) or actual stats (`false`)
+   * @returns the numeric value of the desired {@linkcode Stat}
+   */
+  getStat(stat: Stat, getOverride: boolean = false): number {
+    if (getOverride && this.summonData?.stats.has(stat)) {
+      return this.summonData.stats.get(stat);
+    }
     return this.stats[stat];
+  }
+
+  /**
+   * Writes the value of the corresponding {@linkcode Stat} of the {@linkcode Pokemon}.
+   * @param stat the desired {@linkcode Stat}
+   * @param value the desired numeric value to be written to the desired {@linkcode Stat}
+   * @param setOverride {@linkcode boolean} to write on in-battle overriden stats (`true`) or actual stats (`false`)
+   */
+  setStat(stat: Stat, value: number, setOverride: boolean = false) {
+    if (setOverride && !!this.summonData) {
+      this.summonData.stats.set(stat, value);
+    } else {
+      this.stats[stat] = value;
+    }
   }
 
   getBattleStat(stat: Stat, opponent?: Pokemon, move?: Move, isCritical: boolean = false): integer {
     if (stat === Stat.HP) {
-      return this.getStat(Stat.HP);
+      return this.getStat(Stat.HP, true);
     }
     const battleStat = (stat - 1) as BattleStat;
     const statLevel = new Utils.IntegerHolder(this.summonData.battleStats[battleStat]);
@@ -655,7 +678,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.isPlayer()) {
       this.scene.applyModifiers(TempBattleStatBoosterModifier, this.isPlayer(), battleStat as integer as TempBattleStat, statLevel);
     }
-    const statValue = new Utils.NumberHolder(this.getStat(stat));
+    const statValue = new Utils.NumberHolder(this.getStat(stat, true));
     const fieldApplied = new Utils.BooleanHolder(false);
     for (const pokemon of this.scene.getField(true)) {
       applyFieldBattleStatMultiplierAbAttrs(FieldMultiplyBattleStatAbAttr, pokemon, stat, statValue, this, fieldApplied);
@@ -711,9 +734,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!this.stats) {
       this.stats = [ 0, 0, 0, 0, 0, 0 ];
     }
-    const baseStats = this.getSpeciesForm().baseStats.slice(0);
+    const baseStats = this.getSpeciesForm(true).baseStats.slice(0);
     if (this.fusionSpecies) {
-      const fusionBaseStats = this.getFusionSpeciesForm().baseStats;
+      const fusionBaseStats = this.getFusionSpeciesForm(true).baseStats;
       for (let s = 0; s < this.stats.length; s++) {
         baseStats[s] = Math.ceil((baseStats[s] + fusionBaseStats[s]) / 2);
       }
@@ -1173,7 +1196,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   getMatchupScore(pokemon: Pokemon): number {
     const types = this.getTypes(true);
     const enemyTypes = pokemon.getTypes(true, true);
-    const outspeed = (this.isActive(true) ? this.getBattleStat(Stat.SPD, pokemon) : this.getStat(Stat.SPD)) <= pokemon.getBattleStat(Stat.SPD, this);
+    const outspeed = (this.isActive(true) ? this.getBattleStat(Stat.SPD, pokemon) : this.getStat(Stat.SPD, true)) <= pokemon.getBattleStat(Stat.SPD, this);
     let atkScore = pokemon.getAttackTypeEffectiveness(types[0], this) * (outspeed ? 1.25 : 1);
     let defScore = 1 / Math.max(this.getAttackTypeEffectiveness(enemyTypes[0], pokemon), 0.25);
     if (types.length > 1) {
@@ -3840,7 +3863,7 @@ export class PokemonSummonData {
   public ability: Abilities = Abilities.NONE;
   public gender: Gender;
   public fusionGender: Gender;
-  public stats: integer[];
+  public stats: Map<Stat, number> = new Map<Stat, number>();
   public moveset: PokemonMove[];
   // If not initialized this value will not be populated from save data.
   public types: Type[] = null;
