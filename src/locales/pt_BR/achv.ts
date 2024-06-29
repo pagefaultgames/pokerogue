@@ -265,6 +265,14 @@ export const PGMachv: AchievementTranslationEntries = {
   "MONO_FAIRY": {
     name: "Clube das Winx",
   },
+  "NUZLOCKE_REGULAR": {
+    name: "Unfaintable",
+    description: "Complete the regular nuzlocke challenge.",
+  },
+  "NUZLOCKE_HARDCORE": {
+    name: "How?",
+    description: "Complete the hardcore nuzlocke challenge.",
+  },
 } as const;
 
 // Achievement translations for the when the player character is female
@@ -532,4 +540,6 @@ export const PGFachv: AchievementTranslationEntries = {
   "MONO_FAIRY": {
     name: "Clube das Winx",
   },
+  "NUZLOCKE_REGULAR": PGMachv.NUZLOCKE_REGULAR,
+  "NUZLOCKE_HARDCORE": PGMachv.NUZLOCKE_HARDCORE,
 } as const;

@@ -3,6 +3,7 @@ import { TranslationEntries } from "#app/interfaces/locales";
 export const challenges: TranslationEntries = {
   "title": "Paramètres du Challenge",
   "illegalEvolution": "{{pokemon}} s’est transformé en Pokémon\ninéligible pour ce challenge !",
+  "illegalMove": "{{moveName}} is not a valid move for this challenge!",
   "singleGeneration": {
     "name": "Mono-génération",
     "desc": "Vous ne pouvez choisir que des Pokémon de {{gen}} génération.",
@@ -23,4 +24,13 @@ export const challenges: TranslationEntries = {
     "desc_default": "Vous ne pouvez choisir que des Pokémon du type sélectionné."
     //type in pokemon-info
   },
+  "nuzlocke": {
+    "name": "Nuzlocke",
+    "desc": "The Nuzlocke Challenge offers various restrictions to create a special challenge.",
+    "desc.1": "Nuzlocke Ruleset:\n- No revives.\n- Only one Pokémon every 10th waves can be added to the party.\n",
+    "desc.2": "- No heal at the end of every 10th wave.\n- No legendary starters.",
+    "value.0": "Off",
+    "value.1": "Regular",
+    "value.2": "Hardcore",
+  }
 } as const;

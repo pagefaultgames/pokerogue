@@ -770,8 +770,15 @@ export class NuzlockeChallenge extends Challenge {
       overrideValue = this.value;
     }
     let desc: string = i18next.t("challenges:nuzlocke.desc");
-    if (overrideValue === 2) {
+    switch (overrideValue) {
+    case 1:
+      desc = i18next.t("challenges:nuzlocke.desc.1");
+      break;
+    case 2:
+      desc = i18next.t("challenges:nuzlocke.desc.1");
       desc += i18next.t("challenges:nuzlocke.desc.2");
+    default:
+      break;
     }
     return desc;
   }
