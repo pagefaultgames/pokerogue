@@ -19,11 +19,10 @@ export function updateUserInfo(): Promise<[boolean, integer]> {
     if (bypassLogin) {
       loggedInUser = { username: "Guest", lastSessionSlot: -1 };
       let lastSessionSlot = -1;
-      for (let s = 0; s < 5; s++) {
-        if (localStorage.getItem(`sessionData${s ? s : ""}_${loggedInUser.username}`)) {
-          lastSessionSlot = s;
-          break;
-        }
+      // Get last slot saved and checks if it has data to enable continue
+      const slotId = parseInt(localStorage.getItem("slotId"));
+      if (localStorage.getItem(`sessionData${slotId ? slotId : ""}_${loggedInUser.username}`)) {
+        lastSessionSlot = slotId;
       }
       loggedInUser.lastSessionSlot = lastSessionSlot;
       // Migrate old data from before the username was appended
