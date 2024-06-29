@@ -382,7 +382,7 @@ describe("Abilities - Parental Bond", () => {
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
 
-      await game.phaseInterceptor.to(TurnEndPhase);
+      await game.phaseInterceptor.to(MoveEndPhase, false);
 
       expect(enemyPokemon.hp).toBe(Math.ceil(enemyStartingHp * 0.25));
     }, TIMEOUT
@@ -413,7 +413,7 @@ describe("Abilities - Parental Bond", () => {
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
 
-      await game.phaseInterceptor.to(TurnEndPhase);
+      await game.phaseInterceptor.to(MoveEndPhase, false);
 
       expect(enemyPokemon.hp).toBe(enemyStartingHp - 200);
     }, TIMEOUT
