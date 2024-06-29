@@ -1,5 +1,5 @@
 import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
-import { BattleEndPhase, MoveEffectPhase, MovePhase, NewBattlePhase, PartyStatusCurePhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../phases";
+import { BattleEndPhase, MovePhase, NewBattlePhase, PartyStatusCurePhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../phases";
 import { BattleStat, getBattleStatName } from "./battle-stat";
 import { EncoreTag, SemiInvulnerableTag } from "./battler-tags";
 import { getPokemonMessage, getPokemonNameWithAffix } from "../messages";
@@ -813,12 +813,15 @@ export class MoveEffectAttr extends MoveAttr {
   public firstHitOnly: boolean;
   /** Should this effect only apply on the last hit? */
   public lastHitOnly: boolean;
+  /** Should this effect only apply on the first target hit? */
+  public firstTargetOnly: boolean;
 
-  constructor(selfTarget?: boolean, trigger?: MoveEffectTrigger, firstHitOnly: boolean = false, lastHitOnly: boolean = false) {
+  constructor(selfTarget?: boolean, trigger?: MoveEffectTrigger, firstHitOnly: boolean = false, lastHitOnly: boolean = false, firstTargetOnly: boolean = false) {
     super(selfTarget);
     this.trigger = trigger !== undefined ? trigger : MoveEffectTrigger.POST_APPLY;
     this.firstHitOnly = firstHitOnly;
     this.lastHitOnly = lastHitOnly;
+    this.firstTargetOnly = firstTargetOnly;
   }
 
   /**
@@ -2330,8 +2333,8 @@ export class StatChangeAttr extends MoveEffectAttr {
   private condition: MoveConditionFunc;
   private showMessage: boolean;
 
-  constructor(stats: BattleStat | BattleStat[], levels: integer, selfTarget?: boolean, condition?: MoveConditionFunc, showMessage: boolean = true, firstHitOnly: boolean = false, moveEffectTrigger: MoveEffectTrigger = MoveEffectTrigger.HIT) {
-    super(selfTarget, moveEffectTrigger, firstHitOnly);
+  constructor(stats: BattleStat | BattleStat[], levels: integer, selfTarget?: boolean, condition?: MoveConditionFunc, showMessage: boolean = true, firstHitOnly: boolean = false, moveEffectTrigger: MoveEffectTrigger = MoveEffectTrigger.HIT, firstTargetOnly: boolean = false) {
+    super(selfTarget, moveEffectTrigger, firstHitOnly, false, firstTargetOnly);
     this.stats = typeof(stats) === "number"
       ? [ stats as BattleStat ]
       : stats as BattleStat[];
@@ -5513,25 +5516,6 @@ const userSleptOrComatoseCondition: MoveConditionFunc = (user: Pokemon, target: 
 
 const targetSleptOrComatoseCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) =>  target.status?.effect === StatusEffect.SLEEP || target.hasAbility(Abilities.COMATOSE);
 
-/**
- * Condition to apply effects only upon applying the move to its last target.
- * Currently only used for Make It Rain.
- * @param {Pokemon} user The user of the move.
- * @param {Pokemon} target The current target of the move.
- * @param {Move} move The move to which this condition applies.
- * @returns true if the target is the last target to which the move applies.
- */
-const lastTargetOnlyCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => {
-  const effectPhase = user.scene.getCurrentPhase();
-  const targetIndex = target.getFieldIndex() + (target.isPlayer() ? 0 : BattlerIndex.ENEMY);
-
-  if (effectPhase instanceof MoveEffectPhase) {
-    const activeTargets = effectPhase.getTargets();
-    return (activeTargets.length === 0 || targetIndex >= activeTargets.at(-1).getBattlerIndex());
-  }
-  return false;
-};
-
 export type MoveAttrFilter = (attr: MoveAttr) => boolean;
 
 function applyMoveAttrsInternal(attrFilter: MoveAttrFilter, user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<void> {
@@ -8279,7 +8263,7 @@ export function initMoves() {
       .attr(RemoveScreensAttr),
     new AttackMove(Moves.MAKE_IT_RAIN, Type.STEEL, MoveCategory.SPECIAL, 120, 100, 5, -1, 0, 9)
       .attr(MoneyAttr)
-      .attr(StatChangeAttr, BattleStat.SPATK, -1, true, lastTargetOnlyCondition, true, false)
+      .attr(StatChangeAttr, BattleStat.SPATK, -1, true, null, true, false, MoveEffectTrigger.HIT, true)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.PSYBLADE, Type.PSYCHIC, MoveCategory.PHYSICAL, 80, 100, 15, -1, 0, 9)
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.ELECTRIC && user.isGrounded() ? 1.5 : 1)
