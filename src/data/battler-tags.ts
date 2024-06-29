@@ -66,6 +66,10 @@ export class BattlerTag {
     return false;
   }
 
+  isTargetLinked(): boolean {
+    return false;
+  }
+
   getMoveName(): string | null {
     return this.sourceMove
       ? allMoves[this.sourceMove].name
@@ -193,6 +197,19 @@ export class TrappedTag extends BattlerTag {
 
   getTrapMessage(pokemon: Pokemon): string {
     return i18next.t("battle:battlerTagsTrappedOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) });
+  }
+}
+
+/**
+ * Tag applied to the {@linkcode Moves.JAW_LOCK} user and target to prevent switching.
+ */
+export class JawLockTag extends TrappedTag {
+  constructor(sourceId: integer) {
+    super(BattlerTagType.JAW_LOCK, BattlerTagLapseType.CUSTOM, 1, Moves.JAW_LOCK, sourceId);
+  }
+
+  isTargetLinked(): boolean {
+    return true;
   }
 }
 
@@ -1806,6 +1823,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new DrowsyTag();
   case BattlerTagType.TRAPPED:
     return new TrappedTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
+  case BattlerTagType.JAW_LOCK:
+    return new JawLockTag(sourceId);
   case BattlerTagType.BIND:
     return new BindTag(turnCount, sourceId);
   case BattlerTagType.WRAP:
