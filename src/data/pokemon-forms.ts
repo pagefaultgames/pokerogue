@@ -137,7 +137,7 @@ export class SpeciesFormChange {
   public formKey: string;
   public trigger: SpeciesFormChangeTrigger;
   public quiet: boolean;
-  private conditions: SpeciesFormChangeCondition[];
+  public conditions: SpeciesFormChangeCondition[];
 
   constructor(speciesId: Species, preFormKey: string, evoFormKey: string, trigger: SpeciesFormChangeTrigger, quiet: boolean = false, ...conditions: SpeciesFormChangeCondition[]) {
     this.speciesId = speciesId;
