@@ -10,7 +10,7 @@ export enum PokeballType {
   LUXURY_BALL
 }
 
-export const MAX_PER_TYPE_POKEBALL_COUNT: integer = 99;
+export const MAX_PER_TYPE_POKEBALLS: integer = 99;
 
 export function getPokeballAtlasKey(type: PokeballType): string {
   switch (type) {
