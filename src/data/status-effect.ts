@@ -32,7 +32,7 @@ export class Status {
   }
 }
 
-export function getStatusEffectMessageKey(statusEffect: StatusEffect): string {
+function getStatusEffectMessageKey(statusEffect: StatusEffect): string {
   switch (statusEffect) {
   case StatusEffect.POISON:
     return "statusEffect:poison";

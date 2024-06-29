@@ -24,14 +24,22 @@ describe("status-effect", () => {
 
     it("should return the obtain text", () => {
       vi.spyOn(i18next, "t").mockImplementation(tMock);
+
       const text = getStatusEffectObtainText(statusEffect, pokemonName);
       expect(text).toBe("statusEffect:none.obtain");
+
+      const emptySourceText = getStatusEffectObtainText(statusEffect, pokemonName, "");
+      expect(emptySourceText).toBe("statusEffect:none.obtain");
     });
 
     it("should return the source-obtain text", () => {
       vi.spyOn(i18next, "t").mockImplementation(tMock);
+
       const text = getStatusEffectObtainText(statusEffect, pokemonName, sourceText);
       expect(text).toBe("statusEffect:none.obtainSource");
+
+      const emptySourceText = getStatusEffectObtainText(statusEffect, pokemonName, "");
+      expect(emptySourceText).not.toBe("statusEffect:none.obtainSource");
     });
 
     it("should return the activation text", () => {
@@ -64,8 +72,12 @@ describe("status-effect", () => {
 
     it("should return the obtain text", () => {
       vi.spyOn(i18next, "t").mockImplementation(tMock);
+
       const text = getStatusEffectObtainText(statusEffect, pokemonName);
       expect(text).toBe("statusEffect:poison.obtain");
+
+      const emptySourceText = getStatusEffectObtainText(statusEffect, pokemonName, "");
+      expect(emptySourceText).toBe("statusEffect:poison.obtain");
     });
 
     it("should return the activation text", () => {
@@ -98,8 +110,12 @@ describe("status-effect", () => {
 
     it("should return the obtain text", () => {
       vi.spyOn(i18next, "t").mockImplementation(tMock);
+
       const text = getStatusEffectObtainText(statusEffect, pokemonName);
       expect(text).toBe("statusEffect:toxic.obtain");
+
+      const emptySourceText = getStatusEffectObtainText(statusEffect, pokemonName, "");
+      expect(emptySourceText).toBe("statusEffect:toxic.obtain");
     });
 
     it("should return the activation text", () => {
@@ -132,8 +148,12 @@ describe("status-effect", () => {
 
     it("should return the obtain text", () => {
       vi.spyOn(i18next, "t").mockImplementation(tMock);
+
       const text = getStatusEffectObtainText(statusEffect, pokemonName);
       expect(text).toBe("statusEffect:paralysis.obtain");
+
+      const emptySourceText = getStatusEffectObtainText(statusEffect, pokemonName, "");
+      expect(emptySourceText).toBe("statusEffect:paralysis.obtain");
     });
 
     it("should return the activation text", () => {
@@ -166,8 +186,12 @@ describe("status-effect", () => {
 
     it("should return the obtain text", () => {
       vi.spyOn(i18next, "t").mockImplementation(tMock);
+
       const text = getStatusEffectObtainText(statusEffect, pokemonName);
       expect(text).toBe("statusEffect:sleep.obtain");
+
+      const emptySourceText = getStatusEffectObtainText(statusEffect, pokemonName, "");
+      expect(emptySourceText).toBe("statusEffect:sleep.obtain");
     });
 
     it("should return the activation text", () => {
@@ -200,8 +224,12 @@ describe("status-effect", () => {
 
     it("should return the obtain text", () => {
       vi.spyOn(i18next, "t").mockImplementation(tMock);
+
       const text = getStatusEffectObtainText(statusEffect, pokemonName);
       expect(text).toBe("statusEffect:freeze.obtain");
+
+      const emptySourceText = getStatusEffectObtainText(statusEffect, pokemonName, "");
+      expect(emptySourceText).toBe("statusEffect:freeze.obtain");
     });
 
     it("should return the activation text", () => {
@@ -234,8 +262,12 @@ describe("status-effect", () => {
 
     it("should return the obtain text", () => {
       vi.spyOn(i18next, "t").mockImplementation(tMock);
+
       const text = getStatusEffectObtainText(statusEffect, pokemonName);
       expect(text).toBe("statusEffect:burn.obtain");
+
+      const emptySourceText = getStatusEffectObtainText(statusEffect, pokemonName, "");
+      expect(emptySourceText).toBe("statusEffect:burn.obtain");
     });
 
     it("should return the activation text", () => {
