@@ -2024,7 +2024,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         }
 
         if (this.isFainted()) {
-          this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), oneHitKo));
+          this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), oneHitKo, [...this.summonData.tags]));
           this.resetSummonData();
         }
 
@@ -2078,7 +2078,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     this.hp = this.hp - damage;
     if (this.isFainted() && !ignoreFaintPhase) {
-      this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), preventEndure));
+      this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), preventEndure, [...this.summonData.tags]));
       this.resetSummonData();
     }
 
@@ -2208,6 +2208,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   removeTagsBySourceId(sourceId: integer): void {
     this.findAndRemoveTags(t => t.isSourceLinked() && t.sourceId === sourceId);
+  }
+
+  /**
+   * Removes all tags that are from this Pokemon and are target linked
+   * @param {BattlerTag[]} sourceTags {@linkcode BattlerTag} array to filter from
+   */
+  removeTargetLinkedTags(sourceTags: BattlerTag[]): void {
+    sourceTags.filter(t => t.isTargetLinked() && t.sourceId === this.id).forEach(t => this.removeTag(t.tagType));
   }
 
   transferTagsBySourceId(sourceId: integer, newSourceId: integer): void {

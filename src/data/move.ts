@@ -7759,8 +7759,8 @@ export function initMoves() {
       .attr(HighCritAttr)
       .attr(BypassRedirectAttr),
     new AttackMove(Moves.JAW_LOCK, Type.DARK, MoveCategory.PHYSICAL, 80, 100, 10, -1, 0, 8)
-      .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, false, 1)
-      .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, true, false, 1)
+      .attr(AddBattlerTagAttr, BattlerTagType.JAW_LOCK, false, false, 1)
+      .attr(AddBattlerTagAttr, BattlerTagType.JAW_LOCK, true, false, 1)
       .bitingMove(),
     new SelfStatusMove(Moves.STUFF_CHEEKS, Type.NORMAL, -1, 10, -1, 0, 8) // TODO: Stuff Cheeks should not be selectable when the user does not have a berry, see wiki
       .attr(EatBerryAttr)
