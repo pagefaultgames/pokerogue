@@ -111,7 +111,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
       let legendaryLabelX = gachaX;
       let legendaryLabelY = gachaY;
-      if (["de"].includes(currentLanguage)) {
+      if (["de", "es"].includes(currentLanguage)) {
         pokemonIconX = -25;
         pokemonIconY = 10;
         legendaryLabelX = -6;
@@ -124,9 +124,21 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
       switch (gachaType as GachaType) {
       case GachaType.LEGENDARY:
-        gachaUpLabel.setX(legendaryLabelX);
+        if (["de", "es"].includes(currentLanguage)) {
+          gachaUpLabel.setAlign("center");
+          gachaUpLabel.setY(0);
+        }
+        if (["pt-BR"].includes(currentLanguage)) {
+          gachaUpLabel.setX(legendaryLabelX - 2);
+        } else {
+          gachaUpLabel.setX(legendaryLabelX);
+        }
         gachaUpLabel.setY(legendaryLabelY);
+
         const pokemonIcon = this.scene.add.sprite(pokemonIconX, pokemonIconY, "pokemon_icons_0");
+        if (["pt-BR"].includes(currentLanguage)) {
+          pokemonIcon.setX(pokemonIconX - 2);
+        }
         pokemonIcon.setScale(0.5);
         pokemonIcon.setOrigin(0, 0.5);
 
