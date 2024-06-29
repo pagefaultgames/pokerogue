@@ -1727,6 +1727,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return (this.isPlayer() ? this.scene.getPlayerField() : this.scene.getEnemyField())[this.getFieldIndex() ? 0 : 1];
   }
 
+  /**
+   * Gets the Pokémon on the allied field.
+   *
+   * @returns An array of Pokémon on the allied field.
+   */
   getAlliedField(): Pokemon[] {
     return this instanceof PlayerPokemon ? this.scene.getPlayerField() : this.scene.getEnemyField();
   }

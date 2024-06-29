@@ -2399,6 +2399,9 @@ export class PreSetStatusAbAttr extends AbAttr {
   }
 }
 
+/**
+ * Provides immunity to status effects to specified targets.
+ */
 export class PreSetStatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
   private immuneEffects: StatusEffect[];
 
@@ -2459,6 +2462,9 @@ export class PreApplyBattlerTagAbAttr extends AbAttr {
   }
 }
 
+/**
+ * Provides immunity to BattlerTags {@linkcode BattlerTag} to specified targets.
+ */
 export class PreApplyBattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
   private immuneTagType: BattlerTagType;
 
@@ -2482,12 +2488,18 @@ export class PreApplyBattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
   }
 }
 
+/**
+ * Provides immunity to BattlerTags {@linkcode BattlerTag} to the user.
+ */
 export class BattlerTagImmunityAbAttr extends PreApplyBattlerTagImmunityAbAttr {
   constructor(immuneTagType: BattlerTagType) {
     super(immuneTagType);
   }
 }
 
+/**
+ * Provides immunity to BattlerTags {@linkcode BattlerTag} to the user's field.
+ */
 export class UserFieldBattlerTagImmunityAbAttr extends PreApplyBattlerTagImmunityAbAttr {
   constructor(immuneTagType: BattlerTagType) {
     super(immuneTagType);
