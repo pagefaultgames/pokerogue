@@ -164,10 +164,10 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "parasol_lady": {
     "encounter": {
-      1: "Time to grace the battlefield with elegance and poise!",
+      1: "Honorons ce terrain de combat avec élégance et équilibre !",
     },
     "victory": {
-      2: "My elegance remains unbroken!",
+      2: "Mon élégance demeure inébranlable !",
     }
   },
   "twins": {
@@ -2671,10 +2671,10 @@ export const PGFdialogue: DialogueTranslationEntries = {
   },
   "parasol_lady": {
     "encounter": {
-      1: "Time to grace the battlefield with elegance and poise!",
+      1: "Honorons ce terrain de combat avec élégance et équilibre !",
     },
     "victory": {
-      1: "My elegance remains unbroken!",
+      2: "Mon élégance demeure inébranlable !",
     }
   },
   "twins": {
