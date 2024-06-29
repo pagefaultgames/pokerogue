@@ -2545,6 +2545,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return false;
     }
 
+    /**
+     * If this Pokemon falls asleep or freezes in the middle of a multi-hit attack,
+     * cancel the attack's subsequent hits.
+     */
+    if (effect === StatusEffect.SLEEP || effect === StatusEffect.FREEZE) {
+      this.stopMultiHit();
+    }
+
     if (asPhase) {
       this.scene.unshiftPhase(new ObtainStatusEffectPhase(this.scene, this.getBattlerIndex(), effect, cureTurn, sourceText, sourcePokemon));
       return true;
