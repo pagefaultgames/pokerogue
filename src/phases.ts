@@ -416,7 +416,7 @@ export class TitlePhase extends Phase {
         this.scene.pushPhase(new SummonPhase(this.scene, 1, true, true));
       }
 
-      if (this.scene.currentBattle.battleType !== BattleType.TRAINER && (this.scene.currentBattle.waveIndex > 1 || !this.scene.gameMode.isDaily)) {
+      if (this.scene.currentBattle.waveIndex > 1 || !this.scene.gameMode.isDaily) {
         const minPartySize = this.scene.currentBattle.double ? 2 : 1;
         if (availablePartyMembers > minPartySize) {
           this.scene.pushPhase(new CheckSwitchPhase(this.scene, 0, this.scene.currentBattle.double));
@@ -1093,7 +1093,7 @@ export class EncounterPhase extends BattlePhase {
         this.scene.pushPhase(new ToggleDoublePositionPhase(this.scene, false));
       }
 
-      if (this.scene.currentBattle.battleType !== BattleType.TRAINER && (this.scene.currentBattle.waveIndex > 1 || !this.scene.gameMode.isDaily)) {
+      if (this.scene.currentBattle.waveIndex > 1 || !this.scene.gameMode.isDaily) {
         const minPartySize = this.scene.currentBattle.double ? 2 : 1;
         if (availablePartyMembers.length > minPartySize) {
           this.scene.pushPhase(new CheckSwitchPhase(this.scene, 0, this.scene.currentBattle.double));
