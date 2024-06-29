@@ -60,5 +60,4 @@ describe("Moves - Fissure", () => {
 
     expect(enemyPokemon.isFainted()).toBe(true);
   });
-
 });
