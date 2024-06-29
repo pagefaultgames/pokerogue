@@ -3996,6 +3996,27 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * Attribute used for moves that add a tag to the user and target, such as Jaw Lock
+ * @extends AddBattlerTagAttr
+ */
+export class AddLinkedBattlerTagAttr extends AddBattlerTagAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.canApply(user, target, move, args)) {
+      return false;
+    }
+
+    const moveChance = this.getMoveChance(user,target,move,this.selfTarget);
+    if (moveChance < 0 || moveChance === 100 || user.randSeedInt(100) < moveChance) {
+      // Add the tag to both the user and target
+      return target.addTag(this.tagType,  user.randSeedInt(this.turnCountMax - this.turnCountMin, this.turnCountMin), move.id, user.id)
+        && user.addTag(this.tagType,  user.randSeedInt(this.turnCountMax - this.turnCountMin, this.turnCountMin), move.id, user.id);
+    }
+
+    return false;
+  }
+}
+
 export class CurseAttr extends MoveEffectAttr {
 
   apply(user: Pokemon, target: Pokemon, move:Move, args: any[]): boolean {
@@ -7759,8 +7780,7 @@ export function initMoves() {
       .attr(HighCritAttr)
       .attr(BypassRedirectAttr),
     new AttackMove(Moves.JAW_LOCK, Type.DARK, MoveCategory.PHYSICAL, 80, 100, 10, -1, 0, 8)
-      .attr(AddBattlerTagAttr, BattlerTagType.JAW_LOCK, false, false, 1)
-      .attr(AddBattlerTagAttr, BattlerTagType.JAW_LOCK, true, false, 1)
+      .attr(AddLinkedBattlerTagAttr, BattlerTagType.JAW_LOCK, false, false, 1)
       .bitingMove(),
     new SelfStatusMove(Moves.STUFF_CHEEKS, Type.NORMAL, -1, 10, -1, 0, 8) // TODO: Stuff Cheeks should not be selectable when the user does not have a berry, see wiki
       .attr(EatBerryAttr)
