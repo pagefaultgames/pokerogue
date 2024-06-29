@@ -19,6 +19,8 @@ describe("Moves - Dragon Rage", () => {
   let partyPokemon: PlayerPokemon;
   let enemyPokemon: EnemyPokemon;
 
+  const dragonRageDamage = 40;
+
   beforeAll(() => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
@@ -61,7 +63,7 @@ describe("Moves - Dragon Rage", () => {
     await game.phaseInterceptor.to(DamagePhase, true);
     const damageDealt = enemyPokemon.getMaxHp() - enemyPokemon.hp;
 
-    expect(damageDealt).toBe(40);
+    expect(damageDealt).toBe(dragonRageDamage);
   });
 
   it("ignores resistances", async () => {
@@ -71,7 +73,7 @@ describe("Moves - Dragon Rage", () => {
     await game.phaseInterceptor.to(DamagePhase, true);
     const damageDealt = enemyPokemon.getMaxHp() - enemyPokemon.hp;
 
-    expect(damageDealt).toBe(40);
+    expect(damageDealt).toBe(dragonRageDamage);
   });
 
   it("ignores stat changes", async () => {
@@ -81,7 +83,7 @@ describe("Moves - Dragon Rage", () => {
     await game.phaseInterceptor.to(DamagePhase, true);
     const damageDealt = enemyPokemon.getMaxHp() - enemyPokemon.hp;
 
-    expect(damageDealt).toBe(40);
+    expect(damageDealt).toBe(dragonRageDamage);
   });
 
   it("ignores stab", async () => {
@@ -91,7 +93,7 @@ describe("Moves - Dragon Rage", () => {
     await game.phaseInterceptor.to(DamagePhase, true);
     const damageDealt = enemyPokemon.getMaxHp() - enemyPokemon.hp;
 
-    expect(damageDealt).toBe(40);
+    expect(damageDealt).toBe(dragonRageDamage);
   });
 
   it("ignores criticals", async () => {
@@ -102,7 +104,7 @@ describe("Moves - Dragon Rage", () => {
     await game.phaseInterceptor.to(DamagePhase, true);
     const damageDealt = enemyPokemon.getMaxHp() - enemyPokemon.hp;
 
-    expect(damageDealt).toBe(40);
+    expect(damageDealt).toBe(dragonRageDamage);
   });
 
   it("ignores damage modification from abilities such as ice scales", async () => {
@@ -112,7 +114,7 @@ describe("Moves - Dragon Rage", () => {
     await game.phaseInterceptor.to(DamagePhase, true);
     const damageDealt = enemyPokemon.getMaxHp() - enemyPokemon.hp;
 
-    expect(damageDealt).toBe(40);
+    expect(damageDealt).toBe(dragonRageDamage);
   });
 
   it("ignores multi hit", async () => {
@@ -122,6 +124,6 @@ describe("Moves - Dragon Rage", () => {
     await game.phaseInterceptor.to(DamagePhase, true);
     const damageDealt = enemyPokemon.getMaxHp() - enemyPokemon.hp;
 
-    expect(damageDealt).toBe(40);
+    expect(damageDealt).toBe(dragonRageDamage);
   });
 });
