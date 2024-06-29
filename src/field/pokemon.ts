@@ -1947,9 +1947,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           if (!typeMultiplier.value) {
             result = move.id === Moves.SHEER_COLD ? HitResult.IMMUNE : HitResult.NO_EFFECT;
           } else {
-            const oneHitKo = new Utils.BooleanHolder(false);
-            applyMoveAttrs(OneHitKOAttr, source, this, move, oneHitKo);
-            if (oneHitKo.value) {
+            const isOneHitKo = new Utils.BooleanHolder(false);
+            applyMoveAttrs(OneHitKOAttr, source, this, move, isOneHitKo);
+            if (isOneHitKo.value) {
               result = HitResult.ONE_HIT_KO;
               isCritical = false;
               damage.value = this.hp;
