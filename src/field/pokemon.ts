@@ -1924,6 +1924,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         if (this.scene.arena.terrain?.terrainType === TerrainType.MISTY && this.isGrounded() && move.type === Type.DRAGON) {
           damage.value = Math.floor(damage.value / 2);
         }
+        applyPreDefendAbAttrs(ReceivedMoveDamageMultiplierAbAttr, this, source, move, cancelled, damage);
 
         const fixedDamage = new Utils.IntegerHolder(0);
         applyMoveAttrs(FixedDamageAttr, source, this, move, fixedDamage);
@@ -1963,7 +1964,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         }
 
         applyMoveAttrs(ModifiedDamageAttr, source, this, move, damage);
-        applyPreDefendAbAttrs(ReceivedMoveDamageMultiplierAbAttr, this, source, move, cancelled, damage);
 
         console.log("damage", damage.value, move.name, power.value, sourceAtk, targetDef);
 
