@@ -1,6 +1,6 @@
 import * as Modifiers from "./modifier";
 import { AttackMove, allMoves } from "../data/move";
-import { PokeballType, getPokeballCatchMultiplier, getPokeballName } from "../data/pokeball";
+import { MAX_PER_TYPE_POKEBALLS, PokeballType, getPokeballCatchMultiplier, getPokeballName } from "../data/pokeball";
 import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove } from "../field/pokemon";
 import { EvolutionItem, pokemonEvolutions } from "../data/pokemon-evolutions";
 import { Stat, getStatName } from "../data/pokemon-stat";
@@ -1362,8 +1362,6 @@ interface ModifierPool {
   [tier: string]: WeightedModifierType[]
 }
 
-const MAX_BALLS = 99;
-
 /**
  * Used to check if the player has max of a given ball type in Classic
  * @param party The player's party, just used to access the scene
@@ -1371,7 +1369,7 @@ const MAX_BALLS = 99;
  * @returns boolean: true if the player has the maximum of a given ball type
  */
 function hasMaximumBalls(party: Pokemon[], ballType: PokeballType): boolean {
-  return (party[0].scene.gameMode.isClassic && party[0].scene.pokeballCounts[ballType] >= MAX_BALLS);
+  return (party[0].scene.gameMode.isClassic && party[0].scene.pokeballCounts[ballType] >= MAX_PER_TYPE_POKEBALLS);
 }
 
 const modifierPool: ModifierPool = {
