@@ -2691,7 +2691,6 @@ export class MovePhase extends BattlePhase {
 
       // This should only happen when there are no valid targets left on the field
       if ((moveQueue.length && moveQueue[0].move === Moves.NONE) || !targets.length) {
-        console.log("no valid targets");
         this.showFailedText();
         this.cancel();
 
@@ -2718,10 +2717,8 @@ export class MovePhase extends BattlePhase {
       const cancelled = new Utils.BooleanHolder(false);
       let failedText = this.move.getMove().getFailedText(this.pokemon, targets[0], this.move.getMove(), cancelled);
       if (success && this.scene.arena.isMoveWeatherCancelled(this.move.getMove())) {
-        console.log("weathercancelled");
         success = false;
       } else if (success && this.scene.arena.isMoveTerrainCancelled(this.pokemon, this.targets, this.move.getMove())) {
-        console.log("terraincancelled");
         success = false;
         if (failedText === null) {
           failedText = getTerrainBlockMessage(targets[0], this.scene.arena.terrain.terrainType);
@@ -2738,12 +2735,10 @@ export class MovePhase extends BattlePhase {
       }
 
       if (success) {
-        console.log("success");
         this.scene.unshiftPhase(this.getEffectPhase());
       } else {
         this.pokemon.pushMoveHistory({ move: this.move.moveId, targets: this.targets, result: MoveResult.FAIL, virtual: this.move.virtual });
         if (!cancelled.value) {
-          console.log("cancelled.value");
           this.showFailedText(failedText);
         }
       }
@@ -2903,7 +2898,6 @@ export class MoveEffectPhase extends PokemonPhase {
           moveHistoryEntry.result = MoveResult.MISS;
           applyMoveAttrs(MissEffectAttr, user, null, move);
         } else {
-          console.log("activetargets");
           this.scene.queueMessage(i18next.t("battle:attackFailed"));
           moveHistoryEntry.result = MoveResult.FAIL;
         }
