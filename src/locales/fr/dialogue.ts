@@ -44,7 +44,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       6: "Un combat doit être pris au sérieux. T’es prêt à te battre ?",
       7: "Tu seras pas jeune éternellement. T’as qu’une chance pendant un combat. Bientôt, tu seras plus qu’un souvenir.",
       8: "Tu ferais mieux d’y aller doucement avec moi. Mais je vais me battre sérieusement !",
-      9: "Je m’ennuie à l’école. Y’a rien à y faire. *Baille*. Je me bats juste pour passer le temps."
+      9: "Je m’ennuie à l’école. Y’a rien à y faire. *Baille*\nJe me bats juste pour passer le temps."
     },
     "victory": {
       1: "Wah, c’était impressionnant ! J’ai encore beaucoup à apprendre.",
@@ -55,7 +55,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       6: "Vraiment ? J’ai perdu… ? C’est des choses qui arrivent, ça me déprime mais tu es vraiment très cool.",
       7: "J’ai pas besoin de ce genre de souvenirs.\n*Suppression de mémoire en cours…*",
       8: "Hé ! Je t’avais dit d’y aller doucement avec moi ! Mais t’es vraiment si cool quand tu te bats sérieusement…",
-      9: "J’en ai marre des combats Pokémon… Je vais chercher d’autres trucs à faire…"
+      9: "J’en ai marre des combats Pokémon…\nJe vais chercher d’autres trucs à faire…"
     }
   },
   "breeder": {
@@ -2331,12 +2331,12 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "encounter": {
       1: `@c{smile_wave}Ah, je te cherchais ! Je t’ai cherché partout !\n@c{angry_mopen}On oublie de dire au revoir à sa meilleure amie ?
                     $@c{smile_ehalf}T’as décidé de réaliser ton rêve, hein ?\nCe jour est donc vraiment arrivé…
-					$@c{smile}Je veux bien te pardonner de m’avoir oubliée, à une conditon. @c{smile_wave_wink}Que tu m’affronte !
+					$@c{smile}Je veux bien te pardonner de m’avoir oubliée,\nà une conditon. @c{smile_wave_wink}Que tu m’affronte !
 					$@c{angry_mopen}Donne tout ! Ce serait dommage que ton aventure finisse avant d’avoir commencé, hein ?`
     },
     "victory": {
       1: `@c{shock}Tu viens de commencer et t’es déjà si fort ?!@d{96}\n@c{angry}T’as triché non ? Avoue !
-                    $@c{smile_wave_wink}J’déconne !@d{64} @c{smile_eclosed}J’ai perdu dans les règles… J’ai le sentiment que tu vas très bien t’en sortir.
+                    $@c{smile_wave_wink}J’déconne !@d{64} @c{smile_eclosed}J’ai perdu dans les règles…\nJ’ai le sentiment que tu vas très bien t’en sortir.
 					$@c{smile}D’ailleurs, le prof veut que je te donne ces quelques objets. Ils te seront utiles, pour sûr !
 					$@c{smile_wave}Fais de ton mieux, comme toujours !\nJe crois fort en toi !`
     },
@@ -2360,7 +2360,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   "rival_2_female": {
     "encounter": {
 	  1: `@c{smile_wave}Hé, sympa de te croiser ici. T’as toujours l’air invaincu. @c{angry_mopen}Eh… Pas mal !
-				$@c{angry_mopen}Je sais à quoi tu penses et non, je t’espionne pas. @c{smile_eclosed}C’est juste que j’étais aussi dans le coin.
+				$@c{angry_mopen}Je sais à quoi tu penses et non, je t’espionne pas.\n@c{smile_eclosed}C’est juste que j’étais aussi dans le coin.
 				$@c{smile_ehalf}Heureuse pour toi, mais je veux juste te rappeler que c’est pas grave de perdre parfois.
 				$@c{smile}On apprend de nos erreurs, souvent plus que si on ne connaissait que le succès.
 				$@c{angry_mopen}Dans tous les cas je me suis bien entrainée pour cette revanche, t’as intérêt à tout donner !`
@@ -2551,7 +2551,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
       6: "Un combat doit être pris au sérieux. T’es prête à te battre ?",
       7: "Tu seras pas jeune éternellement. T’as qu’une chance pendant un combat. Bientôt, tu seras plus qu’un souvenir.",
       8: "Tu ferais mieux d’y aller doucement avec moi. Mais je vais me battre sérieusement !",
-      9: "Je m’ennuie à l’école. Y’a rien à y faire. *Baille*. Je me bats juste pour passer le temps."
+      9: "Je m’ennuie à l’école. Y’a rien à y faire. *Baille*\nJe me bats juste pour passer le temps."
     },
     "victory": {
       1: "Wah, c’était impressionnant ! J’ai encore beaucoup à apprendre.",
@@ -2562,7 +2562,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
       6: "Vraiment ? J’ai perdu… ? C’est des choses qui arrivent, ça me déprime mais t’es vraiment très cool.",
       7: "J’ai pas besoin de ce genre de souvenirs.\n*Suppression de mémoire en cours…*",
       8: "Hé ! Je t’avais dit d’y aller doucement avec moi ! Mais t’es vraiment si cool quand tu te bats sérieusement…",
-      9: "J’en ai marre des combats Pokémon… Je vais chercher d’autres trucs à faire…"
+      9: "J’en ai marre des combats Pokémon…\nJe vais chercher d’autres trucs à faire…"
     }
   },
   "breeder": {
@@ -4813,12 +4813,12 @@ export const PGFdialogue: DialogueTranslationEntries = {
     "encounter": {
       1: `@c{smile_wave}Ah, je te cherchais ! Je t’ai cherchée partout !\n@c{angry_mopen}On oublie de dire au revoir à sa meilleure amie ?
                     $@c{smile_ehalf}T’as décidé de réaliser ton rêve, hein ?\nCe jour est donc vraiment arrivé…
-					$@c{smile}Je veux bien te pardonner de m’avoir oubliée, à une conditon. @c{smile_wave_wink}Que tu m’affronte !
+					$@c{smile}Je veux bien te pardonner de m’avoir oubliée,\nà une conditon. @c{smile_wave_wink}Que tu m’affronte !
 					$@c{angry_mopen}Donne tout ! Ce serait dommage que ton aventure finisse avant d’avoir commencé, hein ?`
     },
     "victory": {
       1: `@c{shock}Tu viens de commencer et t’es déjà si forte ?!@d{96}\n@c{angry}T’as triché non ? Avoue !
-                    $@c{smile_wave_wink}J’déconne !@d{64} @c{smile_eclosed}J’ai perdu dans les règles… J’ai le sentiment que tu vas très bien t’en sortir.
+                    $@c{smile_wave_wink}J’déconne !@d{64} @c{smile_eclosed}J’ai perdu dans les règles…\nJ’ai le sentiment que tu vas très bien t’en sortir.
 					$@c{smile}D’ailleurs, le prof veut que je te donne ces quelques objets. Ils te seront utiles, pour sûr !
 					$@c{smile_wave}Fais de ton mieux, comme toujours !\nJe crois fort en toi !`
     },
@@ -4842,7 +4842,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
   "rival_2_female": {
     "encounter": {
 	  1: `@c{smile_wave}Hé, sympa de te croiser ici. T’as toujours l’air invaincue. @c{angry_mopen}Eh… Pas mal !
-				$@c{angry_mopen}Je sais à quoi tu penses et non, je t’espionne pas. @c{smile_eclosed}C’est juste que j’étais aussi dans le coin.
+				$@c{angry_mopen}Je sais à quoi tu penses et non, je t’espionne pas.\n@c{smile_eclosed}C’est juste que j’étais aussi dans le coin.
 				$@c{smile_ehalf}Heureuse pour toi, mais je veux juste te rappeler que c’est pas grave de perdre parfois.
 				$@c{smile}On apprend de nos erreurs, souvent plus que si on ne connaissait que le succès.
 				$@c{angry_mopen}Dans tous les cas je me suis bien entrainée pour cette revanche, t’as intérêt à tout donner !`
