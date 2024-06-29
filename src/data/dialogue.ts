@@ -458,7 +458,11 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
         "dialogue:rocket_grunt.encounter.4",
         "dialogue:rocket_grunt.encounter.5",
         "dialogue:rocket_grunt.encounter.6",
-        "dialogue:rocket_grunt.encounter.7"
+        "dialogue:rocket_grunt.encounter.7",
+        "dialogue:rocket_grunt.encounter.8",
+        "dialogue:rocket_grunt.encounter.9",
+        "dialogue:rocket_grunt.encounter.10",
+        "dialogue:rocket_grunt.encounter.11",
       ],
       victory: [
         "dialogue:rocket_grunt.victory.1",
@@ -493,6 +497,8 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
         "dialogue:magma_grunt.encounter.13",
         "dialogue:magma_grunt.encounter.14",
         "dialogue:magma_grunt.encounter.15",
+        "dialogue:magma_grunt.encounter.16",
+        "dialogue:magma_grunt.encounter.17",
       ],
       victory: [
         "dialogue:magma_grunt.victory.1",
@@ -549,6 +555,10 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
         "dialogue:galactic_grunt.encounter.5",
         "dialogue:galactic_grunt.encounter.6",
         "dialogue:galactic_grunt.encounter.7",
+        "dialogue:galactic_grunt.encounter.8",
+        "dialogue:galactic_grunt.encounter.9",
+        "dialogue:galactic_grunt.encounter.10",
+        "dialogue:galactic_grunt.encounter.11",
       ],
       victory: [
         "dialogue:galactic_grunt.victory.1",
@@ -586,6 +596,8 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
         "dialogue:plasma_grunt.victory.5",
         "dialogue:plasma_grunt.victory.6",
         "dialogue:plasma_grunt.victory.7",
+        "dialogue:plasma_grunt.victory.8",
+        "dialogue:plasma_grunt.victory.9",
       ]
     }
   ],
@@ -597,6 +609,7 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
         "dialogue:flare_grunt.encounter.3",
         "dialogue:flare_grunt.encounter.4",
         "dialogue:flare_grunt.encounter.5",
+        "dialogue:flare_grunt.encounter.6",
       ],
       victory: [
         "dialogue:flare_grunt.victory.1",

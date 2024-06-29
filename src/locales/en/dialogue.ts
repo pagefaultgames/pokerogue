@@ -392,6 +392,10 @@ export const PGMdialogue: DialogueTranslationEntries = {
       5: "We Team Rocket are Pokémon gangsters!",
       6: "We're pulling a big job here! Get lost, kid!",
       7: "You broke into our operation? You must be lost!",
+      8: "Hand over your Pokémon, or face the wrath of Team Rocket!",
+      9: "We are Team Rocket, and we're here to steal your Pokémon!",
+      10: "You're about to experience the true terror of Team Rocket!",
+      11: "Resistance is futile! Give us your Pokémon or face the consequences!"
     },
     "victory": {
       1: "Team Rocket blasting off again!",
@@ -423,7 +427,9 @@ export const PGMdialogue: DialogueTranslationEntries = {
       12: "Oh, you're here to stop us? Do you have any idea how much paperwork I'd have to do if you succeed?",
       13: "I hope you brought marshmallows because things are about to heat up!",
       14:  "You're here to stop our plans? Good luck! I've been practicing my 'evil laugh' all week!",
-      15: "Prepare to face my wrath... and my slightly underleveled Pokémon!"
+      16: "Hope you brought sunscreen, 'cause you're about to get burned!",
+      17: "You're in the way! Team Magma has no time for kids like you!",
+
 
     },
     "victory": {
@@ -477,6 +483,10 @@ export const PGMdialogue: DialogueTranslationEntries = {
       5: "Get ready to lose!",
       6: "You dare to challenge Team Galactic?",
       7: "Team Galactic will conquer all!",
+      8: "Hope you're ready for a cosmic beatdown!",
+      9: "Witness the power of our technology and the future we envision!",
+      10: "In the name of Team Galactic, I'll eliminate anyone who stands in our way!",
+      11: "Looks like you're about to get starstruck...by our Pokémon!"
 
     },
     "victory": {
@@ -512,7 +522,9 @@ export const PGMdialogue: DialogueTranslationEntries = {
       4: "How could I lose...",
       5: "I think Lord N would approve of a rematch clause.",
       6: "I guess my Pokémon liberation degree needs updating.",
-      7: "Note to self: practice Pokémon battling, liberate Pokémon better."
+      7: "Note to self: practice Pokémon battling, liberate Pokémon better.",
+      8: "Better luck next time! Maybe join Team Plasma for a change?",
+      9: "We came, we saw, we Plasma'd!"
     },
   },
   "flare_grunt": {
