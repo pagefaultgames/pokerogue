@@ -19,5 +19,6 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "importData": "導入數據",
   "exportData": "導出數據",
   "cancel": "取消",
-  "losingProgressionWarning": "你將失去自戰鬥開始以來的所有進度。是否\n繼續？"
+  "losingProgressionWarning": "你將失去自戰鬥開始以來的所有進度。是否\n繼續？",
+  "noEggs": "You are not hatching\nany eggs at the moment!"
 } as const;

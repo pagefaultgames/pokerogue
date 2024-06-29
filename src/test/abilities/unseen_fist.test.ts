@@ -31,6 +31,7 @@ describe("Abilities - Unseen Fist", () => {
     vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SNORLAX);
     vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.PROTECT, Moves.PROTECT, Moves.PROTECT, Moves.PROTECT]);
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
   });
 
   test(
@@ -81,7 +82,7 @@ async function testUnseenFistHitResult(game: GameManager, attackMove: Moves, pro
   const enemyStartingHp = enemyPokemon.hp;
 
   game.doAttack(getMovePosition(game.scene, 0, attackMove));
-  await game.phaseInterceptor.to(TurnEndPhase);
+  await game.phaseInterceptor.to(TurnEndPhase, false);
 
   if (shouldSucceed) {
     expect(enemyPokemon.hp).toBeLessThan(enemyStartingHp);

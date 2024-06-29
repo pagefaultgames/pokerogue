@@ -2,6 +2,9 @@ export interface Localizable {
     localize(): void;
   }
 
+export interface TranslationEntries {
+  [key: string]: string | { [key: string]: string }
+}
 export interface SimpleTranslationEntries {
     [key: string]: string
   }
@@ -32,6 +35,7 @@ export interface ModifierTypeTranslationEntry {
 
 export interface ModifierTypeTranslationEntries {
     ModifierType: { [key: string]: ModifierTypeTranslationEntry },
+    SpeciesBoosterItem: { [key: string]: ModifierTypeTranslationEntry },
     AttackTypeBoosterItem: SimpleTranslationEntries,
     TempBattleStatBoosterItem: SimpleTranslationEntries,
     TempBattleStatBoosterStatName: SimpleTranslationEntries,

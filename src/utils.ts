@@ -361,6 +361,9 @@ export function apiPost(path: string, data?: any, contentType: string = "applica
   }) : new Promise(() => {});
 }
 
+/** Alias for the constructor of a class */
+export type Constructor<T> = new(...args: unknown[]) => T;
+
 export class BooleanHolder {
   public value: boolean;
 
@@ -391,6 +394,20 @@ export class FixedInt extends IntegerHolder {
 
 export function fixedInt(value: integer): integer {
   return new FixedInt(value) as unknown as integer;
+}
+
+/**
+ * Formats a string to title case
+ * @param unformattedText Text to be formatted
+ * @returns the formatted string
+ */
+export function formatText(unformattedText: string): string {
+  const text = unformattedText.split("_");
+  for (let i = 0; i < text.length; i++) {
+    text[i] = text[i].charAt(0).toUpperCase() + text[i].substring(1).toLowerCase();
+  }
+
+  return text.join(" ");
 }
 
 export function rgbToHsv(r: integer, g: integer, b: integer) {
@@ -447,9 +464,9 @@ export function verifyLang(lang?: string): boolean {
   case "fr":
   case "de":
   case "it":
-  case "zh_CN":
-  case "zh_TW":
-  case "pt_BR":
+  case "zh-CN":
+  case "zh-TW":
+  case "pt-BR":
   case "ko":
     return true;
   default:

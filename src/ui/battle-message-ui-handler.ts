@@ -16,7 +16,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
   private nameBox: Phaser.GameObjects.NineSlice;
   private nameText: Phaser.GameObjects.Text;
 
-  public bg: Phaser.GameObjects.Image;
+  public bg: Phaser.GameObjects.Sprite;
   public commandWindow: Phaser.GameObjects.NineSlice;
   public movesWindowContainer: Phaser.GameObjects.Container;
   public nameBoxContainer: Phaser.GameObjects.Container;
@@ -31,33 +31,30 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     this.textTimer = null;
     this.textCallbackTimer = null;
 
-    const bg = this.scene.add.sprite(0, 0, "bg", this.scene.windowType);
-    bg.setOrigin(0, 1);
-    ui.add(bg);
+    this.bg = this.scene.add.sprite(0, 0, "bg", this.scene.windowType);
+    this.bg.setName("sprite-battle-msg-bg");
+    this.bg.setOrigin(0, 1);
+    ui.add(this.bg);
 
-    this.bg = bg;
-
-    this.commandWindow = addWindow(this.scene, 201, -1, 118, 46);
+    this.commandWindow = addWindow(this.scene, 202, 0, 118, 48);
+    this.commandWindow.setName("window-command");
     this.commandWindow.setOrigin(0, 1);
     this.commandWindow.setVisible(false);
     ui.add(this.commandWindow);
 
-    this.movesWindowContainer = this.scene.add.container(1, -1);
+    this.movesWindowContainer = this.scene.add.container(0, 0);
+    this.movesWindowContainer.setName("moves-bg");
     this.movesWindowContainer.setVisible(false);
 
-    const movesWindow = addWindow(this.scene, 0, 0, 243, 46);
+    const movesWindow = addWindow(this.scene, 0, 0, 243, 48);
+    movesWindow.setName("moves-window");
     movesWindow.setOrigin(0, 1);
-    this.movesWindowContainer.add(movesWindow);
 
-    const moveDetailsWindow = addWindow(this.scene, 238, 0, 80, 46, false, true, 2, 133);
+    const moveDetailsWindow = addWindow(this.scene, 240, 0, 80, 48, false, false, -1, 132);
+    moveDetailsWindow.setName("move-details-window");
     moveDetailsWindow.setOrigin(0, 1);
-    this.movesWindowContainer.add(moveDetailsWindow);
 
-    // TODO: Maybe remove this asset definitively if it's no longer needed?
-    // const commandFightLabels = this.scene.add.image(246, -10, 'command_fight_labels');
-    // commandFightLabels.setOrigin(0, 1);
-    // this.movesWindowContainer.add(commandFightLabels);
-
+    this.movesWindowContainer.add([movesWindow, moveDetailsWindow]);
     ui.add(this.movesWindowContainer);
 
     const messageContainer = this.scene.add.container(12, -39);

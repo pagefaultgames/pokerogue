@@ -331,7 +331,7 @@ export const ability: AbilityTranslationEntries = {
   },
   angerPoint: {
     name: "Anger Point",
-    description: "Quando recebe um golpe crítico se enraivece, e com isso, aumenta seu Ataque.",
+    description: "Quando recebe um acerto crítico se enraivece, e com isso, aumenta seu Ataque.",
   },
   unburden: {
     name: "Unburden",

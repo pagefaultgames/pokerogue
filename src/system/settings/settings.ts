@@ -96,7 +96,8 @@ export const SettingKeys = {
   Master_Volume: "MASTER_VOLUME",
   BGM_Volume: "BGM_VOLUME",
   SE_Volume: "SE_VOLUME",
-  Music_Preference: "MUSIC_PREFERENCE"
+  Music_Preference: "MUSIC_PREFERENCE",
+  Show_BGM_Bar: "SHOW_BGM_BAR",
 };
 
 /**
@@ -489,6 +490,14 @@ export const Setting: Array<Setting> = [
     type: SettingType.DISPLAY
   },
   {
+    key: SettingKeys.Show_BGM_Bar,
+    label: i18next.t("settings:showBgmBar"),
+    options: OFF_ON,
+    default: 0,
+    type: SettingType.DISPLAY,
+    requireReload: true
+  },
+  {
     key: SettingKeys.Master_Volume,
     label: i18next.t("settings:masterVolume"),
     options: VOLUME_OPTIONS,
@@ -525,7 +534,8 @@ export const Setting: Array<Setting> = [
     default: 0,
     type: SettingType.AUDIO,
     requireReload: true
-  }
+  },
+
 ];
 
 /**
@@ -600,11 +610,13 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
   case SettingKeys.Battle_Style:
     scene.battleStyle = value;
     break;
+  case SettingKeys.Show_BGM_Bar:
+    scene.showBgmBar = Setting[index].options[value].value === "On";
+    break;
   case SettingKeys.Candy_Upgrade_Notification:
     if (scene.candyUpgradeNotification === value) {
       break;
     }
-
     scene.candyUpgradeNotification = value;
     scene.eventTarget.dispatchEvent(new CandyUpgradeNotificationChangedEvent(value));
     break;
