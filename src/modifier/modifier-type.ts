@@ -1477,7 +1477,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.PP_MAX, 3),
     new WeightedModifierType(modifierTypes.MINT, 4),
     new WeightedModifierType(modifierTypes.RARE_EVOLUTION_ITEM, (party: Pokemon[]) => Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 15) * 4, 32), 32),
-    new WeightedModifierType(modifierTypes.AMULET_COIN, 3),
+    new WeightedModifierType(modifierTypes.AMULET_COIN, skipInLastClassicWaveOrDefault(3)),
     //new WeightedModifierType(modifierTypes.EVIOLITE, (party: Pokemon[]) => party.some(p => ((p.getSpeciesForm(true).speciesId in pokemonEvolutions) || (p.isFusion() && (p.getFusionSpeciesForm(true).speciesId in pokemonEvolutions))) && !p.getHeldItems().some(i => i instanceof Modifiers.EvolutionStatBoosterModifier)) ? 10 : 0),
     new WeightedModifierType(modifierTypes.SPECIES_STAT_BOOSTER, 12),
     new WeightedModifierType(modifierTypes.TOXIC_ORB, (party: Pokemon[]) => {
@@ -1497,7 +1497,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 9),
     new WeightedModifierType(modifierTypes.TM_ULTRA, 11),
     new WeightedModifierType(modifierTypes.RARER_CANDY, 4),
-    new WeightedModifierType(modifierTypes.GOLDEN_PUNCH, 2),
+    new WeightedModifierType(modifierTypes.GOLDEN_PUNCH, skipInLastClassicWaveOrDefault(2)),
     new WeightedModifierType(modifierTypes.IV_SCANNER, 4),
     new WeightedModifierType(modifierTypes.EXP_CHARM, 8),
     new WeightedModifierType(modifierTypes.EXP_SHARE, 10),
