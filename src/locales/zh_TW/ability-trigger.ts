@@ -5,6 +5,7 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "badDreams": "{{pokemonName}} 被折磨着！",
   "costar": "{{pokemonName}} 複製了 {{allyName}} 的\n能力變化！",
   "iceFaceAvoidedDamage": "{{pokemonNameWithAffix}} 因爲 {{abilityName}}\n避免了傷害！",
+  "movePrevented": "{{moveUser}} cannot use {{moveName}}!",
   "perishBody": "{{pokemonName}}'s {{abilityName}}\nwill faint both pokemon in 3 turns!",
   "poisonHeal": "{{pokemonName}}'s {{abilityName}}\nrestored its HP a little!",
   "trace": "{{pokemonName}} 複製了 {{targetName}} 的\n{{abilityName}}!",

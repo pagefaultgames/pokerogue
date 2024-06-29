@@ -5,6 +5,7 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "badDreams": "¡{{pokemonName}} está atormentado!",
   "costar": "{{pokemonName}} copied {{allyName}}'s stat changes!",
   "iceFaceAvoidedDamage": "¡{{pokemonNameWithAffix}} evitó\ndaño con {{abilityName}}!",
+  "movePrevented": "{{moveUser}} cannot use {{moveName}}!",
   "perishBody": "{{pokemonName}}'s {{abilityName}}\nwill faint both pokemon in 3 turns!",
   "poisonHeal": "{{pokemonName}}'s {{abilityName}}\nrestored its HP a little!",
   "trace": "¡{{pokemonName}} ha copiado la habilidad {{abilityName}} \nde {{targetName}}!",
