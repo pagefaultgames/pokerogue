@@ -49,8 +49,8 @@ describe("Abilities - Sheer Force", () => {
     ]);
 
 
-    game.scene.getEnemyParty()[0].stats[Stat.SPDEF] = 10000;
-    game.scene.getEnemyParty()[0].stats[Stat.SPD] = 1;
+    game.scene.getEnemyParty()[0].setStat(Stat.SPDEF, 10000);
+    game.scene.getEnemyParty()[0].setStat(Stat.SPD, 1);
     expect(game.scene.getParty()[0].formIndex).toBe(0);
 
     game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
@@ -88,8 +88,8 @@ describe("Abilities - Sheer Force", () => {
     ]);
 
 
-    game.scene.getEnemyParty()[0].stats[Stat.DEF] = 10000;
-    game.scene.getEnemyParty()[0].stats[Stat.SPD] = 1;
+    game.scene.getEnemyParty()[0].setStat(Stat.DEF, 10000);
+    game.scene.getEnemyParty()[0].setStat(Stat.SPD, 1);
     expect(game.scene.getParty()[0].formIndex).toBe(0);
 
     game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
@@ -127,8 +127,8 @@ describe("Abilities - Sheer Force", () => {
     ]);
 
 
-    game.scene.getEnemyParty()[0].stats[Stat.DEF] = 10000;
-    game.scene.getEnemyParty()[0].stats[Stat.SPD] = 1;
+    game.scene.getEnemyParty()[0].setStat(Stat.DEF, 10000);
+    game.scene.getEnemyParty()[0].setStat(Stat.SPD, 1);
     expect(game.scene.getParty()[0].formIndex).toBe(0);
 
     game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
@@ -168,8 +168,8 @@ describe("Abilities - Sheer Force", () => {
     ]);
 
 
-    game.scene.getEnemyParty()[0].stats[Stat.DEF] = 10000;
-    game.scene.getEnemyParty()[0].stats[Stat.SPD] = 1;
+    game.scene.getEnemyParty()[0].setStat(Stat.DEF, 10000);
+    game.scene.getEnemyParty()[0].setStat(Stat.SPD, 1);
     expect(game.scene.getParty()[0].formIndex).toBe(0);
 
     game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {

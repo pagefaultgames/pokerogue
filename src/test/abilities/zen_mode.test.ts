@@ -57,8 +57,8 @@ describe("Abilities - ZEN MODE", () => {
     async () => {
       const moveToUse = Moves.SPLASH;
       await game.startBattle([Species.DARMANITAN]);
-      game.scene.getParty()[0].stats[Stat.SPD] = 1;
-      game.scene.getParty()[0].stats[Stat.HP] = 100;
+      game.scene.getParty()[0].setStat(Stat.SPD, 1);
+      game.scene.getParty()[0].setStat(Stat.HP, 100);
       game.scene.getParty()[0].hp = 100;
       expect(game.scene.getParty()[0].formIndex).toBe(0);
 
@@ -85,8 +85,8 @@ describe("Abilities - ZEN MODE", () => {
     async () => {
       const moveToUse = Moves.SPLASH;
       await game.startBattle([Species.DARMANITAN]);
-      game.scene.getParty()[0].stats[Stat.SPD] = 1;
-      game.scene.getParty()[0].stats[Stat.HP] = 1000;
+      game.scene.getParty()[0].setStat(Stat.SPD, 1);
+      game.scene.getParty()[0].setStat(Stat.HP, 1000);
       game.scene.getParty()[0].hp = 100;
       expect(game.scene.getParty()[0].formIndex).toBe(0);
 
@@ -110,8 +110,8 @@ describe("Abilities - ZEN MODE", () => {
     async () => {
       const moveToUse = Moves.SPLASH;
       await game.startBattle([Species.DARMANITAN, Species.CHARIZARD]);
-      game.scene.getParty()[0].stats[Stat.SPD] = 1;
-      game.scene.getParty()[0].stats[Stat.HP] = 1000;
+      game.scene.getParty()[0].setStat(Stat.SPD, 1);
+      game.scene.getParty()[0].setStat(Stat.HP, 1000);
       game.scene.getParty()[0].hp = 100;
       expect(game.scene.getParty()[0].formIndex).toBe(0);
 

@@ -4685,7 +4685,7 @@ export function initAbilities() {
         let highestBattleStat = 0;
         let highestBattleStatIndex = 0;
         battleStats.map((bs: BattleStat, i: integer) => {
-          const stat = p.getStat(bs + 1);
+          const stat = p.getStat(bs + 1, true);
           if (stat > highestBattleStat) {
             highestBattleStatIndex = i;
             highestBattleStat = stat;

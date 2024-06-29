@@ -641,7 +641,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Writes the value of the corresponding {@linkcode Stat} of the {@linkcode Pokemon}.
    * @param stat the desired {@linkcode Stat}
    * @param value the desired numeric value to be written to the desired {@linkcode Stat}
-   * @param setOverride {@linkcode boolean} to write on in-battle overriden stats (`true`) or actual stats (`false`)
+   * @param setOverride {@linkcode boolean} to write on in-battle overridden stats (`true`) or actual stats (`false`)
    */
   setStat(stat: Stat, value: number, setOverride: boolean = false) {
     if (setOverride && !!this.summonData) {
@@ -653,7 +653,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   getBattleStat(stat: Stat, opponent?: Pokemon, move?: Move, isCritical: boolean = false): integer {
     if (stat === Stat.HP) {
-      return this.getStat(Stat.HP, true);
+      return this.getStat(Stat.HP);
     }
     const battleStat = (stat - 1) as BattleStat;
     const statLevel = new Utils.IntegerHolder(this.summonData.battleStats[battleStat]);
@@ -1196,7 +1196,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   getMatchupScore(pokemon: Pokemon): number {
     const types = this.getTypes(true);
     const enemyTypes = pokemon.getTypes(true, true);
-    const outspeed = (this.isActive(true) ? this.getBattleStat(Stat.SPD, pokemon) : this.getStat(Stat.SPD, true)) <= pokemon.getBattleStat(Stat.SPD, this);
+    const outspeed = (this.isActive(true) ? this.getBattleStat(Stat.SPD, pokemon) : this.getStat(Stat.SPD)) <= pokemon.getBattleStat(Stat.SPD, this);
     let atkScore = pokemon.getAttackTypeEffectiveness(types[0], this) * (outspeed ? 1.25 : 1);
     let defScore = 1 / Math.max(this.getAttackTypeEffectiveness(enemyTypes[0], pokemon), 0.25);
     if (types.length > 1) {
@@ -3743,7 +3743,7 @@ export class EnemyPokemon extends Pokemon {
       let boostedStat = BattleStat.RAND;
 
       const battleStats = Utils.getEnumValues(BattleStat).slice(0, -3);
-      const statWeights = new Array().fill(battleStats.length).filter((bs: BattleStat) => this.summonData.battleStats[bs] < 6).map((bs: BattleStat) => this.getStat(bs + 1));
+      const statWeights = new Array().fill(battleStats.length).filter((bs: BattleStat) => this.summonData.battleStats[bs] < 6).map((bs: BattleStat) => this.getStat(bs + 1, true));
       const statThresholds: integer[] = [];
       let totalWeight = 0;
       for (const bs of battleStats) {
