@@ -9,5 +9,5 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "poisonHeal": "{{pokemonName}}[[는]] {{abilityName}}[[로]]인해\n조금 회복했다.",
   "trace": "{{pokemonName}} copied {{targetName}}'s\n{{abilityName}}!",
   "windPowerCharged": "{{pokemonName}}[[는]]\n{{moveName}}에 맞아 충전되었다!",
-  "quickDraw": "{{pokemonName}} can act faster than normal, thanks to its Quick Draw!",
+  "quickDraw": "{{pokemonName}}[[는]]\n퀵드로에 의해 행동이 빨라졌다!",
 } as const;

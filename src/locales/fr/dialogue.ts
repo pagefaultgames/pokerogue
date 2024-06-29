@@ -447,7 +447,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "Mes anciens collaborateurs m’attendent.\nComptes-tu m’en empêcher ?"
     },
     "victory": {
-      1: "Comment c'est possible… ?\nLe grand dessein de la Team Rocket n’est plus qu’une illusion…"
+      1: "Comment c'est possible… ? Le grand dessein de la Team Rocket n’est plus qu’une illusion…"
     },
     "defeat": {
       1: "La Team Rocket renaitra, et je dominerai le monde !"
@@ -499,7 +499,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "galactic_boss_cyrus_1": {
     "encounter": {
-      1: "Tu t’es senti obligé de venir ici dans un acte vide de sens.\nJe vais te le faire regretter."
+      1: "Tu t’es senti obligé de venir ici dans un acte vide de sens. Je vais te le faire regretter."
     },
     "victory": {
       1: "Intéressant. Et plutôt curieux."
@@ -510,7 +510,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "galactic_boss_cyrus_2": {
     "encounter": {
-      1: "Nous y revoilà. Il semblerait que nos destinées soient entremêlées.\nIl est l’heure d’y mettre un terme."
+      1: "Nous y revoilà. Il semblerait que nos destinées soient entremêlées. Il est l’heure d’y mettre un terme."
     },
     "victory": {
       1: "Comment. Comment ?\nCOMMENT ?!"
@@ -2954,7 +2954,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
       1: "Mes anciens collaborateurs m’attendent.\nComptes-tu m’en empêcher ?"
     },
     "victory": {
-      1: "Comment c'est possible… ?\nLe grand dessein de la Team Rocket n’est plus qu’une illusion…"
+      1: "Comment c'est possible… ? Le grand dessein de la Team Rocket n’est plus qu’une illusion…"
     },
     "defeat": {
       1: "La Team Rocket renaitra, et je dominerai le monde !"
@@ -3006,7 +3006,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
   },
   "galactic_boss_cyrus_1": {
     "encounter": {
-      1: "Tu t’es sentie obligée de venir ici dans un acte vide de sens.\nJe vais te le faire regretter."
+      1: "Tu t’es sentie obligée de venir ici dans un acte vide de sens. Je vais te le faire regretter."
     },
     "victory": {
       1: "Intéressant. Et plutôt curieux."
@@ -3017,7 +3017,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
   },
   "galactic_boss_cyrus_2": {
     "encounter": {
-      1: "Nous y revoilà. Il semblerait que nos destinées soient entremêlées.\nIl est l’heure d’y mettre un terme."
+      1: "Nous y revoilà. Il semblerait que nos destinées soient entremêlées. Il est l’heure d’y mettre un terme."
     },
     "victory": {
       1: "Comment. Comment ?\nCOMMENT ?!"

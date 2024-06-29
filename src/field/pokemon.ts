@@ -17,7 +17,7 @@ import { initMoveAnim, loadMoveAnimAssets } from "../data/battle-anims";
 import { Status, StatusEffect, getRandomStatus } from "../data/status-effect";
 import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEvolutionCondition, FusionSpeciesFormEvolution } from "../data/pokemon-evolutions";
 import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "../data/tms";
-import { DamagePhase, FaintPhase, LearnMovePhase, ObtainStatusEffectPhase, StatChangePhase, SwitchSummonPhase, ToggleDoublePositionPhase  } from "../phases";
+import { DamagePhase, FaintPhase, LearnMovePhase, MoveEffectPhase, ObtainStatusEffectPhase, StatChangePhase, SwitchSummonPhase, ToggleDoublePositionPhase  } from "../phases";
 import { BattleStat } from "../data/battle-stat";
 import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HelpingHandTag, HighestStatBoostTag, TypeBoostTag, TypeImmuneTag, getBattlerTag } from "../data/battler-tags";
 import { WeatherType } from "../data/weather";
@@ -1811,7 +1811,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
 
       if (cancelled.value) {
-        source.stopMultiHit();
+        source.stopMultiHit(this);
         result = HitResult.NO_EFFECT;
       } else {
         const typeBoost = source.findTag(t => t instanceof TypeBoostTag && t.boostedType === move.type) as TypeBoostTag;
@@ -1897,8 +1897,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         applyMoveAttrs(VariableAtkAttr, source, this, move, sourceAtk);
         applyMoveAttrs(VariableDefAttr, source, this, move, targetDef);
 
+        const effectPhase = this.scene.getCurrentPhase();
+        let numTargets = 1;
+        if (effectPhase instanceof MoveEffectPhase) {
+          numTargets = effectPhase.getTargets().length;
+        }
         const twoStrikeMultiplier = new Utils.NumberHolder(1);
-        applyPreAttackAbAttrs(AddSecondStrikeAbAttr, source, this, move, 1, new Utils.IntegerHolder(0), twoStrikeMultiplier);
+        applyPreAttackAbAttrs(AddSecondStrikeAbAttr, source, this, move, numTargets, new Utils.IntegerHolder(0), twoStrikeMultiplier);
 
         if (!isTypeImmune) {
           damage.value = Math.ceil(((((2 * source.level / 5 + 2) * power.value * sourceAtk.value / targetDef.value) / 50) + 2) * stabMultiplier.value * typeMultiplier.value * arenaAttackTypeMultiplier.value * screenMultiplier.value * twoStrikeMultiplier.value * ((this.scene.randBattleSeedInt(15) + 85) / 100) * criticalMultiplier.value);
@@ -2267,15 +2272,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * If this Pokemon is using a multi-hit move, stop the move
-   * after the next hit resolves.
+   * If this Pokemon is using a multi-hit move, cancels all subsequent strikes
+   * @param {Pokemon} target If specified, this only cancels subsequent strikes against this Pokemon
    */
-  stopMultiHit(): void {
-    if (!this.turnData) {
-      return;
+  stopMultiHit(target?: Pokemon): void {
+    const effectPhase = this.scene.getCurrentPhase();
+    if (effectPhase instanceof MoveEffectPhase) {
+      effectPhase.stopMultiHit(target);
     }
-    this.turnData.hitCount = 1;
-    this.turnData.hitsLeft = 1;
   }
 
   changeForm(formChange: SpeciesFormChange): Promise<void> {
@@ -3405,12 +3409,15 @@ export class EnemyPokemon extends Pokemon {
   public aiType: AiType;
   public bossSegments: integer;
   public bossSegmentIndex: integer;
+  /** To indicate of the instance was populated with a dataSource -> e.g. loaded & populated from session data */
+  public readonly isPopulatedFromDataSource: boolean;
 
   constructor(scene: BattleScene, species: PokemonSpecies, level: integer, trainerSlot: TrainerSlot, boss: boolean, dataSource: PokemonData) {
     super(scene, 236, 84, species, level, dataSource?.abilityIndex, dataSource?.formIndex,
       dataSource?.gender, dataSource ? dataSource.shiny : false, dataSource ? dataSource.variant : undefined, null, dataSource ? dataSource.nature : undefined, dataSource);
 
     this.trainerSlot = trainerSlot;
+    this.isPopulatedFromDataSource = !!dataSource; // if a dataSource is provided, then it was populated from dataSource
     if (boss) {
       this.setBoss(boss, dataSource?.bossSegments);
     }
@@ -3460,6 +3467,13 @@ export class EnemyPokemon extends Pokemon {
     }
   }
 
+  /**
+   * Sets the pokemons boss status. If true initializes the boss segments either from the arguments
+   * or through the the Scene.getEncounterBossSegments function
+   *
+   * @param boss if the pokemon is a boss
+   * @param bossSegments amount of boss segments (health-bar segments)
+   */
   setBoss(boss: boolean = true, bossSegments: integer = 0): void {
     if (boss) {
       this.bossSegments = bossSegments || this.scene.getEncounterBossSegments(this.scene.currentBattle.waveIndex, this.level, this.species, true);

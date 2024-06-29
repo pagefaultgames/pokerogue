@@ -382,7 +382,7 @@ describe("Abilities - Parental Bond", () => {
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
 
-      await game.phaseInterceptor.to(TurnEndPhase);
+      await game.phaseInterceptor.to(MoveEndPhase, false);
 
       expect(enemyPokemon.hp).toBe(Math.ceil(enemyStartingHp * 0.25));
     }, TIMEOUT
@@ -413,7 +413,7 @@ describe("Abilities - Parental Bond", () => {
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
 
-      await game.phaseInterceptor.to(TurnEndPhase);
+      await game.phaseInterceptor.to(MoveEndPhase, false);
 
       expect(enemyPokemon.hp).toBe(enemyStartingHp - 200);
     }, TIMEOUT
@@ -607,6 +607,44 @@ describe("Abilities - Parental Bond", () => {
       await game.phaseInterceptor.to(TurnEndPhase, false);
 
       expect(enemyPokemon.summonData.battleStats[BattleStat.SPATK]).toBe(1);
+    }, TIMEOUT
+  );
+
+  test(
+    "ability should not apply to multi-target moves with Multi-Lens",
+    async () => {
+      vi.spyOn(Overrides, "DOUBLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+      vi.spyOn(Overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(false);
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.EARTHQUAKE, Moves.SPLASH]);
+      vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "MULTI_LENS", count: 1}]);
+
+      await game.startBattle([Species.CHARIZARD, Species.PIDGEOT]);
+
+      const playerPokemon = game.scene.getPlayerField();
+      expect(playerPokemon.length).toBe(2);
+      playerPokemon.forEach(p => expect(p).not.toBe(undefined));
+
+      const enemyPokemon = game.scene.getEnemyField();
+      expect(enemyPokemon.length).toBe(2);
+      enemyPokemon.forEach(p => expect(p).not.toBe(undefined));
+
+      const enemyStartingHp = enemyPokemon.map(p => p.hp);
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.EARTHQUAKE));
+      await game.phaseInterceptor.to(CommandPhase);
+
+      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+
+      await game.phaseInterceptor.to(MoveEffectPhase, false);
+      vi.spyOn(game.scene, "randBattleSeedInt").mockReturnValue(15);
+
+      await game.phaseInterceptor.to(DamagePhase);
+      const enemyFirstHitDamage = enemyStartingHp.map((hp, i) => hp - enemyPokemon[i].hp);
+
+      await game.phaseInterceptor.to(TurnEndPhase, false);
+
+      enemyPokemon.forEach((p, i) => expect(enemyStartingHp[i] - p.hp).toBe(2*enemyFirstHitDamage[i]));
+
     }, TIMEOUT
   );
 });
