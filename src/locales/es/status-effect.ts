@@ -12,7 +12,7 @@ export const statusEffect: StatusEffectTranslationEntries = {
   },
   poison: {
     name: "Envenenamiento",
-    description: "envenenado",
+    description: "envenenamiento",
     obtain: "¡{{pokemonNameWithAffix}}\nha sido envenenado!",
     obtainSource: "¡{{pokemonNameWithAffix}}\nha sido envenenado por {{sourceText}}!",
     activation: "¡El veneno resta PS a {{pokemonNameWithAffix}}!",
@@ -21,16 +21,16 @@ export const statusEffect: StatusEffectTranslationEntries = {
   },
   toxic: {
     name: "Envenenamiento grave",
-    description: "envenenado grave",
+    description: "envenenamiento grave",
     obtain: "¡{{pokemonNameWithAffix}}\nha sido gravemente envenenado!",
     obtainSource: "¡{{pokemonNameWithAffix}}\nha sido gravemente envenenado por {{sourceText}}!",
-    activation: "¡{{pokemonNameWithAffix}} se hizo daño\npor el veneno!",
+    activation: "¡El veneno resta PS a {{pokemonNameWithAffix}}!",
     overlap: "¡{{pokemonNameWithAffix}} ya\nestá envenenado!",
-    heal: "¡{{pokemonNameWithAffix}} se\ncuró del envenenamiento!"
+    heal: "¡{{pokemonNameWithAffix}} ya no\nestá envenenado!"
   },
   paralysis: {
     name: "Parálisis",
-    description: "paralizado",
+    description: "parálisis",
     obtain: "¡{{pokemonNameWithAffix}} sufre parálisis!\nQuizás no se pueda mover.",
     obtainSource: "¡{{pokemonNameWithAffix}} sufre parálisis por {{sourceText}}!\nQuizás no se pueda mover.",
     activation: "¡{{pokemonNameWithAffix}} está paralizado!\n¡No se puede mover!",
