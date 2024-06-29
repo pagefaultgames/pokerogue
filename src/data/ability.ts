@@ -2459,7 +2459,7 @@ export class PreApplyBattlerTagAbAttr extends AbAttr {
   }
 }
 
-export class BattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
+export class PreApplyBattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
   private immuneTagType: BattlerTagType;
 
   constructor(immuneTagType: BattlerTagType) {
@@ -2482,7 +2482,13 @@ export class BattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
   }
 }
 
-export class UserFieldBattlerTagImmunityAbAttr extends BattlerTagImmunityAbAttr {
+export class BattlerTagImmunityAbAttr extends PreApplyBattlerTagImmunityAbAttr {
+  constructor(immuneTagType: BattlerTagType) {
+    super(immuneTagType);
+  }
+}
+
+export class UserFieldBattlerTagImmunityAbAttr extends PreApplyBattlerTagImmunityAbAttr {
   constructor(immuneTagType: BattlerTagType) {
     super(immuneTagType);
   }
