@@ -77,7 +77,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "breeder_female": {
     "encounter": {
-      1: "Les Pokémon ne tahissent jamais. Ils te rendront toujours l’amour que tu leur donne.",
+      1: "Les Pokémon ne trahissent jamais. Ils te rendront toujours l’amour que tu leur donne.",
       2: "Puis-je te donner une astuce pour mieux élever tes Pokémon ?",
       3: "J’ai élevé mes Pokémon en utilisant une méthode très spéciale."
     },
