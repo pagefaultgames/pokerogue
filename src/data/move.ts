@@ -4203,7 +4203,7 @@ export class AddArenaTagAttr extends MoveEffectAttr {
   public selfSideTarget: boolean;
 
   constructor(tagType: ArenaTagType, turnCount?: integer, failOnOverlap: boolean = false, selfSideTarget: boolean = false) {
-    super(true, MoveEffectTrigger.POST_APPLY, true);
+    super(true, MoveEffectTrigger.POST_APPLY);
 
     this.tagType = tagType;
     this.turnCount = turnCount;
