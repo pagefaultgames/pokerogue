@@ -7,7 +7,12 @@ export interface UserInfo {
 }
 
 export let loggedInUser: UserInfo = null;
+// This is a random string that is used to identify the client session - unique per session (tab or window) so that the game will only save on the one that the server is expecting
 export const clientSessionId = Utils.randomString(32);
+
+export function initLoggedInUser(): void {
+  loggedInUser = { username: "Guest", lastSessionSlot: -1 };
+}
 
 export function updateUserInfo(): Promise<[boolean, integer]> {
   return new Promise<[boolean, integer]>(resolve => {

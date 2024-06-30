@@ -15,13 +15,15 @@ import { Stat, getStatName } from "../data/pokemon-stat";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { StatusEffect } from "../data/status-effect";
 import { getBiomeName } from "../data/biomes";
-import { Nature, getNatureStatMultiplier } from "../data/nature";
+import { getNatureName, getNatureStatMultiplier } from "../data/nature";
 import { loggedInUser } from "../account";
-import { PlayerGender } from "#app/data/enums/player-gender";
 import { Variant, getVariantTint } from "#app/data/variant";
-import {Button} from "../enums/buttons";
+import {Button} from "#enums/buttons";
 import { Ability } from "../data/ability.js";
 import i18next from "i18next";
+import {modifierSortFunc} from "../modifier/modifier";
+import { PlayerGender } from "#enums/player-gender";
+
 
 enum Page {
   PROFILE,
@@ -794,7 +796,7 @@ export default class SummaryUiHandler extends UiHandler {
       this.passiveContainer?.nameText.setVisible(false);
       this.passiveContainer?.descriptionText.setVisible(false);
 
-      const memoString = `${getBBCodeFrag(Utils.toReadableString(Nature[this.pokemon.getNature()]), TextStyle.SUMMARY_RED)}${getBBCodeFrag(" nature,", TextStyle.WINDOW_ALT)}\n${getBBCodeFrag(`${this.pokemon.metBiome === -1 ? "apparently " : ""}met at Lv`, TextStyle.WINDOW_ALT)}${getBBCodeFrag(this.pokemon.metLevel.toString(), TextStyle.SUMMARY_RED)}${getBBCodeFrag(",", TextStyle.WINDOW_ALT)}\n${getBBCodeFrag(getBiomeName(this.pokemon.metBiome), TextStyle.SUMMARY_RED)}${getBBCodeFrag(".", TextStyle.WINDOW_ALT)}`;
+      const memoString = `${getBBCodeFrag(Utils.toReadableString(getNatureName(this.pokemon.getNature())), TextStyle.SUMMARY_RED)}${getBBCodeFrag(" nature,", TextStyle.WINDOW_ALT)}\n${getBBCodeFrag(`${this.pokemon.metBiome === -1 ? "apparently " : ""}met at Lv`, TextStyle.WINDOW_ALT)}${getBBCodeFrag(this.pokemon.metLevel.toString(), TextStyle.SUMMARY_RED)}${getBBCodeFrag(",", TextStyle.WINDOW_ALT)}\n${getBBCodeFrag(getBiomeName(this.pokemon.metBiome), TextStyle.SUMMARY_RED)}${getBBCodeFrag(".", TextStyle.WINDOW_ALT)}`;
 
       const memoText = addBBCodeTextObject(this.scene, 7, 113, memoString, TextStyle.WINDOW_ALT);
       memoText.setOrigin(0, 0);
@@ -828,8 +830,9 @@ export default class SummaryUiHandler extends UiHandler {
         statsContainer.add(statValue);
       });
 
-      const itemModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-          && (m as PokemonHeldItemModifier).pokemonId === this.pokemon.id, true) as PokemonHeldItemModifier[];
+      const itemModifiers = (this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
+          && (m as PokemonHeldItemModifier).pokemonId === this.pokemon.id, true) as PokemonHeldItemModifier[])
+        .sort(modifierSortFunc);
 
       itemModifiers.forEach((item, i) => {
         const icon = item.getIcon(this.scene, true);

@@ -142,10 +142,11 @@ export default class MoveInfoOverlay extends Phaser.GameObjects.Container implem
 
     this.desc.setText(move?.effect || "");
 
-    // stop previous scrolling effects
+    // stop previous scrolling effects and reset y position
     if (this.descScroll) {
       this.descScroll.remove();
       this.descScroll = null;
+      this.desc.y = (this.options?.top ? EFF_HEIGHT : 0) + BORDER - 2;
     }
 
     // determine if we need to add new scrolling effects
