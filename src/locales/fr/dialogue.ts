@@ -2652,7 +2652,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
   "ace_trainer": {
     "encounter": {
       1: "T’as l’air plutôt confiante.",
-      2: "Tes Pokémon… Monte-les-moi…",
+      2: "Tes Pokémon… Montre-les-moi…",
       3: "Les gens pensent que je suis fort par que je suis un Topdresseur.",
       4: "T’es au courant de ce que ça signifie d’être un Topdresseur ?"
     },
