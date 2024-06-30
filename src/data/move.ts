@@ -4282,10 +4282,7 @@ export class AddArenaTrapTagAttr extends AddArenaTagAttr {
     return (user, target, move) => {
       const side = (this.selfSideTarget ? user : target).isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
       const tag = user.scene.arena.getTagOnSide(this.tagType, side) as ArenaTrapTag;
-      if (!tag) {
-        return true;
-      }
-      return tag.layers < tag.maxLayers;
+      return !tag || (tag.layers < tag.maxLayers);
     };
   }
 }
@@ -4293,6 +4290,9 @@ export class AddArenaTrapTagAttr extends AddArenaTagAttr {
 /**
  * Attribute used for Stone Axe and Ceaseless Edge.
  * Applies the given ArenaTrapTag when move is used.
+ * This was created because of a niche interaction with Sheer Force and Shield Dust,
+ * applying AddArenaTrapTagAttr normally with the moveChance check will cause
+ * these moves to fail.
  * @extends AddArenaTagAttr
  * @see {@linkcode apply}
  */
@@ -4308,10 +4308,7 @@ export class AddArenaTrapTagHitAttr extends AddArenaTagAttr {
     const tag = user.scene.arena.getTagOnSide(this.tagType, side) as ArenaTrapTag;
     if ((moveChance < 0 || moveChance === 100 || user.randSeedInt(100) < moveChance)) {
       user.scene.arena.addTag(this.tagType, 0, move.id, user.id, side);
-      if (!tag) {
-        return true;
-      }
-      return tag.layers < tag.maxLayers;
+      return !tag || (tag.layers < tag.maxLayers);
     }
     return false;
   }

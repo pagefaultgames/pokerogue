@@ -1513,6 +1513,39 @@ export class PostAttackAbAttr extends AbAttr {
   }
 }
 
+/**
+ * Attribute for Sheer Force interaction with certain abilities.
+ * Checks if last move used against target was affected by a Sheer Force user and:
+ * Supresses: Color Change, Pickpocket, Wimp Out, Emergency Exit, Berserk, Anger Shell
+ * @returns {AbAttrCondition} If false disables the ability which the condition is applied to.
+ */
+export class SheerForceHitDisableAbAttr extends PreAttackAbAttr {
+
+  constructor() {
+    super(false);
+  }
+
+  applyPreAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: Move, args: any[]): boolean {
+
+    /**if the last move chance is greater than or equal to cero, and the attacker's ability is sheer force*/
+    const SheerForceAffected = allMoves[move.id].chance >= 0 && defender.hasAbilityWithAttr(SheerForceHitDisabled);
+
+    defender.summonData.abilitySuppressed = SheerForceAffected;
+
+    return true;
+  }
+}
+/**
+ * Attribute applied to abilities related to Sheer Force.
+ * Allows for suppressing: Color Change, Pickpocket, Wimp Out, Emergency Exit, Berserk, Anger Shell
+ * @returns {AbAttr}
+ */
+export class SheerForceHitDisabled extends AbAttr {
+  constructor() {
+    super(false);
+  }
+}
+
 export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
   private condition: PokemonAttackCondition;
 
@@ -2597,35 +2630,6 @@ export class SuppressWeatherEffectAbAttr extends PreWeatherEffectAbAttr {
 
     return false;
   }
-}
-
-/**
- * Condition function to applied to abilities related to Sheer Force.
- * Checks if last move used against target was affected by a Sheer Force user and:
- * Disables: Color Change, Pickpocket, Wimp Out, Emergency Exit, Berserk, Anger Shell
- * @returns {AbAttrCondition} If false disables the ability which the condition is applied to.
- */
-function getSheerForceHitDisableAbCondition(): AbAttrCondition {
-  return (pokemon: Pokemon) => {
-    if (!pokemon.turnData) {
-      return true;
-    }
-
-    const lastReceivedAttack = pokemon.turnData.attacksReceived[0];
-    if (!lastReceivedAttack) {
-      return true;
-    }
-
-    const lastAttacker = pokemon.getOpponents().find(p => p.id === lastReceivedAttack.sourceId);
-    if (!lastAttacker) {
-      return true;
-    }
-
-    /**if the last move chance is greater than or equal to cero, and the last attacker's ability is sheer force*/
-    const SheerForceAffected = allMoves[lastReceivedAttack.move].chance >= 0 && lastAttacker.hasAbility(Abilities.SHEER_FORCE);
-
-    return !SheerForceAffected;
-  };
 }
 
 function getWeatherCondition(...weatherTypes: WeatherType[]): AbAttrCondition {
@@ -4211,7 +4215,7 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.COLOR_CHANGE, 3)
       .attr(PostDefendTypeChangeAbAttr)
-      .condition(getSheerForceHitDisableAbCondition()),
+      .attr(SheerForceHitDisabled),
     new Ability(Abilities.IMMUNITY, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
       .ignorable(),
@@ -4334,8 +4338,8 @@ export function initAbilities() {
     new Ability(Abilities.TRUANT, 3)
       .attr(PostSummonAddBattlerTagAbAttr, BattlerTagType.TRUANT, 1, false),
     new Ability(Abilities.HUSTLE, 3)
-      .attr(BattleStatMultiplierAbAttr, BattleStat.ATK, 1.5, (user, target, move) => move.category === MoveCategory.PHYSICAL)
-      .attr(BattleStatMultiplierAbAttr, BattleStat.ACC, 0.8, (user, target, move) => move.category === MoveCategory.PHYSICAL),
+      .attr(BattleStatMultiplierAbAttr, BattleStat.ATK, 1.5, (user, target, move) => move?.category === MoveCategory.PHYSICAL)
+      .attr(BattleStatMultiplierAbAttr, BattleStat.ACC, 0.8, (user, target, move) => move?.category === MoveCategory.PHYSICAL),
     new Ability(Abilities.CUTE_CHARM, 3)
       .attr(PostDefendContactApplyTagChanceAbAttr, 30, BattlerTagType.INFATUATED),
     new Ability(Abilities.PLUS, 3)
@@ -4541,10 +4545,11 @@ export function initAbilities() {
       .attr(PostTurnHurtIfSleepingAbAttr),
     new Ability(Abilities.PICKPOCKET, 5)
       .attr(PostDefendStealHeldItemAbAttr, (target, user, move) => move.hasFlag(MoveFlags.MAKES_CONTACT))
-      .condition(getSheerForceHitDisableAbCondition()),
+      .attr(SheerForceHitDisabled),
     new Ability(Abilities.SHEER_FORCE, 5)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.chance >= 1, 5461/4096)
       .attr(MoveEffectChanceMultiplierAbAttr, 0)
+      .attr(SheerForceHitDisableAbAttr)
       .partial(),
     new Ability(Abilities.CONTRARY, 5)
       .attr(StatChangeMultiplierAbAttr, -1)
@@ -4755,10 +4760,10 @@ export function initAbilities() {
     new Ability(Abilities.STAMINA, 7)
       .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, BattleStat.DEF, 1),
     new Ability(Abilities.WIMP_OUT, 7)
-      .condition(getSheerForceHitDisableAbCondition())
+      .attr(SheerForceHitDisabled)
       .unimplemented(),
     new Ability(Abilities.EMERGENCY_EXIT, 7)
-      .condition(getSheerForceHitDisableAbCondition())
+      .attr(SheerForceHitDisabled)
       .unimplemented(),
     new Ability(Abilities.WATER_COMPACTION, 7)
       .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.type === Type.WATER && move.category !== MoveCategory.STATUS, BattleStat.DEF, 2),
@@ -4785,7 +4790,7 @@ export function initAbilities() {
       .attr(MoveTypePowerBoostAbAttr, Type.STEEL),
     new Ability(Abilities.BERSERK, 7)
       .attr(PostDefendHpGatedStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, 0.5, [BattleStat.SPATK], 1)
-      .condition(getSheerForceHitDisableAbCondition()),
+      .attr(SheerForceHitDisabled),
     new Ability(Abilities.SLUSH_RUSH, 7)
       .attr(BattleStatMultiplierAbAttr, BattleStat.SPD, 2)
       .condition(getWeatherCondition(WeatherType.HAIL, WeatherType.SNOW)),
@@ -5044,7 +5049,7 @@ export function initAbilities() {
     new Ability(Abilities.ANGER_SHELL, 9)
       .attr(PostDefendHpGatedStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, 0.5, [ BattleStat.ATK, BattleStat.SPATK, BattleStat.SPD ], 1)
       .attr(PostDefendHpGatedStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, 0.5, [ BattleStat.DEF, BattleStat.SPDEF ], -1)
-      .condition(getSheerForceHitDisableAbCondition()),
+      .attr(SheerForceHitDisabled),
     new Ability(Abilities.PURIFYING_SALT, 9)
       .attr(StatusEffectImmunityAbAttr)
       .attr(ReceivedTypeDamageMultiplierAbAttr, Type.GHOST, 0.5)
