@@ -1,13 +1,13 @@
 import { Arena } from "../field/arena";
 import { Type } from "./type";
 import * as Utils from "../utils";
-import { MoveCategory, allMoves, MoveTarget } from "./move";
+import { MoveCategory, allMoves, MoveTarget, IncrementMovePriorityAttr, applyMoveAttrs } from "./move";
 import { getPokemonNameWithAffix } from "../messages";
 import Pokemon, { HitResult, PokemonMove } from "../field/pokemon";
 import { MoveEffectPhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
 import { StatusEffect } from "./status-effect";
 import { BattlerIndex } from "../battle";
-import { BlockNonDirectDamageAbAttr, ProtectStatAbAttr, applyAbAttrs } from "./ability";
+import { BlockNonDirectDamageAbAttr, IncrementMovePriorityAbAttr, ProtectStatAbAttr, applyAbAttrs } from "./ability";
 import { BattleStat } from "./battle-stat";
 import { CommonAnim, CommonBattleAnim } from "./battle-anims";
 import i18next from "i18next";
@@ -181,14 +181,14 @@ class AuroraVeilTag extends WeakenMoveScreenTag {
   }
 }
 
-type ProtectConditionFunc = (...args: any[]) => boolean;
+type ProtectConditionFunc = (arena: Arena, moveId: Moves) => boolean;
 
 /**
- * Abstract class to implement conditional team protection
+ * Class to implement conditional team protection
  * applies protection based on the attributes of incoming moves
  * @param protectConditionFunc: The function determining if an incoming move is negated
  */
-abstract class ConditionalProtectTag extends ArenaTag {
+export class ConditionalProtectTag extends ArenaTag {
   protected protectConditionFunc: ProtectConditionFunc;
 
   constructor(tagType: ArenaTagType, sourceMove: Moves, sourceId: integer, side: ArenaTagSide, condition: ProtectConditionFunc) {
@@ -208,23 +208,31 @@ abstract class ConditionalProtectTag extends ArenaTag {
    * apply(): Checks incoming moves against the condition function
    * and protects the target if conditions are met
    * @param arena The arena containing this tag
-   * @param args[0] (Utils.BooleanHolder) Signals if the move is cancelled
-   * @param args[1] (Pokemon) The intended target of the move
-   * @param args[2...] (any[]) The parameters to the condition function
+   * @param args\[0\] (Utils.BooleanHolder) Signals if the move is cancelled
+   * @param args\[1\] (Pokemon) The Pokemon using the move
+   * @param args\[1\] (Pokemon) The intended target of the move
+   * @param args\[2\] (Moves) The parameters to the condition function
    * @returns
    */
   apply(arena: Arena, args: any[]): boolean {
-    if ((args[0] as Utils.BooleanHolder).value) {
-      return false;
-    }
+    const [ cancelled, user, target, moveId ] = args;
 
-    const target = args[1] as Pokemon;
-    if ((this.side === ArenaTagSide.PLAYER) === target.isPlayer()
-         && this.protectConditionFunc(...args.slice(2))) {
-      (args[0] as Utils.BooleanHolder).value = true;
-      new CommonBattleAnim(CommonAnim.PROTECT, target).play(arena.scene);
-      arena.scene.queueMessage(i18next.t("arenaTag:conditionalProtectApply", { moveName: super.getMoveName(), pokemonNameWithAffix: getPokemonNameWithAffix(target) }));
-      return true;
+    if (cancelled instanceof Utils.BooleanHolder && user instanceof Pokemon
+        && target instanceof Pokemon && typeof moveId === "number") {
+
+      if (cancelled.value) {
+        return false;
+      }
+
+      if ((this.side === ArenaTagSide.PLAYER) === target.isPlayer()
+          && this.protectConditionFunc(arena, moveId)) {
+        cancelled.value = true;
+        user.stopMultiHit(target);
+
+        new CommonBattleAnim(CommonAnim.PROTECT, target).play(arena.scene);
+        arena.scene.queueMessage(i18next.t("arenaTag:conditionalProtectApply", { moveName: super.getMoveName(), pokemonNameWithAffix: getPokemonNameWithAffix(target) }));
+        return true;
+      }
     }
     return false;
   }
@@ -237,8 +245,17 @@ abstract class ConditionalProtectTag extends ArenaTag {
 class QuickGuardTag extends ConditionalProtectTag {
   constructor(sourceId: integer, side: ArenaTagSide) {
     super(ArenaTagType.QUICK_GUARD, Moves.QUICK_GUARD, sourceId, side,
-      (priority: integer) : boolean => {
-        return priority > 0;
+      (arena: Arena, moveId: Moves) : boolean => {
+        const move = allMoves[moveId];
+        const priority = new Utils.IntegerHolder(move.priority);
+        const effectPhase = arena.scene.getCurrentPhase();
+
+        if (effectPhase instanceof MoveEffectPhase) {
+          const attacker = effectPhase.getUserPokemon();
+          applyMoveAttrs(IncrementMovePriorityAttr, attacker, null, move, priority);
+          applyAbAttrs(IncrementMovePriorityAbAttr, attacker, null, move, priority);
+        }
+        return priority.value > 0;
       }
     );
   }
@@ -252,8 +269,10 @@ class QuickGuardTag extends ConditionalProtectTag {
 class WideGuardTag extends ConditionalProtectTag {
   constructor(sourceId: integer, side: ArenaTagSide) {
     super(ArenaTagType.WIDE_GUARD, Moves.WIDE_GUARD, sourceId, side,
-      (moveTarget: MoveTarget) : boolean => {
-        switch (moveTarget) {
+      (arena: Arena, moveId: Moves) : boolean => {
+        const move = allMoves[moveId];
+
+        switch (move.moveTarget) {
         case MoveTarget.ALL_ENEMIES:
         case MoveTarget.ALL_NEAR_ENEMIES:
         case MoveTarget.ALL_OTHERS:
@@ -273,8 +292,9 @@ class WideGuardTag extends ConditionalProtectTag {
 class MatBlockTag extends ConditionalProtectTag {
   constructor(sourceId: integer, side: ArenaTagSide) {
     super(ArenaTagType.MAT_BLOCK, Moves.MAT_BLOCK, sourceId, side,
-      (moveCategory: MoveCategory) : boolean => {
-        return moveCategory !== MoveCategory.STATUS;
+      (arena: Arena, moveId: Moves) : boolean => {
+        const move = allMoves[moveId];
+        return move.category !== MoveCategory.STATUS;
       }
     );
   }
@@ -293,11 +313,12 @@ class MatBlockTag extends ConditionalProtectTag {
 class CraftyShieldTag extends ConditionalProtectTag {
   constructor(sourceId: integer, side: ArenaTagSide) {
     super(ArenaTagType.CRAFTY_SHIELD, Moves.CRAFTY_SHIELD, sourceId, side,
-      (moveCategory: MoveCategory, moveTarget: MoveTarget) : boolean => {
-        return moveCategory === MoveCategory.STATUS
-          && moveTarget !== MoveTarget.ENEMY_SIDE
-          && moveTarget !== MoveTarget.BOTH_SIDES
-          && moveTarget !== MoveTarget.ALL;
+      (arena: Arena, moveId: Moves) : boolean => {
+        const move = allMoves[moveId];
+        return move.category === MoveCategory.STATUS
+          && move.moveTarget !== MoveTarget.ENEMY_SIDE
+          && move.moveTarget !== MoveTarget.BOTH_SIDES
+          && move.moveTarget !== MoveTarget.ALL;
       }
     );
   }
