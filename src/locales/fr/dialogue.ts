@@ -2646,7 +2646,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
       1: "J’ai trébuché !",
       2: "Ah, je crois que je me suis paumé.",
       3: "Ah, une impasse !",
-      4: "Hé ! Attends un seconde…\nTu saurais pas qui je suis ?"
+      4: "Hé ! Attends une seconde…\nTu saurais pas qui je suis ?"
     },
   },
   "ace_trainer": {
