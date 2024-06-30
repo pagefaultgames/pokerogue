@@ -2590,7 +2590,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
     },
     "victory": {
       1: "Arg… C’était pas supposé se passer comme ça. Leur ai-je administré la mauvaise préparation ?",
-      2: "Comment ça a pu arrver…\nAvec quoi nourris-tu tes Pokémon ?",
+      2: "Comment ça a pu arriver…\nAvec quoi nourris-tu tes Pokémon ?",
       3: "Si je perds, c’est juste pour te dire que je tuais le temps. Mon ego n’est absolument pas touché…"
     },
     "defeat": {
