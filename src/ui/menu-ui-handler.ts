@@ -200,7 +200,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       {
         label: i18next.t("menuUiHandler:importSettings"),
         handler: () => {
-          console.log("TODO import settings");
+          this.scene.gameData.importData(GameDataType.SETTINGS);
           return true;
         },
         keepOpen: true

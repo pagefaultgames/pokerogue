@@ -1282,6 +1282,7 @@ export class GameData {
                 valid = !!sessionData.party && !!sessionData.enemyParty && !!sessionData.timestamp;
                 break;
               case GameDataType.SETTINGS:
+                // TODO validate
               case GameDataType.TUTORIALS:
                 valid = true;
                 break;
@@ -1298,30 +1299,35 @@ export class GameData {
 
             this.scene.ui.showText(`Your ${dataName} data will be overridden and the page will reload. Proceed?`, null, () => {
               this.scene.ui.setOverlayMode(Mode.CONFIRM, () => {
-                localStorage.setItem(dataKey, encrypt(dataStr, bypassLogin));
+                if (dataType < GameDataType.SETTINGS) {
+                  localStorage.setItem(dataKey, encrypt(dataStr, bypassLogin));
 
-                if (!bypassLogin && dataType < GameDataType.SETTINGS) {
-                  updateUserInfo().then(success => {
-                    if (!success[0]) {
-                      return displayError(`Could not contact the server. Your ${dataName} data could not be imported.`);
-                    }
-                    let url: string;
-                    if (dataType === GameDataType.SESSION) {
-                      url = `savedata/session/update?slot=${slotId}&trainerId=${this.trainerId}&secretId=${this.secretId}&clientSessionId=${clientSessionId}`;
-                    } else {
-                      url = `savedata/system/update?trainerId=${this.trainerId}&secretId=${this.secretId}&clientSessionId=${clientSessionId}`;
-                    }
-                    Utils.apiPost(url, dataStr, undefined, true)
-                      .then(response => response.text())
-                      .then(error => {
-                        if (error) {
-                          console.error(error);
-                          return displayError(`An error occurred while updating ${dataName} data. Please contact the administrator.`);
-                        }
-                        window.location = window.location;
-                      });
-                  });
+                  if (!bypassLogin) {
+                    updateUserInfo().then(success => {
+                      if (!success[0]) {
+                        return displayError(`Could not contact the server. Your ${dataName} data could not be imported.`);
+                      }
+                      let url: string;
+                      if (dataType === GameDataType.SESSION) {
+                        url = `savedata/session/update?slot=${slotId}&trainerId=${this.trainerId}&secretId=${this.secretId}&clientSessionId=${clientSessionId}`;
+                      } else {
+                        url = `savedata/system/update?trainerId=${this.trainerId}&secretId=${this.secretId}&clientSessionId=${clientSessionId}`;
+                      }
+                      Utils.apiPost(url, dataStr, undefined, true)
+                        .then(response => response.text())
+                        .then(error => {
+                          if (error) {
+                            console.error(error);
+                            return displayError(`An error occurred while updating ${dataName} data. Please contact the administrator.`);
+                          }
+                          window.location = window.location;
+                        });
+                    });
+                  } else {
+                    window.location = window.location;
+                  }
                 } else {
+                  localStorage.setItem(getDataTypeKey(dataType), dataStr);
                   window.location = window.location;
                 }
               }, () => {
