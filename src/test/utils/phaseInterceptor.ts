@@ -17,7 +17,6 @@ import {
   NextEncounterPhase,
   PostSummonPhase,
   SelectGenderPhase,
-  SelectModifierPhase,
   SelectStarterPhase,
   SelectTargetPhase,
   ShinySparklePhase,
@@ -37,6 +36,7 @@ import {
 import UI, {Mode} from "#app/ui/ui";
 import {Phase} from "#app/phase";
 import ErrorInterceptor from "#app/test/utils/errorInterceptor";
+import {SelectModifierPhase} from "#app/phases/select-modifier-phase";
 import {QuietFormChangePhase} from "#app/form-change-phase";
 
 export default class PhaseInterceptor {
@@ -95,7 +95,7 @@ export default class PhaseInterceptor {
   ];
 
   private endBySetMode = [
-    TitlePhase, SelectGenderPhase, CommandPhase
+    TitlePhase, SelectGenderPhase, CommandPhase, SelectModifierPhase
   ];
 
   /**
