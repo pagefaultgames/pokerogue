@@ -2975,7 +2975,7 @@ export const move: MoveTranslationEntries = {
   },
   dynamaxCannon: {
     name: "Cañón Dinamax",
-    effect: "El usuario ataca emitiendo un rayo desde su núcleo. Inflinge hasta el doble de daño si el usuario tiene menos nivel que el objetivo."
+    effect: "El usuario ataca emitiendo un rayo desde su núcleo. Inflinge hasta el doble de daño si el objetivo tiene más niveles de lo normal."
   },
   snipeShot: {
     name: "Disparo Certero",

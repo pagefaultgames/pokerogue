@@ -2975,7 +2975,7 @@ export const move: MoveTranslationEntries = {
   },
   "dynamaxCannon": {
     name: "Canon Dynamax",
-    effect: "Le lanceur attaque en libérant l’énergie concentrée dans son noyau. Inflige jusqu’à deux fois plus de dégâts si l’adversaire a un niveau plus élevé que le lanceur."
+    effect: "Le lanceur attaque en libérant l’énergie concentrée dans son noyau. Inflige jusqu’à deux fois plus de dégâts si l’adversaire a un niveau plus élevé que le lanceur." // Check new English description
   },
   "snipeShot": {
     name: "Tir de Précision",

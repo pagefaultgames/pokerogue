@@ -2975,7 +2975,7 @@ export const move: MoveTranslationEntries = {
   },
   "dynamaxCannon": {
     name: "极巨炮",
-    effect: "将凝缩在体内的能量从核心放出进行攻击，\n对手的等级比你高的越多，造成的伤害越高，最多两倍。",
+    effect: "将凝缩在体内的能量从核心放出进行攻击，\n对手的等级比你高的越多，造成的伤害越高，最多两倍。", // Check new English description
   },
   "snipeShot": {
     name: "狙击",

@@ -2861,7 +2861,7 @@ export const move: MoveTranslationEntries = {
   },
   dynamaxCannon: {
     name: "極巨炮",
-    effect: "將凝縮在體內的能量從核心\n放出進行攻擊", // Check new EN locale
+    effect: "將凝縮在體內的能量從核心\n放出進行攻擊", // Check new English description
   },
   snipeShot: {
     name: "狙擊",

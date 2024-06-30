@@ -2981,7 +2981,7 @@ export const move: MoveTranslationEntries = {
   },
   dynamaxCannon: {
     name: "다이맥스포",
-    /* 다이맥스에서 200레벨로 조건 변경 */
+    // Check new English description
     effect: "코어에서 빔을 발사해서 공격한다. 상대의 레벨이 더 높다면 데미지가 2배가 된다."
   },
   snipeShot: {
