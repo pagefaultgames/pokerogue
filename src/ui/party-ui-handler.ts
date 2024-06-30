@@ -1152,13 +1152,13 @@ class PartySlot extends Phaser.GameObjects.Container {
       let slotTmText: string;
       switch (true) {
       case (this.pokemon.compatibleTms.indexOf(tmMoveId) === -1):
-        slotTmText = i18next.t("partyUiHandler:notAble");
+        slotTmText = i18next.t("partyUiHandler:NOT_ABLE");
         break;
       case (this.pokemon.getMoveset().filter(m => m?.moveId === tmMoveId).length > 0):
-        slotTmText = i18next.t("partyUiHandler:learned");
+        slotTmText = i18next.t("partyUiHandler:LEARNED");
         break;
       default:
-        slotTmText = i18next.t("partyUiHandler:able");
+        slotTmText = i18next.t("partyUiHandler:ABLE");
         break;
       }
 
@@ -1168,9 +1168,9 @@ class PartySlot extends Phaser.GameObjects.Container {
 
       slotInfoContainer.add(slotTmLabel);
     } else if (partyUiMode === PartyUiMode.MODIFIER && (evolutionItemId || formItemId)) {
-      let slotItemText = i18next.t("partyUiHandler:notAble");
+      let slotItemText = i18next.t("partyUiHandler:NOT_ABLE");
       if (this.pokemon.evolutionItems.indexOf(evolutionItemId) !== -1 || this.pokemon.formChangeItems.indexOf(formItemId) !== -1) {
-        slotItemText = i18next.t("partyUiHandler:able");
+        slotItemText = i18next.t("partyUiHandler:ABLE");
       }
 
       const slotItemLabel = addTextObject(this.scene, 0, 0, slotItemText, TextStyle.MESSAGE);

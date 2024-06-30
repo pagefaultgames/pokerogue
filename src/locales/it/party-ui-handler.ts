@@ -35,9 +35,9 @@ export const partyUiHandler: SimpleTranslationEntries = {
   "cancel": "Cancel",
 
   // Slot TM text
-  "able": "Able",
-  "notAble": "Not able",
-  "learned": "Learned",
+  "ABLE": "Able",
+  "NOT_ABLE": "Not able",
+  "LEARNED": "Learned",
 
   // Releasing messages
   "goodbye": "Goodbye, {{pokemonName}}!",
