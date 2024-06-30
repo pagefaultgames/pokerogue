@@ -1322,14 +1322,15 @@ export class PokemonResetNegativeStatStageModifier extends PokemonHeldItemModifi
 
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
-
-    for (let s = 0; s < pokemon.summonData.battleStats.length; s++) {
-      pokemon.summonData.battleStats[s] = Math.max(0, pokemon.summonData.battleStats[s]);
+    const loweredStats = pokemon.summonData.battleStats.filter(s => s < 0);
+    if (loweredStats.length) {
+      for (let s = 0; s < pokemon.summonData.battleStats.length; s++) {
+        pokemon.summonData.battleStats[s] = Math.max(0, pokemon.summonData.battleStats[s]);
+      }
+      pokemon.scene.queueMessage(getPokemonMessage(pokemon, `'s lowered stats were'\nrestored by its ${this.type.name}!`));
+      return true;
     }
-
-    pokemon.updateInfo();
-
-    return true;
+    return false;
   }
 
   getMaxHeldItemCount(pokemon: Pokemon): integer {

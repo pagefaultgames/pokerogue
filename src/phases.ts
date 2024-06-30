@@ -3014,12 +3014,6 @@ export class MoveEffectPhase extends PokemonPhase {
         if (hitsTotal > 1) {
           this.scene.queueMessage(i18next.t("battle:attackHitsCount", { count: hitsTotal }));
         }
-        this.scene.applyModifiers(PokemonResetNegativeStatStageModifier, this.player, user);
-        for (const target of this.targets) {
-          if (this.scene.getPokemonById(target)?.isActive()) {
-            this.scene.applyModifiers(PokemonResetNegativeStatStageModifier, this.player, this.scene.getPokemonById(target));
-          }
-        }
         this.scene.applyModifiers(HitHealModifier, this.player, user);
       }
     }
@@ -3307,6 +3301,16 @@ export class StatChangePhase extends PokemonPhase {
       }
 
       applyPostStatChangeAbAttrs(PostStatChangeAbAttr, pokemon, filteredStats, this.levels, this.selfTarget);
+      const existingPhase = this.scene.findPhase(p => p instanceof StatChangePhase && p.battlerIndex === this.battlerIndex);
+      if (!(existingPhase instanceof StatChangePhase)) {
+        const whiteHerb = this.scene.applyModifier(PokemonResetNegativeStatStageModifier, this.player, pokemon) as PokemonResetNegativeStatStageModifier;
+        if (whiteHerb && Utils.randSeedInt(2)) {
+          if (!--whiteHerb.stackCount) {
+            this.scene.removeModifier(whiteHerb);
+          }
+          this.scene.updateModifiers(this.player);
+        }
+      }
 
       pokemon.updateInfo();
 
