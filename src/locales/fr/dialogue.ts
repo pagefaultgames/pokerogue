@@ -554,7 +554,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "flare_boss_lysandre_2": {
     "encounter": {
-      1: "Ton future ou le mien… Voyons lequel mérite plus."
+      1: "Ton futur ou le mien…\nVoyons lequel mérite plus d’aboutir."
     },
     "victory": {
       1: "Ohhhh… !"
@@ -3061,7 +3061,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
   },
   "flare_boss_lysandre_2": {
     "encounter": {
-      1: "Ton future ou le mien… Voyons lequel mérite plus."
+      1: "Ton futur ou le mien…\nVoyons lequel mérite plus d’aboutir."
     },
     "victory": {
       1: "Ohhhh… !"
