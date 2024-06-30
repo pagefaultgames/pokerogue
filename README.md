@@ -17,7 +17,10 @@ If you have the motivation and experience with Typescript/Javascript (or are wil
 2. Run `npm run start:dev` to locally run the project in `localhost:8000`
 
 #### Linting
-We're using ESLint as our common linter and formatter. It will run automatically during the pre-commit hook but if you would like to manually run it, use the `npm run eslint` script. 
+We're using ESLint as our common linter and formatter. It will run automatically during the pre-commit hook but if you would like to manually run it, use the `npm run eslint` script.
+
+#### Version management
+If you're making a bigger change, it is recommended to bump the minor version in the `package.json` file. If you're making an even bigger change, bump the major version. Patch versions are bumped automatically by the CI/CD pipeline.
 
 ### ❔ FAQ 
 

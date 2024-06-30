@@ -1,0 +1,6 @@
+name: "Auto-Bump Version File"
+author: "Franck Trouillez"
+description: "Automatically bump the package.json and package-file.json file."
+runs:
+  using: 'docker'
+  image: 'Dockerfile'

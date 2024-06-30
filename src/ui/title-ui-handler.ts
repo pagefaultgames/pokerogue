@@ -15,6 +15,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
   private eventDisplay: TimedEventDisplay;
 
   private titleStatsTimer: NodeJS.Timeout;
+  private versionLabel: Phaser.GameObjects.Text;
 
   constructor(scene: BattleScene, mode: Mode = Mode.TITLE) {
     super(scene, mode);
@@ -39,6 +40,9 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
       this.eventDisplay.setup();
       this.titleContainer.add(this.eventDisplay);
     }
+
+    this.versionLabel = addTextObject(this.scene, 0, 0, this.scene.game.config.gameVersion, TextStyle.MESSAGE, { fontSize: "54px" });
+    this.titleContainer.add(this.versionLabel);
 
     this.playerCountLabel = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - 109, `? ${i18next.t("menu:playersOnline")}`, TextStyle.MESSAGE, { fontSize: "54px" });
     this.playerCountLabel.setOrigin(1, 0);
