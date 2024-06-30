@@ -2340,6 +2340,7 @@ export class TurnStartPhase extends FieldPhase {
       const turnCommand = this.scene.currentBattle.turnCommands[o];
 
       if (turnCommand.skip) {
+        this.scene.tryRemovePhase(phase => phase instanceof MoveHeaderPhase && phase.pokemon === pokemon);
         continue;
       }
 
@@ -2699,10 +2700,6 @@ export class MoveHeaderPhase extends BattlePhase {
 
     // Remove the MovePhase from this turn with the same user Pokemon
     this.scene.tryRemovePhase(phase => phase instanceof MovePhase && phase.pokemon === this.pokemon);
-  }
-
-  end() {
-    super.end();
   }
 }
 
