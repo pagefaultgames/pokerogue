@@ -4144,7 +4144,7 @@ export class IgnoreAccuracyAttr extends AddBattlerTagAttr {
 
 export class AlwaysGetHitAttr extends AddBattlerTagAttr {
   constructor() {
-    super(BattlerTagType.ALWAYS_GET_HIT, true, false);
+    super(BattlerTagType.ALWAYS_GET_HIT, true, false, 0, 0, true);
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -4158,7 +4158,7 @@ export class AlwaysGetHitAttr extends AddBattlerTagAttr {
 
 export class ReceiveDoubleDamageAttr extends AddBattlerTagAttr {
   constructor() {
-    super(BattlerTagType.RECEIVE_DOUBLE_DAMAGE, true, false);
+    super(BattlerTagType.RECEIVE_DOUBLE_DAMAGE, true, false, 0, 0, true);
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {

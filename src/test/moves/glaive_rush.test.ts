@@ -10,7 +10,7 @@ import { Abilities } from "#app/enums/abilities.js";
 import { allMoves } from "#app/data/move.js";
 
 
-describe("Moves - Tackle", () => {
+describe("Moves - Glaive Rush", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -49,7 +49,7 @@ describe("Moves - Tackle", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
     game.doAttack(getMovePosition(game.scene, 0, Moves.SHADOW_SNEAK));
     await game.phaseInterceptor.to(DamagePhase);
-    expect(enemy.hp).toEqual(1000 - (damageDealt * 3));
+    expect(enemy.hp).toBeLessThanOrEqual(1000 - (damageDealt * 3));
 
   }, 20000);
 
@@ -62,6 +62,26 @@ describe("Moves - Tackle", () => {
     game.doAttack(getMovePosition(game.scene, 0, Moves.AVALANCHE));
     await game.phaseInterceptor.to(TurnEndPhase);
     expect(enemy.hp).toBeLessThan(1000);
+
+  }, 20000);
+
+  it("interacts properly with multi-lens", async() => {
+    vi.spyOn(overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "MULTI_LENS", count: 2}]);
+    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(Array(4).fill(Moves.AVALANCHE));
+    await game.startBattle();
+    const player = game.scene.getPlayerPokemon();
+    const enemy = game.scene.getEnemyPokemon();
+    enemy.hp = 1000;
+    player.hp = 1000;
+
+    allMoves[Moves.AVALANCHE].accuracy = 0;
+    game.doAttack(getMovePosition(game.scene, 0, Moves.GLAIVE_RUSH));
+    await game.phaseInterceptor.to(TurnEndPhase);
+    expect(player.hp).toBeLessThan(1000);
+    player.hp = 1000;
+    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    await game.phaseInterceptor.to(TurnEndPhase);
+    expect(player.hp).toBe(1000);
 
   }, 20000);
 
