@@ -1241,9 +1241,9 @@ export class GameData {
             resolve(true);
           });
       } else {
-        const data = localStorage.getItem(dataKey);
+        const data = localStorage.getItem(getDataTypeKey(dataType));
         if (data) {
-          handleData(decrypt(data, bypassLogin));
+          handleData(data);
         }
         resolve(!!data);
       }
