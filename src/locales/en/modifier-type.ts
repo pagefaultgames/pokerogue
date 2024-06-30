@@ -1,6 +1,24 @@
 import { ModifierTypeTranslationEntries } from "#app/interfaces/locales";
 
 export const modifierType: ModifierTypeTranslationEntries = {
+  ModifierOptionType: {
+    "Reroll": {
+      name: "Reroll",
+      description: "Spend money to reroll your item options.",
+    },
+    Transfer: {
+      name: "Transfer",
+      description: "Transfer a held item from one Pokémon to another.",
+    },
+    "CheckTeam": {
+      name: "Check Team",
+      description: "Check your team or use a form changing item.",
+    },
+    "LockRarities": {
+      name: "Lock Rarities",
+      description: "Lock item rarities on reroll (affects reroll cost).",
+    },
+  },
   ModifierType: {
     "AddPokeballModifierType": {
       name: "{{modifierCount}}x {{pokeballName}}",

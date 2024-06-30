@@ -1,6 +1,24 @@
 import { ModifierTypeTranslationEntries } from "#app/interfaces/locales";
 
 export const modifierType: ModifierTypeTranslationEntries = {
+  ModifierOptionType: {
+    "Reroll": {
+      name: "새로고침",
+      description: "돈을 사용해 아이템 목록을 다시 추천받을 수 있습니다.",
+    },
+    Transfer: {
+      name: "도구 교체",
+      description: "포켓몬이 보유한 아이템을 다른 포켓몬으로 옮길 수 있습니다.",
+    },
+    "CheckTeam": {
+      name: "파티 보기",
+      description: "현재 포켓몬 파티를 확인할 수 있습니다.",
+    },
+    "LockRarities": {
+      name: "희귀도 고정",
+      description: "아이템 목록의 희귀도를 고정합니다(비용 증가).",
+    },
+  },
   ModifierType: {
     "AddPokeballModifierType": {
       name: "{{pokeballName}} {{modifierCount}}개",

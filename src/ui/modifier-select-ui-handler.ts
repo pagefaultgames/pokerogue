@@ -10,6 +10,7 @@ import {Button} from "#enums/buttons";
 import MoveInfoOverlay from "./move-info-overlay";
 import { allMoves } from "../data/move";
 import * as Utils from "./../utils";
+import i18next from "i18next";
 
 export const SHOP_OPTIONS_ROW_LIMIT = 6;
 
@@ -390,16 +391,16 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       }
     } else if (cursor === 0) {
       this.cursorObj.setPosition(6, this.lockRarityButtonContainer.visible ? -72 : -60);
-      ui.showText("Spend money to reroll your item options.");
+      ui.showText(i18next.t("modifierType:ModifierOptionType.Reroll.description"));
     } else if (cursor === 1) {
       this.cursorObj.setPosition((this.scene.game.canvas.width / 6) - 120, -60);
-      ui.showText("Transfer a held item from one Pokémon to another.");
+      ui.showText(i18next.t("modifierType:ModifierOptionType.Transfer.description"));
     } else if (cursor === 2) {
       this.cursorObj.setPosition((this.scene.game.canvas.width / 6) - 60, -60);
-      ui.showText("Check your team or use a form changing item.");
+      ui.showText(i18next.t("modifierType:ModifierOptionType.CheckTeam.description"));
     } else {
       this.cursorObj.setPosition(6, -60);
-      ui.showText("Lock item rarities on reroll (affects reroll cost).");
+      ui.showText(i18next.t("modifierType:ModifierOptionType.LockRarities.description"));
     }
 
     return ret;

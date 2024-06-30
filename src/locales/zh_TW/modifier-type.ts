@@ -1,6 +1,24 @@
 import { ModifierTypeTranslationEntries } from "#app/interfaces/locales";
 
 export const modifierType: ModifierTypeTranslationEntries = {
+  ModifierOptionType: {
+    "Reroll": {
+      name: "重新捲動",
+      description: "花錢重新滾動你的物品選項。",
+    },
+    Transfer: {
+      name: "轉移",
+      description: "將持有的物品從一隻神奇寶貝轉移到另一隻神奇寶貝。",
+    },
+    "CheckTeam": {
+      name: "檢查團隊",
+      description: "檢查您的團隊或使用表單更改項目。",
+    },
+    "LockRarities": {
+      name: "鎖稀有度",
+      description: "重新滾動時鎖定物品稀有度（影響重新滾動成本）。",
+    },
+  },
   ModifierType: {
     AddPokeballModifierType: {
       name: "{{modifierCount}}x {{pokeballName}}",

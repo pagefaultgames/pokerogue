@@ -33,7 +33,13 @@ export interface ModifierTypeTranslationEntry {
     extra?: SimpleTranslationEntries
   }
 
+export interface ModifierOptionTypeTranslationEntry {
+  name: string,
+  description: string
+}
+
 export interface ModifierTypeTranslationEntries {
+    ModifierOptionType: { [key: string]: ModifierOptionTypeTranslationEntry },
     ModifierType: { [key: string]: ModifierTypeTranslationEntry },
     SpeciesBoosterItem: { [key: string]: ModifierTypeTranslationEntry },
     AttackTypeBoosterItem: SimpleTranslationEntries,
