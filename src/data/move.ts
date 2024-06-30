@@ -4142,9 +4142,9 @@ export class IgnoreAccuracyAttr extends AddBattlerTagAttr {
   }
 }
 
-export class AlwaysCritsAttr extends AddBattlerTagAttr {
+export class AlwaysGetHitAttr extends AddBattlerTagAttr {
   constructor() {
-    super(BattlerTagType.ALWAYS_CRIT, true, false, 2);
+    super(BattlerTagType.ALWAYS_GET_HIT, true, false);
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -4152,7 +4152,19 @@ export class AlwaysCritsAttr extends AddBattlerTagAttr {
       return false;
     }
 
-    user.scene.queueMessage(getPokemonMessage(user, ` took aim\nat ${target.name}!`));
+    return true;
+  }
+}
+
+export class ReceiveDoubleDamageAttr extends AddBattlerTagAttr {
+  constructor() {
+    super(BattlerTagType.RECEIVE_DOUBLE_DAMAGE, true, false);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args)) {
+      return false;
+    }
 
     return true;
   }
@@ -8216,7 +8228,8 @@ export function initMoves() {
     new AttackMove(Moves.ICE_SPINNER, Type.ICE, MoveCategory.PHYSICAL, 80, 100, 15, -1, 0, 9)
       .attr(ClearTerrainAttr),
     new AttackMove(Moves.GLAIVE_RUSH, Type.DRAGON, MoveCategory.PHYSICAL, 120, 100, 5, -1, 0, 9)
-      .partial(),
+      .attr(AlwaysGetHitAttr)
+      .attr(ReceiveDoubleDamageAttr),
     new StatusMove(Moves.REVIVAL_BLESSING, Type.NORMAL, -1, 1, -1, 0, 9)
       .triageMove()
       .attr(RevivalBlessingAttr)
