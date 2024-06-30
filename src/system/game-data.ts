@@ -13,7 +13,7 @@ import { GameModes, getGameMode } from "../game-mode";
 import { BattleType } from "../battle";
 import TrainerData from "./trainer-data";
 import { trainerConfigs } from "../data/trainer-config";
-import { SettingKeys, resetSettings, setSetting } from "./settings/settings";
+import { Setting, SettingKeys, resetSettings, setSetting, settingIndex } from "./settings/settings";
 import { achvs } from "./achv";
 import EggData from "./egg-data";
 import { Egg } from "../data/egg";
@@ -1149,6 +1149,14 @@ export class GameData {
     }) as SessionSaveData;
   }
 
+  validateSettingsData(dataStr: string): boolean {
+    return Object.entries(JSON.parse(dataStr))
+      .every(([k, v]: [string, number]) => {
+        const index: number = settingIndex(k);
+        return index !== -1 && Setting[index].options.length > v;
+      });
+  }
+
   saveAll(scene: BattleScene, skipVerification: boolean = false, sync: boolean = false, useCachedSession: boolean = false, useCachedSystem: boolean = false): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       Utils.executeIf(!skipVerification, updateUserInfo).then(success => {
@@ -1282,7 +1290,8 @@ export class GameData {
                 valid = !!sessionData.party && !!sessionData.enemyParty && !!sessionData.timestamp;
                 break;
               case GameDataType.SETTINGS:
-                // TODO validate
+                valid = this.validateSettingsData(dataStr);
+                break;
               case GameDataType.TUTORIALS:
                 valid = true;
                 break;
