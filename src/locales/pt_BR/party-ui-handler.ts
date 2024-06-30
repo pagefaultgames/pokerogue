@@ -7,4 +7,7 @@ export const partyUiHandler: SimpleTranslationEntries = {
   "RELEASE": "Soltar",
   "APPLY": "Aplicar",
   "TEACH": "Ensinar",
+  "ABLE": "Capaz",
+  "NOT_ABLE": "Incapaz",
+  "LEARNED": "Aprendido"
 } as const;

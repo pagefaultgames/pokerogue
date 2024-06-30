@@ -1149,13 +1149,13 @@ class PartySlot extends Phaser.GameObjects.Container {
       let slotTmText: string;
       switch (true) {
       case (this.pokemon.compatibleTms.indexOf(tmMoveId) === -1):
-        slotTmText = "Not Able";
+        slotTmText = i18next.t("partyUiHandler:notAble");
         break;
       case (this.pokemon.getMoveset().filter(m => m?.moveId === tmMoveId).length > 0):
-        slotTmText = "Learned";
+        slotTmText = i18next.t("partyUiHandler:learned");
         break;
       default:
-        slotTmText = "Able";
+        slotTmText = i18next.t("partyUiHandler:able");
         break;
       }
 
