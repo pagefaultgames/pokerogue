@@ -42,6 +42,7 @@ describe("Moves - Tackle", () => {
     const enemy = game.scene.getEnemyPokemon();
     enemy.hp = 1000;
 
+    vi.spyOn(game.scene, "randBattleSeedInt").mockReturnValue(0);
     game.doAttack(getMovePosition(game.scene, 0, Moves.SHADOW_SNEAK));
     await game.phaseInterceptor.to(DamagePhase);
     const damageDealt = 1000 - enemy.hp;
