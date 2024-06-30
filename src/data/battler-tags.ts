@@ -900,8 +900,7 @@ export class ProtectedTag extends BattlerTag {
       // Stop multi-hit moves early
       const effectPhase = pokemon.scene.getCurrentPhase();
       if (effectPhase instanceof MoveEffectPhase) {
-        const attacker = effectPhase.getPokemon();
-        attacker.stopMultiHit();
+        effectPhase.stopMultiHit(pokemon);
       }
       return true;
     }

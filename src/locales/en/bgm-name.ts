@@ -62,6 +62,7 @@ export const bgmName: SimpleTranslationEntries = {
   "battle_legendary_calyrex": "SWSH Calyrex Battle",
   "battle_legendary_birds_galar": "SWSH Galarian Legendary Birds Battle",
   "battle_legendary_ruinous": "SV Treasures of Ruin Battle",
+  "battle_legendary_kor_mir": "SV Depths of Area Zero Battle",
   "battle_legendary_loyal_three": "SV Loyal Three Battle",
   "battle_legendary_ogerpon": "SV Ogerpon Battle",
   "battle_legendary_terapagos": "SV Terapagos Battle",
@@ -91,7 +92,7 @@ export const bgmName: SimpleTranslationEntries = {
   "cave": "PMD EoS Sky Peak Cave",
   "construction_site": "PMD EoS Boulder Quarry",
   "desert": "PMD EoS Northern Desert",
-  "dojo": "PMD EoS Marowa Dojo",
+  "dojo": "PMD EoS Marowak Dojo",
   "end": "PMD RTDX Sky Tower",
   "factory": "PMD EoS Concealed Ruins",
   "fairy_cave": "PMD EoS Star Cave",
@@ -100,20 +101,20 @@ export const bgmName: SimpleTranslationEntries = {
   "graveyard": "PMD EoS Mystifying Forest",
   "ice_cave": "PMD EoS Vast Ice Mountain",
   "island": "PMD EoS Craggy Coast",
-  //"jungle": "jungle", // The composer thinks about a more creative name
-  //"labratory": "labratory", // The composer thinks about a more creative name
+  "jungle": "Lmz - Jungle", // The composer thinks about a more creative name
+  "laboratory": "Firel - Laboratory", // The composer thinks about a more creative name
   "lake": "PMD EoS Crystal Cave",
   "meadow": "PMD EoS Sky Peak Forest",
-  //"metropolis": "metropolis", // The composer thinks about a more creative name
+  "metropolis": "Firel - Metropolis", // The composer thinks about a more creative name
   "mountain": "PMD EoS Mt. Horn",
   "plains": "PMD EoS Sky Peak Prairie",
   "power_plant": "PMD EoS Far Amp Plains",
   "ruins": "PMD EoS Deep Sealed Ruin",
   "sea": "PMD EoS Brine Cave",
-  "seabed": "PMD EoS Lower Brine Cave",
+  "seabed": "Firel - Seabed", // The composer thinks about a more creative name
   "slum": "PMD EoS Sky Peak Coast",
   "snowy_forest": "PMD EoS Sky Peak Snowfield",
-  "space": "PMD EoS Fortune Ravine",
+  "space": "Firel - Aether",
   "swamp": "PMD EoS Surrounded Sea",
   "tall_grass": "PMD EoS Foggy Forest",
   "temple": "PMD EoS Aegis Cave",

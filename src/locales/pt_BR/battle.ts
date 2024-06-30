@@ -19,7 +19,7 @@ export const battle: SimpleTranslationEntries = {
   "partyFull": "Sua equipe está cheia.\nSolte um Pokémon para ter espaço para {{pokemonName}}?",
   "pokemon": "Pokémon",
   "sendOutPokemon": "{{pokemonName}}, eu escolho você!!",
-  "hitResultCriticalHit": "Um golpe crítico!",
+  "hitResultCriticalHit": "Foi um acerto crítico!",
   "hitResultSuperEffective": "É supereficaz!",
   "hitResultNotVeryEffective": "É pouco eficaz...",
   "hitResultNoEffect": "Isso não afeta {{pokemonName}}!",
