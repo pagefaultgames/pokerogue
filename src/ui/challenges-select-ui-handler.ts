@@ -51,7 +51,7 @@ export default class GameChallengesUiHandler extends UiHandler {
     this.challengesContainer.add(bgOverlay);
 
     // TODO: Change this back to /9 when adding in difficulty
-    const headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6), 24);
+    const headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6) - 2, 24);
     headerBg.setName("window-header-bg");
     headerBg.setOrigin(0, 0);
 
@@ -72,11 +72,11 @@ export default class GameChallengesUiHandler extends UiHandler {
     // difficultyName.setOrigin(0, 0);
     // difficultyName.setPositionRelative(difficultyBg, difficultyBg.width - difficultyName.displayWidth - 8, 4);
 
-    this.optionsBg = addWindow(this.scene, 0, headerBg.height, (this.scene.game.canvas.width / 9), (this.scene.game.canvas.height / 6) - headerBg.height - 2);
+    this.optionsBg = addWindow(this.scene, 0, headerBg.height, (this.scene.game.canvas.width / 11), (this.scene.game.canvas.height / 6) - headerBg.height - 2);
     this.optionsBg.setName("window-options-bg");
     this.optionsBg.setOrigin(0, 0);
 
-    const descriptionBg = addWindow(this.scene, 0, headerBg.height, (this.scene.game.canvas.width / 18) - 2, (this.scene.game.canvas.height / 6) - headerBg.height - 26);
+    const descriptionBg = addWindow(this.scene, 0, headerBg.height, (this.scene.game.canvas.width / 13) - 4, (this.scene.game.canvas.height / 6) - headerBg.height - 26);
     descriptionBg.setName("window-desc-bg");
     descriptionBg.setOrigin(0, 0);
     descriptionBg.setPositionRelative(this.optionsBg, this.optionsBg.width, 0);
@@ -98,6 +98,8 @@ export default class GameChallengesUiHandler extends UiHandler {
     this.descriptionText.setScale(1/6);
     this.descriptionText.setShadow(4, 5, ShadowColor.ORANGE);
     this.descriptionText.setOrigin(0, 0);
+    //this.descriptionText.setWordWrapWidth(800, true);
+    //this.descriptionText.setPositionRelative(descriptionBg, 6, 4);
 
     const startBg = addWindow(this.scene, 0, 0, descriptionBg.width, 24);
     startBg.setName("window-start-bg");
@@ -109,7 +111,7 @@ export default class GameChallengesUiHandler extends UiHandler {
     startText.setOrigin(0, 0);
     startText.setPositionRelative(startBg, 8, 4);
 
-    this.startCursor = this.scene.add.nineslice(0, 0, "summary_moves_cursor", null, (this.scene.game.canvas.width / 18) - 10, 16, 1, 1, 1, 1);
+    this.startCursor = this.scene.add.nineslice(0, 0, "summary_moves_cursor", null, (this.scene.game.canvas.width / 18) + 29, 16, 1, 1, 1, 1);
     this.startCursor.setName("9s-start-cursor");
     this.startCursor.setOrigin(0, 0);
     this.startCursor.setPositionRelative(startBg, 4, 4);
@@ -348,7 +350,7 @@ export default class GameChallengesUiHandler extends UiHandler {
     let ret = super.setCursor(cursor);
 
     if (!this.cursorObj) {
-      this.cursorObj = this.scene.add.nineslice(0, 0, "summary_moves_cursor", null, (this.scene.game.canvas.width / 9) - 10, 16, 1, 1, 1, 1);
+      this.cursorObj = this.scene.add.nineslice(0, 0, "summary_moves_cursor", null, (this.scene.game.canvas.width / 11) - 20, 16, 1, 1, 1, 1);
       this.cursorObj.setOrigin(0, 0);
       this.valuesContainer.add(this.cursorObj);
     }

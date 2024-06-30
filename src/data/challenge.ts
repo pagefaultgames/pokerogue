@@ -2,7 +2,7 @@ import * as Utils from "../utils";
 import i18next from "i18next";
 import { DexAttrProps, GameData } from "#app/system/game-data.js";
 import PokemonSpecies, { getPokemonSpecies, getPokemonSpeciesForm, speciesStarters } from "./pokemon-species";
-import Pokemon from "#app/field/pokemon.js";
+import Pokemon, { PokemonMove } from "#app/field/pokemon.js";
 import { BattleType, FixedBattleConfig } from "#app/battle.js";
 import Trainer, { TrainerVariant } from "#app/field/trainer.js";
 import { GameMode } from "#app/game-mode.js";
@@ -12,7 +12,9 @@ import { pokemonFormChanges } from "./pokemon-forms";
 import { Challenges } from "#enums/challenges";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
+import { ModifierTypeOption } from "#app/modifier/modifier-type.js";
 import { TypeColor, TypeShadow } from "#app/enums/color.js";
+import { Moves } from "#app/enums/moves.js";
 
 /**
  * An enum for all the challenge types. The parameter entries on these describe the
@@ -47,6 +49,36 @@ export enum ChallengeType {
    *             [1] {@link FixedBattleConfig} A new fixed battle. It'll be modified if a battle exists.
   */
   FIXED_BATTLES,
+  /**
+   * Checks if the heal phase should be run
+   * @param args [1] {@link Utils.BooleanHolder} Sets to false if illegal, pass in true.
+  */
+  NO_HEAL_PHASE,
+  /**
+   * Checks if the shop item is blacklisted
+   * @param args [0] {@link ModifierTypeOption} The shop item
+   *             [1] {@link Utils.BooleanHolder} Sets to false if illegal, pass in true.
+  */
+  SHOP_ITEM_BLACKLIST,
+  /**
+   * Checks if the random item is blacklisted
+   * @param args [0] {@link ModifierTypeOption} The random item
+   *             [1] {@link Utils.BooleanHolder} Sets to false if illegal, pass in true.
+  */
+  RANDOM_ITEM_BLACKLIST,
+  /**
+   * Checks if the cought pokemon can be add to the team
+   * @param args [0] {@link EnemyPokemon} The pokemon cought
+   *             [1] {@link number} Current wave index
+   *             [2] {@link Utils.BooleanHolder} Sets to false if illegal, pass in true.
+  */
+  ADD_POKEMON_TO_PARTY,
+  /**
+   * Checks if the move is blacklisted
+   * @param args [0] {@link PokemonMove} The move thats tryed to be used
+   *             [1] {@link Utils.BooleanHolder} Sets to false if illegal, pass in true.
+  */
+  MOVE_BLACKLIST
 }
 
 /**
@@ -62,6 +94,8 @@ export abstract class Challenge {
 
   public conditions: ChallengeCondition[];
   public challengeTypes: ChallengeType[];
+
+  public additionalData: {[x: string]: any};
 
   /**
    * @param {Challenges} id The enum value for the challenge
@@ -635,6 +669,130 @@ export class LowerStarterPointsChallenge extends Challenge {
 }
 
 /**
+ * No Heal Phase
+ * No revive items
+ * Catch only one pokemon each biome or just the first one?
+ * additional rules?
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
+export class NuzlockeChallenge extends Challenge {
+  constructor() {
+    super(Challenges.NUZLOCKE, 2);
+    this.addChallengeType(ChallengeType.NO_HEAL_PHASE);
+    this.addChallengeType(ChallengeType.RANDOM_ITEM_BLACKLIST);
+    this.addChallengeType(ChallengeType.SHOP_ITEM_BLACKLIST);
+    this.addChallengeType(ChallengeType.ADD_POKEMON_TO_PARTY);
+    this.addChallengeType(ChallengeType.MOVE_BLACKLIST);
+    this.addChallengeType(ChallengeType.STARTER_CHOICE);
+  }
+
+  apply(challengeType: ChallengeType, args: any[]): boolean {
+    if (this.value === 0) {
+      return false;
+    }
+
+    switch (challengeType) {
+    case ChallengeType.SHOP_ITEM_BLACKLIST:
+      const shopItem: ModifierTypeOption = args[0];
+      const isShopItemValid = args[1] as Utils.BooleanHolder;
+      const shopItemBlackList = ["modifierType:ModifierType.REVIVE", "modifierType:ModifierType.MAX_REVIVE", "modifierType:ModifierType.SACRED_ASH", "modifierType:ModifierType.REVIVER_SEED"];
+
+      isShopItemValid.value = !shopItemBlackList.includes(shopItem.type.localeKey);
+      return true;
+    case ChallengeType.RANDOM_ITEM_BLACKLIST:
+      const randomItem: ModifierTypeOption = args[0];
+      const isRandomItemValid = args[1] as Utils.BooleanHolder;
+      const randomItemBlackList = ["modifierType:ModifierType.REVIVE", "modifierType:ModifierType.MAX_REVIVE", "modifierType:ModifierType.SACRED_ASH", "modifierType:ModifierType.REVIVER_SEED"];
+
+      isRandomItemValid.value = !randomItemBlackList.includes(randomItem.type.localeKey);
+      return true;
+    case ChallengeType.ADD_POKEMON_TO_PARTY:
+      const currentWave: number = args[1];
+      const canAddToParty = args[2] as Utils.BooleanHolder;
+
+      if (Math.floor((this.additionalData.lastCatchAtWave - 1) / 10) < Math.floor((currentWave - 1) / 10)) {
+        canAddToParty.value = true;
+        this.additionalData.lastCatchAtWave = currentWave;
+      } else {
+        canAddToParty.value = false;
+      }
+      return true;
+    case ChallengeType.MOVE_BLACKLIST:
+      const move = args[0] as PokemonMove;
+      const isMoveValid = args[1] as Utils.BooleanHolder;
+      const moveBlacklist = [Moves.REVIVAL_BLESSING];
+
+      isMoveValid.value = !moveBlacklist.includes(move.moveId);
+      return true;
+    case ChallengeType.NO_HEAL_PHASE:
+      if (this.value === 1) {
+        return false;
+      }
+      const isHealPhaseActive = args[0] as Utils.BooleanHolder;
+      isHealPhaseActive.value = false;
+      return true;
+    case ChallengeType.STARTER_CHOICE:
+      if (this.value === 1) {
+        return false;
+      }
+      const species = args[0] as PokemonSpecies;
+      const isValidStarter = args[1] as Utils.BooleanHolder;
+      isValidStarter.value = !species.legendary;
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * @overrides
+   */
+  getDifficulty(): number {
+    return this.value > 0 ? 1 : 0;
+  }
+
+
+  /**
+   * Returns the description of a challenge's current value.
+   * @param {value} overrideValue The value to check for. If undefined, gets the current value.
+   * @returns {string} The localised description for the current value.
+   */
+  getDescription(overrideValue?: integer): string {
+    if (overrideValue === undefined) {
+      overrideValue = this.value;
+    }
+    let desc: string = i18next.t("challenges:nuzlocke.desc");
+    switch (overrideValue) {
+    case 1:
+      desc = i18next.t("challenges:nuzlocke.desc.1");
+      break;
+    case 2:
+      desc = i18next.t("challenges:nuzlocke.desc.1");
+      desc += i18next.t("challenges:nuzlocke.desc.2");
+    default:
+      break;
+    }
+    return desc;
+  }
+
+  static loadChallenge(source: NuzlockeChallenge | any): NuzlockeChallenge {
+    const newChallenge = new NuzlockeChallenge();
+    newChallenge.value = source.value;
+    newChallenge.severity = source.severity;
+    newChallenge.additionalData = source.additionalData ?? { lastCatchAtWave: -10 };
+    return newChallenge;
+  }
+}
+
+/**
  * Apply all challenges of a given challenge type.
  * @param {GameMode} gameMode The current game mode
  * @param {ChallengeType} challengeType What challenge type to apply
@@ -661,6 +819,8 @@ export function copyChallenge(source: Challenge | any): Challenge {
     return LowerStarterMaxCostChallenge.loadChallenge(source);
   case Challenges.LOWER_STARTER_POINTS:
     return LowerStarterPointsChallenge.loadChallenge(source);
+  case Challenges.NUZLOCKE:
+    return NuzlockeChallenge.loadChallenge(source);
   }
   throw new Error("Unknown challenge copied");
 }
@@ -674,5 +834,6 @@ export function initChallenges() {
     // new LowerStarterMaxCostChallenge(),
     // new LowerStarterPointsChallenge(),
     // new FreshStartChallenge()
+    new NuzlockeChallenge()
   );
 }

@@ -1,7 +1,8 @@
 export enum Challenges {
     SINGLE_GENERATION,
     SINGLE_TYPE,
+    NUZLOCKE,
     LOWER_MAX_STARTER_COST,
     LOWER_STARTER_POINTS,
-    FRESH_START
+    FRESH_START,
 }
