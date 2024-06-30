@@ -182,6 +182,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SOOTHE_BELL": { name: "Sanftglocke" },
 
+    "SCOPE_LENS": { name: "Scope-Linse", description: "Ein Item zum Tragen. Es erhöht die Volltrefferquote." },
+    "LEEK": { name: "Lauchstange", description: "Ein Item, das von Porenta getragen werden kann. Diese lange Lauchstange erhöht die Volltrefferquote stark." },
+
     "EVIOLITE": { name: "Evolith", description: "Ein mysteriöser Klumpen, der die Vert. u. Spez.-Vert. von Pokémon erhöht, die sich noch entwickeln können." },
 
     "SOUL_DEW": { name: "Seelentau", description: "Erhöht den Einfluss des Wesens eines Pokemon auf seine Werte um 10% (additiv)." },

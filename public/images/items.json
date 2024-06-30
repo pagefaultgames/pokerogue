@@ -2068,7 +2068,7 @@
 					}
 				},
 				{
-					"filename": "rare_candy",
+					"filename": "leek",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -2089,7 +2089,7 @@
 					}
 				},
 				{
-					"filename": "rarer_candy",
+					"filename": "rare_candy",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -2110,7 +2110,7 @@
 					}
 				},
 				{
-					"filename": "stick",
+					"filename": "rarer_candy",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -5659,16 +5659,16 @@
 					}
 				},
 				{
-					"filename": "candy",
+					"filename": "baton",
 					"rotated": false,
-					"trimmed": true,
+					"trimmed": false,
 					"sourceSize": {
-						"w": 32,
-						"h": 32
+						"w": 18,
+						"h": 18
 					},
 					"spriteSourceSize": {
-						"x": 7,
-						"y": 11,
+						"x": 0,
+						"y": 0,
 						"w": 18,
 						"h": 18
 					},
@@ -6436,7 +6436,7 @@
 					}
 				},
 				{
-					"filename": "dark_stone",
+					"filename": "candy",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -6445,7 +6445,7 @@
 					},
 					"spriteSourceSize": {
 						"x": 7,
-						"y": 7,
+						"y": 11,
 						"w": 18,
 						"h": 18
 					},
@@ -6478,7 +6478,7 @@
 					}
 				},
 				{
-					"filename": "flame_orb",
+					"filename": "dark_stone",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -6499,7 +6499,7 @@
 					}
 				},
 				{
-					"filename": "light_ball",
+					"filename": "flame_orb",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -6562,7 +6562,7 @@
 					}
 				},
 				{
-					"filename": "light_stone",
+					"filename": "light_ball",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -6877,7 +6877,7 @@
 					}
 				},
 				{
-					"filename": "toxic_orb",
+					"filename": "light_stone",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -7024,6 +7024,27 @@
 					}
 				},
 				{
+					"filename": "toxic_orb",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 7,
+						"y": 7,
+						"w": 18,
+						"h": 18
+					},
+					"frame": {
+						"x": 115,
+						"y": 375,
+						"w": 18,
+						"h": 18
+					}
+				},
+				{
 					"filename": "relic_band",
 					"rotated": false,
 					"trimmed": true,
@@ -7038,8 +7059,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 115,
-						"y": 375,
+						"x": 114,
+						"y": 393,
 						"w": 17,
 						"h": 16
 					}
@@ -7059,8 +7080,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 114,
-						"y": 391,
+						"x": 131,
+						"y": 399,
 						"w": 16,
 						"h": 16
 					}
@@ -7080,7 +7101,7 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 130,
+						"x": 147,
 						"y": 399,
 						"w": 16,
 						"h": 16
@@ -7101,7 +7122,7 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 146,
+						"x": 163,
 						"y": 399,
 						"w": 16,
 						"h": 16
@@ -7122,7 +7143,7 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 162,
+						"x": 179,
 						"y": 399,
 						"w": 16,
 						"h": 16
@@ -7143,7 +7164,7 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 178,
+						"x": 195,
 						"y": 399,
 						"w": 16,
 						"h": 16
@@ -7164,7 +7185,7 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 194,
+						"x": 211,
 						"y": 399,
 						"w": 16,
 						"h": 16
@@ -7185,7 +7206,7 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 210,
+						"x": 227,
 						"y": 399,
 						"w": 16,
 						"h": 16
@@ -7206,7 +7227,7 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 226,
+						"x": 243,
 						"y": 399,
 						"w": 16,
 						"h": 16
@@ -7227,7 +7248,7 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 242,
+						"x": 259,
 						"y": 399,
 						"w": 16,
 						"h": 16
@@ -7248,7 +7269,7 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 258,
+						"x": 275,
 						"y": 399,
 						"w": 16,
 						"h": 16
@@ -7269,7 +7290,7 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 274,
+						"x": 291,
 						"y": 399,
 						"w": 16,
 						"h": 16
@@ -7290,7 +7311,7 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 290,
+						"x": 307,
 						"y": 399,
 						"w": 16,
 						"h": 16
@@ -7311,7 +7332,7 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 306,
+						"x": 323,
 						"y": 399,
 						"w": 16,
 						"h": 16
@@ -7332,7 +7353,7 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 322,
+						"x": 339,
 						"y": 399,
 						"w": 16,
 						"h": 16
@@ -7353,28 +7374,7 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 338,
-						"y": 399,
-						"w": 16,
-						"h": 16
-					}
-				},
-				{
-					"filename": "kangaskhanite",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 8,
-						"y": 8,
-						"w": 16,
-						"h": 16
-					},
-					"frame": {
-						"x": 132,
+						"x": 133,
 						"y": 375,
 						"w": 16,
 						"h": 16
@@ -7402,7 +7402,7 @@
 					}
 				},
 				{
-					"filename": "latiasite",
+					"filename": "kangaskhanite",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -7423,7 +7423,7 @@
 					}
 				},
 				{
-					"filename": "latiosite",
+					"filename": "latiasite",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -7437,14 +7437,14 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 148,
+						"x": 149,
 						"y": 376,
 						"w": 16,
 						"h": 16
 					}
 				},
 				{
-					"filename": "lopunnite",
+					"filename": "latiosite",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -7465,7 +7465,7 @@
 					}
 				},
 				{
-					"filename": "lucarionite",
+					"filename": "lopunnite",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -7486,7 +7486,7 @@
 					}
 				},
 				{
-					"filename": "manectite",
+					"filename": "lucarionite",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -7507,7 +7507,7 @@
 					}
 				},
 				{
-					"filename": "mawilite",
+					"filename": "manectite",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -7528,6 +7528,27 @@
 					}
 				},
 				{
+					"filename": "mawilite",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 8,
+						"y": 8,
+						"w": 16,
+						"h": 16
+					},
+					"frame": {
+						"x": 165,
+						"y": 377,
+						"w": 16,
+						"h": 16
+					}
+				},
+				{
 					"filename": "medichamite",
 					"rotated": false,
 					"trimmed": true,
@@ -7542,7 +7563,7 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 164,
+						"x": 181,
 						"y": 377,
 						"w": 16,
 						"h": 16
@@ -7563,7 +7584,7 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 180,
+						"x": 197,
 						"y": 377,
 						"w": 16,
 						"h": 16
@@ -7584,7 +7605,7 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 196,
+						"x": 213,
 						"y": 377,
 						"w": 16,
 						"h": 16
@@ -7605,7 +7626,7 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 212,
+						"x": 229,
 						"y": 377,
 						"w": 16,
 						"h": 16
@@ -7626,8 +7647,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 228,
-						"y": 377,
+						"x": 349,
+						"y": 327,
 						"w": 16,
 						"h": 16
 					}
@@ -7648,7 +7669,7 @@
 					},
 					"frame": {
 						"x": 349,
-						"y": 327,
+						"y": 343,
 						"w": 16,
 						"h": 16
 					}
@@ -7669,7 +7690,7 @@
 					},
 					"frame": {
 						"x": 349,
-						"y": 343,
+						"y": 359,
 						"w": 16,
 						"h": 16
 					}
@@ -7690,7 +7711,7 @@
 					},
 					"frame": {
 						"x": 349,
-						"y": 359,
+						"y": 375,
 						"w": 16,
 						"h": 16
 					}
@@ -7710,8 +7731,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 349,
-						"y": 375,
+						"x": 365,
+						"y": 330,
 						"w": 16,
 						"h": 16
 					}
@@ -7731,8 +7752,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 354,
-						"y": 391,
+						"x": 381,
+						"y": 330,
 						"w": 16,
 						"h": 16
 					}
@@ -7753,7 +7774,7 @@
 					},
 					"frame": {
 						"x": 365,
-						"y": 330,
+						"y": 346,
 						"w": 16,
 						"h": 16
 					}
@@ -7773,8 +7794,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 381,
-						"y": 330,
+						"x": 365,
+						"y": 362,
 						"w": 16,
 						"h": 16
 					}
@@ -7794,7 +7815,7 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 365,
+						"x": 381,
 						"y": 346,
 						"w": 16,
 						"h": 16
@@ -7815,7 +7836,7 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 365,
+						"x": 381,
 						"y": 362,
 						"w": 16,
 						"h": 16
@@ -7836,8 +7857,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 381,
-						"y": 346,
+						"x": 397,
+						"y": 342,
 						"w": 16,
 						"h": 16
 					}
@@ -7857,8 +7878,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 381,
-						"y": 362,
+						"x": 397,
+						"y": 358,
 						"w": 16,
 						"h": 16
 					}
@@ -7878,8 +7899,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 397,
-						"y": 342,
+						"x": 365,
+						"y": 378,
 						"w": 16,
 						"h": 16
 					}
@@ -7899,8 +7920,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 397,
-						"y": 358,
+						"x": 381,
+						"y": 378,
 						"w": 16,
 						"h": 16
 					}
@@ -7941,8 +7962,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 370,
-						"y": 378,
+						"x": 397,
+						"y": 390,
 						"w": 16,
 						"h": 16
 					}
@@ -7953,6 +7974,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:60db8f4653a650759cd9189e91c38a40:439307cbef9c000f6c45603b2d82d107:110e074689c9edd2c54833ce2e4d9270$"
+		"smartupdate": "$TexturePacker:SmartUpdate:d3848d1a2f1d71413dd485f5f629a4eb:a418dc4833fcd357930c1512c8417df7:110e074689c9edd2c54833ce2e4d9270$"
 	}
 }
