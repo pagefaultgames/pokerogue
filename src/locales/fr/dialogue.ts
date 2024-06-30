@@ -136,7 +136,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       4: "J’ai passé 20 ans à la recherche de moi-même…\nMais où suis-je ?"
     },
     "victory": {
-      1: "J’ai tébuché !",
+      1: "J’ai trébuché !",
       2: "Ah, je crois que je me suis paumé.",
       3: "Ah, une impasse !",
       4: "Hé ! Attends un seconde…\nTu saurais pas qui je suis ?"
