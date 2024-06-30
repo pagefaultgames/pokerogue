@@ -1821,7 +1821,7 @@ export class LevelCapPhase extends FieldPhase {
 
     this.scene.ui.setMode(Mode.MESSAGE).then(() => {
       this.scene.playSound("level_up_fanfare");
-      this.scene.ui.showText(i18next.t("battle:levelCapUp", { levelCap: this.scene.getMaxExpLevel() }), null, () => this.end(), null, true);
+      this.scene.ui.showText(i18next.t("battle:levelCapUp", { levelCap: this.scene.gameMode.getMaxExpLevel(this.scene.currentBattle?.waveIndex) }), null, () => this.end(), null, true);
       this.executeForAll(pokemon => pokemon.updateInfo(true));
     });
   }
@@ -3812,7 +3812,7 @@ export class VictoryPhase extends PokemonPhase {
     const expBalanceModifier = this.scene.findModifier(m => m instanceof ExpBalanceModifier) as ExpBalanceModifier;
     const multipleParticipantExpBonusModifier = this.scene.findModifier(m => m instanceof MultipleParticipantExpBonusModifier) as MultipleParticipantExpBonusModifier;
     const nonFaintedPartyMembers = party.filter(p => p.hp);
-    const expPartyMembers = nonFaintedPartyMembers.filter(p => p.level < this.scene.getMaxExpLevel());
+    const expPartyMembers = nonFaintedPartyMembers.filter(p => p.level < this.scene.gameMode.getMaxExpLevel(this.scene.currentBattle?.waveIndex));
     const partyMemberExp = [];
 
     if (participantIds.size) {

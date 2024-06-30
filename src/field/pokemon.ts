@@ -1664,7 +1664,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   addExp(exp: integer) {
-    const maxExpLevel = this.scene.getMaxExpLevel();
+    const maxExpLevel = this.scene.gameMode.getMaxExpLevel(this.scene.currentBattle?.waveIndex);
     const initialExp = this.exp;
     this.exp += exp;
     while (this.level < maxExpLevel && this.exp >= getLevelTotalExp(this.level + 1, this.species.growthRate)) {

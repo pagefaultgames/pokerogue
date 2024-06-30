@@ -591,7 +591,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       };
 
       if (this.player) {
-        const isLevelCapped = pokemon.level >= (this.scene as BattleScene).getMaxExpLevel();
+        const isLevelCapped = pokemon.level >= (this.scene as BattleScene).gameMode.getMaxExpLevel((this.scene as BattleScene).currentBattle?.waveIndex);
 
         if ((this.lastExp !== pokemon.exp || this.lastLevel !== pokemon.level)) {
           const originalResolve = resolve;
@@ -652,7 +652,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       const relLevelExp = getLevelRelExp(this.lastLevel + 1, pokemon.species.growthRate);
       const levelExp = levelUp ? relLevelExp : pokemon.levelExp;
       let ratio = relLevelExp ? levelExp / relLevelExp : 0;
-      if (this.lastLevel >= (this.scene as BattleScene).getMaxExpLevel(true)) {
+      if (this.lastLevel >= (this.scene as BattleScene).gameMode.getMaxExpLevel((this.scene as BattleScene).currentBattle?.waveIndex, true)) {
         if (levelUp) {
           ratio = 1;
         } else {
@@ -700,7 +700,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   }
 
   setLevel(level: integer): void {
-    const isCapped = level >= (this.scene as BattleScene).getMaxExpLevel();
+    const isCapped = level >= (this.scene as BattleScene).gameMode.getMaxExpLevel((this.scene as BattleScene).currentBattle?.waveIndex);
     this.levelNumbersContainer.removeAll(true);
     const levelStr = level.toString();
     for (let i = 0; i < levelStr.length; i++) {

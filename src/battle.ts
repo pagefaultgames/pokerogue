@@ -76,7 +76,7 @@ export default class Battle {
     this.initBattleSpec();
     this.enemyLevels = battleType !== BattleType.TRAINER
       ? new Array(double ? 2 : 1).fill(null).map(() => this.getLevelForWave())
-      : trainer.getPartyLevels(this.waveIndex);
+      : trainer.getPartyLevels(this.waveIndex, gameMode);
     this.enemyParty = [];
     this.seenEnemyPartyMemberIds = new Set<integer>();
     this.double = double;

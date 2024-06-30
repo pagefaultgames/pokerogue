@@ -846,7 +846,7 @@ export default class SummaryUiHandler extends UiHandler {
       });
 
       const relLvExp = getLevelRelExp(this.pokemon.level + 1, this.pokemon.species.growthRate);
-      const expRatio = this.pokemon.level < this.scene.getMaxExpLevel() ? this.pokemon.levelExp / relLvExp : 0;
+      const expRatio = this.pokemon.level < this.scene.gameMode.getMaxExpLevel(this.scene.currentBattle?.waveIndex) ? this.pokemon.levelExp / relLvExp : 0;
 
       const expLabel = addTextObject(this.scene, 6, 112, "EXP. Points", TextStyle.SUMMARY);
       expLabel.setOrigin(0, 0);
@@ -860,7 +860,7 @@ export default class SummaryUiHandler extends UiHandler {
       expText.setOrigin(1, 0);
       statsContainer.add(expText);
 
-      const nextLvExp = this.pokemon.level < this.scene.getMaxExpLevel()
+      const nextLvExp = this.pokemon.level < this.scene.gameMode.getMaxExpLevel(this.scene.currentBattle?.waveIndex)
         ? getLevelTotalExp(this.pokemon.level + 1, this.pokemon.species.growthRate) - this.pokemon.exp
         : 0;
       const nextLvExpText = addTextObject(this.scene, 208, 128, nextLvExp.toString(), TextStyle.WINDOW_ALT);

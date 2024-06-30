@@ -21,6 +21,8 @@ import i18next from "i18next";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
+import { applyChallenges, ChallengeType } from "#app/data/challenge.js";
+import { GameMode } from "#app/game-mode.js";
 
 export enum TrainerVariant {
     DEFAULT,
@@ -205,7 +207,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
     return this.config.partyTemplates[this.partyTemplateIndex];
   }
 
-  getPartyLevels(waveIndex: integer): integer[] {
+  getPartyLevels(waveIndex: integer, gameMode: GameMode): integer[] {
     const ret = [];
     const partyTemplate = this.getPartyTemplate();
 
@@ -246,8 +248,9 @@ export default class Trainer extends Phaser.GameObjects.Container {
         levelOffset = -Math.floor((difficultyWaveIndex / 50) * (PartyMemberStrength.STRONG - strength));
       }
 
-      const level = Math.ceil(baseLevel * multiplier) + levelOffset;
-      ret.push(level);
+      const level = new Utils.IntegerHolder(Math.ceil(baseLevel * multiplier) + levelOffset);
+      applyChallenges(gameMode, ChallengeType.AI_LEVEL, level, 0, true, false);
+      ret.push(level.value);
     }
 
     return ret;

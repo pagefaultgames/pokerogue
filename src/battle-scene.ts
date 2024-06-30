@@ -1055,7 +1055,7 @@ export default class BattleScene extends SceneBase {
       this.tryRemovePhase(p => p instanceof SwitchPhase);
     }
 
-    const maxExpLevel = this.getMaxExpLevel();
+    const maxExpLevel = this.gameMode.getMaxExpLevel(this.currentBattle?.waveIndex);
 
     this.lastEnemyTrainer = lastBattle?.trainer ?? null;
 
@@ -1120,7 +1120,7 @@ export default class BattleScene extends SceneBase {
         this.pushPhase(new SelectBiomePhase(this));
         this.pushPhase(new NewBiomeEncounterPhase(this));
 
-        const newMaxExpLevel = this.getMaxExpLevel();
+        const newMaxExpLevel = this.gameMode.getMaxExpLevel(this.currentBattle?.waveIndex);
         if (newMaxExpLevel > maxExpLevel) {
           this.pushPhase(new LevelCapPhase(this));
         }
@@ -1507,22 +1507,12 @@ export default class BattleScene extends SceneBase {
   }
 
   addFaintedEnemyScore(enemy: EnemyPokemon): void {
-    let scoreIncrease = enemy.getSpeciesForm().getBaseExp() * (enemy.level / this.getMaxExpLevel()) * ((enemy.ivs.reduce((iv: integer, total: integer) => total += iv, 0) / 93) * 0.2 + 0.8);
+    let scoreIncrease = enemy.getSpeciesForm().getBaseExp() * (enemy.level / this.gameMode.getMaxExpLevel(this.currentBattle?.waveIndex)) * ((enemy.ivs.reduce((iv: integer, total: integer) => total += iv, 0) / 93) * 0.2 + 0.8);
     this.findModifiers(m => m instanceof PokemonHeldItemModifier && m.pokemonId === enemy.id, false).map(m => scoreIncrease *= (m as PokemonHeldItemModifier).getScoreMultiplier());
     if (enemy.isBoss()) {
       scoreIncrease *= Math.sqrt(enemy.bossSegments);
     }
     this.currentBattle.battleScore += Math.ceil(scoreIncrease);
-  }
-
-  getMaxExpLevel(ignoreLevelCap?: boolean): integer {
-    if (ignoreLevelCap) {
-      return Number.MAX_SAFE_INTEGER;
-    }
-    const waveIndex = Math.ceil((this.currentBattle?.waveIndex || 1) / 10) * 10;
-    const difficultyWaveIndex = this.gameMode.getWaveForDifficulty(waveIndex);
-    const baseLevel = (1 + difficultyWaveIndex / 2 + Math.pow(difficultyWaveIndex / 25, 2)) * 1.2;
-    return Math.ceil(baseLevel / 2) * 2 + 2;
   }
 
   randomSpecies(waveIndex: integer, level: integer, fromArenaPool?: boolean, speciesFilter?: PokemonSpeciesFilter, filterAllEvolutions?: boolean): PokemonSpecies {

@@ -11,6 +11,7 @@ import { Challenges } from "#enums/challenges";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 import { Nature } from "./nature";
+import { Gender } from "./gender";
 
 /**
  * An enum for all the challenge types. The parameter entries on these describe the
@@ -42,6 +43,22 @@ export enum ChallengeType {
    * @see {@link Challenge.applyFixedBattle}
   */
   FIXED_BATTLES,
+  /**
+   * Modifies what level the AI pokemon are.
+   */
+  AI_LEVEL,
+  /**
+   * Modifies how many move slots the AI has.
+   */
+  AI_MOVE_SLOTS,
+  /**
+   * Modifies if a pokemon has its passive.
+   */
+  PASSIVE_ACCESS,
+  /**
+   * Modifies the game mode settings in some way.
+   */
+  GAME_MODE_MODIFY,
 }
 
 /**
@@ -264,6 +281,46 @@ export abstract class Challenge {
   applyFixedBattle(waveIndex: Number, battleConfig: FixedBattleConfig): boolean {
     return false;
   }
+
+  /**
+   * An apply function for AI_LEVEL challenges. Derived classes should alter this.
+   * @param level {@link Utils.IntegerHolder} The generated level.
+   * @param levelCap {@link Number} The current level cap.
+   * @param isTrainer {@link Boolean} Whether this is a trainer pokemon.
+   * @param isBoss {@link Boolean} Whether this is a non-trainer boss pokemon.
+   * @returns {@link boolean} Whether this function did anything.
+   */
+  applyLevelChange(level: Utils.IntegerHolder, levelCap: number, isTrainer: boolean, isBoss: boolean): boolean {
+    return false;
+  }
+
+  /**
+   * An apply function for AI_MOVE_SLOTS challenges. Derived classes should alter this.
+   * @param moveSlots {@link Utils.IntegerHolder} The amount of move slots.
+   * @returns {@link boolean} Whether this function did anything.
+   */
+  applyMoveSlot(moveSlots: Utils.IntegerHolder): boolean {
+    return false;
+  }
+
+  /**
+   * An apply function for PASSIVE_ACCESS challenges. Derived classes should alter this.
+   * @param pokemon {@link Pokemon} The pokemon to change.
+   * @param hasPassive {@link Utils.BooleanHolder} Whether it should have its passive.
+   * @returns {@link boolean} Whether this function did anything.
+   */
+  applyPassiveAccess(pokemon: Pokemon, hasPassive: Utils.BooleanHolder): boolean {
+    return false;
+  }
+
+  /**
+   * An apply function for GAME_MODE_MODIFY challenges. Derived classes should alter this.
+   * @param gameMode {@link GameMode} The current game mode.
+   * @returns {@link boolean} Whether this function did anything.
+   */
+  applyGameModeModify(gameMode: GameMode): boolean {
+    return false;
+  }
 }
 
 type ChallengeCondition = (data: GameData) => boolean;
@@ -430,6 +487,7 @@ export class FreshStartChallenge extends Challenge {
     pokemon.nature = Nature.HARDY; // Neutral nature
     pokemon.formIndex = 0; // Just for Froakie, make sure in base form.
     pokemon.ivs = [10, 10, 10, 10, 10, 10]; // Base IVs
+    pokemon.gender = Gender.MALE; // Only male starters
     pokemon.luck = 0; // No luck
     pokemon.shiny = false; // Not shiny
     pokemon.variant = 0; // Reset shiny variant
@@ -446,6 +504,122 @@ export class FreshStartChallenge extends Challenge {
 
   static loadChallenge(source: FreshStartChallenge | any): FreshStartChallenge {
     const newChallenge = new FreshStartChallenge();
+    newChallenge.value = source.value;
+    newChallenge.severity = source.severity;
+    return newChallenge;
+  }
+}
+
+/**
+ * Makes all mons fusions.
+ */
+export class SplicedOnlyChallenge extends Challenge {
+  constructor() {
+    super(Challenges.SPLICED_ONLY, 1);
+  }
+
+  applyGameModeModify(gameMode: GameMode): boolean {
+    if (!gameMode.isSplicedOnly) {
+      gameMode.isSplicedOnly = true;
+      return true;
+    }
+    return false;
+  }
+
+  static loadChallenge(source: SplicedOnlyChallenge | any): SplicedOnlyChallenge {
+    const newChallenge = new SplicedOnlyChallenge();
+    newChallenge.value = source.value;
+    newChallenge.severity = source.severity;
+    return newChallenge;
+  }
+}
+
+/**
+ * Makes all battles double battles.
+ */
+export class DoublesOnlyChallenge extends Challenge {
+  constructor() {
+    super(Challenges.DOUBLES_ONLY, 1);
+  }
+
+  applyGameModeModify(gameMode: GameMode): boolean {
+    if (!gameMode.isDoublesOnly) {
+      gameMode.isDoublesOnly = true;
+      return true;
+    }
+    return false;
+  }
+
+  static loadChallenge(source: DoublesOnlyChallenge | any): DoublesOnlyChallenge {
+    const newChallenge = new DoublesOnlyChallenge();
+    newChallenge.value = source.value;
+    newChallenge.severity = source.severity;
+    return newChallenge;
+  }
+}
+
+/**
+ * Makes bosses harder.
+ * Level 1 adds rubber banding to trainers and boss pokemon levels. This is greater for trainers, and increases with level.
+ * Level 2 gives AI bosses and trainers a fifth moveslot.
+ * Level 3 gives all trainer pokemon their passives.
+ */
+export class HarderBossesChallenge extends Challenge {
+  constructor() {
+    super(Challenges.HARDER_BOSSES, 3);
+  }
+
+  applyLevelChange(level: Utils.IntegerHolder, levelCap: number, isTrainer: boolean, isBoss: boolean): boolean {
+    if (level.value < levelCap && (isTrainer || isBoss)) {
+      const scalingFactor = isTrainer ? 0.3 : 0.25;
+      level.value += Math.floor(scalingFactor * this.value * (levelCap - level.value));
+      return true;
+    }
+    return false;
+  }
+
+  applyMoveSlot(moveSlots: Utils.IntegerHolder): boolean {
+    if (this.value >= 2) {
+      moveSlots.value = 5;
+      return true;
+    }
+    return false;
+  }
+
+  applyPassiveAccess(pokemon: Pokemon, hasPassive: Utils.BooleanHolder): boolean {
+    if (this.value >= 3 && !pokemon.isPlayer() && pokemon.hasTrainer()) {
+      hasPassive.value = true;
+      return true;
+    }
+    return false;
+  }
+
+  static loadChallenge(source: HarderBossesChallenge | any): HarderBossesChallenge {
+    const newChallenge = new HarderBossesChallenge();
+    newChallenge.value = source.value;
+    newChallenge.severity = source.severity;
+    return newChallenge;
+  }
+}
+
+/**
+ * Implements a Nuzlocke, if enabled you can only catch the first pokemon in each zone and if a pokemon is fainted it gets released.
+ */
+export class NuzlockeChallenge extends Challenge {
+  constructor() {
+    super(Challenges.NUZLOCKE, 1);
+  }
+
+  applyGameModeModify(gameMode: GameMode): boolean {
+    if (!gameMode.isNuzlocke) {
+      gameMode.isNuzlocke = true;
+      return true;
+    }
+    return false;
+  }
+
+  static loadChallenge(source: NuzlockeChallenge | any): NuzlockeChallenge {
+    const newChallenge = new NuzlockeChallenge();
     newChallenge.value = source.value;
     newChallenge.severity = source.severity;
     return newChallenge;
@@ -560,6 +734,41 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.FIXED_BATTLES, waveIndex: Number, battleConfig: FixedBattleConfig): boolean;
+/**
+ * Apply all challenges that modify what level AI are.
+ * @param gameMode {@link GameMode} The current gameMode
+ * @param challengeType {@link ChallengeType} ChallengeType.AI_LEVEL
+ * @param level {@link Utils.IntegerHolder} The generated level of the pokemon.
+ * @param levelCap {@link Number} The maximum level cap for the current wave.
+ * @param isTrainer {@link Boolean} Whether this is a trainer pokemon.
+ * @param isBoss {@link Boolean} Whether this is a non-trainer boss pokemon.
+ * @returns True if any challenge was successfully applied.
+ */
+export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.AI_LEVEL, level: Utils.IntegerHolder, levelCap: number, isTrainer: boolean, isBoss: boolean): boolean;
+/**
+ * Apply all challenges that modify how many move slots the AI has.
+ * @param gameMode {@link GameMode} The current gameMode
+ * @param challengeType {@link ChallengeType} ChallengeType.AI_MOVE_SLOTS
+ * @param moveSlots {@link Utils.IntegerHolder} The amount of move slots.
+ * @returns True if any challenge was successfully applied.
+ */
+export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.AI_MOVE_SLOTS, moveSlots: Utils.IntegerHolder): boolean;
+/**
+ * Apply all challenges that modify whether a pokemon has its passive.
+ * @param gameMode {@link GameMode} The current gameMode
+ * @param challengeType {@link ChallengeType} ChallengeType.PASSIVE_ACCESS
+ * @param pokemon {@link Pokemon} The pokemon to modify.
+ * @param hasPassive {@link Utils.BooleanHolder} Whether it has its passive.
+ * @returns True if any challenge was successfully applied.
+ */
+export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.PASSIVE_ACCESS, pokemon: Pokemon, hasPassive: Utils.BooleanHolder): boolean;
+/**
+ * Apply all challenges that modify the game modes settings.
+ * @param gameMode {@link GameMode} The current gameMode
+ * @param challengeType {@link ChallengeType} ChallengeType.GAME_MODE_MODIFY
+ * @returns True if any challenge was successfully applied.
+ */
+export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.GAME_MODE_MODIFY): boolean;
 export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType, ...args: any[]): boolean {
   let ret = false;
   gameMode.challenges.forEach(c => {
@@ -579,6 +788,18 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
         break;
       case ChallengeType.FIXED_BATTLES:
         ret ||= c.applyFixedBattle(args[0], args[1]);
+        break;
+      case ChallengeType.AI_LEVEL:
+        ret ||= c.applyLevelChange(args[0], args[1], args[2], args[3]);
+        break;
+      case ChallengeType.AI_MOVE_SLOTS:
+        ret ||= c.applyMoveSlot(args[0]);
+        break;
+      case ChallengeType.PASSIVE_ACCESS:
+        ret ||= c.applyPassiveAccess(args[0], args[1]);
+        break;
+      case ChallengeType.GAME_MODE_MODIFY:
+        ret ||= c.applyGameModeModify(gameMode);
         break;
       }
     }
@@ -603,6 +824,14 @@ export function copyChallenge(source: Challenge | any): Challenge {
     return LowerStarterPointsChallenge.loadChallenge(source);
   case Challenges.FRESH_START:
     return FreshStartChallenge.loadChallenge(source);
+  case Challenges.SPLICED_ONLY:
+    return SplicedOnlyChallenge.loadChallenge(source);
+  case Challenges.DOUBLES_ONLY:
+    return DoublesOnlyChallenge.loadChallenge(source);
+  case Challenges.HARDER_BOSSES:
+    return HarderBossesChallenge.loadChallenge(source);
+  case Challenges.NUZLOCKE:
+    return NuzlockeChallenge.loadChallenge(source);
   }
   throw new Error("Unknown challenge copied");
 }
@@ -613,8 +842,10 @@ export function initChallenges() {
   allChallenges.push(
     new SingleGenerationChallenge(),
     new SingleTypeChallenge(),
-    // new LowerStarterMaxCostChallenge(),
-    // new LowerStarterPointsChallenge(),
-    // new FreshStartChallenge()
+    new NuzlockeChallenge(),
+    new FreshStartChallenge(),
+    new SplicedOnlyChallenge(),
+    new DoublesOnlyChallenge(),
+    new HarderBossesChallenge(),
   );
 }

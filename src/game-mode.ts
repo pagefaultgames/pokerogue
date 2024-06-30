@@ -41,6 +41,8 @@ export class GameMode implements GameModeConfig {
   public hasRandomBiomes: boolean;
   public hasRandomBosses: boolean;
   public isSplicedOnly: boolean;
+  public isDoublesOnly: boolean;
+  public isNuzlocke: boolean;
   public isChallenge: boolean;
   public challenges: Challenge[];
   public battleConfig: FixedBattleConfigs;
@@ -242,6 +244,21 @@ export class GameMode implements GameModeConfig {
     } else {
       return this.battleConfig[waveIndex];
     }
+  }
+
+  /**
+   * Gets the level cap for a given wave.
+   * @param waveIndex The current wave.
+   * @param ignoreLevelCap Whether to return the maximum possible cap instead of the wave based cap. Used for candies.
+   * @returns
+   */
+  getMaxExpLevel(waveIndex: integer, ignoreLevelCap?: boolean): integer {
+    if (ignoreLevelCap) {
+      return Number.MAX_SAFE_INTEGER;
+    }
+    const difficultyWaveIndex = this.getWaveForDifficulty(Math.ceil(waveIndex / 10) * 10);
+    const baseLevel = (1 + difficultyWaveIndex / 2 + Math.pow(difficultyWaveIndex / 25, 2)) * 1.2;
+    return Math.ceil(baseLevel / 2) * 2 + 2;
   }
 
 
