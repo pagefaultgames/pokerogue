@@ -8,7 +8,7 @@ import { PokeballCounts } from "./battle-scene";
 import { PokeballType } from "./data/pokeball";
 import { Gender } from "./data/gender";
 import { StatusEffect } from "./data/status-effect";
-import { modifierTypes } from "./modifier/modifier-type";
+import { SpeciesStatBoosterItem, modifierTypes } from "./modifier/modifier-type";
 import { VariantTier } from "./enums/variant-tiers";
 import { EggTier } from "#enums/egg-type";
 import { allSpecies } from "./data/pokemon-species"; // eslint-disable-line @typescript-eslint/no-unused-vars
@@ -125,11 +125,12 @@ export const EGG_GACHA_PULL_COUNT_OVERRIDE: number = 0;
  * - Nature is for MINT
  * - Type is for TERA_SHARD or ATTACK_TYPE_BOOSTER (type boosting items i.e Silk Scarf)
  * - BerryType is for BERRY
+ * - SpeciesStatBoosterItem is for SPECIES_STAT_BOOSTER
  */
 interface ModifierOverride {
     name: keyof typeof modifierTypes & string,
     count?: integer
-    type?: TempBattleStat|Stat|Nature|Type|BerryType
+    type?: TempBattleStat|Stat|Nature|Type|BerryType|SpeciesStatBoosterItem
 }
 export const STARTING_MODIFIER_OVERRIDE: Array<ModifierOverride> = [];
 export const OPP_MODIFIER_OVERRIDE: Array<ModifierOverride> = [];

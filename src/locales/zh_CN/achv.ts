@@ -127,7 +127,7 @@ export const PGMachv: AchievementTranslationEntries = {
   },
   "CATCH_SUB_LEGENDARY": {
     name: "二级传说",
-    description: "捕捉一只准传说宝可梦",
+    description: "捕捉一只二级传说宝可梦",
   },
   "CATCH_LEGENDARY": {
     name: "传说",

@@ -21,7 +21,7 @@ import MoveInfoOverlay from "./move-info-overlay";
 import i18next from "i18next";
 import { Moves } from "#enums/moves";
 
-const defaultMessage = "Choose a Pokémon.";
+const defaultMessage = i18next.t("menu:choosePokemon");
 
 export enum PartyUiMode {
   SWITCH,
@@ -161,31 +161,37 @@ export default class PartyUiHandler extends MessageUiHandler {
     const ui = this.getUi();
 
     const partyContainer = this.scene.add.container(0, 0);
+    partyContainer.setName("party");
     partyContainer.setVisible(false);
     ui.add(partyContainer);
 
     this.partyContainer = partyContainer;
 
     this.partyBg = this.scene.add.image(0, 0, "party_bg");
+    this.partyBg.setName("img-party-bg");
     partyContainer.add(this.partyBg);
 
     this.partyBg.setOrigin(0, 1);
 
     const partySlotsContainer = this.scene.add.container(0, 0);
+    partySlotsContainer.setName("party-slots");
     partyContainer.add(partySlotsContainer);
 
     this.partySlotsContainer = partySlotsContainer;
 
     const partyMessageBoxContainer = this.scene.add.container(0, -32);
+    partyMessageBoxContainer.setName("party-msg-box");
     partyContainer.add(partyMessageBoxContainer);
 
     const partyMessageBox = addWindow(this.scene, 1, 31, 262, 30);
+    partyMessageBox.setName("window-party-msg-box");
     partyMessageBox.setOrigin(0, 1);
     partyMessageBoxContainer.add(partyMessageBox);
 
     this.partyMessageBox = partyMessageBox;
 
-    const partyMessageText = addTextObject(this.scene, 8, 10, defaultMessage, TextStyle.WINDOW, { maxLines: 2 });
+    const partyMessageText = addTextObject(this.scene, 10, 8, defaultMessage, TextStyle.WINDOW, { maxLines: 2 });
+    partyMessageText.setName("text-party-msg");
 
     partyMessageText.setOrigin(0, 0);
     partyMessageBoxContainer.add(partyMessageText);
@@ -1224,7 +1230,7 @@ class PartyCancelButton extends Phaser.GameObjects.Container {
 
     this.partyCancelPb = partyCancelPb;
 
-    const partyCancelText = addTextObject(this.scene, -7, -6, "Cancel", TextStyle.PARTY);
+    const partyCancelText = addTextObject(this.scene, -8, -7, "Cancel", TextStyle.PARTY);
     this.add(partyCancelText);
   }
 
