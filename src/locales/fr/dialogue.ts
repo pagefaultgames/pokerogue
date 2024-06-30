@@ -2665,7 +2665,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
     "defeat": {
       1: "Je me dévoue corps et âme aux combats Pokémon !",
       2: "Comme prévu… Vraiment aucune surprise…",
-      3: "Et moi qui pensais qu’en grandissant, j’allais rester frêle et fragile, à me se briser à la moindre étreinte.",
+      3: "Et moi qui pensais qu’en grandissant, j’allais rester frêle et fragile, à me briser à la moindre étreinte.",
       4: "Évidemment que je suis fort et encore moins un perdant. C’est important de gagner avec grâce."
     }
   },
