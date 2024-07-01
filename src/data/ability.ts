@@ -1678,7 +1678,8 @@ export class SynchronizeStatusAbAttr extends PostSetStatusAbAttr {
     ]);
 
     if (sourcePokemon && syncStatuses.has(effect)) {
-      return sourcePokemon.trySetStatus(effect, true, pokemon);
+      sourcePokemon.trySetStatus(effect, true, pokemon);
+      return true;
     }
 
     return false;
