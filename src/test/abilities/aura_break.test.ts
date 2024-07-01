@@ -15,6 +15,7 @@ import { NumberHolder } from "#app/utils.js";
 describe("Abilities - Aura Break", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
+  const multiplier = 9 / 16;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -37,7 +38,6 @@ describe("Abilities - Aura Break", () => {
   it("reverses the effect of fairy aura", async () => {
     vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.FAIRY_AURA);
     const basePower = allMoves[Moves.MOONBLAST].power;
-    const multiplier = 9 / 16;
     await game.startBattle([Species.MAGIKARP]);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.MOONBLAST));
@@ -51,10 +51,10 @@ describe("Abilities - Aura Break", () => {
     expect(appliedPower).toBe(basePower * multiplier);
 
   });
+
   it("reverses the effect of dark aura", async () => {
     vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.DARK_AURA);
     const basePower = allMoves[Moves.DARK_PULSE].power;
-    const multiplier = 9 / 16;
     await game.startBattle([Species.MAGIKARP]);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.DARK_PULSE));

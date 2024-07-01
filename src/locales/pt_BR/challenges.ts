@@ -18,7 +18,7 @@ export const challenges: TranslationEntries = {
     "gen_9": "nona",
   },
   "singleType": {
-    "name": "Tipo Único",
+    "name": "Monotipo",
     "desc": "Você só pode user Pokémon do tipo {{type}}.",
     "desc_default": "Você só pode user Pokémon de um único tipo."
   },

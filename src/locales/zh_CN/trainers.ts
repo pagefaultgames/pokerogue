@@ -13,6 +13,12 @@ export const titles: SimpleTranslationEntries = {
   "rival": "劲敌",
   "professor": "博士",
   "frontier_brain": "开拓头脑",
+  "rocket_boss": "火箭队老大",
+  "magma_boss": "熔岩队老大",
+  "aqua_boss": "海洋队老大",
+  "galactic_boss": "银河队老大",
+  "plasma_boss": "等离子队老大",
+  "flare_boss": "闪焰队老大",
   // Maybe if we add the evil teams we can add "Team Rocket" and "Team Aqua" etc. here as well as "Team Rocket Boss" and "Team Aqua Admin" etc.
 } as const;
 
@@ -118,7 +124,19 @@ export const trainerClasses: SimpleTranslationEntries = {
   "worker": "工人",
   "worker_female": "工人",
   "workers": "工人组合",
-  "youngster": "短裤小子"
+  "youngster": "短裤小子",
+  "rocket_grunt": "火箭队手下",
+  "rocket_grunt_female": "火箭队手下",
+  "magma_grunt": "熔岩队手下",
+  "magma_grunt_female": "熔岩队手下",
+  "aqua_grunt": "海洋队手下",
+  "aqua_grunt_female": "海洋队手下",
+  "galactic_grunt": "银河队手下",
+  "galactic_grunt_female": "银河队手下",
+  "plasma_grunt": "等离子队手下",
+  "plasma_grunt_female": "等离子队手下",
+  "flare_grunt": "闪焰队手下",
+  "flare_grunt_female": "闪焰队手下",
 } as const;
 
 // Names of special trainers like gym leaders, elite four, and the champion
@@ -303,6 +321,13 @@ export const trainerNames: SimpleTranslationEntries = {
   // 劲敌 rival
   "rival": "芬恩",
   "rival_female": "艾薇",
+
+  // ---- 组织老大 Bosses ----
+  "maxie": "赤焰松",
+  "archie": "水梧桐",
+  "cyrus": "赤日",
+  "ghetsis": "魁奇思",
+  "lysandre": "弗拉达利",
 
 
   // Double Names

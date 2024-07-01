@@ -98,6 +98,7 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
     this.navigationIcons = {};
 
     this.settingsContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
+    this.settingsContainer.setName(`settings-${this.titleSelected}`);
 
     this.settingsContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
 

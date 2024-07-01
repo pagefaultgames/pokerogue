@@ -119,7 +119,15 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
             };
             if (this.sessionSlots[cursor].hasData) {
               ui.showText(i18next.t("saveSlotSelectUiHandler:overwriteData"), null, () => {
-                ui.setOverlayMode(Mode.CONFIRM, () => saveAndCallback(), () => {
+                ui.setOverlayMode(Mode.CONFIRM, () => {
+                  this.scene.gameData.deleteSession(cursor).then(response => {
+                    if (response === false) {
+                      this.scene.reset(true);
+                    } else {
+                      saveAndCallback();
+                    }
+                  });
+                }, () => {
                   ui.revertMode();
                   ui.showText(null, 0);
                 }, false, 0, 19, 2000);

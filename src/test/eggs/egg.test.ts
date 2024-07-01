@@ -1,4 +1,4 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it} from "vitest";
+import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
 import BattleScene from "../../battle-scene";
 import { Egg, getLegendaryGachaSpeciesForTimestamp } from "#app/data/egg.js";
 import { Species } from "#enums/species";
@@ -8,6 +8,7 @@ import { EggTier } from "#app/enums/egg-type.js";
 import { VariantTier } from "#app/enums/variant-tiers.js";
 import GameManager from "../utils/gameManager";
 import EggData from "#app/system/egg-data.js";
+import * as Utils from "#app/utils.js";
 
 describe("Egg Generation Tests", () => {
   let phaserGame: Phaser.Game;
@@ -21,6 +22,7 @@ describe("Egg Generation Tests", () => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
+    vi.restoreAllMocks();
   });
 
   beforeEach(async() => {
@@ -225,5 +227,80 @@ describe("Egg Generation Tests", () => {
     expect(result.timestamp).toBe(legacyEgg.timestamp);
     expect(result.hatchWaves).toBe(legacyEgg.hatchWaves);
     expect(result.sourceType).toBe(legacyEgg.gachaType);
+  });
+  it("should increase egg pity", () => {
+    const scene = game.scene;
+    const startPityValues = [...scene.gameData.eggPity];
+
+    new Egg({scene, sourceType: EggSourceType.GACHA_MOVE, pulled: true, tier: EggTier.COMMON});
+
+    expect(scene.gameData.eggPity[EggTier.GREAT]).toBe(startPityValues[EggTier.GREAT] + 1);
+    expect(scene.gameData.eggPity[EggTier.ULTRA]).toBe(startPityValues[EggTier.ULTRA] + 1);
+    expect(scene.gameData.eggPity[EggTier.MASTER]).toBe(startPityValues[EggTier.MASTER] + 1);
+  });
+  it("should increase legendary egg pity by two", () => {
+    const scene = game.scene;
+    const startPityValues = [...scene.gameData.eggPity];
+
+    new Egg({scene, sourceType: EggSourceType.GACHA_LEGENDARY, pulled: true, tier: EggTier.COMMON});
+
+    expect(scene.gameData.eggPity[EggTier.GREAT]).toBe(startPityValues[EggTier.GREAT] + 1);
+    expect(scene.gameData.eggPity[EggTier.ULTRA]).toBe(startPityValues[EggTier.ULTRA] + 1);
+    expect(scene.gameData.eggPity[EggTier.MASTER]).toBe(startPityValues[EggTier.MASTER] + 2);
+  });
+  it("should not increase manaphy egg count if bulbasaurs are pulled", () => {
+    const scene = game.scene;
+    const startingManaphyEggCount = scene.gameData.gameStats.manaphyEggsPulled;
+
+    for (let i = 0; i < 200; i++) {
+      new Egg({scene, sourceType: EggSourceType.GACHA_MOVE, pulled: true, species: Species.BULBASAUR});
+    }
+
+    expect(scene.gameData.gameStats.manaphyEggsPulled).toBe(startingManaphyEggCount);
+  });
+  it("should increase manaphy egg count", () => {
+    const scene = game.scene;
+    const startingManaphyEggCount = scene.gameData.gameStats.manaphyEggsPulled;
+
+    new Egg({scene, sourceType: EggSourceType.GACHA_MOVE, pulled: true, id: 204, tier: EggTier.COMMON});
+
+    expect(scene.gameData.gameStats.manaphyEggsPulled).toBe(startingManaphyEggCount + 1);
+  });
+  it("should increase rare eggs pulled statistic", () => {
+    const scene = game.scene;
+    const startingRareEggsPulled = scene.gameData.gameStats.rareEggsPulled;
+
+    new Egg({scene, sourceType: EggSourceType.GACHA_MOVE, pulled: true, tier: EggTier.GREAT});
+
+    expect(scene.gameData.gameStats.rareEggsPulled).toBe(startingRareEggsPulled + 1);
+  });
+  it("should increase epic eggs pulled statistic", () => {
+    const scene = game.scene;
+    const startingEpicEggsPulled = scene.gameData.gameStats.epicEggsPulled;
+
+    new Egg({scene, sourceType: EggSourceType.GACHA_MOVE, pulled: true, tier: EggTier.ULTRA});
+
+    expect(scene.gameData.gameStats.epicEggsPulled).toBe(startingEpicEggsPulled + 1);
+  });
+  it("should increase legendary eggs pulled statistic", () => {
+    const scene = game.scene;
+    const startingLegendaryEggsPulled = scene.gameData.gameStats.legendaryEggsPulled;
+
+    new Egg({scene, sourceType: EggSourceType.GACHA_MOVE, pulled: true, tier: EggTier.MASTER});
+
+    expect(scene.gameData.gameStats.legendaryEggsPulled).toBe(startingLegendaryEggsPulled + 1);
+  });
+  it("should increase legendary egg rate", () => {
+    vi.spyOn(Utils, "randInt").mockReturnValue(1);
+
+    const scene = game.scene;
+    const expectedTier1 = EggTier.MASTER;
+    const expectedTier2 = EggTier.ULTRA;
+
+    const result1 = new Egg({scene, sourceType: EggSourceType.GACHA_LEGENDARY, pulled: true}).tier;
+    const result2 = new Egg({scene, sourceType: EggSourceType.GACHA_MOVE, pulled: true}).tier;
+
+    expect(result1).toBe(expectedTier1);
+    expect(result2).toBe(expectedTier2);
   });
 });

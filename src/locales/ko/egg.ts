@@ -19,4 +19,7 @@ export const egg: SimpleTranslationEntries = {
   "pull": "뽑기",
   "pulls": "뽑기",
   "sameSpeciesEgg": "{{species}}[[가]] 이 알에서 부화할 거야!",
+  "hatchFromTheEgg": "알이 부화해서\n{{pokemonName}}[[가]] 태어났다!",
+  "eggMoveUnlock": "알 기술 {{moveName}}[[를]]\n사용할 수 있게 되었다!",
+  "rareEggMoveUnlock": "레어 알 기술 {{moveName}}[[를]]\n사용할 수 있게 되었다!",
 } as const;
