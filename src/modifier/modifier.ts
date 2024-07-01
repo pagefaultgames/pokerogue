@@ -1236,6 +1236,7 @@ export class BerryModifier extends PokemonHeldItemModifier {
     getBerryEffectFunc(this.berryType)(pokemon);
     if (!preserve.value) {
       this.consumed = true;
+      pokemon.summonData.itemLost = true;
     }
 
     return true;

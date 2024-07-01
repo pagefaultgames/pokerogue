@@ -1805,6 +1805,7 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
         user.scene.tryTransferHeldItemModifier(stolenItem, user, false).then(success => {
           if (success) {
             user.scene.queueMessage(getPokemonMessage(user, ` stole\n${target.name}'s ${stolenItem.type.name}!`));
+            target.summonData.itemLost = true;
           }
           resolve(success);
         });
@@ -1888,7 +1889,7 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
         user.scene.queueMessage(getPokemonMessage(user, ` knocked off\n${target.name}'s ${removedItem.type.name}!`));
       }
     }
-
+    target.summonData.itemLost = true;
     return true;
   }
 
@@ -1998,6 +1999,7 @@ export class StealEatBerryAttr extends EatBerryAttr {
       target.scene.updateModifiers(target.isPlayer());
 
       user.scene.queueMessage(getPokemonMessage(user, ` stole and ate\n${target.name}'s ${this.chosenBerry.type.name}!`));
+      target.summonData.itemLost = true;
       return super.apply(user, user, move, args);
     }
 
@@ -5121,7 +5123,6 @@ export class MovesetCopyMoveAttr extends OverrideMoveEffectAttr {
     if (!targetMoves.length) {
       return false;
     }
-
     const copiedMove = allMoves[targetMoves[0].move];
 
     const thisMoveIndex = user.getMoveset().findIndex(m => m.moveId === move.id);

@@ -2518,6 +2518,7 @@ export class BlockOneHitKOAbAttr extends AbAttr {
   }
 }
 
+
 export class IncrementMovePriorityAbAttr extends AbAttr {
   private moveIncrementFunc: (pokemon: Pokemon, move: Move) => boolean;
   private increaseAmount: integer;
@@ -4406,7 +4407,10 @@ export function initAbilities() {
     new Ability(Abilities.ANGER_POINT, 4)
       .attr(PostDefendCritStatChangeAbAttr, BattleStat.ATK, 6),
     new Ability(Abilities.UNBURDEN, 4)
-      .unimplemented(),
+      .attr(BattleStatMultiplierAbAttr, BattleStat.SPD, 2)
+      .condition(function(user: Pokemon) {
+        return user.summonData.itemLost;
+      }),
     new Ability(Abilities.HEATPROOF, 4)
       .attr(ReceivedTypeDamageMultiplierAbAttr, Type.FIRE, 0.5)
       .ignorable(),
