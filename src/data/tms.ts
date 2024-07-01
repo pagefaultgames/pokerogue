@@ -67198,6 +67198,7 @@ export const tmPoolTiers: TmPoolTiers = {
   [Moves.ENDEAVOR]: ModifierTier.COMMON,
   [Moves.SKILL_SWAP]: ModifierTier.COMMON,
   [Moves.IMPRISON]: ModifierTier.COMMON,
+  [Moves.SECRET_POWER]: ModifierTier.GREAT,
   [Moves.DIVE]: ModifierTier.GREAT,
   [Moves.FEATHER_DANCE]: ModifierTier.COMMON,
   [Moves.BLAZE_KICK]: ModifierTier.GREAT,
