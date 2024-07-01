@@ -131,11 +131,11 @@ async function checkDamageDecrease(game: GameManager, attackMove: Moves, killAll
   const afterHp1v1 = game.scene.getEnemyField()[0].hp;
 
   if (shouldDecreased) {
-    expect(initialHp - afterHp).toBeLessThan(0.8 * (initialHp1v1 - afterHp1v1));
-    expect(initialHp - afterHp).toBeGreaterThan(0.7 * (initialHp1v1 - afterHp1v1));
+    expect(initialHp - afterHp).toBeLessThan(0.75 * (initialHp1v1 - afterHp1v1) + 2);
+    expect(initialHp - afterHp).toBeGreaterThan(0.75 * (initialHp1v1 - afterHp1v1) - 2);
   } else {
-    expect(initialHp - afterHp).toBeLessThan(1.1 * (initialHp1v1 - afterHp1v1));
-    expect(initialHp - afterHp).toBeGreaterThan(0.9 * (initialHp1v1 - afterHp1v1));
+    expect(initialHp - afterHp).toBeLessThan(initialHp1v1 - afterHp1v1 + 2);
+    expect(initialHp - afterHp).toBeGreaterThan(initialHp1v1 - afterHp1v1 - 2);
   }
 
 }
