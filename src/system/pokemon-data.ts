@@ -1,17 +1,17 @@
 import { BattleType } from "../battle";
 import BattleScene from "../battle-scene";
-import { Biome } from "../data/enums/biome";
 import { Gender } from "../data/gender";
 import { Nature } from "../data/nature";
 import { PokeballType } from "../data/pokeball";
 import { getPokemonSpecies } from "../data/pokemon-species";
-import { Species } from "../data/enums/species";
 import { Status } from "../data/status-effect";
 import Pokemon, { EnemyPokemon, PokemonMove, PokemonSummonData } from "../field/pokemon";
 import { TrainerSlot } from "../data/trainer-config";
-import { Moves } from "../data/enums/moves";
 import { Variant } from "#app/data/variant";
 import { loadBattlerTag } from "../data/battler-tags";
+import { Biome } from "#enums/biome";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 
 export default class PokemonData {
   public id: integer;
@@ -50,6 +50,7 @@ export default class PokemonData {
   public fusionLuck: integer;
 
   public boss: boolean;
+  public bossSegments?: integer;
 
   public summonData: PokemonSummonData;
 
@@ -96,6 +97,7 @@ export default class PokemonData {
 
     if (!forHistory) {
       this.boss = (source instanceof EnemyPokemon && !!source.bossSegments) || (!this.player && !!source.boss);
+      this.bossSegments = source.bossSegments;
     }
 
     if (sourcePokemon) {
