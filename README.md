@@ -11,6 +11,7 @@ If you have the motivation and experience with Typescript/Javascript (or are wil
 - node: 20.13.1
 - npm: [how to install](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 
+If you happen to install the incorrect version, you can change the installation to the correct version by using [NVM](https://github.com/nvm-sh/nvm) or [NVM-windows](https://github.com/coreybutler/nvm-windows)
 #### Running Locally
 1. Clone the repo and in the root directory run `npm install`
     - *if you run into any errors, reach out in the **#dev-corner** channel in discord*
@@ -24,6 +25,10 @@ We're using ESLint as our common linter and formatter. It will run automatically
 **How do I test a new _______?**
 - In the `src/overrides.ts` file there are overrides for most values you'll need to change for testing
 
+**How can i find abilities and moves that have not been implemented or only partially implemented?**
+- goto pokerogue\src\data
+- check `ability.ts` and `move.ts` for abilities and moves respectively
+- they have either `.partial()` or `.unimplemented()` where they are instantiated
 
 ## 🪧 To Do
 Check out [Github Issues](https://github.com/pagefaultgames/pokerogue/issues) to see how can you help us!
