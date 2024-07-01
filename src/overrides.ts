@@ -8,6 +8,8 @@ import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
 import { TimeOfDay } from "#enums/time-of-day";
 import { WeatherType } from "#enums/weather-type";
+import { VariantTier } from "#enums/variant-tiers";
+import { EggTier } from "#enums/egg-type";
 import { type PokeballCounts } from "./battle-scene";
 import { Gender } from "./data/gender";
 import { allSpecies } from "./data/pokemon-species"; // eslint-disable-line @typescript-eslint/no-unused-vars
@@ -15,7 +17,7 @@ import { StatusEffect } from "./data/status-effect";
 import { TempBattleStat } from "./data/temp-battle-stat";
 import { Type } from "./data/type";
 import { Variant } from "./data/variant";
-import { type ModifierTypes } from "./modifier/modifier-type";
+import { type SpeciesStatBoosterItem, type ModifierTypes } from "./modifier/modifier-type";
 
 /**
  * Overrides for testing different in game situations
@@ -36,9 +38,9 @@ export const STARTING_BIOME_OVERRIDE: Biome = Biome.TOWN;
 export const ARENA_TINT_OVERRIDE: TimeOfDay = null;
 // Multiplies XP gained by this value including 0. Set to null to ignore the override
 export const XP_MULTIPLIER_OVERRIDE: number = null;
-export const IMMEDIATE_HATCH_EGGS_OVERRIDE: boolean = false;
 // default 1000
 export const STARTING_MONEY_OVERRIDE: integer = 0;
+export const FREE_CANDY_UPGRADE_OVERRIDE: boolean = false;
 export const POKEBALL_OVERRIDE: { active: boolean, pokeballs: PokeballCounts } = {
   active: false,
   pokeballs: {
@@ -99,6 +101,17 @@ export const OPP_VARIANT_OVERRIDE: Variant = 0;
 export const OPP_IVS_OVERRIDE: integer | integer[] = [];
 
 /**
+ * EGG OVERRIDES
+ */
+
+export const EGG_IMMEDIATE_HATCH_OVERRIDE: boolean = false;
+export const EGG_TIER_OVERRIDE: EggTier = null;
+export const EGG_SHINY_OVERRIDE: boolean = false;
+export const EGG_VARIANT_OVERRIDE: VariantTier = null;
+export const EGG_FREE_GACHA_PULLS_OVERRIDE: boolean = false;
+export const EGG_GACHA_PULL_COUNT_OVERRIDE: number = 0;
+
+/**
  * MODIFIER / ITEM OVERRIDES
  * if count is not provided, it will default to 1
  * @example Modifier Override [{name: "EXP_SHARE", count: 2}]
@@ -112,11 +125,12 @@ export const OPP_IVS_OVERRIDE: integer | integer[] = [];
  * - Nature is for MINT
  * - Type is for TERA_SHARD or ATTACK_TYPE_BOOSTER (type boosting items i.e Silk Scarf)
  * - BerryType is for BERRY
+ * - SpeciesStatBoosterItem is for SPECIES_STAT_BOOSTER
  */
 interface ModifierOverride {
     name: ModifierTypes & string,
     count?: integer
-    type?: TempBattleStat|Stat|Nature|Type|BerryType
+    type?: TempBattleStat|Stat|Nature|Type|BerryType|SpeciesStatBoosterItem
 }
 export const STARTING_MODIFIER_OVERRIDE: Array<ModifierOverride> = [];
 export const OPP_MODIFIER_OVERRIDE: Array<ModifierOverride> = [];

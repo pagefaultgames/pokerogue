@@ -1,4 +1,4 @@
-import { ModifierTypeTranslationEntries } from "#app/plugins/i18n";
+import { ModifierTypeTranslationEntries } from "#app/interfaces/locales";
 
 export const modifierType: ModifierTypeTranslationEntries = {
   ModifierType: {
@@ -182,6 +182,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SOOTHE_BELL": { name: "평온의방울" },
 
+    "EVIOLITE": { name: "진화의휘석", description: "진화의 이상한 덩어리. 지니게 하면 진화 전 포켓몬의 방어와 특수방어가 올라간다." },
+
     "SOUL_DEW": { name: "마음의물방울", description: "지닌 포켓몬의 성격의 효과가 10% 증가한다 (합연산)." },
 
     "NUGGET": { name: "금구슬" },
@@ -199,7 +201,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "MULTI_LENS": { name: "멀티렌즈" },
 
-    "HEALING_CHARM": { name: "치유의부적", description: "HP를 회복하는 기술을 썼을 때 효율이 10% 증가한다 (부활 제외)." },
+    "HEALING_CHARM": { name: "치유의부적", description: "HP를 회복하는 기술이나 도구를 썼을 때 효율이 10% 증가한다 (부활 제외)." },
     "CANDY_JAR": { name: "사탕단지", description: "이상한사탕 종류의 아이템이 올려주는 레벨이 1 증가한다." },
 
     "BERRY_POUCH": { name: "열매주머니", description: "사용한 나무열매가 소모되지 않을 확률이 30% 추가된다." },
@@ -239,6 +241,12 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_ENDURE_CHANCE": { name: "버티기 토큰" },
     "ENEMY_FUSED_CHANCE": { name: "합체 토큰", description: "야생 포켓몬이 합체되어 등장할 확률이 1% 추가된다." },
   },
+  SpeciesBoosterItem: {
+    "LIGHT_BALL": { name: "전기구슬", description: "피카츄에게 지니게 하면 공격과 특수공격이 올라가는 이상한 구슬." },
+    "THICK_CLUB": { name: "굵은뼈", description: "무언가의 단단한 뼈. 탕구리 혹은 텅구리에게 지니게 하면 공격이 올라간다." },
+    "METAL_POWDER": { name: "금속파우더", description: "메타몽에게 지니게 하면 방어가 올라가는 이상한 가루. 매우 잘고 단단하다." },
+    "QUICK_POWDER": { name: "스피드파우더", description: "메타몽에게 지니게 하면 스피드가 올라가는 이상한 가루. 매우 잘고 단단하다." }
+  },
   TempBattleStatBoosterItem: {
     "x_attack": "플러스파워",
     "x_defense": "디펜드업",
@@ -248,6 +256,19 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "x_accuracy": "잘-맞히기",
     "dire_hit": "크리티컬커터",
   },
+
+  TempBattleStatBoosterStatName: {
+    "ATK": "공격",
+    "DEF": "방어",
+    "SPATK": "특수공격",
+    "SPDEF": "특수방어",
+    "SPD": "스피드",
+    "ACC": "명중률",
+    "CRIT": "급소율",
+    "EVA": "회피율",
+    "DEFAULT": "???",
+  },
+
   AttackTypeBoosterItem: {
     "silk_scarf": "실크스카프",
     "black_belt": "검은띠",

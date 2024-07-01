@@ -1,5 +1,5 @@
 import { Stat } from "#enums/stat";
-import i18next from "../plugins/i18n";
+import i18next from "i18next";
 
 export { Stat };
 
