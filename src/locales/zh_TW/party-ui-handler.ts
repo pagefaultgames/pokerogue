@@ -7,7 +7,7 @@ export const partyUiHandler: SimpleTranslationEntries = {
   "RELEASE": "放生",
   "APPLY": "應用",
   "TEACH": "教授",
-  
+
   "ABLE": "Able",
   "NOT_ABLE": "Not Able",
   "LEARNED": "Learned"
