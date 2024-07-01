@@ -28,7 +28,7 @@ export const splashMessages: SimpleTranslationEntries = {
   "mostlyConsistentSeeds": "随机数种子基本固定！",
   "achievementPointsDontDoAnything": "成就点数没有任何用处！",
   "youDoNotStartAtLevel": "你不能第一关就改个2000级！",
-  "dontTalkAboutTheManaphyEggIncident": "禁止谈论玛纳霏蛋事件！",
+  "dontTalkAboutTheManaphyEggIncident": "别再提玛纳霏蛋事件了！",
   "alsoTryPokengine": "也玩玩看Pokéngine！",
   "alsoTryEmeraldRogue": "也玩玩看绿宝石肉鸽！",
   "alsoTryRadicalRed": "也玩玩看激进红！",
