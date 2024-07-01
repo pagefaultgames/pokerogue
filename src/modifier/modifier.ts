@@ -735,27 +735,26 @@ export class StatBoosterModifier extends PokemonHeldItemModifier {
 
   /**
    * Checks if the incoming stat is listed in {@linkcode stats}
-   * @param args [0] {@linkcode Pokemon} N/A
-   *             [1] {@linkcode Stat} being checked at the time
-   *             [2] {@linkcode Utils.NumberHolder} N/A
+   * @param pokemon {@linkcode Pokemon} N/A
+   * @param stat {@linkcode Stat} being checked at the time
+   * @param statValue {@linkcode Utils.NumberHolder} N/A
    * @returns true if the stat could be boosted, false otherwise
    */
-  shouldApply(args: any[]): boolean {
-    return super.shouldApply(args) && this.stats.includes(args[1] as Stat);
+  shouldApply(...args: Parameters<this["apply"]>): boolean {
+    const stat = args[1];
+    return super.shouldApply(...args) && this.stats.includes(stat);
   }
 
   /**
    * Boosts the incoming stat by a {@linkcode multiplier} if the stat is listed
    * in {@linkcode stats}.
-   * @param args [0] {@linkcode Pokemon} N/A
-   *             [1] {@linkcode Stat} N/A
-   *             [2] {@linkcode Utils.NumberHolder} that holds the resulting value of the stat
+   * @param pokemon {@linkcode Pokemon} N/A
+   * @param stat {@linkcode Stat} N/A
+   * @param statValue {@linkcode Utils.NumberHolder} that holds the resulting value of the stat
    * @returns true if the stat boost applies successfully, false otherwise
    * @see shouldApply
    */
-  apply(args: any[]): boolean {
-    const statValue = args[2] as Utils.NumberHolder;
-
+  apply(pokemon: Pokemon, stat: Stat, statValue: Utils.NumberHolder): boolean {
     statValue.value *= this.multiplier;
     return true;
   }
@@ -786,15 +785,13 @@ export class EvolutionStatBoosterModifier extends StatBoosterModifier {
    * only half of the boost if either of the fused members are fully
    * evolved. However, if they are both unevolved, the full boost
    * will apply.
-   * @param args [0] {@linkcode Pokemon} that holds the held item
-   *             [1] {@linkcode Stat} N/A
-   *             [2] {@linkcode Utils.NumberHolder} that holds the resulting value of the stat
+   * @param holder {@linkcode Pokemon} that holds the held item
+   * @param stat {@linkcode Stat} N/A
+   * @param statValue {@linkcode Utils.NumberHolder} that holds the resulting value of the stat
    * @returns true if the stat boost applies successfully, false otherwise
    * @see shouldApply
    */
-  apply(args: any[]): boolean {
-    const holder = args[0] as Pokemon;
-    const statValue = args[2] as Utils.NumberHolder;
+  apply(holder: Pokemon, stat: Stat, statValue: Utils.NumberHolder): boolean {
     const isUnevolved = holder.getSpeciesForm(true).speciesId in pokemonEvolutions;
 
     if (holder.isFusion() && (holder.getFusionSpeciesForm(true).speciesId in pokemonEvolutions) !== isUnevolved) {
@@ -803,7 +800,7 @@ export class EvolutionStatBoosterModifier extends StatBoosterModifier {
       return true;
     } else if (isUnevolved) {
       // Full boost applied if holder is unfused and unevolved or, if fused, both parts of fusion are unevolved
-      return super.apply(args);
+      return super.apply(holder, stat, statValue);
     }
 
     return false;
@@ -853,9 +850,9 @@ export class SpeciesStatBoosterModifier extends StatBoosterModifier {
    *             [2] {@linkcode Utils.NumberHolder} N/A
    * @returns true if the stat could be boosted, false otherwise
    */
-  shouldApply(args: any[]): boolean {
+  shouldApply(...args: Parameters<this["apply"]>): boolean {
     const holder = args[0] as Pokemon;
-    return super.shouldApply(args) && (this.species.includes(holder.getSpeciesForm(true).speciesId) || (holder.isFusion() && this.species.includes(holder.getFusionSpeciesForm(true).speciesId)));
+    return super.shouldApply(...args) && (this.species.includes(holder.getSpeciesForm(true).speciesId) || (holder.isFusion() && this.species.includes(holder.getFusionSpeciesForm(true).speciesId)));
   }
 
   /**
