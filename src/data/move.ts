@@ -1262,7 +1262,7 @@ export class AddSubstituteAttr extends MoveEffectAttr {
     const blockSelfDamage = new Utils.BooleanHolder(false);
     applyAbAttrs(BlockNonDirectDamageAbAttr, user, blockSelfDamage);
 
-    const hpCost = blockSelfDamage.value
+    const hpCost = !blockSelfDamage.value
       ? Math.ceil(user.getMaxHp() / 4)
       : 0;
     if (user.hp > hpCost) {
