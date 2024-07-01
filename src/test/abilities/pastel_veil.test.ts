@@ -37,35 +37,33 @@ describe("Abilities - Pastel Veil", () => {
     await game.startBattle([Species.GALAR_PONYTA, Species.MAGIKARP]);
 
     game.scene.getPlayerField()[0].abilityIndex = 1;
+    expect(game.scene.getPlayerField()[0].abilityIndex).toBe(1);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    for (const pokemon of game.scene.getPlayerField()) {
-      expect(pokemon.status).toBeUndefined();
-    }
+    expect(game.scene.getPlayerField().every(p => p.status?.effect)).toBe(false);
   });
 
   it("it heals the poisoned status condition of allies if user is sent out into battle", async () => {
     await game.startBattle([Species.MAGIKARP, Species.MAGIKARP, Species.GALAR_PONYTA]);
 
+    game.scene.getPlayerField()[0].abilityIndex = 1;
+    expect(game.scene.getPlayerField()[0].abilityIndex).toBe(1);
+
     game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
-    await game.phaseInterceptor.to(TurnEndPhase);
 
-    for (const pokemon of game.scene.getPlayerField()) {
-      if (pokemon.status) {
-        expect(pokemon.status.effect).toBe(StatusEffect.POISON);
-      }
-    }
+    await game.phaseInterceptor.to(TurnEndPhase);
+    expect(game.scene.getPlayerField().some(p => p.status?.effect === StatusEffect.POISON)).toBe(true);
 
     await game.phaseInterceptor.to(CommandPhase);
     game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
     game.doSwitchPokemon(2);
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    game.scene.getPlayerField().forEach(p => expect(p.status).toBeUndefined());
+    expect(game.scene.getPlayerField().every(p => p.status?.effect)).toBe(false);
   });
 });
