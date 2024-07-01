@@ -633,7 +633,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (stat === Stat.HP) {
       return this.getStat(Stat.HP);
     }
-    const battleStat = (stat - 1) as BattleStat;
+    const battleStat = stat - 1;
     const statLevel = new Utils.IntegerHolder(this.summonData.battleStats[battleStat]);
     if (opponent) {
       if (isCritical) {
@@ -654,7 +654,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
     if (this.isPlayer()) {
-      this.scene.applyModifiers(TempBattleStatBoosterModifier, this.isPlayer(), battleStat as integer as TempBattleStat, statLevel);
+      this.scene.applyModifiers(TempBattleStatBoosterModifier, this.isPlayer(), battleStat satisfies TempBattleStat, statLevel);
     }
     const statValue = new Utils.NumberHolder(this.getStat(stat));
     this.scene.applyModifiers(StatBoosterModifier, this.isPlayer(), this, stat, statValue);
