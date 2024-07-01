@@ -48,6 +48,5 @@ export const menu: SimpleTranslationEntries = {
   "no":"Non",
   "disclaimer": "AVERTISSEMENT",
   "disclaimerDescription": "Ce jeu n’est pas un produit fini et peut contenir des problèmes de jouabilité, dont de possibles pertes de sauvegardes,\ndes modifications sans avertissement et pourrait ou non encore être mis à jour ou terminé.",
-  "choosePokemon": "Sélectionnez un Pokémon.",
   "errorServerDown": "Oupsi ! Un problème de connexion au serveur est survenu.\n\nVous pouvez garder cette fenêtre ouverte,\nle jeu se reconnectera automatiquement.",
 } as const;
