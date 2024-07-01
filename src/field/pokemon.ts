@@ -2026,14 +2026,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             break;
           }
         }
-        source.turnData.damageDealt += damage.value;
-        source.turnData.currDamageDealt = damage.value;
-        this.battleData.hitCount++;
-        const attackResult = { move: move.id, result: result as DamageResult, damage: damage.value, critical: isCritical, sourceId: source.id };
-        this.turnData.attacksReceived.unshift(attackResult);
-        if (source.isPlayer() && !this.isPlayer()) {
-          this.scene.applyModifiers(DamageMoneyRewardModifier, true, source, damage);
-        }
 
         if (this.isFainted()) {
           // set splice index here, so future scene queues happen before FaintedPhase
