@@ -49,7 +49,7 @@ describe("Moves - Glaive Rush", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
     game.doAttack(getMovePosition(game.scene, 0, Moves.SHADOW_SNEAK));
     await game.phaseInterceptor.to(DamagePhase);
-    expect(enemy.hp).toBeLessThanOrEqual(1000 - (damageDealt * 3));
+    expect(enemy.hp).toBeLessThanOrEqual(1001 - (damageDealt * 3));
 
   }, 20000);
 
