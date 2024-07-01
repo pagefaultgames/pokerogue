@@ -42,7 +42,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       }
     },
     "PokemonPpUpModifierType": {
-      description: "为一只宝可梦的一个招式的PP永久增加{{upPoints}}20%的原最大PP值 (最多3次)。",
+      description: "选择一只宝可梦的一个招式使用\n使其PP最大值提升基础的20％ (最多3次)。",
     },
     "PokemonNatureChangeModifierType": {
       name: "{{natureName}}薄荷",
