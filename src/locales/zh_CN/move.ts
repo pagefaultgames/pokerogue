@@ -1,4 +1,4 @@
-import { MoveTranslationEntries } from "#app/plugins/i18n";
+import { MoveTranslationEntries } from "#app/interfaces/locales";
 
 export const move: MoveTranslationEntries = {
   "pound": {
@@ -671,7 +671,7 @@ export const move: MoveTranslationEntries = {
   },
   "thief": {
     name: "小偷",
-    effect: "攻击的同时盗取道具。当自\n己携带道具时，不会去盗取",
+    effect: "攻击的同时盗取对手的道具。",
   },
   "spiderWeb": {
     name: "蛛网",
@@ -2931,7 +2931,7 @@ export const move: MoveTranslationEntries = {
   },
   "bouncyBubble": {
     name: "活活气泡",
-    effect: "投掷水球进行攻击。吸水后\n能回复等同于造成的伤害一\n半的HP",
+    effect: "投掷水球进行攻击。吸水后\n能回复等同于造成的伤害\n的HP",
   },
   "buzzyBuzz": {
     name: "麻麻电击",

@@ -3,10 +3,10 @@ import { Mode } from "./ui";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
 import { TextStyle, addTextObject } from "./text";
 import MessageUiHandler from "./message-ui-handler";
-import { Egg, getEggGachaTypeDescriptor, getEggHatchWavesMessage, getEggDescriptor } from "../data/egg";
+import { Egg } from "../data/egg";
 import { addWindow } from "./ui-theme";
-import {Button} from "../enums/buttons";
-import i18next from "../plugins/i18n";
+import {Button} from "#enums/buttons";
+import i18next from "i18next";
 
 export default class EggListUiHandler extends MessageUiHandler {
   private eggListContainer: Phaser.GameObjects.Container;
@@ -98,13 +98,6 @@ export default class EggListUiHandler extends MessageUiHandler {
 
     let e = 0;
 
-    /*this.scene.gameData.eggs = [
-      new Egg(1, 1, 5, new Date().getTime()),
-      new Egg(1 + EGG_SEED, 1, 15, new Date().getTime()),
-      new Egg(1 + EGG_SEED * 2, 1, 50, new Date().getTime()),
-      new Egg(1 + EGG_SEED * 3, GachaType.LEGENDARY, 100, new Date().getTime())
-    ];*/
-
     for (const egg of this.scene.gameData.eggs) {
       const x = (e % 11) * 18;
       const y = Math.floor(e / 11) * 18;
@@ -170,7 +163,7 @@ export default class EggListUiHandler extends MessageUiHandler {
 
   setEggDetails(egg: Egg): void {
     this.eggSprite.setFrame(`egg_${egg.getKey()}`);
-    this.eggNameText.setText(`${i18next.t("egg:egg")} (${getEggDescriptor(egg)})`);
+    this.eggNameText.setText(`${i18next.t("egg:egg")} (${egg.getEggDescriptor()})`);
     this.eggDateText.setText(
       new Date(egg.timestamp).toLocaleString(undefined, {
         weekday: "short",
@@ -179,8 +172,8 @@ export default class EggListUiHandler extends MessageUiHandler {
         day: "numeric"
       })
     );
-    this.eggHatchWavesText.setText(getEggHatchWavesMessage(egg.hatchWaves));
-    this.eggGachaInfoText.setText(getEggGachaTypeDescriptor(this.scene, egg));
+    this.eggHatchWavesText.setText(egg.getEggHatchWavesMessage());
+    this.eggGachaInfoText.setText(egg.getEggTypeDescriptor(this.scene));
   }
 
   setCursor(cursor: integer): boolean {

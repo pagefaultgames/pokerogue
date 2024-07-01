@@ -7,21 +7,22 @@ import {
   settingKeyboardBlackList,
   settingKeyboardDefaults,
   settingKeyboardOptions
-} from "#app/system/settings-keyboard";
+} from "#app/system/settings/settings-keyboard";
 import {reverseValueToKeySetting, truncateString} from "#app/utils";
-import AbstractSettingsUiUiHandler from "#app/ui/settings/abstract-settings-ui-handler";
+import AbstractControlSettingsUiHandler from "#app/ui/settings/abstract-control-settings-ui-handler.js";
 import {InterfaceConfig} from "#app/inputs-controller";
 import {addTextObject, TextStyle} from "#app/ui/text";
 import {deleteBind} from "#app/configs/inputs/configHandler";
-import {Device} from "#app/enums/devices";
+import {Device} from "#enums/devices";
 import {NavigationManager} from "#app/ui/settings/navigationMenu";
+import i18next from "i18next";
 
 /**
  * Class representing the settings UI handler for keyboards.
  *
- * @extends AbstractSettingsUiUiHandler
+ * @extends AbstractControlSettingsUiHandler
  */
-export default class SettingsKeyboardUiHandler extends AbstractSettingsUiUiHandler {
+export default class SettingsKeyboardUiHandler extends AbstractControlSettingsUiHandler {
   /**
      * Creates an instance of SettingsKeyboardUiHandler.
      *
@@ -31,7 +32,7 @@ export default class SettingsKeyboardUiHandler extends AbstractSettingsUiUiHandl
   constructor(scene: BattleScene, mode?: Mode) {
     super(scene, mode);
     this.titleSelected = "Keyboard";
-    this.settingDevice = SettingKeyboard;
+    this.setting = SettingKeyboard;
     this.settingDeviceDefaults = settingKeyboardDefaults;
     this.settingDeviceOptions = settingKeyboardOptions;
     this.configs = [cfg_keyboard_qwerty];
@@ -39,6 +40,7 @@ export default class SettingsKeyboardUiHandler extends AbstractSettingsUiUiHandl
     this.textureOverride = "keyboard";
     this.localStoragePropertyName = "settingsKeyboard";
     this.settingBlacklisted = settingKeyboardBlackList;
+    this.device = Device.KEYBOARD;
 
     const deleteEvent = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DELETE);
     const restoreDefaultEvent = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.HOME);
@@ -46,9 +48,7 @@ export default class SettingsKeyboardUiHandler extends AbstractSettingsUiUiHandl
     restoreDefaultEvent.on("up", this.onHomeDown, this);
   }
 
-  setSetting(scene: BattleScene, setting, value: integer): boolean {
-    return setSettingKeyboard(scene, setting, value);
-  }
+  setSetting = setSettingKeyboard;
 
   /**
      * Setup UI elements.
@@ -59,7 +59,7 @@ export default class SettingsKeyboardUiHandler extends AbstractSettingsUiUiHandl
     this.layout["noKeyboard"] = new Map();
     const optionsContainer = this.scene.add.container(0, 0);
     optionsContainer.setVisible(false); // Initially hide the container as no gamepads are connected.
-    const label = addTextObject(this.scene, 8, 28, "Please press a key on your keyboard", TextStyle.SETTINGS_LABEL);
+    const label = addTextObject(this.scene, 8, 28, i18next.t("settings:keyboardPleasePress"), TextStyle.SETTINGS_LABEL);
     label.setOrigin(0, 0);
     optionsContainer.add(label);
     this.settingsContainer.add(optionsContainer);
@@ -69,7 +69,7 @@ export default class SettingsKeyboardUiHandler extends AbstractSettingsUiUiHandl
     iconDelete.setPositionRelative(this.actionsBg, this.navigationContainer.width - 260, 4);
     this.navigationIcons["BUTTON_DELETE"] = iconDelete;
 
-    const deleteText = addTextObject(this.scene, 0, 0, "Delete", TextStyle.SETTINGS_LABEL);
+    const deleteText = addTextObject(this.scene, 0, 0, i18next.t("settings:delete"), TextStyle.SETTINGS_LABEL);
     deleteText.setOrigin(0, 0.15);
     deleteText.setPositionRelative(iconDelete, -deleteText.width/6-2, 0);
 
@@ -115,26 +115,6 @@ export default class SettingsKeyboardUiHandler extends AbstractSettingsUiUiHandl
   }
 
   /**
-     * Get the active configuration.
-     *
-     * @returns The active keyboard configuration.
-     */
-  getActiveConfig(): InterfaceConfig {
-    return this.scene.inputController.getActiveConfig(Device.KEYBOARD);
-  }
-
-  /**
-     * Get the keyboard settings from local storage.
-     *
-     * @returns The keyboard settings from local storage.
-     */
-  getLocalStorageSetting(): object {
-    // Retrieve the gamepad settings from local storage or use an empty object if none exist.
-    const settings: object = localStorage.hasOwnProperty("settingsKeyboard") ? JSON.parse(localStorage.getItem("settingsKeyboard")) : {};
-    return settings;
-  }
-
-  /**
      * Set the layout for the active configuration.
      *
      * @param activeConfig - The active keyboard configuration.
@@ -155,26 +135,6 @@ export default class SettingsKeyboardUiHandler extends AbstractSettingsUiUiHandl
   }
 
   /**
-     * Navigate to the left menu tab.
-     *
-     * @returns `true` indicating the navigation was successful.
-     */
-  navigateMenuLeft(): boolean {
-    this.scene.ui.setMode(Mode.SETTINGS_GAMEPAD);
-    return true;
-  }
-
-  /**
-     * Navigate to the right menu tab.
-     *
-     * @returns `true` indicating the navigation was successful.
-     */
-  navigateMenuRight(): boolean {
-    this.scene.ui.setMode(Mode.SETTINGS);
-    return true;
-  }
-
-  /**
      * Update the display of the chosen keyboard layout.
      */
   updateChosenKeyboardDisplay(): void {
@@ -182,11 +142,11 @@ export default class SettingsKeyboardUiHandler extends AbstractSettingsUiUiHandl
     this.updateBindings();
 
     // Iterate over the keys in the settingDevice enumeration.
-    for (const [index, key] of Object.keys(this.settingDevice).entries()) {
-      const setting = this.settingDevice[key]; // Get the actual setting value using the key.
+    for (const [index, key] of Object.keys(this.setting).entries()) {
+      const setting = this.setting[key]; // Get the actual setting value using the key.
 
       // Check if the current setting corresponds to the layout setting.
-      if (setting === this.settingDevice.Default_Layout) {
+      if (setting === this.setting.Default_Layout) {
         // Iterate over all layouts excluding the 'noGamepads' special case.
         for (const _key of Object.keys(this.layout)) {
           if (_key === "noKeyboard") {
@@ -217,8 +177,8 @@ export default class SettingsKeyboardUiHandler extends AbstractSettingsUiUiHandl
      * @param cursor - The cursor position to save.
      */
   saveSettingToLocalStorage(settingName, cursor): void {
-    if (this.settingDevice[settingName] !== this.settingDevice.Default_Layout) {
-      this.scene.gameData.saveKeyboardSetting(settingName, cursor);
+    if (this.setting[settingName] !== this.setting.Default_Layout) {
+      this.scene.gameData.saveControlSetting(this.device, this.localStoragePropertyName, settingName, this.settingDeviceDefaults, cursor);
     }
   }
 }
