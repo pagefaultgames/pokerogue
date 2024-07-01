@@ -18,9 +18,9 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "exportSlotSelect": "Selecciona una ranura para exportar.",
   "importData": "Importar Datos",
   "exportData": "Exportar Datos",
-  "importSettings": "Import Settings",
-  "exportSettings": "Export Settings",
+  "importSettings": "Importar Configuraciones",
+  "exportSettings": "Exportar Configuraciones",
   "cancel": "Cancelar",
   "losingProgressionWarning": "Perderás cualquier progreso desde el inicio de la batalla. ¿Continuar?",
-  "noEggs": "You are not hatching\nany eggs at the moment!"
+  "noEggs": "¡No estás eclosionando\nningún huevo en estos momentos!"
 } as const;
