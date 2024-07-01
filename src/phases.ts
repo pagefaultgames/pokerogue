@@ -5147,6 +5147,7 @@ export class SelectModifierPhase extends BattlePhase {
           }, PartyUiHandler.FilterItemMaxStacks);
           break;
         case 2:
+          // this defines our check team thing, we need to modify the partyuimode.check
           this.scene.ui.setModeWithoutClear(Mode.PARTY, PartyUiMode.CHECK, -1, () => {
             this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost(typeOptions, this.scene.lockModifierTiers));
           });
