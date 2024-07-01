@@ -41,7 +41,7 @@ export default class GameChallengesUiHandler extends UiHandler {
     const ui = this.getUi();
 
     this.challengesContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
-    this.challengesContainer.setName("container-challenges");
+    this.challengesContainer.setName("challenges");
 
     this.challengesContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
 
@@ -82,7 +82,7 @@ export default class GameChallengesUiHandler extends UiHandler {
     descriptionBg.setPositionRelative(this.optionsBg, this.optionsBg.width, 0);
 
     this.descriptionText = new BBCodeText(this.scene, descriptionBg.x + 6, descriptionBg.y + 4, "", {
-      fontFamily: "emerald, unifont",
+      fontFamily: "emerald",
       fontSize: 96,
       color: Color.ORANGE,
       padding: {
@@ -116,7 +116,7 @@ export default class GameChallengesUiHandler extends UiHandler {
     this.startCursor.setVisible(false);
 
     this.valuesContainer = this.scene.add.container(0, 0);
-    this.valuesContainer.setName("container-values");
+    this.valuesContainer.setName("values");
 
     this.challengeLabels = [];
 

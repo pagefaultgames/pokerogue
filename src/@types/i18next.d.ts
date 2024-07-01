@@ -1,4 +1,5 @@
 import { AbilityTranslationEntries, SimpleTranslationEntries, AchievementTranslationEntries, BerryTranslationEntries, DialogueTranslationEntries, ModifierTypeTranslationEntries, MoveTranslationEntries, PokemonInfoTranslationEntries, TranslationEntries, FusionTranslationEntries } from "#app/interfaces/locales";
+import { enConfig } from "#app/locales/en/config.js";
 
 // Module declared to make referencing keys in the localization files type-safe.
 declare module "i18next" {
@@ -53,5 +54,6 @@ declare module "i18next" {
         voucher: SimpleTranslationEntries;
         weather: SimpleTranslationEntries;
       };
+      resources: typeof enConfig
     }
   }
