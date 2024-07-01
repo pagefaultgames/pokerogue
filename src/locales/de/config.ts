@@ -35,13 +35,14 @@ import { pokemonInfoContainer } from "./pokemon-info-container";
 import { saveSlotSelectUiHandler } from "./save-slot-select-ui-handler";
 import { splashMessages } from "./splash-messages";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
+import { statusEffect } from "./status-effect";
 import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { weather } from "./weather";
 import { partyUiHandler } from "./party-ui-handler";
-import { settings } from "#app/locales/de/settings.js";
-import { common } from "#app/locales/de/common.js";
+import { settings } from "./settings.js";
+import { common } from "./common.js";
 
 export const deConfig = {
   ability: ability,
@@ -82,6 +83,7 @@ export const deConfig = {
   settings: settings,
   splashMessages: splashMessages,
   starterSelectUiHandler: starterSelectUiHandler,
+  statusEffect: statusEffect,
   titles: titles,
   trainerClasses: trainerClasses,
   trainerNames: trainerNames,

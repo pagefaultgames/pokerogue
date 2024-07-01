@@ -15,6 +15,7 @@ import {StatusEffect} from "#app/data/status-effect";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import i18next, { initI18n } from "#app/plugins/i18n";
 
 
 describe("Items - Toxic orb", () => {
@@ -48,6 +49,8 @@ describe("Items - Toxic orb", () => {
   });
 
   it("TOXIC ORB", async() => {
+    initI18n();
+    i18next.changeLanguage("en");
     const moveToUse = Moves.GROWTH;
     await game.startBattle([
       Species.MIGHTYENA,
