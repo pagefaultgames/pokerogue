@@ -55,6 +55,8 @@ export const defaultStarterSpecies: Species[] = [
 
 const saveKey = "x0i2O7WRiANTqPmZ"; // Temporary; secure encryption is not yet necessary
 
+const selfHostedSaveKey = "x0i2O7WRiANTqPmZ"; // Must have to change it later
+
 export function getDataTypeKey(dataType: GameDataType, slotId: integer = 0): string {
   switch (dataType) {
   case GameDataType.SYSTEM:
@@ -76,12 +78,24 @@ export function getDataTypeKey(dataType: GameDataType, slotId: integer = 0): str
 
 export function encrypt(data: string, bypassLogin: boolean): string {
   return (bypassLogin
-    ? (data: string) => btoa(data)
+    // Replaced Base64 to AES - Base64 only encrypt latin1 characters.
+    // Adding exclamation mark to clarify data is new version of self-hosted encryption data.
+    // Base64 do not use exclamation mark as result, so this is safe operation.
+    ? (data: string) => ("!" + AES.encrypt(data, selfHostedSaveKey))
     : (data: string) => AES.encrypt(data, saveKey))(data);
 }
 
 export function decrypt(data: string, bypassLogin: boolean): string {
+  // If data starts with exclamation mark...
+  if (data[0] === "!") {
+    // ...it's the new version of self-hosted encryption data
+    // Process decryption without first character, using self-hosted save key
+    const dataProceed : string = data.substring(1);
+    return AES.decrypt(dataProceed, saveKey).toString(enc.Utf8);
+  }
   return (bypassLogin
+    // If bypassLogin is false, file is legacy Base64 encrypted data.
+    // For backward compatibility, Base64 decryption remains in this line.
     ? (data: string) => atob(data)
     : (data: string) => AES.decrypt(data, saveKey).toString(enc.Utf8))(data);
 }
