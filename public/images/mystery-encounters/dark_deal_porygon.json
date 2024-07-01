@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "dark_deal_porygon.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 36,
+				"h": 45
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 36,
+						"h": 45
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 44,
+						"h": 44
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 36,
+						"h": 45
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:895f0a79b89fa0fb44167f4584fd9a22:357b46953b7e17c6b2f43a62d52855d8:cc1ed0e4f90aaa9dcf1b39a0af1283b0$"
+	}
+}

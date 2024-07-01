@@ -1,4 +1,4 @@
-import { CommandPhase, SelectModifierPhase } from "../phases";
+import { CommandPhase } from "../phases";
 import BattleScene from "../battle-scene";
 import { PlayerPokemon, PokemonMove } from "../field/pokemon";
 import { addTextObject, TextStyle } from "./text";
@@ -20,6 +20,7 @@ import { applyChallenges, ChallengeType } from "#app/data/challenge.js";
 import MoveInfoOverlay from "./move-info-overlay";
 import i18next from "i18next";
 import { Moves } from "#enums/moves";
+import {SelectModifierPhase} from "#app/phases/select-modifier-phase";
 
 const defaultMessage = i18next.t("menu:choosePokemon");
 
@@ -35,7 +36,8 @@ export enum PartyUiMode {
   MODIFIER_TRANSFER,
   SPLICE,
   RELEASE,
-  CHECK
+  CHECK,
+  SELECT
 }
 
 export enum PartyOption {
@@ -51,6 +53,7 @@ export enum PartyOption {
   SPLICE,
   UNSPLICE,
   RELEASE,
+  SELECT,
   SCROLL_UP = 1000,
   SCROLL_DOWN = 1001,
   FORM_CHANGE_ITEM = 2000,
@@ -151,7 +154,7 @@ export default class PartyUiHandler extends MessageUiHandler {
 
   public static NoEffectMessage = "It won't have any effect.";
 
-  private localizedOptions = [PartyOption.SEND_OUT, PartyOption.SUMMARY, PartyOption.CANCEL, PartyOption.APPLY, PartyOption.RELEASE, PartyOption.TEACH];
+  private localizedOptions = [PartyOption.SEND_OUT, PartyOption.SUMMARY, PartyOption.CANCEL, PartyOption.APPLY, PartyOption.RELEASE, PartyOption.TEACH, PartyOption.SELECT];
 
   constructor(scene: BattleScene) {
     super(scene, Mode.PARTY);
@@ -416,6 +419,10 @@ export default class PartyUiHandler extends MessageUiHandler {
           return true;
         } else if (option === PartyOption.CANCEL) {
           return this.processInput(Button.CANCEL);
+        } else if (option === PartyOption.SELECT) {
+          ui.playSelect();
+          // ui.setModeWithoutClear(Mode.SUMMARY, pokemon).then(() =>  this.clearOptions());
+          return true;
         }
       } else if (button === Button.CANCEL) {
         this.clearOptions();
@@ -756,6 +763,9 @@ export default class PartyUiHandler extends MessageUiHandler {
             this.options.push(PartyOption.FORM_CHANGE_ITEM + i);
           }
         }
+        break;
+      case PartyUiMode.SELECT:
+        this.options.push(PartyOption.SELECT);
         break;
       }
 

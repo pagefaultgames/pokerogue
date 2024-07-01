@@ -59,5 +59,7 @@ export enum BattlerTagType {
   MINIMIZED = "MINIMIZED",
   DESTINY_BOND = "DESTINY_BOND",
   CENTER_OF_ATTENTION = "CENTER_OF_ATTENTION",
-  ICE_FACE = "ICE_FACE"
+  ICE_FACE = "ICE_FACE",
+  // Mystery Encounters
+  ENRAGED = "ENRAGED" // Gives pkmn +1 to all stats on post-summon
 }

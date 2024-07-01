@@ -13,32 +13,34 @@ import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
+import MysteryEncounter, { MysteryEncounterVariant } from "./data/mystery-encounter";
 
 export enum BattleType {
-    WILD,
-    TRAINER,
-    CLEAR
+  WILD,
+  TRAINER,
+  CLEAR,
+  MYSTERY_ENCOUNTER
 }
 
 export enum BattlerIndex {
-    ATTACKER = -1,
-    PLAYER,
-    PLAYER_2,
-    ENEMY,
-    ENEMY_2
+  ATTACKER = -1,
+  PLAYER,
+  PLAYER_2,
+  ENEMY,
+  ENEMY_2
 }
 
 export interface TurnCommand {
-    command: Command;
-    cursor?: integer;
-    move?: QueuedMove;
-    targets?: BattlerIndex[];
-    skip?: boolean;
-    args?: any[];
+  command: Command;
+  cursor?: integer;
+  move?: QueuedMove;
+  targets?: BattlerIndex[];
+  skip?: boolean;
+  args?: any[];
 }
 
 interface TurnCommands {
-    [key: integer]: TurnCommand
+  [key: integer]: TurnCommand
 }
 
 export default class Battle {
@@ -66,6 +68,7 @@ export default class Battle {
   public lastUsedPokeball: PokeballType;
   public playerFaints: number; // The amount of times pokemon on the players side have fainted
   public enemyFaints: number; // The amount of times pokemon on the enemies side have fainted
+  public mysteryEncounter: MysteryEncounter;
 
   private rngCounter: integer = 0;
 
@@ -104,7 +107,7 @@ export default class Battle {
     this.battleSpec = spec;
   }
 
-  private getLevelForWave(): integer {
+  public getLevelForWave(): integer {
     const levelWaveIndex = this.gameMode.getWaveForDifficulty(this.waveIndex);
     const baseLevel = 1 + levelWaveIndex / 2 + Math.pow(levelWaveIndex / 25, 2);
     const bossMultiplier = 1.2;
@@ -198,7 +201,7 @@ export default class Battle {
 
   getBgmOverride(scene: BattleScene): string {
     const battlers = this.enemyParty.slice(0, this.getBattlerCount());
-    if (this.battleType === BattleType.TRAINER) {
+    if (this.battleType === BattleType.TRAINER || this.mysteryEncounter?.encounterVariant === MysteryEncounterVariant.TRAINER_BATTLE) {
       if (!this.started && this.trainer.config.encounterBgm && this.trainer.getEncounterMessages()?.length) {
         return `encounter_${this.trainer.getEncounterBgm()}`;
       }

@@ -12,8 +12,10 @@ import { initSpecies } from "#app/data/pokemon-species";
 import { initAchievements } from "#app/system/achv.js";
 import { initVouchers } from "#app/system/voucher.js";
 import { initStatsKeys } from "#app/ui/game-stats-ui-handler";
-
-import { beforeAll } from "vitest";
+import { beforeAll, beforeEach, vi } from "vitest";
+import * as overrides from "#app/overrides";
+import {initMysteryEncounterDialogue} from "#app/data/mystery-encounters/dialogue/mystery-encounter-dialogue";
+import {initMysteryEncounters} from "#app/data/mystery-encounters/mystery-encounters";
 
 initVouchers();
 initAchievements();
@@ -26,6 +28,8 @@ initSpecies();
 initMoves();
 initAbilities();
 initLoggedInUser();
+initMysteryEncounterDialogue();
+initMysteryEncounters();
 
 global.testFailed = false;
 
@@ -36,4 +40,9 @@ beforeAll(() => {
       add: () => {},
     }
   });
+});
+
+// Disables Mystery Encounters on all tests (can be overridden at test level)
+beforeEach( () => {
+  vi.spyOn(overrides, "MYSTERY_ENCOUNTER_RATE_OVERRIDE", "get").mockReturnValue(0);
 });

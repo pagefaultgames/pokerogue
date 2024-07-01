@@ -17,7 +17,6 @@ import {
   NextEncounterPhase,
   PostSummonPhase,
   SelectGenderPhase,
-  SelectModifierPhase,
   SelectStarterPhase,
   SelectTargetPhase,
   ShinySparklePhase,
@@ -38,6 +37,13 @@ import UI, {Mode} from "#app/ui/ui";
 import {Phase} from "#app/phase";
 import ErrorInterceptor from "#app/test/utils/errorInterceptor";
 import {QuietFormChangePhase} from "#app/form-change-phase";
+import {SelectModifierPhase} from "#app/phases/select-modifier-phase";
+import {
+  MysteryEncounterBattlePhase,
+  MysteryEncounterOptionSelectedPhase,
+  MysteryEncounterPhase,
+  PostMysteryEncounterPhase
+} from "#app/phases/mystery-encounter-phase";
 
 export default class PhaseInterceptor {
   public scene;
@@ -92,10 +98,14 @@ export default class PhaseInterceptor {
     [QuietFormChangePhase, this.startPhase],
     [SwitchPhase, this.startPhase],
     [SwitchSummonPhase, this.startPhase],
+    [MysteryEncounterPhase, this.startPhase],
+    [MysteryEncounterOptionSelectedPhase, this.startPhase],
+    [MysteryEncounterBattlePhase, this.startPhase],
+    [PostMysteryEncounterPhase, this.startPhase]
   ];
 
   private endBySetMode = [
-    TitlePhase, SelectGenderPhase, CommandPhase
+    TitlePhase, SelectGenderPhase, CommandPhase, SelectModifierPhase
   ];
 
   /**
