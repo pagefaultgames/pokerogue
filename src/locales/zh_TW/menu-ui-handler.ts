@@ -22,6 +22,8 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "unlinkDiscord": "Unlink Discord",
   "linkGoogle": "Link Google",
   "unlinkGoogle": "Unlink Google",
+  "importSettings": "Import Settings",
+  "exportSettings": "Export Settings",
   "cancel": "取消",
   "losingProgressionWarning": "你將失去自戰鬥開始以來的所有進度。是否\n繼續？",
   "noEggs": "You are not hatching\nany eggs at the moment!"

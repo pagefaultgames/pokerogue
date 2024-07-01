@@ -22,6 +22,8 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "unlinkDiscord": "Desconectar Discord",
   "linkGoogle": "Conectar Google",
   "unlinkGoogle": "Desconectar Google",
+  "importSettings": "Import Settings",
+  "exportSettings": "Export Settings",
   "cancel": "Cancelar",
   "losingProgressionWarning": "Você vai perder todo o progresso desde o início da batalha. Confirmar?",
   "noEggs": "Você não está chocando\nnenhum ovo no momento!"
