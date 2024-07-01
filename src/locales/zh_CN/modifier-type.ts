@@ -254,7 +254,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "x_sp_def": "特防强化",
     "x_speed": "速度强化",
     "x_accuracy": "命中强化",
-    "dire_hit": "会心强化",
+    "dire_hit": "要害攻击",
   },
 
   TempBattleStatBoosterStatName: {
