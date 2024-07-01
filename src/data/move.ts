@@ -1617,6 +1617,7 @@ export class MultiHitAttr extends MoveAttr {
     } else {
       const hitType = new Utils.IntegerHolder(this.multiHitType);
       applyMoveAttrs(ChangeMultiHitTypeAttr, user, target, move, hitType);
+      this.multiHitType = hitType.value;
       hitTimes = this.getHitCount(user, target);
     }
 
