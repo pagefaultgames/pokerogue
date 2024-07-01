@@ -5,7 +5,7 @@ import { Biome } from "#enums/biome";
 import { WeatherType } from "#enums/weather-type";
 import { expect, test } from "vitest";
 
-test("Overrides are not default values", () => {
+test("Overrides are default values", () => {
   const defaultOverrides = {
     SEED_OVERRIDE: "",
     WEATHER_OVERRIDE: WeatherType.NONE,
