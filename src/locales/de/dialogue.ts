@@ -398,7 +398,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
           $und es kommt noch härter!
           $Wir wollen über die Erde regieren…
           $und naja du kennst den Rest…!`,
-      2: "Come from Johto will they, mine allies, yes. Will revenge they are",
+      2: "OH NO! I DROPPED THE LIFT KEY!",
       3: "You say what? Team Rocket bye-bye a go-go? Broken up it is says you?",
       4: "To denounce the evils of truth and love!",
       5: "We Team Rocket are Pokémon gangsters!",
@@ -407,7 +407,8 @@ export const PGMdialogue: DialogueTranslationEntries = {
       8: "Hand over your Pokémon, or face the wrath of Team Rocket!",
       9: "We are Team Rocket, and we're here to steal your Pokémon!",
       10: "You're about to experience the true terror of Team Rocket!",
-      11: "Resistance is futile! Give us your Pokémon or face the consequences!"
+      11: "Resistance is futile! Give us your Pokémon or face the consequences!",
+      12: "STEAL for team rocket EXPLOIT for team rocket"
     },
     "victory": {
       1: "Das war mal wieder ein Schuss in den Ofen!",
@@ -420,18 +421,19 @@ export const PGMdialogue: DialogueTranslationEntries = {
       8: "I blew it!",
       9: "My associates won't stand for this!",
       10: "So, you are good…",
-      11: "I'm steamed..."
+      11: "I'm steamed...",
+      12: "Come from Johto will they, mine allies, yes. Will revenge they are",
     },
   },
   "magma_grunt": {
     "encounter": {
       1: "Keiner, der sich Team Magma in den Weg stellt, bekommt Gnade, nicht einmal Kinder!",
-      2: "I should've brought my Game Boy Advance SP to play some Pokémon Sapphire  instead.",
+      2: "Get ready to feel the heat! And by heat, I mean my burning desire to win!",
       3: "Hey! You there! Which do you think is cooler? Team Aqua's uniform or Team Magma's?",
       4: "Heh, I'd like to you see try!",
       5: "Huh? What are you doing here?",
-      6: "Don't get any ideas about going easy on us just because you're a kid! We'll show you the power of Team Magma's amazing technology!",
-      7: "We, Team Magma, are working hard for everyone's sake. If there's more land, there'll be more places to live! Everyone would be happy!",
+      6: "We'll show you the power of Team Magma's amazing technology!",
+      7: "If there's more land, there'll be more places to live!",
       8: "You'd better not interfere with our plans! We're making the world a better place!",
       9: "You're in the way! Team Magma has no time for kids like you!",
       10: "Do you really think you can take on Team Magma? You're just a kid!",
@@ -442,7 +444,6 @@ export const PGMdialogue: DialogueTranslationEntries = {
       15: "Prepare to face my wrath... and my slightly underleveled Pokémon!",
       16: "Hope you brought sunscreen, 'cause you're about to get burned!",
       17: "You're in the way! Team Magma has no time for kids like you!",
-
     },
     "victory": {
       1: "Wie kann das sein? Ich bin Teil vom mächtigen Team Magma! Wir wollen doch nur die Welt verbessern…",
@@ -452,7 +453,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       5: "What, what, what?",
       6: "I'm getting heat exhaustion…",
       7: "I failed to win, I should've planned better...",
-      8: "I'm steamed...",
+      8: "I'm heated...",
       9: "Oof... you got me.",
       10: "What?! I lost?! How could this be...?",
       11: "No way! You're just a kid!",
@@ -467,13 +468,13 @@ export const PGMdialogue: DialogueTranslationEntries = {
   "aqua_grunt": {
     "encounter": {
       1: "Du willst dich also mit Team Aqua anlegen? Du traust dich ja was… Dich werfe ich über Bord!",
-      2: "I should've brought my Game Boy Advance SP to play some Pokémon Ruby instead.",
-      3: "I was going to ambush you, but you had to dawdle in Petalburg Woods forever, didn't you?",
+      2: "I was going to ambush you, but you had to dawdle in the Plains forever, didn't you?",
+      3: "You're about to get soaked! And not just from my Pokémon's Water Gun.",
       4: "Grrr…You've got some nerve meddling with Team Aqua!",
       5: "Hey, you there! Don't butt in!",
       6: "Hey, there! Quit pushing! This is the line, can't you see?",
       7: "We, Team Aqua, exist for the good of all!",
-      8: "Hey! You there! Which do you think is cooler? Team Aqua's uniform or Team Magma's?",
+      8: "Prepare to be washed away by the tides of my… uh, Pokémon! Yeah, my Pokémon!",
     },
     "victory": {
       1: "Vielleicht sollte ich wohl lieber selber über die Planke gehen…",
@@ -498,7 +499,9 @@ export const PGMdialogue: DialogueTranslationEntries = {
       8: "Hope you're ready for a cosmic beatdown!",
       9: "Witness the power of our technology and the future we envision!",
       10: "In the name of Team Galactic, I'll eliminate anyone who stands in our way!",
-      11: "Looks like you're about to get starstruck...by our Pokémon!"
+      11: "Looks like you're about to get starstruck...by our Pokémon!",
+      12: "Because of you, they took my CLEFAIRY away...",
+      13: "If you try to mess with me, I'll shut you down with a Pokémon battle. So, what's it going to be? Are you going to mess with me?"
     },
     "victory": {
       1: "Zyrus wird uns für diese Niederlage bestrafen…",
@@ -511,31 +514,35 @@ export const PGMdialogue: DialogueTranslationEntries = {
       8: "Oops, our evil was no match for your Pokémon.",
       9: "This setback means nothing in the grand scheme.",
       10: "Our plans are bigger than this defeat.",
-      11: "I knew I should have trained more and evil-planned less."
+      11: "I knew I should have trained more and evil-planned less.",
+      12:"Looks like I need a new cosmic plan. This one fizzled out.",
+      13: "Defeated by a mere earthling… how embarrassing."
     },
   },
   "plasma_grunt": {
     "encounter": {
       1: "Pokémon sollten frei sein! Team Plasma wird sie befreien!",
-      2: "Bad for Team Plasma! Or Plasbad, for short!",
+      2: "Prepare to be dazzled by our galactic style! And by that, I mean defeated.",
       3: "There's no room for obstacles like you getting in the way of Unova's new dawn!",
       4: "Pokémon that work with humans might look happy, but they're suffering, count on it! No doubt about it!",
-      5: "If I win against you, release your Pokémon !",
+      5: "If I win against you, release your Pokémon!",
       6: "As a proud member of Team Plasma, I will gladly battle with you.",
-      7: "YOU! To please my Pokémon , lose!",
+      7: "YOU! To please my Pokémon, lose!",
       8: "Your Pokémon will serve a greater purpose under Lord N's vision.",
-      9: "Team Plasma will liberate Pokémon from selfish humans like you!"
+      9: "Team Plasma will liberate Pokémon from selfish humans like you!",
+      10: "Our hairstyles are out of this world... but our battling skills? You'll find out soon enough."
     },
     "victory": {
       1: "Wie konnte ich verlieren? Ich dachte, ich würde die Welt retten…",
-      2: "You daft codger, your mask's absurd!",
+      2: "Looks like you're not ready for a galactic takeover!",
       3: "If you try to mess with me, I'll shut you down with a Pokémon battle.",
       4: "How could I lose...",
       5: "I think Lord N would approve of a rematch clause.",
       6: "I guess my Pokémon liberation degree needs updating.",
       7: "Note to self: practice Pokémon battling, liberate Pokémon better.",
       8: "Better luck next time! Maybe join Team Plasma for a change?",
-      9: "We came, we saw, we Plasma'd!"
+      9: "We came, we saw, we Plasma'd!",
+      10: "This is bad... Badbadbadbadbadbadbad! Bad for Team Plasma! Or Plasbad, for short!"
     },
   },
   "flare_grunt": {
@@ -555,7 +562,6 @@ export const PGMdialogue: DialogueTranslationEntries = {
       4: "Your victory today won't stop Team Flare's quest for a beautiful world.",
       5: "Even in defeat, Team Flare's elegance shines through.",
       6: "Perhaps there's more to battling than I thought. Back to the drawing board."
-
     },
   },
   "rocket_boss_giovanni_1": {

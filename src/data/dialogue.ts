@@ -463,6 +463,7 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
         "dialogue:rocket_grunt.encounter.9",
         "dialogue:rocket_grunt.encounter.10",
         "dialogue:rocket_grunt.encounter.11",
+        "dialogue:rocket_grunt.encounter.12",
       ],
       victory: [
         "dialogue:rocket_grunt.victory.1",
@@ -476,6 +477,7 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
         "dialogue:rocket_grunt.victory.9",
         "dialogue:rocket_grunt.victory.10",
         "dialogue:rocket_grunt.victory.11",
+        "dialogue:rocket_grunt.victory.12",
       ]
     }
   ],
@@ -559,6 +561,8 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
         "dialogue:galactic_grunt.encounter.9",
         "dialogue:galactic_grunt.encounter.10",
         "dialogue:galactic_grunt.encounter.11",
+        "dialogue:galactic_grunt.encounter.12",
+        "dialogue:galactic_grunt.encounter.13",
       ],
       victory: [
         "dialogue:galactic_grunt.victory.1",
@@ -572,6 +576,8 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
         "dialogue:galactic_grunt.victory.9",
         "dialogue:galactic_grunt.victory.10",
         "dialogue:galactic_grunt.victory.11",
+        "dialogue:galactic_grunt.victory.12",
+        "dialogue:galactic_grunt.victory.13",
       ]
     }
   ],
@@ -587,6 +593,7 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
         "dialogue:plasma_grunt.encounter.7",
         "dialogue:plasma_grunt.encounter.8",
         "dialogue:plasma_grunt.encounter.9",
+        "dialogue:plasma_grunt.encounter.10",
       ],
       victory: [
         "dialogue:plasma_grunt.victory.1",
@@ -598,6 +605,7 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
         "dialogue:plasma_grunt.victory.7",
         "dialogue:plasma_grunt.victory.8",
         "dialogue:plasma_grunt.victory.9",
+        "dialogue:plasma_grunt.victory.10",
       ]
     }
   ],
