@@ -40,6 +40,7 @@ export default class PokemonData {
   public luck: integer;
   public pauseEvolutions: boolean;
   public pokerus: boolean;
+  public evoCounter: integer;
 
   public fusionSpecies: Species;
   public fusionFormIndex: integer;

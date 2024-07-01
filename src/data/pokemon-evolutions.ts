@@ -11,7 +11,6 @@ import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
-import { ExtraModifierModifier, MoneyMultiplierModifier } from "#app/modifier/modifier.js";
 
 export enum SpeciesWildEvolutionDelay {
   NONE,
@@ -1097,7 +1096,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.GALAR_RAPIDASH, 40, null, null)
   ],
   [Species.GALAR_FARFETCHD]: [
-    new SpeciesEvolution(Species.SIRFETCHD, 30, null, null)
+    new SpeciesEvolution(Species.SIRFETCHD, 1, null, new SpeciesEvolutionCondition(p => p.evoCounter > 2), SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.GALAR_SLOWPOKE]: [
     new SpeciesEvolution(Species.GALAR_SLOWBRO, 1, EvolutionItem.GALARICA_CUFF, null, SpeciesWildEvolutionDelay.VERY_LONG),
@@ -1632,7 +1631,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.FROSMOTH, 1, null, new SpeciesFriendshipEvolutionCondition(90, p => p.scene.arena.getTimeOfDay() === TimeOfDay.DUSK || p.scene.arena.getTimeOfDay() === TimeOfDay.NIGHT), SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.GIMMIGHOUL]: [
-    new SpeciesEvolution(Species.GHOLDENGO, 1, null, new SpeciesEvolutionCondition( p => p.scene.money >= 15000 ), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.GHOLDENGO, 1, null, new SpeciesEvolutionCondition( p => p.evoCounter > 9 ), SpeciesWildEvolutionDelay.VERY_LONG)
   ]
 };
 

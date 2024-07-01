@@ -85,6 +85,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public luck: integer;
   public pauseEvolutions: boolean;
   public pokerus: boolean;
+  public evoCounter: integer;
 
   public fusionSpecies: PokemonSpecies;
   public fusionFormIndex: integer;
@@ -162,6 +163,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.metBiome = dataSource.metBiome;
       this.pauseEvolutions = dataSource.pauseEvolutions;
       this.pokerus = !!dataSource.pokerus;
+      this.evoCounter = dataSource.evoCounter || 0;
       this.fusionSpecies = dataSource.fusionSpecies instanceof PokemonSpecies ? dataSource.fusionSpecies : getPokemonSpecies(dataSource.fusionSpecies);
       this.fusionFormIndex = dataSource.fusionFormIndex;
       this.fusionAbilityIndex = dataSource.fusionAbilityIndex;
@@ -1989,8 +1991,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           this.battleData.hitCount++;
           const attackResult = { move: move.id, result: result as DamageResult, damage: damage.value, critical: isCritical, sourceId: source.id };
           this.turnData.attacksReceived.unshift(attackResult);
-          if (source.isPlayer() && !this.isPlayer()) {
-            this.scene.applyModifiers(DamageMoneyRewardModifier, true, source, damage);
+          if (source.isPlayer()) {
+            if (!this.isPlayer()) {
+              this.scene.applyModifiers(DamageMoneyRewardModifier, true, source, damage);
+            }
+            if (isCritical && source.species.speciesId === Species.GALAR_FARFETCHD) {
+              source.evoCounter++;
+            }
           }
         }
 

@@ -375,8 +375,8 @@ export default class PartyUiHandler extends MessageUiHandler {
         } else if (option === PartyOption.UNPAUSE_EVOLUTION) {
           this.clearOptions();
           ui.playSelect();
-          pokemon.pauseEvolutions = false;
-          this.showText(`Evolutions have been unpaused for ${pokemon.name}.`, null, () => this.showText(null, 0), null, true);
+          pokemon.pauseEvolutions = !pokemon.pauseEvolutions;
+          this.showText(`Evolutions have been ${pokemon.pauseEvolutions?"un":""}paused for ${pokemon.name}.`, null, () => this.showText(null, 0), null, true);
         } else if (option === PartyOption.UNSPLICE) {
           this.clearOptions();
           ui.playSelect();
@@ -761,7 +761,7 @@ export default class PartyUiHandler extends MessageUiHandler {
 
       this.options.push(PartyOption.SUMMARY);
 
-      if (pokemon.pauseEvolutions && pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId)) {
+      if (pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId)) {
         this.options.push(PartyOption.UNPAUSE_EVOLUTION);
       }
 
