@@ -3616,7 +3616,9 @@ export class DamagePhase extends PokemonPhase {
     super.start();
 
     if (this.damageResult === HitResult.ONE_HIT_KO) {
-      this.scene.toggleInvert(true);
+      if (this.scene.moveAnimations) {
+        this.scene.toggleInvert(true);
+      }
       this.scene.time.delayedCall(Utils.fixedInt(1000), () => {
         this.scene.toggleInvert(false);
         this.applyDamage();
