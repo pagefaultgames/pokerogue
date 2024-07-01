@@ -51,6 +51,7 @@ export const battle: SimpleTranslationEntries = {
   "runAwayCannotEscape": "你無法逃脫！",
   "escapeVerbSwitch": "切換",
   "escapeVerbFlee": "逃跑",
+  "stealEatBerry": "{{pokemonName}} stole and ate\n{{targetName}}'s {{berryName}}!",
   "notDisabled": "{{moveName}} 不再被禁用！",
   "turnEndHpRestore": "{{pokemonName}}'s HP was restored.",
   "hpIsFull": "{{pokemonName}}'s\nHP is full!",
@@ -128,5 +129,5 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsSaltCuredOnAdd": "{{pokemonNameWithAffix}} 陷入了鹽腌狀態！",
   "battlerTagsSaltCuredLapse": "{{pokemonNameWithAffix}} 受到了{{moveName}}的傷害！",
   "battlerTagsCursedOnAdd": "{{pokemonNameWithAffix}}削減了自己的體力，並詛咒了{{pokemonName}}！",
-  "battlerTagsCursedLapse": "{{pokemonNameWithAffix}}正受到詛咒！"
+  "battlerTagsCursedLapse": "{{pokemonNameWithAffix}}正受到詛咒！",
 } as const;

@@ -65,6 +65,7 @@ export const battle: SimpleTranslationEntries = {
   "useMove": "{{pokemonNameWithAffix}} setzt {{moveName}} ein!",
   "drainMessage": "{{pokemonName}} wurde Energie abgesaugt",
   "regainHealth": "KP von {{pokemonName}} wurden wieder aufgefrischt!",
+  "stealEatBerry": "{{pokemonName}} stole and ate\n{{targetName}}'s {{berryName}}!",
   "fainted": "{{pokemonNameWithAffix}} wurde besiegt!",
   "statRose": "{{stats}} von {{pokemonNameWithAffix}} steigt!",
   "statSharplyRose": "{{stats}} von {{pokemonNameWithAffix}} steigt stark!",

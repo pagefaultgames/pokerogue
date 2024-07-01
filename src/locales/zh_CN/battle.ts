@@ -59,6 +59,7 @@ export const battle: SimpleTranslationEntries = {
   "hpIsFull": "{{pokemonName}}的体力已满！",
   "skipItemQuestion": "你确定要跳过拾取道具吗？",
   "eggHatching": "咦？",
+  "stealEatBerry": "{{pokemonName}} stole and ate\n{{targetName}}'s {{berryName}}!",
   "ivScannerUseQuestion": "对{{pokemonName}}使用个体值扫描仪？",
   "wildPokemonWithAffix": "野生的{{pokemonName}}",
   "foePokemonWithAffix": "对手 {{pokemonName}}",
