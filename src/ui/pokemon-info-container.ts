@@ -364,13 +364,14 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
     });
   }
 
-  makeRoomForConfirmUi(speedMultiplier: number = 1): Promise<void> {
+  makeRoomForConfirmUi(speedMultiplier: number = 1, fromCatch: boolean = false): Promise<void> {
+    const xPosition = fromCatch ? this.initialX - this.infoWindowWidth - 65 : this.initialX - this.infoWindowWidth - ConfirmUiHandler.windowWidth;
     return new Promise<void>(resolve => {
       this.scene.tweens.add({
         targets: this,
         duration: Utils.fixedInt(Math.floor(150 / speedMultiplier)),
         ease: "Cubic.easeInOut",
-        x: this.initialX - this.infoWindowWidth - ConfirmUiHandler.windowWidth,
+        x: xPosition,
         onComplete: () => {
           resolve();
         }
