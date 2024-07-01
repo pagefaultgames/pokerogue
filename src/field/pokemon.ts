@@ -2034,16 +2034,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           this.resetSummonData();
         }
 
-        /**
-         * since damage is an object, I don't see how this would ever by false?
-         * i think the motivation was to have this here to counter setPhaseQueueSplice()
-         * not sure the original motivation
-         * It would be bad to run both the top if block and the one below commented out without changing the later's condition
-         */
-
         if (damage) {
-          //this.scene.clearPhaseQueueSplice();
-
           const attacker = this.scene.getPokemonById(source.id);
           destinyTag?.lapse(attacker, BattlerTagLapseType.CUSTOM);
         }

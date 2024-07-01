@@ -3017,10 +3017,10 @@ export class MoveEffectPhase extends PokemonPhase {
         this.scene.unshiftPhase(this.getNewHitPhase());
       } else {
         // queue message for number of hits made by multi-move
-        // BUG: when fainting occurs, the resulting message isn't rendered - has to do with FaintPhase
-        // temp fix in pokemon.ts apply() that checks, but ideally want to fix it here at the source
+        // if multi-hit attack only hits once, still want to render a message
         const hitsTotal = user.turnData.hitCount - Math.max(user.turnData.hitsLeft, 0);
-        if (hitsTotal > 1) {
+        if (hitsTotal > 1 || user.turnData.hitsLeft > 0) {
+          // if there are multiple hits, or if there are hits of the multi-hit move left
           this.scene.queueMessage(i18next.t("battle:attackHitsCount", { count: hitsTotal }));
         }
         this.scene.applyModifiers(HitHealModifier, this.player, user);
