@@ -342,7 +342,7 @@ export class EggHatchPhase extends Phase {
 
         this.scene.playSoundWithoutBgm("evolution_fanfare");
 
-        this.scene.ui.showText(i18next.t("egg:hatchFromTheEgg", { pokemonName: this.pokemon.name }), null, () => {
+        this.scene.ui.showText(i18next.t("egg:hatchFromTheEgg", { pokemonName: this.pokemon.getNameToRender() }), null, () => {
           this.scene.gameData.updateSpeciesDexIvs(this.pokemon.species.speciesId, this.pokemon.ivs);
           this.scene.gameData.setPokemonCaught(this.pokemon, true, true).then(() => {
             this.scene.gameData.setEggMoveUnlocked(this.pokemon.species, this.eggMoveIndex).then(() => {

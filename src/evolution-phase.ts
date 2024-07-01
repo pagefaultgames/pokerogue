@@ -116,7 +116,7 @@ export class EvolutionPhase extends Phase {
 
   doEvolution(): void {
     const evolutionHandler = this.scene.ui.getHandler() as EvolutionSceneHandler;
-    const preName = this.pokemon.name;
+    const preName = this.pokemon.getNameToRender();
 
     this.scene.ui.showText(i18next.t("menu:evolving", { pokemonName: preName }), null, () => {
       this.pokemon.cry();

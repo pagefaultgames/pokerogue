@@ -327,7 +327,7 @@ export class InfatuatedTag extends BattlerTag {
     pokemon.scene.queueMessage(
       i18next.t("battle:battlerTagsInfatuatedOnAdd", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        sourcePokemonName: pokemon.scene.getPokemonById(this.sourceId).name
+        sourcePokemonName: pokemon.scene.getPokemonById(this.sourceId).getNameToRender()
       })
     );
   }
@@ -345,7 +345,7 @@ export class InfatuatedTag extends BattlerTag {
       pokemon.scene.queueMessage(
         i18next.t("battle:battlerTagsInfatuatedLapse", {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-          sourcePokemonName: pokemon.scene.getPokemonById(this.sourceId).name
+          sourcePokemonName: pokemon.scene.getPokemonById(this.sourceId).getNameToRender()
         })
       );
       pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, pokemon.getBattlerIndex(), undefined, CommonAnim.ATTRACT));
@@ -573,7 +573,7 @@ export class HelpingHandTag extends BattlerTag {
     pokemon.scene.queueMessage(
       i18next.t("battle:battlerTagsHelpingHandOnAdd", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon.scene.getPokemonById(this.sourceId)),
-        pokemonName: pokemon.name
+        pokemonName: pokemon.getNameToRender()
       })
     );
   }
@@ -648,7 +648,7 @@ export class AquaRingTag extends BattlerTag {
           Math.floor(pokemon.getMaxHp() / 16),
           i18next.t("battle:battlerTagsAquaRingLapse", {
             moveName: this.getMoveName(),
-            pokemonName: pokemon.name
+            pokemonName: pokemon.getNameToRender()
           }),
           true));
     }
@@ -767,7 +767,7 @@ export class BindTag extends DamagingTrapTag {
   getTrapMessage(pokemon: Pokemon): string {
     return i18next.t("battle:battlerTagsBindOnTrap", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      sourcePokemonName: pokemon.scene.getPokemonById(this.sourceId).name,
+      sourcePokemonName: pokemon.scene.getPokemonById(this.sourceId).getNameToRender(),
       moveName: this.getMoveName()
     });
   }
@@ -781,7 +781,7 @@ export class WrapTag extends DamagingTrapTag {
   getTrapMessage(pokemon: Pokemon): string {
     return i18next.t("battle:battlerTagsWrapOnTrap", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      sourcePokemonName: pokemon.scene.getPokemonById(this.sourceId).name
+      sourcePokemonName: pokemon.scene.getPokemonById(this.sourceId).getNameToRender()
     });
   }
 }
@@ -816,7 +816,7 @@ export class ClampTag extends DamagingTrapTag {
   getTrapMessage(pokemon: Pokemon): string {
     return i18next.t("battle:battlerTagsClampOnTrap", {
       sourcePokemonNameWithAffix: getPokemonNameWithAffix(pokemon.scene.getPokemonById(this.sourceId)),
-      pokemonName: pokemon.name,
+      pokemonName: pokemon.getNameToRender(),
     });
   }
 }

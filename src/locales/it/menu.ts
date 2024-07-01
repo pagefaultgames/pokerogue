@@ -54,5 +54,8 @@ export const menu: SimpleTranslationEntries = {
   "disclaimer": "DISCLAIMER",
   "disclaimerDescription": "Questo gioco è un prodotto incompleto; si potrebbero riscontrare errori (inclusa la perdita dei dati di salvataggio),\ncambiamenti impercettibili, e non è detto che venga aggiornato nel tempo o mai completato del tutto.",
   "choosePokemon": "Choose a Pokémon.",
+  "renamePokemon": "Rename Pokémon",
+  "rename": "Rename",
+  "nickname": "Nickname",
   "errorServerDown": "Oops! There was an issue contacting the server.\n\nYou may leave this window open,\nthe game will automatically reconnect.",
 } as const;

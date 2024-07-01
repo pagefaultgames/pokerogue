@@ -2202,7 +2202,7 @@ export class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
   }
 
   getTransferMessage(pokemon: Pokemon, targetPokemon: Pokemon, item: ModifierTypes.ModifierType): string {
-    return getPokemonMessage(targetPokemon, `'s ${item.name} was absorbed\nby ${pokemon.name}'s ${this.type.name}!`);
+    return getPokemonMessage(targetPokemon, `'s ${item.name} was absorbed\nby ${pokemon.getNameToRender()}'s ${this.type.name}!`);
   }
 
   getMaxHeldItemCount(pokemon: Pokemon): integer {
@@ -2236,7 +2236,7 @@ export class ContactHeldItemTransferChanceModifier extends HeldItemTransferModif
   }
 
   getTransferMessage(pokemon: Pokemon, targetPokemon: Pokemon, item: ModifierTypes.ModifierType): string {
-    return getPokemonMessage(targetPokemon, `'s ${item.name} was snatched\nby ${pokemon.name}'s ${this.type.name}!`);
+    return getPokemonMessage(targetPokemon, `'s ${item.name} was snatched\nby ${pokemon.getNameToRender()}'s ${this.type.name}!`);
   }
 
   getMaxHeldItemCount(pokemon: Pokemon): integer {
