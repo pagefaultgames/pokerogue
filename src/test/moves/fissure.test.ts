@@ -7,13 +7,12 @@ import { Moves } from "#enums/moves";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { Species } from "#app/enums/species.js";
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
+import { EnemyPokemon } from "#app/field/pokemon";
 
 describe("Moves - Fissure", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  let partyPokemon: PlayerPokemon;
+  //let partyPokemon: PlayerPokemon;
   let enemyPokemon: EnemyPokemon;
 
   beforeAll(() => {
@@ -28,25 +27,28 @@ describe("Moves - Fissure", () => {
 
   beforeEach(async () => {
     game = new GameManager(phaserGame);
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
 
-    vi.spyOn(overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.PORYGON);
+    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    vi.spyOn(overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
+
+    vi.spyOn(overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SNORLAX);
     vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.FISSURE]);
     vi.spyOn(overrides, "PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
     vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
 
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.PORYGON);
+    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SNORLAX);
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
     vi.spyOn(overrides, "OPP_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
     vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
 
     await game.startBattle();
 
-    partyPokemon = game.scene.getParty()[0];
-    partyPokemon.addTag(BattlerTagType.NO_CRIT, 99);
-
+    //partyPokemon = game.scene.getParty()[0];
     enemyPokemon = game.scene.getEnemyPokemon();
-    enemyPokemon.addTag(BattlerTagType.NO_CRIT, 99);
+
+    // remove berries
+    game.scene.removePartyMemberModifiers(0);
+    game.scene.clearEnemyHeldItemModifiers();
   });
 
   it("ignores damage modification from abilities such as fur coat", async () => {
