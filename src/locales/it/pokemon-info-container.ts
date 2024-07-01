@@ -5,7 +5,4 @@ export const pokemonInfoContainer: SimpleTranslationEntries = {
   "gender": "Genere:",
   "ability": "Abilità:",
   "nature": "Natura:",
-  "epic": "Epico",
-  "rare": "Raro",
-  "common": "Comune"
 } as const;
