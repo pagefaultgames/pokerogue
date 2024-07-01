@@ -29,6 +29,7 @@
 		"node_modules",
 		"dist",
 		"vite.config.ts",
-		"vitest.config.ts"
+		"vitest.config.ts",
+		"vitest.workspace.ts",
 	]
 }

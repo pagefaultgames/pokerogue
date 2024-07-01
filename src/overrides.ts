@@ -1,23 +1,23 @@
-import { WeatherType } from "./data/weather";
-import { Variant } from "./data/variant";
-import { TempBattleStat } from "./data/temp-battle-stat";
-import { Nature } from "./data/nature";
-import { Type } from "./data/type";
-import { Stat } from "./data/pokemon-stat";
-import { PokeballCounts } from "./battle-scene";
-import { PokeballType } from "./data/pokeball";
-import { Gender } from "./data/gender";
-import { StatusEffect } from "./data/status-effect";
-import { SpeciesStatBoosterItem, modifierTypes } from "./modifier/modifier-type";
-import { VariantTier } from "./enums/variant-tiers";
-import { EggTier } from "#enums/egg-type";
-import { allSpecies } from "./data/pokemon-species"; // eslint-disable-line @typescript-eslint/no-unused-vars
 import { Abilities } from "#enums/abilities";
 import { BerryType } from "#enums/berry-type";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
+import { Nature } from "#enums/nature";
+import { PokeballType } from "#enums/pokeball";
 import { Species } from "#enums/species";
+import { Stat } from "#enums/stat";
 import { TimeOfDay } from "#enums/time-of-day";
+import { WeatherType } from "#enums/weather-type";
+import { VariantTier } from "#enums/variant-tiers";
+import { EggTier } from "#enums/egg-type";
+import { type PokeballCounts } from "./battle-scene";
+import { Gender } from "./data/gender";
+import { allSpecies } from "./data/pokemon-species"; // eslint-disable-line @typescript-eslint/no-unused-vars
+import { StatusEffect } from "./data/status-effect";
+import { TempBattleStat } from "./data/temp-battle-stat";
+import { Type } from "./data/type";
+import { Variant } from "./data/variant";
+import { type SpeciesStatBoosterItem, type ModifierTypes } from "./modifier/modifier-type";
 
 /**
  * Overrides for testing different in game situations
@@ -128,7 +128,7 @@ export const EGG_GACHA_PULL_COUNT_OVERRIDE: number = 0;
  * - SpeciesStatBoosterItem is for SPECIES_STAT_BOOSTER
  */
 interface ModifierOverride {
-    name: keyof typeof modifierTypes & string,
+    name: ModifierTypes & string,
     count?: integer
     type?: TempBattleStat|Stat|Nature|Type|BerryType|SpeciesStatBoosterItem
 }

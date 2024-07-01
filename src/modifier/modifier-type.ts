@@ -1156,6 +1156,8 @@ class WeightedModifierType {
   }
 }
 
+export type ModifierTypes = keyof typeof modifierTypes;
+
 export const modifierTypes = {
   POKEBALL: () => new AddPokeballModifierType("pb", PokeballType.POKEBALL, 5),
   GREAT_BALL: () => new AddPokeballModifierType("gb", PokeballType.GREAT_BALL, 5),
