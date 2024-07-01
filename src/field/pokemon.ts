@@ -2531,7 +2531,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     const cancelled = new Utils.BooleanHolder(false);
-    applyPreSetStatusAbAttrs(StatusEffectImmunityAbAttr, this, effect, cancelled, quiet);
+    applyPreSetStatusAbAttrs(StatusEffectImmunityAbAttr, this, effect, cancelled, effect, quiet);
 
     if (cancelled.value) {
       return false;
@@ -2540,8 +2540,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return true;
   }
 
-  trySetStatus(effect: StatusEffect, asPhase: boolean = false, sourcePokemon: Pokemon = null, cureTurn: integer = 0, sourceText: string = null): boolean {
-    if (!this.canSetStatus(effect, asPhase, false, sourcePokemon)) {
+  trySetStatus(effect: StatusEffect, asPhase: boolean = false, sourcePokemon: Pokemon = null, cureTurn: integer = 0, sourceText: string = null, quiet: boolean = false): boolean {
+    if (!this.canSetStatus(effect, quiet, false, sourcePokemon)) {
       return false;
     }
 
