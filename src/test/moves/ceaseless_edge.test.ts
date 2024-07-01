@@ -56,11 +56,15 @@ describe("Moves - Ceaseless Edge", () => {
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.CEASELESS_EDGE));
 
+      await game.phaseInterceptor.to(MoveEffectPhase, false);
+      // Spikes should not have any layers before move effect is applied
+      const tagBefore = game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.ENEMY) as ArenaTrapTag;
+      expect(tagBefore instanceof ArenaTrapTag).toBeFalsy();
+
       await game.phaseInterceptor.to(TurnEndPhase);
-
-      const tag = game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.ENEMY) as ArenaTrapTag;
-
-      expect(tag.layers).toBe(1);
+      const tagAfter = game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.ENEMY) as ArenaTrapTag;
+      expect(tagAfter instanceof ArenaTrapTag).toBeTruthy();
+      expect(tagAfter.layers).toBe(1);
       expect(enemyPokemon.hp).toBeLessThan(enemyStartingHp);
     }, TIMEOUT
   );
@@ -69,7 +73,6 @@ describe("Moves - Ceaseless Edge", () => {
     "move should hit twice with multi lens and apply two layers of spikes",
     async () => {
       vi.spyOn(overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "MULTI_LENS"}]);
-
       await game.startBattle([ Species.ILLUMISE ]);
 
       const leadPokemon = game.scene.getPlayerPokemon();
@@ -85,11 +88,11 @@ describe("Moves - Ceaseless Edge", () => {
       await game.phaseInterceptor.to(MoveEffectPhase, false);
       // Spikes should not have any layers before move effect is applied
       const tagBefore = game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.ENEMY) as ArenaTrapTag;
-      expect(tagBefore).toBeUndefined();
+      expect(tagBefore instanceof ArenaTrapTag).toBeFalsy();
 
       await game.phaseInterceptor.to(TurnEndPhase);
-
       const tagAfter = game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.ENEMY) as ArenaTrapTag;
+      expect(tagAfter instanceof ArenaTrapTag).toBeTruthy();
       expect(tagAfter.layers).toBe(2);
       expect(enemyPokemon.hp).toBeLessThan(enemyStartingHp);
     }, TIMEOUT
@@ -101,7 +104,6 @@ describe("Moves - Ceaseless Edge", () => {
       vi.spyOn(overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "MULTI_LENS"}]);
       vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(5);
       vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(0);
-
 
       await game.startBattle([ Species.SNORLAX, Species.MUNCHLAX ]);
 
@@ -115,19 +117,18 @@ describe("Moves - Ceaseless Edge", () => {
       await game.phaseInterceptor.to(MoveEffectPhase, false);
       // Spikes should not have any layers before move effect is applied
       const tagBefore = game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.ENEMY) as ArenaTrapTag;
-      expect(tagBefore).toBeUndefined();
+      expect(tagBefore instanceof ArenaTrapTag).toBeFalsy();
 
       await game.phaseInterceptor.to(TurnEndPhase, false);
       const tagAfter = game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.ENEMY) as ArenaTrapTag;
+      expect(tagAfter instanceof ArenaTrapTag).toBeTruthy();
       expect(tagAfter.layers).toBe(2);
 
       const hpBeforeSpikes = game.scene.currentBattle.enemyParty[1].hp;
       // Check HP of pokemon that WILL BE switched in (index 1)
-
       game.forceOpponentToSwitch();
       game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
       await game.phaseInterceptor.to(TurnEndPhase, false);
-
       expect(game.scene.currentBattle.enemyParty[0].hp).toBeLessThan(hpBeforeSpikes);
     }, TIMEOUT
   );
