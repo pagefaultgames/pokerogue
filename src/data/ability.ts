@@ -1678,7 +1678,7 @@ export class SynchronizeStatusAbAttr extends PostSetStatusAbAttr {
     ]);
 
     if (sourcePokemon && syncStatuses.has(effect)) {
-      return sourcePokemon.trySetStatus(effect, true);
+      return sourcePokemon.trySetStatus(effect, true, pokemon);
     }
 
     return false;
@@ -4307,7 +4307,7 @@ export function initAbilities() {
     new Ability(Abilities.SYNCHRONIZE, 3)
       .attr(SyncEncounterNatureAbAttr)
       .attr(SynchronizeStatusAbAttr)
-      .partial(), // interaction with psycho shift needs work
+      .partial(), // interaction with psycho shift needs work, keeping to old Gen interaction for now
     new Ability(Abilities.CLEAR_BODY, 3)
       .attr(ProtectStatAbAttr)
       .ignorable(),

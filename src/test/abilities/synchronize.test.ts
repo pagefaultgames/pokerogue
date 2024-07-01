@@ -209,4 +209,29 @@ describe("Abilities - Synchronize", () => {
     expect(game.scene.getEnemyParty()[0].status?.effect).toBe(undefined);
     expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
   }, 20000);
+
+  it("should activate with Psycho Shift after the move clears the status", async () => {
+    // Arrange
+    const moveToUse = Moves.PSYCHO_SHIFT;
+
+    // Starter mocks
+    vi.spyOn(overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.HOOTHOOT);
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
+    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.KEEN_EYE);
+    vi.spyOn(overrides, "STATUS_OVERRIDE", "get").mockReturnValue(StatusEffect.PARALYSIS);
+
+    // Act
+    await game.startBattle();
+    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
+
+    await game.phaseInterceptor.to(MoveEffectPhase, false);
+    vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
+
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    // Assert
+    expect(game.scene.getParty()[0].status?.effect).toBe(StatusEffect.PARALYSIS); // keeping old gen < V impl for now since it's buggy otherwise
+    expect(game.scene.getEnemyParty()[0].status?.effect).toBe(StatusEffect.PARALYSIS);
+    expect(game.phaseInterceptor.log).toContain("ShowAbilityPhase");
+  }, 20000);
 });
