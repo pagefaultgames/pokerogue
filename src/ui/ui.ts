@@ -44,6 +44,8 @@ import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-han
 import KeyboardBindingUiHandler from "#app/ui/settings/keyboard-binding-ui-handler";
 import SettingsDisplayUiHandler from "./settings/settings-display-ui-handler";
 import SettingsAudioUiHandler from "./settings/settings-audio-ui-handler";
+import RunHistoryUiHandler from "./run-history-ui-handler";
+import RunInfoUiHandler from "./run-info-ui-handler";
 import { PlayerGender } from "#enums/player-gender";
 import BgmBar from "#app/ui/bgm-bar";
 
@@ -73,6 +75,8 @@ export enum Mode {
   SETTINGS_KEYBOARD,
   KEYBOARD_BINDING,
   ACHIEVEMENTS,
+  RUN_HISTORY,
+  RUN_INFO,
   GAME_STATS,
   VOUCHERS,
   EGG_LIST,
@@ -115,6 +119,7 @@ const noTransitionModes = [
   Mode.GAME_STATS,
   Mode.VOUCHERS,
   Mode.LOGIN_FORM,
+  Mode.RUN_HISTORY,
   Mode.REGISTRATION_FORM,
   Mode.LOADING,
   Mode.SESSION_RELOAD,
@@ -170,6 +175,8 @@ export default class UI extends Phaser.GameObjects.Container {
       new SettingsKeyboardUiHandler(scene),
       new KeyboardBindingUiHandler(scene),
       new AchvsUiHandler(scene),
+      new RunHistoryUiHandler(scene),
+      new RunInfoUiHandler(scene),
       new GameStatsUiHandler(scene),
       new VouchersUiHandler(scene),
       new EggListUiHandler(scene),
@@ -455,6 +462,7 @@ export default class UI extends Phaser.GameObjects.Container {
             touchControls.dataset.uiMode = Mode[mode];
           }
           this.getHandler().show(args);
+          console.log(args);
         }
         resolve();
       };

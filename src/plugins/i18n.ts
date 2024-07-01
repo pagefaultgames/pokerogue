@@ -139,6 +139,60 @@ export async function initI18n(): Promise<void> {
   await initFonts();
 }
 
+// Module declared to make referencing keys in the localization files type-safe.
+declare module "i18next" {
+  interface CustomTypeOptions {
+    defaultNS: "menu"; // Even if we don't use it, i18next requires a valid default namespace
+    resources: {
+      ability: AbilityTranslationEntries;
+      abilityTriggers: SimpleTranslationEntries;
+      achv: AchievementTranslationEntries;
+      battle: SimpleTranslationEntries;
+      battleMessageUiHandler: SimpleTranslationEntries;
+      berry: BerryTranslationEntries;
+      biome: SimpleTranslationEntries;
+      challenges: SimpleTranslationEntries;
+      commandUiHandler: SimpleTranslationEntries;
+      PGMachv: AchievementTranslationEntries;
+      PGMdialogue: DialogueTranslationEntries;
+      PGMbattleSpecDialogue: SimpleTranslationEntries;
+      PGMmiscDialogue: SimpleTranslationEntries;
+      PGMdoubleBattleDialogue: DialogueTranslationEntries;
+      PGFdialogue: DialogueTranslationEntries;
+      PGFbattleSpecDialogue: SimpleTranslationEntries;
+      PGFmiscDialogue: SimpleTranslationEntries;
+      PGFdoubleBattleDialogue: DialogueTranslationEntries;
+      PGFachv: AchievementTranslationEntries;
+      egg: SimpleTranslationEntries;
+      fightUiHandler: SimpleTranslationEntries;
+      gameMode: SimpleTranslationEntries;
+      gameStatsUiHandler: SimpleTranslationEntries;
+      growth: SimpleTranslationEntries;
+      menu: SimpleTranslationEntries;
+      menuUiHandler: SimpleTranslationEntries;
+      modifierType: ModifierTypeTranslationEntries;
+      move: MoveTranslationEntries;
+      nature: SimpleTranslationEntries;
+      partyUiHandler: SimpleTranslationEntries;
+      pokeball: SimpleTranslationEntries;
+      pokemon: SimpleTranslationEntries;
+      pokemonInfo: PokemonInfoTranslationEntries;
+      pokemonInfoContainer: SimpleTranslationEntries;
+      saveSlotSelectUiHandler: SimpleTranslationEntries;
+      splashMessages: SimpleTranslationEntries;
+      starterSelectUiHandler: SimpleTranslationEntries;
+      titles: SimpleTranslationEntries;
+      trainerClasses: SimpleTranslationEntries;
+      trainerNames: SimpleTranslationEntries;
+      tutorial: SimpleTranslationEntries;
+      voucher: SimpleTranslationEntries;
+      weather: SimpleTranslationEntries;
+      battleStat: SimpleTranslationEntries;
+      runHistory: SimpleTranslationEntries;
+    };
+  }
+}
+
 export default i18next;
 
 export function getIsInitialized(): boolean {
