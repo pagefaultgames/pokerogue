@@ -96,4 +96,5 @@ export const settings: SimpleTranslationEntries = {
   "controller": "Controle",
   "gamepadSupport": "Suporte para Controle",
   "showBgmBar": "Show Music Names",
+  "moveTouchControls": "Move Touch Controls",
 } as const;
