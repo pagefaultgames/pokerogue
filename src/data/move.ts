@@ -1761,13 +1761,14 @@ export class PsychoShiftEffectAttr extends MoveEffectAttr {
       return false;
     }
     if (!target.status || (target.status.effect === statusToApply && move.chance < 0)) {
-      const statusAfflictResult = target.trySetStatus(statusToApply, true, user);
-      if (statusAfflictResult) {
+      const canSetStatus = target.canSetStatus(statusToApply, true, false, user);
+      if (canSetStatus) {
         user.scene.queueMessage(getPokemonMessage(user, getStatusEffectHealText(user.status.effect)));
         user.resetStatus();
         user.updateInfo();
+        target.trySetStatus(statusToApply, true, user);
       }
-      return statusAfflictResult;
+      return canSetStatus;
     }
 
     return false;
