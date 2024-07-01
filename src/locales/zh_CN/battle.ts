@@ -28,7 +28,7 @@ export const battle: SimpleTranslationEntries = {
   "attackHitsCount": "击中{{count}}次！",
   "rewardGain": "你获得了\n{{modifierName}}！",
   "expGain": "{{pokemonName}}获得了 {{exp}} 点经验值！",
-  "levelUp": "{{pokemonName}}升级到 {{level}}级！",
+  "levelUp": "{{pokemonName}}升级到 Lv.{{level}}！",
   "learnMove": "{{pokemonName}} 学会了 {{moveName}}！",
   "learnMovePrompt": "{{pokemonName}}想要学习{{moveName}}。",
   "learnMoveLimitReached": "但是，{{pokemonName}}已经学会了\n四个技能",
