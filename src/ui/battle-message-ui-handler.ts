@@ -194,24 +194,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
       this.scene.executeWithSeedOffset(() => {
         let levelUpStatsValuesText = "";
         const stats = Utils.getEnumValues(Stat);
-        let shownStats: Stat[] = [];
-        if (shownIvsCount < 6) {
-          const statsPool = stats.slice(0);
-          for (let i = 0; i < shownIvsCount; i++) {
-            let shownStat: Stat;
-            let highestIv = -1;
-            statsPool.map(s => {
-              if (ivs[s] > highestIv) {
-                shownStat = s as Stat;
-                highestIv = ivs[s];
-              }
-            });
-            shownStats.push(shownStat);
-            statsPool.splice(statsPool.indexOf(shownStat), 1);
-          }
-        } else {
-          shownStats = stats;
-        }
+        const shownStats = this.topIvs(ivs, shownIvsCount);
         for (const s of stats) {
           levelUpStatsValuesText += `${shownStats.indexOf(s) > -1 ? this.getIvDescriptor(ivs[s], s, pokemonId) : "???"}\n`;
         }
@@ -225,6 +208,29 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
         };
       }, pokemonId);
     });
+  }
+
+  topIvs(ivs: integer[], shownIvsCount: integer): Stat[] {
+    const stats = Utils.getEnumValues(Stat);
+    let shownStats: Stat[] = [];
+    if (shownIvsCount < 6) {
+      const statsPool = stats.slice(0);
+      for (let i = 0; i < shownIvsCount; i++) {
+        let shownStat: Stat;
+        let highestIv = -1;
+        statsPool.map(s => {
+          if (ivs[s] > highestIv) {
+            shownStat = s as Stat;
+            highestIv = ivs[s];
+          }
+        });
+        shownStats.push(shownStat);
+        statsPool.splice(statsPool.indexOf(shownStat), 1);
+      }
+    } else {
+      shownStats = stats;
+    }
+    return shownStats;
   }
 
   getIvDescriptor(value: integer, typeIv: integer, pokemonId: integer): string {

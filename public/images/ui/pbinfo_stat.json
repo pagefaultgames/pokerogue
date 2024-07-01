@@ -176,6 +176,27 @@
 						"w": 13,
 						"h": 7
 					}
+				},
+        {
+					"filename": "HP",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 9,
+						"h": 8
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 1,
+						"w": 9,
+						"h": 7
+					},
+					"frame": {
+						"x": 120,
+						"y": 0,
+						"w": 9,
+						"h": 7
+					}
 				}
 			]
 		}
