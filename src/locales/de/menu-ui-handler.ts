@@ -18,6 +18,8 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "exportSlotSelect": "Wähle einen Slot zum Exportieren.",
   "importData": "Daten importieren",
   "exportData": "Daten exportieren",
+  "importSettings": "Einstellungen importieren",
+  "exportSettings": "Einstellungen exportieren",
   "cancel": "Abbrechen",
   "losingProgressionWarning": "Du wirst jeglichen Fortschritt seit Anfang dieses Kampfes verlieren. Fortfahren?",
   "noEggs": "Du brütest aktuell keine Eier aus!"

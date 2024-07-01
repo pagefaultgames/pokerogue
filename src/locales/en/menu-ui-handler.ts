@@ -18,6 +18,8 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "exportSlotSelect": "Select a slot to export from.",
   "importData": "Import Data",
   "exportData": "Export Data",
+  "importSettings": "Import Settings",
+  "exportSettings": "Export Settings",
   "cancel": "Cancel",
   "losingProgressionWarning": "You will lose any progress since the beginning of the battle. Proceed?",
   "noEggs": "You are not hatching\nany eggs at the moment!"
