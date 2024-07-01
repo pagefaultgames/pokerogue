@@ -12,7 +12,7 @@ export const statusEffect: StatusEffectTranslationEntries = {
   },
   poison: {
     name: "Empoisonnement",
-    description: "empoisonnement",
+    description: "empoisonné",
     obtain: "{{pokemonNameWithAffix}} est\nempoisonné !",
     obtainSource: "{{pokemonNameWithAffix}} est\nempoisonné par {{sourceText}} !",
     activation: "{{pokemonNameWithAffix}}\nsouffre du poison !",
@@ -21,7 +21,7 @@ export const statusEffect: StatusEffectTranslationEntries = {
   },
   toxic: {
     name: "Empoisonnement grave",
-    description: "empoisonnement grave",
+    description: "gravement empoisonné",
     obtain: "{{pokemonNameWithAffix}} est\ngravement empoisonné !",
     obtainSource: "{{pokemonNameWithAffix}} est\ngravement empoisonné par {{sourceText}} !",
     activation: "{{pokemonNameWithAffix}}\nsouffre du poison !",
@@ -30,7 +30,7 @@ export const statusEffect: StatusEffectTranslationEntries = {
   },
   paralysis: {
     name: "Paralysie",
-    description: "paralysie",
+    description: "paralysé",
     obtain: "{{pokemonNameWithAffix}} est paralysé !\nIl aura du mal à attaquer !",
     obtainSource: "{{pokemonNameWithAffix}} est paralysé\npar {{sourceText}} ! Il aura du mal à attaquer !",
     activation: "{{pokemonNameWithAffix}} est paralysé !\nIl n’a pas pu attaquer !",
@@ -39,7 +39,7 @@ export const statusEffect: StatusEffectTranslationEntries = {
   },
   sleep: {
     name: "Sommeil",
-    description: "sommeil",
+    description: "endormi",
     obtain: "{{pokemonNameWithAffix}}\ns’est endormi !",
     obtainSource: "{{pokemonNameWithAffix}} est\nendormi par {{sourceText}} !",
     activation: "{{pokemonNameWithAffix}}\ndort profondément.",
@@ -57,7 +57,7 @@ export const statusEffect: StatusEffectTranslationEntries = {
   },
   burn: {
     name: "Brulure",
-    description: "brulure",
+    description: "brulé",
     obtain: "{{pokemonNameWithAffix}} est\nbrulé !",
     obtainSource: "{{pokemonNameWithAffix}} est\nbrulé par {{sourceText}} !",
     activation: "{{pokemonNameWithAffix}}\nsouffre de sa brulure !",
