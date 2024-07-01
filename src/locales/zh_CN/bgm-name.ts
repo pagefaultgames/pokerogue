@@ -62,7 +62,7 @@ export const bgmName: SimpleTranslationEntries = {
   "battle_legendary_calyrex": "剑盾「战斗！蕾冠王」",
   "battle_legendary_birds_galar": "剑盾「战斗！传说的鸟宝可梦」",
   "battle_legendary_ruinous": "朱紫「战斗！灾厄宝可梦」",
-  "battle_legendary_kor_mir": "SV Depths of Area Zero Battle",
+  "battle_legendary_kor_mir": "朱紫「战斗！第零区的宝可梦2」",
   "battle_legendary_loyal_three": "朱紫「战斗！宝伴」",
   "battle_legendary_ogerpon": "朱紫「战斗！厄鬼椪」",
   "battle_legendary_terapagos": "朱紫「战斗！太乐巴戈斯」",
@@ -101,17 +101,17 @@ export const bgmName: SimpleTranslationEntries = {
   "graveyard": "空之探险队「神秘森林」",
   "ice_cave": "空之探险队「大冰山」",
   "island": "空之探险队「沿岸岩地」",
-  "jungle": "Lmz - Jungle", // The composer thinks about a more creative name
-  "laboratory": "Firel - Laboratory", // The composer thinks about a more creative name
+  "jungle": "Lmz - 丛林", // The composer thinks about a more creative name
+  "laboratory": "Firel - 研究所", // The composer thinks about a more creative name
   "lake": "空之探险队「水晶洞窟」",
   "meadow": "空之探险队「天空顶端（森林）」",
-  "metropolis": "Firel - Metropolis", // The composer thinks about a more creative name
+  "metropolis": "Firel - 城市", // The composer thinks about a more creative name
   "mountain": "空之探险队「角山」",
   "plains": "空之探险队「天空顶端（草原）」",
   "power_plant": "空之探险队「电气平原 深处」",
   "ruins": "空之探险队「封印岩地 深处」",
   "sea": "空之探险队「石滩洞窟」",
-  "seabed": "Firel - Seabed", // The composer thinks about a more creative name
+  "seabed": "Firel - 海底", // The composer thinks about a more creative name
   "slum": "空之探险队「天空顶端（岩场）」",
   "snowy_forest": "空之探险队「天空顶端（雪山）」",
   "space": "Firel - Aether",
