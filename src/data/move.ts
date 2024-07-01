@@ -29,6 +29,7 @@ import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 
+
 export enum MoveCategory {
   PHYSICAL,
   SPECIAL,
@@ -2689,6 +2690,148 @@ export class LessPPMorePowerAttr extends VariablePowerAttr {
       break;
     }
     return true;
+  }
+}
+
+/**
+ * Represents the Fling attribute which extends VariablePowerAttr.
+ * This class handles the logic for the Fling move in the game.
+ */
+export class FlingAttr extends VariablePowerAttr {
+  protected randomItem: string;
+
+  private readonly flingPowerMap: { [power: number]: string[] } = {
+    10: [
+      "sitrus berry", "lum berry", "enigma berry", "liechi berry", "ganlon berry", "petaya berry", "apicot berry", "salac berry",
+      "lansat berry", "starf berry", "leppa berry", "choice band", "choice scarf", "choice specs", "air balloon", "absorb bulb", "amulet coin", "big root",
+      "destiny knot", "expert belt", "focus band", "focus sash", "lagging tail", "leftovers", "mental herb", "fairy feather",
+      "muscle band", "power herb", "red card", "shed shell", "silk scarf", "silver powder", "smooth rock", "soft sand",
+      "soothe bell", "white herb", "wide lens", "wise glasses", "zoom lens"
+    ],
+    20: [
+      "boiled egg", "fancy apple", "large leek", "moomoo cheese"
+    ],
+    30: [
+      "flame orb","yellow flute", "amulet coin", "binding band", "black belt", "black glasses", "black sludge", "cell battery",
+      "charcoal", "eject button", "escape rope", "exp. share",
+      "float stone", "heart scale", "king's rock", "life orb", "light ball", "light clay",
+      "lucky egg", "luminous moss", "magnet", "metal coat", "metronome", "miracle seed",
+      "mystic water", "never-melt ice", "pearl", "poké doll", "razor fang", "scope lens", "shell bell",
+      "smoke ball", "snowball", "spell tag", "stardust", "toxic orb",
+      "twisted spoon", "soul dew"
+    ],
+    40: ["eviolite", "icy rock"],
+    50: ["sharp beak"],
+    60: ["damp rock", "heat rock", "macho brace", "rocky helmet"],
+    70: [
+      "dragon fang", "poison barb", "power anklet", "power band", "power belt", "power bracer",
+      "power lens", "power weight"
+    ],
+    80: [
+      "assault vest", "quick claw", "razor claw",
+      "sachet", "safety goggles", "sticky barb",
+      "weakness policy"
+    ],
+    90: ["grip claw"],
+    100: ["hard stone"],
+    130: ["iron ball"]
+  };
+
+  /**
+   * @returns the {@linkcode MoveConditionFunc} for this {@linkcode Move}
+   */
+  getCondition(): MoveConditionFunc {
+    return (user: Pokemon, target: Pokemon, move: Move) => {
+      const heldItems = user.scene.findModifiers(
+        m => m instanceof PokemonHeldItemModifier && m.pokemonId === user.id,
+        user.isPlayer()
+      ) as PokemonHeldItemModifier[];
+
+      if (heldItems.length === 0) {
+        return false;
+      }
+
+      const allItems = Object.values(this.flingPowerMap).flat();
+      const validHeldItems = heldItems.filter(item => allItems.includes(item.type.name.toLowerCase().replace(/_/g, " ")));
+
+      return validHeldItems.length > 0;
+    };
+  }
+
+  /**
+   * Retrieves the failure text for the Fling move, indicating why it failed.
+   * @returns the failure message or null if the move does not fail
+   */
+  getFailedText(user: Pokemon, target: Pokemon, move: Move, cancelled: Utils.BooleanHolder): string | null {
+    const heldItems = user.scene.findModifiers(
+      m => m instanceof PokemonHeldItemModifier && m.pokemonId === user.id,
+      user.isPlayer()
+    ) as PokemonHeldItemModifier[];
+
+    if (heldItems.length === 0) {
+      return "But it failed!";
+    }
+
+    const allItems = Object.values(this.flingPowerMap).flat();
+    const validHeldItems = heldItems.filter(item => allItems.includes(item.type.name.toLowerCase().replace(/_/g, " ")));
+
+    if (validHeldItems.length === 0) {
+      return "No valid held items!";
+    }
+
+    return null;
+  }
+
+  /**
+   * Applies the Fling move logic to the given user and target Pokémon.
+   * Determines the random item to be used, calculates power, and removes the item.
+   * @param user - The Pokémon using the move.
+   * @param target - The target Pokémon.
+   * @param move - The move being used.
+   * @param args - Additional arguments for the move. The first element is expected to be a Utils.NumberHolder which holds the power of the move.
+   *               This power value is dynamically calculated based on the item being flung.
+   * @returns A boolean indicating whether the move was successfully applied.
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const power = args[0] as Utils.NumberHolder;
+
+    // Inline logic to retrieve the held items for the given Pokémon
+    const heldItems = user.scene.findModifiers(
+      m => m instanceof PokemonHeldItemModifier && m.pokemonId === user.id,
+      user.isPlayer()
+    ) as PokemonHeldItemModifier[];
+
+    if (heldItems.length === 0) {
+      const failedText = this.getFailedText(user, target, move, new Utils.BooleanHolder(true));
+      user.scene.queueMessage(failedText);
+      return false;
+    }
+
+    const allItems = Object.values(this.flingPowerMap).flat();
+    const validHeldItems = heldItems.filter(item => allItems.includes(item.type.name.toLowerCase().replace(/_/g, " ")));
+
+    if (validHeldItems.length === 0) {
+      const failedText = this.getFailedText(user, target, move, new Utils.BooleanHolder(true));
+      user.scene.queueMessage(failedText);
+      return false;
+    }
+
+    const randomHeldItemModifier = validHeldItems[user.randSeedInt(validHeldItems.length)];
+    this.randomItem = randomHeldItemModifier.type.name;
+    this.randomItem = this.randomItem.toLowerCase().replace(/_/g, " ");
+
+    for (const [flingPower, items] of Object.entries(this.flingPowerMap)) {
+      if (items.includes(this.randomItem)) {
+        power.value = parseInt(flingPower);
+        user.scene.removeModifier(randomHeldItemModifier, !user.isPlayer());
+        user.scene.updateModifiers(user.isPlayer());
+        return true;
+      }
+    }
+
+    const failedText = this.getFailedText(user, target, move, new Utils.BooleanHolder(true));
+    user.scene.queueMessage(failedText);
+    return false;
   }
 }
 
@@ -6672,8 +6815,8 @@ export function initMoves() {
     new StatusMove(Moves.EMBARGO, Type.DARK, 100, 15, -1, 0, 4)
       .unimplemented(),
     new AttackMove(Moves.FLING, Type.DARK, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 4)
-      .makesContact(false)
-      .unimplemented(),
+      .attr(FlingAttr)
+      .makesContact(false),
     new StatusMove(Moves.PSYCHO_SHIFT, Type.PSYCHIC, 100, 10, -1, 0, 4)
       .attr(PsychoShiftEffectAttr)
       .condition((user, target, move) => (user.status?.effect === StatusEffect.BURN
