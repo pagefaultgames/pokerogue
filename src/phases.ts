@@ -416,7 +416,7 @@ export class TitlePhase extends Phase {
         this.scene.pushPhase(new SummonPhase(this.scene, 1, true, true));
       }
 
-      if (this.scene.currentBattle.waveIndex > 1 || !this.scene.gameMode.isDaily) {
+      if (this.scene.currentBattle.battleType !== BattleType.TRAINER && (this.scene.currentBattle.waveIndex > 1 || !this.scene.gameMode.isDaily)) {
         const minPartySize = this.scene.currentBattle.double ? 2 : 1;
         if (availablePartyMembers > minPartySize) {
           this.scene.pushPhase(new CheckSwitchPhase(this.scene, 0, this.scene.currentBattle.double));
@@ -1093,7 +1093,7 @@ export class EncounterPhase extends BattlePhase {
         this.scene.pushPhase(new ToggleDoublePositionPhase(this.scene, false));
       }
 
-      if (this.scene.currentBattle.waveIndex > 1 || !this.scene.gameMode.isDaily) {
+      if (this.scene.currentBattle.battleType !== BattleType.TRAINER && (this.scene.currentBattle.waveIndex > 1 || !this.scene.gameMode.isDaily)) {
         const minPartySize = this.scene.currentBattle.double ? 2 : 1;
         if (availablePartyMembers.length > minPartySize) {
           this.scene.pushPhase(new CheckSwitchPhase(this.scene, 0, this.scene.currentBattle.double));
@@ -5112,6 +5112,7 @@ export class SelectModifierPhase extends BattlePhase {
           }, PartyUiHandler.FilterItemMaxStacks);
           break;
         case 2:
+          // this defines our check team thing, we need to modify the partyuimode.check
           this.scene.ui.setModeWithoutClear(Mode.PARTY, PartyUiMode.CHECK, -1, () => {
             this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost(typeOptions, this.scene.lockModifierTiers));
           });

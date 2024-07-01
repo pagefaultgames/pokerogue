@@ -51,6 +51,7 @@ export enum PartyOption {
   SPLICE,
   UNSPLICE,
   RELEASE,
+  SWITCH,
   SCROLL_UP = 1000,
   SCROLL_DOWN = 1001,
   FORM_CHANGE_ITEM = 2000,
@@ -151,7 +152,7 @@ export default class PartyUiHandler extends MessageUiHandler {
 
   public static NoEffectMessage = "It won't have any effect.";
 
-  private localizedOptions = [PartyOption.SEND_OUT, PartyOption.SUMMARY, PartyOption.CANCEL, PartyOption.APPLY, PartyOption.RELEASE, PartyOption.TEACH];
+  private localizedOptions = [PartyOption.SEND_OUT, PartyOption.SUMMARY, PartyOption.CANCEL, PartyOption.APPLY, PartyOption.RELEASE, PartyOption.TEACH,PartyOption.SWITCH];
 
   constructor(scene: BattleScene) {
     super(scene, Mode.PARTY);
@@ -288,7 +289,6 @@ export default class PartyUiHandler extends MessageUiHandler {
           ui.playSelect();
           return true;
         } else if (this.partyUiMode === PartyUiMode.REMEMBER_MOVE_MODIFIER && option !== PartyOption.CANCEL) {
-          // clear overlay on cancel
           this.moveInfoOverlay.clear();
           const filterResult = (this.selectFilter as PokemonSelectFilter)(pokemon);
           if (filterResult === null) {
@@ -300,7 +300,7 @@ export default class PartyUiHandler extends MessageUiHandler {
           }
           ui.playSelect();
           return true;
-        } else if ((option !== PartyOption.SUMMARY && option !== PartyOption.UNPAUSE_EVOLUTION && option !== PartyOption.UNSPLICE && option !== PartyOption.RELEASE && option !== PartyOption.CANCEL)
+        } else if ((option !== PartyOption.SWITCH && option !== PartyOption.SUMMARY && option !== PartyOption.UNPAUSE_EVOLUTION && option !== PartyOption.UNSPLICE && option !== PartyOption.RELEASE && option !== PartyOption.CANCEL)
           || (option === PartyOption.RELEASE && this.partyUiMode === PartyUiMode.RELEASE)) {
           let filterResult: string;
           const getTransferrableItemsFromPokemon = (pokemon: PlayerPokemon) =>
@@ -320,6 +320,7 @@ export default class PartyUiHandler extends MessageUiHandler {
             if (this.partyUiMode !== PartyUiMode.SPLICE) {
               this.clearOptions();
             }
+
             if (this.selectCallback && this.partyUiMode !== PartyUiMode.CHECK) {
               if (option === PartyOption.TRANSFER) {
                 if (this.transferCursor !== this.cursor) {
@@ -371,6 +372,21 @@ export default class PartyUiHandler extends MessageUiHandler {
         } else if (option === PartyOption.SUMMARY) {
           ui.playSelect();
           ui.setModeWithoutClear(Mode.SUMMARY, pokemon).then(() =>  this.clearOptions());
+          return true;
+        } else if (option === PartyOption.SWITCH) {
+
+          ui.playSelect();
+          this.showText("Move to where?", 0, () => {
+            this.clearOptions();
+            const selectedPokemon = this.partySlots[this.cursor]; // Pokémon to swap, first one
+            // change this to button.action or wtv it is supposed to be
+            window.addEventListener("keydown", (event) => {
+              if (event.key === " ") {
+                this.updatedPartySlots(selectedPokemon, this.partySlots[this.cursor]); // Update the party slots
+              }
+            });
+          });
+
           return true;
         } else if (option === PartyOption.UNPAUSE_EVOLUTION) {
           this.clearOptions();
@@ -440,6 +456,7 @@ export default class PartyUiHandler extends MessageUiHandler {
           }
           break;
         case Button.UP:
+
           /** If currently selecting items to transfer, reset quantity selection */
           if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
             if (option !== PartyOption.ALL) {
@@ -566,6 +583,37 @@ export default class PartyUiHandler extends MessageUiHandler {
         partySlot.select();
       }
     }
+  }
+
+  updatedPartySlots(selectedPokemon, pokemonToSwitch) {
+    this.performSwap(selectedPokemon, pokemonToSwitch);
+    this.updatePartyUI();
+  }
+
+  performSwap(selectedPokemon, pokemonToSwitch) {
+    console.log("party container party", (this.partyContainer.scene as BattleScene).getParty());
+
+    const selectedIndex = this.partySlots.indexOf(selectedPokemon);
+    const switchIndex = this.partySlots.indexOf(pokemonToSwitch);
+
+    if (selectedIndex !== -1 && switchIndex !== -1) {
+      [this.partySlots[selectedIndex], this.partySlots[switchIndex]] = [this.partySlots[switchIndex], this.partySlots[selectedIndex]];
+
+      const party = (this.partyContainer.scene as BattleScene).getParty();
+      [party[selectedIndex], party[switchIndex]] = [party[switchIndex], party[selectedIndex]];
+    }
+  }
+
+  updatePartyUI() {
+
+    // manually force the refresh between the two changed pokemon
+    // set texture I think is it
+    // we need to get the UI element
+    // force the name and texture update
+    // lets get the scene and then force the texture update!
+
+    console.log("This scene", this.scene);
+
   }
 
   setCursor(cursor: integer): boolean {
@@ -760,6 +808,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       }
 
       this.options.push(PartyOption.SUMMARY);
+      this.options.push(PartyOption.SWITCH);
 
       if (pokemon.pauseEvolutions && pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId)) {
         this.options.push(PartyOption.UNPAUSE_EVOLUTION);
