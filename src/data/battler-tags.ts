@@ -1535,6 +1535,54 @@ export class IceFaceTag extends BattlerTag {
   }
 }
 
+/**
+ * Provides the Disguise ability's effects.
+ */
+export class DisguiseTag extends BattlerTag {
+  constructor(sourceMove: Moves) {
+    super(BattlerTagType.DISGUISE, BattlerTagLapseType.CUSTOM, 1, sourceMove);
+  }
+
+  /**
+   * Determines if the Disguise tag can be added to the Pokémon.
+   * @param {Pokemon} pokemon - The Pokémon to which the tag might be added.
+   * @returns {boolean} - True if the tag can be added, false otherwise.
+   */
+  canAdd(pokemon: Pokemon): boolean {
+    const isFormDisguised = pokemon.formIndex === 0;
+
+    // Hard code Mimikyu for now, this is to prevent the game from crashing if fused pokemon has Disguise
+    if (pokemon.species.speciesId === Species.MIMIKYU && isFormDisguised) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Applies the Disguise tag to the Pokémon.
+   * Triggers a form change to Disguised if the Pokémon is not in its Disguised form.
+   * @param {Pokemon} pokemon - The Pokémon to which the tag is added.
+   */
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+
+    if (pokemon.formIndex !== 0) {
+      pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
+    }
+  }
+
+  /**
+   * Removes the Disguise tag from the Pokémon.
+   * Triggers a form change to Busted when the tag is removed.
+   * @param {Pokemon} pokemon - The Pokémon from which the tag is removed.
+   */
+  onRemove(pokemon: Pokemon): void {
+    super.onRemove(pokemon);
+
+    pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
+  }
+}
+
 export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourceMove: Moves, sourceId: integer): BattlerTag {
   switch (tagType) {
   case BattlerTagType.RECHARGING:
@@ -1652,6 +1700,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
     return new DestinyBondTag(sourceMove, sourceId);
   case BattlerTagType.ICE_FACE:
     return new IceFaceTag(sourceMove);
+  case BattlerTagType.DISGUISE:
+    return new DisguiseTag(sourceMove);
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);

@@ -10,4 +10,5 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "trace": "{{pokemonName}} copied {{targetName}}'s\n{{abilityName}}!",
   "windPowerCharged": "{{pokemonName}}[[는]]\n{{moveName}}에 맞아 충전되었다!",
   "quickDraw": "{{pokemonName}}[[는]]\n퀵드로에 의해 행동이 빨라졌다!",
+  "disguiseAvoidedDamage" : "{{pokemonName}}'s disguise was busted!",
 } as const;
