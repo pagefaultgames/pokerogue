@@ -42,6 +42,7 @@ import { weather } from "./weather";
 import { partyUiHandler } from "./party-ui-handler";
 import { settings } from "#app/locales/ko/settings.js";
 import { common } from "#app/locales/ko/common.js";
+import { modifierSelectUiHandler } from "./modifier-select-ui-handler";
 
 export const koConfig = {
   ability: ability,
@@ -88,5 +89,6 @@ export const koConfig = {
   tutorial: tutorial,
   voucher: voucher,
   weather: weather,
-  partyUiHandler: partyUiHandler
+  partyUiHandler: partyUiHandler,
+  modifierSelectUiHandler: modifierSelectUiHandler
 };

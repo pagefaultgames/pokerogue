@@ -42,6 +42,7 @@ import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { weather } from "./weather";
+import { modifierSelectUiHandler } from "./modifier-select-ui-handler";
 
 export const ptBrConfig = {
   ability: ability,
@@ -88,5 +89,6 @@ export const ptBrConfig = {
   trainerNames: trainerNames,
   tutorial: tutorial,
   voucher: voucher,
-  weather: weather
+  weather: weather,
+  modifierSelectUiHandler: modifierSelectUiHandler
 };
