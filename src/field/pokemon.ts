@@ -2269,11 +2269,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * If this Pokemon is using a multi-hit move, cancels all subsequent strikes
-   * @param {Pokemon} target If specified, this only cancels subsequent strikes against this Pokemon
+   * @param {Pokemon} target If specified, this only cancels subsequent strikes against the given target
    */
   stopMultiHit(target?: Pokemon): void {
     const effectPhase = this.scene.getCurrentPhase();
-    if (effectPhase instanceof MoveEffectPhase) {
+    if (effectPhase instanceof MoveEffectPhase && effectPhase.getUserPokemon() === this) {
       effectPhase.stopMultiHit(target);
     }
   }
@@ -2550,6 +2550,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   trySetStatus(effect: StatusEffect, asPhase: boolean = false, sourcePokemon: Pokemon = null, cureTurn: integer = 0, sourceText: string = null): boolean {
     if (!this.canSetStatus(effect, asPhase, false, sourcePokemon)) {
       return false;
+    }
+
+    /**
+     * If this Pokemon falls asleep or freezes in the middle of a multi-hit attack,
+     * cancel the attack's subsequent hits.
+     */
+    if (effect === StatusEffect.SLEEP || effect === StatusEffect.FREEZE) {
+      this.stopMultiHit();
     }
 
     if (asPhase) {

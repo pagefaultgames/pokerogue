@@ -53,7 +53,7 @@ export const menu: SimpleTranslationEntries = {
   "no":"Nein",
   "disclaimer": "HAFTUNGSAUSSCHLUSS",
   "disclaimerDescription": "Dieses Spiel ist ein unfertiges Produkt. Es kann spielbeinträchtigende Fehler (bis hin zum Verlust des Speicherstandes)\n aufweisen, sich ohne Vorankündigung ändern und es gibt keine Garantie dass es weiterentwickelt oder fertiggestellt wird.",
-  "choosePokemon": "Choose a Pokémon.",
+  "choosePokemon": "Wähle ein Pokémon.",
   "renamePokemon": "Pokémon umbennenen",
   "rename": "Umbenennen",
   "nickname": "Spitzname",
