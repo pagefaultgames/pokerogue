@@ -210,8 +210,8 @@ export class ConditionalProtectTag extends ArenaTag {
    * @param arena The arena containing this tag
    * @param args\[0\] (Utils.BooleanHolder) Signals if the move is cancelled
    * @param args\[1\] (Pokemon) The Pokemon using the move
-   * @param args\[1\] (Pokemon) The intended target of the move
-   * @param args\[2\] (Moves) The parameters to the condition function
+   * @param args\[2\] (Pokemon) The intended target of the move
+   * @param args\[3\] (Moves) The parameters to the condition function
    * @returns
    */
   apply(arena: Arena, args: any[]): boolean {
