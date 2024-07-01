@@ -211,7 +211,7 @@ export const ability: AbilityTranslationEntries = {
   },
   pickup: {
     name: "捡拾",
-    description: "有时会捡来对手用过的道具，\n冒险过程中也会捡到。",
+    description: "有时会捡来对手用过的道具。",
   },
   truant: {
     name: "懒惰",
@@ -947,7 +947,7 @@ export const ability: AbilityTranslationEntries = {
   },
   ballFetch: {
     name: "捡球",
-    description: "没有携带道具时，会拾取第\n１个投出后捕捉失败的精灵\n球。",
+    description: "会拾取每场战斗第1个投出\n后捕捉失败的精灵球。",
   },
   cottonDown: {
     name: "棉絮",
