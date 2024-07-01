@@ -1895,7 +1895,17 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         applyPreAttackAbAttrs(AddSecondStrikeAbAttr, source, this, move, numTargets, new Utils.IntegerHolder(0), twoStrikeMultiplier);
 
         if (!isTypeImmune) {
-          damage.value = Math.ceil(((((2 * source.level / 5 + 2) * power.value * sourceAtk.value / targetDef.value) / 50) + 2) * stabMultiplier.value * typeMultiplier.value * arenaAttackTypeMultiplier.value * screenMultiplier.value * twoStrikeMultiplier.value * ((this.scene.randBattleSeedInt(15) + 85) / 100) * criticalMultiplier.value);
+          const levelMultiplier = (2 * source.level / 5 + 2);
+          const randomMultiplier = ((this.scene.randBattleSeedInt(15) + 85) / 100);
+          damage.value = Math.ceil((((levelMultiplier * power.value * sourceAtk.value / targetDef.value) / 50) + 2)
+                                   * stabMultiplier.value
+                                   * typeMultiplier.value
+                                   * arenaAttackTypeMultiplier.value
+                                   * screenMultiplier.value
+                                   * twoStrikeMultiplier.value
+                                   * randomMultiplier
+                                   * criticalMultiplier.value);
+
           if (isPhysical && source.status && source.status.effect === StatusEffect.BURN) {
             if (!move.hasAttr(BypassBurnDamageReductionAttr)) {
               const burnDamageReductionCancelled = new Utils.BooleanHolder(false);
@@ -1937,9 +1947,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           if (!typeMultiplier.value) {
             result = move.id === Moves.SHEER_COLD ? HitResult.IMMUNE : HitResult.NO_EFFECT;
           } else {
-            const oneHitKo = new Utils.BooleanHolder(false);
-            applyMoveAttrs(OneHitKOAttr, source, this, move, oneHitKo);
-            if (oneHitKo.value) {
+            const isOneHitKo = new Utils.BooleanHolder(false);
+            applyMoveAttrs(OneHitKOAttr, source, this, move, isOneHitKo);
+            if (isOneHitKo.value) {
               result = HitResult.ONE_HIT_KO;
               isCritical = false;
               damage.value = this.hp;
@@ -1953,7 +1963,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           }
         }
 
-        if (!fixedDamage.value) {
+        const isOneHitKo = result === HitResult.ONE_HIT_KO;
+
+        if (!fixedDamage.value && !isOneHitKo) {
+          applyPreDefendAbAttrs(ReceivedMoveDamageMultiplierAbAttr, this, source, move, cancelled, damage);
+
           if (!source.isPlayer()) {
             this.scene.applyModifiers(EnemyDamageBoosterModifier, false, damage);
           }
@@ -1963,14 +1977,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         }
 
         applyMoveAttrs(ModifiedDamageAttr, source, this, move, damage);
-        applyPreDefendAbAttrs(ReceivedMoveDamageMultiplierAbAttr, this, source, move, cancelled, damage);
 
         console.log("damage", damage.value, move.name, power.value, sourceAtk, targetDef);
 
         // In case of fatal damage, this tag would have gotten cleared before we could lapse it.
         const destinyTag = this.getTag(BattlerTagType.DESTINY_BOND);
 
-        const oneHitKo = result === HitResult.ONE_HIT_KO;
         if (damage.value) {
           if (this.getHpRatio() === 1) {
             applyPreDefendAbAttrs(PreDefendFullHpEndureAbAttr, this, source, move, cancelled, damage);
@@ -1982,7 +1994,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
              * We explicitly require to ignore the faint phase here, as we want to show the messages
              * about the critical hit and the super effective/not very effective messages before the faint phase.
              */
-          damage.value = this.damageAndUpdate(damage.value, result as DamageResult, isCritical, oneHitKo, oneHitKo, true);
+          damage.value = this.damageAndUpdate(damage.value, result as DamageResult, isCritical, isOneHitKo, isOneHitKo, true);
           this.turnData.damageTaken += damage.value;
           if (isCritical) {
             this.scene.queueMessage(i18next.t("battle:hitResultCriticalHit"));
@@ -2024,7 +2036,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         }
 
         if (this.isFainted()) {
-          this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), oneHitKo));
+          this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), isOneHitKo));
           this.resetSummonData();
         }
 
