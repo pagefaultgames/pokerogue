@@ -206,14 +206,14 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "BERRY_POUCH": { name: "树果袋", description: "使用树果时有30%的几率不会消耗树果。" },
 
-    "FOCUS_BAND": { name: "气势头带", description: "携带该道具的宝可梦有10%几率在受到\n攻击而将陷入濒死状态时，保留1点HP不陷入濒死状态。" },
+    "FOCUS_BAND": { name: "气势头带", description: "携带该道具的宝可梦有10%几率在受到攻击\n而将陷入濒死状态时，保留1点HP不陷入濒死状态。" },
 
     "QUICK_CLAW": { name: "先制之爪", description: "有10%的几率无视速度优先使出招式\n(先制技能优先)。" },
 
-    "KINGS_ROCK": { name: "王者之证", description: "携带该道具的宝可梦使用任意原本不会造成\n畏缩状态的攻击招式并造成伤害时，有\n10%几率使目标陷入畏缩状态。" },
+    "KINGS_ROCK": { name: "王者之证", description: "使用任意原本不会造成畏缩状态的攻击，\n有10%几率使目标陷入畏缩状态。" },
 
-    "LEFTOVERS": { name: "吃剩的东西", description: "携带该道具的宝可梦在每个回合结束时恢复\n最大HP的1/16。" },
-    "SHELL_BELL": { name: "贝壳之铃", description: "携带该道具的宝可梦在攻击对方成功造成伤\n害时，携带者的HP会恢复其所造成伤害\n的1/8。" },
+    "LEFTOVERS": { name: "吃剩的东西", description: "携带后，在每个回合结束时恢复\n最大HP的1/16。" },
+    "SHELL_BELL": { name: "贝壳之铃", description: "携带后，在攻击对方成功造成伤害时，\n携带者的HP会恢复其所造成伤害的1/8。" },
 
     "TOXIC_ORB": { name: "剧毒宝珠", description: "触碰后会放出毒的神奇宝珠。携带后，在战斗时会变成剧毒状态。" },
     "FLAME_ORB": { name: "火焰宝珠", description: "触碰后会放出热量的神奇宝珠。携带后，在战斗时会变成灼伤状态。" },
@@ -223,7 +223,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "SHINY_CHARM": { name: "闪耀护符", description: "显著增加野生宝可梦的闪光概率。" },
     "ABILITY_CHARM": { name: "特性护符", description: "显著增加野生宝可梦有隐藏特性的概率。" },
 
-    "IV_SCANNER": { name: "个体值探测器", description: "允许扫描野生宝可梦的个体值。每多拥有一个多显示\n2项个体值. 最好的个体值优先显示。" },
+    "IV_SCANNER": { name: "个体值探测器", description: "允许扫描野生宝可梦的个体值。每多拥有一个\n多显示两项个体值，优先显示最高项。" },
 
     "DNA_SPLICERS": { name: "基因之楔" },
 
