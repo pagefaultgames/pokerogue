@@ -114,7 +114,7 @@ export const bgmName: SimpleTranslationEntries = {
   "seabed": "Firel - 海底", // The composer thinks about a more creative name
   "slum": "空之探险队「天空顶端（岩场）」",
   "snowy_forest": "空之探险队「天空顶端（雪山）」",
-  "space": "Firel - Aether",
+  "space": "Firel - 太空",
   "swamp": "空之探险队「封闭之海」",
   "tall_grass": "空之探险队「浓雾森林」",
   "temple": "空之探险队「守护洞穴」",
