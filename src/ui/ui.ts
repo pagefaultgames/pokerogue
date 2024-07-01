@@ -24,6 +24,8 @@ import EggHatchSceneHandler from "./egg-hatch-scene-handler";
 import EggListUiHandler from "./egg-list-ui-handler";
 import EggGachaUiHandler from "./egg-gacha-ui-handler";
 import VouchersUiHandler from "./vouchers-ui-handler";
+import PokedexUiHandler from "./pokedex-ui-handler";
+import PokedexUiHandler2 from "./pokedex-ui-handler2";
 import {addWindow} from "./ui-theme";
 import LoginFormUiHandler from "./login-form-ui-handler";
 import RegistrationFormUiHandler from "./registration-form-ui-handler";
@@ -75,6 +77,8 @@ export enum Mode {
   ACHIEVEMENTS,
   GAME_STATS,
   VOUCHERS,
+  POKEDEX,
+  POKEDEX2,
   EGG_LIST,
   EGG_GACHA,
   LOGIN_FORM,
@@ -114,6 +118,8 @@ const noTransitionModes = [
   Mode.ACHIEVEMENTS,
   Mode.GAME_STATS,
   Mode.VOUCHERS,
+  Mode.POKEDEX,
+  Mode.POKEDEX2,
   Mode.LOGIN_FORM,
   Mode.REGISTRATION_FORM,
   Mode.LOADING,
@@ -172,6 +178,8 @@ export default class UI extends Phaser.GameObjects.Container {
       new AchvsUiHandler(scene),
       new GameStatsUiHandler(scene),
       new VouchersUiHandler(scene),
+      new PokedexUiHandler(scene),
+      new PokedexUiHandler2(scene),
       new EggListUiHandler(scene),
       new EggGachaUiHandler(scene),
       new LoginFormUiHandler(scene),
