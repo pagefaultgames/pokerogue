@@ -56,6 +56,6 @@ export const menu: SimpleTranslationEntries = {
   "choosePokemon": "Choose a Pokémon.",
   "renamePokemon": "Rename Pokémon",
   "rename": "Rename",
-  "nickname": "Nickname"
+  "nickname": "Nickname",
   "errorServerDown": "Oops! There was an issue contacting the server.\n\nYou may leave this window open,\nthe game will automatically reconnect.",
 } as const;
