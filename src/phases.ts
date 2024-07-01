@@ -25,7 +25,7 @@ import { Starter } from "./ui/starter-select-ui-handler";
 import { Gender } from "./data/gender";
 import { Weather, WeatherType, getRandomWeatherType, getTerrainBlockMessage, getWeatherDamageMessage, getWeatherLapseMessage } from "./data/weather";
 import { TempBattleStat } from "./data/temp-battle-stat";
-import { ArenaTagSide, ArenaTrapTag, MistTag, TrickRoomTag } from "./data/arena-tag";
+import { ArenaTagSide, ArenaTrapTag, ConditionalProtectTag, MistTag, TrickRoomTag } from "./data/arena-tag";
 import { CheckTrappedAbAttr, IgnoreOpponentStatChangesAbAttr, IgnoreOpponentEvasionAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, BlockRedirectAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, BattleStatMultiplierAbAttr, applyBattleStatMultiplierAbAttrs, IncrementMovePriorityAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr, BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, PostBiomeChangeAbAttr, applyPostFaintAbAttrs, PostFaintAbAttr, IncreasePpAbAttr, PostStatChangeAbAttr, applyPostStatChangeAbAttrs, AlwaysHitAbAttr, PreventBerryUseAbAttr, StatChangeCopyAbAttr, PokemonTypeChangeAbAttr, applyPreAttackAbAttrs, applyPostMoveUsedAbAttrs, PostMoveUsedAbAttr, MaxMultiHitAbAttr, HealFromBerryUseAbAttr, WonderSkinAbAttr, applyPreDefendAbAttrs, IgnoreMoveEffectsAbAttr, BlockStatusDamageAbAttr, BypassSpeedChanceAbAttr, AddSecondStrikeAbAttr } from "./data/ability";
 import { Unlockables, getUnlockableName } from "./system/unlockables";
 import { getBiomeKey } from "./field/arena";
@@ -2920,7 +2920,12 @@ export class MoveEffectPhase extends PokemonPhase {
             continue;
           }
 
-          const isProtected = !this.move.getMove().checkFlag(MoveFlags.IGNORE_PROTECT, user, target) && target.findTags(t => t instanceof ProtectedTag).find(t => target.lapseTag(t.tagType));
+          const targetSide = target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
+          const hasConditionalProtectApplied = new Utils.BooleanHolder(false);
+          this.scene.arena.applyTagsForSide(ConditionalProtectTag, targetSide, hasConditionalProtectApplied, user, target, move.id);
+
+          const isProtected = !this.move.getMove().checkFlag(MoveFlags.IGNORE_PROTECT, user, target)
+            && (hasConditionalProtectApplied.value || target.findTags(t => t instanceof ProtectedTag).find(t => target.lapseTag(t.tagType)));
 
           const firstHit = (user.turnData.hitsLeft === user.turnData.hitCount);
           const firstTarget = (moveHistoryEntry.result === MoveResult.PENDING);
