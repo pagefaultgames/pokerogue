@@ -241,6 +241,12 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_ENDURE_CHANCE": { name: "Jeton Ténacité" },
     "ENEMY_FUSED_CHANCE": { name: "Jeton Fusion", description: "Ajoute 1% de chances qu’un Pokémon sauvage soit une fusion." },
   },
+  SpeciesBoosterItem: {
+    "LIGHT_BALL": { name: "Balle Lumière", description: "Objet à faire tenir à Pikachu. Un orbe énigmatique qui augmente son Attaque et son Attaque Spéciale." },
+    "THICK_CLUB": { name: "Masse Os", description: "Objet à faire tenir à Osselait ou Ossatueur. Un os dur qui augmente leur Attaque." },
+    "METAL_POWDER": { name: "Poudre Métal", description: "Objet à faire tenir à Métamorph. Cette poudre étrange, très fine mais résistante, augmente sa Défense." },
+    "QUICK_POWDER": { name: "Poudre Vite", description: "Objet à faire tenir à Métamorph. Cette poudre étrange, très fine mais résistante, augmente sa Vitesse." }
+  },
   TempBattleStatBoosterItem: {
     "x_attack": "Attaque +",
     "x_defense": "Défense +",
