@@ -1300,7 +1300,7 @@ export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
         hitCount.value *= 2;
       }
 
-      if (!!multiplier?.value && pokemon.turnData.hitsLeft % 2 === 1) {
+      if (!!multiplier?.value && pokemon.turnData.hitsLeft % 2 === 1 && pokemon.turnData.hitsLeft !== pokemon.turnData.hitCount) {
         multiplier.value *= this.damageMultiplier;
       }
       return true;
