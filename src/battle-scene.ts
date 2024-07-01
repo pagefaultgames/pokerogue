@@ -2461,7 +2461,7 @@ export default class BattleScene extends SceneBase {
       };
       modifiers = shuffleModifiers(modifiers);
     }, scene.currentBattle.turn << 4, scene.waveSeed);
-    return this.applyModifiersInternal(modifiers, player, ...args);
+    return this.applyModifiersInternal(modifiers, player, args);
   }
 
   /**
@@ -2473,11 +2473,11 @@ export default class BattleScene extends SceneBase {
    */
   applyModifiers<T extends PersistentModifier>(modifierType: Constructor<T>, player: boolean = true, ...args: Parameters<T["apply"]>): T[] {
     const modifiers = (player ? this.modifiers : this.enemyModifiers).filter((m): m is T => m instanceof modifierType && m.shouldApply(...args));
-    return this.applyModifiersInternal(modifiers, player, ...args);
+    return this.applyModifiersInternal(modifiers, player, args);
   }
 
   /** Helper function to apply all passed modifiers */
-  applyModifiersInternal<T extends PersistentModifier>(modifiers: T[], player: boolean, ...args: Parameters<T["apply"]>): T[] {
+  applyModifiersInternal<T extends PersistentModifier>(modifiers: T[], player: boolean, args: Parameters<T["apply"]>): T[] {
     const appliedModifiers: T[] = [];
     for (const modifier of modifiers) {
       if (modifier.apply(...args)) {

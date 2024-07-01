@@ -851,7 +851,7 @@ export class SpeciesStatBoosterModifier extends StatBoosterModifier {
    * @returns true if the stat could be boosted, false otherwise
    */
   shouldApply(...args: Parameters<this["apply"]>): boolean {
-    const holder = args[0] as Pokemon;
+    const [holder] = args;
     return super.shouldApply(...args) && (this.species.includes(holder.getSpeciesForm(true).speciesId) || (holder.isFusion() && this.species.includes(holder.getFusionSpeciesForm(true).speciesId)));
   }
 
