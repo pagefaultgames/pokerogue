@@ -72,6 +72,9 @@ export default class SettingsDisplayUiHandler extends AbstractSettingsUiHandler 
           label: "繁體中文",
         };
         break;
+      case "th":
+        this.settings[languageIndex].options[0] = "ภาษาไทย";
+        break;
       case "ko":
       case "ko-KR":
         this.settings[languageIndex].options[0] = {
