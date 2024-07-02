@@ -27,6 +27,6 @@ export const challenges: TranslationEntries = {
   },
   "eeveeOnly": {
     "name": "Évoli uniquement",
-    "desc": "Vous ne pouvez choisir que des Évoli comme starters.",
+    "desc": "Vous ne pouvez utiliser que des Évoli et leurs évolutions.",
   }
 } as const;
