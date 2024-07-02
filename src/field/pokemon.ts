@@ -40,7 +40,7 @@ import * as Overrides from "../overrides";
 import i18next from "../plugins/i18n";
 import { speciesEggMoves } from "../data/egg-moves";
 import { ModifierTier } from "../modifier/modifier-tier";
-import { applyChallenges, ChallengeType } from "#app/data/challenge.js";
+import { applyChallenges, ChallengeType, MoveSourceType } from "#app/data/challenge.js";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleSpec } from "#enums/battle-spec";
@@ -1453,22 +1453,26 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (this.level < levelMove[0]) {
         break;
       }
-      let weight = levelMove[0];
-      if (weight === 0) { // Evo Moves
-        weight = 50;
+      const weight = new Utils.IntegerHolder(levelMove[0]);
+      if (weight.value === 0) { // Evo Moves
+        weight.value = 50;
       }
-      if (weight === 1 && allMoves[levelMove[1]].power >= 80) { // Assume level 1 moves with 80+ BP are "move reminder" moves and bump their weight
-        weight = 40;
+      if (weight.value === 1 && allMoves[levelMove[1]].power >= 80) { // Assume level 1 moves with 80+ BP are "move reminder" moves and bump their weight
+        weight.value = 40;
       }
       if (allMoves[levelMove[1]].name.endsWith(" (N)")) {
-        weight /= 100;
+        weight.value /= 100;
       } // Unimplemented level up moves are possible to generate, but 1% of their normal chance.
+      applyChallenges(this.scene.gameMode, ChallengeType.MOVE_WEIGHT, this, MoveSourceType.LEVEL_UP, levelMove, weight);
       if (!movePool.some(m => m[0] === levelMove[1])) {
-        movePool.push([levelMove[1], weight]);
+        movePool.push([levelMove[1], weight.value]);
       }
     }
 
     if (this.hasTrainer()) {
+      const levelThreshold = new Utils.IntegerHolder(0);
+      const weight = new Utils.IntegerHolder(5);
+
       const tms = Object.keys(tmSpecies);
       for (const tm of tms) {
         const moveId = parseInt(tm) as Moves;
@@ -1485,37 +1489,77 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           }
         }
         if (compatible && !movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(" (N)")) {
-          if (tmPoolTiers[moveId] === ModifierTier.COMMON && this.level >= 15) {
-            movePool.push([moveId, 4]);
-          } else if (tmPoolTiers[moveId] === ModifierTier.GREAT && this.level >= 30) {
-            movePool.push([moveId, 8]);
-          } else if (tmPoolTiers[moveId] === ModifierTier.ULTRA && this.level >= 50) {
-            movePool.push([moveId, 14]);
+          if (tmPoolTiers[moveId] === ModifierTier.COMMON) {
+            levelThreshold.value = 15;
+            applyChallenges(this.scene.gameMode, ChallengeType.MOVE_ACCESS, this, MoveSourceType.COMMON_TM, moveId, levelThreshold);
+            if (this.level >= levelThreshold.value) {
+              weight.value = 4;
+              applyChallenges(this.scene.gameMode, ChallengeType.MOVE_WEIGHT, this, MoveSourceType.COMMON_TM, moveId, weight);
+              movePool.push([moveId, weight.value]);
+            }
+          } else if (tmPoolTiers[moveId] === ModifierTier.GREAT) {
+            levelThreshold.value = 30;
+            applyChallenges(this.scene.gameMode, ChallengeType.MOVE_ACCESS, this, MoveSourceType.GREAT_TM, moveId, levelThreshold);
+            if (this.level >= levelThreshold.value) {
+              weight.value = 8;
+              applyChallenges(this.scene.gameMode, ChallengeType.MOVE_WEIGHT, this, MoveSourceType.COMMON_TM, moveId, weight);
+              movePool.push([moveId, weight.value]);
+            }
+          } else if (tmPoolTiers[moveId] === ModifierTier.ULTRA) {
+            levelThreshold.value = 50;
+            applyChallenges(this.scene.gameMode, ChallengeType.MOVE_ACCESS, this, MoveSourceType.ULTRA_TM, moveId, levelThreshold);
+            if (this.level >= levelThreshold.value) {
+              weight.value = 14;
+              applyChallenges(this.scene.gameMode, ChallengeType.MOVE_WEIGHT, this, MoveSourceType.COMMON_TM, moveId, weight);
+              movePool.push([moveId, weight.value]);
+            }
           }
         }
       }
 
-      if (this.level >= 60) { // No egg moves below level 60
-        for (let i = 0; i < 3; i++) {
-          const moveId = speciesEggMoves[this.species.getRootSpeciesId()][i];
-          if (!movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(" (N)")) {
-            movePool.push([moveId, 40]);
+      for (let i = 0; i < 3; i++) {
+        const moveId = speciesEggMoves[this.species.getRootSpeciesId()][i];
+        if (!movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(" (N)")) {
+          levelThreshold.value = 60;
+          applyChallenges(this.scene.gameMode, ChallengeType.MOVE_ACCESS, this, MoveSourceType.COMMON_EGG, moveId, levelThreshold);
+          if (this.level >= levelThreshold.value) {
+            weight.value = 40;
+            applyChallenges(this.scene.gameMode, ChallengeType.MOVE_WEIGHT, this, MoveSourceType.COMMON_EGG, moveId, weight);
+            movePool.push([moveId, weight.value]);
           }
         }
-        const moveId = speciesEggMoves[this.species.getRootSpeciesId()][3];
-        if (this.level >= 170 && !movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(" (N)") && !this.isBoss()) { // No rare egg moves before e4
-          movePool.push([moveId, 30]);
+      }
+      const moveId = speciesEggMoves[this.species.getRootSpeciesId()][3];
+      if (!movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(" (N)") && !this.isBoss()) {
+        levelThreshold.value = 170;
+        applyChallenges(this.scene.gameMode, ChallengeType.MOVE_ACCESS, this, MoveSourceType.RARE_EGG, moveId, levelThreshold);
+        if (this.level >= levelThreshold.value) {
+          weight.value = 30;
+          applyChallenges(this.scene.gameMode, ChallengeType.MOVE_WEIGHT, this, MoveSourceType.RARE_EGG, moveId, weight);
+          movePool.push([moveId, weight.value]);
         }
-        if (this.fusionSpecies) {
-          for (let i = 0; i < 3; i++) {
-            const moveId = speciesEggMoves[this.fusionSpecies.getRootSpeciesId()][i];
-            if (!movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(" (N)")) {
-              movePool.push([moveId, 40]);
+      }
+      if (this.fusionSpecies) {
+        for (let i = 0; i < 3; i++) {
+          const moveId = speciesEggMoves[this.fusionSpecies.getRootSpeciesId()][i];
+          if (!movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(" (N)")) {
+            levelThreshold.value = 60;
+            applyChallenges(this.scene.gameMode, ChallengeType.MOVE_ACCESS, this, MoveSourceType.COMMON_EGG, moveId, levelThreshold);
+            if (this.level >= levelThreshold.value) {
+              weight.value = 40;
+              applyChallenges(this.scene.gameMode, ChallengeType.MOVE_WEIGHT, this, MoveSourceType.COMMON_EGG, moveId, weight);
+              movePool.push([moveId, weight.value]);
             }
           }
-          const moveId = speciesEggMoves[this.fusionSpecies.getRootSpeciesId()][3];
-          if (this.level >= 170 && !movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(" (N)") && !this.isBoss()) {// No rare egg moves before e4
-            movePool.push([moveId, 30]);
+        }
+        const moveId = speciesEggMoves[this.fusionSpecies.getRootSpeciesId()][3];
+        if (!movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(" (N)") && !this.isBoss()) {// No rare egg moves before e4
+          levelThreshold.value = 170;
+          applyChallenges(this.scene.gameMode, ChallengeType.MOVE_ACCESS, this, MoveSourceType.RARE_EGG, moveId, levelThreshold);
+          if (this.level >= levelThreshold.value) {
+            weight.value = 30;
+            applyChallenges(this.scene.gameMode, ChallengeType.MOVE_WEIGHT, this, MoveSourceType.RARE_EGG, moveId, weight);
+            movePool.push([moveId, weight.value]);
           }
         }
       }

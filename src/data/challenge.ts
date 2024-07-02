@@ -12,6 +12,7 @@ import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 import { Nature } from "./nature";
 import { Starter } from "#app/ui/starter-select-ui-handler.js";
+import { Moves } from "#app/enums/moves.js";
 
 /**
  * An enum for all the challenge types. The parameter entries on these describe the
@@ -59,6 +60,27 @@ export enum ChallengeType {
    * Modifies the game mode settings in some way.
    */
   GAME_MODE_MODIFY,
+  /**
+   * Modifies what level AI pokemon can access a move.
+   */
+  MOVE_ACCESS,
+  /**
+   * Modifies what weight AI pokemon have when generating movesets.
+   */
+  MOVE_WEIGHT,
+}
+
+/**
+ * Used for challenge types that modify movesets, these denote the various sources of moves for pokemon.
+ */
+export enum MoveSourceType {
+  LEVEL_UP, // Currently unimplemented for move access
+  RELEARNER, // Relearner moves currently unimplemented
+  COMMON_TM,
+  GREAT_TM,
+  ULTRA_TM,
+  COMMON_EGG,
+  RARE_EGG
 }
 
 /**
@@ -322,6 +344,30 @@ export abstract class Challenge {
   applyGameModeModify(gameMode: GameMode): boolean {
     return false;
   }
+
+  /**
+   * An apply function for MOVE_ACCESS. Derived classes should alter this.
+   * @param pokemon {@link Pokemon} What pokemon would learn the move.
+   * @param moveSource {@link MoveSourceType} What source the pokemon would get the move from.
+   * @param move {@link Moves} The move in question.
+   * @param level {@link Utils.IntegerHolder} The level threshold for access.
+   * @returns {@link boolean} Whether this function did anything.
+   */
+  applyMoveAccessLevel(pokemon: Pokemon, moveSource: MoveSourceType, move: Moves, level: Utils.IntegerHolder): boolean {
+    return false;
+  }
+
+  /**
+   * An apply function for MOVE_WEIGHT. Derived classes should alter this.
+   * @param pokemon {@link Pokemon} What pokemon would learn the move.
+   * @param moveSource {@link MoveSourceType} What source the pokemon would get the move from.
+   * @param move {@link Moves} The move in question.
+   * @param weight {@link Utils.IntegerHolder} The base weight of the move
+   * @returns {@link boolean} Whether this function did anything.
+   */
+  applyMoveWeight(pokemon: Pokemon, moveSource: MoveSourceType, move: Moves, level: Utils.IntegerHolder): boolean {
+    return false;
+  }
 }
 
 type ChallengeCondition = (data: GameData) => boolean;
@@ -557,7 +603,7 @@ export class DoublesOnlyChallenge extends Challenge {
 /**
  * Makes bosses harder.
  * Level 1 adds rubber banding to trainers and boss pokemon levels. This is greater for trainers, and increases with level.
- * Level 2 gives AI bosses and trainers a fifth moveslot.
+ * Level 2 gives AI bosses and trainers a fifth moveslot, removes the minimum level for TMs and egg moves, and increases the chance of egg moves.
  * Level 3 gives all trainer pokemon their passives.
  */
 export class HarderBossesChallenge extends Challenge {
@@ -578,6 +624,44 @@ export class HarderBossesChallenge extends Challenge {
     if (this.value >= 2 && !pokemon.isPlayer() && (pokemon.isBoss() || pokemon.hasTrainer())) {
       moveSlots.value = 5;
       return true;
+    }
+    return false;
+  }
+
+  applyMoveAccessLevel(pokemon: Pokemon, moveSource: MoveSourceType, move: Moves, level: Utils.IntegerHolder): boolean {
+    if (this.value >= 2 && !pokemon.isPlayer() && pokemon.hasTrainer() && [MoveSourceType.COMMON_TM, MoveSourceType.GREAT_TM, MoveSourceType.ULTRA_TM, MoveSourceType.COMMON_EGG, MoveSourceType.RARE_EGG].includes(moveSource)) {
+      level.value = 1;
+      return true;
+    }
+    return false;
+  }
+
+  applyMoveWeight(pokemon: Pokemon, moveSource: MoveSourceType, move: Moves, weight: Utils.IntegerHolder): boolean {
+    if (this.value >= 2 && !pokemon.isPlayer() && pokemon.hasTrainer()) {
+      let ret = false;
+      switch (moveSource) {
+      case MoveSourceType.COMMON_TM:
+        weight.value = Math.min(weight.value, Math.ceil(0.5 * pokemon.level));
+        ret = true;
+        break;
+      case MoveSourceType.GREAT_TM:
+        weight.value = Math.min(weight.value, Math.ceil(0.33 * pokemon.level));
+        ret = true;
+        break;
+      case MoveSourceType.ULTRA_TM:
+        weight.value = Math.min(weight.value, Math.ceil(0.25 * pokemon.level));
+        ret = true;
+        break;
+      case MoveSourceType.COMMON_EGG:
+        weight.value = Math.min(weight.value * 2, pokemon.level);
+        ret = true;
+        break;
+      case MoveSourceType.RARE_EGG:
+        weight.value = Math.min(weight.value * 3, Math.ceil(0.75 * pokemon.level));
+        ret = true;
+        break;
+      }
+      return ret;
     }
     return false;
   }
@@ -766,6 +850,28 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.GAME_MODE_MODIFY): boolean;
+/**
+ * Apply all challenges that modify what level a pokemon can access a move.
+ * @param gameMode {@link GameMode} The current gameMode
+ * @param challengeType {@link ChallengeType} ChallengeType.MOVE_ACCESS
+ * @param pokemon {@link Pokemon} What pokemon would learn the move.
+ * @param moveSource {@link MoveSourceType} What source the pokemon would get the move from.
+ * @param move {@link Moves} The move in question.
+ * @param level {@link Utils.IntegerHolder} The level threshold for access.
+ * @returns True if any challenge was successfully applied.
+ */
+export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.MOVE_ACCESS, pokemon: Pokemon, moveSource: MoveSourceType, move: Moves, level: Utils.IntegerHolder): boolean;
+/**
+ * Apply all challenges that modify what weight a pokemon gives to move generation
+ * @param gameMode {@link GameMode} The current gameMode
+ * @param challengeType {@link ChallengeType} ChallengeType.MOVE_WEIGHT
+ * @param pokemon {@link Pokemon} What pokemon would learn the move.
+ * @param moveSource {@link MoveSourceType} What source the pokemon would get the move from.
+ * @param move {@link Moves} The move in question.
+ * @param weight {@link Utils.IntegerHolder} The weight of the move.
+ * @returns True if any challenge was successfully applied.
+ */
+export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.MOVE_WEIGHT, pokemon: Pokemon, moveSource: MoveSourceType, move: Moves, weight: Utils.IntegerHolder): boolean;
 export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType, ...args: any[]): boolean {
   let ret = false;
   gameMode.challenges.forEach(c => {
@@ -797,6 +903,12 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
         break;
       case ChallengeType.GAME_MODE_MODIFY:
         ret ||= c.applyGameModeModify(gameMode);
+        break;
+      case ChallengeType.MOVE_ACCESS:
+        ret ||= c.applyMoveAccessLevel(args[0], args[1], args[2], args[3]);
+        break;
+      case ChallengeType.MOVE_WEIGHT:
+        ret ||= c.applyMoveWeight(args[0], args[1], args[2], args[3]);
         break;
       }
     }
