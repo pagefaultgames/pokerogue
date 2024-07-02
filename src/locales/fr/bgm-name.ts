@@ -62,6 +62,7 @@ export const bgmName: SimpleTranslationEntries = {
   "battle_legendary_calyrex": "ÉB - Vs. Sylveroy",
   "battle_legendary_birds_galar": "ÉB - Vs. Oiseaux Légendaires de Galar",
   "battle_legendary_ruinous": "ÉV - Vs. Trésors du fléau",
+  "battle_legendary_kor_mir": "ÉV - Profondeurs de la Zone Zéro (Combat)",
   "battle_legendary_loyal_three": "ÉV - Vs. Adoramis",
   "battle_legendary_ogerpon": "ÉV - Vs. Ogerpon",
   "battle_legendary_terapagos": "ÉV - Vs. Terapagos",
@@ -100,20 +101,20 @@ export const bgmName: SimpleTranslationEntries = {
   "graveyard": "PDM EdS - Forêt Trompeuse",
   "ice_cave": "PDM EdS - Montagne Glacier",
   "island": "PDM EdS - Côte Escarpée",
-  //"jungle": "jungle", // The composer thinks about a more creative name
-  //"labratory": "labratory", // The composer thinks about a more creative name
+  "jungle": "Lmz - Jungle", // The composer thinks about a more creative name
+  "laboratory": "Firel - Laboratory", // The composer thinks about a more creative name
   "lake": "PDM EdS - Caverne Cristal",
   "meadow": "PDM EdS - Pic Céleste (forêt)",
-  //"metropolis": "metropolis", // The composer thinks about a more creative name
+  "metropolis": "Firel - Metropolis", // The composer thinks about a more creative name
   "mountain": "PDM EdS - Mt Corne",
   "plains": "PDM EdS - Pic Céleste (prairie)",
   "power_plant": "PDM EdS - Plaines Élek",
   "ruins": "PDM EdS - Ruine Scellée",
   "sea": "PDM EdS - Caverne Saline",
-  "seabed": "PDM EdS - Caverne Saline profondeurs",
+  "seabed": "Firel - Seabed", // The composer thinks about a more creative name
   "slum": "PDM EdS - Pic Céleste (côte)",
   "snowy_forest": "PDM EdS - Pic Céleste (plaine enneigée)",
-  "space": "PDM EdS - Ravin Aubaine",
+  "space": "Firel - Aether",
   "swamp": "PDM EdS - Mer Fermée",
   "tall_grass": "PDM EdS - Forêt Brumeuse",
   "temple": "PDM EdS - Grotte Égide",

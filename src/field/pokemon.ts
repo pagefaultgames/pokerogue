@@ -2262,11 +2262,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * If this Pokemon is using a multi-hit move, cancels all subsequent strikes
-   * @param {Pokemon} target If specified, this only cancels subsequent strikes against this Pokemon
+   * @param {Pokemon} target If specified, this only cancels subsequent strikes against the given target
    */
   stopMultiHit(target?: Pokemon): void {
     const effectPhase = this.scene.getCurrentPhase();
-    if (effectPhase instanceof MoveEffectPhase) {
+    if (effectPhase instanceof MoveEffectPhase && effectPhase.getUserPokemon() === this) {
       effectPhase.stopMultiHit(target);
     }
   }
@@ -2543,6 +2543,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   trySetStatus(effect: StatusEffect, asPhase: boolean = false, sourcePokemon: Pokemon = null, cureTurn: integer = 0, sourceText: string = null): boolean {
     if (!this.canSetStatus(effect, asPhase, false, sourcePokemon)) {
       return false;
+    }
+
+    /**
+     * If this Pokemon falls asleep or freezes in the middle of a multi-hit attack,
+     * cancel the attack's subsequent hits.
+     */
+    if (effect === StatusEffect.SLEEP || effect === StatusEffect.FREEZE) {
+      this.stopMultiHit();
     }
 
     if (asPhase) {
@@ -3398,12 +3406,15 @@ export class EnemyPokemon extends Pokemon {
   public aiType: AiType;
   public bossSegments: integer;
   public bossSegmentIndex: integer;
+  /** To indicate of the instance was populated with a dataSource -> e.g. loaded & populated from session data */
+  public readonly isPopulatedFromDataSource: boolean;
 
   constructor(scene: BattleScene, species: PokemonSpecies, level: integer, trainerSlot: TrainerSlot, boss: boolean, dataSource: PokemonData) {
     super(scene, 236, 84, species, level, dataSource?.abilityIndex, dataSource?.formIndex,
       dataSource?.gender, dataSource ? dataSource.shiny : false, dataSource ? dataSource.variant : undefined, null, dataSource ? dataSource.nature : undefined, dataSource);
 
     this.trainerSlot = trainerSlot;
+    this.isPopulatedFromDataSource = !!dataSource; // if a dataSource is provided, then it was populated from dataSource
     if (boss) {
       this.setBoss(boss, dataSource?.bossSegments);
     }
@@ -3453,6 +3464,13 @@ export class EnemyPokemon extends Pokemon {
     }
   }
 
+  /**
+   * Sets the pokemons boss status. If true initializes the boss segments either from the arguments
+   * or through the the Scene.getEncounterBossSegments function
+   *
+   * @param boss if the pokemon is a boss
+   * @param bossSegments amount of boss segments (health-bar segments)
+   */
   setBoss(boss: boolean = true, bossSegments: integer = 0): void {
     if (boss) {
       this.bossSegments = bossSegments || this.scene.getEncounterBossSegments(this.scene.currentBattle.waveIndex, this.level, this.species, true);
