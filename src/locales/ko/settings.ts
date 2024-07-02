@@ -94,5 +94,6 @@ export const settings: SimpleTranslationEntries = {
   "alt": " (대체)",
   "mute": "음소거",
   "controller": "컨트롤러",
-  "gamepadSupport": "게임패드 지원"
+  "gamepadSupport": "게임패드 지원",
+  "showBgmBar": "BGM 제목 보여주기",
 } as const;
