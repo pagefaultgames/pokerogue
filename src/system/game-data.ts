@@ -39,6 +39,7 @@ import { GameDataType } from "#enums/game-data-type";
 import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
+import { applyChallenges, ChallengeType } from "#app/data/challenge.js";
 
 export const defaultStarterSpecies: Species[] = [
   Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE,
@@ -887,6 +888,7 @@ export class GameData {
           scene.gameMode = getGameMode(sessionData.gameMode || GameModes.CLASSIC);
           if (sessionData.challenges) {
             scene.gameMode.challenges = sessionData.challenges.map(c => c.toChallenge());
+            applyChallenges(scene.gameMode, ChallengeType.GAME_MODE_MODIFY);
           }
 
           scene.setSeed(sessionData.seed || scene.game.config.seed[0]);

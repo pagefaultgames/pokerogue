@@ -65,6 +65,7 @@ import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
+import { applyChallenges } from "./data/challenge";
 
 
 export class LoginPhase extends Phase {
@@ -560,6 +561,7 @@ export class SelectStarterPhase extends Phase {
     this.scene.playBgm("menu");
 
     this.scene.ui.setMode(Mode.STARTER_SELECT, (starters: Starter[]) => {
+      applyChallenges(this.scene.gameMode, ChallengeType.GAME_MODE_MODIFY);
       this.scene.ui.clearText();
       this.scene.ui.setMode(Mode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: integer) => {
         if (slotId === -1) {
