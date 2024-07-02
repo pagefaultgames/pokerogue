@@ -21,11 +21,11 @@ export const challenges: TranslationEntries = {
   },
   "singleType": {
     "name": "Monotipo",
-    "desc": "Você só pode user Pokémon do tipo {{type}}.",
-    "desc_default": "Você só pode user Pokémon de um único tipo."
+    "desc": "Você só pode usar Pokémon do tipo {{type}}.",
+    "desc_default": "Você só pode usar Pokémon de um único tipo."
   },
   "eeveeOnly": {
-    "name": "Eevee only",
-    "desc": "You can use only Eevee and its evolutions in this challenge",
+    "name": "Somente Eevees",
+    "desc": "Você só pode usar Eevee e suas evoluções nesse desafio",
   }
 } as const;
