@@ -1,6 +1,5 @@
 import * as battleScene from "#app/battle-scene.js";
-import { afterEach, describe } from "node:test";
-import { expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { loggedInUser, updateUserInfo } from "../account";
 import * as utils from "../utils";
 
