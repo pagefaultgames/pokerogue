@@ -1,7 +1,8 @@
 import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const abilityTriggers: SimpleTranslationEntries = {
-  "blockRecoilDamage": "{{pokemonName}}'s {{abilityName}}\nprotected it from recoil!",
+  "blockRecoilDamage" : "{{pokemonName}}'s {{abilityName}}\nprotected it from recoil!",
+  "stockpile" : "{{pokemonName}}\nstockpiled {{stockpileNumber}}!",
   "badDreams": "{{pokemonName}} is tormented!",
   "costar": "{{pokemonName}} copied {{allyName}}'s stat changes!",
   "iceFaceAvoidedDamage": "{{pokemonName}} avoided\ndamage with {{abilityName}}!",

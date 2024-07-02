@@ -74,7 +74,7 @@ export const STARTING_LEVEL_OVERRIDE: integer = 0;
  * SPECIES OVERRIDE
  * will only apply to the first starter in your party or each enemy pokemon
  * default is 0 to not override
- * @example SPECIES_OVERRIDE = Species.Bulbasaur;
+ * @example SPECIES_OVERRIDE = Species.BULBASAUR;
  */
 export const STARTER_SPECIES_OVERRIDE: Species | integer = 0;
 export const ABILITY_OVERRIDE: Abilities = Abilities.NONE;
