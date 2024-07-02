@@ -2480,7 +2480,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.starterSelectCallback = null;
           originalStarterSelectCallback(new Array(this.starterGens.length).fill(0).map(function (_, i) {
             const starterSpecies = thisObj.genSpecies[thisObj.starterGens[i]][thisObj.starterCursors[i]];
-            return {
+            const starterData: Starter = {
               species: starterSpecies,
               dexAttr: thisObj.starterAttr[i],
               abilityIndex: thisObj.starterAbilityIndexes[i],
@@ -2489,6 +2489,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               moveset: thisObj.starterMovesets[i],
               pokerus: !![ 0, 1, 2 ].filter(n => thisObj.pokerusGens[n] === starterSpecies.generation - 1 && thisObj.pokerusCursors[n] === thisObj.genSpecies[starterSpecies.generation - 1].indexOf(starterSpecies)).length
             };
+            return starterData;
           }));
         };
         startRun();

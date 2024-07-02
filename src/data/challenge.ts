@@ -1,8 +1,8 @@
 import * as Utils from "../utils";
 import i18next from "#app/plugins/i18n.js";
-import { GameData } from "#app/system/game-data.js";
+import { DexAttr, GameData } from "#app/system/game-data.js";
 import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "./pokemon-species";
-import Pokemon, { PlayerPokemon, PokemonMove } from "#app/field/pokemon.js";
+import Pokemon from "#app/field/pokemon.js";
 import { BattleType, FixedBattleConfig } from "#app/battle.js";
 import Trainer, { TrainerVariant } from "#app/field/trainer.js";
 import { GameMode } from "#app/game-mode.js";
@@ -11,7 +11,7 @@ import { Challenges } from "#enums/challenges";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 import { Nature } from "./nature";
-import { Gender } from "./gender";
+import { Starter } from "#app/ui/starter-select-ui-handler.js";
 
 /**
  * An enum for all the challenge types. The parameter entries on these describe the
@@ -255,10 +255,10 @@ export abstract class Challenge {
 
   /**
    * An apply function for STARTER_MODIFY challenges. Derived classes should alter this.
-   * @param pokemon {@link PlayerPokemon} The pokemon to modify.
+   * @param starter {@link Starter} The starter data of the pokemon to modify.
    * @returns {@link boolean} Whether this function did anything.
    */
-  applyStarterModify(pokemon: PlayerPokemon): boolean {
+  applyStarterModify(starter: Starter): boolean {
     return false;
   }
 
@@ -482,17 +482,12 @@ export class FreshStartChallenge extends Challenge {
     return false;
   }
 
-  applyStarterModify(pokemon: PlayerPokemon): boolean {
-    pokemon.abilityIndex = 0; // Always base ability, not hidden ability
-    pokemon.passive = false; // Passive isn't unlocked
-    pokemon.nature = Nature.HARDY; // Neutral nature
-    pokemon.formIndex = 0; // Just for Froakie, make sure in base form.
-    pokemon.ivs = [10, 10, 10, 10, 10, 10]; // Base IVs
-    pokemon.gender = Gender.MALE; // Only male starters
-    pokemon.luck = 0; // No luck
-    pokemon.shiny = false; // Not shiny
-    pokemon.variant = 0; // Reset shiny variant
-    pokemon.moveset = pokemon.getSpeciesForm(true).getLevelMoves().filter(m => m[0] <= 5).slice(0, pokemon.getMaxMoveSlots()).map(m => new PokemonMove(m[1])); // No egg moves
+  applyStarterModify(starter: Starter): boolean {
+    starter.abilityIndex = 0; // Always base ability, not hidden ability
+    starter.passive = false; // Passive isn't unlocked
+    starter.nature = Nature.HARDY; // Neutral nature
+    starter.moveset = starter.species.getLevelMoves().filter(m => m[0] <= 5).map(lm => lm[1]).slice(0, 4); // No egg moves
+    starter.dexAttr = DexAttr.NON_SHINY | DexAttr.MALE | DexAttr.DEFAULT_VARIANT | DexAttr.DEFAULT_FORM;
     return true;
   }
 
@@ -713,10 +708,10 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
  * Apply all challenges that modify a starter after selection.
  * @param gameMode {@link GameMode} The current gameMode
  * @param challengeType {@link ChallengeType} ChallengeType.STARTER_MODIFY
- * @param pokemon {@link PlayerPokemon} The pokemon to modify.
+ * @param starter {@link Starter} The starter data of the pokemon to modify.
  * @returns True if any challenge was successfully applied.
  */
-export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.STARTER_MODIFY, pokemon: PlayerPokemon): boolean;
+export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.STARTER_MODIFY, starter: Starter): boolean;
 /**
  * Apply all challenges that what pokemon you can have in battle.
  * @param gameMode {@link GameMode} The current gameMode
