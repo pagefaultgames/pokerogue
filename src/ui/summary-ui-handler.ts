@@ -397,7 +397,7 @@ export default class SummaryUiHandler extends UiHandler {
     }
 
     const ui = this.getUi();
-
+    const fromPartyMode = ui.handlers[Mode.PARTY].active;
     let success = false;
     let error = false;
 
@@ -485,7 +485,8 @@ export default class SummaryUiHandler extends UiHandler {
         if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
           this.hideMoveSelect();
         } else {
-          if (ui.getMessageHandler().onActionInput) {
+
+          if (!fromPartyMode) {
             ui.setMode(Mode.MESSAGE);
           } else {
             ui.setMode(Mode.PARTY);
@@ -499,7 +500,7 @@ export default class SummaryUiHandler extends UiHandler {
         case Button.DOWN:
           if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
             break;
-          } else if (ui.getMessageHandler().onActionInput) {
+          } else if (!fromPartyMode) {
             break;
           }
           const isDown = button === Button.DOWN;
