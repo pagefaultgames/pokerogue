@@ -49,7 +49,7 @@ export enum ChallengeType {
   FIXED_BATTLES,
 
   /**
-   * Allow to use only duplicate species
+   * Allow to duplicate species
    * @param args [0] {@link Utils.BooleanHolder} Sets to false if illegal, pass in true.
   */
   DUPLICATE_SPECIES,
