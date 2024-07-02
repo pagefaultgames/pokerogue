@@ -25,7 +25,7 @@ export const challenges: TranslationEntries = {
   },
   "eeveeOnly": {
     "name": "Eevee only",
-    "desc": "You can use only Eevee in this challenge",
+    "desc": "You can use only Eevee and its evolutions in this challenge",
     "value.0": "Off",
     "value.1": "On",
   }
