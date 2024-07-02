@@ -1,8 +1,8 @@
 import { TranslationEntries } from "#app/interfaces/locales";
 
 export const challenges: TranslationEntries = {
-  "on": "On",
-  "off": "Off",
+  "on": "Ligado",
+  "off": "Desligado",
   "title": "Desafios",
   "illegalEvolution": "{{pokemon}} não pode ser escolhido\nnesse desafio!",
   "singleGeneration": {
