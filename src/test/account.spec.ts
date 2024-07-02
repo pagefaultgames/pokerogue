@@ -26,8 +26,8 @@ describe("account", () => {
     });
 
     it("should fetch user info from the API if bypassLogin is false", async () => {
-      const apiFetchSpy = vi.spyOn(utils, "apiFetch");
-      apiFetchSpy.mockResolvedValue(
+      vi.spyOn(battleScene, "bypassLogin", "get").mockReturnValue(false);
+      vi.spyOn(utils, "apiFetch").mockResolvedValue(
         new Response(
           JSON.stringify({
             username: "test",
@@ -38,7 +38,6 @@ describe("account", () => {
           }
         )
       );
-      vi.spyOn(battleScene, "bypassLogin", "get").mockReturnValue(false);
 
       const [success, status] = await updateUserInfo();
 
@@ -49,9 +48,10 @@ describe("account", () => {
     });
 
     it("should handle resolved API errors", async () => {
-      const apiFetchSpy = vi.spyOn(utils, "apiFetch");
-      apiFetchSpy.mockResolvedValue(new Response(null, { status: 401 }));
       vi.spyOn(battleScene, "bypassLogin", "get").mockReturnValue(false);
+      vi.spyOn(utils, "apiFetch").mockResolvedValue(
+        new Response(null, { status: 401 })
+      );
 
       const [success, status] = await updateUserInfo();
 
@@ -61,9 +61,8 @@ describe("account", () => {
 
     it("should handle rejected API errors", async () => {
       const consoleErrorSpy = vi.spyOn(console, "error");
-      const apiFetchSpy = vi.spyOn(utils, "apiFetch");
-      apiFetchSpy.mockRejectedValue(new Error("Api failed!"));
       vi.spyOn(battleScene, "bypassLogin", "get").mockReturnValue(false);
+      vi.spyOn(utils, "apiFetch").mockRejectedValue(new Error("Api failed!"));
 
       const [success, status] = await updateUserInfo();
 
