@@ -533,7 +533,7 @@ export const PGFachv: AchievementTranslationEntries = {
     name: "Clube das Winx",
   },
   "EEVEE_TRAINER": {
-    name: "Eevee Trainer",
-    description: "Complete Eevee Only challenge.",
+    name: "Treinador de Eevee",
+    description: "Complete o desafio Somente Eevees.",
   },
 } as const;
