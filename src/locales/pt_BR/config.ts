@@ -1,11 +1,10 @@
-import { common } from "#app/locales/pt_BR/common.js";
-import { settings } from "#app/locales/pt_BR/settings.js";
 import { ability } from "./ability";
 import { abilityTriggers } from "./ability-trigger";
 import { PGFachv, PGMachv } from "./achv";
 import { battle } from "./battle";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
 import { berry } from "./berry";
+import { bgmName } from "./bgm-name";
 import { biome } from "./biome";
 import { challenges } from "./challenges";
 import { commandUiHandler } from "./command-ui-handler";
@@ -29,7 +28,6 @@ import { menuUiHandler } from "./menu-ui-handler";
 import { modifierType } from "./modifier-type";
 import { move } from "./move";
 import { nature } from "./nature";
-import { partyUiHandler } from "./party-ui-handler";
 import { pokeball } from "./pokeball";
 import { pokemon } from "./pokemon";
 import { pokemonInfo } from "./pokemon-info";
@@ -37,10 +35,14 @@ import { pokemonInfoContainer } from "./pokemon-info-container";
 import { saveSlotSelectUiHandler } from "./save-slot-select-ui-handler";
 import { splashMessages } from "./splash-messages";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
+import { statusEffect } from "./status-effect";
 import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { weather } from "./weather";
+import { partyUiHandler } from "./party-ui-handler";
+import { settings } from "./settings.js";
+import { common } from "./common.js";
 import { modifierSelectUiHandler } from "./modifier-select-ui-handler";
 
 export const ptBrConfig = {
@@ -49,6 +51,7 @@ export const ptBrConfig = {
   battle: battle,
   battleMessageUiHandler: battleMessageUiHandler,
   berry: berry,
+  bgmName: bgmName,
   biome: biome,
   challenges: challenges,
   commandUiHandler: commandUiHandler,
@@ -79,6 +82,7 @@ export const ptBrConfig = {
   pokemonInfo: pokemonInfo,
   pokemonInfoContainer: pokemonInfoContainer,
   saveSlotSelectUiHandler: saveSlotSelectUiHandler,
+  statusEffect: statusEffect,
   settings: settings,
   splashMessages: splashMessages,
   starterSelectUiHandler: starterSelectUiHandler,

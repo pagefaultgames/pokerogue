@@ -184,19 +184,7 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
     this.battleScene.arena.eventTarget.addEventListener(ArenaEventType.TAG_REMOVED,     this.onFieldEffectChangedEvent);
   }
 
-  /**
-   * Formats a string to title case
-   * @param unformattedText Text to be formatted
-   * @returns the formatted string
-   */
-  private formatText(unformattedText: string): string {
-    const text = unformattedText.split("_");
-    for (let i = 0; i < text.length; i++) {
-      text[i] = text[i].charAt(0).toUpperCase() + text[i].substring(1).toLowerCase();
-    }
 
-    return text.join(" ");
-  }
 
   /** Clears out the current string stored in all arena effect texts */
   private clearText() {
@@ -233,7 +221,7 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
         break;
       }
 
-      textObject.text += this.formatText(fieldEffectInfo.name);
+      textObject.text += Utils.formatText(fieldEffectInfo.name);
       if (fieldEffectInfo.effecType === ArenaEffectType.TERRAIN) {
         textObject.text += " Terrain"; // Adds 'Terrain' since the enum does not contain it
       }
