@@ -1,9 +1,18 @@
 import * as battleScene from "#app/battle-scene.js";
 import { describe, expect, it, vi } from "vitest";
-import { loggedInUser, updateUserInfo } from "../account";
+import { initLoggedInUser, loggedInUser, updateUserInfo } from "../account";
 import * as utils from "../utils";
 
 describe("account", () => {
+  describe("initLoggedInUser", () => {
+    it("should set loggedInUser to Guest and lastSessionSlot to -1", () => {
+      initLoggedInUser();
+
+      expect(loggedInUser.username).toBe("Guest");
+      expect(loggedInUser.lastSessionSlot).toBe(-1);
+    });
+  });
+
   describe("updateUserInfo", () => {
     it("should set loggedInUser to Guest if bypassLogin is true", async () => {
       vi.spyOn(battleScene, "bypassLogin", "get").mockReturnValue(true);
