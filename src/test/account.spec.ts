@@ -8,8 +8,10 @@ describe("account", () => {
     it("should set loggedInUser to Guest if bypassLogin is true", async () => {
       vi.spyOn(battleScene, "bypassLogin", "get").mockReturnValue(true);
 
-      await updateUserInfo();
+      const [success, status] = await updateUserInfo();
 
+      expect(success).toBe(true);
+      expect(status).toBe(200);
       expect(loggedInUser.username).toBe("Guest");
       expect(loggedInUser.lastSessionSlot).toBe(-1);
     });
@@ -37,15 +39,28 @@ describe("account", () => {
       expect(loggedInUser.lastSessionSlot).toBe(99);
     });
 
-    it("should handle API errors", async () => {
+    it("should handle resolved API errors", async () => {
       const apiFetchSpy = vi.spyOn(utils, "apiFetch");
-      apiFetchSpy.mockResolvedValue(new Response(null, { status: 500 }));
+      apiFetchSpy.mockResolvedValue(new Response(null, { status: 401 }));
+      vi.spyOn(battleScene, "bypassLogin", "get").mockReturnValue(false);
+
+      const [success, status] = await updateUserInfo();
+
+      expect(success).toBe(false);
+      expect(status).toBe(401);
+    });
+
+    it("should handle rejected API errors", async () => {
+      const consoleErrorSpy = vi.spyOn(console, "error");
+      const apiFetchSpy = vi.spyOn(utils, "apiFetch");
+      apiFetchSpy.mockRejectedValue(new Error("Api failed!"));
       vi.spyOn(battleScene, "bypassLogin", "get").mockReturnValue(false);
 
       const [success, status] = await updateUserInfo();
 
       expect(success).toBe(false);
       expect(status).toBe(500);
+      expect(consoleErrorSpy).toHaveBeenCalled();
     });
   });
 });
