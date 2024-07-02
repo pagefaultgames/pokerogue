@@ -5153,12 +5153,12 @@ export class SketchAttr extends MoveEffectAttr {
       return false;
     }
 
-    const targetMoves = target.getLastXMoves(1).filter(m => !m.virtual);
-    if (!targetMoves.length) {
+    const [targetMove] = target.getLastXMoves(1);
+    if (!targetMove || targetMove.virtual) {
       return false;
     }
 
-    const sketchedMove = allMoves[targetMoves[0].move];
+    const sketchedMove = allMoves[targetMove.move];
 
     const sketchIndex = user.getMoveset().findIndex(m => m.moveId === move.id);
 
