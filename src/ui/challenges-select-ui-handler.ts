@@ -70,7 +70,7 @@ export default class GameChallengesUiHandler extends UiHandler {
 
     this.descriptionText = addTextObject(this.scene, 0, 0, "", TextStyle.SETTINGS_LABEL);
     this.descriptionText.setOrigin(0, 0);
-    this.descriptionText.setWordWrapWidth(500, true);
+    this.descriptionText.setWordWrapWidth((descriptionBg.width - 12) * 6, true);
     this.descriptionText.setPositionRelative(descriptionBg, 6, 4);
 
     const startBg = addWindow(this.scene, 0, 0, descriptionBg.width, 24);
