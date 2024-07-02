@@ -447,7 +447,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "My old associates need me... Are you going to get in my way?"
     },
     "victory": {
-      1: "How is this possible...?\nThe precious dream of Team Rocket has become little more than an illusion..."
+      1: "How is this possible...? The precious dream of Team Rocket has become little more than an illusion..."
     },
     "defeat": {
       1: "Team Rocket will be reborn again, and I will rule the world!"
@@ -466,7 +466,8 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "magma_boss_maxie_2": {
     "encounter": {
-      1: "You are the final obstacle remaining between me and my goals.\nBrace yourself for my ultimate attack! Fuhahaha!"
+      1: `You are the final obstacle remaining between me and my goals.
+          $Brace yourself for my ultimate attack! Fuhahaha!`
     },
     "victory": {
       1: "This... This is not.. Ngh..."
@@ -499,7 +500,8 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "galactic_boss_cyrus_1": {
     "encounter": {
-      1: "You were compelled to come here by such vacuous sentimentality\nI will make you regret paying heed to your heart!"
+      1: `You were compelled to come here by such vacuous sentimentality.
+          $I will make you regret paying heed to your heart!`
     },
     "victory": {
       1: "Interesting. And quite curious."
@@ -510,7 +512,8 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "galactic_boss_cyrus_2": {
     "encounter": {
-      1: "So we meet again. It seems our fates have become intertwined.\nBut here and now, I will finally break that bond!"
+      1: `So we meet again. It seems our fates have become intertwined.
+          $But here and now, I will finally break that bond!`
     },
     "victory": {
       1: "How? How? HOW?!"
@@ -1641,7 +1644,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: `Just a moment, please. The book I'm reading has nearly reached its thrilling climax… 
                 $The hero has obtained a mystic sword and is about to face their final trial… Ah, never mind. 
                 $Since you've made it this far, I'll put that aside and battle you. 
-                $Let me see if you'll achieve as much glory as the hero of my book!,`
+                $Let me see if you'll achieve as much glory as the hero of my book!`
     },
     "victory": {
       1: "I see… It appears you've put me in checkmate."

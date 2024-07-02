@@ -2095,7 +2095,7 @@ export const move: MoveTranslationEntries = {
   },
   "frostBreath": {
     name: "Frost Breath",
-    effect: "O usuário sopra sua respiração gelada no alvo. Esse ataque sempre resulta em um golpe crítico."
+    effect: "O usuário sopra sua respiração gelada no alvo. Esse ataque sempre resulta em um acerto crítico."
   },
   "dragonTail": {
     name: "Dragon Tail",
@@ -2691,7 +2691,7 @@ export const move: MoveTranslationEntries = {
   },
   "laserFocus": {
     name: "Laser Focus",
-    effect: "O usuário se concentra intensamente. O ataque no próximo turno sempre resultará em um golpe crítico."
+    effect: "O usuário se concentra intensamente. O ataque no próximo turno sempre resultará em um acerto crítico."
   },
   "gearUp": {
     name: "Gear Up",
@@ -3267,11 +3267,11 @@ export const move: MoveTranslationEntries = {
   },
   wickedBlow: {
     name: "Wicked Blow",
-    effect: "O usuário, tendo dominado o estilo Sombrio, atinge o alvo com um golpe feroz. Este ataque sempre resulta em um golpe crítico."
+    effect: "O usuário, tendo dominado o estilo Sombrio, atinge o alvo com um golpe feroz. Este ataque sempre resulta em um acerto crítico."
   },
   surgingStrikes: {
     name: "Surging Strikes",
-    effect: "O usuário, tendo dominado o estilo Água, atinge o alvo com um movimento fluido três vezes seguidas. Este ataque sempre resulta em um golpe crítico."
+    effect: "O usuário, tendo dominado o estilo Água, atinge o alvo com um movimento fluido três vezes seguidas. Estes ataques sempre resultam em acertos críticos."
   },
   thunderCage: {
     name: "Thunder Cage",
@@ -3359,7 +3359,7 @@ export const move: MoveTranslationEntries = {
   },
   esperWing: {
     name: "Esper Wing",
-    effect: "O usuário corta o alvo com asas enriquecidas com aura. Isso também aumenta o atributo de Velocidade do usuário. Este movimento tem uma chance aumentada de causar um golpe crítico."
+    effect: "O usuário corta o alvo com asas enriquecidas com aura. Isso também aumenta o atributo de Velocidade do usuário. Este movimento tem uma chance aumentada de causar um acerto crítico."
   },
   bitterMalice: {
     name: "Bitter Malice",
@@ -3371,7 +3371,7 @@ export const move: MoveTranslationEntries = {
   },
   tripleArrows: {
     name: "Triple Arrows",
-    effect: "O usuário chuta e depois dispara três flechas. Este movimento tem uma chance aumentada de causar um golpe crítico e também pode diminuir o atributo de Defesa do alvo ou fazê-lo hesitar."
+    effect: "O usuário chuta e depois dispara três flechas. Este movimento tem uma chance aumentada de causar um acerto crítico e também pode diminuir o atributo de Defesa do alvo ou fazê-lo hesitar."
   },
   infernalParade: {
     name: "Infernal Parade",
@@ -3611,7 +3611,7 @@ export const move: MoveTranslationEntries = {
   },
   "flowerTrick": {
     name: "Flower Trick",
-    effect: "O usuário lança um buquê de flores armado no alvo. Este ataque nunca erra e sempre resulta em um golpe crítico."
+    effect: "O usuário lança um buquê de flores armado no alvo. Este ataque nunca erra e sempre resulta em um acerto crítico."
   },
   "torchSong": {
     name: "Torch Song",
@@ -3711,7 +3711,7 @@ export const move: MoveTranslationEntries = {
   },
   "aquaCutter": {
     name: "Aqua Cutter",
-    effect: "O usuário expele água pressurizada para cortar o alvo como uma lâmina. Este movimento tem uma chance aumentada de resultar em um golpe crítico."
+    effect: "O usuário expele água pressurizada para cortar o alvo como uma lâmina. Este movimento tem uma chance aumentada de resultar em um acerto crítico."
   },
   "blazingTorque": {
     name: "Blazing Torque",
@@ -3747,7 +3747,7 @@ export const move: MoveTranslationEntries = {
   },
   "ivyCudgel": {
     name: "Ivy Cudgel",
-    effect: "O usuário golpeia com um porrete envolto em hera. O tipo deste movimento muda dependendo da máscara usada pelo usuário, e tem uma chance aumentada de resultar em um golpe crítico."
+    effect: "O usuário golpeia com um porrete envolto em hera. O tipo deste movimento muda dependendo da máscara usada pelo usuário, e tem uma chance aumentada de resultar em um acerto crítico."
   },
   "electroShot": {
     name: "Electro Shot",
