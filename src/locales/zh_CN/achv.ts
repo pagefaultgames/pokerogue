@@ -1,4 +1,4 @@
-import { AchievementTranslationEntries } from "#app/plugins/i18n.js";
+import { AchievementTranslationEntries } from "#app/interfaces/locales.js";
 
 // Achievement translations for the when the player character is male
 export const PGMachv: AchievementTranslationEntries = {
@@ -127,7 +127,7 @@ export const PGMachv: AchievementTranslationEntries = {
   },
   "CATCH_SUB_LEGENDARY": {
     name: "二级传说",
-    description: "捕捉一只准传说宝可梦",
+    description: "捕捉一只二级传说宝可梦",
   },
   "CATCH_LEGENDARY": {
     name: "传说",
