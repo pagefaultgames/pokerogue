@@ -261,6 +261,8 @@ export abstract class Challenge {
    * An apply function for STARTER_CHOICE challenges. Derived classes should alter this.
    * @param pokemon {@link PokemonSpecies} The pokemon to check the validity of.
    * @param valid {@link Utils.BooleanHolder} A BooleanHolder, the value gets set to false if the pokemon isn't allowed.
+   * @param dexAttr {@link DexAttrProps} The dex attributes of the pokemon.
+   * @param soft {@link boolean} If true, allow it if it could become a valid pokemon.
    * @returns {@link boolean} Whether this function did anything.
    */
   applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps, soft: boolean = false): boolean {
@@ -381,7 +383,7 @@ export class SingleGenerationChallenge extends Challenge {
     super(Challenges.SINGLE_GENERATION, 9);
   }
 
-  applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder): boolean {
+  applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps, soft: boolean = false): boolean {
     /**
      * We have special code below for victini because it is classed as a generation 4 pokemon in the code
      * despite being a generation 5 pokemon. This is due to UI constraints, the starter select screen has
@@ -501,7 +503,7 @@ export class SingleTypeChallenge extends Challenge {
     super(Challenges.SINGLE_TYPE, 18);
   }
 
-  applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder): boolean {
+  applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps, soft: boolean = false): boolean {
     if (!pokemon.isOfType(this.value - 1)) {
       valid.value = false;
       return true;
@@ -837,9 +839,11 @@ export class LowerStarterPointsChallenge extends Challenge {
  * @param challengeType {@link ChallengeType} ChallengeType.STARTER_CHOICE
  * @param pokemon {@link PokemonSpecies} The pokemon to check the validity of.
  * @param valid {@link Utils.BooleanHolder} A BooleanHolder, the value gets set to false if the pokemon isn't allowed.
+ * @param dexAttr {@link DexAttrProps} The dex attributes of the pokemon.
+ * @param soft {@link boolean} If true, allow it if it could become a valid pokemon.
  * @returns True if any challenge was successfully applied.
  */
-export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.STARTER_CHOICE, pokemon: PokemonSpecies, valid: Utils.BooleanHolder): boolean;
+export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.STARTER_CHOICE, pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps, soft: boolean): boolean;
 /**
  * Apply all challenges that modify starter points.
  * @param gameMode {@link GameMode} The current gameMode
@@ -938,7 +942,7 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
     if (c.value !== 0) {
       switch (challengeType) {
       case ChallengeType.STARTER_CHOICE:
-        ret ||= c.applyStarterChoice(args[0], args[1]);
+        ret ||= c.applyStarterChoice(args[0], args[1], args[2], args[3]);
         break;
       case ChallengeType.STARTER_POINTS:
         ret ||= c.applyStarterPoints(args[0]);
