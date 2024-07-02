@@ -24,8 +24,8 @@ export const challenges: TranslationEntries = {
     //type in pokemon-info
   },
   "eeveeOnly": {
-    "name": "Eevee only",
-    "desc": "You can use only Eevee in this challenge",
+    "name": "이브이 모드",
+    "desc": "이 챌린지는 이브이만 사용할 수 있습니다.",
     "value.0": "Off",
     "value.1": "On",
   }
