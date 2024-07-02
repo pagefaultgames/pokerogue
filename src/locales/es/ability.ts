@@ -1239,6 +1239,6 @@ export const ability: AbilityTranslationEntries = {
   },
   "poisonPuppeteer": {
     name: "Títere Tóxico",
-    description: "Los rivales que Pecharunt envenene con sus movimientos también sufrirán confusión."
+    description: "Los rivales que este Pokémon envenene con sus movimientos también sufrirán confusión."
   }
 } as const;

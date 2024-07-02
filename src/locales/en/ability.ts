@@ -1239,6 +1239,6 @@ export const ability: AbilityTranslationEntries = {
   },
   poisonPuppeteer: {
     name: "Poison Puppeteer",
-    description: "Pokémon poisoned by Pecharunt's moves will also become confused.",
+    description: "Pokémon poisoned by this Pokémon's moves will also become confused.",
   },
 } as const;
