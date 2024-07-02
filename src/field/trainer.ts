@@ -435,20 +435,24 @@ export default class Trainer extends Phaser.GameObjects.Container {
     }
 
     const party = this.scene.getEnemyParty();
-    const nonFaintedPartyMembers = party.slice(this.scene.currentBattle.getBattlerCount()).filter(p => !p.isFainted()).filter(p => !trainerSlot || p.trainerSlot === trainerSlot);
-    const partyMemberScores = nonFaintedPartyMembers.map(p => {
-      const playerField = this.scene.getPlayerField();
+    const nonFaintedLegalPartyMembers = party.slice(this.scene.currentBattle.getBattlerCount()).filter(p => p.isAllowedInBattle()).filter(p => !trainerSlot || p.trainerSlot === trainerSlot);
+    const partyMemberScores = nonFaintedLegalPartyMembers.map(p => {
+      const playerField = this.scene.getPlayerField().filter(p => p.isAllowedInBattle());
       let score = 0;
-      for (const playerPokemon of playerField) {
-        score += p.getMatchupScore(playerPokemon);
-        if (playerPokemon.species.legendary) {
-          score /= 2;
+
+      if (playerField.length > 0) {
+        for (const playerPokemon of playerField) {
+          score += p.getMatchupScore(playerPokemon);
+          if (playerPokemon.species.legendary) {
+            score /= 2;
+          }
+        }
+        score /= playerField.length;
+        if (forSwitch && !p.isOnField()) {
+          this.scene.arena.findTagsOnSide(t => t instanceof ArenaTrapTag, ArenaTagSide.ENEMY).map(t => score *= (t as ArenaTrapTag).getMatchupScoreMultiplier(p));
         }
       }
-      score /= playerField.length;
-      if (forSwitch && !p.isOnField()) {
-        this.scene.arena.findTagsOnSide(t => t instanceof ArenaTrapTag, ArenaTagSide.ENEMY).map(t => score *= (t as ArenaTrapTag).getMatchupScoreMultiplier(p));
-      }
+
       return [party.indexOf(p), score];
     }) as [integer, integer][];
 
