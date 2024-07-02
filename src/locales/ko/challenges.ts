@@ -23,4 +23,10 @@ export const challenges: TranslationEntries = {
     "desc_default": "선택한 타입의 포켓몬만 사용할 수 있습니다."
     //type in pokemon-info
   },
+  "eeveeOnly": {
+    "name": "Eevee only",
+    "desc": "You can use only Eevee in this challenge",
+    "value.0": "Off",
+    "value.1": "On",
+  }
 } as const;

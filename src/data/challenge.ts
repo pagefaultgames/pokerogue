@@ -47,6 +47,12 @@ export enum ChallengeType {
    *             [1] {@link FixedBattleConfig} A new fixed battle. It'll be modified if a battle exists.
   */
   FIXED_BATTLES,
+
+  /**
+   * Allow to use only duplicate species
+   * @param args [0] {@link Utils.BooleanHolder} Sets to false if illegal, pass in true.
+  */
+  DUPLICATE_SPECIES,
 }
 
 /**
@@ -634,6 +640,79 @@ export class LowerStarterPointsChallenge extends Challenge {
   }
 }
 
+export class EeveeOnlyChallenge extends Challenge {
+  constructor() {
+    super(Challenges.EEVEE_ONLY, 1);
+    this.addChallengeType(ChallengeType.POKEMON_IN_BATTLE);
+    this.addChallengeType(ChallengeType.STARTER_CHOICE);
+    this.addChallengeType(ChallengeType.STARTER_POINTS);
+    this.addChallengeType(ChallengeType.DUPLICATE_SPECIES);
+  }
+
+  getValue(overrideValue?: integer): string {
+    if (overrideValue === undefined) {
+      overrideValue = this.value;
+    }
+    return i18next.t(`challenges:eeveeOnly.value.${this.value}`);
+  }
+
+  getDescription(overrideValue?: integer): string {
+    if (overrideValue === undefined) {
+      overrideValue = this.value;
+    }
+
+    return i18next.t("challenges:eeveeOnly.desc");
+  }
+
+  apply(challlengeType: ChallengeType, args: any[]): boolean {
+    if (this.value === 0) {
+      return false;
+    }
+
+    switch (challlengeType) {
+    case ChallengeType.POKEMON_IN_BATTLE:
+      const pokemon = args[0] as Pokemon;
+      const isValidPokemon = args[1] as Utils.BooleanHolder;
+      if (pokemon.isPlayer() && (pokemon.species.getRootSpeciesId() !== Species.EEVEE || (pokemon.isFusion() && pokemon.species.getRootSpeciesId() !== Species.EEVEE))) {
+        isValidPokemon.value = false;
+        return true;
+      }
+      break;
+    case ChallengeType.STARTER_CHOICE:
+      const species = args[0] as PokemonSpecies;
+      const isValidStarter = args[1] as Utils.BooleanHolder;
+      if (species.getRootSpeciesId() !== Species.EEVEE) {
+        isValidStarter.value = false;
+        return true;
+      }
+      break;
+    case ChallengeType.STARTER_POINTS:
+      const points = args[0] as Utils.NumberHolder;
+      points.value = 24;
+      return true;
+    case ChallengeType.DUPLICATE_SPECIES:
+      const duplicateSpecies = args[0] as Utils.BooleanHolder;
+      duplicateSpecies.value = true;
+      return true;
+    }
+    return false;
+  }
+
+  static loadChallenge(source: EeveeOnlyChallenge | any): EeveeOnlyChallenge {
+    const newChallenge = new EeveeOnlyChallenge();
+    newChallenge.value = source.value;
+    newChallenge.severity = source.severity;
+    return newChallenge;
+  }
+
+  /**
+   * @overrides
+   */
+  getDifficulty(): number {
+    return this.value > 0 ? 1 : 0;
+  }
+}
+
 /**
  * Apply all challenges of a given challenge type.
  * @param {GameMode} gameMode The current game mode
@@ -661,6 +740,8 @@ export function copyChallenge(source: Challenge | any): Challenge {
     return LowerStarterMaxCostChallenge.loadChallenge(source);
   case Challenges.LOWER_STARTER_POINTS:
     return LowerStarterPointsChallenge.loadChallenge(source);
+  case Challenges.EEVEE_ONLY:
+    return EeveeOnlyChallenge.loadChallenge(source);
   }
   throw new Error("Unknown challenge copied");
 }
@@ -674,5 +755,6 @@ export function initChallenges() {
     // new LowerStarterMaxCostChallenge(),
     // new LowerStarterPointsChallenge(),
     // new FreshStartChallenge()
+    new EeveeOnlyChallenge(),
   );
 }

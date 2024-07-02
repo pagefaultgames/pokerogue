@@ -22,4 +22,10 @@ export const challenges: TranslationEntries = {
     "desc": "Você só pode user Pokémon do tipo {{type}}.",
     "desc_default": "Você só pode user Pokémon de um único tipo."
   },
+  "eeveeOnly": {
+    "name": "Eevee only",
+    "desc": "You can use only Eevee in this challenge",
+    "value.0": "Off",
+    "value.1": "On",
+  }
 } as const;
