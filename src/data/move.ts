@@ -2609,7 +2609,7 @@ export class HpSplitAttr extends MoveEffectAttr {
         return resolve(false);
       }
 
-      const infoUpdates = [];
+      const infoUpdates: Promise<void>[] = [];
 
       const hpValue = Math.floor((target.hp + user.hp) / 2);
       if (user.hp < hpValue) {
