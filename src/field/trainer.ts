@@ -249,7 +249,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
       }
 
       const level = new Utils.IntegerHolder(Math.ceil(baseLevel * multiplier) + levelOffset);
-      applyChallenges(gameMode, ChallengeType.AI_LEVEL, level, 0, true, false);
+      applyChallenges(gameMode, ChallengeType.AI_LEVEL, level, gameMode.getMaxExpLevel(waveIndex), true, false);
       ret.push(level.value);
     }
 
