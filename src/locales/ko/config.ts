@@ -1,3 +1,5 @@
+import { common } from "#app/locales/ko/common.js";
+import { settings } from "#app/locales/ko/settings.js";
 import { ability } from "./ability";
 import { abilityTriggers } from "./ability-trigger";
 import { PGFachv, PGMachv } from "./achv";
@@ -28,8 +30,10 @@ import { menuUiHandler } from "./menu-ui-handler";
 import { modifierType } from "./modifier-type";
 import { move } from "./move";
 import { nature } from "./nature";
+import { partyUiHandler } from "./party-ui-handler";
 import { pokeball } from "./pokeball";
 import { pokemon } from "./pokemon";
+import { fusionAffixes } from "./pokemon-fusion-affixes";
 import { pokemonInfo } from "./pokemon-info";
 import { pokemonInfoContainer } from "./pokemon-info-container";
 import { saveSlotSelectUiHandler } from "./save-slot-select-ui-handler";
@@ -39,10 +43,6 @@ import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { weather } from "./weather";
-import { partyUiHandler } from "./party-ui-handler";
-import { settings } from "#app/locales/ko/settings.js";
-import { common } from "#app/locales/ko/common.js";
-
 export const koConfig = {
   ability: ability,
   abilityTriggers: abilityTriggers,
@@ -74,8 +74,10 @@ export const koConfig = {
   modifierType: modifierType,
   move: move,
   nature: nature,
+  partyUiHandler: partyUiHandler,
   pokeball: pokeball,
   pokemon: pokemon,
+  fusionAffixes: fusionAffixes,
   pokemonInfo: pokemonInfo,
   pokemonInfoContainer: pokemonInfoContainer,
   saveSlotSelectUiHandler: saveSlotSelectUiHandler,
@@ -88,5 +90,4 @@ export const koConfig = {
   tutorial: tutorial,
   voucher: voucher,
   weather: weather,
-  partyUiHandler: partyUiHandler
 };
