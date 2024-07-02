@@ -24,9 +24,9 @@ export const challenges: TranslationEntries = {
     // types in pokemon-info
   },
   "eeveeOnly": {
-    "name": "Eevee only",
-    "desc": "You can use only Eevee in this challenge",
-    "value.0": "Off",
-    "value.1": "On",
+    "name": "Nur-Evoli",
+    "desc": "Du kannst nur Evoli in dieser Herausforderung verwenden.",
+    "value.0": "Aus",
+    "value.1": "An",
   }
 } as const;
