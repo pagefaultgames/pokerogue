@@ -1,5 +1,3 @@
-import { common } from "./common.js";
-import { settings } from "./settings.js";
 import { ability } from "./ability";
 import { abilityTriggers } from "./ability-trigger";
 import { PGFachv, PGMachv } from "./achv";
@@ -10,6 +8,7 @@ import { bgmName } from "./bgm-name";
 import { biome } from "./biome";
 import { challenges } from "./challenges";
 import { commandUiHandler } from "./command-ui-handler";
+import { common } from "./common";
 import {
   PGFbattleSpecDialogue,
   PGFdialogue,
@@ -37,6 +36,7 @@ import { pokemon } from "./pokemon";
 import { pokemonInfo } from "./pokemon-info";
 import { pokemonInfoContainer } from "./pokemon-info-container";
 import { saveSlotSelectUiHandler } from "./save-slot-select-ui-handler";
+import { settings } from "./settings";
 import { splashMessages } from "./splash-messages";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
 import { statusEffect } from "./status-effect";
@@ -92,5 +92,5 @@ export const enConfig = {
   trainerNames: trainerNames,
   tutorial: tutorial,
   voucher: voucher,
-  weather: weather,
+  weather: weather
 };
