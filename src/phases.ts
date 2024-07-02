@@ -65,7 +65,7 @@ import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
-import { applyChallenges, ChallengeType } from "./data/challenge";
+import { applyChallenges, ChallengeType, FreshStartChallenge } from "./data/challenge";
 
 
 export class LoginPhase extends Phase {
@@ -607,7 +607,9 @@ export class SelectStarterPhase extends Phase {
       if (starter.passive) {
         starterPokemon.passive = true;
       }
-      starterPokemon.luck = this.scene.gameData.getDexAttrLuck(this.scene.gameData.dexData[starter.species.speciesId].caughtAttr);
+      if (!this.scene.gameMode.challenges.some(c => c instanceof FreshStartChallenge && c.value > 0)) {
+        starterPokemon.luck = this.scene.gameData.getDexAttrLuck(this.scene.gameData.dexData[starter.species.speciesId].caughtAttr);
+      }
       if (starter.pokerus) {
         starterPokemon.pokerus = true;
       }

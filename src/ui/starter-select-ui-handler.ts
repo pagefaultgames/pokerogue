@@ -2489,6 +2489,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               moveset: thisObj.starterMovesets[i],
               pokerus: !![ 0, 1, 2 ].filter(n => thisObj.pokerusGens[n] === starterSpecies.generation - 1 && thisObj.pokerusCursors[n] === thisObj.genSpecies[starterSpecies.generation - 1].indexOf(starterSpecies)).length
             };
+            Challenge.applyChallenges(thisObj.scene.gameMode, Challenge.ChallengeType.STARTER_MODIFY, starterData);
             return starterData;
           }));
         };
