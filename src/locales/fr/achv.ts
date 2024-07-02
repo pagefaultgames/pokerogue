@@ -265,8 +265,8 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "Hey ! Listen !",
   },
   "EEVEE_TRAINER": {
-    name: "Eevee Trainer",
-    description: "Complete Eevee Only challenge.",
+    name: "RP Pania",
+    description: "Terminer un challenge Évoli.",
   },
 } as const;
 
