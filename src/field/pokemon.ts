@@ -153,7 +153,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
       this.nature = dataSource.nature || 0 as Nature;
       this.natureOverride = dataSource.natureOverride !== undefined ? dataSource.natureOverride : -1;
-      this.moveset = dataSource.moveset;
+      this.moveset = dataSource.moveset.slice(0, this.getMaxMoveSlots());
       this.status = dataSource.status;
       this.friendship = dataSource.friendship !== undefined ? dataSource.friendship : this.species.baseFriendship;
       this.metLevel = dataSource.metLevel || 5;
@@ -520,6 +520,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return [];
     }
     return this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && (m as PokemonHeldItemModifier).pokemonId === this.id, this.isPlayer()) as PokemonHeldItemModifier[];
+  }
+
+  /**
+   * Used in case a challenge would vary the amount of move slots.
+   * If the player would catch a pokemon with more than 4 moves only the first four are kept.
+   * @returns The amount of move slots this pokemon has.
+   */
+  getMaxMoveSlots(): number {
+    return 4;
   }
 
   updateScale(): void {
@@ -1569,7 +1578,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
 
-    while (baseWeights.length > this.moveset.length && this.moveset.length < 4) {
+    while (baseWeights.length > this.moveset.length && this.moveset.length < this.getMaxMoveSlots()) {
       if (this.hasTrainer()) {
         // Sqrt the weight of any damaging moves with overlapping types. This is about a 0.05 - 0.1 multiplier.
         // Other damaging moves 2x weight if 0-1 damaging moves, 0.5x if 2, 0.125x if 3. These weights double if STAB.
@@ -3406,15 +3415,16 @@ export class EnemyPokemon extends Pokemon {
     }
   }
 
+  getMaxMoveSlots(): number {
+    const moveSlots = new Utils.IntegerHolder(4);
+    applyChallenges(this.scene.gameMode, ChallengeType.AI_MOVE_SLOTS, moveSlots);
+    return moveSlots.value;
+  }
+
   generateAndPopulateMoveset(formIndex?: integer): void {
     switch (true) {
     case (this.species.speciesId === Species.SMEARGLE):
-      this.moveset = [
-        new PokemonMove(Moves.SKETCH),
-        new PokemonMove(Moves.SKETCH),
-        new PokemonMove(Moves.SKETCH),
-        new PokemonMove(Moves.SKETCH)
-      ];
+      this.moveset = Array(this.getMaxMoveSlots()).fill(0).map(() => new PokemonMove(Moves.SKETCH));
       break;
     case (this.species.speciesId === Species.ETERNATUS):
       this.moveset = (formIndex !== undefined ? formIndex : this.formIndex)
@@ -3422,14 +3432,17 @@ export class EnemyPokemon extends Pokemon {
           new PokemonMove(Moves.DYNAMAX_CANNON),
           new PokemonMove(Moves.CROSS_POISON),
           new PokemonMove(Moves.FLAMETHROWER),
-          new PokemonMove(Moves.RECOVER, 0, -4)
+          new PokemonMove(Moves.RECOVER, 0, -4),
+          new PokemonMove(Moves.SHADOW_BALL)
         ]
         : [
           new PokemonMove(Moves.ETERNABEAM),
           new PokemonMove(Moves.SLUDGE_BOMB),
           new PokemonMove(Moves.DRAGON_DANCE),
-          new PokemonMove(Moves.COSMIC_POWER)
+          new PokemonMove(Moves.COSMIC_POWER),
+          new PokemonMove(Moves.FLAMETHROWER)
         ];
+      this.moveset = this.moveset.slice(0, this.getMaxMoveSlots());
       break;
     default:
       super.generateAndPopulateMoveset();

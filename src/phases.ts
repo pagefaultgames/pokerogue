@@ -4548,7 +4548,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
       return this.end();
     }
 
-    const emptyMoveIndex = pokemon.getMoveset().length < 4
+    const emptyMoveIndex = pokemon.getMoveset().length < pokemon.getMaxMoveSlots()
       ? pokemon.getMoveset().length
       : pokemon.getMoveset().findIndex(m => m === null);
 

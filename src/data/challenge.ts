@@ -491,7 +491,7 @@ export class FreshStartChallenge extends Challenge {
     pokemon.luck = 0; // No luck
     pokemon.shiny = false; // Not shiny
     pokemon.variant = 0; // Reset shiny variant
-    pokemon.moveset = pokemon.getSpeciesForm(true).getLevelMoves().filter(m => m[0] <= 5).slice(0, 4).map(m => new PokemonMove(m[1])); // No egg moves
+    pokemon.moveset = pokemon.getSpeciesForm(true).getLevelMoves().filter(m => m[0] <= 5).slice(0, pokemon.getMaxMoveSlots()).map(m => new PokemonMove(m[1])); // No egg moves
     return true;
   }
 
