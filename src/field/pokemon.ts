@@ -1003,6 +1003,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         (Overrides.OPP_PASSIVE_ABILITY_OVERRIDE !== Abilities.NONE && !this.isPlayer())) {
       return true;
     }
+    const hasChallengePassive = new Utils.BooleanHolder(false);
+    if (applyChallenges(this.scene.gameMode, ChallengeType.PASSIVE_ACCESS, this, hasChallengePassive)) {
+      return hasChallengePassive.value;
+    }
     return this.passive || this.isBoss();
   }
 
