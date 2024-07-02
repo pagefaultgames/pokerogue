@@ -23,7 +23,7 @@ import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HelpingHandTag
 import { WeatherType } from "../data/weather";
 import { TempBattleStat } from "../data/temp-battle-stat";
 import { ArenaTagSide, WeakenMoveScreenTag, WeakenMoveTypeTag } from "../data/arena-tag";
-import { Ability, AbAttr, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, MoveTypeChangeAttr, PreApplyBattlerTagAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldBattleStatMultiplierAbAttrs, FieldMultiplyBattleStatAbAttr, AllyMoveCategoryPowerBoostAbAttr, FieldMoveTypePowerBoostAbAttr, AddSecondStrikeAbAttr } from "../data/ability";
+import { Ability, AbAttr, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, MoveTypeChangeAttr, PreApplyBattlerTagAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldBattleStatMultiplierAbAttrs, FieldMultiplyBattleStatAbAttr, AllyMoveCategoryPowerBoostAbAttr, FieldMoveTypePowerBoostAbAttr, AddSecondStrikeAbAttr, MoveAbilityBypassAbAttr } from "../data/ability";
 import PokemonData from "../system/pokemon-data";
 import { BattlerIndex } from "../battle";
 import { Mode } from "../ui/ui";
@@ -2483,7 +2483,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     switch (effect) {
     case StatusEffect.POISON:
     case StatusEffect.TOXIC:
-      // Check if the Pokemon is immune to Poison/Toxic or if the source pokemon is canceling the immunity
+      // Check if the Pokemon is immune to Poison/Toxic due to type or if the source pokemon is canceling the immunity
       const poisonImmunity = types.map(defType => {
         // Check if the Pokemon is not immune to Poison/Toxic
         if (defType !== Type.POISON && defType !== Type.STEEL) {
@@ -2534,6 +2534,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     applyPreSetStatusAbAttrs(StatusEffectImmunityAbAttr, this, effect, cancelled, quiet);
 
     if (cancelled.value) {
+      if (sourcePokemon && sourcePokemon === this) {
+        const uncancel = new Utils.BooleanHolder(false);
+        applyAbAttrs(MoveAbilityBypassAbAttr, sourcePokemon, uncancel);
+        return uncancel.value;
+      }
       return false;
     }
 
