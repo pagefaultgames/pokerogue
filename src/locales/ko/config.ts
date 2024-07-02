@@ -2,6 +2,7 @@ import { ability } from "./ability";
 import { abilityTriggers } from "./ability-trigger";
 import { PGFachv, PGMachv } from "./achv";
 import { battle } from "./battle";
+import { battleInfo } from "./battle-info";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
 import { berry } from "./berry";
 import { bgmName } from "./bgm-name";
@@ -47,6 +48,7 @@ export const koConfig = {
   ability: ability,
   abilityTriggers: abilityTriggers,
   battle: battle,
+  battleInfo: battleInfo,
   battleMessageUiHandler: battleMessageUiHandler,
   berry: berry,
   bgmName: bgmName,
