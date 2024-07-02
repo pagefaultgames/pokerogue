@@ -5153,7 +5153,7 @@ export class SketchAttr extends MoveEffectAttr {
       return false;
     }
 
-    const targetMoves = target.getMoveHistory().filter(m => !m.virtual);
+    const targetMoves = target.getLastXMoves(1).filter(m => !m.virtual);
     if (!targetMoves.length) {
       return false;
     }
