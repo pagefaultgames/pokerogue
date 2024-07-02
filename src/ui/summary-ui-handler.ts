@@ -336,8 +336,8 @@ export default class SummaryUiHandler extends UiHandler {
 
     this.candyShadow.setCrop(0,0,16, candyCropY);
 
-    const doubleShiny = isFusion && this.pokemon.shiny && this.pokemon.fusionShiny;
-    const baseVariant = !doubleShiny ? this.pokemon.getVariant() : this.pokemon.variant;
+    const doubleShiny = this.pokemon.isDoubleShiny(false);
+    const baseVariant = this.pokemon.getBaseVariant(doubleShiny);
 
     this.shinyIcon.setPositionRelative(this.nameText, this.nameText.displayWidth + (this.splicedIcon.visible ? this.splicedIcon.displayWidth + 1 : 0) + 1, 3);
     this.shinyIcon.setTexture(`shiny_star${doubleShiny ? "_1" : ""}`);
@@ -354,7 +354,7 @@ export default class SummaryUiHandler extends UiHandler {
     this.fusionShinyIcon.setPosition(this.shinyIcon.x, this.shinyIcon.y);
     this.fusionShinyIcon.setVisible(doubleShiny);
     if (isFusion) {
-      this.fusionShinyIcon.setTint(getVariantTint(this.pokemon.fusionVariant));
+      this.fusionShinyIcon.setTint(getVariantTint(this.pokemon.illusion.fusionVariant ?? this.pokemon.fusionVariant));
     }
 
     this.pokeball.setFrame(getPokeballAtlasKey(this.pokemon.pokeball));

@@ -79,7 +79,7 @@ export const ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
 export const STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
 export const GENDER_OVERRIDE: Gender = null;
-export const MOVESET_OVERRIDE: Array<Moves> = [];
+export const MOVESET_OVERRIDE: Array<Moves> = [Moves.WORRY_SEED, Moves.SOAK];
 export const SHINY_OVERRIDE: boolean = false;
 export const VARIANT_OVERRIDE: Variant = 0;
 

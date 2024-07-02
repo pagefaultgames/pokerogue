@@ -1084,7 +1084,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     }
 
     if (this.pokemon.isShiny()) {
-      const doubleShiny = this.pokemon.isFusion() && this.pokemon.shiny && this.pokemon.fusionShiny;
+      const doubleShiny = this.pokemon.isDoubleShiny(false);
 
       const shinyStar = this.scene.add.image(0, 0, `shiny_star_small${doubleShiny ? "_1" : ""}`);
       shinyStar.setOrigin(0, 0);
@@ -1097,7 +1097,7 @@ class PartySlot extends Phaser.GameObjects.Container {
         const fusionShinyStar = this.scene.add.image(0, 0, "shiny_star_small_2");
         fusionShinyStar.setOrigin(0, 0);
         fusionShinyStar.setPosition(shinyStar.x, shinyStar.y);
-        fusionShinyStar.setTint(getVariantTint(this.pokemon.fusionVariant));
+        fusionShinyStar.setTint(getVariantTint(this.pokemon.illusion.fusionVariant ?? this.pokemon.fusionVariant));
 
         slotInfoContainer.add(fusionShinyStar);
       }

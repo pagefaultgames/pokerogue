@@ -1422,7 +1422,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
 
   summon(): void {
     const pokemon = this.getPokemon();
-    const pokeball = this.scene.addFieldSprite(this.player ? 36 : 248, this.player ? 80 : 44, "pb", getPokeballAtlasKey(pokemon.pokeball));
+    const pokeball = this.scene.addFieldSprite(this.player ? 36 : 248, this.player ? 80 : 44, "pb", getPokeballAtlasKey(pokemon.illusion.pokeball ?? pokemon.pokeball));
     pokeball.setVisible(false);
     pokeball.setOrigin(0.5, 0.625);
     this.scene.field.add(pokeball);
@@ -1468,7 +1468,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
               }
               this.scene.currentBattle.seenEnemyPartyMemberIds.add(pokemon.id);
             }
-            addPokeballOpenParticles(this.scene, pokemon.x, pokemon.y - 16, pokemon.pokeball);
+            addPokeballOpenParticles(this.scene, pokemon.x, pokemon.y - 16, pokemon.illusion.pokeball ?? pokemon.pokeball);
             this.scene.updateModifiers(this.player);
             this.scene.updateFieldScale();
             pokemon.showInfo();
@@ -1476,7 +1476,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
             pokemon.setVisible(true);
             pokemon.getSprite().setVisible(true);
             pokemon.setScale(0.5);
-            pokemon.tint(getPokeballTintColor(pokemon.pokeball));
+            pokemon.tint(getPokeballTintColor(pokemon.illusion.pokeball ?? pokemon.pokeball));
             pokemon.untint(250, "Sine.easeIn");
             this.scene.updateFieldScale();
             this.scene.tweens.add({
@@ -1575,7 +1575,7 @@ export class SwitchSummonPhase extends SummonPhase {
     );
     this.scene.playSound("pb_rel");
     pokemon.hideInfo();
-    pokemon.tint(getPokeballTintColor(pokemon.pokeball), 1, 250, "Sine.easeIn");
+    pokemon.tint(getPokeballTintColor(pokemon.illusion.pokeball ?? pokemon.pokeball), 1, 250, "Sine.easeIn");
     this.scene.tweens.add({
       targets: pokemon,
       duration: 250,

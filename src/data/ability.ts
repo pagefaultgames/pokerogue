@@ -1910,6 +1910,10 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
       target = targets[0];
     }
 
+    if (target.illusion.active) {
+      return false;
+    }
+
     pokemon.summonData.speciesForm = target.getSpeciesForm();
     pokemon.summonData.fusionSpeciesForm = target.getFusionSpeciesForm();
     pokemon.summonData.ability = target.getAbility().id;
@@ -3593,27 +3597,8 @@ export class IllusionPreSummonAbAttr extends PreSummonAbAttr {
    */
   applyPreSummon(pokemon: Pokemon, passive: boolean, party: Pokemon[], args: any[]): boolean | Promise<boolean> {
     if (pokemon.illusion.available) {
+      console.log(pokemon.illusion);
       return pokemon.generateIllusion(party);
-    } else {
-      return false;
-    }
-  }
-}
-
-export class IllusionPostTurnAbAttr extends PostTurnAbAttr {
-  /**
-   * Apply a new illusion after each turn if the illusion is available
-   *
-   * @param {Pokemon} pokemon - The Pokémon with the Illusion ability.
-   * @param {boolean} passive - Whether the ability is passive.
-   * @param {Pokemon[]} party - The party of the trainer's pokemon.
-   * @param {...any} args - Additional arguments.
-   * @returns {boolean} - Whether the illusion was applied.
-   */
-  applyPostTurn(pokemon: Pokemon, passive: boolean, party: Pokemon[]) {
-    if (pokemon.hasTrainer() && !pokemon.isOnField() && pokemon.illusion.available) {
-      pokemon.generateIllusion(party);
-      return true;
     } else {
       return false;
     }
@@ -3633,22 +3618,13 @@ export class IllusionBreakAbAttr extends PostDefendAbAttr {
    * @returns {boolean} - Whether the illusion was destroyed.
    */
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean | Promise<boolean> {
+
+    //[HitResult.EFFECTIVE, HitResult.SUPER_EFFECTIVE, HitResult.NOT_VERY_EFFECTIVE, HitResult.ONE_HIT_KO]
     if (hitResult > 4) {
       return false;
     }
-    //icito
-    /*
-    pokemon.illusion.active = false;
-    pokemon.name = pokemon.illusion.name;
-    pokemon.shiny = pokemon.illusion.shiny;
-    pokemon.variant = pokemon.illusion.variant;
-    pokemon.fusionVariant = pokemon.illusion.fusionVariant;
-    pokemon.scene.playSound("PRSFX- Transform");
-    pokemon.loadAssets(false).then(() => pokemon.playAnim());
-    */
     pokemon.breakIllusion();
     pokemon.scene.queueMessage(getPokemonMessage(pokemon, "'s illusion wore off!"));
-    //pokemon.updateInfo(true);
     return true;
   }
 }
@@ -4379,7 +4355,6 @@ export function initAbilities() {
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       //The pokemon genrate an illusion if it's available
-      //.conditionalAttr((pokemon) => pokemon.illusion.available, IllusionPostTurnAbAttr, false)
       .conditionalAttr((pokemon) => pokemon.illusion.available, IllusionPreSummonAbAttr, false)
       //Illusion is not available after summon
       .attr(IllusionDisableAbAttr, false)

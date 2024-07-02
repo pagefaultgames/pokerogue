@@ -5051,7 +5051,9 @@ export class AbilityChangeAttr extends MoveEffectAttr {
     }
 
     (this.selfTarget ? user : target).summonData.ability = this.ability;
-
+    if ((this.selfTarget ? user : target).breakIllusion()) {
+      (this.selfTarget ? user : target).scene.queueMessage(getPokemonMessage((this.selfTarget ? user : target), "'s illusion wore off!"));
+    }
     user.scene.queueMessage("The " + getPokemonMessage((this.selfTarget ? user : target), ` acquired\n${allAbilities[this.ability].name}!`));
 
     return true;
@@ -5195,7 +5197,8 @@ export class SuppressAbilitiesIfActedAttr extends MoveEffectAttr {
 export class TransformAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
-      if (!super.apply(user, target, move, args)) {
+      if (!super.apply(user, target, move, args) || target.illusion.active || user.illusion.active) {
+        user.scene.queueMessage("But it failed!");
         return resolve(false);
       }
 

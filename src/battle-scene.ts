@@ -813,7 +813,7 @@ export default class BattleScene extends SceneBase {
 
     container.add(icon);
 
-    if (pokemon.isFusion()) {
+    if (pokemon.isFusion(true)) {
       const fusionIcon = this.add.sprite(0, 0, pokemon.getFusionIconAtlasKey(ignoreOverride));
       fusionIcon.setOrigin(0.5, 0);
       fusionIcon.setFrame(pokemon.getFusionIconId(true));
