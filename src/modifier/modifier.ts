@@ -469,6 +469,7 @@ export class TerastallizeAccessModifier extends PersistentModifier {
 
 export abstract class PokemonHeldItemModifier extends PersistentModifier {
   public pokemonId: integer;
+  public isTransferrable: boolean = true;
 
   constructor(type: ModifierType, pokemonId: integer, stackCount: integer) {
     super(type, stackCount);
@@ -488,10 +489,6 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
 
   shouldApply(args: any[]): boolean {
     return super.shouldApply(args) && args.length && args[0] instanceof Pokemon && (this.pokemonId === -1 || (args[0] as Pokemon).id === this.pokemonId);
-  }
-
-  getTransferrable(withinParty: boolean) {
-    return true;
   }
 
   isIconVisible(scene: BattleScene): boolean {
@@ -605,6 +602,7 @@ export abstract class LapsingPokemonHeldItemModifier extends PokemonHeldItemModi
 
 export class TerastallizeModifier extends LapsingPokemonHeldItemModifier {
   public teraType: Type;
+  public isTransferrable: boolean = false;
 
   constructor(type: ModifierTypes.TerastallizeModifierType, pokemonId: integer, teraType: Type, battlesLeft?: integer, stackCount?: integer) {
     super(type, pokemonId, battlesLeft || 10, stackCount);
@@ -648,10 +646,6 @@ export class TerastallizeModifier extends LapsingPokemonHeldItemModifier {
     return ret;
   }
 
-  getTransferrable(withinParty: boolean): boolean {
-    return false;
-  }
-
   getScoreMultiplier(): number {
     return 1.25;
   }
@@ -663,6 +657,7 @@ export class TerastallizeModifier extends LapsingPokemonHeldItemModifier {
 
 export class PokemonBaseStatModifier extends PokemonHeldItemModifier {
   protected stat: Stat;
+  public isTransferrable: boolean = false;
 
   constructor(type: ModifierTypes.PokemonBaseStatBoosterModifierType, pokemonId: integer, stat: Stat, stackCount?: integer) {
     super(type, pokemonId, stackCount);
@@ -692,10 +687,6 @@ export class PokemonBaseStatModifier extends PokemonHeldItemModifier {
     args[1][this.stat] = Math.min(Math.floor(args[1][this.stat] * (1 + this.getStackCount() * 0.1)), 999999);
 
     return true;
-  }
-
-  getTransferrable(_withinParty: boolean): boolean {
-    return false;
   }
 
   getScoreMultiplier(): number {
@@ -1877,6 +1868,7 @@ export class PokemonMultiHitModifier extends PokemonHeldItemModifier {
 export class PokemonFormChangeItemModifier extends PokemonHeldItemModifier {
   public formChangeItem: FormChangeItem;
   public active: boolean;
+  public isTransferrable: boolean = false;
 
   constructor(type: ModifierTypes.FormChangeItemModifierType, pokemonId: integer, formChangeItem: FormChangeItem, active: boolean, stackCount?: integer) {
     super(type, pokemonId, stackCount);
@@ -1913,10 +1905,6 @@ export class PokemonFormChangeItemModifier extends PokemonHeldItemModifier {
     }
 
     return ret;
-  }
-
-  getTransferrable(withinParty: boolean) {
-    return withinParty;
   }
 
   getMaxHeldItemCount(pokemon: Pokemon): integer {
@@ -2136,12 +2124,11 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
       return false;
     }
 
-    const withinParty = pokemon.isPlayer() === targetPokemon.isPlayer();
     const poolType = pokemon.isPlayer() ? ModifierTypes.ModifierPoolType.PLAYER : pokemon.hasTrainer() ? ModifierTypes.ModifierPoolType.TRAINER : ModifierTypes.ModifierPoolType.WILD;
 
     const transferredModifierTypes: ModifierTypes.ModifierType[] = [];
     const itemModifiers = pokemon.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-        && (m as PokemonHeldItemModifier).pokemonId === targetPokemon.id && m.getTransferrable(withinParty), targetPokemon.isPlayer()) as PokemonHeldItemModifier[];
+        && (m as PokemonHeldItemModifier).pokemonId === targetPokemon.id && m.isTransferrable, targetPokemon.isPlayer()) as PokemonHeldItemModifier[];
     let highestItemTier = itemModifiers.map(m => m.type.getOrInferTier(poolType)).reduce((highestTier, tier) => Math.max(tier, highestTier), 0);
     let tierItemModifiers = itemModifiers.filter(m => m.type.getOrInferTier(poolType) === highestItemTier);
 
@@ -2181,6 +2168,7 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
 }
 
 export class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
+  public isTransferrable: boolean = false;
   constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
     super(type, pokemonId, stackCount);
   }
@@ -2191,10 +2179,6 @@ export class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
 
   clone(): TurnHeldItemTransferModifier {
     return new TurnHeldItemTransferModifier(this.type, this.pokemonId, this.stackCount);
-  }
-
-  getTransferrable(withinParty: boolean) {
-    return withinParty;
   }
 
   getTransferredItemCount(): integer {
