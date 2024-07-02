@@ -667,12 +667,12 @@ export class EeveeOnlyChallenge extends Challenge {
     return i18next.t("challenges:eeveeOnly.desc");
   }
 
-  apply(challlengeType: ChallengeType, args: any[]): boolean {
+  apply(challengeType: ChallengeType, args: any[]): boolean {
     if (this.value === 0) {
       return false;
     }
 
-    switch (challlengeType) {
+    switch (challengeType) {
     case ChallengeType.POKEMON_IN_BATTLE:
       const pokemon = args[0] as Pokemon;
       const isValidPokemon = args[1] as Utils.BooleanHolder;
