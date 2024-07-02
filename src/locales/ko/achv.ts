@@ -265,8 +265,8 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "설마 자시안으로?",
   },
   "EEVEE_TRAINER": {
-    name: "Eevee Trainer",
-    description: "Complete Eevee Only Eevee challenge.",
+    name: "이브이 트레이너",
+    description: "이브이 챌린지 모드 클리어.",
   },
 } as const;
 
