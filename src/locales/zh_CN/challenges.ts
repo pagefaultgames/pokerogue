@@ -23,9 +23,9 @@ export const challenges: TranslationEntries = {
     "desc_default": "你只能使用所选\n属性的宝可梦"
   },
   "eeveeOnly": {
-    "name": "Eevee only",
-    "desc": "You can use only Eevee in this challenge",
-    "value.0": "Off",
-    "value.1": "On",
+    "name": "伊布限定",
+    "desc": "在这个挑战中你只能使用伊布",
+    "value.0": "禁用",
+    "value.1": "启用",
   }
 } as const;

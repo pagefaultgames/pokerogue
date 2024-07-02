@@ -265,8 +265,8 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "林克，醒醒！",
   },
   "EEVEE_TRAINER": {
-    name: "Eevee Trainer",
-    description: "Complete Eevee Only challenge.",
+    name: "唯布独尊",
+    description: "完成伊布限定挑战。",
   },
 } as const;
 
