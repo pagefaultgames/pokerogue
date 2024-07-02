@@ -3301,10 +3301,14 @@ export class StatChangePhase extends PokemonPhase {
       }
 
       applyPostStatChangeAbAttrs(PostStatChangeAbAttr, pokemon, filteredStats, this.levels, this.selfTarget);
+
+      //Look for any other stat change phases; if this is the last one, do White Herb check
       const existingPhase = this.scene.findPhase(p => p instanceof StatChangePhase && p.battlerIndex === this.battlerIndex);
       if (!(existingPhase instanceof StatChangePhase)) {
+        // Apply White Herb if needed
         const whiteHerb = this.scene.applyModifier(PokemonResetNegativeStatStageModifier, this.player, pokemon) as PokemonResetNegativeStatStageModifier;
-        if (whiteHerb && Utils.randSeedInt(2)) {
+        // If the White Herb was applied, consume it
+        if (whiteHerb) {
           if (!--whiteHerb.stackCount) {
             this.scene.removeModifier(whiteHerb);
           }
