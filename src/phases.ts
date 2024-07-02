@@ -19,7 +19,7 @@ import { biomeLinks, getBiomeName } from "./data/biomes";
 import { ModifierTier } from "./modifier/modifier-tier";
 import { FusePokemonModifierType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, PokemonPpRestoreModifierType, PokemonPpUpModifierType, RememberMoveModifierType, TmModifierType, getDailyRunStarterModifiers, getEnemyBuffModifierForWave, getModifierType, getPlayerModifierTypeOptions, getPlayerShopModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { BattlerTagLapseType, CenterOfAttentionTag, EncoreTag, ProtectedTag, SemiInvulnerableTag, TrappedTag } from "./data/battler-tags";
+import { BattlerTagLapseType, CenterOfAttentionTag, DamagingTrapTag, EncoreTag, ProtectedTag, SemiInvulnerableTag, TrappedTag } from "./data/battler-tags";
 import { getPokemonMessage, getPokemonNameWithAffix } from "./messages";
 import { Starter } from "./ui/starter-select-ui-handler";
 import { Gender } from "./data/gender";
@@ -58,13 +58,13 @@ import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleSpec } from "#enums/battle-spec";
 import { BattleStyle } from "#enums/battle-style";
-import { BattlerTagType } from "#enums/battler-tag-type";
 import { Biome } from "#enums/biome";
 import { ExpNotification } from "#enums/exp-notification";
 import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
+import { BattlerTagType } from "./enums/battler-tag-type";
 
 const { t } = i18next;
 
@@ -2048,7 +2048,7 @@ export class CommandPhase extends FieldPhase {
           this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
         }, null, true);
       } else {
-        const trapTag = playerPokemon.findTag(t => t instanceof TrappedTag) as TrappedTag;
+        const trapTag = playerPokemon.findTag(t => t instanceof TrappedTag);
         const trapped = new Utils.BooleanHolder(false);
         const batonPass = isSwitch && args[0] as boolean;
         if (!batonPass) {
@@ -2063,7 +2063,9 @@ export class CommandPhase extends FieldPhase {
             this.scene.currentBattle.turnCommands[this.fieldIndex - 1].skip = true;
           }
         } else if (trapTag) {
-          if (trapTag.sourceMove === Moves.INGRAIN && this.scene.getPokemonById(trapTag.sourceId).isOfType(Type.GHOST)) {
+          const canSwitch = (trapTag.sourceMove === Moves.INGRAIN && this.scene.getPokemonById(trapTag.sourceId).isOfType(Type.GHOST)) ||
+                            (trapTag instanceof DamagingTrapTag && playerPokemon.isOfType(Type.GHOST));
+          if (canSwitch) {
             success = true;
             this.scene.currentBattle.turnCommands[this.fieldIndex] = isSwitch
               ? { command: Command.POKEMON, cursor: cursor, args: args }
