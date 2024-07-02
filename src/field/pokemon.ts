@@ -2262,11 +2262,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * If this Pokemon is using a multi-hit move, cancels all subsequent strikes
-   * @param {Pokemon} target If specified, this only cancels subsequent strikes against this Pokemon
+   * @param {Pokemon} target If specified, this only cancels subsequent strikes against the given target
    */
   stopMultiHit(target?: Pokemon): void {
     const effectPhase = this.scene.getCurrentPhase();
-    if (effectPhase instanceof MoveEffectPhase) {
+    if (effectPhase instanceof MoveEffectPhase && effectPhase.getUserPokemon() === this) {
       effectPhase.stopMultiHit(target);
     }
   }

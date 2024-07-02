@@ -671,7 +671,7 @@ export const move: MoveTranslationEntries = {
   },
   "thief": {
     name: "小偷",
-    effect: "攻击的同时盗取道具。当自\n己携带道具时，不会去盗取",
+    effect: "攻击的同时盗取对手的道具。",
   },
   "spiderWeb": {
     name: "蛛网",
