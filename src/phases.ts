@@ -65,7 +65,7 @@ import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
-import { applyChallenges } from "./data/challenge";
+import { applyChallenges, ChallengeType } from "./data/challenge";
 
 
 export class LoginPhase extends Phase {
