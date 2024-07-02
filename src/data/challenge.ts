@@ -653,7 +653,10 @@ export class EeveeOnlyChallenge extends Challenge {
     if (overrideValue === undefined) {
       overrideValue = this.value;
     }
-    return i18next.t(`challenges:eeveeOnly.value.${this.value}`);
+    if (overrideValue === 0) {
+      return i18next.t("challenges:off");
+    }
+    return i18next.t("challenges:on");
   }
 
   getDescription(overrideValue?: integer): string {

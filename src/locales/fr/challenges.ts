@@ -1,6 +1,8 @@
 import { TranslationEntries } from "#app/interfaces/locales";
 
 export const challenges: TranslationEntries = {
+  "on": "Activé",
+  "off": "Désactivé",
   "title": "Paramètres du Challenge",
   "illegalEvolution": "{{pokemon}} s’est transformé en Pokémon\ninéligible pour ce challenge !",
   "singleGeneration": {
@@ -26,7 +28,5 @@ export const challenges: TranslationEntries = {
   "eeveeOnly": {
     "name": "Évoli uniquement",
     "desc": "Vous ne pouvez choisir que des Évoli comme starters.",
-    "value.0": "Désactivé",
-    "value.1": "Activé",
   }
 } as const;

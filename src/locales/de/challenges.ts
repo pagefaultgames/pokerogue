@@ -1,6 +1,8 @@
 import { TranslationEntries } from "#app/interfaces/locales";
 
 export const challenges: TranslationEntries = {
+  "on": "An",
+  "off": "Aus",
   "title": "Herausforderungsmodifikatoren",
   "illegalEvolution": "{{pokemon}} hat sich in ein Pokémon verwandelt, dass für diese Herausforderung nicht zulässig ist!",
   "singleGeneration": {
@@ -26,7 +28,5 @@ export const challenges: TranslationEntries = {
   "eeveeOnly": {
     "name": "Nur-Evoli",
     "desc": "Du kannst nur Evoli in dieser Herausforderung verwenden.",
-    "value.0": "Aus",
-    "value.1": "An",
   }
 } as const;
