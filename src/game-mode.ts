@@ -248,12 +248,13 @@ export class GameMode implements GameModeConfig {
 
   /**
    * Gets the level cap for a given wave.
-   * @param waveIndex The current wave.
-   * @param ignoreLevelCap Whether to return the maximum possible cap instead of the wave based cap. Used for candies.
-   * @returns
+   * @param waveIndex {@link integer} The current wave.
+   * @param ignoreLevelCap {@link boolean} Whether to return the maximum possible cap instead of the wave based cap. Used for candies.
+   * @returns The level cap.
    */
   getMaxExpLevel(waveIndex: integer, ignoreLevelCap?: boolean): integer {
-    if (ignoreLevelCap) {
+    // Any wave index higher than this number would produce a level cap above the max safe integer.
+    if (ignoreLevelCap || waveIndex > 2165929110) {
       return Number.MAX_SAFE_INTEGER;
     }
     const difficultyWaveIndex = this.getWaveForDifficulty(Math.ceil(waveIndex / 10) * 10);
