@@ -885,7 +885,7 @@ export class SpeciesStatBoosterModifier extends StatBoosterModifier {
  * Applies Specific Type item boosts (e.g., Magnet)
  */
 export class AttackTypeBoosterModifier extends PokemonHeldItemModifier {
-  private moveType: Type;
+  public moveType: Type;
   private boostMultiplier: number;
 
   constructor(type: ModifierType, pokemonId: integer, moveType: Type, boostPercent: number, stackCount?: integer) {
@@ -1940,6 +1940,8 @@ export class MoneyRewardModifier extends ConsumableModifier {
     scene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
 
     scene.addMoney(moneyAmount.value);
+
+    scene.getParty().filter(p => p.species.speciesId === Species.GIMMIGHOUL).map(p => p.evoCounter++);
 
     return true;
   }
