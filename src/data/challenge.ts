@@ -174,7 +174,7 @@ export abstract class Challenge {
     if (overrideValue === undefined) {
       overrideValue = this.value;
     }
-    return `${i18next.t("challenges:usePokemon")}${i18next.t(`challenges:${this.geti18nKey()}.desc.${this.value}`)}`;
+    return `${i18next.t(`challenges:${this.geti18nKey()}.desc.${this.value}`)}`;
   }
 
   /**
