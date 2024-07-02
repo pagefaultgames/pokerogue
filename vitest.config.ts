@@ -5,7 +5,7 @@ export default defineProject(({ mode }) => ({
 	...defaultConfig,
 	test: {
 		name: "main",
-		include: ["./src/test/**/*.test.ts"],
+		include: ["./src/test/**/*.{test,spec}.ts"],
 		exclude: ["./src/test/pre.test.ts"],
 		setupFiles: ['./src/test/vitest.setup.ts'],
 		server: {
