@@ -3417,7 +3417,7 @@ export class EnemyPokemon extends Pokemon {
 
   getMaxMoveSlots(): number {
     const moveSlots = new Utils.IntegerHolder(4);
-    applyChallenges(this.scene.gameMode, ChallengeType.AI_MOVE_SLOTS, moveSlots);
+    applyChallenges(this.scene.gameMode, ChallengeType.AI_MOVE_SLOTS, this, moveSlots);
     return moveSlots.value;
   }
 

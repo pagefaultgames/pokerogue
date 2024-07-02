@@ -296,10 +296,11 @@ export abstract class Challenge {
 
   /**
    * An apply function for AI_MOVE_SLOTS challenges. Derived classes should alter this.
+   * @param pokemon {@link Pokemon} The pokemon that is being considered.
    * @param moveSlots {@link Utils.IntegerHolder} The amount of move slots.
    * @returns {@link boolean} Whether this function did anything.
    */
-  applyMoveSlot(moveSlots: Utils.IntegerHolder): boolean {
+  applyMoveSlot(pokemon: Pokemon, moveSlots: Utils.IntegerHolder): boolean {
     return false;
   }
 
@@ -578,8 +579,8 @@ export class HarderBossesChallenge extends Challenge {
     return false;
   }
 
-  applyMoveSlot(moveSlots: Utils.IntegerHolder): boolean {
-    if (this.value >= 2) {
+  applyMoveSlot(pokemon: Pokemon, moveSlots: Utils.IntegerHolder): boolean {
+    if (this.value >= 2 && !pokemon.isPlayer() && (pokemon.isBoss() || pokemon.hasTrainer())) {
       moveSlots.value = 5;
       return true;
     }
@@ -749,10 +750,11 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
  * Apply all challenges that modify how many move slots the AI has.
  * @param gameMode {@link GameMode} The current gameMode
  * @param challengeType {@link ChallengeType} ChallengeType.AI_MOVE_SLOTS
+ * @param pokemon {@link Pokemon} The pokemon being considered.
  * @param moveSlots {@link Utils.IntegerHolder} The amount of move slots.
  * @returns True if any challenge was successfully applied.
  */
-export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.AI_MOVE_SLOTS, moveSlots: Utils.IntegerHolder): boolean;
+export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.AI_MOVE_SLOTS, pokemon: Pokemon, moveSlots: Utils.IntegerHolder): boolean;
 /**
  * Apply all challenges that modify whether a pokemon has its passive.
  * @param gameMode {@link GameMode} The current gameMode
@@ -793,7 +795,7 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
         ret ||= c.applyLevelChange(args[0], args[1], args[2], args[3]);
         break;
       case ChallengeType.AI_MOVE_SLOTS:
-        ret ||= c.applyMoveSlot(args[0]);
+        ret ||= c.applyMoveSlot(args[0], args[1]);
         break;
       case ChallengeType.PASSIVE_ACCESS:
         ret ||= c.applyPassiveAccess(args[0], args[1]);
