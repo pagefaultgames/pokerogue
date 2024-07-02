@@ -469,7 +469,7 @@ export class TerastallizeAccessModifier extends PersistentModifier {
 
 export abstract class PokemonHeldItemModifier extends PersistentModifier {
   public pokemonId: integer;
-  public isTransferrable: boolean = true;
+  readonly isTransferrable: boolean = true;
 
   constructor(type: ModifierType, pokemonId: integer, stackCount: integer) {
     super(type, stackCount);
@@ -566,6 +566,7 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
 
 export abstract class LapsingPokemonHeldItemModifier extends PokemonHeldItemModifier {
   protected battlesLeft: integer;
+  readonly isTransferrable: boolean = false;
 
   constructor(type: ModifierTypes.ModifierType, pokemonId: integer, battlesLeft?: integer, stackCount?: integer) {
     super(type, pokemonId, stackCount);
@@ -602,7 +603,7 @@ export abstract class LapsingPokemonHeldItemModifier extends PokemonHeldItemModi
 
 export class TerastallizeModifier extends LapsingPokemonHeldItemModifier {
   public teraType: Type;
-  public isTransferrable: boolean = false;
+  readonly isTransferrable: boolean = false;
 
   constructor(type: ModifierTypes.TerastallizeModifierType, pokemonId: integer, teraType: Type, battlesLeft?: integer, stackCount?: integer) {
     super(type, pokemonId, battlesLeft || 10, stackCount);
@@ -657,7 +658,7 @@ export class TerastallizeModifier extends LapsingPokemonHeldItemModifier {
 
 export class PokemonBaseStatModifier extends PokemonHeldItemModifier {
   protected stat: Stat;
-  public isTransferrable: boolean = false;
+  readonly isTransferrable: boolean = false;
 
   constructor(type: ModifierTypes.PokemonBaseStatBoosterModifierType, pokemonId: integer, stat: Stat, stackCount?: integer) {
     super(type, pokemonId, stackCount);
@@ -1868,7 +1869,7 @@ export class PokemonMultiHitModifier extends PokemonHeldItemModifier {
 export class PokemonFormChangeItemModifier extends PokemonHeldItemModifier {
   public formChangeItem: FormChangeItem;
   public active: boolean;
-  public isTransferrable: boolean = false;
+  readonly isTransferrable: boolean = false;
 
   constructor(type: ModifierTypes.FormChangeItemModifierType, pokemonId: integer, formChangeItem: FormChangeItem, active: boolean, stackCount?: integer) {
     super(type, pokemonId, stackCount);
@@ -2128,7 +2129,7 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
 
     const transferredModifierTypes: ModifierTypes.ModifierType[] = [];
     const itemModifiers = pokemon.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-        && (m as PokemonHeldItemModifier).pokemonId === targetPokemon.id && m.isTransferrable, targetPokemon.isPlayer()) as PokemonHeldItemModifier[];
+        && m.pokemonId === targetPokemon.id && m.isTransferrable, targetPokemon.isPlayer()) as PokemonHeldItemModifier[];
     let highestItemTier = itemModifiers.map(m => m.type.getOrInferTier(poolType)).reduce((highestTier, tier) => Math.max(tier, highestTier), 0);
     let tierItemModifiers = itemModifiers.filter(m => m.type.getOrInferTier(poolType) === highestItemTier);
 
@@ -2168,7 +2169,7 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
 }
 
 export class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
-  public isTransferrable: boolean = false;
+  readonly isTransferrable: boolean = false;
   constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
     super(type, pokemonId, stackCount);
   }
