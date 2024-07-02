@@ -12,7 +12,7 @@ import { Moves } from "#enums/moves";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
 
-describe("Abilities - Pastel Veil", () => {
+describe("Abilities - Sweet Veil", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -34,7 +34,7 @@ describe("Abilities - Pastel Veil", () => {
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.POWDER, Moves.POWDER, Moves.POWDER, Moves.POWDER]);
   });
 
-  it("prevents the user and its allies from being afflicted by poison", async () => {
+  it("prevents the user and its allies from falling asleep", async () => {
     await game.startBattle([Species.SWIRLIX, Species.MAGIKARP]);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
