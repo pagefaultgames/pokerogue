@@ -8,7 +8,7 @@ import Pokemon, { EnemyPokemon, PlayerPokemon } from "./field/pokemon";
 import { Mode } from "./ui/ui";
 import PartyUiHandler from "./ui/party-ui-handler";
 import { BattleSpec } from "#enums/battle-spec";
-import { BattlePhase, MovePhase, PokemonHealPhase } from "./phases";
+import { BattlePhase, LearnMovePhase, MovePhase, PokemonHealPhase } from "./phases";
 import { getTypeRgb } from "./data/type";
 
 export class FormChangePhase extends EvolutionPhase {
@@ -35,6 +35,8 @@ export class FormChangePhase extends EvolutionPhase {
 
   doEvolution(): void {
     const preName = this.pokemon.name;
+    const preMoves = this.pokemon.getLevelMoves(this.lastLevel + 1, true);
+    const preMove = preMoves.length && preMoves[0][0] === 0 ? preMoves[0][1] : 0;
 
     this.pokemon.getPossibleForm(this.formChange).then(transformedPokemon => {
 
@@ -132,7 +134,10 @@ export class FormChangePhase extends EvolutionPhase {
 
                                           const delay = playEvolutionFanfare ? 4000 : 1750;
                                           this.scene.playSoundWithoutBgm(playEvolutionFanfare ? "evolution_fanfare" : "minor_fanfare");
-
+                                          const levelMoves = this.pokemon.getLevelMoves(this.lastLevel + 1, true);
+                                          if (levelMoves.length && levelMoves[0][0] === 0 && levelMoves[0][1] !== preMove) {
+                                            this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.scene.getParty().indexOf(this.pokemon), levelMoves[0][1]));
+                                          }
                                           transformedPokemon.destroy();
                                           this.scene.ui.showText(getSpeciesFormChangeMessage(this.pokemon, this.formChange, preName), null, () => this.end(), null, true, Utils.fixedInt(delay));
                                           this.scene.time.delayedCall(Utils.fixedInt(delay + 250), () => this.scene.playBgm());

@@ -18973,7 +18973,6 @@ export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
   [Species.GRENINJA]: {
     1: [
       [ 0, Moves.WATER_SHURIKEN ],
-      [ 0, Moves.WATER_SHURIKEN ],
       [ 1, Moves.POUND ],
       [ 1, Moves.GROWL ],
       [ 1, Moves.WATER_GUN ],
