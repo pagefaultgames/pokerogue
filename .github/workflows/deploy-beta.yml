@@ -19,6 +19,8 @@ jobs:
         run: npm run build:beta
         env:
           NODE_ENV: production
+      - name:
+        run: echo "Deploying ${{ github.ref_name }} to beta environment"
       - name: Set up SSH
         if: github.event_name == 'push' && github.ref_name == 'f-fsantos:beta-environment'
         run: |
