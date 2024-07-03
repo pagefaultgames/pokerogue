@@ -1,7 +1,7 @@
 import BattleScene from "../battle-scene";
 import { getPlayerShopModifierTypeOptionsForWave, ModifierTypeOption, TmModifierType } from "../modifier/modifier-type";
 import { getPokeballAtlasKey, PokeballType } from "../data/pokeball";
-import { addTextObject, getModifierTierTextTint, getTextColor, TextStyle } from "./text";
+import { addTextObject, getTextStyleOptions, getModifierTierTextTint, getTextColor, TextStyle } from "./text";
 import AwaitableUiHandler from "./awaitable-ui-handler";
 import { Mode } from "./ui";
 import { LockModifierTiersModifier, PokemonHeldItemModifier } from "../modifier/modifier";
@@ -28,6 +28,8 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   private rowCursor: integer = 0;
   private player: boolean;
   private rerollCost: integer;
+  private transferButtonWidth: integer;
+  private checkButtonWidth: integer;
 
   public options: ModifierOption[];
   public shopOptionsRows: ModifierOption[][];
@@ -47,7 +49,14 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.modifierContainer = this.scene.add.container(0, 0);
     ui.add(this.modifierContainer);
 
-    this.transferButtonContainer = this.scene.add.container((this.scene.game.canvas.width / 6) - 71, -64);
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+    const [ , styleOptions, , , ] = getTextStyleOptions(TextStyle.PARTY, (this.scene as BattleScene).uiTheme);
+    context.font = styleOptions.fontSize + "px " + styleOptions.fontFamily;
+    this.transferButtonWidth = context.measureText(i18next.t("modifierSelectUiHandler:transfer")).width;
+    this.checkButtonWidth = context.measureText(i18next.t("modifierSelectUiHandler:checkTeam")).width;
+
+    this.transferButtonContainer = this.scene.add.container((this.scene.game.canvas.width - this.checkButtonWidth) / 6 - 21, -64);
     this.transferButtonContainer.setName("transfer-btn");
     this.transferButtonContainer.setVisible(false);
     ui.add(this.transferButtonContainer);
@@ -57,7 +66,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     transferButtonText.setOrigin(1, 0);
     this.transferButtonContainer.add(transferButtonText);
 
-    this.checkButtonContainer = this.scene.add.container((this.scene.game.canvas.width / 6) - 1, -64);
+    this.checkButtonContainer = this.scene.add.container((this.scene.game.canvas.width) / 6 - 1, -64);
     this.checkButtonContainer.setName("use-btn");
     this.checkButtonContainer.setVisible(false);
     ui.add(this.checkButtonContainer);
@@ -393,10 +402,10 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       this.cursorObj.setPosition(6, this.lockRarityButtonContainer.visible ? -72 : -60);
       ui.showText(i18next.t("modifierSelectUiHandler:rerollDesc"));
     } else if (cursor === 1) {
-      this.cursorObj.setPosition((this.scene.game.canvas.width / 6) - 120, -60);
+      this.cursorObj.setPosition((this.scene.game.canvas.width - this.transferButtonWidth - this.checkButtonWidth)/6 - 30, -60);
       ui.showText(i18next.t("modifierSelectUiHandler:transferDesc"));
     } else if (cursor === 2) {
-      this.cursorObj.setPosition((this.scene.game.canvas.width / 6) - 60, -60);
+      this.cursorObj.setPosition((this.scene.game.canvas.width - this.checkButtonWidth)/6 - 10, -60);
       ui.showText(i18next.t("modifierSelectUiHandler:checkTeamDesc"));
     } else {
       this.cursorObj.setPosition(6, -60);
