@@ -1,4 +1,4 @@
-import { ModifierTypeTranslationEntries } from "#app/plugins/i18n";
+import { ModifierTypeTranslationEntries } from "#app/interfaces/locales";
 
 export const modifierType: ModifierTypeTranslationEntries = {
   ModifierType: {
@@ -199,7 +199,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "MULTI_LENS": { name: "멀티렌즈" },
 
-    "HEALING_CHARM": { name: "치유의부적", description: "HP를 회복하는 기술을 썼을 때 효율이 10% 증가한다 (부활 제외)." },
+    "HEALING_CHARM": { name: "치유의부적", description: "HP를 회복하는 기술이나 도구를 썼을 때 효율이 10% 증가한다 (부활 제외)." },
     "CANDY_JAR": { name: "사탕단지", description: "이상한사탕 종류의 아이템이 올려주는 레벨이 1 증가한다." },
 
     "BERRY_POUCH": { name: "열매주머니", description: "사용한 나무열매가 소모되지 않을 확률이 30% 추가된다." },
@@ -248,6 +248,19 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "x_accuracy": "잘-맞히기",
     "dire_hit": "크리티컬커터",
   },
+
+  TempBattleStatBoosterStatName: {
+    "ATK": "공격",
+    "DEF": "방어",
+    "SPATK": "특수공격",
+    "SPDEF": "특수방어",
+    "SPD": "스피드",
+    "ACC": "명중률",
+    "CRIT": "급소율",
+    "EVA": "회피율",
+    "DEFAULT": "???",
+  },
+
   AttackTypeBoosterItem: {
     "silk_scarf": "실크스카프",
     "black_belt": "검은띠",
