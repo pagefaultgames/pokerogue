@@ -445,7 +445,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       10: "What?! I lost?! How could this be...?",
       11: "No way! You're just a kid!",
       12: "What? I lost? But... but I was supposed to win!",
-      13:  "I lost?! Now I'll never get promoted to Team Magma Senior Grunt!",
+      13: "I lost?! Now I'll never get promoted to Team Magma Senior Grunt!",
       14: "You beat me... Do you think the boss will dock my pay for this?",
       15: "I can't believe I lost! I even skipped lunch for this!",
       16: "Defeated... I guess evil masterminds don't get sick days, huh?",
