@@ -478,8 +478,9 @@ export class FrenzyTag extends BattlerTag {
 
   onRemove(pokemon: Pokemon): void {
     super.onRemove(pokemon);
-
-    pokemon.addTag(BattlerTagType.CONFUSED, pokemon.randSeedIntRange(2, 4));
+    if ([Moves.OUTRAGE, Moves.PETAL_DANCE, Moves.THRASH].includes(this.sourceMove)) {
+      pokemon.addTag(BattlerTagType.CONFUSED, pokemon.randSeedIntRange(2, 4));
+    }
   }
 }
 
