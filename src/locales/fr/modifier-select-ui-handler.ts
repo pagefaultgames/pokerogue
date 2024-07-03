@@ -1,4 +1,4 @@
-  import { SimpleTranslationEntries } from "#app/interfaces/locales";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const modifierSelectUiHandler: SimpleTranslationEntries = {
   "transfer": "Transférer",
