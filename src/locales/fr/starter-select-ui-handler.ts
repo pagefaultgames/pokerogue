@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/interfaces/locales";
+import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 /**
  * The menu namespace holds most miscellaneous text that isn't directly part of the game's
@@ -21,17 +21,15 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "passive": "Passif :",
   "nature": "Nature :",
   "eggMoves": "Capacités Œuf",
+  "start": "Lancer",
   "addToParty": "Ajouter à l’équipe",
-  "toggleIVs": "Voir les IV",
-  "manageMoves": "Modifier les Capacités",
-  "manageNature": "Modifier la Nature",
-  "useCandies": "Utiliser des Bonbons",
-  "selectNature": "Sélectionnez une nature.",
+  "toggleIVs": "Voir IVs",
+  "manageMoves": "Gérer Capacités",
+  "useCandies": "Utiliser Bonbons",
   "selectMoveSwapOut": "Sélectionnez la capacité à échanger.",
   "selectMoveSwapWith": "Sélectionnez laquelle échanger avec",
   "unlockPassive": "Débloquer Passif",
   "reduceCost": "Diminuer le cout",
-  "sameSpeciesEgg": "Buy an Egg",
   "cycleShiny": ": » Chromatiques",
   "cycleForm": ": » Formes",
   "cycleGender": ": » Sexes",

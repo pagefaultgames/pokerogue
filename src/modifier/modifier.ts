@@ -24,9 +24,6 @@ import * as Overrides from "../overrides";
 import { ModifierType, modifierTypes } from "./modifier-type";
 import { Command } from "#app/ui/command-ui-handler.js";
 
-import { allMoves } from "#app/data/move.js";
-import { Abilities } from "#app/enums/abilities.js";
-
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 
 const iconOverflowIndex = 24;
@@ -64,19 +61,13 @@ export class ModifierBar extends Phaser.GameObjects.Container {
     this.setScale(0.5);
   }
 
-  /**
-   * Method to update content displayed in {@linkcode ModifierBar}
-   * @param {PersistentModifier[]} modifiers - The list of modifiers to be displayed in the {@linkcode ModifierBar}
-   * @param {boolean} hideHeldItems - If set to "true", only modifiers not assigned to a Pokémon are displayed
-   */
-  updateModifiers(modifiers: PersistentModifier[], hideHeldItems: boolean = false) {
+  updateModifiers(modifiers: PersistentModifier[]) {
     this.removeAll(true);
 
     const visibleIconModifiers = modifiers.filter(m => m.isIconVisible(this.scene as BattleScene));
     const nonPokemonSpecificModifiers = visibleIconModifiers.filter(m => !(m as PokemonHeldItemModifier).pokemonId).sort(modifierSortFunc);
     const pokemonSpecificModifiers = visibleIconModifiers.filter(m => (m as PokemonHeldItemModifier).pokemonId).sort(modifierSortFunc);
-
-    const sortedVisibleIconModifiers = hideHeldItems ? nonPokemonSpecificModifiers : nonPokemonSpecificModifiers.concat(pokemonSpecificModifiers);
+    const sortedVisibleIconModifiers = nonPokemonSpecificModifiers.concat(pokemonSpecificModifiers);
 
     const thisArg = this;
 
@@ -328,8 +319,7 @@ export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier
 
   match(modifier: Modifier): boolean {
     if (modifier instanceof DoubleBattleChanceBoosterModifier) {
-      // Check type id to not match different tiers of lures
-      return modifier.type.id === this.type.id && modifier.battlesLeft === this.battlesLeft;
+      return (modifier as DoubleBattleChanceBoosterModifier).battlesLeft === this.battlesLeft;
     }
     return false;
   }
@@ -341,15 +331,9 @@ export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier
   getArgs(): any[] {
     return [ this.battlesLeft ];
   }
-  /**
-   * Modifies the chance of a double battle occurring
-   * @param args A single element array containing the double battle chance as a NumberHolder
-   * @returns {boolean} Returns true if the modifier was applied
-   */
+
   apply(args: any[]): boolean {
     const doubleBattleChance = args[0] as Utils.NumberHolder;
-    // This is divided because the chance is generated as a number from 0 to doubleBattleChance.value using Utils.randSeedInt
-    // A double battle will initiate if the generated number is 0
     doubleBattleChance.value = Math.ceil(doubleBattleChance.value / 2);
 
     return true;
@@ -533,22 +517,6 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
   }
 
   getScoreMultiplier(): number {
-    return 1;
-  }
-
-  //Applies to items with chance of activating secondary effects ie Kings Rock
-  getSecondaryChanceMultiplier(pokemon: Pokemon): integer {
-    // Temporary quickfix to stop game from freezing when the opponet uses u-turn while holding on to king's rock
-    if (!pokemon.getLastXMoves(0)[0]) {
-      return 1;
-    }
-    const sheerForceAffected = allMoves[pokemon.getLastXMoves(0)[0].move].chance >= 0 && pokemon.hasAbility(Abilities.SHEER_FORCE);
-
-    if (sheerForceAffected) {
-      return 0;
-    } else if (pokemon.hasAbility(Abilities.SERENE_GRACE)) {
-      return 2;
-    }
     return 1;
   }
 
@@ -863,7 +831,7 @@ export class FlinchChanceModifier extends PokemonHeldItemModifier {
     const pokemon = args[0] as Pokemon;
     const flinched = args[1] as Utils.BooleanHolder;
 
-    if (!flinched.value && pokemon.randSeedInt(10) < (this.getStackCount() * this.getSecondaryChanceMultiplier(pokemon))) {
+    if (!flinched.value && pokemon.randSeedInt(10) < this.getStackCount()) {
       flinched.value = true;
       return true;
     }

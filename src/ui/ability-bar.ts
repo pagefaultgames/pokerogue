@@ -44,6 +44,9 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
 
     (this.scene as BattleScene).fieldUI.bringToTop(this);
 
+    if (this.tween) {
+      this.tween.stop();
+    }
 
     this.y = baseY + ((this.scene as BattleScene).currentBattle.double ? 14 : 0);
     this.tween = this.scene.tweens.add({

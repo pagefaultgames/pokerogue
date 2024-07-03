@@ -7,13 +7,12 @@ import UiHandler from "./ui-handler";
 import * as Utils from "../utils";
 import { CommandPhase } from "../phases";
 import { MoveCategory } from "#app/data/move.js";
-import i18next from "i18next";
+import i18next from "../plugins/i18n";
 import {Button} from "#enums/buttons";
 import Pokemon, { PokemonMove } from "#app/field/pokemon.js";
 
 export default class FightUiHandler extends UiHandler {
   private movesContainer: Phaser.GameObjects.Container;
-  private moveInfoContainer: Phaser.GameObjects.Container;
   private typeIcon: Phaser.GameObjects.Sprite;
   private ppLabel: Phaser.GameObjects.Text;
   private ppText: Phaser.GameObjects.Text;
@@ -35,53 +34,48 @@ export default class FightUiHandler extends UiHandler {
     const ui = this.getUi();
 
     this.movesContainer = this.scene.add.container(18, -38.7);
-    this.movesContainer.setName("moves");
     ui.add(this.movesContainer);
 
-    this.moveInfoContainer = this.scene.add.container(1, 0);
-    this.moveInfoContainer.setName("move-info");
-    ui.add(this.moveInfoContainer);
-
-    this.typeIcon = this.scene.add.sprite(this.scene.scaledCanvas.width - 57, -36,`types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}` , "unknown");
+    this.typeIcon = this.scene.add.sprite((this.scene.game.canvas.width / 6) - 57, -36,`types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}` , "unknown");
     this.typeIcon.setVisible(false);
-    this.moveInfoContainer.add(this.typeIcon);
+    ui.add(this.typeIcon);
 
-    this.moveCategoryIcon = this.scene.add.sprite(this.scene.scaledCanvas.width - 25, -36, "categories", "physical");
+    this.moveCategoryIcon = this.scene.add.sprite((this.scene.game.canvas.width / 6) - 25, -36, "categories", "physical");
     this.moveCategoryIcon.setVisible(false);
-    this.moveInfoContainer.add(this.moveCategoryIcon);
+    ui.add(this.moveCategoryIcon);
 
-    this.ppLabel = addTextObject(this.scene, this.scene.scaledCanvas.width - 70, -26, "PP", TextStyle.MOVE_INFO_CONTENT);
+    this.ppLabel = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 70, -26, "PP", TextStyle.MOVE_INFO_CONTENT);
     this.ppLabel.setOrigin(0.0, 0.5);
     this.ppLabel.setVisible(false);
     this.ppLabel.setText(i18next.t("fightUiHandler:pp"));
-    this.moveInfoContainer.add(this.ppLabel);
+    ui.add(this.ppLabel);
 
-    this.ppText = addTextObject(this.scene, this.scene.scaledCanvas.width - 12, -26, "--/--", TextStyle.MOVE_INFO_CONTENT);
+    this.ppText = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 12, -26, "--/--", TextStyle.MOVE_INFO_CONTENT);
     this.ppText.setOrigin(1, 0.5);
     this.ppText.setVisible(false);
-    this.moveInfoContainer.add(this.ppText);
+    ui.add(this.ppText);
 
-    this.powerLabel = addTextObject(this.scene, this.scene.scaledCanvas.width - 70, -18, "POWER", TextStyle.MOVE_INFO_CONTENT);
+    this.powerLabel = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 70, -18, "POWER", TextStyle.MOVE_INFO_CONTENT);
     this.powerLabel.setOrigin(0.0, 0.5);
     this.powerLabel.setVisible(false);
     this.powerLabel.setText(i18next.t("fightUiHandler:power"));
-    this.moveInfoContainer.add(this.powerLabel);
+    ui.add(this.powerLabel);
 
-    this.powerText = addTextObject(this.scene, this.scene.scaledCanvas.width - 12, -18, "---", TextStyle.MOVE_INFO_CONTENT);
+    this.powerText = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 12, -18, "---", TextStyle.MOVE_INFO_CONTENT);
     this.powerText.setOrigin(1, 0.5);
     this.powerText.setVisible(false);
-    this.moveInfoContainer.add(this.powerText);
+    ui.add(this.powerText);
 
-    this.accuracyLabel = addTextObject(this.scene, this.scene.scaledCanvas.width - 70, -10, "ACC", TextStyle.MOVE_INFO_CONTENT);
+    this.accuracyLabel = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 70, -10, "ACC", TextStyle.MOVE_INFO_CONTENT);
     this.accuracyLabel.setOrigin(0.0, 0.5);
     this.accuracyLabel.setVisible(false);
     this.accuracyLabel.setText(i18next.t("fightUiHandler:accuracy"));
-    this.moveInfoContainer.add(this.accuracyLabel);
+    ui.add(this.accuracyLabel);
 
-    this.accuracyText = addTextObject(this.scene, this.scene.scaledCanvas.width - 12, -10, "---", TextStyle.MOVE_INFO_CONTENT);
+    this.accuracyText = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 12, -10, "---", TextStyle.MOVE_INFO_CONTENT);
     this.accuracyText.setOrigin(1, 0.5);
     this.accuracyText.setVisible(false);
-    this.moveInfoContainer.add(this.accuracyText);
+    ui.add(this.accuracyText);
   }
 
   show(args: any[]): boolean {
@@ -90,7 +84,6 @@ export default class FightUiHandler extends UiHandler {
     this.fieldIndex = args.length ? args[0] as integer : 0;
 
     const messageHandler = this.getUi().getMessageHandler();
-    messageHandler.bg.setVisible(false);
     messageHandler.commandWindow.setVisible(false);
     messageHandler.movesWindowContainer.setVisible(true);
     this.setCursor(this.getCursor());
@@ -243,12 +236,10 @@ export default class FightUiHandler extends UiHandler {
 
     for (let moveIndex = 0; moveIndex < 4; moveIndex++) {
       const moveText = addTextObject(this.scene, moveIndex % 2 === 0 ? 0 : 100, moveIndex < 2 ? 0 : 16, "-", TextStyle.WINDOW);
-      moveText.setName("text-empty-move");
 
       if (moveIndex < moveset.length) {
         const pokemonMove = moveset[moveIndex];
         moveText.setText(pokemonMove.getName());
-        moveText.setName(pokemonMove.getName());
         moveText.setColor(this.getMoveColor(pokemon, pokemonMove) ?? moveText.style.color);
       }
 
@@ -282,7 +273,6 @@ export default class FightUiHandler extends UiHandler {
 
   clear() {
     super.clear();
-    const messageHandler = this.getUi().getMessageHandler();
     this.clearMoves();
     this.typeIcon.setVisible(false);
     this.ppLabel.setVisible(false);
@@ -292,7 +282,6 @@ export default class FightUiHandler extends UiHandler {
     this.accuracyLabel.setVisible(false);
     this.accuracyText.setVisible(false);
     this.moveCategoryIcon.setVisible(false);
-    messageHandler.bg.setVisible(true);
     this.eraseCursor();
   }
 

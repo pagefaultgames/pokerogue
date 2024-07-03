@@ -1,4 +1,4 @@
-import { PokemonInfoTranslationEntries } from "#app/interfaces/locales";
+import { PokemonInfoTranslationEntries } from "#app/plugins/i18n";
 
 export const pokemonInfo: PokemonInfoTranslationEntries = {
   Stat: {
@@ -13,9 +13,7 @@ export const pokemonInfo: PokemonInfoTranslationEntries = {
     "SPDEF": "Def. Esp.",
     "SPDEFshortened": "DefEsp",
     "SPD": "Velocidad",
-    "SPDshortened": "Veloc.",
-    "ACC": "Accuracy",
-    "EVA": "Evasiveness"
+    "SPDshortened": "Veloc."
   },
 
   Type: {

@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/interfaces/locales";
+import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const tutorial: SimpleTranslationEntries = {
   "intro": `Willkommen bei PokéRogue! Dies ist ein kampforientiertes Pokémon-Fangame mit Roguelite-Elementen.

@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/interfaces/locales";
+import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const pokeball: SimpleTranslationEntries = {
   "pokeBall": "Poké Ball",
@@ -6,5 +6,5 @@ export const pokeball: SimpleTranslationEntries = {
   "ultraBall": "Ultra Ball",
   "rogueBall": "Rogue Ball",
   "masterBall": "Master Ball",
-  "luxuryBall": "Chic Ball",
+  "luxuryBall": "Chich Ball",
 } as const;

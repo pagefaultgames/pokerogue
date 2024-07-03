@@ -1,14 +1,14 @@
-import { ModifierTypeTranslationEntries } from "#app/interfaces/locales";
+import { ModifierTypeTranslationEntries } from "#app/plugins/i18n";
 
 export const modifierType: ModifierTypeTranslationEntries = {
   ModifierType: {
     "AddPokeballModifierType": {
       name: "{{modifierCount}}x {{pokeballName}}",
-      description: "Ganhe {{modifierCount}}x {{pokeballName}} (Mochila: {{pokeballAmount}}) \nChance de captura: {{catchRate}}.",
+      description: "Ganhe x{{modifierCount}} {{pokeballName}} (Mochila: {{pokeballAmount}}) \nChance de captura: {{catchRate}}.",
     },
     "AddVoucherModifierType": {
       name: "{{modifierCount}}x {{voucherTypeName}}",
-      description: "Ganhe {{modifierCount}}x {{voucherTypeName}}.",
+      description: "Ganhe x{{modifierCount}} {{voucherTypeName}}.",
     },
     "PokemonHeldItemModifierType": {
       extra: {
@@ -248,19 +248,6 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "x_accuracy": "Precisão X",
     "dire_hit": "Direto",
   },
-
-  TempBattleStatBoosterStatName: {
-    "ATK": "Ataque",
-    "DEF": "Defesa",
-    "SPATK": "Ataque Esp.",
-    "SPDEF": "Defesa Esp.",
-    "SPD": "Velocidade",
-    "ACC": "Precisão",
-    "CRIT": "Chance de Acerto Crítico",
-    "EVA": "Evasão",
-    "DEFAULT": "???",
-  },
-
   AttackTypeBoosterItem: {
     "silk_scarf": "Lenço de Seda",
     "black_belt": "Faixa Preta",
@@ -403,7 +390,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "DOUSE_DRIVE": "HidroDisco",
     "ULTRANECROZIUM_Z": "Ultranecrozium Z",
 
-    "FIST_PLATE": "Placa do Punho",
+    "FIST_PLATE": "Placa de Punho",
     "SKY_PLATE": "Placa do Céu",
     "TOXIC_PLATE": "Placa Tóxica",
     "EARTH_PLATE": "Placa Terrestre",
@@ -413,15 +400,15 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "IRON_PLATE": "Placa de Ferro",
     "FLAME_PLATE": "Placa da Chama",
     "SPLASH_PLATE": "Placa de Respingo",
-    "MEADOW_PLATE": "Placa da Planície",
+    "MEADOW_PLATE": "Placa de Prado",
     "ZAP_PLATE": "Placa Elétrica",
     "MIND_PLATE": "Placa Mental",
     "ICICLE_PLATE": "Placa de Gelo",
-    "DRACO_PLATE": "Placa do Dragão",
-    "DREAD_PLATE": "Placa Sombria",
-    "PIXIE_PLATE": "Placa de Fada",
+    "DRACO_PLATE": "Placa de Draco",
+    "DREAD_PLATE": "Placa do Pavor",
+    "PIXIE_PLATE": "Placa Duende",
     "BLANK_PLATE": "Placa em Branco",
-    "LEGEND_PLATE": "Placa Lendária",
+    "LEGEND_PLATE": "Placa de Legenda",
     "FIGHTING_MEMORY": "Memória de Lutador",
     "FLYING_MEMORY": "Memória Voadora",
     "POISON_MEMORY": "Memória Venenosa",
@@ -437,7 +424,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "PSYCHIC_MEMORY": "Memória Psíquica",
     "ICE_MEMORY": "Memória de Gelo",
     "DRAGON_MEMORY": "Memória do Dragão",
-    "DARK_MEMORY": "Memória Sombria",
+    "DARK_MEMORY": "Memória Negra",
     "FAIRY_MEMORY": "Memória de Fada",
     "BLANK_MEMORY": "Memória Vazia",
   },

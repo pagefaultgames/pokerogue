@@ -1,5 +1,5 @@
 import BattleScene from "../battle-scene";
-import i18next from "i18next";
+import i18next from "../plugins/i18n";
 
 export enum PokeballType {
   POKEBALL,

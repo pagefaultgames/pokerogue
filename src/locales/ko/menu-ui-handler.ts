@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/interfaces/locales";
+import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const menuUiHandler: SimpleTranslationEntries = {
   "GAME_SETTINGS": "게임 설정",
@@ -19,6 +19,5 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "importData": "데이터 불러오기",
   "exportData": "데이터 내보내기",
   "cancel": "취소",
-  "losingProgressionWarning": "전투 시작으로부터의 진행 상황을 잃게 됩니다. 계속하시겠습니까?",
-  "noEggs": "You are not hatching\nany eggs at the moment!"
+  "losingProgressionWarning": "전투 시작으로부터의 진행 상황을 잃게 됩니다. 계속하시겠습니까?"
 } as const;

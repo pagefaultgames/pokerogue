@@ -1,5 +1,4 @@
 import { BattleStat, getBattleStatName } from "./battle-stat";
-import i18next from "i18next";
 
 export enum TempBattleStat {
   ATK,
@@ -13,7 +12,7 @@ export enum TempBattleStat {
 
 export function getTempBattleStatName(tempBattleStat: TempBattleStat) {
   if (tempBattleStat === TempBattleStat.CRIT) {
-    return i18next.t("modifierType:TempBattleStatBoosterStatName.CRIT");
+    return "critical-hit ratio";
   }
   return getBattleStatName(tempBattleStat as integer as BattleStat);
 }

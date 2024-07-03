@@ -1,4 +1,4 @@
-import { MoveTranslationEntries } from "#app/interfaces/locales";
+import { MoveTranslationEntries } from "#app/plugins/i18n";
 
 export const move: MoveTranslationEntries = {
   pound: {

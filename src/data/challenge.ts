@@ -1,18 +1,15 @@
 import * as Utils from "../utils";
-import i18next from "i18next";
-import { DexAttrProps, GameData } from "#app/system/game-data.js";
-import PokemonSpecies, { getPokemonSpecies, getPokemonSpeciesForm, speciesStarters } from "./pokemon-species";
+import i18next from "#app/plugins/i18n.js";
+import { GameData } from "#app/system/game-data.js";
+import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "./pokemon-species";
 import Pokemon from "#app/field/pokemon.js";
 import { BattleType, FixedBattleConfig } from "#app/battle.js";
 import Trainer, { TrainerVariant } from "#app/field/trainer.js";
 import { GameMode } from "#app/game-mode.js";
 import { Type } from "./type";
-import { pokemonEvolutions } from "./pokemon-evolutions";
-import { pokemonFormChanges } from "./pokemon-forms";
 import { Challenges } from "#enums/challenges";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
-import { TypeColor, TypeShadow } from "#app/enums/color.js";
 
 /**
  * An enum for all the challenge types. The parameter entries on these describe the
@@ -161,7 +158,7 @@ export abstract class Challenge {
     if (overrideValue === undefined) {
       overrideValue = this.value;
     }
-    return `${i18next.t("challenges:usePokemon")}${i18next.t(`challenges:${this.geti18nKey()}.desc.${this.value}`)}`;
+    return i18next.t(`challenges:${this.geti18nKey()}.desc.${this.value}`);
   }
 
   /**
@@ -280,22 +277,8 @@ export class SingleGenerationChallenge extends Challenge {
     case ChallengeType.STARTER_CHOICE:
       const species = args[0] as PokemonSpecies;
       const isValidStarter = args[1] as Utils.BooleanHolder;
-      const amountOfPokemon = args[3] as number;
       const starterGeneration = species.speciesId === Species.VICTINI ? 5 : species.generation;
-      const generations = [starterGeneration];
-      if (amountOfPokemon > 0) {
-        const speciesToCheck = [species.speciesId];
-        while (speciesToCheck.length) {
-          const checking = speciesToCheck.pop();
-          if (pokemonEvolutions.hasOwnProperty(checking)) {
-            pokemonEvolutions[checking].forEach(e => {
-              speciesToCheck.push(e.speciesId);
-              generations.push(getPokemonSpecies(e.speciesId).generation);
-            });
-          }
-        }
-      }
-      if (!generations.includes(this.value)) {
+      if (starterGeneration !== this.value) {
         isValidStarter.value = false;
         return true;
       }
@@ -348,37 +331,6 @@ export class SingleGenerationChallenge extends Challenge {
     return this.value > 0 ? 1 : 0;
   }
 
-  /**
-   * Returns the textual representation of a challenge's current value.
-   * @param {value} overrideValue The value to check for. If undefined, gets the current value.
-   * @returns {string} The localised name for the current value.
-   */
-  getValue(overrideValue?: integer): string {
-    if (overrideValue === undefined) {
-      overrideValue = this.value;
-    }
-    if (this.value === 0) {
-      return i18next.t("settings:off");
-    }
-    return i18next.t(`starterSelectUiHandler:gen${this.value}`);
-  }
-
-  /**
-   * Returns the description of a challenge's current value.
-   * @param {value} overrideValue The value to check for. If undefined, gets the current value.
-   * @returns {string} The localised description for the current value.
-   */
-  getDescription(overrideValue?: integer): string {
-    if (overrideValue === undefined) {
-      overrideValue = this.value;
-    }
-    if (this.value === 0) {
-      return i18next.t("challenges:singleGeneration.desc_default");
-    }
-    return i18next.t("challenges:singleGeneration.desc", { gen: i18next.t(`challenges:singleGeneration.gen_${this.value}`) });
-  }
-
-
   static loadChallenge(source: SingleGenerationChallenge | any): SingleGenerationChallenge {
     const newChallenge = new SingleGenerationChallenge();
     newChallenge.value = source.value;
@@ -420,32 +372,7 @@ export class SingleTypeChallenge extends Challenge {
     case ChallengeType.STARTER_CHOICE:
       const species = args[0] as PokemonSpecies;
       const isValidStarter = args[1] as Utils.BooleanHolder;
-      const dexAttr = args[2] as DexAttrProps;
-      const amountOfPokemon = args[3] as number;
-      const speciesForm = getPokemonSpeciesForm(species.speciesId, dexAttr.formIndex);
-      const types = [speciesForm.type1, speciesForm.type2];
-      if (amountOfPokemon > 0) {
-        const speciesToCheck = [species.speciesId];
-        while (speciesToCheck.length) {
-          const checking = speciesToCheck.pop();
-          if (pokemonEvolutions.hasOwnProperty(checking)) {
-            pokemonEvolutions[checking].forEach(e => {
-              speciesToCheck.push(e.speciesId);
-              types.push(getPokemonSpecies(e.speciesId).type1, getPokemonSpecies(e.speciesId).type2);
-            });
-          }
-          if (pokemonFormChanges.hasOwnProperty(checking)) {
-            pokemonFormChanges[checking].forEach(f1 => {
-              getPokemonSpecies(checking).forms.forEach(f2 => {
-                if (f1.formKey === f2.formKey) {
-                  types.push(f2.type1, f2.type2);
-                }
-              });
-            });
-          }
-        }
-      }
-      if (!types.includes(this.value - 1)) {
+      if (!species.isOfType(this.value - 1)) {
         isValidStarter.value = false;
         return true;
       }
@@ -468,34 +395,6 @@ export class SingleTypeChallenge extends Challenge {
    */
   getDifficulty(): number {
     return this.value > 0 ? 1 : 0;
-  }
-
-  /**
-   * Returns the textual representation of a challenge's current value.
-   * @param {value} overrideValue The value to check for. If undefined, gets the current value.
-   * @returns {string} The localised name for the current value.
-   */
-  getValue(overrideValue?: integer): string {
-    if (overrideValue === undefined) {
-      overrideValue = this.value;
-    }
-    return Type[this.value - 1].toLowerCase();
-  }
-
-  /**
-   * Returns the description of a challenge's current value.
-   * @param {value} overrideValue The value to check for. If undefined, gets the current value.
-   * @returns {string} The localised description for the current value.
-   */
-  getDescription(overrideValue?: integer): string {
-    if (overrideValue === undefined) {
-      overrideValue = this.value;
-    }
-    const type = i18next.t(`pokemonInfo:Type.${Type[this.value - 1]}`);
-    const typeColor = `[color=${TypeColor[Type[this.value-1]]}][shadow=${TypeShadow[Type[this.value-1]]}]${type}[/shadow][/color]`;
-    const defaultDesc = i18next.t("challenges:singleType.desc_default");
-    const typeDesc = i18next.t("challenges:singleType.desc", {type: typeColor});
-    return this.value === 0 ? defaultDesc : typeDesc;
   }
 
   static loadChallenge(source: SingleTypeChallenge | any): SingleTypeChallenge {
@@ -636,7 +535,7 @@ export class LowerStarterPointsChallenge extends Challenge {
 
 /**
  * Apply all challenges of a given challenge type.
- * @param {GameMode} gameMode The current game mode
+ * @param {BattleScene} scene The current scene
  * @param {ChallengeType} challengeType What challenge type to apply
  * @param {any[]} args Any args for that challenge type
  * @returns {boolean} True if any challenge was successfully applied.

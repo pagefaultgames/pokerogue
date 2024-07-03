@@ -1,4 +1,4 @@
-import { ModifierTypeTranslationEntries } from "#app/interfaces/locales";
+import { ModifierTypeTranslationEntries } from "#app/plugins/i18n";
 
 export const modifierType: ModifierTypeTranslationEntries = {
   ModifierType: {
@@ -243,14 +243,14 @@ export const modifierType: ModifierTypeTranslationEntries = {
                 "攜帶該道具的寶可夢在攻擊對方成功造成傷\n害時，攜帶者的HP會恢復其所造成傷害\n的1/8。",
     },
     TOXIC_ORB: {
-      name: "劇毒寶珠",
+      name: "Toxic Orb",
       description:
-                "觸碰後會放出毒的神奇寶珠。\n攜帶後，在戰鬥時會變成劇毒狀態。"
+                "It's a bizarre orb that exudes toxins when touched and will badly poison the holder during battle"
     },
     FLAME_ORB: {
-      name: "火焰寶珠",
+      name: "Flame Orb",
       description:
-                "觸碰後會放出熱量的神奇寶珠。\n攜帶後，在戰鬥時會變成灼傷狀態。"
+                "It's a bizarre orb that gives off heat when touched and will affect the holder with a burn during battle"
     },
     BATON: {
       name: "接力棒",
@@ -306,19 +306,6 @@ export const modifierType: ModifierTypeTranslationEntries = {
     x_accuracy: "命中強化",
     dire_hit: "要害攻擊",
   },
-
-  TempBattleStatBoosterStatName: {
-    "ATK": "攻擊",
-    "DEF": "防禦",
-    "SPATK": "特攻",
-    "SPDEF": "特防",
-    "SPD": "速度",
-    "ACC": "命中",
-    "CRIT": "會心",
-    "EVA": "閃避",
-    "DEFAULT": "???",
-  },
-
   AttackTypeBoosterItem: {
     silk_scarf: "絲綢圍巾",
     black_belt: "黑帶",

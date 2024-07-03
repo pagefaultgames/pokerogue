@@ -1,4 +1,4 @@
-import { AchievementTranslationEntries } from "#app/interfaces/locales.js";
+import { AchievementTranslationEntries } from "#app/plugins/i18n.js";
 
 // Achievement translations for the when the player character is male
 export const PGMachv: AchievementTranslationEntries = {
@@ -162,7 +162,7 @@ export const PGMachv: AchievementTranslationEntries = {
     description: "Capturer un Pokémon possédant un talent caché",
   },
   "PERFECT_IVS": {
-    name: "Certificat d’authenticité",
+    name: "Certificat d’Authenticité",
     description: "Avoir des IV parfaits sur un Pokémon",
   },
   "CLASSIC_VICTORY": {
@@ -171,98 +171,98 @@ export const PGMachv: AchievementTranslationEntries = {
   },
 
   "MONO_GEN_ONE": {
-    name: "Le rival originel",
-    description: "Terminer un challenge avec uniquement des Pokémon de 1re génération.",
+    name: "The Original Rival",
+    description: "Complete the generation one only challenge.",
   },
   "MONO_GEN_TWO": {
-    name: "Entre tradition et modernité",
-    description: "Terminer un challenge avec uniquement des Pokémon de 2e génération.",
+    name: "Generation 1.5",
+    description: "Complete the generation two only challenge.",
   },
   "MONO_GEN_THREE": {
-    name: "Too much water ?",
-    description: "Terminer un challenge avec uniquement des Pokémon de 3e génération.",
+    name: "Too much water?",
+    description: "Complete the generation three only challenge.",
   },
   "MONO_GEN_FOUR": {
-    name: "Réellement la plus difficile ?",
-    description: "Terminer un challenge avec uniquement des Pokémon de 4e génération.",
+    name: "Is she really the hardest?",
+    description: "Complete the generation four only challenge.",
   },
   "MONO_GEN_FIVE": {
-    name: "Recast complet",
-    description: "Terminer un challenge avec uniquement des Pokémon de 5e génération.",
+    name: "All Original",
+    description: "Complete the generation five only challenge.",
   },
   "MONO_GEN_SIX": {
-    name: "Aristocrate",
-    description: "Terminer un challenge avec uniquement des Pokémon de 6e génération.",
+    name: "Almost Royalty",
+    description: "Complete the generation six only challenge.",
   },
   "MONO_GEN_SEVEN": {
-    name: "Seulement techniquement",
-    description: "Terminer un challenge avec uniquement des Pokémon de 7e génération.",
+    name: "Only Technically",
+    description: "Complete the generation seven only challenge.",
   },
   "MONO_GEN_EIGHT": {
-    name: "L’heure de gloire",
-    description: "Terminer un challenge avec uniquement des Pokémon de 8e génération.",
+    name: "A Champion Time!",
+    description: "Complete the generation eight only challenge.",
   },
   "MONO_GEN_NINE": {
-    name: "Ça va, c’était EZ",
-    description: "Terminer un challenge avec uniquement des Pokémon de 9e génération.",
+    name: "She was going easy on you",
+    description: "Complete the generation nine only challenge.",
   },
 
   "MonoType": {
-    description: "Terminer un challenge en monotype {{type}}.",
+    description: "Complete the {{type}} monotype challenge.",
   },
   "MONO_NORMAL": {
-    name: "Extraordinairement banal",
+    name: "Mono NORMAL",
   },
   "MONO_FIGHTING": {
-    name: "Je connais le kung-fu",
+    name: "I Know Kung Fu",
   },
   "MONO_FLYING": {
-    name: "Angry Birds",
+    name: "Mono FLYING",
   },
   "MONO_POISON": {
-    name: "Touche moi je t’empoisonne !",
+    name: "Kanto's Favourite",
   },
   "MONO_GROUND": {
-    name: "Prévisions : Séisme",
+    name: "Mono GROUND",
   },
   "MONO_ROCK": {
-    name: "Comme un roc",
+    name: "Brock Hard",
   },
   "MONO_BUG": {
-    name: "Une chenille !",
+    name: "Sting Like A Beedrill",
   },
   "MONO_GHOST": {
-    name: "SOS Fantômes",
+    name: "Who you gonna call?",
   },
   "MONO_STEEL": {
-    name: "De type Acier !",
+    name: "Mono STEEL",
   },
   "MONO_FIRE": {
-    name: "Allumer le feu",
+    name: "Mono FIRE",
   },
   "MONO_WATER": {
-    name: "Vacances en Bretagne",
+    name: "When It Rains, It Pours",
   },
   "MONO_GRASS": {
-    name: "Ne pas toucher !",
+    name: "Mono GRASS",
   },
   "MONO_ELECTRIC": {
-    name: "À la masse",
+    name: "Mono ELECTRIC",
   },
   "MONO_PSYCHIC": {
-    name: "Grocervo",
+    name: "Mono PSYCHIC",
   },
   "MONO_ICE": {
-    name: "Froid comme la glace",
+    name: "Mono ICE",
   },
   "MONO_DRAGON": {
-    name: "Légendes du club, ou presque",
+    name: "Mono DRAGON",
   },
   "MONO_DARK": {
-    name: "Ça va lui passer",
+    name: "It's just a phase",
   },
   "MONO_FAIRY": {
-    name: "Hey ! Listen !",
+    name: "Mono FAIRY",
   },
 } as const;
 

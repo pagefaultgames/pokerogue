@@ -4,7 +4,6 @@ import {InputsIcons} from "#app/ui/settings/abstract-control-settings-ui-handler
 import {addTextObject, setTextStyle, TextStyle} from "#app/ui/text";
 import {addWindow} from "#app/ui/ui-theme";
 import {Button} from "#enums/buttons";
-import i18next from "i18next";
 
 const LEFT = "LEFT";
 const RIGHT = "RIGHT";
@@ -33,7 +32,7 @@ export class NavigationManager {
       Mode.SETTINGS_GAMEPAD,
       Mode.SETTINGS_KEYBOARD,
     ];
-    this.labels = [i18next.t("settings:general"), i18next.t("settings:display"), i18next.t("settings:audio"), i18next.t("settings:gamepad"), i18next.t("settings:keyboard")];
+    this.labels = ["General", "Display", "Audio", "Gamepad", "Keyboard"];
   }
 
   public reset() {

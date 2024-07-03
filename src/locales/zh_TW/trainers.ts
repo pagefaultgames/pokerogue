@@ -1,4 +1,4 @@
-import {SimpleTranslationEntries} from "#app/interfaces/locales";
+import {SimpleTranslationEntries} from "#app/plugins/i18n";
 
 // Titles of special trainers like gym leaders, elite four, and the champion
 export const titles: SimpleTranslationEntries = {
@@ -48,7 +48,7 @@ export const trainerClasses: SimpleTranslationEntries = {
   "depot_agent": "鐵路員工",
   "doctor": "醫生",
   "doctor_female": "醫生",
-  "firebreather": "吹火人",
+  "firebreather": "Firebreather",
   "fisherman": "垂釣者",
   "fisherman_female": "垂釣者",
   "gentleman": "紳士",

@@ -1,4 +1,4 @@
-import {AchievementTranslationEntries} from "#app/interfaces/locales.js";
+import {AchievementTranslationEntries} from "#app/plugins/i18n.js";
 
 // Achievement translations for the when the player character is male
 export const PGMachv: AchievementTranslationEntries = {

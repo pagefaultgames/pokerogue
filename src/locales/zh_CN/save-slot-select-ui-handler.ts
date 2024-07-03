@@ -1,9 +1,9 @@
-import { SimpleTranslationEntries } from "#app/interfaces/locales";
+import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const saveSlotSelectUiHandler: SimpleTranslationEntries = {
-  "overwriteData": "要覆盖该槽位的存档吗？",
+  "overwriteData": "Overwrite the data in the selected slot?",
   "loading": "正在加载中...",
-  "wave": "层数",
+  "wave": "Wave",
   "lv": "Lv",
   "empty": "空",
 } as const;

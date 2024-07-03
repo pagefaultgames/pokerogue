@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/interfaces/locales";
+import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const pokemon: SimpleTranslationEntries = {
   "bulbasaur": "Bulbizarre",

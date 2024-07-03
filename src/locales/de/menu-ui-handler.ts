@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/interfaces/locales";
+import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const menuUiHandler: SimpleTranslationEntries = {
   "GAME_SETTINGS": "Spieleinstellungen",
@@ -19,6 +19,5 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "importData": "Daten importieren",
   "exportData": "Daten exportieren",
   "cancel": "Abbrechen",
-  "losingProgressionWarning": "Du wirst jeglichen Fortschritt seit Anfang dieses Kampfes verlieren. Fortfahren?",
-  "noEggs": "You are not hatching\nany eggs at the moment!"
+  "losingProgressionWarning": "Du wirst jeglichen Fortschritt seit Anfang dieses Kampfes verlieren. Fortfahren?"
 } as const;

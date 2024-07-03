@@ -1,4 +1,4 @@
-import { BerryTranslationEntries } from "#app/interfaces/locales";
+import { BerryTranslationEntries } from "#app/plugins/i18n";
 
 export const berry: BerryTranslationEntries = {
   "SITRUS": {

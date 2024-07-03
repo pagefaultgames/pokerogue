@@ -1,10 +1,10 @@
-import { SimpleTranslationEntries } from "#app/interfaces/locales";
+import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const gameMode: SimpleTranslationEntries = {
-  "classic": "Classica",
-  "endless": "Infinita",
-  "endlessSpliced": "Infinita (fusioni)",
-  "dailyRun": "Run giornaliera",
-  "unknown": "Sconosciuta",
-  "challenge": "Sfida",
+  "classic": "Classic",
+  "endless": "Endless",
+  "endlessSpliced": "Endless (Spliced)",
+  "dailyRun": "Daily Run",
+  "unknown": "Unknown",
+  "challenge": "Challenge",
 } as const;
