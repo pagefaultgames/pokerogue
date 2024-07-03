@@ -19,18 +19,15 @@ jobs:
         run: npm run build:beta
         env:
           NODE_ENV: production
-      - name:
-        run: echo "Deploying ${{ github.ref_name }} on event ${{ github.event_name }}to beta environment"
       - name: Set up SSH
-        if: github.event_name == 'pull_request' && github.ref_name == '2595/merge'
+        if: github.event_name == 'push' && github.ref_name == github.event.repository.default_branch
         run: |
           mkdir ~/.ssh
-          echo "${{ secrets.SSH_PUBLIC_KEY }}" > ~/.ssh/id_ed25519.pub2
           echo "${{ secrets.BETA_SSH_PUBLIC_KEY }}" > ~/.ssh/id_ed25519.pub
           echo "${{ secrets.BETA_SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/*
           ssh-keyscan -H ${{ secrets.BETA_SSH_HOST }} >> ~/.ssh/known_hosts
       - name: Deploy build on server
-        if: github.event_name == 'pull_request' && github.ref_name == '2595/merge'
+        if: github.event_name == 'push' && github.ref_name == github.event.repository.default_branch
         run: | 
           rsync --del --no-times --checksum -vrm dist/* ${{ secrets.BETA_SSH_USER }}@${{ secrets.BETA_SSH_HOST }}:${{ secrets.BETA_DESTINATION_DIR }}
