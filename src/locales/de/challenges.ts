@@ -27,6 +27,6 @@ export const challenges: TranslationEntries = {
   },
   "eeveeOnly": {
     "name": "Nur-Evoli",
-    "desc": "Du kannst nur Evoli in dieser Herausforderung verwenden.",
+    "desc": "Du kannst nur Evoli und dessen Entwicklungen in dieser Herausforderung verwenden.",
   }
 } as const;
