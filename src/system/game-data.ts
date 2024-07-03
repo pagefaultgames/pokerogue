@@ -1258,7 +1258,7 @@ export class GameData {
     saveFile = document.createElement("input");
     saveFile.id = "saveFile";
     saveFile.type = "file";
-    saveFile.accept = ".prsv, .txt";
+    saveFile.accept = ".prsv,.txt";
     saveFile.style.display = "none";
     saveFile.addEventListener("change",
       e => {
