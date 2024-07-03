@@ -98,6 +98,7 @@ export const SettingKeys = {
   SE_Volume: "SE_VOLUME",
   Music_Preference: "MUSIC_PREFERENCE",
   Show_BGM_Bar: "SHOW_BGM_BAR",
+  Pokemon_Cries: "POKEMON_CRIES",
 };
 
 /**
@@ -535,6 +536,13 @@ export const Setting: Array<Setting> = [
     type: SettingType.AUDIO,
     requireReload: true
   },
+  {
+    key: SettingKeys.Pokemon_Cries,
+    label: i18next.t("settings:pokemonCries"),
+    options: OFF_ON,
+    default: 1,
+    type: SettingType.AUDIO
+  },
 
 ];
 
@@ -585,6 +593,9 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     break;
   case SettingKeys.Music_Preference:
     scene.musicPreference = value;
+    break;
+  case SettingKeys.Pokemon_Cries:
+    scene.pokemonCries = Setting[index].options[value].value === "On";
     break;
   case SettingKeys.Damage_Numbers:
     scene.damageNumbersMode = value;

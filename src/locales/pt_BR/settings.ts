@@ -64,6 +64,7 @@ export const settings: SimpleTranslationEntries = {
   "bgmVolume": "Volume de BGM",
   "seVolume": "Volume de SE",
   "musicPreference": "Preferência de Música",
+  "pokemonCries": "Pokemon Cries",
   "mixed": "Misto",
   "gamepadPleasePlug": "Conecte um controle ou pressione um botão",
   "delete": "Deletar",

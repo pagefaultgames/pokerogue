@@ -1500,7 +1500,9 @@ export class SummonPhase extends PartyMemberPokemonPhase {
               ease: "Sine.easeIn",
               scale: pokemon.getSpriteScale(),
               onComplete: () => {
-                pokemon.cry(pokemon.getHpRatio() > 0.25 ? undefined : { rate: 0.85 });
+                if (this.scene.pokemonCries) {
+                  pokemon.cry(pokemon.getHpRatio() > 0.25 ? undefined : { rate: 0.85 });
+                }
                 pokemon.getSprite().clearTint();
                 pokemon.resetSummonData();
                 this.scene.time.delayedCall(1000, () => this.end());
@@ -3796,7 +3798,7 @@ export class FaintPhase extends PokemonPhase {
     pokemon.lapseTags(BattlerTagLapseType.FAINT);
     this.scene.getField(true).filter(p => p !== pokemon).forEach(p => p.removeTagsBySourceId(pokemon.id));
 
-    pokemon.faintCry(() => {
+    const faintCryCallback = () => {
       if (pokemon instanceof PlayerPokemon) {
         pokemon.addFriendship(-10);
       }
@@ -3821,7 +3823,13 @@ export class FaintPhase extends PokemonPhase {
           this.end();
         }
       });
-    });
+    };
+
+    if (this.scene.pokemonCries) {
+      faintCryCallback();
+    } else {
+      pokemon.faintCry(faintCryCallback);
+    }
   }
 
   tryOverrideForBattleSpec(): boolean {

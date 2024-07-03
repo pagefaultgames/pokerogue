@@ -107,6 +107,7 @@ export default class BattleScene extends SceneBase {
   public masterVolume: number = 0.5;
   public bgmVolume: number = 1;
   public seVolume: number = 1;
+  public pokemonCries: boolean = true;
   public gameSpeed: integer = 1;
   public damageNumbersMode: integer = 0;
   public reroll: boolean = false;

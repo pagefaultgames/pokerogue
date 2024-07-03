@@ -16,6 +16,6 @@ export default class SettingsAudioUiHandler extends AbstractSettingsUiHandler {
     this.title = "Audio";
     this.settings = Setting.filter(s => s.type === SettingType.AUDIO);
     this.localStorageKey = "settings";
-    this.rowsToDisplay = 4;
+    this.rowsToDisplay = 5;
   }
 }
