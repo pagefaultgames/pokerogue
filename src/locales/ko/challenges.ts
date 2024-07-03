@@ -27,6 +27,6 @@ export const challenges: TranslationEntries = {
   },
   "eeveeOnly": {
     "name": "이브이 모드",
-    "desc": "이 챌린지는 이브이만 사용할 수 있습니다.",
+    "desc": "이 챌린지는 이브이와 이브이의 진화체만 사용할 수 있습니다.",
   }
 } as const;
