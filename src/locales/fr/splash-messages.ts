@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const splashMessages: SimpleTranslationEntries = {
   "battlesWon": "combats gagnés !",
@@ -28,7 +28,7 @@ export const splashMessages: SimpleTranslationEntries = {
   "mostlyConsistentSeeds": "Des seeds à peu près stables !",
   "achievementPointsDontDoAnything": "Les Points de Succès servent à rien !",
   "youDoNotStartAtLevel": "Ne commence pas au Niveau 2000 !",
-  "dontTalkAboutTheManaphyEggIncident": "Ne parle pas de l'incident de l’Œuf de Manaphy !",
+  "dontTalkAboutTheManaphyEggIncident": "Ne parle pas de l’incident de l’Œuf de Manaphy !",
   "alsoTryPokengine": "Essaye aussi Pokéngine !",
   "alsoTryEmeraldRogue": "Essaye aussi Emerald Rogue!",
   "alsoTryRadicalRed": "Essaye aussi Radical Red !",

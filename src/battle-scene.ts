@@ -3,6 +3,7 @@ import UI from "./ui/ui";
 import { NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, TurnInitPhase, ReturnPhase, LevelCapPhase, ShowTrainerPhase, LoginPhase, MovePhase, TitlePhase, SwitchPhase } from "./phases";
 import Pokemon, { PlayerPokemon, EnemyPokemon } from "./field/pokemon";
 import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies } from "./data/pokemon-species";
+import { Constructor } from "#app/utils";
 import * as Utils from "./utils";
 import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier, FusePokemonModifier, PokemonFormChangeItemModifier, TerastallizeModifier, overrideModifiers, overrideHeldItems } from "./modifier/modifier";
 import { PokeballType } from "./data/pokeball";
@@ -36,7 +37,7 @@ import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 import { addUiThemeOverrides } from "./ui/ui-theme";
 import PokemonData from "./system/pokemon-data";
 import { Nature } from "./data/nature";
-import { SpeciesFormChangeTimeOfDayTrigger, SpeciesFormChangeTrigger, pokemonFormChanges } from "./data/pokemon-forms";
+import { SpeciesFormChangeManualTrigger, SpeciesFormChangeTimeOfDayTrigger, SpeciesFormChangeTrigger, pokemonFormChanges } from "./data/pokemon-forms";
 import { FormChangePhase, QuietFormChangePhase } from "./form-change-phase";
 import { getTypeRgb } from "./data/type";
 import PokemonSpriteSparkleHandler from "./field/pokemon-sprite-sparkle-handler";
@@ -47,7 +48,7 @@ import { biomeDepths, getBiomeName } from "./data/biomes";
 import { SceneBase } from "./scene-base";
 import CandyBar from "./ui/candy-bar";
 import { Variant, variantData } from "./data/variant";
-import { Localizable } from "./plugins/i18n";
+import { Localizable } from "#app/interfaces/locales";
 import * as Overrides from "./overrides";
 import {InputsController} from "./inputs-controller";
 import {UiInputs} from "./ui-inputs";
@@ -156,6 +157,8 @@ export default class BattleScene extends SceneBase {
   public fusionPaletteSwaps: boolean = true;
   public enableTouchControls: boolean = false;
   public enableVibration: boolean = false;
+  public showBgmBar: boolean = true;
+
   /**
    * Determines the selected battle style.
    * - 0 = 'Switch'
@@ -218,6 +221,7 @@ export default class BattleScene extends SceneBase {
   public arenaFlyout: ArenaFlyout;
 
   private fieldOverlay: Phaser.GameObjects.Rectangle;
+  private shopOverlay: Phaser.GameObjects.Rectangle;
   public modifiers: PersistentModifier[];
   private enemyModifiers: PersistentModifier[];
   public uiContainer: Phaser.GameObjects.Container;
@@ -331,7 +335,9 @@ export default class BattleScene extends SceneBase {
 
   launchBattle() {
     this.arenaBg = this.add.sprite(0, 0, "plains_bg");
+    this.arenaBg.setName("sprite-arena-bg");
     this.arenaBgTransition = this.add.sprite(0, 0, "plains_bg");
+    this.arenaBgTransition.setName("sprite-arena-bg-transition");
 
     [ this.arenaBgTransition, this.arenaBg ].forEach(a => {
       a.setPipeline(this.fieldSpritePipeline);
@@ -341,13 +347,13 @@ export default class BattleScene extends SceneBase {
     });
 
     const field = this.add.container(0, 0);
+    field.setName("field");
     field.setScale(6);
-    field.setName("container-field");
 
     this.field = field;
 
     const fieldUI = this.add.container(0, this.game.canvas.height);
-    fieldUI.setName("container-field-ui");
+    fieldUI.setName("field-ui");
     fieldUI.setDepth(1);
     fieldUI.setScale(6);
 
@@ -371,7 +377,7 @@ export default class BattleScene extends SceneBase {
     this.add.existing(transition);
 
     const uiContainer = this.add.container(0, 0);
-    uiContainer.setName("container-ui");
+    uiContainer.setName("ui");
     uiContainer.setDepth(2);
     uiContainer.setScale(6);
 
@@ -385,16 +391,22 @@ export default class BattleScene extends SceneBase {
     this.fieldOverlay.setAlpha(0);
     this.fieldUI.add(this.fieldOverlay);
 
+    this.shopOverlay = this.add.rectangle(0, overlayHeight * -1 - 48, overlayWidth, overlayHeight, 0x070707);
+    this.shopOverlay.setName("rect-shop-overlay");
+    this.shopOverlay.setOrigin(0, 0);
+    this.shopOverlay.setAlpha(0);
+    this.fieldUI.add(this.shopOverlay);
+
     this.modifiers = [];
     this.enemyModifiers = [];
 
     this.modifierBar = new ModifierBar(this);
-    this.modifierBar.setName("container-modifier-bar");
+    this.modifierBar.setName("modifier-bar");
     this.add.existing(this.modifierBar);
     uiContainer.add(this.modifierBar);
 
     this.enemyModifierBar = new ModifierBar(this, true);
-    this.enemyModifierBar.setName("container-enemy-modifier-bar");
+    this.enemyModifierBar.setName("enemy-modifier-bar");
     this.add.existing(this.enemyModifierBar);
     uiContainer.add(this.enemyModifierBar);
 
@@ -405,28 +417,28 @@ export default class BattleScene extends SceneBase {
     this.fieldUI.add(this.charSprite);
 
     this.pbTray = new PokeballTray(this, true);
-    this.pbTray.setName("container-pb-tray");
+    this.pbTray.setName("pb-tray");
     this.pbTray.setup();
 
     this.pbTrayEnemy = new PokeballTray(this, false);
-    this.pbTrayEnemy.setName("container-enemy-pb-tray");
+    this.pbTrayEnemy.setName("enemy-pb-tray");
     this.pbTrayEnemy.setup();
 
     this.fieldUI.add(this.pbTray);
     this.fieldUI.add(this.pbTrayEnemy);
 
     this.abilityBar = new AbilityBar(this);
-    this.abilityBar.setName("container-ability-bar");
+    this.abilityBar.setName("ability-bar");
     this.abilityBar.setup();
     this.fieldUI.add(this.abilityBar);
 
     this.partyExpBar = new PartyExpBar(this);
-    this.partyExpBar.setName("container-party-exp-bar");
+    this.partyExpBar.setName("party-exp-bar");
     this.partyExpBar.setup();
     this.fieldUI.add(this.partyExpBar);
 
     this.candyBar = new CandyBar(this);
-    this.candyBar.setName("container-candy-bar");
+    this.candyBar.setName("candy-bar");
     this.candyBar.setup();
     this.fieldUI.add(this.candyBar);
 
@@ -478,13 +490,13 @@ export default class BattleScene extends SceneBase {
     const loadPokemonAssets = [];
 
     this.arenaPlayer = new ArenaBase(this, true);
-    this.arenaPlayer.setName("container-arena-player");
+    this.arenaPlayer.setName("arena-player");
     this.arenaPlayerTransition = new ArenaBase(this, true);
-    this.arenaPlayerTransition.setName("container-arena-player-transition");
+    this.arenaPlayerTransition.setName("arena-player-transition");
     this.arenaEnemy = new ArenaBase(this, false);
-    this.arenaEnemy.setName("container-arena-enemy");
+    this.arenaEnemy.setName("arena-enemy");
     this.arenaNextEnemy = new ArenaBase(this, false);
-    this.arenaNextEnemy.setName("container-arena-next-enemy");
+    this.arenaNextEnemy.setName("arena-next-enemy");
 
     this.arenaBgTransition.setVisible(false);
     this.arenaPlayerTransition.setVisible(false);
@@ -736,6 +748,14 @@ export default class BattleScene extends SceneBase {
       : ret;
   }
 
+  /**
+   * Returns the ModifierBar of this scene, which is declared private and therefore not accessible elsewhere
+   * @returns {ModifierBar}
+   */
+  getModifierBar(): ModifierBar {
+    return this.modifierBar;
+  }
+
   // store info toggles to be accessible by the ui
   addInfoToggle(infoToggle: InfoToggle): void {
     this.infoToggles.push(infoToggle);
@@ -797,8 +817,10 @@ export default class BattleScene extends SceneBase {
 
   addPokemonIcon(pokemon: Pokemon, x: number, y: number, originX: number = 0.5, originY: number = 0.5, ignoreOverride: boolean = false): Phaser.GameObjects.Container {
     const container = this.add.container(x, y);
+    container.setName(`${pokemon.name}-icon`);
 
     const icon = this.add.sprite(0, 0, pokemon.getIconAtlasKey(ignoreOverride));
+    icon.setName(`sprite-${pokemon.name}-icon`);
     icon.setFrame(pokemon.getIconId(true));
     // Temporary fix to show pokemon's default icon if variant icon doesn't exist
     if (icon.frame.name !== pokemon.getIconId(true)) {
@@ -815,6 +837,7 @@ export default class BattleScene extends SceneBase {
 
     if (pokemon.isFusion(true)) {
       const fusionIcon = this.add.sprite(0, 0, pokemon.getFusionIconAtlasKey(ignoreOverride));
+      fusionIcon.setName("sprite-fusion-icon");
       fusionIcon.setOrigin(0.5, 0);
       fusionIcon.setFrame(pokemon.getFusionIconId(true));
 
@@ -1099,8 +1122,10 @@ export default class BattleScene extends SceneBase {
         playerField.forEach((_, p) => this.unshiftPhase(new ReturnPhase(this, p)));
 
         for (const pokemon of this.getParty()) {
-          if (pokemon.hasAbility(Abilities.ICE_FACE)) {
-            pokemon.formIndex = 0;
+          // Only trigger form change when Eiscue is in Noice form
+          // Hardcoded Eiscue for now in case it is fused with another pokemon
+          if (pokemon.species.speciesId === Species.EISCUE && pokemon.hasAbility(Abilities.ICE_FACE) && pokemon.formIndex === 1) {
+            this.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
           }
 
           pokemon.resetBattleData();
@@ -1396,6 +1421,30 @@ export default class BattleScene extends SceneBase {
     });
   }
 
+  showShopOverlay(duration: integer): Promise<void> {
+    return new Promise(resolve => {
+      this.tweens.add({
+        targets: this.shopOverlay,
+        alpha: 0.8,
+        ease: "Sine.easeOut",
+        duration: duration,
+        onComplete: () => resolve()
+      });
+    });
+  }
+
+  hideShopOverlay(duration: integer): Promise<void> {
+    return new Promise(resolve => {
+      this.tweens.add({
+        targets: this.shopOverlay,
+        alpha: 0,
+        duration: duration,
+        ease: "Cubic.easeIn",
+        onComplete: () => resolve()
+      });
+    });
+  }
+
   showEnemyModifierBar(): void {
     this.enemyModifierBar.setVisible(true);
   }
@@ -1407,6 +1456,7 @@ export default class BattleScene extends SceneBase {
   updateBiomeWaveText(): void {
     const isBoss = !(this.currentBattle.waveIndex % 10);
     const biomeString: string = getBiomeName(this.arena.biomeType);
+    this.fieldUI.moveAbove(this.biomeWaveText, this.luckText);
     this.biomeWaveText.setText( biomeString + " - " + this.currentBattle.waveIndex.toString());
     this.biomeWaveText.setColor(!isBoss ? "#ffffff" : "#f89890");
     this.biomeWaveText.setShadowColor(!isBoss ? "#636363" : "#984038");
@@ -1591,6 +1641,7 @@ export default class BattleScene extends SceneBase {
       : this.getBgmLoopPoint(bgmName);
     let loaded = false;
     const playNewBgm = () => {
+      this.ui.bgmBar.setBgmToBgmBar(bgmName);
       if (bgmName === null && this.bgm && !this.bgm.pendingRemove) {
         this.bgm.play({
           volume: this.masterVolume * this.bgmVolume
@@ -1824,6 +1875,8 @@ export default class BattleScene extends SceneBase {
       return 0.175;
     case "battle_legendary_ruinous": //SV Treasures of Ruin Battle
       return 6.333;
+    case "battle_legendary_kor_mir": //SV Depths of Area Zero Battle
+      return 6.442;
     case "battle_legendary_loyal_three": //SV Loyal Three Battle
       return 6.500;
     case "battle_legendary_ogerpon": //SV Ogerpon Battle
@@ -1846,8 +1899,26 @@ export default class BattleScene extends SceneBase {
       return 13.940;
     case "end_summit": //PMD RTDX Sky Tower Summit
       return 30.025;
+    case "battle_rocket_grunt": //HGSS Team Rocket Battle
+      return 12.707;
+    case "battle_aqua_magma_grunt": //ORAS Team Aqua & Magma Battle
+      return 12.062;
+    case "battle_galactic_grunt": //BDSP Team Galactic Battle
+      return 13.043;
     case "battle_plasma_grunt": //BW Team Plasma Battle
       return 12.974;
+    case "battle_flare_grunt": //XY Team Flare Battle
+      return 4.228;
+    case "battle_rocket_boss": //USUM Giovanni Battle
+      return 9.115;
+    case "battle_aqua_magma_boss": //ORAS Archie & Maxie Battle
+      return 14.847;
+    case "battle_galactic_boss": //BDSP Cyrus Battle
+      return 106.962;
+    case "battle_plasma_boss": //B2W2 Ghetsis Battle
+      return 25.624;
+    case "battle_flare_boss": //XY Lysandre Battle
+      return 8.085;
     }
 
     return 0;
@@ -2340,8 +2411,14 @@ export default class BattleScene extends SceneBase {
     return false;
   }
 
-  getModifiers(modifierType: { new(...args: any[]): Modifier }, player: boolean = true): PersistentModifier[] {
-    return (player ? this.modifiers : this.enemyModifiers).filter(m => m instanceof modifierType);
+  /**
+   * Get all of the modifiers that match `modifierType`
+   * @param modifierType The type of modifier to apply; must extend {@linkcode PersistentModifier}
+   * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
+   * @returns the list of all modifiers that matched `modifierType`.
+   */
+  getModifiers<T extends PersistentModifier>(modifierType: Constructor<T>, player: boolean = true): T[] {
+    return (player ? this.modifiers : this.enemyModifiers).filter((m): m is T => m instanceof modifierType);
   }
 
   findModifiers(modifierFilter: ModifierPredicate, player: boolean = true): PersistentModifier[] {
@@ -2352,7 +2429,7 @@ export default class BattleScene extends SceneBase {
     return (player ? this.modifiers : this.enemyModifiers).find(m => (modifierFilter as ModifierPredicate)(m));
   }
 
-  applyShuffledModifiers(scene: BattleScene, modifierType: { new(...args: any[]): Modifier }, player: boolean = true, ...args: any[]): PersistentModifier[] {
+  applyShuffledModifiers(scene: BattleScene, modifierType: Constructor<Modifier>, player: boolean = true, ...args: any[]): PersistentModifier[] {
     let modifiers = (player ? this.modifiers : this.enemyModifiers).filter(m => m instanceof modifierType && m.shouldApply(args));
     scene.executeWithSeedOffset(() => {
       const shuffleModifiers = mods => {
@@ -2367,7 +2444,7 @@ export default class BattleScene extends SceneBase {
     return this.applyModifiersInternal(modifiers, player, args);
   }
 
-  applyModifiers(modifierType: { new(...args: any[]): Modifier }, player: boolean = true, ...args: any[]): PersistentModifier[] {
+  applyModifiers(modifierType: Constructor<Modifier>, player: boolean = true, ...args: any[]): PersistentModifier[] {
     const modifiers = (player ? this.modifiers : this.enemyModifiers).filter(m => m instanceof modifierType && m.shouldApply(args));
     return this.applyModifiersInternal(modifiers, player, args);
   }
@@ -2384,7 +2461,7 @@ export default class BattleScene extends SceneBase {
     return appliedModifiers;
   }
 
-  applyModifier(modifierType: { new(...args: any[]): Modifier }, player: boolean = true, ...args: any[]): PersistentModifier {
+  applyModifier(modifierType: Constructor<Modifier>, player: boolean = true, ...args: any[]): PersistentModifier {
     const modifiers = (player ? this.modifiers : this.enemyModifiers).filter(m => m instanceof modifierType && m.shouldApply(args));
     for (const modifier of modifiers) {
       if (modifier.apply(args)) {
@@ -2396,7 +2473,7 @@ export default class BattleScene extends SceneBase {
     return null;
   }
 
-  triggerPokemonFormChange(pokemon: Pokemon, formChangeTriggerType: { new(...args: any[]): SpeciesFormChangeTrigger }, delayed: boolean = false, modal: boolean = false): boolean {
+  triggerPokemonFormChange(pokemon: Pokemon, formChangeTriggerType: Constructor<SpeciesFormChangeTrigger>, delayed: boolean = false, modal: boolean = false): boolean {
     if (pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId)) {
       const matchingFormChange = pokemonFormChanges[pokemon.species.speciesId].find(fc => fc.findTrigger(formChangeTriggerType) && fc.canChange(pokemon));
       if (matchingFormChange) {
@@ -2420,7 +2497,7 @@ export default class BattleScene extends SceneBase {
     return false;
   }
 
-  validateAchvs(achvType: { new(...args: any[]): Achv }, ...args: any[]): void {
+  validateAchvs(achvType: Constructor<Achv>, ...args: unknown[]): void {
     const filteredAchvs = Object.values(achvs).filter(a => a instanceof achvType);
     for (const achv of filteredAchvs) {
       this.validateAchv(achv, args);
