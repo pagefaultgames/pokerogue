@@ -62,6 +62,7 @@ export const bgmName: SimpleTranslationEntries = {
   "battle_legendary_calyrex": "SWSH - ¡Vs Calyrex!",
   "battle_legendary_birds_galar": "SWSH - ¡Vs Aves Legendarias de Galar!",
   "battle_legendary_ruinous": "SV - ¡Vs Tesoros Funestos!",
+  "battle_legendary_kor_mir": "SV Depths of Area Zero Battle",
   "battle_legendary_loyal_three": "SV - ¡Vs Compatrones!",
   "battle_legendary_ogerpon": "SV - ¡Vs Ogerpon!",
   "battle_legendary_terapagos": "SV - ¡Vs Terapagos!",
@@ -73,7 +74,16 @@ export const bgmName: SimpleTranslationEntries = {
   "battle_wild": "BW - ¡Vs Pokémon Salvaje!",
   "battle_wild_strong": "BW - ¡Vs Pokémon Salvaje Raro!",
   "end_summit": "PMD RTDX - Techo del Cielo",
+  "battle_rocket_grunt": "HGSS Team Rocket Battle",
+  "battle_aqua_magma_grunt": "ORAS Team Aqua & Magma Battle",
+  "battle_galactic_grunt": "BDSP Team Galactic Battle",
   "battle_plasma_grunt": "BW - ¡Vs Equipo Plasma!",
+  "battle_flare_grunt": "XY Team Flare Battle",
+  "battle_rocket_boss": "USUM Giovanni Battle",
+  "battle_aqua_magma_boss": "ORAS Archie & Maxie Battle",
+  "battle_galactic_boss": "BDSP Cyrus Battle",
+  "battle_plasma_boss": "B2W2 Ghetsis Battle",
+  "battle_flare_boss": "XY Lysandre Battle",
 
   // Biome Music
   "abyss": "PMD EoS - Cráter Oscuro",
@@ -91,20 +101,20 @@ export const bgmName: SimpleTranslationEntries = {
   "graveyard": "PMD EoS - Bosque Misterio",
   "ice_cave": "PMD EoS - Gran Iceberg",
   "island": "PMD EoS - Costa Escarpada",
-  //"jungle": "jungle", // The composer thinks about a more creative name
-  //"labratory": "labratory", // The composer thinks about a more creative name
+  "jungle": "Lmz - Jungle", // The composer thinks about a more creative name
+  "laboratory": "Firel - Laboratory", // The composer thinks about a more creative name
   "lake": "PMD EoS - Cueva Cristal",
   "meadow": "PMD EoS - Bosque de la Cumbre del Cielo",
-  //"metropolis": "metropolis", // The composer thinks about a more creative name
+  "metropolis": "Firel - Metropolis", // The composer thinks about a more creative name
   "mountain": "PMD EoS - Monte Cuerno",
   "plains": "PMD EoS - Pradera de la Cumbre del Cielo",
   "power_plant": "PMD EoS - Pradera Destello",
   "ruins": "PMD EoS - Sima Hermética",
   "sea": "PMD EoS - Cueva Aguamar",
-  "seabed": "PMD EoS - Fosa Aguamar",
+  "seabed": "Firel - Seabed", // The composer thinks about a more creative name
   "slum": "PMD EoS - Costa de la Cumbre del Cielo",
   "snowy_forest": "PMD EoS - Campo nevado de la Cumbre del Cielo",
-  "space": "PMD EoS - Risco Fortuna",
+  "space": "Firel - Aether",
   "swamp": "PMD EoS - Mar Circundante",
   "tall_grass": "PMD EoS - Bosque Niebla",
   "temple": "PMD EoS - Cueva Regia",
@@ -130,6 +140,6 @@ export const bgmName: SimpleTranslationEntries = {
 
   // Other
   "heal": "BW - Cura Pokémon",
-  "menu": "PMD Eos - ¡Bienvenidos al mundo de los Pokémon!",
+  "menu": "PMD EoS - ¡Bienvenidos al mundo de los Pokémon!",
   "title": "PMD EoS - Tema del menú principal",
 } as const;

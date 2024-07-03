@@ -1875,6 +1875,8 @@ export default class BattleScene extends SceneBase {
       return 0.175;
     case "battle_legendary_ruinous": //SV Treasures of Ruin Battle
       return 6.333;
+    case "battle_legendary_kor_mir": //SV Depths of Area Zero Battle
+      return 6.442;
     case "battle_legendary_loyal_three": //SV Loyal Three Battle
       return 6.500;
     case "battle_legendary_ogerpon": //SV Ogerpon Battle
@@ -1897,8 +1899,26 @@ export default class BattleScene extends SceneBase {
       return 13.940;
     case "end_summit": //PMD RTDX Sky Tower Summit
       return 30.025;
+    case "battle_rocket_grunt": //HGSS Team Rocket Battle
+      return 12.707;
+    case "battle_aqua_magma_grunt": //ORAS Team Aqua & Magma Battle
+      return 12.062;
+    case "battle_galactic_grunt": //BDSP Team Galactic Battle
+      return 13.043;
     case "battle_plasma_grunt": //BW Team Plasma Battle
       return 12.974;
+    case "battle_flare_grunt": //XY Team Flare Battle
+      return 4.228;
+    case "battle_rocket_boss": //USUM Giovanni Battle
+      return 9.115;
+    case "battle_aqua_magma_boss": //ORAS Archie & Maxie Battle
+      return 14.847;
+    case "battle_galactic_boss": //BDSP Cyrus Battle
+      return 106.962;
+    case "battle_plasma_boss": //B2W2 Ghetsis Battle
+      return 25.624;
+    case "battle_flare_boss": //XY Lysandre Battle
+      return 8.085;
     }
 
     return 0;
