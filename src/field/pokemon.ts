@@ -23,7 +23,7 @@ import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HelpingHandTag
 import { WeatherType } from "../data/weather";
 import { TempBattleStat } from "../data/temp-battle-stat";
 import { ArenaTagSide, WeakenMoveScreenTag, WeakenMoveTypeTag } from "../data/arena-tag";
-import { Ability, AbAttr, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, MoveTypeChangeAttr, PreApplyBattlerTagAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldBattleStatMultiplierAbAttrs, FieldMultiplyBattleStatAbAttr, AllyMoveCategoryPowerBoostAbAttr, FieldMoveTypePowerBoostAbAttr, AddSecondStrikeAbAttr } from "../data/ability";
+import { Ability, AbAttr, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, MoveTypeChangeAttr, PreApplyBattlerTagAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldBattleStatMultiplierAbAttrs, FieldMultiplyBattleStatAbAttr, AllyMoveCategoryPowerBoostAbAttr, FieldMoveTypePowerBoostAbAttr, AddSecondStrikeAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr } from "../data/ability";
 import PokemonData from "../system/pokemon-data";
 import { BattlerIndex } from "../battle";
 import { Mode } from "../ui/ui";
@@ -1727,6 +1727,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return (this.isPlayer() ? this.scene.getPlayerField() : this.scene.getEnemyField())[this.getFieldIndex() ? 0 : 1];
   }
 
+  /**
+   * Gets the Pokémon on the allied field.
+   *
+   * @returns An array of Pokémon on the allied field.
+   */
+  getAlliedField(): Pokemon[] {
+    return this instanceof PlayerPokemon ? this.scene.getPlayerField() : this.scene.getEnemyField();
+  }
+
   apply(source: Pokemon, move: Move): HitResult {
     let result: HitResult;
     const damage = new Utils.NumberHolder(0);
@@ -2121,6 +2130,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const cancelled = new Utils.BooleanHolder(false);
     applyPreApplyBattlerTagAbAttrs(PreApplyBattlerTagAbAttr, this, newTag, cancelled);
 
+    const userField = this.getAlliedField();
+    userField.forEach(pokemon => applyPreApplyBattlerTagAbAttrs(UserFieldBattlerTagImmunityAbAttr, pokemon, newTag, cancelled));
+
     if (!cancelled.value && newTag.canAdd(this)) {
       this.summonData.tags.push(newTag);
       newTag.onAdd(this);
@@ -2262,11 +2274,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * If this Pokemon is using a multi-hit move, cancels all subsequent strikes
-   * @param {Pokemon} target If specified, this only cancels subsequent strikes against the given target
+   * @param {Pokemon} target If specified, this only cancels subsequent strikes against this Pokemon
    */
   stopMultiHit(target?: Pokemon): void {
     const effectPhase = this.scene.getCurrentPhase();
-    if (effectPhase instanceof MoveEffectPhase && effectPhase.getUserPokemon() === this) {
+    if (effectPhase instanceof MoveEffectPhase) {
       effectPhase.stopMultiHit(target);
     }
   }
@@ -2533,6 +2545,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const cancelled = new Utils.BooleanHolder(false);
     applyPreSetStatusAbAttrs(StatusEffectImmunityAbAttr, this, effect, cancelled, quiet);
 
+    const userField = this.getAlliedField();
+    userField.forEach(pokemon => applyPreSetStatusAbAttrs(UserFieldStatusEffectImmunityAbAttr, pokemon, effect, cancelled, quiet));
+
     if (cancelled.value) {
       return false;
     }
@@ -2543,14 +2558,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   trySetStatus(effect: StatusEffect, asPhase: boolean = false, sourcePokemon: Pokemon = null, cureTurn: integer = 0, sourceText: string = null): boolean {
     if (!this.canSetStatus(effect, asPhase, false, sourcePokemon)) {
       return false;
-    }
-
-    /**
-     * If this Pokemon falls asleep or freezes in the middle of a multi-hit attack,
-     * cancel the attack's subsequent hits.
-     */
-    if (effect === StatusEffect.SLEEP || effect === StatusEffect.FREEZE) {
-      this.stopMultiHit();
     }
 
     if (asPhase) {
@@ -3406,15 +3413,12 @@ export class EnemyPokemon extends Pokemon {
   public aiType: AiType;
   public bossSegments: integer;
   public bossSegmentIndex: integer;
-  /** To indicate of the instance was populated with a dataSource -> e.g. loaded & populated from session data */
-  public readonly isPopulatedFromDataSource: boolean;
 
   constructor(scene: BattleScene, species: PokemonSpecies, level: integer, trainerSlot: TrainerSlot, boss: boolean, dataSource: PokemonData) {
     super(scene, 236, 84, species, level, dataSource?.abilityIndex, dataSource?.formIndex,
       dataSource?.gender, dataSource ? dataSource.shiny : false, dataSource ? dataSource.variant : undefined, null, dataSource ? dataSource.nature : undefined, dataSource);
 
     this.trainerSlot = trainerSlot;
-    this.isPopulatedFromDataSource = !!dataSource; // if a dataSource is provided, then it was populated from dataSource
     if (boss) {
       this.setBoss(boss, dataSource?.bossSegments);
     }
@@ -3464,13 +3468,6 @@ export class EnemyPokemon extends Pokemon {
     }
   }
 
-  /**
-   * Sets the pokemons boss status. If true initializes the boss segments either from the arguments
-   * or through the the Scene.getEncounterBossSegments function
-   *
-   * @param boss if the pokemon is a boss
-   * @param bossSegments amount of boss segments (health-bar segments)
-   */
   setBoss(boss: boolean = true, bossSegments: integer = 0): void {
     if (boss) {
       this.bossSegments = bossSegments || this.scene.getEncounterBossSegments(this.scene.currentBattle.waveIndex, this.level, this.species, true);
