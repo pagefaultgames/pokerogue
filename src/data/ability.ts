@@ -1,4 +1,4 @@
-import Pokemon, { HitResult, PlayerPokemon, PokemonMove } from "../field/pokemon";
+import Pokemon, { HitResult, PokemonMove } from "../field/pokemon";
 import { Type } from "./type";
 import { Constructor } from "#app/utils";
 import * as Utils from "../utils";
@@ -2133,8 +2133,8 @@ export class PostSummonUserFieldRemoveStatusEffectAbAttr extends PostSummonAbAtt
    * @returns A boolean or a promise that resolves to a boolean indicating the result of the ability application.
    */
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
-    const party = pokemon instanceof PlayerPokemon ? pokemon.scene.getPlayerField() : pokemon.scene.getEnemyField();
-    const allowedParty = party.filter(p => p.isAllowedInBattle());
+    const field = pokemon.getAlliedField();
+    const allowedParty = field.filter(p => p.isAllowedInBattle());
 
     if (allowedParty.length < 1) {
       return false;
