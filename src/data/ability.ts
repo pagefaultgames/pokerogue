@@ -2142,7 +2142,7 @@ export class PostSummonUserFieldRemoveStatusEffectAbAttr extends PostSummonAbAtt
 
     for (const pokemon of allowedParty) {
       if (this.statusEffect.includes(pokemon.status?.effect)) {
-        pokemon.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectHealText(pokemon.status.effect, getPokemonNameWithAffix(pokemon))));
+        pokemon.scene.queueMessage(getStatusEffectHealText(pokemon.status.effect, getPokemonNameWithAffix(pokemon)));
         pokemon.resetStatus(false);
         pokemon.updateInfo();
       }
