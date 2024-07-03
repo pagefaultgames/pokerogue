@@ -37,7 +37,7 @@ import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 import { addUiThemeOverrides } from "./ui/ui-theme";
 import PokemonData from "./system/pokemon-data";
 import { Nature } from "./data/nature";
-import { SpeciesFormChangeTimeOfDayTrigger, SpeciesFormChangeTimeOfDayTrigger, SpeciesFormChangeTrigger, pokemonFormChanges, FormChangeItem } from "./data/pokemon-forms";
+import { SpeciesFormChangeManualTrigger, SpeciesFormChangeTimeOfDayTrigger, SpeciesFormChangeTrigger, pokemonFormChanges, FormChangeItem } from "./data/pokemon-forms";
 import { FormChangePhase, QuietFormChangePhase } from "./form-change-phase";
 import { getTypeRgb } from "./data/type";
 import PokemonSpriteSparkleHandler from "./field/pokemon-sprite-sparkle-handler";
