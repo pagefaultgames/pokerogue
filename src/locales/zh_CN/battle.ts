@@ -14,6 +14,7 @@ export const battle: SimpleTranslationEntries = {
   "switchQuestion": "要更换\n{{pokemonName}}吗？",
   "trainerDefeated": "你击败了\n{{trainerName}}！",
   "moneyWon": "你赢得了\n₽{{moneyAmount}}！",
+  "moneyPickedUp": "你捡起了 ₽{{moneyAmount}}！",
   "pokemonCaught": "{{pokemonName}}被抓住了！",
   "addedAsAStarter": "增加了{{pokemonName}}作为\n一个新的基础宝可梦！",
   "partyFull": "你的队伍已满员。是否放生其他宝可梦\n为{{pokemonName}}腾出空间?",
