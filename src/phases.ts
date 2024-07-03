@@ -4891,7 +4891,6 @@ export class AttemptCapturePhase extends PokemonPhase {
                   }
                 },
                 onComplete: () => {
-                  this.scene.unshiftPhase(new VictoryPhase(this.scene, this.battlerIndex));
                   this.scene.gameData.setPokemonCaught(pokemon);
                   this.catch();
                 }
@@ -4960,6 +4959,7 @@ export class AttemptCapturePhase extends PokemonPhase {
 
     this.scene.ui.showText(i18next.t("battle:pokemonCaught", { pokemonName: pokemon.name }), null, () => {
       const end = () => {
+        this.scene.unshiftPhase(new VictoryPhase(this.scene, this.battlerIndex));
         this.scene.pokemonInfoContainer.hide();
         this.removePb();
         this.end();
