@@ -2,14 +2,14 @@ import * as ModifierTypes from "./modifier-type";
 import { LearnMovePhase, LevelUpPhase, PokemonHealPhase } from "../phases";
 import BattleScene from "../battle-scene";
 import { getLevelTotalExp } from "../data/exp";
-import { PokeballType } from "../data/pokeball";
+import { MAX_PER_TYPE_POKEBALLS, PokeballType } from "../data/pokeball";
 import Pokemon, { PlayerPokemon } from "../field/pokemon";
 import { Stat } from "../data/pokemon-stat";
 import { addTextObject, TextStyle } from "../ui/text";
 import { Type } from "../data/type";
 import { EvolutionPhase } from "../evolution-phase";
 import { FusionSpeciesFormEvolution, pokemonEvolutions, pokemonPrevolutions } from "../data/pokemon-evolutions";
-import { getPokemonMessage } from "../messages";
+import {getPokemonMessage, getPokemonNameWithAffix} from "../messages";
 import * as Utils from "../utils";
 import { TempBattleStat } from "../data/temp-battle-stat";
 import { getBerryEffectFunc, getBerryPredicate } from "../data/berry";
@@ -263,7 +263,7 @@ export class AddPokeballModifier extends ConsumableModifier {
 
   apply(args: any[]): boolean {
     const pokeballCounts = (args[0] as BattleScene).pokeballCounts;
-    pokeballCounts[this.pokeballType] = Math.min(pokeballCounts[this.pokeballType] + this.count, 99);
+    pokeballCounts[this.pokeballType] = Math.min(pokeballCounts[this.pokeballType] + this.count, MAX_PER_TYPE_POKEBALLS);
 
     return true;
   }
@@ -2469,7 +2469,7 @@ export class EnemyStatusEffectHealChanceModifier extends EnemyPersistentModifier
   apply(args: any[]): boolean {
     const target = (args[0] as Pokemon);
     if (target.status && Phaser.Math.RND.realInRange(0, 1) < (this.chance * this.getStackCount())) {
-      target.scene.queueMessage(getPokemonMessage(target, getStatusEffectHealText(target.status.effect)));
+      target.scene.queueMessage(getStatusEffectHealText(target.status.effect, getPokemonNameWithAffix(target)));
       target.resetStatus();
       target.updateInfo();
       return true;
