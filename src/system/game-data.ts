@@ -1220,7 +1220,7 @@ export class GameData {
         const blob = new Blob([ encryptedData.toString() ], {type: "text/json"});
         const link = document.createElement("a");
         link.href = window.URL.createObjectURL(blob);
-        link.download = `${dataKey}.prsv`;
+        link.download = `${dataKey}.prsv.txt`;
         link.click();
         link.remove();
       };
@@ -1258,7 +1258,7 @@ export class GameData {
     saveFile = document.createElement("input");
     saveFile.id = "saveFile";
     saveFile.type = "file";
-    saveFile.accept = ".prsv";
+    saveFile.accept = ".prsv, .txt";
     saveFile.style.display = "none";
     saveFile.addEventListener("change",
       e => {
