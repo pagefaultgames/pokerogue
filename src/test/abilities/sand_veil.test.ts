@@ -9,8 +9,7 @@ import { getMovePosition } from "../utils/gameManagerUtils";
 import { CommandPhase, MoveEffectPhase, MoveEndPhase } from "#app/phases.js";
 import { BattleStat } from "#app/data/battle-stat.js";
 import { WeatherType } from "#app/data/weather.js";
-import * as Utils from "#app/utils.js";
-import { BattleStatMultiplierAbAttr, allAbilities, applyBattleStatMultiplierAbAttrs } from "#app/data/ability.js";
+import { BattleStatMultiplierAbAttr, allAbilities } from "#app/data/ability.js";
 
 const TIMEOUT = 20 * 1000;
 
@@ -53,6 +52,17 @@ describe("Abilities - Sand Veil", () => {
 
       vi.spyOn(leadPokemon[0], "getAbility").mockReturnValue(allAbilities[Abilities.SAND_VEIL]);
 
+      const sandVeilAttr = allAbilities[Abilities.SAND_VEIL].getAttrs(BattleStatMultiplierAbAttr)[0];
+      vi.spyOn(sandVeilAttr, "applyBattleStat").mockImplementation(
+        (pokemon, passive, battleStat, statValue, args) => {
+          if (battleStat === BattleStat.EVA && game.scene.arena.weather?.weatherType === WeatherType.SANDSTORM) {
+            statValue.value *= -1; // will make all attacks miss
+            return true;
+          }
+          return false;
+        }
+      );
+
       expect(leadPokemon[0].hasAbility(Abilities.SAND_VEIL)).toBe(true);
       expect(leadPokemon[1].hasAbility(Abilities.SAND_VEIL)).toBe(false);
 
@@ -63,13 +73,6 @@ describe("Abilities - Sand Veil", () => {
       game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
       await game.phaseInterceptor.to(MoveEffectPhase, false);
-
-      // Mock implementation of hitCheck causes attack to miss if a multiplier is applied
-      vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockImplementation((target) => {
-        const evasionMultiplier = new Utils.NumberHolder(1);
-        applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, target, BattleStat.EVA, evasionMultiplier);
-        return evasionMultiplier.value <= 1;
-      });
 
       await game.phaseInterceptor.to(MoveEndPhase, false);
 
