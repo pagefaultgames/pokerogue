@@ -8,7 +8,8 @@ import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import Pokemon, { PlayerPokemon } from "#app/field/pokemon.js";
 import Move, { allMoves } from "#app/data/move.js";
 import { NumberHolder } from "#app/utils.js";
-import { applyPreAttackAbAttrs, UserFieldMoveTypePowerBoostAbAttr } from "#app/data/ability.js";
+import { allAbilities, applyPreAttackAbAttrs, UserFieldMoveTypePowerBoostAbAttr } from "#app/data/ability.js";
+import { Abilities } from "#app/enums/abilities.js";
 
 describe("Abilities - Steely Spirit", () => {
   let phaserGame: Phaser.Game;
@@ -37,8 +38,9 @@ describe("Abilities - Steely Spirit", () => {
     await game.startBattle([Species.MAGIKARP, Species.PERRSERKER]);
     const moveToCheck = Moves.IRON_HEAD;
 
-    // Set ability to Steely Spirit
-    game.scene.getPlayerField()[1].abilityIndex = 2;
+    vi.spyOn(game.scene.getPlayerField()[1], "getAbility").mockReturnValue(allAbilities[Abilities.STEELY_SPIRIT]);
+
+    expect(game.scene.getPlayerField()[1].hasAbility(Abilities.STEELY_SPIRIT)).toBe(true);
 
     game.doAttack(getMovePosition(game.scene, 0, moveToCheck));
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
@@ -52,15 +54,18 @@ describe("Abilities - Steely Spirit", () => {
     await game.startBattle([Species.PERRSERKER, Species.PERRSERKER]);
     const moveToCheck = Moves.IRON_HEAD;
 
-    // Set ability to Steely Spirit
-    game.scene.getPlayerField().forEach(p => p.abilityIndex = 2);
+    game.scene.getPlayerField().forEach(p => {
+      vi.spyOn(p, "getAbility").mockReturnValue(allAbilities[Abilities.STEELY_SPIRIT]);
+    });
+
+    expect(game.scene.getPlayerField().every(p => p.hasAbility(Abilities.STEELY_SPIRIT))).toBe(true);
 
     game.doAttack(getMovePosition(game.scene, 0, moveToCheck));
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
     const mockedMovePower = getMockedMovePower(game.scene.getEnemyPokemon(), game.scene.getPlayerPokemon(), allMoves[moveToCheck]);
 
-    expect(mockedMovePower).toBe(allMoves[moveToCheck].power * steelySpiritMultiplier * steelySpiritMultiplier);
+    expect(mockedMovePower).toBe(allMoves[moveToCheck].power * Math.pow(steelySpiritMultiplier, 2));
   });
 });
 

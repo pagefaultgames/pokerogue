@@ -1460,29 +1460,13 @@ export class PreAttackFieldMoveTypePowerBoostAbAttr extends FieldMovePowerBoostA
  * Boosts the power of a specific type of move for all Pokemon in the field.
  * @extends PreAttackFieldMoveTypePowerBoostAbAttr
  */
-export class FieldMoveTypePowerBoostAbAttr extends PreAttackFieldMoveTypePowerBoostAbAttr {
-  /**
-   * @param boostedType - The type of move that will receive the power boost.
-   * @param powerMultiplier - The multiplier to apply to the move's power, defaults to 1.5 if not provided.
-   */
-  constructor(boostedType: Type, powerMultiplier?: number) {
-    super(boostedType, powerMultiplier);
-  }
-}
+export class FieldMoveTypePowerBoostAbAttr extends PreAttackFieldMoveTypePowerBoostAbAttr { }
 
 /**
  * Boosts the power of a specific type of move for the user and its allies.
  * @extends PreAttackFieldMoveTypePowerBoostAbAttr
  */
-export class UserFieldMoveTypePowerBoostAbAttr extends PreAttackFieldMoveTypePowerBoostAbAttr {
-  /**
-   * @param boostedType - The type of move that will receive the power boost.
-   * @param powerMultiplier - The multiplier to apply to the move's power, defaults to 1.5 if not provided.
-   */
-  constructor(boostedType: Type, powerMultiplier?: number) {
-    super(boostedType, powerMultiplier);
-  }
-}
+export class UserFieldMoveTypePowerBoostAbAttr extends PreAttackFieldMoveTypePowerBoostAbAttr { }
 
 /**
  * Boosts the power of moves in specified categories.
