@@ -428,7 +428,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       11: "We're going to use the power of a volcano! It's gonna be... explosive! Get it? Heh heh!",
       12: "Oh, you're here to stop us? Do you have any idea how much paperwork I'd have to do if you succeed?",
       13: "I hope you brought marshmallows because things are about to heat up!",
-      14:  "You're here to stop our plans? Good luck! I've been practicing my 'evil laugh' all week!",
+      14: "You're here to stop our plans? Good luck! I've been practicing my 'evil laugh' all week!",
       16: "Hope you brought sunscreen, 'cause you're about to get burned!",
       17: "You're in the way! Team Magma has no time for kids like you!",
     },
