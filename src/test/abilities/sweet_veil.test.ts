@@ -4,6 +4,7 @@ import GameManager from "#app/test/utils/gameManager";
 import * as overrides from "#app/overrides";
 import { Species } from "#enums/species";
 import {
+  CommandPhase,
   MoveEffectPhase,
   MovePhase,
   TurnEndPhase,
@@ -95,8 +96,11 @@ describe("Abilities - Sweet Veil", () => {
 
     const drowsyMon = game.scene.getPlayerField().filter(p => !!p.getTag(BattlerTagType.DROWSY))[0];
 
+    await game.phaseInterceptor.to(CommandPhase);
     game.doAttack(getMovePosition(game.scene, drowsyMon.getFieldIndex(), Moves.SPLASH));
     game.doSwitchPokemon(2);
+
+    await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(game.scene.getPlayerField().every(p => p.status?.effect)).toBe(false);
   });
