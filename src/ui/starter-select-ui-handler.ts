@@ -2077,9 +2077,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             this.pokemonHatchedIcon,
             this.pokemonHatchedCountText
           ].map(c => c.setVisible(false));
-        } else if (species.speciesId === Species.ETERNATUS) {
-          this.pokemonHatchedIcon.setVisible(false);
-          this.pokemonHatchedCountText.setVisible(false);
+          this.pokemonFormText.setY(25);
         } else {
           this.pokemonCaughtHatchedContainer.setY(25);
           this.pokemonShinyIcon.setY(117);
@@ -2091,6 +2089,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.pokemonCandyCountText.setText(`x${this.scene.gameData.starterData[species.speciesId].candyCount}`);
           this.pokemonCandyCountText.setVisible(true);
           this.pokemonFormText.setVisible(true);
+          this.pokemonFormText.setY(42);
           this.pokemonHatchedIcon.setVisible(true);
           this.pokemonHatchedCountText.setVisible(true);
 
