@@ -502,7 +502,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       9: "This setback means nothing in the grand scheme.",
       10: "Our plans are bigger than this defeat.",
       11: "I knew I should have trained more and evil-planned less.",
-      12:"Looks like I need a new cosmic plan. This one fizzled out.",
+      12: "Looks like I need a new cosmic plan. This one fizzled out.",
       13: "Defeated by a mere earthling… how embarrassing."
     },
   },
