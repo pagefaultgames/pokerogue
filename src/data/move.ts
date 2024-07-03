@@ -3,7 +3,7 @@ import { BattleEndPhase, MovePhase, NewBattlePhase, PartyStatusCurePhase, Pokemo
 import { BattleStat, getBattleStatName } from "./battle-stat";
 import { EncoreTag, SemiInvulnerableTag } from "./battler-tags";
 import { getPokemonMessage, getPokemonNameWithAffix } from "../messages";
-import Pokemon, { AttackMoveResult, EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../field/pokemon";
+import Pokemon, { AttackMoveResult, DamageResult, EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../field/pokemon";
 import { StatusEffect, getStatusEffectHealText, isNonVolatileStatusEffect, getNonVolatileStatusEffects} from "./status-effect";
 import { Type } from "./type";
 import { Constructor } from "#app/utils";
@@ -1136,6 +1136,8 @@ export class SacrificialAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     user.damageAndUpdate(user.hp, HitResult.OTHER, false, true, true);
 	  user.turnData.damageTaken += user.hp;
+    const attackResult = { move: move.id, result: HitResult.OTHER as DamageResult, damage: user.hp, critical: false, sourceId: user.id };
+    user.turnData.attacksReceived.unshift(attackResult);
 
     return true;
   }

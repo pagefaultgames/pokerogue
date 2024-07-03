@@ -3740,7 +3740,9 @@ export class FaintPhase extends PokemonPhase {
 
     if (pokemon.turnData?.attacksReceived?.length) {
       const lastAttack = pokemon.turnData.attacksReceived[0];
-      applyPostFaintAbAttrs(PostFaintAbAttr, pokemon, this.scene.getPokemonById(lastAttack.sourceId), new PokemonMove(lastAttack.move).getMove(), lastAttack.result);
+      if (lastAttack.sourceId !== pokemon.id) { // prevent applying faint abilities to self
+        applyPostFaintAbAttrs(PostFaintAbAttr, pokemon, this.scene.getPokemonById(lastAttack.sourceId), new PokemonMove(lastAttack.move).getMove(), lastAttack.result);
+      }
     }
 
     const alivePlayField = this.scene.getField(true);
