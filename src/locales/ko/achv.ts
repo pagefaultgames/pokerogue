@@ -266,7 +266,7 @@ export const PGMachv: AchievementTranslationEntries = {
   },
   "EEVEE_TRAINER": {
     name: "이브이 트레이너",
-    description: "이브이 챌린지 모드 클리어.",
+    description: "이브이 모드 챌린지 클리어.",
   },
 } as const;
 
