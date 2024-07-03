@@ -6345,6 +6345,7 @@ export function initMoves() {
       .condition(new FirstMoveCondition()),
     new AttackMove(Moves.UPROAR, Type.NORMAL, MoveCategory.SPECIAL, 90, 100, 10, -1, 0, 3)
       .attr(FrenzyAttr, 3, 3)
+      .attr(NoEffectAttr, frenzyMissFunc)
       .attr(MissEffectAttr, frenzyMissFunc)
       .ignoresVirtual()
       .soundBased()
