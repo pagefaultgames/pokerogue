@@ -52,8 +52,8 @@ export const settings: SimpleTranslationEntries = {
   "showArenaFlyout": "显示战场弹窗",
   "showTimeOfDayWidget": "显示时间指示器",
   "timeOfDayAnimation": "时间指示器动画",
-  "bounce": "彈一下",
-  "timeOfDay_back": "不彈",
+  "bounce": "弹跳",
+  "timeOfDay_back": "不弹",
   "spriteSet": "宝可梦动画",
   "consistent": "默认",
   "mixedAnimated": "全部动画",
@@ -94,5 +94,6 @@ export const settings: SimpleTranslationEntries = {
   "alt": " (备用)",
   "mute": "静音",
   "controller": "控制器",
-  "gamepadSupport": "手柄支持"
+  "gamepadSupport": "手柄支持",
+  "showBgmBar": "显示音乐名称",
 } as const;
