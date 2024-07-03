@@ -1678,11 +1678,7 @@ export class ReturnPhase extends SwitchSummonPhase {
     pokemon.resetSummonData();
 
     this.scene.updateFieldScale();
-
-    const preSwitchAbList = pokemon.getAbilityAttrs(PreSwitchOutAbAttr);
-    if (preSwitchAbList.length > 0) {
-      applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, pokemon);
-    }
+    applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, pokemon);
 
     this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger);
   }
