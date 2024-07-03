@@ -1,11 +1,12 @@
-import { common } from "#app/locales/en/common.js";
-import { settings } from "#app/locales/en/settings.js";
+import { common } from "./common.js";
+import { settings } from "./settings.js";
 import { ability } from "./ability";
 import { abilityTriggers } from "./ability-trigger";
 import { PGFachv, PGMachv } from "./achv";
 import { battle } from "./battle";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
 import { berry } from "./berry";
+import { bgmName } from "./bgm-name";
 import { biome } from "./biome";
 import { challenges } from "./challenges";
 import { commandUiHandler } from "./command-ui-handler";
@@ -37,6 +38,7 @@ import { pokemonInfoContainer } from "./pokemon-info-container";
 import { saveSlotSelectUiHandler } from "./save-slot-select-ui-handler";
 import { splashMessages } from "./splash-messages";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
+import { statusEffect } from "./status-effect";
 import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
@@ -48,6 +50,7 @@ export const enConfig = {
   battle: battle,
   battleMessageUiHandler: battleMessageUiHandler,
   berry: berry,
+  bgmName: bgmName,
   biome: biome,
   challenges: challenges,
   commandUiHandler: commandUiHandler,
@@ -81,6 +84,7 @@ export const enConfig = {
   settings: settings,
   splashMessages: splashMessages,
   starterSelectUiHandler: starterSelectUiHandler,
+  statusEffect: statusEffect,
   titles: titles,
   trainerClasses: trainerClasses,
   trainerNames: trainerNames,
