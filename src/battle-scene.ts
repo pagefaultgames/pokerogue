@@ -1222,6 +1222,7 @@ export default class BattleScene extends SceneBase {
     case Species.PUMPKABOO:
     case Species.GOURGEIST:
     case Species.ORICORIO:
+    case Species.ROCKRUFF:
     case Species.MAGEARNA:
     case Species.ZARUDE:
     case Species.SQUAWKABILLY:
