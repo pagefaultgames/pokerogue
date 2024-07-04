@@ -17,7 +17,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       }
     },
     "PokemonHpRestoreModifierType": {
-      description: "为一只宝可梦回复 {{restorePoints}} HP 或 {{restorePercent}}% HP，取较大值。",
+      description: "为一只宝可梦回复{{restorePoints}}HP或{{restorePercent}}%HP，取较大值。",
       extra: {
         "fully": "为一只宝可梦回复全部HP。",
         "fullyWithStatus": "为一只宝可梦回复全部HP并消除所有负面\n状态。",
@@ -42,11 +42,11 @@ export const modifierType: ModifierTypeTranslationEntries = {
       }
     },
     "PokemonPpUpModifierType": {
-      description: "为一只宝可梦的一个招式永久增加{{upPoints}}点\nPP每5点当前最大PP (最多3点)。",
+      description: "选择一只宝可梦的一个招式使用\n使其PP最大值提升基础的20％ (最多3次)。",
     },
     "PokemonNatureChangeModifierType": {
       name: "{{natureName}}薄荷",
-      description: "将一只宝可梦的性格改为{{natureName}}并为该宝可\n梦永久解锁该性格。",
+      description: "将一只宝可梦的性格改为{{natureName}}并为\n该宝可梦永久解锁该性格。",
     },
     "DoubleBattleChanceBoosterModifierType": {
       description: "接下来的{{battleCount}}场战斗是双打的概率翻倍。",
@@ -64,16 +64,16 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "所有成员宝可梦等级提升1级。",
     },
     "PokemonBaseStatBoosterModifierType": {
-      description: "增加持有者的{{statName}}10%，个体值越高堆叠\n上限越高。",
+      description: "增加10%持有者的{{statName}}，\n个体值越高堆叠上限越高。",
     },
     "AllPokemonFullHpRestoreModifierType": {
       description: "所有宝可梦完全回复HP。",
     },
     "AllPokemonFullReviveModifierType": {
-      description: "复活所有濒死宝可梦，完全回复HP。",
+      description: "复活所有濒死的宝可梦，\n并完全回复HP。",
     },
     "MoneyRewardModifierType": {
-      description: "获得{{moneyMultiplier}}金钱 (₽{{moneyAmount}})。",
+      description: "获得{{moneyMultiplier}}金钱(₽{{moneyAmount}})。",
       extra: {
         "small": "少量",
         "moderate": "中等",
@@ -90,7 +90,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "每场战斗获得的好感度提升50%。",
     },
     "PokemonMoveAccuracyBoosterModifierType": {
-      description: "招式命中率增加{{accuracyAmount}} (最大100)。",
+      description: "招式命中率增加{{accuracyAmount}}(最大100)。",
     },
     "PokemonMultiHitModifierType": {
       description: "攻击以40/25/12.5%的伤害造成2/3/4次伤害",
@@ -114,29 +114,29 @@ export const modifierType: ModifierTypeTranslationEntries = {
     },
     "TerastallizeModifierType": {
       name: "{{teraType}}太晶碎块",
-      description: "持有者获得{{teraType}}太晶化10场战斗。",
+      description: "持有者获得{{teraType}}太晶化，\n持续10场战斗。",
     },
     "ContactHeldItemTransferChanceModifierType": {
-      description: "攻击时{{chancePercent}}%概率偷取对手物品。",
+      description: "攻击时{{chancePercent}}%概率\n偷取对手物品。",
     },
     "TurnHeldItemTransferModifierType": {
-      description: "持有者每回合从对手那里获得一个持有的物品。",
+      description: "持有者每回合从对手那里\n获得一个持有的物品。",
     },
     "EnemyAttackStatusEffectChanceModifierType": {
       description: "攻击时{{chancePercent}}%概率造成{{statusEffect}}。",
     },
     "EnemyEndureChanceModifierType": {
-      description: "敌方增加{{chancePercent}}%的概率在本回合不会倒下。",
+      description: "敌方增加{{chancePercent}}%的概率\n在本回合不会倒下。",
     },
 
     "RARE_CANDY": { name: "神奇糖果" },
     "RARER_CANDY": { name: "超神奇糖果" },
 
-    "MEGA_BRACELET": { name: "超级手镯", description: "能让携带着超级石战斗的宝可梦进行\n超级进化。" },
-    "DYNAMAX_BAND": { name: "极巨腕带", description: "能让携带着极巨菇菇战斗的宝可梦进行\n极巨化。" },
-    "TERA_ORB": { name: "太晶珠", description: "能让携带着太晶碎块战斗的宝可梦进行\n太晶化。" },
+    "MEGA_BRACELET": { name: "MEGA手镯", description: "能让携带着MEGA石战斗的宝可梦\n进行MEGA进化。" },
+    "DYNAMAX_BAND": { name: "极巨腕带", description: "能让携带着极巨菇菇战斗的宝可梦\n进行超极巨化。" },
+    "TERA_ORB": { name: "太晶珠", description: "能让携带着太晶碎块战斗的宝可梦\n进行太晶化。" },
 
-    "MAP": { name: "地图", description: "允许你在切换宝可梦群落时选择目的地。"},
+    "MAP": { name: "地图", description: "有概率允许你在切换地区时\n选择目的地。"},
 
     "POTION": { name: "伤药" },
     "SUPER_POTION": { name: "好伤药" },
@@ -169,7 +169,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "MEMORY_MUSHROOM": { name: "回忆蘑菇", description: "回忆一个宝可梦已经遗忘的招式。" },
 
     "EXP_SHARE": { name: "学习装置", description: "未参加对战的宝可梦获得20%的经验值。" },
-    "EXP_BALANCE": { name: "均衡型学习装置", description: "队伍中的低级宝可梦获得更多经验值。" },
+    "EXP_BALANCE": { name: "均衡型学习装置", description: "经验值会更多分给队伍中等级最低的宝可梦。" },
 
     "OVAL_CHARM": { name: "圆形护符", description: "当多只宝可梦参与战斗，分别获得总经验值\n10%的额外经验值。" },
 
@@ -182,19 +182,19 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SOOTHE_BELL": { name: "安抚之铃" },
 
-    "EVIOLITE": { name: "进化奇石", description: "进化的神奇石块。携带后，还能进化的宝可梦的 防御和特防就会提高。" },
+    "EVIOLITE": { name: "进化奇石", description: "携带后，还能进化的宝可梦的\n防御和特防就会提高。" },
 
-    "SOUL_DEW": { name: "心之水滴", description: "增加宝可梦性格影响10% (加算)。" },
+    "SOUL_DEW": { name: "心之水滴", description: "增加10%宝可梦性格对数值的影响 (加算)。" },
 
     "NUGGET": { name: "金珠" },
     "BIG_NUGGET": { name: "巨大金珠" },
     "RELIC_GOLD": { name: "古代金币" },
 
-    "AMULET_COIN": { name: "护符金币", description: "金钱奖励增加20%。" },
+    "AMULET_COIN": { name: "护符金币", description: "获得的金钱增加20%。" },
     "GOLDEN_PUNCH": { name: "黄金拳头", description: "将50%造成的伤害转换为金钱。" },
-    "COIN_CASE": { name: "代币盒", description: "每十场战斗, 获得自己金钱10%的利息。" },
+    "COIN_CASE": { name: "代币盒", description: "每10场战斗, 获得自己金钱10%的利息。" },
 
-    "LOCK_CAPSULE": { name: "上锁的容器", description: "允许在刷新物品时锁定物品稀有度。" },
+    "LOCK_CAPSULE": { name: "上锁的容器", description: "允许在商店中刷新物品时，\n锁定物品的稀有度。" },
 
     "GRIP_CLAW": { name: "紧缠钩爪" },
     "WIDE_LENS": { name: "广角镜" },
@@ -206,14 +206,14 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "BERRY_POUCH": { name: "树果袋", description: "使用树果时有30%的几率不会消耗树果。" },
 
-    "FOCUS_BAND": { name: "气势头带", description: "携带该道具的宝可梦有10%几率在受到\n攻击而将陷入濒死状态时，保留1点HP不陷入濒死状态。" },
+    "FOCUS_BAND": { name: "气势头带", description: "携带该道具的宝可梦有10%几率在受到攻击\n而将陷入濒死状态时，保留1点HP不陷入濒死状态。" },
 
     "QUICK_CLAW": { name: "先制之爪", description: "有10%的几率无视速度优先使出招式\n(先制技能优先)。" },
 
-    "KINGS_ROCK": { name: "王者之证", description: "携带该道具的宝可梦使用任意原本不会造成\n畏缩状态的攻击招式并造成伤害时，有\n10%几率使目标陷入畏缩状态。" },
+    "KINGS_ROCK": { name: "王者之证", description: "使用任意原本不会造成畏缩状态的攻击，\n有10%几率使目标陷入畏缩状态。" },
 
-    "LEFTOVERS": { name: "吃剩的东西", description: "携带该道具的宝可梦在每个回合结束时恢复\n最大HP的1/16。" },
-    "SHELL_BELL": { name: "贝壳之铃", description: "携带该道具的宝可梦在攻击对方成功造成伤\n害时，携带者的HP会恢复其所造成伤害\n的1/8。" },
+    "LEFTOVERS": { name: "吃剩的东西", description: "携带后，在每个回合结束时恢复\n最大HP的1/16。" },
+    "SHELL_BELL": { name: "贝壳之铃", description: "携带后，在攻击对方成功造成伤害时，\n携带者的HP会恢复其所造成伤害的1/8。" },
 
     "TOXIC_ORB": { name: "剧毒宝珠", description: "触碰后会放出毒的神奇宝珠。携带后，在战斗时会变成剧毒状态。" },
     "FLAME_ORB": { name: "火焰宝珠", description: "触碰后会放出热量的神奇宝珠。携带后，在战斗时会变成灼伤状态。" },
@@ -223,13 +223,13 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "SHINY_CHARM": { name: "闪耀护符", description: "显著增加野生宝可梦的闪光概率。" },
     "ABILITY_CHARM": { name: "特性护符", description: "显著增加野生宝可梦有隐藏特性的概率。" },
 
-    "IV_SCANNER": { name: "个体值探测器", description: "允许扫描野生宝可梦的个体值。可叠加，每多拥有一个多显示\n2项个体值. 最好的个体值优先显示。" },
+    "IV_SCANNER": { name: "个体值探测器", description: "允许扫描野生宝可梦的个体值。每多拥有一个\n多显示两项个体值，优先显示最高项。" },
 
     "DNA_SPLICERS": { name: "基因之楔" },
 
     "MINI_BLACK_HOLE": { name: "迷你黑洞" },
 
-    "GOLDEN_POKEBALL": { name: "黄金精灵球", description: "在每场战斗结束后增加一个额外物品选项。" },
+    "GOLDEN_POKEBALL": { name: "黄金精灵球", description: "在每场战斗结束后，增加一个额外物品选项。" },
 
     "ENEMY_DAMAGE_BOOSTER": { name: "伤害硬币", description: "造成5%额外伤害（乘算）。" },
     "ENEMY_DAMAGE_REDUCTION": { name: "防御硬币", description: "受到2.5%更少伤害（乘算）。" },
@@ -242,7 +242,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_FUSED_CHANCE": { name: "融合硬币", description: "增加1%野生融合宝可梦出现概率。" },
   },
   SpeciesBoosterItem: {
-    "LIGHT_BALL": { name: "电气球", description: "让皮卡丘携带后，攻击和特攻就会 提高的神奇之球。" },
+    "LIGHT_BALL": { name: "电气球", description: "让皮卡丘携带后，攻击和特攻就会提高的神奇之球。" },
     "THICK_CLUB": { name: "粗骨头", description: "某种坚硬的骨头。让卡拉卡拉或嘎啦嘎啦携带后，攻击就会提高。" },
     "METAL_POWDER": { name: "金属粉", description: "让百变怪携带后，防御就会提高的神奇粉末。非常细腻坚硬。" },
     "QUICK_POWDER": { name: "速度粉", description: "让百变怪携带后，速度就会提高的神奇粉末。非常细腻坚硬。" }
