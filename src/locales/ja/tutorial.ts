@@ -1,7 +1,7 @@
 import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const tutorial: SimpleTranslationEntries = {
-  intro: `PokéRogueへようこそ！ログライク要素が\n加わったバトル中心のポケモンファンゲームです。
+  intro: `PokéRogueへようこそ！ローグライク要素が\n加わったバトル中心のポケモンファンゲームです。
   $このゲームは収益を上げず、Pokémonおよび使用される\n著作権資産に対する所有権を主張しません。
   $ゲームはまだ作業中ですが、完全にプレイすることができます。\nバグ報告はディスコードコミュニティをご利用ください。
   $ゲームが遅い場合は、ブラウザ設定で「ハードウェア\nアクセラレーション」がオンになっていることを確認してください`,
