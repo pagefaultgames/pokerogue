@@ -1769,7 +1769,7 @@ export class PsychoShiftEffectAttr extends MoveEffectAttr {
         user.updateInfo();
         target.trySetStatus(statusToApply, true, user);
       }
-      
+
       return canSetStatus;
     }
 
