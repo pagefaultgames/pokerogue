@@ -17,7 +17,7 @@ const DEFAULT_SHINY_RATE = 128;
 const GACHA_SHINY_UP_SHINY_RATE = 64;
 const SAME_SPECIES_EGG_SHINY_RATE = 32;
 const SAME_SPECIES_EGG_HA_RATE = 16;
-const MANAPHY_EGG_MANAPHY_RATE = 8;
+const MANAPHY_EGG_MANAPHY_RATE = 2;
 
 // 1/x for legendary eggs, 1/x*2 for epic eggs, 1/x*4 for rare eggs, and 1/x*8 for common eggs
 const DEFAULT_RARE_EGGMOVE_RATE = 6;
@@ -152,7 +152,7 @@ export class Egg {
     this._id = eggOptions.id ?? Utils.randInt(EGG_SEED, EGG_SEED * this._tier);
 
     this._sourceType = eggOptions.sourceType ?? undefined;
-    this._hatchWaves = eggOptions.hatchWaves ?? this.getEggTierDefaultHatchWaves();
+    this._hatchWaves = 1; // eggOptions.hatchWaves ?? this.getEggTierDefaultHatchWaves();
     this._timestamp = eggOptions.timestamp ?? new Date().getTime();
 
     // First roll shiny and variant so we can filter if species with an variant exist
@@ -165,7 +165,7 @@ export class Egg {
     // Override egg tier and hatchwaves if species was given
     if (eggOptions.species) {
       this._tier = this.getEggTierFromSpeciesStarterValue();
-      this._hatchWaves = eggOptions.hatchWaves ?? this.getEggTierDefaultHatchWaves();
+      this._hatchWaves = 1;// eggOptions.hatchWaves ?? this.getEggTierDefaultHatchWaves();
       // If species has no variant, set variantTier to common. This needs to
       // be done because species with no variants get filtered at rollSpecies but since the
       // species is set the check never happens
@@ -205,7 +205,11 @@ export class Egg {
       this._species = this.rollSpecies(scene);
     }
 
-    const pokemonSpecies = getPokemonSpecies(this._species);
+    let pokemonSpecies = getPokemonSpecies(this._species);
+    // Special condition to have Phione eggs also have a chance of generating Manaphy
+    if (this._species === Species.PHIONE) {
+      pokemonSpecies = getPokemonSpecies(Utils.randSeedInt(MANAPHY_EGG_MANAPHY_RATE) ? Species.PHIONE : Species.MANAPHY);
+    }
 
     // Sets the hidden ability if a hidden ability exists and the override is set
     // or if the same species egg hits the chance
