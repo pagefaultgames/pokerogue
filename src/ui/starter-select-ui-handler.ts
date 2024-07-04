@@ -1423,8 +1423,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             }
 
             // Same species egg menu option. Only visible if passive is bought
-            if (true) {
-              const sameSpeciesEggCost = 0;// getSameSpeciesEggCandyCounts(speciesStarters[this.lastSpecies.speciesId]);
+            if (passiveAttr & PassiveAttr.UNLOCKED) {
+              const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(speciesStarters[this.lastSpecies.speciesId]);
               options.push({
                 label: `x${sameSpeciesEggCost} ${i18next.t("starterSelectUiHandler:sameSpeciesEgg")}`,
                 handler: () => {
