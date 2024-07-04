@@ -43,7 +43,7 @@ export const settings: SimpleTranslationEntries = {
   "moveAnimations": "Animações de Movimento",
   "showStatsOnLevelUp": "Mostrar Atributos ao Subir de Nível",
   "candyUpgradeNotification": "Exibir Melhorias com Doce",
-  "passivesOnly": "Passivas",
+  "passivesFirst": "Passivas",
   "candyUpgradeDisplay": "Modo Melhorias com Doce",
   "icon": "Ícone",
   "animation": "Animação",

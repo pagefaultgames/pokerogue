@@ -881,6 +881,18 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   /**
+   * Determines if a passive upgrade has been unlocked for the given species ID
+   * @param speciesId The ID of the species to check the passive of
+   * @returns true if the passive has been unlocked
+   */
+  isPassiveUnlocked(speciesId: number): boolean {
+    // Get this species ID's starter data
+    const starterData = this.scene.gameData.starterData[speciesId];
+
+    return !!(starterData.passiveAttr & PassiveAttr.UNLOCKED);
+  }
+
+  /**
    * Determines if a passive upgrade is available for the given species ID
    * @param speciesId The ID of the species to check the passive of
    * @returns true if the user has enough candies and a passive has not been unlocked already
@@ -891,6 +903,18 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     return starterData.candyCount >= getPassiveCandyCount(speciesStarters[speciesId])
       && !(starterData.passiveAttr & PassiveAttr.UNLOCKED);
+  }
+
+  /**
+   * Determines if a passive upgrade is maxed for the given species ID
+   * @param speciesId The ID of the species to check the passive of
+   * @returns true if the passive has been maxed
+   */
+  isValueReductionMaxed(speciesId: number): boolean {
+    // Get this species ID's starter data
+    const starterData = this.scene.gameData.starterData[speciesId];
+
+    return starterData.valueReduction >= 2;
   }
 
   /**
@@ -907,7 +931,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   /**
-   * Determines if an same species egg can be baught for the given species ID
+   * Determines if an same species egg can be bought for the given species ID
    * @param speciesId The ID of the species to check the value reduction of
    * @returns true if the user has enough candies
    */
@@ -957,15 +981,19 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
       ],};
 
+    const passiveUnlocked = this.isPassiveUnlocked(species.speciesId);
     const passiveAvailable = this.isPassiveAvailable(species.speciesId);
-    // 'Only Passives' mode
+    const valueReductionMaxed = this.isValueReductionMaxed(species.speciesId);
+    const valueReductionAvailable = this.isValueReductionAvailable(species.speciesId);
+    const eggAvailable = this.isSameSpeciesEggAvailable(species.speciesId);
+    // 'Passives First' mode
     if (this.scene.candyUpgradeNotification === 1) {
-      if (passiveAvailable) {
+      if (passiveAvailable || (passiveUnlocked && !valueReductionMaxed) || (passiveUnlocked && valueReductionMaxed && eggAvailable)) {
         this.scene.tweens.chain(tweenChain).paused = startPaused;
       }
     // 'On' mode
     } else if (this.scene.candyUpgradeNotification === 2) {
-      if (passiveAvailable || this.isValueReductionAvailable(species.speciesId)) {
+      if (passiveAvailable || valueReductionAvailable || eggAvailable) {
         this.scene.tweens.chain(tweenChain).paused = startPaused;
       }
     }
@@ -989,16 +1017,20 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       return;
     }
 
+    const passiveUnlocked = this.isPassiveUnlocked(species.speciesId);
     const passiveAvailable = this.isPassiveAvailable(species.speciesId);
-    // 'Only Passive Unlocks' mode
+    const valueReductionMaxed = this.isValueReductionMaxed(species.speciesId);
+    const valueReductionAvailable = this.isValueReductionAvailable(species.speciesId);
+    const eggAvailable = this.isSameSpeciesEggAvailable(species.speciesId);
+    // 'Passives First' mode
     if (this.scene.candyUpgradeNotification === 1) {
-      this.candyUpgradeIcon[index].setVisible(slotVisible && passiveAvailable);
+      this.candyUpgradeIcon[index].setVisible(slotVisible && (passiveAvailable || (passiveUnlocked && !valueReductionMaxed) || (passiveUnlocked && valueReductionMaxed && eggAvailable)));
       this.candyUpgradeOverlayIcon[index].setVisible(slotVisible && this.candyUpgradeIcon[index].visible);
 
       // 'On' mode
     } else if (this.scene.candyUpgradeNotification === 2) {
       this.candyUpgradeIcon[index].setVisible(
-        slotVisible && ( passiveAvailable || this.isValueReductionAvailable(species.speciesId)));
+        slotVisible && (passiveAvailable || valueReductionAvailable || eggAvailable));
       this.candyUpgradeOverlayIcon[index].setVisible(slotVisible && this.candyUpgradeIcon[index].visible);
     }
   }

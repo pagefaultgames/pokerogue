@@ -43,7 +43,7 @@ export const settings: SimpleTranslationEntries = {
   "moveAnimations": "Attacken Animationen",
   "showStatsOnLevelUp": "Werte beim Aufleveln anzeigen",
   "candyUpgradeNotification": "Bonbon Upgrade Benachrichtigung",
-  "passivesOnly": "Nur Passive",
+  "passivesFirst": "Passives First", // Changed from "Passives Only" to "Passives First", needs new translation
   "candyUpgradeDisplay": "Bonbon Upgrade Anzeige",
   "icon": "Icon",
   "animation": "Animation",

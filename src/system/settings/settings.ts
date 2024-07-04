@@ -369,8 +369,8 @@ export const Setting: Array<Setting> = [
         label: i18next.t("settings:off")
       },
       {
-        value: "Passives Only",
-        label: i18next.t("settings:passivesOnly")
+        value: "Passives First",
+        label: i18next.t("settings:passivesFirst")
       },
       {
         value: "On",
