@@ -3911,6 +3911,16 @@ export const frenzyMissFunc: UserMoveConditionFunc = (user: Pokemon, move: Move)
   return true;
 };
 
+export class UproarMessage extends MoveEffectAttr {
+  constructor() {
+    super();
+  }
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    user.scene.queueMessage(getPokemonMessage(user, " caused\nan uproar!"));
+    return true;
+  }
+}
+
 export class AddBattlerTagAttr extends MoveEffectAttr {
   public tagType: BattlerTagType;
   public turnCountMin: integer;
@@ -6344,6 +6354,7 @@ export function initMoves() {
       .attr(FlinchAttr)
       .condition(new FirstMoveCondition()),
     new AttackMove(Moves.UPROAR, Type.NORMAL, MoveCategory.SPECIAL, 90, 100, 10, -1, 0, 3)
+      .attr(UproarMessage)
       .attr(FrenzyAttr, 3, 3)
       .attr(NoEffectAttr, frenzyMissFunc)
       .attr(MissEffectAttr, frenzyMissFunc)
