@@ -1837,7 +1837,13 @@ export class PostSummonMessageAbAttr extends PostSummonAbAttr {
 
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     pokemon.scene.queueMessage(this.messageFunc(pokemon));
-
+    console.log(pokemon.scene.getField());
+    console.log(pokemon.scene.getField(true));
+    for (pokemon of pokemon.scene.getField(true)) {
+      if (pokemon.breakIllusion()) {
+        pokemon.scene.queueMessage(getPokemonMessage(pokemon, "'s illusion wore off!"));
+      }
+    }
     return true;
   }
 }
@@ -3876,13 +3882,24 @@ export class IllusionPreSummonAbAttr extends PreSummonAbAttr {
    * Apply a new illusion when summoning Zoroark if the illusion is available
    *
    * @param {Pokemon} pokemon - The Pokémon with the Illusion ability.
-   * @param {boolean} passive - Whether the ability is passive.
+   * @param {boolean} passive - N/A
    * @param {Pokemon[]} party - The party of the trainer's pokemon.
-   * @param {...any} args - Additional arguments.
+   * @param {...any} args - N/A
    * @returns {boolean} - Whether the illusion was applied.
    */
   applyPreSummon(pokemon: Pokemon, passive: boolean, party: Pokemon[], args: any[]): boolean | Promise<boolean> {
-    if (pokemon.illusion.available) {
+
+    let suppressed = false;
+    pokemon.scene.getField(true).filter(p => p !== pokemon).map(p => {
+      if (p.getAbility().hasAttr(SuppressFieldAbilitiesAbAttr) && p.canApplyAbility()) {
+        suppressed = true;
+      }
+      if (p.getPassiveAbility().hasAttr(SuppressFieldAbilitiesAbAttr) && p.canApplyAbility(true)) {
+        suppressed = true;
+      }
+    });
+
+    if (pokemon.illusion.available && !suppressed) {
       console.log(pokemon.illusion);
       return pokemon.generateIllusion(party);
     } else {
@@ -3896,11 +3913,11 @@ export class IllusionBreakAbAttr extends PostDefendAbAttr {
    * Destroy illusion if attack move deals damage to zoroark
    *
    * @param {Pokemon} pokemon - The Pokémon with the Illusion ability.
-   * @param {boolean} passive - Whether the ability is passive.
+   * @param {boolean} passive - N/A
    * @param {Pokemon} attacker - The attacking Pokémon.
    * @param {PokemonMove} move - The move being used.
    * @param {PokemonMove} hitResult - The type of hitResult the pokemon got
-   * @param {...any} args - Additional arguments..
+   * @param {...any} args - N/A
    * @returns {boolean} - Whether the illusion was destroyed.
    */
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean | Promise<boolean> {
@@ -3920,20 +3937,12 @@ export class IllusionAfterBattle extends PostBattleAbAttr {
    * Illusion will be available again after a battle and apply the illusion of the pokemon is already on field
    *
    * @param {Pokemon} pokemon - The Pokémon with the Illusion ability.
-   * @param {boolean} passive - Whether the ability is passive.
+   * @param {boolean} passive - N/A
    * @param {Pokemon[]} party - The party of the trainer's pokemon.
-   * @param {...any} args - Additional arguments.
+   * @param {...any} args - N/A
    * @returns {boolean} - Whether the illusion was applied.
    */
   applyPostBattle(pokemon: Pokemon, passive: boolean, party: Pokemon[], args: any[]): boolean {
-
-    /*
-    pokemon.generateIllusion(pokemon, party);
-    if (pokemon.isOnField()) {
-      pokemon.scene.playSound("PRSFX- Transform");
-      pokemon.illusion.available = false;
-    }
-    */
     pokemon.breakIllusion();
     pokemon.illusion.available = true;
     return true;
@@ -3946,8 +3955,8 @@ export class IllusionDisableAbAttr extends PostSummonAbAttr {
    * So the pokemon can use 1 illusion per battle.
    *
    * @param {Pokemon} pokemon - The Pokémon with the Illusion ability.
-   * @param {boolean} passive - Whether the ability is passive.
-   * @param {...any} args - Additional arguments.
+   * @param {boolean} passive - N/A
+   * @param {...any} args - N/A
    * @returns {boolean}
    */
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {

@@ -392,7 +392,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   breakIllusion(): boolean {
-    console.log(this.illusion);
     if (this.illusion.active) {
       this.name = this.illusion.name;
       this.shiny = this.illusion.shiny;
