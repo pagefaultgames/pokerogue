@@ -15,7 +15,9 @@ interface PokemonSpeciesFormLevelMoves {
   [key: integer]: PokemonFormLevelMoves
 }
 
+/** Moves that can only be learned with a memory-🍄 */
 const RELEARN_MOVE = -1;
+/** Moves that can only be learned with an evolve */
 const EVOLVE_MOVE = 0;
 
 export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
