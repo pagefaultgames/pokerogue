@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, it, vi } from "vitest";
+import { beforeAll, describe, afterEach, expect, it, vi } from "vitest";
 import {
   StatusEffect,
   getStatusEffectActivationText,
@@ -8,7 +8,6 @@ import {
   getStatusEffectOverlapText,
 } from "#app/data/status-effect";
 import i18next, { ParseKeys } from "i18next";
-import { afterEach } from "node:test";
 
 const tMock = (key: ParseKeys) => key;
 const pokemonName = "PKM";
