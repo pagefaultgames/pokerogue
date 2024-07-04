@@ -1,11 +1,11 @@
 import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const egg: SimpleTranslationEntries = {
-  "egg": "Egg",
-  "greatTier": "Rare",
-  "ultraTier": "Epic",
-  "masterTier": "Legendary",
-  "defaultTier": "Common",
+  "egg": "たまご",
+  "greatTier": "レア",
+  "ultraTier": "エピック",
+  "masterTier": "レジェンダリー",
+  "defaultTier": "コモン",
   "hatchWavesMessageSoon": "Sounds can be heard coming from inside! It will hatch soon!",
   "hatchWavesMessageClose": "It appears to move occasionally. It may be close to hatching.",
   "hatchWavesMessageNotClose": "What will hatch from this? It doesn't seem close to hatching.",
