@@ -20,6 +20,7 @@ import { applyChallenges, ChallengeType } from "#app/data/challenge.js";
 import MoveInfoOverlay from "./move-info-overlay";
 import i18next from "i18next";
 import { Moves } from "#enums/moves";
+import { Gender } from "../data/gender";
 
 const defaultMessage = i18next.t("menu:choosePokemon");
 
@@ -587,33 +588,82 @@ export default class PartyUiHandler extends MessageUiHandler {
 
   updatedPartySlots(selectedPokemon, pokemonToSwitch) {
     this.performSwap(selectedPokemon, pokemonToSwitch);
-    this.updatePartyUI();
   }
 
   performSwap(selectedPokemon, pokemonToSwitch) {
     console.log("party container party", (this.partyContainer.scene as BattleScene).getParty());
+    console.log("partySlots before swap:", this.partySlots);
 
     const selectedIndex = this.partySlots.indexOf(selectedPokemon);
     const switchIndex = this.partySlots.indexOf(pokemonToSwitch);
 
     if (selectedIndex !== -1 && switchIndex !== -1) {
+    // Swap in partySlots array
       [this.partySlots[selectedIndex], this.partySlots[switchIndex]] = [this.partySlots[switchIndex], this.partySlots[selectedIndex]];
 
+      // Swap in the actual party data
       const party = (this.partyContainer.scene as BattleScene).getParty();
       [party[selectedIndex], party[switchIndex]] = [party[switchIndex], party[selectedIndex]];
+
+      // Update UI for both swapped slots
+      this.updatePartyUI(selectedIndex, switchIndex);
+
+      console.log("partySlots after swap:", this.partySlots);
     }
   }
 
-  updatePartyUI() {
+  updatePartyUI(index1: number, index2: number) {
+    const swapUIElements = (indexA: number, indexB: number) => {
+      const slotA = this.partySlots[indexA];
+      const slotB = this.partySlots[indexB];
 
-    // manually force the refresh between the two changed pokemon
-    // set texture I think is it
-    // we need to get the UI element
-    // force the name and texture update
-    // lets get the scene and then force the texture update!
+      // Swap Pokémon icons
+      const tempFrame = (slotA.getPokemonIcon().list[0] as Phaser.GameObjects.Sprite).frame;
+      slotA.setPokemonIconFrame((slotB.getPokemonIcon().list[0] as Phaser.GameObjects.Sprite).frame);
+      slotB.setPokemonIconFrame(tempFrame);
 
-    console.log("This scene", this.scene);
+      // Swap Pokémon names
+      const tempName = slotA.getPokemonName();
+      slotA.setPokemonName(slotB.getPokemonName());
+      slotB.setPokemonName(tempName);
 
+      // Swap Pokémon status
+      const tempStatus = slotA.getPokemonStatus();
+      slotA.setPokemonStatus(slotB.getPokemonStatus());
+      slotB.setPokemonStatus(tempStatus);
+
+      // Swap Pokemon levels
+      const tempLevel = slotA.getPokemonLevel();
+      slotA.setPokemonLevel(slotB.getPokemonLevel());
+      slotB.setPokemonLevel(tempLevel);
+
+      // Swap Pokemon Genders
+      const tempGender = slotA.getPokemonGender();
+      slotA.setPokemonGender(slotB.getPokemonGender());
+      slotB.setPokemonGender(tempGender);
+
+      // Swap Pokemon Fusion Icons
+      const tempFusion = slotA.getPokemonFusionIcon();
+      slotA.setPokemonFusionIcon(slotB.getPokemonFusionIcon());
+      slotB.setPokemonFusionIcon(tempFusion);
+
+      // Swap Shiny Icons
+      const tempShiny = slotA.getPokemonShinyIcon();
+      slotA.setPokemonShinyIcon(slotB.getPokemonShinyIcon());
+      slotB.setPokemonShinyIcon(tempShiny);
+
+      // Swap Pokémon HP
+      const tempHP = slotA.getPokemonHP();
+      slotA.setPokemonHP(slotB.getPokemonHP());
+      slotB.setPokemonHP(tempHP);
+
+      // Swap Pokémon Levels
+      const tempLevels = slotA.getPokemonLevels();
+      slotA.setPokemonLevels(slotB.getPokemonLevels());
+      slotB.setPokemonLevels(tempLevels);
+    };
+
+    swapUIElements(index1, index2);
   }
 
   setCursor(cursor: integer): boolean {
@@ -1054,6 +1104,15 @@ class PartySlot extends Phaser.GameObjects.Container {
 
   private pokemonIcon: Phaser.GameObjects.Container;
   private iconAnimHandler: PokemonIconAnimHandler;
+  private slotName: Phaser.GameObjects.Text;
+  private slotHpText: Phaser.GameObjects.Text;
+  private slotHpOverlay: Phaser.GameObjects.Image;
+  private slotHpBar: Phaser.GameObjects.Image;
+  private slotGenderText: Phaser.GameObjects.Text;
+  private statusIndicator : Phaser.GameObjects.Image;
+  private slotLevelLabel: Phaser.GameObjects.Image;
+  private slotInfoContainer: Phaser.GameObjects.Container;
+
 
   constructor(scene: BattleScene, slotIndex: integer, pokemon: PlayerPokemon, iconAnimHandler: PokemonIconAnimHandler, partyUiMode: PartyUiMode, tmMoveId: Moves) {
     super(scene, slotIndex >= scene.currentBattle.getBattlerCount() ? 230.5 : 64,
@@ -1064,7 +1123,13 @@ class PartySlot extends Phaser.GameObjects.Container {
     this.pokemon = pokemon;
     this.iconAnimHandler = iconAnimHandler;
 
+    this.initializeSlotName();
+
     this.setup(partyUiMode, tmMoveId);
+  }
+  private initializeSlotName() {
+    // Assuming addTextObject is a function that correctly returns a Phaser.GameObjects.Text
+    this.slotName = addTextObject(this.scene, 0, 0, "displayName", TextStyle.PARTY);
   }
 
   setup(partyUiMode: PartyUiMode, tmMoveId: Moves) {
@@ -1088,8 +1153,8 @@ class PartySlot extends Phaser.GameObjects.Container {
 
     this.iconAnimHandler.addOrUpdate(this.pokemonIcon, PokemonIconAnimMode.PASSIVE);
 
-    const slotInfoContainer = this.scene.add.container(0, 0);
-    this.add(slotInfoContainer);
+    this.slotInfoContainer = this.scene.add.container(0, 0);
+    this.add(this.slotInfoContainer);
 
     let displayName = this.pokemon.name;
     let nameTextWidth: number;
@@ -1105,34 +1170,33 @@ class PartySlot extends Phaser.GameObjects.Container {
 
     nameSizeTest.destroy();
 
-    const slotName = addTextObject(this.scene, 0, 0, displayName, TextStyle.PARTY);
-    slotName.setPositionRelative(slotBg, this.slotIndex >= battlerCount ? 21 : 24, this.slotIndex >= battlerCount ? 2 : 10);
-    slotName.setOrigin(0, 0);
-
-    const slotLevelLabel = this.scene.add.image(0, 0, "party_slot_overlay_lv");
-    slotLevelLabel.setPositionRelative(slotName, 8, 12);
-    slotLevelLabel.setOrigin(0, 0);
+    this.slotName = addTextObject(this.scene, 0, 0, displayName, TextStyle.PARTY);
+    this.slotName.setPositionRelative(slotBg, this.slotIndex >= battlerCount ? 21 : 24, this.slotIndex >= battlerCount ? 2 : 10);
+    this.slotName.setOrigin(0, 0);
+    this.slotLevelLabel = this.scene.add.image(0, 0, "party_slot_overlay_lv");
+    this.slotLevelLabel.setPositionRelative(this.slotName, 8, 12);
+    this.slotLevelLabel.setOrigin(0, 0);
 
     const slotLevelText = addTextObject(this.scene, 0, 0, this.pokemon.level.toString(), this.pokemon.level < (this.scene as BattleScene).getMaxExpLevel() ? TextStyle.PARTY : TextStyle.PARTY_RED);
-    slotLevelText.setPositionRelative(slotLevelLabel, 9, 0);
+    slotLevelText.setPositionRelative(this.slotLevelLabel, 9, 0);
     slotLevelText.setOrigin(0, 0.25);
 
-    slotInfoContainer.add([ slotName, slotLevelLabel, slotLevelText ]);
+    this.slotInfoContainer.add([ this.slotName, this.slotLevelLabel, slotLevelText ]);
 
     const genderSymbol = getGenderSymbol(this.pokemon.getGender(true));
 
     if (genderSymbol) {
-      const slotGenderText = addTextObject(this.scene, 0, 0, genderSymbol, TextStyle.PARTY);
-      slotGenderText.setColor(getGenderColor(this.pokemon.getGender(true)));
-      slotGenderText.setShadowColor(getGenderColor(this.pokemon.getGender(true), true));
+      this.slotGenderText = addTextObject(this.scene, 0, 0, genderSymbol, TextStyle.PARTY);
+      this.slotGenderText.setColor(getGenderColor(this.pokemon.getGender(true)));
+      this.slotGenderText.setShadowColor(getGenderColor(this.pokemon.getGender(true), true));
       if (this.slotIndex >= battlerCount) {
-        slotGenderText.setPositionRelative(slotLevelLabel, 36, 0);
+        this.slotGenderText.setPositionRelative(this.slotLevelLabel, 36, 0);
       } else {
-        slotGenderText.setPositionRelative(slotName, 76 - (this.pokemon.fusionSpecies ? 8 : 0), 3);
+        this.slotGenderText.setPositionRelative(this.slotName, 76 - (this.pokemon.fusionSpecies ? 8 : 0), 3);
       }
-      slotGenderText.setOrigin(0, 0.25);
+      this.slotGenderText.setOrigin(0, 0.25);
 
-      slotInfoContainer.add(slotGenderText);
+      this.slotInfoContainer.add(this.slotGenderText);
     }
 
     if (this.pokemon.fusionSpecies) {
@@ -1140,21 +1204,20 @@ class PartySlot extends Phaser.GameObjects.Container {
       splicedIcon.setScale(0.5);
       splicedIcon.setOrigin(0, 0);
       if (this.slotIndex >= battlerCount) {
-        splicedIcon.setPositionRelative(slotLevelLabel, 36 + (genderSymbol ? 8 : 0), 0.5);
+        splicedIcon.setPositionRelative(this.slotLevelLabel, 36 + (genderSymbol ? 8 : 0), 0.5);
       } else {
-        splicedIcon.setPositionRelative(slotName, 76, 3.5);
+        splicedIcon.setPositionRelative(this.slotName, 76, 3.5);
       }
 
-      slotInfoContainer.add(splicedIcon);
+      this.slotInfoContainer.add(splicedIcon);
     }
 
     if (this.pokemon.status) {
-      const statusIndicator = this.scene.add.sprite(0, 0, "statuses");
-      statusIndicator.setFrame(StatusEffect[this.pokemon.status?.effect].toLowerCase());
-      statusIndicator.setOrigin(0, 0);
-      statusIndicator.setPositionRelative(slotLevelLabel, this.slotIndex >= battlerCount ? 43 : 55, 0);
-
-      slotInfoContainer.add(statusIndicator);
+      this.statusIndicator = this.scene.add.sprite(0, 0, "statuses");
+      this.statusIndicator.setFrame(StatusEffect[this.pokemon.status?.effect].toLowerCase());
+      this.statusIndicator.setOrigin(0, 0);
+      this.statusIndicator.setPositionRelative(this.slotLevelLabel, this.slotIndex >= battlerCount ? 43 : 55, 0);
+      this.slotInfoContainer.add(this.statusIndicator);
     }
 
     if (this.pokemon.isShiny()) {
@@ -1162,10 +1225,10 @@ class PartySlot extends Phaser.GameObjects.Container {
 
       const shinyStar = this.scene.add.image(0, 0, `shiny_star_small${doubleShiny ? "_1" : ""}`);
       shinyStar.setOrigin(0, 0);
-      shinyStar.setPositionRelative(slotName, -9, 3);
+      shinyStar.setPositionRelative(this.slotName, -9, 3);
       shinyStar.setTint(getVariantTint(!doubleShiny ? this.pokemon.getVariant() : this.pokemon.variant));
 
-      slotInfoContainer.add(shinyStar);
+      this.slotInfoContainer.add(shinyStar);
 
       if (doubleShiny) {
         const fusionShinyStar = this.scene.add.image(0, 0, "shiny_star_small_2");
@@ -1173,27 +1236,27 @@ class PartySlot extends Phaser.GameObjects.Container {
         fusionShinyStar.setPosition(shinyStar.x, shinyStar.y);
         fusionShinyStar.setTint(getVariantTint(this.pokemon.fusionVariant));
 
-        slotInfoContainer.add(fusionShinyStar);
+        this.slotInfoContainer.add(fusionShinyStar);
       }
     }
 
     if (partyUiMode !== PartyUiMode.TM_MODIFIER) {
-      const slotHpBar = this.scene.add.image(0, 0, "party_slot_hp_bar");
-      slotHpBar.setPositionRelative(slotBg, this.slotIndex >= battlerCount ? 72 : 8, this.slotIndex >= battlerCount ? 6 : 31);
-      slotHpBar.setOrigin(0, 0);
+      this.slotHpBar = this.scene.add.image(0, 0, "party_slot_hp_bar");
+      this.slotHpBar.setPositionRelative(slotBg, this.slotIndex >= battlerCount ? 72 : 8, this.slotIndex >= battlerCount ? 6 : 31);
+      this.slotHpBar.setOrigin(0, 0);
 
       const hpRatio = this.pokemon.getHpRatio();
 
-      const slotHpOverlay = this.scene.add.sprite(0, 0, "party_slot_hp_overlay", hpRatio > 0.5 ? "high" : hpRatio > 0.25 ? "medium" : "low");
-      slotHpOverlay.setPositionRelative(slotHpBar, 16, 2);
-      slotHpOverlay.setOrigin(0, 0);
-      slotHpOverlay.setScale(hpRatio, 1);
+      this.slotHpOverlay = this.scene.add.sprite(0, 0, "party_slot_hp_overlay", hpRatio > 0.5 ? "high" : hpRatio > 0.25 ? "medium" : "low");
+      this.slotHpOverlay.setPositionRelative(this.slotHpBar, 16, 2);
+      this.slotHpOverlay.setOrigin(0, 0);
+      this.slotHpOverlay.setScale(hpRatio, 1);
 
-      const slotHpText = addTextObject(this.scene, 0, 0, `${this.pokemon.hp}/${this.pokemon.getMaxHp()}`, TextStyle.PARTY);
-      slotHpText.setPositionRelative(slotHpBar, slotHpBar.width - 3, slotHpBar.height - 2);
-      slotHpText.setOrigin(1, 0);
+      this.slotHpText = addTextObject(this.scene, 0, 0, `${this.pokemon.hp}/${this.pokemon.getMaxHp()}`, TextStyle.PARTY);
+      this.slotHpText.setPositionRelative(this.slotHpBar, this.slotHpBar.width - 3, this.slotHpBar.height - 2);
+      this.slotHpText.setOrigin(1, 0);
 
-      slotInfoContainer.add([ slotHpBar, slotHpOverlay, slotHpText ]);
+      this.slotInfoContainer.add([ this.slotHpBar, this.slotHpOverlay, this.slotHpText ]);
     } else {
       let slotTmText: string;
       switch (true) {
@@ -1212,7 +1275,7 @@ class PartySlot extends Phaser.GameObjects.Container {
       slotTmLabel.setPositionRelative(slotBg, this.slotIndex >= battlerCount ? 94 : 32, this.slotIndex >= battlerCount ? 16 : 46);
       slotTmLabel.setOrigin(0, 1);
 
-      slotInfoContainer.add(slotTmLabel);
+      this.slotInfoContainer.add(slotTmLabel);
     }
   }
 
@@ -1254,6 +1317,126 @@ class PartySlot extends Phaser.GameObjects.Container {
     this.slotBg.setTexture(`party_slot${this.slotIndex >= battlerCount ? "" : "_main"}`,
       `party_slot${this.slotIndex >= battlerCount ? "" : "_main"}${this.transfer ? "_swap" : this.pokemon.hp ? "" : "_fnt"}${this.selected ? "_sel" : ""}`);
   }
+
+  public getPokemonIcon() {
+    console.log("getPokemonIcon", this.pokemonIcon);
+    return this.pokemonIcon;
+  }
+  public setPokemonIconFrame(frame: any) {
+    (this.pokemonIcon.list[0] as Phaser.GameObjects.Sprite).setFrame(frame);
+  }
+
+  public getPokemonName() {
+    return this.pokemon.name;
+  }
+
+  public setPokemonName(newName: string) {
+    this.slotName.setText(newName);
+  }
+
+  public getPokemonStatus() {
+    return this.pokemon.status?.effect;
+  }
+  public setPokemonStatus(newStatus: StatusEffect = StatusEffect.NONE) {
+    console.log("setPokemonStatus called with status:", newStatus);
+
+    if (newStatus !== StatusEffect.NONE) {
+      if (!this.statusIndicator) {
+
+        const battlerCount = (this.scene as BattleScene).currentBattle.getBattlerCount();
+
+        this.statusIndicator = this.scene.add.sprite(0, 0, "statuses");
+        this.statusIndicator.setOrigin(0, 0);
+        this.statusIndicator.setPositionRelative(this.slotLevelLabel, this.slotIndex >= battlerCount ? 43 : 55, 0);
+        this.slotInfoContainer.add(this.statusIndicator);
+      }
+
+      this.statusIndicator.setFrame(StatusEffect[newStatus].toLowerCase());
+    }
+  }
+
+  public getPokemonLevel() {
+    return this.pokemon.level;
+  }
+
+  public setPokemonLevel(newLevel: number) {
+    //  to implement
+
+  }
+  public getPokemonGender() {
+    return this.pokemon.getGender(true);
+  }
+  public setPokemonGender(newGender: Gender) {
+    console.log("before change", this.slotGenderText);
+
+    // Update the text to the new gender symbol
+    this.slotGenderText.setText(getGenderSymbol(newGender));
+
+    // Update the color and shadow color based on the new gender
+    const genderColor = getGenderColor(newGender);
+    const genderShadowColor = getGenderColor(newGender, true);
+    this.slotGenderText.setColor(genderColor);
+    this.slotGenderText.setShadowColor(genderShadowColor);
+
+    console.log("gender colour", genderColor, this.pokemon);
+    console.log("after change", this.slotGenderText);
+  }
+
+  public getPokemonFusionIcon() {
+    return this.pokemon.fusionSpecies;
+  }
+  public setPokemonFusionIcon(newFusion: any) {
+    //  to implement
+
+  }
+
+  // redo this implementation
+  public getPokemonShinyIcon() {
+    if (this.pokemon.isShiny()) {
+      return true; // return the shiny icon
+    } else {
+      return false; // return the normal icon
+    }
+  }
+  public setPokemonShinyIcon(newShiny: boolean) {
+    //  to implement
+  }
+
+  public getPokemonHP() {
+    console.log("getPokemonHP", this.pokemon.hp);
+    return this.pokemon.hp;
+  }
+  // update the overlay
+  public setPokemonHP(newHP: number) {
+    // Set the new HP value
+    this.pokemon.hp = newHP;
+
+    // Calculate the new HP ratio
+    const hpRatio = this.pokemon.hp / this.pokemon.getMaxHp();
+
+    // Update the HP text
+    const hpText = `${this.pokemon.hp}/${this.pokemon.getMaxHp()}`;
+    this.slotHpText.setText(hpText);
+
+
+    const overlayFrame = hpRatio > 0.5 ? "high" : hpRatio > 0.25 ? "medium" : "low";
+    this.slotHpOverlay.setTexture("party_slot_hp_overlay", overlayFrame);
+    this.slotHpOverlay.setScale(hpRatio, 1);
+
+    // this is not working as intended
+    this.slotHpBar.setScale(hpRatio, 1);
+
+  }
+
+  public getPokemonLevels() {
+    return this.pokemon.getMaxHp();
+  }
+
+  public setPokemonLevels(newLevels: number) {
+    //  to implement
+  }
+
+
 }
 
 class PartyCancelButton extends Phaser.GameObjects.Container {

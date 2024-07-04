@@ -382,6 +382,7 @@ export default class SummaryUiHandler extends UiHandler {
     const fromSummary = args.length >= 2;
 
     if (this.pokemon.status || this.pokemon.pokerus) {
+      console.log("haily mary triggered");
       this.showStatus(!fromSummary);
       this.status.setFrame(this.pokemon.status ? StatusEffect[this.pokemon.status.effect].toLowerCase() : "pokerus");
     } else {
