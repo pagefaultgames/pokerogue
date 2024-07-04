@@ -2116,14 +2116,38 @@ export class SwitchEffectTransferModifier extends PokemonHeldItemModifier {
   }
 }
 
+/**
+ * Abstract class for held items that steal other Pokemon's items.
+ * @see {@linkcode TurnHeldItemTransferModifier}
+ * @see {@linkcode ContactHeldItemTransferChanceModifier}
+ */
 export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
   constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
     super(type, pokemonId, stackCount);
   }
 
+  /**
+   * Determines the targets to transfer items from when this applies.
+   * @param args\[0\] the {@linkcode Pokemon} holding this item
+   * @returns the opponents of the source {@linkcode Pokemon}
+   */
+  getTargets(args: any[]): Pokemon[] {
+    const pokemon = args[0];
+
+    return pokemon instanceof Pokemon
+      ? pokemon.getOpponents()
+      : [];
+  }
+
+  /**
+   * Steals an item from a set of target Pokemon.
+   * This prioritizes high-tier held items when selecting the item to steal.
+   * @param args \[0\] The {@linkcode Pokemon} holding this item
+   * @returns true if an item was stolen; false otherwise.
+   */
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
-    const opponents = pokemon.getOpponents();
+    const opponents = this.getTargets(args);
 
     if (!opponents.length) {
       return false;
@@ -2180,6 +2204,11 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
   abstract getTransferMessage(pokemon: Pokemon, targetPokemon: Pokemon, item: ModifierTypes.ModifierType): string;
 }
 
+/**
+ * Modifier for held items that steal items from the enemy at the end of
+ * each turn.
+ * @see {@linkcode modifierTypes[MINI_BLACK_HOLE]}
+ */
 export class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
   constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
     super(type, pokemonId, stackCount);
@@ -2210,6 +2239,12 @@ export class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
   }
 }
 
+/**
+ * Modifier for held items that add a chance to steal items from the target of a
+ * successful attack.
+ * @see {@linkcode modifierTypes[GRIP_CLAW]}
+ * @see {@linkcode HeldItemTransferModifier}
+ */
 export class ContactHeldItemTransferChanceModifier extends HeldItemTransferModifier {
   private chance: number;
 
@@ -2217,6 +2252,20 @@ export class ContactHeldItemTransferChanceModifier extends HeldItemTransferModif
     super(type, pokemonId, stackCount);
 
     this.chance = chancePercent / 100;
+  }
+
+  /**
+   * Determines the target to steal items from when this applies.
+   * @param args\[0\] The {@linkcode Pokemon} holding this item
+   * @param args\[1\] The {@linkcode Pokemon} the holder is targeting with an attack
+   * @returns The target (args[1]) stored in array format for use in {@linkcode HeldItemTransferModifier.apply}
+   */
+  getTargets(args: any[]): Pokemon[] {
+    const target = args[1];
+
+    return target instanceof Pokemon
+      ? [ target ]
+      : [];
   }
 
   matchType(modifier: Modifier): boolean {

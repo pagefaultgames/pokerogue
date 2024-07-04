@@ -2973,7 +2973,7 @@ export class MoveEffectPhase extends PokemonPhase {
                         })).then(() => {
                           applyPostAttackAbAttrs(PostAttackAbAttr, user, target, this.move.getMove(), hitResult).then(() => {
                             if (this.move.getMove() instanceof AttackMove) {
-                              this.scene.applyModifiers(ContactHeldItemTransferChanceModifier, this.player, user, target.getFieldIndex());
+                              this.scene.applyModifiers(ContactHeldItemTransferChanceModifier, this.player, user, target);
                             }
                             resolve();
                           });
@@ -3102,7 +3102,7 @@ export class MoveEffectPhase extends PokemonPhase {
     applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, user, BattleStat.ACC, accuracyMultiplier, this.move.getMove());
 
     const evasionMultiplier = new Utils.NumberHolder(1);
-    applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, this.getTarget(), BattleStat.EVA, evasionMultiplier);
+    applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, target, BattleStat.EVA, evasionMultiplier);
 
     accuracyMultiplier.value /= evasionMultiplier.value;
 
