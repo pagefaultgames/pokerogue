@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 /**
  * The weather namespace holds text displayed when weather is active during a battle
@@ -15,12 +15,12 @@ export const weather: SimpleTranslationEntries = {
   "sandstormStartMessage": "Ein Sandsturm kommt auf!",
   "sandstormLapseMessage": "Der Sandsturm tobt.",
   "sandstormClearMessage": "Der Sandsturm legt sich.",
-  "sandstormDamageMessage": " Der Sandsturm fügt {{pokemonPrefix}}{{pokemonName}} Schaden zu!",
+  "sandstormDamageMessage": " Der Sandsturm fügt {{pokemonNameWithAffix}} Schaden zu!",
 
   "hailStartMessage": "Es fängt an zu hageln!",
   "hailLapseMessage": "Der Hagelsturm tobt.",
   "hailClearMessage": "Der Hagelsturm legt sich.",
-  "hailDamageMessage": "{{pokemonPrefix}}{{pokemonName}} wird von Hagelkörnern getroffen!",
+  "hailDamageMessage": "{{pokemonNameWithAffix}} wird von Hagelkörnern getroffen!",
 
   "snowStartMessage": "Es fängt an zu schneien!",
   "snowLapseMessage": "Der Schneesturm tobt.",
@@ -40,5 +40,6 @@ export const weather: SimpleTranslationEntries = {
 
   "strongWindsStartMessage": "Alle Flug-Pokémon werden von rätselhaften Luftströmungen geschützt!",
   "strongWindsLapseMessage": "Die rätselhafte Luftströmung hält an.",
+  "strongWindsEffectMessage": "Rätselhafte Luftströmungen haben den Angriff abgeschwächt!",
   "strongWindsClearMessage": "Die rätselhafte Luftströmung hat sich wieder geleget.",
 };

@@ -1,6 +1,7 @@
 import BattleScene from "../battle-scene";
 import Pokemon from "../field/pokemon";
 import { TextStyle, addTextObject } from "./text";
+import i18next from "i18next";
 
 const hiddenX = -118;
 const shownX = 0;
@@ -8,11 +9,10 @@ const baseY = -116;
 
 export default class AbilityBar extends Phaser.GameObjects.Container {
   private bg: Phaser.GameObjects.Image;
-  private pokemonNameText: Phaser.GameObjects.Text;
-  private abilityNameText: Phaser.GameObjects.Text;
+  private abilityBarText: Phaser.GameObjects.Text;
 
   private tween: Phaser.Tweens.Tween;
-  private autoHideTimer: number;
+  private autoHideTimer: NodeJS.Timeout;
 
   public shown: boolean;
 
@@ -26,21 +26,17 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
 
     this.add(this.bg);
 
-    this.pokemonNameText = addTextObject(this.scene, 15, 3, "", TextStyle.MESSAGE, { fontSize: "72px" });
-    this.pokemonNameText.setOrigin(0, 0);
-    this.add(this.pokemonNameText);
-
-    this.abilityNameText = addTextObject(this.scene, 97, 16, "", TextStyle.WINDOW, { fontSize: "72px" });
-    this.abilityNameText.setOrigin(1, 0);
-    this.add(this.abilityNameText);
+    this.abilityBarText = addTextObject(this.scene, 15, 3, "", TextStyle.MESSAGE, { fontSize: "72px" });
+    this.abilityBarText.setOrigin(0, 0);
+    this.abilityBarText.setWordWrapWidth(600, true);
+    this.add(this.abilityBarText);
 
     this.setVisible(false);
     this.shown = false;
   }
 
   showAbility(pokemon: Pokemon, passive: boolean = false): void {
-    this.pokemonNameText.setText(`${pokemon.name}'s${passive ? " Passive" : ""}`);
-    this.abilityNameText.setText((!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name);
+    this.abilityBarText.setText(`${i18next.t("fightUiHandler:abilityFlyInText", { pokemonName: pokemon.name, passive: passive ? i18next.t("fightUiHandler:passive") : "", abilityName: !passive ?  pokemon.getAbility().name : pokemon.getPassiveAbility().name })}`);
 
     if (this.shown) {
       return;
@@ -48,9 +44,6 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
 
     (this.scene as BattleScene).fieldUI.bringToTop(this);
 
-    if (this.tween) {
-      this.tween.stop();
-    }
 
     this.y = baseY + ((this.scene as BattleScene).currentBattle.double ? 14 : 0);
     this.tween = this.scene.tweens.add({

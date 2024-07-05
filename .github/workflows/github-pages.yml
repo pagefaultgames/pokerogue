@@ -1,0 +1,68 @@
+name: "Github Pages"
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  pages:
+    name: Github Pages
+    if: github.repository == 'pagefaultgames/pokerogue'
+    runs-on: ubuntu-latest
+    env:
+      api-dir: ./
+
+    strategy:
+      fail-fast: false
+
+    steps:
+      - name: Checkout repository for Typedoc
+        uses: actions/checkout@v3
+        with:
+          path: pokerogue_docs
+
+      - name: Install OS package
+        run: |
+          sudo apt update
+          sudo apt install -y git openssh-client
+
+      - name: Setup Node 20.13.1
+        uses: actions/setup-node@v1
+        with:
+          node-version: 20
+
+      - name: Checkout repository for Github Pages
+        if: github.event_name == 'push'
+        uses: actions/checkout@v3
+        with:
+          path: pokerogue_gh
+          ref: gh-pages
+
+      - name: Install Node.js dependencies
+        working-directory: ${{env.api-dir}}
+        run: |
+          cd pokerogue_docs
+          npm ci
+
+      - name: Generate Typedoc docs
+        working-directory: ${{env.api-dir}}
+        run: |
+          cd pokerogue_docs
+          npx typedoc --out /tmp/docs --githubPages false --entryPoints ./src/
+
+      - name: Commit & Push docs
+        if: github.event_name == 'push'
+        run: |
+          cd pokerogue_gh
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          mkdir -p $GITHUB_REF_NAME
+          rm -rf $GITHUB_REF_NAME/*
+          cp -r /tmp/docs/. $GITHUB_REF_NAME
+          git add $GITHUB_REF_NAME
+          git commit --allow-empty -m "[skip ci] Deploy docs"
+          git push

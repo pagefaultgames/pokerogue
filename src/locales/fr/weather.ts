@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 /**
  * The weather namespace holds text displayed when weather is active during a battle
@@ -15,12 +15,12 @@ export const weather: SimpleTranslationEntries = {
   "sandstormStartMessage": "Une tempête de sable se prépare !",
   "sandstormLapseMessage": "La tempête de sable fait rage !",
   "sandstormClearMessage": "La tempête de sable se calme !",
-  "sandstormDamageMessage": "La tempête de sable inflige des dégâts\nà {{pokemonPrefix}}{{pokemonName}} !",
+  "sandstormDamageMessage": "La tempête de sable inflige des dégâts\nà {{pokemonNameWithAffix}} !",
 
   "hailStartMessage": "Il commence à grêler !",
   "hailLapseMessage": "La grêle continue de tomber !",
   "hailClearMessage": "La grêle s’est arrêtée !",
-  "hailDamageMessage": "La grêle inflige des dégâts\nà {{pokemonPrefix}}{{pokemonName}} !",
+  "hailDamageMessage": "La grêle inflige des dégâts\nà {{pokemonNameWithAffix}} !",
 
   "snowStartMessage": "Il commence à neiger !",
   "snowLapseMessage": "Il y a une tempête de neige !",
@@ -40,5 +40,6 @@ export const weather: SimpleTranslationEntries = {
 
   "strongWindsStartMessage": "Un vent mystérieux se lève !",
   "strongWindsLapseMessage": "Le vent mystérieux souffle violemment !",
+  "strongWindsEffectMessage": "Le courant aérien mystérieux affaiblit l’attaque !",
   "strongWindsClearMessage": "Le vent mystérieux s’est dissipé…"
 };

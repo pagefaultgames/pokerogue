@@ -1,4 +1,4 @@
-import { MoveTranslationEntries } from "#app/plugins/i18n";
+import { MoveTranslationEntries } from "#app/interfaces/locales";
 
 export const move: MoveTranslationEntries = {
   "pound": {
@@ -149,7 +149,7 @@ export const move: MoveTranslationEntries = {
     name: "Thrash",
     effect: "O usuário fica furioso e ataca com violência de dois a três turnos. O usuário então se torna confuso."
   },
-  "double-Edge": {
+  "doubleEdge": {
     name: "Double-Edge",
     effect: "Uma investida imprudente e muito perigosa. Isso também fere bastante o usuário."
   },
@@ -477,7 +477,7 @@ export const move: MoveTranslationEntries = {
     name: "Mirror Move",
     effect: "O usuário contra-ataca o alvo imitando seu último movimento utilizado."
   },
-  "self-Destruct": {
+  "selfDestruct": {
     name: "Self-Destruct",
     effect: "O usuário ataca tudo ao seu redor causando uma explosão. O usuário desmaia por usar esse golpe."
   },
@@ -537,7 +537,7 @@ export const move: MoveTranslationEntries = {
     name: "Kinesis",
     effect: "O usuário distrai o alvo entortando uma colher. Isso diminui a Precisão do alvo."
   },
-  "soft-Boiled": {
+  "softBoiled": {
     name: "Soft-Boiled",
     effect: "O usuário restaura os próprios PS pela metade dos seus PS máximos."
   },
@@ -753,7 +753,7 @@ export const move: MoveTranslationEntries = {
     name: "Sludge Bomb",
     effect: "Lodo insalubre é no arremessado no alvo. Isso também pode causar envenenamento."
   },
-  "mud-Slap": {
+  "mudSlap": {
     name: "Mud-Slap",
     effect: "O usuário arremessa lama no rosto do adversário para causar dano e prejudicar sua precisão."
   },
@@ -793,7 +793,7 @@ export const move: MoveTranslationEntries = {
     name: "Bone Rush",
     effect: "O usuário atinge o alvo com um osso duro de duas a cinco vezes seguidas."
   },
-  "lock-On": {
+  "lockOn": {
     name: "Lock-On",
     effect: "O usuário foca sua mira no alvo. Isso garante que o próximo ataque não erre o alvo."
   },
@@ -1041,7 +1041,7 @@ export const move: MoveTranslationEntries = {
     name: "Flatter",
     effect: "Bajulação é usada para confundir o oponente. Entretanto, isso também fortalece o Ataque Especial do alvo."
   },
-  "will-O-Wisp": {
+  "willOWisp": {
     name: "Will-O-Wisp",
     effect: "O usuário atira uma sinistra chama azulada no alvo para causar uma queimadura."
   },
@@ -1429,7 +1429,7 @@ export const move: MoveTranslationEntries = {
     name: "Miracle Eye",
     effect: "Permite que um alvo tipo Sombrio seja atingido por ataques do tipo Psíquico. Isso também permite que um alvo evasivo possa ser atingido."
   },
-  "wake-UpSlap": {
+  "wakeUpSlap": {
     name: "Wake-Up Slap",
     effect: "Esse ataque causa muito dano em um alvo que estiver dormindo; entretanto, isso também acorda o alvo."
   },
@@ -1473,7 +1473,7 @@ export const move: MoveTranslationEntries = {
     name: "Metal Burst",
     effect: "O usuário revida com muito mais força contra o alvo que lhe infligiu dano por ultimo."
   },
-  "u-Turn": {
+  "uTurn": {
     name: "U-turn",
     effect: "Depois de fazer o seu ataque, o usuário corre de volta para trocar de lugar com um Pokémon da própria equipe."
   },
@@ -1613,7 +1613,7 @@ export const move: MoveTranslationEntries = {
     name: "Air Slash",
     effect: "O usuário ataca com uma lâmina de ar que corta até mesmo o céu. Isso pode fazer o alvo hesitar."
   },
-  "x-Scissor": {
+  "xScissor": {
     name: "X-Scissor",
     effect: "O usuário cutila o alvo cruzando suas foices ou garras como se elas fossem um par de tesouras."
   },
@@ -1943,7 +1943,7 @@ export const move: MoveTranslationEntries = {
   },
   "electroBall": {
     name: "Electro Ball",
-    effect: "O usuário arremessa uma orbe elétrica no alvo. Quanto mais rápido for o usuário comparado ao alvo, maior será o poder do movimento."
+    effect: "O usuário arremessa uma esfera elétrica no alvo. Quanto mais rápido for o usuário comparado ao alvo, maior será o poder do movimento."
   },
   "soak": {
     name: "Soak",
@@ -2095,7 +2095,7 @@ export const move: MoveTranslationEntries = {
   },
   "frostBreath": {
     name: "Frost Breath",
-    effect: "O usuário sopra sua respiração gelada no alvo. Esse ataque sempre resulta em um golpe crítico."
+    effect: "O usuário sopra sua respiração gelada no alvo. Esse ataque sempre resulta em um acerto crítico."
   },
   "dragonTail": {
     name: "Dragon Tail",
@@ -2219,13 +2219,13 @@ export const move: MoveTranslationEntries = {
   },
   "snarl": {
     name: "Snarl",
-    effect: "O usuário grita como se ele estivesse reclamando de algo, diminuindo a Defesa Especial do Pokémon oponente."
+    effect: "O usuário grita como se ele estivesse reclamando de algo, diminuindo o Ataque Especial do Pokémon oponente."
   },
   "icicleCrash": {
     name: "Icicle Crash",
     effect: "O usuário ataca arremessando estacas de gelo no alvo violentamente. Isso também pode fazer o alvo hesitar."
   },
-  "v-Create": {
+  "vCreate": {
     name: "V-create",
     effect: "Com uma ardente chama em sua testa, o usuário joga seu corpo em direção ao alvo. Isso diminui a Defesa, Defesa Especial, e Velocidade do usuário."
   },
@@ -2265,7 +2265,7 @@ export const move: MoveTranslationEntries = {
     name: "Phantom Force",
     effect: "O usuário desaparece para algum lugar e então ataca o alvo no próximo turno. Esse movimento acerta mesmo se o alvo estiver se protegendo."
   },
-  "trick-Or-Treat": {
+  "trickOrTreat": {
     name: "Trick-or-Treat",
     effect: "O usuário enche o alvo com o espírito do Halloween para celebrarem juntos. Isso adiciona o tipo Fantasma à tipagem do alvo."
   },
@@ -2289,7 +2289,7 @@ export const move: MoveTranslationEntries = {
     name: "Petal Blizzard",
     effect: "O usuário rotaciona uma violenta nevasca composta por pétalas e ataca tudo ao seu redor."
   },
-  "freeze-Dry": {
+  "freezeDry": {
     name: "Freeze-Dry",
     effect: "O usuário rapidamente diminui a temperatura do alvo. Isso pode deixar o alvo congelado. Esse movimento é supereficaz contra tipos Água."
   },
@@ -2301,7 +2301,7 @@ export const move: MoveTranslationEntries = {
     name: "Parting Shot",
     effect: "O usuário diminui os atributos de Ataque e Ataque Esp. do alvo com uma ameaça antes de ser trocado por outro Pokémon na equipe."
   },
-  "topsy-Turvy": {
+  "topsyTurvy": {
     name: "Topsy-Turvy",
     effect: "Todas as mudanças de atributos afetando o alvo viram de cabeça para baixo e se tornam o oposto do que eram."
   },
@@ -2429,7 +2429,7 @@ export const move: MoveTranslationEntries = {
     name: "Hold Hands",
     effect: "O usuário e um aliado dão as mãos. Isso os deixam muito contentes."
   },
-  "baby-DollEyes": {
+  "babyDollEyes": {
     name: "Baby-Doll Eyes",
     effect: "O usuário encara o alvo com seus olhos adoráveis, o que diminui seu atributo de Ataque. Esse movimento tem prioridade."
   },
@@ -2445,7 +2445,7 @@ export const move: MoveTranslationEntries = {
     name: "Infestation",
     effect: "O alvo é infestado e atacado de quatro a cinco turnos. O alvo não pode fugir durante esse período."
   },
-  "power-UpPunch": {
+  "powerUpPunch": {
     name: "Power-Up Punch",
     effect: "Golpear oponentes repetidamente faz os punhos do usuário enrijecerem. Acertar um alvo aumenta o Ataque."
   },
@@ -2495,7 +2495,7 @@ export const move: MoveTranslationEntries = {
   },
   "allOutPummelingPhysical": {
     name: "All-Out Pummeling",
-    effect: "Utilizando o Poder Z, o usuário cria e arremessa um orbe de energia no alvo com força total. Seu poder varia dependendo do movimento original."
+    effect: "Utilizando o Poder Z, o usuário cria e arremessa uma esfera de energia no alvo com força total. Seu poder varia dependendo do movimento original."
   },
   "allOutPummelingSpecial": {
     name: "All-Out Pummeling",
@@ -2541,11 +2541,11 @@ export const move: MoveTranslationEntries = {
     name: "Savage Spin-Out",
     effect: "Dummy Data"
   },
-  "never-EndingNightmarePhysical": {
+  "neverEndingNightmarePhysical": {
     name: "Never-Ending Nightmare",
     effect: "Utilizando o Poder Z, o usuário invoca espectros rancorosos que sufocam o alvo. Seu poder varia dependendo do movimento original."
   },
-  "never-EndingNightmareSpecial": {
+  "neverEndingNightmareSpecial": {
     name: "Never-Ending Nightmare",
     effect: "Dummy Data"
   },
@@ -2691,7 +2691,7 @@ export const move: MoveTranslationEntries = {
   },
   "laserFocus": {
     name: "Laser Focus",
-    effect: "O usuário se concentra intensamente. O ataque no próximo turno sempre resultará em um golpe crítico."
+    effect: "O usuário se concentra intensamente. O ataque no próximo turno sempre resultará em um acerto crítico."
   },
   "gearUp": {
     name: "Gear Up",
@@ -2793,7 +2793,7 @@ export const move: MoveTranslationEntries = {
     name: "Guardian of Alola",
     effect: "Utilizando o Poder Z, o Espírito Nativo canaliza a energia de Alola e ataca o alvo com força total. Reduz muito os PS do alvo."
   },
-  "soul-Stealing7-StarStrike": {
+  "soulStealing7StarStrike": {
     name: "Soul-Stealing 7-Star Strike",
     effect: "Quando um Marshadow obtém o Poder Z, ele ataca o alvo consecutivamente com socos e chutes usando força total."
   },
@@ -2865,11 +2865,11 @@ export const move: MoveTranslationEntries = {
     name: "Zing Zap",
     effect: "Uma forte explosão elétrica que cai sobre o alvo, eletrocutando-o e podendo fazê-lo hesitar."
   },
-  "nature’SMadness": {
-    name: "Nature’s Madness",
+  "naturesMadness": {
+    name: "Nature's Madness",
     effect: "O usuário atinge o alvo com a força da natureza. Reduz os PS do alvo pela metade."
   },
-  "multi-Attack": {
+  "multiAttack": {
     name: "Multi-Attack",
     effect: "Se envolvendo em energia concentrada, o usuário acerta o alvo. A memória segurada determina o tipo do movimento."
   },
@@ -2915,7 +2915,7 @@ export const move: MoveTranslationEntries = {
   },
   zippyZap: {
     name: "Zippy Zap",
-    effect: "The user attacks the target with bursts of electricity at high speed. This move always goes first and raises the user's evasiveness."
+    effect: "O usuário ataca o alvo com rajadas de eletricidade em alta velocidade. Esse movimento sempre vai primeiro e aumenta a Evasão do usuário."
   },
   splishySplash: {
     name: "Splishy Splash",
@@ -2931,7 +2931,7 @@ export const move: MoveTranslationEntries = {
   },
   bouncyBubble: {
     name: "Bouncy Bubble",
-    effect: "O usuário ataca atirando bolhas de água no alvo. Em seguida, absorve água e restaura seu HP pela metade do dano causado ao alvo."
+    effect: "O usuário ataca atirando bolhas de água no alvo. Em seguida, absorve água e restaura seu HP pelo mesmo valor de dano causado ao alvo."
   },
   buzzyBuzz: {
     name: "Buzzy Buzz",
@@ -3267,11 +3267,11 @@ export const move: MoveTranslationEntries = {
   },
   wickedBlow: {
     name: "Wicked Blow",
-    effect: "O usuário, tendo dominado o estilo Sombrio, atinge o alvo com um golpe feroz. Este ataque sempre resulta em um golpe crítico."
+    effect: "O usuário, tendo dominado o estilo Sombrio, atinge o alvo com um golpe feroz. Este ataque sempre resulta em um acerto crítico."
   },
   surgingStrikes: {
     name: "Surging Strikes",
-    effect: "O usuário, tendo dominado o estilo Água, atinge o alvo com um movimento fluido três vezes seguidas. Este ataque sempre resulta em um golpe crítico."
+    effect: "O usuário, tendo dominado o estilo Água, atinge o alvo com um movimento fluido três vezes seguidas. Estes ataques sempre resultam em acertos críticos."
   },
   thunderCage: {
     name: "Thunder Cage",
@@ -3359,7 +3359,7 @@ export const move: MoveTranslationEntries = {
   },
   esperWing: {
     name: "Esper Wing",
-    effect: "O usuário corta o alvo com asas enriquecidas com aura. Isso também aumenta o atributo de Velocidade do usuário. Este movimento tem uma chance aumentada de causar um golpe crítico."
+    effect: "O usuário corta o alvo com asas enriquecidas com aura. Isso também aumenta o atributo de Velocidade do usuário. Este movimento tem uma chance aumentada de causar um acerto crítico."
   },
   bitterMalice: {
     name: "Bitter Malice",
@@ -3371,7 +3371,7 @@ export const move: MoveTranslationEntries = {
   },
   tripleArrows: {
     name: "Triple Arrows",
-    effect: "O usuário chuta e depois dispara três flechas. Este movimento tem uma chance aumentada de causar um golpe crítico e também pode diminuir o atributo de Defesa do alvo ou fazê-lo hesitar."
+    effect: "O usuário chuta e depois dispara três flechas. Este movimento tem uma chance aumentada de causar um acerto crítico e também pode diminuir o atributo de Defesa do alvo ou fazê-lo hesitar."
   },
   infernalParade: {
     name: "Infernal Parade",
@@ -3479,7 +3479,7 @@ export const move: MoveTranslationEntries = {
   },
   "gMaxTartness": {
     name: "G-Max Tartness",
-    effect: "Um ataque do tipo Planta que Gigantamax Flapple usa. Este movimento reduz a evasão dos oponentes."
+    effect: "Um ataque do tipo Planta que Gigantamax Flapple usa. Este movimento reduz a Evasão dos oponentes."
   },
   "gMaxSweetness": {
     name: "G-Max Sweetness",
@@ -3611,7 +3611,7 @@ export const move: MoveTranslationEntries = {
   },
   "flowerTrick": {
     name: "Flower Trick",
-    effect: "O usuário lança um buquê de flores armado no alvo. Este ataque nunca erra e sempre resulta em um golpe crítico."
+    effect: "O usuário lança um buquê de flores armado no alvo. Este ataque nunca erra e sempre resulta em um acerto crítico."
   },
   "torchSong": {
     name: "Torch Song",
@@ -3711,7 +3711,7 @@ export const move: MoveTranslationEntries = {
   },
   "aquaCutter": {
     name: "Aqua Cutter",
-    effect: "O usuário expele água pressurizada para cortar o alvo como uma lâmina. Este movimento tem uma chance aumentada de resultar em um golpe crítico."
+    effect: "O usuário expele água pressurizada para cortar o alvo como uma lâmina. Este movimento tem uma chance aumentada de resultar em um acerto crítico."
   },
   "blazingTorque": {
     name: "Blazing Torque",
@@ -3747,7 +3747,7 @@ export const move: MoveTranslationEntries = {
   },
   "ivyCudgel": {
     name: "Ivy Cudgel",
-    effect: "O usuário golpeia com um porrete envolto em hera. O tipo deste movimento muda dependendo da máscara usada pelo usuário, e tem uma chance aumentada de resultar em um golpe crítico."
+    effect: "O usuário golpeia com um porrete envolto em hera. O tipo deste movimento muda dependendo da máscara usada pelo usuário, e tem uma chance aumentada de resultar em um acerto crítico."
   },
   "electroShot": {
     name: "Electro Shot",

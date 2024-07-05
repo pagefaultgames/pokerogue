@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 /**
  * The weather namespace holds text displayed when weather is active during a battle
@@ -15,12 +15,12 @@ export const weather: SimpleTranslationEntries = {
   "sandstormStartMessage": "开始刮沙暴了！",
   "sandstormLapseMessage": "沙暴肆虐。",
   "sandstormClearMessage": "沙暴停止了！",
-  "sandstormDamageMessage": "沙暴袭击了{{pokemonPrefix}}{{pokemonName}}！",
+  "sandstormDamageMessage": "沙暴袭击了{{pokemonNameWithAffix}}！",
 
   "hailStartMessage": "开始下冰雹了！",
   "hailLapseMessage": "冰雹继续肆虐。",
   "hailClearMessage": "冰雹不再下了。",
-  "hailDamageMessage": "冰雹袭击了{{pokemonPrefix}}{{pokemonName}}！",
+  "hailDamageMessage": "冰雹袭击了{{pokemonNameWithAffix}}！",
 
   "snowStartMessage": "开始下雪了！",
   "snowLapseMessage": "雪继续下。",
@@ -40,5 +40,6 @@ export const weather: SimpleTranslationEntries = {
 
   "strongWindsStartMessage": "吹起了神秘的乱流！",
   "strongWindsLapseMessage": "神秘的乱流势头不减。",
+  "strongWindsEffectMessage": "The mysterious air current weakened the attack!",
   "strongWindsClearMessage": "神秘的乱流停止了。"
 };

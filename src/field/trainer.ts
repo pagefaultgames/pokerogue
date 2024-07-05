@@ -11,8 +11,6 @@ import {
   trainerPartyTemplates,
   signatureSpecies
 } from "../data/trainer-config";
-import {PartyMemberStrength} from "../data/enums/party-member-strength";
-import {TrainerType} from "../data/enums/trainer-type";
 import {EnemyPokemon} from "./pokemon";
 import * as Utils from "../utils";
 import {PersistentModifier} from "../modifier/modifier";
@@ -20,6 +18,9 @@ import {trainerNamePools} from "../data/trainer-names";
 import {ArenaTagSide, ArenaTrapTag} from "#app/data/arena-tag";
 import {getIsInitialized, initI18n} from "#app/plugins/i18n";
 import i18next from "i18next";
+import { PartyMemberStrength } from "#enums/party-member-strength";
+import { Species } from "#enums/species";
+import { TrainerType } from "#enums/trainer-type";
 
 export enum TrainerVariant {
     DEFAULT,
@@ -34,11 +35,16 @@ export default class Trainer extends Phaser.GameObjects.Container {
   public name: string;
   public partnerName: string;
 
-  constructor(scene: BattleScene, trainerType: TrainerType, variant: TrainerVariant, partyTemplateIndex?: integer, name?: string, partnerName?: string) {
+  constructor(scene: BattleScene, trainerType: TrainerType, variant: TrainerVariant, partyTemplateIndex?: integer, name?: string, partnerName?: string, trainerConfigOverride?: TrainerConfig) {
     super(scene, -72, 80);
     this.config = trainerConfigs.hasOwnProperty(trainerType)
       ? trainerConfigs[trainerType]
       : trainerConfigs[TrainerType.ACE_TRAINER];
+
+    if (trainerConfigOverride) {
+      this.config = trainerConfigOverride;
+    }
+
     this.variant = variant;
     this.partyTemplateIndex = Math.min(partyTemplateIndex !== undefined ? partyTemplateIndex : Utils.randSeedWeightedItem(this.config.partyTemplates.map((_, i) => i)),
       this.config.partyTemplates.length - 1);
@@ -121,6 +127,14 @@ export default class Trainer extends Phaser.GameObjects.Container {
     // Determine the title to include based on the configuration and includeTitle flag.
     let title = includeTitle && this.config.title ? this.config.title : null;
 
+    if (this.name === "" && name.toLowerCase().includes("grunt")) {
+      // This is a evil team grunt so we localize it by only using the "name" as the title
+      title = i18next.t(`trainerClasses:${name.toLowerCase().replace(/\s/g, "_")}`);
+      console.log("Localized grunt name: " + title);
+      // Since grunts are not named we can just return the title
+      return title;
+    }
+
     // If the trainer has a name (not null or undefined).
     if (this.name) {
       // If the title should be included.
@@ -163,6 +177,10 @@ export default class Trainer extends Phaser.GameObjects.Container {
 
   isDouble(): boolean {
     return this.config.doubleOnly || this.variant === TrainerVariant.DOUBLE;
+  }
+
+  getMixedBattleBgm(): string {
+    return this.config.mixedBattleBgm;
   }
 
   getBattleBgm(): string {
@@ -314,12 +332,25 @@ export default class Trainer extends Phaser.GameObjects.Container {
 
         // If the index is even, use the species pool for the main trainer (that way he only uses his own pokemon in battle)
         if (!(index % 2)) {
-          newSpeciesPool = speciesPoolFiltered;
+          // Since the only currently allowed double battle with named trainers is Tate & Liza, we need to make sure that Solrock is the first pokemon in the party for Tate and Lunatone for Liza
+          if (index === 0 && (TrainerType[this.config.trainerType] === TrainerType[TrainerType.TATE])) {
+            newSpeciesPool = [Species.SOLROCK];
+          } else if (index === 0 && (TrainerType[this.config.trainerType] === TrainerType[TrainerType.LIZA])) {
+            newSpeciesPool = [Species.LUNATONE];
+          } else {
+            newSpeciesPool = speciesPoolFiltered;
+          }
         } else {
           // If the index is odd, use the species pool for the partner trainer (that way he only uses his own pokemon in battle)
-          newSpeciesPool = speciesPoolPartnerFiltered;
+          // Since the only currently allowed double battle with named trainers is Tate & Liza, we need to make sure that Solrock is the first pokemon in the party for Tate and Lunatone for Liza
+          if (index === 1 && (TrainerType[this.config.trainerTypeDouble] === TrainerType[TrainerType.TATE])) {
+            newSpeciesPool = [Species.SOLROCK];
+          } else if (index === 1 && (TrainerType[this.config.trainerTypeDouble] === TrainerType[TrainerType.LIZA])) {
+            newSpeciesPool = [Species.LUNATONE];
+          } else {
+            newSpeciesPool = speciesPoolPartnerFiltered;
+          }
         }
-
         // Fallback for when the species pool is empty
         if (newSpeciesPool.length === 0) {
           // If all pokemon from this pool are already in the party, generate a random species
@@ -328,11 +359,16 @@ export default class Trainer extends Phaser.GameObjects.Container {
       }
 
       // If useNewSpeciesPool is true, we need to generate a new species from the new species pool, otherwise we generate a random species
-      const species = useNewSpeciesPool
+      let species = useNewSpeciesPool
         ? getPokemonSpecies(newSpeciesPool[Math.floor(Math.random() * newSpeciesPool.length)])
         : template.isSameSpecies(index) && index > offset
           ? getPokemonSpecies(battle.enemyParty[offset].species.getTrainerSpeciesForLevel(level, false, template.getStrength(offset)))
           : this.genNewPartyMemberSpecies(level, strength);
+
+      // If the species is from newSpeciesPool, we need to adjust it based on the level and strength
+      if (newSpeciesPool) {
+        species = getPokemonSpecies(species.getSpeciesForLevel(level, true, true, strength));
+      }
 
       ret = this.scene.addEnemyPokemon(species, level, !this.isDouble() || !(index % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER);
     }, this.config.hasStaticParty ? this.config.getDerivedType() + ((index + 1) << 8) : this.scene.currentBattle.waveIndex + (this.config.getDerivedType() << 10) + (((!this.config.useSameSeedForAllMembers ? index : 0) + 1) << 8));
@@ -401,22 +437,26 @@ export default class Trainer extends Phaser.GameObjects.Container {
     }
 
     const party = this.scene.getEnemyParty();
-    const nonFaintedPartyMembers = party.slice(this.scene.currentBattle.getBattlerCount()).filter(p => !p.isFainted()).filter(p => !trainerSlot || p.trainerSlot === trainerSlot);
-    const partyMemberScores = nonFaintedPartyMembers.map(p => {
-      const playerField = this.scene.getPlayerField();
+    const nonFaintedLegalPartyMembers = party.slice(this.scene.currentBattle.getBattlerCount()).filter(p => p.isAllowedInBattle()).filter(p => !trainerSlot || p.trainerSlot === trainerSlot);
+    const partyMemberScores = nonFaintedLegalPartyMembers.map(p => {
+      const playerField = this.scene.getPlayerField().filter(p => p.isAllowedInBattle());
       let score = 0;
-      for (const playerPokemon of playerField) {
-        score += p.getMatchupScore(playerPokemon);
-        if (playerPokemon.species.legendary) {
-          score /= 2;
+
+      if (playerField.length > 0) {
+        for (const playerPokemon of playerField) {
+          score += p.getMatchupScore(playerPokemon);
+          if (playerPokemon.species.legendary) {
+            score /= 2;
+          }
+        }
+        score /= playerField.length;
+        if (forSwitch && !p.isOnField()) {
+          this.scene.arena.findTagsOnSide(t => t instanceof ArenaTrapTag, ArenaTagSide.ENEMY).map(t => score *= (t as ArenaTrapTag).getMatchupScoreMultiplier(p));
         }
       }
-      score /= playerField.length;
-      if (forSwitch && !p.isOnField()) {
-        this.scene.arena.findTagsOnSide(t => t instanceof ArenaTrapTag, ArenaTagSide.ENEMY).map(t => score *= (t as ArenaTrapTag).getMatchupScoreMultiplier(p));
-      }
+
       return [party.indexOf(p), score];
-    });
+    }) as [integer, integer][];
 
     return partyMemberScores;
   }

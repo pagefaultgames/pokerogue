@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const menu: SimpleTranslationEntries = {
   "cancel": "Annuler",
@@ -6,6 +6,7 @@ export const menu: SimpleTranslationEntries = {
   "dailyRun": "Défi du jour (Bêta)",
   "loadGame": "Charger la partie",
   "newGame": "Nouvelle partie",
+  "settings": "Paramètres",
   "selectGameMode": "Sélectionnez un mode de jeu.",
   "logInOrCreateAccount": "Connectez-vous ou créez un compte pour commencer. Aucun e-mail requis !",
   "username": "Nom d’utilisateur",
@@ -28,8 +29,6 @@ export const menu: SimpleTranslationEntries = {
   "sessionSuccess": "Session chargée avec succès.",
   "failedToLoadSession": "Vos données de session n’ont pas pu être chargées.\nElles pourraient être corrompues.",
   "boyOrGirl": "Es-tu un garçon ou une fille ?",
-  "boy": "Garçon",
-  "girl": "Fille",
   "evolving": "Quoi ?\n{{pokemonName}} évolue !",
   "stoppedEvolving": "Hein ?\n{{pokemonName}} n’évolue plus !",
   "pauseEvolutionsQuestion": "Mettre en pause les évolutions pour {{pokemonName}} ?\nElles peuvent être réactivées depuis l’écran d’équipe.",
@@ -38,9 +37,16 @@ export const menu: SimpleTranslationEntries = {
   "dailyRankings": "Classement du Jour",
   "weeklyRankings": "Classement de la Semaine",
   "noRankings": "Pas de Classement",
+  "positionIcon": "#",
+  "usernameScoreboard": "Utilisateur",
+  "score": "Score",
+  "wave": "Vague",
   "loading": "Chargement…",
+  "loadingAsset": "Chargement de la ressource : {{assetName}}",
   "playersOnline": "Joueurs Connectés",
-  "empty":"Vide",
   "yes":"Oui",
   "no":"Non",
+  "disclaimer": "AVERTISSEMENT",
+  "disclaimerDescription": "Ce jeu n’est pas un produit fini et peut contenir des problèmes de jouabilité, dont de possibles pertes de sauvegardes,\ndes modifications sans avertissement et pourrait ou non encore être mis à jour ou terminé.",
+  "errorServerDown": "Oupsi ! Un problème de connexion au serveur est survenu.\n\nVous pouvez garder cette fenêtre ouverte,\nle jeu se reconnectera automatiquement.",
 } as const;

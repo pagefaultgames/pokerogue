@@ -1,7 +1,7 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const tutorial: SimpleTranslationEntries = {
-  "intro": `欢迎来到PokéRogue！这是一款以战斗为核心的融合了roguelite元素的宝可梦同人游戏。
+  "intro": `欢迎来到PokéRogue！这是一款以战斗为核心的\n融合了roguelite元素的宝可梦同人游戏。
     $本游戏未进行商业化，我们没有\nPokémon或Pokémon使用的版
     $权资产的所有权。
     $游戏仍在开发中，但已可完整游玩。如需报\n告错误，请通过 Discord 社区。
@@ -13,7 +13,7 @@ export const tutorial: SimpleTranslationEntries = {
     $在设置中，您可以更改游戏速度、窗口样式\n和其他选项。
     $这里还有各种其他功能，请务必全部查看！`,
 
-  "starterSelect": `在此页面中，您可以选择您的初始宝可梦。\n这些是您最初的队伍成员。
+  "starterSelect": `在此页面中，您可以通过按Z或空格键选择\n您的初始宝可梦。这些是您最初的队伍成员。
     $每个初始宝可梦都有一个费用值。您的队伍\n最多可以拥有6名成员，只要总费用不超过10。
     $您还可以根据您捕获或孵化的变种选择性别\n、特性和形态。
     $一个物种个体值是您捕获或孵化的所有宝可\n梦中最好的，所以尽量获得更多同种宝可梦！`,

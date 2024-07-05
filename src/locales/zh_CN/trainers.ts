@@ -1,18 +1,24 @@
-import {SimpleTranslationEntries} from "#app/plugins/i18n";
+import {SimpleTranslationEntries} from "#app/interfaces/locales";
 
 // Titles of special trainers like gym leaders, elite four, and the champion
 export const titles: SimpleTranslationEntries = {
   "elite_four": "四天王",
-  "elite_four_female": "Elite Four",
+  "elite_four_female": "四天王",
   "gym_leader": "道馆馆主",
   "gym_leader_female": "道馆馆主",
-  "gym_leader_double": "Gym Leader Duo",
+  "gym_leader_double": "道馆馆主搭档",
   "champion": "冠军",
-  "champion_female": "Champion",
-  "champion_double": "Champion Duo",
+  "champion_female": "冠军",
+  "champion_double": "冠军搭档",
   "rival": "劲敌",
   "professor": "博士",
   "frontier_brain": "开拓头脑",
+  "rocket_boss": "火箭队老大",
+  "magma_boss": "熔岩队老大",
+  "aqua_boss": "海洋队老大",
+  "galactic_boss": "银河队老大",
+  "plasma_boss": "等离子队老大",
+  "flare_boss": "闪焰队老大",
   // Maybe if we add the evil teams we can add "Team Rocket" and "Team Aqua" etc. here as well as "Team Rocket Boss" and "Team Aqua Admin" etc.
 } as const;
 
@@ -48,6 +54,7 @@ export const trainerClasses: SimpleTranslationEntries = {
   "depot_agent": "铁路员工",
   "doctor": "医生",
   "doctor_female": "医生",
+  "firebreather": "吹火人",
   "fisherman": "垂钓者",
   "fisherman_female": "垂钓者",
   "gentleman": "绅士",
@@ -86,14 +93,15 @@ export const trainerClasses: SimpleTranslationEntries = {
   "pokémon_rangers": "宝可梦巡护员组合",
   "ranger": "巡护员",
   "restaurant_staff": "服务生组合",
-  "rich": "Rich",
-  "rich_female": "Rich",
+  "rich": "富豪",
+  "rich_female": "富豪太太",
   "rich_boy": "富家少爷",
   "rich_couple": "富豪夫妇",
-  "rich_kid": "Rich Kid",
-  "rich_kid_female": "Rich Kid",
-  "rich_kids": "富二代组合",
+  "rich_kid": "富家小孩",
+  "rich_kid_female": "富家小孩",
+  "rich_kids": "富家小孩组合",
   "roughneck": "光头男",
+  "sailor": "水手",
   "scientist": "研究员",
   "scientist_female": "研究员",
   "scientists": "研究员组合",
@@ -116,7 +124,19 @@ export const trainerClasses: SimpleTranslationEntries = {
   "worker": "工人",
   "worker_female": "工人",
   "workers": "工人组合",
-  "youngster": "短裤小子"
+  "youngster": "短裤小子",
+  "rocket_grunt": "火箭队手下",
+  "rocket_grunt_female": "火箭队手下",
+  "magma_grunt": "熔岩队手下",
+  "magma_grunt_female": "熔岩队手下",
+  "aqua_grunt": "海洋队手下",
+  "aqua_grunt_female": "海洋队手下",
+  "galactic_grunt": "银河队手下",
+  "galactic_grunt_female": "银河队手下",
+  "plasma_grunt": "等离子队手下",
+  "plasma_grunt_female": "等离子队手下",
+  "flare_grunt": "闪焰队手下",
+  "flare_grunt_female": "闪焰队手下",
 } as const;
 
 // Names of special trainers like gym leaders, elite four, and the champion
@@ -302,16 +322,23 @@ export const trainerNames: SimpleTranslationEntries = {
   "rival": "芬恩",
   "rival_female": "艾薇",
 
+  // ---- 组织老大 Bosses ----
+  "maxie": "赤焰松",
+  "archie": "水梧桐",
+  "cyrus": "赤日",
+  "ghetsis": "魁奇思",
+  "lysandre": "弗拉达利",
+
 
   // Double Names
-  "blue_red_double": "Blue & Red",
-  "red_blue_double": "Red & Blue",
-  "tate_liza_double": "Tate & Liza",
-  "liza_tate_double": "Liza & Tate",
-  "steven_wallace_double": "Steven & Wallace",
-  "wallace_steven_double": "Wallace & Steven",
-  "alder_iris_double": "Alder & Iris",
-  "iris_alder_double": "Iris & Alder",
-  "marnie_piers_double": "Marnie & Piers",
-  "piers_marnie_double": "Piers & Marnie",
+  "blue_red_double": "青绿 & 赤红",
+  "red_blue_double": "赤红 & 青绿",
+  "tate_liza_double": "小枫 & 小南",
+  "liza_tate_double": "小南 & 小枫",
+  "steven_wallace_double": "大吾 & 米可利",
+  "wallace_steven_double": "米可利 & 大吾",
+  "alder_iris_double": "阿戴克 & 艾莉丝",
+  "iris_alder_double": "艾莉丝 & 阿戴克",
+  "marnie_piers_double": "玛俐 & 聂梓",
+  "piers_marnie_double": "聂梓 & 玛俐",
 } as const;

@@ -2,7 +2,7 @@ import BattleScene, { starterColors } from "../battle-scene";
 import { TextStyle, addTextObject } from "./text";
 import { argbFromRgba } from "@material/material-color-utilities";
 import * as Utils from "../utils";
-import { Species } from "#app/data/enums/species";
+import { Species } from "#enums/species";
 
 export default class CandyBar extends Phaser.GameObjects.Container {
   private bg: Phaser.GameObjects.NineSlice;
@@ -12,7 +12,7 @@ export default class CandyBar extends Phaser.GameObjects.Container {
   private speciesId: Species;
 
   private tween: Phaser.Tweens.Tween;
-  private autoHideTimer: number;
+  private autoHideTimer: NodeJS.Timeout;
 
   public shown: boolean;
 

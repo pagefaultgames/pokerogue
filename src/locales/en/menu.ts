@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 /**
  * The menu namespace holds most miscellaneous text that isn't directly part of the game's
@@ -11,6 +11,7 @@ export const menu: SimpleTranslationEntries = {
   "dailyRun": "Daily Run (Beta)",
   "loadGame": "Load Game",
   "newGame": "New Game",
+  "settings": "Settings",
   "selectGameMode": "Select a game mode.",
   "logInOrCreateAccount": "Log in or create an account to start. No email required!",
   "username": "Username",
@@ -33,8 +34,6 @@ export const menu: SimpleTranslationEntries = {
   "sessionSuccess": "Session loaded successfully.",
   "failedToLoadSession": "Your session data could not be loaded.\nIt may be corrupted.",
   "boyOrGirl": "Are you a boy or a girl?",
-  "boy": "Boy",
-  "girl": "Girl",
   "evolving": "What?\n{{pokemonName}} is evolving!",
   "stoppedEvolving": "{{pokemonName}} stopped evolving.",
   "pauseEvolutionsQuestion": "Would you like to pause evolutions for {{pokemonName}}?\nEvolutions can be re-enabled from the party screen.",
@@ -43,9 +42,16 @@ export const menu: SimpleTranslationEntries = {
   "dailyRankings": "Daily Rankings",
   "weeklyRankings": "Weekly Rankings",
   "noRankings": "No Rankings",
+  "positionIcon": "#",
+  "usernameScoreboard": "Username",
+  "score": "Score",
+  "wave": "Wave",
   "loading": "Loading…",
+  "loadingAsset": "Loading asset: {{assetName}}",
   "playersOnline": "Players Online",
-  "empty":"Empty",
   "yes":"Yes",
   "no":"No",
+  "disclaimer": "DISCLAIMER",
+  "disclaimerDescription": "This game is an unfinished product; it might have playability issues (including the potential loss of save data),\n change without notice, and may or may not be updated further or completed.",
+  "errorServerDown": "Oops! There was an issue contacting the server.\n\nYou may leave this window open,\nthe game will automatically reconnect.",
 } as const;

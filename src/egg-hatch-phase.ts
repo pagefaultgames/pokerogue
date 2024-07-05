@@ -1,45 +1,69 @@
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
+import i18next from "i18next";
 import { Phase } from "./phase";
 import BattleScene, { AnySound } from "./battle-scene";
 import * as Utils from "./utils";
 import { Mode } from "./ui/ui";
-import { EGG_SEED, Egg, GachaType, getLegendaryGachaSpeciesForTimestamp } from "./data/egg";
+import { EGG_SEED, Egg } from "./data/egg";
 import EggHatchSceneHandler from "./ui/egg-hatch-scene-handler";
-import { Species } from "./data/enums/species";
 import { PlayerPokemon } from "./field/pokemon";
-import { getPokemonSpecies, speciesStarters } from "./data/pokemon-species";
 import { achvs } from "./system/achv";
-import { pokemonPrevolutions } from "./data/pokemon-evolutions";
-import { EggTier } from "./data/enums/egg-type";
 import PokemonInfoContainer from "./ui/pokemon-info-container";
+import EggCounterContainer from "./ui/egg-counter-container";
+import { EggCountChangedEvent } from "./events/egg";
 
+/**
+ * Class that represents egg hatching
+ */
 export class EggHatchPhase extends Phase {
+  /** The egg that is hatching */
   private egg: Egg;
 
+  /** The number of eggs that are hatching */
+  private eggsToHatchCount: integer;
+  /** The container that lists how many eggs are hatching */
+  private eggCounterContainer: EggCounterContainer;
+
+  /** The scene handler for egg hatching */
   private eggHatchHandler: EggHatchSceneHandler;
+  /** The phaser gameobject container that holds everything */
   private eggHatchContainer: Phaser.GameObjects.Container;
+  /** The phaser image that is the background */
   private eggHatchBg: Phaser.GameObjects.Image;
+  /** The phaser rectangle that overlays during the scene */
   private eggHatchOverlay: Phaser.GameObjects.Rectangle;
+  /** The phaser container that holds the egg */
   private eggContainer: Phaser.GameObjects.Container;
+  /** The phaser sprite of the egg */
   private eggSprite: Phaser.GameObjects.Sprite;
+  /** The phaser sprite of the cracks in an egg */
   private eggCrackSprite: Phaser.GameObjects.Sprite;
+  /** The phaser sprite that represents the overlaid light rays */
   private eggLightraysOverlay: Phaser.GameObjects.Sprite;
+  /** The phaser sprite of the hatched Pokemon */
   private pokemonSprite: Phaser.GameObjects.Sprite;
+  /** The phaser sprite for shiny sparkles */
   private pokemonShinySparkle: Phaser.GameObjects.Sprite;
 
+  /** The {@link PokemonInfoContainer} of the newly hatched Pokemon */
   private infoContainer: PokemonInfoContainer;
 
+  /** The newly hatched {@link PlayerPokemon} */
   private pokemon: PlayerPokemon;
+  /** The index of which egg move is unlocked. 0-2 is common, 3 is rare */
   private eggMoveIndex: integer;
+  /** Internal booleans representing if the egg is hatched, able to be skipped, or skipped */
   private hatched: boolean;
   private canSkip: boolean;
   private skipped: boolean;
+  /** The sound effect being played when the egg is hatched */
   private evolutionBgm: AnySound;
 
-  constructor(scene: BattleScene, egg: Egg) {
+  constructor(scene: BattleScene, egg: Egg, eggsToHatchCount: integer) {
     super(scene);
 
     this.egg = egg;
+    this.eggsToHatchCount = eggsToHatchCount;
   }
 
   start() {
@@ -84,6 +108,9 @@ export class EggHatchPhase extends Phase {
       this.eggContainer.add(this.eggLightraysOverlay);
       this.eggHatchContainer.add(this.eggContainer);
 
+      this.eggCounterContainer = new EggCounterContainer(this.scene, this.eggsToHatchCount);
+      this.eggHatchContainer.add(this.eggCounterContainer);
+
       const getPokemonSprite = () => {
         const ret = this.scene.add.sprite(this.eggHatchBg.displayWidth / 2, this.eggHatchBg.displayHeight / 2, "pkmn__sub");
         ret.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });
@@ -107,6 +134,7 @@ export class EggHatchPhase extends Phase {
 
       this.eggHatchContainer.add(this.infoContainer);
 
+      // The game will try to unfuse any Pokemon even though eggs should not generate fused Pokemon in the first place
       const pokemon = this.generatePokemon();
       if (pokemon.fusionSpecies) {
         pokemon.clearFusionSpecies();
@@ -177,6 +205,13 @@ export class EggHatchPhase extends Phase {
     super.end();
   }
 
+  /**
+   * Function that animates egg shaking
+   * @param intensity of horizontal shaking. Doubled on the first call (where count is 0)
+   * @param repeatCount the number of times this function should be called (asynchronous recursion?!?)
+   * @param count the current number of times this function has been called.
+   * @returns nothing since it's a Promise<void>
+   */
   doEggShake(intensity: number, repeatCount?: integer, count?: integer): Promise<void> {
     return new Promise(resolve => {
       if (repeatCount === undefined) {
@@ -216,8 +251,15 @@ export class EggHatchPhase extends Phase {
     });
   }
 
+  /**
+   * Tries to skip the hatching animation
+   * @returns false if cannot be skipped or already skipped. True otherwise
+   */
   trySkip(): boolean {
     if (!this.canSkip || this.skipped) {
+      return false;
+    }
+    if (this.eggCounterContainer.eggCountText?.data === undefined) {
       return false;
     }
     this.skipped = true;
@@ -229,6 +271,9 @@ export class EggHatchPhase extends Phase {
     return true;
   }
 
+  /**
+   * Plays the animation of an egg hatch
+   */
   doHatch(): void {
     this.canSkip = false;
     this.hatched = true;
@@ -258,6 +303,9 @@ export class EggHatchPhase extends Phase {
     });
   }
 
+  /**
+   * Function to do the logic and animation of completing a hatch and revealing the Pokemon
+   */
   doReveal(): void {
     const isShiny = this.pokemon.isShiny();
     if (this.pokemon.species.subLegendary) {
@@ -280,6 +328,8 @@ export class EggHatchPhase extends Phase {
     this.pokemonSprite.setPipelineData("variant", this.pokemon.variant);
     this.pokemonSprite.setVisible(true);
     this.scene.time.delayedCall(Utils.fixedInt(250), () => {
+      this.eggsToHatchCount--;
+      this.eggHatchHandler.eventTarget.dispatchEvent(new EggCountChangedEvent(this.eggsToHatchCount));
       this.pokemon.cry();
       if (isShiny) {
         this.scene.time.delayedCall(Utils.fixedInt(500), () => {
@@ -292,7 +342,7 @@ export class EggHatchPhase extends Phase {
 
         this.scene.playSoundWithoutBgm("evolution_fanfare");
 
-        this.scene.ui.showText(`${this.pokemon.name} hatched from the egg!`, null, () => {
+        this.scene.ui.showText(i18next.t("egg:hatchFromTheEgg", { pokemonName: this.pokemon.name }), null, () => {
           this.scene.gameData.updateSpeciesDexIvs(this.pokemon.species.speciesId, this.pokemon.ivs);
           this.scene.gameData.setPokemonCaught(this.pokemon, true, true).then(() => {
             this.scene.gameData.setEggMoveUnlocked(this.pokemon.species, this.eggMoveIndex).then(() => {
@@ -312,10 +362,21 @@ export class EggHatchPhase extends Phase {
     });
   }
 
+  /**
+   * Helper function to generate sine. (Why is this not a Utils?!?)
+   * @param index random number from 0-7 being passed in to scale pi/128
+   * @param amplitude Scaling
+   * @returns a number
+   */
   sin(index: integer, amplitude: integer): number {
     return amplitude * Math.sin(index * (Math.PI / 128));
   }
 
+  /**
+   * Animates spraying
+   * @param intensity number of times this is repeated (this is a badly named variable)
+   * @param offsetY how much to offset the Y coordinates
+   */
   doSpray(intensity: integer, offsetY?: number) {
     this.scene.tweens.addCounter({
       repeat: intensity,
@@ -326,6 +387,11 @@ export class EggHatchPhase extends Phase {
     });
   }
 
+  /**
+   * Animates a particle used in the spray animation
+   * @param trigIndex Used to modify the particle's vertical speed, is a random number from 0-7
+   * @param offsetY how much to offset the Y coordinate
+   */
   doSprayParticle(trigIndex: integer, offsetY: number) {
     const initialX = this.eggHatchBg.displayWidth / 2;
     const initialY = this.eggHatchBg.displayHeight / 2 + offsetY;
@@ -366,96 +432,17 @@ export class EggHatchPhase extends Phase {
     updateParticle();
   }
 
+
+  /**
+   * Generates a Pokemon to be hatched by the egg
+   * @returns the hatched PlayerPokemon
+   */
   generatePokemon(): PlayerPokemon {
     let ret: PlayerPokemon;
-    let speciesOverride: Species;
 
     this.scene.executeWithSeedOffset(() => {
-
-      if (this.egg.isManaphyEgg()) {
-        const rand = Utils.randSeedInt(8);
-
-        speciesOverride = rand ? Species.PHIONE : Species.MANAPHY;
-      } else if (this.egg.tier === EggTier.MASTER
-        && this.egg.gachaType === GachaType.LEGENDARY) {
-        if (!Utils.randSeedInt(2)) {
-          speciesOverride = getLegendaryGachaSpeciesForTimestamp(this.scene, this.egg.timestamp);
-        }
-      }
-
-      if (speciesOverride) {
-        const pokemonSpecies = getPokemonSpecies(speciesOverride);
-        ret = this.scene.addPlayerPokemon(pokemonSpecies, 1, undefined, undefined, undefined, false);
-      } else {
-        let minStarterValue: integer;
-        let maxStarterValue: integer;
-
-        switch (this.egg.tier) {
-        case EggTier.GREAT:
-          minStarterValue = 4;
-          maxStarterValue = 5;
-          break;
-        case EggTier.ULTRA:
-          minStarterValue = 6;
-          maxStarterValue = 7;
-          break;
-        case EggTier.MASTER:
-          minStarterValue = 8;
-          maxStarterValue = 9;
-          break;
-        default:
-          minStarterValue = 1;
-          maxStarterValue = 3;
-          break;
-        }
-
-        const ignoredSpecies = [ Species.PHIONE, Species.MANAPHY, Species.ETERNATUS ];
-
-        const speciesPool = Object.keys(speciesStarters)
-          .filter(s => speciesStarters[s] >= minStarterValue && speciesStarters[s] <= maxStarterValue)
-          .map(s => parseInt(s) as Species)
-          .filter(s => !pokemonPrevolutions.hasOwnProperty(s) && getPokemonSpecies(s).isObtainable() && ignoredSpecies.indexOf(s) === -1);
-
-        let totalWeight = 0;
-        const speciesWeights = [];
-        for (const speciesId of speciesPool) {
-          let weight = Math.floor((((maxStarterValue - speciesStarters[speciesId]) / ((maxStarterValue - minStarterValue) + 1)) * 1.5 + 1) * 100);
-          const species = getPokemonSpecies(speciesId);
-          if (species.isRegional()) {
-            weight = Math.floor(weight / (species.isRareRegional() ? 8 : 2));
-          }
-          speciesWeights.push(totalWeight + weight);
-          totalWeight += weight;
-        }
-
-        let species: Species;
-
-        const rand = Utils.randSeedInt(totalWeight);
-        for (let s = 0; s < speciesWeights.length; s++) {
-          if (rand < speciesWeights[s]) {
-            species = speciesPool[s];
-            break;
-          }
-        }
-
-        const pokemonSpecies = getPokemonSpecies(species);
-
-        ret = this.scene.addPlayerPokemon(pokemonSpecies, 1, undefined, undefined, undefined, false);
-      }
-
-      ret.trySetShiny(this.egg.gachaType === GachaType.SHINY ? 1024 : 512);
-      ret.variant = ret.shiny ? ret.generateVariant() : 0;
-
-      const secondaryIvs = Utils.getIvsFromId(Utils.randSeedInt(4294967295));
-
-      for (let s = 0; s < ret.ivs.length; s++) {
-        ret.ivs[s] = Math.max(ret.ivs[s], secondaryIvs[s]);
-      }
-
-      const baseChance = this.egg.gachaType === GachaType.MOVE ? 3 : 6;
-      this.eggMoveIndex = Utils.randSeedInt(baseChance * Math.pow(2, 3 - this.egg.tier))
-        ? Utils.randSeedInt(3)
-        : 3;
+      ret = this.egg.generatePlayerPokemon(this.scene);
+      this.eggMoveIndex = this.egg.eggMoveIndex;
 
     }, this.egg.id, EGG_SEED.toString());
 

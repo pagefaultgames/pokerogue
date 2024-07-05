@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 /**
  * The menu namespace holds most miscellaneous text that isn't directly part of the game's
@@ -11,6 +11,7 @@ export const menu: SimpleTranslationEntries = {
   "dailyRun": "Desafio Diário (Beta)",
   "loadGame": "Carregar Jogo",
   "newGame": "Novo Jogo",
+  "settings": "Configurações",
   "selectGameMode": "Escolha um modo de jogo.",
   "logInOrCreateAccount": "Inicie uma sessão ou crie uma conta para começar. Não é necessário email!",
   "username": "Nome de Usuário",
@@ -33,8 +34,6 @@ export const menu: SimpleTranslationEntries = {
   "sessionSuccess": "Sessão carregada com sucesso.",
   "failedToLoadSession": "Não foi possível carregar os dados da sua sessão.\nEles podem estar corrompidos.",
   "boyOrGirl": "Você é um menino ou uma menina?",
-  "boy": "Menino",
-  "girl": "Menina",
   "evolving": "Que?\n{{pokemonName}} tá evoluindo!",
   "stoppedEvolving": "{{pokemonName}} parou de evoluir.",
   "pauseEvolutionsQuestion": "Gostaria de pausar evoluções para {{pokemonName}}?\nEvoluções podem ser religadas na tela de equipe.",
@@ -43,9 +42,16 @@ export const menu: SimpleTranslationEntries = {
   "dailyRankings": "Classificação Diária",
   "weeklyRankings": "Classificação Semanal",
   "noRankings": "Sem Classificação",
+  "positionIcon": "#",
+  "usernameScoreboard": "Usuário",
+  "score": "Pontuação",
+  "wave": "Onda",
   "loading": "Carregando…",
+  "loadingAsset": "Carregando recurso: {{assetName}}",
   "playersOnline": "Jogadores Ativos",
-  "empty": "Vazio",
   "yes": "Sim",
   "no": "Não",
+  "disclaimer": "AVISO",
+  "disclaimerDescription": "Este jogo é um produto inacabado; ele pode ter problemas de jogabilidade (incluindo possíveis\n perdas de dados salvos), sofrer alterações sem aviso prévio e pode ou não ser atualizado ou concluído.",
+  "errorServerDown": "Opa! Não foi possível conectar-se ao servidor.\n\nVocê pode deixar essa janela aberta,\npois o jogo irá se reconectar automaticamente.",
 } as const;

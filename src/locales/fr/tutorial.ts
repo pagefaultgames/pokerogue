@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const tutorial: SimpleTranslationEntries = {
   "intro": `Bienvenue dans PokéRogue, un fangame axé sur les combats Pokémon avec des éléments roguelite !
@@ -16,7 +16,7 @@ export const tutorial: SimpleTranslationEntries = {
     $Il y a également toute une variété d’autres fonctionnalités,
     $jetez-y un œil !`,
 
-  "starterSelect": `Choisissez vos starters depuis cet écran.\nIls formeront votre équipe de départ.
+  "starterSelect": `Choisissez vos starters depuis cet écran avec Z ou Espace.\nIls formeront votre équipe de départ.
     $Chacun possède une valeur. Votre équipe peut avoir jusqu’à\n6 membres, tant que vous ne dépassez pas un cout de 10.
     $Vous pouvez aussi choisir le sexe, le talent et la forme en\nfonction des variants déjà capturés ou éclos.
     $Les IVs d’un starter sont les meilleurs de tous ceux de son\nespèce déjà obtenus. Essayez donc d’en obtenir plusieurs !`,
@@ -27,7 +27,9 @@ export const tutorial: SimpleTranslationEntries = {
 
   "statChange": `Les changements de stats restent à travers les combats tant que le Pokémon n’est pas rappelé.
     $Vos Pokémon sont rappelés avant un combat de Dresseur et avant d’entrer dans un nouveau biome.
-    $Vous pouvez également voir en combat les changements de stats d’un Pokémon en maintenant C ou Maj.`,
+    $Vous pouvez voir en combat les changements de stats d’un Pokémon en maintenant C ou Maj.
+    $Vous pouvez également voir les capacités de l’adversaire en maintenant V.
+    $Seules les capacités que le Pokémon a utilisées dans ce combat sont consultables.`,
 
   "selectItem": `Après chaque combat, vous avez le choix entre 3 objets\ntirés au sort. Vous ne pouvez en prendre qu’un.
     $Cela peut être des objets consommables, des objets à\nfaire tenir, ou des objets passifs aux effets permanents.

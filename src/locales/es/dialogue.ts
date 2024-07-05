@@ -1,107 +1,107 @@
-import {DialogueTranslationEntries, SimpleTranslationEntries} from "#app/plugins/i18n";
+import {DialogueTranslationEntries, SimpleTranslationEntries} from "#app/interfaces/locales";
 
 // Dialogue of the NPCs in the game when the player character is male (or unset)
 export const PGMdialogue: DialogueTranslationEntries = {
   "youngster": {
     "encounter": {
-      1: "Hey, wanna battle?",
-      2: "Are you a new trainer too?",
-      3: "Hey, I haven't seen you before. Let's battle!",
-      4: "I just lost, so I'm trying to find more Pokémon.\nWait! You look weak! Come on, let's battle!",
-      5: "Have we met or not? I don't really remember. Well, I guess it's nice to meet you anyway!",
-      6: "All right! Let's go!",
-      7: "All right! Here I come! I'll show you my power!",
-      8: "Haw haw haw... I'll show you how hawesome my Pokémon are!",
-      9: "No need to waste time saying hello. Bring it on whenever you're ready!",
-      10: "Don't let your guard down, or you may be crying when a kid beats you.",
-      11: "I've raised my Pokémon with great care. You're not allowed to hurt them!",
-      12: "Glad you made it! It won't be an easy job from here.",
-      13: "The battles continue forever! Welcome to the world with no end!"
+      1: "Hey, ¿quieres luchar?",
+      2: "¿También eres un entrenador novato?",
+      3: "No te había visto antes. ¡Vamos a luchar!",
+      4: "Perdí y estoy intentando buscar nuevos Pokémon.\n¡Espera, pareces débil! ¡Vamos, a luchar!",
+      5: "¿Nos conocimos o no? Ni me acuerdo. ¡Supongo que es un gusto conocerte!",
+      6: "¡Venga, vamos!",
+      7: "¡Allá voy! ¡Te enseñaré mi poder!",
+      8: "¡Ja ja ja! ¡Te enseñaré lo jimpresionante que es mi equipo!",
+      9: "No pierdas tiempo saludando. ¡Adelante, cuando estés listo!",
+      10: "No bajes la guardia o llorarás porque un niño te ganó.",
+      11: "He cuidado a mis Pokémon con cariño. ¡Prohibido hacerles daño!",
+      12: "¡Encantado de que lo lograses! A partir de aquí no será fácil.",
+      13: "¡Las batallas continúan para siempre! ¡Bienvenido al mundo sin fin!"
     },
     "victory": {
-      1: "Wow! You're strong!",
-      2: "I didn't stand a chance, huh?",
-      3: "I'll find you again when I'm older and beat you!",
-      4: "Ugh. I don't have any more Pokémon.",
-      5: "No way… NO WAY! How could I lose again…",
-      6: "No! I lost!",
-      7: "Whoa! You are incredible! I'm amazed and surprised!",
-      8: "Could it be… How… My Pokémon and I are the strongest, though…",
-      9: "I won't lose next time! Let's battle again sometime!",
-      10: "Sheesh! Can't you see that I'm just a kid! It wasn't fair of you to go all out like that!",
-      11: "Your Pokémon are more amazing! Trade with me!",
-      12: "I got a little carried away earlier, but what job was I talking about?",
-      13: "Ahaha! There it is! That's right! You're already right at home in this world!"
+      1: "¡Guau! ¡Eres fuerte!",
+      2: "¿No tuve oportunidad, eh?",
+      3: "¡Cuando sea mayor te encontraré y te ganaré!",
+      4: "Ay. No tengo más Pokémon.",
+      5: "Imposible… ¡IMPOSIBLE! Cómo pude perder de nuevo…",
+      6: "¡No! ¡Perdí!",
+      7: "¡Guau! ¡Eres increíble! ¡Estoy alucinado y sorprendido!",
+      8: "Puede ser… Cómo… Aunque mis Pokémon y yo somos los más fuertes…",
+      9: "¡No perderé a la próxima! ¡Luchemos otra vez pronto!",
+      10: "¡Oye! ¡No ves que solo soy un niño! ¡No es justo que vayas así conmigo!",
+      11: "¡Tus Pokémon molan más! ¡Intercámbiamelos!",
+      12: "Me perdí antes pero, ¿de qué tarea estaba hablando antes?",
+      13: "¡Jajaja! ¡Esa es! ¡Correcto! ¡Ya te sientes como en casa en este mundo!"
     }
   },
   "lass": {
     "encounter": {
-      1: "Let's have a battle, shall we?",
-      2: "You look like a new trainer. Let's have a battle!",
-      3: "I don't recognize you. How about a battle?",
-      4: "Let's have a fun Pokémon battle!",
-      5: "I'll show you the ropes of how to really use Pokémon!",
-      6: "A serious battle starts from a serious beginning! Are you sure you're ready?",
-      7: "You're only young once. And you only get one shot at a given battle. Soon, you'll be nothing but a memory.",
-      8: "You'd better go easy on me, OK? Though I'll be seriously fighting!",
-      9: "School is boring. I've got nothing to do. Yawn. I'm only battling to kill the time."
+      1: "¿Luchemos, podría ser?",
+      2: "Pareces novato. ¡Luchemos!",
+      3: "No te reconozco. ¿Un combate?",
+      4: "¡Tengamos un combate Pokémon divertido!",
+      5: "¡Te enseñaré lo básico de cómo entrenar Pokémon!",
+      6: "¡Un combate serio empieza por un comienzo serio! ¿Seguro que estás listo?",
+      7: "Solo se es joven una vez. Y solo tienes una oportunidad en una batalla. Pronto, solo serás un recuerdo.",
+      8: "Asegúrate de ir fácil conmigo, ¿vale? ¡Pero seré seria luchando!",
+      9: "El colegio es aburrido. No hay nada que hacer. Uaa. Solo lucho para pasar el tiempo."
     },
     "victory": {
-      1: "That was impressive! I've got a lot to learn.",
-      2: "I didn't think you'd beat me that bad…",
-      3: "I hope we get to have a rematch some day.",
-      4: "That was pretty amazingly fun! You've totally exhausted me…",
-      5: "You actually taught me a lesson! You're pretty amazing!",
-      6: "Seriously, I lost. That is, like, seriously depressing, but you were seriously cool.",
-      7: "I don't need memories like this. Deleting memory…",
-      8: "Hey! I told you to go easy on me! Still, you're pretty cool when you're serious.",
-      9: "I'm actually getting tired of battling… There's gotta be something new to do…"
+      1: "¡Impresionante! Tengo mucho que aprender.",
+      2: "No pensé que me vencerías así…",
+      3: "Espero la revancha algún día.",
+      4: "¡Fue increíblemente divertido! Me dejaste cansada…",
+      5: "¡Me enseñaste una lección! ¡Eres increíble!",
+      6: "En serio, he perdido. O sea, es seriamente decepcionante, pero tú eres realmente guay.",
+      7: "No necesito estos recuerdos. Borrando recuerdos…",
+      8: "¡Te dije que fueses fácil conmigo! Aun así, me gusta cuando eres serio.",
+      9: "Me canso de luchar… Habrá algo nuevo que hacer…"
     }
   },
   "breeder": {
     "encounter": {
-      1: "Obedient Pokémon, selfish Pokémon… Pokémon have unique characteristics.",
-      2: "Even though my upbringing and behavior are poor, I've raised my Pokémon well.",
-      3: "Hmm, do you discipline your Pokémon? Pampering them too much is no good.",
+      1: "Pokémon obedientes, Pokémon egoístas… Los Pokémon tienen características únicas.",
+      2: "Aunque tengo descendencia y comportamiento pobre, he cuidado muy bien a mis Pokémon.",
+      3: "¿Tienes disciplina con tus Pokémon? Malcriarlos mucho no es bueno.",
     },
     "victory": {
-      1: "It is important to nurture and train each Pokémon's characteristics.",
-      2: "Unlike my diabolical self, these are some good Pokémon.",
-      3: "Too much praise can spoil both Pokémon and people.",
+      1: "Es importante cuidar y mimar todas las características de los Pokémon.",
+      2: "No como mi diabólica personalidad, mis Pokémon son muy buenos.",
+      3: "Malcriar puede arruinar a los Pokémon y a los humanos.",
     },
     "defeat": {
-      1: "You should not get angry at your Pokémon, even if you lose a battle.",
-      2: "Right? Pretty good Pokémon, huh? I'm suited to raising things.",
-      3: "No matter how much you love your Pokémon, you still have to discipline them when they misbehave."
+      1: "No deberías enfadarte con tu Pokémon, aún tras un combate perdido.",
+      2: "¿Eh? ¿Buen Pokémon? Me acostumbro a cuidarlos.",
+      3: "No importa el cariño que le tengas a tus Pokémon, tienes que ser serio si se portan mal."
     }
   },
   "breeder_female": {
     "encounter": {
-      1: "Pokémon never betray you. They return all the love you give them.",
-      2: "Shall I give you a tip for training good Pokémon?",
-      3: "I have raised these very special Pokémon using a special method."
+      1: "Los Pokémon nunca te traicionan, te devuelven el amor que les diste.",
+      2: "¿Puedo darte un consejo para entrenar bien tus Pokémon?",
+      3: "Cuidé estos Pokémon con un método especial."
     },
     "victory": {
-      1: "Ugh… It wasn't supposed to be like this. Did I administer the wrong blend?",
-      2: "How could that happen to my Pokémon… What are you feeding your Pokémon?",
-      3: "If I lose, that tells you I was just killing time. It doesn't damage my ego at all."
+      1: "Ugh… No se supone que acabaría así. ¿Les cuidé de forma errónea?",
+      2: "Cómo pudo pasarle esto a mi Pokémon... ¿Qué le das a tu Pokémon?",
+      3: "Si pierdo, solo fue un pasatiempo. Mi ego se ve intacto."
     },
     "defeat": {
-      1: "This proves my Pokémon have accepted my love.",
-      2: "The real trick behind training good Pokémon is catching good Pokémon.",
-      3: "Pokémon will be strong or weak depending on how you raise them."
+      1: "Esto demuestra que los Pokémon aceptaron mi amor.",
+      2: "El truco detrás de atrapar buenos Pokémon es cuidar buenos Pokémon.",
+      3: "Los Pokémon serán fuertes o débiles según los cuides."
     }
   },
   "fisherman": {
     "encounter": {
-      1: "Aack! You made me lose a bite!\nWhat are you going to do about it?",
-      2: "Go away! You're scaring the Pokémon!",
-      3: "Let's see if you can reel in a victory!",
+      1: "¡Uy uy uy! ¡Hiciste que huyera un pez!\n¿Qué harás al respecto?",
+      2: "¡Vete! ¡Espantas los Pokémon!",
+      3: "¡Veamos si pescas una victoria!",
     },
     "victory": {
-      1: "Just forget about it.",
-      2: "Next time, I'll be reelin' in the triumph!",
-      3: "Guess I underestimated the currents this time.",
+      1: "Olvídalo.",
+      2: "A la siguiente, ¡pescaré mi victoria!",
+      3: "Infravaloré la corriente esta vez.",
     },
   },
   "fisherman_female": {
@@ -167,7 +167,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "Time to grace the battlefield with elegance and poise!",
     },
     "victory": {
-      2: "My elegance remains unbroken!",
+      1: "My elegance remains unbroken!",
     }
   },
   "twins": {
@@ -358,6 +358,210 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "victory": {
       1: "I'll tune up for the next race."
     },
+  },
+  "firebreather": {
+    "encounter": {
+      1: "My flames shall devour you!",
+      2: "My soul is on fire. I'll show you how hot it burns!",
+      3: "Step right up and take a look!"
+    },
+    "victory": {
+      1: "I burned down to ashes...",
+      2: "Yow! That's hot!",
+      3: "Ow! I scorched the tip of my nose!"
+    },
+  },
+  "sailor": {
+    "encounter": {
+      1: "¡Amigo, te haré caminar por la borda si pierdes!",
+      2: "¡Adelante! ¡Mi orgullo como marinero está en auge!",
+      3: "¡Ah del barco! ¿Estás mareado?"
+    },
+    "victory": {
+      1: "¡Argh! ¡Derrotado por un niño!",
+      2: "¡Tu espíritu me ha hundido!",
+      3: "Creo que soy yo quien está mareado..."
+    },
+  },
+  "rocket_grunt": {
+    "encounter": {
+      1: "¡Ríndete ahora, o prepárate para luchar!"
+    },
+    "victory": {
+      1: "¡El Team Rocket despega de nuevo!"
+    },
+  },
+  "magma_grunt": {
+    "encounter": {
+      1: "¡No esperes piedad si te interpones al Team Magma!"
+    },
+    "victory": {
+      1: "¿Eh? ¿He perdido?"
+    },
+  },
+  "aqua_grunt": {
+    "encounter": {
+      1: "El Team Aqua no muestra piedad, ¡ni siquiera a los niños!"
+    },
+    "victory": {
+      1: "¡Bromeas! ¡No me lo creo!"
+    },
+  },
+  "galactic_grunt": {
+    "encounter": {
+      1: "¡No desafíes al Equipo Galaxia, te arrepentirás!"
+    },
+    "victory": {
+      1: "Me callaste la boca..."
+    },
+  },
+  "plasma_grunt": {
+    "encounter": {
+      1: "¡El Equipo Plasma no tolerará otros ideales!"
+    },
+    "victory": {
+      1: "Plasmaaaaaaaaa!"
+    },
+  },
+  "flare_grunt": {
+    "encounter": {
+      1: "¡La moda es lo más importante para nosotros!"
+    },
+    "victory": {
+      1: "Me temo que se me avecina un futuro oscuro..."
+    },
+  },
+  "rocket_boss_giovanni_1": {
+    "encounter": {
+      1: "He de decir... estoy impresionado de que hayas llegado tan lejos."
+    },
+    "victory": {
+      1: "¿¡QUÉ?! ¡No puede ser!"
+    },
+    "defeat": {
+      1: "Recuerda mis palabras: Que no seas capaz de medir\n tu propia fuerza demuestra que todavía eres un niño"
+    }
+  },
+  "rocket_boss_giovanni_2": {
+    "encounter": {
+      1: "Mis antiguos socios me necesitan... ¿te atreves a imponerte en mi camino?"
+    },
+    "victory": {
+      1: "¿Cómo es esto posible?\nEl sueño del Team Rocket, ahora tan solo una mera ilusión..."
+    },
+    "defeat": {
+      1: "El Team Rocket renacerá... ¡y gobernaré el mundo!"
+    }
+  },
+  "magma_boss_maxie_1": {
+    "encounter": {
+      1: "Está bien, tendré que cavar yo mismo tu propia tumba. Siéntete orgulloso."
+    },
+    "victory": {
+      1: "Ugh! Eres... muy capaz...\nFue por poco, estuve a esto de ganarte..."
+    },
+    "defeat": {
+      1: "¡El Equipo Magma prevalecerá!"
+    }
+  },
+  "magma_boss_maxie_2": {
+    "encounter": {
+      1: "Eres el obstáculo final entre mi y mis propósitos.\n¡Aquí va mi mejor golpe! ¡MUAJAJAJA!"
+    },
+    "victory": {
+      1: "No... no es posib... nnngh..."
+    },
+    "defeat": {
+      1: "Y ahora... transformaré este planeta en una tierra ideal para la humanidad."
+    }
+  },
+  "aqua_boss_archie_1": {
+    "encounter": {
+      1: "Soy el líder del Equipo Aqua, así que me temo que aquí se acaba tu bromita."
+    },
+    "victory": {
+      1: "Volvamos a vernos más tarde. Recordaré tu cara."
+    },
+    "defeat": {
+      1: "¡Excelente! ¡Nadie se puede oponer a mi equipo!"
+    }
+  },
+  "aqua_boss_archie_2": {
+    "encounter": {
+      1: "Llevo esperando mucho que llegara este día.\n¡Contempla el poder de mi equipo!"
+    },
+    "victory": {
+      1: "Quién me lo iba a decir..."
+    },
+    "defeat": {
+      1: "Devolveré todo en este planeta a su estado original.\nSe avecina un nuevo mundo, ¡más puro!"
+    }
+  },
+  "galactic_boss_cyrus_1": {
+    "encounter": {
+      1: "Tu fútil sentimentalidad te hizo interferir.\n¡Haré que te arrepientas de escuchar a tu corazón!"
+    },
+    "victory": {
+      1: "Interesante. Muy... curioso."
+    },
+    "defeat": {
+      1: "Crearé un nuevo mundo..."
+    }
+  },
+  "galactic_boss_cyrus_2": {
+    "encounter": {
+      1: "Nos vemos de nuevo... se ve que nuestros destinos están entrelazados.\nPero, aquí y ahora, ¡sesgaré ese vínculo!"
+    },
+    "victory": {
+      1: "¿Cómo? ¿¡Cómo!? ¿¡¡CÓMO!!?"
+    },
+    "defeat": {
+      1: "Hasta nunca."
+    }
+  },
+  "plasma_boss_ghetsis_1": {
+    "encounter": {
+      1: "¡No permitiré que nadie me detenga!"
+    },
+    "victory": {
+      1: "¿Cómo puede ser esto? ¡yo creé al Equipo Plasma!\n¡Soy PERFECTO!"
+    },
+    "defeat": {
+      1: "Soy el perfecto gobernante para un perfecto nuevo mundo. ¡Muajajajaja!"
+    }
+  },
+  "plasma_boss_ghetsis_2": {
+    "encounter": {
+      1: "¡Adelante! ¡Quiero ver tu cara cuando la desesperación se apoderede de ti!"
+    },
+    "victory": {
+      1: "Mis planes... ¡no! ¡El mundo debería pertenecerme!"
+    },
+    "defeat": {
+      1: "¡Kyurem, Absorfusión... ahora!"
+    }
+  },
+  "flare_boss_lysandre_1": {
+    "encounter": {
+      1: "¿Acaso quieres detenerme? Demuéstramelo."
+    },
+    "victory": {
+      1: "Estás aquí para detenerme. Pero tendrás que esperar. "
+    },
+    "defeat": {
+      1: "Los Pokémon... su fin ha llegado."
+    }
+  },
+  "flare_boss_lysandre_2": {
+    "encounter": {
+      1: "El futuro que quieres tú, o el futuro que quiero yo.\nVeamos cuál de los dos se merece existir..."
+    },
+    "victory": {
+      1: "¡AARGH!"
+    },
+    "defeat": {
+      1: "Los idiotas sin ningún tipo de visión continuarán asediando este mundo."
+    }
   },
   "brock": {
     "encounter": {
@@ -1203,8 +1407,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "bugsy": {
     "encounter": {
-      1: `Whoa, amazing! You're an expert on Pokémon! 
-                $My research isn't complete yet. OK, you win.`,
+      1: "I'm Bugsy! I never lose when it comes to bug Pokémon!"
     },
     "victory": {
       1: "Whoa, amazing! You're an expert on Pokémon!\nMy research isn't complete yet. OK, you win."
@@ -1595,13 +1798,13 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "encounter": {
       1: `I decided to throw my hat in the ring once more. 
                 $Come now… Show me the fruits of your training.`,
-      "victory": {
-        1: "I eagerly await news of all your achievements!"
-      },
-      "defeat": {
-        1: "What's the matter? This isn't all, is it?"
-      }
     },
+    "victory": {
+      1: "I eagerly await news of all your achievements!"
+    },
+    "defeat": {
+      1: "What's the matter? This isn't all, is it?"
+    }
   },
   "nemona": {
     "encounter": {
@@ -2084,6 +2287,32 @@ export const PGMdialogue: DialogueTranslationEntries = {
       2: "You got caught in my storm! Better luck next time!"
     }
   },
+  "alder": {
+    "encounter": {
+      1: "Prepárate para una batalla contra el entrenador más fuerte en Unova!"
+    },
+    "victory": {
+      1: "Bien hecho! Tienes ciertamente un talento inigualable"
+    },
+    "defeat": {
+      1: `Un viento fresco sopla a través en mi corazón
+         $Qué esfuerzo extraordinario!`
+    }
+  },
+  "kieran": {
+    "encounter": {
+      1: `A través del trabajo duro, me he vuelto más y más fuerte!
+          $No pierdo.`
+    },
+    "victory": {
+      1: `No puedo creerlo...
+          $¡Qué batalla tan divertida y trepidante!`
+    },
+    "defeat": {
+      1: `Asombroso, que batalla!
+          $Es hora de que entrenes aún más duro.`
+    }
+  },
   "rival": {
     "encounter": {
       1: `@c{smile}Hey, I was looking for you! I knew you were eager to get going but I expected at least a goodbye…
@@ -2278,7 +2507,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
 
 
 // Dialogue of the NPCs in the game when the player character is female. For languages that do not have gendered pronouns, this can be set to PGMdialogue.
-export const PGFdialogue: SimpleTranslationEntries = PGMdialogue;
+export const PGFdialogue: DialogueTranslationEntries = PGMdialogue;
 
 // Dialogue of the endboss of the game when the player character is male (Or unset)
 export const PGMbattleSpecDialogue: SimpleTranslationEntries = {
