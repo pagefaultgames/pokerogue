@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const egg: SimpleTranslationEntries = {
   "egg": "Uovo",
@@ -17,5 +17,12 @@ export const egg: SimpleTranslationEntries = {
   "notEnoughVouchers": "Non hai abbastanza biglietti!",
   "tooManyEggs": "Hai troppe uova!",
   "pull": "Estrazione",
-  "pulls": "Estrazioni"
+  "pulls": "Estrazioni",
+  "sameSpeciesEgg": "{{species}} will hatch from this egg!",
+  "hatchFromTheEgg": "Dall’Uovo è nato {{pokemonName}}!",
+  "eggMoveUnlock": "Egg Move unlocked: {{moveName}}",
+  "rareEggMoveUnlock": "Rare Egg Move unlocked: {{moveName}}",
+  "moveUPGacha": "Move UP!",
+  "shinyUPGacha": "Shiny UP!",
+  "legendaryUPGacha": "UP!",
 } as const;

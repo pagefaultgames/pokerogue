@@ -1,8 +1,8 @@
+import i18next from "i18next";
 import BattleScene from "../battle-scene";
+import * as Utils from "../utils";
 import { TextStyle, addTextObject } from "./text";
 import { WindowVariant, addWindow } from "./ui-theme";
-import * as Utils from "../utils";
-import i18next from "i18next";
 
 interface RankingEntry {
   rank: integer,
@@ -154,7 +154,7 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
       return entryContainer;
     };
 
-    this.rankingsContainer.add(getEntry("#", "Username", "Score", "Wave"));
+    this.rankingsContainer.add(getEntry(i18next.t("menu:positionIcon"), i18next.t("menu:usernameScoreboard"), i18next.t("menu:score"), i18next.t("menu:wave")));
 
     rankings.forEach((r: RankingEntry, i: integer) => {
       const entryContainer = getEntry(r.rank.toString(), r.username, r.score.toString(), r.wave.toString());
