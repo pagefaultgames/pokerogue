@@ -191,7 +191,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "AMULET_COIN": { name: "Monetamuleto", description: "Aumenta le ricompense in denaro del 20%." },
     "GOLDEN_PUNCH": { name: "Pugno dorato", description: "Fornisce il 50% dei danni inflitti sottoforma di denaro." },
-    "COIN_CASE": { name: "	Salvadanaio", description: "Dopo ogni 10° battaglia, fornisce il 10% del proprio denaro in interessi." },
+    "COIN_CASE": { name: "Salvadanaio", description: "Dopo ogni 10° battaglia, fornisce il 10% del proprio denaro in interessi." },
 
     "LOCK_CAPSULE": { name: "Capsula scrigno", description: "Permette di bloccare le rarità degli oggetti quando si fa un reroll (i costi variano in base alle rarità)." },
 
