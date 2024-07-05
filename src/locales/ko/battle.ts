@@ -25,7 +25,7 @@ export const battle: SimpleTranslationEntries = {
   "hitResultNoEffect": "{{pokemonName}}에게는\n효과가 없는 것 같다…",
   "hitResultOneHitKO": "일격필살!",
   "attackFailed": "그러나 실패하고 말았다!!",
-  "attackMissed": "그러나 {{pokemonNameWithAffix}}의\n공격은 빗나갔다!",
+  "attackMissed": "{{pokemonNameWithAffix}} avoided the attack!",
   "attackHitsCount": "{{count}}번 맞았다!",
   "rewardGain": "{{modifierName}}[[를]] 받았다!",
   "expGain": "{{pokemonName}}[[는]]\n{{exp}} 경험치를 얻었다!",
