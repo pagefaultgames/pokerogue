@@ -1,4 +1,4 @@
-import { ModifierTypeTranslationEntries } from "#app/plugins/i18n";
+import { ModifierTypeTranslationEntries } from "#app/interfaces/locales";
 
 export const modifierType: ModifierTypeTranslationEntries = {
   ModifierType: {
@@ -177,10 +177,11 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "SUPER_EXP_CHARM": { name: "Esperienzamuleto super" },
     "GOLDEN_EXP_CHARM": { name: "Esperienzamuleto dorato" },
 
-    "LUCKY_EGG": { name: "Uovo fortunato" },
+    "LUCKY_EGG": { name: "Fortunuovo" },
     "GOLDEN_EGG": { name: "Uovo dorato" },
 
     "SOOTHE_BELL": { name: "Calmanella" },
+    "EVIOLITE": { name: "Evolcondensa", description: "Misteriosa materia evolutiva. Aumenta la Difesa e la Difesa Speciale di un Pokémon che può ancora evolversi." },
 
     "SOUL_DEW": { name: "Cuorugiada", description: "Aumenta del 10% l'influenza della natura di un Pokémon sulle sue statistiche (cumulativo)." },
 
@@ -238,6 +239,12 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "Gettone guarigione completa", description: "Aggiunge una probabilità del 2.5% a ogni turno di guarire da un problema di stato." },
     "ENEMY_ENDURE_CHANCE": { name: "Gettone di resistenza" },
     "ENEMY_FUSED_CHANCE": { name: "Gettone della fusione", description: "Aggiunge l'1% di possibilità che un Pokémon selvatico sia una fusione." },
+  },
+  SpeciesBoosterItem: {
+    "LIGHT_BALL": { name: "Elettropalla", description: "Strumento da dare a Pikachu. Sfera insolita che aumenta l’Attacco e l’Attacco Speciale." },
+    "THICK_CLUB": { name: "Osso spesso", description: "Strumento da dare a Cubone o Marowak. Osso duro che aumenta l’Attacco." },
+    "METAL_POWDER": { name: "Metalpolvere", description: "Strumento da dare a Ditto. Strana polvere finissima e al tempo stesso dura che migliora la Difesa." },
+    "QUICK_POWDER": { name: "Velopolvere", description: "Strumento da dare a Ditto. Questa strana polvere, fine e al contempo dura, aumenta la Velocità." }
   },
   TempBattleStatBoosterItem: {
     "x_attack": "Attacco X",
