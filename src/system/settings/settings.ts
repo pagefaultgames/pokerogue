@@ -413,6 +413,26 @@ export const Setting: Array<Setting> = [
     type: SettingType.DISPLAY
   },
   {
+    key: SettingKeys.Show_Pokemon_Teams,
+    label: i18next.t("settings:showTeamTray"),
+    options: [
+      {
+        value: "Off",
+        label: i18next.t("settings:off")
+      },
+      {
+        value: "Ball",
+        label: i18next.t("settings:simple")
+      },
+      {
+        value: "Sprite",
+        label: i18next.t("settings:fancy")
+      }
+    ],
+    default: 1,
+    type: SettingType.DISPLAY
+  },
+  {
     key: SettingKeys.Show_Arena_Flyout,
     label: i18next.t("settings:showArenaFlyout"),
     options: OFF_ON,
@@ -647,8 +667,8 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     scene.showMovesetFlyout = Setting[index].options[value].value === "On";
     break;
   case SettingKeys.Show_Pokemon_Teams:
-    // Currently not used
-    scene.showTeams = Setting[index].options[value].value === "On";
+    scene.showTeams = Setting[index].options[value].value !== "Off";
+    scene.showTeamSprites = Setting[index].options[value].value === "Sprite";
     break;
   case SettingKeys.Show_Arena_Flyout:
     scene.showArenaFlyout = Setting[index].options[value].value === "On";

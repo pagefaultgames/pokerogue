@@ -888,6 +888,12 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     } else {
       this.updateEffectiveness(this.currentEffectiveness);
     }
+    if (!this.override) this.switchIconVisibility(visible);
+    // this.teamIconOver[ballindex].setAlpha(0.4, 0.4, 0.7, 0.7)
+  }
+  toggleTeamTray(visible: boolean): void {
+    this.pressedShow = visible;
+    if (!this.override) this.switchIconVisibility(visible);
   }
 
   /** 
