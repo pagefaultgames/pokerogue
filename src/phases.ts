@@ -17,7 +17,7 @@ import { Phase } from "./phase";
 import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "./data/battle-stat";
 import { biomeLinks, getBiomeName } from "./data/biomes";
 import { ModifierTier } from "./modifier/modifier-tier";
-import { FusePokemonModifierType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, PokemonPpRestoreModifierType, PokemonPpUpModifierType, RememberMoveModifierType, TmModifierType, getDailyRunStarterModifiers, getEnemyBuffModifierForWave, getModifierType, getPlayerModifierTypeOptions, getPlayerShopModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
+import { ModifierPoolType, ModifierType, ModifierTypeFunc, getDailyRunStarterModifiers, getEnemyBuffModifierForWave, getModifierType, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { BattlerTagLapseType, CenterOfAttentionTag, EncoreTag, ProtectedTag, SemiInvulnerableTag, TrappedTag } from "./data/battler-tags";
 import { getPokemonMessage, getPokemonNameWithAffix } from "./messages";
@@ -65,6 +65,11 @@ import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
+import { BattlePhase } from "#app/phases/battle-phase";
+import { MysteryEncounterVariant } from "#app/data/mystery-encounter";
+import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phase";
+import { handleMysteryEncounterVictory } from "#app/data/mystery-encounters/mystery-encounter-utils";
+import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 
 const { t } = i18next;
 
@@ -287,6 +292,14 @@ export class TitlePhase extends Phase {
       label: i18next.t("menu:dailyRun"),
       handler: () => {
         this.initDailyRun();
+        return true;
+      },
+      keepOpen: true
+    },
+    {
+      label: i18next.t("menu:settings"),
+      handler: () => {
+        this.scene.ui.setOverlayMode(Mode.SETTINGS);
         return true;
       },
       keepOpen: true
@@ -667,17 +680,6 @@ export class BattlePhase extends Phase {
       duration: 750
     });
   }
-
-  hideEnemyTrainer(): void {
-    this.scene.tweens.add({
-      targets: this.scene.currentBattle.trainer,
-      x: "+=16",
-      y: "-=16",
-      alpha: 0,
-      ease: "Sine.easeInOut",
-      duration: 750
-    });
-  }
 }
 
 type PokemonFunc = (pokemon: Pokemon) => void;
@@ -814,6 +816,24 @@ export class EncounterPhase extends BattlePhase {
 
     const battle = this.scene.currentBattle;
 
+    // Init Mystery Encounter if there is one
+    const mysteryEncounter = battle.mysteryEncounter;
+    if (mysteryEncounter) {
+      // If ME has an onInit() function, call it
+      // Usually used for calculating rand data before initializing anything visual
+      // Also prepopulates any dialogue tokens from encounter/option requirements
+      this.scene.executeWithSeedOffset(() => {
+        if (mysteryEncounter.onInit) {
+          mysteryEncounter.onInit(this.scene);
+        }
+        mysteryEncounter.populateDialogueTokensFromRequirements();
+      }, this.scene.currentBattle.waveIndex);
+
+      // Add intro visuals for mystery encounter
+      mysteryEncounter.initIntroVisuals(this.scene);
+      this.scene.field.add(mysteryEncounter.introVisuals);
+    }
+
     let totalBst = 0;
 
     battle.enemyLevels.forEach((level, e) => {
@@ -838,7 +858,7 @@ export class EncounterPhase extends BattlePhase {
       }
 
       if (!this.loaded) {
-        this.scene.gameData.setPokemonSeen(enemyPokemon, true, battle.battleType === BattleType.TRAINER);
+        this.scene.gameData.setPokemonSeen(enemyPokemon, true, battle.battleType === BattleType.TRAINER || battle?.mysteryEncounter?.encounterVariant === MysteryEncounterVariant.TRAINER_BATTLE);
       }
 
       if (enemyPokemon.species.speciesId === Species.ETERNATUS) {
@@ -867,6 +887,12 @@ export class EncounterPhase extends BattlePhase {
 
     if (battle.battleType === BattleType.TRAINER) {
       loadEnemyAssets.push(battle.trainer.loadAssets().then(() => battle.trainer.initSprite()));
+    } else if (battle.battleType === BattleType.MYSTERY_ENCOUNTER) {
+      if (!battle.mysteryEncounter) {
+        const newEncounter = this.scene.getMysteryEncounter(mysteryEncounter);
+        battle.mysteryEncounter = newEncounter;
+      }
+      loadEnemyAssets.push(battle.mysteryEncounter.introVisuals.loadAssets().then(() => battle.mysteryEncounter.introVisuals.initSprite()));
     } else {
       // This block only applies for double battles to init the boss segments (idk why it's split up like this)
       if (battle.enemyParty.filter(p => p.isBoss()).length > 1) {
@@ -894,6 +920,9 @@ export class EncounterPhase extends BattlePhase {
           } else if (battle.battleType === BattleType.TRAINER) {
             enemyPokemon.setVisible(false);
             this.scene.currentBattle.trainer.tint(0, 0.5);
+          } else if (battle.battleType === BattleType.MYSTERY_ENCOUNTER) {
+            enemyPokemon.setVisible(false);
+            this.scene.currentBattle?.trainer?.tint(0, 0.5);
           }
           if (battle.double) {
             enemyPokemon.setFieldPosition(e ? FieldPosition.RIGHT : FieldPosition.LEFT);
@@ -945,8 +974,8 @@ export class EncounterPhase extends BattlePhase {
 
     const enemyField = this.scene.getEnemyField();
     this.scene.tweens.add({
-      targets: [this.scene.arenaEnemy, this.scene.currentBattle.trainer, enemyField, this.scene.arenaPlayer, this.scene.trainer].flat(),
-      x: (_target, _key, value, fieldIndex: integer) => fieldIndex < 2 + (enemyField.length) ? value + 300 : value - 300,
+      targets: [this.scene.arenaEnemy, this.scene.currentBattle.trainer, enemyField, this.scene.currentBattle?.mysteryEncounter?.introVisuals, this.scene.arenaPlayer, this.scene.trainer].flat(),
+      x: (_target, _key, value, fieldIndex: integer) => fieldIndex < 3 + (enemyField.length) ? value + 300 : value - 300,
       duration: 2000,
       onComplete: () => {
         if (!this.tryOverrideForBattleSpec()) {
@@ -1040,6 +1069,54 @@ export class EncounterPhase extends BattlePhase {
           showDialogueAndSummon();
         }
       }
+    } else if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER) {
+      const introVisuals = this.scene.currentBattle.mysteryEncounter.introVisuals;
+      introVisuals.playAnim();
+
+      const doEncounter = () => {
+        this.scene.playBgm(undefined);
+
+        const doShowEncounterOptions = () => {
+          this.scene.ui.clearText();
+          this.scene.ui.getMessageHandler().hideNameText();
+          this.scene.unshiftPhase(new MysteryEncounterPhase(this.scene));
+
+          this.end();
+        };
+
+        if (showEncounterMessage) {
+          const introDialogue = this.scene.currentBattle.mysteryEncounter.dialogue.intro;
+          let i = 0;
+          const showNextDialogue = () => {
+            const nextAction = i === introDialogue.length - 1 ? doShowEncounterOptions : showNextDialogue;
+            const dialogue = introDialogue[i];
+            const title = dialogue.speaker;
+            const text = dialogue.text;
+            if (title) {
+              this.scene.ui.showDialogue(i18next.t(text), i18next.t(title), null, nextAction, 0, i === 0 ? 750 : 0);
+            } else {
+              this.scene.ui.showText(i18next.t(text), null, nextAction, i === 0 ? 750 : 0, true);
+            }
+            i++;
+          };
+
+          if (introDialogue.length > 0) {
+            showNextDialogue();
+          }
+        } else {
+          doShowEncounterOptions();
+        }
+      };
+
+      const encounterMessage = i18next.t("battle:mysteryEncounterAppeared");
+
+      if (!encounterMessage) {
+        doEncounter();
+      } else {
+        this.scene.ui.showDialogue(encounterMessage, "???", null, () => {
+          this.scene.charSprite.hide().then(() => this.scene.hideFieldOverlay(250).then(() => doEncounter()));
+        });
+      }
     }
   }
 
@@ -1052,7 +1129,7 @@ export class EncounterPhase extends BattlePhase {
       }
     });
 
-    if (this.scene.currentBattle.battleType !== BattleType.TRAINER) {
+    if (this.scene.currentBattle.battleType !== BattleType.TRAINER && this.scene.currentBattle.battleType !== BattleType.MYSTERY_ENCOUNTER) {
       enemyField.map(p => this.scene.pushConditionalPhase(new PostSummonPhase(this.scene, p.getBattlerIndex()), () => {
         // if there is not a player party, we can't continue
         if (!this.scene.getParty()?.length) {
@@ -1146,8 +1223,17 @@ export class NextEncounterPhase extends EncounterPhase {
     this.scene.arenaNextEnemy.setVisible(true);
 
     const enemyField = this.scene.getEnemyField();
+    const moveTargets: any[] = [this.scene.arenaEnemy, this.scene.arenaNextEnemy, this.scene.currentBattle.trainer, enemyField, this.scene.lastEnemyTrainer];
+    const lastEncounterVisuals = this.scene?.lastMysteryEncounter?.introVisuals;
+    if (lastEncounterVisuals) {
+      moveTargets.push(lastEncounterVisuals);
+    }
+    const nextEncounterVisuals = this.scene.currentBattle?.mysteryEncounter?.introVisuals;
+    if (nextEncounterVisuals) {
+      moveTargets.push(nextEncounterVisuals);
+    }
     this.scene.tweens.add({
-      targets: [this.scene.arenaEnemy, this.scene.arenaNextEnemy, this.scene.currentBattle.trainer, enemyField, this.scene.lastEnemyTrainer].flat(),
+      targets: moveTargets.flat(),
       x: "+=300",
       duration: 2000,
       onComplete: () => {
@@ -1158,6 +1244,11 @@ export class NextEncounterPhase extends EncounterPhase {
         this.scene.arenaNextEnemy.setVisible(false);
         if (this.scene.lastEnemyTrainer) {
           this.scene.lastEnemyTrainer.destroy();
+        }
+        if (lastEncounterVisuals) {
+          this.scene.field.remove(lastEncounterVisuals);
+          lastEncounterVisuals.destroy();
+          this.scene.lastMysteryEncounter.introVisuals = null;
         }
 
         if (!this.tryOverrideForBattleSpec()) {
@@ -1189,8 +1280,14 @@ export class NewBiomeEncounterPhase extends NextEncounterPhase {
     }
 
     const enemyField = this.scene.getEnemyField();
+    const moveTargets: any[]  = [this.scene.arenaEnemy, enemyField];
+    const mysteryEncounter = this.scene.currentBattle?.mysteryEncounter?.introVisuals;
+    if (mysteryEncounter) {
+      moveTargets.push(mysteryEncounter);
+    }
+
     this.scene.tweens.add({
-      targets: [this.scene.arenaEnemy, enemyField].flat(),
+      targets: moveTargets.flat(),
       x: "+=300",
       duration: 2000,
       onComplete: () => {
@@ -1216,6 +1313,12 @@ export class PostSummonPhase extends PokemonPhase {
       pokemon.status.turnCount = 0;
     }
     this.scene.arena.applyTags(ArenaTrapTag, pokemon);
+
+    // If this is fight or flight mystery encounter and is enemy pokemon summon phase, add enraged tag
+    if (pokemon.findTags(t => t instanceof MysteryEncounterPostSummonTag)) {
+      pokemon.lapseTag(BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON);
+    }
+
     applyPostSummonAbAttrs(PostSummonAbAttr, pokemon).then(() => this.end());
   }
 }
@@ -1376,7 +1479,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
   preSummon(): void {
     const partyMember = this.getPokemon();
     // If the Pokemon about to be sent out is fainted or illegal under a challenge, switch to the first non-fainted legal Pokemon
-    if (!partyMember.isAllowedInBattle()) {
+    if (!partyMember.isAllowedInBattle() || (this.player && isNullOrUndefined(this.getParty().find(p => p.id === partyMember.id)))) {
       console.warn("The Pokemon about to be sent out is fainted or illegal under a challenge. Attempting to resolve...");
 
       // First check if they're somehow still in play, if so remove them.
@@ -1424,13 +1527,16 @@ export class SummonPhase extends PartyMemberPokemonPhase {
         onComplete: () => this.scene.trainer.setVisible(false)
       });
       this.scene.time.delayedCall(750, () => this.summon());
-    } else {
+    } else if (this.scene.currentBattle.battleType === BattleType.TRAINER || this.scene?.currentBattle?.mysteryEncounter?.encounterVariant === MysteryEncounterVariant.TRAINER_BATTLE) {
       const trainerName = this.scene.currentBattle.trainer.getName(!(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER);
       const pokemonName = this.getPokemon().name;
       const message = i18next.t("battle:trainerSendOut", { trainerName, pokemonName });
 
       this.scene.pbTrayEnemy.hide();
       this.scene.ui.showText(message, null, () => this.summon());
+    } else if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER) {
+      this.scene.pbTrayEnemy.hide();
+      this.summonWild();
     }
   }
 
@@ -1512,6 +1618,57 @@ export class SummonPhase extends PartyMemberPokemonPhase {
     });
   }
 
+  summonWild(): void {
+    const pokemon = this.getPokemon();
+
+    if (this.fieldIndex === 1) {
+      pokemon.setFieldPosition(FieldPosition.RIGHT, 0);
+    } else {
+      const availablePartyMembers = this.getParty().filter(p => !p.isFainted()).length;
+      pokemon.setFieldPosition(!this.scene.currentBattle.double || availablePartyMembers === 1 ? FieldPosition.CENTER : FieldPosition.LEFT);
+    }
+
+    this.scene.add.existing(pokemon);
+    this.scene.field.add(pokemon);
+    if (!this.player) {
+      const playerPokemon = this.scene.getPlayerPokemon() as Pokemon;
+      if (playerPokemon?.visible) {
+        this.scene.field.moveBelow(pokemon, playerPokemon);
+      }
+      this.scene.currentBattle.seenEnemyPartyMemberIds.add(pokemon.id);
+    }
+    this.scene.updateModifiers(this.player);
+    this.scene.updateFieldScale();
+    pokemon.showInfo();
+    pokemon.playAnim();
+    pokemon.setVisible(true);
+    pokemon.getSprite().setVisible(true);
+    pokemon.setScale(0.75);
+    pokemon.tint(getPokeballTintColor(pokemon.pokeball));
+    pokemon.untint(250, "Sine.easeIn");
+    this.scene.updateFieldScale();
+    pokemon.x += 16;
+    pokemon.y -= 16;
+    pokemon.alpha = 0;
+
+    // Ease pokemon in
+    this.scene.tweens.add({
+      targets: pokemon,
+      x: "-=16",
+      y: "+=16",
+      alpha: 1,
+      duration: 1000,
+      ease: "Sine.easeIn",
+      scale: pokemon.getSpriteScale(),
+      onComplete: () => {
+        pokemon.cry(pokemon.getHpRatio() > 0.25 ? undefined : { rate: 0.85 });
+        pokemon.getSprite().clearTint();
+        pokemon.resetSummonData();
+        this.scene.time.delayedCall(1000, () => this.end());
+      }
+    });
+  }
+
   onEnd(): void {
     const pokemon = this.getPokemon();
 
@@ -1521,7 +1678,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
 
     pokemon.resetTurnData();
 
-    if (!this.loaded || this.scene.currentBattle.battleType === BattleType.TRAINER || (this.scene.currentBattle.waveIndex % 10) === 1) {
+    if (!this.loaded || this.scene.currentBattle.battleType === BattleType.TRAINER || this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER || (this.scene.currentBattle.waveIndex % 10) === 1) {
       this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
       this.queuePostSummon();
     }
@@ -1581,6 +1738,11 @@ export class SwitchSummonPhase extends SummonPhase {
 
     if (!this.batonPass) {
       (this.player ? this.scene.getEnemyField() : this.scene.getPlayerField()).forEach(enemyPokemon => enemyPokemon.removeTagsBySourceId(pokemon.id));
+    }
+
+    // TODO: maybe remove this? Not sure if still necessary
+    if (!pokemon.isActive() || !pokemon.isOnField()) {
+      this.switchAndSummon();
     }
 
     this.scene.ui.showText(this.player ?
@@ -1998,6 +2160,13 @@ export class CommandPhase extends FieldPhase {
         this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
         this.scene.ui.setMode(Mode.MESSAGE);
         this.scene.ui.showText(i18next.t("battle:noPokeballTrainer"), null, () => {
+          this.scene.ui.showText(null, 0);
+          this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+        }, null, true);
+      } else if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER && !this.scene.currentBattle.mysteryEncounter.catchAllowed) {
+        this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+        this.scene.ui.setMode(Mode.MESSAGE);
+        this.scene.ui.showText(i18next.t("battle:noPokeballMysteryEncounter"), null, () => {
           this.scene.ui.showText(null, 0);
           this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
         }, null, true);
@@ -3774,7 +3943,7 @@ export class FaintPhase extends PokemonPhase {
       }
     } else {
       this.scene.unshiftPhase(new VictoryPhase(this.scene, this.battlerIndex));
-      if (this.scene.currentBattle.battleType === BattleType.TRAINER) {
+      if (this.scene.currentBattle.battleType === BattleType.TRAINER || this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER) {
         const hasReservePartyMember = !!this.scene.getEnemyParty().filter(p => p.isActive() && !p.isOnField() && p.trainerSlot === (pokemon as EnemyPokemon).trainerSlot).length;
         if (hasReservePartyMember) {
           this.scene.pushPhase(new SwitchSummonPhase(this.scene, this.fieldIndex, -1, false, false, false));
@@ -3870,6 +4039,8 @@ export class VictoryPhase extends PokemonPhase {
       let expValue = this.getPokemon().getExpValue();
       if (this.scene.currentBattle.battleType === BattleType.TRAINER) {
         expValue = Math.floor(expValue * 1.5);
+      } else if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER) {
+        expValue = Math.floor(expValue * this.scene.currentBattle.mysteryEncounter.expMultiplier);
       }
       for (const partyMember of nonFaintedPartyMembers) {
         const pId = partyMember.id;
@@ -3938,7 +4109,13 @@ export class VictoryPhase extends PokemonPhase {
       }
     }
 
-    if (!this.scene.getEnemyParty().find(p => this.scene.currentBattle.battleType ? !p?.isFainted(true) : p.isOnField())) {
+    if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER) {
+      handleMysteryEncounterVictory(this.scene);
+      this.end();
+      return;
+    }
+
+    if (!this.scene.getEnemyParty().find(p => this.scene.currentBattle.battleType === BattleType.WILD ? p.isOnField() : !p?.isFainted(true))) {
       this.scene.pushPhase(new BattleEndPhase(this.scene));
       if (this.scene.currentBattle.battleType === BattleType.TRAINER) {
         this.scene.pushPhase(new TrainerVictoryPhase(this.scene));
@@ -3968,6 +4145,7 @@ export class VictoryPhase extends PokemonPhase {
             this.scene.pushPhase(new AddEnemyBuffModifierPhase(this.scene));
           }
         }
+
         this.scene.pushPhase(new NewBattlePhase(this.scene));
       } else {
         this.scene.currentBattle.battleType = BattleType.CLEAR;

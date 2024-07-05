@@ -18,6 +18,8 @@ import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
+import {MysteryEncounterType} from "#enums/mystery-encounter-type"; // eslint-disable-line @typescript-eslint/no-unused-vars
+import {MysteryEncounterTier} from "#app/data/mystery-encounter"; // eslint-disable-line @typescript-eslint/no-unused-vars
 
 /**
  * Overrides for testing different in game situations
@@ -110,6 +112,15 @@ export const EGG_SHINY_OVERRIDE: boolean = false;
 export const EGG_VARIANT_OVERRIDE: VariantTier = null;
 export const EGG_FREE_GACHA_PULLS_OVERRIDE: boolean = false;
 export const EGG_GACHA_PULL_COUNT_OVERRIDE: number = 0;
+
+/**
+ * MYSTERY ENCOUNTER OVERRIDES
+ */
+
+// 1 to 256, set to null to ignore
+export const MYSTERY_ENCOUNTER_RATE_OVERRIDE: number = 256;
+export const MYSTERY_ENCOUNTER_TIER_OVERRIDE: MysteryEncounterTier = null;
+export const MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType = MysteryEncounterType.FIGHT_OR_FLIGHT;
 
 /**
  * MODIFIER / ITEM OVERRIDES

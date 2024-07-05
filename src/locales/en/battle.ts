@@ -49,6 +49,7 @@ export const battle: SimpleTranslationEntries = {
   "noPokeballTrainer": "You can't catch\nanother trainer's Pokémon!",
   "noPokeballMulti": "You can only throw a Poké Ball\nwhen there is one Pokémon remaining!",
   "noPokeballStrong": "The target Pokémon is too strong to be caught!\nYou need to weaken it first!",
+  "noPokeballMysteryEncounter": "You aren't able to\ncatch this Pokémon!",
   "noEscapeForce": "An unseen force\nprevents escape.",
   "noEscapeTrainer": "You can't run\nfrom a trainer battle!",
   "noEscapePokemon": "{{pokemonName}}'s {{moveName}}\nprevents {{escapeVerb}}!",
@@ -134,5 +135,6 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsSaltCuredOnAdd": "{{pokemonNameWithAffix}} is being salt cured!",
   "battlerTagsSaltCuredLapse": "{{pokemonNameWithAffix}} is hurt by {{moveName}}!",
   "battlerTagsCursedOnAdd": "{{pokemonNameWithAffix}} cut its own HP and put a curse on the {{pokemonName}}!",
-  "battlerTagsCursedLapse": "{{pokemonNameWithAffix}} is afflicted by the Curse!"
+  "battlerTagsCursedLapse": "{{pokemonNameWithAffix}} is afflicted by the Curse!",
+  "mysteryEncounterAppeared": "What's this?"
 } as const;

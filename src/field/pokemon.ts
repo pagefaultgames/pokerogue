@@ -3913,6 +3913,7 @@ export class PokemonSummonData {
   public moveset: PokemonMove[];
   // If not initialized this value will not be populated from save data.
   public types: Type[] = null;
+  public mysteryEncounterBattleEffects: (pokemon: Pokemon) => void = null;
 }
 
 export class PokemonBattleData {
