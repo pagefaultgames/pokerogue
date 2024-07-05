@@ -56,7 +56,7 @@ export class Weather {
   isDamaging(): boolean {
     switch (this.weatherType) {
     case WeatherType.SANDSTORM:
-    case WeatherType.HAIL:
+    // case WeatherType.HAIL: remove HAIL as damaging 
       return true;
     }
 
