@@ -122,7 +122,7 @@ export default interface MysteryEncounter {
  */
 export default class MysteryEncounter implements MysteryEncounter {
   constructor(encounter: MysteryEncounter) {
-    if (!Utils.isNullOrUndefined(encounter)) {
+    if (!isNullOrUndefined(encounter)) {
       Object.assign(this, encounter);
     }
     this.encounterTier = this.encounterTier ? this.encounterTier : MysteryEncounterTier.COMMON;

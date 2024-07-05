@@ -186,21 +186,19 @@ export function getRandomSpeciesByStarterTier(starterTiers: number | [number, nu
   let min = starterTiers instanceof Array ? starterTiers[0] : starterTiers;
   let max = starterTiers instanceof Array ? starterTiers[1] : starterTiers;
 
-  let filteredSpecies = Object.entries(speciesStarters)
-    .map(s => parseInt(s[0]))
-    .filter(s => getPokemonSpecies(s) && !excludedSpecies.includes(s));
+  let filteredSpecies: [PokemonSpecies, number][] = Object.keys(speciesStarters)
+    .map(s => [parseInt(s) as Species, speciesStarters[s] as number])
+    .filter(s => getPokemonSpecies(s[0]) && !excludedSpecies.includes(s[0]))
+    .map(s => [getPokemonSpecies(s[0]), s[1]]);
 
   if (!isNullOrUndefined(types) && types.length > 0) {
-    filteredSpecies = filteredSpecies.filter(s => {
-      const species = getPokemonSpecies(s);
-      return types.includes(species.type1) || types.includes(species.type2);
-    });
+    filteredSpecies = filteredSpecies.filter(s => types.includes(s[0].type1) || types.includes(s[0].type2));
   }
 
   // If no filtered mons exist at specified starter tiers, will expand starter search range until there are
   // Starts by decrementing starter tier min until it is 0, then increments tier max up to 10
-  let tryFilterStarterTiers = filteredSpecies.filter(s => s[1] >= min && s[1] <= max);
-  while (tryFilterStarterTiers.length === 0 || !(min === 0 && max === 10)) {
+  let tryFilterStarterTiers: [PokemonSpecies, number][] = filteredSpecies.filter(s => (s[1] >= min && s[1] <= max));
+  while (tryFilterStarterTiers.length === 0 && (min !== 0 && max !== 10)) {
     if (min > 0) {
       min--;
     } else {
@@ -212,7 +210,7 @@ export function getRandomSpeciesByStarterTier(starterTiers: number | [number, nu
 
   if (tryFilterStarterTiers.length > 0) {
     const index = Utils.randSeedInt(tryFilterStarterTiers.length);
-    return Phaser.Math.RND.shuffle(tryFilterStarterTiers)[index];
+    return Phaser.Math.RND.shuffle(tryFilterStarterTiers)[index][0].speciesId;
   }
 
   return Species.BULBASAUR;
@@ -427,7 +425,7 @@ export function setCustomEncounterRewards(scene: BattleScene, customShopRewards?
         scene.unshiftPhase(new ModifierRewardPhase(scene, reward));
       });
     } else {
-      while (!Utils.isNullOrUndefined(scene.findPhase(p => p instanceof ModifierRewardPhase))) {
+      while (!isNullOrUndefined(scene.findPhase(p => p instanceof ModifierRewardPhase))) {
         scene.tryRemovePhase(p => p instanceof ModifierRewardPhase);
       }
     }
@@ -474,7 +472,6 @@ export function selectPokemonForOption(scene: BattleScene, onPokemonSelected: (p
               }).concat({
                 label: i18next.t("menu:cancel"),
                 handler: () => {
-                  scene.ui.clearText();
                   scene.ui.setMode(Mode.MYSTERY_ENCOUNTER);
                   resolve(false);
                   return true;

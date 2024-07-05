@@ -1,4 +1,4 @@
-import { CommandPhase, SelectModifierPhase } from "../phases";
+import { CommandPhase } from "../phases";
 import BattleScene from "../battle-scene";
 import { PlayerPokemon, PokemonMove } from "../field/pokemon";
 import { addBBCodeTextObject, addTextObject, getTextColor, TextStyle } from "./text";

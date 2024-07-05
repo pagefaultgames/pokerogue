@@ -1,23 +1,22 @@
-import { WeatherType } from "./data/weather";
-import { Variant } from "./data/variant";
-import { TempBattleStat } from "./data/temp-battle-stat";
-import { Nature } from "./data/nature";
-import { Type } from "./data/type";
-import { Stat } from "./data/pokemon-stat";
-import { PokeballCounts } from "./battle-scene";
-import { PokeballType } from "./data/pokeball";
-import { Gender } from "./data/gender";
-import { StatusEffect } from "./data/status-effect";
-import { SpeciesStatBoosterItem, modifierTypes } from "./modifier/modifier-type";
-import { VariantTier } from "./enums/variant-tiers";
-import { EggTier } from "#enums/egg-type";
-import { allSpecies } from "./data/pokemon-species"; // eslint-disable-line @typescript-eslint/no-unused-vars
-import { Abilities } from "#enums/abilities";
-import { BerryType } from "#enums/berry-type";
-import { Biome } from "#enums/biome";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
-import { TimeOfDay } from "#enums/time-of-day";
+import {WeatherType} from "./data/weather";
+import {Variant} from "./data/variant";
+import {TempBattleStat} from "./data/temp-battle-stat";
+import {Nature} from "./data/nature";
+import {Type} from "./data/type";
+import {Stat} from "./data/pokemon-stat";
+import {PokeballCounts} from "./battle-scene";
+import {PokeballType} from "./data/pokeball";
+import {Gender} from "./data/gender";
+import {StatusEffect} from "./data/status-effect";
+import {modifierTypes, SpeciesStatBoosterItem} from "./modifier/modifier-type";
+import {VariantTier} from "./enums/variant-tiers";
+import {EggTier} from "#enums/egg-type";
+import {Abilities} from "#enums/abilities";
+import {BerryType} from "#enums/berry-type";
+import {Biome} from "#enums/biome";
+import {Moves} from "#enums/moves";
+import {Species} from "#enums/species";
+import {TimeOfDay} from "#enums/time-of-day";
 import {MysteryEncounterType} from "#enums/mystery-encounter-type"; // eslint-disable-line @typescript-eslint/no-unused-vars
 import {MysteryEncounterTier} from "#app/data/mystery-encounter"; // eslint-disable-line @typescript-eslint/no-unused-vars
 
@@ -118,9 +117,9 @@ export const EGG_GACHA_PULL_COUNT_OVERRIDE: number = 0;
  */
 
 // 1 to 256, set to null to ignore
-export const MYSTERY_ENCOUNTER_RATE_OVERRIDE: number = null;
+export const MYSTERY_ENCOUNTER_RATE_OVERRIDE: number = 256;
 export const MYSTERY_ENCOUNTER_TIER_OVERRIDE: MysteryEncounterTier = null;
-export const MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType = null;
+export const MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType = MysteryEncounterType.DARK_DEAL;
 
 /**
  * MODIFIER / ITEM OVERRIDES

@@ -10,6 +10,7 @@ import { PartyUiMode } from "./party-ui-handler";
 import MysteryEncounterOption from "../data/mystery-encounter-option";
 import * as Utils from "../utils";
 import { getPokeballAtlasKey } from "../data/pokeball";
+import {isNullOrUndefined} from "../utils";
 
 export default class MysteryEncounterUiHandler extends UiHandler {
   private cursorContainer: Phaser.GameObjects.Container;
@@ -294,6 +295,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
   }
 
   displayEncounterOptions(slideInDescription: boolean = true): void {
+    this.getUi().clearText();
     const mysteryEncounter = this.scene.currentBattle.mysteryEncounter;
     this.filteredEncounterOptions = mysteryEncounter.options;
     this.optionsMeetsReqs = [];
@@ -405,7 +407,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     }
     this.tooltipContainer.setVisible(true);
 
-    if (Utils.isNullOrUndefined(cursor) || cursor > this.optionsContainer.length - 2) {
+    if (isNullOrUndefined(cursor) || cursor > this.optionsContainer.length - 2) {
       // Ignore hovers on view party button
       return;
     }
