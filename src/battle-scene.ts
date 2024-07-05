@@ -54,7 +54,6 @@ import {InputsController} from "./inputs-controller";
 import {UiInputs} from "./ui-inputs";
 import { NewArenaEvent } from "./events/battle-scene";
 import ArenaFlyout from "./ui/arena-flyout";
-import TeamBar from "./ui/trainer-team-bar";
 import { EaseType } from "#enums/ease-type";
 import { Abilities } from "#enums/abilities";
 import { BattleSpec } from "#enums/battle-spec";
@@ -221,7 +220,6 @@ export default class BattleScene extends SceneBase {
   private modifierBar: ModifierBar;
   private enemyModifierBar: ModifierBar;
   public arenaFlyout: ArenaFlyout;
-  public trainerBar: TeamBar;
 
   private fieldOverlay: Phaser.GameObjects.Rectangle;
   private shopOverlay: Phaser.GameObjects.Rectangle;
@@ -472,9 +470,6 @@ export default class BattleScene extends SceneBase {
     this.luckLabelText.setVisible(false);
     this.fieldUI.add(this.luckLabelText);
 
-    this.trainerBar = new TeamBar(this);
-    this.fieldUI.add(this.trainerBar);
-    this.fieldUI.moveBelow<Phaser.GameObjects.GameObject>(this.trainerBar, this.fieldOverlay);
     this.arenaFlyout = new ArenaFlyout(this);
     this.fieldUI.add(this.arenaFlyout);
     this.fieldUI.moveBelow<Phaser.GameObjects.GameObject>(this.arenaFlyout, this.fieldOverlay);
@@ -1400,11 +1395,6 @@ export default class BattleScene extends SceneBase {
     this.fieldUI.moveBelow<any>(gameObject, this.fieldOverlay);
   }
   processInfoButton(pressed: boolean): void {
-    if (pressed) {
-      this.trainerBar.tempToggleFlyout(false)
-    } else {
-      this.trainerBar.revertFlyout()
-    }
     this.arenaFlyout.toggleFlyout(pressed);
   }
 
