@@ -25,6 +25,7 @@ export const battle: SimpleTranslationEntries = {
   "hitResultNoEffect": "It doesn't affect {{pokemonName}}!",
   "hitResultOneHitKO": "It's a one-hit KO!",
   "attackFailed": "But it failed!",
+  "attackMissed": "{{pokemonNameWithAffix}}'s\nattack missed!",
   "attackHitsCount": "Hit {{count}} time(s)!",
   "rewardGain": "You received\n{{modifierName}}!",
   "expGain": "{{pokemonName}} gained\n{{exp}} EXP. Points!",
