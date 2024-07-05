@@ -1214,6 +1214,20 @@ const berryNaturalGiftPowerMap: { [key in BerryType]: number } = {
   [BerryType.LEPPA]: 80,
 };
 
+const berryNaturalGiftTypeMap: { [key in BerryType]: number } = {
+  [BerryType.SITRUS]: 6,  // Type.PSYCHIC
+  [BerryType.LUM]: 1,     // Type.FLYING
+  [BerryType.ENIGMA]: 4,  // Type.BUG
+  [BerryType.LIECHI]: 5,  // Type.GRASS
+  [BerryType.GANLON]: 7,  // Type.ICE
+  [BerryType.PETAYA]: 2,  // Type.POISON
+  [BerryType.APICOT]: 3,  // Type.GROUND
+  [BerryType.SALAC]: 0,   // Type.FIGHTING
+  [BerryType.LANSAT]: 1,  // Type.FLYING
+  [BerryType.STARF]: 6,   // Type.PSYCHIC
+  [BerryType.LEPPA]: 0,   // Type.FIGHTING
+};
+
 export class BerryModifier extends PokemonHeldItemModifier {
   public berryType: BerryType;
   public consumed: boolean;
@@ -1264,6 +1278,10 @@ export class BerryModifier extends PokemonHeldItemModifier {
 
   getNaturalGiftPower(): number {
     return berryNaturalGiftPowerMap[this.berryType] || 0;
+  }
+
+  getMoveTypeForBerry(): number {
+    return berryNaturalGiftTypeMap[this.berryType];
   }
 }
 
