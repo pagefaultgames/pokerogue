@@ -1214,18 +1214,18 @@ const berryNaturalGiftPowerMap: { [key in BerryType]: number } = {
   [BerryType.LEPPA]: 80,
 };
 
-const berryNaturalGiftTypeMap: { [key in BerryType]: number } = {
-  [BerryType.SITRUS]: 6,  // Type.PSYCHIC
-  [BerryType.LUM]: 1,     // Type.FLYING
-  [BerryType.ENIGMA]: 4,  // Type.BUG
-  [BerryType.LIECHI]: 5,  // Type.GRASS
-  [BerryType.GANLON]: 7,  // Type.ICE
-  [BerryType.PETAYA]: 2,  // Type.POISON
-  [BerryType.APICOT]: 3,  // Type.GROUND
-  [BerryType.SALAC]: 0,   // Type.FIGHTING
-  [BerryType.LANSAT]: 1,  // Type.FLYING
-  [BerryType.STARF]: 6,   // Type.PSYCHIC
-  [BerryType.LEPPA]: 0,   // Type.FIGHTING
+const berryNaturalGiftTypeMap: { [key in BerryType]: Type } = {
+  [BerryType.SITRUS]: Type.PSYCHIC,
+  [BerryType.LUM]: Type.FLYING,
+  [BerryType.ENIGMA]: Type.BUG,
+  [BerryType.LIECHI]: Type.GRASS,
+  [BerryType.GANLON]: Type.ICE,
+  [BerryType.PETAYA]: Type.POISON,
+  [BerryType.APICOT]: Type.GROUND,
+  [BerryType.SALAC]: Type.FIGHTING,
+  [BerryType.LANSAT]: Type.FLYING,
+  [BerryType.STARF]: Type.PSYCHIC,
+  [BerryType.LEPPA]: Type.FIGHTING,
 };
 
 export class BerryModifier extends PokemonHeldItemModifier {
@@ -1280,7 +1280,7 @@ export class BerryModifier extends PokemonHeldItemModifier {
     return berryNaturalGiftPowerMap[this.berryType] || 0;
   }
 
-  getMoveTypeForBerry(): number {
+  getMoveTypeForBerry(): Type {
     return berryNaturalGiftTypeMap[this.berryType];
   }
 }

@@ -3727,13 +3727,7 @@ class NaturalGiftTypeAttr extends VariableMoveTypeAttr {
     const randomBerry = userBerries[user.randSeedInt(userBerries.length)];
     user.scene.naturalGiftBerryModifier = randomBerry;
 
-    const naturalGiftType = randomBerry.getMoveTypeForBerry();
-    const moveTypes = [
-      Type.FIGHTING, Type.FLYING, Type.POISON, Type.GROUND,
-      Type.BUG, Type.GRASS, Type.PSYCHIC, Type.ICE
-    ];
-
-    move.type = moveTypes[naturalGiftType];
+    move.type = randomBerry.getMoveTypeForBerry();
     user.scene.removeModifier(randomBerry, !user.isPlayer());
     user.scene.updateModifiers(user.isPlayer());
 
