@@ -69,7 +69,7 @@ import { TimedEventManager } from "#app/timed-event-manager.js";
 import i18next from "i18next";
 import {TrainerType} from "#enums/trainer-type";
 
-export const bypassLogin = true;
+export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
 const DEBUG_RNG = false;
 
@@ -182,10 +182,8 @@ export default class BattleScene extends SceneBase {
 
   public phaseQueue: Phase[];
   public conditionalQueue: Array<[() => boolean, Phase]>;
-  public phaseQueuePrepend: Phase[];
-
-  public phaseQueuePrependSpliceIndex: integer;
-
+  private phaseQueuePrepend: Phase[];
+  private phaseQueuePrependSpliceIndex: integer;
   private nextCommandPhaseQueue: Phase[];
   private currentPhase: Phase;
   private standbyPhase: Phase;
