@@ -2894,10 +2894,7 @@ export class MoveEffectPhase extends PokemonPhase {
       if (!activeTargets.length || (!move.hasAttr(VariableTargetAttr) && !move.isMultiTarget() && !targetHitChecks[this.targets[0]])) {
         this.stopMultiHit();
         if (activeTargets.length) {
-
           this.scene.queueMessage(i18next.t("battle:attackMissed", { pokemonNameWithAffix: getPokemonNameWithAffix(this.getTarget()) }));
-
-
           moveHistoryEntry.result = MoveResult.MISS;
           applyMoveAttrs(MissEffectAttr, user, null, move);
         } else {
