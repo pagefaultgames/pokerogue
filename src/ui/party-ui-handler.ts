@@ -113,7 +113,7 @@ export default class PartyUiHandler extends MessageUiHandler {
 
   public static FilterNonFainted = (pokemon: PlayerPokemon) => {
     if (pokemon.isFainted()) {
-      return `${pokemon.getName(false)} has no energy\nleft to battle!`;
+      return i18next.t("partyUiHandler:noEnergy", { pokemonName: pokemon.getName() });
     }
     return null;
   };
