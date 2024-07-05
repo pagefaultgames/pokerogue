@@ -151,7 +151,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SACRED_ASH": { name: "Cenere Magica" },
 
-    "REVIVER_SEED": { name: "Revitalseme", description: "Il possessore recupera 1/2 di PS in caso di svenimento." },
+    "REVIVER_SEED": { name: "Revitalseme", description: "Il possessore recupera 1/2 di PS in caso di svenimento." },  //TODO: missing info: after a direct hit only!
 
     "ETHER": { name: "Etere" },
     "MAX_ETHER": { name: "Etere Max" },

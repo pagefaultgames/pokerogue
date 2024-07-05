@@ -151,7 +151,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SACRED_ASH": { name: "Cen. Sagrada" },
 
-    "REVIVER_SEED": { name: "Semilla Revivir", description: "Revive al portador con la mitad de sus PS al debilitarse." },
+    "REVIVER_SEED": { name: "Semilla Revivir", description: "Revive al portador con la mitad de sus PS al debilitarse." }, //TODO: missing info: after a direct hit only!
 
     "ETHER": { name: "Éter" },
     "MAX_ETHER": { name: "Éter Máx." },

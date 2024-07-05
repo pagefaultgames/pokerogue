@@ -151,7 +151,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SACRED_ASH": { name: "성스러운분말" },
 
-    "REVIVER_SEED": { name: "부활의씨앗", description: "포켓몬이 쓰러지려 할 때 HP를 절반 회복한다." },
+    "REVIVER_SEED": { name: "부활의씨앗", description: "포켓몬이 쓰러지려 할 때 HP를 절반 회복한다." },  //TODO: missing info: after a direct hit only!
 
     "ETHER": { name: "PP에이드" },
     "MAX_ETHER": { name: "PP회복" },
