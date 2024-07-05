@@ -442,6 +442,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       ease: "Sine.easeInOut",
       alpha: visible ? 1 : 0
     });
+    (this.scene as BattleScene).trainerBar.toggleFlyout(visible);
   }
 
   updateBossSegments(pokemon: EnemyPokemon): void {

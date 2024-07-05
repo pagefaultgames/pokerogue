@@ -1401,7 +1401,6 @@ export default class BattleScene extends SceneBase {
   }
   processInfoButton(pressed: boolean): void {
     this.arenaFlyout.toggleFlyout(pressed);
-    this.trainerBar.toggleFlyout(pressed);
   }
 
   showFieldOverlay(duration: integer): Promise<void> {
