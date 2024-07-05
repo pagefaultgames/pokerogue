@@ -44,22 +44,22 @@ export const weather: SimpleTranslationEntries = {
 };
 
 export const terrain: SimpleTranslationEntries = {
-  "misty": "Misty",
-  "mistyStartMessage": "Mist swirled around the battlefield!",
-  "mistyClearMessage": "The mist disappeared from the battlefield.",
-  "mistyBlockMessage": "{{pokemonNameWithAffix}} surrounds itself with a protective mist!",
+  "misty": "Enevoado",
+  "mistyStartMessage": "Uma névoa se espalhou pelo campo de batalha!",
+  "mistyClearMessage": "A névou sumiu do campo de batalha.",
+  "mistyBlockMessage": "{{pokemonNameWithAffix}} se envolveu com uma névoa protetora!",
 
-  "electric": "Electric",
-  "electricStartMessage": "An electric current ran across the battlefield!",
-  "electricClearMessage": "The electricity disappeared from the battlefield.",
+  "electric": "Elétrico",
+  "electricStartMessage": "Uma corrente elétrica se espalhou pelo campo de batalha!",
+  "electricClearMessage": "A eletricidade sumiu do campo de batalha.",
 
-  "grassy": "Grassy",
-  "grassyStartMessage": "Grass grew to cover the battlefield!",
-  "grassyClearMessage": "The grass disappeared from the battlefield.",
+  "grassy": "de Plantas",
+  "grassyStartMessage": "Grama cresceu para cobrir o campo de batalha!",
+  "grassyClearMessage": "A grama sumiu do campo de batalha.",
 
-  "psychic": "Psychic",
-  "psychicStartMessage": "The battlefield got weird!",
-  "psychicClearMessage": "The weirdness disappeared from the battlefield!",
+  "psychic": "Psíquico",
+  "psychicStartMessage": "O campo de batalha ficou esquisito!",
+  "psychicClearMessage": "A esquisitice sumiu do campo de batalha",
 
-  "defaultBlockMessage": "{{pokemonNameWithAffix}} is protected by the {{terrainName}} Terrain!"
+  "defaultBlockMessage": "{{pokemonNameWithAffix}} está protegido pelo Terreno {{terrainName}}!"
 };
