@@ -3916,7 +3916,9 @@ export class UproarMessage extends MoveEffectAttr {
     super();
   }
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    user.scene.queueMessage(getPokemonMessage(user, " caused\nan uproar!"));
+    user.scene.queueMessage(i18next.t("battle:battlerTagsUproar", {
+      pokemonNameWithAffix: getPokemonNameWithAffix(user),
+    }));
     return true;
   }
 }
