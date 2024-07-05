@@ -22,7 +22,7 @@ export const battle: SimpleTranslationEntries = {
   "hitResultNoEffect": "對 {{pokemonName}} 沒有效果！",
   "hitResultOneHitKO": "一擊切殺！",
   "attackFailed": "但是失敗了！",
-  "attackMissed": "{{pokemonNameWithAffix}}'s\nattack missed!",
+  "attackMissed": "{{pokemonNameWithAffix}}的攻擊\n沒有命中！",
   "attackHitsCount": "擊中 {{count}} 次！",
   "rewardGain": "You received\n{{modifierName}}!",
   "expGain": "{{pokemonName}} 獲得了 {{exp}} 經驗值！",
