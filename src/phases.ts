@@ -4890,10 +4890,7 @@ export class AttemptCapturePhase extends PokemonPhase {
                     });
                   }
                 },
-                onComplete: () => {
-                  this.scene.gameData.setPokemonCaught(pokemon);
-                  this.catch();
-                }
+                onComplete: () => this.catch()
               });
             };
 
@@ -4934,6 +4931,7 @@ export class AttemptCapturePhase extends PokemonPhase {
 
   catch() {
     const pokemon = this.getPokemon() as EnemyPokemon;
+    this.scene.unshiftPhase(new VictoryPhase(this.scene, this.battlerIndex));
 
     const speciesForm = !pokemon.fusionSpecies ? pokemon.getSpeciesForm() : pokemon.getFusionSpeciesForm();
 
@@ -4959,7 +4957,6 @@ export class AttemptCapturePhase extends PokemonPhase {
 
     this.scene.ui.showText(i18next.t("battle:pokemonCaught", { pokemonName: pokemon.name }), null, () => {
       const end = () => {
-        this.scene.unshiftPhase(new VictoryPhase(this.scene, this.battlerIndex));
         this.scene.pokemonInfoContainer.hide();
         this.removePb();
         this.end();
@@ -4988,18 +4985,12 @@ export class AttemptCapturePhase extends PokemonPhase {
           }
         });
       };
-      Promise.all([pokemon.hideInfo()]).then(() => {
+      Promise.all([pokemon.hideInfo(), this.scene.gameData.setPokemonCaught(pokemon)]).then(() => {
         if (this.scene.getParty().length === 6) {
           const promptRelease = () => {
             this.scene.ui.showText(i18next.t("battle:partyFull", { pokemonName: pokemon.name }), null, () => {
-              this.scene.pokemonInfoContainer.makeRoomForConfirmUi(1, true);
+              this.scene.pokemonInfoContainer.makeRoomForConfirmUi();
               this.scene.ui.setMode(Mode.CONFIRM, () => {
-                const newPokemon = this.scene.addPlayerPokemon(pokemon.species, pokemon.level, pokemon.abilityIndex, pokemon.formIndex, pokemon.gender, pokemon.shiny, pokemon.variant, pokemon.ivs, pokemon.nature, pokemon);
-                this.scene.ui.setMode(Mode.SUMMARY, newPokemon).then(() => {
-                  this.catch();
-                  return;
-                });
-              }, () => {
                 this.scene.ui.setMode(Mode.PARTY, PartyUiMode.RELEASE, this.fieldIndex, (slotIndex: integer, _option: PartyOption) => {
                   this.scene.ui.setMode(Mode.MESSAGE).then(() => {
                     if (slotIndex < 6) {

@@ -20,45 +20,7 @@ export default class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
   }
 
   show(args: any[]): boolean {
-    if (args.length === 3 && args[0].toString().includes("newPokemon")) {
-      const config: OptionSelectConfig = {
-        options: [
-          {
-            label: i18next.t("partyUiHandler:SUMMARY"),
-            handler: () => {
-              args[0]();
-              return false;
-            },
-          }, {
-            label: i18next.t("menu:yes"),
-            handler: () => {
-              args[1]();
-              return true;
-            }
-          }, {
-            label: i18next.t("menu:no"),
-            handler: () => {
-              args[2]();
-              return true;
-            }
-          }
-        ],
-        delay: args.length >= 7 && args[6] !== null ? args[6] as integer : 0
-      };
-
-      super.show([ config ]);
-
-      this.switchCheck = args.length >= 4 && args[3] !== null && args[3] as boolean;
-
-      const xOffset = (args.length >= 5 && args[4] !== null ? args[4] as number : 0);
-      const yOffset = (args.length >= 6 && args[5] !== null ? args[5] as number : 0);
-
-      this.optionSelectContainer.setPosition((this.scene.game.canvas.width / 6) - 1 + xOffset, -48 + yOffset);
-
-      this.setCursor(this.switchCheck ? this.switchCheckCursor : 0);
-
-      return true;
-    } else if (args.length >= 2 && args[0] instanceof Function && args[1] instanceof Function) {
+    if (args.length >= 2 && args[0] instanceof Function && args[1] instanceof Function) {
       const config: OptionSelectConfig = {
         options: [
           {
@@ -92,6 +54,7 @@ export default class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
 
       return true;
     }
+
     return false;
   }
 
