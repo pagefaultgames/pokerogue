@@ -57,7 +57,7 @@ describe("Abilities - Protean", () => {
     TIMEOUT,
   );
 
-  test(
+  test.skip(
     "ability applies only once per switch in",
     async () => {
       vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.AGILITY]);

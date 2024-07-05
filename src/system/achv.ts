@@ -1,7 +1,7 @@
 import { Modifier } from "typescript";
 import BattleScene from "../battle-scene";
 import { TurnHeldItemTransferModifier } from "../modifier/modifier";
-import i18next from "../plugins/i18n";
+import i18next from "i18next";
 import * as Utils from "../utils";
 import { PlayerGender } from "#enums/player-gender";
 import { ParseKeys } from "i18next";
