@@ -1,7 +1,7 @@
 {
 	"textures": [
 		{
-			"image": "training_gear.png",
+			"image": "chest_red.png",
 			"format": "RGBA8888",
 			"size": {
 				"w": 76,
