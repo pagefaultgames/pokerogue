@@ -472,12 +472,12 @@ export default class BattleScene extends SceneBase {
     this.luckLabelText.setVisible(false);
     this.fieldUI.add(this.luckLabelText);
 
-    this.arenaFlyout = new ArenaFlyout(this);
-    this.fieldUI.add(this.arenaFlyout);
-    this.fieldUI.moveBelow<Phaser.GameObjects.GameObject>(this.arenaFlyout, this.fieldOverlay);
     this.trainerBar = new TeamBar(this);
     this.fieldUI.add(this.trainerBar);
     this.fieldUI.moveBelow<Phaser.GameObjects.GameObject>(this.trainerBar, this.fieldOverlay);
+    this.arenaFlyout = new ArenaFlyout(this);
+    this.fieldUI.add(this.arenaFlyout);
+    this.fieldUI.moveBelow<Phaser.GameObjects.GameObject>(this.arenaFlyout, this.fieldOverlay);
 
     this.updateUIPositions();
 
@@ -1400,6 +1400,11 @@ export default class BattleScene extends SceneBase {
     this.fieldUI.moveBelow<any>(gameObject, this.fieldOverlay);
   }
   processInfoButton(pressed: boolean): void {
+    if (pressed) {
+      this.trainerBar.tempToggleFlyout(false)
+    } else {
+      this.trainerBar.revertFlyout()
+    }
     this.arenaFlyout.toggleFlyout(pressed);
   }
 
