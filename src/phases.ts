@@ -4332,11 +4332,11 @@ export class EndCardPhase extends Phase {
     ], 0x000000, 0.5);
     this.scene.field.add(topRectangle);
 
-    const bottomRectangle = this.scene.add.polygon(topRectangle.x + 100, topRectangle.y + 115, [ 
-      new Phaser.Math.Vector2(topRectangle.x + 100, topRectangle.y + 50),
-      new Phaser.Math.Vector2(topRectangle.x + 140, topRectangle.y + 100),
-      new Phaser.Math.Vector2(topRectangle.width, topRectangle.y + 120),
-      new Phaser.Math.Vector2(topRectangle.width, topRectangle.y + 90),
+    const bottomRectangle = this.scene.add.polygon(topRectangle.x+100, topRectangle.y + 115, [
+      new Phaser.Math.Vector2(topRectangle.x+100, topRectangle.y + 50),
+      new Phaser.Math.Vector2(topRectangle.x+140, topRectangle.y+100),
+      new Phaser.Math.Vector2(topRectangle.width, topRectangle.y+120),
+      new Phaser.Math.Vector2(topRectangle.width, topRectangle.y+90),
     ], 0x000000, 0.5);
 
     this.scene.field.add(bottomRectangle);
@@ -4348,7 +4348,7 @@ export class EndCardPhase extends Phase {
       const formIndex = species.formIndex;
       const variant = species.variant;
       const pokemonSprite: Phaser.GameObjects.Sprite = this.scene.add.sprite(50 + 40 * i, 50 + row  * 80, "pkmn__sub");
-      pokemonSprite.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });  
+      pokemonSprite.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });
       this.scene.field.add(pokemonSprite);
       const speciesLoaded: Map<Species, boolean> = new Map<Species, boolean>();
       speciesLoaded.set(id, false);
