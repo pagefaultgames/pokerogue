@@ -2,7 +2,7 @@ import { TranslationEntries } from "#app/interfaces/locales";
 
 export const challenges: TranslationEntries = {
   "title": "챌린지 조건 설정",
-  "illegalEvolution": "{{pokemon}} changed into an ineligble pokémon\nfor this challenge!",
+  "illegalEvolution": "{{pokemon}}[[는]] 현재의 챌린지에\n부적합한 포켓몬이 되었습니다!",
   "illegalMove": "{{moveName}} is not a valid move for this challenge!",
   "singleGeneration": {
     "name": "단일 세대",

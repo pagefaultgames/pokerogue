@@ -1,5 +1,5 @@
-import { common } from "#app/locales/en/common.js";
-import { settings } from "#app/locales/en/settings.js";
+import { common } from "./common.js";
+import { settings } from "./settings.js";
 import { ability } from "./ability";
 import { abilityTriggers } from "./ability-trigger";
 import { PGFachv, PGMachv } from "./achv";
@@ -38,10 +38,12 @@ import { pokemonInfoContainer } from "./pokemon-info-container";
 import { saveSlotSelectUiHandler } from "./save-slot-select-ui-handler";
 import { splashMessages } from "./splash-messages";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
+import { statusEffect } from "./status-effect";
 import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { weather } from "./weather";
+import { modifierSelectUiHandler } from "./modifier-select-ui-handler";
 
 export const enConfig = {
   ability: ability,
@@ -83,10 +85,12 @@ export const enConfig = {
   settings: settings,
   splashMessages: splashMessages,
   starterSelectUiHandler: starterSelectUiHandler,
+  statusEffect: statusEffect,
   titles: titles,
   trainerClasses: trainerClasses,
   trainerNames: trainerNames,
   tutorial: tutorial,
   voucher: voucher,
   weather: weather,
+  modifierSelectUiHandler: modifierSelectUiHandler
 };

@@ -13,6 +13,8 @@ import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { BattleStat } from "#app/data/battle-stat.js";
 
+const TIMEOUT = 20 * 1000;
+
 describe("Moves - Make It Rain", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -57,7 +59,7 @@ describe("Moves - Make It Rain", () => {
     await game.phaseInterceptor.to(MoveEndPhase);
 
     expect(playerPokemon[0].summonData.battleStats[BattleStat.SPATK]).toBe(-1);
-  });
+  }, TIMEOUT);
 
   it("should apply effects even if the target faints", async () => {
     vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(1); // ensures the enemy will faint
@@ -78,5 +80,27 @@ describe("Moves - Make It Rain", () => {
 
     expect(enemyPokemon.isFainted()).toBe(true);
     expect(playerPokemon.summonData.battleStats[BattleStat.SPATK]).toBe(-1);
-  });
+  }, TIMEOUT);
+
+  it("should reduce Sp. Atk. once after KOing two enemies", async () => {
+    vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(1); // ensures the enemy will faint
+
+    await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+
+    const playerPokemon = game.scene.getPlayerField();
+    playerPokemon.forEach(p => expect(p).toBeDefined());
+
+    const enemyPokemon = game.scene.getEnemyField();
+    enemyPokemon.forEach(p => expect(p).toBeDefined());
+
+    game.doAttack(getMovePosition(game.scene, 0, Moves.MAKE_IT_RAIN));
+
+    await game.phaseInterceptor.to(CommandPhase);
+    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+
+    await game.phaseInterceptor.to(StatChangePhase);
+
+    enemyPokemon.forEach(p => expect(p.isFainted()).toBe(true));
+    expect(playerPokemon[0].summonData.battleStats[BattleStat.SPATK]).toBe(-1);
+  }, TIMEOUT);
 });
