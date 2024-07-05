@@ -44,22 +44,22 @@ export const weather: SimpleTranslationEntries = {
 };
 
 export const terrain: SimpleTranslationEntries = {
-  "misty": "Misty",
-  "mistyStartMessage": "Mist swirled around the battlefield!",
-  "mistyClearMessage": "The mist disappeared from the battlefield.",
-  "mistyBlockMessage": "{{pokemonNameWithAffix}} surrounds itself with a protective mist!",
+  "misty": "Nebelfeld",
+  "mistyStartMessage": "Am Boden breitet sich dichter Nebel aus!",
+  "mistyClearMessage": "Das Nebelfeld ist wieder verschwunden!",
+  "mistyBlockMessage": "{{pokemonNameWithAffix}} wird vom Nebelfeld geschützt!",
 
-  "electric": "Electric",
-  "electricStartMessage": "An electric current ran across the battlefield!",
-  "electricClearMessage": "The electricity disappeared from the battlefield.",
+  "electric": "Elektrofeld",
+  "electricStartMessage": "Elektrische Energie fließt durch den Boden!",
+  "electricClearMessage": "Das Elektrofeld ist wieder verschwunden!",
 
-  "grassy": "Grassy",
-  "grassyStartMessage": "Grass grew to cover the battlefield!",
-  "grassyClearMessage": "The grass disappeared from the battlefield.",
+  "grassy": "Grasfeld",
+  "grassyStartMessage": "Dichtes Gras schießt aus dem Boden!",
+  "grassyClearMessage": "Das Grasfeld ist wieder verschwunden!",
 
-  "psychic": "Psychic",
-  "psychicStartMessage": "The battlefield got weird!",
-  "psychicClearMessage": "The weirdness disappeared from the battlefield!",
+  "psychic": "Psychofeld",
+  "psychicStartMessage": "Der Boden fühlt sich seltsam an!",
+  "psychicClearMessage": "Das Psychofeld ist wieder verschwunden!",
 
-  "defaultBlockMessage": "{{pokemonNameWithAffix}} is protected by the {{terrainName}} Terrain!"
+  "defaultBlockMessage": "{{pokemonNameWithAffix}} wird vom {{terrainName}} geschützt!"
 };
