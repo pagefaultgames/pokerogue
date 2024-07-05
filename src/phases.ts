@@ -4324,6 +4324,46 @@ export class EndCardPhase extends Phase {
     this.endCard.setScale(0.5);
     this.scene.field.add(this.endCard);
 
+
+    const topRectangle = this.scene.add.polygon(0, 0, [
+      new Phaser.Math.Vector2(0, 63),
+      new Phaser.Math.Vector2(this.endCard.width, 100),
+      new Phaser.Math.Vector2(this.endCard.width, 0),
+    ], 0x000000, 0.5);
+    this.scene.field.add(topRectangle);
+
+    const bottomRectangle = this.scene.add.polygon(topRectangle.x + 100, topRectangle.y + 115, [ 
+      new Phaser.Math.Vector2(topRectangle.x + 100, topRectangle.y + 50),
+      new Phaser.Math.Vector2(topRectangle.x + 140, topRectangle.y + 100),
+      new Phaser.Math.Vector2(topRectangle.width, topRectangle.y + 120),
+      new Phaser.Math.Vector2(topRectangle.width, topRectangle.y + 90),
+    ], 0x000000, 0.5);
+
+    this.scene.field.add(bottomRectangle);
+
+    this.scene.getParty().forEach((species, i) => {
+      const row = i % 2;
+      const id = species.id;
+      const shiny = species.shiny;
+      const formIndex = species.formIndex;
+      const variant = species.variant;
+      const pokemonSprite: Phaser.GameObjects.Sprite = this.scene.add.sprite(50 + 40 * i, 50 + row  * 80, "pkmn__sub");
+      pokemonSprite.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });  
+      this.scene.field.add(pokemonSprite);
+      const speciesLoaded: Map<Species, boolean> = new Map<Species, boolean>();
+      speciesLoaded.set(id, false);
+
+      const female = species.gender === 1;
+      species.species.loadAssets(this.scene, female, formIndex, shiny, variant, true).then(() => {
+        speciesLoaded.set(id, true);
+        pokemonSprite.play(species.species.getSpriteKey(female, formIndex, shiny, variant));
+        pokemonSprite.setPipelineData("shiny", shiny);
+        pokemonSprite.setPipelineData("variant", variant);
+        pokemonSprite.setPipelineData("spriteKey", species.species.getSpriteKey(female, formIndex, shiny, variant));
+        pokemonSprite.setVisible(true);
+      });
+    });
+
     this.text = addTextObject(this.scene, this.scene.game.canvas.width / 12, (this.scene.game.canvas.height / 6) - 16, "Congratulations!", TextStyle.SUMMARY, { fontSize: "128px" });
     this.text.setOrigin(0.5);
     this.scene.field.add(this.text);
