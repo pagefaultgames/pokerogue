@@ -67,7 +67,7 @@ import { Species } from "#enums/species";
 import { UiTheme } from "#enums/ui-theme";
 import { TimedEventManager } from "#app/timed-event-manager.js";
 
-export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
+export const bypassLogin = true;
 
 const DEBUG_RNG = false;
 
@@ -180,8 +180,10 @@ export default class BattleScene extends SceneBase {
 
   public phaseQueue: Phase[];
   public conditionalQueue: Array<[() => boolean, Phase]>;
-  private phaseQueuePrepend: Phase[];
-  private phaseQueuePrependSpliceIndex: integer;
+  public phaseQueuePrepend: Phase[];
+
+  public phaseQueuePrependSpliceIndex: integer;
+
   private nextCommandPhaseQueue: Phase[];
   private currentPhase: Phase;
   private standbyPhase: Phase;
@@ -2062,6 +2064,29 @@ export default class BattleScene extends SceneBase {
     } else {
       this.pushPhase(movePhase);
     }
+  }
+
+  /**
+   * Tries to add the input phase to right before the MoveEndPhase, useful for resolving moves before the end-of-turn phases start
+   * @param phase {@linkcode Phase} the phase to be added
+   * @returns boolean if a MoveEndPhase was found
+   */
+  prependToMoveEndPhase(phase: Phase): boolean {
+    let flag = false;
+    // want to add the pahse after MoveEnd of U-turn? so it can ge the effects of whatever
+    for (let i = 0; i < this.phaseQueue.length; i++) {
+      if (this.phaseQueue[i].constructor.name === "MoveEndPhase") {
+        this.phaseQueue.splice(i, 0, phase);
+        flag = true;
+        break;
+      }
+    }
+    if (flag === false) {
+      // what to do here if there is none?
+      // it should be the case that during combat there is always a MoveEndPhase when a move is being used, extensive testing/reasoning needed
+      this.unshiftPhase(phase);
+    }
+    return flag;
   }
 
   queueMessage(message: string, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer, defer?: boolean) {
