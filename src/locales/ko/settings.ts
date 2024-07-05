@@ -43,7 +43,7 @@ export const settings: SimpleTranslationEntries = {
   "moveAnimations": "배틀 애니메이션",
   "showStatsOnLevelUp": "레벨업 능력치 표시",
   "candyUpgradeNotification": "사탕 업그레이드 알림",
-  "passivesFirst": "Passives First", // Changed from "Passives Only" to "Passives First", needs new translation
+  "passivesFirst": "패시브우선",
   "candyUpgradeDisplay": "사탕 업그레이드 표시",
   "icon": "아이콘",
   "animation": "애니메이션",
