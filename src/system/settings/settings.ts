@@ -98,6 +98,7 @@ export const SettingKeys = {
   SE_Volume: "SE_VOLUME",
   Music_Preference: "MUSIC_PREFERENCE",
   Show_BGM_Bar: "SHOW_BGM_BAR",
+  Show_Pokemon_Teams: "SHOW_POKEMON_TEAMS"
 };
 
 /**
@@ -644,6 +645,10 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     break;
   case SettingKeys.Show_Moveset_Flyout:
     scene.showMovesetFlyout = Setting[index].options[value].value === "On";
+    break;
+  case SettingKeys.Show_Pokemon_Teams:
+    // Currently not used
+    scene.showTeams = Setting[index].options[value].value === "On";
     break;
   case SettingKeys.Show_Arena_Flyout:
     scene.showArenaFlyout = Setting[index].options[value].value === "On";

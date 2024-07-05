@@ -1873,6 +1873,9 @@ export class TurnInitPhase extends FieldPhase {
       if (pokemon?.isActive()) {
         if (pokemon.isPlayer()) {
           this.scene.currentBattle.addParticipant(pokemon as PlayerPokemon);
+        } else {
+          pokemon.usedInBattle = true;
+          pokemon.getBattleInfo().iconsActive = true
         }
 
         pokemon.resetTurnData();
@@ -1880,6 +1883,32 @@ export class TurnInitPhase extends FieldPhase {
         this.scene.pushPhase(pokemon.isPlayer() ? new CommandPhase(this.scene, i) : new EnemyCommandPhase(this.scene, i - BattlerIndex.ENEMY));
       }
     });
+
+    var Pt = this.scene.getEnemyParty()
+    var Pt2 = Pt.slice()
+    if (Pt2.length > 1) {
+      Pt2[1] = Pt[0]
+      Pt2[0] = Pt[1]
+    }
+    Pt.forEach((pokemon, i) => {
+      if (pokemon.hasTrainer() || true) {
+        console.log(i)
+        if (pokemon.getFieldIndex() == 1 && pokemon.isOnField()) {
+          // Switch this to cycle between
+          //   - hiding the top mon's team bar
+          //   - showing the bottom mon's team bar with its active slots reversed
+          if (false) {
+            pokemon.getBattleInfo().displayParty(Pt)
+            Pt[0].getBattleInfo().switchIconVisibility(false); // Make the top mon's team bar go away
+            Pt[0].getBattleInfo().iconsActive = false; // Prevent the top mon from re-opening its bar
+          } else {
+            pokemon.getBattleInfo().displayParty(Pt2)
+          }
+        } else {
+          pokemon.getBattleInfo().displayParty(Pt)
+        }
+      }
+    })
 
     this.scene.pushPhase(new TurnStartPhase(this.scene));
 
