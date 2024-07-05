@@ -6,7 +6,7 @@ import { Species } from "#enums/species";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { getMovePosition } from "../utils/gameManagerUtils";
-import { CommandPhase, DamagePhase, MoveEffectPhase, MoveEndPhase, TurnEndPhase } from "#app/phases.js";
+import { BerryPhase, CommandPhase, DamagePhase, MoveEffectPhase, MoveEndPhase, TurnEndPhase } from "#app/phases.js";
 import { BattleStat } from "#app/data/battle-stat.js";
 import { Type } from "#app/data/type.js";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
@@ -63,7 +63,7 @@ describe("Abilities - Parental Bond", () => {
       const firstStrikeDamage = enemyStartingHp - enemyPokemon.hp;
       enemyStartingHp = enemyPokemon.hp;
 
-      await game.phaseInterceptor.to(TurnEndPhase, false);
+      await game.phaseInterceptor.to(BerryPhase, false);
 
       const secondStrikeDamage = enemyStartingHp - enemyPokemon.hp;
 
@@ -88,7 +88,7 @@ describe("Abilities - Parental Bond", () => {
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.POWER_UP_PUNCH));
 
-      await game.phaseInterceptor.to(TurnEndPhase, false);
+      await game.phaseInterceptor.to(BerryPhase, false);
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
       expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(2);
@@ -109,7 +109,7 @@ describe("Abilities - Parental Bond", () => {
       expect(enemyPokemon).not.toBe(undefined);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.BABY_DOLL_EYES));
-      await game.phaseInterceptor.to(TurnEndPhase, false);
+      await game.phaseInterceptor.to(BerryPhase, false);
 
       expect(enemyPokemon.summonData.battleStats[BattleStat.ATK]).toBe(-1);
     }, TIMEOUT
@@ -134,7 +134,7 @@ describe("Abilities - Parental Bond", () => {
 
       vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
 
-      await game.phaseInterceptor.to(TurnEndPhase, false);
+      await game.phaseInterceptor.to(BerryPhase, false);
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
     }, TIMEOUT
@@ -201,7 +201,7 @@ describe("Abilities - Parental Bond", () => {
       const enemyStartingHp = enemyPokemon.hp;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_RAGE));
-      await game.phaseInterceptor.to(TurnEndPhase, false);
+      await game.phaseInterceptor.to(BerryPhase, false);
 
       expect(enemyPokemon.hp).toBe(enemyStartingHp - 80);
     }, TIMEOUT
@@ -229,7 +229,7 @@ describe("Abilities - Parental Bond", () => {
 
       const playerDamage = playerStartingHp - leadPokemon.hp;
 
-      await game.phaseInterceptor.to(TurnEndPhase, false);
+      await game.phaseInterceptor.to(BerryPhase, false);
 
       expect(enemyPokemon.hp).toBe(enemyStartingHp - 4*playerDamage);
     }, TIMEOUT
@@ -256,7 +256,7 @@ describe("Abilities - Parental Bond", () => {
       await game.phaseInterceptor.to(CommandPhase);
 
       game.doAttack(getMovePosition(game.scene, 1, Moves.EARTHQUAKE));
-      await game.phaseInterceptor.to(TurnEndPhase, false);
+      await game.phaseInterceptor.to(BerryPhase, false);
 
       playerPokemon.forEach(p => expect(p.turnData.hitCount).toBe(1));
     }, TIMEOUT
@@ -302,7 +302,7 @@ describe("Abilities - Parental Bond", () => {
       expect(leadPokemon.turnData.hitCount).toBe(2);
 
       // This test will time out if the user faints
-      await game.phaseInterceptor.to(TurnEndPhase, false);
+      await game.phaseInterceptor.to(BerryPhase, false);
 
       expect(leadPokemon.hp).toBe(Math.floor(leadPokemon.getMaxHp()/2));
     }, TIMEOUT
@@ -329,7 +329,7 @@ describe("Abilities - Parental Bond", () => {
       expect(enemyPokemon.hp).toBeGreaterThan(0);
       expect(leadPokemon.isOfType(Type.FIRE)).toBe(true);
 
-      await game.phaseInterceptor.to(TurnEndPhase, false);
+      await game.phaseInterceptor.to(BerryPhase, false);
 
       expect(leadPokemon.isOfType(Type.FIRE)).toBe(false);
     }, TIMEOUT
@@ -560,7 +560,7 @@ describe("Abilities - Parental Bond", () => {
       expect(leadPokemon.turnData.hitCount).toBe(2);
       expect(enemyPokemon.status?.effect).toBe(StatusEffect.SLEEP);
 
-      await game.phaseInterceptor.to(TurnEndPhase);
+      await game.phaseInterceptor.to(BerryPhase, false);
 
       expect(enemyPokemon.status?.effect).toBeUndefined();
     }, TIMEOUT
@@ -582,7 +582,7 @@ describe("Abilities - Parental Bond", () => {
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
 
-      await game.phaseInterceptor.to(TurnEndPhase, false);
+      await game.phaseInterceptor.to(BerryPhase, false);
 
       expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(-1);
     }, TIMEOUT
@@ -604,7 +604,7 @@ describe("Abilities - Parental Bond", () => {
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.WATER_GUN));
 
-      await game.phaseInterceptor.to(TurnEndPhase, false);
+      await game.phaseInterceptor.to(BerryPhase, false);
 
       expect(enemyPokemon.summonData.battleStats[BattleStat.SPATK]).toBe(1);
     }, TIMEOUT
@@ -641,7 +641,7 @@ describe("Abilities - Parental Bond", () => {
       await game.phaseInterceptor.to(DamagePhase);
       const enemyFirstHitDamage = enemyStartingHp.map((hp, i) => hp - enemyPokemon[i].hp);
 
-      await game.phaseInterceptor.to(TurnEndPhase, false);
+      await game.phaseInterceptor.to(BerryPhase, false);
 
       enemyPokemon.forEach((p, i) => expect(enemyStartingHp[i] - p.hp).toBe(2*enemyFirstHitDamage[i]));
 
