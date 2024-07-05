@@ -5,15 +5,9 @@ import Pokemon, { MoveResult, HitResult } from "../field/pokemon";
 import { Stat, getStatName } from "./pokemon-stat";
 import { StatusEffect } from "./status-effect";
 import * as Utils from "../utils";
-import {ChargeAttr, MoveFlags, allMoves} from "./move";
+import { ChargeAttr, MoveFlags, allMoves } from "./move";
 import { Type } from "./type";
-import {
-  BlockNonDirectDamageAbAttr,
-  FlinchEffectAbAttr,
-  ReverseDrainAbAttr,
-  applyAbAttrs,
-  ProtectStatAbAttr
-} from "./ability";
+import { BlockNonDirectDamageAbAttr, FlinchEffectAbAttr, ReverseDrainAbAttr, applyAbAttrs, ProtectStatAbAttr } from "./ability";
 import { TerrainType } from "./terrain";
 import { WeatherType } from "./weather";
 import { BattleStat } from "./battle-stat";

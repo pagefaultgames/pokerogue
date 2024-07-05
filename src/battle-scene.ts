@@ -69,7 +69,7 @@ import PokemonSpriteSparkleHandler from "./field/pokemon-sprite-sparkle-handler"
 import CharSprite from "./ui/char-sprite";
 import DamageNumberHandler from "./field/damage-number-handler";
 import PokemonInfoContainer from "./ui/pokemon-info-container";
-import {biomeDepths, getBiomeName} from "./data/biomes";
+import { biomeDepths, getBiomeName } from "./data/biomes";
 import { SceneBase } from "./scene-base";
 import CandyBar from "./ui/candy-bar";
 import { Variant, variantData } from "./data/variant";
@@ -1201,11 +1201,9 @@ export default class BattleScene extends SceneBase {
       }
       if (resetArenaState) {
         this.arena.removeAllTags();
-
         // If last battle was mystery encounter and no battle occurred, skip return phases
         if (lastBattle?.mysteryEncounter?.encounterVariant !== MysteryEncounterVariant.NO_BATTLE) {
           playerField.forEach((_, p) => this.unshiftPhase(new ReturnPhase(this, p)));
-
           for (const pokemon of this.getParty()) {
             // Only trigger form change when Eiscue is in Noice form
             // Hardcoded Eiscue for now in case it is fused with another pokemon

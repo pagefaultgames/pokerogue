@@ -183,7 +183,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new UnavailableModalUiHandler(scene),
       new OutdatedModalUiHandler(scene),
       new GameChallengesUiHandler(scene),
-      new MysteryEncounterUiHandler(scene),
+      new MysteryEncounterUiHandler(scene)
     ];
   }
 
