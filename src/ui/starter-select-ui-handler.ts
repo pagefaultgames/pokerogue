@@ -787,6 +787,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
       this.starterSelectContainer.setVisible(true);
 
+      this.setCursor(0);
       this.setGenMode(false);
       this.setCursor(0);
       this.setGenMode(true);
