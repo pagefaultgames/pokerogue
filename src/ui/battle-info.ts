@@ -549,7 +549,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       if (!party[i].hp) {
         states[i] = "faint"
       } else if (party[i].status) {
-        states[i] = "ball"
+        states[i] = (this.scene as BattleScene).showTeamSprites ? "ball" : "status"
       }
       if (P[i].isOnField()) {
         //console.log(P[i].name + " is in battle; set it as seen")
@@ -568,7 +568,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.teamCount = P.length
     for (var ballindex = 0; ballindex < 6; ballindex++) {
       //console.log(ballindex + ": setting icon " + states[ballindex])
-      if (states[ballindex] == "ball" && P[ballindex].usedInBattle) {
+      if (states[ballindex] == "ball" && P[ballindex].usedInBattle && (this.scene as BattleScene).showTeamSprites) {
         this.teamIcons[ballindex].setTexture(P[ballindex].getIconAtlasKey(true))
           this.teamIcons[ballindex].setFrame(P[ballindex].getIconId(true))
           this.teamIcons[ballindex].setPositionRelative(this.nameText, Spacing * ballindex - 3, 11.75 - 4);
@@ -620,6 +620,41 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         this.teamIconOver[ballindex].clearTint()
         this.teamIconOver[ballindex].setVisible(false)
         this.teamIconsShow[ballindex] = false
+        this.teamIcons[ballindex].clearTint()
+        if (states[ballindex] == "status" && P[ballindex].usedInBattle) {
+          if (P[ballindex].status && P[ballindex].hp) {
+            switch (P[ballindex].status.effect) {
+              case StatusEffect.NONE:
+                // Uncallable; replaced by "ball"
+                break;
+              case StatusEffect.POISON:
+                this.teamIcons[ballindex].setTintFill(0xe40dfc)
+                break;
+              case StatusEffect.TOXIC:
+                this.teamIcons[ballindex].setTintFill(0xfa2590)
+                break;
+              case StatusEffect.PARALYSIS:
+                this.teamIcons[ballindex].setTintFill(0xf7ec1e)
+                break;
+              case StatusEffect.SLEEP:
+                this.teamIcons[ballindex].setTintFill(0x54bfaa)
+                break;
+              case StatusEffect.FREEZE:
+                this.teamIcons[ballindex].setTintFill(0xcbf0f2)
+                break;
+              case StatusEffect.BURN:
+                this.teamIcons[ballindex].setTintFill(0xf51905)
+                break;
+              case StatusEffect.FAINT:
+                // Uncallable; replaced by "faint"
+                break;
+            }
+          } else if (this.teamIcons[ballindex].tint) {
+            this.teamIcons[ballindex].clearTint()
+          }
+        } else if (this.teamIcons[ballindex].tint) {
+          this.teamIcons[ballindex].clearTint()
+        }
       }
     }
   }
