@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const nature: SimpleTranslationEntries = {
   "Hardy": "Destemida",
@@ -10,7 +10,7 @@ export const nature: SimpleTranslationEntries = {
   "Docile": "Dócil",
   "Relaxed": "Relaxada",
   "Impish": "Inquieta",
-  "Lax": "Relaxada",
+  "Lax": "Frouxa",
   "Timid": "Tímida",
   "Hasty": "Apressada",
   "Serious": "Séria",

@@ -1,4 +1,4 @@
-import { ModifierTypeTranslationEntries } from "#app/plugins/i18n";
+import { ModifierTypeTranslationEntries } from "#app/interfaces/locales";
 
 export const modifierType: ModifierTypeTranslationEntries = {
   ModifierType: {
@@ -182,6 +182,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SOOTHE_BELL": { name: "Sanftglocke" },
 
+    "EVIOLITE": { name: "Evolith", description: "Ein mysteriöser Klumpen, der die Vert. u. Spez.-Vert. von Pokémon erhöht, die sich noch entwickeln können." },
+
     "SOUL_DEW": { name: "Seelentau", description: "Erhöht den Einfluss des Wesens eines Pokemon auf seine Werte um 10% (additiv)." },
 
     "NUGGET": { name: "Nugget" },
@@ -240,6 +242,12 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_FUSED_CHANCE": { "name": "Fusionsmarke", "description": "Fügt eine 1%ige Chance hinzu, dass ein wildes Pokémon eine Fusion ist." },
 
   },
+  SpeciesBoosterItem: {
+    "LIGHT_BALL": { name: "Kugelblitz", description: "Ein Item, das von Pikachu getragen werden kann. Es erhöht den Angriff und den Spezial-Angriff." },
+    "THICK_CLUB": { name: "Kampfknochen", description: "Ein Item, das von Tragosso oder Knogga getragen werden kann. Dieser harte Knochen erhöht den Angriff." },
+    "METAL_POWDER": { name: "Metallstaub", description: "Ein Item, das von Ditto getragen werden kann. Fein und doch hart, erhöht dieses sonderbare Pulver die Verteidigung." },
+    "QUICK_POWDER": { name: "Flottstaub", description: "Ein Item, das Ditto zum Tragen gegeben werden kann. Fein und doch hart, erhöht dieses sonderbare Pulver die Initiative." }
+  },
   TempBattleStatBoosterItem: {
     "x_attack": "X-Angriff",
     "x_defense": "X-Verteidigung",
@@ -249,6 +257,20 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "x_accuracy": "X-Treffer",
     "dire_hit": "X-Volltreffer",
   },
+
+  TempBattleStatBoosterStatName: {
+    "ATK": "Angriff",
+    "DEF": "Verteidigung",
+    "SPATK": "Sp. Ang",
+    "SPDEF": "Sp. Vert",
+    "SPD": "Initiative",
+    "ACC": "Genauigkeit",
+    "CRIT": "Volltrefferquote",
+    "EVA": "Fluchtwert",
+    "DEFAULT": "???",
+  },
+
+
   AttackTypeBoosterItem: {
     "silk_scarf": "Seidenschal",
     "black_belt": "Schwarzgurt",
