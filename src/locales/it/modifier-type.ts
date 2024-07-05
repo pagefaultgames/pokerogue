@@ -187,7 +187,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "NUGGET": { name: "Pepita" },
     "BIG_NUGGET": { name: "Granpepita" },
-    "RELIC_GOLD": { name: "	Dobloantico" },
+    "RELIC_GOLD": { name: "Dobloantico" },
 
     "AMULET_COIN": { name: "Monetamuleto", description: "Aumenta le ricompense in denaro del 20%." },
     "GOLDEN_PUNCH": { name: "Pugno dorato", description: "Fornisce il 50% dei danni inflitti sottoforma di denaro." },
