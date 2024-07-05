@@ -1176,6 +1176,8 @@ export class SacrificialAttrOnHit extends MoveEffectAttr {
 
     user.damageAndUpdate(user.hp, HitResult.OTHER, false, true, true);
     user.turnData.damageTaken += user.hp;
+    const attackResult = { move: move.id, result: HitResult.OTHER as DamageResult, damage: user.hp, critical: false, sourceId: user.id };
+    user.turnData.attacksReceived.unshift(attackResult);
 
     return true;
   }
@@ -1216,7 +1218,10 @@ export class HalfSacrificialAttr extends MoveEffectAttr {
     // Check to see if the Pokemon has an ability that blocks non-direct damage
     applyAbAttrs(BlockNonDirectDamageAbAttr, user, cancelled);
     if (!cancelled.value) {
-      user.damageAndUpdate(Math.ceil(user.getMaxHp()/2), HitResult.OTHER, false, true, true);
+      const damage = Math.ceil(user.getMaxHp()/2);
+      user.damageAndUpdate(damage, HitResult.OTHER, false, true, true);
+      const attackResult = { move: move.id, result: HitResult.OTHER as DamageResult, damage: damage, critical: false, sourceId: user.id };
+      user.turnData.attacksReceived.unshift(attackResult);
       user.scene.queueMessage(getPokemonMessage(user, " cut its own HP to power up its move!")); // Queue recoil message
     }
     return true;
