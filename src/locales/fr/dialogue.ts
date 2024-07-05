@@ -7,14 +7,14 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "Hé ! Combat ?",
       2: "Toi aussi tu débutes ?",
       3: "Hé, j’me souviens pas de ta tête. Combat !",
-	  4: "J’ai perdu, alors j’essaye de capturer d’autres Pokémon.\nHé, t’as l'air faible toi ! Allez, combat !",
+	  4: "J’ai perdu, alors j’essaye de capturer d’autres Pokémon.\nHé, t’as l’air faible toi ! Allez, combat !",
       5: "On s’connait ? J’ai comme un doute. Dans tous les cas, sympa de te rencontrer !",
       6: "Allez, c’est parti !",
       7: "Attention, me voilà !\nTu vas voir comment j’suis fort !",
 	  8: "Coucou… Tu veux voir mes bô Pokémon ?",
 	  9: "Trève de mondanités. Ramène-toi quand tu le sens !",
 	  10: "Baisse pas ta garde si tu veux pas pleurer d’avoir perdu face à un gamin.",
-	  11: "J'ai tout donné pour élever mes Pokémon. Attention à toi si tu leur fait du mal !",
+	  11: "J’ai tout donné pour élever mes Pokémon. Attention à toi si tu leur fait du mal !",
 	  12: "Incroyable que t’y sois parvenu ! Mais la suite va pas être une partie de plaisir.",
 	  13: "Les combats sont éternels ! Bienvenue dans un monde sans fin !"
     },
@@ -28,146 +28,146 @@ export const PGMdialogue: DialogueTranslationEntries = {
 	  7: "Waah ! T’es trop incroyable ! J’suis bouche bée !",
       8: "Pourquoi… Comment… Pourtant on est les plus forts, mes Pokémon et moi…",
 	  9: "J’perdrai pas la prochaine fois ! Remettons ça un jour !",
-	  10: "Weeeesh ! Tu vois que j’suis qu’un gamin ? C'est pas juste de me bully comme ça !",
+	  10: "Weeeesh ! Tu vois que j’suis qu’un gamin ? C’est pas juste de me bully comme ça !",
 	  11: "Tes Pokémon sont trop incroyables !\n… P’tit échange ?",
 	  12: "Je me suis fait un peu aider plus tôt, mais de quel taf je parlais ?",
-	  13: "Ahaha ! Et voilà, ça y est !\nT'es déjà comme chez toi dans ce monde !"
+	  13: "Ahaha ! Et voilà, ça y est !\nT’es déjà comme chez toi dans ce monde !"
     }
   },
   "lass": {
     "encounter": {
-      1: "Affrontons-nous, d'accord ?",
-      2: "Tu as l'air d'un nouveau dresseur. Battons nous !",
-      3: "Je ne te reconnais pas. Que dirais-tu de te battre ?",
-      4: "Amusons-nous pendant ce combat Pokémon !",
-      5: "Je vais t'apprendre à te battre avec des Pokémon !",
-      6: "Un combat doit être pris au sérieux. Es-tu prêt à te battre ?",
-      7: "Tu ne seras pas jeune éternellement. Tu n'auras qu'une chance pendant un combat. Bientôt, tu ne seras plus qu'un souvenir.",
-      8: "Tu ferais mieux d'y aller doucement avec moi. Mais je vais me battre sérieusement !",
-      9: "Je m'ennuie à l'école. Je n'ai rien à faire. *Baille*. Je me bats juste pour passer le temps."
+      1: "Affrontons-nous, d’accord ?",
+      2: "T’as l’air d’un nouveau Dresseur. Battons nous !",
+      3: "Je te connais pas. Ça te dis de te battre ?",
+      4: "Prenons du bon temps avec ce combat Pokémon !",
+      5: "Je vais t’apprendre à te battre avec tes Pokémon !",
+      6: "Un combat doit être pris au sérieux. T’es prêt à te battre ?",
+      7: "Tu seras pas jeune éternellement. T’as qu’une chance pendant un combat. Bientôt, tu seras plus qu’un souvenir.",
+      8: "Tu ferais mieux d’y aller doucement avec moi. Mais je vais me battre sérieusement !",
+      9: "Je m’ennuie à l’école. Y’a rien à y faire. *Baille*\nJe me bats juste pour passer le temps."
     },
     "victory": {
-      1: "Wow, c'était impressionnant. J'ai beaucoup à apprendre.",
+      1: "Wah, c’était impressionnant ! J’ai encore beaucoup à apprendre.",
       2: "Je ne pensais pas que je perdrais comme ça…",
-      3: "J'espère que j'aurai ma revanche un jour.",
-      4: "C'était super amusant ! Ce combat m'a épuisé…",
-      5: "Tu m'as appris une belle leçon ! Tu es vraiment incroyable !",
-      6: "Vraiment ? J'ai perdu… C'est des choses qui arrivent, ça me déprime mais tu es vraiment très cool.",
-      7: "Je n'ai pas besoin de souvenirs comme ça. *Suppression de la mémoire…*",
-      8: "Hé ! Je t'avais dit d'y aller doucement avec moi ! Mais tu es vraiment trop cool quand tu te bats sérieusement.",
-      9: "J'en ai marre des combats Pokémon… Il doit y avoir de nouvelles choses à faire…"
+      3: "J’espère que j’aurai ma revanche un jour.",
+      4: "C’était super amusant ! Mais ce combat m’a épuisée…",
+      5: "Tu m’as appris une belle leçon ! T’es vraiment incroyable !",
+      6: "Vraiment ? J’ai perdu… ? C’est des choses qui arrivent, ça me déprime mais tu es vraiment très cool.",
+      7: "J’ai pas besoin de ce genre de souvenirs.\n*Suppression de mémoire en cours…*",
+      8: "Hé ! Je t’avais dit d’y aller doucement avec moi ! Mais t’es vraiment si cool quand tu te bats sérieusement…",
+      9: "J’en ai marre des combats Pokémon…\nJe vais chercher d’autres trucs à faire…"
     }
   },
   "breeder": {
     "encounter": {
-      1: "Obedient Pokémon, selfish Pokémon… Pokémon have unique characteristics.",
-      2: "Even though my upbringing and behavior are poor, I've raised my Pokémon well.",
-      3: "Hmm, do you discipline your Pokémon? Pampering them too much is no good.",
+      1: "Qu’ils soient obéissants ou égoïstes… Les Pokémon ont des caractéristiques uniques.",
+      2: "Même si mes choix et ma personnalité ne sont pas fous, je pense quand même bien avoir élevé mes Pokémon.",
+      3: "Hum, t’es pas trop laxiste avec tes Pokémon ?\nTrop les chouchouter n’est pas bon.",
     },
     "victory": {
-      1: "It is important to nurture and train each Pokémon's characteristics.",
-      2: "Unlike my diabolical self, these are some good Pokémon.",
-      3: "Too much praise can spoil both Pokémon and people.",
+      1: "Il est primordial de nourir et développer toutes les caractéristiques de chaque Pokémon.",
+      2: "Contrairement à moi, ces Pokémon ont un bon fond.",
+      3: "Trop d’éloges peut ruiner les Pokémon et les gens.",
     },
     "defeat": {
-      1: "You should not get angry at your Pokémon, even if you lose a battle.",
-      2: "Right? Pretty good Pokémon, huh? I'm suited to raising things.",
-      3: "No matter how much you love your Pokémon, you still have to discipline them when they misbehave."
+      1: "Tu ne devrais pas t’énerver sur tes Pokémon, même après une défaite.",
+      2: "Alors ? Pas mal mes Pokémon, hein ? Je suis fait pour ça.",
+      3: "Peut importe à quel point t’aimes tes Pokémon, il faut toujours de la discipline s’ils se comportent mal."
     }
   },
   "breeder_female": {
     "encounter": {
-      1: "Pokémon never betray you. They return all the love you give them.",
-      2: "Shall I give you a tip for training good Pokémon?",
-      3: "I have raised these very special Pokémon using a special method."
+      1: "Les Pokémon ne trahissent jamais. Ils te rendront toujours l’amour que tu leur donne.",
+      2: "Puis-je te donner une astuce pour mieux élever tes Pokémon ?",
+      3: "J’ai élevé mes Pokémon en utilisant une méthode très spéciale."
     },
     "victory": {
-      1: "Ugh… It wasn't supposed to be like this. Did I administer the wrong blend?",
-      2: "How could that happen to my Pokémon… What are you feeding your Pokémon?",
-      3: "If I lose, that tells you I was just killing time. It doesn't damage my ego at all."
+      1: "Arg… C’était pas supposé se passer comme ça. Leur ai-je administré la mauvaise préparation ?",
+      2: "Comment ça a pu arriver…\nAvec quoi nourris-tu tes Pokémon ?",
+      3: "Si je perds, c’est juste pour te dire que je tuais le temps. Mon ego n’est absolument pas touché…"
     },
     "defeat": {
-      1: "This proves my Pokémon have accepted my love.",
-      2: "The real trick behind training good Pokémon is catching good Pokémon.",
-      3: "Pokémon will be strong or weak depending on how you raise them."
+      1: "C’est la preuve que mes Pokémon reconnaissent tout mon amour.",
+      2: "Le seul secret derrière des Pokémon bien entrainés, c’est surtout d’en capturer des bons.",
+      3: "La force des Pokémon dépend de ta capacité à savoir les élever correctement."
     }
   },
   "fisherman": {
     "encounter": {
-      1: "Aack! You made me lose a bite!\nWhat are you going to do about it?",
-      2: "Go away! You're scaring the Pokémon!",
-      3: "Let's see if you can reel in a victory!",
+      1: "Aaah non ! J’avais une touche !\nTu comptes faire quoi pour arranger ça ?",
+      2: "Bouge de là ! Tu fais peur aux Pokémon !",
+      3: "Voyons si t'arrives à ferrer une victoire !",
     },
     "victory": {
-      1: "Just forget about it.",
-      2: "Next time, I'll be reelin' in the triumph!",
-      3: "Guess I underestimated the currents this time.",
+      1: "Vas-y là, oublie.",
+      2: "La prochaine fois, je vais me repêcher !",
+      3: "Je présume que j’ai sous-estimé les courants…",
     },
   },
   "fisherman_female": {
     "encounter": {
-      1: "Woah! I've hooked a big one!",
-      2: "Line's in, ready to reel in success!",
-      3: "Ready to make waves!"
+      1: "Oh la belle prise !",
+      2: "Ma ligne est en place, prête à ferrer le succès !",
+      3: "Prête à faire des vagues !"
     },
     "victory": {
-      1: "I'll be back with a stronger hook.",
-      2: "I'll reel in victory next time.",
-      3: "I'm just sharpening my hooks for the comeback!"
+      1: "Je suppose que je vais avoir besoin d’un plus gros hameçon.",
+      2: "La ligne s’est brisée, j’ai pas pu la ferrer…",
+      3: "Attends que j’aiguise mes hameçons pour la revanche !"
     },
   },
   "swimmer": {
     "encounter": {
-      1: "C'est l'heure de plonger dans le combat !",
-      2: "Je vais surfer sur les vagues de la victoire !",
-      3: "Je vais t'éclabousser de mon talent !",
+      1: "C’est l’heure de plonger dans le vif !",
+      2: "C’est le moment de surfer sur les vagues de la victoire !",
+      3: "Je vais t’éclabousser de mon talent !",
     },
     "victory": {
-      1: "Tu m'as complètement séché",
-      2: "Il semblerait que j'ai surfé sur les vagues de la défaite...",
+      1: "Tu m’as complètement séché",
+      2: "Il semblerait que ce soit celles de la défaite…",
       3: "Retour sur la terre ferme je suppose",
     },
   },
   "backpacker": {
     "encounter": {
-      1: "Pack up, game on!",
-      2: "Let's see if you can keep pace!",
-      3: "Gear up, challenger!",
-      4: "I've spent 20 years trying to find myself… But where am I?"
+      1: "Fais ton sac, on y va !",
+      2: "Voyons si t’arrives à garder le rythme !",
+      3: "Accélère le pas, camarade !",
+      4: "J’ai passé 20 ans à la recherche de moi-même…\nMais où suis-je ?"
     },
     "victory": {
-      1: "Tripped up this time!",
-      2: "Oh, I think I'm lost.",
-      3: "Dead end!",
-      4: "Wait up a second! Hey! Don't you know who I am?"
+      1: "J’ai trébuché !",
+      2: "Ah, je crois que je me suis paumé.",
+      3: "Ah, une impasse !",
+      4: "Hé ! Attends une seconde…\nTu saurais pas qui je suis ?"
     },
   },
   "ace_trainer": {
     "encounter": {
-      1: "You seem quite confident.",
-      2: "Your Pokémon… Show them to me…",
-      3: "Because I'm an Ace Trainer, people think I'm strong.",
-      4: "Are you aware of what it takes to be an Ace Trainer?"
+      1: "T’as l’air plutôt confiant.",
+      2: "Tes Pokémon… Montre-les-moi…",
+      3: "Les gens pensent que je suis fort par que je suis un Topdresseur.",
+      4: "T’es au courant de ce que ça signifie d’être un Topdresseur ?"
     },
     "victory": {
-      1: "Yes… You have good Pokémon…",
-      2: "What?! But I'm a battling genius!",
-      3: "Of course, you are the main character!",
-      4: "OK! OK! You could be an Ace Trainer!"
+      1: "Très bien… T’as de bons Pokémon…",
+      2: "Quoi ?! Mais c'est moi le génie des combats !",
+      3: "Évidemment que t’es le personnage principal !",
+      4: "OK ! OK ! Tu pourrais être un Topdresseur !"
     },
     "defeat": {
-      1: "I am devoting my body and soul to Pokémon battles!",
-      2: "All within my expectations… Nothing to be surprised about…",
-      3: "I thought I'd grow up to be a frail person who looked like they would break if you squeezed them too hard.",
-      4: "Of course I'm strong and don't lose. It's important that I win gracefully."
+      1: "Je me dévoue corps et âme aux combats Pokémon !",
+      2: "Comme prévu… Vraiment aucune surprise…",
+      3: "Et moi qui pensais qu’en grandissant, j’allais rester frêle et fragile, à me briser à la moindre étreinte.",
+      4: "Évidemment que je suis fort et encore moins un perdant. C’est important de gagner avec grâce."
     }
   },
   "parasol_lady": {
     "encounter": {
-      1: "Time to grace the battlefield with elegance and poise!",
+      1: "Honorons ce terrain de combat avec élégance et équilibre !",
     },
     "victory": {
-      2: "My elegance remains unbroken!",
+      2: "Mon élégance demeure inébranlable !",
     }
   },
   "twins": {
@@ -439,7 +439,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "QUOI ? IMPOSSIBLE !"
     },
     "defeat": {
-      1: "Retiens bien. Ton incapacité à évaluer ta propre force est\nla démonstration claire que tu n'es encore qu’un gamin."
+      1: "Retiens bien. Ton incapacité à évaluer ta propre force est\nla démonstration claire que tu n’es encore qu’un gamin."
     }
   },
   "rocket_boss_giovanni_2": {
@@ -447,7 +447,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "Mes anciens collaborateurs m’attendent.\nComptes-tu m’en empêcher ?"
     },
     "victory": {
-      1: "Comment c'est possible… ? Le grand dessein de la Team Rocket n’est plus qu’une illusion…"
+      1: "Comment c’est possible… ? Le grand dessein de la Team Rocket n’est plus qu’une illusion…"
     },
     "defeat": {
       1: "La Team Rocket renaitra, et je dominerai le monde !"
@@ -466,13 +466,13 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "magma_boss_maxie_2": {
     "encounter": {
-      1: "T’es le dernier rempart entravant mes objectifs.\nPrépare-toi à mon ultime riposte ! Hahahaha !"
+      1: "T’es le dernier rempart entravant mes objectifs. Prépare-toi à mon ultime riposte ! Hahahaha !"
     },
     "victory": {
-      1: "Ce… Ce n'est pas… Gnn…"
+      1: "Ce… Ce n’est pas… Gnn…"
     },
     "defeat": {
-      1: "L'heure est venue…\nJe vais transformer cette planète en paradis pour l’humanité."
+      1: "L’heure est venue…\nJe vais transformer cette planète en paradis pour l’humanité."
     }
   },
   "aqua_boss_archie_1": {
@@ -554,7 +554,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "flare_boss_lysandre_2": {
     "encounter": {
-      1: "Ton future ou le mien… Voyons lequel mérite plus."
+      1: "Ton futur ou le mien…\nVoyons lequel mérite plus d’aboutir."
     },
     "victory": {
       1: "Ohhhh… !"
@@ -2289,13 +2289,13 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "alder": {
     "encounter": {
-      1: "Prépare-toi pour un combat contre le meilleur Dresseur d'Unys !",
+      1: "Prépare-toi pour un combat contre le meilleur Dresseur d’Unys !",
     },
     "victory": {
       1: "Bien joué ! Tu as sans aucun doute un talent inégalé.",
     },
     "defeat": {
-      1: `Une brise fraîche traverse mon cœur…
+      1: `Une brise fraiche traverse mon cœur…
           $Quel effort extraordinaire !`,
     }
   },
@@ -2305,25 +2305,25 @@ export const PGMdialogue: DialogueTranslationEntries = {
           $Je ne perdrai pas.`,
     },
     "victory": {
-      1: `Je n'y crois pas…
+      1: `Je n’y crois pas…
           $Quel combat amusant et palpitant !`
     },
     "defeat": {
       1: `Eh beh, quel combat !
-          $Il est temps pour toi de t'entraîner encore plus dur.`,
+          $Il est temps pour toi de t’entrainer encore plus dur.`,
     }
   },
   "rival": {
     "encounter": {
-	  1: `@c{smile}Ah, je te cherchais ! Je savais que t’étais pressée de partir, mais je m’attendais quand même à un au revoir…
+	  1: `@c{smile}Ah, je te cherchais ! Je savais que t’étais pressé de partir, mais je m’attendais quand même à un au revoir…
 					$@c{smile_eclosed}T’as finalement décidé de réaliser ton rêve ?\nJ’ai peine à y croire.
-					$@c{serious_smile_fists}Vu que t’es là, ça te dis un petit combat ?\nJe voudrais quand même m’assurer que t'es prête.
+					$@c{serious_smile_fists}Vu que t’es là, ça te dis un petit combat ?\nJe voudrais quand même m’assurer que t’es prêt.
 					$@c{serious_mopen_fists}Surtout ne te retiens pas et donne-moi tout ce que t’as !`
     },
     "victory": {
-	  1: `@c{shock}Wah… Tu m’as vraiment lavé.\nT’es vraiment une débutante ?
-				   $@c{smile}T'as peut-être eu de la chance, mais…\nPeut-être que t’arriveras jusqu’au bout du chemin.
-				   $D'ailleurs, le prof m’a demandé de te filer ces objets.\nIls ont l’air sympas.
+	  1: `@c{shock}Wah… Tu m’as vraiment lavé.\nT’es vraiment un débutant ?
+				   $@c{smile}T’as peut-être eu de la chance, mais…\nPeut-être que t’arriveras jusqu’au bout du chemin.
+				   $D’ailleurs, le prof m’a demandé de te filer ces objets.\nIls ont l’air sympas.
                    $@c{serious_smile_fists}Bonne chance à toi !`
     },
   },
@@ -2331,27 +2331,27 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "encounter": {
       1: `@c{smile_wave}Ah, je te cherchais ! Je t’ai cherché partout !\n@c{angry_mopen}On oublie de dire au revoir à sa meilleure amie ?
                     $@c{smile_ehalf}T’as décidé de réaliser ton rêve, hein ?\nCe jour est donc vraiment arrivé…
-					$@c{smile}Je veux bien te pardonner de m’avoir oubliée, à une conditon. @c{smile_wave_wink}Que tu m’affronte !
+					$@c{smile}Je veux bien te pardonner de m’avoir oubliée,\nà une conditon. @c{smile_wave_wink}Que tu m’affronte !
 					$@c{angry_mopen}Donne tout ! Ce serait dommage que ton aventure finisse avant d’avoir commencé, hein ?`
     },
     "victory": {
-      1: `@c{shock}Tu viens de commencer et t’es déjà si fort ?!@d{96}\n@c{angry}T'as triché non ? Avoue !
-                    $@c{smile_wave_wink}J'déconne !@d{64} @c{smile_eclosed}J'ai perdu dans les règles… J’ai le sentiment que tu vas très bien t’en sortir.
+      1: `@c{shock}Tu viens de commencer et t’es déjà si fort ?!@d{96}\n@c{angry}T’as triché non ? Avoue !
+                    $@c{smile_wave_wink}J’déconne !@d{64} @c{smile_eclosed}J’ai perdu dans les règles…\nJ’ai le sentiment que tu vas très bien t’en sortir.
 					$@c{smile}D’ailleurs, le prof veut que je te donne ces quelques objets. Ils te seront utiles, pour sûr !
 					$@c{smile_wave}Fais de ton mieux, comme toujours !\nJe crois fort en toi !`
     },
   },
   "rival_2": {
     "encounter": {
-	  1: `@c{smile}Hé, toi aussi t’es là ?\n@c{smile_eclosed}Toujours invaincue, hein… ?
-				$@c{serious_mopen_fists}Je sais que j’ai l’air de t’avoir suivie ici, mais c'est pas complètement vrai.
-				$@c{serious_smile_fists}Pour être honnête, ça me démangeait d’avoir une revanche depuis que tu m'as battu.
+	  1: `@c{smile}Hé, toi aussi t’es là ?\n@c{smile_eclosed}Toujours invaincu, hein… ?
+				$@c{serious_mopen_fists}Je sais que j’ai l’air de t’avoir suivi ici, mais c’est pas complètement vrai.
+				$@c{serious_smile_fists}Pour être honnête, ça me démangeait d’avoir une revanche depuis que tu m’as battu.
 				$Je me suis beaucoup entrainé, alors sois sure que je vais pas retenir mes coups cette fois.
                 $@c{serious_mopen_fists}Et comme la dernière fois, ne te retiens pas !\nC’est parti !`
     },
     "victory": {
 	  1: `@c{neutral_eclosed}Oh. Je crois que j’ai trop pris la confiance.
-				$@c{smile}Pas grave, c'est OK. Je me doutais que ça arriverait.\n@c{serious_mopen_fists}Je vais juste devoir encore plus m’entrainer !\n
+				$@c{smile}Pas grave, c’est OK. Je me doutais que ça arriverait.\n@c{serious_mopen_fists}Je vais juste devoir encore plus m’entrainer !\n
                 $@c{smile}Ah, et pas que t’aies réellement besoin d’aide, mais j’ai ça en trop sur moi qui pourrait t’intéresser.\n
 				$@c{serious_smile_fists}Mais n’espère plus en avoir d’autres !\nJe peux pas passer mon temps à aider mon adversaire.
                 $@c{smile}Bref, prends soin de toi !`
@@ -2360,10 +2360,10 @@ export const PGMdialogue: DialogueTranslationEntries = {
   "rival_2_female": {
     "encounter": {
 	  1: `@c{smile_wave}Hé, sympa de te croiser ici. T’as toujours l’air invaincu. @c{angry_mopen}Eh… Pas mal !
-				$@c{angry_mopen}Je sais à quoi tu penses et non, je t’espionne pas. @c{smile_eclosed}C’est juste que j’étais aussi dans le coin.
+				$@c{angry_mopen}Je sais à quoi tu penses et non, je t’espionne pas.\n@c{smile_eclosed}C’est juste que j’étais aussi dans le coin.
 				$@c{smile_ehalf}Heureuse pour toi, mais je veux juste te rappeler que c’est pas grave de perdre parfois.
 				$@c{smile}On apprend de nos erreurs, souvent plus que si on ne connaissait que le succès.
-				$@c{angry_mopen}Dans tous les cas je me suis bien entrainée pour cette revanche, t'as intérêt à tout donner !`
+				$@c{angry_mopen}Dans tous les cas je me suis bien entrainée pour cette revanche, t’as intérêt à tout donner !`
     },
     "victory": {
 	  1: `@c{neutral}Je… J’étais pas encore supposée perdre…
@@ -2378,11 +2378,11 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "rival_3": {
     "encounter": {
-	  1: `@c{smile}Hé, mais qui voilà ! Ça fait un bail.\n@c{neutral}T’es… toujours invaincue ? Incroyable.
+	  1: `@c{smile}Hé, mais qui voilà ! Ça fait un bail.\n@c{neutral}T’es… toujours invaincu ? Incroyable.
 				$@c{neutral_eclosed}Tout est devenu un peu… étrange.\nC’est plus pareil sans toi au village.
 				$@c{serious}Je sais que c’est égoïste, mais j’ai besoin d’expier ça.\n@c{neutral_eclosed}Je crois que tout ça te dépasse.
 				$@c{serious}Ne jamais perdre, c’est juste irréaliste.\nGrandir, c’est parfois aussi savoir perdre.
-				$@c{neutral_eclosed}T’as un beau parcours, mais il y a encore tellement à venir et ça va pas s’arranger. @c{neutral}T’es prête pour ça ?
+				$@c{neutral_eclosed}T’as un beau parcours, mais il y a encore tellement à venir et ça va pas s’arranger. @c{neutral}T’es prêt pour ça ?
                 $@c{serious_mopen_fists}Si tu l’es, alors prouve-le.`
     },
     "victory": {
@@ -2411,9 +2411,9 @@ export const PGMdialogue: DialogueTranslationEntries = {
 				$@c{serious_mhalf_fists}J’ai appris à maximiser tout mon potentiel en m’entrainant d’arrachepied.
 				$@c{smile}C’est fou tout le temps que tu peux te dégager si tu dors pas en sacrifiant ta vie sociale.
 				$@c{serious_mopen_fists}Plus rien n’a d’importance désormais, pas tant que j’aurai pas gagné.
-				$@c{neutral_eclosed}J'ai atteint un stade où je ne peux plus perdre.\n@c{smile_eclosed}Je présume que ta philosophie était pas si fausse finalement.
-				$@c{angry_mhalf}La défaite, c'est pour les faibles, et je ne suis plus un faible.
-                $@c{serious_mopen_fists}Tiens-toi prête.`
+				$@c{neutral_eclosed}J’ai atteint un stade où je ne peux plus perdre.\n@c{smile_eclosed}Je présume que ta philosophie était pas si fausse finalement.
+				$@c{angry_mhalf}La défaite, c’est pour les faibles, et je ne suis plus un faible.
+                $@c{serious_mopen_fists}Tiens-toi prêt.`
     },
     "victory": {
       1: "@c{neutral}Que…@d{64} Qui es-tu ?"
@@ -2423,7 +2423,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "encounter": {
 	  1: `@c{neutral}C’est moi ! Tu m’as pas encore oubliée… n’est-ce pas ?
 				$@c{smile}Tu devrais être fier d’être arrivé aussi loin. GG !\nMais c’est certainement pas la fin de ton aventure.
-				$@c{smile_eclosed}T’as éveillé en moi quelque chose que j’ignorais.\nTout mon temps passe dans l'entrainement.
+				$@c{smile_eclosed}T’as éveillé en moi quelque chose que j’ignorais.\nTout mon temps passe dans l’entrainement.
 				$@c{smile_ehalf}Je dors et je mange à peine, je m’entraine juste tous les jours, et deviens de plus en plus forte.
                 $@c{neutral}En vrai, Je… J’ai de la peine à me reconnaitre.
 				$Mais maintenant, je suis au top de mes capacités.\nJe doute que tu sois de nouveau capable de me battre.
@@ -2467,16 +2467,16 @@ export const PGMdialogue: DialogueTranslationEntries = {
 				$@c{neutral_eclosed}J’ignore si je serai capable de l’accomplir, mais je ferai tout ce qui est en mon pouvoir.
 				$@c{neutral}Cet endroit est terrifiant… Et pourtant il m’a l’air familier, comme si j’y avais déjà mis les pieds.
                 $@c{serious_mhalf_fists}Tu ressens la même chose, pas vrai ?
-				$@c{serious}…et c’est comme si quelque chose ici me parlait.
+				$@c{serious}… et c’est comme si quelque chose ici me parlait.
                 $Comme si c’était tout ce que ce monde avait toujours connu.
 				$Ces précieux moments ensemble semblent si proches ne sont rien de plus qu’un lointain souvenir.
 				$@c{neutral_eclosed}D’ailleurs, qui peut dire aujourd’hui qu’ils ont pu être réels ?
-				$@c{serious_mopen_fists}Il faut que tu persévères. Si tu t’arrêtes, ça n'aura jamais de fin et t’es la seule à en être capable.
+				$@c{serious_mopen_fists}Il faut que tu persévères. Si tu t’arrêtes, ça n’aura jamais de fin et t’es le seul à en être capable.
 				$@c{serious_smile_fists}Difficile de comprendre le sens de tout ça, je sais juste que c’est la réalité.
 				$@c{serious_mopen_fists}Si tu ne parviens pas à me battre ici et maintenant, tu n’as aucune chance.`
     },
     "victory": {
-      1: `@c{smile_eclosed}J'ai fait ce que je j'avais à faire.
+      1: `@c{smile_eclosed}J’ai fait ce que j’avais à faire.
 				$Promets-moi juste une chose.\n@c{smile}Après avoir réparé ce monde… Rentre à la maison.`
     },
   },
@@ -2493,12 +2493,12 @@ export const PGMdialogue: DialogueTranslationEntries = {
                 $Comme… si c’était tout ce que ce monde avait toujours connu.
 				$@c{smile_eclosed}J’ai le sentiment que nos précieux moments ensemble sont devenus si flous.
 				$@c{smile_ehalf}Ont-ils au moins été réels ? Tout semble si loin maintenant…
-                $@c{angry_mopen}Il faut que tu persévères. Si tu t’arrêtes, ça n'aura jamais de fin et t’es le seul à en être capable.
+                $@c{angry_mopen}Il faut que tu persévères. Si tu t’arrêtes, ça n’aura jamais de fin et t’es le seul à en être capable.
                 $@c{smile_ehalf}Je… j’ignore le sens de tout ça… Mais je sais que c’est la réalité.
                 $@c{neutral}Si tu ne parviens pas à me battre ici et maintenant, tu n’as aucune chance.`
     },
     "victory": {
-      1: `@c{smile_ehalf}Je… Je crois que j'ai rempli ma mission…
+      1: `@c{smile_ehalf}Je… Je crois que j’ai rempli ma mission…
                 $@c{smile_eclosed}Promets-moi… Après avoir réparé ce monde… Reviens à la maison sain et sauf.
                 $@c{smile_ehalf}… Merci.`
 
@@ -2514,14 +2514,14 @@ export const PGFdialogue: DialogueTranslationEntries = {
       1: "Hé ! Combat ?",
       2: "Toi aussi tu débutes ?",
       3: "Hé, j’me souviens pas de ta tête. Combat !",
-	  4: "J’ai perdu, alors j’essaye de capturer d’autres Pokémon.\nHé, t’as l'air faible toi ! Allez, combat !",
+	  4: "J’ai perdu, alors j’essaye de capturer d’autres Pokémon.\nHé, t’as l’air faible toi ! Allez, combat !",
       5: "On s’connait ? J’ai comme un doute. Dans tous les cas, sympa de te rencontrer !",
       6: "Allez, c’est parti !",
       7: "Attention, me voilà !\nTu vas voir comment j’suis fort !",
 	  8: "Coucou… Tu veux voir mes bô Pokémon ?",
 	  9: "Trève de mondanités. Ramène-toi quand tu le sens !",
 	  10: "Baisse pas ta garde si tu veux pas pleurer d’avoir perdu face à un gamin.",
-	  11: "J'ai tout donné pour élever mes Pokémon. Attention à toi si tu leur fait du mal !",
+	  11: "J’ai tout donné pour élever mes Pokémon. Attention à toi si tu leur fait du mal !",
 	  12: "Incroyable que t’y sois parvenue ! Mais la suite va pas être une partie de plaisir.",
 	  13: "Les combats sont éternels ! Bienvenue dans un monde sans fin !"
     },
@@ -2535,146 +2535,146 @@ export const PGFdialogue: DialogueTranslationEntries = {
 	  7: "Waah ! T’es trop incroyable ! J’suis bouche bée !",
       8: "Pourquoi… Comment… Pourtant on est les plus forts, mes Pokémon et moi…",
 	  9: "J’perdrai pas la prochaine fois ! Remettons ça un jour !",
-	  10: "Weeeesh ! Tu vois que j’suis qu’un gamin ? C'est pas juste de me bully comme ça !",
+	  10: "Weeeesh ! Tu vois que j’suis qu’un gamin ? C’est pas juste de me bully comme ça !",
 	  11: "Tes Pokémon sont trop incroyables !\n… P’tit échange ?",
 	  12: "Je me suis fait un peu aider plus tôt, mais de quel taf je parlais ?",
-	  13: "Ahaha ! Et voilà, ça y est !\nT'es déjà comme chez toi dans ce monde !"
+	  13: "Ahaha ! Et voilà, ça y est !\nT’es déjà comme chez toi dans ce monde !"
     }
   },
   "lass": {
     "encounter": {
-      1: "Let's have a battle, shall we?",
-      2: "You look like a new trainer. Let's have a battle!",
-      3: "I don't recognize you. How about a battle?",
-      4: "Let's have a fun Pokémon battle!",
-      5: "I'll show you the ropes of how to really use Pokémon!",
-      6: "A serious battle starts from a serious beginning! Are you sure you're ready?",
-      7: "You're only young once. And you only get one shot at a given battle. Soon, you'll be nothing but a memory.",
-      8: "You'd better go easy on me, OK? Though I'll be seriously fighting!",
-      9: "School is boring. I've got nothing to do. Yawn. I'm only battling to kill the time."
+      1: "Affrontons-nous, d’accord ?",
+      2: "T’as l’air d’une nouvelle Dresseuse. Battons nous !",
+      3: "Je te connais pas. Ça te dis de te battre ?",
+      4: "Prenons du bon temps avec ce combat Pokémon !",
+      5: "Je vais t’apprendre à te battre avec tes Pokémon !",
+      6: "Un combat doit être pris au sérieux. T’es prête à te battre ?",
+      7: "Tu seras pas jeune éternellement. T’as qu’une chance pendant un combat. Bientôt, tu seras plus qu’un souvenir.",
+      8: "Tu ferais mieux d’y aller doucement avec moi. Mais je vais me battre sérieusement !",
+      9: "Je m’ennuie à l’école. Y’a rien à y faire. *Baille*\nJe me bats juste pour passer le temps."
     },
     "victory": {
-      1: "That was impressive! I've got a lot to learn.",
-      2: "I didn't think you'd beat me that bad…",
-      3: "I hope we get to have a rematch some day.",
-      4: "That was pretty amazingly fun! You've totally exhausted me…",
-      5: "You actually taught me a lesson! You're pretty amazing!",
-      6: "Seriously, I lost. That is, like, seriously depressing, but you were seriously cool.",
-      7: "I don't need memories like this. Deleting memory…",
-      8: "Hey! I told you to go easy on me! Still, you're pretty cool when you're serious.",
-      9: "I'm actually getting tired of battling… There's gotta be something new to do…"
+      1: "Wah, c’était impressionnant ! J’ai encore beaucoup à apprendre.",
+      2: "Je pensais pas que je perdrais comme ça…",
+      3: "J’espère que j’aurai ma revanche un jour.",
+      4: "C’était super amusant ! Mais ce combat m’a épuisée…",
+      5: "Tu m’as appris une belle leçon ! T’es vraiment incroyable !",
+      6: "Vraiment ? J’ai perdu… ? C’est des choses qui arrivent, ça me déprime mais t’es vraiment très cool.",
+      7: "J’ai pas besoin de ce genre de souvenirs.\n*Suppression de mémoire en cours…*",
+      8: "Hé ! Je t’avais dit d’y aller doucement avec moi ! Mais t’es vraiment si cool quand tu te bats sérieusement…",
+      9: "J’en ai marre des combats Pokémon…\nJe vais chercher d’autres trucs à faire…"
     }
   },
   "breeder": {
     "encounter": {
-      1: "Obedient Pokémon, selfish Pokémon… Pokémon have unique characteristics.",
-      2: "Even though my upbringing and behavior are poor, I've raised my Pokémon well.",
-      3: "Hmm, do you discipline your Pokémon? Pampering them too much is no good.",
+      1: "Qu’ils soient obéissants ou égoïstes… Les Pokémon ont des caractéristiques uniques.",
+      2: "Même si mes choix et ma personnalité ne sont pas fous, je pense quand même bien avoir élevé mes Pokémon.",
+      3: "Hum, t’es pas trop laxiste avec tes Pokémon ?\nTrop les chouchouter n’est pas bon.",
     },
     "victory": {
-      1: "It is important to nurture and train each Pokémon's characteristics.",
-      2: "Unlike my diabolical self, these are some good Pokémon.",
-      3: "Too much praise can spoil both Pokémon and people.",
+      1: "Il est primordial de nourir et développer toutes les caractéristiques de chaque Pokémon.",
+      2: "Contrairement à moi, ces Pokémon ont un bon fond.",
+      3: "Trop d’éloges peut ruiner les Pokémon et les gens.",
     },
     "defeat": {
-      1: "You should not get angry at your Pokémon, even if you lose a battle.",
-      2: "Right? Pretty good Pokémon, huh? I'm suited to raising things.",
-      3: "No matter how much you love your Pokémon, you still have to discipline them when they misbehave."
+      1: "Tu ne devrais pas t’énerver sur tes Pokémon, même après une défaite.",
+      2: "Alors ? Pas mal mes Pokémon, hein ? Je suis fait pour ça.",
+      3: "Peut importe à quel point t’aimes tes Pokémon, il faut toujours de la discipline s’ils se comportent mal."
     }
   },
   "breeder_female": {
     "encounter": {
-      1: "Pokémon never betray you. They return all the love you give them.",
-      2: "Shall I give you a tip for training good Pokémon?",
-      3: "I have raised these very special Pokémon using a special method."
+      1: "Les Pokémon ne trahissent jamais. Ils te rendront toujours l’amour que tu leur donne.",
+      2: "Puis-je te donner une astuce pour mieux élever tes Pokémon ?",
+      3: "J’ai élevé mes Pokémon en utilisant une méthode très spéciale."
     },
     "victory": {
-      1: "Ugh… It wasn't supposed to be like this. Did I administer the wrong blend?",
-      2: "How could that happen to my Pokémon… What are you feeding your Pokémon?",
-      3: "If I lose, that tells you I was just killing time. It doesn't damage my ego at all."
+      1: "Arg… C’était pas supposé se passer comme ça. Leur ai-je administré la mauvaise préparation ?",
+      2: "Comment ça a pu arriver…\nAvec quoi nourris-tu tes Pokémon ?",
+      3: "Si je perds, c’est juste pour te dire que je tuais le temps. Mon ego n’est absolument pas touché…"
     },
     "defeat": {
-      1: "This proves my Pokémon have accepted my love.",
-      2: "The real trick behind training good Pokémon is catching good Pokémon.",
-      3: "Pokémon will be strong or weak depending on how you raise them."
+      1: "C’est la preuve que mes Pokémon reconnaissent tout mon amour.",
+      2: "Le seul secret derrière des Pokémon bien entrainés, c’est surtout d’en capturer des bons.",
+      3: "La force des Pokémon dépend de ta capacité à savoir les élever correctement."
     }
   },
   "fisherman": {
     "encounter": {
-      1: "Aack! You made me lose a bite!\nWhat are you going to do about it?",
-      2: "Go away! You're scaring the Pokémon!",
-      3: "Let's see if you can reel in a victory!",
+      1: "Aaah non ! J’avais une touche !\nTu comptes faire quoi pour arranger ça ?",
+      2: "Bouge de là ! Tu fais peur aux Pokémon !",
+      3: "Voyons si t’arrives à ferrer une victoire !",
     },
     "victory": {
-      1: "Just forget about it.",
-      2: "Next time, I'll be reelin' in the triumph!",
-      3: "Guess I underestimated the currents this time.",
+      1: "Vas-y là, oublie.",
+      2: "La prochaine fois, je vais me repêcher !",
+      3: "Je présume que j’ai sous-estimé les courants…",
     },
   },
   "fisherman_female": {
     "encounter": {
-      1: "Woah! I've hooked a big one!",
-      2: "Line's in, ready to reel in success!",
-      3: "Ready to make waves!"
+      1: "Oh la belle prise !",
+      2: "Ma ligne est en place, prête à ferrer le succès !",
+      3: "Prête à faire des vagues !"
     },
     "victory": {
-      1: "I'll be back with a stronger hook.",
-      2: "I'll reel in victory next time.",
-      3: "I'm just sharpening my hooks for the comeback!"
+      1: "Je suppose que je vais avoir besoin d’un plus gros hameçon.",
+      2: "La ligne s’est brisée, j’ai pas pu la ferrer…",
+      3: "Attends que j’aiguise mes hameçons pour la revanche !"
     },
   },
   "swimmer": {
     "encounter": {
-      1: "Time to dive in!",
-      2: "Let's ride the waves of victory!",
-      3: "Ready to make a splash!",
+      1: "C’est l’heure de plonger dans le vif !",
+      2: "C’est le moment de surfer sur les vagues de la victoire !",
+      3: "Je vais t’éclabousser de mon talent !",
     },
     "victory": {
-      1: "Drenched in defeat!",
-      2: "A wave of defeat!",
-      3: "Back to shore, I guess.",
+      1: "Tu m’as complètement séché",
+      2: "Il semblerait que ce soit celles de la défaite…",
+      3: "Retour sur la terre ferme je suppose",
     },
   },
   "backpacker": {
     "encounter": {
-      1: "Pack up, game on!",
-      2: "Let's see if you can keep pace!",
-      3: "Gear up, challenger!",
-      4: "I've spent 20 years trying to find myself… But where am I?"
+      1: "Fais ton sac, on y va !",
+      2: "Voyons si t’arrives à garder le rythme !",
+      3: "Accélère le pas, camarade !",
+      4: "J’ai passé 20 ans à la recherche de moi-même…\nMais où suis-je ?"
     },
     "victory": {
-      1: "Tripped up this time!",
-      2: "Oh, I think I'm lost.",
-      3: "Dead end!",
-      4: "Wait up a second! Hey! Don't you know who I am?"
+      1: "J’ai trébuché !",
+      2: "Ah, je crois que je me suis paumé.",
+      3: "Ah, une impasse !",
+      4: "Hé ! Attends une seconde…\nTu saurais pas qui je suis ?"
     },
   },
   "ace_trainer": {
     "encounter": {
-      1: "You seem quite confident.",
-      2: "Your Pokémon… Show them to me…",
-      3: "Because I'm an Ace Trainer, people think I'm strong.",
-      4: "Are you aware of what it takes to be an Ace Trainer?"
+      1: "T’as l’air plutôt confiante.",
+      2: "Tes Pokémon… Montre-les-moi…",
+      3: "Les gens pensent que je suis fort par que je suis un Topdresseur.",
+      4: "T’es au courant de ce que ça signifie d’être un Topdresseur ?"
     },
     "victory": {
-      1: "Yes… You have good Pokémon…",
-      2: "What?! But I'm a battling genius!",
-      3: "Of course, you are the main character!",
-      4: "OK! OK! You could be an Ace Trainer!"
+      1: "Très bien… T’as de bons Pokémon…",
+      2: "Quoi ?! Mais c'est moi le génie des combats !",
+      3: "Évidemment que t’es le personnage principal !",
+      4: "OK ! OK ! Tu pourrais être une Topdresseuse !"
     },
     "defeat": {
-      1: "I am devoting my body and soul to Pokémon battles!",
-      2: "All within my expectations… Nothing to be surprised about…",
-      3: "I thought I'd grow up to be a frail person who looked like they would break if you squeezed them too hard.",
-      4: "Of course I'm strong and don't lose. It's important that I win gracefully."
+      1: "Je me dévoue corps et âme aux combats Pokémon !",
+      2: "Comme prévu… Vraiment aucune surprise…",
+      3: "Et moi qui pensais qu’en grandissant, j’allais rester frêle et fragile, à me briser à la moindre étreinte.",
+      4: "Évidemment que je suis fort et encore moins un perdant. C’est important de gagner avec grâce."
     }
   },
   "parasol_lady": {
     "encounter": {
-      1: "Time to grace the battlefield with elegance and poise!",
+      1: "Honorons ce terrain de combat avec élégance et équilibre !",
     },
     "victory": {
-      1: "My elegance remains unbroken!",
+      2: "Mon élégance demeure inébranlable !",
     }
   },
   "twins": {
@@ -2954,7 +2954,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
       1: "Mes anciens collaborateurs m’attendent.\nComptes-tu m’en empêcher ?"
     },
     "victory": {
-      1: "Comment c'est possible… ? Le grand dessein de la Team Rocket n’est plus qu’une illusion…"
+      1: "Comment c’est possible… ? Le grand dessein de la Team Rocket n’est plus qu’une illusion…"
     },
     "defeat": {
       1: "La Team Rocket renaitra, et je dominerai le monde !"
@@ -2976,10 +2976,10 @@ export const PGFdialogue: DialogueTranslationEntries = {
       1: "T’es le dernier rempart entravant mes objectifs.\nPrépare-toi à mon ultime riposte ! Hahahaha !"
     },
     "victory": {
-      1: "Ce… Ce n'est pas… Gnn…"
+      1: "Ce… Ce n’est pas… Gnn…"
     },
     "defeat": {
-      1: "L'heure est venue…\nJe vais transformer cette planète en paradis pour l’humanité."
+      1: "L’heure est venue…\nJe vais transformer cette planète en paradis pour l’humanité."
     }
   },
   "aqua_boss_archie_1": {
@@ -3061,7 +3061,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
   },
   "flare_boss_lysandre_2": {
     "encounter": {
-      1: "Ton future ou le mien… Voyons lequel mérite plus."
+      1: "Ton futur ou le mien…\nVoyons lequel mérite plus d’aboutir."
     },
     "victory": {
       1: "Ohhhh… !"
@@ -4799,26 +4799,26 @@ export const PGFdialogue: DialogueTranslationEntries = {
     "encounter": {
 	  1: `@c{smile}Ah, je te cherchais ! Je savais que t’étais pressée de partir, mais je m’attendais quand même à un au revoir…
 					$@c{smile_eclosed}T’as finalement décidé de réaliser ton rêve ?\nJ’ai peine à y croire.
-					$@c{serious_smile_fists}Vu que t’es là, ça te dis un petit combat ?\nJe voudrais quand même m’assurer que t'es prête.
+					$@c{serious_smile_fists}Vu que t’es là, ça te dis un petit combat ?\nJe voudrais quand même m’assurer que t’es prête.
 					$@c{serious_mopen_fists}Surtout ne te retiens pas et donne-moi tout ce que t’as !`
     },
     "victory": {
 	  1: `@c{shock}Wah… Tu m’as vraiment lavé.\nT’es vraiment une débutante ?
-				   $@c{smile}T'as peut-être eu de la chance, mais…\nPeut-être que t’arriveras jusqu’au bout du chemin.
-				   $D'ailleurs, le prof m’a demandé de te filer ces objets.\nIls ont l’air sympas.
+				   $@c{smile}T’as peut-être eu de la chance, mais…\nPeut-être que t’arriveras jusqu’au bout du chemin.
+				   $D’ailleurs, le prof m’a demandé de te filer ces objets.\nIls ont l’air sympas.
                    $@c{serious_smile_fists}Bonne chance à toi !`
     },
   },
   "rival_female": {
     "encounter": {
-      1: `@c{smile_wave}Ah, je te cherchais ! Je t’ai cherché partout !\n@c{angry_mopen}On oublie de dire au revoir à sa meilleure amie ?
+      1: `@c{smile_wave}Ah, je te cherchais ! Je t’ai cherchée partout !\n@c{angry_mopen}On oublie de dire au revoir à sa meilleure amie ?
                     $@c{smile_ehalf}T’as décidé de réaliser ton rêve, hein ?\nCe jour est donc vraiment arrivé…
-					$@c{smile}Je veux bien te pardonner de m’avoir oubliée, à une conditon. @c{smile_wave_wink}Que tu m’affronte !
+					$@c{smile}Je veux bien te pardonner de m’avoir oubliée,\nà une conditon. @c{smile_wave_wink}Que tu m’affronte !
 					$@c{angry_mopen}Donne tout ! Ce serait dommage que ton aventure finisse avant d’avoir commencé, hein ?`
     },
     "victory": {
-      1: `@c{shock}Tu viens de commencer et t’es déjà si fort ?!@d{96}\n@c{angry}T'as triché non ? Avoue !
-                    $@c{smile_wave_wink}J'déconne !@d{64} @c{smile_eclosed}J'ai perdu dans les règles… J’ai le sentiment que tu vas très bien t’en sortir.
+      1: `@c{shock}Tu viens de commencer et t’es déjà si forte ?!@d{96}\n@c{angry}T’as triché non ? Avoue !
+                    $@c{smile_wave_wink}J’déconne !@d{64} @c{smile_eclosed}J’ai perdu dans les règles…\nJ’ai le sentiment que tu vas très bien t’en sortir.
 					$@c{smile}D’ailleurs, le prof veut que je te donne ces quelques objets. Ils te seront utiles, pour sûr !
 					$@c{smile_wave}Fais de ton mieux, comme toujours !\nJe crois fort en toi !`
     },
@@ -4826,14 +4826,14 @@ export const PGFdialogue: DialogueTranslationEntries = {
   "rival_2": {
     "encounter": {
 	  1: `@c{smile}Hé, toi aussi t’es là ?\n@c{smile_eclosed}Toujours invaincue, hein… ?
-				$@c{serious_mopen_fists}Je sais que j’ai l’air de t’avoir suivie ici, mais c'est pas complètement vrai.
-				$@c{serious_smile_fists}Pour être honnête, ça me démangeait d’avoir une revanche depuis que tu m'as battu.
+				$@c{serious_mopen_fists}Je sais que j’ai l’air de t’avoir suivie ici, mais c’est pas complètement vrai.
+				$@c{serious_smile_fists}Pour être honnête, ça me démangeait d’avoir une revanche depuis que tu m’as battu.
 				$Je me suis beaucoup entrainé, alors sois sure que je vais pas retenir mes coups cette fois.
                 $@c{serious_mopen_fists}Et comme la dernière fois, ne te retiens pas !\nC’est parti !`
     },
     "victory": {
 	  1: `@c{neutral_eclosed}Oh. Je crois que j’ai trop pris la confiance.
-				$@c{smile}Pas grave, c'est OK. Je me doutais que ça arriverait.\n@c{serious_mopen_fists}Je vais juste devoir encore plus m’entrainer !\n
+				$@c{smile}Pas grave, c’est OK. Je me doutais que ça arriverait.\n@c{serious_mopen_fists}Je vais juste devoir encore plus m’entrainer !\n
                 $@c{smile}Ah, et pas que t’aies réellement besoin d’aide, mais j’ai ça en trop sur moi qui pourrait t’intéresser.\n
 				$@c{serious_smile_fists}Mais n’espère plus en avoir d’autres !\nJe peux pas passer mon temps à aider mon adversaire.
                 $@c{smile}Bref, prends soin de toi !`
@@ -4841,11 +4841,11 @@ export const PGFdialogue: DialogueTranslationEntries = {
   },
   "rival_2_female": {
     "encounter": {
-	  1: `@c{smile_wave}Hé, sympa de te croiser ici. T’as toujours l’air invaincu. @c{angry_mopen}Eh… Pas mal !
-				$@c{angry_mopen}Je sais à quoi tu penses et non, je t’espionne pas. @c{smile_eclosed}C’est juste que j’étais aussi dans le coin.
+	  1: `@c{smile_wave}Hé, sympa de te croiser ici. T’as toujours l’air invaincue. @c{angry_mopen}Eh… Pas mal !
+				$@c{angry_mopen}Je sais à quoi tu penses et non, je t’espionne pas.\n@c{smile_eclosed}C’est juste que j’étais aussi dans le coin.
 				$@c{smile_ehalf}Heureuse pour toi, mais je veux juste te rappeler que c’est pas grave de perdre parfois.
 				$@c{smile}On apprend de nos erreurs, souvent plus que si on ne connaissait que le succès.
-				$@c{angry_mopen}Dans tous les cas je me suis bien entrainée pour cette revanche, t'as intérêt à tout donner !`
+				$@c{angry_mopen}Dans tous les cas je me suis bien entrainée pour cette revanche, t’as intérêt à tout donner !`
     },
     "victory": {
 	  1: `@c{neutral}Je… J’étais pas encore supposée perdre…
@@ -4876,7 +4876,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
 	  1: `@c{smile_wave}Ça fait une éternité ! Toujours debout hein ?\n@c{angry}Tu commences à me pousser à bout là. @c{smile_wave_wink}T’inquiètes j’déconne !
 				$@c{smile_ehalf}Mais en vrai, ta maison te manque pas ? Ou… Moi ?\nJ… Je veux dire… Tu me manques vraiment beaucoup.
 				$@c{smile_eclosed}Je te soutiendrai toujours dans tes ambitions, mais la vérité est que tu finiras par perdre un jour ou l’autre.
-                $@c{smile}Quand ça arrivera, je serai là pour toi, comme toujours.\n@c{angry_mopen}Maintenant, montre-moi à quel point t’es devenu fort !`
+                $@c{smile}Quand ça arrivera, je serai là pour toi, comme toujours.\n@c{angry_mopen}Maintenant, montre-moi à quel point t’es devenue forte !`
     },
     "victory": {
 	  1: "@c{shock}Après tout ça… Ça te suffit toujours pas… ?\nTu reviendras jamais à ce rythme…"
@@ -4893,8 +4893,8 @@ export const PGFdialogue: DialogueTranslationEntries = {
 				$@c{serious_mhalf_fists}J’ai appris à maximiser tout mon potentiel en m’entrainant d’arrachepied.
 				$@c{smile}C’est fou tout le temps que tu peux te dégager si tu dors pas en sacrifiant ta vie sociale.
 				$@c{serious_mopen_fists}Plus rien n’a d’importance désormais, pas tant que j’aurai pas gagné.
-				$@c{neutral_eclosed}J'ai atteint un stade où je ne peux plus perdre.\n@c{smile_eclosed}Je présume que ta philosophie était pas si fausse finalement.
-				$@c{angry_mhalf}La défaite, c'est pour les faibles, et je ne suis plus un faible.
+				$@c{neutral_eclosed}J’ai atteint un stade où je ne peux plus perdre.\n@c{smile_eclosed}Je présume que ta philosophie était pas si fausse finalement.
+				$@c{angry_mhalf}La défaite, c’est pour les faibles, et je ne suis plus un faible.
                 $@c{serious_mopen_fists}Tiens-toi prête.`
     },
     "victory": {
@@ -4904,20 +4904,20 @@ export const PGFdialogue: DialogueTranslationEntries = {
   "rival_4_female": {
     "encounter": {
 	  1: `@c{neutral}C’est moi ! Tu m’as pas encore oubliée… n’est-ce pas ?
-				$@c{smile}Tu devrais être fier d’être arrivé aussi loin. GG !\nMais c’est certainement pas la fin de ton aventure.
-				$@c{smile_eclosed}T’as éveillé en moi quelque chose que j’ignorais.\nTout mon temps passe dans l'entrainement.
+				$@c{smile}Tu devrais être fière d’être arrivée aussi loin. GG !\nMais c’est certainement pas la fin de ton aventure.
+				$@c{smile_eclosed}T’as éveillé en moi quelque chose que j’ignorais.\nTout mon temps passe dans l’entrainement.
 				$@c{smile_ehalf}Je dors et je mange à peine, je m’entraine juste tous les jours, et deviens de plus en plus forte.
                 $@c{neutral}En vrai, Je… J’ai de la peine à me reconnaitre.
 				$Mais maintenant, je suis au top de mes capacités.\nJe doute que tu sois de nouveau capable de me battre.
 				$Et tu sais quoi ? Tout ça, c’est de ta faute.\n@c{smile_ehalf}Et j’ignore si je dois te remercier ou te haïr.
-                $@c{angry_mopen}Tiens-toi prêt.`
+                $@c{angry_mopen}Tiens-toi prête.`
     },
     "victory": {
       1: "@c{neutral}Que…@d{64} Qui es-tu ?"
 
     },
     "defeat": {
-      1: "$@c{smile}Tu devrais être fier d’être arrivé jusque là."
+      1: "$@c{smile}Tu devrais être fière d’être arrivé jusque là."
     }
   },
   "rival_5": {
@@ -4949,7 +4949,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
 				$@c{neutral_eclosed}J’ignore si je serai capable de l’accomplir, mais je ferai tout ce qui est en mon pouvoir.
 				$@c{neutral}Cet endroit est terrifiant… Et pourtant il m’a l’air familier, comme si j’y avais déjà mis les pieds.
                 $@c{serious_mhalf_fists}Tu ressens la même chose, pas vrai ?
-				$@c{serious}…et c’est comme si quelque chose ici me parlait.
+				$@c{serious}… et c’est comme si quelque chose ici me parlait.
 				$Comme si c’était tout ce que ce monde avait toujours connu.
 				$Ces précieux moments ensemble semblent si proches ne sont rien de plus qu’un lointain souvenir.
 				$@c{neutral_eclosed}D’ailleurs, qui peut dire aujourd’hui qu’ils ont pu être réels ?
@@ -4958,7 +4958,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
 				$@c{serious_mopen_fists}Si tu ne parviens à pas me battre ici et maintenant, tu n’as aucune chance.`
     },
     "victory": {
-      1: `@c{smile_eclosed}J'ai fait ce que je j'avais à faire.
+      1: `@c{smile_eclosed}J’ai fait ce que j’avais à faire.
 				$Promets-moi juste une chose.\n@c{smile}Après avoir réparé ce monde… Rentre à la maison.`
     },
   },
@@ -4975,13 +4975,13 @@ export const PGFdialogue: DialogueTranslationEntries = {
                 $Comme… si c’était tout ce que ce monde avait toujours connu.
 				$@c{smile_eclosed}J’ai le sentiment que nos précieux moments ensemble sont devenus si flous.
 				$@c{smile_ehalf}Ont-ils au moins été réels ? Tout semble si loin maintenant…
-                $@c{angry_mopen}Il faut que tu persévères. Si tu t’arrêtes, ça n'aura jamais de fin et t’es le seul à en être capable.
+                $@c{angry_mopen}Il faut que tu persévères. Si tu t’arrêtes, ça n’aura jamais de fin et t’es le seul à en être capable.
                 $@c{smile_ehalf}Je… j’ignore le sens de tout ça… Mais je sais que c’est la réalité.
                 $@c{neutral}Si tu ne parviens pas à me battre ici et maintenant, tu n’as aucune chance.`
     },
     "victory": {
-      1: `@c{smile_ehalf}Je… Je crois que j'ai rempli ma mission…
-                $@c{smile_eclosed}Promets-moi… Après avoir réparé ce monde… Reviens à la maison sain et sauf.
+      1: `@c{smile_ehalf}Je… Je crois que j’ai rempli ma mission…
+                $@c{smile_eclosed}Promets-moi… Après avoir réparé ce monde… Reviens à la maison saine et sauve.
                 $@c{smile_ehalf}… Merci.`
 
     },
@@ -5021,7 +5021,7 @@ export const PGFbattleSpecDialogue: SimpleTranslationEntries = {
 // Dialogue that does not fit into any other category (e.g. tutorial messages, or the end of the game). For when the player character is male
 export const PGMmiscDialogue: SimpleTranslationEntries = {
   "ending":
-	  `@c{smile}Oh ? T’as gagné ?@d{96} @c{smile_eclosed}J'aurais dû le savoir.\nMais de voilà de retour.
+	  `@c{smile}Oh ? T’as gagné ?@d{96} @c{smile_eclosed}J’aurais dû le savoir.\nMais de voilà de retour.
         $@c{smile}C’est terminé.@d{64} T’as brisé ce cycle infernal.
 		$@c{serious_smile_fists}T’as aussi accompli ton rêve non ?\nTu n’as pas connu la moindre défaite.
 		$@c{neutral}Je suis le seul à me souvenir de ce que t’as fait.@d{96}\nJe pense que ça ira, non ?
@@ -5029,7 +5029,7 @@ export const PGMmiscDialogue: SimpleTranslationEntries = {
 		$@c{smile_eclosed}Bref, j’en ai un peu marre de ce endroit, pas toi ? Rentrons à la maison.
 		$@c{serious_smile_fists}On se fera un p’tit combat une fois rentrés ?\nSi t’es d’accord.`,
   "ending_female":
-      `@c{shock}T’es revenu ?@d{32} Ça veut dire…@d{96} que t’as gagné ?!\n@c{smile_ehalf}J'aurais dû le savoir.
+      `@c{shock}T’es revenu ?@d{32} Ça veut dire…@d{96} que t’as gagné ?!\n@c{smile_ehalf}J’aurais dû le savoir.
 		$@c{smile_eclosed}Bien sûr… J’ai toujours eu ce sentiment.\n@c{smile}C’est fini maitenant hein ? T’as brisé ce cycle.
 		$@c{smile_ehalf}T’as aussi accompli ton rêve non ?\nTu n’as pas connu la moindre défaite.
         $Je serai la seule à me souvenir de ce que t’as fait.\n@c{angry_mopen}Je tâcherai de ne pas oublier !
@@ -5067,76 +5067,76 @@ export const PGMdoubleBattleDialogue: DialogueTranslationEntries = {
   },
   "tate_liza_double": {
     "encounter": {
-      1: `Lévy : Are you suprised?
-                  $Tatia : We are two gym leaders at once!
-                  $Lévy : We are twins!
-                  $Tatia : We dont need to talk to understand each other!
-                  $Lévy : Twice the power...
-                  $Tatia : Can you handle it?`,
+      1: `Lévy : Héhéhé… Tu en fais une drôle de tête.
+                  $Tatia : Tu ne t’attendais pas à rencontrer deux Champions, n’est-ce pas ?
+                  $Lévy : Nous sommes des jumeaux !
+                  $Tatia : Nous n’avons pas besoin de parler entre nous !
+                  $Lévy : Tu crois pouvoir briser…
+                  $Tatia : … Notre duo parfait ?`,
     },
     "victory": {
-      1: `Lévy : What? Our combination was perfect!
-                  $Tatia : Looks like we need to train more...`,
+      1: `Lévy : Quoi ? Notre combinaison était parfaite !
+                  $Tatia : Nous avons encore besoin d’entrainement…`,
     },
   },
   "liza_tate_double": {
     "encounter": {
-      1: `Tatia : Hihihi... Are you suprised?
-                  $Lévy : Yes, we are really two gym leaders at once!
-                  $Tatia : This is my twin brother Tate!
-                  $Lévy : And this is my twin sister Liza!
-                  $Tatia : Don't you think we are a perfect combination?`
+      1: `Tatia : Hihih… Si tu voyais ta tête !
+                  $Lévy : Oui, nous sommes deux Champions en un !
+                  $Tatia : Voici mon frère, Lévy…
+                  $Lévy : … Et ma sœur, Tatia !
+                  $Tatia : Tu ne penses pas que notre combinaison est parfaite ?`
     },
     "victory": {
-      1: `Tatia : Are we...
-                  $Lévy : ...not as strong as we thought?`,
+      1: `Tatia : Quoi ? Notre combinaison…
+                  $Lévy : … a échoué !`,
     },
   },
   "wallace_steven_double": {
     "encounter": {
-      1: `Pierre R. : Marc, let's show them the power of the champions!
-                  $Marc : We will show you the power of Hoenn!
-                  $Pierre R. : Let's go!`,
+      1: `Pierre R. : Marc, montrons-lui la puissance des Maitres !
+                  $Marc : Tu vas gouter au pouvoir de Hoenn !
+                  $Pierre R. : C’est parti !`,
     },
     "victory": {
-      1: `Pierre R. : That was a great battle!
-                  $Marc : We will win next time!`,
+      1: `Pierre R. : C’était un beau combat !
+                  $Marc : Ce sera notre tour la prochaine fois !`,
     },
   },
   "steven_wallace_double": {
     "encounter": {
-      1: `Pierre R. : Do you have any rare Pokémon?
-          $Marc : Pierre... We are here for a battle, not to show off our pokémon.
-            $Pierre R. : Oh... I see... Let's go then!`,
+      1: `Pierre R. : Excuse-moi, aurais-tu des Pokémon rares ?
+          $Marc : Pierre… Nous sommes là pour nous battre, pas pour frimer avec nos Pokémon.
+            $Pierre R. : Oh… Je vois… Commençons alors !`,
     },
     "victory": {
-      1: `Pierre R. : Now that we are done with the battle, let's show off our pokémon!
-            $Marc : Pierre...`,
+      1: `Pierre R. : Bien, maintenant que ce combat est clos, montrons-nous nos Pokémon !
+            $Marc : Pierre…`,
     },
   },
   "alder_iris_double": {
     "encounter": {
-      1:  `Goyah : We are the strongest trainers in Unova!
-                  $Iris : Fights against strong trainers are the best!`,
+      1:  `Goyah : Nous sommes l’élite des Dresseurs d’Unys !
+                  $Iris : Rien de mieux que des combats contre des prodiges !`,
     },
     "victory": {
-      1:   `Goyah : Wow! You are super strong!
-                  $Iris : We will win next time!`,
+      1:   `Goyah : INCROYABLE ! T’es trop doué !
+                  $Iris : On gagnera la prochaine fois !`,
     },
   },
   "iris_alder_double": {
     "encounter": {
-      1:   `Iris : Welcome Challenger! I am THE Unova Champion!
-                  $Goyah : Iris, aren't you a bit too excited?`,
+      1:   `Iris : Bienvenue, Dresseur ! Je suis LA Maitresse d’Unys !
+                  $Goyah : Iris, concentre-toi s’il te plait…`,
     },
     "victory": {
-      1:    `Iris : A loss like this is not easy to take...
-                  $Goyah : But we will only get stronger with every loss!`,
+      1:    `Iris : On a tout donné et pourtant…
+                  $Goyah : Cette défaite ne pourra que nous être bénéfique !`,
     },
   },
   "piers_marnie_double": {
     "encounter": {
-      1:   `Rosemary : Frérot, montrons-leur la puissance de Smashings !
+      1:   `Rosemary : Frérot, montrons-lui la puissance de Smashings !
                   $Peterson : Nous sommes les ténèbres !`,
     },
     "victory": {
@@ -5147,10 +5147,10 @@ export const PGMdoubleBattleDialogue: DialogueTranslationEntries = {
   "marnie_piers_double": {
     "encounter": {
       1:  `Peterson : Chauds pour un concert ?
-                    $Rosemary : Frérot… Ils sont pas là pour chanter, mais se battre…`,
+                    $Rosemary : Frérot… Il est pas là pour chanter, mais se battre…`,
     },
     "victory": {
-      1:  `Peterson : Ça c'est du rock !
+      1:  `Peterson : Ça c’est du rock !
                     $Rosemary : Frérot…`,
     },
   },
@@ -5182,76 +5182,76 @@ export const PGFdoubleBattleDialogue: DialogueTranslationEntries = {
   },
   "tate_liza_double": {
     "encounter": {
-      1: `Lévy : Are you suprised?
-                  $Tatia : We are two gym leaders at once!
-                  $Lévy : We are twins!
-                  $Tatia : We dont need to talk to understand each other!
-                  $Lévy : Twice the power...
-                  $Tatia : Can you handle it?`,
+      1: `Lévy : Héhéhé… Tu en fais une drôle de tête.
+                  $Tatia : Tu ne t’attendais pas à rencontrer deux Champions, n’est-ce pas ?
+                  $Lévy : Nous sommes des jumeaux !
+                  $Tatia : Nous n’avons pas besoin de parler entre nous !
+                  $Lévy : Tu crois pouvoir briser…
+                  $Tatia : … Notre duo parfait ?`,
     },
     "victory": {
-      1: `Lévy : What? Our combination was perfect!
-                  $Tatia : Looks like we need to train more...`,
+      1: `Lévy : Quoi ? Notre combinaison était parfaite !
+                  $Tatia : Nous avons encore besoin d’entrainement…`,
     },
   },
   "liza_tate_double": {
     "encounter": {
-      1: `Tatia : Hihihi... Are you suprised?
-                  $Lévy : Yes, we are really two gym leaders at once!
-                  $Tatia : This is my twin brother Tate!
-                  $Lévy : And this is my twin sister Liza!
-                  $Tatia : Don't you think we are a perfect combination?`
+      1: `Tatia : Hihih… Si tu voyais ta tête !
+                  $Lévy : Oui, nous sommes deux Champions en un !
+                  $Tatia : Voici mon frère, Lévy…
+                  $Lévy : … Et ma sœur, Tatia !
+                  $Tatia : Tu ne penses pas que notre combinaison est parfaite ?`
     },
     "victory": {
-      1: `Tatia : Are we...
-                  $Lévy : ...not as strong as we thought?`,
+      1: `Tatia : Quoi ? Notre combinaison…
+                  $Lévy : … a échoué !`,
     },
   },
   "wallace_steven_double": {
     "encounter": {
-      1: `Pierre R. : Marc, let's show them the power of the champions!
-                  $Marc : We will show you the power of Hoenn!
-                  $Pierre R. : Let's go!`,
+      1: `Pierre R. : Marc, montrons-lui la puissance des Maitres !
+                  $Marc : Tu vas gouter au pouvoir de Hoenn !
+                  $Pierre R. : C’est parti !`,
     },
     "victory": {
-      1: `Pierre R. : That was a great battle!
-                  $Marc : We will win next time!`,
+      1: `Pierre R. : C’était un beau combat !
+                  $Marc : Ce sera notre tour la prochaine fois !`,
     },
   },
   "steven_wallace_double": {
     "encounter": {
-      1: `Pierre R. : Do you have any rare Pokémon?
-          $Marc : Pierre... We are here for a battle, not to show off our pokémon.
-            $Pierre R. : Oh... I see... Let's go then!`,
+      1: `Pierre R. : Excuse-moi, aurais-tu des Pokémon rares ?
+          $Marc : Pierre… Nous sommes là pour nous battre, pas pour frimer avec nos Pokémon.
+            $Pierre R. : Oh… Je vois… Commençons alors !`,
     },
     "victory": {
-      1: `Pierre R. : Now that we are done with the battle, let's show off our pokémon!
-            $Marc : Pierre...`,
+      1: `Pierre R. : Bien, maintenant que ce combat est clos, montrons-nous nos Pokémon !
+            $Marc : Pierre…`,
     },
   },
   "alder_iris_double": {
     "encounter": {
-      1:  `Goyah : We are the strongest trainers in Unova!
-                  $Iris : Fights against strong trainers are the best!`,
+      1:  `Goyah : Nous sommes l’élite des Dresseurs d’Unys !
+                  $Iris : Rien de mieux que des combats contre des prodiges !`,
     },
     "victory": {
-      1:   `Goyah : Wow! You are super strong!
-                  $Iris : We will win next time!`,
+      1:   `Goyah : INCROYABLE ! T’es trop doué !
+                  $Iris : On gagnera la prochaine fois !`,
     },
   },
   "iris_alder_double": {
     "encounter": {
-      1:   `Iris : Welcome Challenger! I am THE Unova Champion!
-                  $Goyah : Iris, aren't you a bit too excited?`,
+      1:   `Iris : Bienvenue, Dresseur ! Je suis LA Maitresse d’Unys !
+                  $Goyah : Iris, concentre-toi s’il te plait…`,
     },
     "victory": {
-      1:    `Iris : A loss like this is not easy to take...
-                  $Goyah : But we will only get stronger with every loss!`,
+      1:    `Iris : On a tout donné et pourtant…
+                  $Goyah : Cette défaite ne pourra que nous être bénéfique !`,
     },
   },
   "piers_marnie_double": {
     "encounter": {
-      1:   `Rosemary : Frérot, montrons-leur la puissance de Smashings !
+      1:   `Rosemary : Frérot, montrons-lui la puissance de Smashings !
                   $Peterson : Nous sommes les ténèbres !`,
     },
     "victory": {
@@ -5262,10 +5262,10 @@ export const PGFdoubleBattleDialogue: DialogueTranslationEntries = {
   "marnie_piers_double": {
     "encounter": {
       1:  `Peterson : Chauds pour un concert ?
-                    $Rosemary : Frérot… Ils sont pas là pour chanter, mais se battre…`,
+                    $Rosemary : Frérot… Elle est pas là pour chanter, mais se battre…`,
     },
     "victory": {
-      1:  `Peterson : Ça c'est du rock !
+      1:  `Peterson : Ça c’est du rock !
                     $Rosemary : Frérot…`,
     },
   },

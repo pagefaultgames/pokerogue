@@ -60,6 +60,7 @@ export const battle: SimpleTranslationEntries = {
   "skipItemQuestion": "Sei sicuro di non voler prendere nessun oggetto?",
   "eggHatching": "Oh!",
   "ivScannerUseQuestion": "Vuoi usare lo scanner di IV su {{pokemonName}}?",
+  "stealEatBerry": "{{pokemonName}} stole and ate\n{{targetName}}'s {{berryName}}!",
   "wildPokemonWithAffix": "{{pokemonName}} selvatico",
   "foePokemonWithAffix": "{{pokemonName}} avversario",
   "useMove": "{{pokemonNameWithAffix}} usa {{moveName}}!",
