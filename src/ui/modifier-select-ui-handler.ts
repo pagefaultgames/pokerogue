@@ -51,7 +51,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     const canvas = document.createElement("canvas");
     const context = canvas.getContext("2d");
-    const [ , styleOptions, , , ] = getTextStyleOptions(TextStyle.PARTY, (this.scene as BattleScene).uiTheme);
+    const styleOptions = getTextStyleOptions(TextStyle.PARTY, (this.scene as BattleScene).uiTheme).styleOptions;
     context.font = styleOptions.fontSize + "px " + styleOptions.fontFamily;
     this.transferButtonWidth = context.measureText(i18next.t("modifierSelectUiHandler:transfer")).width;
     this.checkButtonWidth = context.measureText(i18next.t("modifierSelectUiHandler:checkTeam")).width;
