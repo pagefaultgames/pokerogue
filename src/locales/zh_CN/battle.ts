@@ -132,5 +132,6 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsSaltCuredOnAdd": "{{pokemonNameWithAffix}}\n陷入了盐腌状态！",
   "battlerTagsSaltCuredLapse": "{{pokemonNameWithAffix}}\n受到了{{moveName}}的伤害！",
   "battlerTagsCursedOnAdd": "{{pokemonNameWithAffix}}削减了自己的体力，\n并诅咒了{{pokemonName}}！",
-  "battlerTagsCursedLapse": "{{pokemonNameWithAffix}}\n正受到诅咒！"
+  "battlerTagsCursedLapse": "{{pokemonNameWithAffix}}\n正受到诅咒！",
+  "battlerTagsUproar": "{{pokemonNameWithAffix}} caused\nan uproar!",
 } as const;
