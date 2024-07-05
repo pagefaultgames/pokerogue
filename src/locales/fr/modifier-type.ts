@@ -151,7 +151,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SACRED_ASH": { name: "Cendre Sacrée" },
 
-    "REVIVER_SEED": { name: "Résugraine", description: "Réanime et restaure la moitié des PV de son porteur s’il tombe K.O. ." },  //TODO: missing info: after a direct hit only!
+    "REVIVER_SEED": { name: "Résugraine", description: "Réanime et restaure la moitié des PV de son porteur s’il est mis K.O. par une capacité directe." },
 
     "ETHER": { name: "Huile" },
     "MAX_ETHER": { name: "Huile Max" },
