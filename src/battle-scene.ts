@@ -1098,7 +1098,7 @@ export default class BattleScene extends SceneBase {
 
       // Check for mystery encounter
       // Can only occur in place of a standard wild battle, waves 10-180
-      if (this.gameMode.hasMysteryEncounters && newBattleType === BattleType.WILD && !this.gameMode.isBoss(newWaveIndex) && !(this.gameMode.isClassic && (newWaveIndex > 180 || newWaveIndex < 10))) {
+      if (this.gameMode.hasMysteryEncounters && newBattleType === BattleType.WILD && !this.gameMode.isBoss(newWaveIndex) && newWaveIndex < 180 && newWaveIndex > 10) {
         const roll = Utils.randSeedInt(256);
 
         // Base spawn weight is 3/256, and increases by 1/256 for each missed attempt at spawning an encounter on a valid floor
@@ -1111,7 +1111,7 @@ export default class BattleScene extends SceneBase {
         const currentRunDiffFromAvg = expectedEncountersByFloor - (this.mysteryEncounterFlags?.encounteredEvents?.length || 0);
         const favoredEncounterRate = sessionEncounterRate + currentRunDiffFromAvg * 5;
 
-        const successRate = Utils.isNullOrUndefined(Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE) ? favoredEncounterRate : Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE;
+        const successRate = isNullOrUndefined(Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE) ? favoredEncounterRate : Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE;
 
         if (roll < successRate) {
           newBattleType = BattleType.MYSTERY_ENCOUNTER;
@@ -2639,7 +2639,7 @@ export default class BattleScene extends SceneBase {
   getMysteryEncounter(override: MysteryEncounter): MysteryEncounter {
     // Loading override or session encounter
     let encounter: MysteryEncounter;
-    if (!Utils.isNullOrUndefined(Overrides.MYSTERY_ENCOUNTER_OVERRIDE) && allMysteryEncounters.hasOwnProperty(Overrides.MYSTERY_ENCOUNTER_OVERRIDE)) {
+    if (!isNullOrUndefined(Overrides.MYSTERY_ENCOUNTER_OVERRIDE) && allMysteryEncounters.hasOwnProperty(Overrides.MYSTERY_ENCOUNTER_OVERRIDE)) {
       encounter = allMysteryEncounters[Overrides.MYSTERY_ENCOUNTER_OVERRIDE];
     } else {
       encounter = override?.encounterType >= 0 ? allMysteryEncounters[override?.encounterType] : null;
@@ -2685,7 +2685,7 @@ export default class BattleScene extends SceneBase {
     const rareThreshold = totalWeight - tierWeights[0] - tierWeights[1] - tierWeights[2];
     let tier = tierValue > commonThreshold ? MysteryEncounterTier.COMMON : tierValue > uncommonThreshold ? MysteryEncounterTier.UNCOMMON : tierValue > rareThreshold ? MysteryEncounterTier.RARE : MysteryEncounterTier.SUPER_RARE;
 
-    if (!Utils.isNullOrUndefined(Overrides.MYSTERY_ENCOUNTER_TIER_OVERRIDE)) {
+    if (!isNullOrUndefined(Overrides.MYSTERY_ENCOUNTER_TIER_OVERRIDE)) {
       tier = Overrides.MYSTERY_ENCOUNTER_TIER_OVERRIDE;
     }
 

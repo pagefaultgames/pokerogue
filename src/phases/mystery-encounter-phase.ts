@@ -35,7 +35,6 @@ export class MysteryEncounterPhase extends Phase {
     super.start();
 
     // Clears out queued phases that are part of standard battle
-    this.scene.ui.clearText();
     this.scene.clearPhaseQueue();
     this.scene.clearPhaseQueueSplice();
 
