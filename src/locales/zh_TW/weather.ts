@@ -44,22 +44,22 @@ export const weather: SimpleTranslationEntries = {
 };
 
 export const terrain: SimpleTranslationEntries = {
-  "misty": "Misty",
-  "mistyStartMessage": "Mist swirled around the battlefield!",
-  "mistyClearMessage": "The mist disappeared from the battlefield.",
-  "mistyBlockMessage": "{{pokemonNameWithAffix}} surrounds itself with a protective mist!",
+  "misty": "薄霧",
+  "mistyStartMessage": "腳下霧氣繚繞！",
+  "mistyClearMessage": "腳下的霧氣消失不見了！",
+  "mistyBlockMessage": "{{pokemonNameWithAffix}}正受到薄霧場地的保護！",
 
-  "electric": "Electric",
-  "electricStartMessage": "An electric current ran across the battlefield!",
-  "electricClearMessage": "The electricity disappeared from the battlefield.",
+  "electric": "電氣",
+  "electricStartMessage": "腳下電流飛閃！",
+  "electricClearMessage": "腳下的電流消失了！",
 
-  "grassy": "Grassy",
-  "grassyStartMessage": "Grass grew to cover the battlefield!",
-  "grassyClearMessage": "The grass disappeared from the battlefield.",
+  "grassy": "青草",
+  "grassyStartMessage": "腳下青草如茵！",
+  "grassyClearMessage": "腳下的青草消失不見了！",
 
-  "psychic": "Psychic",
-  "psychicStartMessage": "The battlefield got weird!",
-  "psychicClearMessage": "The weirdness disappeared from the battlefield!",
+  "psychic": "精神",
+  "psychicStartMessage": "腳下傳來了奇妙的感覺！",
+  "psychicClearMessage": "腳下的奇妙感覺消失了！",
 
-  "defaultBlockMessage": "{{pokemonNameWithAffix}} is protected by the {{terrainName}} Terrain!"
+  "defaultBlockMessage": "{{pokemonNameWithAffix}}正受到{{terrainName}}的保護！"
 };
