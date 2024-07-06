@@ -77,8 +77,8 @@ export const TrainingSessionEncounter: MysteryEncounter = new MysteryEncounterBu
       };
 
       const onBeforeRewardsPhase = () => {
-        encounter.dialogueTokens.set(/@ec\{stat1\}/gi, "-");
-        encounter.dialogueTokens.set(/@ec\{stat2\}/gi, "-");
+        encounter.dialogueTokens.set("stat1", [/@ec\{stat1\}/gi, "-"]);
+        encounter.dialogueTokens.set("stat2", [/@ec\{stat2\}/gi, "-"]);
         // Add the pokemon back to party with IV boost
         const ivIndexes = [];
         playerPokemon.ivs.forEach((iv, index) => {
@@ -100,9 +100,9 @@ export const TrainingSessionEncounter: MysteryEncounter = new MysteryEncounterBu
           const ivToChange = ivIndexes.pop();
           let newVal = ivToChange.iv;
           if (improvedCount === 0) {
-            encounter.dialogueTokens.set(/@ec\{stat1\}/gi, getIvName(ivToChange.index));
+            encounter.dialogueTokens.set("stat1", [/@ec\{stat1\}/gi, getIvName(ivToChange.index)]);
           } else {
-            encounter.dialogueTokens.set(/@ec\{stat2\}/gi, getIvName(ivToChange.index));
+            encounter.dialogueTokens.set("stat2", [/@ec\{stat2\}/gi, getIvName(ivToChange.index)]);
           }
 
           // Corrects required encounter breakpoints to be continuous for all IV values
@@ -148,7 +148,7 @@ export const TrainingSessionEncounter: MysteryEncounter = new MysteryEncounterBu
             label: getNatureName(nature, true, true, true, scene.uiTheme),
             handler: () => {
               // Pokemon and second option selected
-              encounter.dialogueTokens.set(/@ec\{nature\}/gi, getNatureName(nature));
+              encounter.dialogueTokens.set("nature", [/@ec\{nature\}/gi, getNatureName(nature)]);
               encounter.misc = {
                 playerPokemon: pokemon,
                 chosenNature: nature
@@ -201,15 +201,15 @@ export const TrainingSessionEncounter: MysteryEncounter = new MysteryEncounterBu
         const speciesForm = !!pokemon.getFusionSpeciesForm() ? pokemon.getFusionSpeciesForm() : pokemon.getSpeciesForm();
         const abilityCount = speciesForm.getAbilityCount();
         const abilities = new Array(abilityCount).fill(null).map((val, i) => allAbilities[speciesForm.getAbility(i)]);
-        return abilities.map((ability: Ability) => {
+        return abilities.map((ability: Ability, index) => {
           const option: OptionSelectItem = {
             label: ability.name,
             handler: () => {
               // Pokemon and ability selected
-              encounter.dialogueTokens.set(/@ec\{ability\}/gi, ability.name);
+              encounter.dialogueTokens.set("ability", [/@ec\{ability\}/gi, ability.name]);
               encounter.misc = {
                 playerPokemon: pokemon,
-                abilityIndex: ability
+                abilityIndex: index
               };
               return true;
             },

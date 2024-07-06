@@ -131,8 +131,8 @@ export function getTextWithEncounterDialogueTokens(scene: BattleScene, textKey: 
   const dialogueTokens = scene.currentBattle?.mysteryEncounter?.dialogueTokens;
 
   if (dialogueTokens) {
-    dialogueTokens.forEach((value, key) => {
-      textString = textString.replace(key, value);
+    dialogueTokens.forEach((value) => {
+      textString = textString.replace(value[0], value[1]);
     });
   }
 
@@ -450,7 +450,7 @@ export function selectPokemonForOption(scene: BattleScene, onPokemonSelected: (p
           const pokemon = scene.getParty()[slotIndex];
           const secondaryOptions = onPokemonSelected(pokemon);
           if (!secondaryOptions) {
-            scene.currentBattle.mysteryEncounter.dialogueTokens.set(/@ec\{selectedPokemon\}/gi, pokemon.name);
+            scene.currentBattle.mysteryEncounter.dialogueTokens.set("selectedPokemon", [/@ec\{selectedPokemon\}/gi, pokemon.name]);
             resolve(true);
             return;
           }
@@ -464,7 +464,7 @@ export function selectPokemonForOption(scene: BattleScene, onPokemonSelected: (p
                 const onSelect = option.handler;
                 option.handler = () => {
                   onSelect();
-                  scene.currentBattle.mysteryEncounter.dialogueTokens.set(/@ec\{selectedPokemon\}/gi, pokemon.name);
+                  scene.currentBattle.mysteryEncounter.dialogueTokens.set("selectedPokemon", [/@ec\{selectedPokemon\}/gi, pokemon.name]);
                   resolve(true);
                   return true;
                 };

@@ -92,7 +92,7 @@ export const DarkDealEncounter: MysteryEncounter = new MysteryEncounterBuilder()
       // Will never return last battle able mon and instead pick fainted/unable to battle
       const removedPokemon = getRandomPlayerPokemon(scene, false, true);
       scene.removePokemonFromPlayerParty(removedPokemon);
-      scene.currentBattle.mysteryEncounter.dialogueTokens.set( /@ec\{pokeName\}/gi, removedPokemon.name);
+      scene.currentBattle.mysteryEncounter.dialogueTokens.set("pokeName", [/@ec\{pokeName\}/gi, removedPokemon.name]);
 
       // Store removed pokemon types
       scene.currentBattle.mysteryEncounter.misc = [removedPokemon.species.type1];
