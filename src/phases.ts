@@ -50,7 +50,7 @@ import { GameMode, GameModes, getGameMode } from "./game-mode";
 import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "./data/pokemon-species";
 import i18next from "./plugins/i18n";
 import * as Overrides from "./overrides";
-import { TextStyle, addTextObject } from "./ui/text";
+import { TextStyle, addTextObject, getTextColor } from "./ui/text";
 import { Type } from "./data/type";
 import { BerryUsedEvent, EncounterPhaseEvent, MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./events/battle-scene";
 import { Abilities } from "#enums/abilities";
@@ -5507,19 +5507,45 @@ export class ScanIvsPhase extends PokemonPhase {
 
     const pokemon = this.getPokemon();
 
-    this.scene.ui.showText(i18next.t("battle:ivScannerUseQuestion", { pokemonName: pokemon.name }), null, () => {
-      this.scene.ui.setMode(Mode.CONFIRM, () => {
-        this.scene.ui.setMode(Mode.MESSAGE);
-        this.scene.ui.clearText();
-        new CommonBattleAnim(CommonAnim.LOCK_ON, pokemon, pokemon).play(this.scene, () => {
-          this.scene.ui.getMessageHandler().promptIvs(pokemon.id, pokemon.ivs, this.shownIvs).then(() => this.end());
+    let enemyIvs = [];
+    let statsContainer = [];
+    let statsContainerLabels = [];
+    const enemyField = this.scene.getEnemyField();
+    const uiTheme = (this.scene as BattleScene).uiTheme; // Assuming uiTheme is accessible
+    for (let e = 0; e < enemyField.length; e++) {
+      enemyIvs = enemyField[e].ivs;
+      const currentIvs = this.scene.gameData.dexData[enemyField[e].species.speciesId].ivs;
+      const ivsToShow = this.scene.ui.getMessageHandler().topIvs(enemyIvs, this.shownIvs);
+      statsContainer = enemyField[e].getBattleInfo().getStatsValueContainer().list;
+      statsContainerLabels = statsContainer.filter(m => m.name.indexOf("icon_stat_label") >= 0);
+      for (let s = 0; s < statsContainerLabels.length; s++) {
+        const ivStat = Stat[statsContainerLabels[s].frame.name];
+        if (enemyIvs[ivStat] > currentIvs[ivStat] && ivsToShow.indexOf(Number(ivStat)) >= 0) {
+          const hexColour = enemyIvs[ivStat] === 31 ? "#f8c020" : getTextColor(TextStyle.SUMMARY_GREEN, false, uiTheme);
+          const hexTextColour = Phaser.Display.Color.HexStringToColor(hexColour).color;
+          statsContainerLabels[s].setTint(hexTextColour);
+        }
+        statsContainerLabels[s].setVisible(true);
+      }
+    }
+
+    if (!this.scene.hideIvs) {
+      this.scene.ui.showText(i18next.t("battle:ivScannerUseQuestion", { pokemonName: pokemon.name }), null, () => {
+        this.scene.ui.setMode(Mode.CONFIRM, () => {
+          this.scene.ui.setMode(Mode.MESSAGE);
+          this.scene.ui.clearText();
+          new CommonBattleAnim(CommonAnim.LOCK_ON, pokemon, pokemon).play(this.scene, () => {
+            this.scene.ui.getMessageHandler().promptIvs(pokemon.id, pokemon.ivs, this.shownIvs).then(() => this.end());
+          });
+        }, () => {
+          this.scene.ui.setMode(Mode.MESSAGE);
+          this.scene.ui.clearText();
+          this.end();
         });
-      }, () => {
-        this.scene.ui.setMode(Mode.MESSAGE);
-        this.scene.ui.clearText();
-        this.end();
       });
-    });
+    } else {
+      this.end();
+    }
   }
 }
 
