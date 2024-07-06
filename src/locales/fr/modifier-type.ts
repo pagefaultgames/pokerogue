@@ -4,7 +4,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
   ModifierType: {
     "AddPokeballModifierType": {
       name: "{{pokeballName}} x{{modifierCount}}",
-      description: "Recevez {{modifierCount}} {{pokeballName}}·s (Inventaire : {{pokeballAmount}})\nTaux de capture : {{catchRate}}.",
+      description: "Recevez {{modifierCount}} {{pokeballName}}·s. (Inventaire : {{pokeballAmount}})\nTaux de capture : {{catchRate}}",
     },
     "AddVoucherModifierType": {
       name: "{{voucherTypeName}} x{{modifierCount}}",
@@ -101,7 +101,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     },
     "TmModifierTypeWithInfo": {
       name: "CT{{moveId}} - {{moveName}}",
-      description: "Apprend la capacité {{moveName}} à un Pokémon\n(Maintenez C ou Maj pour plus d’infos).",
+      description: "Apprend la capacité {{moveName}} à un Pokémon.\n(Maintenez C ou Maj pour plus d’infos)",
     },
     "EvolutionItemModifierType": {
       description: "Permet à certains Pokémon d’évoluer.",
@@ -240,6 +240,12 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "Jeton Total Soin", description: "Ajoute 2.5% de chances à chaque tour de se soigner d’un problème de statut." },
     "ENEMY_ENDURE_CHANCE": { name: "Jeton Ténacité" },
     "ENEMY_FUSED_CHANCE": { name: "Jeton Fusion", description: "Ajoute 1% de chances qu’un Pokémon sauvage soit une fusion." },
+  },
+  SpeciesBoosterItem: {
+    "LIGHT_BALL": { name: "Balle Lumière", description: "Objet à faire tenir à Pikachu. Un orbe énigmatique qui augmente son Attaque et son Attaque Spéciale." },
+    "THICK_CLUB": { name: "Masse Os", description: "Objet à faire tenir à Osselait ou Ossatueur. Un os dur qui augmente leur Attaque." },
+    "METAL_POWDER": { name: "Poudre Métal", description: "Objet à faire tenir à Métamorph. Cette poudre étrange, très fine mais résistante, augmente sa Défense." },
+    "QUICK_POWDER": { name: "Poudre Vite", description: "Objet à faire tenir à Métamorph. Cette poudre étrange, très fine mais résistante, augmente sa Vitesse." }
   },
   TempBattleStatBoosterItem: {
     "x_attack": "Attaque +",
