@@ -5051,7 +5051,7 @@ export class AttemptCapturePhase extends PokemonPhase {
 
     const pokemon = this.getPokemon() as EnemyPokemon;
 
-    if (!pokemon?.hp) {
+    if (!pokemon?.hp || !!pokemon.getTag(SemiInvulnerableTag) && !pokemon.getTag(BattlerTagType.FLYING)) {
       return this.end();
     }
 
