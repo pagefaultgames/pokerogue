@@ -1,7 +1,7 @@
 import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const bgmName: SimpleTranslationEntries = {
-  "music": "Musik",
+  "music": "Musik: ",
   "missing_entries" : "{{name}}",
   "battle_kanto_champion": "S2W2 Vs. Kanto Champion",
   "battle_johto_champion": "S2W2 Vs. Johto Champion",
@@ -101,20 +101,20 @@ export const bgmName: SimpleTranslationEntries = {
   "graveyard": "PMD Erkundungsteam Himmel Verwirrwald",
   "ice_cave": "PMD Erkundungsteam Himmel Rieseneisberg",
   "island": "PMD Erkundungsteam Himmel Schroffküste",
-  //"jungle": "jungle", // The composer thinks about a more creative name
-  //"labratory": "labratory", // The composer thinks about a more creative name
+  "jungle": "Lmz - Jungle", // The composer thinks about a more creative name
+  "laboratory": "Firel - Laboratory", // The composer thinks about a more creative name
   "lake": "PMD Erkundungsteam Himmel Kristallhöhle",
   "meadow": "PMD Erkundungsteam Himmel Himmelsgipfel-Wald",
-  //"metropolis": "metropolis", // The composer thinks about a more creative name
+  "metropolis": "Firel - Metropolis", // The composer thinks about a more creative name
   "mountain": "PMD Erkundungsteam Himmel Hornberg",
   "plains": "PMD Erkundungsteam Himmel Himmelsgipfel-Prärie",
   "power_plant": "PMD Erkundungsteam Himmel Weite Ampere-Ebene",
   "ruins": "PMD Erkundungsteam Himmel Tiefes Ruinenverlies",
   "sea": "PMD Erkundungsteam Himmel Salzwasserhöhle",
-  "seabed": "PMD Erkundungsteam Himmel Untere Salzwasserhöhle",
+  "seabed": "Firel - Seabed", // The composer thinks about a more creative name
   "slum": "PMD Erkundungsteam Himmel Himmelsgipfel-Küste",
   "snowy_forest": "PMD Erkundungsteam Himmel Himmelsgipfel-Schneefeld",
-  "space": "PMD Erkundungsteam Himmel Schicksalsschlucht",
+  "space": "Firel - Aether",
   "swamp": "PMD Erkundungsteam Himmel Ringmeer",
   "tall_grass": "PMD Erkundungsteam Himmel Nebelwald",
   "temple": "PMD Erkundungsteam Himmel Ägishöhle",

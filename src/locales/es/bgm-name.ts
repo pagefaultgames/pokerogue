@@ -1,7 +1,7 @@
 import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const bgmName: SimpleTranslationEntries = {
-  "music": "Música",
+  "music": "Música: ",
   "missing_entries" : "{{name}}",
   "battle_kanto_champion": "B2W2 - ¡Vs Campeón de Kanto!",
   "battle_johto_champion": "B2W2 - ¡Vs Campeón de Johto!",
@@ -101,20 +101,20 @@ export const bgmName: SimpleTranslationEntries = {
   "graveyard": "PMD EoS - Bosque Misterio",
   "ice_cave": "PMD EoS - Gran Iceberg",
   "island": "PMD EoS - Costa Escarpada",
-  //"jungle": "jungle", // The composer thinks about a more creative name
-  //"labratory": "labratory", // The composer thinks about a more creative name
+  "jungle": "Lmz - Jungle", // The composer thinks about a more creative name
+  "laboratory": "Firel - Laboratory", // The composer thinks about a more creative name
   "lake": "PMD EoS - Cueva Cristal",
   "meadow": "PMD EoS - Bosque de la Cumbre del Cielo",
-  //"metropolis": "metropolis", // The composer thinks about a more creative name
+  "metropolis": "Firel - Metropolis", // The composer thinks about a more creative name
   "mountain": "PMD EoS - Monte Cuerno",
   "plains": "PMD EoS - Pradera de la Cumbre del Cielo",
   "power_plant": "PMD EoS - Pradera Destello",
   "ruins": "PMD EoS - Sima Hermética",
   "sea": "PMD EoS - Cueva Aguamar",
-  "seabed": "PMD EoS - Fosa Aguamar",
+  "seabed": "Firel - Seabed", // The composer thinks about a more creative name
   "slum": "PMD EoS - Costa de la Cumbre del Cielo",
   "snowy_forest": "PMD EoS - Campo nevado de la Cumbre del Cielo",
-  "space": "PMD EoS - Risco Fortuna",
+  "space": "Firel - Aether",
   "swamp": "PMD EoS - Mar Circundante",
   "tall_grass": "PMD EoS - Bosque Niebla",
   "temple": "PMD EoS - Cueva Regia",

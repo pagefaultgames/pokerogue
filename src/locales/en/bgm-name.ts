@@ -1,7 +1,7 @@
 import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const bgmName: SimpleTranslationEntries = {
-  "music": "Music",
+  "music": "Music: ",
   "missing_entries" : "{{name}}",
   "battle_kanto_champion": "B2W2 Kanto Champion Battle",
   "battle_johto_champion": "B2W2 Johto Champion Battle",
@@ -101,20 +101,20 @@ export const bgmName: SimpleTranslationEntries = {
   "graveyard": "PMD EoS Mystifying Forest",
   "ice_cave": "PMD EoS Vast Ice Mountain",
   "island": "PMD EoS Craggy Coast",
-  //"jungle": "jungle", // The composer thinks about a more creative name
-  //"labratory": "labratory", // The composer thinks about a more creative name
+  "jungle": "Lmz - Jungle", // The composer thinks about a more creative name
+  "laboratory": "Firel - Laboratory", // The composer thinks about a more creative name
   "lake": "PMD EoS Crystal Cave",
   "meadow": "PMD EoS Sky Peak Forest",
-  //"metropolis": "metropolis", // The composer thinks about a more creative name
+  "metropolis": "Firel - Metropolis", // The composer thinks about a more creative name
   "mountain": "PMD EoS Mt. Horn",
   "plains": "PMD EoS Sky Peak Prairie",
   "power_plant": "PMD EoS Far Amp Plains",
   "ruins": "PMD EoS Deep Sealed Ruin",
   "sea": "PMD EoS Brine Cave",
-  "seabed": "PMD EoS Lower Brine Cave",
+  "seabed": "Firel - Seabed", // The composer thinks about a more creative name
   "slum": "PMD EoS Sky Peak Coast",
   "snowy_forest": "PMD EoS Sky Peak Snowfield",
-  "space": "PMD EoS Fortune Ravine",
+  "space": "Firel - Aether",
   "swamp": "PMD EoS Surrounded Sea",
   "tall_grass": "PMD EoS Foggy Forest",
   "temple": "PMD EoS Aegis Cave",

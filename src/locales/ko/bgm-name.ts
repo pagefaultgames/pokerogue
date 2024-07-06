@@ -1,7 +1,7 @@
 import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const bgmName: SimpleTranslationEntries = {
-  "music": "Music",
+  "music": "Music: ",
   "missing_entries" : "{{name}}",
   "battle_kanto_champion": "BW2 관동 챔피언 배틀",
   "battle_johto_champion": "BW2 성도 챔피언 배틀",
@@ -62,7 +62,7 @@ export const bgmName: SimpleTranslationEntries = {
   "battle_legendary_calyrex": "SWSH 버드렉스 배틀",
   "battle_legendary_birds_galar": "SWSH 가라르 전설의 새 배틀",
   "battle_legendary_ruinous": "SV 재앙의 보물 배틀",
-  "battle_legendary_kor_mir": "SV Depths of Area Zero Battle",
+  "battle_legendary_kor_mir": "SV 에리어 제로 배틀",
   "battle_legendary_loyal_three": "SV 세벗들 배틀",
   "battle_legendary_ogerpon": "SV 오거폰 배틀",
   "battle_legendary_terapagos": "SV 테라파고스 배틀",
@@ -74,16 +74,16 @@ export const bgmName: SimpleTranslationEntries = {
   "battle_wild": "BW 야생 포켓몬 배틀",
   "battle_wild_strong": "BW 강한 야생 포켓몬 조우 배틀",
   "end_summit": "불가사의 던전 구조대 DX 천공의 탑 꼭대기",
-  "battle_rocket_grunt": "HGSS Team Rocket Battle",
-  "battle_aqua_magma_grunt": "ORAS Team Aqua & Magma Battle",
-  "battle_galactic_grunt": "BDSP Team Galactic Battle",
+  "battle_rocket_grunt": "HGSS 로켓단 배틀",
+  "battle_aqua_magma_grunt": "ORAS 아쿠아단 & 마그마단 배틀",
+  "battle_galactic_grunt": "BDSP 갤럭시단 배틀",
   "battle_plasma_grunt": "BW 플라스마단 배틀",
-  "battle_flare_grunt": "XY Team Flare Battle",
-  "battle_rocket_boss": "USUM Giovanni Battle",
-  "battle_aqua_magma_boss": "ORAS Archie & Maxie Battle",
-  "battle_galactic_boss": "BDSP Cyrus Battle",
-  "battle_plasma_boss": "B2W2 Ghetsis Battle",
-  "battle_flare_boss": "XY Lysandre Battle",
+  "battle_flare_grunt": "XY 플레어단 배틀",
+  "battle_rocket_boss": "USUM 비주기 배틀",
+  "battle_aqua_magma_boss": "ORAS 아강 & 마적 배틀",
+  "battle_galactic_boss": "BDSP 태홍 배틀",
+  "battle_plasma_boss": "B2W2 게치스 배틀",
+  "battle_flare_boss": "XY 플라드리 배틀",
 
   // Biome Music
   "abyss": "불가사의 던전 하늘의 탐험대 어둠의 화구",
@@ -101,20 +101,20 @@ export const bgmName: SimpleTranslationEntries = {
   "graveyard": "불가사의 던전 하늘의 탐험대 신비의 숲",
   "ice_cave": "불가사의 던전 하늘의 탐험대 광대한 얼음산",
   "island": "불가사의 던전 하늘의 탐험대 연안의 암반",
-  //"jungle": "jungle", // The composer thinks about a more creative name
-  //"labratory": "labratory", // The composer thinks about a more creative name
+  "jungle": "Lmz - Jungle", // The composer thinks about a more creative name
+  "laboratory": "Firel - Laboratory", // The composer thinks about a more creative name
   "lake": "불가사의 던전 하늘의 탐험대 수정 동굴",
   "meadow": "불가사의 던전 하늘의 탐험대 하늘 꼭대기 숲",
-  //"metropolis": "metropolis", // The composer thinks about a more creative name
+  "metropolis": "Firel - Metropolis", // The composer thinks about a more creative name
   "mountain": "불가사의 던전 하늘의 탐험대 뿔산",
   "plains": "불가사의 던전 하늘의 탐험대 하늘 꼭대기 초원",
   "power_plant": "불가사의 던전 하늘의 탐험대 일렉트릭 평원",
   "ruins": "불가사의 던전 하늘의 탐험대 봉인의 암반",
   "sea": "불가사의 던전 하늘의 탐험대 바닷가 동굴",
-  "seabed": "불가사의 던전 하늘의 탐험대 바닷가 동굴(저층)",
+  "seabed": "Firel - Seabed", // The composer thinks about a more creative name
   "slum": "불가사의 던전 하늘의 탐험대 하늘 꼭대기 해변",
   "snowy_forest": "불가사의 던전 하늘의 탐험대 하늘 꼭대기 설원",
-  "space": "불가사의 던전 하늘의 탐험대 행운 협곡",
+  "space": "Firel - Aether",
   "swamp": "불가사의 던전 하늘의 탐험대 폐쇄되어진 바다",
   "tall_grass": "불가사의 던전 하늘의 탐험대 짙은 안개의 숲",
   "temple": "불가사의 던전 하늘의 탐험대 파수꾼의 동굴",

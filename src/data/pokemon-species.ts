@@ -319,6 +319,7 @@ export abstract class PokemonSpeciesForm {
     case Species.UNFEZANT:
     case Species.FRILLISH:
     case Species.JELLICENT:
+    case Species.PYROAR:
       ret += female ? "-f" : "";
       break;
     }
@@ -778,7 +779,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
   }
 
   // This could definitely be written better and more accurate to the getSpeciesForLevel logic, but it is only for generating movesets for evolved Pokemon
-  getSimulatedEvolutionChain(currentLevel: integer, forTrainer: boolean = false, isBoss: boolean = false, player: boolean = false) {
+  getSimulatedEvolutionChain(currentLevel: integer, forTrainer: boolean = false, isBoss: boolean = false, player: boolean = false): [Species, integer][] {
     const ret = [];
     if (pokemonPrevolutions.hasOwnProperty(this.speciesId)) {
       const prevolutionLevels = this.getPrevolutionLevels().reverse();
@@ -2157,7 +2158,7 @@ export function initSpecies() {
     new PokemonSpecies(Species.TURTONATOR, 7, false, false, false, "Blast Turtle Pokémon", Type.FIRE, Type.DRAGON, 2, 212, Abilities.SHELL_ARMOR, Abilities.NONE, Abilities.NONE, 485, 60, 78, 135, 91, 85, 36, 70, 50, 170, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.TOGEDEMARU, 7, false, false, false, "Roly-Poly Pokémon", Type.ELECTRIC, Type.STEEL, 0.3, 3.3, Abilities.IRON_BARBS, Abilities.LIGHTNING_ROD, Abilities.STURDY, 435, 65, 98, 63, 40, 73, 96, 180, 50, 152, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.MIMIKYU, 7, false, false, false, "Disguise Pokémon", Type.GHOST, Type.FAIRY, 0.2, 0.7, Abilities.DISGUISE, Abilities.NONE, Abilities.NONE, 476, 55, 90, 80, 50, 105, 96, 45, 50, 167, GrowthRate.MEDIUM_FAST, 50, false, false,
-      new PokemonForm("Disguised Form", "disguised", Type.GHOST, Type.FAIRY, 0.2, 0.7, Abilities.DISGUISE, Abilities.NONE, Abilities.NONE, 476, 55, 90, 80, 50, 105, 96, 45, 50, 167, false, "", true),
+      new PokemonForm("Disguised Form", "disguised", Type.GHOST, Type.FAIRY, 0.2, 0.7, Abilities.DISGUISE, Abilities.NONE, Abilities.NONE, 476, 55, 90, 80, 50, 105, 96, 45, 50, 167, false, null, true),
       new PokemonForm("Busted Form", "busted", Type.GHOST, Type.FAIRY, 0.2, 0.7, Abilities.DISGUISE, Abilities.NONE, Abilities.NONE, 476, 55, 90, 80, 50, 105, 96, 45, 50, 167),
     ),
     new PokemonSpecies(Species.BRUXISH, 7, false, false, false, "Gnash Teeth Pokémon", Type.WATER, Type.PSYCHIC, 0.9, 19, Abilities.DAZZLING, Abilities.STRONG_JAW, Abilities.WONDER_SKIN, 475, 68, 105, 70, 70, 70, 92, 80, 70, 166, GrowthRate.MEDIUM_FAST, 50, false),
@@ -2430,8 +2431,8 @@ export function initSpecies() {
     new PokemonSpecies(Species.PAWMOT, 9, false, false, false, "Hands-On Pokémon", Type.ELECTRIC, Type.FIGHTING, 0.9, 41, Abilities.VOLT_ABSORB, Abilities.NATURAL_CURE, Abilities.IRON_FIST, 490, 70, 115, 70, 70, 60, 105, 45, 50, 245, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.TANDEMAUS, 9, false, false, false, "Couple Pokémon", Type.NORMAL, null, 0.3, 1.8, Abilities.RUN_AWAY, Abilities.PICKUP, Abilities.OWN_TEMPO, 305, 50, 50, 45, 40, 45, 75, 150, 50, 61, GrowthRate.FAST, null, false),
     new PokemonSpecies(Species.MAUSHOLD, 9, false, false, false, "Family Pokémon", Type.NORMAL, null, 0.3, 2.3, Abilities.FRIEND_GUARD, Abilities.CHEEK_POUCH, Abilities.TECHNICIAN, 470, 74, 75, 70, 65, 75, 111, 75, 50, 165, GrowthRate.FAST, null, false, false,
-      new PokemonForm("Family of Four", "four", Type.NORMAL, null, 0.3, 2.3, Abilities.FRIEND_GUARD, Abilities.CHEEK_POUCH, Abilities.TECHNICIAN, 470, 74, 75, 70, 65, 75, 111, 75, 50, 165),
-      new PokemonForm("Family of Three", "three", Type.NORMAL, null, 0.3, 2.8, Abilities.FRIEND_GUARD, Abilities.CHEEK_POUCH, Abilities.TECHNICIAN, 470, 74, 75, 70, 65, 75, 111, 75, 50, 165),
+      new PokemonForm("Family of Four", "four", Type.NORMAL, null, 0.3, 2.8, Abilities.FRIEND_GUARD, Abilities.CHEEK_POUCH, Abilities.TECHNICIAN, 470, 74, 75, 70, 65, 75, 111, 75, 50, 165),
+      new PokemonForm("Family of Three", "three", Type.NORMAL, null, 0.3, 2.3, Abilities.FRIEND_GUARD, Abilities.CHEEK_POUCH, Abilities.TECHNICIAN, 470, 74, 75, 70, 65, 75, 111, 75, 50, 165),
     ),
     new PokemonSpecies(Species.FIDOUGH, 9, false, false, false, "Puppy Pokémon", Type.FAIRY, null, 0.3, 10.9, Abilities.OWN_TEMPO, Abilities.NONE, Abilities.KLUTZ, 312, 37, 55, 70, 30, 55, 65, 190, 50, 62, GrowthRate.MEDIUM_SLOW, 50, false),
     new PokemonSpecies(Species.DACHSBUN, 9, false, false, false, "Dog Pokémon", Type.FAIRY, null, 0.5, 14.9, Abilities.WELL_BAKED_BODY, Abilities.NONE, Abilities.AROMA_VEIL, 477, 57, 80, 115, 50, 80, 95, 90, 50, 167, GrowthRate.MEDIUM_SLOW, 50, false),
