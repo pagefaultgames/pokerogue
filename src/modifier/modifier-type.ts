@@ -45,7 +45,6 @@ type NewModifierFunc = (type: ModifierType, args: any[]) => Modifier;
 
 export class ModifierType {
   public id: string;
-  public generatorId: string;
   public localeKey: string;
   public iconImage: string;
   public group: string;
@@ -102,7 +101,7 @@ export class ModifierType {
         if (!pool.hasOwnProperty(tier)) {
           continue;
         }
-        if (pool[tier].find(m => (m as WeightedModifierType).modifierType.id === (this.generatorId || this.id))) {
+        if (pool[tier].find(m => (m as WeightedModifierType).modifierType.id === this.id)) {
           return (this.tier = tier);
         }
       }
@@ -133,7 +132,6 @@ export class ModifierTypeGenerator extends ModifierType {
   generateType(party: Pokemon[], pregenArgs?: any[]) {
     const ret = this.genTypeFunc(party, pregenArgs);
     if (ret) {
-      ret.generatorId = ret.id;
       ret.id = this.id;
       ret.setTier(this.tier);
     }
@@ -145,7 +143,7 @@ export interface GeneratedPersistentModifierType {
   getPregenArgs(): any[];
 }
 
-class AddPokeballModifierType extends ModifierType {
+export class AddPokeballModifierType extends ModifierType {
   private pokeballType: PokeballType;
   private count: integer;
 
@@ -554,7 +552,7 @@ export class SpeciesStatBoosterModifierType extends PokemonHeldItemModifierType 
     const item = SpeciesStatBoosterModifierTypeGenerator.items[key];
     super(`modifierType:SpeciesBoosterItem.${key}`, key.toLowerCase(), (type, args) => new Modifiers.SpeciesStatBoosterModifier(type, (args[0] as Pokemon).id, item.stats, item.multiplier, item.species));
 
-    this.id = this.key = key;
+    this.key = key;
   }
 
   getPregenArgs(): any[] {
@@ -1753,7 +1751,7 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
     let i = 0;
     pool[t].reduce((total: integer, modifierType: WeightedModifierType) => {
       const weightedModifierType = modifierType as WeightedModifierType;
-      const existingModifiers = party[0].scene.findModifiers(m => (m.type.generatorId || m.type.id) === weightedModifierType.modifierType.id, poolType === ModifierPoolType.PLAYER);
+      const existingModifiers = party[0].scene.findModifiers(m => m.type.id === weightedModifierType.modifierType.id, poolType === ModifierPoolType.PLAYER);
       const itemModifierType = weightedModifierType.modifierType instanceof ModifierTypeGenerator
         ? weightedModifierType.modifierType.generateType(party)
         : weightedModifierType.modifierType;
@@ -1766,7 +1764,7 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
           : weightedModifierType.weight as integer
         : 0;
       if (weightedModifierType.maxWeight) {
-        const modifierId = weightedModifierType.modifierType.generatorId || weightedModifierType.modifierType.id;
+        const modifierId = weightedModifierType.modifierType.id;
         tierModifierIds.push(modifierId);
         const outputWeight = useMaxWeightForOutput ? weightedModifierType.maxWeight : weight;
         modifierTableData[modifierId] = { weight: outputWeight, tier: parseInt(t), tierPercent: 0, totalPercent: 0 };
@@ -1814,21 +1812,74 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
   }
 }
 
+export interface CustomModifierSettings {
+  guaranteedModifierTiers?: ModifierTier[];
+  guaranteedModifierTypeOptions?: ModifierTypeOption[];
+  guaranteedModifierTypeFuncs?: ModifierTypeFunc[];
+  fillRemaining?: boolean;
+  rerollMultiplier?: number;
+}
+
 export function getModifierTypeFuncById(id: string): ModifierTypeFunc {
   return modifierTypes[id];
 }
 
-export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemon[], modifierTiers?: ModifierTier[]): ModifierTypeOption[] {
+export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemon[], modifierTiers?: ModifierTier[], customModifierSettings?: CustomModifierSettings): ModifierTypeOption[] {
   const options: ModifierTypeOption[] = [];
   const retryCount = Math.min(count * 5, 50);
-  new Array(count).fill(0).map((_, i) => {
-    let candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, modifierTiers?.length > i ? modifierTiers[i] : undefined);
-    let r = 0;
-    while (options.length && ++r < retryCount && options.filter(o => o.type.name === candidate.type.name || o.type.group === candidate.type.group).length) {
-      candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, candidate.type.tier, candidate.upgradeCount);
+  if (!customModifierSettings) {
+    new Array(count).fill(0).map((_, i) => {
+      options.push(getModifierTypeOptionWithRetry(options, retryCount, party, modifierTiers?.length > i ? modifierTiers[i] : undefined));
+    });
+  } else {
+    // Guaranteed mods first
+    if (customModifierSettings?.guaranteedModifierTypeOptions?.length) {
+      customModifierSettings?.guaranteedModifierTypeOptions.forEach((option) => {
+        options.push(option);
+      });
     }
-    options.push(candidate);
-  });
+
+    // Guaranteed mod funcs second
+    if (customModifierSettings?.guaranteedModifierTypeFuncs?.length) {
+      customModifierSettings?.guaranteedModifierTypeFuncs.forEach((mod, i) => {
+        const modifierId = Object.keys(modifierTypes).find(k => modifierTypes[k] === mod);
+        let guaranteedMod: ModifierType = modifierTypes[modifierId]?.();
+
+        // Gets tier of item by checking player item pool
+        Object.keys(modifierPool).every(modifierTier => {
+          const modType = modifierPool[modifierTier].find(m => {
+            if (m.modifierType.id === modifierId) {
+              return m;
+            }
+          });
+          if (modType) {
+            guaranteedMod = modType.modifierType;
+            return false;
+          }
+          return true;
+        });
+
+        const modType = guaranteedMod instanceof ModifierTypeGenerator ? guaranteedMod.generateType(party) : guaranteedMod;
+        const option = new ModifierTypeOption(modType, 0);
+        options.push(option);
+      });
+    }
+
+    // Guaranteed tiers third
+    if (customModifierSettings?.guaranteedModifierTiers?.length) {
+      customModifierSettings?.guaranteedModifierTiers.forEach((tier) => {
+        options.push(getModifierTypeOptionWithRetry(options, retryCount, party, tier));
+      });
+    }
+
+    // Fill remaining
+    if (options.length < count && customModifierSettings.fillRemaining) {
+      while (options.length < count) {
+        options.push(getModifierTypeOptionWithRetry(options, retryCount, party, undefined));
+      }
+    }
+  }
+
   // OVERRIDE IF NECESSARY
   if (Overrides.ITEM_REWARD_OVERRIDE?.length) {
     options.forEach((mod, i) => {
@@ -1838,6 +1889,15 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
     });
   }
   return options;
+}
+
+function getModifierTypeOptionWithRetry(existingOptions: ModifierTypeOption[], retryCount: integer, party: PlayerPokemon[], tier?: ModifierTier): ModifierTypeOption {
+  let candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, tier);
+  let r = 0;
+  while (existingOptions.length && ++r < retryCount && existingOptions.filter(o => o.type.name === candidate.type.name || o.type.group === candidate.type.group).length) {
+    candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, candidate.type.tier, candidate.upgradeCount);
+  }
+  return candidate;
 }
 
 export function getPlayerShopModifierTypeOptionsForWave(waveIndex: integer, baseCost: integer): ModifierTypeOption[] {

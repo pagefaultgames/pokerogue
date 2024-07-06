@@ -4,6 +4,7 @@ import Pokemon from "../field/pokemon";
 import Trainer from "../field/trainer";
 import FieldSpritePipeline from "./field-sprite";
 import * as Utils from "../utils";
+import MysteryEncounterIntroVisuals from "../field/mystery-encounter-intro";
 
 const spriteFragShader = `
 #ifdef GL_FRAGMENT_PRECISION_HIGH
@@ -353,7 +354,7 @@ export default class SpritePipeline extends FieldSpritePipeline {
     const ignoreFieldPos = data["ignoreFieldPos"] as boolean;
     const ignoreOverride = data["ignoreOverride"] as boolean;
 
-    const isEntityObj = sprite.parentContainer instanceof Pokemon || sprite.parentContainer instanceof Trainer;
+    const isEntityObj = sprite.parentContainer instanceof Pokemon || sprite.parentContainer instanceof Trainer || sprite.parentContainer instanceof MysteryEncounterIntroVisuals;
     const field = isEntityObj ? sprite.parentContainer.parentContainer : sprite.parentContainer;
     const position = isEntityObj
       ? [ sprite.parentContainer.x, sprite.parentContainer.y ]
@@ -448,7 +449,7 @@ export default class SpritePipeline extends FieldSpritePipeline {
 
     const hasShadow = sprite.pipelineData["hasShadow"] as boolean;
     if (hasShadow) {
-      const isEntityObj = sprite.parentContainer instanceof Pokemon || sprite.parentContainer instanceof Trainer;
+      const isEntityObj = sprite.parentContainer instanceof Pokemon || sprite.parentContainer instanceof Trainer || sprite.parentContainer instanceof MysteryEncounterIntroVisuals;
       const field = isEntityObj ? sprite.parentContainer.parentContainer : sprite.parentContainer;
       const fieldScaleRatio = field.scale / 6;
       const baseY = (isEntityObj
