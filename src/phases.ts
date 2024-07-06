@@ -4207,7 +4207,7 @@ export class GameOverPhase extends BattlePhase {
 
         this.scene.gameData.getSession(this.scene.sessionSlotId).then(sessionData => {
           if (sessionData) {
-            this.scene.gameData.saveRunHistory(this.scene, sessionData, this.victory, true);
+            this.scene.gameData.saveRunHistory(this.scene, sessionData, this.victory);
           }
         }).catch(err => {
           console.error(err);

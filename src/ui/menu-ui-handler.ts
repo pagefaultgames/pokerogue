@@ -267,7 +267,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     this.menuContainer.setVisible(false);
   }
 
-  async show(args: any[]): boolean {
+  async show(args: any[]): Promise<boolean> {
     super.show(args);
 
     //This is here because the MenuUiConstructor is created before the user is assigned an username. Without an username, the player cannot access run history and check if it is present or not. Therefore, it is added here.

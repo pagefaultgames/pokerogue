@@ -1,18 +1,17 @@
 import BattleScene from "../battle-scene";
 import { GameModes } from "../game-mode";
 import UiHandler from "./ui-handler";
-import { RunEntries } from "../system/game-data";
+import { SessionSaveData } from "../system/game-data";
 import { TextStyle, addTextObject, addBBCodeTextObject } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
 import * as Utils from "../utils";
-import { PokemonData } from "../system/pokemon-data";
+import PokemonData from "../system/pokemon-data";
 import i18next from "i18next";
 import {Button} from "../enums/buttons";
 import { BattleType } from "../battle";
 import { TrainerVariant } from "../field/trainer";
 import { Challenges } from "#enums/challenges";
-import { Type } from "../data/type";
 import { getLuckString, getLuckTextTint } from "../modifier/modifier-type";
 import RoundRectangle from "phaser3-rex-plugins/plugins/roundrectangle.js";
 import { Type, getTypeRgb } from "../data/type";
@@ -36,7 +35,7 @@ export enum RunVictory {
 }
 
 export default class GameInfoUiHandler extends UiHandler {
-  private runInfo: RunEntries;
+  private runInfo: SessionSaveData;
   private victory: Boolean;
 
   private gameStatsContainer: Phaser.GameObjects.Container;
@@ -46,6 +45,7 @@ export default class GameInfoUiHandler extends UiHandler {
   private partyContainer: Phaser.GameObjects.Container;
   private statsBgWidth: integer;
   private partyContainerHeight: integer;
+  private partyContainerWidth: integer;
 
   private hallofFameContainer: Phaser.GameObjects.Container;
 
@@ -157,11 +157,11 @@ export default class GameInfoUiHandler extends UiHandler {
         }
       }
       if (rules) {
-        for (const r in rules) {
-          if (r > 0) {
+        for (let i = 0; i < rules.length; i++) {
+          if (i > 0) {
             genInfoText.appendText(" + ", false);
           }
-          genInfoText.appendText(rules[r], false);
+          genInfoText.appendText(rules[i], false);
         }
       }
     			break;
@@ -460,10 +460,7 @@ export default class GameInfoUiHandler extends UiHandler {
         pokemonMoveLabels[m].setText(move ? move.name : "-");
     	}
 
-      //pokemonSpriteWindow.setOrigin(0,0);
-      //iconContainer.add(pokemonSpriteWindow);
       pokemonInfoContainer.add(pokemonInfoWindow);
-      //iconContainer.add(pokemonSpriteWindow);
       iconContainer.add(icon);
       pokemonInfoContainer.add(iconContainer);
       pokemonInfoContainer.add(movesetContainer);
