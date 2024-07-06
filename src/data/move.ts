@@ -861,6 +861,47 @@ export class MoveEffectAttr extends MoveAttr {
   }
 }
 
+/**
+ * Base class defining all Move Header attributes.
+ * Move Header effects apply at the beginning of a turn before any moves are resolved.
+ * They can be used to apply effects to the field (e.g. queueing a message) or to the user
+ * (e.g. adding a battler tag).
+ */
+export class MoveHeaderAttr extends MoveAttr {
+  constructor() {
+    super(true);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
+    return true;
+  }
+}
+
+/**
+ * Header attribute to queue a message at the beginning of a turn.
+ * @see {@link MoveHeaderAttr}
+ */
+export class MessageHeaderAttr extends MoveHeaderAttr {
+  private message: string | ((user: Pokemon, move: Move) => string);
+
+  constructor(message: string | ((user: Pokemon, move: Move) => string)) {
+    super();
+    this.message = message;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const message = typeof this.message === "string"
+      ? this.message as string
+      : this.message(user, move);
+
+    if (message) {
+      user.scene.queueMessage(message);
+      return true;
+    }
+    return false;
+  }
+}
+
 export class PreMoveMessageAttr extends MoveAttr {
   private message: string | ((user: Pokemon, target: Pokemon, move: Move) => string);
 
@@ -5640,6 +5681,10 @@ export const allMoves: Move[] = [
   new SelfStatusMove(Moves.NONE, Type.NORMAL, MoveCategory.STATUS, -1, -1, 0, 1),
 ];
 
+export const selfStatLowerMoves: Moves[] = [
+
+];
+
 export function initMoves() {
   allMoves.push(
     new AttackMove(Moves.POUND, Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 35, -1, 0, 1),
@@ -6374,6 +6419,7 @@ export function initMoves() {
         && (user.status.effect === StatusEffect.BURN || user.status.effect === StatusEffect.POISON || user.status.effect === StatusEffect.TOXIC || user.status.effect === StatusEffect.PARALYSIS) ? 2 : 1)
       .attr(BypassBurnDamageReductionAttr),
     new AttackMove(Moves.FOCUS_PUNCH, Type.FIGHTING, MoveCategory.PHYSICAL, 150, 100, 20, -1, -3, 3)
+      .attr(MessageHeaderAttr, (user, move) => getPokemonMessage(user, " is tightening its focus!"))
       .punchingMove()
       .ignoresVirtual()
       .condition((user, target, move) => !user.turnData.attacksReceived.find(r => r.damage)),
@@ -8405,4 +8451,9 @@ export function initMoves() {
     new AttackMove(Moves.MALIGNANT_CHAIN, Type.POISON, MoveCategory.SPECIAL, 100, 100, 5, 50, 0, 9)
       .attr(StatusEffectAttr, StatusEffect.TOXIC)
   );
+  allMoves.map(m=>{
+    if (m.getAttrs(StatChangeAttr).some(a=> a.selfTarget && a.levels < 0)) {
+      selfStatLowerMoves.push(m.id);
+    }
+  });
 }
