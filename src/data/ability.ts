@@ -245,25 +245,6 @@ export class PreDefendAbAttr extends AbAttr {
   }
 }
 
-export class PreDefendFormChangeAbAttr extends PreDefendAbAttr {
-  private formFunc: (p: Pokemon) => integer;
-
-  constructor(formFunc: ((p: Pokemon) => integer)) {
-    super(true);
-
-    this.formFunc = formFunc;
-  }
-
-  applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    const formIndex = this.formFunc(pokemon);
-    if (formIndex !== pokemon.formIndex) {
-      pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
-      return true;
-    }
-
-    return false;
-  }
-}
 export class PreDefendFullHpEndureAbAttr extends PreDefendAbAttr {
   applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     if (pokemon.hp === pokemon.getMaxHp() &&
@@ -324,21 +305,6 @@ export class ReceivedMoveDamageMultiplierAbAttr extends PreDefendAbAttr {
 export class ReceivedTypeDamageMultiplierAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
   constructor(moveType: Type, damageMultiplier: number) {
     super((user, target, move) => move.type === moveType, damageMultiplier);
-  }
-}
-
-export class PreDefendMoveDamageToOneAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
-  constructor(condition: PokemonDefendCondition) {
-    super(condition, 1);
-  }
-
-  applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (this.condition(pokemon, attacker, move)) {
-      (args[0] as Utils.NumberHolder).value = Math.floor(pokemon.getMaxHp() / 8);
-      return true;
-    }
-
-    return false;
   }
 }
 
@@ -486,45 +452,6 @@ export class NonSuperEffectiveImmunityAbAttr extends TypeImmunityAbAttr {
 
 export class PostDefendAbAttr extends AbAttr {
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean | Promise<boolean> {
-    return false;
-  }
-}
-
-export class PostDefendDisguiseAbAttr extends PostDefendAbAttr {
-
-  applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
-    if (pokemon.formIndex === 0 && pokemon.battleData.hitCount !== 0 && (move.category === MoveCategory.SPECIAL || move.category === MoveCategory.PHYSICAL)) {
-
-      const recoilDamage = Math.ceil((pokemon.getMaxHp() / 8) - attacker.turnData.damageDealt);
-      if (!recoilDamage) {
-        return false;
-      }
-      pokemon.damageAndUpdate(recoilDamage, HitResult.OTHER);
-      pokemon.turnData.damageTaken += recoilDamage;
-      pokemon.scene.queueMessage(getPokemonMessage(pokemon, "'s disguise was busted!"));
-      return true;
-    }
-
-    return false;
-  }
-}
-
-export class PostDefendFormChangeAbAttr extends PostDefendAbAttr {
-  private formFunc: (p: Pokemon) => integer;
-
-  constructor(formFunc: ((p: Pokemon) => integer)) {
-    super(true);
-
-    this.formFunc = formFunc;
-  }
-
-  applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
-    const formIndex = this.formFunc(pokemon);
-    if (formIndex !== pokemon.formIndex) {
-      pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
-      return true;
-    }
-
     return false;
   }
 }
@@ -3875,6 +3802,54 @@ export class IceFaceBlockPhysicalAbAttr extends ReceivedMoveDamageMultiplierAbAt
 }
 
 /**
+ * Takes no damage from the first hit of a damaging move.
+ * This is used in the Disguise ability.
+ */
+export class DisguiseBlockDamageAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
+  private multiplier: number;
+
+  constructor(condition: PokemonDefendCondition, multiplier: number) {
+    super(condition, multiplier);
+
+    this.multiplier = multiplier;
+  }
+
+  /**
+   * Applies the Disguise pre-defense ability to the Pokémon.
+   * Removes BattlerTagType.DISGUISE when hit by an attack and is in its Disguised form.
+   *
+   * @param {Pokemon} pokemon - The Pokémon with the Disguise ability.
+   * @param {boolean} passive - Whether the ability is passive.
+   * @param {Pokemon} attacker - The attacking Pokémon.
+   * @param {PokemonMove} move - The move being used.
+   * @param {Utils.BooleanHolder} cancelled - A holder for whether the move was cancelled.
+   * @param {any[]} args - Additional arguments.
+   * @returns {boolean} - Whether the immunity was applied.
+   */
+  applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    if (this.condition(pokemon, attacker, move)) {
+      (args[0] as Utils.NumberHolder).value = this.multiplier;
+      pokemon.removeTag(BattlerTagType.DISGUISE);
+      pokemon.damageAndUpdate(Math.floor(pokemon.getMaxHp() / 8), HitResult.OTHER);
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Gets the message triggered when the Pokémon avoids damage using the Disguise ability.
+   * @param {Pokemon} pokemon - The Pokémon with the Disguise ability.
+   * @param {string} abilityName - The name of the ability.
+   * @param {...any} args - Additional arguments.
+   * @returns {string} - The trigger message.
+   */
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
+    return i18next.t("abilityTriggers:disguiseAvoidedDamage", { pokemonName: pokemon.name, abilityName: abilityName });
+  }
+}
+
+/**
  * If a Pokémon with this Ability selects a damaging move, it has a 30% chance of going first in its priority bracket. If the Ability activates, this is announced at the start of the turn (after move selection).
  *
  * @extends AbAttr
@@ -4783,20 +4758,15 @@ export function initAbilities() {
       .attr(NoFusionAbilityAbAttr)
       .bypassFaint(),
     new Ability(Abilities.DISGUISE, 7)
-      .attr(PreDefendMoveDamageToOneAbAttr, (target, user, move) => target.formIndex === 0 && target.getAttackTypeEffectiveness(move.type, user) > 0)
-      .attr(PostSummonFormChangeAbAttr, p => p.battleData.hitCount === 0 ? 0 : 1)
-      .attr(PostBattleInitFormChangeAbAttr, () => 0)
-      .attr(PostDefendFormChangeAbAttr, p => p.battleData.hitCount === 0 ? 0 : 1)
-      .attr(PreDefendFormChangeAbAttr, p => p.battleData.hitCount === 0 ? 0 : 1)
-      .attr(PostDefendDisguiseAbAttr)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       .attr(UnsuppressableAbilityAbAttr)
       .attr(NoTransformAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
-      .bypassFaint()
-      .ignorable()
-      .partial(),
+      // Add BattlerTagType.DISGUISE if the pokemon is in its disguised form
+      .conditionalAttr(pokemon => pokemon.formIndex === 0, PostSummonAddBattlerTagAbAttr, BattlerTagType.DISGUISE, 0, false)
+      .attr(DisguiseBlockDamageAbAttr, (target, user, move) => !!target.getTag(BattlerTagType.DISGUISE) && target.getAttackTypeEffectiveness(move.type, user) > 0, 0)
+      .ignorable(),
     new Ability(Abilities.BATTLE_BOND, 7)
       .attr(PostVictoryFormChangeAbAttr, () => 2)
       .attr(PostBattleInitFormChangeAbAttr, () => 1)
