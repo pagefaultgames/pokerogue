@@ -40,5 +40,6 @@ export const weather: SimpleTranslationEntries = {
 
   "strongWindsStartMessage": "吹起了神秘的亂流！",
   "strongWindsLapseMessage": "神秘的亂流勢頭不減。",
+  "strongWindsEffectMessage": "The mysterious air current weakened the attack!",
   "strongWindsClearMessage": "神秘的亂流停止了。"
 };
