@@ -120,4 +120,30 @@ describe("Moves - Focus Punch", () => {
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
     }, TIMEOUT
   );
+
+  test(
+    "move should be cancelled if the user falls asleep mid-turn",
+    async () => {
+      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPORE, Moves.SPORE, Moves.SPORE, Moves.SPORE]);
+
+      await game.startBattle([Species.CHARIZARD]);
+
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).toBeDefined();
+
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).toBeDefined();
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.FOCUS_PUNCH));
+
+      await game.phaseInterceptor.to(MessagePhase); // Header message
+
+      expect(leadPokemon.getMoveHistory().length).toBe(0);
+
+      await game.phaseInterceptor.to(BerryPhase, false);
+
+      expect(leadPokemon.getMoveHistory().length).toBe(1);
+      expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    }, TIMEOUT
+  );
 });
