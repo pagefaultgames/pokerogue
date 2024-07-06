@@ -1833,7 +1833,7 @@ export class PostSummonRemoveArenaTagAbAttr extends PostSummonAbAttr {
 }
 
 export class PreSummonAbAttr extends AbAttr {
-  applyPreSummon(pokemon: Pokemon, passive: boolean, party: Pokemon[], args: any[]): boolean | Promise<boolean> {
+  applyPreSummon(pokemon: Pokemon, passive: boolean, party: Pokemon[], args: any[]): boolean {
     return false;
   }
 }
@@ -1849,13 +1849,20 @@ export class PostSummonMessageAbAttr extends PostSummonAbAttr {
 
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     pokemon.scene.queueMessage(this.messageFunc(pokemon));
-    console.log(pokemon.scene.getField());
-    console.log(pokemon.scene.getField(true));
+
+    //icito
+    /*
     for (pokemon of pokemon.scene.getField(true)) {
       if (pokemon.breakIllusion()) {
         pokemon.scene.queueMessage(getPokemonMessage(pokemon, "'s illusion wore off!"));
       }
     }
+      */
+    pokemon.scene.getField(true).map(pokemon => {
+      if (pokemon.breakIllusion()) {
+        pokemon.scene.queueMessage(getPokemonMessage(pokemon, "'s illusion wore off!"));
+      }
+    });
     return true;
   }
 }
@@ -3899,7 +3906,7 @@ export class IllusionPreSummonAbAttr extends PreSummonAbAttr {
    * @param {...any} args - N/A
    * @returns {boolean} - Whether the illusion was applied.
    */
-  applyPreSummon(pokemon: Pokemon, passive: boolean, party: Pokemon[], args: any[]): boolean | Promise<boolean> {
+  applyPreSummon(pokemon: Pokemon, passive: boolean, party: Pokemon[], args: any[]): boolean {
 
     let suppressed = false;
     pokemon.scene.getField(true).filter(p => p !== pokemon).map(p => {
@@ -3912,7 +3919,6 @@ export class IllusionPreSummonAbAttr extends PreSummonAbAttr {
     });
 
     if (pokemon.illusion.available && !suppressed) {
-      console.log(pokemon.illusion);
       return pokemon.generateIllusion(party);
     } else {
       return false;
@@ -4173,7 +4179,7 @@ export function applyPostSummonAbAttrs(attrType: Constructor<PostSummonAbAttr>,
   return applyAbAttrsInternal<PostSummonAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostSummon(pokemon, passive, args), args);
 }
 
-export function applyPreSummonAbAttrs(attrType: { new(...args: any[]): PreSummonAbAttr },
+export function applyPreSummonAbAttrs(attrType: Constructor<PreSummonAbAttr>,
   pokemon: Pokemon, party: Pokemon[], ...args: any[]): Promise<void> {
   return applyAbAttrsInternal<PreSummonAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPreSummon(pokemon, passive, party, args), args);
 }

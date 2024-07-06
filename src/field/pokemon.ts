@@ -365,13 +365,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
         for (let species of area) {
           for (const evolutionLevel of getPokemonSpecies(species).getEvolutionLevels()) {
-            if (evolutionLevel[1] <= this.level && evolutionLevel[1]) {
+            if (evolutionLevel[1] && evolutionLevel[1] <= this.level) {
               species = evolutionLevel[0];
             }
           }
-          availables = [...availables, species];
+          availables.push(species);
         }
-        availables = [...availables, this.species.name === getPokemonSpecies(Species.ZORUA).name ? Species.MURKROW : Species.HONCHKROW];
+        availables.push(this.species.name === getPokemonSpecies(Species.ZORUA).name ? Species.MURKROW : Species.HONCHKROW);
       }
       const randomIllusion: PokemonSpecies = getPokemonSpecies(availables[this.randSeedInt(availables.length)]);
 
@@ -392,25 +392,25 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   breakIllusion(): boolean {
-    if (this.illusion.active) {
-      this.name = this.illusion.name;
-      this.shiny = this.illusion.shiny;
-      this.variant = this.illusion.variant;
-      this.fusionVariant = this.illusion.fusionVariant;
-      this.fusionShiny = this.illusion.fusionShiny;
-      this.illusion = {active: false, available: false};
-      if (this.isOnField) {
-        this.scene.playSound("PRSFX- Transform");
-      }
-      if (this.shiny) {
-        this.initShinySparkle();
-      }
-      this.loadAssets(false).then(() => this.playAnim());
-      this.updateInfo(true);
-
-      return true;
+    if (!this.illusion.active) {
+      return false;
     }
-    return false;
+
+    this.name = this.illusion.name;
+    this.shiny = this.illusion.shiny;
+    this.variant = this.illusion.variant;
+    this.fusionVariant = this.illusion.fusionVariant;
+    this.fusionShiny = this.illusion.fusionShiny;
+    this.illusion = {active: false, available: false};
+    if (this.isOnField) {
+      this.scene.playSound("PRSFX- Transform");
+    }
+    if (this.shiny) {
+      this.initShinySparkle();
+    }
+    this.loadAssets(false).then(() => this.playAnim());
+    this.updateInfo(true);
+    return true;
   }
 
   abstract isPlayer(): boolean;
