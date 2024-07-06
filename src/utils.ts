@@ -527,4 +527,6 @@ export function reverseValueToKeySetting(input) {
   return capitalizedWords.join("_");
 }
 
-
+export function isNullOrUndefined(object: any): boolean {
+  return null === object || undefined === object;
+}
