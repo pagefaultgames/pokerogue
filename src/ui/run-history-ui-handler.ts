@@ -4,7 +4,7 @@ import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
 import * as Utils from "../utils";
-import { PokemonData } from "../system/pokemon-data";
+import PokemonData from "../system/pokemon-data";
 import MessageUiHandler from "./message-ui-handler";
 import i18next from "i18next";
 import {Button} from "../enums/buttons";
@@ -12,6 +12,8 @@ import { BattleType } from "../battle";
 import { TrainerVariant } from "../field/trainer";
 import { Challenges } from "#enums/challenges";
 import { Type } from "../data/type";
+import { RunHistoryData } from "../system/game-data";
+
 
 export const runCount = 25;
 
@@ -23,7 +25,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
   private runsContainer: Phaser.GameObjects.Container;
   private runSelectMessageBox: Phaser.GameObjects.NineSlice;
   private runSelectMessageBoxContainer: Phaser.GameObjects.Container;
-  private runs: runEntry[];
+  private runs: RunEntry[];
 
   private uiMode: RunHistoryUiMode;
   private runSelectCallback: RunSelectCallback;
@@ -323,10 +325,6 @@ class RunEntry extends Phaser.GameObjects.Container {
     //Display Score - only visible for Daily Mode
     //Display Personal Best - only visible for Endless Modes
     switch (data.gameMode) {
-    case GameModes.DAILY:
-      const scoreText = addTextObject(this.scene, 230, 5, `${i18next.t("runHistory:score")}: ${data.score}`, TextStyle.WINDOW, {color: "#f89890"});
-      this.add(scoreText);
-      break;
     case GameModes.ENDLESS:
     case GameModes.SPLICED_ENDLESS:
       if (this.scene.gameData.gameStats.highestEndlessWave === data.waveIndex) {
@@ -338,7 +336,7 @@ class RunEntry extends Phaser.GameObjects.Container {
     case GameModes.CHALLENGE:
       const runChallenges = data.challenges;
       for (let i = 0; i < runChallenges.length; i++) {
-        const challengeLabel = addTextObject(this.scene, 245, 5, "", TextStyle.WINDOW, {fontSize: "34px"});
+        const challengeLabel = addTextObject(this.scene, 270, 5, "", TextStyle.WINDOW, {fontSize: "40px"});
         if (runChallenges[i].id === Challenges.SINGLE_GENERATION && runChallenges[i].value !== 0) {
           challengeLabel.appendText(`${i18next.t("runHistory:challengeMonoGen"+runChallenges[i].value)}`, false);
         }
@@ -346,11 +344,11 @@ class RunEntry extends Phaser.GameObjects.Container {
           if (challengeLabel.text) {
             challengeLabel.appendText(i18next.t("pokemonInfo:Type."+Type[runChallenges[i].value-1]));
           } else {
-            challengeLabel.appendText(i18next.t("pokemonInfo:Type."+Type[runChallenges[i].value-1]), false);
+            challengeLabel.appendText(i18next.t("pokemonInfo:Type."+Type[runChallenges[i].value-1]));
           }
         }
+        this.add(challengeLabel);
       }
-      this.add(challengeLabel);
       break;
     }
   }
