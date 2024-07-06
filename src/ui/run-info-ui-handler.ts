@@ -64,8 +64,6 @@ export default class GameInfoUiHandler extends UiHandler {
 
  		this.gameStatsContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
 
-
-
     this.gameStatsContainer.setVisible(false);
  	}
 
@@ -91,7 +89,7 @@ export default class GameInfoUiHandler extends UiHandler {
 
 
     this.partyContainerWidth = (this.statsBgWidth*2)+10;
-    this.partyContainerHeight = (this.scene.game.canvas / 6) - 25;
+    this.partyContainerHeight = (this.scene.game.canvas.height / 6) - 25;
     const partyInfoWindow = addWindow(this.scene, 0, 0, (this.statsBgWidth*2)+10, (this.scene.game.canvas.height / 6) - 25);
     partyInfoWindow.setOrigin(0,0);
 
@@ -372,8 +370,8 @@ export default class GameInfoUiHandler extends UiHandler {
       textContainer.add(textNameNatureLevel);
 
       const pPassiveInfo = pokemon.passive ? `${i18next.t("starterSelectUiHandler:passive")+" "+allAbilities[starterPassiveAbilities[pSpecies.speciesId]].name}` : "";
-      const pHasHA = (pSpecies.hiddenAbility === pSpecies.getAbility(pokemon.AbilityIndex)) ? ["[color=#e8e8a8]","[/color]"] : ["",""];
-      const pAbilityInfo = i18next.t("starterSelectUiHandler:ability")+" "+pHasHA[0] + allAbilities[pSpecies.getAbility(pokemon.AbilityIndex)].name + pHasHA[1];
+      const pHasHA = (pSpecies.abilityHidden === pSpecies.getAbility(pokemon.abilityIndex)) ? ["[color=#e8e8a8]","[/color]"] : ["",""];
+      const pAbilityInfo = i18next.t("starterSelectUiHandler:ability")+" "+pHasHA[0] + allAbilities[pSpecies.getAbility(pokemon.abilityIndex)].name + pHasHA[1];
       const textAbility = addBBCodeTextObject(this.scene, -2, 6, `${pAbilityInfo}`, TextStyle.SUMMARY, { fontSize: textContainerFontSize });
       textContainer.add(textAbility);
       const textPassive = addBBCodeTextObject(this.scene, -2, 11, pPassiveInfo, TextStyle.SUMMARY, {fontSize: textContainerFontSize});
@@ -476,6 +474,7 @@ export default class GameInfoUiHandler extends UiHandler {
     const ui = this.getUi();
 
     let success = false;
+    const error = false;
 
     if (button === Button.CANCEL) {
       success = true;

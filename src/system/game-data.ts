@@ -1173,7 +1173,7 @@ export class GameData {
       const data = await Utils.apiFetch("savedata/runHistory", true).json();
       //const data = await response.json();
       if (localStorage.hasOwnProperty(`runHistoryData_${loggedInUser.username}`)) {
-        let cachedResponse = localStorage.getItem(`runHistoryData_${loggedInUser.username}`, true);
+        let cachedResponse = localStorage.getItem(`runHistoryData_${loggedInUser.username}`);
         if (cachedResponse) {
           cachedResponse = JSON.parse(decrypt(cachedResponse, true));
         }
