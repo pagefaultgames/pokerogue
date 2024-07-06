@@ -8,4 +8,5 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "trace": "{{pokemonName}}复制了{{targetName}}的\n{{abilityName}}！",
   "windPowerCharged": "受{{moveName}}的影响，{{pokemonName}}提升了能力！",
   "quickDraw":"因为速击效果发动，\n{{pokemonName}}比平常出招更快了！",
+  "disguiseAvoidedDamage" : "{{pokemonName}}'s disguise was busted!",
 } as const;
