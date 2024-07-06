@@ -8,7 +8,7 @@ import {Button} from "#enums/buttons";
 import { Moves } from "#enums/moves";
 import Pokemon from "#app/field/pokemon.js";
 
-export type TargetSelectCallback = (cursor: integer) => void;
+export type TargetSelectCallback = (targets: BattlerIndex[]) => void;
 
 export default class TargetSelectUiHandler extends UiHandler {
   private fieldIndex: integer;
@@ -55,12 +55,12 @@ export default class TargetSelectUiHandler extends UiHandler {
 
   processInput(button: Button): boolean {
     const ui = this.getUi();
-    console.log("cursor", this.cursor);
 
     let success = false;
 
     if (button === Button.ACTION || button === Button.CANCEL) {
-      this.targetSelectCallback(button === Button.ACTION ? this.cursor : -1);
+      const targetIndexes: BattlerIndex[] = this.isMultipleTargets ? this.targets : [this.cursor];
+      this.targetSelectCallback(button === Button.ACTION ? targetIndexes : []);
       success = true;
     } else if (this.isMultipleTargets) {
       success = false;
