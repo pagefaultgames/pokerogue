@@ -879,7 +879,7 @@ export class PostDefendContactDamageAbAttr extends PostDefendAbAttr {
   }
 
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
-    if (move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) {
+    if (move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && !attacker.hasAbilityWithAttr(BlockNonDirectDamageAbAttr)) {
       attacker.damageAndUpdate(Math.ceil(attacker.getMaxHp() * (1 / this.damageRatio)), HitResult.OTHER);
       attacker.turnData.damageTaken += Math.ceil(attacker.getMaxHp() * (1 / this.damageRatio));
       return true;
@@ -1296,6 +1296,7 @@ export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
     const multiplier = args[2] as Utils.NumberHolder;
 
     if (this.canApplyPreAttack(move, numTargets)) {
+      this.showAbility = !!hitCount?.value;
       if (!!hitCount?.value) {
         hitCount.value *= 2;
       }
