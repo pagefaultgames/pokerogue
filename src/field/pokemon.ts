@@ -2021,7 +2021,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           source.turnData.currDamageDealt = damage.value;
           this.battleData.hitCount++;
           // create attack result and push to turnData
-          const attackResult = { move: move.id, result: result as DamageResult, damage: damage.value, critical: isCritical, sourceId: source.id };
+          const attackResult = { move: move.id, result: result as DamageResult, damage: damage.value, critical: isCritical, sourceId: source.id, sourceBattlerIndex: source.getBattlerIndex() };
           this.turnData.attacksReceived.unshift(attackResult);
           if (source.isPlayer() && !this.isPlayer()) {
             this.scene.applyModifiers(DamageMoneyRewardModifier, true, source, damage);
@@ -3940,6 +3940,7 @@ export interface AttackMoveResult {
   damage: integer;
   critical: boolean;
   sourceId: integer;
+  sourceBattlerIndex: BattlerIndex;
 }
 
 export class PokemonSummonData {
