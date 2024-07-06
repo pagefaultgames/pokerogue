@@ -270,7 +270,6 @@ export default class GameInfoUiHandler extends UiHandler {
         }
     	  }
     	  this.runInfoContainer.add(enemyContainer);
-      this.gameStatsContainer.add(this.runInfoContainer);
     }
 
     	if (runData.modifiers.length) {
@@ -311,7 +310,8 @@ export default class GameInfoUiHandler extends UiHandler {
       this.runInfoContainer.add(modifierIconsContainer);
     }
 
- 		  this.runInfoContainer.add(genInfoText);
+ 		this.runInfoContainer.add(genInfoText);
+    this.gameStatsContainer.add(this.runInfoContainer);
 
  	}
 
@@ -380,7 +380,8 @@ export default class GameInfoUiHandler extends UiHandler {
 
       const pPassiveInfo = pokemon.passive ? `${i18next.t("starterSelectUiHandler:passive")+" "+allAbilities[starterPassiveAbilities[pSpecies.speciesId]].name}` : "";
       const pHasHA = (pSpecies.abilityHidden === pSpecies.getAbility(pokemon.abilityIndex)) ? ["[color=#e8e8a8]","[/color]"] : ["",""];
-      const pAbilityInfo = i18next.t("starterSelectUiHandler:ability")+" "+pHasHA[0] + allAbilities[pSpecies.getAbility(pokemon.abilityIndex)].name + pHasHA[1];
+      const abilityInd = pokemon.fusionSpecies ? pokemon.fusionAbilityIndex : pokemon.abilityIndex;
+      const pAbilityInfo = i18next.t("starterSelectUiHandler:ability")+" "+pHasHA[0] + allAbilities[pSpecies.getAbility(abilityInd)].name + pHasHA[1];
       const textAbility = addBBCodeTextObject(this.scene, -2, 6, `${pAbilityInfo}`, TextStyle.SUMMARY, { fontSize: textContainerFontSize });
       textContainer.add(textAbility);
       const textPassive = addBBCodeTextObject(this.scene, -2, 11, pPassiveInfo, TextStyle.SUMMARY, {fontSize: textContainerFontSize});
