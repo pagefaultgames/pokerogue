@@ -8,6 +8,7 @@ import SettingsUiHandler from "#app/ui/settings/settings-ui-handler";
 import { EaseType } from "#enums/ease-type";
 import { MoneyFormat } from "#enums/money-format";
 import { PlayerGender } from "#enums/player-gender";
+import { audioManager } from "#app/audio-manager.js";
 
 const VOLUME_OPTIONS: SettingOption[] = new Array(11).fill(null).map((_, i) => i ? {
   value: (i * 10).toString(),
@@ -580,15 +581,15 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     scene.gameSpeed = parseFloat(Setting[index].options[value].value.replace("x", ""));
     break;
   case SettingKeys.Master_Volume:
-    scene.masterVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
+    audioManager.masterVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
     scene.updateSoundVolume();
     break;
   case SettingKeys.BGM_Volume:
-    scene.bgmVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
+    audioManager.bgmVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
     scene.updateSoundVolume();
     break;
   case SettingKeys.SE_Volume:
-    scene.seVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
+    audioManager.seVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
     scene.updateSoundVolume();
     break;
   case SettingKeys.Music_Preference:

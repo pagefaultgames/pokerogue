@@ -530,3 +530,13 @@ export function reverseValueToKeySetting(input) {
 export function isNullOrUndefined(object: any): boolean {
   return null === object || undefined === object;
 }
+
+export function getCachedUrl(url: string, manifest : unknown  = null): string {
+  if (manifest) {
+    const timestamp = manifest[`/${url}`];
+    if (timestamp) {
+      url += `?t=${timestamp}`;
+    }
+  }
+  return url;
+}

@@ -101,8 +101,11 @@ import {
 } from "./data/mystery-encounters/mystery-encounters";
 import {MysteryEncounterFlags} from "#app/data/mystery-encounter-flags";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { audioManager } from "./audio-manager";
+
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
+
 
 const DEBUG_RNG = false;
 
@@ -342,6 +345,7 @@ export default class BattleScene extends SceneBase {
       };
     }
 
+    audioManager.load = this.load;
     populateAnims();
 
     await this.initVariantData();
@@ -1222,17 +1226,15 @@ export default class BattleScene extends SceneBase {
               this.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
             }
 
+            // Only trigger form change when Mimikyu is in Busted form
+            // Hardcoded Mimikyu for now in case it is fused with another pokemon
+            if (pokemon.species.speciesId === Species.MIMIKYU && pokemon.hasAbility(Abilities.DISGUISE) && pokemon.formIndex === 1) {
+              this.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
+            }
+
             pokemon.resetBattleData();
             applyPostBattleInitAbAttrs(PostBattleInitAbAttr, pokemon);
           }
-          // Only trigger form change when Mimikyu is in Busted form
-          // Hardcoded Mimikyu for now in case it is fused with another pokemon
-          if (pokemon.species.speciesId === Species.MIMIKYU && pokemon.hasAbility(Abilities.DISGUISE) && pokemon.formIndex === 1) {
-            this.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
-          }
-
-          pokemon.resetBattleData();
-          applyPostBattleInitAbAttrs(PostBattleInitAbAttr, pokemon);
         }
 
         this.unshiftPhase(new ShowTrainerPhase(this));
@@ -1728,7 +1730,7 @@ export default class BattleScene extends SceneBase {
     if (this.bgm && bgmName === this.bgm.key) {
       if (!this.bgm.isPlaying) {
         this.bgm.play({
-          volume: this.masterVolume * this.bgmVolume
+          volume: audioManager.masterVolume * audioManager.bgmVolume
         });
       }
       return;
@@ -1737,7 +1739,8 @@ export default class BattleScene extends SceneBase {
       fadeOut = false;
     }
     this.bgmCache.add(bgmName);
-    this.loadBgm(bgmName);
+    // this.loadBgm(bgmName);
+    audioManager.loadBgm(bgmName);
     let loopPoint = 0;
     loopPoint = bgmName === this.arena.bgm
       ? this.arena.getBgmLoopPoint()
@@ -1747,7 +1750,7 @@ export default class BattleScene extends SceneBase {
       this.ui.bgmBar.setBgmToBgmBar(bgmName);
       if (bgmName === null && this.bgm && !this.bgm.pendingRemove) {
         this.bgm.play({
-          volume: this.masterVolume * this.bgmVolume
+          volume: audioManager.masterVolume * audioManager.bgmVolume
         });
         return;
       }
@@ -1756,7 +1759,7 @@ export default class BattleScene extends SceneBase {
       }
       this.bgm = this.sound.add(bgmName, { loop: true });
       this.bgm.play({
-        volume: this.masterVolume * this.bgmVolume
+        volume: audioManager.masterVolume * audioManager.bgmVolume
       });
       if (loopPoint) {
         this.bgm.on("looped", () => this.bgm.play({ seek: loopPoint }));
@@ -1800,7 +1803,7 @@ export default class BattleScene extends SceneBase {
   updateSoundVolume(): void {
     if (this.sound) {
       for (const sound of this.sound.getAllPlaying()) {
-        (sound as AnySound).setVolume(this.masterVolume * (this.bgmCache.has(sound.key) ? this.bgmVolume : this.seVolume));
+        (sound as AnySound).setVolume(audioManager.masterVolume * (this.bgmCache.has(sound.key) ? audioManager.bgmVolume : audioManager.seVolume));
       }
     }
   }
@@ -1821,12 +1824,12 @@ export default class BattleScene extends SceneBase {
   playSound(sound: string | AnySound, config?: object): AnySound {
     if (config) {
       if (config.hasOwnProperty("volume")) {
-        config["volume"] *= this.masterVolume * this.seVolume;
+        config["volume"] *= audioManager.masterVolume * audioManager.seVolume;
       } else {
-        config["volume"] = this.masterVolume * this.seVolume;
+        config["volume"] = audioManager.masterVolume * audioManager.seVolume;
       }
     } else {
-      config = { volume: this.masterVolume * this.seVolume };
+      config = { volume: audioManager.masterVolume * audioManager.seVolume };
     }
     // PRSFX sounds are mixed too loud
     if ((typeof sound === "string" ? sound : sound.key).startsWith("PRSFX- ")) {

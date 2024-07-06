@@ -24,6 +24,7 @@ import { Biome } from "#enums/biome";
 import { TrainerType } from "#enums/trainer-type";
 import {initMysteryEncounterDialogue} from "#app/data/mystery-encounters/dialogue/mystery-encounter-dialogue";
 import {initMysteryEncounters} from "#app/data/mystery-encounters/mystery-encounters";
+import { audioManager } from "./audio-manager";
 
 export class LoadingScene extends SceneBase {
   readonly LOAD_EVENTS = Phaser.Loader.Events;
@@ -36,6 +37,7 @@ export class LoadingScene extends SceneBase {
   }
 
   preload() {
+    audioManager.load = this.load;
     Utils.localPing();
     this.load["manifest"] = this.game["manifest"];
 
@@ -317,18 +319,18 @@ export class LoadingScene extends SceneBase {
 
     this.loadSe("PRSFX- Transform", "battle_anims");
 
-    this.loadBgm("menu");
+    audioManager.loadBgm("menu");
 
-    this.loadBgm("level_up_fanfare", "bw/level_up_fanfare.mp3");
-    this.loadBgm("item_fanfare", "bw/item_fanfare.mp3");
-    this.loadBgm("minor_fanfare", "bw/minor_fanfare.mp3");
-    this.loadBgm("heal", "bw/heal.mp3");
-    this.loadBgm("victory_trainer", "bw/victory_trainer.mp3");
-    this.loadBgm("victory_team_plasma", "bw/victory_team_plasma.mp3");
-    this.loadBgm("victory_gym", "bw/victory_gym.mp3");
-    this.loadBgm("victory_champion", "bw/victory_champion.mp3");
-    this.loadBgm("evolution", "bw/evolution.mp3");
-    this.loadBgm("evolution_fanfare", "bw/evolution_fanfare.mp3");
+    audioManager.loadBgm("level_up_fanfare", "bw/level_up_fanfare.mp3");
+    audioManager.loadBgm("item_fanfare", "bw/item_fanfare.mp3");
+    audioManager.loadBgm("minor_fanfare", "bw/minor_fanfare.mp3");
+    audioManager.loadBgm("heal", "bw/heal.mp3");
+    audioManager.loadBgm("victory_trainer", "bw/victory_trainer.mp3");
+    audioManager.loadBgm("victory_team_plasma", "bw/victory_team_plasma.mp3");
+    audioManager.loadBgm("victory_gym", "bw/victory_gym.mp3");
+    audioManager.loadBgm("victory_champion", "bw/victory_champion.mp3");
+    audioManager.loadBgm("evolution", "bw/evolution.mp3");
+    audioManager.loadBgm("evolution_fanfare", "bw/evolution_fanfare.mp3");
 
     this.load.plugin("rextexteditplugin", "https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rextexteditplugin.min.js", true);
 
