@@ -17,13 +17,13 @@ import { initMoveAnim, loadMoveAnimAssets } from "../data/battle-anims";
 import { Status, StatusEffect, getRandomStatus } from "../data/status-effect";
 import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEvolutionCondition, FusionSpeciesFormEvolution } from "../data/pokemon-evolutions";
 import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "../data/tms";
-import { DamagePhase, FaintPhase, LearnMovePhase, MoveEffectPhase, ObtainStatusEffectPhase, StatChangePhase, SwitchSummonPhase, ToggleDoublePositionPhase  } from "../phases";
+import { DamagePhase, FaintPhase, LearnMovePhase, MoveEffectPhase, ObtainStatusEffectPhase, StatChangePhase, SwitchSummonPhase, ToggleDoublePositionPhase, MoveEndPhase } from "../phases";
 import { BattleStat } from "../data/battle-stat";
 import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HelpingHandTag, HighestStatBoostTag, TypeBoostTag, TypeImmuneTag, getBattlerTag } from "../data/battler-tags";
 import { WeatherType } from "../data/weather";
 import { TempBattleStat } from "../data/temp-battle-stat";
 import { ArenaTagSide, WeakenMoveScreenTag, WeakenMoveTypeTag } from "../data/arena-tag";
-import { Ability, AbAttr, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, MoveTypeChangeAttr, PreApplyBattlerTagAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldBattleStatMultiplierAbAttrs, FieldMultiplyBattleStatAbAttr, AllyMoveCategoryPowerBoostAbAttr, FieldMoveTypePowerBoostAbAttr, AddSecondStrikeAbAttr, UserFieldMoveTypePowerBoostAbAttr } from "../data/ability";
+import { Ability, AbAttr, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, MoveTypeChangeAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldBattleStatMultiplierAbAttrs, FieldMultiplyBattleStatAbAttr, AllyMoveCategoryPowerBoostAbAttr, FieldMoveTypePowerBoostAbAttr, AddSecondStrikeAbAttr, UserFieldMoveTypePowerBoostAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr } from "../data/ability";
 import PokemonData from "../system/pokemon-data";
 import { BattlerIndex } from "../battle";
 import { Mode } from "../ui/ui";
@@ -1733,6 +1733,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return (this.isPlayer() ? this.scene.getPlayerField() : this.scene.getEnemyField())[this.getFieldIndex() ? 0 : 1];
   }
 
+  /**
+   * Gets the Pokémon on the allied field.
+   *
+   * @returns An array of Pokémon on the allied field.
+   */
+  getAlliedField(): Pokemon[] {
+    return this instanceof PlayerPokemon ? this.scene.getPlayerField() : this.scene.getEnemyField();
+  }
+
   apply(source: Pokemon, move: Move): HitResult {
     let result: HitResult;
     const damage = new Utils.NumberHolder(0);
@@ -1835,6 +1844,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         if (source.getTag(HelpingHandTag)) {
           power.value *= 1.5;
         }
+        const glaiveRushModifier = new Utils.IntegerHolder(1);
+        if (this.getTag(BattlerTagType.RECEIVE_DOUBLE_DAMAGE)) {
+          glaiveRushModifier.value = 2;
+        }
         let isCritical: boolean;
         const critOnly = new Utils.BooleanHolder(false);
         const critAlways = source.getTag(BattlerTagType.ALWAYS_CRIT);
@@ -1904,7 +1917,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         applyPreAttackAbAttrs(AddSecondStrikeAbAttr, source, this, move, numTargets, new Utils.IntegerHolder(0), twoStrikeMultiplier);
 
         if (!isTypeImmune) {
-          damage.value = Math.ceil(((((2 * source.level / 5 + 2) * power.value * sourceAtk.value / targetDef.value) / 50) + 2) * stabMultiplier.value * typeMultiplier.value * arenaAttackTypeMultiplier.value * screenMultiplier.value * twoStrikeMultiplier.value * ((this.scene.randBattleSeedInt(15) + 85) / 100) * criticalMultiplier.value);
+          damage.value = Math.ceil(((((2 * source.level / 5 + 2) * power.value * sourceAtk.value / targetDef.value) / 50) + 2) * stabMultiplier.value * typeMultiplier.value * arenaAttackTypeMultiplier.value * screenMultiplier.value * twoStrikeMultiplier.value * glaiveRushModifier.value * criticalMultiplier.value * ((this.scene.randBattleSeedInt(15) + 85) / 100));
           if (isPhysical && source.status && source.status.effect === StatusEffect.BURN) {
             if (!move.hasAttr(BypassBurnDamageReductionAttr)) {
               const burnDamageReductionCancelled = new Utils.BooleanHolder(false);
@@ -1988,11 +2001,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           }
 
           /**
-             * We explicitly require to ignore the faint phase here, as we want to show the messages
-             * about the critical hit and the super effective/not very effective messages before the faint phase.
-             */
+           * We explicitly require to ignore the faint phase here, as we want to show the messages
+           * about the critical hit and the super effective/not very effective messages before the faint phase.
+           */
           damage.value = this.damageAndUpdate(damage.value, result as DamageResult, isCritical, oneHitKo, oneHitKo, true);
           this.turnData.damageTaken += damage.value;
+
+          // queue critical message before effectiveness
           if (isCritical) {
             this.scene.queueMessage(i18next.t("battle:hitResultCriticalHit"));
           }
@@ -2005,6 +2020,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           source.turnData.damageDealt += damage.value;
           source.turnData.currDamageDealt = damage.value;
           this.battleData.hitCount++;
+          // create attack result and push to turnData
           const attackResult = { move: move.id, result: result as DamageResult, damage: damage.value, critical: isCritical, sourceId: source.id, sourceBattlerIndex: source.getBattlerIndex() };
           this.turnData.attacksReceived.unshift(attackResult);
           if (source.isPlayer() && !this.isPlayer()) {
@@ -2012,7 +2028,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           }
         }
 
-        if (source.turnData.hitsLeft === 1) {
+        // want to include is.Fainted() in case multi hit move ends early, still want to render message
+        if (source.turnData.hitsLeft === 1 || this.isFainted()) {
           switch (result) {
           case HitResult.SUPER_EFFECTIVE:
             this.scene.queueMessage(i18next.t("battle:hitResultSuperEffective"));
@@ -2033,13 +2050,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         }
 
         if (this.isFainted()) {
+          // set splice index here, so future scene queues happen before FaintedPhase
+          this.scene.setPhaseQueueSplice();
           this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), oneHitKo));
           this.resetSummonData();
         }
 
         if (damage) {
-          this.scene.clearPhaseQueueSplice();
-
           const attacker = this.scene.getPokemonById(source.id);
           destinyTag?.lapse(attacker, BattlerTagLapseType.CUSTOM);
         }
@@ -2063,6 +2080,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return result;
   }
 
+  /**
+   * called by damageAndUpdate()
+   * @param damage integer
+   * @param ignoreSegments boolean, not currently used
+   * @param preventEndure  used to update damage if endure or sturdy
+   * @param ignoreFaintPhase  flag on wheter to add FaintPhase if pokemon after applying damage faints
+   * @returns integer representing damage
+   */
   damage(damage: integer, ignoreSegments: boolean = false, preventEndure: boolean = false, ignoreFaintPhase: boolean = false): integer {
     if (this.isFainted()) {
       return 0;
@@ -2084,9 +2109,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     damage = Math.min(damage, this.hp);
-
     this.hp = this.hp - damage;
     if (this.isFainted() && !ignoreFaintPhase) {
+      /**
+       * when adding the FaintPhase, want to toggle future unshiftPhase() and queueMessage() calls
+       * to appear before the FaintPhase (as FaintPhase will potentially end the encounter and add Phases such as
+       * GameOverPhase, VictoryPhase, etc.. that will interfere with anything else that happens during this MoveEffectPhase)
+       *
+       * once the MoveEffectPhase is over (and calls it's .end() function, shiftPhase() will reset the PhaseQueueSplice via clearPhaseQueueSplice() )
+       */
+      this.scene.setPhaseQueueSplice();
       this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), preventEndure));
       this.resetSummonData();
     }
@@ -2094,6 +2126,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return damage;
   }
 
+  /**
+   * Called by apply(), given the damage, adds a new DamagePhase and actually updates HP values, etc.
+   * @param damage integer - passed to damage()
+   * @param result an enum if it's super effective, not very, etc.
+   * @param critical boolean if move is a critical hit
+   * @param ignoreSegments boolean, passed to damage() and not used currently
+   * @param preventEndure boolean, ignore endure properties of pokemon, passed to damage()
+   * @param ignoreFaintPhase boolean to ignore adding a FaintPhase, passsed to damage()
+   * @returns integer of damage done
+   */
   damageAndUpdate(damage: integer, result?: DamageResult, critical: boolean = false, ignoreSegments: boolean = false, preventEndure: boolean = false, ignoreFaintPhase: boolean = false): integer {
     const damagePhase = new DamagePhase(this.scene, this.getBattlerIndex(), damage, result as DamageResult, critical);
     this.scene.unshiftPhase(damagePhase);
@@ -2128,7 +2170,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const newTag = getBattlerTag(tagType, turnCount, sourceMove, sourceId);
 
     const cancelled = new Utils.BooleanHolder(false);
-    applyPreApplyBattlerTagAbAttrs(PreApplyBattlerTagAbAttr, this, newTag, cancelled);
+    applyPreApplyBattlerTagAbAttrs(BattlerTagImmunityAbAttr, this, newTag, cancelled);
+
+    this.getAlliedField().forEach(p => applyPreApplyBattlerTagAbAttrs(UserFieldBattlerTagImmunityAbAttr, p, newTag, cancelled));
 
     if (!cancelled.value && newTag.canAdd(this)) {
       this.summonData.tags.push(newTag);
@@ -2541,6 +2585,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     const cancelled = new Utils.BooleanHolder(false);
     applyPreSetStatusAbAttrs(StatusEffectImmunityAbAttr, this, effect, cancelled, quiet);
+
+    this.getAlliedField().forEach(pokemon => applyPreSetStatusAbAttrs(UserFieldStatusEffectImmunityAbAttr, pokemon, effect, cancelled, quiet));
 
     if (cancelled.value) {
       return false;
@@ -3103,7 +3149,8 @@ export class PlayerPokemon extends Pokemon {
 
       this.scene.ui.setMode(Mode.PARTY, PartyUiMode.FAINT_SWITCH, this.getFieldIndex(), (slotIndex: integer, option: PartyOption) => {
         if (slotIndex >= this.scene.currentBattle.getBattlerCount() && slotIndex < 6) {
-          this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, this.getFieldIndex(), slotIndex, false, batonPass));
+          // add a SwitchSummonPhase
+          this.scene.prependToPhase(new SwitchSummonPhase(this.scene, this.getFieldIndex(), slotIndex, false, batonPass), MoveEndPhase);
         }
         if (removeFromField) {
           this.setVisible(false);
@@ -3914,6 +3961,7 @@ export class PokemonSummonData {
   public moveset: PokemonMove[];
   // If not initialized this value will not be populated from save data.
   public types: Type[] = null;
+  public mysteryEncounterBattleEffects: (pokemon: Pokemon) => void = null;
 }
 
 export class PokemonBattleData {

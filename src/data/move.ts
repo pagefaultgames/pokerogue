@@ -1,5 +1,5 @@
 import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
-import { BattleEndPhase, MovePhase, NewBattlePhase, PartyStatusCurePhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../phases";
+import { BattleEndPhase, MoveEndPhase, MovePhase, NewBattlePhase, PartyStatusCurePhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../phases";
 import { BattleStat, getBattleStatName } from "./battle-stat";
 import { EncoreTag, SemiInvulnerableTag } from "./battler-tags";
 import { getPokemonMessage, getPokemonNameWithAffix } from "../messages";
@@ -873,6 +873,47 @@ export class MoveEffectAttr extends MoveAttr {
     applyAbAttrs(MoveEffectChanceMultiplierAbAttr, user, null, moveChance, move, target, selfEffect);
     applyPreDefendAbAttrs(IgnoreMoveEffectsAbAttr,target,user,null,null, moveChance);
     return moveChance.value;
+  }
+}
+
+/**
+ * Base class defining all Move Header attributes.
+ * Move Header effects apply at the beginning of a turn before any moves are resolved.
+ * They can be used to apply effects to the field (e.g. queueing a message) or to the user
+ * (e.g. adding a battler tag).
+ */
+export class MoveHeaderAttr extends MoveAttr {
+  constructor() {
+    super(true);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
+    return true;
+  }
+}
+
+/**
+ * Header attribute to queue a message at the beginning of a turn.
+ * @see {@link MoveHeaderAttr}
+ */
+export class MessageHeaderAttr extends MoveHeaderAttr {
+  private message: string | ((user: Pokemon, move: Move) => string);
+
+  constructor(message: string | ((user: Pokemon, move: Move) => string)) {
+    super();
+    this.message = message;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const message = typeof this.message === "string"
+      ? this.message as string
+      : this.message(user, move);
+
+    if (message) {
+      user.scene.queueMessage(message);
+      return true;
+    }
+    return false;
   }
 }
 
@@ -4156,9 +4197,9 @@ export class IgnoreAccuracyAttr extends AddBattlerTagAttr {
   }
 }
 
-export class AlwaysCritsAttr extends AddBattlerTagAttr {
+export class AlwaysGetHitAttr extends AddBattlerTagAttr {
   constructor() {
-    super(BattlerTagType.ALWAYS_CRIT, true, false, 2);
+    super(BattlerTagType.ALWAYS_GET_HIT, true, false, 0, 0, true);
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -4166,7 +4207,19 @@ export class AlwaysCritsAttr extends AddBattlerTagAttr {
       return false;
     }
 
-    user.scene.queueMessage(getPokemonMessage(user, ` took aim\nat ${target.name}!`));
+    return true;
+  }
+}
+
+export class ReceiveDoubleDamageAttr extends AddBattlerTagAttr {
+  constructor() {
+    super(BattlerTagType.RECEIVE_DOUBLE_DAMAGE, true, false, 0, 0, true);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args)) {
+      return false;
+    }
 
     return true;
   }
@@ -4516,6 +4569,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 	  if (switchOutTarget instanceof PlayerPokemon) {
 	  	if (switchOutTarget.hp) {
 	  	  applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, switchOutTarget);
+          // switchOut below sets the UI to select party(this is not a separate Phase), then adds a SwitchSummonPhase with selected 'mon
 	  	  (switchOutTarget as PlayerPokemon).switchOut(this.batonPass, true).then(() => resolve(true));
 	  	} else {
           resolve(false);
@@ -4531,7 +4585,8 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 	  	user.scene.triggerPokemonFormChange(switchOutTarget, SpeciesFormChangeActiveTrigger, true);
 
 	  	if (switchOutTarget.hp) {
-          user.scene.unshiftPhase(new SwitchSummonPhase(user.scene, switchOutTarget.getFieldIndex(), user.scene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot), false, this.batonPass, false));
+        // for opponent switching out
+          user.scene.prependToPhase(new SwitchSummonPhase(user.scene, switchOutTarget.getFieldIndex(), user.scene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot), false, this.batonPass, false), MoveEndPhase);
         }
 	  } else {
 	    // Switch out logic for everything else
@@ -5659,6 +5714,10 @@ export const allMoves: Move[] = [
   new SelfStatusMove(Moves.NONE, Type.NORMAL, MoveCategory.STATUS, -1, -1, 0, 1),
 ];
 
+export const selfStatLowerMoves: Moves[] = [
+
+];
+
 export function initMoves() {
   allMoves.push(
     new AttackMove(Moves.POUND, Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 35, -1, 0, 1),
@@ -6393,6 +6452,7 @@ export function initMoves() {
         && (user.status.effect === StatusEffect.BURN || user.status.effect === StatusEffect.POISON || user.status.effect === StatusEffect.TOXIC || user.status.effect === StatusEffect.PARALYSIS) ? 2 : 1)
       .attr(BypassBurnDamageReductionAttr),
     new AttackMove(Moves.FOCUS_PUNCH, Type.FIGHTING, MoveCategory.PHYSICAL, 150, 100, 20, -1, -3, 3)
+      .attr(MessageHeaderAttr, (user, move) => getPokemonMessage(user, " is tightening its focus!"))
       .punchingMove()
       .ignoresVirtual()
       .condition((user, target, move) => !user.turnData.attacksReceived.find(r => r.damage)),
@@ -8231,7 +8291,8 @@ export function initMoves() {
     new AttackMove(Moves.ICE_SPINNER, Type.ICE, MoveCategory.PHYSICAL, 80, 100, 15, -1, 0, 9)
       .attr(ClearTerrainAttr),
     new AttackMove(Moves.GLAIVE_RUSH, Type.DRAGON, MoveCategory.PHYSICAL, 120, 100, 5, -1, 0, 9)
-      .partial(),
+      .attr(AlwaysGetHitAttr)
+      .attr(ReceiveDoubleDamageAttr),
     new StatusMove(Moves.REVIVAL_BLESSING, Type.NORMAL, -1, 1, -1, 0, 9)
       .triageMove()
       .attr(RevivalBlessingAttr)
@@ -8426,4 +8487,9 @@ export function initMoves() {
     new AttackMove(Moves.MALIGNANT_CHAIN, Type.POISON, MoveCategory.SPECIAL, 100, 100, 5, 50, 0, 9)
       .attr(StatusEffectAttr, StatusEffect.TOXIC)
   );
+  allMoves.map(m=>{
+    if (m.getAttrs(StatChangeAttr).some(a=> a.selfTarget && a.levels < 0)) {
+      selfStatLowerMoves.push(m.id);
+    }
+  });
 }
