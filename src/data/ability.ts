@@ -1850,14 +1850,6 @@ export class PostSummonMessageAbAttr extends PostSummonAbAttr {
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     pokemon.scene.queueMessage(this.messageFunc(pokemon));
 
-    //icito
-    /*
-    for (pokemon of pokemon.scene.getField(true)) {
-      if (pokemon.breakIllusion()) {
-        pokemon.scene.queueMessage(getPokemonMessage(pokemon, "'s illusion wore off!"));
-      }
-    }
-      */
     pokemon.scene.getField(true).map(pokemon => {
       if (pokemon.breakIllusion()) {
         pokemon.scene.queueMessage(getPokemonMessage(pokemon, "'s illusion wore off!"));
