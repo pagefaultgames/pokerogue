@@ -7,6 +7,8 @@ import {GameModes, getGameMode} from "#app/game-mode";
 import {getPokemonSpecies, getPokemonSpeciesForm} from "#app/data/pokemon-species";
 import {PlayerPokemon} from "#app/field/pokemon";
 import Battle, {BattleType} from "#app/battle";
+import { Moves } from "#app/enums/moves";
+import BattleScene from "#app/battle-scene";
 
 export function blobToString(blob) {
   return new Promise((resolve, reject) => {
@@ -80,10 +82,11 @@ export function waitUntil(truth) {
   });
 }
 
-export function getMovePosition(scene, pokemonIndex, moveIndex) {
+/** Get the index of `move` from the moveset of the pokemon on the player's field at location `pokemonIndex` */
+export function getMovePosition(scene: BattleScene, pokemonIndex: 0 | 1, move: Moves) {
   const playerPokemon = scene.getPlayerField()[pokemonIndex];
   const moveSet = playerPokemon.getMoveset();
-  const index = moveSet.findIndex((move) => move.moveId === moveIndex);
+  const index = moveSet.findIndex((m) => m.moveId === move);
   return index;
 }
 
