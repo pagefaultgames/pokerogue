@@ -371,6 +371,9 @@ export function getSpeciesFormChangeMessage(pokemon: Pokemon, formChange: Specie
   if (isRevert) {
     return `${prefix}${pokemon.name} reverted\nto its original form!`;
   }
+  if (pokemon.species.speciesId === Species.MIMIKYU) {
+    return "Its disguise served it as a decoy!";
+  }
   return `${prefix}${preName} changed form!`;
 }
 
@@ -638,6 +641,10 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.AEGISLASH, "blade", "shield", new SpeciesFormChangePreMoveTrigger(Moves.KINGS_SHIELD), true, new SpeciesFormChangeCondition(p => p.hasAbility(Abilities.STANCE_CHANGE))),
     new SpeciesFormChange(Species.AEGISLASH, "shield", "blade", new SpeciesFormChangePreMoveTrigger(m => allMoves[m].category !== MoveCategory.STATUS), true, new SpeciesFormChangeCondition(p => p.hasAbility(Abilities.STANCE_CHANGE))),
     new SpeciesFormChange(Species.AEGISLASH, "blade", "shield", new SpeciesFormChangeActiveTrigger(false), true)
+  ],
+  [Species.XERNEAS]: [
+    new SpeciesFormChange(Species.XERNEAS, "neutral", "active", new SpeciesFormChangeActiveTrigger(true), true),
+    new SpeciesFormChange(Species.XERNEAS, "active", "neutral", new SpeciesFormChangeActiveTrigger(false), true)
   ],
   [Species.ZYGARDE]: [
     new SpeciesFormChange(Species.ZYGARDE, "50-pc", "complete", new SpeciesFormChangeManualTrigger(), true),
