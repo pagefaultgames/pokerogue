@@ -1,4 +1,4 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it} from "vitest";
+import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
 import BattleScene from "../../battle-scene";
 import { Egg, getLegendaryGachaSpeciesForTimestamp } from "#app/data/egg.js";
 import { Species } from "#enums/species";
@@ -8,6 +8,7 @@ import { EggTier } from "#app/enums/egg-type.js";
 import { VariantTier } from "#app/enums/variant-tiers.js";
 import GameManager from "../utils/gameManager";
 import EggData from "#app/system/egg-data.js";
+import * as Utils from "#app/utils.js";
 
 describe("Egg Generation Tests", () => {
   let phaserGame: Phaser.Game;
@@ -21,6 +22,7 @@ describe("Egg Generation Tests", () => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
+    vi.restoreAllMocks();
   });
 
   beforeEach(async() => {
@@ -287,5 +289,18 @@ describe("Egg Generation Tests", () => {
     new Egg({scene, sourceType: EggSourceType.GACHA_MOVE, pulled: true, tier: EggTier.MASTER});
 
     expect(scene.gameData.gameStats.legendaryEggsPulled).toBe(startingLegendaryEggsPulled + 1);
+  });
+  it("should increase legendary egg rate", () => {
+    vi.spyOn(Utils, "randInt").mockReturnValue(1);
+
+    const scene = game.scene;
+    const expectedTier1 = EggTier.MASTER;
+    const expectedTier2 = EggTier.ULTRA;
+
+    const result1 = new Egg({scene, sourceType: EggSourceType.GACHA_LEGENDARY, pulled: true}).tier;
+    const result2 = new Egg({scene, sourceType: EggSourceType.GACHA_MOVE, pulled: true}).tier;
+
+    expect(result1).toBe(expectedTier1);
+    expect(result2).toBe(expectedTier2);
   });
 });
