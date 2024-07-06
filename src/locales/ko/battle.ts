@@ -24,7 +24,8 @@ export const battle: SimpleTranslationEntries = {
   "hitResultNotVeryEffective": "효과가 별로인 듯하다…",
   "hitResultNoEffect": "{{pokemonName}}에게는\n효과가 없는 것 같다…",
   "hitResultOneHitKO": "일격필살!",
-  "attackFailed": "하지만 실패했다!",
+  "attackFailed": "그러나 실패하고 말았다!!",
+  "attackMissed": "{{pokemonNameWithAffix}}에게는\n맞지 않았다!",
   "attackHitsCount": "{{count}}번 맞았다!",
   "rewardGain": "{{modifierName}}[[를]] 받았다!",
   "expGain": "{{pokemonName}}[[는]]\n{{exp}} 경험치를 얻었다!",
@@ -64,6 +65,7 @@ export const battle: SimpleTranslationEntries = {
   "foePokemonWithAffix": "상대 {{pokemonName}}",
   "useMove": "{{pokemonNameWithAffix}}의 {{moveName}}!",
   "drainMessage": "{{pokemonName}}[[로]]부터\n체력을 흡수했다!",
+  "stealEatBerry": "{{pokemonName}}[[가]]\n{{targetName}}의 {{berryName}}[[를]] 빼앗아 먹었다!",
   "regainHealth": "{{pokemonName}}[[는]]\n체력을 회복했다!",
   "fainted": "{{pokemonNameWithAffix}}[[는]] 쓰러졌다!",
   "statRose": "{{pokemonNameWithAffix}}의\n{{stats}}[[가]] 올라갔다!",
@@ -131,5 +133,5 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsSaltCuredOnAdd": "{{pokemonNameWithAffix}}[[는]]\n소금에 절여졌다!",
   "battlerTagsSaltCuredLapse": "{{pokemonNameWithAffix}}[[는]] 소금절이의\n데미지를 입고 있다.",
   "battlerTagsCursedOnAdd": "{{pokemonNameWithAffix}}[[는]]\n자신의 체력을 깎아서\n{{pokemonName}}에게 저주를 걸었다!",
-  "battlerTagsCursedLapse": "{{pokemonNameWithAffix}}[[는]]\n저주받고 있다!"
+  "battlerTagsCursedLapse": "{{pokemonNameWithAffix}}[[는]]\n저주받고 있다!",
 } as const;

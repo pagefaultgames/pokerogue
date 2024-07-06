@@ -879,7 +879,7 @@ export class PostDefendContactDamageAbAttr extends PostDefendAbAttr {
   }
 
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
-    if (move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) {
+    if (move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && !attacker.hasAbilityWithAttr(BlockNonDirectDamageAbAttr)) {
       attacker.damageAndUpdate(Math.ceil(attacker.getMaxHp() * (1 / this.damageRatio)), HitResult.OTHER);
       attacker.turnData.damageTaken += Math.ceil(attacker.getMaxHp() * (1 / this.damageRatio));
       return true;
@@ -1296,6 +1296,7 @@ export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
     const multiplier = args[2] as Utils.NumberHolder;
 
     if (this.canApplyPreAttack(move, numTargets)) {
+      this.showAbility = !!hitCount?.value;
       if (!!hitCount?.value) {
         hitCount.value *= 2;
       }
@@ -1446,7 +1447,7 @@ export class FieldMovePowerBoostAbAttr extends AbAttr {
  * Boosts the power of a specific type of move.
  * @extends FieldMovePowerBoostAbAttr
  */
-export class FieldMoveTypePowerBoostAbAttr extends FieldMovePowerBoostAbAttr {
+export class PreAttackFieldMoveTypePowerBoostAbAttr extends FieldMovePowerBoostAbAttr {
   /**
    * @param boostedType - The type of move that will receive the power boost.
    * @param powerMultiplier - The multiplier to apply to the move's power, defaults to 1.5 if not provided.
@@ -1455,6 +1456,18 @@ export class FieldMoveTypePowerBoostAbAttr extends FieldMovePowerBoostAbAttr {
     super((pokemon, defender, move) => move.type === boostedType, powerMultiplier || 1.5);
   }
 }
+
+/**
+ * Boosts the power of a specific type of move for all Pokemon in the field.
+ * @extends PreAttackFieldMoveTypePowerBoostAbAttr
+ */
+export class FieldMoveTypePowerBoostAbAttr extends PreAttackFieldMoveTypePowerBoostAbAttr { }
+
+/**
+ * Boosts the power of a specific type of move for the user and its allies.
+ * @extends PreAttackFieldMoveTypePowerBoostAbAttr
+ */
+export class UserFieldMoveTypePowerBoostAbAttr extends PreAttackFieldMoveTypePowerBoostAbAttr { }
 
 /**
  * Boosts the power of moves in specified categories.
@@ -2910,7 +2923,7 @@ export class PostTurnResetStatusAbAttr extends PostTurnAbAttr {
     }
     if (this.target?.status) {
 
-      this.target.scene.queueMessage(getPokemonMessage(this.target, getStatusEffectHealText(this.target.status?.effect)));
+      this.target.scene.queueMessage(getStatusEffectHealText(this.target.status?.effect, getPokemonNameWithAffix(this.target)));
       this.target.resetStatus(false);
       this.target.updateInfo();
       return true;
@@ -4964,8 +4977,7 @@ export function initAbilities() {
     new Ability(Abilities.SCREEN_CLEANER, 8)
       .attr(PostSummonRemoveArenaTagAbAttr, [ArenaTagType.AURORA_VEIL, ArenaTagType.LIGHT_SCREEN, ArenaTagType.REFLECT]),
     new Ability(Abilities.STEELY_SPIRIT, 8)
-      .attr(MoveTypePowerBoostAbAttr, Type.STEEL)
-      .partial(),
+      .attr(UserFieldMoveTypePowerBoostAbAttr, Type.STEEL),
     new Ability(Abilities.PERISH_BODY, 8)
       .attr(PostDefendPerishSongAbAttr, 4),
     new Ability(Abilities.WANDERING_SPIRIT, 8)
