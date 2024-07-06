@@ -43,3 +43,17 @@ export const weather: SimpleTranslationEntries = {
   "strongWindsEffectMessage": "The mysterious air current weakened the attack!",
   "strongWindsClearMessage": "The heavy wind stopped."
 };
+
+export const terrain: SimpleTranslationEntries = {
+  "mistyStartMessage": "Mist swirled around the battlefield!",
+  "mistyClearMessage": "The mist disappeared from the battlefield.",
+
+  "electricStartMessage": "An electric current ran across the battlefield!",
+  "electricClearMessage": "The electricity disappeared from the battlefield.",
+
+  "grassyStartMessage": "Grass grew to cover the battlefield!",
+  "grassyClearMessage": "The grass disappeared from the battlefield.",
+
+  "psychicStartMessage": "The battlefield got weird!",
+  "psychicClearMessage": "The weirdness disappeared from the battlefield!",
+};
