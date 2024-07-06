@@ -410,6 +410,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "BURN_DRIVE": "Burn Drive",
     "CHILL_DRIVE": "Chill Drive",
     "DOUSE_DRIVE": "Douse Drive",
+    "ULTRANECROZIUM_Z": "Ultranecrozium Z",
 
     "FIST_PLATE": "Fist Plate",
     "SKY_PLATE": "Sky Plate",

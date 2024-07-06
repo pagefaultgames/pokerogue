@@ -1014,13 +1014,40 @@ class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
         return new FormChangeItemModifierType(pregenArgs[0] as FormChangeItem);
       }
 
-      const formChangeItemPool = party.filter(p => pokemonFormChanges.hasOwnProperty(p.species.speciesId)).map(p => {
+      const formChangeItemPool = [...new Set(party.filter(p => pokemonFormChanges.hasOwnProperty(p.species.speciesId)).map(p => {
         const formChanges = pokemonFormChanges[p.species.speciesId];
-        return formChanges.filter(fc => ((fc.formKey.indexOf(SpeciesFormKey.MEGA) === -1 && fc.formKey.indexOf(SpeciesFormKey.PRIMAL) === -1) || party[0].scene.getModifiers(Modifiers.MegaEvolutionAccessModifier).length)
+        let formChangeItemTriggers = formChanges.filter(fc => ((fc.formKey.indexOf(SpeciesFormKey.MEGA) === -1 && fc.formKey.indexOf(SpeciesFormKey.PRIMAL) === -1) || party[0].scene.getModifiers(Modifiers.MegaEvolutionAccessModifier).length)
           && ((fc.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) === -1 && fc.formKey.indexOf(SpeciesFormKey.ETERNAMAX) === -1) || party[0].scene.getModifiers(Modifiers.GigantamaxAccessModifier).length))
           .map(fc => fc.findTrigger(SpeciesFormChangeItemTrigger) as SpeciesFormChangeItemTrigger)
           .filter(t => t && t.active && !p.scene.findModifier(m => m instanceof Modifiers.PokemonFormChangeItemModifier && m.pokemonId === p.id && m.formChangeItem === t.item));
-      }).flat().flatMap(fc => fc.item);
+
+        if (p.species.speciesId === Species.NECROZMA) {
+          // technically we could use a simplified version and check for formChanges.length > 3, but in case any code changes later, this might break...
+
+          let foundULTRA_Z = false,
+            foundN_LUNA = false,
+            foundN_SOLAR = false;
+          formChangeItemTriggers.forEach((fc, i) => {
+            switch (fc.item) {
+            case FormChangeItem.ULTRANECROZIUM_Z:
+              foundULTRA_Z = true;
+              break;
+            case FormChangeItem.N_LUNARIZER:
+              foundN_LUNA = true;
+              break;
+            case FormChangeItem.N_SOLARIZER:
+              foundN_SOLAR = true;
+              break;
+            }
+          });
+          if (foundULTRA_Z && foundN_LUNA && foundN_SOLAR) {
+            // all three items are present -> user hasn't acquired any of the N_*ARIZERs -> block ULTRANECROZIUM_Z acquisition.
+            formChangeItemTriggers = formChangeItemTriggers.filter(fc => fc.item !== FormChangeItem.ULTRANECROZIUM_Z);
+          }
+        }
+        return formChangeItemTriggers;
+      }).flat().flatMap(fc => fc.item))];
+      // convert it into a set to remove duplicate values, which can appear when the same species with a potential form change is in the party.
 
       if (!formChangeItemPool.length) {
         return null;
