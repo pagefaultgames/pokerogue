@@ -43,6 +43,7 @@ import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { weather } from "./weather";
+import { modifierSelectUiHandler } from "./modifier-select-ui-handler";
 
 export const enConfig = {
   ability: ability,
@@ -91,4 +92,5 @@ export const enConfig = {
   tutorial: tutorial,
   voucher: voucher,
   weather: weather,
+  modifierSelectUiHandler: modifierSelectUiHandler
 };
