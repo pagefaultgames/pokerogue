@@ -1,4 +1,4 @@
-import { CommandPhase, SelectModifierPhase } from "../phases";
+import { CommandPhase } from "../phases";
 import BattleScene from "../battle-scene";
 import { PlayerPokemon, PokemonMove } from "../field/pokemon";
 import { addBBCodeTextObject, addTextObject, getTextColor, TextStyle } from "./text";
@@ -21,6 +21,7 @@ import MoveInfoOverlay from "./move-info-overlay";
 import i18next from "i18next";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { Moves } from "#enums/moves";
+import {SelectModifierPhase} from "#app/phases/select-modifier-phase";
 
 const defaultMessage = i18next.t("partyUiHandler:choosePokemon");
 
@@ -36,7 +37,8 @@ export enum PartyUiMode {
   MODIFIER_TRANSFER,
   SPLICE,
   RELEASE,
-  CHECK
+  CHECK,
+  SELECT
 }
 
 export enum PartyOption {
@@ -52,6 +54,7 @@ export enum PartyOption {
   SPLICE,
   UNSPLICE,
   RELEASE,
+  SELECT,
   SCROLL_UP = 1000,
   SCROLL_DOWN = 1001,
   FORM_CHANGE_ITEM = 2000,
@@ -153,7 +156,7 @@ export default class PartyUiHandler extends MessageUiHandler {
 
   public static NoEffectMessage = i18next.t("partyUiHandler:anyEffect");
 
-  private localizedOptions = [PartyOption.SEND_OUT, PartyOption.SUMMARY, PartyOption.CANCEL, PartyOption.APPLY, PartyOption.RELEASE, PartyOption.TEACH, PartyOption.SPLICE, PartyOption.UNSPLICE, PartyOption.REVIVE, PartyOption.TRANSFER, PartyOption.UNPAUSE_EVOLUTION, PartyOption.PASS_BATON];
+  private localizedOptions = [PartyOption.SEND_OUT, PartyOption.SUMMARY, PartyOption.CANCEL, PartyOption.APPLY, PartyOption.RELEASE, PartyOption.TEACH, PartyOption.SPLICE, PartyOption.UNSPLICE, PartyOption.REVIVE, PartyOption.TRANSFER, PartyOption.UNPAUSE_EVOLUTION, PartyOption.PASS_BATON, PartyOption.SELECT];
 
   constructor(scene: BattleScene) {
     super(scene, Mode.PARTY);
@@ -418,6 +421,10 @@ export default class PartyUiHandler extends MessageUiHandler {
           return true;
         } else if (option === PartyOption.CANCEL) {
           return this.processInput(Button.CANCEL);
+        } else if (option === PartyOption.SELECT) {
+          ui.playSelect();
+          // ui.setModeWithoutClear(Mode.SUMMARY, pokemon).then(() =>  this.clearOptions());
+          return true;
         }
       } else if (button === Button.CANCEL) {
         this.clearOptions();
@@ -758,6 +765,9 @@ export default class PartyUiHandler extends MessageUiHandler {
             this.options.push(PartyOption.FORM_CHANGE_ITEM + i);
           }
         }
+        break;
+      case PartyUiMode.SELECT:
+        this.options.push(PartyOption.SELECT);
         break;
       }
 

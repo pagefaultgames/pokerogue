@@ -7,7 +7,7 @@ import { StatusEffect } from "./status-effect";
 import * as Utils from "../utils";
 import { ChargeAttr, MoveFlags, allMoves } from "./move";
 import { Type } from "./type";
-import { BlockNonDirectDamageAbAttr, FlinchEffectAbAttr, ReverseDrainAbAttr, applyAbAttrs } from "./ability";
+import { BlockNonDirectDamageAbAttr, FlinchEffectAbAttr, ReverseDrainAbAttr, applyAbAttrs, ProtectStatAbAttr } from "./ability";
 import { TerrainType } from "./terrain";
 import { WeatherType } from "./weather";
 import { BattleStat } from "./battle-stat";
@@ -1537,6 +1537,38 @@ export class IceFaceTag extends BattlerTag {
   }
 }
 
+export class MysteryEncounterPostSummonTag extends BattlerTag {
+  constructor(sourceMove: Moves) {
+    super(BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON, BattlerTagLapseType.CUSTOM, 1, sourceMove);
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    const ret = super.lapse(pokemon, lapseType);
+
+    if (lapseType === BattlerTagLapseType.CUSTOM) {
+      // Give pokemon +1 stats for battle
+      const cancelled = new Utils.BooleanHolder(false);
+      applyAbAttrs(ProtectStatAbAttr, pokemon, cancelled);
+      if (!cancelled.value) {
+        const mysteryEncounterBattleEffects = pokemon.summonData.mysteryEncounterBattleEffects;
+        if (mysteryEncounterBattleEffects) {
+          mysteryEncounterBattleEffects(pokemon);
+        }
+      }
+    }
+
+    return ret;
+  }
+
+  onRemove(pokemon: Pokemon): void {
+    super.onRemove(pokemon);
+  }
+}
+
 export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourceMove: Moves, sourceId: integer): BattlerTag {
   switch (tagType) {
   case BattlerTagType.RECHARGING:
@@ -1654,6 +1686,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
     return new DestinyBondTag(sourceMove, sourceId);
   case BattlerTagType.ICE_FACE:
     return new IceFaceTag(sourceMove);
+  case BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON:
+    return new MysteryEncounterPostSummonTag(sourceMove);
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
