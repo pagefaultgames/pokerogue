@@ -17,7 +17,7 @@ export default class TargetSelectUiHandler extends UiHandler {
 
   private isMultipleTargets: boolean = false;
   private targets: BattlerIndex[];
-  private targetsTakingHit: Pokemon[];
+  private targetsHighlighted: Pokemon[];
   private targetFlashTween: Phaser.Tweens.Tween;
   private targetBattleInfoMoveTween: Phaser.Tweens.Tween[] = [];
 
@@ -96,12 +96,11 @@ export default class TargetSelectUiHandler extends UiHandler {
     return success;
   }
 
-  // cursor is battlerIndex
   setCursor(cursor: integer): boolean {
     const singleTarget = this.scene.getField()[cursor];
     const multipleTargets = this.targets.map(index => this.scene.getField()[index]);
 
-    this.targetsTakingHit = this.isMultipleTargets ? multipleTargets : [ singleTarget ];
+    this.targetsHighlighted = this.isMultipleTargets ? multipleTargets : [ singleTarget ];
 
     const ret = super.setCursor(cursor);
 
@@ -113,15 +112,14 @@ export default class TargetSelectUiHandler extends UiHandler {
     }
 
     this.targetFlashTween = this.scene.tweens.add({
-      targets: [...this.targetsTakingHit],
+      targets: [...this.targetsHighlighted],
       alpha: 0,
       loop: -1,
       duration: Utils.fixedInt(250),
       ease: "Sine.easeIn",
       yoyo: true,
-      // this creates the "flashing" pokemon
       onUpdate: t => {
-        for (const target of this.targetsTakingHit) {
+        for (const target of this.targetsHighlighted) {
           target.setAlpha(t.getValue());
         }
       }
@@ -134,9 +132,7 @@ export default class TargetSelectUiHandler extends UiHandler {
       }
     }
 
-    console.log("targetBattleInfoMoveTween", this.targetBattleInfoMoveTween);
-
-    const targetsBattleInfo = this.targetsTakingHit.map(target => target.getBattleInfo());
+    const targetsBattleInfo = this.targetsHighlighted.map(target => target.getBattleInfo());
 
     targetsBattleInfo.map(info => {
       this.targetBattleInfoMoveTween.push(this.scene.tweens.add({
@@ -157,7 +153,7 @@ export default class TargetSelectUiHandler extends UiHandler {
       this.targetFlashTween.stop();
       this.targetFlashTween = null;
     }
-    for (const pokemon of this.targetsTakingHit) {
+    for (const pokemon of this.targetsHighlighted) {
       pokemon.setAlpha(1);
     }
 
@@ -165,7 +161,7 @@ export default class TargetSelectUiHandler extends UiHandler {
       this.targetBattleInfoMoveTween.forEach(tween => tween.stop());
       this.targetBattleInfoMoveTween = [];
     }
-    for (const pokemon of this.targetsTakingHit) {
+    for (const pokemon of this.targetsHighlighted) {
       pokemon.getBattleInfo().resetY();
     }
   }
