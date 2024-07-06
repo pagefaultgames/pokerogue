@@ -20,7 +20,6 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   private lockRarityButtonContainer: Phaser.GameObjects.Container;
   private transferButtonContainer: Phaser.GameObjects.Container;
   private checkButtonContainer: Phaser.GameObjects.Container;
-  private continueButtonContainer: Phaser.GameObjects.Container;
   private rerollCostText: Phaser.GameObjects.Text;
   private lockRarityButtonText: Phaser.GameObjects.Text;
   private moveInfoOverlay : MoveInfoOverlay;
@@ -101,10 +100,6 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.lockRarityButtonText.setOrigin(0, 0);
     this.lockRarityButtonContainer.add(this.lockRarityButtonText);
 
-    this.continueButtonContainer = this.scene.add.container((this.scene.game.canvas.width / 12), -(this.scene.game.canvas.height / 12));
-    this.continueButtonContainer.setVisible(false);
-    ui.add(this.continueButtonContainer);
-
     // prepare move overlay
     const overlayScale = 1;
     this.moveInfoOverlay = new MoveInfoOverlay(this.scene, {
@@ -131,7 +126,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       return false;
     }
 
-    if (args.length !== 4 || !(args[1] instanceof Array) || !(args[2] instanceof Function)) {
+    if (args.length !== 4 || !(args[1] instanceof Array) || !args[1].length || !(args[2] instanceof Function)) {
       return false;
     }
 
@@ -156,9 +151,6 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.lockRarityButtonContainer.setVisible(false);
     this.lockRarityButtonContainer.setAlpha(0);
 
-    this.continueButtonContainer.setVisible(false);
-    this.continueButtonContainer.setAlpha(0);
-
     this.rerollButtonContainer.setPositionRelative(this.lockRarityButtonContainer, 0, canLockRarities ? -12 : 0);
 
     this.rerollCost = args[3] as integer;
@@ -178,13 +170,6 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       this.scene.add.existing(option);
       this.modifierContainer.add(option);
       this.options.push(option);
-    }
-
-    // Add continue button
-    if (this.options.length === 0) {
-      const continueButtonText = addTextObject(this.scene, -24, optionsYOffset - 5, "Continue", TextStyle.MESSAGE);
-      continueButtonText.setName("text-continue-btn");
-      this.continueButtonContainer.add(continueButtonText);
     }
 
     for (let m = 0; m < shopTypeOptions.length; m++) {
@@ -250,21 +235,13 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       this.rerollButtonContainer.setAlpha(0);
       this.checkButtonContainer.setAlpha(0);
       this.lockRarityButtonContainer.setAlpha(0);
-      this.continueButtonContainer.setAlpha(0);
       this.rerollButtonContainer.setVisible(true);
       this.checkButtonContainer.setVisible(true);
-      this.continueButtonContainer.setVisible(this.rerollCost === 0);
       this.lockRarityButtonContainer.setVisible(canLockRarities);
 
       this.scene.tweens.add({
-        targets: [this.lockRarityButtonContainer, this.checkButtonContainer, this.continueButtonContainer],
+        targets: [ this.rerollButtonContainer, this.lockRarityButtonContainer, this.checkButtonContainer ],
         alpha: 1,
-        duration: 250
-      });
-
-      this.scene.tweens.add({
-        targets: [this.rerollButtonContainer],
-        alpha: this.rerollCost === 0 ? 0.5 : 1,
         duration: 250
       });
 
@@ -408,14 +385,6 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     // the modifier selection has been updated, always hide the overlay
     this.moveInfoOverlay.clear();
     if (this.rowCursor) {
-      if (this.rowCursor === 1 && options.length === 0) {
-        // Continue button when no shop items
-        this.cursorObj.setScale(1.25);
-        this.cursorObj.setPosition((this.scene.game.canvas.width / 18) + 23, (-this.scene.game.canvas.height / 12) - (this.shopOptionsRows.length > 1 ? 6 : 22));
-        ui.showText("Continue to the next wave.");
-        return ret;
-      }
-
       const sliceWidth = (this.scene.game.canvas.width / 6) / (options.length + 2);
       if (this.rowCursor < 2) {
         this.cursorObj.setPosition(sliceWidth * (cursor + 1) + (sliceWidth * 0.5) - 20, (-this.scene.game.canvas.height / 12) - (this.shopOptionsRows.length > 1 ? 6 : 22));
@@ -452,14 +421,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     if (rowCursor !== lastRowCursor) {
       this.rowCursor = rowCursor;
       let newCursor = Math.round(this.cursor / Math.max(this.getRowItems(lastRowCursor) - 1, 1) * (this.getRowItems(rowCursor) - 1));
-      if (rowCursor === 1 && this.options.length === 0) {
-        // Handle empty shop
-        newCursor = 0;
-      }
       if (rowCursor === 0) {
-        if (this.options.length === 0) {
-          newCursor = 1;
-        }
         if (newCursor === 0 && !this.rerollButtonContainer.visible) {
           newCursor = 1;
         }
@@ -544,7 +506,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       onComplete: () => options.forEach(o => o.destroy())
     });
 
-    [this.rerollButtonContainer, this.checkButtonContainer, this.transferButtonContainer, this.lockRarityButtonContainer, this.continueButtonContainer].forEach(container => {
+    [ this.rerollButtonContainer, this.checkButtonContainer, this.transferButtonContainer, this.lockRarityButtonContainer ].forEach(container => {
       if (container.visible) {
         this.scene.tweens.add({
           targets: container,

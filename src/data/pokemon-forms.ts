@@ -372,9 +372,6 @@ export function getSpeciesFormChangeMessage(pokemon: Pokemon, formChange: Specie
   if (isRevert) {
     return `${prefix}${pokemon.name} reverted\nto its original form!`;
   }
-  if (pokemon.species.speciesId === Species.MIMIKYU) {
-    return "Its disguise served it as a decoy!";
-  }
   return `${prefix}${preName} changed form!`;
 }
 

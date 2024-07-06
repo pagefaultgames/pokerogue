@@ -10,6 +10,7 @@ import {
   EnemyCommandPhase,
   LoginPhase,
   SelectGenderPhase,
+  SelectModifierPhase,
   SelectStarterPhase,
   SummonPhase,
   TitlePhase,
@@ -23,7 +24,6 @@ import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
-import {SelectModifierPhase} from "#app/phases/select-modifier-phase";
 
 describe("Test Battle Phase", () => {
   let phaserGame: Phaser.Game;

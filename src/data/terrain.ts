@@ -5,7 +5,6 @@ import * as Utils from "../utils";
 import { IncrementMovePriorityAbAttr, applyAbAttrs } from "./ability";
 import { ProtectAttr } from "./move";
 import { BattlerIndex } from "#app/battle.js";
-import i18next from "i18next";
 
 export enum TerrainType {
   NONE,
@@ -67,22 +66,6 @@ export class Terrain {
     return false;
   }
 }
-
-export function getTerrainName(terrainType: TerrainType): string {
-  switch (terrainType) {
-  case TerrainType.MISTY:
-    return i18next.t("terrain:misty");
-  case TerrainType.ELECTRIC:
-    return i18next.t("terrain:electric");
-  case TerrainType.GRASSY:
-    return i18next.t("terrain:grassy");
-  case TerrainType.PSYCHIC:
-    return i18next.t("terrain:psychic");
-  }
-
-  return "";
-}
-
 
 export function getTerrainColor(terrainType: TerrainType): [ integer, integer, integer ] {
   switch (terrainType) {

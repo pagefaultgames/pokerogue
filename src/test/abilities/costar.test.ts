@@ -45,7 +45,7 @@ describe("Abilities - COSTAR", () => {
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.NASTY_PLOT));
       await game.phaseInterceptor.to(CommandPhase);
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
       await game.toNextTurn();
 
       expect(leftPokemon.summonData.battleStats[BattleStat.SPATK]).toBe(+2);

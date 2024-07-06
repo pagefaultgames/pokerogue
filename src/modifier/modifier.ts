@@ -1307,47 +1307,6 @@ export class PokemonInstantReviveModifier extends PokemonHeldItemModifier {
   }
 }
 
-/**
- * Modifier used for White Herb, which resets negative {@linkcode Stat} changes
- * @extends PokemonHeldItemModifier
- * @see {@linkcode apply}
- */
-export class PokemonResetNegativeStatStageModifier extends PokemonHeldItemModifier {
-  constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
-    super(type, pokemonId, stackCount);
-  }
-
-  matchType(modifier: Modifier) {
-    return modifier instanceof PokemonResetNegativeStatStageModifier;
-  }
-
-  clone() {
-    return new PokemonResetNegativeStatStageModifier(this.type, this.pokemonId, this.stackCount);
-  }
-
-  /**
-   * Restores any negative stat stages of the mon to 0
-   * @param args args[0] is the {@linkcode Pokemon} whose stat stages are being checked
-   * @returns true if any stat changes were applied (item was used), false otherwise
-   */
-  apply(args: any[]): boolean {
-    const pokemon = args[0] as Pokemon;
-    const loweredStats = pokemon.summonData.battleStats.filter(s => s < 0);
-    if (loweredStats.length) {
-      for (let s = 0; s < pokemon.summonData.battleStats.length; s++) {
-        pokemon.summonData.battleStats[s] = Math.max(0, pokemon.summonData.battleStats[s]);
-      }
-      pokemon.scene.queueMessage(getPokemonMessage(pokemon, `'s lowered stats were'\nrestored by its ${this.type.name}!`));
-      return true;
-    }
-    return false;
-  }
-
-  getMaxHeldItemCount(pokemon: Pokemon): integer {
-    return 2;
-  }
-}
-
 export abstract class ConsumablePokemonModifier extends ConsumableModifier {
   public pokemonId: integer;
 
