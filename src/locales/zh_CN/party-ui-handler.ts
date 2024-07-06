@@ -14,7 +14,7 @@ export const partyUiHandler: SimpleTranslationEntries = {
   "TRANSFER": "交换",
   "ALL": "全部道具",
   "PASS_BATON": "接棒",
-  "UNPAUSE_EVOLUTION": "接触进化暂停",
+  "UNPAUSE_EVOLUTION": "解除进化暂停",
   "REVIVE": "复活",
 
   "choosePokemon": "选择一只宝可梦。",

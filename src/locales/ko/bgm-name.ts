@@ -1,7 +1,7 @@
 import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const bgmName: SimpleTranslationEntries = {
-  "music": "Music",
+  "music": "Music: ",
   "missing_entries" : "{{name}}",
   "battle_kanto_champion": "BW2 관동 챔피언 배틀",
   "battle_johto_champion": "BW2 성도 챔피언 배틀",
@@ -80,8 +80,8 @@ export const bgmName: SimpleTranslationEntries = {
   "battle_plasma_grunt": "BW 플라스마단 배틀",
   "battle_flare_grunt": "XY 플레어단 배틀",
   "battle_rocket_boss": "USUM 비주기 배틀",
-  "battle_aqua_magma_boss": "ORAS 아강 & 정주 배틀",
-  "battle_galactic_boss": "BDSP 얀커 배틀",
+  "battle_aqua_magma_boss": "ORAS 아강 & 마적 배틀",
+  "battle_galactic_boss": "BDSP 태홍 배틀",
   "battle_plasma_boss": "B2W2 게치스 배틀",
   "battle_flare_boss": "XY 플라드리 배틀",
 
