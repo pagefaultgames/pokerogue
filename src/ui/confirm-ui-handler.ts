@@ -58,7 +58,7 @@ export default class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
 
       this.setCursor(this.switchCheck ? this.switchCheckCursor : 0);
       return true;
-    } else if (args.length >= 2 && args[0] instanceof Function && args[1] instanceof Function) {
+    } else if (args.length === 2 && args[0] instanceof Function && args[1] instanceof Function) {
       const config: OptionSelectConfig = {
         options: [
           {
