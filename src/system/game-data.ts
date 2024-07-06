@@ -1170,8 +1170,8 @@ export class GameData {
 
   public async getRunHistoryData(scene: BattleScene): Promise<Object> {
     if (!Utils.isLocal) {
-      const dataAPI = await Utils.apiFetch("savedata/runHistory", true);
-      const data = await dataAPI.json();
+      const response = await Utils.apiFetch("savedata/runHistory", true);
+      const data = await response.json();
       if (localStorage.hasOwnProperty(`runHistoryData_${loggedInUser.username}`)) {
         let cachedResponse = localStorage.getItem(`runHistoryData_${loggedInUser.username}`);
         if (cachedResponse) {
