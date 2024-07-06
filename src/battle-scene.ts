@@ -2085,26 +2085,23 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
-   * Tries to add the input phase to right before the MoveEndPhase, useful for resolving moves before the end-of-turn phases start
+   * Tries to add the input phase to index before target phase in the phaseQueue, else simply calls unshiftPhase()
    * @param phase {@linkcode Phase} the phase to be added
-   * @returns boolean if a MoveEndPhase was found
+   * @param targetPhase {@linkcode Phase} the type of phase to search for in phaseQueue
+   * @returns boolean if a targetPhase was found and added
    */
-  prependToMoveEndPhase(phase: Phase): boolean {
-    let flag = false;
-    // want to add the pahse after MoveEnd of U-turn? so it can ge the effects of whatever
-    for (let i = 0; i < this.phaseQueue.length; i++) {
-      if (this.phaseQueue[i].constructor.name === "MoveEndPhase") {
-        this.phaseQueue.splice(i, 0, phase);
-        flag = true;
-        break;
-      }
-    }
-    if (flag === false) {
-      // what to do here if there is none?
-      // it should be the case that during combat there is always a MoveEndPhase when a move is being used, extensive testing/reasoning needed
+  prependToPhase(phase: Phase, targetPhase: Constructor<Phase>): boolean {
+    // want to add the target phase before the targetPhase
+    const targetIndex = this.phaseQueue.findIndex(ph => ph instanceof targetPhase);
+
+    // targetIndex === 1 iff findIndex() can't find a phase matching targetPhase
+    if (targetIndex !== -1) {
+      this.phaseQueue.splice(targetIndex, 0, phase);
+      return true;
+    } else {
       this.unshiftPhase(phase);
+      return false;
     }
-    return flag;
   }
 
   queueMessage(message: string, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer, defer?: boolean) {
