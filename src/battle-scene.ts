@@ -93,7 +93,7 @@ import { UiTheme } from "#enums/ui-theme";
 import { TimedEventManager } from "#app/timed-event-manager.js";
 import i18next from "i18next";
 import MysteryEncounter, { MysteryEncounterTier, MysteryEncounterVariant } from "./data/mystery-encounter";
-import {mysteryEncountersByBiome, allMysteryEncounters, BASE_MYSTYERY_ENCOUNTER_WEIGHT} from "./data/mystery-encounters/mystery-encounters";
+import {mysteryEncountersByBiome, allMysteryEncounters, BASE_MYSTERY_ENCOUNTER_WEIGHT} from "./data/mystery-encounters/mystery-encounters";
 import {MysteryEncounterFlags} from "#app/data/mystery-encounter-flags";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 
@@ -1099,11 +1099,16 @@ export default class BattleScene extends SceneBase {
 
       // Check for mystery encounter
       // Can only occur in place of a standard wild battle, waves 10-180
+      // let testStartingWeight = 40;
+      // while (testStartingWeight < 60) {
+      //   calculateMEAggregateStats(this, testStartingWeight);
+      //   testStartingWeight += 2;
+      // }
       if (this.gameMode.hasMysteryEncounters && newBattleType === BattleType.WILD && !this.gameMode.isBoss(newWaveIndex) && newWaveIndex < 180 && newWaveIndex > 10) {
         const roll = Utils.randSeedInt(256);
 
         // Base spawn weight is 3/256, and increases by 1/256 for each missed attempt at spawning an encounter on a valid floor
-        const sessionEncounterRate = !isNullOrUndefined(this.mysteryEncounterFlags?.encounterSpawnChance) ? this.mysteryEncounterFlags.encounterSpawnChance : BASE_MYSTYERY_ENCOUNTER_WEIGHT;
+        const sessionEncounterRate = !isNullOrUndefined(this.mysteryEncounterFlags?.encounterSpawnChance) ? this.mysteryEncounterFlags.encounterSpawnChance : BASE_MYSTERY_ENCOUNTER_WEIGHT;
 
         // If total number of encounters is lower than expected for the run, slightly favor a new encounter spawn
         // Do the reverse as well
@@ -1117,7 +1122,7 @@ export default class BattleScene extends SceneBase {
         if (roll < successRate) {
           newBattleType = BattleType.MYSTERY_ENCOUNTER;
           // Reset base spawn weight
-          this.mysteryEncounterFlags.encounterSpawnChance = BASE_MYSTYERY_ENCOUNTER_WEIGHT;
+          this.mysteryEncounterFlags.encounterSpawnChance = BASE_MYSTERY_ENCOUNTER_WEIGHT;
         } else {
           this.mysteryEncounterFlags.encounterSpawnChance = sessionEncounterRate + 1;
         }
