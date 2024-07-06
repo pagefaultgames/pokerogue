@@ -1,5 +1,5 @@
 import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
-import { BattleEndPhase, MoveEffectPhase, MovePhase, NewBattlePhase, PartyStatusCurePhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../phases";
+import { BattleEndPhase, MovePhase, NewBattlePhase, PartyStatusCurePhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../phases";
 import { BattleStat, getBattleStatName } from "./battle-stat";
 import { EncoreTag, SemiInvulnerableTag } from "./battler-tags";
 import { getPokemonMessage, getPokemonNameWithAffix } from "../messages";
@@ -813,12 +813,15 @@ export class MoveEffectAttr extends MoveAttr {
   public firstHitOnly: boolean;
   /** Should this effect only apply on the last hit? */
   public lastHitOnly: boolean;
+  /** Should this effect only apply on the first target hit? */
+  public firstTargetOnly: boolean;
 
-  constructor(selfTarget?: boolean, trigger?: MoveEffectTrigger, firstHitOnly: boolean = false, lastHitOnly: boolean = false) {
+  constructor(selfTarget?: boolean, trigger?: MoveEffectTrigger, firstHitOnly: boolean = false, lastHitOnly: boolean = false, firstTargetOnly: boolean = false) {
     super(selfTarget);
     this.trigger = trigger !== undefined ? trigger : MoveEffectTrigger.POST_APPLY;
     this.firstHitOnly = firstHitOnly;
     this.lastHitOnly = lastHitOnly;
+    this.firstTargetOnly = firstTargetOnly;
   }
 
   /**
@@ -1152,7 +1155,7 @@ export class SacrificialAttr extends MoveEffectAttr {
  **/
 export class SacrificialAttrOnHit extends MoveEffectAttr {
   constructor() {
-    super(true, MoveEffectTrigger.POST_TARGET);
+    super(true, MoveEffectTrigger.HIT);
   }
 
   /**
@@ -1760,7 +1763,7 @@ export class PsychoShiftEffectAttr extends MoveEffectAttr {
     if (!target.status || (target.status.effect === statusToApply && move.chance < 0)) {
       const statusAfflictResult = target.trySetStatus(statusToApply, true, user);
       if (statusAfflictResult) {
-        user.scene.queueMessage(getPokemonMessage(user, getStatusEffectHealText(user.status.effect)));
+        user.scene.queueMessage(getStatusEffectHealText(user.status.effect, getPokemonNameWithAffix(user)));
         user.resetStatus();
         user.updateInfo();
       }
@@ -1906,7 +1909,7 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
 }
 
 /**
- * Attribute that causes targets of the move to eat a berry. If chosenBerry is not overridden, a random berry will be picked from the target's inventory.
+ * Attribute that causes targets of the move to eat a berry. Used for Teatime, Stuff Cheeks
  */
 export class EatBerryAttr extends MoveEffectAttr {
   protected chosenBerry: BerryModifier;
@@ -1915,42 +1918,29 @@ export class EatBerryAttr extends MoveEffectAttr {
     this.chosenBerry = undefined;
   }
   /**
- * Causes the target to eat a berry.
- * @param user {@linkcode Pokemon} Pokemon that used the move
- * @param target {@linkcode Pokemon} Pokemon that will eat a berry
- * @param move {@linkcode Move} The move being used
- * @param args Unused
- * @returns {boolean} true if the function succeeds
- */
+   * Causes the target to eat a berry.
+   * @param user {@linkcode Pokemon} Pokemon that used the move
+   * @param target {@linkcode Pokemon} Pokemon that will eat a berry
+   * @param move {@linkcode Move} The move being used
+   * @param args Unused
+   * @returns {boolean} true if the function succeeds
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
       return false;
     }
 
-    if (this.chosenBerry === undefined) { // if no berry has been provided, pick a random berry from their inventory
-      const heldBerries = this.getTargetHeldBerries(target);
-      if (heldBerries.length <= 0) {
-        return false;
-      }
-      this.chosenBerry = heldBerries[user.randSeedInt(heldBerries.length)];
+    const heldBerries = this.getTargetHeldBerries(target);
+    if (heldBerries.length <= 0) {
+      return false;
     }
-
-    getBerryEffectFunc(this.chosenBerry.berryType)(target); // target eats the berry
-
+    this.chosenBerry = heldBerries[user.randSeedInt(heldBerries.length)];
     const preserve = new Utils.BooleanHolder(false);
-    target.scene.applyModifiers(PreserveBerryModifier, target.isPlayer(), target, preserve);
-
-    if (!preserve.value) { // remove the eaten berry if not preserved
-      if (!--this.chosenBerry.stackCount) {
-        target.scene.removeModifier(this.chosenBerry, !target.isPlayer());
-      }
-      target.scene.updateModifiers(target.isPlayer());
+    target.scene.applyModifiers(PreserveBerryModifier, target.isPlayer(), target, preserve); // check for berry pouch preservation
+    if (!preserve.value) {
+      this.reduceBerryModifier(target);
     }
-
-    this.chosenBerry = undefined;
-
-    applyAbAttrs(HealFromBerryUseAbAttr, target, new Utils.BooleanHolder(false));
-
+    this.eatBerry(target);
     return true;
   }
 
@@ -1959,7 +1949,21 @@ export class EatBerryAttr extends MoveEffectAttr {
       && (m as BerryModifier).pokemonId === target.id, target.isPlayer()) as BerryModifier[];
   }
 
+  reduceBerryModifier(target: Pokemon) {
+    if (this.chosenBerry.stackCount === 1) {
+      target.scene.removeModifier(this.chosenBerry, !target.isPlayer());
+    } else {
+      this.chosenBerry.stackCount--;
+    }
+    target.scene.updateModifiers(target.isPlayer());
+  }
+
+  eatBerry(consumer: Pokemon) {
+    getBerryEffectFunc(this.chosenBerry.berryType)(consumer); // consumer eats the berry
+    applyAbAttrs(HealFromBerryUseAbAttr, consumer, new Utils.BooleanHolder(false));
+  }
 }
+
 /**
  *  Attribute used for moves that steal a random berry from the target. The user then eats the stolen berry.
  *  Used for Pluck & Bug Bite.
@@ -1969,36 +1973,30 @@ export class StealEatBerryAttr extends EatBerryAttr {
     super();
   }
   /**
- * User steals a random berry from the target and then eats it.
- * @param {Pokemon} user Pokemon that used the move and will eat the stolen berry
- * @param {Pokemon} target Pokemon that will have its berry stolen
- * @param {Move} move Move being used
- * @param {any[]} args Unused
- * @returns {boolean} true if the function succeeds
- */
+   * User steals a random berry from the target and then eats it.
+   * @param {Pokemon} user Pokemon that used the move and will eat the stolen berry
+   * @param {Pokemon} target Pokemon that will have its berry stolen
+   * @param {Move} move Move being used
+   * @param {any[]} args Unused
+   * @returns {boolean} true if the function succeeds
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-
     const cancelled = new Utils.BooleanHolder(false);
     applyAbAttrs(BlockItemTheftAbAttr, target, cancelled); // check for abilities that block item theft
     if (cancelled.value === true) {
       return false;
     }
-
     const heldBerries = this.getTargetHeldBerries(target).filter(i => i.getTransferrable(false));
-
-    if (heldBerries.length) { // if the target has berries, pick a random berry and steal it
-      this.chosenBerry = heldBerries[user.randSeedInt(heldBerries.length)];
-
-      if (this.chosenBerry.stackCount === 1) { // remove modifier if its the last berry
-        target.scene.removeModifier(this.chosenBerry, !target.isPlayer());
-      }
-      target.scene.updateModifiers(target.isPlayer());
-
-      user.scene.queueMessage(getPokemonMessage(user, ` stole and ate\n${target.name}'s ${this.chosenBerry.type.name}!`));
-      return super.apply(user, user, move, args);
+    if (heldBerries.length <= 0) {
+      return false;
     }
-
-    return false;
+    // if the target has berries, pick a random berry and steal it
+    this.chosenBerry = heldBerries[user.randSeedInt(heldBerries.length)];
+    const message = i18next.t("battle:stealEatBerry", {pokemonName: user.name, targetName: target.name, berryName: this.chosenBerry.type.name});
+    user.scene.queueMessage(message);
+    this.reduceBerryModifier(target);
+    this.eatBerry(user);
+    return true;
   }
 }
 
@@ -2034,7 +2032,7 @@ export class HealStatusEffectAttr extends MoveEffectAttr {
 
     const pokemon = this.selfTarget ? user : target;
     if (pokemon.status && this.effects.includes(pokemon.status.effect)) {
-      pokemon.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectHealText(pokemon.status.effect)));
+      pokemon.scene.queueMessage(getStatusEffectHealText(pokemon.status.effect, getPokemonNameWithAffix(pokemon)));
       pokemon.resetStatus();
       pokemon.updateInfo();
 
@@ -2330,8 +2328,8 @@ export class StatChangeAttr extends MoveEffectAttr {
   private condition: MoveConditionFunc;
   private showMessage: boolean;
 
-  constructor(stats: BattleStat | BattleStat[], levels: integer, selfTarget?: boolean, condition?: MoveConditionFunc, showMessage: boolean = true, firstHitOnly: boolean = false, moveEffectTrigger: MoveEffectTrigger = MoveEffectTrigger.HIT) {
-    super(selfTarget, moveEffectTrigger, firstHitOnly);
+  constructor(stats: BattleStat | BattleStat[], levels: integer, selfTarget?: boolean, condition?: MoveConditionFunc, showMessage: boolean = true, firstHitOnly: boolean = false, moveEffectTrigger: MoveEffectTrigger = MoveEffectTrigger.HIT, firstTargetOnly: boolean = false) {
+    super(selfTarget, moveEffectTrigger, firstHitOnly, false, firstTargetOnly);
     this.stats = typeof(stats) === "number"
       ? [ stats as BattleStat ]
       : stats as BattleStat[];
@@ -5513,25 +5511,6 @@ const userSleptOrComatoseCondition: MoveConditionFunc = (user: Pokemon, target: 
 
 const targetSleptOrComatoseCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) =>  target.status?.effect === StatusEffect.SLEEP || target.hasAbility(Abilities.COMATOSE);
 
-/**
- * Condition to apply effects only upon applying the move to its last target.
- * Currently only used for Make It Rain.
- * @param {Pokemon} user The user of the move.
- * @param {Pokemon} target The current target of the move.
- * @param {Move} move The move to which this condition applies.
- * @returns true if the target is the last target to which the move applies.
- */
-const lastTargetOnlyCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => {
-  const effectPhase = user.scene.getCurrentPhase();
-  const targetIndex = target.getFieldIndex() + (target.isPlayer() ? 0 : BattlerIndex.ENEMY);
-
-  if (effectPhase instanceof MoveEffectPhase) {
-    const activeTargets = effectPhase.getTargets();
-    return (activeTargets.length === 0 || targetIndex >= activeTargets.at(-1).getBattlerIndex());
-  }
-  return false;
-};
-
 export type MoveAttrFilter = (attr: MoveAttr) => boolean;
 
 function applyMoveAttrsInternal(attrFilter: MoveAttrFilter, user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<void> {
@@ -7577,9 +7556,9 @@ export function initMoves() {
     new AttackMove(Moves.SMART_STRIKE, Type.STEEL, MoveCategory.PHYSICAL, 70, -1, 10, -1, 0, 7),
     new StatusMove(Moves.PURIFY, Type.POISON, -1, 20, -1, 0, 7)
       .condition(
-        (user: Pokemon, target: Pokemon, move: Move) => isNonVolatileStatusEffect(user.status?.effect))
+        (user: Pokemon, target: Pokemon, move: Move) => isNonVolatileStatusEffect(target.status?.effect))
       .attr(HealAttr, 0.5)
-      .attr(HealStatusEffectAttr, true, ...getNonVolatileStatusEffects())
+      .attr(HealStatusEffectAttr, false, ...getNonVolatileStatusEffects())
       .triageMove(),
     new AttackMove(Moves.REVELATION_DANCE, Type.NORMAL, MoveCategory.SPECIAL, 90, 100, 15, -1, 0, 7)
       .danceMove()
@@ -8279,7 +8258,7 @@ export function initMoves() {
       .attr(RemoveScreensAttr),
     new AttackMove(Moves.MAKE_IT_RAIN, Type.STEEL, MoveCategory.SPECIAL, 120, 100, 5, -1, 0, 9)
       .attr(MoneyAttr)
-      .attr(StatChangeAttr, BattleStat.SPATK, -1, true, lastTargetOnlyCondition, true, false)
+      .attr(StatChangeAttr, BattleStat.SPATK, -1, true, null, true, false, MoveEffectTrigger.HIT, true)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.PSYBLADE, Type.PSYCHIC, MoveCategory.PHYSICAL, 80, 100, 15, -1, 0, 9)
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.ELECTRIC && user.isGrounded() ? 1.5 : 1)
