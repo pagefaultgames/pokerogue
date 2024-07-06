@@ -5014,7 +5014,7 @@ export class AttemptCapturePhase extends PokemonPhase {
                   removePokemon();
                   end();
                 });
-              });
+              }, pokemon);
             });
           };
           promptRelease();
