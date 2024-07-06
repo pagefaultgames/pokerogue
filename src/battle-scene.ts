@@ -93,7 +93,12 @@ import { UiTheme } from "#enums/ui-theme";
 import { TimedEventManager } from "#app/timed-event-manager.js";
 import i18next from "i18next";
 import MysteryEncounter, { MysteryEncounterTier, MysteryEncounterVariant } from "./data/mystery-encounter";
-import {mysteryEncountersByBiome, allMysteryEncounters, BASE_MYSTERY_ENCOUNTER_WEIGHT} from "./data/mystery-encounters/mystery-encounters";
+import {
+  mysteryEncountersByBiome,
+  allMysteryEncounters,
+  BASE_MYSTERY_ENCOUNTER_WEIGHT,
+  AVERAGE_ENCOUNTERS_PER_RUN_TARGET
+} from "./data/mystery-encounters/mystery-encounters";
 import {MysteryEncounterFlags} from "#app/data/mystery-encounter-flags";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 
@@ -1099,8 +1104,8 @@ export default class BattleScene extends SceneBase {
 
       // Check for mystery encounter
       // Can only occur in place of a standard wild battle, waves 10-180
-      // let testStartingWeight = 40;
-      // while (testStartingWeight < 60) {
+      // let testStartingWeight = 10;
+      // while (testStartingWeight < 30) {
       //   calculateMEAggregateStats(this, testStartingWeight);
       //   testStartingWeight += 2;
       // }
@@ -1113,7 +1118,7 @@ export default class BattleScene extends SceneBase {
         // If total number of encounters is lower than expected for the run, slightly favor a new encounter spawn
         // Do the reverse as well
         // Reduces occurrence of runs with very few (<6) and a ton (>10) of encounters
-        const expectedEncountersByFloor = 8 / (180 - 10) * newWaveIndex;
+        const expectedEncountersByFloor = AVERAGE_ENCOUNTERS_PER_RUN_TARGET / (180 - 10) * newWaveIndex;
         const currentRunDiffFromAvg = expectedEncountersByFloor - (this.mysteryEncounterFlags?.encounteredEvents?.length || 0);
         const favoredEncounterRate = sessionEncounterRate + currentRunDiffFromAvg * 5;
 
