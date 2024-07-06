@@ -48,7 +48,7 @@ export default class MenuUiHandler extends MessageUiHandler {
   protected communityConfig: OptionSelectConfig;
 
   public bgmBar: BgmBar;
-  private runHistoryCheck: boolean;
+  //private runHistoryCheck: boolean;
 
   constructor(scene: BattleScene, mode?: Mode) {
     super(scene, mode);
@@ -56,8 +56,8 @@ export default class MenuUiHandler extends MessageUiHandler {
     this.ignoredMenuOptions = !bypassLogin
       ? [ ]
       : [ MenuOptions.LOG_OUT ];
-    this.ignoredMenuOptions.push(MenuOptions.RUN_HISTORY);
-    this.runHistoryCheck = false;
+    //this.ignoredMenuOptions.push(MenuOptions.RUN_HISTORY);
+    //this.runHistoryCheck = false;
     this.menuOptions = Utils.getEnumKeys(MenuOptions).map(m => parseInt(MenuOptions[m]) as MenuOptions).filter(m => !this.ignoredMenuOptions.includes(m));
   }
 
@@ -267,11 +267,12 @@ export default class MenuUiHandler extends MessageUiHandler {
     this.menuContainer.setVisible(false);
   }
 
-  async show(args: any[]): Promise<boolean> {
+  show(args: any[]): boolean {
     super.show(args);
 
     //This is here because the MenuUiConstructor is created before the user is assigned an username. Without an username, the player cannot access run history and check if it is present or not. Therefore, it is added here.
-    //I added a class variable runHistoryCheck so that the game does not need to poll getRunHistoryData every time the menu is open.
+    //I added a class variable runHistoryCheck so that the game does not need to poll getRunHistoryData every time the menu is open. show() needs to be async btw!
+    /*
     if (await this.scene.gameData.getRunHistoryData(this.scene) && !this.runHistoryCheck) {
       this.ignoredMenuOptions.pop();
       this.menuOptions = Utils.getEnumKeys(MenuOptions).map(m => parseInt(MenuOptions[m]) as MenuOptions).filter(m => !this.ignoredMenuOptions.includes(m));
@@ -284,6 +285,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       this.menuContainer.add(this.optionSelectText);
       this.runHistoryCheck = true;
     }
+    */
 
     this.menuContainer.setVisible(true);
     this.setCursor(0);
@@ -297,7 +299,6 @@ export default class MenuUiHandler extends MessageUiHandler {
     handleTutorial(this.scene, Tutorial.Menu);
 
     this.bgmBar.toggleBgmBar(true);
-
 
     return true;
   }

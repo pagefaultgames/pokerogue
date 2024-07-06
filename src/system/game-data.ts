@@ -1170,8 +1170,8 @@ export class GameData {
 
   public async getRunHistoryData(scene: BattleScene): Promise<Object> {
     if (!Utils.isLocal) {
-      const data = await Utils.apiFetch("savedata/runHistory", true).json();
-      //const data = await response.json();
+      const dataAPI = await Utils.apiFetch("savedata/runHistory", true);
+      const data = await dataAPI.json();
       if (localStorage.hasOwnProperty(`runHistoryData_${loggedInUser.username}`)) {
         let cachedResponse = localStorage.getItem(`runHistoryData_${loggedInUser.username}`);
         if (cachedResponse) {
@@ -1183,12 +1183,12 @@ export class GameData {
           return cachedRHData;
         }
       } else {
-        localStorage.setItem(`runHistoryData_${loggedInUser.username}`, JSON.parse(encrypt({}, true)));
+        localStorage.setItem(`runHistoryData_${loggedInUser.username}`, JSON.parse(encrypt("", true)));
         return {};
       }
       return data;
     } else {
-      let cachedResponse = localStorage.getItem(`runHistoryData_${loggedInUser.username}`, true);
+      let cachedResponse = localStorage.getItem(`runHistoryData_${loggedInUser.username}`);
       if (cachedResponse) {
         cachedResponse = JSON.parse(decrypt(cachedResponse, true));
       }
@@ -1204,10 +1204,12 @@ export class GameData {
       runHistoryData = {};
     }
     const timestamps = Object.keys(runHistoryData);
+    const timestampsNo = timestamps.map(Number);
 
     //Arbitrary limit of 25 entries per User --> Can increase or decrease
     if (timestamps.length >= 25) {
-      delete this.scene.gameData.runHistory[Math.min(timestamps)];
+      const oldestTimestamp = Math.min.apply(Math, timestampsNo);
+      delete this.scene.gameData.runHistory[oldestTimestamp.toString()];
     }
 
     const timestamp = (runEntry.timestamp).toString();
