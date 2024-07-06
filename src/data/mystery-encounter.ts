@@ -157,12 +157,12 @@ export default class MysteryEncounter implements MysteryEncounter {
     const secReqs = this.meetsSecondaryRequirementAndSecondaryPokemonSelected(scene); // secondary is checked first to handle cases of primary overlapping with secondary
     const priReqs = this.meetsPrimaryRequirementAndPrimaryPokemonSelected(scene);
 
-    console.log("-------" + MysteryEncounterType[this.encounterType] + " Encounter Check -------");
-    console.log(this);
-    console.log( "sceneCheck: " + sceneReq);
-    console.log( "primaryCheck: " +  priReqs);
-    console.log( "secondaryCheck: " +  secReqs);
-    console.log(MysteryEncounterTier[this.encounterTier]);
+    // console.log("-------" + MysteryEncounterType[this.encounterType] + " Encounter Check -------");
+    // console.log(this);
+    // console.log( "sceneCheck: " + sceneReq);
+    // console.log( "primaryCheck: " +  priReqs);
+    // console.log( "secondaryCheck: " +  secReqs);
+    // console.log(MysteryEncounterTier[this.encounterTier]);
 
     return sceneReq && secReqs && priReqs;
   }
