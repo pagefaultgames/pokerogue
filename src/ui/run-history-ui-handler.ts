@@ -12,7 +12,7 @@ import { BattleType } from "../battle";
 import { TrainerVariant } from "../field/trainer";
 import { Challenges } from "#enums/challenges";
 import { Type } from "../data/type";
-import { RunHistoryData } from "../system/game-data";
+import { RunHistoryData, RunEntries } from "../system/game-data";
 
 
 export const runCount = 25;
@@ -27,7 +27,6 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
   private runSelectMessageBoxContainer: Phaser.GameObjects.Container;
   private runs: RunEntry[];
 
-  private uiMode: RunHistoryUiMode;
   private runSelectCallback: RunSelectCallback;
 
   private scrollCursor: integer = 0;
@@ -228,7 +227,7 @@ class RunEntry extends Phaser.GameObjects.Container {
 
   }
 
-  setup(run: RunHistoryData) {
+  setup(run: RunEntries) {
 
     const victory = run.victory;
     const data = this.scene.gameData.parseSessionData(JSON.stringify(run.entry));
