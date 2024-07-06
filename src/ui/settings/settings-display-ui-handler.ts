@@ -73,6 +73,7 @@ export default class SettingsDisplayUiHandler extends AbstractSettingsUiHandler 
         };
         break;
       case "ko":
+      case "ko-KR":
         this.settings[languageIndex].options[0] = {
           value: "한국어",
           label: "한국어",
