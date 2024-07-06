@@ -62,6 +62,8 @@ export default class TargetSelectUiHandler extends UiHandler {
     if (button === Button.ACTION || button === Button.CANCEL) {
       this.targetSelectCallback(button === Button.ACTION ? this.cursor : -1);
       success = true;
+    } else if (this.isMultipleTargets) {
+      success = false;
     } else {
       switch (button) {
       case Button.UP:
