@@ -143,15 +143,15 @@ export default class GameInfoUiHandler extends UiHandler {
     			genInfoText.appendText(`${i18next.t("gameMode:endlessSpliced")}`, false);
     			break;
     		case GameModes.CHALLENGE:
-    			genInfoText.appendText(`${i18next.t("gameMode:"+GameModes[runData.gameMode].toLowerCase())}`, false);
+    			genInfoText.appendText(`${i18next.t("gameMode:challenge")}`, false);
     			genInfoText.appendText(`\t\t${i18next.t("runHistory:challengeRules")}: `);
       const runChallenges = runData.challenges;
       const rules = [];
       for (let i = 0; i < runChallenges.length; i++) {
         if (runChallenges[i].id === Challenges.SINGLE_GENERATION && runChallenges[i].value !== 0) {
-          rules.push(i18next.t("runHistory:challengeMonoGen"+runChallenges[i].value));
+          rules.push(i18next.t(`runHistory:challengeMonoGen${runChallenges[i].value}` as const));
         } else if (runChallenges[i].id === Challenges.SINGLE_TYPE && runChallenges[i].value !== 0) {
-          rules.push(i18next.t(`pokemonInfo:Type.${Type[runChallenges[i].value-1]}`));
+          rules.push(i18next.t(`pokemonInfo:Type.${Type[runChallenges[i].value-1]}` as const));
         }
       }
       if (rules) {
@@ -164,8 +164,10 @@ export default class GameInfoUiHandler extends UiHandler {
       }
     			break;
     		case GameModes.ENDLESS:
+      genInfoText.appendText(`${i18next.t("gameMode:endless")}`, false);
+      break;
     		case GameModes.CLASSIC:
-    			genInfoText.appendText(`${i18next.t("gameMode:"+GameModes[runData.gameMode].toLowerCase())}`, false);
+      genInfoText.appendText(`${i18next.t("gameMode:classic")}`, false);
     			break;
     	}
 
@@ -239,10 +241,15 @@ export default class GameInfoUiHandler extends UiHandler {
           enemyData.boss = false;
           const enemy = enemyData.toPokemon(this.scene);
           const enemyIcon = this.scene.addPokemonIcon(enemy, 0, 0, 0, 0);
+          const enemySprite1 = enemyIcon.list[0] as Phaser.GameObjects.Sprite;
+          const enemySprite2 = (enemyIcon.list.length > 1) ? enemyIcon.list[1] as Phaser.GameObjects.Sprite : null;
           if (teraPokemon[enemyData.id]) {
             const teraTint = getTypeRgb(teraPokemon[enemyData.id]);
             const teraColor = new Phaser.Display.Color(teraTint[0], teraTint[1], teraTint[2]);
-            enemyIcon.list[0].setTint(teraColor.color);
+            enemySprite1.setTint(teraColor.color);
+            if (enemySprite2) {
+              enemySprite2.setTint(teraColor.color);
+            }
           }
           enemyIcon.setPosition(34+(24 * (e%3)), 0+(35*pokemonRowHeight));
           const enemyLevel = addTextObject(this.scene, (26*(e%3))+44, 26+(35*pokemonRowHeight), `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`, isBoss ? TextStyle.PARTY_RED : TextStyle.PARTY, { fontSize: "54px" });
@@ -340,21 +347,23 @@ export default class GameInfoUiHandler extends UiHandler {
       //const spriteAnimKey = icon.list[0].anims.key;
       typeColor = types[1] ? getTypeRgb(types[1]) : null;
       const type2Color = typeColor ? new Phaser.Display.Color(typeColor[0], typeColor[1], typeColor[2]) : null;
+      const sprite1 = icon.list[0] as Phaser.GameObjects.Sprite;
+      const sprite2 = (icon.list.length > 1) ? icon.list[1] as Phaser.GameObjects.Sprite : null;
       if (type2Color && !pokemon.fusionSpecies) {
-        icon.list[0].preFX.addShadow(-1, -1, 0.1, 1, type1Color.color);
-        icon.list[0].preFX.addGlow(type2Color.color);
+        sprite1.preFX.addShadow(-1, -1, 0.1, 1, type1Color.color);
+        sprite1.preFX.addGlow(type2Color.color);
         //pokemonSpriteWindow.setFillStyle(type2Color.color, 0.7);
       } else if (type2Color && pokemon.fusionSpecies) {
-        icon.list[0].preFX.addShadow(-1, -1, 0.1, 1, type2Color.color);
-        icon.list[0].preFX.addGlow(type1Color.color);
-        icon.list[1].preFX.addShadow(-1, -1, 0.1, 1, type1Color.color);
-        icon.list[1].preFX.addGlow(type2Color.color);
+        sprite1.preFX.addShadow(-1, -1, 0.1, 1, type2Color.color);
+        sprite1.preFX.addGlow(type1Color.color);
+        sprite2.preFX.addShadow(-1, -1, 0.1, 1, type1Color.color);
+        sprite2.preFX.addGlow(type2Color.color);
       } else {
-        icon.list[0].preFX.addShadow(-1, -1, 0.1, 1, type1Color.darken(10).color);
-        icon.list[0].preFX.addGlow(type1Color.color);
+        sprite1.preFX.addShadow(-1, -1, 0.1, 1, type1Color.darken(10).color);
+        sprite1.preFX.addGlow(type1Color.color);
         if (pokemon.fusionSpecies) {
-          icon.list[1].preFX.addShadow(-1, -1, 0.1, 1, type1Color.color);
-          icon.list[1].preFX.addGlow(type1Color.color);
+          sprite2.preFX.addShadow(-1, -1, 0.1, 1, type1Color.color);
+          sprite2.preFX.addGlow(type1Color.color);
         }
       }
       //pokemonSpriteWindow.setPosition(-2,1.5);

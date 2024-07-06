@@ -12,7 +12,7 @@ import { BattleType } from "../battle";
 import { TrainerVariant } from "../field/trainer";
 import { Challenges } from "#enums/challenges";
 import { Type } from "../data/type";
-import { RunHistoryData, RunEntries } from "../system/game-data";
+import { RunHistoryData } from "../system/game-data";
 
 
 export const runCount = 25;
@@ -133,12 +133,13 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
   async populateruns(scene: BattleScene) {
     const response = await this.scene.gameData.getRunHistoryData(this.scene);
     const timestamps = Object.keys(response);
+    const timestampsNo = timestamps.map(Number);
     if (timestamps.length > 1) {
-      timestamps.sort((a, b) => a - b);
+      timestampsNo.sort((a, b) => a - b);
     }
     const entryCount = timestamps.length;
     for (let s = 0; s < entryCount; s++) {
-      const entry = new RunEntry(this.scene, response, timestamps[s], s);
+      const entry = new RunEntry(this.scene, response, timestampsNo[s].toString(), s);
       this.scene.add.existing(entry);
       this.runsContainer.add(entry);
       this.runs.push(entry);
@@ -216,7 +217,7 @@ class RunEntry extends Phaser.GameObjects.Container {
   public entryData: RunHistoryData;
   private loadingLabel: Phaser.GameObjects.Text;
 
-  constructor(scene: BattleScene, runHistory: RunHistoryData, timestamp: string, slotId: integer) {
+  constructor(scene: BattleScene, runHistory: any, timestamp: string, slotId: integer) {
     super(scene, 0, slotId*56);
 
     this.slotId = slotId;
@@ -227,7 +228,7 @@ class RunEntry extends Phaser.GameObjects.Container {
 
   }
 
-  setup(run: RunEntries) {
+  setup(run: any) {
 
     const victory = run.victory;
     const data = this.scene.gameData.parseSessionData(JSON.stringify(run.entry));
@@ -277,23 +278,27 @@ class RunEntry extends Phaser.GameObjects.Container {
       }
     }
 
-
+    const gameModeLabel = addTextObject(this.scene, 8, 19, "", TextStyle.WINDOW);
     switch (data.gameMode) {
     case GameModes.DAILY:
-      const dailyModeLabel = addTextObject(this.scene, 8, 19, `${i18next.t("gameMode:dailyRun") || i18next.t("gameMode:unknown")} - ${i18next.t("saveSlotSelectUiHandler:wave")} ${data.waveIndex}`, TextStyle.WINDOW);
-      this.add(dailyModeLabel);
+      gameModeLabel.appendText(`${i18next.t("gameMode:dailyRun")}`, false);
       break;
     case GameModes.SPLICED_ENDLESS:
-      const endlessSplicedLabel = addTextObject(this.scene, 8, 19, `${i18next.t("gameMode:endlessSpliced") || i18next.t("gameMode:unknown")} - ${i18next.t("saveSlotSelectUiHandler:wave")} ${data.waveIndex}`, TextStyle.WINDOW);
-      this.add(endlessSplicedLabel);
+      gameModeLabel.appendText(`${i18next.t("gameMode:splicedEndless")}`, false);
       break;
     case GameModes.ENDLESS:
+      gameModeLabel.appendText(`${i18next.t("gameMode:endless")}`, false);
+      break;
     case GameModes.CLASSIC:
+      gameModeLabel.appendText(`${i18next.t("gameMode:classic")}`, false);
+      break;
     case GameModes.CHALLENGE:
-      const gameModeLabel = addTextObject(this.scene, 8, 19, `${i18next.t("gameMode:"+GameModes[data.gameMode].toLowerCase()) || i18next.t("gameMode:unknown")} - ${i18next.t("saveSlotSelectUiHandler:wave")} ${data.waveIndex}`, TextStyle.WINDOW);
-      this.add(gameModeLabel);
+      gameModeLabel.appendText(`${i18next.t("gameMode:challenge")}`, false);
       break;
     }
+    gameModeLabel.appendText(" - ", false);
+    gameModeLabel.appendText(i18next.t("saveSlotSelectUiHandler:wave")+" "+data.waveIndex, false);
+    this.add(gameModeLabel);
 
     const timestampLabel = addTextObject(this.scene, 8, 33, new Date(data.timestamp).toLocaleString(), TextStyle.WINDOW);
     this.add(timestampLabel);
@@ -333,17 +338,20 @@ class RunEntry extends Phaser.GameObjects.Container {
       }
       break;
     case GameModes.CHALLENGE:
-      const runChallenges = data.challenges;
-      for (let i = 0; i < runChallenges.length; i++) {
+      const allChallenges = data.challenges;
+      for (let i = 0; i < allChallenges.length; i++) {
+        const runChallenge = allChallenges[i];
         const challengeLabel = addTextObject(this.scene, 270, 5, "", TextStyle.WINDOW, {fontSize: "40px"});
-        if (runChallenges[i].id === Challenges.SINGLE_GENERATION && runChallenges[i].value !== 0) {
-          challengeLabel.appendText(`${i18next.t("runHistory:challengeMonoGen"+runChallenges[i].value)}`, false);
+        if (runChallenge.id === Challenges.SINGLE_GENERATION && runChallenge.value !== 0) {
+          const genValue = i18next.t(`runHistory:challengeMonoGen${runChallenge.value.toString()}` as const);
+          challengeLabel.appendText(genValue, false);
         }
-        if (runChallenges[i].id === Challenges.SINGLE_TYPE && runChallenges[i].value !== 0) {
+        if (runChallenge.id === Challenges.SINGLE_TYPE && runChallenge.value !== 0) {
+          const typeValue = i18next.t(`pokemonInfo:Type.${Type[runChallenge.value-1]}` as const);
           if (challengeLabel.text) {
-            challengeLabel.appendText(i18next.t("pokemonInfo:Type."+Type[runChallenges[i].value-1]));
+            challengeLabel.appendText(typeValue);
           } else {
-            challengeLabel.appendText(i18next.t("pokemonInfo:Type."+Type[runChallenges[i].value-1]));
+            challengeLabel.appendText(typeValue, false);
           }
         }
         this.add(challengeLabel);
