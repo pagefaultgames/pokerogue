@@ -595,6 +595,7 @@ export function handleMysteryEncounterVictory(scene: BattleScene, addHealPhase: 
 export function calculateMEAggregateStats(scene: BattleScene, baseSpawnWeight: number) {
   const numRuns = 1000;
   let run = 0;
+  const targetEncountersPerRun = 15;
 
   const calculateNumEncounters = (): number[] => {
     let encounterRate = baseSpawnWeight;
@@ -646,7 +647,7 @@ export function calculateMEAggregateStats(scene: BattleScene, baseSpawnWeight: n
 
       // If total number of encounters is lower than expected for the run, slightly favor a new encounter
       // Do the reverse as well
-      const expectedEncountersByFloor = 8 / (180 - 10) * i;
+      const expectedEncountersByFloor = targetEncountersPerRun / (180 - 10) * i;
       const currentRunDiffFromAvg = expectedEncountersByFloor - numEncounters.reduce((a, b) => a + b);
       const favoredEncounterRate = encounterRate + currentRunDiffFromAvg * 5;
 

@@ -8,7 +8,8 @@ import { Biome } from "#app/enums/biome";
 import { SleepingSnorlaxEncounter } from "./sleeping-snorlax";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 
-export const BASE_MYSTERY_ENCOUNTER_WEIGHT = 50;
+export const BASE_MYSTERY_ENCOUNTER_WEIGHT = 19;
+export const AVERAGE_ENCOUNTERS_PER_RUN_TARGET = 15;
 
 export const allMysteryEncounters : {[encounterType:string]: MysteryEncounter} = {};
 

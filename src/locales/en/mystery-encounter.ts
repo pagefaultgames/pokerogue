@@ -55,7 +55,7 @@ export const mysteryEncounter: SimpleTranslationEntries = {
   "mysterious_challengers_outro_win": "The mysterious challenger was defeated!",
 
   // Mysterious Encounters -- Rare Tier
-  "training_session_intro_message": "You've come across a some\ntraining tools and supplies.",
+  "training_session_intro_message": "You've come across some\ntraining tools and supplies.",
   "training_session_title": "Training Session",
   "training_session_description": "These supplies look like they could be used to train a member of your party! There are a few ways you could train your Pokémon, by battling against it with the rest of your team.",
   "training_session_query": "How should you train?",
