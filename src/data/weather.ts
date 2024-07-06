@@ -1,12 +1,12 @@
 import { Biome } from "#enums/biome";
-import { getPokemonNameWithAffix } from "../messages";
+import { getPokemonMessage, getPokemonNameWithAffix } from "../messages";
 import Pokemon from "../field/pokemon";
 import { Type } from "./type";
 import Move, { AttackMove } from "./move";
 import * as Utils from "../utils";
 import BattleScene from "../battle-scene";
 import { SuppressWeatherEffectAbAttr } from "./ability";
-import { TerrainType, getTerrainName } from "./terrain";
+import { TerrainType } from "./terrain";
 import i18next from "i18next";
 
 export enum WeatherType {
@@ -216,34 +216,34 @@ export function getWeatherClearMessage(weatherType: WeatherType): string {
 export function getTerrainStartMessage(terrainType: TerrainType): string {
   switch (terrainType) {
   case TerrainType.MISTY:
-    return i18next.t("terrain:mistyStartMessage");
+    return "Mist swirled around the battlefield!";
   case TerrainType.ELECTRIC:
-    return i18next.t("terrain:electricStartMessage");
+    return "An electric current ran across the battlefield!";
   case TerrainType.GRASSY:
-    return i18next.t("terrain:grassyStartMessage");
+    return "Grass grew to cover the battlefield!";
   case TerrainType.PSYCHIC:
-    return i18next.t("terrain:psychicStartMessage");
+    return "The battlefield got weird!";
   }
 }
 
 export function getTerrainClearMessage(terrainType: TerrainType): string {
   switch (terrainType) {
   case TerrainType.MISTY:
-    return i18next.t("terrain:mistyClearMessage");
+    return "The mist disappeared from the battlefield.";
   case TerrainType.ELECTRIC:
-    return i18next.t("terrain:electricClearMessage");
+    return "The electricity disappeared from the battlefield.";
   case TerrainType.GRASSY:
-    return i18next.t("terrain:grassyClearMessage");
+    return "The grass disappeared from the battlefield.";
   case TerrainType.PSYCHIC:
-    return i18next.t("terrain:psychicClearMessage");
+    return "The weirdness disappeared from the battlefield!";
   }
 }
 
 export function getTerrainBlockMessage(pokemon: Pokemon, terrainType: TerrainType): string {
   if (terrainType === TerrainType.MISTY) {
-    return i18next.t("terrain:mistyBlockMessage", {pokemonNameWithAffix: getPokemonNameWithAffix(pokemon)});
+    return getPokemonMessage(pokemon, " surrounds itself with a protective mist!");
   }
-  return i18next.t("terrain:defaultBlockMessage", {pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), terrainName: getTerrainName(terrainType)});
+  return getPokemonMessage(pokemon, ` is protected by the ${Utils.toReadableString(TerrainType[terrainType])} Terrain!`);
 }
 
 interface WeatherPoolEntry {
