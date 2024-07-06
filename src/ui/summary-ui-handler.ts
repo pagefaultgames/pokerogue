@@ -6,7 +6,7 @@ import { PlayerPokemon } from "../field/pokemon";
 import { getStarterValueFriendshipCap, speciesStarters } from "../data/pokemon-species";
 import { argbFromRgba } from "@material/material-color-utilities";
 import { Type, getTypeRgb } from "../data/type";
-import { TextStyle, addBBCodeTextObject, addTextObject, getBBCodeFrag } from "./text";
+import { TextStyle, addBBCodeTextObject, addTextObject, getBBCodeFrag, getTextColor } from "./text";
 import Move, { MoveCategory } from "../data/move";
 import { getPokeballAtlasKey } from "../data/pokeball";
 import { getGenderColor, getGenderSymbol } from "../data/gender";
@@ -919,12 +919,14 @@ export default class SummaryUiHandler extends UiHandler {
       this.moveRowsContainer = this.scene.add.container(0, 0);
       this.movesContainer.add(this.moveRowsContainer);
 
+      const uiTheme = (this.scene as BattleScene).uiTheme; // Assuming uiTheme is accessible
+
       for (let m = 0; m < 4; m++) {
         const move = m < this.pokemon.moveset.length ? this.pokemon.moveset[m] : null;
         const moveRowContainer = this.scene.add.container(0, 16 * m);
         this.moveRowsContainer.add(moveRowContainer);
 
-        let moveColour = TextStyle.SUMMARY;
+        let moveColour = getTextColor(TextStyle.SUMMARY, false, uiTheme);
         if (move) {
           const typeIcon = this.scene.add.sprite(0, 0, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`, Type[move.getMove().type].toLowerCase());          typeIcon.setOrigin(0, 1);
           moveRowContainer.add(typeIcon);
@@ -934,7 +936,8 @@ export default class SummaryUiHandler extends UiHandler {
           }
         }
 
-        const moveText = addTextObject(this.scene, 35, 0, move ? move.getName() : "-", moveColour);
+        const moveText = addTextObject(this.scene, 35, 0, move ? move.getName() : "-", TextStyle.SUMMARY);
+        moveText.setColor(moveColour);
         moveText.setOrigin(0, 1);
         moveRowContainer.add(moveText);
 
