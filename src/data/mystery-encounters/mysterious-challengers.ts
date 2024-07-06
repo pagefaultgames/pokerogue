@@ -21,7 +21,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter = new MysteryEncou
   .withIntroSpriteConfigs([]) // These are set in onInit()
   .withSceneRequirement(new WaveCountRequirement([10, 180])) // waves 10 to 180
   .withOnInit((scene: BattleScene) => {
-    const instance = scene.currentBattle.mysteryEncounter;
+    const encounter = scene.currentBattle.mysteryEncounter;
     // Calculates what trainers are available for battle in the encounter
 
     // Normal difficulty trainer is randomly pulled from biome
@@ -32,7 +32,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter = new MysteryEncou
       female = !!(Utils.randSeedInt(2));
     }
     const normalSpriteKey = normalConfig.getSpriteKey(female, normalConfig.doubleOnly);
-    instance.enemyPartyConfigs.push({
+    encounter.enemyPartyConfigs.push({
       trainerConfig: normalConfig,
       female: female
     });
@@ -50,7 +50,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter = new MysteryEncou
       female = !!(Utils.randSeedInt(2));
     }
     const hardSpriteKey = hardConfig.getSpriteKey(female, hardConfig.doubleOnly);
-    instance.enemyPartyConfigs.push({
+    encounter.enemyPartyConfigs.push({
       trainerConfig: hardConfig,
       levelAdditiveMultiplier: 0.5,
       female: female,
@@ -68,13 +68,13 @@ export const MysteriousChallengersEncounter: MysteryEncounter = new MysteryEncou
       female = !!(Utils.randSeedInt(2));
     }
     const brutalSpriteKey = brutalConfig.getSpriteKey(female, brutalConfig.doubleOnly);
-    instance.enemyPartyConfigs.push({
+    encounter.enemyPartyConfigs.push({
       trainerConfig: brutalConfig,
       levelAdditiveMultiplier: 1.1,
       female: female
     });
 
-    instance.spriteConfigs = [
+    encounter.spriteConfigs = [
       {
         spriteKey: normalSpriteKey,
         fileRoot: "trainer",

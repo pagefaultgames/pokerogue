@@ -69,7 +69,7 @@ export const MysteriousChestEncounter: MysteryEncounter = new MysteryEncounterBu
         const highestLevelPokemon = getHighestLevelPlayerPokemon(scene, true);
         koPlayerPokemon(highestLevelPokemon);
 
-        scene.currentBattle.mysteryEncounter.dialogueTokens.set("pokeName", [/@ec\{pokeName\}/gi, highestLevelPokemon.name]);
+        scene.currentBattle.mysteryEncounter.setDialogueToken("pokeName", highestLevelPokemon.name);
         // Show which Pokemon was KOed, then leave encounter with no rewards
         // Does this synchronously so that game over doesn't happen over result message
         await showEncounterText(scene, "mysteryEncounter:mysterious_chest_option_1_bad_result")

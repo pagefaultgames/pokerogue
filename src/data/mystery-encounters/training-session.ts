@@ -77,8 +77,8 @@ export const TrainingSessionEncounter: MysteryEncounter = new MysteryEncounterBu
       };
 
       const onBeforeRewardsPhase = () => {
-        encounter.dialogueTokens.set("stat1", [/@ec\{stat1\}/gi, "-"]);
-        encounter.dialogueTokens.set("stat2", [/@ec\{stat2\}/gi, "-"]);
+        encounter.setDialogueToken("stat1", "-");
+        encounter.setDialogueToken("stat2", "-");
         // Add the pokemon back to party with IV boost
         const ivIndexes = [];
         playerPokemon.ivs.forEach((iv, index) => {
@@ -100,9 +100,9 @@ export const TrainingSessionEncounter: MysteryEncounter = new MysteryEncounterBu
           const ivToChange = ivIndexes.pop();
           let newVal = ivToChange.iv;
           if (improvedCount === 0) {
-            encounter.dialogueTokens.set("stat1", [/@ec\{stat1\}/gi, getIvName(ivToChange.index)]);
+            encounter.setDialogueToken("stat1", getIvName(ivToChange.index));
           } else {
-            encounter.dialogueTokens.set("stat2", [/@ec\{stat2\}/gi, getIvName(ivToChange.index)]);
+            encounter.setDialogueToken("stat2", getIvName(ivToChange.index));
           }
 
           // Corrects required encounter breakpoints to be continuous for all IV values
@@ -148,7 +148,7 @@ export const TrainingSessionEncounter: MysteryEncounter = new MysteryEncounterBu
             label: getNatureName(nature, true, true, true, scene.uiTheme),
             handler: () => {
               // Pokemon and second option selected
-              encounter.dialogueTokens.set("nature", [/@ec\{nature\}/gi, getNatureName(nature)]);
+              encounter.setDialogueToken("nature", getNatureName(nature));
               encounter.misc = {
                 playerPokemon: pokemon,
                 chosenNature: nature
@@ -206,7 +206,7 @@ export const TrainingSessionEncounter: MysteryEncounter = new MysteryEncounterBu
             label: ability.name,
             handler: () => {
               // Pokemon and ability selected
-              encounter.dialogueTokens.set("ability", [/@ec\{ability\}/gi, ability.name]);
+              encounter.setDialogueToken("ability", ability.name);
               encounter.misc = {
                 playerPokemon: pokemon,
                 abilityIndex: index

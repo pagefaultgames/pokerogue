@@ -17,6 +17,7 @@ import {MysteryEncounterType} from "#enums/mystery-encounter-type";
 
 export interface EncounterRequirement {
   meetsRequirement(scene: BattleScene): boolean; // Boolean to see if a requirement is met
+  getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string];
 }
 
 export abstract class EncounterSceneRequirement implements EncounterRequirement {
@@ -24,8 +25,8 @@ export abstract class EncounterSceneRequirement implements EncounterRequirement 
     throw new Error("Method not implemented.");
   }
 
-  getMatchingDialogueToken(scene:BattleScene): [RegExp, string] {
-    return [(/@/gi), ""];
+  getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
+    return ["", ""];
   }
 }
 
@@ -44,8 +45,8 @@ export abstract class EncounterPokemonRequirement implements EncounterRequiremen
 
   // Doesn't require the "@ec" as prefix, just the string; populates the token with the attribute
   // ex. @ec{primarySpecies} if strPrefix is simply "primary"
-  getMatchingDialogueToken(strPrefix:string, pokemon: PlayerPokemon): [RegExp, string] {
-    return [(/@/gi), ""];
+  getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
+    return ["", ""];
   }
 }
 
@@ -65,8 +66,8 @@ export class PreviousEncounterRequirement extends EncounterSceneRequirement {
     return scene.mysteryEncounterFlags.encounteredEvents.some(e => e[0] === this.previousEncounterRequirement);
   }
 
-  getMatchingDialogueToken(scene:BattleScene): [RegExp, string] {
-    return [new RegExp("@ec\{previousEncounter\\}", "gi"), scene.mysteryEncounterFlags.encounteredEvents.find(e => e[0] === this.previousEncounterRequirement)[0].toString()];
+  getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
+    return ["previousEncounter", scene.mysteryEncounterFlags.encounteredEvents.find(e => e[0] === this.previousEncounterRequirement)[0].toString()];
   }
 }
 
@@ -93,8 +94,8 @@ export class WaveCountRequirement extends EncounterSceneRequirement {
     return true;
   }
 
-  getMatchingDialogueToken(scene:BattleScene): [RegExp, string] {
-    return [new RegExp("@ec\{waveCount\\}", "gi"), scene.currentBattle.waveIndex.toString()];
+  getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
+    return ["waveCount", scene.currentBattle.waveIndex.toString()];
   }
 }
 
@@ -120,8 +121,8 @@ export class TimeOfDayRequirement extends EncounterSceneRequirement {
     return true;
   }
 
-  getMatchingDialogueToken(scene:BattleScene): [RegExp, string] {
-    return [new RegExp("@ec\{timeOfDay\\}", "gi"), TimeOfDay[scene.arena.getTimeOfDay()].toLocaleLowerCase()];
+  getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
+    return ["timeOfDay", TimeOfDay[scene.arena.getTimeOfDay()].toLocaleLowerCase()];
   }
 }
 
@@ -146,8 +147,8 @@ export class WeatherRequirement extends EncounterSceneRequirement {
 
     return true;
   }
-  getMatchingDialogueToken(scene:BattleScene): [RegExp, string] {
-    return [new RegExp("@ec\{weather\\}", "gi"), WeatherType[scene.arena?.weather?.weatherType].replace("_", " ").toLocaleLowerCase()];
+  getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
+    return ["weather", WeatherType[scene.arena?.weather?.weatherType].replace("_", " ").toLocaleLowerCase()];
   }
 }
 
@@ -175,8 +176,8 @@ export class PartySizeRequirement extends EncounterSceneRequirement {
     return true;
   }
 
-  getMatchingDialogueToken(scene:BattleScene): [RegExp, string] {
-    return [new RegExp("@ec\{partySize\\}", "gi"), scene.getParty().length.toString()];
+  getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
+    return ["partySize", scene.getParty().length.toString()];
   }
 }
 
@@ -202,12 +203,12 @@ export class PersistentModifierRequirement extends EncounterSceneRequirement {
     return true;
   }
 
-  getMatchingDialogueToken(scene:BattleScene): [RegExp, string] {
+  getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
     const requiredItemsInInventory = this.requiredItems.filter((a) => {
       scene.modifiers.filter((itemInScene)  => itemInScene.type.id === a.id).length > 0;
     });
     if (requiredItemsInInventory.length > 0) {
-      return [new RegExp("@ec\{requiredItem\\}", "gi"), requiredItemsInInventory[0].name];
+      return ["requiredItem", requiredItemsInInventory[0].name];
     }
     return null;
   }
@@ -229,8 +230,8 @@ export class MoneyRequirement extends EncounterSceneRequirement {
     return true;
   }
 
-  getMatchingDialogueToken(scene:BattleScene): [RegExp, string] {
-    return [new RegExp("@ec\{money\\}", "gi"), "₽" + scene.money.toString()];
+  getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
+    return ["money", "₽" + scene.money.toString()];
   }
 }
 
@@ -268,9 +269,9 @@ export class SpeciesRequirement extends EncounterPokemonRequirement {
     }
   }
 
-  getMatchingDialogueToken(str:string, pokemon: PlayerPokemon): [RegExp, string] {
+  getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
     if (this.requiredSpecies.includes(pokemon.species.speciesId)) {
-      return [new RegExp("@ec\{" + str + "Species\\}", "gi"), Species[pokemon.species.speciesId]];
+      return ["species", Species[pokemon.species.speciesId]];
     }
     return null;
   }
@@ -311,9 +312,9 @@ export class NatureRequirement extends EncounterPokemonRequirement {
     }
   }
 
-  getMatchingDialogueToken(str:string, pokemon: PlayerPokemon): [RegExp, string] {
+  getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
     if (this.requiredNature.includes(pokemon.nature)) {
-      return [new RegExp("@ec\{" + str + "Nature\\}", "gi"), Nature[pokemon.nature]];
+      return ["nature", Nature[pokemon.nature]];
     }
     return null;
   }
@@ -353,10 +354,10 @@ export class TypeRequirement extends EncounterPokemonRequirement {
     }
   }
 
-  getMatchingDialogueToken(str:string, pokemon: PlayerPokemon): [RegExp, string] {
+  getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
     const includedTypes = this.requiredType.filter((ty) => pokemon.getTypes().includes(ty));
     if (includedTypes.length > 0) {
-      return [new RegExp("@ec\{" + str + "Type\\}", "gi"), Type[includedTypes[0]]];
+      return ["type", Type[includedTypes[0]]];
     }
     return null;
   }
@@ -397,10 +398,10 @@ export class MoveRequirement extends EncounterPokemonRequirement {
     }
   }
 
-  getMatchingDialogueToken(str:string, pokemon: PlayerPokemon): [RegExp, string] {
+  getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
     const includedMoves = this.requiredMoves.filter((reqMove) => pokemon.moveset.filter((move) => move.moveId === reqMove).length > 0);
     if (includedMoves.length > 0) {
-      return [new RegExp("@ec\{" + str + "Move\\}", "gi"), Moves[includedMoves[0]].replace("_", " ")];
+      return ["move", Moves[includedMoves[0]].replace("_", " ")];
     }
     return null;
   }
@@ -446,10 +447,10 @@ export class CompatibleMoveRequirement extends EncounterPokemonRequirement {
     }
   }
 
-  getMatchingDialogueToken(str:string, pokemon: PlayerPokemon): [RegExp, string] {
+  getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
     const includedCompatMoves = this.requiredMoves.filter((reqMove) => pokemon.compatibleTms.filter((tm) => !pokemon.moveset.find(m => m.moveId === tm)).includes(reqMove));
     if (includedCompatMoves.length > 0) {
-      return [new RegExp("@ec\{" + str + "CompatibleMove\\}", "gi"), Moves[includedCompatMoves[0]]];
+      return ["compatibleMove", Moves[includedCompatMoves[0]]];
     }
     return null;
   }
@@ -494,7 +495,7 @@ export class EvolutionTargetSpeciesRequirement extends EncounterPokemonRequireme
   getMatchingDialogueToken(str:string, pokemon: PlayerPokemon): [RegExp, string] {
     const evos = this.requiredEvolutionTargetSpecies.filter((evolutionTargetSpecies) => pokemon.getEvolution().speciesId === evolutionTargetSpecies);
     if (evos.length > 0) {
-      return [new RegExp("@ec\{" + str + "Evolution\\}", "gi"), Species[evos[0]]];
+      return ["Evolution", Species[evos[0]]];
     }
     return null;
   }
@@ -535,12 +536,12 @@ export class AbilityRequirement extends EncounterPokemonRequirement {
     }
   }
 
-  getMatchingDialogueToken(str:string, pokemon: PlayerPokemon): [RegExp, string] {
+  getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
     const reqAbilities = this.requiredAbilities.filter((a) => {
       pokemon.hasAbility(a);
     });
     if (reqAbilities.length > 0) {
-      return [new RegExp("@ec\{" + str + "Ability\\}", "gi"), Abilities[reqAbilities[0]]];
+      return ["ability", Abilities[reqAbilities[0]]];
     }
     return null;
   }
@@ -582,12 +583,12 @@ export class StatusEffectRequirement extends EncounterPokemonRequirement {
     }
   }
 
-  getMatchingDialogueToken(str:string, pokemon: PlayerPokemon): [RegExp, string] {
+  getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
     const reqStatus = this.requiredStatusEffect.filter((a) => {
       pokemon.status?.effect ===(a);
     });
     if (reqStatus.length > 0) {
-      return [new RegExp("@ec\{" + str + "Status\\}", "gi"), StatusEffect[reqStatus[0]]];
+      return ["status", StatusEffect[reqStatus[0]]];
     }
     return null;
   }
@@ -645,10 +646,10 @@ export class CanFormChangeWithItemRequirement extends EncounterPokemonRequiremen
     }
   }
 
-  getMatchingDialogueToken(str:string, pokemon: PlayerPokemon): [RegExp, string] {
+  getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
     const requiredItems = this.requiredFormChangeItem.filter((formChangeItem) => this.filterByForm(pokemon, formChangeItem));
     if (requiredItems.length > 0) {
-      return [new RegExp("@ec\{" + str + "FormChangeItem\\}", "gi"), FormChangeItem[requiredItems[0]]];
+      return ["formChangeItem", FormChangeItem[requiredItems[0]]];
     }
     return null;
   }
@@ -700,10 +701,10 @@ export class CanEvolveWithItemRequirement extends EncounterPokemonRequirement {
     }
   }
 
-  getMatchingDialogueToken(str:string, pokemon: PlayerPokemon): [RegExp, string] {
+  getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
     const requiredItems = this.requiredEvolutionItem.filter((evoItem) => this.filterByEvo(pokemon, evoItem));
     if (requiredItems.length > 0) {
-      return [new RegExp("@ec\{" + str + "EvolutionItem\\}", "gi"), EvolutionItem[requiredItems[0]]];
+      return ["evolutionItem", EvolutionItem[requiredItems[0]]];
     }
     return null;
   }
@@ -743,18 +744,16 @@ export class HeldItemRequirement extends EncounterPokemonRequirement {
     }
   }
 
-  getMatchingDialogueToken(str:string, pokemon: PlayerPokemon): [RegExp, string] {
+  getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
     const requiredItems = this.requiredHeldItemModifier.filter((a) => {
       pokemon.getHeldItems().filter((it) => it.type.id === a.id ).length > 0;
     });
     if (requiredItems.length > 0) {
-      return [new RegExp("@ec\{" + str + "HeldItem\\}", "gi"), requiredItems[0].name];
+      return ["heldItem", requiredItems[0].name];
     }
     return null;
   }
-
 }
-
 
 export class LevelRequirement extends EncounterPokemonRequirement {
   requiredLevelRange?: [number, number];
@@ -789,8 +788,9 @@ export class LevelRequirement extends EncounterPokemonRequirement {
       return partyPokemon.filter((pokemon) => pokemon.level < this.requiredLevelRange[0] || pokemon.level > this.requiredLevelRange[1]);
     }
   }
-  getMatchingDialogueToken(str:string, pokemon: PlayerPokemon): [RegExp, string] {
-    return [new RegExp("@ec\{" + str + "Level\\}", "gi"), pokemon.level.toString()];
+
+  getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
+    return ["level", pokemon.level.toString()];
   }
 }
 
@@ -827,8 +827,8 @@ export class FriendshipRequirement extends EncounterPokemonRequirement {
     }
   }
 
-  getMatchingDialogueToken(str:string, pokemon: PlayerPokemon): [RegExp, string] {
-    return [new RegExp("@ec\{" + str + "Friendship\\}", "gi"), pokemon.friendship.toString()];
+  getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
+    return ["friendship", pokemon.friendship.toString()];
   }
 }
 
@@ -870,8 +870,8 @@ export class HealthRatioRequirement extends EncounterPokemonRequirement {
     }
   }
 
-  getMatchingDialogueToken(str:string, pokemon: PlayerPokemon): [RegExp, string] {
-    return [new RegExp("@ec\{" + str + "HealthRatio\\}", "gi"), Math.floor(pokemon.getHpRatio()*100).toString() + "%"];
+  getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
+    return ["healthRatio", Math.floor(pokemon.getHpRatio()*100).toString() + "%"];
   }
 }
 
@@ -907,7 +907,8 @@ export class WeightRequirement extends EncounterPokemonRequirement {
       return partyPokemon.filter((pokemon) => pokemon.getWeight() < this.requiredWeightRange[0] || pokemon.getWeight() > this.requiredWeightRange[1]);
     }
   }
-  getMatchingDialogueToken(str:string, pokemon: PlayerPokemon): [RegExp, string] {
-    return [new RegExp("@ec\{" + str + "Weight\\}", "gi"), pokemon.getWeight().toString()];
+
+  getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
+    return ["weight", pokemon.getWeight().toString()];
   }
 }

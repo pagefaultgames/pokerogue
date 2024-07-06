@@ -38,8 +38,8 @@ export const SleepingSnorlaxEncounter: MysteryEncounter = new MysteryEncounterBu
   .withCatchAllowed(true)
   .withHideWildIntroMessage(true)
   .withOnInit((scene: BattleScene) => {
-    const instance = scene.currentBattle.mysteryEncounter;
-    console.log(instance);
+    const encounter = scene.currentBattle.mysteryEncounter;
+    console.log(encounter);
 
     // Calculate boss mon
     const bossSpecies = getPokemonSpecies(Species.SNORLAX);
@@ -52,7 +52,7 @@ export const SleepingSnorlaxEncounter: MysteryEncounter = new MysteryEncounterBu
       levelAdditiveMultiplier: 2,
       pokemonConfigs: [pokemonConfig]
     };
-    instance.enemyPartyConfigs = [config];
+    encounter.enemyPartyConfigs = [config];
     return true;
   })
   .withOption(new MysteryEncounterOptionBuilder()
