@@ -32,7 +32,7 @@ export const FightOrFlightEncounter: MysteryEncounter = new MysteryEncounterBuil
   .withCatchAllowed(true)
   .withHideWildIntroMessage(true)
   .withOnInit((scene: BattleScene) => {
-    const instance = scene.currentBattle.mysteryEncounter;
+    const encounter = scene.currentBattle.mysteryEncounter;
 
     // Calculate boss mon
     const bossSpecies = scene.arena.randomSpecies(scene.currentBattle.waveIndex, scene.currentBattle.waveIndex, 0, getPartyLuckValue(scene.getParty()), true);
@@ -40,17 +40,17 @@ export const FightOrFlightEncounter: MysteryEncounter = new MysteryEncounterBuil
       levelAdditiveMultiplier: 1,
       pokemonConfigs: [{species: bossSpecies, isBoss: true}]
     };
-    instance.enemyPartyConfigs = [config];
+    encounter.enemyPartyConfigs = [config];
 
     // Calculate item
     // 10-60 GREAT, 60-110 ULTRA, 110-160 ROGUE, 160-180 MASTER
     const tier = scene.currentBattle.waveIndex > 160 ? ModifierTier.MASTER : scene.currentBattle.waveIndex > 110 ? ModifierTier.ROGUE : scene.currentBattle.waveIndex > 60 ? ModifierTier.ULTRA : ModifierTier.GREAT;
     regenerateModifierPoolThresholds(scene.getParty(), ModifierPoolType.PLAYER, 0); // refresh player item pool
     const item = getPlayerModifierTypeOptions(1, scene.getParty(), [], { guaranteedModifierTiers: [tier]})[0];
-    scene.currentBattle.mysteryEncounter.dialogueTokens.set(/@ec\{itemName\}/gi, item.type.name);
-    scene.currentBattle.mysteryEncounter.misc = item;
+    encounter.setDialogueToken("itemName", item.type.name);
+    encounter.misc = item;
 
-    instance.spriteConfigs = [
+    encounter.spriteConfigs = [
       {
         spriteKey: item.type.iconImage,
         fileRoot: "items",
@@ -92,7 +92,7 @@ export const FightOrFlightEncounter: MysteryEncounter = new MysteryEncounterBuil
         const config = scene.currentBattle.mysteryEncounter.enemyPartyConfigs[0];
         config.pokemonConfigs[0].tags = [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON];
         config.pokemonConfigs[0].mysteryEncounterBattleEffects = (pokemon: Pokemon) => {
-          pokemon.scene.currentBattle.mysteryEncounter.dialogueTokens.set(/@ec\{enemyPokemon\}/gi, pokemon.name);
+          pokemon.scene.currentBattle.mysteryEncounter.setDialogueToken("enemyPokemon", pokemon.name);
           queueEncounterMessage(pokemon.scene, "mysteryEncounter:fight_or_flight_boss_enraged");
           pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD], 1));
         };
