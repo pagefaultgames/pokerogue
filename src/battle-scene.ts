@@ -1339,6 +1339,7 @@ export default class BattleScene extends SceneBase {
     case Species.ZARUDE:
     case Species.SQUAWKABILLY:
     case Species.TATSUGIRI:
+    case Species.GIMMIGHOUL:
     case Species.PALDEA_TAUROS:
       return Utils.randSeedInt(species.forms.length);
     case Species.PIKACHU:
