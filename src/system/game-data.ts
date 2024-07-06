@@ -40,8 +40,6 @@ import { GameDataType } from "#enums/game-data-type";
 import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
-import { MysteryEncounterFlags } from "../data/mystery-encounter-flags";
-import MysteryEncounter from "../data/mystery-encounter";
 
 export const defaultStarterSpecies: Species[] = [
   Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE,
@@ -80,13 +78,13 @@ export function getDataTypeKey(dataType: GameDataType, slotId: integer = 0): str
 
 export function encrypt(data: string, bypassLogin: boolean): string {
   return (bypassLogin
-    ? (data: string) => btoa(encodeURIComponent(data))
+    ? (data: string) => btoa(data)
     : (data: string) => AES.encrypt(data, saveKey))(data);
 }
 
 export function decrypt(data: string, bypassLogin: boolean): string {
   return (bypassLogin
-    ? (data: string) => decodeURIComponent(atob(data))
+    ? (data: string) => atob(data)
     : (data: string) => AES.decrypt(data, saveKey).toString(enc.Utf8))(data);
 }
 
@@ -124,11 +122,9 @@ export interface SessionSaveData {
   waveIndex: integer;
   battleType: BattleType;
   trainer: TrainerData;
-  mysteryEncounter: MysteryEncounter;
   gameVersion: string;
   timestamp: integer;
   challenges: ChallengeData[];
-  mysteryEncounterFlags: MysteryEncounterFlags;
 }
 
 export interface RunHistoryData {
@@ -859,9 +855,7 @@ export class GameData {
       trainer: scene.currentBattle.battleType === BattleType.TRAINER ? new TrainerData(scene.currentBattle.trainer) : null,
       gameVersion: scene.game.config.gameVersion,
       timestamp: new Date().getTime(),
-      challenges: scene.gameMode.challenges.map(c => new ChallengeData(c)),
-      mysteryEncounter: scene.currentBattle.mysteryEncounter,
-      mysteryEncounterFlags: scene.mysteryEncounterFlags
+      challenges: scene.gameMode.challenges.map(c => new ChallengeData(c))
     } as SessionSaveData;
   }
 
@@ -952,14 +946,11 @@ export class GameData {
           scene.score = sessionData.score;
           scene.updateScoreText();
 
-          scene.mysteryEncounterFlags = sessionData?.mysteryEncounterFlags ? sessionData?.mysteryEncounterFlags : new MysteryEncounterFlags(null);
-
           scene.newArena(sessionData.arena.biome);
 
           const battleType = sessionData.battleType || 0;
           const trainerConfig = sessionData.trainer ? trainerConfigs[sessionData.trainer.trainerType] : null;
-          const mysteryEncounterConfig = sessionData?.mysteryEncounter;
-          const battle = scene.newBattle(sessionData.waveIndex, battleType, sessionData.trainer, battleType === BattleType.TRAINER ? trainerConfig?.doubleOnly || sessionData.trainer?.variant === TrainerVariant.DOUBLE : sessionData.enemyParty.length > 1, mysteryEncounterConfig);
+          const battle = scene.newBattle(sessionData.waveIndex, battleType, sessionData.trainer, battleType === BattleType.TRAINER ? trainerConfig?.doubleOnly || sessionData.trainer?.variant === TrainerVariant.DOUBLE : sessionData.enemyParty.length > 1);
           battle.enemyLevels = sessionData.enemyParty.map(p => p.level);
 
           scene.arena.init();
@@ -1171,14 +1162,6 @@ export class GameData {
           ret.push(new ChallengeData(c));
         }
         return ret;
-      }
-
-      if (k === "mysteryEncounter") {
-        return new MysteryEncounter(v);
-      }
-
-      if (k === "mysteryEncounterFlags") {
-        return new MysteryEncounterFlags(v);
       }
 
       return v;

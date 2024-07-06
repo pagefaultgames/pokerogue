@@ -11,30 +11,6 @@ import i18next from "i18next";
 import {Button} from "#enums/buttons";
 import Pokemon, { PokemonMove } from "#app/field/pokemon.js";
 
-/**
- * Returns a specific move's color based on its type effectiveness against opponents
- * If there are multiple opponents, the highest effectiveness' color is returned
- * @returns A color or undefined if the default color should be used
- */
-export function getMoveColor(pokemon: Pokemon, pokemonMove: PokemonMove): string | undefined {
-  if (!pokemon.scene.typeHints) {
-    return undefined;
-  }
-
-  const opponents = pokemon.getOpponents();
-  if (opponents.length <= 0) {
-    return undefined;
-  }
-
-  const moveColors = opponents.map((opponent) => {
-    return opponent.getMoveEffectiveness(pokemon, pokemonMove);
-  }).sort((a, b) => b - a).map((effectiveness) => {
-    return getTypeDamageMultiplierColor(effectiveness, "offense");
-  });
-
-  return moveColors[0];
-}
-
 export default class FightUiHandler extends UiHandler {
   private movesContainer: Phaser.GameObjects.Container;
   private moveInfoContainer: Phaser.GameObjects.Container;
@@ -273,11 +249,35 @@ export default class FightUiHandler extends UiHandler {
         const pokemonMove = moveset[moveIndex];
         moveText.setText(pokemonMove.getName());
         moveText.setName(pokemonMove.getName());
-        moveText.setColor(getMoveColor(pokemon, pokemonMove) ?? moveText.style.color);
+        moveText.setColor(this.getMoveColor(pokemon, pokemonMove) ?? moveText.style.color);
       }
 
       this.movesContainer.add(moveText);
     }
+  }
+
+  /**
+   * Returns a specific move's color based on its type effectiveness against opponents
+   * If there are multiple opponents, the highest effectiveness' color is returned
+   * @returns A color or undefined if the default color should be used
+   */
+  private getMoveColor(pokemon: Pokemon, pokemonMove: PokemonMove): string | undefined {
+    if (!this.scene.typeHints) {
+      return undefined;
+    }
+
+    const opponents = pokemon.getOpponents();
+    if (opponents.length <= 0) {
+      return undefined;
+    }
+
+    const moveColors = opponents.map((opponent) => {
+      return opponent.getMoveEffectiveness(pokemon, pokemonMove);
+    }).sort((a, b) => b - a).map((effectiveness) => {
+      return getTypeDamageMultiplierColor(effectiveness, "offense");
+    });
+
+    return moveColors[0];
   }
 
   clear() {

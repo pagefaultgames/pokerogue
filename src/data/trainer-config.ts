@@ -810,63 +810,6 @@ export class TrainerConfig {
       }
     });
   }
-
-  copy(): TrainerConfig {
-    let copy = new TrainerConfig(this.trainerType);
-    copy = this.trainerTypeDouble ? copy.setDoubleTrainerType(this.trainerTypeDouble) : copy;
-    copy = this.name ? copy.setName(this.name) : copy;
-    copy = this.hasGenders ? copy.setHasGenders(this.nameFemale, this.femaleEncounterBgm) : copy;
-    copy = this.hasDouble ? copy.setHasDouble(this.nameDouble, this.doubleEncounterBgm) : copy;
-    copy = this.title ? copy.setTitle(this.title) : copy;
-    copy = this.titleDouble ? copy.setDoubleTitle(this.titleDouble) : copy;
-    copy = this.hasCharSprite ? copy.setHasCharSprite() : copy;
-    copy = this.doubleOnly ? copy.setDoubleOnly() : copy;
-    copy = this.moneyMultiplier ? copy.setMoneyMultiplier(this.moneyMultiplier) : copy;
-    copy = this.isBoss ? copy.setBoss() : copy;
-    copy = this.hasStaticParty ? copy.setStaticParty() : copy;
-    copy = this.useSameSeedForAllMembers ? copy.setUseSameSeedForAllMembers() : copy;
-    copy = this.battleBgm ? copy.setBattleBgm(this.battleBgm) : copy;
-    copy = this.encounterBgm ? copy.setEncounterBgm(this.encounterBgm) : copy;
-    copy = this.victoryBgm ? copy.setVictoryBgm(this.victoryBgm) : copy;
-    copy = this.genModifiersFunc ? copy.setGenModifiersFunc(this.genModifiersFunc) : copy;
-
-    if (this.modifierRewardFuncs) {
-      // Clones array instead of passing ref
-      copy.modifierRewardFuncs = this.modifierRewardFuncs.slice(0);
-    }
-
-    if (this.partyTemplates) {
-      copy.partyTemplates = this.partyTemplates.slice(0);
-    }
-
-    copy = this.partyTemplateFunc ? copy.setPartyTemplateFunc(this.partyTemplateFunc) : copy;
-
-    if (this.partyMemberFuncs) {
-      Object.keys(this.partyMemberFuncs).forEach((index) => {
-        copy = copy.setPartyMemberFunc(parseInt(index, 10), this.partyMemberFuncs[index]);
-      });
-    }
-
-    copy = this.speciesPools ? copy.setSpeciesPools(this.speciesPools) : copy;
-    copy = this.speciesFilter ? copy.setSpeciesFilter(this.speciesFilter) : copy;
-    if (this.specialtyTypes) {
-      copy.specialtyTypes = this.specialtyTypes.slice(0);
-    }
-
-    copy.encounterMessages = this.encounterMessages?.slice(0);
-    copy.victoryMessages = this.victoryMessages?.slice(0);
-    copy.defeatMessages = this.defeatMessages?.slice(0);
-
-    copy.femaleEncounterMessages = this.femaleEncounterMessages?.slice(0);
-    copy.femaleVictoryMessages = this.femaleVictoryMessages?.slice(0);
-    copy.femaleDefeatMessages = this.femaleDefeatMessages?.slice(0);
-
-    copy.doubleEncounterMessages = this.doubleEncounterMessages?.slice(0);
-    copy.doubleVictoryMessages = this.doubleVictoryMessages?.slice(0);
-    copy.doubleDefeatMessages = this.doubleDefeatMessages?.slice(0);
-
-    return copy;
-  }
 }
 
 let t = 0;
