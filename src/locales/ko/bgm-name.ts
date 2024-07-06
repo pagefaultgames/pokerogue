@@ -1,7 +1,7 @@
 import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const bgmName: SimpleTranslationEntries = {
-  "music": "Music",
+  "music": "Music: ",
   "missing_entries" : "{{name}}",
   "battle_kanto_champion": "BW2 관동 챔피언 배틀",
   "battle_johto_champion": "BW2 성도 챔피언 배틀",
@@ -62,7 +62,7 @@ export const bgmName: SimpleTranslationEntries = {
   "battle_legendary_calyrex": "SWSH 버드렉스 배틀",
   "battle_legendary_birds_galar": "SWSH 가라르 전설의 새 배틀",
   "battle_legendary_ruinous": "SV 재앙의 보물 배틀",
-  "battle_legendary_kor_mir": "SV Depths of Area Zero Battle",
+  "battle_legendary_kor_mir": "SV 에리어 제로 배틀",
   "battle_legendary_loyal_three": "SV 세벗들 배틀",
   "battle_legendary_ogerpon": "SV 오거폰 배틀",
   "battle_legendary_terapagos": "SV 테라파고스 배틀",
@@ -74,16 +74,16 @@ export const bgmName: SimpleTranslationEntries = {
   "battle_wild": "BW 야생 포켓몬 배틀",
   "battle_wild_strong": "BW 강한 야생 포켓몬 조우 배틀",
   "end_summit": "불가사의 던전 구조대 DX 천공의 탑 꼭대기",
-  "battle_rocket_grunt": "HGSS Team Rocket Battle",
-  "battle_aqua_magma_grunt": "ORAS Team Aqua & Magma Battle",
-  "battle_galactic_grunt": "BDSP Team Galactic Battle",
+  "battle_rocket_grunt": "HGSS 로켓단 배틀",
+  "battle_aqua_magma_grunt": "ORAS 아쿠아단 & 마그마단 배틀",
+  "battle_galactic_grunt": "BDSP 갤럭시단 배틀",
   "battle_plasma_grunt": "BW 플라스마단 배틀",
-  "battle_flare_grunt": "XY Team Flare Battle",
-  "battle_rocket_boss": "USUM Giovanni Battle",
-  "battle_aqua_magma_boss": "ORAS Archie & Maxie Battle",
-  "battle_galactic_boss": "BDSP Cyrus Battle",
-  "battle_plasma_boss": "B2W2 Ghetsis Battle",
-  "battle_flare_boss": "XY Lysandre Battle",
+  "battle_flare_grunt": "XY 플레어단 배틀",
+  "battle_rocket_boss": "USUM 비주기 배틀",
+  "battle_aqua_magma_boss": "ORAS 아강 & 마적 배틀",
+  "battle_galactic_boss": "BDSP 태홍 배틀",
+  "battle_plasma_boss": "B2W2 게치스 배틀",
+  "battle_flare_boss": "XY 플라드리 배틀",
 
   // Biome Music
   "abyss": "불가사의 던전 하늘의 탐험대 어둠의 화구",
