@@ -44,7 +44,7 @@ import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { weather } from "./weather";
 import { modifierSelectUiHandler } from "./modifier-select-ui-handler";
-import { runHistory } from "./run-history-ui-handler.ts";
+import { runHistory } from "./run-history-ui-handler";
 
 export const enConfig = {
   ability: ability,
