@@ -1221,18 +1221,15 @@ export default class BattleScene extends SceneBase {
             if (pokemon.species.speciesId === Species.EISCUE && pokemon.hasAbility(Abilities.ICE_FACE) && pokemon.formIndex === 1) {
               this.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
             }
+            // Only trigger form change when Mimikyu is in Busted form
+            // Hardcoded Mimikyu for now in case it is fused with another pokemon
+            if (pokemon.species.speciesId === Species.MIMIKYU && pokemon.hasAbility(Abilities.DISGUISE) && pokemon.formIndex === 1) {
+              this.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
+            }
 
             pokemon.resetBattleData();
             applyPostBattleInitAbAttrs(PostBattleInitAbAttr, pokemon);
           }
-          // Only trigger form change when Mimikyu is in Busted form
-          // Hardcoded Mimikyu for now in case it is fused with another pokemon
-          if (pokemon.species.speciesId === Species.MIMIKYU && pokemon.hasAbility(Abilities.DISGUISE) && pokemon.formIndex === 1) {
-            this.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
-          }
-
-          pokemon.resetBattleData();
-          applyPostBattleInitAbAttrs(PostBattleInitAbAttr, pokemon);
         }
 
         this.unshiftPhase(new ShowTrainerPhase(this));
