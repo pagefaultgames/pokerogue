@@ -133,5 +133,5 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsSaltCuredLapse": "{{pokemonNameWithAffix}} wurde durch {{moveName}} verletzt!",
   "battlerTagsCursedOnAdd": "{{pokemonNameWithAffix}} nimmt einen Teil seiner KP und legt einen Fluch auf {{pokemonName}}!",
   "battlerTagsCursedLapse": "{{pokemonNameWithAffix}} wurde durch den Fluch verletzt!",
-  "useQuickClaw": "{{pokemonName}} nutzte die Flinkklaue um schneller zu sein!"
+  "useQuickClaw": "Dank des Items {{quickClaw}} kann {{pokemonName}} schneller handeln als sonst!"
 } as const;

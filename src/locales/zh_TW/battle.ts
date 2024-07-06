@@ -130,5 +130,5 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsSaltCuredLapse": "{{pokemonNameWithAffix}} 受到了{{moveName}}的傷害！",
   "battlerTagsCursedOnAdd": "{{pokemonNameWithAffix}}削減了自己的體力，並詛咒了{{pokemonName}}！",
   "battlerTagsCursedLapse": "{{pokemonNameWithAffix}}正受到詛咒！",
-  "useQuickClaw": "{{pokemonName}}用了先製之爪後，\n行動變快了！"
+  "useQuickClaw": "{{pokemonName}}用了{{quickClaw}}後，行動變快了！"
 } as const;

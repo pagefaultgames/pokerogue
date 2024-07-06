@@ -133,5 +133,5 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsSaltCuredLapse": "{{pokemonNameWithAffix}} est blessé\npar la capacité {{moveName}} !",
   "battlerTagsCursedOnAdd": "{{pokemonNameWithAffix}} sacrifie des PV\net lance une malédiction sur {{pokemonName}} !",
   "battlerTagsCursedLapse": "{{pokemonNameWithAffix}} est touché par la malédiction !",
-  "useQuickClaw": "{{pokemonName}} used its Quick Claw to move faster!"
+  "useQuickClaw": "{{quickClaw}} {{pokemonName}} lui permettent d’agir plus vite que d’habitude !"
 } as const;
