@@ -14,9 +14,11 @@ import { initVouchers } from "#app/system/voucher.js";
 import { initStatsKeys } from "#app/ui/game-stats-ui-handler";
 import { beforeAll, beforeEach, vi } from "vitest";
 import * as overrides from "#app/overrides";
-import {initMysteryEncounterDialogue} from "#app/data/mystery-encounters/dialogue/mystery-encounter-dialogue";
-import {initMysteryEncounters} from "#app/data/mystery-encounters/mystery-encounters";
+import { initMysteryEncounterDialogue } from "#app/data/mystery-encounters/dialogue/mystery-encounter-dialogue";
+import { initMysteryEncounters } from "#app/data/mystery-encounters/mystery-encounters";
 
+initVouchers();
+initAchievements();
 initStatsKeys();
 initPokemonPrevolutions();
 initBiomes();

@@ -93,13 +93,8 @@ import { UiTheme } from "#enums/ui-theme";
 import { TimedEventManager } from "#app/timed-event-manager.js";
 import i18next from "i18next";
 import MysteryEncounter, { MysteryEncounterTier, MysteryEncounterVariant } from "./data/mystery-encounter";
-import {
-  mysteryEncountersByBiome,
-  allMysteryEncounters,
-  BASE_MYSTERY_ENCOUNTER_WEIGHT,
-  AVERAGE_ENCOUNTERS_PER_RUN_TARGET
-} from "./data/mystery-encounters/mystery-encounters";
-import {MysteryEncounterFlags} from "#app/data/mystery-encounter-flags";
+import { mysteryEncountersByBiome, allMysteryEncounters, BASE_MYSTERY_ENCOUNTER_WEIGHT, AVERAGE_ENCOUNTERS_PER_RUN_TARGET } from "./data/mystery-encounters/mystery-encounters";
+import { MysteryEncounterFlags } from "#app/data/mystery-encounter-flags";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
@@ -1225,6 +1220,7 @@ export default class BattleScene extends SceneBase {
             pokemon.resetBattleData();
             applyPostBattleInitAbAttrs(PostBattleInitAbAttr, pokemon);
           }
+        }
 
           this.unshiftPhase(new ShowTrainerPhase(this));
         }
