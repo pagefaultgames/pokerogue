@@ -5,9 +5,8 @@ import * as overrides from "#app/overrides";
 import { Species } from "#enums/species";
 import { TerrainType, getTerrainName } from "#app/data/terrain";
 import { getTerrainStartMessage, getTerrainClearMessage, getTerrainBlockMessage } from "#app/data/weather";
-import i18next, { ParseKeys } from "i18next";
-
-const tMock = (key: ParseKeys) => key;
+import i18next from "i18next";
+import { mockI18next } from "../utils/testUtils";
 
 describe("terrain", () => {
   let phaserGame: Phaser.Game;
@@ -29,21 +28,21 @@ describe("terrain", () => {
     const terrainType = TerrainType.NONE;
 
     it("should return the obtain text", () => {
-      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      mockI18next();
 
       const text = getTerrainName(terrainType);
       expect(text).toBe("");
     });
 
     it("should return the start text", () => {
-      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      mockI18next();
 
       const text = getTerrainStartMessage(terrainType);
       expect(text).toBe(undefined);
     });
 
     it("should return the clear text", () => {
-      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      mockI18next();
       const text = getTerrainClearMessage(terrainType);
       expect(text).toBe(undefined);
     });
@@ -51,7 +50,7 @@ describe("terrain", () => {
     it("should return the block text", async () => {
       await game.startBattle([Species.MAGIKARP]);
       const pokemon = game.scene.getPlayerPokemon();
-      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      mockI18next();
       const text = getTerrainBlockMessage(pokemon, terrainType);
       expect(text).toBe("terrain:defaultBlockMessage");
     });
@@ -61,21 +60,21 @@ describe("terrain", () => {
     const terrainType = TerrainType.MISTY;
 
     it("should return the obtain text", () => {
-      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      mockI18next();
 
       const text = getTerrainName(terrainType);
       expect(text).toBe("terrain:misty");
     });
 
     it("should return the start text", () => {
-      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      mockI18next();
 
       const text = getTerrainStartMessage(terrainType);
       expect(text).toBe("terrain:mistyStartMessage");
     });
 
     it("should return the clear text", () => {
-      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      mockI18next();
       const text = getTerrainClearMessage(terrainType);
       expect(text).toBe("terrain:mistyClearMessage");
     });
@@ -83,7 +82,7 @@ describe("terrain", () => {
     it("should return the block text", async () => {
       await game.startBattle([Species.MAGIKARP]);
       const pokemon = game.scene.getPlayerPokemon();
-      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      mockI18next();
       const text = getTerrainBlockMessage(pokemon, terrainType);
       expect(text).toBe("terrain:mistyBlockMessage");
     });
@@ -93,21 +92,21 @@ describe("terrain", () => {
     const terrainType = TerrainType.ELECTRIC;
 
     it("should return the obtain text", () => {
-      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      mockI18next();
 
       const text = getTerrainName(terrainType);
       expect(text).toBe("terrain:electric");
     });
 
     it("should return the start text", () => {
-      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      mockI18next();
 
       const text = getTerrainStartMessage(terrainType);
       expect(text).toBe("terrain:electricStartMessage");
     });
 
     it("should return the clear text", () => {
-      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      mockI18next();
       const text = getTerrainClearMessage(terrainType);
       expect(text).toBe("terrain:electricClearMessage");
     });
@@ -115,7 +114,7 @@ describe("terrain", () => {
     it("should return the block text", async () => {
       await game.startBattle([Species.MAGIKARP]);
       const pokemon = game.scene.getPlayerPokemon();
-      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      mockI18next();
       const text = getTerrainBlockMessage(pokemon, terrainType);
       expect(text).toBe("terrain:defaultBlockMessage");
     });
@@ -125,21 +124,21 @@ describe("terrain", () => {
     const terrainType = TerrainType.GRASSY;
 
     it("should return the obtain text", () => {
-      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      mockI18next();
 
       const text = getTerrainName(terrainType);
       expect(text).toBe("terrain:grassy");
     });
 
     it("should return the start text", () => {
-      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      mockI18next();
 
       const text = getTerrainStartMessage(terrainType);
       expect(text).toBe("terrain:grassyStartMessage");
     });
 
     it("should return the clear text", () => {
-      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      mockI18next();
       const text = getTerrainClearMessage(terrainType);
       expect(text).toBe("terrain:grassyClearMessage");
     });
@@ -147,7 +146,7 @@ describe("terrain", () => {
     it("should return the block text", async () => {
       await game.startBattle([Species.MAGIKARP]);
       const pokemon = game.scene.getPlayerPokemon();
-      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      mockI18next();
       const text = getTerrainBlockMessage(pokemon, terrainType);
       expect(text).toBe("terrain:defaultBlockMessage");
     });
@@ -157,21 +156,21 @@ describe("terrain", () => {
     const terrainType = TerrainType.PSYCHIC;
 
     it("should return the obtain text", () => {
-      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      mockI18next();
 
       const text = getTerrainName(terrainType);
       expect(text).toBe("terrain:psychic");
     });
 
     it("should return the start text", () => {
-      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      mockI18next();
 
       const text = getTerrainStartMessage(terrainType);
       expect(text).toBe("terrain:psychicStartMessage");
     });
 
     it("should return the clear text", () => {
-      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      mockI18next();
       const text = getTerrainClearMessage(terrainType);
       expect(text).toBe("terrain:psychicClearMessage");
     });
@@ -179,7 +178,7 @@ describe("terrain", () => {
     it("should return the block text", async () => {
       await game.startBattle([Species.MAGIKARP]);
       const pokemon = game.scene.getPlayerPokemon();
-      vi.spyOn(i18next, "t").mockImplementation(tMock);
+      mockI18next();
       const text = getTerrainBlockMessage(pokemon, terrainType);
       expect(text).toBe("terrain:defaultBlockMessage");
     });
