@@ -1722,6 +1722,73 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return (this.isPlayer() ? this.scene.getPlayerField() : this.scene.getEnemyField())[this.getFieldIndex() ? 0 : 1];
   }
 
+  /**
+   * Calculates the power of a move based on various conditions and attributes.
+   *
+   * @param source - The Pokémon using the move.
+   * @param move - The move being used.
+   * @returns The calculated power of the move.
+   */
+  calculateMovePower(source: Pokemon, move: Move): number {
+    const power = new Utils.NumberHolder(move.power);
+
+    const typeChangeMovePowerMultiplier = new Utils.NumberHolder(1);
+    applyPreAttackAbAttrs(MoveTypeChangeAttr, source, this, move, typeChangeMovePowerMultiplier);
+
+    const sourceTeraType = source.getTeraType();
+    if (sourceTeraType !== Type.UNKNOWN && sourceTeraType === move.type && power.value < 60 && move.priority <= 0 && !move.hasAttr(MultiHitAttr) && !this.scene.findModifier(m => m instanceof PokemonMultiHitModifier && m.pokemonId === source.id)) {
+      power.value = 60;
+    }
+
+    applyPreAttackAbAttrs(VariableMovePowerAbAttr, source, this, move, power);
+
+    if (source.getAlly()?.hasAbilityWithAttr(AllyMoveCategoryPowerBoostAbAttr)) {
+      applyPreAttackAbAttrs(AllyMoveCategoryPowerBoostAbAttr, source, this, move, power);
+    }
+
+    const fieldAuras = new Set(
+      this.scene.getField(true)
+        .map((p) => p.getAbilityAttrs(FieldMoveTypePowerBoostAbAttr) as FieldMoveTypePowerBoostAbAttr[])
+        .flat(),
+    );
+    for (const aura of fieldAuras) {
+      // The only relevant values are `move` and the `power` holder
+      aura.applyPreAttack(null, null, null, move, [power]);
+    }
+
+    const alliedField: Pokemon[] = source instanceof PlayerPokemon ? this.scene.getPlayerField() : this.scene.getEnemyField();
+    alliedField.forEach(p => applyPreAttackAbAttrs(UserFieldMoveTypePowerBoostAbAttr, p, this, move, power));
+
+    power.value *= typeChangeMovePowerMultiplier.value;
+
+    const typeBoost = source.findTag(t => t instanceof TypeBoostTag && t.boostedType === move.type) as TypeBoostTag;
+    if (typeBoost) {
+      power.value *= typeBoost.boostValue;
+      if (typeBoost.oneUse) {
+        source.removeTag(typeBoost.tagType);
+      }
+    }
+
+    if (this.scene.arena.getTerrainType() === TerrainType.GRASSY && this.isGrounded() && move.type === Type.GROUND && move.moveTarget === MoveTarget.ALL_NEAR_OTHERS) {
+      power.value /= 2;
+    }
+
+    applyMoveAttrs(VariablePowerAttr, source, this, move, power);
+
+    this.scene.applyModifiers(PokemonMultiHitModifier, source.isPlayer(), source, new Utils.IntegerHolder(0), power);
+
+    if (!move.hasAttr(TypelessAttr)) {
+      this.scene.arena.applyTags(WeakenMoveTypeTag, move.type, power);
+      this.scene.applyModifiers(AttackTypeBoosterModifier, source.isPlayer(), source, move.type, power);
+    }
+
+    if (source.getTag(HelpingHandTag)) {
+      power.value *= 1.5;
+    }
+
+    return power.value;
+  }
+
   apply(source: Pokemon, move: Move): HitResult {
     let result: HitResult;
     const damage = new Utils.NumberHolder(0);
@@ -1731,9 +1798,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     applyMoveAttrs(VariableMoveCategoryAttr, source, this, move, variableCategory);
     const moveCategory = variableCategory.value as MoveCategory;
 
-    const typeChangeMovePowerMultiplier = new Utils.NumberHolder(1);
     applyMoveAttrs(VariableMoveTypeAttr, source, this, move);
-    applyPreAttackAbAttrs(MoveTypeChangeAttr, source, this, move, typeChangeMovePowerMultiplier);
     const types = this.getTypes(true, true);
 
     const cancelled = new Utils.BooleanHolder(false);
@@ -1762,31 +1827,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     case MoveCategory.PHYSICAL:
     case MoveCategory.SPECIAL:
       const isPhysical = moveCategory === MoveCategory.PHYSICAL;
-      const power = new Utils.NumberHolder(move.power);
+      const power = this.calculateMovePower(source, move);
       const sourceTeraType = source.getTeraType();
-      if (sourceTeraType !== Type.UNKNOWN && sourceTeraType === move.type && power.value < 60 && move.priority <= 0 && !move.hasAttr(MultiHitAttr) && !this.scene.findModifier(m => m instanceof PokemonMultiHitModifier && m.pokemonId === source.id)) {
-        power.value = 60;
-      }
-      applyPreAttackAbAttrs(VariableMovePowerAbAttr, source, this, move, power);
-
-      if (source.getAlly()?.hasAbilityWithAttr(AllyMoveCategoryPowerBoostAbAttr)) {
-        applyPreAttackAbAttrs(AllyMoveCategoryPowerBoostAbAttr, source, this, move, power);
-      }
-
-      const fieldAuras = new Set(
-        this.scene.getField(true)
-          .map((p) => p.getAbilityAttrs(FieldMoveTypePowerBoostAbAttr) as FieldMoveTypePowerBoostAbAttr[])
-          .flat(),
-      );
-      for (const aura of fieldAuras) {
-        // The only relevant values are `move` and the `power` holder
-        aura.applyPreAttack(null, null, null, move, [power]);
-      }
-
-      const alliedField: Pokemon[] = source instanceof PlayerPokemon ? this.scene.getPlayerField() : this.scene.getEnemyField();
-      alliedField.forEach(p => applyPreAttackAbAttrs(UserFieldMoveTypePowerBoostAbAttr, p, this, move, power));
-
-      power.value *= typeChangeMovePowerMultiplier.value;
 
       if (!typeless) {
         applyPreDefendAbAttrs(TypeImmunityAbAttr, this, source, move, cancelled, typeMultiplier);
@@ -1801,29 +1843,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         source.stopMultiHit(this);
         result = HitResult.NO_EFFECT;
       } else {
-        const typeBoost = source.findTag(t => t instanceof TypeBoostTag && t.boostedType === move.type) as TypeBoostTag;
-        if (typeBoost) {
-          power.value *= typeBoost.boostValue;
-          if (typeBoost.oneUse) {
-            source.removeTag(typeBoost.tagType);
-          }
-        }
         const arenaAttackTypeMultiplier = new Utils.NumberHolder(this.scene.arena.getAttackTypeMultiplier(move.type, source.isGrounded()));
         applyMoveAttrs(IgnoreWeatherTypeDebuffAttr, source, this, move, arenaAttackTypeMultiplier);
-        if (this.scene.arena.getTerrainType() === TerrainType.GRASSY && this.isGrounded() && move.type === Type.GROUND && move.moveTarget === MoveTarget.ALL_NEAR_OTHERS) {
-          power.value /= 2;
-        }
 
-        applyMoveAttrs(VariablePowerAttr, source, this, move, power);
-
-        this.scene.applyModifiers(PokemonMultiHitModifier, source.isPlayer(), source, new Utils.IntegerHolder(0), power);
-        if (!typeless) {
-          this.scene.arena.applyTags(WeakenMoveTypeTag, move.type, power);
-          this.scene.applyModifiers(AttackTypeBoosterModifier, source.isPlayer(), source, move.type, power);
-        }
-        if (source.getTag(HelpingHandTag)) {
-          power.value *= 1.5;
-        }
         let isCritical: boolean;
         const critOnly = new Utils.BooleanHolder(false);
         const critAlways = source.getTag(BattlerTagType.ALWAYS_CRIT);
@@ -1893,7 +1915,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         applyPreAttackAbAttrs(AddSecondStrikeAbAttr, source, this, move, numTargets, new Utils.IntegerHolder(0), twoStrikeMultiplier);
 
         if (!isTypeImmune) {
-          damage.value = Math.ceil(((((2 * source.level / 5 + 2) * power.value * sourceAtk.value / targetDef.value) / 50) + 2) * stabMultiplier.value * typeMultiplier.value * arenaAttackTypeMultiplier.value * screenMultiplier.value * twoStrikeMultiplier.value * ((this.scene.randBattleSeedInt(15) + 85) / 100) * criticalMultiplier.value);
+          damage.value = Math.ceil(((((2 * source.level / 5 + 2) * power * sourceAtk.value / targetDef.value) / 50) + 2) * stabMultiplier.value * typeMultiplier.value * arenaAttackTypeMultiplier.value * screenMultiplier.value * twoStrikeMultiplier.value * ((this.scene.randBattleSeedInt(15) + 85) / 100) * criticalMultiplier.value);
           if (isPhysical && source.status && source.status.effect === StatusEffect.BURN) {
             if (!move.hasAttr(BypassBurnDamageReductionAttr)) {
               const burnDamageReductionCancelled = new Utils.BooleanHolder(false);
@@ -1963,7 +1985,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         applyMoveAttrs(ModifiedDamageAttr, source, this, move, damage);
         applyPreDefendAbAttrs(ReceivedMoveDamageMultiplierAbAttr, this, source, move, cancelled, damage);
 
-        console.log("damage", damage.value, move.name, power.value, sourceAtk, targetDef);
+        console.log("damage", damage.value, move.name, power, sourceAtk, targetDef);
 
         // In case of fatal damage, this tag would have gotten cleared before we could lapse it.
         const destinyTag = this.getTag(BattlerTagType.DESTINY_BOND);
