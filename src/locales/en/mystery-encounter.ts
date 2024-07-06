@@ -69,7 +69,7 @@ export const mysteryEncounter: SimpleTranslationEntries = {
   "training_session_option_3_select_prompt": "Select a new ability\nto train your Pokémon in.",
   "training_session_option_selected_message": "@ec{selectedPokemon} moves across\nthe clearing to face you...",
   "training_session_battle_finished_1": `@ec{selectedPokemon} returns, feeling\nworn out but accomplished!
-    $Its @ec{stat1} and @ec{stat2}IVs were improved!`,
+    $Its @ec{stat1} and @ec{stat2} IVs were improved!`,
   "training_session_battle_finished_2": `@ec{selectedPokemon} returns, feeling\nworn out but accomplished!
     $Its nature was changed to @ec{nature}!`,
   "training_session_battle_finished_3": `@ec{selectedPokemon} returns, feeling\nworn out but accomplished!

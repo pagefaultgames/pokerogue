@@ -306,7 +306,7 @@ export default class MysteryEncounter implements MysteryEncounter {
   }
 
   setDialogueToken?(key: string, value: string) {
-    this.dialogueTokens.set(key, [new RegExp("@ec\{" + value + "\\}", "gi"), value]);
+    this.dialogueTokens.set(key, [new RegExp("@ec\{" + key + "\\}", "gi"), value]);
   }
 
   private capitalizeFirstLetter?(str: string) {
