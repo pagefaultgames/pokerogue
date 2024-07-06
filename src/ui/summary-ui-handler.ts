@@ -23,6 +23,7 @@ import { Ability } from "../data/ability.js";
 import i18next from "i18next";
 import {modifierSortFunc} from "../modifier/modifier";
 import { PlayerGender } from "#enums/player-gender";
+import { getMoveColor } from "./fight-ui-handler";
 
 
 enum Page {
@@ -927,6 +928,8 @@ export default class SummaryUiHandler extends UiHandler {
           moveRowContainer.add(typeIcon);
         }
 
+        const test = getMoveColor(this.pokemon, move);
+        console.log(test);
         const moveText = addTextObject(this.scene, 35, 0, move ? move.getName() : "-", TextStyle.SUMMARY);
         moveText.setOrigin(0, 1);
         moveRowContainer.add(moveText);
