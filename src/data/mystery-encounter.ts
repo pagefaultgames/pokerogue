@@ -86,7 +86,7 @@ export default interface MysteryEncounter {
    * Can be set for uses programatic dialogue during an encounter (storing the name of one of the party's pokemon, etc.)
    * Example use: see MYSTERIOUS_CHEST
    */
-  dialogueTokens?: Map<RegExp, string>;
+  dialogueTokens?: Map<string, [RegExp, string]>;
   /**
    * Should be set depending upon option selected as part of an encounter
    * For example, if there is no battle as part of the encounter/selected option, should be set to NO_BATTLE
@@ -139,7 +139,7 @@ export default class MysteryEncounter implements MysteryEncounter {
 
     // Reset any dirty flags or encounter data
     this.lockEncounterRewardTiers = true;
-    this.dialogueTokens = new Map<RegExp, string>;
+    this.dialogueTokens = new Map<string, [RegExp, string]>;
     this.enemyPartyConfigs = [];
     this.introVisuals = null;
     this.misc = null;
@@ -264,20 +264,20 @@ export default class MysteryEncounter implements MysteryEncounter {
    */
   populateDialogueTokensFromRequirements?() {
     if (this.primaryPokemon?.length > 0) {
-      this.dialogueTokens.set(/@ec\{primaryName\}/gi, this.primaryPokemon.name);
+      this.dialogueTokens.set("primaryName", [/@ec\{primaryName\}/gi, this.primaryPokemon.name]);
       for (const req of this.primaryPokemonRequirements) {
         if (!req.invertQuery) {
           const entry: [RegExp, string] = req.getMatchingDialogueToken("primary", this.primaryPokemon);
-          this.dialogueTokens.set(entry[0], entry[1]);
+          this.dialogueTokens.set("primary", entry);
         }
       }
     }
     if (this.secondaryPokemonRequirements?.length > 0 && this.secondaryPokemon?.length > 0) {
-      this.dialogueTokens.set(/@ec\{secondaryName\}/gi, this.secondaryPokemon[0].name);
+      this.dialogueTokens.set("secondaryName", [/@ec\{secondaryName\}/gi, this.secondaryPokemon[0].name]);
       for (const req of this.secondaryPokemonRequirements) {
         if (!req.invertQuery) {
           const entry: [RegExp, string] = req.getMatchingDialogueToken("secondary", this.secondaryPokemon[0]);
-          this.dialogueTokens.set(entry[0], entry[1]);
+          this.dialogueTokens.set("secondary", entry);
         }
       }
     }
@@ -285,20 +285,20 @@ export default class MysteryEncounter implements MysteryEncounter {
       const opt = this.options[i];
       const j = i + 1;
       if (opt.primaryPokemonRequirements?.length > 0 && opt.primaryPokemon?.length > 0) {
-        this.dialogueTokens.set(new RegExp("@ec\{option" + j + "PrimaryName\\}", "gi"), opt.primaryPokemon.name);
+        this.dialogueTokens.set("option" + j + "PrimaryName", [new RegExp("@ec\{option" + j + "PrimaryName\\}", "gi"), opt.primaryPokemon.name]);
         for (const req of opt.primaryPokemonRequirements) {
           if (!req.invertQuery) {
             const entry: [RegExp, string] = req.getMatchingDialogueToken("option" + j + "Primary", opt.primaryPokemon);
-            this.dialogueTokens.set(entry[0], entry[1]);
+            this.dialogueTokens.set("option" + j + "Primary", entry);
           }
         }
       }
       if (opt.secondaryPokemonRequirements?.length > 0 && opt.secondaryPokemon?.length > 0) {
-        this.dialogueTokens.set(new RegExp("@ec\{option" + j + "SecondaryName\\}", "gi"), opt.secondaryPokemon[0].name);
+        this.dialogueTokens.set("option" + j + "SecondaryName", [new RegExp("@ec\{option" + j + "SecondaryName\\}", "gi"), opt.secondaryPokemon[0].name]);
         for (const req of opt.secondaryPokemonRequirements) {
           if (!req.invertQuery) {
             const entry: [RegExp, string] = req.getMatchingDialogueToken("option" + j + "Secondary", opt.secondaryPokemon[0]);
-            this.dialogueTokens.set(entry[0], entry[1]);
+            this.dialogueTokens.set("option" + j + "Secondary", entry);
           }
         }
       }
@@ -317,7 +317,7 @@ export class MysteryEncounterBuilder implements Partial<MysteryEncounter> {
   primaryPokemonRequirements?: EncounterPokemonRequirement[] = [];
   secondaryPokemonRequirements ?: EncounterPokemonRequirement[] = [];
   excludePrimaryFromSupportRequirements?: boolean;
-  dialogueTokens?: Map<RegExp, string>;
+  dialogueTokens?: Map<string, [RegExp, string]>;
   doEncounterRewards?: (scene: BattleScene) => boolean;
   onInit?: (scene: BattleScene) => boolean;
   hideBattleIntroMessage?: boolean;

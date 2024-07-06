@@ -302,14 +302,6 @@ export class TitlePhase extends Phase {
         return true;
       },
       keepOpen: true
-    },
-    {
-      label: i18next.t("menu:settings"),
-      handler: () => {
-        this.scene.ui.setOverlayMode(Mode.SETTINGS);
-        return true;
-      },
-      keepOpen: true
     });
     const config: OptionSelectConfig = {
       options: options,

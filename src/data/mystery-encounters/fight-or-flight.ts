@@ -47,7 +47,7 @@ export const FightOrFlightEncounter: MysteryEncounter = new MysteryEncounterBuil
     const tier = scene.currentBattle.waveIndex > 160 ? ModifierTier.MASTER : scene.currentBattle.waveIndex > 110 ? ModifierTier.ROGUE : scene.currentBattle.waveIndex > 60 ? ModifierTier.ULTRA : ModifierTier.GREAT;
     regenerateModifierPoolThresholds(scene.getParty(), ModifierPoolType.PLAYER, 0); // refresh player item pool
     const item = getPlayerModifierTypeOptions(1, scene.getParty(), [], { guaranteedModifierTiers: [tier]})[0];
-    scene.currentBattle.mysteryEncounter.dialogueTokens.set(/@ec\{itemName\}/gi, item.type.name);
+    scene.currentBattle.mysteryEncounter.dialogueTokens.set("itemName", [/@ec\{itemName\}/gi, item.type.name]);
     scene.currentBattle.mysteryEncounter.misc = item;
 
     instance.spriteConfigs = [
@@ -92,7 +92,7 @@ export const FightOrFlightEncounter: MysteryEncounter = new MysteryEncounterBuil
         const config = scene.currentBattle.mysteryEncounter.enemyPartyConfigs[0];
         config.pokemonConfigs[0].tags = [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON];
         config.pokemonConfigs[0].mysteryEncounterBattleEffects = (pokemon: Pokemon) => {
-          pokemon.scene.currentBattle.mysteryEncounter.dialogueTokens.set(/@ec\{enemyPokemon\}/gi, pokemon.name);
+          pokemon.scene.currentBattle.mysteryEncounter.dialogueTokens.set("enemyPokemon", [/@ec\{enemyPokemon\}/gi, pokemon.name]);
           queueEncounterMessage(pokemon.scene, "mysteryEncounter:fight_or_flight_boss_enraged");
           pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD], 1));
         };
