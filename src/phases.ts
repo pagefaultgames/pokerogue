@@ -784,7 +784,7 @@ export class EncounterPhase extends BattlePhase {
         if (mysteryEncounter.onInit) {
           mysteryEncounter.onInit(this.scene);
         }
-        mysteryEncounter.populateDialogueTokensFromRequirements();
+        mysteryEncounter.populateDialogueTokensFromRequirements(this.scene);
       }, this.scene.currentBattle.waveIndex);
 
       // Add intro visuals for mystery encounter

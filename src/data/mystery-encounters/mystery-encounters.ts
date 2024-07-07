@@ -8,7 +8,9 @@ import { Biome } from "#app/enums/biome";
 import { SleepingSnorlaxEncounter } from "./sleeping-snorlax";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 
-export const BASE_MYSTERY_ENCOUNTER_WEIGHT = 19;
+// Spawn chance: (BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT + WIGHT_INCREMENT_ON_SPAWN_MISS * <number of missed spawns>) / 256
+export const BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT = 1;
+export const WIGHT_INCREMENT_ON_SPAWN_MISS = 5;
 export const AVERAGE_ENCOUNTERS_PER_RUN_TARGET = 15;
 
 export const allMysteryEncounters : {[encounterType:string]: MysteryEncounter} = {};

@@ -103,7 +103,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
         if (cursor === this.viewPartyIndex) {
           // Handle view party
           success = true;
-          this.clear();
+          // this.clear();
           this.scene.ui.setMode(Mode.PARTY, PartyUiMode.CHECK, -1, () => {
             this.scene.ui.setMode(Mode.MYSTERY_ENCOUNTER, true);
             setTimeout(() => {
@@ -116,7 +116,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
         } else {
           const selected = this.filteredEncounterOptions[cursor];
           if ((this.scene.getCurrentPhase() as MysteryEncounterPhase).handleOptionSelect(selected, cursor)) {
-            this.clear();
+            // this.clear();
             success = true;
           } else {
             ui.playError();
