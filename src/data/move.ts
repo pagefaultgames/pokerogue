@@ -3,7 +3,7 @@ import { BattleEndPhase, MoveEndPhase, MovePhase, NewBattlePhase, PartyStatusCur
 import { BattleStat, getBattleStatName } from "./battle-stat";
 import { EncoreTag, SemiInvulnerableTag } from "./battler-tags";
 import { getPokemonMessage, getPokemonNameWithAffix } from "../messages";
-import Pokemon, { AttackMoveResult, EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../field/pokemon";
+import Pokemon, { AttackMoveResult, DamageResult, EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../field/pokemon";
 import { StatusEffect, getStatusEffectHealText, isNonVolatileStatusEffect, getNonVolatileStatusEffects} from "./status-effect";
 import { Type } from "./type";
 import { Constructor } from "#app/utils";
@@ -1192,6 +1192,8 @@ export class SacrificialAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     user.damageAndUpdate(user.hp, HitResult.OTHER, false, true, true);
 	  user.turnData.damageTaken += user.hp;
+    const attackResult = { move: move.id, result: HitResult.OTHER as DamageResult, damage: user.hp, critical: false, sourceId: user.id };
+    user.turnData.attacksReceived.unshift(attackResult);
 
     return true;
   }
@@ -1230,6 +1232,8 @@ export class SacrificialAttrOnHit extends MoveEffectAttr {
 
     user.damageAndUpdate(user.hp, HitResult.OTHER, false, true, true);
     user.turnData.damageTaken += user.hp;
+    const attackResult = { move: move.id, result: HitResult.OTHER as DamageResult, damage: user.hp, critical: false, sourceId: user.id };
+    user.turnData.attacksReceived.unshift(attackResult);
 
     return true;
   }
@@ -1270,7 +1274,10 @@ export class HalfSacrificialAttr extends MoveEffectAttr {
     // Check to see if the Pokemon has an ability that blocks non-direct damage
     applyAbAttrs(BlockNonDirectDamageAbAttr, user, cancelled);
     if (!cancelled.value) {
-      user.damageAndUpdate(Math.ceil(user.getMaxHp()/2), HitResult.OTHER, false, true, true);
+      const damage = Math.ceil(user.getMaxHp()/2);
+      user.damageAndUpdate(damage, HitResult.OTHER, false, true, true);
+      const attackResult = { move: move.id, result: HitResult.OTHER as DamageResult, damage: damage, critical: false, sourceId: user.id };
+      user.turnData.attacksReceived.unshift(attackResult);
       user.scene.queueMessage(getPokemonMessage(user, " cut its own HP to power up its move!")); // Queue recoil message
     }
     return true;
