@@ -8,5 +8,5 @@ export const modifier: SimpleTranslationEntries = {
   "moneyInterestApply": "{{typeName}}[[로]]부터\n₽{{moneyAmount}}[[를]] 받았다!",
   "turnHeldItemTransferApply": "{{pokemonName}}의 {{typeName}}[[는]]\n{{pokemonNameWithAffix}}의 {{itemName}}[[를]] 흡수했다!",
   "contactHeldItemTransferApply": "{{pokemonName}}의 {{typeName}}[[는]]\n{{pokemonNameWithAffix}}의 {{itemName}}[[를]] 가로챘다!",
-  "enemyTurnHealApply": "{{pokemonNameWithAffix}}[[의]]\n체력이 약간 회복되었다!",
+  "enemyTurnHealApply": "{{pokemonNameWithAffix}}의\n체력이 약간 회복되었다!",
 } as const;
