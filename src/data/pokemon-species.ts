@@ -599,18 +599,16 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
       const form = this.forms[formIndex];
       switch (form.formKey) {
       case SpeciesFormKey.MEGA:
-        return i18next.t("pokemonForm:mega", {pokemonName: this.name});
       case SpeciesFormKey.PRIMAL:
-        return i18next.t("pokemonForm:primal", {pokemonName: this.name});
       case SpeciesFormKey.ETERNAMAX:
-        return i18next.t("pokemonForm:eternamax", {pokemonName: this.name});
+        return `${form.formName} ${this.name}`;
       case SpeciesFormKey.MEGA_X:
-        return i18next.t("pokemonForm:megax", {pokemonName: this.name});
+        return `Mega ${this.name} X`;
       case SpeciesFormKey.MEGA_Y:
-        return i18next.t("pokemonForm:megay", {pokemonName: this.name});
+        return `Mega ${this.name} Y`;
       default:
         if (form.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1) {
-          return i18next.t("pokemonForm:gigantamax", {pokemonName: this.name});
+          return `G-Max ${this.name}`;
         }
       }
     }

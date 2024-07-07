@@ -1,4 +1,3 @@
-import { pokemonForm } from "./pokemon-form";
 import { ability } from "./ability";
 import { abilityTriggers } from "./ability-trigger";
 import { PGFachv, PGMachv } from "./achv";
@@ -79,7 +78,6 @@ export const koConfig = {
   nature: nature,
   pokeball: pokeball,
   pokemon: pokemon,
-  pokemonForm: pokemonForm,
   pokemonInfo: pokemonInfo,
   pokemonInfoContainer: pokemonInfoContainer,
   saveSlotSelectUiHandler: saveSlotSelectUiHandler,
