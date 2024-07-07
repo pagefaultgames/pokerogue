@@ -1,12 +1,12 @@
 import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const modifier: SimpleTranslationEntries = {
-  "surviveDamageApply": "{{pokemonNameWithAffix}} hung on\nusing its {{typeName}}!",
-  "turnHealApply": "{{pokemonNameWithAffix}} restored a little HP using\nits {{typeName}}!",
-  "hitHealApply": "{{pokemonNameWithAffix}} restored a little HP using\nits {{typeName}}!",
-  "pokemonInstantReviveApply": "{{pokemonNameWithAffix}} was revived\nby its {{typeName}}!",
-  "moneyInterestApply": "You received interest of ₽{{moneyAmount}}\nfrom the {{typeName}}!",
-  "turnHeldItemTransferApply": "{{pokemonNameWithAffix}}'s {{itemName}} was absorbed\nby {{pokemonName}}'s {{typeName}}!",
-  "contactHeldItemTransferApply": "{{pokemonNameWithAffix}}'s {{itemName}} was snatched\nby {{pokemonName}}'s {{typeName}}!",
-  "enemyTurnHealApply": "{{pokemonNameWithAffix}}\nrestored some HP!",
+  "surviveDamageApply": "{{pokemonNameWithAffix}} aguentou o tranco\nusando sua {{typeName}}!",
+  "turnHealApply": "{{pokemonNameWithAffix}} restaurou um pouco de PS usando\nseu {{typeName}}!",
+  "hitHealApply": "{{pokemonNameWithAffix}} restaurou um pouco de PS usando\nsua {{typeName}}!",
+  "pokemonInstantReviveApply": "{{pokemonNameWithAffix}} foi revivido\npor seu {{typeName}}!",
+  "moneyInterestApply": "Você recebeu um juros de ₽{{moneyAmount}}\nde sua {{typeName}}!",
+  "turnHeldItemTransferApply": "{{itemName}} de {{pokemonNameWithAffix}} foi absorvido(a)\npelo {{typeName}} de {{pokemonName}}!",
+  "contactHeldItemTransferApply": "{{itemName}} de {{pokemonNameWithAffix}} foi pego(a)\npela {{typeName}} de {{pokemonName}}!",
+  "enemyTurnHealApply": "{{pokemonNameWithAffix}}\nrestaurou um pouco de PS!",
 } as const;
