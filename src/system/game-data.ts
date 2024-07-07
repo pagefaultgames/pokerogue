@@ -40,6 +40,8 @@ import { GameDataType } from "#enums/game-data-type";
 import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
+import { MysteryEncounterFlags } from "../data/mystery-encounter-flags";
+import MysteryEncounter from "../data/mystery-encounter";
 
 export const defaultStarterSpecies: Species[] = [
   Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE,
@@ -71,18 +73,20 @@ export function getDataTypeKey(dataType: GameDataType, slotId: integer = 0): str
     return "tutorials";
   case GameDataType.SEEN_DIALOGUES:
     return "seenDialogues";
+  case GameDataType.RUN_HISTORY:
+    return "runHistory";
   }
 }
 
 export function encrypt(data: string, bypassLogin: boolean): string {
   return (bypassLogin
-    ? (data: string) => btoa(data)
+    ? (data: string) => btoa(encodeURIComponent(data))
     : (data: string) => AES.encrypt(data, saveKey))(data);
 }
 
 export function decrypt(data: string, bypassLogin: boolean): string {
   return (bypassLogin
-    ? (data: string) => atob(data)
+    ? (data: string) => decodeURIComponent(atob(data))
     : (data: string) => AES.decrypt(data, saveKey).toString(enc.Utf8))(data);
 }
 
@@ -93,6 +97,7 @@ interface SystemSaveData {
   dexData: DexData;
   starterData: StarterData;
   gameStats: GameStats;
+  runHistory: RunHistoryData;
   unlocks: Unlocks;
   achvUnlocks: AchvUnlocks;
   voucherUnlocks: VoucherUnlocks;
@@ -119,9 +124,20 @@ export interface SessionSaveData {
   waveIndex: integer;
   battleType: BattleType;
   trainer: TrainerData;
+  mysteryEncounter: MysteryEncounter;
   gameVersion: string;
   timestamp: integer;
   challenges: ChallengeData[];
+  mysteryEncounterFlags: MysteryEncounterFlags;
+}
+
+export interface RunHistoryData {
+  [key: integer]: RunEntries;
+}
+
+export interface RunEntries {
+  entry: SessionSaveData;
+  victory: boolean;
 }
 
 interface Unlocks {
@@ -283,7 +299,7 @@ export class GameData {
   public starterData: StarterData;
 
   public gameStats: GameStats;
-
+  public runHistory: RunHistoryData;
   public unlocks: Unlocks;
 
   public achvUnlocks: AchvUnlocks;
@@ -302,6 +318,7 @@ export class GameData {
     this.trainerId = Utils.randInt(65536);
     this.secretId = Utils.randInt(65536);
     this.starterData = {};
+    this.runHistory = {};
     this.gameStats = new GameStats();
     this.unlocks = {
       [Unlockables.ENDLESS_MODE]: false,
@@ -328,6 +345,7 @@ export class GameData {
       trainerId: this.trainerId,
       secretId: this.secretId,
       gender: this.gender,
+      runHistory: this.runHistory,
       dexData: this.dexData,
       starterData: this.starterData,
       gameStats: this.gameStats,
@@ -431,6 +449,11 @@ export class GameData {
         console.debug(systemData);
 
         localStorage.setItem(`data_${loggedInUser.username}`, encrypt(systemDataStr, bypassLogin));
+
+        if (!localStorage.hasOwnProperty(`runHistoryData_${loggedInUser.username}`)) {
+          localStorage.setItem(`runHistoryData_${loggedInUser.username}`, encrypt("", true));
+        }
+
 
         /*const versions = [ this.scene.game.config.gameVersion, data.gameVersion || '0.0.0' ];
 
@@ -836,7 +859,9 @@ export class GameData {
       trainer: scene.currentBattle.battleType === BattleType.TRAINER ? new TrainerData(scene.currentBattle.trainer) : null,
       gameVersion: scene.game.config.gameVersion,
       timestamp: new Date().getTime(),
-      challenges: scene.gameMode.challenges.map(c => new ChallengeData(c))
+      challenges: scene.gameMode.challenges.map(c => new ChallengeData(c)),
+      mysteryEncounter: scene.currentBattle.mysteryEncounter,
+      mysteryEncounterFlags: scene.mysteryEncounterFlags
     } as SessionSaveData;
   }
 
@@ -927,11 +952,14 @@ export class GameData {
           scene.score = sessionData.score;
           scene.updateScoreText();
 
+          scene.mysteryEncounterFlags = sessionData?.mysteryEncounterFlags ? sessionData?.mysteryEncounterFlags : new MysteryEncounterFlags(null);
+
           scene.newArena(sessionData.arena.biome);
 
           const battleType = sessionData.battleType || 0;
           const trainerConfig = sessionData.trainer ? trainerConfigs[sessionData.trainer.trainerType] : null;
-          const battle = scene.newBattle(sessionData.waveIndex, battleType, sessionData.trainer, battleType === BattleType.TRAINER ? trainerConfig?.doubleOnly || sessionData.trainer?.variant === TrainerVariant.DOUBLE : sessionData.enemyParty.length > 1);
+          const mysteryEncounterConfig = sessionData?.mysteryEncounter;
+          const battle = scene.newBattle(sessionData.waveIndex, battleType, sessionData.trainer, battleType === BattleType.TRAINER ? trainerConfig?.doubleOnly || sessionData.trainer?.variant === TrainerVariant.DOUBLE : sessionData.enemyParty.length > 1, mysteryEncounterConfig);
           battle.enemyLevels = sessionData.enemyParty.map(p => p.level);
 
           scene.arena.init();
@@ -1089,7 +1117,7 @@ export class GameData {
     });
   }
 
-  parseSessionData(dataStr: string): SessionSaveData {
+  public parseSessionData(dataStr: string): SessionSaveData {
     return JSON.parse(dataStr, (k: string, v: any) => {
       /*const versions = [ scene.game.config.gameVersion, sessionData.gameVersion || '0.0.0' ];
 
@@ -1145,8 +1173,81 @@ export class GameData {
         return ret;
       }
 
+      if (k === "mysteryEncounter") {
+        return new MysteryEncounter(v);
+      }
+
+      if (k === "mysteryEncounterFlags") {
+        return new MysteryEncounterFlags(v);
+      }
+
       return v;
     }) as SessionSaveData;
+  }
+
+  public async getRunHistoryData(scene: BattleScene): Promise<Object> {
+    if (!Utils.isLocal) {
+      //const response = await Utils.apiFetch("savedata/runHistory", true);
+      //const data = await response.json();
+      const data = "";
+      if (localStorage.hasOwnProperty(`runHistoryData_${loggedInUser.username}`)) {
+        let cachedResponse = localStorage.getItem(`runHistoryData_${loggedInUser.username}`);
+        if (cachedResponse) {
+          cachedResponse = JSON.parse(decrypt(cachedResponse, true));
+        }
+        const cachedRHData = cachedResponse ?? {};
+        //check to see whether cachedData or serverData is more up-to-date
+        if ( Object.keys(cachedRHData).length >= Object.keys(data).length ) {
+          return cachedRHData;
+        }
+      } else {
+        localStorage.setItem(`runHistoryData_${loggedInUser.username}`, JSON.parse(encrypt("", true)));
+        return {};
+      }
+      return data;
+    } else {
+      let cachedResponse = localStorage.getItem(`runHistoryData_${loggedInUser.username}`);
+      if (cachedResponse) {
+        cachedResponse = JSON.parse(decrypt(cachedResponse, true));
+      }
+      const cachedRHData = cachedResponse ?? {};
+      return cachedRHData;
+    }
+  }
+
+  async saveRunHistory(scene: BattleScene, runEntry : SessionSaveData, victory: boolean): Promise<boolean> {
+
+    let runHistoryData = await this.getRunHistoryData(scene);
+    if (!runHistoryData) {
+      runHistoryData = {};
+    }
+    const timestamps = Object.keys(runHistoryData);
+    const timestampsNo = timestamps.map(Number);
+
+    //Arbitrary limit of 25 entries per User --> Can increase or decrease
+    if (timestamps.length >= 25) {
+      const oldestTimestamp = Math.min.apply(Math, timestampsNo);
+      delete this.scene.gameData.runHistory[oldestTimestamp.toString()];
+    }
+
+    const timestamp = (runEntry.timestamp).toString();
+    runHistoryData[timestamp] = {};
+    runHistoryData[timestamp]["entry"] = runEntry;
+    runHistoryData[timestamp]["victory"] = victory;
+
+    localStorage.setItem(`runHistoryData_${loggedInUser.username}`, encrypt(JSON.stringify(runHistoryData), true));
+    console.log("Run entry saved onto cache");
+    /*if (!Utils.isLocal) {
+      try {
+        Utils.apiPost("savedata/runHistory", JSON.stringify(runHistoryData), undefined, true);
+        return true;
+      } catch (err) {
+        console.log("savedata/runHistory POST failed : ", err);
+        return false;
+      }
+    }
+    */
+    return true;
   }
 
   saveAll(scene: BattleScene, skipVerification: boolean = false, sync: boolean = false, useCachedSession: boolean = false, useCachedSystem: boolean = false): Promise<boolean> {

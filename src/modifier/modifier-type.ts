@@ -1,5 +1,5 @@
 import * as Modifiers from "./modifier";
-import { AttackMove, allMoves } from "../data/move";
+import { AttackMove, allMoves, selfStatLowerMoves } from "../data/move";
 import { MAX_PER_TYPE_POKEBALLS, PokeballType, getPokeballCatchMultiplier, getPokeballName } from "../data/pokeball";
 import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove } from "../field/pokemon";
 import { EvolutionItem, pokemonEvolutions } from "../data/pokemon-evolutions";
@@ -143,7 +143,7 @@ export interface GeneratedPersistentModifierType {
   getPregenArgs(): any[];
 }
 
-class AddPokeballModifierType extends ModifierType {
+export class AddPokeballModifierType extends ModifierType {
   private pokeballType: PokeballType;
   private count: integer;
 
@@ -1014,13 +1014,40 @@ class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
         return new FormChangeItemModifierType(pregenArgs[0] as FormChangeItem);
       }
 
-      const formChangeItemPool = party.filter(p => pokemonFormChanges.hasOwnProperty(p.species.speciesId)).map(p => {
+      const formChangeItemPool = [...new Set(party.filter(p => pokemonFormChanges.hasOwnProperty(p.species.speciesId)).map(p => {
         const formChanges = pokemonFormChanges[p.species.speciesId];
-        return formChanges.filter(fc => ((fc.formKey.indexOf(SpeciesFormKey.MEGA) === -1 && fc.formKey.indexOf(SpeciesFormKey.PRIMAL) === -1) || party[0].scene.getModifiers(Modifiers.MegaEvolutionAccessModifier).length)
+        let formChangeItemTriggers = formChanges.filter(fc => ((fc.formKey.indexOf(SpeciesFormKey.MEGA) === -1 && fc.formKey.indexOf(SpeciesFormKey.PRIMAL) === -1) || party[0].scene.getModifiers(Modifiers.MegaEvolutionAccessModifier).length)
           && ((fc.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) === -1 && fc.formKey.indexOf(SpeciesFormKey.ETERNAMAX) === -1) || party[0].scene.getModifiers(Modifiers.GigantamaxAccessModifier).length))
           .map(fc => fc.findTrigger(SpeciesFormChangeItemTrigger) as SpeciesFormChangeItemTrigger)
           .filter(t => t && t.active && !p.scene.findModifier(m => m instanceof Modifiers.PokemonFormChangeItemModifier && m.pokemonId === p.id && m.formChangeItem === t.item));
-      }).flat().flatMap(fc => fc.item);
+
+        if (p.species.speciesId === Species.NECROZMA) {
+          // technically we could use a simplified version and check for formChanges.length > 3, but in case any code changes later, this might break...
+
+          let foundULTRA_Z = false,
+            foundN_LUNA = false,
+            foundN_SOLAR = false;
+          formChangeItemTriggers.forEach((fc, i) => {
+            switch (fc.item) {
+            case FormChangeItem.ULTRANECROZIUM_Z:
+              foundULTRA_Z = true;
+              break;
+            case FormChangeItem.N_LUNARIZER:
+              foundN_LUNA = true;
+              break;
+            case FormChangeItem.N_SOLARIZER:
+              foundN_SOLAR = true;
+              break;
+            }
+          });
+          if (foundULTRA_Z && foundN_LUNA && foundN_SOLAR) {
+            // all three items are present -> user hasn't acquired any of the N_*ARIZERs -> block ULTRANECROZIUM_Z acquisition.
+            formChangeItemTriggers = formChangeItemTriggers.filter(fc => fc.item !== FormChangeItem.ULTRANECROZIUM_Z);
+          }
+        }
+        return formChangeItemTriggers;
+      }).flat().flatMap(fc => fc.item))];
+      // convert it into a set to remove duplicate values, which can appear when the same species with a potential form change is in the party.
 
       if (!formChangeItemPool.length) {
         return null;
@@ -1188,6 +1215,7 @@ export const modifierTypes = {
   SACRED_ASH: () => new AllPokemonFullReviveModifierType("modifierType:ModifierType.SACRED_ASH", "sacred_ash"),
 
   REVIVER_SEED: () => new PokemonHeldItemModifierType("modifierType:ModifierType.REVIVER_SEED", "reviver_seed", (type, args) => new Modifiers.PokemonInstantReviveModifier(type, (args[0] as Pokemon).id)),
+  WHITE_HERB: () => new PokemonHeldItemModifierType("modifierType:ModifierType.WHITE_HERB", "white_herb", (type, args) => new Modifiers.PokemonResetNegativeStatStageModifier(type, (args[0] as Pokemon).id)),
 
   ETHER: () => new PokemonPpRestoreModifierType("modifierType:ModifierType.ETHER", "ether", 10),
   MAX_ETHER: () => new PokemonPpRestoreModifierType("modifierType:ModifierType.MAX_ETHER", "max_ether", -1),
@@ -1490,6 +1518,14 @@ const modifierPool: ModifierPool = {
       // If a party member doesn't already have one of these two orbs and has one of the above moves or abilities, the orb can appear
       return party.some(p => !p.getHeldItems().some(i => i instanceof Modifiers.TurnStatusEffectModifier) && (checkedAbilities.some(a => p.hasAbility(a, false, true)) || p.getMoveset(true).some(m => checkedMoves.includes(m.moveId)))) ? 10 : 0;
     }, 10),
+    new WeightedModifierType(modifierTypes.WHITE_HERB, (party: Pokemon[]) => {
+      const checkedAbilities = [Abilities.WEAK_ARMOR, Abilities.CONTRARY, Abilities.MOODY, Abilities.ANGER_SHELL, Abilities.COMPETITIVE, Abilities.DEFIANT];
+      const weightMultiplier = party.filter(
+        p => !p.getHeldItems().some(i => i instanceof Modifiers.PokemonResetNegativeStatStageModifier && i.stackCount >= i.getMaxHeldItemCount(p)) &&
+          (checkedAbilities.some(a => p.hasAbility(a, false, true)) || p.getMoveset(true).some(m => selfStatLowerMoves.includes(m.moveId)))).length;
+      // If a party member has one of the above moves or abilities and doesn't have max herbs, the herb will appear more frequently
+      return 3*(weightMultiplier? 2: 1)+(weightMultiplier? weightMultiplier-1: 0);
+    }, 10),
     new WeightedModifierType(modifierTypes.REVIVER_SEED, 4),
     new WeightedModifierType(modifierTypes.CANDY_JAR, 5),
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 9),
@@ -1555,6 +1591,7 @@ const wildModifierPool: ModifierPool = {
   }),
   [ModifierTier.ULTRA]: [
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 10),
+    new WeightedModifierType(modifierTypes.WHITE_HERB, 2)
   ].map(m => {
     m.setTier(ModifierTier.ULTRA); return m;
   }),
@@ -1583,7 +1620,8 @@ const trainerModifierPool: ModifierPool = {
     m.setTier(ModifierTier.GREAT); return m;
   }),
   [ModifierTier.ULTRA]: [
-    new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 1),
+    new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 5),
+    new WeightedModifierType(modifierTypes.WHITE_HERB, 1),
   ].map(m => {
     m.setTier(ModifierTier.ULTRA); return m;
   }),
@@ -1801,21 +1839,74 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
   }
 }
 
+export interface CustomModifierSettings {
+  guaranteedModifierTiers?: ModifierTier[];
+  guaranteedModifierTypeOptions?: ModifierTypeOption[];
+  guaranteedModifierTypeFuncs?: ModifierTypeFunc[];
+  fillRemaining?: boolean;
+  rerollMultiplier?: number;
+}
+
 export function getModifierTypeFuncById(id: string): ModifierTypeFunc {
   return modifierTypes[id];
 }
 
-export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemon[], modifierTiers?: ModifierTier[]): ModifierTypeOption[] {
+export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemon[], modifierTiers?: ModifierTier[], customModifierSettings?: CustomModifierSettings): ModifierTypeOption[] {
   const options: ModifierTypeOption[] = [];
   const retryCount = Math.min(count * 5, 50);
-  new Array(count).fill(0).map((_, i) => {
-    let candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, modifierTiers?.length > i ? modifierTiers[i] : undefined);
-    let r = 0;
-    while (options.length && ++r < retryCount && options.filter(o => o.type.name === candidate.type.name || o.type.group === candidate.type.group).length) {
-      candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, candidate.type.tier, candidate.upgradeCount);
+  if (!customModifierSettings) {
+    new Array(count).fill(0).map((_, i) => {
+      options.push(getModifierTypeOptionWithRetry(options, retryCount, party, modifierTiers?.length > i ? modifierTiers[i] : undefined));
+    });
+  } else {
+    // Guaranteed mods first
+    if (customModifierSettings?.guaranteedModifierTypeOptions?.length) {
+      customModifierSettings?.guaranteedModifierTypeOptions.forEach((option) => {
+        options.push(option);
+      });
     }
-    options.push(candidate);
-  });
+
+    // Guaranteed mod funcs second
+    if (customModifierSettings?.guaranteedModifierTypeFuncs?.length) {
+      customModifierSettings?.guaranteedModifierTypeFuncs.forEach((mod, i) => {
+        const modifierId = Object.keys(modifierTypes).find(k => modifierTypes[k] === mod);
+        let guaranteedMod: ModifierType = modifierTypes[modifierId]?.();
+
+        // Gets tier of item by checking player item pool
+        Object.keys(modifierPool).every(modifierTier => {
+          const modType = modifierPool[modifierTier].find(m => {
+            if (m.modifierType.id === modifierId) {
+              return m;
+            }
+          });
+          if (modType) {
+            guaranteedMod = modType.modifierType;
+            return false;
+          }
+          return true;
+        });
+
+        const modType = guaranteedMod instanceof ModifierTypeGenerator ? guaranteedMod.generateType(party) : guaranteedMod;
+        const option = new ModifierTypeOption(modType, 0);
+        options.push(option);
+      });
+    }
+
+    // Guaranteed tiers third
+    if (customModifierSettings?.guaranteedModifierTiers?.length) {
+      customModifierSettings?.guaranteedModifierTiers.forEach((tier) => {
+        options.push(getModifierTypeOptionWithRetry(options, retryCount, party, tier));
+      });
+    }
+
+    // Fill remaining
+    if (options.length < count && customModifierSettings.fillRemaining) {
+      while (options.length < count) {
+        options.push(getModifierTypeOptionWithRetry(options, retryCount, party, undefined));
+      }
+    }
+  }
+
   // OVERRIDE IF NECESSARY
   if (Overrides.ITEM_REWARD_OVERRIDE?.length) {
     options.forEach((mod, i) => {
@@ -1825,6 +1916,15 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
     });
   }
   return options;
+}
+
+function getModifierTypeOptionWithRetry(existingOptions: ModifierTypeOption[], retryCount: integer, party: PlayerPokemon[], tier?: ModifierTier): ModifierTypeOption {
+  let candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, tier);
+  let r = 0;
+  while (existingOptions.length && ++r < retryCount && existingOptions.filter(o => o.type.name === candidate.type.name || o.type.group === candidate.type.group).length) {
+    candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, candidate.type.tier, candidate.upgradeCount);
+  }
+  return candidate;
 }
 
 export function getPlayerShopModifierTypeOptionsForWave(waveIndex: integer, baseCost: integer): ModifierTypeOption[] {
