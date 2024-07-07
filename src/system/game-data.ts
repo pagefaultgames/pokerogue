@@ -40,7 +40,7 @@ import { GameDataType } from "#enums/game-data-type";
 import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
-import { MysteryEncounterFlags } from "../data/mystery-encounter-flags";
+import { MysteryEncounterData } from "../data/mystery-encounter-data";
 import MysteryEncounter from "../data/mystery-encounter";
 
 export const defaultStarterSpecies: Species[] = [
@@ -128,7 +128,7 @@ export interface SessionSaveData {
   gameVersion: string;
   timestamp: integer;
   challenges: ChallengeData[];
-  mysteryEncounterFlags: MysteryEncounterFlags;
+  mysteryEncounterFlags: MysteryEncounterData;
 }
 
 export interface RunHistoryData {
@@ -861,7 +861,7 @@ export class GameData {
       timestamp: new Date().getTime(),
       challenges: scene.gameMode.challenges.map(c => new ChallengeData(c)),
       mysteryEncounter: scene.currentBattle.mysteryEncounter,
-      mysteryEncounterFlags: scene.mysteryEncounterFlags
+      mysteryEncounterFlags: scene.mysteryEncounterData
     } as SessionSaveData;
   }
 
@@ -952,7 +952,7 @@ export class GameData {
           scene.score = sessionData.score;
           scene.updateScoreText();
 
-          scene.mysteryEncounterFlags = sessionData?.mysteryEncounterFlags ? sessionData?.mysteryEncounterFlags : new MysteryEncounterFlags(null);
+          scene.mysteryEncounterData = sessionData?.mysteryEncounterFlags ? sessionData?.mysteryEncounterFlags : new MysteryEncounterData(null);
 
           scene.newArena(sessionData.arena.biome);
 
@@ -1178,7 +1178,7 @@ export class GameData {
       }
 
       if (k === "mysteryEncounterFlags") {
-        return new MysteryEncounterFlags(v);
+        return new MysteryEncounterData(v);
       }
 
       return v;

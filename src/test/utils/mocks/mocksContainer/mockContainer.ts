@@ -33,6 +33,10 @@ export default class MockContainer {
     // same as remove or destroy
   }
 
+  removeBetween(startIndex, endIndex, destroyChild) {
+    // Removes multiple children across an index range
+  }
+
   addedToScene() {
     // This callback is invoked when this Game Object is added to a Scene.
   }

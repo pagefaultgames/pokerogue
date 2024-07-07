@@ -1,6 +1,8 @@
 import {SimpleTranslationEntries} from "#app/interfaces/locales";
 
 export const mysteryEncounter: SimpleTranslationEntries = {
+  // DO NOT REMOVE
+  "unit_test_dialogue": "@ec{test}@ec{test} @ec{test@ec{test}} @ec{test1} @ec{test\} @ec{test\\} @ec{test\\\} {test}",
 
   // Mysterious Encounters -- Common Tier
 

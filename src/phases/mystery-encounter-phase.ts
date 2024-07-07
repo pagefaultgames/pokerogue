@@ -40,7 +40,7 @@ export class MysteryEncounterPhase extends Phase {
 
     // Sets flag that ME was encountered
     // Can be used in later MEs to check for requirements to spawn, etc.
-    this.scene.mysteryEncounterFlags.encounteredEvents.push([this.scene.currentBattle.mysteryEncounter.encounterType, this.scene.currentBattle.mysteryEncounter.encounterTier]);
+    this.scene.mysteryEncounterData.encounteredEvents.push([this.scene.currentBattle.mysteryEncounter.encounterType, this.scene.currentBattle.mysteryEncounter.encounterTier]);
 
     // Initiates encounter dialogue window and option select
     this.scene.ui.setMode(Mode.MYSTERY_ENCOUNTER);
@@ -55,7 +55,7 @@ export class MysteryEncounterPhase extends Phase {
     }
 
     // Populate dialogue tokens for option requirements
-    this.scene.currentBattle.mysteryEncounter.populateDialogueTokensFromRequirements();
+    this.scene.currentBattle.mysteryEncounter.populateDialogueTokensFromRequirements(this.scene);
 
     if (option.onPreOptionPhase) {
       this.scene.executeWithSeedOffset(async () => {

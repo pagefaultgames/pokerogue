@@ -1,14 +1,14 @@
 # 📝 Most immediate things to-do list
 
 - ### High priority
-    - 🐛 Intimidate and other ETB abilities proc twice at the start of wild MEs (fight or flight, dark deal) 
-    - ⚙️ Add a tag system so MEs don't show where they shouldn't and bricking Challenge runs:
+    - ⚙️ Add a tag system so MEs to filter or change spawn rates in Challenge runs:
       - noChallenge (cant be spawned in challenge runs)
       - allChallenge (can spawn in all challenge modes)
       - (typespecific)Challenge: 
         - Example: fireOnly (can only spawn in fire related challenges)
 
 - ### Medium priority
+    - ⚙️ Update Chest visuals for Mysterious Chest (with animated chest)
 
 - ### Low priority
     - 🐛 Mysterious Challengers can spawn two trainers (or three) of the same type [Dev comment: not a bug]
@@ -106,9 +106,9 @@ Events (referred to as 'Mysterious Encounters, MEs' in the code) aim to be an ad
   
   ### 🌟 **Rarity** tier of the ME, common by default.
     - ⚪ Common pool 
-    - 🔵 Rare pool 
-    - 🟣 Epic pool
-    - 🟡 Legendary pool
+    - 🔵 Uncommon pool 
+    - 🟣 Rare pool
+    - 🟡 Super Rare pool
 
   ### **Optional Requirements** for Mystery Encounters.
   - 🛠️ They give granular control over whether encounters will spawn in certain situations
@@ -135,13 +135,10 @@ Events (referred to as 'Mysterious Encounters, MEs' in the code) aim to be an ad
 
 # 📝 Known bugs (squash 'em all!):
   - ## 🔴 __**Really bad ones**__
-    - 🐛 Picking up certain items in Fight or Flight is still broken. Workaround is leave encounter.
-    - 🐛 Modifiers that are applied to pokemon get skipped in Fight or Flight.
 
   - ## 🟡 __**Bad ones under certain circumstances**__
     - 🐛 Needs further replication : At wave 51, wild PKMN encounter caused a freezed after pressing "ESC" key upon being asked to switch PKMNs
     - 🐛 Wave seed generates different encounter data if you roll to a new wave, see the spawned stuff, and refresh the app
-    - 🐛 Type-buffing items (like Silk Scarf) get swapped around when offered as a reward in Fight or Flight
 
   - ## 🟢 __**Non-game breaking**__
     - Both of these bugs seem to have in common that they don't "forget" their last passed string:
@@ -157,7 +154,6 @@ Events (referred to as 'Mysterious Encounters, MEs' in the code) aim to be an ad
 #### More requirements (with helper functions)
 - Having X item
 - Having Y amount of X item
-- Being in a specific Biome
 - A Pokémon X in player's party can learn Y move
 - A Pokémon X in player's party knows Y move
 - A Pokémon X in player's party has Y ability

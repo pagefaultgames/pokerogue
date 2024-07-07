@@ -34,6 +34,7 @@ import { Species } from "#enums/species";
 import { Button } from "#enums/buttons";
 import { BattlerIndex } from "#app/battle.js";
 import TargetSelectUiHandler from "#app/ui/target-select-ui-handler.js";
+import BattleMessageUiHandler from "#app/ui/battle-message-ui-handler";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -134,6 +135,30 @@ export default class GameManager {
       this.scene.pushPhase(new EncounterPhase(this.scene, false));
       selectStarterPhase.initBattle(starters);
     });
+
+    await this.phaseInterceptor.run(EncounterPhase);
+  }
+
+  /**
+   * Runs the game to a mystery encounter phase.
+   * @param species - Optional array of species for party.
+   * @returns A promise that resolves when the EncounterPhase ends.
+   */
+  async runToMysteryEncounter(species?: Species[]) {
+    await this.runToTitle();
+
+    this.onNextPrompt("TitlePhase", Mode.TITLE, () => {
+      this.scene.gameMode = getGameMode(GameModes.CLASSIC);
+      const starters = generateStarter(this.scene, species);
+      const selectStarterPhase = new SelectStarterPhase(this.scene);
+      this.scene.pushPhase(new EncounterPhase(this.scene, false));
+      selectStarterPhase.initBattle(starters);
+    });
+
+    this.onNextPrompt("EncounterPhase", Mode.MESSAGE, () => {
+      const handler = this.scene.ui.getHandler() as BattleMessageUiHandler;
+      handler.processInput(Button.ACTION);
+    }, null, true);
 
     await this.phaseInterceptor.run(EncounterPhase);
   }

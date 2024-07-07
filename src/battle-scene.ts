@@ -96,10 +96,10 @@ import MysteryEncounter, { MysteryEncounterTier, MysteryEncounterVariant } from 
 import {
   mysteryEncountersByBiome,
   allMysteryEncounters,
-  BASE_MYSTERY_ENCOUNTER_WEIGHT,
-  AVERAGE_ENCOUNTERS_PER_RUN_TARGET
+  BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT,
+  AVERAGE_ENCOUNTERS_PER_RUN_TARGET, WIGHT_INCREMENT_ON_SPAWN_MISS
 } from "./data/mystery-encounters/mystery-encounters";
-import {MysteryEncounterFlags} from "#app/data/mystery-encounter-flags";
+import {MysteryEncounterData} from "#app/data/mystery-encounter-data";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
@@ -301,7 +301,7 @@ export default class BattleScene extends SceneBase {
 
   public eventManager: TimedEventManager;
 
-  public mysteryEncounterFlags: MysteryEncounterFlags = new MysteryEncounterFlags(null);
+  public mysteryEncounterData: MysteryEncounterData = new MysteryEncounterData(null);
   public lastMysteryEncounter: MysteryEncounter;
 
   /**
@@ -1118,22 +1118,22 @@ export default class BattleScene extends SceneBase {
 
       // Check for mystery encounter
       // Can only occur in place of a standard wild battle, waves 10-180
-      // let testStartingWeight = 10;
-      // while (testStartingWeight < 30) {
+      // let testStartingWeight = 0;
+      // while (testStartingWeight < 20) {
       //   calculateMEAggregateStats(this, testStartingWeight);
-      //   testStartingWeight += 2;
+      //   testStartingWeight += 1;
       // }
       if (this.gameMode.hasMysteryEncounters && newBattleType === BattleType.WILD && !this.gameMode.isBoss(newWaveIndex) && newWaveIndex < 180 && newWaveIndex > 10) {
         const roll = Utils.randSeedInt(256);
 
-        // Base spawn weight is 3/256, and increases by 1/256 for each missed attempt at spawning an encounter on a valid floor
-        const sessionEncounterRate = !isNullOrUndefined(this.mysteryEncounterFlags?.encounterSpawnChance) ? this.mysteryEncounterFlags.encounterSpawnChance : BASE_MYSTERY_ENCOUNTER_WEIGHT;
+        // Base spawn weight is 1/256, and increases by 5/256 for each missed attempt at spawning an encounter on a valid floor
+        const sessionEncounterRate = !isNullOrUndefined(this.mysteryEncounterData?.encounterSpawnChance) ? this.mysteryEncounterData.encounterSpawnChance : BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT;
 
         // If total number of encounters is lower than expected for the run, slightly favor a new encounter spawn
         // Do the reverse as well
         // Reduces occurrence of runs with very few (<6) and a ton (>10) of encounters
         const expectedEncountersByFloor = AVERAGE_ENCOUNTERS_PER_RUN_TARGET / (180 - 10) * newWaveIndex;
-        const currentRunDiffFromAvg = expectedEncountersByFloor - (this.mysteryEncounterFlags?.encounteredEvents?.length || 0);
+        const currentRunDiffFromAvg = expectedEncountersByFloor - (this.mysteryEncounterData?.encounteredEvents?.length || 0);
         const favoredEncounterRate = sessionEncounterRate + currentRunDiffFromAvg * 5;
 
         const successRate = isNullOrUndefined(Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE) ? favoredEncounterRate : Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE;
@@ -1141,9 +1141,9 @@ export default class BattleScene extends SceneBase {
         if (roll < successRate) {
           newBattleType = BattleType.MYSTERY_ENCOUNTER;
           // Reset base spawn weight
-          this.mysteryEncounterFlags.encounterSpawnChance = BASE_MYSTERY_ENCOUNTER_WEIGHT;
+          this.mysteryEncounterData.encounterSpawnChance = BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT;
         } else {
-          this.mysteryEncounterFlags.encounterSpawnChance = sessionEncounterRate + 1;
+          this.mysteryEncounterData.encounterSpawnChance = sessionEncounterRate + WIGHT_INCREMENT_ON_SPAWN_MISS;
         }
       }
     }
@@ -1188,7 +1188,9 @@ export default class BattleScene extends SceneBase {
     if (newBattleType === BattleType.MYSTERY_ENCOUNTER) {
       // Disable double battle on mystery encounters (it may be re-enabled as part of encounter)
       this.currentBattle.double = false;
-      this.currentBattle.mysteryEncounter = this.getMysteryEncounter(mysteryEncounter);
+      this.executeWithSeedOffset(() => {
+        this.currentBattle.mysteryEncounter = this.getMysteryEncounter(mysteryEncounter);
+      }, this.currentBattle.waveIndex << 4);
     }
 
     //this.pushPhase(new TrainerMessageTestPhase(this, TrainerType.RIVAL, TrainerType.RIVAL_2, TrainerType.RIVAL_3, TrainerType.RIVAL_4, TrainerType.RIVAL_5, TrainerType.RIVAL_6));
@@ -2779,10 +2781,10 @@ export default class BattleScene extends SceneBase {
     }
 
     // Check for queued encounters first
-    if (!encounter && this.mysteryEncounterFlags?.nextEncounterQueue?.length > 0) {
+    if (!encounter && this.mysteryEncounterData?.nextEncounterQueue?.length > 0) {
       let i = 0;
-      while (i < this.mysteryEncounterFlags.nextEncounterQueue.length && !!encounter) {
-        const candidate = this.mysteryEncounterFlags.nextEncounterQueue[i];
+      while (i < this.mysteryEncounterData.nextEncounterQueue.length && !!encounter) {
+        const candidate = this.mysteryEncounterData.nextEncounterQueue[i];
         const forcedChance = candidate[1];
         if (Utils.randSeedInt(100) < forcedChance) {
           encounter = allMysteryEncounters[candidate[0]];
@@ -2802,7 +2804,7 @@ export default class BattleScene extends SceneBase {
     const tierWeights = [61, 40, 21, 6];
 
     // Adjust tier weights by previously encountered events to lower odds of only common/uncommons in run
-    this.mysteryEncounterFlags.encounteredEvents.forEach(val => {
+    this.mysteryEncounterData.encounteredEvents.forEach(val => {
       const tier = val[1];
       if (tier === MysteryEncounterTier.COMMON) {
         tierWeights[0] = tierWeights[0] - 6;
@@ -2824,7 +2826,7 @@ export default class BattleScene extends SceneBase {
 
     let availableEncounters = [];
     // New encounter will never be the same as the most recent encounter
-    const previousEncounter = this.mysteryEncounterFlags.encounteredEvents?.length > 0 ? this.mysteryEncounterFlags.encounteredEvents[this.mysteryEncounterFlags.encounteredEvents.length - 1][0] : null;
+    const previousEncounter = this.mysteryEncounterData.encounteredEvents?.length > 0 ? this.mysteryEncounterData.encounteredEvents[this.mysteryEncounterData.encounteredEvents.length - 1][0] : null;
     const biomeMysteryEncounters = mysteryEncountersByBiome.get(this.arena.biomeType);
     // If no valid encounters exist at tier, checks next tier down, continuing until there are some encounters available
     while (availableEncounters.length === 0 && tier >= 0) {
