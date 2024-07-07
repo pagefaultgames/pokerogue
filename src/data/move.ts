@@ -657,7 +657,7 @@ export default class Move implements Localizable {
   }
 
   /**
-   * Calculates the accuracy of a move taking based on various conditions and attributes..
+   * Calculates the accuracy of a move based on various conditions and attributes..
    *
    * @param user {@linkcode Pokemon} The Pokémon using the move.
    * @param target {@linkcode Pokemon} The Pokémon being targeted by the move.
