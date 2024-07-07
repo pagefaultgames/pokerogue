@@ -1149,6 +1149,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   getAttackMoveEffectiveness(source: Pokemon, pokemonMove: PokemonMove, ignoreAbility: boolean = false): TypeDamageMultiplier {
     const move = pokemonMove.getMove();
     const typeless = move.hasAttr(TypelessAttr);
+    // Apply abilities that change the move type
+    const typeChangeMovePowerMultiplier = new Utils.NumberHolder(1);
+    applyMoveAttrs(VariableMoveTypeAttr, source, this, move);
+    applyPreAttackAbAttrs(MoveTypeChangeAttr, source, this, move, typeChangeMovePowerMultiplier);
+
     const typeMultiplier = new Utils.NumberHolder(this.getAttackTypeEffectiveness(move.type, source));
     const cancelled = new Utils.BooleanHolder(false);
     applyMoveAttrs(VariableMoveTypeMultiplierAttr, source, this, move, typeMultiplier);

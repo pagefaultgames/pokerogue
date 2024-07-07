@@ -44,7 +44,6 @@ describe("Test Pokemon methods", () => {
       const playerPokemon = game.gameWrapper.scene.getPlayerPokemon();
       const tackle = new PokemonMove(Moves.TACKLE);
       const enemyPokemon = game.gameWrapper.scene.getEnemyPokemon();
-      console.log(playerPokemon.getAbility());
       const typeEffectiveness = enemyPokemon.getAttackMoveEffectiveness(playerPokemon, tackle, false);
       expect(typeEffectiveness.valueOf()).toEqual(2);
     }, 20000);
