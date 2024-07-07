@@ -124,9 +124,11 @@ export interface SessionSaveData {
   waveIndex: integer;
   battleType: BattleType;
   trainer: TrainerData;
+  mysteryEncounter: MysteryEncounter;
   gameVersion: string;
   timestamp: integer;
   challenges: ChallengeData[];
+  mysteryEncounterFlags: MysteryEncounterFlags;
 }
 
 export interface RunHistoryData {
