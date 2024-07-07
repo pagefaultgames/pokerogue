@@ -6,11 +6,10 @@ import {
   EncounterPhase,
   FaintPhase,
   LoginPhase,
-  MoveEndPhase,
   NewBattlePhase,
   SelectStarterPhase,
   SelectTargetPhase,
-  TitlePhase, TurnInitPhase,
+  TitlePhase, TurnEndPhase, TurnInitPhase,
   TurnStartPhase,
 } from "#app/phases";
 import BattleScene from "#app/battle-scene.js";
@@ -180,7 +179,7 @@ export default class GameManager {
       if (move.isMultiTarget()) {
         handler.processInput(Button.ACTION);
       }
-    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(MoveEndPhase));
+    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnEndPhase));
   }
 
   /**
