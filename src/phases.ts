@@ -140,7 +140,7 @@ export function parseSlotData(slotId: integer): SessionSaveData {
     return v;
   }) as SessionSaveData;
   Save.slot = slotId
-  Save.description = slotId + " - "
+  Save.description = (slotId + 1) + " - "
   var challengeParts: ChallengeData[] = new Array(5)
   var nameParts: string[] = new Array(5)
   if (Save.challenges != undefined) {
@@ -372,7 +372,24 @@ export class TitlePhase extends Phase {
     }
     saves.sort((a, b): integer => {return b[2] - a[2]})
     if (log) console.log(saves)
+    if (saves == undefined) return undefined;
+    if (saves[0] == undefined) return undefined;
     return saves[0][1]
+  }
+  getSaves(log?: boolean, dailyOnly?: boolean): SessionSaveData[] {
+    var saves: Array<Array<any>> = [];
+    for (var i = 0; i < 5; i++) {
+      var s = parseSlotData(i);
+      if (s != undefined) {
+        if (!dailyOnly || s.gameMode == GameModes.DAILY) {
+          saves.push([i, s, s.timestamp]);
+        }
+      }
+    }
+    saves.sort((a, b): integer => {return b[2] - a[2]})
+    if (log) console.log(saves)
+    if (saves == undefined) return undefined;
+    return saves.map(f => f[1]);
   }
 
   showOptions(): void {
@@ -388,25 +405,27 @@ export class TitlePhase extends Phase {
         }
       });
     }
-    // Replaces 'Continue' with the last Daily Run that the player completed a floor on
+    // Replaces 'Continue' with all Daily Run saves, sorted by when they last saved
     // If there are no daily runs, it instead shows the most recently saved run
     // If this fails too, there are no saves, and the option does not appear
-    var lastsave = this.getLastSave(false, true);
-    if (lastsave != undefined) {
-      options.push({
-        label: (this.getLastSave().description ? this.getLastSave().description : "[???]"),
-        handler: () => {
-          this.loadSaveSlot(this.getLastSave().slot);
-          return true;
-        }
+    var lastsaves = this.getSaves(false, true);
+    if (lastsaves != undefined) {
+      lastsaves.forEach(lastsave => {
+        options.push({
+          label: (lastsave.description ? lastsave.description : "[???]"),
+          handler: () => {
+            this.loadSaveSlot(lastsave.slot);
+            return true;
+          }
+        })
       })
     } else {
-      lastsave = this.getLastSave(false);
+      var lastsave = this.getLastSave(false);
       if (lastsave != undefined) {
         options.push({
-          label: (this.getLastSave().description ? this.getLastSave().description : "[???]"),
+          label: (lastsave.description ? lastsave.description : "[???]"),
           handler: () => {
-            this.loadSaveSlot(this.getLastSave().slot);
+            this.loadSaveSlot(lastsave.slot);
             return true;
           }
         })
