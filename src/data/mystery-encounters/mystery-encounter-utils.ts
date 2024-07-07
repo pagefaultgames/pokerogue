@@ -27,10 +27,10 @@ import {BattlerTagType} from "#enums/battler-tag-type";
 import PokemonData from "#app/system/pokemon-data";
 import {Biome} from "#enums/biome";
 import {biomeLinks} from "#app/data/biomes";
-import {EncounterSceneRequirement} from "#app/data/mystery-encounter-requirements";
 import {Mode} from "#app/ui/ui";
 import {PartyOption, PartyUiMode} from "#app/ui/party-ui-handler";
 import {OptionSelectConfig, OptionSelectItem} from "#app/ui/abstact-option-select-ui-handler";
+import {WIGHT_INCREMENT_ON_SPAWN_MISS} from "#app/data/mystery-encounters/mystery-encounters";
 
 /**
  *
@@ -62,15 +62,15 @@ export function getRandomPlayerPokemon(scene: BattleScene, isAllowedInBattle: bo
   return chosenPokemon;
 }
 
-export function getTokensFromScene(scene: BattleScene, reqs: EncounterSceneRequirement[]): Array<[RegExp, String]> {
-  const arr = [];
-  if (scene) {
-    for (const req of reqs) {
-      req.getDialogueToken(scene);
-    }
-  }
-  return arr;
-}
+// export function getTokensFromScene(scene: BattleScene, reqs: EncounterSceneRequirement[]): Array<[RegExp, String]> {
+//   const arr = [];
+//   if (scene) {
+//     for (const req of reqs) {
+//       req.getDialogueToken(scene);
+//     }
+//   }
+//   return arr;
+// }
 
 /**
  * Ties are broken by whatever mon is closer to the front of the party
@@ -112,6 +112,48 @@ export function getLowestLevelPlayerPokemon(scene: BattleScene, unfainted: boole
   });
 
   return pokemon;
+}
+
+/**
+ *
+ * NOTE: This returns ANY random species, including those locked behind eggs, etc.
+ * @param starterTiers
+ * @param excludedSpecies
+ * @param types
+ * @returns
+ */
+export function getRandomSpeciesByStarterTier(starterTiers: number | [number, number], excludedSpecies?: Species[], types?: Type[]): Species {
+  let min = starterTiers instanceof Array ? starterTiers[0] : starterTiers;
+  let max = starterTiers instanceof Array ? starterTiers[1] : starterTiers;
+
+  let filteredSpecies: [PokemonSpecies, number][] = Object.keys(speciesStarters)
+    .map(s => [parseInt(s) as Species, speciesStarters[s] as number])
+    .filter(s => getPokemonSpecies(s[0]) && (!excludedSpecies || !excludedSpecies.includes(s[0])))
+    .map(s => [getPokemonSpecies(s[0]), s[1]]);
+
+  if (!isNullOrUndefined(types) && types.length > 0) {
+    filteredSpecies = filteredSpecies.filter(s => types.includes(s[0].type1) || types.includes(s[0].type2));
+  }
+
+  // If no filtered mons exist at specified starter tiers, will expand starter search range until there are
+  // Starts by decrementing starter tier min until it is 0, then increments tier max up to 10
+  let tryFilterStarterTiers: [PokemonSpecies, number][] = filteredSpecies.filter(s => (s[1] >= min && s[1] <= max));
+  while (tryFilterStarterTiers.length === 0 && (min !== 0 && max !== 10)) {
+    if (min > 0) {
+      min--;
+    } else {
+      max++;
+    }
+
+    tryFilterStarterTiers = filteredSpecies.filter(s => s[1] >= min && s[1] <= max);
+  }
+
+  if (tryFilterStarterTiers.length > 0) {
+    const index = Utils.randSeedInt(tryFilterStarterTiers.length);
+    return Phaser.Math.RND.shuffle(tryFilterStarterTiers)[index][0].speciesId;
+  }
+
+  return Species.BULBASAUR;
 }
 
 export function koPlayerPokemon(pokemon: PlayerPokemon) {
@@ -171,48 +213,6 @@ export function showEncounterDialogue(scene: BattleScene, textContentKey: Templa
   const text: string = getTextWithEncounterDialogueTokens(scene, textContentKey);
   const speaker: string = getTextWithEncounterDialogueTokens(scene, speakerContentKey);
   scene.ui.showDialogue(text, speaker, null, callback, 0, 0);
-}
-
-/**
- *
- * NOTE: This returns ANY random species, including those locked behind eggs, etc.
- * @param starterTiers
- * @param excludedSpecies
- * @param types
- * @returns
- */
-export function getRandomSpeciesByStarterTier(starterTiers: number | [number, number], excludedSpecies?: Species[], types?: Type[]): Species {
-  let min = starterTiers instanceof Array ? starterTiers[0] : starterTiers;
-  let max = starterTiers instanceof Array ? starterTiers[1] : starterTiers;
-
-  let filteredSpecies: [PokemonSpecies, number][] = Object.keys(speciesStarters)
-    .map(s => [parseInt(s) as Species, speciesStarters[s] as number])
-    .filter(s => getPokemonSpecies(s[0]) && !excludedSpecies.includes(s[0]))
-    .map(s => [getPokemonSpecies(s[0]), s[1]]);
-
-  if (!isNullOrUndefined(types) && types.length > 0) {
-    filteredSpecies = filteredSpecies.filter(s => types.includes(s[0].type1) || types.includes(s[0].type2));
-  }
-
-  // If no filtered mons exist at specified starter tiers, will expand starter search range until there are
-  // Starts by decrementing starter tier min until it is 0, then increments tier max up to 10
-  let tryFilterStarterTiers: [PokemonSpecies, number][] = filteredSpecies.filter(s => (s[1] >= min && s[1] <= max));
-  while (tryFilterStarterTiers.length === 0 && (min !== 0 && max !== 10)) {
-    if (min > 0) {
-      min--;
-    } else {
-      max++;
-    }
-
-    tryFilterStarterTiers = filteredSpecies.filter(s => s[1] >= min && s[1] <= max);
-  }
-
-  if (tryFilterStarterTiers.length > 0) {
-    const index = Utils.randSeedInt(tryFilterStarterTiers.length);
-    return Phaser.Math.RND.shuffle(tryFilterStarterTiers)[index][0].speciesId;
-  }
-
-  return Species.BULBASAUR;
 }
 
 export class EnemyPokemonConfig {
@@ -594,10 +594,10 @@ export function handleMysteryEncounterVictory(scene: BattleScene, addHealPhase: 
 export function calculateMEAggregateStats(scene: BattleScene, baseSpawnWeight: number) {
   const numRuns = 1000;
   let run = 0;
-  const targetEncountersPerRun = 15;
+  const targetEncountersPerRun = 15; // AVERAGE_ENCOUNTERS_PER_RUN_TARGET
 
   const calculateNumEncounters = (): number[] => {
-    let encounterRate = baseSpawnWeight;
+    let encounterRate = baseSpawnWeight; // BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT
     const numEncounters = [0, 0, 0, 0];
     let currentBiome = Biome.TOWN;
     let currentArena = scene.newArena(currentBiome);
@@ -669,7 +669,7 @@ export function calculateMEAggregateStats(scene: BattleScene, baseSpawnWeight: n
 
         tierValue > commonThreshold ? ++numEncounters[0] : tierValue > uncommonThreshold ? ++numEncounters[1] : tierValue > rareThreshold ? ++numEncounters[2] : ++numEncounters[3];
       } else {
-        encounterRate++;
+        encounterRate += WIGHT_INCREMENT_ON_SPAWN_MISS;
       }
     }
 

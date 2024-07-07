@@ -1,14 +1,14 @@
 import {MysteryEncounterTier} from "#app/data/mystery-encounter";
 import {MysteryEncounterType} from "#enums/mystery-encounter-type";
-import {BASE_MYSTERY_ENCOUNTER_WEIGHT} from "#app/data/mystery-encounters/mystery-encounters";
+import {BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT} from "#app/data/mystery-encounters/mystery-encounters";
 import {isNullOrUndefined} from "../utils";
 
-export class MysteryEncounterFlags {
+export class MysteryEncounterData {
   encounteredEvents: [MysteryEncounterType, MysteryEncounterTier][] = [];
-  encounterSpawnChance: number = BASE_MYSTERY_ENCOUNTER_WEIGHT;
+  encounterSpawnChance: number = BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT;
   nextEncounterQueue: [MysteryEncounterType, integer][] = [];
 
-  constructor(flags: MysteryEncounterFlags) {
+  constructor(flags: MysteryEncounterData) {
     if (!isNullOrUndefined(flags)) {
       Object.assign(this, flags);
     }
