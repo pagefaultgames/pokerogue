@@ -34,8 +34,6 @@ describe("Mystery Encounter Utils", () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
     initSceneWithoutEncounterPhase(game.scene, [Species.ARCEUS, Species.MANAPHY]);
-    // vi.spyOn(overrides, "MYSTERY_ENCOUNTER_RATE_OVERRIDE", "get").mockReturnValue(256);
-    // vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(11);
   });
 
   describe("getRandomPlayerPokemon", () => {
