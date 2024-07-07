@@ -3327,27 +3327,10 @@ export class MoveEffectPhase extends PokemonPhase {
       return false;
     }
 
-    const moveAccuracy = new Utils.NumberHolder(this.move.getMove().accuracy);
+    const moveAccuracy = this.move.getMove().calculateMoveAccuracy(user, target);
 
-    applyMoveAttrs(VariableAccuracyAttr, user, target, this.move.getMove(), moveAccuracy);
-    applyPreDefendAbAttrs(WonderSkinAbAttr, target, user, this.move.getMove(), { value: false }, moveAccuracy);
-
-    if (moveAccuracy.value === -1) {
+    if (moveAccuracy === -1) {
       return true;
-    }
-
-    const isOhko = this.move.getMove().hasAttr(OneHitKOAccuracyAttr);
-
-    if (!isOhko) {
-      user.scene.applyModifiers(PokemonMoveAccuracyBoosterModifier, user.isPlayer(), user, moveAccuracy);
-    }
-
-    if (this.scene.arena.weather?.weatherType === WeatherType.FOG) {
-      moveAccuracy.value = Math.floor(moveAccuracy.value * 0.9);
-    }
-
-    if (!isOhko && this.scene.arena.getTag(ArenaTagType.GRAVITY)) {
-      moveAccuracy.value = Math.floor(moveAccuracy.value * 1.67);
     }
 
     const userAccuracyLevel = new Utils.IntegerHolder(user.summonData.battleStats[BattleStat.ACC]);
@@ -3374,7 +3357,7 @@ export class MoveEffectPhase extends PokemonPhase {
 
     accuracyMultiplier.value /= evasionMultiplier.value;
 
-    return rand <= moveAccuracy.value * accuracyMultiplier.value;
+    return rand <= moveAccuracy * accuracyMultiplier.value;
   }
 
   getUserPokemon(): Pokemon {
