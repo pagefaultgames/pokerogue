@@ -31,6 +31,7 @@ export default class MockSprite {
     };
     this.anims = {
       pause: () => null,
+      stop: () => null,
     };
   }
 

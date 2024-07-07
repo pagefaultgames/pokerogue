@@ -11,10 +11,13 @@ import i18next from "i18next";
 import {Button} from "#enums/buttons";
 import { GameDataType } from "#enums/game-data-type";
 import BgmBar from "#app/ui/bgm-bar";
+import { Species } from "#app/enums/species.js";
+import { DexAttr, DexEntry } from "#app/system/game-data.js";
 
 enum MenuOptions {
   GAME_SETTINGS,
   ACHIEVEMENTS,
+  RUN_HISTORY,
   STATS,
   VOUCHERS,
   EGG_LIST,
@@ -198,6 +201,22 @@ export default class MenuUiHandler extends MessageUiHandler {
         keepOpen: true
       },
       {
+        label: i18next.t("menuUiHandler:importSettings"),
+        handler: () => {
+          this.scene.gameData.importData(GameDataType.SETTINGS);
+          return true;
+        },
+        keepOpen: true
+      },
+      {
+        label: i18next.t("menuUiHandler:exportSettings"),
+        handler: () => {
+          this.scene.gameData.tryExportData(GameDataType.SETTINGS);
+          return true;
+        },
+        keepOpen: true
+      },
+      {
         label: i18next.t("menuUiHandler:cancel"),
         handler: () => {
           this.scene.ui.revertMode();
@@ -205,6 +224,22 @@ export default class MenuUiHandler extends MessageUiHandler {
         }
       }
     );
+
+    manageDataOptions.push(
+      {
+        label: "Unlock All",
+        handler: () => {
+          for (const species of Object.keys(Species)) {
+            (this.scene.gameData.dexData[species] as DexEntry).seenAttr = DexAttr.DEFAULT_FORM | DexAttr.DEFAULT_VARIANT | DexAttr.FEMALE | DexAttr.MALE | DexAttr.NON_SHINY | DexAttr.SHINY | DexAttr.VARIANT_2 | DexAttr.VARIANT_3;
+            (this.scene.gameData.dexData[species] as DexEntry).caughtAttr = DexAttr.DEFAULT_FORM | DexAttr.DEFAULT_VARIANT | DexAttr.FEMALE | DexAttr.MALE | DexAttr.NON_SHINY | DexAttr.SHINY | DexAttr.VARIANT_2 | DexAttr.VARIANT_3;
+            (this.scene.gameData.dexData[species] as DexEntry).caughtCount = 1;
+            (this.scene.gameData.dexData[species] as DexEntry).seenCount = 1;
+            (this.scene.gameData.dexData[species] as DexEntry).ivs = [31, 31, 31, 31, 31, 31];
+          }
+          this.scene.ui.revertMode();
+          return true;
+        }
+      });
 
     this.manageDataConfig = {
       xOffset: 98,
@@ -306,6 +341,10 @@ export default class MenuUiHandler extends MessageUiHandler {
         break;
       case MenuOptions.ACHIEVEMENTS:
         ui.setOverlayMode(Mode.ACHIEVEMENTS);
+        success = true;
+        break;
+      case MenuOptions.RUN_HISTORY:
+        ui.setOverlayMode(Mode.RUN_HISTORY);
         success = true;
         break;
       case MenuOptions.STATS:

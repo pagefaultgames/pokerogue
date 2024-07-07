@@ -8,7 +8,8 @@ import {
   LoginPhase,
   NewBattlePhase,
   SelectStarterPhase,
-  TitlePhase, TurnInitPhase,
+  SelectTargetPhase,
+  TitlePhase, TurnEndPhase, TurnInitPhase,
   TurnStartPhase,
 } from "#app/phases";
 import BattleScene from "#app/battle-scene.js";
@@ -33,6 +34,7 @@ import { Species } from "#enums/species";
 import { Button } from "#enums/buttons";
 import { BattlerIndex } from "#app/battle.js";
 import TargetSelectUiHandler from "#app/ui/target-select-ui-handler.js";
+import BattleMessageUiHandler from "#app/ui/battle-message-ui-handler";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -138,6 +140,30 @@ export default class GameManager {
   }
 
   /**
+   * Runs the game to a mystery encounter phase.
+   * @param species - Optional array of species for party.
+   * @returns A promise that resolves when the EncounterPhase ends.
+   */
+  async runToMysteryEncounter(species?: Species[]) {
+    await this.runToTitle();
+
+    this.onNextPrompt("TitlePhase", Mode.TITLE, () => {
+      this.scene.gameMode = getGameMode(GameModes.CLASSIC);
+      const starters = generateStarter(this.scene, species);
+      const selectStarterPhase = new SelectStarterPhase(this.scene);
+      this.scene.pushPhase(new EncounterPhase(this.scene, false));
+      selectStarterPhase.initBattle(starters);
+    });
+
+    this.onNextPrompt("EncounterPhase", Mode.MESSAGE, () => {
+      const handler = this.scene.ui.getHandler() as BattleMessageUiHandler;
+      handler.processInput(Button.ACTION);
+    }, null, true);
+
+    await this.phaseInterceptor.run(EncounterPhase);
+  }
+
+  /**
    * Transitions to the start of a battle.
    * @param species - Optional array of species to start the battle with.
    * @returns A promise that resolves when the battle is started.
@@ -170,6 +196,15 @@ export default class GameManager {
     this.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
       (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
     });
+
+    // Immediately confirm target selection if move is multi-target
+    this.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
+      const handler = this.scene.ui.getHandler() as TargetSelectUiHandler;
+      const move = (this.scene.getCurrentPhase() as SelectTargetPhase).getPokemon().getMoveset()[movePosition].getMove();
+      if (move.isMultiTarget()) {
+        handler.processInput(Button.ACTION);
+      }
+    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnEndPhase));
   }
 
   /**

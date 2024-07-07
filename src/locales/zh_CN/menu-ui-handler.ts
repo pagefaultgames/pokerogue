@@ -18,6 +18,8 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "exportSlotSelect": "选择要导出的存档位。",
   "importData": "导入数据",
   "exportData": "导出数据",
+  "importSettings": "导入设置",
+  "exportSettings": "导出设置",
   "cancel": "取消",
   "losingProgressionWarning": "你将失去自战斗开始以来的所有进度。\n是否继续？",
   "noEggs": "当前没有任何蛋\n正在孵化中！"

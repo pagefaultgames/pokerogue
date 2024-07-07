@@ -39,11 +39,12 @@ import { statusEffect } from "./status-effect";
 import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
-import { weather } from "./weather";
+import { terrain, weather } from "./weather";
 import { partyUiHandler } from "./party-ui-handler";
 import { settings } from "./settings.js";
 import { common } from "./common.js";
 import { modifierSelectUiHandler } from "./modifier-select-ui-handler";
+import { runHistory } from "./run-history-ui-handler";
 
 export const deConfig = {
   ability: ability,
@@ -85,6 +86,7 @@ export const deConfig = {
   splashMessages: splashMessages,
   starterSelectUiHandler: starterSelectUiHandler,
   statusEffect: statusEffect,
+  terrain: terrain,
   titles: titles,
   trainerClasses: trainerClasses,
   trainerNames: trainerNames,
@@ -92,5 +94,6 @@ export const deConfig = {
   voucher: voucher,
   weather: weather,
   partyUiHandler: partyUiHandler,
-  modifierSelectUiHandler: modifierSelectUiHandler
+  modifierSelectUiHandler: modifierSelectUiHandler,
+  runHistory: runHistory,
 };

@@ -3,6 +3,7 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
 export const menuUiHandler: SimpleTranslationEntries = {
   "GAME_SETTINGS": "Game Settings",
   "ACHIEVEMENTS": "Achievements",
+  "RUN_HISTORY": "Run History",
   "STATS": "Stats",
   "VOUCHERS": "Vouchers",
   "EGG_LIST": "Egg List",
@@ -18,6 +19,8 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "exportSlotSelect": "Select a slot to export from.",
   "importData": "Import Data",
   "exportData": "Export Data",
+  "importSettings": "Import Settings",
+  "exportSettings": "Export Settings",
   "cancel": "Cancel",
   "losingProgressionWarning": "You will lose any progress since the beginning of the battle. Proceed?",
   "noEggs": "You are not hatching\nany eggs at the moment!"
