@@ -4500,6 +4500,15 @@ export class GameOverPhase extends BattlePhase {
             this.scene.gameData.gameStats.dailyRunSessionsWon++;
           }
         }
+
+        this.scene.gameData.getSession(this.scene.sessionSlotId).then(sessionData => {
+          if (sessionData) {
+            this.scene.gameData.saveRunHistory(this.scene, sessionData, this.victory);
+          }
+        }).catch(err => {
+          console.error(err);
+        });
+
         const fadeDuration = this.victory ? 10000 : 5000;
         this.scene.fadeOutBgm(fadeDuration, true);
         const activeBattlers = this.scene.getField().filter(p => p?.isActive(true));
