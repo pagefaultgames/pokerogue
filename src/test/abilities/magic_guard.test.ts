@@ -3,18 +3,14 @@ import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
 import * as overrides from "#app/overrides";
 import { Species } from "#enums/species";
-import { CommandPhase, TurnEndPhase, WeatherEffectPhase, PostTurnStatusEffectPhase } from "#app/phases";
+import { TurnEndPhase } from "#app/phases";
 import { Moves } from "#enums/moves";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
-import Move, { allMoves } from "#app/data/move.js";
-import { BlockNonDirectDamageAbAttr } from "#app/data/ability.js";
 import { WeatherType } from "#app/data/weather.js";
-import { NumberHolder } from "#app/utils.js";
-import Pokemon from "#app/field/pokemon.js";
-import {Mode} from "#app/ui/ui";
-import {Command} from "#app/ui/command-ui-handler";
 import { StatusEffect } from "#app/data/status-effect";
+
+const TIMEOUT = 20 * 1000; // 20 sec timeout
 
 describe("Abilities - Magic Guard", () => {
   let phaserGame: Phaser.Game;
@@ -33,42 +29,89 @@ describe("Abilities - Magic Guard", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+
+    /** Player Pokemon overrides */
     vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.MAGIC_GUARD);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
-  });
-
-  it("Magic Guard prevents damage caused by weather", async () => {
-    vi.spyOn(overrides, "WEATHER_OVERRIDE", "get").mockReturnValue(WeatherType.SANDSTORM);
     vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH]);
-    await game.startBattle([Species.MAGIKARP]);
-    const hpPokemon = game.scene.getPlayerPokemon().hp;
-    //Attempting to applying weather damage now...
-    new WeatherEffectPhase(game.scene).start();
-    const hpLost = (hpPokemon === game.scene.getPlayerPokemon().hp);
-    expect(hpLost).toBe(true);
+    vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+
+    /** Enemy Pokemon overrides */
+    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SNORLAX);
+    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INSOMNIA);
+    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
   });
 
-  it("Magic Guard prevents damage caused by poison but Pokemon still can be poisoned and take damage upon losing Magic Guard", async () => {
-    //Toxic keeps track of the turn counters -> important that Magic Guard keeps track of post-Toxic turns 
-    vi.spyOn(overrides, "STATUS_OVERRIDE", "get").mockReturnValue(StatusEffect.POISON);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SKILL_SWAP, Moves.SPLASH]);
-    await game.startBattle([Species.MAGIKARP]);
-    const pokemonMG = game.scene.getPlayerPokemon();
-    const startingHP = pokemonMG.hp;
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
-    await game.phaseInterceptor.to(TurnEndPhase);
-  	const statusEffectPhase = new PostTurnStatusEffectPhase(game.scene, 0);
-    statusEffectPhase.start();
-    const lostHPWithMG = (pokemonMG.hp === startingHP);
-    //await game.toNextTurn();
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SKILL_SWAP));
-    await game.phaseInterceptor.to(TurnEndPhase);
-    statusEffectPhase.start();
-    const lostHPWithNoMG = (pokemonMG.hp < startingHP);
+  it(
+    "ability should prevent damage caused by weather",
+    async () => {
+      vi.spyOn(overrides, "WEATHER_OVERRIDE", "get").mockReturnValue(WeatherType.SANDSTORM);
 
-    expect(lostHPWithMG).toBe(true);
-    expect(lostHPWithNoMG).toBe(true);
-  });
+      await game.startBattle([Species.MAGIKARP]);
+
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).toBeDefined();
+
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).toBeDefined();
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+
+      await game.phaseInterceptor.to(TurnEndPhase);
+
+      /**
+       * Expect:
+       * - The player Pokemon (with Magic Guard) has not taken damage from weather
+       * - The enemy Pokemon (without Magic Guard) has taken damage from weather
+       */
+      expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
+      expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+    }, TIMEOUT
+  );
+
+  it(
+    "ability should prevent damage caused by status effects",
+    async () => {
+      //Toxic keeps track of the turn counters -> important that Magic Guard keeps track of post-Toxic turns
+      vi.spyOn(overrides, "STATUS_OVERRIDE", "get").mockReturnValue(StatusEffect.POISON);
+
+      await game.startBattle([Species.MAGIKARP]);
+
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).toBeDefined();
+
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).toBeDefined();
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+
+      await game.phaseInterceptor.to(TurnEndPhase);
+
+      expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
+    }, TIMEOUT
+  );
+
+  it(
+    "ability effect should not persist when the ability is replaced",
+    async () => {
+      vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.WORRY_SEED,Moves.WORRY_SEED,Moves.WORRY_SEED,Moves.WORRY_SEED]);
+      vi.spyOn(overrides, "STATUS_OVERRIDE", "get").mockReturnValue(StatusEffect.POISON);
+
+      await game.startBattle([Species.MAGIKARP]);
+
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).toBeDefined();
+
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).toBeDefined();
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+
+      await game.phaseInterceptor.to(TurnEndPhase);
+
+      expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
+    }
+  );
 
 /*
   it("Magic Guard prevents damage caused by burn but Pokemon still can be burned and take damage upon losing Magic Guard", async () => {
