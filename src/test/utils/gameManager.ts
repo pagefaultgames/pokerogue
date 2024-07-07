@@ -6,8 +6,10 @@ import {
   EncounterPhase,
   FaintPhase,
   LoginPhase,
+  MoveEndPhase,
   NewBattlePhase,
   SelectStarterPhase,
+  SelectTargetPhase,
   TitlePhase, TurnInitPhase,
   TurnStartPhase,
 } from "#app/phases";
@@ -170,6 +172,15 @@ export default class GameManager {
     this.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
       (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
     });
+
+    // Immediately confirm target selection if move is multi-target
+    this.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
+      const handler = this.scene.ui.getHandler() as TargetSelectUiHandler;
+      const move = (this.scene.getCurrentPhase() as SelectTargetPhase).getPokemon().getMoveset()[movePosition].getMove();
+      if (move.isMultiTarget()) {
+        handler.processInput(Button.ACTION);
+      }
+    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(MoveEndPhase));
   }
 
   /**

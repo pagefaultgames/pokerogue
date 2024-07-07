@@ -124,9 +124,8 @@ export default class TargetSelectUiHandler extends UiHandler {
         }
       }
     });
-
     if (this.targetBattleInfoMoveTween.length >= 1) {
-      this.targetBattleInfoMoveTween.forEach(tween => tween.stop());
+      this.targetBattleInfoMoveTween.filter(t => t !== undefined).forEach(tween => tween.stop());
       for (const pokemon of multipleTargets) {
         pokemon.getBattleInfo().resetY();
       }
@@ -158,7 +157,7 @@ export default class TargetSelectUiHandler extends UiHandler {
     }
 
     if (this.targetBattleInfoMoveTween.length >= 1) {
-      this.targetBattleInfoMoveTween.forEach(tween => tween.stop());
+      this.targetBattleInfoMoveTween.filter(t => t !== undefined).forEach(tween => tween.stop());
       this.targetBattleInfoMoveTween = [];
     }
     for (const pokemon of this.targetsHighlighted) {
