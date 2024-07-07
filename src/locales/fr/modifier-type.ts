@@ -4,7 +4,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
   ModifierType: {
     "AddPokeballModifierType": {
       name: "{{pokeballName}} x{{modifierCount}}",
-      description: "Recevez {{modifierCount}} {{pokeballName}}·s (Inventaire : {{pokeballAmount}})\nTaux de capture : {{catchRate}}.",
+      description: "Recevez {{modifierCount}} {{pokeballName}}·s. (Inventaire : {{pokeballAmount}})\nTaux de capture : {{catchRate}}",
     },
     "AddVoucherModifierType": {
       name: "{{voucherTypeName}} x{{modifierCount}}",
@@ -101,7 +101,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     },
     "TmModifierTypeWithInfo": {
       name: "CT{{moveId}} - {{moveName}}",
-      description: "Apprend la capacité {{moveName}} à un Pokémon\n(Maintenez C ou Maj pour plus d’infos).",
+      description: "Apprend la capacité {{moveName}} à un Pokémon.\n(Maintenez C ou Maj pour plus d’infos)",
     },
     "EvolutionItemModifierType": {
       description: "Permet à certains Pokémon d’évoluer.",
@@ -409,6 +409,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "BURN_DRIVE": "Module Pyro",
     "CHILL_DRIVE": "Module Cryo",
     "DOUSE_DRIVE": "Module Aqua",
+    "ULTRANECROZIUM_Z": "Ultranecrozium Z",
 
     "FIST_PLATE": "Plaque Poing",
     "SKY_PLATE": "Plaque Ciel",

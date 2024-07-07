@@ -300,9 +300,9 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
       this.pokemonShinyIcon.setTint(getVariantTint(baseVariant));
       if (this.pokemonShinyIcon.visible) {
         const shinyDescriptor = doubleShiny || baseVariant ?
-          `${baseVariant === 2 ? i18next.t("pokemonInfoContainer:epic") : baseVariant === 1 ? i18next.t("pokemonInfoContainer:rare") : i18next.t("pokemonInfoContainer:common")}${doubleShiny ? `/${pokemon.fusionVariant === 2 ? i18next.t("pokemonInfoContainer:epic") : pokemon.fusionVariant === 1 ? i18next.t("pokemonInfoContainer:rare") : i18next.t("pokemonInfoContainer:common")}` : ""}`
+          `${baseVariant === 2 ? i18next.t("common:epicShiny") : baseVariant === 1 ? i18next.t("common:rareShiny") : i18next.t("common:commonShiny")}${doubleShiny ? `/${pokemon.fusionVariant === 2 ? i18next.t("common:epicShiny") : pokemon.fusionVariant === 1 ? i18next.t("common:rareShiny") : i18next.t("common:commonShiny")}` : ""}`
           : "";
-        this.pokemonShinyIcon.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, `Shiny${shinyDescriptor ? ` (${shinyDescriptor})` : ""}`, true));
+        this.pokemonShinyIcon.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, `${i18next.t("common:shinyOnHover")}${shinyDescriptor ? ` (${shinyDescriptor})` : ""}`, true));
         this.pokemonShinyIcon.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
 
         const newShiny = BigInt(Math.pow(2, (pokemon.shiny ? 1 : 0)));
@@ -364,13 +364,14 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
     });
   }
 
-  makeRoomForConfirmUi(speedMultiplier: number = 1): Promise<void> {
+  makeRoomForConfirmUi(speedMultiplier: number = 1, fromCatch: boolean = false): Promise<void> {
+    const xPosition = fromCatch ? this.initialX - this.infoWindowWidth - 65 : this.initialX - this.infoWindowWidth - ConfirmUiHandler.windowWidth;
     return new Promise<void>(resolve => {
       this.scene.tweens.add({
         targets: this,
         duration: Utils.fixedInt(Math.floor(150 / speedMultiplier)),
         ease: "Cubic.easeInOut",
-        x: this.initialX - this.infoWindowWidth - ConfirmUiHandler.windowWidth,
+        x: xPosition,
         onComplete: () => {
           resolve();
         }

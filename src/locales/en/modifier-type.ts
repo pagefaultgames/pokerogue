@@ -152,6 +152,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "SACRED_ASH": { name: "Sacred Ash" },
 
     "REVIVER_SEED": { name: "Reviver Seed", description: "Revives the holder for 1/2 HP upon fainting." },
+    "WHITE_HERB": { name: "White Herb", description: "An item to be held by a Pokémon. It will restore any lowered stat in battle." },
 
     "ETHER": { name: "Ether" },
     "MAX_ETHER": { name: "Max Ether" },
@@ -409,6 +410,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "BURN_DRIVE": "Burn Drive",
     "CHILL_DRIVE": "Chill Drive",
     "DOUSE_DRIVE": "Douse Drive",
+    "ULTRANECROZIUM_Z": "Ultranecrozium Z",
 
     "FIST_PLATE": "Fist Plate",
     "SKY_PLATE": "Sky Plate",

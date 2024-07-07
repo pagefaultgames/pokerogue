@@ -22,5 +22,5 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "exportSettings": "Einstellungen exportieren",
   "cancel": "Abbrechen",
   "losingProgressionWarning": "Du wirst jeglichen Fortschritt seit Anfang dieses Kampfes verlieren. Fortfahren?",
-  "noEggs": "You are not hatching\nany eggs at the moment!"
+  "noEggs": "Du brütest aktuell keine Eier aus!"
 } as const;
