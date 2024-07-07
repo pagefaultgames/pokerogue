@@ -17,6 +17,7 @@ import { DexAttr, DexEntry } from "#app/system/game-data.js";
 enum MenuOptions {
   GAME_SETTINGS,
   ACHIEVEMENTS,
+  RUN_HISTORY,
   STATS,
   VOUCHERS,
   EGG_LIST,
@@ -324,6 +325,10 @@ export default class MenuUiHandler extends MessageUiHandler {
         break;
       case MenuOptions.ACHIEVEMENTS:
         ui.setOverlayMode(Mode.ACHIEVEMENTS);
+        success = true;
+        break;
+      case MenuOptions.RUN_HISTORY:
+        ui.setOverlayMode(Mode.RUN_HISTORY);
         success = true;
         break;
       case MenuOptions.STATS:

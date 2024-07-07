@@ -44,6 +44,7 @@ import { partyUiHandler } from "./party-ui-handler";
 import { settings } from "./settings.js";
 import { common } from "./common.js";
 import { modifierSelectUiHandler } from "./modifier-select-ui-handler";
+import { runHistory } from "./run-history-ui-handler";
 
 export const deConfig = {
   ability: ability,
@@ -93,5 +94,6 @@ export const deConfig = {
   voucher: voucher,
   weather: weather,
   partyUiHandler: partyUiHandler,
-  modifierSelectUiHandler: modifierSelectUiHandler
+  modifierSelectUiHandler: modifierSelectUiHandler,
+  runHistory: runHistory,
 };

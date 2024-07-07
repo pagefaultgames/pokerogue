@@ -47,6 +47,8 @@ import SettingsAudioUiHandler from "./settings/settings-audio-ui-handler";
 import { PlayerGender } from "#enums/player-gender";
 import BgmBar from "#app/ui/bgm-bar";
 import MysteryEncounterUiHandler from "./mystery-encounter-ui-handler";
+import RunHistoryUiHandler from "./run-history-ui-handler";
+import RunInfoUiHandler from "./run-info-ui-handler";
 
 export enum Mode {
   MESSAGE,
@@ -85,7 +87,9 @@ export enum Mode {
   UNAVAILABLE,
   OUTDATED,
   CHALLENGE_SELECT,
-  MYSTERY_ENCOUNTER
+  MYSTERY_ENCOUNTER,
+  RUN_HISTORY,
+  RUN_INFO
 }
 
 const transitionModes = [
@@ -121,7 +125,8 @@ const noTransitionModes = [
   Mode.LOADING,
   Mode.SESSION_RELOAD,
   Mode.UNAVAILABLE,
-  Mode.OUTDATED
+  Mode.OUTDATED,
+  Mode.RUN_HISTORY,
 ];
 
 export default class UI extends Phaser.GameObjects.Container {
@@ -183,7 +188,9 @@ export default class UI extends Phaser.GameObjects.Container {
       new UnavailableModalUiHandler(scene),
       new OutdatedModalUiHandler(scene),
       new GameChallengesUiHandler(scene),
-      new MysteryEncounterUiHandler(scene)
+      new MysteryEncounterUiHandler(scene),
+      new RunHistoryUiHandler(scene),
+      new RunInfoUiHandler(scene),
     ];
   }
 
