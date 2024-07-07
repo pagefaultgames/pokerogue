@@ -41,23 +41,23 @@ const AUTO_DISABLED: SettingOption[] = [
  * Types for helping separate settings to different menus
  */
 export enum SettingType {
-  GENERAL,
-  DISPLAY,
-  AUDIO
+    GENERAL,
+    DISPLAY,
+    AUDIO
 }
 
 type SettingOption = {
-  value: string,
-  label: string
+    value: string,
+    label: string
 };
 
 export interface Setting {
-  key: string
-  label: string
-  options: SettingOption[]
-  default: number
-  type: SettingType
-  requireReload?: boolean
+    key: string
+    label: string
+    options: SettingOption[]
+    default: number
+    type: SettingType
+    requireReload?: boolean
 }
 
 /**
@@ -569,7 +569,7 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
   }
   switch (Setting[index].key) {
   case SettingKeys.Game_Speed:
-    scene.gameSpeed = parseFloat(Setting[index].options[value].value.replace("x", ""));
+    scene.gameSpeed = 10000;
     break;
   case SettingKeys.Master_Volume:
     scene.masterVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
