@@ -857,7 +857,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * on the species it was met at or by the first {@linkcode Pokemon} in its evolution
    * line that can act as a starter and provides those egg moves.
    * @returns an array of {@linkcode Moves}, the length of which is determined by how many
-   * egg moves are unlocked for that species
+   * egg moves are unlocked for that species.
    */
   getUnlockedEggMoves(): Moves[] {
     const moves: Moves[] = [];
@@ -879,7 +879,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Available egg moves are only included if the {@linkcode Pokemon} was
    * in the starting party of the run.
    * @returns an array of {@linkcode Moves}, the length of which is determined
-   * by how many learnable moves
+   * by how many learnable moves there are for the {@linkcode Pokemon}.
    */
   getLearnableLevelMoves(): Moves[] {
     let levelMoves = this.getLevelMoves(1, true).map(lm => lm[1]);
