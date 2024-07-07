@@ -2,7 +2,7 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const modifier: SimpleTranslationEntries = {
   "surviveDamageApply": "{{pokemonNameWithAffix}} aguentou o tranco\nusando sua {{typeName}}!",
-  "turnHealApply": "{{pokemonNameWithAffix}} restaurou um pouco de PS usando\nseu {{typeName}}!",
+  "turnHealApply": "{{pokemonNameWithAffix}} restaurou um pouco de PS usando\nsuas {{typeName}}!",
   "hitHealApply": "{{pokemonNameWithAffix}} restaurou um pouco de PS usando\nsua {{typeName}}!",
   "pokemonInstantReviveApply": "{{pokemonNameWithAffix}} foi revivido\npor sua {{typeName}}!",
   "moneyInterestApply": "Você recebeu um juros de ₽{{moneyAmount}}\nde sua {{typeName}}!",
