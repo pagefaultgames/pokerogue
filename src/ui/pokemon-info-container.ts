@@ -79,7 +79,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
   }
 
   setup(): void {
-    this.setName("container-pkmn-info");
+    this.setName("pkmn-info");
     const currentLanguage = i18next.resolvedLanguage;
     const langSettingKey = Object.keys(languageSettings).find(lang => currentLanguage.includes(lang));
     const textSettings = languageSettings[langSettingKey];
@@ -88,7 +88,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
     infoBg.setName("window-info-bg");
 
     this.pokemonMovesContainer = this.scene.add.container(6, 14);
-    this.pokemonMovesContainer.setName("container-pkmn-moves");
+    this.pokemonMovesContainer.setName("pkmn-moves");
 
     this.movesContainerInitialX = this.pokemonMovesContainer.x;
 
@@ -109,7 +109,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
     for (let m = 0; m < 4; m++) {
       const moveContainer = this.scene.add.container(-6, 18 + 7 * m);
       moveContainer.setScale(0.5);
-      moveContainer.setName("container-move");
+      moveContainer.setName("move");
 
       const moveBg = this.scene.add.nineslice(0, 0, "type_bgs", "unknown", 92, 14, 2, 2, 2, 2);
       moveBg.setOrigin(1, 0);
@@ -300,9 +300,9 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
       this.pokemonShinyIcon.setTint(getVariantTint(baseVariant));
       if (this.pokemonShinyIcon.visible) {
         const shinyDescriptor = doubleShiny || baseVariant ?
-          `${baseVariant === 2 ? i18next.t("pokemonInfoContainer:epic") : baseVariant === 1 ? i18next.t("pokemonInfoContainer:rare") : i18next.t("pokemonInfoContainer:common")}${doubleShiny ? `/${pokemon.fusionVariant === 2 ? i18next.t("pokemonInfoContainer:epic") : pokemon.fusionVariant === 1 ? i18next.t("pokemonInfoContainer:rare") : i18next.t("pokemonInfoContainer:common")}` : ""}`
+          `${baseVariant === 2 ? i18next.t("common:epicShiny") : baseVariant === 1 ? i18next.t("common:rareShiny") : i18next.t("common:commonShiny")}${doubleShiny ? `/${pokemon.fusionVariant === 2 ? i18next.t("common:epicShiny") : pokemon.fusionVariant === 1 ? i18next.t("common:rareShiny") : i18next.t("common:commonShiny")}` : ""}`
           : "";
-        this.pokemonShinyIcon.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, `Shiny${shinyDescriptor ? ` (${shinyDescriptor})` : ""}`, true));
+        this.pokemonShinyIcon.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, `${i18next.t("common:shinyOnHover")}${shinyDescriptor ? ` (${shinyDescriptor})` : ""}`, true));
         this.pokemonShinyIcon.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
 
         const newShiny = BigInt(Math.pow(2, (pokemon.shiny ? 1 : 0)));

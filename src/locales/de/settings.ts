@@ -95,4 +95,5 @@ export const settings: SimpleTranslationEntries = {
   "mute": "Stumm",
   "controller": "Controller",
   "gamepadSupport": "Controllerunterstützung",
+  "showBgmBar": "Musiknamen anzeigen",
 } as const;

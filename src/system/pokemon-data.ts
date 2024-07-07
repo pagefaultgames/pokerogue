@@ -51,6 +51,7 @@ export default class PokemonData {
   public fusionLuck: integer;
 
   public boss: boolean;
+  public bossSegments?: integer;
 
   public summonData: PokemonSummonData;
 
@@ -98,6 +99,7 @@ export default class PokemonData {
 
     if (!forHistory) {
       this.boss = (source instanceof EnemyPokemon && !!source.bossSegments) || (!this.player && !!source.boss);
+      this.bossSegments = source.bossSegments;
     }
 
     if (sourcePokemon) {
