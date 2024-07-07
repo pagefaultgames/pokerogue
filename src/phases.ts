@@ -184,18 +184,27 @@ export class TitlePhase extends Phase {
 
     this.scene.playBgm("title", true);
 
-    this.scene.gameData.getSession(loggedInUser.lastSessionSlot).then(sessionData => {
-      if (sessionData) {
-        this.lastSessionData = sessionData;
-        const biomeKey = getBiomeKey(sessionData.arena.biome);
-        const bgTexture = `${biomeKey}_bg`;
-        this.scene.arenaBg.setTexture(bgTexture);
-      }
-      this.showOptions();
-    }).catch(err => {
-      console.error(err);
-      this.showOptions();
-    });
+    const setModeAndEnd = (gameMode: GameModes) => {
+      this.gameMode = gameMode;
+      this.scene.ui.setMode(Mode.MESSAGE);
+      this.scene.ui.clearText();
+      this.end();
+    };
+
+    setModeAndEnd(GameModes.ENDLESS);
+
+    // this.scene.gameData.getSession(loggedInUser.lastSessionSlot).then(sessionData => {
+    //   if (sessionData) {
+    //     this.lastSessionData = sessionData;
+    //     const biomeKey = getBiomeKey(sessionData.arena.biome);
+    //     const bgTexture = `${biomeKey}_bg`;
+    //     this.scene.arenaBg.setTexture(bgTexture);
+    //   }
+    //   this.showOptions();
+    // }).catch(err => {
+    //   console.error(err);
+    //   this.showOptions();
+    // });
   }
 
   showOptions(): void {
@@ -560,18 +569,18 @@ export class SelectStarterPhase extends Phase {
 
     this.scene.playBgm("menu");
 
-    this.scene.ui.setMode(Mode.STARTER_SELECT, (starters: Starter[]) => {
-      this.scene.ui.clearText();
-      this.scene.ui.setMode(Mode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: integer) => {
-        if (slotId === -1) {
-          this.scene.clearPhaseQueue();
-          this.scene.pushPhase(new TitlePhase(this.scene));
-          return this.end();
-        }
-        this.scene.sessionSlotId = slotId;
-        this.initBattle(starters);
-      });
-    });
+    // this.scene.ui.setMode(Mode.STARTER_SELECT, (starters: Starter[]) => {
+    //   this.scene.ui.clearText();
+    //   this.scene.ui.setMode(Mode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: integer) => {
+    //     if (slotId === -1) {
+    //       this.scene.clearPhaseQueue();
+    //       this.scene.pushPhase(new TitlePhase(this.scene));
+    //       return this.end();
+    //     }
+    //     this.scene.sessionSlotId = slotId;
+    //     this.initBattle(starters);
+    //   });
+    // });
   }
 
   /**

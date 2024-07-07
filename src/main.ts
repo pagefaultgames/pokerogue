@@ -7,7 +7,13 @@ import BBCodeTextPlugin from "phaser3-rex-plugins/plugins/bbcodetext-plugin";
 import InputTextPlugin from "phaser3-rex-plugins/plugins/inputtext-plugin.js";
 import TransitionImagePackPlugin from "phaser3-rex-plugins/templates/transitionimagepack/transitionimagepack-plugin.js";
 import { LoadingScene } from "./loading-scene";
-
+import { SelectStarterPhase } from "./phases";
+import { Starter } from "./ui/starter-select-ui-handler";
+import { Species } from "./enums/species";
+import { getPokemonSpecies, getPokemonSpeciesForm } from "./data/pokemon-species";
+import { StarterMoveset } from "./system/game-data";
+import { Gender } from "#app/data/gender";
+import { PlayerPokemon } from "./field/pokemon";
 
 // Catch global errors and display them in an alert so users can report the issue.
 window.onerror = function (message, source, lineno, colno, error) {
@@ -153,9 +159,65 @@ document.fonts.load("16px emerald").then(() => document.fonts.load("10px pkmnems
 
 let game;
 
+const createStarterFromSpecies = (speciesNumber: Species, scene: BattleScene): Starter => {
+  const gameMode = scene.gameMode;
+
+  const startingLevel = gameMode.getStartingLevel();
+  const starterSpeciesForm = getPokemonSpeciesForm(speciesNumber, 0);
+  const pokemonSpecies = getPokemonSpecies(starterSpeciesForm.speciesId);
+
+  const pokemon = new PlayerPokemon(scene, pokemonSpecies, startingLevel, undefined, 0, undefined, undefined, undefined, undefined, undefined, undefined);
+
+  const starter: Starter = {
+    species: pokemonSpecies,
+    dexAttr: pokemon.getDexAttr(),
+    abilityIndex: pokemon.abilityIndex,
+    passive: false,
+    nature: pokemon.getNature(),
+    pokerus: pokemon.pokerus
+  };
+
+  const starterProps = scene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);
+  const starterFormIndex = Math.min(starterProps.formIndex, Math.max(starter.species.forms.length - 1, 0));
+  const starterGender = starter.species.malePercent !== null
+    ? !starterProps.female ? Gender.MALE : Gender.FEMALE
+    : Gender.GENDERLESS;
+  const starterPokemon = scene.addPlayerPokemon(starter.species, startingLevel, starter.abilityIndex, starterFormIndex, starterGender, starterProps.shiny, starterProps.variant, undefined, starter.nature);
+  starter.moveset = starterPokemon.moveset as unknown as StarterMoveset;
+
+  return starter;
+};
+// Given pokedex ids, return list of Species for selectStarterPhase to initBattle with
+// TODO: limit to starting 3 starters from every gen only
+const chooseStarters = (speciesNumbers: Species[]) => {
+  const scenes = game.scene.getScenes(true);
+  for (const scene of scenes) {
+    if (scene.scene.key === "battle") {
+      const battleScene = scene as BattleScene;
+      console.log("BattleScene found.");
+      const selectStarterPhase = battleScene.getCurrentPhase();
+      if (selectStarterPhase instanceof SelectStarterPhase) {
+        console.log("SelectStarterPhase found.");
+
+        const starters: Starter[] = speciesNumbers.map((species) => createStarterFromSpecies(species, battleScene));
+
+        starters.forEach((v) => {
+          console.log("Starters chosen:", v);
+        });
+
+        selectStarterPhase.initBattle(starters);
+
+        return;
+      }
+    }
+  }
+  setTimeout(() => chooseStarters(speciesNumbers), 500);
+};
+
 const startGame = () => {
   game = new Phaser.Game(config);
   game.sound.pauseOnBlur = false;
+  chooseStarters([1,4,7]);
 };
 
 fetch("/manifest.json")
