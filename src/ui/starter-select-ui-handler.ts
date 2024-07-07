@@ -1201,8 +1201,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                           ui.setMode(Mode.STARTER_SELECT).then(() => {
                             ui.showText(`${i18next.t("starterSelectUiHandler:selectMoveSwapWith")} ${allMoves[m].name}.`, null, () => {
                               const possibleMoves = this.speciesStarterMoves.filter((sm: Moves) => sm !== m);
-                              const moveToShow = possibleMoves.length === 0 ? allMoves[m] : allMoves[possibleMoves[0]];
-                              this.moveInfoOverlay.show(moveToShow);
+                              this.moveInfoOverlay.show(allMoves[possibleMoves[0]]);
 
                               ui.setModeWithoutClear(Mode.OPTION_SELECT, {
                                 options: possibleMoves.map(sm => {
