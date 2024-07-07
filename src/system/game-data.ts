@@ -80,13 +80,13 @@ export function getDataTypeKey(dataType: GameDataType, slotId: integer = 0): str
 
 export function encrypt(data: string, bypassLogin: boolean): string {
   return (bypassLogin
-    ? (data: string) => btoa(data)
+    ? (data: string) => btoa(encodeURIComponent(data))
     : (data: string) => AES.encrypt(data, saveKey))(data);
 }
 
 export function decrypt(data: string, bypassLogin: boolean): string {
   return (bypassLogin
-    ? (data: string) => atob(data)
+    ? (data: string) => decodeURIComponent(atob(data))
     : (data: string) => AES.decrypt(data, saveKey).toString(enc.Utf8))(data);
 }
 
@@ -1115,7 +1115,7 @@ export class GameData {
     });
   }
 
-  parseSessionData(dataStr: string): SessionSaveData {
+  public parseSessionData(dataStr: string): SessionSaveData {
     return JSON.parse(dataStr, (k: string, v: any) => {
       /*const versions = [ scene.game.config.gameVersion, sessionData.gameVersion || '0.0.0' ];
 
@@ -1169,6 +1169,14 @@ export class GameData {
           ret.push(new ChallengeData(c));
         }
         return ret;
+      }
+
+      if (k === "mysteryEncounter") {
+        return new MysteryEncounter(v);
+      }
+
+      if (k === "mysteryEncounterFlags") {
+        return new MysteryEncounterFlags(v);
       }
 
       return v;
