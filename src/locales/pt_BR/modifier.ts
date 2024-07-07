@@ -8,5 +8,5 @@ export const modifier: SimpleTranslationEntries = {
   "moneyInterestApply": "Você recebeu um juros de ₽{{moneyAmount}}\nde sua {{typeName}}!",
   "turnHeldItemTransferApply": "{{itemName}} de {{pokemonNameWithAffix}} foi absorvido(a)\npelo {{typeName}} de {{pokemonName}}!",
   "contactHeldItemTransferApply": "{{itemName}} de {{pokemonNameWithAffix}} foi pego(a)\npela {{typeName}} de {{pokemonName}}!",
-  "enemyTurnHealApply": "{{pokemonNameWithAffix}}\nrestaurou um pouco de PS!",
+  "enemyTurnHealApply": "{{pokemonNameWithAffix}}\nrestaurou um pouco de seus PS!",
 } as const;
