@@ -1187,8 +1187,9 @@ export class GameData {
 
   public async getRunHistoryData(scene: BattleScene): Promise<Object> {
     if (!Utils.isLocal) {
-      const response = await Utils.apiFetch("savedata/runHistory", true);
-      const data = await response.json();
+      //const response = await Utils.apiFetch("savedata/runHistory", true);
+      //const data = await response.json();
+      const data = "";
       if (localStorage.hasOwnProperty(`runHistoryData_${loggedInUser.username}`)) {
         let cachedResponse = localStorage.getItem(`runHistoryData_${loggedInUser.username}`);
         if (cachedResponse) {
@@ -1235,8 +1236,8 @@ export class GameData {
     runHistoryData[timestamp]["victory"] = victory;
 
     localStorage.setItem(`runHistoryData_${loggedInUser.username}`, encrypt(JSON.stringify(runHistoryData), true));
-
-    if (!Utils.isLocal) {
+    console.log("Run entry saved onto cache");
+    /*if (!Utils.isLocal) {
       try {
         Utils.apiPost("savedata/runHistory", JSON.stringify(runHistoryData), undefined, true);
         return true;
@@ -1245,6 +1246,8 @@ export class GameData {
         return false;
       }
     }
+    */
+    return true;
   }
 
   saveAll(scene: BattleScene, skipVerification: boolean = false, sync: boolean = false, useCachedSession: boolean = false, useCachedSystem: boolean = false): Promise<boolean> {
