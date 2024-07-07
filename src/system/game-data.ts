@@ -122,6 +122,8 @@ export interface SessionSaveData {
   gameVersion: string;
   timestamp: integer;
   challenges: ChallengeData[];
+  slot: integer;
+  description: string;
 }
 
 interface Unlocks {
