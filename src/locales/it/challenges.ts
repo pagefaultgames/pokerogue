@@ -4,7 +4,7 @@ export const challenges: TranslationEntries = {
   "on": "On",
   "off": "Off",
   "title": "Modificatori delle sfide",
-  "illegalEvolution": "{{pokemon}} changed into an ineligble pokémon\nfor this challenge!",
+  "illegalEvolution": "{{pokemon}} non è più un Pokémon\nvalido per la sfida!",
   "singleGeneration": {
     "name": "Mono gen",
     "desc": "Puoi usare solo Pokémon di {{gen}} generazione.",
@@ -25,7 +25,7 @@ export const challenges: TranslationEntries = {
     "desc_default": "Puoi usare solo Pokémon del tipo selezionato."
   },
   "eeveeOnly": {
-    "name": "Eevee only",
-    "desc": "You can use only Eevee and its evolutions in this challenge",
+    "name": "Mono-Eevee",
+    "desc": "Puoi usare solo Eevee e le sue evoluzioni.",
   }
 } as const;
