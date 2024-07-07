@@ -1,15 +1,21 @@
 import i18next from "i18next";
 import * as Utils from "./utils";
+import Pokemon from "./field/pokemon";
+import { PlayerPokemon, EnemyPokemon } from "./field/pokemon";
+import { Nature, getNatureName } from "./data/nature";
+import BattleScene from "./battle-scene";
+import { OptionSelectItem } from "./ui/abstact-option-select-ui-handler";
+import { TrainerType } from "#enums/trainer-type";
 
 /**
  * All logs.
  * 
- * Format: [filename, localStorage key, name, header]
+ * Format: [filename, localStorage key, name, header, item sprite, header suffix]
  */
 export const logs: string[][] = [
-  ["instructions.txt", "path_log", "Steps", "Run Steps", "wide_lens"],
-  ["encounters.csv", "enc_log", "Encounters", "Encounter Data"],
-  ["log.txt", "debug_log", "Debug", "Debug Log"],
+  ["instructions.txt", "path_log", "Steps", "Run Steps", "wide_lens", ""],
+  ["encounters.csv", "enc_log", "Encounters", "Encounter Data", "", ",,,,,,,,,,,,,,,,"],
+  ["log.txt", "debug_log", "Debug", "Debug Log", "", ""],
 ]
 export var logKeys: string[] = [
   "i", // Instructions/steps
@@ -27,6 +33,16 @@ export function getSize(str: string) {
     unit++
   }
   return d.toString() + filesizes[unit]
+}
+
+export function generateOption(i: integer): OptionSelectItem {
+  return {
+    label: `Export ${logs[i][2]} (${getSize(localStorage.getItem(logs[i][1]))})`,
+    handler: () => {
+      downloadLogByID(i)
+      return false;
+    }
+  }
 }
 
 /**
@@ -51,7 +67,7 @@ export function appendLog(keyword: string, data: string) {
  * @param keyword The identifier key for the log you want to reste
  */
 export function clearLog(keyword: string) {
-  localStorage.setItem(logs[logKeys.indexOf(keyword)][1], "---- " + logs[logKeys.indexOf(keyword)][3] + " ----")
+  localStorage.setItem(logs[logKeys.indexOf(keyword)][1], "---- " + logs[logKeys.indexOf(keyword)][3] + " ----" + logs[logKeys.indexOf(keyword)][5])
 }
 /**
  * Saves a log to your device.
@@ -66,4 +82,93 @@ export function downloadLog(keyword: string) {
   link.download = `${logs[logKeys.indexOf(keyword)][0]}`;
   link.click();
   link.remove();
+}
+export function downloadLogByID(i: integer) {
+  console.log(i)
+  var d = localStorage.getItem(logs[i][1])
+  const blob = new Blob([ d ], {type: "text/json"});
+  const link = document.createElement("a");
+  link.href = window.URL.createObjectURL(blob);
+  link.download = `${logs[i][0]}`;
+  link.click();
+  link.remove();
+}
+export function logTeam(scene: BattleScene, floor: integer = undefined) {
+  if (floor == undefined) floor = scene.currentBattle.waveIndex
+  var team = scene.getEnemyParty()
+  if (team[0].hasTrainer()) {
+    var sprite = scene.currentBattle.trainer.config.getSpriteKey()
+    var trainerCat = Utils.getEnumKeys(TrainerType)[Utils.getEnumValues(TrainerType).indexOf(scene.currentBattle.trainer.config.trainerType)]
+    setRow("e", floor + "," + team.length + "," + sprite + ",trainer," + trainerCat + ",,,,,,,,,,,,", floor, 0)
+  } else {
+    for (var i = 0; i < team.length; i++) {
+      logPokemon(scene, floor, i, team[i])
+    }
+    if (team.length == 1) {
+      setRow("e", ",,,,,,,,,,,,,,,,", floor, 1)
+    }
+  }
+}
+export function logPokemon(scene: BattleScene, floor: integer = undefined, slot: integer, pokemon: EnemyPokemon) {
+  if (floor == undefined) floor = scene.currentBattle.waveIndex
+  var modifiers: string[] = []
+  var mods = pokemon.getHeldItems()
+  for (var i = 0; i < mods.length; i++) {
+    modifiers.push(mods[i].type.name + (mods[i].getMaxStackCount(scene) == 1 ? "" : " x" + mods[i].getStackCount()))
+  }
+  var sprite = pokemon.getBattleSpriteAtlasPath()
+  // floor,party slot,encounter,species,ability,passive,level,gender,isBoss,nature,HP IV,Attack IV,Defense IV,Sp. Atk IV,Sp. Def IV,Speed IV,Items separated by slashes /
+  var newLine = floor + ","
+    + slot + ","
+    + sprite + ","
+    + (pokemon.hasTrainer() ? "trainer_pokemon" : "wild") + ","
+    + pokemon.species.getName(pokemon.formIndex) + (pokemon.getFormKey() == "" ? "" : " (" + pokemon.getFormKey() + ")") + ","
+    + pokemon.getAbility().name.toLowerCase() + ","
+    + pokemon.getPassiveAbility().name.toLowerCase() + ","
+    + pokemon.level + ","
+    + (pokemon.gender == 0 ? "M" : (pokemon.gender == 1 ? "F" : "")) + ","
+    + (pokemon.isBoss() ? "true" : "false") + ","
+    + getNatureName(pokemon.nature) + ","
+    + pokemon.ivs[0] + ","
+    + pokemon.ivs[1] + ","
+    + pokemon.ivs[2] + ","
+    + pokemon.ivs[3] + ","
+    + pokemon.ivs[4] + ","
+    + pokemon.ivs[5] + ","
+    + modifiers.join("/")
+  //console.log(idx, data.slice(0, idx), newLine, data.slice(idx))
+  setRow("e", newLine, floor, slot)
+  //console.log(localStorage.getItem(logs[logKeys.indexOf("e")][1]).split("\n"))
+}
+export function setRow(keyword: string, newLine: string, floor: integer, slot: integer) {
+  var data = localStorage.getItem(logs[logKeys.indexOf(keyword)][1]).split("\n")
+  var idx = 1
+  if (slot == -1) {
+    while (idx < data.length && (data[idx].split(",")[0] as any) * 1 < floor) {
+      idx++
+    }
+    idx--
+    slot = ((data[idx].split(",")[1] as any) * 1) + 1
+  } else {
+    while (idx < data.length && (data[idx].split(",")[0] as any) * 1 <= floor && (data[idx].split(",")[1] as any) * 1 <= slot) {
+      idx++
+    }
+  }
+  localStorage.setItem(logs[logKeys.indexOf(keyword)][1], data.slice(0, idx).join("\n") + "\n" + newLine + (data.slice(idx).length == 0 ? "" : "\n") + data.slice(idx).join("\n"));
+}
+export function setRowByID(key: integer, newLine: string, floor: integer, slot: integer) {
+  var data = localStorage.getItem(logs[key][1]).split("\n")
+  var idx = 1
+  if (slot == -1) {
+    while (idx < data.length && (data[idx].split(",")[0] as any) * 1 < floor) {
+      idx++
+    }
+    idx--
+    slot = ((data[idx].split(",")[1] as any) * 1) + 1
+  } else {
+    while (idx < data.length && (data[idx].split(",")[0] as any) * 1 <= floor && (data[idx].split(",")[1] as any) * 1 <= slot) {
+      idx++
+    }
+  }
+  localStorage.setItem(logs[key][1], data.slice(0, idx).join("\n") + "\n" + newLine + (data.slice(idx).length == 0 ? "" : "\n") + data.slice(idx).join("\n"));
 }

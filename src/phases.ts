@@ -501,28 +501,25 @@ export class TitlePhase extends Phase {
         const options: OptionSelectItem[] = [];
         for (var i = 0; i < LoggerTools.logs.length; i++) {
           if (localStorage.getItem(LoggerTools.logs[i][1]) != null)
-          options.push({
-            label: `Export ${LoggerTools.logs[i][2]} (${LoggerTools.getSize(LoggerTools.logs[i][2])})`,
-            handler: () => {
-              LoggerTools.downloadLog(LoggerTools.logKeys[i])
-              return true;
-            }
-          })
+          options.push(LoggerTools.generateOption(i) as OptionSelectItem)
         }
         options.push({
           label: `Export all (${options.length})`,
           handler: () => {
-            for (var i = 0; i < LoggerTools.logKeys[i].length; i++) {
+            for (var i = 0; i < LoggerTools.logKeys.length; i++) {
               LoggerTools.downloadLog(LoggerTools.logKeys[i])
             }
-            return true;
+            return false;
           }
         }, {
-          label: `Reset all (${LoggerTools.logKeys[i].length})`,
+          label: `Reset all (${LoggerTools.logKeys.length})`,
           handler: () => {
-            for (var i = 0; i < LoggerTools.logKeys[i].length; i++) {
+            for (var i = 0; i < LoggerTools.logKeys.length; i++) {
               LoggerTools.clearLog(LoggerTools.logKeys[i])
             }
+            this.scene.clearPhaseQueue();
+            this.scene.pushPhase(new TitlePhase(this.scene));
+            super.end();
             return true;
           }
         }, {
@@ -1249,6 +1246,8 @@ export class EncounterPhase extends BattlePhase {
 
   doEncounterCommon(showEncounterMessage: boolean = true) {
     const enemyField = this.scene.getEnemyField();
+
+    LoggerTools.logTeam(this.scene, this.scene.currentBattle.waveIndex)
 
     if (this.scene.currentBattle.battleType === BattleType.WILD) {
       enemyField.forEach(enemyPokemon => {
