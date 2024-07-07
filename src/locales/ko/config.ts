@@ -1,4 +1,4 @@
-import { pokemonForm } from "../es/pokemon-form";
+import { pokemonForm } from "./pokemon-form";
 import { ability } from "./ability";
 import { abilityTriggers } from "./ability-trigger";
 import { PGFachv, PGMachv } from "./achv";
