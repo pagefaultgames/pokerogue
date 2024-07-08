@@ -54,7 +54,7 @@ describe("UI - Starter select", () => {
     game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
       const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
       handler.processInput(Button.RIGHT);
-      handler.processInput(Button.DOWN);
+      handler.processInput(Button.LEFT);
       handler.processInput(Button.ACTION);
       game.phaseInterceptor.unlock();
     });
@@ -114,7 +114,7 @@ describe("UI - Starter select", () => {
     game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
       const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
       handler.processInput(Button.RIGHT);
-      handler.processInput(Button.DOWN);
+      handler.processInput(Button.LEFT);
       handler.processInput(Button.CYCLE_GENDER);
       handler.processInput(Button.ACTION);
       game.phaseInterceptor.unlock();
@@ -176,7 +176,7 @@ describe("UI - Starter select", () => {
     game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
       const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
       handler.processInput(Button.RIGHT);
-      handler.processInput(Button.DOWN);
+      handler.processInput(Button.LEFT);
       handler.processInput(Button.CYCLE_GENDER);
       handler.processInput(Button.CYCLE_NATURE);
       handler.processInput(Button.CYCLE_ABILITY);
@@ -240,7 +240,7 @@ describe("UI - Starter select", () => {
     game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
       const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
       handler.processInput(Button.RIGHT);
-      handler.processInput(Button.DOWN);
+      handler.processInput(Button.LEFT);
       handler.processInput(Button.CYCLE_GENDER);
       handler.processInput(Button.ACTION);
       game.phaseInterceptor.unlock();
@@ -301,7 +301,7 @@ describe("UI - Starter select", () => {
     game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
       const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
       handler.processInput(Button.RIGHT);
-      handler.processInput(Button.DOWN);
+      handler.processInput(Button.LEFT);
       handler.processInput(Button.CYCLE_SHINY);
       handler.processInput(Button.ACTION);
       game.phaseInterceptor.unlock();
@@ -361,7 +361,7 @@ describe("UI - Starter select", () => {
     game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
       const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
       handler.processInput(Button.RIGHT);
-      handler.processInput(Button.DOWN);
+      handler.processInput(Button.LEFT);
       handler.processInput(Button.V);
       handler.processInput(Button.V);
       handler.processInput(Button.ACTION);
@@ -422,7 +422,7 @@ describe("UI - Starter select", () => {
     game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
       const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
       handler.processInput(Button.RIGHT);
-      handler.processInput(Button.DOWN);
+      handler.processInput(Button.LEFT);
       handler.processInput(Button.V);
       handler.processInput(Button.V);
       handler.processInput(Button.V);
@@ -483,8 +483,6 @@ describe("UI - Starter select", () => {
     });
     game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
       const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
-      handler.processInput(Button.RIGHT);
-      handler.processInput(Button.DOWN);
       handler.processInput(Button.RIGHT);
       handler.processInput(Button.RIGHT);
       handler.processInput(Button.RIGHT);
@@ -550,8 +548,6 @@ describe("UI - Starter select", () => {
     game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
       const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
       handler.processInput(Button.RIGHT);
-      handler.processInput(Button.DOWN);
-      handler.processInput(Button.RIGHT);
       handler.processInput(Button.RIGHT);
       handler.processInput(Button.RIGHT);
       handler.processInput(Button.DOWN);
@@ -585,10 +581,10 @@ describe("UI - Starter select", () => {
     });
 
     expect(starterSelectUiHandler.starterSpecies.length).toBe(1);
-    expect(starterSelectUiHandler.starterSpecies[0].generation).toBe(0);
-    expect(starterSelectUiHandler.starterSpecies[0].speciesId).toBe(12);
-    expect(starterSelectUiHandler.cursorObj.x).toBe(132 + 4 * 18);
-    expect(starterSelectUiHandler.cursorObj.y).toBe(28);
+    expect(starterSelectUiHandler.starterSpecies[0].generation).toBe(1);
+    expect(starterSelectUiHandler.starterSpecies[0].speciesId).toBe(32);
+    expect(starterSelectUiHandler.cursorObj.x).toBe(53);
+    expect(starterSelectUiHandler.cursorObj.y).toBe(31);
 
     game.onNextPrompt("SelectStarterPhase", Mode.CONFIRM, () => {
       const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
