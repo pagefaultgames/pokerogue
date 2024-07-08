@@ -1,7 +1,7 @@
 import BattleScene from "../../battle-scene";
 import {
   EnemyPartyConfig,
-  getTextWithEncounterDialogueTokens,
+  getTextWithEncounterDialogueTokensAndColor,
   initBattleWithEnemyConfig,
   selectPokemonForOption,
   setCustomEncounterRewards
@@ -128,7 +128,7 @@ export const TrainingSessionEncounter: MysteryEncounter = new MysteryEncounterBu
           scene.addModifier(mod, true, false, false, true);
         }
         scene.updateModifiers(true);
-        scene.queueMessage(getTextWithEncounterDialogueTokens(scene, "mysteryEncounter:training_session_battle_finished_1"), null, true);
+        scene.queueMessage(getTextWithEncounterDialogueTokensAndColor(scene, "mysteryEncounter:training_session_battle_finished_1"), null, true);
       };
 
       setCustomEncounterRewards(scene, { fillRemaining: true }, null, onBeforeRewardsPhase);
@@ -174,7 +174,7 @@ export const TrainingSessionEncounter: MysteryEncounter = new MysteryEncounterBu
       scene.removePokemonFromPlayerParty(playerPokemon, false);
 
       const onBeforeRewardsPhase = () => {
-        scene.queueMessage(getTextWithEncounterDialogueTokens(scene, "mysteryEncounter:training_session_battle_finished_2"), null, true);
+        scene.queueMessage(getTextWithEncounterDialogueTokensAndColor(scene, "mysteryEncounter:training_session_battle_finished_2"), null, true);
         // Add the pokemon back to party with Nature change
         playerPokemon.setNature(encounter.misc.chosenNature);
         scene.gameData.setPokemonCaught(playerPokemon, false);
@@ -237,7 +237,7 @@ export const TrainingSessionEncounter: MysteryEncounter = new MysteryEncounterBu
       scene.removePokemonFromPlayerParty(playerPokemon, false);
 
       const onBeforeRewardsPhase = () => {
-        scene.queueMessage(getTextWithEncounterDialogueTokens(scene, "mysteryEncounter:training_session_battle_finished_3"), null, true);
+        scene.queueMessage(getTextWithEncounterDialogueTokensAndColor(scene, "mysteryEncounter:training_session_battle_finished_3"), null, true);
         // Add the pokemon back to party with ability change
         const abilityIndex = encounter.misc.abilityIndex;
         if (!!playerPokemon.getFusionSpeciesForm()) {

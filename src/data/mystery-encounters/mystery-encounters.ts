@@ -7,6 +7,8 @@ import {TrainingSessionEncounter} from "#app/data/mystery-encounters/training-se
 import { Biome } from "#app/enums/biome";
 import { SleepingSnorlaxEncounter } from "./sleeping-snorlax";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import {DepartmentStoreSaleEncounter} from "#app/data/mystery-encounters/department-store-sale";
+import {ShadyVitaminDealerEncounter} from "#app/data/mystery-encounters/shady-vitamin-dealer";
 
 // Spawn chance: (BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT + WIGHT_INCREMENT_ON_SPAWN_MISS * <number of missed spawns>) / 256
 export const BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT = 1;
@@ -19,18 +21,20 @@ export const allMysteryEncounters : {[encounterType:string]: MysteryEncounter} =
 // To enable an encounter in all biomes, do not add to this map
 export const mysteryEncountersByBiome = new Map<Biome, MysteryEncounterType[]>([
   [Biome.TOWN, [
+    MysteryEncounterType.DEPARTMENT_STORE_SALE
   ]],
   [Biome.PLAINS,[
-
+    MysteryEncounterType.DEPARTMENT_STORE_SALE
   ]],
   [Biome.GRASS, [
-    MysteryEncounterType.SLEEPING_SNORLAX
+    MysteryEncounterType.SLEEPING_SNORLAX,
+    MysteryEncounterType.DEPARTMENT_STORE_SALE
   ]],
   [Biome.TALL_GRASS, [
-
+    MysteryEncounterType.DEPARTMENT_STORE_SALE
   ]],
   [Biome.METROPOLIS, [
-
+    MysteryEncounterType.DEPARTMENT_STORE_SALE
   ]],
   [Biome.FOREST, [
     MysteryEncounterType.SLEEPING_SNORLAX
@@ -43,7 +47,7 @@ export const mysteryEncountersByBiome = new Map<Biome, MysteryEncounterType[]>([
 
   ]],
   [Biome.BEACH, [
-
+    MysteryEncounterType.DEPARTMENT_STORE_SALE
   ]],
   [Biome.LAKE, [
 
@@ -67,10 +71,10 @@ export const mysteryEncountersByBiome = new Map<Biome, MysteryEncounterType[]>([
 
   ]],
   [Biome.MEADOW, [
-
+    MysteryEncounterType.DEPARTMENT_STORE_SALE
   ]],
   [Biome.POWER_PLANT, [
-
+    MysteryEncounterType.DEPARTMENT_STORE_SALE
   ]],
   [Biome.VOLCANO, [
 
@@ -82,7 +86,7 @@ export const mysteryEncountersByBiome = new Map<Biome, MysteryEncounterType[]>([
 
   ]],
   [Biome.FACTORY, [
-
+    MysteryEncounterType.DEPARTMENT_STORE_SALE
   ]],
   [Biome.RUINS, [
 
@@ -97,7 +101,7 @@ export const mysteryEncountersByBiome = new Map<Biome, MysteryEncounterType[]>([
 
   ]],
   [Biome.CONSTRUCTION_SITE, [
-
+    MysteryEncounterType.DEPARTMENT_STORE_SALE
   ]],
   [Biome.JUNGLE, [
 
@@ -109,7 +113,7 @@ export const mysteryEncountersByBiome = new Map<Biome, MysteryEncounterType[]>([
 
   ]],
   [Biome.SLUM, [
-
+    MysteryEncounterType.DEPARTMENT_STORE_SALE
   ]],
   [Biome.SNOWY_FOREST, [
 
@@ -131,6 +135,8 @@ export function initMysteryEncounters() {
   allMysteryEncounters[MysteryEncounterType.FIGHT_OR_FLIGHT] = FightOrFlightEncounter;
   allMysteryEncounters[MysteryEncounterType.TRAINING_SESSION] = TrainingSessionEncounter;
   allMysteryEncounters[MysteryEncounterType.SLEEPING_SNORLAX] = SleepingSnorlaxEncounter;
+  allMysteryEncounters[MysteryEncounterType.DEPARTMENT_STORE_SALE] = DepartmentStoreSaleEncounter;
+  allMysteryEncounters[MysteryEncounterType.SHADY_VITAMIN_DEALER] = ShadyVitaminDealerEncounter;
 
   // Append encounters that can occur in any biome to biome map
   const anyBiomeEncounters: MysteryEncounterType[] = Object.keys(MysteryEncounterType).filter(e => !isNaN(Number(e))).map(k => Number(k) as MysteryEncounterType);
