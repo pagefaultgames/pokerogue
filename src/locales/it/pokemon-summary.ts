@@ -1,21 +1,21 @@
 import { TranslationEntries } from "#app/interfaces/locales";
 
 export const pokemonSummary: TranslationEntries = {
-  "pokemonInfo": "Pokémon Info",
-  "status": "Status",
-  "powerAccuracyCategory": "Power\nAccuracy\nCategory",
-  "type": "Type",
-  "unknownTrainer": "Unknown",
-  "ot": "OT",
-  "nature": "nature",
-  "metAtLv": "met at Lv.",
-  "expPoints": "Exp. Points",
-  "nextLv": "Next Lv.",
-  "cancel": "Cancel",
+  "pokemonInfo": "Info Pokémon",
+  "status": "Stato",
+  "powerAccuracyCategory": "Potenza\nPrecisione\nCategoria",
+  "type": "Tipo",
+  "unknownTrainer": "Sconosciuto",
+  "ot": "AO",
+  "nature": "natura",
+  "metAtLv": "incontrato al Lv.",
+  "expPoints": "Punti Esp.",
+  "nextLv": "Prossimo Lv.",
+  "cancel": "Annulla",
 
-  "memoString": "{{natureFragment}} nature,\n{{metFragment}}",
+  "memoString": "Natura {{natureFragment}},\n{{metFragment}}",
   "metFragment": {
-    "normal": "met at Lv{{level}},\n{{biome}}.",
-    "apparently": "apparently met at Lv{{level}},\n{{biome}}.",
+    "normal": "incontrato al Lv.{{level}},\n{{biome}}.",
+    "apparently": "apparentemente incontrato al Lv.{{level}},\n{{biome}}.",
   },
 } as const;
