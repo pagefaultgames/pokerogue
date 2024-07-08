@@ -28,6 +28,14 @@ describe("Mystery Encounter Phases", () => {
     game = new GameManager(phaserGame);
     vi.spyOn(overrides, "MYSTERY_ENCOUNTER_RATE_OVERRIDE", "get").mockReturnValue(256);
     vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(11);
+    vi.spyOn(overrides, "MYSTERY_ENCOUNTER_OVERRIDE", "get").mockReturnValue(MysteryEncounterType.MYSTERIOUS_CHALLENGERS);
+
+    // Seed guarantees wild encounter to be replaced by ME
+    vi.spyOn(game.scene, "resetSeed").mockImplementation(() => {
+      game.scene.waveSeed = "test";
+      Phaser.Math.RND.sow([ game.scene.waveSeed ]);
+      game.scene.rngCounter = 0;
+    });
   });
 
   describe("MysteryEncounterPhase", () => {
@@ -42,7 +50,6 @@ describe("Mystery Encounter Phases", () => {
     });
 
     it("Runs MysteryEncounterPhase", async() => {
-      vi.spyOn(overrides, "MYSTERY_ENCOUNTER_OVERRIDE", "get").mockReturnValue(MysteryEncounterType.MYSTERIOUS_CHALLENGERS);
       await game.runToMysteryEncounter([
         Species.CHARIZARD,
         Species.VOLCARONA
@@ -61,7 +68,6 @@ describe("Mystery Encounter Phases", () => {
     });
 
     it("Selects an option for MysteryEncounterPhase", async() => {
-      vi.spyOn(overrides, "MYSTERY_ENCOUNTER_OVERRIDE", "get").mockReturnValue(MysteryEncounterType.MYSTERIOUS_CHALLENGERS);
       const dialogueSpy = vi.spyOn(game.scene.ui, "showDialogue");
       const messageSpy = vi.spyOn(game.scene.ui, "showText");
       await game.runToMysteryEncounter([
@@ -74,7 +80,7 @@ describe("Mystery Encounter Phases", () => {
         const handler = game.scene.ui.getHandler() as MysteryEncounterUiHandler;
         handler.unblockInput();
         handler.processInput(Button.ACTION);
-      });
+      }, () => !game.isCurrentPhase(MysteryEncounterPhase));
       await game.phaseInterceptor.run(MysteryEncounterPhase);
 
       // After option selected
@@ -83,7 +89,7 @@ describe("Mystery Encounter Phases", () => {
       expect(dialogueSpy).toHaveBeenCalledTimes(1);
       expect(messageSpy).toHaveBeenCalledTimes(2);
       expect(dialogueSpy).toHaveBeenCalledWith("What's this?", "???", null, expect.any(Function));
-      expect(messageSpy).toHaveBeenCalledWith("Mysterious challengers have appeared!", null, expect.any(Function), 750, true);
+      expect(messageSpy).toHaveBeenCalledWith("[color=#f8f8f8][shadow=#6b5a73]Mysterious challengers have appeared![/color][/shadow]", null, expect.any(Function), 750, true);
       expect(messageSpy).toHaveBeenCalledWith("[color=#f8f8f8][shadow=#6b5a73]The trainer steps forward...[/color][/shadow]", null, expect.any(Function), 750, true);
     });
   });
