@@ -1,7 +1,7 @@
 import { TranslationEntries } from "#app/interfaces/locales";
 
 export const pokemonSummary: TranslationEntries = {
-  "pokemonInfo": "Informações do Pokémon",
+  "pokemonInfo": "Info. Pokémon",
   "status": "Status",
   "powerAccuracyCategory": "Poder\nPrecisão\nCategoria",
   "type": "Tipo",
@@ -13,7 +13,7 @@ export const pokemonSummary: TranslationEntries = {
   "nextLv": "Próx. Nv.",
   "cancel": "Cancelar",
 
-  "memoString": "{{natureFragment}} natureza,\n{{metFragment}}",
+  "memoString": "Natureza {{natureFragment}},\n{{metFragment}}",
   "metFragment": {
     "normal": "encontrado no Nv.{{level}},\n{{biome}}.",
     "apparently": "aparentemente encontrado no Nv.{{level}},\n{{biome}}.",
