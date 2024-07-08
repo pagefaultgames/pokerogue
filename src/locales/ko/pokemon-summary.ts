@@ -8,7 +8,7 @@ export const pokemonSummary: SimpleTranslationEntries = {
   "unknownTrainer": "알수없음",
   "ot": "어버이",
   "nature": "성격",
-  "apparently": "apparently",
+  "apparently": "아마도",
   "metAtLv": "만났을 때 Lv.",
   "expPoints": "현재 경험치",
   "nextLv": "다음 레벨까지",
