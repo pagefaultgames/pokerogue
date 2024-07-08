@@ -9,6 +9,7 @@ import { BattleSceneEventType, TurnEndEvent } from "../events/battle-scene";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import TimeOfDayWidget from "./time-of-day-widget";
 import * as Utils from "../utils";
+import i18next, {ParseKeys} from "i18next";
 
 /** Enum used to differentiate {@linkcode Arena} effects */
 enum ArenaEffectType {
@@ -33,7 +34,13 @@ interface ArenaEffectInfo {
   tagType?: ArenaTagType;
 }
 
-export default class ArenaFlyout extends Phaser.GameObjects.Container {
+export function getFieldEffectText(fieldEffectInfo: ArenaEffectInfo): string {
+  const i18nKey = fieldEffectInfo.name.split("_").filter(f => f).map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join("") as unknown as string;
+  const resultName = i18next.t(`arenaFlyout:${i18nKey}` as ParseKeys);
+  return resultName || Utils.formatText(fieldEffectInfo.name);
+}
+
+export class ArenaFlyout extends Phaser.GameObjects.Container {
   /** An alias for the scene typecast to a {@linkcode BattleScene} */
   private battleScene: BattleScene;
 
@@ -111,7 +118,7 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
 
     this.flyoutContainer.add(this.flyoutWindowHeader);
 
-    this.flyoutTextHeader = addTextObject(this.scene, this.flyoutWidth / 2, 0, "Active Battle Effects", TextStyle.BATTLE_INFO);
+    this.flyoutTextHeader = addTextObject(this.scene, this.flyoutWidth / 2, 0, i18next.t("arenaFlyout:activeBattleEffects"), TextStyle.BATTLE_INFO);
     this.flyoutTextHeader.setFontSize(54);
     this.flyoutTextHeader.setAlign("center");
     this.flyoutTextHeader.setOrigin();
@@ -121,21 +128,21 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
     this.timeOfDayWidget = new TimeOfDayWidget(this.scene, (this.flyoutWidth / 2) + (this.flyoutWindowHeader.displayWidth / 2));
     this.flyoutContainer.add(this.timeOfDayWidget);
 
-    this.flyoutTextHeaderPlayer = addTextObject(this.scene, 6, 5, "Player", TextStyle.SUMMARY_BLUE);
+    this.flyoutTextHeaderPlayer = addTextObject(this.scene, 6, 5, i18next.t("arenaFlyout:player"), TextStyle.SUMMARY_BLUE);
     this.flyoutTextHeaderPlayer.setFontSize(54);
     this.flyoutTextHeaderPlayer.setAlign("left");
     this.flyoutTextHeaderPlayer.setOrigin(0, 0);
 
     this.flyoutContainer.add(this.flyoutTextHeaderPlayer);
 
-    this.flyoutTextHeaderField = addTextObject(this.scene, this.flyoutWidth / 2, 5, "Neutral", TextStyle.SUMMARY_GREEN);
+    this.flyoutTextHeaderField = addTextObject(this.scene, this.flyoutWidth / 2, 5, i18next.t("arenaFlyout:neutral"), TextStyle.SUMMARY_GREEN);
     this.flyoutTextHeaderField.setFontSize(54);
     this.flyoutTextHeaderField.setAlign("center");
     this.flyoutTextHeaderField.setOrigin(0.5, 0);
 
     this.flyoutContainer.add(this.flyoutTextHeaderField);
 
-    this.flyoutTextHeaderEnemy = addTextObject(this.scene, this.flyoutWidth - 6, 5, "Enemy", TextStyle.SUMMARY_RED);
+    this.flyoutTextHeaderEnemy = addTextObject(this.scene, this.flyoutWidth - 6, 5, i18next.t("arenaFlyout:enemy"), TextStyle.SUMMARY_RED);
     this.flyoutTextHeaderEnemy.setFontSize(54);
     this.flyoutTextHeaderEnemy.setAlign("right");
     this.flyoutTextHeaderEnemy.setOrigin(1, 0);
@@ -221,10 +228,8 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
         break;
       }
 
-      textObject.text += Utils.formatText(fieldEffectInfo.name);
-      if (fieldEffectInfo.effecType === ArenaEffectType.TERRAIN) {
-        textObject.text += " Terrain"; // Adds 'Terrain' since the enum does not contain it
-      }
+      // textObject.text += Utils.formatText(fieldEffectInfo.name);
+      textObject.text += getFieldEffectText(fieldEffectInfo);
 
       if (fieldEffectInfo.maxDuration !== 0) {
         textObject.text += "  " + fieldEffectInfo.duration + "/" + fieldEffectInfo.maxDuration;
