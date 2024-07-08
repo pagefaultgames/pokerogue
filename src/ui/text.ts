@@ -1,10 +1,10 @@
+import { EggTier } from "#enums/egg-type";
+import { UiTheme } from "#enums/ui-theme";
+import Phaser from "phaser";
 import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import BattleScene from "../battle-scene";
 import { ModifierTier } from "../modifier/modifier-tier";
-import Phaser from "phaser";
-import { EggTier } from "#enums/egg-type";
-import { UiTheme } from "#enums/ui-theme";
 
 export enum TextStyle {
   MESSAGE,
@@ -33,7 +33,9 @@ export enum TextStyle {
   MOVE_PP_FULL,
   MOVE_PP_HALF_FULL,
   MOVE_PP_NEAR_EMPTY,
-  MOVE_PP_EMPTY
+  MOVE_PP_EMPTY,
+  SMALLER_WINDOW_ALT,
+  BGM_BAR
 }
 
 export function addTextObject(scene: Phaser.Scene, x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): Phaser.GameObjects.Text {
@@ -82,7 +84,7 @@ export function addTextInputObject(scene: Phaser.Scene, x: number, y: number, wi
   return ret;
 }
 
-function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): [ number, Phaser.Types.GameObjects.Text.TextStyle | InputText.IConfig, string, number, number ] {
+export function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): [ number, Phaser.Types.GameObjects.Text.TextStyle | InputText.IConfig, string, number, number ] {
   let shadowXpos = 4;
   let shadowYpos = 5;
   const scale = 0.1666666667;
@@ -137,6 +139,16 @@ function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptio
     break;
   case TextStyle.MOVE_INFO_CONTENT:
     styleOptions.fontSize = defaultFontSize - 40;
+    shadowXpos = 3;
+    shadowYpos = 3;
+    break;
+  case TextStyle.SMALLER_WINDOW_ALT:
+    styleOptions.fontSize = defaultFontSize - 36;
+    shadowXpos = 3;
+    shadowYpos = 3;
+    break;
+  case TextStyle.BGM_BAR:
+    styleOptions.fontSize = defaultFontSize - 24;
     shadowXpos = 3;
     shadowYpos = 3;
     break;
@@ -198,10 +210,10 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
   case TextStyle.PARTY_RED:
     return !shadow ? "#f89890" : "#984038";
   case TextStyle.SUMMARY:
-    return !shadow ? "#ffffff" : "#636363";
+    return !shadow ? "#f8f8f8" : "#636363";
   case TextStyle.SUMMARY_ALT:
     if (uiTheme) {
-      return !shadow ? "#ffffff" : "#636363";
+      return !shadow ? "#f8f8f8" : "#636363";
     }
     return !shadow ? "#484848" : "#d0d0c8";
   case TextStyle.SUMMARY_RED:
@@ -227,23 +239,27 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
     return !shadow ? "#f8b050" : "#c07800";
   case TextStyle.SETTINGS_SELECTED:
     return !shadow ? "#f88880" : "#f83018";
+  case TextStyle.SMALLER_WINDOW_ALT:
+    return !shadow ? "#484848" : "#d0d0c8";
+  case TextStyle.BGM_BAR:
+    return !shadow ? "#f8f8f8" : "#6b5a73";
   }
 }
 
 export function getModifierTierTextTint(tier: ModifierTier): integer {
   switch (tier) {
   case ModifierTier.COMMON:
-    return 0xffffff;
+    return 0xf8f8f8;
   case ModifierTier.GREAT:
-    return 0x3890f8;
+    return 0x4998f8;
   case ModifierTier.ULTRA:
     return 0xf8d038;
   case ModifierTier.ROGUE:
-    return 0xd52929;
+    return 0xdb4343;
   case ModifierTier.MASTER:
-    return 0xe020c0;
+    return 0xe331c5;
   case ModifierTier.LUXURY:
-    return 0xe64a18;
+    return 0xe74c18;
   }
 }
 

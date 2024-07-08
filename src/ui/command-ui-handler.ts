@@ -34,12 +34,14 @@ export default class CommandUiHandler extends UiHandler {
       i18next.t("commandUiHandler:run")
     ];
 
-    this.commandsContainer = this.scene.add.container(216, -38.7);
+    this.commandsContainer = this.scene.add.container(217, -38.7);
+    this.commandsContainer.setName("commands");
     this.commandsContainer.setVisible(false);
     ui.add(this.commandsContainer);
 
     for (let c = 0; c < commands.length; c++) {
       const commandText = addTextObject(this.scene, c % 2 === 0 ? 0 : 55.8, c < 2 ? 0 : 16, commands[c], TextStyle.WINDOW);
+      commandText.setName(commands[c]);
       this.commandsContainer.add(commandText);
     }
   }
@@ -60,6 +62,7 @@ export default class CommandUiHandler extends UiHandler {
     }
 
     const messageHandler = this.getUi().getMessageHandler();
+    messageHandler.bg.setVisible(true);
     messageHandler.commandWindow.setVisible(true);
     messageHandler.movesWindowContainer.setVisible(false);
     messageHandler.message.setWordWrapWidth(1110);
