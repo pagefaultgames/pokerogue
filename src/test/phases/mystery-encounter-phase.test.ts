@@ -84,7 +84,7 @@ describe("Mystery Encounter Phases", () => {
       expect(messageSpy).toHaveBeenCalledTimes(2);
       expect(dialogueSpy).toHaveBeenCalledWith("What's this?", "???", null, expect.any(Function));
       expect(messageSpy).toHaveBeenCalledWith("Mysterious challengers have appeared!", null, expect.any(Function), 750, true);
-      expect(messageSpy).toHaveBeenCalledWith("The trainer steps forward...", null, expect.any(Function), 750, true);
+      expect(messageSpy).toHaveBeenCalledWith("[color=#f8f8f8][shadow=#6b5a73]The trainer steps forward...[/color][/shadow]", null, expect.any(Function), 750, true);
     });
   });
 

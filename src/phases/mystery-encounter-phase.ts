@@ -3,7 +3,7 @@ import BattleScene from "../battle-scene";
 import { Phase } from "../phase";
 import { Mode } from "../ui/ui";
 import {
-  getTextWithEncounterDialogueTokens
+  getTextWithEncounterDialogueTokensAndColor
 } from "../data/mystery-encounters/mystery-encounter-utils";
 import { CheckSwitchPhase, NewBattlePhase, PostSummonPhase, ReturnPhase, ScanIvsPhase, SummonPhase, ToggleDoublePositionPhase } from "../phases";
 import MysteryEncounterOption from "../data/mystery-encounter-option";
@@ -89,9 +89,9 @@ export class MysteryEncounterPhase extends Phase {
         const nextAction = i === selectedDialogue.length - 1 ? endDialogueAndContinueEncounter : showNextDialogue;
         const dialogue = selectedDialogue[i];
         let title: string = null;
-        const text: string = getTextWithEncounterDialogueTokens(this.scene, dialogue.text);
+        const text: string = getTextWithEncounterDialogueTokensAndColor(this.scene, dialogue.text);
         if (dialogue.speaker) {
-          title = getTextWithEncounterDialogueTokens(this.scene, dialogue.speaker);
+          title = getTextWithEncounterDialogueTokensAndColor(this.scene, dialogue.speaker);
         }
 
         if (title) {
@@ -451,9 +451,9 @@ export class PostMysteryEncounterPhase extends Phase {
         const nextAction = i === outroDialogue.length - 1 ? endPhase : showNextDialogue;
         const dialogue = outroDialogue[i];
         let title: string = null;
-        const text: string = getTextWithEncounterDialogueTokens(this.scene, dialogue.text);
+        const text: string = getTextWithEncounterDialogueTokensAndColor(this.scene, dialogue.text);
         if (dialogue.speaker) {
-          title = getTextWithEncounterDialogueTokens(this.scene, dialogue.speaker);
+          title = getTextWithEncounterDialogueTokensAndColor(this.scene, dialogue.speaker);
         }
 
         this.scene.ui.setMode(Mode.MESSAGE);
