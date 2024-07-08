@@ -1,7 +1,7 @@
 import { CommonAnim, CommonBattleAnim } from "./battle-anims";
 import { CommonAnimPhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
 import { getPokemonMessage, getPokemonNameWithAffix } from "../messages";
-import Pokemon, { MoveResult, HitResult } from "../field/pokemon";
+import Pokemon, { MoveResult, HitResult, DamageResult } from "../field/pokemon";
 import { Stat, getStatName } from "./pokemon-stat";
 import { StatusEffect } from "./status-effect";
 import * as Utils from "../utils";
@@ -251,6 +251,8 @@ export class ConfusedTag extends BattlerTag {
         const damage = Math.ceil(((((2 * pokemon.level / 5 + 2) * 40 * atk / def) / 50) + 2) * (pokemon.randSeedInt(15, 85) / 100));
         pokemon.scene.queueMessage(i18next.t("battle:battlerTagsConfusedLapseHurtItself"));
         pokemon.damageAndUpdate(damage);
+        const attackResult = { move: Moves.NONE, result: HitResult.OTHER as DamageResult, damage, critical: false, sourceId: pokemon.id };
+        pokemon.turnData?.attacksReceived.unshift(attackResult);
         pokemon.battleData.hitCount++;
         (pokemon.scene.getCurrentPhase() as MovePhase).cancel();
       }
