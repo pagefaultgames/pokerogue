@@ -5,10 +5,13 @@ import MysteryEncounterDialogue, {
   allMysteryEncounterDialogue
 } from "./mystery-encounters/dialogue/mystery-encounter-dialogue";
 import MysteryEncounterOption from "./mystery-encounter-option";
-import { EncounterPokemonRequirement, EncounterSceneRequirement } from "./mystery-encounter-requirements";
+import {
+  EncounterPokemonRequirement,
+  EncounterSceneRequirement
+} from "./mystery-encounter-requirements";
 import * as Utils from "../utils";
 import {EnemyPartyConfig} from "#app/data/mystery-encounters/mystery-encounter-utils";
-import { PlayerPokemon } from "#app/field/pokemon";
+import Pokemon, { PlayerPokemon } from "#app/field/pokemon";
 import {isNullOrUndefined} from "../utils";
 
 export enum MysteryEncounterVariant {
@@ -167,6 +170,10 @@ export default class MysteryEncounter implements MysteryEncounter {
     return sceneReq && secReqs && priReqs;
   }
 
+  pokemonMeetsPrimaryRequirements?(scene: BattleScene, pokemon: Pokemon) {
+    return !this.primaryPokemonRequirements.some(req => !req.queryParty(scene.getParty()).map(p => p.id).includes(pokemon.id));
+  }
+
   private meetsPrimaryRequirementAndPrimaryPokemonSelected?(scene: BattleScene) {
     if (this.primaryPokemonRequirements.length === 0) {
       const activeMon = scene.getParty().filter(p => p.isActive(true));
@@ -263,6 +270,12 @@ export default class MysteryEncounter implements MysteryEncounter {
    * For multiple support pokemon in the dialogue token, it will have to be overridden.
    */
   populateDialogueTokensFromRequirements?(scene: BattleScene) {
+    if (this.requirements?.length > 0) {
+      for (const req of this.requirements) {
+        const dialogueToken = req.getDialogueToken(scene);
+        this.setDialogueToken(...dialogueToken);
+      }
+    }
     if (this.primaryPokemon?.length > 0) {
       this.setDialogueToken("primaryName", this.primaryPokemon.name);
       for (const req of this.primaryPokemonRequirements) {
@@ -281,9 +294,17 @@ export default class MysteryEncounter implements MysteryEncounter {
         }
       }
     }
+
+    // Dialogue tokens for options
     for (let i = 0; i < this.options.length; i++) {
       const opt = this.options[i];
       const j = i + 1;
+      if (opt.requirements?.length > 0) {
+        for (const req of opt.requirements) {
+          const dialogueToken = req.getDialogueToken(scene);
+          this.setDialogueToken("option" + j + this.capitalizeFirstLetter(dialogueToken[0]), dialogueToken[1]);
+        }
+      }
       if (opt.primaryPokemonRequirements?.length > 0 && opt.primaryPokemon?.length > 0) {
         this.setDialogueToken("option" + j + "PrimaryName", opt.primaryPokemon.name);
         for (const req of opt.primaryPokemonRequirements) {

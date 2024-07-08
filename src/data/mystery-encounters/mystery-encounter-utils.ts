@@ -10,8 +10,12 @@ import Trainer, {TrainerVariant} from "../../field/trainer";
 import {PokemonExpBoosterModifier} from "#app/modifier/modifier";
 import {
   CustomModifierSettings,
+  getModifierPoolForType,
   ModifierPoolType,
+  ModifierType,
   ModifierTypeFunc,
+  ModifierTypeGenerator,
+  modifierTypes,
   PokemonHeldItemModifierType,
   regenerateModifierPoolThresholds
 } from "#app/modifier/modifier-type";
@@ -31,6 +35,7 @@ import {Mode} from "#app/ui/ui";
 import {PartyOption, PartyUiMode} from "#app/ui/party-ui-handler";
 import {OptionSelectConfig, OptionSelectItem} from "#app/ui/abstact-option-select-ui-handler";
 import {WIGHT_INCREMENT_ON_SPAWN_MISS} from "#app/data/mystery-encounters/mystery-encounters";
+import {getBBCodeFrag, TextStyle} from "#app/ui/text";
 
 /**
  *
@@ -162,20 +167,34 @@ export function koPlayerPokemon(pokemon: PlayerPokemon) {
   pokemon.updateInfo();
 }
 
-export function getTextWithEncounterDialogueTokens(scene: BattleScene, textKey: TemplateStringsArray | `mysteryEncounter:${string}`): string {
+export function getTextWithEncounterDialogueTokensAndColor(scene: BattleScene, textKey: TemplateStringsArray | `mysteryEncounter:${string}`, primaryStyle: TextStyle = TextStyle.MESSAGE): string {
   if (isNullOrUndefined(textKey)) {
     return null;
   }
 
   let textString: string = i18next.t(textKey);
 
-  const dialogueTokens = scene.currentBattle?.mysteryEncounter?.dialogueTokens;
+  // Apply primary styling before anything else, if it exists
+  textString = getBBCodeFrag(textString, primaryStyle) + "[/color][/shadow]";
+  const primaryStyleString = [...textString.match(new RegExp(/\[color=[^\[]*\]\[shadow=[^\[]*\]/i))][0];
 
+  // Apply dialogue tokens
+  const dialogueTokens = scene.currentBattle?.mysteryEncounter?.dialogueTokens;
   if (dialogueTokens) {
     dialogueTokens.forEach((value) => {
       textString = textString.replace(value[0], value[1]);
     });
   }
+
+  // Set custom colors
+  // Looks for any pattern like this: @ecCol[SUMMARY_BLUE]{my text to color}
+  // Resulting in: "my text to color" string with TextStyle.SUMMARY_BLUE
+  textString = textString.replace(/@ecCol\[([^{]*)\]{([^}]*)}/gi, (substring, textStyle: string, textToColor: string) => {
+    return "[/color][/shadow]" + getBBCodeFrag(textToColor, TextStyle[textStyle]) + "[/color][/shadow]" + primaryStyleString;
+  });
+
+  // Remove extra style block at the end
+  textString = textString.replace(/\[color=[^\[]*\]\[shadow=[^\[]*\]\[\/color\]\[\/shadow\]/gi, "");
 
   return textString;
 }
@@ -186,7 +205,7 @@ export function getTextWithEncounterDialogueTokens(scene: BattleScene, textKey: 
  * @param contentKey
  */
 export function queueEncounterMessage(scene: BattleScene, contentKey: TemplateStringsArray | `mysteryEncounter:${string}`): void {
-  const text: string = getTextWithEncounterDialogueTokens(scene, contentKey);
+  const text: string = getTextWithEncounterDialogueTokensAndColor(scene, contentKey, TextStyle.MESSAGE);
   scene.queueMessage(text, null, true);
 }
 
@@ -197,7 +216,7 @@ export function queueEncounterMessage(scene: BattleScene, contentKey: TemplateSt
  */
 export function showEncounterText(scene: BattleScene, contentKey: TemplateStringsArray | `mysteryEncounter:${string}`): Promise<void> {
   return new Promise<void>(resolve => {
-    const text: string = getTextWithEncounterDialogueTokens(scene, contentKey);
+    const text: string = getTextWithEncounterDialogueTokensAndColor(scene, contentKey, TextStyle.MESSAGE);
     scene.ui.showText(text, null, () => resolve(), 0, true);
   });
 }
@@ -210,8 +229,8 @@ export function showEncounterText(scene: BattleScene, contentKey: TemplateString
  * @param callback
  */
 export function showEncounterDialogue(scene: BattleScene, textContentKey: TemplateStringsArray | `mysteryEncounter:${string}`, speakerContentKey: TemplateStringsArray | `mysteryEncounter:${string}`, callback?: Function) {
-  const text: string = getTextWithEncounterDialogueTokens(scene, textContentKey);
-  const speaker: string = getTextWithEncounterDialogueTokens(scene, speakerContentKey);
+  const text: string = getTextWithEncounterDialogueTokensAndColor(scene, textContentKey, TextStyle.MESSAGE);
+  const speaker: string = getTextWithEncounterDialogueTokensAndColor(scene, speakerContentKey);
   scene.ui.showDialogue(text, speaker, null, callback, 0, 0);
 }
 
@@ -400,6 +419,50 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
 }
 
 /**
+ * Will update player money, and animate change (sound optional)
+ * @param scene - Battle Scene
+ * @param changeValue
+ * @param playSound
+ */
+export function updatePlayerMoney(scene: BattleScene, changeValue: number, playSound: boolean = true) {
+  scene.money += changeValue;
+  scene.updateMoneyText();
+  scene.animateMoneyChanged(false);
+  if (playSound) {
+    scene.playSound("buy");
+  }
+}
+
+/**
+ * Converts modifier bullshit to an actual item
+ * @param scene - Battle Scene
+ * @param modifier
+ * @param pregenArgs - can specify BerryType for berries, TM for TMs, AttackBoostType for item, etc.
+ */
+export function generateModifierType(scene: BattleScene, modifier: () => ModifierType, pregenArgs?: any[]): ModifierType {
+  const modifierId = Object.keys(modifierTypes).find(k => modifierTypes[k] === modifier);
+  let result: ModifierType = modifierTypes[modifierId]?.();
+
+  // Gets tier of item by checking player item pool
+  const modifierPool = getModifierPoolForType(ModifierPoolType.PLAYER);
+  Object.keys(modifierPool).every(modifierTier => {
+    const modType = modifierPool[modifierTier].find(m => {
+      if (m.modifierType.id === modifierId) {
+        return m;
+      }
+    });
+    if (modType) {
+      result = modType.modifierType;
+      return false;
+    }
+    return true;
+  });
+
+  result = result instanceof ModifierTypeGenerator ? result.generateType(scene.getParty(), pregenArgs) : result;
+  return result;
+}
+
+/**
  * Will initialize reward phases to follow the mystery encounter
  * Can have shop displayed or skipped
  * @param scene - Battle Scene
@@ -439,8 +502,9 @@ export function setCustomEncounterRewards(scene: BattleScene, customShopRewards?
  * @param onPokemonSelected - Any logic that needs to be performed when Pokemon is chosen
  * If a second option needs to be selected, onPokemonSelected should return a OptionSelectItem[] object
  * @param onPokemonNotSelected - Any logic that needs to be performed if no Pokemon is chosen
+ * @param selectablePokemonFilter
  */
-export function selectPokemonForOption(scene: BattleScene, onPokemonSelected: (pokemon: PlayerPokemon) => void | OptionSelectItem[], onPokemonNotSelected?: () => void): Promise<boolean> {
+export function selectPokemonForOption(scene: BattleScene, onPokemonSelected: (pokemon: PlayerPokemon) => void | OptionSelectItem[], onPokemonNotSelected?: () => void, selectablePokemonFilter?: (pokemon: PlayerPokemon) => string): Promise<boolean> {
   return new Promise(resolve => {
     // Open party screen to choose pokemon to train
     scene.ui.setMode(Mode.PARTY, PartyUiMode.SELECT, -1, (slotIndex: integer, option: PartyOption) => {
@@ -493,7 +557,7 @@ export function selectPokemonForOption(scene: BattleScene, onPokemonSelected: (p
             if (!textPromptKey) {
               displayOptions();
             } else {
-              const secondOptionSelectPrompt = getTextWithEncounterDialogueTokens(scene, textPromptKey);
+              const secondOptionSelectPrompt = getTextWithEncounterDialogueTokensAndColor(scene, textPromptKey, TextStyle.MESSAGE);
               scene.ui.showText(secondOptionSelectPrompt, null, displayOptions, null, true);
             }
           });
@@ -506,7 +570,7 @@ export function selectPokemonForOption(scene: BattleScene, onPokemonSelected: (p
           resolve(false);
         });
       }
-    });
+    }, selectablePokemonFilter);
   });
 }
 

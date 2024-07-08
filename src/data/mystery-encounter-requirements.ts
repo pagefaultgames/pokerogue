@@ -1,18 +1,18 @@
-import { PlayerPokemon } from "#app/field/pokemon";
-import { ModifierType, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
+import {PlayerPokemon} from "#app/field/pokemon";
+import {ModifierType, PokemonHeldItemModifierType} from "#app/modifier/modifier-type";
 import BattleScene from "../battle-scene";
-import { isNullOrUndefined } from "../utils";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
-import { TimeOfDay } from "#enums/time-of-day";
-import { Nature } from "./nature";
-import { EvolutionItem, pokemonEvolutions } from "./pokemon-evolutions";
-import { FormChangeItem, SpeciesFormChangeItemTrigger, pokemonFormChanges } from "./pokemon-forms";
-import { SpeciesFormKey } from "./pokemon-species";
-import { StatusEffect } from "./status-effect";
-import { Type } from "./type";
-import { WeatherType } from "./weather";
+import {isNullOrUndefined} from "../utils";
+import {Abilities} from "#enums/abilities";
+import {Moves} from "#enums/moves";
+import {Species} from "#enums/species";
+import {TimeOfDay} from "#enums/time-of-day";
+import {Nature} from "./nature";
+import {EvolutionItem, pokemonEvolutions} from "./pokemon-evolutions";
+import {FormChangeItem, pokemonFormChanges, SpeciesFormChangeItemTrigger} from "./pokemon-forms";
+import {SpeciesFormKey} from "./pokemon-species";
+import {StatusEffect} from "./status-effect";
+import {Type} from "./type";
+import {WeatherType} from "./weather";
 import {MysteryEncounterType} from "#enums/mystery-encounter-type";
 
 export interface EncounterRequirement {
@@ -39,7 +39,7 @@ export abstract class EncounterPokemonRequirement implements EncounterRequiremen
   }
 
   // Returns all party members that are compatible with this requirement. For non pokemon related requirements, the entire party is returned..
-  queryParty(partyPokemon: PlayerPokemon[]) {
+  queryParty(partyPokemon: PlayerPokemon[]): PlayerPokemon[] {
     return [];
   }
 
@@ -215,23 +215,31 @@ export class PersistentModifierRequirement extends EncounterSceneRequirement {
 }
 
 export class MoneyRequirement extends EncounterSceneRequirement {
-  requiredMoney: number;
+  requiredMoney: number; // Static value
+  scalingMultiplier: number; // Calculates required money based off wave index
 
-  constructor(requiredMoney: number) {
+  constructor(requiredMoney: number, scalingMultiplier?: number) {
     super();
     this.requiredMoney = requiredMoney;
+    this.scalingMultiplier = scalingMultiplier ? scalingMultiplier : 0;
   }
 
   meetsRequirement(scene: BattleScene): boolean {
     const money = scene.money;
-    if (!isNullOrUndefined(money) && this?.requiredMoney > 0 && this.requiredMoney > money) {
+    if (isNullOrUndefined(money)) {
       return false;
     }
-    return true;
+
+    if (this?.scalingMultiplier > 0) {
+      this.requiredMoney = scene.getWaveMoneyAmount(this.scalingMultiplier);
+    }
+    return !(this?.requiredMoney > 0 && this.requiredMoney > money);
   }
 
   getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
-    return ["money", "₽" + scene.money.toString()];
+    const value = this?.scalingMultiplier > 0 ? scene.getWaveMoneyAmount(this.scalingMultiplier).toString() : this.requiredMoney.toString();
+    // Colors money text
+    return ["money", "@ecCol[MONEY]{₽" + value + "}"];
   }
 }
 
@@ -399,9 +407,9 @@ export class MoveRequirement extends EncounterPokemonRequirement {
   }
 
   getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
-    const includedMoves = this.requiredMoves.filter((reqMove) => pokemon.moveset.filter((move) => move.moveId === reqMove).length > 0);
+    const includedMoves = pokemon.moveset.filter((move) => this.requiredMoves.includes(move.moveId));
     if (includedMoves.length > 0) {
-      return ["move", Moves[includedMoves[0]].replace("_", " ")];
+      return ["move", includedMoves[0].getName()];
     }
     return null;
   }
@@ -552,15 +560,15 @@ export class StatusEffectRequirement extends EncounterPokemonRequirement {
   minNumberOfPokemon:number;
   invertQuery:boolean;
 
-  constructor(StatusEffect: StatusEffect | StatusEffect[], minNumberOfPokemon: number = 1, invertQuery: boolean = false) {
+  constructor(statusEffect: StatusEffect | StatusEffect[], minNumberOfPokemon: number = 1, invertQuery: boolean = false) {
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
-    if (StatusEffect instanceof Array) {
-      this.requiredStatusEffect = StatusEffect;
+    if (statusEffect instanceof Array) {
+      this.requiredStatusEffect = statusEffect;
     } else {
       this.requiredStatusEffect = [];
-      this.requiredStatusEffect.push(StatusEffect);
+      this.requiredStatusEffect.push(statusEffect);
     }
   }
 
@@ -576,16 +584,38 @@ export class StatusEffectRequirement extends EncounterPokemonRequirement {
 
   queryParty(partyPokemon: PlayerPokemon[]): PlayerPokemon[] {
     if (!this.invertQuery) {
-      return partyPokemon.filter((pokemon) => this.requiredStatusEffect.filter((StatusEffect) => pokemon.status?.effect === StatusEffect).length > 0);
+      return partyPokemon.filter((pokemon) => {
+        return this.requiredStatusEffect.some((statusEffect) => {
+          if (statusEffect === StatusEffect.NONE) {
+            // StatusEffect.NONE also checks for null or undefined status
+            return isNullOrUndefined(pokemon.status) || isNullOrUndefined(pokemon.status.effect) || pokemon.status?.effect === statusEffect;
+          } else {
+            return pokemon.status?.effect === statusEffect;
+          }
+        });
+      });
     } else {
       // for an inverted query, we only want to get the pokemon that don't have ANY of the listed StatusEffects
-      return partyPokemon.filter((pokemon) => this.requiredStatusEffect.filter((StatusEffect) => pokemon.status?.effect === StatusEffect).length === 0);
+      // return partyPokemon.filter((pokemon) => this.requiredStatusEffect.filter((statusEffect) => pokemon.status?.effect === statusEffect).length === 0);
+      return partyPokemon.filter((pokemon) => {
+        return !this.requiredStatusEffect.some((statusEffect) => {
+          if (statusEffect === StatusEffect.NONE) {
+            // StatusEffect.NONE also checks for null or undefined status
+            return isNullOrUndefined(pokemon.status) || isNullOrUndefined(pokemon.status.effect) || pokemon.status?.effect === statusEffect;
+          } else {
+            return pokemon.status?.effect === statusEffect;
+          }
+        });
+      });
     }
   }
 
   getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
     const reqStatus = this.requiredStatusEffect.filter((a) => {
-      pokemon.status?.effect ===(a);
+      if (a === StatusEffect.NONE) {
+        return isNullOrUndefined(pokemon.status) || isNullOrUndefined(pokemon.status.effect) || pokemon.status?.effect === a;
+      }
+      return pokemon.status?.effect === a;
     });
     if (reqStatus.length > 0) {
       return ["status", StatusEffect[reqStatus[0]]];
@@ -863,7 +893,9 @@ export class HealthRatioRequirement extends EncounterPokemonRequirement {
 
   queryParty(partyPokemon: PlayerPokemon[]): PlayerPokemon[] {
     if (!this.invertQuery) {
-      return partyPokemon.filter((pokemon) => pokemon.getHpRatio() >= this.requiredHealthRange[0] && pokemon.getHpRatio() <= this.requiredHealthRange[1]);
+      return partyPokemon.filter((pokemon) => {
+        return pokemon.getHpRatio() >= this.requiredHealthRange[0] && pokemon.getHpRatio() <= this.requiredHealthRange[1];
+      });
     } else {
       // for an inverted query, we only want to get the pokemon that don't have ANY of the listed requiredHealthRanges
       return partyPokemon.filter((pokemon) => pokemon.getHpRatio() < this.requiredHealthRange[0] || pokemon.getHpRatio() > this.requiredHealthRange[1]);
