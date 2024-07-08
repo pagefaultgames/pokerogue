@@ -44,6 +44,7 @@ import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { weather } from "./weather";
 import { modifierSelectUiHandler } from "./modifier-select-ui-handler";
+import { moveTriggers } from "./move-trigger";
 
 export const enConfig = {
   ability: ability,
@@ -92,5 +93,6 @@ export const enConfig = {
   tutorial: tutorial,
   voucher: voucher,
   weather: weather,
-  modifierSelectUiHandler: modifierSelectUiHandler
+  modifierSelectUiHandler: modifierSelectUiHandler,
+  moveTriggers: moveTriggers
 };
