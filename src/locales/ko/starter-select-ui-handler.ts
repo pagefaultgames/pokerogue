@@ -32,7 +32,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "unlockPassive": "패시브 해금",
   "reduceCost": "코스트 줄이기",
   "sameSpeciesEgg": "알 구매하기",
-  "cycleShiny": ": 특별한 색",
+  "cycleShiny": ": 색이 다른",
   "cycleForm": ": 폼",
   "cycleGender": ": 암수",
   "cycleAbility": ": 특성",
