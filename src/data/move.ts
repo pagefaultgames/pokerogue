@@ -1032,10 +1032,6 @@ export class CounterDamageAttr extends FixedDamageAttr {
   }
 }
 
-export class TargetSwitchingCounterDamageAttr extends CounterDamageAttr {
-
-}
-
 export class LevelDamageAttr extends FixedDamageAttr {
   constructor() {
     super(0);
