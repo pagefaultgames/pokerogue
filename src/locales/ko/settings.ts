@@ -84,7 +84,7 @@ export const settings: SimpleTranslationEntries = {
   "buttonCancel": "취소",
   "buttonStats": "스탯",
   "buttonCycleForm": "폼 변환",
-  "buttonCycleShiny": "특별한 색 변환",
+  "buttonCycleShiny": "색이 다른 변환",
   "buttonCycleGender": "성별 변환",
   "buttonCycleAbility": "특성 변환",
   "buttonCycleNature": "성격 변환",
