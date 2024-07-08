@@ -1,17 +1,28 @@
 import {SimpleTranslationEntries} from "#app/interfaces/locales";
 
+/**
+ * Patterns that can be used:
+ * '$' will be treated as a new line for Message and Dialogue strings
+ * '@d{<number>}' will add a time delay to text animation for Message and Dialogue strings
+ *
+ * '@ec{<token>}' will auto-inject the matching token value for the specified Encounter
+ *
+ * '@ecCol[<TextStyle>]{<text>}' will auto-color the given text to a specified TextStyle (e.g. TextStyle.SUMMARY_GREEN)
+ *
+ * Any '(+)' or '(-)' type of tooltip will auto-color to green/blue respectively. THIS ONLY OCCURS FOR OPTION TOOLTIPS, NOWHERE ELSE
+ * Other types of '(...)' tooltips will have to specify the text color manually by using '@ecCol[SUMMARY_GREEN]{<text>}' pattern
+ */
 export const mysteryEncounter: SimpleTranslationEntries = {
   // DO NOT REMOVE
   "unit_test_dialogue": "@ec{test}@ec{test} @ec{test@ec{test}} @ec{test1} @ec{test\} @ec{test\\} @ec{test\\\} {test}",
 
-  // Mysterious Encounters -- Common Tier
-
+  // Mystery Encounters -- Common Tier
   "mysterious_chest_intro_message": "You found...@d{32} a chest?",
   "mysterious_chest_title": "The Mysterious Chest",
   "mysterious_chest_description": "A beautifully ornamented chest stands on the ground. There must be something good inside... right?",
   "mysterious_chest_query": "Will you open it?",
   "mysterious_chest_option_1_label": "Open it",
-  "mysterious_chest_option_1_tooltip": "(35%) Something terrible\n(40%) Okay Rewards\n(20%) Good Rewards\n(4%) Great Rewards\n(1%) Amazing Rewards",
+  "mysterious_chest_option_1_tooltip": "@ecCol[SUMMARY_BLUE]{(35%) Something terrible}\n@ecCol[SUMMARY_GREEN]{(40%) Okay Rewards}\n@ecCol[SUMMARY_GREEN]{(20%) Good Rewards}\n@ecCol[SUMMARY_GREEN]{(4%) Great Rewards}\n@ecCol[SUMMARY_GREEN]{(1%) Amazing Rewards}",
   "mysterious_chest_option_2_label": "It's too risky, leave",
   "mysterious_chest_option_2_tooltip": "(-) No Rewards",
   "mysterious_chest_option_1_selected_message": "You open the chest to find...",
@@ -27,36 +38,82 @@ export const mysteryEncounter: SimpleTranslationEntries = {
   "fight_or_flight_title": "Fight or Flight",
   "fight_or_flight_description": "It looks like there's a strong Pokémon guarding an item. Battling is the straightforward approach, but this Pokémon looks strong. You could also try to sneak around, though the Pokémon might catch you.",
   "fight_or_flight_query": "What will you do?",
-  "fight_or_flight_option_1_label": "Battle it",
-  "fight_or_flight_option_1_tooltip": "(+) Hard Battle\n(+) New Item",
-  "fight_or_flight_option_2_label": "Sneak around",
-  "fight_or_flight_option_2_tooltip": "(35%) Steal Item\n(65%) Harder Battle",
+  "fight_or_flight_option_1_label": "Battle the Pokémon",
+  "fight_or_flight_option_1_tooltip": "(-) Hard Battle\n(+) New Item",
+  "fight_or_flight_option_2_label": "Steal the item",
+  "fight_or_flight_option_2_tooltip": "@ecCol[SUMMARY_GREEN]{(35%) Steal Item}\n@ecCol[SUMMARY_BLUE]{(65%) Harder Battle}",
+  "fight_or_flight_option_2_steal_tooltip": "@ecCol[SUMMARY_GREEN]{(?) Use a Pokémon Move}",
   "fight_or_flight_option_3_label": "Leave",
   "fight_or_flight_option_3_tooltip": "(-) No Rewards",
   "fight_or_flight_option_1_selected_message": "You approach the\nPokémon without fear.",
   "fight_or_flight_option_2_good_result": `.@d{32}.@d{32}.@d{32}
   $You manage to sneak your way\npast and grab the item!`,
+  "fight_or_flight_option_2_steal_result": `.@d{32}.@d{32}.@d{32}
+  $Your @ec{thiefPokemon} helps you out and uses @ec{move}!
+  $ You nabbed the item!`,
   "fight_or_flight_option_2_bad_result": `.@d{32}.@d{32}.@d{32}
   $The Pokémon catches you\nas you try to sneak around!`,
   "fight_or_flight_boss_enraged": "The opposing @ec{enemyPokemon} has become enraged!",
   "fight_or_flight_option_3_selected": "You leave the strong Pokémon\nwith its prize and continue on.",
 
-  // Mysterious Encounters -- Uncommon Tier
+  "department_store_sale_intro_message": "It's a lady with a ton of shopping bags.",
+  "department_store_sale_speaker": "Shopper",
+  "department_store_sale_intro_dialogue": `Hello! Are you here for\nthe amazing sales too?
+    $There's a special coupon that you can\nredeem for a free item during the sale!
+    $I have an extra one. Here you go!`,
+  "department_store_sale_title": "Department Store Sale",
+  "department_store_sale_description": "There is merchandise in every direction! It looks like there are 4 counters where you can redeem the coupon for various items. The possibilities are endless!",
+  "department_store_sale_query": "Which counter will you go to?",
+  "department_store_sale_option_1_label": "TM Counter",
+  "department_store_sale_option_1_tooltip": "(+) TM Shop",
+  "department_store_sale_option_2_label": "Vitamin Counter",
+  "department_store_sale_option_2_tooltip": "(+) Vitamin Shop",
+  "department_store_sale_option_3_label": "Battle Item Counter",
+  "department_store_sale_option_3_tooltip": "(+) X Item Shop",
+  "department_store_sale_option_4_label": "Pokéball Counter",
+  "department_store_sale_option_4_tooltip": "(+) Pokéball Shop",
+  "department_store_sale_outro": "What a deal! You should shop there more often.",
+
+  "shady_vitamin_dealer_intro_message": "A man in a dark coat approaches you.",
+  "shady_vitamin_dealer_speaker": "Shady Salesman",
+  "shady_vitamin_dealer_intro_dialogue": `.@d{16}.@d{16}.@d{16}
+    $I've got the goods if you've got the money.
+    $Make sure your Pokémon can handle it though.`,
+  "shady_vitamin_dealer_title": "The Vitamin Dealer",
+  "shady_vitamin_dealer_description": "The man opens his jacket to reveal some Pokémon vitamins. The numbers he quotes seem like a really good deal. Almost too good...\nHe offers two package deals to choose from.",
+  "shady_vitamin_dealer_query": "Which deal will choose?",
+  "shady_vitamin_dealer_option_1_label": "The Cheap Deal",
+  "shady_vitamin_dealer_option_1_tooltip": "(-) Pay @ec{option1Money}\n(-) Side Effects?\n(+) Chosen Pokémon Gains 2 Random Vitamins",
+  "shady_vitamin_dealer_option_2_label": "The Pricey Deal",
+  "shady_vitamin_dealer_option_2_tooltip": "(-) Pay @ec{option2Money}\n(-) Side Effects?\n(+) Chosen Pokémon Gains 2 Random Vitamins",
+  "shady_vitamin_dealer_option_selected": `The man hands you two bottles and quickly disappears.
+    $@ec{selectedPokemon} gained @ec{boost1} and @ec{boost2} boosts!`,
+  "shady_vitamin_dealer_damage_only": `But the medicine had some side effects!
+  $Your @ec{selectedPokemon} takes some damage...`,
+  "shady_vitamin_dealer_bad_poison": `But the medicine had some side effects!
+  $Your @ec{selectedPokemon} takes some damage\nand becomes badly poisoned...`,
+  "shady_vitamin_dealer_poison": `But the medicine had some side effects!
+  $Your @ec{selectedPokemon} becomes poisoned...`,
+  "shady_vitamin_dealer_option_3_label": "Leave",
+  "shady_vitamin_dealer_option_3_tooltip": "(-) No Rewards",
+  "shady_vitamin_dealer_outro_good": "Looks like there were no side-effects this time.",
+
+  // Mystery Encounters -- Uncommon Tier
 
   "mysterious_challengers_intro_message": "Mysterious challengers have appeared!",
   "mysterious_challengers_title": "Mysterious Challengers",
   "mysterious_challengers_description": "If you defeat a challenger, you might impress them enough to receive a boon. But some look tough, are you up to the challenge?",
   "mysterious_challengers_query": "Who will you battle?",
   "mysterious_challengers_option_1_label": "A clever, mindful foe",
-  "mysterious_challengers_option_1_tooltip": "(+) Standard Battle\n(+) Move Item Rewards",
+  "mysterious_challengers_option_1_tooltip": "(-) Standard Battle\n(+) Move Item Rewards",
   "mysterious_challengers_option_2_label": "A strong foe",
-  "mysterious_challengers_option_2_tooltip": "(+) Hard Battle\n(+) Good Rewards",
+  "mysterious_challengers_option_2_tooltip": "(-) Hard Battle\n(+) Good Rewards",
   "mysterious_challengers_option_3_label": "The mightiest foe",
-  "mysterious_challengers_option_3_tooltip": "(+) Brutal Battle\n(+) Great Rewards",
+  "mysterious_challengers_option_3_tooltip": "(-) Brutal Battle\n(+) Great Rewards",
   "mysterious_challengers_option_selected_message": "The trainer steps forward...",
   "mysterious_challengers_outro_win": "The mysterious challenger was defeated!",
 
-  // Mysterious Encounters -- Rare Tier
+  // Mystery Encounters -- Rare Tier
   "training_session_intro_message": "You've come across some\ntraining tools and supplies.",
   "training_session_title": "Training Session",
   "training_session_description": "These supplies look like they could be used to train a member of your party! There are a few ways you could train your Pokémon, by battling against it with the rest of your team.",
@@ -78,7 +135,7 @@ export const mysteryEncounter: SimpleTranslationEntries = {
     $Its ability was changed to @ec{ability}!`,
   "training_session_outro_win": "That was a successful training session!",
 
-  // Mysterious Encounters -- Super Rare Tier
+  // Mystery Encounters -- Super Rare Tier
 
   "dark_deal_intro_message": "A strange man in a tattered coat\nstands in your way...",
   "dark_deal_speaker": "Shady Guy",
@@ -108,9 +165,9 @@ export const mysteryEncounter: SimpleTranslationEntries = {
   "sleeping_snorlax_description": "You could attack it to try and get it to move, or simply wait for it to wake up.",
   "sleeping_snorlax_query": "What will you do?",
   "sleeping_snorlax_option_1_label": "Fight it",
-  "sleeping_snorlax_option_1_tooltip": "(+) Fight Sleeping Snorlax",
+  "sleeping_snorlax_option_1_tooltip": "(-) Fight Sleeping Snorlax",
   "sleeping_snorlax_option_2_label": "Wait for it to move",
-  "sleeping_snorlax_option_2_tooltip": "(75%) Wait a short time\n(25%) Wait a long time",
+  "sleeping_snorlax_option_2_tooltip": "@ecCol[SUMMARY_BLUE]{(75%) Wait a short time}\n@ecCol[SUMMARY_BLUE]{(25%) Wait a long time}",
   "sleeping_snorlax_option_3_label": "Steal",
   "sleeping_snorlax_option_3_tooltip": "(+) Leftovers",
   "sleeping_snorlax_option_3_disabled_tooltip": "Your Pokémon need to know certain moves to choose this",

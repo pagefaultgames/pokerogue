@@ -1,7 +1,7 @@
 import BattleScene from "../../battle-scene";
 import {
   EnemyPartyConfig,
-  EnemyPokemonConfig,
+  EnemyPokemonConfig, generateModifierType,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle, queueEncounterMessage,
   setCustomEncounterRewards
@@ -12,7 +12,6 @@ import {MysteryEncounterType} from "#enums/mystery-encounter-type";
 import {MoveRequirement, WaveCountRequirement} from "../mystery-encounter-requirements";
 import {MysteryEncounterOptionBuilder} from "../mystery-encounter-option";
 import {
-  ModifierTypeGenerator,
   ModifierTypeOption,
   modifierTypes
 } from "#app/modifier/modifier-type";
@@ -76,7 +75,8 @@ export const SleepingSnorlaxEncounter: MysteryEncounter = new MysteryEncounterBu
         const p = instance.primaryPokemon;
         p.status =  new Status(StatusEffect.SLEEP, 0, 3);
         p.updateInfo(true);
-        const sitrus = (modifierTypes.BERRY?.() as ModifierTypeGenerator).generateType(scene.getParty(), [BerryType.SITRUS]);
+        // const sitrus = (modifierTypes.BERRY?.() as ModifierTypeGenerator).generateType(scene.getParty(), [BerryType.SITRUS]);
+        const sitrus = generateModifierType(scene, modifierTypes.BERRY, [BerryType.SITRUS]);
 
         setCustomEncounterRewards(scene, { guaranteedModifierTypeOptions: [new ModifierTypeOption(sitrus, 0)], fillRemaining: false});
         queueEncounterMessage(scene, "mysteryEncounter:sleeping_snorlax_option_2_bad_result");

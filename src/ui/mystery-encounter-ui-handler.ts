@@ -1,16 +1,16 @@
 import BattleScene from "../battle-scene";
-import { addTextObject, TextStyle } from "./text";
-import { Mode } from "./ui";
+import {addBBCodeTextObject, getBBCodeFrag, TextStyle} from "./text";
+import {Mode} from "./ui";
 import UiHandler from "./ui-handler";
-import { Button } from "#enums/buttons";
-import { addWindow, WindowVariant } from "./ui-theme";
-import i18next from "i18next";
-import { MysteryEncounterPhase } from "../phases/mystery-encounter-phase";
-import { PartyUiMode } from "./party-ui-handler";
+import {Button} from "#enums/buttons";
+import {addWindow, WindowVariant} from "./ui-theme";
+import {MysteryEncounterPhase} from "../phases/mystery-encounter-phase";
+import {PartyUiMode} from "./party-ui-handler";
 import MysteryEncounterOption from "../data/mystery-encounter-option";
 import * as Utils from "../utils";
-import { getPokeballAtlasKey } from "../data/pokeball";
 import {isNullOrUndefined} from "../utils";
+import {getPokeballAtlasKey} from "../data/pokeball";
+import {getTextWithEncounterDialogueTokensAndColor} from "#app/data/mystery-encounters/mystery-encounter-utils";
 
 export default class MysteryEncounterUiHandler extends UiHandler {
   private cursorContainer: Phaser.GameObjects.Container;
@@ -298,9 +298,9 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     this.filteredEncounterOptions = mysteryEncounter.options;
     this.optionsMeetsReqs = [];
 
-    const titleText: string = i18next.t(mysteryEncounter.dialogue.encounterOptionsDialogue.title);
-    const descriptionText: string = i18next.t(mysteryEncounter.dialogue.encounterOptionsDialogue.description);
-    const queryText: string = i18next.t(mysteryEncounter.dialogue.encounterOptionsDialogue.query);
+    const titleText: string = getTextWithEncounterDialogueTokensAndColor(this.scene, mysteryEncounter.dialogue.encounterOptionsDialogue.title, TextStyle.TOOLTIP_TITLE);
+    const descriptionText: string = getTextWithEncounterDialogueTokensAndColor(this.scene, mysteryEncounter.dialogue.encounterOptionsDialogue.description, TextStyle.TOOLTIP_CONTENT);
+    const queryText: string = getTextWithEncounterDialogueTokensAndColor(this.scene, mysteryEncounter.dialogue.encounterOptionsDialogue.query, TextStyle.TOOLTIP_CONTENT);
 
     // Clear options container (except cursor)
     this.optionsContainer.removeAll();
@@ -310,16 +310,17 @@ export default class MysteryEncounterUiHandler extends UiHandler {
       let optionText;
       switch (this.filteredEncounterOptions.length) {
       case 2:
-        optionText = addTextObject(this.scene, i % 2 === 0 ? 0 : 100, 8, "-", TextStyle.WINDOW, { wordWrap: { width: 558 }, fontSize: "80px", lineSpacing: -8 });
+        optionText = addBBCodeTextObject(this.scene, i % 2 === 0 ? 0 : 100, 8, "-", TextStyle.WINDOW, { wordWrap: { width: 558 }, fontSize: "80px", lineSpacing: -8 });
         break;
       case 3:
-        optionText = addTextObject(this.scene, i % 2 === 0 ? 0 : 100, i < 2 ? 0 : 16, "-", TextStyle.WINDOW, { wordWrap: { width: 558 }, fontSize: "80px", lineSpacing: -8 });
+        optionText = addBBCodeTextObject(this.scene, i % 2 === 0 ? 0 : 100, i < 2 ? 0 : 16, "-", TextStyle.WINDOW, { wordWrap: { width: 558 }, fontSize: "80px", lineSpacing: -8 });
         break;
       case 4:
-        optionText = addTextObject(this.scene, i % 2 === 0 ? 0 : 100, i < 2 ? 0 : 16, "-", TextStyle.WINDOW, { wordWrap: { width: 558 }, fontSize: "80px", lineSpacing: -8 });
+        optionText = addBBCodeTextObject(this.scene, i % 2 === 0 ? 0 : 100, i < 2 ? 0 : 16, "-", TextStyle.WINDOW, { wordWrap: { width: 558 }, fontSize: "80px", lineSpacing: -8 });
         break;
       }
-      const text = i18next.t(mysteryEncounter.dialogue.encounterOptionsDialogue.options[i].buttonLabel);
+      const option = mysteryEncounter.dialogue.encounterOptionsDialogue.options[i];
+      const text = getTextWithEncounterDialogueTokensAndColor(this.scene, option.buttonLabel, option.style ? option.style : TextStyle.WINDOW);
       if (text) {
         optionText.setText(text);
       }
@@ -336,11 +337,11 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     }
 
     // View Party Button
-    const viewPartyText = addTextObject(this.scene, 256, -24, "View Party", TextStyle.PARTY);
+    const viewPartyText = addBBCodeTextObject(this.scene, 256, -24, getBBCodeFrag("View Party", TextStyle.PARTY), TextStyle.PARTY);
     this.optionsContainer.add(viewPartyText);
 
     // Description Window
-    const titleTextObject = addTextObject(this.scene, 0, 0, titleText, TextStyle.TOOLTIP_TITLE, { wordWrap: { width: 750 }, align: "center", lineSpacing: -8 });
+    const titleTextObject = addBBCodeTextObject(this.scene, 0, 0, titleText, TextStyle.TOOLTIP_TITLE, { wordWrap: { width: 750 }, align: "center", lineSpacing: -8 });
     this.descriptionContainer.add(titleTextObject);
     titleTextObject.setPosition(72 - titleTextObject.displayWidth / 2, 5.5);
 
@@ -348,7 +349,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     const ballType = getPokeballAtlasKey(mysteryEncounter.encounterTier as number);
     this.rarityBall.setTexture("pb", ballType);
 
-    const descriptionTextObject = addTextObject(this.scene, 6, 25, descriptionText, TextStyle.TOOLTIP_CONTENT, { wordWrap: { width: 830 } });
+    const descriptionTextObject = addBBCodeTextObject(this.scene, 6, 25, descriptionText, TextStyle.TOOLTIP_CONTENT, { wordWrap: { width: 830 } });
 
     // Sets up the mask that hides the description text to give an illusion of scrolling
     const descriptionTextMaskRect = this.scene.make.graphics({});
@@ -382,8 +383,9 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
     this.descriptionContainer.add(descriptionTextObject);
 
-    const queryTextObject = addTextObject(this.scene, 65 - (queryText.length), 90, queryText, TextStyle.TOOLTIP_CONTENT, { wordWrap: { width: 830 } });
+    const queryTextObject = addBBCodeTextObject(this.scene, 0, 0, queryText, TextStyle.TOOLTIP_CONTENT, { wordWrap: { width: 830 } });
     this.descriptionContainer.add(queryTextObject);
+    queryTextObject.setPosition(75 - queryTextObject.displayWidth / 2, 90);
 
     // Slide in description container
     if (slideInDescription) {
@@ -412,15 +414,20 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
     const mysteryEncounter = this.scene.currentBattle.mysteryEncounter;
     let text;
-    if (!this.optionsMeetsReqs[cursor] && mysteryEncounter.dialogue.encounterOptionsDialogue.options[cursor].disabledTooltip) {
-      text = i18next.t(mysteryEncounter.dialogue.encounterOptionsDialogue.options[cursor].disabledTooltip);
+    const option = mysteryEncounter.dialogue.encounterOptionsDialogue.options[cursor];
+    if (!this.optionsMeetsReqs[cursor] && option.disabledTooltip) {
+      text = getTextWithEncounterDialogueTokensAndColor(this.scene, option.disabledTooltip, TextStyle.TOOLTIP_CONTENT);
     } else {
-      text = i18next.t(mysteryEncounter.dialogue.encounterOptionsDialogue.options[cursor].buttonTooltip);
+      text = getTextWithEncounterDialogueTokensAndColor(this.scene, option.buttonTooltip, TextStyle.TOOLTIP_CONTENT);
     }
 
+    // Auto-color options green/blue for good/bad by looking for (+)/(-)
+    const primaryStyleString = [...text.match(new RegExp(/\[color=[^\[]*\]\[shadow=[^\[]*\]/i))][0];
+    text = text.replace(/(\([^\(]*\+\)[^\(\[]*)/gi, substring => "[/color][/shadow]" + getBBCodeFrag(substring, TextStyle.SUMMARY_GREEN) + "[/color][/shadow]" + primaryStyleString);
+    text = text.replace(/(\([^\(]*\-\)[^\(\[]*)/gi, substring => "[/color][/shadow]" + getBBCodeFrag(substring, TextStyle.SUMMARY_BLUE) + "[/color][/shadow]" + primaryStyleString);
 
     if (text) {
-      const tooltipTextObject = addTextObject(this.scene, 6, 7, text, TextStyle.TOOLTIP_CONTENT, { wordWrap: { width: 600 }, fontSize: "72px" });
+      const tooltipTextObject = addBBCodeTextObject(this.scene, 6, 7, text, TextStyle.TOOLTIP_CONTENT, { wordWrap: { width: 600 }, fontSize: "72px" });
       this.tooltipContainer.add(tooltipTextObject);
 
       // Sets up the mask that hides the description text to give an illusion of scrolling
