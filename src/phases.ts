@@ -67,7 +67,7 @@ import { TrainerType } from "#enums/trainer-type";
 import { BattlePhase } from "#app/phases/battle-phase";
 import { MysteryEncounterVariant } from "#app/data/mystery-encounter";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phase";
-import { handleMysteryEncounterVictory } from "#app/data/mystery-encounters/mystery-encounter-utils";
+import { getTextWithEncounterDialogueTokensAndColor, handleMysteryEncounterVictory } from "#app/data/mystery-encounters/mystery-encounter-utils";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 
 const { t } = i18next;
@@ -1081,12 +1081,12 @@ export class EncounterPhase extends BattlePhase {
           const showNextDialogue = () => {
             const nextAction = i === introDialogue.length - 1 ? doShowEncounterOptions : showNextDialogue;
             const dialogue = introDialogue[i];
-            const title = dialogue.speaker;
-            const text = dialogue.text;
+            const title = getTextWithEncounterDialogueTokensAndColor(this.scene, dialogue.speaker);
+            const text = getTextWithEncounterDialogueTokensAndColor(this.scene, dialogue.text);
             if (title) {
-              this.scene.ui.showDialogue(i18next.t(text), i18next.t(title), null, nextAction, 0, i === 0 ? 750 : 0);
+              this.scene.ui.showDialogue(text, title, null, nextAction, 0, i === 0 ? 750 : 0);
             } else {
-              this.scene.ui.showText(i18next.t(text), null, nextAction, i === 0 ? 750 : 0, true);
+              this.scene.ui.showText(text, null, nextAction, i === 0 ? 750 : 0, true);
             }
             i++;
           };

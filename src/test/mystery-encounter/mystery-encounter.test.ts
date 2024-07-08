@@ -4,6 +4,7 @@ import GameManager from "#app/test/utils/gameManager";
 import Phaser from "phaser";
 import {Species} from "#enums/species";
 import {MysteryEncounterPhase} from "#app/phases/mystery-encounter-phase";
+import {MysteryEncounterType} from "#enums/mystery-encounter-type";
 
 describe("Mystery Encounters", () => {
   let phaserGame: Phaser.Game;
@@ -23,6 +24,14 @@ describe("Mystery Encounters", () => {
     game = new GameManager(phaserGame);
     vi.spyOn(overrides, "MYSTERY_ENCOUNTER_RATE_OVERRIDE", "get").mockReturnValue(256);
     vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(11);
+    vi.spyOn(overrides, "MYSTERY_ENCOUNTER_OVERRIDE", "get").mockReturnValue(MysteryEncounterType.MYSTERIOUS_CHALLENGERS);
+
+    // Seed guarantees wild encounter to be replaced by ME
+    vi.spyOn(game.scene, "resetSeed").mockImplementation(() => {
+      game.scene.waveSeed = "test";
+      Phaser.Math.RND.sow([ game.scene.waveSeed ]);
+      game.scene.rngCounter = 0;
+    });
   });
 
   it("Spawns a mystery encounter", async() => {
