@@ -77,7 +77,6 @@ export const battle: SimpleTranslationEntries = {
   "statSeverelyFell": "{{pokemonNameWithAffix}}'s {{stats}} severely fell!",
   "statWontGoAnyLower": "{{pokemonNameWithAffix}}'s {{stats}} won't go any lower!",
   "retryBattle": "Would you like to retry from the start of the battle?",
-  "receivedNewModifier": "You received\n{{modifierName}}!",
   "unlockedSomething": "{{unlockedThing}}\nhas been unlocked.",
   "congratulations": "Congratulations!",
   "beatModeFirstTime": "{{speciesName}} beat {{gameMode}} Mode for the first time!\nYou received {{newModifier}}!",

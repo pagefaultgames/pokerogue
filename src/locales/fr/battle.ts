@@ -78,7 +78,6 @@ export const battle: SimpleTranslationEntries = {
   "statWontGoAnyLower": "{{stats}} de {{pokemonNameWithAffix}}\nne peut plus baisser !",
   "ppReduced": "Les PP de la capacité {{moveName}}\nde {{targetName}} baissent de {{reduction}} !",
   "retryBattle": "Voulez-vous réessayer depuis le début du combat ?",
-  "receivedNewModifier": "Vous avez reçu\n{{modifierName}} !",
   "unlockedSomething": "{{unlockedThing}}\na été débloqué.",
   "congratulations": "Félicitations !",
   "beatModeFirstTime": "{{speciesName}} a battu le mode {{gameMode}} pour la première fois !\nVous avez reçu {{newModifier}} !",

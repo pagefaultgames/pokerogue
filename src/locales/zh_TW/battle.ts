@@ -75,7 +75,6 @@ export const battle: SimpleTranslationEntries = {
   "statWontGoAnyLower": "{{pokemonNameWithAffix}} 的 {{stats}} 已經無法再降低了！",
   "ppReduced": "降低了 {{targetName}} 的\n{{moveName}} 的PP{{reduction}}點！",
   "retryBattle": "Would you like to retry from the start of the battle?",
-  "receivedNewModifier": "You received\n{{modifierName}}!",
   "unlockedSomething": "{{unlockedThing}}\nhas been unlocked.",
   "congratulations": "Congratulations!",
   "beatModeFirstTime": "{{speciesName}} beat {{gameMode}} Mode for the first time!\nYou received {{newModifier}}!",
