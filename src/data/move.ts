@@ -5362,7 +5362,7 @@ export class TransformAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
       if (!super.apply(user, target, move, args) || target.illusion.active || user.illusion.active) {
-        user.scene.queueMessage("But it failed!");
+        user.scene.queueMessage(i18next.t("battle:attackFailed"));
         return resolve(false);
       }
 

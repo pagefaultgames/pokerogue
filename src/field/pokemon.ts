@@ -317,12 +317,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   generateIllusion(party: Pokemon[]): boolean {
     if (this.hasTrainer()) {
-      const lastPokemon: Pokemon = party.slice(-1)[0];
+      const lastPokemon: Pokemon = party.at(-1);
       const speciesId = lastPokemon.species.speciesId;
 
       if ( lastPokemon === this || this.illusion.active ||
-        (speciesId === Species.OGERPON && (lastPokemon.isTerastallized() || this.isTerastallized())) ||
-        (speciesId === Species.TERAPAGOS && (lastPokemon.isTerastallized() || this.isTerastallized())) ) {
+        ((speciesId === Species.OGERPON || speciesId === Species.TERAPAGOS) && (lastPokemon.isTerastallized() || this.isTerastallized()))) {
         return false;
       }
 
@@ -1375,12 +1374,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   getMatchupScore(pokemon: Pokemon): number {
     const types = this.getTypes(true);
-    const enemyTypes = pokemon.getTypes(true, true);
+    const enemyTypes = pokemon.getTypes(true, true, false, true);
     const outspeed = (this.isActive(true) ? this.getBattleStat(Stat.SPD, pokemon) : this.getStat(Stat.SPD)) <= pokemon.getBattleStat(Stat.SPD, this);
-    let atkScore = pokemon.getAttackTypeEffectiveness(types[0], this) * (outspeed ? 1.25 : 1);
+    let atkScore = pokemon.getAttackTypeEffectiveness(types[0], this, false, false, true) * (outspeed ? 1.25 : 1);
     let defScore = 1 / Math.max(this.getAttackTypeEffectiveness(enemyTypes[0], pokemon), 0.25);
     if (types.length > 1) {
-      atkScore *= pokemon.getAttackTypeEffectiveness(types[1], this);
+      atkScore *= pokemon.getAttackTypeEffectiveness(types[1], this, false, false, true);
     }
     if (enemyTypes.length > 1) {
       defScore *= (1 / Math.max(this.getAttackTypeEffectiveness(enemyTypes[1], pokemon), 0.25));
