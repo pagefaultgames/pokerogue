@@ -80,7 +80,7 @@ export const battle: SimpleTranslationEntries = {
   "retryBattle": "Möchtest du vom Beginn des Kampfes neustarten?",
   "unlockedSomething": "{{unlockedThing}}\nwurde freigeschaltet.",
   "congratulations": "Glückwunsch!",
-  "beatModeFirstTime": "{{speciesName}} hat den {{gameMode}} Modus zum ersten Mal beendet!\nDu erhältst {{newModifier}}!",
+  "beatModeFirstTime": "{{speciesName}} hat den {{gameMode}} Modus zum ersten Mal beendet! Du erhältst {{newModifier}}!",
   "battlerTagsRechargingLapse": "{{pokemonNameWithAffix}} kann sich wegen des Rückstoßes durch den Angriff nicht bewegen!",
   "battlerTagsTrappedOnAdd": "{{pokemonNameWithAffix}} kann nicht mehr fliehen!",
   "battlerTagsTrappedOnRemove": "{{pokemonNameWithAffix}} wurde von {{moveName}} befreit.",
