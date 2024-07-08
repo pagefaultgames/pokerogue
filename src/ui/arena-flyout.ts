@@ -89,6 +89,7 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
 
   constructor(scene: Phaser.Scene) {
     super(scene, 0, 0);
+    this.setName("arena-flyout");
     this.battleScene = this.scene as BattleScene;
 
     this.translationX = this.flyoutWidth;
@@ -183,19 +184,7 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
     this.battleScene.arena.eventTarget.addEventListener(ArenaEventType.TAG_REMOVED,     this.onFieldEffectChangedEvent);
   }
 
-  /**
-   * Formats a string to title case
-   * @param unformattedText Text to be formatted
-   * @returns the formatted string
-   */
-  private formatText(unformattedText: string): string {
-    const text = unformattedText.split("_");
-    for (let i = 0; i < text.length; i++) {
-      text[i] = text[i].charAt(0).toUpperCase() + text[i].substring(1).toLowerCase();
-    }
 
-    return text.join(" ");
-  }
 
   /** Clears out the current string stored in all arena effect texts */
   private clearText() {
@@ -232,7 +221,7 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
         break;
       }
 
-      textObject.text += this.formatText(fieldEffectInfo.name);
+      textObject.text += Utils.formatText(fieldEffectInfo.name);
       if (fieldEffectInfo.effecType === ArenaEffectType.TERRAIN) {
         textObject.text += " Terrain"; // Adds 'Terrain' since the enum does not contain it
       }
@@ -273,15 +262,15 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
       const existingTrapTagIndex = isArenaTrapTag ? this.fieldEffectInfo.findIndex(e => tagAddedEvent.arenaTagType === e.tagType && arenaEffectType === e.effecType) : -1;
       let name: string = ArenaTagType[tagAddedEvent.arenaTagType];
 
-      if (isArenaTrapTag && tagAddedEvent.arenaTagMaxLayers > 1) {
+      if (isArenaTrapTag) {
         if (existingTrapTagIndex !== -1) {
-          this.fieldEffectInfo[existingTrapTagIndex].name = `${name} (${tagAddedEvent.arenaTagLayers})`;
+          const layers = tagAddedEvent.arenaTagMaxLayers > 1 ? ` (${tagAddedEvent.arenaTagLayers})` : "";
+          this.fieldEffectInfo[existingTrapTagIndex].name = `${name}${layers}`;
           break;
-        } else {
+        } else if (tagAddedEvent.arenaTagMaxLayers > 1) {
           name = `${name} (${tagAddedEvent.arenaTagLayers})`;
         }
       }
-
 
       this.fieldEffectInfo.push({
         name,
