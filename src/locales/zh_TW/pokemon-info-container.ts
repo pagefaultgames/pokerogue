@@ -1,11 +1,8 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const pokemonInfoContainer: SimpleTranslationEntries = {
-  "moveset": "Moveset",
-  "gender": "Gender:",
-  "ability": "Ability:",
-  "nature": "Nature:",
-  "epic": "Epic",
-  "rare": "Rare",
-  "common": "Common"
+  "moveset": "招式",
+  "gender": "性别:",
+  "ability": "特性:",
+  "nature": "性格:",
 } as const;
