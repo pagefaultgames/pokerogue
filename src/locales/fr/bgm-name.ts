@@ -1,7 +1,7 @@
 import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const bgmName: SimpleTranslationEntries = {
-  "music": "Musique ",
+  "music": "Musique : ",
   "missing_entries" : "{{name}}",
   "battle_kanto_champion": "N2B2 - Vs. Maitre de Kanto",
   "battle_johto_champion": "N2B2 - Vs. Maitre de Johto",
@@ -62,6 +62,7 @@ export const bgmName: SimpleTranslationEntries = {
   "battle_legendary_calyrex": "ÉB - Vs. Sylveroy",
   "battle_legendary_birds_galar": "ÉB - Vs. Oiseaux Légendaires de Galar",
   "battle_legendary_ruinous": "ÉV - Vs. Trésors du fléau",
+  "battle_legendary_kor_mir": "ÉV - Profondeurs de la Zone Zéro (Combat)",
   "battle_legendary_loyal_three": "ÉV - Vs. Adoramis",
   "battle_legendary_ogerpon": "ÉV - Vs. Ogerpon",
   "battle_legendary_terapagos": "ÉV - Vs. Terapagos",
@@ -73,7 +74,16 @@ export const bgmName: SimpleTranslationEntries = {
   "battle_wild": "NB - Vs. Pokémon sauvage",
   "battle_wild_strong": "NB - Vs. Pokémon puissant sauvage",
   "end_summit": "PDM ÉSDX - Tour Céleste",
+  "battle_rocket_grunt": "HGSS Team Rocket Battle",
+  "battle_aqua_magma_grunt": "ORAS Team Aqua & Magma Battle",
+  "battle_galactic_grunt": "BDSP Team Galactic Battle",
   "battle_plasma_grunt": "NB - Vs. Team Plasma",
+  "battle_flare_grunt": "XY Team Flare Battle",
+  "battle_rocket_boss": "USUM Giovanni Battle",
+  "battle_aqua_magma_boss": "ORAS Archie & Maxie Battle",
+  "battle_galactic_boss": "BDSP Cyrus Battle",
+  "battle_plasma_boss": "B2W2 Ghetsis Battle",
+  "battle_flare_boss": "XY Lysandre Battle",
 
   // Biome Music
   "abyss": "PDM EdS - Cratère Obscur",
@@ -91,20 +101,20 @@ export const bgmName: SimpleTranslationEntries = {
   "graveyard": "PDM EdS - Forêt Trompeuse",
   "ice_cave": "PDM EdS - Montagne Glacier",
   "island": "PDM EdS - Côte Escarpée",
-  //"jungle": "jungle", // The composer thinks about a more creative name
-  //"labratory": "labratory", // The composer thinks about a more creative name
+  "jungle": "Lmz - Jungle", // The composer thinks about a more creative name
+  "laboratory": "Firel - Laboratory", // The composer thinks about a more creative name
   "lake": "PDM EdS - Caverne Cristal",
   "meadow": "PDM EdS - Pic Céleste (forêt)",
-  //"metropolis": "metropolis", // The composer thinks about a more creative name
+  "metropolis": "Firel - Metropolis", // The composer thinks about a more creative name
   "mountain": "PDM EdS - Mt Corne",
   "plains": "PDM EdS - Pic Céleste (prairie)",
   "power_plant": "PDM EdS - Plaines Élek",
   "ruins": "PDM EdS - Ruine Scellée",
   "sea": "PDM EdS - Caverne Saline",
-  "seabed": "PDM EdS - Caverne Saline profondeurs",
+  "seabed": "Firel - Seabed", // The composer thinks about a more creative name
   "slum": "PDM EdS - Pic Céleste (côte)",
   "snowy_forest": "PDM EdS - Pic Céleste (plaine enneigée)",
-  "space": "PDM EdS - Ravin Aubaine",
+  "space": "Firel - Aether",
   "swamp": "PDM EdS - Mer Fermée",
   "tall_grass": "PDM EdS - Forêt Brumeuse",
   "temple": "PDM EdS - Grotte Égide",

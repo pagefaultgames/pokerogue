@@ -1,7 +1,7 @@
 import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const bgmName: SimpleTranslationEntries = {
-  "music": "Musik",
+  "music": "Musik: ",
   "missing_entries" : "{{name}}",
   "battle_kanto_champion": "S2W2 Vs. Kanto Champion",
   "battle_johto_champion": "S2W2 Vs. Johto Champion",
@@ -62,6 +62,7 @@ export const bgmName: SimpleTranslationEntries = {
   "battle_legendary_calyrex": "SWSH Vs. Coronospa",
   "battle_legendary_birds_galar": "SWSH Vs. Legendäre Galar-Vögel",
   "battle_legendary_ruinous": "KAPU Vs. Schätze des Unheils",
+  "battle_legendary_kor_mir": "KAPU Die Tiefen von Zone Null",
   "battle_legendary_loyal_three": "KAPU Drei Gefährten",
   "battle_legendary_ogerpon": "KAPU Vs. Ogerpon",
   "battle_legendary_terapagos": "KAPU Vs. Terapagos",
@@ -73,7 +74,16 @@ export const bgmName: SimpleTranslationEntries = {
   "battle_wild": "SW Vs. Wilde Pokémon",
   "battle_wild_strong": "SW Vs. Starke Wilde Pokémon",
   "end_summit": "PMDDX Gipfel des Himmelturms",
+  "battle_rocket_grunt": "HGSS Team Rocket Battle",
+  "battle_aqua_magma_grunt": "ORAS Team Aqua & Magma Battle",
+  "battle_galactic_grunt": "BDSP Team Galactic Battle",
   "battle_plasma_grunt": "SW Vs. Team Plasma Rüpel",
+  "battle_flare_grunt": "XY Team Flare Battle",
+  "battle_rocket_boss": "USUM Giovanni Battle",
+  "battle_aqua_magma_boss": "ORAS Archie & Maxie Battle",
+  "battle_galactic_boss": "BDSP Cyrus Battle",
+  "battle_plasma_boss": "B2W2 Ghetsis Battle",
+  "battle_flare_boss": "XY Lysandre Battle",
 
   // Biome Music
   "abyss": "PMD Erkundungsteam Himmel Dunkelkrater",
@@ -91,20 +101,20 @@ export const bgmName: SimpleTranslationEntries = {
   "graveyard": "PMD Erkundungsteam Himmel Verwirrwald",
   "ice_cave": "PMD Erkundungsteam Himmel Rieseneisberg",
   "island": "PMD Erkundungsteam Himmel Schroffküste",
-  //"jungle": "jungle", // The composer thinks about a more creative name
-  //"labratory": "labratory", // The composer thinks about a more creative name
+  "jungle": "Lmz - Jungle", // The composer thinks about a more creative name
+  "laboratory": "Firel - Laboratory", // The composer thinks about a more creative name
   "lake": "PMD Erkundungsteam Himmel Kristallhöhle",
   "meadow": "PMD Erkundungsteam Himmel Himmelsgipfel-Wald",
-  //"metropolis": "metropolis", // The composer thinks about a more creative name
+  "metropolis": "Firel - Metropolis", // The composer thinks about a more creative name
   "mountain": "PMD Erkundungsteam Himmel Hornberg",
   "plains": "PMD Erkundungsteam Himmel Himmelsgipfel-Prärie",
   "power_plant": "PMD Erkundungsteam Himmel Weite Ampere-Ebene",
   "ruins": "PMD Erkundungsteam Himmel Tiefes Ruinenverlies",
   "sea": "PMD Erkundungsteam Himmel Salzwasserhöhle",
-  "seabed": "PMD Erkundungsteam Himmel Untere Salzwasserhöhle",
+  "seabed": "Firel - Seabed", // The composer thinks about a more creative name
   "slum": "PMD Erkundungsteam Himmel Himmelsgipfel-Küste",
   "snowy_forest": "PMD Erkundungsteam Himmel Himmelsgipfel-Schneefeld",
-  "space": "PMD Erkundungsteam Himmel Schicksalsschlucht",
+  "space": "Firel - Aether",
   "swamp": "PMD Erkundungsteam Himmel Ringmeer",
   "tall_grass": "PMD Erkundungsteam Himmel Nebelwald",
   "temple": "PMD Erkundungsteam Himmel Ägishöhle",

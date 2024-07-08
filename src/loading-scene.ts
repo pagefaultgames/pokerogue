@@ -78,6 +78,7 @@ export class LoadingScene extends SceneBase {
     this.loadImage("overlay_exp", "ui");
     this.loadImage("icon_owned", "ui");
     this.loadImage("ability_bar_left", "ui");
+    this.loadImage("bgm_bar", "ui");
     this.loadImage("party_exp_bar", "ui");
     this.loadImage("achv_bar", "ui");
     this.loadImage("achv_bar_2", "ui");
@@ -90,6 +91,7 @@ export class LoadingScene extends SceneBase {
     this.loadImage("shiny_star_small", "ui", "shiny_small.png");
     this.loadImage("shiny_star_small_1", "ui", "shiny_small_1.png");
     this.loadImage("shiny_star_small_2", "ui", "shiny_small_2.png");
+    this.loadAtlas("shiny_icons", "ui");
     this.loadImage("ha_capsule", "ui", "ha_capsule.png");
     this.loadImage("champion_ribbon", "ui", "champion_ribbon.png");
     this.loadImage("icon_spliced", "ui");
@@ -320,6 +322,7 @@ export class LoadingScene extends SceneBase {
     this.loadBgm("minor_fanfare", "bw/minor_fanfare.mp3");
     this.loadBgm("heal", "bw/heal.mp3");
     this.loadBgm("victory_trainer", "bw/victory_trainer.mp3");
+    this.loadBgm("victory_team_plasma", "bw/victory_team_plasma.mp3");
     this.loadBgm("victory_gym", "bw/victory_gym.mp3");
     this.loadBgm("victory_champion", "bw/victory_champion.mp3");
     this.loadBgm("evolution", "bw/evolution.mp3");
