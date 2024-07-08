@@ -8,5 +8,5 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "trace": "{{pokemonName}} kopiert {{abilityName}} von {{targetName}}!",
   "windPowerCharged": "Der Treffer durch {{moveName}} läd die Stärke von {{pokemonName}} auf!",
   "quickDraw": "Durch Schnellschuss kann {{pokemonName}} schneller handeln als sonst!",
-  "illusion": "{{pokemonName}}'s illusion wore off!",
+  "illusion": "Das Trugbild von {{pokemonName}} verschwindet!",
 } as const;
