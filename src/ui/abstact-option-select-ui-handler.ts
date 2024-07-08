@@ -88,9 +88,8 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     }
 
     this.optionSelectText = addTextObject(this.scene, 0, 0, options.map(o => o.item ? `    ${o.label}` : o.label).join("\n"), TextStyle.WINDOW, { maxLines: options.length });
-    this.optionSelectText.setLineSpacing(this.scale * 72);
     this.optionSelectText.setName("text-option-select");
-    this.optionSelectText.setLineSpacing(12);
+    this.optionSelectText.setLineSpacing(this.scale * 72);
     this.optionSelectContainer.add(this.optionSelectText);
     this.optionSelectContainer.setPosition((this.scene.game.canvas.width / 6) - 1 - (this.config?.xOffset || 0), -48 + (this.config?.yOffset || 0));
 
