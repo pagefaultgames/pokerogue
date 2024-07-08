@@ -44,6 +44,7 @@ import { partyUiHandler } from "./party-ui-handler";
 import { settings } from "./settings.js";
 import { common } from "./common.js";
 import { modifierSelectUiHandler } from "./modifier-select-ui-handler";
+import { moveTriggers } from "./move-trigger";
 
 export const ptBrConfig = {
   ability: ability,
@@ -92,5 +93,6 @@ export const ptBrConfig = {
   tutorial: tutorial,
   voucher: voucher,
   weather: weather,
-  modifierSelectUiHandler: modifierSelectUiHandler
+  modifierSelectUiHandler: modifierSelectUiHandler,
+  moveTriggers: moveTriggers
 };
