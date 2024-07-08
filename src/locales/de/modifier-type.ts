@@ -61,7 +61,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "Increases a Pokémon's level by {{levels}}.",
     },
     "AllPokemonLevelIncrementModifierType": {
-      description: "Increases all party members' level by {{levels}}.",
+      description: "Erhöht das Level aller Teammitglieder um {{levels}}.",
     },
     "PokemonBaseStatBoosterModifierType": {
       description: "Erhöht den {{statName}} Basiswert des Trägers um 10%. Das Stapellimit erhöht sich, je höher dein IS-Wert ist.",
