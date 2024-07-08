@@ -537,7 +537,7 @@ export class TitlePhase extends Phase {
       }
     })
     // If the player has no save data (as determined above), hide the "Load Game" button
-    if (hasFile)
+    if (hasFile || true)
     options.push({
       label: i18next.t("menu:loadGame"),
       handler: () => {
