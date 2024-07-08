@@ -43,6 +43,7 @@ import { weather } from "./weather";
 import { partyUiHandler } from "./party-ui-handler";
 import { settings } from "./settings.js";
 import { common } from "./common.js";
+import { modifierSelectUiHandler } from "./modifier-select-ui-handler";
 
 export const esConfig = {
   ability: ability,
@@ -90,5 +91,6 @@ export const esConfig = {
   tutorial: tutorial,
   voucher: voucher,
   weather: weather,
-  partyUiHandler: partyUiHandler
+  partyUiHandler: partyUiHandler,
+  modifierSelectUiHandler: modifierSelectUiHandler
 };

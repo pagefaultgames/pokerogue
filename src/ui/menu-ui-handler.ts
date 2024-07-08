@@ -46,9 +46,9 @@ export default class MenuUiHandler extends MessageUiHandler {
   protected manageDataConfig: OptionSelectConfig;
   protected communityConfig: OptionSelectConfig;
 
-  protected scale: number = 0.1666666667;
   public bgmBar: BgmBar;
 
+  protected scale: number = 0.1666666667;
 
   constructor(scene: BattleScene, mode?: Mode) {
     super(scene, mode);

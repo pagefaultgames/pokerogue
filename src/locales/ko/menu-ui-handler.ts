@@ -20,5 +20,5 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "exportData": "데이터 내보내기",
   "cancel": "취소",
   "losingProgressionWarning": "전투 시작으로부터의 진행 상황을 잃게 됩니다. 계속하시겠습니까?",
-  "noEggs": "You are not hatching\nany eggs at the moment!"
+  "noEggs": "부화중인 알이 없습니다!"
 } as const;
