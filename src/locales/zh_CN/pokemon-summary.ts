@@ -8,7 +8,6 @@ export const pokemonSummary: TranslationEntries = {
   "unknownTrainer": "未知",
   "ot": "训练师",
   "nature": "性格",
-  "metAtLv": "相遇于Lv.",
   "expPoints": "经验值",
   "nextLv": "下一级",
   "cancel": "取消",

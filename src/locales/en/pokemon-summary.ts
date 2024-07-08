@@ -8,7 +8,6 @@ export const pokemonSummary: TranslationEntries = {
   "unknownTrainer": "Unknown",
   "ot": "OT",
   "nature": "nature",
-  "metAtLv": "met at Lv.",
   "expPoints": "Exp. Points",
   "nextLv": "Next Lv.",
   "cancel": "Cancel",
