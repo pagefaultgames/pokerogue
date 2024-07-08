@@ -58,10 +58,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "一只宝可梦的{{moveType}}系招式威力提升20%。",
     },
     "PokemonLevelIncrementModifierType": {
-      description: "一只宝可梦等级提升1级。",
+      description: "Increases a Pokémon's level by {{levels}}.",
     },
     "AllPokemonLevelIncrementModifierType": {
-      description: "所有成员宝可梦等级提升1级。",
+      description: "Increases all party members' level by {{levels}}.",
     },
     "PokemonBaseStatBoosterModifierType": {
       description: "增加10%持有者的{{statName}}，\n个体值越高堆叠上限越高。",

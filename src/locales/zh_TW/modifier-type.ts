@@ -58,11 +58,11 @@ export const modifierType: ModifierTypeTranslationEntries = {
     AttackTypeBoosterModifierType: {
       description: "一隻寶可夢的{{moveType}}系招式威力提升20%。",
     },
-    PokemonLevelIncrementModifierType: {
-      description: "一隻寶可夢等級提升1級。",
+    "PokemonLevelIncrementModifierType": {
+      description: "Increases a Pokémon's level by {{levels}}.",
     },
-    AllPokemonLevelIncrementModifierType: {
-      description: "所有成員寶可夢等級提升1級。",
+    "AllPokemonLevelIncrementModifierType": {
+      description: "Increases all party members' level by {{levels}}.",
     },
     PokemonBaseStatBoosterModifierType: {
       description:

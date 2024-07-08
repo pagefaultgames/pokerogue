@@ -58,10 +58,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "지니게 하면 {{moveType}}타입 기술의 위력이 20% 상승한다.",
     },
     "PokemonLevelIncrementModifierType": {
-      description: "포켓몬 1마리의 레벨이 1만큼 상승한다.",
+      description: "Increases a Pokémon's level by {{levels}}.",
     },
     "AllPokemonLevelIncrementModifierType": {
-      description: "자신의 모든 포켓몬의 레벨이 1씩 상승한다.",
+      description: "Increases all party members' level by {{levels}}.",
     },
     "PokemonBaseStatBoosterModifierType": {
       description: "지니게 하면 {{statName}} 종족값을 10% 올려준다. 개체값이 높을수록 더 많이 누적시킬 수 있다.",

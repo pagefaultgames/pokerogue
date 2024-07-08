@@ -58,10 +58,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "Aumenta la potenza delle mosse di tipo {{moveType}} del 20% per un Pokémon.",
     },
     "PokemonLevelIncrementModifierType": {
-      description: "Fa salire un Pokémon di un livello.",
+      description: "Increases a Pokémon's level by {{levels}}.",
     },
     "AllPokemonLevelIncrementModifierType": {
-      description: "Aumenta il livello di tutti i Pokémon nel gruppo di 1.",
+      description: "Increases all party members' level by {{levels}}.",
     },
     "PokemonBaseStatBoosterModifierType": {
       description: "Aumenta {{statName}} di base del possessore del 10%.",
