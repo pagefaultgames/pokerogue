@@ -7,7 +7,6 @@ export const pokemonSummary: SimpleTranslationEntries = {
   "type": "Tipo",
   "unknownTrainer": "Desconhecido",
   "ot": "TO",
-  "luck": "Sorte",
   "nature": "natureza",
   "apparently": "aparentemente",
   "metAtLv": "encontrado no Nv.",

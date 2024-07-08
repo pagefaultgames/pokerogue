@@ -288,8 +288,7 @@ export const isLocal = (
 export const localServerUrl = import.meta.env.VITE_SERVER_URL ?? `http://${window.location.hostname}:${window.location.port+1}`;
 
 // Set the server URL based on whether it's local or not
-export const serverUrl = isLocal ? localServerUrl : "";
-export const apiUrl = isLocal ? serverUrl : "https://api.pokerogue.net";
+export const apiUrl = localServerUrl ?? "https://api.pokerogue.net";
 // used to disable api calls when isLocal is true and a server is not found
 export let isLocalServerConnected = true;
 
@@ -394,6 +393,20 @@ export class FixedInt extends IntegerHolder {
 
 export function fixedInt(value: integer): integer {
   return new FixedInt(value) as unknown as integer;
+}
+
+/**
+ * Formats a string to title case
+ * @param unformattedText Text to be formatted
+ * @returns the formatted string
+ */
+export function formatText(unformattedText: string): string {
+  const text = unformattedText.split("_");
+  for (let i = 0; i < text.length; i++) {
+    text[i] = text[i].charAt(0).toUpperCase() + text[i].substring(1).toLowerCase();
+  }
+
+  return text.join(" ");
 }
 
 export function rgbToHsv(r: integer, g: integer, b: integer) {

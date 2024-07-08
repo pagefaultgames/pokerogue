@@ -7,7 +7,6 @@ export const pokemonSummary: SimpleTranslationEntries = {
   "type": "属性",
   "unknownTrainer": "未知",
   "ot": "训练师",
-  "luck": "幸运",
   "nature": "性格",
   "apparently": "命中注定般地",
   "metAtLv": "相遇于Lv.",

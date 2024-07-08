@@ -7,7 +7,6 @@ export const pokemonSummary: SimpleTranslationEntries = {
   "type": "타입",
   "unknownTrainer": "알수없음",
   "ot": "어버이",
-  "luck": "행운",
   "nature": "성격",
   "apparently": "apparently",
   "metAtLv": "만났을 때 Lv.",
