@@ -1,7 +1,7 @@
 import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const moveTriggers: SimpleTranslationEntries = {
-  "hitWithRecoil" : " is hit\nwith recoil!",
+  "hitWithRecoil" : " was damaged by the recoil!",
   "cutHpPowerUpMove": " cut its own HP to power up its move!",
   "absorbedElectricity": "absorbed electricity!",
   "switchedStatChanges": " switched stat changes with the target!",
@@ -15,10 +15,10 @@ export const moveTriggers: SimpleTranslationEntries = {
   "attackedByItem": "is about to be attacked by its {{itemName}}!",
   "whippedUpAWhirlwind": "whipped\nup a whirlwind!",
   "flewUpHigh": "flew\nup high!",
-  "tookInSunlight": "took\nin sunlight!",
-  "dugAHole": "dug a hole!",
-  "loweredItsHead": "lowered\nits head!",
-  "isGlowing": "is glowing!",
+  "tookInSunlight": "absorbed light!",
+  "dugAHole": "burrowed its way under the ground!",
+  "loweredItsHead": "tucked in its head!",
+  "isGlowing": "became cloaked in a harsh light!",
   "bellChimed": "A bell chimed!",
   "foresawAnAttack": "foresaw\nan attack!",
   "hidUnderwater": "hid\nunderwater!",
@@ -29,7 +29,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "tookTargetIntoSky": "took {{targetName}}\ninto the sky!",
   "becameCloakedInFreezingLight": "became cloaked\nin a freezing light!",
   "becameCloakedInFreezingAir": "became cloaked\nin freezing air!",
-  "isChargingPower": "is charging its power!",
+  "isChargingPower": "is absorbing power!",
   "burnedItselfOut": " burned itself out!",
   "startedHeatingUpBeak": "started\nheating up its beak!",
   "isOverflowingWithSpacePower": "is overflowing\nwith space power!",
@@ -47,8 +47,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "sketchedMove": " sketched\n{{moveName}}!",
   "acquiredAbility": "The {{pokemonName}} acquired\n{{abilityName}}!",
   "copiedTargetAbility": "{{userName}} copied the {{targerName}}'s\n{{abilityName}}!",
-  "acquiredTargetAbility": "The {{pokemonName}}\nacquired {{abilityName}}!",
   "transformedIntoTarget": " transformed\ninto {{targetName}}!",
-  "tryingToTakeFoeDown": " is trying\nto take its foe down with it!",
+  "tryingToTakeFoeDown": " is hoping to take its attacker down with it!",
   "cannotUseMove": " cannot use {{moveName}}!"
 } as const;
