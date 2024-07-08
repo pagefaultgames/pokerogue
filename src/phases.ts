@@ -80,10 +80,10 @@ export class LoginPhase extends Phase {
   start(): void {
     super.start();
 
-    const hasSession = !!Utils.getCookie(Utils.sessionIdKey);
+    // const hasSession = !!Utils.getCookie(Utils.sessionIdKey);
 
     this.scene.ui.setMode(Mode.LOADING, { buttonActions: [] });
-    Utils.executeIf(bypassLogin || hasSession, updateUserInfo).then(response => {
+    Utils.executeIf(true, updateUserInfo).then(response => {
       const success = response ? response[0] : false;
       const statusCode = response ? response[1] : null;
       if (!success) {
@@ -512,30 +512,33 @@ export class SelectGenderPhase extends Phase {
   start(): void {
     super.start();
 
-    this.scene.ui.showText(i18next.t("menu:boyOrGirl"), null, () => {
-      this.scene.ui.setMode(Mode.OPTION_SELECT, {
-        options: [
-          {
-            label: i18next.t("settings:boy"),
-            handler: () => {
-              this.scene.gameData.gender = PlayerGender.MALE;
-              this.scene.gameData.saveSetting(SettingKeys.Player_Gender, 0);
-              this.scene.gameData.saveSystem().then(() => this.end());
-              return true;
-            }
-          },
-          {
-            label: i18next.t("settings:girl"),
-            handler: () => {
-              this.scene.gameData.gender = PlayerGender.FEMALE;
-              this.scene.gameData.saveSetting(SettingKeys.Player_Gender, 1);
-              this.scene.gameData.saveSystem().then(() => this.end());
-              return true;
-            }
-          }
-        ]
-      });
-    });
+    // this.scene.ui.showText(i18next.t("menu:boyOrGirl"), null, () => {
+    //   this.scene.ui.setMode(Mode.OPTION_SELECT, {
+    //     options: [
+    //       {
+    //         label: i18next.t("settings:boy"),
+    //         handler: () => {
+    //           this.scene.gameData.gender = PlayerGender.MALE;
+    //           this.scene.gameData.saveSetting(SettingKeys.Player_Gender, 0);
+    //           this.scene.gameData.saveSystem().then(() => this.end());
+    //           return true;
+    //         }
+    //       },
+    //       {
+    //         label: i18next.t("settings:girl"),
+    //         handler: () => {
+    //           this.scene.gameData.gender = PlayerGender.FEMALE;
+    //           this.scene.gameData.saveSetting(SettingKeys.Player_Gender, 1);
+    //           this.scene.gameData.saveSystem().then(() => this.end());
+    //           return true;
+    //         }
+    //       }
+    //     ]
+    //   });
+    // });
+    this.scene.gameData.gender = PlayerGender.MALE;
+    this.scene.gameData.saveSetting(SettingKeys.Player_Gender, 0);
+    this.scene.gameData.saveSystem().then(() => this.end());
   }
 
   end(): void {
@@ -569,18 +572,18 @@ export class SelectStarterPhase extends Phase {
 
     this.scene.playBgm("menu");
 
-    // this.scene.ui.setMode(Mode.STARTER_SELECT, (starters: Starter[]) => {
-    //   this.scene.ui.clearText();
-    //   this.scene.ui.setMode(Mode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: integer) => {
-    //     if (slotId === -1) {
-    //       this.scene.clearPhaseQueue();
-    //       this.scene.pushPhase(new TitlePhase(this.scene));
-    //       return this.end();
-    //     }
-    //     this.scene.sessionSlotId = slotId;
-    //     this.initBattle(starters);
-    //   });
-    // });
+    this.scene.ui.setMode(Mode.STARTER_SELECT, (starters: Starter[]) => {
+      this.scene.ui.clearText();
+      this.scene.ui.setMode(Mode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: integer) => {
+        if (slotId === -1) {
+          this.scene.clearPhaseQueue();
+          this.scene.pushPhase(new TitlePhase(this.scene));
+          return this.end();
+        }
+        this.scene.sessionSlotId = slotId;
+        this.initBattle(starters);
+      });
+    });
   }
 
   /**

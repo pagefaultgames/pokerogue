@@ -141,7 +141,7 @@ export const Setting: Array<Setting> = [
         label: "5x"
       }
     ],
-    default: 3,
+    default: 7,
     type: SettingType.GENERAL
   },
   {
@@ -165,7 +165,7 @@ export const Setting: Array<Setting> = [
         label: i18next.t("settings:skip")
       }
     ],
-    default: 0,
+    default: 3,
     type: SettingType.GENERAL
   },
   {
@@ -189,7 +189,7 @@ export const Setting: Array<Setting> = [
         label: i18next.t("settings:skip")
       }
     ],
-    default: 0,
+    default: 3,
     type: SettingType.GENERAL
   },
   {
@@ -209,7 +209,7 @@ export const Setting: Array<Setting> = [
         label: i18next.t("settings:skip")
       }
     ],
-    default: 0,
+    default: 2,
     type: SettingType.GENERAL
   },
   {
@@ -246,7 +246,7 @@ export const Setting: Array<Setting> = [
     key: SettingKeys.Tutorials,
     label: i18next.t("settings:tutorials"),
     options: OFF_ON,
-    default: 1,
+    default: 0,
     type: SettingType.GENERAL
   },
   {

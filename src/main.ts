@@ -7,13 +7,7 @@ import BBCodeTextPlugin from "phaser3-rex-plugins/plugins/bbcodetext-plugin";
 import InputTextPlugin from "phaser3-rex-plugins/plugins/inputtext-plugin.js";
 import TransitionImagePackPlugin from "phaser3-rex-plugins/templates/transitionimagepack/transitionimagepack-plugin.js";
 import { LoadingScene } from "./loading-scene";
-import { SelectStarterPhase } from "./phases";
-import { Starter } from "./ui/starter-select-ui-handler";
-import { Species } from "./enums/species";
-import { getPokemonSpecies, getPokemonSpeciesForm } from "./data/pokemon-species";
-import { StarterMoveset } from "./system/game-data";
-import { Gender } from "#app/data/gender";
-import { PlayerPokemon } from "./field/pokemon";
+import { automateGame } from "./hackathon-api/automateGame";
 
 // Catch global errors and display them in an alert so users can report the issue.
 window.onerror = function (message, source, lineno, colno, error) {
@@ -37,44 +31,50 @@ const config: Phaser.Types.Core.GameConfig = {
   scale: {
     width: 1920,
     height: 1080,
-    mode: Phaser.Scale.FIT
+    mode: Phaser.Scale.FIT,
   },
   plugins: {
-    global: [{
-      key: "rexInputTextPlugin",
-      plugin: InputTextPlugin,
-      start: true
-    }, {
-      key: "rexBBCodeTextPlugin",
-      plugin: BBCodeTextPlugin,
-      start: true
-    }, {
-      key: "rexTransitionImagePackPlugin",
-      plugin: TransitionImagePackPlugin,
-      start: true
-    }],
-    scene: [{
-      key: "rexUI",
-      plugin: UIPlugin,
-      mapping: "rexUI"
-    }]
+    global: [
+      {
+        key: "rexInputTextPlugin",
+        plugin: InputTextPlugin,
+        start: true,
+      },
+      {
+        key: "rexBBCodeTextPlugin",
+        plugin: BBCodeTextPlugin,
+        start: true,
+      },
+      {
+        key: "rexTransitionImagePackPlugin",
+        plugin: TransitionImagePackPlugin,
+        start: true,
+      },
+    ],
+    scene: [
+      {
+        key: "rexUI",
+        plugin: UIPlugin,
+        mapping: "rexUI",
+      },
+    ],
   },
   input: {
     mouse: {
-      target: "app"
+      target: "app",
     },
     touch: {
-      target: "app"
+      target: "app",
     },
-    gamepad: true
+    gamepad: true,
   },
   dom: {
-    createContainer: true
+    createContainer: true,
   },
   pixelArt: true,
-  pipeline: [ InvertPostFX ] as unknown as Phaser.Types.Core.PipelineConfig,
-  scene: [ LoadingScene, BattleScene ],
-  version: version
+  pipeline: [InvertPostFX] as unknown as Phaser.Types.Core.PipelineConfig,
+  scene: [LoadingScene, BattleScene],
+  version: version,
 };
 
 /**
@@ -90,142 +90,93 @@ const setPositionRelative = function (guideObject: any, x: number, y: number) {
 };
 
 declare module "phaser" {
-	namespace GameObjects {
-		interface Container {
+  namespace GameObjects {
+    interface Container {
       /**
        * Sets this object's position relative to another object with a given offset
        * @param guideObject {@linkcode Phaser.GameObjects.GameObject} to base the position off of
        * @param x The relative x position
        * @param y The relative y position
        */
-			setPositionRelative(guideObject: any, x: number, y: number): void;
-		}
-		interface Sprite {
+      setPositionRelative(guideObject: any, x: number, y: number): void;
+    }
+    interface Sprite {
       /**
        * Sets this object's position relative to another object with a given offset
        * @param guideObject {@linkcode Phaser.GameObjects.GameObject} to base the position off of
        * @param x The relative x position
        * @param y The relative y position
        */
-			setPositionRelative(guideObject: any, x: number, y: number): void;
-		}
-		interface Image {
+      setPositionRelative(guideObject: any, x: number, y: number): void;
+    }
+    interface Image {
       /**
        * Sets this object's position relative to another object with a given offset
        * @param guideObject {@linkcode Phaser.GameObjects.GameObject} to base the position off of
        * @param x The relative x position
        * @param y The relative y position
        */
-			setPositionRelative(guideObject: any, x: number, y: number): void;
-		}
-		interface NineSlice {
+      setPositionRelative(guideObject: any, x: number, y: number): void;
+    }
+    interface NineSlice {
       /**
        * Sets this object's position relative to another object with a given offset
        * @param guideObject {@linkcode Phaser.GameObjects.GameObject} to base the position off of
        * @param x The relative x position
        * @param y The relative y position
        */
-			setPositionRelative(guideObject: any, x: number, y: number): void;
-		}
-		interface Text {
+      setPositionRelative(guideObject: any, x: number, y: number): void;
+    }
+    interface Text {
       /**
        * Sets this object's position relative to another object with a given offset
        * @param guideObject {@linkcode Phaser.GameObjects.GameObject} to base the position off of
        * @param x The relative x position
        * @param y The relative y position
        */
-			setPositionRelative(guideObject: any, x: number, y: number): void;
-		}
-		interface Rectangle {
+      setPositionRelative(guideObject: any, x: number, y: number): void;
+    }
+    interface Rectangle {
       /**
        * Sets this object's position relative to another object with a given offset
        * @param guideObject {@linkcode Phaser.GameObjects.GameObject} to base the position off of
        * @param x The relative x position
        * @param y The relative y position
        */
-			setPositionRelative(guideObject: any, x: number, y: number): void;
-		}
-	}
-}
-
-Phaser.GameObjects.Container.prototype.setPositionRelative = setPositionRelative;
-Phaser.GameObjects.Sprite.prototype.setPositionRelative = setPositionRelative;
-Phaser.GameObjects.Image.prototype.setPositionRelative = setPositionRelative;
-Phaser.GameObjects.NineSlice.prototype.setPositionRelative = setPositionRelative;
-Phaser.GameObjects.Text.prototype.setPositionRelative = setPositionRelative;
-Phaser.GameObjects.Rectangle.prototype.setPositionRelative = setPositionRelative;
-
-document.fonts.load("16px emerald").then(() => document.fonts.load("10px pkmnems"));
-
-let game;
-
-const createStarterFromSpecies = (speciesNumber: Species, scene: BattleScene): Starter => {
-  const gameMode = scene.gameMode;
-
-  const startingLevel = gameMode.getStartingLevel();
-  const starterSpeciesForm = getPokemonSpeciesForm(speciesNumber, 0);
-  const pokemonSpecies = getPokemonSpecies(starterSpeciesForm.speciesId);
-
-  const pokemon = new PlayerPokemon(scene, pokemonSpecies, startingLevel, undefined, 0, undefined, undefined, undefined, undefined, undefined, undefined);
-
-  const starter: Starter = {
-    species: pokemonSpecies,
-    dexAttr: pokemon.getDexAttr(),
-    abilityIndex: pokemon.abilityIndex,
-    passive: false,
-    nature: pokemon.getNature(),
-    pokerus: pokemon.pokerus
-  };
-
-  const starterProps = scene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);
-  const starterFormIndex = Math.min(starterProps.formIndex, Math.max(starter.species.forms.length - 1, 0));
-  const starterGender = starter.species.malePercent !== null
-    ? !starterProps.female ? Gender.MALE : Gender.FEMALE
-    : Gender.GENDERLESS;
-  const starterPokemon = scene.addPlayerPokemon(starter.species, startingLevel, starter.abilityIndex, starterFormIndex, starterGender, starterProps.shiny, starterProps.variant, undefined, starter.nature);
-  starter.moveset = starterPokemon.moveset as unknown as StarterMoveset;
-
-  return starter;
-};
-// Given pokedex ids, return list of Species for selectStarterPhase to initBattle with
-// TODO: limit to starting 3 starters from every gen only
-const chooseStarters = (speciesNumbers: Species[]) => {
-  const scenes = game.scene.getScenes(true);
-  for (const scene of scenes) {
-    if (scene.scene.key === "battle") {
-      const battleScene = scene as BattleScene;
-      console.log("BattleScene found.");
-      const selectStarterPhase = battleScene.getCurrentPhase();
-      if (selectStarterPhase instanceof SelectStarterPhase) {
-        console.log("SelectStarterPhase found.");
-
-        const starters: Starter[] = speciesNumbers.map((species) => createStarterFromSpecies(species, battleScene));
-
-        starters.forEach((v) => {
-          console.log("Starters chosen:", v);
-        });
-
-        selectStarterPhase.initBattle(starters);
-
-        return;
-      }
+      setPositionRelative(guideObject: any, x: number, y: number): void;
     }
   }
-  setTimeout(() => chooseStarters(speciesNumbers), 500);
-};
+}
+
+Phaser.GameObjects.Container.prototype.setPositionRelative =
+  setPositionRelative;
+Phaser.GameObjects.Sprite.prototype.setPositionRelative = setPositionRelative;
+Phaser.GameObjects.Image.prototype.setPositionRelative = setPositionRelative;
+Phaser.GameObjects.NineSlice.prototype.setPositionRelative =
+  setPositionRelative;
+Phaser.GameObjects.Text.prototype.setPositionRelative = setPositionRelative;
+Phaser.GameObjects.Rectangle.prototype.setPositionRelative =
+  setPositionRelative;
+
+document.fonts
+  .load("16px emerald")
+  .then(() => document.fonts.load("10px pkmnems"));
+
+let game;
 
 const startGame = () => {
   game = new Phaser.Game(config);
   game.sound.pauseOnBlur = false;
-  chooseStarters([1,4,7]);
+  automateGame(game);
 };
 
 fetch("/manifest.json")
-  .then(res => res.json())
-  .then(jsonResponse => {
+  .then((res) => res.json())
+  .then((jsonResponse) => {
     startGame();
     game["manifest"] = jsonResponse.manifest;
-  }).catch(() => {
+  })
+  .catch(() => {
     // Manifest not found (likely local build)
     startGame();
   });

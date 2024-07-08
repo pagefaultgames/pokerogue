@@ -107,7 +107,7 @@ export default class BattleScene extends SceneBase {
   public masterVolume: number = 0.5;
   public bgmVolume: number = 1;
   public seVolume: number = 1;
-  public gameSpeed: integer = 1000;
+  public gameSpeed: integer = 10000;
   public damageNumbersMode: integer = 0;
   public reroll: boolean = false;
   public showMovesetFlyout: boolean = true;
