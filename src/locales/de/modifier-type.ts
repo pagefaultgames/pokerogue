@@ -58,7 +58,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "Erhöht die Stärke aller {{moveType}}-Attacken eines Pokémon um 20%.",
     },
     "PokemonLevelIncrementModifierType": {
-      description: "Increases a Pokémon's level by {{levels}}.",
+      description: "Erhöht das Level eines Pokémon um {{levels}}.",
     },
     "AllPokemonLevelIncrementModifierType": {
       description: "Erhöht das Level aller Teammitglieder um {{levels}}.",
