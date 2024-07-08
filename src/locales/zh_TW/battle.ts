@@ -12,7 +12,7 @@ export const battle: SimpleTranslationEntries = {
   "trainerGo": "{{trainerName}} 派出了 {{pokemonName}}！",
   "switchQuestion": "要更換\n{{pokemonName}}嗎？",
   "trainerDefeated": "你擊敗了\n{{trainerName}}！",
-  "moneyPickedUp": "你撿起了 ₽{{moneyAmount}}！",
+  "moneyPickedUp": "撿到了 ₽{{moneyAmount}}！",
   "pokemonCaught": "{{pokemonName}} 被抓住了！",
   "addedAsAStarter": "{{pokemonName}} has been\nadded as a starter!",
   "pokemon": "寶可夢",
