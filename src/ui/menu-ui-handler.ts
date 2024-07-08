@@ -201,6 +201,22 @@ export default class MenuUiHandler extends MessageUiHandler {
         keepOpen: true
       },
       {
+        label: i18next.t("menuUiHandler:importSettings"),
+        handler: () => {
+          this.scene.gameData.importData(GameDataType.SETTINGS);
+          return true;
+        },
+        keepOpen: true
+      },
+      {
+        label: i18next.t("menuUiHandler:exportSettings"),
+        handler: () => {
+          this.scene.gameData.tryExportData(GameDataType.SETTINGS);
+          return true;
+        },
+        keepOpen: true
+      },
+      {
         label: i18next.t("menuUiHandler:cancel"),
         handler: () => {
           this.scene.ui.revertMode();

@@ -1,7 +1,7 @@
 import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
 import { BattleEndPhase, MoveEndPhase, MovePhase, NewBattlePhase, PartyStatusCurePhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../phases";
 import { BattleStat, getBattleStatName } from "./battle-stat";
-import { EncoreTag, SemiInvulnerableTag } from "./battler-tags";
+import { EncoreTag, HelpingHandTag, SemiInvulnerableTag, TypeBoostTag } from "./battler-tags";
 import { getPokemonMessage, getPokemonNameWithAffix } from "../messages";
 import Pokemon, { AttackMoveResult, DamageResult, EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../field/pokemon";
 import { StatusEffect, getStatusEffectHealText, isNonVolatileStatusEffect, getNonVolatileStatusEffects} from "./status-effect";
@@ -9,10 +9,10 @@ import { Type } from "./type";
 import { Constructor } from "#app/utils";
 import * as Utils from "../utils";
 import { WeatherType } from "./weather";
-import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
-import { UnswappableAbilityAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr, applyPostDefendAbAttrs, PostDefendContactApplyStatusEffectAbAttr, MoveAbilityBypassAbAttr, ReverseDrainAbAttr, FieldPreventExplosiveMovesAbAttr, ForceSwitchOutImmunityAbAttr, BlockItemTheftAbAttr, applyPostAttackAbAttrs, ConfusionOnStatusEffectAbAttr, HealFromBerryUseAbAttr, IgnoreProtectOnContactAbAttr, IgnoreMoveEffectsAbAttr, applyPreDefendAbAttrs, MoveEffectChanceMultiplierAbAttr } from "./ability";
+import { ArenaTagSide, ArenaTrapTag, WeakenMoveTypeTag } from "./arena-tag";
+import { UnswappableAbilityAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr, applyPostDefendAbAttrs, PostDefendContactApplyStatusEffectAbAttr, MoveAbilityBypassAbAttr, ReverseDrainAbAttr, FieldPreventExplosiveMovesAbAttr, ForceSwitchOutImmunityAbAttr, BlockItemTheftAbAttr, applyPostAttackAbAttrs, ConfusionOnStatusEffectAbAttr, HealFromBerryUseAbAttr, IgnoreProtectOnContactAbAttr, IgnoreMoveEffectsAbAttr, applyPreDefendAbAttrs, MoveEffectChanceMultiplierAbAttr, applyPreAttackAbAttrs, MoveTypeChangeAttr, UserFieldMoveTypePowerBoostAbAttr, FieldMoveTypePowerBoostAbAttr, AllyMoveCategoryPowerBoostAbAttr, VariableMovePowerAbAttr, WonderSkinAbAttr } from "./ability";
 import { allAbilities } from "./ability";
-import { PokemonHeldItemModifier, BerryModifier, PreserveBerryModifier } from "../modifier/modifier";
+import { PokemonHeldItemModifier, BerryModifier, PreserveBerryModifier, AttackTypeBoosterModifier, PokemonMultiHitModifier, PokemonMoveAccuracyBoosterModifier } from "../modifier/modifier";
 import { BattlerIndex } from "../battle";
 import { Stat } from "./pokemon-stat";
 import { TerrainType } from "./terrain";
@@ -669,6 +669,107 @@ export default class Move implements Localizable {
     }
 
     return score;
+  }
+
+  /**
+   * Calculates the power of a move based on various conditions and attributes.
+   *
+   * @param source {@linkcode Pokemon} The Pokémon using the move.
+   * @param target {@linkcode Pokemon} The move being used.
+   * @returns The calculated power of the move.
+   */
+  calculateMovePower(source: Pokemon, target: Pokemon): number {
+    const power = new Utils.NumberHolder(this.power);
+
+    const typeChangeMovePowerMultiplier = new Utils.NumberHolder(1);
+    applyPreAttackAbAttrs(MoveTypeChangeAttr, source, target, this, typeChangeMovePowerMultiplier);
+
+    const sourceTeraType = source.getTeraType();
+    if (sourceTeraType !== Type.UNKNOWN && sourceTeraType === this.type && power.value < 60 && this.priority <= 0 && !this.hasAttr(MultiHitAttr) && !source.scene.findModifier(m => m instanceof PokemonMultiHitModifier && m.pokemonId === source.id)) {
+      power.value = 60;
+    }
+
+    applyPreAttackAbAttrs(VariableMovePowerAbAttr, source, target, this, power);
+
+    if (source.getAlly()?.hasAbilityWithAttr(AllyMoveCategoryPowerBoostAbAttr)) {
+      applyPreAttackAbAttrs(AllyMoveCategoryPowerBoostAbAttr, source, target, this, power);
+    }
+
+    const fieldAuras = new Set(
+      source.scene.getField(true)
+        .map((p) => p.getAbilityAttrs(FieldMoveTypePowerBoostAbAttr) as FieldMoveTypePowerBoostAbAttr[])
+        .flat(),
+    );
+    for (const aura of fieldAuras) {
+      // The only relevant values are `move` and the `power` holder
+      aura.applyPreAttack(null, null, null, this, [power]);
+    }
+
+    const alliedField: Pokemon[] = source instanceof PlayerPokemon ? source.scene.getPlayerField() : source.scene.getEnemyField();
+    alliedField.forEach(p => applyPreAttackAbAttrs(UserFieldMoveTypePowerBoostAbAttr, p, target, this, power));
+
+    power.value *= typeChangeMovePowerMultiplier.value;
+
+    const typeBoost = source.findTag(t => t instanceof TypeBoostTag && t.boostedType === this.type) as TypeBoostTag;
+    if (typeBoost) {
+      power.value *= typeBoost.boostValue;
+      if (typeBoost.oneUse) {
+        source.removeTag(typeBoost.tagType);
+      }
+    }
+
+    if (source.scene.arena.getTerrainType() === TerrainType.GRASSY && target.isGrounded() && this.type === Type.GROUND && this.moveTarget === MoveTarget.ALL_NEAR_OTHERS) {
+      power.value /= 2;
+    }
+
+    applyMoveAttrs(VariablePowerAttr, source, target, this, power);
+
+    source.scene.applyModifiers(PokemonMultiHitModifier, source.isPlayer(), source, new Utils.IntegerHolder(0), power);
+
+    if (!this.hasAttr(TypelessAttr)) {
+      source.scene.arena.applyTags(WeakenMoveTypeTag, this.type, power);
+      source.scene.applyModifiers(AttackTypeBoosterModifier, source.isPlayer(), source, this.type, power);
+    }
+
+    if (source.getTag(HelpingHandTag)) {
+      power.value *= 1.5;
+    }
+
+    return power.value;
+  }
+
+  /**
+   * Calculates the accuracy of a move based on various conditions and attributes..
+   *
+   * @param user {@linkcode Pokemon} The Pokémon using the move.
+   * @param target {@linkcode Pokemon} The Pokémon being targeted by the move.
+   * @returns The calculated accuracy of the move.
+   */
+  calculateMoveAccuracy(user: Pokemon, target: Pokemon) {
+    const moveAccuracy = new Utils.NumberHolder(this.accuracy);
+
+    applyMoveAttrs(VariableAccuracyAttr, user, target, this, moveAccuracy);
+    applyPreDefendAbAttrs(WonderSkinAbAttr, target, user, this, { value: false }, moveAccuracy);
+
+    if (moveAccuracy.value === -1) {
+      return moveAccuracy.value;
+    }
+
+    const isOhko = this.hasAttr(OneHitKOAccuracyAttr);
+
+    if (!isOhko) {
+      user.scene.applyModifiers(PokemonMoveAccuracyBoosterModifier, user.isPlayer(), user, moveAccuracy);
+    }
+
+    if (user.scene.arena.weather?.weatherType === WeatherType.FOG) {
+      moveAccuracy.value = Math.floor(moveAccuracy.value * 0.9);
+    }
+
+    if (!isOhko && user.scene.arena.getTag(ArenaTagType.GRAVITY)) {
+      moveAccuracy.value = Math.floor(moveAccuracy.value * 1.67);
+    }
+
+    return moveAccuracy.value;
   }
 }
 
@@ -3024,9 +3125,29 @@ export class HpPowerAttr extends VariablePowerAttr {
   }
 }
 
+/**
+ * Attribute used for moves whose base power scales with the opponent's HP
+ * Used for Crush Grip, Wring Out, and Hard Press
+ * maxBasePower 100 for Hard Press, 120 for others
+ */
 export class OpponentHighHpPowerAttr extends VariablePowerAttr {
+  maxBasePower: number;
+
+  constructor(maxBasePower: number) {
+    super();
+    this.maxBasePower = maxBasePower;
+  }
+
+  /**
+   * Changes the base power of the move to be the target's HP ratio times the maxBasePower with a min value of 1
+   * @param user n/a
+   * @param target the Pokemon being attacked
+   * @param move n/a
+   * @param args holds the base power of the move at args[0]
+   * @returns true
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    (args[0] as Utils.NumberHolder).value = Math.max(Math.floor(120 * target.getHpRatio()), 1);
+    (args[0] as Utils.NumberHolder).value = Math.max(Math.floor(this.maxBasePower * target.getHpRatio()), 1);
 
     return true;
   }
@@ -6768,7 +6889,7 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
     new AttackMove(Moves.WRING_OUT, Type.NORMAL, MoveCategory.SPECIAL, -1, 100, 5, -1, 0, 4)
-      .attr(OpponentHighHpPowerAttr)
+      .attr(OpponentHighHpPowerAttr, 120)
       .makesContact(),
     new SelfStatusMove(Moves.POWER_TRICK, Type.PSYCHIC, -1, 10, -1, 0, 4)
       .unimplemented(),
@@ -6992,7 +7113,7 @@ export function initMoves() {
       .triageMove()
       .unimplemented(),
     new AttackMove(Moves.CRUSH_GRIP, Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 5, -1, 0, 4)
-      .attr(OpponentHighHpPowerAttr),
+      .attr(OpponentHighHpPowerAttr, 120),
     new AttackMove(Moves.MAGMA_STORM, Type.FIRE, MoveCategory.SPECIAL, 100, 75, 5, -1, 0, 4)
       .attr(TrapAttr, BattlerTagType.MAGMA_STORM),
     new StatusMove(Moves.DARK_VOID, Type.DARK, 50, 10, -1, 0, 4)
@@ -8464,8 +8585,8 @@ export function initMoves() {
     new AttackMove(Moves.TACHYON_CUTTER, Type.STEEL, MoveCategory.SPECIAL, 50, -1, 10, -1, 0, 9)
       .attr(MultiHitAttr, MultiHitType._2)
       .slicingMove(),
-    new AttackMove(Moves.HARD_PRESS, Type.STEEL, MoveCategory.PHYSICAL, 100, 100, 5, -1, 0, 9)
-      .attr(OpponentHighHpPowerAttr),
+    new AttackMove(Moves.HARD_PRESS, Type.STEEL, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 9)
+      .attr(OpponentHighHpPowerAttr, 100),
     new StatusMove(Moves.DRAGON_CHEER, Type.DRAGON, -1, 15, -1, 0, 9)
       .attr(AddBattlerTagAttr, BattlerTagType.CRIT_BOOST, false, true)
       .target(MoveTarget.NEAR_ALLY)

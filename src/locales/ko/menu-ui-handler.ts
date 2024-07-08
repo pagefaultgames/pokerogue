@@ -18,6 +18,8 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "exportSlotSelect": "내보낼 슬롯을 골라주세요.",
   "importData": "데이터 불러오기",
   "exportData": "데이터 내보내기",
+  "importSettings": "설정 불러오기",
+  "exportSettings": "설정 내보내기",
   "cancel": "취소",
   "losingProgressionWarning": "전투 시작으로부터의 진행 상황을 잃게 됩니다. 계속하시겠습니까?",
   "noEggs": "부화중인 알이 없습니다!"

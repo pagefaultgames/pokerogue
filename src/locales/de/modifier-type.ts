@@ -151,7 +151,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SACRED_ASH": { name: "Zauberasche" },
 
-    "REVIVER_SEED": { name: "Belebersamen", description: "Belebt den Träger mit der Hälfte seiner KP wieder sollte er kampfunfähig werden." },
+    "REVIVER_SEED": { name: "Belebersamen", description: "Belebt den Träger mit der Hälfte seiner KP wieder,  sollte er  durch einen direkten Treffer kampfunfähig werden." },
 
     "ETHER": { name: "Äther" },
     "MAX_ETHER": { name: "Top-Äther" },

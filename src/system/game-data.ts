@@ -13,7 +13,7 @@ import { GameModes, getGameMode } from "../game-mode";
 import { BattleType } from "../battle";
 import TrainerData from "./trainer-data";
 import { trainerConfigs } from "../data/trainer-config";
-import { SettingKeys, resetSettings, setSetting } from "./settings/settings";
+import { Setting, SettingKeys, resetSettings, setSetting, settingIndex } from "./settings/settings";
 import { achvs } from "./achv";
 import EggData from "./egg-data";
 import { Egg } from "../data/egg";
@@ -40,7 +40,7 @@ import { GameDataType } from "#enums/game-data-type";
 import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
-import { MysteryEncounterFlags } from "../data/mystery-encounter-flags";
+import { MysteryEncounterData } from "../data/mystery-encounter-data";
 import MysteryEncounter from "../data/mystery-encounter";
 
 export const defaultStarterSpecies: Species[] = [
@@ -128,7 +128,7 @@ export interface SessionSaveData {
   gameVersion: string;
   timestamp: integer;
   challenges: ChallengeData[];
-  mysteryEncounterFlags: MysteryEncounterFlags;
+  mysteryEncounterFlags: MysteryEncounterData;
 }
 
 export interface RunHistoryData {
@@ -861,7 +861,7 @@ export class GameData {
       timestamp: new Date().getTime(),
       challenges: scene.gameMode.challenges.map(c => new ChallengeData(c)),
       mysteryEncounter: scene.currentBattle.mysteryEncounter,
-      mysteryEncounterFlags: scene.mysteryEncounterFlags
+      mysteryEncounterFlags: scene.mysteryEncounterData
     } as SessionSaveData;
   }
 
@@ -952,7 +952,7 @@ export class GameData {
           scene.score = sessionData.score;
           scene.updateScoreText();
 
-          scene.mysteryEncounterFlags = sessionData?.mysteryEncounterFlags ? sessionData?.mysteryEncounterFlags : new MysteryEncounterFlags(null);
+          scene.mysteryEncounterData = sessionData?.mysteryEncounterFlags ? sessionData?.mysteryEncounterFlags : new MysteryEncounterData(null);
 
           scene.newArena(sessionData.arena.biome);
 
@@ -1178,11 +1178,19 @@ export class GameData {
       }
 
       if (k === "mysteryEncounterFlags") {
-        return new MysteryEncounterFlags(v);
+        return new MysteryEncounterData(v);
       }
 
       return v;
     }) as SessionSaveData;
+  }
+
+  validateSettingsData(dataStr: string): boolean {
+    return Object.entries(JSON.parse(dataStr))
+      .every(([k, v]: [string, number]) => {
+        const index: number = settingIndex(k);
+        return index !== -1 && Setting[index].options.length > v;
+      });
   }
 
   public async getRunHistoryData(scene: BattleScene): Promise<Object> {
@@ -1339,9 +1347,9 @@ export class GameData {
             resolve(true);
           });
       } else {
-        const data = localStorage.getItem(dataKey);
+        const data = localStorage.getItem(getDataTypeKey(dataType));
         if (data) {
-          handleData(decrypt(data, bypassLogin));
+          handleData(data);
         }
         resolve(!!data);
       }
@@ -1383,6 +1391,8 @@ export class GameData {
                 valid = !!sessionData.party && !!sessionData.enemyParty && !!sessionData.timestamp;
                 break;
               case GameDataType.SETTINGS:
+                valid = this.validateSettingsData(dataStr);
+                break;
               case GameDataType.TUTORIALS:
                 valid = true;
                 break;
@@ -1399,30 +1409,35 @@ export class GameData {
 
             this.scene.ui.showText(`Your ${dataName} data will be overridden and the page will reload. Proceed?`, null, () => {
               this.scene.ui.setOverlayMode(Mode.CONFIRM, () => {
-                localStorage.setItem(dataKey, encrypt(dataStr, bypassLogin));
+                if (dataType < GameDataType.SETTINGS) {
+                  localStorage.setItem(dataKey, encrypt(dataStr, bypassLogin));
 
-                if (!bypassLogin && dataType < GameDataType.SETTINGS) {
-                  updateUserInfo().then(success => {
-                    if (!success[0]) {
-                      return displayError(`Could not contact the server. Your ${dataName} data could not be imported.`);
-                    }
-                    let url: string;
-                    if (dataType === GameDataType.SESSION) {
-                      url = `savedata/session/update?slot=${slotId}&trainerId=${this.trainerId}&secretId=${this.secretId}&clientSessionId=${clientSessionId}`;
-                    } else {
-                      url = `savedata/system/update?trainerId=${this.trainerId}&secretId=${this.secretId}&clientSessionId=${clientSessionId}`;
-                    }
-                    Utils.apiPost(url, dataStr, undefined, true)
-                      .then(response => response.text())
-                      .then(error => {
-                        if (error) {
-                          console.error(error);
-                          return displayError(`An error occurred while updating ${dataName} data. Please contact the administrator.`);
-                        }
-                        window.location = window.location;
-                      });
-                  });
+                  if (!bypassLogin) {
+                    updateUserInfo().then(success => {
+                      if (!success[0]) {
+                        return displayError(`Could not contact the server. Your ${dataName} data could not be imported.`);
+                      }
+                      let url: string;
+                      if (dataType === GameDataType.SESSION) {
+                        url = `savedata/session/update?slot=${slotId}&trainerId=${this.trainerId}&secretId=${this.secretId}&clientSessionId=${clientSessionId}`;
+                      } else {
+                        url = `savedata/system/update?trainerId=${this.trainerId}&secretId=${this.secretId}&clientSessionId=${clientSessionId}`;
+                      }
+                      Utils.apiPost(url, dataStr, undefined, true)
+                        .then(response => response.text())
+                        .then(error => {
+                          if (error) {
+                            console.error(error);
+                            return displayError(`An error occurred while updating ${dataName} data. Please contact the administrator.`);
+                          }
+                          window.location = window.location;
+                        });
+                    });
+                  } else {
+                    window.location = window.location;
+                  }
                 } else {
+                  localStorage.setItem(getDataTypeKey(dataType), dataStr);
                   window.location = window.location;
                 }
               }, () => {
