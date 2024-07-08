@@ -363,8 +363,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     // win filter
     const winOptions = [
-      new DropDownOption(this.scene, 0, "has won"),
-      new DropDownOption(this.scene, 1, "hasn't won yet")];
+      new DropDownOption(this.scene, "WIN", "has won"),
+      new DropDownOption(this.scene, "NOTWIN", "hasn't won yet")];
     this.filterBar.addFilter("Win", new DropDown(this.scene, 0, 0, winOptions, this.updateStarters, DropDownType.MULTI));
 
     // sort filter
@@ -458,7 +458,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.valueLimitLabel.setOrigin(0.5, 0);
     this.starterSelectContainer.add(this.valueLimitLabel);
 
-    const startLabel = addTextObject(this.scene, 302, 162, i18next.t("starterSelectUiHandler:start"), TextStyle.TOOLTIP_CONTENT);
+    const startLabel = addTextObject(this.scene, 302, 162, i18next.t("common:start"), TextStyle.TOOLTIP_CONTENT);
     startLabel.setOrigin(0.5, 0);
     this.starterSelectContainer.add(startLabel);
 
@@ -1774,7 +1774,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
   updateStarters = () => {
     this.scrollCursor = 0;
-    console.log("UPDATE STARTERS", this.filterBar.getVals(DropDownColumn.GEN)),
     this.filteredStarterContainers = [];
 
     this.pokerusCursorObjs.forEach(cursor => cursor.setVisible(false));
@@ -1810,16 +1809,24 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             return isUncaught;
           }
         });
-        const fitsDiv =   (this.filterBar.getVals(DropDownColumn.DIV).includes(0) && this.scene.gameData.starterData[container.species.speciesId].classicWinCount > 0) ||
-                          (this.filterBar.getVals(DropDownColumn.DIV).includes(1) && this.scene.gameData.starterData[container.species.speciesId].classicWinCount === 0);
+        const isWin = this.scene.gameData.starterData[container.species.speciesId].classicWinCount > 0;
+        const isNotWin = this.scene.gameData.starterData[container.species.speciesId].classicWinCount === 0;
+        const isUndefined = this.scene.gameData.starterData[container.species.speciesId].classicWinCount === undefined;
 
-        if (fitsGen && fitsType && fitsShiny && fitsDiv) {
+        const fitsWin = this.filterBar.getVals(DropDownColumn.WIN).some(win => {
+          if (win === "WIN") {
+            return isWin;
+          } else if (win === "NOTWIN") {
+            return isNotWin || isUndefined;
+          }
+        });
+
+        if (fitsGen && fitsType && fitsShiny && fitsWin) {
           this.filteredStarterContainers.push(container);
         }
       });
     }
 
-    // set pages
     this.starterSelectScrollBar.setPages(Math.ceil((this.filteredStarterContainers.length - 81) / 9) + 1);
     this.starterSelectScrollBar.setPage(0);
 
@@ -1930,17 +1937,21 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       const pos = calcStarterPosition(cursor, this.scrollCursor);
       this.cursorObj.setPosition(pos.x - 1, pos.y + 1);
 
-      console.log(this.filteredStarterContainers, cursor);
       const species = this.filteredStarterContainers[cursor]?.species;
 
-      const defaultDexAttr = this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true);
-      const defaultProps = this.scene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
-      const variant = defaultProps.variant;
-      const tint = getVariantTint(variant);
-      this.pokemonShinyIcon.setFrame(getVariantIcon(variant));
-      this.pokemonShinyIcon.setTint(tint);
-      this.setSpecies(species);
-      this.updateInstructions();
+      if (species) {
+        const defaultDexAttr = this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true);
+        const defaultProps = this.scene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
+        const variant = defaultProps.variant;
+        const tint = getVariantTint(variant);
+        this.pokemonShinyIcon.setFrame(getVariantIcon(variant));
+        this.pokemonShinyIcon.setTint(tint);
+        this.setSpecies(species);
+        this.updateInstructions();
+      } else {
+        console.warn("Species is undefined for cursor position", cursor);
+        this.setFilterMode(true);
+      }
     }
 
     return changed;
