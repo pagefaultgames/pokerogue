@@ -42,7 +42,7 @@ import { statusEffect } from "./status-effect";
 import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
-import { weather } from "./weather";
+import { terrain, weather } from "./weather";
 import { modifierSelectUiHandler } from "./modifier-select-ui-handler";
 
 export const enConfig = {
@@ -76,7 +76,6 @@ export const enConfig = {
   modifierType: modifierType,
   move: move,
   nature: nature,
-  partyUiHandler: partyUiHandler,
   pokeball: pokeball,
   pokemon: pokemon,
   pokemonInfo: pokemonInfo,
@@ -86,11 +85,13 @@ export const enConfig = {
   splashMessages: splashMessages,
   starterSelectUiHandler: starterSelectUiHandler,
   statusEffect: statusEffect,
+  terrain: terrain,
   titles: titles,
   trainerClasses: trainerClasses,
   trainerNames: trainerNames,
   tutorial: tutorial,
   voucher: voucher,
   weather: weather,
+  partyUiHandler: partyUiHandler,
   modifierSelectUiHandler: modifierSelectUiHandler
 };
