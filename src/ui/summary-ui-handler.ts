@@ -102,6 +102,7 @@ export default class SummaryUiHandler extends UiHandler {
   private moveSelect: boolean;
   private moveCursor: integer;
   private selectedMoveIndex: integer;
+  private selectCallback: Function;
 
   constructor(scene: BattleScene) {
     super(scene, Mode.SUMMARY);
@@ -368,6 +369,9 @@ export default class SummaryUiHandler extends UiHandler {
       const page = args.length < 2 ? Page.PROFILE : args[2] as Page;
       this.hideMoveEffect(true);
       this.setCursor(page);
+      if (args.length > 3) {
+        this.selectCallback = args[3];
+      }
       break;
     case SummaryUiMode.LEARN_MOVE:
       this.newMove = args[2] as Move;
@@ -485,6 +489,11 @@ export default class SummaryUiHandler extends UiHandler {
         if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
           this.hideMoveSelect();
         } else {
+          if (this.selectCallback instanceof Function) {
+            const selectCallback = this.selectCallback;
+            this.selectCallback = null;
+            selectCallback();
+          }
 
           if (!fromPartyMode) {
             ui.setMode(Mode.MESSAGE);
