@@ -5226,7 +5226,7 @@ export class AbilityChangeAttr extends MoveEffectAttr {
 
     (this.selfTarget ? user : target).summonData.ability = this.ability;
     if ((this.selfTarget ? user : target).breakIllusion()) {
-      (this.selfTarget ? user : target).scene.queueMessage(getPokemonMessage((this.selfTarget ? user : target), "'s illusion wore off!"));
+      (this.selfTarget ? user : target).scene.queueMessage(i18next.t("abilityTriggers:illusion", { pokemonName: getPokemonNameWithAffix((this.selfTarget ? user : target)) }));
     }
     user.scene.queueMessage("The " + getPokemonMessage((this.selfTarget ? user : target), ` acquired\n${allAbilities[this.ability].name}!`));
 
