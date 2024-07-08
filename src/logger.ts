@@ -99,7 +99,7 @@ export function logTeam(scene: BattleScene, floor: integer = undefined) {
   if (team[0].hasTrainer()) {
     var sprite = scene.currentBattle.trainer.config.getSpriteKey()
     var trainerCat = Utils.getEnumKeys(TrainerType)[Utils.getEnumValues(TrainerType).indexOf(scene.currentBattle.trainer.config.trainerType)]
-    setRow("e", floor + "," + team.length + "," + sprite + ",trainer," + trainerCat + ",,,,,,,,,,,,", floor, 0)
+    setRow("e", floor + ",0," + sprite + ",trainer," + trainerCat + ",,,,,,,,,,,,", floor, 0)
   } else {
     for (var i = 0; i < team.length; i++) {
       logPokemon(scene, floor, i, team[i])
@@ -140,8 +140,23 @@ export function logPokemon(scene: BattleScene, floor: integer = undefined, slot:
   setRow("e", newLine, floor, slot)
   //console.log(localStorage.getItem(logs[logKeys.indexOf("e")][1]).split("\n"))
 }
+export function dataSorter(a: string, b: string) {
+  var da = a.split(",")
+  var db = b.split(",")
+  if (da[0] == "---- " + logs[logKeys.indexOf("e")][3] + " ----") {
+    return -1;
+  }
+  if (db[0] == "---- " + logs[logKeys.indexOf("e")][3] + " ----") {
+    return 1;
+  }
+  if (da[0] == db[0]) {
+    return ((da[1] as any) * 1) - ((db[1] as any) * 1)
+  }
+  return ((da[0] as any) * 1) - ((db[0] as any) * 1)
+}
 export function setRow(keyword: string, newLine: string, floor: integer, slot: integer) {
   var data = localStorage.getItem(logs[logKeys.indexOf(keyword)][1]).split("\n")
+  data.sort(dataSorter)
   var idx = 1
   if (slot == -1) {
     while (idx < data.length && (data[idx].split(",")[0] as any) * 1 < floor) {
@@ -153,22 +168,38 @@ export function setRow(keyword: string, newLine: string, floor: integer, slot: i
     while (idx < data.length && (data[idx].split(",")[0] as any) * 1 <= floor && (data[idx].split(",")[1] as any) * 1 <= slot) {
       idx++
     }
+    idx--
+    console.log((data[idx].split(",")[0] as any) * 1, floor, (data[idx].split(",")[1] as any) * 1, slot)
+    if (idx < data.length && (data[idx].split(",")[0] as any) * 1 == floor && (data[idx].split(",")[1] as any) * 1 == slot) {
+      data[idx] = newLine
+      console.log("Overwrote data at " + idx)
+      for (var i = 0; i < Math.max(0, idx - 2) && i < 2; i++) {
+        console.log(i + " " + data[i])
+      }
+      if (Math.min(0, idx - 2) > 3) {
+        console.log("...")
+      }
+      for (var i = Math.max(0, idx - 2); i <= idx + 2 && i < data.length; i++) {
+        console.log(i + (i == idx ? " >> " : " ") + data[i])
+      }
+      localStorage.setItem(logs[logKeys.indexOf(keyword)][1], data.join("\n"));
+      return;
+    }
+    idx++
+  }
+  console.log("Inserted data at " + idx)
+  for (var i = 0; i < Math.max(0, idx - 2) && i < 2; i++) {
+    console.log(i + " " + data[i])
+  }
+  if (Math.min(0, idx - 2) > 3) {
+    console.log("...")
+  }
+  for (var i = Math.max(0, idx - 2); i < idx; i++) {
+    console.log(i + " " + data[i])
+  }
+  console.log(i + " >> " + newLine)
+  for (var i = idx; i <= idx + 2 && i < data.length; i++) {
+    console.log(i + " " + data[i])
   }
   localStorage.setItem(logs[logKeys.indexOf(keyword)][1], data.slice(0, idx).join("\n") + "\n" + newLine + (data.slice(idx).length == 0 ? "" : "\n") + data.slice(idx).join("\n"));
-}
-export function setRowByID(key: integer, newLine: string, floor: integer, slot: integer) {
-  var data = localStorage.getItem(logs[key][1]).split("\n")
-  var idx = 1
-  if (slot == -1) {
-    while (idx < data.length && (data[idx].split(",")[0] as any) * 1 < floor) {
-      idx++
-    }
-    idx--
-    slot = ((data[idx].split(",")[1] as any) * 1) + 1
-  } else {
-    while (idx < data.length && (data[idx].split(",")[0] as any) * 1 <= floor && (data[idx].split(",")[1] as any) * 1 <= slot) {
-      idx++
-    }
-  }
-  localStorage.setItem(logs[key][1], data.slice(0, idx).join("\n") + "\n" + newLine + (data.slice(idx).length == 0 ? "" : "\n") + data.slice(idx).join("\n"));
 }

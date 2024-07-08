@@ -72,6 +72,7 @@ import ChallengeData from "./system/challenge-data";
 import { Challenges } from "./enums/challenges"
 import PokemonData from "./system/pokemon-data"
 import * as LoggerTools from "./logger"
+import { getNatureName } from "./data/nature";
 
 const { t } = i18next;
 
@@ -2058,14 +2059,51 @@ export class CheckSwitchPhase extends BattlePhase {
       return;
     }
 
+    for (var i = 0; i < this.scene.getEnemyField().length; i++) {
+      var pk = this.scene.getEnemyField()[i]
+      var maxIVs = []
+      var ivnames = ["HP", "Atk", "Def", "Sp.Atk", "Sp.Def", "Speed"]
+      pk.ivs.forEach((iv, j) => {if (iv == 31) maxIVs.push(ivnames[j])})
+      var ivDesc = maxIVs.join(",")
+      if (ivDesc == "") {
+        ivDesc = "No Max IVs"
+      } else {
+        ivDesc = "31: " + ivDesc
+      }
+      pk.getBattleInfo().flyoutMenu.toggleFlyout(true)
+      pk.getBattleInfo().flyoutMenu.flyoutText[0].text = getNatureName(pk.nature)
+      pk.getBattleInfo().flyoutMenu.flyoutText[1].text = ivDesc
+      pk.getBattleInfo().flyoutMenu.flyoutText[2].text = pk.getAbility().name
+      pk.getBattleInfo().flyoutMenu.flyoutText[3].text = pk.getPassiveAbility().name
+      if (pk.hasAbility(pk.species.abilityHidden, true, true)) {
+        pk.getBattleInfo().flyoutMenu.flyoutText[2].setColor("#e8e8a8")
+      }
+    }
+
     this.scene.ui.showText(i18next.t("battle:switchQuestion", { pokemonName: this.useName ? pokemon.name : i18next.t("battle:pokemon") }), null, () => {
       this.scene.ui.setMode(Mode.CONFIRM, () => {
         this.scene.ui.setMode(Mode.MESSAGE);
         this.scene.tryRemovePhase(p => p instanceof PostSummonPhase && p.player && p.fieldIndex === this.fieldIndex);
         this.scene.unshiftPhase(new SwitchPhase(this.scene, this.fieldIndex, false, true));
+        for (var i = 0; i < this.scene.getEnemyField().length; i++) {
+          this.scene.getEnemyField()[i].getBattleInfo().flyoutMenu.toggleFlyout(false)
+          this.scene.getEnemyField()[i].getBattleInfo().flyoutMenu.flyoutText[0].text = "???"
+          this.scene.getEnemyField()[i].getBattleInfo().flyoutMenu.flyoutText[1].text = "???"
+          this.scene.getEnemyField()[i].getBattleInfo().flyoutMenu.flyoutText[2].text = "???"
+          this.scene.getEnemyField()[i].getBattleInfo().flyoutMenu.flyoutText[3].text = "???"
+          this.scene.getEnemyField()[i].getBattleInfo().flyoutMenu.flyoutText[2].setColor("#f8f8f8")
+        }
         this.end();
       }, () => {
         this.scene.ui.setMode(Mode.MESSAGE);
+        for (var i = 0; i < this.scene.getEnemyField().length; i++) {
+          this.scene.getEnemyField()[i].getBattleInfo().flyoutMenu.toggleFlyout(false)
+          this.scene.getEnemyField()[i].getBattleInfo().flyoutMenu.flyoutText[0].text = "???"
+          this.scene.getEnemyField()[i].getBattleInfo().flyoutMenu.flyoutText[1].text = "???"
+          this.scene.getEnemyField()[i].getBattleInfo().flyoutMenu.flyoutText[2].text = "???"
+          this.scene.getEnemyField()[i].getBattleInfo().flyoutMenu.flyoutText[3].text = "???"
+          this.scene.getEnemyField()[i].getBattleInfo().flyoutMenu.flyoutText[2].setColor("#f8f8f8")
+        }
         this.end();
       });
     });
@@ -2102,6 +2140,60 @@ export class LevelCapPhase extends FieldPhase {
 export class TurnInitPhase extends FieldPhase {
   constructor(scene: BattleScene) {
     super(scene);
+  }
+
+  catchCalc(pokemon: EnemyPokemon) {
+    const _3m = 3 * pokemon.getMaxHp();
+    const _2h = 2 * pokemon.hp;
+    const catchRate = pokemon.species.catchRate;
+    const statusMultiplier = pokemon.status ? getStatusEffectCatchRateMultiplier(pokemon.status.effect) : 1;
+    const rate1 = Math.round(65536 / Math.sqrt(Math.sqrt(255 / (Math.round((((_3m - _2h) * catchRate * 1) / _3m) * statusMultiplier)))));
+    const rate2 = Math.round(65536 / Math.sqrt(Math.sqrt(255 / (Math.round((((_3m - _2h) * catchRate * 1.5) / _3m) * statusMultiplier)))));
+    const rate3 = Math.round(65536 / Math.sqrt(Math.sqrt(255 / (Math.round((((_3m - _2h) * catchRate * 2) / _3m) * statusMultiplier)))));
+    const rate4 = Math.round(65536 / Math.sqrt(Math.sqrt(255 / (Math.round((((_3m - _2h) * catchRate * 3) / _3m) * statusMultiplier)))));
+
+    var rates = [rate1, rate2, rate3, rate4]
+    var rates2 = rates.map(r => ((r/65536) ** 3))
+    console.log(rates2)
+
+    return rates2
+  }
+
+  /**
+   * Finds the best Poké Ball to catch a Pokemon with, and the % chance of capturing it.
+   * @param pokemon The Pokémon to get the catch rate for.
+   * @param override Show the best Poké Ball to use, even if you don't have any.
+   * @returns The name and % rate of the best Poké Ball.
+   */
+  findBest(pokemon: EnemyPokemon, override?: boolean) {
+    var rates = this.catchCalc(pokemon)
+    if (this.scene.pokeballCounts[0] == 0 && !override) rates[0] = 0
+    if (this.scene.pokeballCounts[1] == 0 && !override) rates[1] = 0
+    if (this.scene.pokeballCounts[2] == 0 && !override) rates[2] = 0
+    if (this.scene.pokeballCounts[3] == 0 && !override) rates[3] = 0
+    var rates2 = rates.slice()
+    rates2.sort(function(a, b) {return b - a})
+    switch (rates2[0]) {
+      case rates[0]:
+        // Poke Balls are best
+        return "Poké Ball " + Math.round(rates2[0] * 100) + "%";
+      case rates[1]:
+        // Great Balls are best
+        return "Great Ball " + Math.round(rates2[0] * 100) + "%";
+      case rates[2]:
+        // Ultra Balls are best
+        return "Ultra Ball " + Math.round(rates2[0] * 100) + "%";
+      case rates[3]:
+        // Rogue Balls are best
+        return "Rogue Ball " + Math.round(rates2[0] * 100) + "%";
+      default:
+        // Master Balls are the only thing that will work
+        if (this.scene.pokeballCounts[4] != 0 || override) {
+          return "Master Ball";
+        } else {
+          return "No balls"
+        }
+    }
   }
 
   start() {
@@ -2151,6 +2243,15 @@ export class TurnInitPhase extends FieldPhase {
     });
 
     this.scene.pushPhase(new TurnStartPhase(this.scene));
+
+    var txt = ["Turn: " + this.scene.currentBattle.turn]
+    if (!this.scene.getEnemyField()[0].hasTrainer()) {
+      this.scene.getEnemyField().forEach((pk, i) => {
+        txt = txt.concat(this.findBest(pk))
+      })
+    }
+
+    this.scene.setScoreText(txt.join("/"))
 
     this.end();
   }
@@ -5048,6 +5149,16 @@ export class AttemptCapturePhase extends PokemonPhase {
     this.pokeballType = pokeballType;
   }
 
+  roll(y?: integer) {
+    var roll = (this.getPokemon() as EnemyPokemon).randSeedInt(65536)
+    if (y != undefined) {
+      console.log(roll, y, roll < y)
+    } else {
+      console.log(roll)
+    }
+    return roll;
+  }
+
   start() {
     super.start();
 
@@ -5129,7 +5240,7 @@ export class AttemptCapturePhase extends PokemonPhase {
                     shakeCounter.stop();
                     this.failCatch(shakeCount);
                   } else if (shakeCount++ < 3) {
-                    if (pokeballMultiplier === -1 || pokemon.randSeedInt(65536) < y) {
+                    if (pokeballMultiplier === -1 || this.roll(y) < y) {
                       this.scene.playSound("pb_move");
                     } else {
                       shakeCounter.stop();

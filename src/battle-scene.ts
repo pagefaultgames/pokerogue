@@ -224,7 +224,7 @@ export default class BattleScene extends SceneBase {
   private fieldOverlay: Phaser.GameObjects.Rectangle;
   private shopOverlay: Phaser.GameObjects.Rectangle;
   public modifiers: PersistentModifier[];
-  private enemyModifiers: PersistentModifier[];
+  public enemyModifiers: PersistentModifier[];
   public uiContainer: Phaser.GameObjects.Container;
   public ui: UI;
 
@@ -1496,6 +1496,10 @@ export default class BattleScene extends SceneBase {
   updateScoreText(): void {
     this.scoreText.setText(`Score: ${this.score.toString()}`);
     this.scoreText.setVisible(this.gameMode.isDaily);
+  }
+  setScoreText(text: string): void {
+    this.scoreText.setText(text);
+    this.scoreText.setVisible(true);
   }
 
   updateAndShowText(duration: integer): void {

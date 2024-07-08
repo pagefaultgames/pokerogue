@@ -6,10 +6,15 @@ import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import * as Utils from "../utils";
 import { CommandPhase } from "../phases";
-import { MoveCategory } from "#app/data/move.js";
+import * as MoveData from "#app/data/move.js";
 import i18next from "i18next";
 import {Button} from "#enums/buttons";
-import Pokemon, { PokemonMove } from "#app/field/pokemon.js";
+import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove } from "#app/field/pokemon.js";
+import Battle from "#app/battle.js";
+import { Stat } from "#app/data/pokemon-stat.js";
+import { Abilities } from "#app/enums/abilities.js";
+import { WeatherType } from "#app/data/weather.js";
+import { Moves } from "#app/enums/moves.js";
 
 export default class FightUiHandler extends UiHandler {
   private movesContainer: Phaser.GameObjects.Container;
@@ -153,6 +158,93 @@ export default class FightUiHandler extends UiHandler {
     return !this.fieldIndex ? this.cursor : this.cursor2;
   }
 
+  calcDamage(scene: BattleScene, user: PlayerPokemon, target: Pokemon, move: PokemonMove) {
+    var power = move.getMove().power
+    var myAtk = 0
+    var theirDef = 0
+    var myAtkC = 0
+    var theirDefC = 0
+    switch (move.getMove().category) {
+      case MoveData.MoveCategory.PHYSICAL:
+        myAtk = user.getBattleStat(Stat.ATK, target, move.getMove())
+        myAtkC = user.getBattleStat(Stat.ATK, target, move.getMove(), true)
+        theirDef = target.getBattleStat(Stat.DEF, user, move.getMove())
+        theirDefC = target.getBattleStat(Stat.DEF, user, move.getMove(), true)
+        break;
+      case MoveData.MoveCategory.SPECIAL:
+        myAtk = user.getBattleStat(Stat.SPATK, target, move.getMove())
+        myAtkC = user.getBattleStat(Stat.SPATK, target, move.getMove(), true)
+        theirDef = target.getBattleStat(Stat.SPDEF, user, move.getMove())
+        theirDefC = target.getBattleStat(Stat.SPDEF, user, move.getMove(), true)
+        break;
+      case MoveData.MoveCategory.STATUS:
+        return "---"
+    }
+    var stabBonus = 1
+    var types = user.getTypes()
+    // Apply STAB bonus
+    for (var i = 0; i < types.length; i++) {
+      if (types[i] == move.getMove().type) {
+        stabBonus = 1.5
+      }
+    }
+    // Apply Tera Type bonus
+    if (stabBonus == 1.5) {
+      // STAB
+      if (move.getMove().type == user.getTeraType()) {
+        stabBonus = 2
+      }
+    } else if (move.getMove().type == user.getTeraType()) {
+      stabBonus = 1.5
+    }
+    // Apply adaptability
+    if (stabBonus == 2) {
+      // Tera-STAB
+      if (move.getMove().type == user.getTeraType()) {
+        stabBonus = 2.25
+      }
+    } else if (stabBonus == 1.5) {
+      // STAB or Tera
+      if (move.getMove().type == user.getTeraType()) {
+        stabBonus = 2
+      }
+    } else if (move.getMove().type == user.getTeraType()) {
+      // Adaptability
+      stabBonus = 1.5
+    }
+    var weatherBonus = 1
+    if (this.scene.arena.weather.weatherType == WeatherType.RAIN || this.scene.arena.weather.weatherType == WeatherType.HEAVY_RAIN) {
+      if (move.getMove().type == Type.WATER) {
+        weatherBonus = 1.5
+      }
+      if (move.getMove().type == Type.FIRE) {
+        weatherBonus = this.scene.arena.weather.weatherType == WeatherType.HEAVY_RAIN ? 0 : 0.5
+      }
+    }
+    if (this.scene.arena.weather.weatherType == WeatherType.SUNNY || this.scene.arena.weather.weatherType == WeatherType.HARSH_SUN) {
+      if (move.getMove().type == Type.FIRE) {
+        weatherBonus = 1.5
+      }
+      if (move.getMove().type == Type.WATER) {
+        weatherBonus = this.scene.arena.weather.weatherType == WeatherType.HARSH_SUN ? 0 : (move.moveId == Moves.HYDRO_STEAM ? 1.5 : 0.5)
+      }
+    }
+    var typeBonus = target.getAttackMoveEffectiveness(user, move)
+    var modifiers = stabBonus * weatherBonus
+    var dmgLow = (((2*user.level/5 + 2) * power * myAtk / theirDef)/50 + 2) * 0.85 * modifiers
+    var dmgHigh = (((2*user.level/5 + 2) * power * myAtkC / theirDefC)/50 + 2) * 1.5 * modifiers
+    if (user.hasAbility(Abilities.PARENTAL_BOND)) {
+      // Second hit deals 0.25x damage
+      dmgLow *= 1.25
+      dmgHigh *= 1.25
+    }
+    return (Math.round(dmgLow) == Math.round(dmgHigh) ? Math.round(dmgLow).toString() : Math.round(dmgLow) + "-" + Math.round(dmgHigh)) + ((Math.round(dmgLow) > target.hp) ? " KO" : "")
+    dmgLow = Math.round((dmgLow)/target.getBattleStat(Stat.HP)*100)
+    dmgHigh = Math.round((dmgHigh)/target.getBattleStat(Stat.HP)*100)
+    return (dmgLow == dmgHigh ? dmgLow + "%" : dmgLow + "%-" + dmgHigh + "%") + ((Math.round(dmgLow) > target.hp) ? " KO" : "")
+    return "???"
+  }
+
   setCursor(cursor: integer): boolean {
     const ui = this.getUi();
 
@@ -178,7 +270,7 @@ export default class FightUiHandler extends UiHandler {
     if (hasMove) {
       const pokemonMove = moveset[cursor];
       this.typeIcon.setTexture(`types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`, Type[pokemonMove.getMove().type].toLowerCase()).setScale(0.8);
-      this.moveCategoryIcon.setTexture("categories", MoveCategory[pokemonMove.getMove().category].toLowerCase()).setScale(1.0);
+      this.moveCategoryIcon.setTexture("categories", MoveData.MoveCategory[pokemonMove.getMove().category].toLowerCase()).setScale(1.0);
 
       const power = pokemonMove.getMove().power;
       const accuracy = pokemonMove.getMove().accuracy;
@@ -207,6 +299,7 @@ export default class FightUiHandler extends UiHandler {
 
       pokemon.getOpponents().forEach((opponent) => {
         opponent.updateEffectiveness(this.getEffectivenessText(pokemon, opponent, pokemonMove));
+        opponent.updateEffectiveness(this.calcDamage(this.scene, pokemon, opponent, pokemonMove));
       });
     }
 
