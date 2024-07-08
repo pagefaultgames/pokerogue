@@ -13,9 +13,9 @@ import { TrainerType } from "#enums/trainer-type";
  * Format: [filename, localStorage key, name, header, item sprite, header suffix]
  */
 export const logs: string[][] = [
-  ["instructions.txt", "path_log", "Steps", "Run Steps", "wide_lens", ""],
-  ["encounters.csv", "enc_log", "Encounters", "Encounter Data", "", ",,,,,,,,,,,,,,,,"],
-  ["log.txt", "debug_log", "Debug", "Debug Log", "", ""],
+  ["instructions.txt", "path_log", "Steps", "Run Steps", "blunder_policy", ""],
+  ["encounters.csv", "enc_log", "Encounters", "Encounter Data", "ub", ",,,,,,,,,,,,,,,,"],
+  ["log.txt", "debug_log", "Debug", "Debug Log", "wide_lens", ""],
 ]
 export var logKeys: string[] = [
   "i", // Instructions/steps
@@ -36,11 +36,22 @@ export function getSize(str: string) {
 }
 
 export function generateOption(i: integer): OptionSelectItem {
-  return {
-    label: `Export ${logs[i][2]} (${getSize(localStorage.getItem(logs[i][1]))})`,
-    handler: () => {
-      downloadLogByID(i)
-      return false;
+  if (logs[i][4] != "") {
+    return {
+      label: `Export ${logs[i][2]} (${getSize(localStorage.getItem(logs[i][1]))})`,
+      handler: () => {
+        downloadLogByID(i)
+        return false;
+      },
+      item: logs[i][4]
+    }
+  } else {
+    return {
+      label: `Export ${logs[i][2]} (${getSize(localStorage.getItem(logs[i][1]))})`,
+      handler: () => {
+        downloadLogByID(i)
+        return false;
+      }
     }
   }
 }
