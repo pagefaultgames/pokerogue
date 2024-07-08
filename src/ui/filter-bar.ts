@@ -8,7 +8,7 @@ export enum DropDownColumn {
   GEN,
   TYPES,
   SHINY,
-  DIV,
+  WIN,
   SORT
 }
 
