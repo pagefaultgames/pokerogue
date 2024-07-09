@@ -58,7 +58,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "지니게 하면 {{moveType}}타입 기술의 위력이 20% 상승한다.",
     },
     "PokemonLevelIncrementModifierType": {
-      description: "Increases a Pokémon's level by {{levels}}.",
+      description: "포켓몬 1마리의 레벨이 기본 1만큼, 사탕단지의 개수에 따라 최대 {{levels}}까지 상승한다.",
     },
     "AllPokemonLevelIncrementModifierType": {
       description: "Increases all party members' level by {{levels}}.",
