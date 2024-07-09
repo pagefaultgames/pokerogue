@@ -19,7 +19,6 @@ import { trainerConfigs } from "./data/trainer-config";
 export const logs: string[][] = [
   ["instructions.txt", "path_log", "Steps", "Run Steps", "blunder_policy", ""],
   ["encounters.csv", "enc_log", "Encounters", "Encounter Data", "ub", ",,,,,,,,,,,,,,,,"],
-  ["log.txt", "debug_log", "Debug", "Debug Log", "wide_lens", ""],
 ]
 export var logKeys: string[] = [
   "i", // Instructions/steps
@@ -27,7 +26,7 @@ export var logKeys: string[] = [
   "d", // Debug
 ];
 
-export const DRPD_Version = "0.1.2"
+export const DRPD_Version = "0.1.3"
 export interface DRPD {
   version: string,
   title: string,
@@ -37,16 +36,15 @@ export interface DRPD {
   starters: PokeData[]
 }
 export interface Wave {
-  id: integer, // Renamed to 'id' in file
+  id: integer,
   reload: boolean,
   type: string,
   double: boolean,
   actions: string[],
-  shop: boolean | string, // suggest using only 'string' and returning undefined if nothing is taken
+  shop: boolean | string,
   biome: string,
   trainer?: TrainerData,
-  pokeLeft?: PokeData,
-  pokeRight?: PokeData
+  pokemon?: PokeData[]
 }
 export interface PokeData {
   id: integer,
@@ -57,10 +55,11 @@ export interface PokeData {
   nature: string,
   gender: string,
   rarity: string,
-  capture: boolean,
+  captured: boolean,
   level: integer,
   items: ItemData[],
-  ivs: IVData
+  ivs: IVData,
+  source?: Pokemon
 }
 export interface IVData {
   hp: integer,
@@ -86,7 +85,7 @@ export function newDocument(name: string = "Untitled Run " + (new Date().getUTCM
     version: DRPD_Version,
     title: name,
     authors: (Array.isArray(authorName) ? authorName : [authorName]),
-    date: new Date().getUTCFullYear() + "-" + (new Date().getUTCMonth() + 1 < 10 ? "0" : "") + (new Date().getUTCMonth() + 1) + "-" + (new Date().getUTCDate() < 10 ? "0" : "") + new Date().getUTCDate(),
+    date: (new Date().getUTCMonth() + 1 < 10 ? "0" : "") + (new Date().getUTCMonth() + 1) + "-" + (new Date().getUTCDate() < 10 ? "0" : "") + new Date().getUTCDate() + "-" + new Date().getUTCFullYear(),
     waves: new Array(50),
     starters: new Array(3)
   }
@@ -101,7 +100,7 @@ export function exportPokemon(pokemon: Pokemon, encounterRarity?: string): PokeD
     nature: getNatureName(pokemon.nature),
     gender: pokemon.gender == 0 ? "Male" : (pokemon.gender == 1 ? "Female" : "Genderless"),
     rarity: encounterRarity,
-    capture: false,
+    captured: false,
     level: pokemon.level,
     items: pokemon.getHeldItems().map(item => exportItem(item)),
     ivs: exportIVs(pokemon.ivs)
@@ -137,9 +136,9 @@ export function exportWave(scene: BattleScene): Wave {
   switch (ret.type) {
     case "wild":
     case "boss":
-      ret.pokeLeft = exportPokemon(scene.getEnemyField()[0])
-      if (ret.double) {
-        ret.pokeRight = exportPokemon(scene.getEnemyField()[1])
+      ret.pokemon = []
+      for (var i = 0; i < scene.getEnemyParty().length; i++) {
+        ret.pokemon.push(exportPokemon(scene.getEnemyParty()[i]))
       }
       break;
     case "trainer":
@@ -147,6 +146,10 @@ export function exportWave(scene: BattleScene): Wave {
         id: scene.currentBattle.trainer.config.trainerType,
         name: scene.currentBattle.trainer.name,
         type: scene.currentBattle.trainer.config.title
+      }
+      ret.pokemon = []
+      for (var i = 0; i < scene.getEnemyParty().length; i++) {
+        ret.pokemon.push(exportPokemon(scene.getEnemyParty()[i]))
       }
       break;
   }
