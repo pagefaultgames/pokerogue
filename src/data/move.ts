@@ -4743,12 +4743,8 @@ export class FirstMoveTypeAttr extends MoveEffectAttr {
     }
 
     const firstMoveType = target.getMoveset()[0].getMove().type;
-
     user.summonData.types = [ firstMoveType ];
-
-
-    user.scene.queueMessage(getPokemonMessage(user, ` transformed\ninto to the ${Utils.toReadableString(Type[firstMoveType])} type!`));
-
+    user.scene.queueMessage(i18next.t("battle:typeChanged", {pokemonName: user.name, type: Utils.toReadableString(Type[firstMoveType])}));
 
     return true;
   }
