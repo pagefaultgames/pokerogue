@@ -1,5 +1,5 @@
 import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const battleInfo: SimpleTranslationEntries = {
-  "generation": "Generation {{generation}}",
+  "generation": "{{generation}}세대",
 } as const;
