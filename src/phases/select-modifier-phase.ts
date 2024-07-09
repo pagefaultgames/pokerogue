@@ -22,6 +22,7 @@ import PartyUiHandler, {PartyOption, PartyUiMode} from "#app/ui/party-ui-handler
 import ModifierSelectUiHandler, {SHOP_OPTIONS_ROW_LIMIT} from "#app/ui/modifier-select-ui-handler";
 import {BattlePhase} from "#app/phases/battle-phase";
 import {isNullOrUndefined} from "#app/utils";
+import * as Overrides from "#app/overrides";
 
 export class SelectModifierPhase extends BattlePhase {
   private rerollCount: integer;
