@@ -821,7 +821,15 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
   }
 
   hasVariants() {
-    return variantData.hasOwnProperty(this.speciesId);
+    const formIndex: number = this.formIndex;
+    let variantDataIndex: string | number = this.speciesId;
+    if (this.forms.length > 0) {
+      const formKey = this.forms[formIndex]?.formKey;
+      if (formKey) {
+        variantDataIndex = `${variantDataIndex}-${formKey}`;
+      }
+    }
+    return variantData.hasOwnProperty(variantDataIndex) || variantData.hasOwnProperty(this.speciesId);
   }
 
   getFormSpriteKey(formIndex?: integer) {
