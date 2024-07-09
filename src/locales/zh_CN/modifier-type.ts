@@ -58,7 +58,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "一只宝可梦的{{moveType}}系招式威力提升20%。",
     },
     "PokemonLevelIncrementModifierType": {
-      description: "Increases a Pokémon's level by {{levels}}.",
+      description: "使一只宝可梦的等级提升{{levels}}级。",
     },
     "AllPokemonLevelIncrementModifierType": {
       description: "Increases all party members' level by {{levels}}.",
