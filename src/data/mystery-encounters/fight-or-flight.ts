@@ -9,7 +9,7 @@ import {
 } from "#app/data/mystery-encounters/mystery-encounter-utils";
 import MysteryEncounter, {MysteryEncounterBuilder, MysteryEncounterTier} from "../mystery-encounter";
 import {MysteryEncounterType} from "#enums/mystery-encounter-type";
-import {WaveCountRequirement} from "../mystery-encounter-requirements";
+import {MoveRequirement, WaveCountRequirement} from "../mystery-encounter-requirements";
 import {MysteryEncounterOptionBuilder} from "../mystery-encounter-option";
 import {
   getPartyLuckValue,
@@ -23,6 +23,18 @@ import {StatChangePhase} from "#app/phases";
 import {BattleStat} from "#app/data/battle-stat";
 import Pokemon from "#app/field/pokemon";
 import {randSeedInt} from "#app/utils";
+import {Moves} from "#enums/moves";
+import {TextStyle} from "#app/ui/text";
+
+const validMovesForSteal = [
+  Moves.PLUCK,
+  Moves.COVET,
+  Moves.FAKE_OUT,
+  Moves.THIEF,
+  Moves.TRICK,
+  Moves.SWITCHEROO,
+  Moves.GIGA_DRAIN
+];
 
 export const FightOrFlightEncounter: MysteryEncounter = new MysteryEncounterBuilder()
   .withEncounterType(MysteryEncounterType.FIGHT_OR_FLIGHT)
@@ -70,6 +82,21 @@ export const FightOrFlightEncounter: MysteryEncounter = new MysteryEncounterBuil
       }
     ];
 
+    // If player has a stealing move, they succeed automatically
+    const moveRequirement = new MoveRequirement(validMovesForSteal);
+    const validPokemon = moveRequirement.queryParty(scene.getParty());
+    if (validPokemon?.length > 0) {
+      // Use first valid pokemon to execute the theivery
+      const pokemon = validPokemon[0];
+      encounter.setDialogueToken("thiefPokemon", pokemon.name);
+      encounter.setDialogueToken(...moveRequirement.getDialogueToken(scene, pokemon));
+      encounter.dialogue.encounterOptionsDialogue.options[1].buttonTooltip = "mysteryEncounter:fight_or_flight_option_2_steal_tooltip";
+      encounter.dialogue.encounterOptionsDialogue.options[1].style = TextStyle.SUMMARY_GREEN;
+    } else {
+      encounter.dialogue.encounterOptionsDialogue.options[1].buttonTooltip = "mysteryEncounter:fight_or_flight_option_2_tooltip";
+      encounter.dialogue.encounterOptionsDialogue.options[1].style = null;
+    }
+
     return true;
   })
   .withOption(new MysteryEncounterOptionBuilder()
@@ -83,8 +110,22 @@ export const FightOrFlightEncounter: MysteryEncounter = new MysteryEncounterBuil
   .withOption(new MysteryEncounterOptionBuilder()
     .withOptionPhase(async (scene: BattleScene) => {
       // Pick steal
+      const encounter = scene.currentBattle.mysteryEncounter;
       const item = scene.currentBattle.mysteryEncounter.misc as ModifierTypeOption;
       setCustomEncounterRewards(scene, { guaranteedModifierTypeOptions: [item], fillRemaining: false});
+
+      // If player has a stealing move, they succeed automatically
+      const moveRequirement = new MoveRequirement(validMovesForSteal);
+      const validPokemon = moveRequirement.queryParty(scene.getParty());
+      if (validPokemon?.length > 0) {
+        // Use first valid pokemon to execute the theivery
+        const pokemon = validPokemon[0];
+        encounter.setDialogueToken("thiefPokemon", pokemon.name);
+        encounter.setDialogueToken(...moveRequirement.getDialogueToken(scene, pokemon));
+        await showEncounterText(scene, "mysteryEncounter:fight_or_flight_option_2_steal_result");
+        leaveEncounterWithoutBattle(scene);
+        return;
+      }
 
       const roll = randSeedInt(16);
       if (roll > 6) {
@@ -101,8 +142,8 @@ export const FightOrFlightEncounter: MysteryEncounter = new MysteryEncounterBuil
       } else {
         // Steal item (37.5%)
         // Display result message then proceed to rewards
-        await showEncounterText(scene, "mysteryEncounter:fight_or_flight_option_2_good_result")
-          .then(() => leaveEncounterWithoutBattle(scene));
+        await showEncounterText(scene, "mysteryEncounter:fight_or_flight_option_2_good_result");
+        leaveEncounterWithoutBattle(scene);
       }
     })
     .build())

@@ -290,7 +290,8 @@ export default class PhaseInterceptor {
    * @param phase - The phase to start.
    */
   setMode(mode: Mode, ...args: any[]): Promise<void> {
-    const currentPhase = this.scene.getCurrentPhase();
+    const currentPhase = this.
+      scene.getCurrentPhase();
     const instance = this.scene.ui;
     console.log("setMode", mode, args);
     const ret = this.originalSetMode.apply(instance, [mode, ...args]);

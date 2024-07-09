@@ -3,7 +3,7 @@ import GameManager from "#app/test/utils/gameManager";
 import Phaser from "phaser";
 import {
   getHighestLevelPlayerPokemon, getLowestLevelPlayerPokemon,
-  getRandomPlayerPokemon, getRandomSpeciesByStarterTier, getTextWithEncounterDialogueTokens,
+  getRandomPlayerPokemon, getRandomSpeciesByStarterTier, getTextWithEncounterDialogueTokensAndColor,
   koPlayerPokemon, queueEncounterMessage, showEncounterDialogue, showEncounterText,
 } from "#app/data/mystery-encounters/mystery-encounter-utils";
 import {initSceneWithoutEncounterPhase} from "#test/utils/gameManagerUtils";
@@ -272,12 +272,12 @@ describe("Mystery Encounter Utils", () => {
   });
 
   describe("getTextWithEncounterDialogueTokens", () => {
-    it("injects dialogue tokens", () => {
+    it("injects dialogue tokens and color styling", () => {
       scene.currentBattle.mysteryEncounter = new MysteryEncounter(null);
       scene.currentBattle.mysteryEncounter.setDialogueToken("test", "value");
 
-      const result = getTextWithEncounterDialogueTokens(scene, "mysteryEncounter:unit_test_dialogue");
-      expect(result).toEqual("valuevalue @ec{testvalue} @ec{test1} value @ec{test\\} @ec{test\\} {test}");
+      const result = getTextWithEncounterDialogueTokensAndColor(scene, "mysteryEncounter:unit_test_dialogue");
+      expect(result).toEqual("[color=#f8f8f8][shadow=#6b5a73]valuevalue @ec{testvalue} @ec{test1} value @ec{test\\} @ec{test\\} {test}[/color][/shadow]");
     });
 
     it("can perform nested dialogue token injection", () => {
@@ -285,8 +285,8 @@ describe("Mystery Encounter Utils", () => {
       scene.currentBattle.mysteryEncounter.setDialogueToken("test", "value");
       scene.currentBattle.mysteryEncounter.setDialogueToken("testvalue", "new");
 
-      const result = getTextWithEncounterDialogueTokens(scene, "mysteryEncounter:unit_test_dialogue");
-      expect(result).toEqual("valuevalue new @ec{test1} value @ec{test\\} @ec{test\\} {test}");
+      const result = getTextWithEncounterDialogueTokensAndColor(scene, "mysteryEncounter:unit_test_dialogue");
+      expect(result).toEqual("[color=#f8f8f8][shadow=#6b5a73]valuevalue new @ec{test1} value @ec{test\\} @ec{test\\} {test}[/color][/shadow]");
     });
   });
 
@@ -298,7 +298,7 @@ describe("Mystery Encounter Utils", () => {
       const phaseSpy = vi.spyOn(game.scene, "unshiftPhase");
 
       queueEncounterMessage(scene, "mysteryEncounter:unit_test_dialogue");
-      expect(spy).toHaveBeenCalledWith("valuevalue @ec{testvalue} @ec{test1} value @ec{test\\} @ec{test\\} {test}", null, true);
+      expect(spy).toHaveBeenCalledWith("[color=#f8f8f8][shadow=#6b5a73]valuevalue @ec{testvalue} @ec{test1} value @ec{test\\} @ec{test\\} {test}[/color][/shadow]", null, true);
       expect(phaseSpy).toHaveBeenCalledWith(expect.any(MessagePhase));
     });
   });
@@ -310,7 +310,7 @@ describe("Mystery Encounter Utils", () => {
       const spy = vi.spyOn(game.scene.ui, "showText");
 
       showEncounterText(scene, "mysteryEncounter:unit_test_dialogue");
-      expect(spy).toHaveBeenCalledWith("valuevalue @ec{testvalue} @ec{test1} value @ec{test\\} @ec{test\\} {test}", null, expect.any(Function), 0, true);
+      expect(spy).toHaveBeenCalledWith("[color=#f8f8f8][shadow=#6b5a73]valuevalue @ec{testvalue} @ec{test1} value @ec{test\\} @ec{test\\} {test}[/color][/shadow]", null, expect.any(Function), 0, true);
     });
   });
 
@@ -321,7 +321,7 @@ describe("Mystery Encounter Utils", () => {
       const spy = vi.spyOn(game.scene.ui, "showDialogue");
 
       showEncounterDialogue(scene, "mysteryEncounter:unit_test_dialogue", "mysteryEncounter:unit_test_dialogue");
-      expect(spy).toHaveBeenCalledWith("valuevalue @ec{testvalue} @ec{test1} value @ec{test\\} @ec{test\\} {test}", "valuevalue @ec{testvalue} @ec{test1} value @ec{test\\} @ec{test\\} {test}", null, undefined, 0, 0);
+      expect(spy).toHaveBeenCalledWith("[color=#f8f8f8][shadow=#6b5a73]valuevalue @ec{testvalue} @ec{test1} value @ec{test\\} @ec{test\\} {test}[/color][/shadow]", "[color=#f8f8f8][shadow=#6b5a73]valuevalue @ec{testvalue} @ec{test1} value @ec{test\\} @ec{test\\} {test}[/color][/shadow]", null, undefined, 0, 0);
     });
   });
 

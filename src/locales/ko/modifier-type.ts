@@ -151,7 +151,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SACRED_ASH": { name: "성스러운분말" },
 
-    "REVIVER_SEED": { name: "부활의씨앗", description: "포켓몬이 쓰러지려 할 때 HP를 절반 회복한다." },
+    "REVIVER_SEED": { name: "부활의씨앗", description: "포켓몬이 공격을 받고 쓰러지려 할 때 HP를 절반 회복한다." },
 
     "ETHER": { name: "PP에이드" },
     "MAX_ETHER": { name: "PP회복" },
@@ -181,6 +181,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "GOLDEN_EGG": { name: "황금의알" },
 
     "SOOTHE_BELL": { name: "평온의방울" },
+
+    "SCOPE_LENS": { name: "초점렌즈", description: "약점이 보이는 렌즈. 지니게 한 포켓몬의 기술이 급소에 맞기 쉬워진다." },
+    "LEEK": { name: "대파", description: "매우 길고 단단한 줄기. 파오리에게 지니게 하면 기술이 급소에 맞기 쉬워진다." },
 
     "EVIOLITE": { name: "진화의휘석", description: "진화의 이상한 덩어리. 지니게 하면 진화 전 포켓몬의 방어와 특수방어가 올라간다." },
 

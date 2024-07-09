@@ -151,7 +151,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SACRED_ASH": { name: "Zauberasche" },
 
-    "REVIVER_SEED": { name: "Belebersamen", description: "Belebt den Träger mit der Hälfte seiner KP wieder sollte er kampfunfähig werden." },
+    "REVIVER_SEED": { name: "Belebersamen", description: "Belebt den Träger mit der Hälfte seiner KP wieder,  sollte er  durch einen direkten Treffer kampfunfähig werden." },
 
     "ETHER": { name: "Äther" },
     "MAX_ETHER": { name: "Top-Äther" },
@@ -181,6 +181,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "GOLDEN_EGG": { name: "Goldenes Ei" },
 
     "SOOTHE_BELL": { name: "Sanftglocke" },
+
+    "SCOPE_LENS": { name: "Scope-Linse", description: "Ein Item zum Tragen. Es erhöht die Volltrefferquote." },
+    "LEEK": { name: "Lauchstange", description: "Ein Item, das von Porenta getragen werden kann. Diese lange Lauchstange erhöht die Volltrefferquote stark." },
 
     "EVIOLITE": { name: "Evolith", description: "Ein mysteriöser Klumpen, der die Vert. u. Spez.-Vert. von Pokémon erhöht, die sich noch entwickeln können." },
 

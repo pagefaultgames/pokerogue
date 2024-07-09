@@ -35,6 +35,7 @@ import { Button } from "#enums/buttons";
 import { BattlerIndex } from "#app/battle.js";
 import TargetSelectUiHandler from "#app/ui/target-select-ui-handler.js";
 import BattleMessageUiHandler from "#app/ui/battle-message-ui-handler";
+import {MysteryEncounterPhase} from "#app/phases/mystery-encounter-phase";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -153,12 +154,12 @@ export default class GameManager {
       const selectStarterPhase = new SelectStarterPhase(this.scene);
       this.scene.pushPhase(new EncounterPhase(this.scene, false));
       selectStarterPhase.initBattle(starters);
-    });
+    }, () => this.isCurrentPhase(EncounterPhase));
 
     this.onNextPrompt("EncounterPhase", Mode.MESSAGE, () => {
       const handler = this.scene.ui.getHandler() as BattleMessageUiHandler;
       handler.processInput(Button.ACTION);
-    }, null, true);
+    }, () => this.isCurrentPhase(MysteryEncounterPhase), true);
 
     await this.phaseInterceptor.run(EncounterPhase);
   }
