@@ -335,7 +335,7 @@ export default class MenuUiHandler extends MessageUiHandler {
         }
       }
       if (this.disabledMenuOptions.includes(adjustedCursor)) {
-        this.scene.playSound("error");
+        error = true;
       } else {
         switch (adjustedCursor) {
         case MenuOptions.GAME_SETTINGS:
