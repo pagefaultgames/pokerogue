@@ -158,12 +158,12 @@ export class Arena {
   randomTrainerType(waveIndex: integer): TrainerType {
     const isBoss = !!this.trainerPool[BiomePoolTier.BOSS].length
       && this.scene.gameMode.isTrainerBoss(waveIndex, this.biomeType, this.scene.offsetGym);
-    logger.log(isBoss, this.trainerPool);
+    logger.log("Is boss:", isBoss, "trainer pool:", this.trainerPool);
     const tierValue = Utils.randSeedInt(!isBoss ? 512 : 64);
     let tier = !isBoss
       ? tierValue >= 156 ? BiomePoolTier.COMMON : tierValue >= 32 ? BiomePoolTier.UNCOMMON : tierValue >= 6 ? BiomePoolTier.RARE : tierValue >= 1 ? BiomePoolTier.SUPER_RARE : BiomePoolTier.ULTRA_RARE
       : tierValue >= 20 ? BiomePoolTier.BOSS : tierValue >= 6 ? BiomePoolTier.BOSS_RARE : tierValue >= 1 ? BiomePoolTier.BOSS_SUPER_RARE : BiomePoolTier.BOSS_ULTRA_RARE;
-    logger.log(BiomePoolTier[tier]);
+    logger.log("BiomePoolTier[tier]: ", BiomePoolTier[tier]);
     while (tier && !this.trainerPool[tier].length) {
       logger.log(`Downgraded trainer rarity tier from ${BiomePoolTier[tier]} to ${BiomePoolTier[tier - 1]}`);
       tier--;

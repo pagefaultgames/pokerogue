@@ -300,7 +300,7 @@ export default class BattleScene extends SceneBase {
         if (scene.rngOffset) {
           args.push(`offset: ${scene.rngOffset}`);
         }
-        logger.log(...args);
+        logger.log("Battle scene preload args:", ...args);
         return ret;
       };
     }

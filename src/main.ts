@@ -12,7 +12,7 @@ import { logger } from "./logger";
 
 // Catch global errors and display them in an alert so users can report the issue.
 window.onerror = function (message, source, lineno, colno, error) {
-  logger.error(error);
+  logger.error("Caught global error: ", error);
   // const errorString = `Received unhandled error. Open browser console and click OK to see details.\nError: ${message}\nSource: ${source}\nLine: ${lineno}\nColumn: ${colno}\nStack: ${error.stack}`;
   //alert(errorString);
   // Avoids logging the error a second time.
@@ -22,7 +22,7 @@ window.onerror = function (message, source, lineno, colno, error) {
 // Catch global promise rejections and display them in an alert so users can report the issue.
 window.addEventListener("unhandledrejection", (event) => {
   // const errorString = `Received unhandled promise rejection. Open browser console and click OK to see details.\nReason: ${event.reason}`;
-  logger.error(event.reason);
+  logger.error("Caught global promise rejection: ", event.reason);
   //alert(errorString);
 });
 

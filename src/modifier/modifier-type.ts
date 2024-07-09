@@ -1988,7 +1988,7 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
   }
 
   if (player) {
-    logger.log(index, ignoredPoolIndexes[tier].filter(i => i <= index).length, ignoredPoolIndexes[tier]);
+    logger.log(`${index}`, ignoredPoolIndexes[tier].filter(i => i <= index).length, ignoredPoolIndexes[tier]);
   }
   let modifierType: ModifierType = (pool[tier][index]).modifierType;
   if (modifierType instanceof ModifierTypeGenerator) {
@@ -2001,7 +2001,7 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
     }
   }
 
-  logger.log(modifierType, !player ? "(enemy)" : "");
+  logger.log("modifier type:", modifierType, !player ? "(enemy)" : "");
 
   return new ModifierTypeOption(modifierType as ModifierType, upgradeCount);
 }

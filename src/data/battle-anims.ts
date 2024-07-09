@@ -327,7 +327,7 @@ class AnimTimedSoundEvent extends AnimTimedEvent {
       try {
         scene.playSound(this.resourceName, soundConfig);
       } catch (err) {
-        logger.error(err);
+        logger.error("Failed to play sound: ", err);
       }
       return Math.ceil((scene.sound.get(this.resourceName).totalDuration * 1000) / 33.33);
     } else {

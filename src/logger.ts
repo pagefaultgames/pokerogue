@@ -3,7 +3,7 @@ type LogType = "ERROR" | "WARN" | "INFO" | "LOG" | "DEBUG" | "TRACE";
 interface LogEntry {
   date: Date;
   type: LogType;
-  message?: any;
+  context: string;
   optionalParams?: any[];
 }
 
@@ -43,78 +43,78 @@ export class Logger {
   /**
    * Logs an error to the console and saves a copy in the buffer
    *
-   * @param message message/obj to be logged
-   * @param optionalParams optional additional parameters to be logged
+   * @param context - some context of what is logged
+   * @param optionalParams - optional additional parameters to be logged
    */
-  public error(message?: any, ...optionalParams: any[]): void {
-    this.addEntry("ERROR", message, ...optionalParams);
+  public error(context: string, ...optionalParams: any[]): void {
+    this.addEntry("ERROR", context, ...optionalParams);
     if (this.logLevel <= 5) {
-      console.error(message, ...optionalParams);
+      console.error(context, ...optionalParams);
     }
   }
 
   /**
    *  Logs a warning to the console and saves a copy in the buffer
    *
-   * @param message - message/obj to be logged
+   * @param context - some context of what is logged
    * @param optionalParams - optional additional parameters to be logged
    */
-  public warn(message?: any, ...optionalParams: any[]): void {
-    this.addEntry("WARN", message, ...optionalParams);
+  public warn(context: string, ...optionalParams: any[]): void {
+    this.addEntry("WARN", context, ...optionalParams);
     if (this.logLevel <= 4) {
-      console.warn(message, ...optionalParams);
+      console.warn(context, ...optionalParams);
     }
   }
 
   /**
    * Logs an info to the console and saves a copy in the buffer
    *
-   * @param message - message/obj to be logged
+   * @param context - some context of what is logged
    * @param optionalParams - optional additional parameters to be logged
    */
-  public info(message?: any, ...optionalParams: any[]): void {
-    this.addEntry("INFO", message, ...optionalParams);
+  public info(context: string, ...optionalParams: any[]): void {
+    this.addEntry("INFO", context, ...optionalParams);
     if (this.logLevel <= 3) {
-      console.info(message, ...optionalParams);
+      console.info(context, ...optionalParams);
     }
   }
 
   /**
    * Logs a log to the console and saves a copy in the buffer
    *
-   * @param message - message/obj to be logged
+   * @param context - some context of what is logged
    * @param optionalParams - optional additional parameters to be logged
    */
-  public log(message?: any, ...optionalParams: any[]): void {
-    this.addEntry("LOG", message, ...optionalParams);
+  public log(context: string, ...optionalParams: any[]): void {
+    this.addEntry("LOG", context, ...optionalParams);
     if (this.logLevel <= 2) {
-      console.log(message, ...optionalParams);
+      console.log(context, ...optionalParams);
     }
   }
 
   /**
    * Logs a debug to the console and saves a copy in the buffer
    *
-   * @param message - message/obj to be logged
+   * @param context - some context of what is logged
    * @param optionalParams - optional additional parameters to be logged
    */
-  public debug(message?: any, ...optionalParams: any[]): void {
-    this.addEntry("DEBUG", message, ...optionalParams);
+  public debug(context: string, ...optionalParams: any[]): void {
+    this.addEntry("DEBUG", context, ...optionalParams);
     if (this.logLevel <= 1) {
-      console.debug(message, ...optionalParams);
+      console.debug(context, ...optionalParams);
     }
   }
 
   /**
    * Logs a trace to the console and saves a copy in the buffer
    *
-   * @param message - message/obj to be logged
+   * @param context - some context of what is logged
    * @param optionalParams - optional additional parameters to be logged
    */
-  public trace(message?: any, ...optionalParams: any[]): void {
-    this.addEntry("TRACE", message, ...optionalParams);
+  public trace(context: string, ...optionalParams: any[]): void {
+    this.addEntry("TRACE", context, ...optionalParams);
     if (this.logLevel <= 0) {
-      console.trace(message, ...optionalParams);
+      console.trace(context, ...optionalParams);
     }
   }
 
@@ -134,13 +134,13 @@ export class Logger {
 
   private addEntry(
     type: LogType,
-    message?: string,
+    context: string,
     ...optionalParams: any[]
   ): void {
     this.entries.push({
       date: new Date(),
       type: type,
-      message,
+      context: context,
       optionalParams,
     });
 
@@ -150,12 +150,11 @@ export class Logger {
   }
 
   private entriesAsStringArray(): string[] {
-    return this.entries.map(({ message, type: type, optionalParams, date }) => {
-      const messageStr = this.stringify(message);
+    return this.entries.map(({ context, type: type, optionalParams, date }) => {
       const optionalParamsStr = optionalParams
         .map((param) => this.stringify(param))
         .join(", ");
-      return `${date.toUTCString()} *${type}* ${messageStr} ${optionalParamsStr}`;
+      return `${date.toUTCString()} *${type}* ${context} ${optionalParamsStr}`;
     });
   }
 

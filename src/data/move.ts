@@ -2992,7 +2992,7 @@ export class OpponentHighHpPowerAttr extends VariablePowerAttr {
 
 export class FirstAttackDoublePowerAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    logger.log(target.getLastXMoves(1), target.scene.currentBattle.turn);
+    logger.log("target.getlastXMoves(1):", target.getLastXMoves(1), "target.scene.currentBattle.turn:", target.scene.currentBattle.turn);
     if (!target.getLastXMoves(1).find(m => m.turn === target.scene.currentBattle.turn)) {
       (args[0] as Utils.NumberHolder).value *= 2;
       return true;
@@ -5407,7 +5407,7 @@ export class TransformAttr extends MoveEffectAttr {
 export class DiscourageFrequentUseAttr extends MoveAttr {
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
     const lastMoves = user.getLastXMoves(4);
-    logger.log(lastMoves);
+    logger.log("Last Move: ", lastMoves);
     for (let m = 0; m < lastMoves.length; m++) {
       if (lastMoves[m].move === move.id) {
         return (4 - (m + 1)) * -10;

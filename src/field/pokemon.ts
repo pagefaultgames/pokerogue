@@ -1464,7 +1464,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     let movePool: [Moves, number][] = [];
     const allLevelMoves = this.getLevelMoves(1, true, true);
     if (!allLevelMoves) {
-      logger.log(this.species.speciesId, "ERROR");
+      logger.log("Species ID: ",this.species.speciesId, "ERROR");
       return;
     }
 
@@ -1704,7 +1704,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.level++;
     }
     if (this.level >= maxExpLevel) {
-      logger.log(initialExp, this.exp, getLevelTotalExp(this.level, this.species.growthRate));
+      logger.log("initialExp: ", initialExp, "this.exp: ", this.exp, "getLevelTotalExp: ", getLevelTotalExp(this.level, this.species.growthRate));
       this.exp = Math.max(getLevelTotalExp(this.level, this.species.growthRate), initialExp);
     }
     this.levelExp = this.exp - getLevelTotalExp(this.level, this.species.growthRate);
@@ -2313,7 +2313,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           fusionCry = this.getFusionSpeciesForm().cry(scene, Object.assign({ seek: Math.max(fusionCry.totalDuration * 0.4, 0) }, soundConfig));
           SoundFade.fadeIn(scene, fusionCry, Utils.fixedInt(Math.ceil(duration * 0.2)), scene.masterVolume * scene.seVolume, 0);
         } catch (err) {
-          logger.error(err);
+          logger.error("Failed to play cry:", err);
         }
       });
     }
@@ -3602,7 +3602,7 @@ export class EnemyPokemon extends Pokemon {
           moveScores[m] = moveScore;
         }
 
-        logger.log(moveScores);
+        logger.log("Move score:", moveScores);
 
         const sortedMovePool = movePool.slice(0);
         sortedMovePool.sort((a, b) => {
@@ -3621,7 +3621,7 @@ export class EnemyPokemon extends Pokemon {
             r++;
           }
         }
-        logger.log(movePool.map(m => m.getName()), moveScores, r, sortedMovePool.map(m => m.getName()));
+        logger.log("Getting next move:", movePool.map(m => m.getName()), moveScores, r, sortedMovePool.map(m => m.getName()));
         return { move: sortedMovePool[r].moveId, targets: moveTargets[sortedMovePool[r].moveId] };
       }
     }

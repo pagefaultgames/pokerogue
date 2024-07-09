@@ -194,7 +194,7 @@ export class TitlePhase extends Phase {
       }
       this.showOptions();
     }).catch(err => {
-      logger.error(err);
+      logger.error("Failed to get session: ", err);
       this.showOptions();
     });
   }
@@ -319,7 +319,7 @@ export class TitlePhase extends Phase {
         this.end();
       }
     }).catch(err => {
-      logger.error(err);
+      logger.error("Failed to load session: ", err);
       this.scene.ui.showText(i18next.t("menu:failedToLoadSession"), null);
     });
   }
@@ -1961,7 +1961,7 @@ export class CommandPhase extends FieldPhase {
         if (!moveId) {
           turnCommand.targets = [this.fieldIndex];
         }
-        logger.log(moveTargets, playerPokemon.name);
+        logger.log("Move target:", moveTargets, "Player pkm name:", playerPokemon.name);
         if (moveTargets.targets.length <= 1 || moveTargets.multiple) {
           turnCommand.move.targets = moveTargets.targets;
         } else if (playerPokemon.getTag(BattlerTagType.CHARGING) && playerPokemon.getMoveQueue().length >= 1) {
@@ -2580,7 +2580,7 @@ export class MovePhase extends BattlePhase {
   start() {
     super.start();
 
-    logger.log(Moves[this.move.moveId]);
+    logger.log("Move: ", Moves[this.move.moveId]);
 
     if (!this.canMove()) {
       if (this.move.moveId && this.pokemon.summonData?.disabledMove === this.move.moveId) {
@@ -3184,7 +3184,7 @@ export class MoveAnimTestPhase extends BattlePhase {
       this.playMoveAnim(this.moveQueue.slice(0), true);
       return;
     } else if (player) {
-      logger.log(Moves[moveId]);
+      logger.log("Move:", Moves[moveId]);
     }
 
     initMoveAnim(this.scene, moveId).then(() => {

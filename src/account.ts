@@ -49,7 +49,7 @@ export function updateUserInfo(): Promise<[boolean, integer]> {
       loggedInUser = jsonResponse;
       resolve([ true, 200 ]);
     }).catch(err => {
-      logger.error(err);
+      logger.error("Failed to fetch account info:", err);
       resolve([ false, 500 ]);
     });
   });

@@ -2760,7 +2760,7 @@ export class PostWeatherChangeAddBattlerTagAttr extends PostWeatherChangeAbAttr 
   }
 
   applyPostWeatherChange(pokemon: Pokemon, passive: boolean, weather: WeatherType, args: any[]): boolean {
-    logger.log(this.weatherTypes.find(w => weather === w), WeatherType[weather]);
+    logger.log("Found weather types:", this.weatherTypes.find(w => weather === w), WeatherType[weather]);
     if (!this.weatherTypes.find(w => weather === w)) {
       return false;
     }

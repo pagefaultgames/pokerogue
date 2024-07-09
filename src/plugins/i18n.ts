@@ -60,7 +60,7 @@ async function initFonts() {
     if (result.status === "fulfilled") {
       document.fonts?.add(result.value);
     } else {
-      logger.error(result.reason);
+      logger.error("Failed to load font:", result.reason);
     }
   }
 }

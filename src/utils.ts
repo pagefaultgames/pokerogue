@@ -479,7 +479,7 @@ export function verifyLang(lang?: string): boolean {
  * @param container container with game objects inside it
  */
 export function printContainerList(container: Phaser.GameObjects.Container): void {
-  logger.log(container.list.map(go => {
+  logger.log("Container list: ",container.list.map(go => {
     return {type: go.type, name: go.name};
   }));
 }

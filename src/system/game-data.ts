@@ -367,7 +367,7 @@ export class GameData {
                 this.scene.clearPhaseQueue();
                 this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
               }
-              logger.error(error);
+              logger.error("Failed to update system save data:", error);
               return resolve(false);
             }
             resolve(true);
@@ -400,7 +400,7 @@ export class GameData {
                 this.scene.queueMessage("Too many people are trying to connect and the server is overloaded. Please try again later.", null, true);
                 return resolve(false);
               }
-              logger.error(response);
+              logger.error("Failed to get system save data:", response);
               return resolve(false);
             }
 
@@ -429,7 +429,7 @@ export class GameData {
           }
         }
 
-        logger.debug(systemData);
+        logger.debug("System data: ", systemData);
 
         localStorage.setItem(`data_${loggedInUser.username}`, encrypt(systemDataStr, bypassLogin));
 
@@ -543,7 +543,7 @@ export class GameData {
 
         resolve(true);
       } catch (err) {
-        logger.error(err);
+        logger.error("Failed to init system:", err);
         resolve(false);
       }
     });
@@ -861,7 +861,7 @@ export class GameData {
           .then(response => response.text())
           .then(async response => {
             if (!response.length || response[0] !== "{") {
-              logger.error(response);
+              logger.error("Failed to get session save data:", response);
               return resolve(null);
             }
 
@@ -884,7 +884,7 @@ export class GameData {
     return new Promise(async (resolve, reject) => {
       try {
         const initSessionFromData = async (sessionData: SessionSaveData) => {
-          logger.debug(sessionData);
+          logger.debug("Session data:", sessionData);
 
           scene.gameMode = getGameMode(sessionData.gameMode || GameModes.CLASSIC);
           if (sessionData.challenges) {
@@ -1018,7 +1018,7 @@ export class GameData {
               this.scene.clearPhaseQueue();
               this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
             }
-            logger.error(error);
+            logger.error("Failed to delete session:", error);
             resolve(false);
           }
           resolve(true);
@@ -1083,7 +1083,7 @@ export class GameData {
             this.scene.clearPhaseQueue();
             this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
           }
-          logger.error(jsonResponse);
+          logger.error("Failed to clear session:", jsonResponse);
           resolve([false, false]);
         });
       });
@@ -1193,7 +1193,7 @@ export class GameData {
                   this.scene.clearPhaseQueue();
                   this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
                 }
-                logger.error(error);
+                logger.error("Failed to updateAll:", error);
                 return resolve(false);
               }
               resolve(true);
@@ -1230,7 +1230,7 @@ export class GameData {
           .then(response => response.text())
           .then(response => {
             if (!response.length || response[0] !== "{") {
-              logger.error(response);
+              logger.error(`Failed to get ${dataType === GameDataType.SYSTEM ? "system" : "session"} save data:`, response);
               resolve(false);
               return;
             }
@@ -1288,7 +1288,7 @@ export class GameData {
                 break;
               }
             } catch (ex) {
-              logger.error(ex);
+              logger.error("Failed to parse imported data file: ", ex);
             }
 
             const displayError = (error: string) => this.scene.ui.showText(error, null, () => this.scene.ui.showText(null, 0), Utils.fixedInt(1500));
@@ -1316,7 +1316,7 @@ export class GameData {
                       .then(response => response.text())
                       .then(error => {
                         if (error) {
-                          logger.error(error);
+                          logger.error("Failed to save imported data to server:", error);
                           return displayError(`An error occurred while updating ${dataName} data. Please contact the administrator.`);
                         }
                         window.location = window.location;

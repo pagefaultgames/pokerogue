@@ -50,7 +50,7 @@ export default class ModifierData {
 
       return ret;
     } catch (err) {
-      logger.error(err);
+      logger.error("ToModifier failed: ", err);
       return null;
     }
   }
