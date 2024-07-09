@@ -151,7 +151,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SACRED_ASH": { name: "Sacred Ash" },
 
-    "REVIVER_SEED": { name: "Reviver Seed", description: "Revives the holder for 1/2 HP upon fainting." },
+    "REVIVER_SEED": { name: "Reviver Seed", description: "Revives the holder for 1/2 HP upon fainting from a direct hit." },
 
     "ETHER": { name: "Ether" },
     "MAX_ETHER": { name: "Max Ether" },
