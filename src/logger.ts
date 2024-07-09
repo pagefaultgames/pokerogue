@@ -29,11 +29,12 @@ export var logKeys: string[] = [
 export const DRPD_Version = "0.1.3"
 export interface DRPD {
   version: string,
-  title: string,
+  title?: string,
   authors: string[],
   date: string,
   waves: Wave[],
-  starters: PokeData[]
+  starters?: PokeData[],
+  filename: string
 }
 export interface Wave {
   id: integer,
@@ -87,7 +88,8 @@ export function newDocument(name: string = "Untitled Run " + (new Date().getUTCM
     authors: (Array.isArray(authorName) ? authorName : [authorName]),
     date: (new Date().getUTCMonth() + 1 < 10 ? "0" : "") + (new Date().getUTCMonth() + 1) + "-" + (new Date().getUTCDate() < 10 ? "0" : "") + new Date().getUTCDate() + "-" + new Date().getUTCFullYear(),
     waves: new Array(50),
-    starters: new Array(3)
+    starters: new Array(3),
+    filename: (new Date().getUTCMonth() + 1 < 10 ? "0" : "") + (new Date().getUTCMonth() + 1) + "-" + (new Date().getUTCDate() < 10 ? "0" : "") + new Date().getUTCDate() + "-" + new Date().getUTCFullYear() + "_untitled" 
   }
 }
 export function exportPokemon(pokemon: Pokemon, encounterRarity?: string): PokeData {

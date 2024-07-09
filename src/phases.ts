@@ -73,6 +73,7 @@ import { Challenges } from "./enums/challenges"
 import PokemonData from "./system/pokemon-data"
 import * as LoggerTools from "./logger"
 import { getNatureName } from "./data/nature";
+import { GameDataType } from "./enums/game-data-type";
 
 const { t } = i18next;
 
@@ -554,7 +555,7 @@ export class TitlePhase extends Phase {
     options.push({
       label: i18next.t("menu:dailyRun"),
       handler: () => {
-        this.initDailyRun();
+        this.setupDaily();
         return true;
       },
       keepOpen: true
@@ -659,7 +660,50 @@ export class TitlePhase extends Phase {
       }
     });
   }
-
+  setupDaily(): void {
+    // TODO
+    var saves = this.getSaves()
+    var saveNames = new Array(5).fill("")
+    for (var i = 0; i < saves.length; i++) {
+      saveNames[saves[i][0]] = saves[i][1].description
+    }
+    const ui = this.scene.ui
+    const confirmSlot = (message: string, slotFilter: (i: integer) => boolean, callback: (i: integer) => void) => {
+      ui.revertMode();
+      ui.showText(message, null, () => {
+        const config: OptionSelectConfig = {
+          options: new Array(5).fill(null).map((_, i) => i).filter(slotFilter).map(i => {
+            return {
+              label: (i+1) + " " + saveNames[i],
+              handler: () => {
+                callback(i);
+                ui.revertMode();
+                ui.showText(null, 0);
+                return true;
+              }
+            };
+          }).concat([{
+            label: i18next.t("menuUiHandler:cancel"),
+            handler: () => {
+              ui.revertMode();
+              ui.showText(null, 0);
+              return true;
+            }
+          }]),
+          xOffset: 98
+        };
+        ui.setOverlayMode(Mode.MENU_OPTION_SELECT, config);
+      });
+    };
+    ui.showText("This feature is incomplete.", null, () => {
+      this.scene.clearPhaseQueue();
+      this.scene.pushPhase(new TitlePhase(this.scene));
+      super.end();
+      return true;
+    })
+    return;
+    confirmSlot("Select a slot to replace.", () => true, slotId => this.scene.gameData.importData(GameDataType.SESSION, slotId));
+  }
   end(): void {
     if (!this.loaded && !this.scene.gameMode.isDaily) {
       this.scene.arena.preloadBgm();
