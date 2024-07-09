@@ -12,7 +12,7 @@ export const pokemonSummary: TranslationEntries = {
   "nextLv": "下一级",
   "cancel": "取消",
 
-  "memoString": "{{natureFragment}} 性格,\n{{metFragment}}",
+  "memoString": "{{natureFragment}} 性格，\n{{metFragment}}",
   "metFragment": {
     "apparently": "命中注定般地相遇于Lv.{{level}},\n{{biome}}.",
   },
