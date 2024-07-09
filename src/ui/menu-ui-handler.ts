@@ -11,6 +11,7 @@ import i18next from "i18next";
 import {Button} from "#enums/buttons";
 import { GameDataType } from "#enums/game-data-type";
 import BgmBar from "#app/ui/bgm-bar";
+import { logger } from "#app/logger.js";
 
 enum MenuOptions {
   GAME_SETTINGS,
@@ -198,6 +199,14 @@ export default class MenuUiHandler extends MessageUiHandler {
         keepOpen: true
       },
       {
+        label: i18next.t("menuUiHandler:downloadLog"),
+        handler: () => {
+          logger.downloadLogFile();
+          return true;
+        },
+        keepOpen: true
+      },
+      {
         label: i18next.t("menuUiHandler:cancel"),
         handler: () => {
           this.scene.ui.revertMode();
@@ -361,7 +370,7 @@ export default class MenuUiHandler extends MessageUiHandler {
         const doLogout = () => {
           Utils.apiFetch("account/logout", true).then(res => {
             if (!res.ok) {
-              console.error(`Log out failed (${res.status}: ${res.statusText})`);
+              logger.error(`Log out failed (${res.status}: ${res.statusText})`);
             }
             Utils.setCookie(Utils.sessionIdKey, "");
             updateUserInfo().then(() => this.scene.reset(true, true));

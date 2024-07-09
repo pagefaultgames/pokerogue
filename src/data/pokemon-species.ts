@@ -19,6 +19,7 @@ import { Stat } from "./pokemon-stat";
 import { Abilities } from "#enums/abilities";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { Species } from "#enums/species";
+import { logger } from "#app/logger.js";
 
 export enum Region {
   NORMAL,
@@ -366,7 +367,7 @@ export abstract class PokemonSpeciesForm {
     const forms = getPokemonSpecies(speciesId).forms;
     if (forms.length) {
       if (formIndex >= forms.length) {
-        console.warn(`Attempted accessing form with index ${formIndex} of species ${getPokemonSpecies(speciesId).getName()} with only ${forms.length || 0} forms`);
+        logger.warn(`Attempted accessing form with index ${formIndex} of species ${getPokemonSpecies(speciesId).getName()} with only ${forms.length || 0} forms`);
         formIndex = Math.min(formIndex, forms.length - 1);
       }
       const formKey = forms[formIndex || 0].formKey;
@@ -440,11 +441,11 @@ export abstract class PokemonSpeciesForm {
       scene.loadPokemonAtlas(spriteKey, this.getSpriteAtlasPath(female, formIndex, shiny, variant));
       scene.load.audio(this.getCryKey(formIndex), `audio/cry/${this.getCryKey(formIndex)}.m4a`);
       scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
-        const originalWarn = console.warn;
+        const originalWarn = logger.warn;
         // Ignore warnings for missing frames, because there will be a lot
-        console.warn = () => {};
+        logger.warn = () => {};
         const frameNames = scene.anims.generateFrameNames(spriteKey, { zeroPad: 4, suffix: ".png", start: 1, end: 400 });
-        console.warn = originalWarn;
+        logger.warn = originalWarn;
         if (!(scene.anims.exists(spriteKey))) {
           scene.anims.create({
             key: this.getSpriteKey(female, formIndex, shiny, variant),
@@ -739,14 +740,14 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
   getEvolutionLevels() {
     const evolutionLevels = [];
 
-    //console.log(Species[this.speciesId], pokemonEvolutions[this.speciesId])
+    //logger.log(Species[this.speciesId], pokemonEvolutions[this.speciesId])
 
     if (pokemonEvolutions.hasOwnProperty(this.speciesId)) {
       for (const e of pokemonEvolutions[this.speciesId]) {
         const speciesId = e.speciesId;
         const level = e.level;
         evolutionLevels.push([ speciesId, level ]);
-        //console.log(Species[speciesId], getPokemonSpecies(speciesId), getPokemonSpecies(speciesId).getEvolutionLevels());
+        //logger.log(Species[speciesId], getPokemonSpecies(speciesId), getPokemonSpecies(speciesId).getEvolutionLevels());
         const nextEvolutionLevels = getPokemonSpecies(speciesId).getEvolutionLevels();
         for (const npl of nextEvolutionLevels) {
           evolutionLevels.push(npl);
@@ -826,7 +827,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
 
   getFormSpriteKey(formIndex?: integer) {
     if (this.forms.length && formIndex >= this.forms.length) {
-      console.warn(`Attempted accessing form with index ${formIndex} of species ${this.getName()} with only ${this.forms.length || 0} forms`);
+      logger.warn(`Attempted accessing form with index ${formIndex} of species ${this.getName()} with only ${this.forms.length || 0} forms`);
       formIndex = Math.min(formIndex, this.forms.length - 1);
     }
     return this.forms?.length
@@ -3861,7 +3862,7 @@ export const starterPassiveAbilities = {
 {
   //setTimeout(() => {
   /*for (let tc of Object.keys(trainerConfigs)) {
-      console.log(TrainerType[tc], !trainerConfigs[tc].speciesFilter ? 'all' : [...new Set(allSpecies.filter(s => s.generation <= 9).filter(trainerConfigs[tc].speciesFilter).map(s => {
+      logger.log(TrainerType[tc], !trainerConfigs[tc].speciesFilter ? 'all' : [...new Set(allSpecies.filter(s => s.generation <= 9).filter(trainerConfigs[tc].speciesFilter).map(s => {
         while (pokemonPrevolutions.hasOwnProperty(s.speciesId))
 				  s = getPokemonSpecies(pokemonPrevolutions[s.speciesId]);
         return s;
@@ -3869,7 +3870,7 @@ export const starterPassiveAbilities = {
     }
 
     const speciesFilter = (species: PokemonSpecies) => !species.legendary && !species.pseudoLegendary && !species.mythical && species.baseTotal >= 540;
-    console.log(!speciesFilter ? 'all' : [...new Set(allSpecies.filter(s => s.generation <= 9).filter(speciesFilter).map(s => {
+    logger.log(!speciesFilter ? 'all' : [...new Set(allSpecies.filter(s => s.generation <= 9).filter(speciesFilter).map(s => {
       while (pokemonPrevolutions.hasOwnProperty(s.speciesId))
         s = getPokemonSpecies(pokemonPrevolutions[s.speciesId]);
       return s;

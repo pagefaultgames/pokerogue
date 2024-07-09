@@ -1,4 +1,5 @@
 import { bypassLogin } from "./battle-scene";
+import { logger } from "./logger";
 import * as Utils from "./utils";
 
 export interface UserInfo {
@@ -48,7 +49,7 @@ export function updateUserInfo(): Promise<[boolean, integer]> {
       loggedInUser = jsonResponse;
       resolve([ true, 200 ]);
     }).catch(err => {
-      console.error(err);
+      logger.error(err);
       resolve([ false, 500 ]);
     });
   });

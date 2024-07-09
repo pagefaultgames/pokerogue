@@ -3,6 +3,7 @@ import BattleScene from "../battle-scene";
 import * as Utils from "../utils";
 import { TextStyle, addTextObject } from "./text";
 import { WindowVariant, addWindow } from "./ui-theme";
+import { logger } from "#app/logger.js";
 
 interface RankingEntry {
   rank: integer,
@@ -210,7 +211,7 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
           this.isUpdating = false;
         });
     }).catch(err => {
-      console.error("Failed to load daily rankings:\n", err);
+      logger.error("Failed to load daily rankings:\n", err);
     });
   }
 

@@ -6,6 +6,7 @@ import * as Utils from "../utils";
 import { BattlerIndex } from "../battle";
 import { Element } from "json-stable-stringify";
 import { Moves } from "#enums/moves";
+import { logger } from "#app/logger.js";
 //import fs from 'vite-plugin-fs/browser';
 
 export enum AnimFrameTarget {
@@ -326,7 +327,7 @@ class AnimTimedSoundEvent extends AnimTimedEvent {
       try {
         scene.playSound(this.resourceName, soundConfig);
       } catch (err) {
-        console.error(err);
+        logger.error(err);
       }
       return Math.ceil((scene.sound.get(this.resourceName).totalDuration * 1000) / 33.33);
     } else {
@@ -485,7 +486,7 @@ export function initMoveAnim(scene: BattleScene, move: Moves): Promise<void> {
         scene.cachedFetch(`./battle-anims/${moveName}.json`)
           .then(response => {
             if (!response.ok) {
-              console.error(`Could not load animation file for move '${moveName}'`, response.status, response.statusText);
+              logger.error(`Could not load animation file for move '${moveName}'`, response.status, response.statusText);
               populateMoveAnim(move, moveAnims.get(defaultMoveAnim));
               return resolve();
             }
@@ -923,7 +924,7 @@ export abstract class BattleAnim {
                 setSpritePriority(frame.priority);
               }
               moveSprite.setFrame(frame.graphicFrame);
-              //console.log(AnimFocus[frame.focus]);
+              //logger.log(AnimFocus[frame.focus]);
 
               const graphicFrameData = frameData.get(frame.target).get(graphicIndex);
               moveSprite.setPosition(graphicFrameData.x, graphicFrameData.y);

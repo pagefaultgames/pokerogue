@@ -39,6 +39,7 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import {Button} from "#enums/buttons";
 import { EggSourceType } from "#app/enums/egg-source-types.js";
+import { logger } from "#app/logger.js";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -2677,7 +2678,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
   checkIconId(icon: Phaser.GameObjects.Sprite, species: PokemonSpecies, female, formIndex, shiny, variant) {
     if (icon.frame.name !== species.getIconId(female, formIndex, shiny, variant)) {
-      console.log(`${species.name}'s variant icon does not exist. Replacing with default.`);
+      logger.log(`${species.name}'s variant icon does not exist. Replacing with default.`);
       icon.setTexture(species.getIconAtlasKey(formIndex, false, variant));
       icon.setFrame(species.getIconId(female, formIndex, false, variant));
     }

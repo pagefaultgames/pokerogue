@@ -1,4 +1,5 @@
 import BattleScene from "./battle-scene";
+import { logger } from "./logger";
 
 export class Phase {
   protected scene: BattleScene;
@@ -8,7 +9,7 @@ export class Phase {
   }
 
   start() {
-    console.log(`%cStart Phase ${this.constructor.name}`, "color:green;");
+    logger.log(`%cStart Phase ${this.constructor.name}`, "color:green;");
     if (this.scene.abilityBar.shown) {
       this.scene.abilityBar.resetAutoHideTimer();
     }

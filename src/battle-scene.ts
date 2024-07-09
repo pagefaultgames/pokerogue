@@ -67,6 +67,7 @@ import { Species } from "#enums/species";
 import { UiTheme } from "#enums/ui-theme";
 import { TimedEventManager } from "#app/timed-event-manager.js";
 import i18next from "i18next";
+import { logger } from "./logger";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -299,7 +300,7 @@ export default class BattleScene extends SceneBase {
         if (scene.rngOffset) {
           args.push(`offset: ${scene.rngOffset}`);
         }
-        console.log(...args);
+        logger.log(...args);
         return ret;
       };
     }
@@ -673,7 +674,7 @@ export default class BattleScene extends SceneBase {
                         starterCandyColors[species.speciesId] = species.generateCandyColors(this).map(c => rgbaToHexFunc(c[0], c[1], c[2]));
                     }
 
-                    console.log(JSON.stringify(starterCandyColors));
+                    logger.log(JSON.stringify(starterCandyColors));
 
                     resolve();
                 });*/
@@ -825,7 +826,7 @@ export default class BattleScene extends SceneBase {
     icon.setFrame(pokemon.getIconId(true));
     // Temporary fix to show pokemon's default icon if variant icon doesn't exist
     if (icon.frame.name !== pokemon.getIconId(true)) {
-      console.log(`${pokemon.name}'s variant icon does not exist. Replacing with default.`);
+      logger.log(`${pokemon.name}'s variant icon does not exist. Replacing with default.`);
       const temp = pokemon.shiny;
       pokemon.shiny = false;
       icon.setTexture(pokemon.getIconAtlasKey(ignoreOverride));
@@ -914,7 +915,7 @@ export default class BattleScene extends SceneBase {
     this.gameMode = getGameMode(GameModes.CLASSIC);
 
     this.setSeed(Overrides.SEED_OVERRIDE || Utils.randomString(24));
-    console.log("Seed:", this.seed);
+    logger.log("Seed:", this.seed);
 
     this.disableMenu = false;
 
@@ -1347,7 +1348,7 @@ export default class BattleScene extends SceneBase {
     const wave = waveIndex || this.currentBattle?.waveIndex || 0;
     this.waveSeed = Utils.shiftCharCodes(this.seed, wave);
     Phaser.Math.RND.sow([ this.waveSeed ]);
-    console.log("Wave Seed:", this.waveSeed, wave);
+    logger.log("Wave Seed:", this.waveSeed, wave);
     this.rngCounter = 0;
   }
 
@@ -2455,7 +2456,7 @@ export default class BattleScene extends SceneBase {
     const appliedModifiers: PersistentModifier[] = [];
     for (const modifier of modifiers) {
       if (modifier.apply(args)) {
-        console.log("Applied", modifier.type.name, !player ? "(enemy)" : "");
+        logger.log("Applied", modifier.type.name, !player ? "(enemy)" : "");
         appliedModifiers.push(modifier);
       }
     }
@@ -2467,7 +2468,7 @@ export default class BattleScene extends SceneBase {
     const modifiers = (player ? this.modifiers : this.enemyModifiers).filter(m => m instanceof modifierType && m.shouldApply(args));
     for (const modifier of modifiers) {
       if (modifier.apply(args)) {
-        console.log("Applied", modifier.type.name, !player ? "(enemy)" : "");
+        logger.log("Applied", modifier.type.name, !player ? "(enemy)" : "");
         return modifier;
       }
     }

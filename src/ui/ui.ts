@@ -46,6 +46,7 @@ import SettingsDisplayUiHandler from "./settings/settings-display-ui-handler";
 import SettingsAudioUiHandler from "./settings/settings-audio-ui-handler";
 import { PlayerGender } from "#enums/player-gender";
 import BgmBar from "#app/ui/bgm-bar";
+import { logger } from "#app/logger.js";
 
 export enum Mode {
   MESSAGE,
@@ -303,7 +304,7 @@ export default class UI extends Phaser.GameObjects.Container {
 
       // Skip dialogue if the player has enabled the option and the dialogue has been already seen
       if ((this.scene as BattleScene).skipSeenDialogues && (this.scene as BattleScene).gameData.getSeenDialogues()[localizationKey] === true) {
-        console.log(`Dialogue ${localizationKey} skipped`);
+        logger.log(`Dialogue ${localizationKey} skipped`);
         callback();
         return;
       }

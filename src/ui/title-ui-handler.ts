@@ -6,6 +6,7 @@ import { TextStyle, addTextObject } from "./text";
 import { getBattleCountSplashMessage, getSplashMessages } from "../data/splash-messages";
 import i18next from "i18next";
 import { TimedEventDisplay } from "#app/timed-event-manager.js";
+import { logger } from "#app/logger.js";
 
 export default class TitleUiHandler extends OptionSelectUiHandler {
   private titleContainer: Phaser.GameObjects.Container;
@@ -70,7 +71,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
         }
       })
       .catch(err => {
-        console.error("Failed to fetch title stats:\n", err);
+        logger.error("Failed to fetch title stats:\n", err);
       });
   }
 

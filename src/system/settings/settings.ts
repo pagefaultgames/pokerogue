@@ -8,6 +8,7 @@ import SettingsUiHandler from "#app/ui/settings/settings-ui-handler";
 import { EaseType } from "#enums/ease-type";
 import { MoneyFormat } from "#enums/money-format";
 import { PlayerGender } from "#enums/player-gender";
+import { logger } from "#app/logger.js";
 
 const VOLUME_OPTIONS: SettingOption[] = new Array(11).fill(null).map((_, i) => i ? {
   value: (i * 10).toString(),
@@ -707,7 +708,7 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
             window.location.reload();
             return true;
           } catch (error) {
-            console.error("Error changing locale:", error);
+            logger.error("Error changing locale:", error);
             return false;
           }
         };

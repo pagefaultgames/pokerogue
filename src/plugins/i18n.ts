@@ -11,6 +11,7 @@ import { koConfig } from "#app/locales/ko/config.js";
 import { ptBrConfig } from "#app/locales/pt_BR/config.js";
 import { zhCnConfig } from "#app/locales/zh_CN/config.js";
 import { zhTwConfig } from "#app/locales/zh_TW/config.js";
+import { logger } from "#app/logger.js";
 
 const unicodeHalfAndFullWidthForms = [
   "U+FF00-FFEF"
@@ -59,7 +60,7 @@ async function initFonts() {
     if (result.status === "fulfilled") {
       document.fonts?.add(result.value);
     } else {
-      console.error(result.reason);
+      logger.error(result.reason);
     }
   }
 }

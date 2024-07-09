@@ -1,5 +1,6 @@
 import i18next from "i18next";
 import { MoneyFormat } from "#enums/money-format";
+import { logger } from "./logger";
 
 export const MissingTextureKey = "__MISSING";
 
@@ -478,7 +479,7 @@ export function verifyLang(lang?: string): boolean {
  * @param container container with game objects inside it
  */
 export function printContainerList(container: Phaser.GameObjects.Container): void {
-  console.log(container.list.map(go => {
+  logger.log(container.list.map(go => {
     return {type: go.type, name: go.name};
   }));
 }

@@ -1,3 +1,4 @@
+import { logger } from "#app/logger.js";
 import { TrainerType } from "#enums/trainer-type";
 import * as Utils from "../utils";
 
@@ -134,7 +135,7 @@ function fetchAndPopulateTrainerNames(url: string, parser: DOMParser, trainerNam
     fetch(`https://bulbapedia.bulbagarden.net/wiki/${url}_(Trainer_class)`)
       .then(response => response.text())
       .then(html => {
-        console.log(url);
+        logger.log(url);
         const htmlDoc = parser.parseFromString(html, "text/html");
         const trainerListHeader = htmlDoc.querySelector("#Trainer_list").parentElement;
         const elements = [...trainerListHeader.parentElement.childNodes];
@@ -147,7 +148,7 @@ function fetchAndPopulateTrainerNames(url: string, parser: DOMParser, trainerNam
           const childIndex = elements.indexOf(t);
           return childIndex > startChildIndex && childIndex < endChildIndex;
         }).map(t => t as Element);
-        console.log(url, tables);
+        logger.log(url, tables);
         for (const table of tables) {
           const trainerRows = [...table.querySelectorAll("tr:not(:first-child)")].filter(r => r.children.length === 9);
           for (const row of trainerRows) {
@@ -156,7 +157,7 @@ function fetchAndPopulateTrainerNames(url: string, parser: DOMParser, trainerNam
             if (content.indexOf(" <a ") > -1) {
               const female = /♀/.test(content);
               if (url === "Twins") {
-                console.log(content);
+                logger.log(content);
               }
               const nameMatch = />([a-z]+(?: &amp; [a-z]+)?)<\/a>/i.exec(content);
               if (nameMatch) {
@@ -182,12 +183,12 @@ function fetchAndPopulateTrainerNames(url: string, parser: DOMParser, trainerNam
       const config = trainerNameConfigs[t] as TrainerNameConfig;
       const trainerNames = new Set<string>();
       const femaleTrainerNames = new Set<string>();
-      console.log(config.urls, config.femaleUrls)
+      logger.log(config.urls, config.femaleUrls)
       const trainerClassRequests = config.urls.map(u => fetchAndPopulateTrainerNames(u, parser, trainerNames, femaleTrainerNames));
       if (config.femaleUrls)
         trainerClassRequests.push(...config.femaleUrls.map(u => fetchAndPopulateTrainerNames(u, parser, null, femaleTrainerNames, true)));
       Promise.all(trainerClassRequests).then(() => {
-        console.log(trainerNames, femaleTrainerNames)
+        logger.log(trainerNames, femaleTrainerNames)
         trainerTypeNames[trainerType] = !femaleTrainerNames.size ? Array.from(trainerNames) : [ Array.from(trainerNames), Array.from(femaleTrainerNames) ];
         resolve();
       });
@@ -199,6 +200,6 @@ function fetchAndPopulateTrainerNames(url: string, parser: DOMParser, trainerNam
       output += `\n\t[TrainerType.${TrainerType[t]}]: ${JSON.stringify(trainerTypeNames[t])},`;
     });
     output += `\n};`;
-    console.log(output);
+    logger.log(output);
   });
 }*/

@@ -7,11 +7,12 @@ import BBCodeTextPlugin from "phaser3-rex-plugins/plugins/bbcodetext-plugin";
 import InputTextPlugin from "phaser3-rex-plugins/plugins/inputtext-plugin.js";
 import TransitionImagePackPlugin from "phaser3-rex-plugins/templates/transitionimagepack/transitionimagepack-plugin.js";
 import { LoadingScene } from "./loading-scene";
+import { logger } from "./logger";
 
 
 // Catch global errors and display them in an alert so users can report the issue.
 window.onerror = function (message, source, lineno, colno, error) {
-  console.error(error);
+  logger.error(error);
   // const errorString = `Received unhandled error. Open browser console and click OK to see details.\nError: ${message}\nSource: ${source}\nLine: ${lineno}\nColumn: ${colno}\nStack: ${error.stack}`;
   //alert(errorString);
   // Avoids logging the error a second time.
@@ -21,7 +22,7 @@ window.onerror = function (message, source, lineno, colno, error) {
 // Catch global promise rejections and display them in an alert so users can report the issue.
 window.addEventListener("unhandledrejection", (event) => {
   // const errorString = `Received unhandled promise rejection. Open browser console and click OK to see details.\nReason: ${event.reason}`;
-  console.error(event.reason);
+  logger.error(event.reason);
   //alert(errorString);
 });
 
@@ -154,6 +155,7 @@ document.fonts.load("16px emerald").then(() => document.fonts.load("10px pkmnems
 let game;
 
 const startGame = () => {
+  logger.log("Starting game...", config);
   game = new Phaser.Game(config);
   game.sound.pauseOnBlur = false;
 };

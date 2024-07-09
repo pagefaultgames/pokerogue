@@ -50,6 +50,7 @@ import { BerryType } from "#enums/berry-type";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { logger } from "#app/logger.js";
 
 export enum FieldPosition {
   CENTER,
@@ -368,7 +369,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
                       then(res => {
                         // Prevent the JSON from processing if it failed to load
                         if (!res.ok) {
-                          console.error(`Could not load ${res.url}!`);
+                          logger.error(`Could not load ${res.url}!`);
                           return;
                         }
                         return res.json();
@@ -567,7 +568,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       sprite.play(key);
       tintSprite.play(key);
     } catch (error: unknown) {
-      console.error(`Couldn't play animation for '${key}'!\nIs the image for this Pokemon missing?\n`, error);
+      logger.error(`Couldn't play animation for '${key}'!\nIs the image for this Pokemon missing?\n`, error);
 
       return false;
     }
@@ -1363,7 +1364,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     this.shiny = (E ^ F) < shinyThreshold.value;
     if ((E ^ F) < 32) {
-      console.log("REAL SHINY!!");
+      logger.log("REAL SHINY!!");
     }
 
     if (this.shiny) {
@@ -1463,7 +1464,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     let movePool: [Moves, number][] = [];
     const allLevelMoves = this.getLevelMoves(1, true, true);
     if (!allLevelMoves) {
-      console.log(this.species.speciesId, "ERROR");
+      logger.log(this.species.speciesId, "ERROR");
       return;
     }
 
@@ -1703,7 +1704,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.level++;
     }
     if (this.level >= maxExpLevel) {
-      console.log(initialExp, this.exp, getLevelTotalExp(this.level, this.species.growthRate));
+      logger.log(initialExp, this.exp, getLevelTotalExp(this.level, this.species.growthRate));
       this.exp = Math.max(getLevelTotalExp(this.level, this.species.growthRate), initialExp);
     }
     this.levelExp = this.exp - getLevelTotalExp(this.level, this.species.growthRate);
@@ -1974,7 +1975,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         applyMoveAttrs(ModifiedDamageAttr, source, this, move, damage);
         applyPreDefendAbAttrs(ReceivedMoveDamageMultiplierAbAttr, this, source, move, cancelled, damage);
 
-        console.log("damage", damage.value, move.name, power.value, sourceAtk, targetDef);
+        logger.log("damage", damage.value, move.name, power.value, sourceAtk, targetDef);
 
         // In case of fatal damage, this tag would have gotten cleared before we could lapse it.
         const destinyTag = this.getTag(BattlerTagType.DESTINY_BOND);
@@ -2312,7 +2313,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           fusionCry = this.getFusionSpeciesForm().cry(scene, Object.assign({ seek: Math.max(fusionCry.totalDuration * 0.4, 0) }, soundConfig));
           SoundFade.fadeIn(scene, fusionCry, Utils.fixedInt(Math.ceil(duration * 0.2)), scene.masterVolume * scene.seVolume, 0);
         } catch (err) {
-          console.error(err);
+          logger.error(err);
         }
       });
     }
@@ -3570,7 +3571,7 @@ export class EnemyPokemon extends Pokemon {
             const target = this.scene.getField()[mt];
             let targetScore = move.getUserBenefitScore(this, target, move) + move.getTargetBenefitScore(this, target, move) * (mt < BattlerIndex.ENEMY === this.isPlayer() ? 1 : -1);
             if (Number.isNaN(targetScore)) {
-              console.error(`Move ${move.name} returned score of NaN`);
+              logger.error(`Move ${move.name} returned score of NaN`);
               targetScore = 0;
             }
             if ((move.name.endsWith(" (N)") || !move.applyConditions(this, target, move)) && ![Moves.SUCKER_PUNCH, Moves.UPPER_HAND, Moves.THUNDERCLAP].includes(move.id)) {
@@ -3601,7 +3602,7 @@ export class EnemyPokemon extends Pokemon {
           moveScores[m] = moveScore;
         }
 
-        console.log(moveScores);
+        logger.log(moveScores);
 
         const sortedMovePool = movePool.slice(0);
         sortedMovePool.sort((a, b) => {
@@ -3620,7 +3621,7 @@ export class EnemyPokemon extends Pokemon {
             r++;
           }
         }
-        console.log(movePool.map(m => m.getName()), moveScores, r, sortedMovePool.map(m => m.getName()));
+        logger.log(movePool.map(m => m.getName()), moveScores, r, sortedMovePool.map(m => m.getName()));
         return { move: sortedMovePool[r].moveId, targets: moveTargets[sortedMovePool[r].moveId] };
       }
     }
@@ -3740,7 +3741,7 @@ export class EnemyPokemon extends Pokemon {
             let segmentsBypassed = 0;
             while (segmentsBypassed < this.bossSegmentIndex && this.canBypassBossSegments(segmentsBypassed + 1) && (damage - hpRemainder) >= Math.round(segmentSize * Math.pow(2, segmentsBypassed + 1))) {
               segmentsBypassed++;
-              //console.log('damage', damage, 'segment', segmentsBypassed + 1, 'segment size', segmentSize, 'damage needed', Math.round(segmentSize * Math.pow(2, segmentsBypassed + 1)));
+              //logger.log('damage', damage, 'segment', segmentsBypassed + 1, 'segment size', segmentSize, 'damage needed', Math.round(segmentSize * Math.pow(2, segmentsBypassed + 1)));
             }
 
             damage = hpRemainder + Math.round(segmentSize * segmentsBypassed);

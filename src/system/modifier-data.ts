@@ -1,3 +1,4 @@
+import { logger } from "#app/logger.js";
 import BattleScene from "../battle-scene";
 import { PersistentModifier } from "../modifier/modifier";
 import { GeneratedPersistentModifierType, ModifierTypeGenerator, getModifierTypeFuncById } from "../modifier/modifier-type";
@@ -49,7 +50,7 @@ export default class ModifierData {
 
       return ret;
     } catch (err) {
-      console.error(err);
+      logger.error(err);
       return null;
     }
   }

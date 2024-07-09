@@ -14,6 +14,7 @@ import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 import i18next from "#app/plugins/i18n";
+import { logger } from "./logger";
 
 export enum BattleType {
     WILD,
@@ -195,8 +196,8 @@ export default class Battle {
     const turnMultiplier = Phaser.Tweens.Builders.GetEaseFunction("Sine.easeIn")(1 - Math.min(this.turn - 2, 10 * partyMemberTurnMultiplier) / (10 * partyMemberTurnMultiplier));
     const finalBattleScore = Math.ceil(this.battleScore * turnMultiplier);
     scene.score += finalBattleScore;
-    console.log(`Battle Score: ${finalBattleScore} (${this.turn - 1} Turns x${Math.floor(turnMultiplier * 100) / 100})`);
-    console.log(`Total Score: ${scene.score}`);
+    logger.log(`Battle Score: ${finalBattleScore} (${this.turn - 1} Turns x${Math.floor(turnMultiplier * 100) / 100})`);
+    logger.log(`Total Score: ${scene.score}`);
     scene.updateScoreText();
   }
 
@@ -356,7 +357,7 @@ export default class Battle {
       Phaser.Math.RND.state(this.battleSeedState);
     } else {
       Phaser.Math.RND.sow([ Utils.shiftCharCodes(this.battleSeed, this.turn << 6) ]);
-      console.log("Battle Seed:", this.battleSeed);
+      logger.log("Battle Seed:", this.battleSeed);
     }
     scene.rngCounter = this.rngCounter++;
     scene.rngSeedOverride = this.battleSeed;

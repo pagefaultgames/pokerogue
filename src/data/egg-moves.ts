@@ -2,6 +2,7 @@ import { allMoves } from "./move";
 import * as Utils from "../utils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { logger } from "#app/logger.js";
 
 
 export const speciesEggMoves = {
@@ -597,7 +598,7 @@ function parseEggMoves(content: string): void {
       eggMoves.push(moveIndex > -1 ? moveIndex as Moves : Moves.NONE);
 
       if (moveIndex === -1) {
-        console.warn(moveName, "could not be parsed");
+        logger.warn(moveName, "could not be parsed");
       }
     }
 
@@ -606,7 +607,7 @@ function parseEggMoves(content: string): void {
     }
   });
 
-  console.log(output);
+  logger.log(output);
 }
 
 export function initEggMoves() {

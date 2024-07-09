@@ -65,6 +65,7 @@ import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
+import { logger } from "./logger";
 
 const { t } = i18next;
 
@@ -193,7 +194,7 @@ export class TitlePhase extends Phase {
       }
       this.showOptions();
     }).catch(err => {
-      console.error(err);
+      logger.error(err);
       this.showOptions();
     });
   }
@@ -318,7 +319,7 @@ export class TitlePhase extends Phase {
         this.end();
       }
     }).catch(err => {
-      console.error(err);
+      logger.error(err);
       this.scene.ui.showText(i18next.t("menu:failedToLoadSession"), null);
     });
   }
@@ -384,7 +385,7 @@ export class TitlePhase extends Phase {
         fetchDailyRunSeed().then(seed => {
           generateDaily(seed);
         }).catch(err => {
-          console.error("Failed to load daily run:\n", err);
+          logger.error("Failed to load daily run:\n", err);
         });
       } else {
         generateDaily(btoa(new Date().toISOString().substring(0, 10)));
@@ -858,7 +859,7 @@ export class EncounterPhase extends BattlePhase {
 
       loadEnemyAssets.push(enemyPokemon.loadAssets());
 
-      console.log(enemyPokemon.name, enemyPokemon.species.speciesId, enemyPokemon.stats);
+      logger.log(enemyPokemon.name, enemyPokemon.species.speciesId, enemyPokemon.stats);
     });
 
     if (this.scene.getParty().filter(p => p.isShiny()).length === 6) {
@@ -1377,7 +1378,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
     const partyMember = this.getPokemon();
     // If the Pokemon about to be sent out is fainted or illegal under a challenge, switch to the first non-fainted legal Pokemon
     if (!partyMember.isAllowedInBattle()) {
-      console.warn("The Pokemon about to be sent out is fainted or illegal under a challenge. Attempting to resolve...");
+      logger.warn("The Pokemon about to be sent out is fainted or illegal under a challenge. Attempting to resolve...");
 
       // First check if they're somehow still in play, if so remove them.
       if (partyMember.isOnField()) {
@@ -1392,8 +1393,8 @@ export class SummonPhase extends PartyMemberPokemonPhase {
       // Find the first non-fainted Pokemon index above the current one
       const legalIndex = party.findIndex((p, i) => i > this.partyMemberIndex && p.isAllowedInBattle());
       if (legalIndex === -1) {
-        console.error("Party Details:\n", party);
-        console.error("All available Pokemon were fainted or illegal!");
+        logger.error("Party Details:\n", party);
+        logger.error("All available Pokemon were fainted or illegal!");
         this.scene.clearPhaseQueue();
         this.scene.unshiftPhase(new GameOverPhase(this.scene));
         this.end();
@@ -1402,7 +1403,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
 
       // Swaps the fainted Pokemon and the first non-fainted legal Pokemon in the party
       [party[this.partyMemberIndex], party[legalIndex]] = [party[legalIndex], party[this.partyMemberIndex]];
-      console.warn("Swapped %s %O with %s %O", partyMember?.name, partyMember, party[0]?.name, party[0]);
+      logger.warn("Swapped %s %O with %s %O", partyMember?.name, partyMember, party[0]?.name, party[0]);
     }
 
     if (this.player) {
@@ -1960,7 +1961,7 @@ export class CommandPhase extends FieldPhase {
         if (!moveId) {
           turnCommand.targets = [this.fieldIndex];
         }
-        console.log(moveTargets, playerPokemon.name);
+        logger.log(moveTargets, playerPokemon.name);
         if (moveTargets.targets.length <= 1 || moveTargets.multiple) {
           turnCommand.move.targets = moveTargets.targets;
         } else if (playerPokemon.getTag(BattlerTagType.CHARGING) && playerPokemon.getMoveQueue().length >= 1) {
@@ -2579,7 +2580,7 @@ export class MovePhase extends BattlePhase {
   start() {
     super.start();
 
-    console.log(Moves[this.move.moveId]);
+    logger.log(Moves[this.move.moveId]);
 
     if (!this.canMove()) {
       if (this.move.moveId && this.pokemon.summonData?.disabledMove === this.move.moveId) {
@@ -3183,7 +3184,7 @@ export class MoveAnimTestPhase extends BattlePhase {
       this.playMoveAnim(this.moveQueue.slice(0), true);
       return;
     } else if (player) {
-      console.log(Moves[moveId]);
+      logger.log(Moves[moveId]);
     }
 
     initMoveAnim(this.scene, moveId).then(() => {

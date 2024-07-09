@@ -40,6 +40,7 @@ import { GameDataType } from "#enums/game-data-type";
 import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
+import { logger } from "#app/logger.js";
 
 export const defaultStarterSpecies: Species[] = [
   Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE,
@@ -366,7 +367,7 @@ export class GameData {
                 this.scene.clearPhaseQueue();
                 this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
               }
-              console.error(error);
+              logger.error(error);
               return resolve(false);
             }
             resolve(true);
@@ -399,7 +400,7 @@ export class GameData {
                 this.scene.queueMessage("Too many people are trying to connect and the server is overloaded. Please try again later.", null, true);
                 return resolve(false);
               }
-              console.error(response);
+              logger.error(response);
               return resolve(false);
             }
 
@@ -420,7 +421,7 @@ export class GameData {
         if (cachedSystemDataStr) {
           const cachedSystemData = this.parseSystemData(cachedSystemDataStr);
           if (cachedSystemData.timestamp > systemData.timestamp) {
-            console.debug("Use cached system");
+            logger.debug("Use cached system");
             systemData = cachedSystemData;
             systemDataStr = cachedSystemDataStr;
           } else {
@@ -428,7 +429,7 @@ export class GameData {
           }
         }
 
-        console.debug(systemData);
+        logger.debug(systemData);
 
         localStorage.setItem(`data_${loggedInUser.username}`, encrypt(systemDataStr, bypassLogin));
 
@@ -542,7 +543,7 @@ export class GameData {
 
         resolve(true);
       } catch (err) {
-        console.error(err);
+        logger.error(err);
         resolve(false);
       }
     });
@@ -860,7 +861,7 @@ export class GameData {
           .then(response => response.text())
           .then(async response => {
             if (!response.length || response[0] !== "{") {
-              console.error(response);
+              logger.error(response);
               return resolve(null);
             }
 
@@ -883,7 +884,7 @@ export class GameData {
     return new Promise(async (resolve, reject) => {
       try {
         const initSessionFromData = async (sessionData: SessionSaveData) => {
-          console.debug(sessionData);
+          logger.debug(sessionData);
 
           scene.gameMode = getGameMode(sessionData.gameMode || GameModes.CLASSIC);
           if (sessionData.challenges) {
@@ -1017,7 +1018,7 @@ export class GameData {
               this.scene.clearPhaseQueue();
               this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
             }
-            console.error(error);
+            logger.error(error);
             resolve(false);
           }
           resolve(true);
@@ -1082,7 +1083,7 @@ export class GameData {
             this.scene.clearPhaseQueue();
             this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
           }
-          console.error(jsonResponse);
+          logger.error(jsonResponse);
           resolve([false, false]);
         });
       });
@@ -1174,7 +1175,7 @@ export class GameData {
 
         localStorage.setItem(`sessionData${scene.sessionSlotId ? scene.sessionSlotId : ""}_${loggedInUser.username}`, encrypt(JSON.stringify(sessionData), bypassLogin));
 
-        console.debug("Session data saved");
+        logger.debug("Session data saved");
 
         if (!bypassLogin && sync) {
           Utils.apiPost("savedata/updateall", JSON.stringify(request, (k: any, v: any) => typeof v === "bigint" ? v <= maxIntAttrValue ? Number(v) : v.toString() : v), undefined, true)
@@ -1192,7 +1193,7 @@ export class GameData {
                   this.scene.clearPhaseQueue();
                   this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
                 }
-                console.error(error);
+                logger.error(error);
                 return resolve(false);
               }
               resolve(true);
@@ -1229,7 +1230,7 @@ export class GameData {
           .then(response => response.text())
           .then(response => {
             if (!response.length || response[0] !== "{") {
-              console.error(response);
+              logger.error(response);
               resolve(false);
               return;
             }
@@ -1287,7 +1288,7 @@ export class GameData {
                 break;
               }
             } catch (ex) {
-              console.error(ex);
+              logger.error(ex);
             }
 
             const displayError = (error: string) => this.scene.ui.showText(error, null, () => this.scene.ui.showText(null, 0), Utils.fixedInt(1500));
@@ -1315,7 +1316,7 @@ export class GameData {
                       .then(response => response.text())
                       .then(error => {
                         if (error) {
-                          console.error(error);
+                          logger.error(error);
                           return displayError(`An error occurred while updating ${dataName} data. Please contact the administrator.`);
                         }
                         window.location = window.location;

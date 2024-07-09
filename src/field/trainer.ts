@@ -21,6 +21,7 @@ import i18next from "i18next";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
+import { logger } from "#app/logger.js";
 
 export enum TrainerVariant {
     DEFAULT,
@@ -72,7 +73,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
       break;
     }
 
-    console.log(Object.keys(trainerPartyTemplates)[Object.values(trainerPartyTemplates).indexOf(this.getPartyTemplate())]);
+    logger.log(Object.keys(trainerPartyTemplates)[Object.values(trainerPartyTemplates).indexOf(this.getPartyTemplate())]);
 
     const getSprite = (hasShadow?: boolean, forceFemale?: boolean) => {
       const ret = this.scene.addFieldSprite(0, 0, this.config.getSpriteKey(variant === TrainerVariant.FEMALE || forceFemale,this.isDouble()));
@@ -125,7 +126,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
     if (this.name === "" && name.toLowerCase().includes("grunt")) {
       // This is a evil team grunt so we localize it by only using the "name" as the title
       title = i18next.t(`trainerClasses:${name.toLowerCase().replace(/\s/g, "_")}`);
-      console.log("Localized grunt name: " + title);
+      logger.log("Localized grunt name: " + title);
       // Since grunts are not named we can just return the title
       return title;
     }
@@ -380,9 +381,9 @@ export default class Trainer extends Phaser.GameObjects.Container {
     if (this.config.speciesPools) {
       const tierValue = Utils.randSeedInt(512);
       let tier = tierValue >= 156 ? TrainerPoolTier.COMMON : tierValue >= 32 ? TrainerPoolTier.UNCOMMON : tierValue >= 6 ? TrainerPoolTier.RARE : tierValue >= 1 ? TrainerPoolTier.SUPER_RARE : TrainerPoolTier.ULTRA_RARE;
-      console.log(TrainerPoolTier[tier]);
+      logger.log(TrainerPoolTier[tier]);
       while (!this.config.speciesPools.hasOwnProperty(tier) || !this.config.speciesPools[tier].length) {
-        console.log(`Downgraded trainer Pokemon rarity tier from ${TrainerPoolTier[tier]} to ${TrainerPoolTier[tier - 1]}`);
+        logger.log(`Downgraded trainer Pokemon rarity tier from ${TrainerPoolTier[tier]} to ${TrainerPoolTier[tier - 1]}`);
         tier--;
       }
       const tierPool = this.config.speciesPools[tier];
@@ -394,7 +395,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
     let ret = getPokemonSpecies(species.getTrainerSpeciesForLevel(level, true, strength));
     let retry = false;
 
-    console.log(ret.getName());
+    logger.log(ret.getName());
 
     if (pokemonPrevolutions.hasOwnProperty(species.speciesId) && ret.speciesId !== species.speciesId) {
       retry = true;
@@ -407,11 +408,11 @@ export default class Trainer extends Phaser.GameObjects.Container {
 
     if (!retry && this.config.specialtyTypes.length && !this.config.specialtyTypes.find(t => ret.isOfType(t))) {
       retry = true;
-      console.log("Attempting reroll of species evolution to fit specialty type...");
+      logger.log("Attempting reroll of species evolution to fit specialty type...");
       let evoAttempt = 0;
       while (retry && evoAttempt++ < 10) {
         ret = getPokemonSpecies(species.getTrainerSpeciesForLevel(level, true, strength));
-        console.log(ret.name);
+        logger.log(ret.name);
         if (this.config.specialtyTypes.find(t => ret.isOfType(t))) {
           retry = false;
         }
@@ -419,7 +420,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
     }
 
     if (retry && (attempt || 0) < 10) {
-      console.log("Rerolling party member...");
+      logger.log("Rerolling party member...");
       ret = this.genNewPartyMemberSpecies(level, strength, (attempt || 0) + 1);
     }
 
@@ -527,13 +528,13 @@ export default class Trainer extends Phaser.GameObjects.Container {
   tryPlaySprite(sprite: Phaser.GameObjects.Sprite, tintSprite: Phaser.GameObjects.Sprite, animConfig: Phaser.Types.Animations.PlayAnimationConfig): boolean {
     // Show an error in the console if there isn't a texture loaded
     if (sprite.texture.key === "__MISSING") {
-      console.error(`No texture found for '${animConfig.key}'!`);
+      logger.error(`No texture found for '${animConfig.key}'!`);
 
       return false;
     }
     // Don't try to play an animation when there isn't one
     if (sprite.texture.frameTotal <= 1) {
-      console.warn(`No animation found for '${animConfig.key}'. Is this intentional?`);
+      logger.warn(`No animation found for '${animConfig.key}'. Is this intentional?`);
 
       return false;
     }
