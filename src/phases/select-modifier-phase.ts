@@ -22,6 +22,7 @@ import PartyUiHandler, {PartyOption, PartyUiMode} from "#app/ui/party-ui-handler
 import ModifierSelectUiHandler, {SHOP_OPTIONS_ROW_LIMIT} from "#app/ui/modifier-select-ui-handler";
 import {BattlePhase} from "#app/phases/battle-phase";
 import {isNullOrUndefined} from "#app/utils";
+import * as Overrides from "#app/overrides";
 
 export class SelectModifierPhase extends BattlePhase {
   private rerollCount: integer;
@@ -85,7 +86,7 @@ export class SelectModifierPhase extends BattlePhase {
         switch (cursor) {
         case 0:
           const rerollCost = this.getRerollCost(typeOptions, this.scene.lockModifierTiers);
-          if (rerollCost === 0 || this.scene.money < rerollCost) {
+          if (this.scene.money < rerollCost) {
             this.scene.ui.playError();
             return false;
           } else {
@@ -93,9 +94,11 @@ export class SelectModifierPhase extends BattlePhase {
             this.scene.unshiftPhase(new SelectModifierPhase(this.scene, this.rerollCount + 1, typeOptions.map(o => o.type.tier)));
             this.scene.ui.clearText();
             this.scene.ui.setMode(Mode.MESSAGE).then(() => super.end());
-            this.scene.money -= rerollCost;
-            this.scene.updateMoneyText();
-            this.scene.animateMoneyChanged(false);
+            if (!Overrides.WAIVE_REROLL_FEE_OVERRIDE) {
+              this.scene.money -= rerollCost;
+              this.scene.updateMoneyText();
+              this.scene.animateMoneyChanged(false);
+            }
             this.scene.audioHandler.playSound("buy");
           }
           break;
@@ -141,7 +144,7 @@ export class SelectModifierPhase extends BattlePhase {
         break;
       }
 
-      if (cost && this.scene.money < cost) {
+      if (cost && (this.scene.money < cost) && !Overrides.WAIVE_SHOP_FEES_OVERRIDE) {
         this.scene.ui.playError();
         return false;
       }
@@ -151,9 +154,11 @@ export class SelectModifierPhase extends BattlePhase {
         if (cost) {
           result.then(success => {
             if (success) {
-              this.scene.money -= cost;
-              this.scene.updateMoneyText();
-              this.scene.animateMoneyChanged(false);
+              if (!Overrides.WAIVE_SHOP_FEES_OVERRIDE) {
+                this.scene.money -= cost;
+                this.scene.updateMoneyText();
+                this.scene.animateMoneyChanged(false);
+              }
               this.scene.audioHandler.playSound("buy");
               (this.scene.ui.getHandler() as ModifierSelectUiHandler).updateCostText();
             } else {
@@ -233,7 +238,9 @@ export class SelectModifierPhase extends BattlePhase {
 
   getRerollCost(typeOptions: ModifierTypeOption[], lockRarities: boolean): integer {
     let baseValue = 0;
-    if (lockRarities) {
+    if (Overrides.WAIVE_REROLL_FEE_OVERRIDE) {
+      return baseValue;
+    } else if (lockRarities) {
       const tierValues = [50, 125, 300, 750, 2000];
       for (const opt of typeOptions) {
         baseValue += tierValues[opt.type.tier];
