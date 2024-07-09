@@ -154,6 +154,9 @@ export class TrappedTag extends BattlerTag {
   }
 }
 
+/**
+ * BattlerTag that represents the {@link https://bulbapedia.bulbagarden.net/wiki/Flinch Flinch} status condition
+ */
 export class FlinchedTag extends BattlerTag {
   constructor(sourceMove: Moves) {
     super(BattlerTagType.FLINCHED, [ BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END ], 0, sourceMove);
@@ -169,6 +172,12 @@ export class FlinchedTag extends BattlerTag {
     return !pokemon.isMax();
   }
 
+  /**
+   * Cancels the Pokemon's next Move on the turn this tag is applied
+   * @param pokemon The {@linkcode Pokemon} with this tag
+   * @param lapseType The {@linkcode BattlerTagLapseType lapse type} used for this function call
+   * @returns `false` (This tag is always removed after applying its effects)
+   */
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.PRE_MOVE) {
       (pokemon.scene.getCurrentPhase() as MovePhase).cancel();
@@ -206,7 +215,7 @@ export class InterruptedTag extends BattlerTag {
 }
 
 /**
- * BattlerTag that represents the {@link https://bulbapedia.bulbagarden.net/wiki/Confusion_(status_condition)}
+ * BattlerTag that represents the {@link https://bulbapedia.bulbagarden.net/wiki/Confusion_(status_condition) Confusion} status condition
  */
 export class ConfusedTag extends BattlerTag {
   constructor(turnCount: integer, sourceMove: Moves) {
