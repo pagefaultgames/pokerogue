@@ -4746,7 +4746,9 @@ export class FirstMoveTypeAttr extends MoveEffectAttr {
 
     user.summonData.types = [ firstMoveType ];
 
+
     user.scene.queueMessage(getPokemonMessage(user, ` transformed\ninto to the ${Utils.toReadableString(Type[firstMoveType])} type!`));
+
 
     return true;
   }
@@ -5617,18 +5619,14 @@ export class ResistLastMoveTypeAttr extends MoveEffectAttr {
       return false;
     }
     const moveData = allMoves[targetMove.move];
-    const resistances = getTypeResistances(moveData.type);
-    if (!resistances.length) {
-      return false;
-    }
-
     const userTypes = user.getTypes();
-    const validTypes = resistances.filter(t => !userTypes.includes(t)); // valid types are ones that are not already the user's types
+    const validTypes = getTypeResistances(moveData.type).filter(t => !userTypes.includes(t)); // valid types are ones that are not already the user's types
     if (!validTypes.length) {
       return false;
     }
     const type = validTypes[user.randSeedInt(validTypes.length)];
     user.summonData.types = [ type ];
+    user.scene.queueMessage(i18next.t("battle:typeChanged", {pokemonName: user.name, type: Utils.toReadableString(Type[type])}));
     user.updateInfo();
 
     return true;

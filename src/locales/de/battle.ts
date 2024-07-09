@@ -78,6 +78,7 @@ export const battle: SimpleTranslationEntries = {
   "statSeverelyFell": "{{stats}} von {{pokemonNameWithAffix}} sinkt drastisch!",
   "statWontGoAnyLower": "{{stats}} von {{pokemonNameWithAffix}} kann nicht weiter sinken!",
   "ppReduced": "{{moveName}} von {{targetName}} wird um {{reduction}} AP reduziert!",
+  "typeChanged": "{{pokemonName}} transformed\ninto the {{type}} type!",
   "battlerTagsRechargingLapse": "{{pokemonNameWithAffix}} kann sich wegen des Rückstoßes durch den Angriff nicht bewegen!",
   "battlerTagsTrappedOnAdd": "{{pokemonNameWithAffix}} kann nicht mehr fliehen!",
   "battlerTagsTrappedOnRemove": "{{pokemonNameWithAffix}} wurde von {{moveName}} befreit.",

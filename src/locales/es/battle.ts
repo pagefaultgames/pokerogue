@@ -78,6 +78,7 @@ export const battle: SimpleTranslationEntries = {
   "statSeverelyFell": "¡El {{stats}} de {{pokemonNameWithAffix}} ha bajado muchísimo!",
   "statWontGoAnyLower": "¡El {{stats}} de {{pokemonNameWithAffix}} no puede bajar más!",
   "ppReduced": "It reduced the PP of {{targetName}}'s\n{{moveName}} by {{reduction}}!",
+  "typeChanged": "{{pokemonName}} transformed\ninto the {{type}} type!",
   "battlerTagsRechargingLapse": "{{pokemonNameWithAffix}} must\nrecharge!",
   "battlerTagsTrappedOnAdd": "{{pokemonNameWithAffix}} can no\nlonger escape!",
   "battlerTagsTrappedOnRemove": "{{pokemonNameWithAffix}} was freed\nfrom {{moveName}}!",

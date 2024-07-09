@@ -78,6 +78,7 @@ export const battle: SimpleTranslationEntries = {
   "statSeverelyFell": "{{pokemonNameWithAffix}}\n的{{stats}}极大幅降低了！",
   "statWontGoAnyLower": "{{pokemonNameWithAffix}}\n的{{stats}}已经无法再降低了！",
   "ppReduced": "降低了{{targetName}}的\n{{moveName}}的PP{{reduction}}点！",
+  "typeChanged": "{{pokemonName}} transformed\ninto the {{type}} type!",
   "battlerTagsRechargingLapse": "{{pokemonNameWithAffix}}\n因攻击的反作用力而无法动弹！",
   "battlerTagsTrappedOnAdd": "{{pokemonNameWithAffix}}不能逃跑！",
   "battlerTagsTrappedOnRemove": "{{pokemonNameWithAffix}}\n摆脱了{{moveName}}！",
