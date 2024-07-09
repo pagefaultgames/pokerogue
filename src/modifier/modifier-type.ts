@@ -2166,6 +2166,10 @@ type GeneratorModifierOverride = {
     count?: number
   } & (
   | {
+      name: "SPECIES_STAT_BOOSTER";
+      type?: SpeciesStatBoosterItem;
+    }
+  | {
       name: "TEMP_STAT_BOOSTER";
       type?: TempBattleStat;
     }
