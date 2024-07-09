@@ -15,6 +15,7 @@ import { Species } from "#app/enums/species.js";
 import { DexAttr, DexEntry, AbilityAttr, StarterDataEntry } from "#app/system/game-data.js";
 import { allSpecies } from "../data/pokemon-species";
 import { Nature } from "../data/nature";
+import { Passive } from "../enums/passive";
 
 enum MenuOptions {
   GAME_SETTINGS,
@@ -63,6 +64,7 @@ export function unlockAll(scene: BattleScene) {
     (scene.gameData.dexData[species] as DexEntry).ivs = [31, 31, 31, 31, 31, 31];
     if (scene.gameData.starterData[species]) { // this checks to make sure the species has a starter
       (scene.gameData.starterData[species] as StarterDataEntry).abilityAttr = abilityAttr; // if so, it sets the abilityAttr for the starter
+      (scene.gameData.starterData[species] as StarterDataEntry).passiveAttr = Passive.UNLOCKED + Passive.ENABLED; // if so, it sets the passiveAttr for the starter to be
     }
   }
   //scene.gameData.saveAll(scene, true, true, false, true); // I could not for the life of me figure out how to make it save
