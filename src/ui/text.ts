@@ -1,9 +1,9 @@
-import i18next from "i18next";
+import { EggTier } from "#enums/egg-type";
+import { UiTheme } from "#enums/ui-theme";
+import Phaser from "phaser";
 import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import BattleScene from "../battle-scene";
-import { EggTier } from "../data/enums/egg-type";
-import { UiTheme } from "../enums/ui-theme";
 import { ModifierTier } from "../modifier/modifier-tier";
 
 export enum TextStyle {
@@ -29,33 +29,20 @@ export enum TextStyle {
   SETTINGS_LOCKED,
   TOOLTIP_TITLE,
   TOOLTIP_CONTENT,
-  MOVE_INFO_CONTENT
+  MOVE_INFO_CONTENT,
+  MOVE_PP_FULL,
+  MOVE_PP_HALF_FULL,
+  MOVE_PP_NEAR_EMPTY,
+  MOVE_PP_EMPTY,
+  SMALLER_WINDOW_ALT,
+  BGM_BAR
 }
-
-interface LanguageSetting {
-  summaryFontSize?: string,
-  battleInfoFontSize?: string,
-  partyFontSize?: string,
-  tooltipContentFontSize?: string,
-  moveInfoFontSize?: string,
-  textScale?: number
-}
-
-const languageSettings: { [key: string]: LanguageSetting } = {
-  "en":{},
-  "de":{},
-  "es":{},
-  "fr":{},
-  "it":{},
-  "pt_BR":{},
-  "zh_CN":{},
-};
 
 export function addTextObject(scene: Phaser.Scene, x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): Phaser.GameObjects.Text {
-  const [ styleOptions, shadowColor, shadowXpos, shadowYpos ] = getTextStyleOptions(style, (scene as BattleScene).uiTheme, extraStyleOptions);
+  const [ scale, styleOptions, shadowColor, shadowXpos, shadowYpos ] = getTextStyleOptions(style, (scene as BattleScene).uiTheme, extraStyleOptions);
 
   const ret = scene.add.text(x, y, content, styleOptions);
-  ret.setScale(0.1666666667);
+  ret.setScale(scale);
   ret.setShadow(shadowXpos, shadowYpos, shadowColor);
   if (!(styleOptions as Phaser.Types.GameObjects.Text.TextStyle).lineSpacing) {
     ret.setLineSpacing(5);
@@ -65,8 +52,8 @@ export function addTextObject(scene: Phaser.Scene, x: number, y: number, content
 }
 
 export function setTextStyle(obj: Phaser.GameObjects.Text, scene: Phaser.Scene, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle) {
-  const [ styleOptions, shadowColor, shadowXpos, shadowYpos ] = getTextStyleOptions(style, (scene as BattleScene).uiTheme, extraStyleOptions);
-  obj.setScale(0.1666666667);
+  const [ scale, styleOptions, shadowColor, shadowXpos, shadowYpos ] = getTextStyleOptions(style, (scene as BattleScene).uiTheme, extraStyleOptions);
+  obj.setScale(scale);
   obj.setShadow(shadowXpos, shadowYpos, shadowColor);
   if (!(styleOptions as Phaser.Types.GameObjects.Text.TextStyle).lineSpacing) {
     obj.setLineSpacing(5);
@@ -74,11 +61,11 @@ export function setTextStyle(obj: Phaser.GameObjects.Text, scene: Phaser.Scene, 
 }
 
 export function addBBCodeTextObject(scene: Phaser.Scene, x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): BBCodeText {
-  const [ styleOptions, shadowColor, shadowXpos, shadowYpos ] = getTextStyleOptions(style, (scene as BattleScene).uiTheme, extraStyleOptions);
+  const [ scale, styleOptions, shadowColor, shadowXpos, shadowYpos ] = getTextStyleOptions(style, (scene as BattleScene).uiTheme, extraStyleOptions);
 
   const ret = new BBCodeText(scene, x, y, content, styleOptions as BBCodeText.TextStyle);
   scene.add.existing(ret);
-  ret.setScale(0.1666666667);
+  ret.setScale(scale);
   ret.setShadow(shadowXpos, shadowYpos, shadowColor);
   if (!(styleOptions as BBCodeText.TextStyle).lineSpacing) {
     ret.setLineSpacing(10);
@@ -88,23 +75,24 @@ export function addBBCodeTextObject(scene: Phaser.Scene, x: number, y: number, c
 }
 
 export function addTextInputObject(scene: Phaser.Scene, x: number, y: number, width: number, height: number, style: TextStyle, extraStyleOptions?: InputText.IConfig): InputText {
-  const [ styleOptions ] = getTextStyleOptions(style, (scene as BattleScene).uiTheme, extraStyleOptions);
+  const [ scale, styleOptions ] = getTextStyleOptions(style, (scene as BattleScene).uiTheme, extraStyleOptions);
 
   const ret = new InputText(scene, x, y, width, height, styleOptions as InputText.IConfig);
   scene.add.existing(ret);
-  ret.setScale(0.1666666667);
+  ret.setScale(scale);
 
   return ret;
 }
 
-function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): [ Phaser.Types.GameObjects.Text.TextStyle | InputText.IConfig, string, number, number ] {
-  const lang = i18next.resolvedLanguage;
+export function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): [ number, Phaser.Types.GameObjects.Text.TextStyle | InputText.IConfig, string, number, number ] {
   let shadowXpos = 4;
   let shadowYpos = 5;
+  const scale = 0.1666666667;
+  const defaultFontSize = 96;
 
   let styleOptions: Phaser.Types.GameObjects.Text.TextStyle = {
     fontFamily: "emerald",
-    fontSize: "96px",
+    fontSize: 96,
     color: getTextColor(style, false, uiTheme),
     padding: {
       bottom: 6
@@ -122,60 +110,45 @@ function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptio
   case TextStyle.SUMMARY_GREEN:
   case TextStyle.WINDOW:
   case TextStyle.WINDOW_ALT:
+  case TextStyle.STATS_VALUE:
     shadowXpos = 3;
     shadowYpos = 3;
     break;
   case TextStyle.STATS_LABEL:
-    let fontSizeLabel = "96px";
-    switch (lang) {
-    case "de":
-      fontSizeLabel = "80px";
-      break;
-    default:
-      fontSizeLabel = "96px";
-      break;
-    }
-    styleOptions.fontSize =  fontSizeLabel;
-    break;
-  case TextStyle.STATS_VALUE:
-    shadowXpos = 3;
-    shadowYpos = 3;
-    let fontSizeValue = "96px";
-    switch (lang) {
-    case "de":
-      fontSizeValue = "80px";
-      break;
-    default:
-      fontSizeValue = "96px";
-      break;
-    }
-    styleOptions.fontSize =  fontSizeValue;
-    break;
   case TextStyle.MESSAGE:
   case TextStyle.SETTINGS_LABEL:
   case TextStyle.SETTINGS_LOCKED:
   case TextStyle.SETTINGS_SELECTED:
-    styleOptions.fontSize = languageSettings[lang]?.summaryFontSize || "96px";
     break;
   case TextStyle.BATTLE_INFO:
   case TextStyle.MONEY:
   case TextStyle.TOOLTIP_TITLE:
-    styleOptions.fontSize = languageSettings[lang]?.battleInfoFontSize || "72px";
+    styleOptions.fontSize = defaultFontSize - 24;
     shadowXpos = 3.5;
     shadowYpos = 3.5;
     break;
   case TextStyle.PARTY:
   case TextStyle.PARTY_RED:
-    styleOptions.fontSize = languageSettings[lang]?.partyFontSize || "66px";
+    styleOptions.fontSize = defaultFontSize - 30;
     styleOptions.fontFamily = "pkmnems";
     break;
   case TextStyle.TOOLTIP_CONTENT:
-    styleOptions.fontSize = languageSettings[lang]?.tooltipContentFontSize || "64px";
+    styleOptions.fontSize = defaultFontSize - 32;
     shadowXpos = 3;
     shadowYpos = 3;
     break;
   case TextStyle.MOVE_INFO_CONTENT:
-    styleOptions.fontSize = languageSettings[lang]?.moveInfoFontSize || "56px";
+    styleOptions.fontSize = defaultFontSize - 40;
+    shadowXpos = 3;
+    shadowYpos = 3;
+    break;
+  case TextStyle.SMALLER_WINDOW_ALT:
+    styleOptions.fontSize = defaultFontSize - 36;
+    shadowXpos = 3;
+    shadowYpos = 3;
+    break;
+  case TextStyle.BGM_BAR:
+    styleOptions.fontSize = defaultFontSize - 24;
     shadowXpos = 3;
     shadowYpos = 3;
     break;
@@ -191,7 +164,7 @@ function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptio
     styleOptions = Object.assign(styleOptions, extraStyleOptions);
   }
 
-  return [ styleOptions, shadowColor, shadowXpos, shadowYpos ];
+  return [ scale, styleOptions, shadowColor, shadowXpos, shadowYpos ];
 }
 
 export function getBBCodeFrag(content: string, textStyle: TextStyle, uiTheme: UiTheme = UiTheme.DEFAULT): string {
@@ -204,11 +177,27 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
     return !shadow ? "#f8f8f8" : "#6b5a73";
   case TextStyle.WINDOW:
   case TextStyle.MOVE_INFO_CONTENT:
+  case TextStyle.MOVE_PP_FULL:
   case TextStyle.TOOLTIP_CONTENT:
     if (uiTheme) {
       return !shadow ? "#484848" : "#d0d0c8";
     }
     return !shadow ? "#f8f8f8" : "#6b5a73";
+  case TextStyle.MOVE_PP_HALF_FULL:
+    if (uiTheme) {
+      return !shadow ? "#a68e17" : "#ebd773";
+    }
+    return !shadow ? "#ccbe00" : "#6e672c";
+  case TextStyle.MOVE_PP_NEAR_EMPTY:
+    if (uiTheme) {
+      return !shadow ? "#d64b00" : "#f7b18b";
+    }
+    return !shadow ? "#d64b00" : "#69402a";
+  case TextStyle.MOVE_PP_EMPTY:
+    if (uiTheme) {
+      return !shadow ? "#e13d3d" : "#fca2a2";
+    }
+    return !shadow ? "#e13d3d" : "#632929";
   case TextStyle.WINDOW_ALT:
     return !shadow ? "#484848" : "#d0d0c8";
   case TextStyle.BATTLE_INFO:
@@ -221,10 +210,10 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
   case TextStyle.PARTY_RED:
     return !shadow ? "#f89890" : "#984038";
   case TextStyle.SUMMARY:
-    return !shadow ? "#ffffff" : "#636363";
+    return !shadow ? "#f8f8f8" : "#636363";
   case TextStyle.SUMMARY_ALT:
     if (uiTheme) {
-      return !shadow ? "#ffffff" : "#636363";
+      return !shadow ? "#f8f8f8" : "#636363";
     }
     return !shadow ? "#484848" : "#d0d0c8";
   case TextStyle.SUMMARY_RED:
@@ -250,23 +239,27 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
     return !shadow ? "#f8b050" : "#c07800";
   case TextStyle.SETTINGS_SELECTED:
     return !shadow ? "#f88880" : "#f83018";
+  case TextStyle.SMALLER_WINDOW_ALT:
+    return !shadow ? "#484848" : "#d0d0c8";
+  case TextStyle.BGM_BAR:
+    return !shadow ? "#f8f8f8" : "#6b5a73";
   }
 }
 
 export function getModifierTierTextTint(tier: ModifierTier): integer {
   switch (tier) {
   case ModifierTier.COMMON:
-    return 0xffffff;
+    return 0xf8f8f8;
   case ModifierTier.GREAT:
-    return 0x3890f8;
+    return 0x4998f8;
   case ModifierTier.ULTRA:
     return 0xf8d038;
   case ModifierTier.ROGUE:
-    return 0xd52929;
+    return 0xdb4343;
   case ModifierTier.MASTER:
-    return 0xe020c0;
+    return 0xe331c5;
   case ModifierTier.LUXURY:
-    return 0xe64a18;
+    return 0xe74c18;
   }
 }
 

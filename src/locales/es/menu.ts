@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 /**
  * The menu namespace holds most miscellaneous text that isn't directly part of the game's
@@ -34,8 +34,6 @@ export const menu: SimpleTranslationEntries = {
   "sessionSuccess": "Sesión cargada con éxito.",
   "failedToLoadSession": "No se han podido cargar los datos de tu sesión.\nPuede que estén corruptos.",
   "boyOrGirl": "¿Eres un chico o una chica?",
-  "boy": "Chico",
-  "girl": "Chica",
   "evolving": "¡Anda!\n¡{{pokemonName}} está evolucionando!",
   "stoppedEvolving": "¿Eh?\n¡La evolución de {{pokemonName}} se ha detenido!",
   "pauseEvolutionsQuestion": "¿Quieres detener las evoluciones de {{pokemonName}}?\nSiempre pueden ser reactivadas desde la pantalla de tu equipo.",
@@ -44,11 +42,16 @@ export const menu: SimpleTranslationEntries = {
   "dailyRankings": "Rankings Diarios",
   "weeklyRankings": "Rankings Semanales",
   "noRankings": "Sin Rankings",
+  "positionIcon": "#",
+  "usernameScoreboard": "Username",
+  "score": "Score",
+  "wave": "Wave",
   "loading": "Cargando…",
+  "loadingAsset": "Cargando recurso: {{assetName}}",
   "playersOnline": "Jugadores en Línea",
-  "empty":"Vacío",
   "yes":"Sí",
   "no":"No",
-  "disclaimer": "DISCLAIMER",
-  "disclaimerDescription": "This game is an unfinished product; it might have playability issues (including the potential loss of save data),\n change without notice, and may or may not be updated further or completed."
+  "disclaimer": "AVISO",
+  "disclaimerDescription": "Este juego es un producto inacabado; puede tener problemas de jugabilidad (incluyendo la posible pérdida\n de datos de guardado),cambiar sin avisar, y puede o no puede ser actualizado hasta ser completado.",
+  "errorServerDown": "¡Ups! Ha habido un problema al contactar con el servidor.\n\nPuedes mantener esta ventana abierta,\nel juego se reconectará automáticamente.",
 } as const;

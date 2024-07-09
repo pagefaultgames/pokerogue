@@ -1,4 +1,4 @@
-import {SimpleTranslationEntries} from "#app/plugins/i18n";
+import {SimpleTranslationEntries} from "#app/interfaces/locales";
 
 // Titles of special trainers like gym leaders, elite four, and the champion
 export const titles: SimpleTranslationEntries = {
@@ -13,6 +13,12 @@ export const titles: SimpleTranslationEntries = {
   "rival": "라이벌",
   "professor": "박사",
   "frontier_brain": "프런티어 브레인",
+  "rocket_boss": "로켓단 보스",
+  "magma_boss": "마그마단 보스",
+  "aqua_boss": "아쿠아단 보스",
+  "galactic_boss": "갤럭시단 보스",
+  "plasma_boss": "플라스마단 보스",
+  "flare_boss": "플레어단 보스",
   // Maybe if we add the evil teams we can add "Team Rocket" and "Team Aqua" etc. here as well as "Team Rocket Boss" and "Team Aqua Admin" etc.
 } as const;
 
@@ -48,7 +54,7 @@ export const trainerClasses: SimpleTranslationEntries = {
   "depot_agent": "역무원",
   "doctor": "의사",
   "doctor_female": "간호사", // doctor_f.png 파일이 간호사
-  "firebreather": "Firebreather",
+  "firebreather": "불놀이꾼",
   "fisherman": "낚시꾼",
   "fisherman_female": "낚시꾼",
   "gentleman": "신사",
@@ -101,11 +107,12 @@ export const trainerClasses: SimpleTranslationEntries = {
   "smasher": "테니스선수",
   "snow_worker": "작업원",
   "snow_worker_female": "작업원",
+  "sailor": "선원",
   "striker": "축구선수",
   "school_kid": "학원끝난 아이",
   "school_kid_female": "학원끝난 아이",
   "school_kids": "학원끝난 아이",
-  "swimmer": "수연팬티 소년",
+  "swimmer": "수영팬티 소년",
   "swimmer_female": "비키니 아가씨",
   "swimmers": "수영팬티 소년 & 비키니 아가씨", // 확인 필요
   "twins": "쌍둥이",
@@ -117,7 +124,19 @@ export const trainerClasses: SimpleTranslationEntries = {
   "worker": "작업원",
   "worker_female": "작업원",
   "workers": "작업원",
-  "youngster": "반바지 꼬마"
+  "youngster": "반바지 꼬마",
+  "rocket_grunt": "로켓단 조무래기",
+  "rocket_grunt_female": "로켓단 조무래기",
+  "magma_grunt": "마그마단 조무래기",
+  "magma_grunt_female": "마그마단 조무래기",
+  "aqua_grunt": "아쿠아단 조무래기",
+  "aqua_grunt_female": "아쿠아단 조무래기",
+  "galactic_grunt": "갤럭시단 조무래기",
+  "galactic_grunt_female": "갤럭시단 조무래기",
+  "plasma_grunt": "플라스마단 조무래기",
+  "plasma_grunt_female": "플라스마단 조무래기",
+  "flare_grunt": "플레어단 조무래기",
+  "flare_grunt_female": "플레어단 조무래기",
 } as const;
 
 // Names of special trainers like gym leaders, elite four, and the champion
@@ -246,6 +265,11 @@ export const trainerNames: SimpleTranslationEntries = {
   "leon": "단델",
   "rival": "핀",
   "rival_female": "아이비",
+  "maxie": "마적",
+  "archie": "아강",
+  "cyrus": "태홍",
+  "ghetsis": "게치스",
+  "lysandre": "플라드리",
 
   // Double Names
   "blue_red_double": "그린 & 레드",

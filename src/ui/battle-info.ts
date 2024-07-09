@@ -9,6 +9,8 @@ import { Type, getTypeRgb } from "../data/type";
 import { getVariantTint } from "#app/data/variant";
 import { BattleStat } from "#app/data/battle-stat";
 import BattleFlyout from "./battle-flyout";
+import { WindowVariant, addWindow } from "./ui-theme";
+import i18next from "i18next";
 
 const battleStatOrder = [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.ACC, BattleStat.EVA, BattleStat.SPD ];
 
@@ -52,6 +54,13 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   private type3Icon: Phaser.GameObjects.Sprite;
   private expBar: Phaser.GameObjects.Image;
 
+  // #region Type effectiveness hint objects
+  private effectivenessContainer: Phaser.GameObjects.Container;
+  private effectivenessWindow: Phaser.GameObjects.NineSlice;
+  private effectivenessText: Phaser.GameObjects.Text;
+  private currentEffectiveness?: string;
+  // #endregion
+
   public expMaskRect: Phaser.GameObjects.Graphics;
 
   private statsContainer: Phaser.GameObjects.Container;
@@ -59,7 +68,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   private statValuesContainer: Phaser.GameObjects.Container;
   private statNumbers: Phaser.GameObjects.Sprite[];
 
-  public flyoutMenu: BattleFlyout;
+  public flyoutMenu?: BattleFlyout;
 
   constructor(scene: Phaser.Scene, x: number, y: number, player: boolean) {
     super(scene, x, y);
@@ -250,6 +259,19 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.type3Icon.setName("icon_type_3");
     this.type3Icon.setOrigin(0, 0);
     this.add(this.type3Icon);
+
+    if (!this.player) {
+      this.effectivenessContainer = this.scene.add.container(0, 0);
+      this.effectivenessContainer.setPositionRelative(this.type1Icon, 22, 4);
+      this.effectivenessContainer.setVisible(false);
+      this.add(this.effectivenessContainer);
+
+      this.effectivenessText = addTextObject(this.scene, 5, 4.5, "", TextStyle.BATTLE_INFO);
+      this.effectivenessWindow = addWindow((this.scene as BattleScene), 0, 0, 0, 20, false, false, null, null, WindowVariant.XTHIN);
+
+      this.effectivenessContainer.add(this.effectivenessWindow);
+      this.effectivenessContainer.add(this.effectivenessText);
+    }
   }
 
   initInfo(pokemon: Pokemon) {
@@ -294,9 +316,9 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.shinyIcon.setTint(getVariantTint(baseVariant));
     if (this.shinyIcon.visible) {
       const shinyDescriptor = doubleShiny || baseVariant ?
-        `${baseVariant === 2 ? "Epic" : baseVariant === 1 ? "Rare" : "Common"}${doubleShiny ? `/${pokemon.fusionVariant === 2 ? "Epic" : pokemon.fusionVariant === 1 ? "Rare" : "Common"}` : ""}`
+        `${baseVariant === 2 ? i18next.t("common:epicShiny") : baseVariant === 1 ? i18next.t("common:rareShiny") : i18next.t("common:commonShiny")}${doubleShiny ? `/${pokemon.fusionVariant === 2 ? i18next.t("common:epicShiny") : pokemon.fusionVariant === 1 ? i18next.t("common:rareShiny") : i18next.t("common:commonShiny")}` : ""}`
         : "";
-      this.shinyIcon.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, `Shiny${shinyDescriptor ? ` (${shinyDescriptor})` : ""}`));
+      this.shinyIcon.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, `${i18next.t("common:shinyOnHover")}${shinyDescriptor ? ` (${shinyDescriptor})` : ""}`));
       this.shinyIcon.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
     }
 
@@ -709,6 +731,39 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     battleStatOrder.map((s, i) => {
       this.statNumbers[i].setFrame(battleStats[s].toString());
     });
+  }
+
+  /**
+   * Request the flyoutMenu to toggle if available and hides or shows the effectiveness window where necessary
+   */
+  toggleFlyout(visible: boolean): void {
+    this.flyoutMenu?.toggleFlyout(visible);
+
+    if (visible) {
+      this.effectivenessContainer?.setVisible(false);
+    } else {
+      this.updateEffectiveness(this.currentEffectiveness);
+    }
+  }
+
+  /**
+   * Show or hide the type effectiveness multiplier window
+   * Passing undefined will hide the window
+   */
+  updateEffectiveness(effectiveness?: string) {
+    if (this.player) {
+      return;
+    }
+    this.currentEffectiveness = effectiveness;
+
+    if (!(this.scene as BattleScene).typeHints || effectiveness === undefined || this.flyoutMenu.flyoutVisible) {
+      this.effectivenessContainer.setVisible(false);
+      return;
+    }
+
+    this.effectivenessText.setText(effectiveness);
+    this.effectivenessWindow.width = 10 + this.effectivenessText.displayWidth;
+    this.effectivenessContainer.setVisible(true);
   }
 
   getBaseY(): number {

@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 /**
  * The menu namespace holds most miscellaneous text that isn't directly part of the game's
@@ -34,8 +34,6 @@ export const menu: SimpleTranslationEntries = {
   "sessionSuccess": "세션 불러오기 성공.",
   "failedToLoadSession": "세션을 불러올 수 없었습니다.\n파일이 손상되었을 수 있습니다.",
   "boyOrGirl": "너는 남자니?\n아니면 여자니?",
-  "boy": "남자",
-  "girl": "여자",
   "evolving": "…오잉!?\n{{pokemonName}}의 모습이…!",
   "stoppedEvolving": "얼라리…?\n{{pokemonName}}의 변화가 멈췄다!",
   "pauseEvolutionsQuestion": "{{pokemonName}}[[를]] 진화하지 않게 만드시겠습니까?\n포켓몬 화면에서 다시 활성화시킬 수 있습니다.",
@@ -44,11 +42,16 @@ export const menu: SimpleTranslationEntries = {
   "dailyRankings": "일간 랭킹",
   "weeklyRankings": "주간 랭킹",
   "noRankings": "랭킹 정보 없음",
+  "positionIcon": "#",
+  "usernameScoreboard": "이름",
+  "score": "점수",
+  "wave": "웨이브",
   "loading": "로딩 중…",
+  "loadingAsset": "Loading asset: {{assetName}}",
   "playersOnline": "플레이어 온라인",
-  "empty":"빈 슬롯",
   "yes":"예",
   "no":"아니오",
-  "disclaimer": "DISCLAIMER",
-  "disclaimerDescription": "This game is an unfinished product; it might have playability issues (including the potential loss of save data),\n change without notice, and may or may not be updated further or completed."
+  "disclaimer": "면책 조항",
+  "disclaimerDescription": "이 게임은 완전히 개발되지 않았습니다- (세이브 데이터 소실을 포함) 플레이에 지장을 주는 문제가 생길 수 있으며,\n공지 없이 업데이트가 진행 혹은 중지될 수 있습니다.",
+  "errorServerDown": "서버 연결 중 문제가 발생했습니다.\n\n이 창을 종료하지 않고 두면,\n게임은 자동으로 재접속됩니다.",
 } as const;

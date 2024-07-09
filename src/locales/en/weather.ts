@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 /**
  * The weather namespace holds text displayed when weather is active during a battle
@@ -15,12 +15,12 @@ export const weather: SimpleTranslationEntries = {
   "sandstormStartMessage": "A sandstorm brewed!",
   "sandstormLapseMessage": "The sandstorm rages.",
   "sandstormClearMessage": "The sandstorm subsided.",
-  "sandstormDamageMessage": "{{pokemonPrefix}}{{pokemonName}} is buffeted\nby the sandstorm!",
+  "sandstormDamageMessage": "{{pokemonNameWithAffix}} is buffeted\nby the sandstorm!",
 
   "hailStartMessage": "It started to hail!",
   "hailLapseMessage": "Hail continues to fall.",
   "hailClearMessage": "The hail stopped.",
-  "hailDamageMessage": "{{pokemonPrefix}}{{pokemonName}} is pelted\nby the hail!",
+  "hailDamageMessage": "{{pokemonNameWithAffix}} is pelted\nby the hail!",
 
   "snowStartMessage": "It started to snow!",
   "snowLapseMessage": "The snow is falling down.",
@@ -40,5 +40,27 @@ export const weather: SimpleTranslationEntries = {
 
   "strongWindsStartMessage": "A heavy wind began!",
   "strongWindsLapseMessage": "The wind blows intensely.",
+  "strongWindsEffectMessage": "The mysterious air current weakened the attack!",
   "strongWindsClearMessage": "The heavy wind stopped."
+};
+
+export const terrain: SimpleTranslationEntries = {
+  "misty": "Misty",
+  "mistyStartMessage": "Mist swirled around the battlefield!",
+  "mistyClearMessage": "The mist disappeared from the battlefield.",
+  "mistyBlockMessage": "{{pokemonNameWithAffix}} surrounds itself with a protective mist!",
+
+  "electric": "Electric",
+  "electricStartMessage": "An electric current ran across the battlefield!",
+  "electricClearMessage": "The electricity disappeared from the battlefield.",
+
+  "grassy": "Grassy",
+  "grassyStartMessage": "Grass grew to cover the battlefield!",
+  "grassyClearMessage": "The grass disappeared from the battlefield.",
+
+  "psychic": "Psychic",
+  "psychicStartMessage": "The battlefield got weird!",
+  "psychicClearMessage": "The weirdness disappeared from the battlefield!",
+
+  "defaultBlockMessage": "{{pokemonNameWithAffix}} is protected by the {{terrainName}} Terrain!"
 };

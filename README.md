@@ -46,8 +46,15 @@ Check out [Github Issues](https://github.com/pagefaultgames/pokerogue/issues) to
     - Keisuke Ito
     - Arata Iiyoshi
     - Atsuhiro Ishizuna
+  - Pokémon HeartGold/SoulSilver
   - Pokémon Black/White 2
-  - Firel (Custom Metropolis and Laboratory biome music)
+  - Pokémon X/Y
+  - Pokémon Omega Ruby/Alpha Sapphire
+  - Pokémon Sun/Moon
+  - Pokémon Ultra Sun/Ultra Moon
+  - Pokémon Sword/Shield
+  - Pokémon Scarlet/Violet
+  - Firel (Custom Laboratory, Metropolis, Seabed, and Space biome music)
   - Lmz (Custom Jungle biome music)
 
 ### 🎵 Sound Effects

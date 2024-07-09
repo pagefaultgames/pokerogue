@@ -1,4 +1,4 @@
-import {SimpleTranslationEntries} from "#app/plugins/i18n";
+import {SimpleTranslationEntries} from "#app/interfaces/locales";
 
 // Titles of special trainers like gym leaders, elite four, and the champion
 export const titles: SimpleTranslationEntries = {
@@ -94,6 +94,7 @@ export const trainerClasses: SimpleTranslationEntries = {
   "rich_kid_female": "Niña Bien",
   "rich_kids": "Niños Bien",
   "roughneck": "Calvo",
+  "sailor": "Marinero",
   "scientist": "Científico",
   "scientist_female": "Científica",
   "scientists": "Científicos",
