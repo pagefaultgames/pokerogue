@@ -38,7 +38,7 @@ export function getFieldEffectText(arenaTagType: string): string {
   if (!arenaTagType || arenaTagType === ArenaTagType.NONE) {
     return arenaTagType;
   }
-  const effectName = Utils.toLowerCamelString(arenaTagType);
+  const effectName = Utils.toCamelCaseString(arenaTagType);
   const i18nKey = `arenaFlyout:${effectName}` as ParseKeys;
   const resultName = i18next.t(i18nKey);
   return (!resultName || resultName === i18nKey) ? Utils.formatText(arenaTagType) : resultName;

@@ -409,7 +409,7 @@ export function formatText(unformattedText: string): string {
   return text.join(" ");
 }
 
-export function toLowerCamelString(unformattedText: string): string {
+export function toCamelCaseString(unformattedText: string): string {
   if (!unformattedText) {
     return "";
   }
