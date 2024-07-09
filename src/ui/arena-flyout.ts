@@ -35,8 +35,8 @@ interface ArenaEffectInfo {
 }
 
 export function getFieldEffectText(arenaTagType: string): string {
-  if (!arenaTagType || arenaTagType === "NONE") {
-    return "";
+  if (!arenaTagType || arenaTagType === ArenaTagType.NONE) {
+    return arenaTagType;
   }
   const effectName = Utils.toLowerCamelString(arenaTagType);
   const i18nKey = `arenaFlyout:${effectName}` as ParseKeys;
