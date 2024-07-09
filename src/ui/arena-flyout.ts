@@ -34,10 +34,14 @@ interface ArenaEffectInfo {
   tagType?: ArenaTagType;
 }
 
-export function getFieldEffectText(fieldEffectInfo: ArenaEffectInfo): string {
-  const i18nKey = fieldEffectInfo.name.split("_").filter(f => f).map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join("") as unknown as string;
-  const resultName = i18next.t(`arenaFlyout:${i18nKey}` as ParseKeys);
-  return resultName || Utils.formatText(fieldEffectInfo.name);
+export function getFieldEffectText(arenaTagType: string): string {
+  if (!arenaTagType || arenaTagType === "NONE") {
+    return "";
+  }
+  const effectName = Utils.toLowerCamelString(arenaTagType);
+  const i18nKey = `arenaFlyout:${effectName}` as ParseKeys;
+  const resultName = i18next.t(i18nKey);
+  return (!resultName || resultName === i18nKey) ? Utils.formatText(arenaTagType) : resultName;
 }
 
 export class ArenaFlyout extends Phaser.GameObjects.Container {
@@ -228,8 +232,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
         break;
       }
 
-      // textObject.text += Utils.formatText(fieldEffectInfo.name);
-      textObject.text += getFieldEffectText(fieldEffectInfo);
+      textObject.text += fieldEffectInfo.name;
 
       if (fieldEffectInfo.maxDuration !== 0) {
         textObject.text += "  " + fieldEffectInfo.duration + "/" + fieldEffectInfo.maxDuration;
@@ -265,7 +268,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
       }
 
       const existingTrapTagIndex = isArenaTrapTag ? this.fieldEffectInfo.findIndex(e => tagAddedEvent.arenaTagType === e.tagType && arenaEffectType === e.effecType) : -1;
-      let name: string = ArenaTagType[tagAddedEvent.arenaTagType];
+      let name: string =  getFieldEffectText(ArenaTagType[tagAddedEvent.arenaTagType]);
 
       if (isArenaTrapTag) {
         if (existingTrapTagIndex !== -1) {
@@ -300,15 +303,15 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
 
       // Stores the old Weather/Terrain name in case it's in the array already
       const oldName =
-      fieldEffectChangedEvent instanceof WeatherChangedEvent
-        ? WeatherType[fieldEffectChangedEvent.oldWeatherType]
-        : TerrainType[fieldEffectChangedEvent.oldTerrainType];
+        getFieldEffectText(fieldEffectChangedEvent instanceof WeatherChangedEvent
+          ? WeatherType[fieldEffectChangedEvent.oldWeatherType]
+          : TerrainType[fieldEffectChangedEvent.oldTerrainType]);
       // Stores the new Weather/Terrain info
       const newInfo = {
         name:
-          fieldEffectChangedEvent instanceof WeatherChangedEvent
+          getFieldEffectText(fieldEffectChangedEvent instanceof WeatherChangedEvent
             ? WeatherType[fieldEffectChangedEvent.newWeatherType]
-            : TerrainType[fieldEffectChangedEvent.newTerrainType],
+            : TerrainType[fieldEffectChangedEvent.newTerrainType]),
         effecType: fieldEffectChangedEvent instanceof WeatherChangedEvent
           ? ArenaEffectType.WEATHER
           : ArenaEffectType.TERRAIN,
