@@ -5,7 +5,7 @@ import { EncoreTag, SemiInvulnerableTag } from "./battler-tags";
 import { getPokemonMessage, getPokemonNameWithAffix } from "../messages";
 import Pokemon, { AttackMoveResult, EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../field/pokemon";
 import { StatusEffect, getStatusEffectHealText, isNonVolatileStatusEffect, getNonVolatileStatusEffects} from "./status-effect";
-import { Type } from "./type";
+import { getTypeResistances, Type } from "./type";
 import { Constructor } from "#app/utils";
 import * as Utils from "../utils";
 import { WeatherType } from "./weather";
@@ -5589,6 +5589,49 @@ export class hitsSameTypeAttr extends VariableMoveTypeMultiplierAttr {
       return true;
     }
     return false;
+  }
+}
+
+/**
+ *  Attribute used for Conversion 2, to convert the user's type to a random type that resists the target's last used move.
+ */
+export class ResistLastMoveTypeAttr extends MoveEffectAttr {
+  constructor() {
+    super(true);
+  }
+  /**
+   * User changes its type to a random type that resists the target's last used move
+   * @param {Pokemon} user Pokemon that used the move and will change types
+   * @param {Pokemon} target Opposing pokemon that recently used a move
+   * @param {Move} move Move being used
+   * @param {any[]} args Unused
+   * @returns {boolean} true if the function succeeds
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args)) {
+      return false;
+    }
+
+    const [targetMove] = target.getLastXMoves(1); // target's most recent move
+    if (!targetMove) {
+      return false;
+    }
+    const moveData = allMoves[targetMove.move];
+    const resistances = getTypeResistances(moveData.type);
+    if (!resistances.length) {
+      return false;
+    }
+
+    const userTypes = user.getTypes();
+    const validTypes = resistances.filter(t => !userTypes.includes(t)); // valid types are ones that are not already the user's types
+    if (!validTypes.length) {
+      return false;
+    }
+    const type = validTypes[user.randSeedInt(validTypes.length)];
+    user.summonData.types = [ type ];
+    user.updateInfo();
+
+    return true;
   }
 }
 
