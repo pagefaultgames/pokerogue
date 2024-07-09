@@ -3,10 +3,11 @@ import { addTextObject, TextStyle } from "./text";
 import * as Utils from "../utils";
 import BattleScene from "#app/battle-scene.js";
 import Move from "#app/data/move.js";
-import { BattleSceneEventType, BerryUsedEvent, MoveUsedEvent } from "../events/battle-scene";
+import { BattleSceneEventType, BattleBerryUsedEvent, BattleMoveUsedEvent } from "../events/battle-scene";
 import { BerryType } from "#enums/berry-type";
 import { Moves } from "#enums/moves";
 import { UiTheme } from "#enums/ui-theme";
+import { eventBus } from "#app/event-bus.js";
 
 /** Container for info about a {@linkcode Move} */
 interface MoveInfo {
@@ -116,8 +117,8 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
     this.name = `Flyout ${this.pokemon.name}`;
     this.flyoutParent.name = `Flyout Parent ${this.pokemon.name}`;
 
-    this.battleScene.eventTarget.addEventListener(BattleSceneEventType.MOVE_USED, this.onMoveUsedEvent);
-    this.battleScene.eventTarget.addEventListener(BattleSceneEventType.BERRY_USED, this.onBerryUsedEvent);
+    eventBus.on(BattleSceneEventType.MOVE_USED, this.onMoveUsedEvent);
+    eventBus.on(BattleSceneEventType.BERRY_USED, this.onBerryUsedEvent);
   }
 
   /** Sets and formats the text property for all {@linkcode Phaser.GameObjects.Text} in the flyoutText array */
@@ -137,7 +138,7 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
 
   /** Updates all of the {@linkcode MoveInfo} objects in the moveInfo array */
   private onMoveUsed(event: Event) {
-    const moveUsedEvent = event as MoveUsedEvent;
+    const moveUsedEvent = event as BattleMoveUsedEvent;
     if (!moveUsedEvent
       || moveUsedEvent.pokemonId !== this.pokemon?.id
       || moveUsedEvent.move.id === Moves.STRUGGLE) { // Ignore Struggle
@@ -155,7 +156,7 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
   }
 
   private onBerryUsed(event: Event) {
-    const berryUsedEvent = event as BerryUsedEvent;
+    const berryUsedEvent = event as BattleBerryUsedEvent;
     if (!berryUsedEvent
       || berryUsedEvent.berryModifier.pokemonId !== this.pokemon?.id
       || berryUsedEvent.berryModifier.berryType !== BerryType.LEPPA) { // We only care about Leppa berries
@@ -185,8 +186,8 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
   }
 
   destroy(fromScene?: boolean): void {
-    this.battleScene.eventTarget.removeEventListener(BattleSceneEventType.MOVE_USED, this.onMoveUsedEvent);
-    this.battleScene.eventTarget.removeEventListener(BattleSceneEventType.BERRY_USED, this.onBerryUsedEvent);
+    eventBus.off(BattleSceneEventType.MOVE_USED, this.onMoveUsedEvent);
+    eventBus.off(BattleSceneEventType.BERRY_USED, this.onBerryUsedEvent);
 
     super.destroy(fromScene);
   }

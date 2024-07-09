@@ -70,7 +70,7 @@ export class FormChangePhase extends EvolutionPhase {
               this.evolutionBg.setVisible(true);
               this.evolutionBg.play();
             });
-            this.scene.playSound("charge");
+            this.scene.audioHandler.playSound("charge");
             this.doSpiralUpward();
             this.scene.tweens.addCounter({
               from: 0,
@@ -82,13 +82,13 @@ export class FormChangePhase extends EvolutionPhase {
               onComplete: () => {
                 this.pokemonSprite.setVisible(false);
                 this.scene.time.delayedCall(1100, () => {
-                  this.scene.playSound("beam");
+                  this.scene.audioHandler.playSound("beam");
                   this.doArcDownward();
                   this.scene.time.delayedCall(1000, () => {
                     this.pokemonEvoTintSprite.setScale(0.25);
                     this.pokemonEvoTintSprite.setVisible(true);
                     this.doCycle(1, 1).then(_success => {
-                      this.scene.playSound("sparkle");
+                      this.scene.audioHandler.playSound("sparkle");
                       this.pokemonEvoSprite.setVisible(true);
                       this.doCircleInward();
                       this.scene.time.delayedCall(900, () => {
@@ -97,7 +97,7 @@ export class FormChangePhase extends EvolutionPhase {
                             this.scene.unshiftPhase(new EndEvolutionPhase(this.scene));
                           }
 
-                          this.scene.playSound("shine");
+                          this.scene.audioHandler.playSound("shine");
                           this.doSpray();
                           this.scene.tweens.add({
                             targets: this.evolutionOverlay,
@@ -132,7 +132,7 @@ export class FormChangePhase extends EvolutionPhase {
                                           }
 
                                           const delay = playEvolutionFanfare ? 4000 : 1750;
-                                          this.scene.playSoundWithoutBgm(playEvolutionFanfare ? "evolution_fanfare" : "minor_fanfare");
+                                          this.scene.audioHandler.playSoundWithoutBgm(playEvolutionFanfare ? "evolution_fanfare" : "minor_fanfare");
 
                                           transformedPokemon.destroy();
                                           this.scene.ui.showText(getSpeciesFormChangeMessage(this.pokemon, this.formChange, preName), null, () => this.end(), null, true, Utils.fixedInt(delay));
@@ -231,7 +231,7 @@ export class QuietFormChangePhase extends BattlePhase {
     pokemonFormTintSprite.setVisible(false);
     pokemonFormTintSprite.setTintFill(0xFFFFFF);
 
-    this.scene.playSound("PRSFX- Transform");
+    this.scene.audioHandler.playSound("PRSFX- Transform");
 
     this.scene.tweens.add({
       targets: pokemonTintSprite,

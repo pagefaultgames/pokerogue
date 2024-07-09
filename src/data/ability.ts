@@ -2147,7 +2147,7 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
     pokemon.summonData.moveset = target.getMoveset().map(m => new PokemonMove(m.moveId, m.ppUsed, m.ppUp));
     pokemon.summonData.types = target.getTypes();
 
-    pokemon.scene.playSound("PRSFX- Transform");
+    pokemon.scene.audioHandler.playSound("PRSFX- Transform");
 
     pokemon.loadAssets(false).then(() => pokemon.playAnim());
 

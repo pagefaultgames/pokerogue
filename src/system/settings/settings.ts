@@ -3,11 +3,13 @@ import i18next from "i18next";
 import BattleScene from "../../battle-scene";
 import { hasTouchscreen } from "../../touch-controls";
 import { updateWindowType } from "../../ui/ui-theme";
-import { CandyUpgradeNotificationChangedEvent } from "../../events/battle-scene";
+import { BattleCandyUpgradeNotificationChangedEvent } from "../../events/battle-scene";
 import SettingsUiHandler from "#app/ui/settings/settings-ui-handler";
 import { EaseType } from "#enums/ease-type";
 import { MoneyFormat } from "#enums/money-format";
 import { PlayerGender } from "#enums/player-gender";
+import { AudioHandlerScene } from "#app/scenes/audio-handler-scene";
+import { eventBus } from "#app/event-bus";
 
 const VOLUME_OPTIONS: SettingOption[] = new Array(11).fill(null).map((_, i) => i ? {
   value: (i * 10).toString(),
@@ -575,7 +577,13 @@ export function settingIndex(key: string) {
  * @param scene current BattleScene
  */
 export function resetSettings(scene: BattleScene) {
-  Setting.forEach(s => setSetting(scene, s.key, s.default));
+  Setting.filter((s) => // exclude volume settings
+    ![
+      SettingKeys.Master_Volume,
+      SettingKeys.BGM_Volume,
+      SettingKeys.SE_Volume,
+    ].includes(s.key)
+  ).forEach((s) => setSetting(scene, s.key, s.default));
 }
 
 /**
@@ -587,6 +595,8 @@ export function resetSettings(scene: BattleScene) {
  */
 export function setSetting(scene: BattleScene, setting: string, value: integer): boolean {
   const index: number = settingIndex(setting);
+  const audioHandlerScene: AudioHandlerScene = scene.scene.get<AudioHandlerScene>(AudioHandlerScene.KEY);
+
   if (index === -1) {
     return false;
   }
@@ -595,16 +605,16 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     scene.gameSpeed = parseFloat(Setting[index].options[value].value.replace("x", ""));
     break;
   case SettingKeys.Master_Volume:
-    scene.masterVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
-    scene.updateSoundVolume();
+    audioHandlerScene.masterVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
+    audioHandlerScene.updateSoundVolume();
     break;
   case SettingKeys.BGM_Volume:
-    scene.bgmVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
-    scene.updateSoundVolume();
+    audioHandlerScene.bgmVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
+    audioHandlerScene.updateSoundVolume();
     break;
   case SettingKeys.SE_Volume:
-    scene.seVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
-    scene.updateSoundVolume();
+    audioHandlerScene.seVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
+    audioHandlerScene.updateSoundVolume();
     break;
   case SettingKeys.Music_Preference:
     scene.musicPreference = value;
@@ -644,7 +654,7 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
       break;
     }
     scene.candyUpgradeNotification = value;
-    scene.eventTarget.dispatchEvent(new CandyUpgradeNotificationChangedEvent(value));
+    eventBus.emit(new BattleCandyUpgradeNotificationChangedEvent(value));
     break;
   case SettingKeys.Candy_Upgrade_Display:
     scene.candyUpgradeDisplay = value;

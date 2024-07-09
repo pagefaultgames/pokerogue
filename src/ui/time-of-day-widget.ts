@@ -3,6 +3,7 @@ import BattleScene from "#app/battle-scene.js";
 import { BattleSceneEventType } from "../events/battle-scene";
 import { EaseType } from "#enums/ease-type";
 import { TimeOfDay } from "#enums/time-of-day";
+import { eventBus } from "#app/event-bus";
 
 /** A small self contained UI element that displays the time of day as an icon */
 export default class TimeOfDayWidget extends Phaser.GameObjects.Container {
@@ -69,7 +70,7 @@ export default class TimeOfDayWidget extends Phaser.GameObjects.Container {
     this.timeOfDayIcons = [this.timeOfDayIconBgs, this.timeOfDayIconMgs, this.timeOfDayIconFgs].flat();
     this.add(this.timeOfDayIcons);
 
-    this.battleScene.eventTarget.addEventListener(BattleSceneEventType.ENCOUNTER_PHASE, this.onEncounterPhaseEvent);
+    eventBus.on(BattleSceneEventType.ENCOUNTER_PHASE, this.onEncounterPhaseEvent);
   }
 
   /**

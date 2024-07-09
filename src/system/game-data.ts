@@ -31,7 +31,7 @@ import { OutdatedPhase, ReloadSessionPhase } from "#app/phases";
 import { Variant, variantData } from "#app/data/variant";
 import {setSettingGamepad, SettingGamepad, settingGamepadDefaults} from "./settings/settings-gamepad";
 import {setSettingKeyboard, SettingKeyboard} from "#app/system/settings/settings-keyboard";
-import { TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena.js";
+import { ArenaTerrainChangedEvent, ArenaWeatherChangedEvent } from "#app/events/arena";
 import { EnemyAttackStatusEffectChanceModifier } from "../modifier/modifier";
 import { StatusEffect } from "#app/data/status-effect.js";
 import ChallengeData from "./challenge-data";
@@ -42,6 +42,7 @@ import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { MysteryEncounterData } from "../data/mystery-encounter-data";
 import MysteryEncounter from "../data/mystery-encounter";
+import { eventBus } from "#app/event-bus";
 
 export const defaultStarterSpecies: Species[] = [
   Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE,
@@ -975,10 +976,10 @@ export class GameData {
           });
 
           scene.arena.weather = sessionData.arena.weather;
-          scene.arena.eventTarget.dispatchEvent(new WeatherChangedEvent(null, scene.arena.weather?.weatherType, scene.arena.weather?.turnsLeft));
+          eventBus.emit(new ArenaWeatherChangedEvent(null, scene.arena.weather?.weatherType, scene.arena.weather?.turnsLeft));
 
           scene.arena.terrain = sessionData.arena.terrain;
-          scene.arena.eventTarget.dispatchEvent(new TerrainChangedEvent(null, scene.arena.terrain?.terrainType, scene.arena.terrain?.turnsLeft));
+          eventBus.emit(new ArenaTerrainChangedEvent(null, scene.arena.terrain?.terrainType, scene.arena.terrain?.turnsLeft));
           // TODO
           //scene.arena.tags = sessionData.arena.tags;
 
@@ -1601,7 +1602,7 @@ export class GameData {
       };
 
       if (newCatch && speciesStarters.hasOwnProperty(species.speciesId)) {
-        this.scene.playSound("level_up_fanfare");
+        this.scene.audioHandler.playSound("level_up_fanfare");
         this.scene.ui.showText(i18next.t("battle:addedAsAStarter", { pokemonName: species.name }), null, () => checkPrevolution(), null, true);
       } else {
         checkPrevolution();
@@ -1667,7 +1668,7 @@ export class GameData {
 
       this.starterData[speciesId].eggMoves |= value;
 
-      this.scene.playSound("level_up_fanfare");
+      this.scene.audioHandler.playSound("level_up_fanfare");
 
       const moveName = allMoves[speciesEggMoves[speciesId][eggMoveIndex]].name;
       this.scene.ui.showText(eggMoveIndex === 3 ? i18next.t("egg:rareEggMoveUnlock", { moveName: moveName }) : i18next.t("egg:eggMoveUnlock", { moveName: moveName }), null, () => resolve(true), null, true);

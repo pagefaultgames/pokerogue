@@ -52,7 +52,7 @@ export class EvolutionPhase extends Phase {
         return this.end();
       }
 
-      this.scene.fadeOutBgm(null, false);
+      this.scene.audioHandler.fadeOutBgm(null, false);
 
       const evolutionHandler = this.scene.ui.getHandler() as EvolutionSceneHandler;
 
@@ -138,7 +138,7 @@ export class EvolutionPhase extends Phase {
         });
 
         this.scene.time.delayedCall(1000, () => {
-          const evolutionBgm = this.scene.playSoundWithoutBgm("evolution");
+          const evolutionBgm = this.scene.audioHandler.playSoundWithoutBgm("evolution");
           this.scene.tweens.add({
             targets: this.evolutionBgOverlay,
             alpha: 1,
@@ -155,7 +155,7 @@ export class EvolutionPhase extends Phase {
                 this.evolutionBg.setVisible(true);
                 this.evolutionBg.play();
               });
-              this.scene.playSound("charge");
+              this.scene.audioHandler.playSound("charge");
               this.doSpiralUpward();
               this.scene.tweens.addCounter({
                 from: 0,
@@ -167,7 +167,7 @@ export class EvolutionPhase extends Phase {
                 onComplete: () => {
                   this.pokemonSprite.setVisible(false);
                   this.scene.time.delayedCall(1100, () => {
-                    this.scene.playSound("beam");
+                    this.scene.audioHandler.playSound("beam");
                     this.doArcDownward();
                     this.scene.time.delayedCall(1500, () => {
                       this.pokemonEvoTintSprite.setScale(0.25);
@@ -212,7 +212,7 @@ export class EvolutionPhase extends Phase {
                           return;
                         }
 
-                        this.scene.playSound("sparkle");
+                        this.scene.audioHandler.playSound("sparkle");
                         this.pokemonEvoSprite.setVisible(true);
                         this.doCircleInward();
                         this.scene.time.delayedCall(900, () => {
@@ -225,7 +225,7 @@ export class EvolutionPhase extends Phase {
                             }
                             this.scene.unshiftPhase(new EndEvolutionPhase(this.scene));
 
-                            this.scene.playSound("shine");
+                            this.scene.audioHandler.playSound("shine");
                             this.doSpray();
                             this.scene.tweens.add({
                               targets: this.evolutionOverlay,
@@ -251,7 +251,7 @@ export class EvolutionPhase extends Phase {
                                         this.scene.time.delayedCall(250, () => {
                                           this.pokemon.cry();
                                           this.scene.time.delayedCall(1250, () => {
-                                            this.scene.playSoundWithoutBgm("evolution_fanfare");
+                                            this.scene.audioHandler.playSoundWithoutBgm("evolution_fanfare");
 
                                             evolvedPokemon.destroy();
                                             this.scene.ui.showText(i18next.t("menu:evolutionDone", { pokemonName: preName, evolvedPokemonName: this.pokemon.name }), null, () => this.end(), null, true, Utils.fixedInt(4000));

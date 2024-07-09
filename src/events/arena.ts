@@ -6,14 +6,14 @@ import { WeatherType } from "#app/data/weather.js";
 /** Alias for all {@linkcode ArenaEvent} type strings */
 export enum ArenaEventType {
   /** Triggers when a {@linkcode WeatherType} is added, overlapped, or removed */
-  WEATHER_CHANGED = "onWeatherChanged",
+  WEATHER_CHANGED = "arena/weather/changed",
   /** Triggers when a {@linkcode TerrainType} is added, overlapped, or removed */
-  TERRAIN_CHANGED = "onTerrainChanged",
+  TERRAIN_CHANGED = "arena/terrain/changed",
 
   /** Triggers when a {@linkcode ArenaTagType} is added */
-  TAG_ADDED = "onTagAdded",
+  TAG_ADDED = "arena/tag/added",
   /** Triggers when a {@linkcode ArenaTagType} is removed */
-  TAG_REMOVED = "onTagRemoved",
+  TAG_REMOVED = "arena/tag/removed",
 }
 
 /**
@@ -33,7 +33,7 @@ export class ArenaEvent extends Event {
  * Container class for {@linkcode ArenaEventType.WEATHER_CHANGED} events
  * @extends ArenaEvent
 */
-export class WeatherChangedEvent extends ArenaEvent {
+export class ArenaWeatherChangedEvent extends ArenaEvent {
   /** The {@linkcode WeatherType} being overridden */
   public oldWeatherType: WeatherType;
   /** The {@linkcode WeatherType} being set */
@@ -49,7 +49,7 @@ export class WeatherChangedEvent extends ArenaEvent {
  * Container class for {@linkcode ArenaEventType.TERRAIN_CHANGED} events
  * @extends ArenaEvent
 */
-export class TerrainChangedEvent extends ArenaEvent {
+export class ArenaTerrainChangedEvent extends ArenaEvent {
   /** The {@linkcode TerrainType} being overridden */
   public oldTerrainType: TerrainType;
   /** The {@linkcode TerrainType} being set */
@@ -66,7 +66,7 @@ export class TerrainChangedEvent extends ArenaEvent {
  * Container class for {@linkcode ArenaEventType.TAG_ADDED} events
  * @extends ArenaEvent
 */
-export class TagAddedEvent extends ArenaEvent {
+export class ArenaTagAddedEvent extends ArenaEvent {
   /** The {@linkcode ArenaTagType} being added */
   public arenaTagType: ArenaTagType;
   /** The {@linkcode ArenaTagSide} the tag is being placed on */
@@ -89,7 +89,7 @@ export class TagAddedEvent extends ArenaEvent {
  * Container class for {@linkcode ArenaEventType.TAG_REMOVED} events
  * @extends ArenaEvent
 */
-export class TagRemovedEvent extends ArenaEvent {
+export class ArenaTagRemovedEvent extends ArenaEvent {
   /** The {@linkcode ArenaTagType} being removed */
   public arenaTagType: ArenaTagType;
   /** The {@linkcode ArenaTagSide} the tag was being placed on */

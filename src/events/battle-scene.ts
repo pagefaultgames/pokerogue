@@ -5,49 +5,49 @@ import { BerryModifier } from "../modifier/modifier";
 export enum BattleSceneEventType {
   /**
    * Triggers when the corresponding setting is changed
-   * @see {@linkcode CandyUpgradeNotificationChangedEvent}
+   * @see {@linkcode BattleCandyUpgradeNotificationChangedEvent}
    */
-  CANDY_UPGRADE_NOTIFICATION_CHANGED = "onCandyUpgradeNotificationChanged",
+  CANDY_UPGRADE_NOTIFICATION_CHANGED = "battle/candyUpgradeNotification/changed",
 
   /**
    * Triggers when a move is successfully used
-   * @see {@linkcode MoveUsedEvent}
+   * @see {@linkcode BattleMoveUsedEvent}
    */
-  MOVE_USED = "onMoveUsed",
+  MOVE_USED = "battle/move/used",
   /**
    * Triggers when a berry gets successfully used
-   * @see {@linkcode BerryUsedEvent}
+   * @see {@linkcode BattleBerryUsedEvent}
    */
-  BERRY_USED = "onBerryUsed",
+  BERRY_USED = "battle/berry/used",
 
   /**
    * Triggers at the start of each new encounter
-   * @see {@linkcode EncounterPhaseEvent}
+   * @see {@linkcode BattleEncounterPhaseEvent}
    */
-  ENCOUNTER_PHASE = "onEncounterPhase",
+  ENCOUNTER_PHASE = "battle/encounter/start",
   /**
    * Triggers on the first turn of a new battle
-   * @see {@linkcode TurnInitEvent}
+   * @see {@linkcode BattleTurnInitEvent}
    */
-  TURN_INIT = "onTurnInit",
+  TURN_INIT = "battle/turn/init",
   /**
    * Triggers after a turn ends in battle
-   * @see {@linkcode TurnEndEvent}
+   * @see {@linkcode BattleTurnEndEvent}
    */
-  TURN_END  = "onTurnEnd",
+  TURN_END  = "battle/turn/end",
 
   /**
    * Triggers when a new {@linkcode Arena} is created during initialization
-   * @see {@linkcode NewArenaEvent}
+   * @see {@linkcode BattleNewArenaEvent}
    */
-  NEW_ARENA = "onNewArena",
+  NEW_ARENA = "battle/arena/new",
 }
 
 /**
  * Container class for {@linkcode BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED} events
  * @extends Event
 */
-export class CandyUpgradeNotificationChangedEvent extends Event {
+export class BattleCandyUpgradeNotificationChangedEvent extends Event {
   /** The new value the setting was changed to */
   public newValue: number;
   constructor(newValue: number) {
@@ -61,7 +61,7 @@ export class CandyUpgradeNotificationChangedEvent extends Event {
  * Container class for {@linkcode BattleSceneEventType.MOVE_USED} events
  * @extends Event
 */
-export class MoveUsedEvent extends Event {
+export class BattleMoveUsedEvent extends Event {
   /** The ID of the {@linkcode Pokemon} that used the {@linkcode Move} */
   public pokemonId: number;
   /** The {@linkcode Move} used */
@@ -80,7 +80,7 @@ export class MoveUsedEvent extends Event {
  * Container class for {@linkcode BattleSceneEventType.BERRY_USED} events
  * @extends Event
 */
-export class BerryUsedEvent extends Event {
+export class BattleBerryUsedEvent extends Event {
   /** The {@linkcode BerryModifier} being used */
   public berryModifier: BerryModifier;
   constructor(berry: BerryModifier) {
@@ -94,7 +94,7 @@ export class BerryUsedEvent extends Event {
  * Container class for {@linkcode BattleSceneEventType.ENCOUNTER_PHASE} events
  * @extends Event
 */
-export class EncounterPhaseEvent extends Event {
+export class BattleEncounterPhaseEvent extends Event {
   constructor() {
     super(BattleSceneEventType.ENCOUNTER_PHASE);
   }
@@ -103,7 +103,7 @@ export class EncounterPhaseEvent extends Event {
  * Container class for {@linkcode BattleSceneEventType.TURN_INIT} events
  * @extends Event
 */
-export class TurnInitEvent extends Event {
+export class BattleTurnInitEvent extends Event {
   constructor() {
     super(BattleSceneEventType.TURN_INIT);
   }
@@ -112,7 +112,7 @@ export class TurnInitEvent extends Event {
  * Container class for {@linkcode BattleSceneEventType.TURN_END} events
  * @extends Event
 */
-export class TurnEndEvent extends Event {
+export class BattleTurnEndEvent extends Event {
   /** The amount of turns in the current battle */
   public turnCount: number;
   constructor(turnCount: number) {
@@ -125,7 +125,7 @@ export class TurnEndEvent extends Event {
  * Container class for {@linkcode BattleSceneEventType.NEW_ARENA} events
  * @extends Event
 */
-export class NewArenaEvent extends Event {
+export class BattleNewArenaEvent extends Event {
   constructor() {
     super(BattleSceneEventType.NEW_ARENA);
   }

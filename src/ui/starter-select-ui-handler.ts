@@ -1,4 +1,4 @@
-import { BattleSceneEventType, CandyUpgradeNotificationChangedEvent } from "../events/battle-scene";
+import { BattleSceneEventType, BattleCandyUpgradeNotificationChangedEvent } from "../events/battle-scene";
 import { pokemonPrevolutions } from "#app/data/pokemon-evolutions";
 import { Variant, getVariantTint, getVariantIcon } from "#app/data/variant";
 import { argbFromRgba } from "@material/material-color-utilities";
@@ -40,6 +40,7 @@ import { Species } from "#enums/species";
 import {Button} from "#enums/buttons";
 import { EggSourceType } from "#app/enums/egg-source-types.js";
 import AwaitableUiHandler from "./awaitable-ui-handler";
+import { eventBus } from "#app/event-bus";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -815,7 +816,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     });
     this.starterSelectContainer.add(this.moveInfoOverlay);
 
-    this.scene.eventTarget.addEventListener(BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED, (e) => this.onCandyUpgradeDisplayChanged(e));
+    eventBus.on(BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED, (e) => this.onCandyUpgradeDisplayChanged(e));
 
     this.updateInstructions();
   }
@@ -1015,11 +1016,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   /**
-   * Processes an {@linkcode CandyUpgradeNotificationChangedEvent} sent when the corresponding setting changes
+   * Processes an {@linkcode BattleCandyUpgradeNotificationChangedEvent} sent when the corresponding setting changes
    * @param event {@linkcode Event} sent by the callback
    */
   onCandyUpgradeDisplayChanged(event: Event): void {
-    const candyUpgradeDisplayEvent = event as CandyUpgradeNotificationChangedEvent;
+    const candyUpgradeDisplayEvent = event as BattleCandyUpgradeNotificationChangedEvent;
     if (!candyUpgradeDisplayEvent) {
       return;
     }
@@ -1439,7 +1440,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                     this.updateStarterValueLabel(pokemonCursor);
                     this.tryUpdateValue(0);
                     ui.setMode(Mode.STARTER_SELECT);
-                    this.scene.playSound("buy");
+                    this.scene.audioHandler.playSound("buy");
 
                     // If the notification setting is set to 'On', update the candy upgrade display
                     if (this.scene.candyUpgradeNotification === 2) {
@@ -1482,7 +1483,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                       }
                     });
                     ui.setMode(Mode.STARTER_SELECT);
-                    this.scene.playSound("buy");
+                    this.scene.audioHandler.playSound("buy");
 
                     // If the notification setting is set to 'On', update the candy upgrade display
                     // if (this.scene.candyUpgradeNotification === 2) {
@@ -1555,7 +1556,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             const newVariant = props.variant;
             this.setSpeciesDetails(this.lastSpecies, !props.shiny, undefined, undefined, props.shiny ? 0 : undefined, undefined, undefined);
             if (this.dexAttrCursor & DexAttr.SHINY) {
-              this.scene.playSound("sparkle");
+              this.scene.audioHandler.playSound("sparkle");
               // Set the variant label to the shiny tint
               const tint = getVariantTint(newVariant);
               this.pokemonShinyIcon.setFrame(getVariantIcon(newVariant));

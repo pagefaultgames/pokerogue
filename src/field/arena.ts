@@ -14,15 +14,18 @@ import { Terrain, TerrainType } from "../data/terrain";
 import { PostTerrainChangeAbAttr, PostWeatherChangeAbAttr, applyPostTerrainChangeAbAttrs, applyPostWeatherChangeAbAttrs } from "../data/ability";
 import Pokemon from "./pokemon";
 import * as Overrides from "../overrides";
-import { WeatherChangedEvent, TerrainChangedEvent, TagAddedEvent, TagRemovedEvent } from "../events/arena";
+import { ArenaWeatherChangedEvent, ArenaTerrainChangedEvent, ArenaTagAddedEvent, ArenaTagRemovedEvent } from "../events/arena";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
+import { eventBus } from "#app/event-bus";
 
 export class Arena {
+  public static readonly KEY: string = "arena";
+
   public scene: BattleScene;
   public biomeType: Biome;
   public weather: Weather;
@@ -36,7 +39,7 @@ export class Arena {
   private pokemonPool: PokemonPools;
   private trainerPool: BiomeTierTrainerPools;
 
-  public readonly eventTarget: EventTarget = new EventTarget();
+  // public readonly eventTarget: EventTarget = new EventTarget();
 
   constructor(scene: BattleScene, biome: Biome, bgm: string) {
     this.scene = scene;
@@ -314,7 +317,7 @@ export class Arena {
     const oldWeatherType = this.weather?.weatherType || WeatherType.NONE;
 
     this.weather = weather ? new Weather(weather, hasPokemonSource ? 5 : 0) : null;
-    this.eventTarget.dispatchEvent(new WeatherChangedEvent(oldWeatherType, this.weather?.weatherType, this.weather?.turnsLeft));
+    eventBus.emit(new ArenaWeatherChangedEvent(oldWeatherType, this.weather?.weatherType, this.weather?.turnsLeft));
 
     if (this.weather) {
       this.scene.unshiftPhase(new CommonAnimPhase(this.scene, undefined, undefined, CommonAnim.SUNNY + (weather - 1)));
@@ -339,7 +342,7 @@ export class Arena {
     const oldTerrainType = this.terrain?.terrainType || TerrainType.NONE;
 
     this.terrain = terrain ? new Terrain(terrain, hasPokemonSource ? 5 : 0) : null;
-    this.eventTarget.dispatchEvent(new TerrainChangedEvent(oldTerrainType,this.terrain?.terrainType, this.terrain?.turnsLeft));
+    eventBus.emit(new ArenaTerrainChangedEvent(oldTerrainType,this.terrain?.terrainType, this.terrain?.turnsLeft));
 
     if (this.terrain) {
       if (!ignoreAnim) {
@@ -557,7 +560,7 @@ export class Arena {
 
       if (existingTag instanceof ArenaTrapTag) {
         const { tagType, side, turnCount, layers, maxLayers } = existingTag as ArenaTrapTag;
-        this.eventTarget.dispatchEvent(new TagAddedEvent(tagType, side, turnCount, layers, maxLayers));
+        eventBus.emit(new ArenaTagAddedEvent(tagType, side, turnCount, layers, maxLayers));
       }
 
       return false;
@@ -569,7 +572,7 @@ export class Arena {
 
     const { layers = 0, maxLayers = 0 } = newTag instanceof ArenaTrapTag ? newTag : {};
 
-    this.eventTarget.dispatchEvent(new TagAddedEvent(newTag.tagType, newTag.side, newTag.turnCount, layers, maxLayers));
+    eventBus.emit(new ArenaTagAddedEvent(newTag.tagType, newTag.side, newTag.turnCount, layers, maxLayers));
 
     return true;
   }
@@ -597,7 +600,7 @@ export class Arena {
       t.onRemove(this);
       this.tags.splice(this.tags.indexOf(t), 1);
 
-      this.eventTarget.dispatchEvent(new TagRemovedEvent(t.tagType, t.side, t.turnCount));
+      eventBus.emit(new ArenaTagRemovedEvent(t.tagType, t.side, t.turnCount));
     });
   }
 
@@ -608,7 +611,7 @@ export class Arena {
       tag.onRemove(this);
       tags.splice(tags.indexOf(tag), 1);
 
-      this.eventTarget.dispatchEvent(new TagRemovedEvent(tag.tagType, tag.side, tag.turnCount));
+      eventBus.emit(new ArenaTagRemovedEvent(tag.tagType, tag.side, tag.turnCount));
     }
     return !!tag;
   }
@@ -619,7 +622,7 @@ export class Arena {
       tag.onRemove(this, quiet);
       this.tags.splice(this.tags.indexOf(tag), 1);
 
-      this.eventTarget.dispatchEvent(new TagRemovedEvent(tag.tagType, tag.side, tag.turnCount));
+      eventBus.emit(new ArenaTagRemovedEvent(tag.tagType, tag.side, tag.turnCount));
     }
     return !!tag;
   }
@@ -628,7 +631,7 @@ export class Arena {
   removeAllTags(): void {
     while (this.tags.length) {
       this.tags[0].onRemove(this);
-      this.eventTarget.dispatchEvent(new TagRemovedEvent(this.tags[0].tagType, this.tags[0].side, this.tags[0].turnCount));
+      eventBus.emit(new ArenaTagRemovedEvent(this.tags[0].tagType, this.tags[0].side, this.tags[0].turnCount));
 
       this.tags.splice(0, 1);
     }

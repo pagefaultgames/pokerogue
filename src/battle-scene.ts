@@ -51,7 +51,6 @@ import PartyExpBar from "./ui/party-exp-bar";
 import { TrainerSlot, trainerConfigs } from "./data/trainer-config";
 import Trainer, { TrainerVariant } from "./field/trainer";
 import TrainerData from "./system/trainer-data";
-import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { pokemonPrevolutions } from "./data/pokemon-evolutions";
 import PokeballTray from "./ui/pokeball-tray";
 import InvertPostFX from "./pipelines/invert";
@@ -77,7 +76,7 @@ import { Localizable } from "#app/interfaces/locales";
 import * as Overrides from "./overrides";
 import {InputsController} from "./inputs-controller";
 import {UiInputs} from "./ui-inputs";
-import { NewArenaEvent } from "./events/battle-scene";
+import { BattleNewArenaEvent } from "./events/battle-scene";
 import ArenaFlyout from "./ui/arena-flyout";
 import { EaseType } from "#enums/ease-type";
 import { Abilities } from "#enums/abilities";
@@ -101,6 +100,9 @@ import {
 } from "./data/mystery-encounters/mystery-encounters";
 import {MysteryEncounterData} from "#app/data/mystery-encounter-data";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { AudioHandlerScene } from "./scenes/audio-handler-scene";
+import { eventBus } from "./event-bus";
+import { BgmChangedEvent } from "./events/audio/bgm-changed-event";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -139,9 +141,6 @@ export default class BattleScene extends SceneBase {
 
   public sessionPlayTime: integer = null;
   public lastSavePlayTime: integer = null;
-  public masterVolume: number = 0.5;
-  public bgmVolume: number = 1;
-  public seVolume: number = 1;
   public gameSpeed: integer = 1;
   public damageNumbersMode: integer = 0;
   public reroll: boolean = false;
@@ -287,9 +286,9 @@ export default class BattleScene extends SceneBase {
   public fieldSpritePipeline: FieldSpritePipeline;
   public spritePipeline: SpritePipeline;
 
-  private bgm: AnySound;
-  private bgmResumeTimer: Phaser.Time.TimerEvent;
-  private bgmCache: Set<string> = new Set();
+  // private bgm: AnySound;
+  // private bgmResumeTimer: Phaser.Time.TimerEvent;
+  // private bgmCache: Set<string> = new Set();
   private playTimeTimer: Phaser.Time.TimerEvent;
 
   public rngCounter: integer = 0;
@@ -304,16 +303,7 @@ export default class BattleScene extends SceneBase {
   public mysteryEncounterData: MysteryEncounterData = new MysteryEncounterData(null);
   public lastMysteryEncounter: MysteryEncounter;
 
-  /**
-   * Allows subscribers to listen for events
-   *
-   * Current Events:
-   * - {@linkcode BattleSceneEventType.MOVE_USED} {@linkcode MoveUsedEvent}
-   * - {@linkcode BattleSceneEventType.TURN_INIT} {@linkcode TurnInitEvent}
-   * - {@linkcode BattleSceneEventType.TURN_END} {@linkcode TurnEndEvent}
-   * - {@linkcode BattleSceneEventType.NEW_ARENA} {@linkcode NewArenaEvent}
-   */
-  public readonly eventTarget: EventTarget = new EventTarget();
+  private readonly audio: AudioHandlerScene;
 
   constructor() {
     super("battle");
@@ -358,6 +348,7 @@ export default class BattleScene extends SceneBase {
     populateAnims();
 
     await this.initVariantData();
+    eventBus.on<BgmChangedEvent>(BgmChangedEvent.NAME, this.handleBgmNameChanged);
   }
 
   create() {
@@ -1054,7 +1045,7 @@ export default class BattleScene extends SceneBase {
       // Reload variant data in case sprite set has changed
       this.initVariantData();
 
-      this.fadeOutBgm(250, false);
+      this.audioHandler.fadeOutBgm(250, false);
       this.tweens.add({
         targets: [ this.uiContainer ],
         alpha: 0,
@@ -1272,7 +1263,7 @@ export default class BattleScene extends SceneBase {
 
   newArena(biome: Biome): Arena {
     this.arena = new Arena(this, biome, Biome[biome].toLowerCase());
-    this.eventTarget.dispatchEvent(new NewArenaEvent());
+    eventBus.emit(new BattleNewArenaEvent());
 
     this.arenaBg.pipelineData = { terrainColorRatio: this.arena.getBgTerrainColorRatioForBiome() };
 
@@ -1740,314 +1731,12 @@ export default class BattleScene extends SceneBase {
     return biomes[Utils.randSeedInt(biomes.length)];
   }
 
-  isBgmPlaying(): boolean {
-    return this.bgm && this.bgm.isPlaying;
-  }
-
   playBgm(bgmName?: string, fadeOut?: boolean): void {
     if (bgmName === undefined) {
       bgmName = this.currentBattle?.getBgmOverride(this) || this.arena?.bgm;
     }
-    if (this.bgm && bgmName === this.bgm.key) {
-      if (!this.bgm.isPlaying) {
-        this.bgm.play({
-          volume: this.masterVolume * this.bgmVolume
-        });
-      }
-      return;
-    }
-    if (fadeOut && !this.bgm) {
-      fadeOut = false;
-    }
-    this.bgmCache.add(bgmName);
-    this.loadBgm(bgmName);
-    let loopPoint = 0;
-    loopPoint = bgmName === this.arena.bgm
-      ? this.arena.getBgmLoopPoint()
-      : this.getBgmLoopPoint(bgmName);
-    let loaded = false;
-    const playNewBgm = () => {
-      this.ui.bgmBar.setBgmToBgmBar(bgmName);
-      if (bgmName === null && this.bgm && !this.bgm.pendingRemove) {
-        this.bgm.play({
-          volume: this.masterVolume * this.bgmVolume
-        });
-        return;
-      }
-      if (this.bgm && !this.bgm.pendingRemove && this.bgm.isPlaying) {
-        this.bgm.stop();
-      }
-      this.bgm = this.sound.add(bgmName, { loop: true });
-      this.bgm.play({
-        volume: this.masterVolume * this.bgmVolume
-      });
-      if (loopPoint) {
-        this.bgm.on("looped", () => this.bgm.play({ seek: loopPoint }));
-      }
-    };
-    this.load.once(Phaser.Loader.Events.COMPLETE, () => {
-      loaded = true;
-      if (!fadeOut || !this.bgm.isPlaying) {
-        playNewBgm();
-      }
-    });
-    if (fadeOut) {
-      const onBgmFaded = () => {
-        if (loaded && (!this.bgm.isPlaying || this.bgm.pendingRemove)) {
-          playNewBgm();
-        }
-      };
-      this.time.delayedCall(this.fadeOutBgm(500, true) ? 750 : 250, onBgmFaded);
-    }
-    if (!this.load.isLoading()) {
-      this.load.start();
-    }
-  }
 
-  pauseBgm(): boolean {
-    if (this.bgm && !this.bgm.pendingRemove && this.bgm.isPlaying) {
-      this.bgm.pause();
-      return true;
-    }
-    return false;
-  }
-
-  resumeBgm(): boolean {
-    if (this.bgm && !this.bgm.pendingRemove && this.bgm.isPaused) {
-      this.bgm.resume();
-      return true;
-    }
-    return false;
-  }
-
-  updateSoundVolume(): void {
-    if (this.sound) {
-      for (const sound of this.sound.getAllPlaying()) {
-        (sound as AnySound).setVolume(this.masterVolume * (this.bgmCache.has(sound.key) ? this.bgmVolume : this.seVolume));
-      }
-    }
-  }
-
-  fadeOutBgm(duration: integer = 500, destroy: boolean = true): boolean {
-    if (!this.bgm) {
-      return false;
-    }
-    const bgm = this.sound.getAllPlaying().find(bgm => bgm.key === this.bgm.key);
-    if (bgm) {
-      SoundFade.fadeOut(this, this.bgm, duration, destroy);
-      return true;
-    }
-
-    return false;
-  }
-
-  playSound(sound: string | AnySound, config?: object): AnySound {
-    if (config) {
-      if (config.hasOwnProperty("volume")) {
-        config["volume"] *= this.masterVolume * this.seVolume;
-      } else {
-        config["volume"] = this.masterVolume * this.seVolume;
-      }
-    } else {
-      config = { volume: this.masterVolume * this.seVolume };
-    }
-    // PRSFX sounds are mixed too loud
-    if ((typeof sound === "string" ? sound : sound.key).startsWith("PRSFX- ")) {
-      config["volume"] *= 0.5;
-    }
-    if (typeof sound === "string") {
-      this.sound.play(sound, config);
-      return this.sound.get(sound) as AnySound;
-    } else {
-      sound.play(config);
-      return sound;
-    }
-  }
-
-  playSoundWithoutBgm(soundName: string, pauseDuration?: integer): AnySound {
-    this.bgmCache.add(soundName);
-    const resumeBgm = this.pauseBgm();
-    this.playSound(soundName);
-    const sound = this.sound.get(soundName) as AnySound;
-    if (this.bgmResumeTimer) {
-      this.bgmResumeTimer.destroy();
-    }
-    if (resumeBgm) {
-      this.bgmResumeTimer = this.time.delayedCall((pauseDuration || Utils.fixedInt(sound.totalDuration * 1000)), () => {
-        this.resumeBgm();
-        this.bgmResumeTimer = null;
-      });
-    }
-    return sound;
-  }
-
-  getBgmLoopPoint(bgmName: string): number {
-    switch (bgmName) {
-    case "battle_kanto_champion": //B2W2 Kanto Champion Battle
-      return 13.950;
-    case "battle_johto_champion": //B2W2 Johto Champion Battle
-      return 23.498;
-    case "battle_hoenn_champion": //B2W2 Hoenn Champion Battle
-      return 11.328;
-    case "battle_sinnoh_champion": //B2W2 Sinnoh Champion Battle
-      return 12.235;
-    case "battle_champion_alder": //BW Unova Champion Battle
-      return 27.653;
-    case "battle_champion_iris": //B2W2 Unova Champion Battle
-      return 10.145;
-    case "battle_kalos_champion": //XY Kalos Champion Battle
-      return 10.380;
-    case "battle_alola_champion": //USUM Alola Champion Battle
-      return 13.025;
-    case "battle_galar_champion": //SWSH Galar Champion Battle
-      return 61.635;
-    case "battle_champion_geeta": //SV Champion Geeta Battle
-      return 37.447;
-    case "battle_champion_nemona": //SV Champion Nemona Battle
-      return 14.914;
-    case "battle_champion_kieran": //SV Champion Kieran Battle
-      return 7.206;
-    case "battle_hoenn_elite": //ORAS Elite Four Battle
-      return 11.350;
-    case "battle_unova_elite": //BW Elite Four Battle
-      return 17.730;
-    case "battle_kalos_elite": //XY Elite Four Battle
-      return 12.340;
-    case "battle_alola_elite": //SM Elite Four Battle
-      return 19.212;
-    case "battle_galar_elite": //SWSH League Tournament Battle
-      return 164.069;
-    case "battle_paldea_elite": //SV Elite Four Battle
-      return 12.770;
-    case "battle_bb_elite": //SV BB League Elite Four Battle
-      return 19.434;
-    case "battle_final_encounter": //PMD RTDX Rayquaza's Domain
-      return 19.159;
-    case "battle_final": //BW Ghetsis Battle
-      return 16.453;
-    case "battle_kanto_gym": //B2W2 Kanto Gym Battle
-      return 13.857;
-    case "battle_johto_gym": //B2W2 Johto Gym Battle
-      return 12.911;
-    case "battle_hoenn_gym": //B2W2 Hoenn Gym Battle
-      return 12.379;
-    case "battle_sinnoh_gym": //B2W2 Sinnoh Gym Battle
-      return 13.122;
-    case "battle_unova_gym": //BW Unova Gym Battle
-      return 19.145;
-    case "battle_kalos_gym": //XY Kalos Gym Battle
-      return 44.810;
-    case "battle_galar_gym": //SWSH Galar Gym Battle
-      return 171.262;
-    case "battle_paldea_gym": //SV Paldea Gym Battle
-      return 127.489;
-    case "battle_legendary_kanto": //XY Kanto Legendary Battle
-      return 32.966;
-    case "battle_legendary_raikou": //HGSS Raikou Battle
-      return 12.632;
-    case "battle_legendary_entei": //HGSS Entei Battle
-      return 2.905;
-    case "battle_legendary_suicune": //HGSS Suicune Battle
-      return 12.636;
-    case "battle_legendary_lugia": //HGSS Lugia Battle
-      return 19.770;
-    case "battle_legendary_ho_oh": //HGSS Ho-oh Battle
-      return 17.668;
-    case "battle_legendary_regis_g5": //B2W2 Legendary Titan Battle
-      return 49.500;
-    case "battle_legendary_regis_g6": //ORAS Legendary Titan Battle
-      return 21.130;
-    case "battle_legendary_gro_kyo": //ORAS Groudon & Kyogre Battle
-      return 10.547;
-    case "battle_legendary_rayquaza": //ORAS Rayquaza Battle
-      return 10.495;
-    case "battle_legendary_deoxys": //ORAS Deoxys Battle
-      return 13.333;
-    case "battle_legendary_lake_trio": //ORAS Lake Guardians Battle
-      return 16.887;
-    case "battle_legendary_sinnoh": //ORAS Sinnoh Legendary Battle
-      return 22.770;
-    case "battle_legendary_dia_pal": //ORAS Dialga & Palkia Battle
-      return 16.009;
-    case "battle_legendary_giratina": //ORAS Giratina Battle
-      return 10.451;
-    case "battle_legendary_arceus": //HGSS Arceus Battle
-      return 9.595;
-    case "battle_legendary_unova": //BW Unova Legendary Battle
-      return 13.855;
-    case "battle_legendary_kyurem": //BW Kyurem Battle
-      return 18.314;
-    case "battle_legendary_res_zek": //BW Reshiram & Zekrom Battle
-      return 18.329;
-    case "battle_legendary_xern_yvel": //XY Xerneas & Yveltal Battle
-      return 26.468;
-    case "battle_legendary_tapu": //SM Tapu Battle
-      return 0.000;
-    case "battle_legendary_sol_lun": //SM Solgaleo & Lunala Battle
-      return 6.525;
-    case "battle_legendary_ub": //SM Ultra Beast Battle
-      return 9.818;
-    case "battle_legendary_dusk_dawn": //USUM Dusk Mane & Dawn Wings Necrozma Battle
-      return 5.211;
-    case "battle_legendary_ultra_nec": //USUM Ultra Necrozma Battle
-      return 10.344;
-    case "battle_legendary_zac_zam": //SWSH Zacian & Zamazenta Battle
-      return 11.424;
-    case "battle_legendary_glas_spec": //SWSH Glastrier & Spectrier Battle
-      return 12.503;
-    case "battle_legendary_calyrex": //SWSH Calyrex Battle
-      return 50.641;
-    case "battle_legendary_birds_galar": //SWSH Galarian Legendary Birds Battle
-      return 0.175;
-    case "battle_legendary_ruinous": //SV Treasures of Ruin Battle
-      return 6.333;
-    case "battle_legendary_kor_mir": //SV Depths of Area Zero Battle
-      return 6.442;
-    case "battle_legendary_loyal_three": //SV Loyal Three Battle
-      return 6.500;
-    case "battle_legendary_ogerpon": //SV Ogerpon Battle
-      return 14.335;
-    case "battle_legendary_terapagos": //SV Terapagos Battle
-      return 24.377;
-    case "battle_legendary_pecharunt": //SV Pecharunt Battle
-      return 6.508;
-    case "battle_rival": //BW Rival Battle
-      return 13.689;
-    case "battle_rival_2": //BW N Battle
-      return 17.714;
-    case "battle_rival_3": //BW Final N Battle
-      return 17.586;
-    case "battle_trainer": //BW Trainer Battle
-      return 13.686;
-    case "battle_wild": //BW Wild Battle
-      return 12.703;
-    case "battle_wild_strong": //BW Strong Wild Battle
-      return 13.940;
-    case "end_summit": //PMD RTDX Sky Tower Summit
-      return 30.025;
-    case "battle_rocket_grunt": //HGSS Team Rocket Battle
-      return 12.707;
-    case "battle_aqua_magma_grunt": //ORAS Team Aqua & Magma Battle
-      return 12.062;
-    case "battle_galactic_grunt": //BDSP Team Galactic Battle
-      return 13.043;
-    case "battle_plasma_grunt": //BW Team Plasma Battle
-      return 12.974;
-    case "battle_flare_grunt": //XY Team Flare Battle
-      return 4.228;
-    case "battle_rocket_boss": //USUM Giovanni Battle
-      return 9.115;
-    case "battle_aqua_magma_boss": //ORAS Archie & Maxie Battle
-      return 14.847;
-    case "battle_galactic_boss": //BDSP Cyrus Battle
-      return 106.962;
-    case "battle_plasma_boss": //B2W2 Ghetsis Battle
-      return 25.624;
-    case "battle_flare_boss": //XY Lysandre Battle
-      return 8.085;
-    }
-
-    return 0;
+    this.audioHandler.playBgm(bgmName, fadeOut);
   }
 
   toggleInvert(invert: boolean): void {
@@ -2316,7 +2005,7 @@ export default class BattleScene extends SceneBase {
             success = modifier.apply([ this.getPokemonById(modifier.pokemonId), true ]);
           }
           if (playSound && !this.sound.get(soundName)) {
-            this.playSound(soundName);
+            this.audioHandler.playSound(soundName);
           }
         } else if (!virtual) {
           const defaultModifierType = getDefaultModifierTypeForTier(modifier.type.tier);
@@ -2333,7 +2022,7 @@ export default class BattleScene extends SceneBase {
         }
       } else if (modifier instanceof ConsumableModifier) {
         if (playSound && !this.sound.get(soundName)) {
-          this.playSound(soundName);
+          this.audioHandler.playSound(soundName);
         }
 
         if (modifier instanceof ConsumablePokemonModifier) {
@@ -2848,5 +2537,14 @@ export default class BattleScene extends SceneBase {
     encounter = new MysteryEncounter(encounter);
     encounter.meetsRequirements(this);
     return encounter;
+  }
+
+  public get audioHandler(): AudioHandlerScene {
+    return this.scene.get<AudioHandlerScene>(AudioHandlerScene.KEY);
+  }
+
+  private handleBgmNameChanged(event: BgmChangedEvent) {
+    console.debug("bgm changed - title: ", event.title);
+    this.ui.bgmBar.setBgmToBgmBar(event.title);
   }
 }

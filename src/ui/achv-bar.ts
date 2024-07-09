@@ -90,7 +90,7 @@ export default class AchvBar extends Phaser.GameObjects.Container {
     this.bg.height = Math.max(this.defaultHeight, this.titleText.displayHeight + this.descriptionText.displayHeight + 8);
     this.icon.y = (this.bg.height / 2) - (this.icon.height / 2);
 
-    (this.scene as BattleScene).playSound("achv");
+    (this.scene as BattleScene).audioHandler.playSound("achv");
 
     this.scene.tweens.add({
       targets: this,

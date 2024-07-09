@@ -13,7 +13,7 @@ export default class EggHatchSceneHandler extends UiHandler {
    * Current Events:
    * - {@linkcode EggEventType.EGG_COUNT_CHANGED} {@linkcode EggCountChangedEvent}
    */
-  public readonly eventTarget: EventTarget = new EventTarget();
+  // public readonly eventTarget: EventTarget = new EventTarget();
 
   constructor(scene: BattleScene) {
     super(scene, Mode.EGG_HATCH_SCENE);

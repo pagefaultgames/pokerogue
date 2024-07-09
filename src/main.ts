@@ -7,6 +7,7 @@ import BBCodeTextPlugin from "phaser3-rex-plugins/plugins/bbcodetext-plugin";
 import InputTextPlugin from "phaser3-rex-plugins/plugins/inputtext-plugin.js";
 import TransitionImagePackPlugin from "phaser3-rex-plugins/templates/transitionimagepack/transitionimagepack-plugin.js";
 import { LoadingScene } from "./loading-scene";
+import { AudioHandlerScene } from "./scenes/audio-handler-scene";
 
 
 // Catch global errors and display them in an alert so users can report the issue.
@@ -67,8 +68,8 @@ const config: Phaser.Types.Core.GameConfig = {
   },
   pixelArt: true,
   pipeline: [ InvertPostFX ] as unknown as Phaser.Types.Core.PipelineConfig,
-  scene: [ LoadingScene, BattleScene ],
-  version: version
+  scene: [ LoadingScene, BattleScene, AudioHandlerScene ],
+  version: version,
 };
 
 /**

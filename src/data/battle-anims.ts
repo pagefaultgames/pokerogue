@@ -324,7 +324,7 @@ class AnimTimedSoundEvent extends AnimTimedEvent {
     const soundConfig = { rate: (this.pitch * 0.01), volume: (this.volume * 0.01) };
     if (this.resourceName) {
       try {
-        scene.playSound(this.resourceName, soundConfig);
+        scene.audioHandler.playSound(this.resourceName, soundConfig);
       } catch (err) {
         console.error(err);
       }

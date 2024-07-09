@@ -96,7 +96,7 @@ export class SelectModifierPhase extends BattlePhase {
             this.scene.money -= rerollCost;
             this.scene.updateMoneyText();
             this.scene.animateMoneyChanged(false);
-            this.scene.playSound("buy");
+            this.scene.audioHandler.playSound("buy");
           }
           break;
         case 1:
@@ -154,7 +154,7 @@ export class SelectModifierPhase extends BattlePhase {
               this.scene.money -= cost;
               this.scene.updateMoneyText();
               this.scene.animateMoneyChanged(false);
-              this.scene.playSound("buy");
+              this.scene.audioHandler.playSound("buy");
               (this.scene.ui.getHandler() as ModifierSelectUiHandler).updateCostText();
             } else {
               this.scene.ui.playError();

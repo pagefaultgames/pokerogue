@@ -52,7 +52,7 @@ import i18next from "./plugins/i18n";
 import * as Overrides from "./overrides";
 import { TextStyle, addTextObject, getTextColor } from "./ui/text";
 import { Type } from "./data/type";
-import { BerryUsedEvent, EncounterPhaseEvent, MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./events/battle-scene";
+import { BattleBerryUsedEvent, BattleEncounterPhaseEvent, BattleMoveUsedEvent, BattleTurnEndEvent, BattleTurnInitEvent } from "./events/battle-scene";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleSpec } from "#enums/battle-spec";
@@ -69,6 +69,7 @@ import {MysteryEncounterVariant} from "#app/data/mystery-encounter";
 import {MysteryEncounterPhase} from "#app/phases/mystery-encounter-phase";
 import {handleMysteryEncounterVictory} from "#app/data/mystery-encounters/mystery-encounter-utils";
 import {SelectModifierPhase} from "#app/phases/select-modifier-phase";
+import { eventBus } from "./event-bus";
 
 const { t } = i18next;
 
@@ -96,7 +97,7 @@ export class LoginPhase extends Phase {
             this.scene.ui.showText(i18next.t("menu:logInOrCreateAccount"));
           }
 
-          this.scene.playSound("menu_open");
+          this.scene.audioHandler.playSound("menu_open");
 
           const loadData = () => {
             updateUserInfo().then(success => {
@@ -115,7 +116,7 @@ export class LoginPhase extends Phase {
                 this.scene.ui.playSelect();
                 loadData();
               }, () => {
-                this.scene.playSound("menu_open");
+                this.scene.audioHandler.playSound("menu_open");
                 this.scene.ui.setMode(Mode.REGISTRATION_FORM, {
                   buttonActions: [
                     () => {
@@ -763,7 +764,7 @@ export class EncounterPhase extends BattlePhase {
 
     this.scene.initSession();
 
-    this.scene.eventTarget.dispatchEvent(new EncounterPhaseEvent());
+    eventBus.emit(new BattleEncounterPhaseEvent());
 
     // Failsafe if players somehow skip floor 200 in classic mode
     if (this.scene.gameMode.isClassic && this.scene.currentBattle.waveIndex > 200) {
@@ -1536,7 +1537,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
           angle: 1440,
           y: (this.player ? 132 : 86) + fpOffset[1],
           onComplete: () => {
-            this.scene.playSound("pb_rel");
+            this.scene.audioHandler.playSound("pb_rel");
             pokeball.destroy();
             this.scene.add.existing(pokemon);
             this.scene.field.add(pokemon);
@@ -1720,7 +1721,7 @@ export class SwitchSummonPhase extends SummonPhase {
         pokemonName: pokemon.name
       })
     );
-    this.scene.playSound("pb_rel");
+    this.scene.audioHandler.playSound("pb_rel");
     pokemon.hideInfo();
     pokemon.tint(getPokeballTintColor(pokemon.pokeball), 1, 250, "Sine.easeIn");
     this.scene.tweens.add({
@@ -1953,7 +1954,7 @@ export class LevelCapPhase extends FieldPhase {
     super.start();
 
     this.scene.ui.setMode(Mode.MESSAGE).then(() => {
-      this.scene.playSound("level_up_fanfare");
+      this.scene.audioHandler.playSound("level_up_fanfare");
       this.scene.ui.showText(i18next.t("battle:levelCapUp", { levelCap: this.scene.getMaxExpLevel() }), null, () => this.end(), null, true);
       this.executeForAll(pokemon => pokemon.updateInfo(true));
     });
@@ -1997,7 +1998,7 @@ export class TurnInitPhase extends FieldPhase {
     });
 
     //this.scene.pushPhase(new MoveAnimTestPhase(this.scene));
-    this.scene.eventTarget.dispatchEvent(new TurnInitEvent());
+    eventBus.emit(new BattleTurnInitEvent());
 
     this.scene.getField().forEach((pokemon, i) => {
       if (pokemon?.isActive()) {
@@ -2552,7 +2553,7 @@ export class BerryPhase extends FieldPhase {
                 berryModifier.consumed = false;
               }
             }
-            this.scene.eventTarget.dispatchEvent(new BerryUsedEvent(berryModifier)); // Announce a berry was used
+            eventBus.emit(new BattleBerryUsedEvent(berryModifier)); // Announce a berry was used
           }
 
           this.scene.updateModifiers(pokemon.isPlayer());
@@ -2575,7 +2576,7 @@ export class TurnEndPhase extends FieldPhase {
     super.start();
 
     this.scene.currentBattle.incrementTurn(this.scene);
-    this.scene.eventTarget.dispatchEvent(new TurnEndEvent(this.scene.currentBattle.turn));
+    eventBus.emit(new BattleTurnEndEvent(this.scene.currentBattle.turn));
 
     const handlePokemon = (pokemon: Pokemon) => {
       pokemon.lapseTags(BattlerTagLapseType.TURN_END);
@@ -2936,7 +2937,7 @@ export class MovePhase extends BattlePhase {
       if (this.cancelled || this.failed) {
         if (this.failed) {
           this.move.usePp(ppUsed); // Only use PP if the move failed
-          this.scene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon?.id, this.move.getMove(), ppUsed));
+          eventBus.emit(new BattleMoveUsedEvent(this.pokemon?.id, this.move.getMove(), ppUsed));
         }
 
         // Record a failed move so Abilities like Truant don't trigger next turn and soft-lock
@@ -2969,7 +2970,7 @@ export class MovePhase extends BattlePhase {
 
       if (!moveQueue.length || !moveQueue.shift().ignorePP) { // using .shift here clears out two turn moves once they've been used
         this.move.usePp(ppUsed);
-        this.scene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon?.id, this.move.getMove(), ppUsed));
+        eventBus.emit(new BattleMoveUsedEvent(this.pokemon?.id, this.move.getMove(), ppUsed));
       }
 
       if (!allMoves[this.move.moveId].hasAttr(CopyMoveAttr)) {
@@ -3614,7 +3615,7 @@ export class StatChangePhase extends PokemonPhase {
       statSprite.setScale(6);
       statSprite.setOrigin(0.5, 1);
 
-      this.scene.playSound(`stat_${levels.value >= 1 ? "up" : "down"}`);
+      this.scene.audioHandler.playSound(`stat_${levels.value >= 1 ? "up" : "down"}`);
 
       statSprite.setMask(new Phaser.Display.Masks.BitmapMask(this.scene, pokemonMaskSprite));
 
@@ -3924,14 +3925,14 @@ export class DamagePhase extends PokemonPhase {
   applyDamage() {
     switch (this.damageResult) {
     case HitResult.EFFECTIVE:
-      this.scene.playSound("hit");
+      this.scene.audioHandler.playSound("hit");
       break;
     case HitResult.SUPER_EFFECTIVE:
     case HitResult.ONE_HIT_KO:
-      this.scene.playSound("hit_strong");
+      this.scene.audioHandler.playSound("hit_strong");
       break;
     case HitResult.NOT_VERY_EFFECTIVE:
-      this.scene.playSound("hit_weak");
+      this.scene.audioHandler.playSound("hit_weak");
       break;
     }
 
@@ -3961,7 +3962,7 @@ export class DamagePhase extends PokemonPhase {
     case BattleSpec.FINAL_BOSS:
       const pokemon = this.getPokemon();
       if (pokemon instanceof EnemyPokemon && pokemon.isBoss() && !pokemon.formIndex && pokemon.bossSegmentIndex < 1) {
-        this.scene.fadeOutBgm(Utils.fixedInt(2000), false);
+        this.scene.audioHandler.fadeOutBgm(Utils.fixedInt(2000), false);
         this.scene.ui.showDialogue(battleSpecDialogue[BattleSpec.FINAL_BOSS].firstStageWin, pokemon.species.name, null, () => {
           this.scene.addEnemyModifier(getModifierType(modifierTypes.MINI_BLACK_HOLE).newModifier(pokemon) as PersistentModifier, false, true);
           pokemon.generateAndPopulateMoveset(1);
@@ -4093,7 +4094,7 @@ export class FaintPhase extends PokemonPhase {
         pokemon.addFriendship(-10);
       }
       pokemon.hideInfo();
-      this.scene.playSound("faint");
+      this.scene.audioHandler.playSound("faint");
       this.scene.tweens.add({
         targets: pokemon,
         duration: 500,
@@ -4380,7 +4381,7 @@ export class ModifierRewardPhase extends BattlePhase {
     return new Promise<void>(resolve => {
       const newModifier = this.modifierType.newModifier();
       this.scene.addModifier(newModifier).then(() => {
-        this.scene.playSound("item_fanfare");
+        this.scene.audioHandler.playSound("item_fanfare");
         this.scene.ui.showText(i18next.t("battle:rewardGain", { modifierName: newModifier.type.name }), null, () => resolve(), null, true);
       });
     });
@@ -4396,7 +4397,7 @@ export class GameOverModifierRewardPhase extends ModifierRewardPhase {
     return new Promise<void>(resolve => {
       const newModifier = this.modifierType.newModifier();
       this.scene.addModifier(newModifier).then(() => {
-        this.scene.playSound("level_up_fanfare");
+        this.scene.audioHandler.playSound("level_up_fanfare");
         this.scene.ui.setMode(Mode.MESSAGE);
         this.scene.ui.fadeIn(250).then(() => {
           this.scene.ui.showText(i18next.t("battle:rewardGain", { modifierName: newModifier.type.name }), null, () => {
@@ -4422,7 +4423,7 @@ export class RibbonModifierRewardPhase extends ModifierRewardPhase {
     return new Promise<void>(resolve => {
       const newModifier = this.modifierType.newModifier();
       this.scene.addModifier(newModifier).then(() => {
-        this.scene.playSound("level_up_fanfare");
+        this.scene.audioHandler.playSound("level_up_fanfare");
         this.scene.ui.setMode(Mode.MESSAGE);
         this.scene.ui.showText(`${this.species.name} beat ${this.scene.gameMode.getName()} Mode for the first time!\nYou received ${newModifier.type.name}!`, null, () => {
           resolve();
@@ -4515,7 +4516,7 @@ export class GameOverPhase extends BattlePhase {
         });
 
         const fadeDuration = this.victory ? 10000 : 5000;
-        this.scene.fadeOutBgm(fadeDuration, true);
+        this.scene.audioHandler.fadeOutBgm(fadeDuration, true);
         const activeBattlers = this.scene.getField().filter(p => p?.isActive(true));
         activeBattlers.map(p => p.hideInfo());
         this.scene.ui.fadeOut(fadeDuration).then(() => {
@@ -4662,7 +4663,7 @@ export class UnlockPhase extends Phase {
   start(): void {
     this.scene.time.delayedCall(2000, () => {
       this.scene.gameData.unlocks[this.unlockable] = true;
-      this.scene.playSound("level_up_fanfare");
+      this.scene.audioHandler.playSound("level_up_fanfare");
       this.scene.ui.setMode(Mode.MESSAGE);
       this.scene.ui.showText(`${getUnlockableName(this.unlockable)}\nhas been unlocked.`, null, () => {
         this.scene.time.delayedCall(1500, () => this.scene.arenaBg.setVisible(true));
@@ -4867,7 +4868,7 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
     pokemon.calculateStats();
     pokemon.updateInfo();
     if (this.scene.expParty === ExpNotification.DEFAULT) {
-      this.scene.playSound("level_up_fanfare");
+      this.scene.audioHandler.playSound("level_up_fanfare");
       this.scene.ui.showText(i18next.t("battle:levelUp", { pokemonName: this.getPokemon().name, level: this.level }), null, () => this.scene.ui.getMessageHandler().promptLevelUpStats(this.partyMemberIndex, prevStats, false).then(() => this.end()), null, true);
     } else if (this.scene.expParty === ExpNotification.SKIP) {
       this.end();
@@ -4925,7 +4926,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
         loadMoveAnimAssets(this.scene, [this.moveId], true)
           .then(() => {
             this.scene.ui.setMode(messageMode).then(() => {
-              this.scene.playSound("level_up_fanfare");
+              this.scene.audioHandler.playSound("level_up_fanfare");
               this.scene.ui.showText(i18next.t("battle:learnMove", { pokemonName: pokemon.name, moveName: move.name }), null, () => {
                 this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeMoveLearnedTrigger, true);
                 this.end();
@@ -5114,7 +5115,7 @@ export class AttemptCapturePhase extends PokemonPhase {
     this.pokeball.setOrigin(0.5, 0.625);
     this.scene.field.add(this.pokeball);
 
-    this.scene.playSound("pb_throw");
+    this.scene.audioHandler.playSound("pb_throw");
     this.scene.time.delayedCall(300, () => {
       this.scene.field.moveBelow(this.pokeball as Phaser.GameObjects.GameObject, pokemon);
     });
@@ -5127,7 +5128,7 @@ export class AttemptCapturePhase extends PokemonPhase {
       onComplete: () => {
         this.pokeball.setTexture("pb", `${pokeballAtlasKey}_opening`);
         this.scene.time.delayedCall(17, () => this.pokeball.setTexture("pb", `${pokeballAtlasKey}_open`));
-        this.scene.playSound("pb_rel");
+        this.scene.audioHandler.playSound("pb_rel");
         pokemon.tint(getPokeballTintColor(this.pokeballType));
 
         addPokeballOpenParticles(this.scene, this.pokeball.x, this.pokeball.y, this.pokeballType);
@@ -5141,7 +5142,7 @@ export class AttemptCapturePhase extends PokemonPhase {
           onComplete: () => {
             this.pokeball.setTexture("pb", `${pokeballAtlasKey}_opening`);
             pokemon.setVisible(false);
-            this.scene.playSound("pb_catch");
+            this.scene.audioHandler.playSound("pb_catch");
             this.scene.time.delayedCall(17, () => this.pokeball.setTexture("pb", `${pokeballAtlasKey}`));
 
             const doShake = () => {
@@ -5169,13 +5170,13 @@ export class AttemptCapturePhase extends PokemonPhase {
                     this.failCatch(shakeCount);
                   } else if (shakeCount++ < 3) {
                     if (pokeballMultiplier === -1 || pokemon.randSeedInt(65536) < y) {
-                      this.scene.playSound("pb_move");
+                      this.scene.audioHandler.playSound("pb_move");
                     } else {
                       shakeCounter.stop();
                       this.failCatch(shakeCount);
                     }
                   } else {
-                    this.scene.playSound("pb_lock");
+                    this.scene.audioHandler.playSound("pb_lock");
                     addPokeballCaptureStars(this.scene, this.pokeball);
 
                     const pbTint = this.scene.add.sprite(this.pokeball.x, this.pokeball.y, "pb", "pb");
@@ -5217,7 +5218,7 @@ export class AttemptCapturePhase extends PokemonPhase {
   failCatch(shakeCount: integer) {
     const pokemon = this.getPokemon();
 
-    this.scene.playSound("pb_rel");
+    this.scene.audioHandler.playSound("pb_rel");
     pokemon.setY(this.originalY);
     if (pokemon.status?.effect !== StatusEffect.SLEEP) {
       pokemon.cry(pokemon.getHpRatio() > 0.25 ? undefined : { rate: 0.85 });
@@ -5364,7 +5365,7 @@ export class AttemptRunPhase extends PokemonPhase {
     applyAbAttrs(RunSuccessAbAttr, playerPokemon, null, escapeChance);
 
     if (playerPokemon.randSeedInt(256) < escapeChance.value) {
-      this.scene.playSound("flee");
+      this.scene.audioHandler.playSound("flee");
       this.scene.queueMessage(i18next.t("battle:runAwaySuccess"), null, true, 500);
 
       this.scene.tweens.add({
@@ -5498,9 +5499,9 @@ export class PartyHealPhase extends BattlePhase {
   start() {
     super.start();
 
-    const bgmPlaying = this.scene.isBgmPlaying();
+    const bgmPlaying = this.scene.audioHandler.isBgmPlaying();
     if (bgmPlaying) {
-      this.scene.fadeOutBgm(1000, false);
+      this.scene.audioHandler.fadeOutBgm(1000, false);
     }
     this.scene.ui.fadeOut(1000).then(() => {
       for (const pokemon of this.scene.getParty()) {
@@ -5511,7 +5512,7 @@ export class PartyHealPhase extends BattlePhase {
         }
         pokemon.updateInfo(true);
       }
-      const healSong = this.scene.playSoundWithoutBgm("heal");
+      const healSong = this.scene.audioHandler.playSoundWithoutBgm("heal");
       this.scene.time.delayedCall(Utils.fixedInt(healSong.totalDuration * 1000), () => {
         healSong.destroy();
         if (this.resumeBgm && bgmPlaying) {

@@ -2,7 +2,7 @@ import BattleScene from "#app/battle-scene.js";
 import { addWindow } from "./ui-theme";
 import { addTextObject, TextStyle } from "./text";
 import { EggCountChangedEvent, EggEventType } from "#app/events/egg.js";
-import EggHatchSceneHandler from "./egg-hatch-scene-handler";
+import { eventBus } from "#app/event-bus";
 
 /**
  * A container that displays the count of hatching eggs.
@@ -28,9 +28,7 @@ export default class EggCounterContainer extends Phaser.GameObjects.Container {
     this.eggCount = eggCount;
     this.battleScene = scene;
 
-    const uiHandler = this.battleScene.ui.getHandler() as EggHatchSceneHandler;
-
-    uiHandler.eventTarget.addEventListener(EggEventType.EGG_COUNT_CHANGED, this.onEggCountChangedEvent);
+    eventBus.on(EggEventType.EGG_COUNT_CHANGED, this.onEggCountChangedEvent);
     this.setup();
   }
 

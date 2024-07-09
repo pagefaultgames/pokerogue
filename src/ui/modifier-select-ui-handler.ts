@@ -665,7 +665,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
           }
           const value = t.getValue();
           if (!bounce && value > lastValue) {
-            (this.scene as BattleScene).playSound("pb_bounce_1", { volume: 1 / ++bounceCount });
+            (this.scene as BattleScene).audioHandler.playSound("pb_bounce_1", { volume: 1 / ++bounceCount });
             bounce = true;
           } else if (bounce && value < lastValue) {
             bounce = false;
@@ -677,7 +677,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
       for (let u = 0; u < this.modifierTypeOption.upgradeCount; u++) {
         const upgradeIndex = u;
         this.scene.time.delayedCall(remainingDuration - 2000 * (this.modifierTypeOption.upgradeCount - (upgradeIndex + 1 + upgradeCountOffset)), () => {
-          (this.scene as BattleScene).playSound("upgrade", { rate: 1 + 0.25 * upgradeIndex });
+          (this.scene as BattleScene).audioHandler.playSound("upgrade", { rate: 1 + 0.25 * upgradeIndex });
           this.pbTint.setPosition(this.pb.x, this.pb.y);
           this.pbTint.setTintFill(0xFFFFFF);
           this.pbTint.setAlpha(0);
@@ -711,7 +711,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
 
       if (!this.modifierTypeOption.cost) {
         this.pb.setTexture("pb", `${this.getPbAtlasKey(0)}_open`);
-        (this.scene as BattleScene).playSound("pb_rel");
+        (this.scene as BattleScene).audioHandler.playSound("pb_rel");
 
         this.scene.tweens.add({
           targets: this.pb,

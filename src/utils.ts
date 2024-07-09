@@ -530,3 +530,29 @@ export function reverseValueToKeySetting(input) {
 export function isNullOrUndefined(object: any): boolean {
   return null === object || undefined === object;
 }
+
+/**
+ * Helper function to get cached or cache-busted urls
+ *
+ * @param url url to check
+ * @param manifest an optional manifest object
+ * @returns the url or a cache-busted url
+ */
+export function getCachedUrl(url: string, manifest?: unknown): string {
+  if (manifest) {
+    const timestamp = manifest[`/${url}`];
+    if (timestamp) {
+      url += `?t=${timestamp}`;
+    }
+  }
+  return url;
+}
+
+/**
+ * Generates a unix timestamp
+ *
+ * @returns the current timestamp in seconds
+ */
+export function getUnixTimestamp() {
+  return Date.now() / 1000;
+}

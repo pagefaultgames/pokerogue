@@ -2405,7 +2405,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     //eslint-disable-next-line @typescript-eslint/no-unused-vars
     let i = 0;
     let rate = 0.85;
-    const cry = this.scene.playSound(key, { rate: rate }) as AnySound;
+    const cry = this.scene.audioHandler.playSound(key, { rate: rate }) as AnySound;
     const sprite = this.getSprite();
     const tintSprite = this.getTintSprite();
     const delay = Math.max(this.scene.sound.get(key).totalDuration * 50, 25);
@@ -2462,12 +2462,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const key = this.getSpeciesForm().getCryKey(this.formIndex);
     let i = 0;
     let rate = 0.85;
-    const cry = this.scene.playSound(key, { rate: rate }) as AnySound;
+    const cry = this.scene.audioHandler.playSound(key, { rate: rate }) as AnySound;
     const sprite = this.getSprite();
     const tintSprite = this.getTintSprite();
     let duration = cry.totalDuration * 1000;
 
-    let fusionCry = this.scene.playSound(this.getFusionSpeciesForm().getCryKey(this.fusionFormIndex), { rate: rate }) as AnySound;
+    let fusionCry = this.scene.audioHandler.playSound(this.getFusionSpeciesForm().getCryKey(this.fusionFormIndex), { rate: rate }) as AnySound;
     fusionCry.stop();
     duration = Math.min(duration, fusionCry.totalDuration * 1000);
     fusionCry.destroy();
@@ -2511,7 +2511,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         }
         if (i === transitionIndex) {
           SoundFade.fadeOut(this.scene, cry, Utils.fixedInt(Math.ceil((duration / rate) * 0.2)));
-          fusionCry = this.scene.playSound(this.getFusionSpeciesForm().getCryKey(this.fusionFormIndex), Object.assign({ seek: Math.max(fusionCry.totalDuration * 0.4, 0), rate: rate }));
+          fusionCry = this.scene.audioHandler.playSound(this.getFusionSpeciesForm().getCryKey(this.fusionFormIndex), Object.assign({ seek: Math.max(fusionCry.totalDuration * 0.4, 0), rate: rate }));
           SoundFade.fadeIn(this.scene, fusionCry, Utils.fixedInt(Math.ceil((duration / rate) * 0.2)), this.scene.masterVolume * this.scene.seVolume, 0);
         }
         rate *= 0.99;
@@ -2823,7 +2823,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   sparkle(): void {
     if (this.shinySparkle) {
       this.shinySparkle.play(`sparkle${this.variant ? `_${this.variant + 1}` : ""}`);
-      this.scene.playSound("sparkle");
+      this.scene.audioHandler.playSound("sparkle");
     }
   }
 

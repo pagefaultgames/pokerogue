@@ -24,12 +24,14 @@ import { Biome } from "#enums/biome";
 import { TrainerType } from "#enums/trainer-type";
 import {initMysteryEncounterDialogue} from "#app/data/mystery-encounters/dialogue/mystery-encounter-dialogue";
 import {initMysteryEncounters} from "#app/data/mystery-encounters/mystery-encounters";
+import { AudioHandlerScene } from "./scenes/audio-handler-scene";
 
 export class LoadingScene extends SceneBase {
+  public static readonly KEY = "loading";
   readonly LOAD_EVENTS = Phaser.Loader.Events;
 
   constructor() {
-    super("loading");
+    super(LoadingScene.KEY);
 
     Phaser.Plugins.PluginCache.register("Loader", CacheBustedLoaderPlugin, "load");
     initI18n();
@@ -37,7 +39,10 @@ export class LoadingScene extends SceneBase {
 
   preload() {
     Utils.localPing();
-    this.load["manifest"] = this.game["manifest"];
+
+    this.load.manifest = this.game.manifest;
+    const audioHandlerScene = this.scene.get<AudioHandlerScene>(AudioHandlerScene.KEY);
+    audioHandlerScene.loadSettings();
 
     this.loadImage("loading_bg", "arenas");
     this.loadImage("logo", "");
@@ -317,18 +322,19 @@ export class LoadingScene extends SceneBase {
 
     this.loadSe("PRSFX- Transform", "battle_anims");
 
-    this.loadBgm("menu");
+    audioHandlerScene.loadBgmFile("menu");
 
-    this.loadBgm("level_up_fanfare", "bw/level_up_fanfare.mp3");
-    this.loadBgm("item_fanfare", "bw/item_fanfare.mp3");
-    this.loadBgm("minor_fanfare", "bw/minor_fanfare.mp3");
-    this.loadBgm("heal", "bw/heal.mp3");
-    this.loadBgm("victory_trainer", "bw/victory_trainer.mp3");
-    this.loadBgm("victory_team_plasma", "bw/victory_team_plasma.mp3");
-    this.loadBgm("victory_gym", "bw/victory_gym.mp3");
-    this.loadBgm("victory_champion", "bw/victory_champion.mp3");
-    this.loadBgm("evolution", "bw/evolution.mp3");
-    this.loadBgm("evolution_fanfare", "bw/evolution_fanfare.mp3");
+    audioHandlerScene.loadBgmFile("level_up_fanfare", "bw/level_up_fanfare.mp3");
+    audioHandlerScene.loadBgmFile("item_fanfare", "bw/item_fanfare.mp3");
+    audioHandlerScene.loadBgmFile("minor_fanfare", "bw/minor_fanfare.mp3");
+    audioHandlerScene.loadBgmFile("heal", "bw/heal.mp3");
+    audioHandlerScene.loadBgmFile("victory_trainer", "bw/victory_trainer.mp3");
+    audioHandlerScene.loadBgmFile("victory_team_plasma", "bw/victory_team_plasma.mp3");
+    audioHandlerScene.loadBgmFile("victory_gym", "bw/victory_gym.mp3");
+    audioHandlerScene.loadBgmFile("victory_champion", "bw/victory_champion.mp3");
+    audioHandlerScene.loadBgmFile("evolution", "bw/evolution.mp3");
+    audioHandlerScene.loadBgmFile("evolution_fanfare", "bw/evolution_fanfare.mp3");
+
 
     this.load.plugin("rextexteditplugin", "https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rextexteditplugin.min.js", true);
 
@@ -493,5 +499,6 @@ export class LoadingScene extends SceneBase {
 
   async create() {
     this.scene.start("battle");
+    console.debug("audio handler scene in loading: ", this.scene.get<AudioHandlerScene>(AudioHandlerScene.KEY));
   }
 }

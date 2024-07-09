@@ -352,9 +352,9 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       this.gachaContainers[this.gachaCursor].moveTo(egg, 2);
 
       const doPullAnim = () => {
-        this.scene.playSound("gacha_running", { loop: true });
+        this.scene.audioHandler.playSound("gacha_running", { loop: true });
         this.scene.time.delayedCall(this.getDelayValue(count ? 500 : 1250), () => {
-          this.scene.playSound("gacha_dispense");
+          this.scene.audioHandler.playSound("gacha_dispense");
           this.scene.time.delayedCall(this.getDelayValue(750), () => {
             this.scene.sound.stopByKey("gacha_running");
             this.scene.tweens.add({
@@ -364,7 +364,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
               ease: "Bounce.easeOut",
               onComplete: () => {
                 this.scene.time.delayedCall(this.getDelayValue(125), () => {
-                  this.scene.playSound("pb_catch");
+                  this.scene.audioHandler.playSound("pb_catch");
                   this.gachaHatches[this.gachaCursor].play("open");
                   this.scene.tweens.add({
                     targets: egg,
@@ -402,7 +402,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       };
 
       if (!count) {
-        this.scene.playSound("gacha_dial");
+        this.scene.audioHandler.playSound("gacha_dial");
         this.scene.tweens.add({
           targets: this.gachaKnobs[this.gachaCursor],
           duration: this.getDelayValue(350),

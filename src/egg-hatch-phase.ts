@@ -11,6 +11,7 @@ import { achvs } from "./system/achv";
 import PokemonInfoContainer from "./ui/pokemon-info-container";
 import EggCounterContainer from "./ui/egg-counter-container";
 import { EggCountChangedEvent } from "./events/egg";
+import { eventBus } from "./event-bus";
 
 /**
  * Class that represents egg hatching
@@ -83,7 +84,7 @@ export class EggHatchPhase extends Phase {
 
       this.scene.gameData.eggs.splice(eggIndex, 1);
 
-      this.scene.fadeOutBgm(null, false);
+      this.scene.audioHandler.fadeOutBgm(null, false);
 
       this.eggHatchHandler = this.scene.ui.getHandler() as EggHatchSceneHandler;
 
@@ -149,7 +150,7 @@ export class EggHatchPhase extends Phase {
 
         this.scene.time.delayedCall(1000, () => {
           if (!this.hatched) {
-            this.evolutionBgm = this.scene.playSoundWithoutBgm("evolution");
+            this.evolutionBgm = this.scene.audioHandler.playSoundWithoutBgm("evolution");
           }
         });
 
@@ -178,7 +179,7 @@ export class EggHatchPhase extends Phase {
                   if (this.hatched) {
                     return;
                   }
-                  this.scene.playSound("egg_crack");
+                  this.scene.audioHandler.playSound("egg_crack");
                   this.doSpray(4);
                   this.eggCrackSprite.setFrame("3");
                   this.scene.time.delayedCall(125, () => this.eggCrackSprite.setFrame("4"));
@@ -220,7 +221,7 @@ export class EggHatchPhase extends Phase {
       if (count === undefined) {
         count = 0;
       }
-      this.scene.playSound("pb_move");
+      this.scene.audioHandler.playSound("pb_move");
       this.scene.tweens.add({
         targets: this.eggContainer,
         x: `-=${intensity / (count ? 1 : 2)}`,
@@ -281,7 +282,7 @@ export class EggHatchPhase extends Phase {
       SoundFade.fadeOut(this.scene, this.evolutionBgm, Utils.fixedInt(100));
     }
     for (let e = 0; e < 5; e++) {
-      this.scene.time.delayedCall(Utils.fixedInt(375 * e), () => this.scene.playSound("egg_hatch", { volume: 1 - (e * 0.2) }));
+      this.scene.time.delayedCall(Utils.fixedInt(375 * e), () => this.scene.audioHandler.playSound("egg_hatch", { volume: 1 - (e * 0.2) }));
     }
     this.eggLightraysOverlay.setVisible(true);
     this.eggLightraysOverlay.play("egg_lightrays");
@@ -329,18 +330,18 @@ export class EggHatchPhase extends Phase {
     this.pokemonSprite.setVisible(true);
     this.scene.time.delayedCall(Utils.fixedInt(250), () => {
       this.eggsToHatchCount--;
-      this.eggHatchHandler.eventTarget.dispatchEvent(new EggCountChangedEvent(this.eggsToHatchCount));
+      eventBus.emit(new EggCountChangedEvent(this.eggsToHatchCount));
       this.pokemon.cry();
       if (isShiny) {
         this.scene.time.delayedCall(Utils.fixedInt(500), () => {
           this.pokemonShinySparkle.play(`sparkle${this.pokemon.variant ? `_${this.pokemon.variant + 1}` : ""}`);
-          this.scene.playSound("sparkle");
+          this.scene.audioHandler.playSound("sparkle");
         });
       }
       this.scene.time.delayedCall(Utils.fixedInt(!this.skipped ? !isShiny ? 1250 : 1750 : !isShiny ? 250 : 750), () => {
         this.infoContainer.show(this.pokemon, false, this.skipped ? 2 : 1);
 
-        this.scene.playSoundWithoutBgm("evolution_fanfare");
+        this.scene.audioHandler.playSoundWithoutBgm("evolution_fanfare");
 
         this.scene.ui.showText(i18next.t("egg:hatchFromTheEgg", { pokemonName: this.pokemon.name }), null, () => {
           this.scene.gameData.updateSpeciesDexIvs(this.pokemon.species.speciesId, this.pokemon.ivs);
