@@ -49,7 +49,6 @@ export default class MenuUiHandler extends MessageUiHandler {
 
   public bgmBar: BgmBar;
 
-
   constructor(scene: BattleScene, mode?: Mode) {
     super(scene, mode);
 
