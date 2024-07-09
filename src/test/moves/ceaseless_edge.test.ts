@@ -9,10 +9,10 @@ import {
 import {getMovePosition} from "#app/test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { ArenaTagType } from "#app/enums/arena-tag-type.js";
-import { allMoves } from "#app/data/move.js";
-import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag.js";
-import { Abilities } from "#app/enums/abilities.js";
+import { ArenaTagType } from "#app/enums/arena-tag-type";
+import { allMoves } from "#app/data/move";
+import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
+import { Abilities } from "#app/enums/abilities";
 
 const TIMEOUT = 20 * 1000;
 
