@@ -2,27 +2,27 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const arenaFlyout: SimpleTranslationEntries = {
   // Title
-  "activeBattleEffects": "Active Battle Effects",
-  "player": "Player",
-  "neutral": "Neutral",
-  "enemy": "Enemy",
+  "activeBattleEffects": "Efeitos de Batalha Ativos",
+  "player": "Jogador",
+  "neutral": "Neutro",
+  "enemy": "Inimigo",
 
   // WeatherType
-  "sunny": "Sunny",
-  "rain": "Rain",
-  "sandstorm": "Sandstorm",
-  "hail": "Hail",
-  "snow": "Snow",
-  "fog": "Fog",
-  "heavyRain": "Heavy Rain",
-  "harshSun": "Harsh Sun",
-  "strongWinds": "Strong Winds",
+  "sunny": "Ensolarado",
+  "rain": "Chuva",
+  "sandstorm": "Tempestade de Areia",
+  "hail": "Granizo",
+  "snow": "Neve",
+  "fog": "Névoa",
+  "heavyRain": "Chuva Forte",
+  "harshSun": "Sol Forte",
+  "strongWinds": "Ventos Fortes",
 
   // TerrainType
-  "misty": "Misty Terrain",
-  "electric": "Electric Terrain",
-  "grassy": "Grassy Terrain",
-  "psychic": "Psychic Terrain",
+  "misty": "Terreno Enevoado",
+  "electric": "Terreno Elétrico",
+  "grassy": "Terreno de Planta",
+  "psychic": "Terreno Psíquico",
 
   // ArenaTagType
   "mudSport": "Mud Sport",
