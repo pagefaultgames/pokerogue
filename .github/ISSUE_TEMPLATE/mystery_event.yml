@@ -27,6 +27,7 @@ body:
     id: description
     attributes:
       label: What is it?
+      placeholder: Describe the event you are proposing
     validations:
       required: true
   - type: dropdown
