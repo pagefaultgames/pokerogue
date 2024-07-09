@@ -231,7 +231,9 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       });
 
       this.setCursor(0);
-      if (this.scene.hasRerolled) {
+      const phase = this.scene.getCurrentPhase() as any;
+      const rerollCount = phase.hasOwnProperty("rerollCount") ? phase.rerollCount : 0;
+      if (rerollCount) {
         this.setRowCursor(this.scene.rerollTarget);
       } else {
         this.setRowCursor(1);

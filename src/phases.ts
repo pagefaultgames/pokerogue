@@ -4984,8 +4984,6 @@ export class SelectModifierPhase extends BattlePhase {
 
   constructor(scene: BattleScene, rerollCount: integer = 0, modifierTiers?: ModifierTier[]) {
     super(scene);
-
-    this.scene.hasRerolled = rerollCount > 0;
     this.rerollCount = rerollCount;
     this.modifierTiers = modifierTiers;
   }
