@@ -12,6 +12,7 @@ import { Species } from "#enums/species";
 import { ArenaTagType } from "#app/enums/arena-tag-type.js";
 import { allMoves } from "#app/data/move.js";
 import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag.js";
+import { Abilities } from "#app/enums/abilities.js";
 
 const TIMEOUT = 20 * 1000;
 
@@ -33,6 +34,8 @@ describe("Moves - Ceaseless Edge", () => {
     game = new GameManager(phaserGame);
     vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
     vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
+    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.RUN_AWAY);
+    vi.spyOn(overrides, "OPP_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.RUN_AWAY);
     vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
     vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
     vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.CEASELESS_EDGE, Moves.SPLASH, Moves.ROAR ]);
@@ -103,9 +106,8 @@ describe("Moves - Ceaseless Edge", () => {
     async () => {
       vi.spyOn(overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "MULTI_LENS"}]);
       vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(5);
-      vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(0);
 
-      await game.startBattle([ Species.SNORLAX, Species.MUNCHLAX ]);
+      await game.startBattle([ Species.ILLUMISE ]);
 
       const leadPokemon = game.scene.getPlayerPokemon();
       expect(leadPokemon).toBeDefined();
