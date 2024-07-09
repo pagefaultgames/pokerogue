@@ -171,18 +171,18 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
     this.flyoutParent.name = "Fight Flyout Parent";
 
     // Subscribes to required events available on game start
-    eventBus.on(BattleSceneEventType.NEW_ARENA, this.onNewArenaEvent);
-    eventBus.on(BattleSceneEventType.TURN_END,  this.onTurnEndEvent);
+    eventBus.on(BattleSceneEventType.NEW_ARENA, this.onNewArenaEvent.bind(this));
+    eventBus.on(BattleSceneEventType.TURN_END,  this.onTurnEndEvent.bind(this));
   }
 
   private onNewArena(event: Event) {
     this.fieldEffectInfo.length = 0;
 
     // Subscribes to required events available on battle start
-    eventBus.on(ArenaEventType.WEATHER_CHANGED, this.onFieldEffectChangedEvent);
-    eventBus.on(ArenaEventType.TERRAIN_CHANGED, this.onFieldEffectChangedEvent);
-    eventBus.on(ArenaEventType.TAG_ADDED,       this.onFieldEffectChangedEvent);
-    eventBus.on(ArenaEventType.TAG_REMOVED,     this.onFieldEffectChangedEvent);
+    eventBus.on(ArenaEventType.WEATHER_CHANGED, this.onFieldEffectChangedEvent.bind(this));
+    eventBus.on(ArenaEventType.TERRAIN_CHANGED, this.onFieldEffectChangedEvent.bind(this));
+    eventBus.on(ArenaEventType.TAG_ADDED,       this.onFieldEffectChangedEvent.bind(this));
+    eventBus.on(ArenaEventType.TAG_REMOVED,     this.onFieldEffectChangedEvent.bind(this));
   }
 
 
@@ -372,13 +372,13 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
   }
 
   public destroy(fromScene?: boolean): void {
-    eventBus.off(BattleSceneEventType.NEW_ARENA, this.onNewArenaEvent);
-    eventBus.off(BattleSceneEventType.TURN_END,  this.onTurnEndEvent);
+    eventBus.off(BattleSceneEventType.NEW_ARENA, this.onNewArenaEvent.bind(this));
+    eventBus.off(BattleSceneEventType.TURN_END,  this.onTurnEndEvent.bind(this));
 
-    eventBus.off(ArenaEventType.WEATHER_CHANGED, this.onFieldEffectChangedEvent);
-    eventBus.off(ArenaEventType.TERRAIN_CHANGED, this.onFieldEffectChangedEvent);
-    eventBus.off(ArenaEventType.TAG_ADDED,       this.onFieldEffectChangedEvent);
-    eventBus.off(ArenaEventType.TAG_REMOVED,     this.onFieldEffectChangedEvent);
+    eventBus.off(ArenaEventType.WEATHER_CHANGED, this.onFieldEffectChangedEvent.bind(this));
+    eventBus.off(ArenaEventType.TERRAIN_CHANGED, this.onFieldEffectChangedEvent.bind(this));
+    eventBus.off(ArenaEventType.TAG_ADDED,       this.onFieldEffectChangedEvent.bind(this));
+    eventBus.off(ArenaEventType.TAG_REMOVED,     this.onFieldEffectChangedEvent.bind(this));
 
     super.destroy(fromScene);
   }

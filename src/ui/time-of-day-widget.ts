@@ -70,7 +70,7 @@ export default class TimeOfDayWidget extends Phaser.GameObjects.Container {
     this.timeOfDayIcons = [this.timeOfDayIconBgs, this.timeOfDayIconMgs, this.timeOfDayIconFgs].flat();
     this.add(this.timeOfDayIcons);
 
-    eventBus.on(BattleSceneEventType.ENCOUNTER_PHASE, this.onEncounterPhaseEvent);
+    eventBus.on(BattleSceneEventType.ENCOUNTER_PHASE, this.onEncounterPhaseEvent.bind(this));
   }
 
   /**

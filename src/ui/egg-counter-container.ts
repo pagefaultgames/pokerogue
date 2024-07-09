@@ -28,7 +28,7 @@ export default class EggCounterContainer extends Phaser.GameObjects.Container {
     this.eggCount = eggCount;
     this.battleScene = scene;
 
-    eventBus.on(EggEventType.EGG_COUNT_CHANGED, this.onEggCountChangedEvent);
+    eventBus.on(EggEventType.EGG_COUNT_CHANGED, this.onEggCountChangedEvent.bind(this));
     this.setup();
   }
 

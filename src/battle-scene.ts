@@ -348,7 +348,7 @@ export default class BattleScene extends SceneBase {
     populateAnims();
 
     await this.initVariantData();
-    eventBus.on<BgmChangedEvent>(BgmChangedEvent.NAME, this.handleBgmNameChanged);
+    eventBus.on(BgmChangedEvent.NAME, this.handleBgmNameChanged.bind(this));
   }
 
   create() {
@@ -2545,6 +2545,6 @@ export default class BattleScene extends SceneBase {
 
   private handleBgmNameChanged(event: BgmChangedEvent) {
     console.debug("bgm changed - title: ", event.title);
-    this.ui.bgmBar.setBgmToBgmBar(event.title);
+    this.ui?.bgmBar?.setBgmToBgmBar(event.title);
   }
 }

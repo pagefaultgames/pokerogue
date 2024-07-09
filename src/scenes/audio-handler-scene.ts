@@ -84,12 +84,18 @@ export class AudioHandlerScene extends Phaser.Scene {
   }
 
   public async create() {
-    eventBus.on(BgmVolumeChangedEvent.NAME, this.handleBgmVolumeChanged);
-    eventBus.on(MasterVolumeChangedEvent.NAME, this.handleMasterVolumeChanged);
+    eventBus.on(
+      BgmVolumeChangedEvent.NAME,
+      this.handleBgmVolumeChanged.bind(this)
+    );
+    eventBus.on(
+      MasterVolumeChangedEvent.NAME,
+      this.handleMasterVolumeChanged.bind(this)
+    );
   }
 
   public async destroy() {
-    eventBus.off(BgmVolumeChangedEvent.NAME, this.handleBgmVolumeChanged);
+    eventBus.off(BgmVolumeChangedEvent.NAME, this.handleBgmVolumeChanged.bind(this));
   }
 
   public get masterVolume(): number {
@@ -218,7 +224,7 @@ export class AudioHandlerScene extends Phaser.Scene {
     if (!this.load.audio) {
       throw new Error("load.audio is not defined!");
     }
-    console.debug("loading pending audio files");
+    console.debug("loading pending bgm files");
 
     const pendingBgmFiles = this.bgmFilesCache.filter(
       ({ timestamp }) => !timestamp
@@ -233,7 +239,7 @@ export class AudioHandlerScene extends Phaser.Scene {
       const path = `${AudioHandlerScene.BGM_BASE_PATH}/${filename}`;
       const url = getCachedUrl(path, this.game.manifest);
 
-      console.debug("Load audio file", key, filename);
+      console.debug("Load bgm file", key, filename);
       this.load.audio(key, url);
       bgmFileEntry.timestamp = getUnixTimestamp();
     });
@@ -258,11 +264,11 @@ export class AudioHandlerScene extends Phaser.Scene {
       const path = `${AudioHandlerScene.BGM_BASE_PATH}/${filename}`;
       const url = getCachedUrl(path, this.game.manifest);
 
-      console.debug("Load audio file", key, url);
+      console.debug("Load bgm file", key, url);
       this.load.audio(key, url);
       cacheEntry.timestamp = getUnixTimestamp();
     } else {
-      console.debug("Prepare audio file", cacheEntry);
+      console.debug("Prepare bgm file", cacheEntry);
     }
 
     this.bgmFilesCache.push(cacheEntry);

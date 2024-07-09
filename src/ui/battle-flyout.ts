@@ -117,8 +117,8 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
     this.name = `Flyout ${this.pokemon.name}`;
     this.flyoutParent.name = `Flyout Parent ${this.pokemon.name}`;
 
-    eventBus.on(BattleSceneEventType.MOVE_USED, this.onMoveUsedEvent);
-    eventBus.on(BattleSceneEventType.BERRY_USED, this.onBerryUsedEvent);
+    eventBus.on(BattleSceneEventType.MOVE_USED, this.onMoveUsedEvent.bind(this));
+    eventBus.on(BattleSceneEventType.BERRY_USED, this.onBerryUsedEvent.bind(this));
   }
 
   /** Sets and formats the text property for all {@linkcode Phaser.GameObjects.Text} in the flyoutText array */
@@ -186,8 +186,8 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
   }
 
   destroy(fromScene?: boolean): void {
-    eventBus.off(BattleSceneEventType.MOVE_USED, this.onMoveUsedEvent);
-    eventBus.off(BattleSceneEventType.BERRY_USED, this.onBerryUsedEvent);
+    eventBus.off(BattleSceneEventType.MOVE_USED, this.onMoveUsedEvent.bind(this));
+    eventBus.off(BattleSceneEventType.BERRY_USED, this.onBerryUsedEvent.bind(this));
 
     super.destroy(fromScene);
   }

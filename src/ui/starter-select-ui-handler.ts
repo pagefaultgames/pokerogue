@@ -816,7 +816,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     });
     this.starterSelectContainer.add(this.moveInfoOverlay);
 
-    eventBus.on(BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED, (e) => this.onCandyUpgradeDisplayChanged(e));
+    eventBus.on(BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED, this.onCandyUpgradeDisplayChanged.bind(this));
 
     this.updateInstructions();
   }
