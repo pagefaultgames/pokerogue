@@ -1,10 +1,10 @@
+import { EggTier } from "#enums/egg-type";
+import { UiTheme } from "#enums/ui-theme";
+import Phaser from "phaser";
 import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import BattleScene from "../battle-scene";
 import { ModifierTier } from "../modifier/modifier-tier";
-import Phaser from "phaser";
-import { EggTier } from "#enums/egg-type";
-import { UiTheme } from "#enums/ui-theme";
 
 export enum TextStyle {
   MESSAGE,
@@ -33,7 +33,9 @@ export enum TextStyle {
   MOVE_PP_FULL,
   MOVE_PP_HALF_FULL,
   MOVE_PP_NEAR_EMPTY,
-  MOVE_PP_EMPTY
+  MOVE_PP_EMPTY,
+  SMALLER_WINDOW_ALT,
+  BGM_BAR
 }
 
 export function addTextObject(scene: Phaser.Scene, x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): Phaser.GameObjects.Text {
@@ -140,6 +142,16 @@ export function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraSty
     shadowXpos = 3;
     shadowYpos = 3;
     break;
+  case TextStyle.SMALLER_WINDOW_ALT:
+    styleOptions.fontSize = defaultFontSize - 36;
+    shadowXpos = 3;
+    shadowYpos = 3;
+    break;
+  case TextStyle.BGM_BAR:
+    styleOptions.fontSize = defaultFontSize - 24;
+    shadowXpos = 3;
+    shadowYpos = 3;
+    break;
   }
 
   const shadowColor = getTextColor(style, true, uiTheme);
@@ -227,6 +239,10 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
     return !shadow ? "#f8b050" : "#c07800";
   case TextStyle.SETTINGS_SELECTED:
     return !shadow ? "#f88880" : "#f83018";
+  case TextStyle.SMALLER_WINDOW_ALT:
+    return !shadow ? "#484848" : "#d0d0c8";
+  case TextStyle.BGM_BAR:
+    return !shadow ? "#f8f8f8" : "#6b5a73";
   }
 }
 
