@@ -1853,7 +1853,7 @@ export class PostSummonMessageAbAttr extends PostSummonAbAttr {
 
     pokemon.scene.getField(true).map(pokemon => {
       if (pokemon.breakIllusion()) {
-        pokemon.scene.queueMessage(i18next.t("abilityTriggers:illusion", { pokemonName: getPokemonNameWithAffix(pokemon) }));
+        pokemon.scene.queueMessage(i18next.t("abilityTriggers:illusionBreak", { pokemonName: getPokemonNameWithAffix(pokemon) }));
       }
     });
     return true;
@@ -3938,7 +3938,7 @@ export class IllusionBreakAbAttr extends PostDefendAbAttr {
       return false;
     }
     pokemon.breakIllusion();
-    pokemon.scene.queueMessage(i18next.t("abilityTriggers:illusion", { pokemonName: getPokemonNameWithAffix(pokemon) }));
+    pokemon.scene.queueMessage(i18next.t("abilityTriggers:illusionBreak", { pokemonName: getPokemonNameWithAffix(pokemon) }));
     return true;
   }
 }
