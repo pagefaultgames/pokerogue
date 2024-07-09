@@ -37,7 +37,6 @@ export default class MenuUiHandler extends MessageUiHandler {
 
   private menuBg: Phaser.GameObjects.NineSlice;
   private optionContainer: Phaser.GameObjects.Container;
-  protected optionSelectText: Phaser.GameObjects.Text;
 
   private cursorObj: Phaser.GameObjects.Image;
 
