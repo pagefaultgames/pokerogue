@@ -14,6 +14,6 @@ export const pokemonSummary: TranslationEntries = {
 
   "memoString": "{{natureFragment}} 性格，\n{{metFragment}}",
   "metFragment": {
-    "apparently": "命中注定般地相遇于Lv.{{level}},\n{{biome}}.",
+    "apparently": "命中注定般地相遇于Lv.{{level}}，\n{{biome}}。",
   },
 } as const;
