@@ -59,11 +59,11 @@ const createStarterFromSpecies = (
     Math.max(starter.species.forms.length - 1, 0)
   );
   const starterGender =
-    starter.species.malePercent !== null
-      ? !starterProps.female
-        ? Gender.MALE
-        : Gender.FEMALE
-      : Gender.GENDERLESS;
+        starter.species.malePercent !== null
+          ? !starterProps.female
+            ? Gender.MALE
+            : Gender.FEMALE
+          : Gender.GENDERLESS;
   const starterPokemon = scene.addPlayerPokemon(
     starter.species,
     startingLevel,
@@ -94,65 +94,75 @@ const createStarterFromSpecies = (
 export const initWithStarters = (
   game: Phaser.Game,
   speciesNumbers: Species[]
-) => {
-  const starterPokedexNumbers = [
-    // Generation 1
-    1, 4, 7,
-    // Generation 2
-    152, 155, 158,
-    // Generation 3
-    252, 255, 258,
-    // Generation 4
-    387, 390, 393,
-    // Generation 5
-    495, 498, 501,
-    // Generation 6
-    650, 653, 656,
-    // Generation 7
-    722, 725, 728,
-    // Generation 8
-    810, 813, 816,
-    // Generation 9
-    906, 909, 912,
-  ];
-  if (speciesNumbers.length !== 3) {
-    throw new Error("The number of starters should be exactly 3.");
-  }
+): Promise<BattleScene> => {
+  return new Promise((resolve) => {
+    const starterPokedexNumbers = [
+      // Generation 1
+      1, 4, 7,
+      // Generation 2
+      152, 155, 158,
+      // Generation 3
+      252, 255, 258,
+      // Generation 4
+      387, 390, 393,
+      // Generation 5
+      495, 498, 501,
+      // Generation 6
+      650, 653, 656,
+      // Generation 7
+      722, 725, 728,
+      // Generation 8
+      810, 813, 816,
+      // Generation 9
+      906, 909, 912,
+    ];
 
-  const uniqueSpeciesNumbers = new Set(speciesNumbers);
-
-  const areValidStarters =
-    speciesNumbers.every((num) => starterPokedexNumbers.includes(num)) &&
-    uniqueSpeciesNumbers.size === speciesNumbers.length;
-
-  if (!areValidStarters) {
-    throw new Error(
-      "The starters should be a combination of three unique starter Pokemon numbers."
-    );
-  }
-
-  const scenes = game.scene.getScenes(true);
-  for (const scene of scenes) {
-    if (scene.scene.key === "battle") {
-      const battleScene = scene as BattleScene;
-      console.log("BattleScene found.");
-      const selectStarterPhase = battleScene.getCurrentPhase();
-      if (selectStarterPhase instanceof SelectStarterPhase) {
-        console.log("SelectStarterPhase found.");
-
-        const starters: Starter[] = speciesNumbers.map((species) =>
-          createStarterFromSpecies(species, battleScene)
-        );
-
-        starters.forEach((v) => {
-          console.log("Starters chosen:", v);
-        });
-
-        selectStarterPhase.initBattle(starters);
-
-        return;
-      }
+    if (speciesNumbers.length !== 3) {
+      throw new Error("The number of starters should be exactly 3.");
     }
-  }
-  setTimeout(() => initWithStarters(game, speciesNumbers), 500);
+
+    const uniqueSpeciesNumbers = new Set(speciesNumbers);
+
+    const areValidStarters =
+            speciesNumbers.every((num) =>
+              starterPokedexNumbers.includes(num)
+            ) && uniqueSpeciesNumbers.size === speciesNumbers.length;
+
+    if (!areValidStarters) {
+      throw new Error(
+        "The starters should be a combination of three unique starter Pokemon numbers."
+      );
+    }
+
+    const checkForBattleScene = () => {
+      const scenes = game.scene.getScenes(true);
+      for (const scene of scenes) {
+        if (scene.scene.key === "battle") {
+          const battleScene = scene as BattleScene;
+          console.log("BattleScene found.");
+          const selectStarterPhase = battleScene.getCurrentPhase();
+          if (selectStarterPhase instanceof SelectStarterPhase) {
+            console.log("SelectStarterPhase found.");
+
+            const starters: Starter[] = speciesNumbers.map(
+              (species) =>
+                createStarterFromSpecies(species, battleScene)
+            );
+
+            starters.forEach((v) => {
+              console.log("Starters chosen:", v);
+            });
+
+            selectStarterPhase.initBattle(starters);
+
+            resolve(battleScene);
+            return;
+          }
+        }
+      }
+      setTimeout(checkForBattleScene, 500);
+    };
+
+    checkForBattleScene();
+  });
 };

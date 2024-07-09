@@ -1,4 +1,7 @@
+import BattleScene from "#app/battle-scene.js";
 import { initWithStarters } from "./initWithStarters";
+import { BallCommand } from "./BattlePhaseAPI";
+import { CommandPhase } from "#app/phases.js";
 
 /**
  * Automates the game
@@ -10,10 +13,12 @@ import { initWithStarters } from "./initWithStarters";
  *
  * @param game - The Phaser game instance.
  */
-export const automateGame = (game: Phaser.Game) => {
+export const automateGame = async (game: Phaser.Game) => {
   // Initialise the game with three starter Pokémon.
   // Participants can change the species numbers to select different starters.
-  initWithStarters(game, [1, 155, 258]);
+  const battleScene = await initWithStarters(game, [1, 155, 258]);
+
+  phaseApi(battleScene);
 
   // Additional logic to interact with the game via the Pokerogue hackathon API can be added here.
   // For example, participants can use this space to automate player actions,
@@ -21,6 +26,24 @@ export const automateGame = (game: Phaser.Game) => {
 
   // Participants are encouraged to refer to the Pokerogue hackathon API documentation
   // for detailed information on available functions and their usage.
+};
+
+const phaseApi = (scene: BattleScene) => {
+  console.log(scene);
+
+  const checkPhase = () => {
+    const currentPhase = scene.getCurrentPhase();
+    if (currentPhase instanceof CommandPhase) {
+      BallCommand(scene);
+    } else {
+      console.log("Some other phase not yet implemented");
+    }
+  };
+
+  // Check the phase every 100 milliseconds
+  // TODO: Refactor to trigger this check after each phase update instead of using setInterval
+  // May have to edit battle-scene to create some sort of callback every time its updated
+  setInterval(checkPhase, 100);
 };
 
 export default automateGame;
