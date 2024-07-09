@@ -449,7 +449,7 @@ describe("Abilities - Parental Bond", () => {
   );
 
   /** TODO: Fix TRAPPED tag lapsing incorrectly, then run this test */
-  test.skip(
+  test(
     "Anchor Shot boosted by this ability should only trap the target after the second hit",
     async () => {
       vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.ANCHOR_SHOT]);
