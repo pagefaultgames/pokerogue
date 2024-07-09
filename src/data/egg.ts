@@ -337,7 +337,12 @@ export class Egg {
     } else if (this.tier === EggTier.MASTER
       && this._sourceType === EggSourceType.GACHA_LEGENDARY) {
       if (!Utils.randSeedInt(2)) {
-        return getLegendaryGachaSpeciesForTimestamp(scene, this.timestamp);
+        const legendarySpecies = getLegendaryGachaSpeciesForTimestamp(scene, this.timestamp);
+        // Checks if the species has variants since this check gets skipped in this function
+        if (!getPokemonSpecies(legendarySpecies).hasVariants()) {
+          this._variantTier = VariantTier.COMMON;
+        }
+        return legendarySpecies;
       }
     }
 
