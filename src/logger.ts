@@ -6,6 +6,10 @@ import { Nature, getNatureName } from "./data/nature";
 import BattleScene from "./battle-scene";
 import { OptionSelectItem } from "./ui/abstact-option-select-ui-handler";
 import { TrainerType } from "#enums/trainer-type";
+import { Modifier, PokemonHeldItemModifier } from "./modifier/modifier";
+import Battle from "./battle";
+import { getBiomeName } from "./data/biomes";
+import { trainerConfigs } from "./data/trainer-config";
 
 /**
  * All logs.
@@ -22,6 +26,132 @@ export var logKeys: string[] = [
   "e", // Encounters
   "d", // Debug
 ];
+
+export const DRPD_Version = "0.1.2"
+export interface DRPD {
+  version: string,
+  title: string,
+  authors: string[],
+  date: string,
+  waves: Wave[],
+  starters: PokeData[]
+}
+export interface Wave {
+  id: integer, // Renamed to 'id' in file
+  reload: boolean,
+  type: string,
+  double: boolean,
+  actions: string[],
+  shop: boolean | string, // suggest using only 'string' and returning undefined if nothing is taken
+  biome: string,
+  trainer?: TrainerData,
+  pokeLeft?: PokeData,
+  pokeRight?: PokeData
+}
+export interface PokeData {
+  id: integer,
+  name: string,
+  ability: string,
+  isHiddenAbility: boolean,
+  passiveAbility: string,
+  nature: string,
+  gender: string,
+  rarity: string,
+  capture: boolean,
+  level: integer,
+  items: ItemData[],
+  ivs: IVData
+}
+export interface IVData {
+  hp: integer,
+  atk: integer,
+  def: integer,
+  spatk: integer,
+  spdef: integer,
+  speed: integer
+}
+export interface TrainerData {
+  id: integer,
+  name: string,
+  type: string,
+}
+export interface ItemData {
+  id: string,
+  name: string,
+  quantity: integer,
+}
+
+export function newDocument(name: string = "Untitled Run " + (new Date().getUTCMonth() + 1 < 10 ? "0" : "") + (new Date().getUTCMonth() + 1) + "/" + (new Date().getUTCDate() < 10 ? "0" : "") + new Date().getUTCDate() + "/" + new Date().getUTCFullYear(), authorName: string | string[] = "Write your name here"): DRPD {
+  return {
+    version: DRPD_Version,
+    title: name,
+    authors: (Array.isArray(authorName) ? authorName : [authorName]),
+    date: new Date().getUTCFullYear() + "-" + (new Date().getUTCMonth() + 1 < 10 ? "0" : "") + (new Date().getUTCMonth() + 1) + "-" + (new Date().getUTCDate() < 10 ? "0" : "") + new Date().getUTCDate(),
+    waves: new Array(50),
+    starters: new Array(3)
+  }
+}
+export function exportPokemon(pokemon: Pokemon, encounterRarity?: string): PokeData {
+  return {
+    id: pokemon.species.speciesId,
+    name: pokemon.species.getName(),
+    ability: pokemon.getAbility().name,
+    isHiddenAbility: pokemon.hasAbility(pokemon.species.abilityHidden),
+    passiveAbility: pokemon.getPassiveAbility().name,
+    nature: getNatureName(pokemon.nature),
+    gender: pokemon.gender == 0 ? "Male" : (pokemon.gender == 1 ? "Female" : "Genderless"),
+    rarity: encounterRarity,
+    capture: false,
+    level: pokemon.level,
+    items: pokemon.getHeldItems().map(item => exportItem(item)),
+    ivs: exportIVs(pokemon.ivs)
+  }
+}
+export function exportItem(item: PokemonHeldItemModifier): ItemData {
+  return {
+    id: item.type.id,
+    name: item.type.name,
+    quantity: item.getStackCount()
+  }
+}
+export function exportIVs(ivs: integer[]): IVData {
+  return {
+    hp: ivs[0],
+    atk: ivs[1],
+    def: ivs[2],
+    spatk: ivs[3],
+    spdef: ivs[4],
+    speed: ivs[5]
+  }
+}
+export function exportWave(scene: BattleScene): Wave {
+  var ret: Wave = {
+    id: scene.currentBattle.waveIndex,
+    reload: false,
+    type: scene.getEnemyField()[0].hasTrainer() ? "trainer" : scene.getEnemyField()[0].isBoss() ? "boss" : "wild",
+    double: scene.currentBattle.double,
+    actions: [],
+    shop: "",
+    biome: getBiomeName(scene.arena.biomeType)
+  }
+  switch (ret.type) {
+    case "wild":
+    case "boss":
+      ret.pokeLeft = exportPokemon(scene.getEnemyField()[0])
+      if (ret.double) {
+        ret.pokeRight = exportPokemon(scene.getEnemyField()[1])
+      }
+      break;
+    case "trainer":
+      ret.trainer = {
+        id: scene.currentBattle.trainer.config.trainerType,
+        name: scene.currentBattle.trainer.name,
+        type: scene.currentBattle.trainer.config.title
+      }
+      break;
+  }
+  return ret;
+}
 
 export const byteSize = str => new Blob([str]).size
 const filesizes = ["b", "kb", "mb", "gb", "tb"]
@@ -116,7 +246,7 @@ export function logTeam(scene: BattleScene, floor: integer = undefined) {
       logPokemon(scene, floor, i, team[i])
     }
     if (team.length == 1) {
-      setRow("e", ",,,,,,,,,,,,,,,,", floor, 1)
+      //setRow("e", ",,,,,,,,,,,,,,,,", floor, 1)
     }
   }
 }
@@ -180,17 +310,25 @@ export function setRow(keyword: string, newLine: string, floor: integer, slot: i
       idx++
     }
     idx--
+    for (var i = 0; i < data.length; i++) {
+      if (data[i] == ",,,,,,,,,,,,,,,,") {
+        data.splice(i, 1)
+        if (idx > i) idx--
+        i--
+      }
+    }
     console.log((data[idx].split(",")[0] as any) * 1, floor, (data[idx].split(",")[1] as any) * 1, slot)
     if (idx < data.length && (data[idx].split(",")[0] as any) * 1 == floor && (data[idx].split(",")[1] as any) * 1 == slot) {
       data[idx] = newLine
       console.log("Overwrote data at " + idx)
-      for (var i = 0; i < Math.max(0, idx - 2) && i < 2; i++) {
+      var i: number;
+      for (i = 0; i < Math.max(0, idx - 2) && i < 2; i++) {
         console.log(i + " " + data[i])
       }
-      if (Math.min(0, idx - 2) > 3) {
+      if (i == 3 && i != Math.min(0, idx - 2)) {
         console.log("...")
       }
-      for (var i = Math.max(0, idx - 2); i <= idx + 2 && i < data.length; i++) {
+      for (i = Math.max(0, idx - 2); i <= idx + 2 && i < data.length; i++) {
         console.log(i + (i == idx ? " >> " : " ") + data[i])
       }
       localStorage.setItem(logs[logKeys.indexOf(keyword)][1], data.join("\n"));
@@ -198,18 +336,26 @@ export function setRow(keyword: string, newLine: string, floor: integer, slot: i
     }
     idx++
   }
+  for (var i = 0; i < data.length; i++) {
+    if (data[i] == ",,,,,,,,,,,,,,,,") {
+      data.splice(i, 1)
+      if (idx > i) idx--
+      i--
+    }
+  }
   console.log("Inserted data at " + idx)
-  for (var i = 0; i < Math.max(0, idx - 2) && i < 2; i++) {
+  var i: number;
+  for (i = 0; i < Math.max(0, idx - 2) && i < 2; i++) {
     console.log(i + " " + data[i])
   }
-  if (Math.min(0, idx - 2) > 3) {
+  if (i == 3 && i != Math.min(0, idx - 2)) {
     console.log("...")
   }
-  for (var i = Math.max(0, idx - 2); i < idx; i++) {
+  for (i = Math.max(0, idx - 2); i < idx; i++) {
     console.log(i + " " + data[i])
   }
   console.log(i + " >> " + newLine)
-  for (var i = idx; i <= idx + 2 && i < data.length; i++) {
+  for (i = idx; i <= idx + 2 && i < data.length; i++) {
     console.log(i + " " + data[i])
   }
   localStorage.setItem(logs[logKeys.indexOf(keyword)][1], data.slice(0, idx).join("\n") + "\n" + newLine + (data.slice(idx).length == 0 ? "" : "\n") + data.slice(idx).join("\n"));
