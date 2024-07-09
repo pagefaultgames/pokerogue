@@ -10,6 +10,7 @@ export enum TextStyle {
   MESSAGE,
   WINDOW,
   WINDOW_ALT,
+  WINDOW_DISABLED,
   BATTLE_INFO,
   PARTY,
   PARTY_RED,
@@ -55,6 +56,7 @@ export function setTextStyle(obj: Phaser.GameObjects.Text, scene: Phaser.Scene, 
   const [ scale, styleOptions, shadowColor, shadowXpos, shadowYpos ] = getTextStyleOptions(style, (scene as BattleScene).uiTheme, extraStyleOptions);
   obj.setScale(scale);
   obj.setShadow(shadowXpos, shadowYpos, shadowColor);
+  obj.setStyle(styleOptions);
   if (!(styleOptions as Phaser.Types.GameObjects.Text.TextStyle).lineSpacing) {
     obj.setLineSpacing(5);
   }
@@ -183,6 +185,11 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
       return !shadow ? "#484848" : "#d0d0c8";
     }
     return !shadow ? "#f8f8f8" : "#6b5a73";
+  case TextStyle.WINDOW_DISABLED:
+    if (uiTheme) {
+      return !shadow ? "#808080" : "#d0d0c8";
+    }
+    return !shadow ? "#cccccc" : "#6b5a73";
   case TextStyle.MOVE_PP_HALF_FULL:
     if (uiTheme) {
       return !shadow ? "#a68e17" : "#ebd773";

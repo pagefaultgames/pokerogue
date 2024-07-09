@@ -524,6 +524,14 @@ export default class UI extends Phaser.GameObjects.Container {
     });
   }
 
+  public getPrevMode(): Mode {
+    if (this.modeChain.length) {
+      return this.modeChain[this.modeChain.length - 1];
+    } else {
+      return null;
+    }
+  }
+
   revertModes(): Promise<void> {
     return new Promise<void>(resolve => {
       if (!this?.modeChain?.length) {

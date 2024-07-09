@@ -1,5 +1,5 @@
 import BattleScene, { bypassLogin } from "../battle-scene";
-import { TextStyle, addTextObject } from "./text";
+import { TextStyle, addTextObject, setTextStyle } from "./text";
 import { Mode } from "./ui";
 import * as Utils from "../utils";
 import { addWindow } from "./ui-theme";
@@ -36,12 +36,14 @@ export default class MenuUiHandler extends MessageUiHandler {
   private menuOverlay: Phaser.GameObjects.Rectangle;
 
   private menuBg: Phaser.GameObjects.NineSlice;
+  private optionContainer: Phaser.GameObjects.Container;
   protected optionSelectText: Phaser.GameObjects.Text;
 
   private cursorObj: Phaser.GameObjects.Image;
 
   protected ignoredMenuOptions: MenuOptions[];
   protected menuOptions: MenuOptions[];
+  protected disabledMenuOptions: MenuOptions[];
 
   protected manageDataConfig: OptionSelectConfig;
   protected communityConfig: OptionSelectConfig;
@@ -85,17 +87,26 @@ export default class MenuUiHandler extends MessageUiHandler {
     menuMessageText.setWordWrapWidth(1224);
     menuMessageText.setOrigin(0, 0);
 
-    this.optionSelectText = addTextObject(this.scene, 0, 0, this.menuOptions.map(o => `${i18next.t(`menuUiHandler:${MenuOptions[o]}`)}`).join("\n"), TextStyle.WINDOW, { maxLines: this.menuOptions.length });
-    this.optionSelectText.setLineSpacing(12);
+    this.optionContainer = this.scene.add.container();
+    let maxTextWidth = 0;
+    this.menuOptions.map((o,i) => {
+      const nextOption = addTextObject(this.scene, 0, i*16, i18next.t(`menuUiHandler:${MenuOptions[o]}`), TextStyle.WINDOW);
+      nextOption.setData({ optionIndex: o });
+      if (nextOption.displayWidth > maxTextWidth) {
+        maxTextWidth = nextOption.displayWidth;
+      }
 
-    this.menuBg = addWindow(this.scene, (this.scene.game.canvas.width / 6) - (this.optionSelectText.displayWidth + 25), 0, this.optionSelectText.displayWidth + 23, (this.scene.game.canvas.height / 6) - 2);
+      this.optionContainer.add(nextOption);
+    });
+
+    this.menuBg = addWindow(this.scene, (this.scene.game.canvas.width / 6) - (maxTextWidth + 25), 0, maxTextWidth + 23, (this.scene.game.canvas.height / 6) - 2);
     this.menuBg.setOrigin(0, 0);
 
-    this.optionSelectText.setPositionRelative(this.menuBg, 14, 6);
+    this.optionContainer.setPositionRelative(this.menuBg, 14, 6);
 
     this.menuContainer.add(this.menuBg);
 
-    this.menuContainer.add(this.optionSelectText);
+    this.menuContainer.add(this.optionContainer);
 
     ui.add(this.menuContainer);
 
@@ -263,16 +274,40 @@ export default class MenuUiHandler extends MessageUiHandler {
     this.menuContainer.setVisible(false);
   }
 
+  private getDisabledMenuOptions() : void {
+    const ui = this.getUi();
+
+    switch (ui.getPrevMode()) {
+    case Mode.MODIFIER_SELECT:
+      this.disabledMenuOptions =  [ MenuOptions.EGG_GACHA ];
+      break;
+    default:
+      this.disabledMenuOptions =  [ ];
+    }
+  }
+
   show(args: any[]): boolean {
 
     super.show(args);
 
+    const ui = this.getUi();
+
+    this.getDisabledMenuOptions();
+
+    for (const option of this.optionContainer.list) {
+      const isDisabled = this.disabledMenuOptions.includes(option.getData("optionIndex"));
+      if (isDisabled) {
+        const textOption = option as Phaser.GameObjects.Text;
+        setTextStyle(textOption, this.scene, TextStyle.WINDOW_DISABLED);
+      }
+    }
+
     this.menuContainer.setVisible(true);
     this.setCursor(0);
 
-    this.getUi().moveTo(this.menuContainer, this.getUi().length - 1);
+    ui.moveTo(this.menuContainer, ui.length - 1);
 
-    this.getUi().hideTooltip();
+    ui.hideTooltip();
 
     this.scene.playSound("menu_open");
 
@@ -299,85 +334,89 @@ export default class MenuUiHandler extends MessageUiHandler {
           break;
         }
       }
-      switch (adjustedCursor) {
-      case MenuOptions.GAME_SETTINGS:
-        ui.setOverlayMode(Mode.SETTINGS);
-        success = true;
-        break;
-      case MenuOptions.ACHIEVEMENTS:
-        ui.setOverlayMode(Mode.ACHIEVEMENTS);
-        success = true;
-        break;
-      case MenuOptions.STATS:
-        ui.setOverlayMode(Mode.GAME_STATS);
-        success = true;
-        break;
-      case MenuOptions.VOUCHERS:
-        ui.setOverlayMode(Mode.VOUCHERS);
-        success = true;
-        break;
-      case MenuOptions.EGG_LIST:
-        if (this.scene.gameData.eggs.length) {
+      if (this.disabledMenuOptions.includes(adjustedCursor)) {
+        this.scene.playSound("error");
+      } else {
+        switch (adjustedCursor) {
+        case MenuOptions.GAME_SETTINGS:
+          ui.setOverlayMode(Mode.SETTINGS);
+          success = true;
+          break;
+        case MenuOptions.ACHIEVEMENTS:
+          ui.setOverlayMode(Mode.ACHIEVEMENTS);
+          success = true;
+          break;
+        case MenuOptions.STATS:
+          ui.setOverlayMode(Mode.GAME_STATS);
+          success = true;
+          break;
+        case MenuOptions.VOUCHERS:
+          ui.setOverlayMode(Mode.VOUCHERS);
+          success = true;
+          break;
+        case MenuOptions.EGG_LIST:
+          if (this.scene.gameData.eggs.length) {
+            ui.revertMode();
+            ui.setOverlayMode(Mode.EGG_LIST);
+            success = true;
+          } else {
+            ui.showText(i18next.t("menuUiHandler:noEggs"), null, () => ui.showText(""), Utils.fixedInt(1500));
+            error = true;
+          }
+          break;
+        case MenuOptions.EGG_GACHA:
           ui.revertMode();
-          ui.setOverlayMode(Mode.EGG_LIST);
+          ui.setOverlayMode(Mode.EGG_GACHA);
           success = true;
-        } else {
-          ui.showText(i18next.t("menuUiHandler:noEggs"), null, () => ui.showText(""), Utils.fixedInt(1500));
-          error = true;
-        }
-        break;
-      case MenuOptions.EGG_GACHA:
-        ui.revertMode();
-        ui.setOverlayMode(Mode.EGG_GACHA);
-        success = true;
-        break;
-      case MenuOptions.MANAGE_DATA:
-        ui.setOverlayMode(Mode.MENU_OPTION_SELECT, this.manageDataConfig);
-        success = true;
-        break;
-      case MenuOptions.COMMUNITY:
-        ui.setOverlayMode(Mode.MENU_OPTION_SELECT, this.communityConfig);
-        success = true;
-        break;
-      case MenuOptions.SAVE_AND_QUIT:
-        if (this.scene.currentBattle) {
+          break;
+        case MenuOptions.MANAGE_DATA:
+          ui.setOverlayMode(Mode.MENU_OPTION_SELECT, this.manageDataConfig);
           success = true;
-          if (this.scene.currentBattle.turn > 1) {
+          break;
+        case MenuOptions.COMMUNITY:
+          ui.setOverlayMode(Mode.MENU_OPTION_SELECT, this.communityConfig);
+          success = true;
+          break;
+        case MenuOptions.SAVE_AND_QUIT:
+          if (this.scene.currentBattle) {
+            success = true;
+            if (this.scene.currentBattle.turn > 1) {
+              ui.showText(i18next.t("menuUiHandler:losingProgressionWarning"), null, () => {
+                ui.setOverlayMode(Mode.CONFIRM, () => this.scene.gameData.saveAll(this.scene, true, true, true, true).then(() => this.scene.reset(true)), () => {
+                  ui.revertMode();
+                  ui.showText(null, 0);
+                }, false, -98);
+              });
+            } else {
+              this.scene.gameData.saveAll(this.scene, true, true, true, true).then(() => this.scene.reset(true));
+            }
+          } else {
+            error = true;
+          }
+          break;
+        case MenuOptions.LOG_OUT:
+          success = true;
+          const doLogout = () => {
+            Utils.apiFetch("account/logout", true).then(res => {
+              if (!res.ok) {
+                console.error(`Log out failed (${res.status}: ${res.statusText})`);
+              }
+              Utils.setCookie(Utils.sessionIdKey, "");
+              updateUserInfo().then(() => this.scene.reset(true, true));
+            });
+          };
+          if (this.scene.currentBattle) {
             ui.showText(i18next.t("menuUiHandler:losingProgressionWarning"), null, () => {
-              ui.setOverlayMode(Mode.CONFIRM, () => this.scene.gameData.saveAll(this.scene, true, true, true, true).then(() => this.scene.reset(true)), () => {
+              ui.setOverlayMode(Mode.CONFIRM, doLogout, () => {
                 ui.revertMode();
                 ui.showText(null, 0);
               }, false, -98);
             });
           } else {
-            this.scene.gameData.saveAll(this.scene, true, true, true, true).then(() => this.scene.reset(true));
+            doLogout();
           }
-        } else {
-          error = true;
+          break;
         }
-        break;
-      case MenuOptions.LOG_OUT:
-        success = true;
-        const doLogout = () => {
-          Utils.apiFetch("account/logout", true).then(res => {
-            if (!res.ok) {
-              console.error(`Log out failed (${res.status}: ${res.statusText})`);
-            }
-            Utils.setCookie(Utils.sessionIdKey, "");
-            updateUserInfo().then(() => this.scene.reset(true, true));
-          });
-        };
-        if (this.scene.currentBattle) {
-          ui.showText(i18next.t("menuUiHandler:losingProgressionWarning"), null, () => {
-            ui.setOverlayMode(Mode.CONFIRM, doLogout, () => {
-              ui.revertMode();
-              ui.showText(null, 0);
-            }, false, -98);
-          });
-        } else {
-          doLogout();
-        }
-        break;
       }
     } else if (button === Button.CANCEL) {
       success = true;

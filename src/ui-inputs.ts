@@ -162,6 +162,7 @@ export class UiInputs {
       }
     case Mode.TITLE:
     case Mode.COMMAND:
+    case Mode.MODIFIER_SELECT:
       this.scene.ui.setOverlayMode(Mode.MENU);
       break;
     case Mode.STARTER_SELECT:
