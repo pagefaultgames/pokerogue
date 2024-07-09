@@ -5633,6 +5633,13 @@ export class ResistLastMoveTypeAttr extends MoveEffectAttr {
 
     return true;
   }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target, move) => {
+      const moveHistory = target.getLastXMoves();
+      return !!moveHistory.length;
+    };
+  }
 }
 
 const unknownTypeCondition: MoveConditionFunc = (user, target, move) => !user.getTypes().includes(Type.UNKNOWN);
@@ -6182,7 +6189,7 @@ export function initMoves() {
     new AttackMove(Moves.FLAIL, Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 15, -1, 0, 2)
       .attr(LowHpPowerAttr),
     new StatusMove(Moves.CONVERSION_2, Type.NORMAL, -1, 30, -1, 0, 2)
-      .unimplemented(),
+      .attr(ResistLastMoveTypeAttr),
     new AttackMove(Moves.AEROBLAST, Type.FLYING, MoveCategory.SPECIAL, 100, 95, 5, -1, 0, 2)
       .attr(HighCritAttr),
     new StatusMove(Moves.COTTON_SPORE, Type.GRASS, 100, 40, -1, 0, 2)
