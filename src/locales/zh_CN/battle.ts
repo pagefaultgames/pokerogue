@@ -80,7 +80,7 @@ export const battle: SimpleTranslationEntries = {
   "retryBattle": "你要从对战开始时重试么？",
   "unlockedSomething": "{{unlockedThing}}\n已解锁。",
   "congratulations": "恭喜！",
-  "beatModeFirstTime": "{{speciesName}} 首次击败了 {{gameMode}} 模式！\n你获得了{{newModifier}}！",
+  "beatModeFirstTime": "{{speciesName}}首次击败了{{gameMode}}！\n你获得了{{newModifier}}！",
   "battlerTagsRechargingLapse": "{{pokemonNameWithAffix}}\n因攻击的反作用力而无法动弹！",
   "battlerTagsTrappedOnAdd": "{{pokemonNameWithAffix}}不能逃跑！",
   "battlerTagsTrappedOnRemove": "{{pokemonNameWithAffix}}\n摆脱了{{moveName}}！",
