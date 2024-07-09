@@ -23,7 +23,6 @@ import { Nature } from "#app/data/nature";
 import * as Overrides from "../overrides";
 import { ModifierType, modifierTypes } from "./modifier-type";
 import { Command } from "#app/ui/command-ui-handler.js";
-import i18next from "../plugins/i18n";
 import { Species } from "#enums/species";
 import i18next from "i18next";
 
