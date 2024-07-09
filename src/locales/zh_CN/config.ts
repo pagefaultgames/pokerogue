@@ -27,8 +27,8 @@ import { gameStatsUiHandler } from "./game-stats-ui-handler";
 import { growth } from "./growth";
 import { menu } from "./menu";
 import { menuUiHandler } from "./menu-ui-handler";
-import { modifierSelectUiHandler } from "./modifier-select-ui-handler";
 import { modifier } from "./modifier";
+import { modifierSelectUiHandler } from "./modifier-select-ui-handler";
 import { modifierType } from "./modifier-type";
 import { move } from "./move";
 import { nature } from "./nature";
@@ -45,12 +45,7 @@ import { statusEffect } from "./status-effect";
 import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
-import { weather } from "./weather";
 import { terrain, weather } from "./weather";
-import { partyUiHandler } from "./party-ui-handler";
-import { settings } from "./settings.js";
-import { common } from "./common.js";
-import { modifierSelectUiHandler } from "./modifier-select-ui-handler";
 
 export const zhCnConfig = {
   ability: ability,
