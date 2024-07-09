@@ -19,10 +19,10 @@ export const arenaFlyout: SimpleTranslationEntries = {
   "strongWinds": "Strong Winds",
 
   // TerrainType
-  "misty": "Misty",
-  "electric": "Electric",
-  "grassy": "Grassy",
-  "psychic": "Psychic",
+  "misty": "Misty Terrain",
+  "electric": "Electric Terrain",
+  "grassy": "Grassy Terrain",
+  "psychic": "Psychic Terrain",
 
   // ArenaTagType
   "mudSport": "Mud Sport",
