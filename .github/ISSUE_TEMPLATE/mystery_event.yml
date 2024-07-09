@@ -1,0 +1,93 @@
+name: Mystery Event
+description: Propose a new mystery event
+title: "[Event]: "
+body:
+  - type: dropdown
+    id: rarity
+    attributes:
+      label: Rarity
+      multiple: false
+      options:
+        - Common (~4/8)
+        - Uncommon (~2/8)
+        - Rare 
+        - Epic
+        - Legendary (~0.5/8 or 1 per 2 Classic runs)
+        - Other (please specify)
+    validations:
+      required: true
+  - type: input
+    id: floors
+    attributes:
+      label: Floors
+      placeholder: 1-200
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What is it?
+    validations:
+      required: true
+  - type: dropdown
+    id: biomes
+    attributes:
+      label: Biomes
+      multiple: true
+      options:
+        - any (no need to select all)
+        - TOWN
+        - PLAINS
+        - GRASS
+        - TALL_GRASS
+        - METROPOLIS
+        - FOREST
+        - SEA
+        - SWAMP
+        - BEACH
+        - LAKE
+        - SEABED
+        - MOUNTAIN
+        - BADLANDS
+        - CAVE
+        - DESERT
+        - ICE_CAVE
+        - MEADOW
+        - POWER_PLANT
+        - VOLCANO
+        - GRAVEYARD
+        - DOJO
+        - FACTORY
+        - RUINS
+        - WASTELAND
+        - ABYSS
+        - SPACE
+        - CONSTRUCTION_SITE
+        - JUNGLE
+        - FAIRY_CAVE
+        - TEMPLE
+        - SLUM
+        - SNOWY_FOREST
+        - ISLAND
+        - LABORATORY
+        - END
+    validations:
+      required: truea
+  - type: textarea
+    id: options
+    attributes:
+      label: Options offered
+    validations:
+      required: true
+  - type: textarea
+    id: design-notes
+    attributes:
+      label: Notes on Design
+    validations:
+      required: false
+  - type: textarea
+    id: dev-notes
+    attributes:
+      label: Notes to Devs
+    validations:
+      required: false
