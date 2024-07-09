@@ -1,6 +1,6 @@
 name: Mystery Event
 description: Propose a new mystery event
-title: "[Event]: "
+title: "[Event Proposal]: "
 body:
   - type: dropdown
     id: rarity
@@ -8,19 +8,18 @@ body:
       label: Rarity
       multiple: false
       options:
-        - Common (~4/8)
-        - Uncommon (~2/8)
-        - Rare 
-        - Epic
-        - Legendary (~0.5/8 or 1 per 2 Classic runs)
+        - Common
+        - Great
+        - Ultra 
+        - Rogue
         - Other (please specify)
     validations:
       required: true
   - type: input
-    id: floors
+    id: waves
     attributes:
-      label: Floors
-      placeholder: 1-200
+      label: Waves
+      placeholder: 1-200 (currently only 11-179 exist)
     validations:
       required: true
   - type: textarea
@@ -37,6 +36,7 @@ body:
       multiple: true
       options:
         - any (no need to select all)
+        - non-extreme (almost all except Space, Seabed, etc...)
         - TOWN
         - PLAINS
         - GRASS
@@ -78,17 +78,20 @@ body:
     id: options
     attributes:
       label: Options offered
+      placeholder: Only four options can be displayed at a time
     validations:
       required: true
   - type: textarea
     id: design-notes
     attributes:
       label: Notes on Design
+      placeholder: (If any needed)
     validations:
       required: false
   - type: textarea
     id: dev-notes
     attributes:
       label: Notes to Devs
+      placeholder: (If any needed)
     validations:
       required: false
