@@ -54,9 +54,11 @@ export function addTextObject(scene: Phaser.Scene, x: number, y: number, content
 
 export function setTextStyle(obj: Phaser.GameObjects.Text, scene: Phaser.Scene, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle) {
   const [ scale, styleOptions, shadowColor, shadowXpos, shadowYpos ] = getTextStyleOptions(style, (scene as BattleScene).uiTheme, extraStyleOptions);
+
+  // obj.setStyle(styleOptions);
   obj.setScale(scale);
   obj.setShadow(shadowXpos, shadowYpos, shadowColor);
-  obj.setStyle(styleOptions);
+
   if (!(styleOptions as Phaser.Types.GameObjects.Text.TextStyle).lineSpacing) {
     obj.setLineSpacing(5);
   }
@@ -86,7 +88,7 @@ export function addTextInputObject(scene: Phaser.Scene, x: number, y: number, wi
   return ret;
 }
 
-export function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): [ number, Phaser.Types.GameObjects.Text.TextStyle | InputText.IConfig, string, number, number ] {
+export function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): [ number, Phaser.Types.GameObjects.Text.TextStyle, string, number, number ] {
   let shadowXpos = 4;
   let shadowYpos = 5;
   const scale = 0.1666666667;
@@ -111,6 +113,7 @@ export function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraSty
   case TextStyle.SUMMARY_GRAY:
   case TextStyle.SUMMARY_GREEN:
   case TextStyle.WINDOW:
+  case TextStyle.WINDOW_DISABLED:
   case TextStyle.WINDOW_ALT:
   case TextStyle.STATS_VALUE:
     shadowXpos = 3;

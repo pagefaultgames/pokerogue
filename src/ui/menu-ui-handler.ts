@@ -89,15 +89,18 @@ export default class MenuUiHandler extends MessageUiHandler {
 
     this.optionContainer = this.scene.add.container();
     let maxTextWidth = 0;
-    this.menuOptions.map((o,i) => {
-      const nextOption = addTextObject(this.scene, 0, i*16, i18next.t(`menuUiHandler:${MenuOptions[o]}`), TextStyle.WINDOW);
-      nextOption.setData({ optionIndex: o });
-      if (nextOption.displayWidth > maxTextWidth) {
-        maxTextWidth = nextOption.displayWidth;
-      }
-
-      this.optionContainer.add(nextOption);
-    });
+    this.optionContainer.add(
+      this.menuOptions.map((o,i) => {
+        const nextOption = addTextObject(this.scene, 0, i*16, i18next.t(`menuUiHandler:${MenuOptions[o]}`), TextStyle.WINDOW);
+        if (nextOption.setData) {
+          nextOption.setData({ optionIndex: o });
+        }
+        if (nextOption.displayWidth > maxTextWidth) {
+          maxTextWidth = nextOption.displayWidth;
+        }
+        return nextOption;
+      })
+    );
 
     this.menuBg = addWindow(this.scene, (this.scene.game.canvas.width / 6) - (maxTextWidth + 25), 0, maxTextWidth + 23, (this.scene.game.canvas.height / 6) - 2);
     this.menuBg.setOrigin(0, 0);
