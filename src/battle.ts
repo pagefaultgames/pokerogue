@@ -13,7 +13,7 @@ import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
-import MysteryEncounter, { MysteryEncounterVariant } from "./data/mystery-encounter";
+import MysteryEncounter, { MysteryEncounterVariant } from "./data/mystery-encounters/mystery-encounter";
 
 export enum BattleType {
   WILD,

@@ -1,29 +1,29 @@
-import BattleScene from "../../battle-scene";
+import BattleScene from "../../../battle-scene";
 import {
   EnemyPartyConfig,
   EnemyPokemonConfig, generateModifierType,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle, queueEncounterMessage,
-  setCustomEncounterRewards
-} from "./mystery-encounter-utils";
-import MysteryEncounter, {MysteryEncounterBuilder, MysteryEncounterTier} from "../mystery-encounter";
-import * as Utils from "../../utils";
-import {MysteryEncounterType} from "#enums/mystery-encounter-type";
-import {MoveRequirement, WaveCountRequirement} from "../mystery-encounter-requirements";
-import {MysteryEncounterOptionBuilder} from "../mystery-encounter-option";
+  setEncounterRewards
+} from "../mystery-encounter-utils";
+import MysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier } from "../mystery-encounter";
+import * as Utils from "../../../utils";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { MoveRequirement, WaveCountRequirement } from "../mystery-encounter-requirements";
+import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import {
   ModifierTypeOption,
   modifierTypes
 } from "#app/modifier/modifier-type";
-import { getPokemonSpecies } from "../pokemon-species";
+import { getPokemonSpecies } from "../../pokemon-species";
 import { Species } from "#enums/species";
-import { Status, StatusEffect } from "../status-effect";
+import { Status, StatusEffect } from "../../status-effect";
 import { Moves } from "#enums/moves";
 import { BerryType } from "#enums/berry-type";
 
 export const SleepingSnorlaxEncounter: MysteryEncounter = new MysteryEncounterBuilder()
   .withEncounterType(MysteryEncounterType.SLEEPING_SNORLAX)
-  .withEncounterTier(MysteryEncounterTier.RARE)
+  .withEncounterTier(MysteryEncounterTier.ULTRA)
   .withIntroSpriteConfigs([
     {
       spriteKey: Species.SNORLAX.toString(),
@@ -65,7 +65,7 @@ export const SleepingSnorlaxEncounter: MysteryEncounter = new MysteryEncounterBu
   .withOption(new MysteryEncounterOptionBuilder()
     .withOptionPhase(async (scene: BattleScene) => {
       const instance = scene.currentBattle.mysteryEncounter;
-      let roll:integer;
+      let roll: integer;
       scene.executeWithSeedOffset(() => {
         roll = Utils.randSeedInt(16, 0);
       }, scene.currentBattle.waveIndex);
@@ -73,12 +73,12 @@ export const SleepingSnorlaxEncounter: MysteryEncounter = new MysteryEncounterBu
       if (roll > 4) {
         // Fall asleep and get a sitrus berry (75%)
         const p = instance.primaryPokemon;
-        p.status =  new Status(StatusEffect.SLEEP, 0, 3);
+        p.status = new Status(StatusEffect.SLEEP, 0, 3);
         p.updateInfo(true);
         // const sitrus = (modifierTypes.BERRY?.() as ModifierTypeGenerator).generateType(scene.getParty(), [BerryType.SITRUS]);
         const sitrus = generateModifierType(scene, modifierTypes.BERRY, [BerryType.SITRUS]);
 
-        setCustomEncounterRewards(scene, { guaranteedModifierTypeOptions: [new ModifierTypeOption(sitrus, 0)], fillRemaining: false});
+        setEncounterRewards(scene, { guaranteedModifierTypeOptions: [new ModifierTypeOption(sitrus, 0)], fillRemaining: false });
         queueEncounterMessage(scene, "mysteryEncounter:sleeping_snorlax_option_2_bad_result");
         leaveEncounterWithoutBattle(scene);
       } else {
@@ -101,7 +101,7 @@ export const SleepingSnorlaxEncounter: MysteryEncounter = new MysteryEncounterBu
     .withPrimaryPokemonRequirement(new MoveRequirement([Moves.PLUCK, Moves.COVET, Moves.KNOCK_OFF, Moves.THIEF, Moves.TRICK, Moves.SWITCHEROO]))
     .withOptionPhase(async (scene: BattleScene) => {
       // Leave encounter with no rewards or exp
-      setCustomEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.LEFTOVERS], fillRemaining: false});
+      setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.LEFTOVERS], fillRemaining: false });
       queueEncounterMessage(scene, "mysteryEncounter:sleeping_snorlax_option_3_good_result");
       leaveEncounterWithoutBattle(scene);
     })

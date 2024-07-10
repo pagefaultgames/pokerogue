@@ -1,32 +1,32 @@
-import BattleScene from "../../battle-scene";
+import BattleScene from "../../../battle-scene";
 import {
   EnemyPartyConfig,
-  getTextWithEncounterDialogueTokensAndColor,
+  getEncounterText,
   initBattleWithEnemyConfig,
   selectPokemonForOption,
-  setCustomEncounterRewards
+  setEncounterRewards
 } from "#app/data/mystery-encounters/mystery-encounter-utils";
-import {MysteryEncounterType} from "#enums/mystery-encounter-type";
-import MysteryEncounter, {MysteryEncounterBuilder, MysteryEncounterTier} from "../mystery-encounter";
-import {MysteryEncounterOptionBuilder} from "../mystery-encounter-option";
-import {WaveCountRequirement} from "../mystery-encounter-requirements";
-import {PlayerPokemon} from "#app/field/pokemon";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import MysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier } from "../mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
+import { WaveCountRequirement } from "../mystery-encounter-requirements";
+import { PlayerPokemon } from "#app/field/pokemon";
 import PokemonData from "#app/system/pokemon-data";
-import {randSeedShuffle} from "#app/utils";
-import {getNatureName, Nature} from "#app/data/nature";
-import {BattlerTagType} from "#enums/battler-tag-type";
-import {OptionSelectItem} from "#app/ui/abstact-option-select-ui-handler";
-import {PokemonHeldItemModifier} from "#app/modifier/modifier";
-import {PokemonHeldItemModifierType} from "#app/modifier/modifier-type";
-import {Ability, allAbilities} from "#app/data/ability";
-import {speciesStarters} from "#app/data/pokemon-species";
-import {AbilityAttr} from "#app/system/game-data";
-import {Stat} from "#app/data/pokemon-stat";
-import {pokemonInfo} from "#app/locales/en/pokemon-info";
+import { randSeedShuffle } from "#app/utils";
+import { getNatureName, Nature } from "#app/data/nature";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
+import { PokemonHeldItemModifier } from "#app/modifier/modifier";
+import { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
+import { Ability, allAbilities } from "#app/data/ability";
+import { speciesStarters } from "#app/data/pokemon-species";
+import { AbilityAttr } from "#app/system/game-data";
+import { Stat } from "#app/data/pokemon-stat";
+import { pokemonInfo } from "#app/locales/en/pokemon-info";
 
 export const TrainingSessionEncounter: MysteryEncounter = new MysteryEncounterBuilder()
   .withEncounterType(MysteryEncounterType.TRAINING_SESSION)
-  .withEncounterTier(MysteryEncounterTier.RARE)
+  .withEncounterTier(MysteryEncounterTier.ULTRA)
   .withIntroSpriteConfigs([
     {
       spriteKey: "training_gear",
@@ -83,7 +83,7 @@ export const TrainingSessionEncounter: MysteryEncounter = new MysteryEncounterBu
         const ivIndexes = [];
         playerPokemon.ivs.forEach((iv, index) => {
           if (iv < 31) {
-            ivIndexes.push({iv: iv, index: index});
+            ivIndexes.push({ iv: iv, index: index });
           }
         });
 
@@ -128,10 +128,10 @@ export const TrainingSessionEncounter: MysteryEncounter = new MysteryEncounterBu
           scene.addModifier(mod, true, false, false, true);
         }
         scene.updateModifiers(true);
-        scene.queueMessage(getTextWithEncounterDialogueTokensAndColor(scene, "mysteryEncounter:training_session_battle_finished_1"), null, true);
+        scene.queueMessage(getEncounterText(scene, "mysteryEncounter:training_session_battle_finished_1"), null, true);
       };
 
-      setCustomEncounterRewards(scene, { fillRemaining: true }, null, onBeforeRewardsPhase);
+      setEncounterRewards(scene, { fillRemaining: true }, null, onBeforeRewardsPhase);
 
       return initBattleWithEnemyConfig(scene, config);
     })
@@ -174,7 +174,7 @@ export const TrainingSessionEncounter: MysteryEncounter = new MysteryEncounterBu
       scene.removePokemonFromPlayerParty(playerPokemon, false);
 
       const onBeforeRewardsPhase = () => {
-        scene.queueMessage(getTextWithEncounterDialogueTokensAndColor(scene, "mysteryEncounter:training_session_battle_finished_2"), null, true);
+        scene.queueMessage(getEncounterText(scene, "mysteryEncounter:training_session_battle_finished_2"), null, true);
         // Add the pokemon back to party with Nature change
         playerPokemon.setNature(encounter.misc.chosenNature);
         scene.gameData.setPokemonCaught(playerPokemon, false);
@@ -187,7 +187,7 @@ export const TrainingSessionEncounter: MysteryEncounter = new MysteryEncounterBu
         scene.updateModifiers(true);
       };
 
-      setCustomEncounterRewards(scene, { fillRemaining: true }, null, onBeforeRewardsPhase);
+      setEncounterRewards(scene, { fillRemaining: true }, null, onBeforeRewardsPhase);
 
       return initBattleWithEnemyConfig(scene, config);
     })
@@ -237,7 +237,7 @@ export const TrainingSessionEncounter: MysteryEncounter = new MysteryEncounterBu
       scene.removePokemonFromPlayerParty(playerPokemon, false);
 
       const onBeforeRewardsPhase = () => {
-        scene.queueMessage(getTextWithEncounterDialogueTokensAndColor(scene, "mysteryEncounter:training_session_battle_finished_3"), null, true);
+        scene.queueMessage(getEncounterText(scene, "mysteryEncounter:training_session_battle_finished_3"), null, true);
         // Add the pokemon back to party with ability change
         const abilityIndex = encounter.misc.abilityIndex;
         if (!!playerPokemon.getFusionSpeciesForm()) {
@@ -268,7 +268,7 @@ export const TrainingSessionEncounter: MysteryEncounter = new MysteryEncounterBu
         scene.updateModifiers(true);
       };
 
-      setCustomEncounterRewards(scene, { fillRemaining: true }, null, onBeforeRewardsPhase);
+      setEncounterRewards(scene, { fillRemaining: true }, null, onBeforeRewardsPhase);
 
       return initBattleWithEnemyConfig(scene, config);
     })
@@ -302,5 +302,6 @@ function getEnemyConfig(scene: BattleScene, playerPokemon: PlayerPokemon, segmen
 class ModifiersHolder {
   public value: PokemonHeldItemModifier[] = [];
 
-  constructor() {}
+  constructor() {
+  }
 }

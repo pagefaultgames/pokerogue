@@ -1,6 +1,6 @@
 import { GameObjects } from "phaser";
 import BattleScene from "../battle-scene";
-import MysteryEncounter from "../data/mystery-encounter";
+import MysteryEncounter from "../data/mystery-encounters/mystery-encounter";
 
 export class MysteryEncounterSpriteConfig {
   spriteKey: string; // e.g. "ace_trainer_f"
@@ -40,7 +40,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
     const getSprite = (spriteKey: string, hasShadow?: boolean) => {
       const ret = this.scene.addFieldSprite(0, 0, spriteKey);
       ret.setOrigin(0.5, 1);
-      ret.setPipeline(this.scene.spritePipeline, {tone: [0.0, 0.0, 0.0, 0.0], hasShadow: !!hasShadow});
+      ret.setPipeline(this.scene.spritePipeline, { tone: [0.0, 0.0, 0.0, 0.0], hasShadow: !!hasShadow });
       return ret;
     };
 

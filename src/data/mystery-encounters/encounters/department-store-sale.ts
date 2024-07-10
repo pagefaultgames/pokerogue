@@ -1,15 +1,15 @@
-import BattleScene from "../../battle-scene";
+import BattleScene from "../../../battle-scene";
 import {
-  leaveEncounterWithoutBattle,
-  setCustomEncounterRewards,
+  leaveEncounterWithoutBattle, setEncounterExp,
+  setEncounterRewards,
 } from "#app/data/mystery-encounters/mystery-encounter-utils";
-import MysteryEncounter, {MysteryEncounterBuilder, MysteryEncounterTier} from "../mystery-encounter";
+import MysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier } from "../mystery-encounter";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import {WaveCountRequirement} from "../mystery-encounter-requirements";
+import { WaveCountRequirement } from "../mystery-encounter-requirements";
 import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
-import {modifierTypes} from "#app/modifier/modifier-type";
-import {Species} from "#enums/species";
-import {randSeedInt} from "#app/utils";
+import { modifierTypes } from "#app/modifier/modifier-type";
+import { Species } from "#enums/species";
+import { randSeedInt } from "#app/utils";
 
 export const DepartmentStoreSaleEncounter: MysteryEncounter = new MysteryEncounterBuilder()
   .withEncounterType(MysteryEncounterType.DEPARTMENT_STORE_SALE)
@@ -49,7 +49,8 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter = new MysteryEncount
         i++;
       }
 
-      setCustomEncounterRewards(scene, { guaranteedModifierTypeFuncs: modifiers, fillRemaining: false});
+      setEncounterExp(scene, scene.getParty().map(p => p.id), 300);
+      setEncounterRewards(scene, { guaranteedModifierTypeFuncs: modifiers, fillRemaining: false });
       leaveEncounterWithoutBattle(scene);
     })
     .build())
@@ -69,7 +70,7 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter = new MysteryEncount
         i++;
       }
 
-      setCustomEncounterRewards(scene, { guaranteedModifierTypeFuncs: modifiers, fillRemaining: false});
+      setEncounterRewards(scene, { guaranteedModifierTypeFuncs: modifiers, fillRemaining: false });
       leaveEncounterWithoutBattle(scene);
     })
     .build())
@@ -89,7 +90,7 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter = new MysteryEncount
         i++;
       }
 
-      setCustomEncounterRewards(scene, { guaranteedModifierTypeFuncs: modifiers, fillRemaining: false});
+      setEncounterRewards(scene, { guaranteedModifierTypeFuncs: modifiers, fillRemaining: false });
       leaveEncounterWithoutBattle(scene);
     })
     .build())
@@ -107,13 +108,13 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter = new MysteryEncount
           modifiers.push(modifierTypes.GREAT_BALL);
         } else if (roll < 60) {
           modifiers.push(modifierTypes.ULTRA_BALL);
-        } else  {
+        } else {
           modifiers.push(modifierTypes.ROGUE_BALL);
         }
         i++;
       }
 
-      setCustomEncounterRewards(scene, { guaranteedModifierTypeFuncs: modifiers, fillRemaining: false});
+      setEncounterRewards(scene, { guaranteedModifierTypeFuncs: modifiers, fillRemaining: false });
       leaveEncounterWithoutBattle(scene);
     })
     .build())

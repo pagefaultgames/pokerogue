@@ -1,16 +1,16 @@
-import BattleScene from "../../battle-scene";
-import {ModifierTier} from "#app/modifier/modifier-tier";
+import BattleScene from "../../../battle-scene";
+import { ModifierTier } from "#app/modifier/modifier-tier";
 import {
   EnemyPartyConfig,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle, queueEncounterMessage,
-  setCustomEncounterRewards,
+  setEncounterRewards,
   showEncounterText
 } from "#app/data/mystery-encounters/mystery-encounter-utils";
-import MysteryEncounter, {MysteryEncounterBuilder, MysteryEncounterTier} from "../mystery-encounter";
-import {MysteryEncounterType} from "#enums/mystery-encounter-type";
-import {MoveRequirement, WaveCountRequirement} from "../mystery-encounter-requirements";
-import {MysteryEncounterOptionBuilder} from "../mystery-encounter-option";
+import MysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier } from "../mystery-encounter";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { MoveRequirement, WaveCountRequirement } from "../mystery-encounter-requirements";
+import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import {
   getPartyLuckValue,
   getPlayerModifierTypeOptions,
@@ -18,13 +18,13 @@ import {
   ModifierTypeOption,
   regenerateModifierPoolThresholds
 } from "#app/modifier/modifier-type";
-import {BattlerTagType} from "#enums/battler-tag-type";
-import {StatChangePhase} from "#app/phases";
-import {BattleStat} from "#app/data/battle-stat";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { StatChangePhase } from "#app/phases";
+import { BattleStat } from "#app/data/battle-stat";
 import Pokemon from "#app/field/pokemon";
-import {randSeedInt} from "#app/utils";
-import {Moves} from "#enums/moves";
-import {TextStyle} from "#app/ui/text";
+import { randSeedInt } from "#app/utils";
+import { Moves } from "#enums/moves";
+import { TextStyle } from "#app/ui/text";
 
 const validMovesForSteal = [
   Moves.PLUCK,
@@ -50,7 +50,7 @@ export const FightOrFlightEncounter: MysteryEncounter = new MysteryEncounterBuil
     const bossSpecies = scene.arena.randomSpecies(scene.currentBattle.waveIndex, scene.currentBattle.waveIndex, 0, getPartyLuckValue(scene.getParty()), true);
     const config: EnemyPartyConfig = {
       levelAdditiveMultiplier: 1,
-      pokemonConfigs: [{species: bossSpecies, isBoss: true}]
+      pokemonConfigs: [{ species: bossSpecies, isBoss: true }]
     };
     encounter.enemyPartyConfigs = [config];
 
@@ -58,7 +58,7 @@ export const FightOrFlightEncounter: MysteryEncounter = new MysteryEncounterBuil
     // 10-60 GREAT, 60-110 ULTRA, 110-160 ROGUE, 160-180 MASTER
     const tier = scene.currentBattle.waveIndex > 160 ? ModifierTier.MASTER : scene.currentBattle.waveIndex > 110 ? ModifierTier.ROGUE : scene.currentBattle.waveIndex > 60 ? ModifierTier.ULTRA : ModifierTier.GREAT;
     regenerateModifierPoolThresholds(scene.getParty(), ModifierPoolType.PLAYER, 0); // refresh player item pool
-    const item = getPlayerModifierTypeOptions(1, scene.getParty(), [], { guaranteedModifierTiers: [tier]})[0];
+    const item = getPlayerModifierTypeOptions(1, scene.getParty(), [], { guaranteedModifierTiers: [tier] })[0];
     encounter.setDialogueToken("itemName", item.type.name);
     encounter.misc = item;
 
@@ -103,7 +103,7 @@ export const FightOrFlightEncounter: MysteryEncounter = new MysteryEncounterBuil
     .withOptionPhase(async (scene: BattleScene) => {
       // Pick battle
       const item = scene.currentBattle.mysteryEncounter.misc as ModifierTypeOption;
-      setCustomEncounterRewards(scene, { guaranteedModifierTypeOptions: [item], fillRemaining: false});
+      setEncounterRewards(scene, { guaranteedModifierTypeOptions: [item], fillRemaining: false });
       await initBattleWithEnemyConfig(scene, scene.currentBattle.mysteryEncounter.enemyPartyConfigs[0]);
     })
     .build())
@@ -112,7 +112,7 @@ export const FightOrFlightEncounter: MysteryEncounter = new MysteryEncounterBuil
       // Pick steal
       const encounter = scene.currentBattle.mysteryEncounter;
       const item = scene.currentBattle.mysteryEncounter.misc as ModifierTypeOption;
-      setCustomEncounterRewards(scene, { guaranteedModifierTypeOptions: [item], fillRemaining: false});
+      setEncounterRewards(scene, { guaranteedModifierTypeOptions: [item], fillRemaining: false });
 
       // If player has a stealing move, they succeed automatically
       const moveRequirement = new MoveRequirement(validMovesForSteal);
