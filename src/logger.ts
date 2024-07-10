@@ -103,22 +103,6 @@ export function newDocument(name: string = "Untitled Run " + (new Date().getUTCM
 export function importDocument(drpd: string): DRPD {
   return JSON.parse(drpd) as DRPD;
 }
-export function importPokemon(pokemon: any): PokeData {
-  return {
-    id: pokemon.id,
-    name: pokemon.name,
-    ability: pokemon.ability,
-    isHiddenAbility: pokemon.isHiddenAbility,
-    passiveAbility: pokemon.passiveAbility,
-    nature: importNature(pokemon.nature),
-    gender: pokemon.gender,
-    rarity: pokemon.rarity,
-    captured: pokemon.captured,
-    level: pokemon.level,
-    items: pokemon.items.map(itm => importItem(itm)),
-    ivs: importIVs(pokemon.ivs)
-  }
-}
 export function exportPokemon(pokemon: Pokemon, encounterRarity?: string): PokeData {
   return {
     id: pokemon.species.speciesId,
@@ -135,13 +119,6 @@ export function exportPokemon(pokemon: Pokemon, encounterRarity?: string): PokeD
     ivs: exportIVs(pokemon.ivs)
   }
 }
-export function importNature(nature: any): NatureData {
-  return {
-    name: nature.name,
-    increased: nature.increased,
-    decreased: nature.decreased
-  }
-}
 export function exportNature(nature: Nature): NatureData {
   return {
     name: getNatureName(nature),
@@ -149,28 +126,11 @@ export function exportNature(nature: Nature): NatureData {
     decreased: getNatureDecrease(nature),
   }
 }
-export function importItem(item: any): ItemData {
-  return {
-    id: item.id,
-    name: item.name,
-    quantity: item.quantity
-  }
-}
 export function exportItem(item: PokemonHeldItemModifier): ItemData {
   return {
     id: item.type.id,
     name: item.type.name,
     quantity: item.getStackCount()
-  }
-}
-export function importIVs(ivs: any): IVData {
-  return {
-    hp: ivs[0],
-    atk: ivs[1],
-    def: ivs[2],
-    spatk: ivs[3],
-    spdef: ivs[4],
-    speed: ivs[5]
   }
 }
 export function exportIVs(ivs: integer[]): IVData {
