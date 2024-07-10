@@ -378,8 +378,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       new DropDownOption(this.scene, 0, "No."),
       new DropDownOption(this.scene, 1, "Cost", null, DropDownState.OFF),
       new DropDownOption(this.scene, 2, "IVs", null, DropDownState.OFF),
-      new DropDownOption(this.scene, 3, "Name", null, DropDownState.OFF),
-      new DropDownOption(this.scene, 4, "# caught", null, DropDownState.OFF),];
+      new DropDownOption(this.scene, 3, "Name", null, DropDownState.OFF)];
     this.filterBar.addFilter("Sort", new DropDown(this.scene, 0, 0, sortOptions, this.updateStarters, DropDownType.SINGLE));
     this.filterBarContainer.add(this.filterBar);
 
@@ -2001,8 +2000,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         return (avgIVsA - avgIVsB) * -sort.dir;
       case 3:
         return a.species.name.localeCompare(b.species.name) * -sort.dir;
-      case 4:
-        return (this.scene.gameData.dexData[a.species.speciesId].caughtCount - this.scene.gameData.dexData[b.species.speciesId].caughtCount) * -sort.dir;
       }
       return 0;
     });
