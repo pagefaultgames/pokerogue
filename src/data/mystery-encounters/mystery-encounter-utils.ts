@@ -7,35 +7,12 @@ import { Status, StatusEffect } from "../status-effect";
 import { TrainerConfig, trainerConfigs, TrainerSlot } from "../trainer-config";
 import Pokemon, { FieldPosition, PlayerPokemon } from "#app/field/pokemon";
 import Trainer, { TrainerVariant } from "../../field/trainer";
-import {
-  ExpBalanceModifier,
-  ExpShareModifier,
-  MultipleParticipantExpBonusModifier,
-  PokemonExpBoosterModifier
-} from "#app/modifier/modifier";
-import {
-  CustomModifierSettings,
-  getModifierPoolForType,
-  ModifierPoolType,
-  ModifierType,
-  ModifierTypeFunc,
-  ModifierTypeGenerator,
-  modifierTypes,
-  PokemonHeldItemModifierType,
-  regenerateModifierPoolThresholds
-} from "#app/modifier/modifier-type";
-import {
-  BattleEndPhase,
-  EggLapsePhase,
-  ExpPhase,
-  ModifierRewardPhase,
-  ShowPartyExpBarPhase,
-  TrainerVictoryPhase
-} from "#app/phases";
+import { ExpBalanceModifier, ExpShareModifier, MultipleParticipantExpBonusModifier, PokemonExpBoosterModifier } from "#app/modifier/modifier";
+import { CustomModifierSettings, getModifierPoolForType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeGenerator, modifierTypes, PokemonHeldItemModifierType, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
+import { BattleEndPhase, EggLapsePhase, ExpPhase, ModifierRewardPhase, SelectModifierPhase, ShowPartyExpBarPhase, TrainerVictoryPhase } from "#app/phases";
 import { MysteryEncounterBattlePhase, MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phase";
 import * as Utils from "../../utils";
 import { isNullOrUndefined } from "#app/utils";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { TrainerType } from "#enums/trainer-type";
 import { Species } from "#enums/species";
 import { Type } from "#app/data/type";

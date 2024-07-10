@@ -1,4 +1,4 @@
-import { CommandPhase } from "../phases";
+import { CommandPhase, SelectModifierPhase } from "../phases";
 import BattleScene from "../battle-scene";
 import { PlayerPokemon, PokemonMove } from "../field/pokemon";
 import { addBBCodeTextObject, addTextObject, getTextColor, TextStyle } from "./text";
@@ -21,7 +21,6 @@ import MoveInfoOverlay from "./move-info-overlay";
 import i18next from "i18next";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { Moves } from "#enums/moves";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 
 const defaultMessage = i18next.t("partyUiHandler:choosePokemon");
 

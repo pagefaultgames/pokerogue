@@ -8,9 +8,8 @@ import Pokemon, { EnemyPokemon, PlayerPokemon } from "./field/pokemon";
 import { Mode } from "./ui/ui";
 import PartyUiHandler from "./ui/party-ui-handler";
 import { BattleSpec } from "#enums/battle-spec";
-import { MovePhase, PokemonHealPhase } from "./phases";
+import { BattlePhase, MovePhase, PokemonHealPhase } from "./phases";
 import { getTypeRgb } from "./data/type";
-import { BattlePhase } from "#app/phases/battle-phase";
 
 export class FormChangePhase extends EvolutionPhase {
   private formChange: SpeciesFormChange;

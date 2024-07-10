@@ -5,16 +5,15 @@ import { Mode } from "../ui/ui";
 import {
   getEncounterText
 } from "../data/mystery-encounters/mystery-encounter-utils";
-import { CheckSwitchPhase, NewBattlePhase, PostSummonPhase, ReturnPhase, ScanIvsPhase, SummonPhase, ToggleDoublePositionPhase } from "../phases";
+import { CheckSwitchPhase, NewBattlePhase, PostSummonPhase, ReturnPhase, ScanIvsPhase, SelectModifierPhase, SummonPhase, ToggleDoublePositionPhase } from "../phases";
 import MysteryEncounterOption from "../data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterVariant } from "../data/mystery-encounters/mystery-encounter";
 import { getCharVariantFromDialogue } from "../data/dialogue";
 import { TrainerSlot } from "../data/trainer-config";
-import { BattleSpec } from "../enums/battle-spec";
+import { BattleSpec } from "#enums/battle-spec";
 import { Tutorial, handleTutorial } from "../tutorial";
 import { IvScannerModifier } from "../modifier/modifier";
 import * as Utils from "../utils";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { isNullOrUndefined } from "../utils";
 
 /**

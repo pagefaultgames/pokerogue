@@ -240,7 +240,7 @@ export default class BattleScene extends SceneBase {
   public money: integer;
   public pokemonInfoContainer: PokemonInfoContainer;
   private party: PlayerPokemon[];
-  public mysteryEncounterFlags: MysteryEncounterFlags = new MysteryEncounterFlags(null);
+  public mysteryEncounterData: MysteryEncounterData = new MysteryEncounterData(null);
   public lastMysteryEncounter: MysteryEncounter;
   /** Combined Biome and Wave count text */
   private biomeWaveText: Phaser.GameObjects.Text;
@@ -1222,7 +1222,6 @@ export default class BattleScene extends SceneBase {
             pokemon.resetBattleData();
             applyPostBattleInitAbAttrs(PostBattleInitAbAttr, pokemon);
           }
-        }
 
           this.unshiftPhase(new ShowTrainerPhase(this));
         }

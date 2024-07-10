@@ -14,7 +14,7 @@ import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 import i18next from "#app/plugins/i18n";
-import MysteryEncounter, { MysteryEncounterVariant } from "./data/mystery-encounter";
+import MysteryEncounter, { MysteryEncounterVariant } from "./data/mystery-encounters/mystery-encounter";
 
 export enum BattleType {
   WILD,

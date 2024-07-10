@@ -125,7 +125,7 @@ export interface SessionSaveData {
   timestamp: integer;
   challenges: ChallengeData[];
   mysteryEncounter: MysteryEncounter;
-  mysteryEncounterFlags: MysteryEncounterData;
+  mysteryEncounterData: MysteryEncounterData;
 }
 
 interface Unlocks {
@@ -842,7 +842,7 @@ export class GameData {
       timestamp: new Date().getTime(),
       challenges: scene.gameMode.challenges.map(c => new ChallengeData(c)),
       mysteryEncounter: scene.currentBattle.mysteryEncounter,
-      mysteryEncounterFlags: scene.mysteryEncounterData
+      mysteryEncounterData: scene.mysteryEncounterData
     } as SessionSaveData;
   }
 
@@ -933,7 +933,7 @@ export class GameData {
           scene.score = sessionData.score;
           scene.updateScoreText();
 
-          scene.mysteryEncounterData = sessionData?.mysteryEncounterFlags ? sessionData?.mysteryEncounterFlags : new MysteryEncounterData(null);
+          scene.mysteryEncounterData = sessionData?.mysteryEncounterData ? sessionData?.mysteryEncounterData : new MysteryEncounterData(null);
 
           scene.newArena(sessionData.arena.biome);
 
@@ -1158,7 +1158,7 @@ export class GameData {
         return new MysteryEncounter(v);
       }
 
-      if (k === "mysteryEncounterFlags") {
+      if (k === "mysteryEncounterData") {
         return new MysteryEncounterData(v);
       }
 

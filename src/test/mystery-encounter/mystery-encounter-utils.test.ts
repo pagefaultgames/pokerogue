@@ -1,4 +1,4 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import GameManager from "#app/test/utils/gameManager";
 import Phaser from "phaser";
 import {
@@ -6,14 +6,14 @@ import {
   getRandomPlayerPokemon, getRandomSpeciesByStarterTier, getEncounterText,
   koPlayerPokemon, queueEncounterMessage, showEncounterDialogue, showEncounterText,
 } from "#app/data/mystery-encounters/mystery-encounter-utils";
-import {initSceneWithoutEncounterPhase} from "#test/utils/gameManagerUtils";
-import {Species} from "#enums/species";
+import { initSceneWithoutEncounterPhase } from "#test/utils/gameManagerUtils";
+import { Species } from "#enums/species";
 import BattleScene from "#app/battle-scene";
-import {StatusEffect} from "#app/data/status-effect";
+import { StatusEffect } from "#app/data/status-effect";
 import MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import {MessagePhase} from "#app/phases";
-import {getPokemonSpecies, speciesStarters} from "#app/data/pokemon-species";
-import {Type} from "#app/data/type";
+import { MessagePhase } from "#app/phases";
+import { getPokemonSpecies, speciesStarters } from "#app/data/pokemon-species";
+import { Type } from "#app/data/type";
 
 describe("Mystery Encounter Utils", () => {
   let phaserGame: Phaser.Game;
@@ -40,14 +40,14 @@ describe("Mystery Encounter Utils", () => {
     it("gets a random pokemon from player party", () => {
       // Seeds are calculated to return index 0 first, 1 second (if both pokemon are legal)
       scene.waveSeed = "random";
-      Phaser.Math.RND.sow([ scene.waveSeed ]);
+      Phaser.Math.RND.sow([scene.waveSeed]);
       scene.rngCounter = 0;
 
       let result = getRandomPlayerPokemon(scene);
       expect(result.species.speciesId).toBe(Species.MANAPHY);
 
       scene.waveSeed = "random2";
-      Phaser.Math.RND.sow([ scene.waveSeed ]);
+      Phaser.Math.RND.sow([scene.waveSeed]);
       scene.rngCounter = 0;
 
       result = getRandomPlayerPokemon(scene);
@@ -64,14 +64,14 @@ describe("Mystery Encounter Utils", () => {
 
       // Seeds are calculated to return index 0 first, 1 second (if both pokemon are legal)
       scene.waveSeed = "random";
-      Phaser.Math.RND.sow([ scene.waveSeed ]);
+      Phaser.Math.RND.sow([scene.waveSeed]);
       scene.rngCounter = 0;
 
       let result = getRandomPlayerPokemon(scene);
       expect(result.species.speciesId).toBe(Species.MANAPHY);
 
       scene.waveSeed = "random2";
-      Phaser.Math.RND.sow([ scene.waveSeed ]);
+      Phaser.Math.RND.sow([scene.waveSeed]);
       scene.rngCounter = 0;
 
       result = getRandomPlayerPokemon(scene);
@@ -87,14 +87,14 @@ describe("Mystery Encounter Utils", () => {
 
       // Seeds are calculated to return index 0 first, 1 second (if both pokemon are legal)
       scene.waveSeed = "random";
-      Phaser.Math.RND.sow([ scene.waveSeed ]);
+      Phaser.Math.RND.sow([scene.waveSeed]);
       scene.rngCounter = 0;
 
       let result = getRandomPlayerPokemon(scene, true);
       expect(result.species.speciesId).toBe(Species.MANAPHY);
 
       scene.waveSeed = "random2";
-      Phaser.Math.RND.sow([ scene.waveSeed ]);
+      Phaser.Math.RND.sow([scene.waveSeed]);
       scene.rngCounter = 0;
 
       result = getRandomPlayerPokemon(scene, true);
@@ -110,14 +110,14 @@ describe("Mystery Encounter Utils", () => {
 
       // Seeds are calculated to return index 0 first, 1 second (if both pokemon are legal)
       scene.waveSeed = "random";
-      Phaser.Math.RND.sow([ scene.waveSeed ]);
+      Phaser.Math.RND.sow([scene.waveSeed]);
       scene.rngCounter = 0;
 
       let result = getRandomPlayerPokemon(scene, true, false);
       expect(result.species.speciesId).toBe(Species.MANAPHY);
 
       scene.waveSeed = "random2";
-      Phaser.Math.RND.sow([ scene.waveSeed ]);
+      Phaser.Math.RND.sow([scene.waveSeed]);
       scene.rngCounter = 0;
 
       result = getRandomPlayerPokemon(scene, true, false);
@@ -133,14 +133,14 @@ describe("Mystery Encounter Utils", () => {
 
       // Seeds are calculated to return index 0 first, 1 second (if both pokemon are legal)
       scene.waveSeed = "random";
-      Phaser.Math.RND.sow([ scene.waveSeed ]);
+      Phaser.Math.RND.sow([scene.waveSeed]);
       scene.rngCounter = 0;
 
       let result = getRandomPlayerPokemon(scene, true, true);
       expect(result.species.speciesId).toBe(Species.ARCEUS);
 
       scene.waveSeed = "random2";
-      Phaser.Math.RND.sow([ scene.waveSeed ]);
+      Phaser.Math.RND.sow([scene.waveSeed]);
       scene.rngCounter = 0;
 
       result = getRandomPlayerPokemon(scene, true, true);

@@ -1,17 +1,17 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
-import {initSceneWithoutEncounterPhase} from "#app/test/utils/gameManagerUtils";
+import { initSceneWithoutEncounterPhase } from "#app/test/utils/gameManagerUtils";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
-import {ModifierTier} from "#app/modifier/modifier-tier";
+import { ModifierTier } from "#app/modifier/modifier-tier";
 import * as Utils from "#app/utils";
-import {CustomModifierSettings, ModifierTypeOption, modifierTypes} from "#app/modifier/modifier-type";
+import { CustomModifierSettings, ModifierTypeOption, modifierTypes } from "#app/modifier/modifier-type";
 import BattleScene from "#app/battle-scene";
-import {SelectModifierPhase} from "#app/phases/select-modifier-phase";
-import {Species} from "#enums/species";
-import {Mode} from "#app/ui/ui";
-import {PlayerPokemon} from "#app/field/pokemon";
-import {getPokemonSpecies} from "#app/data/pokemon-species";
+import { Species } from "#enums/species";
+import { Mode } from "#app/ui/ui";
+import { PlayerPokemon } from "#app/field/pokemon";
+import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { SelectModifierPhase } from "#app/phases";
 
 describe("SelectModifierPhase", () => {
   let phaserGame: Phaser.Game;
@@ -30,7 +30,7 @@ describe("SelectModifierPhase", () => {
 
     vi.spyOn(scene, "resetSeed").mockImplementation(() => {
       scene.waveSeed = "test";
-      Phaser.Math.RND.sow([ scene.waveSeed ]);
+      Phaser.Math.RND.sow([scene.waveSeed]);
       scene.rngCounter = 0;
     });
 
@@ -73,7 +73,7 @@ describe("SelectModifierPhase", () => {
     ];
 
     const selectModifierPhase1 = new SelectModifierPhase(scene);
-    const selectModifierPhase2 = new SelectModifierPhase(scene, 0, null, { rerollMultiplier: 2});
+    const selectModifierPhase2 = new SelectModifierPhase(scene, 0, null, { rerollMultiplier: 2 });
 
     const cost1 = selectModifierPhase1.getRerollCost(options, false);
     const cost2 = selectModifierPhase2.getRerollCost(options, false);
@@ -109,7 +109,7 @@ describe("SelectModifierPhase", () => {
     // Just use fully random seed for this test
     vi.spyOn(scene, "resetSeed").mockImplementation(() => {
       scene.waveSeed = Utils.shiftCharCodes(scene.seed, 5);
-      Phaser.Math.RND.sow([ scene.waveSeed ]);
+      Phaser.Math.RND.sow([scene.waveSeed]);
       console.log("Wave Seed:", scene.waveSeed, 5);
       scene.rngCounter = 0;
     });
