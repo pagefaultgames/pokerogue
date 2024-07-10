@@ -1,6 +1,11 @@
+import { EnemyPartyConfig } from "#app/data/mystery-encounters/mystery-encounter-utils";
+import Pokemon, { PlayerPokemon } from "#app/field/pokemon";
+import { isNullOrUndefined } from "#app/utils";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "../../battle-scene";
 import MysteryEncounterIntroVisuals, { MysteryEncounterSpriteConfig } from "../../field/mystery-encounter-intro";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import * as Utils from "../../utils";
+import { StatusEffect } from "../status-effect";
 import MysteryEncounterDialogue, {
   allMysteryEncounterDialogue
 } from "./mystery-encounter-dialogue";
@@ -8,13 +13,11 @@ import MysteryEncounterOption, { MysteryEncounterOptionBuilder, OptionPhaseCallb
 import {
   EncounterPokemonRequirement,
   EncounterSceneRequirement,
+  HealthRatioRequirement,
   PartySizeRequirement,
+  StatusEffectRequirement,
   WaveRangeRequirement
 } from "./mystery-encounter-requirements";
-import * as Utils from "../../utils";
-import { EnemyPartyConfig } from "#app/data/mystery-encounters/mystery-encounter-utils";
-import Pokemon, { PlayerPokemon } from "#app/field/pokemon";
-import { isNullOrUndefined } from "#app/utils";
 
 export enum MysteryEncounterVariant {
   DEFAULT,
@@ -468,6 +471,14 @@ export class MysteryEncounterBuilder implements Partial<MysteryEncounter> {
   withPrimaryPokemonRequirement(requirement: EncounterPokemonRequirement): this & Required<Pick<MysteryEncounter, "primaryPokemonRequirements">> {
     this.primaryPokemonRequirements.push(requirement);
     return Object.assign(this, { primaryPokemonRequirements: this.primaryPokemonRequirements });
+  }
+
+  withPrimaryPokemonStatusEffectRequirement(statusEffect: StatusEffect | StatusEffect[], minNumberOfPokemon: number = 1, invertQuery: boolean = false): this & Required<Pick<MysteryEncounter, "primaryPokemonRequirements">> {
+    return this.withPrimaryPokemonRequirement(new StatusEffectRequirement(statusEffect, minNumberOfPokemon, invertQuery));
+  }
+
+  withPrimaryPokemonHealthRatioRequirement(requiredHealthRange: [number, number], minNumberOfPokemon: number = 1, invertQuery: boolean = false): this & Required<Pick<MysteryEncounter, "primaryPokemonRequirements">> {
+    return this.withPrimaryPokemonRequirement(new HealthRatioRequirement(requiredHealthRange, minNumberOfPokemon, invertQuery));
   }
 
   // TODO: Maybe add an optional parameter for excluding primary pokemon from the support cast?
