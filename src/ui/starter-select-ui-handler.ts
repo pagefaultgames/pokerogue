@@ -351,7 +351,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     });
     this.filterBar.addFilter("Type", new DropDown(this.scene, 0, 0, typeOptions, this.updateStarters, DropDownType.MULTI, 0.5));
 
-    // shiny filter
+    // Unlocks filter
     const shiny1Sprite = this.scene.add.sprite(0, 0, "shiny_star_small");
     shiny1Sprite.setTint(getVariantTint(0));
     const shiny2Sprite = this.scene.add.sprite(0, 0, "shiny_star_small");
@@ -359,13 +359,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const shiny3Sprite = this.scene.add.sprite(0, 0, "shiny_star_small");
     shiny3Sprite.setTint(getVariantTint(2));
 
-    const shinyOptions = [
+    const unlocksOptions = [
       new DropDownOption(this.scene, "SHINY3", null, shiny3Sprite),
       new DropDownOption(this.scene, "SHINY2", null, shiny2Sprite),
       new DropDownOption(this.scene, "SHINY", null, shiny1Sprite),
       new DropDownOption(this.scene, "NORMAL", "Normal"),
       new DropDownOption(this.scene, "UNCAUGHT", "Not Caught")];
-    this.filterBar.addFilter("Shiny", new DropDown(this.scene, 0, 0, shinyOptions, this.updateStarters, DropDownType.MULTI));
+    this.filterBar.addFilter("Unlocks", new DropDown(this.scene, 0, 0, unlocksOptions, this.updateStarters, DropDownType.MULTI));
 
     // win filter
     const winOptions = [
@@ -1950,7 +1950,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
         const fitsGen =   this.filterBar.getVals(DropDownColumn.GEN).includes(g);
         const fitsType =  this.filterBar.getVals(DropDownColumn.TYPES).some(type => container.species.isOfType((type as number) - 1));
-        const fitsShiny = this.filterBar.getVals(DropDownColumn.SHINY).some(variant => {
+        const fitsUnlocks = this.filterBar.getVals(DropDownColumn.UNLOCKS).some(variant => {
           if (variant === "SHINY3") {
             return isVariant3Caught;
           } else if (variant === "SHINY2") {
@@ -1975,7 +1975,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           }
         });
 
-        if (fitsGen && fitsType && fitsShiny && fitsWin) {
+        if (fitsGen && fitsType && fitsUnlocks && fitsWin) {
           this.filteredStarterContainers.push(container);
         }
       });
