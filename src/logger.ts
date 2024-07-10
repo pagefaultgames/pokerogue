@@ -2,7 +2,7 @@ import i18next from "i18next";
 import * as Utils from "./utils";
 import Pokemon from "./field/pokemon";
 import { PlayerPokemon, EnemyPokemon } from "./field/pokemon";
-import { Nature, getNatureName } from "./data/nature";
+import { Nature, getNatureDecrease, getNatureIncrease, getNatureName } from "./data/nature";
 import BattleScene from "./battle-scene";
 import { OptionSelectItem } from "./ui/abstact-option-select-ui-handler";
 import { TrainerType } from "#enums/trainer-type";
@@ -26,7 +26,10 @@ export var logKeys: string[] = [
   "d", // Debug
 ];
 
-export const DRPD_Version = "0.1.3"
+export const DRPD_Version = "1.0.0"
+export const acceptedVersions = [
+  "1.0.0"
+]
 export interface DRPD {
   version: string,
   title?: string,
@@ -42,7 +45,7 @@ export interface Wave {
   type: string,
   double: boolean,
   actions: string[],
-  shop: boolean | string,
+  shop: string,
   biome: string,
   trainer?: TrainerData,
   pokemon?: PokeData[]
@@ -53,7 +56,7 @@ export interface PokeData {
   ability: string,
   isHiddenAbility: boolean,
   passiveAbility: string,
-  nature: string,
+  nature: NatureData,
   gender: string,
   rarity: string,
   captured: boolean,
@@ -61,6 +64,11 @@ export interface PokeData {
   items: ItemData[],
   ivs: IVData,
   source?: Pokemon
+}
+export interface NatureData {
+  name: string,
+  increased: string,
+  decreased: string
 }
 export interface IVData {
   hp: integer,
@@ -92,6 +100,25 @@ export function newDocument(name: string = "Untitled Run " + (new Date().getUTCM
     filename: (new Date().getUTCMonth() + 1 < 10 ? "0" : "") + (new Date().getUTCMonth() + 1) + "-" + (new Date().getUTCDate() < 10 ? "0" : "") + new Date().getUTCDate() + "-" + new Date().getUTCFullYear() + "_untitled" 
   }
 }
+export function importDocument(drpd: string): DRPD {
+  return JSON.parse(drpd) as DRPD;
+}
+export function importPokemon(pokemon: any): PokeData {
+  return {
+    id: pokemon.id,
+    name: pokemon.name,
+    ability: pokemon.ability,
+    isHiddenAbility: pokemon.isHiddenAbility,
+    passiveAbility: pokemon.passiveAbility,
+    nature: importNature(pokemon.nature),
+    gender: pokemon.gender,
+    rarity: pokemon.rarity,
+    captured: pokemon.captured,
+    level: pokemon.level,
+    items: pokemon.items.map(itm => importItem(itm)),
+    ivs: importIVs(pokemon.ivs)
+  }
+}
 export function exportPokemon(pokemon: Pokemon, encounterRarity?: string): PokeData {
   return {
     id: pokemon.species.speciesId,
@@ -99,7 +126,7 @@ export function exportPokemon(pokemon: Pokemon, encounterRarity?: string): PokeD
     ability: pokemon.getAbility().name,
     isHiddenAbility: pokemon.hasAbility(pokemon.species.abilityHidden),
     passiveAbility: pokemon.getPassiveAbility().name,
-    nature: getNatureName(pokemon.nature),
+    nature: exportNature(pokemon.nature),
     gender: pokemon.gender == 0 ? "Male" : (pokemon.gender == 1 ? "Female" : "Genderless"),
     rarity: encounterRarity,
     captured: false,
@@ -108,11 +135,42 @@ export function exportPokemon(pokemon: Pokemon, encounterRarity?: string): PokeD
     ivs: exportIVs(pokemon.ivs)
   }
 }
+export function importNature(nature: any): NatureData {
+  return {
+    name: nature.name,
+    increased: nature.increased,
+    decreased: nature.decreased
+  }
+}
+export function exportNature(nature: Nature): NatureData {
+  return {
+    name: getNatureName(nature),
+    increased: getNatureIncrease(nature),
+    decreased: getNatureDecrease(nature),
+  }
+}
+export function importItem(item: any): ItemData {
+  return {
+    id: item.id,
+    name: item.name,
+    quantity: item.quantity
+  }
+}
 export function exportItem(item: PokemonHeldItemModifier): ItemData {
   return {
     id: item.type.id,
     name: item.type.name,
     quantity: item.getStackCount()
+  }
+}
+export function importIVs(ivs: any): IVData {
+  return {
+    hp: ivs[0],
+    atk: ivs[1],
+    def: ivs[2],
+    spatk: ivs[3],
+    spdef: ivs[4],
+    speed: ivs[5]
   }
 }
 export function exportIVs(ivs: integer[]): IVData {
