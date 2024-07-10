@@ -1804,7 +1804,7 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
         const stolenItem = tierHeldItems[user.randSeedInt(tierHeldItems.length)];
         user.scene.tryTransferHeldItemModifier(stolenItem, user, false).then(success => {
           if (success) {
-            user.scene.queueMessage(i18next.t("moveTriggers:stoleItem", {pokemonName: getPokemonNameWithAffix(user), targetName: target.name, ItemName: stolenItem.type.name}));
+            user.scene.queueMessage(i18next.t("moveTriggers:stoleItem", {pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), ItemName: stolenItem.type.name}));
           }
           resolve(success);
         });
@@ -1883,9 +1883,9 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
       target.scene.updateModifiers(target.isPlayer());
 
       if (this.berriesOnly) {
-        user.scene.queueMessage(i18next.t("moveTriggers:incineratedItem", {pokemonName: getPokemonNameWithAffix(user), targetName: target.name, itemName: removedItem.type.name}));
+        user.scene.queueMessage(i18next.t("moveTriggers:incineratedItem", {pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), itemName: removedItem.type.name}));
       } else {
-        user.scene.queueMessage(i18next.t("moveTriggers:knockedOffItem", {pokemonName: getPokemonNameWithAffix(user), targetName: target.name, itemName: removedItem.type.name}));
+        user.scene.queueMessage(i18next.t("moveTriggers:knockedOffItem", {pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), itemName: removedItem.type.name}));
       }
     }
 
@@ -2205,7 +2205,7 @@ export class ChargeAttr extends OverrideMoveEffectAttr {
       if (!lastMove || lastMove.move !== move.id || (lastMove.result !== MoveResult.OTHER && (this.sameTurn || lastMove.turn !== user.scene.currentBattle.turn))) {
         (args[0] as Utils.BooleanHolder).value = true;
         new MoveChargeAnim(this.chargeAnim, move.id, user).play(user.scene, () => {
-          user.scene.queueMessage(`${this.chargeText.replace("{TARGET}", target.name).replace("{USER}", getPokemonNameWithAffix(user))}`);
+          user.scene.queueMessage(this.chargeText.replace("{TARGET}", getPokemonNameWithAffix(target)).replace("{USER}", getPokemonNameWithAffix(user)));
           if (this.tagType) {
             user.addTag(this.tagType, 1, move.id, user.id);
           }
@@ -4150,7 +4150,7 @@ export class IgnoreAccuracyAttr extends AddBattlerTagAttr {
       return false;
     }
 
-    user.scene.queueMessage(i18next.t("moveTriggers:tookAimAtTarget", {pokemonName: getPokemonNameWithAffix(user), targetName: target.name}));
+    user.scene.queueMessage(i18next.t("moveTriggers:tookAimAtTarget", {pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target)}));
 
     return true;
   }
@@ -4166,7 +4166,7 @@ export class AlwaysCritsAttr extends AddBattlerTagAttr {
       return false;
     }
 
-    user.scene.queueMessage(i18next.t("moveTriggers:tookAimAtTarget", {pokemonName: getPokemonNameWithAffix(user), targetName: target.name}));
+    user.scene.queueMessage(i18next.t("moveTriggers:tookAimAtTarget", {pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target)}));
 
     return true;
   }
@@ -5392,7 +5392,7 @@ export class TransformAttr extends MoveEffectAttr {
       user.summonData.moveset = target.getMoveset().map(m => new PokemonMove(m.moveId, m.ppUsed, m.ppUp));
       user.summonData.types = target.getTypes();
 
-      user.scene.queueMessage(i18next.t("moveTriggers:transformedIntoTarget", {pokemonName: getPokemonNameWithAffix(user), targetName: target.name}));
+      user.scene.queueMessage(i18next.t("moveTriggers:transformedIntoTarget", {pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target)}));
 
       user.loadAssets(false).then(() => {
         user.playAnim();
