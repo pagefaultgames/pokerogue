@@ -46,7 +46,7 @@ import { biomeLinks } from "#app/data/biomes";
 import { Mode } from "#app/ui/ui";
 import { PartyOption, PartyUiMode } from "#app/ui/party-ui-handler";
 import { OptionSelectConfig, OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
-import { WIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/encounters/mystery-encounters";
+import { WIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
 import { getTextWithColors, TextStyle } from "#app/ui/text";
 import * as Overrides from "#app/overrides";
 import { UiTheme } from "#enums/ui-theme";

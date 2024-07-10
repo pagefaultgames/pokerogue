@@ -37,11 +37,6 @@ export default class MysteryEncounterDialogue {
   outro?: TextDisplay[];
 }
 
-export interface EncounterTypeDialogue {
-  [key: integer]: MysteryEncounterDialogue
-}
-
-
 /**
  * Example MysteryEncounterDialogue object:
  *
@@ -86,8 +81,7 @@ export interface EncounterTypeDialogue {
  *
  */
 
-
-export const allMysteryEncounterDialogue: EncounterTypeDialogue = {};
+export const allMysteryEncounterDialogue: { [encounterType: number]: MysteryEncounterDialogue } = {};
 
 export function initMysteryEncounterDialogue() {
   allMysteryEncounterDialogue[MysteryEncounterType.MYSTERIOUS_CHALLENGERS] = MysteriousChallengersDialogue;
