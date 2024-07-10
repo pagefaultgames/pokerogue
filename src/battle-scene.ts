@@ -5,23 +5,7 @@ import Pokemon, { PlayerPokemon, EnemyPokemon } from "./field/pokemon";
 import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies } from "./data/pokemon-species";
 import {Constructor, isNullOrUndefined} from "#app/utils";
 import * as Utils from "./utils";
-import {
-  Modifier,
-  ModifierBar,
-  ConsumablePokemonModifier,
-  ConsumableModifier,
-  PokemonHpRestoreModifier,
-  HealingBoosterModifier,
-  PersistentModifier,
-  PokemonHeldItemModifier,
-  ModifierPredicate,
-  DoubleBattleChanceBoosterModifier,
-  FusePokemonModifier,
-  PokemonFormChangeItemModifier,
-  TerastallizeModifier,
-  overrideModifiers,
-  overrideHeldItems
-} from "./modifier/modifier";
+import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier, FusePokemonModifier, PokemonFormChangeItemModifier, TerastallizeModifier, overrideModifiers, overrideHeldItems } from "./modifier/modifier";
 import { PokeballType } from "./data/pokeball";
 import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets, populateAnims } from "./data/battle-anims";
 import { Phase } from "./phase";
@@ -30,16 +14,7 @@ import { Arena, ArenaBase } from "./field/arena";
 import { GameData } from "./system/game-data";
 import { TextStyle, addTextObject, getTextColor } from "./ui/text";
 import { allMoves } from "./data/move";
-import {
-  ModifierPoolType,
-  getDefaultModifierTypeForTier,
-  getEnemyModifierTypesForWave,
-  getLuckString,
-  getLuckTextTint,
-  getModifierPoolForType,
-  getPartyLuckValue,
-  PokemonHeldItemModifierType
-} from "./modifier/modifier-type";
+import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getLuckString, getLuckTextTint, getModifierPoolForType, getPartyLuckValue, PokemonHeldItemModifierType } from "./modifier/modifier-type";
 import AbilityBar from "./ui/ability-bar";
 import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, IncrementMovePriorityAbAttr, PostBattleInitAbAttr, applyAbAttrs, applyPostBattleInitAbAttrs } from "./data/ability";
 import { allAbilities } from "./data/ability";
@@ -2388,34 +2363,37 @@ export default class BattleScene extends SceneBase {
         }
       }
 
-      party.forEach((enemyPokemon: EnemyPokemon, i: integer) => {
+      party.every((enemyPokemon: EnemyPokemon, i: integer) => {
         if (customHeldModifiers && i < customHeldModifiers.length && customHeldModifiers[i].length > 0) {
           customHeldModifiers[i].forEach(mt => mt.newModifier(enemyPokemon).add(this.enemyModifiers, false, this));
-        } else {
-          const isBoss = enemyPokemon.isBoss() || (this.currentBattle.battleType === BattleType.TRAINER && this.currentBattle.trainer.config.isBoss);
-          let upgradeChance = 32;
-          if (isBoss) {
-            upgradeChance /= 2;
-          }
-          if (isFinalBoss) {
-            upgradeChance /= 8;
-          }
-          const modifierChance = this.gameMode.getEnemyModifierChance(isBoss);
-          let pokemonModifierChance = modifierChance;
-          if (this.currentBattle.battleType === BattleType.TRAINER)
-            pokemonModifierChance = Math.ceil(pokemonModifierChance * this.currentBattle.trainer.getPartyMemberModifierChanceMultiplier(i)); // eslint-disable-line
-          let count = 0;
-          for (let c = 0; c < chances; c++) {
-            if (!Utils.randSeedInt(modifierChance)) {
-              count++;
-            }
-          }
-          if (isBoss) {
-            count = Math.max(count, Math.floor(chances / 2));
-          }
-          getEnemyModifierTypesForWave(difficultyWaveIndex, count, [ enemyPokemon ], this.currentBattle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD, upgradeChance)
-            .map(mt => mt.newModifier(enemyPokemon).add(this.enemyModifiers, false, this));
+          return true;
         }
+
+        const isBoss = enemyPokemon.isBoss() || (this.currentBattle.battleType === BattleType.TRAINER && this.currentBattle.trainer.config.isBoss);
+        let upgradeChance = 32;
+        if (isBoss) {
+          upgradeChance /= 2;
+        }
+        if (isFinalBoss) {
+          upgradeChance /= 8;
+        }
+        const modifierChance = this.gameMode.getEnemyModifierChance(isBoss);
+        let pokemonModifierChance = modifierChance;
+        if (this.currentBattle.battleType === BattleType.TRAINER)
+          pokemonModifierChance = Math.ceil(pokemonModifierChance * this.currentBattle.trainer.getPartyMemberModifierChanceMultiplier(i)); // eslint-disable-line
+        let count = 0;
+        for (let c = 0; c < chances; c++) {
+          if (!Utils.randSeedInt(modifierChance)) {
+            count++;
+          }
+        }
+        if (isBoss) {
+          count = Math.max(count, Math.floor(chances / 2));
+        }
+        getEnemyModifierTypesForWave(difficultyWaveIndex, count, [ enemyPokemon ], this.currentBattle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD, upgradeChance)
+          .map(mt => mt.newModifier(enemyPokemon).add(this.enemyModifiers, false, this));
+
+        return true;
       });
 
       this.updateModifiers(false).then(() => resolve());

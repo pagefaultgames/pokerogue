@@ -9,13 +9,13 @@ import { initMoves } from "#app/data/move";
 import { initPokemonPrevolutions } from "#app/data/pokemon-evolutions";
 import { initPokemonForms } from "#app/data/pokemon-forms";
 import { initSpecies } from "#app/data/pokemon-species";
-import { initStatsKeys } from "#app/ui/game-stats-ui-handler";
-import { beforeAll, beforeEach, vi } from "vitest";
-import * as overrides from "#app/overrides";
-import { initMysteryEncounters } from "#app/data/mystery-encounters/mystery-encounters";
-import { initMysteryEncounterDialogue } from "#app/data/mystery-encounters/mystery-encounter-dialogue";
 import { initVouchers } from "#app/system/voucher";
 import { initAchievements } from "#app/system/achv";
+import { initStatsKeys } from "#app/ui/game-stats-ui-handler";
+import { initMysteryEncounters } from "#app/data/mystery-encounters/mystery-encounters";
+import { initMysteryEncounterDialogue } from "#app/data/mystery-encounters/mystery-encounter-dialogue";
+import { beforeAll, beforeEach, vi } from "vitest";
+import * as overrides from "#app/overrides";
 
 initVouchers();
 initAchievements();
