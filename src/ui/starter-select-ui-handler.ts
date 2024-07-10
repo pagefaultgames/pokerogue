@@ -565,7 +565,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.type2Icon.setOrigin(0, 0);
     this.starterSelectContainer.add(this.type2Icon);
 
-    this.pokemonLuckLabelText = addTextObject(this.scene, 8, 89, "Luck:", TextStyle.WINDOW_ALT, { fontSize: "56px" });
+    this.pokemonLuckLabelText = addTextObject(this.scene, 8, 89, i18next.t("common:luckIndicator"), TextStyle.WINDOW_ALT, { fontSize: "56px" });
     this.pokemonLuckLabelText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonLuckLabelText);
 
@@ -2077,9 +2077,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             this.pokemonHatchedIcon,
             this.pokemonHatchedCountText
           ].map(c => c.setVisible(false));
-        } else if (species.speciesId === Species.ETERNATUS) {
-          this.pokemonHatchedIcon.setVisible(false);
-          this.pokemonHatchedCountText.setVisible(false);
+          this.pokemonFormText.setY(25);
         } else {
           this.pokemonCaughtHatchedContainer.setY(25);
           this.pokemonShinyIcon.setY(117);
@@ -2091,6 +2089,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.pokemonCandyCountText.setText(`x${this.scene.gameData.starterData[species.speciesId].candyCount}`);
           this.pokemonCandyCountText.setVisible(true);
           this.pokemonFormText.setVisible(true);
+          this.pokemonFormText.setY(42);
           this.pokemonHatchedIcon.setVisible(true);
           this.pokemonHatchedCountText.setVisible(true);
 
@@ -2323,10 +2322,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
 
         const isValidForChallenge = new Utils.BooleanHolder(true);
+        const currentPartyValue = this.starterGens.reduce((total: number, gen: number, i: number) => total += this.scene.gameData.getSpeciesStarterValue(this.genSpecies[gen][this.starterCursors[i]].speciesId), 0);
+        const cursorCost = this.scene.gameData.getSpeciesStarterValue(species.speciesId);
+        const isValidNextPartyValue = (currentPartyValue + cursorCost) <= this.getValueLimit();
         Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor), this.starterGens.length);
         const starterSprite = this.starterSelectGenIconContainers[this.getGenCursorWithScroll()].getAt(this.cursor) as Phaser.GameObjects.Sprite;
         starterSprite.setTexture(species.getIconAtlasKey(formIndex, shiny, variant), species.getIconId(female, formIndex, shiny, variant));
-        starterSprite.setAlpha(isValidForChallenge.value ? 1 : 0.375);
+        starterSprite.setAlpha(isValidForChallenge.value && isValidNextPartyValue ? 1 : 0.375);
         this.checkIconId((this.starterSelectGenIconContainers[this.getGenCursorWithScroll()].getAt(this.cursor) as Phaser.GameObjects.Sprite), species, female, formIndex, shiny, variant);
         this.canCycleShiny = !!(dexEntry.caughtAttr & DexAttr.NON_SHINY && dexEntry.caughtAttr & DexAttr.SHINY);
         this.canCycleGender = !!(dexEntry.caughtAttr & DexAttr.MALE && dexEntry.caughtAttr & DexAttr.FEMALE);
@@ -2367,7 +2369,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         } else {
           levelMoves = pokemonSpeciesLevelMoves[species.speciesId];
         }
-        this.speciesStarterMoves.push(...levelMoves.filter(lm => lm[0] <= 5).map(lm => lm[1]));
+        this.speciesStarterMoves.push(...levelMoves.filter(lm => lm[0] > 0 && lm[0] <= 5).map(lm => lm[1]));
         if (speciesEggMoves.hasOwnProperty(species.speciesId)) {
           for (let em = 0; em < 4; em++) {
             if (this.scene.gameData.starterData[species.speciesId].eggMoves & Math.pow(2, em)) {
