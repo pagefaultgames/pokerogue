@@ -8,6 +8,7 @@ import MysteryEncounterOption from "./mystery-encounter-option";
 import {
   EncounterPokemonRequirement,
   EncounterSceneRequirement,
+  PartySizeRequirement,
   WaveRangeRequirement
 } from "./mystery-encounter-requirements";
 import * as Utils from "../../utils";
@@ -440,6 +441,17 @@ export class MysteryEncounterBuilder implements Partial<MysteryEncounter> {
    */
   withSceneWaveRangeRequirement(min: number, max?: number) {
     return this.withSceneRequirement(new WaveRangeRequirement([min, max ?? min]));
+  }
+
+  /**
+   * Specifies a party size requirement for an encounter.
+   *
+   * @param min min wave (or exact size if only min is given)
+   * @param max optional max size. If not given, defaults to min => exact wave
+   * @returns
+   */
+  withScenePartySizeRequirement(min: number, max?: number) {
+    return this.withSceneRequirement(new PartySizeRequirement([min, max ?? min]));
   }
 
   withPrimaryPokemonRequirement(requirement: EncounterPokemonRequirement): this & Required<Pick<MysteryEncounter, "primaryPokemonRequirements">> {
