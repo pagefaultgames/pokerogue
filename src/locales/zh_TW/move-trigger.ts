@@ -9,7 +9,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "regainedHealth": "{{pokemonName}}的\n體力回復了！",
   "keptGoingAndCrashed": "{{pokemonName}}因勢頭過猛\n而撞到了地面！",
   "fled": "{{pokemonName}}\n逃走了！",
-  "cannotBeSwitchedOut": "{{pokemonName}}\無法被收回！",
+  "cannotBeSwitchedOut": "{{pokemonName}}\n無法被收回！",
   "swappedAbilitiesWithTarget": "{{pokemonName}}\n互換了各自的特性！",
   "coinsScatteredEverywhere": "金幣散落一地！",
   "attackedByItem": "{{pokemonName}}被\n{{itemName}}襲擊了！",
