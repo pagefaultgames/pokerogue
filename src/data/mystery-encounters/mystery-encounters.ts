@@ -1,11 +1,11 @@
-import MysteryEncounter from "../mystery-encounter";
-import { DarkDealEncounter } from "./dark-deal";
-import { MysteriousChallengersEncounter } from "./mysterious-challengers";
-import { MysteriousChestEncounter } from "./mysterious-chest";
+import MysteryEncounter from "./mystery-encounter";
+import { DarkDealEncounter } from "./encounters/dark-deal";
+import { MysteriousChallengersEncounter } from "./encounters/mysterious-challengers";
+import { MysteriousChestEncounter } from "./encounters/mysterious-chest";
 import { FightOrFlightEncounter } from "#app/data/mystery-encounters/encounters/fight-or-flight";
 import { TrainingSessionEncounter } from "#app/data/mystery-encounters/encounters/training-session";
 import { Biome } from "#enums/biome";
-import { SleepingSnorlaxEncounter } from "./sleeping-snorlax";
+import { SleepingSnorlaxEncounter } from "./encounters/sleeping-snorlax";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { DepartmentStoreSaleEncounter } from "#app/data/mystery-encounters/encounters/department-store-sale";
 import { ShadyVitaminDealerEncounter } from "#app/data/mystery-encounters/encounters/shady-vitamin-dealer";
@@ -15,7 +15,7 @@ export const BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT = 1;
 export const WIGHT_INCREMENT_ON_SPAWN_MISS = 5;
 export const AVERAGE_ENCOUNTERS_PER_RUN_TARGET = 15;
 
-export const allMysteryEncounters: { [encounterType: string]: MysteryEncounter } = {};
+export const allMysteryEncounters: { [encounterType: number]: MysteryEncounter } = {};
 
 // Add MysteryEncounterType to biomes to enable it exclusively for those biomes
 // To enable an encounter in all biomes, do not add to this map
@@ -86,8 +86,6 @@ export const mysteryEncountersByBiome = new Map<Biome, MysteryEncounterType[]>([
   [Biome.LABORATORY, []]
 ]);
 
-// Only add your MysterEncounter here if you want it to be in every biome.
-// We recommend designing biome-specific encounters for better flavor and variance
 export function initMysteryEncounters() {
   allMysteryEncounters[MysteryEncounterType.MYSTERIOUS_CHALLENGERS] = MysteriousChallengersEncounter;
   allMysteryEncounters[MysteryEncounterType.MYSTERIOUS_CHEST] = MysteriousChestEncounter;

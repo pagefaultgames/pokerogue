@@ -92,9 +92,9 @@ import { Species } from "#enums/species";
 import { UiTheme } from "#enums/ui-theme";
 import { TimedEventManager } from "#app/timed-event-manager.js";
 import i18next from "i18next";
-import MysteryEncounter, { MysteryEncounterTier, MysteryEncounterVariant } from "./data/mystery-encounter";
-import { mysteryEncountersByBiome, allMysteryEncounters, BASE_MYSTERY_ENCOUNTER_WEIGHT, AVERAGE_ENCOUNTERS_PER_RUN_TARGET, WIGHT_INCREMENT_ON_SPAWN_MISS } from "./data/mystery-encounters/mystery-encounters";
-import { MysteryEncounterFlags } from "#app/data/mystery-encounter-flags";
+import MysteryEncounter, { MysteryEncounterTier, MysteryEncounterVariant } from "./data/mystery-encounters/mystery-encounter";
+import { mysteryEncountersByBiome, allMysteryEncounters, BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT, AVERAGE_ENCOUNTERS_PER_RUN_TARGET, WIGHT_INCREMENT_ON_SPAWN_MISS } from "./data/mystery-encounters/mystery-encounters";
+import { MysteryEncounterData } from "#app/data/mystery-encounters/mystery-encounter-data";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
