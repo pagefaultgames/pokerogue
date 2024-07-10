@@ -157,10 +157,6 @@ export class Logger {
       this.latestEntryIndex = isEntriesFull ? 0 : this.latestEntryIndex + 1;
       this.entries[this.latestEntryIndex] = entry;
     }
-
-    if (this.entries.length > this.entriesLimit) {
-      this.entries.shift();
-    }
   }
 
   private entriesAsStringArray(): string[] {
