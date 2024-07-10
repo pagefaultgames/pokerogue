@@ -1020,6 +1020,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const onScreenLastIndex = Math.min(onScreenFirstIndex + 9*9, numberOfStarters) - 1; // this is the last starter index on the screen
     const onScreenNumberOfStarters = onScreenLastIndex - onScreenFirstIndex + 1;
     const onScreenNumberOfRows = Math.ceil(onScreenNumberOfStarters / 9);
+    const onScreenFirstRow = Math.floor(onScreenFirstIndex / 9);
     const onScreenCurrentRow = Math.floor((this.cursor - onScreenFirstIndex) / 9);
 
 
@@ -1082,7 +1083,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       case Button.DOWN:
         this.startCursorObj.setVisible(false);
         if (this.starterSpecies.length > 0) {
-          this.starterIconsCursorIndex = this.starterSpecies.length - 1;
+          this.starterIconsCursorIndex = 0;
           this.moveStarterIconsCursor(this.starterIconsCursorIndex);
         } else {
           this.setFilterMode(true);
@@ -1658,7 +1659,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             if (this.starterIconsCursorIndex === 0) {
               this.starterIconsCursorObj.setVisible(false);
               this.setSpecies(null);
-              this.setFilterMode(true);
+              this.startCursorObj.setVisible(true);
               success = true;
             } else {
               this.starterIconsCursorIndex--;
@@ -1716,8 +1717,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           } else {
             this.starterIconsCursorObj.setVisible(false);
             this.cursorObj.setVisible(true);
-            const rowToUse = Math.min(this.starterIconsCursorIndex + 3, numOfRows - 1);
-            this.setCursor(Math.min((rowToUse * 9) + 8, numberOfStarters - 1));
+            const rowToGo = Math.min(onScreenFirstRow + this.starterIconsCursorIndex + 2, numOfRows - 1);
+            this.setCursor(Math.min((rowToGo * 9) + 8, numberOfStarters - 1));
             success = true;
           }
           break;
@@ -1747,8 +1748,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           } else {
             this.starterIconsCursorObj.setVisible(false);
             this.cursorObj.setVisible(true);
-            const rowToUse = Math.min(this.starterIconsCursorIndex + 3, numOfRows - 1);
-            this.setCursor(Math.min((rowToUse * 9), numberOfStarters - 1));
+            const rowToGo = Math.min(onScreenFirstRow + this.starterIconsCursorIndex + 2, numOfRows - 1);
+            this.setCursor(Math.min((rowToGo * 9), numberOfStarters - 1));
             success = true;
           }
           break;
