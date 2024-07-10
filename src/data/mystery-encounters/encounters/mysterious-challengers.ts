@@ -12,7 +12,6 @@ import { PartyMemberStrength } from "#enums/party-member-strength";
 import BattleScene from "../../../battle-scene";
 import * as Utils from "../../../utils";
 import MysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier } from "../mystery-encounter";
-import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 
 export const MysteriousChallengersEncounter: MysteryEncounter = MysteryEncounterBuilder
   .withEncounterType(MysteryEncounterType.MYSTERIOUS_CHALLENGERS)
@@ -96,55 +95,49 @@ export const MysteriousChallengersEncounter: MysteryEncounter = MysteryEncounter
 
     return true;
   })
-  .withOption(new MysteryEncounterOptionBuilder()
-    .withOptionPhase(async (scene: BattleScene) => {
-      const encounter = scene.currentBattle.mysteryEncounter;
-      // Spawn standard trainer battle with memory mushroom reward
-      const config: EnemyPartyConfig = encounter.enemyPartyConfigs[0];
+  .withOptionPhase(async (scene: BattleScene) => {
+    const encounter = scene.currentBattle.mysteryEncounter;
+    // Spawn standard trainer battle with memory mushroom reward
+    const config: EnemyPartyConfig = encounter.enemyPartyConfigs[0];
 
-      setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.TM_COMMON, modifierTypes.TM_GREAT, modifierTypes.MEMORY_MUSHROOM], fillRemaining: true });
+    setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.TM_COMMON, modifierTypes.TM_GREAT, modifierTypes.MEMORY_MUSHROOM], fillRemaining: true });
 
-      // Seed offsets to remove possibility of different trainers having exact same teams
-      let ret;
-      scene.executeWithSeedOffset(() => {
-        ret = initBattleWithEnemyConfig(scene, config);
-      }, scene.currentBattle.waveIndex * 10);
-      return ret;
-    })
-    .build())
-  .withOption(new MysteryEncounterOptionBuilder()
-    .withOptionPhase(async (scene: BattleScene) => {
-      const encounter = scene.currentBattle.mysteryEncounter;
-      // Spawn hard fight with ULTRA/GREAT reward (can improve with luck)
-      const config: EnemyPartyConfig = encounter.enemyPartyConfigs[1];
+    // Seed offsets to remove possibility of different trainers having exact same teams
+    let ret;
+    scene.executeWithSeedOffset(() => {
+      ret = initBattleWithEnemyConfig(scene, config);
+    }, scene.currentBattle.waveIndex * 10);
+    return ret;
+  })
+  .withOptionPhase(async (scene: BattleScene) => {
+    const encounter = scene.currentBattle.mysteryEncounter;
+    // Spawn hard fight with ULTRA/GREAT reward (can improve with luck)
+    const config: EnemyPartyConfig = encounter.enemyPartyConfigs[1];
 
-      setEncounterRewards(scene, { guaranteedModifierTiers: [ModifierTier.ULTRA, ModifierTier.GREAT, ModifierTier.GREAT], fillRemaining: true });
+    setEncounterRewards(scene, { guaranteedModifierTiers: [ModifierTier.ULTRA, ModifierTier.GREAT, ModifierTier.GREAT], fillRemaining: true });
 
-      // Seed offsets to remove possibility of different trainers having exact same teams
-      let ret;
-      scene.executeWithSeedOffset(() => {
-        ret = initBattleWithEnemyConfig(scene, config);
-      }, scene.currentBattle.waveIndex * 100);
-      return ret;
-    })
-    .build())
-  .withOption(new MysteryEncounterOptionBuilder()
-    .withOptionPhase(async (scene: BattleScene) => {
-      const encounter = scene.currentBattle.mysteryEncounter;
-      // Spawn brutal fight with ROGUE/ULTRA/GREAT reward (can improve with luck)
-      const config: EnemyPartyConfig = encounter.enemyPartyConfigs[2];
+    // Seed offsets to remove possibility of different trainers having exact same teams
+    let ret;
+    scene.executeWithSeedOffset(() => {
+      ret = initBattleWithEnemyConfig(scene, config);
+    }, scene.currentBattle.waveIndex * 100);
+    return ret;
+  })
+  .withOptionPhase(async (scene: BattleScene) => {
+    const encounter = scene.currentBattle.mysteryEncounter;
+    // Spawn brutal fight with ROGUE/ULTRA/GREAT reward (can improve with luck)
+    const config: EnemyPartyConfig = encounter.enemyPartyConfigs[2];
 
-      // To avoid player level snowballing from picking this option
-      encounter.expMultiplier = 0.9;
+    // To avoid player level snowballing from picking this option
+    encounter.expMultiplier = 0.9;
 
-      setEncounterRewards(scene, { guaranteedModifierTiers: [ModifierTier.ROGUE, ModifierTier.ULTRA, ModifierTier.GREAT], fillRemaining: true });
+    setEncounterRewards(scene, { guaranteedModifierTiers: [ModifierTier.ROGUE, ModifierTier.ULTRA, ModifierTier.GREAT], fillRemaining: true });
 
-      // Seed offsets to remove possibility of different trainers having exact same teams
-      let ret;
-      scene.executeWithSeedOffset(() => {
-        ret = initBattleWithEnemyConfig(scene, config);
-      }, scene.currentBattle.waveIndex * 1000);
-      return ret;
-    })
-    .build())
+    // Seed offsets to remove possibility of different trainers having exact same teams
+    let ret;
+    scene.executeWithSeedOffset(() => {
+      ret = initBattleWithEnemyConfig(scene, config);
+    }, scene.currentBattle.waveIndex * 1000);
+    return ret;
+  })
   .build();

@@ -54,49 +54,45 @@ export const SleepingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuilde
     encounter.enemyPartyConfigs = [config];
     return true;
   })
-  .withOption(new MysteryEncounterOptionBuilder()
-    .withOptionPhase(async (scene: BattleScene) => {
-      // Pick battle
-      // TODO: do we want special rewards for this?
-      // setCustomEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.LEFTOVERS], fillRemaining: true});
-      await initBattleWithEnemyConfig(scene, scene.currentBattle.mysteryEncounter.enemyPartyConfigs[0]);
-    })
-    .build())
-  .withOption(new MysteryEncounterOptionBuilder()
-    .withOptionPhase(async (scene: BattleScene) => {
-      const instance = scene.currentBattle.mysteryEncounter;
-      let roll: integer;
-      scene.executeWithSeedOffset(() => {
-        roll = Utils.randSeedInt(16, 0);
-      }, scene.currentBattle.waveIndex);
-      console.log(roll);
-      if (roll > 4) {
-        // Fall asleep and get a sitrus berry (75%)
-        const p = instance.primaryPokemon;
-        p.status = new Status(StatusEffect.SLEEP, 0, 3);
-        p.updateInfo(true);
-        // const sitrus = (modifierTypes.BERRY?.() as ModifierTypeGenerator).generateType(scene.getParty(), [BerryType.SITRUS]);
-        const sitrus = generateModifierType(scene, modifierTypes.BERRY, [BerryType.SITRUS]);
+  .withOptionPhase(async (scene: BattleScene) => {
+    // Pick battle
+    // TODO: do we want special rewards for this?
+    // setCustomEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.LEFTOVERS], fillRemaining: true});
+    await initBattleWithEnemyConfig(scene, scene.currentBattle.mysteryEncounter.enemyPartyConfigs[0]);
+  })
+  .withOptionPhase(async (scene: BattleScene) => {
+    const instance = scene.currentBattle.mysteryEncounter;
+    let roll: integer;
+    scene.executeWithSeedOffset(() => {
+      roll = Utils.randSeedInt(16, 0);
+    }, scene.currentBattle.waveIndex);
+    console.log(roll);
+    if (roll > 4) {
+      // Fall asleep and get a sitrus berry (75%)
+      const p = instance.primaryPokemon;
+      p.status = new Status(StatusEffect.SLEEP, 0, 3);
+      p.updateInfo(true);
+      // const sitrus = (modifierTypes.BERRY?.() as ModifierTypeGenerator).generateType(scene.getParty(), [BerryType.SITRUS]);
+      const sitrus = generateModifierType(scene, modifierTypes.BERRY, [BerryType.SITRUS]);
 
-        setEncounterRewards(scene, { guaranteedModifierTypeOptions: [new ModifierTypeOption(sitrus, 0)], fillRemaining: false });
-        queueEncounterMessage(scene, "mysteryEncounter:sleeping_snorlax_option_2_bad_result");
-        leaveEncounterWithoutBattle(scene);
-      } else {
-        // Heal to full (25%)
-        for (const pokemon of scene.getParty()) {
-          pokemon.hp = pokemon.getMaxHp();
-          pokemon.resetStatus();
-          for (const move of pokemon.moveset) {
-            move.ppUsed = 0;
-          }
-          pokemon.updateInfo(true);
+      setEncounterRewards(scene, { guaranteedModifierTypeOptions: [new ModifierTypeOption(sitrus, 0)], fillRemaining: false });
+      queueEncounterMessage(scene, "mysteryEncounter:sleeping_snorlax_option_2_bad_result");
+      leaveEncounterWithoutBattle(scene);
+    } else {
+      // Heal to full (25%)
+      for (const pokemon of scene.getParty()) {
+        pokemon.hp = pokemon.getMaxHp();
+        pokemon.resetStatus();
+        for (const move of pokemon.moveset) {
+          move.ppUsed = 0;
         }
-
-        queueEncounterMessage(scene, "mysteryEncounter:sleeping_snorlax_option_2_good_result");
-        leaveEncounterWithoutBattle(scene);
+        pokemon.updateInfo(true);
       }
-    })
-    .build())
+
+      queueEncounterMessage(scene, "mysteryEncounter:sleeping_snorlax_option_2_good_result");
+      leaveEncounterWithoutBattle(scene);
+    }
+  })
   .withOption(new MysteryEncounterOptionBuilder()
     .withPrimaryPokemonRequirement(new MoveRequirement([Moves.PLUCK, Moves.COVET, Moves.KNOCK_OFF, Moves.THIEF, Moves.TRICK, Moves.SWITCHEROO]))
     .withOptionPhase(async (scene: BattleScene) => {
@@ -105,5 +101,6 @@ export const SleepingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuilde
       queueEncounterMessage(scene, "mysteryEncounter:sleeping_snorlax_option_3_good_result");
       leaveEncounterWithoutBattle(scene);
     })
-    .build())
+    .build()
+  )
   .build();
