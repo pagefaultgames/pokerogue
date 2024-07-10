@@ -35,7 +35,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "isOverflowingWithSpacePower": "{{pokemonName}}에게서\n우주의 힘이 넘쳐난다!",
   "usedUpAllElectricity": "{{pokemonName}}[[는]]\n전기를 다 써 버렸다!",
   "stoleItem": "{{pokemonName}}[[는]] {{targetName}}[[로]]부터\n{{itemName}}[[을]] 빼앗았다!",
-  "incineratedItem": "{{pokemonName}} incinerated\n{{targetName}}'s {{itemName}}!",
+  "incineratedItem": "{{pokemonName}}[[는]] {{targetName}}의\n{{itemName}}[[를]] 불태워서 없애버렸다!",
   "knockedOffItem": "{{pokemonName}}[[는]] {{targetName}}의\n{{itemName}}[[를]] 탁 쳐서 떨구었다!",
   "tookMoveAttack": "{{pokemonName}}[[는]]\n{{moveName}} 공격을 끌어들였다!",
   "cutOwnHpAndMaximizedStat": "{{pokemonName}}[[는]] 체력을 깎아서\n{{stateName}}[[를]] 풀 파워로 만들었다!",
