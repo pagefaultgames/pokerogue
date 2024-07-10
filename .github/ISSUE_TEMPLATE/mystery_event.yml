@@ -92,6 +92,15 @@ body:
       label: Options offered to the player
       description: A maximum of four options can be displayed at a time
       placeholder: Remember that only up to four options can be displayed at a time
+      value: |
+        - [ ] OPTION-1 Label
+            - _OPTION-1 description._
+        - [ ] OPTION-2 Label
+            - _OPTION-2 description._
+        - [ ] OPTION-3 Label
+            - _OPTION-3 description._
+        - [ ] OPTION-4 Label
+            - _OPTION-4 description._
     validations:
       required: true
   - type: textarea
@@ -100,15 +109,6 @@ body:
       label: Explanation/Notes on Design
       description: Explain why you think this design is right and what this Event brings to the table
       placeholder: Explain why you think this design is right and what this Event brings to the table
-      value: |
-        - [ ] _OPTION-1 Label
-            - _OPTION-1 description._
-        - [ ] _OPTION-2 Label
-            - _OPTION-2 description._
-        - [ ] _OPTION-3 Label
-            - _OPTION-3 description._
-        - [ ] _OPTION-4 Label
-            - _OPTION-4 description._
     validations:
       required: true
   - type: textarea
