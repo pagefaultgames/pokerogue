@@ -27,6 +27,7 @@ import { gameStatsUiHandler } from "./game-stats-ui-handler";
 import { growth } from "./growth";
 import { menu } from "./menu";
 import { menuUiHandler } from "./menu-ui-handler";
+import { modifier } from "./modifier";
 import { modifierType } from "./modifier-type";
 import { move } from "./move";
 import { mysteryEncounter } from "./mystery-encounter";
@@ -75,6 +76,7 @@ export const enConfig = {
   growth: growth,
   menu: menu,
   menuUiHandler: menuUiHandler,
+  modifier: modifier,
   modifierType: modifierType,
   move: move,
   mysteryEncounter: mysteryEncounter,
