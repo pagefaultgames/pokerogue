@@ -44,7 +44,7 @@ describe("battle-stat", () => {
         true
       );
 
-      expect(message).toBe("battle:statRose_one");
+      expect(message).toBe("battle:statRose");
     });
 
     it("should return battle:statSharplyRose for +2", () => {
@@ -57,7 +57,7 @@ describe("battle-stat", () => {
         true
       );
 
-      expect(message).toBe("battle:statSharplyRose_one");
+      expect(message).toBe("battle:statSharplyRose");
     });
 
     it("should return battle:statRoseDrastically for +3 to +6", () => {
@@ -71,7 +71,7 @@ describe("battle-stat", () => {
           true
         );
 
-        expect(message).toBe("battle:statRoseDrastically_one");
+        expect(message).toBe("battle:statRoseDrastically");
       });
     });
 
@@ -86,7 +86,7 @@ describe("battle-stat", () => {
           true
         );
 
-        expect(message).toBe("battle:statWontGoAnyHigher_one");
+        expect(message).toBe("battle:statWontGoAnyHigher");
       });
     });
 
@@ -100,7 +100,7 @@ describe("battle-stat", () => {
         false
       );
 
-      expect(message).toBe("battle:statFell_one");
+      expect(message).toBe("battle:statFell");
     });
 
     it("should return battle:statHarshlyFell for -2", () => {
@@ -113,7 +113,7 @@ describe("battle-stat", () => {
         false
       );
 
-      expect(message).toBe("battle:statHarshlyFell_one");
+      expect(message).toBe("battle:statHarshlyFell");
     });
 
     it("should return battle:statSeverelyFell for -3 to -6", () => {
@@ -127,7 +127,7 @@ describe("battle-stat", () => {
           false
         );
 
-        expect(message).toBe("battle:statSeverelyFell_one");
+        expect(message).toBe("battle:statSeverelyFell");
       });
     });
 
@@ -139,10 +139,10 @@ describe("battle-stat", () => {
           TEST_POKEMON,
           TEST_STAT,
           n,
-          false
+          false,
         );
 
-        expect(message).toBe("battle:statWontGoAnyLower_one");
+        expect(message).toBe("battle:statWontGoAnyLower");
       });
     });
   });
