@@ -64,6 +64,5 @@ export function getBattleStatLevelChangeDescription(pokemonNameWithAffix: string
       }
     }
   })();
-
   return i18next.t(stringKey as ParseKeys, { pokemonNameWithAffix, stats, count });
 }
