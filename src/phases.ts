@@ -5164,6 +5164,10 @@ export class SelectModifierPhase extends BattlePhase {
     return true;
   }
 
+  getRerollCount(): integer {
+    return this.rerollCount;
+  }
+
   getRerollCost(typeOptions: ModifierTypeOption[], lockRarities: boolean): integer {
     let baseValue = 0;
     if (lockRarities) {
