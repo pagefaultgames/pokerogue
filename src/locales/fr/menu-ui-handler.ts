@@ -23,5 +23,6 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "linkGoogle": "Link Google",
   "unlinkGoogle": "Unlink Google",
   "cancel": "Retour",
-  "losingProgressionWarning": "Vous allez perdre votre progression depuis le début du combat. Continuer ?"
+  "losingProgressionWarning": "Vous allez perdre votre progression depuis le début du combat. Continuer ?",
+  "noEggs": "Vous ne faites actuellement\néclore aucun Œuf !"
 } as const;

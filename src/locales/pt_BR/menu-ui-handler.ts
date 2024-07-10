@@ -23,5 +23,6 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "linkGoogle": "Conectar Google",
   "unlinkGoogle": "Desconectar Google",
   "cancel": "Cancelar",
-  "losingProgressionWarning": "Você vai perder todo o progresso desde o início da batalha. Confirmar?"
+  "losingProgressionWarning": "Você vai perder todo o progresso desde o início da batalha. Confirmar?",
+  "noEggs": "Você não está chocando\nnenhum ovo no momento!"
 } as const;
