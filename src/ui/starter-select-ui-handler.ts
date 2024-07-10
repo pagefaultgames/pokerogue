@@ -114,6 +114,8 @@ const starterCandyCosts: { passive: integer, costReduction: [integer, integer], 
   { passive: 10, costReduction: [3, 10], egg: 10 },  // 10
 ];
 
+export const VALUE_REDUCTION_MAX = 2;
+
 function getPassiveCandyCount(baseValue: integer): integer {
   return starterCandyCosts[baseValue - 1].passive;
 }
@@ -268,7 +270,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private classicWinIcons: Phaser.GameObjects.Image[];
   private candyUpgradeIcon: Phaser.GameObjects.Image[];
   private candyUpgradeOverlayIcon: Phaser.GameObjects.Image[];
-  private valueReductionMax: 2;
 
   private iconAnimHandler: PokemonIconAnimHandler;
 
@@ -915,7 +916,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     // Get this species ID's starter data
     const starterData = this.scene.gameData.starterData[speciesId];
 
-    return starterData.valueReduction >= this.valueReductionMax;
+    return starterData.valueReduction >= VALUE_REDUCTION_MAX;
   }
 
   /**
@@ -928,7 +929,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const starterData = this.scene.gameData.starterData[speciesId];
 
     return starterData.candyCount >= getValueReductionCandyCounts(speciesStarters[speciesId])[starterData.valueReduction]
-        && starterData.valueReduction < this.valueReductionMax;
+        && starterData.valueReduction < VALUE_REDUCTION_MAX;
   }
 
   /**
