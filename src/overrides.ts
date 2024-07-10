@@ -1,22 +1,18 @@
-import {WeatherType} from "./data/weather";
-import {Variant} from "./data/variant";
-import {TempBattleStat} from "./data/temp-battle-stat";
-import {Nature} from "./data/nature";
-import {Type} from "./data/type";
-import {Stat} from "./data/pokemon-stat";
-import {PokeballCounts} from "./battle-scene";
-import {PokeballType} from "./data/pokeball";
-import {Gender} from "./data/gender";
-import {StatusEffect} from "./data/status-effect";
-import {modifierTypes, SpeciesStatBoosterItem} from "./modifier/modifier-type";
-import {VariantTier} from "./enums/variant-tiers";
-import {EggTier} from "#enums/egg-type";
-import {Abilities} from "#enums/abilities";
-import {BerryType} from "#enums/berry-type";
-import {Biome} from "#enums/biome";
-import {Moves} from "#enums/moves";
-import {Species} from "#enums/species";
-import {TimeOfDay} from "#enums/time-of-day";
+import { WeatherType } from "./data/weather";
+import { Variant } from "./data/variant";
+import { PokeballCounts } from "./battle-scene";
+import { PokeballType } from "./data/pokeball";
+import { Gender } from "./data/gender";
+import { StatusEffect } from "./data/status-effect";
+import { type ModifierOverride } from "#app/modifier/modifier-type";
+import { VariantTier } from "./enums/variant-tiers";
+import { EggTier } from "#enums/egg-type";
+import { allSpecies } from "./data/pokemon-species"; // eslint-disable-line @typescript-eslint/no-unused-vars
+import { Abilities } from "#enums/abilities";
+import { Biome } from "#enums/biome";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import { TimeOfDay } from "#enums/time-of-day";
 import {MysteryEncounterType} from "#enums/mystery-encounter-type"; // eslint-disable-line @typescript-eslint/no-unused-vars
 import {MysteryEncounterTier} from "#app/data/mystery-encounter"; // eslint-disable-line @typescript-eslint/no-unused-vars
 
@@ -37,10 +33,15 @@ export const SINGLE_BATTLE_OVERRIDE: boolean = false;
 export const STARTING_WAVE_OVERRIDE: integer = 0;
 export const STARTING_BIOME_OVERRIDE: Biome = Biome.TOWN;
 export const ARENA_TINT_OVERRIDE: TimeOfDay = null;
-// Multiplies XP gained by this value including 0. Set to null to ignore the override
+/** Multiplies XP gained by this value including 0. Set to null to ignore the override */
 export const XP_MULTIPLIER_OVERRIDE: number = null;
+export const NEVER_CRIT_OVERRIDE: boolean = false;
 // default 1000
 export const STARTING_MONEY_OVERRIDE: integer = 0;
+/** Sets all shop item prices to 0 */
+export const WAIVE_SHOP_FEES_OVERRIDE: boolean = false;
+/** Sets reroll price to 0 */
+export const WAIVE_REROLL_FEE_OVERRIDE: boolean = false;
 export const FREE_CANDY_UPGRADE_OVERRIDE: boolean = false;
 export const POKEBALL_OVERRIDE: { active: boolean, pokeballs: PokeballCounts } = {
   active: false,
@@ -122,37 +123,29 @@ export const MYSTERY_ENCOUNTER_TIER_OVERRIDE: MysteryEncounterTier = null;
 export const MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType = null;
 
 /**
- * MODIFIER / ITEM OVERRIDES
- * if count is not provided, it will default to 1
- * @example Modifier Override [{name: "EXP_SHARE", count: 2}]
- * @example Held Item Override [{name: "LUCKY_EGG"}]
- *
- * Some items are generated based on a sub-type (i.e. berries), to override those:
- * @example [{name: "BERRY", count: 5, type: BerryType.SITRUS}]
- * types are listed in interface below
- * - TempBattleStat is for TEMP_STAT_BOOSTER / X Items (Dire hit is separate)
- * - Stat is for BASE_STAT_BOOSTER / Vitamin
- * - Nature is for MINT
- * - Type is for TERA_SHARD or ATTACK_TYPE_BOOSTER (type boosting items i.e Silk Scarf)
- * - BerryType is for BERRY
- * - SpeciesStatBoosterItem is for SPECIES_STAT_BOOSTER
+ * MODIFIER / HELD ITEM OVERRIDES
  */
-interface ModifierOverride {
-    name: keyof typeof modifierTypes & string,
-    count?: integer
-    type?: TempBattleStat|Stat|Nature|Type|BerryType|SpeciesStatBoosterItem
-}
-export const STARTING_MODIFIER_OVERRIDE: Array<ModifierOverride> = [];
-export const OPP_MODIFIER_OVERRIDE: Array<ModifierOverride> = [];
 
-export const STARTING_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = [];
-export const OPP_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = [];
-export const NEVER_CRIT_OVERRIDE: boolean = false;
+/** Override array of {@linkcode ModifierOverride}s used to provide modifiers to the player when starting a new game. */
+export const STARTING_MODIFIER_OVERRIDE: ModifierOverride[] = [];
+/**
+ * Override array of {@linkcode ModifierOverride}s used to provide modifiers to enemies.
+ *
+ * Note that any previous modifiers are cleared.
+ */
+export const OPP_MODIFIER_OVERRIDE: ModifierOverride[] = [];
+
+/** Override array of {@linkcode ModifierOverride}s used to provide held items to first party member when starting a new game. */
+export const STARTING_HELD_ITEMS_OVERRIDE: ModifierOverride[] = [];
+/** Override array of {@linkcode ModifierOverride}s used to provide held items to enemies on spawn. */
+export const OPP_HELD_ITEMS_OVERRIDE: ModifierOverride[] = [];
 
 /**
- * An array of items by keys as defined in the "modifierTypes" object in the "modifier/modifier-type.ts" file.
- * Items listed will replace the normal rolls.
- * If less items are listed than rolled, only some items will be replaced
- * If more items are listed than rolled, only the first X items will be shown, where X is the number of items rolled.
+ * Override array of {@linkcode ModifierOverride}s used to replace the generated item rolls after a wave.
+ *
+ * If less entries are listed than rolled, only those entries will be used to replace the corresponding items while the rest randomly generated.
+ * If more entries are listed than rolled, only the first X entries will be used, where X is the number of items rolled.
+ *
+ * Note that, for all items in the array, `count` is not used.
  */
-export const ITEM_REWARD_OVERRIDE: Array<String> = [];
+export const ITEM_REWARD_OVERRIDE: ModifierOverride[] = [];
