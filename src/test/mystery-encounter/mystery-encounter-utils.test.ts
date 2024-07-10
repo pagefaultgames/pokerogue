@@ -3,14 +3,14 @@ import GameManager from "#app/test/utils/gameManager";
 import Phaser from "phaser";
 import {
   getHighestLevelPlayerPokemon, getLowestLevelPlayerPokemon,
-  getRandomPlayerPokemon, getRandomSpeciesByStarterTier, getTextWithEncounterDialogueTokensAndColor,
+  getRandomPlayerPokemon, getRandomSpeciesByStarterTier, getEncounterText,
   koPlayerPokemon, queueEncounterMessage, showEncounterDialogue, showEncounterText,
 } from "#app/data/mystery-encounters/mystery-encounter-utils";
 import {initSceneWithoutEncounterPhase} from "#test/utils/gameManagerUtils";
 import {Species} from "#enums/species";
 import BattleScene from "#app/battle-scene";
 import {StatusEffect} from "#app/data/status-effect";
-import MysteryEncounter from "#app/data/mystery-encounter";
+import MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 import {MessagePhase} from "#app/phases";
 import {getPokemonSpecies, speciesStarters} from "#app/data/pokemon-species";
 import {Type} from "#app/data/type";
@@ -276,8 +276,8 @@ describe("Mystery Encounter Utils", () => {
       scene.currentBattle.mysteryEncounter = new MysteryEncounter(null);
       scene.currentBattle.mysteryEncounter.setDialogueToken("test", "value");
 
-      const result = getTextWithEncounterDialogueTokensAndColor(scene, "mysteryEncounter:unit_test_dialogue");
-      expect(result).toEqual("[color=#f8f8f8][shadow=#6b5a73]valuevalue @ec{testvalue} @ec{test1} value @ec{test\\} @ec{test\\} {test}[/color][/shadow]");
+      const result = getEncounterText(scene, "mysteryEncounter:unit_test_dialogue");
+      expect(result).toEqual("valuevalue @ec{testvalue} @ec{test1} value @ec{test\\} @ec{test\\} {test}");
     });
 
     it("can perform nested dialogue token injection", () => {
@@ -285,8 +285,8 @@ describe("Mystery Encounter Utils", () => {
       scene.currentBattle.mysteryEncounter.setDialogueToken("test", "value");
       scene.currentBattle.mysteryEncounter.setDialogueToken("testvalue", "new");
 
-      const result = getTextWithEncounterDialogueTokensAndColor(scene, "mysteryEncounter:unit_test_dialogue");
-      expect(result).toEqual("[color=#f8f8f8][shadow=#6b5a73]valuevalue new @ec{test1} value @ec{test\\} @ec{test\\} {test}[/color][/shadow]");
+      const result = getEncounterText(scene, "mysteryEncounter:unit_test_dialogue");
+      expect(result).toEqual("valuevalue new @ec{test1} value @ec{test\\} @ec{test\\} {test}");
     });
   });
 
@@ -298,7 +298,7 @@ describe("Mystery Encounter Utils", () => {
       const phaseSpy = vi.spyOn(game.scene, "unshiftPhase");
 
       queueEncounterMessage(scene, "mysteryEncounter:unit_test_dialogue");
-      expect(spy).toHaveBeenCalledWith("[color=#f8f8f8][shadow=#6b5a73]valuevalue @ec{testvalue} @ec{test1} value @ec{test\\} @ec{test\\} {test}[/color][/shadow]", null, true);
+      expect(spy).toHaveBeenCalledWith("valuevalue @ec{testvalue} @ec{test1} value @ec{test\\} @ec{test\\} {test}", null, true);
       expect(phaseSpy).toHaveBeenCalledWith(expect.any(MessagePhase));
     });
   });
@@ -310,7 +310,7 @@ describe("Mystery Encounter Utils", () => {
       const spy = vi.spyOn(game.scene.ui, "showText");
 
       showEncounterText(scene, "mysteryEncounter:unit_test_dialogue");
-      expect(spy).toHaveBeenCalledWith("[color=#f8f8f8][shadow=#6b5a73]valuevalue @ec{testvalue} @ec{test1} value @ec{test\\} @ec{test\\} {test}[/color][/shadow]", null, expect.any(Function), 0, true);
+      expect(spy).toHaveBeenCalledWith("valuevalue @ec{testvalue} @ec{test1} value @ec{test\\} @ec{test\\} {test}", null, expect.any(Function), 0, true);
     });
   });
 
@@ -321,7 +321,7 @@ describe("Mystery Encounter Utils", () => {
       const spy = vi.spyOn(game.scene.ui, "showDialogue");
 
       showEncounterDialogue(scene, "mysteryEncounter:unit_test_dialogue", "mysteryEncounter:unit_test_dialogue");
-      expect(spy).toHaveBeenCalledWith("[color=#f8f8f8][shadow=#6b5a73]valuevalue @ec{testvalue} @ec{test1} value @ec{test\\} @ec{test\\} {test}[/color][/shadow]", "[color=#f8f8f8][shadow=#6b5a73]valuevalue @ec{testvalue} @ec{test1} value @ec{test\\} @ec{test\\} {test}[/color][/shadow]", null, undefined, 0, 0);
+      expect(spy).toHaveBeenCalledWith("valuevalue @ec{testvalue} @ec{test1} value @ec{test\\} @ec{test\\} {test}", "valuevalue @ec{testvalue} @ec{test1} value @ec{test\\} @ec{test\\} {test}", null, undefined, 0, 0);
     });
   });
 

@@ -1,22 +1,22 @@
-import BattleScene from "../../battle-scene";
-import {AddPokeballModifierType} from "../../modifier/modifier-type";
+import BattleScene from "../../../battle-scene";
+import { AddPokeballModifierType } from "../../../modifier/modifier-type";
 import {
   EnemyPartyConfig, EnemyPokemonConfig,
   getRandomPlayerPokemon,
   getRandomSpeciesByStarterTier,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle
-} from "./mystery-encounter-utils";
-import MysteryEncounter, {MysteryEncounterBuilder, MysteryEncounterTier} from "../mystery-encounter";
-import {ModifierRewardPhase} from "#app/phases";
-import {getPokemonSpecies} from "../pokemon-species";
-import {MysteryEncounterType} from "#enums/mystery-encounter-type";
-import {PokeballType} from "../pokeball";
-import {PartySizeRequirement, WaveCountRequirement} from "../mystery-encounter-requirements";
-import {MysteryEncounterOptionBuilder} from "../mystery-encounter-option";
-import {Type} from "#app/data/type";
-import {Species} from "#enums/species";
-import {isNullOrUndefined, randSeedInt} from "#app/utils";
+} from "../mystery-encounter-utils";
+import MysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier } from "../mystery-encounter";
+import { ModifierRewardPhase } from "#app/phases";
+import { getPokemonSpecies } from "../../pokemon-species";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { PokeballType } from "../../pokeball";
+import { PartySizeRequirement, WaveCountRequirement } from "../mystery-encounter-requirements";
+import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
+import { Type } from "#app/data/type";
+import { Species } from "#enums/species";
+import { isNullOrUndefined, randSeedInt } from "#app/utils";
 
 // Exclude Ultra Beasts, Paradox, Necrozma, Eternatus, and egg-locked mythicals
 const excludedBosses = [
@@ -69,7 +69,7 @@ const excludedBosses = [
 
 export const DarkDealEncounter: MysteryEncounter = new MysteryEncounterBuilder()
   .withEncounterType(MysteryEncounterType.DARK_DEAL)
-  .withEncounterTier(MysteryEncounterTier.ULTRA_RARE)
+  .withEncounterTier(MysteryEncounterTier.ROGUE)
   .withIntroSpriteConfigs([
     {
       spriteKey: "mad_scientist_m",
