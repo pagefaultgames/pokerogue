@@ -2371,10 +2371,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
 
         const isValidForChallenge = new Utils.BooleanHolder(true);
+        const currentPartyValue = this.starterSpecies.map(s => s.generation).reduce((total: integer, gen: integer, i: integer) => total += this.scene.gameData.getSpeciesStarterValue(this.starterSpecies[i].speciesId), 0);
+        const cursorCost = this.scene.gameData.getSpeciesStarterValue(species.speciesId);
+        const isValidNextPartyValue = (currentPartyValue + cursorCost) <= this.getValueLimit();
         Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor), this.starterSpecies.length);
         const starterSprite = this.filteredStarterContainers[this.cursor].icon as Phaser.GameObjects.Sprite;
         starterSprite.setTexture(species.getIconAtlasKey(formIndex, shiny, variant), species.getIconId(female, formIndex, shiny, variant));
-        starterSprite.setAlpha(isValidForChallenge.value ? 1 : 0.375);
+        starterSprite.setAlpha(isValidForChallenge.value && isValidNextPartyValue ? 1 : 0.375);
         this.filteredStarterContainers[this.cursor].checkIconId(female, formIndex, shiny, variant);
         this.canCycleShiny = !!(dexEntry.caughtAttr & DexAttr.NON_SHINY && dexEntry.caughtAttr & DexAttr.SHINY);
         this.canCycleGender = !!(dexEntry.caughtAttr & DexAttr.MALE && dexEntry.caughtAttr & DexAttr.FEMALE);
