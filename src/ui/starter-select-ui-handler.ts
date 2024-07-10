@@ -1119,7 +1119,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           }
           break;
         case Button.UP:
-          if (!this.filterBar.decDropDownCursor() && numberOfStarters > 0) {
+          if (this.filterBar.openDropDown) {
+            success = this.filterBar.decDropDownCursor()
+          } else {
             this.setFilterMode(false);
             this.scrollCursor = Math.max(0,numOfRows - 9);
             this.updateScroll();
@@ -1128,8 +1130,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           }
           break;
         case Button.DOWN:
-          // add extra check to prevent cursor if there is no filtered results
-          if ((!this.filterBar.openDropDown || !this.filterBar.incDropDownCursor()) && numberOfStarters > 0) {
+          if (this.filterBar.openDropDown) {
+            success = this.filterBar.incDropDownCursor()
+          } else {
             this.setFilterMode(false);
             this.scrollCursor = 0;
             this.updateScroll();
