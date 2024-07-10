@@ -1,22 +1,34 @@
-import { CommonAnim, CommonBattleAnim } from "./battle-anims";
-import { CommonAnimPhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
-import { getPokemonMessage, getPokemonNameWithAffix } from "../messages";
-import Pokemon, { MoveResult, HitResult } from "../field/pokemon";
-import { Stat, getStatName } from "./pokemon-stat";
-import { StatusEffect } from "./status-effect";
+import {CommonAnim, CommonBattleAnim} from "./battle-anims";
+import {
+  CommonAnimPhase,
+  MoveEffectPhase,
+  MovePhase,
+  PokemonHealPhase,
+  ShowAbilityPhase,
+  StatChangePhase
+} from "../phases";
+import {getPokemonMessage, getPokemonNameWithAffix} from "../messages";
+import Pokemon, {HitResult, MoveResult} from "../field/pokemon";
+import {getStatName, Stat} from "./pokemon-stat";
+import {StatusEffect} from "./status-effect";
 import * as Utils from "../utils";
-import { ChargeAttr, MoveFlags, allMoves } from "./move";
-import { Type } from "./type";
-import { BlockNonDirectDamageAbAttr, FlinchEffectAbAttr, ReverseDrainAbAttr, applyAbAttrs } from "./ability";
-import { TerrainType } from "./terrain";
-import { WeatherType } from "./weather";
-import { BattleStat } from "./battle-stat";
-import { allAbilities } from "./ability";
-import { SpeciesFormChangeManualTrigger } from "./pokemon-forms";
-import { Abilities } from "#enums/abilities";
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import {allMoves, ChargeAttr, MoveFlags} from "./move";
+import {Type} from "./type";
+import {
+  allAbilities,
+  applyAbAttrs,
+  BlockNonDirectDamageAbAttr,
+  FlinchEffectAbAttr,
+  ReverseDrainAbAttr
+} from "./ability";
+import {TerrainType} from "./terrain";
+import {WeatherType} from "./weather";
+import {BattleStat} from "./battle-stat";
+import {SpeciesFormChangeManualTrigger} from "./pokemon-forms";
+import {Abilities} from "#enums/abilities";
+import {BattlerTagType} from "#enums/battler-tag-type";
+import {Moves} from "#enums/moves";
+import {Species} from "#enums/species";
 import i18next from "#app/plugins/i18n.js";
 
 export enum BattlerTagLapseType {
@@ -90,6 +102,65 @@ export interface WeatherBattlerTag {
 
 export interface TerrainBattlerTag {
   terrainTypes: TerrainType[];
+}
+
+export class StockpileTag extends BattlerTag {
+  stockpileCount: integer = 0;
+
+  constructor(sourceId: integer) {
+    super(BattlerTagType.STOCKPILE, BattlerTagLapseType.TURN_END, 1, Moves.STOCKPILE, sourceId);
+  }
+
+  hasStock(pokemon: Pokemon): boolean {
+    const existingTag : StockpileTag = (pokemon.getTag(StockpileTag) as StockpileTag);
+    const currentStockpileCount : integer = existingTag?.stockpileCount ?? 0;
+    return currentStockpileCount >0;
+  }
+
+  canAdd(pokemon: Pokemon) : boolean {
+    const existingTag : StockpileTag = (pokemon.getTag(StockpileTag) as StockpileTag);
+    const currentStockpileCount : integer = existingTag?.stockpileCount ?? 0;
+    return currentStockpileCount <  3;
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+    this.stockpileCount += 1;
+    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsStockpileOnAdd", {stockpileCount : this.stockpileCount}));
+    pokemon.scene.unshiftPhase(new StatChangePhase(
+      pokemon.scene,
+      pokemon.getBattlerIndex(),
+      true,
+      [BattleStat.DEF,BattleStat.SPDEF],
+      1,
+      true));
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType) : boolean {
+    return lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
+  }
+
+  onRemove(pokemon: Pokemon): void {
+    pokemon.scene.unshiftPhase(new StatChangePhase(
+      pokemon.scene,
+      pokemon.getBattlerIndex(),
+      true,
+      [BattleStat.DEF,BattleStat.SPDEF],
+      -1*this.stockpileCount,
+      true));
+  }
+
+  onOverlap(pokemon: Pokemon) {
+    if (this.canAdd(pokemon)) {
+      this.onAdd(pokemon);
+    }
+  }
+
+  loadTag(source: any) {
+    super.loadTag(source);
+    this.stockpileCount = source.stockpileCount as integer;
+  }
+
 }
 
 export class RechargingTag extends BattlerTag {
@@ -600,7 +671,7 @@ export class IngrainTag extends TrappedTag {
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    const ret = lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
+    const ret = lapseType === BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
 
     if (ret) {
       pokemon.scene.unshiftPhase(
@@ -697,6 +768,7 @@ export class DrowsyTag extends BattlerTag {
     super.onAdd(pokemon);
 
     pokemon.scene.queueMessage(i18next.t("battle:battlerTagsDrowsyOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
@@ -1654,6 +1726,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
     return new DestinyBondTag(sourceMove, sourceId);
   case BattlerTagType.ICE_FACE:
     return new IceFaceTag(sourceMove);
+  case BattlerTagType.STOCKPILE:
+    return new StockpileTag(sourceId);
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);

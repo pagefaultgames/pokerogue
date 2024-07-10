@@ -1,7 +1,7 @@
 import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
 import { BattleEndPhase, MovePhase, NewBattlePhase, PartyStatusCurePhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../phases";
 import { BattleStat, getBattleStatName } from "./battle-stat";
-import { EncoreTag, SemiInvulnerableTag } from "./battler-tags";
+import { EncoreTag, SemiInvulnerableTag, StockpileTag} from "./battler-tags";
 import { getPokemonMessage, getPokemonNameWithAffix } from "../messages";
 import Pokemon, { AttackMoveResult, EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../field/pokemon";
 import { StatusEffect, getStatusEffectHealText, isNonVolatileStatusEffect, getNonVolatileStatusEffects} from "./status-effect";
@@ -1419,6 +1419,12 @@ export class SandHealAttr extends WeatherHealAttr {
   }
 }
 
+export class VariableHealAttr extends HealAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    return false;
+  }
+}
+
 /**
  * Heals the target or the user by either {@linkcode normalHealRatio} or {@linkcode boostedHealRatio}
  * depending on the evaluation of {@linkcode condition}
@@ -1453,6 +1459,23 @@ export class BoostHealAttr extends HealAttr {
     return true;
   }
 }
+
+export class SwallowHealAttr extends VariableHealAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const stockpileTag : StockpileTag = user.getTag(BattlerTagType.STOCKPILE) as StockpileTag;
+    const healRatio : number = 0.25*2**(stockpileTag?.stockpileCount-1);
+
+    if (!healRatio) {
+      return false;
+    }
+
+    user.removeTag(BattlerTagType.STOCKPILE);
+    this.addHealPhase(target,healRatio);
+
+    return true;
+  }
+}
+
 
 /**
  * Heals the target only if it is the ally
@@ -3179,6 +3202,23 @@ export class PresentPowerAttr extends VariablePowerAttr {
       target.scene.unshiftPhase(new PokemonHealPhase(target.scene, target.getBattlerIndex(),
         Math.max(Math.floor(target.getMaxHp() / 4), 1), getPokemonMessage(target, " regained\nhealth!"), true));
     }
+
+    return true;
+  }
+}
+
+export class SpitUpPowerAttr extends VariablePowerAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const stockpileTag : StockpileTag = (user.getTag(BattlerTagType.STOCKPILE) as StockpileTag);
+    const stockpileCount = stockpileTag?.stockpileCount ?? 0;
+
+    if (stockpileCount) {
+      (args[0] as Utils.NumberHolder).value = 100*stockpileCount;
+    } else {
+      return false;
+    }
+
+    user.removeTag(BattlerTagType.STOCKPILE);
 
     return true;
   }
@@ -5581,6 +5621,12 @@ export class FirstMoveCondition extends MoveCondition {
   }
 }
 
+export class HasStockpileCondition extends MoveCondition {
+  constructor() {
+    super( (user, target, move) => new StockpileTag(user.id).hasStock(user));
+  }
+}
+
 export class hitsSameTypeAttr extends VariableMoveTypeMultiplierAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const multiplier = args[0] as Utils.NumberHolder;
@@ -6365,12 +6411,15 @@ export function initMoves() {
       .target(MoveTarget.RANDOM_NEAR_ENEMY)
       .partial(),
     new SelfStatusMove(Moves.STOCKPILE, Type.NORMAL, -1, 20, -1, 0, 3)
-      .unimplemented(),
+      .attr(AddBattlerTagAttr, BattlerTagType.STOCKPILE,true,false)
+      .condition((user, target, move) => new StockpileTag(user.id).canAdd(target)),
     new AttackMove(Moves.SPIT_UP, Type.NORMAL, MoveCategory.SPECIAL, -1, 100, 10, -1, 0, 3)
-      .unimplemented(),
+      .attr(SpitUpPowerAttr)
+      .condition(new HasStockpileCondition()),
     new SelfStatusMove(Moves.SWALLOW, Type.NORMAL, -1, 10, -1, 0, 3)
       .triageMove()
-      .unimplemented(),
+      .attr(SwallowHealAttr)
+      .condition(new HasStockpileCondition()),
     new AttackMove(Moves.HEAT_WAVE, Type.FIRE, MoveCategory.SPECIAL, 95, 90, 10, 10, 0, 3)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
       .attr(StatusEffectAttr, StatusEffect.BURN)
