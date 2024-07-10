@@ -1,6 +1,6 @@
 name: Mystery Event
 description: Propose a new mystery event
-title: "[Event Proposal]: "
+title: "[Event] "
 labels: ["event proposal"]
 projects: ["AsdarDevelops/1"]
 body:
@@ -10,6 +10,8 @@ body:
       label: Event Name
       description: Name of the event
       placeholder: e.g Fight or Flight
+    validations:
+      required: true
   - type: markdown # SEPARATOR
     attributes:
       value: |
