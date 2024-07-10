@@ -1338,7 +1338,7 @@ export class PokemonResetNegativeStatStageModifier extends PokemonHeldItemModifi
       for (let s = 0; s < pokemon.summonData.battleStats.length; s++) {
         pokemon.summonData.battleStats[s] = Math.max(0, pokemon.summonData.battleStats[s]);
       }
-      pokemon.scene.queueMessage(getPokemonMessage(pokemon, `'s lowered stats were'\nrestored by its ${this.type.name}!`));
+      pokemon.scene.queueMessage(i18next.t("modifier:pokemonResetNegativeStatStageApply", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), typeName: this.type.name }));
       return true;
     }
     return false;
