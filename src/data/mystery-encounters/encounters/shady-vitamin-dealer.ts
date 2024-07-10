@@ -22,7 +22,7 @@ import { randSeedInt } from "#app/utils";
 import Pokemon, { PlayerPokemon } from "#app/field/pokemon";
 import { StatusEffect } from "#app/data/status-effect";
 
-export const ShadyVitaminDealerEncounter: MysteryEncounter = new MysteryEncounterBuilder()
+export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBuilder
   .withEncounterType(MysteryEncounterType.SHADY_VITAMIN_DEALER)
   .withEncounterTier(MysteryEncounterTier.COMMON)
   .withIntroSpriteConfigs([

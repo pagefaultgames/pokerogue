@@ -21,7 +21,7 @@ import { Status, StatusEffect } from "../../status-effect";
 import { Moves } from "#enums/moves";
 import { BerryType } from "#enums/berry-type";
 
-export const SleepingSnorlaxEncounter: MysteryEncounter = new MysteryEncounterBuilder()
+export const SleepingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuilder
   .withEncounterType(MysteryEncounterType.SLEEPING_SNORLAX)
   .withEncounterTier(MysteryEncounterTier.ULTRA)
   .withIntroSpriteConfigs([

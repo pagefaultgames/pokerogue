@@ -67,7 +67,7 @@ const excludedBosses = [
   Species.PECHARUNT
 ];
 
-export const DarkDealEncounter: MysteryEncounter = new MysteryEncounterBuilder()
+export const DarkDealEncounter: MysteryEncounter = MysteryEncounterBuilder
   .withEncounterType(MysteryEncounterType.DARK_DEAL)
   .withEncounterTier(MysteryEncounterTier.ROGUE)
   .withIntroSpriteConfigs([

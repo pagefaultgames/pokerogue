@@ -24,7 +24,7 @@ import { AbilityAttr } from "#app/system/game-data";
 import { Stat } from "#app/data/pokemon-stat";
 import { pokemonInfo } from "#app/locales/en/pokemon-info";
 
-export const TrainingSessionEncounter: MysteryEncounter = new MysteryEncounterBuilder()
+export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilder
   .withEncounterType(MysteryEncounterType.TRAINING_SESSION)
   .withEncounterTier(MysteryEncounterTier.ULTRA)
   .withIntroSpriteConfigs([

@@ -360,12 +360,12 @@ export class MysteryEncounterBuilder implements Partial<MysteryEncounter> {
    */
 
   /**
-   * Defines the type of encounter which is used as an identifier, should be tied to a unique MysteryEncounterType
+   * @statif Defines the type of encounter which is used as an identifier, should be tied to a unique MysteryEncounterType
    * @param encounterType
    * @returns this
    */
-  withEncounterType(encounterType: MysteryEncounterType): this & Pick<MysteryEncounter, "encounterType"> {
-    return Object.assign(this, { encounterType: encounterType });
+  static withEncounterType(encounterType: MysteryEncounterType): MysteryEncounterBuilder & Pick<MysteryEncounter, "encounterType"> {
+    return Object.assign(new MysteryEncounterBuilder(), { encounterType: encounterType });
   }
 
   /**
