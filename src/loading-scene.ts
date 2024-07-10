@@ -22,8 +22,8 @@ import { initStatsKeys } from "./ui/game-stats-ui-handler";
 import { initVouchers } from "./system/voucher";
 import { Biome } from "#enums/biome";
 import { TrainerType } from "#enums/trainer-type";
-import {initMysteryEncounterDialogue} from "#app/data/mystery-encounters/dialogue/mystery-encounter-dialogue";
-import {initMysteryEncounters} from "#app/data/mystery-encounters/mystery-encounters";
+import {initMysteryEncounterDialogue} from "#app/data/mystery-encounters/mystery-encounter-dialogue";
+import {initMysteryEncounters} from "#app/data/mystery-encounters/encounters/mystery-encounters";
 
 export class LoadingScene extends SceneBase {
   readonly LOAD_EVENTS = Phaser.Loader.Events;

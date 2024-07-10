@@ -92,15 +92,15 @@ import { Species } from "#enums/species";
 import { UiTheme } from "#enums/ui-theme";
 import { TimedEventManager } from "#app/timed-event-manager.js";
 import i18next from "i18next";
-import {TrainerType} from "#enums/trainer-type";
-import MysteryEncounter, { MysteryEncounterTier, MysteryEncounterVariant } from "./data/mystery-encounter";
+import { TrainerType } from "#enums/trainer-type";
+import MysteryEncounter, { MysteryEncounterTier, MysteryEncounterVariant } from "./data/mystery-encounters/mystery-encounter";
 import {
   mysteryEncountersByBiome,
   allMysteryEncounters,
   BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT,
   AVERAGE_ENCOUNTERS_PER_RUN_TARGET, WIGHT_INCREMENT_ON_SPAWN_MISS
-} from "./data/mystery-encounters/mystery-encounters";
-import {MysteryEncounterData} from "#app/data/mystery-encounter-data";
+} from "./data/mystery-encounters/encounters/mystery-encounters";
+import { MysteryEncounterData } from "#app/data/mystery-encounters/mystery-encounter-data";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
@@ -2813,7 +2813,7 @@ export default class BattleScene extends SceneBase {
       const tier = val[1];
       if (tier === MysteryEncounterTier.COMMON) {
         tierWeights[0] = tierWeights[0] - 6;
-      } else if (tier === MysteryEncounterTier.UNCOMMON) {
+      } else if (tier === MysteryEncounterTier.GREAT) {
         tierWeights[1] = tierWeights[1] - 4;
       }
     });
@@ -2823,7 +2823,7 @@ export default class BattleScene extends SceneBase {
     const commonThreshold = totalWeight - tierWeights[0];
     const uncommonThreshold = totalWeight - tierWeights[0] - tierWeights[1];
     const rareThreshold = totalWeight - tierWeights[0] - tierWeights[1] - tierWeights[2];
-    let tier = tierValue > commonThreshold ? MysteryEncounterTier.COMMON : tierValue > uncommonThreshold ? MysteryEncounterTier.UNCOMMON : tierValue > rareThreshold ? MysteryEncounterTier.RARE : MysteryEncounterTier.SUPER_RARE;
+    let tier = tierValue > commonThreshold ? MysteryEncounterTier.COMMON : tierValue > uncommonThreshold ? MysteryEncounterTier.GREAT : tierValue > rareThreshold ? MysteryEncounterTier.ULTRA : MysteryEncounterTier.ROGUE;
 
     if (!isNullOrUndefined(Overrides.MYSTERY_ENCOUNTER_TIER_OVERRIDE)) {
       tier = Overrides.MYSTERY_ENCOUNTER_TIER_OVERRIDE;

@@ -64,14 +64,14 @@ import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
-import {BattlePhase} from "#app/phases/battle-phase";
-import {MysteryEncounterVariant} from "#app/data/mystery-encounter";
-import {MysteryEncounterPhase} from "#app/phases/mystery-encounter-phase";
+import { BattlePhase } from "#app/phases/battle-phase";
+import { MysteryEncounterVariant } from "#app/data/mystery-encounters/mystery-encounter";
+import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phase";
 import {
-  getTextWithEncounterDialogueTokensAndColor,
+  getEncounterText,
   handleMysteryEncounterVictory
 } from "#app/data/mystery-encounters/mystery-encounter-utils";
-import {SelectModifierPhase} from "#app/phases/select-modifier-phase";
+import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 
 const { t } = i18next;
 
@@ -1051,8 +1051,8 @@ export class EncounterPhase extends BattlePhase {
           const showNextDialogue = () => {
             const nextAction = i === introDialogue.length - 1 ? doShowEncounterOptions : showNextDialogue;
             const dialogue = introDialogue[i];
-            const title = getTextWithEncounterDialogueTokensAndColor(this.scene, dialogue.speaker);
-            const text = getTextWithEncounterDialogueTokensAndColor(this.scene, dialogue.text);
+            const title = getEncounterText(this.scene, dialogue.speaker);
+            const text = getEncounterText(this.scene, dialogue.text);
             if (title) {
               this.scene.ui.showDialogue(text, title, null, nextAction, 0, i === 0 ? 750 : 0);
             } else {

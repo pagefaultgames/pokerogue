@@ -1,4 +1,4 @@
-import {SimpleTranslationEntries} from "#app/interfaces/locales";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 /**
  * Patterns that can be used:
@@ -7,10 +7,10 @@ import {SimpleTranslationEntries} from "#app/interfaces/locales";
  *
  * '@ec{<token>}' will auto-inject the matching token value for the specified Encounter
  *
- * '@ecCol[<TextStyle>]{<text>}' will auto-color the given text to a specified TextStyle (e.g. TextStyle.SUMMARY_GREEN)
+ * '@[<TextStyle>]{<text>}' will auto-color the given text to a specified TextStyle (e.g. TextStyle.SUMMARY_GREEN)
  *
  * Any '(+)' or '(-)' type of tooltip will auto-color to green/blue respectively. THIS ONLY OCCURS FOR OPTION TOOLTIPS, NOWHERE ELSE
- * Other types of '(...)' tooltips will have to specify the text color manually by using '@ecCol[SUMMARY_GREEN]{<text>}' pattern
+ * Other types of '(...)' tooltips will have to specify the text color manually by using '@[SUMMARY_GREEN]{<text>}' pattern
  */
 export const mysteryEncounter: SimpleTranslationEntries = {
   // DO NOT REMOVE
@@ -22,7 +22,7 @@ export const mysteryEncounter: SimpleTranslationEntries = {
   "mysterious_chest_description": "A beautifully ornamented chest stands on the ground. There must be something good inside... right?",
   "mysterious_chest_query": "Will you open it?",
   "mysterious_chest_option_1_label": "Open it",
-  "mysterious_chest_option_1_tooltip": "@ecCol[SUMMARY_BLUE]{(35%) Something terrible}\n@ecCol[SUMMARY_GREEN]{(40%) Okay Rewards}\n@ecCol[SUMMARY_GREEN]{(20%) Good Rewards}\n@ecCol[SUMMARY_GREEN]{(4%) Great Rewards}\n@ecCol[SUMMARY_GREEN]{(1%) Amazing Rewards}",
+  "mysterious_chest_option_1_tooltip": "@[SUMMARY_BLUE]{(35%) Something terrible}\n@[SUMMARY_GREEN]{(40%) Okay Rewards}\n@[SUMMARY_GREEN]{(20%) Good Rewards}\n@[SUMMARY_GREEN]{(4%) Great Rewards}\n@[SUMMARY_GREEN]{(1%) Amazing Rewards}",
   "mysterious_chest_option_2_label": "It's too risky, leave",
   "mysterious_chest_option_2_tooltip": "(-) No Rewards",
   "mysterious_chest_option_1_selected_message": "You open the chest to find...",
@@ -41,8 +41,8 @@ export const mysteryEncounter: SimpleTranslationEntries = {
   "fight_or_flight_option_1_label": "Battle the Pokémon",
   "fight_or_flight_option_1_tooltip": "(-) Hard Battle\n(+) New Item",
   "fight_or_flight_option_2_label": "Steal the item",
-  "fight_or_flight_option_2_tooltip": "@ecCol[SUMMARY_GREEN]{(35%) Steal Item}\n@ecCol[SUMMARY_BLUE]{(65%) Harder Battle}",
-  "fight_or_flight_option_2_steal_tooltip": "@ecCol[SUMMARY_GREEN]{(?) Use a Pokémon Move}",
+  "fight_or_flight_option_2_tooltip": "@[SUMMARY_GREEN]{(35%) Steal Item}\n@[SUMMARY_BLUE]{(65%) Harder Battle}",
+  "fight_or_flight_option_2_steal_tooltip": "@[SUMMARY_GREEN]{(?) Use a Pokémon Move}",
   "fight_or_flight_option_3_label": "Leave",
   "fight_or_flight_option_3_tooltip": "(-) No Rewards",
   "fight_or_flight_option_1_selected_message": "You approach the\nPokémon without fear.",
@@ -167,7 +167,7 @@ export const mysteryEncounter: SimpleTranslationEntries = {
   "sleeping_snorlax_option_1_label": "Fight it",
   "sleeping_snorlax_option_1_tooltip": "(-) Fight Sleeping Snorlax",
   "sleeping_snorlax_option_2_label": "Wait for it to move",
-  "sleeping_snorlax_option_2_tooltip": "@ecCol[SUMMARY_BLUE]{(75%) Wait a short time}\n@ecCol[SUMMARY_BLUE]{(25%) Wait a long time}",
+  "sleeping_snorlax_option_2_tooltip": "@[SUMMARY_BLUE]{(75%) Wait a short time}\n@[SUMMARY_BLUE]{(25%) Wait a long time}",
   "sleeping_snorlax_option_3_label": "Steal",
   "sleeping_snorlax_option_3_tooltip": "(+) Leftovers",
   "sleeping_snorlax_option_3_disabled_tooltip": "Your Pokémon need to know certain moves to choose this",

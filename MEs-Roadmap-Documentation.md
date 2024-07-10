@@ -1,59 +1,48 @@
-# 📝 Most immediate things to-do list
+# 📝 Things to be done before Mystery Encounters ("MEs/Events") goes __live__:
 
-- ### High priority
-    - ⚙️ Add a tag system so MEs to filter or change spawn rates in Challenge runs:
-      - noChallenge (cant be spawned in challenge runs)
-      - allChallenge (can spawn in all challenge modes)
-      - (typespecific)Challenge: 
-        - Example: fireOnly (can only spawn in fire related challenges)
-
-- ### Medium priority
-    - ⚙️ Update Chest visuals for Mysterious Chest (with animated chest)
-
-- ### Low priority
-    - 🐛 Mysterious Challengers can spawn two trainers (or three) of the same type [Dev comment: not a bug]
-    - 🐛 Fight or Flight intro visuals may show different gender from the actual spawned pokemon
-
-# 📝 Things to be done before Mystery Encounters ("MEs/Events") MVP is finished:
-  All the things on this list should be done before an MVP (Minimum Viable Product) can be playtested.
-
-- ## Bugless implementation of the MVP MEs
-  - Establish placeholder waves for MEs to happen ✔️
-  - ⚪ Bug-free implementation of Common ME 1 ('Mysterious Chest')✔️
-  - ⚪ Bug-free implementation of Common ME 2 ('Fight or Flight')✔️
-  - 🔵 Bug-free implementation of Rare ME 1 ('Mysterious Challenger')✔️
-  - 🔵 Bug-free implementation of Rare ME 2 ('Sleeping Snorlax') 🛠️
-  - 🟣 Bug-free implementation of Epic ME 1 ('Training Session') 🛠️
-  - 🟡 Bug-free implementation of Legendary ME 1 ('Dark Deal') ✔️
-
-- ## First round of playtesting (Alpha)
+- ## 1: First round of playtesting (Beta PokéRogue)
   - First round of feedback on bugs for more slippery bugs 🛠️
   - First round of balance feedback on odds and power-level 🛠️
   - Tweak difficulty/rewards balance in MEs 🛠️
 
-  ## Translation of MEs after playtest/balance
-  - First round of translators feedback to avoid potential issues 🛠️
-  - EN localisation 🛠️
-  - ES localisation 🛠️
+- ## 2.1: More requirements (with helper functions)
+  - Having X item 🛠️
+  - Having Y amount of X item 🛠️
+  - A Pokémon X in player's party can learn Y move 🛠️
+  - A Pokémon X in player's party knows Y move ✔️
+  - A Pokémon X in player's party has Y ability 🛠️
+  - A Pokémon X in player's party belongs to a pre-defined pool (ie. "Ultrabeasts") 🛠️
 
-# 📝 Things to be done before Mystery Encounters ("MEs/Events") goes __live__:
-  All the things on this list should be done before the merge to main.
+- ## 2.2: More outcomes (with helper functions)
+  - Status one or many Pokémon if your party -- if they can be statused ✔️
+  - Damage one or many Pokémon in your party ✔️
+  - Set a hazard (ally or foe side) 🛠️
+  - Set a weather 🛠️
+  - Give the player a Pokémon from a pool 🛠️
+  - XP to a Pokémon ✔️
+  - Add logic for choosing a Pokémon from party for some effect ✔️
+  - Add logic for awarding exp to the party ✔️
+  - Encounter/pull a PKMN from a pre-defined pool (ie. "Ultrabeasts") ✔️
 
-- ## Bugless implementation of the MVP MEs
+- ## 2.3: Other wanted utils
+  - IV changes visuals for improving starter IVs in Events 🛠️
+
+- ## 2.4: Bugless implementation of the MVP MEs
   - Bugless implementation of about 55-60 MEs
     - 20 non-biome-dependant:
       - ⚪ 9 Common Events 
-      - 🔵 5 Rare Events
-      - 🟣 4 Epic Events
-      - 🟡 2 Legendary Events
-    - 35-40 biome-dependant Events, at least one for each biome
+      - 🔵 5 Great Events
+      - 🟡 4 Ultra Events
+      - 🔴 2 Rogue Events
+    - ⚪/🔵/🟡 35-40 biome-dependant Events, at least one for each biome
 
-- ## Second round of playtesting (Beta)
-  - Second round of feedback for bugs ❌
-  - Second round of balance feedback ❌
-  - Final decisions on balance, powerlevel, odds and design choices before live feedback ❌
+- ## 3.0: Continuous playtesting (Beta PokéRogue)
+  - More rounds of feedback on bugs for more slippery bugs 🛠️
+  - More rounds of balance feedback on odds and power-level 🛠️
+  - Tweak difficulty/rewards balance in MEs 🛠️
 
-  ## Translation of MEs after playtest/balance
+- ## Translation of MEs after playtest/balance
+  - First round of translators feedback to avoid potential issues 🛠️
   - de localisation     🛠️
   - en localisation     🛠️
   - es-ES localisation  🛠️
@@ -66,9 +55,10 @@
   - zh-TW localisation  🛠️
 
 
-# 🧬 Deep dive into Events and what has been done so far
+# So, __what__ are Events? 🧬
+## (A deep dive into Events and what has been done so far)
 
-Events (referred to as 'Mysterious Encounters, MEs' in the code) aim to be an addition to PokeRogue that will fundamentally shift the way PokéRogue feels. It looks to improve the bet of the game into the RogueLike genre without touching the core gameplay loop of Pokémon battles/collection that we know and love already in this game. Below there are some specifications that clarify what's being worked on for ease of access for the devs, balance team, artists and others who may be interested. Beware of spoilers!
+Events (referred to as '__Mysterious Encounters, MEs__' in the code) aim to be an addition to PokeRogue that will fundamentally shift the way PokéRogue feels. It looks to improve the bet of the game into the RogueLike genre without touching the core gameplay loop of Pokémon battles/collection that we know and love already in this game. Below there are some specifications that clarify what's being worked on for ease of access for the devs, balance team, wiki editors, artists and others who may be interested. Beware of spoilers!
 
 ## An Event __**always has**__:
   ### #️⃣ A wave index where they're happening -- each ME takes up a whole wave (means you miss a combat!).
@@ -106,9 +96,9 @@ Events (referred to as 'Mysterious Encounters, MEs' in the code) aim to be an ad
   
   ### 🌟 **Rarity** tier of the ME, common by default.
     - ⚪ Common pool 
-    - 🔵 Uncommon pool 
-    - 🟣 Rare pool
-    - 🟡 Super Rare pool
+    - 🔵 Great pool 
+    - 🟡 Ultra pool
+    - 🔴 Rogue pool
 
   ### **Optional Requirements** for Mystery Encounters.
   - 🛠️ They give granular control over whether encounters will spawn in certain situations
@@ -133,44 +123,6 @@ Events (referred to as 'Mysterious Encounters, MEs' in the code) aim to be an ad
     - Remove a PKMN from the player's party ✔️
     - Steal from player ❌
 
-# 📝 Known bugs (squash 'em all!):
-  - ## 🔴 __**Really bad ones**__
-
-  - ## 🟡 __**Bad ones under certain circumstances**__
-    - 🐛 Needs further replication : At wave 51, wild PKMN encounter caused a freezed after pressing "ESC" key upon being asked to switch PKMNs
-    - 🐛 Wave seed generates different encounter data if you roll to a new wave, see the spawned stuff, and refresh the app
-
-  - ## 🟢 __**Non-game breaking**__
-    - Both of these bugs seem to have in common that they don't "forget" their last passed string:
-      - 🐛 Scientist will remember the first PKMN it "did the thing on" and never ever forget it, even in future runs. Only affects dialogue.
-      - 🐛 Tooltip bug in Events. When showing the tooltip of the 2nd or later Event you've found, the tooltip for the first option will match whatever option you selected in the previous Event. This wrong tooltip gets overriden once you move the cursor.
-
-# 🗿 Other cool things/functionalities that won't make it in the MVP but are planned to accomodate future MEs:
-
-### QoL improvements
-- Dialogue references to __**good**__ outcomes will be colored 🟢,  __**bad**__ ones in 🔴 and __**ambiguous**__ or __**mixed**__, in 🟡
-  - Helps with quick glances when 5x speed
-
-#### More requirements (with helper functions)
-- Having X item
-- Having Y amount of X item
-- A Pokémon X in player's party can learn Y move
-- A Pokémon X in player's party knows Y move
-- A Pokémon X in player's party has Y ability
-- A Pokémon X in player's party belongs to a pre-defined pool (ie. "Ultrabeasts")
-
-#### More outcomes (with helper functions)
-- Status one or many Pokémon if your party -- if they can be statused 
-- Damage one or many Pokémon in your party 
-- Set a hazard (ally or foe side)
-- Set a weather 
-- Give the player a Pokémon from a pool (useful for reg. professors/traders) 
-- XP to a Pokémon (similar to rare candy?) 
-- Add logic for choosing a Pokémon from party for some effect (trades, sacrifices, etc) 
-- Add logic for awarding exp to the party (outside of a normal combat)
-- Encounter/pull a PKMN from a pre-defined pool (ie. "Ultrabeasts")
-
-
 # Log Documentation
 
 ## 12th-13th June
@@ -188,7 +140,21 @@ Events (referred to as 'Mysterious Encounters, MEs' in the code) aim to be an ad
 - The 🐛 "Picking up certain items in Fight or Flight works poorly" has been squashed.
 - The 🐛 "Modifiers that are applied to pokemon get skipped in Fight or Flight" has been squashed.
 - ⚙️ Added "Omniboost" functionality (Fight or Flight ME) 
-- The 🐛 "Wave seed generates different encounter data if you roll to a new wave, see the spawned stuff, and refresh the app" has been squashed.
+- The 🐛 "Wave seed generates different encounter data if you roll to a new wave, see the spawned stuff, and refresh the app" has been squashed. But we are still watching this one just in case 🕵️
 - The 🐛 "Type-buffing items (like Silk Scarf) get swapped around when offered as a reward in Fight or Flight" has been squashed.
 - ⚖️ Adjusted Dark Deal odds to show 6-7 cost PKMNs at a much higher rate (70%) than 8-cost (20%) or 9-cost (10%), to avoid box legendaries being overly present.
 - The 🐛 about "Tooltips being remembered from the previous ME choice until you hovered a different option" is squashed.
+
+## 01st-10th June; MVP ready!
+- MVP threshold reached! Whoop whoop! Here's what we had set up to do and accomplished:
+  - ### Bugless implementation of the MVP MEs
+    - The framework for Events and all the helper functions. 💖
+      Literally this didn't exist and is the backbone for any Event to to happen! 😅
+    - ⚪ Bug-free implementation of Common ME 1 ('Mysterious Chest')✔️
+    - ⚪ Bug-free implementation of Common ME 2 ('Fight or Flight')✔️
+    - 🔵 Bug-free implementation of Great ME 1 ('Mysterious Challenger')✔️
+    - 🟡 Bug-free implementation of Ultra ME 1 ('Training Session') ✔️
+    - 🔴 Bug-free implementation of Rogue ME 1 ('Dark Deal') ✔️
+- Lots of QoL added. 
+- Refactor the rarity of Events
+- Scrapped much of the Readme to keep it simpler, as we prepare to move onto GitHub Projects for better organization

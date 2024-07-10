@@ -1,19 +1,19 @@
-import {PlayerPokemon} from "#app/field/pokemon";
-import {ModifierType, PokemonHeldItemModifierType} from "#app/modifier/modifier-type";
-import BattleScene from "../battle-scene";
-import {isNullOrUndefined} from "../utils";
-import {Abilities} from "#enums/abilities";
-import {Moves} from "#enums/moves";
-import {Species} from "#enums/species";
-import {TimeOfDay} from "#enums/time-of-day";
-import {Nature} from "./nature";
-import {EvolutionItem, pokemonEvolutions} from "./pokemon-evolutions";
-import {FormChangeItem, pokemonFormChanges, SpeciesFormChangeItemTrigger} from "./pokemon-forms";
-import {SpeciesFormKey} from "./pokemon-species";
-import {StatusEffect} from "./status-effect";
-import {Type} from "./type";
-import {WeatherType} from "./weather";
-import {MysteryEncounterType} from "#enums/mystery-encounter-type";
+import { PlayerPokemon } from "#app/field/pokemon";
+import { ModifierType, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
+import BattleScene from "../../battle-scene";
+import { isNullOrUndefined } from "#app/utils";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import { TimeOfDay } from "#enums/time-of-day";
+import { Nature } from "../nature";
+import { EvolutionItem, pokemonEvolutions } from "../pokemon-evolutions";
+import { FormChangeItem, pokemonFormChanges, SpeciesFormChangeItemTrigger } from "../pokemon-forms";
+import { SpeciesFormKey } from "../pokemon-species";
+import { StatusEffect } from "../status-effect";
+import { Type } from "../type";
+import { WeatherType } from "../weather";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 
 export interface EncounterRequirement {
   meetsRequirement(scene: BattleScene): boolean; // Boolean to see if a requirement is met
@@ -147,6 +147,7 @@ export class WeatherRequirement extends EncounterSceneRequirement {
 
     return true;
   }
+
   getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
     return ["weather", WeatherType[scene.arena?.weather?.weatherType].replace("_", " ").toLocaleLowerCase()];
   }
@@ -205,7 +206,7 @@ export class PersistentModifierRequirement extends EncounterSceneRequirement {
 
   getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
     const requiredItemsInInventory = this.requiredItems.filter((a) => {
-      scene.modifiers.filter((itemInScene)  => itemInScene.type.id === a.id).length > 0;
+      scene.modifiers.filter((itemInScene) => itemInScene.type.id === a.id).length > 0;
     });
     if (requiredItemsInInventory.length > 0) {
       return ["requiredItem", requiredItemsInInventory[0].name];
@@ -239,14 +240,14 @@ export class MoneyRequirement extends EncounterSceneRequirement {
   getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
     const value = this?.scalingMultiplier > 0 ? scene.getWaveMoneyAmount(this.scalingMultiplier).toString() : this.requiredMoney.toString();
     // Colors money text
-    return ["money", "@ecCol[MONEY]{₽" + value + "}"];
+    return ["money", "@[MONEY]{₽" + value + "}"];
   }
 }
 
 export class SpeciesRequirement extends EncounterPokemonRequirement {
   requiredSpecies: Species[];
-  minNumberOfPokemon:number;
-  invertQuery:boolean;
+  minNumberOfPokemon: number;
+  invertQuery: boolean;
 
   constructor(species: Species | Species[], minNumberOfPokemon: number = 1, invertQuery: boolean = false) {
     super();
@@ -288,8 +289,8 @@ export class SpeciesRequirement extends EncounterPokemonRequirement {
 
 export class NatureRequirement extends EncounterPokemonRequirement {
   requiredNature: Nature[];
-  minNumberOfPokemon:number;
-  invertQuery:boolean;
+  minNumberOfPokemon: number;
+  invertQuery: boolean;
 
   constructor(nature: Nature | Nature[], minNumberOfPokemon: number = 1, invertQuery: boolean = false) {
     super();
@@ -330,8 +331,8 @@ export class NatureRequirement extends EncounterPokemonRequirement {
 
 export class TypeRequirement extends EncounterPokemonRequirement {
   requiredType: Type[];
-  minNumberOfPokemon:number;
-  invertQuery:boolean;
+  minNumberOfPokemon: number;
+  invertQuery: boolean;
 
   constructor(type: Type | Type[], minNumberOfPokemon: number = 1, invertQuery: boolean = false) {
     super();
@@ -374,8 +375,8 @@ export class TypeRequirement extends EncounterPokemonRequirement {
 
 export class MoveRequirement extends EncounterPokemonRequirement {
   requiredMoves: Moves[] = [];
-  minNumberOfPokemon:number;
-  invertQuery:boolean;
+  minNumberOfPokemon: number;
+  invertQuery: boolean;
 
   constructor(moves: Moves | Moves[], minNumberOfPokemon: number = 1, invertQuery: boolean = false) {
     super();
@@ -423,8 +424,8 @@ export class MoveRequirement extends EncounterPokemonRequirement {
  */
 export class CompatibleMoveRequirement extends EncounterPokemonRequirement {
   requiredMoves: Moves[];
-  minNumberOfPokemon:number;
-  invertQuery:boolean;
+  minNumberOfPokemon: number;
+  invertQuery: boolean;
 
   constructor(learnableMove: Moves | Moves[], minNumberOfPokemon: number = 1, invertQuery: boolean = false) {
     super();
@@ -512,8 +513,8 @@ export class EvolutionTargetSpeciesRequirement extends EncounterPokemonRequireme
 
 export class AbilityRequirement extends EncounterPokemonRequirement {
   requiredAbilities: Abilities[];
-  minNumberOfPokemon:number;
-  invertQuery:boolean;
+  minNumberOfPokemon: number;
+  invertQuery: boolean;
 
   constructor(abilities: Abilities | Abilities[], minNumberOfPokemon: number = 1, invertQuery: boolean = false) {
     super();
@@ -557,8 +558,8 @@ export class AbilityRequirement extends EncounterPokemonRequirement {
 
 export class StatusEffectRequirement extends EncounterPokemonRequirement {
   requiredStatusEffect: StatusEffect[];
-  minNumberOfPokemon:number;
-  invertQuery:boolean;
+  minNumberOfPokemon: number;
+  invertQuery: boolean;
 
   constructor(statusEffect: StatusEffect | StatusEffect[], minNumberOfPokemon: number = 1, invertQuery: boolean = false) {
     super();
@@ -632,8 +633,8 @@ export class StatusEffectRequirement extends EncounterPokemonRequirement {
  */
 export class CanFormChangeWithItemRequirement extends EncounterPokemonRequirement {
   requiredFormChangeItem: FormChangeItem[];
-  minNumberOfPokemon:number;
-  invertQuery:boolean;
+  minNumberOfPokemon: number;
+  invertQuery: boolean;
 
   constructor(formChangeItem: FormChangeItem | FormChangeItem[], minNumberOfPokemon: number = 1, invertQuery: boolean = false) {
     super();
@@ -654,13 +655,14 @@ export class CanFormChangeWithItemRequirement extends EncounterPokemonRequiremen
     }
     return this.queryParty(partyPokemon).length >= this.minNumberOfPokemon;
   }
-  filterByForm(pokemon, formChangeItem)  {
+
+  filterByForm(pokemon, formChangeItem) {
     if (pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId)
-    // Get all form changes for this species with an item trigger, including any compound triggers
-    && pokemonFormChanges[pokemon.species.speciesId].filter(fc => fc.trigger.hasTriggerType(SpeciesFormChangeItemTrigger))
-    // Returns true if any form changes match this item
-      .map(fc => fc.findTrigger(SpeciesFormChangeItemTrigger) as SpeciesFormChangeItemTrigger)
-      .flat().flatMap(fc => fc.item).includes(formChangeItem))  {
+      // Get all form changes for this species with an item trigger, including any compound triggers
+      && pokemonFormChanges[pokemon.species.speciesId].filter(fc => fc.trigger.hasTriggerType(SpeciesFormChangeItemTrigger))
+        // Returns true if any form changes match this item
+        .map(fc => fc.findTrigger(SpeciesFormChangeItemTrigger) as SpeciesFormChangeItemTrigger)
+        .flat().flatMap(fc => fc.item).includes(formChangeItem)) {
       return true;
     } else {
       return false;
@@ -688,8 +690,8 @@ export class CanFormChangeWithItemRequirement extends EncounterPokemonRequiremen
 
 export class CanEvolveWithItemRequirement extends EncounterPokemonRequirement {
   requiredEvolutionItem: EvolutionItem[];
-  minNumberOfPokemon:number;
-  invertQuery:boolean;
+  minNumberOfPokemon: number;
+  invertQuery: boolean;
 
   constructor(evolutionItems: EvolutionItem | EvolutionItem[], minNumberOfPokemon: number = 1, invertQuery: boolean = false) {
     super();
@@ -716,7 +718,7 @@ export class CanEvolveWithItemRequirement extends EncounterPokemonRequirement {
       && (!e.condition || e.condition.predicate(pokemon))).length && (pokemon.getFormKey() !== SpeciesFormKey.GIGANTAMAX)) {
       return true;
     } else if (pokemon.isFusion() && pokemonEvolutions.hasOwnProperty(pokemon.fusionSpecies.speciesId) && pokemonEvolutions[pokemon.fusionSpecies.speciesId].filter(e => e.item === evolutionItem
-    && (!e.condition || e.condition.predicate(pokemon))).length && (pokemon.getFusionFormKey() !== SpeciesFormKey.GIGANTAMAX)) {
+      && (!e.condition || e.condition.predicate(pokemon))).length && (pokemon.getFusionFormKey() !== SpeciesFormKey.GIGANTAMAX)) {
       return true;
     }
     return false;
@@ -742,8 +744,8 @@ export class CanEvolveWithItemRequirement extends EncounterPokemonRequirement {
 
 export class HeldItemRequirement extends EncounterPokemonRequirement {
   requiredHeldItemModifier: PokemonHeldItemModifierType[];
-  minNumberOfPokemon:number;
-  invertQuery:boolean;
+  minNumberOfPokemon: number;
+  invertQuery: boolean;
 
   constructor(heldItem: PokemonHeldItemModifierType | PokemonHeldItemModifierType[], minNumberOfPokemon: number = 1, invertQuery: boolean = false) {
     super();
@@ -776,7 +778,7 @@ export class HeldItemRequirement extends EncounterPokemonRequirement {
 
   getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
     const requiredItems = this.requiredHeldItemModifier.filter((a) => {
-      pokemon.getHeldItems().filter((it) => it.type.id === a.id ).length > 0;
+      pokemon.getHeldItems().filter((it) => it.type.id === a.id).length > 0;
     });
     if (requiredItems.length > 0) {
       return ["heldItem", requiredItems[0].name];
@@ -787,8 +789,8 @@ export class HeldItemRequirement extends EncounterPokemonRequirement {
 
 export class LevelRequirement extends EncounterPokemonRequirement {
   requiredLevelRange?: [number, number];
-  minNumberOfPokemon:number;
-  invertQuery:boolean;
+  minNumberOfPokemon: number;
+  invertQuery: boolean;
 
   constructor(requiredLevelRange: [number, number], minNumberOfPokemon: number = 1, invertQuery: boolean = false) {
     super();
@@ -826,8 +828,8 @@ export class LevelRequirement extends EncounterPokemonRequirement {
 
 export class FriendshipRequirement extends EncounterPokemonRequirement {
   requiredFriendshipRange?: [number, number];
-  minNumberOfPokemon:number;
-  invertQuery:boolean;
+  minNumberOfPokemon: number;
+  invertQuery: boolean;
 
   constructor(requiredFriendshipRange: [number, number], minNumberOfPokemon: number = 1, invertQuery: boolean = false) {
     super();
@@ -869,8 +871,8 @@ export class FriendshipRequirement extends EncounterPokemonRequirement {
  */
 export class HealthRatioRequirement extends EncounterPokemonRequirement {
   requiredHealthRange?: [number, number];
-  minNumberOfPokemon:number;
-  invertQuery:boolean;
+  minNumberOfPokemon: number;
+  invertQuery: boolean;
 
   constructor(requiredHealthRange: [number, number], minNumberOfPokemon: number = 1, invertQuery: boolean = false) {
     super();
@@ -903,14 +905,14 @@ export class HealthRatioRequirement extends EncounterPokemonRequirement {
   }
 
   getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
-    return ["healthRatio", Math.floor(pokemon.getHpRatio()*100).toString() + "%"];
+    return ["healthRatio", Math.floor(pokemon.getHpRatio() * 100).toString() + "%"];
   }
 }
 
 export class WeightRequirement extends EncounterPokemonRequirement {
   requiredWeightRange?: [number, number];
-  minNumberOfPokemon:number;
-  invertQuery:boolean;
+  minNumberOfPokemon: number;
+  invertQuery: boolean;
 
   constructor(requiredWeightRange: [number, number], minNumberOfPokemon: number = 1, invertQuery: boolean = false) {
     super();

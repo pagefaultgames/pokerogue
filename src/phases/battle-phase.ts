@@ -1,6 +1,6 @@
-import {Phase} from "#app/phase";
+import { Phase } from "#app/phase";
 import BattleScene from "#app/battle-scene";
-import {TrainerSlot} from "#app/data/trainer-config";
+import { TrainerSlot } from "#app/data/trainer-config";
 
 export class BattlePhase extends Phase {
   constructor(scene: BattleScene) {
