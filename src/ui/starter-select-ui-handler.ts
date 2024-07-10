@@ -499,7 +499,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     this.cursorObj = this.scene.add.image(0, 0, "select_cursor");
     this.cursorObj.setOrigin(0, 0);
-    // need to check this x is valid position is valid
+    // TODO: need to check this x is valid position is valid
     this.starterIconsCursorObj = this.scene.add.image(500, 64, "select_gen_cursor");
     this.starterIconsCursorObj.setName("starter-icons-cursor");
     this.starterIconsCursorObj.setVisible(false);
@@ -2541,7 +2541,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor), this.starterSpecies.length);
         const starterSprite = this.filteredStarterContainers[this.cursor].icon as Phaser.GameObjects.Sprite;
         starterSprite.setTexture(species.getIconAtlasKey(formIndex, shiny, variant), species.getIconId(female, formIndex, shiny, variant));
-        starterSprite.setAlpha(isValidForChallenge.value ? 1 : 0.375);
         this.filteredStarterContainers[this.cursor].checkIconId(female, formIndex, shiny, variant);
         this.canCycleShiny = !!(dexEntry.caughtAttr & DexAttr.NON_SHINY && dexEntry.caughtAttr & DexAttr.SHINY);
         this.canCycleGender = !!(dexEntry.caughtAttr & DexAttr.MALE && dexEntry.caughtAttr & DexAttr.FEMALE);
@@ -2803,7 +2802,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
         const canBeChosen = remainValue >= speciesStarterValue && isValidForChallenge.value;
 
-        const isPokemonInParty = this.isInParty(this.genSpecies[g][s]); // this will get the valud of isDupe from isInParty. This will let us see if the pokemon in question is in our party already so we don't grey out the sprites if they're invalid
+        const isPokemonInParty = this.isInParty(this.genSpecies[g][s])[0]; // this will get the valud of isDupe from isInParty. This will let us see if the pokemon in question is in our party already so we don't grey out the sprites if they're invalid
 
         /* This code does a check to tell whether or not a sprite should be lit up or greyed out. There are 3 ways a pokemon's sprite should be lit up:
          * 1) If it's in your party, it's a valid pokemon (i.e. for challenge) and you have enough points to have it
