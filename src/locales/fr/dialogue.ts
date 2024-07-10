@@ -172,19 +172,19 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "twins": {
     "encounter": {
-      1: "Get ready, because when we team up, it's double the trouble!",
-      2: "Two hearts, one strategy – let's see if you can keep up with our twin power!",
-      3: "Hope you're ready for double trouble, because we're about to bring the heat!"
+      1: "Prépare-toi, parce que quand on fait équipe, c’est deux fois plus d’embrouilles !",
+      2: "Deux cœurs, une stratégie – on va gagner grâce au pouvoir des jumelles !",
+      3: "À deux contre un, nous sommes imbattables, alors prépare-toi !"
     },
     "victory": {
-      1: "We may have lost this round, but our bond remains unbreakable!",
-      2: "Our twin spirit won't be dimmed for long.",
-      3: "We'll come back stronger as a dynamic duo!"
+      1: "On a peut-être perdu ce combat, mais notre lien reste incassable !",
+      2: "L’esprit des jumelles ne restera pas affaibli très longtemps.",
+      3: "Notre duo dynamique reviendra plus fort !"
     },
     "defeat": {
-      1: "Twin power reigns supreme!",
-      2: "Two hearts, one triumph!",
-      3: "Double the smiles, double the victory dance!"
+      1: "Le pouvoir des jumelles règne en maître !",
+      2: "Deux cœurs, une victoire !",
+      3: "Deux fois plus de sourires, deux fois plus de danses de la victoire !"
     }
   },
   "cyclist": {
@@ -305,24 +305,24 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "hex_maniac": {
     "encounter": {
-      1: "I normally only ever listen to classical music, but if I lose, I think I shall try a bit of new age!",
-      2: "I grow stronger with each tear I cry."
+      1: "Normalement, je n’écoute que de la musique classique, mais si je perds, je pense que je vais essayer des musiques plus récentes !",
+      2: "Chacune de mes larmes me rend plus forte."
     },
     "victory": {
-      1: "Is this the dawning of the age of Aquarius?",
-      2: "Now I can get even stronger. I grow with every grudge."
+      1: "Serait-ce l’aube de l’ère du Verseau ?",
+      2: "Maintenant je peux devenir plus forte. Chaque rancune me rend plus forte."
     },
     "defeat": {
-      1: "New age simply refers to twentieth century classical composers, right?",
-      2: "Don't get hung up on sadness or frustration. You can use your grudges to motivate yourself."
+      1: "Les compositeurs classiques du vingtième siècle, ça compte ?",
+      2: "Ne t’attarde pas sur la tristesse ou la frustration. Tu peux utiliser tes rancunes pour te motiver."
     }
   },
   "psychic": {
     "encounter": {
-      1: "Hi! Focus!",
+      1: "Salut ! Concentration !",
     },
     "victory": {
-      1: "Eeeeek!",
+      1: "Zut !",
     },
   },
   "officer": {
@@ -928,19 +928,19 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "marlon": {
     "encounter": {
-      1: "You look strong! Shoots! Let's start!",
-      2: "I'm strong like the ocean's wide. You're gonna get swept away, fo' sho'.",
-      3: "Oh ho, so I'm facing you! That's off the wall."
+      1: "T’as l’air balèze, toi. Allez, on démarre ?",
+      2: "La mer est vaste et profonde, comme ma puissance, en fait. Tu vas en rester baba.",
+      3: "Waaah... C’est toi, mon adversaire ? Cool... On va se faire un match de dingos !"
     },
     "victory": {
-      1: "You totally rocked that! You're raising some wicked Pokémon. You got this Trainer thing down!",
-      2: "You don't just look strong, you're strong fo' reals! Eh, I was swept away, too!",
-      3: "You're strong as a gnarly wave!"
+      1: "T’es balèze comme un océan en furie, et cool comme une mer d’huile...",
+      2: "T’as pas juste l’air balèze, tu l’es vraiment, en fait. J’en reste baba !",
+      3: "Tu étais comme un vrai tourbillon qui aspire tout !"
     },
     "defeat": {
-      1: "You're tough, but it's not enough to sway the sea, 'K!",
-      2: "Hee! Looks like I went and won again!",
-      3: "Sweet, sweet victory!"
+      1: "T’es balèze, mais pas assez pour refouler la marée !",
+      2: "Hop ! On dirait que j’ai encore gagné !",
+      3: "Super, à moi la victoire !"
     }
   },
   "shauntal": {
@@ -1014,22 +1014,22 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "cilan": {
     "encounter": {
-      1: `Nothing personal... No hard feelings... Me and my Grass-type Pokémon will...
-               $Um... We're gonna battle come what may.`,
-      2: "So, um, if you're OK with me, I'll, um, put everything I've got into being, er, you know, your opponent.",
-      3: "OK… So, um, I'm Cilan, I like Grass-type Pokémon."
+      1: `Rien de personnel... Pas de rancune... Moi et mes Pokémon Plante allons...
+               Euh... Nous allons nous battre... coûte que coûte.`,
+      2: "Donc... Si ça ne te dérange pas... Je serai... ton adversaire.",
+      3: "Très bien... Je suis Rachid. J’aime... le type Plante."
     },
     "victory": {
-      1: "Er… Is it over now?",
-      2: `…What a surprise. You are very strong, aren't you? 
-               $I guess my brothers wouldn't have been able to defeat you either…`,
-      3: "…Huh. Looks like my timing was, um, off?"
+      1: "Oh... Donc c’est fini ?",
+      2: `... Quelle surprise. Tu es... très fort, n’est-ce pas ? 
+               $J’imagine que mes frères... n’auraient pas été capables... de te vaincre non plus...`,
+      3: "Le timing... la synchronisation, là... C’est pas encore ça..."
     },
     "defeat": {
-      1: "Huh? Did I win?",
-      2: `I guess… 
-                $I suppose I won, because I've been competing with my brothers Chili and Cress, and we all were able to get tougher.`,
-      3: "It…it was quite a thrilling experience…"
+      1: "Hein ? ... J’ai gagné ?",
+      2: `Je suppose que... 
+                $J’ai gagné... parce que je m’entraîne... avec mes frères Armando et Noa... et nous avons tous pu devenir plus forts.`,
+      3: "C’était... une expérience assez passionnante..."
     }
   },
   "roark": {
@@ -2172,16 +2172,16 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "iono": {
     "encounter": {
-      1: `How're ya feelin' about this battle?
+      1: `Alors, comment tu te sens ?
                     $...
-                    $Let's get this show on the road! How strong is our challenger? 
-                    $I 'unno! Let's find out together!`,
+                    Allez, on commence le stream ! Quelle est la puissance de notre challenger ? 
+                    $’Cune idée ! Découvrons-le ensemble !`,
     },
     "victory": {
-      1: "You're as flashy and bright as a 10,000,000-volt Thunderbolt, friendo!"
+      1: "T’es plus lumineux et foudroyant qu'un Giga-Tonnerre !"
     },
     "defeat": {
-      1: "Your eyeballs are MINE!"
+      1: "Oubliez pas de laisser un like et de vous abonner !"
     }
   },
   "larry": {
@@ -2679,19 +2679,19 @@ export const PGFdialogue: DialogueTranslationEntries = {
   },
   "twins": {
     "encounter": {
-      1: "Get ready, because when we team up, it's double the trouble!",
-      2: "Two hearts, one strategy – let's see if you can keep up with our twin power!",
-      3: "Hope you're ready for double trouble, because we're about to bring the heat!"
+      1: "Prépare-toi, parce que quand on fait équipe, c’est deux fois plus d’embrouilles !",
+      2: "Deux cœurs, une stratégie – on va gagner grâce au pouvoir des jumelles !",
+      3: "À deux contre un, nous sommes imbattables, alors prépare-toi !"
     },
     "victory": {
-      1: "We may have lost this round, but our bond remains unbreakable!",
-      2: "Our twin spirit won't be dimmed for long.",
-      3: "We'll come back stronger as a dynamic duo!"
+      1: "On a peut-être perdu ce combat, mais notre lien reste incassable !",
+      2: "L’esprit des jumelles ne restera pas affaibli très longtemps.",
+      3: "Notre duo dynamique reviendra plus fort !"
     },
     "defeat": {
-      1: "Twin power reigns supreme!",
-      2: "Two hearts, one triumph!",
-      3: "Double the smiles, double the victory dance!"
+      1: "Le pouvoir des jumelles règne en maître !",
+      2: "Deux cœurs, une victoire !",
+      3: "Deux fois plus de sourires, deux fois plus de danses de la victoire !"
     }
   },
   "cyclist": {
@@ -2812,24 +2812,24 @@ export const PGFdialogue: DialogueTranslationEntries = {
   },
   "hex_maniac": {
     "encounter": {
-      1: "I normally only ever listen to classical music, but if I lose, I think I shall try a bit of new age!",
-      2: "I grow stronger with each tear I cry."
+      1: "Normalement, je n’écoute que de la musique classique, mais si je perds, je pense que je vais essayer des musiques plus récentes !",
+      2: "Chacune de mes larmes me rend plus forte."
     },
     "victory": {
-      1: "Is this the dawning of the age of Aquarius?",
-      2: "Now I can get even stronger. I grow with every grudge."
+      1: "Serait-ce l’aube de l’ère du Verseau ?",
+      2: "Maintenant je peux devenir plus forte. Chaque rancune me rend plus forte."
     },
     "defeat": {
-      1: "New age simply refers to twentieth century classical composers, right?",
-      2: "Don't get hung up on sadness or frustration. You can use your grudges to motivate yourself."
+      1: "Les compositeurs classiques du vingtième siècle, ça compte ?",
+      2: "Ne t’attarde pas sur la tristesse ou la frustration. Tu peux utiliser tes rancunes pour te motiver."
     }
   },
   "psychic": {
     "encounter": {
-      1: "Hi! Focus!",
+      1: "Salut ! Concentration !",
     },
     "victory": {
-      1: "Eeeeek!",
+      1: "Zut !",
     },
   },
   "officer": {
@@ -3435,19 +3435,19 @@ export const PGFdialogue: DialogueTranslationEntries = {
   },
   "marlon": {
     "encounter": {
-      1: "You look strong! Shoots! Let's start!",
-      2: "I'm strong like the ocean's wide. You're gonna get swept away, fo' sho'.",
-      3: "Oh ho, so I'm facing you! That's off the wall."
+      1: "T’as l’air balèze, toi. Allez, on démarre ?",
+      2: "La mer est vaste et profonde, comme ma puissance, en fait. Tu vas en rester baba.",
+      3: "Waaah... C’est toi, mon adversaire ? Cool... On va se faire un match de dingos !"
     },
     "victory": {
-      1: "You totally rocked that! You're raising some wicked Pokémon. You got this Trainer thing down!",
-      2: "You don't just look strong, you're strong fo' reals! Eh, I was swept away, too!",
-      3: "You're strong as a gnarly wave!"
+      1: "T’es balèze comme un océan en furie, et cool comme une mer d’huile...",
+      2: "T’as pas juste l’air balèze, tu l’es vraiment, en fait. J’en reste baba !",
+      3: "Tu étais comme un vrai tourbillon qui aspire tout !"
     },
     "defeat": {
-      1: "You're tough, but it's not enough to sway the sea, 'K!",
-      2: "Hee! Looks like I went and won again!",
-      3: "Sweet, sweet victory!"
+      1: "T’es balèze, mais pas assez pour refouler la marée !",
+      2: "Hop ! On dirait que j’ai encore gagné !",
+      3: "Super, à moi la victoire !"
     }
   },
   "shauntal": {
@@ -3521,22 +3521,22 @@ export const PGFdialogue: DialogueTranslationEntries = {
   },
   "cilan": {
     "encounter": {
-      1: `Nothing personal... No hard feelings... Me and my Grass-type Pokémon will...
-               $Um... We're gonna battle come what may.`,
-      2: "So, um, if you're OK with me, I'll, um, put everything I've got into being, er, you know, your opponent.",
-      3: "OK… So, um, I'm Cilan, I like Grass-type Pokémon."
+      1: `Rien de personnel... Pas de rancune... Moi et mes Pokémon Plante allons...
+               Euh... Nous allons nous battre... coûte que coûte.`,
+      2: "Donc... Si ça ne te dérange pas... Je serai... ton adversaire.",
+      3: "Très bien... Je suis Rachid. J’aime... le type Plante."
     },
     "victory": {
-      1: "Er… Is it over now?",
-      2: `…What a surprise. You are very strong, aren't you? 
-               $I guess my brothers wouldn't have been able to defeat you either…`,
-      3: "…Huh. Looks like my timing was, um, off?"
+      1: "Oh... Donc c’est fini ?",
+      2: `... Quelle surprise. Tu es... très fort, n’est-ce pas ? 
+               $J’imagine que mes frères... n’auraient pas été capables... de te vaincre non plus...`,
+      3: "Le timing... la synchronisation, là... C’est pas encore ça..."
     },
     "defeat": {
-      1: "Huh? Did I win?",
-      2: `I guess… 
-                $I suppose I won, because I've been competing with my brothers Chili and Cress, and we all were able to get tougher.`,
-      3: "It…it was quite a thrilling experience…"
+      1: "Hein ? ... J’ai gagné ?",
+      2: `Je suppose que... 
+                $J’ai gagné... parce que je m’entraîne... avec mes frères Armando et Noa... et nous avons tous pu devenir plus forts.`,
+      3: "C’était... une expérience assez passionnante..."
     }
   },
   "roark": {
@@ -4680,16 +4680,16 @@ export const PGFdialogue: DialogueTranslationEntries = {
   },
   "iono": {
     "encounter": {
-      1: `How're ya feelin' about this battle?
+      1: `Alors, comment tu te sens ?
                     $...
-                    $Let's get this show on the road! How strong is our challenger? 
-                    $I 'unno! Let's find out together!`,
+                    Allez, on commence le stream ! Quelle est la puissance de notre challenger ? 
+                    $’Cune idée ! Découvrons-le ensemble !`,
     },
     "victory": {
-      1: "You're as flashy and bright as a 10,000,000-volt Thunderbolt, friendo!"
+      1: "T’es plus lumineux et foudroyant qu'un Giga-Tonnerre !"
     },
     "defeat": {
-      1: "Your eyeballs are MINE!"
+      1: "Oubliez pas de laisser un like et de vous abonner !"
     }
   },
   "larry": {
