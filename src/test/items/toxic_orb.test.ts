@@ -2,8 +2,6 @@ import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
 import * as overrides from "#app/overrides";
-import {Abilities} from "#app/data/enums/abilities";
-import {Species} from "#app/data/enums/species";
 import {
   CommandPhase,
   EnemyCommandPhase,
@@ -11,10 +9,13 @@ import {
   TurnEndPhase,
 } from "#app/phases";
 import {Mode} from "#app/ui/ui";
-import {Moves} from "#app/data/enums/moves";
 import {getMovePosition} from "#app/test/utils/gameManagerUtils";
 import {Command} from "#app/ui/command-ui-handler";
 import {StatusEffect} from "#app/data/status-effect";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import i18next, { initI18n } from "#app/plugins/i18n";
 
 
 describe("Items - Toxic orb", () => {
@@ -48,6 +49,8 @@ describe("Items - Toxic orb", () => {
   });
 
   it("TOXIC ORB", async() => {
+    initI18n();
+    i18next.changeLanguage("en");
     const moveToUse = Moves.GROWTH;
     await game.startBattle([
       Species.MIGHTYENA,

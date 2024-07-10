@@ -1,4 +1,4 @@
-import { ModifierTypeTranslationEntries } from "#app/plugins/i18n";
+import { ModifierTypeTranslationEntries } from "#app/interfaces/locales";
 
 export const modifierType: ModifierTypeTranslationEntries = {
   ModifierType: {
@@ -42,7 +42,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       }
     },
     "PokemonPpUpModifierType": {
-      description: "포켓몬이 기억하고 있는 기술 중 1개의 PP 최대치를 5마다 {{upPoints}}씩 상승시킨다 (최대 3).",
+      description: "포켓몬이 기억하고 있는 기술 중 1개의 PP 최대치를 5마다 {{upPoints}}씩 상승시킨다. (최대 3)",
     },
     "PokemonNatureChangeModifierType": {
       name: "{{natureName}}민트",
@@ -70,10 +70,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "자신의 포켓몬의 HP를 모두 회복한다.",
     },
     "AllPokemonFullReviveModifierType": {
-      description: "자신의 포켓몬의 HP를 기절해 버렸더라도 모두 회복한다.",
+      description: "기절해 버린 포켓몬 전원의 HP를 완전히 회복한다.",
     },
     "MoneyRewardModifierType": {
-      description: "{{moneyMultiplier}} 양의 돈을 획득한다 (₽{{moneyAmount}}).",
+      description: "{{moneyMultiplier}} 양의 돈을 획득한다. (₽{{moneyAmount}})",
       extra: {
         "small": "적은",
         "moderate": "적당한",
@@ -90,7 +90,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "배틀 승리로 얻는 친밀도가 50% 증가한다.",
     },
     "PokemonMoveAccuracyBoosterModifierType": {
-      description: "기술의 명중률이 {{accuracyAmount}} 증가한다 (최대 100).",
+      description: "기술의 명중률이 {{accuracyAmount}} 증가한다. (최대 100)",
     },
     "PokemonMultiHitModifierType": {
       description: "지닌 개수(최대 3개)마다 추가 공격을 하는 대신, 공격력이 60%(1개)/75%(2개)/82.5%(3개)만큼 감소합니다.",
@@ -101,7 +101,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     },
     "TmModifierTypeWithInfo": {
       name: "No.{{moveId}} {{moveName}}",
-      description: "포켓몬에게 {{moveName}}를(을) 가르침\n(C 또는 Shift를 꾹 눌러 정보 확인).",
+      description: "포켓몬에게 {{moveName}}를(을) 가르침.\n(C 또는 Shift를 꾹 눌러 정보 확인)",
     },
     "EvolutionItemModifierType": {
       description: "어느 특정 포켓몬을 진화시킨다.",
@@ -110,7 +110,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "어느 특정 포켓몬을 폼 체인지시킨다.",
     },
     "FusePokemonModifierType": {
-      description: "두 포켓몬을 결합시킨다 (특성 변환, 종족값과 타입 분배, 기술폭 공유).",
+      description: "두 포켓몬을 결합시킨다. (특성 변환, 종족값과 타입 분배, 기술폭 공유)",
     },
     "TerastallizeModifierType": {
       name: "테라피스 {{teraType}}",
@@ -151,7 +151,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SACRED_ASH": { name: "성스러운분말" },
 
-    "REVIVER_SEED": { name: "부활의씨앗", description: "포켓몬이 쓰러지려 할 때 HP를 절반 회복한다." },
+    "REVIVER_SEED": { name: "부활의씨앗", description: "포켓몬이 공격을 받고 쓰러지려 할 때 HP를 절반 회복한다." },
 
     "ETHER": { name: "PP에이드" },
     "MAX_ETHER": { name: "PP회복" },
@@ -182,7 +182,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SOOTHE_BELL": { name: "평온의방울" },
 
-    "SOUL_DEW": { name: "마음의물방울", description: "지닌 포켓몬의 성격의 효과가 10% 증가한다 (합연산)." },
+    "EVIOLITE": { name: "진화의휘석", description: "진화의 이상한 덩어리. 지니게 하면 진화 전 포켓몬의 방어와 특수방어가 올라간다." },
+
+    "SOUL_DEW": { name: "마음의물방울", description: "지닌 포켓몬의 성격의 효과가 10% 증가한다. (합연산)" },
 
     "NUGGET": { name: "금구슬" },
     "BIG_NUGGET": { name: "큰금구슬" },
@@ -199,14 +201,14 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "MULTI_LENS": { name: "멀티렌즈" },
 
-    "HEALING_CHARM": { name: "치유의부적", description: "HP를 회복하는 기술을 썼을 때 효율이 10% 증가한다 (부활 제외)." },
+    "HEALING_CHARM": { name: "치유의부적", description: "HP를 회복하는 기술이나 도구를 썼을 때 효율이 10% 증가한다. (부활 제외)" },
     "CANDY_JAR": { name: "사탕단지", description: "이상한사탕 종류의 아이템이 올려주는 레벨이 1 증가한다." },
 
     "BERRY_POUCH": { name: "열매주머니", description: "사용한 나무열매가 소모되지 않을 확률이 30% 추가된다." },
 
     "FOCUS_BAND": { name: "기합의머리띠", description: "기절할 듯한 데미지를 받아도 HP를 1 남겨서 견딜 확률이 10% 추가된다." },
 
-    "QUICK_CLAW": { name: "선제공격손톱", description: "상대보다 먼저 행동할 수 있게 될 확률이 10% 추가된다 (우선도 처리 이후)." },
+    "QUICK_CLAW": { name: "선제공격손톱", description: "상대보다 먼저 행동할 수 있게 될 확률이 10% 추가된다. (우선도 처리 이후)" },
 
     "KINGS_ROCK": { name: "왕의징표석", description: "공격해서 데미지를 줄 때 상대를 풀죽일 확률이 10% 추가된다." },
 
@@ -239,6 +241,12 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_ENDURE_CHANCE": { name: "버티기 토큰" },
     "ENEMY_FUSED_CHANCE": { name: "합체 토큰", description: "야생 포켓몬이 합체되어 등장할 확률이 1% 추가된다." },
   },
+  SpeciesBoosterItem: {
+    "LIGHT_BALL": { name: "전기구슬", description: "피카츄에게 지니게 하면 공격과 특수공격이 올라가는 이상한 구슬." },
+    "THICK_CLUB": { name: "굵은뼈", description: "무언가의 단단한 뼈. 탕구리 혹은 텅구리에게 지니게 하면 공격이 올라간다." },
+    "METAL_POWDER": { name: "금속파우더", description: "메타몽에게 지니게 하면 방어가 올라가는 이상한 가루. 매우 잘고 단단하다." },
+    "QUICK_POWDER": { name: "스피드파우더", description: "메타몽에게 지니게 하면 스피드가 올라가는 이상한 가루. 매우 잘고 단단하다." }
+  },
   TempBattleStatBoosterItem: {
     "x_attack": "플러스파워",
     "x_defense": "디펜드업",
@@ -248,6 +256,19 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "x_accuracy": "잘-맞히기",
     "dire_hit": "크리티컬커터",
   },
+
+  TempBattleStatBoosterStatName: {
+    "ATK": "공격",
+    "DEF": "방어",
+    "SPATK": "특수공격",
+    "SPDEF": "특수방어",
+    "SPD": "스피드",
+    "ACC": "명중률",
+    "CRIT": "급소율",
+    "EVA": "회피율",
+    "DEFAULT": "???",
+  },
+
   AttackTypeBoosterItem: {
     "silk_scarf": "실크스카프",
     "black_belt": "검은띠",

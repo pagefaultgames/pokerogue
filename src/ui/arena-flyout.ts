@@ -1,12 +1,12 @@
 import { addTextObject, TextStyle } from "./text";
 import BattleScene from "#app/battle-scene.js";
-import { ArenaTagSide } from "#app/data/arena-tag.js";
+import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag.js";
 import { WeatherType } from "#app/data/weather.js";
 import { TerrainType } from "#app/data/terrain.js";
 import { addWindow, WindowVariant } from "./ui-theme";
-import { ArenaEvent, ArenaEventType, TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#app/field/events/arena";
+import { ArenaEvent, ArenaEventType, TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena.js";
 import { BattleSceneEventType, TurnEndEvent } from "../events/battle-scene";
-import { ArenaTagType } from "#app/data/enums/arena-tag-type.js";
+import { ArenaTagType } from "#enums/arena-tag-type";
 import TimeOfDayWidget from "./time-of-day-widget";
 import * as Utils from "../utils";
 
@@ -23,12 +23,14 @@ interface ArenaEffectInfo {
   /** The enum string representation of the effect */
   name: string;
   /** {@linkcode ArenaEffectType} type of effect */
-  type: ArenaEffectType,
+  effecType: ArenaEffectType,
 
   /** The maximum duration set by the effect */
   maxDuration: number;
   /** The current duration left on the effect */
   duration: number;
+  /** The arena tag type being added */
+  tagType?: ArenaTagType;
 }
 
 export default class ArenaFlyout extends Phaser.GameObjects.Container {
@@ -87,6 +89,7 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
 
   constructor(scene: Phaser.Scene) {
     super(scene, 0, 0);
+    this.setName("arena-flyout");
     this.battleScene = this.scene as BattleScene;
 
     this.translationX = this.flyoutWidth;
@@ -181,19 +184,7 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
     this.battleScene.arena.eventTarget.addEventListener(ArenaEventType.TAG_REMOVED,     this.onFieldEffectChangedEvent);
   }
 
-  /**
-   * Formats a string to title case
-   * @param unformattedText Text to be formatted
-   * @returns the formatted string
-   */
-  private formatText(unformattedText: string): string {
-    const text = unformattedText.split("_");
-    for (let i = 0; i < text.length; i++) {
-      text[i] = text[i].charAt(0).toUpperCase() + text[i].substring(1).toLowerCase();
-    }
 
-    return text.join(" ");
-  }
 
   /** Clears out the current string stored in all arena effect texts */
   private clearText() {
@@ -213,7 +204,7 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
 
       // Creates a proxy object to decide which text object needs to be updated
       let textObject: Phaser.GameObjects.Text;
-      switch (fieldEffectInfo.type) {
+      switch (fieldEffectInfo.effecType) {
       case ArenaEffectType.PLAYER:
         textObject = this.flyoutTextPlayer;
         break;
@@ -230,8 +221,8 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
         break;
       }
 
-      textObject.text += this.formatText(fieldEffectInfo.name);
-      if (fieldEffectInfo.type === ArenaEffectType.TERRAIN) {
+      textObject.text += Utils.formatText(fieldEffectInfo.name);
+      if (fieldEffectInfo.effecType === ArenaEffectType.TERRAIN) {
         textObject.text += " Terrain"; // Adds 'Terrain' since the enum does not contain it
       }
 
@@ -257,19 +248,42 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
     switch (arenaEffectChangedEvent.constructor) {
     case TagAddedEvent:
       const tagAddedEvent = arenaEffectChangedEvent as TagAddedEvent;
+      const isArenaTrapTag = this.battleScene.arena.getTag(tagAddedEvent.arenaTagType) instanceof ArenaTrapTag;
+      let arenaEffectType: ArenaEffectType;
+
+      if (tagAddedEvent.arenaTagSide === ArenaTagSide.BOTH) {
+        arenaEffectType = ArenaEffectType.FIELD;
+      } else if (tagAddedEvent.arenaTagSide === ArenaTagSide.PLAYER) {
+        arenaEffectType = ArenaEffectType.PLAYER;
+      } else {
+        arenaEffectType = ArenaEffectType.ENEMY;
+      }
+
+      const existingTrapTagIndex = isArenaTrapTag ? this.fieldEffectInfo.findIndex(e => tagAddedEvent.arenaTagType === e.tagType && arenaEffectType === e.effecType) : -1;
+      let name: string = ArenaTagType[tagAddedEvent.arenaTagType];
+
+      if (isArenaTrapTag) {
+        if (existingTrapTagIndex !== -1) {
+          const layers = tagAddedEvent.arenaTagMaxLayers > 1 ? ` (${tagAddedEvent.arenaTagLayers})` : "";
+          this.fieldEffectInfo[existingTrapTagIndex].name = `${name}${layers}`;
+          break;
+        } else if (tagAddedEvent.arenaTagMaxLayers > 1) {
+          name = `${name} (${tagAddedEvent.arenaTagLayers})`;
+        }
+      }
+
       this.fieldEffectInfo.push({
-        name: ArenaTagType[tagAddedEvent.arenaTagType],
-        type: tagAddedEvent.arenaTagSide === ArenaTagSide.BOTH
-          ? ArenaEffectType.FIELD
-          : tagAddedEvent.arenaTagSide === ArenaTagSide.PLAYER
-            ? ArenaEffectType.PLAYER
-            : ArenaEffectType.ENEMY,
+        name,
+        effecType: arenaEffectType,
         maxDuration: tagAddedEvent.duration,
-        duration: tagAddedEvent.duration});
+        duration: tagAddedEvent.duration,
+        tagType: tagAddedEvent.arenaTagType
+      });
       break;
     case TagRemovedEvent:
       const tagRemovedEvent = arenaEffectChangedEvent as TagRemovedEvent;
-      foundIndex = this.fieldEffectInfo.findIndex(info => info.name === ArenaTagType[tagRemovedEvent.arenaTagType]);
+      foundIndex = this.fieldEffectInfo.findIndex(info => info.tagType === tagRemovedEvent.arenaTagType);
+
       if (foundIndex !== -1) { // If the tag was being tracked, remove it
         this.fieldEffectInfo.splice(foundIndex, 1);
       }
@@ -290,7 +304,7 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
           fieldEffectChangedEvent instanceof WeatherChangedEvent
             ? WeatherType[fieldEffectChangedEvent.newWeatherType]
             : TerrainType[fieldEffectChangedEvent.newTerrainType],
-        type: fieldEffectChangedEvent instanceof WeatherChangedEvent
+        effecType: fieldEffectChangedEvent instanceof WeatherChangedEvent
           ? ArenaEffectType.WEATHER
           : ArenaEffectType.TERRAIN,
         maxDuration: fieldEffectChangedEvent.duration,
