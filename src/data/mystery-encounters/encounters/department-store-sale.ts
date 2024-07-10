@@ -11,7 +11,7 @@ import { modifierTypes } from "#app/modifier/modifier-type";
 import { Species } from "#enums/species";
 import { randSeedInt } from "#app/utils";
 
-export const DepartmentStoreSaleEncounter: MysteryEncounter = new MysteryEncounterBuilder()
+export const DepartmentStoreSaleEncounter: MysteryEncounter = MysteryEncounterBuilder
   .withEncounterType(MysteryEncounterType.DEPARTMENT_STORE_SALE)
   .withEncounterTier(MysteryEncounterTier.COMMON)
   .withIntroSpriteConfigs([

@@ -15,7 +15,7 @@ import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import { GameOverPhase } from "#app/phases";
 import { randSeedInt } from "#app/utils";
 
-export const MysteriousChestEncounter: MysteryEncounter = new MysteryEncounterBuilder()
+export const MysteriousChestEncounter: MysteryEncounter = MysteryEncounterBuilder
   .withEncounterType(MysteryEncounterType.MYSTERIOUS_CHEST)
   .withEncounterTier(MysteryEncounterTier.COMMON)
   .withIntroSpriteConfigs([

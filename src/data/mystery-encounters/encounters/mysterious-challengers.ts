@@ -15,7 +15,7 @@ import {
 import * as Utils from "../../../utils";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 
-export const MysteriousChallengersEncounter: MysteryEncounter = new MysteryEncounterBuilder()
+export const MysteriousChallengersEncounter: MysteryEncounter = MysteryEncounterBuilder
   .withEncounterType(MysteryEncounterType.MYSTERIOUS_CHALLENGERS)
   .withEncounterTier(MysteryEncounterTier.GREAT)
   .withIntroSpriteConfigs([]) // These are set in onInit()

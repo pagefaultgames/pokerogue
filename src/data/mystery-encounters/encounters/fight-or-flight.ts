@@ -36,7 +36,7 @@ const validMovesForSteal = [
   Moves.GIGA_DRAIN
 ];
 
-export const FightOrFlightEncounter: MysteryEncounter = new MysteryEncounterBuilder()
+export const FightOrFlightEncounter: MysteryEncounter = MysteryEncounterBuilder
   .withEncounterType(MysteryEncounterType.FIGHT_OR_FLIGHT)
   .withEncounterTier(MysteryEncounterTier.COMMON)
   .withIntroSpriteConfigs([]) // Set in onInit()
