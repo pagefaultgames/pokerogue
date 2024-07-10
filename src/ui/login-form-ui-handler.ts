@@ -34,7 +34,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     googleImage.setInteractive();
     googleImage.setName("google-icon");
     googleImage.on("pointerdown", () => {
-      const redirectUri = encodeURIComponent(`${Utils.serverUrl}/auth/google/callback`);
+      const redirectUri = encodeURIComponent(`${import.meta.env.VITE_SERVER_URL}/auth/google/callback`);
       const googleId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
       const googleUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${googleId}&redirect_uri=${redirectUri}&response_type=code&scope=openid`;
       window.open(googleUrl, "_self");
@@ -47,7 +47,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     discordImage.setInteractive();
     discordImage.setName("discord-icon");
     discordImage.on("pointerdown", () => {
-      const redirectUri = encodeURIComponent(`${Utils.serverUrl}/auth/discord/callback`);
+      const redirectUri = encodeURIComponent(`${import.meta.env.VITE_SERVER_URL}/auth/discord/callback`);
       const discordId = import.meta.env.VITE_DISCORD_CLIENT_ID;
       const discordUrl = `https://discord.com/api/oauth2/authorize?client_id=${discordId}&redirect_uri=${redirectUri}&response_type=code&scope=identify`;
       window.open(discordUrl, "_self");
@@ -152,7 +152,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
   }
 
   processExternalProvider() : void {
-    this.externalPartyTitle.setText(i18next.t("menu:orUse"));
+    this.externalPartyTitle.setText(i18next.t("menu:orUse") ?? "");
     this.externalPartyTitle.setX(20+this.externalPartyTitle.text.length);
     this.externalPartyTitle.setVisible(true);
     this.externalPartyContainer.setPositionRelative(this.modalContainer, 175, 0);
