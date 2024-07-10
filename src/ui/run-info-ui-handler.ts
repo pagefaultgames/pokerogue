@@ -171,6 +171,8 @@ export default class GameInfoUiHandler extends UiHandler {
     			break;
     	}
 
+
+
     genInfoText.appendText(`${i18next.t("runHistory:money")}: ${Utils.formatLargeNumber(runData.money, 1000)}`);
 
     const luckValue = Phaser.Math.Clamp(runData.party.map(p => p.toPokemon(this.scene).getLuck()).reduce((total: integer, value: integer) => total += value, 0), 0, 14);
@@ -185,11 +187,11 @@ export default class GameInfoUiHandler extends UiHandler {
     }
 
     	if (runHistoryOrigin && !runResult) {
-    		const enemyContainer = this.scene.add.container(8, -42);
+    		const enemyContainer = this.scene.add.container(2, -42);
     		//Wild - Single and Doubles
     		if (runData.battleType === BattleType.WILD) {
     			runData.enemyParty.forEach((enemyData, e) => {
-          const enemyIconContainer = this.scene.add.container(12+(e*24),63);
+          const enemyIconContainer = this.scene.add.container(8+(e*24),63);
           enemyIconContainer.setScale(0.75);
           const bossStatus = enemyData.boss;
           enemyData.boss = false;
@@ -272,8 +274,16 @@ export default class GameInfoUiHandler extends UiHandler {
     	  this.runInfoContainer.add(enemyContainer);
     }
 
+
+    if (luckValue >= 14) {
+      genInfoText.appendText("\n", false);
+    }
+
+    const runLength = Utils.getPlayTimeString(runData.playTime);
+    genInfoText.appendText(`${i18next.t("runHistory:runLength")}: ${runLength}`);
+
     	if (runData.modifiers.length) {
-      genInfoText.appendText((luckValue < 14) ? i18next.t("runHistory:playerItems")+": " : "\n"+i18next.t("runHistory:playerItems")+": ");
+      genInfoText.appendText(i18next.t("runHistory:playerItems")+": ");
       const modifiersModule = await import("../modifier/modifier");
 
       let visibleModifierIndex = 0;
@@ -290,10 +300,18 @@ export default class GameInfoUiHandler extends UiHandler {
 
         item.setOrigin(0, 0.5);
         const rowHeightModifier = Math.floor(visibleModifierIndex/7);
-        item.setPosition(24 * (visibleModifierIndex%7), 0+(35*rowHeightModifier));
-        const itemStackCount = addTextObject(this.scene, (24*(visibleModifierIndex%7))+22, 8+(35*rowHeightModifier), modifier.stackCount, TextStyle.PARTY, {fontSize:"64px"});
+        item.setPosition(24 * (visibleModifierIndex%7), 20+(35*rowHeightModifier));
+
         modifierIconsContainer.add(item);
-        modifierIconsContainer.add(itemStackCount);
+        const maxStackCount = modifier.getMaxStackCount(this.scene);
+        if (maxStackCount > 1) {
+          const itemStackCount = addTextObject(this.scene, (24*(visibleModifierIndex%7))+22, 22+(35*rowHeightModifier), modifier.stackCount, TextStyle.PARTY, {fontSize:"64px"});
+          if (modifier.stackCount === maxStackCount) {
+            itemStackCount.setColor("#f89890");
+          }
+          modifierIconsContainer.add(itemStackCount);
+        }
+
         if (++visibleModifierIndex === 20) {
           const maxItems = addTextObject(this.scene, 45, 90, "+", TextStyle.WINDOW);
           maxItems.setPositionRelative(modifierIconsContainer, 70, 45);
@@ -302,7 +320,7 @@ export default class GameInfoUiHandler extends UiHandler {
         }
       }
       if (runData.gameMode === GameModes.CHALLENGE) {
-        modifierIconsContainer.setPositionRelative(genInfoText, 2, 55);
+        modifierIconsContainer.setPositionRelative(genInfoText, 2, 65);
       } else {
         modifierIconsContainer.setPositionRelative(genInfoText, 2, 55);
       }
@@ -324,12 +342,9 @@ export default class GameInfoUiHandler extends UiHandler {
  		const pokemonPos = [[infoWidth+4, 28], [(infoWidth*3)+5, 28], [infoWidth+4, 78], [(infoWidth*3)+5, 78], [infoWidth+4, 128], [(infoWidth*3)+5, 128]];
  		party.forEach((p: PokemonData, i: integer) => {
       const pokemonInfoWindow = new RoundRectangle(this.scene, 0, 0, infoWidth*2, windowHeight-3, 3);
- 			pokemonInfoWindow.setStrokeStyle(1, 0x4b4b4b, 0.85);
- 			//const pokemonSpriteWindow = this.scene.add.rectangle(0, 0, 21, 21, 0xFFFFFF, 0.4);
 
  			const pokemon = p.toPokemon(this.scene);
  			const pokemonInfoContainer = this.scene.add.container(pokemonPos[i][0], pokemonPos[i][1]);
- 			pokemonInfoWindow.setStrokeStyle(1, 0x4b4b4b, 0.95);
 
  			const types = pokemon.getTypes();
  			let typeColor = getTypeRgb(types[0]);
@@ -347,6 +362,7 @@ export default class GameInfoUiHandler extends UiHandler {
       //const spriteAnimKey = icon.list[0].anims.key;
       typeColor = types[1] ? getTypeRgb(types[1]) : null;
       const type2Color = typeColor ? new Phaser.Display.Color(typeColor[0], typeColor[1], typeColor[2]) : null;
+      type2Color ? pokemonInfoWindow.setStrokeStyle(1, type2Color.color, 0.95) : pokemonInfoWindow.setStrokeStyle(1, type1Color.color, 0.95);
       const sprite1 = icon.list[0] as Phaser.GameObjects.Sprite;
       const sprite2 = (icon.list.length > 1) ? icon.list[1] as Phaser.GameObjects.Sprite : null;
       if (type2Color && !pokemon.fusionSpecies) {
@@ -375,13 +391,12 @@ export default class GameInfoUiHandler extends UiHandler {
       const pSpecies = pokemon.species;
       const pNature = getNatureName(pokemon.nature);
       const pName = pokemon.fusionSpecies ? pokemon.name : pSpecies.name;
-      const textNameNatureLevel = addTextObject(this.scene, -2, 1, `${pName} - ${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatFancyLargeNumber(pokemon.level, 1)} - ${pNature}`, TextStyle.SUMMARY, { fontSize: textContainerFontSize, color: "#f8f8f8" });
+      const textNameNatureLevel = addBBCodeTextObject(this.scene, -2, 1, `${pName} - ${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatFancyLargeNumber(pokemon.level, 1)} - ${pNature}`, TextStyle.SUMMARY, { fontSize: textContainerFontSize, color: "#f8f8f8" });
       textContainer.add(textNameNatureLevel);
 
       const pPassiveInfo = pokemon.passive ? `${i18next.t("starterSelectUiHandler:passive")+" "+allAbilities[starterPassiveAbilities[pSpecies.speciesId]].name}` : "";
-      const pHasHA = (pSpecies.abilityHidden === pSpecies.getAbility(pokemon.abilityIndex)) ? ["[color=#e8e8a8]","[/color]"] : ["",""];
-      const abilityInd = pokemon.fusionSpecies ? pokemon.fusionAbilityIndex : pokemon.abilityIndex;
-      const pAbilityInfo = i18next.t("starterSelectUiHandler:ability")+" "+pHasHA[0] + allAbilities[pSpecies.getAbility(abilityInd)].name + pHasHA[1];
+      //const abilityInd = pokemon.fusionSpecies ? pokemon.fusionAbilityIndex : pokemon.abilityIndex;
+      const pAbilityInfo = i18next.t("starterSelectUiHandler:ability")+" "+ pokemon.getAbility().name;
       const textAbility = addBBCodeTextObject(this.scene, -2, 6, `${pAbilityInfo}`, TextStyle.SUMMARY, { fontSize: textContainerFontSize });
       textContainer.add(textAbility);
       const textPassive = addBBCodeTextObject(this.scene, -2, 11, pPassiveInfo, TextStyle.SUMMARY, {fontSize: textContainerFontSize});
@@ -392,8 +407,8 @@ export default class GameInfoUiHandler extends UiHandler {
       const currentLanguage = i18next.resolvedLanguage;
       for (let i = 0; i < pStats.length; i++) {
         const isMult = getNatureStatMultiplier(pokemon.nature, i);
-        pStats[i] = (isMult < 1) ? pStats[i] + "↓" : pStats[i];
-        pStats[i] = (isMult > 1) ? pStats[i] + "↑" : pStats[i];
+        pStats[i] = (isMult < 1) ? pStats[i] + "[color=#40c8f8]↓[/color]" : pStats[i];
+        pStats[i] = (isMult > 1) ? pStats[i] + "[color=#f89890]↑[/color]" : pStats[i];
       }
       //Row 1: HP, Atk, Def
       //Row 2: SpAtk, SpDef, Speed
@@ -412,7 +427,7 @@ export default class GameInfoUiHandler extends UiHandler {
         const splicedIcon = this.scene.add.image(0, 0, "icon_spliced");
         splicedIcon.setScale(0.35);
         splicedIcon.setOrigin(0, 0);
-        splicedIcon.setPositionRelative(textContainer, 121, 32);
+        pokemon.shiny ? splicedIcon.setPositionRelative(textContainer, 121, 32) : splicedIcon.setPositionRelative(textContainer, 127, 32);
         iconContainer.add(splicedIcon);
         this.getUi().bringToTop(splicedIcon);
       }

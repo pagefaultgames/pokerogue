@@ -24,6 +24,7 @@ export const runHistory: SimpleTranslationEntries = {
   "SPDshortened":"Vel.",
   "runInfo":"Run Info",
   "money":"Money",
+  "runLength":"Run Length",
 } as const;
 
 //Mode Information found in game-mode.ts
