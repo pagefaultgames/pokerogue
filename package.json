@@ -7,6 +7,7 @@
 		"start": "vite",
 		"start:dev": "vite --mode development",
 		"build": "vite build",
+		"build:beta": "vite build --mode beta",
 		"preview": "vite preview",
 		"test": "vitest run --project pre && vitest run --project main",
 		"test:cov": "vitest run --project pre && vitest run --project main --coverage",
