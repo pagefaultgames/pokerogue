@@ -44,6 +44,7 @@ import { DropDown, DropDownOption, DropDownState, DropDownType } from "./dropdow
 import { StarterContainer } from "./starter-container";
 import { DropDownColumn, FilterBar } from "./filter-bar";
 import { ScrollBar } from "./scroll-bar";
+import { on } from "events";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -992,7 +993,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     // Loop through all visible candy icons when set to 'Icon' mode
     if (this.scene.candyUpgradeDisplay === 0) {
-      this.starterContainers[this.getGenCursorWithScroll()].forEach((starter) => {
+      this.filteredStarterContainers.forEach((starter) => {
         this.setUpgradeIcon(starter);
       });
 
@@ -1000,19 +1001,29 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     }
 
     // Loop through all animations when set to 'Animation' mode
-    for (let g = 0; g < gens.length; g++) {
-      this.genSpecies[g].forEach((species, s) => {
-        const icon = this.starterContainers[g][s].icon;
+    this.filteredStarterContainers.forEach((starter, s) => {
+      const icon = this.filteredStarterContainers[s].icon;
 
-        this.setUpgradeAnimation(icon, species);
-      });
-    }
+      this.setUpgradeAnimation(icon, starter.species);
+    });
   }
 
   processInput(button: Button): boolean {
     if (this.blockInput) {
       return false;
     }
+
+    const numberOfStarters = this.filteredStarterContainers.length;
+    const numOfRows = Math.ceil(numberOfStarters / 9);
+    const currentRow = Math.floor(this.cursor / 9);
+    const onScreenFirstIndex = this.scrollCursor * 9; // this is first starter index on the screen
+    const onScreenLastIndex = Math.min(onScreenFirstIndex + 9*9, numberOfStarters) - 1; // this is the last starter index on the screen
+    const onScreenNumberOfStarters = onScreenLastIndex - onScreenFirstIndex + 1;
+    const onScreenNumberOfRows = Math.ceil(onScreenNumberOfStarters / 9);
+    const onScreenCurrentRow = Math.floor((this.cursor - onScreenFirstIndex) / 9);
+
+
+    console.log("this.cursor: ", this.cursor, "this.scrollCursor" , this.scrollCursor, "numberOfStarters: ", numberOfStarters, "numOfRows: ", numOfRows, "currentRow: ", currentRow, "onScreenFirstIndex: ", onScreenFirstIndex, "onScreenLastIndex: ", onScreenLastIndex, "onScreenNumberOfStarters: ", onScreenNumberOfStarters, "onScreenNumberOfRow: ", onScreenNumberOfRows, "onScreenCurrentRow: ", onScreenCurrentRow);
 
     const ui = this.getUi();
 
@@ -1027,7 +1038,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       }
     } else if (button === Button.CANCEL) {
       if (this.filterMode && this.filterBar.openDropDown) {
-        this.filterBar.hideDropDowns();
+        this.filterBar.toggleDropDown(this.filterBarCursor);
         success = true;
       } else if (this.statsMode) {
         this.toggleStatsMode(false);
@@ -1048,10 +1059,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         success = true;
       }
     } else if (this.startCursorObj.visible) { // this checks to see if the start button is selected
-      // TODO: to be checked valid rows with genStarters in new filter UI
-      // const genStarters = this.starterSelectGenIconContainers[this.getGenCursorWithScroll()].getAll().length;
-      const genStarters = this.starterContainers.length;
-      const rows = Math.ceil(genStarters / 9);
       switch (button) {
       case Button.ACTION:
         if (this.tryStart(true)) {
@@ -1067,6 +1074,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.moveStarterIconsCursor(this.starterIconsCursorIndex);
         } else {
           this.setFilterMode(true);
+          this.scrollCursor = 0;
+          this.updateScroll();
         }
         success = true;
         break;
@@ -1076,25 +1085,20 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.starterIconsCursorIndex = this.starterSpecies.length - 1;
           this.moveStarterIconsCursor(this.starterIconsCursorIndex);
         } else {
-          // TODO: to be checked
           this.setFilterMode(true);
         }
         success = true;
         break;
-      case Button.DOWN:
-        this.startCursorObj.setVisible(false);
-        success = true;
-        break;
       case Button.LEFT:
         this.startCursorObj.setVisible(false);
-        this.setCursor(Math.min(this.cursor + 8, this.filteredStarterContainers.length - 1));
-        // TODO: check this is correct
-        this.setCursor(genStarters - 1);
+        this.cursorObj.setVisible(true);
+        this.setCursor(onScreenLastIndex);
         success = true;
         break;
       case Button.RIGHT:
         this.startCursorObj.setVisible(false);
-        this.setCursor((rows - 1) * 9);
+        this.cursorObj.setVisible(true);
+        this.setCursor(onScreenLastIndex - Math.min(9, onScreenLastIndex % 9));
         success = true;
         break;
       }
@@ -1104,26 +1108,33 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           if (this.filterBarCursor > 0) {
             success = this.setCursor(this.filterBarCursor - 1);
           } else {
-            this.setFilterMode(false);
+            success = this.setCursor(this.filterBar.numFilters - 1);
           }
           break;
         case Button.RIGHT:
           if (this.filterBarCursor < this.filterBar.numFilters - 1) {
             success = this.setCursor(this.filterBarCursor + 1);
           } else {
-            this.setFilterMode(false);
+            success = this.setCursor(0);
           }
           break;
         case Button.UP:
-          if (!this.filterBar.decDropDownCursor()) {
-            this.filterBar.hideDropDowns();
+          if (!this.filterBar.decDropDownCursor() && numberOfStarters > 0) {
+            this.setFilterMode(false);
+            this.scrollCursor = Math.max(0,numOfRows - 9);
+            this.updateScroll();
+            const proportion = this.filterBarCursor / Math.max(1, this.filterBar.numFilters - 1);
+            success = this.setCursor(numberOfStarters - Math.min(9, numberOfStarters % 9) + Math.round(proportion * (Math.min(9, numberOfStarters) - 1)));
           }
           break;
         case Button.DOWN:
           // add extra check to prevent cursor if there is no filtered results
-          if ((!this.filterBar.openDropDown || !this.filterBar.incDropDownCursor()) && this.filteredStarterContainers.length > 0) {
+          if ((!this.filterBar.openDropDown || !this.filterBar.incDropDownCursor()) && numberOfStarters > 0) {
             this.setFilterMode(false);
-            success = true;
+            this.scrollCursor = 0;
+            this.updateScroll();
+            const proportion = this.filterBarCursor / Math.max(1, this.filterBar.numFilters - 1);
+            success = this.setCursor(Math.round(proportion * (Math.min(9, numberOfStarters) - 1)));
           }
           break;
         case Button.ACTION:
@@ -1135,6 +1146,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           break;
         }
     } else {
+
+      // this gets the correct generation and pokemon cursor depending on whether you're in the starter screen or the party icons
+      const species = this.filteredStarterContainers[this.cursor].species;
       /**
        * This code generates the menu for a pokemon when you press the action button
        * This works in modules; it does a check for each option to see if it's valid, and if so, will add that option to the menu
@@ -1146,37 +1160,36 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         if (!this.speciesStarterDexEntry?.caughtAttr) {
           error = true;
         } else if (this.starterSpecies.length < 6) { // checks to see you have less than 6 pokemon in your party
-          // TODO: need to check this
-          let pokemonSpecies;
-          // this gets the correct generation and pokemon cursor depending on whether you're in the starter screen or the party icons
-          pokemonSpecies = this.starterSpecies[this.starterIconsCursorIndex];
+          console.log("button: Action and caughtAttr and starterSpecies.length < 6");
           const ui = this.getUi();
           let options = [];
 
-          const [isDupe, removeIndex]: [boolean, number] = this.isInParty(pokemonSpecies); // checks to see if the pokemon is a duplicate; if it is, returns the index that will be removed
+          const [isDupe, removeIndex]: [boolean, number] = this.isInParty(species); // checks to see if the pokemon is a duplicate; if it is, returns the index that will be removed
 
           const isPartyValid = this.isPartyValid();
           const isValidForChallenge = new Utils.BooleanHolder(true);
-          // TODO: to be checked
-          // if (isPartyValid) {
-          //   Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, pokemonSpecies, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(pokemonSpecies, this.scene.gameData.getSpeciesDefaultDexAttr(pokemonSpecies, false, true)), this.starterGens.length + 1);
-          // } else {
-          //   Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, pokemonSpecies, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(pokemonSpecies, this.scene.gameData.getSpeciesDefaultDexAttr(pokemonSpecies, false, true)), this.starterGens.length + 1, false, false);
-          // }
-          // TODO: need to check this
-          // const currentPartyValue = this.starterGens.reduce((total: number, gen: number, i: number) => total += this.scene.gameData.getSpeciesStarterValue(this.genSpecies[gen][this.starterSpecies[i]].speciesId), 0);
-          const currentPartyValue = 1; // temporary value for conflict resolution
-          const newCost = this.scene.gameData.getSpeciesStarterValue(pokemonSpecies.speciesId);
+
+          if (isPartyValid) {
+            Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true)), this.starterSpecies.length + 1);
+
+          } else {
+            Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true)), this.starterSpecies.length + 1, false, false);
+            
+          }
+          
+          const currentPartyValue = this.starterSpecies.map(s => s.generation).reduce((total: integer, gen: integer, i: integer) => total += this.scene.gameData.getSpeciesStarterValue(this.starterSpecies[i].speciesId), 0);
+          
+          const newCost = this.scene.gameData.getSpeciesStarterValue(species.speciesId);
+          console.log("currentPartyValue: ", currentPartyValue, "newCost: ", newCost, "this.getValueLimit(): ", this.getValueLimit());
           if (!isDupe && isValidForChallenge.value && currentPartyValue + newCost <= this.getValueLimit()) { // this checks to make sure the pokemon doesn't exist in your party, it's valid for the challenge and that it won't go over the cost limit; if it meets all these criteria it will add it to your party
             options = [
               {
                 label: i18next.t("starterSelectUiHandler:addToParty"),
                 handler: () => {
                   ui.setMode(Mode.STARTER_SELECT);
-                  // todo: to be checked
-                  // if (!isDupe && isValidForChallenge.value && this.tryUpdateValue(this.scene.gameData.getSpeciesStarterValue(pokemonSpecies.speciesId), true)) {
-                  if (!isDupe && isValidForChallenge.value) {
-                    this.addToParty(pokemonSpecies);
+                  console.log("button: Action and addToParty, isValidForChallenge.value: ", isValidForChallenge.value, "pokemonSpecies: ", species, "this.scene.gameData.getSpeciesStarterValue(pokemonSpecies.speciesId): ", this.scene.gameData.getSpeciesStarterValue(species.speciesId));
+                  if (!isDupe && isValidForChallenge.value && this.tryUpdateValue(this.scene.gameData.getSpeciesStarterValue(species.speciesId), true)) {
+                    this.addToParty(species);
                     ui.playSelect();
                   } else {
                     ui.playError(); // this should be redundant as there is now a trigger for when a pokemon can't be added to party
@@ -1517,15 +1530,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           success = true;
         }
       } else {
-        const genStarters = this.filteredStarterContainers.length;
-        const rows = Math.ceil(genStarters / 9);
-        const row = Math.floor(this.cursor / 9);
         const props = this.scene.gameData.getSpeciesDexAttrProps(this.lastSpecies, this.dexAttrCursor);
         // prepare persistent starter data to store changes
         let starterAttributes = this.starterPreferences[this.lastSpecies.speciesId];
         if (!starterAttributes) {
-          starterAttributes =
-          this.starterPreferences[this.lastSpecies.speciesId] = {};
+          starterAttributes = this.starterPreferences[this.lastSpecies.speciesId] = {};
         }
         switch (button) {
 
@@ -1636,8 +1645,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
         case Button.UP:
           if (!this.starterIconsCursorObj.visible) {
-            if (row > 0) {
-              if (this.scrollCursor > 0 && row - this.scrollCursor === 0) {
+            if (currentRow > 0) {
+              if (this.scrollCursor > 0 && currentRow - this.scrollCursor === 0) {
                 this.scrollCursor--;
                 this.updateScroll();
               }
@@ -1653,34 +1662,36 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               this.starterIconsCursorObj.setVisible(false);
               this.setSpecies(null);
               this.setFilterMode(true);
+              success = true;
             } else {
               this.starterIconsCursorIndex--;
               this.moveStarterIconsCursor(this.starterIconsCursorIndex);
+              success = true;
             }
           }
           break;
         case Button.DOWN:
           if (!this.starterIconsCursorObj.visible) {
-            if (row < rows - 1) {
-              if (row - this.scrollCursor === 8) {
+            if (currentRow < numOfRows - 1) { // not last row
+              if (currentRow - this.scrollCursor === 8) { // last row of visible starters
                 this.scrollCursor++;
               }
               success = this.setCursor(this.cursor + 9);
               this.updateScroll();
-            } else {
-              // TODO: check this is working
+            } else { // last row
               this.setFilterMode(true);
-              this.scrollCursor = 0;
-              this.updateScroll();
+              success = true;
             }
           } else {
             if (this.starterIconsCursorIndex <= this.starterSpecies.length - 2) {
               this.starterIconsCursorIndex++;
               this.moveStarterIconsCursor(this.starterIconsCursorIndex);
+              success = true;
             } else {
               this.starterIconsCursorObj.setVisible(false);
               this.setSpecies(null);
               this.startCursorObj.setVisible(true);
+              success = true;
             }
           }
           break;
@@ -1690,63 +1701,55 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               success = this.setCursor(this.cursor - 1);
             } else {
               if (this.starterSpecies.length === 0) {
-                if (row >= 5) {
+                // just wrap around to the last column
+                success = this.setCursor(this.cursor + Math.min(8, numberOfStarters - this.cursor));
+              } else { // there is a pokemon in the party
+                if (onScreenCurrentRow >= onScreenNumberOfRows - 1) { // the last row will always go to the starter button
+                  this.cursorObj.setVisible(false);
                   this.startCursorObj.setVisible(true);
-                }
-              } else {
-                if (row >= rows - 1) { // the last row will always go to the starter button
-                  this.startCursorObj.setVisible(true);
-                } else if (row > 2) { // the first three rows will always go to the gen select, so anything else will go to the starterIcons party section
-                  if (this.starterSpecies.length >= row - 2) {
-                    this.starterIconsCursorIndex = row - 3;
-                  } else {
-                    this.starterIconsCursorIndex = this.starterSpecies.length - 1;
-                  }
+                } else { 
+                  // set starterIconsCursorindex to the closest pokemon in the party
+                  this.starterIconsCursorIndex = Math.min(this.starterSpecies.length - 1, Math.max(onScreenCurrentRow-2,0));
+                  this.cursorObj.setVisible(false);
                   this.moveStarterIconsCursor(this.starterIconsCursorIndex);
                 }
               }
             }
           } else {
             this.starterIconsCursorObj.setVisible(false);
-            const rowToUse = Math.min(this.starterIconsCursorIndex + 3, rows - 1);
-            this.setCursor(Math.min((rowToUse * 9) + 8, genStarters - 1));
+            this.cursorObj.setVisible(true);
+            const rowToUse = Math.min(this.starterIconsCursorIndex + 3, numOfRows - 1);
+            this.setCursor(Math.min((rowToUse * 9) + 8, numberOfStarters - 1));
             success = true;
           }
           break;
         case Button.RIGHT:
-          if (this.cursor % 9 < (row < rows - 1 ? 8 : (genStarters - 1) % 9)) {
-            success = this.setCursor(this.cursor + 1);
-          } else {
-            if (row >= Math.min(5, rows - 1)) {
-              this.startCursorObj.setVisible(true);
-            }
-          }
           if (!this.starterIconsCursorObj.visible) {
-            if (this.cursor % 9 < (row < rows - 1 ? 8 : (genStarters - 1) % 9)) {
+            // is not right edge
+            if (this.cursor % 9 < (currentRow < numOfRows - 1 ? 8 : (numberOfStarters - 1) % 9)) {
               success = this.setCursor(this.cursor + 1);
             } else {
+              // in right edge
               if (this.starterSpecies.length === 0) {
-                if (row >= Math.min(5, rows - 1)) {
+                // just wrap around to the first column
+                success = this.setCursor(this.cursor - Math.min(8, this.cursor % 9));
+              } else { // there is a pokemon in the party
+                if (onScreenCurrentRow >= onScreenNumberOfRows - 1) { // the last row will always go to the starter button
+                  this.cursorObj.setVisible(false);
                   this.startCursorObj.setVisible(true);
-                }
-              } else {
-                if (row >= rows - 1) { // the last row will always go to the starter button
-                  this.startCursorObj.setVisible(true);
-                } else if (row > 2) { // the first three rows will always go to the gen select, so anything else will go to the starterIcons party section
-                  if (this.starterSpecies.length >= row - 2) {
-                    this.starterIconsCursorIndex = row - 3;
-                  } else {
-                    this.starterIconsCursorIndex = this.starterSpecies.length - 1;
-                  }
+                } else { 
+                  // set starterIconsCursorindex to the closest pokemon in the party
+                  this.starterIconsCursorIndex = Math.min(this.starterSpecies.length - 1, Math.max(onScreenCurrentRow-2,0));
+                  this.cursorObj.setVisible(false);
                   this.moveStarterIconsCursor(this.starterIconsCursorIndex);
                 }
               }
             }
           } else {
             this.starterIconsCursorObj.setVisible(false);
-            const rowToUse = Math.min(this.starterIconsCursorIndex + 3, rows - 1);
-            this.setCursor(Math.min((rowToUse * 9), genStarters - 1));
-            this.setSpecies(this.genSpecies[this.getGenCursorWithScroll()][this.cursor]);
+            this.cursorObj.setVisible(true);
+            const rowToUse = Math.min(this.starterIconsCursorIndex + 3, numOfRows - 1);
+            this.setCursor(Math.min((rowToUse * 9), numberOfStarters - 1));
             success = true;
           }
           break;
@@ -2145,8 +2148,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.filterBar.hideDropDowns();
       }
       if (this.starterIconsCursorObj.visible) {
-        // TODO: this should be handled for the starter icons cursor
-        this.setSpecies(this.genSpecies[this.getGenCursorWithScroll()][this.cursor]);
+        this.setSpecies(this.filteredStarterContainers[this.cursor].species);
       }
 
       return true;
@@ -2759,11 +2761,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.scene.time.delayedCall(Utils.fixedInt(500), () => this.tryUpdateValue());
       return false;
     }
-
     let isPartyValid: boolean = this.isPartyValid(); // this checks to see if the party is valid
     if (addingToParty) { // this does a check to see if the pokemon being added is valid; if so, it will update the isPartyValid boolean
       const isNewPokemonValid = new Utils.BooleanHolder(true);
-      Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, this.genSpecies[this.getGenCursorWithScroll()][this.cursor], isNewPokemonValid, this.scene.gameData.getSpeciesDexAttrProps(this.genSpecies[this.getGenCursorWithScroll()][this.cursor], this.scene.gameData.getSpeciesDefaultDexAttr(this.genSpecies[this.getGenCursorWithScroll()][this.cursor], false, true)), this.starterSpecies.length + (add ? 1 : 0), false, false);
+      const species = this.filteredStarterContainers[this.cursor].species;
+      Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isNewPokemonValid, this.scene.gameData.getSpeciesDexAttrProps(species, this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true)), this.starterSpecies.length + (add ? 1 : 0), false, false);
       isPartyValid = isPartyValid || isNewPokemonValid.value;
     }
 
