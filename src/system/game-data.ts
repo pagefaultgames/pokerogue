@@ -40,8 +40,8 @@ import { GameDataType } from "#enums/game-data-type";
 import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
-import { MysteryEncounterData } from "../data/mystery-encounter-data";
-import MysteryEncounter from "../data/mystery-encounter";
+import { MysteryEncounterData } from "../data/mystery-encounters/mystery-encounter-data";
+import MysteryEncounter from "../data/mystery-encounters/mystery-encounter";
 
 export const defaultStarterSpecies: Species[] = [
   Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE,

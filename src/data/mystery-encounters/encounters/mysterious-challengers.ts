@@ -1,9 +1,9 @@
-import BattleScene from "../../battle-scene";
+import BattleScene from "../../../battle-scene";
 import { ModifierTier } from "#app/modifier/modifier-tier";
-import {modifierTypes} from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/modifier/modifier-type";
 import { EnemyPartyConfig, initBattleWithEnemyConfig, setEncounterRewards } from "#app/data/mystery-encounters/mystery-encounter-utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import MysteryEncounter, {MysteryEncounterBuilder, MysteryEncounterTier} from "../mystery-encounter";
+import MysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier } from "../mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import { WaveCountRequirement } from "../mystery-encounter-requirements";
 import {
@@ -12,8 +12,8 @@ import {
   TrainerPartyTemplate,
   trainerPartyTemplates
 } from "#app/data/trainer-config";
-import * as Utils from "../../utils";
-import {PartyMemberStrength} from "#enums/party-member-strength";
+import * as Utils from "../../../utils";
+import { PartyMemberStrength } from "#enums/party-member-strength";
 
 export const MysteriousChallengersEncounter: MysteryEncounter = new MysteryEncounterBuilder()
   .withEncounterType(MysteryEncounterType.MYSTERIOUS_CHALLENGERS)

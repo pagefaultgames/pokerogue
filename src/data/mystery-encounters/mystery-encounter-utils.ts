@@ -1,12 +1,12 @@
 import i18next from "i18next";
-import {BattleType} from "#app/battle";
+import { BattleType } from "#app/battle";
 import BattleScene from "../../battle-scene";
-import PokemonSpecies, {getPokemonSpecies, speciesStarters} from "../pokemon-species";
-import {MysteryEncounterVariant} from "../mystery-encounter";
-import {Status, StatusEffect} from "../status-effect";
-import {TrainerConfig, trainerConfigs, TrainerSlot} from "../trainer-config";
-import Pokemon, {FieldPosition, PlayerPokemon} from "#app/field/pokemon";
-import Trainer, {TrainerVariant} from "../../field/trainer";
+import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "../pokemon-species";
+import { MysteryEncounterVariant } from "./mystery-encounter";
+import { Status, StatusEffect } from "../status-effect";
+import { TrainerConfig, trainerConfigs, TrainerSlot } from "../trainer-config";
+import Pokemon, { FieldPosition, PlayerPokemon } from "#app/field/pokemon";
+import Trainer, { TrainerVariant } from "../../field/trainer";
 import {
   ExpBalanceModifier,
   ExpShareModifier,
@@ -32,24 +32,24 @@ import {
   ShowPartyExpBarPhase,
   TrainerVictoryPhase
 } from "#app/phases";
-import {MysteryEncounterBattlePhase, MysteryEncounterRewardsPhase} from "#app/phases/mystery-encounter-phase";
+import { MysteryEncounterBattlePhase, MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phase";
 import * as Utils from "../../utils";
-import {isNullOrUndefined} from "#app/utils";
-import {SelectModifierPhase} from "#app/phases/select-modifier-phase";
-import {TrainerType} from "#enums/trainer-type";
-import {Species} from "#enums/species";
-import {Type} from "#app/data/type";
-import {BattlerTagType} from "#enums/battler-tag-type";
+import { isNullOrUndefined } from "#app/utils";
+import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
+import { TrainerType } from "#enums/trainer-type";
+import { Species } from "#enums/species";
+import { Type } from "#app/data/type";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import PokemonData from "#app/system/pokemon-data";
-import {Biome} from "#enums/biome";
-import {biomeLinks} from "#app/data/biomes";
-import {Mode} from "#app/ui/ui";
-import {PartyOption, PartyUiMode} from "#app/ui/party-ui-handler";
-import {OptionSelectConfig, OptionSelectItem} from "#app/ui/abstact-option-select-ui-handler";
-import {WIGHT_INCREMENT_ON_SPAWN_MISS} from "#app/data/mystery-encounters/mystery-encounters";
-import {getTextWithColors, TextStyle} from "#app/ui/text";
+import { Biome } from "#enums/biome";
+import { biomeLinks } from "#app/data/biomes";
+import { Mode } from "#app/ui/ui";
+import { PartyOption, PartyUiMode } from "#app/ui/party-ui-handler";
+import { OptionSelectConfig, OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
+import { WIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/encounters/mystery-encounters";
+import { getTextWithColors, TextStyle } from "#app/ui/text";
 import * as Overrides from "#app/overrides";
-import {UiTheme} from "#enums/ui-theme";
+import { UiTheme } from "#enums/ui-theme";
 
 /**
  *
@@ -402,7 +402,7 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
       // Set Status
       if (partyConfig.pokemonConfigs[e].status) {
         // Default to cureturn 3 for sleep
-        const cureTurn = partyConfig.pokemonConfigs[e].status === StatusEffect.SLEEP ? 3: null;
+        const cureTurn = partyConfig.pokemonConfigs[e].status === StatusEffect.SLEEP ? 3 : null;
         enemyPokemon.status = new Status(partyConfig.pokemonConfigs[e].status, 0, cureTurn);
       }
 
