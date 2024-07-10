@@ -303,7 +303,7 @@ describe("Egg Generation Tests", () => {
     expect(result1).toBe(expectedTier1);
     expect(result2).toBe(expectedTier2);
   });
-  it("should generate rare/epic shinys from pokemon with a differend form", () => {
+  it("should generate rare/epic shinys from pokemon with a different form", () => {
     const scene = game.scene;
     const eggs: Egg[] = [];
 
