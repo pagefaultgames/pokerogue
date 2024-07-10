@@ -170,7 +170,7 @@ export class Egg {
     // If species has no variant, set variantTier to common. This needs to
     // be done because species with no variants get filtered at rollSpecies but if the
     // species is set via options or the legendary gacha pokemon gets choosen the check never happens
-    if (!getPokemonSpecies(this.species).hasVariants()) {
+    if (this._species && !getPokemonSpecies(this._species).hasVariants()) {
       this._variantTier = VariantTier.COMMON;
     }
     // Needs this._tier so it needs to be generated afer the tier override if bought from same species
