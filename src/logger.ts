@@ -26,6 +26,8 @@ export var logKeys: string[] = [
   "d", // Debug
 ];
 
+export var StoredLog: DRPD = undefined;
+
 export const DRPD_Version = "1.0.0"
 export const acceptedVersions = [
   "1.0.0"
