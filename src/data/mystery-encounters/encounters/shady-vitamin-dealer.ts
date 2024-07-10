@@ -16,9 +16,7 @@ import BattleScene from "../../../battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier } from "../mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import {
-  HealthRatioRequirement,
-  MoneyRequirement,
-  StatusEffectRequirement
+  MoneyRequirement
 } from "../mystery-encounter-requirements";
 
 export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBuilder
@@ -42,8 +40,8 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBui
     }
   ])
   .withSceneWaveRangeRequirement(10, 180)
-  .withPrimaryPokemonRequirement(new StatusEffectRequirement([StatusEffect.NONE])) // Pokemon must not have status
-  .withPrimaryPokemonRequirement(new HealthRatioRequirement([0.34, 1])) // Pokemon must have above 1/3rd HP
+  .withPrimaryPokemonStatusEffectRequirement([StatusEffect.NONE]) // Pokemon must not have status
+  .withPrimaryPokemonHealthRatioRequirement([0.34, 1]) // Pokemon must have above 1/3rd HP
   .withOption(new MysteryEncounterOptionBuilder()
     .withSceneRequirement(new MoneyRequirement(0, 2)) // Wave scaling multiplier of 2 for cost
     .withPreOptionPhase(async (scene: BattleScene): Promise<boolean> => {
