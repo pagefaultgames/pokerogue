@@ -91,7 +91,7 @@ body:
     attributes:
       label: Options offered to the player
       description: A maximum of four options can be displayed at a time
-      placeholder: Remember that only a maximum of up to four options can be displayed at a time
+      placeholder: Remember that only up to four options can be displayed at a time
     validations:
       required: true
   - type: textarea
