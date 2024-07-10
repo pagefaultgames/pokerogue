@@ -9,7 +9,7 @@ body:
     attributes:
       label: Event Name
       description: Name of the event
-      placeholder: "Fight or Flight"
+      placeholder: e.g Fight or Flight
   - type: dropdown
     id: rarity
     attributes:
@@ -18,7 +18,7 @@ body:
       options:
         - Common
         - Great
-        - Ultra 
+        - Ultra
         - Rogue
         - Other or unsure (please specify)
     validations:
@@ -27,20 +27,23 @@ body:
     id: waves
     attributes:
       label: Waves
-      placeholder: 1-200 (currently only 11-179 exist)
+      description: Classic/Challenge is 1 -209. Currently only 11-179 is supported.
+      palceholder: 1-200
     validations:
       required: true
   - type: textarea
     id: description
     attributes:
-      label: What is it?
-      placeholder: Describe the event you are proposing
+      label: Description
+      description: Describe the event you are proposing
+      placeholder: What is it?
     validations:
       required: true
   - type: dropdown
     id: biomes
     attributes:
       label: Biomes
+      description: Select all biomes where the event can occur
       multiple: true
       options:
         - ANY (no need to select all)
@@ -81,27 +84,37 @@ body:
         - LABORATORY
         - END
         - OTHER (please specify)
-
     validations:
       required: true
   - type: textarea
     id: options
     attributes:
       label: Options offered to the player
-      placeholder: Remember that only four options can be displayed at a time
+      description: A maximum of four options can be displayed at a time
+      placeholder: Remember that only a maximum of up to four options can be displayed at a time
     validations:
       required: true
   - type: textarea
     id: design-notes
     attributes:
       label: Explanation/Notes on Design
+      description: Explain why you think this design is right and what this Event brings to the table
       placeholder: Explain why you think this design is right and what this Event brings to the table
+      value: |
+        - [ ] _OPTION-1 Label
+            - _OPTION-1 description._
+        - [ ] _OPTION-2 Label
+            - _OPTION-2 description._
+        - [ ] _OPTION-3 Label
+            - _OPTION-3 description._
+        - [ ] _OPTION-4 Label
+            - _OPTION-4 description._
     validations:
       required: true
   - type: textarea
     id: dev-notes
     attributes:
-      label: Notes to Devs
-      placeholder: (If any needed)
+      label: Notes to Developers
+      placeholder: If necessary
     validations:
       required: false
