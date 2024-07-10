@@ -1,4 +1,3 @@
-import BattleScene from "../../../battle-scene";
 import {
   generateModifierType,
   leaveEncounterWithoutBattle,
@@ -7,20 +6,20 @@ import {
   setEncounterRewards,
   updatePlayerMoney,
 } from "#app/data/mystery-encounters/mystery-encounter-utils";
-import MysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier } from "../mystery-encounter";
+import { StatusEffect } from "#app/data/status-effect";
+import Pokemon, { PlayerPokemon } from "#app/field/pokemon";
+import { modifierTypes } from "#app/modifier/modifier-type";
+import { randSeedInt } from "#app/utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { Species } from "#enums/species";
+import BattleScene from "../../../battle-scene";
+import MysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier } from "../mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import {
   HealthRatioRequirement,
   MoneyRequirement,
-  StatusEffectRequirement,
-  WaveCountRequirement
+  StatusEffectRequirement
 } from "../mystery-encounter-requirements";
-import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
-import { modifierTypes } from "#app/modifier/modifier-type";
-import { Species } from "#enums/species";
-import { randSeedInt } from "#app/utils";
-import Pokemon, { PlayerPokemon } from "#app/field/pokemon";
-import { StatusEffect } from "#app/data/status-effect";
 
 export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBuilder
   .withEncounterType(MysteryEncounterType.SHADY_VITAMIN_DEALER)
@@ -42,7 +41,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBui
       y: 2
     }
   ])
-  .withSceneRequirement(new WaveCountRequirement([10, 180]))
+  .withSceneWaveRangeRequirement(10, 180)
   .withPrimaryPokemonRequirement(new StatusEffectRequirement([StatusEffect.NONE])) // Pokemon must not have status
   .withPrimaryPokemonRequirement(new HealthRatioRequirement([0.34, 1])) // Pokemon must have above 1/3rd HP
   .withOption(new MysteryEncounterOptionBuilder()

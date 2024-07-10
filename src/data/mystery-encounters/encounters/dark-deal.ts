@@ -1,5 +1,15 @@
+import { Type } from "#app/data/type";
+import { ModifierRewardPhase } from "#app/phases";
+import { isNullOrUndefined, randSeedInt } from "#app/utils";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { Species } from "#enums/species";
 import BattleScene from "../../../battle-scene";
 import { AddPokeballModifierType } from "../../../modifier/modifier-type";
+import { PokeballType } from "../../pokeball";
+import { getPokemonSpecies } from "../../pokemon-species";
+import MysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier } from "../mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
+import { PartySizeRequirement } from "../mystery-encounter-requirements";
 import {
   EnemyPartyConfig, EnemyPokemonConfig,
   getRandomPlayerPokemon,
@@ -7,16 +17,6 @@ import {
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle
 } from "../mystery-encounter-utils";
-import MysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier } from "../mystery-encounter";
-import { ModifierRewardPhase } from "#app/phases";
-import { getPokemonSpecies } from "../../pokemon-species";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { PokeballType } from "../../pokeball";
-import { PartySizeRequirement, WaveCountRequirement } from "../mystery-encounter-requirements";
-import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
-import { Type } from "#app/data/type";
-import { Species } from "#enums/species";
-import { isNullOrUndefined, randSeedInt } from "#app/utils";
 
 // Exclude Ultra Beasts, Paradox, Necrozma, Eternatus, and egg-locked mythicals
 const excludedBosses = [
@@ -83,7 +83,7 @@ export const DarkDealEncounter: MysteryEncounter = MysteryEncounterBuilder
       repeat: true
     }
   ])
-  .withSceneRequirement(new WaveCountRequirement([30, 180])) // waves 30 to 180
+  .withSceneWaveRangeRequirement(30, 180) // waves 30 to 180
   .withSceneRequirement(new PartySizeRequirement([2, 6])) // Must have at least 2 pokemon in party
   .withCatchAllowed(true)
   .withOption(new MysteryEncounterOptionBuilder()

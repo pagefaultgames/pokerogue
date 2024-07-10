@@ -1,4 +1,4 @@
-import BattleScene from "../../../battle-scene";
+import { Ability, allAbilities } from "#app/data/ability";
 import {
   EnemyPartyConfig,
   getEncounterText,
@@ -6,23 +6,22 @@ import {
   selectPokemonForOption,
   setEncounterRewards
 } from "#app/data/mystery-encounters/mystery-encounter-utils";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import MysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier } from "../mystery-encounter";
-import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
-import { WaveCountRequirement } from "../mystery-encounter-requirements";
-import { PlayerPokemon } from "#app/field/pokemon";
-import PokemonData from "#app/system/pokemon-data";
-import { randSeedShuffle } from "#app/utils";
 import { getNatureName, Nature } from "#app/data/nature";
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
+import { speciesStarters } from "#app/data/pokemon-species";
+import { Stat } from "#app/data/pokemon-stat";
+import { PlayerPokemon } from "#app/field/pokemon";
+import { pokemonInfo } from "#app/locales/en/pokemon-info";
 import { PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
-import { Ability, allAbilities } from "#app/data/ability";
-import { speciesStarters } from "#app/data/pokemon-species";
 import { AbilityAttr } from "#app/system/game-data";
-import { Stat } from "#app/data/pokemon-stat";
-import { pokemonInfo } from "#app/locales/en/pokemon-info";
+import PokemonData from "#app/system/pokemon-data";
+import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
+import { randSeedShuffle } from "#app/utils";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import BattleScene from "../../../battle-scene";
+import MysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier } from "../mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 
 export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilder
   .withEncounterType(MysteryEncounterType.TRAINING_SESSION)
@@ -35,7 +34,7 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
       y: 3
     }
   ])
-  .withSceneRequirement(new WaveCountRequirement([10, 180])) // waves 10 to 180
+  .withSceneWaveRangeRequirement(10, 180) // waves 10 to 180
   .withHideWildIntroMessage(true)
   .withOption(new MysteryEncounterOptionBuilder()
     .withPreOptionPhase(async (scene: BattleScene): Promise<boolean> => {

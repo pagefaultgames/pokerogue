@@ -71,7 +71,7 @@ export class PreviousEncounterRequirement extends EncounterSceneRequirement {
   }
 }
 
-export class WaveCountRequirement extends EncounterSceneRequirement {
+export class WaveRangeRequirement extends EncounterSceneRequirement {
   waveRange: [number, number];
 
   /**
