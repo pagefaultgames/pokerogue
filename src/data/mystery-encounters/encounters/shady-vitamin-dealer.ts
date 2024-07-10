@@ -43,7 +43,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBui
   .withPrimaryPokemonStatusEffectRequirement([StatusEffect.NONE]) // Pokemon must not have status
   .withPrimaryPokemonHealthRatioRequirement([0.34, 1]) // Pokemon must have above 1/3rd HP
   .withOption(new MysteryEncounterOptionBuilder()
-    .withSceneRequirement(new MoneyRequirement(0, 2)) // Wave scaling multiplier of 2 for cost
+    .withSceneMoneyRequirement(0, 2) // Wave scaling multiplier of 2 for cost
     .withPreOptionPhase(async (scene: BattleScene): Promise<boolean> => {
       const encounter = scene.currentBattle.mysteryEncounter;
       const onPokemonSelected = (pokemon: PlayerPokemon) => {
@@ -116,7 +116,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBui
     .build())
 
   .withOption(new MysteryEncounterOptionBuilder()
-    .withSceneRequirement(new MoneyRequirement(0, 5)) // Wave scaling multiplier of 2 for cost
+    .withSceneMoneyRequirement(0, 5) // Wave scaling multiplier of 2 for cost
     .withOptionPhase(async (scene: BattleScene) => {
       // Choose Expensive Option
       const modifiers = [];

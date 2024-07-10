@@ -1,8 +1,8 @@
-import { PlayerPokemon } from "#app/field/pokemon";
-import * as Utils from "../../utils";
-import BattleScene from "../../battle-scene";
-import { EncounterPokemonRequirement, EncounterSceneRequirement } from "./mystery-encounter-requirements";
 import { OptionTextDisplay } from "#app/data/mystery-encounters/mystery-encounter-dialogue";
+import { PlayerPokemon } from "#app/field/pokemon";
+import BattleScene from "../../battle-scene";
+import * as Utils from "../../utils";
+import { EncounterPokemonRequirement, EncounterSceneRequirement, MoneyRequirement } from "./mystery-encounter-requirements";
 
 
 export type OptionPhaseCallback = (scene: BattleScene) => Promise<void | boolean>;
@@ -131,6 +131,10 @@ export class MysteryEncounterOptionBuilder implements Partial<MysteryEncounterOp
   withSceneRequirement(requirement: EncounterSceneRequirement): this & Required<Pick<MysteryEncounterOption, "requirements">> {
     this.requirements.push(requirement);
     return Object.assign(this, { requirements: this.requirements });
+  }
+
+  withSceneMoneyRequirement(requiredMoney: number, scalingMultiplier?: number) {
+    return this.withSceneRequirement(new MoneyRequirement(requiredMoney, scalingMultiplier));
   }
 
   withPreOptionPhase(onPreOptionPhase: OptionPhaseCallback): this & Required<Pick<MysteryEncounterOption, "onPreOptionPhase">> {
