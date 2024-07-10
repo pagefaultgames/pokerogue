@@ -12,6 +12,7 @@ import { allMoves } from "../data/move";
 import * as Utils from "./../utils";
 import Overrides from "#app/overrides";
 import i18next from "i18next";
+import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 
 export const SHOP_OPTIONS_ROW_LIMIT = 6;
 
@@ -250,13 +251,8 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       });
 
       this.setCursor(0);
-      const phase = this.scene.getCurrentPhase() as any;
-      const rerollCount = phase.hasOwnProperty("rerollCount") ? phase.rerollCount : 0;
-      if (rerollCount) {
-        this.setRowCursor(this.scene.rerollTarget);
-      } else {
-        this.setRowCursor(1);
-      }
+      const phase = this.scene.getCurrentPhase() as SelectModifierPhase;
+      phase.getRerollCount() ? this.setRowCursor(this.scene.rerollTarget) : this.setRowCursor(1);
 
       handleTutorial(this.scene, Tutorial.Select_Item).then(() => {
         this.setCursor(0);
