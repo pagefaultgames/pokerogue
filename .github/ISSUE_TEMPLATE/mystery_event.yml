@@ -1,6 +1,8 @@
 name: Mystery Event
 description: Propose a new mystery event
 title: "[Event Proposal]: "
+labels: ["event proposal"]
+projects: ["AsdarDevelops/1"]
 body:
   - type: input
     id: name
