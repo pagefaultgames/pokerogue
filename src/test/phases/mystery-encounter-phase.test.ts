@@ -8,7 +8,7 @@ import {Mode} from "#app/ui/ui";
 import {Button} from "#enums/buttons";
 import MysteryEncounterUiHandler from "#app/ui/mystery-encounter-ui-handler";
 import {MysteryEncounterType} from "#enums/mystery-encounter-type";
-import {MysteryEncounterTier} from "#app/data/mystery-encounter";
+import {MysteryEncounterTier} from "#app/data/mystery-encounters/mystery-encounter";
 
 describe("Mystery Encounter Phases", () => {
   let phaserGame: Phaser.Game;
@@ -89,8 +89,8 @@ describe("Mystery Encounter Phases", () => {
       expect(dialogueSpy).toHaveBeenCalledTimes(1);
       expect(messageSpy).toHaveBeenCalledTimes(2);
       expect(dialogueSpy).toHaveBeenCalledWith("What's this?", "???", null, expect.any(Function));
-      expect(messageSpy).toHaveBeenCalledWith("[color=#f8f8f8][shadow=#6b5a73]Mysterious challengers have appeared![/color][/shadow]", null, expect.any(Function), 750, true);
-      expect(messageSpy).toHaveBeenCalledWith("[color=#f8f8f8][shadow=#6b5a73]The trainer steps forward...[/color][/shadow]", null, expect.any(Function), 750, true);
+      expect(messageSpy).toHaveBeenCalledWith("Mysterious challengers have appeared!", null, expect.any(Function), 750, true);
+      expect(messageSpy).toHaveBeenCalledWith("The trainer steps forward...", null, expect.any(Function), 750, true);
     });
   });
 

@@ -1,4 +1,4 @@
-import {SimpleTranslationEntries} from "#app/interfaces/locales";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 /**
  * Patterns that can be used:

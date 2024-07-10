@@ -6,7 +6,7 @@ import {Button} from "#enums/buttons";
 import {addWindow, WindowVariant} from "./ui-theme";
 import {MysteryEncounterPhase} from "../phases/mystery-encounter-phase";
 import {PartyUiMode} from "./party-ui-handler";
-import MysteryEncounterOption from "../data/mystery-encounter-option";
+import MysteryEncounterOption from "../data/mystery-encounters/mystery-encounter-option";
 import * as Utils from "../utils";
 import {isNullOrUndefined} from "../utils";
 import {getPokeballAtlasKey} from "../data/pokeball";

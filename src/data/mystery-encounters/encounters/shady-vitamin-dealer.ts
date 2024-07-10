@@ -1,4 +1,4 @@
-import BattleScene from "../../battle-scene";
+import BattleScene from "../../../battle-scene";
 import {
   generateModifierType,
   leaveEncounterWithoutBattle,
@@ -7,20 +7,20 @@ import {
   setEncounterRewards,
   updatePlayerMoney,
 } from "#app/data/mystery-encounters/mystery-encounter-utils";
-import MysteryEncounter, {MysteryEncounterBuilder, MysteryEncounterTier} from "../mystery-encounter";
-import {MysteryEncounterType} from "#enums/mystery-encounter-type";
+import MysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier } from "../mystery-encounter";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import {
   HealthRatioRequirement,
   MoneyRequirement,
   StatusEffectRequirement,
   WaveCountRequirement
 } from "../mystery-encounter-requirements";
-import {MysteryEncounterOptionBuilder} from "../mystery-encounter-option";
-import {modifierTypes} from "#app/modifier/modifier-type";
-import {Species} from "#enums/species";
-import {randSeedInt} from "#app/utils";
-import Pokemon, {PlayerPokemon} from "#app/field/pokemon";
-import {StatusEffect} from "#app/data/status-effect";
+import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
+import { modifierTypes } from "#app/modifier/modifier-type";
+import { Species } from "#enums/species";
+import { randSeedInt } from "#app/utils";
+import Pokemon, { PlayerPokemon } from "#app/field/pokemon";
+import { StatusEffect } from "#app/data/status-effect";
 
 export const ShadyVitaminDealerEncounter: MysteryEncounter = new MysteryEncounterBuilder()
   .withEncounterType(MysteryEncounterType.SHADY_VITAMIN_DEALER)
@@ -134,7 +134,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = new MysteryEncounte
         i++;
       }
 
-      setEncounterRewards(scene, { guaranteedModifierTypeFuncs: modifiers, fillRemaining: false});
+      setEncounterRewards(scene, { guaranteedModifierTypeFuncs: modifiers, fillRemaining: false });
       leaveEncounterWithoutBattle(scene);
     })
     .build())

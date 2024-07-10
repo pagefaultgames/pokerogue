@@ -1,4 +1,4 @@
-import {ModifierTier} from "#app/modifier/modifier-tier";
+import { ModifierTier } from "#app/modifier/modifier-tier";
 import {
   CustomModifierSettings,
   FusePokemonModifierType, getPlayerModifierTypeOptions,
@@ -15,13 +15,13 @@ import {
 } from "#app/modifier/modifier-type";
 import BattleScene from "#app/battle-scene";
 import * as Utils from "#app/utils";
-import {ExtraModifierModifier, Modifier, PokemonHeldItemModifier} from "#app/modifier/modifier";
+import { ExtraModifierModifier, Modifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
 import i18next from "#app/plugins/i18n";
-import {Mode} from "#app/ui/ui";
-import PartyUiHandler, {PartyOption, PartyUiMode} from "#app/ui/party-ui-handler";
-import ModifierSelectUiHandler, {SHOP_OPTIONS_ROW_LIMIT} from "#app/ui/modifier-select-ui-handler";
-import {BattlePhase} from "#app/phases/battle-phase";
-import {isNullOrUndefined} from "#app/utils";
+import { Mode } from "#app/ui/ui";
+import PartyUiHandler, { PartyOption, PartyUiMode } from "#app/ui/party-ui-handler";
+import ModifierSelectUiHandler, { SHOP_OPTIONS_ROW_LIMIT } from "#app/ui/modifier-select-ui-handler";
+import { BattlePhase } from "#app/phases/battle-phase";
+import { isNullOrUndefined } from "#app/utils";
 
 export class SelectModifierPhase extends BattlePhase {
   private rerollCount: integer;
@@ -47,7 +47,7 @@ export class SelectModifierPhase extends BattlePhase {
 
     const party = this.scene.getParty();
     regenerateModifierPoolThresholds(party, this.getPoolType(), this.rerollCount);
-    const  modifierCount = new Utils.IntegerHolder(3);
+    const modifierCount = new Utils.IntegerHolder(3);
     if (this.isPlayer()) {
       this.scene.applyModifiers(ExtraModifierModifier, true, modifierCount);
     }
@@ -241,7 +241,7 @@ export class SelectModifierPhase extends BattlePhase {
     } else {
       baseValue = 250;
     }
-    const multiplier = !isNullOrUndefined(this.customModifierSettings?.rerollMultiplier)  ? this.customModifierSettings.rerollMultiplier : 1;
+    const multiplier = !isNullOrUndefined(this.customModifierSettings?.rerollMultiplier) ? this.customModifierSettings.rerollMultiplier : 1;
     return Math.min(Math.ceil(this.scene.currentBattle.waveIndex / 10) * baseValue * Math.pow(2, this.rerollCount) * multiplier, Number.MAX_SAFE_INTEGER);
   }
 

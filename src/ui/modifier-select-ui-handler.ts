@@ -6,7 +6,7 @@ import AwaitableUiHandler from "./awaitable-ui-handler";
 import { Mode } from "./ui";
 import { LockModifierTiersModifier, PokemonHeldItemModifier } from "../modifier/modifier";
 import { handleTutorial, Tutorial } from "../tutorial";
-import {Button} from "#enums/buttons";
+import { Button } from "#enums/buttons";
 import MoveInfoOverlay from "./move-info-overlay";
 import { allMoves } from "../data/move";
 import * as Utils from "./../utils";
@@ -23,8 +23,8 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   private continueButtonContainer: Phaser.GameObjects.Container;
   private rerollCostText: Phaser.GameObjects.Text;
   private lockRarityButtonText: Phaser.GameObjects.Text;
-  private moveInfoOverlay : MoveInfoOverlay;
-  private moveInfoOverlayActive : boolean = false;
+  private moveInfoOverlay: MoveInfoOverlay;
+  private moveInfoOverlayActive: boolean = false;
 
   private rowCursor: integer = 0;
   private player: boolean;
@@ -52,7 +52,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     const canvas = document.createElement("canvas");
     const context = canvas.getContext("2d");
-    const [ , styleOptions, , , ] = getTextStyleOptions(TextStyle.PARTY, (this.scene as BattleScene).uiTheme);
+    const [, styleOptions, , ,] = getTextStyleOptions(TextStyle.PARTY, (this.scene as BattleScene).uiTheme);
     context.font = styleOptions.fontSize + "px " + styleOptions.fontFamily;
     this.transferButtonWidth = context.measureText(i18next.t("modifierSelectUiHandler:transfer")).width;
     this.checkButtonWidth = context.measureText(i18next.t("modifierSelectUiHandler:checkTeam")).width;
@@ -113,7 +113,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       onSide: true,
       right: true,
       x: 1,
-      y: -MoveInfoOverlay.getHeight(overlayScale, true) -1,
+      y: -MoveInfoOverlay.getHeight(overlayScale, true) - 1,
       width: (this.scene.game.canvas.width / 6) - 2,
     });
     ui.add(this.moveInfoOverlay);
@@ -433,10 +433,10 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       this.cursorObj.setPosition(6, this.lockRarityButtonContainer.visible ? -72 : -60);
       ui.showText(i18next.t("modifierSelectUiHandler:rerollDesc"));
     } else if (cursor === 1) {
-      this.cursorObj.setPosition((this.scene.game.canvas.width - this.transferButtonWidth - this.checkButtonWidth)/6 - 30, -60);
+      this.cursorObj.setPosition((this.scene.game.canvas.width - this.transferButtonWidth - this.checkButtonWidth) / 6 - 30, -60);
       ui.showText(i18next.t("modifierSelectUiHandler:transferDesc"));
     } else if (cursor === 2) {
-      this.cursorObj.setPosition((this.scene.game.canvas.width - this.checkButtonWidth)/6 - 10, -60);
+      this.cursorObj.setPosition((this.scene.game.canvas.width - this.checkButtonWidth) / 6 - 10, -60);
       ui.showText(i18next.t("modifierSelectUiHandler:checkTeamDesc"));
     } else {
       this.cursorObj.setPosition(6, -60);

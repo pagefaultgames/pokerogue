@@ -1,4 +1,4 @@
-import MysteryEncounterDialogue from "#app/data/mystery-encounters/dialogue/mystery-encounter-dialogue";
+import MysteryEncounterDialogue from "#app/data/mystery-encounters/mystery-encounter-dialogue";
 
 export const FightOrFlightDialogue: MysteryEncounterDialogue = {
   intro: [

@@ -1,4 +1,4 @@
-import BattleScene from "../../battle-scene";
+import BattleScene from "../../../battle-scene";
 import {
   EnemyPartyConfig,
   getEncounterText,
@@ -6,23 +6,23 @@ import {
   selectPokemonForOption,
   setEncounterRewards
 } from "#app/data/mystery-encounters/mystery-encounter-utils";
-import {MysteryEncounterType} from "#enums/mystery-encounter-type";
-import MysteryEncounter, {MysteryEncounterBuilder, MysteryEncounterTier} from "../mystery-encounter";
-import {MysteryEncounterOptionBuilder} from "../mystery-encounter-option";
-import {WaveCountRequirement} from "../mystery-encounter-requirements";
-import {PlayerPokemon} from "#app/field/pokemon";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import MysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier } from "../mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
+import { WaveCountRequirement } from "../mystery-encounter-requirements";
+import { PlayerPokemon } from "#app/field/pokemon";
 import PokemonData from "#app/system/pokemon-data";
-import {randSeedShuffle} from "#app/utils";
-import {getNatureName, Nature} from "#app/data/nature";
-import {BattlerTagType} from "#enums/battler-tag-type";
-import {OptionSelectItem} from "#app/ui/abstact-option-select-ui-handler";
-import {PokemonHeldItemModifier} from "#app/modifier/modifier";
-import {PokemonHeldItemModifierType} from "#app/modifier/modifier-type";
-import {Ability, allAbilities} from "#app/data/ability";
-import {speciesStarters} from "#app/data/pokemon-species";
-import {AbilityAttr} from "#app/system/game-data";
-import {Stat} from "#app/data/pokemon-stat";
-import {pokemonInfo} from "#app/locales/en/pokemon-info";
+import { randSeedShuffle } from "#app/utils";
+import { getNatureName, Nature } from "#app/data/nature";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
+import { PokemonHeldItemModifier } from "#app/modifier/modifier";
+import { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
+import { Ability, allAbilities } from "#app/data/ability";
+import { speciesStarters } from "#app/data/pokemon-species";
+import { AbilityAttr } from "#app/system/game-data";
+import { Stat } from "#app/data/pokemon-stat";
+import { pokemonInfo } from "#app/locales/en/pokemon-info";
 
 export const TrainingSessionEncounter: MysteryEncounter = new MysteryEncounterBuilder()
   .withEncounterType(MysteryEncounterType.TRAINING_SESSION)
@@ -83,7 +83,7 @@ export const TrainingSessionEncounter: MysteryEncounter = new MysteryEncounterBu
         const ivIndexes = [];
         playerPokemon.ivs.forEach((iv, index) => {
           if (iv < 31) {
-            ivIndexes.push({iv: iv, index: index});
+            ivIndexes.push({ iv: iv, index: index });
           }
         });
 
@@ -302,5 +302,6 @@ function getEnemyConfig(scene: BattleScene, playerPokemon: PlayerPokemon, segmen
 class ModifiersHolder {
   public value: PokemonHeldItemModifier[] = [];
 
-  constructor() {}
+  constructor() {
+  }
 }

@@ -64,14 +64,14 @@ import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
-import {BattlePhase} from "#app/phases/battle-phase";
-import {MysteryEncounterVariant} from "#app/data/mystery-encounter";
-import {MysteryEncounterPhase} from "#app/phases/mystery-encounter-phase";
+import { BattlePhase } from "#app/phases/battle-phase";
+import { MysteryEncounterVariant } from "#app/data/mystery-encounters/mystery-encounter";
+import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phase";
 import {
   getEncounterText,
   handleMysteryEncounterVictory
 } from "#app/data/mystery-encounters/mystery-encounter-utils";
-import {SelectModifierPhase} from "#app/phases/select-modifier-phase";
+import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 
 const { t } = i18next;
 

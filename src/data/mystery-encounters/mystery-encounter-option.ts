@@ -1,13 +1,13 @@
 import { PlayerPokemon } from "#app/field/pokemon";
-import * as Utils from "../utils";
-import BattleScene from "../battle-scene";
+import * as Utils from "../../utils";
+import BattleScene from "../../battle-scene";
 import { EncounterPokemonRequirement, EncounterSceneRequirement } from "./mystery-encounter-requirements";
-import {OptionTextDisplay} from "#app/data/mystery-encounters/dialogue/mystery-encounter-dialogue";
+import { OptionTextDisplay } from "#app/data/mystery-encounters/mystery-encounter-dialogue";
 
 export default interface MysteryEncounterOption {
   requirements?: EncounterSceneRequirement[];
   primaryPokemonRequirements?: EncounterPokemonRequirement[];
-  secondaryPokemonRequirements ?: EncounterPokemonRequirement[];
+  secondaryPokemonRequirements?: EncounterPokemonRequirement[];
   primaryPokemon?: PlayerPokemon;
   secondaryPokemon?: PlayerPokemon[];
   excludePrimaryFromSecondaryRequirements?: boolean;
@@ -37,15 +37,16 @@ export default class MysteryEncounterOption implements MysteryEncounterOption {
       this.meetsPrimaryRequirementAndPrimaryPokemonSelected(scene) &&
       this.meetsSupportingRequirementAndSupportingPokemonSelected(scene);
   }
+
   meetsPrimaryRequirementAndPrimaryPokemonSelected?(scene: BattleScene) {
     if (!this.primaryPokemonRequirements) {
       return true;
     }
-    let qualified:PlayerPokemon[] = scene.getParty();
+    let qualified: PlayerPokemon[] = scene.getParty();
     for (const req of this.primaryPokemonRequirements) {
       console.log(req);
       if (req.meetsRequirement(scene)) {
-        if (req instanceof EncounterPokemonRequirement)  {
+        if (req instanceof EncounterPokemonRequirement) {
           qualified = qualified.filter(pkmn => req.queryParty(scene.getParty()).includes(pkmn));
         }
       } else {
@@ -71,14 +72,14 @@ export default class MysteryEncounterOption implements MysteryEncounterOption {
       }
       if (truePrimaryPool.length > 0) {
         // always choose from the non-overlapping pokemon first
-        this.primaryPokemon =  truePrimaryPool[Utils.randSeedInt(truePrimaryPool.length, 0)];
+        this.primaryPokemon = truePrimaryPool[Utils.randSeedInt(truePrimaryPool.length, 0)];
         return true;
       } else {
         // if there are multiple overlapping pokemon, we're okay - just choose one and take it out of the supporting pokemon pool
         if (overlap.length > 1 || (this.secondaryPokemon.length - overlap.length >= 1)) {
           // is this working?
           this.primaryPokemon = overlap[Utils.randSeedInt(overlap.length, 0)];
-          this.secondaryPokemon = this.secondaryPokemon.filter((supp)=> supp !== this.primaryPokemon);
+          this.secondaryPokemon = this.secondaryPokemon.filter((supp) => supp !== this.primaryPokemon);
           return true;
         }
         console.log("Mystery Encounter Edge Case: Requirement not met due to primay pokemon overlapping with support pokemon. There's no valid primary pokemon left.");
@@ -97,10 +98,10 @@ export default class MysteryEncounterOption implements MysteryEncounterOption {
       return true;
     }
 
-    let qualified:PlayerPokemon[] = scene.getParty();
+    let qualified: PlayerPokemon[] = scene.getParty();
     for (const req of this.secondaryPokemonRequirements) {
       if (req.meetsRequirement(scene)) {
-        if (req instanceof EncounterPokemonRequirement)  {
+        if (req instanceof EncounterPokemonRequirement) {
           qualified = qualified.filter(pkmn => req.queryParty(scene.getParty()).includes(pkmn));
 
         }
@@ -150,7 +151,7 @@ export class MysteryEncounterOptionBuilder implements Partial<MysteryEncounterOp
     return Object.assign(this, { primaryPokemonRequirements: this.primaryPokemonRequirements });
   }
 
-  withSecondaryPokemonRequirement(requirement: EncounterPokemonRequirement,   excludePrimaryFromSecondaryRequirements?: boolean): this & Required<Pick<MysteryEncounterOption, "secondaryPokemonRequirements">> {
+  withSecondaryPokemonRequirement(requirement: EncounterPokemonRequirement, excludePrimaryFromSecondaryRequirements?: boolean): this & Required<Pick<MysteryEncounterOption, "secondaryPokemonRequirements">> {
     this.secondaryPokemonRequirements.push(requirement);
     this.excludePrimaryFromSecondaryRequirements = excludePrimaryFromSecondaryRequirements;
     return Object.assign(this, { secondaryPokemonRequirements: this.secondaryPokemonRequirements });

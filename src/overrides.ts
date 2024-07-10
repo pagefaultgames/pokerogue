@@ -18,7 +18,7 @@ import {Moves} from "#enums/moves";
 import {Species} from "#enums/species";
 import {TimeOfDay} from "#enums/time-of-day";
 import {MysteryEncounterType} from "#enums/mystery-encounter-type"; // eslint-disable-line @typescript-eslint/no-unused-vars
-import {MysteryEncounterTier} from "#app/data/mystery-encounter"; // eslint-disable-line @typescript-eslint/no-unused-vars
+import {MysteryEncounterTier} from "#app/data/mystery-encounters/mystery-encounter"; // eslint-disable-line @typescript-eslint/no-unused-vars
 
 /**
  * Overrides for testing different in game situations
