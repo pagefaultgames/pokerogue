@@ -172,6 +172,8 @@ describe("Test for BattleStat Localization", () => {
   it("Test getBattleStatLevelChangeDescription() in 简体中文", async () => {
     i18next.changeLanguage("zh-CN");
     battleStatLevelUnits.forEach(unit => {
+      // In i18next, the pluralization rules are language-specific, and Chinese only supports the _other suffix.
+      unit.key = unit.key.replace("one", "other");
       testBattleStatLevelChangeDescription(unit.levels, unit.up, zhCnBattleStat[unit.key], unit.changedStats);
     });
   });
@@ -186,6 +188,8 @@ describe("Test for BattleStat Localization", () => {
   it("Test getBattleStatLevelChangeDescription() in 繁體中文", async () => {
     i18next.changeLanguage("zh-TW");
     battleStatLevelUnits.forEach(unit => {
+      // In i18next, the pluralization rules are language-specific, and Chinese only supports the _other suffix.
+      unit.key = unit.key.replace("one", "other");
       testBattleStatLevelChangeDescription(unit.levels, unit.up, zhTwBattleStat[unit.key], unit.changedStats);
     });
   });
