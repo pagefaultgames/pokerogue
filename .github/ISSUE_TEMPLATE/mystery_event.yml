@@ -27,8 +27,8 @@ body:
     id: waves
     attributes:
       label: Waves
-      description: Classic/Challenge is 1 -209. Currently only 11-179 is supported.
-      palceholder: 1-200
+      description: Classic/Challenge is 1 -200. Currently only 11-179 is supported.
+      placeholder: 1-200
     validations:
       required: true
   - type: textarea
