@@ -342,7 +342,6 @@ export class TitlePhase extends Phase {
 
   start(): void {
     super.start();
-    console.log(LoggerTools.importDocument(JSON.stringify(LoggerTools.newDocument())))
 
     this.scene.ui.clearText();
     this.scene.ui.fadeIn(250);
