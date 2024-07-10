@@ -7,14 +7,14 @@ export const pokemonSummary: TranslationEntries = {
   "type": "Tipo",
   "unknownTrainer": "Desconocido",
   "ot": "EO",
-  "nature": "de naturaleza",
+  "nature": "Naturaleza",
   "expPoints": "Puntos Exp.",
   "nextLv": "Nv. siguiente",
   "cancel": "Salir",
 
-  "memoString": "{{natureFragment}} de naturaleza,\n{{metFragment}}",
+  "memoString": "Naturaleza {{natureFragment}},\n{{metFragment}}",
   "metFragment": {
-    "normal": "encontrado al Nv.{{level}},\n{{biome}}.",
-    "apparently": "aparentemente encontrado al Nv.{{level}},\n{{biome}}.",
+    "normal": "encontrado al Nv. {{level}},\n{{biome}}.",
+    "apparently": "aparentemente encontrado al Nv. {{level}},\n{{biome}}.",
   },
 } as const;
