@@ -2,17 +2,23 @@ name: Mystery Event
 description: Propose a new mystery event
 title: "[Event Proposal]: "
 body:
+  - type: input
+    id: name
+    attributes:
+      label: Event Name
+      description: Name of the event
+      placeholder: "Fight or Flight"
   - type: dropdown
     id: rarity
     attributes:
-      label: Rarity
+      label: Rarity Tier
       multiple: false
       options:
         - Common
         - Great
         - Ultra 
         - Rogue
-        - Other (please specify)
+        - Other or unsure (please specify)
     validations:
       required: true
   - type: input
@@ -35,8 +41,8 @@ body:
       label: Biomes
       multiple: true
       options:
-        - any (no need to select all)
-        - non-extreme (almost all except Space, Seabed, etc...)
+        - ANY (no need to select all)
+        - NON-EXTREME (almost all except Space, Seabed, etc...)
         - TOWN
         - PLAINS
         - GRASS
@@ -72,22 +78,24 @@ body:
         - ISLAND
         - LABORATORY
         - END
+        - OTHER (please specify)
+
     validations:
       required: true
   - type: textarea
     id: options
     attributes:
-      label: Options offered
-      placeholder: Only four options can be displayed at a time
+      label: Options offered to the player
+      placeholder: Remember that only four options can be displayed at a time
     validations:
       required: true
   - type: textarea
     id: design-notes
     attributes:
-      label: Notes on Design
-      placeholder: (If any needed)
+      label: Explanation/Notes on Design
+      placeholder: Explain why you think this design is right and what this Event brings to the table
     validations:
-      required: false
+      required: true
   - type: textarea
     id: dev-notes
     attributes:
