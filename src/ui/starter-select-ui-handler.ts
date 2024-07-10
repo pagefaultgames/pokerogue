@@ -341,9 +341,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const typeKeys = Object.keys(Type).filter(v => isNaN(Number(v)));
     const typeOptions: DropDownOption[] = [];
     typeKeys.forEach((type, index) => {
-      if (index === 0) {
+      if (index === 0 || index === 19) {
         return;
       }
+      console.log("type", type, "index", index);
       const typeSprite = this.scene.add.sprite(0, 0, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`);
       typeSprite.setScale(0.5);
       typeSprite.setFrame(type.toLowerCase());
