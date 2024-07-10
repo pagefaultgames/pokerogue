@@ -32,6 +32,11 @@ export class Logger {
    * The log entries. Max size is defined by {@linkcode entriesLimit}
    */
   private entries: LogEntry[] = [];
+  /**
+   * The index of the latest entry in {@linkcode entries}.
+   * Ring pattern necessity to avoid having to use ~~{@linkcode Array.shift}~~
+   */
+  private latestEntryIndex: number = 0;
 
   constructor(bufferLimit: number = 500) {
     this.entriesLimit = bufferLimit;
@@ -137,12 +142,21 @@ export class Logger {
     context: string,
     ...optionalParams: any[]
   ): void {
-    this.entries.push({
+    const entry: LogEntry = {
       date: new Date(),
       type: type,
       context: context,
       optionalParams,
-    });
+    };
+
+    if (this.entries.length < this.entriesLimit) {
+      this.entries.push(entry);
+      this.latestEntryIndex += 1;
+    } else {
+      const isEntriesFull = this.entries.length === this.entriesLimit;
+      this.latestEntryIndex = isEntriesFull ? 0 : this.latestEntryIndex + 1;
+      this.entries[this.latestEntryIndex] = entry;
+    }
 
     if (this.entries.length > this.entriesLimit) {
       this.entries.shift();
@@ -150,7 +164,9 @@ export class Logger {
   }
 
   private entriesAsStringArray(): string[] {
-    return this.entries.map(({ context, type: type, optionalParams, date }) => {
+    return this.entries.map((_, idx) => {
+      const { context, type, optionalParams, date } =
+        this.entries[(idx + this.latestEntryIndex) % this.entries.length];
       const optionalParamsStr = optionalParams
         .map((param) => this.stringify(param))
         .join(", ");
