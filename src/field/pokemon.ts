@@ -315,8 +315,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param {Pokemon} pokemon - The Pokemon that will create an illusion.
    * @param {Pokemon[]} party - The party of the trainer's pokemon.
    */
-  generateIllusion(party: Pokemon[]): boolean {
+  generateIllusion(): boolean {
     if (this.hasTrainer()) {
+      const party: Pokemon[] = (this.isPlayer() ? this.scene.getParty() : this.scene.getEnemyParty()).filter(p => p.isAllowedInBattle());
       const lastPokemon: Pokemon = party.at(-1);
       const speciesId = lastPokemon.species.speciesId;
 

@@ -1834,7 +1834,7 @@ export class PostSummonRemoveArenaTagAbAttr extends PostSummonAbAttr {
 }
 
 export class PreSummonAbAttr extends AbAttr {
-  applyPreSummon(pokemon: Pokemon, passive: boolean, party: Pokemon[], args: any[]): boolean {
+  applyPreSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     return false;
   }
 }
@@ -3406,7 +3406,7 @@ export class PostBattleAbAttr extends AbAttr {
     super(showAbility);
   }
 
-  applyPostBattle(pokemon: Pokemon, passive: boolean, party: Pokemon[], args: any[]): boolean {
+  applyPostBattle(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     return false;
   }
 }
@@ -3895,12 +3895,10 @@ export class IllusionPreSummonAbAttr extends PreSummonAbAttr {
    *
    * @param {Pokemon} pokemon - The Pokémon with the Illusion ability.
    * @param {boolean} passive - N/A
-   * @param {Pokemon[]} party - The party of the trainer's pokemon.
    * @param {...any} args - N/A
    * @returns {boolean} - Whether the illusion was applied.
    */
-  applyPreSummon(pokemon: Pokemon, passive: boolean, party: Pokemon[], args: any[]): boolean {
-
+  applyPreSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     let suppressed = false;
     pokemon.scene.getField(true).filter(p => p !== pokemon).map(p => {
       if (p.getAbility().hasAttr(SuppressFieldAbilitiesAbAttr) && p.canApplyAbility()) {
@@ -3912,7 +3910,7 @@ export class IllusionPreSummonAbAttr extends PreSummonAbAttr {
     });
 
     if (pokemon.illusion.available && !suppressed) {
-      return pokemon.generateIllusion(party);
+      return pokemon.generateIllusion();
     } else {
       return false;
     }
@@ -3949,11 +3947,10 @@ export class IllusionAfterBattle extends PostBattleAbAttr {
    *
    * @param {Pokemon} pokemon - The Pokémon with the Illusion ability.
    * @param {boolean} passive - N/A
-   * @param {Pokemon[]} party - The party of the trainer's pokemon.
    * @param {...any} args - N/A
    * @returns {boolean} - Whether the illusion was applied.
    */
-  applyPostBattle(pokemon: Pokemon, passive: boolean, party: Pokemon[], args: any[]): boolean {
+  applyPostBattle(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     pokemon.breakIllusion();
     pokemon.illusion.available = true;
     return true;
@@ -4173,8 +4170,8 @@ export function applyPostSummonAbAttrs(attrType: Constructor<PostSummonAbAttr>,
 }
 
 export function applyPreSummonAbAttrs(attrType: Constructor<PreSummonAbAttr>,
-  pokemon: Pokemon, party: Pokemon[], ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PreSummonAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPreSummon(pokemon, passive, party, args), args);
+  pokemon: Pokemon, ...args: any[]): Promise<void> {
+  return applyAbAttrsInternal<PreSummonAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPreSummon(pokemon, passive, args), args);
 }
 
 export function applyPreSwitchOutAbAttrs(attrType: Constructor<PreSwitchOutAbAttr>,
@@ -4234,8 +4231,8 @@ export function applyCheckTrappedAbAttrs(attrType: Constructor<CheckTrappedAbAtt
 }
 
 export function applyPostBattleAbAttrs(attrType: { new(...args: any[]): PostBattleAbAttr },
-  pokemon: Pokemon, party: Pokemon[], ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PostBattleAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostBattle(pokemon, passive, party, args), args);
+  pokemon: Pokemon, ...args: any[]): Promise<void> {
+  return applyAbAttrsInternal<PostBattleAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostBattle(pokemon, passive, args), args);
 }
 
 export function applyPostFaintAbAttrs(attrType: Constructor<PostFaintAbAttr>,
@@ -4726,12 +4723,12 @@ export function initAbilities() {
       .attr(UnswappableAbilityAbAttr)
       //The pokemon genrate an illusion if it's available
       .conditionalAttr((pokemon) => pokemon.illusion.available, IllusionPreSummonAbAttr, false)
-      //Illusion is not available after summon
-      .attr(IllusionDisableAbAttr, false)
       //The pokemon loses his illusion when he is damaged by a move
       .conditionalAttr((pokemon) => pokemon.illusion.active, IllusionBreakAbAttr, true)
       //Illusion is available again after a battle
       .conditionalAttr((pokemon) => pokemon.isAllowedInBattle(), IllusionAfterBattle, false)
+      //Illusion is not available after summon
+      .attr(IllusionDisableAbAttr, false)
       .bypassFaint(),
     new Ability(Abilities.IMPOSTER, 5)
       .attr(PostSummonTransformAbAttr)

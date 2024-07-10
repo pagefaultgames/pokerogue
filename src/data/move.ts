@@ -5224,11 +5224,12 @@ export class AbilityChangeAttr extends MoveEffectAttr {
       return false;
     }
 
-    (this.selfTarget ? user : target).summonData.ability = this.ability;
-    if ((this.selfTarget ? user : target).breakIllusion()) {
-      (this.selfTarget ? user : target).scene.queueMessage(i18next.t("abilityTriggers:illusionBreak", { pokemonName: getPokemonNameWithAffix((this.selfTarget ? user : target)) }));
+    const pokemon: Pokemon = this.selfTarget ? user : target;
+    pokemon.summonData.ability = this.ability;
+    if (pokemon.breakIllusion()) {
+      pokemon.scene.queueMessage(i18next.t("abilityTriggers:illusionBreak", { pokemonName: getPokemonNameWithAffix(pokemon) }));
     }
-    user.scene.queueMessage("The " + getPokemonMessage((this.selfTarget ? user : target), ` acquired\n${allAbilities[this.ability].name}!`));
+    user.scene.queueMessage("The " + getPokemonMessage(pokemon, ` acquired\n${allAbilities[this.ability].name}!`));
 
     return true;
   }

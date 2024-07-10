@@ -1372,8 +1372,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
     super.start();
 
     const pokemon = this.getPokemon();
-    const party: Pokemon[] = (pokemon.isPlayer() ? this.scene.getParty() : this.scene.getEnemyParty()).filter(p => p.isAllowedInBattle());
-    applyPreSummonAbAttrs(PreSummonAbAttr, pokemon, party).then(() => this.preSummon());
+    applyPreSummonAbAttrs(PreSummonAbAttr, pokemon).then(() => this.preSummon());
   }
 
   /**
@@ -1612,11 +1611,10 @@ export class SwitchSummonPhase extends SummonPhase {
 
   switchAndSummon() {
     const party = this.player ? this.getParty() : this.scene.getEnemyParty();
-    const allowedParty: Pokemon[] = (this.player ? this.getParty() : this.scene.getEnemyParty()).filter(p => p.isAllowedInBattle());
     const switchedPokemon = party[this.slotIndex];
     this.lastPokemon = this.getPokemon();
 
-    applyPreSummonAbAttrs(PreSummonAbAttr, switchedPokemon, allowedParty);
+    applyPreSummonAbAttrs(PreSummonAbAttr, switchedPokemon);
     applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, this.lastPokemon);
     if (this.batonPass && switchedPokemon) {
       (this.player ? this.scene.getEnemyField() : this.scene.getPlayerField()).forEach(enemyPokemon => enemyPokemon.transferTagsBySourceId(this.lastPokemon.id, switchedPokemon.id));
@@ -2492,7 +2490,7 @@ export class BattleEndPhase extends BattlePhase {
     }
 
     for (const pokemon of this.scene.getParty().filter(p => p.isAllowedInBattle())) {
-      applyPostBattleAbAttrs(PostBattleAbAttr, pokemon, this.scene.getParty().filter(p => p.isAllowedInBattle()));
+      applyPostBattleAbAttrs(PostBattleAbAttr, pokemon);
     }
 
     if (this.scene.currentBattle.moneyScattered) {
