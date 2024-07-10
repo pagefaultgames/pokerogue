@@ -1,12 +1,12 @@
 import { CommandPhase, SelectModifierPhase } from "../phases";
 import BattleScene from "../battle-scene";
 import { PlayerPokemon, PokemonMove } from "../field/pokemon";
-import { addTextObject, TextStyle } from "./text";
+import { addBBCodeTextObject, addTextObject, getTextColor, TextStyle } from "./text";
 import { Command } from "./command-ui-handler";
 import MessageUiHandler from "./message-ui-handler";
 import { Mode } from "./ui";
 import * as Utils from "../utils";
-import { PokemonFormChangeItemModifier, PokemonHeldItemModifier, SwitchEffectTransferModifier } from "../modifier/modifier";
+import { PokemonBaseStatModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier, SwitchEffectTransferModifier } from "../modifier/modifier";
 import { allMoves } from "../data/move";
 import { getGenderColor, getGenderSymbol } from "../data/gender";
 import { StatusEffect } from "../data/status-effect";
@@ -19,6 +19,7 @@ import {Button} from "#enums/buttons";
 import { applyChallenges, ChallengeType } from "#app/data/challenge.js";
 import MoveInfoOverlay from "./move-info-overlay";
 import i18next from "i18next";
+import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { Moves } from "#enums/moves";
 
 const defaultMessage = i18next.t("partyUiHandler:choosePokemon");
@@ -86,7 +87,8 @@ export default class PartyUiHandler extends MessageUiHandler {
   private optionsCursor: integer = 0;
   private optionsScrollCursor: integer = 0;
   private optionsScrollTotal: integer = 0;
-  private optionsContainer: Phaser.GameObjects.Container;
+  /** This is only public for test/ui/transfer-item.test.ts */
+  public optionsContainer: Phaser.GameObjects.Container;
   private optionsBg: Phaser.GameObjects.NineSlice;
   private optionsCursorObj: Phaser.GameObjects.Image;
   private options: integer[];
@@ -840,7 +842,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     optionEndIndex = this.options.length;
 
     let widestOptionWidth = 0;
-    const optionTexts: Phaser.GameObjects.Text[] = [];
+    const optionTexts: BBCodeText[] = [];
 
     for (let o = optionStartIndex; o < optionEndIndex; o++) {
       const option = this.options[this.options.length - (o + 1)];
@@ -882,26 +884,41 @@ export default class PartyUiHandler extends MessageUiHandler {
         const move = learnableLevelMoves[option];
         optionName = allMoves[move].name;
         altText = !pokemon.getSpeciesForm().getLevelMoves().find(plm => plm[1] === move);
+      } else if (option === PartyOption.ALL) {
+        optionName = i18next.t("partyUiHandler:ALL");
       } else {
-        if (option === PartyOption.ALL) {
-          optionName = i18next.t("partyUiHandler:ALL");
-        } else {
-          const itemModifier = itemModifiers[option];
-          optionName = itemModifier.type.name;
-          /** For every item that has stack bigger than 1, display the current quantity selection */
-          if (this.transferQuantitiesMax[option] > 1) {
-            optionName += ` (${this.transferQuantities[option]})`;
-          }
-        }
+        const itemModifier = itemModifiers[option];
+        optionName = itemModifier.type.name;
       }
 
       const yCoord = -6 - 16 * o;
-      const optionText = addTextObject(this.scene, 0, yCoord - 16, optionName, TextStyle.WINDOW);
+      const optionText = addBBCodeTextObject(this.scene, 0, yCoord - 16, optionName, TextStyle.WINDOW, { maxLines: 1 });
       if (altText) {
         optionText.setColor("#40c8f8");
         optionText.setShadowColor("#006090");
       }
       optionText.setOrigin(0, 0);
+
+      /** For every item that has stack bigger than 1, display the current quantity selection */
+      if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER && this.transferQuantitiesMax[option] > 1) {
+        const itemModifier = itemModifiers[option];
+
+        /** Not sure why getMaxHeldItemCount had an error, but it only checks the Pokemon parameter if the modifier is PokemonBaseStatModifier */
+        if (itemModifier === undefined || itemModifier instanceof PokemonBaseStatModifier) {
+          continue;
+        }
+
+        let amountText = ` (${this.transferQuantities[option]})`;
+
+        /** If the amount held is the maximum, display the count in red */
+        if (this.transferQuantitiesMax[option] === itemModifier.getMaxHeldItemCount(undefined)) {
+          amountText = `[color=${getTextColor(TextStyle.SUMMARY_RED)}]${amountText}[/color]`;
+        }
+
+        optionText.setText(optionName + amountText);
+      }
+
+      optionText.setText(`[shadow]${optionText.text}[/shadow]`);
 
       optionTexts.push(optionText);
 
