@@ -1,5 +1,5 @@
 import { CommonAnim, CommonBattleAnim } from "./battle-anims";
-import { CommonAnimPhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
+import { CommonAnimPhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangeCallback, StatChangePhase } from "../phases";
 import { getPokemonMessage, getPokemonNameWithAffix } from "../messages";
 import Pokemon, { MoveResult, HitResult } from "../field/pokemon";
 import { Stat, getStatName } from "./pokemon-stat";
@@ -1545,6 +1545,120 @@ export class IceFaceTag extends BattlerTag {
   }
 }
 
+/**
+ * Battler tag enabling the Stockpile mechanic. This tag handles:
+ * - Stack tracking, including max limit enforcement.
+ * - Stat changes (on adding a stack, and removal of all stacks).
+ *
+ * Adding a stockpile stack increases the pokemon's DEF and SPDEF by one stage.
+ *
+ * Removing stacks decreases DEF and SPDEF by one stage for each stack that had *successfully* changed
+ * that stat upon being added. To clarify:
+ * - The number of stacks which successfully changed DEF/SPDEF are tracked for each stat *independently*
+ * - We only track THAT a stack changed the stat, not how much it changed (see below for an example of how this comes into play)
+ *
+ * To further clarify, here's a quote from Bulbapedia:
+ * > ... For each Stockpile that successfully changed a defensive stat, that stat will drop by two stages if the
+ * > Pokémon has Simple at the time of using Spit Up, rise by one stage if the Pokémon has Contrary at that time,
+ * > or drop by one stage with any other ability. Stockpiles that did not result in stat changes (most likely
+ * > because the stat was already maxed out) are not taken into account for this adjustment, but Stockpiles that
+ * > resulted in stat changes which were later erased by a move such as Haze or Clear Smog are.
+ *
+ * ### Example
+ * Consider a pokemon with Simple, and an existing stat change of +5 SPDEF.
+ *
+ * The opposing pokemon has Neutralizing Gas.
+ *
+ * The following events take place:
+ * 1. The pokemon uses Stockpile twice (bringing its stat changes to +2 DEF / +6 SPDEF)
+ * 2. The opponent switches out its pokemon (to one without Neutralizing Gas), re-enabling Simple.
+ * 3. The pokemon uses Spit Up (bringing its stat changes to -2 DEF / +4 SPDEF)
+ *
+ * Note that:
+ * - Stockpile successfully changed DEF twice, but SPDEF only once (because the second use occurred with SPDEF at +6)
+ * - Simple was active when using Spit Up, doubling the decreases from removing stacks.
+ *
+ * Thus, removing the stacks with Spit Up decreases the pokemon's DEF by 4 stages, and SPDEF by 2 stages.
+ *
+ * TODO - localize message displayed on adding a stack.
+ */
+export class StockpilingTag extends BattlerTag {
+  public stockpiledCount: number = 0;
+  public statChangeCounts: { [BattleStat.DEF]: number; [BattleStat.SPDEF]: number } = {
+    [BattleStat.DEF]: 0,
+    [BattleStat.SPDEF]: 0
+  };
+
+  private onStatsChanged: StatChangeCallback = (_, statsChanged, statChanges) => {
+    const defChange = statChanges[statsChanged.indexOf(BattleStat.DEF)] ?? 0;
+    const spDefChange = statChanges[statsChanged.indexOf(BattleStat.SPDEF)] ?? 0;
+
+    if (defChange) {
+      this.statChangeCounts[BattleStat.DEF]++;
+    }
+
+    if (spDefChange) {
+      this.statChangeCounts[BattleStat.SPDEF]++;
+    }
+  };
+
+  constructor(sourceMove: Moves) {
+    super(BattlerTagType.STOCKPILING, BattlerTagLapseType.CUSTOM, 1, sourceMove);
+  }
+
+  loadTag(source: BattlerTag | any): void {
+    super.loadTag(source);
+    this.stockpiledCount = source.stockpiledCount || 0;
+    this.statChangeCounts = {
+      [BattleStat.DEF]: source.statChangeCounts?.[BattleStat.DEF] || 0,
+      [BattleStat.SPDEF]: source.statChangeCounts?.[BattleStat.SPDEF] || 0,
+    };
+  }
+
+  /**
+   * Adds a stockpile stack to a pokemon, up to a maximum of 3 stacks. Note that onOverlap defers to this method.
+   *
+   * If a stack is added, a message is displayed and the pokemon's DEF and SPDEF are increased by 1.
+   * For each stat, an internal counter is incremented (by 1) if the stat was successfully changed.
+   *
+   * @param pokemon - The pokemon to which the tag (or a stack) is added
+   */
+  onAdd(pokemon: Pokemon): void {
+    if (this.stockpiledCount < 3) {
+      this.stockpiledCount++;
+
+      // TODO - localization
+      pokemon.scene.queueMessage(`${pokemon.name} stockpiled ${this.stockpiledCount}!`);
+
+      // Attempt to increase DEF and SPDEF by one stage, keeping track of successful changes.
+      pokemon.scene.phaseQueue.unshift(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.SPDEF, BattleStat.DEF], 1, true, false, true, this.onStatsChanged));
+    }
+  }
+
+  onOverlap(pokemon: Pokemon): void {
+    this.onAdd(pokemon);
+  }
+
+  /**
+   * When the tag (and all its stacks) are removed, the pokemon's DEF and SPDEF are decreased by
+   * one stage for each stack which (upon being added) successfully changed that particular stat.
+   *
+   * @param pokemon - The pokemon from which the tag is removed.
+   */
+  onRemove(pokemon: Pokemon): void {
+    const defChange = this.statChangeCounts[BattleStat.DEF];
+    const spDefChange = this.statChangeCounts[BattleStat.SPDEF];
+
+    if (defChange) {
+      pokemon.scene.phaseQueue.unshift(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.DEF], -defChange, true, false, true));
+    }
+
+    if (spDefChange) {
+      pokemon.scene.phaseQueue.unshift(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.SPDEF], -spDefChange, true, false, true));
+    }
+  }
+}
+
 export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourceMove: Moves, sourceId: integer): BattlerTag {
   switch (tagType) {
   case BattlerTagType.RECHARGING:
@@ -1662,6 +1776,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
     return new DestinyBondTag(sourceMove, sourceId);
   case BattlerTagType.ICE_FACE:
     return new IceFaceTag(sourceMove);
+  case BattlerTagType.STOCKPILING:
+    return new StockpilingTag(sourceMove);
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
