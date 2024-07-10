@@ -23,7 +23,6 @@ import { Moves } from "#enums/moves";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "../../../battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier } from "../mystery-encounter";
-import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import { MoveRequirement } from "../mystery-encounter-requirements";
 
 const validMovesForSteal = [
@@ -99,59 +98,53 @@ export const FightOrFlightEncounter: MysteryEncounter = MysteryEncounterBuilder
 
     return true;
   })
-  .withOption(new MysteryEncounterOptionBuilder()
-    .withOptionPhase(async (scene: BattleScene) => {
-      // Pick battle
-      const item = scene.currentBattle.mysteryEncounter.misc as ModifierTypeOption;
-      setEncounterRewards(scene, { guaranteedModifierTypeOptions: [item], fillRemaining: false });
-      await initBattleWithEnemyConfig(scene, scene.currentBattle.mysteryEncounter.enemyPartyConfigs[0]);
-    })
-    .build())
-  .withOption(new MysteryEncounterOptionBuilder()
-    .withOptionPhase(async (scene: BattleScene) => {
-      // Pick steal
-      const encounter = scene.currentBattle.mysteryEncounter;
-      const item = scene.currentBattle.mysteryEncounter.misc as ModifierTypeOption;
-      setEncounterRewards(scene, { guaranteedModifierTypeOptions: [item], fillRemaining: false });
+  .withOptionPhase(async (scene: BattleScene) => {
+    // Pick battle
+    const item = scene.currentBattle.mysteryEncounter.misc as ModifierTypeOption;
+    setEncounterRewards(scene, { guaranteedModifierTypeOptions: [item], fillRemaining: false });
+    await initBattleWithEnemyConfig(scene, scene.currentBattle.mysteryEncounter.enemyPartyConfigs[0]);
+  })
+  .withOptionPhase(async (scene: BattleScene) => {
+    // Pick steal
+    const encounter = scene.currentBattle.mysteryEncounter;
+    const item = scene.currentBattle.mysteryEncounter.misc as ModifierTypeOption;
+    setEncounterRewards(scene, { guaranteedModifierTypeOptions: [item], fillRemaining: false });
 
-      // If player has a stealing move, they succeed automatically
-      const moveRequirement = new MoveRequirement(validMovesForSteal);
-      const validPokemon = moveRequirement.queryParty(scene.getParty());
-      if (validPokemon?.length > 0) {
-        // Use first valid pokemon to execute the theivery
-        const pokemon = validPokemon[0];
-        encounter.setDialogueToken("thiefPokemon", pokemon.name);
-        encounter.setDialogueToken(...moveRequirement.getDialogueToken(scene, pokemon));
-        await showEncounterText(scene, "mysteryEncounter:fight_or_flight_option_2_steal_result");
-        leaveEncounterWithoutBattle(scene);
-        return;
-      }
+    // If player has a stealing move, they succeed automatically
+    const moveRequirement = new MoveRequirement(validMovesForSteal);
+    const validPokemon = moveRequirement.queryParty(scene.getParty());
+    if (validPokemon?.length > 0) {
+      // Use first valid pokemon to execute the theivery
+      const pokemon = validPokemon[0];
+      encounter.setDialogueToken("thiefPokemon", pokemon.name);
+      encounter.setDialogueToken(...moveRequirement.getDialogueToken(scene, pokemon));
+      await showEncounterText(scene, "mysteryEncounter:fight_or_flight_option_2_steal_result");
+      leaveEncounterWithoutBattle(scene);
+      return;
+    }
 
-      const roll = randSeedInt(16);
-      if (roll > 6) {
-        // Noticed and attacked by boss, gets +1 to all stats at start of fight (62.5%)
-        const config = scene.currentBattle.mysteryEncounter.enemyPartyConfigs[0];
-        config.pokemonConfigs[0].tags = [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON];
-        config.pokemonConfigs[0].mysteryEncounterBattleEffects = (pokemon: Pokemon) => {
-          pokemon.scene.currentBattle.mysteryEncounter.setDialogueToken("enemyPokemon", pokemon.name);
-          queueEncounterMessage(pokemon.scene, "mysteryEncounter:fight_or_flight_boss_enraged");
-          pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD], 1));
-        };
-        await showEncounterText(scene, "mysteryEncounter:fight_or_flight_option_2_bad_result");
-        await initBattleWithEnemyConfig(scene, config);
-      } else {
-        // Steal item (37.5%)
-        // Display result message then proceed to rewards
-        await showEncounterText(scene, "mysteryEncounter:fight_or_flight_option_2_good_result");
-        leaveEncounterWithoutBattle(scene);
-      }
-    })
-    .build())
-  .withOption(new MysteryEncounterOptionBuilder()
-    .withOptionPhase(async (scene: BattleScene) => {
-      // Leave encounter with no rewards or exp
-      leaveEncounterWithoutBattle(scene, true);
-      return true;
-    })
-    .build())
+    const roll = randSeedInt(16);
+    if (roll > 6) {
+      // Noticed and attacked by boss, gets +1 to all stats at start of fight (62.5%)
+      const config = scene.currentBattle.mysteryEncounter.enemyPartyConfigs[0];
+      config.pokemonConfigs[0].tags = [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON];
+      config.pokemonConfigs[0].mysteryEncounterBattleEffects = (pokemon: Pokemon) => {
+        pokemon.scene.currentBattle.mysteryEncounter.setDialogueToken("enemyPokemon", pokemon.name);
+        queueEncounterMessage(pokemon.scene, "mysteryEncounter:fight_or_flight_boss_enraged");
+        pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD], 1));
+      };
+      await showEncounterText(scene, "mysteryEncounter:fight_or_flight_option_2_bad_result");
+      await initBattleWithEnemyConfig(scene, config);
+    } else {
+      // Steal item (37.5%)
+      // Display result message then proceed to rewards
+      await showEncounterText(scene, "mysteryEncounter:fight_or_flight_option_2_good_result");
+      leaveEncounterWithoutBattle(scene);
+    }
+  })
+  .withOptionPhase(async (scene: BattleScene) => {
+    // Leave encounter with no rewards or exp
+    leaveEncounterWithoutBattle(scene, true);
+    return true;
+  })
   .build();

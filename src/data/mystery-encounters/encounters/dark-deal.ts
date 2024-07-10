@@ -123,12 +123,11 @@ export const DarkDealEncounter: MysteryEncounter = MysteryEncounterBuilder
       };
       return initBattleWithEnemyConfig(scene, config);
     })
-    .build())
-  .withOption(new MysteryEncounterOptionBuilder()
-    .withOptionPhase(async (scene: BattleScene) => {
-      // Leave encounter with no rewards or exp
-      leaveEncounterWithoutBattle(scene, true);
-      return true;
-    })
-    .build())
+    .build()
+  )
+  .withOptionPhase(async (scene: BattleScene) => {
+    // Leave encounter with no rewards or exp
+    leaveEncounterWithoutBattle(scene, true);
+    return true;
+  })
   .build();

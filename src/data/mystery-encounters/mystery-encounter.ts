@@ -4,7 +4,7 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import MysteryEncounterDialogue, {
   allMysteryEncounterDialogue
 } from "./mystery-encounter-dialogue";
-import MysteryEncounterOption from "./mystery-encounter-option";
+import MysteryEncounterOption, { MysteryEncounterOptionBuilder, OptionPhaseCallback } from "./mystery-encounter-option";
 import {
   EncounterPokemonRequirement,
   EncounterSceneRequirement,
@@ -385,6 +385,17 @@ export class MysteryEncounterBuilder implements Partial<MysteryEncounter> {
       this.options.push(option);
       return Object.assign(this, { options: this.options });
     }
+  }
+
+  /**
+   * Adds a streamlined option phase.
+   * Only use if no pre-/post-options or condtions necessary.
+   *
+   * @param callback - OptionPhaseCallback
+   * @returns
+   */
+  withOptionPhase(callback: OptionPhaseCallback) {
+    return this.withOption(new MysteryEncounterOptionBuilder().withOptionPhase(callback).build());
   }
 
   /**

@@ -116,6 +116,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBui
       chosenPokemon.updateInfo();
     })
     .build())
+
   .withOption(new MysteryEncounterOptionBuilder()
     .withSceneRequirement(new MoneyRequirement(0, 5)) // Wave scaling multiplier of 2 for cost
     .withOptionPhase(async (scene: BattleScene) => {
@@ -136,12 +137,11 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBui
       setEncounterRewards(scene, { guaranteedModifierTypeFuncs: modifiers, fillRemaining: false });
       leaveEncounterWithoutBattle(scene);
     })
-    .build())
-  .withOption(new MysteryEncounterOptionBuilder()
-    .withOptionPhase(async (scene: BattleScene) => {
-      // Leave encounter with no rewards or exp
-      leaveEncounterWithoutBattle(scene, true);
-      return true;
-    })
-    .build())
+    .build()
+  )
+  .withOptionPhase(async (scene: BattleScene) => {
+    // Leave encounter with no rewards or exp
+    leaveEncounterWithoutBattle(scene, true);
+    return true;
+  })
   .build();

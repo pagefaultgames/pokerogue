@@ -134,7 +134,8 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
 
       return initBattleWithEnemyConfig(scene, config);
     })
-    .build())
+    .build()
+  )
   .withOption(new MysteryEncounterOptionBuilder()
     .withPreOptionPhase(async (scene: BattleScene): Promise<boolean> => {
       // Open menu for selecting pokemon and Nature
@@ -190,7 +191,8 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
 
       return initBattleWithEnemyConfig(scene, config);
     })
-    .build())
+    .build()
+  )
   .withOption(new MysteryEncounterOptionBuilder()
     .withPreOptionPhase(async (scene: BattleScene): Promise<boolean> => {
       // Open menu for selecting pokemon and ability to learn
@@ -271,7 +273,8 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
 
       return initBattleWithEnemyConfig(scene, config);
     })
-    .build())
+    .build()
+  )
   .build();
 
 function getEnemyConfig(scene: BattleScene, playerPokemon: PlayerPokemon, segments: number, modifiers: ModifiersHolder): EnemyPartyConfig {
