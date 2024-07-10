@@ -1,5 +1,4 @@
-import BattleScene from "../../../battle-scene";
-import { ModifierTier } from "#app/modifier/modifier-tier";
+import { BattleStat } from "#app/data/battle-stat";
 import {
   EnemyPartyConfig,
   initBattleWithEnemyConfig,
@@ -7,10 +6,8 @@ import {
   setEncounterRewards,
   showEncounterText
 } from "#app/data/mystery-encounters/mystery-encounter-utils";
-import MysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier } from "../mystery-encounter";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { MoveRequirement, WaveCountRequirement } from "../mystery-encounter-requirements";
-import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
+import Pokemon from "#app/field/pokemon";
+import { ModifierTier } from "#app/modifier/modifier-tier";
 import {
   getPartyLuckValue,
   getPlayerModifierTypeOptions,
@@ -18,13 +15,16 @@ import {
   ModifierTypeOption,
   regenerateModifierPoolThresholds
 } from "#app/modifier/modifier-type";
-import { BattlerTagType } from "#enums/battler-tag-type";
 import { StatChangePhase } from "#app/phases";
-import { BattleStat } from "#app/data/battle-stat";
-import Pokemon from "#app/field/pokemon";
-import { randSeedInt } from "#app/utils";
-import { Moves } from "#enums/moves";
 import { TextStyle } from "#app/ui/text";
+import { randSeedInt } from "#app/utils";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { Moves } from "#enums/moves";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import BattleScene from "../../../battle-scene";
+import MysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier } from "../mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
+import { MoveRequirement } from "../mystery-encounter-requirements";
 
 const validMovesForSteal = [
   Moves.PLUCK,
@@ -40,7 +40,7 @@ export const FightOrFlightEncounter: MysteryEncounter = MysteryEncounterBuilder
   .withEncounterType(MysteryEncounterType.FIGHT_OR_FLIGHT)
   .withEncounterTier(MysteryEncounterTier.COMMON)
   .withIntroSpriteConfigs([]) // Set in onInit()
-  .withSceneRequirement(new WaveCountRequirement([10, 180])) // waves 10 to 180
+  .withSceneWaveRangeRequirement(10, 180) // waves 10 to 180
   .withCatchAllowed(true)
   .withHideWildIntroMessage(true)
   .withOnInit((scene: BattleScene) => {

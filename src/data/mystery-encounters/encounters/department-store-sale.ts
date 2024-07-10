@@ -1,15 +1,14 @@
-import BattleScene from "../../../battle-scene";
 import {
   leaveEncounterWithoutBattle, setEncounterExp,
   setEncounterRewards,
 } from "#app/data/mystery-encounters/mystery-encounter-utils";
-import MysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier } from "../mystery-encounter";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { WaveCountRequirement } from "../mystery-encounter-requirements";
-import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import { modifierTypes } from "#app/modifier/modifier-type";
-import { Species } from "#enums/species";
 import { randSeedInt } from "#app/utils";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { Species } from "#enums/species";
+import BattleScene from "../../../battle-scene";
+import MysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier } from "../mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 
 export const DepartmentStoreSaleEncounter: MysteryEncounter = MysteryEncounterBuilder
   .withEncounterType(MysteryEncounterType.DEPARTMENT_STORE_SALE)
@@ -30,7 +29,7 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter = MysteryEncounterBu
     }
   ])
   // .withHideIntroVisuals(false)
-  .withSceneRequirement(new WaveCountRequirement([10, 100]))
+  .withSceneWaveRangeRequirement(10, 100)
   .withOption(new MysteryEncounterOptionBuilder()
     .withOptionPhase(async (scene: BattleScene) => {
       // Choose TMs

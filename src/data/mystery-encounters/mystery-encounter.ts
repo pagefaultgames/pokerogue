@@ -7,7 +7,8 @@ import MysteryEncounterDialogue, {
 import MysteryEncounterOption from "./mystery-encounter-option";
 import {
   EncounterPokemonRequirement,
-  EncounterSceneRequirement
+  EncounterSceneRequirement,
+  WaveRangeRequirement
 } from "./mystery-encounter-requirements";
 import * as Utils from "../../utils";
 import { EnemyPartyConfig } from "#app/data/mystery-encounters/mystery-encounter-utils";
@@ -428,6 +429,17 @@ export class MysteryEncounterBuilder implements Partial<MysteryEncounter> {
     }
     this.requirements.push(requirement);
     return Object.assign(this, { requirements: this.requirements });
+  }
+
+  /**
+   * Specifies a wave range requirement for an encounter.
+   *
+   * @param min min wave (or exact wave if only min is given)
+   * @param max optional max wave. If not given, defaults to min => exact wave
+   * @returns
+   */
+  withSceneWaveRangeRequirement(min: number, max?: number) {
+    return this.withSceneRequirement(new WaveRangeRequirement([min, max ?? min]));
   }
 
   withPrimaryPokemonRequirement(requirement: EncounterPokemonRequirement): this & Required<Pick<MysteryEncounter, "primaryPokemonRequirements">> {

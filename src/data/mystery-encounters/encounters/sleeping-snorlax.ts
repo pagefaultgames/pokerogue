@@ -1,4 +1,18 @@
+import {
+  ModifierTypeOption,
+  modifierTypes
+} from "#app/modifier/modifier-type";
+import { BerryType } from "#enums/berry-type";
+import { Moves } from "#enums/moves";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { Species } from "#enums/species";
 import BattleScene from "../../../battle-scene";
+import * as Utils from "../../../utils";
+import { getPokemonSpecies } from "../../pokemon-species";
+import { Status, StatusEffect } from "../../status-effect";
+import MysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier } from "../mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
+import { MoveRequirement } from "../mystery-encounter-requirements";
 import {
   EnemyPartyConfig,
   EnemyPokemonConfig, generateModifierType,
@@ -6,20 +20,6 @@ import {
   leaveEncounterWithoutBattle, queueEncounterMessage,
   setEncounterRewards
 } from "../mystery-encounter-utils";
-import MysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier } from "../mystery-encounter";
-import * as Utils from "../../../utils";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { MoveRequirement, WaveCountRequirement } from "../mystery-encounter-requirements";
-import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
-import {
-  ModifierTypeOption,
-  modifierTypes
-} from "#app/modifier/modifier-type";
-import { getPokemonSpecies } from "../../pokemon-species";
-import { Species } from "#enums/species";
-import { Status, StatusEffect } from "../../status-effect";
-import { Moves } from "#enums/moves";
-import { BerryType } from "#enums/berry-type";
 
 export const SleepingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuilder
   .withEncounterType(MysteryEncounterType.SLEEPING_SNORLAX)
@@ -33,7 +33,7 @@ export const SleepingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuilde
       repeat: true
     }
   ])
-  .withSceneRequirement(new WaveCountRequirement([10, 180])) // waves 10 to 180
+  .withSceneWaveRangeRequirement(10, 180) // waves 10 to 180
   .withCatchAllowed(true)
   .withHideWildIntroMessage(true)
   .withOnInit((scene: BattleScene) => {

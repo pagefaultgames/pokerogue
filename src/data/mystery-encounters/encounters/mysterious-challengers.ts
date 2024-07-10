@@ -1,25 +1,24 @@
-import BattleScene from "../../../battle-scene";
-import { ModifierTier } from "#app/modifier/modifier-tier";
-import { modifierTypes } from "#app/modifier/modifier-type";
 import { EnemyPartyConfig, initBattleWithEnemyConfig, setEncounterRewards } from "#app/data/mystery-encounters/mystery-encounter-utils";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import MysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier } from "../mystery-encounter";
-import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
-import { WaveCountRequirement } from "../mystery-encounter-requirements";
 import {
   trainerConfigs,
   TrainerPartyCompoundTemplate,
   TrainerPartyTemplate,
   trainerPartyTemplates
 } from "#app/data/trainer-config";
-import * as Utils from "../../../utils";
+import { ModifierTier } from "#app/modifier/modifier-tier";
+import { modifierTypes } from "#app/modifier/modifier-type";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
+import BattleScene from "../../../battle-scene";
+import * as Utils from "../../../utils";
+import MysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier } from "../mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 
 export const MysteriousChallengersEncounter: MysteryEncounter = MysteryEncounterBuilder
   .withEncounterType(MysteryEncounterType.MYSTERIOUS_CHALLENGERS)
   .withEncounterTier(MysteryEncounterTier.GREAT)
   .withIntroSpriteConfigs([]) // These are set in onInit()
-  .withSceneRequirement(new WaveCountRequirement([10, 180])) // waves 10 to 180
+  .withSceneWaveRangeRequirement(10, 180) // waves 10 to 180
   .withOnInit((scene: BattleScene) => {
     const encounter = scene.currentBattle.mysteryEncounter;
     // Calculates what trainers are available for battle in the encounter
