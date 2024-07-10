@@ -3,9 +3,7 @@ import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import { Button } from "#app/enums/buttons";
 import * as overrides from "#app/overrides";
-import {
-  BattleEndPhase, SelectModifierPhase,
-} from "#app/phases";
+import { BattleEndPhase, SelectModifierPhase } from "#app/phases";
 import GameManager from "#app/test/utils/gameManager";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import PartyUiHandler, { PartyUiMode } from "#app/ui/party-ui-handler";
@@ -14,6 +12,7 @@ import Phaser from "phaser";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { getMovePosition } from "../utils/gameManagerUtils";
+import {SelectModifierPhase} from "#app/phases/select-modifier-phase";
 
 
 describe("UI - Transfer Items", () => {

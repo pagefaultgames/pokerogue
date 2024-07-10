@@ -284,6 +284,9 @@ export default class BattleScene extends SceneBase {
 
   public eventManager: TimedEventManager;
 
+  public mysteryEncounterData: MysteryEncounterData = new MysteryEncounterData(null);
+  public lastMysteryEncounter: MysteryEncounter;
+
   /**
    * Allows subscribers to listen for events
    *
@@ -1207,7 +1210,6 @@ export default class BattleScene extends SceneBase {
       }
       if (resetArenaState) {
         this.arena.removeAllTags();
-
         // If last battle was mystery encounter and no battle occurred, skip return phases
         if (lastBattle?.mysteryEncounter?.encounterVariant !== MysteryEncounterVariant.NO_BATTLE) {
           playerField.forEach((_, p) => this.unshiftPhase(new ReturnPhase(this, p)));

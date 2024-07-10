@@ -29,7 +29,7 @@ describe("Mystery Encounters", () => {
     // Seed guarantees wild encounter to be replaced by ME
     vi.spyOn(game.scene, "resetSeed").mockImplementation(() => {
       game.scene.waveSeed = "test";
-      Phaser.Math.RND.sow([game.scene.waveSeed]);
+      Phaser.Math.RND.sow([ game.scene.waveSeed ]);
       game.scene.rngCounter = 0;
     });
   });

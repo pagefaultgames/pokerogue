@@ -30,7 +30,7 @@ describe("SelectModifierPhase", () => {
 
     vi.spyOn(scene, "resetSeed").mockImplementation(() => {
       scene.waveSeed = "test";
-      Phaser.Math.RND.sow([scene.waveSeed]);
+      Phaser.Math.RND.sow([ scene.waveSeed ]);
       scene.rngCounter = 0;
     });
 
@@ -109,7 +109,7 @@ describe("SelectModifierPhase", () => {
     // Just use fully random seed for this test
     vi.spyOn(scene, "resetSeed").mockImplementation(() => {
       scene.waveSeed = Utils.shiftCharCodes(scene.seed, 5);
-      Phaser.Math.RND.sow([scene.waveSeed]);
+      Phaser.Math.RND.sow([ scene.waveSeed ]);
       console.log("Wave Seed:", scene.waveSeed, 5);
       scene.rngCounter = 0;
     });
