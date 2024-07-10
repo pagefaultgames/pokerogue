@@ -534,7 +534,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
           this.statusIndicator.setFrame(StatusEffect[this.lastStatus].toLowerCase());
         }
 
-        const offsetX = (this.ownedIcon.visible ? 9 : 0) + (this.championRibbon.visible ? 9 : 0);
+        const offsetX = !this.player ? (this.ownedIcon.visible ? 9 : 0) + (this.championRibbon.visible ? 9 : 0) : 0;
         this.statusIndicator.setPositionRelative(this.nameText, offsetX, 11.5);
 
         this.statusIndicator.setVisible(!!this.lastStatus);
