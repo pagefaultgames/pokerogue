@@ -10,7 +10,7 @@ import MysteryEncounterOption from "../data/mystery-encounter-option";
 import * as Utils from "../utils";
 import {isNullOrUndefined} from "../utils";
 import {getPokeballAtlasKey} from "../data/pokeball";
-import {getTextWithEncounterDialogueTokensAndColor} from "#app/data/mystery-encounters/mystery-encounter-utils";
+import {getEncounterText} from "#app/data/mystery-encounters/mystery-encounter-utils";
 
 export default class MysteryEncounterUiHandler extends UiHandler {
   private cursorContainer: Phaser.GameObjects.Container;
@@ -298,9 +298,9 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     this.filteredEncounterOptions = mysteryEncounter.options;
     this.optionsMeetsReqs = [];
 
-    const titleText: string = getTextWithEncounterDialogueTokensAndColor(this.scene, mysteryEncounter.dialogue.encounterOptionsDialogue.title, TextStyle.TOOLTIP_TITLE);
-    const descriptionText: string = getTextWithEncounterDialogueTokensAndColor(this.scene, mysteryEncounter.dialogue.encounterOptionsDialogue.description, TextStyle.TOOLTIP_CONTENT);
-    const queryText: string = getTextWithEncounterDialogueTokensAndColor(this.scene, mysteryEncounter.dialogue.encounterOptionsDialogue.query, TextStyle.TOOLTIP_CONTENT);
+    const titleText: string = getEncounterText(this.scene, mysteryEncounter.dialogue.encounterOptionsDialogue.title, TextStyle.TOOLTIP_TITLE);
+    const descriptionText: string = getEncounterText(this.scene, mysteryEncounter.dialogue.encounterOptionsDialogue.description, TextStyle.TOOLTIP_CONTENT);
+    const queryText: string = getEncounterText(this.scene, mysteryEncounter.dialogue.encounterOptionsDialogue.query, TextStyle.TOOLTIP_CONTENT);
 
     // Clear options container (except cursor)
     this.optionsContainer.removeAll();
@@ -320,7 +320,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
         break;
       }
       const option = mysteryEncounter.dialogue.encounterOptionsDialogue.options[i];
-      const text = getTextWithEncounterDialogueTokensAndColor(this.scene, option.buttonLabel, option.style ? option.style : TextStyle.WINDOW);
+      const text = getEncounterText(this.scene, option.buttonLabel, option.style ? option.style : TextStyle.WINDOW);
       if (text) {
         optionText.setText(text);
       }
@@ -416,15 +416,15 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     let text;
     const option = mysteryEncounter.dialogue.encounterOptionsDialogue.options[cursor];
     if (!this.optionsMeetsReqs[cursor] && option.disabledTooltip) {
-      text = getTextWithEncounterDialogueTokensAndColor(this.scene, option.disabledTooltip, TextStyle.TOOLTIP_CONTENT);
+      text = getEncounterText(this.scene, option.disabledTooltip, TextStyle.TOOLTIP_CONTENT);
     } else {
-      text = getTextWithEncounterDialogueTokensAndColor(this.scene, option.buttonTooltip, TextStyle.TOOLTIP_CONTENT);
+      text = getEncounterText(this.scene, option.buttonTooltip, TextStyle.TOOLTIP_CONTENT);
     }
 
     // Auto-color options green/blue for good/bad by looking for (+)/(-)
     const primaryStyleString = [...text.match(new RegExp(/\[color=[^\[]*\]\[shadow=[^\[]*\]/i))][0];
-    text = text.replace(/(\([^\(]*\+\)[^\(\[]*)/gi, substring => "[/color][/shadow]" + getBBCodeFrag(substring, TextStyle.SUMMARY_GREEN) + "[/color][/shadow]" + primaryStyleString);
-    text = text.replace(/(\([^\(]*\-\)[^\(\[]*)/gi, substring => "[/color][/shadow]" + getBBCodeFrag(substring, TextStyle.SUMMARY_BLUE) + "[/color][/shadow]" + primaryStyleString);
+    text = text.replace(/(\(\+\)[^\(\[]*)/gi, substring => "[/color][/shadow]" + getBBCodeFrag(substring, TextStyle.SUMMARY_GREEN) + "[/color][/shadow]" + primaryStyleString);
+    text = text.replace(/(\(\-\)[^\(\[]*)/gi, substring => "[/color][/shadow]" + getBBCodeFrag(substring, TextStyle.SUMMARY_BLUE) + "[/color][/shadow]" + primaryStyleString);
 
     if (text) {
       const tooltipTextObject = addBBCodeTextObject(this.scene, 6, 7, text, TextStyle.TOOLTIP_CONTENT, { wordWrap: { width: 600 }, fontSize: "72px" });

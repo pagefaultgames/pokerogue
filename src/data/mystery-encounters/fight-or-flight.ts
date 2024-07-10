@@ -4,7 +4,7 @@ import {
   EnemyPartyConfig,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle, queueEncounterMessage,
-  setCustomEncounterRewards,
+  setEncounterRewards,
   showEncounterText
 } from "#app/data/mystery-encounters/mystery-encounter-utils";
 import MysteryEncounter, {MysteryEncounterBuilder, MysteryEncounterTier} from "../mystery-encounter";
@@ -103,7 +103,7 @@ export const FightOrFlightEncounter: MysteryEncounter = new MysteryEncounterBuil
     .withOptionPhase(async (scene: BattleScene) => {
       // Pick battle
       const item = scene.currentBattle.mysteryEncounter.misc as ModifierTypeOption;
-      setCustomEncounterRewards(scene, { guaranteedModifierTypeOptions: [item], fillRemaining: false});
+      setEncounterRewards(scene, { guaranteedModifierTypeOptions: [item], fillRemaining: false});
       await initBattleWithEnemyConfig(scene, scene.currentBattle.mysteryEncounter.enemyPartyConfigs[0]);
     })
     .build())
@@ -112,7 +112,7 @@ export const FightOrFlightEncounter: MysteryEncounter = new MysteryEncounterBuil
       // Pick steal
       const encounter = scene.currentBattle.mysteryEncounter;
       const item = scene.currentBattle.mysteryEncounter.misc as ModifierTypeOption;
-      setCustomEncounterRewards(scene, { guaranteedModifierTypeOptions: [item], fillRemaining: false});
+      setEncounterRewards(scene, { guaranteedModifierTypeOptions: [item], fillRemaining: false});
 
       // If player has a stealing move, they succeed automatically
       const moveRequirement = new MoveRequirement(validMovesForSteal);

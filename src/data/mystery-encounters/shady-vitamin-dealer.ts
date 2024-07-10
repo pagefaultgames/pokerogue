@@ -4,7 +4,7 @@ import {
   leaveEncounterWithoutBattle,
   queueEncounterMessage,
   selectPokemonForOption,
-  setCustomEncounterRewards,
+  setEncounterRewards,
   updatePlayerMoney,
 } from "#app/data/mystery-encounters/mystery-encounter-utils";
 import MysteryEncounter, {MysteryEncounterBuilder, MysteryEncounterTier} from "../mystery-encounter";
@@ -134,7 +134,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = new MysteryEncounte
         i++;
       }
 
-      setCustomEncounterRewards(scene, { guaranteedModifierTypeFuncs: modifiers, fillRemaining: false});
+      setEncounterRewards(scene, { guaranteedModifierTypeFuncs: modifiers, fillRemaining: false});
       leaveEncounterWithoutBattle(scene);
     })
     .build())

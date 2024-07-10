@@ -1,7 +1,7 @@
 import BattleScene from "../../battle-scene";
 import {
-  leaveEncounterWithoutBattle,
-  setCustomEncounterRewards,
+  leaveEncounterWithoutBattle, setEncounterExp,
+  setEncounterRewards,
 } from "#app/data/mystery-encounters/mystery-encounter-utils";
 import MysteryEncounter, {MysteryEncounterBuilder, MysteryEncounterTier} from "../mystery-encounter";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
@@ -49,7 +49,8 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter = new MysteryEncount
         i++;
       }
 
-      setCustomEncounterRewards(scene, { guaranteedModifierTypeFuncs: modifiers, fillRemaining: false});
+      setEncounterExp(scene, scene.getParty().map(p => p.id), 300);
+      setEncounterRewards(scene, { guaranteedModifierTypeFuncs: modifiers, fillRemaining: false});
       leaveEncounterWithoutBattle(scene);
     })
     .build())
@@ -69,7 +70,7 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter = new MysteryEncount
         i++;
       }
 
-      setCustomEncounterRewards(scene, { guaranteedModifierTypeFuncs: modifiers, fillRemaining: false});
+      setEncounterRewards(scene, { guaranteedModifierTypeFuncs: modifiers, fillRemaining: false});
       leaveEncounterWithoutBattle(scene);
     })
     .build())
@@ -89,7 +90,7 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter = new MysteryEncount
         i++;
       }
 
-      setCustomEncounterRewards(scene, { guaranteedModifierTypeFuncs: modifiers, fillRemaining: false});
+      setEncounterRewards(scene, { guaranteedModifierTypeFuncs: modifiers, fillRemaining: false});
       leaveEncounterWithoutBattle(scene);
     })
     .build())
@@ -113,7 +114,7 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter = new MysteryEncount
         i++;
       }
 
-      setCustomEncounterRewards(scene, { guaranteedModifierTypeFuncs: modifiers, fillRemaining: false});
+      setEncounterRewards(scene, { guaranteedModifierTypeFuncs: modifiers, fillRemaining: false});
       leaveEncounterWithoutBattle(scene);
     })
     .build())
