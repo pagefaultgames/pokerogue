@@ -142,7 +142,7 @@ export class Logger {
     context: string,
     ...optionalParams: any[]
   ): void {
-    const entry: LogEntry = {
+    const newEntry: LogEntry = {
       date: new Date(),
       type: type,
       context: context,
@@ -150,12 +150,12 @@ export class Logger {
     };
 
     if (this.entries.length < this.entriesLimit) {
-      this.entries.push(entry);
-      this.latestEntryIndex += 1;
+      this.entries.push(newEntry);
+      this.latestEntryIndex++;
     } else {
-      const isEntriesFull = this.entries.length === this.entriesLimit;
-      this.latestEntryIndex = isEntriesFull ? 0 : this.latestEntryIndex + 1;
-      this.entries[this.latestEntryIndex] = entry;
+      this.latestEntryIndex = this.latestEntryIndex % this.entries.length;
+      this.entries[this.latestEntryIndex] = newEntry;
+      this.latestEntryIndex++;
     }
   }
 
