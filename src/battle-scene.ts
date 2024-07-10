@@ -98,7 +98,7 @@ import {
   allMysteryEncounters,
   BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT,
   AVERAGE_ENCOUNTERS_PER_RUN_TARGET, WIGHT_INCREMENT_ON_SPAWN_MISS
-} from "./data/mystery-encounters/encounters/mystery-encounters";
+} from "./data/mystery-encounters/mystery-encounters";
 import { MysteryEncounterData } from "#app/data/mystery-encounters/mystery-encounter-data";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 
