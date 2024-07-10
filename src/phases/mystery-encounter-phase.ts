@@ -3,7 +3,7 @@ import BattleScene from "../battle-scene";
 import { Phase } from "../phase";
 import { Mode } from "../ui/ui";
 import {
-  getTextWithEncounterDialogueTokensAndColor
+  getEncounterText
 } from "../data/mystery-encounters/mystery-encounter-utils";
 import { CheckSwitchPhase, NewBattlePhase, PostSummonPhase, ReturnPhase, ScanIvsPhase, SummonPhase, ToggleDoublePositionPhase } from "../phases";
 import MysteryEncounterOption from "../data/mystery-encounter-option";
@@ -89,9 +89,9 @@ export class MysteryEncounterPhase extends Phase {
         const nextAction = i === selectedDialogue.length - 1 ? endDialogueAndContinueEncounter : showNextDialogue;
         const dialogue = selectedDialogue[i];
         let title: string = null;
-        const text: string = getTextWithEncounterDialogueTokensAndColor(this.scene, dialogue.text);
+        const text: string = getEncounterText(this.scene, dialogue.text);
         if (dialogue.speaker) {
-          title = getTextWithEncounterDialogueTokensAndColor(this.scene, dialogue.speaker);
+          title = getEncounterText(this.scene, dialogue.speaker);
         }
 
         if (title) {
@@ -377,6 +377,7 @@ export class MysteryEncounterBattlePhase extends Phase {
 
 /**
  * Will handle (in order):
+ * - Any encounter reward logic that is set within MysteryEncounter doEncounterExp
  * - Any encounter reward logic that is set within MysteryEncounter doEncounterRewards
  * - Otherwise, can add a no-reward-item shop with only Potions, etc. if addHealPhase is true
  * - Queuing of the PostMysteryEncounterPhase
@@ -393,6 +394,10 @@ export class MysteryEncounterRewardsPhase extends Phase {
     super.start();
 
     this.scene.executeWithSeedOffset(() => {
+      if (this.scene.currentBattle.mysteryEncounter.doEncounterExp) {
+        this.scene.currentBattle.mysteryEncounter.doEncounterExp(this.scene);
+      }
+
       if (this.scene.currentBattle.mysteryEncounter.doEncounterRewards) {
         this.scene.currentBattle.mysteryEncounter.doEncounterRewards(this.scene);
       } else if (this.addHealPhase) {
@@ -451,9 +456,9 @@ export class PostMysteryEncounterPhase extends Phase {
         const nextAction = i === outroDialogue.length - 1 ? endPhase : showNextDialogue;
         const dialogue = outroDialogue[i];
         let title: string = null;
-        const text: string = getTextWithEncounterDialogueTokensAndColor(this.scene, dialogue.text);
+        const text: string = getEncounterText(this.scene, dialogue.text);
         if (dialogue.speaker) {
-          title = getTextWithEncounterDialogueTokensAndColor(this.scene, dialogue.speaker);
+          title = getEncounterText(this.scene, dialogue.speaker);
         }
 
         this.scene.ui.setMode(Mode.MESSAGE);

@@ -4,7 +4,7 @@ import {
   EnemyPokemonConfig, generateModifierType,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle, queueEncounterMessage,
-  setCustomEncounterRewards
+  setEncounterRewards
 } from "./mystery-encounter-utils";
 import MysteryEncounter, {MysteryEncounterBuilder, MysteryEncounterTier} from "../mystery-encounter";
 import * as Utils from "../../utils";
@@ -23,7 +23,7 @@ import { BerryType } from "#enums/berry-type";
 
 export const SleepingSnorlaxEncounter: MysteryEncounter = new MysteryEncounterBuilder()
   .withEncounterType(MysteryEncounterType.SLEEPING_SNORLAX)
-  .withEncounterTier(MysteryEncounterTier.RARE)
+  .withEncounterTier(MysteryEncounterTier.ULTRA)
   .withIntroSpriteConfigs([
     {
       spriteKey: Species.SNORLAX.toString(),
@@ -78,7 +78,7 @@ export const SleepingSnorlaxEncounter: MysteryEncounter = new MysteryEncounterBu
         // const sitrus = (modifierTypes.BERRY?.() as ModifierTypeGenerator).generateType(scene.getParty(), [BerryType.SITRUS]);
         const sitrus = generateModifierType(scene, modifierTypes.BERRY, [BerryType.SITRUS]);
 
-        setCustomEncounterRewards(scene, { guaranteedModifierTypeOptions: [new ModifierTypeOption(sitrus, 0)], fillRemaining: false});
+        setEncounterRewards(scene, { guaranteedModifierTypeOptions: [new ModifierTypeOption(sitrus, 0)], fillRemaining: false});
         queueEncounterMessage(scene, "mysteryEncounter:sleeping_snorlax_option_2_bad_result");
         leaveEncounterWithoutBattle(scene);
       } else {
@@ -101,7 +101,7 @@ export const SleepingSnorlaxEncounter: MysteryEncounter = new MysteryEncounterBu
     .withPrimaryPokemonRequirement(new MoveRequirement([Moves.PLUCK, Moves.COVET, Moves.KNOCK_OFF, Moves.THIEF, Moves.TRICK, Moves.SWITCHEROO]))
     .withOptionPhase(async (scene: BattleScene) => {
       // Leave encounter with no rewards or exp
-      setCustomEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.LEFTOVERS], fillRemaining: false});
+      setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.LEFTOVERS], fillRemaining: false});
       queueEncounterMessage(scene, "mysteryEncounter:sleeping_snorlax_option_3_good_result");
       leaveEncounterWithoutBattle(scene);
     })

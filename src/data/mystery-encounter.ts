@@ -24,10 +24,10 @@ export enum MysteryEncounterVariant {
 
 export enum MysteryEncounterTier {
   COMMON,
-  UNCOMMON,
-  RARE,
-  SUPER_RARE,
-  ULTRA_RARE // Not currently used
+  GREAT,
+  ULTRA,
+  ROGUE,
+  MASTER // Not currently used
 }
 
 export default interface MysteryEncounter {
@@ -44,6 +44,7 @@ export default interface MysteryEncounter {
   hideBattleIntroMessage?: boolean;
   hideIntroVisuals?: boolean;
   catchAllowed?: boolean;
+  doEncounterExp?: (scene: BattleScene) => boolean;
   doEncounterRewards?: (scene: BattleScene) => boolean;
   onInit?: (scene: BattleScene) => boolean;
 
@@ -347,6 +348,7 @@ export class MysteryEncounterBuilder implements Partial<MysteryEncounter> {
   secondaryPokemonRequirements ?: EncounterPokemonRequirement[] = [];
   excludePrimaryFromSupportRequirements?: boolean;
   dialogueTokens?: Map<string, [RegExp, string]>;
+  doEncounterExp?: (scene: BattleScene) => boolean;
   doEncounterRewards?: (scene: BattleScene) => boolean;
   onInit?: (scene: BattleScene) => boolean;
   hideBattleIntroMessage?: boolean;
@@ -448,13 +450,26 @@ export class MysteryEncounterBuilder implements Partial<MysteryEncounter> {
    *
    * NOTE: If rewards are dependent on options selected, runtime data, etc.,
    * It may be better to programmatically set doEncounterRewards elsewhere.
-   * For instance, doEncounterRewards could instead be set inside the onOptionPhase() callback function for a MysteryEncounterOption
-   * Check other existing mystery encounters for examples on how to use this
+   * There is a helper function in mystery-encounter utils, setEncounterRewards(), which can be called programmatically to set rewards
    * @param doEncounterRewards - synchronous callback function to perform during rewards phase of the encounter
    * @returns
    */
   withRewards(doEncounterRewards: (scene: BattleScene) => boolean): this & Required<Pick<MysteryEncounter, "doEncounterRewards">> {
     return Object.assign(this, { doEncounterRewards: doEncounterRewards });
+  }
+
+  /**
+   * Can set custom encounter exp via this callback function
+   * If exp always deterministic for an encounter, this is a good way to set them
+   *
+   * NOTE: If rewards are dependent on options selected, runtime data, etc.,
+   * It may be better to programmatically set doEncounterExp elsewhere.
+   * There is a helper function in mystery-encounter utils, setEncounterExp(), which can be called programmatically to set rewards
+   * @param doEncounterExp - synchronous callback function to perform during rewards phase of the encounter
+   * @returns
+   */
+  withExp(doEncounterExp: (scene: BattleScene) => boolean): this & Required<Pick<MysteryEncounter, "doEncounterExp">> {
+    return Object.assign(this, { doEncounterExp: doEncounterExp });
   }
 
   /**

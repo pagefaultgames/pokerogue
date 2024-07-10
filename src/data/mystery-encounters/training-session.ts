@@ -1,10 +1,10 @@
 import BattleScene from "../../battle-scene";
 import {
   EnemyPartyConfig,
-  getTextWithEncounterDialogueTokensAndColor,
+  getEncounterText,
   initBattleWithEnemyConfig,
   selectPokemonForOption,
-  setCustomEncounterRewards
+  setEncounterRewards
 } from "#app/data/mystery-encounters/mystery-encounter-utils";
 import {MysteryEncounterType} from "#enums/mystery-encounter-type";
 import MysteryEncounter, {MysteryEncounterBuilder, MysteryEncounterTier} from "../mystery-encounter";
@@ -26,7 +26,7 @@ import {pokemonInfo} from "#app/locales/en/pokemon-info";
 
 export const TrainingSessionEncounter: MysteryEncounter = new MysteryEncounterBuilder()
   .withEncounterType(MysteryEncounterType.TRAINING_SESSION)
-  .withEncounterTier(MysteryEncounterTier.RARE)
+  .withEncounterTier(MysteryEncounterTier.ULTRA)
   .withIntroSpriteConfigs([
     {
       spriteKey: "training_gear",
@@ -128,10 +128,10 @@ export const TrainingSessionEncounter: MysteryEncounter = new MysteryEncounterBu
           scene.addModifier(mod, true, false, false, true);
         }
         scene.updateModifiers(true);
-        scene.queueMessage(getTextWithEncounterDialogueTokensAndColor(scene, "mysteryEncounter:training_session_battle_finished_1"), null, true);
+        scene.queueMessage(getEncounterText(scene, "mysteryEncounter:training_session_battle_finished_1"), null, true);
       };
 
-      setCustomEncounterRewards(scene, { fillRemaining: true }, null, onBeforeRewardsPhase);
+      setEncounterRewards(scene, { fillRemaining: true }, null, onBeforeRewardsPhase);
 
       return initBattleWithEnemyConfig(scene, config);
     })
@@ -174,7 +174,7 @@ export const TrainingSessionEncounter: MysteryEncounter = new MysteryEncounterBu
       scene.removePokemonFromPlayerParty(playerPokemon, false);
 
       const onBeforeRewardsPhase = () => {
-        scene.queueMessage(getTextWithEncounterDialogueTokensAndColor(scene, "mysteryEncounter:training_session_battle_finished_2"), null, true);
+        scene.queueMessage(getEncounterText(scene, "mysteryEncounter:training_session_battle_finished_2"), null, true);
         // Add the pokemon back to party with Nature change
         playerPokemon.setNature(encounter.misc.chosenNature);
         scene.gameData.setPokemonCaught(playerPokemon, false);
@@ -187,7 +187,7 @@ export const TrainingSessionEncounter: MysteryEncounter = new MysteryEncounterBu
         scene.updateModifiers(true);
       };
 
-      setCustomEncounterRewards(scene, { fillRemaining: true }, null, onBeforeRewardsPhase);
+      setEncounterRewards(scene, { fillRemaining: true }, null, onBeforeRewardsPhase);
 
       return initBattleWithEnemyConfig(scene, config);
     })
@@ -237,7 +237,7 @@ export const TrainingSessionEncounter: MysteryEncounter = new MysteryEncounterBu
       scene.removePokemonFromPlayerParty(playerPokemon, false);
 
       const onBeforeRewardsPhase = () => {
-        scene.queueMessage(getTextWithEncounterDialogueTokensAndColor(scene, "mysteryEncounter:training_session_battle_finished_3"), null, true);
+        scene.queueMessage(getEncounterText(scene, "mysteryEncounter:training_session_battle_finished_3"), null, true);
         // Add the pokemon back to party with ability change
         const abilityIndex = encounter.misc.abilityIndex;
         if (!!playerPokemon.getFusionSpeciesForm()) {
@@ -268,7 +268,7 @@ export const TrainingSessionEncounter: MysteryEncounter = new MysteryEncounterBu
         scene.updateModifiers(true);
       };
 
-      setCustomEncounterRewards(scene, { fillRemaining: true }, null, onBeforeRewardsPhase);
+      setEncounterRewards(scene, { fillRemaining: true }, null, onBeforeRewardsPhase);
 
       return initBattleWithEnemyConfig(scene, config);
     })

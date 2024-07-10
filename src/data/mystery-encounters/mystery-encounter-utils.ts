@@ -7,7 +7,12 @@ import {Status, StatusEffect} from "../status-effect";
 import {TrainerConfig, trainerConfigs, TrainerSlot} from "../trainer-config";
 import Pokemon, {FieldPosition, PlayerPokemon} from "#app/field/pokemon";
 import Trainer, {TrainerVariant} from "../../field/trainer";
-import {PokemonExpBoosterModifier} from "#app/modifier/modifier";
+import {
+  ExpBalanceModifier,
+  ExpShareModifier,
+  MultipleParticipantExpBonusModifier,
+  PokemonExpBoosterModifier
+} from "#app/modifier/modifier";
 import {
   CustomModifierSettings,
   getModifierPoolForType,
@@ -19,7 +24,14 @@ import {
   PokemonHeldItemModifierType,
   regenerateModifierPoolThresholds
 } from "#app/modifier/modifier-type";
-import {BattleEndPhase, EggLapsePhase, ModifierRewardPhase, TrainerVictoryPhase} from "#app/phases";
+import {
+  BattleEndPhase,
+  EggLapsePhase,
+  ExpPhase,
+  ModifierRewardPhase,
+  ShowPartyExpBarPhase,
+  TrainerVictoryPhase
+} from "#app/phases";
 import {MysteryEncounterBattlePhase, MysteryEncounterRewardsPhase} from "#app/phases/mystery-encounter-phase";
 import * as Utils from "../../utils";
 import {isNullOrUndefined} from "#app/utils";
@@ -35,7 +47,9 @@ import {Mode} from "#app/ui/ui";
 import {PartyOption, PartyUiMode} from "#app/ui/party-ui-handler";
 import {OptionSelectConfig, OptionSelectItem} from "#app/ui/abstact-option-select-ui-handler";
 import {WIGHT_INCREMENT_ON_SPAWN_MISS} from "#app/data/mystery-encounters/mystery-encounters";
-import {getBBCodeFrag, TextStyle} from "#app/ui/text";
+import {getTextWithColors, TextStyle} from "#app/ui/text";
+import * as Overrides from "#app/overrides";
+import {UiTheme} from "#enums/ui-theme";
 
 /**
  *
@@ -167,16 +181,28 @@ export function koPlayerPokemon(pokemon: PlayerPokemon) {
   pokemon.updateInfo();
 }
 
-export function getTextWithEncounterDialogueTokensAndColor(scene: BattleScene, textKey: TemplateStringsArray | `mysteryEncounter:${string}`, primaryStyle: TextStyle = TextStyle.MESSAGE): string {
+export function getEncounterText(scene: BattleScene, textKey: TemplateStringsArray | `mysteryEncounter:${string}`, primaryStyle?: TextStyle, uiTheme: UiTheme = UiTheme.DEFAULT): string {
+  if (isNullOrUndefined(textKey)) {
+    return null;
+  }
+
+  let textString: string = getTextWithDialogueTokens(scene, textKey);
+
+  // Can only color the text if a Primary Style is defined
+  // primaryStyle is applied to all text that does not have its own specified style
+  if (primaryStyle) {
+    textString = getTextWithColors(textString, primaryStyle, uiTheme);
+  }
+
+  return textString;
+}
+
+function getTextWithDialogueTokens(scene: BattleScene, textKey: TemplateStringsArray | `mysteryEncounter:${string}`): string {
   if (isNullOrUndefined(textKey)) {
     return null;
   }
 
   let textString: string = i18next.t(textKey);
-
-  // Apply primary styling before anything else, if it exists
-  textString = getBBCodeFrag(textString, primaryStyle) + "[/color][/shadow]";
-  const primaryStyleString = [...textString.match(new RegExp(/\[color=[^\[]*\]\[shadow=[^\[]*\]/i))][0];
 
   // Apply dialogue tokens
   const dialogueTokens = scene.currentBattle?.mysteryEncounter?.dialogueTokens;
@@ -185,16 +211,6 @@ export function getTextWithEncounterDialogueTokensAndColor(scene: BattleScene, t
       textString = textString.replace(value[0], value[1]);
     });
   }
-
-  // Set custom colors
-  // Looks for any pattern like this: @ecCol[SUMMARY_BLUE]{my text to color}
-  // Resulting in: "my text to color" string with TextStyle.SUMMARY_BLUE
-  textString = textString.replace(/@ecCol\[([^{]*)\]{([^}]*)}/gi, (substring, textStyle: string, textToColor: string) => {
-    return "[/color][/shadow]" + getBBCodeFrag(textToColor, TextStyle[textStyle]) + "[/color][/shadow]" + primaryStyleString;
-  });
-
-  // Remove extra style block at the end
-  textString = textString.replace(/\[color=[^\[]*\]\[shadow=[^\[]*\]\[\/color\]\[\/shadow\]/gi, "");
 
   return textString;
 }
@@ -205,7 +221,7 @@ export function getTextWithEncounterDialogueTokensAndColor(scene: BattleScene, t
  * @param contentKey
  */
 export function queueEncounterMessage(scene: BattleScene, contentKey: TemplateStringsArray | `mysteryEncounter:${string}`): void {
-  const text: string = getTextWithEncounterDialogueTokensAndColor(scene, contentKey, TextStyle.MESSAGE);
+  const text: string = getEncounterText(scene, contentKey);
   scene.queueMessage(text, null, true);
 }
 
@@ -216,7 +232,7 @@ export function queueEncounterMessage(scene: BattleScene, contentKey: TemplateSt
  */
 export function showEncounterText(scene: BattleScene, contentKey: TemplateStringsArray | `mysteryEncounter:${string}`): Promise<void> {
   return new Promise<void>(resolve => {
-    const text: string = getTextWithEncounterDialogueTokensAndColor(scene, contentKey, TextStyle.MESSAGE);
+    const text: string = getEncounterText(scene, contentKey);
     scene.ui.showText(text, null, () => resolve(), 0, true);
   });
 }
@@ -229,8 +245,8 @@ export function showEncounterText(scene: BattleScene, contentKey: TemplateString
  * @param callback
  */
 export function showEncounterDialogue(scene: BattleScene, textContentKey: TemplateStringsArray | `mysteryEncounter:${string}`, speakerContentKey: TemplateStringsArray | `mysteryEncounter:${string}`, callback?: Function) {
-  const text: string = getTextWithEncounterDialogueTokensAndColor(scene, textContentKey, TextStyle.MESSAGE);
-  const speaker: string = getTextWithEncounterDialogueTokensAndColor(scene, speakerContentKey);
+  const text: string = getEncounterText(scene, textContentKey);
+  const speaker: string = getEncounterText(scene, speakerContentKey);
   scene.ui.showDialogue(text, speaker, null, callback, 0, 0);
 }
 
@@ -246,6 +262,7 @@ export class EnemyPokemonConfig {
   tags?: BattlerTagType[];
   mysteryEncounterBattleEffects?: (pokemon: Pokemon) => void;
   status?: StatusEffect;
+  passive?: boolean;
 }
 
 export class EnemyPartyConfig {
@@ -341,6 +358,11 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
 
     const enemyPokemon = scene.getEnemyParty()[e];
 
+    // Make sure basic data is clean
+    enemyPokemon.hp = enemyPokemon.getMaxHp();
+    enemyPokemon.status = null;
+    enemyPokemon.passive = false;
+
     if (e < (doubleBattle ? 2 : 1)) {
       enemyPokemon.setX(-66 + enemyPokemon.getFieldPositionOffset()[0]);
       enemyPokemon.resetSummonData();
@@ -353,7 +375,7 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
     if (e < partyConfig?.pokemonConfigs?.length) {
       const config = partyConfig?.pokemonConfigs?.[e];
 
-      // Generate new id in case using data source
+      // Generate new id, reset status and HP in case using data source
       if (config.dataSource) {
         enemyPokemon.id = Utils.randSeedInt(4294967296);
       }
@@ -370,6 +392,11 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
           segments += config.bossSegmentModifier;
         }
         enemyPokemon.setBoss(true, segments);
+      }
+
+      // Set Passive
+      if (partyConfig.pokemonConfigs[e].passive) {
+        enemyPokemon.passive = true;
       }
 
       // Set Status
@@ -463,40 +490,6 @@ export function generateModifierType(scene: BattleScene, modifier: () => Modifie
 }
 
 /**
- * Will initialize reward phases to follow the mystery encounter
- * Can have shop displayed or skipped
- * @param scene - Battle Scene
- * @param customShopRewards - adds a shop phase with the specified rewards / reward tiers
- * @param nonShopRewards - will add a non-shop reward phase for each specified item/modifier (can happen in addition to a shop)
- * @param preRewardsCallback - can execute an arbitrary callback before the new phases if necessary (useful for updating items/party/injecting new phases before MysteryEncounterRewardsPhase)
- */
-export function setCustomEncounterRewards(scene: BattleScene, customShopRewards?: CustomModifierSettings, nonShopRewards?: ModifierTypeFunc[], preRewardsCallback?: Function) {
-  scene.currentBattle.mysteryEncounter.doEncounterRewards = (scene: BattleScene) => {
-    if (preRewardsCallback) {
-      preRewardsCallback();
-    }
-
-    if (customShopRewards) {
-      scene.unshiftPhase(new SelectModifierPhase(scene, 0, null, customShopRewards));
-    } else {
-      scene.tryRemovePhase(p => p instanceof SelectModifierPhase);
-    }
-
-    if (nonShopRewards?.length > 0) {
-      nonShopRewards.forEach((reward) => {
-        scene.unshiftPhase(new ModifierRewardPhase(scene, reward));
-      });
-    } else {
-      while (!isNullOrUndefined(scene.findPhase(p => p instanceof ModifierRewardPhase))) {
-        scene.tryRemovePhase(p => p instanceof ModifierRewardPhase);
-      }
-    }
-
-    return true;
-  };
-}
-
-/**
  *
  * @param scene
  * @param onPokemonSelected - Any logic that needs to be performed when Pokemon is chosen
@@ -557,7 +550,7 @@ export function selectPokemonForOption(scene: BattleScene, onPokemonSelected: (p
             if (!textPromptKey) {
               displayOptions();
             } else {
-              const secondOptionSelectPrompt = getTextWithEncounterDialogueTokensAndColor(scene, textPromptKey, TextStyle.MESSAGE);
+              const secondOptionSelectPrompt = getEncounterText(scene, textPromptKey, TextStyle.MESSAGE);
               scene.ui.showText(secondOptionSelectPrompt, null, displayOptions, null, true);
             }
           });
@@ -575,49 +568,140 @@ export function selectPokemonForOption(scene: BattleScene, onPokemonSelected: (p
 }
 
 /**
- * Will initialize exp phases to follow the mystery encounter (in addition to any combat or other exp earned)
- * Exp earned will be a simple function that linearly scales with wave index, that can be increased or decreased by the expMultiplier
- * Exp Share will have no effect (so no accounting for what mon is "on the field")
- * Exp Balance will still function as normal
+ * Will initialize reward phases to follow the mystery encounter
+ * Can have shop displayed or skipped
  * @param scene - Battle Scene
- * @param expMultiplier - default is 100, can be increased or decreased as desired
+ * @param customShopRewards - adds a shop phase with the specified rewards / reward tiers
+ * @param nonShopRewards - will add a non-shop reward phase for each specified item/modifier (can happen in addition to a shop)
+ * @param preRewardsCallback - can execute an arbitrary callback before the new phases if necessary (useful for updating items/party/injecting new phases before MysteryEncounterRewardsPhase)
  */
-export function setEncounterExp(scene: BattleScene, expMultiplier: number = 100) {
-  //const expBalanceModifier = scene.findModifier(m => m instanceof ExpBalanceModifier) as ExpBalanceModifier;
-  const expVal = scene.currentBattle.waveIndex * expMultiplier;
-  const pokemonExp = new Utils.NumberHolder(expVal);
-  const partyMemberExp = [];
+export function setEncounterRewards(scene: BattleScene, customShopRewards?: CustomModifierSettings, nonShopRewards?: ModifierTypeFunc[], preRewardsCallback?: Function) {
+  scene.currentBattle.mysteryEncounter.doEncounterRewards = (scene: BattleScene) => {
+    if (preRewardsCallback) {
+      preRewardsCallback();
+    }
 
-  const party = scene.getParty();
-  party.forEach(pokemon => {
-    scene.applyModifiers(PokemonExpBoosterModifier, true, pokemon, pokemonExp);
-    partyMemberExp.push(Math.floor(pokemonExp.value));
-  });
+    if (customShopRewards) {
+      scene.unshiftPhase(new SelectModifierPhase(scene, 0, null, customShopRewards));
+    } else {
+      scene.tryRemovePhase(p => p instanceof SelectModifierPhase);
+    }
 
-  // TODO
-  //if (expBalanceModifier) {
-  //  let totalLevel = 0;
-  //  let totalExp = 0;
-  //  expPartyMembers.forEach((expPartyMember, epm) => {
-  //    totalExp += partyMemberExp[epm];
-  //    totalLevel += expPartyMember.level;
-  //  });
+    if (nonShopRewards?.length > 0) {
+      nonShopRewards.forEach((reward) => {
+        scene.unshiftPhase(new ModifierRewardPhase(scene, reward));
+      });
+    } else {
+      while (!isNullOrUndefined(scene.findPhase(p => p instanceof ModifierRewardPhase))) {
+        scene.tryRemovePhase(p => p instanceof ModifierRewardPhase);
+      }
+    }
 
-  //  const medianLevel = Math.floor(totalLevel / expPartyMembers.length);
+    return true;
+  };
+}
 
-  //  const recipientExpPartyMemberIndexes = [];
-  //  expPartyMembers.forEach((expPartyMember, epm) => {
-  //    if (expPartyMember.level <= medianLevel) {
-  //      recipientExpPartyMemberIndexes.push(epm);
-  //    }
-  //  });
+/**
+ * Will initialize exp phases into the phase queue (these are in addition to any combat or other exp earned)
+ * Exp Share and Exp Balance will still function as normal
+ * @param scene - Battle Scene
+ * @param participantIds - ids of party pokemon that get full exp value. Other party members will receive Exp Share amounts
+ * @param baseExpValue - gives exp equivalent to a pokemon of the wave index's level.
+ * Guidelines:
+ * 36 - Sunkern (lowest in game)
+ * 62-64 - regional starter base evos
+ * 100 - Scyther
+ * 170 - Spiritomb
+ * 250 - Gengar
+ * 290 - trio legendaries
+ * 340 - box legendaries
+ * 608 - Blissey (highest in game)
+ * @param useWaveIndex - set to false when directly passing the the full exp value instead of baseExpValue
+ */
+export function setEncounterExp(scene: BattleScene, participantIds: integer[], baseExpValue: number, useWaveIndex: boolean = true) {
+  scene.currentBattle.mysteryEncounter.doEncounterExp = (scene: BattleScene) => {
+    const party = scene.getParty();
+    const expShareModifier = scene.findModifier(m => m instanceof ExpShareModifier) as ExpShareModifier;
+    const expBalanceModifier = scene.findModifier(m => m instanceof ExpBalanceModifier) as ExpBalanceModifier;
+    const multipleParticipantExpBonusModifier = scene.findModifier(m => m instanceof MultipleParticipantExpBonusModifier) as MultipleParticipantExpBonusModifier;
+    const nonFaintedPartyMembers = party.filter(p => p.hp);
+    const expPartyMembers = nonFaintedPartyMembers.filter(p => p.level < scene.getMaxExpLevel());
+    const partyMemberExp = [];
+    let expValue = baseExpValue * (useWaveIndex ? scene.currentBattle.waveIndex : 1);
 
-  //  const splitExp = Math.floor(totalExp / recipientExpPartyMemberIndexes.length);
+    if (participantIds?.length > 0) {
+      if (scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.TRAINER_BATTLE) {
+        expValue = Math.floor(expValue * 1.5);
+      }
+      for (const partyMember of nonFaintedPartyMembers) {
+        const pId = partyMember.id;
+        const participated = participantIds.includes(pId);
+        if (participated) {
+          partyMember.addFriendship(2);
+        }
+        if (!expPartyMembers.includes(partyMember)) {
+          continue;
+        }
+        if (!participated && !expShareModifier) {
+          partyMemberExp.push(0);
+          continue;
+        }
+        let expMultiplier = 0;
+        if (participated) {
+          expMultiplier += (1 / participantIds.length);
+          if (participantIds.length > 1 && multipleParticipantExpBonusModifier) {
+            expMultiplier += multipleParticipantExpBonusModifier.getStackCount() * 0.2;
+          }
+        } else if (expShareModifier) {
+          expMultiplier += (expShareModifier.getStackCount() * 0.2) / participantIds.length;
+        }
+        if (partyMember.pokerus) {
+          expMultiplier *= 1.5;
+        }
+        if (Overrides.XP_MULTIPLIER_OVERRIDE !== null) {
+          expMultiplier = Overrides.XP_MULTIPLIER_OVERRIDE;
+        }
+        const pokemonExp = new Utils.NumberHolder(expValue * expMultiplier);
+        scene.applyModifiers(PokemonExpBoosterModifier, true, partyMember, pokemonExp);
+        partyMemberExp.push(Math.floor(pokemonExp.value));
+      }
 
-  //  expPartyMembers.forEach((_partyMember, pm) => {
-  //    partyMemberExp[pm] = Phaser.Math.Linear(partyMemberExp[pm], recipientExpPartyMemberIndexes.indexOf(pm) > -1 ? splitExp : 0, 0.2 * expBalanceModifier.getStackCount());
-  //  });
-  //}
+      if (expBalanceModifier) {
+        let totalLevel = 0;
+        let totalExp = 0;
+        expPartyMembers.forEach((expPartyMember, epm) => {
+          totalExp += partyMemberExp[epm];
+          totalLevel += expPartyMember.level;
+        });
+
+        const medianLevel = Math.floor(totalLevel / expPartyMembers.length);
+
+        const recipientExpPartyMemberIndexes = [];
+        expPartyMembers.forEach((expPartyMember, epm) => {
+          if (expPartyMember.level <= medianLevel) {
+            recipientExpPartyMemberIndexes.push(epm);
+          }
+        });
+
+        const splitExp = Math.floor(totalExp / recipientExpPartyMemberIndexes.length);
+
+        expPartyMembers.forEach((_partyMember, pm) => {
+          partyMemberExp[pm] = Phaser.Math.Linear(partyMemberExp[pm], recipientExpPartyMemberIndexes.indexOf(pm) > -1 ? splitExp : 0, 0.2 * expBalanceModifier.getStackCount());
+        });
+      }
+
+      for (let pm = 0; pm < expPartyMembers.length; pm++) {
+        const exp = partyMemberExp[pm];
+
+        if (exp) {
+          const partyMemberIndex = party.indexOf(expPartyMembers[pm]);
+          scene.unshiftPhase(expPartyMembers[pm].isOnField() ? new ExpPhase(scene, partyMemberIndex, exp) : new ShowPartyExpBarPhase(scene, partyMemberIndex, exp));
+        }
+      }
+    }
+
+    return true;
+  };
 }
 
 /**

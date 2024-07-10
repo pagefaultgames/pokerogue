@@ -3,7 +3,7 @@ import GameManager from "#app/test/utils/gameManager";
 import Phaser from "phaser";
 import {
   getHighestLevelPlayerPokemon, getLowestLevelPlayerPokemon,
-  getRandomPlayerPokemon, getRandomSpeciesByStarterTier, getTextWithEncounterDialogueTokensAndColor,
+  getRandomPlayerPokemon, getRandomSpeciesByStarterTier, getEncounterText,
   koPlayerPokemon, queueEncounterMessage, showEncounterDialogue, showEncounterText,
 } from "#app/data/mystery-encounters/mystery-encounter-utils";
 import {initSceneWithoutEncounterPhase} from "#test/utils/gameManagerUtils";
@@ -276,7 +276,7 @@ describe("Mystery Encounter Utils", () => {
       scene.currentBattle.mysteryEncounter = new MysteryEncounter(null);
       scene.currentBattle.mysteryEncounter.setDialogueToken("test", "value");
 
-      const result = getTextWithEncounterDialogueTokensAndColor(scene, "mysteryEncounter:unit_test_dialogue");
+      const result = getEncounterText(scene, "mysteryEncounter:unit_test_dialogue");
       expect(result).toEqual("[color=#f8f8f8][shadow=#6b5a73]valuevalue @ec{testvalue} @ec{test1} value @ec{test\\} @ec{test\\} {test}[/color][/shadow]");
     });
 
@@ -285,7 +285,7 @@ describe("Mystery Encounter Utils", () => {
       scene.currentBattle.mysteryEncounter.setDialogueToken("test", "value");
       scene.currentBattle.mysteryEncounter.setDialogueToken("testvalue", "new");
 
-      const result = getTextWithEncounterDialogueTokensAndColor(scene, "mysteryEncounter:unit_test_dialogue");
+      const result = getEncounterText(scene, "mysteryEncounter:unit_test_dialogue");
       expect(result).toEqual("[color=#f8f8f8][shadow=#6b5a73]valuevalue new @ec{test1} value @ec{test\\} @ec{test\\} {test}[/color][/shadow]");
     });
   });

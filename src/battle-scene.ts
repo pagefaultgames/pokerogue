@@ -2683,7 +2683,7 @@ export default class BattleScene extends SceneBase {
       const tier = val[1];
       if (tier === MysteryEncounterTier.COMMON) {
         tierWeights[0] = tierWeights[0] - 6;
-      } else if (tier === MysteryEncounterTier.UNCOMMON) {
+      } else if (tier === MysteryEncounterTier.GREAT) {
         tierWeights[1] = tierWeights[1] - 4;
       }
     });
@@ -2693,7 +2693,7 @@ export default class BattleScene extends SceneBase {
     const commonThreshold = totalWeight - tierWeights[0];
     const uncommonThreshold = totalWeight - tierWeights[0] - tierWeights[1];
     const rareThreshold = totalWeight - tierWeights[0] - tierWeights[1] - tierWeights[2];
-    let tier = tierValue > commonThreshold ? MysteryEncounterTier.COMMON : tierValue > uncommonThreshold ? MysteryEncounterTier.UNCOMMON : tierValue > rareThreshold ? MysteryEncounterTier.RARE : MysteryEncounterTier.SUPER_RARE;
+    let tier = tierValue > commonThreshold ? MysteryEncounterTier.COMMON : tierValue > uncommonThreshold ? MysteryEncounterTier.GREAT : tierValue > rareThreshold ? MysteryEncounterTier.ULTRA : MysteryEncounterTier.ROGUE;
 
     if (!isNullOrUndefined(Overrides.MYSTERY_ENCOUNTER_TIER_OVERRIDE)) {
       tier = Overrides.MYSTERY_ENCOUNTER_TIER_OVERRIDE;
