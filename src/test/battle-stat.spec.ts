@@ -139,7 +139,7 @@ describe("battle-stat", () => {
           TEST_POKEMON,
           TEST_STAT,
           n,
-          false,
+          false
         );
 
         expect(message).toBe("battle:statWontGoAnyLower");
