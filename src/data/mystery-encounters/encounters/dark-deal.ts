@@ -1,5 +1,14 @@
+import { Type } from "#app/data/type";
+import { ModifierRewardPhase } from "#app/phases";
+import { isNullOrUndefined, randSeedInt } from "#app/utils";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { Species } from "#enums/species";
 import BattleScene from "../../../battle-scene";
 import { AddPokeballModifierType } from "../../../modifier/modifier-type";
+import { PokeballType } from "../../pokeball";
+import { getPokemonSpecies } from "../../pokemon-species";
+import MysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier } from "../mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import {
   EnemyPartyConfig, EnemyPokemonConfig,
   getRandomPlayerPokemon,
@@ -7,16 +16,6 @@ import {
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle
 } from "../mystery-encounter-utils";
-import MysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier } from "../mystery-encounter";
-import { ModifierRewardPhase } from "#app/phases";
-import { getPokemonSpecies } from "../../pokemon-species";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { PokeballType } from "../../pokeball";
-import { PartySizeRequirement, WaveCountRequirement } from "../mystery-encounter-requirements";
-import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
-import { Type } from "#app/data/type";
-import { Species } from "#enums/species";
-import { isNullOrUndefined, randSeedInt } from "#app/utils";
 
 // Exclude Ultra Beasts, Paradox, Necrozma, Eternatus, and egg-locked mythicals
 const excludedBosses = [
@@ -67,7 +66,7 @@ const excludedBosses = [
   Species.PECHARUNT
 ];
 
-export const DarkDealEncounter: MysteryEncounter = new MysteryEncounterBuilder()
+export const DarkDealEncounter: MysteryEncounter = MysteryEncounterBuilder
   .withEncounterType(MysteryEncounterType.DARK_DEAL)
   .withEncounterTier(MysteryEncounterTier.ROGUE)
   .withIntroSpriteConfigs([
@@ -83,8 +82,8 @@ export const DarkDealEncounter: MysteryEncounter = new MysteryEncounterBuilder()
       repeat: true
     }
   ])
-  .withSceneRequirement(new WaveCountRequirement([30, 180])) // waves 30 to 180
-  .withSceneRequirement(new PartySizeRequirement([2, 6])) // Must have at least 2 pokemon in party
+  .withSceneWaveRangeRequirement(30, 180) // waves 30 to 180
+  .withScenePartySizeRequirement(2, 6) // Must have at least 2 pokemon in party
   .withCatchAllowed(true)
   .withOption(new MysteryEncounterOptionBuilder()
     .withPreOptionPhase(async (scene: BattleScene) => {
@@ -124,12 +123,11 @@ export const DarkDealEncounter: MysteryEncounter = new MysteryEncounterBuilder()
       };
       return initBattleWithEnemyConfig(scene, config);
     })
-    .build())
-  .withOption(new MysteryEncounterOptionBuilder()
-    .withOptionPhase(async (scene: BattleScene) => {
-      // Leave encounter with no rewards or exp
-      leaveEncounterWithoutBattle(scene, true);
-      return true;
-    })
-    .build())
+    .build()
+  )
+  .withOptionPhase(async (scene: BattleScene) => {
+    // Leave encounter with no rewards or exp
+    leaveEncounterWithoutBattle(scene, true);
+    return true;
+  })
   .build();

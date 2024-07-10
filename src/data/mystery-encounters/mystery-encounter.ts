@@ -1,18 +1,23 @@
-import BattleScene from "../../battle-scene";
-import MysteryEncounterIntroVisuals, { MysteryEncounterSpriteConfig } from "../../field/mystery-encounter-intro";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import MysteryEncounterDialogue, {
-  allMysteryEncounterDialogue
-} from "./mystery-encounter-dialogue";
-import MysteryEncounterOption from "./mystery-encounter-option";
-import {
-  EncounterPokemonRequirement,
-  EncounterSceneRequirement
-} from "./mystery-encounter-requirements";
-import * as Utils from "../../utils";
 import { EnemyPartyConfig } from "#app/data/mystery-encounters/mystery-encounter-utils";
 import Pokemon, { PlayerPokemon } from "#app/field/pokemon";
 import { isNullOrUndefined } from "#app/utils";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import BattleScene from "../../battle-scene";
+import MysteryEncounterIntroVisuals, { MysteryEncounterSpriteConfig } from "../../field/mystery-encounter-intro";
+import * as Utils from "../../utils";
+import { StatusEffect } from "../status-effect";
+import MysteryEncounterDialogue, {
+  allMysteryEncounterDialogue
+} from "./mystery-encounter-dialogue";
+import MysteryEncounterOption, { MysteryEncounterOptionBuilder, OptionPhaseCallback } from "./mystery-encounter-option";
+import {
+  EncounterPokemonRequirement,
+  EncounterSceneRequirement,
+  HealthRatioRequirement,
+  PartySizeRequirement,
+  StatusEffectRequirement,
+  WaveRangeRequirement
+} from "./mystery-encounter-requirements";
 
 export enum MysteryEncounterVariant {
   DEFAULT,
@@ -360,12 +365,12 @@ export class MysteryEncounterBuilder implements Partial<MysteryEncounter> {
    */
 
   /**
-   * Defines the type of encounter which is used as an identifier, should be tied to a unique MysteryEncounterType
+   * @statif Defines the type of encounter which is used as an identifier, should be tied to a unique MysteryEncounterType
    * @param encounterType
    * @returns this
    */
-  withEncounterType(encounterType: MysteryEncounterType): this & Pick<MysteryEncounter, "encounterType"> {
-    return Object.assign(this, { encounterType: encounterType });
+  static withEncounterType(encounterType: MysteryEncounterType): MysteryEncounterBuilder & Pick<MysteryEncounter, "encounterType"> {
+    return Object.assign(new MysteryEncounterBuilder(), { encounterType: encounterType });
   }
 
   /**
@@ -383,6 +388,17 @@ export class MysteryEncounterBuilder implements Partial<MysteryEncounter> {
       this.options.push(option);
       return Object.assign(this, { options: this.options });
     }
+  }
+
+  /**
+   * Adds a streamlined option phase.
+   * Only use if no pre-/post-options or condtions necessary.
+   *
+   * @param callback - OptionPhaseCallback
+   * @returns
+   */
+  withOptionPhase(callback: OptionPhaseCallback) {
+    return this.withOption(new MysteryEncounterOptionBuilder().withOptionPhase(callback).build());
   }
 
   /**
@@ -430,9 +446,39 @@ export class MysteryEncounterBuilder implements Partial<MysteryEncounter> {
     return Object.assign(this, { requirements: this.requirements });
   }
 
+  /**
+   * Specifies a wave range requirement for an encounter.
+   *
+   * @param min min wave (or exact wave if only min is given)
+   * @param max optional max wave. If not given, defaults to min => exact wave
+   * @returns
+   */
+  withSceneWaveRangeRequirement(min: number, max?: number) {
+    return this.withSceneRequirement(new WaveRangeRequirement([min, max ?? min]));
+  }
+
+  /**
+   * Specifies a party size requirement for an encounter.
+   *
+   * @param min min wave (or exact size if only min is given)
+   * @param max optional max size. If not given, defaults to min => exact wave
+   * @returns
+   */
+  withScenePartySizeRequirement(min: number, max?: number) {
+    return this.withSceneRequirement(new PartySizeRequirement([min, max ?? min]));
+  }
+
   withPrimaryPokemonRequirement(requirement: EncounterPokemonRequirement): this & Required<Pick<MysteryEncounter, "primaryPokemonRequirements">> {
     this.primaryPokemonRequirements.push(requirement);
     return Object.assign(this, { primaryPokemonRequirements: this.primaryPokemonRequirements });
+  }
+
+  withPrimaryPokemonStatusEffectRequirement(statusEffect: StatusEffect | StatusEffect[], minNumberOfPokemon: number = 1, invertQuery: boolean = false): this & Required<Pick<MysteryEncounter, "primaryPokemonRequirements">> {
+    return this.withPrimaryPokemonRequirement(new StatusEffectRequirement(statusEffect, minNumberOfPokemon, invertQuery));
+  }
+
+  withPrimaryPokemonHealthRatioRequirement(requiredHealthRange: [number, number], minNumberOfPokemon: number = 1, invertQuery: boolean = false): this & Required<Pick<MysteryEncounter, "primaryPokemonRequirements">> {
+    return this.withPrimaryPokemonRequirement(new HealthRatioRequirement(requiredHealthRange, minNumberOfPokemon, invertQuery));
   }
 
   // TODO: Maybe add an optional parameter for excluding primary pokemon from the support cast?

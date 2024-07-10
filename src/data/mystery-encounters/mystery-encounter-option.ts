@@ -1,8 +1,11 @@
-import { PlayerPokemon } from "#app/field/pokemon";
-import * as Utils from "../../utils";
-import BattleScene from "../../battle-scene";
-import { EncounterPokemonRequirement, EncounterSceneRequirement } from "./mystery-encounter-requirements";
 import { OptionTextDisplay } from "#app/data/mystery-encounters/mystery-encounter-dialogue";
+import { PlayerPokemon } from "#app/field/pokemon";
+import BattleScene from "../../battle-scene";
+import * as Utils from "../../utils";
+import { EncounterPokemonRequirement, EncounterSceneRequirement, MoneyRequirement } from "./mystery-encounter-requirements";
+
+
+export type OptionPhaseCallback = (scene: BattleScene) => Promise<void | boolean>;
 
 export default interface MysteryEncounterOption {
   requirements?: EncounterSceneRequirement[];
@@ -19,11 +22,11 @@ export default interface MysteryEncounterOption {
   dialogue?: OptionTextDisplay;
 
   // Executes before any following dialogue or business logic from option. Usually this will be for calculating dialogueTokens or performing scene/data updates
-  onPreOptionPhase?: (scene: BattleScene) => Promise<void | boolean>;
+  onPreOptionPhase?: OptionPhaseCallback;
   // Business logic for option
-  onOptionPhase?: (scene: BattleScene) => Promise<void | boolean>;
+  onOptionPhase?: OptionPhaseCallback;
   // Executes after the encounter is over. Usually this will be for calculating dialogueTokens or performing data updates
-  onPostOptionPhase?: (scene: BattleScene) => Promise<void | boolean>;
+  onPostOptionPhase?: OptionPhaseCallback;
 }
 
 export default class MysteryEncounterOption implements MysteryEncounterOption {
@@ -121,24 +124,28 @@ export class MysteryEncounterOptionBuilder implements Partial<MysteryEncounterOp
   primaryPokemonRequirements?: EncounterPokemonRequirement[] = [];
   secondaryPokemonRequirements ?: EncounterPokemonRequirement[] = [];
   excludePrimaryFromSecondaryRequirements?: boolean;
-  onPreOptionPhase?: (scene: BattleScene) => Promise<void | boolean>;
-  onOptionPhase?: (scene: BattleScene) => Promise<void | boolean>;
-  onPostOptionPhase?: (scene: BattleScene) => Promise<void | boolean>;
+  onPreOptionPhase?: OptionPhaseCallback;
+  onOptionPhase?: OptionPhaseCallback;
+  onPostOptionPhase?: OptionPhaseCallback;
 
   withSceneRequirement(requirement: EncounterSceneRequirement): this & Required<Pick<MysteryEncounterOption, "requirements">> {
     this.requirements.push(requirement);
     return Object.assign(this, { requirements: this.requirements });
   }
 
-  withPreOptionPhase(onPreOptionPhase: (scene: BattleScene) => Promise<void | boolean>): this & Required<Pick<MysteryEncounterOption, "onPreOptionPhase">> {
+  withSceneMoneyRequirement(requiredMoney: number, scalingMultiplier?: number) {
+    return this.withSceneRequirement(new MoneyRequirement(requiredMoney, scalingMultiplier));
+  }
+
+  withPreOptionPhase(onPreOptionPhase: OptionPhaseCallback): this & Required<Pick<MysteryEncounterOption, "onPreOptionPhase">> {
     return Object.assign(this, { onPreOptionPhase: onPreOptionPhase });
   }
 
-  withOptionPhase(onOptionPhase: (scene: BattleScene) => Promise<void | boolean>): this & Required<Pick<MysteryEncounterOption, "onOptionPhase">> {
+  withOptionPhase(onOptionPhase: OptionPhaseCallback): this & Required<Pick<MysteryEncounterOption, "onOptionPhase">> {
     return Object.assign(this, { onOptionPhase: onOptionPhase });
   }
 
-  withPostOptionPhase(onPostOptionPhase: (scene: BattleScene) => Promise<void | boolean>): this & Required<Pick<MysteryEncounterOption, "onPostOptionPhase">> {
+  withPostOptionPhase(onPostOptionPhase: OptionPhaseCallback): this & Required<Pick<MysteryEncounterOption, "onPostOptionPhase">> {
     return Object.assign(this, { onPostOptionPhase: onPostOptionPhase });
   }
 

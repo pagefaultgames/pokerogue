@@ -1,4 +1,3 @@
-import BattleScene from "../../../battle-scene";
 import {
   generateModifierType,
   leaveEncounterWithoutBattle,
@@ -7,22 +6,20 @@ import {
   setEncounterRewards,
   updatePlayerMoney,
 } from "#app/data/mystery-encounters/mystery-encounter-utils";
-import MysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier } from "../mystery-encounter";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import {
-  HealthRatioRequirement,
-  MoneyRequirement,
-  StatusEffectRequirement,
-  WaveCountRequirement
-} from "../mystery-encounter-requirements";
-import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
-import { modifierTypes } from "#app/modifier/modifier-type";
-import { Species } from "#enums/species";
-import { randSeedInt } from "#app/utils";
-import Pokemon, { PlayerPokemon } from "#app/field/pokemon";
 import { StatusEffect } from "#app/data/status-effect";
+import Pokemon, { PlayerPokemon } from "#app/field/pokemon";
+import { modifierTypes } from "#app/modifier/modifier-type";
+import { randSeedInt } from "#app/utils";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { Species } from "#enums/species";
+import BattleScene from "../../../battle-scene";
+import MysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier } from "../mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
+import {
+  MoneyRequirement
+} from "../mystery-encounter-requirements";
 
-export const ShadyVitaminDealerEncounter: MysteryEncounter = new MysteryEncounterBuilder()
+export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBuilder
   .withEncounterType(MysteryEncounterType.SHADY_VITAMIN_DEALER)
   .withEncounterTier(MysteryEncounterTier.COMMON)
   .withIntroSpriteConfigs([
@@ -42,11 +39,11 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = new MysteryEncounte
       y: 2
     }
   ])
-  .withSceneRequirement(new WaveCountRequirement([10, 180]))
-  .withPrimaryPokemonRequirement(new StatusEffectRequirement([StatusEffect.NONE])) // Pokemon must not have status
-  .withPrimaryPokemonRequirement(new HealthRatioRequirement([0.34, 1])) // Pokemon must have above 1/3rd HP
+  .withSceneWaveRangeRequirement(10, 180)
+  .withPrimaryPokemonStatusEffectRequirement([StatusEffect.NONE]) // Pokemon must not have status
+  .withPrimaryPokemonHealthRatioRequirement([0.34, 1]) // Pokemon must have above 1/3rd HP
   .withOption(new MysteryEncounterOptionBuilder()
-    .withSceneRequirement(new MoneyRequirement(0, 2)) // Wave scaling multiplier of 2 for cost
+    .withSceneMoneyRequirement(0, 2) // Wave scaling multiplier of 2 for cost
     .withPreOptionPhase(async (scene: BattleScene): Promise<boolean> => {
       const encounter = scene.currentBattle.mysteryEncounter;
       const onPokemonSelected = (pokemon: PlayerPokemon) => {
@@ -117,8 +114,9 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = new MysteryEncounte
       chosenPokemon.updateInfo();
     })
     .build())
+
   .withOption(new MysteryEncounterOptionBuilder()
-    .withSceneRequirement(new MoneyRequirement(0, 5)) // Wave scaling multiplier of 2 for cost
+    .withSceneMoneyRequirement(0, 5) // Wave scaling multiplier of 2 for cost
     .withOptionPhase(async (scene: BattleScene) => {
       // Choose Expensive Option
       const modifiers = [];
@@ -137,12 +135,11 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = new MysteryEncounte
       setEncounterRewards(scene, { guaranteedModifierTypeFuncs: modifiers, fillRemaining: false });
       leaveEncounterWithoutBattle(scene);
     })
-    .build())
-  .withOption(new MysteryEncounterOptionBuilder()
-    .withOptionPhase(async (scene: BattleScene) => {
-      // Leave encounter with no rewards or exp
-      leaveEncounterWithoutBattle(scene, true);
-      return true;
-    })
-    .build())
+    .build()
+  )
+  .withOptionPhase(async (scene: BattleScene) => {
+    // Leave encounter with no rewards or exp
+    leaveEncounterWithoutBattle(scene, true);
+    return true;
+  })
   .build();
