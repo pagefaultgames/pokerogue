@@ -3209,7 +3209,7 @@ export class StockpilePowerAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const stockpilingTag = user.getTag(BattlerTagType.STOCKPILING) as StockpilingTag;
 
-    if (stockpilingTag) {
+    if (stockpilingTag?.stockpiledCount > 0) {
       const power = args[0] as Utils.IntegerHolder;
       power.value = this.multiplier * stockpilingTag.stockpiledCount;
       return true;
@@ -3227,31 +3227,29 @@ export class SwallowHealAttr extends HealAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const stockpilingTag = user.getTag(BattlerTagType.STOCKPILING) as StockpilingTag;
 
-    if (!stockpilingTag || stockpilingTag.stockpiledCount < 1) {
-      return false;
-    }
+    if (stockpilingTag?.stockpiledCount > 0) {
+      const stockpiled = stockpilingTag.stockpiledCount;
+      let healRatio: number;
 
-    const stockpiled = stockpilingTag.stockpiledCount;
-    let healRatio: number;
+      if (stockpiled === 1) {
+        healRatio = 0.25;
+      } else if (stockpiled === 2) {
+        healRatio = 0.50;
+      } else { // stockpiled >= 3
+        healRatio = 1.00;
+      }
 
-    if (stockpiled === 1) {
-      healRatio = 0.25;
-    } else if (stockpiled === 2) {
-      healRatio = 0.50;
-    } else { // stockpiled >= 3
-      healRatio = 1.00;
-    }
-
-    if (healRatio) {
-      this.addHealPhase(user, healRatio);
-      return true;
+      if (healRatio) {
+        this.addHealPhase(user, healRatio);
+        return true;
+      }
     }
 
     return false;
   }
 }
 
-const hasStockpileStacksCondition: MoveConditionFunc = (user) => ((user.getTag(BattlerTagType.STOCKPILING) as StockpilingTag)?.stockpiledCount ?? 0) > 0;
+const hasStockpileStacksCondition: MoveConditionFunc = (user) => (user.getTag(BattlerTagType.STOCKPILING) as StockpilingTag)?.stockpiledCount > 0;
 
 /**
  * Attribute used for multi-hit moves that increase power in increments of the
