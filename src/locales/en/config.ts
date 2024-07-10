@@ -27,6 +27,7 @@ import { gameStatsUiHandler } from "./game-stats-ui-handler";
 import { growth } from "./growth";
 import { menu } from "./menu";
 import { menuUiHandler } from "./menu-ui-handler";
+import { modifier } from "./modifier";
 import { modifierType } from "./modifier-type";
 import { move } from "./move";
 import { nature } from "./nature";
@@ -42,7 +43,7 @@ import { statusEffect } from "./status-effect";
 import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
-import { weather } from "./weather";
+import { terrain, weather } from "./weather";
 import { modifierSelectUiHandler } from "./modifier-select-ui-handler";
 import { moveTriggers } from "./move-trigger";
 
@@ -74,10 +75,10 @@ export const enConfig = {
   growth: growth,
   menu: menu,
   menuUiHandler: menuUiHandler,
+  modifier: modifier,
   modifierType: modifierType,
   move: move,
   nature: nature,
-  partyUiHandler: partyUiHandler,
   pokeball: pokeball,
   pokemon: pokemon,
   pokemonInfo: pokemonInfo,
@@ -87,12 +88,14 @@ export const enConfig = {
   splashMessages: splashMessages,
   starterSelectUiHandler: starterSelectUiHandler,
   statusEffect: statusEffect,
+  terrain: terrain,
   titles: titles,
   trainerClasses: trainerClasses,
   trainerNames: trainerNames,
   tutorial: tutorial,
   voucher: voucher,
   weather: weather,
+  partyUiHandler: partyUiHandler,
   modifierSelectUiHandler: modifierSelectUiHandler,
   moveTriggers: moveTriggers
 };
