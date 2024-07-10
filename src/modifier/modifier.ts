@@ -9,7 +9,7 @@ import { addTextObject, TextStyle } from "../ui/text";
 import { Type } from "../data/type";
 import { EvolutionPhase } from "../evolution-phase";
 import { FusionSpeciesFormEvolution, pokemonEvolutions, pokemonPrevolutions } from "../data/pokemon-evolutions";
-import { getPokemonMessage } from "../messages";
+import {getPokemonMessage, getPokemonNameWithAffix} from "../messages";
 import * as Utils from "../utils";
 import { TempBattleStat } from "../data/temp-battle-stat";
 import { getBerryEffectFunc, getBerryPredicate } from "../data/berry";
@@ -24,6 +24,7 @@ import * as Overrides from "../overrides";
 import { ModifierType, modifierTypes } from "./modifier-type";
 import { Command } from "#app/ui/command-ui-handler.js";
 import { Species } from "#enums/species";
+import i18next from "i18next";
 
 import { allMoves } from "#app/data/move.js";
 import { Abilities } from "#app/enums/abilities.js";
@@ -965,7 +966,7 @@ export class SurviveDamageModifier extends PokemonHeldItemModifier {
     if (!surviveDamage.value && pokemon.randSeedInt(10) < this.getStackCount()) {
       surviveDamage.value = true;
 
-      pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` hung on\nusing its ${this.type.name}!`));
+      pokemon.scene.queueMessage(i18next.t("modifier:surviveDamageApply", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), typeName: this.type.name }));
       return true;
     }
 
@@ -1070,7 +1071,7 @@ export class TurnHealModifier extends PokemonHeldItemModifier {
     if (pokemon.getHpRatio() < 1) {
       const scene = pokemon.scene;
       scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.getBattlerIndex(),
-        Math.max(Math.floor(pokemon.getMaxHp() / 16) * this.stackCount, 1), getPokemonMessage(pokemon, `'s ${this.type.name}\nrestored its HP a little!`), true));
+        Math.max(Math.floor(pokemon.getMaxHp() / 16) * this.stackCount, 1), i18next.t("modifier:turnHealApply", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), typeName: this.type.name }), true));
       return true;
     }
 
@@ -1161,7 +1162,7 @@ export class HitHealModifier extends PokemonHeldItemModifier {
     if (pokemon.turnData.damageDealt && pokemon.getHpRatio() < 1) {
       const scene = pokemon.scene;
       scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.getBattlerIndex(),
-        Math.max(Math.floor(pokemon.turnData.damageDealt / 8) * this.stackCount, 1), getPokemonMessage(pokemon, `'s ${this.type.name}\nrestored its HP a little!`), true));
+        Math.max(Math.floor(pokemon.turnData.damageDealt / 8) * this.stackCount, 1), i18next.t("modifier:hitHealApply", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), typeName: this.type.name }), true));
     }
 
     return true;
@@ -1296,7 +1297,7 @@ export class PokemonInstantReviveModifier extends PokemonHeldItemModifier {
     const pokemon = args[0] as Pokemon;
 
     pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.getBattlerIndex(),
-      Math.max(Math.floor(pokemon.getMaxHp() / 2), 1), getPokemonMessage(pokemon, ` was revived\nby its ${this.type.name}!`), false, false, true));
+      Math.max(Math.floor(pokemon.getMaxHp() / 2), 1), i18next.t("modifier:pokemonInstantReviveApply", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), typeName: this.type.name }), false, false, true));
 
     pokemon.resetStatus(true, false, true);
     return true;
@@ -2051,7 +2052,10 @@ export class MoneyInterestModifier extends PersistentModifier {
     const interestAmount = Math.floor(scene.money * 0.1 * this.getStackCount());
     scene.addMoney(interestAmount);
 
-    scene.queueMessage(`You received interest of ₽${interestAmount.toLocaleString("en-US")}\nfrom the ${this.type.name}!`, null, true);
+    const userLocale = navigator.language || "en-US";
+    const formattedMoneyAmount = interestAmount.toLocaleString(userLocale);
+    const message = i18next.t("modifier:moneyInterestApply", { moneyAmount: formattedMoneyAmount, typeName: this.type.name });
+    scene.queueMessage(message, null, true);
 
     return true;
   }
@@ -2157,14 +2161,38 @@ export class SwitchEffectTransferModifier extends PokemonHeldItemModifier {
   }
 }
 
+/**
+ * Abstract class for held items that steal other Pokemon's items.
+ * @see {@linkcode TurnHeldItemTransferModifier}
+ * @see {@linkcode ContactHeldItemTransferChanceModifier}
+ */
 export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
   constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
     super(type, pokemonId, stackCount);
   }
 
+  /**
+   * Determines the targets to transfer items from when this applies.
+   * @param args\[0\] the {@linkcode Pokemon} holding this item
+   * @returns the opponents of the source {@linkcode Pokemon}
+   */
+  getTargets(args: any[]): Pokemon[] {
+    const pokemon = args[0];
+
+    return pokemon instanceof Pokemon
+      ? pokemon.getOpponents()
+      : [];
+  }
+
+  /**
+   * Steals an item from a set of target Pokemon.
+   * This prioritizes high-tier held items when selecting the item to steal.
+   * @param args \[0\] The {@linkcode Pokemon} holding this item
+   * @returns true if an item was stolen; false otherwise.
+   */
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
-    const opponents = pokemon.getOpponents();
+    const opponents = this.getTargets(args);
 
     if (!opponents.length) {
       return false;
@@ -2221,6 +2249,11 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
   abstract getTransferMessage(pokemon: Pokemon, targetPokemon: Pokemon, item: ModifierTypes.ModifierType): string;
 }
 
+/**
+ * Modifier for held items that steal items from the enemy at the end of
+ * each turn.
+ * @see {@linkcode modifierTypes[MINI_BLACK_HOLE]}
+ */
 export class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
   constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
     super(type, pokemonId, stackCount);
@@ -2243,7 +2276,7 @@ export class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
   }
 
   getTransferMessage(pokemon: Pokemon, targetPokemon: Pokemon, item: ModifierTypes.ModifierType): string {
-    return getPokemonMessage(targetPokemon, `'s ${item.name} was absorbed\nby ${pokemon.name}'s ${this.type.name}!`);
+    return i18next.t("modifier:turnHeldItemTransferApply", { pokemonNameWithAffix: getPokemonNameWithAffix(targetPokemon), itemName: item.name, pokemonName: pokemon.name, typeName: this.type.name });
   }
 
   getMaxHeldItemCount(pokemon: Pokemon): integer {
@@ -2251,6 +2284,12 @@ export class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
   }
 }
 
+/**
+ * Modifier for held items that add a chance to steal items from the target of a
+ * successful attack.
+ * @see {@linkcode modifierTypes[GRIP_CLAW]}
+ * @see {@linkcode HeldItemTransferModifier}
+ */
 export class ContactHeldItemTransferChanceModifier extends HeldItemTransferModifier {
   private chance: number;
 
@@ -2258,6 +2297,20 @@ export class ContactHeldItemTransferChanceModifier extends HeldItemTransferModif
     super(type, pokemonId, stackCount);
 
     this.chance = chancePercent / 100;
+  }
+
+  /**
+   * Determines the target to steal items from when this applies.
+   * @param args\[0\] The {@linkcode Pokemon} holding this item
+   * @param args\[1\] The {@linkcode Pokemon} the holder is targeting with an attack
+   * @returns The target (args[1]) stored in array format for use in {@linkcode HeldItemTransferModifier.apply}
+   */
+  getTargets(args: any[]): Pokemon[] {
+    const target = args[1];
+
+    return target instanceof Pokemon
+      ? [ target ]
+      : [];
   }
 
   matchType(modifier: Modifier): boolean {
@@ -2277,7 +2330,7 @@ export class ContactHeldItemTransferChanceModifier extends HeldItemTransferModif
   }
 
   getTransferMessage(pokemon: Pokemon, targetPokemon: Pokemon, item: ModifierTypes.ModifierType): string {
-    return getPokemonMessage(targetPokemon, `'s ${item.name} was snatched\nby ${pokemon.name}'s ${this.type.name}!`);
+    return i18next.t("modifier:contactHeldItemTransferApply", { pokemonNameWithAffix: getPokemonNameWithAffix(targetPokemon), itemName: item.name, pokemonName: pokemon.name, typeName: this.type.name });
   }
 
   getMaxHeldItemCount(pokemon: Pokemon): integer {
@@ -2435,7 +2488,7 @@ export class EnemyTurnHealModifier extends EnemyPersistentModifier {
     if (pokemon.getHpRatio() < 1) {
       const scene = pokemon.scene;
       scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.getBattlerIndex(),
-        Math.max(Math.floor(pokemon.getMaxHp() / (100 / this.healPercent)) * this.stackCount, 1), getPokemonMessage(pokemon, "\nrestored some HP!"), true, false, false, false, true));
+        Math.max(Math.floor(pokemon.getMaxHp() / (100 / this.healPercent)) * this.stackCount, 1), i18next.t("modifier:enemyTurnHealApply", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), true, false, false, false, true));
       return true;
     }
 
@@ -2510,7 +2563,7 @@ export class EnemyStatusEffectHealChanceModifier extends EnemyPersistentModifier
   apply(args: any[]): boolean {
     const target = (args[0] as Pokemon);
     if (target.status && Phaser.Math.RND.realInRange(0, 1) < (this.chance * this.getStackCount())) {
-      target.scene.queueMessage(getPokemonMessage(target, getStatusEffectHealText(target.status.effect)));
+      target.scene.queueMessage(getStatusEffectHealText(target.status.effect, getPokemonNameWithAffix(target)));
       target.resetStatus();
       target.updateInfo();
       return true;

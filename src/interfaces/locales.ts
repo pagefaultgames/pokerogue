@@ -58,6 +58,20 @@ export interface BerryTranslationEntries {
     [key: string]: BerryTranslationEntry
   }
 
+export interface StatusEffectTranslationEntries {
+  [key: string]: StatusEffectTranslationEntry
+}
+
+export interface StatusEffectTranslationEntry {
+  name: string,
+  obtain: string,
+  obtainSource: string,
+  activation: string,
+  overlap: string,
+  heal: string
+  description: string,
+}
+
 export interface AchievementTranslationEntry {
     name?: string,
     description?: string,
