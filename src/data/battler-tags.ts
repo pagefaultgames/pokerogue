@@ -1579,8 +1579,6 @@ export class IceFaceTag extends BattlerTag {
  * - Simple was active when using Spit Up, doubling the decreases from removing stacks.
  *
  * Thus, removing the stacks with Spit Up decreases the pokemon's DEF by 4 stages, and SPDEF by 2 stages.
- *
- * TODO - localize message displayed on adding a stack.
  */
 export class StockpilingTag extends BattlerTag {
   public stockpiledCount: number = 0;
@@ -1627,8 +1625,10 @@ export class StockpilingTag extends BattlerTag {
     if (this.stockpiledCount < 3) {
       this.stockpiledCount++;
 
-      // TODO - localization
-      pokemon.scene.queueMessage(`${pokemon.name} stockpiled ${this.stockpiledCount}!`);
+      pokemon.scene.queueMessage(i18next.t("battle:battlerTagsStockpilingOnAdd", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+        stockpiledCount: this.stockpiledCount
+      }));
 
       // Attempt to increase DEF and SPDEF by one stage, keeping track of successful changes.
       pokemon.scene.phaseQueue.unshift(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.SPDEF, BattleStat.DEF], 1, true, false, true, this.onStatsChanged));
