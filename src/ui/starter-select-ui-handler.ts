@@ -1023,7 +1023,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const onScreenCurrentRow = Math.floor((this.cursor - onScreenFirstIndex) / 9);
 
 
-    console.log("this.cursor: ", this.cursor, "this.scrollCursor" , this.scrollCursor, "numberOfStarters: ", numberOfStarters, "numOfRows: ", numOfRows, "currentRow: ", currentRow, "onScreenFirstIndex: ", onScreenFirstIndex, "onScreenLastIndex: ", onScreenLastIndex, "onScreenNumberOfStarters: ", onScreenNumberOfStarters, "onScreenNumberOfRow: ", onScreenNumberOfRows, "onScreenCurrentRow: ", onScreenCurrentRow);
+    // console.log("this.cursor: ", this.cursor, "this.scrollCursor" , this.scrollCursor, "numberOfStarters: ", numberOfStarters, "numOfRows: ", numOfRows, "currentRow: ", currentRow, "onScreenFirstIndex: ", onScreenFirstIndex, "onScreenLastIndex: ", onScreenLastIndex, "onScreenNumberOfStarters: ", onScreenNumberOfStarters, "onScreenNumberOfRow: ", onScreenNumberOfRows, "onScreenCurrentRow: ", onScreenCurrentRow);
 
     const ui = this.getUi();
 
@@ -1160,7 +1160,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         if (!this.speciesStarterDexEntry?.caughtAttr) {
           error = true;
         } else if (this.starterSpecies.length < 6) { // checks to see you have less than 6 pokemon in your party
-          console.log("button: Action and caughtAttr and starterSpecies.length < 6");
           const ui = this.getUi();
           let options = [];
 
@@ -1180,14 +1179,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           const currentPartyValue = this.starterSpecies.map(s => s.generation).reduce((total: integer, gen: integer, i: integer) => total += this.scene.gameData.getSpeciesStarterValue(this.starterSpecies[i].speciesId), 0);
           
           const newCost = this.scene.gameData.getSpeciesStarterValue(species.speciesId);
-          console.log("currentPartyValue: ", currentPartyValue, "newCost: ", newCost, "this.getValueLimit(): ", this.getValueLimit());
           if (!isDupe && isValidForChallenge.value && currentPartyValue + newCost <= this.getValueLimit()) { // this checks to make sure the pokemon doesn't exist in your party, it's valid for the challenge and that it won't go over the cost limit; if it meets all these criteria it will add it to your party
             options = [
               {
                 label: i18next.t("starterSelectUiHandler:addToParty"),
                 handler: () => {
                   ui.setMode(Mode.STARTER_SELECT);
-                  console.log("button: Action and addToParty, isValidForChallenge.value: ", isValidForChallenge.value, "pokemonSpecies: ", species, "this.scene.gameData.getSpeciesStarterValue(pokemonSpecies.speciesId): ", this.scene.gameData.getSpeciesStarterValue(species.speciesId));
                   if (!isDupe && isValidForChallenge.value && this.tryUpdateValue(this.scene.gameData.getSpeciesStarterValue(species.speciesId), true)) {
                     this.addToParty(species);
                     ui.playSelect();
@@ -1707,6 +1704,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 if (onScreenCurrentRow >= onScreenNumberOfRows - 1) { // the last row will always go to the starter button
                   this.cursorObj.setVisible(false);
                   this.startCursorObj.setVisible(true);
+                  success = true;
                 } else { 
                   // set starterIconsCursorindex to the closest pokemon in the party
                   this.starterIconsCursorIndex = Math.min(this.starterSpecies.length - 1, Math.max(onScreenCurrentRow-2,0));
@@ -1737,6 +1735,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 if (onScreenCurrentRow >= onScreenNumberOfRows - 1) { // the last row will always go to the starter button
                   this.cursorObj.setVisible(false);
                   this.startCursorObj.setVisible(true);
+                  success = true;
                 } else { 
                   // set starterIconsCursorindex to the closest pokemon in the party
                   this.starterIconsCursorIndex = Math.min(this.starterSpecies.length - 1, Math.max(onScreenCurrentRow-2,0));
@@ -1938,6 +1937,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.starterContainers[g].forEach(container => {
         container.setVisible(false);
 
+        this.updateStarterValueLabel(container);
         // First, ensure you have the caught attributes for the species else default to bigint 0
         const caughtVariants = this.scene.gameData.dexData[container.species.speciesId]?.caughtAttr || BigInt(0);
 
@@ -1991,7 +1991,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       default:
         break;
       case 0:
-        return -sort.dir;
+        return (a.species.speciesId - b.species.speciesId) * -sort.dir;
       case 1:
         return (a.cost - b.cost) * -sort.dir;
       case 2:
