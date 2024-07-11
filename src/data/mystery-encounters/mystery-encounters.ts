@@ -119,7 +119,6 @@ export const CIVILIZATION_ENCOUNTER_BIOMES = [
 
 export const allMysteryEncounters: { [encounterType: number]: MysteryEncounter } = {};
 
-// TO ENABLE AN ENCOUNTER IN ALL BIOMES, DO NOT SPECIFY IN ANY OF THESE LISTS/MAPS
 
 const extremeBiomeEncounters: MysteryEncounterType[] = [];
 
@@ -136,6 +135,10 @@ const civilizationBiomeEncounters: MysteryEncounterType[] = [
   MysteryEncounterType.DEPARTMENT_STORE_SALE
 ];
 
+
+/**
+ * To add an encounter to every biome possible, use this array
+ */
 const anyBiomeEncounters: MysteryEncounterType[] = [
   MysteryEncounterType.FIGHT_OR_FLIGHT,
   MysteryEncounterType.DARK_DEAL,
@@ -143,7 +146,13 @@ const anyBiomeEncounters: MysteryEncounterType[] = [
   MysteryEncounterType.TRAINING_SESSION
 ];
 
-// Add MysteryEncounterType to biomes to enable it exclusively for those biomes
+/**
+ * ENCOUNTER BIOME MAPPING
+ * To add an Encounter to a biome group, instead of cluttering the map, use the biome group arrays above
+ *
+ * Adding specific Encounters to the mysteryEncountersByBiome map is for specific cases and special circumstances
+ * that biome groups do not cover
+ */
 export const mysteryEncountersByBiome = new Map<Biome, MysteryEncounterType[]>([
   [Biome.TOWN, []],
   [Biome.PLAINS, []],
@@ -192,7 +201,7 @@ export const mysteryEncountersByBiome = new Map<Biome, MysteryEncounterType[]>([
 export function initMysteryEncounters() {
   allMysteryEncounters[MysteryEncounterType.MYSTERIOUS_CHALLENGERS] = MysteriousChallengersEncounter;
   allMysteryEncounters[MysteryEncounterType.MYSTERIOUS_CHEST] = MysteriousChestEncounter;
-  allMysteryEncounters[MysteryEncounterType.DARK_DEAL] = DarkDealEncounter; // TODO: move to HUMAN if we add an ANY biome ROGUE tier encounter
+  allMysteryEncounters[MysteryEncounterType.DARK_DEAL] = DarkDealEncounter;
   allMysteryEncounters[MysteryEncounterType.FIGHT_OR_FLIGHT] = FightOrFlightEncounter;
   allMysteryEncounters[MysteryEncounterType.TRAINING_SESSION] = TrainingSessionEncounter;
   allMysteryEncounters[MysteryEncounterType.SLEEPING_SNORLAX] = SleepingSnorlaxEncounter;

@@ -325,6 +325,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
       let text;
       if (this.filteredEncounterOptions[i].hasRequirements() && this.optionsMeetsReqs[i]) {
         // Options with special requirements that are met are automatically colored green
+        // In cases where isDisabledOnRequirementsNotMet = false and requirements are not met, option will not be auto-colored
         text = getEncounterText(this.scene, optionDialogue.buttonLabel, TextStyle.SUMMARY_GREEN);
       } else {
         text = getEncounterText(this.scene, optionDialogue.buttonLabel, optionDialogue.style ? optionDialogue.style : TextStyle.WINDOW);

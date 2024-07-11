@@ -108,7 +108,6 @@ export const mysteryEncounter: SimpleTranslationEntries = {
   "field_trip_title": "Field Trip",
   "field_trip_description": "A teacher is requesting a move demonstration from a Pokémon. Depending on the move you choose, she might have something useful for you in exchange.",
   "field_trip_query": "Which move category will you show off?",
-  // "field_trip_invalid_selection": "Pokémon doesn't know that type of move.",
   "field_trip_option_1_label": "A Physical Move",
   "field_trip_option_1_tooltip": "(+) Physical Item Rewards",
   "field_trip_option_2_label": "A Special Move",
@@ -141,6 +140,7 @@ export const mysteryEncounter: SimpleTranslationEntries = {
   "mysterious_challengers_outro_win": "The mysterious challenger was defeated!",
 
   // Mystery Encounters -- Rare Tier
+
   "training_session_intro_message": "You've come across some\ntraining tools and supplies.",
   "training_session_title": "Training Session",
   "training_session_description": "These supplies look like they could be used to train a member of your party! There are a few ways you could train your Pokémon, by battling against it with the rest of your team.",
@@ -173,8 +173,8 @@ export const mysteryEncounter: SimpleTranslationEntries = {
   "dark_deal_title": "Dark Deal",
   "dark_deal_description": "The disturbing fellow holds up some Pokéballs.\n\"I'll make it worth your while! You can have these strong Pokéballs as payment, All I need is a Pokémon from your team! Hehe...\"",
   "dark_deal_query": "What will you do?",
-  "dark_deal_option_1_label": "Accept", // Give player 10 rogue balls. Remove a random Pokémon from player's party. Fight a legendary Pokémon as a boss
-  "dark_deal_option_1_tooltip": "(+) 5 Rogue Balls\n(?) Enhance a Random Pokémon", // Give player 10 rogue balls. Remove a random Pokémon from player's party. Fight a legendary Pokémon as a boss
+  "dark_deal_option_1_label": "Accept",
+  "dark_deal_option_1_tooltip": "(+) 5 Rogue Balls\n(?) Enhance a Random Pokémon",
   "dark_deal_option_2_label": "Refuse",
   "dark_deal_option_2_tooltip": "(-) No Rewards",
   "dark_deal_option_1_selected": `Let's see, that @ec{pokeName} will do nicely!
@@ -206,6 +206,5 @@ export const mysteryEncounter: SimpleTranslationEntries = {
   $But on the bright side, the Snorlax left something behind...
   $@s{item_fanfare}You gained a Berry!`,
   "sleeping_snorlax_option_3_good_result": "Your @ec{option3PrimaryName} uses @ec{option3PrimaryMove}! @s{item_fanfare}It steals Leftovers off the sleeping Snorlax and you make out like bandits!",
-  // "sleeping_snorlax_outro_win": "The mysterious challengers were defeated!",
 
 } as const;
