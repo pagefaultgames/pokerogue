@@ -38,7 +38,7 @@ describe("Moves - Hard Press", () => {
     await game.startBattle([Species.GRAVELER]);
     const moveToBeUsed = allMoves[Moves.HARD_PRESS];
 
-    game.doAttack(getMovePosition(game.scene, 0, moveToBeUsed));
+    game.doAttack(getMovePosition(game.scene, 0, Moves.HARD_PRESS));
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     const enemy = game.scene.getEnemyPokemon();
