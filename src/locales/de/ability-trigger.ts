@@ -27,7 +27,7 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "intimidateImmunity": "{{abilityName}} von {{pokemonNameWithAffix}} verhindert den Effekt von Bedroher!",
   "postSummonAllyHeal": "{{pokemonNameWithAffix}} trinkt den von {{pokemonName}} zubereiteten Tee!",
   "postSummonClearAllyStats": "Die Statusveränderungen von {{pokemonNameWithAffix}} wurden aufgehoben!",
-  "postSummonTransform": "{{pokemonNameWithAffix}} verwandelt sich in ${targetName}!",
+  "postSummonTransform": "{{pokemonNameWithAffix}} verwandelt sich in {{targetName}}!",
   "protectStat": "{{abilityName}} von {{pokemonNameWithAffix}} verhindert das der Statuswert {{statName}} gesenkt wird!",
   "statusEffectImmunityWithName": "{{abilityName}} von {{pokemonNameWithAffix}} verhindert {{statusEffectName}}!",
   "statusEffectImmunity": "{{abilityName}} von {{pokemonNameWithAffix}} verhindert Statusprobleme",
