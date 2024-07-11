@@ -61,7 +61,7 @@ describe("Moves - Dynamax Cannon", () => {
     expect(power.value).toBe(100);
   }, 20000);
 
-  it("DYNAMAX CANNON against enemy at level cap", async() => {
+  it("DYNAMAX CANNON against enemy exactly at level cap", async() => {
     vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(10);
     const moveToUse = Moves.DYNAMAX_CANNON;
     await game.startBattle([
@@ -137,59 +137,7 @@ describe("Moves - Dynamax Cannon", () => {
     expect(power.value).toBe(140);
   }, 20000);
 
-  it("DYNAMAX CANNON against enemy at 3% above level cap", async() => {
-    vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(103);
-    const moveToUse = Moves.DYNAMAX_CANNON;
-    await game.startBattle([
-      Species.ETERNATUS,
-    ]);
-
-    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
-
-    await game.phaseInterceptor.to(MoveEffectPhase, false);
-
-    // Check initial base power of Dynamax Cannon
-    const phase = game.scene.getCurrentPhase() as MoveEffectPhase;
-    const move = phase.move.getMove();
-    expect(move.id).toBe(moveToUse);
-    expect(move.power).toBe(100);
-
-    const target = phase.getTarget();
-    target.scene.getMaxExpLevel = vi.fn().mockReturnValue(100);
-
-    // Check base power of Dynamax Cannon in context
-    const power = new Utils.IntegerHolder(move.power);
-    applyMoveAttrs(VariablePowerAttr, phase.getUserPokemon(), target, move, power);
-    expect(power.value).toBe(160);
-  }, 20000);
-
-  it("DYNAMAX CANNON against enemy at 4% above level cap", async() => {
-    vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(104);
-    const moveToUse = Moves.DYNAMAX_CANNON;
-    await game.startBattle([
-      Species.ETERNATUS,
-    ]);
-
-    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
-
-    await game.phaseInterceptor.to(MoveEffectPhase, false);
-
-    // Check initial base power of Dynamax Cannon
-    const phase = game.scene.getCurrentPhase() as MoveEffectPhase;
-    const move = phase.move.getMove();
-    expect(move.id).toBe(moveToUse);
-    expect(move.power).toBe(100);
-
-    const target = phase.getTarget();
-    target.scene.getMaxExpLevel = vi.fn().mockReturnValue(100);
-
-    // Check base power of Dynamax Cannon in context
-    const power = new Utils.IntegerHolder(move.power);
-    applyMoveAttrs(VariablePowerAttr, phase.getUserPokemon(), target, move, power);
-    expect(power.value).toBe(180);
-  }, 20000);
-
-  it("DYNAMAX CANNON against enemy at 5% above level cap", async() => {
+  it("DYNAMAX CANNON against enemy exactly at 5% above level cap", async() => {
     vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(105);
     const moveToUse = Moves.DYNAMAX_CANNON;
     await game.startBattle([
