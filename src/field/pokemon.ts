@@ -1771,7 +1771,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     case MoveCategory.PHYSICAL:
     case MoveCategory.SPECIAL:
       const isPhysical = moveCategory === MoveCategory.PHYSICAL;
-      const power = move.calculateMovePower(source, this);
+      const power = move.calculatePower(source, this);
       const sourceTeraType = source.getTeraType();
 
       if (!typeless) {

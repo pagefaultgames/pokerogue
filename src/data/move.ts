@@ -663,7 +663,7 @@ export default class Move implements Localizable {
    * @param target {@linkcode Pokemon} The move being used.
    * @returns The calculated power of the move.
    */
-  calculateMovePower(source: Pokemon, target: Pokemon): number {
+  calculatePower(source: Pokemon, target: Pokemon): number {
     const power = new Utils.NumberHolder(this.power);
 
     const typeChangeMovePowerMultiplier = new Utils.NumberHolder(1);
