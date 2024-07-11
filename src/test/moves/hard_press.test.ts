@@ -9,9 +9,7 @@ import {
 import { Moves } from "#enums/moves";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
-import { NumberHolder } from "#app/utils.js";
 import Move from "#app/data/move.js";
-import Pokemon from "#app/field/pokemon.js";
 import { allMoves, OpponentHighHpPowerAttr } from "#app/data/move.js";
 
 describe("Moves - Hard Press", () => {
@@ -44,31 +42,12 @@ describe("Moves - Hard Press", () => {
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     const enemy = game.scene.getEnemyPokemon();
-    const movePower = getMockedMovePower(enemy, game.scene.getPlayerPokemon(), moveToBeUsed);
+    const movePower = moveToBeUsed.calculatePower(game.scene.getPlayerPokemon(), enemy);
     const moveMaxBasePower = getMoveMaxBasePower(moveToBeUsed);
 
     expect(movePower).toBe(moveMaxBasePower * enemy.getHpRatio());
   });
 });
-
-/**
- * Calculates the mocked move power based on the attributes of the move and the opponent's high HP.
- *
- * @param defender - The defending Pokémon.
- * @param attacker - The attacking Pokémon.
- * @param move - The move being used.
- * @returns The calculated move power.
- */
-const getMockedMovePower = (defender: Pokemon, attacker: Pokemon, move: Move) => {
-  const powerHolder = new NumberHolder(move.power);
-
-  if (move.hasAttr(OpponentHighHpPowerAttr)) {
-    const attr = move.getAttrs(OpponentHighHpPowerAttr);
-    attr[0].apply(attacker, defender, move, [ powerHolder ]);
-  }
-
-  return powerHolder.value;
-};
 
 /**
  * Retrieves the maximum base power of a move based on its attributes.

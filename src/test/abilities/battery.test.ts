@@ -5,10 +5,10 @@ import * as overrides from "#app/overrides";
 import { Species } from "#enums/species";
 import { Moves } from "#enums/moves";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
-import Move, { allMoves, MoveCategory } from "#app/data/move.js";
+import { allMoves } from "#app/data/move.js";
 import { AllyMoveCategoryPowerBoostAbAttr } from "#app/data/ability.js";
-import { NumberHolder } from "#app/utils.js";
 import Pokemon from "#app/field/pokemon.js";
+import { Abilities } from "#app/enums/abilities.js";
 
 describe("Abilities - Battery", () => {
   let phaserGame: Phaser.Game;
@@ -27,6 +27,7 @@ describe("Abilities - Battery", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     vi.spyOn(overrides, "DOUBLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
     vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.ROCK_SLIDE, Moves.SPLASH, Moves.HEAT_WAVE]);
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
   });
@@ -41,11 +42,9 @@ describe("Abilities - Battery", () => {
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
     const multiplier = getAttrPowerMultiplier(game.scene.getPlayerField()[1]);
-    const mockedPower = getMockedMovePower(game.scene.getEnemyField()[0], game.scene.getPlayerField()[0], allMoves[moveToBeUsed]);
+    const movePower = allMoves[moveToBeUsed].calculatePower(game.scene.getPlayerField()[0], game.scene.getEnemyField()[0]);
 
-    expect(mockedPower).not.toBe(undefined);
-    expect(mockedPower).not.toBe(basePower);
-    expect(mockedPower).toBe(basePower * multiplier);
+    expect(movePower).toBe(basePower * multiplier);
   });
 
   it("does not raise the power of allies' non-special moves", async () => {
@@ -57,12 +56,9 @@ describe("Abilities - Battery", () => {
     game.doAttack(getMovePosition(game.scene, 0, moveToBeUsed));
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
-    const multiplier = getAttrPowerMultiplier(game.scene.getPlayerField()[1]);
-    const mockedPower = getMockedMovePower(game.scene.getEnemyField()[0], game.scene.getPlayerField()[0], allMoves[moveToBeUsed]);
+    const movePower = allMoves[moveToBeUsed].calculatePower(game.scene.getPlayerField()[0], game.scene.getEnemyField()[0]);
 
-    expect(mockedPower).not.toBe(undefined);
-    expect(mockedPower).toBe(basePower);
-    expect(mockedPower).not.toBe(basePower * multiplier);
+    expect(movePower).toBe(basePower);
   });
 
   it("does not raise the power of the ability owner's special moves", async () => {
@@ -74,38 +70,11 @@ describe("Abilities - Battery", () => {
     game.doAttack(getMovePosition(game.scene, 0, moveToBeUsed));
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
-    const multiplier = getAttrPowerMultiplier(game.scene.getPlayerField()[0]);
-    const mockedPower = getMockedMovePower(game.scene.getEnemyField()[0], game.scene.getPlayerField()[0], allMoves[moveToBeUsed]);
+    const movePower = allMoves[moveToBeUsed].calculatePower(game.scene.getPlayerField()[0], game.scene.getEnemyField()[0]);
 
-    expect(mockedPower).not.toBe(undefined);
-    expect(mockedPower).toBe(basePower);
-    expect(mockedPower).not.toBe(basePower * multiplier);
+    expect(movePower).toBe(basePower);
   });
 });
-
-/**
- * Calculates the mocked power of a move.
- * Note this does not consider other damage calculations
- * except the power multiplier from Battery.
- *
- * @param defender - The defending Pokémon.
- * @param attacker - The attacking Pokémon.
- * @param move - The move being used by the attacker.
- * @returns The adjusted power of the move.
- */
-const getMockedMovePower = (defender: Pokemon, attacker: Pokemon, move: Move) => {
-  const powerHolder = new NumberHolder(move.power);
-
-  /**
-   * @see AllyMoveCategoryPowerBoostAbAttr
-   */
-  if (attacker.getAlly().hasAbilityWithAttr(AllyMoveCategoryPowerBoostAbAttr)) {
-    const batteryInstance = new AllyMoveCategoryPowerBoostAbAttr([MoveCategory.SPECIAL], 1.3);
-    batteryInstance.applyPreAttack(attacker, false, defender, move, [ powerHolder ]);
-  }
-
-  return powerHolder.value;
-};
 
 /**
  * Retrieves the power multiplier from a Pokémon's ability attribute.

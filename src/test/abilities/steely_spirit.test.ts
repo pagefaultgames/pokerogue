@@ -5,11 +5,10 @@ import * as overrides from "#app/overrides";
 import { Species } from "#enums/species";
 import { Moves } from "#enums/moves";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
-import Pokemon, { PlayerPokemon } from "#app/field/pokemon.js";
-import Move, { allMoves } from "#app/data/move.js";
-import { NumberHolder } from "#app/utils.js";
-import { allAbilities, applyPreAttackAbAttrs, UserFieldMoveTypePowerBoostAbAttr } from "#app/data/ability.js";
+import { allMoves } from "#app/data/move.js";
+import { allAbilities } from "#app/data/ability.js";
 import { Abilities } from "#app/enums/abilities.js";
+import { SelectTargetPhase } from "#app/phases.js";
 
 describe("Abilities - Steely Spirit", () => {
   let phaserGame: Phaser.Game;
@@ -38,21 +37,25 @@ describe("Abilities - Steely Spirit", () => {
   it("increases Steel-type moves used by the user and its allies", async () => {
     await game.startBattle([Species.MAGIKARP, Species.PERRSERKER]);
     const perserrker = game.scene.getPlayerField()[1];
+    const enemyToCheck = game.scene.getEnemyField()[0];
 
     vi.spyOn(perserrker, "getAbility").mockReturnValue(allAbilities[Abilities.STEELY_SPIRIT]);
 
     expect(perserrker.hasAbility(Abilities.STEELY_SPIRIT)).toBe(true);
 
     game.doAttack(getMovePosition(game.scene, 0, moveToCheck));
+    await game.phaseInterceptor.to(SelectTargetPhase, false);
+    game.doSelectTarget(enemyToCheck.getBattlerIndex());
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
-    const mockedMovePower = getMockedMovePower(game.scene.getEnemyPokemon(), perserrker, allMoves[moveToCheck]);
+    const movePower = allMoves[moveToCheck].calculatePower(game.scene.getPlayerField()[0], enemyToCheck);
 
-    expect(mockedMovePower).toBe(allMoves[moveToCheck].power * steelySpiritMultiplier);
+    expect(movePower).toBe(allMoves[moveToCheck].power * steelySpiritMultiplier);
   });
 
   it("stacks if multiple users with this ability are on the field.", async () => {
     await game.startBattle([Species.PERRSERKER, Species.PERRSERKER]);
+    const enemyToCheck = game.scene.getEnemyField()[0];
 
     game.scene.getPlayerField().forEach(p => {
       vi.spyOn(p, "getAbility").mockReturnValue(allAbilities[Abilities.STEELY_SPIRIT]);
@@ -61,16 +64,19 @@ describe("Abilities - Steely Spirit", () => {
     expect(game.scene.getPlayerField().every(p => p.hasAbility(Abilities.STEELY_SPIRIT))).toBe(true);
 
     game.doAttack(getMovePosition(game.scene, 0, moveToCheck));
+    await game.phaseInterceptor.to(SelectTargetPhase, false);
+    game.doSelectTarget(enemyToCheck.getBattlerIndex());
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
-    const mockedMovePower = getMockedMovePower(game.scene.getEnemyPokemon(), game.scene.getPlayerPokemon(), allMoves[moveToCheck]);
+    const movePower = allMoves[moveToCheck].calculatePower(game.scene.getPlayerField()[0], enemyToCheck);
 
-    expect(mockedMovePower).toBe(allMoves[moveToCheck].power * Math.pow(steelySpiritMultiplier, 2));
+    expect(movePower).toBe(allMoves[moveToCheck].power * Math.pow(steelySpiritMultiplier, 2));
   });
 
   it("does not take effect when suppressed", async () => {
     await game.startBattle([Species.MAGIKARP, Species.PERRSERKER]);
     const perserrker = game.scene.getPlayerField()[1];
+    const enemyToCheck = game.scene.getEnemyField()[0];
 
     vi.spyOn(perserrker, "getAbility").mockReturnValue(allAbilities[Abilities.STEELY_SPIRIT]);
     expect(perserrker.hasAbility(Abilities.STEELY_SPIRIT)).toBe(true);
@@ -81,35 +87,12 @@ describe("Abilities - Steely Spirit", () => {
     expect(perserrker.summonData.abilitySuppressed).toBe(true);
 
     game.doAttack(getMovePosition(game.scene, 0, moveToCheck));
+    await game.phaseInterceptor.to(SelectTargetPhase, false);
+    game.doSelectTarget(enemyToCheck.getBattlerIndex());
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
-    const mockedMovePower = getMockedMovePower(game.scene.getEnemyPokemon(), perserrker, allMoves[moveToCheck]);
+    const movePower = allMoves[moveToCheck].calculatePower(game.scene.getPlayerField()[0], enemyToCheck);
 
-    expect(mockedMovePower).toBe(allMoves[moveToCheck].power);
+    expect(movePower).toBe(allMoves[moveToCheck].power);
   });
 });
-
-/**
- * Calculates the mocked power of a move.
- * Note this does not consider other damage calculations
- * except the power multiplier from Steely Spirit.
- *
- * @param defender - The defending Pokémon.
- * @param attacker - The attacking Pokémon.
- * @param move - The move being used by the attacker.
- * @returns The adjusted power of the move.
- */
-const getMockedMovePower = (defender: Pokemon, attacker: Pokemon, move: Move) => {
-  const powerHolder = new NumberHolder(move.power);
-
-  /**
-   * Check if pokemon has the specified ability and is in effect.
-   * See Pokemon.hasAbility {@linkcode Pokemon.hasAbility}
-   */
-  if (attacker.hasAbility(Abilities.STEELY_SPIRIT)) {
-    const alliedField: Pokemon[] = attacker instanceof PlayerPokemon ? attacker.scene.getPlayerField() : attacker.scene.getEnemyField();
-    alliedField.forEach(p => applyPreAttackAbAttrs(UserFieldMoveTypePowerBoostAbAttr, p, this, move, powerHolder));
-  }
-
-  return powerHolder.value;
-};

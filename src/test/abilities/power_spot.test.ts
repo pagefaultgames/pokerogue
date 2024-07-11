@@ -5,9 +5,8 @@ import * as overrides from "#app/overrides";
 import { Species } from "#enums/species";
 import { Moves } from "#enums/moves";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
-import Move, { allMoves, MoveCategory } from "#app/data/move.js";
+import { allMoves } from "#app/data/move.js";
 import { AllyMoveCategoryPowerBoostAbAttr } from "#app/data/ability.js";
-import { NumberHolder } from "#app/utils.js";
 import Pokemon from "#app/field/pokemon.js";
 
 describe("Abilities - Power Spot", () => {
@@ -41,11 +40,9 @@ describe("Abilities - Power Spot", () => {
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
     const multiplier = getAttrPowerMultiplier(game.scene.getPlayerField()[1]);
-    const mockedPower = getMockedMovePower(game.scene.getEnemyField()[0], game.scene.getPlayerField()[0], allMoves[moveToBeUsed]);
+    const movePower = allMoves[moveToBeUsed].calculatePower(game.scene.getPlayerField()[0], game.scene.getEnemyField()[0]);
 
-    expect(mockedPower).not.toBe(undefined);
-    expect(mockedPower).not.toBe(basePower);
-    expect(mockedPower).toBe(basePower * multiplier);
+    expect(movePower).toBe(basePower * multiplier);
   });
 
   it("raises the power of allies' physical moves by 30%", async () => {
@@ -58,11 +55,9 @@ describe("Abilities - Power Spot", () => {
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
     const multiplier = getAttrPowerMultiplier(game.scene.getPlayerField()[1]);
-    const mockedPower = getMockedMovePower(game.scene.getEnemyField()[0], game.scene.getPlayerField()[0], allMoves[moveToBeUsed]);
+    const movePower = allMoves[moveToBeUsed].calculatePower(game.scene.getPlayerField()[0], game.scene.getEnemyField()[0]);
 
-    expect(mockedPower).not.toBe(undefined);
-    expect(mockedPower).not.toBe(basePower);
-    expect(mockedPower).toBe(basePower * multiplier);
+    expect(movePower).toBe(basePower * multiplier);
   });
 
   it("does not raise the power of the ability owner's moves", async () => {
@@ -74,38 +69,11 @@ describe("Abilities - Power Spot", () => {
     game.doAttack(getMovePosition(game.scene, 0, moveToBeUsed));
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
-    const multiplier = getAttrPowerMultiplier(game.scene.getPlayerField()[0]);
-    const mockedPower = getMockedMovePower(game.scene.getEnemyField()[0], game.scene.getPlayerField()[0], allMoves[moveToBeUsed]);
+    const movePower = allMoves[moveToBeUsed].calculatePower(game.scene.getPlayerField()[0], game.scene.getEnemyField()[0]);
 
-    expect(mockedPower).not.toBe(undefined);
-    expect(mockedPower).toBe(basePower);
-    expect(mockedPower).not.toBe(basePower * multiplier);
+    expect(movePower).toBe(basePower);
   });
 });
-
-/**
- * Calculates the mocked power of a move.
- * Note this does not consider other damage calculations
- * except the power multiplier from Power Spot.
- *
- * @param defender - The defending Pokémon.
- * @param attacker - The attacking Pokémon.
- * @param move - The move being used by the attacker.
- * @returns The adjusted power of the move.
- */
-const getMockedMovePower = (defender: Pokemon, attacker: Pokemon, move: Move) => {
-  const powerHolder = new NumberHolder(move.power);
-
-  /**
-   * @see AllyMoveCategoryPowerBoostAbAttr
-   */
-  if (attacker.getAlly().hasAbilityWithAttr(AllyMoveCategoryPowerBoostAbAttr)) {
-    const powerSpotInstance = new AllyMoveCategoryPowerBoostAbAttr([MoveCategory.SPECIAL, MoveCategory.PHYSICAL], 1.3);
-    powerSpotInstance.applyPreAttack(attacker, false, defender, move, [ powerHolder ]);
-  }
-
-  return powerHolder.value;
-};
 
 /**
  * Retrieves the power multiplier from a Pokémon's ability attribute.
