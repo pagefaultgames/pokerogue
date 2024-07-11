@@ -25,6 +25,7 @@ import { gameStatsUiHandler } from "./game-stats-ui-handler";
 import { growth } from "./growth";
 import { menu } from "./menu";
 import { menuUiHandler } from "./menu-ui-handler";
+import { modifier } from "./modifier";
 import { modifierType } from "./modifier-type";
 import { move } from "./move";
 import { nature } from "./nature";
@@ -35,13 +36,15 @@ import { pokemonInfoContainer } from "./pokemon-info-container";
 import { saveSlotSelectUiHandler } from "./save-slot-select-ui-handler";
 import { splashMessages } from "./splash-messages";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
+import { statusEffect } from "./status-effect";
 import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
-import { weather } from "./weather";
+import { terrain, weather } from "./weather";
 import { partyUiHandler } from "./party-ui-handler";
-import { settings } from "#app/locales/es/settings.js";
-import { common } from "#app/locales/es/common.js";
+import { settings } from "./settings.js";
+import { common } from "./common.js";
+import { modifierSelectUiHandler } from "./modifier-select-ui-handler";
 
 export const esConfig = {
   ability: ability,
@@ -71,6 +74,7 @@ export const esConfig = {
   growth: growth,
   menu: menu,
   menuUiHandler: menuUiHandler,
+  modifier: modifier,
   modifierType: modifierType,
   move: move,
   nature: nature,
@@ -82,11 +86,14 @@ export const esConfig = {
   settings: settings,
   splashMessages: splashMessages,
   starterSelectUiHandler: starterSelectUiHandler,
+  statusEffect: statusEffect,
+  terrain: terrain,
   titles: titles,
   trainerClasses: trainerClasses,
   trainerNames: trainerNames,
   tutorial: tutorial,
   voucher: voucher,
   weather: weather,
-  partyUiHandler: partyUiHandler
+  partyUiHandler: partyUiHandler,
+  modifierSelectUiHandler: modifierSelectUiHandler
 };

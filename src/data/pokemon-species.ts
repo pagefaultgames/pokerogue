@@ -319,6 +319,7 @@ export abstract class PokemonSpeciesForm {
     case Species.UNFEZANT:
     case Species.FRILLISH:
     case Species.JELLICENT:
+    case Species.PYROAR:
       ret += female ? "-f" : "";
       break;
     }
@@ -778,7 +779,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
   }
 
   // This could definitely be written better and more accurate to the getSpeciesForLevel logic, but it is only for generating movesets for evolved Pokemon
-  getSimulatedEvolutionChain(currentLevel: integer, forTrainer: boolean = false, isBoss: boolean = false, player: boolean = false) {
+  getSimulatedEvolutionChain(currentLevel: integer, forTrainer: boolean = false, isBoss: boolean = false, player: boolean = false): [Species, integer][] {
     const ret = [];
     if (pokemonPrevolutions.hasOwnProperty(this.speciesId)) {
       const prevolutionLevels = this.getPrevolutionLevels().reverse();
@@ -2157,7 +2158,7 @@ export function initSpecies() {
     new PokemonSpecies(Species.TURTONATOR, 7, false, false, false, "Blast Turtle Pokémon", Type.FIRE, Type.DRAGON, 2, 212, Abilities.SHELL_ARMOR, Abilities.NONE, Abilities.NONE, 485, 60, 78, 135, 91, 85, 36, 70, 50, 170, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.TOGEDEMARU, 7, false, false, false, "Roly-Poly Pokémon", Type.ELECTRIC, Type.STEEL, 0.3, 3.3, Abilities.IRON_BARBS, Abilities.LIGHTNING_ROD, Abilities.STURDY, 435, 65, 98, 63, 40, 73, 96, 180, 50, 152, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.MIMIKYU, 7, false, false, false, "Disguise Pokémon", Type.GHOST, Type.FAIRY, 0.2, 0.7, Abilities.DISGUISE, Abilities.NONE, Abilities.NONE, 476, 55, 90, 80, 50, 105, 96, 45, 50, 167, GrowthRate.MEDIUM_FAST, 50, false, false,
-      new PokemonForm("Disguised Form", "disguised", Type.GHOST, Type.FAIRY, 0.2, 0.7, Abilities.DISGUISE, Abilities.NONE, Abilities.NONE, 476, 55, 90, 80, 50, 105, 96, 45, 50, 167, false, "", true),
+      new PokemonForm("Disguised Form", "disguised", Type.GHOST, Type.FAIRY, 0.2, 0.7, Abilities.DISGUISE, Abilities.NONE, Abilities.NONE, 476, 55, 90, 80, 50, 105, 96, 45, 50, 167, false, null, true),
       new PokemonForm("Busted Form", "busted", Type.GHOST, Type.FAIRY, 0.2, 0.7, Abilities.DISGUISE, Abilities.NONE, Abilities.NONE, 476, 55, 90, 80, 50, 105, 96, 45, 50, 167),
     ),
     new PokemonSpecies(Species.BRUXISH, 7, false, false, false, "Gnash Teeth Pokémon", Type.WATER, Type.PSYCHIC, 0.9, 19, Abilities.DAZZLING, Abilities.STRONG_JAW, Abilities.WONDER_SKIN, 475, 68, 105, 70, 70, 70, 92, 80, 70, 166, GrowthRate.MEDIUM_FAST, 50, false),

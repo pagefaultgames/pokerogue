@@ -13,6 +13,7 @@ import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
+import i18next from "#app/plugins/i18n";
 
 export enum BattleType {
     WILD,
@@ -173,7 +174,10 @@ export default class Battle {
 
     scene.addMoney(moneyAmount.value);
 
-    scene.queueMessage(`You picked up ₽${moneyAmount.value.toLocaleString("en-US")}!`, null, true);
+    const userLocale = navigator.language || "en-US";
+    const formattedMoneyAmount = moneyAmount.value.toLocaleString(userLocale);
+    const message = i18next.t("battle:moneyPickedUp", { moneyAmount: formattedMoneyAmount });
+    scene.queueMessage(message, null, true);
 
     scene.currentBattle.moneyScattered = 0;
   }
@@ -310,6 +314,9 @@ export default class Battle {
           }
           if (pokemon.species.speciesId === Species.WO_CHIEN || pokemon.species.speciesId === Species.CHIEN_PAO || pokemon.species.speciesId === Species.TING_LU || pokemon.species.speciesId === Species.CHI_YU) {
             return "battle_legendary_ruinous";
+          }
+          if (pokemon.species.speciesId === Species.KORAIDON || pokemon.species.speciesId === Species.MIRAIDON) {
+            return "battle_legendary_kor_mir";
           }
           if (pokemon.species.speciesId === Species.OKIDOGI || pokemon.species.speciesId === Species.MUNKIDORI || pokemon.species.speciesId === Species.FEZANDIPITI) {
             return "battle_legendary_loyal_three";
