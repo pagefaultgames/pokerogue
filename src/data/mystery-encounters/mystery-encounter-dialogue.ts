@@ -1,5 +1,3 @@
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { TrainingSessionDialogue } from "#app/data/mystery-encounters/dialogue/training-session-dialogue";
 import { TextStyle } from "#app/ui/text";
 
 export class TextDisplay {
@@ -77,5 +75,4 @@ export default class MysteryEncounterDialogue {
 export const allMysteryEncounterDialogue: { [encounterType: number]: MysteryEncounterDialogue } = {};
 
 export function initMysteryEncounterDialogue() {
-  allMysteryEncounterDialogue[MysteryEncounterType.TRAINING_SESSION] = TrainingSessionDialogue;
 }
