@@ -21,6 +21,9 @@ import IMysteryEncounter, {
 import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import { MoneyRequirement } from "../mystery-encounter-requirements";
 
+/** the i18n namespace for this encounter */
+const namespace = "mysteryEncounter:shady_vitamin_dealer";
+
 export const ShadyVitaminDealerEncounter: IMysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(
     MysteryEncounterType.SHADY_VITAMIN_DEALER
@@ -48,26 +51,25 @@ export const ShadyVitaminDealerEncounter: IMysteryEncounter =
     ])
     .withIntroDialogue([
       {
-        text: "mysteryEncounter:shady_vitamin_dealer_intro_message",
+        text: `${namespace}_intro_message`,
       },
       {
-        text: "mysteryEncounter:shady_vitamin_dealer_intro_dialogue",
-        speaker: "mysteryEncounter:shady_vitamin_dealer_speaker",
+        text: `${namespace}_intro_dialogue`,
+        speaker: `${namespace}_speaker`,
       },
     ])
-    .withTitle("mysteryEncounter:shady_vitamin_dealer_title")
-    .withDescription("mysteryEncounter:shady_vitamin_dealer_description")
-    .withQuery("mysteryEncounter:shady_vitamin_dealer_query")
+    .withTitle(`${namespace}_title`)
+    .withDescription(`${namespace}_description`)
+    .withQuery(`${namespace}_query`)
     .withOption(
       new MysteryEncounterOptionBuilder()
         .withSceneMoneyRequirement(0, 2) // Wave scaling money multiplier of 2
         .withDialogue({
-          buttonLabel: "mysteryEncounter:shady_vitamin_dealer_option_1_label",
-          buttonTooltip:
-            "mysteryEncounter:shady_vitamin_dealer_option_1_tooltip",
+          buttonLabel: `${namespace}_option_1_label`,
+          buttonTooltip: `${namespace}_option_1_tooltip`,
           selected: [
             {
-              text: "mysteryEncounter:shady_vitamin_dealer_option_selected",
+              text: `${namespace}_option_selected`,
             },
           ],
         })
@@ -103,9 +105,7 @@ export const ShadyVitaminDealerEncounter: IMysteryEncounter =
               pokemon
             );
             if (!meetsReqs) {
-              return i18next.t(
-                "mysteryEncounter:shady_vitamin_dealer_invalid_selection"
-              );
+              return i18next.t(`${namespace}_invalid_selection`);
             }
 
             return null;
@@ -145,22 +145,13 @@ export const ShadyVitaminDealerEncounter: IMysteryEncounter =
           if (randSeedInt(10) < 8) {
             if (chosenPokemon.trySetStatus(StatusEffect.TOXIC)) {
               // Toxic applied
-              queueEncounterMessage(
-                scene,
-                "mysteryEncounter:shady_vitamin_dealer_bad_poison"
-              );
+              queueEncounterMessage(scene, `${namespace}_bad_poison`);
             } else {
               // Pokemon immune or something else prevents status
-              queueEncounterMessage(
-                scene,
-                "mysteryEncounter:shady_vitamin_dealer_damage_only"
-              );
+              queueEncounterMessage(scene, `${namespace}_damage_only`);
             }
           } else {
-            queueEncounterMessage(
-              scene,
-              "mysteryEncounter:shady_vitamin_dealer_damage_only"
-            );
+            queueEncounterMessage(scene, `${namespace}_damage_only`);
           }
 
           setEncounterExp(scene, [chosenPokemon.id], 100);
@@ -172,12 +163,11 @@ export const ShadyVitaminDealerEncounter: IMysteryEncounter =
     .withOption(
       new MysteryEncounterOptionBuilder()
         .withDialogue({
-          buttonLabel: "mysteryEncounter:shady_vitamin_dealer_option_2_label",
-          buttonTooltip:
-            "mysteryEncounter:shady_vitamin_dealer_option_2_tooltip",
+          buttonLabel: `${namespace}_option_2_label`,
+          buttonTooltip: `${namespace}_option_2_tooltip`,
           selected: [
             {
-              text: "mysteryEncounter:shady_vitamin_dealer_option_selected",
+              text: `${namespace}_option_selected`,
             },
           ],
         })
@@ -214,9 +204,7 @@ export const ShadyVitaminDealerEncounter: IMysteryEncounter =
               pokemon
             );
             if (!meetsReqs) {
-              return i18next.t(
-                "mysteryEncounter:shady_vitamin_dealer_invalid_selection"
-              );
+              return i18next.t(`${namespace}_invalid_selection`);
             }
 
             return null;
@@ -252,22 +240,13 @@ export const ShadyVitaminDealerEncounter: IMysteryEncounter =
           if (randSeedInt(10) < 2) {
             if (chosenPokemon.trySetStatus(StatusEffect.POISON)) {
               // Poison applied
-              queueEncounterMessage(
-                scene,
-                "mysteryEncounter:shady_vitamin_dealer_poison"
-              );
+              queueEncounterMessage(scene, `${namespace}_poison`);
             } else {
               // Pokemon immune or something else prevents status
-              queueEncounterMessage(
-                scene,
-                "mysteryEncounter:shady_vitamin_dealer_no_bad_effects"
-              );
+              queueEncounterMessage(scene, `${namespace}_no_bad_effects`);
             }
           } else {
-            queueEncounterMessage(
-              scene,
-              "mysteryEncounter:shady_vitamin_dealer_no_bad_effects"
-            );
+            queueEncounterMessage(scene, `${namespace}_no_bad_effects`);
           }
 
           setEncounterExp(scene, [chosenPokemon.id], 100);
@@ -278,8 +257,8 @@ export const ShadyVitaminDealerEncounter: IMysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: "mysteryEncounter:shady_vitamin_dealer_option_3_label",
-        buttonTooltip: "mysteryEncounter:shady_vitamin_dealer_option_3_tooltip",
+        buttonLabel: `${namespace}_option_3_label`,
+        buttonTooltip: `${namespace}_option_3_tooltip`,
       },
       async (scene: BattleScene) => {
         // Leave encounter with no rewards or exp
