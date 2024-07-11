@@ -1,5 +1,5 @@
 import {
-  leaveEncounterWithoutBattle, setEncounterExp,
+  leaveEncounterWithoutBattle,
   setEncounterRewards,
 } from "#app/data/mystery-encounters/mystery-encounter-utils";
 import { modifierTypes } from "#app/modifier/modifier-type";
@@ -46,7 +46,6 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter = MysteryEncounterBu
       i++;
     }
 
-    setEncounterExp(scene, scene.getParty().map(p => p.id), 300);
     setEncounterRewards(scene, { guaranteedModifierTypeFuncs: modifiers, fillRemaining: false });
     leaveEncounterWithoutBattle(scene);
   })

@@ -2696,7 +2696,7 @@ export default class BattleScene extends SceneBase {
     encounter = availableEncounters[Utils.randSeedInt(availableEncounters.length)];
     // New encounter object to not dirty flags
     encounter = new MysteryEncounter(encounter);
-    encounter.meetsRequirements(this);
+    encounter.populateDialogueTokensFromRequirements(this);
     return encounter;
   }
 }
