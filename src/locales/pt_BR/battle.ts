@@ -88,6 +88,10 @@ export const battle: SimpleTranslationEntries = {
   "statWontGoAnyLower_one": "{{stats}} de {{pokemonNameWithAffix}} não vai mais diminuir!",
   "statWontGoAnyLower_other": "{{stats}} de {{pokemonNameWithAffix}} não vão mais diminuir!",
   "ppReduced": "O PP do movimento {{moveName}} de\n{{targetName}} foi reduzido em {{reduction}}!",
+  "retryBattle": "Você gostaria de tentar novamente desde o início da batalha?",
+  "unlockedSomething": "{{unlockedThing}}\nfoi desbloqueado.",
+  "congratulations": "Parabéns!",
+  "beatModeFirstTime": "{{speciesName}} venceu o Modo {{gameMode}} pela primeira vez!\nVocê recebeu {{newModifier}}!",
   "battlerTagsRechargingLapse": "{{pokemonNameWithAffix}} precisa\nrecarregar!",
   "battlerTagsTrappedOnAdd": "{{pokemonNameWithAffix}} não pode\nmais escapar!",
   "battlerTagsTrappedOnRemove": "{{pokemonNameWithAffix}} foi liberto\nde {{moveName}}!",
@@ -144,5 +148,5 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsSaltCuredOnAdd": "{{pokemonNameWithAffix}} está sendo curado com sal!",
   "battlerTagsSaltCuredLapse": "{{pokemonNameWithAffix}} foi ferido pelo {{moveName}}!",
   "battlerTagsCursedOnAdd": "{{pokemonNameWithAffix}} cortou seus PS pela metade e amaldiçoou {{pokemonName}}!",
-  "battlerTagsCursedLapse": "{{pokemonNameWithAffix}} foi ferido pelo Curse!"
+  "battlerTagsCursedLapse": "{{pokemonNameWithAffix}} foi ferido pelo Curse!",
 } as const;

@@ -53,7 +53,7 @@ import * as Overrides from "./overrides";
 import {InputsController} from "./inputs-controller";
 import {UiInputs} from "./ui-inputs";
 import { NewArenaEvent } from "./events/battle-scene";
-import ArenaFlyout from "./ui/arena-flyout";
+import { ArenaFlyout } from "./ui/arena-flyout";
 import { EaseType } from "#enums/ease-type";
 import { Abilities } from "#enums/abilities";
 import { BattleSpec } from "#enums/battle-spec";
