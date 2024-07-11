@@ -46,7 +46,7 @@ import { settings } from "./settings.js";
 import { common } from "./common.js";
 import { modifierSelectUiHandler } from "./modifier-select-ui-handler";
 
-export const esConfig = {
+export const esEsConfig = {
   ability: ability,
   abilityTriggers: abilityTriggers,
   battle: battle,
