@@ -582,7 +582,7 @@ export function setEncounterRewards(scene: BattleScene, customShopRewards?: Cust
  * Will initialize exp phases into the phase queue (these are in addition to any combat or other exp earned)
  * Exp Share and Exp Balance will still function as normal
  * @param scene - Battle Scene
- * @param participantIds - ids of party pokemon that get full exp value. Other party members will receive Exp Share amounts
+ * @param participantId - ids of party pokemon that get full exp value. Other party members will receive Exp Share amounts
  * @param baseExpValue - gives exp equivalent to a pokemon of the wave index's level.
  * Guidelines:
  * 36 - Sunkern (lowest in game)
@@ -595,7 +595,8 @@ export function setEncounterRewards(scene: BattleScene, customShopRewards?: Cust
  * 608 - Blissey (highest in game)
  * @param useWaveIndex - set to false when directly passing the the full exp value instead of baseExpValue
  */
-export function setEncounterExp(scene: BattleScene, participantIds: integer[], baseExpValue: number, useWaveIndex: boolean = true) {
+export function setEncounterExp(scene: BattleScene, participantId: integer | integer[], baseExpValue: number, useWaveIndex: boolean = true) {
+  const participantIds = Array.isArray(participantId) ? participantId : [participantId];
   scene.currentBattle.mysteryEncounter.doEncounterExp = (scene: BattleScene) => {
     const party = scene.getParty();
     const expShareModifier = scene.findModifier(m => m instanceof ExpShareModifier) as ExpShareModifier;
