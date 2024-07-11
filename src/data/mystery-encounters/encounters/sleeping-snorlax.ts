@@ -55,13 +55,13 @@ export const SleepingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuilde
     encounter.enemyPartyConfigs = [config];
     return true;
   })
-  .withOptionPhase(async (scene: BattleScene) => {
+  .withSimpleOption(async (scene: BattleScene) => {
     // Pick battle
     // TODO: do we want special rewards for this?
     // setCustomEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.LEFTOVERS], fillRemaining: true});
     await initBattleWithEnemyConfig(scene, scene.currentBattle.mysteryEncounter.enemyPartyConfigs[0]);
   })
-  .withOptionPhase(async (scene: BattleScene) => {
+  .withSimpleOption(async (scene: BattleScene) => {
     const instance = scene.currentBattle.mysteryEncounter;
     let roll: integer;
     scene.executeWithSeedOffset(() => {

@@ -29,7 +29,7 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter = MysteryEncounterBu
   ])
   // .withHideIntroVisuals(false)
   .withSceneWaveRangeRequirement(10, 100)
-  .withOptionPhase(async (scene: BattleScene) => {
+  .withSimpleOption(async (scene: BattleScene) => {
     // Choose TMs
     const modifiers = [];
     let i = 0;
@@ -49,7 +49,7 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter = MysteryEncounterBu
     setEncounterRewards(scene, { guaranteedModifierTypeFuncs: modifiers, fillRemaining: false });
     leaveEncounterWithoutBattle(scene);
   })
-  .withOptionPhase(async (scene: BattleScene) => {
+  .withSimpleOption(async (scene: BattleScene) => {
     // Choose Vitamins
     const modifiers = [];
     let i = 0;
@@ -67,7 +67,7 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter = MysteryEncounterBu
     setEncounterRewards(scene, { guaranteedModifierTypeFuncs: modifiers, fillRemaining: false });
     leaveEncounterWithoutBattle(scene);
   })
-  .withOptionPhase(async (scene: BattleScene) => {
+  .withSimpleOption(async (scene: BattleScene) => {
     // Choose X Items
     const modifiers = [];
     let i = 0;
@@ -85,7 +85,7 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter = MysteryEncounterBu
     setEncounterRewards(scene, { guaranteedModifierTypeFuncs: modifiers, fillRemaining: false });
     leaveEncounterWithoutBattle(scene);
   })
-  .withOptionPhase(async (scene: BattleScene) => {
+  .withSimpleOption(async (scene: BattleScene) => {
     // Choose Pokeballs
     const modifiers = [];
     let i = 0;

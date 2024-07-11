@@ -7,7 +7,8 @@ import MysteryEncounterIntroVisuals, { MysteryEncounterSpriteConfig } from "../.
 import * as Utils from "../../utils";
 import { StatusEffect } from "../status-effect";
 import MysteryEncounterDialogue, {
-  allMysteryEncounterDialogue
+  allMysteryEncounterDialogue,
+  OptionTextDisplay
 } from "./mystery-encounter-dialogue";
 import MysteryEncounterOption, { MysteryEncounterOptionBuilder, OptionPhaseCallback } from "./mystery-encounter-option";
 import {
@@ -136,9 +137,7 @@ export default class MysteryEncounter implements MysteryEncounter {
       Object.assign(this, encounter);
     }
     this.encounterTier = this.encounterTier ? this.encounterTier : MysteryEncounterTier.COMMON;
-    this.dialogue = Object.assign((this.dialogue ?? {}), allMysteryEncounterDialogue[this.encounterType]);
-    // this.dialogue = allMysteryEncounterDialogue[this.encounterType];
-    console.log(`${MysteryEncounterType[encounter.encounterType]} Encounter Dialogue:`, this.dialogue);
+    this.dialogue = Object.assign((this.dialogue ?? {}), allMysteryEncounterDialogue[this.encounterType] ?? {});
     this.encounterVariant = MysteryEncounterVariant.DEFAULT;
     this.requirements = this.requirements ? this.requirements : [];
     this.hideBattleIntroMessage = !isNullOrUndefined(this.hideBattleIntroMessage) ? this.hideBattleIntroMessage : false;
@@ -399,11 +398,12 @@ export class MysteryEncounterBuilder implements Partial<MysteryEncounter> {
    * Adds a streamlined option phase.
    * Only use if no pre-/post-options or condtions necessary.
    *
-   * @param callback - OptionPhaseCallback
+   * @param dialogue - {@linkcode OptionTextDisplay}
+   * @param callback - {@linkcode OptionPhaseCallback}
    * @returns
    */
-  withOptionPhase(callback: OptionPhaseCallback) {
-    return this.withOption(new MysteryEncounterOptionBuilder().withOptionPhase(callback).build());
+  withSimpleOption(dialogue: OptionTextDisplay, callback: OptionPhaseCallback) {
+    return this.withOption(new MysteryEncounterOptionBuilder().withDialogue(dialogue).withOptionPhase(callback).build());
   }
 
   /**
@@ -413,12 +413,10 @@ export class MysteryEncounterBuilder implements Partial<MysteryEncounter> {
    * @returns
    */
   withIntroSpriteConfigs(spriteConfigs: MysteryEncounterSpriteConfig[]): this & Pick<MysteryEncounter, "spriteConfigs"> {
-    console.debug("with intro sprite configs: ", spriteConfigs);
     return Object.assign(this, { spriteConfigs: spriteConfigs });
   }
 
-  withIntroDialogue(dialogue: MysteryEncounterDialogue["intro"] = []): this {
-    console.debug("with intro dialogue: ", dialogue);
+  withIntroDialogue(dialogue: MysteryEncounterDialogue["intro"] = []) {
     this.dialogue = {...this.dialogue, intro: dialogue };
     return this;
   }
@@ -579,6 +577,56 @@ export class MysteryEncounterBuilder implements Partial<MysteryEncounter> {
    */
   withHideIntroVisuals(hideIntroVisuals: boolean): this & Required<Pick<MysteryEncounter, "hideIntroVisuals">> {
     return Object.assign(this, { hideIntroVisuals: hideIntroVisuals });
+  }
+
+  withTitle(title: TemplateStringsArray | `mysteryEncounter:${string}`) {
+    const dialogue = this.dialogue ?? {};
+    const encounterOptionsDialogue = this.dialogue?.encounterOptionsDialogue ?? {};
+
+    this.dialogue = {
+      ...dialogue,
+      encounterOptionsDialogue: {
+        ...encounterOptionsDialogue,
+        title,
+      }
+    };
+
+    return this;
+  }
+
+  withDescription(description: TemplateStringsArray | `mysteryEncounter:${string}`) {
+    const dialogue = this.dialogue ?? {};
+    const encounterOptionsDialogue = this.dialogue?.encounterOptionsDialogue ?? {};
+
+    this.dialogue = {
+      ...dialogue,
+      encounterOptionsDialogue: {
+        ...encounterOptionsDialogue,
+        description,
+      }
+    };
+
+    return this;
+  }
+
+  withQuery(query: TemplateStringsArray | `mysteryEncounter:${string}`) {
+    const dialogue = this.dialogue ?? {};
+    const encounterOptionsDialogue = this.dialogue?.encounterOptionsDialogue ?? {};
+
+    this.dialogue = {
+      ...dialogue,
+      encounterOptionsDialogue: {
+        ...encounterOptionsDialogue,
+        query,
+      }
+    };
+
+    return this;
+  }
+
+  withOutroDialogue(dialogue: MysteryEncounterDialogue["outro"] = []) {
+    this.dialogue = {...this.dialogue, outro: dialogue };
+    return this;
   }
 
   build(this: MysteryEncounter) {

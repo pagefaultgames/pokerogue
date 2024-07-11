@@ -95,7 +95,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter = MysteryEncounter
 
     return true;
   })
-  .withOptionPhase(async (scene: BattleScene) => {
+  .withSimpleOption(async (scene: BattleScene) => {
     const encounter = scene.currentBattle.mysteryEncounter;
     // Spawn standard trainer battle with memory mushroom reward
     const config: EnemyPartyConfig = encounter.enemyPartyConfigs[0];
@@ -109,7 +109,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter = MysteryEncounter
     }, scene.currentBattle.waveIndex * 10);
     return ret;
   })
-  .withOptionPhase(async (scene: BattleScene) => {
+  .withSimpleOption(async (scene: BattleScene) => {
     const encounter = scene.currentBattle.mysteryEncounter;
     // Spawn hard fight with ULTRA/GREAT reward (can improve with luck)
     const config: EnemyPartyConfig = encounter.enemyPartyConfigs[1];
@@ -123,7 +123,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter = MysteryEncounter
     }, scene.currentBattle.waveIndex * 100);
     return ret;
   })
-  .withOptionPhase(async (scene: BattleScene) => {
+  .withSimpleOption(async (scene: BattleScene) => {
     const encounter = scene.currentBattle.mysteryEncounter;
     // Spawn brutal fight with ROGUE/ULTRA/GREAT reward (can improve with luck)
     const config: EnemyPartyConfig = encounter.enemyPartyConfigs[2];

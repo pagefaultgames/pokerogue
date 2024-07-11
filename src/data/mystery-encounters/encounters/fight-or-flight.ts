@@ -83,7 +83,7 @@ export const FightOrFlightEncounter: MysteryEncounter = MysteryEncounterBuilder
 
     return true;
   })
-  .withOptionPhase(async (scene: BattleScene) => {
+  .withSimpleOption(async (scene: BattleScene) => {
     // Pick battle
     const item = scene.currentBattle.mysteryEncounter.misc as ModifierTypeOption;
     setEncounterRewards(scene, { guaranteedModifierTypeOptions: [item], fillRemaining: false });
@@ -127,7 +127,7 @@ export const FightOrFlightEncounter: MysteryEncounter = MysteryEncounterBuilder
       }
     })
     .build())
-  .withOptionPhase(async (scene: BattleScene) => {
+  .withSimpleOption(async (scene: BattleScene) => {
     // Leave encounter with no rewards or exp
     leaveEncounterWithoutBattle(scene, true);
     return true;

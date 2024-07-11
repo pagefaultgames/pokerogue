@@ -424,12 +424,13 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     }
 
     const mysteryEncounter = this.scene.currentBattle.mysteryEncounter;
-    let text;
-    const option = mysteryEncounter.dialogue.encounterOptionsDialogue.options[cursor];
-    if (!this.optionsMeetsReqs[cursor] && this.filteredEncounterOptions[cursor].isDisabledOnRequirementsNotMet && option.disabledTooltip) {
-      text = getEncounterText(this.scene, option.disabledTooltip, TextStyle.TOOLTIP_CONTENT);
+    let text: string;
+    const option = this.filteredEncounterOptions[cursor];
+    const optionDialogue = option.dialogue ?? mysteryEncounter.dialogue.encounterOptionsDialogue.options[cursor];
+    if (!this.optionsMeetsReqs[cursor] && this.filteredEncounterOptions[cursor].isDisabledOnRequirementsNotMet && optionDialogue.disabledTooltip) {
+      text = getEncounterText(this.scene, optionDialogue.disabledTooltip, TextStyle.TOOLTIP_CONTENT);
     } else {
-      text = getEncounterText(this.scene, option.buttonTooltip, TextStyle.TOOLTIP_CONTENT);
+      text = getEncounterText(this.scene, optionDialogue.buttonTooltip, TextStyle.TOOLTIP_CONTENT);
     }
 
     // Auto-color options green/blue for good/bad by looking for (+)/(-)

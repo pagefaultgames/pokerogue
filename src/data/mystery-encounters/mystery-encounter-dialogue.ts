@@ -1,7 +1,6 @@
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { MysteriousChallengersDialogue } from "#app/data/mystery-encounters/dialogue/mysterious-challengers-dialogue";
 import { MysteriousChestDialogue } from "#app/data/mystery-encounters/dialogue/mysterious-chest-dialogue";
-import { DarkDealDialogue } from "#app/data/mystery-encounters/dialogue/dark-deal-dialogue";
 import { FightOrFlightDialogue } from "#app/data/mystery-encounters/dialogue/fight-or-flight-dialogue";
 import { TrainingSessionDialogue } from "#app/data/mystery-encounters/dialogue/training-session-dialogue";
 import { SleepingSnorlaxDialogue } from "./dialogue/sleeping-snorlax-dialogue";
@@ -26,15 +25,15 @@ export class OptionTextDisplay {
 }
 
 export class EncounterOptionsDialogue {
-  title: TemplateStringsArray | `mysteryEncounter:${string}`;
-  description: TemplateStringsArray | `mysteryEncounter:${string}`;
+  title?: TemplateStringsArray | `mysteryEncounter:${string}`;
+  description?: TemplateStringsArray | `mysteryEncounter:${string}`;
   query?: TemplateStringsArray | `mysteryEncounter:${string}`;
   options?: [...OptionTextDisplay[]]; // Options array with minimum 2 options
 }
 
 export default class MysteryEncounterDialogue {
   intro?: TextDisplay[];
-  encounterOptionsDialogue: EncounterOptionsDialogue;
+  encounterOptionsDialogue?: EncounterOptionsDialogue;
   outro?: TextDisplay[];
 }
 
@@ -87,7 +86,6 @@ export const allMysteryEncounterDialogue: { [encounterType: number]: MysteryEnco
 export function initMysteryEncounterDialogue() {
   allMysteryEncounterDialogue[MysteryEncounterType.MYSTERIOUS_CHALLENGERS] = MysteriousChallengersDialogue;
   allMysteryEncounterDialogue[MysteryEncounterType.MYSTERIOUS_CHEST] = MysteriousChestDialogue;
-  allMysteryEncounterDialogue[MysteryEncounterType.DARK_DEAL] = DarkDealDialogue;
   allMysteryEncounterDialogue[MysteryEncounterType.FIGHT_OR_FLIGHT] = FightOrFlightDialogue;
   allMysteryEncounterDialogue[MysteryEncounterType.TRAINING_SESSION] = TrainingSessionDialogue;
   allMysteryEncounterDialogue[MysteryEncounterType.SLEEPING_SNORLAX] = SleepingSnorlaxDialogue;

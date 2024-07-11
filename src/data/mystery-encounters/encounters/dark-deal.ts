@@ -98,6 +98,9 @@ export const DarkDealEncounter: MysteryEncounter =
     .withSceneWaveRangeRequirement(30, 180) // waves 30 to 180
     .withScenePartySizeRequirement(2, 6) // Must have at least 2 pokemon in party
     .withCatchAllowed(true)
+    .withTitle("mysteryEncounter:dark_deal_title")
+    .withDescription("mysteryEncounter:dark_deal_description")
+    .withQuery("mysteryEncounter:dark_deal_query")
     .withOption(
       new MysteryEncounterOptionBuilder()
         .withDialogue({
@@ -175,24 +178,27 @@ export const DarkDealEncounter: MysteryEncounter =
         })
         .build()
     )
-    .withOption(
-      new MysteryEncounterOptionBuilder()
-        .withDialogue({
-          buttonLabel: "mysteryEncounter:dark_deal_option_2_label",
-          buttonTooltip: "mysteryEncounter:dark_deal_option_2_tooltip",
-          selected: [
-            {
-              speaker: "mysteryEncounter:dark_deal_speaker",
-              text: "mysteryEncounter:dark_deal_option_2_selected",
-            },
-          ],
-        })
-        .withOptionPhase(async (scene: BattleScene) => {
-          // Leave encounter with no rewards or exp
+    .withSimpleOption(
+      {
+        buttonLabel: "mysteryEncounter:dark_deal_option_2_label",
+        buttonTooltip: "mysteryEncounter:dark_deal_option_2_tooltip",
+        selected: [
+          {
+            speaker: "mysteryEncounter:dark_deal_speaker",
+            text: "mysteryEncounter:dark_deal_option_2_selected",
+          },
+        ],
+      },
+      async (scene: BattleScene) => {
+        // Leave encounter with no rewards or exp
 
-          leaveEncounterWithoutBattle(scene, true);
-          return true;
-        })
-        .build()
+        leaveEncounterWithoutBattle(scene, true);
+        return true;
+      }
     )
+    .withOutroDialogue([
+      {
+        text: "mysteryEncounter:dark_deal_outro"
+      }
+    ])
     .build();

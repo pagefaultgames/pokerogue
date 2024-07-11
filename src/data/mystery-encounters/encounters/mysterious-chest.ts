@@ -85,7 +85,7 @@ export const MysteriousChestEncounter: MysteryEncounter = MysteryEncounterBuilde
     })
     .build()
   )
-  .withOptionPhase(async (scene: BattleScene) => {
+  .withSimpleOption(async (scene: BattleScene) => {
     // Leave encounter with no rewards or exp
     leaveEncounterWithoutBattle(scene, true);
     return true;
