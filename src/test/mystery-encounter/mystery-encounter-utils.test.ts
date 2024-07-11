@@ -10,7 +10,7 @@ import { initSceneWithoutEncounterPhase } from "#test/utils/gameManagerUtils";
 import { Species } from "#enums/species";
 import BattleScene from "#app/battle-scene";
 import { StatusEffect } from "#app/data/status-effect";
-import MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
+import IMysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 import { MessagePhase } from "#app/phases";
 import { getPokemonSpecies, speciesStarters } from "#app/data/pokemon-species";
 import { Type } from "#app/data/type";
@@ -273,7 +273,7 @@ describe("Mystery Encounter Utils", () => {
 
   describe("getTextWithEncounterDialogueTokens", () => {
     it("injects dialogue tokens and color styling", () => {
-      scene.currentBattle.mysteryEncounter = new MysteryEncounter(null);
+      scene.currentBattle.mysteryEncounter = new IMysteryEncounter(null);
       scene.currentBattle.mysteryEncounter.setDialogueToken("test", "value");
 
       const result = getEncounterText(scene, "mysteryEncounter:unit_test_dialogue");
@@ -281,7 +281,7 @@ describe("Mystery Encounter Utils", () => {
     });
 
     it("can perform nested dialogue token injection", () => {
-      scene.currentBattle.mysteryEncounter = new MysteryEncounter(null);
+      scene.currentBattle.mysteryEncounter = new IMysteryEncounter(null);
       scene.currentBattle.mysteryEncounter.setDialogueToken("test", "value");
       scene.currentBattle.mysteryEncounter.setDialogueToken("testvalue", "new");
 
@@ -292,7 +292,7 @@ describe("Mystery Encounter Utils", () => {
 
   describe("queueEncounterMessage", () => {
     it("queues a message with encounter dialogue tokens", async () => {
-      scene.currentBattle.mysteryEncounter = new MysteryEncounter(null);
+      scene.currentBattle.mysteryEncounter = new IMysteryEncounter(null);
       scene.currentBattle.mysteryEncounter.setDialogueToken("test", "value");
       const spy = vi.spyOn(game.scene, "queueMessage");
       const phaseSpy = vi.spyOn(game.scene, "unshiftPhase");
@@ -305,7 +305,7 @@ describe("Mystery Encounter Utils", () => {
 
   describe("showEncounterText", () => {
     it("showText with dialogue tokens", async () => {
-      scene.currentBattle.mysteryEncounter = new MysteryEncounter(null);
+      scene.currentBattle.mysteryEncounter = new IMysteryEncounter(null);
       scene.currentBattle.mysteryEncounter.setDialogueToken("test", "value");
       const spy = vi.spyOn(game.scene.ui, "showText");
 
@@ -316,7 +316,7 @@ describe("Mystery Encounter Utils", () => {
 
   describe("showEncounterDialogue", () => {
     it("showText with dialogue tokens", async () => {
-      scene.currentBattle.mysteryEncounter = new MysteryEncounter(null);
+      scene.currentBattle.mysteryEncounter = new IMysteryEncounter(null);
       scene.currentBattle.mysteryEncounter.setDialogueToken("test", "value");
       const spy = vi.spyOn(game.scene.ui, "showDialogue");
 

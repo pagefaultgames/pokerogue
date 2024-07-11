@@ -67,7 +67,7 @@ import { Species } from "#enums/species";
 import { UiTheme } from "#enums/ui-theme";
 import { TimedEventManager } from "#app/timed-event-manager.js";
 import i18next from "i18next";
-import MysteryEncounter, { MysteryEncounterTier, MysteryEncounterVariant } from "./data/mystery-encounters/mystery-encounter";
+import IMysteryEncounter, { MysteryEncounterTier, MysteryEncounterVariant } from "./data/mystery-encounters/mystery-encounter";
 import { mysteryEncountersByBiome, allMysteryEncounters, BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT, AVERAGE_ENCOUNTERS_PER_RUN_TARGET, WIGHT_INCREMENT_ON_SPAWN_MISS } from "./data/mystery-encounters/mystery-encounters";
 import { MysteryEncounterData } from "#app/data/mystery-encounters/mystery-encounter-data";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
@@ -216,7 +216,7 @@ export default class BattleScene extends SceneBase {
   public pokemonInfoContainer: PokemonInfoContainer;
   private party: PlayerPokemon[];
   public mysteryEncounterData: MysteryEncounterData = new MysteryEncounterData(null);
-  public lastMysteryEncounter: MysteryEncounter;
+  public lastMysteryEncounter: IMysteryEncounter;
   /** Combined Biome and Wave count text */
   private biomeWaveText: Phaser.GameObjects.Text;
   private moneyText: Phaser.GameObjects.Text;
@@ -1026,7 +1026,7 @@ export default class BattleScene extends SceneBase {
     }
   }
 
-  newBattle(waveIndex?: integer, battleType?: BattleType, trainerData?: TrainerData, double?: boolean, mysteryEncounter?: MysteryEncounter): Battle {
+  newBattle(waveIndex?: integer, battleType?: BattleType, trainerData?: TrainerData, double?: boolean, mysteryEncounter?: IMysteryEncounter): Battle {
     const _startingWave = Overrides.STARTING_WAVE_OVERRIDE || startingWave;
     const newWaveIndex = waveIndex || ((this.currentBattle?.waveIndex || (_startingWave - 1)) + 1);
     let newDouble: boolean;
@@ -2621,9 +2621,9 @@ export default class BattleScene extends SceneBase {
    * @param override - used to load session encounter when restarting game, etc.
    * @returns
    */
-  getMysteryEncounter(override: MysteryEncounter): MysteryEncounter {
+  getMysteryEncounter(override: IMysteryEncounter): IMysteryEncounter {
     // Loading override or session encounter
-    let encounter: MysteryEncounter;
+    let encounter: IMysteryEncounter;
     if (!isNullOrUndefined(Overrides.MYSTERY_ENCOUNTER_OVERRIDE) && allMysteryEncounters.hasOwnProperty(Overrides.MYSTERY_ENCOUNTER_OVERRIDE)) {
       encounter = allMysteryEncounters[Overrides.MYSTERY_ENCOUNTER_OVERRIDE];
     } else {
@@ -2645,7 +2645,7 @@ export default class BattleScene extends SceneBase {
     }
 
     if (encounter) {
-      encounter = new MysteryEncounter(encounter);
+      encounter = new IMysteryEncounter(encounter);
       encounter.populateDialogueTokensFromRequirements(this);
       return encounter;
     }
@@ -2674,7 +2674,7 @@ export default class BattleScene extends SceneBase {
       tier = Overrides.MYSTERY_ENCOUNTER_TIER_OVERRIDE;
     }
 
-    let availableEncounters: MysteryEncounter[] = [];
+    let availableEncounters: IMysteryEncounter[] = [];
     // New encounter will never be the same as the most recent encounter
     const previousEncounter = this.mysteryEncounterData.encounteredEvents?.length > 0 ? this.mysteryEncounterData.encounteredEvents[this.mysteryEncounterData.encounteredEvents.length - 1][0] : null;
     const biomeMysteryEncounters = mysteryEncountersByBiome.get(this.arena.biomeType);
@@ -2695,7 +2695,7 @@ export default class BattleScene extends SceneBase {
     }
     encounter = availableEncounters[Utils.randSeedInt(availableEncounters.length)];
     // New encounter object to not dirty flags
-    encounter = new MysteryEncounter(encounter);
+    encounter = new IMysteryEncounter(encounter);
     encounter.populateDialogueTokensFromRequirements(this);
     return encounter;
   }

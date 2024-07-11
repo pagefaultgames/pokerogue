@@ -15,7 +15,7 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import BattleScene from "../../../battle-scene";
 import * as Utils from "../../../utils";
-import MysteryEncounter, {
+import IMysteryEncounter, {
   MysteryEncounterBuilder,
   MysteryEncounterTier,
 } from "../mystery-encounter";
@@ -23,7 +23,7 @@ import MysteryEncounter, {
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:mysterious_challengers";
 
-export const MysteriousChallengersEncounter: MysteryEncounter =
+export const MysteriousChallengersEncounter: IMysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(
     MysteryEncounterType.MYSTERIOUS_CHALLENGERS
   )

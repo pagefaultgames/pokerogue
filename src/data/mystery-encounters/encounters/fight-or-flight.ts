@@ -23,7 +23,7 @@ import { randSeedInt } from "#app/utils";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "../../../battle-scene";
-import MysteryEncounter, {
+import IMysteryEncounter, {
   MysteryEncounterBuilder,
   MysteryEncounterTier,
 } from "../mystery-encounter";
@@ -32,7 +32,7 @@ import { MoveRequirement } from "../mystery-encounter-requirements";
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:fight_or_flight";
 
-export const FightOrFlightEncounter: MysteryEncounter =
+export const FightOrFlightEncounter: IMysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(
     MysteryEncounterType.FIGHT_OR_FLIGHT
   )

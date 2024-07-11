@@ -7,7 +7,7 @@ import BattleScene from "../../../battle-scene";
 import { AddPokeballModifierType } from "../../../modifier/modifier-type";
 import { PokeballType } from "../../pokeball";
 import { getPokemonSpecies } from "../../pokemon-species";
-import MysteryEncounter, {
+import IMysteryEncounter, {
   MysteryEncounterBuilder,
   MysteryEncounterTier,
 } from "../mystery-encounter";
@@ -73,7 +73,7 @@ const excludedBosses = [
   Species.PECHARUNT,
 ];
 
-export const DarkDealEncounter: MysteryEncounter =
+export const DarkDealEncounter: IMysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.DARK_DEAL)
     .withEncounterTier(MysteryEncounterTier.ROGUE)
     .withIntroSpriteConfigs([

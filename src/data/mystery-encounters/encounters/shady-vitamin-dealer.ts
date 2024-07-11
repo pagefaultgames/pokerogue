@@ -14,14 +14,14 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
 import i18next from "i18next";
 import BattleScene from "../../../battle-scene";
-import MysteryEncounter, {
+import IMysteryEncounter, {
   MysteryEncounterBuilder,
   MysteryEncounterTier,
 } from "../mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import { MoneyRequirement } from "../mystery-encounter-requirements";
 
-export const ShadyVitaminDealerEncounter: MysteryEncounter =
+export const ShadyVitaminDealerEncounter: IMysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(
     MysteryEncounterType.SHADY_VITAMIN_DEALER
   )

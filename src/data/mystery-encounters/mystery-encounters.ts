@@ -1,4 +1,4 @@
-import MysteryEncounter from "./mystery-encounter";
+import IMysteryEncounter from "./mystery-encounter";
 import { DarkDealEncounter } from "./encounters/dark-deal";
 import { MysteriousChallengersEncounter } from "./encounters/mysterious-challengers";
 import { MysteriousChestEncounter } from "./encounters/mysterious-chest";
@@ -117,7 +117,7 @@ export const CIVILIZATION_ENCOUNTER_BIOMES = [
   Biome.ISLAND
 ];
 
-export const allMysteryEncounters: { [encounterType: number]: MysteryEncounter } = {};
+export const allMysteryEncounters: { [encounterType: number]: IMysteryEncounter } = {};
 
 
 const extremeBiomeEncounters: MysteryEncounterType[] = [];

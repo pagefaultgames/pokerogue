@@ -7,7 +7,7 @@ import BattleScene from "../../../battle-scene";
 import * as Utils from "../../../utils";
 import { getPokemonSpecies } from "../../pokemon-species";
 import { Status, StatusEffect } from "../../status-effect";
-import MysteryEncounter, {
+import IMysteryEncounter, {
   MysteryEncounterBuilder,
   MysteryEncounterTier,
 } from "../mystery-encounter";
@@ -27,7 +27,7 @@ import {
 /** i18n namespace for the encounter */
 const namespace = "mysteryEncounter:sleeping_snorlax";
 
-export const SleepingSnorlaxEncounter: MysteryEncounter =
+export const SleepingSnorlaxEncounter: IMysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(
     MysteryEncounterType.SLEEPING_SNORLAX
   )

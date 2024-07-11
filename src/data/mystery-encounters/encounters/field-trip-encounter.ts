@@ -13,7 +13,7 @@ import { modifierTypes } from "#app/modifier/modifier-type";
 import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "../../../battle-scene";
-import MysteryEncounter, {
+import IMysteryEncounter, {
   MysteryEncounterBuilder,
   MysteryEncounterTier,
 } from "../mystery-encounter";
@@ -21,7 +21,7 @@ import MysteryEncounter, {
 /** i18n namespace for the encounter */
 const namespace = "mysteryEncounter:field_trip";
 
-export const FieldTripEncounter: MysteryEncounter =
+export const FieldTripEncounter: IMysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.FIELD_TRIP)
     .withEncounterTier(MysteryEncounterTier.COMMON)
     .withSceneWaveRangeRequirement(10, 180)

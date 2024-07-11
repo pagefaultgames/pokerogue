@@ -7,7 +7,7 @@ import { randSeedInt } from "#app/utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
 import BattleScene from "../../../battle-scene";
-import MysteryEncounter, {
+import IMysteryEncounter, {
   MysteryEncounterBuilder,
   MysteryEncounterTier,
 } from "../mystery-encounter";
@@ -15,7 +15,7 @@ import MysteryEncounter, {
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounter:department_store_sale";
 
-export const DepartmentStoreSaleEncounter: MysteryEncounter =
+export const DepartmentStoreSaleEncounter: IMysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(
     MysteryEncounterType.DEPARTMENT_STORE_SALE
   )

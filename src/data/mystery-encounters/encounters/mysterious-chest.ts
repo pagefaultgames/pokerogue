@@ -11,13 +11,13 @@ import { GameOverPhase } from "#app/phases";
 import { randSeedInt } from "#app/utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "../../../battle-scene";
-import MysteryEncounter, {
+import IMysteryEncounter, {
   MysteryEncounterBuilder,
   MysteryEncounterTier,
 } from "../mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 
-export const MysteriousChestEncounter: MysteryEncounter =
+export const MysteriousChestEncounter: IMysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(
     MysteryEncounterType.MYSTERIOUS_CHEST
   )

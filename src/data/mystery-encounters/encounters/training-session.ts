@@ -20,13 +20,13 @@ import { randSeedShuffle } from "#app/utils";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "../../../battle-scene";
-import MysteryEncounter, {
+import IMysteryEncounter, {
   MysteryEncounterBuilder,
   MysteryEncounterTier,
 } from "../mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 
-export const TrainingSessionEncounter: MysteryEncounter =
+export const TrainingSessionEncounter: IMysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(
     MysteryEncounterType.TRAINING_SESSION
   )
