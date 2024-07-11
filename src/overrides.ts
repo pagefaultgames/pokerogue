@@ -35,8 +35,8 @@ export const SEED_OVERRIDE: string = "";
 export const WEATHER_OVERRIDE: WeatherType = WeatherType.NONE;
 export const DOUBLE_BATTLE_OVERRIDE: boolean = false;
 export const SINGLE_BATTLE_OVERRIDE: boolean = false;
-export const STARTING_WAVE_OVERRIDE: integer = 0;
-export const STARTING_BIOME_OVERRIDE: Biome = Biome.TOWN;
+export const STARTING_WAVE_OVERRIDE: integer = 15;
+export const STARTING_BIOME_OVERRIDE: Biome = Biome.SEA;
 export const ARENA_TINT_OVERRIDE: TimeOfDay = null;
 // Multiplies XP gained by this value including 0. Set to null to ignore the override
 export const XP_MULTIPLIER_OVERRIDE: number = null;
@@ -118,9 +118,9 @@ export const EGG_GACHA_PULL_COUNT_OVERRIDE: number = 0;
  */
 
 // 1 to 256, set to null to ignore
-export const MYSTERY_ENCOUNTER_RATE_OVERRIDE: number = null;
+export const MYSTERY_ENCOUNTER_RATE_OVERRIDE: number = 100000;
 export const MYSTERY_ENCOUNTER_TIER_OVERRIDE: MysteryEncounterTier = null;
-export const MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType = null;
+export const MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType = MysteryEncounterType.GETTING_LOST_AT_THE_SEA;
 
 /**
  * MODIFIER / ITEM OVERRIDES
