@@ -1072,13 +1072,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       case Button.LEFT:
         this.startCursorObj.setVisible(false);
         this.cursorObj.setVisible(true);
-        success = this.setCursor(onScreenCurrentRow * 9 + 8); // set last column
+        success = this.setCursor(onScreenFirstIndex + onScreenCurrentRow * 9 + 8); // set last column
         success = true;
         break;
       case Button.RIGHT:
         this.startCursorObj.setVisible(false);
         this.cursorObj.setVisible(true);
-        success = this.setCursor(onScreenCurrentRow * 9); // set first column
+        success = this.setCursor(onScreenFirstIndex + onScreenCurrentRow * 9); // set first column
         success = true;
         break;
       }
