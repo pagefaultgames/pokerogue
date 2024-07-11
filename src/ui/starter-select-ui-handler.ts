@@ -1155,7 +1155,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 }
 
                 const isValidForChallenge = new Utils.BooleanHolder(true);
-                Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor), this.starterSpecies.length);
+                Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor), !!this.starterSpecies.length);
+
 
                 if (!isDupe && isValidForChallenge.value && this.tryUpdateValue(this.scene.gameData.getSpeciesStarterValue(species.speciesId))) {
                   const cursorObj = this.starterCursorObjs[this.starterSpecies.length];
@@ -2436,7 +2437,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
 
         const isValidForChallenge = new Utils.BooleanHolder(true);
-        Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor), this.starterSpecies.length);
+        Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor), !!this.starterSpecies.length);
         const starterSprite = this.filteredStarterContainers[this.cursor].icon as Phaser.GameObjects.Sprite;
         starterSprite.setTexture(species.getIconAtlasKey(formIndex, shiny, variant), species.getIconId(female, formIndex, shiny, variant));
         this.filteredStarterContainers[this.cursor].checkIconId(female, formIndex, shiny, variant);
@@ -2636,7 +2637,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     if (addingToParty) { // this does a check to see if the pokemon being added is valid; if so, it will update the isPartyValid boolean
       const isNewPokemonValid = new Utils.BooleanHolder(true);
       const species = this.filteredStarterContainers[this.cursor].species;
-      Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isNewPokemonValid, this.scene.gameData.getSpeciesDexAttrProps(species, this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true)), this.starterSpecies.length + (add ? 1 : 0), false, false);
+      Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isNewPokemonValid, this.scene.gameData.getSpeciesDexAttrProps(species, this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true)), !!(this.starterSpecies.length + (add ? 1 : 0)));
       isPartyValid = isPartyValid || isNewPokemonValid.value;
     }
 
@@ -2666,11 +2667,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
          * we change to can AddParty value to true since the user has enough cost to choose this pokemon and this pokemon registered too.
          */
         const isValidForChallenge = new Utils.BooleanHolder(true);
-        if (isPartyValid) { // we have two checks here - one for the party being valid and one for not. This comes from mono type challenges - if the party is valid it will check pokemon's evolutions and forms, and if it's not valid it won't check their evolutions and forms
-          Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, this.genSpecies[g][s], isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(this.genSpecies[g][s], this.scene.gameData.getSpeciesDefaultDexAttr(this.genSpecies[g][s], false, true)), this.starterSpecies.length + (add ? 1 : 0));
-        } else {
-          Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, this.genSpecies[g][s], isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(this.genSpecies[g][s], this.scene.gameData.getSpeciesDefaultDexAttr(this.genSpecies[g][s], false, true)), this.starterSpecies.length + (add ? 1 : 0), false, false);
-        }
+        Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, this.genSpecies[g][s], isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(this.genSpecies[g][s], this.scene.gameData.getSpeciesDefaultDexAttr(this.genSpecies[g][s], false, true)), !!(this.starterSpecies.length + (add ? 1 : 0)));
 
         const canBeChosen = remainValue >= speciesStarterValue && isValidForChallenge.value;
 
@@ -2756,7 +2753,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     for (let s = 0; s < this.starterSpecies.length; s++) {
       const isValidForChallenge = new Utils.BooleanHolder(true);
       const species = this.starterSpecies[s];
-      Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor), this.starterSpecies.length, false, false);
+      Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor), !!this.starterSpecies.length);
       canStart = canStart || isValidForChallenge.value;
     }
     return canStart;
