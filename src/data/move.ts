@@ -3617,7 +3617,7 @@ export class TerrainPulseTypeAttr extends VariableMoveTypeAttr {
    * @returns true if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!user.isGrounded) {
+    if (!user.isGrounded()) {
       return false;
     }
 
@@ -4218,7 +4218,7 @@ export class AddArenaTagAttr extends MoveEffectAttr {
   public selfSideTarget: boolean;
 
   constructor(tagType: ArenaTagType, turnCount?: integer, failOnOverlap: boolean = false, selfSideTarget: boolean = false) {
-    super(true, MoveEffectTrigger.POST_APPLY, true);
+    super(true, MoveEffectTrigger.POST_APPLY);
 
     this.tagType = tagType;
     this.turnCount = turnCount;
