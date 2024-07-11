@@ -163,16 +163,18 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
     let playSound = true;
 
-    if (button === this.konamiCode[this.konamiIndex] && ui.getMode() === Mode.TITLE) {
-      if (this.konamiIndex !== this.konamiCode.length - 1) {
-        this.konamiIndex += 1;
+    if (Utils.isLocal || Utils.isBeta) {
+      if (button === this.konamiCode[this.konamiIndex] && ui.getMode() === Mode.TITLE) {
+        if (this.konamiIndex !== this.konamiCode.length - 1) {
+          this.konamiIndex += 1;
+        } else {
+          unlockAll(this.scene);
+          this.konamiIndex = 0;
+          return false;
+        }
       } else {
-        unlockAll(this.scene);
         this.konamiIndex = 0;
-        return false;
       }
-    } else {
-      this.konamiIndex = 0;
     }
 
     if (button === Button.ACTION || button === Button.CANCEL) {
