@@ -12,7 +12,7 @@ export const lostAtSea = {
       selected: "@ec{waterPkm} guides you back and earns EXP.",
     },
     2: {
-      label: "Use @ec{flyingPkm}", // pkm has to be of type water
+      label: "Use @ec{flyingPkm}", // pkm has to be of type flying
       tooltip:
         "Use @ec{flyingPkm} to guide you back. @ec{flyingPkm} earns EXP as if having defeated a Lapras.",
       selected: "@ec{flyingPkm} guides you back and earns EXP.",
@@ -25,5 +25,4 @@ export const lostAtSea = {
         "You wander aimlessly around. After hours of wandering, you find your way back. You and your team take the toll.",
     },
   },
-  // outro: "TBA: OUTRO MESSAGE",
 };

@@ -5,8 +5,8 @@ const namepsace = "mysteryEncounter:lostAtSea";
 export const LostAtSeaDialogue: MysteryEncounterDialogue = {
   intro: [
     {
-      text: `${namepsace}:intro`
-    }
+      text: `${namepsace}:intro`,
+    },
   ],
   encounterOptionsDialogue: {
     title: `${namepsace}:title`,
@@ -42,9 +42,4 @@ export const LostAtSeaDialogue: MysteryEncounterDialogue = {
       },
     ],
   },
-  outro: [
-    {
-      text: `${namepsace}:outro`,
-    },
-  ],
 };

@@ -8,7 +8,11 @@ import MysteryEncounter, {
   MysteryEncounterTier,
 } from "../mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
-import { leaveEncounterWithoutBattle } from "../mystery-encounter-utils";
+import {
+  applyDamageToPokemon,
+  leaveEncounterWithoutBattle,
+  setEncounterExp,
+} from "../mystery-encounter-utils";
 
 /**
  * Damage percentage taken when wandering aimlessly.
@@ -17,9 +21,12 @@ import { leaveEncounterWithoutBattle } from "../mystery-encounter-utils";
  */
 const DAMAGE_PERCENTAGE: number = 30; // 0 - 100
 
+let waterPkm: PlayerPokemon;
+let flyingPkm: PlayerPokemon;
+
 /**
  * Lost at sea encounter.
- * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/9|GitHub Issue #9}
+ * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/9 | GitHub Issue #9}
  * @see For biome requirements check [mysteryEncountersByBiome](../mystery-encounters.ts)
  */
 export const LostAtSeaEncounter: MysteryEncounter =
@@ -39,7 +46,9 @@ export const LostAtSeaEncounter: MysteryEncounter =
     ])
     .withSceneWaveRangeRequirement(11, 179)
     .withOnInit((scene: BattleScene) => {
-      const party = scene.getParty();
+      const allowedPokemon = scene
+        .getParty()
+        .filter((p) => p.isAllowedInBattle());
       const { mysteryEncounter } = scene.currentBattle;
 
       mysteryEncounter.setDialogueToken(
@@ -48,11 +57,11 @@ export const LostAtSeaEncounter: MysteryEncounter =
       );
 
       // check for water pokemon
-      const waterPkm = findPokemonByType(party, Type.WATER);
+      waterPkm = findPokemonByType(allowedPokemon, Type.WATER);
       mysteryEncounter.setDialogueToken("waterPkm", waterPkm?.name ?? "<NONE>");
 
       // check for flying pokemon
-      const flyingPkm = findPokemonByType(party, Type.FLYING);
+      flyingPkm = findPokemonByType(allowedPokemon, Type.FLYING);
       mysteryEncounter.setDialogueToken(
         "flyingPkm",
         flyingPkm?.name ?? "<NONE>"
@@ -67,10 +76,9 @@ export const LostAtSeaEncounter: MysteryEncounter =
     .withOption(
       new MysteryEncounterOptionBuilder()
         .withPokemonTypeRequirement(Type.WATER, true, 1)
-        .withOptionPhase(async (scene: BattleScene) => {
-          console.debug("Lost at sea: Option 1 - Water Pokemon");
-          leaveEncounterWithoutBattle(scene);
-        })
+        .withOptionPhase(async (scene: BattleScene) =>
+          handleGuidingOption(scene, waterPkm)
+        )
         .build()
     )
     /**
@@ -80,26 +88,57 @@ export const LostAtSeaEncounter: MysteryEncounter =
     .withOption(
       new MysteryEncounterOptionBuilder()
         .withPokemonTypeRequirement(Type.FLYING, true, 1)
-        .withOptionPhase(async (scene: BattleScene) => {
-          console.debug("Lost at sea: Option 2 - Flying Pokemon");
-          leaveEncounterWithoutBattle(scene);
-        })
+        .withOptionPhase(async (scene: BattleScene) =>
+          handleGuidingOption(scene, flyingPkm)
+        )
         .build()
     )
     /**
      * Option 3: Wander aimlessly. All pokemons lose 30% of their HP (or KO on 0 HP).
      */
     .withOptionPhase(async (scene: BattleScene) => {
-      const party = scene.getParty().filter((p) => !p.isFainted());
-      party.forEach((pkm) => {
-        const damage = Math.round(pkm.getMaxHp() / (DAMAGE_PERCENTAGE / 100));
-        pkm.hp = Math.min(pkm.hp, damage);
+      const allowedPokemon = scene
+        .getParty()
+        .filter((p) => p.isAllowedInBattle());
+
+      allowedPokemon.forEach((pkm) => {
+        const percentage = DAMAGE_PERCENTAGE / 100;
+        const damage = Math.floor(pkm.getMaxHp() * percentage);
+        return applyDamageToPokemon(pkm, damage);
       });
       leaveEncounterWithoutBattle(scene);
       return true;
     })
     .build();
 
-const findPokemonByType = (party: PlayerPokemon[], type: Type) => {
+/**
+ * Find a pokemon inside the given party by a given type
+ *
+ * @param party player pokemon party
+ * @param type type to search for
+ * @returns
+ */
+function findPokemonByType(party: PlayerPokemon[], type: Type) {
   return party.find((p) => p.getTypes(true).includes(type));
-};
+}
+
+/**
+ * Generic handler for using a guiding pokemon to guide you back.
+ *
+ * @param scene Battle scene
+ * @param guidePokemon pokemon choosen as a guide
+ */
+function handleGuidingOption(scene: BattleScene, guidePokemon: PlayerPokemon) {
+  /** Base EXP value for guiding pokemon. Currently Lapras base-value */
+  const baseExpValue: number = 187;
+
+  if (guidePokemon) {
+    setEncounterExp(scene, guidePokemon.id, baseExpValue, true);
+  } else {
+    console.warn(
+      "Lost at sea: No guide pokemon found but pokemon guides player. huh!?"
+    );
+  }
+
+  leaveEncounterWithoutBattle(scene);
+}
