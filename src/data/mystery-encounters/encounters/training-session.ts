@@ -6,7 +6,7 @@ import {
   selectPokemonForOption,
   setEncounterRewards,
 } from "#app/data/mystery-encounters/mystery-encounter-utils";
-import { getNatureName, Nature } from "#app/data/nature";
+import { Nature, getNatureName } from "#app/data/nature";
 import { speciesStarters } from "#app/data/pokemon-species";
 import { Stat } from "#app/data/pokemon-stat";
 import { PlayerPokemon } from "#app/field/pokemon";
@@ -26,6 +26,9 @@ import IMysteryEncounter, {
 } from "../mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 
+/** The i18n namespace for the encounter */
+const namespace = "mysteryEncounter:training_session";
+
 export const TrainingSessionEncounter: IMysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(
     MysteryEncounterType.TRAINING_SESSION
@@ -43,20 +46,20 @@ export const TrainingSessionEncounter: IMysteryEncounter =
     ])
     .withIntroDialogue([
       {
-        text: "mysteryEncounter:training_session_intro_message",
+        text: `${namespace}_intro_message`,
       },
     ])
-    .withTitle("mysteryEncounter:training_session_title")
-    .withDescription("mysteryEncounter:training_session_description")
-    .withQuery("mysteryEncounter:training_session_query")
+    .withTitle(`${namespace}_title`)
+    .withDescription(`${namespace}_description`)
+    .withQuery(`${namespace}_query`)
     .withOption(
       new MysteryEncounterOptionBuilder()
         .withDialogue({
-          buttonLabel: "mysteryEncounter:training_session_option_1_label",
-          buttonTooltip: "mysteryEncounter:training_session_option_1_tooltip",
+          buttonLabel: `${namespace}_option_1_label`,
+          buttonTooltip: `${namespace}_option_1_tooltip`,
           selected: [
             {
-              text: "mysteryEncounter:training_session_option_selected_message",
+              text: `${namespace}_option_selected_message`,
             },
           ],
         })
@@ -168,10 +171,7 @@ export const TrainingSessionEncounter: IMysteryEncounter =
             }
             scene.updateModifiers(true);
             scene.queueMessage(
-              getEncounterText(
-                scene,
-                "mysteryEncounter:training_session_battle_finished_1"
-              ),
+              getEncounterText(scene, `${namespace}_battle_finished_1`),
               null,
               true
             );
@@ -191,13 +191,12 @@ export const TrainingSessionEncounter: IMysteryEncounter =
     .withOption(
       new MysteryEncounterOptionBuilder()
         .withDialogue({
-          buttonLabel: "mysteryEncounter:training_session_option_2_label",
-          buttonTooltip: "mysteryEncounter:training_session_option_2_tooltip",
-          secondOptionPrompt:
-            "mysteryEncounter:training_session_option_2_select_prompt",
+          buttonLabel: `${namespace}_option_2_label`,
+          buttonTooltip: `${namespace}_option_2_tooltip`,
+          secondOptionPrompt: `${namespace}_option_2_select_prompt`,
           selected: [
             {
-              text: "mysteryEncounter:training_session_option_selected_message",
+              text: `${namespace}_option_selected_message`,
             },
           ],
         })
@@ -247,10 +246,7 @@ export const TrainingSessionEncounter: IMysteryEncounter =
 
           const onBeforeRewardsPhase = () => {
             scene.queueMessage(
-              getEncounterText(
-                scene,
-                "mysteryEncounter:training_session_battle_finished_2"
-              ),
+              getEncounterText(scene, `${namespace}_battle_finished_2`),
               null,
               true
             );
@@ -280,13 +276,12 @@ export const TrainingSessionEncounter: IMysteryEncounter =
     .withOption(
       new MysteryEncounterOptionBuilder()
         .withDialogue({
-          buttonLabel: "mysteryEncounter:training_session_option_3_label",
-          buttonTooltip: "mysteryEncounter:training_session_option_3_tooltip",
-          secondOptionPrompt:
-            "mysteryEncounter:training_session_option_3_select_prompt",
+          buttonLabel: `${namespace}_option_3_label`,
+          buttonTooltip: `${namespace}_option_3_tooltip`,
+          secondOptionPrompt: `${namespace}_option_3_select_prompt`,
           selected: [
             {
-              text: "mysteryEncounter:training_session_option_selected_message",
+              text: `${namespace}_option_selected_message`,
             },
           ],
         })
@@ -349,10 +344,7 @@ export const TrainingSessionEncounter: IMysteryEncounter =
 
           const onBeforeRewardsPhase = () => {
             scene.queueMessage(
-              getEncounterText(
-                scene,
-                "mysteryEncounter:training_session_battle_finished_3"
-              ),
+              getEncounterText(scene, `${namespace}_battle_finished_3`),
               null,
               true
             );
