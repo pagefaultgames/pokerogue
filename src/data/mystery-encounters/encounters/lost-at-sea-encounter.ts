@@ -89,7 +89,7 @@ export const LostAtSeaEncounter: MysteryEncounter =
     .withOptionPhase(async (scene: BattleScene) => {
       const party = scene.getParty().filter((p) => !p.isFainted());
       party.forEach((pkm) => {
-        const damage = Math.round(pkm.getMaxHp() / 3);
+        const damage = Math.round(pkm.getMaxHp() / (DAMAGE_PERCENTAGE / 100));
         pkm.hp = Math.min(pkm.hp, damage);
       });
       leaveEncounterWithoutBattle(scene);
