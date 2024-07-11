@@ -4148,7 +4148,7 @@ export function applyPostSummonAbAttrs(attrType: Constructor<PostSummonAbAttr>,
 }
 
 export function applyPreSummonAbAttrs(attrType: Constructor<PreSummonAbAttr>,
-  pokemon: Pokemon, ...args: any[]): Promise<void> {
+  pokemon: Pokemon, ...args: any[]) {
   return applyAbAttrsInternal<PreSummonAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPreSummon(pokemon, passive, args), args);
 }
 

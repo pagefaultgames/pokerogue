@@ -899,15 +899,14 @@ export class EncounterPhase extends BattlePhase {
         if (e < (battle.double ? 2 : 1)) {
           if (battle.battleType === BattleType.WILD) {
 
-            applyPreSummonAbAttrs(PreSummonAbAttr, enemyPokemon, []).then(() => {
-              this.scene.field.add(enemyPokemon);
-              battle.seenEnemyPartyMemberIds.add(enemyPokemon.id);
-              const playerPokemon = this.scene.getPlayerPokemon();
-              if (playerPokemon?.visible) {
-                this.scene.field.moveBelow(enemyPokemon as Pokemon, playerPokemon);
-              }
-              enemyPokemon.tint(0, 0.5);
-            });
+            applyPreSummonAbAttrs(PreSummonAbAttr, enemyPokemon, []);
+            this.scene.field.add(enemyPokemon);
+            battle.seenEnemyPartyMemberIds.add(enemyPokemon.id);
+            const playerPokemon = this.scene.getPlayerPokemon();
+            if (playerPokemon?.visible) {
+              this.scene.field.moveBelow(enemyPokemon as Pokemon, playerPokemon);
+            }
+            enemyPokemon.tint(0, 0.5);
           } else if (battle.battleType === BattleType.TRAINER) {
             enemyPokemon.setVisible(false);
             this.scene.currentBattle.trainer.tint(0, 0.5);
