@@ -307,6 +307,8 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
     // Options Window
     for (let i = 0; i < this.filteredEncounterOptions.length; i++) {
+      const option = this.filteredEncounterOptions[i];
+
       let optionText;
       switch (this.filteredEncounterOptions.length) {
       case 2:
@@ -319,11 +321,11 @@ export default class MysteryEncounterUiHandler extends UiHandler {
         optionText = addBBCodeTextObject(this.scene, i % 2 === 0 ? 0 : 100, i < 2 ? 0 : 16, "-", TextStyle.WINDOW, { wordWrap: { width: 558 }, fontSize: "80px", lineSpacing: -8 });
         break;
       }
-      this.optionsMeetsReqs.push(this.filteredEncounterOptions[i].meetsRequirements(this.scene));
 
-      const optionDialogue = mysteryEncounter.dialogue.encounterOptionsDialogue.options[i];
-      let text;
-      if (this.filteredEncounterOptions[i].hasRequirements() && this.optionsMeetsReqs[i]) {
+      this.optionsMeetsReqs.push(option.meetsRequirements(this.scene));
+      const optionDialogue = option.dialogue;
+      let text: string;
+      if (option.hasRequirements() && this.optionsMeetsReqs[i]) {
         // Options with special requirements that are met are automatically colored green
         // In cases where isDisabledOnRequirementsNotMet = false and requirements are not met, option will not be auto-colored
         text = getEncounterText(this.scene, optionDialogue.buttonLabel, TextStyle.SUMMARY_GREEN);
@@ -335,7 +337,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
         optionText.setText(text);
       }
 
-      if (!this.optionsMeetsReqs[i] && this.filteredEncounterOptions[i].isDisabledOnRequirementsNotMet) {
+      if (!this.optionsMeetsReqs[i] && option.isDisabledOnRequirementsNotMet) {
         optionText.setAlpha(0.5);
       }
       if (this.blockInput) {
@@ -420,13 +422,13 @@ export default class MysteryEncounterUiHandler extends UiHandler {
       return;
     }
 
-    const mysteryEncounter = this.scene.currentBattle.mysteryEncounter;
-    let text;
-    const option = mysteryEncounter.dialogue.encounterOptionsDialogue.options[cursor];
-    if (!this.optionsMeetsReqs[cursor] && this.filteredEncounterOptions[cursor].isDisabledOnRequirementsNotMet && option.disabledTooltip) {
-      text = getEncounterText(this.scene, option.disabledTooltip, TextStyle.TOOLTIP_CONTENT);
+    let text: string;
+    const cursorOption = this.filteredEncounterOptions[cursor];
+    const optionDialogue = cursorOption.dialogue;
+    if (!this.optionsMeetsReqs[cursor] && cursorOption.isDisabledOnRequirementsNotMet && optionDialogue.disabledTooltip) {
+      text = getEncounterText(this.scene, optionDialogue.disabledTooltip, TextStyle.TOOLTIP_CONTENT);
     } else {
-      text = getEncounterText(this.scene, option.buttonTooltip, TextStyle.TOOLTIP_CONTENT);
+      text = getEncounterText(this.scene, optionDialogue.buttonTooltip, TextStyle.TOOLTIP_CONTENT);
     }
 
     // Auto-color options green/blue for good/bad by looking for (+)/(-)

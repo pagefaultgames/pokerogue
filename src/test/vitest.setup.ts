@@ -13,7 +13,6 @@ import { initVouchers } from "#app/system/voucher";
 import { initAchievements } from "#app/system/achv";
 import { initStatsKeys } from "#app/ui/game-stats-ui-handler";
 import { initMysteryEncounters } from "#app/data/mystery-encounters/mystery-encounters";
-import { initMysteryEncounterDialogue } from "#app/data/mystery-encounters/mystery-encounter-dialogue";
 import { beforeAll, beforeEach, vi } from "vitest";
 import * as overrides from "#app/overrides";
 
@@ -28,7 +27,6 @@ initSpecies();
 initMoves();
 initAbilities();
 initLoggedInUser();
-initMysteryEncounterDialogue();
 initMysteryEncounters();
 
 global.testFailed = false;
