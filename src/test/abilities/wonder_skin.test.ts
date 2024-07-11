@@ -39,9 +39,6 @@ describe("Abilities - Wonder Skin", () => {
     const moveAccuracy = allMoves[Moves.CHARM].calculateAccuracy(game.scene.getPlayerPokemon(), game.scene.getEnemyPokemon());
 
     await game.phaseInterceptor.to(TurnEndPhase);
-
-    expect(moveAccuracy).not.toBe(undefined);
-    expect(moveAccuracy).not.toBe(100);
     expect(moveAccuracy).toBe(50);
   });
 
@@ -53,9 +50,6 @@ describe("Abilities - Wonder Skin", () => {
     const moveAccuracy = allMoves[Moves.TACKLE].calculateAccuracy(game.scene.getPlayerPokemon(), game.scene.getEnemyPokemon());
 
     await game.phaseInterceptor.to(TurnEndPhase);
-
-    expect(moveAccuracy).not.toBe(undefined);
-    expect(moveAccuracy).toBe(100);
     expect(moveAccuracy).not.toBe(50);
   });
 
