@@ -2437,8 +2437,7 @@ export class TurnEndPhase extends FieldPhase {
         this.scene.applyModifier(EnemyStatusEffectHealChanceModifier, false, pokemon);
       }
 
-      const party: Pokemon[] = pokemon.isPlayer() ? this.scene.getParty().filter(p => p.isAllowedInBattle()) : this.scene.getEnemyParty().filter(p => p.isAllowedInBattle());
-      applyPostTurnAbAttrs(PostTurnAbAttr, pokemon, party);
+      applyPostTurnAbAttrs(PostTurnAbAttr, pokemon);
 
       this.scene.applyModifiers(TurnStatusEffectModifier, pokemon.isPlayer(), pokemon);
 

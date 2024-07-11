@@ -1832,13 +1832,6 @@ export class PostSummonRemoveArenaTagAbAttr extends PostSummonAbAttr {
     return true;
   }
 }
-
-export class PreSummonAbAttr extends AbAttr {
-  applyPreSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
-    return false;
-  }
-}
-
 export class PostSummonMessageAbAttr extends PostSummonAbAttr {
   private messageFunc: (pokemon: Pokemon) => string;
 
@@ -3889,6 +3882,12 @@ export class IceFaceBlockPhysicalAbAttr extends ReceivedMoveDamageMultiplierAbAt
   }
 }
 
+export class PreSummonAbAttr extends AbAttr {
+  applyPreSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+    return false;
+  }
+}
+
 export class IllusionPreSummonAbAttr extends PreSummonAbAttr {
   /**
    * Apply a new illusion when summoning Zoroark if the illusion is available
@@ -3929,7 +3928,7 @@ export class IllusionBreakAbAttr extends PostDefendAbAttr {
    * @param {...any} args - N/A
    * @returns {boolean} - Whether the illusion was destroyed.
    */
-  applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean | Promise<boolean> {
+  applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
 
     //[HitResult.EFFECTIVE, HitResult.SUPER_EFFECTIVE, HitResult.NOT_VERY_EFFECTIVE, HitResult.ONE_HIT_KO]
     if (hitResult > 4) {
