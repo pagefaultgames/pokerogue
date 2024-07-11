@@ -2,9 +2,11 @@ import { GameObjects } from "phaser";
 import BattleScene from "../battle-scene";
 import MysteryEncounter from "../data/mystery-encounters/mystery-encounter";
 
+type KnownFileRoot = "trainer" | "pokemon" | "arenas" | "battle_anims" | "cg" | "character" | "effect" | "egg" | "events" | "inputs" | "items" | "mystery-encounters" | "pokeball" | "pokemon" | "statuses" | "trainer" | "ui";
+
 export class MysteryEncounterSpriteConfig {
   spriteKey: string; // e.g. "ace_trainer_f"
-  fileRoot: string; // "trainer" for trainer sprites, "pokemon" for pokemon, etc. Refer to /public/images directory for the folder name
+  fileRoot: KnownFileRoot & string; // Refer to /public/images directory for the folder name
   hasShadow?: boolean = false; // Spawns shadow underneath sprite
   disableAnimation?: boolean = false; // Animates frames or not
   repeat?: boolean = false; // Cycles animation
