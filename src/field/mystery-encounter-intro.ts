@@ -2,19 +2,48 @@ import { GameObjects } from "phaser";
 import BattleScene from "../battle-scene";
 import MysteryEncounter from "../data/mystery-encounters/mystery-encounter";
 
-type KnownFileRoot = "trainer" | "pokemon" | "arenas" | "battle_anims" | "cg" | "character" | "effect" | "egg" | "events" | "inputs" | "items" | "mystery-encounters" | "pokeball" | "pokemon" | "statuses" | "trainer" | "ui";
+type KnownFileRoot =
+  | "trainer"
+  | "pokemon"
+  | "arenas"
+  | "battle_anims"
+  | "cg"
+  | "character"
+  | "effect"
+  | "egg"
+  | "events"
+  | "inputs"
+  | "items"
+  | "mystery-encounters"
+  | "pokeball"
+  | "pokemon"
+  | "statuses"
+  | "trainer"
+  | "ui";
 
 export class MysteryEncounterSpriteConfig {
-  spriteKey: string; // e.g. "ace_trainer_f"
-  fileRoot: KnownFileRoot & string; // Refer to /public/images directory for the folder name
-  hasShadow?: boolean = false; // Spawns shadow underneath sprite
-  disableAnimation?: boolean = false; // Animates frames or not
-  repeat?: boolean = false; // Cycles animation
+  /** The sprite key (which is the image file name). e.g. "ace_trainer_f" */
+  spriteKey: string;
+  /** Refer to [/public/images](../../public/images) directorty for all folder names */
+  fileRoot: KnownFileRoot & string;
+  /** Enable shadow. Defaults to `false` */
+  hasShadow?: boolean = false;
+  /** Disable animation. Defaults to `false` */
+  disableAnimation?: boolean = false;
+  /** Depeat the animation. Defaults to `false` */
+  repeat?: boolean = false;
+  /** Tint color. `0` - `1`. Higher means darker tint. */
   tint?: number;
-  x?: number; // X offset
-  y?: number; // Y offset
+  /** X offset */
+  x?: number;
+  /** Y offset */
+  y?: number;
+  /** Sprite scale. `0` - `n` */
   scale?: number;
-  isItem?: boolean; // For item sprites, set to true
+  /** If you are using an item sprite, set to `true` */
+  isItem?: boolean;
+  /** The sprites alpha. `0` - `1` The lower the number, the more transparent */
+  alpha?: number;
 }
 
 /**
