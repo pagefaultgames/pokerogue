@@ -71,8 +71,3 @@ export default class MysteryEncounterDialogue {
  }
  *
  */
-
-export const allMysteryEncounterDialogue: { [encounterType: number]: MysteryEncounterDialogue } = {};
-
-export function initMysteryEncounterDialogue() {
-}

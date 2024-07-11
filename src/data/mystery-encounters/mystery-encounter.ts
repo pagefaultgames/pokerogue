@@ -7,7 +7,6 @@ import MysteryEncounterIntroVisuals, { MysteryEncounterSpriteConfig } from "../.
 import * as Utils from "../../utils";
 import { StatusEffect } from "../status-effect";
 import MysteryEncounterDialogue, {
-  allMysteryEncounterDialogue,
   OptionTextDisplay
 } from "./mystery-encounter-dialogue";
 import MysteryEncounterOption, { MysteryEncounterOptionBuilder, OptionPhaseCallback } from "./mystery-encounter-option";
@@ -137,16 +136,11 @@ export default class MysteryEncounter implements MysteryEncounter {
       Object.assign(this, encounter);
     }
     this.encounterTier = this.encounterTier ? this.encounterTier : MysteryEncounterTier.COMMON;
-    this.dialogue = Object.assign((this.dialogue ?? {}), allMysteryEncounterDialogue[this.encounterType] ?? {});
+    this.dialogue = {};
     this.encounterVariant = MysteryEncounterVariant.DEFAULT;
     this.requirements = this.requirements ? this.requirements : [];
     this.hideBattleIntroMessage = !isNullOrUndefined(this.hideBattleIntroMessage) ? this.hideBattleIntroMessage : false;
     this.hideIntroVisuals = !isNullOrUndefined(this.hideIntroVisuals) ? this.hideIntroVisuals : true;
-
-    // Populate options with respective dialogue
-    if (this.dialogue?.encounterOptionsDialogue) {
-      // this.options.forEach((o, i) => o.dialogue = this.dialogue.encounterOptionsDialogue.options[i]);
-    }
 
     // Reset any dirty flags or encounter data
     this.lockEncounterRewardTiers = true;
@@ -482,15 +476,37 @@ export class MysteryEncounterBuilder implements Partial<MysteryEncounter> {
     return this.withSceneRequirement(new PartySizeRequirement([min, max ?? min]));
   }
 
+  /**
+   * Add a primary pokemon requirement
+   *
+   * @param requirement {@linkcode EncounterPokemonRequirement}
+   * @returns
+   */
   withPrimaryPokemonRequirement(requirement: EncounterPokemonRequirement): this & Required<Pick<MysteryEncounter, "primaryPokemonRequirements">> {
     this.primaryPokemonRequirements.push(requirement);
     return Object.assign(this, { primaryPokemonRequirements: this.primaryPokemonRequirements });
   }
 
+  /**
+   * Add a primary pokemon status effect requirement
+   *
+   * @param statusEffect the status effect/s to check
+   * @param minNumberOfPokemon minimum number of pokemon to have the effect
+   * @param invertQuery if true will invert the query
+   * @returns
+   */
   withPrimaryPokemonStatusEffectRequirement(statusEffect: StatusEffect | StatusEffect[], minNumberOfPokemon: number = 1, invertQuery: boolean = false): this & Required<Pick<MysteryEncounter, "primaryPokemonRequirements">> {
     return this.withPrimaryPokemonRequirement(new StatusEffectRequirement(statusEffect, minNumberOfPokemon, invertQuery));
   }
 
+  /**
+   * Add a primary pokemon health ratio requirement
+   *
+   * @param requiredHealthRange the health range to check
+   * @param minNumberOfPokemon minimum number of pokemon to have the health range
+   * @param invertQuery if true will invert the query
+   * @returns
+   */
   withPrimaryPokemonHealthRatioRequirement(requiredHealthRange: [number, number], minNumberOfPokemon: number = 1, invertQuery: boolean = false): this & Required<Pick<MysteryEncounter, "primaryPokemonRequirements">> {
     return this.withPrimaryPokemonRequirement(new HealthRatioRequirement(requiredHealthRange, minNumberOfPokemon, invertQuery));
   }
@@ -579,12 +595,17 @@ export class MysteryEncounterBuilder implements Partial<MysteryEncounter> {
     return Object.assign(this, { hideIntroVisuals: hideIntroVisuals });
   }
 
+  /**
+   * Add a title for the encounter
+   *
+   * @param title - title of the encounter
+   * @returns
+   */
   withTitle(title: TemplateStringsArray | `mysteryEncounter:${string}`) {
-    const dialogue = this.dialogue ?? {};
-    const encounterOptionsDialogue = this.dialogue?.encounterOptionsDialogue ?? {};
+    const encounterOptionsDialogue = this.dialogue.encounterOptionsDialogue ?? {};
 
     this.dialogue = {
-      ...dialogue,
+      ...this.dialogue,
       encounterOptionsDialogue: {
         ...encounterOptionsDialogue,
         title,
@@ -594,12 +615,17 @@ export class MysteryEncounterBuilder implements Partial<MysteryEncounter> {
     return this;
   }
 
+  /**
+   * Add a description of the encounter
+   *
+   * @param description - description of the encounter
+   * @returns
+   */
   withDescription(description: TemplateStringsArray | `mysteryEncounter:${string}`) {
-    const dialogue = this.dialogue ?? {};
-    const encounterOptionsDialogue = this.dialogue?.encounterOptionsDialogue ?? {};
+    const encounterOptionsDialogue = this.dialogue.encounterOptionsDialogue ?? {};
 
     this.dialogue = {
-      ...dialogue,
+      ...this.dialogue,
       encounterOptionsDialogue: {
         ...encounterOptionsDialogue,
         description,
@@ -609,12 +635,17 @@ export class MysteryEncounterBuilder implements Partial<MysteryEncounter> {
     return this;
   }
 
+  /**
+   * Add a query for the encounter
+   *
+   * @param query - query to use for the encounter
+   * @returns
+   */
   withQuery(query: TemplateStringsArray | `mysteryEncounter:${string}`) {
-    const dialogue = this.dialogue ?? {};
-    const encounterOptionsDialogue = this.dialogue?.encounterOptionsDialogue ?? {};
+    const encounterOptionsDialogue = this.dialogue.encounterOptionsDialogue ?? {};
 
     this.dialogue = {
-      ...dialogue,
+      ...this.dialogue,
       encounterOptionsDialogue: {
         ...encounterOptionsDialogue,
         query,
@@ -624,11 +655,23 @@ export class MysteryEncounterBuilder implements Partial<MysteryEncounter> {
     return this;
   }
 
+  /**
+   * Add outro dialogue/s for the encounter
+   *
+   * @param dialogue - outro dialogue/s
+   * @returns
+   */
   withOutroDialogue(dialogue: MysteryEncounterDialogue["outro"] = []) {
     this.dialogue = {...this.dialogue, outro: dialogue };
     return this;
   }
 
+  /**
+   * Builds the mystery encounter
+   *
+   * @param this - MysteryEncounter
+   * @returns
+   */
   build(this: MysteryEncounter) {
     return new MysteryEncounter(this);
   }
