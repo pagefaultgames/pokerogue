@@ -660,7 +660,7 @@ export default class Move implements Localizable {
    * Calculates the power of a move based on various conditions and attributes.
    *
    * @param source {@linkcode Pokemon} The Pokémon using the move.
-   * @param target {@linkcode Pokemon} The move being used.
+   * @param target {@linkcode Pokemon} The Pokémon being targeted by the move.
    * @returns The calculated power of the move.
    */
   calculatePower(source: Pokemon, target: Pokemon): number {
@@ -677,7 +677,7 @@ export default class Move implements Localizable {
     applyPreAttackAbAttrs(VariableMovePowerAbAttr, source, target, this, power);
 
     if (source.getAlly()?.hasAbilityWithAttr(AllyMoveCategoryPowerBoostAbAttr)) {
-      applyPreAttackAbAttrs(AllyMoveCategoryPowerBoostAbAttr, source, target, this, power);
+      applyPreAttackAbAttrs(AllyMoveCategoryPowerBoostAbAttr, source.getAlly(), target, this, power);
     }
 
     const fieldAuras = new Set(
