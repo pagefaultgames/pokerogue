@@ -12,6 +12,7 @@ export const battle: SimpleTranslationEntries = {
   "trainerGo": "{{trainerName}} 派出了 {{pokemonName}}！",
   "switchQuestion": "要更換\n{{pokemonName}}嗎？",
   "trainerDefeated": "你擊敗了\n{{trainerName}}！",
+  "moneyPickedUp": "撿到了 ₽{{moneyAmount}}！",
   "pokemonCaught": "{{pokemonName}} 被抓住了！",
   "addedAsAStarter": "{{pokemonName}} has been\nadded as a starter!",
   "pokemon": "寶可夢",
@@ -22,6 +23,7 @@ export const battle: SimpleTranslationEntries = {
   "hitResultNoEffect": "對 {{pokemonName}} 沒有效果！",
   "hitResultOneHitKO": "一擊切殺！",
   "attackFailed": "但是失敗了！",
+  "attackMissed": "沒有命中{{pokemonNameWithAffix}}！",
   "attackHitsCount": "擊中 {{count}} 次！",
   "rewardGain": "You received\n{{modifierName}}!",
   "expGain": "{{pokemonName}} 獲得了 {{exp}} 經驗值！",
@@ -51,6 +53,7 @@ export const battle: SimpleTranslationEntries = {
   "runAwayCannotEscape": "你無法逃脫！",
   "escapeVerbSwitch": "切換",
   "escapeVerbFlee": "逃跑",
+  "stealEatBerry": "{{pokemonName}} stole and ate\n{{targetName}}'s {{berryName}}!",
   "notDisabled": "{{moveName}} 不再被禁用！",
   "turnEndHpRestore": "{{pokemonName}}'s HP was restored.",
   "hpIsFull": "{{pokemonName}}'s\nHP is full!",
@@ -128,5 +131,5 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsSaltCuredOnAdd": "{{pokemonNameWithAffix}} 陷入了鹽腌狀態！",
   "battlerTagsSaltCuredLapse": "{{pokemonNameWithAffix}} 受到了{{moveName}}的傷害！",
   "battlerTagsCursedOnAdd": "{{pokemonNameWithAffix}}削減了自己的體力，並詛咒了{{pokemonName}}！",
-  "battlerTagsCursedLapse": "{{pokemonNameWithAffix}}正受到詛咒！"
+  "battlerTagsCursedLapse": "{{pokemonNameWithAffix}}正受到詛咒！",
 } as const;

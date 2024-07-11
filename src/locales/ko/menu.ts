@@ -17,6 +17,7 @@ export const menu: SimpleTranslationEntries = {
   "username": "이름",
   "password": "비밀번호",
   "login": "로그인",
+  "orUse": "혹은",
   "register": "등록",
   "emptyUsername": "이름은 비워둘 수 없습니다",
   "invalidLoginUsername": "사용할 수 없는 이름입니다",
@@ -53,5 +54,5 @@ export const menu: SimpleTranslationEntries = {
   "no":"아니오",
   "disclaimer": "면책 조항",
   "disclaimerDescription": "이 게임은 완전히 개발되지 않았습니다- (세이브 데이터 소실을 포함) 플레이에 지장을 주는 문제가 생길 수 있으며,\n공지 없이 업데이트가 진행 혹은 중지될 수 있습니다.",
-  "choosePokemon": "포켓몬을 선택하세요.",
+  "errorServerDown": "서버 연결 중 문제가 발생했습니다.\n\n이 창을 종료하지 않고 두면,\n게임은 자동으로 재접속됩니다.",
 } as const;
