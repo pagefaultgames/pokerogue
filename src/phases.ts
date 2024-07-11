@@ -66,7 +66,7 @@ import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 import { applyChallenges, ChallengeType } from "./data/challenge";
-import { ExpNotification } from "./enums/exp-notification";
+
 
 const { t } = i18next;
 
