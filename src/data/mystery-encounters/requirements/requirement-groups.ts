@@ -4,7 +4,6 @@ export const STEALING_MOVES = [
   Moves.PLUCK,
   Moves.COVET,
   Moves.KNOCK_OFF,
-  Moves.FAKE_OUT,
   Moves.THIEF,
   Moves.TRICK,
   Moves.SWITCHEROO
