@@ -295,6 +295,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return ret;
   }
 
+  /**
+   * Sets the Pokemon's name. Only called when loading a Pokemon so this function needs to be called when
+   * initializing hardcoded Pokemon or else it will not display the form index name properly.
+   * @returns n/a
+   */
   generateName(): void {
     if (!this.fusionSpecies) {
       this.name = this.species.getName(this.formIndex);

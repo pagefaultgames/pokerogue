@@ -65,6 +65,7 @@ import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
+import { applyChallenges, ChallengeType } from "./data/challenge";
 
 const { t } = i18next;
 
@@ -130,6 +131,16 @@ export class LoginPhase extends Phase {
                     }
                   ]
                 });
+              }, () => {
+                const redirectUri = encodeURIComponent(`${import.meta.env.VITE_SERVER_URL}/auth/discord/callback`);
+                const discordId = import.meta.env.VITE_DISCORD_CLIENT_ID;
+                const discordUrl = `https://discord.com/api/oauth2/authorize?client_id=${discordId}&redirect_uri=${redirectUri}&response_type=code&scope=identify`;
+                window.open(discordUrl, "_self");
+              }, () => {
+                const redirectUri = encodeURIComponent(`${import.meta.env.VITE_SERVER_URL}/auth/google/callback`);
+                const googleId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+                const googleUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${googleId}&redirect_uri=${redirectUri}&response_type=code&scope=openid`;
+                window.open(googleUrl, "_self");
               }
             ]
           });
@@ -614,6 +625,7 @@ export class SelectStarterPhase extends Phase {
         starterPokemon.generateFusionSpecies(true);
       }
       starterPokemon.setVisible(false);
+      applyChallenges(this.scene.gameMode, ChallengeType.STARTER_MODIFY, starterPokemon);
       party.push(starterPokemon);
       loadPokemonAssets.push(starterPokemon.loadAssets());
     });
