@@ -4137,7 +4137,11 @@ export class RibbonModifierRewardPhase extends ModifierRewardPhase {
       this.scene.addModifier(newModifier).then(() => {
         this.scene.playSound("level_up_fanfare");
         this.scene.ui.setMode(Mode.MESSAGE);
-        this.scene.ui.showText(`${this.species.name} beat ${this.scene.gameMode.getName()} Mode for the first time!\nYou received ${newModifier.type.name}!`, null, () => {
+        this.scene.ui.showText(i18next.t("battle:beatModeFirstTime", {
+          speciesName: this.species.name,
+          gameMode: this.scene.gameMode.getName(),
+          newModifier: newModifier.type.name
+        }), null, () => {
           resolve();
         }, null, true, 1500);
       });
@@ -4168,7 +4172,7 @@ export class GameOverPhase extends BattlePhase {
     } else if (this.victory || !this.scene.enableRetries) {
       this.handleGameOver();
     } else {
-      this.scene.ui.showText("Would you like to retry from the start of the battle?", null, () => {
+      this.scene.ui.showText(i18next.t("battle:retryBattle"), null, () => {
         this.scene.ui.setMode(Mode.CONFIRM, () => {
           this.scene.ui.fadeOut(1250).then(() => {
             this.scene.reset();
@@ -4338,7 +4342,7 @@ export class EndCardPhase extends Phase {
     this.endCard.setScale(0.5);
     this.scene.field.add(this.endCard);
 
-    this.text = addTextObject(this.scene, this.scene.game.canvas.width / 12, (this.scene.game.canvas.height / 6) - 16, "Congratulations!", TextStyle.SUMMARY, { fontSize: "128px" });
+    this.text = addTextObject(this.scene, this.scene.game.canvas.width / 12, (this.scene.game.canvas.height / 6) - 16, i18next.t("battle:congratulations"), TextStyle.SUMMARY, { fontSize: "128px" });
     this.text.setOrigin(0.5);
     this.scene.field.add(this.text);
 
@@ -4368,7 +4372,7 @@ export class UnlockPhase extends Phase {
       this.scene.gameData.unlocks[this.unlockable] = true;
       this.scene.playSound("level_up_fanfare");
       this.scene.ui.setMode(Mode.MESSAGE);
-      this.scene.ui.showText(`${getUnlockableName(this.unlockable)}\nhas been unlocked.`, null, () => {
+      this.scene.ui.showText(i18next.t("battle:unlockedSomething", { unlockedThing: getUnlockableName(this.unlockable) }), null, () => {
         this.scene.time.delayedCall(1500, () => this.scene.arenaBg.setVisible(true));
         this.end();
       }, null, true, 1500);
