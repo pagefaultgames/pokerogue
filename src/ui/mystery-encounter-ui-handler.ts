@@ -307,6 +307,8 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
     // Options Window
     for (let i = 0; i < this.filteredEncounterOptions.length; i++) {
+      const option = this.filteredEncounterOptions[i];
+
       let optionText;
       switch (this.filteredEncounterOptions.length) {
       case 2:
@@ -319,10 +321,9 @@ export default class MysteryEncounterUiHandler extends UiHandler {
         optionText = addBBCodeTextObject(this.scene, i % 2 === 0 ? 0 : 100, i < 2 ? 0 : 16, "-", TextStyle.WINDOW, { wordWrap: { width: 558 }, fontSize: "80px", lineSpacing: -8 });
         break;
       }
-      const option = this.filteredEncounterOptions[i];
-      this.optionsMeetsReqs.push(this.filteredEncounterOptions[i].meetsRequirements(this.scene));
 
-      const optionDialogue = option.dialogue ?? mysteryEncounter.dialogue.encounterOptionsDialogue.options[i];
+      this.optionsMeetsReqs.push(option.meetsRequirements(this.scene));
+      const optionDialogue = option.dialogue;
       let text: string;
       if (option.hasRequirements() && this.optionsMeetsReqs[i]) {
         // Options with special requirements that are met are automatically colored green
@@ -335,8 +336,6 @@ export default class MysteryEncounterUiHandler extends UiHandler {
       if (text) {
         optionText.setText(text);
       }
-
-      this.optionsMeetsReqs.push(option.meetsRequirements(this.scene));
 
       if (!this.optionsMeetsReqs[i]) {
         optionText.setAlpha(0.5);
