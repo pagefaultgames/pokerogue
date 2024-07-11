@@ -67,6 +67,7 @@ import { Species } from "#enums/species";
 import { UiTheme } from "#enums/ui-theme";
 import { TimedEventManager } from "#app/timed-event-manager.js";
 import i18next from "i18next";
+import {TrainerType} from "#enums/trainer-type";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -1046,6 +1047,10 @@ export default class BattleScene extends SceneBase {
           this.applyModifiers(DoubleBattleChanceBoosterModifier, true, doubleChance);
           playerField.forEach(p => applyAbAttrs(DoubleBattleChanceAbAttr, p, null, doubleChance));
           doubleTrainer = !Utils.randSeedInt(doubleChance.value);
+          // Add a check that special trainers can't be double except for tate and liza - they should use the normal double chance
+          if (trainerConfigs[trainerType].trainerTypeDouble && !(trainerType === TrainerType.TATE || trainerType === TrainerType.LIZA)) {
+            doubleTrainer = false;
+          }
         }
         newTrainer = trainerData !== undefined ? trainerData.toTrainer(this) : new Trainer(this, trainerType, doubleTrainer ? TrainerVariant.DOUBLE : Utils.randSeedInt(2) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT);
         this.field.add(newTrainer);
