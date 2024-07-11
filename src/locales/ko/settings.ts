@@ -15,6 +15,7 @@ export const settings: SimpleTranslationEntries = {
   "skipSeenDialogues": "본 대화 생략",
   "battleStyle": "시합 룰",
   "enableRetries": "재도전 허용",
+  "hideIvs": "Hide IV scanner",
   "tutorials": "튜토리얼",
   "touchControls": "터치 컨트롤",
   "vibrations": "진동",

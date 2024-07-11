@@ -15,6 +15,7 @@ export const settings: SimpleTranslationEntries = {
   "skipSeenDialogues": "跳过已读对话",
   "battleStyle": "对战模式",
   "enableRetries": "允许重试",
+  "hideIvs": "Hide IV scanner",
   "tutorials": "教程",
   "touchControls": "触摸操作",
   "vibrations": "手柄震动",
