@@ -14,6 +14,7 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "typeImmunityHeal": "{{pokemonNameWithAffix}}[[는]]\n{{abilityName}}[[로]] 체력이 회복되었다!",
   "nonSuperEffectiveImmunity": "{{pokemonNameWithAffix}}[[는]] {{abilityName}} 때문에\n데미지를 입지 않는다!",
   "postDefendDisguise": "{{pokemonNameWithAffix}}의\n정체가 드러났다!",
+  "moveImmunity": "{{pokemonNameWithAffix}}에게는\n효과가 없는 것 같다...",
   "reverseDrain": "{{pokemonNameWithAffix}}[[는]]\n해감액을 흡수했다!",
   "postDefendTypeChange": "{{pokemonNameWithAffix}}[[는]] {{abilityName}}[[로]] 인해\n{{typeName}}타입이 됐다!",
   "postDefendContactDamage": "{{pokemonNameWithAffix}}[[는]] {{abilityName}}[[로]]\n상대를 상처입혔다!",

@@ -14,6 +14,7 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "typeImmunityHeal": "{{pokemonNameWithAffix}}'s {{abilityName}}\nrestored its HP a little!",
   "nonSuperEffectiveImmunity": "{{pokemonNameWithAffix}} avoided damage\nwith {{abilityName}}!",
   "postDefendDisguise": "{{pokemonNameWithAffix}}'s disguise was busted!",
+  "moveImmunity": "It doesn't affect {{pokemonNameWithAffix}}!",
   "reverseDrain": "{{pokemonNameWithAffix}} sucked up the liquid ooze!",
   "postDefendTypeChange": "{{pokemonNameWithAffix}}'s {{abilityName}}\nmade it the {{typeName}} type!",
   "postDefendContactDamage": "{{pokemonNameWithAffix}}'s {{abilityName}}\nhurt its attacker!",
