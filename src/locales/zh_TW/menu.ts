@@ -17,6 +17,7 @@ export const menu: SimpleTranslationEntries = {
   "username": "用戶名",
   "password": "密碼",
   "login": "登入",
+  "orUse": "Or use",
   "register": "注冊",
   "emptyUsername": "用戶名不能為空",
   "invalidLoginUsername": "提供的用戶名無效",
@@ -53,6 +54,5 @@ export const menu: SimpleTranslationEntries = {
   "no":"否",
   "disclaimer": "DISCLAIMER",
   "disclaimerDescription": "This game is an unfinished product; it might have playability issues (including the potential loss of save data),\n change without notice, and may or may not be updated further or completed.",
-  "choosePokemon": "Choose a Pokémon.",
   "errorServerDown": "Oops! There was an issue contacting the server.\n\nYou may leave this window open,\nthe game will automatically reconnect.",
 } as const;
