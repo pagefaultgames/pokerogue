@@ -178,11 +178,6 @@ export default class BattleScene extends SceneBase {
   public gameData: GameData;
   public sessionSlotId: integer;
 
-  /**
-	 * queues are moved around during the function shiftPhase() below
-	 * can debug phases using "phase.constructor.name"
-	 */
-
   /** PhaseQueue: dequeue/remove the first element to get the next phase */
   public phaseQueue: Phase[];
   public conditionalQueue: Array<[() => boolean, Phase]>;
@@ -1951,11 +1946,6 @@ export default class BattleScene extends SceneBase {
     return this.standbyPhase;
   }
 
-  /**
-	 * PhaseQueuePrepend: is a temp storage of what will be added to PhaseQueue
-	 * PhaseQueue: dequeue/remove the first element to get the next phase
-	 * queues are moved around during shiftPhase() below
-	 */
 
   /**
    * Adds a phase to the conditional queue and ensures it is executed only when the specified condition is met.
@@ -1972,18 +1962,18 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
-	 * Adds a phase to nextCommandPhaseQueue, as long as boolean passed in is false
-	 * @param phase {@linkcode Phase} the phase to add
-	 * @param defer boolean on which queue to add to, defaults to false, and adds to phaseQueue
-	*/
+   * Adds a phase to nextCommandPhaseQueue, as long as boolean passed in is false
+   * @param phase {@linkcode Phase} the phase to add
+   * @param defer boolean on which queue to add to, defaults to false, and adds to phaseQueue
+   */
   pushPhase(phase: Phase, defer: boolean = false): void {
     (!defer ? this.phaseQueue : this.nextCommandPhaseQueue).push(phase);
   }
 
   /**
-	 * Adds Phase to the end of phaseQueuePrepend, or at phaseQueuePrependSpliceIndex
-	 * @param phase {@linkcode Phase} the phase to add
-	 */
+   * Adds Phase to the end of phaseQueuePrepend, or at phaseQueuePrependSpliceIndex
+   * @param phase {@linkcode Phase} the phase to add
+   */
   unshiftPhase(phase: Phase): void {
     if (this.phaseQueuePrependSpliceIndex === -1) {
       // .push() adds to end of array
@@ -1993,42 +1983,34 @@ export default class BattleScene extends SceneBase {
       // modifies array by inserting at index, removing num of elements after index
       this.phaseQueuePrepend.splice(this.phaseQueuePrependSpliceIndex, 0, phase);
     }
-    /**
-		 * debugging queues via printing, may be helpful in the future
-		console.log(`State of the phaseQueuePrepend (will be moved over to phaseQeueu)`)
-		this.phaseQueuePrepend.forEach(p => console.log(p.constructor.name));
-
-		console.log(`State of the phaseQueue, what is going to be called next `)
-		this.phaseQueue.forEach(p => console.log(p.constructor.name));
-		 */
   }
 
   /**
-	 * Clears phaseQueue
-	 */
+   * Clears the phaseQueue
+   */
   clearPhaseQueue(): void {
     this.phaseQueue.splice(0, this.phaseQueue.length);
   }
 
   /**
-	 * combo with unshiftPhase(), want to start inserting at current length instead of the "end", useful if phaseQueuePrepend gets longer with Phases
-	 */
+   * Used by function unshiftPhase(), sets index to start inserting at current length instead of the end of the array, useful if phaseQueuePrepend gets longer with Phases
+   */
   setPhaseQueueSplice(): void {
     this.phaseQueuePrependSpliceIndex = this.phaseQueuePrepend.length;
   }
 
   /**
-	 * Resets phaseQueuePrependSpliceIndex to -1, implies that calls to unshiftPhase will insert at end of phaseQueuePrepend
-	 */
+   * Resets phaseQueuePrependSpliceIndex to -1, implies that calls to unshiftPhase will insert at end of phaseQueuePrepend
+   */
   clearPhaseQueueSplice(): void {
     this.phaseQueuePrependSpliceIndex = -1;
   }
 
   /**
-	 * is called by each Phase implementations "end()" by default
-	 * dumps everything from phaseQueuePrepend to the start of of phaseQueue
-	 * then removes first Phase and starts it
-	 */
+   * is called by each Phase implementations "end()" by default
+   * dumps everything from phaseQueuePrepend to the start of of phaseQueue
+   * then removes first Phase and starts it
+   */
   shiftPhase(): void {
     if (this.standbyPhase) {
       this.currentPhase = this.standbyPhase;
@@ -2036,7 +2018,6 @@ export default class BattleScene extends SceneBase {
       return;
     }
 
-    // shifting phase (with no standby phase) will move everything from prepend to actual PhaseQueue?
     // resets the index, if it was changed via setPhaseQueueSplice()
     if (this.phaseQueuePrependSpliceIndex > -1) {
       this.clearPhaseQueueSplice();
@@ -2121,13 +2102,13 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
-	 * Adds a MessagePhase, either to PhaseQueuePrepend or nextCommandPhaseQueue
-	 * @param message string for MessagePhase
-	 * @param callbackDelay optional param for MessagePhase constructor
-	 * @param prompt optional param for MessagePhase constructor
-	 * @param promptDelay optional param for MessagePhase constructor
-	 * @param defer boolean for which queue to add it to, false -> add to PhaseQueuePrepend, true -> nextCommandPhaseQueue
-	 */
+   * Adds a MessagePhase, either to PhaseQueuePrepend or nextCommandPhaseQueue
+   * @param message string for MessagePhase
+   * @param callbackDelay optional param for MessagePhase constructor
+   * @param prompt optional param for MessagePhase constructor
+   * @param promptDelay optional param for MessagePhase constructor
+   * @param defer boolean for which queue to add it to, false -> add to PhaseQueuePrepend, true -> nextCommandPhaseQueue
+   */
   queueMessage(message: string, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer, defer?: boolean) {
     const phase = new MessagePhase(this, message, callbackDelay, prompt, promptDelay);
     if (!defer) {
@@ -2140,8 +2121,8 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
-	 * Moves everything from nextCommandPhaseQueue to phaseQueue (keeping order)
-	 */
+   * Moves everything from nextCommandPhaseQueue to phaseQueue (keeping order)
+   */
   populatePhaseQueue(): void {
     if (this.nextCommandPhaseQueue.length) {
       this.phaseQueue.push(...this.nextCommandPhaseQueue);
