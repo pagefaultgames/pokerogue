@@ -16,7 +16,6 @@ import {
   regenerateModifierPoolThresholds
 } from "#app/modifier/modifier-type";
 import { StatChangePhase } from "#app/phases";
-import { TextStyle } from "#app/ui/text";
 import { randSeedInt } from "#app/utils";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
@@ -78,10 +77,8 @@ export const FightOrFlightEncounter: MysteryEncounter = MysteryEncounterBuilder
     if (primaryPokemon) {
       // Use primaryPokemon to execute the thievery
       encounter.dialogue.encounterOptionsDialogue.options[1].buttonTooltip = "mysteryEncounter:fight_or_flight_option_2_steal_tooltip";
-      encounter.dialogue.encounterOptionsDialogue.options[1].style = TextStyle.SUMMARY_GREEN;
     } else {
       encounter.dialogue.encounterOptionsDialogue.options[1].buttonTooltip = "mysteryEncounter:fight_or_flight_option_2_tooltip";
-      encounter.dialogue.encounterOptionsDialogue.options[1].style = null;
     }
 
     return true;
