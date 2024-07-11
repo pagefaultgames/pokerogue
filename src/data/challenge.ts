@@ -393,6 +393,15 @@ export abstract class Challenge {
   applyMoveWeight(pokemon: Pokemon, moveSource: MoveSourceType, move: Moves, level: Utils.IntegerHolder): boolean {
     return false;
   }
+
+  /**
+   * An apply function for DUPLICATE_SPECIES. Derived classes should alter this.
+   * @param allowDuplicates {@link Utils.BooleanHolder} Is allowing duplicates.
+   * @returns {@link boolean} Whether this function did anything.
+   */
+  applyDuplicateSpecies(allowDuplicates: Utils.BooleanHolder): boolean {
+    return false;
+  }
 }
 
 type ChallengeCondition = (data: GameData) => boolean;
@@ -741,10 +750,6 @@ export class LowerStarterPointsChallenge extends Challenge {
 export class EeveeOnlyChallenge extends Challenge {
   constructor() {
     super(Challenges.EEVEE_ONLY, 1);
-    this.addChallengeType(ChallengeType.POKEMON_IN_BATTLE);
-    this.addChallengeType(ChallengeType.STARTER_CHOICE);
-    this.addChallengeType(ChallengeType.STARTER_POINTS);
-    this.addChallengeType(ChallengeType.DUPLICATE_SPECIES);
   }
 
   getValue(overrideValue?: integer): string {
@@ -765,38 +770,30 @@ export class EeveeOnlyChallenge extends Challenge {
     return i18next.t("challenges:eeveeOnly.desc");
   }
 
-  apply(challengeType: ChallengeType, args: any[]): boolean {
-    if (this.value === 0) {
-      return false;
-    }
-
-    switch (challengeType) {
-    case ChallengeType.POKEMON_IN_BATTLE:
-      const pokemon = args[0] as Pokemon;
-      const isValidPokemon = args[1] as Utils.BooleanHolder;
-      if (pokemon.isPlayer() && (pokemon.species.getRootSpeciesId() !== Species.EEVEE || (pokemon.isFusion() && pokemon.species.getRootSpeciesId() !== Species.EEVEE))) {
-        isValidPokemon.value = false;
-        return true;
-      }
-      break;
-    case ChallengeType.STARTER_CHOICE:
-      const species = args[0] as PokemonSpecies;
-      const isValidStarter = args[1] as Utils.BooleanHolder;
-      if (species.getRootSpeciesId() !== Species.EEVEE) {
-        isValidStarter.value = false;
-        return true;
-      }
-      break;
-    case ChallengeType.STARTER_POINTS:
-      const points = args[0] as Utils.NumberHolder;
-      points.value = 24;
-      return true;
-    case ChallengeType.DUPLICATE_SPECIES:
-      const duplicateSpecies = args[0] as Utils.BooleanHolder;
-      duplicateSpecies.value = true;
+  applyPokemonInBattle(pokemon: Pokemon, valid: Utils.BooleanHolder): boolean {
+    if (pokemon.isPlayer() && (pokemon.species.getRootSpeciesId() !== Species.EEVEE || (pokemon.isFusion() && pokemon.species.getRootSpeciesId() !== Species.EEVEE))) {
+      valid.value = false;
       return true;
     }
     return false;
+  }
+
+  applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps, soft?: boolean): boolean {
+    if (pokemon.getRootSpeciesId() !== Species.EEVEE) {
+      valid.value = false;
+      return true;
+    }
+    return false;
+  }
+
+  applyStarterPoints(points: Utils.NumberHolder): boolean {
+    points.value = 24;
+    return true;
+  }
+
+  applyDuplicateSpecies(allowDuplicates: Utils.BooleanHolder): boolean {
+    allowDuplicates.value = true;
+    return true;
   }
 
   static loadChallenge(source: EeveeOnlyChallenge | any): EeveeOnlyChallenge {
@@ -926,6 +923,14 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.MOVE_WEIGHT, pokemon: Pokemon, moveSource: MoveSourceType, move: Moves, weight: Utils.IntegerHolder): boolean;
+/**
+ * Apply all challenges that modify what weight a pokemon gives to move generation
+ * @param gameMode {@link GameMode} The current gameMode
+ * @param challengeType {@link ChallengeType} ChallengeType.DUPLICATE_SPECIES
+ * @param allowDuplicates {@link Utils.BooleanHolder} is allowing duplicates.
+ * @returns True if any challenge was successfully applied.
+ */
+export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.DUPLICATE_SPECIES, allowDuplicates: Utils.BooleanHolder): boolean;
 export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType, ...args: any[]): boolean {
   let ret = false;
   gameMode.challenges.forEach(c => {
@@ -966,6 +971,9 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
         break;
       case ChallengeType.MOVE_WEIGHT:
         ret ||= c.applyMoveWeight(args[0], args[1], args[2], args[3]);
+        break;
+      case ChallengeType.DUPLICATE_SPECIES:
+        ret ||= c.applyDuplicateSpecies(args[0]);
         break;
       }
     }

@@ -1139,7 +1139,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 const isValidForChallenge = new Utils.BooleanHolder(true);
                 Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor), !!this.starterGens.length);
                 const allowDuplicateSpecies = new Utils.BooleanHolder(false);
-                Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_POINTS, allowDuplicateSpecies);
+                Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.DUPLICATE_SPECIES, allowDuplicateSpecies);
 
                 if ((!isDupe || allowDuplicateSpecies.value) && isValidForChallenge.value && this.tryUpdateValue(this.scene.gameData.getSpeciesStarterValue(species.speciesId))) {
                   const cursorObj = this.starterCursorObjs[this.starterCursors.length];
