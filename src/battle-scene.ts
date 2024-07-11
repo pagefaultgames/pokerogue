@@ -2364,7 +2364,7 @@ export default class BattleScene extends SceneBase {
       }
 
       party.every((enemyPokemon: EnemyPokemon, i: integer) => {
-        if (customHeldModifiers && i < customHeldModifiers.length && customHeldModifiers[i].length > 0) {
+        if (customHeldModifiers && i < customHeldModifiers.length && customHeldModifiers[i] && customHeldModifiers[i].length > 0) {
           customHeldModifiers[i].forEach(mt => mt.newModifier(enemyPokemon).add(this.enemyModifiers, false, this));
           return true;
         }
