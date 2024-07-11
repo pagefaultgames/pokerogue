@@ -12,7 +12,13 @@ import { allMoves } from "#app/data/move.js";
 describe("Abilities - Aura Break", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  const multiplier = 9 / 16;
+  const auraBreakMultiplier = 9 / 16;
+  const auraMultiplier = 4 / 3;
+  /**
+   * Apparently, the auraMultiplier is being multiplied first to the move's power then multiplied again to
+   * the auraBreakMultiplier. This means we can't net the multiplier like so:
+   * power * (auraMultiplier * auraBreakMultiplier). Doing so will make the result off by a decimal value.
+   */
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -43,7 +49,7 @@ describe("Abilities - Aura Break", () => {
     const movePower = moveToCheck.calculatePower(game.scene.getPlayerPokemon(), game.scene.getEnemyPokemon());
     await game.phaseInterceptor.to(MoveEffectPhase);
 
-    expect(movePower).toBe(basePower * multiplier);
+    expect(movePower).toBe(basePower * auraMultiplier * auraBreakMultiplier);
   });
 
   it("reverses the effect of dark aura", async () => {
@@ -57,6 +63,6 @@ describe("Abilities - Aura Break", () => {
     const movePower = moveToCheck.calculatePower(game.scene.getPlayerPokemon(), game.scene.getEnemyPokemon());
     await game.phaseInterceptor.to(MoveEffectPhase);
 
-    expect(movePower).toBe(basePower * multiplier);
+    expect(movePower).toBe(basePower * auraMultiplier * auraBreakMultiplier);
   });
 });
