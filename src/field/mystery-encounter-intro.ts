@@ -90,32 +90,34 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
     const spacingValue = Math.round((maxX - minX) / Math.max(this.spriteConfigs.filter(s => !s.x && !s.y).length, 1));
 
     this.spriteConfigs?.forEach((config) => {
+      const { spriteKey, isItem, hasShadow, scale, x, y, alpha } = config;
+
       let sprite: GameObjects.Sprite;
       let tintSprite: GameObjects.Sprite;
-      if (!config.isItem) {
-        sprite = getSprite(config.spriteKey, config.hasShadow);
-        tintSprite = getSprite(config.spriteKey);
+      if (!isItem) {
+        sprite = getSprite(spriteKey, hasShadow);
+        tintSprite = getSprite(spriteKey);
       } else {
-        sprite = getItemSprite(config.spriteKey);
-        tintSprite = getItemSprite(config.spriteKey);
+        sprite = getItemSprite(spriteKey);
+        tintSprite = getItemSprite(spriteKey);
       }
 
       tintSprite.setVisible(false);
 
-      if (config.scale) {
-        sprite.setScale(config.scale);
-        tintSprite.setScale(config.scale);
+      if (scale) {
+        sprite.setScale(scale);
+        tintSprite.setScale(scale);
       }
 
       // Sprite offset from origin
-      if (config.x || config.y) {
-        if (config.x) {
-          sprite.setPosition(origin + config.x, sprite.y);
-          tintSprite.setPosition(origin + config.x, tintSprite.y);
+      if (x || y) {
+        if (x) {
+          sprite.setPosition(origin + x, sprite.y);
+          tintSprite.setPosition(origin + x, tintSprite.y);
         }
-        if (config.y) {
-          sprite.setPosition(sprite.x, config.y);
-          tintSprite.setPosition(tintSprite.x, config.y);
+        if (y) {
+          sprite.setPosition(sprite.x, y);
+          tintSprite.setPosition(tintSprite.x, y);
         }
       } else {
         // Single sprite
@@ -128,6 +130,11 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
           tintSprite.x = minX + (n + 0.5) * spacingValue + origin;
           n++;
         }
+      }
+
+      if (alpha) {
+        sprite.setAlpha(alpha);
+        tintSprite.setAlpha(alpha);
       }
 
       this.add(sprite);
