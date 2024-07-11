@@ -7,7 +7,7 @@ import { addWindow, WindowVariant } from "./ui-theme";
 export enum DropDownColumn {
   GEN,
   TYPES,
-  SHINY,
+  UNLOCKS,
   WIN,
   SORT
 }
@@ -101,12 +101,20 @@ export class FilterBar extends Phaser.GameObjects.Container {
 
   incDropDownCursor(): boolean {
     (this.scene as BattleScene).ui.playSelect();
-    return this.dropDowns[this.lastCursor].setCursor(this.dropDowns[this.lastCursor].cursor + 1);
+    if (this.dropDowns[this.lastCursor].cursor === this.dropDowns[this.lastCursor].options.length - 1) {// if at the bottom of the list, wrap around
+      return this.dropDowns[this.lastCursor].setCursor(0);
+    } else {
+      return this.dropDowns[this.lastCursor].setCursor(this.dropDowns[this.lastCursor].cursor + 1);
+    }
   }
 
   decDropDownCursor(): boolean {
     (this.scene as BattleScene).ui.playSelect();
-    return this.dropDowns[this.lastCursor].setCursor(this.dropDowns[this.lastCursor].cursor - 1);
+    if (this.dropDowns[this.lastCursor].cursor === 0) {// if at the top of the list, wrap around
+      return this.dropDowns[this.lastCursor].setCursor(this.dropDowns[this.lastCursor].options.length - 1);
+    } else {
+      return this.dropDowns[this.lastCursor].setCursor(this.dropDowns[this.lastCursor].cursor - 1);
+    }
   }
 
   toggleOptionState(): void {

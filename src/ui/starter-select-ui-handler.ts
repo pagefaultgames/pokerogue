@@ -335,7 +335,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const typeKeys = Object.keys(Type).filter(v => isNaN(Number(v)));
     const typeOptions: DropDownOption[] = [];
     typeKeys.forEach((type, index) => {
-      if (index === 0) {
+      if (index === 0 || index === 19) {
         return;
       }
       const typeSprite = this.scene.add.sprite(0, 0, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`);
@@ -345,7 +345,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     });
     this.filterBar.addFilter("Type", new DropDown(this.scene, 0, 0, typeOptions, this.updateStarters, DropDownType.MULTI, 0.5));
 
-    // shiny filter
+    // Unlocks filter
     const shiny1Sprite = this.scene.add.sprite(0, 0, "shiny_star_small");
     shiny1Sprite.setTint(getVariantTint(0));
     const shiny2Sprite = this.scene.add.sprite(0, 0, "shiny_star_small");
@@ -353,13 +353,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const shiny3Sprite = this.scene.add.sprite(0, 0, "shiny_star_small");
     shiny3Sprite.setTint(getVariantTint(2));
 
-    const shinyOptions = [
+    const unlocksOptions = [
       new DropDownOption(this.scene, "SHINY3", null, shiny3Sprite),
       new DropDownOption(this.scene, "SHINY2", null, shiny2Sprite),
       new DropDownOption(this.scene, "SHINY", null, shiny1Sprite),
       new DropDownOption(this.scene, "NORMAL", "Normal"),
       new DropDownOption(this.scene, "UNCAUGHT", "Not Caught")];
-    this.filterBar.addFilter("Shiny", new DropDown(this.scene, 0, 0, shinyOptions, this.updateStarters, DropDownType.MULTI));
+    this.filterBar.addFilter("Unlocks", new DropDown(this.scene, 0, 0, unlocksOptions, this.updateStarters, DropDownType.MULTI));
 
     // win filter
     const winOptions = [
@@ -372,8 +372,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       new DropDownOption(this.scene, 0, "No."),
       new DropDownOption(this.scene, 1, "Cost", null, DropDownState.OFF),
       new DropDownOption(this.scene, 2, "IVs", null, DropDownState.OFF),
-      new DropDownOption(this.scene, 3, "Name", null, DropDownState.OFF),
-      new DropDownOption(this.scene, 4, "# caught", null, DropDownState.OFF),];
+      new DropDownOption(this.scene, 3, "Name", null, DropDownState.OFF)];
     this.filterBar.addFilter("Sort", new DropDown(this.scene, 0, 0, sortOptions, this.updateStarters, DropDownType.SINGLE));
     this.filterBarContainer.add(this.filterBar);
 
@@ -981,7 +980,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     // Loop through all visible candy icons when set to 'Icon' mode
     if (this.scene.candyUpgradeDisplay === 0) {
-      this.starterContainers[this.getGenCursorWithScroll()].forEach((starter) => {
+      this.filteredStarterContainers.forEach((starter) => {
         this.setUpgradeIcon(starter);
       });
 
@@ -989,19 +988,30 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     }
 
     // Loop through all animations when set to 'Animation' mode
-    for (let g = 0; g < gens.length; g++) {
-      this.genSpecies[g].forEach((species, s) => {
-        const icon = this.starterContainers[g][s].icon;
+    this.filteredStarterContainers.forEach((starter, s) => {
+      const icon = this.filteredStarterContainers[s].icon;
 
-        this.setUpgradeAnimation(icon, species);
-      });
-    }
+      this.setUpgradeAnimation(icon, starter.species);
+    });
   }
 
   processInput(button: Button): boolean {
     if (this.blockInput) {
       return false;
     }
+
+    const numberOfStarters = this.filteredStarterContainers.length;
+    const numOfRows = Math.ceil(numberOfStarters / 9);
+    const currentRow = Math.floor(this.cursor / 9);
+    const onScreenFirstIndex = this.scrollCursor * 9; // this is first starter index on the screen
+    const onScreenLastIndex = Math.min(onScreenFirstIndex + 9*9, numberOfStarters) - 1; // this is the last starter index on the screen
+    const onScreenNumberOfStarters = onScreenLastIndex - onScreenFirstIndex + 1;
+    const onScreenNumberOfRows = Math.ceil(onScreenNumberOfStarters / 9);
+    const onScreenFirstRow = Math.floor(onScreenFirstIndex / 9);
+    const onScreenCurrentRow = Math.floor((this.cursor - onScreenFirstIndex) / 9);
+
+
+    // console.log("this.cursor: ", this.cursor, "this.scrollCursor" , this.scrollCursor, "numberOfStarters: ", numberOfStarters, "numOfRows: ", numOfRows, "currentRow: ", currentRow, "onScreenFirstIndex: ", onScreenFirstIndex, "onScreenLastIndex: ", onScreenLastIndex, "onScreenNumberOfStarters: ", onScreenNumberOfStarters, "onScreenNumberOfRow: ", onScreenNumberOfRows, "onScreenCurrentRow: ", onScreenCurrentRow);
 
     const ui = this.getUi();
 
@@ -1016,7 +1026,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       }
     } else if (button === Button.CANCEL) {
       if (this.filterMode && this.filterBar.openDropDown) {
-        this.filterBar.hideDropDowns();
+        this.filterBar.toggleDropDown(this.filterBarCursor);
         success = true;
       } else if (this.statsMode) {
         this.toggleStatsMode(false);
@@ -1047,15 +1057,28 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         break;
       case Button.UP:
         this.startCursorObj.setVisible(false);
+        this.setFilterMode(true);
+        this.scrollCursor = 0;
+        this.updateScroll();
+        success = true;
+        break;
+      case Button.DOWN:
+        this.startCursorObj.setVisible(false);
+        this.setFilterMode(true);
+        this.scrollCursor = 0;
+        this.updateScroll();
         success = true;
         break;
       case Button.LEFT:
         this.startCursorObj.setVisible(false);
-        this.setCursor(Math.min(this.cursor + 8, this.filteredStarterContainers.length - 1));
+        this.cursorObj.setVisible(true);
+        success = this.setCursor(onScreenCurrentRow * 9 + 8); // set last column
         success = true;
         break;
       case Button.RIGHT:
         this.startCursorObj.setVisible(false);
+        this.cursorObj.setVisible(true);
+        success = this.setCursor(onScreenCurrentRow * 9); // set first column
         success = true;
         break;
       }
@@ -1065,26 +1088,42 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         if (this.filterBarCursor > 0) {
           success = this.setCursor(this.filterBarCursor - 1);
         } else {
-          this.setFilterMode(false);
+          success = this.setCursor(this.filterBar.numFilters - 1);
         }
         break;
       case Button.RIGHT:
         if (this.filterBarCursor < this.filterBar.numFilters - 1) {
           success = this.setCursor(this.filterBarCursor + 1);
         } else {
-          this.setFilterMode(false);
+          success = this.setCursor(0);
         }
         break;
       case Button.UP:
-        if (!this.filterBar.decDropDownCursor()) {
-          this.filterBar.hideDropDowns();
+        if (this.filterBar.openDropDown) {
+          success = this.filterBar.decDropDownCursor()
+        // else if there is filtered starters
+        } else if (numberOfStarters > 0) {
+          this.setFilterMode(false);
+          this.scrollCursor = Math.max(0,numOfRows - 9);
+          this.updateScroll();
+          const proportion = (this.filterBarCursor + 0.5) / this.filterBar.numFilters;
+          const targetCol = Math.floor(proportion * 9);
+          if (numberOfStarters % 9 > targetCol) {
+            success = this.setCursor(numberOfStarters - (numberOfStarters) % 9 + targetCol);
+          } else {
+            success = this.setCursor(Math.max(numberOfStarters - (numberOfStarters) % 9 + targetCol - 9,0));
+          }
         }
         break;
       case Button.DOWN:
-        // add extra check to prevent cursor if there is no filtered results
-        if ((!this.filterBar.openDropDown || !this.filterBar.incDropDownCursor()) && this.filteredStarterContainers.length > 0) {
+        if (this.filterBar.openDropDown) {
+          success = this.filterBar.incDropDownCursor()
+        } else if (numberOfStarters > 0) {
           this.setFilterMode(false);
-          success = true;
+          this.scrollCursor = 0;
+          this.updateScroll();
+          const proportion = this.filterBarCursor / Math.max(1, this.filterBar.numFilters - 1);
+          success = this.setCursor(Math.round(proportion * (Math.min(9, numberOfStarters) - 1)));
         }
         break;
       case Button.ACTION:
@@ -1135,6 +1174,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                     getPokemonSpeciesForm(species.speciesId, props.formIndex).cry(this.scene);
                   }
                   if (this.starterSpecies.length === 6 || this.value === this.getValueLimit()) {
+                    this.cursorObj.setVisible(false);
+                    this.setSpecies(null);
+                    this.startCursorObj.setVisible(true);
                     this.tryStart();
                   }
                   this.updateInstructions();
@@ -1261,8 +1303,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                         handler: () => {
                           // update default nature in starter save data
                           if (!starterAttributes) {
-                            starterAttributes=
-                            this.starterPreferences[this.lastSpecies.speciesId] = {};
+                            starterAttributes = this.starterPreferences[this.lastSpecies.speciesId] = {};
                           }
                           starterAttributes.nature = n as unknown as integer;
                           this.clearText();
@@ -1475,15 +1516,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           success = true;
         }
       } else {
-        const genStarters = this.filteredStarterContainers.length;
-        const rows = Math.ceil(genStarters / 9);
-        const row = Math.floor(this.cursor / 9);
         const props = this.scene.gameData.getSpeciesDexAttrProps(this.lastSpecies, this.dexAttrCursor);
         // prepare persistent starter data to store changes
         let starterAttributes = this.starterPreferences[this.lastSpecies.speciesId];
         if (!starterAttributes) {
-          starterAttributes =
-          this.starterPreferences[this.lastSpecies.speciesId] = {};
+          starterAttributes = this.starterPreferences[this.lastSpecies.speciesId] = {};
         }
         switch (button) {
         case Button.CYCLE_SHINY:
@@ -1591,8 +1628,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           }
           break;
         case Button.UP:
-          if (row > 0) {
-            if (this.scrollCursor > 0 && row - this.scrollCursor === 0) {
+          if (currentRow > 0) {
+            if (this.scrollCursor > 0 && currentRow - this.scrollCursor === 0) {
               this.scrollCursor--;
               this.updateScroll();
             }
@@ -1605,29 +1642,46 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           }
           break;
         case Button.DOWN:
-          if (row < rows - 1) {
-            if (row - this.scrollCursor === 8) {
+          if (currentRow < numOfRows - 1) { // not last row
+            if (currentRow - this.scrollCursor === 8) { // last row of visible starters
               this.scrollCursor++;
             }
             success = this.setCursor(this.cursor + 9);
             this.updateScroll();
+          } else { // last row
+            this.setFilterMode(true);
+            success = true;
           }
           break;
         case Button.LEFT:
-          if (this.cursor % 9) {
+          if (this.cursor % 9 !== 0) {
             success = this.setCursor(this.cursor - 1);
           } else {
-            if (row >= 5) {
+            if (this.starterSpecies.length === 0 || onScreenNumberOfRows - onScreenCurrentRow > 4) {
+              // just wrap around to the last column
+              success = this.setCursor(this.cursor + Math.min(8, numberOfStarters - this.cursor));
+            } else {
+              this.cursorObj.setVisible(false);
+              this.setSpecies(null);
               this.startCursorObj.setVisible(true);
-            }
+              success = true;
+            } 
           }
           break;
         case Button.RIGHT:
-          if (this.cursor % 9 < (row < rows - 1 ? 8 : (genStarters - 1) % 9)) {
+          // is not right edge
+          if (this.cursor % 9 < (currentRow < numOfRows - 1 ? 8 : (numberOfStarters - 1) % 9)) {
             success = this.setCursor(this.cursor + 1);
           } else {
-            if (row >= Math.min(5, rows - 1)) {
+            // in right edge
+            if (this.starterSpecies.length === 0 || onScreenNumberOfRows - onScreenCurrentRow > 4) {
+              // just wrap around to the first column
+              success = this.setCursor(this.cursor - Math.min(8, this.cursor % 9));
+            } else {
+              this.cursorObj.setVisible(false);
+              this.setSpecies(null);
               this.startCursorObj.setVisible(true);
+              success = true;
             }
           }
           break;
@@ -1642,6 +1696,19 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     }
 
     return success || error;
+  }
+
+  isInParty(species: PokemonSpecies): [boolean, number] {
+    let removeIndex = 0;
+    let isDupe = false;
+    for (let s = 0; s < this.starterSpecies.length; s++) {
+      if (this.starterSpecies[s] === species) {
+        isDupe = true;
+        removeIndex = s;
+        break;
+      }
+    }
+    return [isDupe, removeIndex];
   }
 
   switchMoveHandler(i: number, newMove: Moves, move: Moves) {
@@ -1784,6 +1851,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.starterContainers[g].forEach(container => {
         container.setVisible(false);
 
+        this.updateStarterValueLabel(container);
         // First, ensure you have the caught attributes for the species else default to bigint 0
         const caughtVariants = this.scene.gameData.dexData[container.species.speciesId]?.caughtAttr || BigInt(0);
 
@@ -1796,7 +1864,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
         const fitsGen =   this.filterBar.getVals(DropDownColumn.GEN).includes(g);
         const fitsType =  this.filterBar.getVals(DropDownColumn.TYPES).some(type => container.species.isOfType((type as number) - 1));
-        const fitsShiny = this.filterBar.getVals(DropDownColumn.SHINY).some(variant => {
+        const fitsUnlocks = this.filterBar.getVals(DropDownColumn.UNLOCKS).some(variant => {
           if (variant === "SHINY3") {
             return isVariant3Caught;
           } else if (variant === "SHINY2") {
@@ -1821,7 +1889,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           }
         });
 
-        if (fitsGen && fitsType && fitsShiny && fitsWin) {
+        if (fitsGen && fitsType && fitsUnlocks && fitsWin) {
           this.filteredStarterContainers.push(container);
         }
       });
@@ -1837,7 +1905,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       default:
         break;
       case 0:
-        return -sort.dir;
+        return (a.species.speciesId - b.species.speciesId) * -sort.dir;
       case 1:
         return (a.cost - b.cost) * -sort.dir;
       case 2:
@@ -1846,8 +1914,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         return (avgIVsA - avgIVsB) * -sort.dir;
       case 3:
         return a.species.name.localeCompare(b.species.name) * -sort.dir;
-      case 4:
-        return (this.scene.gameData.dexData[a.species.speciesId].caughtCount - this.scene.gameData.dexData[b.species.speciesId].caughtCount) * -sort.dir;
       }
       return 0;
     });
@@ -2076,7 +2142,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       const dexAttr = this.scene.gameData.getSpeciesDefaultDexAttr(this.lastSpecies, false, true);
       const props = this.scene.gameData.getSpeciesDexAttrProps(this.lastSpecies, dexAttr);
       const lastSpeciesIcon = this.starterContainers[this.lastSpecies.generation - 1][this.genSpecies[this.lastSpecies.generation - 1].indexOf(this.lastSpecies)].icon;
-      lastSpeciesIcon.setTexture(this.lastSpecies.getIconAtlasKey(props.formIndex, props.shiny, props.variant), this.lastSpecies.getIconId(props.female, props.formIndex, props.shiny, props.variant));
       this.checkIconId(lastSpeciesIcon, this.lastSpecies, props.female, props.formIndex, props.shiny, props.variant);
       this.iconAnimHandler.addOrUpdate(lastSpeciesIcon, PokemonIconAnimMode.NONE);
 
@@ -2371,13 +2436,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
 
         const isValidForChallenge = new Utils.BooleanHolder(true);
-        const currentPartyValue = this.starterSpecies.map(s => s.generation).reduce((total: integer, gen: integer, i: integer) => total += this.scene.gameData.getSpeciesStarterValue(this.starterSpecies[i].speciesId), 0);
-        const cursorCost = this.scene.gameData.getSpeciesStarterValue(species.speciesId);
-        const isValidNextPartyValue = (currentPartyValue + cursorCost) <= this.getValueLimit();
         Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor), this.starterSpecies.length);
         const starterSprite = this.filteredStarterContainers[this.cursor].icon as Phaser.GameObjects.Sprite;
         starterSprite.setTexture(species.getIconAtlasKey(formIndex, shiny, variant), species.getIconId(female, formIndex, shiny, variant));
-        starterSprite.setAlpha(isValidForChallenge.value && isValidNextPartyValue ? 1 : 0.375);
         this.filteredStarterContainers[this.cursor].checkIconId(female, formIndex, shiny, variant);
         this.canCycleShiny = !!(dexEntry.caughtAttr & DexAttr.NON_SHINY && dexEntry.caughtAttr & DexAttr.SHINY);
         this.canCycleGender = !!(dexEntry.caughtAttr & DexAttr.MALE && dexEntry.caughtAttr & DexAttr.FEMALE);
@@ -2555,7 +2616,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     starter.label.setShadowColor(this.getTextColor(textStyle, true));
   }
 
-  tryUpdateValue(add?: integer): boolean {
+  tryUpdateValue(add?: integer, addingToParty?: boolean): boolean {
     const value = this.starterSpecies.map(s => s.generation).reduce((total: integer, gen: integer, i: integer) => total += this.scene.gameData.getSpeciesStarterValue(this.starterSpecies[i].speciesId), 0);
     const newValue = value + (add || 0);
     const valueLimit = this.getValueLimit();
@@ -2570,6 +2631,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     if (overLimit) {
       this.scene.time.delayedCall(Utils.fixedInt(500), () => this.tryUpdateValue());
       return false;
+    }
+    let isPartyValid: boolean = this.isPartyValid(); // this checks to see if the party is valid
+    if (addingToParty) { // this does a check to see if the pokemon being added is valid; if so, it will update the isPartyValid boolean
+      const isNewPokemonValid = new Utils.BooleanHolder(true);
+      const species = this.filteredStarterContainers[this.cursor].species;
+      Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isNewPokemonValid, this.scene.gameData.getSpeciesDexAttrProps(species, this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true)), this.starterSpecies.length + (add ? 1 : 0), false, false);
+      isPartyValid = isPartyValid || isNewPokemonValid.value;
     }
 
     /**
@@ -2590,15 +2658,32 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
          * If remainValue greater than or equal pokemon species and the pokemon is legal for this challenge, the user can select.
          * so that the alpha value of pokemon sprite set 1.
          *
+         * However, if isPartyValid is false, that means none of the party members are valid for the run. In this case, we should
+         * check the challenge to make sure evolutions and forms aren't being checked for mono type runs.
+         * This will let us set the sprite's alpha to show it can't be selected
+         *
          * If speciesStarterDexEntry?.caughtAttr is true, this species registered in stater.
          * we change to can AddParty value to true since the user has enough cost to choose this pokemon and this pokemon registered too.
          */
         const isValidForChallenge = new Utils.BooleanHolder(true);
-        Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, this.genSpecies[g][s], isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(this.genSpecies[g][s], this.scene.gameData.getSpeciesDefaultDexAttr(this.genSpecies[g][s], false, true)), this.starterSpecies.length + (add ? 1 : 0));
+        if (isPartyValid) { // we have two checks here - one for the party being valid and one for not. This comes from mono type challenges - if the party is valid it will check pokemon's evolutions and forms, and if it's not valid it won't check their evolutions and forms
+          Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, this.genSpecies[g][s], isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(this.genSpecies[g][s], this.scene.gameData.getSpeciesDefaultDexAttr(this.genSpecies[g][s], false, true)), this.starterSpecies.length + (add ? 1 : 0));
+        } else {
+          Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, this.genSpecies[g][s], isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(this.genSpecies[g][s], this.scene.gameData.getSpeciesDefaultDexAttr(this.genSpecies[g][s], false, true)), this.starterSpecies.length + (add ? 1 : 0), false, false);
+        }
 
         const canBeChosen = remainValue >= speciesStarterValue && isValidForChallenge.value;
 
-        if (canBeChosen) {
+        const isPokemonInParty = this.isInParty(this.genSpecies[g][s])[0]; // this will get the valud of isDupe from isInParty. This will let us see if the pokemon in question is in our party already so we don't grey out the sprites if they're invalid
+
+        /* This code does a check to tell whether or not a sprite should be lit up or greyed out. There are 3 ways a pokemon's sprite should be lit up:
+         * 1) If it's in your party, it's a valid pokemon (i.e. for challenge) and you have enough points to have it
+         * 2) If it's in your party, it's not valid (i.e. for challenges), and you have enough points to have it
+         * 3) If it's not in your party, but it's a valid pokemon and you have enough points for it
+         * Any other time, the sprite should be greyed out.
+         * For example, if it's in your party, valid, but costs too much, or if it's not in your party and not valid, regardless of cost
+        */
+        if (canBeChosen || (isPokemonInParty && remainValue >= speciesStarterValue)) {
           speciesSprite.setAlpha(1);
           if (speciesStarterDexEntry?.caughtAttr) {
             this.canAddParty = true;
@@ -2632,32 +2717,49 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.clearText();
     };
 
-    ui.showText(i18next.t("starterSelectUiHandler:confirmStartTeam"), null, () => {
-      ui.setModeWithoutClear(Mode.CONFIRM, () => {
-        const startRun = () => {
-          this.scene.money = this.scene.gameMode.getStartingMoney();
-          ui.setMode(Mode.STARTER_SELECT);
-          const thisObj = this;
-          const originalStarterSelectCallback = this.starterSelectCallback;
-          this.starterSelectCallback = null;
-          originalStarterSelectCallback(new Array(this.starterSpecies.length).fill(0).map(function (_, i) {
-            const starterSpecies = thisObj.starterSpecies[i];
-            return {
-              species: starterSpecies,
-              dexAttr: thisObj.starterAttr[i],
-              abilityIndex: thisObj.starterAbilityIndexes[i],
-              passive: !(thisObj.scene.gameData.starterData[starterSpecies.speciesId].passiveAttr ^ (PassiveAttr.ENABLED | PassiveAttr.UNLOCKED)),
-              nature: thisObj.starterNatures[i] as Nature,
-              moveset: thisObj.starterMovesets[i],
-              pokerus: thisObj.pokerusSpecies.includes(starterSpecies)
-            };
-          }));
-        };
-        startRun();
-      }, cancel, null, null, 19);
-    });
+    const canStart = this.isPartyValid();
 
+    if (canStart) {
+      ui.showText(i18next.t("starterSelectUiHandler:confirmStartTeam"), null, () => {
+        ui.setModeWithoutClear(Mode.CONFIRM, () => {
+          const startRun = () => {
+            this.scene.money = this.scene.gameMode.getStartingMoney();
+            ui.setMode(Mode.STARTER_SELECT);
+            const thisObj = this;
+            const originalStarterSelectCallback = this.starterSelectCallback;
+            this.starterSelectCallback = null;
+            originalStarterSelectCallback(new Array(this.starterSpecies.length).fill(0).map(function (_, i) {
+              const starterSpecies = thisObj.starterSpecies[i];
+              return {
+                species: starterSpecies,
+                dexAttr: thisObj.starterAttr[i],
+                abilityIndex: thisObj.starterAbilityIndexes[i],
+                passive: !(thisObj.scene.gameData.starterData[starterSpecies.speciesId].passiveAttr ^ (PassiveAttr.ENABLED | PassiveAttr.UNLOCKED)),
+                nature: thisObj.starterNatures[i] as Nature,
+                moveset: thisObj.starterMovesets[i],
+                pokerus: thisObj.pokerusSpecies.includes(starterSpecies)
+              };
+            }));
+          };
+          startRun();
+        }, cancel, null, null, 19);
+      });
+    }
     return true;
+  }
+
+  /* This block checks to see if your party is valid
+   * It checks each pokemon against the challenge - noting that due to monotype challenges it needs to check the pokemon while ignoring their evolutions/form change items
+  */
+  isPartyValid(): boolean {
+    let canStart = false;
+    for (let s = 0; s < this.starterSpecies.length; s++) {
+      const isValidForChallenge = new Utils.BooleanHolder(true);
+      const species = this.starterSpecies[s];
+      Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor), this.starterSpecies.length, false, false);
+      canStart = canStart || isValidForChallenge.value;
+    }
+    return canStart;
   }
 
   toggleStatsMode(on?: boolean): void {

@@ -59,7 +59,7 @@ export class DropDownOption extends Phaser.GameObjects.Container {
   public setOptionState(state: DropDownState): DropDownState {
     this.state = state % 2;
     if (this.state === DropDownState.OFF) {
-      this.toggle.setTint(0xff5555);
+      this.toggle.setTint(0x272727);
     } else {
       this.toggle.setTint(0x55ff55);
     }
