@@ -4,7 +4,6 @@ import { MysteriousChestDialogue } from "#app/data/mystery-encounters/dialogue/m
 import { FightOrFlightDialogue } from "#app/data/mystery-encounters/dialogue/fight-or-flight-dialogue";
 import { TrainingSessionDialogue } from "#app/data/mystery-encounters/dialogue/training-session-dialogue";
 import { SleepingSnorlaxDialogue } from "./dialogue/sleeping-snorlax-dialogue";
-import { DepartmentStoreSaleDialogue } from "#app/data/mystery-encounters/dialogue/department-store-sale-dialogue";
 import { ShadyVitaminDealerDialogue } from "#app/data/mystery-encounters/dialogue/shady-vitamin-dealer";
 import { TextStyle } from "#app/ui/text";
 import { FieldTripDialogue } from "#app/data/mystery-encounters/dialogue/field-trip-dialogue";
@@ -89,7 +88,6 @@ export function initMysteryEncounterDialogue() {
   allMysteryEncounterDialogue[MysteryEncounterType.FIGHT_OR_FLIGHT] = FightOrFlightDialogue;
   allMysteryEncounterDialogue[MysteryEncounterType.TRAINING_SESSION] = TrainingSessionDialogue;
   allMysteryEncounterDialogue[MysteryEncounterType.SLEEPING_SNORLAX] = SleepingSnorlaxDialogue;
-  allMysteryEncounterDialogue[MysteryEncounterType.DEPARTMENT_STORE_SALE] = DepartmentStoreSaleDialogue;
   allMysteryEncounterDialogue[MysteryEncounterType.SHADY_VITAMIN_DEALER] = ShadyVitaminDealerDialogue;
   allMysteryEncounterDialogue[MysteryEncounterType.FIELD_TRIP] = FieldTripDialogue;
 }

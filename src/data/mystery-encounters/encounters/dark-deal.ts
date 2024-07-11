@@ -21,6 +21,9 @@ import {
   leaveEncounterWithoutBattle,
 } from "../mystery-encounter-utils";
 
+/** i18n namespace for encounter */
+const namespace = "mysteryEncounter:dark_deal";
+
 // Exclude Ultra Beasts, Paradox, Necrozma, Eternatus, and egg-locked mythicals
 const excludedBosses = [
   Species.NECROZMA,
@@ -88,31 +91,31 @@ export const DarkDealEncounter: MysteryEncounter =
     ])
     .withIntroDialogue([
       {
-        text: "mysteryEncounter:dark_deal_intro_message",
+        text: `${namespace}_intro_message`,
       },
       {
-        speaker: "mysteryEncounter:dark_deal_speaker",
-        text: "mysteryEncounter:dark_deal_intro_dialogue",
+        speaker: `${namespace}_speaker`,
+        text: `${namespace}_intro_dialogue`,
       },
     ])
     .withSceneWaveRangeRequirement(30, 180) // waves 30 to 180
     .withScenePartySizeRequirement(2, 6) // Must have at least 2 pokemon in party
     .withCatchAllowed(true)
-    .withTitle("mysteryEncounter:dark_deal_title")
-    .withDescription("mysteryEncounter:dark_deal_description")
-    .withQuery("mysteryEncounter:dark_deal_query")
+    .withTitle(`${namespace}_title`)
+    .withDescription(`${namespace}_description`)
+    .withQuery(`${namespace}_query`)
     .withOption(
       new MysteryEncounterOptionBuilder()
         .withDialogue({
-          buttonLabel: "mysteryEncounter:dark_deal_option_1_label",
-          buttonTooltip: "mysteryEncounter:dark_deal_option_1_tooltip",
+          buttonLabel: `${namespace}_option_1_label`,
+          buttonTooltip: `${namespace}_option_1_tooltip`,
           selected: [
             {
-              speaker: "mysteryEncounter:dark_deal_speaker",
-              text: "mysteryEncounter:dark_deal_option_1_selected",
+              speaker: `${namespace}_speaker`,
+              text: `${namespace}_option_1_selected`,
             },
             {
-              text: "mysteryEncounter:dark_deal_option_1_selected_message",
+              text: `${namespace}_option_1_selected_message`,
             },
           ],
         })
@@ -180,12 +183,12 @@ export const DarkDealEncounter: MysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: "mysteryEncounter:dark_deal_option_2_label",
-        buttonTooltip: "mysteryEncounter:dark_deal_option_2_tooltip",
+        buttonLabel: `${namespace}_option_2_label`,
+        buttonTooltip: `${namespace}_option_2_tooltip`,
         selected: [
           {
-            speaker: "mysteryEncounter:dark_deal_speaker",
-            text: "mysteryEncounter:dark_deal_option_2_selected",
+            speaker: `${namespace}_speaker`,
+            text: `${namespace}_option_2_selected`,
           },
         ],
       },
@@ -198,7 +201,7 @@ export const DarkDealEncounter: MysteryEncounter =
     )
     .withOutroDialogue([
       {
-        text: "mysteryEncounter:dark_deal_outro"
+        text: `${namespace}_outro`
       }
     ])
     .build();
