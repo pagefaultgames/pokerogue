@@ -110,7 +110,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
               this.unblockInput();
             }, 300);
           });
-        } else if (this.blockInput || !this.optionsMeetsReqs[cursor]) {
+        } else if (this.blockInput || (!this.optionsMeetsReqs[cursor] && this.filteredEncounterOptions[cursor].isDisabledOnRequirementsNotMet)) {
           success = false;
         } else {
           const selected = this.filteredEncounterOptions[cursor];
@@ -253,7 +253,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     if (this.blockInput) {
       this.blockInput = false;
       for (let i = 0; i < this.optionsContainer.length - 1; i++) {
-        if (!this.optionsMeetsReqs[i]) {
+        if (!this.optionsMeetsReqs[i] && this.filteredEncounterOptions[i].isDisabledOnRequirementsNotMet) {
           continue;
         }
         (this.optionsContainer.getAt(i) as Phaser.GameObjects.Text).setAlpha(1);
@@ -334,9 +334,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
         optionText.setText(text);
       }
 
-
-
-      if (!this.optionsMeetsReqs[i]) {
+      if (!this.optionsMeetsReqs[i] && this.filteredEncounterOptions[i].isDisabledOnRequirementsNotMet) {
         optionText.setAlpha(0.5);
       }
       if (this.blockInput) {
@@ -424,7 +422,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     const mysteryEncounter = this.scene.currentBattle.mysteryEncounter;
     let text;
     const option = mysteryEncounter.dialogue.encounterOptionsDialogue.options[cursor];
-    if (!this.optionsMeetsReqs[cursor] && option.disabledTooltip) {
+    if (!this.optionsMeetsReqs[cursor] && this.filteredEncounterOptions[cursor].isDisabledOnRequirementsNotMet && option.disabledTooltip) {
       text = getEncounterText(this.scene, option.disabledTooltip, TextStyle.TOOLTIP_CONTENT);
     } else {
       text = getEncounterText(this.scene, option.buttonTooltip, TextStyle.TOOLTIP_CONTENT);

@@ -4,8 +4,8 @@
 			"image": "mad_scientist_m.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 44,
-				"h": 74
+				"w": 46,
+				"h": 76
 			},
 			"scale": 1,
 			"frames": [
@@ -24,8 +24,8 @@
 						"h": 74
 					},
 					"frame": {
-						"x": 0,
-						"y": 0,
+						"x": 1,
+						"y": 1,
 						"w": 44,
 						"h": 74
 					}
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:895f0a79b89fa0fb44167f4584fd9a22:357b46953b7e17c6b2f43a62d52855d8:cc1ed0e4f90aaa9dcf1b39a0af1283b0$"
+		"smartupdate": "$TexturePacker:SmartUpdate:a7f8ff2bbb362868f51125c254eb6681:cf76e61ddd31a8f46af67ced168c44a2:4fc09abe16c0608828269e5da81d0744$"
 	}
 }

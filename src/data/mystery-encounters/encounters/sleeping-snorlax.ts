@@ -2,7 +2,6 @@ import {
   modifierTypes
 } from "#app/modifier/modifier-type";
 import { BerryType } from "#enums/berry-type";
-import { Moves } from "#enums/moves";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
 import BattleScene from "../../../battle-scene";
@@ -19,6 +18,7 @@ import {
   leaveEncounterWithoutBattle, queueEncounterMessage, setEncounterExp,
   setEncounterRewards
 } from "../mystery-encounter-utils";
+import { STEALING_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
 
 export const SleepingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuilder
   .withEncounterType(MysteryEncounterType.SLEEPING_SNORLAX)
@@ -98,7 +98,7 @@ export const SleepingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuilde
     }
   })
   .withOption(new MysteryEncounterOptionBuilder()
-    .withPrimaryPokemonRequirement(new MoveRequirement([Moves.PLUCK, Moves.COVET, Moves.KNOCK_OFF, Moves.THIEF, Moves.TRICK, Moves.SWITCHEROO]))
+    .withPrimaryPokemonRequirement(new MoveRequirement(STEALING_MOVES))
     .withOptionPhase(async (scene: BattleScene) => {
       // Steal the Snorlax's Leftovers
       const instance = scene.currentBattle.mysteryEncounter;

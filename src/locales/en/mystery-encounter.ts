@@ -43,14 +43,14 @@ export const mysteryEncounter: SimpleTranslationEntries = {
   "fight_or_flight_option_1_tooltip": "(-) Hard Battle\n(+) New Item",
   "fight_or_flight_option_2_label": "Steal the item",
   "fight_or_flight_option_2_tooltip": "@[SUMMARY_GREEN]{(35%) Steal Item}\n@[SUMMARY_BLUE]{(65%) Harder Battle}",
-  "fight_or_flight_option_2_steal_tooltip": "@[SUMMARY_GREEN]{(?) Use a Pokémon Move}",
+  "fight_or_flight_option_2_steal_tooltip": "(+) @ec{option2PrimaryName} uses @ec{option2PrimaryMove}",
   "fight_or_flight_option_3_label": "Leave",
   "fight_or_flight_option_3_tooltip": "(-) No Rewards",
   "fight_or_flight_option_1_selected_message": "You approach the\nPokémon without fear.",
   "fight_or_flight_option_2_good_result": `.@d{32}.@d{32}.@d{32}
   $You manage to sneak your way\npast and grab the item!`,
   "fight_or_flight_option_2_steal_result": `.@d{32}.@d{32}.@d{32}
-  $Your @ec{thiefPokemon} helps you out and uses @ec{move}!
+  $Your @ec{option2PrimaryName} helps you out and uses @ec{option2PrimaryMove}!
   $ You nabbed the item!`,
   "fight_or_flight_option_2_bad_result": `.@d{32}.@d{32}.@d{32}
   $The Pokémon catches you\nas you try to sneak around!`,
