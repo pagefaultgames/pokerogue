@@ -6,9 +6,11 @@ on:
   push:
     branches:
       - main  # Trigger on push events to the main branch
+      - beta # Trigger on push events to the beta branch
   pull_request:
     branches:
       - main  # Trigger on pull request events targeting the main branch
+      - beta # Trigger on pull request events targeting the beta branch
 
 jobs:
   run-tests:  # Define a job named "run-tests"

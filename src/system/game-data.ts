@@ -40,6 +40,7 @@ import { GameDataType } from "#enums/game-data-type";
 import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
+import { applyChallenges, ChallengeType } from "#app/data/challenge.js";
 
 export const defaultStarterSpecies: Species[] = [
   Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE,
@@ -1676,7 +1677,10 @@ export class GameData {
       value = decrementValue(value);
     }
 
-    return value;
+    const cost = new Utils.NumberHolder(value);
+    applyChallenges(this.scene.gameMode, ChallengeType.STARTER_COST, speciesId, cost);
+
+    return cost.value;
   }
 
   getFormIndex(attr: bigint): integer {
