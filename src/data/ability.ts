@@ -3966,7 +3966,7 @@ export class IllusionDisableAbAttr extends PostSummonAbAttr {
    * @param {...any} args - N/A
    * @returns {boolean}
    */
-  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
+  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     pokemon.illusion.available = false;
     return true;
   }
