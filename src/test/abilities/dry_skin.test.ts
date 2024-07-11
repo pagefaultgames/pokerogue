@@ -25,6 +25,7 @@ describe("Abilities - Dry Skin", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    vi.spyOn(overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
     vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.DRY_SKIN);
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
     vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.CHARMANDER);
@@ -77,30 +78,28 @@ describe("Abilities - Dry Skin", () => {
   });
 
   it("opposing fire attacks do 25% more damage", async () => {
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.EMBER]);
-
-    // ensure the enemy doesn't die to this
-    vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(30);
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.FLAMETHROWER]);
 
     await game.startBattle();
 
     const enemy = game.scene.getEnemyPokemon();
-    expect(enemy).not.toBe(undefined);
+    expect(enemy).toBeDefined();
+    const maxHP = 1000;
+    enemy.hp = maxHP;
 
     // first turn
-    vi.spyOn(game.scene, "randBattleSeedInt").mockReturnValue(0); // this makes moves always deal 85% damage
-    game.doAttack(getMovePosition(game.scene, 0, Moves.EMBER));
+    game.doAttack(getMovePosition(game.scene, 0, Moves.FLAMETHROWER));
     await game.phaseInterceptor.to(TurnEndPhase);
-    const fireDamageTakenWithDrySkin = enemy.getMaxHp() - enemy.hp;
+    const fireDamageTakenWithDrySkin = maxHP - enemy.hp;
 
     expect(enemy.hp > 0);
-    enemy.hp = enemy.getMaxHp();
+    enemy.hp = maxHP;
     vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
 
     // second turn
-    game.doAttack(getMovePosition(game.scene, 0, Moves.EMBER));
+    game.doAttack(getMovePosition(game.scene, 0, Moves.FLAMETHROWER));
     await game.phaseInterceptor.to(TurnEndPhase);
-    const fireDamageTakenWithoutDrySkin = enemy.getMaxHp() - enemy.hp;
+    const fireDamageTakenWithoutDrySkin = maxHP - enemy.hp;
 
     expect(fireDamageTakenWithDrySkin).toBeGreaterThan(fireDamageTakenWithoutDrySkin);
   });
