@@ -172,7 +172,7 @@ export default class GameManager {
       (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
     });
 
-    // Immediately confirm target selection if move is multi-target
+    // Auto confirm target selection if move is multi-target
     this.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
       const handler = this.scene.ui.getHandler() as TargetSelectUiHandler;
       const move = (this.scene.getCurrentPhase() as SelectTargetPhase).getPokemon().getMoveset()[movePosition].getMove();
