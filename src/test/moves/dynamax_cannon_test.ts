@@ -34,20 +34,20 @@ describe("Moves - Dynamax Cannon", () => {
     vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
     vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
     vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(1);
-    vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(97);
+    vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(200);
     vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.GROWTH,Moves.GROWTH,Moves.GROWTH,Moves.GROWTH]);
     vi.spyOn(overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
   });
 
-  it("DYNAMAX CANNON against not resistant", async() => {
+  it("DYNAMAX CANNON against enemy at level cap", async() => {
     const moveToUse = Moves.DYNAMAX_CANNON;
     await game.startBattle([
       Species.MIGHTYENA,
     ]);
-    game.scene.currentBattle.enemyParty[0].stats[Stat.DEF] = 50;
-    game.scene.getParty()[0].stats[Stat.ATK] = 50;
-
+    game.scene.getParty()[0].level = 200;
+    game.scene.currentBattle.enemyParty[0].stats[Stat.SPDEF] = 50;
+    game.scene.getParty()[0].stats[Stat.SPATK] = 50;
 
     const hpOpponent = game.scene.currentBattle.enemyParty[0].hp;
 
@@ -61,6 +61,6 @@ describe("Moves - Dynamax Cannon", () => {
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnEndPhase);
     const hpLost = hpOpponent - game.scene.currentBattle.enemyParty[0].hp;
     expect(hpLost).toBeGreaterThan(0);
-    expect(hpLost).toBe(4);
+    expect(hpLost).toBe(10); // Meaning BP was 100BP? This number was "4" for Tackle
   }, 20000);
 });
