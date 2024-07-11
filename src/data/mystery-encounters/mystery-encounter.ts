@@ -356,6 +356,7 @@ export class MysteryEncounterBuilder implements Partial<MysteryEncounter> {
   doEncounterExp?: (scene: BattleScene) => boolean;
   doEncounterRewards?: (scene: BattleScene) => boolean;
   onInit?: (scene: BattleScene) => boolean;
+  onDone?: (scene: BattleScene) => boolean;
   hideBattleIntroMessage?: boolean;
   hideIntroVisuals?: boolean;
   enemyPartyConfigs?: EnemyPartyConfig[] = [];
@@ -374,8 +375,11 @@ export class MysteryEncounterBuilder implements Partial<MysteryEncounter> {
   }
 
   /**
-   * Defines an option for the encounter
-   * There should be at least 2 options defined and no more than 4
+   * Defines an option for the encounter.
+   * Use for complex options.
+   * There should be at least 2 options defined and no more than 4.
+   * If easy/streamlined use {@linkcode MysteryEncounterBuilder.withOptionPhase}
+   *
    * @param option - MysteryEncounterOption to add, can use MysteryEncounterOptionBuilder to create instance
    * @returns
    */
@@ -391,8 +395,10 @@ export class MysteryEncounterBuilder implements Partial<MysteryEncounter> {
   }
 
   /**
-   * Adds a streamlined option phase.
-   * Only use if no pre-/post-options or condtions necessary.
+   * Defines an option + phasefor the encounter.
+   * Use for easy/streamlined options.
+   * There should be at least 2 options defined and no more than 4.
+   * If complex use {@linkcode MysteryEncounterBuilder.withOption}
    *
    * @param callback - OptionPhaseCallback
    * @returns
