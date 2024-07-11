@@ -1007,7 +1007,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const onScreenLastIndex = Math.min(onScreenFirstIndex + 9*9, numberOfStarters) - 1; // this is the last starter index on the screen
     const onScreenNumberOfStarters = onScreenLastIndex - onScreenFirstIndex + 1;
     const onScreenNumberOfRows = Math.ceil(onScreenNumberOfStarters / 9);
-    const onScreenFirstRow = Math.floor(onScreenFirstIndex / 9);
+    // const onScreenFirstRow = Math.floor(onScreenFirstIndex / 9);
     const onScreenCurrentRow = Math.floor((this.cursor - onScreenFirstIndex) / 9);
 
 
@@ -1100,7 +1100,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         break;
       case Button.UP:
         if (this.filterBar.openDropDown) {
-          success = this.filterBar.decDropDownCursor()
+          success = this.filterBar.decDropDownCursor();
         // else if there is filtered starters
         } else if (numberOfStarters > 0) {
           this.setFilterMode(false);
@@ -1117,7 +1117,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         break;
       case Button.DOWN:
         if (this.filterBar.openDropDown) {
-          success = this.filterBar.incDropDownCursor()
+          success = this.filterBar.incDropDownCursor();
         } else if (numberOfStarters > 0) {
           this.setFilterMode(false);
           this.scrollCursor = 0;
@@ -1666,7 +1666,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               this.setSpecies(null);
               this.startCursorObj.setVisible(true);
               success = true;
-            } 
+            }
           }
           break;
         case Button.RIGHT:
@@ -2633,12 +2633,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.scene.time.delayedCall(Utils.fixedInt(500), () => this.tryUpdateValue());
       return false;
     }
-    let isPartyValid: boolean = this.isPartyValid(); // this checks to see if the party is valid
     if (addingToParty) { // this does a check to see if the pokemon being added is valid; if so, it will update the isPartyValid boolean
       const isNewPokemonValid = new Utils.BooleanHolder(true);
       const species = this.filteredStarterContainers[this.cursor].species;
       Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isNewPokemonValid, this.scene.gameData.getSpeciesDexAttrProps(species, this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true)), !!(this.starterSpecies.length + (add ? 1 : 0)));
-      isPartyValid = isPartyValid || isNewPokemonValid.value;
     }
 
     /**
