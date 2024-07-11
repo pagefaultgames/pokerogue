@@ -2,7 +2,7 @@ import { TranslationEntries } from "#app/interfaces/locales";
 
 export const pokemonSummary: TranslationEntries = {
   "pokemonInfo": "Info Pokémon",
-  "status": "Résumé",
+  "status": "Statut",
   "powerAccuracyCategory": "Puissance\nPrécision\nCatégorie",
   "type": "Type",
   "unknownTrainer": "Inconnu",
