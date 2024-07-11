@@ -8324,7 +8324,8 @@ export function initMoves() {
     new SelfStatusMove(Moves.SHED_TAIL, Type.NORMAL, -1, 10, -1, 0, 9)
       .unimplemented(),
     new SelfStatusMove(Moves.CHILLY_RECEPTION, Type.ICE, -1, 10, -1, 0, 9)
-      .attr(MessageHeaderAttr, (user, move) => getPokemonMessage(user, " is preparing to tell a chillingly bad joke!"))
+      //.attr(MessageHeaderAttr, )
+      .attr(PreMoveMessageAttr, (user, move) => getPokemonMessage(user, " is preparing to tell a chillingly bad joke!"))
       .attr(WeatherChangeAttr, WeatherType.SNOW)
       .attr(ForceSwitchOutAttr, true, false),
     new SelfStatusMove(Moves.TIDY_UP, Type.NORMAL, -1, 10, -1, 0, 9)
