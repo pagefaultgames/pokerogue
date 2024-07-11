@@ -2975,7 +2975,7 @@ export const move: MoveTranslationEntries = {
   },
   dynamaxCannon: {
     name: "Cannone Dynamax",
-    effect: "Il Pokémon attacca emettendo dal suo nucleo l'energia concentrata nel corpo.",
+    effect: "Il Pokémon attacca emettendo dal suo nucleo l'energia concentrata nel corpo. Se il bersaglio è overlivellato, i danni inflitti aumentano.",
   },
   snipeShot: {
     name: "Tiromirato",
