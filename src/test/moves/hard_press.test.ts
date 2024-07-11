@@ -38,14 +38,14 @@ describe("Moves - Hard Press", () => {
 
   it("power varies between 1 and 100, and is greater the more HP the target has", async () => {
     await game.startBattle([Species.GRAVELER]);
-    const moveToBeUsed = allMoves[Moves.HARD_PRESS];
+    const moveToBeUsed = Moves.HARD_PRESS;
 
     game.doAttack(getMovePosition(game.scene, 0, moveToBeUsed));
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     const enemy = game.scene.getEnemyPokemon();
-    const movePower = getMockedMovePower(enemy, game.scene.getPlayerPokemon(), moveToBeUsed);
-    const moveMaxBasePower = getMoveMaxBasePower(moveToBeUsed);
+    const movePower = getMockedMovePower(enemy, game.scene.getPlayerPokemon(), allMoves[Moves.HARD_PRESS]);
+    const moveMaxBasePower = getMoveMaxBasePower(allMoves[Moves.HARD_PRESS]);
 
     expect(movePower).toBe(moveMaxBasePower * enemy.getHpRatio());
   });
