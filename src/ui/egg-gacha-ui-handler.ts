@@ -96,25 +96,71 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
       const gachaInfoContainer = this.scene.add.container(160, 46);
 
-      const gachaUpLabel = addTextObject(this.scene, 4, 0, "UP!", TextStyle.WINDOW_ALT);
+      const currentLanguage = i18next.resolvedLanguage;
+      let gachaTextStyle = TextStyle.WINDOW_ALT;
+      let gachaX = 4;
+      let gachaY = 0;
+      let pokemonIconX = -20;
+      let pokemonIconY = 6;
+
+      if (["de", "es", "fr", "ko", "pt-BR"].includes(currentLanguage)) {
+        gachaTextStyle = TextStyle.SMALLER_WINDOW_ALT;
+        gachaX = 2;
+        gachaY = 2;
+      }
+
+      let legendaryLabelX = gachaX;
+      let legendaryLabelY = gachaY;
+      if (["de", "es"].includes(currentLanguage)) {
+        pokemonIconX = -25;
+        pokemonIconY = 10;
+        legendaryLabelX = -6;
+        legendaryLabelY = 0;
+      }
+
+      const gachaUpLabel = addTextObject(this.scene, gachaX, gachaY, i18next.t("egg:legendaryUPGacha"), gachaTextStyle);
       gachaUpLabel.setOrigin(0, 0);
       gachaInfoContainer.add(gachaUpLabel);
 
       switch (gachaType as GachaType) {
       case GachaType.LEGENDARY:
-        const pokemonIcon = this.scene.add.sprite(-20, 6, "pokemon_icons_0");
+        if (["de", "es"].includes(currentLanguage)) {
+          gachaUpLabel.setAlign("center");
+          gachaUpLabel.setY(0);
+        }
+        if (["pt-BR"].includes(currentLanguage)) {
+          gachaUpLabel.setX(legendaryLabelX - 2);
+        } else {
+          gachaUpLabel.setX(legendaryLabelX);
+        }
+        gachaUpLabel.setY(legendaryLabelY);
+
+        const pokemonIcon = this.scene.add.sprite(pokemonIconX, pokemonIconY, "pokemon_icons_0");
+        if (["pt-BR"].includes(currentLanguage)) {
+          pokemonIcon.setX(pokemonIconX - 2);
+        }
         pokemonIcon.setScale(0.5);
         pokemonIcon.setOrigin(0, 0.5);
 
         gachaInfoContainer.add(pokemonIcon);
         break;
       case GachaType.MOVE:
-        gachaUpLabel.setText("Move UP!");
+        if (["de", "es", "fr", "pt-BR"].includes(currentLanguage)) {
+          gachaUpLabel.setAlign("center");
+          gachaUpLabel.setY(0);
+        }
+
+        gachaUpLabel.setText(i18next.t("egg:moveUPGacha"));
         gachaUpLabel.setX(0);
         gachaUpLabel.setOrigin(0.5, 0);
         break;
       case GachaType.SHINY:
-        gachaUpLabel.setText("Shiny UP!");
+        if (["de", "fr", "ko"].includes(currentLanguage)) {
+          gachaUpLabel.setAlign("center");
+          gachaUpLabel.setY(0);
+        }
+
+        gachaUpLabel.setText(i18next.t("egg:shinyUPGacha"));
         gachaUpLabel.setX(0);
         gachaUpLabel.setOrigin(0.5, 0);
         break;
