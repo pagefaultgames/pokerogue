@@ -598,7 +598,7 @@ export default class Move implements Localizable {
   }
 
   /**
-   * Applies each {@linkcode MoveCondition} of this move to the params
+   * Applies each {@linkcode MoveCondition} function of this move to the params, determines if the move can be used prior to calling each attribute's apply()
    * @param user {@linkcode Pokemon} to apply conditions to
    * @param target {@linkcode Pokemon} to apply conditions to
    * @param move {@linkcode Move} to apply conditions to
@@ -2261,7 +2261,27 @@ export class WeatherChangeAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => !user.scene.arena.weather || (user.scene.arena.weather.weatherType !== this.weatherType && !user.scene.arena.weather.isImmutable());
+    // adding clause CHILLY_RECEPTION, so move doesn't fail when it's already snowing: since the move still allows a switch out
+    return (user, target, move) => {
+
+      if (move.id === Moves.CHILLY_RECEPTION) {
+        // in the case of CHILLY_RECEPTION: if trySetWeather(...) === False AND getSwitchOut() === False, then it's false
+
+        // know that in this case a ForceSwithcOutAttr must exist, so no error checking needed
+
+        // if can't switch out, and it's snowing, then move fails
+        if ( move.getAttrs(ForceSwitchOutAttr)[0].getSwitchOutCondition()(user, target, move) === false &&  user.scene.arena.weather?.weatherType === WeatherType.SNOW ) {
+          return false;
+        }
+
+        // else if can set weather to snow, or can switch out, then move succeeds
+        return user.scene.arena.trySetWeather(this.weatherType, true) || move.getAttrs(ForceSwitchOutAttr)[0].getSwitchOutCondition()(user, target, move);
+      }
+
+
+      return !user.scene.arena.weather || (user.scene.arena.weather.weatherType !== this.weatherType && !user.scene.arena.weather.isImmutable());
+
+    };
   }
 }
 
@@ -4741,7 +4761,15 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => (move.category !== MoveCategory.STATUS || this.getSwitchOutCondition()(user, target, move));
+    return (user, target, move) => {
+
+      // add bypass here for CHILLY, since it's a status move that shouldn't fail when getSwitchOutCondition fails (moves like u_turn aren't STATUS so they still pass)
+      if (move.id === Moves.CHILLY_RECEPTION) {
+        return true;
+      }
+
+      return (move.category !== MoveCategory.STATUS || this.getSwitchOutCondition()(user, target, move));
+    };
   }
 
   getFailedText(user: Pokemon, target: Pokemon, move: Move, cancelled: Utils.BooleanHolder): string | null {
@@ -8484,10 +8512,10 @@ export function initMoves() {
       .makesContact(),
     new SelfStatusMove(Moves.SHED_TAIL, Type.NORMAL, -1, 10, -1, 0, 9)
       .unimplemented(),
-    new StatusMove(Moves.CHILLY_RECEPTION, Type.ICE, -1, 10, -1, 0, 9)
+    new SelfStatusMove(Moves.CHILLY_RECEPTION, Type.ICE, -1, 10, -1, 0, 9)
+      .attr(MessageHeaderAttr, (user, move) => getPokemonMessage(user, " is preparing to tell a chillingly bad joke!"))
       .attr(WeatherChangeAttr, WeatherType.SNOW)
-      .attr(ForceSwitchOutAttr, true, false)
-      .target(MoveTarget.BOTH_SIDES),
+      .attr(ForceSwitchOutAttr, true, false),
     new SelfStatusMove(Moves.TIDY_UP, Type.NORMAL, -1, 10, -1, 0, 9)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPD ], 1, true, null, true, true)
       .attr(RemoveArenaTrapAttr, true),
