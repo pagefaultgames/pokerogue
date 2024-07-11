@@ -1393,29 +1393,52 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
     levelMoves.sort((lma: [integer, integer], lmb: [integer, integer]) => lma[0] > lmb[0] ? 1 : lma[0] < lmb[0] ? -1 : 0);
-    const uniqueMoves: Moves[] = [];
+
+
+    /**
+     * Filter out moves not within the correct level range(s)
+     * Includes moves below startingLevel, or of specifically level 0 if
+     * includeRelearnerMoves or includeEvolutionMoves are true respectively
+     */
     levelMoves = levelMoves.filter(lm => {
-      if (uniqueMoves.find(m => m === lm[1])) {
-        return false;
-      }
-      uniqueMoves.push(lm[1]);
-      return true;
+      const level = lm[0];
+      const isRelearner = level < startingLevel;
+      const allowedEvolutionMove = (level === 0) && includeEvolutionMoves;
+
+      return !(level > this.level)
+          && (includeRelearnerMoves || !isRelearner || allowedEvolutionMove);
     });
 
+    /**
+     * This must be done AFTER filtering by level, else if the same move shows up
+     * in levelMoves multiple times all but the lowest level one will be skipped.
+     * This causes problems when there are intentional duplicates (i.e. Smeargle with Sketch)
+     */
     if (levelMoves) {
-      for (const lm of levelMoves) {
-        const level = lm[0];
-        if (!includeRelearnerMoves && ((level > 0 && level < startingLevel) || (!includeEvolutionMoves && level === 0) || level < 0)) {
-          continue;
-        } else if (level > this.level) {
-          break;
-        }
-        ret.push(lm);
-      }
+      this.getUniqueMoves(levelMoves,ret);
     }
 
     return ret;
   }
+
+  /**
+   * Helper function for getLevelMoves.
+   * Finds all non-duplicate items from the input, and pushes them into the output.
+   * Two items count as duplicate if they have the same Move, regardless of level.
+   *
+   * @param levelMoves the input array to search for non-duplicates from
+   * @param ret the output array to be pushed into.
+   */
+  private getUniqueMoves(levelMoves: LevelMoves, ret: LevelMoves ): void {
+    const uniqueMoves : Moves[] = [];
+    for (const lm of levelMoves) {
+      if (!uniqueMoves.find(m => m === lm[1])) {
+        uniqueMoves.push(lm[1]);
+        ret.push(lm);
+      }
+    }
+  }
+
 
   setMove(moveIndex: integer, moveId: Moves): void {
     const move = moveId ? new PokemonMove(moveId) : null;
