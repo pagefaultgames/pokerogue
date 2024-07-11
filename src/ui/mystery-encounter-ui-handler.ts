@@ -1,16 +1,16 @@
 import BattleScene from "../battle-scene";
-import {addBBCodeTextObject, getBBCodeFrag, TextStyle} from "./text";
-import {Mode} from "./ui";
+import { addBBCodeTextObject, getBBCodeFrag, TextStyle } from "./text";
+import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
-import {Button} from "#enums/buttons";
-import {addWindow, WindowVariant} from "./ui-theme";
-import {MysteryEncounterPhase} from "../phases/mystery-encounter-phase";
-import {PartyUiMode} from "./party-ui-handler";
+import { Button } from "#enums/buttons";
+import { addWindow, WindowVariant } from "./ui-theme";
+import { MysteryEncounterPhase } from "../phases/mystery-encounter-phase";
+import { PartyUiMode } from "./party-ui-handler";
 import MysteryEncounterOption from "../data/mystery-encounters/mystery-encounter-option";
 import * as Utils from "../utils";
-import {isNullOrUndefined} from "../utils";
-import {getPokeballAtlasKey} from "../data/pokeball";
-import {getEncounterText} from "#app/data/mystery-encounters/mystery-encounter-utils";
+import { isNullOrUndefined } from "../utils";
+import { getPokeballAtlasKey } from "../data/pokeball";
+import { getEncounterText } from "#app/data/mystery-encounters/mystery-encounter-utils";
 
 export default class MysteryEncounterUiHandler extends UiHandler {
   private cursorContainer: Phaser.GameObjects.Container;
@@ -319,13 +319,22 @@ export default class MysteryEncounterUiHandler extends UiHandler {
         optionText = addBBCodeTextObject(this.scene, i % 2 === 0 ? 0 : 100, i < 2 ? 0 : 16, "-", TextStyle.WINDOW, { wordWrap: { width: 558 }, fontSize: "80px", lineSpacing: -8 });
         break;
       }
-      const option = mysteryEncounter.dialogue.encounterOptionsDialogue.options[i];
-      const text = getEncounterText(this.scene, option.buttonLabel, option.style ? option.style : TextStyle.WINDOW);
+      this.optionsMeetsReqs.push(this.filteredEncounterOptions[i].meetsRequirements(this.scene));
+
+      const optionDialogue = mysteryEncounter.dialogue.encounterOptionsDialogue.options[i];
+      let text;
+      if (this.filteredEncounterOptions[i].hasRequirements() && this.optionsMeetsReqs[i]) {
+        // Options with special requirements that are met are automatically colored green
+        text = getEncounterText(this.scene, optionDialogue.buttonLabel, TextStyle.SUMMARY_GREEN);
+      } else {
+        text = getEncounterText(this.scene, optionDialogue.buttonLabel, optionDialogue.style ? optionDialogue.style : TextStyle.WINDOW);
+      }
+
       if (text) {
         optionText.setText(text);
       }
 
-      this.optionsMeetsReqs.push(this.filteredEncounterOptions[i].meetsRequirements(this.scene));
+
 
       if (!this.optionsMeetsReqs[i]) {
         optionText.setAlpha(0.5);

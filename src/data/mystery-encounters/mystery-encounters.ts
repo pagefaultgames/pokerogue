@@ -9,6 +9,7 @@ import { SleepingSnorlaxEncounter } from "./encounters/sleeping-snorlax";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { DepartmentStoreSaleEncounter } from "#app/data/mystery-encounters/encounters/department-store-sale";
 import { ShadyVitaminDealerEncounter } from "#app/data/mystery-encounters/encounters/shady-vitamin-dealer";
+import { FieldTripEncounter } from "#app/data/mystery-encounters/encounters/field-trip-encounter";
 
 // Spawn chance: (BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT + WIGHT_INCREMENT_ON_SPAWN_MISS * <number of missed spawns>) / 256
 export const BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT = 1;
@@ -95,6 +96,7 @@ export function initMysteryEncounters() {
   allMysteryEncounters[MysteryEncounterType.SLEEPING_SNORLAX] = SleepingSnorlaxEncounter;
   allMysteryEncounters[MysteryEncounterType.DEPARTMENT_STORE_SALE] = DepartmentStoreSaleEncounter;
   allMysteryEncounters[MysteryEncounterType.SHADY_VITAMIN_DEALER] = ShadyVitaminDealerEncounter;
+  allMysteryEncounters[MysteryEncounterType.FIELD_TRIP] = FieldTripEncounter;
 
   // Append encounters that can occur in any biome to biome map
   const anyBiomeEncounters: MysteryEncounterType[] = Object.keys(MysteryEncounterType).filter(e => !isNaN(Number(e))).map(k => Number(k) as MysteryEncounterType);

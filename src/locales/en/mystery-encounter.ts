@@ -17,6 +17,7 @@ export const mysteryEncounter: SimpleTranslationEntries = {
   "unit_test_dialogue": "@ec{test}@ec{test} @ec{test@ec{test}} @ec{test1} @ec{test\} @ec{test\\} @ec{test\\\} {test}",
 
   // Mystery Encounters -- Common Tier
+
   "mysterious_chest_intro_message": "You found...@d{32} a chest?",
   "mysterious_chest_title": "The Mysterious Chest",
   "mysterious_chest_description": "A beautifully ornamented chest stands on the ground. There must be something good inside... right?",
@@ -82,6 +83,7 @@ export const mysteryEncounter: SimpleTranslationEntries = {
   "shady_vitamin_dealer_title": "The Vitamin Dealer",
   "shady_vitamin_dealer_description": "The man opens his jacket to reveal some Pokémon vitamins. The numbers he quotes seem like a really good deal. Almost too good...\nHe offers two package deals to choose from.",
   "shady_vitamin_dealer_query": "Which deal will choose?",
+  "shady_vitamin_dealer_invalid_selection": "Pokémon must be healthy enough.",
   "shady_vitamin_dealer_option_1_label": "The Cheap Deal",
   "shady_vitamin_dealer_option_1_tooltip": "(-) Pay @ec{option1Money}\n(-) Side Effects?\n(+) Chosen Pokémon Gains 2 Random Vitamins",
   "shady_vitamin_dealer_option_2_label": "The Pricey Deal",
@@ -94,9 +96,34 @@ export const mysteryEncounter: SimpleTranslationEntries = {
   $Your @ec{selectedPokemon} takes some damage\nand becomes badly poisoned...`,
   "shady_vitamin_dealer_poison": `But the medicine had some side effects!
   $Your @ec{selectedPokemon} becomes poisoned...`,
+  "shady_vitamin_dealer_no_bad_effects": "Looks like there were no side-effects this time.",
   "shady_vitamin_dealer_option_3_label": "Leave",
   "shady_vitamin_dealer_option_3_tooltip": "(-) No Rewards",
-  "shady_vitamin_dealer_outro_good": "Looks like there were no side-effects this time.",
+
+  "field_trip_intro_message": "It's a teacher and some school children!",
+  "field_trip_speaker": "Teacher",
+  "field_trip_intro_dialogue": `Hello, there! Would you be able to\nspare a minute for my students?
+    $I'm teaching them about Pokémon moves\nand would love to show them a demonstration.
+    $Would you mind showing us one of\nthe moves your Pokémon can use?`,
+  "field_trip_title": "Field Trip",
+  "field_trip_description": "A teacher is requesting a move demonstration from a Pokémon. Depending on the move you choose, she might have something useful for you in exchange.",
+  "field_trip_query": "Which move category will you show off?",
+  // "field_trip_invalid_selection": "Pokémon doesn't know that type of move.",
+  "field_trip_option_1_label": "A Physical Move",
+  "field_trip_option_1_tooltip": "(+) Physical Item Rewards",
+  "field_trip_option_2_label": "A Special Move",
+  "field_trip_option_2_tooltip": "(+) Special Item Rewards",
+  "field_trip_option_3_label": "A Status Move",
+  "field_trip_option_3_tooltip": "(+) Status Item Rewards",
+  "field_trip_second_option_prompt": "Choose a move for your Pokémon to use.",
+  "field_trip_option_selected": "@ec{pokeName} shows off an awesome display of @ec{move}!",
+  "field_trip_option_incorrect": `...
+    $That isn't a @ec{moveCategory} move!
+    $I'm sorry, but I can't give you anything.`,
+  "field_trip_lesson_learned": `Looks like you learned a valuable lesson?
+    $Your Pokémon also gained some knowledge.`,
+  "field_trip_outro_good": "Thank you so much for your kindness!\nI hope the items I had were helpful!",
+  "field_trip_outro_bad": "Come along children, we'll\nfind a better demonstration elsewhere.",
 
   // Mystery Encounters -- Uncommon Tier
 
@@ -162,14 +189,14 @@ export const mysteryEncounter: SimpleTranslationEntries = {
   "sleeping_snorlax_intro_message": `As you walk down a narrow pathway, you see a towering silhouette blocking your path.
   $You get closer to see a Snorlax sleeping peacefully.\nIt seems like there's no way around it.`,
   "sleeping_snorlax_title": "Sleeping Snorlax",
-  "sleeping_snorlax_description": "You could attack it to try and get it to move, or simply wait for it to wake up.",
+  "sleeping_snorlax_description": "You could attack it to try and get it to move, or simply wait for it to wake up. Who knows how long that could take, though...",
   "sleeping_snorlax_query": "What will you do?",
   "sleeping_snorlax_option_1_label": "Fight it",
   "sleeping_snorlax_option_1_tooltip": "(-) Fight Sleeping Snorlax",
   "sleeping_snorlax_option_2_label": "Wait for it to move",
   "sleeping_snorlax_option_2_tooltip": "@[SUMMARY_BLUE]{(75%) Wait a short time}\n@[SUMMARY_BLUE]{(25%) Wait a long time}",
-  "sleeping_snorlax_option_3_label": "Steal",
-  "sleeping_snorlax_option_3_tooltip": "(+) Leftovers",
+  "sleeping_snorlax_option_3_label": "Steal its item",
+  "sleeping_snorlax_option_3_tooltip": "(+) @ec{option3PrimaryName} uses @ec{option3PrimaryMove}\n(+) Leftovers",
   "sleeping_snorlax_option_3_disabled_tooltip": "Your Pokémon need to know certain moves to choose this",
   "sleeping_snorlax_option_1_selected_message": "You approach the\nPokémon without fear.",
   "sleeping_snorlax_option_2_selected_message": `.@d{32}.@d{32}.@d{32}

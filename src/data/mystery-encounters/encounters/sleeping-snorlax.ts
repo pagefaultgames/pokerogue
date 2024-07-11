@@ -1,5 +1,4 @@
 import {
-  ModifierTypeOption,
   modifierTypes
 } from "#app/modifier/modifier-type";
 import { BerryType } from "#enums/berry-type";
@@ -15,9 +14,9 @@ import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import { MoveRequirement } from "../mystery-encounter-requirements";
 import {
   EnemyPartyConfig,
-  EnemyPokemonConfig, generateModifierType,
+  EnemyPokemonConfig, generateModifierTypeOption,
   initBattleWithEnemyConfig,
-  leaveEncounterWithoutBattle, queueEncounterMessage,
+  leaveEncounterWithoutBattle, queueEncounterMessage, setEncounterExp,
   setEncounterRewards
 } from "../mystery-encounter-utils";
 
@@ -30,7 +29,9 @@ export const SleepingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuilde
       fileRoot: "pokemon",
       hasShadow: true,
       tint: 0.25,
-      repeat: true
+      scale: 1.5,
+      repeat: true,
+      y: 5
     }
   ])
   .withSceneWaveRangeRequirement(10, 180) // waves 10 to 180
@@ -66,16 +67,19 @@ export const SleepingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuilde
     scene.executeWithSeedOffset(() => {
       roll = Utils.randSeedInt(16, 0);
     }, scene.currentBattle.waveIndex);
-    console.log(roll);
+
+    // Half Snorlax exp to entire party
+    setEncounterExp(scene, scene.getParty().map(p => p.id), 98);
+
     if (roll > 4) {
       // Fall asleep and get a sitrus berry (75%)
       const p = instance.primaryPokemon;
       p.status = new Status(StatusEffect.SLEEP, 0, 3);
       p.updateInfo(true);
       // const sitrus = (modifierTypes.BERRY?.() as ModifierTypeGenerator).generateType(scene.getParty(), [BerryType.SITRUS]);
-      const sitrus = generateModifierType(scene, modifierTypes.BERRY, [BerryType.SITRUS]);
+      const sitrus = generateModifierTypeOption(scene, modifierTypes.BERRY, [BerryType.SITRUS]);
 
-      setEncounterRewards(scene, { guaranteedModifierTypeOptions: [new ModifierTypeOption(sitrus, 0)], fillRemaining: false });
+      setEncounterRewards(scene, { guaranteedModifierTypeOptions: [sitrus], fillRemaining: false });
       queueEncounterMessage(scene, "mysteryEncounter:sleeping_snorlax_option_2_bad_result");
       leaveEncounterWithoutBattle(scene);
     } else {
@@ -96,9 +100,12 @@ export const SleepingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuilde
   .withOption(new MysteryEncounterOptionBuilder()
     .withPrimaryPokemonRequirement(new MoveRequirement([Moves.PLUCK, Moves.COVET, Moves.KNOCK_OFF, Moves.THIEF, Moves.TRICK, Moves.SWITCHEROO]))
     .withOptionPhase(async (scene: BattleScene) => {
-      // Leave encounter with no rewards or exp
+      // Steal the Snorlax's Leftovers
+      const instance = scene.currentBattle.mysteryEncounter;
       setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.LEFTOVERS], fillRemaining: false });
       queueEncounterMessage(scene, "mysteryEncounter:sleeping_snorlax_option_3_good_result");
+      // Snorlax exp to Pokemon that did the stealing
+      setEncounterExp(scene, [instance.primaryPokemon.id], 189);
       leaveEncounterWithoutBattle(scene);
     })
     .build()

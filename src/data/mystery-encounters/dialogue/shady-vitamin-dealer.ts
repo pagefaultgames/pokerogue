@@ -21,7 +21,7 @@ export const ShadyVitaminDealerDialogue: MysteryEncounterDialogue = {
         selected: [
           {
             text: "mysteryEncounter:shady_vitamin_dealer_option_selected"
-          },
+          }
         ]
       },
       {
@@ -30,7 +30,7 @@ export const ShadyVitaminDealerDialogue: MysteryEncounterDialogue = {
         selected: [
           {
             text: "mysteryEncounter:shady_vitamin_dealer_option_selected"
-          },
+          }
         ]
       },
       {
