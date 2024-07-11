@@ -36,7 +36,7 @@ describe("Abilities - Wonder Skin", () => {
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.CHARM));
 
-    const moveAccuracy = allMoves[Moves.CHARM].calculateMoveAccuracy(game.scene.getPlayerPokemon(), game.scene.getEnemyPokemon());
+    const moveAccuracy = allMoves[Moves.CHARM].calculateAccuracy(game.scene.getPlayerPokemon(), game.scene.getEnemyPokemon());
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -50,7 +50,7 @@ describe("Abilities - Wonder Skin", () => {
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
 
-    const moveAccuracy = allMoves[Moves.TACKLE].calculateMoveAccuracy(game.scene.getPlayerPokemon(), game.scene.getEnemyPokemon());
+    const moveAccuracy = allMoves[Moves.TACKLE].calculateAccuracy(game.scene.getPlayerPokemon(), game.scene.getEnemyPokemon());
 
     await game.phaseInterceptor.to(TurnEndPhase);
 

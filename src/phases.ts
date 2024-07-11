@@ -3051,7 +3051,7 @@ export class MoveEffectPhase extends PokemonPhase {
       return false;
     }
 
-    const moveAccuracy = this.move.getMove().calculateMoveAccuracy(user, target);
+    const moveAccuracy = this.move.getMove().calculateAccuracy(user, target);
 
     if (moveAccuracy === -1) {
       return true;
