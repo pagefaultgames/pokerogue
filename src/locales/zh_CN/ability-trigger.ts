@@ -41,7 +41,7 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "fetchBall": "{{pokemonNameWithAffix}} found a\n{{pokeballName}}!",
   "healFromBerryUse": "{{pokemonNameWithAffix}}'s {{abilityName}}\nrestored its HP!",
   "arenaTrap": "{{pokemonNameWithAffix}}'s {{abilityName}}\nprevents switching!",
-  "postBattleLoot": "{{pokemonNameWithAffix}} picked up\n${randItem.type.name}!",
+  "postBattleLoot": "{{pokemonNameWithAffix}} picked up\n{{itemName}}!",
   "postFaintContactDamage": "{{pokemonNameWithAffix}}'s {{abilityName}}\nhurt its attacker!",
   "postFaintHpDamage": "{{pokemonNameWithAffix}}'s {{abilityName}}\nhurt its attacker!",
   "postSummonPressure": "{{pokemonNameWithAffix}} is exerting its Pressure!",
