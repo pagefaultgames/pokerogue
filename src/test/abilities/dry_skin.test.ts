@@ -84,22 +84,22 @@ describe("Abilities - Dry Skin", () => {
 
     const enemy = game.scene.getEnemyPokemon();
     expect(enemy).toBeDefined();
-    const maxHP = 1000;
-    enemy.hp = maxHP;
+    const initialHP = 1000;
+    enemy.hp = initialHP;
 
     // first turn
     game.doAttack(getMovePosition(game.scene, 0, Moves.FLAMETHROWER));
     await game.phaseInterceptor.to(TurnEndPhase);
-    const fireDamageTakenWithDrySkin = maxHP - enemy.hp;
+    const fireDamageTakenWithDrySkin = initialHP - enemy.hp;
 
     expect(enemy.hp > 0);
-    enemy.hp = maxHP;
+    enemy.hp = initialHP;
     vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
 
     // second turn
     game.doAttack(getMovePosition(game.scene, 0, Moves.FLAMETHROWER));
     await game.phaseInterceptor.to(TurnEndPhase);
-    const fireDamageTakenWithoutDrySkin = maxHP - enemy.hp;
+    const fireDamageTakenWithoutDrySkin = initialHP - enemy.hp;
 
     expect(fireDamageTakenWithDrySkin).toBeGreaterThan(fireDamageTakenWithoutDrySkin);
   });
