@@ -1,8 +1,8 @@
 import MysteryEncounterDialogue from "#app/data/mystery-encounters/mystery-encounter-dialogue";
 
-const namepsace = "mysteryEncounter:gettingLostAtTheSea";
+const namepsace = "mysteryEncounter:lostAtSea";
 
-export const GettingLostAtTheSeaDialogue: MysteryEncounterDialogue = {
+export const LostAtSeaDialogue: MysteryEncounterDialogue = {
   intro: [
     {
       text: `${namepsace}:intro`

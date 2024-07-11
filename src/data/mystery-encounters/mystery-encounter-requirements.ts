@@ -331,11 +331,13 @@ export class NatureRequirement extends EncounterPokemonRequirement {
 
 export class TypeRequirement extends EncounterPokemonRequirement {
   requiredType: Type[];
+  excludeFainted: boolean;
   minNumberOfPokemon: number;
   invertQuery: boolean;
 
-  constructor(type: Type | Type[], minNumberOfPokemon: number = 1, invertQuery: boolean = false) {
+  constructor(type: Type | Type[], excludeFainted: boolean = true, minNumberOfPokemon: number = 1, invertQuery: boolean = false) {
     super();
+    this.excludeFainted = excludeFainted;
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
     if (type instanceof Array) {
@@ -347,10 +349,16 @@ export class TypeRequirement extends EncounterPokemonRequirement {
   }
 
   meetsRequirement(scene: BattleScene): boolean {
-    const partyPokemon = scene.getParty();
+    let partyPokemon = scene.getParty();
+
     if (isNullOrUndefined(partyPokemon) || this?.requiredType?.length < 0) {
       return false;
     }
+
+    if (!this.excludeFainted) {
+      partyPokemon = partyPokemon.filter((pokemon) => !pokemon.isFainted());
+    }
+
     return this.queryParty(partyPokemon).length >= this.minNumberOfPokemon;
   }
 

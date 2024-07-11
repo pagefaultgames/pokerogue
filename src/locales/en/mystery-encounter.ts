@@ -1,4 +1,4 @@
-import { gettingLostAtTheSea } from "./mystery-encounters/getting-lost-at-the-sea";
+import { lostAtSea } from "./mystery-encounters/lost-at-sea";
 
 /**
  * Patterns that can be used:
@@ -181,5 +181,5 @@ export const mysteryEncounter = {
   "sleeping_snorlax_option_3_good_result": "Your @ec{option3PrimaryName} uses @ec{option3PrimaryMove}! @s{item_fanfare}It steals Leftovers off the sleeping Snorlax and you make out like bandits!",
   // "sleeping_snorlax_outro_win": "The mysterious challengers were defeated!",
 
-  gettingLostAtTheSea,
+  lostAtSea,
 } as const;

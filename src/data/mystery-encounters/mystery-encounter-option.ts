@@ -2,7 +2,8 @@ import { OptionTextDisplay } from "#app/data/mystery-encounters/mystery-encounte
 import { PlayerPokemon } from "#app/field/pokemon";
 import BattleScene from "../../battle-scene";
 import * as Utils from "../../utils";
-import { EncounterPokemonRequirement, EncounterSceneRequirement, MoneyRequirement } from "./mystery-encounter-requirements";
+import { Type } from "../type";
+import { EncounterPokemonRequirement, EncounterSceneRequirement, MoneyRequirement, TypeRequirement } from "./mystery-encounter-requirements";
 
 
 export type OptionPhaseCallback = (scene: BattleScene) => Promise<void | boolean>;
@@ -156,6 +157,20 @@ export class MysteryEncounterOptionBuilder implements Partial<MysteryEncounterOp
   withPrimaryPokemonRequirement(requirement: EncounterPokemonRequirement): this & Required<Pick<MysteryEncounterOption, "primaryPokemonRequirements">> {
     this.primaryPokemonRequirements.push(requirement);
     return Object.assign(this, { primaryPokemonRequirements: this.primaryPokemonRequirements });
+  }
+
+  /**
+   * Player is required to have certain type/s of pokemon in his party (with optional min number of pokemons with that type)
+   *
+   * @param type the required type/s
+   * @param excludeFainted whether to exclude fainted pokemon
+   * @param minNumberOfPokemon number of pokemons to have that type
+   * @param invertQuery
+   * @returns
+   */
+  withPokemonTypeRequirement(type: Type | Type[], excludeFainted?: boolean, minNumberOfPokemon?: number, invertQuery?: boolean) {
+    const types = Array.isArray(type) ? type : [type];
+    return this.withPrimaryPokemonRequirement(new TypeRequirement(types, excludeFainted, minNumberOfPokemon, invertQuery));
   }
 
   withSecondaryPokemonRequirement(requirement: EncounterPokemonRequirement, excludePrimaryFromSecondaryRequirements?: boolean): this & Required<Pick<MysteryEncounterOption, "secondaryPokemonRequirements">> {
