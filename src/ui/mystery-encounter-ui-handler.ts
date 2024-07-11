@@ -337,7 +337,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
         optionText.setText(text);
       }
 
-      if (!this.optionsMeetsReqs[i]) {
+      if (!this.optionsMeetsReqs[i] && option.isDisabledOnRequirementsNotMet) {
         optionText.setAlpha(0.5);
       }
       if (this.blockInput) {
@@ -422,11 +422,10 @@ export default class MysteryEncounterUiHandler extends UiHandler {
       return;
     }
 
-    const mysteryEncounter = this.scene.currentBattle.mysteryEncounter;
     let text: string;
-    const option = this.filteredEncounterOptions[cursor];
-    const optionDialogue = option.dialogue ?? mysteryEncounter.dialogue.encounterOptionsDialogue.options[cursor];
-    if (!this.optionsMeetsReqs[cursor] && this.filteredEncounterOptions[cursor].isDisabledOnRequirementsNotMet && optionDialogue.disabledTooltip) {
+    const cursorOption = this.filteredEncounterOptions[cursor];
+    const optionDialogue = cursorOption.dialogue;
+    if (!this.optionsMeetsReqs[cursor] && cursorOption.isDisabledOnRequirementsNotMet && optionDialogue.disabledTooltip) {
       text = getEncounterText(this.scene, optionDialogue.disabledTooltip, TextStyle.TOOLTIP_CONTENT);
     } else {
       text = getEncounterText(this.scene, optionDialogue.buttonTooltip, TextStyle.TOOLTIP_CONTENT);
