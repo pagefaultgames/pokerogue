@@ -2646,7 +2646,7 @@ export default class BattleScene extends SceneBase {
 
     if (encounter) {
       encounter = new MysteryEncounter(encounter);
-      encounter.meetsRequirements(this);
+      encounter.populateDialogueTokensFromRequirements(this);
       return encounter;
     }
 
@@ -2674,7 +2674,7 @@ export default class BattleScene extends SceneBase {
       tier = Overrides.MYSTERY_ENCOUNTER_TIER_OVERRIDE;
     }
 
-    let availableEncounters = [];
+    let availableEncounters: MysteryEncounter[] = [];
     // New encounter will never be the same as the most recent encounter
     const previousEncounter = this.mysteryEncounterData.encounteredEvents?.length > 0 ? this.mysteryEncounterData.encounteredEvents[this.mysteryEncounterData.encounteredEvents.length - 1][0] : null;
     const biomeMysteryEncounters = mysteryEncountersByBiome.get(this.arena.biomeType);

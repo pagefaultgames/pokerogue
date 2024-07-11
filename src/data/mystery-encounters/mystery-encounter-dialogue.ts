@@ -1,7 +1,6 @@
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { TrainingSessionDialogue } from "#app/data/mystery-encounters/dialogue/training-session-dialogue";
 import { SleepingSnorlaxDialogue } from "./dialogue/sleeping-snorlax-dialogue";
-import { ShadyVitaminDealerDialogue } from "#app/data/mystery-encounters/dialogue/shady-vitamin-dealer";
 import { TextStyle } from "#app/ui/text";
 
 export class TextDisplay {
@@ -81,5 +80,4 @@ export const allMysteryEncounterDialogue: { [encounterType: number]: MysteryEnco
 export function initMysteryEncounterDialogue() {
   allMysteryEncounterDialogue[MysteryEncounterType.TRAINING_SESSION] = TrainingSessionDialogue;
   allMysteryEncounterDialogue[MysteryEncounterType.SLEEPING_SNORLAX] = SleepingSnorlaxDialogue;
-  allMysteryEncounterDialogue[MysteryEncounterType.SHADY_VITAMIN_DEALER] = ShadyVitaminDealerDialogue;
 }
