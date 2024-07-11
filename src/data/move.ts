@@ -5591,7 +5591,11 @@ export class hitsSameTypeAttr extends VariableMoveTypeMultiplierAttr {
 }
 
 /**
- *  Attribute used for Conversion 2, to convert the user's type to a random type that resists the target's last used move.
+ * Attribute used for Conversion 2, to convert the user's type to a random type that resists the target's last used move.
+ * If a move has its type changed (e.g. {@linkcode Moves.HIDDEN_POWER}), it will check the new type.
+ * Fails if both of the user's types are already resistant to the move.
+ * Fails if the opponent has not used a move yet
+ * Fails if the type is unknown or stellar
  */
 export class ResistLastMoveTypeAttr extends MoveEffectAttr {
   constructor() {
@@ -5614,7 +5618,11 @@ export class ResistLastMoveTypeAttr extends MoveEffectAttr {
     if (!targetMove) {
       return false;
     }
+
     const moveData = allMoves[targetMove.move];
+    if (moveData.type === Type.STELLAR || moveData.type === Type.UNKNOWN) {
+      return false;
+    }
     const userTypes = user.getTypes();
     const validTypes = getTypeResistances(moveData.type).filter(t => !userTypes.includes(t)); // valid types are ones that are not already the user's types
     if (!validTypes.length) {
