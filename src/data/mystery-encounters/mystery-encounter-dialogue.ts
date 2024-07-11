@@ -1,7 +1,6 @@
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { MysteriousChallengersDialogue } from "#app/data/mystery-encounters/dialogue/mysterious-challengers-dialogue";
 import { MysteriousChestDialogue } from "#app/data/mystery-encounters/dialogue/mysterious-chest-dialogue";
-import { FightOrFlightDialogue } from "#app/data/mystery-encounters/dialogue/fight-or-flight-dialogue";
 import { TrainingSessionDialogue } from "#app/data/mystery-encounters/dialogue/training-session-dialogue";
 import { SleepingSnorlaxDialogue } from "./dialogue/sleeping-snorlax-dialogue";
 import { ShadyVitaminDealerDialogue } from "#app/data/mystery-encounters/dialogue/shady-vitamin-dealer";
@@ -84,7 +83,6 @@ export const allMysteryEncounterDialogue: { [encounterType: number]: MysteryEnco
 export function initMysteryEncounterDialogue() {
   allMysteryEncounterDialogue[MysteryEncounterType.MYSTERIOUS_CHALLENGERS] = MysteriousChallengersDialogue;
   allMysteryEncounterDialogue[MysteryEncounterType.MYSTERIOUS_CHEST] = MysteriousChestDialogue;
-  allMysteryEncounterDialogue[MysteryEncounterType.FIGHT_OR_FLIGHT] = FightOrFlightDialogue;
   allMysteryEncounterDialogue[MysteryEncounterType.TRAINING_SESSION] = TrainingSessionDialogue;
   allMysteryEncounterDialogue[MysteryEncounterType.SLEEPING_SNORLAX] = SleepingSnorlaxDialogue;
   allMysteryEncounterDialogue[MysteryEncounterType.SHADY_VITAMIN_DEALER] = ShadyVitaminDealerDialogue;
