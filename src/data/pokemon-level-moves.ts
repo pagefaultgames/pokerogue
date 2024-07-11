@@ -18594,7 +18594,7 @@ export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
       [ 48, Moves.PIKA_PAPOW ],
     ],
     3: [
-      [ EVOLVE_MOVE, Moves.METEOR_MASH ],
+      [ 1, Moves.METEOR_MASH ],
       [ 1, Moves.TAIL_WHIP ],
       [ 1, Moves.GROWL ],
       [ 1, Moves.THUNDER_SHOCK ],
@@ -18618,7 +18618,7 @@ export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
       [ 48, Moves.PIKA_PAPOW ],
     ],
     4: [
-      [ EVOLVE_MOVE, Moves.ICICLE_CRASH ],
+      [ 1, Moves.ICICLE_CRASH ],
       [ 1, Moves.TAIL_WHIP ],
       [ 1, Moves.GROWL ],
       [ 1, Moves.THUNDER_SHOCK ],
@@ -18642,7 +18642,7 @@ export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
       [ 48, Moves.PIKA_PAPOW ],
     ],
     5: [
-      [ EVOLVE_MOVE, Moves.DRAINING_KISS ],
+      [ 1, Moves.DRAINING_KISS ],
       [ 1, Moves.TAIL_WHIP ],
       [ 1, Moves.GROWL ],
       [ 1, Moves.THUNDER_SHOCK ],
@@ -18666,7 +18666,7 @@ export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
       [ 48, Moves.PIKA_PAPOW ],
     ],
     6: [
-      [ EVOLVE_MOVE, Moves.ELECTRIC_TERRAIN ],
+      [ 1, Moves.ELECTRIC_TERRAIN ],
       [ 1, Moves.TAIL_WHIP ],
       [ 1, Moves.GROWL ],
       [ 1, Moves.THUNDER_SHOCK ],
@@ -18690,7 +18690,7 @@ export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
       [ 48, Moves.PIKA_PAPOW ],
     ],
     7: [
-      [ EVOLVE_MOVE, Moves.FLYING_PRESS ],
+      [ 1, Moves.FLYING_PRESS ],
       [ 1, Moves.TAIL_WHIP ],
       [ 1, Moves.GROWL ],
       [ 1, Moves.THUNDER_SHOCK ],
@@ -18814,7 +18814,7 @@ export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
   },
   [Species.ROTOM]: {
     1: [
-      [ EVOLVE_MOVE, Moves.OVERHEAT ],
+      [ 1, Moves.OVERHEAT ],
       [ 1, Moves.DOUBLE_TEAM ],
       [ 1, Moves.ASTONISH ],
       [ 5, Moves.THUNDER_SHOCK ],
@@ -18830,7 +18830,7 @@ export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
       [ 55, Moves.UPROAR ],
     ],
     2: [
-      [ EVOLVE_MOVE, Moves.HYDRO_PUMP ],
+      [ 1, Moves.HYDRO_PUMP ],
       [ 1, Moves.DOUBLE_TEAM ],
       [ 1, Moves.ASTONISH ],
       [ 5, Moves.THUNDER_SHOCK ],
@@ -18846,7 +18846,7 @@ export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
       [ 55, Moves.UPROAR ],
     ],
     3: [
-      [ EVOLVE_MOVE, Moves.BLIZZARD ],
+      [ 1, Moves.BLIZZARD ],
       [ 1, Moves.DOUBLE_TEAM ],
       [ 1, Moves.ASTONISH ],
       [ 5, Moves.THUNDER_SHOCK ],
@@ -18862,7 +18862,7 @@ export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
       [ 55, Moves.UPROAR ],
     ],
     4: [
-      [ EVOLVE_MOVE, Moves.AIR_SLASH ],
+      [ 1, Moves.AIR_SLASH ],
       [ 1, Moves.DOUBLE_TEAM ],
       [ 1, Moves.ASTONISH ],
       [ 5, Moves.THUNDER_SHOCK ],
@@ -18878,7 +18878,7 @@ export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
       [ 55, Moves.UPROAR ],
     ],
     5: [
-      [ EVOLVE_MOVE, Moves.LEAF_STORM ],
+      [ 1, Moves.LEAF_STORM ],
       [ 1, Moves.DOUBLE_TEAM ],
       [ 1, Moves.ASTONISH ],
       [ 5, Moves.THUNDER_SHOCK ],
