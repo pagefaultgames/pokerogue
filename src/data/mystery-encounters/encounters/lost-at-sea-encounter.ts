@@ -10,6 +10,11 @@ import MysteryEncounter, {
 import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import { leaveEncounterWithoutBattle } from "../mystery-encounter-utils";
 
+/**
+ * Damage percentage taken when wandering aimlessly.
+ * Can be a number between `0` - `100`.
+ * The higher the more damage taken (100% = instant KO).
+ */
 const DAMAGE_PERCENTAGE: number = 30; // 0 - 100
 
 /**
@@ -18,9 +23,7 @@ const DAMAGE_PERCENTAGE: number = 30; // 0 - 100
  * @see For biome requirements check [mysteryEncountersByBiome](../mystery-encounters.ts)
  */
 export const LostAtSeaEncounter: MysteryEncounter =
-  MysteryEncounterBuilder.withEncounterType(
-    MysteryEncounterType.LOST_AT_SEA
-  )
+  MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.LOST_AT_SEA)
     .withEncounterTier(MysteryEncounterTier.COMMON)
     .withIntroSpriteConfigs([
       {
