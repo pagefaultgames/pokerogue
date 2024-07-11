@@ -1399,7 +1399,11 @@ const modifierPool: ModifierPool = {
   }),
   [ModifierTier.GREAT]: [
     new WeightedModifierType(modifierTypes.GREAT_BALL, (party: Pokemon[]) => (hasMaximumBalls(party, PokeballType.GREAT_BALL)) ? 0 : 6, 6),
-    new WeightedModifierType(modifierTypes.PP_UP, 2),
+    new WeightedModifierType(modifierTypes.PP_UP, (party: Pokemon[]) => {
+      // This find function will search for any move in the party that has less than 3 pp ups
+      const needsPpUp = party.find((p: Pokemon) => p.getMoveset().find(m => m.ppUp !== 3)) !== undefined;
+      return needsPpUp ? 2 : 0;
+    }),
     new WeightedModifierType(modifierTypes.FULL_HEAL, (party: Pokemon[]) => {
       const statusEffectPartyMemberCount = Math.min(party.filter(p => p.hp && !!p.status && !p.getHeldItems().some(i => {
         if (i instanceof Modifiers.TurnStatusEffectModifier) {
@@ -1472,7 +1476,11 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.ULTRA_BALL, (party: Pokemon[]) => (hasMaximumBalls(party, PokeballType.ULTRA_BALL)) ? 0 : 15, 15),
     new WeightedModifierType(modifierTypes.MAX_LURE, 4),
     new WeightedModifierType(modifierTypes.BIG_NUGGET, skipInLastClassicWaveOrDefault(12)),
-    new WeightedModifierType(modifierTypes.PP_MAX, 3),
+    new WeightedModifierType(modifierTypes.PP_MAX, (party: Pokemon[]) => {
+      // This find function will search for any move in the party that has less than 3 pp ups
+      const needsPpUp = party.find((p: Pokemon) => p.getMoveset().find(m => m.ppUp !== 3)) !== undefined;
+      return needsPpUp ? 3 : 0;
+    }),
     new WeightedModifierType(modifierTypes.MINT, 4),
     new WeightedModifierType(modifierTypes.RARE_EVOLUTION_ITEM, (party: Pokemon[]) => Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 15) * 4, 32), 32),
     new WeightedModifierType(modifierTypes.AMULET_COIN, skipInLastClassicWaveOrDefault(3)),
