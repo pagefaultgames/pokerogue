@@ -30,7 +30,7 @@ export class MysteryEncounterSpriteConfig {
   hasShadow?: boolean = false;
   /** Disable animation. Defaults to `false` */
   disableAnimation?: boolean = false;
-  /** Depeat the animation. Defaults to `false` */
+  /** Repeat the animation. Defaults to `false` */
   repeat?: boolean = false;
   /** Tint color. `0` - `1`. Higher means darker tint. */
   tint?: number;
