@@ -2981,7 +2981,7 @@ export const move: MoveTranslationEntries = {
   },
   dynamaxCannon: {
     name: "다이맥스포",
-    effect: "코어에서 빔을 발사해서 공격한다. 상대의 레벨이 웨이브 단계보다 더 높다면, 데미지가 최대 2배가 된다."
+    effect: "코어에서 빔을 발사해서 공격한다. 상대가 웨이브 레벨 최대치를 초과했다면, 초과한 정도에 비례하여 데미지가 최대 2배가 된다."
   },
   snipeShot: {
     name: "노려맞히기",
