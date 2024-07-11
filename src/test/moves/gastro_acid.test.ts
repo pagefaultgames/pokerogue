@@ -68,7 +68,7 @@ describe("Moves - Gastro Acid", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(enemyField[0].hp).toBeLessThan(enemyField[0].getMaxHp());
-    expect(enemyField[1].hp).toBe(enemyField[1].getMaxHp());
+    expect(enemyField[1].isFullHp()).toBe(true);
   }, TIMEOUT);
 
   it("fails if used on an enemy with an already-suppressed ability", async () => {

@@ -6080,7 +6080,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.REST, Type.PSYCHIC, -1, 5, -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.SLEEP, true, 3, true)
       .attr(HealAttr, 1, true)
-      .condition((user, target, move) => user.getHpRatio() < 1 && user.canSetStatus(StatusEffect.SLEEP, true, true))
+      .condition((user, target, move) => !user.isFullHp() && user.canSetStatus(StatusEffect.SLEEP, true, true))
       .triageMove(),
     new AttackMove(Moves.ROCK_SLIDE, Type.ROCK, MoveCategory.PHYSICAL, 75, 90, 10, 30, 0, 1)
       .attr(FlinchAttr)

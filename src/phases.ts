@@ -4696,7 +4696,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
   }
 
   start() {
-    if (!this.skipAnim && (this.revive || this.getPokemon().hp) && this.getPokemon().getHpRatio() < 1) {
+    if (!this.skipAnim && (this.revive || this.getPokemon().hp) && !this.getPokemon().isFullHp()) {
       super.start();
     } else {
       this.end();
@@ -4711,10 +4711,8 @@ export class PokemonHealPhase extends CommonAnimPhase {
       return;
     }
 
-    const fullHp = pokemon.getHpRatio() >= 1;
-
     const hasMessage = !!this.message;
-    const healOrDamage = (!fullHp || this.hpHealed < 0);
+    const healOrDamage = (!pokemon.isFullHp() || this.hpHealed < 0);
     let lastStatusEffect = StatusEffect.NONE;
 
     if (healOrDamage) {

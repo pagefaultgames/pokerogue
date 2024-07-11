@@ -77,7 +77,7 @@ describe("Abilities - Sturdy", () => {
       await game.phaseInterceptor.to(MoveEndPhase);
 
       const enemyPokemon: EnemyPokemon = game.scene.getEnemyParty()[0];
-      expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+      expect(enemyPokemon.isFullHp()).toBe(true);
     },
     TIMEOUT
   );

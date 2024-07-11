@@ -55,7 +55,7 @@ describe("Moves - Purify", () => {
       await game.phaseInterceptor.to(MoveEndPhase);
 
       expect(enemyPokemon.status).toBe(undefined);
-      expect(playerPokemon.hp).toBe(playerPokemon.getMaxHp());
+      expect(playerPokemon.isFullHp()).toBe(true);
     },
     TIMEOUT
   );
