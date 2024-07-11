@@ -9,10 +9,10 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { CommandPhase } from "#app/phases/command-phase.js";
-import { EnemyCommandPhase } from "#app/phases/enemy-command-phase.js";
-import { MessagePhase } from "#app/phases/message-phase.js";
-import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import {CommandPhase} from "#app/phases/command-phase";
+import {EnemyCommandPhase} from "#app/phases/enemy-command-phase";
+import {TurnEndPhase} from "#app/phases/turn-end-phase";
+import {MessagePhase} from "#app/phases/message-phase";
 
 
 describe("Items - Toxic orb", () => {
@@ -71,10 +71,8 @@ describe("Items - Toxic orb", () => {
     await game.phaseInterceptor.run(MessagePhase);
     const message = game.textInterceptor.getLatestMessage();
     expect(message).toContain("was badly poisoned by the Toxic Orb");
-    await game.phaseInterceptor.run(MessagePhase);
-    const message2 = game.textInterceptor.getLatestMessage();
-    expect(message2).toContain("is hurt");
-    expect(message2).toContain("by poison");
     expect(game.scene.getParty()[0].status!.effect).toBe(StatusEffect.TOXIC);
-  }, 20000);
+    // Damage should not have ticked yet.
+    expect(game.scene.getParty()[0].status!.turnCount).toBe(0);
+  }, 2000);
 });

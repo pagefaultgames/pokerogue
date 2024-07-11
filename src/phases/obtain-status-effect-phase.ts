@@ -6,7 +6,6 @@ import { StatusEffect } from "#app/enums/status-effect.js";
 import Pokemon from "#app/field/pokemon.js";
 import { getPokemonNameWithAffix } from "#app/messages.js";
 import { PokemonPhase } from "./pokemon-phase";
-import { PostTurnStatusEffectPhase } from "./post-turn-status-effect-phase";
 
 export class ObtainStatusEffectPhase extends PokemonPhase {
   private statusEffect: StatusEffect | undefined;
@@ -33,9 +32,6 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
         pokemon.updateInfo(true);
         new CommonBattleAnim(CommonAnim.POISON + (this.statusEffect! - 1), pokemon).play(this.scene, () => {
           this.scene.queueMessage(getStatusEffectObtainText(this.statusEffect, getPokemonNameWithAffix(pokemon), this.sourceText ?? undefined));
-          if (pokemon.status?.isPostTurn()) {
-            this.scene.pushPhase(new PostTurnStatusEffectPhase(this.scene, this.battlerIndex));
-          }
           this.end();
         });
         return;

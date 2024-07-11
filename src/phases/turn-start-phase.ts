@@ -13,10 +13,10 @@ import { BerryPhase } from "./berry-phase";
 import { FieldPhase } from "./field-phase";
 import { MoveHeaderPhase } from "./move-header-phase";
 import { MovePhase } from "./move-phase";
-import { PostTurnStatusEffectPhase } from "./post-turn-status-effect-phase";
 import { SwitchSummonPhase } from "./switch-summon-phase";
 import { TurnEndPhase } from "./turn-end-phase";
 import { WeatherEffectPhase } from "./weather-effect-phase";
+import {CheckStatusEffectPhase} from "#app/phases/check-status-effect-phase";
 
 export class TurnStartPhase extends FieldPhase {
   constructor(scene: BattleScene) {
@@ -153,11 +153,8 @@ export class TurnStartPhase extends FieldPhase {
 
     this.scene.pushPhase(new WeatherEffectPhase(this.scene));
 
-    for (const o of order) {
-      if (field[o].status && field[o].status.isPostTurn()) {
-        this.scene.pushPhase(new PostTurnStatusEffectPhase(this.scene, o));
-      }
-    }
+    /** Add a new phase to check who should be taking status damage */
+    this.scene.pushPhase(new CheckStatusEffectPhase(this.scene, order));
 
     this.scene.pushPhase(new BerryPhase(this.scene));
     this.scene.pushPhase(new TurnEndPhase(this.scene));

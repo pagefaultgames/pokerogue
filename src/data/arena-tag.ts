@@ -64,6 +64,18 @@ export abstract class ArenaTag {
       ? allMoves[this.sourceMove].name
       : null;
   }
+
+  /**
+   * When given a arena tag or json representing one, load the data for it.
+   * This is meant to be inherited from by any arena tag with custom attributes
+   * @param {ArenaTag | any} source An arena tag
+   */
+  loadTag(source : ArenaTag | any) : void {
+    this.turnCount = source.turnCount;
+    this.sourceMove = source.sourceMove;
+    this.sourceId = source.sourceId;
+    this.side = source.side;
+  }
 }
 
 /**
@@ -557,6 +569,12 @@ export class ArenaTrapTag extends ArenaTag {
   getMatchupScoreMultiplier(pokemon: Pokemon): number {
     return pokemon.isGrounded() ? 1 : Phaser.Math.Linear(0, 1 / Math.pow(2, this.layers), Math.min(pokemon.getHpRatio(), 0.5) * 2);
   }
+
+  loadTag(source: any): void {
+    super.loadTag(source);
+    this.layers = source.layers;
+    this.maxLayers = source.maxLayers;
+  }
 }
 
 /**
@@ -905,6 +923,12 @@ class HappyHourTag extends ArenaTag {
   }
 }
 
+class NoneTag extends ArenaTag {
+  constructor() {
+    super(ArenaTagType.NONE, 0, undefined, undefined);
+  }
+}
+
 export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves | undefined, sourceId: integer, targetIndex?: BattlerIndex, side: ArenaTagSide = ArenaTagSide.BOTH): ArenaTag | null {
   switch (tagType) {
   case ArenaTagType.MIST:
@@ -954,3 +978,16 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMov
     return null;
   }
 }
+
+/**
+ * When given a battler tag or json representing one, creates an actual ArenaTag object with the same data.
+ * @param {ArenaTag | any} source An arena tag
+ * @return {ArenaTag} The valid arena tag
+ */
+export function loadArenaTag(source: ArenaTag | any): ArenaTag {
+  const tag = getArenaTag(source.tagType, source.turnCount, source.sourceMove, source.sourceId, source.targetIndex, source.side)
+      ?? new NoneTag();
+  tag.loadTag(source);
+  return tag;
+}
+
