@@ -292,6 +292,8 @@ export const apiUrl = localServerUrl ?? "https://api.pokerogue.net";
 // used to disable api calls when isLocal is true and a server is not found
 export let isLocalServerConnected = true;
 
+export const isBeta = import.meta.env.MODE === "development"; // this checks to see if the env mode is development. Technically this will be the same for beta AND for dev, so for now, isLocal and isBeta are technically the same thing
+
 export function setCookie(cName: string, cValue: string): void {
   const expiration = new Date();
   expiration.setTime(new Date().getTime() + 3600000 * 24 * 30 * 3/*7*/);
