@@ -7,14 +7,18 @@ import BattleScene from "../../../battle-scene";
 import { AddPokeballModifierType } from "../../../modifier/modifier-type";
 import { PokeballType } from "../../pokeball";
 import { getPokemonSpecies } from "../../pokemon-species";
-import MysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier } from "../mystery-encounter";
+import MysteryEncounter, {
+  MysteryEncounterBuilder,
+  MysteryEncounterTier,
+} from "../mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import {
-  EnemyPartyConfig, EnemyPokemonConfig,
+  EnemyPartyConfig,
+  EnemyPokemonConfig,
   getRandomPlayerPokemon,
   getRandomSpeciesByStarterTier,
   initBattleWithEnemyConfig,
-  leaveEncounterWithoutBattle
+  leaveEncounterWithoutBattle,
 } from "../mystery-encounter-utils";
 
 // Exclude Ultra Beasts, Paradox, Necrozma, Eternatus, and egg-locked mythicals
@@ -63,71 +67,132 @@ const excludedBosses = [
   Species.ARCEUS,
   Species.VICTINI,
   Species.MELTAN,
-  Species.PECHARUNT
+  Species.PECHARUNT,
 ];
 
-export const DarkDealEncounter: MysteryEncounter = MysteryEncounterBuilder
-  .withEncounterType(MysteryEncounterType.DARK_DEAL)
-  .withEncounterTier(MysteryEncounterTier.ROGUE)
-  .withIntroSpriteConfigs([
-    {
-      spriteKey: "mad_scientist_m",
-      fileRoot: "mystery-encounters",
-      hasShadow: true
-    },
-    {
-      spriteKey: "dark_deal_porygon",
-      fileRoot: "mystery-encounters",
-      hasShadow: true,
-      repeat: true
-    }
-  ])
-  .withSceneWaveRangeRequirement(30, 180) // waves 30 to 180
-  .withScenePartySizeRequirement(2, 6) // Must have at least 2 pokemon in party
-  .withCatchAllowed(true)
-  .withOption(new MysteryEncounterOptionBuilder()
-    .withPreOptionPhase(async (scene: BattleScene) => {
-      // Removes random pokemon (including fainted) from party and adds name to dialogue data tokens
-      // Will never return last battle able mon and instead pick fainted/unable to battle
-      const removedPokemon = getRandomPlayerPokemon(scene, false, true);
-      scene.removePokemonFromPlayerParty(removedPokemon);
+export const DarkDealEncounter: MysteryEncounter =
+  MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.DARK_DEAL)
+    .withEncounterTier(MysteryEncounterTier.ROGUE)
+    .withIntroSpriteConfigs([
+      {
+        spriteKey: "mad_scientist_m",
+        fileRoot: "mystery-encounters",
+        hasShadow: true,
+      },
+      {
+        spriteKey: "dark_deal_porygon",
+        fileRoot: "mystery-encounters",
+        hasShadow: true,
+        repeat: true,
+      },
+    ])
+    .withIntroDialogue([
+      {
+        text: "mysteryEncounter:dark_deal_intro_message",
+      },
+      {
+        speaker: "mysteryEncounter:dark_deal_speaker",
+        text: "mysteryEncounter:dark_deal_intro_dialogue",
+      },
+    ])
+    .withSceneWaveRangeRequirement(30, 180) // waves 30 to 180
+    .withScenePartySizeRequirement(2, 6) // Must have at least 2 pokemon in party
+    .withCatchAllowed(true)
+    .withOption(
+      new MysteryEncounterOptionBuilder()
+        .withDialogue({
+          buttonLabel: "mysteryEncounter:dark_deal_option_1_label",
+          buttonTooltip: "mysteryEncounter:dark_deal_option_1_tooltip",
+          selected: [
+            {
+              speaker: "mysteryEncounter:dark_deal_speaker",
+              text: "mysteryEncounter:dark_deal_option_1_selected",
+            },
+            {
+              text: "mysteryEncounter:dark_deal_option_1_selected_message",
+            },
+          ],
+        })
+        .withPreOptionPhase(async (scene: BattleScene) => {
+          // Removes random pokemon (including fainted) from party and adds name to dialogue data tokens
+          // Will never return last battle able mon and instead pick fainted/unable to battle
+          const removedPokemon = getRandomPlayerPokemon(scene, false, true);
+          scene.removePokemonFromPlayerParty(removedPokemon);
 
-      scene.currentBattle.mysteryEncounter.setDialogueToken("pokeName", removedPokemon.name);
+          scene.currentBattle.mysteryEncounter.setDialogueToken(
+            "pokeName",
+            removedPokemon.name
+          );
 
-      // Store removed pokemon types
-      scene.currentBattle.mysteryEncounter.misc = [removedPokemon.species.type1];
-      if (removedPokemon.species.type2) {
-        scene.currentBattle.mysteryEncounter.misc.push(removedPokemon.species.type2);
-      }
-    })
-    .withOptionPhase(async (scene: BattleScene) => {
-      // Give the player 5 Rogue Balls
-      scene.unshiftPhase(new ModifierRewardPhase(scene, () => new AddPokeballModifierType("rb", PokeballType.ROGUE_BALL, 5)));
+          // Store removed pokemon types
+          scene.currentBattle.mysteryEncounter.misc = [
+            removedPokemon.species.type1,
+          ];
+          if (removedPokemon.species.type2) {
+            scene.currentBattle.mysteryEncounter.misc.push(
+              removedPokemon.species.type2
+            );
+          }
+        })
+        .withOptionPhase(async (scene: BattleScene) => {
+          // Give the player 5 Rogue Balls
+          scene.unshiftPhase(
+            new ModifierRewardPhase(
+              scene,
+              () =>
+                new AddPokeballModifierType("rb", PokeballType.ROGUE_BALL, 5)
+            )
+          );
 
-      // Start encounter with random legendary (7-10 starter strength) that has level additive
-      const bossTypes = scene.currentBattle.mysteryEncounter.misc as Type[];
-      // Starter egg tier, 35/50/10/5 %odds for tiers 6/7/8/9+
-      const roll = randSeedInt(100);
-      const starterTier: number | [number, number] = roll > 65 ? 6 : roll > 15 ? 7 : roll > 5 ? 8 : [9, 10];
-      const bossSpecies = getPokemonSpecies(getRandomSpeciesByStarterTier(starterTier, excludedBosses, bossTypes));
-      const pokemonConfig: EnemyPokemonConfig = {
-        species: bossSpecies,
-        isBoss: true
-      };
-      if (!isNullOrUndefined(bossSpecies.forms) && bossSpecies.forms.length > 0) {
-        pokemonConfig.formIndex = 0;
-      }
-      const config: EnemyPartyConfig = {
-        levelAdditiveMultiplier: 0.75,
-        pokemonConfigs: [pokemonConfig]
-      };
-      return initBattleWithEnemyConfig(scene, config);
-    })
-    .build()
-  )
-  .withOptionPhase(async (scene: BattleScene) => {
-    // Leave encounter with no rewards or exp
-    leaveEncounterWithoutBattle(scene, true);
-    return true;
-  })
-  .build();
+          // Start encounter with random legendary (7-10 starter strength) that has level additive
+          const bossTypes = scene.currentBattle.mysteryEncounter.misc as Type[];
+          // Starter egg tier, 35/50/10/5 %odds for tiers 6/7/8/9+
+          const roll = randSeedInt(100);
+          const starterTier: number | [number, number] =
+            roll > 65 ? 6 : roll > 15 ? 7 : roll > 5 ? 8 : [9, 10];
+          const bossSpecies = getPokemonSpecies(
+            getRandomSpeciesByStarterTier(
+              starterTier,
+              excludedBosses,
+              bossTypes
+            )
+          );
+          const pokemonConfig: EnemyPokemonConfig = {
+            species: bossSpecies,
+            isBoss: true,
+          };
+          if (
+            !isNullOrUndefined(bossSpecies.forms) &&
+            bossSpecies.forms.length > 0
+          ) {
+            pokemonConfig.formIndex = 0;
+          }
+          const config: EnemyPartyConfig = {
+            levelAdditiveMultiplier: 0.75,
+            pokemonConfigs: [pokemonConfig],
+          };
+          return initBattleWithEnemyConfig(scene, config);
+        })
+        .build()
+    )
+    .withOption(
+      new MysteryEncounterOptionBuilder()
+        .withDialogue({
+          buttonLabel: "mysteryEncounter:dark_deal_option_2_label",
+          buttonTooltip: "mysteryEncounter:dark_deal_option_2_tooltip",
+          selected: [
+            {
+              speaker: "mysteryEncounter:dark_deal_speaker",
+              text: "mysteryEncounter:dark_deal_option_2_selected",
+            },
+          ],
+        })
+        .withOptionPhase(async (scene: BattleScene) => {
+          // Leave encounter with no rewards or exp
+
+          leaveEncounterWithoutBattle(scene, true);
+          return true;
+        })
+        .build()
+    )
+    .build();

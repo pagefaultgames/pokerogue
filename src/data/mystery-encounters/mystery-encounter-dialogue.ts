@@ -28,7 +28,7 @@ export class EncounterOptionsDialogue {
   title: TemplateStringsArray | `mysteryEncounter:${string}`;
   description: TemplateStringsArray | `mysteryEncounter:${string}`;
   query?: TemplateStringsArray | `mysteryEncounter:${string}`;
-  options: [OptionTextDisplay, OptionTextDisplay, ...OptionTextDisplay[]]; // Options array with minimum 2 options
+  options?: [...OptionTextDisplay[]]; // Options array with minimum 2 options
 }
 
 export default class MysteryEncounterDialogue {

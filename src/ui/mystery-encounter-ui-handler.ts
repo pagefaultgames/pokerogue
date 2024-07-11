@@ -319,13 +319,13 @@ export default class MysteryEncounterUiHandler extends UiHandler {
         optionText = addBBCodeTextObject(this.scene, i % 2 === 0 ? 0 : 100, i < 2 ? 0 : 16, "-", TextStyle.WINDOW, { wordWrap: { width: 558 }, fontSize: "80px", lineSpacing: -8 });
         break;
       }
-      const option = mysteryEncounter.dialogue.encounterOptionsDialogue.options[i];
-      const text = getEncounterText(this.scene, option.buttonLabel, option.style ? option.style : TextStyle.WINDOW);
+      const option = this.filteredEncounterOptions[i];
+      const text = getEncounterText(this.scene, option.dialogue?.buttonLabel, option.dialogue?.style ? option.dialogue?.style : TextStyle.WINDOW);
       if (text) {
         optionText.setText(text);
       }
 
-      this.optionsMeetsReqs.push(this.filteredEncounterOptions[i].meetsRequirements(this.scene));
+      this.optionsMeetsReqs.push(option.meetsRequirements(this.scene));
 
       if (!this.optionsMeetsReqs[i]) {
         optionText.setAlpha(0.5);

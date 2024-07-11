@@ -135,15 +135,17 @@ export default class MysteryEncounter implements MysteryEncounter {
       Object.assign(this, encounter);
     }
     this.encounterTier = this.encounterTier ? this.encounterTier : MysteryEncounterTier.COMMON;
-    this.dialogue = allMysteryEncounterDialogue[this.encounterType];
+    this.dialogue = Object.assign((this.dialogue ?? {}), allMysteryEncounterDialogue[this.encounterType]);
+    // this.dialogue = allMysteryEncounterDialogue[this.encounterType];
+    console.log(`${MysteryEncounterType[encounter.encounterType]} Encounter Dialogue:`, this.dialogue);
     this.encounterVariant = MysteryEncounterVariant.DEFAULT;
     this.requirements = this.requirements ? this.requirements : [];
     this.hideBattleIntroMessage = !isNullOrUndefined(this.hideBattleIntroMessage) ? this.hideBattleIntroMessage : false;
     this.hideIntroVisuals = !isNullOrUndefined(this.hideIntroVisuals) ? this.hideIntroVisuals : true;
 
     // Populate options with respective dialogue
-    if (this.dialogue) {
-      this.options.forEach((o, i) => o.dialogue = this.dialogue.encounterOptionsDialogue.options[i]);
+    if (this.dialogue?.encounterOptionsDialogue) {
+      // this.options.forEach((o, i) => o.dialogue = this.dialogue.encounterOptionsDialogue.options[i]);
     }
 
     // Reset any dirty flags or encounter data
@@ -408,7 +410,18 @@ export class MysteryEncounterBuilder implements Partial<MysteryEncounter> {
    * @returns
    */
   withIntroSpriteConfigs(spriteConfigs: MysteryEncounterSpriteConfig[]): this & Pick<MysteryEncounter, "spriteConfigs"> {
+    console.debug("with intro sprite configs: ", spriteConfigs);
     return Object.assign(this, { spriteConfigs: spriteConfigs });
+  }
+
+  withIntroDialogue(dialogue: MysteryEncounterDialogue["intro"] = []): this {
+    console.debug("with intro dialogue: ", dialogue);
+    this.dialogue = {...this.dialogue, intro: dialogue };
+    return this;
+  }
+
+  withIntro({spriteConfigs, dialogue} : {spriteConfigs: MysteryEncounterSpriteConfig[], dialogue?:  MysteryEncounterDialogue["intro"]}) {
+    return this.withIntroSpriteConfigs(spriteConfigs).withIntroDialogue(dialogue);
   }
 
   /**

@@ -127,6 +127,7 @@ export class MysteryEncounterOptionBuilder implements Partial<MysteryEncounterOp
   onPreOptionPhase?: OptionPhaseCallback;
   onOptionPhase?: OptionPhaseCallback;
   onPostOptionPhase?: OptionPhaseCallback;
+  dialogue?: OptionTextDisplay;
 
   withSceneRequirement(requirement: EncounterSceneRequirement): this & Required<Pick<MysteryEncounterOption, "requirements">> {
     this.requirements.push(requirement);
@@ -162,5 +163,10 @@ export class MysteryEncounterOptionBuilder implements Partial<MysteryEncounterOp
     this.secondaryPokemonRequirements.push(requirement);
     this.excludePrimaryFromSecondaryRequirements = excludePrimaryFromSecondaryRequirements;
     return Object.assign(this, { secondaryPokemonRequirements: this.secondaryPokemonRequirements });
+  }
+
+  withDialogue(dialogue: OptionTextDisplay) {
+    this.dialogue = dialogue;
+    return this;
   }
 }
