@@ -1,5 +1,6 @@
 import { ability } from "./ability";
 import { abilityTriggers } from "./ability-trigger";
+import { arenaFlyout } from "./arena-flyout";
 import { PGFachv, PGMachv } from "./achv";
 import { battle } from "./battle";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
@@ -50,6 +51,7 @@ import { modifierSelectUiHandler } from "./modifier-select-ui-handler";
 export const esConfig = {
   ability: ability,
   abilityTriggers: abilityTriggers,
+  arenaFlyout: arenaFlyout,
   battle: battle,
   battleMessageUiHandler: battleMessageUiHandler,
   berry: berry,
