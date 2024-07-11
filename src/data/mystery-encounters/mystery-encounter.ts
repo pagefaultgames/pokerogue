@@ -120,6 +120,7 @@ export default interface MysteryEncounter {
 
   /**
    * Generic property to set any custom data required for the encounter
+   * Extremely useful for carrying state/data between onPreOptionPhase/onOptionPhase/onPostOptionPhase
    */
   misc?: any;
 }
@@ -276,6 +277,7 @@ export default class MysteryEncounter implements MysteryEncounter {
    * For multiple support pokemon in the dialogue token, it will have to be overridden.
    */
   populateDialogueTokensFromRequirements?(scene: BattleScene) {
+    this.meetsRequirements(scene);
     if (this.requirements?.length > 0) {
       for (const req of this.requirements) {
         const dialogueToken = req.getDialogueToken(scene);
@@ -304,6 +306,7 @@ export default class MysteryEncounter implements MysteryEncounter {
     // Dialogue tokens for options
     for (let i = 0; i < this.options.length; i++) {
       const opt = this.options[i];
+      opt.meetsRequirements(scene);
       const j = i + 1;
       if (opt.requirements?.length > 0) {
         for (const req of opt.requirements) {
@@ -316,7 +319,7 @@ export default class MysteryEncounter implements MysteryEncounter {
         for (const req of opt.primaryPokemonRequirements) {
           if (!req.invertQuery) {
             const value = req.getDialogueToken(scene, opt.primaryPokemon);
-            this.setDialogueToken("option" + j + "Primary", value[1]);
+            this.setDialogueToken("option" + j + "Primary" + this.capitalizeFirstLetter(value[0]), value[1]);
           }
         }
       }
@@ -325,7 +328,7 @@ export default class MysteryEncounter implements MysteryEncounter {
         for (const req of opt.secondaryPokemonRequirements) {
           if (!req.invertQuery) {
             const value = req.getDialogueToken(scene, opt.secondaryPokemon[0]);
-            this.setDialogueToken("option" + j + "Secondary", value[1]);
+            this.setDialogueToken("option" + j + "Secondary" + this.capitalizeFirstLetter(value[0]), value[1]);
           }
         }
       }

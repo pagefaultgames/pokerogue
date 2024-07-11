@@ -1,9 +1,8 @@
 import {
-  generateModifierType,
+  generateModifierTypeOption,
   leaveEncounterWithoutBattle,
   queueEncounterMessage,
-  selectPokemonForOption,
-  setEncounterRewards,
+  selectPokemonForOption, setEncounterExp,
   updatePlayerMoney,
 } from "#app/data/mystery-encounters/mystery-encounter-utils";
 import { StatusEffect } from "#app/data/status-effect";
@@ -18,6 +17,7 @@ import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import {
   MoneyRequirement
 } from "../mystery-encounter-requirements";
+import i18next from "i18next";
 
 export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBuilder
   .withEncounterType(MysteryEncounterType.SHADY_VITAMIN_DEALER)
@@ -43,7 +43,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBui
   .withPrimaryPokemonStatusEffectRequirement([StatusEffect.NONE]) // Pokemon must not have status
   .withPrimaryPokemonHealthRatioRequirement([0.34, 1]) // Pokemon must have above 1/3rd HP
   .withOption(new MysteryEncounterOptionBuilder()
-    .withSceneMoneyRequirement(0, 2) // Wave scaling multiplier of 2 for cost
+    .withSceneMoneyRequirement(0, 2) // Wave scaling money multiplier of 2
     .withPreOptionPhase(async (scene: BattleScene): Promise<boolean> => {
       const encounter = scene.currentBattle.mysteryEncounter;
       const onPokemonSelected = (pokemon: PlayerPokemon) => {
@@ -51,8 +51,8 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBui
         updatePlayerMoney(scene, -(encounter.options[0].requirements[0] as MoneyRequirement).requiredMoney);
         // Calculate modifiers and dialogue tokens
         const modifiers = [
-          generateModifierType(scene, modifierTypes.BASE_STAT_BOOSTER),
-          generateModifierType(scene, modifierTypes.BASE_STAT_BOOSTER)
+          generateModifierTypeOption(scene, modifierTypes.BASE_STAT_BOOSTER).type,
+          generateModifierTypeOption(scene, modifierTypes.BASE_STAT_BOOSTER).type
         ];
         encounter.setDialogueToken("boost1", modifiers[0].name);
         encounter.setDialogueToken("boost2", modifiers[1].name);
@@ -62,12 +62,12 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBui
         };
       };
 
-      // Only Pokemon that can gain benefits are unfainted with no status
+      // Only Pokemon that can gain benefits are above 1/3rd HP with no status
       const selectableFilter = (pokemon: Pokemon) => {
         // If pokemon meets primary pokemon reqs, it can be selected
         const meetsReqs = encounter.pokemonMeetsPrimaryRequirements(scene, pokemon);
         if (!meetsReqs) {
-          return "Pokémon must be healthy enough.";
+          return i18next.t("mysteryEncounter:shady_vitamin_dealer_invalid_selection");
         }
 
         return null;
@@ -99,7 +99,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBui
       chosenPokemon.hp = Math.max(chosenPokemon.hp - damage, 0);
 
       // Roll for poison (80%)
-      if (randSeedInt(10) < 10) {
+      if (randSeedInt(10) < 8) {
         if (chosenPokemon.trySetStatus(StatusEffect.TOXIC)) {
           // Toxic applied
           queueEncounterMessage(scene, "mysteryEncounter:shady_vitamin_dealer_bad_poison");
@@ -111,32 +111,81 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBui
         queueEncounterMessage(scene, "mysteryEncounter:shady_vitamin_dealer_damage_only");
       }
 
+      setEncounterExp(scene, [chosenPokemon.id], 100);
+
       chosenPokemon.updateInfo();
     })
     .build())
-
   .withOption(new MysteryEncounterOptionBuilder()
-    .withSceneMoneyRequirement(0, 5) // Wave scaling multiplier of 2 for cost
+    .withSceneMoneyRequirement(0, 5) // Wave scaling money multiplier of 5
+    .withPreOptionPhase(async (scene: BattleScene): Promise<boolean> => {
+      const encounter = scene.currentBattle.mysteryEncounter;
+      const onPokemonSelected = (pokemon: PlayerPokemon) => {
+        // Update money
+        updatePlayerMoney(scene, -(encounter.options[1].requirements[0] as MoneyRequirement).requiredMoney);
+        // Calculate modifiers and dialogue tokens
+        const modifiers = [
+          generateModifierTypeOption(scene, modifierTypes.BASE_STAT_BOOSTER).type,
+          generateModifierTypeOption(scene, modifierTypes.BASE_STAT_BOOSTER).type
+        ];
+        encounter.setDialogueToken("boost1", modifiers[0].name);
+        encounter.setDialogueToken("boost2", modifiers[1].name);
+        encounter.misc = {
+          chosenPokemon: pokemon,
+          modifiers: modifiers
+        };
+      };
+
+      // Only Pokemon that can gain benefits are above 1/3rd HP with no status
+      const selectableFilter = (pokemon: Pokemon) => {
+        // If pokemon meets primary pokemon reqs, it can be selected
+        const meetsReqs = encounter.pokemonMeetsPrimaryRequirements(scene, pokemon);
+        if (!meetsReqs) {
+          return i18next.t("mysteryEncounter:shady_vitamin_dealer_invalid_selection");
+        }
+
+        return null;
+      };
+
+      return selectPokemonForOption(scene, onPokemonSelected, null, selectableFilter);
+    })
     .withOptionPhase(async (scene: BattleScene) => {
       // Choose Expensive Option
-      const modifiers = [];
-      let i = 0;
-      while (i < 3) {
-        // 2/1 weight on base stat booster vs PP Up
-        const roll = randSeedInt(3);
-        if (roll === 0) {
-          modifiers.push(modifierTypes.PP_UP);
-        } else {
+      const encounter = scene.currentBattle.mysteryEncounter;
+      const chosenPokemon = encounter.misc.chosenPokemon;
+      const modifiers = encounter.misc.modifiers;
 
-        }
-        i++;
+      for (const modType of modifiers) {
+        const modifier = modType.newModifier(chosenPokemon);
+        await scene.addModifier(modifier, true, false, false, true);
       }
+      scene.updateModifiers(true);
 
-      setEncounterRewards(scene, { guaranteedModifierTypeFuncs: modifiers, fillRemaining: false });
       leaveEncounterWithoutBattle(scene);
     })
-    .build()
-  )
+    .withPostOptionPhase(async (scene: BattleScene) => {
+      // Status applied after dealer leaves (to make thematic sense)
+      const encounter = scene.currentBattle.mysteryEncounter;
+      const chosenPokemon = encounter.misc.chosenPokemon;
+
+      // Roll for poison (20%)
+      if (randSeedInt(10) < 2) {
+        if (chosenPokemon.trySetStatus(StatusEffect.POISON)) {
+          // Poison applied
+          queueEncounterMessage(scene, "mysteryEncounter:shady_vitamin_dealer_poison");
+        } else {
+          // Pokemon immune or something else prevents status
+          queueEncounterMessage(scene, "mysteryEncounter:shady_vitamin_dealer_no_bad_effects");
+        }
+      } else {
+        queueEncounterMessage(scene, "mysteryEncounter:shady_vitamin_dealer_no_bad_effects");
+      }
+
+      setEncounterExp(scene, [chosenPokemon.id], 100);
+
+      chosenPokemon.updateInfo();
+    })
+    .build())
   .withOptionPhase(async (scene: BattleScene) => {
     // Leave encounter with no rewards or exp
     leaveEncounterWithoutBattle(scene, true);

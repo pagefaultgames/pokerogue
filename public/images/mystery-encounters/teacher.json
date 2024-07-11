@@ -1,33 +1,33 @@
 {
 	"textures": [
 		{
-			"image": "mad_scientist_m.png",
+			"image": "teacher.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 46,
-				"h": 76
+				"w": 43,
+				"h": 74
 			},
 			"scale": 1,
 			"frames": [
 				{
 					"filename": "0001.png",
 					"rotated": false,
-					"trimmed": false,
+					"trimmed": true,
 					"sourceSize": {
-						"w": 44,
-						"h": 74
+						"w": 80,
+						"h": 80
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 44,
-						"h": 74
+						"x": 19,
+						"y": 8,
+						"w": 41,
+						"h": 72
 					},
 					"frame": {
 						"x": 1,
 						"y": 1,
-						"w": 44,
-						"h": 74
+						"w": 41,
+						"h": 72
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:a7f8ff2bbb362868f51125c254eb6681:cf76e61ddd31a8f46af67ced168c44a2:4fc09abe16c0608828269e5da81d0744$"
+		"smartupdate": "$TexturePacker:SmartUpdate:506e5a4ce79c134a7b4af90a90aef244:1b81d3d84bf12cedc419805eaff82548:59bc5dd000b5e72588320b473e31c312$"
 	}
 }
