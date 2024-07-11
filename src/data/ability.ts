@@ -361,13 +361,13 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
 
   /**
    * Applies immunity if this ability grants immunity to the type of the given move.
-   * @param pokemon {@linkcode Pokemon} the defending Pokemon
-   * @param passive N/A
-   * @param attacker {@linkcode Pokemon} the attacking Pokemon
-   * @param move {@linkcode Move} the attacking move
-   * @param cancelled N/A
+   * @param pokemon {@linkcode Pokemon} The defending Pokemon.
+   * @param passive - Whether the ability is passive.
+   * @param attacker {@linkcode Pokemon} The attacking Pokemon.
+   * @param move {@linkcode Move} The attacking move.
+   * @param cancelled {@linkcode Utils.BooleanHolder} - A holder for a boolean value indicating if the move was cancelled.
    * @param args [0] {@linkcode Utils.NumberHolder} gets set to 0 if move is immuned by an ability.
-   * @param args [1] {@linkcode Utils.NumberHolder} type of move being defended against in case it has changed from default type
+   * @param args [1] - Whether the move is simulated.
    */
   applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     // Field moves should ignore immunity
