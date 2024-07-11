@@ -29,23 +29,27 @@ describe("Moves - Hard Press", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SNORLAX);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
+    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
+    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MUNCHLAX);
+    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
     vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.HARD_PRESS]);
   });
 
   it("power varies between 1 and 100, and is greater the more HP the target has", async () => {
-    await game.startBattle([Species.GRAVELER]);
-    const moveToBeUsed = allMoves[Moves.HARD_PRESS];
+    await game.startBattle([Species.PIKACHU]);
+    const moveToCheck = allMoves[Moves.HARD_PRESS];
+    const enemy = game.scene.getEnemyPokemon();
+    const ally = game.scene.getPlayerPokemon();
+    const moveMaxBasePower = getMoveMaxBasePower(moveToCheck);
+
+    const fullHpMovePower = moveToCheck.calculatePower(ally, enemy);
+    expect(fullHpMovePower).toBe(100);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.HARD_PRESS));
     await game.phaseInterceptor.to(MoveEffectPhase);
 
-    const enemy = game.scene.getEnemyPokemon();
-    const movePower = moveToBeUsed.calculatePower(game.scene.getPlayerPokemon(), enemy);
-    const moveMaxBasePower = getMoveMaxBasePower(moveToBeUsed);
-
-    expect(movePower).toBe(moveMaxBasePower * enemy.getHpRatio());
+    const reducedHpMovePower = moveToCheck.calculatePower(ally, enemy);
+    expect(reducedHpMovePower).toBe(Math.max(Math.floor(moveMaxBasePower * enemy.getHpRatio()), 1) );
   });
 });
 
