@@ -53,6 +53,5 @@ export const menu: SimpleTranslationEntries = {
   "no":"Nein",
   "disclaimer": "HAFTUNGSAUSSCHLUSS",
   "disclaimerDescription": "Dieses Spiel ist ein unfertiges Produkt. Es kann spielbeinträchtigende Fehler (bis hin zum Verlust des Speicherstandes)\n aufweisen, sich ohne Vorankündigung ändern und es gibt keine Garantie dass es weiterentwickelt oder fertiggestellt wird.",
-  "choosePokemon": "Wähle ein Pokémon.",
   "errorServerDown": "Ups! Es gab einen Fehler beim Versuch\nden Server zu kontaktieren\nLasse dieses Fenster offen\nDu wirst automatisch neu verbunden.",
 } as const;
