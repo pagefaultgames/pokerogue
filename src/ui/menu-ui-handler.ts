@@ -47,6 +47,8 @@ export default class MenuUiHandler extends MessageUiHandler {
   protected manageDataConfig: OptionSelectConfig;
   protected communityConfig: OptionSelectConfig;
 
+  private OPTION_HEIGHT: integer;
+
   public bgmBar: BgmBar;
 
   constructor(scene: BattleScene, mode?: Mode) {
@@ -56,6 +58,8 @@ export default class MenuUiHandler extends MessageUiHandler {
       ? [ ]
       : [ MenuOptions.LOG_OUT ];
     this.menuOptions = Utils.getEnumKeys(MenuOptions).map(m => parseInt(MenuOptions[m]) as MenuOptions).filter(m => !this.ignoredMenuOptions.includes(m));
+
+    this.OPTION_HEIGHT = 16;
   }
 
   setup() {
@@ -89,7 +93,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     let maxTextWidth = 0;
     this.optionContainer.add(
       this.menuOptions.map((o,i) => {
-        const nextOption = addTextObject(this.scene, 0, i*16, i18next.t(`menuUiHandler:${MenuOptions[o]}`), TextStyle.WINDOW);
+        const nextOption = addTextObject(this.scene, 0, i*this.OPTION_HEIGHT, i18next.t(`menuUiHandler:${MenuOptions[o]}`), TextStyle.WINDOW);
         if (nextOption.setData) {
           nextOption.setData({ optionIndex: o });
         }
@@ -514,7 +518,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       this.menuContainer.add(this.cursorObj);
     }
 
-    this.cursorObj.setPositionRelative(this.menuBg, 7, 9 + this.cursor * 16);
+    this.cursorObj.setPositionRelative(this.menuBg, 7, 9 + this.cursor * this.OPTION_HEIGHT);
 
     return ret;
   }
