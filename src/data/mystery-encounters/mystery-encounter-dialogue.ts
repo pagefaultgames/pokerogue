@@ -1,24 +1,24 @@
 import { TextStyle } from "#app/ui/text";
 
 export class TextDisplay {
-  speaker?: TemplateStringsArray | `mysteryEncounter:${string}`;
-  text: TemplateStringsArray | `mysteryEncounter:${string}`;
+  speaker?: string;
+  text: string;
   style?: TextStyle;
 }
 
 export class OptionTextDisplay {
-  buttonLabel: TemplateStringsArray | `mysteryEncounter:${string}`;
-  buttonTooltip?: TemplateStringsArray | `mysteryEncounter:${string}`;
-  disabledTooltip?: TemplateStringsArray | `mysteryEncounter:${string}`;
-  secondOptionPrompt?: TemplateStringsArray | `mysteryEncounter:${string}`;
+  buttonLabel: string;
+  buttonTooltip?: string;
+  disabledTooltip?: string;
+  secondOptionPrompt?: string;
   selected?: TextDisplay[];
   style?: TextStyle;
 }
 
 export class EncounterOptionsDialogue {
-  title?: TemplateStringsArray | `mysteryEncounter:${string}`;
-  description?: TemplateStringsArray | `mysteryEncounter:${string}`;
-  query?: TemplateStringsArray | `mysteryEncounter:${string}`;
+  title?: string;
+  description?: string;
+  query?: string;
   options?: [...OptionTextDisplay[]]; // Options array with minimum 2 options
 }
 

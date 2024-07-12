@@ -95,7 +95,7 @@ export default interface IMysteryEncounter {
    * Can be set for uses programatic dialogue during an encounter (storing the name of one of the party's pokemon, etc.)
    * Example use: see MYSTERIOUS_CHEST
    */
-  dialogueTokens?: Map<string, [RegExp, string]>;
+  dialogueTokens?: { [key: string]: string; };
   /**
    * Should be set depending upon option selected as part of an encounter
    * For example, if there is no battle as part of the encounter/selected option, should be set to NO_BATTLE
@@ -144,7 +144,7 @@ export default class IMysteryEncounter implements IMysteryEncounter {
 
     // Reset any dirty flags or encounter data
     this.lockEncounterRewardTiers = true;
-    this.dialogueTokens = new Map<string, [RegExp, string]>;
+    this.dialogueTokens = {};
     this.enemyPartyConfigs = [];
     this.introVisuals = null;
     this.misc = null;
@@ -331,7 +331,7 @@ export default class IMysteryEncounter implements IMysteryEncounter {
   }
 
   setDialogueToken?(key: string, value: string) {
-    this.dialogueTokens.set(key, [new RegExp("@ec\{" + key + "\\}", "gi"), value]);
+    this.dialogueTokens[key] = value;
   }
 
   private capitalizeFirstLetter?(str: string) {
@@ -350,7 +350,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   primaryPokemonRequirements?: EncounterPokemonRequirement[] = [];
   secondaryPokemonRequirements ?: EncounterPokemonRequirement[] = [];
   excludePrimaryFromSupportRequirements?: boolean;
-  dialogueTokens?: Map<string, [RegExp, string]>;
+  dialogueTokens?: { [key: string]: string; };
   doEncounterExp?: (scene: BattleScene) => boolean;
   doEncounterRewards?: (scene: BattleScene) => boolean;
   onInit?: (scene: BattleScene) => boolean;
@@ -601,7 +601,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * @param title - title of the encounter
    * @returns
    */
-  withTitle(title: TemplateStringsArray | `mysteryEncounter:${string}`) {
+  withTitle(title: string) {
     const encounterOptionsDialogue = this.dialogue.encounterOptionsDialogue ?? {};
 
     this.dialogue = {
@@ -621,7 +621,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * @param description - description of the encounter
    * @returns
    */
-  withDescription(description: TemplateStringsArray | `mysteryEncounter:${string}`) {
+  withDescription(description: string) {
     const encounterOptionsDialogue = this.dialogue.encounterOptionsDialogue ?? {};
 
     this.dialogue = {
@@ -641,7 +641,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * @param query - query to use for the encounter
    * @returns
    */
-  withQuery(query: TemplateStringsArray | `mysteryEncounter:${string}`) {
+  withQuery(query: string) {
     const encounterOptionsDialogue = this.dialogue.encounterOptionsDialogue ?? {};
 
     this.dialogue = {

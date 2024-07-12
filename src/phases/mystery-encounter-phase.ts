@@ -78,7 +78,7 @@ export class MysteryEncounterPhase extends Phase {
       this.end();
     };
 
-    const optionSelectDialogue = this.scene.currentBattle?.mysteryEncounter?.dialogue?.encounterOptionsDialogue?.options?.[optionIndex];
+    const optionSelectDialogue = this.scene.currentBattle?.mysteryEncounter?.options?.[optionIndex]?.dialogue;
     if (optionSelectDialogue?.selected?.length > 0) {
       // Handle intermediate dialogue (between player selection event and the onOptionSelect logic)
       this.scene.ui.setMode(Mode.MESSAGE);

@@ -162,11 +162,7 @@ export const TrainingSessionEncounter: IMysteryEncounter =
               scene.addModifier(mod, true, false, false, true);
             }
             scene.updateModifiers(true);
-            scene.queueMessage(
-              getEncounterText(scene, `${namespace}_battle_finished_1`),
-              null,
-              true
-            );
+            scene.queueMessage(getEncounterText(scene, `${namespace}_battle_finished_1`), null, true);
           };
 
           setEncounterRewards(
@@ -338,7 +334,7 @@ export const TrainingSessionEncounter: IMysteryEncounter =
 
           const onBeforeRewardsPhase = () => {
             scene.queueMessage(
-              getEncounterText(scene, `${namespace}_battle_finished_3`),
+              getEncounterText(scene, [`${namespace}_battle_finished_3`]),
               null,
               true
             );
