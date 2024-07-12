@@ -162,10 +162,13 @@ export const mysteryEncountersByBiome = new Map<Biome, MysteryEncounterType[]>([
   [Biome.TALL_GRASS, []],
   [Biome.METROPOLIS, []],
   [Biome.FOREST, [
-    MysteryEncounterType.SLEEPING_SNORLAX
+    MysteryEncounterType.SLEEPING_SNORLAX,
+    MysteryEncounterType.SAFARI_ZONE
   ]],
   [Biome.SEA, []],
-  [Biome.SWAMP, []],
+  [Biome.SWAMP, [
+    MysteryEncounterType.SAFARI_ZONE
+  ]],
   [Biome.BEACH, []],
   [Biome.LAKE, []],
   [Biome.SEABED, []],
@@ -189,7 +192,9 @@ export const mysteryEncountersByBiome = new Map<Biome, MysteryEncounterType[]>([
   [Biome.ABYSS, []],
   [Biome.SPACE, []],
   [Biome.CONSTRUCTION_SITE, []],
-  [Biome.JUNGLE, []],
+  [Biome.JUNGLE, [
+    MysteryEncounterType.SAFARI_ZONE
+  ]],
   [Biome.FAIRY_CAVE, []],
   [Biome.TEMPLE, []],
   [Biome.SLUM, []],
