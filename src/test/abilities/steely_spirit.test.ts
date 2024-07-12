@@ -48,7 +48,7 @@ describe("Abilities - Steely Spirit", () => {
     game.doSelectTarget(enemyToCheck.getBattlerIndex());
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
-    const movePower = allMoves[moveToCheck].calculatePower(boostedAlly, enemyToCheck);
+    const movePower = allMoves[moveToCheck].calculateBattlePower(boostedAlly, enemyToCheck);
 
     expect(movePower).toBe(allMoves[moveToCheck].power * steelySpiritMultiplier);
   });
@@ -68,7 +68,7 @@ describe("Abilities - Steely Spirit", () => {
     game.doSelectTarget(enemyToCheck.getBattlerIndex());
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
-    const movePower = allMoves[moveToCheck].calculatePower(game.scene.getPlayerPokemon(), enemyToCheck);
+    const movePower = allMoves[moveToCheck].calculateBattlePower(game.scene.getPlayerPokemon(), enemyToCheck);
 
     expect(movePower).toBe(allMoves[moveToCheck].power * Math.pow(steelySpiritMultiplier, 2));
   });
@@ -91,7 +91,7 @@ describe("Abilities - Steely Spirit", () => {
     game.doSelectTarget(enemyToCheck.getBattlerIndex());
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
-    const movePower = allMoves[moveToCheck].calculatePower(boostedAlly, enemyToCheck);
+    const movePower = allMoves[moveToCheck].calculateBattlePower(boostedAlly, enemyToCheck);
 
     expect(movePower).toBe(allMoves[moveToCheck].power);
   });

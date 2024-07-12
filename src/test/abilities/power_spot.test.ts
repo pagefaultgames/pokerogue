@@ -40,7 +40,7 @@ describe("Abilities - Power Spot", () => {
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
     const multiplier = getAttrPowerMultiplier(game.scene.getPlayerField()[1]);
-    const movePower = allMoves[moveToBeUsed].calculatePower(game.scene.getPlayerField()[0], game.scene.getEnemyField()[0]);
+    const movePower = allMoves[moveToBeUsed].calculateBattlePower(game.scene.getPlayerField()[0], game.scene.getEnemyField()[0]);
 
     expect(movePower).toBe(basePower * multiplier);
   });
@@ -56,7 +56,7 @@ describe("Abilities - Power Spot", () => {
 
     const [boostedAlly, boostSource] = game.scene.getPlayerField();
     const multiplier = getAttrPowerMultiplier(boostSource);
-    const movePower = allMoves[moveToBeUsed].calculatePower(boostedAlly, game.scene.getEnemyPokemon());
+    const movePower = allMoves[moveToBeUsed].calculateBattlePower(boostedAlly, game.scene.getEnemyPokemon());
 
     expect(movePower).toBe(basePower * multiplier);
   });
@@ -70,7 +70,7 @@ describe("Abilities - Power Spot", () => {
     game.doAttack(getMovePosition(game.scene, 0, moveToBeUsed));
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
-    const movePower = allMoves[moveToBeUsed].calculatePower(game.scene.getPlayerPokemon(), game.scene.getEnemyPokemon());
+    const movePower = allMoves[moveToBeUsed].calculateBattlePower(game.scene.getPlayerPokemon(), game.scene.getEnemyPokemon());
 
     expect(movePower).toBe(basePower);
   });

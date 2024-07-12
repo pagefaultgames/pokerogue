@@ -43,7 +43,7 @@ describe("Moves - Hard Press", () => {
     const enemy = game.scene.getEnemyPokemon();
     const ally = game.scene.getPlayerPokemon();
 
-    const fullHpMovePower = moveToCheck.calculatePower(ally, enemy);
+    const fullHpMovePower = moveToCheck.calculateBattlePower(ally, enemy);
     expect(fullHpMovePower).toBe(moveMaxBasePower);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.HARD_PRESS));
@@ -55,7 +55,7 @@ describe("Moves - Hard Press", () => {
     const enemy = game.scene.getEnemyPokemon();
     const ally = game.scene.getPlayerPokemon();
 
-    const fullHpMovePower = moveToCheck.calculatePower(ally, enemy);
+    const fullHpMovePower = moveToCheck.calculateBattlePower(ally, enemy);
     expect(fullHpMovePower).toBe(moveMaxBasePower);
 
     vi.spyOn(enemy, "getHpRatio").mockReturnValue(.5);
@@ -63,7 +63,7 @@ describe("Moves - Hard Press", () => {
     game.doAttack(getMovePosition(game.scene, 0, Moves.HARD_PRESS));
     await game.phaseInterceptor.to(TurnStartPhase);
 
-    const halfHpMovePower = moveToCheck.calculatePower(ally, enemy);
+    const halfHpMovePower = moveToCheck.calculateBattlePower(ally, enemy);
     expect(halfHpMovePower).toBe(Math.max(Math.floor(moveMaxBasePower * enemy.getHpRatio()), 1) );
   });
 
@@ -72,7 +72,7 @@ describe("Moves - Hard Press", () => {
     const enemy = game.scene.getEnemyPokemon();
     const ally = game.scene.getPlayerPokemon();
 
-    const fullHpMovePower = moveToCheck.calculatePower(ally, enemy);
+    const fullHpMovePower = moveToCheck.calculateBattlePower(ally, enemy);
     expect(fullHpMovePower).toBe(moveMaxBasePower);
 
     vi.spyOn(enemy, "getHpRatio").mockReturnValue(.1);
@@ -80,7 +80,7 @@ describe("Moves - Hard Press", () => {
     game.doAttack(getMovePosition(game.scene, 0, Moves.HARD_PRESS));
     await game.phaseInterceptor.to(TurnStartPhase);
 
-    const oneHpMovePower = moveToCheck.calculatePower(ally, enemy);
+    const oneHpMovePower = moveToCheck.calculateBattlePower(ally, enemy);
     expect(oneHpMovePower).toBe(Math.max(Math.floor(moveMaxBasePower * enemy.getHpRatio()), 1) );
   });
 });

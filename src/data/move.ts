@@ -657,13 +657,13 @@ export default class Move implements Localizable {
   }
 
   /**
-   * Calculates the power of a move based on various conditions and attributes.
+   * Calculates the power of a move in battle based on various conditions and attributes.
    *
    * @param source {@linkcode Pokemon} The Pokémon using the move.
    * @param target {@linkcode Pokemon} The Pokémon being targeted by the move.
    * @returns The calculated power of the move.
    */
-  calculatePower(source: Pokemon, target: Pokemon): number {
+  calculateBattlePower(source: Pokemon, target: Pokemon): number {
     const power = new Utils.NumberHolder(this.power);
 
     const typeChangeMovePowerMultiplier = new Utils.NumberHolder(1);

@@ -46,7 +46,7 @@ describe("Abilities - Aura Break", () => {
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.MOONBLAST));
 
-    const movePower = moveToCheck.calculatePower(game.scene.getPlayerPokemon(), game.scene.getEnemyPokemon());
+    const movePower = moveToCheck.calculateBattlePower(game.scene.getPlayerPokemon(), game.scene.getEnemyPokemon());
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(movePower).toBe(basePower * auraMultiplier * auraBreakMultiplier);
@@ -60,7 +60,7 @@ describe("Abilities - Aura Break", () => {
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.DARK_PULSE));
 
-    const movePower = moveToCheck.calculatePower(game.scene.getPlayerPokemon(), game.scene.getEnemyPokemon());
+    const movePower = moveToCheck.calculateBattlePower(game.scene.getPlayerPokemon(), game.scene.getEnemyPokemon());
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(movePower).toBe(basePower * auraMultiplier * auraBreakMultiplier);
