@@ -10,6 +10,7 @@ import PartyUiHandler from "./ui/party-ui-handler";
 import { BattleSpec } from "#enums/battle-spec";
 import { BattlePhase, MovePhase, PokemonHealPhase } from "./phases";
 import { getTypeRgb } from "./data/type";
+import { getPokemonNameWithAffix } from "./messages";
 
 export class FormChangePhase extends EvolutionPhase {
   private formChange: SpeciesFormChange;
@@ -34,7 +35,7 @@ export class FormChangePhase extends EvolutionPhase {
   }
 
   doEvolution(): void {
-    const preName = this.pokemon.getNameToRender();
+    const preName = getPokemonNameWithAffix(this.pokemon);
 
     this.pokemon.getPossibleForm(this.formChange).then(transformedPokemon => {
 
@@ -191,7 +192,7 @@ export class QuietFormChangePhase extends BattlePhase {
       return this.end();
     }
 
-    const preName = this.pokemon.getNameToRender();
+    const preName = getPokemonNameWithAffix(this.pokemon);
 
     if (!this.pokemon.isOnField()) {
       this.pokemon.changeForm(this.formChange).then(() => {

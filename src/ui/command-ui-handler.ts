@@ -6,6 +6,7 @@ import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import i18next from "i18next";
 import {Button} from "#enums/buttons";
+import { getPokemonNameWithAffix } from "#app/messages.js";
 
 export enum Command {
   FIGHT = 0,
@@ -66,7 +67,7 @@ export default class CommandUiHandler extends UiHandler {
     messageHandler.commandWindow.setVisible(true);
     messageHandler.movesWindowContainer.setVisible(false);
     messageHandler.message.setWordWrapWidth(1110);
-    messageHandler.showText(i18next.t("commandUiHandler:actionMessage", {pokemonName: commandPhase.getPokemon().getNameToRender()}), 0);
+    messageHandler.showText(i18next.t("commandUiHandler:actionMessage", {pokemonName: getPokemonNameWithAffix(commandPhase.getPokemon())}), 0);
     this.setCursor(this.getCursor());
 
     return true;

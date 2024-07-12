@@ -8,6 +8,7 @@ import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
+import { getPokemonNameWithAffix } from "#app/messages.js";
 
 export enum FormChangeItem {
   NONE,
@@ -369,7 +370,7 @@ export function getSpeciesFormChangeMessage(pokemon: Pokemon, formChange: Specie
     return `${prefix}${preName} Eternamaxed\ninto ${pokemon.name}!`;
   }
   if (isRevert) {
-    return `${prefix}${pokemon.getNameToRender()} reverted\nto its original form!`;
+    return `${prefix}${getPokemonNameWithAffix(pokemon)} reverted\nto its original form!`;
   }
   return `${prefix}${preName} changed form!`;
 }

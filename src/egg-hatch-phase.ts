@@ -11,6 +11,7 @@ import { achvs } from "./system/achv";
 import PokemonInfoContainer from "./ui/pokemon-info-container";
 import EggCounterContainer from "./ui/egg-counter-container";
 import { EggCountChangedEvent } from "./events/egg";
+import { getPokemonNameWithAffix } from "./messages";
 
 /**
  * Class that represents egg hatching
@@ -342,7 +343,7 @@ export class EggHatchPhase extends Phase {
 
         this.scene.playSoundWithoutBgm("evolution_fanfare");
 
-        this.scene.ui.showText(i18next.t("egg:hatchFromTheEgg", { pokemonName: this.pokemon.getNameToRender() }), null, () => {
+        this.scene.ui.showText(i18next.t("egg:hatchFromTheEgg", { pokemonName: getPokemonNameWithAffix(this.pokemon) }), null, () => {
           this.scene.gameData.updateSpeciesDexIvs(this.pokemon.species.speciesId, this.pokemon.ivs);
           this.scene.gameData.setPokemonCaught(this.pokemon, true, true).then(() => {
             this.scene.gameData.setEggMoveUnlocked(this.pokemon.species, this.eggMoveIndex).then(() => {

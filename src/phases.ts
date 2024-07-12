@@ -858,7 +858,7 @@ export class EncounterPhase extends BattlePhase {
 
       loadEnemyAssets.push(enemyPokemon.loadAssets());
 
-      console.log(enemyPokemon.getNameToRender(), enemyPokemon.species.speciesId, enemyPokemon.stats);
+      console.log(getPokemonNameWithAffix(enemyPokemon), enemyPokemon.species.speciesId, enemyPokemon.stats);
     });
 
     if (this.scene.getParty().filter(p => p.isShiny()).length === 6) {
@@ -960,7 +960,7 @@ export class EncounterPhase extends BattlePhase {
     const enemyField = this.scene.getEnemyField();
 
     if (this.scene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
-      return i18next.t("battle:bossAppeared", { bossName: enemyField[0].getNameToRender() });
+      return i18next.t("battle:bossAppeared", { bossName: getPokemonNameWithAffix(enemyField[0])});
     }
 
     if (this.scene.currentBattle.battleType === BattleType.TRAINER) {
@@ -973,8 +973,8 @@ export class EncounterPhase extends BattlePhase {
     }
 
     return enemyField.length === 1
-      ? i18next.t("battle:singleWildAppeared", { pokemonName: enemyField[0].getNameToRender() })
-      : i18next.t("battle:multiWildAppeared", { pokemonName1: enemyField[0].getNameToRender(), pokemonName2: enemyField[1].getNameToRender() });
+      ? i18next.t("battle:singleWildAppeared", { pokemonName: getPokemonNameWithAffix(enemyField[0]) })
+      : i18next.t("battle:multiWildAppeared", { pokemonName1: getPokemonNameWithAffix(enemyField[0]), pokemonName2: getPokemonNameWithAffix(enemyField[1]) });
   }
 
   doEncounterCommon(showEncounterMessage: boolean = true) {
@@ -1402,11 +1402,11 @@ export class SummonPhase extends PartyMemberPokemonPhase {
 
       // Swaps the fainted Pokemon and the first non-fainted legal Pokemon in the party
       [party[this.partyMemberIndex], party[legalIndex]] = [party[legalIndex], party[this.partyMemberIndex]];
-      console.warn("Swapped %s %O with %s %O", partyMember?.getNameToRender(), partyMember, party[0]?.getNameToRender(), party[0]);
+      console.warn("Swapped %s %O with %s %O", getPokemonNameWithAffix(partyMember), partyMember, getPokemonNameWithAffix(party[0]), party[0]);
     }
 
     if (this.player) {
-      this.scene.ui.showText(i18next.t("battle:playerGo", { pokemonName: this.getPokemon().getNameToRender() }));
+      this.scene.ui.showText(i18next.t("battle:playerGo", { pokemonName: getPokemonNameWithAffix(this.getPokemon()) }));
       if (this.player) {
         this.scene.pbTray.hide();
       }
@@ -1426,7 +1426,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
       this.scene.time.delayedCall(750, () => this.summon());
     } else {
       const trainerName = this.scene.currentBattle.trainer.getName(!(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER);
-      const pokemonName = this.getPokemon().getNameToRender();
+      const pokemonName = getPokemonNameWithAffix(this.getPokemon());
       const message = i18next.t("battle:trainerSendOut", { trainerName, pokemonName });
 
       this.scene.pbTrayEnemy.hide();
@@ -1584,10 +1584,10 @@ export class SwitchSummonPhase extends SummonPhase {
     }
 
     this.scene.ui.showText(this.player ?
-      i18next.t("battle:playerComeBack", { pokemonName: pokemon.getNameToRender() }) :
+      i18next.t("battle:playerComeBack", { pokemonName: getPokemonNameWithAffix(pokemon) }) :
       i18next.t("battle:trainerComeBack", {
         trainerName: this.scene.currentBattle.trainer.getName(!(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER),
-        pokemonName: pokemon.getNameToRender()
+        pokemonName: getPokemonNameWithAffix(pokemon)
       })
     );
     this.scene.playSound("pb_rel");
@@ -1627,10 +1627,10 @@ export class SwitchSummonPhase extends SummonPhase {
       party[this.fieldIndex] = switchedPokemon;
       const showTextAndSummon = () => {
         this.scene.ui.showText(this.player ?
-          i18next.t("battle:playerGo", { pokemonName: switchedPokemon.getNameToRender() }) :
+          i18next.t("battle:playerGo", { pokemonName: getPokemonNameWithAffix(switchedPokemon) }) :
           i18next.t("battle:trainerGo", {
             trainerName: this.scene.currentBattle.trainer.getName(!(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER),
-            pokemonName: this.getPokemon().getNameToRender()
+            pokemonName: getPokemonNameWithAffix(this.getPokemon())
           })
         );
         this.summon();
@@ -1789,7 +1789,7 @@ export class CheckSwitchPhase extends BattlePhase {
       return;
     }
 
-    this.scene.ui.showText(i18next.t("battle:switchQuestion", { pokemonName: this.useName ? pokemon.getNameToRender() : i18next.t("battle:pokemon") }), null, () => {
+    this.scene.ui.showText(i18next.t("battle:switchQuestion", { pokemonName: this.useName ? getPokemonNameWithAffix(pokemon) : i18next.t("battle:pokemon") }), null, () => {
       this.scene.ui.setMode(Mode.CONFIRM, () => {
         this.scene.ui.setMode(Mode.MESSAGE);
         this.scene.tryRemovePhase(p => p instanceof PostSummonPhase && p.player && p.fieldIndex === this.fieldIndex);
@@ -1809,7 +1809,7 @@ export class SummonMissingPhase extends SummonPhase {
   }
 
   preSummon(): void {
-    this.scene.ui.showText(i18next.t("battle:sendOutPokemon", { pokemonName: this.getPokemon().getNameToRender() }));
+    this.scene.ui.showText(i18next.t("battle:sendOutPokemon", { pokemonName: getPokemonNameWithAffix(this.getPokemon()) }));
     this.scene.time.delayedCall(250, () => this.summon());
   }
 }
@@ -1960,7 +1960,7 @@ export class CommandPhase extends FieldPhase {
         if (!moveId) {
           turnCommand.targets = [this.fieldIndex];
         }
-        console.log(moveTargets, playerPokemon.getNameToRender());
+        console.log(moveTargets, getPokemonNameWithAffix(playerPokemon));
         if (moveTargets.targets.length <= 1 || moveTargets.multiple) {
           turnCommand.move.targets = moveTargets.targets;
         } else if (playerPokemon.getTag(BattlerTagType.CHARGING) && playerPokemon.getMoveQueue().length >= 1) {
@@ -2076,7 +2076,7 @@ export class CommandPhase extends FieldPhase {
           }
           this.scene.ui.showText(
             i18next.t("battle:noEscapePokemon", {
-              pokemonName: this.scene.getPokemonById(trapTag.sourceId).getNameToRender(),
+              pokemonName: getPokemonNameWithAffix(this.scene.getPokemonById(trapTag.sourceId)),
               moveName: trapTag.getMoveName(),
               escapeVerb: isSwitch ? i18next.t("battle:escapeVerbSwitch") : i18next.t("battle:escapeVerbFlee")
             }),
@@ -4460,7 +4460,7 @@ export class ExpPhase extends PlayerPartyMemberPokemonPhase {
     const exp = new Utils.NumberHolder(this.expValue);
     this.scene.applyModifiers(ExpBoosterModifier, true, exp);
     exp.value = Math.floor(exp.value);
-    this.scene.ui.showText(i18next.t("battle:expGain", { pokemonName: pokemon.getNameToRender(), exp: exp.value }), null, () => {
+    this.scene.ui.showText(i18next.t("battle:expGain", { pokemonName: getPokemonNameWithAffix(pokemon), exp: exp.value }), null, () => {
       const lastLevel = pokemon.level;
       pokemon.addExp(exp.value);
       const newLevel = pokemon.level;
@@ -4560,7 +4560,7 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
     pokemon.updateInfo();
     if (this.scene.expParty === ExpNotification.DEFAULT) {
       this.scene.playSound("level_up_fanfare");
-      this.scene.ui.showText(i18next.t("battle:levelUp", { pokemonName: this.getPokemon().getNameToRender(), level: this.level }), null, () => this.scene.ui.getMessageHandler().promptLevelUpStats(this.partyMemberIndex, prevStats, false).then(() => this.end()), null, true);
+      this.scene.ui.showText(i18next.t("battle:levelUp", { pokemonName: getPokemonNameWithAffix(this.getPokemon()), level: this.level }), null, () => this.scene.ui.getMessageHandler().promptLevelUpStats(this.partyMemberIndex, prevStats, false).then(() => this.end()), null, true);
     } else if (this.scene.expParty === ExpNotification.SKIP) {
       this.end();
     } else {
@@ -4618,7 +4618,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
           .then(() => {
             this.scene.ui.setMode(messageMode).then(() => {
               this.scene.playSound("level_up_fanfare");
-              this.scene.ui.showText(i18next.t("battle:learnMove", { pokemonName: pokemon.getNameToRender(), moveName: move.name }), null, () => {
+              this.scene.ui.showText(i18next.t("battle:learnMove", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name }), null, () => {
                 this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeMoveLearnedTrigger, true);
                 this.end();
               }, messageMode === Mode.EVOLUTION_SCENE ? 1000 : null, true);
@@ -4627,15 +4627,15 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
       });
     } else {
       this.scene.ui.setMode(messageMode).then(() => {
-        this.scene.ui.showText(i18next.t("battle:learnMovePrompt", { pokemonName: pokemon.getNameToRender(), moveName: move.name }), null, () => {
-          this.scene.ui.showText(i18next.t("battle:learnMoveLimitReached", { pokemonName: pokemon.getNameToRender() }), null, () => {
+        this.scene.ui.showText(i18next.t("battle:learnMovePrompt", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name }), null, () => {
+          this.scene.ui.showText(i18next.t("battle:learnMoveLimitReached", { pokemonName: getPokemonNameWithAffix(pokemon) }), null, () => {
             this.scene.ui.showText(i18next.t("battle:learnMoveReplaceQuestion", { moveName: move.name }), null, () => {
               const noHandler = () => {
                 this.scene.ui.setMode(messageMode).then(() => {
                   this.scene.ui.showText(i18next.t("battle:learnMoveStopTeaching", { moveName: move.name }), null, () => {
                     this.scene.ui.setModeWithoutClear(Mode.CONFIRM, () => {
                       this.scene.ui.setMode(messageMode);
-                      this.scene.ui.showText(i18next.t("battle:learnMoveNotLearned", { pokemonName: pokemon.getNameToRender(), moveName: move.name }), null, () => this.end(), null, true);
+                      this.scene.ui.showText(i18next.t("battle:learnMoveNotLearned", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name }), null, () => this.end(), null, true);
                     }, () => {
                       this.scene.ui.setMode(messageMode);
                       this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, this.moveId));
@@ -4654,7 +4654,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
                     }
                     this.scene.ui.setMode(messageMode).then(() => {
                       this.scene.ui.showText(i18next.t("battle:countdownPoof"), null, () => {
-                        this.scene.ui.showText(i18next.t("battle:learnMoveForgetSuccess", { pokemonName: pokemon.getNameToRender(), moveName: pokemon.moveset[moveIndex].getName() }), null, () => {
+                        this.scene.ui.showText(i18next.t("battle:learnMoveForgetSuccess", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: pokemon.moveset[moveIndex].getName() }), null, () => {
                           this.scene.ui.showText(i18next.t("battle:learnMoveAnd"), null, () => {
                             pokemon.setMove(moveIndex, Moves.NONE);
                             this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, this.moveId));
@@ -4957,7 +4957,7 @@ export class AttemptCapturePhase extends PokemonPhase {
 
     this.scene.gameData.updateSpeciesDexIvs(pokemon.species.getRootSpeciesId(true), pokemon.ivs);
 
-    this.scene.ui.showText(i18next.t("battle:pokemonCaught", { pokemonName: pokemon.getNameToRender() }), null, () => {
+    this.scene.ui.showText(i18next.t("battle:pokemonCaught", { pokemonName: getPokemonNameWithAffix(pokemon) }), null, () => {
       const end = () => {
         this.scene.pokemonInfoContainer.hide();
         this.removePb();
@@ -4990,7 +4990,7 @@ export class AttemptCapturePhase extends PokemonPhase {
       Promise.all([pokemon.hideInfo(), this.scene.gameData.setPokemonCaught(pokemon)]).then(() => {
         if (this.scene.getParty().length === 6) {
           const promptRelease = () => {
-            this.scene.ui.showText(i18next.t("battle:partyFull", { pokemonName: pokemon.getNameToRender() }), null, () => {
+            this.scene.ui.showText(i18next.t("battle:partyFull", { pokemonName: getPokemonNameWithAffix(pokemon) }), null, () => {
               this.scene.pokemonInfoContainer.makeRoomForConfirmUi();
               this.scene.ui.setMode(Mode.CONFIRM, () => {
                 this.scene.ui.setMode(Mode.PARTY, PartyUiMode.RELEASE, this.fieldIndex, (slotIndex: integer, _option: PartyOption) => {
@@ -5450,7 +5450,7 @@ export class ScanIvsPhase extends PokemonPhase {
 
     const pokemon = this.getPokemon();
 
-    this.scene.ui.showText(i18next.t("battle:ivScannerUseQuestion", { pokemonName: pokemon.getNameToRender() }), null, () => {
+    this.scene.ui.showText(i18next.t("battle:ivScannerUseQuestion", { pokemonName: getPokemonNameWithAffix(pokemon) }), null, () => {
       this.scene.ui.setMode(Mode.CONFIRM, () => {
         this.scene.ui.setMode(Mode.MESSAGE);
         this.scene.ui.clearText();

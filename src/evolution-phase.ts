@@ -10,6 +10,7 @@ import { cos, sin } from "./field/anims";
 import { PlayerPokemon } from "./field/pokemon";
 import { getTypeRgb } from "./data/type";
 import i18next from "i18next";
+import { getPokemonNameWithAffix } from "./messages";
 
 export class EvolutionPhase extends Phase {
   protected pokemon: PlayerPokemon;
@@ -116,7 +117,7 @@ export class EvolutionPhase extends Phase {
 
   doEvolution(): void {
     const evolutionHandler = this.scene.ui.getHandler() as EvolutionSceneHandler;
-    const preName = this.pokemon.getNameToRender();
+    const preName = getPokemonNameWithAffix(this.pokemon);
 
     this.scene.ui.showText(i18next.t("menu:evolving", { pokemonName: preName }), null, () => {
       this.pokemon.cry();

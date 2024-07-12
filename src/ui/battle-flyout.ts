@@ -7,6 +7,7 @@ import { BattleSceneEventType, BerryUsedEvent, MoveUsedEvent } from "../events/b
 import { BerryType } from "#enums/berry-type";
 import { Moves } from "#enums/moves";
 import { UiTheme } from "#enums/ui-theme";
+import { getPokemonNameWithAffix } from "#app/messages.js";
 
 /** Container for info about a {@linkcode Move} */
 interface MoveInfo {
@@ -113,8 +114,8 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
   initInfo(pokemon: Pokemon) {
     this.pokemon = pokemon;
 
-    this.name = `Flyout ${this.pokemon.getNameToRender()}`;
-    this.flyoutParent.name = `Flyout Parent ${this.pokemon.getNameToRender()}`;
+    this.name = `Flyout ${getPokemonNameWithAffix(this.pokemon)}`;
+    this.flyoutParent.name = `Flyout Parent ${getPokemonNameWithAffix(this.pokemon)}`;
 
     this.battleScene.eventTarget.addEventListener(BattleSceneEventType.MOVE_USED, this.onMoveUsedEvent);
     this.battleScene.eventTarget.addEventListener(BattleSceneEventType.BERRY_USED, this.onBerryUsedEvent);
