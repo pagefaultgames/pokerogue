@@ -14,7 +14,7 @@ import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 import i18next from "#app/plugins/i18n";
-import MysteryEncounter, { MysteryEncounterVariant } from "./data/mystery-encounters/mystery-encounter";
+import IMysteryEncounter, { MysteryEncounterVariant } from "./data/mystery-encounters/mystery-encounter";
 
 export enum BattleType {
   WILD,
@@ -69,7 +69,7 @@ export default class Battle {
   public lastUsedPokeball: PokeballType;
   public playerFaints: number; // The amount of times pokemon on the players side have fainted
   public enemyFaints: number; // The amount of times pokemon on the enemies side have fainted
-  public mysteryEncounter: MysteryEncounter;
+  public mysteryEncounter: IMysteryEncounter;
 
   private rngCounter: integer = 0;
 

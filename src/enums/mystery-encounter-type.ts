@@ -7,5 +7,6 @@ export enum MysteryEncounterType {
   TRAINING_SESSION,
   DEPARTMENT_STORE_SALE,
   SHADY_VITAMIN_DEALER,
+  FIELD_TRIP,
   LOST_AT_SEA //might be generalized later on
 }

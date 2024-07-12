@@ -1,16 +1,16 @@
 import BattleScene from "../battle-scene";
-import {addBBCodeTextObject, getBBCodeFrag, TextStyle} from "./text";
-import {Mode} from "./ui";
+import { addBBCodeTextObject, getBBCodeFrag, TextStyle } from "./text";
+import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
-import {Button} from "#enums/buttons";
-import {addWindow, WindowVariant} from "./ui-theme";
-import {MysteryEncounterPhase} from "../phases/mystery-encounter-phase";
-import {PartyUiMode} from "./party-ui-handler";
-import MysteryEncounterOption from "../data/mystery-encounters/mystery-encounter-option";
+import { Button } from "#enums/buttons";
+import { addWindow, WindowVariant } from "./ui-theme";
+import { MysteryEncounterPhase } from "../phases/mystery-encounter-phase";
+import { PartyUiMode } from "./party-ui-handler";
+import MysteryEncounterOption, { EncounterOptionMode } from "../data/mystery-encounters/mystery-encounter-option";
 import * as Utils from "../utils";
-import {isNullOrUndefined} from "../utils";
-import {getPokeballAtlasKey} from "../data/pokeball";
-import {getEncounterText} from "#app/data/mystery-encounters/mystery-encounter-utils";
+import { isNullOrUndefined } from "../utils";
+import { getPokeballAtlasKey } from "../data/pokeball";
+import { getEncounterText } from "#app/data/mystery-encounters/mystery-encounter-utils";
 
 export default class MysteryEncounterUiHandler extends UiHandler {
   private cursorContainer: Phaser.GameObjects.Container;
@@ -100,6 +100,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
     if (button === Button.CANCEL || button === Button.ACTION) {
       if (button === Button.ACTION) {
+        const selected = this.filteredEncounterOptions[cursor];
         if (cursor === this.viewPartyIndex) {
           // Handle view party
           success = true;
@@ -110,10 +111,9 @@ export default class MysteryEncounterUiHandler extends UiHandler {
               this.unblockInput();
             }, 300);
           });
-        } else if (this.blockInput || !this.optionsMeetsReqs[cursor]) {
+        } else if (this.blockInput || (!this.optionsMeetsReqs[cursor] && (selected.optionMode === EncounterOptionMode.DISABLED_OR_DEFAULT || selected.optionMode === EncounterOptionMode.DISABLED_OR_SPECIAL))) {
           success = false;
         } else {
-          const selected = this.filteredEncounterOptions[cursor];
           if ((this.scene.getCurrentPhase() as MysteryEncounterPhase).handleOptionSelect(selected, cursor)) {
             success = true;
           } else {
@@ -253,7 +253,8 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     if (this.blockInput) {
       this.blockInput = false;
       for (let i = 0; i < this.optionsContainer.length - 1; i++) {
-        if (!this.optionsMeetsReqs[i]) {
+        const optionMode = this.filteredEncounterOptions[i].optionMode;
+        if (!this.optionsMeetsReqs[i] && (optionMode === EncounterOptionMode.DISABLED_OR_DEFAULT || optionMode === EncounterOptionMode.DISABLED_OR_SPECIAL)) {
           continue;
         }
         (this.optionsContainer.getAt(i) as Phaser.GameObjects.Text).setAlpha(1);
@@ -307,6 +308,8 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
     // Options Window
     for (let i = 0; i < this.filteredEncounterOptions.length; i++) {
+      const option = this.filteredEncounterOptions[i];
+
       let optionText;
       switch (this.filteredEncounterOptions.length) {
       case 2:
@@ -319,15 +322,22 @@ export default class MysteryEncounterUiHandler extends UiHandler {
         optionText = addBBCodeTextObject(this.scene, i % 2 === 0 ? 0 : 100, i < 2 ? 0 : 16, "-", TextStyle.WINDOW, { wordWrap: { width: 558 }, fontSize: "80px", lineSpacing: -8 });
         break;
       }
-      const option = mysteryEncounter.dialogue.encounterOptionsDialogue.options[i];
-      const text = getEncounterText(this.scene, option.buttonLabel, option.style ? option.style : TextStyle.WINDOW);
+
+      this.optionsMeetsReqs.push(option.meetsRequirements(this.scene));
+      const optionDialogue = option.dialogue;
+      let text: string;
+      if (option.hasRequirements() && this.optionsMeetsReqs[i] && (option.optionMode === EncounterOptionMode.DEFAULT_OR_SPECIAL || option.optionMode === EncounterOptionMode.DISABLED_OR_SPECIAL)) {
+        // Options with special requirements that are met are automatically colored green
+        text = getEncounterText(this.scene, optionDialogue.buttonLabel, TextStyle.SUMMARY_GREEN);
+      } else {
+        text = getEncounterText(this.scene, optionDialogue.buttonLabel, optionDialogue.style ? optionDialogue.style : TextStyle.WINDOW);
+      }
+
       if (text) {
         optionText.setText(text);
       }
 
-      this.optionsMeetsReqs.push(this.filteredEncounterOptions[i].meetsRequirements(this.scene));
-
-      if (!this.optionsMeetsReqs[i]) {
+      if (!this.optionsMeetsReqs[i] && (option.optionMode === EncounterOptionMode.DISABLED_OR_DEFAULT || option.optionMode === EncounterOptionMode.DISABLED_OR_SPECIAL)) {
         optionText.setAlpha(0.5);
       }
       if (this.blockInput) {
@@ -412,13 +422,13 @@ export default class MysteryEncounterUiHandler extends UiHandler {
       return;
     }
 
-    const mysteryEncounter = this.scene.currentBattle.mysteryEncounter;
-    let text;
-    const option = mysteryEncounter.dialogue.encounterOptionsDialogue.options[cursor];
-    if (!this.optionsMeetsReqs[cursor] && option.disabledTooltip) {
-      text = getEncounterText(this.scene, option.disabledTooltip, TextStyle.TOOLTIP_CONTENT);
+    let text: string;
+    const cursorOption = this.filteredEncounterOptions[cursor];
+    const optionDialogue = cursorOption.dialogue;
+    if (!this.optionsMeetsReqs[cursor] && (cursorOption.optionMode === EncounterOptionMode.DISABLED_OR_DEFAULT || cursorOption.optionMode === EncounterOptionMode.DISABLED_OR_SPECIAL) && optionDialogue.disabledTooltip) {
+      text = getEncounterText(this.scene, optionDialogue.disabledTooltip, TextStyle.TOOLTIP_CONTENT);
     } else {
-      text = getEncounterText(this.scene, option.buttonTooltip, TextStyle.TOOLTIP_CONTENT);
+      text = getEncounterText(this.scene, optionDialogue.buttonTooltip, TextStyle.TOOLTIP_CONTENT);
     }
 
     // Auto-color options green/blue for good/bad by looking for (+)/(-)

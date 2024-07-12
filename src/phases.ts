@@ -5363,6 +5363,7 @@ export class SelectModifierPhase extends BattlePhase {
           this.scene.ui.revertMode();
           this.scene.ui.setMode(Mode.MESSAGE);
           super.end();
+          return;
         }
         modifierType = typeOptions[cursor].type;
         break;

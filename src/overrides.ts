@@ -8,18 +8,17 @@ import { PokeballCounts } from "./battle-scene";
 import { PokeballType } from "./data/pokeball";
 import { Gender } from "./data/gender";
 import { StatusEffect } from "./data/status-effect";
-import { SpeciesStatBoosterItem, modifierTypes } from "./modifier/modifier-type";
+import { modifierTypes, SpeciesStatBoosterItem } from "./modifier/modifier-type";
 import { VariantTier } from "./enums/variant-tiers";
 import { EggTier } from "#enums/egg-type";
-import { allSpecies } from "./data/pokemon-species"; // eslint-disable-line @typescript-eslint/no-unused-vars
 import { Abilities } from "#enums/abilities";
 import { BerryType } from "#enums/berry-type";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
-import {MysteryEncounterType} from "#enums/mystery-encounter-type"; // eslint-disable-line @typescript-eslint/no-unused-vars
-import {MysteryEncounterTier} from "#app/data/mystery-encounters/mystery-encounter"; // eslint-disable-line @typescript-eslint/no-unused-vars
+import { MysteryEncounterType } from "#enums/mystery-encounter-type"; // eslint-disable-line @typescript-eslint/no-unused-vars
+import { MysteryEncounterTier } from "#app/data/mystery-encounters/mystery-encounter"; // eslint-disable-line @typescript-eslint/no-unused-vars
 
 /**
  * Overrides for testing different in game situations

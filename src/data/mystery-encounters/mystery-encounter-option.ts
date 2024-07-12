@@ -5,10 +5,22 @@ import * as Utils from "../../utils";
 import { Type } from "../type";
 import { EncounterPokemonRequirement, EncounterSceneRequirement, MoneyRequirement, TypeRequirement } from "./mystery-encounter-requirements";
 
+export enum EncounterOptionMode {
+  /** Default style */
+  DEFAULT,
+  /** Disabled on requirements not met, default style on requirements met */
+  DISABLED_OR_DEFAULT,
+  /** Default style on requirements not met, special style on requirements met */
+  DEFAULT_OR_SPECIAL,
+  /** Disabled on requirements not met, special style on requirements met */
+  DISABLED_OR_SPECIAL
+}
+
 
 export type OptionPhaseCallback = (scene: BattleScene) => Promise<void | boolean>;
 
 export default interface MysteryEncounterOption {
+  optionMode: EncounterOptionMode;
   requirements?: EncounterSceneRequirement[];
   primaryPokemonRequirements?: EncounterPokemonRequirement[];
   secondaryPokemonRequirements?: EncounterPokemonRequirement[];
@@ -34,12 +46,18 @@ export default class MysteryEncounterOption implements MysteryEncounterOption {
   constructor(option: MysteryEncounterOption) {
     Object.assign(this, option);
     this.requirements = this.requirements ? this.requirements : [];
+    this.primaryPokemonRequirements = this.primaryPokemonRequirements ? this.primaryPokemonRequirements : [];
+    this.secondaryPokemonRequirements = this.secondaryPokemonRequirements ? this.secondaryPokemonRequirements : [];
+  }
+
+  hasRequirements?() {
+    return this.requirements.length > 0 || this.primaryPokemonRequirements.length > 0 || this.secondaryPokemonRequirements.length > 0;
   }
 
   meetsRequirements?(scene: BattleScene) {
     return !this.requirements.some(requirement => !requirement.meetsRequirement(scene)) &&
-      this.meetsPrimaryRequirementAndPrimaryPokemonSelected(scene) &&
-      this.meetsSupportingRequirementAndSupportingPokemonSelected(scene);
+      this.meetsSupportingRequirementAndSupportingPokemonSelected(scene) &&
+      this.meetsPrimaryRequirementAndPrimaryPokemonSelected(scene);
   }
 
   meetsPrimaryRequirementAndPrimaryPokemonSelected?(scene: BattleScene) {
@@ -121,13 +139,20 @@ export default class MysteryEncounterOption implements MysteryEncounterOption {
 
 
 export class MysteryEncounterOptionBuilder implements Partial<MysteryEncounterOption> {
+  optionMode?: EncounterOptionMode;
   requirements?: EncounterSceneRequirement[] = [];
   primaryPokemonRequirements?: EncounterPokemonRequirement[] = [];
   secondaryPokemonRequirements ?: EncounterPokemonRequirement[] = [];
   excludePrimaryFromSecondaryRequirements?: boolean;
+  isDisabledOnRequirementsNotMet?: boolean;
   onPreOptionPhase?: OptionPhaseCallback;
   onOptionPhase?: OptionPhaseCallback;
   onPostOptionPhase?: OptionPhaseCallback;
+  dialogue?: OptionTextDisplay;
+
+  withOptionMode(optionMode: EncounterOptionMode): this & Pick<MysteryEncounterOption, "optionMode"> {
+    return Object.assign(this, { optionMode });
+  }
 
   withSceneRequirement(requirement: EncounterSceneRequirement): this & Required<Pick<MysteryEncounterOption, "requirements">> {
     this.requirements.push(requirement);
@@ -177,5 +202,10 @@ export class MysteryEncounterOptionBuilder implements Partial<MysteryEncounterOp
     this.secondaryPokemonRequirements.push(requirement);
     this.excludePrimaryFromSecondaryRequirements = excludePrimaryFromSecondaryRequirements;
     return Object.assign(this, { secondaryPokemonRequirements: this.secondaryPokemonRequirements });
+  }
+
+  withDialogue(dialogue: OptionTextDisplay) {
+    this.dialogue = dialogue;
+    return this;
   }
 }

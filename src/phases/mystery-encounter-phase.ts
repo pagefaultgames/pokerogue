@@ -5,7 +5,7 @@ import { Mode } from "../ui/ui";
 import {
   getEncounterText
 } from "../data/mystery-encounters/mystery-encounter-utils";
-import { CheckSwitchPhase, NewBattlePhase, PostSummonPhase, ReturnPhase, ScanIvsPhase, SelectModifierPhase, SummonPhase, ToggleDoublePositionPhase } from "../phases";
+import { CheckSwitchPhase, NewBattlePhase, ReturnPhase, ScanIvsPhase, SelectModifierPhase, SummonPhase, ToggleDoublePositionPhase } from "../phases";
 import MysteryEncounterOption from "../data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterVariant } from "../data/mystery-encounters/mystery-encounter";
 import { getCharVariantFromDialogue } from "../data/dialogue";
@@ -285,22 +285,9 @@ export class MysteryEncounterBattlePhase extends Phase {
     const enemyField = scene.getEnemyField();
     const encounterVariant = scene.currentBattle.mysteryEncounter.encounterVariant;
 
+    // PostSummon and ShinySparkle phases are handled by SummonPhase
+
     if (encounterVariant !== MysteryEncounterVariant.TRAINER_BATTLE) {
-      enemyField.map(p => this.scene.pushConditionalPhase(new PostSummonPhase(this.scene, p.getBattlerIndex()), () => {
-        // if there is not a player party, we can't continue
-        if (!this.scene.getParty()?.length) {
-          return false;
-        }
-        // how many player pokemon are on the field ?
-        const pokemonsOnFieldCount = this.scene.getParty().filter(p => p.isOnField()).length;
-        // if it's a 2vs1, there will never be a 2nd pokemon on our field even
-        const requiredPokemonsOnField = Math.min(this.scene.getParty().filter((p) => !p.isFainted()).length, 2);
-        // if it's a double, there should be 2, otherwise 1
-        if (this.scene.currentBattle.double) {
-          return pokemonsOnFieldCount === requiredPokemonsOnField;
-        }
-        return pokemonsOnFieldCount === 1;
-      }));
       const ivScannerModifier = this.scene.findModifier(m => m instanceof IvScannerModifier);
       if (ivScannerModifier) {
         enemyField.map(p => this.scene.pushPhase(new ScanIvsPhase(this.scene, p.getBattlerIndex(), Math.min(ivScannerModifier.getStackCount() * 2, 6))));
