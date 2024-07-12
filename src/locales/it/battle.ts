@@ -78,6 +78,8 @@ export const battle: SimpleTranslationEntries = {
   "statSeverelyFell": "{{pokemonNameWithAffix}}'s {{stats}} è diminuito/a drasticamente!",
   "statWontGoAnyLower": "{{pokemonNameWithAffix}}'s {{stats}} non può diminuire più di così!",
   "ppReduced": "It reduced the PP of {{targetName}}'s\n{{moveName}} by {{reduction}}!",
+  "ppHealBerry": "{{pokemonNameWithAffix}} restored PP to its move {{moveName}}\nusing its {{berryName}}!",
+  "hpHealBerry": "{{pokemonNameWithAffix}} restored its health using\nits {{berryName}}!",
   "battlerTagsRechargingLapse": "{{pokemonNameWithAffix}} deve\nricaricarsi!",
   "battlerTagsTrappedOnAdd": "{{pokemonNameWithAffix}} non può\npiù fuggire!",
   "battlerTagsTrappedOnRemove": "{{pokemonNameWithAffix}} è stato liberato\nda {{moveName}}",
