@@ -120,6 +120,7 @@ export default class BattleScene extends SceneBase {
   public enableTutorials: boolean = import.meta.env.VITE_BYPASS_TUTORIAL === "1";
   public enableMoveInfo: boolean = true;
   public enableRetries: boolean = false;
+  public damageDisplay: string = "Off";
   /**
    * Determines the condition for a notification should be shown for Candy Upgrades
    * - 0 = 'Off'

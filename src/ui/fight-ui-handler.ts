@@ -15,15 +15,16 @@ import { Stat } from "#app/data/pokemon-stat.js";
 import { Abilities } from "#app/enums/abilities.js";
 import { WeatherType } from "#app/data/weather.js";
 import { Moves } from "#app/enums/moves.js";
-import { AddSecondStrikeAbAttr, AllyMoveCategoryPowerBoostAbAttr, applyAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, ConditionalCritAbAttr, DamageBoostAbAttr, FieldMoveTypePowerBoostAbAttr, FieldPriorityMoveImmunityAbAttr, MoveImmunityAbAttr, MoveTypeChangeAttr, MultCritAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, StabBoostAbAttr, TypeImmunityAbAttr, UserFieldMoveTypePowerBoostAbAttr, VariableMovePowerAbAttr } from "#app/data/ability.js";
+import { AddSecondStrikeAbAttr, AllyMoveCategoryPowerBoostAbAttr, AlwaysHitAbAttr, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, ConditionalCritAbAttr, DamageBoostAbAttr, FieldMoveTypePowerBoostAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentEvasionAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, MoveTypeChangeAttr, MultCritAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, StabBoostAbAttr, TypeImmunityAbAttr, UserFieldMoveTypePowerBoostAbAttr, VariableMovePowerAbAttr, WonderSkinAbAttr } from "#app/data/ability.js";
 import { ArenaTagType } from "#app/enums/arena-tag-type.js";
 import { ArenaTagSide, WeakenMoveScreenTag, WeakenMoveTypeTag } from "#app/data/arena-tag.js";
-import { BattlerTagLapseType, HelpingHandTag, TypeBoostTag } from "#app/data/battler-tags.js";
+import { BattlerTagLapseType, HelpingHandTag, SemiInvulnerableTag, TypeBoostTag } from "#app/data/battler-tags.js";
 import { TerrainType } from "#app/data/terrain.js";
-import { AttackTypeBoosterModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, PokemonMultiHitModifier, TempBattleStatBoosterModifier } from "#app/modifier/modifier.js";
+import { AttackTypeBoosterModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, PokemonMoveAccuracyBoosterModifier, PokemonMultiHitModifier, TempBattleStatBoosterModifier } from "#app/modifier/modifier.js";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
 import { TempBattleStat } from "#app/data/temp-battle-stat.js";
 import { StatusEffect } from "#app/data/status-effect.js";
+import { BattleStat } from "#app/data/battle-stat.js";
 
 export default class FightUiHandler extends UiHandler {
   private movesContainer: Phaser.GameObjects.Container;
@@ -439,6 +440,117 @@ export default class FightUiHandler extends UiHandler {
     return [damage1.value, damage2.value]
   }
 
+  calculateAccuracy(user: Pokemon, target: Pokemon, move: PokemonMove) {
+    if (this.scene.currentBattle.double && false) {
+      switch (move.getMove().moveTarget) {
+        case MoveData.MoveTarget.USER: // Targets yourself
+          return -1; // Moves targeting yourself always hit
+        case MoveData.MoveTarget.OTHER: // Targets one Pokemon
+          return move.getMove().accuracy
+        case MoveData.MoveTarget.ALL_OTHERS: // Targets all Pokemon
+          return move.getMove().accuracy;
+        case MoveData.MoveTarget.NEAR_OTHER: // Targets a Pokemon adjacent to the user
+          return move.getMove().accuracy;
+        case MoveData.MoveTarget.ALL_NEAR_OTHERS: // Targets all Pokemon adjacent to the user
+          return move.getMove().accuracy;
+        case MoveData.MoveTarget.NEAR_ENEMY: // Targets an opponent adjacent to the user
+          return move.getMove().accuracy;
+        case MoveData.MoveTarget.ALL_NEAR_ENEMIES: // Targets all opponents adjacent to the user
+          return move.getMove().accuracy;
+        case MoveData.MoveTarget.RANDOM_NEAR_ENEMY: // Targets a random opponent adjacent to the user
+          return move.getMove().accuracy;
+        case MoveData.MoveTarget.ALL_ENEMIES: // Targets all opponents
+          return move.getMove().accuracy;
+        case MoveData.MoveTarget.ATTACKER: // Counter move
+          return move.getMove().accuracy;
+        case MoveData.MoveTarget.NEAR_ALLY: // Targets an adjacent ally
+          return move.getMove().accuracy;
+        case MoveData.MoveTarget.ALLY: // Targets an ally
+          return move.getMove().accuracy;
+        case MoveData.MoveTarget.USER_OR_NEAR_ALLY: // Targets an ally or yourself
+          return move.getMove().accuracy;
+        case MoveData.MoveTarget.USER_AND_ALLIES: // Targets all on your side
+          return move.getMove().accuracy;
+        case MoveData.MoveTarget.ALL: // Targets everyone
+          return move.getMove().accuracy;
+        case MoveData.MoveTarget.USER_SIDE: // Targets your field
+          return move.getMove().accuracy;
+        case MoveData.MoveTarget.ENEMY_SIDE: // Targets enemy field
+          return -1; // Moves placing entry hazards always hit
+        case MoveData.MoveTarget.BOTH_SIDES: // Targets the entire field
+          return move.getMove().accuracy;
+        case MoveData.MoveTarget.PARTY: // Targets all of the Player's Pokemon, including ones that aren't active
+          return move.getMove().accuracy;
+        case MoveData.MoveTarget.CURSE:
+          return move.getMove().accuracy;
+      }
+    }
+    // Moves targeting the user and entry hazards can't miss
+    if ([MoveData.MoveTarget.USER, MoveData.MoveTarget.ENEMY_SIDE].includes(move.getMove().moveTarget)) {
+      return -1;
+    }
+    if (target == undefined) return move.getMove().accuracy;
+    // If either Pokemon has No Guard, 
+    if (user.hasAbilityWithAttr(AlwaysHitAbAttr) || target.hasAbilityWithAttr(AlwaysHitAbAttr)) {
+      return -1;
+    }
+    // If the user should ignore accuracy on a target, check who the user targeted last turn and see if they match
+    if (user.getTag(BattlerTagType.IGNORE_ACCURACY) && (user.getLastXMoves().slice(1).find(() => true)?.targets || []).indexOf(target.getBattlerIndex()) !== -1) {
+      return -1;
+    }
+
+    const hiddenTag = target.getTag(SemiInvulnerableTag);
+    if (hiddenTag && !move.getMove().getAttrs(MoveData.HitsTagAttr).some(hta => hta.tagType === hiddenTag.tagType)) {
+      return 0;
+    }
+    const moveAccuracy = new Utils.NumberHolder(move.getMove().accuracy);
+
+    MoveData.applyMoveAttrs(MoveData.VariableAccuracyAttr, user, target, move.getMove(), moveAccuracy);
+    applyPreDefendAbAttrs(WonderSkinAbAttr, target, user, move.getMove(), { value: false }, moveAccuracy);
+
+    if (moveAccuracy.value === -1) {
+      return -1;
+    }
+
+    const isOhko = move.getMove().hasAttr(MoveData.OneHitKOAccuracyAttr);
+
+    if (!isOhko) {
+      user.scene.applyModifiers(PokemonMoveAccuracyBoosterModifier, user.isPlayer(), user, moveAccuracy);
+    }
+
+    if (this.scene.arena.weather?.weatherType === WeatherType.FOG) {
+      moveAccuracy.value = Math.floor(moveAccuracy.value * 0.9);
+    }
+
+    if (!isOhko && this.scene.arena.getTag(ArenaTagType.GRAVITY)) {
+      moveAccuracy.value = Math.floor(moveAccuracy.value * 1.67);
+    }
+
+    const userAccuracyLevel = new Utils.IntegerHolder(user.summonData.battleStats[BattleStat.ACC]);
+    const targetEvasionLevel = new Utils.IntegerHolder(target.summonData.battleStats[BattleStat.EVA]);
+    applyAbAttrs(IgnoreOpponentStatChangesAbAttr, target, null, userAccuracyLevel);
+    applyAbAttrs(IgnoreOpponentStatChangesAbAttr, user, null, targetEvasionLevel);
+    applyAbAttrs(IgnoreOpponentEvasionAbAttr, user, null, targetEvasionLevel);
+    MoveData.applyMoveAttrs(MoveData.IgnoreOpponentStatChangesAttr, user, target, move.getMove(), targetEvasionLevel);
+    this.scene.applyModifiers(TempBattleStatBoosterModifier, user.isPlayer(), TempBattleStat.ACC, userAccuracyLevel);
+
+    const accuracyMultiplier = new Utils.NumberHolder(1);
+    if (userAccuracyLevel.value !== targetEvasionLevel.value) {
+      accuracyMultiplier.value = userAccuracyLevel.value > targetEvasionLevel.value
+        ? (3 + Math.min(userAccuracyLevel.value - targetEvasionLevel.value, 6)) / 3
+        : 3 / (3 + Math.min(targetEvasionLevel.value - userAccuracyLevel.value, 6));
+    }
+
+    applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, user, BattleStat.ACC, accuracyMultiplier, move.getMove());
+
+    const evasionMultiplier = new Utils.NumberHolder(1);
+    applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, target, BattleStat.EVA, evasionMultiplier);
+
+    accuracyMultiplier.value /= evasionMultiplier.value;
+
+    return moveAccuracy.value * accuracyMultiplier.value
+  }
+
   calcDamage(scene: BattleScene, user: PlayerPokemon, target: Pokemon, move: PokemonMove) {
     /*
     var power = move.getMove().power
@@ -535,11 +647,17 @@ export default class FightUiHandler extends UiHandler {
       var percentChance = (target.hp - dmgLow + 1) / (dmgHigh - dmgLow + 1)
       koText = " (" + Math.round(percentChance * 100) + "% KO)"
     }
-    return (Math.round(dmgLow) == Math.round(dmgHigh) ? Math.round(dmgLow).toString() : Math.round(dmgLow) + "-" + Math.round(dmgHigh)) + koText
+    if (target.getMoveEffectiveness(user, move) == undefined) {
+      return "---"
+    }
+    if (scene.damageDisplay == "Value")
+      return target.getMoveEffectiveness(user, move) + "x - " + (Math.round(dmgLow) == Math.round(dmgHigh) ? Math.round(dmgLow).toString() : Math.round(dmgLow) + "-" + Math.round(dmgHigh)) + koText
     dmgLow = Math.round((dmgLow)/target.getBattleStat(Stat.HP)*100)
     dmgHigh = Math.round((dmgHigh)/target.getBattleStat(Stat.HP)*100)
-    return (dmgLow == dmgHigh ? dmgLow + "%" : dmgLow + "%-" + dmgHigh + "%") + koText
-    return "???"
+    if (scene.damageDisplay == "Percent")
+      return target.getMoveEffectiveness(user, move) + "x - " + (dmgLow == dmgHigh ? dmgLow + "%" : dmgLow + "%-" + dmgHigh + "%") + koText
+    if (scene.damageDisplay == "Off")
+      return target.getMoveEffectiveness(user, move) + "x"
   }
 
   setCursor(cursor: integer): boolean {
@@ -574,9 +692,15 @@ export default class FightUiHandler extends UiHandler {
       const maxPP = pokemonMove.getMovePp();
       const pp = maxPP - pokemonMove.ppUsed;
 
+      const accuracy1 = this.calculateAccuracy(pokemon, this.scene.getEnemyField()[0], pokemonMove)
+      const accuracy2 = this.calculateAccuracy(pokemon, this.scene.getEnemyField()[1], pokemonMove)
+
       this.ppText.setText(`${Utils.padInt(pp, 2, "  ")}/${Utils.padInt(maxPP, 2, "  ")}`);
       this.powerText.setText(`${power >= 0 ? power : "---"}`);
       this.accuracyText.setText(`${accuracy >= 0 ? accuracy : "---"}`);
+      this.accuracyText.setText(`${accuracy1 >= 0 ? accuracy1 : "---"}`);
+      if (this.scene.getEnemyField()[1] != undefined)
+        this.accuracyText.setText(`${accuracy1 >= 0 ? accuracy1 : "---"}/${accuracy2 >= 0 ? accuracy2 : "---"}`);
 
       const ppPercentLeft = pp / maxPP;
 
@@ -939,8 +1063,8 @@ export function simulateAttack(scene: BattleScene, user: Pokemon, target: Pokemo
       applyPreDefendAbAttrs(ReceivedMoveDamageMultiplierAbAttr, user, target, move, cancelled, damage1);
       applyPreDefendAbAttrs(ReceivedMoveDamageMultiplierAbAttr, user, target, move, cancelled, damage2);
 
-      console.log("damage (min)", damage1.value, move.name, power.value, sourceAtk, targetDef);
-      console.log("damage (max)", damage2.value, move.name, power.value, sourceAtkCrit, targetDefCrit);
+      //console.log("damage (min)", damage1.value, move.name, power.value, sourceAtk, targetDef);
+      //console.log("damage (max)", damage2.value, move.name, power.value, sourceAtkCrit, targetDefCrit);
 
       // In case of fatal damage, this tag would have gotten cleared before we could lapse it.
       const destinyTag = target.getTag(BattlerTagType.DESTINY_BOND);

@@ -409,9 +409,10 @@ export class TitlePhase extends Phase {
 
   logMenu(): boolean {
     const options: OptionSelectItem[] = [];
+    LoggerTools.getLogs()
     for (var i = 0; i < LoggerTools.logs.length; i++) {
       if (localStorage.getItem(LoggerTools.logs[i][1]) != null) {
-        options.push(LoggerTools.generateOption(i) as OptionSelectItem)
+        options.push(LoggerTools.generateOption(i, this.getSaves()) as OptionSelectItem)
       } else {
         //options.push(LoggerTools.generateAddOption(i, this.scene, this))
       }
@@ -1324,7 +1325,7 @@ export class EncounterPhase extends BattlePhase {
   doEncounterCommon(showEncounterMessage: boolean = true) {
     const enemyField = this.scene.getEnemyField();
 
-    LoggerTools.resetWave(this.scene, this.scene.currentBattle.waveIndex)
+    //LoggerTools.resetWave(this.scene, this.scene.currentBattle.waveIndex)
     LoggerTools.logTeam(this.scene, this.scene.currentBattle.waveIndex)
     if (this.scene.getEnemyParty()[0].hasTrainer()) {
       LoggerTools.logTrainer(this.scene, this.scene.currentBattle.waveIndex)
@@ -2742,20 +2743,6 @@ export class TurnStartPhase extends FieldPhase {
         const queuedMove = turnCommand.move;
         if (!queuedMove) {
           continue;
-        }
-        const move = pokemon.getMoveset().find(m => m.moveId === queuedMove.move) || new PokemonMove(queuedMove.move);
-        if (!this.scene.currentBattle.double) {
-          playerActions.push(move.getName())
-        } else {
-          var T = this.getBattlers(pokemon)
-          for (var i = 0; i < T.length; i++) {
-            if (T[i] == undefined) {
-              T.splice(i, 1)
-              i--
-            }
-          }
-          console.log(queuedMove.targets, T, queuedMove.targets.map(p => T[p+1].name))
-          playerActions.push(move.getName() + " → " + queuedMove.targets.map(p => T[p+1].name).join(", "))
         }
         break;
       case Command.BALL:
@@ -4502,11 +4489,13 @@ export class VictoryPhase extends PokemonPhase {
         if (this.scene.currentBattle.waveIndex % 10) {
           this.scene.pushPhase(new SelectModifierPhase(this.scene));
         } else if (this.scene.gameMode.isDaily) {
+          LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, "")
           this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.EXP_CHARM));
           if (this.scene.currentBattle.waveIndex > 10 && !this.scene.gameMode.isWaveFinal(this.scene.currentBattle.waveIndex)) {
             this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.GOLDEN_POKEBALL));
           }
         } else {
+          LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, "")
           const superExpWave = !this.scene.gameMode.isEndless ? (this.scene.offsetGym ? 0 : 20) : 10;
           if (this.scene.gameMode.isEndless && this.scene.currentBattle.waveIndex === 10) {
             this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.EXP_SHARE));
@@ -4524,6 +4513,7 @@ export class VictoryPhase extends PokemonPhase {
         }
         this.scene.pushPhase(new NewBattlePhase(this.scene));
       } else {
+        LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, "")
         this.scene.currentBattle.battleType = BattleType.CLEAR;
         this.scene.score += this.scene.gameMode.getClearScoreBonus();
         this.scene.updateScoreText();
@@ -5612,6 +5602,7 @@ export class AttemptRunPhase extends PokemonPhase {
 
     if (playerPokemon.randSeedInt(256) < escapeChance.value) {
       this.scene.playSound("flee");
+      LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, "")
       this.scene.queueMessage(i18next.t("battle:runAwaySuccess"), null, true, 500);
 
       this.scene.tweens.add({
@@ -5672,6 +5663,7 @@ export class SelectModifierPhase extends BattlePhase {
       if (rowCursor < 0 || cursor < 0) {
         this.scene.ui.showText(i18next.t("battle:skipItemQuestion"), null, () => {
           this.scene.ui.setOverlayMode(Mode.CONFIRM, () => {
+            LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, "")
             this.scene.ui.revertMode();
             this.scene.ui.setMode(Mode.MESSAGE);
             super.end();
@@ -5691,6 +5683,7 @@ export class SelectModifierPhase extends BattlePhase {
             return false;
           } else {
             this.scene.reroll = true;
+            LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "Reroll" + (this.scene.lockModifierTiers ? " (Locked)" : ""))
             this.scene.unshiftPhase(new SelectModifierPhase(this.scene, this.rerollCount + 1, typeOptions.map(o => o.type.tier)));
             this.scene.ui.clearText();
             this.scene.ui.setMode(Mode.MESSAGE).then(() => super.end());
@@ -5701,11 +5694,17 @@ export class SelectModifierPhase extends BattlePhase {
           }
           break;
         case 1:
-          this.scene.ui.setModeWithoutClear(Mode.PARTY, PartyUiMode.MODIFIER_TRANSFER, -1, (fromSlotIndex: integer, itemIndex: integer, itemQuantity: integer, toSlotIndex: integer) => {
+          this.scene.ui.setModeWithoutClear(Mode.PARTY, PartyUiMode.MODIFIER_TRANSFER, -1, (fromSlotIndex: integer, itemIndex: integer, itemQuantity: integer, toSlotIndex: integer, isAll: boolean, isFirst: boolean) => {
             if (toSlotIndex !== undefined && fromSlotIndex < 6 && toSlotIndex < 6 && fromSlotIndex !== toSlotIndex && itemIndex > -1) {
               const itemModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
                     && (m as PokemonHeldItemModifier).getTransferrable(true) && (m as PokemonHeldItemModifier).pokemonId === party[fromSlotIndex].id) as PokemonHeldItemModifier[];
               const itemModifier = itemModifiers[itemIndex];
+              if (isAll) {
+                if (isFirst)
+                  LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "Transfer [" + (fromSlotIndex + 1) + "] " + this.scene.getParty()[fromSlotIndex].name + " (All) → [" + (toSlotIndex + 1) + "] " + this.scene.getParty()[toSlotIndex].name)
+              } else {
+                LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "Transfer [" + (fromSlotIndex + 1) + "] " + this.scene.getParty()[fromSlotIndex].name + " (" + itemModifier.type.name + (itemQuantity == itemModifier.getStackCount() ? "" : " x" + itemQuantity) + ") → [" + (toSlotIndex + 1) + "] " + this.scene.getParty()[toSlotIndex].name)
+              }
               this.scene.tryTransferHeldItemModifier(itemModifier, party[toSlotIndex], true, itemQuantity);
             } else {
               this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost(typeOptions, this.scene.lockModifierTiers));

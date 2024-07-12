@@ -43,7 +43,8 @@ const AUTO_DISABLED: SettingOption[] = [
 export enum SettingType {
   GENERAL,
   DISPLAY,
-  AUDIO
+  AUDIO,
+  MOD
 }
 
 type SettingOption = {
@@ -98,6 +99,7 @@ export const SettingKeys = {
   SE_Volume: "SE_VOLUME",
   Music_Preference: "MUSIC_PREFERENCE",
   Show_BGM_Bar: "SHOW_BGM_BAR",
+  Damage_Display: "DAMAGE_DISPLAY"
 };
 
 /**
@@ -239,6 +241,22 @@ export const Setting: Array<Setting> = [
     key: SettingKeys.Enable_Retries,
     label: i18next.t("settings:enableRetries"),
     options: OFF_ON,
+    default: 0,
+    type: SettingType.GENERAL
+  },
+  {
+    key: SettingKeys.Damage_Display,
+    label: "Damage Display",
+    options: [{
+      label: "Off",
+      value: "Off"
+    }, {
+      label: "Value",
+      value: "Value"
+    }, {
+      label: "Percent",
+      value: "Percent"
+    }],
     default: 0,
     type: SettingType.GENERAL
   },
@@ -604,6 +622,8 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
   case SettingKeys.Enable_Retries:
     scene.enableRetries = Setting[index].options[value].value === "On";
     break;
+  case SettingKeys.Damage_Display:
+    scene.damageDisplay = Setting[index].options[value].value
   case SettingKeys.Skip_Seen_Dialogues:
     scene.skipSeenDialogues = Setting[index].options[value].value === "On";
     break;

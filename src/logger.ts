@@ -16,6 +16,8 @@ import { Item } from "pokenode-ts";
 import Trainer from "./field/trainer";
 import { Species } from "./enums/species";
 import { junit } from "node:test/reporters";
+import { i } from "vitest/dist/reporters-xEmem8D4.js";
+import { GameModes } from "./game-mode";
 
 /**
  * All logs.
@@ -37,6 +39,33 @@ export const logKeys: string[] = [
   "e", // Encounters
   "d", // Debug
 ];
+
+export function getLogID(scene: BattleScene) {
+  return "drpd_log:" + scene.seed
+}
+export function getLogs() {
+  while(logs.length > 0)
+    logs.pop()
+  for (var i = 0; i < localStorage.length; i++) {
+    if (localStorage.key(i).substring(0, 9) == "drpd_log:") {
+      logs.push(["drpd.json", localStorage.key(i), localStorage.key(i).substring(9), "", "", ""])
+    }
+  }
+}
+export function getMode(scene: BattleScene) {
+  switch (scene.gameMode.modeId) {
+    case GameModes.CLASSIC:
+      return "Classic"
+    case GameModes.ENDLESS:
+      return "Endless"
+    case GameModes.SPLICED_ENDLESS:
+      return "Spliced Endless"
+    case GameModes.DAILY:
+      return "Daily"
+    case GameModes.CHALLENGE:
+      return "Challenge"
+  }
+}
 
 export const rarities = []
 export const rarityslot = [0]
@@ -226,16 +255,23 @@ export function getSize(str: string) {
   return d.toString() + filesizes[unit]
 }
 
-export function generateOption(i: integer): OptionSelectItem {
+export function generateOption(i: integer, saves: any): OptionSelectItem {
   var filename: string = (JSON.parse(localStorage.getItem(logs[i][1])) as DRPD).title
   var op: OptionSelectItem = {
-    label: ` Export ${filename} (${getSize(printDRPD("", "", JSON.parse(localStorage.getItem(logs[i][1])) as DRPD))})`,
+    label: `Export ${filename} (${getSize(printDRPD("", "", JSON.parse(localStorage.getItem(logs[i][1])) as DRPD))})`,
     handler: () => {
       downloadLogByID(i)
       return false;
     }
   }
+  for (var j = 0; j < saves.length; j++) {
+    console.log(saves[j].seed, logs[i][2], saves[j].seed == logs[i][2])
+    if (saves[j].seed == logs[i][2]) {
+      op.label = "[Slot " + (j + 1) + "]" + op.label.substring(6)
+    }
+  }
   if (logs[i][4] != "") {
+    op.label = " " + op.label
     op.item = logs[i][4]
   }
   return op;
@@ -306,6 +342,7 @@ export function downloadLogByID(i: integer) {
 export function logTeam(scene: BattleScene, floor: integer = undefined) {
   if (floor == undefined) floor = scene.currentBattle.waveIndex
   var team = scene.getEnemyParty()
+  console.log("Log Enemy Team")
   if (team[0].hasTrainer()) {
     //var sprite = scene.currentBattle.trainer.config.getSpriteKey()
     //var trainerCat = Utils.getEnumKeys(TrainerType)[Utils.getEnumValues(TrainerType).indexOf(scene.currentBattle.trainer.config.trainerType)]
@@ -320,20 +357,47 @@ export function logTeam(scene: BattleScene, floor: integer = undefined) {
   }
 }
 export function logActions(scene: BattleScene, floor: integer, action: string) {
-  if (localStorage.getItem("drpd") == null) localStorage.setItem("drpd", JSON.stringify(newDocument()))
-    var drpd: DRPD = JSON.parse(localStorage.getItem("drpd")) as DRPD;
-    var wv: Wave = getWave(drpd, floor, scene)
-    wv.actions.push(action)
-    console.log(drpd)
-    localStorage.setItem("drpd", JSON.stringify(drpd))
+  if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
+  var drpd: DRPD = JSON.parse(localStorage.getItem(getLogID(scene))) as DRPD;
+  console.log("Log Action", drpd)
+  var wv: Wave = getWave(drpd, floor, scene)
+  wv.actions.push(action)
+  console.log(drpd)
+  localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
+}
+export function logShop(scene: BattleScene, floor: integer, action: string) {
+  if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
+  var drpd: DRPD = JSON.parse(localStorage.getItem(getLogID(scene))) as DRPD;
+  console.log("Log Shop Item", drpd)
+  var wv: Wave = getWave(drpd, floor, scene)
+  wv.shop = action
+  console.log(drpd)
+  localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
 }
 export function getWave(drpd: DRPD, floor: integer, scene: BattleScene) {
   var wv: Wave;
   var insertPos: integer;
+  console.log(drpd.waves)
+  if (drpd.waves[floor - 1] != undefined) {
+    return drpd.waves[floor - 1]
+  }
+  drpd.waves[floor - 1] = {
+    id: floor,
+    reload: false,
+    //type: floor % 10 == 0 ? "boss" : (floor % 10 == 5 ? "trainer" : "wild"),
+    type: floor % 10 == 0 ? "boss" : "wild",
+    double: scene.currentBattle.double,
+    actions: [],
+    shop: "",
+    biome: getBiomeName(scene.arena.biomeType),
+    pokemon: []
+  }
+  return drpd.waves[floor - 1]
   for (var i = 0; i < drpd.waves.length; i++) {
-    if (drpd.waves[i] != undefined) {
+    if (drpd.waves[i] != undefined && drpd.waves[i] != null) {
       if (drpd.waves[i].id == floor) {
         wv = drpd.waves[i]
+        console.log("Found wave for floor " + floor + " at index " + i)
         if (wv.pokemon == undefined) wv.pokemon = []
       }
     } else if (insertPos == undefined) {
@@ -341,6 +405,7 @@ export function getWave(drpd: DRPD, floor: integer, scene: BattleScene) {
     }
   }
   if (wv == undefined && insertPos != undefined) {
+    console.log("Created new wave for floor " + floor + " at index " + insertPos)
     drpd.waves[insertPos] = {
       id: floor,
       reload: false,
@@ -392,9 +457,10 @@ export function getWave(drpd: DRPD, floor: integer, scene: BattleScene) {
         console.error("Go yell at @redstonewolf8557 to fix this")
       } else {
         for (var i = 0; i < drpd.waves.length; i++) {
-          if (drpd.waves[i] != undefined) {
+          if (drpd.waves[i] != undefined && drpd.waves[i] != null) {
             if (drpd.waves[i].id == floor) {
               wv = drpd.waves[i]
+              console.log("Found wave for floor " + floor + " at index " + i)
               if (wv.pokemon == undefined) wv.pokemon = []
             }
           } else if (insertPos == undefined) {
@@ -402,6 +468,7 @@ export function getWave(drpd: DRPD, floor: integer, scene: BattleScene) {
           }
         }
         if (wv == undefined && insertPos != undefined) {
+          console.log("Created new wave for floor " + floor + " at index " + insertPos)
           drpd.waves[insertPos] = {
             id: floor,
             reload: false,
@@ -479,8 +546,9 @@ export function logPokemon(scene: BattleScene, floor: integer = undefined, slot:
   setRow("e", newLine, floor, slot)
   //console.log(localStorage.getItem(logs[logKeys.indexOf("e")][1]).split("\n"))
   */
-  if (localStorage.getItem("drpd") == null) localStorage.setItem("drpd", JSON.stringify(newDocument()))
-  var drpd: DRPD = JSON.parse(localStorage.getItem("drpd")) as DRPD;
+  if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
+  var drpd: DRPD = JSON.parse(localStorage.getItem(getLogID(scene))) as DRPD;
+  console.log("Log Enemy Pokemon", drpd)
   var wv: Wave = getWave(drpd, floor, scene)
   var pk: PokeData = exportPokemon(pokemon, encounterRarity)
   if (wv.pokemon[slot] != undefined) {
@@ -537,36 +605,33 @@ export function logPokemon(scene: BattleScene, floor: integer = undefined, slot:
   }
   if (pk.rarity == undefined) pk.rarity = "[Unknown]"
   wv.pokemon[slot] = pk;
+  while (wv.actions.length > 0)
+    wv.actions.pop()
   console.log(drpd)
-  localStorage.setItem("drpd", JSON.stringify(drpd))
-}
-export function resetWave(scene: BattleScene, floor: integer = undefined) {
-  if (localStorage.getItem("drpd") == null) localStorage.setItem("drpd", JSON.stringify(newDocument()))
-  var drpd: DRPD = JSON.parse(localStorage.getItem("drpd")) as DRPD;
-  drpd.waves[floor] = exportWave(scene)
-  console.log(drpd)
-  localStorage.setItem("drpd", JSON.stringify(drpd))
+  localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
 }
 export function logTrainer(scene: BattleScene, floor: integer = undefined) {
-  if (localStorage.getItem("drpd") == null) localStorage.setItem("drpd", JSON.stringify(newDocument()))
-  var drpd: DRPD = JSON.parse(localStorage.getItem("drpd")) as DRPD;
+  if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
+  var drpd: DRPD = JSON.parse(localStorage.getItem(getLogID(scene))) as DRPD;
+  console.log("Log Trainer", drpd)
   var wv: Wave = getWave(drpd, floor, scene)
   var t: TrainerData = exportTrainer(scene.currentBattle.trainer)
   wv.trainer = t
   wv.type = "trainer"
   console.log(drpd)
-  localStorage.setItem("drpd", JSON.stringify(drpd))
+  localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
 }
 export function logPlayerTeam(scene: BattleScene) {
-  if (localStorage.getItem("drpd") == null) localStorage.setItem("drpd", JSON.stringify(newDocument()))
-  var drpd: DRPD = JSON.parse(localStorage.getItem("drpd")) as DRPD;
+  if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
+  var drpd: DRPD = JSON.parse(localStorage.getItem(getLogID(scene))) as DRPD;
   //var wv: Wave = getWave(drpd, 1, scene)
+  console.log("Log Player Starters", drpd)
   var P = scene.getParty()
   for (var i = 0; i < P.length; i++) {
     drpd.starters[i] = exportPokemon(P[i])
   }
   console.log(drpd)
-  localStorage.setItem("drpd", JSON.stringify(drpd))
+  localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
 }
 
 export function dataSorter(a: string, b: string) {
