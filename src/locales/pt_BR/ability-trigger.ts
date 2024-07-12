@@ -1,7 +1,7 @@
 import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const abilityTriggers: SimpleTranslationEntries = {
-  "blockRecoilDamage" : "{{abilityName}} de {{pokemonName}}\nprotegeu-o do dano de recuo!",
+  "blockRecoilDamage": "{{abilityName}} de {{pokemonName}}\nprotegeu-o do dano reverso!",
   "badDreams": "{{pokemonName}} está tendo pesadelos!",
   "costar": "{{pokemonName}} copiou as mudanças\nde atributo de {{allyName}}!",
   "iceFaceAvoidedDamage": "{{pokemonName}} evitou\ndanos com sua {{abilityName}}!",
@@ -9,5 +9,5 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "poisonHeal": "{{abilityName}} de {{pokemonName}}\nrestaurou seus PS um pouco!",
   "trace": "{{pokemonName}} copiou {{abilityName}}\nde {{targetName}}!",
   "windPowerCharged": "Ser atingido por {{moveName}} carregou {{pokemonName}} com poder!",
-  "quickDraw":"{{pokemonName}} pode agir mais rápido que o normal\ngraças ao seu Quick Draw!",
+  "quickDraw": "{{pokemonName}} pode agir mais rápido que o normal\ngraças ao seu Quick Draw!",
 } as const;
