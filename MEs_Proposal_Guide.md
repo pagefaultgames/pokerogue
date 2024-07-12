@@ -89,7 +89,9 @@ these are all the biomes in two mutually exclusive lists. The main point of this
 - Space
 - Volcano
 - Wasteland
-  - "NON-EXTREME_BIOMES" ; Every other biome not on "EXTREME_BIOMES"
+#### NON-EXTREME_BIOMES
+
+Every other biome not on [`EXTREME_BIOMES`](link-to-extreme-biomes?)
 
 - "HUMAN_TRANSITABLE_BIOMES" ; for __people__, things like trainers, traders, youngster Joey and the people of the world. These are the biomes where you would feaseably find human beings during your journey.
   - They are: TOWN, PLAIN, GRASS, TALL_GRASS, METROPOLIS, FOREST, SWAMP, BEACH, LAKE, MOUNTAIN, BADLANDS, CAVE, DESERT, ICE_CAVE, MEADOW, POWER_PLANT, GRAVEYARD, DOJO, FACTORY, RUINS, CONSTRUCTION_SITE, JUNGLE, FAIRY_CAVE, TEMPLE, SLUM, SNOWY_FOREST, ISLAND, LABORATORY
