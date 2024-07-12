@@ -1858,7 +1858,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokerusCursorObjs.forEach(cursor => cursor.setVisible(false));
     this.starterCursorObjs.forEach(cursor => cursor.setVisible(false));
 
-    this.filterBar.updateFilterLabels()
+    this.filterBar.updateFilterLabels();
 
     // filter
     for (let g=0; g < this.starterContainers.length; g++) {
