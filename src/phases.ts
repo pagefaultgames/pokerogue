@@ -4341,6 +4341,7 @@ export class FaintPhase extends PokemonPhase {
       if (!nonFaintedPartyMemberCount) {
         this.scene.unshiftPhase(new GameOverPhase(this.scene));
       } else if (nonFaintedPartyMemberCount >= this.scene.currentBattle.getBattlerCount() || (this.scene.currentBattle.double && !nonFaintedLegalPartyMembers[0].isActive(true))) {
+        LoggerTools.isFaintSwitch.value = true;
         this.scene.pushPhase(new SwitchPhase(this.scene, this.fieldIndex, true, false));
       }
       if (nonFaintedPartyMemberCount === 1 && this.scene.currentBattle.double) {
@@ -5002,12 +5003,14 @@ export class SwitchPhase extends BattlePhase {
     // Skip modal switch if impossible
     if (this.isModal && !this.scene.getParty().filter(p => p.isAllowedInBattle() && !p.isActive(true)).length) {
       LoggerTools.isPreSwitch.value = false;
+      LoggerTools.isFaintSwitch.value = false;
       return super.end();
     }
 
     // Check if there is any space still in field
     if (this.isModal && this.scene.getPlayerField().filter(p => p.isAllowedInBattle() && p.isActive(true)).length >= this.scene.currentBattle.getBattlerCount()) {
       LoggerTools.isPreSwitch.value = false;
+      LoggerTools.isFaintSwitch.value = false;
       return super.end();
     }
 
@@ -5018,6 +5021,9 @@ export class SwitchPhase extends BattlePhase {
       if (slotIndex >= this.scene.currentBattle.getBattlerCount() && slotIndex < 6) {
         if (LoggerTools.isPreSwitch.value) {
           LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "Pre-switch " + LoggerTools.playerPokeName(this.scene, fieldIndex) + (option == PartyOption.PASS_BATON ? " → Baton" : "") + " → " + LoggerTools.playerPokeName(this.scene, slotIndex))
+        }
+        if (LoggerTools.isFaintSwitch.value) {
+          LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "Send in " + LoggerTools.playerPokeName(this.scene, slotIndex))
         }
         this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, fieldIndex, slotIndex, this.doReturn, option === PartyOption.PASS_BATON));
       }

@@ -120,6 +120,7 @@ export const rarities = []
 export const rarityslot = [0, ""]
 
 export const isPreSwitch: Utils.BooleanHolder = new Utils.BooleanHolder(false);
+export const isFaintSwitch: Utils.BooleanHolder = new Utils.BooleanHolder(false);
 
 export var StoredLog: DRPD = undefined;
 
