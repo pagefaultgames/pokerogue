@@ -3211,13 +3211,22 @@ export class PlayerPokemon extends Pokemon {
       this.generateName();
       if (!isFusion) {
         const abilityCount = this.getSpeciesForm().getAbilityCount();
-        if (this.abilityIndex >= abilityCount) { // Shouldn't happen
-          this.abilityIndex = abilityCount - 1;
+        // If a pokemon has its second ability and it evolves into a pokemon that doesn't have a second ability, switch to its first ability instead of its hidden ability
+        if (this.getSpeciesForm().ability2 === Abilities.NONE && this.abilityIndex === 1) {
+          this.abilityIndex = 0;
         }
-      } else {
+        // Prevent pokemon with an illegal ability value from breaking things too badly
+        if (this.abilityIndex >= abilityCount) {
+          console.warn("this.abilityIndex is somehow an illegal value, please report this");
+          console.warn(this.abilityIndex);
+          this.abilityIndex = 0;
+        }
+      } else { // Do the same as above, but for fusions
         const abilityCount = this.getFusionSpeciesForm().getAbilityCount();
-        if (this.fusionAbilityIndex >= abilityCount) {// Shouldn't happen
-          this.fusionAbilityIndex = abilityCount - 1;
+        if (this.fusionAbilityIndex >= abilityCount) {
+          console.warn("this.fusionAbilityIndex is somehow an illegal value, please report this");
+          console.warn(this.fusionAbilityIndex);
+          this.fusionAbilityIndex = 0;
         }
       }
       this.compatibleTms.splice(0, this.compatibleTms.length);
