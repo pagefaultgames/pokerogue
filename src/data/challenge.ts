@@ -76,6 +76,10 @@ export enum ChallengeType {
    * Modifies what weight AI pokemon have when generating movesets. UNIMPLEMENTED.
    */
   MOVE_WEIGHT,
+  /**
+   * Modifies the amount of friendship a pokemon receives
+   */
+  FRIENDSHIP_BONUS,
 }
 
 /**
@@ -388,6 +392,16 @@ export abstract class Challenge {
   applyMoveWeight(pokemon: Pokemon, moveSource: MoveSourceType, move: Moves, level: Utils.IntegerHolder): boolean {
     return false;
   }
+
+  /**
+   * An apply function for FRIENDSHIP_BONUS. Derived classes should alter this.
+   * @param pokemon {@link Pokemon} What pokemon the bonus is being applied to (in case of variable bonuses)
+   * @param bonus {@link Utils.IntegerHolder} Holds the bonus by which friendship gains are multiplied (default 1)
+   * @returns {@link boolean} Whether this function did anything.
+   */
+  applyFriendshipBonus(pokemon: Pokemon, bonus: Utils.IntegerHolder): boolean {
+    return false;
+  }
 }
 
 type ChallengeCondition = (data: GameData) => boolean;
@@ -654,6 +668,20 @@ export class FreshStartChallenge extends Challenge {
   }
 
   /**
+   * An apply function for FRIENDSHIP_BONUS.
+   * @param pokemon {@link Pokemon} What pokemon the bonus is being applied to
+   * @param bonus {@link Utils.IntegerHolder} Holds the bonus by which friendship gains are multiplied (default 1)
+   * @returns {@link boolean} Whether this function did anything.
+   */
+  applyFriendshipBonus(pokemon: Pokemon, bonus: Utils.IntegerHolder): boolean {
+    if (pokemon.metBiome < 0) {
+      bonus.value *= 1.5;
+      return true;
+    }
+    return false;
+  }
+
+  /**
    * @overrides
    */
   getDifficulty(): number {
@@ -845,6 +873,15 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.MOVE_WEIGHT, pokemon: Pokemon, moveSource: MoveSourceType, move: Moves, weight: Utils.IntegerHolder): boolean;
+/**
+ * Apply all challenges that grant a bonus to friendship gains
+ * @param gameMode {@link GameMode} The current gameMode
+ * @param challengeType {@link ChallengeType} ChallengeType.FRIENDSHIP_BONUS
+ * @param pokemon {@link Pokemon} What pokemon to apply bonus to.
+ * @param bonus {@link Utils.IntegerHolder} Holds the bonus to be applied by multiplication (default 1).
+ * @returns True if any challenge was successfully applied.
+ */
+export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.FRIENDSHIP_BONUS, pokemon: Pokemon, bonus: Utils.IntegerHolder): boolean;
 export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType, ...args: any[]): boolean {
   let ret = false;
   gameMode.challenges.forEach(c => {
@@ -886,6 +923,8 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
       case ChallengeType.MOVE_WEIGHT:
         ret ||= c.applyMoveWeight(args[0], args[1], args[2], args[3]);
         break;
+      case ChallengeType.FRIENDSHIP_BONUS:
+        ret ||= c.applyFriendshipBonus(args[0], args[1]);
       }
     }
   });
