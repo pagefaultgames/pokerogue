@@ -3058,7 +3058,7 @@ export class MoveEffectPhase extends PokemonPhase {
     }
 
     // If the user should ignore accuracy on a target, check who the user targeted last turn and see if they match
-    if (user.getTag(BattlerTagType.IGNORE_ACCURACY) && (user.getLastXMoves().slice(1).find(() => true)?.targets || []).indexOf(target.getBattlerIndex()) !== -1) {
+    if (user.getTag(BattlerTagType.IGNORE_ACCURACY) && (user.getLastXMoves().find(() => true)?.targets || []).indexOf(target.getBattlerIndex()) !== -1) {
       return true;
     }
 
