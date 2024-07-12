@@ -31,12 +31,10 @@ export abstract class EncounterSceneRequirement implements EncounterRequirement 
 }
 
 export abstract class EncounterPokemonRequirement implements EncounterRequirement {
-  minNumberOfPokemon: number;
-  invertQuery: boolean;
+  protected minNumberOfPokemon: number;
+  protected invertQuery: boolean;
 
-  meetsRequirement(scene: BattleScene): boolean {
-    throw new Error("Method not implemented.");
-  }
+  abstract meetsRequirement(scene: BattleScene): boolean;
 
   // Returns all party members that are compatible with this requirement. For non pokemon related requirements, the entire party is returned..
   queryParty(partyPokemon: PlayerPokemon[]): PlayerPokemon[] {
@@ -954,3 +952,5 @@ export class WeightRequirement extends EncounterPokemonRequirement {
     return ["weight", pokemon.getWeight().toString()];
   }
 }
+
+
