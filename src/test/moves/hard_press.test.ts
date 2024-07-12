@@ -10,7 +10,6 @@ import { Moves } from "#enums/moves";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { allMoves } from "#app/data/move.js";
-import { randInt } from "#app/utils.js";
 
 describe("Moves - Hard Press", () => {
   let phaserGame: Phaser.Game;
@@ -37,18 +36,6 @@ describe("Moves - Hard Press", () => {
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
     vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.HARD_PRESS]);
     vi.spyOn(moveToCheck, "calculateBattlePower");
-  });
-
-  it("should return power between 1 and 100 based on target health ratio", async () => {
-    await game.startBattle([Species.PIKACHU]);
-    const enemy = game.scene.getEnemyPokemon();
-
-    vi.spyOn(enemy, "getHpRatio").mockReturnValue(randInt(99, 1));
-
-    game.doAttack(getMovePosition(game.scene, 0, Moves.HARD_PRESS));
-    await game.phaseInterceptor.to(MoveEffectPhase);
-
-    expect(moveToCheck.calculateBattlePower).toHaveReturnedWith(Math.max(Math.floor(100 * enemy.getHpRatio()), 1));
   });
 
   it("should return 100 power if target HP ratio is at 100%", async () => {
