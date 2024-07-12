@@ -1,4 +1,3 @@
-import { Type } from "#app/data/type.js";
 import { Moves } from "#app/enums/moves.js";
 import { Species } from "#app/enums/species.js";
 import { PlayerPokemon } from "#app/field/pokemon.js";
@@ -8,6 +7,8 @@ import MysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier } from 
 import { EncounterOptionMode, MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import { applyDamageToPokemon, leaveEncounterWithoutBattle, setEncounterExp } from "../mystery-encounter-utils";
 
+const OPTION_1_REQUIRED_MOVE = Moves.SURF;
+const OPTION_2_REQUIRED_MOVE = Moves.FLY;
 /**
  * Damage percentage taken when wandering aimlessly.
  * Can be a number between `0` - `100`.
@@ -46,6 +47,8 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
     const { mysteryEncounter } = scene.currentBattle;
 
     mysteryEncounter.setDialogueToken("damagePercentage", String(DAMAGE_PERCENTAGE));
+    mysteryEncounter.setDialogueToken("option1RequiredMove", Moves[OPTION_1_REQUIRED_MOVE]);
+    mysteryEncounter.setDialogueToken("option2RequiredMove", Moves[OPTION_2_REQUIRED_MOVE]);
 
     // check for water pokemon
     // surfablePkm = findPokemonThatCanLearnMove(allowedPokemon, Type.WATER);
@@ -62,15 +65,17 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
   .withQuery(`${namepsace}:query`)
   .withOption(
     /**
-     * Option 1: Use a (non fainted) water pokemon to guide you back.
+     * Option 1: Use a (non fainted) pokemon that can learn Surf to guide you back.
      * Receives EXP similar to defeating a Lapras
      */
     new MysteryEncounterOptionBuilder()
-      .withPokemonCanLearnMoveRequirement(Moves.SURF)
+      .withPokemonCanLearnMoveRequirement(OPTION_1_REQUIRED_MOVE)
       .withOptionMode(EncounterOptionMode.DISABLED_OR_DEFAULT)
       .withDialogue({
         buttonLabel: `${namepsace}:option:1:label`,
+        disabledButtonLabel: `${namepsace}:option:1:label_disabled`,
         buttonTooltip: `${namepsace}:option:1:tooltip`,
+        disabledButtonTooltip: `${namepsace}:option:1:tooltip_disabled`,
         selected: [
           {
             text: `${namepsace}:option:1:selected`,
@@ -82,15 +87,17 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
   )
   .withOption(
     /**
-     * Option 2: Use a (non fainted) flying pokemon to guide you back.
+     * Option 2: Use a (non fainted) pokemon that can learn fly to guide you back.
      * Receives EXP similar to defeating a Lapras
      */
     new MysteryEncounterOptionBuilder()
-      .withPokemonTypeRequirement(Type.FLYING, true, 1)
+      .withPokemonCanLearnMoveRequirement(OPTION_2_REQUIRED_MOVE)
       .withOptionMode(EncounterOptionMode.DISABLED_OR_DEFAULT)
       .withDialogue({
         buttonLabel: `${namepsace}:option:2:label`,
+        disabledButtonLabel: `${namepsace}:option:2:label_disabled`,
         buttonTooltip: `${namepsace}:option:2:tooltip`,
+        disabledButtonTooltip: `${namepsace}:option:2:tooltip_disabled`,
         selected: [
           {
             text: `${namepsace}:option:2:selected`,
