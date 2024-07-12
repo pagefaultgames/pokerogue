@@ -1,12 +1,6 @@
 import { Ability, allAbilities } from "#app/data/ability";
-import {
-  EnemyPartyConfig,
-  getEncounterText,
-  initBattleWithEnemyConfig,
-  selectPokemonForOption,
-  setEncounterRewards,
-} from "#app/data/mystery-encounters/mystery-encounter-utils";
-import { Nature, getNatureName } from "#app/data/nature";
+import { EnemyPartyConfig, getEncounterText, initBattleWithEnemyConfig, selectPokemonForOption, setEncounterRewards, } from "#app/data/mystery-encounters/mystery-encounter-utils";
+import { getNatureName, Nature } from "#app/data/nature";
 import { speciesStarters } from "#app/data/pokemon-species";
 import { Stat } from "#app/data/pokemon-stat";
 import { PlayerPokemon } from "#app/field/pokemon";
@@ -20,11 +14,8 @@ import { randSeedShuffle } from "#app/utils";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "../../../battle-scene";
-import IMysteryEncounter, {
-  MysteryEncounterBuilder,
-  MysteryEncounterTier,
-} from "../mystery-encounter";
-import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
+import IMysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier, } from "../mystery-encounter";
+import { EncounterOptionMode, MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 
 /** The i18n namespace for the encounter */
 const namespace = "mysteryEncounter:training_session";
@@ -54,6 +45,7 @@ export const TrainingSessionEncounter: IMysteryEncounter =
     .withQuery(`${namespace}_query`)
     .withOption(
       new MysteryEncounterOptionBuilder()
+        .withOptionMode(EncounterOptionMode.DEFAULT)
         .withDialogue({
           buttonLabel: `${namespace}_option_1_label`,
           buttonTooltip: `${namespace}_option_1_tooltip`,
@@ -190,6 +182,7 @@ export const TrainingSessionEncounter: IMysteryEncounter =
     )
     .withOption(
       new MysteryEncounterOptionBuilder()
+        .withOptionMode(EncounterOptionMode.DEFAULT)
         .withDialogue({
           buttonLabel: `${namespace}_option_2_label`,
           buttonTooltip: `${namespace}_option_2_tooltip`,
@@ -275,6 +268,7 @@ export const TrainingSessionEncounter: IMysteryEncounter =
     )
     .withOption(
       new MysteryEncounterOptionBuilder()
+        .withOptionMode(EncounterOptionMode.DEFAULT)
         .withDialogue({
           buttonLabel: `${namespace}_option_3_label`,
           buttonTooltip: `${namespace}_option_3_tooltip`,

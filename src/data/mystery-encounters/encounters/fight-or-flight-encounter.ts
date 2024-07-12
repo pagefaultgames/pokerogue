@@ -1,5 +1,5 @@
 import { BattleStat } from "#app/data/battle-stat";
-import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
+import { EncounterOptionMode, MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import {
   EnemyPartyConfig,
   initBattleWithEnemyConfig,
@@ -8,7 +8,7 @@ import {
   setEncounterRewards,
   showEncounterText,
 } from "#app/data/mystery-encounters/mystery-encounter-utils";
-import { STEALING_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
+import {  STEALING_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
 import Pokemon from "#app/field/pokemon";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import {
@@ -50,13 +50,7 @@ export const FightOrFlightEncounter: IMysteryEncounter =
       const encounter = scene.currentBattle.mysteryEncounter;
 
       // Calculate boss mon
-      const bossSpecies = scene.arena.randomSpecies(
-        scene.currentBattle.waveIndex,
-        scene.currentBattle.waveIndex,
-        0,
-        getPartyLuckValue(scene.getParty()),
-        true
-      );
+      const bossSpecies = scene.arena.randomSpecies(scene.currentBattle.waveIndex, scene.currentBattle.waveIndex, 0, getPartyLuckValue(scene.getParty()), true);
       const config: EnemyPartyConfig = {
         levelAdditiveMultiplier: 1,
         pokemonConfigs: [{ species: bossSpecies, isBoss: true }],
@@ -73,17 +67,12 @@ export const FightOrFlightEncounter: IMysteryEncounter =
             : scene.currentBattle.waveIndex > 60
               ? ModifierTier.ULTRA
               : ModifierTier.GREAT;
-      regenerateModifierPoolThresholds(
-        scene.getParty(),
-        ModifierPoolType.PLAYER,
-        0
-      ); // refresh player item pool
-      const item = getPlayerModifierTypeOptions(1, scene.getParty(), [], {
-        guaranteedModifierTiers: [tier],
-      })[0];
+      regenerateModifierPoolThresholds(scene.getParty(), ModifierPoolType.PLAYER, 0);
+      const item = getPlayerModifierTypeOptions(1, scene.getParty(), [], { guaranteedModifierTiers: [tier] })[0];
       encounter.setDialogueToken("itemName", item.type.name);
       encounter.misc = item;
 
+      const bossSpriteKey = bossSpecies.getSpriteId(false, bossSpecies.forms ? 0 : null, false, bossSpecies.hasVariants() ? 0 : null);
       encounter.spriteConfigs = [
         {
           spriteKey: item.type.iconImage,
@@ -95,7 +84,7 @@ export const FightOrFlightEncounter: IMysteryEncounter =
           isItem: true,
         },
         {
-          spriteKey: bossSpecies.speciesId.toString(),
+          spriteKey: bossSpriteKey,
           fileRoot: "pokemon",
           hasShadow: true,
           tint: 0.25,
@@ -133,20 +122,14 @@ export const FightOrFlightEncounter: IMysteryEncounter =
         // Pick battle
         const item = scene.currentBattle.mysteryEncounter
           .misc as ModifierTypeOption;
-        setEncounterRewards(scene, {
-          guaranteedModifierTypeOptions: [item],
-          fillRemaining: false,
-        });
-        await initBattleWithEnemyConfig(
-          scene,
-          scene.currentBattle.mysteryEncounter.enemyPartyConfigs[0]
-        );
+        setEncounterRewards(scene, { guaranteedModifierTypeOptions: [item], fillRemaining: false });
+        await initBattleWithEnemyConfig(scene, scene.currentBattle.mysteryEncounter.enemyPartyConfigs[0]);
       }
     )
     .withOption(
       new MysteryEncounterOptionBuilder()
+        .withOptionMode(EncounterOptionMode.DEFAULT_OR_SPECIAL)
         .withPrimaryPokemonRequirement(new MoveRequirement(STEALING_MOVES)) // Will set option2PrimaryName and option2PrimaryMove dialogue tokens automatically
-        .withDisabledOnRequirementsNotMet(false)
         .withDialogue({
           buttonLabel: `${namespace}_option_2_label`,
           buttonTooltip: `${namespace}_option_2_tooltip`,
@@ -154,21 +137,14 @@ export const FightOrFlightEncounter: IMysteryEncounter =
         .withOptionPhase(async (scene: BattleScene) => {
           // Pick steal
           const encounter = scene.currentBattle.mysteryEncounter;
-          const item = scene.currentBattle.mysteryEncounter
-            .misc as ModifierTypeOption;
-          setEncounterRewards(scene, {
-            guaranteedModifierTypeOptions: [item],
-            fillRemaining: false,
-          });
+          const item = scene.currentBattle.mysteryEncounter.misc as ModifierTypeOption;
+          setEncounterRewards(scene, { guaranteedModifierTypeOptions: [item], fillRemaining: false });
 
           // If player has a stealing move, they succeed automatically
           const primaryPokemon = encounter.options[1].primaryPokemon;
           if (primaryPokemon) {
             // Use primaryPokemon to execute the thievery
-            await showEncounterText(
-              scene,
-              `${namespace}_option_2_steal_result`
-            );
+            await showEncounterText(scene, `${namespace}_option_2_steal_result`);
             leaveEncounterWithoutBattle(scene);
             return;
           }
@@ -176,34 +152,12 @@ export const FightOrFlightEncounter: IMysteryEncounter =
           const roll = randSeedInt(16);
           if (roll > 6) {
             // Noticed and attacked by boss, gets +1 to all stats at start of fight (62.5%)
-            const config =
-              scene.currentBattle.mysteryEncounter.enemyPartyConfigs[0];
-            config.pokemonConfigs[0].tags = [
-              BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON,
-            ];
-            config.pokemonConfigs[0].mysteryEncounterBattleEffects = (
-              pokemon: Pokemon
-            ) => {
-              pokemon.scene.currentBattle.mysteryEncounter.setDialogueToken(
-                "enemyPokemon",
-                pokemon.name
-              );
+            const config = scene.currentBattle.mysteryEncounter.enemyPartyConfigs[0];
+            config.pokemonConfigs[0].tags = [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON];
+            config.pokemonConfigs[0].mysteryEncounterBattleEffects = (pokemon: Pokemon) => {
+              pokemon.scene.currentBattle.mysteryEncounter.setDialogueToken("enemyPokemon", pokemon.name);
               queueEncounterMessage(pokemon.scene, `${namespace}_boss_enraged`);
-              pokemon.scene.unshiftPhase(
-                new StatChangePhase(
-                  pokemon.scene,
-                  pokemon.getBattlerIndex(),
-                  true,
-                  [
-                    BattleStat.ATK,
-                    BattleStat.DEF,
-                    BattleStat.SPATK,
-                    BattleStat.SPDEF,
-                    BattleStat.SPD,
-                  ],
-                  1
-                )
-              );
+              pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD], 1));
             };
             await showEncounterText(scene, `${namespace}_option_2_bad_result`);
             await initBattleWithEnemyConfig(scene, config);

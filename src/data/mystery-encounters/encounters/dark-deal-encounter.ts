@@ -7,19 +7,9 @@ import BattleScene from "../../../battle-scene";
 import { AddPokeballModifierType } from "../../../modifier/modifier-type";
 import { PokeballType } from "../../pokeball";
 import { getPokemonSpecies } from "../../pokemon-species";
-import IMysteryEncounter, {
-  MysteryEncounterBuilder,
-  MysteryEncounterTier,
-} from "../mystery-encounter";
-import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
-import {
-  EnemyPartyConfig,
-  EnemyPokemonConfig,
-  getRandomPlayerPokemon,
-  getRandomSpeciesByStarterTier,
-  initBattleWithEnemyConfig,
-  leaveEncounterWithoutBattle,
-} from "../mystery-encounter-utils";
+import IMysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier, } from "../mystery-encounter";
+import { EncounterOptionMode, MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
+import { EnemyPartyConfig, EnemyPokemonConfig, getRandomPlayerPokemon, getRandomSpeciesByStarterTier, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, } from "../mystery-encounter-utils";
 
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounter:dark_deal";
@@ -27,6 +17,10 @@ const namespace = "mysteryEncounter:dark_deal";
 // Exclude Ultra Beasts, Paradox, Necrozma, Eternatus, and egg-locked mythicals
 const excludedBosses = [
   Species.NECROZMA,
+  Species.COSMOG,
+  Species.COSMOEM,
+  Species.SOLGALEO,
+  Species.LUNALA,
   Species.ETERNATUS,
   Species.NIHILEGO,
   Species.BUZZWOLE,
@@ -106,6 +100,7 @@ export const DarkDealEncounter: IMysteryEncounter =
     .withQuery(`${namespace}_query`)
     .withOption(
       new MysteryEncounterOptionBuilder()
+        .withOptionMode(EncounterOptionMode.DEFAULT)
         .withDialogue({
           buttonLabel: `${namespace}_option_1_label`,
           buttonTooltip: `${namespace}_option_1_tooltip`,
@@ -135,20 +130,12 @@ export const DarkDealEncounter: IMysteryEncounter =
             removedPokemon.species.type1,
           ];
           if (removedPokemon.species.type2) {
-            scene.currentBattle.mysteryEncounter.misc.push(
-              removedPokemon.species.type2
-            );
+            scene.currentBattle.mysteryEncounter.misc.push(removedPokemon.species.type2);
           }
         })
         .withOptionPhase(async (scene: BattleScene) => {
           // Give the player 5 Rogue Balls
-          scene.unshiftPhase(
-            new ModifierRewardPhase(
-              scene,
-              () =>
-                new AddPokeballModifierType("rb", PokeballType.ROGUE_BALL, 5)
-            )
-          );
+          scene.unshiftPhase(new ModifierRewardPhase(scene, () => new AddPokeballModifierType("rb", PokeballType.ROGUE_BALL, 5)));
 
           // Start encounter with random legendary (7-10 starter strength) that has level additive
           const bossTypes = scene.currentBattle.mysteryEncounter.misc as Type[];
@@ -156,21 +143,12 @@ export const DarkDealEncounter: IMysteryEncounter =
           const roll = randSeedInt(100);
           const starterTier: number | [number, number] =
             roll > 65 ? 6 : roll > 15 ? 7 : roll > 5 ? 8 : [9, 10];
-          const bossSpecies = getPokemonSpecies(
-            getRandomSpeciesByStarterTier(
-              starterTier,
-              excludedBosses,
-              bossTypes
-            )
-          );
+          const bossSpecies = getPokemonSpecies(getRandomSpeciesByStarterTier(starterTier, excludedBosses, bossTypes));
           const pokemonConfig: EnemyPokemonConfig = {
             species: bossSpecies,
             isBoss: true,
           };
-          if (
-            !isNullOrUndefined(bossSpecies.forms) &&
-            bossSpecies.forms.length > 0
-          ) {
+          if (!isNullOrUndefined(bossSpecies.forms) && bossSpecies.forms.length > 0) {
             pokemonConfig.formIndex = 0;
           }
           const config: EnemyPartyConfig = {
@@ -194,7 +172,6 @@ export const DarkDealEncounter: IMysteryEncounter =
       },
       async (scene: BattleScene) => {
         // Leave encounter with no rewards or exp
-
         leaveEncounterWithoutBattle(scene, true);
         return true;
       }

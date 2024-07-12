@@ -9,7 +9,7 @@ import { StatusEffect } from "../status-effect";
 import MysteryEncounterDialogue, {
   OptionTextDisplay
 } from "./mystery-encounter-dialogue";
-import MysteryEncounterOption, { MysteryEncounterOptionBuilder, OptionPhaseCallback } from "./mystery-encounter-option";
+import MysteryEncounterOption, { EncounterOptionMode, MysteryEncounterOptionBuilder, OptionPhaseCallback } from "./mystery-encounter-option";
 import {
   EncounterPokemonRequirement,
   EncounterSceneRequirement,
@@ -136,7 +136,7 @@ export default class IMysteryEncounter implements IMysteryEncounter {
       Object.assign(this, encounter);
     }
     this.encounterTier = this.encounterTier ? this.encounterTier : MysteryEncounterTier.COMMON;
-    this.dialogue = {};
+    this.dialogue = this.dialogue ?? {};
     this.encounterVariant = MysteryEncounterVariant.DEFAULT;
     this.requirements = this.requirements ? this.requirements : [];
     this.hideBattleIntroMessage = !isNullOrUndefined(this.hideBattleIntroMessage) ? this.hideBattleIntroMessage : false;
@@ -397,7 +397,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * @returns
    */
   withSimpleOption(dialogue: OptionTextDisplay, callback: OptionPhaseCallback) {
-    return this.withOption(new MysteryEncounterOptionBuilder().withDialogue(dialogue).withOptionPhase(callback).build());
+    return this.withOption(new MysteryEncounterOptionBuilder().withOptionMode(EncounterOptionMode.DEFAULT).withDialogue(dialogue).withOptionPhase(callback).build());
   }
 
   /**

@@ -7,22 +7,10 @@ import BattleScene from "../../../battle-scene";
 import * as Utils from "../../../utils";
 import { getPokemonSpecies } from "../../pokemon-species";
 import { Status, StatusEffect } from "../../status-effect";
-import IMysteryEncounter, {
-  MysteryEncounterBuilder,
-  MysteryEncounterTier,
-} from "../mystery-encounter";
-import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
+import IMysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier, } from "../mystery-encounter";
+import { EncounterOptionMode, MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import { MoveRequirement } from "../mystery-encounter-requirements";
-import {
-  EnemyPartyConfig,
-  EnemyPokemonConfig,
-  generateModifierTypeOption,
-  initBattleWithEnemyConfig,
-  leaveEncounterWithoutBattle,
-  queueEncounterMessage,
-  setEncounterExp,
-  setEncounterRewards,
-} from "../mystery-encounter-utils";
+import { EnemyPartyConfig, EnemyPokemonConfig, generateModifierTypeOption, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, queueEncounterMessage, setEncounterExp, setEncounterRewards, } from "../mystery-encounter-utils";
 
 /** i18n namespace for the encounter */
 const namespace = "mysteryEncounter:sleeping_snorlax";
@@ -152,6 +140,7 @@ export const SleepingSnorlaxEncounter: IMysteryEncounter =
     )
     .withOption(
       new MysteryEncounterOptionBuilder()
+        .withOptionMode(EncounterOptionMode.DISABLED_OR_SPECIAL)
         .withPrimaryPokemonRequirement(new MoveRequirement(STEALING_MOVES))
         .withDialogue({
           buttonLabel: `${namespace}_option_3_label`,
