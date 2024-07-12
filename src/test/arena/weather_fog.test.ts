@@ -39,7 +39,7 @@ describe("Weather - Fog", () => {
     await game.startBattle([Species.MAGIKARP]);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
-    const moveAccuracy = moveToCheck.calculateAccuracy(game.scene.getPlayerPokemon(), game.scene.getEnemyPokemon());
+    const moveAccuracy = moveToCheck.calculateBattleAccuracy(game.scene.getPlayerPokemon(), game.scene.getEnemyPokemon());
 
     await game.phaseInterceptor.to(MoveEndPhase);
 

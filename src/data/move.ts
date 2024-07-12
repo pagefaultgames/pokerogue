@@ -657,13 +657,13 @@ export default class Move implements Localizable {
   }
 
   /**
-   * Calculates the accuracy of a move based on various conditions and attributes.
+   * Calculates the accuracy of a move in battle based on various conditions and attributes.
    *
    * @param user {@linkcode Pokemon} The Pokémon using the move.
    * @param target {@linkcode Pokemon} The Pokémon being targeted by the move.
    * @returns The calculated accuracy of the move.
    */
-  calculateAccuracy(user: Pokemon, target: Pokemon) {
+  calculateBattleAccuracy(user: Pokemon, target: Pokemon) {
     const moveAccuracy = new Utils.NumberHolder(this.accuracy);
 
     applyMoveAttrs(VariableAccuracyAttr, user, target, this, moveAccuracy);

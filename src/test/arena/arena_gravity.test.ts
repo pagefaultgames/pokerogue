@@ -37,7 +37,7 @@ describe("Arena - Gravity", () => {
     const moveToCheck = allMoves[Moves.TACKLE];
     await game.startBattle([Species.MAGIKARP]);
 
-    const preGravityMoveAccuracy = moveToCheck.calculateAccuracy(game.scene.getPlayerPokemon(), game.scene.getEnemyPokemon());
+    const preGravityMoveAccuracy = moveToCheck.calculateBattleAccuracy(game.scene.getPlayerPokemon(), game.scene.getEnemyPokemon());
     expect(preGravityMoveAccuracy).not.toBe(moveToCheck.accuracy * 1.67);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.GRAVITY));
@@ -47,7 +47,7 @@ describe("Arena - Gravity", () => {
 
     expect(game.scene.arena.getTag(ArenaTagType.GRAVITY)).toBeDefined();
 
-    const postGravityMoveAccuracy = moveToCheck.calculateAccuracy(game.scene.getPlayerPokemon(), game.scene.getEnemyPokemon());
+    const postGravityMoveAccuracy = moveToCheck.calculateBattleAccuracy(game.scene.getPlayerPokemon(), game.scene.getEnemyPokemon());
     expect(postGravityMoveAccuracy).toBe(Math.floor(moveToCheck.accuracy * 1.67));
   });
 });
