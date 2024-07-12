@@ -1248,7 +1248,7 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
     return i18next.t("abilityTriggers:pokemonTypeChange", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      moveType: this.moveType,
+      moveType: i18next.t(`pokemonInfo:Type.${Type[this.moveType]}`),
     });
   }
 }
