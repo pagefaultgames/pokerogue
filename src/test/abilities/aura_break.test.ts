@@ -39,30 +39,30 @@ describe("Abilities - Aura Break", () => {
   });
 
   it("reverses the effect of fairy aura", async () => {
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.FAIRY_AURA);
     const moveToCheck = allMoves[Moves.MOONBLAST];
     const basePower = moveToCheck.power;
+
+    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.FAIRY_AURA);
+    vi.spyOn(moveToCheck, "calculateBattlePower");
+
     await game.startBattle([Species.MAGIKARP]);
-
     game.doAttack(getMovePosition(game.scene, 0, Moves.MOONBLAST));
-
-    const movePower = moveToCheck.calculateBattlePower(game.scene.getPlayerPokemon(), game.scene.getEnemyPokemon());
     await game.phaseInterceptor.to(MoveEffectPhase);
 
-    expect(movePower).toBe(basePower * auraMultiplier * auraBreakMultiplier);
+    expect(moveToCheck.calculateBattlePower).toHaveReturnedWith(basePower * auraMultiplier * auraBreakMultiplier);
   });
 
   it("reverses the effect of dark aura", async () => {
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.DARK_AURA);
     const moveToCheck = allMoves[Moves.DARK_PULSE];
     const basePower = moveToCheck.power;
+
+    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.DARK_AURA);
+    vi.spyOn(moveToCheck, "calculateBattlePower");
+
     await game.startBattle([Species.MAGIKARP]);
-
     game.doAttack(getMovePosition(game.scene, 0, Moves.DARK_PULSE));
-
-    const movePower = moveToCheck.calculateBattlePower(game.scene.getPlayerPokemon(), game.scene.getEnemyPokemon());
     await game.phaseInterceptor.to(MoveEffectPhase);
 
-    expect(movePower).toBe(basePower * auraMultiplier * auraBreakMultiplier);
+    expect(moveToCheck.calculateBattlePower).toHaveReturnedWith(basePower * auraMultiplier * auraBreakMultiplier);
   });
 });

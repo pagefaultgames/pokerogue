@@ -6,13 +6,14 @@ import { Species } from "#enums/species";
 import { Moves } from "#enums/moves";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { allMoves } from "#app/data/move.js";
-import { AllyMoveCategoryPowerBoostAbAttr } from "#app/data/ability.js";
-import Pokemon from "#app/field/pokemon.js";
 import { Abilities } from "#app/enums/abilities.js";
+import { MoveEffectPhase, TurnEndPhase } from "#app/phases.js";
 
 describe("Abilities - Battery", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
+
+  const batteryMultiplier = 1.3;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -27,64 +28,54 @@ describe("Abilities - Battery", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     vi.spyOn(overrides, "DOUBLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SHUCKLE);
     vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.ROCK_SLIDE, Moves.SPLASH, Moves.HEAT_WAVE]);
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.BREAKING_SWIPE, Moves.SPLASH, Moves.DAZZLING_GLEAM]);
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
   });
 
   it("raises the power of allies' special moves by 30%", async () => {
-    const moveToBeUsed = Moves.HEAT_WAVE;
-    const basePower = allMoves[moveToBeUsed].power;
+    const moveToCheck = allMoves[Moves.DAZZLING_GLEAM];
+    const basePower = moveToCheck.power;
 
-    await game.startBattle([Species.MAGIKARP, Species.CHARJABUG]);
+    vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    game.doAttack(getMovePosition(game.scene, 0, moveToBeUsed));
+    await game.startBattle([Species.PIKACHU, Species.CHARJABUG]);
+
+    game.doAttack(getMovePosition(game.scene, 0, Moves.DAZZLING_GLEAM));
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+    await game.phaseInterceptor.to(MoveEffectPhase);
 
-    const [boostedAlly, boostSource] = game.scene.getPlayerField();
-    const multiplier = getAttrPowerMultiplier(boostSource);
-    const movePower = allMoves[moveToBeUsed].calculateBattlePower(boostedAlly, game.scene.getEnemyPokemon());
-
-    expect(movePower).toBe(basePower * multiplier);
+    expect(moveToCheck.calculateBattlePower).toHaveReturnedWith(basePower * batteryMultiplier);
   });
 
   it("does not raise the power of allies' non-special moves", async () => {
-    const moveToBeUsed = Moves.ROCK_SLIDE;
-    const basePower = allMoves[moveToBeUsed].power;
+    const moveToCheck = allMoves[Moves.BREAKING_SWIPE];
+    const basePower = moveToCheck.power;
 
-    await game.startBattle([Species.MAGIKARP, Species.CHARJABUG]);
+    vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    game.doAttack(getMovePosition(game.scene, 0, moveToBeUsed));
+    await game.startBattle([Species.PIKACHU, Species.CHARJABUG]);
+
+    game.doAttack(getMovePosition(game.scene, 0, Moves.BREAKING_SWIPE));
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+    await game.phaseInterceptor.to(MoveEffectPhase);
 
-    const movePower = allMoves[moveToBeUsed].calculateBattlePower(game.scene.getPlayerPokemon(), game.scene.getEnemyPokemon());
-
-    expect(movePower).toBe(basePower);
+    expect(moveToCheck.calculateBattlePower).toHaveReturnedWith(basePower);
   });
 
   it("does not raise the power of the ability owner's special moves", async () => {
-    const moveToBeUsed = Moves.HEAT_WAVE;
-    const basePower = allMoves[moveToBeUsed].power;
+    const moveToCheck = allMoves[Moves.DAZZLING_GLEAM];
+    const basePower = moveToCheck.power;
 
-    await game.startBattle([Species.CHARJABUG, Species.MAGIKARP]);
+    vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    game.doAttack(getMovePosition(game.scene, 0, moveToBeUsed));
+    await game.startBattle([Species.CHARJABUG, Species.PIKACHU]);
+
+    game.doAttack(getMovePosition(game.scene, 0, Moves.DAZZLING_GLEAM));
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+    await game.phaseInterceptor.to(TurnEndPhase);
 
-    const movePower = allMoves[moveToBeUsed].calculateBattlePower(game.scene.getPlayerPokemon(), game.scene.getEnemyPokemon());
-
-    expect(movePower).toBe(basePower);
+    expect(moveToCheck.calculateBattlePower).toHaveReturnedWith(basePower);
   });
 });
-
-/**
- * Retrieves the power multiplier from a Pokémon's ability attribute.
- *
- * @param pokemon - The Pokémon whose ability attributes are being queried.
- * @returns The power multiplier of the `AllyMoveCategoryPowerBoostAbAttr` attribute.
- */
-const getAttrPowerMultiplier = (pokemon: Pokemon) => {
-  const attr = pokemon.getAbilityAttrs(AllyMoveCategoryPowerBoostAbAttr);
-
-  return (attr[0] as AllyMoveCategoryPowerBoostAbAttr)["powerMultiplier"];
-};
