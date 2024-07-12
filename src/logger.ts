@@ -397,7 +397,16 @@ export function generateEditOption(scene: BattleScene, i: integer, saves: any, p
         buttonActions: [
           () => {
             scene.ui.playSelect();
-            console.log("Ending UI phase thingy");
+            phase.callEnd()
+          },
+          () => {
+            scene.ui.playSelect();
+            downloadLogByID(i)
+            phase.callEnd()
+          },
+          () => {
+            scene.ui.playSelect();
+            localStorage.removeItem(logs[i][1])
             phase.callEnd()
           }
         ]

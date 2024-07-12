@@ -417,11 +417,39 @@ export class TitlePhase extends Phase {
         //options.push(LoggerTools.generateAddOption(i, this.scene, this))
       }
     }
+    options.push({
+      label: "Delete all",
+      handler: () => {
+        for (var i = 0; i < LoggerTools.logs.length; i++) {
+          if (localStorage.getItem(LoggerTools.logs[i][1]) != null) {
+            localStorage.removeItem(LoggerTools.logs[i][1])
+          }
+        }
+        this.scene.clearPhaseQueue();
+        this.scene.pushPhase(new TitlePhase(this.scene));
+        super.end();
+        return true;
+      }
+    }, {
+      label: i18next.t("menu:cancel"),
+      handler: () => {
+        this.scene.clearPhaseQueue();
+        this.scene.pushPhase(new TitlePhase(this.scene));
+        super.end();
+        return true;
+      }
+    });
+    this.scene.ui.showText("Export or clear game logs.", null, () => this.scene.ui.setOverlayMode(Mode.OPTION_SELECT, { options: options }));
+    return true;
+  }
+  logRenameMenu(): boolean {
+    const options: OptionSelectItem[] = [];
+    LoggerTools.getLogs()
     for (var i = 0; i < LoggerTools.logs.length; i++) {
       if (localStorage.getItem(LoggerTools.logs[i][1]) != null) {
-        //options.push(LoggerTools.generateOption(i, this.scene, this.logMenu) as OptionSelectItem)
+        options.push(LoggerTools.generateEditOption(this.scene, i, this.getSaves(), this) as OptionSelectItem)
       } else {
-        options.push(LoggerTools.generateAddOption(i, this.scene, this))
+        //options.push(LoggerTools.generateAddOption(i, this.scene, this))
       }
     }
     options.push({
@@ -446,7 +474,7 @@ export class TitlePhase extends Phase {
         return true;
       }
     });
-    this.scene.ui.showText("Export or clear game logs.", null, () => this.scene.ui.setOverlayMode(Mode.OPTION_SELECT, { options: options }));
+    this.scene.ui.showText("Export, rename, or delete logs.", null, () => this.scene.ui.setOverlayMode(Mode.OPTION_SELECT, { options: options }));
     return true;
   }
 
@@ -563,7 +591,7 @@ export class TitlePhase extends Phase {
     }, {
       label: "Manage Logs",
       handler: () => {
-        return this.logMenu()
+        return this.logRenameMenu()
       }
     })
     options.push({
