@@ -1,7 +1,7 @@
 import { beforeAll, describe, beforeEach, afterEach, expect, it, vi } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
-import * as overrides from "#app/overrides";
+import overrides from "#app/overrides";
 import { Species } from "#enums/species";
 import { TerrainType, getTerrainName } from "#app/data/terrain";
 import { getTerrainStartMessage, getTerrainClearMessage, getTerrainBlockMessage } from "#app/data/weather";

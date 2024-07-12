@@ -50,7 +50,7 @@ import { fetchDailyRunSeed, getDailyRunStarters } from "./data/daily-run";
 import { GameMode, GameModes, getGameMode } from "./game-mode";
 import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "./data/pokemon-species";
 import i18next from "./plugins/i18n";
-import * as Overrides from "./overrides";
+import Overrides from "./overrides";
 import { TextStyle, addTextObject } from "./ui/text";
 import { Type } from "./data/type";
 import { BerryUsedEvent, EncounterPhaseEvent, MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./events/battle-scene";
