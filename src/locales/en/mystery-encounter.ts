@@ -86,9 +86,9 @@ export const mysteryEncounter: SimpleTranslationEntries = {
   "shady_vitamin_dealer_query": "Which deal will choose?",
   "shady_vitamin_dealer_invalid_selection": "Pokémon must be healthy enough.",
   "shady_vitamin_dealer_option_1_label": "The Cheap Deal",
-  "shady_vitamin_dealer_option_1_tooltip": "(-) Pay @[MONEY]{₽{{option1Money, number}}}\n(-) Side Effects?\n(+) Chosen Pokémon Gains 2 Random Vitamins",
+  "shady_vitamin_dealer_option_1_tooltip": "(-) Pay {{option1Money, money}}\n(-) Side Effects?\n(+) Chosen Pokémon Gains 2 Random Vitamins",
   "shady_vitamin_dealer_option_2_label": "The Pricey Deal",
-  "shady_vitamin_dealer_option_2_tooltip": "(-) Pay @[MONEY]{₽{{option2Money, number}}}\n(-) Side Effects?\n(+) Chosen Pokémon Gains 2 Random Vitamins",
+  "shady_vitamin_dealer_option_2_tooltip": "(-) Pay {{option2Money, money}}\n(-) Side Effects?\n(+) Chosen Pokémon Gains 2 Random Vitamins",
   "shady_vitamin_dealer_option_selected": `The man hands you two bottles and quickly disappears.
     \${{selectedPokemon}} gained {{boost1}} and {{boost2}} boosts!`,
   "shady_vitamin_dealer_damage_only": `But the medicine had some side effects!
