@@ -20,6 +20,11 @@ export class FilterBar extends Phaser.GameObjects.Container {
   public numFilters: number = 0;
   public openDropDown: boolean = false;
   private lastCursor: number = -1;
+  public defaultGenVals: any[] = [];
+  public defaultTypeVals: any[] = [];
+  public defaultUnlockVals: any[] = [];
+  public defaultWinVals: any[] = [];
+  public defaultSortVals: any[] = [];
 
   constructor(scene: BattleScene, x: number, y: number, width: number, height: number) {
     super(scene, x, y);
@@ -46,6 +51,54 @@ export class FilterBar extends Phaser.GameObjects.Container {
 
     this.calcFilterPositions();
     this.numFilters++;
+  }
+
+
+  updateFilterLabels(): void {
+    const genVals = this.getVals(DropDownColumn.GEN);
+    const typeVals = this.getVals(DropDownColumn.TYPES);
+    const unlockVals = this.getVals(DropDownColumn.UNLOCKS);
+    const winVals = this.getVals(DropDownColumn.WIN);
+    const sortVals = this.getVals(DropDownColumn.SORT);
+
+    // onColor is Yellow, offColor is White
+    const onColor = 0xffef5c;
+    const offColor = 0xffffff;
+
+    // if genVals and defaultGenVals has same elements, set the label to White else set it to Green
+    if (genVals.length === this.defaultGenVals.length && genVals.every((value, index) => value === this.defaultGenVals[index])) {
+      this.labels[DropDownColumn.GEN].setTint(offColor);
+    } else {
+      this.labels[DropDownColumn.GEN].setTint(onColor);
+    }
+
+    // if typeVals and defaultTypeVals has same elements, set the label to White else set it to Green
+    if (typeVals.length === this.defaultTypeVals.length && typeVals.every((value, index) => value === this.defaultTypeVals[index])) {
+      this.labels[DropDownColumn.TYPES].setTint(offColor);
+    } else {
+      this.labels[DropDownColumn.TYPES].setTint(onColor);
+    }
+
+    // if unlockVals and defaultUnlockVals has same elements, set the label to White else set it to Green
+    if (unlockVals.length === this.defaultUnlockVals.length && unlockVals.every((value, index) => value === this.defaultUnlockVals[index])) {
+      this.labels[DropDownColumn.UNLOCKS].setTint(offColor);
+    } else {
+      this.labels[DropDownColumn.UNLOCKS].setTint(onColor);
+    }
+
+    // if winVals and defaultWinVals has same elements, set the label to White else set it to Green
+    if (winVals.length === this.defaultWinVals.length && winVals.every((value, index) => value === this.defaultWinVals[index])) {
+      this.labels[DropDownColumn.WIN].setTint(offColor);
+    } else {
+      this.labels[DropDownColumn.WIN].setTint(onColor);
+    }
+
+    // if sortVals and defaultSortVals has same value and dir, set the label to White else set it to Green
+    if (sortVals[0]["dir"] === this.defaultSortVals[0]["dir"] && sortVals[0]["val"] === this.defaultSortVals[0]["val"]) {
+      this.labels[DropDownColumn.SORT].setTint(offColor);
+    } else {
+      this.labels[DropDownColumn.SORT].setTint(onColor);
+    }
   }
 
   calcFilterPositions(): void {

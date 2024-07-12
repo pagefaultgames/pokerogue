@@ -320,16 +320,23 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     // gen filter
     const genOptions: DropDownOption[] = [
       new DropDownOption(this.scene, 0, "I", null, DropDownState.ON),
-      new DropDownOption(this.scene, 1, "II", null, DropDownState.OFF),
-      new DropDownOption(this.scene, 2, "III", null, DropDownState.OFF),
-      new DropDownOption(this.scene, 3, "IV", null, DropDownState.OFF),
-      new DropDownOption(this.scene, 4, "V", null, DropDownState.OFF),
-      new DropDownOption(this.scene, 5, "VI", null, DropDownState.OFF),
-      new DropDownOption(this.scene, 6, "VII", null, DropDownState.OFF),
-      new DropDownOption(this.scene, 7, "VIII", null, DropDownState.OFF),
-      new DropDownOption(this.scene, 8, "IX", null, DropDownState.OFF),
+      new DropDownOption(this.scene, 1, "II", null, DropDownState.ON),
+      new DropDownOption(this.scene, 2, "III", null, DropDownState.ON),
+      new DropDownOption(this.scene, 3, "IV", null, DropDownState.ON),
+      new DropDownOption(this.scene, 4, "V", null, DropDownState.ON),
+      new DropDownOption(this.scene, 5, "VI", null, DropDownState.ON),
+      new DropDownOption(this.scene, 6, "VII", null, DropDownState.ON),
+      new DropDownOption(this.scene, 7, "VIII", null, DropDownState.ON),
+      new DropDownOption(this.scene, 8, "IX", null, DropDownState.ON),
     ];
     this.filterBar.addFilter("Gen", new DropDown(this.scene, 0, 0, genOptions, this.updateStarters, DropDownType.MULTI));
+    this.filterBar.defaultGenVals = this.filterBar.getVals(DropDownColumn.GEN);
+    // set gen filter to all off except for the I GEN
+    for (const option of genOptions) {
+      if (option.val !== 0) {
+        option.setOptionState(DropDownState.OFF);
+      }
+    }
 
     // type filter
     const typeKeys = Object.keys(Type).filter(v => isNaN(Number(v)));
@@ -344,6 +351,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       typeOptions.push(new DropDownOption(this.scene, index, null, typeSprite));
     });
     this.filterBar.addFilter("Type", new DropDown(this.scene, 0, 0, typeOptions, this.updateStarters, DropDownType.MULTI, 0.5));
+    this.filterBar.defaultTypeVals = this.filterBar.getVals(DropDownColumn.TYPES);
 
     // Unlocks filter
     const shiny1Sprite = this.scene.add.sprite(0, 0, "shiny_star_small");
@@ -360,12 +368,14 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       new DropDownOption(this.scene, "NORMAL", "Normal"),
       new DropDownOption(this.scene, "UNCAUGHT", "Not Caught")];
     this.filterBar.addFilter("Unlocks", new DropDown(this.scene, 0, 0, unlocksOptions, this.updateStarters, DropDownType.MULTI));
+    this.filterBar.defaultUnlockVals = this.filterBar.getVals(DropDownColumn.UNLOCKS);
 
     // win filter
     const winOptions = [
       new DropDownOption(this.scene, "WIN", "has won"),
       new DropDownOption(this.scene, "NOTWIN", "hasn't won yet")];
     this.filterBar.addFilter("Win", new DropDown(this.scene, 0, 0, winOptions, this.updateStarters, DropDownType.MULTI));
+    this.filterBar.defaultWinVals = this.filterBar.getVals(DropDownColumn.WIN);
 
     // sort filter
     const sortOptions = [
@@ -375,6 +385,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       new DropDownOption(this.scene, 3, "Name", null, DropDownState.OFF)];
     this.filterBar.addFilter("Sort", new DropDown(this.scene, 0, 0, sortOptions, this.updateStarters, DropDownType.SINGLE));
     this.filterBarContainer.add(this.filterBar);
+    this.filterBar.defaultSortVals = this.filterBar.getVals(DropDownColumn.SORT);
 
     this.starterSelectContainer.add(this.filterBarContainer);
 
@@ -1846,6 +1857,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     this.pokerusCursorObjs.forEach(cursor => cursor.setVisible(false));
     this.starterCursorObjs.forEach(cursor => cursor.setVisible(false));
+
+    this.filterBar.updateFilterLabels()
 
     // filter
     for (let g=0; g < this.starterContainers.length; g++) {
