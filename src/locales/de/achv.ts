@@ -265,8 +265,8 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "Ein ewiges Abenteuer!",
   },
   "NUZLOCKE_REGULAR": {
-    name: "Unfaintable",
-    description: "Complete the regular nuzlocke challenge.",
+    "name": "Unbezwingbar",
+    "description": "Schließe die reguläre Nuzlocke-Herausforderung ab.",
   },
   "NUZLOCKE_HARDCORE": {
     name: "How?",
