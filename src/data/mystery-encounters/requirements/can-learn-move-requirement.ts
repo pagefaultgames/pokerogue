@@ -26,11 +26,23 @@ export class CanLearnMoveRequirement extends EncounterPokemonRequirement {
   private readonly excludeEggMoves?: boolean;
   private readonly includeFainted?: boolean;
 
-  constructor(requiredMoves: Moves | Moves[], options: CanlearnMoveRequirementOptions = {}) {
+  constructor(
+    requiredMoves: Moves | Moves[],
+    options: CanlearnMoveRequirementOptions = {}
+  ) {
     super();
-    this.requiredMoves = Array.isArray(requiredMoves) ? requiredMoves : [requiredMoves];
+    this.requiredMoves = Array.isArray(requiredMoves)
+      ? requiredMoves
+      : [requiredMoves];
 
-    const { excludeLevelMoves, excludeTmMoves, excludeEggMoves, includeFainted, minNumberOfPokemon, invertQuery } = options;
+    const {
+      excludeLevelMoves,
+      excludeTmMoves,
+      excludeEggMoves,
+      includeFainted,
+      minNumberOfPokemon,
+      invertQuery,
+    } = options;
 
     this.excludeLevelMoves = excludeLevelMoves ?? false;
     this.excludeTmMoves = excludeTmMoves ?? false;
@@ -41,7 +53,11 @@ export class CanLearnMoveRequirement extends EncounterPokemonRequirement {
   }
 
   override meetsRequirement(scene: BattleScene): boolean {
-    const partyPokemon = scene.getParty().filter((pkm) => (this.includeFainted ? pkm.isAllowed() : pkm.isAllowedInBattle()));
+    const partyPokemon = scene
+      .getParty()
+      .filter((pkm) =>
+        this.includeFainted ? pkm.isAllowed() : pkm.isAllowedInBattle()
+      );
 
     if (isNullOrUndefined(partyPokemon) || this?.requiredMoves?.length < 0) {
       return false;
@@ -54,19 +70,26 @@ export class CanLearnMoveRequirement extends EncounterPokemonRequirement {
     if (!this.invertQuery) {
       return partyPokemon.filter((pokemon) =>
         // every required move should be included
-        this.requiredMoves.every((requiredMove) => this.getAllPokemonMoves(pokemon).includes(requiredMove))
+        this.requiredMoves.every((requiredMove) =>
+          this.getAllPokemonMoves(pokemon).includes(requiredMove)
+        )
       );
     } else {
       return partyPokemon.filter(
         (pokemon) =>
           // none of the "required" moves should be included
-          !this.requiredMoves.some((requiredMove) => this.getAllPokemonMoves(pokemon).includes(requiredMove))
+          !this.requiredMoves.some((requiredMove) =>
+            this.getAllPokemonMoves(pokemon).includes(requiredMove)
+          )
       );
     }
   }
 
-  override getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
-    return pokemon ? ["pokemonCanLearnMove", pokemon.name] : null;
+  override getDialogueToken(
+    _scene: BattleScene,
+    _pokemon?: PlayerPokemon
+  ): [string, string] {
+    return ["requiredMoves", this.requiredMoves.join(", ")];
   }
 
   private getPokemonLevelMoves(pkm: PlayerPokemon): Moves[] {
@@ -80,11 +103,11 @@ export class CanLearnMoveRequirement extends EncounterPokemonRequirement {
       allPokemonMoves.push(...this.getPokemonLevelMoves(pkm));
     }
 
-    if (this.excludeTmMoves) {
+    if (!this.excludeTmMoves) {
       allPokemonMoves.push(...pkm.compatibleTms);
     }
 
-    if (this.excludeEggMoves) {
+    if (!this.excludeEggMoves) {
       allPokemonMoves.push(...pkm.getEggMoves());
     }
 
