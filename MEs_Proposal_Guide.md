@@ -79,7 +79,16 @@ self explanatory, it's any/all biomes
 ### `EXTREME_BIOMES` and `NON-EXTREME_BIOMES` 
 
 these are all the biomes in two mutually exclusive lists. The main point of this split is to avoid "Breeders in Space" type situations, with random trainers saluting you while on the moon.
-  - "EXTREME_BIOMES": Abyss, Badlands, Desert, Ice Cave, Seabed, Space, Volcano, Wasteland
+#### EXTREME_BIOMES
+
+- Abyss
+- Badlands
+- Desert
+- Ice Cave
+- Seabed
+- Space
+- Volcano
+- Wasteland
   - "NON-EXTREME_BIOMES" ; Every other biome not on "EXTREME_BIOMES"
 
 - "HUMAN_TRANSITABLE_BIOMES" ; for __people__, things like trainers, traders, youngster Joey and the people of the world. These are the biomes where you would feaseably find human beings during your journey.
