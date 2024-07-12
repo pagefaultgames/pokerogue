@@ -36,6 +36,7 @@ describe("Abilities - Aura Break", () => {
     vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.MOONBLAST, Moves.DARK_PULSE, Moves.MOONBLAST, Moves.DARK_PULSE]);
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
     vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.AURA_BREAK);
+    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SHUCKLE);
   });
 
   it("reverses the effect of fairy aura", async () => {
@@ -45,7 +46,7 @@ describe("Abilities - Aura Break", () => {
     vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.FAIRY_AURA);
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    await game.startBattle([Species.MAGIKARP]);
+    await game.startBattle([Species.PIKACHU]);
     game.doAttack(getMovePosition(game.scene, 0, Moves.MOONBLAST));
     await game.phaseInterceptor.to(MoveEffectPhase);
 
@@ -59,7 +60,7 @@ describe("Abilities - Aura Break", () => {
     vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.DARK_AURA);
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    await game.startBattle([Species.MAGIKARP]);
+    await game.startBattle([Species.PIKACHU]);
     game.doAttack(getMovePosition(game.scene, 0, Moves.DARK_PULSE));
     await game.phaseInterceptor.to(MoveEffectPhase);
 
