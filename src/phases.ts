@@ -2777,6 +2777,7 @@ export class TurnStartPhase extends FieldPhase {
         if (!queuedMove) {
           continue;
         }
+        LoggerTools.Actions[pokemon.getBattlerIndex()] = new PokemonMove(queuedMove.move).getName()
         break;
       case Command.BALL:
         var ballNames = [
@@ -2792,9 +2793,7 @@ export class TurnStartPhase extends FieldPhase {
         //this.scene.unshiftPhase(new AttemptCapturePhase(this.scene, turnCommand.targets[0] % 2, turnCommand.cursor));
         break;
       case Command.POKEMON:
-        LoggerTools.Actions[pokemon.getBattlerIndex()] = "Switch " + this.scene.getParty()[pokemon.getFieldIndex()].name + " to " + this.scene.getParty()[turnCommand.cursor].name
-        //playerActions.push("Switch " + this.scene.getParty()[pokemon.getFieldIndex()].name + " to " + this.scene.getParty()[turnCommand.cursor].name)
-        //this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, pokemon.getFieldIndex(), turnCommand.cursor, true, turnCommand.args[0] as boolean, pokemon.isPlayer()));
+        LoggerTools.Actions[pokemon.getBattlerIndex()] = ((turnCommand.args[0] as boolean) ? "Baton" : "Switch") + " " + LoggerTools.playerPokeName(this.scene, pokemon) + " to " + LoggerTools.playerPokeName(this.scene, turnCommand.cursor)
         break;
       case Command.RUN:
         LoggerTools.Actions[pokemon.getBattlerIndex()] = "Run"
@@ -2868,6 +2867,79 @@ export class TurnStartPhase extends FieldPhase {
         if (pokemon.isPlayer()) {
           if (turnCommand.cursor === -1) {
             this.scene.pushPhase(new MovePhase(this.scene, pokemon, turnCommand.targets || turnCommand.move.targets, move));
+            var targets = turnCommand.targets || turnCommand.move.targets
+            var mv = new PokemonMove(queuedMove.move)
+            if (pokemon.isPlayer()) {
+              LoggerTools.Actions[pokemon.getBattlerIndex()] = mv.getName()
+              if (this.scene.currentBattle.double) {
+                var targIDs = ["Counter", "Self", "Ally", "L", "R"]
+                if (pokemon.getBattlerIndex() == 1) targIDs = ["Counter", "Ally", "Self", "L", "R"]
+                switch (mv.getMove().moveTarget) {
+                  case MoveTarget.USER:
+                    //LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+                    break;
+                  case MoveTarget.OTHER:
+                    LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+                    break;
+                  case MoveTarget.ALL_OTHERS:
+                    //LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+                    break;
+                  case MoveTarget.NEAR_OTHER:
+                    LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+                    break;
+                  case MoveTarget.ALL_NEAR_OTHERS:
+                    //LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+                    break;
+                  case MoveTarget.NEAR_ENEMY:
+                    LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+                    break;
+                  case MoveTarget.ALL_NEAR_ENEMIES:
+                    //LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+                    break;
+                  case MoveTarget.RANDOM_NEAR_ENEMY:
+                    //LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+                    break;
+                  case MoveTarget.ALL_ENEMIES:
+                    //LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+                    break;
+                  case MoveTarget.ATTACKER:
+                    //LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+                    break;
+                    break;
+                  case MoveTarget.NEAR_ALLY:
+                    LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+                    break;
+                  case MoveTarget.ALLY:
+                    LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+                    break;
+                  case MoveTarget.USER_OR_NEAR_ALLY:
+                    LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+                    break;
+                  case MoveTarget.USER_AND_ALLIES:
+                    //LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+                    break;
+                  case MoveTarget.ALL:
+                    //LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+                    break;
+                  case MoveTarget.USER_SIDE:
+                    //LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+                    break;
+                  case MoveTarget.ENEMY_SIDE:
+                    //LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+                    break;
+                  case MoveTarget.BOTH_SIDES:
+                    //LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+                    break;
+                  case MoveTarget.PARTY:
+                    //LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+                    break;
+                  case MoveTarget.CURSE:
+                    //LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+                    break;
+                }
+              }
+              console.log(mv.getName(), targets)
+            }
           } else {
             const playerPhase = new MovePhase(this.scene, pokemon, turnCommand.targets || turnCommand.move.targets, move, false, queuedMove.ignorePP);
             this.scene.pushPhase(playerPhase);
@@ -3275,15 +3347,6 @@ export class MovePhase extends BattlePhase {
 
       if (!allMoves[this.move.moveId].hasAttr(CopyMoveAttr)) {
         this.scene.currentBattle.lastMove = this.move.moveId;
-      }
-      if (this.pokemon.isPlayer()) {
-        LoggerTools.Actions[this.pokemon.getBattlerIndex()] = this.move.getName()
-        if (this.scene.currentBattle.double) {
-          var targIDs = ["Counter", "Self", "Ally", "L", "R"]
-          if (this.pokemon.getBattlerIndex() == 1) targIDs = ["Counter", "Ally", "Self", "L", "R"]
-          LoggerTools.Actions[this.pokemon.getBattlerIndex()] += " → " + this.targets.map(v => targIDs[v+1])
-        }
-        console.log(this.move.getName(), this.targets)
       }
 
       // Assume conditions affecting targets only apply to moves with a single target
@@ -5020,10 +5083,10 @@ export class SwitchPhase extends BattlePhase {
     this.scene.ui.setMode(Mode.PARTY, this.isModal ? PartyUiMode.FAINT_SWITCH : PartyUiMode.POST_BATTLE_SWITCH, fieldIndex, (slotIndex: integer, option: PartyOption) => {
       if (slotIndex >= this.scene.currentBattle.getBattlerCount() && slotIndex < 6) {
         if (LoggerTools.isPreSwitch.value) {
-          LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "Pre-switch " + LoggerTools.playerPokeName(this.scene, fieldIndex) + (option == PartyOption.PASS_BATON ? " → Baton" : "") + " → " + LoggerTools.playerPokeName(this.scene, slotIndex))
+          LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "Pre-switch " + (option == PartyOption.PASS_BATON ? "+ Baton" : "") + " to " + LoggerTools.playerPokeName(this.scene, slotIndex))
         }
         if (LoggerTools.isFaintSwitch.value) {
-          LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "Send in " + LoggerTools.playerPokeName(this.scene, slotIndex))
+          LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, (option == PartyOption.PASS_BATON ? "Baton" : "Switch") + "in " + LoggerTools.playerPokeName(this.scene, slotIndex))
         }
         this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, fieldIndex, slotIndex, this.doReturn, option === PartyOption.PASS_BATON));
       }

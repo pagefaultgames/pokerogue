@@ -24,7 +24,7 @@ export default class LogNameFormUiHandler extends FormModalUiHandler {
   }
 
   getButtonLabels(config?: ModalConfig): string[] {
-    return [ "Create" ];
+    return [ "Rename", "Export" ];
   }
 
   getReadableErrorMessage(error: string): string {
@@ -52,6 +52,9 @@ export default class LogNameFormUiHandler extends FormModalUiHandler {
     //const label = addTextObject(this.scene, 10, 87, "Text", TextStyle.TOOLTIP_CONTENT, { fontSize: "42px" });
 
     //this.modalContainer.add(label);
+
+    this.inputs[0].maxLength = 99
+    this.inputs[1].maxLength = 200
   }
 
   show(args: any[]): boolean {
