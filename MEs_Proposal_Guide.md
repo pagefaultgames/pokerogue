@@ -72,7 +72,7 @@ This is the floors/waves where you'd like your Event to happen. (11-179)* is the
 ## Biomes
 
 Currently, you can set the Events to happen in the specific Biomes of your choosing, but there are other options too that you can use:
-### `ANY` Biome"
+### `ANY` Biome
 
 self explanatory, it's any/all biomes
 
@@ -91,7 +91,7 @@ these are all the biomes in two mutually exclusive lists. The main point of this
 - Wasteland
 #### NON-EXTREME_BIOMES
 
-Every other biome not on [`EXTREME_BIOMES`](link-to-extreme-biomes?)
+Every other biome not on [`EXTREME_BIOMES`](https://github.com/AsdarDevelops/PokeRogue-Events/blob/Asdar/MEs_Proposal_Guide.md#extreme_biomes)
 
 ### HUMAN_TRANSITABLE_BIOMES
 
