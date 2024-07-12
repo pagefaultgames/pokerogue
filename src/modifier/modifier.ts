@@ -20,7 +20,7 @@ import { achvs } from "../system/achv";
 import { VoucherType } from "../system/voucher";
 import { FormChangeItem, SpeciesFormChangeItemTrigger } from "../data/pokemon-forms";
 import { Nature } from "#app/data/nature";
-import * as Overrides from "../overrides";
+import Overrides from "../overrides";
 import { ModifierType, modifierTypes } from "./modifier-type";
 import { Command } from "#app/ui/command-ui-handler.js";
 import { Species } from "#enums/species";
@@ -2665,7 +2665,8 @@ export function overrideHeldItems(scene: BattleScene, pokemon: Pokemon, player: 
     const modifierType: ModifierType = modifierTypes[itemName](); // we retrieve the item in the list
     let itemModifier: PokemonHeldItemModifier;
     if (modifierType instanceof ModifierTypes.ModifierTypeGenerator) {
-      itemModifier = modifierType.generateType(null, [item.type]).withIdFromFunc(modifierTypes[itemName]).newModifier(pokemon) as PokemonHeldItemModifier;
+      const pregenArgs = "type" in item ? [item.type] : null;
+      itemModifier = modifierType.generateType(null, pregenArgs).withIdFromFunc(modifierTypes[itemName]).newModifier(pokemon) as PokemonHeldItemModifier;
     } else {
       itemModifier = modifierType.withIdFromFunc(modifierTypes[itemName]).newModifier(pokemon) as PokemonHeldItemModifier;
     }
