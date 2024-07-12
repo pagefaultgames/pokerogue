@@ -240,8 +240,7 @@ export class MoneyRequirement extends EncounterSceneRequirement {
 
   getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
     const value = this?.scalingMultiplier > 0 ? scene.getWaveMoneyAmount(this.scalingMultiplier).toString() : this.requiredMoney.toString();
-    // Colors money text
-    return ["money", "@[MONEY]{₽" + value + "}"];
+    return ["money", value];
   }
 }
 
