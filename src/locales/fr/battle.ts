@@ -129,6 +129,8 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsSlowStartOnRemove": "{{pokemonNameWithAffix}}\narrive enfin à s’y mettre sérieusement !",
   "battlerTagsHighestStatBoostOnAdd": "{{statName}} de {{pokemonNameWithAffix}}\nest renforcée !",
   "battlerTagsHighestStatBoostOnRemove": "L’effet du talent {{abilityName}}\nde {{pokemonNameWithAffix}} se dissipe !",
+  "battlerTagsMagnetRisenOnAdd": "{{pokemonNameWithAffix}} levitated with electromagnetism!",
+  "battlerTagsMagnetRisenOnRemove": "{{pokemonNameWithAffix}}'s electromagnetism wore off!",
   "battlerTagsCritBoostOnAdd": "{{pokemonNameWithAffix}}\nest prêt à tout donner !",
   "battlerTagsCritBoostOnRemove": "{{pokemonNameWithAffix}} se détend.",
   "battlerTagsSaltCuredOnAdd": "{{pokemonNameWithAffix}}\nest couvert de sel !",

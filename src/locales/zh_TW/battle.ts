@@ -126,6 +126,8 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsSlowStartOnRemove": "{{pokemonNameWithAffix}}恢復了平時的水平！",
   "battlerTagsHighestStatBoostOnAdd": "{{pokemonNameWithAffix}}的{{statName}}升高了！",
   "battlerTagsHighestStatBoostOnRemove": "{{pokemonNameWithAffix}}的{{abilityName}}效果解除了！",
+  "battlerTagsMagnetRisenOnAdd": "{{pokemonNameWithAffix}} levitated with electromagnetism!",
+  "battlerTagsMagnetRisenOnRemove": "{{pokemonNameWithAffix}}'s electromagnetism wore off!",
   "battlerTagsCritBoostOnAdd": "{{pokemonNameWithAffix}}現在幹勁十足！",
   "battlerTagsCritBoostOnRemove": "{{pokemonNameWithAffix}}如釋重負似地放鬆了下來。",
   "battlerTagsSaltCuredOnAdd": "{{pokemonNameWithAffix}} 陷入了鹽腌狀態！",

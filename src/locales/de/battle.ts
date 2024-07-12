@@ -129,6 +129,8 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsSlowStartOnRemove": "{{pokemonNameWithAffix}} kriegt schließlich doch noch die Kurve!",
   "battlerTagsHighestStatBoostOnAdd": "{{statName}} von {{pokemonNameWithAffix}} wird verstärkt!",
   "battlerTagsHighestStatBoostOnRemove": "Der Effekt von {{abilityName}} von {{pokemonNameWithAffix}} lässt nach!",
+  "battlerTagsMagnetRisenOnAdd": "{{pokemonNameWithAffix}} levitated with electromagnetism!",
+  "battlerTagsMagnetRisenOnRemove": "{{pokemonNameWithAffix}}'s electromagnetism wore off!",
   "battlerTagsCritBoostOnAdd": "{{pokemonNameWithAffix}} läuft zu Hochtouren auf!",
   "battlerTagsCritBoostOnRemove": "{{pokemonNameWithAffix}} entspannt.",
   "battlerTagsSaltCuredOnAdd": "{{pokemonNameWithAffix}} wurde eingepökelt!",
