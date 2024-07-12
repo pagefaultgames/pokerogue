@@ -26,7 +26,7 @@ import { Gender } from "./data/gender";
 import { Weather, WeatherType, getRandomWeatherType, getTerrainBlockMessage, getWeatherDamageMessage, getWeatherLapseMessage } from "./data/weather";
 import { TempBattleStat } from "./data/temp-battle-stat";
 import { ArenaTagSide, ArenaTrapTag, MistTag, TrickRoomTag } from "./data/arena-tag";
-import { CheckTrappedAbAttr, IgnoreOpponentStatChangesAbAttr, IgnoreOpponentEvasionAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, BlockRedirectAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, BattleStatMultiplierAbAttr, applyBattleStatMultiplierAbAttrs, IncrementMovePriorityAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr, BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, PostBiomeChangeAbAttr, applyPostFaintAbAttrs, PostFaintAbAttr, IncreasePpAbAttr, PostStatChangeAbAttr, applyPostStatChangeAbAttrs, AlwaysHitAbAttr, PreventBerryUseAbAttr, StatChangeCopyAbAttr, PokemonTypeChangeAbAttr, applyPreAttackAbAttrs, applyPostMoveUsedAbAttrs, PostMoveUsedAbAttr, MaxMultiHitAbAttr, HealFromBerryUseAbAttr, WonderSkinAbAttr, applyPreDefendAbAttrs, IgnoreMoveEffectsAbAttr, BlockStatusDamageAbAttr, BypassSpeedChanceAbAttr, AddSecondStrikeAbAttr } from "./data/ability";
+import { CheckTrappedAbAttr, IgnoreOpponentStatChangesAbAttr, IgnoreOpponentEvasionAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, BlockRedirectAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, BattleStatMultiplierAbAttr, applyBattleStatMultiplierAbAttrs, IncrementMovePriorityAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr, BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, PostBiomeChangeAbAttr, applyPostFaintAbAttrs, PostFaintAbAttr, IncreasePpAbAttr, PostStatChangeAbAttr, applyPostStatChangeAbAttrs, AlwaysHitAbAttr, PreventBerryUseAbAttr, StatChangeCopyAbAttr, PokemonTypeChangeAbAttr, applyPreAttackAbAttrs, applyPostMoveUsedAbAttrs, PostMoveUsedAbAttr, MaxMultiHitAbAttr, HealFromBerryUseAbAttr, WonderSkinAbAttr, applyPreDefendAbAttrs, IgnoreMoveEffectsAbAttr, BlockStatusDamageAbAttr, BypassSpeedChanceAbAttr, AddSecondStrikeAbAttr, BattlerTagImmunityAbAttr } from "./data/ability";
 import { Unlockables, getUnlockableName } from "./system/unlockables";
 import { getBiomeKey } from "./field/arena";
 import { BattleType, BattlerIndex, TurnCommand } from "./battle";
@@ -465,7 +465,7 @@ export class TitlePhase extends Phase {
     // If there are no daily runs, it instead shows the most recently saved run
     // If this fails too, there are no saves, and the option does not appear
     var lastsaves = this.getSaves(false, true);
-    if (lastsaves != undefined) {
+    if (lastsaves != undefined && lastsaves.length > 0) {
       lastsaves.forEach(lastsave => {
         options.push({
           label: (lastsave.description ? lastsave.description : "[???]"),
@@ -1324,6 +1324,7 @@ export class EncounterPhase extends BattlePhase {
   doEncounterCommon(showEncounterMessage: boolean = true) {
     const enemyField = this.scene.getEnemyField();
 
+    LoggerTools.resetWave(this.scene, this.scene.currentBattle.waveIndex)
     LoggerTools.logTeam(this.scene, this.scene.currentBattle.waveIndex)
     if (this.scene.getEnemyParty()[0].hasTrainer()) {
       LoggerTools.logTrainer(this.scene, this.scene.currentBattle.waveIndex)
@@ -2683,6 +2684,34 @@ export class TurnStartPhase extends FieldPhase {
     super(scene);
   }
 
+  generateTargString(t: BattlerIndex[]) {
+    var targets = ['Self']
+    for (var i = 0; i < this.scene.getField().length; i++) {
+      if (this.scene.getField()[i] != null)
+      targets[this.scene.getField()[i].getBattlerIndex() + 1] = this.scene.getField()[i].name
+    }
+    for (var i = 0; i < this.scene.getEnemyField().length; i++) {
+      if (this.scene.getEnemyField()[i] != null)
+      targets[this.scene.getEnemyField()[i].getBattlerIndex() + 1] = this.scene.getEnemyField()[i].name
+    }
+    var targetFull = []
+    for (var i = 0; i < t.length; i++) {
+      targetFull.push(targets[t[i] + 1])
+    }
+    if (targetFull.join(", ") == targets.join(", ")) return ""
+    return " → " + targetFull.join(", ")
+  }
+
+  getBattlers(user: Pokemon): Pokemon[] {
+    var battlers = []
+    battlers[0] = this.scene.getField()[0]
+    battlers[1] = this.scene.getField()[1]
+    battlers[2] = this.scene.getEnemyField()[0]
+    battlers[3] = this.scene.getEnemyField()[1]
+    battlers.unshift(user)
+    return battlers;
+  }
+
   start() {
     super.start();
 
@@ -2691,14 +2720,76 @@ export class TurnStartPhase extends FieldPhase {
 
     const battlerBypassSpeed = {};
 
+    const playerActions = []
+
+    const moveOrder = order.slice(0);
+
+    while (LoggerTools.Actions.length > 0) {
+      LoggerTools.Actions.pop()
+    }
+
+    for (const o of moveOrder) {
+
+      const pokemon = field[o];
+      const turnCommand = this.scene.currentBattle.turnCommands[o];
+
+      if (turnCommand.skip || !pokemon.isPlayer()) {
+        continue;
+      }
+
+      switch (turnCommand.command) {
+      case Command.FIGHT:
+        const queuedMove = turnCommand.move;
+        if (!queuedMove) {
+          continue;
+        }
+        const move = pokemon.getMoveset().find(m => m.moveId === queuedMove.move) || new PokemonMove(queuedMove.move);
+        if (!this.scene.currentBattle.double) {
+          playerActions.push(move.getName())
+        } else {
+          var T = this.getBattlers(pokemon)
+          for (var i = 0; i < T.length; i++) {
+            if (T[i] == undefined) {
+              T.splice(i, 1)
+              i--
+            }
+          }
+          console.log(queuedMove.targets, T, queuedMove.targets.map(p => T[p+1].name))
+          playerActions.push(move.getName() + " → " + queuedMove.targets.map(p => T[p+1].name).join(", "))
+        }
+        break;
+      case Command.BALL:
+        var ballNames = [
+          "Poké Ball",
+          "Great Ball",
+          "Ultra Ball",
+          "Rogue Ball",
+          "Master Ball",
+          "Luxury Ball"
+        ]
+        LoggerTools.Actions[pokemon.getBattlerIndex()] = ballNames[turnCommand.cursor]
+        playerActions.push(ballNames[turnCommand.cursor])
+        //this.scene.unshiftPhase(new AttemptCapturePhase(this.scene, turnCommand.targets[0] % 2, turnCommand.cursor));
+        break;
+      case Command.POKEMON:
+        LoggerTools.Actions[pokemon.getBattlerIndex()] = "Switch " + this.scene.getParty()[pokemon.getFieldIndex()].name + " to " + this.scene.getParty()[turnCommand.cursor].name
+        //playerActions.push("Switch " + this.scene.getParty()[pokemon.getFieldIndex()].name + " to " + this.scene.getParty()[turnCommand.cursor].name)
+        //this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, pokemon.getFieldIndex(), turnCommand.cursor, true, turnCommand.args[0] as boolean, pokemon.isPlayer()));
+        break;
+      case Command.RUN:
+        LoggerTools.Actions[pokemon.getBattlerIndex()] = "Run"
+        playerActions.push("Run")
+        break;
+      }
+    }
+    //LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, playerActions.join(" | "))
+
     this.scene.getField(true).filter(p => p.summonData).map(p => {
       const bypassSpeed = new Utils.BooleanHolder(false);
       applyAbAttrs(BypassSpeedChanceAbAttr, p, null, bypassSpeed);
       this.scene.applyModifiers(BypassSpeedChanceModifier, p.isPlayer(), p, bypassSpeed);
       battlerBypassSpeed[p.getBattlerIndex()] = bypassSpeed;
     });
-
-    const moveOrder = order.slice(0);
 
     moveOrder.sort((a, b) => {
       const aCommand = this.scene.currentBattle.turnCommands[a];
@@ -2905,6 +2996,8 @@ export class TurnEndPhase extends FieldPhase {
     if (this.scene.arena.terrain && !this.scene.arena.terrain.lapse()) {
       this.scene.arena.trySetTerrain(TerrainType.NONE, false);
     }
+
+    LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, LoggerTools.Actions.join(" | "))
 
     this.end();
   }
@@ -3162,6 +3255,15 @@ export class MovePhase extends BattlePhase {
 
       if (!allMoves[this.move.moveId].hasAttr(CopyMoveAttr)) {
         this.scene.currentBattle.lastMove = this.move.moveId;
+      }
+      if (this.pokemon.isPlayer()) {
+        LoggerTools.Actions[this.pokemon.getBattlerIndex()] = this.move.getName()
+        if (this.scene.currentBattle.double) {
+          var targIDs = ["Counter", "Self", "Ally", "L", "R"]
+          if (this.pokemon.getBattlerIndex() == 1) targIDs = ["Counter", "Ally", "Self", "L", "R"]
+          LoggerTools.Actions[this.pokemon.getBattlerIndex()] += " → " + this.targets.map(v => targIDs[v+1])
+        }
+        console.log(this.move.getName(), this.targets)
       }
 
       // Assume conditions affecting targets only apply to moves with a single target

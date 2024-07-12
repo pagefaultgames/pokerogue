@@ -105,6 +105,8 @@ export interface ItemData {
   quantity: integer,
 }
 
+export const Actions = []
+
 export function newDocument(name: string = "Untitled Run", authorName: string | string[] = "Write your name here"): DRPD {
   return {
     version: DRPD_Version,
@@ -191,6 +193,20 @@ export function exportWave(scene: BattleScene): Wave {
   return ret;
 }
 export function exportTrainer(trainer: Trainer): TrainerData {
+  if (trainer.config.getTitle(0, trainer.variant) == "Finn") {
+    return {
+      id: trainer.config.trainerType,
+      name: "Finn",
+      type: "Rival"
+    }
+  }
+  if (trainer.config.getTitle(0, trainer.variant) == "Ivy") {
+    return {
+      id: trainer.config.trainerType,
+      name: "Ivy",
+      type: "Rival"
+    }
+  }
   return {
     id: trainer.config.trainerType,
     name: trainer.name,
@@ -213,7 +229,7 @@ export function getSize(str: string) {
 export function generateOption(i: integer): OptionSelectItem {
   var filename: string = (JSON.parse(localStorage.getItem(logs[i][1])) as DRPD).title
   var op: OptionSelectItem = {
-    label: ` Export ${filename} (${getSize(localStorage.getItem(logs[i][1]))})`,
+    label: ` Export ${filename} (${getSize(printDRPD("", "", JSON.parse(localStorage.getItem(logs[i][1])) as DRPD))})`,
     handler: () => {
       downloadLogByID(i)
       return false;
@@ -266,7 +282,7 @@ export function clearLog(keyword: string) {
  */
 export function downloadLog(keyword: string) {
   var d = JSON.parse(localStorage.getItem(logs[logKeys.indexOf(keyword)][1]))
-  const blob = new Blob([ JSON.stringify(d) ], {type: "text/json"});
+  const blob = new Blob([ printDRPD("", "", d as DRPD) ], {type: "text/json"});
   const link = document.createElement("a");
   link.href = window.URL.createObjectURL(blob);
   var date: string = (d as DRPD).date
@@ -303,6 +319,14 @@ export function logTeam(scene: BattleScene, floor: integer = undefined) {
     }
   }
 }
+export function logActions(scene: BattleScene, floor: integer, action: string) {
+  if (localStorage.getItem("drpd") == null) localStorage.setItem("drpd", JSON.stringify(newDocument()))
+    var drpd: DRPD = JSON.parse(localStorage.getItem("drpd")) as DRPD;
+    var wv: Wave = getWave(drpd, floor, scene)
+    wv.actions.push(action)
+    console.log(drpd)
+    localStorage.setItem("drpd", JSON.stringify(drpd))
+}
 export function getWave(drpd: DRPD, floor: integer, scene: BattleScene) {
   var wv: Wave;
   var insertPos: integer;
@@ -335,6 +359,18 @@ export function getWave(drpd: DRPD, floor: integer, scene: BattleScene) {
     if (b == undefined) return -1; // empty values move to the bottom
     return a.id - b.id
   })
+  for (var i = 0; i < drpd.waves.length - 1; i++) {
+    if (drpd.waves[i] != undefined && drpd.waves[i+1] != undefined) {
+      if (drpd.waves[i].id == drpd.waves[i+1].id) {
+        drpd.waves[i] = undefined
+        drpd.waves.sort((a, b) => {
+          if (a == undefined) return 1;  // empty values move to the bottom
+          if (b == undefined) return -1; // empty values move to the bottom
+          return a.id - b.id
+        })
+      }
+    }
+  }
   if (wv == undefined) {
     console.error("Out of wave slots??")
     scene.ui.showText("Out of wave slots!\nClearing duplicates...", null, () => {
@@ -394,26 +430,6 @@ export function getWave(drpd: DRPD, floor: integer, scene: BattleScene) {
   }
   return wv;
 }
-/*
-const entry = tierPool[Utils.randSeedInt(tierPool.length)];
-let species: Species;
-if (typeof entry === "number") {
-  species = entry as Species;
-} else {
-  const levelThresholds = Object.keys(entry);
-  for (let l = levelThresholds.length - 1; l >= 0; l--) {
-    const levelThreshold = parseInt(levelThresholds[l]);
-    if (level >= levelThreshold) {
-      const speciesIds = entry[levelThreshold];
-      if (speciesIds.length > 1) {
-        species = speciesIds[Utils.randSeedInt(speciesIds.length)];
-      } else {
-        species = speciesIds[0];
-      }
-      break;
-    }
-  }
-}*/
 function checkForPokeInBiome(species: Species, pool: (Species | SpeciesTree)[]): boolean {
   //console.log(species, pool)
   for (var i = 0; i < pool.length; i++) {
@@ -512,13 +528,22 @@ export function logPokemon(scene: BattleScene, floor: integer = undefined, slot:
       "Ultra Rare",
     ]
     for (var i = 0; i < tiernames.length; i++) {
+      if (wv.pokemon[slot] != undefined)
       if (checkForPokeInBiome(wv.pokemon[slot].id, scene.arena.pokemonPool[i]) == true) {
         console.log("Autofilled rarity for " + pk.name + " as " + tiernames[i])
         pk.rarity = tiernames[i]
       }
     }
   }
+  if (pk.rarity == undefined) pk.rarity = "[Unknown]"
   wv.pokemon[slot] = pk;
+  console.log(drpd)
+  localStorage.setItem("drpd", JSON.stringify(drpd))
+}
+export function resetWave(scene: BattleScene, floor: integer = undefined) {
+  if (localStorage.getItem("drpd") == null) localStorage.setItem("drpd", JSON.stringify(newDocument()))
+  var drpd: DRPD = JSON.parse(localStorage.getItem("drpd")) as DRPD;
+  drpd.waves[floor] = exportWave(scene)
   console.log(drpd)
   localStorage.setItem("drpd", JSON.stringify(drpd))
 }
@@ -650,25 +675,31 @@ function printWave(inData: string, indent: string, wave: Wave): string {
   inData += ",\n" + indent + "  \"reload\": " + wave.reload + ""
   inData += ",\n" + indent + "  \"type\": \"" + wave.type + "\""
   inData += ",\n" + indent + "  \"double\": " + wave.double + ""
-  inData += ",\n" + indent + "  \"actions\": [\n"
   var isFirst = true
-  for (var i = 0; i < wave.actions.length; i++) {
-    if (wave.actions[i] != undefined) {
-      if (isFirst) {
-        isFirst = false;
-      } else {
-        inData += ","
+  if (wave.actions.length > 0) {
+    inData += ",\n" + indent + "  \"actions\": ["
+    for (var i = 0; i < wave.actions.length; i++) {
+      if (wave.actions[i] != undefined) {
+        if (isFirst) {
+          isFirst = false;
+        } else {
+          inData += ","
+        }
+        inData += "\n    " + indent + "\"" + wave.actions[i] + "\""
       }
-      inData += "\n    " + indent + "\"" + wave.actions[i] + "\""
     }
+    if (!isFirst) inData += "\n"
+    inData += indent + "  ]"
+  } else {
+    inData += ",\n" + indent + "  \"actions\": []"
   }
-  if (!isFirst) inData += "\n"
-  inData += indent + "  ]"
   inData += ",\n  " + indent + "\"shop\": \"" + wave.shop + "\""
   inData += ",\n  " + indent + "\"biome\": \"" + wave.biome + "\""
-  if (wave.trainer)
-    inData += ",\n  " + indent + "\"trainer\": " + wave.trainer
-  if (wave.pokemon) {
+  if (wave.trainer) {
+    inData += ",\n  " + indent + "\"trainer\": "
+    inData = printTrainer(inData, indent + "  ", wave.trainer)
+  }
+  if (wave.pokemon.length > 0) {
     inData += ",\n  " + indent + "\"pokemon\": [\n"
     isFirst = true
     for (var i = 0; i < wave.pokemon.length; i++) {
@@ -681,12 +712,12 @@ function printWave(inData: string, indent: string, wave: Wave): string {
         inData = printPoke(inData, indent + "    ", wave.pokemon[i])
       }
     }
+    inData += "\n" + indent + "  ]"
   }
-  inData += "\n" + indent + "  ]\n" + indent + "}"
+  inData += "\n" + indent + "}"
   return inData;
 }
 function printPoke(inData: string, indent: string, pokemon: PokeData) {
-  var itemdata: string = ""
   inData += indent + "{"
   inData += "\n" + indent + "  \"id\": " + pokemon.id
   inData += ",\n" + indent + "  \"name\": \"" + pokemon.name + "\""
@@ -743,7 +774,7 @@ function printIV(inData: string, indent: string, iv: IVData) {
   return inData;
 }
 function printTrainer(inData: string, indent: string, trainer: TrainerData) {
-  inData += indent + "{"
+  inData += "{"
   inData += "\n" + indent + "  \"id\": \"" + trainer.id + "\""
   inData += ",\n" + indent + "  \"name\": \"" + trainer.name + "\""
   inData += ",\n" + indent + "  \"type\": \"" + trainer.type + "\""
