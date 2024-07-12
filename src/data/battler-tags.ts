@@ -31,14 +31,14 @@ export enum BattlerTagLapseType {
 
 export class BattlerTag {
   public tagType: BattlerTagType;
-  public lapseType: BattlerTagLapseType;
+  public lapseType: BattlerTagLapseType[];
   public turnCount: integer;
   public sourceMove: Moves;
   public sourceId?: integer;
 
-  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, turnCount: integer, sourceMove: Moves, sourceId?: integer) {
+  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType | BattlerTagLapseType[], turnCount: integer, sourceMove: Moves, sourceId?: integer) {
     this.tagType = tagType;
-    this.lapseType = lapseType;
+    this.lapseType = typeof lapseType === "number" ? [ lapseType ] : lapseType;
     this.turnCount = turnCount;
     this.sourceMove = sourceMove;
     this.sourceId = sourceId;
@@ -154,9 +154,12 @@ export class TrappedTag extends BattlerTag {
   }
 }
 
+/**
+ * BattlerTag that represents the {@link https://bulbapedia.bulbagarden.net/wiki/Flinch Flinch} status condition
+ */
 export class FlinchedTag extends BattlerTag {
   constructor(sourceMove: Moves) {
-    super(BattlerTagType.FLINCHED, BattlerTagLapseType.PRE_MOVE, 0, sourceMove);
+    super(BattlerTagType.FLINCHED, [ BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END ], 0, sourceMove);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -169,13 +172,19 @@ export class FlinchedTag extends BattlerTag {
     return !pokemon.isMax();
   }
 
+  /**
+   * Cancels the Pokemon's next Move on the turn this tag is applied
+   * @param pokemon The {@linkcode Pokemon} with this tag
+   * @param lapseType The {@linkcode BattlerTagLapseType lapse type} used for this function call
+   * @returns `false` (This tag is always removed after applying its effects)
+   */
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    super.lapse(pokemon, lapseType);
+    if (lapseType === BattlerTagLapseType.PRE_MOVE) {
+      (pokemon.scene.getCurrentPhase() as MovePhase).cancel();
+      pokemon.scene.queueMessage(i18next.t("battle:battlerTagsFlinchedLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+    }
 
-    (pokemon.scene.getCurrentPhase() as MovePhase).cancel();
-    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsFlinchedLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
-
-    return true;
+    return super.lapse(pokemon, lapseType);
   }
 
   getDescriptor(): string {
@@ -200,14 +209,13 @@ export class InterruptedTag extends BattlerTag {
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    super.lapse(pokemon, lapseType);
     (pokemon.scene.getCurrentPhase() as MovePhase).cancel();
-    return true;
+    return super.lapse(pokemon, lapseType);
   }
 }
 
 /**
- * BattlerTag that represents the {@link https://bulbapedia.bulbagarden.net/wiki/Confusion_(status_condition)}
+ * BattlerTag that represents the {@link https://bulbapedia.bulbagarden.net/wiki/Confusion_(status_condition) Confusion} status condition
  */
 export class ConfusedTag extends BattlerTag {
   constructor(turnCount: integer, sourceMove: Moves) {
@@ -883,7 +891,7 @@ export class InfestationTag extends DamagingTrapTag {
 
 export class ProtectedTag extends BattlerTag {
   constructor(sourceMove: Moves, tagType: BattlerTagType = BattlerTagType.PROTECTED) {
-    super(tagType, BattlerTagLapseType.CUSTOM, 0, sourceMove);
+    super(tagType, BattlerTagLapseType.TURN_END, 0, sourceMove);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -934,7 +942,9 @@ export class ContactDamageProtectedTag extends ProtectedTag {
       const effectPhase = pokemon.scene.getCurrentPhase();
       if (effectPhase instanceof MoveEffectPhase && effectPhase.move.getMove().hasFlag(MoveFlags.MAKES_CONTACT)) {
         const attacker = effectPhase.getPokemon();
-        attacker.damageAndUpdate(Math.ceil(attacker.getMaxHp() * (1 / this.damageRatio)), HitResult.OTHER);
+        if (!attacker.hasAbilityWithAttr(BlockNonDirectDamageAbAttr)) {
+          attacker.damageAndUpdate(Math.ceil(attacker.getMaxHp() * (1 / this.damageRatio)), HitResult.OTHER);
+        }
       }
     }
 
@@ -1475,8 +1485,8 @@ export class CursedTag extends BattlerTag {
 
 /**
  * Battler tag for effects that ground the source, allowing Ground-type moves to hit them. Encompasses two tag types:
- * @item IGNORE_FLYING: Persistent grounding effects (i.e. from Smack Down and Thousand Waves)
- * @item ROOSTED: One-turn grounding effects (i.e. from Roost)
+ * @item `IGNORE_FLYING`: Persistent grounding effects (i.e. from Smack Down and Thousand Waves)
+ * @item `ROOSTED`: One-turn grounding effects (i.e. from Roost)
  */
 export class GroundedTag extends BattlerTag {
   constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, sourceMove: Moves) {

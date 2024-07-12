@@ -1,7 +1,8 @@
-import { common } from "#app/locales/en/common.js";
-import { settings } from "#app/locales/en/settings.js";
+import { common } from "./common.js";
+import { settings } from "./settings.js";
 import { ability } from "./ability";
 import { abilityTriggers } from "./ability-trigger";
+import { arenaFlyout } from "./arena-flyout";
 import { PGFachv, PGMachv } from "./achv";
 import { battle } from "./battle";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
@@ -27,6 +28,7 @@ import { gameStatsUiHandler } from "./game-stats-ui-handler";
 import { growth } from "./growth";
 import { menu } from "./menu";
 import { menuUiHandler } from "./menu-ui-handler";
+import { modifier } from "./modifier";
 import { modifierType } from "./modifier-type";
 import { move } from "./move";
 import { nature } from "./nature";
@@ -35,17 +37,22 @@ import { pokeball } from "./pokeball";
 import { pokemon } from "./pokemon";
 import { pokemonInfo } from "./pokemon-info";
 import { pokemonInfoContainer } from "./pokemon-info-container";
+import { pokemonSummary } from "./pokemon-summary";
 import { saveSlotSelectUiHandler } from "./save-slot-select-ui-handler";
 import { splashMessages } from "./splash-messages";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
+import { statusEffect } from "./status-effect";
 import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
-import { weather } from "./weather";
+import { terrain, weather } from "./weather";
+import { modifierSelectUiHandler } from "./modifier-select-ui-handler";
+import { moveTriggers } from "./move-trigger";
 
 export const enConfig = {
   ability: ability,
   abilityTriggers: abilityTriggers,
+  arenaFlyout: arenaFlyout,
   battle: battle,
   battleMessageUiHandler: battleMessageUiHandler,
   berry: berry,
@@ -71,22 +78,28 @@ export const enConfig = {
   growth: growth,
   menu: menu,
   menuUiHandler: menuUiHandler,
+  modifier: modifier,
   modifierType: modifierType,
   move: move,
   nature: nature,
-  partyUiHandler: partyUiHandler,
   pokeball: pokeball,
   pokemon: pokemon,
   pokemonInfo: pokemonInfo,
   pokemonInfoContainer: pokemonInfoContainer,
+  pokemonSummary: pokemonSummary,
   saveSlotSelectUiHandler: saveSlotSelectUiHandler,
   settings: settings,
   splashMessages: splashMessages,
   starterSelectUiHandler: starterSelectUiHandler,
+  statusEffect: statusEffect,
+  terrain: terrain,
   titles: titles,
   trainerClasses: trainerClasses,
   trainerNames: trainerNames,
   tutorial: tutorial,
   voucher: voucher,
   weather: weather,
+  partyUiHandler: partyUiHandler,
+  modifierSelectUiHandler: modifierSelectUiHandler,
+  moveTriggers: moveTriggers
 };

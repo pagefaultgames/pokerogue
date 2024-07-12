@@ -6,7 +6,7 @@ import { addWindow } from "./ui-theme";
 import {Button} from "#enums/buttons";
 import i18next from "i18next";
 import { SelectStarterPhase, TitlePhase } from "#app/phases.js";
-import { Challenge, ChallengeType } from "#app/data/challenge.js";
+import { Challenge } from "#app/data/challenge.js";
 import * as Utils from "../utils";
 import { Challenges } from "#app/enums/challenges.js";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
@@ -27,7 +27,8 @@ export default class GameChallengesUiHandler extends UiHandler {
 
   private descriptionText: BBCodeText;
 
-  private challengeLabels: Array<{ label: Phaser.GameObjects.Text, value: Phaser.GameObjects.Text | Phaser.GameObjects.Sprite }>;
+  private challengeLabels: Array<{ label: Phaser.GameObjects.Text, value: Phaser.GameObjects.Text }>;
+  private monoTypeValue: Phaser.GameObjects.Sprite;
 
   private cursorObj: Phaser.GameObjects.NineSlice;
 
@@ -120,32 +121,29 @@ export default class GameChallengesUiHandler extends UiHandler {
 
     this.challengeLabels = [];
 
-    for (let i = 0; i < Object.keys(ChallengeType).length; i++) {
+    for (let i = 0; i < 9; i++) {
       const label = addTextObject(this.scene, 8, 28 + i * 16, "", TextStyle.SETTINGS_LABEL);
       label.setName(`text-challenge-label-${i}`);
       label.setOrigin(0, 0);
 
       this.valuesContainer.add(label);
 
-      let value;
-      if (i === Challenges.SINGLE_TYPE) {
-        const type = `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`;
-        value = this.scene.add.sprite(8, 98, type);
-        value.setName("sprite-single-type");
-        value.setScale(0.86);
-        value.setPositionRelative(label, 113, 8);
-      } else {
-        value = addTextObject(this.scene, 0, 28 + i * 16, "", TextStyle.SETTINGS_LABEL);
-        value.setName(`text-challenge-value-label-${i}`);
-        value.setPositionRelative(label, 100, 0);
-      }
-
+      const value = addTextObject(this.scene, 0, 28 + i * 16, "", TextStyle.SETTINGS_LABEL);
+      value.setName(`challenge-value-text-${i}`);
+      value.setPositionRelative(label, 100, 0);
       this.valuesContainer.add(value);
+
       this.challengeLabels[i] = {
         label: label,
         value: value
       };
     }
+
+    this.monoTypeValue = this.scene.add.sprite(8, 98, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`);
+    this.monoTypeValue.setName("challenge-value-monotype-sprite");
+    this.monoTypeValue.setScale(0.86);
+    this.monoTypeValue.setVisible(false);
+    this.valuesContainer.add(this.monoTypeValue);
 
     this.challengesContainer.add(headerBg);
     this.challengesContainer.add(headerText);
@@ -181,32 +179,39 @@ export default class GameChallengesUiHandler extends UiHandler {
    * init all challenge labels
    */
   initLabels(): void {
-    this.setDescription(this.scene.gameMode.challenges[this.cursor].getDescription());
-    this.scene.gameMode.challenges.forEach((challenge, i) => {
-      this.challengeLabels[i].label.setVisible(true);
-      this.challengeLabels[i].value.setVisible(true);
-      this.challengeLabels[i].label.setText(challenge.getName());
-      if (this.challengeLabels[i].value.type.toLowerCase() === "sprite") {
-        (this.challengeLabels[i].value as Phaser.GameObjects.Sprite).setFrame(challenge.getValue());
-      } else {
-        (this.challengeLabels[i].value as Phaser.GameObjects.Text).setText(challenge.getValue());
+    this.setDescription(this.scene.gameMode.challenges[0].getDescription());
+    for (let i = 0; i < 9; i++) {
+      if (i < this.scene.gameMode.challenges.length) {
+        this.challengeLabels[i].label.setVisible(true);
+        this.challengeLabels[i].value.setVisible(true);
       }
-    });
+    }
   }
 
   /**
    * update the text the cursor is on
    */
   updateText(): void {
-    const challenge = this.getActiveChallenge();
-    const { id } = challenge;
     this.setDescription(this.getActiveChallenge().getDescription());
-
-    if (this.challengeLabels[id].value.type.toLowerCase() === "sprite") {
-      (this.challengeLabels[id].value as Phaser.GameObjects.Sprite).setFrame(challenge.getValue());
-    } else {
-      (this.challengeLabels[id].value as Phaser.GameObjects.Text).setText(challenge.getValue());
+    let monoTypeVisible = false;
+    for (let i = 0; i < Math.min(9, this.scene.gameMode.challenges.length); i++) {
+      const challenge = this.scene.gameMode.challenges[this.scrollCursor + i];
+      this.challengeLabels[i].label.setText(challenge.getName());
+      if (challenge.id === Challenges.SINGLE_TYPE) {
+        this.monoTypeValue.setPositionRelative(this.challengeLabels[i].label, 113, 8);
+        this.monoTypeValue.setFrame(challenge.getValue());
+        this.monoTypeValue.setVisible(true);
+        this.challengeLabels[i].value.setVisible(false);
+        monoTypeVisible = true;
+      } else {
+        this.challengeLabels[i].value.setText(challenge.getValue());
+        this.challengeLabels[i].value.setVisible(true);
+      }
     }
+    if (!monoTypeVisible) {
+      this.monoTypeValue.setVisible(false);
+    }
+
     // const totalDifficulty = this.scene.gameMode.challenges.reduce((v, c) => v + c.getDifficulty(), 0);
     // const totalMinDifficulty = this.scene.gameMode.challenges.reduce((v, c) => v + c.getMinDifficulty(), 0);
     // this.difficultyText.text = `${totalDifficulty}` + (totalMinDifficulty ? `/${totalMinDifficulty}` : "");
@@ -221,6 +226,7 @@ export default class GameChallengesUiHandler extends UiHandler {
     this.setCursor(0);
 
     this.initLabels();
+    this.updateText();
 
     this.getUi().moveTo(this.challengesContainer, this.getUi().length - 1);
 

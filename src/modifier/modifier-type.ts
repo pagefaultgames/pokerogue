@@ -45,7 +45,6 @@ type NewModifierFunc = (type: ModifierType, args: any[]) => Modifier;
 
 export class ModifierType {
   public id: string;
-  public generatorId: string;
   public localeKey: string;
   public iconImage: string;
   public group: string;
@@ -102,7 +101,7 @@ export class ModifierType {
         if (!pool.hasOwnProperty(tier)) {
           continue;
         }
-        if (pool[tier].find(m => (m as WeightedModifierType).modifierType.id === (this.generatorId || this.id))) {
+        if (pool[tier].find(m => (m as WeightedModifierType).modifierType.id === this.id)) {
           return (this.tier = tier);
         }
       }
@@ -133,7 +132,6 @@ export class ModifierTypeGenerator extends ModifierType {
   generateType(party: Pokemon[], pregenArgs?: any[]) {
     const ret = this.genTypeFunc(party, pregenArgs);
     if (ret) {
-      ret.generatorId = ret.id;
       ret.id = this.id;
       ret.setTier(this.tier);
     }
@@ -554,7 +552,7 @@ export class SpeciesStatBoosterModifierType extends PokemonHeldItemModifierType 
     const item = SpeciesStatBoosterModifierTypeGenerator.items[key];
     super(`modifierType:SpeciesBoosterItem.${key}`, key.toLowerCase(), (type, args) => new Modifiers.SpeciesStatBoosterModifier(type, (args[0] as Pokemon).id, item.stats, item.multiplier, item.species));
 
-    this.id = this.key = key;
+    this.key = key;
   }
 
   getPregenArgs(): any[] {
@@ -568,7 +566,12 @@ export class PokemonLevelIncrementModifierType extends PokemonModifierType {
   }
 
   getDescription(scene: BattleScene): string {
-    return i18next.t("modifierType:ModifierType.PokemonLevelIncrementModifierType.description");
+    let levels = 1;
+    const hasCandyJar = scene.modifiers.find(modifier => modifier instanceof Modifiers.LevelIncrementBoosterModifier);
+    if (hasCandyJar) {
+      levels += hasCandyJar.stackCount;
+    }
+    return i18next.t("modifierType:ModifierType.PokemonLevelIncrementModifierType.description", {levels });
   }
 }
 
@@ -578,7 +581,12 @@ export class AllPokemonLevelIncrementModifierType extends ModifierType {
   }
 
   getDescription(scene: BattleScene): string {
-    return i18next.t("modifierType:ModifierType.AllPokemonLevelIncrementModifierType.description");
+    let levels = 1;
+    const hasCandyJar = scene.modifiers.find(modifier => modifier instanceof Modifiers.LevelIncrementBoosterModifier);
+    if (hasCandyJar) {
+      levels += hasCandyJar.stackCount;
+    }
+    return i18next.t("modifierType:ModifierType.AllPokemonLevelIncrementModifierType.description", { levels });
   }
 }
 
@@ -1155,6 +1163,8 @@ class WeightedModifierType {
     this.modifierType.setTier(tier);
   }
 }
+
+export type ModifierTypes = keyof typeof modifierTypes;
 
 export const modifierTypes = {
   POKEBALL: () => new AddPokeballModifierType("pb", PokeballType.POKEBALL, 5),
@@ -1742,7 +1752,7 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
     let i = 0;
     pool[t].reduce((total: integer, modifierType: WeightedModifierType) => {
       const weightedModifierType = modifierType as WeightedModifierType;
-      const existingModifiers = party[0].scene.findModifiers(m => (m.type.generatorId || m.type.id) === weightedModifierType.modifierType.id, poolType === ModifierPoolType.PLAYER);
+      const existingModifiers = party[0].scene.findModifiers(m => m.type.id === weightedModifierType.modifierType.id, poolType === ModifierPoolType.PLAYER);
       const itemModifierType = weightedModifierType.modifierType instanceof ModifierTypeGenerator
         ? weightedModifierType.modifierType.generateType(party)
         : weightedModifierType.modifierType;
@@ -1755,7 +1765,7 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
           : weightedModifierType.weight as integer
         : 0;
       if (weightedModifierType.maxWeight) {
-        const modifierId = weightedModifierType.modifierType.generatorId || weightedModifierType.modifierType.id;
+        const modifierId = weightedModifierType.modifierType.id;
         tierModifierIds.push(modifierId);
         const outputWeight = useMaxWeightForOutput ? weightedModifierType.maxWeight : weight;
         modifierTableData[modifierId] = { weight: outputWeight, tier: parseInt(t), tierPercent: 0, totalPercent: 0 };
