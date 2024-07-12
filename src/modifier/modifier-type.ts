@@ -913,7 +913,7 @@ export class EvolutionItemModifierType extends PokemonModifierType implements Ge
   }
 
   get identifier(): string {
-    return "Evolution:" + Utils.getEnumKeys(EvolutionItem)[this.evolutionItem]
+    return "Evolution" + (this.evolutionItem > 50 ? "Rare" : "") + ":" + Utils.getEnumKeys(EvolutionItem)[this.evolutionItem]
   }
 
   getDescription(scene: BattleScene): string {

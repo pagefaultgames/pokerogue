@@ -6,11 +6,11 @@ import i18next from "i18next";
 
 export default class LogNameFormUiHandler extends FormModalUiHandler {
   getModalTitle(config?: ModalConfig): string {
-    return "Create game log";
+    return "New Log";
   }
 
   getFields(config?: ModalConfig): string[] {
-    return [ i18next.t("menu:username"), i18next.t("menu:password") ];
+    return [ "Name", "Author(s)" ];
   }
 
   getWidth(config?: ModalConfig): number {
@@ -22,7 +22,7 @@ export default class LogNameFormUiHandler extends FormModalUiHandler {
   }
 
   getButtonLabels(config?: ModalConfig): string[] {
-    return [ i18next.t("menu:login"), i18next.t("menu:register") ];
+    return [ "Create" ];
   }
 
   getReadableErrorMessage(error: string): string {
