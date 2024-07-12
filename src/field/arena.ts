@@ -21,6 +21,7 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
+import * as LoggerTools from "../logger"
 
 export class Arena {
   public scene: BattleScene;
@@ -91,6 +92,19 @@ export class Arena {
       ? tierValue >= 156 ? BiomePoolTier.COMMON : tierValue >= 32 ? BiomePoolTier.UNCOMMON : tierValue >= 6 ? BiomePoolTier.RARE : tierValue >= 1 ? BiomePoolTier.SUPER_RARE : BiomePoolTier.ULTRA_RARE
       : tierValue >= 20 ? BiomePoolTier.BOSS : tierValue >= 6 ? BiomePoolTier.BOSS_RARE : tierValue >= 1 ? BiomePoolTier.BOSS_SUPER_RARE : BiomePoolTier.BOSS_ULTRA_RARE;
     console.log(BiomePoolTier[tier]);
+    var tiernames = [
+      "Common",
+      "Uncommon",
+      "Rare",
+      "Super Rare",
+      "Ultra Rare",
+      "Common",
+      "Rare",
+      "Super Rare",
+      "Ultra Rare",
+    ]
+    LoggerTools.rarities[LoggerTools.rarityslot[0]] = tiernames[tier]
+    console.log(tiernames[tier])
     while (!this.pokemonPool[tier].length) {
       console.log(`Downgraded rarity tier from ${BiomePoolTier[tier]} to ${BiomePoolTier[tier - 1]}`);
       tier--;
