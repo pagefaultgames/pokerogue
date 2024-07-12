@@ -18,6 +18,10 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "exportSlotSelect": "Wähle einen Slot zum Exportieren.",
   "importData": "Daten importieren",
   "exportData": "Daten exportieren",
+  "linkDiscord": "Discord verbinden",
+  "unlinkDiscord": "Discord trennen",
+  "linkGoogle": "Google verbinden",
+  "unlinkGoogle": "Google trennen",
   "cancel": "Abbrechen",
   "losingProgressionWarning": "Du wirst jeglichen Fortschritt seit Anfang dieses Kampfes verlieren. Fortfahren?",
   "noEggs": "Du brütest aktuell keine Eier aus!"

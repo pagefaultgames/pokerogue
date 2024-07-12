@@ -16,6 +16,13 @@ const VOLUME_OPTIONS: SettingOption[] = new Array(11).fill(null).map((_, i) => i
   value: "Mute",
   label: i18next.t("settings:mute")
 });
+const SHOP_OVERLAY_OPACITY_OPTIONS: SettingOption[] = new Array(9).fill(null).map((_, i) => {
+  const value = ((i + 1) * 10).toString();
+  return {
+    value,
+    label: value,
+  };
+});
 const OFF_ON: SettingOption[] = [
   {
     value: "Off",
@@ -98,6 +105,7 @@ export const SettingKeys = {
   SE_Volume: "SE_VOLUME",
   Music_Preference: "MUSIC_PREFERENCE",
   Show_BGM_Bar: "SHOW_BGM_BAR",
+  Shop_Overlay_Opacity: "SHOP_OVERLAY_OPACITY"
 };
 
 /**
@@ -493,9 +501,8 @@ export const Setting: Array<Setting> = [
     key: SettingKeys.Show_BGM_Bar,
     label: i18next.t("settings:showBgmBar"),
     options: OFF_ON,
-    default: 0,
-    type: SettingType.DISPLAY,
-    requireReload: true
+    default: 1,
+    type: SettingType.DISPLAY
   },
   {
     key: SettingKeys.Master_Volume,
@@ -535,7 +542,14 @@ export const Setting: Array<Setting> = [
     type: SettingType.AUDIO,
     requireReload: true
   },
-
+  {
+    key: SettingKeys.Shop_Overlay_Opacity,
+    label: i18next.t("settings:shopOverlayOpacity"),
+    options: SHOP_OVERLAY_OPACITY_OPTIONS,
+    default: 7,
+    type: SettingType.DISPLAY,
+    requireReload: false
+  },
 ];
 
 /**
@@ -759,6 +773,9 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
         return false;
       }
     }
+    break;
+  case SettingKeys.Shop_Overlay_Opacity:
+    scene.updateShopOverlayOpacity(parseInt(Setting[index].options[value].value) * .01);
     break;
   }
 
