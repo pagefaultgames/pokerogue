@@ -3,6 +3,7 @@ import { abilityTriggers } from "./ability-trigger";
 import { arenaFlyout } from "./arena-flyout";
 import { PGFachv, PGMachv } from "./achv";
 import { battle } from "./battle";
+import { battleInfo } from "./battle-info";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
 import { berry } from "./berry";
 import { bgmName } from "./bgm-name";
@@ -54,6 +55,7 @@ export const ptBrConfig = {
   abilityTriggers: abilityTriggers,
   arenaFlyout: arenaFlyout,
   battle: battle,
+  battleInfo: battleInfo,
   battleMessageUiHandler: battleMessageUiHandler,
   berry: berry,
   bgmName: bgmName,
