@@ -6,21 +6,21 @@ export const lostAtSea = {
   query: "What will you do?",
   option: {
     1: {
-      label: "Use @ec{pokemonCanLearnMove}", // pkm has to be of type water
+      label: "Use {{pokemonCanLearnMove}}", // pkm has to be of type water
       tooltip:
-        "Use @ec{pokemonCanLearnMove} to guide you back. @ec{pokemonCanLearnMove} earns EXP as if having defeated a Lapras.",
-      selected: "@ec{pokemonCanLearnMove} guides you back and earns EXP.",
+        "Use {{pokemonCanLearnMove}} to guide you back. {{pokemonCanLearnMove}} earns EXP as if having defeated a Lapras.",
+      selected: "{{pokemonCanLearnMove}} guides you back and earns EXP.",
     },
     2: {
-      label: "Use @ec{flyingPkm}", // pkm has to be of type flying
+      label: "Use {{flyingPkm}}", // pkm has to be of type flying
       tooltip:
-        "Use @ec{flyingPkm} to guide you back. @ec{flyingPkm} earns EXP as if having defeated a Lapras.",
-      selected: "@ec{flyingPkm} guides you back and earns EXP.",
+        "Use {{flyingPkm}} to guide you back. {{flyingPkm}} earns EXP as if having defeated a Lapras.",
+      selected: "{{flyingPkm}} guides you back and earns EXP.",
     },
     3: {
       label: "Wander aimlessly",
       tooltip:
-        "Wander aimlessly until you're back. All your Pokémon lose @ec{damagePercentage}% of their HP. Any below that are KO'd.",
+        "Wander aimlessly until you're back. All your Pokémon lose {{damagePercentage}}% of their HP. Any below that are KO'd.",
       selected:
         "You wander aimlessly around. After hours of wandering, you find your way back. You and your team take the toll.",
     },
