@@ -94,28 +94,28 @@ describe("Test for BattleStat Localization", () => {
   });
 
   it("Test getBattleStatName() in Español de España", async () => {
-    i18next.changeLanguage("es");
+    i18next.changeLanguage("es-ES");
     battleStatUnits.forEach(unit => {
       testBattleStatName(unit.stat, esEsPokemonInfo[unit.key.split(".")[0]][unit.key.split(".")[1]]);
     });
   });
 
   it("Test getBattleStatLevelChangeDescription() in Español de España", async () => {
-    i18next.changeLanguage("es");
+    i18next.changeLanguage("es-ES");
     battleStatLevelUnits.forEach(unit => {
       testBattleStatLevelChangeDescription(unit.levels, unit.up, esEsBattleStat[unit.key]);
     });
   });
 
   it("Test getBattleStatName() in Español de México", async () => {
-    i18next.changeLanguage("es");
+    i18next.changeLanguage("es-MX");
     battleStatUnits.forEach(unit => {
       testBattleStatName(unit.stat, esMxPokemonInfo[unit.key.split(".")[0]][unit.key.split(".")[1]]);
     });
   });
 
   it("Test getBattleStatLevelChangeDescription() in Español de México", async () => {
-    i18next.changeLanguage("es");
+    i18next.changeLanguage("es-MX");
     battleStatLevelUnits.forEach(unit => {
       testBattleStatLevelChangeDescription(unit.levels, unit.up, esMxBattleStat[unit.key]);
     });
