@@ -44,7 +44,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
   protected scrollCursor: integer = 0;
 
   private konamiIndex: integer = 0;
-  private konamiCode: Button[] = [Button.UP, Button.UP, Button.DOWN, Button.DOWN, Button.LEFT, Button.RIGHT, Button.LEFT, Button.RIGHT, Button.CANCEL, Button.ACTION];
+  static readonly konamiCode: Button[] = [Button.UP, Button.UP, Button.DOWN, Button.DOWN, Button.LEFT, Button.RIGHT, Button.LEFT, Button.RIGHT, Button.CANCEL, Button.ACTION];
 
   private cursorObj: Phaser.GameObjects.Image;
 
@@ -163,9 +163,9 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
     let playSound = true;
 
-    if (Utils.isLocal || Utils.isBeta) {
-      if (button === this.konamiCode[this.konamiIndex] && ui.getMode() === Mode.TITLE) {
-        if (this.konamiIndex !== this.konamiCode.length - 1) {
+    if (ui.getMode() === Mode.TITLE) {
+      if (button === AbstractOptionSelectUiHandler.konamiCode[this.konamiIndex] && (Utils.isLocal || Utils.isBeta)) {
+        if (this.konamiIndex !== AbstractOptionSelectUiHandler.konamiCode.length - 1) {
           this.konamiIndex += 1;
         } else {
           unlockAll(this.scene);

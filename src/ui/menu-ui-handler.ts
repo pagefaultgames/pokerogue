@@ -12,8 +12,8 @@ import {Button} from "#enums/buttons";
 import { GameDataType } from "#enums/game-data-type";
 import BgmBar from "#app/ui/bgm-bar";
 import { Species } from "#app/enums/species.js";
-import { DexAttr, DexEntry, AbilityAttr, StarterDataEntry } from "#app/system/game-data.js";
-import { allSpecies, starterPassiveAbilities } from "../data/pokemon-species";
+import { DexAttr, AbilityAttr } from "#app/system/game-data.js";
+import { getPokemonSpecies, starterPassiveAbilities } from "../data/pokemon-species";
 import { Nature } from "../data/nature";
 import { Passive } from "../enums/passive";
 
@@ -37,8 +37,10 @@ const redditUrl = "https://www.reddit.com/r/pokerogue";
 
 export function unlockAll(scene: BattleScene) {
   if (Utils.isLocal || Utils.isBeta) {
-    for (const species of Object.keys(Species).filter(s => !isNaN(Number(s)))) {
-      const pokemonSpecies = Number(species) > 2000 ? allSpecies.find(s => s.speciesId === Number(species)) : allSpecies[Number(species) - 1]; // thie converts the species to a pokemon from allSpecies by checking regional variants and returning the normal species index
+    const totalSpecies = Object.keys(Species).filter(s => !isNaN(Number(s)));
+    for (const species of totalSpecies) {
+      //const pokemonSpecies = Number(species) > 2000 ? allSpecies.find(s => s.speciesId === Number(species)) : allSpecies[Number(species) - 1]; // thie converts the species to a pokemon from allSpecies by checking regional variants and returning the normal species index
+      const pokemonSpecies = getPokemonSpecies(Number(species));
       let dexAttrLength = Object.values(DexAttr).length; // this will be the final amount of bits to set; we start by getting the length of the DexAttr so we know how many things every pokemon will get at minimum
       if (pokemonSpecies.forms?.length > 0) { // this checks if the specific pokemon has forms
         dexAttrLength += pokemonSpecies.forms?.length; // if it does have forms, add it to the dexAttrLength
@@ -56,17 +58,17 @@ export function unlockAll(scene: BattleScene) {
         abilityAttr = AbilityAttr.ABILITY_1 + AbilityAttr.ABILITY_2 + AbilityAttr.ABILITY_HIDDEN;
         break;
       }
-      (scene.gameData.dexData[species] as DexEntry).seenAttr = BigInt(Math.pow(2, dexAttrLength) - 1); // we can set these values as 2^n - 1 if n is one more than the total number of total bits compared to what we need
-      (scene.gameData.dexData[species] as DexEntry).caughtAttr = BigInt(Math.pow(2, dexAttrLength) - 1);
-      (scene.gameData.dexData[species] as DexEntry).natureAttr = Math.pow(2, natureAttrLength) - 1;
-      (scene.gameData.dexData[species] as DexEntry).caughtCount = 1;
-      (scene.gameData.dexData[species] as DexEntry).seenCount = 1;
-      (scene.gameData.dexData[species] as DexEntry).ivs = [31, 31, 31, 31, 31, 31];
+      scene.gameData.dexData[species].seenAttr = BigInt(Math.pow(2, dexAttrLength) - 1); // we can set these values as 2^n - 1 if n is one more than the total number of total bits compared to what we need
+      scene.gameData.dexData[species].caughtAttr = BigInt(Math.pow(2, dexAttrLength) - 1);
+      scene.gameData.dexData[species].natureAttr = Math.pow(2, natureAttrLength) - 1;
+      scene.gameData.dexData[species].caughtCount = 1;
+      scene.gameData.dexData[species].seenCount = 1;
+      scene.gameData.dexData[species].ivs = [31, 31, 31, 31, 31, 31];
       if (scene.gameData.starterData[species]) { // this checks to make sure the species has a starter
-        (scene.gameData.starterData[species] as StarterDataEntry).abilityAttr = abilityAttr; // if so, it sets the abilityAttr for the starter
+        scene.gameData.starterData[species].abilityAttr = abilityAttr; // if so, it sets the abilityAttr for the starter
       }
       if (starterPassiveAbilities[species]) { // checks to see if the species has a passive - this is different to the starter code above as this needs to check babies instead of evolutions (i.e. check pichu instead of pikachu)
-        (scene.gameData.starterData[species] as StarterDataEntry).passiveAttr = Passive.UNLOCKED + Passive.ENABLED; // if so, it sets the passiveAttr for the starter to be
+        scene.gameData.starterData[species].passiveAttr = Passive.UNLOCKED + Passive.ENABLED; // if so, it sets the passiveAttr for the starter to be
       }
     }
     //scene.gameData.saveAll(scene, true, true, false, true); // I could not for the life of me figure out how to make it save
