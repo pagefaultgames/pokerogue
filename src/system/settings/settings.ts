@@ -99,7 +99,8 @@ export const SettingKeys = {
   SE_Volume: "SE_VOLUME",
   Music_Preference: "MUSIC_PREFERENCE",
   Show_BGM_Bar: "SHOW_BGM_BAR",
-  Damage_Display: "DAMAGE_DISPLAY"
+  Damage_Display: "DAMAGE_DISPLAY",
+  LazyReloads: "FLAG_EVERY_RESET_AS_RELOAD"
 };
 
 /**
@@ -145,6 +146,35 @@ export const Setting: Array<Setting> = [
     ],
     default: 3,
     type: SettingType.GENERAL
+  },
+  {
+    key: SettingKeys.Damage_Display,
+    label: "Damage Display",
+    options: [{
+      label: "Off",
+      value: "Off"
+    }, {
+      label: "Value",
+      value: "Value"
+    }, {
+      label: "Percent",
+      value: "Percent"
+    }],
+    default: 0,
+    type: SettingType.GENERAL,
+  },
+  {
+    key: SettingKeys.LazyReloads,
+    label: "Lazy Reloads",
+    options: [{
+      label: "Off",
+      value: "Off"
+    }, {
+      label: "On",
+      value: "On"
+    }],
+    default: 0,
+    type: SettingType.GENERAL,
   },
   {
     key: SettingKeys.HP_Bar_Speed,
@@ -243,22 +273,6 @@ export const Setting: Array<Setting> = [
     options: OFF_ON,
     default: 0,
     type: SettingType.GENERAL
-  },
-  {
-    key: SettingKeys.Damage_Display,
-    label: "Damage Display",
-    options: [{
-      label: "Off",
-      value: "Off"
-    }, {
-      label: "Value",
-      value: "Value"
-    }, {
-      label: "Percent",
-      value: "Percent"
-    }],
-    default: 0,
-    type: SettingType.GENERAL,
   },
   {
     key: SettingKeys.Tutorials,
@@ -624,6 +638,8 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     break;
   case SettingKeys.Damage_Display:
     scene.damageDisplay = Setting[index].options[value].value
+  case SettingKeys.LazyReloads:
+    scene.lazyReloads = Setting[index].options[value].value == "On"
   case SettingKeys.Skip_Seen_Dialogues:
     scene.skipSeenDialogues = Setting[index].options[value].value === "On";
     break;
