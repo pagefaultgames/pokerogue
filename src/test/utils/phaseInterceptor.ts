@@ -289,13 +289,12 @@ export default class PhaseInterceptor {
    * @param phase - The phase to start.
    */
   setMode(mode: Mode, ...args: any[]): Promise<void> {
-    const currentPhase = this.
-      scene.getCurrentPhase();
+    const currentPhase = this.scene.getCurrentPhase();
     const instance = this.scene.ui;
     console.log("setMode", mode, args);
     const ret = this.originalSetMode.apply(instance, [mode, ...args]);
     if (!this.phases[currentPhase.constructor.name]) {
-      throw new Error(`missing ${currentPhase.constructor.name} in phaseInterceptior PHASES list`);
+      throw new Error(`missing ${currentPhase.constructor.name} in phaseInterceptor PHASES list`);
     }
     if (this.phases[currentPhase.constructor.name].endBySetMode) {
       this.inProgress?.callback();

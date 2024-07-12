@@ -1,32 +1,32 @@
-import i18next, { ParseKeys } from "i18next";
 import { BattleType } from "#app/battle";
-import BattleScene from "../../battle-scene";
-import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "../pokemon-species";
-import { MysteryEncounterVariant } from "./mystery-encounter";
-import { Status, StatusEffect } from "../status-effect";
-import { TrainerConfig, trainerConfigs, TrainerSlot } from "../trainer-config";
+import { biomeLinks } from "#app/data/biomes";
+import { WIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
+import { Type } from "#app/data/type";
 import Pokemon, { FieldPosition, PlayerPokemon } from "#app/field/pokemon";
-import Trainer, { TrainerVariant } from "../../field/trainer";
 import { ExpBalanceModifier, ExpShareModifier, MultipleParticipantExpBonusModifier, PokemonExpBoosterModifier } from "#app/modifier/modifier";
-import { CustomModifierSettings, getModifierPoolForType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeGenerator, ModifierTypeOption, modifierTypes, PokemonHeldItemModifierType, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
+import { CustomModifierSettings, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeGenerator, ModifierTypeOption, PokemonHeldItemModifierType, getModifierPoolForType, modifierTypes, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
+import * as Overrides from "#app/overrides";
 import { BattleEndPhase, EggLapsePhase, ExpPhase, ModifierRewardPhase, SelectModifierPhase, ShowPartyExpBarPhase, TrainerVictoryPhase } from "#app/phases";
 import { MysteryEncounterBattlePhase, MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phase";
-import * as Utils from "../../utils";
-import { isNullOrUndefined } from "#app/utils";
-import { TrainerType } from "#enums/trainer-type";
-import { Species } from "#enums/species";
-import { Type } from "#app/data/type";
-import { BattlerTagType } from "#enums/battler-tag-type";
 import PokemonData from "#app/system/pokemon-data";
-import { Biome } from "#enums/biome";
-import { biomeLinks } from "#app/data/biomes";
-import { Mode } from "#app/ui/ui";
-import { PartyOption, PartyUiMode } from "#app/ui/party-ui-handler";
 import { OptionSelectConfig, OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
-import { WIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
-import { getTextWithColors, TextStyle } from "#app/ui/text";
-import * as Overrides from "#app/overrides";
+import { PartyOption, PartyUiMode } from "#app/ui/party-ui-handler";
+import { TextStyle, getTextWithColors } from "#app/ui/text";
+import { Mode } from "#app/ui/ui";
+import { isNullOrUndefined } from "#app/utils";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { Biome } from "#enums/biome";
+import { Species } from "#enums/species";
+import { TrainerType } from "#enums/trainer-type";
 import { UiTheme } from "#enums/ui-theme";
+import i18next from "i18next";
+import BattleScene from "../../battle-scene";
+import Trainer, { TrainerVariant } from "../../field/trainer";
+import * as Utils from "../../utils";
+import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "../pokemon-species";
+import { Status, StatusEffect } from "../status-effect";
+import { TrainerConfig, TrainerSlot, trainerConfigs } from "../trainer-config";
+import { MysteryEncounterVariant } from "./mystery-encounter";
 
 /**
  *
@@ -158,12 +158,14 @@ export function koPlayerPokemon(pokemon: PlayerPokemon) {
   pokemon.updateInfo();
 }
 
-export function getEncounterText(scene: BattleScene, textKey: TemplateStringsArray | `mysteryEncounter:${string}`, primaryStyle?: TextStyle, uiTheme: UiTheme = UiTheme.DEFAULT): string {
+export function getEncounterText(scene: BattleScene, textKey: string, primaryStyle?: TextStyle, uiTheme: UiTheme = UiTheme.DEFAULT): string {
   if (isNullOrUndefined(textKey)) {
     return null;
   }
 
-  let textString: string = getTextWithDialogueTokens(scene, textKey);
+  const stringArray = [`${textKey}`] as any;
+  stringArray.raw = [`${textKey}`];
+  let textString: string = getTextWithDialogueTokens(scene, stringArray);
 
   // Can only color the text if a Primary Style is defined
   // primaryStyle is applied to all text that does not have its own specified style
@@ -174,22 +176,12 @@ export function getEncounterText(scene: BattleScene, textKey: TemplateStringsArr
   return textString;
 }
 
-function getTextWithDialogueTokens(scene: BattleScene, textKey: TemplateStringsArray | `mysteryEncounter:${string}`): string {
+function getTextWithDialogueTokens(scene: BattleScene, textKey: TemplateStringsArray): string {
   if (isNullOrUndefined(textKey)) {
     return null;
   }
 
-  let textString: string = i18next.t(textKey as ParseKeys);
-
-  // Apply dialogue tokens
-  const dialogueTokens = scene.currentBattle?.mysteryEncounter?.dialogueTokens;
-  if (dialogueTokens) {
-    dialogueTokens.forEach((value) => {
-      textString = textString.replace(value[0], value[1]);
-    });
-  }
-
-  return textString;
+  return i18next.t(textKey, scene.currentBattle?.mysteryEncounter?.dialogueTokens);
 }
 
 /**
@@ -197,7 +189,7 @@ function getTextWithDialogueTokens(scene: BattleScene, textKey: TemplateStringsA
  * @param scene
  * @param contentKey
  */
-export function queueEncounterMessage(scene: BattleScene, contentKey: TemplateStringsArray | `mysteryEncounter:${string}`): void {
+export function queueEncounterMessage(scene: BattleScene, contentKey: string): void {
   const text: string = getEncounterText(scene, contentKey);
   scene.queueMessage(text, null, true);
 }
@@ -207,7 +199,7 @@ export function queueEncounterMessage(scene: BattleScene, contentKey: TemplateSt
  * @param scene
  * @param contentKey
  */
-export function showEncounterText(scene: BattleScene, contentKey: TemplateStringsArray | `mysteryEncounter:${string}`): Promise<void> {
+export function showEncounterText(scene: BattleScene, contentKey: string): Promise<void> {
   return new Promise<void>(resolve => {
     const text: string = getEncounterText(scene, contentKey);
     scene.ui.showText(text, null, () => resolve(), 0, true);
@@ -221,7 +213,7 @@ export function showEncounterText(scene: BattleScene, contentKey: TemplateString
  * @param speakerContentKey
  * @param callback
  */
-export function showEncounterDialogue(scene: BattleScene, textContentKey: TemplateStringsArray | `mysteryEncounter:${string}`, speakerContentKey: TemplateStringsArray | `mysteryEncounter:${string}`, callback?: Function) {
+export function showEncounterDialogue(scene: BattleScene, textContentKey: string, speakerContentKey: string, callback?: Function) {
   const text: string = getEncounterText(scene, textContentKey);
   const speaker: string = getEncounterText(scene, speakerContentKey);
   scene.ui.showDialogue(text, speaker, null, callback, 0, 0);
