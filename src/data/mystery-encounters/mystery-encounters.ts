@@ -1,15 +1,16 @@
-import IMysteryEncounter from "./mystery-encounter";
+import { Biome } from "#enums/biome";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { DarkDealEncounter } from "./encounters/dark-deal-encounter";
+import { DepartmentStoreSaleEncounter } from "./encounters/department-store-sale-encounter";
+import { FieldTripEncounter } from "./encounters/field-trip-encounter";
+import { FightOrFlightEncounter } from "./encounters/fight-or-flight-encounter";
+import { LostAtSeaEncounter } from "./encounters/lost-at-sea-encounter";
 import { MysteriousChallengersEncounter } from "./encounters/mysterious-challengers-encounter";
 import { MysteriousChestEncounter } from "./encounters/mysterious-chest-encounter";
-import { FightOrFlightEncounter } from "./encounters/fight-or-flight-encounter";
-import { TrainingSessionEncounter } from "./encounters/training-session-encounter";
-import { Biome } from "#enums/biome";
-import { SleepingSnorlaxEncounter } from "./encounters/sleeping-snorlax-encounter";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { DepartmentStoreSaleEncounter } from "./encounters/department-store-sale-encounter";
 import { ShadyVitaminDealerEncounter } from "./encounters/shady-vitamin-dealer-encounter";
-import { LostAtSeaEncounter } from "./encounters/lost-at-sea-encounter";
+import { SleepingSnorlaxEncounter } from "./encounters/sleeping-snorlax-encounter";
+import { TrainingSessionEncounter } from "./encounters/training-session-encounter";
+import IMysteryEncounter from "./mystery-encounter";
 
 // Spawn chance: (BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT + WIGHT_INCREMENT_ON_SPAWN_MISS * <number of missed spawns>) / 256
 export const BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT = 1;

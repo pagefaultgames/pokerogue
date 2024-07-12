@@ -1,9 +1,11 @@
 import { OptionTextDisplay } from "#app/data/mystery-encounters/mystery-encounter-dialogue";
+import { Moves } from "#app/enums/moves.js";
 import { PlayerPokemon } from "#app/field/pokemon";
 import BattleScene from "../../battle-scene";
 import * as Utils from "../../utils";
 import { Type } from "../type";
 import { EncounterPokemonRequirement, EncounterSceneRequirement, MoneyRequirement, TypeRequirement } from "./mystery-encounter-requirements";
+import { CanLearnMoveRequirement, CanlearnMoveRequirementOptions } from "./requirements/can-learn-move-requirement";
 
 export enum EncounterOptionMode {
   /** Default style */
@@ -194,8 +196,18 @@ export class MysteryEncounterOptionBuilder implements Partial<MysteryEncounterOp
    * @returns
    */
   withPokemonTypeRequirement(type: Type | Type[], excludeFainted?: boolean, minNumberOfPokemon?: number, invertQuery?: boolean) {
-    const types = Array.isArray(type) ? type : [type];
-    return this.withPrimaryPokemonRequirement(new TypeRequirement(types, excludeFainted, minNumberOfPokemon, invertQuery));
+    return this.withPrimaryPokemonRequirement(new TypeRequirement(type, excludeFainted, minNumberOfPokemon, invertQuery));
+  }
+
+  /**
+   * Player is required to have a pokemon that can learn a certain move/moveset
+   *
+   * @param move the required move/moves
+   * @param options see {@linkcode CanlearnMoveRequirementOptions}
+   * @returns
+   */
+  withPokemonCanLearnMoveRequirement(move: Moves | Moves[], options?: CanlearnMoveRequirementOptions) {
+    return this.withPrimaryPokemonRequirement(new CanLearnMoveRequirement(move, options));
   }
 
   withSecondaryPokemonRequirement(requirement: EncounterPokemonRequirement, excludePrimaryFromSecondaryRequirements?: boolean): this & Required<Pick<MysteryEncounterOption, "secondaryPokemonRequirements">> {

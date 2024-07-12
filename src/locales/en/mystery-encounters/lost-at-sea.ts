@@ -6,10 +6,10 @@ export const lostAtSea = {
   query: "What will you do?",
   option: {
     1: {
-      label: "Use @ec{waterPkm}", // pkm has to be of type water
+      label: "Use @ec{pokemonCanLearnMove}", // pkm has to be of type water
       tooltip:
-        "Use @ec{waterPkm} to guide you back. @ec{waterPkm} earns EXP as if having defeated a Lapras.",
-      selected: "@ec{waterPkm} guides you back and earns EXP.",
+        "Use @ec{pokemonCanLearnMove} to guide you back. @ec{pokemonCanLearnMove} earns EXP as if having defeated a Lapras.",
+      selected: "@ec{pokemonCanLearnMove} guides you back and earns EXP.",
     },
     2: {
       label: "Use @ec{flyingPkm}", // pkm has to be of type flying
