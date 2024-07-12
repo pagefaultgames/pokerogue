@@ -1,4 +1,4 @@
-import { OptionTextDisplay, TextDisplay } from "#app/data/mystery-encounters/mystery-encounter-dialogue";
+import { OptionTextDisplay } from "#app/data/mystery-encounters/mystery-encounter-dialogue";
 import { Moves } from "#app/enums/moves.js";
 import { PlayerPokemon } from "#app/field/pokemon";
 import BattleScene from "../../battle-scene";
@@ -224,40 +224,6 @@ export class MysteryEncounterOptionBuilder implements Partial<MysteryEncounterOp
    */
   withDialogue(dialogue: OptionTextDisplay) {
     this.dialogue = dialogue;
-    return this;
-  }
-
-  /**
-   * Set the button label and disabled label of the option
-   *
-   * @param label the button label
-   * @returns
-   */
-  withButtonLabel(label: string, disabledLabel?: string) {
-    this.dialogue.buttonLabel = label;
-    this.dialogue.disabledButtonLabel = disabledLabel ?? label;
-    return this;
-  }
-  /**
-   * Set the button tooltip and disabled tooltip of the option
-   *
-   * @param tooltip the button tooltip
-   * @returns
-   */
-  withButtonTooltip(tooltip: string, disabledTooltip?: string) {
-    this.dialogue.buttonTooltip = tooltip;
-    this.dialogue.disabledButtonTooltip = disabledTooltip;
-    return this;
-  }
-
-  /**
-   * Set the dialogue to display when the player selects the option
-   *
-   * @param dialogue the text to display on selecting the option
-   * @returns
-   */
-  withSelectedDialogue(dialogue: TextDisplay[]) {
-    this.dialogue.selected = dialogue;
     return this;
   }
 }
