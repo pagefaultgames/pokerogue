@@ -124,6 +124,7 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsEnduringLapse": "{{pokemonNameWithAffix}}[[는]]\n공격을 버텼다!",
   "battlerTagsSturdyLapse": "{{pokemonNameWithAffix}}[[는]]\n공격을 버텼다!",
   "battlerTagsPerishSongLapse": "{{pokemonNameWithAffix}}의 멸망의\n카운트가 {{turnCount}}[[가]] 되었다!",
+  "battlerTagsCenterOfAttentionOnAdd": "{{pokemonNameWithAffix}}[[는]]\n주목의 대상이 되었다!",
   "battlerTagsTruantLapse": "{{pokemonNameWithAffix}}[[는]] 게으름을 피우고 있다!",
   "battlerTagsSlowStartOnAdd": "{{pokemonNameWithAffix}}[[는]] 컨디션이\n좋아지지 않는다!",
   "battlerTagsSlowStartOnRemove": "{{pokemonNameWithAffix}} 는 마침내\n컨디션을 회복했다!",

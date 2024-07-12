@@ -121,6 +121,7 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsEnduringLapse": "{{pokemonNameWithAffix}}挺住了攻擊！",
   "battlerTagsSturdyLapse": "{{pokemonNameWithAffix}}挺住了攻擊！",
   "battlerTagsPerishSongLapse": "{{pokemonNameWithAffix}} 的滅亡計時變成{{turnCount}}了！",
+  "battlerTagsCenterOfAttentionOnAdd": "{{pokemonNameWithAffix}} became the center\nof attention!",
   "battlerTagsTruantLapse": "{{pokemonNameWithAffix}}正在偷懶！",
   "battlerTagsSlowStartOnAdd": "{{pokemonNameWithAffix}}無法拿出平時的水平！",
   "battlerTagsSlowStartOnRemove": "{{pokemonNameWithAffix}}恢復了平時的水平！",

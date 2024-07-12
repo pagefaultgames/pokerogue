@@ -124,6 +124,7 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsEnduringLapse": "{{pokemonNameWithAffix}}\nencaisse les coups !",
   "battlerTagsSturdyLapse": "{{pokemonNameWithAffix}}\nencaisse les coups !",
   "battlerTagsPerishSongLapse": "Le compte à rebours de Requiem\nde {{pokemonNameWithAffix}} descend à {{turnCount}} !",
+  "battlerTagsCenterOfAttentionOnAdd": "{{pokemonNameWithAffix}} became the center\nof attention!",
   "battlerTagsTruantLapse": "{{pokemonNameWithAffix}} paresse !",
   "battlerTagsSlowStartOnAdd": "{{pokemonNameWithAffix}}\nn’arrive pas à se motiver !",
   "battlerTagsSlowStartOnRemove": "{{pokemonNameWithAffix}}\narrive enfin à s’y mettre sérieusement !",

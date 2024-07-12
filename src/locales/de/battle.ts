@@ -124,6 +124,7 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsEnduringLapse": "{{pokemonNameWithAffix}} übersteht die Attacke!",
   "battlerTagsSturdyLapse": "{{pokemonNameWithAffix}} übersteht die Attacke!",
   "battlerTagsPerishSongLapse": "Abgesang von {{pokemonNameWithAffix}} steht bei {{turnCount}}.",
+  "battlerTagsCenterOfAttentionOnAdd": "{{pokemonNameWithAffix}} became the center\nof attention!",
   "battlerTagsTruantLapse": "{{pokemonNameWithAffix}} faulenzt!",
   "battlerTagsSlowStartOnAdd": "{{pokemonNameWithAffix}} kommt nicht in Fahrt!",
   "battlerTagsSlowStartOnRemove": "{{pokemonNameWithAffix}} kriegt schließlich doch noch die Kurve!",

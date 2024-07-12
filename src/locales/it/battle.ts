@@ -124,6 +124,7 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsEnduringLapse": "{{pokemonNameWithAffix}} resiste\nal colpo!",
   "battlerTagsSturdyLapse": "{{pokemonNameWithAffix}} ha resistito\ngrazie a Vigore!",
   "battlerTagsPerishSongLapse": "Il conto alla rovescia di Ultimocanto per {{pokemonNameWithAffix}} scende a {{turnCount}}.",
+  "battlerTagsCenterOfAttentionOnAdd": "{{pokemonNameWithAffix}} became the center\nof attention!",
   "battlerTagsTruantLapse": "{{pokemonNameWithAffix}} sta\nciondolando!",
   "battlerTagsSlowStartOnAdd": "{{pokemonNameWithAffix}} non\ningrana!",
   "battlerTagsSlowStartOnRemove": "{{pokemonNameWithAffix}} ritrova\nlo slancio!",
