@@ -269,8 +269,8 @@ export const PGMachv: AchievementTranslationEntries = {
     "description": "Schließe die reguläre Nuzlocke-Herausforderung ab.",
   },
   "NUZLOCKE_HARDCORE": {
-    name: "How?",
-    description: "Complete the hardcore nuzlocke challenge.",
+    "name": "Wie?",
+    "description": "Schließe die Hardcore-Nuzlocke-Herausforderung ab.",
   },
 } as const;
 
