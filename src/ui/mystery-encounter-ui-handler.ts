@@ -325,12 +325,13 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
       this.optionsMeetsReqs.push(option.meetsRequirements(this.scene));
       const optionDialogue = option.dialogue;
+      const label = !this.optionsMeetsReqs[i] && optionDialogue.disabledButtonLabel ? optionDialogue.disabledButtonLabel : optionDialogue.buttonLabel;
       let text: string;
       if (option.hasRequirements() && this.optionsMeetsReqs[i] && (option.optionMode === EncounterOptionMode.DEFAULT_OR_SPECIAL || option.optionMode === EncounterOptionMode.DISABLED_OR_SPECIAL)) {
         // Options with special requirements that are met are automatically colored green
-        text = getEncounterText(this.scene, optionDialogue.buttonLabel, TextStyle.SUMMARY_GREEN);
+        text = getEncounterText(this.scene, label, TextStyle.SUMMARY_GREEN);
       } else {
-        text = getEncounterText(this.scene, optionDialogue.buttonLabel, optionDialogue.style ? optionDialogue.style : TextStyle.WINDOW);
+        text = getEncounterText(this.scene, label, optionDialogue.style ? optionDialogue.style : TextStyle.WINDOW);
       }
 
       if (text) {
@@ -425,8 +426,8 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     let text: string;
     const cursorOption = this.filteredEncounterOptions[cursor];
     const optionDialogue = cursorOption.dialogue;
-    if (!this.optionsMeetsReqs[cursor] && (cursorOption.optionMode === EncounterOptionMode.DISABLED_OR_DEFAULT || cursorOption.optionMode === EncounterOptionMode.DISABLED_OR_SPECIAL) && optionDialogue.disabledTooltip) {
-      text = getEncounterText(this.scene, optionDialogue.disabledTooltip, TextStyle.TOOLTIP_CONTENT);
+    if (!this.optionsMeetsReqs[cursor] && (cursorOption.optionMode === EncounterOptionMode.DISABLED_OR_DEFAULT || cursorOption.optionMode === EncounterOptionMode.DISABLED_OR_SPECIAL) && optionDialogue.disabledButtonTooltip) {
+      text = getEncounterText(this.scene, optionDialogue.disabledButtonTooltip, TextStyle.TOOLTIP_CONTENT);
     } else {
       text = getEncounterText(this.scene, optionDialogue.buttonTooltip, TextStyle.TOOLTIP_CONTENT);
     }

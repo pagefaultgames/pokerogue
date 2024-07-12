@@ -9,7 +9,8 @@ export class TextDisplay {
 export class OptionTextDisplay {
   buttonLabel: string;
   buttonTooltip?: string;
-  disabledTooltip?: string;
+  disabledButtonLabel?: string;
+  disabledButtonTooltip?: string;
   secondOptionPrompt?: string;
   selected?: TextDisplay[];
   style?: TextStyle;
