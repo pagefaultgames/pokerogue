@@ -58,7 +58,7 @@ describe("Moves - Hard Press", () => {
     const fullHpMovePower = moveToCheck.calculatePower(ally, enemy);
     expect(fullHpMovePower).toBe(moveMaxBasePower);
 
-    enemy.hp /= 2;
+    vi.spyOn(enemy, "getHpRatio").mockReturnValue(.5);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.HARD_PRESS));
     await game.phaseInterceptor.to(TurnStartPhase);
@@ -75,7 +75,7 @@ describe("Moves - Hard Press", () => {
     const fullHpMovePower = moveToCheck.calculatePower(ally, enemy);
     expect(fullHpMovePower).toBe(moveMaxBasePower);
 
-    enemy.hp = 1;
+    vi.spyOn(enemy, "getHpRatio").mockReturnValue(.1);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.HARD_PRESS));
     await game.phaseInterceptor.to(TurnStartPhase);
