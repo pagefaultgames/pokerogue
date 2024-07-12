@@ -1171,42 +1171,42 @@ type BaseModifierOverride = {
 
 /** Type for modifiers and held items that are constructed via {@linkcode ModifierTypeGenerator}. */
 export type GeneratorModifierOverride = {
-    count?: number
-  } & (
+  count?: number;
+} & (
   | {
-      name: "SPECIES_STAT_BOOSTER";
+      name: keyof Pick<typeof modifierTypes, "SPECIES_STAT_BOOSTER">;
       type?: SpeciesStatBoosterItem;
     }
   | {
-      name: "TEMP_STAT_BOOSTER";
+      name: keyof Pick<typeof modifierTypes, "TEMP_STAT_BOOSTER">;
       type?: TempBattleStat;
     }
   | {
-      name: "BASE_STAT_BOOSTER";
+      name: keyof Pick<typeof modifierTypes, "BASE_STAT_BOOSTER">;
       type?: Stat;
     }
   | {
-      name: "MINT";
+      name: keyof Pick<typeof modifierTypes, "MINT">;
       type?: Nature;
     }
   | {
-      name: "TERA_SHARD" | "ATTACK_TYPE_BOOSTER";
+      name: keyof Pick<typeof modifierTypes, "ATTACK_TYPE_BOOSTER" | "TERA_SHARD">;
       type?: Type;
     }
   | {
-      name: "BERRY";
+      name: keyof Pick<typeof modifierTypes, "BERRY">;
       type?: BerryType;
     }
   | {
-      name: "EVOLUTION_ITEM" | "RARE_EVOLUTION_ITEM";
+      name: keyof Pick<typeof modifierTypes, "EVOLUTION_ITEM" | "RARE_EVOLUTION_ITEM">;
       type?: EvolutionItem;
     }
   | {
-      name: "FORM_CHANGE_ITEM";
+      name: keyof Pick<typeof modifierTypes, "FORM_CHANGE_ITEM">;
       type?: FormChangeItem;
     }
   | {
-      name: "TM_COMMON" | "TM_GREAT" | "TM_ULTRA";
+      name: keyof Pick<typeof modifierTypes, "TM_COMMON" | "TM_GREAT" | "TM_ULTRA">;
       type?: Moves;
     }
 );
