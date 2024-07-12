@@ -74,11 +74,12 @@ This is the floors/waves where you'd like your Event to happen. (11-179)* is the
 Currently, you can set the Events to happen in the specific Biomes of your choosing, but there are other options too that you can use:
 ### `ANY` Biome
 
-self explanatory, it's any/all biomes
+Fairly self explanatory, it's any/all biomes.
 
 ### `EXTREME_BIOMES` and `NON-EXTREME_BIOMES` 
 
-these are all the biomes in two mutually exclusive lists. The main point of this split is to avoid "Breeders in Space" type situations, with random trainers saluting you while on the moon.
+These are all the biomes in two mutually exclusive lists. The main point of this split is to avoid "Breeders in Space" type situations, with random trainers saluting you while on the moon.
+
 #### EXTREME_BIOMES
 
 - Abyss
@@ -89,18 +90,20 @@ these are all the biomes in two mutually exclusive lists. The main point of this
 - Space
 - Volcano
 - Wasteland
+
 #### NON-EXTREME_BIOMES
 
 Every other biome not on [`EXTREME_BIOMES`](https://github.com/AsdarDevelops/PokeRogue-Events/blob/Asdar/MEs_Proposal_Guide.md#extreme_biomes)
 
+
 ### HUMAN_TRANSITABLE_BIOMES
 
-for __people__, things like trainers, traders, youngster Joey and the people of the world. These are the biomes where you would feaseably find human beings during your journey.
+For **__people__**, things like trainers, traders, youngster Joey and the people of the world. These are the biomes where you would feaseably find human beings during your journey.
 
 They are: TOWN, PLAIN, GRASS, TALL_GRASS, METROPOLIS, FOREST, SWAMP, BEACH, LAKE, MOUNTAIN, BADLANDS, CAVE, DESERT, ICE_CAVE, MEADOW, POWER_PLANT, GRAVEYARD, DOJO, FACTORY, RUINS, CONSTRUCTION_SITE, JUNGLE, FAIRY_CAVE, TEMPLE, SLUM, SNOWY_FOREST, ISLAND, LABORATORY
 
 ### CIVILIZATION_BIOMES
-these are the places where you might find not only people, but also __are or can be near buildings__, a PKMN Center, a shopping center, a school.
+These are the places where you might find not only people, but also __are or can be near buildings__, a PKMN Center, a shopping center, a school.
 
 They are: TOWN, PLAINS, GRASS, TALL_GRASS, METROPOLIS, BEACH, LAKE, MEADOW, POWER_PLANT, GRAVEYARD, DOJO, FACTORY, CONSTRUCTION_SITE, SLUM, ISLAND
 
