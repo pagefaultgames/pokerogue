@@ -31,6 +31,7 @@ describe("Abilities - Parental Bond", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     vi.spyOn(Overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.PARENTAL_BOND);
     vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SNORLAX);
     vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INSOMNIA);
@@ -57,7 +58,6 @@ describe("Abilities - Parental Bond", () => {
       game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
 
       await game.phaseInterceptor.to(MoveEffectPhase, false);
-      vi.spyOn(game.scene, "randBattleSeedInt").mockReturnValue(15);
 
       await game.phaseInterceptor.to(DamagePhase);
       const firstStrikeDamage = enemyStartingHp - enemyPokemon.hp;
@@ -636,7 +636,6 @@ describe("Abilities - Parental Bond", () => {
       game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
       await game.phaseInterceptor.to(MoveEffectPhase, false);
-      vi.spyOn(game.scene, "randBattleSeedInt").mockReturnValue(15);
 
       await game.phaseInterceptor.to(DamagePhase);
       const enemyFirstHitDamage = enemyStartingHp.map((hp, i) => hp - enemyPokemon[i].hp);
