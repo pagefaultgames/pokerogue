@@ -153,6 +153,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "REVIVER_SEED": { name: "复活种子", description: "受到技能攻击伤害濒死时，\n恢复该宝可梦的HP至1/2。" },
 
+    "WHITE_HERB": { name: "White Herb", description: "An item to be held by a Pokémon. It will restore any lowered stat in battle." },
+
     "ETHER": { name: "PP单项小补剂" },
     "MAX_ETHER": { name: "PP单项全补剂" },
 

@@ -5,6 +5,7 @@ export const modifier: SimpleTranslationEntries = {
   "turnHealApply": "{{pokemonNameWithAffix}}[[는]]\n{{typeName}}[[로]] 인해 조금 회복했다.",
   "hitHealApply": "{{pokemonNameWithAffix}}[[는]]\n{{typeName}}[[로]] 인해 조금 회복했다.",
   "pokemonInstantReviveApply": "{{pokemonNameWithAffix}}[[는]] {{typeName}}[[로]]\n정신을 차려 싸울 수 있게 되었다!",
+  "pokemonResetNegativeStatStageApply": "{{pokemonNameWithAffix}}'s lowered stats were restored\nby its {{typeName}}!",
   "moneyInterestApply": "{{typeName}}[[로]]부터\n₽{{moneyAmount}}[[를]] 받았다!",
   "turnHeldItemTransferApply": "{{pokemonName}}의 {{typeName}}[[는]]\n{{pokemonNameWithAffix}}의 {{itemName}}[[를]] 흡수했다!",
   "contactHeldItemTransferApply": "{{pokemonName}}의 {{typeName}}[[는]]\n{{pokemonNameWithAffix}}의 {{itemName}}[[를]] 가로챘다!",

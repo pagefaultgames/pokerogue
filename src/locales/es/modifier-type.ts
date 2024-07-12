@@ -153,6 +153,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "REVIVER_SEED": { name: "Semilla Revivir", description: "Revive al portador con la mitad de sus PS al debilitarse por un golpe directo." },
 
+    "WHITE_HERB": { name: "White Herb", description: "An item to be held by a Pokémon. It will restore any lowered stat in battle." },
+
     "ETHER": { name: "Éter" },
     "MAX_ETHER": { name: "Éter Máx." },
 

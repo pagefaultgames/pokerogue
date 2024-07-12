@@ -155,6 +155,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       name: "復活種子",
       description: "受到技能攻擊傷害瀕死時，\n恢復該瀕死寶可夢的HP至1/2。",
     },
+    WHITE_HERB: {
+      name: "White Herb",
+      description: "An item to be held by a Pokémon. It will restore any lowered stat in battle.",
+    },
     ETHER: { name: "PP單項小補劑" },
     MAX_ETHER: { name: "PP單項全補劑" },
     ELIXIR: { name: "PP多項小補劑" },
