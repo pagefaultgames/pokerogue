@@ -4677,7 +4677,7 @@ export class CopyBiomeTypeAttr extends MoveEffectAttr {
     user.summonData.types = [ biomeType ];
     user.updateInfo();
 
-    user.scene.queueMessage(i18next.t("moveTriggers:transformedIntoType", {pokemonName: getPokemonNameWithAffix(user), typeName: Utils.toReadableString(Type[biomeType])}));
+    user.scene.queueMessage(i18next.t("moveTriggers:transformedIntoType", {pokemonName: getPokemonNameWithAffix(user), typeName: i18next.t(`pokemonInfo:Type.${Type[biomeType]}`)}));
 
     return true;
   }
@@ -4696,7 +4696,7 @@ export class ChangeTypeAttr extends MoveEffectAttr {
     target.summonData.types = [this.type];
     target.updateInfo();
 
-    user.scene.queueMessage(i18next.t("moveTriggers:transformedIntoType", {pokemonName: getPokemonNameWithAffix(target), typeName: Utils.toReadableString(Type[this.type])}));
+    user.scene.queueMessage(i18next.t("moveTriggers:transformedIntoType", {pokemonName: getPokemonNameWithAffix(target), typeName: i18next.t(`pokemonInfo:Type.${Type[this.type]}`)}));
 
     return true;
   }
@@ -4721,7 +4721,7 @@ export class AddTypeAttr extends MoveEffectAttr {
     target.summonData.types = types;
     target.updateInfo();
 
-    user.scene.queueMessage(`${Utils.toReadableString(Type[this.type])} was added to\n` + getPokemonMessage(target, "!"));
+    user.scene.queueMessage(`${i18next.t(`pokemonInfo:Type.${Type[this.type]}`)} was added to\n` + getPokemonMessage(target, "!"));
 
     return true;
   }
@@ -4745,7 +4745,7 @@ export class FirstMoveTypeAttr extends MoveEffectAttr {
 
     user.summonData.types = [ firstMoveType ];
 
-    user.scene.queueMessage(i18next.t("moveTriggers:transformedIntoType", {pokemonName: getPokemonNameWithAffix(user), typeName: Utils.toReadableString(Type[firstMoveType])}));
+    user.scene.queueMessage(i18next.t("moveTriggers:transformedIntoType", {pokemonName: getPokemonNameWithAffix(user), typeName: i18next.t(`pokemonInfo:Type.${Type[firstMoveType]}`)}));
 
     return true;
   }
