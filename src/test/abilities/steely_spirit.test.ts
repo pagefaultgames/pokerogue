@@ -36,26 +36,26 @@ describe("Abilities - Steely Spirit", () => {
 
   it("increases Steel-type moves used by the user and its allies", async () => {
     await game.startBattle([Species.MAGIKARP, Species.PERRSERKER]);
-    const perserrker = game.scene.getPlayerField()[1];
+    const [boostedAlly, boostSource] = game.scene.getPlayerField();
     const enemyToCheck = game.scene.getEnemyField()[0];
 
-    vi.spyOn(perserrker, "getAbility").mockReturnValue(allAbilities[Abilities.STEELY_SPIRIT]);
+    vi.spyOn(boostSource, "getAbility").mockReturnValue(allAbilities[Abilities.STEELY_SPIRIT]);
 
-    expect(perserrker.hasAbility(Abilities.STEELY_SPIRIT)).toBe(true);
+    expect(boostSource.hasAbility(Abilities.STEELY_SPIRIT)).toBe(true);
 
     game.doAttack(getMovePosition(game.scene, 0, moveToCheck));
     await game.phaseInterceptor.to(SelectTargetPhase, false);
     game.doSelectTarget(enemyToCheck.getBattlerIndex());
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
-    const movePower = allMoves[moveToCheck].calculatePower(game.scene.getPlayerField()[0], enemyToCheck);
+    const movePower = allMoves[moveToCheck].calculatePower(boostedAlly, enemyToCheck);
 
     expect(movePower).toBe(allMoves[moveToCheck].power * steelySpiritMultiplier);
   });
 
   it("stacks if multiple users with this ability are on the field.", async () => {
     await game.startBattle([Species.PERRSERKER, Species.PERRSERKER]);
-    const enemyToCheck = game.scene.getEnemyField()[0];
+    const enemyToCheck = game.scene.getEnemyPokemon();
 
     game.scene.getPlayerField().forEach(p => {
       vi.spyOn(p, "getAbility").mockReturnValue(allAbilities[Abilities.STEELY_SPIRIT]);
@@ -68,30 +68,30 @@ describe("Abilities - Steely Spirit", () => {
     game.doSelectTarget(enemyToCheck.getBattlerIndex());
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
-    const movePower = allMoves[moveToCheck].calculatePower(game.scene.getPlayerField()[0], enemyToCheck);
+    const movePower = allMoves[moveToCheck].calculatePower(game.scene.getPlayerPokemon(), enemyToCheck);
 
     expect(movePower).toBe(allMoves[moveToCheck].power * Math.pow(steelySpiritMultiplier, 2));
   });
 
   it("does not take effect when suppressed", async () => {
     await game.startBattle([Species.MAGIKARP, Species.PERRSERKER]);
-    const perserrker = game.scene.getPlayerField()[1];
-    const enemyToCheck = game.scene.getEnemyField()[0];
+    const [boostedAlly, boostSource] = game.scene.getPlayerField();
+    const enemyToCheck = game.scene.getEnemyPokemon();
 
-    vi.spyOn(perserrker, "getAbility").mockReturnValue(allAbilities[Abilities.STEELY_SPIRIT]);
-    expect(perserrker.hasAbility(Abilities.STEELY_SPIRIT)).toBe(true);
+    vi.spyOn(boostSource, "getAbility").mockReturnValue(allAbilities[Abilities.STEELY_SPIRIT]);
+    expect(boostSource.hasAbility(Abilities.STEELY_SPIRIT)).toBe(true);
 
-    perserrker.summonData.abilitySuppressed = true;
+    boostSource.summonData.abilitySuppressed = true;
 
-    expect(perserrker.hasAbility(Abilities.STEELY_SPIRIT)).toBe(false);
-    expect(perserrker.summonData.abilitySuppressed).toBe(true);
+    expect(boostSource.hasAbility(Abilities.STEELY_SPIRIT)).toBe(false);
+    expect(boostSource.summonData.abilitySuppressed).toBe(true);
 
     game.doAttack(getMovePosition(game.scene, 0, moveToCheck));
     await game.phaseInterceptor.to(SelectTargetPhase, false);
     game.doSelectTarget(enemyToCheck.getBattlerIndex());
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
-    const movePower = allMoves[moveToCheck].calculatePower(game.scene.getPlayerField()[0], enemyToCheck);
+    const movePower = allMoves[moveToCheck].calculatePower(boostedAlly, enemyToCheck);
 
     expect(movePower).toBe(allMoves[moveToCheck].power);
   });
