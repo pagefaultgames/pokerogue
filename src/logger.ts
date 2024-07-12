@@ -11,7 +11,7 @@ import Battle from "./battle";
 import { getBiomeName, PokemonPools, SpeciesTree } from "./data/biomes";
 import { trainerConfigs } from "./data/trainer-config";
 import { Mode } from "./ui/ui";
-import { TitlePhase } from "./phases";
+import { LoginPhase, TitlePhase } from "./phases";
 import { Item } from "pokenode-ts";
 import Trainer from "./field/trainer";
 import { Species } from "./enums/species";
@@ -117,7 +117,7 @@ export function enemyPokeName(scene: BattleScene, index: integer | Pokemon | Ene
 // LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "")
 
 export const rarities = []
-export const rarityslot = [0]
+export const rarityslot = [0, ""]
 
 export const isPreSwitch: Utils.BooleanHolder = new Utils.BooleanHolder(false);
 
@@ -377,6 +377,47 @@ export function generateOption(i: integer, saves: any): OptionSelectItem {
   return op;
 }
 /**
+ * Generates a UI option to save a log to your device.
+ * @param i The slot number. Corresponds to an index in `logs`.
+ * @param saves Your session data. Used to label logs if they match one of your save slots.
+ * @returns A UI option.
+ */
+export function generateEditOption(scene: BattleScene, i: integer, saves: any, phase: TitlePhase): OptionSelectItem {
+  var filename: string = (JSON.parse(localStorage.getItem(logs[i][1])) as DRPD).title
+  var op: OptionSelectItem = {
+    label: `Export ${filename} (${getSize(printDRPD("", "", JSON.parse(localStorage.getItem(logs[i][1])) as DRPD))})`,
+    handler: () => {
+      rarityslot[1] = logs[i][1]
+      //scene.phaseQueue[0].end()
+      scene.ui.setMode(Mode.NAME_LOG, {
+        autofillfields: [
+          (JSON.parse(localStorage.getItem(logs[i][1])) as DRPD).title,
+          (JSON.parse(localStorage.getItem(logs[i][1])) as DRPD).authors.join(", ")
+        ],
+        buttonActions: [
+          () => {
+            scene.ui.playSelect();
+            console.log("Ending UI phase thingy");
+            phase.callEnd()
+          }
+        ]
+      });
+      return false;
+    }
+  }
+  for (var j = 0; j < saves.length; j++) {
+    console.log(saves[j].seed, logs[i][2], saves[j].seed == logs[i][2])
+    if (saves[j].seed == logs[i][2]) {
+      op.label = "[Slot " + (saves[j].slot + 1) + "]" + op.label.substring(6)
+    }
+  }
+  if (logs[i][4] != "") {
+    op.label = " " + op.label
+    op.item = logs[i][4]
+  }
+  return op;
+}
+/**
  * Generates an option to create a new log.
  * 
  * Not used.
@@ -423,6 +464,27 @@ export function appendLog(keyword: string, data: string) {
  */
 export function clearLog(keyword: string) {
   localStorage.setItem(logs[logKeys.indexOf(keyword)][1], "---- " + logs[logKeys.indexOf(keyword)][3] + " ----" + logs[logKeys.indexOf(keyword)][5])
+}
+export function setFileInfo(title: string, authors: string[]) {
+  var fileID = rarityslot[1] as string
+  var drpd = JSON.parse(localStorage.getItem(fileID)) as DRPD;
+  drpd.title = title;
+  for (var i = 0; i < authors.length; i++) {
+    while (authors[i][0] == " ") {
+      authors[i] = authors[i].substring(1)
+    }
+    while (authors[i][authors[i].length - 1] == " ") {
+      authors[i] = authors[i].substring(0, authors[i].length - 1)
+    }
+  }
+  for (var i = 0; i < authors.length; i++) {
+    if (authors[i] == "") {
+      authors.splice(i, 1)
+      i--;
+    }
+  }
+  drpd.authors = authors;
+  localStorage.setItem(fileID, JSON.stringify(drpd))
 }
 /**
  * Saves a log to your device.

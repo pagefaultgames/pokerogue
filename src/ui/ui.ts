@@ -97,7 +97,8 @@ const transitionModes = [
   Mode.EGG_HATCH_SCENE,
   Mode.EGG_LIST,
   Mode.EGG_GACHA,
-  Mode.CHALLENGE_SELECT
+  Mode.CHALLENGE_SELECT,
+  Mode.NAME_LOG
 ];
 
 const noTransitionModes = [
@@ -121,8 +122,7 @@ const noTransitionModes = [
   Mode.LOADING,
   Mode.SESSION_RELOAD,
   Mode.UNAVAILABLE,
-  Mode.OUTDATED,
-  Mode.NAME_LOG
+  Mode.OUTDATED
 ];
 
 export default class UI extends Phaser.GameObjects.Container {

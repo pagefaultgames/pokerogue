@@ -3,6 +3,8 @@ import { ModalConfig } from "./modal-ui-handler";
 import * as Utils from "../utils";
 import { Mode } from "./ui";
 import i18next from "i18next";
+import * as LoggerTools from "../logger";
+import { addTextObject, TextStyle } from "./text";
 
 export default class LogNameFormUiHandler extends FormModalUiHandler {
   getModalTitle(config?: ModalConfig): string {
@@ -44,38 +46,36 @@ export default class LogNameFormUiHandler extends FormModalUiHandler {
     return super.getReadableErrorMessage(error);
   }
 
+  setup(): void {
+    super.setup();
+
+    //const label = addTextObject(this.scene, 10, 87, "Text", TextStyle.TOOLTIP_CONTENT, { fontSize: "42px" });
+
+    //this.modalContainer.add(label);
+  }
+
   show(args: any[]): boolean {
+    console.error("Shown")
     if (super.show(args)) {
       const config = args[0] as ModalConfig;
 
       const originalLoginAction = this.submitAction;
+      this.inputs[0].setText(args[0].autofillfields[0])
+      this.inputs[1].setText(args[0].autofillfields[1])
       this.submitAction = (_) => {
         // Prevent overlapping overrides on action modification
         this.submitAction = originalLoginAction;
         this.sanitizeInputs();
         this.scene.ui.setMode(Mode.LOADING, { buttonActions: [] });
         const onFail = error => {
-          this.scene.ui.setMode(Mode.LOGIN_FORM, Object.assign(config, { errorMessage: error?.trim() }));
+          this.scene.ui.setMode(Mode.NAME_LOG, Object.assign(config, { errorMessage: error?.trim() }));
           this.scene.ui.playError();
         };
         if (!this.inputs[0].text) {
-          return onFail(i18next.t("menu:emptyUsername"));
+          //return onFail(i18next.t("menu:emptyUsername"));
         }
-        Utils.apiPost("account/login", `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}`, "application/x-www-form-urlencoded")
-          .then(response => {
-            if (!response.ok) {
-              return response.text();
-            }
-            return response.json();
-          })
-          .then(response => {
-            if (response.hasOwnProperty("token")) {
-              Utils.setCookie(Utils.sessionIdKey, response.token);
-              originalLoginAction();
-            } else {
-              onFail(response);
-            }
-          });
+        LoggerTools.setFileInfo(this.inputs[0].text, this.inputs[1].text.split(","))
+        originalLoginAction()
       };
 
       return true;
