@@ -2,8 +2,8 @@ import { ability } from "./ability";
 import { abilityTriggers } from "./ability-trigger";
 import { PGFachv, PGMachv } from "./achv";
 import { battle } from "./battle";
-import { battlerTags } from "./battler-tags";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
+import { battlerTags } from "./battler-tags";
 import { berry } from "./berry";
 import { bgmName } from "./bgm-name";
 import { biome } from "./biome";
@@ -51,8 +51,8 @@ export const ptBrConfig = {
   ability: ability,
   abilityTriggers: abilityTriggers,
   battle: battle,
-  battlerTags: battlerTags,
   battleMessageUiHandler: battleMessageUiHandler,
+  battlerTags: battlerTags,
   berry: berry,
   bgmName: bgmName,
   biome: biome,
