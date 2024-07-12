@@ -3,24 +3,29 @@ import { PlayerPokemon } from "#app/field/pokemon";
 import BattleScene from "../../battle-scene";
 import * as Utils from "../../utils";
 import { EncounterPokemonRequirement, EncounterSceneRequirement, MoneyRequirement } from "./mystery-encounter-requirements";
-import { isNullOrUndefined } from "../../utils";
+
+export enum EncounterOptionMode {
+  /** Default style */
+  DEFAULT,
+  /** Disabled on requirements not met, default style on requirements met */
+  DISABLED_OR_DEFAULT,
+  /** Default style on requirements not met, special style on requirements met */
+  DEFAULT_OR_SPECIAL,
+  /** Disabled on requirements not met, special style on requirements met */
+  DISABLED_OR_SPECIAL
+}
 
 
 export type OptionPhaseCallback = (scene: BattleScene) => Promise<void | boolean>;
 
 export default interface MysteryEncounterOption {
+  optionMode: EncounterOptionMode;
   requirements?: EncounterSceneRequirement[];
   primaryPokemonRequirements?: EncounterPokemonRequirement[];
   secondaryPokemonRequirements?: EncounterPokemonRequirement[];
   primaryPokemon?: PlayerPokemon;
   secondaryPokemon?: PlayerPokemon[];
   excludePrimaryFromSecondaryRequirements?: boolean;
-  /**
-   * There are two modes of option requirements:
-   * 1 (DEFAULT): Option is completely disabled if requirements are not met (unselectable and greyed out)
-   * 2: Option is *NOT* disabled if requirements are not met
-   */
-  isDisabledOnRequirementsNotMet?: boolean;
 
   /**
    * Dialogue object containing all the dialogue, messages, tooltips, etc. for this option
@@ -42,7 +47,6 @@ export default class MysteryEncounterOption implements MysteryEncounterOption {
     this.requirements = this.requirements ? this.requirements : [];
     this.primaryPokemonRequirements = this.primaryPokemonRequirements ? this.primaryPokemonRequirements : [];
     this.secondaryPokemonRequirements = this.secondaryPokemonRequirements ? this.secondaryPokemonRequirements : [];
-    this.isDisabledOnRequirementsNotMet = isNullOrUndefined(this.isDisabledOnRequirementsNotMet) ? true : this.isDisabledOnRequirementsNotMet;
   }
 
   hasRequirements?() {
@@ -134,6 +138,7 @@ export default class MysteryEncounterOption implements MysteryEncounterOption {
 
 
 export class MysteryEncounterOptionBuilder implements Partial<MysteryEncounterOption> {
+  optionMode?: EncounterOptionMode;
   requirements?: EncounterSceneRequirement[] = [];
   primaryPokemonRequirements?: EncounterPokemonRequirement[] = [];
   secondaryPokemonRequirements ?: EncounterPokemonRequirement[] = [];
@@ -143,6 +148,10 @@ export class MysteryEncounterOptionBuilder implements Partial<MysteryEncounterOp
   onOptionPhase?: OptionPhaseCallback;
   onPostOptionPhase?: OptionPhaseCallback;
   dialogue?: OptionTextDisplay;
+
+  withOptionMode(optionMode: EncounterOptionMode): this & Pick<MysteryEncounterOption, "optionMode"> {
+    return Object.assign(this, { optionMode });
+  }
 
   withSceneRequirement(requirement: EncounterSceneRequirement): this & Required<Pick<MysteryEncounterOption, "requirements">> {
     this.requirements.push(requirement);
@@ -178,11 +187,6 @@ export class MysteryEncounterOptionBuilder implements Partial<MysteryEncounterOp
     this.secondaryPokemonRequirements.push(requirement);
     this.excludePrimaryFromSecondaryRequirements = excludePrimaryFromSecondaryRequirements;
     return Object.assign(this, { secondaryPokemonRequirements: this.secondaryPokemonRequirements });
-  }
-
-  withDisabledOnRequirementsNotMet(disabled: boolean): this & Required<Pick<MysteryEncounterOption, "isDisabledOnRequirementsNotMet">> {
-    this.isDisabledOnRequirementsNotMet = disabled;
-    return Object.assign(this, { isDisabledOnRequirementsNotMet: this.isDisabledOnRequirementsNotMet });
   }
 
   withDialogue(dialogue: OptionTextDisplay) {

@@ -40,18 +40,13 @@ export const MysteriousChallengersEncounter: IMysteryEncounter =
       // Calculates what trainers are available for battle in the encounter
 
       // Normal difficulty trainer is randomly pulled from biome
-      const normalTrainerType = scene.arena.randomTrainerType(
-        scene.currentBattle.waveIndex
-      );
+      const normalTrainerType = scene.arena.randomTrainerType(scene.currentBattle.waveIndex);
       const normalConfig = trainerConfigs[normalTrainerType].copy();
       let female = false;
       if (normalConfig.hasGenders) {
         female = !!Utils.randSeedInt(2);
       }
-      const normalSpriteKey = normalConfig.getSpriteKey(
-        female,
-        normalConfig.doubleOnly
-      );
+      const normalSpriteKey = normalConfig.getSpriteKey(female, normalConfig.doubleOnly);
       encounter.enemyPartyConfigs.push({
         trainerConfig: normalConfig,
         female: female,
@@ -59,9 +54,7 @@ export const MysteriousChallengersEncounter: IMysteryEncounter =
 
       // Hard difficulty trainer is another random trainer, but with AVERAGE_BALANCED config
       // Number of mons is based off wave: 1-20 is 2, 20-40 is 3, etc. capping at 6 after wave 100
-      const hardTrainerType = scene.arena.randomTrainerType(
-        scene.currentBattle.waveIndex
-      );
+      const hardTrainerType = scene.arena.randomTrainerType(scene.currentBattle.waveIndex);
       const hardTemplate = new TrainerPartyCompoundTemplate(
         new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER, false, true),
         new TrainerPartyTemplate(
@@ -77,10 +70,7 @@ export const MysteriousChallengersEncounter: IMysteryEncounter =
       if (hardConfig.hasGenders) {
         female = !!Utils.randSeedInt(2);
       }
-      const hardSpriteKey = hardConfig.getSpriteKey(
-        female,
-        hardConfig.doubleOnly
-      );
+      const hardSpriteKey = hardConfig.getSpriteKey(female, hardConfig.doubleOnly);
       encounter.enemyPartyConfigs.push({
         trainerConfig: hardConfig,
         levelAdditiveMultiplier: 0.5,
@@ -101,10 +91,7 @@ export const MysteriousChallengersEncounter: IMysteryEncounter =
       if (brutalConfig.hasGenders) {
         female = !!Utils.randSeedInt(2);
       }
-      const brutalSpriteKey = brutalConfig.getSpriteKey(
-        female,
-        brutalConfig.doubleOnly
-      );
+      const brutalSpriteKey = brutalConfig.getSpriteKey(female, brutalConfig.doubleOnly);
       encounter.enemyPartyConfigs.push({
         trainerConfig: brutalConfig,
         levelAdditiveMultiplier: 1.1,
@@ -152,14 +139,7 @@ export const MysteriousChallengersEncounter: IMysteryEncounter =
         // Spawn standard trainer battle with memory mushroom reward
         const config: EnemyPartyConfig = encounter.enemyPartyConfigs[0];
 
-        setEncounterRewards(scene, {
-          guaranteedModifierTypeFuncs: [
-            modifierTypes.TM_COMMON,
-            modifierTypes.TM_GREAT,
-            modifierTypes.MEMORY_MUSHROOM,
-          ],
-          fillRemaining: true,
-        });
+        setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.TM_COMMON, modifierTypes.TM_GREAT, modifierTypes.MEMORY_MUSHROOM], fillRemaining: true });
 
         // Seed offsets to remove possibility of different trainers having exact same teams
         let ret;
@@ -184,14 +164,7 @@ export const MysteriousChallengersEncounter: IMysteryEncounter =
         // Spawn hard fight with ULTRA/GREAT reward (can improve with luck)
         const config: EnemyPartyConfig = encounter.enemyPartyConfigs[1];
 
-        setEncounterRewards(scene, {
-          guaranteedModifierTiers: [
-            ModifierTier.ULTRA,
-            ModifierTier.GREAT,
-            ModifierTier.GREAT,
-          ],
-          fillRemaining: true,
-        });
+        setEncounterRewards(scene, { guaranteedModifierTiers: [ModifierTier.ULTRA, ModifierTier.GREAT, ModifierTier.GREAT], fillRemaining: true });
 
         // Seed offsets to remove possibility of different trainers having exact same teams
         let ret;
@@ -219,14 +192,7 @@ export const MysteriousChallengersEncounter: IMysteryEncounter =
         // To avoid player level snowballing from picking this option
         encounter.expMultiplier = 0.9;
 
-        setEncounterRewards(scene, {
-          guaranteedModifierTiers: [
-            ModifierTier.ROGUE,
-            ModifierTier.ULTRA,
-            ModifierTier.GREAT,
-          ],
-          fillRemaining: true,
-        });
+        setEncounterRewards(scene, { guaranteedModifierTiers: [ModifierTier.ROGUE, ModifierTier.ULTRA, ModifierTier.GREAT], fillRemaining: true });
 
         // Seed offsets to remove possibility of different trainers having exact same teams
         let ret;

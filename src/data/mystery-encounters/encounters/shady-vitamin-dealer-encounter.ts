@@ -1,11 +1,4 @@
-import {
-  generateModifierTypeOption,
-  leaveEncounterWithoutBattle,
-  queueEncounterMessage,
-  selectPokemonForOption,
-  setEncounterExp,
-  updatePlayerMoney,
-} from "#app/data/mystery-encounters/mystery-encounter-utils";
+import { generateModifierTypeOption, leaveEncounterWithoutBattle, queueEncounterMessage, selectPokemonForOption, setEncounterExp, updatePlayerMoney, } from "#app/data/mystery-encounters/mystery-encounter-utils";
 import { StatusEffect } from "#app/data/status-effect";
 import Pokemon, { PlayerPokemon } from "#app/field/pokemon";
 import { modifierTypes } from "#app/modifier/modifier-type";
@@ -14,11 +7,8 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
 import i18next from "i18next";
 import BattleScene from "../../../battle-scene";
-import IMysteryEncounter, {
-  MysteryEncounterBuilder,
-  MysteryEncounterTier,
-} from "../mystery-encounter";
-import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
+import IMysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier, } from "../mystery-encounter";
+import { EncounterOptionMode, MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import { MoneyRequirement } from "../mystery-encounter-requirements";
 
 /** the i18n namespace for this encounter */
@@ -63,6 +53,7 @@ export const ShadyVitaminDealerEncounter: IMysteryEncounter =
     .withQuery(`${namespace}_query`)
     .withOption(
       new MysteryEncounterOptionBuilder()
+        .withOptionMode(EncounterOptionMode.DISABLED_OR_DEFAULT)
         .withSceneMoneyRequirement(0, 2) // Wave scaling money multiplier of 2
         .withDialogue({
           buttonLabel: `${namespace}_option_1_label`,
@@ -77,17 +68,11 @@ export const ShadyVitaminDealerEncounter: IMysteryEncounter =
           const encounter = scene.currentBattle.mysteryEncounter;
           const onPokemonSelected = (pokemon: PlayerPokemon) => {
             // Update money
-            updatePlayerMoney(
-              scene,
-              -(encounter.options[0].requirements[0] as MoneyRequirement)
-                .requiredMoney
-            );
+            updatePlayerMoney(scene, -(encounter.options[0].requirements[0] as MoneyRequirement).requiredMoney);
             // Calculate modifiers and dialogue tokens
             const modifiers = [
-              generateModifierTypeOption(scene, modifierTypes.BASE_STAT_BOOSTER)
-                .type,
-              generateModifierTypeOption(scene, modifierTypes.BASE_STAT_BOOSTER)
-                .type,
+              generateModifierTypeOption(scene, modifierTypes.BASE_STAT_BOOSTER).type,
+              generateModifierTypeOption(scene, modifierTypes.BASE_STAT_BOOSTER).type,
             ];
             encounter.setDialogueToken("boost1", modifiers[0].name);
             encounter.setDialogueToken("boost2", modifiers[1].name);
@@ -100,10 +85,7 @@ export const ShadyVitaminDealerEncounter: IMysteryEncounter =
           // Only Pokemon that can gain benefits are above 1/3rd HP with no status
           const selectableFilter = (pokemon: Pokemon) => {
             // If pokemon meets primary pokemon reqs, it can be selected
-            const meetsReqs = encounter.pokemonMeetsPrimaryRequirements(
-              scene,
-              pokemon
-            );
+            const meetsReqs = encounter.pokemonMeetsPrimaryRequirements(scene, pokemon);
             if (!meetsReqs) {
               return i18next.t(`${namespace}_invalid_selection`);
             }
@@ -111,12 +93,7 @@ export const ShadyVitaminDealerEncounter: IMysteryEncounter =
             return null;
           };
 
-          return selectPokemonForOption(
-            scene,
-            onPokemonSelected,
-            null,
-            selectableFilter
-          );
+          return selectPokemonForOption(scene, onPokemonSelected, null, selectableFilter);
         })
         .withOptionPhase(async (scene: BattleScene) => {
           // Choose Cheap Option
@@ -162,6 +139,8 @@ export const ShadyVitaminDealerEncounter: IMysteryEncounter =
     )
     .withOption(
       new MysteryEncounterOptionBuilder()
+        .withOptionMode(EncounterOptionMode.DISABLED_OR_DEFAULT)
+        .withSceneMoneyRequirement(0, 5) // Wave scaling money multiplier of 5
         .withDialogue({
           buttonLabel: `${namespace}_option_2_label`,
           buttonTooltip: `${namespace}_option_2_tooltip`,
@@ -171,22 +150,15 @@ export const ShadyVitaminDealerEncounter: IMysteryEncounter =
             },
           ],
         })
-        .withSceneMoneyRequirement(0, 5) // Wave scaling money multiplier of 5
         .withPreOptionPhase(async (scene: BattleScene): Promise<boolean> => {
           const encounter = scene.currentBattle.mysteryEncounter;
           const onPokemonSelected = (pokemon: PlayerPokemon) => {
             // Update money
-            updatePlayerMoney(
-              scene,
-              -(encounter.options[1].requirements[0] as MoneyRequirement)
-                .requiredMoney
-            );
+            updatePlayerMoney(scene, -(encounter.options[1].requirements[0] as MoneyRequirement).requiredMoney);
             // Calculate modifiers and dialogue tokens
             const modifiers = [
-              generateModifierTypeOption(scene, modifierTypes.BASE_STAT_BOOSTER)
-                .type,
-              generateModifierTypeOption(scene, modifierTypes.BASE_STAT_BOOSTER)
-                .type,
+              generateModifierTypeOption(scene, modifierTypes.BASE_STAT_BOOSTER).type,
+              generateModifierTypeOption(scene, modifierTypes.BASE_STAT_BOOSTER).type,
             ];
             encounter.setDialogueToken("boost1", modifiers[0].name);
             encounter.setDialogueToken("boost2", modifiers[1].name);
@@ -199,10 +171,7 @@ export const ShadyVitaminDealerEncounter: IMysteryEncounter =
           // Only Pokemon that can gain benefits are above 1/3rd HP with no status
           const selectableFilter = (pokemon: Pokemon) => {
             // If pokemon meets primary pokemon reqs, it can be selected
-            const meetsReqs = encounter.pokemonMeetsPrimaryRequirements(
-              scene,
-              pokemon
-            );
+            const meetsReqs = encounter.pokemonMeetsPrimaryRequirements(scene, pokemon);
             if (!meetsReqs) {
               return i18next.t(`${namespace}_invalid_selection`);
             }
@@ -210,12 +179,7 @@ export const ShadyVitaminDealerEncounter: IMysteryEncounter =
             return null;
           };
 
-          return selectPokemonForOption(
-            scene,
-            onPokemonSelected,
-            null,
-            selectableFilter
-          );
+          return selectPokemonForOption(scene, onPokemonSelected, null, selectableFilter);
         })
         .withOptionPhase(async (scene: BattleScene) => {
           // Choose Expensive Option

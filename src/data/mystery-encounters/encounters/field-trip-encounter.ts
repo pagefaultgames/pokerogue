@@ -1,5 +1,5 @@
 import { MoveCategory } from "#app/data/move";
-import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
+import { EncounterOptionMode, MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import {
   generateModifierTypeOption,
   leaveEncounterWithoutBattle,
@@ -57,6 +57,7 @@ export const FieldTripEncounter: IMysteryEncounter =
     .withQuery(`${namespace}_query`)
     .withOption(
       new MysteryEncounterOptionBuilder()
+        .withOptionMode(EncounterOptionMode.DEFAULT)
         .withDialogue({
           buttonLabel: `${namespace}_option_1_label`,
           buttonTooltip: `${namespace}_option_1_tooltip`,
@@ -76,8 +77,7 @@ export const FieldTripEncounter: IMysteryEncounter =
                 label: move.getName(),
                 handler: () => {
                   // Pokemon and move selected
-                  const correctMove =
-                    move.getMove().category === MoveCategory.PHYSICAL;
+                  const correctMove = move.getMove().category === MoveCategory.PHYSICAL;
                   encounter.setDialogueToken("moveCategory", "Physical");
                   if (!correctMove) {
                     encounter.options[0].dialogue.selected = [
@@ -89,11 +89,7 @@ export const FieldTripEncounter: IMysteryEncounter =
                         text: `${namespace}_lesson_learned`,
                       },
                     ];
-                    setEncounterExp(
-                      scene,
-                      scene.getParty().map((p) => p.id),
-                      50
-                    );
+                    setEncounterExp(scene, scene.getParty().map((p) => p.id), 50);
                   } else {
                     encounter.setDialogueToken("pokeName", pokemon.name);
                     encounter.setDialogueToken("move", move.getName());
@@ -120,28 +116,13 @@ export const FieldTripEncounter: IMysteryEncounter =
           const encounter = scene.currentBattle.mysteryEncounter;
           if (encounter.misc.correctMove) {
             const modifiers = [
-              generateModifierTypeOption(
-                scene,
-                modifierTypes.TEMP_STAT_BOOSTER,
-                [TempBattleStat.ATK]
-              ),
-              generateModifierTypeOption(
-                scene,
-                modifierTypes.TEMP_STAT_BOOSTER,
-                [TempBattleStat.DEF]
-              ),
-              generateModifierTypeOption(
-                scene,
-                modifierTypes.TEMP_STAT_BOOSTER,
-                [TempBattleStat.SPD]
-              ),
+              generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_BOOSTER, [TempBattleStat.ATK]),
+              generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_BOOSTER, [TempBattleStat.DEF]),
+              generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_BOOSTER, [TempBattleStat.SPD]),
               generateModifierTypeOption(scene, modifierTypes.DIRE_HIT),
             ];
 
-            setEncounterRewards(scene, {
-              guaranteedModifierTypeOptions: modifiers,
-              fillRemaining: false,
-            });
+            setEncounterRewards(scene, { guaranteedModifierTypeOptions: modifiers, fillRemaining: false });
           }
 
           leaveEncounterWithoutBattle(scene, !encounter.misc.correctMove);
@@ -150,6 +131,7 @@ export const FieldTripEncounter: IMysteryEncounter =
     )
     .withOption(
       new MysteryEncounterOptionBuilder()
+        .withOptionMode(EncounterOptionMode.DEFAULT)
         .withDialogue({
           buttonLabel: `${namespace}_option_2_label`,
           buttonTooltip: `${namespace}_option_2_tooltip`,
@@ -169,8 +151,7 @@ export const FieldTripEncounter: IMysteryEncounter =
                 label: move.getName(),
                 handler: () => {
                   // Pokemon and move selected
-                  const correctMove =
-                    move.getMove().category === MoveCategory.SPECIAL;
+                  const correctMove = move.getMove().category === MoveCategory.SPECIAL;
                   encounter.setDialogueToken("moveCategory", "Special");
                   if (!correctMove) {
                     encounter.options[1].dialogue.selected = [
@@ -182,11 +163,7 @@ export const FieldTripEncounter: IMysteryEncounter =
                         text: `${namespace}_lesson_learned`,
                       },
                     ];
-                    setEncounterExp(
-                      scene,
-                      scene.getParty().map((p) => p.id),
-                      50
-                    );
+                    setEncounterExp(scene, scene.getParty().map((p) => p.id), 50);
                   } else {
                     encounter.setDialogueToken("pokeName", pokemon.name);
                     encounter.setDialogueToken("move", move.getName());
@@ -213,28 +190,13 @@ export const FieldTripEncounter: IMysteryEncounter =
           const encounter = scene.currentBattle.mysteryEncounter;
           if (encounter.misc.correctMove) {
             const modifiers = [
-              generateModifierTypeOption(
-                scene,
-                modifierTypes.TEMP_STAT_BOOSTER,
-                [TempBattleStat.SPATK]
-              ),
-              generateModifierTypeOption(
-                scene,
-                modifierTypes.TEMP_STAT_BOOSTER,
-                [TempBattleStat.SPDEF]
-              ),
-              generateModifierTypeOption(
-                scene,
-                modifierTypes.TEMP_STAT_BOOSTER,
-                [TempBattleStat.SPD]
-              ),
+              generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_BOOSTER, [TempBattleStat.SPATK]),
+              generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_BOOSTER, [TempBattleStat.SPDEF]),
+              generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_BOOSTER, [TempBattleStat.SPD]),
               generateModifierTypeOption(scene, modifierTypes.DIRE_HIT),
             ];
 
-            setEncounterRewards(scene, {
-              guaranteedModifierTypeOptions: modifiers,
-              fillRemaining: false,
-            });
+            setEncounterRewards(scene, { guaranteedModifierTypeOptions: modifiers, fillRemaining: false });
           }
 
           leaveEncounterWithoutBattle(scene, !encounter.misc.correctMove);
@@ -243,6 +205,7 @@ export const FieldTripEncounter: IMysteryEncounter =
     )
     .withOption(
       new MysteryEncounterOptionBuilder()
+        .withOptionMode(EncounterOptionMode.DEFAULT)
         .withDialogue({
           buttonLabel: `${namespace}_option_3_label`,
           buttonTooltip: `${namespace}_option_3_tooltip`,
@@ -262,8 +225,7 @@ export const FieldTripEncounter: IMysteryEncounter =
                 label: move.getName(),
                 handler: () => {
                   // Pokemon and move selected
-                  const correctMove =
-                    move.getMove().category === MoveCategory.STATUS;
+                  const correctMove = move.getMove().category === MoveCategory.STATUS;
                   encounter.setDialogueToken("moveCategory", "Status");
                   if (!correctMove) {
                     encounter.options[2].dialogue.selected = [
@@ -306,24 +268,13 @@ export const FieldTripEncounter: IMysteryEncounter =
           const encounter = scene.currentBattle.mysteryEncounter;
           if (encounter.misc.correctMove) {
             const modifiers = [
-              generateModifierTypeOption(
-                scene,
-                modifierTypes.TEMP_STAT_BOOSTER,
-                [TempBattleStat.ACC]
-              ),
-              generateModifierTypeOption(
-                scene,
-                modifierTypes.TEMP_STAT_BOOSTER,
-                [TempBattleStat.SPD]
-              ),
+              generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_BOOSTER, [TempBattleStat.ACC]),
+              generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_BOOSTER, [TempBattleStat.SPD]),
               generateModifierTypeOption(scene, modifierTypes.GREAT_BALL),
               generateModifierTypeOption(scene, modifierTypes.IV_SCANNER),
             ];
 
-            setEncounterRewards(scene, {
-              guaranteedModifierTypeOptions: modifiers,
-              fillRemaining: false,
-            });
+            setEncounterRewards(scene, { guaranteedModifierTypeOptions: modifiers, fillRemaining: false });
           }
 
           leaveEncounterWithoutBattle(scene, !encounter.misc.correctMove);

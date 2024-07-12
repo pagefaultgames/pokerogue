@@ -15,7 +15,7 @@ import IMysteryEncounter, {
   MysteryEncounterBuilder,
   MysteryEncounterTier,
 } from "../mystery-encounter";
-import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
+import { EncounterOptionMode, MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 
 export const MysteriousChestEncounter: IMysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(
@@ -44,6 +44,7 @@ export const MysteriousChestEncounter: IMysteryEncounter =
     .withQuery("mysteryEncounter:mysterious_chest_query")
     .withOption(
       new MysteryEncounterOptionBuilder()
+        .withOptionMode(EncounterOptionMode.DEFAULT)
         .withDialogue({
           buttonLabel: "mysteryEncounter:mysterious_chest_option_1_label",
           buttonTooltip: "mysteryEncounter:mysterious_chest_option_1_tooltip",

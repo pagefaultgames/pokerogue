@@ -16,9 +16,7 @@ import IMysteryEncounter, {
 const namespace = "mysteryEncounter:department_store_sale";
 
 export const DepartmentStoreSaleEncounter: IMysteryEncounter =
-  MysteryEncounterBuilder.withEncounterType(
-    MysteryEncounterType.DEPARTMENT_STORE_SALE
-  )
+  MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.DEPARTMENT_STORE_SALE)
     .withEncounterTier(MysteryEncounterTier.COMMON)
     .withSceneWaveRangeRequirement(10, 100)
     .withIntroSpriteConfigs([
@@ -45,7 +43,7 @@ export const DepartmentStoreSaleEncounter: IMysteryEncounter =
         speaker: `${namespace}_speaker`,
       },
     ])
-    // .withHideIntroVisuals(false)
+    .withHideIntroVisuals(false)
     .withTitle(`${namespace}_title`)
     .withDescription(`${namespace}_description`)
     .withQuery(`${namespace}_query`)
@@ -71,10 +69,7 @@ export const DepartmentStoreSaleEncounter: IMysteryEncounter =
           i++;
         }
 
-        setEncounterRewards(scene, {
-          guaranteedModifierTypeFuncs: modifiers,
-          fillRemaining: false,
-        });
+        setEncounterRewards(scene, { guaranteedModifierTypeFuncs: modifiers, fillRemaining: false, });
         leaveEncounterWithoutBattle(scene);
       }
     )
@@ -98,10 +93,7 @@ export const DepartmentStoreSaleEncounter: IMysteryEncounter =
           i++;
         }
 
-        setEncounterRewards(scene, {
-          guaranteedModifierTypeFuncs: modifiers,
-          fillRemaining: false,
-        });
+        setEncounterRewards(scene, { guaranteedModifierTypeFuncs: modifiers, fillRemaining: false, });
         leaveEncounterWithoutBattle(scene);
       }
     )
@@ -125,10 +117,7 @@ export const DepartmentStoreSaleEncounter: IMysteryEncounter =
           i++;
         }
 
-        setEncounterRewards(scene, {
-          guaranteedModifierTypeFuncs: modifiers,
-          fillRemaining: false,
-        });
+        setEncounterRewards(scene, { guaranteedModifierTypeFuncs: modifiers, fillRemaining: false, });
         leaveEncounterWithoutBattle(scene);
       }
     )
@@ -156,10 +145,7 @@ export const DepartmentStoreSaleEncounter: IMysteryEncounter =
           i++;
         }
 
-        setEncounterRewards(scene, {
-          guaranteedModifierTypeFuncs: modifiers,
-          fillRemaining: false,
-        });
+        setEncounterRewards(scene, { guaranteedModifierTypeFuncs: modifiers, fillRemaining: false, });
         leaveEncounterWithoutBattle(scene);
       }
     )
