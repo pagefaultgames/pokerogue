@@ -143,6 +143,10 @@ export abstract class Modifier {
     return true;
   }
 
+  get identifier(): string {
+    return this.type.identifier;
+  }
+
   abstract apply(args: any[]): boolean | Promise<boolean>;
 }
 

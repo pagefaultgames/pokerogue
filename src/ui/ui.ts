@@ -83,7 +83,8 @@ export enum Mode {
   SESSION_RELOAD,
   UNAVAILABLE,
   OUTDATED,
-  CHALLENGE_SELECT
+  CHALLENGE_SELECT,
+  NAME_LOG
 }
 
 const transitionModes = [
@@ -119,7 +120,8 @@ const noTransitionModes = [
   Mode.LOADING,
   Mode.SESSION_RELOAD,
   Mode.UNAVAILABLE,
-  Mode.OUTDATED
+  Mode.OUTDATED,
+  Mode.NAME_LOG
 ];
 
 export default class UI extends Phaser.GameObjects.Container {

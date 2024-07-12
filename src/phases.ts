@@ -1333,6 +1333,7 @@ export class EncounterPhase extends BattlePhase {
     if (this.scene.currentBattle.waveIndex == 1) {
       LoggerTools.logPlayerTeam(this.scene)
     }
+    LoggerTools.resetWaveActions(this.scene)
 
     if (this.scene.currentBattle.battleType === BattleType.WILD) {
       enemyField.forEach(enemyPokemon => {
@@ -2167,6 +2168,7 @@ export class CheckSwitchPhase extends BattlePhase {
     this.scene.ui.showText(i18next.t("battle:switchQuestion", { pokemonName: this.useName ? pokemon.name : i18next.t("battle:pokemon") }), null, () => {
       this.scene.ui.setMode(Mode.CONFIRM, () => {
         this.scene.ui.setMode(Mode.MESSAGE);
+        LoggerTools.isPreSwitch.value = true
         this.scene.tryRemovePhase(p => p instanceof PostSummonPhase && p.player && p.fieldIndex === this.fieldIndex);
         this.scene.unshiftPhase(new SwitchPhase(this.scene, this.fieldIndex, false, true));
         for (var i = 0; i < this.scene.getEnemyField().length; i++) {
@@ -4968,11 +4970,13 @@ export class SwitchPhase extends BattlePhase {
 
     // Skip modal switch if impossible
     if (this.isModal && !this.scene.getParty().filter(p => p.isAllowedInBattle() && !p.isActive(true)).length) {
+      LoggerTools.isPreSwitch.value = false;
       return super.end();
     }
 
     // Check if there is any space still in field
     if (this.isModal && this.scene.getPlayerField().filter(p => p.isAllowedInBattle() && p.isActive(true)).length >= this.scene.currentBattle.getBattlerCount()) {
+      LoggerTools.isPreSwitch.value = false;
       return super.end();
     }
 
@@ -4981,8 +4985,12 @@ export class SwitchPhase extends BattlePhase {
 
     this.scene.ui.setMode(Mode.PARTY, this.isModal ? PartyUiMode.FAINT_SWITCH : PartyUiMode.POST_BATTLE_SWITCH, fieldIndex, (slotIndex: integer, option: PartyOption) => {
       if (slotIndex >= this.scene.currentBattle.getBattlerCount() && slotIndex < 6) {
+        if (LoggerTools.isPreSwitch.value) {
+          LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "Pre-switch " + LoggerTools.playerPokeName(this.scene, fieldIndex) + (option == PartyOption.PASS_BATON ? " → Baton" : "") + " → " + LoggerTools.playerPokeName(this.scene, slotIndex))
+        }
         this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, fieldIndex, slotIndex, this.doReturn, option === PartyOption.PASS_BATON));
       }
+      LoggerTools.isPreSwitch.value = false;
       this.scene.ui.setMode(Mode.MESSAGE).then(() => super.end());
     }, PartyUiHandler.FilterNonFainted);
   }
@@ -5179,6 +5187,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
                   this.scene.ui.showText(i18next.t("battle:learnMoveStopTeaching", { moveName: move.name }), null, () => {
                     this.scene.ui.setModeWithoutClear(Mode.CONFIRM, () => {
                       this.scene.ui.setMode(messageMode);
+                      LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, LoggerTools.playerPokeName(this.scene, pokemon) + " | Skip " + move.name)
                       this.scene.ui.showText(i18next.t("battle:learnMoveNotLearned", { pokemonName: pokemon.name, moveName: move.name }), null, () => this.end(), null, true);
                     }, () => {
                       this.scene.ui.setMode(messageMode);
@@ -5200,6 +5209,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
                       this.scene.ui.showText(i18next.t("battle:countdownPoof"), null, () => {
                         this.scene.ui.showText(i18next.t("battle:learnMoveForgetSuccess", { pokemonName: pokemon.name, moveName: pokemon.moveset[moveIndex].getName() }), null, () => {
                           this.scene.ui.showText(i18next.t("battle:learnMoveAnd"), null, () => {
+                            LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, LoggerTools.playerPokeName(this.scene, pokemon) + " | Replace " + pokemon.moveset[moveIndex].getName() + " with " + new PokemonMove(this.moveId).getName())
                             pokemon.setMove(moveIndex, Moves.NONE);
                             this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, this.moveId));
                             this.end();
@@ -5663,7 +5673,7 @@ export class SelectModifierPhase extends BattlePhase {
       if (rowCursor < 0 || cursor < 0) {
         this.scene.ui.showText(i18next.t("battle:skipItemQuestion"), null, () => {
           this.scene.ui.setOverlayMode(Mode.CONFIRM, () => {
-            LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, "")
+            LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, "Skip taking items")
             this.scene.ui.revertMode();
             this.scene.ui.setMode(Mode.MESSAGE);
             super.end();
@@ -5773,6 +5783,7 @@ export class SelectModifierPhase extends BattlePhase {
         if (modifierType instanceof FusePokemonModifierType) {
           this.scene.ui.setModeWithoutClear(Mode.PARTY, PartyUiMode.SPLICE, -1, (fromSlotIndex: integer, spliceSlotIndex: integer) => {
             if (spliceSlotIndex !== undefined && fromSlotIndex < 6 && spliceSlotIndex < 6 && fromSlotIndex !== spliceSlotIndex) {
+              LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, modifierType.name + " → " + this.scene.getParty()[fromSlotIndex].name + " + " + this.scene.getParty()[spliceSlotIndex].name)
               this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer()).then(() => {
                 const modifier = modifierType.newModifier(party[fromSlotIndex], party[spliceSlotIndex]);
                 applyModifier(modifier, true);
@@ -5802,6 +5813,7 @@ export class SelectModifierPhase extends BattlePhase {
                     ? modifierType.newModifier(party[slotIndex])
                     : modifierType.newModifier(party[slotIndex], option as integer)
                   : modifierType.newModifier(party[slotIndex], option - PartyOption.MOVE_1);
+                  LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, modifierType.name + " → " + this.scene.getParty()[slotIndex].name)
                 applyModifier(modifier, true);
               });
             } else {
@@ -5810,6 +5822,7 @@ export class SelectModifierPhase extends BattlePhase {
           }, pokemonModifierType.selectFilter, modifierType instanceof PokemonMoveModifierType ? (modifierType as PokemonMoveModifierType).moveSelectFilter : undefined, tmMoveId, isPpRestoreModifier);
         }
       } else {
+        LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, modifierType.name)
         applyModifier(modifierType.newModifier());
       }
 
@@ -6015,6 +6028,7 @@ export class ScanIvsPhase extends PokemonPhase {
 
     this.scene.ui.showText(i18next.t("battle:ivScannerUseQuestion", { pokemonName: pokemon.name }), null, () => {
       this.scene.ui.setMode(Mode.CONFIRM, () => {
+        LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "IV Scanner → " + LoggerTools.enemyPokeName(this.scene, pokemon))
         this.scene.ui.setMode(Mode.MESSAGE);
         this.scene.ui.clearText();
         new CommonBattleAnim(CommonAnim.LOCK_ON, pokemon, pokemon).play(this.scene, () => {

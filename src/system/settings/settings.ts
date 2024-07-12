@@ -258,7 +258,7 @@ export const Setting: Array<Setting> = [
       value: "Percent"
     }],
     default: 0,
-    type: SettingType.GENERAL
+    type: SettingType.GENERAL,
   },
   {
     key: SettingKeys.Tutorials,

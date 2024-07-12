@@ -40,18 +40,41 @@ export const logKeys: string[] = [
   "d", // Debug
 ];
 
+/**
+ * Uses the save's RNG seed to create a log ID. Used to assign each save its own log.
+ * @param scene The BattleScene.
+ * @returns The ID of the current save's log.
+ */
 export function getLogID(scene: BattleScene) {
   return "drpd_log:" + scene.seed
 }
+/**
+ * Gets a log's item list storage, for detecting reloads via a change in the loot rewards.
+ * 
+ * Not used yet.
+ * @param scene The BattleScene.
+ * @returns The ID of the current save's log.
+ */
+export function getItemsID(scene: BattleScene) {
+  return "drpd_items:" + scene.seed
+}
+/**
+ * Resets the `logs` array, and creates a list of all game logs in LocalStorage.
+ */
 export function getLogs() {
   while(logs.length > 0)
     logs.pop()
   for (var i = 0; i < localStorage.length; i++) {
     if (localStorage.key(i).substring(0, 9) == "drpd_log:") {
-      logs.push(["drpd.json", localStorage.key(i), localStorage.key(i).substring(9), "", "", ""])
+      logs.push(["drpd.json", localStorage.key(i), localStorage.key(i).substring(9), "drpd_items:" + localStorage.key(i).substring(9), "", ""])
     }
   }
 }
+/**
+ * Returns a string for the name of the current game mode.
+ * @param scene The BattleScene. Used to get the game mode.
+ * @returns The name of the game mode, for use in naming a game log.
+ */
 export function getMode(scene: BattleScene) {
   switch (scene.gameMode.modeId) {
     case GameModes.CLASSIC:
@@ -67,8 +90,36 @@ export function getMode(scene: BattleScene) {
   }
 }
 
+/**
+ * Formats a Pokemon in the player's party.
+ * @param scene The BattleScene, for getting the player's party.
+ * @param index The slot index.
+ * @returns [INDEX] NAME (example: `[1] Walking Wake` is a Walking Wake in the first party slot)
+ */
+export function playerPokeName(scene: BattleScene, index: integer | Pokemon | PlayerPokemon) {
+  if (typeof index == "number") {
+    return "[" + (index  + 1) + "] " + scene.getParty()[index].name
+  }
+  return "[" + (scene.getParty().indexOf(index as PlayerPokemon) + 1) + "] " + index.name
+}
+/**
+ * Formats a Pokemon in the opposing party.
+ * @param scene The BattleScene, for getting the enemy's party.
+ * @param index The slot index.
+ * @returns [INDEX] NAME (example: `[2] Zigzagoon` is a Zigzagoon in the right slot (for a double battle) or in the second party slot (for a single battle against a Trainer))
+ */
+export function enemyPokeName(scene: BattleScene, index: integer | Pokemon | EnemyPokemon) {
+  if (typeof index == "number") {
+    return "[" + (index  + 1) + "] " + scene.getEnemyParty()[index].name
+  }
+  return "[" + (scene.getEnemyParty().indexOf(index as EnemyPokemon) + 1) + "] " + index.name
+}
+// LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "")
+
 export const rarities = []
 export const rarityslot = [0]
+
+export const isPreSwitch: Utils.BooleanHolder = new Utils.BooleanHolder(false);
 
 export var StoredLog: DRPD = undefined;
 
@@ -129,13 +180,19 @@ export interface TrainerData {
   type: string,
 }
 export interface ItemData {
-  id: string,
+  id: integer,
   name: string,
   quantity: integer,
 }
 
 export const Actions = []
 
+/**
+ * Creates a new document in the DRPD format
+ * @param name (Optional) The name for the file. Defaults to "Untitled Run".
+ * @param authorName (Optional) The author(s) of the file. Defaults to "Write your name here".
+ * @returns The fresh DRPD document.
+ */
 export function newDocument(name: string = "Untitled Run", authorName: string | string[] = "Write your name here"): DRPD {
   return {
     version: DRPD_Version,
@@ -146,9 +203,20 @@ export function newDocument(name: string = "Untitled Run", authorName: string | 
     starters: new Array(3),
   }
 }
+/**
+ * Imports a string as a DRPD.
+ * @param drpd The JSON string to import.
+ * @returns The imported document.
+ */
 export function importDocument(drpd: string): DRPD {
   return JSON.parse(drpd) as DRPD;
 }
+/**
+ * Exports a Pokemon's data as `PokeData`.
+ * @param pokemon The Pokemon to store.
+ * @param encounterRarity The rarity tier of the Pokemon for this biome.
+ * @returns The Pokemon data.
+ */
 export function exportPokemon(pokemon: Pokemon, encounterRarity?: string): PokeData {
   return {
     id: pokemon.species.speciesId,
@@ -161,10 +229,15 @@ export function exportPokemon(pokemon: Pokemon, encounterRarity?: string): PokeD
     rarity: encounterRarity,
     captured: false,
     level: pokemon.level,
-    items: pokemon.getHeldItems().map(item => exportItem(item)),
+    items: pokemon.getHeldItems().map((item, idx) => exportItem(item, idx)),
     ivs: exportIVs(pokemon.ivs)
   }
 }
+/**
+ * Exports a Pokemon's nature as `NatureData`.
+ * @param nature The nature to store.
+ * @returns The nature data.
+ */
 export function exportNature(nature: Nature): NatureData {
   return {
     name: getNatureName(nature),
@@ -172,13 +245,23 @@ export function exportNature(nature: Nature): NatureData {
     decreased: getNatureDecrease(nature),
   }
 }
-export function exportItem(item: PokemonHeldItemModifier): ItemData {
+/**
+ * Exports a Held Item as `ItemData`.
+ * @param item The item to store.
+ * @returns The item data.
+ */
+export function exportItem(item: PokemonHeldItemModifier, index: integer): ItemData {
   return {
-    id: item.type.id,
+    id: index,
     name: item.type.name,
     quantity: item.getStackCount()
   }
 }
+/**
+ * Exports a Pokemon's IVs as `IVData`.
+ * @param ivs The IV array to store.
+ * @returns The IV data.
+ */
 export function exportIVs(ivs: integer[]): IVData {
   return {
     hp: ivs[0],
@@ -189,6 +272,11 @@ export function exportIVs(ivs: integer[]): IVData {
     speed: ivs[5]
   }
 }
+/**
+ * Exports the current battle as a `Wave`.
+ * @param scene The BattleScene. Used to retrieve information about the current wave.
+ * @returns The wave data.
+ */
 export function exportWave(scene: BattleScene): Wave {
   var ret: Wave = {
     id: scene.currentBattle.waveIndex,
@@ -221,6 +309,11 @@ export function exportWave(scene: BattleScene): Wave {
   }
   return ret;
 }
+/**
+ * Exports the opposing trainer as `TrainerData`.
+ * @param trainer The Trainer to store.
+ * @returns The Trainer data.
+ */
 export function exportTrainer(trainer: Trainer): TrainerData {
   if (trainer.config.getTitle(0, trainer.variant) == "Finn") {
     return {
@@ -255,6 +348,12 @@ export function getSize(str: string) {
   return d.toString() + filesizes[unit]
 }
 
+/**
+ * Generates a UI option to save a log to your device.
+ * @param i The slot number. Corresponds to an index in `logs`.
+ * @param saves Your session data. Used to label logs if they match one of your save slots.
+ * @returns A UI option.
+ */
 export function generateOption(i: integer, saves: any): OptionSelectItem {
   var filename: string = (JSON.parse(localStorage.getItem(logs[i][1])) as DRPD).title
   var op: OptionSelectItem = {
@@ -267,7 +366,7 @@ export function generateOption(i: integer, saves: any): OptionSelectItem {
   for (var j = 0; j < saves.length; j++) {
     console.log(saves[j].seed, logs[i][2], saves[j].seed == logs[i][2])
     if (saves[j].seed == logs[i][2]) {
-      op.label = "[Slot " + (j + 1) + "]" + op.label.substring(6)
+      op.label = "[Slot " + (saves[j].slot + 1) + "]" + op.label.substring(6)
     }
   }
   if (logs[i][4] != "") {
@@ -276,6 +375,18 @@ export function generateOption(i: integer, saves: any): OptionSelectItem {
   }
   return op;
 }
+/**
+ * Generates an option to create a new log.
+ * 
+ * Not used.
+ * @param i The slot number. Corresponds to an index in `logs`.
+ * @param scene The current scene. Not used.
+ * @param o The current game phase. Used to return to the previous menu. Not necessary anymore lol
+ * @returns A UI option.
+ * 
+ * wow this function sucks
+ * @deprecated
+ */
 export function generateAddOption(i: integer, scene: BattleScene, o: TitlePhase) {
   var op: OptionSelectItem = {
     label: "Generate log " + logs[i][0],
@@ -314,7 +425,7 @@ export function clearLog(keyword: string) {
 }
 /**
  * Saves a log to your device.
- * @param keyword The identifier key for the log you want to reste
+ * @param keyword The identifier key for the log you want to save.
  */
 export function downloadLog(keyword: string) {
   var d = JSON.parse(localStorage.getItem(logs[logKeys.indexOf(keyword)][1]))
@@ -327,6 +438,10 @@ export function downloadLog(keyword: string) {
   link.click();
   link.remove();
 }
+/**
+ * Saves a log to your device.
+ * @param i The index of the log you want to save.
+ */
 export function downloadLogByID(i: integer) {
   console.log(i)
   var d = JSON.parse(localStorage.getItem(logs[i][1]))
@@ -339,6 +454,11 @@ export function downloadLogByID(i: integer) {
   link.click();
   link.remove();
 }
+/**
+ * Calls `logPokemon` once for each opponent or, if it's a trainer battle, logs the trainer's data.
+ * @param scene The BattleScene. Used to get the enemy team and whether it's a trainer battle or not.
+ * @param floor The wave index to write to. Defaults to the current wave.
+ */
 export function logTeam(scene: BattleScene, floor: integer = undefined) {
   if (floor == undefined) floor = scene.currentBattle.waveIndex
   var team = scene.getEnemyParty()
@@ -356,6 +476,14 @@ export function logTeam(scene: BattleScene, floor: integer = undefined) {
     }
   }
 }
+/**
+ * Logs the actions that the player took.
+ * 
+ * This includes attacks you perform, items you transfer during the shop, Poke Balls you throw, running from battl, (or attempting to), and switching (including pre-switches).
+ * @param scene The BattleScene. Used to get the log ID.
+ * @param floor The wave index to write to.
+ * @param action The text you want to add to the actions list.
+ */
 export function logActions(scene: BattleScene, floor: integer, action: string) {
   if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
   var drpd: DRPD = JSON.parse(localStorage.getItem(getLogID(scene))) as DRPD;
@@ -365,6 +493,12 @@ export function logActions(scene: BattleScene, floor: integer, action: string) {
   console.log(drpd)
   localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
 }
+/**
+ * Logs what the player took from the rewards pool and, if applicable, who they used it on.
+ * @param scene The BattleScene. Used to get the log ID.
+ * @param floor The wave index to write to.
+ * @param action The shop action. Left blank if there was no shop this floor or if you ran away. Logged as "Skip taking items" if you didn't take anything for some reason.
+ */
 export function logShop(scene: BattleScene, floor: integer, action: string) {
   if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
   var drpd: DRPD = JSON.parse(localStorage.getItem(getLogID(scene))) as DRPD;
@@ -374,31 +508,24 @@ export function logShop(scene: BattleScene, floor: integer, action: string) {
   console.log(drpd)
   localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
 }
-export function getWave(drpd: DRPD, floor: integer, scene: BattleScene) {
+/**
+ * Retrieves a wave from the DRPD. If the wave doesn't exist, it creates a new one.
+ * @param drpd The document to read from.
+ * @param floor The wave index to retrieve.
+ * @param scene The BattleScene, used for creating a new wave
+ * @returns The requested `Wave`.
+ */
+export function getWave(drpd: DRPD, floor: integer, scene: BattleScene): Wave {
   var wv: Wave;
   var insertPos: integer;
   console.log(drpd.waves)
-  if (drpd.waves[floor - 1] != undefined) {
-    return drpd.waves[floor - 1]
-  }
-  drpd.waves[floor - 1] = {
-    id: floor,
-    reload: false,
-    //type: floor % 10 == 0 ? "boss" : (floor % 10 == 5 ? "trainer" : "wild"),
-    type: floor % 10 == 0 ? "boss" : "wild",
-    double: scene.currentBattle.double,
-    actions: [],
-    shop: "",
-    biome: getBiomeName(scene.arena.biomeType),
-    pokemon: []
-  }
-  return drpd.waves[floor - 1]
   for (var i = 0; i < drpd.waves.length; i++) {
     if (drpd.waves[i] != undefined && drpd.waves[i] != null) {
       if (drpd.waves[i].id == floor) {
         wv = drpd.waves[i]
         console.log("Found wave for floor " + floor + " at index " + i)
         if (wv.pokemon == undefined) wv.pokemon = []
+        return wv;
       }
     } else if (insertPos == undefined) {
       insertPos = i
@@ -489,14 +616,28 @@ export function getWave(drpd: DRPD, floor: integer, scene: BattleScene) {
         })
         if (wv == undefined) {
           scene.ui.showText("Failed to make space\nPress F12 for info")
-        console.error("There should be space to store a new wave, but the program failed to find space anyways")
-        console.error("Go yell at @redstonewolf8557 to fix this")
+          console.error("There should be space to store a new wave, but the program failed to find space anyways")
+          console.error("Go yell at @redstonewolf8557 to fix this")
+          return undefined;
         }
       }
     })
   }
+  if (wv == undefined) {
+    scene.ui.showText("Failed to retrieve wave\nPress F12 for info")
+    console.error("Failed to retrieve wave??")
+    console.error("this mod i stg")
+    console.error("Go yell at @redstonewolf8557 to fix this")
+    return undefined;
+  }
   return wv;
 }
+/**
+ * Compares a Species to a biome's tier pool.
+ * @param species The species to search for.
+ * @param pool The SpeciesPool tier to compare.
+ * @returns whether or not `species` was found in the `pool`.
+ */
 function checkForPokeInBiome(species: Species, pool: (Species | SpeciesTree)[]): boolean {
   //console.log(species, pool)
   for (var i = 0; i < pool.length; i++) {
@@ -514,38 +655,16 @@ function checkForPokeInBiome(species: Species, pool: (Species | SpeciesTree)[]):
   }
   return false;
 }
+/**
+ * Logs a wild Pokemon to a wave's data.
+ * @param scene The BattleScene. Used to retrieve the log ID.
+ * @param floor The wave index to write to. Defaults to the current floor.
+ * @param slot The slot to write to. In a single battle, 0 = the Pokemon that is out first. In a double battle, 0 = Left and 1 = Right.
+ * @param pokemon The `EnemyPokemon` to store the data of. (Automatically converted via `exportPokemon`)
+ * @param encounterRarity The rarity tier of this Pokemon. If not specified, it calculates this automatically by searching the current biome's species pool.
+ */
 export function logPokemon(scene: BattleScene, floor: integer = undefined, slot: integer, pokemon: EnemyPokemon, encounterRarity?: string) {
   if (floor == undefined) floor = scene.currentBattle.waveIndex
-  /*
-  var modifiers: string[] = []
-  var mods = pokemon.getHeldItems()
-  for (var i = 0; i < mods.length; i++) {
-    modifiers.push(mods[i].type.name + (mods[i].getMaxStackCount(scene) == 1 ? "" : " x" + mods[i].getStackCount()))
-  }
-  var sprite = pokemon.getBattleSpriteAtlasPath()
-  // floor,party slot,encounter,species,ability,passive,level,gender,isBoss,nature,HP IV,Attack IV,Defense IV,Sp. Atk IV,Sp. Def IV,Speed IV,Items separated by slashes /
-  var newLine = floor + ","
-    + slot + ","
-    + sprite + ","
-    + (pokemon.hasTrainer() ? "trainer_pokemon" : "wild") + ","
-    + pokemon.species.getName(pokemon.formIndex) + (pokemon.getFormKey() == "" ? "" : " (" + pokemon.getFormKey() + ")") + ","
-    + pokemon.getAbility().name.toLowerCase() + ","
-    + pokemon.getPassiveAbility().name.toLowerCase() + ","
-    + pokemon.level + ","
-    + (pokemon.gender == 0 ? "M" : (pokemon.gender == 1 ? "F" : "")) + ","
-    + (pokemon.isBoss() ? "true" : "false") + ","
-    + getNatureName(pokemon.nature) + ","
-    + pokemon.ivs[0] + ","
-    + pokemon.ivs[1] + ","
-    + pokemon.ivs[2] + ","
-    + pokemon.ivs[3] + ","
-    + pokemon.ivs[4] + ","
-    + pokemon.ivs[5] + ","
-    + modifiers.join("/")
-  //console.log(idx, data.slice(0, idx), newLine, data.slice(idx))
-  setRow("e", newLine, floor, slot)
-  //console.log(localStorage.getItem(logs[logKeys.indexOf("e")][1]).split("\n"))
-  */
   if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
   var drpd: DRPD = JSON.parse(localStorage.getItem(getLogID(scene))) as DRPD;
   console.log("Log Enemy Pokemon", drpd)
@@ -563,10 +682,10 @@ export function logPokemon(scene: BattleScene, floor: integer = undefined, slot:
           "Rare",
           "Super Rare",
           "Ultra Rare",
-          "Common",
-          "Rare",
-          "Super Rare",
-          "Ultra Rare",
+          "Common Boss",
+          "Rare Boss",
+          "Super Rare Boss",
+          "Ultra Rare Boss",
         ]
         for (var i = 0; i < tiernames.length; i++) {
           if (checkForPokeInBiome(wv.pokemon[slot].id, scene.arena.pokemonPool[i]) == true) {
@@ -590,10 +709,10 @@ export function logPokemon(scene: BattleScene, floor: integer = undefined, slot:
       "Rare",
       "Super Rare",
       "Ultra Rare",
-      "Common",
-      "Rare",
-      "Super Rare",
-      "Ultra Rare",
+      "Common Boss",
+      "Rare Boss",
+      "Super Rare Boss",
+      "Ultra Rare Boss",
     ]
     for (var i = 0; i < tiernames.length; i++) {
       if (wv.pokemon[slot] != undefined)
@@ -603,14 +722,38 @@ export function logPokemon(scene: BattleScene, floor: integer = undefined, slot:
       }
     }
   }
-  if (pk.rarity == undefined) pk.rarity = "[Unknown]"
+  if (pk.rarity == undefined)
+    pk.rarity = "[Unknown]"
   wv.pokemon[slot] = pk;
   while (wv.actions.length > 0)
     wv.actions.pop()
+  wv.actions = []
+  wv.shop = ""
   console.log(drpd)
   localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
 }
+/**
+ * Clears the action list for a wave.
+ * @param scene The BattleScene. Used to get the log ID and trainer data.
+ * @param floor The wave index to write to. Defaults to the current floor.
+ */
+export function resetWaveActions(scene: BattleScene, floor: integer = undefined) {
+  if (floor == undefined) floor = scene.currentBattle.waveIndex
+  if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
+    var drpd: DRPD = JSON.parse(localStorage.getItem(getLogID(scene))) as DRPD;
+  console.log("Clear Actions", drpd)
+  var wv: Wave = getWave(drpd, floor, scene)
+  wv.actions = []
+  console.log(drpd, wv)
+  localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
+}
+/**
+ * Logs the current floor's Trainer.
+ * @param scene The BattleScene. Used to get the log ID and trainer data.
+ * @param floor The wave index to write to. Defaults to the current floor.
+ */
 export function logTrainer(scene: BattleScene, floor: integer = undefined) {
+  if (floor == undefined) floor = scene.currentBattle.waveIndex
   if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
   var drpd: DRPD = JSON.parse(localStorage.getItem(getLogID(scene))) as DRPD;
   console.log("Log Trainer", drpd)
@@ -621,6 +764,12 @@ export function logTrainer(scene: BattleScene, floor: integer = undefined) {
   console.log(drpd)
   localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
 }
+/**
+ * Logs the player's current party.
+ * 
+ * Called on Floor 1 to store the starters list.
+ * @param scene  The BattleScene. Used to get the log ID and the player's party.
+ */
 export function logPlayerTeam(scene: BattleScene) {
   if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
   var drpd: DRPD = JSON.parse(localStorage.getItem(getLogID(scene))) as DRPD;
@@ -633,7 +782,12 @@ export function logPlayerTeam(scene: BattleScene) {
   console.log(drpd)
   localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
 }
-
+/**
+ * A sort function, used to sort csv columns.
+ * 
+ * No longer used as we are using .json format instead.
+ * @deprecated
+ */
 export function dataSorter(a: string, b: string) {
   var da = a.split(",")
   var db = b.split(",")
@@ -648,6 +802,16 @@ export function dataSorter(a: string, b: string) {
   }
   return ((da[0] as any) * 1) - ((db[0] as any) * 1)
 }
+/**
+ * Writes or replaces a csv row.
+ * 
+ * No longer used as we are using .json format instead.
+ * @param keyword The keyword/ID of the log to write to.
+ * @param newLine The data to write.
+ * @param floor The floor to write to. Used for sorting.
+ * @param slot  The slot to write to. Used for sorting.
+ * @deprecated
+ */
 export function setRow(keyword: string, newLine: string, floor: integer, slot: integer) {
   var data = localStorage.getItem(logs[logKeys.indexOf(keyword)][1]).split("\n")
   data.sort(dataSorter)
@@ -713,27 +877,49 @@ export function setRow(keyword: string, newLine: string, floor: integer, slot: i
   }
   localStorage.setItem(logs[logKeys.indexOf(keyword)][1], data.slice(0, idx).join("\n") + "\n" + newLine + (data.slice(idx).length == 0 ? "" : "\n") + data.slice(idx).join("\n"));
 }
+/**
+ * Prints a DRPD as a string, for saving it to your device.
+ * @param inData The data to add on to.
+ * @param indent The indent string (just a bunch of spaces).
+ * @param drpd The `DRPD` to export.
+ * @returns `inData`, with all the DRPD's data appended to it.
+ * 
+ * @see printWave
+ */
 export function printDRPD(inData: string, indent: string, drpd: DRPD): string {
   inData += indent + "{"
   inData += "\n" + indent + "  \"version\": \"" + drpd.version + "\""
   inData += ",\n" + indent + "  \"title\": \"" + drpd.title + "\""
   inData += ",\n" + indent + "  \"authors\": [\"" + drpd.authors.join("\", \"") + "\"]"
   inData += ",\n" + indent + "  \"date\": \"" + drpd.date + "\""
-  inData += ",\n" + indent + "  \"waves\": [\n"
-  var isFirst = true
-  for (var i = 0; i < drpd.waves.length; i++) {
-    if (drpd.waves[i] != undefined) {
-      if (isFirst) {
-        isFirst = false;
-      } else {
-        inData += ",\n"
+  if (drpd.waves) {
+    inData += ",\n" + indent + "  \"waves\": [\n"
+    var isFirst = true
+    for (var i = 0; i < drpd.waves.length; i++) {
+      if (drpd.waves[i] != undefined && drpd.waves[i] != null) {
+        if (isFirst) {
+          isFirst = false;
+        } else {
+          inData += ",\n"
+        }
+        inData = printWave(inData, indent + "    ", drpd.waves[i])
       }
-      inData = printWave(inData, indent + "    ", drpd.waves[i])
     }
+  } else {
+    inData += ",\n" + indent + "  \"waves\": []"
   }
   inData += "\n" + indent + "  ]\n" + indent + "}"
   return inData;
 }
+/**
+ * Prints a wave as a string, for saving a DRPD to your device.
+ * @param inData The data to add on to.
+ * @param indent The indent string (just a bunch of spaces).
+ * @param wave The `Wave` to export.
+ * @returns `inData`, with all the wave's data appended to it.
+ * 
+ * @see printDRPD
+ */
 function printWave(inData: string, indent: string, wave: Wave): string {
   inData += indent + "{"
   inData += "\n" + indent + "  \"id\": " + wave.id + ""
@@ -764,24 +950,34 @@ function printWave(inData: string, indent: string, wave: Wave): string {
     inData += ",\n  " + indent + "\"trainer\": "
     inData = printTrainer(inData, indent + "  ", wave.trainer)
   }
-  if (wave.pokemon.length > 0) {
-    inData += ",\n  " + indent + "\"pokemon\": [\n"
-    isFirst = true
-    for (var i = 0; i < wave.pokemon.length; i++) {
-      if (wave.pokemon[i] != undefined) {
-        if (isFirst) {
-          isFirst = false;
-        } else {
-          inData += ",\n"
+  if (wave.pokemon)
+    if (wave.pokemon.length > 0) {
+      inData += ",\n  " + indent + "\"pokemon\": [\n"
+      isFirst = true
+      for (var i = 0; i < wave.pokemon.length; i++) {
+        if (wave.pokemon[i] != undefined) {
+          if (isFirst) {
+            isFirst = false;
+          } else {
+            inData += ",\n"
+          }
+          inData = printPoke(inData, indent + "    ", wave.pokemon[i])
         }
-        inData = printPoke(inData, indent + "    ", wave.pokemon[i])
       }
+      inData += "\n" + indent + "  ]"
     }
-    inData += "\n" + indent + "  ]"
-  }
   inData += "\n" + indent + "}"
   return inData;
 }
+/**
+ * Prints a Pokemon as a string, for saving a DRPD to your device.
+ * @param inData The data to add on to.
+ * @param indent The indent string (just a bunch of spaces).
+ * @param wave The `PokeData` to export.
+ * @returns `inData`, with all the Pokemon's data appended to it.
+ * 
+ * @see printDRPD
+ */
 function printPoke(inData: string, indent: string, pokemon: PokeData) {
   inData += indent + "{"
   inData += "\n" + indent + "  \"id\": " + pokemon.id
@@ -819,6 +1015,15 @@ function printPoke(inData: string, indent: string, pokemon: PokeData) {
   inData += "\n" + indent + "}"
   return inData;
 }
+/**
+ * Prints a Nature as a string, for saving a DRPD to your device.
+ * @param inData The data to add on to.
+ * @param indent The indent string (just a bunch of spaces).
+ * @param wave The `NatureData` to export.
+ * @returns `inData`, with all the nature data appended to it.
+ * 
+ * @see printDRPD
+ */
 function printNature(inData: string, indent: string, nature: NatureData) {
   inData += indent + "{"
   inData += "\n" + indent + "  \"name\": \"" + nature.name + "\""
@@ -827,6 +1032,15 @@ function printNature(inData: string, indent: string, nature: NatureData) {
   inData += "\n" + indent + "}"
   return inData;
 }
+/**
+ * Prints a Pokemon's IV data as a string, for saving a DRPD to your device.
+ * @param inData The data to add on to.
+ * @param indent The indent string (just a bunch of spaces).
+ * @param wave The `IVData` to export.
+ * @returns `inData`, with the IV data appended to it.
+ * 
+ * @see printDRPD
+ */
 function printIV(inData: string, indent: string, iv: IVData) {
   inData += "{"
   inData += "\n" + indent + "  \"hp\": " + iv.hp
@@ -838,6 +1052,15 @@ function printIV(inData: string, indent: string, iv: IVData) {
   inData += "\n" + indent + "}"
   return inData;
 }
+/**
+ * Prints a Trainer as a string, for saving a DRPD to your device.
+ * @param inData The data to add on to.
+ * @param indent The indent string (just a bunch of spaces).
+ * @param wave The `TrainerData` to export.
+ * @returns `inData`, with all the Trainer's data appended to it.
+ * 
+ * @see printDRPD
+ */
 function printTrainer(inData: string, indent: string, trainer: TrainerData) {
   inData += "{"
   inData += "\n" + indent + "  \"id\": \"" + trainer.id + "\""
@@ -846,6 +1069,15 @@ function printTrainer(inData: string, indent: string, trainer: TrainerData) {
   inData += "\n" + indent + "}"
   return inData;
 }
+/**
+ * Prints an item as a string, for saving a DRPD to your device.
+ * @param inData The data to add on to.
+ * @param indent The indent string (just a bunch of spaces).
+ * @param wave The `ItemData` to export.
+ * @returns `inData`, with all the Item's data appended to it.
+ * 
+ * @see printDRPD
+ */
 function printItem(inData: string, indent: string, item: ItemData) {
   inData += indent + "{"
   inData += "\n" + indent + "  \"id\": \"" + item.id + "\""

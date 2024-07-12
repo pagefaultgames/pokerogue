@@ -698,9 +698,9 @@ export default class FightUiHandler extends UiHandler {
       this.ppText.setText(`${Utils.padInt(pp, 2, "  ")}/${Utils.padInt(maxPP, 2, "  ")}`);
       this.powerText.setText(`${power >= 0 ? power : "---"}`);
       this.accuracyText.setText(`${accuracy >= 0 ? accuracy : "---"}`);
-      this.accuracyText.setText(`${accuracy1 >= 0 ? accuracy1 : "---"}`);
+      this.accuracyText.setText(`${accuracy1 >= 0 ? Math.round(accuracy1) : "---"}`);
       if (this.scene.getEnemyField()[1] != undefined)
-        this.accuracyText.setText(`${accuracy1 >= 0 ? accuracy1 : "---"}/${accuracy2 >= 0 ? accuracy2 : "---"}`);
+        this.accuracyText.setText(`${accuracy1 >= 0 ? Math.round(accuracy1) : "---"}/${accuracy2 >= 0 ? Math.round(accuracy2) : "---"}`);
 
       const ppPercentLeft = pp / maxPP;
 
