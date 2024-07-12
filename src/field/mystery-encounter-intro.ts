@@ -1,6 +1,6 @@
 import { GameObjects } from "phaser";
 import BattleScene from "../battle-scene";
-import MysteryEncounter from "../data/mystery-encounters/mystery-encounter";
+import IMysteryEncounter from "../data/mystery-encounters/mystery-encounter";
 
 export class MysteryEncounterSpriteConfig {
   spriteKey: string; // e.g. "ace_trainer_f"
@@ -21,10 +21,10 @@ export class MysteryEncounterSpriteConfig {
  * Note: intro visuals are not "Trainers" or any other specific game object, though they may contain trainer sprites
  */
 export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
-  public encounter: MysteryEncounter;
+  public encounter: IMysteryEncounter;
   public spriteConfigs: MysteryEncounterSpriteConfig[];
 
-  constructor(scene: BattleScene, encounter: MysteryEncounter) {
+  constructor(scene: BattleScene, encounter: IMysteryEncounter) {
     super(scene, -72, 76);
     this.encounter = encounter;
     // Shallow copy configs to allow visual config updates at runtime without dirtying master copy of Encounter

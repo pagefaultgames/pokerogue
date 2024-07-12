@@ -1,15 +1,15 @@
-import MysteryEncounter from "./mystery-encounter";
-import { DarkDealEncounter } from "./encounters/dark-deal";
-import { MysteriousChallengersEncounter } from "./encounters/mysterious-challengers";
-import { MysteriousChestEncounter } from "./encounters/mysterious-chest";
-import { FightOrFlightEncounter } from "#app/data/mystery-encounters/encounters/fight-or-flight";
-import { TrainingSessionEncounter } from "#app/data/mystery-encounters/encounters/training-session";
+import IMysteryEncounter from "./mystery-encounter";
+import { DarkDealEncounter } from "./encounters/dark-deal-encounter";
+import { MysteriousChallengersEncounter } from "./encounters/mysterious-challengers-encounter";
+import { MysteriousChestEncounter } from "./encounters/mysterious-chest-encounter";
+import { FightOrFlightEncounter } from "./encounters/fight-or-flight-encounter";
+import { TrainingSessionEncounter } from "./encounters/training-session-encounter";
 import { Biome } from "#enums/biome";
-import { SleepingSnorlaxEncounter } from "./encounters/sleeping-snorlax";
+import { SleepingSnorlaxEncounter } from "./encounters/sleeping-snorlax-encounter";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { DepartmentStoreSaleEncounter } from "#app/data/mystery-encounters/encounters/department-store-sale";
-import { ShadyVitaminDealerEncounter } from "#app/data/mystery-encounters/encounters/shady-vitamin-dealer";
-import { FieldTripEncounter } from "#app/data/mystery-encounters/encounters/field-trip-encounter";
+import { DepartmentStoreSaleEncounter } from "./encounters/department-store-sale-encounter";
+import { ShadyVitaminDealerEncounter } from "./encounters/shady-vitamin-dealer-encounter";
+import { FieldTripEncounter } from "./encounters/field-trip-encounter";
 
 // Spawn chance: (BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT + WIGHT_INCREMENT_ON_SPAWN_MISS * <number of missed spawns>) / 256
 export const BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT = 1;
@@ -117,7 +117,7 @@ export const CIVILIZATION_ENCOUNTER_BIOMES = [
   Biome.ISLAND
 ];
 
-export const allMysteryEncounters: { [encounterType: number]: MysteryEncounter } = {};
+export const allMysteryEncounters: { [encounterType: number]: IMysteryEncounter } = {};
 
 
 const extremeBiomeEncounters: MysteryEncounterType[] = [];
