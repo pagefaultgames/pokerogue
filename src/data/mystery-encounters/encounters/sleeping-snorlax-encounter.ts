@@ -145,7 +145,7 @@ export const SleepingSnorlaxEncounter: IMysteryEncounter =
         .withDialogue({
           buttonLabel: `${namespace}_option_3_label`,
           buttonTooltip: `${namespace}_option_3_tooltip`,
-          disabledTooltip: `${namespace}_option_3_disabled_tooltip`,
+          disabledButtonTooltip: `${namespace}_option_3_disabled_tooltip`,
         })
         .withOptionPhase(async (scene: BattleScene) => {
           // Steal the Snorlax's Leftovers
