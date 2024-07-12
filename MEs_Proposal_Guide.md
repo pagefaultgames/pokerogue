@@ -99,8 +99,10 @@ for __people__, things like trainers, traders, youngster Joey and the people of 
 
 They are: TOWN, PLAIN, GRASS, TALL_GRASS, METROPOLIS, FOREST, SWAMP, BEACH, LAKE, MOUNTAIN, BADLANDS, CAVE, DESERT, ICE_CAVE, MEADOW, POWER_PLANT, GRAVEYARD, DOJO, FACTORY, RUINS, CONSTRUCTION_SITE, JUNGLE, FAIRY_CAVE, TEMPLE, SLUM, SNOWY_FOREST, ISLAND, LABORATORY
 
-- "CIVILIZATION_BIOMES" ; these are the places where you might find not only people, but also __are or can be near buildings__, a PKMN Center, a shopping center, a school.
-  - They are: TOWN, PLAINS, GRASS, TALL_GRASS, METROPOLIS, BEACH, LAKE, MEADOW, POWER_PLANT, GRAVEYARD, DOJO, FACTORY, CONSTRUCTION_SITE, SLUM, ISLAND
+### CIVILIZATION_BIOMES
+these are the places where you might find not only people, but also __are or can be near buildings__, a PKMN Center, a shopping center, a school.
+
+They are: TOWN, PLAINS, GRASS, TALL_GRASS, METROPOLIS, BEACH, LAKE, MEADOW, POWER_PLANT, GRAVEYARD, DOJO, FACTORY, CONSTRUCTION_SITE, SLUM, ISLAND
 
 You can use these tags, or the specific Biome, or a combination of both, to let us know where you'd like the Event to happen.
 
