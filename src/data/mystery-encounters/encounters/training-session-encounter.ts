@@ -333,11 +333,7 @@ export const TrainingSessionEncounter: IMysteryEncounter =
           scene.removePokemonFromPlayerParty(playerPokemon, false);
 
           const onBeforeRewardsPhase = () => {
-            scene.queueMessage(
-              getEncounterText(scene, [`${namespace}_battle_finished_3`]),
-              null,
-              true
-            );
+            scene.queueMessage(getEncounterText(scene, `${namespace}_battle_finished_3`), null, true);
             // Add the pokemon back to party with ability change
             const abilityIndex = encounter.misc.abilityIndex;
             if (!!playerPokemon.getFusionSpeciesForm()) {
