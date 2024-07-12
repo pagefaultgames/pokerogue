@@ -1,23 +1,23 @@
 import { Abilities } from "#enums/abilities";
-import { BerryType } from "#enums/berry-type";
+import { type BerryType } from "#enums/berry-type";
 import { Biome } from "#enums/biome";
+import { EggTier } from "#enums/egg-type";
 import { Moves } from "#enums/moves";
 import { Nature } from "#enums/nature";
 import { PokeballType } from "#enums/pokeball";
 import { Species } from "#enums/species";
-import { Stat } from "#enums/stat";
+import { type Stat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
 import { TimeOfDay } from "#enums/time-of-day";
-import { WeatherType } from "#enums/weather-type";
 import { VariantTier } from "#enums/variant-tiers";
-import { EggTier } from "#enums/egg-type";
+import { WeatherType } from "#enums/weather-type";
 import { type PokeballCounts } from "./battle-scene";
 import { Gender } from "./data/gender";
 import { allSpecies } from "./data/pokemon-species"; // eslint-disable-line @typescript-eslint/no-unused-vars
-import { StatusEffect } from "./data/status-effect";
-import { TempBattleStat } from "./data/temp-battle-stat";
-import { Type } from "./data/type";
-import { Variant } from "./data/variant";
-import { type SpeciesStatBoosterItem, type ModifierTypes } from "./modifier/modifier-type";
+import { type TempBattleStat } from "./data/temp-battle-stat";
+import { type Type } from "./data/type";
+import { type Variant } from "./data/variant";
+import { type ModifierTypes, type SpeciesStatBoosterItem } from "./modifier/modifier-type";
 
 /**
  * Overrides for testing different in game situations
