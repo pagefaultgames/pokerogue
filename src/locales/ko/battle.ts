@@ -92,7 +92,6 @@ export const battle: SimpleTranslationEntries = {
   "congratulations": "축하합니다!",
   "beatModeFirstTime": "{{speciesName}}[[가]] {{gameMode}} 모드를 처음으로 클리어했다!\n{{newModifier}}[[를]] 손에 넣었다!",
   "ppReduced": "{{targetName}}의\n{{moveName}}[[를]] {{reduction}} 깎았다!",
-  "typeChanged": "{{pokemonName}} transformed\ninto the {{type}} type!",
   "battlerTagsRechargingLapse": "공격의 반동으로\n{{pokemonNameWithAffix}}[[는]] 움직일 수 없다!",
   "battlerTagsTrappedOnAdd": "{{pokemonNameWithAffix}}[[는]]\n이제 도망칠 수 없다!",
   "battlerTagsTrappedOnRemove": "{{pokemonNameWithAffix}}[[는]]\n{{moveName}}로부터 풀려났다!",

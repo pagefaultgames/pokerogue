@@ -100,7 +100,6 @@ export const battle: SimpleTranslationEntries = {
   "congratulations": "Congratulazioni!",
   "beatModeFirstTime": "{{speciesName}} ha completato la modalità {{gameMode}} per la prima volta!\nHai ricevuto {{newModifier}}!",
   "ppReduced": "I PP della mossa {{moveName}} di\n{{targetName}} sono stati ridotti di {{reduction}}!",
-  "typeChanged": "{{pokemonName}} transformed\ninto the {{type}} type!",
   "battlerTagsRechargingLapse": "{{pokemonNameWithAffix}} deve\nricaricarsi!",
   "battlerTagsTrappedOnAdd": "{{pokemonNameWithAffix}} non può\npiù fuggire!",
   "battlerTagsTrappedOnRemove": "{{pokemonNameWithAffix}} è stato liberato\nda {{moveName}}",

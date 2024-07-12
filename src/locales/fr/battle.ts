@@ -88,7 +88,6 @@ export const battle: SimpleTranslationEntries = {
   "statWontGoAnyLower_one": "{{stats}} de {{pokemonNameWithAffix}}\nne peut plus baisser !",
   "statWontGoAnyLower_other": "{{stats}} de {{pokemonNameWithAffix}}\nne peuvent plus baisser !",
   "ppReduced": "Les PP de la capacité {{moveName}}\nde {{targetName}} baissent de {{reduction}} !",
-  "typeChanged": "{{pokemonName}} transformed\ninto the {{type}} type!",
   "retryBattle": "Voulez-vous réessayer depuis le début du combat ?",
   "unlockedSomething": "{{unlockedThing}}\na été débloqué.",
   "congratulations": "Félicitations !",
