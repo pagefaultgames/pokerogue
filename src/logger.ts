@@ -123,9 +123,10 @@ export const isPreSwitch: Utils.BooleanHolder = new Utils.BooleanHolder(false);
 
 export var StoredLog: DRPD = undefined;
 
-export const DRPD_Version = "1.0.0"
+export const DRPD_Version = "1.0.0a"
 export const acceptedVersions = [
-  "1.0.0"
+  "1.0.0",
+  "1.0.0a",
 ]
 export interface DRPD {
   version: string,
@@ -180,7 +181,7 @@ export interface TrainerData {
   type: string,
 }
 export interface ItemData {
-  id: integer,
+  id: string,
   name: string,
   quantity: integer,
 }
@@ -229,7 +230,7 @@ export function exportPokemon(pokemon: Pokemon, encounterRarity?: string): PokeD
     rarity: encounterRarity,
     captured: false,
     level: pokemon.level,
-    items: pokemon.getHeldItems().map((item, idx) => exportItem(item, idx)),
+    items: pokemon.getHeldItems().map((item, idx) => exportItem(item)),
     ivs: exportIVs(pokemon.ivs)
   }
 }
@@ -250,9 +251,9 @@ export function exportNature(nature: Nature): NatureData {
  * @param item The item to store.
  * @returns The item data.
  */
-export function exportItem(item: PokemonHeldItemModifier, index: integer): ItemData {
+export function exportItem(item: PokemonHeldItemModifier): ItemData {
   return {
-    id: index,
+    id: item.type.identifier,
     name: item.type.name,
     quantity: item.getStackCount()
   }
@@ -487,6 +488,7 @@ export function logTeam(scene: BattleScene, floor: integer = undefined) {
 export function logActions(scene: BattleScene, floor: integer, action: string) {
   if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
   var drpd: DRPD = JSON.parse(localStorage.getItem(getLogID(scene))) as DRPD;
+  drpd = updateLog(drpd);
   console.log("Log Action", drpd)
   var wv: Wave = getWave(drpd, floor, scene)
   wv.actions.push(action)
@@ -502,6 +504,7 @@ export function logActions(scene: BattleScene, floor: integer, action: string) {
 export function logShop(scene: BattleScene, floor: integer, action: string) {
   if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
   var drpd: DRPD = JSON.parse(localStorage.getItem(getLogID(scene))) as DRPD;
+  drpd = updateLog(drpd);
   console.log("Log Shop Item", drpd)
   var wv: Wave = getWave(drpd, floor, scene)
   wv.shop = action
@@ -667,6 +670,7 @@ export function logPokemon(scene: BattleScene, floor: integer = undefined, slot:
   if (floor == undefined) floor = scene.currentBattle.waveIndex
   if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
   var drpd: DRPD = JSON.parse(localStorage.getItem(getLogID(scene))) as DRPD;
+  drpd = updateLog(drpd);
   console.log("Log Enemy Pokemon", drpd)
   var wv: Wave = getWave(drpd, floor, scene)
   var pk: PokeData = exportPokemon(pokemon, encounterRarity)
@@ -740,7 +744,8 @@ export function logPokemon(scene: BattleScene, floor: integer = undefined, slot:
 export function resetWaveActions(scene: BattleScene, floor: integer = undefined) {
   if (floor == undefined) floor = scene.currentBattle.waveIndex
   if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
-    var drpd: DRPD = JSON.parse(localStorage.getItem(getLogID(scene))) as DRPD;
+  var drpd: DRPD = JSON.parse(localStorage.getItem(getLogID(scene))) as DRPD;
+  drpd = updateLog(drpd);
   console.log("Clear Actions", drpd)
   var wv: Wave = getWave(drpd, floor, scene)
   wv.actions = []
@@ -756,6 +761,7 @@ export function logTrainer(scene: BattleScene, floor: integer = undefined) {
   if (floor == undefined) floor = scene.currentBattle.waveIndex
   if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
   var drpd: DRPD = JSON.parse(localStorage.getItem(getLogID(scene))) as DRPD;
+  drpd = updateLog(drpd);
   console.log("Log Trainer", drpd)
   var wv: Wave = getWave(drpd, floor, scene)
   var t: TrainerData = exportTrainer(scene.currentBattle.trainer)
@@ -774,6 +780,7 @@ export function logPlayerTeam(scene: BattleScene) {
   if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
   var drpd: DRPD = JSON.parse(localStorage.getItem(getLogID(scene))) as DRPD;
   //var wv: Wave = getWave(drpd, 1, scene)
+  drpd = updateLog(drpd);
   console.log("Log Player Starters", drpd)
   var P = scene.getParty()
   for (var i = 0; i < P.length; i++) {
@@ -1085,4 +1092,29 @@ function printItem(inData: string, indent: string, item: ItemData) {
   inData += ",\n" + indent + "  \"quantity\": " + item.quantity
   inData += "\n" + indent + "}"
   return inData;
+}
+
+
+function updateLog(drpd: DRPD): DRPD {
+  if (drpd.version == "1.0.0") {
+    drpd.version = "1.0.0a"
+    console.log("Updated to 1.0.0a - changed item IDs to strings")
+    for (var i = 0; i < drpd.waves.length; i++) {
+      if (drpd.waves[i] != undefined) {
+        if (drpd.waves[i].pokemon != undefined) {
+          for (var j = 0; j < drpd.waves[i].pokemon.length; j++) {
+            for (var k = 0; k < drpd.waves[i].pokemon[j].items.length; k++) {
+              drpd.waves[i].pokemon[j].items[k].id = drpd.waves[i].pokemon[j].items[k].id.toString()
+            }
+          }
+        }
+      }
+    }
+    for (var j = 0; j < drpd.starters.length; j++) {
+      for (var k = 0; k < drpd.starters[j].items.length; k++) {
+        drpd.starters[j].items[k].id = drpd.starters[j].items[k].id.toString()
+      }
+    }
+  } // 1.0.0 → 1.0.0a
+  return drpd;
 }
