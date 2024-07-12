@@ -1362,7 +1362,7 @@ export class EncounterPhase extends BattlePhase {
       LoggerTools.logPlayerTeam(this.scene)
     }
     LoggerTools.resetWaveActions(this.scene)
-    if (this.scene.lazyReloads) {
+    if (this.scene.lazyReloads && this.loaded) {
       LoggerTools.flagReset(this.scene)
     }
 
