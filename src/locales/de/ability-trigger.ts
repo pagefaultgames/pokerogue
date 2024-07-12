@@ -36,7 +36,7 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "forewarn": "Vorwarnung von {{pokemonNameWithAffix}}: Konzentraion auf {{moveName}}!",
   "frisk": "{{pokemonNameWithAffix}} hat die Fähigkeit {{opponentAbilityName}} von  {{opponentName}} erschnüffelt!",
   "postWeatherLapseHeal": "{{abilityName}} von {{pokemonName}} füllte einige KP auf!",
-  "postWeatherLapseDamage": "{{pokemonNameWithAffix}} wurde durch {abilityName}} verletzt!",
+  "postWeatherLapseDamage": "{{pokemonNameWithAffix}} wurde durch {{abilityName}} verletzt!",
   "postTurnLootCreateEatenBerry": "{{pokemonNameWithAffix}} hat {{berryName}} geerntet!",
   "postTurnHeal": "{{abilityName}} von {{pokemonName}} füllte einige KP auf!",
   "fetchBall": "{{pokemonNameWithAffix}} hat einen {{pokeballName}} gefunden!",

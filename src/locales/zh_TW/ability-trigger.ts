@@ -36,7 +36,7 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "forewarn": "{{pokemonNameWithAffix}} was forewarned about {{moveName}}!",
   "frisk": "{{pokemonNameWithAffix}} frisked {{opponentName}}'s {{opponentAbilityName}}!",
   "postWeatherLapseHeal": "{{pokemonNameWithAffix}}'s {{abilityName}}\nrestored its HP a little!",
-  "postWeatherLapseDamage": "{{pokemonNameWithAffix}} is hurt\nby its {abilityName}}!",
+  "postWeatherLapseDamage": "{{pokemonNameWithAffix}} is hurt\nby its {{abilityName}}!",
   "postTurnLootCreateEatenBerry": "{{pokemonNameWithAffix}} harvested one {{berryName}}!",
   "postTurnHeal": "{{pokemonNameWithAffix}}'s {{abilityName}}\nrestored its HP a little!",
   "fetchBall": "{{pokemonNameWithAffix}} found a\n{{pokeballName}}!",

@@ -36,7 +36,7 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "forewarn": "{{pokemonNameWithAffix}}의\n{{moveName}}[[를]] 간파했다!",
   "frisk": "{{pokemonNameWithAffix}}[[는]] {{opponentName}}의\n{{opponentAbilityName}}[[를]] 통찰했다!",
   "postWeatherLapseHeal": "{{pokemonNameWithAffix}}[[는]]\n{{abilityName}}[[로]] 체력이 회복되었다!",
-  "postWeatherLapseDamage": "{{pokemonNameWithAffix}}[[는]]\n{abilityName}}에 의한 데미지를 입었다!",
+  "postWeatherLapseDamage": "{{pokemonNameWithAffix}}[[는]]\n{{abilityName}}에 의한 데미지를 입었다!",
   "postTurnLootCreateEatenBerry": "{{pokemonNameWithAffix}}[[는]]\n{{berryName}}[[를]] 수확했다!",
   "postTurnHeal": "{{pokemonNameWithAffix}}[[는]]\n{{abilityName}}[[로]] 체력이 회복되었다!",
   "fetchBall": "{{pokemonNameWithAffix}}[[는]]\n{{pokeballName}}[[를]] 주워 왔다!",
