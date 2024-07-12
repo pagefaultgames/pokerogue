@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
-import * as Overrides from "#app/overrides";
+import Overrides from "#app/overrides";
 import { Abilities } from "#enums/abilities";
 import { Species } from "#enums/species";
 import { FaintPhase } from "#app/phases";
