@@ -955,6 +955,18 @@ export function setRow(keyword: string, newLine: string, floor: integer, slot: i
   }
   localStorage.setItem(logs[logKeys.indexOf(keyword)][1], data.slice(0, idx).join("\n") + "\n" + newLine + (data.slice(idx).length == 0 ? "" : "\n") + data.slice(idx).join("\n"));
 }
+export function flagReset(scene: BattleScene, floor: integer = undefined) {
+  if (floor == undefined)
+    floor = scene.currentBattle.waveIndex;
+  if (localStorage.getItem(getLogID(scene)) == null)
+    localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
+  var drpd: DRPD = JSON.parse(localStorage.getItem(getLogID(scene))) as DRPD;
+  drpd = updateLog(drpd);
+  var wv = getWave(drpd, floor, scene)
+  wv.reload = true;
+  console.log(drpd)
+  localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
+}
 /**
  * Prints a DRPD as a string, for saving it to your device.
  * @param inData The data to add on to.

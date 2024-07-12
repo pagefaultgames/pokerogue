@@ -1362,6 +1362,9 @@ export class EncounterPhase extends BattlePhase {
       LoggerTools.logPlayerTeam(this.scene)
     }
     LoggerTools.resetWaveActions(this.scene)
+    if (this.scene.lazyReloads) {
+      LoggerTools.flagReset(this.scene)
+    }
 
     if (this.scene.currentBattle.battleType === BattleType.WILD) {
       enemyField.forEach(enemyPokemon => {
