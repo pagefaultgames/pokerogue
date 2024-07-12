@@ -150,7 +150,7 @@ export class MysteryEncounterOptionBuilder implements Partial<MysteryEncounterOp
   dialogue?: OptionTextDisplay;
 
   withOptionMode(optionMode: EncounterOptionMode): this & Pick<MysteryEncounterOption, "optionMode"> {
-    return Object.assign(this, { optionMode: optionMode });
+    return Object.assign(this, { optionMode });
   }
 
   withSceneRequirement(requirement: EncounterSceneRequirement): this & Required<Pick<MysteryEncounterOption, "requirements">> {
