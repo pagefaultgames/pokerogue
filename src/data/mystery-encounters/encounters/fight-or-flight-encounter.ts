@@ -8,7 +8,7 @@ import {
   setEncounterRewards,
   showEncounterText,
 } from "#app/data/mystery-encounters/mystery-encounter-utils";
-import {  STEALING_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
+import { STEALING_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
 import Pokemon from "#app/field/pokemon";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import {
