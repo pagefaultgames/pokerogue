@@ -31,8 +31,8 @@ export abstract class EncounterSceneRequirement implements EncounterRequirement 
 }
 
 export abstract class EncounterPokemonRequirement implements EncounterRequirement {
-  protected minNumberOfPokemon: number;
-  protected invertQuery: boolean;
+  public minNumberOfPokemon: number;
+  public invertQuery: boolean;
 
   abstract meetsRequirement(scene: BattleScene): boolean;
 
