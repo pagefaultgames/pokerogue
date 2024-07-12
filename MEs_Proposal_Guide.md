@@ -76,7 +76,9 @@ Currently, you can set the Events to happen in the specific Biomes of your choos
 
 self explanatory, it's any/all biomes
 
-- "EXTREME_BIOMES" and "NON-EXTREME_BIOMES" ; these are all the biomes in two mutually exclusive lists. The main point of this split is to avoid "Breeders in Space" type situations, with random trainers saluting you while on the moon.
+### `EXTREME_BIOMES` and `NON-EXTREME_BIOMES` 
+
+these are all the biomes in two mutually exclusive lists. The main point of this split is to avoid "Breeders in Space" type situations, with random trainers saluting you while on the moon.
   - "EXTREME_BIOMES": Abyss, Badlands, Desert, Ice Cave, Seabed, Space, Volcano, Wasteland
   - "NON-EXTREME_BIOMES" ; Every other biome not on "EXTREME_BIOMES"
 
