@@ -973,8 +973,8 @@ export class EncounterPhase extends BattlePhase {
     }
 
     return enemyField.length === 1
-      ? i18next.t("battle:singleWildAppeared", { pokemonName: getPokemonNameWithAffix(enemyField[0]) })
-      : i18next.t("battle:multiWildAppeared", { pokemonName1: getPokemonNameWithAffix(enemyField[0]), pokemonName2: getPokemonNameWithAffix(enemyField[1]) });
+      ? i18next.t("battle:singleWildAppeared", { pokemonName: enemyField[0].getNameToRender() })
+      : i18next.t("battle:multiWildAppeared", { pokemonName1: enemyField[0].getNameToRender(), pokemonName2: enemyField[1].getNameToRender() });
   }
 
   doEncounterCommon(showEncounterMessage: boolean = true) {
