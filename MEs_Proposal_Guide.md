@@ -72,7 +72,9 @@ This is the floors/waves where you'd like your Event to happen. (11-179)* is the
 ## Biomes
 
 Currently, you can set the Events to happen in the specific Biomes of your choosing, but there are other options too that you can use:
-- "ANY" ; self explanatory, it's any/all biomes
+### `ANY` Biome"
+
+self explanatory, it's any/all biomes
 
 - "EXTREME_BIOMES" and "NON-EXTREME_BIOMES" ; these are all the biomes in two mutually exclusive lists. The main point of this split is to avoid "Breeders in Space" type situations, with random trainers saluting you while on the moon.
   - "EXTREME_BIOMES": Abyss, Badlands, Desert, Ice Cave, Seabed, Space, Volcano, Wasteland
