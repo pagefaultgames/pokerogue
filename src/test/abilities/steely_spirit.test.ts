@@ -68,7 +68,7 @@ describe("Abilities - Steely Spirit", () => {
     game.doAttack(getMovePosition(game.scene, 0, moveToCheck));
     await game.phaseInterceptor.to(SelectTargetPhase, false);
     game.doSelectTarget(enemyToCheck.getBattlerIndex());
-    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.doAttack(getMovePosition(game.scene, 1, moveToCheck));
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(allMoves[moveToCheck].calculateBattlePower).toHaveReturnedWith(ironHeadPower * Math.pow(steelySpiritMultiplier, 2));
