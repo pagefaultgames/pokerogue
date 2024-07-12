@@ -95,7 +95,7 @@ export default interface IMysteryEncounter {
    * Can be set for uses programatic dialogue during an encounter (storing the name of one of the party's pokemon, etc.)
    * Example use: see MYSTERIOUS_CHEST
    */
-  dialogueTokens?: { [key: string]: string; };
+  dialogueTokens?: Record<string, string>;
   /**
    * Should be set depending upon option selected as part of an encounter
    * For example, if there is no battle as part of the encounter/selected option, should be set to NO_BATTLE
@@ -350,7 +350,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   primaryPokemonRequirements?: EncounterPokemonRequirement[] = [];
   secondaryPokemonRequirements ?: EncounterPokemonRequirement[] = [];
   excludePrimaryFromSupportRequirements?: boolean;
-  dialogueTokens?: { [key: string]: string; };
+  dialogueTokens?: Record<string, string>;
   doEncounterExp?: (scene: BattleScene) => boolean;
   doEncounterRewards?: (scene: BattleScene) => boolean;
   onInit?: (scene: BattleScene) => boolean;

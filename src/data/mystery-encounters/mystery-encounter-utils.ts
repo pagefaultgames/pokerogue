@@ -181,14 +181,6 @@ function getTextWithDialogueTokens(scene: BattleScene, textKey: TemplateStringsA
     return null;
   }
 
-  // Apply dialogue tokens
-  // const dialogueTokens = scene.currentBattle?.mysteryEncounter?.dialogueTokens;
-  // if (dialogueTokens) {
-  //   dialogueTokens.forEach((value) => {
-  //     textString = textString.replace(value[0], value[1]);
-  //   });
-  // }
-
   return i18next.t(textKey, scene.currentBattle?.mysteryEncounter?.dialogueTokens);
 }
 

@@ -6,6 +6,7 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
  * '@d{<number>}' will add a time delay to text animation for Message and Dialogue strings
  *
  * '{{<token>}}' will auto-inject the matching token value for the specified Encounter that is stored in dialogueTokens
+ * (see [i18next interpolations](https://www.i18next.com/translation-function/interpolation))
  *
  * '@[<TextStyle>]{<text>}' will auto-color the given text to a specified TextStyle (e.g. TextStyle.SUMMARY_GREEN)
  *
