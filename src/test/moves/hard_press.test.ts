@@ -4,6 +4,7 @@ import GameManager from "#app/test/utils/gameManager";
 import * as overrides from "#app/overrides";
 import { Species } from "#enums/species";
 import {
+  MoveEffectPhase,
   TurnStartPhase,
 } from "#app/phases";
 import { Moves } from "#enums/moves";
@@ -15,8 +16,34 @@ import { allMoves, OpponentHighHpPowerAttr } from "#app/data/move.js";
 describe("Moves - Hard Press", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
+
+  /**
+   * Retrieves the maximum base power of a move based on its attributes.
+   *
+   * @param move - The move which maximum base power is being retrieved.
+   * @returns The maximum base power of the move.
+   */
+  const getMoveMaxBasePower = (move: Move): number => {
+    const attr = move.getAttrs(OpponentHighHpPowerAttr);
+
+    return (attr[0] as OpponentHighHpPowerAttr)["maxBasePower"];
+  };
+
+  /**
+   * Computes Hard Press's power based on formula from Bulbapedia.
+   * {@link https://bulbapedia.bulbagarden.net/wiki/Hard_Press_(move)}
+   *
+   * @param targetHpRatio - Target's HP ratio.
+   * @returns The computed power of the move.
+   */
+  const computeHardPressMovePower = (targetHpRatio: number): number => {
+    getMoveMaxBasePower(moveToCheck);
+    return Math.max(Math.floor(moveMaxBasePower * targetHpRatio), 1);
+  };
+
   const moveToCheck = allMoves[Moves.HARD_PRESS];
   const moveMaxBasePower = getMoveMaxBasePower(moveToCheck);
+
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -36,6 +63,21 @@ describe("Moves - Hard Press", () => {
     vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
     vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.HARD_PRESS]);
+  });
+
+  it("power varies between 1 and 100 based on target health ratio (random)", async () => {
+    await game.startBattle([Species.PIKACHU]);
+    const enemy = game.scene.getEnemyPokemon();
+    const ally = game.scene.getPlayerPokemon();
+
+    const fullHpMovePower = moveToCheck.calculateBattlePower(ally, enemy);
+    expect(fullHpMovePower).toBe(moveMaxBasePower);
+
+    game.doAttack(getMovePosition(game.scene, 0, Moves.HARD_PRESS));
+    await game.phaseInterceptor.to(MoveEffectPhase);
+
+    const reducedHpMovePower = moveToCheck.calculateBattlePower(ally, enemy);
+    expect(reducedHpMovePower).toBe(computeHardPressMovePower(enemy.getHpRatio()));
   });
 
   it("power varies between 1 and 100 based on target health ratio (100%)", async () => {
@@ -64,7 +106,7 @@ describe("Moves - Hard Press", () => {
     await game.phaseInterceptor.to(TurnStartPhase);
 
     const halfHpMovePower = moveToCheck.calculateBattlePower(ally, enemy);
-    expect(halfHpMovePower).toBe(Math.max(Math.floor(moveMaxBasePower * enemy.getHpRatio()), 1) );
+    expect(halfHpMovePower).toBe(computeHardPressMovePower(enemy.getHpRatio()) );
   });
 
   it("power varies between 1 and 100 based on target health ratio (1%)", async () => {
@@ -75,24 +117,30 @@ describe("Moves - Hard Press", () => {
     const fullHpMovePower = moveToCheck.calculateBattlePower(ally, enemy);
     expect(fullHpMovePower).toBe(moveMaxBasePower);
 
-    vi.spyOn(enemy, "getHpRatio").mockReturnValue(.1);
+    vi.spyOn(enemy, "getMaxHp").mockReturnValue(100);
+    vi.spyOn(enemy, "getHpRatio").mockReturnValue(.01);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.HARD_PRESS));
     await game.phaseInterceptor.to(TurnStartPhase);
 
     const oneHpMovePower = moveToCheck.calculateBattlePower(ally, enemy);
-    expect(oneHpMovePower).toBe(Math.max(Math.floor(moveMaxBasePower * enemy.getHpRatio()), 1) );
+    expect(oneHpMovePower).toBe(computeHardPressMovePower(enemy.getHpRatio()));
+  });
+
+  it("power varies between 1 and 100 based on target health ratio (less than 1%)", async () => {
+    await game.startBattle([Species.PIKACHU]);
+    const enemy = game.scene.getEnemyPokemon();
+    const ally = game.scene.getPlayerPokemon();
+
+    const fullHpMovePower = moveToCheck.calculateBattlePower(ally, enemy);
+    expect(fullHpMovePower).toBe(moveMaxBasePower);
+
+    vi.spyOn(enemy, "getHpRatio").mockReturnValue(.005);
+
+    game.doAttack(getMovePosition(game.scene, 0, Moves.HARD_PRESS));
+    await game.phaseInterceptor.to(TurnStartPhase);
+
+    const lessThanOnePercentHpMovePower = moveToCheck.calculateBattlePower(ally, enemy);
+    expect(lessThanOnePercentHpMovePower).toBe(computeHardPressMovePower(enemy.getHpRatio()));
   });
 });
-
-/**
- * Retrieves the maximum base power of a move based on its attributes.
- *
- * @param move - The move which maximum base power is being retrieved.
- * @returns The maximum base power of the move.
- */
-const getMoveMaxBasePower = (move: Move) => {
-  const attr = move.getAttrs(OpponentHighHpPowerAttr);
-
-  return (attr[0] as OpponentHighHpPowerAttr)["maxBasePower"];
-};
