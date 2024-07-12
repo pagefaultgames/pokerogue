@@ -7,7 +7,10 @@ import MysteryEncounter, {
   MysteryEncounterBuilder,
   MysteryEncounterTier,
 } from "../mystery-encounter";
-import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
+import {
+  EncounterOptionMode,
+  MysteryEncounterOptionBuilder,
+} from "../mystery-encounter-option";
 import {
   applyDamageToPokemon,
   leaveEncounterWithoutBattle,
@@ -20,6 +23,8 @@ import {
  * The higher the more damage taken (100% = instant KO).
  */
 const DAMAGE_PERCENTAGE: number = 30; // 0 - 100
+/** The i18n namespace for the encounter */
+const namepsace = "mysteryEncounter:lostAtSea";
 
 let waterPkm: PlayerPokemon;
 let flyingPkm: PlayerPokemon;
@@ -32,6 +37,7 @@ let flyingPkm: PlayerPokemon;
 export const LostAtSeaEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.LOST_AT_SEA)
     .withEncounterTier(MysteryEncounterTier.COMMON)
+    .withSceneWaveRangeRequirement(11, 179)
     .withIntroSpriteConfigs([
       {
         fileRoot: "pokemon",
@@ -44,7 +50,11 @@ export const LostAtSeaEncounter: MysteryEncounter =
         alpha: 0.25,
       },
     ])
-    .withSceneWaveRangeRequirement(11, 179)
+    .withIntroDialogue([
+      {
+        text: `${namepsace}:intro`,
+      },
+    ])
     .withOnInit((scene: BattleScene) => {
       const allowedPokemon = scene
         .getParty()
@@ -69,46 +79,80 @@ export const LostAtSeaEncounter: MysteryEncounter =
 
       return true;
     })
-    /**
-     * Option 1: Use a (non fainted) water pokemon to guide you back.
-     * Receives EXP similar to defeating a Lapras
-     */
+    .withTitle(`${namepsace}:title`)
+    .withDescription(`${namepsace}:description`)
+    .withQuery(`${namepsace}:query`)
     .withOption(
+      /**
+       * Option 1: Use a (non fainted) water pokemon to guide you back.
+       * Receives EXP similar to defeating a Lapras
+       */
       new MysteryEncounterOptionBuilder()
         .withPokemonTypeRequirement(Type.WATER, true, 1)
+        .withOptionMode(EncounterOptionMode.DISABLED_OR_DEFAULT)
+        .withDialogue({
+          buttonLabel: `${namepsace}:option:1:label`,
+          buttonTooltip: `${namepsace}:option:1:tooltip`,
+          selected: [
+            {
+              text: `${namepsace}:option:1:selected`,
+            },
+          ],
+        })
         .withOptionPhase(async (scene: BattleScene) =>
-          handleGuidingOption(scene, waterPkm)
+          handleGuidingOptionPhase(scene, waterPkm)
         )
         .build()
     )
-    /**
-     * Option 2: Use a (non fainted) flying pokemon to guide you back.
-     * Receives EXP similar to defeating a Lapras
-     */
     .withOption(
+      /**
+       * Option 2: Use a (non fainted) flying pokemon to guide you back.
+       * Receives EXP similar to defeating a Lapras
+       */
       new MysteryEncounterOptionBuilder()
         .withPokemonTypeRequirement(Type.FLYING, true, 1)
+        .withOptionMode(EncounterOptionMode.DISABLED_OR_DEFAULT)
+        .withDialogue({
+          buttonLabel: `${namepsace}:option:2:label`,
+          buttonTooltip: `${namepsace}:option:2:tooltip`,
+          selected: [
+            {
+              text: `${namepsace}:option:2:selected`,
+            },
+          ],
+        })
         .withOptionPhase(async (scene: BattleScene) =>
-          handleGuidingOption(scene, flyingPkm)
+          handleGuidingOptionPhase(scene, flyingPkm)
         )
         .build()
     )
-    /**
-     * Option 3: Wander aimlessly. All pokemons lose 30% of their HP (or KO on 0 HP).
-     */
-    .withOptionPhase(async (scene: BattleScene) => {
-      const allowedPokemon = scene
-        .getParty()
-        .filter((p) => p.isAllowedInBattle());
+    .withSimpleOption(
+      /**
+       * Option 3: Wander aimlessly. All pokemons lose {@linkcode DAMAGE_PERCENTAGE}}% of their HP (or KO on 0 HP).
+       */
+      {
+        buttonLabel: `${namepsace}:option:3:label`,
+        buttonTooltip: `${namepsace}:option:3:tooltip`,
+        selected: [
+          {
+            text: `${namepsace}:option:3:selected`,
+          },
+        ],
+      },
+      async (scene: BattleScene) => {
+        const allowedPokemon = scene
+          .getParty()
+          .filter((p) => p.isAllowedInBattle());
 
-      allowedPokemon.forEach((pkm) => {
-        const percentage = DAMAGE_PERCENTAGE / 100;
-        const damage = Math.floor(pkm.getMaxHp() * percentage);
-        return applyDamageToPokemon(pkm, damage);
-      });
-      leaveEncounterWithoutBattle(scene);
-      return true;
-    })
+        allowedPokemon.forEach((pkm) => {
+          const percentage = DAMAGE_PERCENTAGE / 100;
+          const damage = Math.floor(pkm.getMaxHp() * percentage);
+          return applyDamageToPokemon(pkm, damage);
+        });
+        leaveEncounterWithoutBattle(scene);
+        return true;
+      }
+    )
     .build();
 
 /**
@@ -128,7 +172,10 @@ function findPokemonByType(party: PlayerPokemon[], type: Type) {
  * @param scene Battle scene
  * @param guidePokemon pokemon choosen as a guide
  */
-function handleGuidingOption(scene: BattleScene, guidePokemon: PlayerPokemon) {
+function handleGuidingOptionPhase(
+  scene: BattleScene,
+  guidePokemon: PlayerPokemon
+) {
   /** Base EXP value for guiding pokemon. Currently Lapras base-value */
   const baseExpValue: number = 187;
 
