@@ -23,4 +23,10 @@ export const challenges: TranslationEntries = {
     "desc_default": "You can only use Pokémon of the chosen type."
     //types in pokemon-info
   },
+  "freshStart": {
+    "name": "Fresh Start",
+    "desc": "You can only use the original starters, and only as if you had just started pokerogue.",
+    "value.0": "Off",
+    "value.1": "On",
+  }
 } as const;
