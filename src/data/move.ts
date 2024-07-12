@@ -1155,7 +1155,7 @@ export class SacrificialAttr extends MoveEffectAttr {
  **/
 export class SacrificialAttrOnHit extends MoveEffectAttr {
   constructor() {
-    super(true, MoveEffectTrigger.POST_TARGET);
+    super(true, MoveEffectTrigger.HIT);
   }
 
   /**
@@ -1763,7 +1763,7 @@ export class PsychoShiftEffectAttr extends MoveEffectAttr {
     if (!target.status || (target.status.effect === statusToApply && move.chance < 0)) {
       const statusAfflictResult = target.trySetStatus(statusToApply, true, user);
       if (statusAfflictResult) {
-        user.scene.queueMessage(getPokemonMessage(user, getStatusEffectHealText(user.status.effect)));
+        user.scene.queueMessage(getStatusEffectHealText(user.status.effect, getPokemonNameWithAffix(user)));
         user.resetStatus();
         user.updateInfo();
       }
@@ -1909,7 +1909,7 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
 }
 
 /**
- * Attribute that causes targets of the move to eat a berry. If chosenBerry is not overridden, a random berry will be picked from the target's inventory.
+ * Attribute that causes targets of the move to eat a berry. Used for Teatime, Stuff Cheeks
  */
 export class EatBerryAttr extends MoveEffectAttr {
   protected chosenBerry: BerryModifier;
@@ -1918,42 +1918,29 @@ export class EatBerryAttr extends MoveEffectAttr {
     this.chosenBerry = undefined;
   }
   /**
- * Causes the target to eat a berry.
- * @param user {@linkcode Pokemon} Pokemon that used the move
- * @param target {@linkcode Pokemon} Pokemon that will eat a berry
- * @param move {@linkcode Move} The move being used
- * @param args Unused
- * @returns {boolean} true if the function succeeds
- */
+   * Causes the target to eat a berry.
+   * @param user {@linkcode Pokemon} Pokemon that used the move
+   * @param target {@linkcode Pokemon} Pokemon that will eat a berry
+   * @param move {@linkcode Move} The move being used
+   * @param args Unused
+   * @returns {boolean} true if the function succeeds
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
       return false;
     }
 
-    if (this.chosenBerry === undefined) { // if no berry has been provided, pick a random berry from their inventory
-      const heldBerries = this.getTargetHeldBerries(target);
-      if (heldBerries.length <= 0) {
-        return false;
-      }
-      this.chosenBerry = heldBerries[user.randSeedInt(heldBerries.length)];
+    const heldBerries = this.getTargetHeldBerries(target);
+    if (heldBerries.length <= 0) {
+      return false;
     }
-
-    getBerryEffectFunc(this.chosenBerry.berryType)(target); // target eats the berry
-
+    this.chosenBerry = heldBerries[user.randSeedInt(heldBerries.length)];
     const preserve = new Utils.BooleanHolder(false);
-    target.scene.applyModifiers(PreserveBerryModifier, target.isPlayer(), target, preserve);
-
-    if (!preserve.value) { // remove the eaten berry if not preserved
-      if (!--this.chosenBerry.stackCount) {
-        target.scene.removeModifier(this.chosenBerry, !target.isPlayer());
-      }
-      target.scene.updateModifiers(target.isPlayer());
+    target.scene.applyModifiers(PreserveBerryModifier, target.isPlayer(), target, preserve); // check for berry pouch preservation
+    if (!preserve.value) {
+      this.reduceBerryModifier(target);
     }
-
-    this.chosenBerry = undefined;
-
-    applyAbAttrs(HealFromBerryUseAbAttr, target, new Utils.BooleanHolder(false));
-
+    this.eatBerry(target);
     return true;
   }
 
@@ -1962,7 +1949,21 @@ export class EatBerryAttr extends MoveEffectAttr {
       && (m as BerryModifier).pokemonId === target.id, target.isPlayer()) as BerryModifier[];
   }
 
+  reduceBerryModifier(target: Pokemon) {
+    if (this.chosenBerry.stackCount === 1) {
+      target.scene.removeModifier(this.chosenBerry, !target.isPlayer());
+    } else {
+      this.chosenBerry.stackCount--;
+    }
+    target.scene.updateModifiers(target.isPlayer());
+  }
+
+  eatBerry(consumer: Pokemon) {
+    getBerryEffectFunc(this.chosenBerry.berryType)(consumer); // consumer eats the berry
+    applyAbAttrs(HealFromBerryUseAbAttr, consumer, new Utils.BooleanHolder(false));
+  }
 }
+
 /**
  *  Attribute used for moves that steal a random berry from the target. The user then eats the stolen berry.
  *  Used for Pluck & Bug Bite.
@@ -1972,36 +1973,30 @@ export class StealEatBerryAttr extends EatBerryAttr {
     super();
   }
   /**
- * User steals a random berry from the target and then eats it.
- * @param {Pokemon} user Pokemon that used the move and will eat the stolen berry
- * @param {Pokemon} target Pokemon that will have its berry stolen
- * @param {Move} move Move being used
- * @param {any[]} args Unused
- * @returns {boolean} true if the function succeeds
- */
+   * User steals a random berry from the target and then eats it.
+   * @param {Pokemon} user Pokemon that used the move and will eat the stolen berry
+   * @param {Pokemon} target Pokemon that will have its berry stolen
+   * @param {Move} move Move being used
+   * @param {any[]} args Unused
+   * @returns {boolean} true if the function succeeds
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-
     const cancelled = new Utils.BooleanHolder(false);
     applyAbAttrs(BlockItemTheftAbAttr, target, cancelled); // check for abilities that block item theft
     if (cancelled.value === true) {
       return false;
     }
-
     const heldBerries = this.getTargetHeldBerries(target).filter(i => i.getTransferrable(false));
-
-    if (heldBerries.length) { // if the target has berries, pick a random berry and steal it
-      this.chosenBerry = heldBerries[user.randSeedInt(heldBerries.length)];
-
-      if (this.chosenBerry.stackCount === 1) { // remove modifier if its the last berry
-        target.scene.removeModifier(this.chosenBerry, !target.isPlayer());
-      }
-      target.scene.updateModifiers(target.isPlayer());
-
-      user.scene.queueMessage(getPokemonMessage(user, ` stole and ate\n${target.name}'s ${this.chosenBerry.type.name}!`));
-      return super.apply(user, user, move, args);
+    if (heldBerries.length <= 0) {
+      return false;
     }
-
-    return false;
+    // if the target has berries, pick a random berry and steal it
+    this.chosenBerry = heldBerries[user.randSeedInt(heldBerries.length)];
+    const message = i18next.t("battle:stealEatBerry", {pokemonName: user.name, targetName: target.name, berryName: this.chosenBerry.type.name});
+    user.scene.queueMessage(message);
+    this.reduceBerryModifier(target);
+    this.eatBerry(user);
+    return true;
   }
 }
 
@@ -2037,7 +2032,7 @@ export class HealStatusEffectAttr extends MoveEffectAttr {
 
     const pokemon = this.selfTarget ? user : target;
     if (pokemon.status && this.effects.includes(pokemon.status.effect)) {
-      pokemon.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectHealText(pokemon.status.effect)));
+      pokemon.scene.queueMessage(getStatusEffectHealText(pokemon.status.effect, getPokemonNameWithAffix(pokemon)));
       pokemon.resetStatus();
       pokemon.updateInfo();
 
@@ -2966,9 +2961,29 @@ export class HpPowerAttr extends VariablePowerAttr {
   }
 }
 
+/**
+ * Attribute used for moves whose base power scales with the opponent's HP
+ * Used for Crush Grip, Wring Out, and Hard Press
+ * maxBasePower 100 for Hard Press, 120 for others
+ */
 export class OpponentHighHpPowerAttr extends VariablePowerAttr {
+  maxBasePower: number;
+
+  constructor(maxBasePower: number) {
+    super();
+    this.maxBasePower = maxBasePower;
+  }
+
+  /**
+   * Changes the base power of the move to be the target's HP ratio times the maxBasePower with a min value of 1
+   * @param user n/a
+   * @param target the Pokemon being attacked
+   * @param move n/a
+   * @param args holds the base power of the move at args[0]
+   * @returns true
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    (args[0] as Utils.NumberHolder).value = Math.max(Math.floor(120 * target.getHpRatio()), 1);
+    (args[0] as Utils.NumberHolder).value = Math.max(Math.floor(this.maxBasePower * target.getHpRatio()), 1);
 
     return true;
   }
@@ -6690,7 +6705,7 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
     new AttackMove(Moves.WRING_OUT, Type.NORMAL, MoveCategory.SPECIAL, -1, 100, 5, -1, 0, 4)
-      .attr(OpponentHighHpPowerAttr)
+      .attr(OpponentHighHpPowerAttr, 120)
       .makesContact(),
     new SelfStatusMove(Moves.POWER_TRICK, Type.PSYCHIC, -1, 10, -1, 0, 4)
       .unimplemented(),
@@ -6914,7 +6929,7 @@ export function initMoves() {
       .triageMove()
       .unimplemented(),
     new AttackMove(Moves.CRUSH_GRIP, Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 5, -1, 0, 4)
-      .attr(OpponentHighHpPowerAttr),
+      .attr(OpponentHighHpPowerAttr, 120),
     new AttackMove(Moves.MAGMA_STORM, Type.FIRE, MoveCategory.SPECIAL, 100, 75, 5, -1, 0, 4)
       .attr(TrapAttr, BattlerTagType.MAGMA_STORM),
     new StatusMove(Moves.DARK_VOID, Type.DARK, 50, 10, -1, 0, 4)
@@ -8384,8 +8399,8 @@ export function initMoves() {
     new AttackMove(Moves.TACHYON_CUTTER, Type.STEEL, MoveCategory.SPECIAL, 50, -1, 10, -1, 0, 9)
       .attr(MultiHitAttr, MultiHitType._2)
       .slicingMove(),
-    new AttackMove(Moves.HARD_PRESS, Type.STEEL, MoveCategory.PHYSICAL, 100, 100, 5, -1, 0, 9)
-      .attr(OpponentHighHpPowerAttr),
+    new AttackMove(Moves.HARD_PRESS, Type.STEEL, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 9)
+      .attr(OpponentHighHpPowerAttr, 100),
     new StatusMove(Moves.DRAGON_CHEER, Type.DRAGON, -1, 15, -1, 0, 9)
       .attr(AddBattlerTagAttr, BattlerTagType.CRIT_BOOST, false, true)
       .target(MoveTarget.NEAR_ALLY)
