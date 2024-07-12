@@ -778,7 +778,7 @@ export class PostDefendTypeChangeAbAttr extends PostDefendAbAttr {
     return i18next.t("abilityTriggers:postDefendTypeChange", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       abilityName: abilityName,
-      typeName: Utils.toReadableString(Type[pokemon.getTypes(true)[0]])
+      typeName: i18next.t(`pokemonInfo:Type.${Type[pokemon.getTypes(true)[0]]}`)
     });
   }
 }
