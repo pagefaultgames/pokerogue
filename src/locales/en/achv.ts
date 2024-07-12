@@ -272,6 +272,10 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "How?",
     description: "Complete the hardcore nuzlocke challenge.",
   },
+  "FRESH_START": {
+    name: "First Try!",
+    description: "Complete the fresh start challenge."
+  }
 } as const;
 
 // Achievement translations for the when the player character is female (it for now uses the same translations as the male version)

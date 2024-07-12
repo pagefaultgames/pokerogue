@@ -33,5 +33,11 @@ export const challenges: TranslationEntries = {
     "value.0": "Off",
     "value.1": "Regular",
     "value.2": "Hardcore",
+  },
+  "freshStart": {
+    "name": "Fresh Start",
+    "desc": "You can only use the original starters, and only as if you had just started pokerogue.",
+    "value.0": "Off",
+    "value.1": "On",
   }
 } as const;
