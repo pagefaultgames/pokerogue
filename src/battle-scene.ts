@@ -67,6 +67,7 @@ import { Species } from "#enums/species";
 import { UiTheme } from "#enums/ui-theme";
 import { TimedEventManager } from "#app/timed-event-manager.js";
 import i18next from "i18next";
+import * as LoggerTools from "./logger"
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -1585,6 +1586,7 @@ export default class BattleScene extends SceneBase {
     if (fromArenaPool) {
       return this.arena.randomSpecies(waveIndex, level,null , getPartyLuckValue(this.party));
     }
+    LoggerTools.rarities[LoggerTools.rarityslot[0]] = ""
     const filteredSpecies = speciesFilter ? [...new Set(allSpecies.filter(s => s.isCatchable()).filter(speciesFilter).map(s => {
       if (!filterAllEvolutions) {
         while (pokemonPrevolutions.hasOwnProperty(s.speciesId)) {

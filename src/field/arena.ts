@@ -33,7 +33,7 @@ export class Arena {
 
   private lastTimeOfDay: TimeOfDay;
 
-  private pokemonPool: PokemonPools;
+  public pokemonPool: PokemonPools;
   private trainerPool: BiomeTierTrainerPools;
 
   public readonly eventTarget: EventTarget = new EventTarget();

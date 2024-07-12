@@ -342,6 +342,7 @@ export class TitlePhase extends Phase {
 
   start(): void {
     super.start();
+    console.log(LoggerTools.importDocument(JSON.stringify(LoggerTools.newDocument())))
 
     this.scene.ui.clearText();
     this.scene.ui.fadeIn(250);
@@ -394,8 +395,61 @@ export class TitlePhase extends Phase {
     return saves.map(f => f[1]);
   }
 
+  callEnd(): boolean {
+    this.scene.clearPhaseQueue();
+    this.scene.pushPhase(new TitlePhase(this.scene));
+    super.end();
+    return true;
+  }
+
+  showLoggerOptions(txt: string, options: OptionSelectItem[]): boolean {
+    this.scene.ui.showText("Export or clear game logs.", null, () => this.scene.ui.setOverlayMode(Mode.OPTION_SELECT, { options: options }));
+    return true;
+  }
+
+  logMenu(): boolean {
+    const options: OptionSelectItem[] = [];
+    for (var i = 0; i < LoggerTools.logs.length; i++) {
+      if (localStorage.getItem(LoggerTools.logs[i][1]) != null) {
+        options.push(LoggerTools.generateOption(i) as OptionSelectItem)
+      } else {
+        //options.push(LoggerTools.generateAddOption(i, this.scene, this))
+      }
+    }
+    for (var i = 0; i < LoggerTools.logs.length; i++) {
+      if (localStorage.getItem(LoggerTools.logs[i][1]) != null) {
+        //options.push(LoggerTools.generateOption(i, this.scene, this.logMenu) as OptionSelectItem)
+      } else {
+        options.push(LoggerTools.generateAddOption(i, this.scene, this))
+      }
+    }
+    options.push({
+      label: "Delete all",
+      handler: () => {
+        for (var i = 0; i < LoggerTools.logs.length; i++) {
+          if (localStorage.getItem(LoggerTools.logs[i][1]) != null) {
+            localStorage.removeItem(LoggerTools.logs[i][1])
+          }
+        }
+        this.scene.clearPhaseQueue();
+        this.scene.pushPhase(new TitlePhase(this.scene));
+        super.end();
+        return true;
+      }
+    }, {
+      label: i18next.t("menu:cancel"),
+      handler: () => {
+        this.scene.clearPhaseQueue();
+        this.scene.pushPhase(new TitlePhase(this.scene));
+        super.end();
+        return true;
+      }
+    });
+    this.scene.ui.showText("Export or clear game logs.", null, () => this.scene.ui.setOverlayMode(Mode.OPTION_SELECT, { options: options }));
+    return true;
+  }
+
   showOptions(): void {
-    var hasFile = true
     const options: OptionSelectItem[] = [];
     if (false)
     if (loggedInUser.lastSessionSlot > -1) {
@@ -434,7 +488,15 @@ export class TitlePhase extends Phase {
       } else {
         console.log("Failed to get last save")
         this.getLastSave(true)
-        hasFile = false
+        if (loggedInUser.lastSessionSlot > -1) {
+          options.push({
+            label: i18next.t("continue", null, { ns: "menu"}),
+            handler: () => {
+              this.loadSaveSlot(this.lastSessionData ? -1 : loggedInUser.lastSessionSlot);
+              return true;
+            }
+          });
+        }
       }
     }
     options.push({
@@ -500,45 +562,9 @@ export class TitlePhase extends Phase {
     }, {
       label: "Manage Logs",
       handler: () => {
-        const options: OptionSelectItem[] = [];
-        for (var i = 0; i < LoggerTools.logs.length; i++) {
-          if (localStorage.getItem(LoggerTools.logs[i][1]) != null)
-          options.push(LoggerTools.generateOption(i) as OptionSelectItem)
-        }
-        options.push({
-          label: `Export all (${options.length})`,
-          handler: () => {
-            for (var i = 0; i < LoggerTools.logKeys.length; i++) {
-              LoggerTools.downloadLog(LoggerTools.logKeys[i])
-            }
-            return false;
-          }
-        }, {
-          label: `Reset all (${LoggerTools.logKeys.length})`,
-          handler: () => {
-            for (var i = 0; i < LoggerTools.logKeys.length; i++) {
-              LoggerTools.clearLog(LoggerTools.logKeys[i])
-            }
-            this.scene.clearPhaseQueue();
-            this.scene.pushPhase(new TitlePhase(this.scene));
-            super.end();
-            return true;
-          }
-        }, {
-          label: i18next.t("menu:cancel"),
-          handler: () => {
-            this.scene.clearPhaseQueue();
-            this.scene.pushPhase(new TitlePhase(this.scene));
-            super.end();
-            return true;
-          }
-        });
-        this.scene.ui.showText("Export or clear game logs.", null, () => this.scene.ui.setOverlayMode(Mode.OPTION_SELECT, { options: options }));
-        return true;
+        return this.logMenu()
       }
     })
-    // If the player has no save data (as determined above), hide the "Load Game" button
-    if (hasFile || true)
     options.push({
       label: i18next.t("menu:loadGame"),
       handler: () => {
@@ -1128,11 +1154,16 @@ export class EncounterPhase extends BattlePhase {
 
     let totalBst = 0;
 
+    while (LoggerTools.rarities.length > 0) {
+      LoggerTools.rarities.pop()
+    }
+    LoggerTools.rarityslot[0] = 0
     battle.enemyLevels.forEach((level, e) => {
       if (!this.loaded) {
         if (battle.battleType === BattleType.TRAINER) {
           battle.enemyParty[e] = battle.trainer.genPartyMember(e);
         } else {
+          LoggerTools.rarityslot[0] = e
           const enemySpecies = this.scene.randomSpecies(battle.waveIndex, level, true);
           battle.enemyParty[e] = this.scene.addEnemyPokemon(enemySpecies, level, TrainerSlot.NONE, !!this.scene.getEncounterBossSegments(battle.waveIndex, level, enemySpecies));
           if (this.scene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
@@ -1172,6 +1203,7 @@ export class EncounterPhase extends BattlePhase {
 
       console.log(enemyPokemon.name, enemyPokemon.species.speciesId, enemyPokemon.stats);
     });
+    console.log(LoggerTools.rarities)
 
     if (this.scene.getParty().filter(p => p.isShiny()).length === 6) {
       this.scene.validateAchv(achvs.SHINY_PARTY);
@@ -1293,6 +1325,12 @@ export class EncounterPhase extends BattlePhase {
     const enemyField = this.scene.getEnemyField();
 
     LoggerTools.logTeam(this.scene, this.scene.currentBattle.waveIndex)
+    if (this.scene.getEnemyParty()[0].hasTrainer()) {
+      LoggerTools.logTrainer(this.scene, this.scene.currentBattle.waveIndex)
+    }
+    if (this.scene.currentBattle.waveIndex == 1) {
+      LoggerTools.logPlayerTeam(this.scene)
+    }
 
     if (this.scene.currentBattle.battleType === BattleType.WILD) {
       enemyField.forEach(enemyPokemon => {
