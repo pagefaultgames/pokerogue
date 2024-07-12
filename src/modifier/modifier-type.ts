@@ -20,7 +20,7 @@ import { ModifierTier } from "./modifier-tier";
 import { Nature, getNatureName, getNatureStatMultiplier } from "#app/data/nature";
 import i18next from "i18next";
 import { getModifierTierTextTint } from "#app/ui/text";
-import * as Overrides from "../overrides";
+import Overrides from "#app/overrides";
 import { MoneyMultiplierModifier } from "./modifier";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -1164,7 +1164,57 @@ class WeightedModifierType {
   }
 }
 
-export type ModifierTypes = keyof typeof modifierTypes;
+type BaseModifierOverride = {
+  name: Exclude<ModifierTypeKeys, GeneratorModifierOverride["name"]>;
+  count?: number;
+};
+
+/** Type for modifiers and held items that are constructed via {@linkcode ModifierTypeGenerator}. */
+export type GeneratorModifierOverride = {
+    count?: number
+  } & (
+  | {
+      name: "SPECIES_STAT_BOOSTER";
+      type?: SpeciesStatBoosterItem;
+    }
+  | {
+      name: "TEMP_STAT_BOOSTER";
+      type?: TempBattleStat;
+    }
+  | {
+      name: "BASE_STAT_BOOSTER";
+      type?: Stat;
+    }
+  | {
+      name: "MINT";
+      type?: Nature;
+    }
+  | {
+      name: "TERA_SHARD" | "ATTACK_TYPE_BOOSTER";
+      type?: Type;
+    }
+  | {
+      name: "BERRY";
+      type?: BerryType;
+    }
+  | {
+      name: "EVOLUTION_ITEM" | "RARE_EVOLUTION_ITEM";
+      type?: EvolutionItem;
+    }
+  | {
+      name: "FORM_CHANGE_ITEM";
+      type?: FormChangeItem;
+    }
+  | {
+      name: "TM_COMMON" | "TM_GREAT" | "TM_ULTRA";
+      type?: Moves;
+    }
+);
+
+/** Type used to construct modifiers and held items for overriding purposes. */
+export type ModifierOverride = GeneratorModifierOverride | BaseModifierOverride;
+
+export type ModifierTypeKeys = keyof typeof modifierTypes;
 
 export const modifierTypes = {
   POKEBALL: () => new AddPokeballModifierType("pb", PokeballType.POKEBALL, 5),
@@ -1831,8 +1881,7 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
   // OVERRIDE IF NECESSARY
   if (Overrides.ITEM_REWARD_OVERRIDE?.length) {
     options.forEach((mod, i) => {
-      // @ts-ignore: keeps throwing don't use string as index error in typedoc run
-      const override = modifierTypes[Overrides.ITEM_REWARD_OVERRIDE[i]]?.();
+      const override = modifierTypes[Overrides.ITEM_REWARD_OVERRIDE[i]]();
       mod.type = (override instanceof ModifierTypeGenerator ? override.generateType(party) : override) || mod.type;
     });
   }
