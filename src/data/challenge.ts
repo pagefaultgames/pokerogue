@@ -995,7 +995,7 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
  * Apply all challenges that modify if the heal phase should be applied.
  * @param gameMode {@link GameMode} The current gameMode
  * @param challengeType {@link ChallengeType} ChallengeType.NO_HEAL_PHASE
- * @param applyHealPhase {@link Utils.BooleanHolder} Whether it should apply the heal phase.
+ * @param applyHealPhase {@link Utils.BooleanHolder} Whether it should apply the heal phase. Default is true. Set to false if heal phase should not be applied.
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.NO_HEAL_PHASE, applyHealPhase: Utils.BooleanHolder): boolean;
@@ -1004,7 +1004,7 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
  * @param gameMode {@link GameMode} The current gameMode
  * @param challengeType {@link ChallengeType} ChallengeType.SHOP_ITEM_BLACKLIST
  * @param shopItem {@link ModifierTypeOption} The shop item.
- * @param isValid {@link Utils.BooleanHolder} Whether this item is valid for this challenge.
+ * @param isValid {@link Utils.BooleanHolder} Whether this item is valid for this challenge. Default is true. Set to false if item should not be in the shop.
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.SHOP_ITEM_BLACKLIST, shopItem: ModifierTypeOption, isValid: Utils.BooleanHolder): boolean;
@@ -1013,7 +1013,7 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
  * @param gameMode {@link GameMode} The current gameMode
  * @param challengeType {@link ChallengeType} ChallengeType.RANDOM_ITEM_BLACKLIST
  * @param randomItem {@link ModifierTypeOption} The random item.
- * @param isValid {@link Utils.BooleanHolder} Whether this item is valid for this challenge.
+ * @param isValid {@link Utils.BooleanHolder} Whether this item is valid for this challenge. Default is true. Set to false if item is not valid for this challenge.
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.RANDOM_ITEM_BLACKLIST, randomItem: ModifierTypeOption, isValid: Utils.BooleanHolder): boolean;
@@ -1023,7 +1023,7 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
  * @param challengeType {@link ChallengeType} ChallengeType.ADD_POKEMON_TO_PARTY
  * @param pokemon {@link EnemyPokemon} The pokemon cought.
  * @param waveIndex {@link number} Current wave index.
- * @param canBeAddToParty {@link Utils.BooleanHolder} Whether this pokemon can be added to the party.
+ * @param canBeAddToParty {@link Utils.BooleanHolder} Whether this pokemon can be added to the party. Default is true. Set to false if pokemon won't be added to the party.
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.ADD_POKEMON_TO_PARTY, pokemon: EnemyPokemon, waveIndex: number, canBeAddToParty: Utils.BooleanHolder): boolean;
@@ -1032,7 +1032,7 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
  * @param gameMode {@link GameMode} The current gameMode
  * @param challengeType {@link ChallengeType} ChallengeType.MOVE_BLACKLIST
  * @param move {@link PokemonMove} The move thats tryed to be used.
- * @param moveCanBeUsed {@link Utils.BooleanHolder} Whether this move can be used.
+ * @param moveCanBeUsed {@link Utils.BooleanHolder} Whether this move can be used. Default is true. Set to false if move is not valid for the challenge.
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.MOVE_BLACKLIST, move: PokemonMove, moveCanBeUsed: Utils.BooleanHolder): boolean;
