@@ -9,6 +9,7 @@ import { BattleSceneEventType, TurnEndEvent } from "../events/battle-scene";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import TimeOfDayWidget from "./time-of-day-widget";
 import * as Utils from "../utils";
+import { getNatureDecrease, getNatureIncrease, getNatureName } from "#app/data/nature.js";
 
 /** Enum used to differentiate {@linkcode Arena} effects */
 enum ArenaEffectType {
@@ -193,11 +194,39 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
     this.flyoutTextEnemy.text = "";
   }
 
+  public printIVs() {
+    var poke = (this.scene as BattleScene).getEnemyField()
+    this.flyoutTextPlayer.text = ""
+    this.flyoutTextField.text = ""
+    this.flyoutTextEnemy.text = ""
+    this.flyoutTextHeaderField.text = "Stats"
+    this.flyoutTextHeaderPlayer.text = ""
+    this.flyoutTextHeaderEnemy.text = ""
+    this.flyoutTextHeader.text = "IVs"
+    for (var i = 0; i < poke.length; i++) {
+      if (i == 1 || true) {
+        this.flyoutTextPlayer.text += poke[i].name + "\n"
+        this.flyoutTextEnemy.text += poke[i].getAbility().name + " / " + (poke[i].isBoss() ? poke[i].getPassiveAbility().name + " / " : "") + getNatureName(poke[i].nature) + (getNatureIncrease(poke[i].nature) != "" ? " (+" + getNatureIncrease(poke[i].nature) + " -" + getNatureDecrease(poke[i].nature) + ")" : "") + "\n\n\n"
+      }
+      this.flyoutTextPlayer.text += "HP: " + poke[i].ivs[0]
+      this.flyoutTextPlayer.text += ", Atk: " + poke[i].ivs[1]
+      this.flyoutTextPlayer.text += ", Def: " + poke[i].ivs[2]
+      this.flyoutTextPlayer.text += ", Sp.A: " + poke[i].ivs[3]
+      this.flyoutTextPlayer.text += ", Sp.D: " + poke[i].ivs[4]
+      this.flyoutTextPlayer.text += ", Speed: " + poke[i].ivs[5] + "\n\n"
+    }
+  }
+
   /** Parses through all set Arena Effects and puts them into the proper {@linkcode Phaser.GameObjects.Text} object */
-  private updateFieldText() {
+  public updateFieldText() {
     this.clearText();
 
     this.fieldEffectInfo.sort((infoA, infoB) => infoA.duration - infoB.duration);
+
+    this.flyoutTextHeaderPlayer.text = "Player"
+    this.flyoutTextHeaderField.text = "Neutral"
+    this.flyoutTextHeaderEnemy.text = "Enemy"
+    this.flyoutTextHeader.text = "Active Battle Effects"
 
     for (let i = 0; i < this.fieldEffectInfo.length; i++) {
       const fieldEffectInfo = this.fieldEffectInfo[i];

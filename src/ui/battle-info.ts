@@ -443,6 +443,11 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       ease: "Sine.easeInOut",
       alpha: visible ? 1 : 0
     });
+    if (visible) {
+      (this.scene as BattleScene).arenaFlyout.printIVs()
+    } else {
+      (this.scene as BattleScene).arenaFlyout.updateFieldText()
+    }
   }
 
   updateBossSegments(pokemon: EnemyPokemon): void {

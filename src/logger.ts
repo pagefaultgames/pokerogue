@@ -968,6 +968,27 @@ export function flagReset(scene: BattleScene, floor: integer = undefined) {
   console.log(drpd)
   localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
 }
+export function flagResetIfExists(scene: BattleScene, floor: integer = undefined) {
+  if (floor == undefined)
+    floor = scene.currentBattle.waveIndex;
+  if (localStorage.getItem(getLogID(scene)) == null)
+    localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
+  var drpd: DRPD = JSON.parse(localStorage.getItem(getLogID(scene))) as DRPD;
+  drpd = updateLog(drpd);
+  var waveExists = false
+  for (var i = 0; i < drpd.waves.length; i++) {
+    if (drpd.waves[i] != undefined) {
+      if (drpd.waves[i].id == floor) {
+        waveExists = true;
+      }
+    }
+  }
+  if (!waveExists) return;
+  var wv = getWave(drpd, floor, scene)
+  wv.reload = true;
+  console.log(drpd)
+  localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
+}
 /**
  * Prints a DRPD as a string, for saving it to your device.
  * @param inData The data to add on to.
