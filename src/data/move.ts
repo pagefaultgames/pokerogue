@@ -698,9 +698,6 @@ export default class Move implements Localizable {
     const typeBoost = source.findTag(t => t instanceof TypeBoostTag && t.boostedType === this.type) as TypeBoostTag;
     if (typeBoost) {
       power.value *= typeBoost.boostValue;
-      if (typeBoost.oneUse) {
-        source.removeTag(typeBoost.tagType);
-      }
     }
 
     if (source.scene.arena.getTerrainType() === TerrainType.GRASSY && target.isGrounded() && this.type === Type.GROUND && this.moveTarget === MoveTarget.ALL_NEAR_OTHERS) {

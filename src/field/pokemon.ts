@@ -19,7 +19,7 @@ import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEv
 import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "../data/tms";
 import { DamagePhase, FaintPhase, LearnMovePhase, MoveEffectPhase, ObtainStatusEffectPhase, StatChangePhase, SwitchSummonPhase, ToggleDoublePositionPhase  } from "../phases";
 import { BattleStat } from "../data/battle-stat";
-import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag } from "../data/battler-tags";
+import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag, TypeBoostTag } from "../data/battler-tags";
 import { WeatherType } from "../data/weather";
 import { TempBattleStat } from "../data/temp-battle-stat";
 import { ArenaTagSide, WeakenMoveScreenTag } from "../data/arena-tag";
@@ -1792,6 +1792,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         source.stopMultiHit(this);
         result = HitResult.NO_EFFECT;
       } else {
+        const typeBoost = source.findTag(t => t instanceof TypeBoostTag && t.boostedType === move.type) as TypeBoostTag;
+        if (typeBoost?.oneUse) {
+          source.removeTag(typeBoost.tagType);
+        }
+
         const arenaAttackTypeMultiplier = new Utils.NumberHolder(this.scene.arena.getAttackTypeMultiplier(move.type, source.isGrounded()));
         applyMoveAttrs(IgnoreWeatherTypeDebuffAttr, source, this, move, arenaAttackTypeMultiplier);
 
