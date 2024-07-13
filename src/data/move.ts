@@ -5400,10 +5400,26 @@ export class MovesetCopyMoveAttr extends OverrideMoveEffectAttr {
   }
 }
 
+/**
+ * Attribute for {@linkcode Moves.SKETCH} that causes the user to copy the opponent's last used move
+ * This move copies the last used non-virtual move
+ *  e.g. if Metronome is used, it copies Metronome itself, not the virtual move called by Metronome
+ * Fails if the opponent has not yet used a move.
+ * Fails if used on an uncopiable move, flagged with {@linkcode MoveFlags.UNSKETCHABLE}
+ * Fails if the move is already in the user's moveset
+ */
 export class SketchAttr extends MoveEffectAttr {
   constructor() {
     super(true);
   }
+  /**
+   * User copies the opponent's last used move, if possible
+   * @param {Pokemon} user Pokemon that used the move and will replace Sketch with the copied move
+   * @param {Pokemon} target Pokemon that the user wants to copy a move from
+   * @param {Move} move Move being used
+   * @param {any[]} args Unused
+   * @returns {boolean} true if the function succeeds, otherwise false
+   */
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
@@ -6275,6 +6291,7 @@ export function initMoves() {
       .ignoresVirtual(),
     new StatusMove(Moves.MIRROR_MOVE, Type.FLYING, -1, 20, -1, 0, 1)
       .attr(CopyMoveAttr)
+      .unsketchableMove()
       .ignoresVirtual(),
     new AttackMove(Moves.SELF_DESTRUCT, Type.NORMAL, MoveCategory.PHYSICAL, 200, 100, 5, -1, 0, 1)
       .attr(SacrificialAttr)
@@ -6407,10 +6424,12 @@ export function initMoves() {
     new AttackMove(Moves.STRUGGLE, Type.NORMAL, MoveCategory.PHYSICAL, 50, -1, 1, -1, 0, 1)
       .attr(RecoilAttr, true, 0.25, true)
       .attr(TypelessAttr)
+      .unsketchableMove()
       .ignoresVirtual()
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
     new StatusMove(Moves.SKETCH, Type.NORMAL, -1, 1, -1, 0, 2)
       .attr(SketchAttr)
+      .unsketchableMove()
       .ignoresVirtual(),
     new AttackMove(Moves.TRIPLE_KICK, Type.FIGHTING, MoveCategory.PHYSICAL, 10, 90, 10, -1, 0, 2)
       .attr(MultiHitAttr, MultiHitType._3)
@@ -6545,6 +6564,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.SLEEP_TALK, Type.NORMAL, -1, 10, -1, 0, 2)
       .attr(BypassSleepAttr)
       .attr(RandomMovesetMoveAttr)
+      .unsketchableMove()
       .condition(userSleptOrComatoseCondition)
       .target(MoveTarget.ALL_ENEMIES)
       .ignoresVirtual(),
@@ -7210,6 +7230,7 @@ export function initMoves() {
       .condition(failOnMaxCondition),
     new AttackMove(Moves.CHATTER, Type.FLYING, MoveCategory.SPECIAL, 65, 100, 20, 100, 0, 4)
       .attr(ConfuseAttr)
+      .unsketchableMove()
       .soundBased(),
     new AttackMove(Moves.JUDGMENT, Type.NORMAL, MoveCategory.SPECIAL, 100, 100, 10, -1, 0, 4)
       .attr(FormChangeItemTypeAttr),
@@ -8715,6 +8736,7 @@ export function initMoves() {
       .ignoresVirtual(),
     new AttackMove(Moves.TERA_STARSTORM, Type.NORMAL, MoveCategory.SPECIAL, 120, 100, 5, -1, 0, 9)
       .attr(TeraBlastCategoryAttr)
+      .unsketchableMove()
       .partial(),
     new AttackMove(Moves.FICKLE_BEAM, Type.DRAGON, MoveCategory.SPECIAL, 80, 100, 5, 30, 0, 9)
       .attr(PreMoveMessageAttr, doublePowerChanceMessageFunc)
