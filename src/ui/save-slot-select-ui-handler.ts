@@ -293,6 +293,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
   public hasData: boolean;
   public wv: integer;
   private loadingLabel: Phaser.GameObjects.Text;
+  public backer: Phaser.GameObjects.Image
 
   constructor(scene: BattleScene, slotId: integer, ypos: integer, autoSlot?: integer) {
     super(scene, 0, ypos * 56);
@@ -306,6 +307,15 @@ class SessionSlot extends Phaser.GameObjects.Container {
   setup() {
     const slotWindow = addWindow(this.scene, 0, 0, 304, 52);
     this.add(slotWindow);
+
+    if (this.slotId == 0) {
+      //this.backer = this.scene.add.image(0, 0, `sea_panel`)
+      //this.backer.setOrigin(0.5, 0.5)
+      //this.backer.setScale(304/909, 52/155)
+      //this.backer.setPosition(102*1.5 - 1, 26)
+      //this.backer.setSize(304, 52)
+      //this.add(this.backer)
+    }
 
     this.loadingLabel = addTextObject(this.scene, 152, 26, i18next.t("saveSlotSelectUiHandler:loading"), TextStyle.WINDOW);
     this.loadingLabel.setOrigin(0.5, 0.5);

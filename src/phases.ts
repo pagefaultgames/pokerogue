@@ -341,13 +341,19 @@ export class TitlePhase extends Phase {
     this.loaded = false;
   }
 
-  setBiomeByType(biome: Biome): void {
+  setBiomeByType(biome: Biome, override?: boolean): void {
+    if (!this.scene.menuChangesBiome && !override)
+      return;
     this.scene.arenaBg.setTexture(`${getBiomeKey(biome)}_bg`);
   }
-  setBiomeByName(biome: string): void {
+  setBiomeByName(biome: string, override?: boolean): void {
+    if (!this.scene.menuChangesBiome && !override)
+      return;
     this.scene.arenaBg.setTexture(`${getBiomeKey(Utils.getEnumValues(Biome)[Utils.getEnumKeys(Biome).indexOf(biome)])}_bg`);
   }
-  setBiomeByFile(sessionData: SessionSaveData): void {
+  setBiomeByFile(sessionData: SessionSaveData, override?: boolean): void {
+    if (!this.scene.menuChangesBiome && !override)
+      return;
     this.scene.arenaBg.setTexture(`${getBiomeKey(sessionData.arena.biome)}_bg`);
   }
 
@@ -365,7 +371,7 @@ export class TitlePhase extends Phase {
     this.scene.gameData.getSession(loggedInUser.lastSessionSlot).then(sessionData => {
       if (sessionData) {
         this.lastSessionData = sessionData;
-        //this.setBiomeByFile(sessionData)
+        this.setBiomeByFile(sessionData, true)
         this.setBiomeByType(Biome.END)
       }
       this.showOptions();

@@ -23,6 +23,60 @@ import { initVouchers } from "./system/voucher";
 import { Biome } from "#enums/biome";
 import { TrainerType } from "#enums/trainer-type";
 
+const biomePanelIDs: string[] = [
+  "town",
+  "plains",
+  "grass",
+  "tall_grass",
+  "metropolis",
+  "forest",
+  "sea",
+  "swamp",
+  "beach",
+  "lake",
+  "seabed",
+  "mountain",
+  "badlands",
+  "cave",
+  "desert",
+  "ice_cave",
+  "meadow",
+  "power_plant",
+  "volcano",
+  "graveyard",
+  "dojo",
+  "factory",
+  "ruins",
+  "wasteland",
+  "abyss",
+  "space",
+  "construction_site",
+  "jungle",
+  "fairy_cave",
+  "temple",
+  "slum",
+  "snowy_forest",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "island",
+  "laboratory",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "end"
+]
+
 export class LoadingScene extends SceneBase {
   readonly LOAD_EVENTS = Phaser.Loader.Events;
 
@@ -53,6 +107,41 @@ export class LoadingScene extends SceneBase {
         this.loadImage(`window_${w}${getWindowVariantSuffix(wv)}`, "ui/windows");
       }
     }
+    //this.loadImage(`abyss_panel`, "ui/windows");
+    //this.loadImage(`badlands_panel`, "ui/windows");
+    //this.loadImage(`beach_panel`, "ui/windows");
+    //this.loadImage(`cave_panel`, "ui/windows");
+    //this.loadImage(`construction_site_panel`, "ui/windows");
+    //this.loadImage(`desert_panel`, "ui/windows");
+    //this.loadImage(`dojo_panel`, "ui/windows");
+    //this.loadImage(`end_panel`, "ui/windows");
+    //this.loadImage(`factory_panel`, "ui/windows");
+    //this.loadImage(`fairy_cave_panel`, "ui/windows");
+    //this.loadImage(`forest_panel`, "ui/windows");
+    //this.loadImage(`grass_panel`, "ui/windows");
+    //this.loadImage(`graveyard_panel`, "ui/windows");
+    //this.loadImage(`ice_cave_panel`, "ui/windows");
+    //this.loadImage(`island_panel`, "ui/windows");
+    //this.loadImage(`jungle_panel`, "ui/windows");
+    //this.loadImage(`laboratory_panel`, "ui/windows");
+    //this.loadImage(`lake_panel`, "ui/windows");
+    //this.loadImage(`meadow_panel`, "ui/windows");
+    //this.loadImage(`metropolis_panel`, "ui/windows");
+    //this.loadImage(`mountain_panel`, "ui/windows");
+    //this.loadImage(`plains_panel`, "ui/windows");
+    //this.loadImage(`power_plant_panel`, "ui/windows");
+     //this.loadImage(`ruins_panel`, "ui/windows");
+    //this.loadImage(`sea_panel`, "ui/windows");
+    //this.loadImage(`seabed_panel`, "ui/windows");
+    //this.loadImage(`slum_panel`, "ui/windows");
+    //this.loadImage(`snowy_forest_panel`, "ui/windows");
+    //this.loadImage(`space_panel`, "ui/windows");
+    //this.loadImage(`swamp_panel`, "ui/windows");
+    //this.loadImage(`tall_grass_panel`, "ui/windows");
+    //this.loadImage(`temple_panel`, "ui/windows");
+    //this.loadImage(`town_panel`, "ui/windows");
+    //this.loadImage(`volcano_panel`, "ui/windows");
+    //this.loadImage(`wasteland_panel`, "ui/windows");
     this.loadAtlas("namebox", "ui");
     this.loadImage("pbinfo_player", "ui");
     this.loadImage("pbinfo_player_stats", "ui");
