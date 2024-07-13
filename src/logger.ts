@@ -528,6 +528,7 @@ export function downloadLog(keyword: string) {
  * Saves a log to your device.
  * @param i The index of the log you want to save.
  */
+export const SheetsMode = new Utils.BooleanHolder(false)
 export function downloadLogByID(i: integer) {
   console.log(i)
   var d = JSON.parse(localStorage.getItem(logs[i][1]))
@@ -543,7 +544,9 @@ export function downloadLogByID(i: integer) {
 export function downloadLogByIDToSheet(i: integer) {
   console.log(i)
   var d = JSON.parse(localStorage.getItem(logs[i][1]))
-  const blob = new Blob([ printDRPD("", "", d as DRPD).split("\n").join("CHAR(10)") ], {type: "text/json"});
+  SheetsMode.value = true;
+  const blob = new Blob([ printDRPD("", "", d as DRPD) ], {type: "text/json"});
+  SheetsMode.value = false;
   const link = document.createElement("a");
   link.href = window.URL.createObjectURL(blob);
   var date: string = (d as DRPD).date
@@ -1074,19 +1077,23 @@ function printWave(inData: string, indent: string, wave: Wave): string {
   inData += ",\n" + indent + "  \"double\": " + wave.double + ""
   var isFirst = true
   if (wave.actions.length > 0) {
-    inData += ",\n" + indent + "  \"actions\": ["
-    for (var i = 0; i < wave.actions.length; i++) {
-      if (wave.actions[i] != undefined) {
-        if (isFirst) {
-          isFirst = false;
-        } else {
-          inData += ","
+    if (SheetsMode.value) {
+      inData += ",\n" + indent + "  \"actions\": [" + wave.actions.join("CHAR(10)") + "]"
+    } else {
+      inData += ",\n" + indent + "  \"actions\": ["
+      for (var i = 0; i < wave.actions.length; i++) {
+        if (wave.actions[i] != undefined) {
+          if (isFirst) {
+            isFirst = false;
+          } else {
+            inData += ","
+          }
+          inData += "\n    " + indent + "\"" + wave.actions[i] + "\""
         }
-        inData += "\n    " + indent + "\"" + wave.actions[i] + "\""
       }
+      if (!isFirst) inData += "\n"
+      inData += indent + "  ]"
     }
-    if (!isFirst) inData += "\n"
-    inData += indent + "  ]"
   } else {
     inData += ",\n" + indent + "  \"actions\": []"
   }
