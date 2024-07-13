@@ -122,6 +122,7 @@ export default class BattleScene extends SceneBase {
   public enableRetries: boolean = false;
   public damageDisplay: string = "Off";
   public lazyReloads: boolean = false;
+  public menuChangesBiome: boolean;
   /**
    * Determines the condition for a notification should be shown for Candy Upgrades
    * - 0 = 'Off'
@@ -256,6 +257,8 @@ export default class BattleScene extends SceneBase {
 
   public eventManager: TimedEventManager;
 
+  public biomeChangeMode: boolean = false;
+
   /**
    * Allows subscribers to listen for events
    *
@@ -298,6 +301,7 @@ export default class BattleScene extends SceneBase {
       Phaser.Math.RND.realInRange = function (min: number, max: number): number {
         const ret = originalRealInRange.apply(this, [ min, max ]);
         const args = [ "RNG", ++scene.rngCounter, ret / (max - min), `min: ${min} / max: ${max}` ];
+        scene.setScoreText("RNG: " + this.rngCounter + ")")
         args.push(`seed: ${scene.rngSeedOverride || scene.waveSeed || scene.seed}`);
         if (scene.rngOffset) {
           args.push(`offset: ${scene.rngOffset}`);
@@ -901,6 +905,7 @@ export default class BattleScene extends SceneBase {
   setSeed(seed: string): void {
     this.seed = seed;
     this.rngCounter = 0;
+    //this.setScoreText("RNG: 0")
     this.waveCycleOffset = this.getGeneratedWaveCycleOffset();
     this.offsetGym = this.gameMode.isClassic && this.getGeneratedOffsetGym();
   }
@@ -1352,6 +1357,7 @@ export default class BattleScene extends SceneBase {
     Phaser.Math.RND.sow([ this.waveSeed ]);
     console.log("Wave Seed:", this.waveSeed, wave);
     this.rngCounter = 0;
+    //this.setScoreText("RNG: 0")
   }
 
   executeWithSeedOffset(func: Function, offset: integer, seedOverride?: string): void {
@@ -1368,6 +1374,7 @@ export default class BattleScene extends SceneBase {
     this.rngSeedOverride = seedOverride || "";
     func();
     Phaser.Math.RND.state(state);
+    this.setScoreText("RNG: " + tempRngCounter + " (Last sim: " + this.rngCounter + ")")
     this.rngCounter = tempRngCounter;
     this.rngOffset = tempRngOffset;
     this.rngSeedOverride = tempRngSeedOverride;
@@ -1497,10 +1504,16 @@ export default class BattleScene extends SceneBase {
   }
 
   updateScoreText(): void {
-    this.scoreText.setText(`Score: ${this.score.toString()}`);
-    this.scoreText.setVisible(this.gameMode.isDaily);
+    //this.scoreText.setText(`Score: ${this.score.toString()}`);
+    //this.scoreText.setVisible(this.gameMode.isDaily);
   }
   setScoreText(text: string): void {
+    if (this.scoreText == undefined)
+      return;
+    if (this.scoreText.setText == undefined)
+      return;
+    if (this.scoreText.setVisible == undefined)
+      return;
     this.scoreText.setText(text);
     this.scoreText.setVisible(true);
   }

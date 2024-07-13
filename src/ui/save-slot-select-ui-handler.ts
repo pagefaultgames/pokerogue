@@ -107,8 +107,20 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
         } else {
           switch (this.uiMode) {
           case SaveSlotUiMode.LOAD:
-            this.saveSlotSelectCallback = null;
-            originalCallback(this.sessionSlots[cursor].slotId, this.sessionSlots[cursor].autoSlot);
+            if (this.sessionSlots[cursor].autoSlot) {
+              ui.showText("This will revert slot " + (this.sessionSlots[cursor].slotId + 1) + " to wave " + (this.sessionSlots[cursor].wv) + ".\nIs that okay?", null, () => {
+                ui.setOverlayMode(Mode.CONFIRM, () => {
+                  this.saveSlotSelectCallback = null;
+                  originalCallback(this.sessionSlots[cursor].slotId, this.sessionSlots[cursor].autoSlot);
+                }, () => {
+                  ui.revertMode();
+                  ui.showText(null, 0);
+                }, false, 0, 19, 500);
+              });
+            } else {
+              this.saveSlotSelectCallback = null;
+              originalCallback(this.sessionSlots[cursor].slotId, this.sessionSlots[cursor].autoSlot);
+            }
             break;
           case SaveSlotUiMode.SAVE:
             const saveAndCallback = () => {
@@ -279,6 +291,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
   public slotId: integer;
   public autoSlot: integer;
   public hasData: boolean;
+  public wv: integer;
   private loadingLabel: Phaser.GameObjects.Text;
 
   constructor(scene: BattleScene, slotId: integer, ypos: integer, autoSlot?: integer) {
@@ -301,9 +314,10 @@ class SessionSlot extends Phaser.GameObjects.Container {
 
   async setupWithData(data: SessionSaveData) {
     this.remove(this.loadingLabel, true);
-    var lbl = `${GameMode.getModeName(data.gameMode) || i18next.t("gameMode:unkown")} - ${i18next.t("saveSlotSelectUiHandler:wave")} ${data.waveIndex}`
+    this.wv = data.waveIndex;
+    var lbl = `Slot ${this.slotId+1} (${GameMode.getModeName(data.gameMode) || i18next.t("gameMode:unkown")}) - ${i18next.t("saveSlotSelectUiHandler:wave")} ${data.waveIndex}`
     if (this.autoSlot != undefined) {
-      lbl = `Slot ${this.slotId} (Auto) - ${i18next.t("saveSlotSelectUiHandler:wave")} ${data.waveIndex}`
+      lbl = `Slot ${this.slotId+1} (Auto) - ${i18next.t("saveSlotSelectUiHandler:wave")} ${data.waveIndex}`
     }
     console.log(data, this.slotId, this.autoSlot, lbl)
     const gameModeLabel = addTextObject(this.scene, 8, 5, lbl, TextStyle.WINDOW);

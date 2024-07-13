@@ -6,6 +6,8 @@ import { addWindow } from "./ui-theme";
 import * as Utils from "../utils";
 import { argbFromRgba } from "@material/material-color-utilities";
 import {Button} from "#enums/buttons";
+import { Biome } from "#app/enums/biome.js";
+import { getBiomeKey } from "#app/field/arena.js";
 
 export interface OptionSelectConfig {
   xOffset?: number;

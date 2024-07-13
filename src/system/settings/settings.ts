@@ -100,7 +100,8 @@ export const SettingKeys = {
   Music_Preference: "MUSIC_PREFERENCE",
   Show_BGM_Bar: "SHOW_BGM_BAR",
   Damage_Display: "DAMAGE_DISPLAY",
-  LazyReloads: "FLAG_EVERY_RESET_AS_RELOAD"
+  LazyReloads: "FLAG_EVERY_RESET_AS_RELOAD",
+  FancyBiome: "FANCY_BIOMES"
 };
 
 /**
@@ -166,6 +167,19 @@ export const Setting: Array<Setting> = [
   {
     key: SettingKeys.LazyReloads,
     label: "Lazy Reloads",
+    options: [{
+      label: "Off",
+      value: "Off"
+    }, {
+      label: "On",
+      value: "On"
+    }],
+    default: 0,
+    type: SettingType.GENERAL,
+  },
+  {
+    key: SettingKeys.FancyBiome,
+    label: "Fancy Title Screen",
     options: [{
       label: "Off",
       value: "Off"
@@ -278,7 +292,7 @@ export const Setting: Array<Setting> = [
     key: SettingKeys.Tutorials,
     label: i18next.t("settings:tutorials"),
     options: OFF_ON,
-    default: 0,
+    default: 1,
     type: SettingType.GENERAL
   },
   {
@@ -518,7 +532,7 @@ export const Setting: Array<Setting> = [
     key: SettingKeys.Type_Hints,
     label: i18next.t("settings:typeHints"),
     options: OFF_ON,
-    default: 1,
+    default: 0,
     type: SettingType.DISPLAY
   },
   {
@@ -640,6 +654,8 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     scene.damageDisplay = Setting[index].options[value].value
   case SettingKeys.LazyReloads:
     scene.lazyReloads = Setting[index].options[value].value == "On"
+  case SettingKeys.FancyBiome:
+    scene.menuChangesBiome = Setting[index].options[value].value == "On"
   case SettingKeys.Skip_Seen_Dialogues:
     scene.skipSeenDialogues = Setting[index].options[value].value === "On";
     break;

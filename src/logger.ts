@@ -40,6 +40,8 @@ export const logKeys: string[] = [
   "d", // Debug
 ];
 
+export const RNGState: number[] = []
+
 export const autoCheckpoints: integer[] = [
   1,
   11,
