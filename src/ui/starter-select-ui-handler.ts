@@ -372,8 +372,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const sortOptions = [
       new DropDownOption(this.scene, 0, "No."),
       new DropDownOption(this.scene, 1, "Cost", null, DropDownState.OFF),
-      new DropDownOption(this.scene, 2, "IVs", null, DropDownState.OFF),
-      new DropDownOption(this.scene, 3, "Name", null, DropDownState.OFF)];
+      new DropDownOption(this.scene, 2, "# Candies", null, DropDownState.OFF),
+      new DropDownOption(this.scene, 3, "IVs", null, DropDownState.OFF),
+      new DropDownOption(this.scene, 4, "Name", null, DropDownState.OFF)];
     this.filterBar.addFilter("Sort", new DropDown(this.scene, 0, 0, sortOptions, this.updateStarters, DropDownType.SINGLE));
     this.filterBarContainer.add(this.filterBar);
     this.filterBar.defaultSortVals = this.filterBar.getVals(DropDownColumn.SORT);
@@ -1902,10 +1903,14 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       case 1:
         return (a.cost - b.cost) * -sort.dir;
       case 2:
+        const candyCountA = this.scene.gameData.starterData[a.species.speciesId].candyCount;
+        const candyCountB = this.scene.gameData.starterData[b.species.speciesId].candyCount;
+        return (candyCountA - candyCountB) * -sort.dir;
+      case 3:
         const avgIVsA = this.scene.gameData.dexData[a.species.speciesId].ivs.reduce((a, b) => a + b, 0) / this.scene.gameData.dexData[a.species.speciesId].ivs.length;
         const avgIVsB = this.scene.gameData.dexData[b.species.speciesId].ivs.reduce((a, b) => a + b, 0) / this.scene.gameData.dexData[b.species.speciesId].ivs.length;
         return (avgIVsA - avgIVsB) * -sort.dir;
-      case 3:
+      case 4:
         return a.species.name.localeCompare(b.species.name) * -sort.dir;
       }
       return 0;
