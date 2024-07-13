@@ -3999,6 +3999,88 @@ function applyAbAttrsInternal<TAttr extends AbAttr>(attrType: Constructor<TAttr>
     applyNextAbAttr();
   });
 }
+function applyAbAttrsInternalNoApply<TAttr extends AbAttr>(attrType: Constructor<TAttr>,
+  pokemon: Pokemon, applyFunc: AbAttrApplyFunc<TAttr>, args: any[], isAsync: boolean = false, showAbilityInstant: boolean = false, quiet: boolean = false, passive: boolean = false): Promise<void> {
+  return new Promise(resolve => {
+    if (!pokemon.canApplyAbility(passive)) {
+      if (!passive) {
+        args[0].value = 0
+        return resolve();
+        return applyAbAttrsInternal(attrType, pokemon, applyFunc, args, isAsync, showAbilityInstant, quiet, true).then(() => resolve());
+      } else {
+        return resolve();
+      }
+    }
+
+    const ability = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility());
+    const attrs = ability.getAttrs(attrType);
+
+    const clearSpliceQueueAndResolve = () => {
+      pokemon.scene?.clearPhaseQueueSplice();
+      if (!passive) {
+        args[0].value = 0
+        return resolve()
+        return applyAbAttrsInternal(attrType, pokemon, applyFunc, args, isAsync, showAbilityInstant, quiet, true).then(() => resolve());
+      } else {
+        return resolve();
+      }
+    };
+    return resolve();
+    const applyNextAbAttr = () => {
+      if (attrs.length) {
+        applyAbAttr(attrs.shift());
+      } else {
+        clearSpliceQueueAndResolve();
+      }
+    };
+    const applyAbAttr = (attr: TAttr) => {
+      if (!canApplyAttr(pokemon, attr)) {
+        return applyNextAbAttr();
+      }
+      pokemon.scene.setPhaseQueueSplice();
+      const onApplySuccess = () => {
+        if (pokemon.summonData && !pokemon.summonData.abilitiesApplied.includes(ability.id)) {
+          pokemon.summonData.abilitiesApplied.push(ability.id);
+        }
+        if (pokemon.battleData && !pokemon.battleData.abilitiesApplied.includes(ability.id)) {
+          pokemon.battleData.abilitiesApplied.push(ability.id);
+        }
+        if (attr.showAbility && !quiet) {
+          if (showAbilityInstant) {
+            pokemon.scene.abilityBar.showAbility(pokemon, passive);
+          } else {
+            queueShowAbility(pokemon, passive);
+          }
+        }
+        if (!quiet) {
+          const message = attr.getTriggerMessage(pokemon, (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name, args);
+          if (message) {
+            if (isAsync) {
+              pokemon.scene.ui.showText(message, null, () => pokemon.scene.ui.showText(null, 0), null, true);
+            } else {
+              pokemon.scene.queueMessage(message);
+            }
+          }
+        }
+      };
+      const result = applyFunc(attr, passive);
+      if (result instanceof Promise) {
+        result.then(success => {
+          if (success) {
+            onApplySuccess();
+          }
+          applyNextAbAttr();
+        });
+      } else {
+        if (result) {
+          onApplySuccess();
+        }
+        applyNextAbAttr();
+      }
+    };
+    applyNextAbAttr();
+  });
+}
 
 export function applyAbAttrs(attrType: Constructor<AbAttr>, pokemon: Pokemon, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void> {
   return applyAbAttrsInternal<AbAttr>(attrType, pokemon, (attr, passive) => attr.apply(pokemon, passive, cancelled, args), args);
@@ -4013,6 +4095,11 @@ export function applyPreDefendAbAttrs(attrType: Constructor<PreDefendAbAttr>,
   pokemon: Pokemon, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void> {
   const simulated = args.length > 1 && args[1];
   return applyAbAttrsInternal<PreDefendAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPreDefend(pokemon, passive, attacker, move, cancelled, args), args, false, false, simulated);
+}
+export function applyPreDefendAbAttrsNoApply(attrType: Constructor<PreDefendAbAttr>,
+  pokemon: Pokemon, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void> {
+  const simulated = args.length > 1 && args[1];
+  return applyAbAttrsInternalNoApply<PreDefendAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPreDefend(pokemon, passive, attacker, move, cancelled, args), args, false, false, simulated);
 }
 
 export function applyPostDefendAbAttrs(attrType: Constructor<PostDefendAbAttr>,

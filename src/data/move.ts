@@ -1590,7 +1590,7 @@ export class IncrementMovePriorityAttr extends MoveAttr {
  * @see {@linkcode apply}
  */
 export class MultiHitAttr extends MoveAttr {
-  private multiHitType: MultiHitType;
+  public multiHitType: MultiHitType;
 
   constructor(multiHitType?: MultiHitType) {
     super();

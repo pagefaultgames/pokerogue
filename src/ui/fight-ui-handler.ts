@@ -15,7 +15,7 @@ import { Stat } from "#app/data/pokemon-stat.js";
 import { Abilities } from "#app/enums/abilities.js";
 import { WeatherType } from "#app/data/weather.js";
 import { Moves } from "#app/enums/moves.js";
-import { AddSecondStrikeAbAttr, AllyMoveCategoryPowerBoostAbAttr, AlwaysHitAbAttr, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, ConditionalCritAbAttr, DamageBoostAbAttr, FieldMoveTypePowerBoostAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentEvasionAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, MoveTypeChangeAttr, MultCritAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, StabBoostAbAttr, TypeImmunityAbAttr, UserFieldMoveTypePowerBoostAbAttr, VariableMovePowerAbAttr, WonderSkinAbAttr } from "#app/data/ability.js";
+import { AddSecondStrikeAbAttr, AllyMoveCategoryPowerBoostAbAttr, AlwaysHitAbAttr, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreDefendAbAttrsNoApply, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, ConditionalCritAbAttr, DamageBoostAbAttr, FieldMoveTypePowerBoostAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentEvasionAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, MoveTypeChangeAttr, MultCritAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, StabBoostAbAttr, TypeImmunityAbAttr, UserFieldMoveTypePowerBoostAbAttr, VariableMovePowerAbAttr, WonderSkinAbAttr } from "#app/data/ability.js";
 import { ArenaTagType } from "#app/enums/arena-tag-type.js";
 import { ArenaTagSide, WeakenMoveScreenTag, WeakenMoveTypeTag } from "#app/data/arena-tag.js";
 import { BattlerTagLapseType, HelpingHandTag, SemiInvulnerableTag, TypeBoostTag } from "#app/data/battler-tags.js";
@@ -236,7 +236,10 @@ export default class FightUiHandler extends UiHandler {
       power.value *= typeChangeMovePowerMultiplier.value;
 
       if (!typeless) {
-        applyPreDefendAbAttrs(TypeImmunityAbAttr, user, target, move, cancelled, typeMultiplier);
+        if (target.hasAbilityWithAttr(TypeImmunityAbAttr)) {
+          //
+        }
+        applyPreDefendAbAttrsNoApply(TypeImmunityAbAttr, user, target, move, cancelled, typeMultiplier);
         MoveData.applyMoveAttrs(MoveData.NeutralDamageAgainstFlyingTypeMultiplierAttr, user, target, move, typeMultiplier);
       }
       if (!cancelled.value) {
@@ -404,8 +407,8 @@ export default class FightUiHandler extends UiHandler {
         applyPreDefendAbAttrs(ReceivedMoveDamageMultiplierAbAttr, user, target, move, cancelled, damage1);
         applyPreDefendAbAttrs(ReceivedMoveDamageMultiplierAbAttr, user, target, move, cancelled, damage2);
 
-        console.log("damage (min)", damage1.value, move.name, power.value, sourceAtk, targetDef);
-        console.log("damage (max)", damage2.value, move.name, power.value, sourceAtkCrit, targetDefCrit);
+        //console.log("damage (min)", damage1.value, move.name, power.value, sourceAtk, targetDef);
+        //console.log("damage (max)", damage2.value, move.name, power.value, sourceAtkCrit, targetDefCrit);
 
         // In case of fatal damage, this tag would have gotten cleared before we could lapse it.
         const destinyTag = target.getTag(BattlerTagType.DESTINY_BOND);
@@ -425,7 +428,7 @@ export default class FightUiHandler extends UiHandler {
       break;
     case MoveData.MoveCategory.STATUS:
       if (!typeless) {
-        applyPreDefendAbAttrs(TypeImmunityAbAttr, target, user, move, cancelled, typeMultiplier);
+        applyPreDefendAbAttrsNoApply(TypeImmunityAbAttr, target, user, move, cancelled, typeMultiplier);
       }
       if (!cancelled.value) {
         applyPreDefendAbAttrs(MoveImmunityAbAttr, target, user, move, cancelled, typeMultiplier);
@@ -631,8 +634,35 @@ export default class FightUiHandler extends UiHandler {
     // dmgLow = (((2*user.level/5 + 2) * power * myAtk / theirDef)/50 + 2) * 0.85 * modifiers
     // dmgHigh = (((2*user.level/5 + 2) * power * myAtkC / theirDefC)/50 + 2) * 1.5 * modifiers
     var out = this.simulateAttack(scene, user, target, move.getMove())
-    dmgLow = out[0]
-    dmgHigh = out[1]
+    var minHits = 1
+    var maxHits = 1
+    var mh = move.getMove().getAttrs(MoveData.MultiHitAttr)
+    for (var i = 0; i < mh.length; i++) {
+      var mh2 = mh[i] as MoveData.MultiHitAttr
+      switch (mh2.multiHitType) {
+        case MoveData.MultiHitType._2:
+          minHits = 2;
+          maxHits = 2;
+        case MoveData.MultiHitType._2_TO_5:
+          minHits = 2;
+          maxHits = 5;
+        case MoveData.MultiHitType._3:
+          minHits = 3;
+          maxHits = 3;
+        case MoveData.MultiHitType._10:
+          minHits = 10;
+          maxHits = 10;
+        case MoveData.MultiHitType.BEAT_UP:
+          const party = user.isPlayer() ? user.scene.getParty() : user.scene.getEnemyParty();
+          // No status means the ally pokemon can contribute to Beat Up
+          minHits = party.reduce((total, pokemon) => {
+            return total + (pokemon.id === user.id ? 1 : pokemon?.status && pokemon.status.effect !== StatusEffect.NONE ? 0 : 1);
+          }, 0);
+          maxHits = minHits
+      }
+    }
+    dmgLow = out[0] * minHits
+    dmgHigh = out[1] * maxHits
     /*
     if (user.hasAbility(Abilities.PARENTAL_BOND)) {
       // Second hit deals 0.25x damage
@@ -1062,11 +1092,6 @@ export function simulateAttack(scene: BattleScene, user: Pokemon, target: Pokemo
       MoveData.applyMoveAttrs(MoveData.ModifiedDamageAttr, user, target, move, damage2);
       applyPreDefendAbAttrs(ReceivedMoveDamageMultiplierAbAttr, user, target, move, cancelled, damage1);
       applyPreDefendAbAttrs(ReceivedMoveDamageMultiplierAbAttr, user, target, move, cancelled, damage2);
-
-      //console.log("damage (min)", damage1.value, move.name, power.value, sourceAtk, targetDef);
-      //console.log("damage (max)", damage2.value, move.name, power.value, sourceAtkCrit, targetDefCrit);
-
-      // In case of fatal damage, this tag would have gotten cleared before we could lapse it.
       const destinyTag = target.getTag(BattlerTagType.DESTINY_BOND);
 
       const oneHitKo = result === HitResult.ONE_HIT_KO;
@@ -1100,80 +1125,6 @@ export function simulateAttack(scene: BattleScene, user: Pokemon, target: Pokemo
 }
 
 export function calcDamage(scene: BattleScene, user: PlayerPokemon, target: Pokemon, move: PokemonMove) {
-  /*
-  var power = move.getMove().power
-  var myAtk = 0
-  var theirDef = 0
-  var myAtkC = 0
-  var theirDefC = 0
-  switch (move.getMove().category) {
-    case MoveData.MoveCategory.PHYSICAL:
-      myAtk = user.getBattleStat(Stat.ATK, target, move.getMove())
-      myAtkC = user.getBattleStat(Stat.ATK, target, move.getMove(), true)
-      theirDef = target.getBattleStat(Stat.DEF, user, move.getMove())
-      theirDefC = target.getBattleStat(Stat.DEF, user, move.getMove(), true)
-      break;
-    case MoveData.MoveCategory.SPECIAL:
-      myAtk = user.getBattleStat(Stat.SPATK, target, move.getMove())
-      myAtkC = user.getBattleStat(Stat.SPATK, target, move.getMove(), true)
-      theirDef = target.getBattleStat(Stat.SPDEF, user, move.getMove())
-      theirDefC = target.getBattleStat(Stat.SPDEF, user, move.getMove(), true)
-      break;
-    case MoveData.MoveCategory.STATUS:
-      return "---"
-  }
-  var stabBonus = 1
-  var types = user.getTypes()
-  // Apply STAB bonus
-  for (var i = 0; i < types.length; i++) {
-    if (types[i] == move.getMove().type) {
-      stabBonus = 1.5
-    }
-  }
-  // Apply Tera Type bonus
-  if (stabBonus == 1.5) {
-    // STAB
-    if (move.getMove().type == user.getTeraType()) {
-      stabBonus = 2
-    }
-  } else if (move.getMove().type == user.getTeraType()) {
-    stabBonus = 1.5
-  }
-  // Apply adaptability
-  if (stabBonus == 2) {
-    // Tera-STAB
-    if (move.getMove().type == user.getTeraType()) {
-      stabBonus = 2.25
-    }
-  } else if (stabBonus == 1.5) {
-    // STAB or Tera
-    if (move.getMove().type == user.getTeraType()) {
-      stabBonus = 2
-    }
-  } else if (move.getMove().type == user.getTeraType()) {
-    // Adaptability
-    stabBonus = 1.5
-  }
-  var weatherBonus = 1
-  if (scene.arena.weather.weatherType == WeatherType.RAIN || scene.arena.weather.weatherType == WeatherType.HEAVY_RAIN) {
-    if (move.getMove().type == Type.WATER) {
-      weatherBonus = 1.5
-    }
-    if (move.getMove().type == Type.FIRE) {
-      weatherBonus = scene.arena.weather.weatherType == WeatherType.HEAVY_RAIN ? 0 : 0.5
-    }
-  }
-  if (scene.arena.weather.weatherType == WeatherType.SUNNY || scene.arena.weather.weatherType == WeatherType.HARSH_SUN) {
-    if (move.getMove().type == Type.FIRE) {
-      weatherBonus = 1.5
-    }
-    if (move.getMove().type == Type.WATER) {
-      weatherBonus = scene.arena.weather.weatherType == WeatherType.HARSH_SUN ? 0 : (move.moveId == Moves.HYDRO_STEAM ? 1.5 : 0.5)
-    }
-  }
-  var typeBonus = target.getAttackMoveEffectiveness(user, move)
-  var modifiers = stabBonus * weatherBonus
-  */
   var dmgHigh = 0
   var dmgLow = 0
   // dmgLow = (((2*user.level/5 + 2) * power * myAtk / theirDef)/50 + 2) * 0.85 * modifiers

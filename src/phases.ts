@@ -2994,6 +2994,8 @@ export class TurnStartPhase extends FieldPhase {
     this.scene.pushPhase(new BerryPhase(this.scene));
     this.scene.pushPhase(new TurnEndPhase(this.scene));
 
+    this.scene.arenaFlyout.updateFieldText()
+
     this.end();
   }
 }
