@@ -1117,6 +1117,9 @@ function printWave(inData: string, indent: string, wave: Wave): string {
           inData = printPoke(inData, indent + "    ", wave.pokemon[i])
         }
       }
+      if (SheetsMode.value && wave.pokemon.length == 1) {
+        inData += "," + indent + "    \n{" + indent + "    \n}"
+      }
       inData += "\n" + indent + "  ]"
     }
   inData += "\n" + indent + "}"
@@ -1144,24 +1147,25 @@ function printPoke(inData: string, indent: string, pokemon: PokeData) {
   inData += ",\n" + indent + "  \"rarity\": \"" + pokemon.rarity + "\""
   inData += ",\n" + indent + "  \"captured\": " + pokemon.captured
   inData += ",\n" + indent + "  \"level\": " + pokemon.level
-  if (pokemon.items.length > 0) {
-    inData += ",\n" + indent + "  \"items\": [\n"
-    var isFirst = true
-    for (var i = 0; i < pokemon.items.length; i++) {
-      if (pokemon.items[i] != undefined) {
-        if (isFirst) {
-          isFirst = false;
-        } else {
-          inData += ","
+  if (!SheetsMode.value)
+    if (pokemon.items.length > 0) {
+      inData += ",\n" + indent + "  \"items\": [\n"
+      var isFirst = true
+      for (var i = 0; i < pokemon.items.length; i++) {
+        if (pokemon.items[i] != undefined) {
+          if (isFirst) {
+            isFirst = false;
+          } else {
+            inData += ","
+          }
+          inData = printItem(inData, indent + "    ", pokemon.items[i])
         }
-        inData = printItem(inData, indent + "    ", pokemon.items[i])
       }
+      if (!isFirst) inData += "\n"
+      inData += indent + "  ]"
+    } else {
+      inData += ",\n" + indent + "  \"items\": []"
     }
-    if (!isFirst) inData += "\n"
-    inData += indent + "  ]"
-  } else {
-    inData += ",\n" + indent + "  \"items\": []"
-  }
   inData += ",\n" + indent + "  \"ivs\": "
   inData = printIV(inData, indent + "  ", pokemon.ivs)
   //inData += ",\n" + indent + "  \"rarity\": " + pokemon.rarity
