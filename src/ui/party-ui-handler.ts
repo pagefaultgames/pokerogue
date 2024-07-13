@@ -306,7 +306,7 @@ export default class PartyUiHandler extends MessageUiHandler {
           || (option === PartyOption.RELEASE && this.partyUiMode === PartyUiMode.RELEASE)) {
           let filterResult: string;
           const getTransferrableItemsFromPokemon = (pokemon: PlayerPokemon) =>
-            this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && (m as PokemonHeldItemModifier).getTransferrable(true) && (m as PokemonHeldItemModifier).pokemonId === pokemon.id) as PokemonHeldItemModifier[];
+            this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && m.isTransferrable && m.pokemonId === pokemon.id) as PokemonHeldItemModifier[];
           if (option !== PartyOption.TRANSFER && option !== PartyOption.SPLICE) {
             filterResult = (this.selectFilter as PokemonSelectFilter)(pokemon);
             if (filterResult === null && (option === PartyOption.SEND_OUT || option === PartyOption.PASS_BATON)) {
@@ -482,7 +482,7 @@ export default class PartyUiHandler extends MessageUiHandler {
           if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER && !this.transferMode) {
             /** Initialize item quantities for the selected Pokemon */
             const itemModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-              && (m as PokemonHeldItemModifier).getTransferrable(true) && (m as PokemonHeldItemModifier).pokemonId === this.scene.getParty()[this.cursor].id) as PokemonHeldItemModifier[];
+              && m.isTransferrable && m.pokemonId === this.scene.getParty()[this.cursor].id) as PokemonHeldItemModifier[];
             this.transferQuantities = itemModifiers.map(item => item.getStackCount());
             this.transferQuantitiesMax = itemModifiers.map(item => item.getStackCount());
           }
@@ -699,7 +699,7 @@ export default class PartyUiHandler extends MessageUiHandler {
 
     const itemModifiers = this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER
       ? this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-        && (m as PokemonHeldItemModifier).getTransferrable(true) && (m as PokemonHeldItemModifier).pokemonId === pokemon.id) as PokemonHeldItemModifier[]
+        && m.isTransferrable && m.pokemonId === pokemon.id) as PokemonHeldItemModifier[]
       : null;
 
     if (this.options.length) {
