@@ -5148,21 +5148,18 @@ export class SketchAttr extends MoveEffectAttr {
       return false;
     }
 
-    const [targetMove] = target.getLastXMoves(1);
-    if (!targetMove || targetMove.virtual) {
+    const targetMove = target.getMoveHistory().filter(m => !m.virtual).at(-1);
+    if (!targetMove) {
       return false;
     }
 
     const sketchedMove = allMoves[targetMove.move];
-
     const sketchIndex = user.getMoveset().findIndex(m => m.moveId === move.id);
-
     if (sketchIndex === -1) {
       return false;
     }
 
     user.setMove(sketchIndex, sketchedMove.id);
-
     user.scene.queueMessage(getPokemonMessage(user, ` sketched\n${sketchedMove.name}!`));
 
     return true;
