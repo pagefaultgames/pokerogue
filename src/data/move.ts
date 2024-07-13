@@ -1083,8 +1083,9 @@ export class RecoilAttr extends MoveEffectAttr {
     }
 
     const cancelled = new Utils.BooleanHolder(false);
-    if (!this.unblockable && move.id !== Moves.STRUGGLE) {
+    if (!this.unblockable) {
       applyAbAttrs(BlockRecoilDamageAttr, user, cancelled);
+      applyAbAttrs(BlockNonDirectDamageAbAttr, user, cancelled);
     }
 
     if (cancelled.value) {
@@ -1097,8 +1098,7 @@ export class RecoilAttr extends MoveEffectAttr {
       return false;
     }
 
-    applyAbAttrs(BlockNonDirectDamageAbAttr, user, cancelled);
-    if (cancelled.value && move.id !== Moves.STRUGGLE) {
+    if (cancelled.value) {
       return false;
     }
 
