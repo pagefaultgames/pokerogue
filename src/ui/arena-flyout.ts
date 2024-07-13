@@ -269,9 +269,10 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
     this.flyoutTextPlayer.text = ""
     this.flyoutTextField.text = ""
     this.flyoutTextEnemy.text = ""
-    this.flyoutTextHeaderField.text = "Stats"
+    this.flyoutTextHeaderField.text = ""
     this.flyoutTextHeaderPlayer.text = ""
     this.flyoutTextHeaderEnemy.text = ""
+    this.flyoutTextHeader.text = "Game Logs"
     this.flyoutTextPlayer.setPosition(6, 4)
     this.flyoutTextPlayer.setFontSize(30);
     var instructions = []

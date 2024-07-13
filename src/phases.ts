@@ -2996,6 +2996,11 @@ export class TurnStartPhase extends FieldPhase {
 
     this.scene.arenaFlyout.updateFieldText()
 
+    if (LoggerTools.Actions.length > 1 && (LoggerTools.Actions[0] == "" || LoggerTools.Actions[0] == undefined || LoggerTools.Actions[0] == null))
+      LoggerTools.Actions.shift() // If the left slot isn't doing anything, delete its entry
+
+    LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, LoggerTools.Actions.join(" | "))
+
     this.end();
   }
 }
@@ -3096,8 +3101,6 @@ export class TurnEndPhase extends FieldPhase {
     if (this.scene.arena.terrain && !this.scene.arena.terrain.lapse()) {
       this.scene.arena.trySetTerrain(TerrainType.NONE, false);
     }
-
-    LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, LoggerTools.Actions.join(" | "))
 
     this.end();
   }
@@ -5094,7 +5097,7 @@ export class SwitchPhase extends BattlePhase {
           LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "Pre-switch " + (option == PartyOption.PASS_BATON ? "+ Baton" : "") + " to " + LoggerTools.playerPokeName(this.scene, slotIndex))
         }
         if (LoggerTools.isFaintSwitch.value) {
-          LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, (option == PartyOption.PASS_BATON ? "Baton" : "Switch") + "in " + LoggerTools.playerPokeName(this.scene, slotIndex))
+          LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, (option == PartyOption.PASS_BATON ? "Baton" : "Switch") + " in " + LoggerTools.playerPokeName(this.scene, slotIndex))
         }
         this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, fieldIndex, slotIndex, this.doReturn, option === PartyOption.PASS_BATON));
       }
@@ -5668,6 +5671,7 @@ export class AttemptCapturePhase extends PokemonPhase {
                 this.scene.ui.setMode(Mode.PARTY, PartyUiMode.RELEASE, this.fieldIndex, (slotIndex: integer, _option: PartyOption) => {
                   this.scene.ui.setMode(Mode.MESSAGE).then(() => {
                     if (slotIndex < 6) {
+                      LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "Release " + LoggerTools.playerPokeName(this.scene, slotIndex))
                       addToParty();
                     } else {
                       promptRelease();
@@ -5675,6 +5679,7 @@ export class AttemptCapturePhase extends PokemonPhase {
                   });
                 });
               }, () => {
+                LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "Do Not Keep")
                 this.scene.ui.setMode(Mode.MESSAGE).then(() => {
                   removePokemon();
                   end();
