@@ -525,7 +525,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!this.scene) {
       return [];
     }
-    return this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && (m as PokemonHeldItemModifier).pokemonId === this.id, this.isPlayer()) as PokemonHeldItemModifier[];
+    return this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && m.pokemonId === this.id, this.isPlayer()) as PokemonHeldItemModifier[];
   }
 
   updateScale(): void {
@@ -3286,7 +3286,7 @@ export class PlayerPokemon extends Pokemon {
         this.scene.getParty().push(newPokemon);
         newPokemon.evolve(!isFusion ? newEvolution : new FusionSpeciesFormEvolution(this.id, newEvolution));
         const modifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-          && (m as PokemonHeldItemModifier).pokemonId === this.id, true) as PokemonHeldItemModifier[];
+          && m.pokemonId === this.id, true) as PokemonHeldItemModifier[];
         modifiers.forEach(m => {
           const clonedModifier = m.clone() as PokemonHeldItemModifier;
           clonedModifier.pokemonId = newPokemon.id;
@@ -3379,7 +3379,7 @@ export class PlayerPokemon extends Pokemon {
         partyMemberIndex--;
       }
       const fusedPartyMemberHeldModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-        && (m as PokemonHeldItemModifier).pokemonId === pokemon.id, true) as PokemonHeldItemModifier[];
+        && m.pokemonId === pokemon.id, true) as PokemonHeldItemModifier[];
       const transferModifiers: Promise<boolean>[] = [];
       for (const modifier of fusedPartyMemberHeldModifiers) {
         transferModifiers.push(this.scene.tryTransferHeldItemModifier(modifier, this, false, modifier.getStackCount(), true, true));
