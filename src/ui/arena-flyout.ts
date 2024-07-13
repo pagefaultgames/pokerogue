@@ -10,6 +10,8 @@ import { ArenaTagType } from "#enums/arena-tag-type";
 import TimeOfDayWidget from "./time-of-day-widget";
 import * as Utils from "../utils";
 import { getNatureDecrease, getNatureIncrease, getNatureName } from "#app/data/nature.js";
+import * as LoggerTools from "../logger"
+import { BattleEndPhase } from "#app/phases.js";
 
 /** Enum used to differentiate {@linkcode Arena} effects */
 enum ArenaEffectType {
@@ -192,9 +194,12 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
     this.flyoutTextPlayer.text = "";
     this.flyoutTextField.text = "";
     this.flyoutTextEnemy.text = "";
+    this.flyoutTextPlayer.setPosition(6, 13)
+    this.flyoutTextPlayer.setFontSize(48);
   }
 
   public printIVs() {
+    this.clearText()
     var poke = (this.scene as BattleScene).getEnemyField()
     this.flyoutTextPlayer.text = ""
     this.flyoutTextField.text = ""
@@ -260,6 +265,36 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
       }
 
       textObject.text += "\n";
+    }
+    this.flyoutTextPlayer.text = ""
+    this.flyoutTextField.text = ""
+    this.flyoutTextEnemy.text = ""
+    this.flyoutTextHeaderField.text = "Stats"
+    this.flyoutTextHeaderPlayer.text = ""
+    this.flyoutTextHeaderEnemy.text = ""
+    this.flyoutTextPlayer.setPosition(6, 5)
+    this.flyoutTextPlayer.setFontSize(30);
+    var instructions = []
+    var drpd = LoggerTools.getDRPD(this.scene as BattleScene);
+    var doWaveInstructions = true;
+    for (var i = 0; i < drpd.waves.length && drpd.waves[i] != undefined && doWaveInstructions; i++) {
+      if (drpd.waves[i].id > (this.scene as BattleScene).currentBattle.waveIndex) {
+        doWaveInstructions = false;
+      } else {
+        instructions.push("")
+        instructions.push("Wave " + drpd.waves[i].id)
+        for (var j = 0; j < drpd.waves[i].actions.length; j++) {
+          instructions.push("- " + drpd.waves[i].actions[j])
+        }
+        if (drpd.waves[i].shop != "")
+          instructions.push("Reward: " + drpd.waves[i].shop)
+      }
+    }
+    for (var i = instructions.length - 8; i < instructions.length; i++) {
+      if (i >= 0) {
+        this.flyoutTextPlayer.text += instructions[i]
+      }
+      this.flyoutTextPlayer.text += "\n"
     }
   }
 

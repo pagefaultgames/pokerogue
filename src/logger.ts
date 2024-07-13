@@ -350,6 +350,13 @@ export function getSize(str: string) {
   return d.toString() + filesizes[unit]
 }
 
+export function getDRPD(scene: BattleScene): DRPD {
+  var drpd: DRPD = JSON.parse(localStorage.getItem(getLogID(scene))) as DRPD;
+  drpd = updateLog(drpd);
+  scene.arenaFlyout.printIVs()
+  return drpd;
+}
+
 /**
  * Generates a UI option to save a log to your device.
  * @param i The slot number. Corresponds to an index in `logs`.
@@ -559,8 +566,7 @@ export function logTeam(scene: BattleScene, floor: integer = undefined) {
  */
 export function logActions(scene: BattleScene, floor: integer, action: string) {
   if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
-  var drpd: DRPD = JSON.parse(localStorage.getItem(getLogID(scene))) as DRPD;
-  drpd = updateLog(drpd);
+  var drpd = getDRPD(scene)
   console.log("Log Action", drpd)
   var wv: Wave = getWave(drpd, floor, scene)
   wv.actions.push(action)
@@ -575,8 +581,7 @@ export function logActions(scene: BattleScene, floor: integer, action: string) {
  */
 export function logShop(scene: BattleScene, floor: integer, action: string) {
   if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
-  var drpd: DRPD = JSON.parse(localStorage.getItem(getLogID(scene))) as DRPD;
-  drpd = updateLog(drpd);
+  var drpd = getDRPD(scene)
   console.log("Log Shop Item", drpd)
   var wv: Wave = getWave(drpd, floor, scene)
   wv.shop = action
@@ -741,8 +746,7 @@ function checkForPokeInBiome(species: Species, pool: (Species | SpeciesTree)[]):
 export function logPokemon(scene: BattleScene, floor: integer = undefined, slot: integer, pokemon: EnemyPokemon, encounterRarity?: string) {
   if (floor == undefined) floor = scene.currentBattle.waveIndex
   if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
-  var drpd: DRPD = JSON.parse(localStorage.getItem(getLogID(scene))) as DRPD;
-  drpd = updateLog(drpd);
+  var drpd = getDRPD(scene)
   console.log("Log Enemy Pokemon", drpd)
   var wv: Wave = getWave(drpd, floor, scene)
   var pk: PokeData = exportPokemon(pokemon, encounterRarity)
@@ -816,8 +820,7 @@ export function logPokemon(scene: BattleScene, floor: integer = undefined, slot:
 export function resetWaveActions(scene: BattleScene, floor: integer = undefined) {
   if (floor == undefined) floor = scene.currentBattle.waveIndex
   if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
-  var drpd: DRPD = JSON.parse(localStorage.getItem(getLogID(scene))) as DRPD;
-  drpd = updateLog(drpd);
+  var drpd = getDRPD(scene)
   console.log("Clear Actions", drpd)
   var wv: Wave = getWave(drpd, floor, scene)
   wv.actions = []
@@ -850,9 +853,7 @@ export function logTrainer(scene: BattleScene, floor: integer = undefined) {
  */
 export function logPlayerTeam(scene: BattleScene) {
   if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
-  var drpd: DRPD = JSON.parse(localStorage.getItem(getLogID(scene))) as DRPD;
-  //var wv: Wave = getWave(drpd, 1, scene)
-  drpd = updateLog(drpd);
+  var drpd = getDRPD(scene)
   console.log("Log Player Starters", drpd)
   var P = scene.getParty()
   for (var i = 0; i < P.length; i++) {
@@ -961,8 +962,7 @@ export function flagReset(scene: BattleScene, floor: integer = undefined) {
     floor = scene.currentBattle.waveIndex;
   if (localStorage.getItem(getLogID(scene)) == null)
     localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
-  var drpd: DRPD = JSON.parse(localStorage.getItem(getLogID(scene))) as DRPD;
-  drpd = updateLog(drpd);
+  var drpd = getDRPD(scene)
   var wv = getWave(drpd, floor, scene)
   wv.reload = true;
   console.log(drpd)
@@ -973,8 +973,7 @@ export function flagResetIfExists(scene: BattleScene, floor: integer = undefined
     floor = scene.currentBattle.waveIndex;
   if (localStorage.getItem(getLogID(scene)) == null)
     localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
-  var drpd: DRPD = JSON.parse(localStorage.getItem(getLogID(scene))) as DRPD;
-  drpd = updateLog(drpd);
+  var drpd = getDRPD(scene)
   var waveExists = false
   for (var i = 0; i < drpd.waves.length; i++) {
     if (drpd.waves[i] != undefined) {
