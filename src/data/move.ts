@@ -676,7 +676,7 @@ export default class Move implements Localizable {
 
     applyPreAttackAbAttrs(VariableMovePowerAbAttr, source, target, this, power);
 
-    if (source.getAlly()?.hasAbilityWithAttr(AllyMoveCategoryPowerBoostAbAttr)) {
+    if (source.getAlly()) {
       applyPreAttackAbAttrs(AllyMoveCategoryPowerBoostAbAttr, source.getAlly(), target, this, power);
     }
 
