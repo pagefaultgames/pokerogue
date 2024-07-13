@@ -8,7 +8,7 @@ import { Moves } from "#enums/moves";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { WeatherType } from "#app/data/weather.js";
-import { StatusEffect } from "#app/data/status-effect";
+import { StatusEffect, getStatusEffectCatchRateMultiplier } from "#app/data/status-effect";
 
 const TIMEOUT = 20 * 1000; // 20 sec timeout
 
@@ -70,7 +70,7 @@ describe("Abilities - Magic Guard", () => {
   );
 
   it(
-    "ability should prevent damage caused by status effects",
+    "ability should prevent damage caused by status effects but other non-damage effects still apply",
     async () => {
       //Toxic keeps track of the turn counters -> important that Magic Guard keeps track of post-Toxic turns
       vi.spyOn(overrides, "STATUS_OVERRIDE", "get").mockReturnValue(StatusEffect.POISON);
@@ -87,6 +87,7 @@ describe("Abilities - Magic Guard", () => {
 
       await game.phaseInterceptor.to(TurnEndPhase);
 
+      expect(getStatusEffectCatchRateMultiplier(leadPokemon.status.effect)).toBe(1.5);
       expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
     }, TIMEOUT
   );
@@ -113,15 +114,55 @@ describe("Abilities - Magic Guard", () => {
     }
   );
 
+
+  it("Magic Guard prevents damage caused by burn but other non-damaging effects are still applied",
+    async () => {
+      vi.spyOn(overrides, "OPP_STATUS_OVERRIDE", "get").mockReturnValue(StatusEffect.BURN);
+      vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.MAGIC_GUARD);
+
+      await game.startBattle([Species.MAGIKARP]);
+
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect (leadPokemon).toBeDefined();
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).toBeDefined();
+
+      await game.phaseInterceptor.to(TurnEndPhase);
+
+      //need to check for damage reduction
+      expect(getStatusEffectCatchRateMultiplier(enemyPokemon.status.effect)).toBe(1.5);
+      expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    });
+
+  it("Magic Guard prevents damage caused by toxic but other non-damaging effects are still applied",
+    async () => {
+      vi.spyOn(overrides, "OPP_STATUS_OVERRIDE", "get").mockReturnValue(StatusEffect.TOXIC);
+      vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.MAGIC_GUARD);
+
+      await game.startBattle([Species.MAGIKARP]);
+
+      const leadPokemon = game.scene.getPlayerPokemon();
+      expect (leadPokemon).toBeDefined();
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).toBeDefined();
+
+      const toxicStartCounter = enemyPokemon.status.turnCount;
+      //should be 0
+
+      await game.phaseInterceptor.to(TurnEndPhase);
+
+      expect(enemyPokemon.status.turnCount).toBeGreaterThan(toxicStartCounter);
+      expect(getStatusEffectCatchRateMultiplier(enemyPokemon.status.effect)).toBe(1.5);
+      expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    });
+
 /*
-  it("Magic Guard prevents damage caused by burn but Pokemon still can be burned and take damage upon losing Magic Guard", async () => {
-    await game.startBattle([Species.MAGIKARP]);
-
-    game.doAttack(getMovePosition(game.scene, 0, Moves.CHARM));
-
-    await game.phaseInterceptor.to(TurnEndPhase);
-  });
-
   it("Magic Guard prevents damage caused by entry hazards", async () => {
     await game.startBattle([Species.MAGIKARP]);
 
