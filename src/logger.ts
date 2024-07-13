@@ -289,6 +289,7 @@ export function exportWave(scene: BattleScene): Wave {
     shop: "",
     biome: getBiomeName(scene.arena.biomeType)
   }
+  if (ret.double == undefined) ret.double = false;
   switch (ret.type) {
     case "wild":
     case "boss":
