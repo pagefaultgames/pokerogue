@@ -54,9 +54,9 @@ export const menu: SimpleTranslationEntries = {
   "no":"No",
   "disclaimer": "DISCLAIMER",
   "disclaimerDescription": "Questo gioco è un prodotto incompleto; si potrebbero riscontrare errori (inclusa la perdita dei dati di salvataggio),\ncambiamenti impercettibili, e non è detto che venga aggiornato nel tempo o mai completato del tutto.",
-  "choosePokemon": "Choose a Pokémon.",
-  "renamePokemon": "Rename Pokémon",
-  "rename": "Rename",
+  "choosePokemon": "Scegli un Pokémon.",
+  "renamePokemon": "Rinomina un Pokémon",
+  "rename": "Rinomina",
   "nickname": "Nickname",
-  "errorServerDown": "Oops! There was an issue contacting the server.\n\nYou may leave this window open,\nthe game will automatically reconnect.",
+  "errorServerDown": "Poffarbacco! C'è stato un errore nella comunicazione col server.\n\nPuoi lasciare questa finestra aperta,\nil gioco si riconnetterà automaticamente.",
 } as const;
