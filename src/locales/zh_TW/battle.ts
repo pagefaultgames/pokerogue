@@ -54,6 +54,8 @@ export const battle: SimpleTranslationEntries = {
   "escapeVerbSwitch": "切換",
   "escapeVerbFlee": "逃跑",
   "stealEatBerry": "{{pokemonName}} stole and ate\n{{targetName}}'s {{berryName}}!",
+  "ppHealBerry": "{{pokemonNameWithAffix}}用{{berryName}}\n回復了{{moveName}}的PP！",
+  "hpHealBerry": "{{pokemonNameWithAffix}}用{{berryName}}\n回復了體力！",
   "notDisabled": "{{moveName}} 不再被禁用！",
   "turnEndHpRestore": "{{pokemonName}}'s HP was restored.",
   "hpIsFull": "{{pokemonName}}'s\nHP is full!",

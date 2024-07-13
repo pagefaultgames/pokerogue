@@ -68,6 +68,8 @@ export const battle: SimpleTranslationEntries = {
   "drainMessage": "{{pokemonName}} had its\nenergy drained!",
   "regainHealth": "{{pokemonName}} regained\nhealth!",
   "stealEatBerry": "{{pokemonName}} stole and ate\n{{targetName}}'s {{berryName}}!",
+  "ppHealBerry": "{{pokemonNameWithAffix}} restored PP to its move {{moveName}}\nusing its {{berryName}}!",
+  "hpHealBerry": "{{pokemonNameWithAffix}} restored its health using\nits {{berryName}}!",
   "fainted": "{{pokemonNameWithAffix}} fainted!",
   "statsAnd": "and",
   "stats": "Stats",
