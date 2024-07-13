@@ -278,7 +278,7 @@ export const Setting: Array<Setting> = [
     key: SettingKeys.Tutorials,
     label: i18next.t("settings:tutorials"),
     options: OFF_ON,
-    default: 1,
+    default: 0,
     type: SettingType.GENERAL
   },
   {
@@ -518,7 +518,7 @@ export const Setting: Array<Setting> = [
     key: SettingKeys.Type_Hints,
     label: i18next.t("settings:typeHints"),
     options: OFF_ON,
-    default: 0,
+    default: 1,
     type: SettingType.DISPLAY
   },
   {
