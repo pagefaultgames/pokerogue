@@ -353,7 +353,7 @@ export function getSize(str: string) {
 export function getDRPD(scene: BattleScene): DRPD {
   var drpd: DRPD = JSON.parse(localStorage.getItem(getLogID(scene))) as DRPD;
   drpd = updateLog(drpd);
-  scene.arenaFlyout.updateFieldText()
+  //scene.arenaFlyout.updateFieldText()
   return drpd;
 }
 

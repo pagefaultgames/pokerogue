@@ -2368,6 +2368,8 @@ export class TurnInitPhase extends FieldPhase {
       })
     }
 
+    this.scene.arenaFlyout.updateFieldText()
+
     this.scene.setScoreText(txt.join("/"))
 
     this.end();
@@ -2876,35 +2878,34 @@ export class TurnStartPhase extends FieldPhase {
                 if (pokemon.getBattlerIndex() == 1) targIDs = ["Counter", "Ally", "Self", "L", "R"]
                 switch (mv.getMove().moveTarget) {
                   case MoveTarget.USER:
-                    //LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+                    LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
                     break;
                   case MoveTarget.OTHER:
                     LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
                     break;
                   case MoveTarget.ALL_OTHERS:
-                    //LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+                    LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
                     break;
                   case MoveTarget.NEAR_OTHER:
                     LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
                     break;
                   case MoveTarget.ALL_NEAR_OTHERS:
-                    //LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+                    LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
                     break;
                   case MoveTarget.NEAR_ENEMY:
                     LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
                     break;
                   case MoveTarget.ALL_NEAR_ENEMIES:
-                    //LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+                    LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
                     break;
                   case MoveTarget.RANDOM_NEAR_ENEMY:
-                    //LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+                    LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
                     break;
                   case MoveTarget.ALL_ENEMIES:
-                    //LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+                    LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
                     break;
                   case MoveTarget.ATTACKER:
-                    //LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
-                    break;
+                    LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
                     break;
                   case MoveTarget.NEAR_ALLY:
                     LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
@@ -2916,25 +2917,25 @@ export class TurnStartPhase extends FieldPhase {
                     LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
                     break;
                   case MoveTarget.USER_AND_ALLIES:
-                    //LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+                    LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
                     break;
                   case MoveTarget.ALL:
-                    //LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+                    LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
                     break;
                   case MoveTarget.USER_SIDE:
-                    //LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+                    LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
                     break;
                   case MoveTarget.ENEMY_SIDE:
-                    //LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+                    LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
                     break;
                   case MoveTarget.BOTH_SIDES:
-                    //LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+                    LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
                     break;
                   case MoveTarget.PARTY:
-                    //LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+                    LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
                     break;
                   case MoveTarget.CURSE:
-                    //LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+                    LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
                     break;
                 }
               }
@@ -3044,6 +3045,8 @@ export class TurnEndPhase extends FieldPhase {
 
   start() {
     super.start();
+
+    this.scene.arenaFlyout.updateFieldText()
 
     this.scene.currentBattle.incrementTurn(this.scene);
     this.scene.eventTarget.dispatchEvent(new TurnEndEvent(this.scene.currentBattle.turn));

@@ -272,7 +272,7 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
     this.flyoutTextHeaderField.text = "Stats"
     this.flyoutTextHeaderPlayer.text = ""
     this.flyoutTextHeaderEnemy.text = ""
-    this.flyoutTextPlayer.setPosition(6, 5)
+    this.flyoutTextPlayer.setPosition(6, 4)
     this.flyoutTextPlayer.setFontSize(30);
     var instructions = []
     var drpd = LoggerTools.getDRPD(this.scene as BattleScene);
@@ -290,7 +290,7 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
           instructions.push("Reward: " + drpd.waves[i].shop)
       }
     }
-    for (var i = instructions.length - 8; i < instructions.length; i++) {
+    for (var i = instructions.length - 10; i < instructions.length; i++) {
       if (i >= 0) {
         this.flyoutTextPlayer.text += instructions[i]
       }
