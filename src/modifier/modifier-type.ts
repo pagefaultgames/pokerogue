@@ -1879,13 +1879,13 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
     }
     options.push(candidate);
   });
+
   // OVERRIDE IF NECESSARY
-  if (Overrides.ITEM_REWARD_OVERRIDE?.length) {
-    options.forEach((mod, i) => {
-      const override = modifierTypes[Overrides.ITEM_REWARD_OVERRIDE[i]]();
-      mod.type = (override instanceof ModifierTypeGenerator ? override.generateType(party) : override) || mod.type;
-    });
-  }
+  Overrides.ITEM_REWARD_OVERRIDE.forEach((item, i) => {
+    const override = modifierTypes[item]();
+    options[i].type = override instanceof ModifierTypeGenerator ? override.generateType(party) : override;
+  });
+
   return options;
 }
 
