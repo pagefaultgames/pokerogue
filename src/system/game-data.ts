@@ -124,6 +124,7 @@ export interface SessionSaveData {
   challenges: ChallengeData[];
   slot: integer;
   description: string;
+  autoSlot: integer;
 }
 
 interface Unlocks {
@@ -842,7 +843,7 @@ export class GameData {
     } as SessionSaveData;
   }
 
-  getSession(slotId: integer): Promise<SessionSaveData> {
+  getSession(slotId: integer, autoSlot?: integer): Promise<SessionSaveData> {
     return new Promise(async (resolve, reject) => {
       if (slotId < 0) {
         return resolve(null);
@@ -850,14 +851,18 @@ export class GameData {
       const handleSessionData = async (sessionDataStr: string) => {
         try {
           const sessionData = this.parseSessionData(sessionDataStr);
+          sessionData.autoSlot = autoSlot;
           resolve(sessionData);
         } catch (err) {
           reject(err);
           return;
         }
       };
-
-      if (!bypassLogin && !localStorage.getItem(`sessionData${slotId ? slotId : ""}_${loggedInUser.username}`)) {
+      var autokey = ""
+      if (autoSlot != undefined) {
+        autokey = "_auto" + autoSlot
+      }
+      if (!bypassLogin && !localStorage.getItem(`sessionData${slotId ? slotId : ""}_${loggedInUser.username}${autokey}`)) {
         Utils.apiFetch(`savedata/session/get?slot=${slotId}&clientSessionId=${clientSessionId}`, true)
           .then(response => response.text())
           .then(async response => {
@@ -871,7 +876,8 @@ export class GameData {
             await handleSessionData(response);
           });
       } else {
-        const sessionData = localStorage.getItem(`sessionData${slotId ? slotId : ""}_${loggedInUser.username}`);
+        const sessionData = localStorage.getItem(`sessionData${slotId ? slotId : ""}_${loggedInUser.username}${autokey}`);
+        console.log(`sessionData${slotId ? slotId : ""}_${loggedInUser.username}${autokey}`, sessionData)
         if (sessionData) {
           await handleSessionData(decrypt(sessionData, bypassLogin));
         } else {
@@ -881,7 +887,7 @@ export class GameData {
     });
   }
 
-  loadSession(scene: BattleScene, slotId: integer, sessionData?: SessionSaveData): Promise<boolean> {
+  loadSession(scene: BattleScene, slotId: integer, sessionData?: SessionSaveData, autoSlot?: integer): Promise<boolean> {
     return new Promise(async (resolve, reject) => {
       try {
         const initSessionFromData = async (sessionData: SessionSaveData) => {
@@ -981,7 +987,7 @@ export class GameData {
         if (sessionData) {
           initSessionFromData(sessionData);
         } else {
-          this.getSession(slotId)
+          this.getSession(slotId, autoSlot)
             .then(data => initSessionFromData(data))
             .catch(err => {
               reject(err);

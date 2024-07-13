@@ -10,6 +10,7 @@ import MessageUiHandler from "./message-ui-handler";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
+import * as LoggerTools from "../logger"
 
 const sessionSlotCount = 5;
 
@@ -18,7 +19,7 @@ export enum SaveSlotUiMode {
   SAVE
 }
 
-export type SaveSlotSelectCallback = (cursor: integer) => void;
+export type SaveSlotSelectCallback = (cursor: integer, cursor2?: integer) => void;
 
 export default class SaveSlotSelectUiHandler extends MessageUiHandler {
 
@@ -106,7 +107,7 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
           switch (this.uiMode) {
           case SaveSlotUiMode.LOAD:
             this.saveSlotSelectCallback = null;
-            originalCallback(cursor);
+            originalCallback(this.sessionSlots[cursor].slotId, this.sessionSlots[cursor].autoSlot);
             break;
           case SaveSlotUiMode.SAVE:
             const saveAndCallback = () => {
@@ -115,8 +116,11 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
               ui.revertMode();
               ui.showText(null, 0);
               ui.setMode(Mode.MESSAGE);
-              originalCallback(cursor);
+              originalCallback(this.sessionSlots[cursor].slotId, this.sessionSlots[cursor].autoSlot);
             };
+            if (this.sessionSlots[cursor].autoSlot != undefined) {
+              return false;
+            }
             if (this.sessionSlots[cursor].hasData) {
               ui.showText(i18next.t("saveSlotSelectUiHandler:overwriteData"), null, () => {
                 ui.setOverlayMode(Mode.CONFIRM, () => {
@@ -158,7 +162,7 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
       case Button.DOWN:
         if (this.cursor < 2) {
           success = this.setCursor(this.cursor + 1);
-        } else if (this.scrollCursor < sessionSlotCount - 3) {
+        } else if (this.scrollCursor < this.sessionSlots.length - 3) {
           success = this.setScrollCursor(this.scrollCursor + 1);
         }
         break;
@@ -175,12 +179,28 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
   }
 
   populateSessionSlots() {
+    var ui = this.getUi();
+    var ypos = 0;
     for (let s = 0; s < sessionSlotCount; s++) {
-      const sessionSlot = new SessionSlot(this.scene, s);
+      const sessionSlot = new SessionSlot(this.scene, s, ypos);
+      ypos++
       sessionSlot.load();
       this.scene.add.existing(sessionSlot);
       this.sessionSlotsContainer.add(sessionSlot);
       this.sessionSlots.push(sessionSlot);
+      if (this.uiMode != SaveSlotUiMode.SAVE) {
+        for (var j = 0; j < LoggerTools.autoCheckpoints.length; j++) {
+          var k = "sessionData" + (s ? s : "") + "_Guest_auto" + j
+          if (localStorage.getItem(k) != null) {
+            const sessionSlot = new SessionSlot(this.scene, s, ypos, j);
+            ypos++
+            sessionSlot.load();
+            this.scene.add.existing(sessionSlot);
+            this.sessionSlotsContainer.add(sessionSlot);
+            this.sessionSlots.push(sessionSlot);
+          }
+        }
+      }
     }
   }
 
@@ -251,13 +271,15 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
 
 class SessionSlot extends Phaser.GameObjects.Container {
   public slotId: integer;
+  public autoSlot: integer;
   public hasData: boolean;
   private loadingLabel: Phaser.GameObjects.Text;
 
-  constructor(scene: BattleScene, slotId: integer) {
-    super(scene, 0, slotId * 56);
+  constructor(scene: BattleScene, slotId: integer, ypos: integer, autoSlot?: integer) {
+    super(scene, 0, ypos * 56);
 
     this.slotId = slotId;
+    this.autoSlot = autoSlot
 
     this.setup();
   }
@@ -273,8 +295,12 @@ class SessionSlot extends Phaser.GameObjects.Container {
 
   async setupWithData(data: SessionSaveData) {
     this.remove(this.loadingLabel, true);
-
-    const gameModeLabel = addTextObject(this.scene, 8, 5, `${GameMode.getModeName(data.gameMode) || i18next.t("gameMode:unkown")} - ${i18next.t("saveSlotSelectUiHandler:wave")} ${data.waveIndex}`, TextStyle.WINDOW);
+    var lbl = `${GameMode.getModeName(data.gameMode) || i18next.t("gameMode:unkown")} - ${i18next.t("saveSlotSelectUiHandler:wave")} ${data.waveIndex}`
+    if (this.autoSlot != undefined) {
+      lbl = `Slot ${this.slotId} (Auto) - ${i18next.t("saveSlotSelectUiHandler:wave")} ${data.waveIndex}`
+    }
+    console.log(data, this.slotId, this.autoSlot, lbl)
+    const gameModeLabel = addTextObject(this.scene, 8, 5, lbl, TextStyle.WINDOW);
     this.add(gameModeLabel);
 
     const timestampLabel = addTextObject(this.scene, 8, 19, new Date(data.timestamp).toLocaleString(), TextStyle.WINDOW);
@@ -329,7 +355,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
 
   load(): Promise<boolean> {
     return new Promise<boolean>(resolve => {
-      this.scene.gameData.getSession(this.slotId).then(async sessionData => {
+      this.scene.gameData.getSession(this.slotId, this.autoSlot).then(async sessionData => {
         if (!sessionData) {
           this.hasData = false;
           this.loadingLabel.setText(i18next.t("saveSlotSelectUiHandler:empty"));

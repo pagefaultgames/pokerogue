@@ -40,6 +40,15 @@ export const logKeys: string[] = [
   "d", // Debug
 ];
 
+export const autoCheckpoints: integer[] = [
+  1,
+  11,
+  21,
+  31,
+  41,
+  50
+]
+
 /**
  * Uses the save's RNG seed to create a log ID. Used to assign each save its own log.
  * @param scene The BattleScene.

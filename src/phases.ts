@@ -598,11 +598,11 @@ export class TitlePhase extends Phase {
       label: i18next.t("menu:loadGame"),
       handler: () => {
         this.scene.ui.setOverlayMode(Mode.SAVE_SLOT, SaveSlotUiMode.LOAD,
-          (slotId: integer) => {
+          (slotId: integer, autoSlot: integer) => {
             if (slotId === -1) {
               return this.showOptions();
             }
-            this.loadSaveSlot(slotId);
+            this.loadSaveSlot(slotId, autoSlot);
           });
         return true;
       }
@@ -631,10 +631,10 @@ export class TitlePhase extends Phase {
     this.scene.ui.setMode(Mode.TITLE, config);
   }
 
-  loadSaveSlot(slotId: integer): void {
+  loadSaveSlot(slotId: integer, autoSlot?: integer): void {
     this.scene.sessionSlotId = slotId > -1 ? slotId : loggedInUser.lastSessionSlot;
     this.scene.ui.setMode(Mode.MESSAGE);
-    this.scene.gameData.loadSession(this.scene, slotId, slotId === -1 ? this.lastSessionData : null).then((success: boolean) => {
+    this.scene.gameData.loadSession(this.scene, slotId, slotId === -1 ? this.lastSessionData : null, autoSlot).then((success: boolean) => {
       if (success) {
         this.loaded = true;
         this.scene.ui.showText(i18next.t("menu:sessionSuccess"), null, () => this.end());
