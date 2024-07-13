@@ -414,20 +414,24 @@ export function generateEditOption(scene: BattleScene, i: integer, saves: any, p
         ],
         buttonActions: [
           () => {
+            console.log("Rename")
             scene.ui.playSelect();
             phase.callEnd()
           },
           () => {
+            console.log("Export")
             scene.ui.playSelect();
             downloadLogByID(i)
             phase.callEnd()
           },
           () => {
+            console.log("Export to Sheets")
             scene.ui.playSelect();
             downloadLogByIDToSheet(i)
             phase.callEnd()
-          },,
+          },
           () => {
+            console.log("Delete")
             scene.ui.playSelect();
             localStorage.removeItem(logs[i][1])
             phase.callEnd()
@@ -438,7 +442,7 @@ export function generateEditOption(scene: BattleScene, i: integer, saves: any, p
     }
   }
   for (var j = 0; j < saves.length; j++) {
-    console.log(saves[j].seed, logs[i][2], saves[j].seed == logs[i][2])
+    //console.log(saves[j].seed, logs[i][2], saves[j].seed == logs[i][2])
     if (saves[j].seed == logs[i][2]) {
       op.label = "[Slot " + (saves[j].slot + 1) + "]" + op.label.substring(6)
     }
@@ -498,6 +502,7 @@ export function clearLog(keyword: string) {
   localStorage.setItem(logs[logKeys.indexOf(keyword)][1], "---- " + logs[logKeys.indexOf(keyword)][3] + " ----" + logs[logKeys.indexOf(keyword)][5])
 }
 export function setFileInfo(title: string, authors: string[]) {
+  console.log("Setting file " + rarityslot[1] + " to " + title + " / [" + authors.join(", ") + "]")
   var fileID = rarityslot[1] as string
   var drpd = JSON.parse(localStorage.getItem(fileID)) as DRPD;
   drpd.title = title;
@@ -1045,6 +1050,7 @@ export function flagResetIfExists(scene: BattleScene, floor: integer = undefined
  * @see printWave
  */
 export function printDRPD(inData: string, indent: string, drpd: DRPD): string {
+  console.log("Printing for sheet?: " + SheetsMode.value)
   inData += indent + "{"
   inData += "\n" + indent + "  \"version\": \"" + drpd.version + "\""
   inData += ",\n" + indent + "  \"title\": \"" + drpd.title + "\""
@@ -1087,7 +1093,19 @@ function printWave(inData: string, indent: string, wave: Wave): string {
   var isFirst = true
   if (wave.actions.length > 0) {
     if (SheetsMode.value) {
-      inData += ",\n" + indent + "  \"actions\": [" + wave.actions.join("CHAR(10)") + "]"
+      inData += ",\n" + indent + "  \"actions\": \""
+      var isFirst = true
+        for (var i = 0; i < wave.actions.length; i++) {
+          if (wave.actions[i] != undefined) {
+            if (isFirst) {
+              isFirst = false;
+            } else {
+              inData += "CHAR(10)"
+            }
+            inData += wave.actions[i]
+          }
+        }
+      inData +=  "\""
     } else {
       inData += ",\n" + indent + "  \"actions\": ["
       for (var i = 0; i < wave.actions.length; i++) {
@@ -1156,7 +1174,21 @@ function printPoke(inData: string, indent: string, pokemon: PokeData) {
   inData += ",\n" + indent + "  \"rarity\": \"" + pokemon.rarity + "\""
   inData += ",\n" + indent + "  \"captured\": " + pokemon.captured
   inData += ",\n" + indent + "  \"level\": " + pokemon.level
-  if (!SheetsMode.value)
+  if (SheetsMode.value) {
+    inData += ",\n" + indent + "  \"items\": \""
+    var isFirst = true
+      for (var i = 0; i < pokemon.items.length; i++) {
+        if (pokemon.items[i] != undefined) {
+          if (isFirst) {
+            isFirst = false;
+          } else {
+            inData += "CHAR(10)"
+          }
+          inData += printItemNoNewline(inData, "", pokemon.items[i])
+        }
+      }
+    inData +=  "\""
+  } else {
     if (pokemon.items.length > 0) {
       inData += ",\n" + indent + "  \"items\": [\n"
       var isFirst = true
@@ -1175,6 +1207,7 @@ function printPoke(inData: string, indent: string, pokemon: PokeData) {
     } else {
       inData += ",\n" + indent + "  \"items\": []"
     }
+  }
   inData += ",\n" + indent + "  \"ivs\": "
   inData = printIV(inData, indent + "  ", pokemon.ivs)
   //inData += ",\n" + indent + "  \"rarity\": " + pokemon.rarity
@@ -1250,6 +1283,19 @@ function printItem(inData: string, indent: string, item: ItemData) {
   inData += ",\n" + indent + "  \"name\": \"" + item.name + "\""
   inData += ",\n" + indent + "  \"quantity\": " + item.quantity
   inData += "\n" + indent + "}"
+  return inData;
+}
+/**
+ * Prints an item as a string, for saving a DRPD to your device.
+ * @param inData The data to add on to.
+ * @param indent The indent string (just a bunch of spaces).
+ * @param wave The `ItemData` to export.
+ * @returns `inData`, with all the Item's data appended to it.
+ * 
+ * @see printDRPD
+ */
+function printItemNoNewline(inData: string, indent: string, item: ItemData) {
+  inData = "{\\\"id\\\": \\\"" + item.id + "\\\", \\\"name\\\": \\\"" + item.name + "\\\", \\\"quantity\\\": " + item.quantity + "}"
   return inData;
 }
 

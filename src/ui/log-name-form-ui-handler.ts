@@ -7,8 +7,10 @@ import * as LoggerTools from "../logger";
 import { addTextObject, TextStyle } from "./text";
 
 export default class LogNameFormUiHandler extends FormModalUiHandler {
+  name: string;
+
   getModalTitle(config?: ModalConfig): string {
-    return "New Log";
+    return "Manage " + (this.name ? this.name : "Log");
   }
 
   getFields(config?: ModalConfig): string[] {
@@ -49,8 +51,7 @@ export default class LogNameFormUiHandler extends FormModalUiHandler {
   setup(): void {
     super.setup();
 
-    //const label = addTextObject(this.scene, 10, 87, "Text", TextStyle.TOOLTIP_CONTENT, { fontSize: "42px" });
-
+    //const label = addTextObject(this.scene, 10, 87, "Clicking Export or ExSheets does NOT save any text you entered\nPress \"Rename\", then reopen this menu and click Export", TextStyle.TOOLTIP_CONTENT, { fontSize: "42px" });
     //this.modalContainer.add(label);
 
     this.inputs[0].maxLength = 99
@@ -58,14 +59,16 @@ export default class LogNameFormUiHandler extends FormModalUiHandler {
   }
 
   show(args: any[]): boolean {
-    console.error("Shown")
+    this.name = args[0].autofillfields[0]
     if (super.show(args)) {
       const config = args[0] as ModalConfig;
+      console.log("Shown", args)
 
       const originalLoginAction = this.submitAction;
       this.inputs[0].setText(args[0].autofillfields[0])
       this.inputs[1].setText(args[0].autofillfields[1])
       this.submitAction = (_) => {
+        console.log("submitAction")
         // Prevent overlapping overrides on action modification
         this.submitAction = originalLoginAction;
         this.sanitizeInputs();
@@ -77,9 +80,21 @@ export default class LogNameFormUiHandler extends FormModalUiHandler {
         if (!this.inputs[0].text) {
           //return onFail(i18next.t("menu:emptyUsername"));
         }
+        console.log(`Calling LoggerTools.setFileInfo(${this.inputs[0].text}, ${this.inputs[1].text.split(",")})`)
         LoggerTools.setFileInfo(this.inputs[0].text, this.inputs[1].text.split(","))
+        console.log(`Calling originalLoginAction()`)
         originalLoginAction()
       };
+      const exportaction1 = config.buttonActions[1]
+      config.buttonActions[1] = (_) => {
+        LoggerTools.setFileInfo(this.inputs[0].text, this.inputs[1].text.split(","))
+        exportaction1()
+      }
+      const exportaction2 = config.buttonActions[2]
+      config.buttonActions[2] = (_) => {
+        LoggerTools.setFileInfo(this.inputs[0].text, this.inputs[1].text.split(","))
+        exportaction2()
+      }
 
       return true;
     }

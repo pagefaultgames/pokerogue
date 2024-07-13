@@ -1366,6 +1366,10 @@ export class EncounterPhase extends BattlePhase {
     }
     LoggerTools.resetWaveActions(this.scene)
 
+    if (LoggerTools.autoCheckpoints.includes(this.scene.currentBattle.waveIndex)) {
+      this.scene.gameData.saveGameToAuto(this.scene)
+    }
+
     if (this.scene.currentBattle.battleType === BattleType.WILD) {
       enemyField.forEach(enemyPokemon => {
         enemyPokemon.untint(100, "Sine.easeOut");

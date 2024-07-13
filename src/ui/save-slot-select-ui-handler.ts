@@ -11,6 +11,7 @@ import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
 import * as LoggerTools from "../logger"
+import { loggedInUser } from "#app/account.js";
 
 const sessionSlotCount = 5;
 
@@ -113,6 +114,11 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
             const saveAndCallback = () => {
               const originalCallback = this.saveSlotSelectCallback;
               this.saveSlotSelectCallback = null;
+              var dataslot = this.sessionSlots[cursor].slotId
+              for (var i = 0; i < LoggerTools.autoCheckpoints.length; i++) {
+                // Delete any autosaves associated with this slot
+                localStorage.removeItem(`sessionData${dataslot ? dataslot : ""}_${loggedInUser.username}_auto${i}`)
+              }
               ui.revertMode();
               ui.showText(null, 0);
               ui.setMode(Mode.MESSAGE);

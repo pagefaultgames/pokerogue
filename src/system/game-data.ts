@@ -40,6 +40,7 @@ import { GameDataType } from "#enums/game-data-type";
 import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
+import * as LoggerTools from "../logger"
 
 export const defaultStarterSpecies: Species[] = [
   Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE,
@@ -877,7 +878,7 @@ export class GameData {
           });
       } else {
         const sessionData = localStorage.getItem(`sessionData${slotId ? slotId : ""}_${loggedInUser.username}${autokey}`);
-        console.log(`sessionData${slotId ? slotId : ""}_${loggedInUser.username}${autokey}`, sessionData)
+        //console.log(`sessionData${slotId ? slotId : ""}_${loggedInUser.username}${autokey}`, sessionData)
         if (sessionData) {
           await handleSessionData(decrypt(sessionData, bypassLogin));
         } else {
@@ -1155,6 +1156,13 @@ export class GameData {
 
       return v;
     }) as SessionSaveData;
+  }
+
+  saveGameToAuto(scene: BattleScene) {
+    var autoSlot = LoggerTools.autoCheckpoints.indexOf(scene.currentBattle.waveIndex)
+    var dat = this.getSessionSaveData(scene)
+    console.log(`Stored autosave as sessionData${scene.sessionSlotId ? scene.sessionSlotId : ""}_${loggedInUser.username}_auto${autoSlot}`)
+    localStorage.setItem(`sessionData${scene.sessionSlotId ? scene.sessionSlotId : ""}_${loggedInUser.username}_auto${autoSlot}`, encrypt(JSON.stringify(dat), bypassLogin));
   }
 
   saveAll(scene: BattleScene, skipVerification: boolean = false, sync: boolean = false, useCachedSession: boolean = false, useCachedSystem: boolean = false): Promise<boolean> {
