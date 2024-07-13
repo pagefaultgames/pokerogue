@@ -92,6 +92,10 @@ export enum MoveFlags {
    * Enables all hits of a multi-hit move to be accuracy checked individually
    */
   CHECK_ALL_HITS   = 1 << 17,
+  /**
+   * Moves that cannot be copied by {@linkcode Moves.SKETCH}
+   */
+  UNSKETCHABLE     = 1 << 18,
 }
 
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
@@ -513,6 +517,11 @@ export default class Move implements Localizable {
    */
   windMove(windMove?: boolean): this {
     this.setFlag(MoveFlags.WIND_MOVE, windMove);
+    return this;
+  }
+
+  unsketchableMove(unsketchableMove?: boolean): this {
+    this.setFlag(MoveFlags.UNSKETCHABLE, unsketchableMove);
     return this;
   }
 
@@ -5193,14 +5202,16 @@ export class SketchAttr extends MoveEffectAttr {
         return false;
       }
 
-      const targetMoves = target.getMoveHistory().filter(m => !m.virtual);
-      if (!targetMoves.length) {
+      const targetMove = target.getMoveHistory().filter(m => !m.virtual).at(-1);
+      if (!targetMove) {
         return false;
       }
 
-      const sketchableMove = targetMoves[0];
+      if (allMoves[targetMove.move].hasFlag(MoveFlags.UNSKETCHABLE)) {
+        return false;
+      }
 
-      if (user.getMoveset().find(m => m.moveId === sketchableMove.move)) {
+      if (user.getMoveset().find(m => m.moveId === targetMove.move)) {
         return false;
       }
 
