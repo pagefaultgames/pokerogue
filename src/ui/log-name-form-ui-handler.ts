@@ -24,7 +24,7 @@ export default class LogNameFormUiHandler extends FormModalUiHandler {
   }
 
   getButtonLabels(config?: ModalConfig): string[] {
-    return [ "Rename", "Export" ];
+    return [ "Rename", "Export", "ExSheet", "Delete" ];
   }
 
   getReadableErrorMessage(error: string): string {

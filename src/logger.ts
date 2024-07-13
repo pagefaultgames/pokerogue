@@ -415,6 +415,11 @@ export function generateEditOption(scene: BattleScene, i: integer, saves: any, p
           },
           () => {
             scene.ui.playSelect();
+            downloadLogByIDToSheet(i)
+            phase.callEnd()
+          },,
+          () => {
+            scene.ui.playSelect();
             localStorage.removeItem(logs[i][1])
             phase.callEnd()
           }
@@ -527,6 +532,18 @@ export function downloadLogByID(i: integer) {
   console.log(i)
   var d = JSON.parse(localStorage.getItem(logs[i][1]))
   const blob = new Blob([ printDRPD("", "", d as DRPD) ], {type: "text/json"});
+  const link = document.createElement("a");
+  link.href = window.URL.createObjectURL(blob);
+  var date: string = (d as DRPD).date
+  var filename: string = date[0] + date[1] + "_" + date[3] + date[4] + "_" + date[6] + date[7] + date[8] + date[9] + "_route.json"
+  link.download = `${filename}`;
+  link.click();
+  link.remove();
+}
+export function downloadLogByIDToSheet(i: integer) {
+  console.log(i)
+  var d = JSON.parse(localStorage.getItem(logs[i][1]))
+  const blob = new Blob([ printDRPD("", "", d as DRPD).split("\n").join("CHAR(10)") ], {type: "text/json"});
   const link = document.createElement("a");
   link.href = window.URL.createObjectURL(blob);
   var date: string = (d as DRPD).date
