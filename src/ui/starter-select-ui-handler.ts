@@ -28,7 +28,7 @@ import { TextStyle, addBBCodeTextObject, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
 import { Egg } from "#app/data/egg";
-import * as Overrides from "../overrides";
+import Overrides from "../overrides";
 import {SettingKeyboard} from "#app/system/settings/settings-keyboard";
 import {Passive as PassiveAttr} from "#enums/passive";
 import * as Challenge from "../data/challenge";
@@ -1979,6 +1979,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           container.shinyIcons[v].setTint(getVariantTint(speciesVariants[v] === DexAttr.DEFAULT_VARIANT ? 0 : speciesVariants[v] === DexAttr.VARIANT_2 ? 1 : 2));
         }
       }
+
+      container.starterPassiveBgs.setVisible(!!this.scene.gameData.starterData[speciesId].passiveAttr);
       container.hiddenAbilityIcon.setVisible(!!this.scene.gameData.dexData[speciesId].caughtAttr && !!(this.scene.gameData.starterData[speciesId].abilityAttr & 4));
       container.classicWinIcon.setVisible(this.scene.gameData.starterData[speciesId].classicWinCount > 0);
 

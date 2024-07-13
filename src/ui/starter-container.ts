@@ -8,6 +8,7 @@ export class StarterContainer extends Phaser.GameObjects.Container {
   public icon: Phaser.GameObjects.Sprite;
   public shinyIcons: Phaser.GameObjects.Image[] = [];
   public label: Phaser.GameObjects.Text;
+  public starterPassiveBgs: Phaser.GameObjects.Image;
   public hiddenAbilityIcon: Phaser.GameObjects.Image;
   public classicWinIcon: Phaser.GameObjects.Image;
   public candyUpgradeIcon: Phaser.GameObjects.Image;
@@ -22,6 +23,14 @@ export class StarterContainer extends Phaser.GameObjects.Container {
     const defaultDexAttr = scene.gameData.getSpeciesDefaultDexAttr(species, false, true);
     const defaultProps = scene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
 
+    // starter passive bg
+    const starterPassiveBg = this.scene.add.image(2, 5, "passive_bg");
+    starterPassiveBg.setOrigin(0, 0);
+    starterPassiveBg.setScale(0.75);
+    starterPassiveBg.setVisible(false);
+    this.add(starterPassiveBg);
+    this.starterPassiveBgs = starterPassiveBg;
+    
     // icon
     this.icon = this.scene.add.sprite(-2, 2, species.getIconAtlasKey(defaultProps.formIndex, defaultProps.shiny, defaultProps.variant));
     this.icon.setScale(0.5);

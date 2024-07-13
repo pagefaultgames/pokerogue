@@ -58,10 +58,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "Increases the power of a Pokémon's {{moveType}}-type moves by 20%.",
     },
     "PokemonLevelIncrementModifierType": {
-      description: "Increases a Pokémon's level by 1.",
+      description: "Increases a Pokémon's level by {{levels}}.",
     },
     "AllPokemonLevelIncrementModifierType": {
-      description: "Increases all party members' level by 1.",
+      description: "Increases all party members' level by {{levels}}.",
     },
     "PokemonBaseStatBoosterModifierType": {
       description: "Increases the holder's base {{statName}} by 10%. The higher your IVs, the higher the stack limit.",
