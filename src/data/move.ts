@@ -519,6 +519,11 @@ export default class Move implements Localizable {
     return this;
   }
 
+  unsketchableMove(unsketchableMove?: boolean): this {
+    this.setFlag(MoveFlags.UNSKETCHABLE, unsketchableMove);
+    return this;
+  }
+
   /**
    * Sets the {@linkcode MoveFlags.TRIAGE_MOVE} flag for the calling Move
    * @param triageMove The value (boolean) to set the flag to
@@ -5429,14 +5434,16 @@ export class SketchAttr extends MoveEffectAttr {
         return false;
       }
 
-      const targetMoves = target.getMoveHistory().filter(m => !m.virtual);
-      if (!targetMoves.length) {
+      const targetMove = target.getMoveHistory().filter(m => !m.virtual).at(-1);
+      if (!targetMove) {
         return false;
       }
 
-      const sketchableMove = targetMoves[0];
+      if (allMoves[targetMove.move].hasFlag(MoveFlags.UNSKETCHABLE)) {
+        return false;
+      }
 
-      if (user.getMoveset().find(m => m.moveId === sketchableMove.move)) {
+      if (user.getMoveset().find(m => m.moveId === targetMove.move)) {
         return false;
       }
 
