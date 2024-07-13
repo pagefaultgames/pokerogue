@@ -2619,8 +2619,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       textStyle = TextStyle.SUMMARY_GOLD;
       break;
     }
-    starter.label.setColor(this.getTextColor(textStyle));
-    starter.label.setShadowColor(this.getTextColor(textStyle, true));
+    if (baseStarterValue - starterValue > 0) {
+      starter.label.setColor(this.getTextColor(textStyle));
+      starter.label.setShadowColor(this.getTextColor(textStyle, true));
+    }
   }
 
   tryUpdateValue(add?: integer, addingToParty?: boolean): boolean {
