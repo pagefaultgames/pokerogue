@@ -144,18 +144,6 @@ function calcStarterPosition(index: number, scrollCursor:number = 0): {x: number
   return {x: x, y: y};
 }
 
-const gens = [
-  i18next.t("starterSelectUiHandler:gen1"),
-  i18next.t("starterSelectUiHandler:gen2"),
-  i18next.t("starterSelectUiHandler:gen3"),
-  i18next.t("starterSelectUiHandler:gen4"),
-  i18next.t("starterSelectUiHandler:gen5"),
-  i18next.t("starterSelectUiHandler:gen6"),
-  i18next.t("starterSelectUiHandler:gen7"),
-  i18next.t("starterSelectUiHandler:gen8"),
-  i18next.t("starterSelectUiHandler:gen9")
-];
-
 export default class StarterSelectUiHandler extends MessageUiHandler {
   private starterSelectContainer: Phaser.GameObjects.Container;
   private starterSelectScrollBar: ScrollBar;
@@ -319,15 +307,15 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     // gen filter
     const genOptions: DropDownOption[] = [
-      new DropDownOption(this.scene, 1, "I", null, DropDownState.ON),
-      new DropDownOption(this.scene, 2, "II", null, DropDownState.ON),
-      new DropDownOption(this.scene, 3, "III", null, DropDownState.ON),
-      new DropDownOption(this.scene, 4, "IV", null, DropDownState.ON),
-      new DropDownOption(this.scene, 5, "V", null, DropDownState.ON),
-      new DropDownOption(this.scene, 6, "VI", null, DropDownState.ON),
-      new DropDownOption(this.scene, 7, "VII", null, DropDownState.ON),
-      new DropDownOption(this.scene, 8, "VIII", null, DropDownState.ON),
-      new DropDownOption(this.scene, 9, "IX", null, DropDownState.ON),
+      new DropDownOption(this.scene, 1, i18next.t("starterSelectUiHandler:gen1"), null, DropDownState.ON),
+      new DropDownOption(this.scene, 2, i18next.t("starterSelectUiHandler:gen2"), null, DropDownState.ON),
+      new DropDownOption(this.scene, 3, i18next.t("starterSelectUiHandler:gen3"), null, DropDownState.ON),
+      new DropDownOption(this.scene, 4, i18next.t("starterSelectUiHandler:gen4"), null, DropDownState.ON),
+      new DropDownOption(this.scene, 5, i18next.t("starterSelectUiHandler:gen5"), null, DropDownState.ON),
+      new DropDownOption(this.scene, 6, i18next.t("starterSelectUiHandler:gen6"), null, DropDownState.ON),
+      new DropDownOption(this.scene, 7, i18next.t("starterSelectUiHandler:gen7"), null, DropDownState.ON),
+      new DropDownOption(this.scene, 8, i18next.t("starterSelectUiHandler:gen8"), null, DropDownState.ON),
+      new DropDownOption(this.scene, 9, i18next.t("starterSelectUiHandler:gen9"), null, DropDownState.ON),
     ];
     this.filterBar.addFilter("Gen", new DropDown(this.scene, 0, 0, genOptions, this.updateStarters, DropDownType.MULTI));
     this.filterBar.defaultGenVals = this.filterBar.getVals(DropDownColumn.GEN);
@@ -507,7 +495,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.cursorObj = this.scene.add.image(0, 0, "select_cursor");
     this.cursorObj.setOrigin(0, 0);
     starterBoxContainer.add(this.cursorObj);
-    
+
     for (const species of allSpecies) {
       if (!speciesStarters.hasOwnProperty(species.speciesId) || !species.isObtainable()) {
         continue;
