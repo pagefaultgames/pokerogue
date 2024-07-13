@@ -1141,6 +1141,6 @@ export const ability: AbilityTranslationEntries = {
   poisonPuppeteer: {
     name: "毒傀儡",
     description:
-            "因為桃歹郎的招式而陷入中\n毒狀態的對手同時也會陷入\n混亂狀態。", // TODO: Remove reference to Pecharunt
+            "因為此寶可夢的招式而陷入中毒狀\n態的對手同時也會陷入混亂狀態。",
   },
 } as const;
