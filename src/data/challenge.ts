@@ -130,8 +130,6 @@ export abstract class Challenge {
 
   public conditions: ChallengeCondition[];
 
-  public additionalData: {[x: string]: any};
-
   /**
    * @param id {@link Challenges} The enum value for the challenge
    */
@@ -839,12 +837,7 @@ export class NuzlockeChallenge extends Challenge {
   }
 
   applyAddPokemonToParty(pokemon: EnemyPokemon, waveIndex: number, canBeAddToParty: Utils.BooleanHolder): boolean {
-    if (Math.floor((this.additionalData.lastCatchAtWave - 1) / 10) < Math.floor((waveIndex - 1) / 10)) {
-      canBeAddToParty.value = true;
-      this.additionalData.lastCatchAtWave = waveIndex;
-    } else {
-      canBeAddToParty.value = false;
-    }
+    canBeAddToParty.value = waveIndex % 10 === 1;
     return true;
   }
 
@@ -874,7 +867,6 @@ export class NuzlockeChallenge extends Challenge {
     const newChallenge = new NuzlockeChallenge();
     newChallenge.value = source.value;
     newChallenge.severity = source.severity;
-    newChallenge.additionalData = source.additionalData ?? { lastCatchAtWave: -10 };
     return newChallenge;
   }
 }
