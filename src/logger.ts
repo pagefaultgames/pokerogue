@@ -17,7 +17,7 @@ import Trainer from "./field/trainer";
 import { Species } from "./enums/species";
 import { junit } from "node:test/reporters";
 import { i } from "vitest/dist/reporters-xEmem8D4.js";
-import { GameModes } from "./game-mode";
+import { GameMode, GameModes } from "./game-mode";
 
 /**
  * All logs.
@@ -658,10 +658,27 @@ export function getWave(drpd: DRPD, floor: integer, scene: BattleScene): Wave {
           }
         }
       }
-      if (drpd.waves[49] != undefined) {
-        scene.ui.showText("No space!\nPress F12 for info")
-        console.error("There should have been 50 slots, but somehow the program ran out of space.")
-        console.error("Go yell at @redstonewolf8557 to fix this")
+      if (drpd.waves[drpd.waves.length - 1] != undefined) {
+        if (scene.gameMode.modeId == GameModes.DAILY) {
+          scene.ui.showText("No space!\nPress F12 for info")
+          console.error("There should have been 50 slots, but somehow the program ran out of space.")
+          console.error("Go yell at @redstonewolf8557 to fix this")
+        } else {
+          drpd.waves.push(null)
+          console.log("Created new wave for floor " + floor + " at newly inserted index " + insertPos)
+          drpd.waves[drpd.waves.length - 1] = {
+            id: floor,
+            reload: false,
+            //type: floor % 10 == 0 ? "boss" : (floor % 10 == 5 ? "trainer" : "wild"),
+            type: floor % 10 == 0 ? "boss" : "wild",
+            double: scene.currentBattle.double,
+            actions: [],
+            shop: "",
+            biome: getBiomeName(scene.arena.biomeType),
+            pokemon: []
+          }
+          wv = drpd.waves[drpd.waves.length - 1]
+        }
       } else {
         for (var i = 0; i < drpd.waves.length; i++) {
           if (drpd.waves[i] != undefined && drpd.waves[i] != null) {
