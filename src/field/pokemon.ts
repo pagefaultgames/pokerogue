@@ -1726,7 +1726,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (opponents.length === 1) {
       return opponents[0].name;
     }
-    return this.isPlayer() ? "the opposing team" : "your team";
+    return this.isPlayer() ? i18next.t("arenaTags:opposingTeam") : i18next.t("arenaTags:yourTeam");
   }
 
   getAlly(): Pokemon {
