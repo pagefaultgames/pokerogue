@@ -366,7 +366,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       new DropDownOption(this.scene, "SHINY2", null, shiny2Sprite),
       new DropDownOption(this.scene, "SHINY", null, shiny1Sprite),
       new DropDownOption(this.scene, "NORMAL", "Normal"),
-      new DropDownOption(this.scene, "UNCAUGHT", "Not Caught")];
+      new DropDownOption(this.scene, "UNCAUGHT", "Not Caught"),  
+      new DropDownOption(this.scene, "PASSIVEUNLOCKED", "Passive Unlocked"), 
+      new DropDownOption(this.scene, "PASSIVELOCKED", "Passive Locked"),];  
+
     this.filterBar.addFilter("Unlocks", new DropDown(this.scene, 0, 0, unlocksOptions, this.updateStarters, DropDownType.MULTI));
     this.filterBar.defaultUnlockVals = this.filterBar.getVals(DropDownColumn.UNLOCKS);
 
@@ -1875,6 +1878,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         const isVariantCaught = !!(caughtVariants & DexAttr.SHINY);
         const isCaught = !!(caughtVariants & DexAttr.NON_SHINY);
         const isUncaught = !isCaught && !isVariantCaught && !isVariant2Caught && !isVariant3Caught;
+        const isPassiveUnlocked = this.scene.gameData.starterData[container.species.speciesId].passiveAttr > 0;  
+
 
         const fitsGen =   this.filterBar.getVals(DropDownColumn.GEN).includes(g);
         const fitsType =  this.filterBar.getVals(DropDownColumn.TYPES).some(type => container.species.isOfType((type as number) - 1));
@@ -1889,6 +1894,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             return isCaught && !isVariantCaught && !isVariant2Caught && !isVariant3Caught;
           } else if (variant === "UNCAUGHT") {
             return isUncaught;
+          } else if (variant === "PASSIVEUNLOCKED") {
+            return isPassiveUnlocked;  
+          } else if (variant === "PASSIVELOCKED") {
+            return !isPassiveUnlocked;  
           }
         });
         const isWin = this.scene.gameData.starterData[container.species.speciesId].classicWinCount > 0;
