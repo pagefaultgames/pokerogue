@@ -58,10 +58,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "一只宝可梦的{{moveType}}系招式威力提升20%。",
     },
     "PokemonLevelIncrementModifierType": {
-      description: "一只宝可梦等级提升1级。",
+      description: "使一只宝可梦的等级提升{{levels}}级。",
     },
     "AllPokemonLevelIncrementModifierType": {
-      description: "所有成员宝可梦等级提升1级。",
+      description: "使一只寶可夢的等級提升{{levels}}級。",
     },
     "PokemonBaseStatBoosterModifierType": {
       description: "增加10%持有者的{{statName}}，\n个体值越高堆叠上限越高。",
@@ -151,7 +151,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SACRED_ASH": { name: "圣灰" },
 
-    "REVIVER_SEED": { name: "复活种子", description: "恢复1只濒死宝可梦的HP至1/2。" },
+    "REVIVER_SEED": { name: "复活种子", description: "受到技能攻击伤害濒死时，\n恢复该宝可梦的HP至1/2。" },
 
     "ETHER": { name: "PP单项小补剂" },
     "MAX_ETHER": { name: "PP单项全补剂" },
