@@ -1809,18 +1809,18 @@ export function getModifierTypeFuncById(id: string): ModifierTypeFunc {
   return modifierTypes[id];
 }
 
-export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemon[], gameMode: GameMode, modifierTiers?: ModifierTier[]): ModifierTypeOption[] {
+export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemon[], modifierTiers?: ModifierTier[]): ModifierTypeOption[] {
   const options: ModifierTypeOption[] = [];
   const retryCount = Math.min(count * 5, 50);
   new Array(count).fill(0).map((_, i) => {
     let candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, modifierTiers?.length > i ? modifierTiers[i] : undefined);
     let r = 0;
     let isValidForChallenge = new Utils.BooleanHolder(true);
-    applyChallenges(gameMode, ChallengeType.RANDOM_ITEM_BLACKLIST, candidate, isValidForChallenge);
+    applyChallenges(party[0].scene.gameMode, ChallengeType.RANDOM_ITEM_BLACKLIST, candidate, isValidForChallenge);
     while ((options.length && ++r < retryCount && options.filter(o => o.type.name === candidate.type.name || o.type.group === candidate.type.group).length) || !isValidForChallenge.value) {
       candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, candidate.type.tier, candidate.upgradeCount);
       isValidForChallenge = new Utils.BooleanHolder(true);
-      applyChallenges(gameMode, ChallengeType.RANDOM_ITEM_BLACKLIST, candidate, isValidForChallenge);
+      applyChallenges(party[0].scene.gameMode, ChallengeType.RANDOM_ITEM_BLACKLIST, candidate, isValidForChallenge);
     }
     options.push(candidate);
   });
