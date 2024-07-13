@@ -30,7 +30,7 @@ export class StarterContainer extends Phaser.GameObjects.Container {
     starterPassiveBg.setVisible(false);
     this.add(starterPassiveBg);
     this.starterPassiveBgs = starterPassiveBg;
-    
+
     // icon
     this.icon = this.scene.add.sprite(-2, 2, species.getIconAtlasKey(defaultProps.formIndex, defaultProps.shiny, defaultProps.variant));
     this.icon.setScale(0.5);
