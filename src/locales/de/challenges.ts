@@ -28,7 +28,7 @@ export const challenges: TranslationEntries = {
     "name": "Nuzlocke",
     "desc": "Die Nuzlocke-Herausforderung beinhaltet verschiedene Einschränkungen, um eine besondere Herausforderung zu gestalten.",
     "desc.1": "Nuzlocke-Regeln:\n- Keine Beleber.\n- Pro 10 Wellen darf nur ein Pokémon zum Team hinzugefügt werden.\n",
-    "desc.2": "- Keine Heilung bei Biomwechsel.\n- Keine Legendären Starter.",
+    "desc.2": "Nuzlocke-Regeln:\n- Keine Beleber.\n- Pro 10 Wellen darf nur ein Pokémon zum Team hinzugefügt werden.\n- Keine Heilung bei Biomwechsel.\n- Keine Legendären Starter.",
     "value.0": "Aus",
     "value.1": "Regulär",
     "value.2": "Hardcore",

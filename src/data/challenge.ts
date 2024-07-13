@@ -870,29 +870,6 @@ export class NuzlockeChallenge extends Challenge {
   }
 
 
-  /**
-   * Returns the description of a challenge's current value.
-   * @param {value} overrideValue The value to check for. If undefined, gets the current value.
-   * @returns {string} The localised description for the current value.
-   */
-  getDescription(overrideValue?: integer): string {
-    if (overrideValue === undefined) {
-      overrideValue = this.value;
-    }
-    let desc: string = i18next.t("challenges:nuzlocke.desc");
-    switch (overrideValue) {
-    case 1:
-      desc = i18next.t("challenges:nuzlocke.desc.1");
-      break;
-    case 2:
-      desc = i18next.t("challenges:nuzlocke.desc.1");
-      desc += i18next.t("challenges:nuzlocke.desc.2");
-    default:
-      break;
-    }
-    return desc;
-  }
-
   static loadChallenge(source: NuzlockeChallenge | any): NuzlockeChallenge {
     const newChallenge = new NuzlockeChallenge();
     newChallenge.value = source.value;
