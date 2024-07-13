@@ -45,9 +45,6 @@ export default class BgmBar extends Phaser.GameObjects.Container {
    */
   setBgmToBgmBar(bgmName: string): void {
     this.musicText.setText(`${i18next.t("bgmName:music")}${this.getRealBgmName(bgmName)}`);
-    if (!(this.scene as BattleScene).showBgmBar) {
-      return;
-    }
 
     this.musicText.width = this.bg.width - 20;
     this.musicText.setWordWrapWidth(this.defaultWidth * 4);
