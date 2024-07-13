@@ -2872,81 +2872,84 @@ export class TurnStartPhase extends FieldPhase {
             var targets = turnCommand.targets || turnCommand.move.targets
             var mv = new PokemonMove(queuedMove.move)
             if (pokemon.isPlayer()) {
+              console.log(turnCommand.targets, turnCommand.move.targets)
               LoggerTools.Actions[pokemon.getBattlerIndex()] = mv.getName()
               if (this.scene.currentBattle.double) {
                 var targIDs = ["Counter", "Self", "Ally", "L", "R"]
                 if (pokemon.getBattlerIndex() == 1) targIDs = ["Counter", "Ally", "Self", "L", "R"]
-                switch (mv.getMove().moveTarget) {
-                  case MoveTarget.USER:
-                    LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
-                    break;
-                  case MoveTarget.OTHER:
-                    LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
-                    break;
-                  case MoveTarget.ALL_OTHERS:
-                    LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
-                    break;
-                  case MoveTarget.NEAR_OTHER:
-                    LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
-                    break;
-                  case MoveTarget.ALL_NEAR_OTHERS:
-                    LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
-                    break;
-                  case MoveTarget.NEAR_ENEMY:
-                    LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
-                    break;
-                  case MoveTarget.ALL_NEAR_ENEMIES:
-                    LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
-                    break;
-                  case MoveTarget.RANDOM_NEAR_ENEMY:
-                    LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
-                    break;
-                  case MoveTarget.ALL_ENEMIES:
-                    LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
-                    break;
-                  case MoveTarget.ATTACKER:
-                    LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
-                    break;
-                  case MoveTarget.NEAR_ALLY:
-                    LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
-                    break;
-                  case MoveTarget.ALLY:
-                    LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
-                    break;
-                  case MoveTarget.USER_OR_NEAR_ALLY:
-                    LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
-                    break;
-                  case MoveTarget.USER_AND_ALLIES:
-                    LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
-                    break;
-                  case MoveTarget.ALL:
-                    LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
-                    break;
-                  case MoveTarget.USER_SIDE:
-                    LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
-                    break;
-                  case MoveTarget.ENEMY_SIDE:
-                    LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
-                    break;
-                  case MoveTarget.BOTH_SIDES:
-                    LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
-                    break;
-                  case MoveTarget.PARTY:
-                    LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
-                    break;
-                  case MoveTarget.CURSE:
-                    LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
-                    break;
-                }
+                LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+              } else {
+                var targIDs = ["Counter", "", "", "", ""]
+                var myField = this.scene.getField()
+                if (myField[0])
+                  targIDs[1] = myField[0].name
+                if (myField[1])
+                  targIDs[2] = myField[1].name
+                var eField = this.scene.getEnemyField()
+                if (eField[0])
+                  targIDs[3] = eField[0].name
+                if (eField[1])
+                  targIDs[4] = eField[1].name
+                //LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
               }
               console.log(mv.getName(), targets)
             }
           } else {
             const playerPhase = new MovePhase(this.scene, pokemon, turnCommand.targets || turnCommand.move.targets, move, false, queuedMove.ignorePP);
+            var targets = turnCommand.targets || turnCommand.move.targets
+            var mv = new PokemonMove(queuedMove.move)
+            if (pokemon.isPlayer()) {
+              console.log(turnCommand.targets, turnCommand.move.targets)
+              LoggerTools.Actions[pokemon.getBattlerIndex()] = mv.getName()
+              if (this.scene.currentBattle.double) {
+                var targIDs = ["Counter", "Self", "Ally", "L", "R"]
+                if (pokemon.getBattlerIndex() == 1) targIDs = ["Counter", "Ally", "Self", "L", "R"]
+                LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+              } else {
+                var targIDs = ["Counter", "", "", "", ""]
+                var myField = this.scene.getField()
+                if (myField[0])
+                  targIDs[1] = myField[0].name
+                if (myField[1])
+                  targIDs[2] = myField[1].name
+                var eField = this.scene.getEnemyField()
+                if (eField[0])
+                  targIDs[3] = eField[0].name
+                if (eField[1])
+                  targIDs[4] = eField[1].name
+                //LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+              }
+              console.log(mv.getName(), targets)
+            }
             this.scene.pushPhase(playerPhase);
           }
         } else {
           this.scene.pushPhase(new MovePhase(this.scene, pokemon, turnCommand.targets || turnCommand.move.targets, move, false, queuedMove.ignorePP));
+          var targets = turnCommand.targets || turnCommand.move.targets
+            var mv = new PokemonMove(queuedMove.move)
+            if (pokemon.isPlayer()) {
+              console.log(turnCommand.targets, turnCommand.move.targets)
+              LoggerTools.Actions[pokemon.getBattlerIndex()] = mv.getName()
+              if (this.scene.currentBattle.double) {
+                var targIDs = ["Counter", "Self", "Ally", "L", "R"]
+                if (pokemon.getBattlerIndex() == 1) targIDs = ["Counter", "Ally", "Self", "L", "R"]
+                LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+              } else {
+                var targIDs = ["Counter", "", "", "", ""]
+                var myField = this.scene.getField()
+                if (myField[0])
+                  targIDs[1] = myField[0].name
+                if (myField[1])
+                  targIDs[2] = myField[1].name
+                var eField = this.scene.getEnemyField()
+                if (eField[0])
+                  targIDs[3] = eField[0].name
+                if (eField[1])
+                  targIDs[4] = eField[1].name
+                //LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+              }
+              console.log(mv.getName(), targets)
+            }
         }
         break;
       case Command.BALL:
