@@ -4,6 +4,6 @@ export const saveSlotSelectUiHandler: SimpleTranslationEntries = {
   "overwriteData": "Den ausgewählten Speicherstand überschreiben?",
   "loading": "Läd...",
   "wave": "Welle",
-  "lv": "Lvl",
+  "lv": "Lvl. ",
   "empty": "Leer",
 } as const;
