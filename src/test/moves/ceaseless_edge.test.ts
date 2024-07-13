@@ -1,7 +1,7 @@
 import {afterEach, beforeAll, beforeEach, describe, expect, test, vi} from "vitest";
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
-import * as overrides from "#app/overrides";
+import overrides from "#app/overrides";
 import {
   MoveEffectPhase,
   TurnEndPhase

@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import Phase from "phaser";
 import GameManager from "#app/test/utils/gameManager";
-import * as overrides from "#app/overrides";
+import overrides from "#app/overrides";
 import { Species } from "#enums/species";
 import { Stat } from "#app/data/pokemon-stat";
 import { SpeciesStatBoosterModifier } from "#app/modifier/modifier";
