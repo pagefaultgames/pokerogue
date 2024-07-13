@@ -142,7 +142,6 @@ export class FilterBar extends Phaser.GameObjects.Container {
     this.dropDowns[index].toggle();
     this.openDropDown = this.dropDowns[index].visible;
     this.dropDowns[index].setCursor(0);
-    (this.scene as BattleScene).ui.playSelect();
   }
 
   hideDropDowns(): void {
@@ -153,7 +152,6 @@ export class FilterBar extends Phaser.GameObjects.Container {
   }
 
   incDropDownCursor(): boolean {
-    (this.scene as BattleScene).ui.playSelect();
     if (this.dropDowns[this.lastCursor].cursor === this.dropDowns[this.lastCursor].options.length - 1) {// if at the bottom of the list, wrap around
       return this.dropDowns[this.lastCursor].setCursor(0);
     } else {
@@ -162,7 +160,6 @@ export class FilterBar extends Phaser.GameObjects.Container {
   }
 
   decDropDownCursor(): boolean {
-    (this.scene as BattleScene).ui.playSelect();
     if (this.dropDowns[this.lastCursor].cursor === 0) {// if at the top of the list, wrap around
       return this.dropDowns[this.lastCursor].setCursor(this.dropDowns[this.lastCursor].options.length - 1);
     } else {
@@ -171,12 +168,7 @@ export class FilterBar extends Phaser.GameObjects.Container {
   }
 
   toggleOptionState(): void {
-    if (this.isFilterActive(this.lastCursor)) {
-      // this.labels[this.lastCursor].setTint(0xffef5c);
-    }
-
     this.dropDowns[this.lastCursor].toggleOptionState();
-    (this.scene as BattleScene).ui.playSelect();
   }
 
   getVals(col: DropDownColumn): any[] {
