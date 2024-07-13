@@ -74,6 +74,7 @@ import PokemonData from "./system/pokemon-data"
 import * as LoggerTools from "./logger"
 import { getNatureName } from "./data/nature";
 import { GameDataType } from "./enums/game-data-type";
+import { Session } from "inspector";
 
 const { t } = i18next;
 
@@ -340,6 +341,16 @@ export class TitlePhase extends Phase {
     this.loaded = false;
   }
 
+  setBiomeByType(biome: Biome): void {
+    this.scene.arenaBg.setTexture(`${getBiomeKey(biome)}_bg`);
+  }
+  setBiomeByName(biome: string): void {
+    this.scene.arenaBg.setTexture(`${getBiomeKey(Utils.getEnumValues(Biome)[Utils.getEnumKeys(Biome).indexOf(biome)])}_bg`);
+  }
+  setBiomeByFile(sessionData: SessionSaveData): void {
+    this.scene.arenaBg.setTexture(`${getBiomeKey(sessionData.arena.biome)}_bg`);
+  }
+
   start(): void {
     super.start();
     console.log(LoggerTools.importDocument(JSON.stringify(LoggerTools.newDocument())))
@@ -349,12 +360,13 @@ export class TitlePhase extends Phase {
 
     this.scene.playBgm("title", true);
 
+    this.scene.biomeChangeMode = false
+
     this.scene.gameData.getSession(loggedInUser.lastSessionSlot).then(sessionData => {
       if (sessionData) {
         this.lastSessionData = sessionData;
-        const biomeKey = getBiomeKey(sessionData.arena.biome);
-        const bgTexture = `${biomeKey}_bg`;
-        this.scene.arenaBg.setTexture(bgTexture);
+        //this.setBiomeByFile(sessionData)
+        this.setBiomeByType(Biome.END)
       }
       this.showOptions();
     }).catch(err => {
@@ -390,6 +402,20 @@ export class TitlePhase extends Phase {
       }
     }
     saves.sort((a, b): integer => {return b[2] - a[2]})
+    if (log) console.log(saves)
+    if (saves == undefined) return undefined;
+    return saves.map(f => f[1]);
+  }
+  getSavesUnsorted(log?: boolean, dailyOnly?: boolean): SessionSaveData[] {
+    var saves: Array<Array<any>> = [];
+    for (var i = 0; i < 5; i++) {
+      var s = parseSlotData(i);
+      if (s != undefined) {
+        if (!dailyOnly || s.gameMode == GameModes.DAILY) {
+          saves.push([i, s, s.timestamp]);
+        }
+      }
+    }
     if (log) console.log(saves)
     if (saves == undefined) return undefined;
     return saves.map(f => f[1]);
@@ -445,6 +471,7 @@ export class TitlePhase extends Phase {
   logRenameMenu(): boolean {
     const options: OptionSelectItem[] = [];
     LoggerTools.getLogs()
+    this.setBiomeByType(Biome.FACTORY)
     for (var i = 0; i < LoggerTools.logs.length; i++) {
       if (localStorage.getItem(LoggerTools.logs[i][1]) != null) {
         options.push(LoggerTools.generateEditOption(this.scene, i, this.getSaves(), this) as OptionSelectItem)
@@ -479,6 +506,7 @@ export class TitlePhase extends Phase {
   }
 
   showOptions(): void {
+    this.scene.biomeChangeMode = true
     const options: OptionSelectItem[] = [];
     if (false)
     if (loggedInUser.lastSessionSlot > -1) {
@@ -494,6 +522,7 @@ export class TitlePhase extends Phase {
     // If there are no daily runs, it instead shows the most recently saved run
     // If this fails too, there are no saves, and the option does not appear
     var lastsaves = this.getSaves(false, true);
+    //lastsaves = this.getSavesUnsorted()
     if (lastsaves != undefined && lastsaves.length > 0) {
       lastsaves.forEach(lastsave => {
         options.push({
@@ -531,6 +560,8 @@ export class TitlePhase extends Phase {
     options.push({
       label: i18next.t("menu:newGame"),
       handler: () => {
+        this.scene.biomeChangeMode = false
+        this.setBiomeByType(Biome.TOWN)
         const setModeAndEnd = (gameMode: GameModes) => {
           this.gameMode = gameMode;
           this.scene.ui.setMode(Mode.MESSAGE);
@@ -591,12 +622,14 @@ export class TitlePhase extends Phase {
     }, {
       label: "Manage Logs",
       handler: () => {
+        this.scene.biomeChangeMode = false
         return this.logRenameMenu()
       }
     })
     options.push({
       label: i18next.t("menu:loadGame"),
       handler: () => {
+        this.scene.biomeChangeMode = false
         this.scene.ui.setOverlayMode(Mode.SAVE_SLOT, SaveSlotUiMode.LOAD,
           (slotId: integer, autoSlot: integer) => {
             if (slotId === -1) {
@@ -610,6 +643,7 @@ export class TitlePhase extends Phase {
     options.push({
       label: i18next.t("menu:dailyRun"),
       handler: () => {
+        this.scene.biomeChangeMode = false
         this.setupDaily();
         return true;
       },
@@ -618,6 +652,7 @@ export class TitlePhase extends Phase {
     {
       label: i18next.t("menu:settings"),
       handler: () => {
+        this.scene.biomeChangeMode = false
         this.scene.ui.setOverlayMode(Mode.SETTINGS);
         return true;
       },
@@ -760,6 +795,7 @@ export class TitlePhase extends Phase {
     confirmSlot("Select a slot to replace.", () => true, slotId => this.scene.gameData.importData(GameDataType.SESSION, slotId));
   }
   end(): void {
+    this.scene.biomeChangeMode = false
     if (!this.loaded && !this.scene.gameMode.isDaily) {
       this.scene.arena.preloadBgm();
       this.scene.gameMode = getGameMode(this.gameMode);
@@ -2374,7 +2410,7 @@ export class TurnInitPhase extends FieldPhase {
 
     this.scene.arenaFlyout.updateFieldText()
 
-    this.scene.setScoreText(txt.join("/"))
+    this.scene.setScoreText(txt.join(" / "))
 
     this.end();
   }

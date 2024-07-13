@@ -1374,7 +1374,7 @@ export default class BattleScene extends SceneBase {
     this.rngSeedOverride = seedOverride || "";
     func();
     Phaser.Math.RND.state(state);
-    this.setScoreText("RNG: " + tempRngCounter + " (Last sim: " + this.rngCounter + ")")
+    //this.setScoreText("RNG: " + tempRngCounter + " (Last sim: " + this.rngCounter + ")")
     this.rngCounter = tempRngCounter;
     this.rngOffset = tempRngOffset;
     this.rngSeedOverride = tempRngSeedOverride;
