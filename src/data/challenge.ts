@@ -858,7 +858,7 @@ export class NuzlockeChallenge extends Challenge {
     if (this.value === 1) {
       return false;
     }
-    valid.value = !pokemon.legendary;
+    valid.value = !pokemon.legendary && !pokemon.mythical && !pokemon.subLegendary;
     return true;
   }
 
