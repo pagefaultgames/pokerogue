@@ -66,6 +66,8 @@ export const battle: SimpleTranslationEntries = {
   "foePokemonWithAffix": "{{pokemonName}} ennemi",
   "useMove": "{{pokemonNameWithAffix}} utilise\n{{moveName}} !",
   "stealEatBerry": "{{pokemonName}} vole et mange\nla {{berryName}} de {{targetName}} !",
+  "ppHealBerry": "La {{berryName}} de {{pokemonNameWithAffix}}\nrestaure les PP de sa capacité {{moveName}} !",
+  "hpHealBerry": "La {{berryName}} de {{pokemonNameWithAffix}}\nrestaure son énergie !",
   "drainMessage": "L’énergie de {{pokemonName}}\nest drainée !",
   "regainHealth": "{{pokemonName}} récupère\ndes PV !",
   "fainted": "{{pokemonNameWithAffix}}\nest K.O. !",
