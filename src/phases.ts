@@ -1,3 +1,4 @@
+//#region 00 Imports
 import BattleScene, { bypassLogin } from "./battle-scene";
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition, HitResult, TurnMove } from "./field/pokemon";
 import * as Utils from "./utils";
@@ -78,6 +79,15 @@ import { Session } from "inspector";
 
 const { t } = i18next;
 
+
+
+//#endregion
+
+
+
+
+
+//#region 01 Uncategorized
 export function parseSlotData(slotId: integer): SessionSaveData {
   var S = localStorage.getItem(`sessionData${slotId ? slotId : ""}_${loggedInUser.username}`)
   if (S == null) {
@@ -232,7 +242,13 @@ export function parseSlotData(slotId: integer): SessionSaveData {
   Save.description += " (" + getBiomeName(Save.arena.biome) + " " + Save.waveIndex + ")"
   return Save;
 }
+//#endregion
 
+
+
+
+
+//#region 02 LoginPhase
 export class LoginPhase extends Phase {
   private showText: boolean;
 
@@ -329,7 +345,13 @@ export class LoginPhase extends Phase {
     handleTutorial(this.scene, Tutorial.Intro).then(() => super.end());
   }
 }
+//#endregion
 
+
+
+
+
+//#region 03 TitlePhase
 export class TitlePhase extends Phase {
   private loaded: boolean;
   private lastSessionData: SessionSaveData;
@@ -845,7 +867,13 @@ export class TitlePhase extends Phase {
     super.end();
   }
 }
+//#endregion
 
+
+
+
+
+//#region 04 Unavailable
 export class UnavailablePhase extends Phase {
   constructor(scene: BattleScene) {
     super(scene);
@@ -858,7 +886,13 @@ export class UnavailablePhase extends Phase {
     });
   }
 }
+//#endregion
 
+
+
+
+
+//#region 05 ReloadSession
 export class ReloadSessionPhase extends Phase {
   private systemDataStr: string;
 
@@ -893,7 +927,13 @@ export class ReloadSessionPhase extends Phase {
     });
   }
 }
+//#endregion
 
+
+
+
+
+//#region 06 OutdatedPhase
 export class OutdatedPhase extends Phase {
   constructor(scene: BattleScene) {
     super(scene);
@@ -903,7 +943,13 @@ export class OutdatedPhase extends Phase {
     this.scene.ui.setMode(Mode.OUTDATED);
   }
 }
+//#endregion
 
+
+
+
+
+//#region 07 SelectGender
 export class SelectGenderPhase extends Phase {
   constructor(scene: BattleScene) {
     super(scene);
@@ -943,7 +989,13 @@ export class SelectGenderPhase extends Phase {
     super.end();
   }
 }
+//#endregion
 
+
+
+
+
+//#region 08 SelectChallenge
 export class SelectChallengePhase extends Phase {
   constructor(scene: BattleScene) {
     super(scene);
@@ -957,7 +1009,13 @@ export class SelectChallengePhase extends Phase {
     this.scene.ui.setMode(Mode.CHALLENGE_SELECT);
   }
 }
+//#endregion
 
+
+
+
+
+//#region 09 SelectStarter
 export class SelectStarterPhase extends Phase {
 
   constructor(scene: BattleScene) {
@@ -1044,7 +1102,13 @@ export class SelectStarterPhase extends Phase {
     });
   }
 }
+//#endregion
 
+
+
+
+
+//#region 10 BattlePhase
 export class BattlePhase extends Phase {
   constructor(scene: BattleScene) {
     super(scene);
@@ -1088,9 +1152,14 @@ export class BattlePhase extends Phase {
     });
   }
 }
+//#endregion
 
+
+
+
+
+//#region 11 FieldPhase
 type PokemonFunc = (pokemon: Pokemon) => void;
-
 export abstract class FieldPhase extends BattlePhase {
   getOrder(): BattlerIndex[] {
     const playerField = this.scene.getPlayerField().filter(p => p.isActive()) as Pokemon[];
@@ -1126,7 +1195,13 @@ export abstract class FieldPhase extends BattlePhase {
     field.forEach(pokemon => func(pokemon));
   }
 }
+//#endregion
 
+
+
+
+
+//#region 12 PokemonPhase
 export abstract class PokemonPhase extends FieldPhase {
   protected battlerIndex: BattlerIndex | integer;
   public player: boolean;
@@ -1151,7 +1226,13 @@ export abstract class PokemonPhase extends FieldPhase {
     return this.scene.getField()[this.battlerIndex];
   }
 }
+//#endregion
 
+
+
+
+
+//#region 13 PartyMembPkmn
 export abstract class PartyMemberPokemonPhase extends FieldPhase {
   protected partyMemberIndex: integer;
   protected fieldIndex: integer;
@@ -1175,7 +1256,13 @@ export abstract class PartyMemberPokemonPhase extends FieldPhase {
     return this.getParty()[this.partyMemberIndex];
   }
 }
+//#endregion
 
+
+
+
+
+//#region 14 PlayerPartyMemberPokemonPhase
 export abstract class PlayerPartyMemberPokemonPhase extends PartyMemberPokemonPhase {
   constructor(scene: BattleScene, partyMemberIndex: integer) {
     super(scene, partyMemberIndex, true);
@@ -1185,7 +1272,13 @@ export abstract class PlayerPartyMemberPokemonPhase extends PartyMemberPokemonPh
     return super.getPokemon() as PlayerPokemon;
   }
 }
+//#endregion
 
+
+
+
+
+//#region 15 EnemyPartyMemberPokemonPhase
 export abstract class EnemyPartyMemberPokemonPhase extends PartyMemberPokemonPhase {
   constructor(scene: BattleScene, partyMemberIndex: integer) {
     super(scene, partyMemberIndex, false);
@@ -1195,7 +1288,13 @@ export abstract class EnemyPartyMemberPokemonPhase extends PartyMemberPokemonPha
     return super.getPokemon() as EnemyPokemon;
   }
 }
+//#endregion
 
+
+
+
+
+//#region 16 EncounterPhase
 export class EncounterPhase extends BattlePhase {
   private loaded: boolean;
 
@@ -1555,7 +1654,13 @@ export class EncounterPhase extends BattlePhase {
     return false;
   }
 }
+//#endregion
 
+
+
+
+
+//#region 17 NextEncounterPhase
 export class NextEncounterPhase extends EncounterPhase {
   constructor(scene: BattleScene) {
     super(scene);
@@ -1599,7 +1704,13 @@ export class NextEncounterPhase extends EncounterPhase {
     });
   }
 }
+//#endregion
 
+
+
+
+
+//#region 18 NewBiomeEncounterPhase
 export class NewBiomeEncounterPhase extends NextEncounterPhase {
   constructor(scene: BattleScene) {
     super(scene);
@@ -1633,7 +1744,13 @@ export class NewBiomeEncounterPhase extends NextEncounterPhase {
     });
   }
 }
+//#endregion
 
+
+
+
+
+//#region 19 PostSummonPhase
 export class PostSummonPhase extends PokemonPhase {
   constructor(scene: BattleScene, battlerIndex: BattlerIndex) {
     super(scene, battlerIndex);
@@ -1651,7 +1768,13 @@ export class PostSummonPhase extends PokemonPhase {
     applyPostSummonAbAttrs(PostSummonAbAttr, pokemon).then(() => this.end());
   }
 }
+//#endregion
 
+
+
+
+
+//#region 20 SelectBiomePh.
 export class SelectBiomePhase extends BattlePhase {
   constructor(scene: BattleScene) {
     super(scene);
@@ -1725,7 +1848,13 @@ export class SelectBiomePhase extends BattlePhase {
     return this.scene.generateRandomBiome(this.scene.currentBattle.waveIndex);
   }
 }
+//#endregion
 
+
+
+
+
+//#region 21 SwitchBiomePhase
 export class SwitchBiomePhase extends BattlePhase {
   private nextBiome: Biome;
 
@@ -1786,7 +1915,13 @@ export class SwitchBiomePhase extends BattlePhase {
     });
   }
 }
+//#endregion
 
+
+
+
+
+//#region 22 SummonPhase
 export class SummonPhase extends PartyMemberPokemonPhase {
   private loaded: boolean;
 
@@ -1969,7 +2104,13 @@ export class SummonPhase extends PartyMemberPokemonPhase {
     super.end();
   }
 }
+//#endregion
 
+
+
+
+
+//#region 23 SwitchSummonPhase
 export class SwitchSummonPhase extends SummonPhase {
   private slotIndex: integer;
   private doReturn: boolean;
@@ -2111,7 +2252,13 @@ export class SwitchSummonPhase extends SummonPhase {
     this.scene.unshiftPhase(new PostSummonPhase(this.scene, this.getPokemon().getBattlerIndex()));
   }
 }
+//#endregion
 
+
+
+
+
+//#region 24 ReturnPhase
 export class ReturnPhase extends SwitchSummonPhase {
   constructor(scene: BattleScene, fieldIndex: integer) {
     super(scene, fieldIndex, -1, true, false);
@@ -2134,7 +2281,13 @@ export class ReturnPhase extends SwitchSummonPhase {
     this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger);
   }
 }
+//#endregion
 
+
+
+
+
+//#region 25 ShowTrainerPhase
 export class ShowTrainerPhase extends BattlePhase {
   constructor(scene: BattleScene) {
     super(scene);
@@ -2155,7 +2308,13 @@ export class ShowTrainerPhase extends BattlePhase {
     });
   }
 }
+//#endregion
 
+
+
+
+
+//#region 26 ToggleDoublePositionPhase
 export class ToggleDoublePositionPhase extends BattlePhase {
   private double: boolean;
 
@@ -2183,7 +2342,13 @@ export class ToggleDoublePositionPhase extends BattlePhase {
     }
   }
 }
+//#endregion
 
+
+
+
+
+//#region 27 CheckSwitchPhase
 export class CheckSwitchPhase extends BattlePhase {
   protected fieldIndex: integer;
   protected useName: boolean;
@@ -2272,7 +2437,13 @@ export class CheckSwitchPhase extends BattlePhase {
     });
   }
 }
+//#endregion
 
+
+
+
+
+//#region 28 SummonMissingPhase
 export class SummonMissingPhase extends SummonPhase {
   constructor(scene: BattleScene, fieldIndex: integer) {
     super(scene, fieldIndex);
@@ -2283,7 +2454,13 @@ export class SummonMissingPhase extends SummonPhase {
     this.scene.time.delayedCall(250, () => this.summon());
   }
 }
+//#endregion
 
+
+
+
+
+//#region 29 LevelCapPhase
 export class LevelCapPhase extends FieldPhase {
   constructor(scene: BattleScene) {
     super(scene);
@@ -2299,7 +2476,13 @@ export class LevelCapPhase extends FieldPhase {
     });
   }
 }
+//#endregion
 
+
+
+
+
+//#region 30 TurnInitPhase
 export class TurnInitPhase extends FieldPhase {
   constructor(scene: BattleScene) {
     super(scene);
@@ -2421,7 +2604,13 @@ export class TurnInitPhase extends FieldPhase {
     this.end();
   }
 }
+//#endregion
 
+
+
+
+
+//#region 31 CommandPhase
 export class CommandPhase extends FieldPhase {
   protected fieldIndex: integer;
 
@@ -2674,7 +2863,13 @@ export class CommandPhase extends FieldPhase {
     this.scene.ui.setMode(Mode.MESSAGE).then(() => super.end());
   }
 }
+//#endregion
 
+
+
+
+
+//#region 32 EnemyCommandPhase
 export class EnemyCommandPhase extends FieldPhase {
   protected fieldIndex: integer;
 
@@ -2734,7 +2929,13 @@ export class EnemyCommandPhase extends FieldPhase {
     this.end();
   }
 }
+//#endregion
 
+
+
+
+
+//#region 33 SelectTargetPhase
 export class SelectTargetPhase extends PokemonPhase {
   constructor(scene: BattleScene, fieldIndex: integer) {
     super(scene, fieldIndex);
@@ -2760,7 +2961,13 @@ export class SelectTargetPhase extends PokemonPhase {
     });
   }
 }
+//#endregion
 
+
+
+
+
+//#region 34 TurnStartPhase
 export class TurnStartPhase extends FieldPhase {
   constructor(scene: BattleScene) {
     super(scene);
@@ -3050,7 +3257,13 @@ export class TurnStartPhase extends FieldPhase {
     this.end();
   }
 }
+//#endregion
 
+
+
+
+
+//#region 35 BerryPhase
 /** The phase after attacks where the pokemon eat berries */
 export class BerryPhase extends FieldPhase {
   start() {
@@ -3093,7 +3306,13 @@ export class BerryPhase extends FieldPhase {
     this.end();
   }
 }
+//#endregion
 
+
+
+
+
+//#region 36 TurnEndPhase
 export class TurnEndPhase extends FieldPhase {
   constructor(scene: BattleScene) {
     super(scene);
@@ -3151,7 +3370,13 @@ export class TurnEndPhase extends FieldPhase {
     this.end();
   }
 }
+//#endregion
 
+
+
+
+
+//#region 37 BattleEndPhase
 export class BattleEndPhase extends BattlePhase {
   start() {
     super.start();
@@ -3202,7 +3427,13 @@ export class BattleEndPhase extends BattlePhase {
     this.scene.updateModifiers().then(() => this.end());
   }
 }
+//#endregion
 
+
+
+
+
+//#region 38 NewBattlePhase
 export class NewBattlePhase extends BattlePhase {
   start() {
     super.start();
@@ -3212,7 +3443,13 @@ export class NewBattlePhase extends BattlePhase {
     this.end();
   }
 }
+//#endregion
 
+
+
+
+
+//#region 39 CommonAnimPhase
 export class CommonAnimPhase extends PokemonPhase {
   private anim: CommonAnim;
   private targetIndex: integer;
@@ -3234,7 +3471,13 @@ export class CommonAnimPhase extends PokemonPhase {
     });
   }
 }
+//#endregion
 
+
+
+
+
+//#region 40 MovePhase
 export class MovePhase extends BattlePhase {
   public pokemon: Pokemon;
   public move: PokemonMove;
@@ -3530,7 +3773,13 @@ export class MovePhase extends BattlePhase {
     super.end();
   }
 }
+//#endregion
 
+
+
+
+
+//#region 41 MoveEffectPhase
 export class MoveEffectPhase extends PokemonPhase {
   public move: PokemonMove;
   protected targets: BattlerIndex[];
@@ -3837,7 +4086,13 @@ export class MoveEffectPhase extends PokemonPhase {
     return new MoveEffectPhase(this.scene, this.battlerIndex, this.targets, this.move);
   }
 }
+//#endregion
 
+
+
+
+
+//#region 42 MoveEndPhase
 export class MoveEndPhase extends PokemonPhase {
   constructor(scene: BattleScene, battlerIndex: BattlerIndex) {
     super(scene, battlerIndex);
@@ -3856,7 +4111,13 @@ export class MoveEndPhase extends PokemonPhase {
     this.end();
   }
 }
+//#endregion
 
+
+
+
+
+//#region 43 MoveAnimTestPhase
 export class MoveAnimTestPhase extends BattlePhase {
   private moveQueue: Moves[];
 
@@ -3894,7 +4155,13 @@ export class MoveAnimTestPhase extends BattlePhase {
     });
   }
 }
+//#endregion
 
+
+
+
+
+//#region 44 ShowAbilityPhase
 export class ShowAbilityPhase extends PokemonPhase {
   private passive: boolean;
 
@@ -3917,7 +4184,13 @@ export class ShowAbilityPhase extends PokemonPhase {
     this.end();
   }
 }
+//#endregion
 
+
+
+
+
+//#region 45 StatChangePhase
 export class StatChangePhase extends PokemonPhase {
   private stats: BattleStat[];
   private selfTarget: boolean;
@@ -4116,7 +4389,13 @@ export class StatChangePhase extends PokemonPhase {
     return messages;
   }
 }
+//#endregion
 
+
+
+
+
+//#region 46 WeatherEffectPhase
 export class WeatherEffectPhase extends CommonAnimPhase {
   public weather: Weather;
 
@@ -4175,7 +4454,13 @@ export class WeatherEffectPhase extends CommonAnimPhase {
     });
   }
 }
+//#endregion
 
+
+
+
+
+//#region 47 ObtainStatusEffectPhase
 export class ObtainStatusEffectPhase extends PokemonPhase {
   private statusEffect: StatusEffect;
   private cureTurn: integer;
@@ -4214,7 +4499,13 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
     this.end();
   }
 }
+//#endregion
 
+
+
+
+
+//#region 48 PostTurnStatusEffectPhase
 export class PostTurnStatusEffectPhase extends PokemonPhase {
   constructor(scene: BattleScene, battlerIndex: BattlerIndex) {
     super(scene, battlerIndex);
@@ -4256,7 +4547,13 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
     }
   }
 }
+//#endregion
 
+
+
+
+
+//#region 49 MessagePhase
 export class MessagePhase extends Phase {
   private text: string;
   private callbackDelay: integer;
@@ -4292,7 +4589,13 @@ export class MessagePhase extends Phase {
     super.end();
   }
 }
+//#endregion
 
+
+
+
+
+//#region 50 DamagePhase
 export class DamagePhase extends PokemonPhase {
   private amount: integer;
   private damageResult: DamageResult;
@@ -4392,7 +4695,13 @@ export class DamagePhase extends PokemonPhase {
     super.end();
   }
 }
+//#endregion
 
+
+
+
+
+//#region 51 FaintPhase
 export class FaintPhase extends PokemonPhase {
   private preventEndure: boolean;
 
@@ -4541,7 +4850,13 @@ export class FaintPhase extends PokemonPhase {
     return false;
   }
 }
+//#endregion
 
+
+
+
+
+//#region 52 VictoryPhase
 export class VictoryPhase extends PokemonPhase {
   constructor(scene: BattleScene, battlerIndex: BattlerIndex) {
     super(scene, battlerIndex);
@@ -4678,7 +4993,13 @@ export class VictoryPhase extends PokemonPhase {
     this.end();
   }
 }
+//#endregion
 
+
+
+
+
+//#region 53 TrainerVictoryPhase
 export class TrainerVictoryPhase extends BattlePhase {
   constructor(scene: BattleScene) {
     super(scene);
@@ -4731,7 +5052,13 @@ export class TrainerVictoryPhase extends BattlePhase {
     this.showEnemyTrainer();
   }
 }
+//#endregion
 
+
+
+
+
+//#region 54 MoneyRewardPhase
 export class MoneyRewardPhase extends BattlePhase {
   private moneyMultiplier: number;
 
@@ -4759,7 +5086,13 @@ export class MoneyRewardPhase extends BattlePhase {
     this.scene.ui.showText(message, null, () => this.end(), null, true);
   }
 }
+//#endregion
 
+
+
+
+
+//#region 55 ModifierRewardPhase
 export class ModifierRewardPhase extends BattlePhase {
   protected modifierType: ModifierType;
 
@@ -4785,7 +5118,13 @@ export class ModifierRewardPhase extends BattlePhase {
     });
   }
 }
+//#endregion
 
+
+
+
+
+//#region 56 GameOverModifierRewardPhase
 export class GameOverModifierRewardPhase extends ModifierRewardPhase {
   constructor(scene: BattleScene, modifierTypeFunc: ModifierTypeFunc) {
     super(scene, modifierTypeFunc);
@@ -4807,7 +5146,13 @@ export class GameOverModifierRewardPhase extends ModifierRewardPhase {
     });
   }
 }
+//#endregion
 
+
+
+
+
+//#region 57 RibbonModifierRewardPhase
 export class RibbonModifierRewardPhase extends ModifierRewardPhase {
   private species: PokemonSpecies;
 
@@ -4830,7 +5175,13 @@ export class RibbonModifierRewardPhase extends ModifierRewardPhase {
     });
   }
 }
+//#endregion
 
+
+
+
+
+//#region 58 GameOverPhase
 export class GameOverPhase extends BattlePhase {
   private victory: boolean;
   private firstRibbons: PokemonSpecies[] = [];
@@ -5004,7 +5355,13 @@ export class GameOverPhase extends BattlePhase {
     }
   }
 }
+//#endregion
 
+
+
+
+
+//#region 59 EndCardPhase
 export class EndCardPhase extends Phase {
   public endCard: Phaser.GameObjects.Image;
   public text: Phaser.GameObjects.Text;
@@ -5039,7 +5396,13 @@ export class EndCardPhase extends Phase {
     });
   }
 }
+//#endregion
 
+
+
+
+
+//#region 60 UnlockPhase
 export class UnlockPhase extends Phase {
   private unlockable: Unlockables;
 
@@ -5061,7 +5424,13 @@ export class UnlockPhase extends Phase {
     });
   }
 }
+//#endregion
 
+
+
+
+
+//#region 61 PostGameOverPhase
 export class PostGameOverPhase extends Phase {
   private endCardPhase: EndCardPhase;
 
@@ -5103,7 +5472,13 @@ export class PostGameOverPhase extends Phase {
     }
   }
 }
+//#endregion
 
+
+
+
+
+//#region 62 SwitchPhase
 export class SwitchPhase extends BattlePhase {
   protected fieldIndex: integer;
   private isModal: boolean;
@@ -5152,7 +5527,13 @@ export class SwitchPhase extends BattlePhase {
     }, PartyUiHandler.FilterNonFainted);
   }
 }
+//#endregion
 
+
+
+
+
+//#region 63 ExpPhase
 export class ExpPhase extends PlayerPartyMemberPokemonPhase {
   private expValue: number;
 
@@ -5180,7 +5561,13 @@ export class ExpPhase extends PlayerPartyMemberPokemonPhase {
     }, null, true);
   }
 }
+//#endregion
 
+
+
+
+
+//#region 64 ShowPartyExpBarPhase
 export class ShowPartyExpBarPhase extends PlayerPartyMemberPokemonPhase {
   private expValue: number;
 
@@ -5229,7 +5616,13 @@ export class ShowPartyExpBarPhase extends PlayerPartyMemberPokemonPhase {
 
   }
 }
+//#endregion
 
+
+
+
+
+//#region 65 HidePartyExpBarPhase
 export class HidePartyExpBarPhase extends BattlePhase {
   constructor(scene: BattleScene) {
     super(scene);
@@ -5241,7 +5634,13 @@ export class HidePartyExpBarPhase extends BattlePhase {
     this.scene.partyExpBar.hide().then(() => this.end());
   }
 }
+//#endregion
 
+
+
+
+
+//#region 66 LevelUpPhase
 export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
   private lastLevel: integer;
   private level: integer;
@@ -5290,7 +5689,13 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
     }
   }
 }
+//#endregion
 
+
+
+
+
+//#region 67 LearnMovePhase
 export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
   private moveId: Moves;
 
@@ -5384,7 +5789,13 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     }
   }
 }
+//#endregion
 
+
+
+
+
+//#region 68 PokemonHealPhase
 export class PokemonHealPhase extends CommonAnimPhase {
   private hpHealed: integer;
   private message: string;
@@ -5478,7 +5889,13 @@ export class PokemonHealPhase extends CommonAnimPhase {
     }
   }
 }
+//#endregion
 
+
+
+
+
+//#region 69 AttemptCapturePhase
 export class AttemptCapturePhase extends PokemonPhase {
   private pokeballType: PokeballType;
   private pokeball: Phaser.GameObjects.Sprite;
@@ -5752,7 +6169,13 @@ export class AttemptCapturePhase extends PokemonPhase {
     });
   }
 }
+//#endregion
 
+
+
+
+
+//#region 70 AttemptRunPhase
 export class AttemptRunPhase extends PokemonPhase {
   constructor(scene: BattleScene, fieldIndex: integer) {
     super(scene, fieldIndex);
@@ -5799,7 +6222,13 @@ export class AttemptRunPhase extends PokemonPhase {
     this.end();
   }
 }
+//#endregion
 
+
+
+
+
+//#region 71 SelectModifierPhase
 export class SelectModifierPhase extends BattlePhase {
   private rerollCount: integer;
   private modifierTiers: ModifierTier[];
@@ -6023,7 +6452,13 @@ export class SelectModifierPhase extends BattlePhase {
     return this.scene.addModifier(modifier, false, true);
   }
 }
+//#endregion
 
+
+
+
+
+//#region 72 EggLapsePhase
 export class EggLapsePhase extends Phase {
   constructor(scene: BattleScene) {
     super(scene);
@@ -6052,7 +6487,13 @@ export class EggLapsePhase extends Phase {
     this.end();
   }
 }
+//#endregion
 
+
+
+
+
+//#region 73 AddEnemyBuffModifierPhase
 export class AddEnemyBuffModifierPhase extends Phase {
   constructor(scene: BattleScene) {
     super(scene);
@@ -6073,7 +6514,13 @@ export class AddEnemyBuffModifierPhase extends Phase {
     this.scene.updateModifiers(false, true).then(() => this.end());
   }
 }
+//#endregion
 
+
+
+
+
+//#region 74 PartyStatusCurePhase
 /**
  * Cures the party of all non-volatile status conditions, shows a message
  * @param {BattleScene} scene The current scene
@@ -6116,7 +6563,13 @@ export class PartyStatusCurePhase extends BattlePhase {
     this.end();
   }
 }
+//#endregion
 
+
+
+
+
+//#region 75 PartyHealPhase
 export class PartyHealPhase extends BattlePhase {
   private resumeBgm: boolean;
 
@@ -6153,7 +6606,13 @@ export class PartyHealPhase extends BattlePhase {
     });
   }
 }
+//#endregion
 
+
+
+
+
+//#region 76 ShinySparklePhase
 export class ShinySparklePhase extends PokemonPhase {
   constructor(scene: BattleScene, battlerIndex: BattlerIndex) {
     super(scene, battlerIndex);
@@ -6166,7 +6625,13 @@ export class ShinySparklePhase extends PokemonPhase {
     this.scene.time.delayedCall(1000, () => this.end());
   }
 }
+//#endregion
 
+
+
+
+
+//#region 77 ScanIvsPhase
 export class ScanIvsPhase extends PokemonPhase {
   private shownIvs: integer;
 
@@ -6201,7 +6666,13 @@ export class ScanIvsPhase extends PokemonPhase {
     });
   }
 }
+//#endregion
 
+
+
+
+
+//#region 78 TrainerMessageTestPhase
 export class TrainerMessageTestPhase extends BattlePhase {
   private trainerTypes: TrainerType[];
 
@@ -6237,7 +6708,13 @@ export class TrainerMessageTestPhase extends BattlePhase {
     this.end();
   }
 }
+//#endregion
 
+
+
+
+
+//#region 79 TestMessagePhase
 export class TestMessagePhase extends MessagePhase {
   constructor(scene: BattleScene, message: string) {
     super(scene, message, null, true);

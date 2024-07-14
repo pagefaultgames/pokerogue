@@ -25,6 +25,7 @@ import { BattlerTagType } from "#app/enums/battler-tag-type.js";
 import { TempBattleStat } from "#app/data/temp-battle-stat.js";
 import { StatusEffect } from "#app/data/status-effect.js";
 import { BattleStat } from "#app/data/battle-stat.js";
+import { PokemonMultiHitModifierType } from "#app/modifier/modifier-type.js";
 
 export default class FightUiHandler extends UiHandler {
   private movesContainer: Phaser.GameObjects.Container;
@@ -661,6 +662,13 @@ export default class FightUiHandler extends UiHandler {
           maxHits = minHits
       }
     }
+    var h = user.getHeldItems()
+    for (var i = 0; i < h.length; i++) {
+      if (h[i].type instanceof PokemonMultiHitModifierType) {
+        minHits += h[i].getStackCount()
+        maxHits += h[i].getStackCount()
+      }
+    }
     dmgLow = out[0] * minHits
     dmgHigh = out[1] * maxHits
     /*
@@ -1130,8 +1138,42 @@ export function calcDamage(scene: BattleScene, user: PlayerPokemon, target: Poke
   // dmgLow = (((2*user.level/5 + 2) * power * myAtk / theirDef)/50 + 2) * 0.85 * modifiers
   // dmgHigh = (((2*user.level/5 + 2) * power * myAtkC / theirDefC)/50 + 2) * 1.5 * modifiers
   var out = this.simulateAttack(scene, user, target, move.getMove())
-  dmgLow = out[0]
-  dmgHigh = out[1]
+  var minHits = 1
+  var maxHits = 1
+  var mh = move.getMove().getAttrs(MoveData.MultiHitAttr)
+  for (var i = 0; i < mh.length; i++) {
+    var mh2 = mh[i] as MoveData.MultiHitAttr
+    switch (mh2.multiHitType) {
+      case MoveData.MultiHitType._2:
+        minHits = 2;
+        maxHits = 2;
+      case MoveData.MultiHitType._2_TO_5:
+        minHits = 2;
+        maxHits = 5;
+      case MoveData.MultiHitType._3:
+        minHits = 3;
+        maxHits = 3;
+      case MoveData.MultiHitType._10:
+        minHits = 10;
+        maxHits = 10;
+      case MoveData.MultiHitType.BEAT_UP:
+        const party = user.isPlayer() ? user.scene.getParty() : user.scene.getEnemyParty();
+        // No status means the ally pokemon can contribute to Beat Up
+        minHits = party.reduce((total, pokemon) => {
+          return total + (pokemon.id === user.id ? 1 : pokemon?.status && pokemon.status.effect !== StatusEffect.NONE ? 0 : 1);
+        }, 0);
+        maxHits = minHits
+    }
+  }
+  var h = user.getHeldItems()
+  for (var i = 0; i < h.length; i++) {
+    if (h[i].type instanceof PokemonMultiHitModifierType) {
+      minHits += h[i].getStackCount()
+      maxHits += h[i].getStackCount()
+    }
+  }
+  dmgLow = out[0] * minHits
+  dmgHigh = out[1] * maxHits
   /*
   if (user.hasAbility(Abilities.PARENTAL_BOND)) {
     // Second hit deals 0.25x damage
