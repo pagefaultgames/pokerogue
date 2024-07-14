@@ -1239,6 +1239,6 @@ export const ability: AbilityTranslationEntries = {
   },
   poisonPuppeteer: {
     name: "	Malia Tossica",
-    description: "I Pokémon avvelenati dalle mosse di Pecharunt entreranno anche in stato di confusione.", // TODO: Remove reference to Pecharunt
+    description: "I Pokémon avvelenati dalle mosse di questo Pokémon entreranno anche in stato di confusione.",
   },
 } as const;
