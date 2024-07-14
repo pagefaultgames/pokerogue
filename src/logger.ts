@@ -13,7 +13,6 @@ import { TitlePhase } from "./phases";
 import Trainer from "./field/trainer";
 import { Species } from "./enums/species";
 import { GameMode, GameModes } from "./game-mode";
-import { randomUUID, UUID } from "node:crypto";
 import PokemonSpecies from "./data/pokemon-species";
 //#endregion
 
@@ -355,7 +354,9 @@ function updateLog(drpd: DRPD): DRPD {
   } // 1.0.0 → 1.0.0a
   if (drpd.version == "1.0.0a") {
     drpd.version = "1.1.0"
-    drpd.uuid = randomUUID()
+    var RState = Phaser.Math.RND.state()
+    drpd.uuid = Phaser.Math.RND.uuid()
+    Phaser.Math.RND.state(RState)
     drpd.label = "route"
   } // 1.0.0a → 1.1.0
   return drpd;
@@ -376,7 +377,7 @@ export interface DRPD {
   /** The webpage path and internal name of this run. Entered by the user. Not to be confused with `title`, which is only a cosmetic identifier. */
   label: string,
   /** A unique ID for this run. Currently unused, but may be used in the future. */
-  uuid: UUID,
+  uuid: string,
   /** The name(s) of the users that worked on this run. Entered by the user. */
   authors: string[],
   /** The date that this document was created on. Does NOT automatically detect the date of daily runs (It can't) */
@@ -409,16 +410,20 @@ export function importDocument(drpd: string): DRPD {
  * @returns The fresh DRPD document.
  */
 export function newDocument(name: string = "Untitled Run", authorName: string | string[] = "Write your name here"): DRPD {
-  return {
+  var ret: DRPD = {
     version: DRPD_Version,
     title: name,
     label: "",
-    uuid: randomUUID(),
+    uuid: undefined,
     authors: (Array.isArray(authorName) ? authorName : [authorName]),
     date: new Date().getUTCFullYear() + "-" + (new Date().getUTCMonth() + 1 < 10 ? "0" : "") + (new Date().getUTCMonth() + 1) + "-" + (new Date().getUTCDate() < 10 ? "0" : "") + new Date().getUTCDate(),
     waves: new Array(50),
     starters: new Array(3),
   }
+  var RState = Phaser.Math.RND.state()
+  ret.uuid = Phaser.Math.RND.uuid()
+  Phaser.Math.RND.state(RState)
+  return ret;
 }
 /**
  * Prints a DRPD as a string, for saving it to your device.
