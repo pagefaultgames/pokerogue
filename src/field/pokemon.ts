@@ -1950,6 +1950,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           applyPreDefendAbAttrs(ReceivedMoveDamageMultiplierAbAttr, this, source, move, cancelled, damage);
         }
 
+        // This attribute may modify damage arbitrarily, so be careful about changing its order of application.
         applyMoveAttrs(ModifiedDamageAttr, source, this, move, damage);
 
         console.log("damage", damage.value, move.name, power, sourceAtk, targetDef);
@@ -1965,9 +1966,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           }
 
           /**
-             * We explicitly require to ignore the faint phase here, as we want to show the messages
-             * about the critical hit and the super effective/not very effective messages before the faint phase.
-             */
+           * We explicitly require to ignore the faint phase here, as we want to show the messages
+           * about the critical hit and the super effective/not very effective messages before the faint phase.
+           */
           damage.value = this.damageAndUpdate(damage.value, result as DamageResult, isCritical, isOneHitKo, isOneHitKo, true);
           this.turnData.damageTaken += damage.value;
           if (isCritical) {
