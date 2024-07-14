@@ -5,6 +5,8 @@ import * as overrides from "#app/overrides";
 import { Species } from "#enums/species";
 import { TurnEndPhase, MoveEffectPhase } from "#app/phases";
 import { Moves } from "#enums/moves";
+import { ArenaTagType } from "#enums/arena-tag-type";
+import { ArenaTagSide, getArenaTag } from "#app/data/arena-tag";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { WeatherType } from "#app/data/weather.js";
@@ -87,8 +89,13 @@ describe("Abilities - Magic Guard", () => {
 
       await game.phaseInterceptor.to(TurnEndPhase);
 
-      expect(getStatusEffectCatchRateMultiplier(leadPokemon.status.effect)).toBe(1.5);
+      /**
+       * Expect:
+       * - The player Pokemon (with Magic Guard) has not taken damage from poison
+       * - The Pokemon's CatchRateMultiplier should be 1.5
+       */
       expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
+      expect(getStatusEffectCatchRateMultiplier(leadPokemon.status.effect)).toBe(1.5);
     }, TIMEOUT
   );
 
@@ -110,6 +117,10 @@ describe("Abilities - Magic Guard", () => {
 
       await game.phaseInterceptor.to(TurnEndPhase);
 
+      /**
+       * Expect:
+       * - The player Pokemon (that just lost its Magic Guard ability) has taken damage from poison
+       */
       expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
     }, TIMEOUT
   );
@@ -132,9 +143,14 @@ describe("Abilities - Magic Guard", () => {
 
       await game.phaseInterceptor.to(TurnEndPhase);
 
-      //need to check for damage reduction
-      expect(getStatusEffectCatchRateMultiplier(enemyPokemon.status.effect)).toBe(1.5);
+      /**
+       * Expect:
+       * - The player Pokemon (with Magic Guard) has not taken damage from burn
+       * - The player Pokemon's physical attack damage is halved (TBD)
+       * - The player Pokemon's hypothetical CatchRateMultiplier should be 1.5
+       */
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+      expect(getStatusEffectCatchRateMultiplier(enemyPokemon.status.effect)).toBe(1.5);
     }, TIMEOUT
   );
 
@@ -158,29 +174,75 @@ describe("Abilities - Magic Guard", () => {
 
       await game.phaseInterceptor.to(TurnEndPhase);
 
+      /**
+       * Expect:
+       * - The player Pokemon (with Magic Guard) has not taken damage from toxic
+       * - The player Pokemon's status effect duration should be incremented
+       * - The player Pokemon's hypothetical CatchRateMultiplier should be 1.5
+       */
+      expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
       expect(enemyPokemon.status.turnCount).toBeGreaterThan(toxicStartCounter);
       expect(getStatusEffectCatchRateMultiplier(enemyPokemon.status.effect)).toBe(1.5);
-      expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
     }, TIMEOUT
   );
 
-  /*
-  it("Magic Guard prevents damage caused by entry hazards", async () => {
-    await game.startBattle([Species.MAGIKARP]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.CHARM));
+  it("Magic Guard prevents damage caused by entry hazards", async () => {
+    //Adds and applies Spikes to both sides of the arena
+    const newTag = getArenaTag(ArenaTagType.SPIKES, 5, Moves.SPIKES, 0, 0, ArenaTagSide.BOTH);
+    game.scene.arena.tags.push(newTag);
+
+    await game.startBattle([Species.MAGIKARP]);
+    const leadPokemon = game.scene.getPlayerPokemon();
+    expect(leadPokemon).toBeDefined();
+
+    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+
+    const enemyPokemon = game.scene.getEnemyPokemon();
+    expect(enemyPokemon).toBeDefined();
 
     await game.phaseInterceptor.to(TurnEndPhase);
-  });
+
+    /**
+    * Expect:
+    * - The player Pokemon (with Magic Guard) has not taken damage from spikes
+    * - The enemy Pokemon (without Magic Guard) has taken damage from spikes
+    */
+    expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
+    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+  }, TIMEOUT
+  );
 
   it("Magic Guard does not prevent poison from Toxic Spikes", async () => {
-    await game.startBattle([Species.MAGIKARP]);
+    //Adds and applies Spikes to both sides of the arena
+    const playerTag = getArenaTag(ArenaTagType.TOXIC_SPIKES, 5, Moves.TOXIC_SPIKES, 0, 0, ArenaTagSide.PLAYER);
+    const enemyTag = getArenaTag(ArenaTagType.TOXIC_SPIKES, 5, Moves.TOXIC_SPIKES, 0, 0, ArenaTagSide.ENEMY);
+    game.scene.arena.tags.push(playerTag);
+    game.scene.arena.tags.push(enemyTag);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.CHARM));
+    await game.startBattle([Species.MAGIKARP]);
+    const leadPokemon = game.scene.getPlayerPokemon();
+    expect(leadPokemon).toBeDefined();
+
+    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+
+    const enemyPokemon = game.scene.getEnemyPokemon();
+    expect(enemyPokemon).toBeDefined();
 
     await game.phaseInterceptor.to(TurnEndPhase);
-  });
-  */
+
+    /**
+    * Expect:
+    * - Both Pokemon gain the poison status effect
+    * - The player Pokemon (with Magic Guard) has not taken damage from poison
+    * - The enemy Pokemon (without Magic Guard) has taken damage from poison
+    */
+    expect(leadPokemon.status.effect).toBe(StatusEffect.POISON);
+    expect(enemyPokemon.status.effect).toBe(StatusEffect.POISON);
+    expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
+    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+  }, TIMEOUT
+  );
 
   it("Magic Guard prevents against damage from volatile status effects",
     async () => {
@@ -198,13 +260,19 @@ describe("Abilities - Magic Guard", () => {
 
       await game.phaseInterceptor.to(TurnEndPhase);
 
+      /**
+    * Expect:
+    * - The player Pokemon (with Magic Guard) has cut its HP to inflict curse
+    * - The enemy Pokemon (with Magic Guard) is cursed
+    * - The enemy Pokemon (with Magic Guard) does not lose HP from being cursed
+    */
       expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
       expect(enemyPokemon.getTag(BattlerTagType.CURSED)).not.toBe(undefined);
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
     }, TIMEOUT
   );
 
-  it("Magic Guard prevents crash damange", async () => {
+  it("Magic Guard prevents crash damage", async () => {
     await game.startBattle([Species.MAGIKARP]);
     vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.HIGH_JUMP_KICK]);
 
@@ -217,9 +285,13 @@ describe("Abilities - Magic Guard", () => {
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
+    /**
+    * Expect:
+    * - The player Pokemon (with Magic Guard) misses High Jump Kick but does not lose HP as a result
+    */
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
-  });
-
+  }, TIMEOUT
+  );
 
   it("Magic Guard prevents damage from recoil", async () => {
     await game.startBattle([Species.MAGIKARP]);
@@ -232,8 +304,13 @@ describe("Abilities - Magic Guard", () => {
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
+    /**
+    * Expect:
+    * - The player Pokemon (with Magic Guard) uses a recoil move but does not lose HP from recoil
+    */
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
-  });
+  }, TIMEOUT
+  );
 
   it("Magic Guard does not prevent damage from Struggle's recoil", async () => {
     await game.startBattle([Species.MAGIKARP]);
@@ -246,19 +323,35 @@ describe("Abilities - Magic Guard", () => {
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
+    /**
+    * Expect:
+    * - The player Pokemon (with Magic Guard) uses Struggle but does lose HP from Struggle's recoil
+    */
     expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
-  });
+  }, TIMEOUT
+  );
 
-/*
+  //This tests different move attributes than the recoil tests above
   it("Magic Guard prevents self-damage from attacking moves", async () => {
     await game.startBattle([Species.MAGIKARP]);
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.STEEL_BEAM]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.CHARM));
+    const leadPokemon = game.scene.getPlayerPokemon();
+    expect(leadPokemon).toBeDefined();
+
+    game.doAttack(getMovePosition(game.scene, 0, Moves.STEEL_BEAM));
 
     await game.phaseInterceptor.to(TurnEndPhase);
-  });
 
-/*
+    /**
+    * Expect:
+    * - The player Pokemon (with Magic Guard) uses a move with an HP cost but does not lose HP from using it
+    */
+    expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
+  }, TIMEOUT
+  );
+
+  /*
   it("Magic Guard does not prevent self-damage from confusion", async () => {
     await game.startBattle([Species.MAGIKARP]);
 
@@ -266,13 +359,24 @@ describe("Abilities - Magic Guard", () => {
 
     await game.phaseInterceptor.to(TurnEndPhase);
   });
+*/
 
   it("Magic Guard does not prevent self-damage from non-attacking moves", async () => {
     await game.startBattle([Species.MAGIKARP]);
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.BELLY_DRUM]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.CHARM));
+    const leadPokemon = game.scene.getPlayerPokemon();
+    expect(leadPokemon).toBeDefined();
+
+    game.doAttack(getMovePosition(game.scene, 0, Moves.BELLY_DRUM));
 
     await game.phaseInterceptor.to(TurnEndPhase);
-  });
-  */
+
+    /**
+    * Expect:
+    * - The player Pokemon (with Magic Guard) uses a non-attacking move with an HP cost but does lose HP from using it
+    */
+    expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
+  }, TIMEOUT
+  );
 });
