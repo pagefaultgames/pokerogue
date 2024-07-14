@@ -1877,8 +1877,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
                                    * arenaAttackTypeMultiplier.value
                                    * screenMultiplier.value
                                    * twoStrikeMultiplier.value
-                                   * randomMultiplier
-                                   * criticalMultiplier.value);
+                                   * criticalMultiplier.value
+                                   * randomMultiplier);
 
           if (isPhysical && source.status && source.status.effect === StatusEffect.BURN) {
             if (!move.hasAttr(BypassBurnDamageReductionAttr)) {
@@ -1940,14 +1940,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         const isOneHitKo = result === HitResult.ONE_HIT_KO;
 
         if (!fixedDamage.value && !isOneHitKo) {
-          applyPreDefendAbAttrs(ReceivedMoveDamageMultiplierAbAttr, this, source, move, cancelled, damage);
-
           if (!source.isPlayer()) {
             this.scene.applyModifiers(EnemyDamageBoosterModifier, false, damage);
           }
           if (!this.isPlayer()) {
             this.scene.applyModifiers(EnemyDamageReducerModifier, false, damage);
           }
+
+          applyPreDefendAbAttrs(ReceivedMoveDamageMultiplierAbAttr, this, source, move, cancelled, damage);
         }
 
         applyMoveAttrs(ModifiedDamageAttr, source, this, move, damage);
