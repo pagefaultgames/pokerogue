@@ -1247,6 +1247,6 @@ export const ability: AbilityTranslationEntries = {
   },
   poisonPuppeteer: {
     name: "독조종",
-    description: "복숭악동의 기술에 의해 독 상태가 된 상대는 혼란 상태도 되어 버린다." // TODO: Remove reference to Pecharunt
+    description: "이 포켓몬의 기술에 의해 독 상태가 된 상대는 혼란 상태도 되어 버린다."
   },
 } as const;
