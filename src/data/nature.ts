@@ -61,7 +61,7 @@ export function getNatureName(nature: Nature, includeStatEffects: boolean = fals
   return ret;
 }
 
-export function getNatureIncrease(nature: Nature): string {
+export function getNatureIncrease(nature: Nature) {
   switch (nature) {
     case Nature.LONELY:
     case Nature.BRAVE:
@@ -102,7 +102,7 @@ export function getNatureIncrease(nature: Nature): string {
       return ""
   }
 }
-export function getNatureDecrease(nature: Nature): string {
+export function getNatureDecrease(nature: Nature) {
   switch (nature) {
     case Nature.BOLD:
     case Nature.TIMID:
