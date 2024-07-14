@@ -4,6 +4,8 @@ import { CommandPhase } from "#app/phases.js";
 import { Command } from "#app/ui/command-ui-handler.js";
 
 export const BallCommand = (scene: BattleScene) => {
+  // Gets the urrent pokeballs in inventory in a dict format
+  // {POKEBALL: 0, GREAT_BALL: 5, ULTRA_BALL: 0, ROGUE_BALL: 0, MASTER_BALL: 0}
   const convertPokeballCounts = (counts: { [key: number]: number }) => {
     const result: { [key: string]: number } = {};
     for (const key in counts) {
