@@ -146,9 +146,9 @@ describe("Abilities - Magic Guard", () => {
 
       /**
        * Expect:
-       * - The player Pokemon (with Magic Guard) has not taken damage from burn
-       * - The player Pokemon's physical attack damage is halved (TBD)
-       * - The player Pokemon's hypothetical CatchRateMultiplier should be 1.5
+       * - The enemy Pokemon (with Magic Guard) has not taken damage from burn
+       * - The enemy Pokemon's physical attack damage is halved (TBD)
+       * - The enemy Pokemon's hypothetical CatchRateMultiplier should be 1.5
        */
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
       expect(getStatusEffectCatchRateMultiplier(enemyPokemon.status.effect)).toBe(1.5);
@@ -177,9 +177,9 @@ describe("Abilities - Magic Guard", () => {
 
       /**
        * Expect:
-       * - The player Pokemon (with Magic Guard) has not taken damage from toxic
-       * - The player Pokemon's status effect duration should be incremented
-       * - The player Pokemon's hypothetical CatchRateMultiplier should be 1.5
+       * - The enemy Pokemon (with Magic Guard) has not taken damage from toxic
+       * - The enemy Pokemon's status effect duration should be incremented
+       * - The enemy Pokemon's hypothetical CatchRateMultiplier should be 1.5
        */
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
       expect(enemyPokemon.status.turnCount).toBeGreaterThan(toxicStartCounter);
@@ -274,8 +274,8 @@ describe("Abilities - Magic Guard", () => {
   );
 
   it("Magic Guard prevents crash damage", async () => {
-    await game.startBattle([Species.MAGIKARP]);
     vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.HIGH_JUMP_KICK]);
+    await game.startBattle([Species.MAGIKARP]);
 
     const leadPokemon = game.scene.getPlayerPokemon();
     expect(leadPokemon).toBeDefined();
@@ -295,8 +295,8 @@ describe("Abilities - Magic Guard", () => {
   );
 
   it("Magic Guard prevents damage from recoil", async () => {
-    await game.startBattle([Species.MAGIKARP]);
     vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TAKE_DOWN]);
+    await game.startBattle([Species.MAGIKARP]);
 
     const leadPokemon = game.scene.getPlayerPokemon();
     expect(leadPokemon).toBeDefined();
@@ -314,8 +314,8 @@ describe("Abilities - Magic Guard", () => {
   );
 
   it("Magic Guard does not prevent damage from Struggle's recoil", async () => {
-    await game.startBattle([Species.MAGIKARP]);
     vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.STRUGGLE]);
+    await game.startBattle([Species.MAGIKARP]);
 
     const leadPokemon = game.scene.getPlayerPokemon();
     expect(leadPokemon).toBeDefined();
@@ -334,8 +334,8 @@ describe("Abilities - Magic Guard", () => {
 
   //This tests different move attributes than the recoil tests above
   it("Magic Guard prevents self-damage from attacking moves", async () => {
-    await game.startBattle([Species.MAGIKARP]);
     vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.STEEL_BEAM]);
+    await game.startBattle([Species.MAGIKARP]);
 
     const leadPokemon = game.scene.getPlayerPokemon();
     expect(leadPokemon).toBeDefined();
@@ -363,8 +363,8 @@ describe("Abilities - Magic Guard", () => {
 */
 
   it("Magic Guard does not prevent self-damage from non-attacking moves", async () => {
-    await game.startBattle([Species.MAGIKARP]);
     vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.BELLY_DRUM]);
+    await game.startBattle([Species.MAGIKARP]);
 
     const leadPokemon = game.scene.getPlayerPokemon();
     expect(leadPokemon).toBeDefined();
@@ -380,4 +380,41 @@ describe("Abilities - Magic Guard", () => {
     expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
   }, TIMEOUT
   );
+
+  it("Magic Guard prevents damage from abilities with PostTurnHurtIfSleepingAbAttr", async() => {
+    vi.spyOn(overrides, "STATUS_OVERRIDE", "get").mockReturnValue(StatusEffect.SLEEP);
+    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPORE, Moves.SPORE, Moves.SPORE, Moves.SPORE]);
+    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BAD_DREAMS);
+
+    await game.startBattle([Species.MAGIKARP]);
+
+    const leadPokemon = game.scene.getPlayerPokemon();
+    expect(leadPokemon).toBeDefined();
+
+    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
+  }, TIMEOUT
+  );
+
+  /*
+  it("Magic Guard prevents damage from abilities with PostDefendContactDamageAbAttr", async() => {
+    await game.startBattle([Species.MAGIKARP]);
+    vi.spyOn(overrides, "STATUS_OVERRIDE", "get").mockReturnValue(StatusEffect.SLEEP);
+    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPORE, Moves.SPORE, Moves.SPORE, Moves.SPORE]);
+
+    }, TIMEOUT
+  );
+*/
+  //Ability Immunities
+  //Iron Barbs/Rough Skin --> PostDefendContactDamageAbAttr
+  //Solar Power/Dry Skin --> PostWeatherLapseDamageAbAttr
+  //Bad Dreams --> PostTurnHurtIfSleepingAbAttr
+  //Aftermath/Innards Out --> PostFaintContactDamageAbAttr
+  //Liquid Ooze --> ReverseDrainAbAttr
+  //
+  //Gulp Missle (not implemented)
+
 });
