@@ -14,6 +14,7 @@ import Trainer from "./field/trainer";
 import { Species } from "./enums/species";
 import { GameMode, GameModes } from "./game-mode";
 import { randomUUID, UUID } from "node:crypto";
+import PokemonSpecies from "./data/pokemon-species";
 //#endregion
 
 
@@ -264,27 +265,57 @@ function checkForPokeInBiome(species: Species, pool: (Species | SpeciesTree)[]):
 
 /**
  * Formats a Pokemon in the player's party.
+ * 
+ * If multiple Pokemon of the same species exist in the party, it will specify which slot they are in.
  * @param scene The BattleScene, for getting the player's party.
  * @param index The slot index.
  * @returns [INDEX] NAME (example: `[1] Walking Wake` is a Walking Wake in the first party slot)
  */
 export function playerPokeName(scene: BattleScene, index: integer | Pokemon | PlayerPokemon) {
-  if (typeof index == "number") {
-    return "[" + (index  + 1) + "] " + scene.getParty()[index].name
+  var species: PokemonSpecies[] = []
+  var dupeSpecies: PokemonSpecies[] = []
+  for (var i = 0; i < scene.getParty().length; i++) {
+    if (!species.includes(scene.getParty()[i].species)) {
+      species.push(scene.getParty()[i].species)
+    } else if (!dupeSpecies.includes(scene.getParty()[i].species)) {
+      dupeSpecies.push(scene.getParty()[i].species)
+    }
   }
-  return "[" + (scene.getParty().indexOf(index as PlayerPokemon) + 1) + "] " + index.name
+  if (typeof index == "number") {
+    if (dupeSpecies.includes(scene.getParty()[index].species))
+      return scene.getParty()[index].name + " (Slot " + (index  + 1) + ")"
+    return scene.getParty()[index].name
+  }
+  if (dupeSpecies.includes(index.species))
+    return index.name + " (Slot " + (scene.getParty().indexOf(index as PlayerPokemon) + 1) + ")"
+  return index.name
 }
 /**
  * Formats a Pokemon in the opposing party.
+ * 
+ * If multiple Pokemon of the same species exist in the party, it will specify which slot they are in.
  * @param scene The BattleScene, for getting the enemy's party.
  * @param index The slot index.
  * @returns [INDEX] NAME (example: `[2] Zigzagoon` is a Zigzagoon in the right slot (for a double battle) or in the second party slot (for a single battle against a Trainer))
  */
 export function enemyPokeName(scene: BattleScene, index: integer | Pokemon | EnemyPokemon) {
-  if (typeof index == "number") {
-    return "[" + (index  + 1) + "] " + scene.getEnemyParty()[index].name
+  var species: PokemonSpecies[] = []
+  var dupeSpecies: PokemonSpecies[] = []
+  for (var i = 0; i < scene.getEnemyParty().length; i++) {
+    if (!species.includes(scene.getEnemyParty()[i].species)) {
+      species.push(scene.getEnemyParty()[i].species)
+    } else if (!dupeSpecies.includes(scene.getEnemyParty()[i].species)) {
+      dupeSpecies.push(scene.getEnemyParty()[i].species)
+    }
   }
-  return "[" + (scene.getEnemyParty().indexOf(index as EnemyPokemon) + 1) + "] " + index.name
+  if (typeof index == "number") {
+    if (dupeSpecies.includes(scene.getEnemyParty()[index].species))
+      return scene.getEnemyParty()[index].name + " (Slot " + (index  + 1) + ")"
+    return scene.getEnemyParty()[index].name
+  }
+  if (dupeSpecies.includes(index.species))
+    return index.name + " (Slot " + (scene.getEnemyParty().indexOf(index as EnemyPokemon) + 1) + ")"
+  return index.name
 }
 // LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "")
 
