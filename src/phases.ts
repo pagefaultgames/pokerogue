@@ -5749,7 +5749,12 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
                   this.scene.ui.showText(i18next.t("battle:learnMoveStopTeaching", { moveName: move.name }), null, () => {
                     this.scene.ui.setModeWithoutClear(Mode.CONFIRM, () => {
                       this.scene.ui.setMode(messageMode);
-                      LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, LoggerTools.playerPokeName(this.scene, pokemon) + " | Skip " + move.name)
+                      var W = LoggerTools.getWave(LoggerTools.getDRPD(this.scene), this.scene.currentBattle.waveIndex, this.scene)
+                      if (W.shop != "") {
+                        LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, W.shop + "; skip learning it")
+                      } else {
+                        LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, LoggerTools.playerPokeName(this.scene, pokemon) + " | Skip " + move.name)
+                      }
                       this.scene.ui.showText(i18next.t("battle:learnMoveNotLearned", { pokemonName: pokemon.name, moveName: move.name }), null, () => this.end(), null, true);
                     }, () => {
                       this.scene.ui.setMode(messageMode);
@@ -5771,7 +5776,12 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
                       this.scene.ui.showText(i18next.t("battle:countdownPoof"), null, () => {
                         this.scene.ui.showText(i18next.t("battle:learnMoveForgetSuccess", { pokemonName: pokemon.name, moveName: pokemon.moveset[moveIndex].getName() }), null, () => {
                           this.scene.ui.showText(i18next.t("battle:learnMoveAnd"), null, () => {
-                            LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, LoggerTools.playerPokeName(this.scene, pokemon) + " | Replace " + pokemon.moveset[moveIndex].getName() + " with " + new PokemonMove(this.moveId).getName())
+                            var W = LoggerTools.getWave(LoggerTools.getDRPD(this.scene), this.scene.currentBattle.waveIndex, this.scene)
+                            if (W.shop != "") {
+                              LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, W.shop + " → replace " + pokemon.moveset[moveIndex].getName())
+                            } else {
+                              LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, LoggerTools.playerPokeName(this.scene, pokemon) + " | Learn " + new PokemonMove(this.moveId).getName() + " → replace " + pokemon.moveset[moveIndex].getName())
+                            }
                             pokemon.setMove(moveIndex, Moves.NONE);
                             this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, this.moveId));
                             this.end();
