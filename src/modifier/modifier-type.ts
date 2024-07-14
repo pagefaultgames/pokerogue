@@ -20,7 +20,7 @@ import { ModifierTier } from "./modifier-tier";
 import { Nature, getNatureName, getNatureStatMultiplier } from "#app/data/nature";
 import i18next from "i18next";
 import { getModifierTierTextTint } from "#app/ui/text";
-import * as Overrides from "../overrides";
+import Overrides from "#app/overrides";
 import { MoneyMultiplierModifier } from "./modifier";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -566,7 +566,12 @@ export class PokemonLevelIncrementModifierType extends PokemonModifierType {
   }
 
   getDescription(scene: BattleScene): string {
-    return i18next.t("modifierType:ModifierType.PokemonLevelIncrementModifierType.description");
+    let levels = 1;
+    const hasCandyJar = scene.modifiers.find(modifier => modifier instanceof Modifiers.LevelIncrementBoosterModifier);
+    if (hasCandyJar) {
+      levels += hasCandyJar.stackCount;
+    }
+    return i18next.t("modifierType:ModifierType.PokemonLevelIncrementModifierType.description", {levels });
   }
 }
 
@@ -576,7 +581,12 @@ export class AllPokemonLevelIncrementModifierType extends ModifierType {
   }
 
   getDescription(scene: BattleScene): string {
-    return i18next.t("modifierType:ModifierType.AllPokemonLevelIncrementModifierType.description");
+    let levels = 1;
+    const hasCandyJar = scene.modifiers.find(modifier => modifier instanceof Modifiers.LevelIncrementBoosterModifier);
+    if (hasCandyJar) {
+      levels += hasCandyJar.stackCount;
+    }
+    return i18next.t("modifierType:ModifierType.AllPokemonLevelIncrementModifierType.description", { levels });
   }
 }
 
@@ -1153,6 +1163,58 @@ class WeightedModifierType {
     this.modifierType.setTier(tier);
   }
 }
+
+type BaseModifierOverride = {
+  name: Exclude<ModifierTypeKeys, GeneratorModifierOverride["name"]>;
+  count?: number;
+};
+
+/** Type for modifiers and held items that are constructed via {@linkcode ModifierTypeGenerator}. */
+export type GeneratorModifierOverride = {
+  count?: number;
+} & (
+  | {
+      name: keyof Pick<typeof modifierTypes, "SPECIES_STAT_BOOSTER">;
+      type?: SpeciesStatBoosterItem;
+    }
+  | {
+      name: keyof Pick<typeof modifierTypes, "TEMP_STAT_BOOSTER">;
+      type?: TempBattleStat;
+    }
+  | {
+      name: keyof Pick<typeof modifierTypes, "BASE_STAT_BOOSTER">;
+      type?: Stat;
+    }
+  | {
+      name: keyof Pick<typeof modifierTypes, "MINT">;
+      type?: Nature;
+    }
+  | {
+      name: keyof Pick<typeof modifierTypes, "ATTACK_TYPE_BOOSTER" | "TERA_SHARD">;
+      type?: Type;
+    }
+  | {
+      name: keyof Pick<typeof modifierTypes, "BERRY">;
+      type?: BerryType;
+    }
+  | {
+      name: keyof Pick<typeof modifierTypes, "EVOLUTION_ITEM" | "RARE_EVOLUTION_ITEM">;
+      type?: EvolutionItem;
+    }
+  | {
+      name: keyof Pick<typeof modifierTypes, "FORM_CHANGE_ITEM">;
+      type?: FormChangeItem;
+    }
+  | {
+      name: keyof Pick<typeof modifierTypes, "TM_COMMON" | "TM_GREAT" | "TM_ULTRA">;
+      type?: Moves;
+    }
+);
+
+/** Type used to construct modifiers and held items for overriding purposes. */
+export type ModifierOverride = GeneratorModifierOverride | BaseModifierOverride;
+
+export type ModifierTypeKeys = keyof typeof modifierTypes;
 
 export const modifierTypes = {
   POKEBALL: () => new AddPokeballModifierType("pb", PokeballType.POKEBALL, 5),
@@ -1816,14 +1878,13 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
     }
     options.push(candidate);
   });
+
   // OVERRIDE IF NECESSARY
-  if (Overrides.ITEM_REWARD_OVERRIDE?.length) {
-    options.forEach((mod, i) => {
-      // @ts-ignore: keeps throwing don't use string as index error in typedoc run
-      const override = modifierTypes[Overrides.ITEM_REWARD_OVERRIDE[i]]?.();
-      mod.type = (override instanceof ModifierTypeGenerator ? override.generateType(party) : override) || mod.type;
-    });
-  }
+  Overrides.ITEM_REWARD_OVERRIDE.forEach((item, i) => {
+    const override = modifierTypes[item]();
+    options[i].type = override instanceof ModifierTypeGenerator ? override.generateType(party) : override;
+  });
+
   return options;
 }
 
