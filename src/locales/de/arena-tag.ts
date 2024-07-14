@@ -44,7 +44,7 @@ export const arenaTag: SimpleTranslationEntries = {
   "tailwindOnAddEnemy": "Die gegnerischen Pokémon erhalten Rückenwind!",
   "tailwindOnRemove": "Der Rückenwind hat sich gelegt!",
   "tailwindOnRemovePlayer": "Der Rückenwind auf deiner Seite hat sich gelegt!",
-  "tailwindOnRemoveEnemy": "TDer Rückenwind auf gegnerischer Seite hat sich gelegt!",
+  "tailwindOnRemoveEnemy": "Der Rückenwind auf gegnerischer Seite hat sich gelegt!",
   "happyHourOnAdd": "Goldene Zeiten sind angebrochen!",
   "happyHourOnRemove": "Die goldenen Zeiten sind vorbei!",
 } as const;
