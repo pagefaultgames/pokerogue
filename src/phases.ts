@@ -2406,6 +2406,27 @@ export class CheckSwitchPhase extends BattlePhase {
         pk.getBattleInfo().flyoutMenu.flyoutText[2].setColor("#e8e8a8")
       }
     }
+    if (false) {
+      this.scene.pokemonInfoContainer.show(this.scene.getEnemyField()[0], false, 1, true);
+      if (this.scene.getEnemyField()[1] != undefined) {
+        this.scene.tweens.add({
+          targets: this.scene.pokemonInfoContainer,
+          alpha: 1,
+          duration: 5000,
+          onComplete: () => {
+            this.scene.pokemonInfoContainer.hide(1.3)
+            this.scene.tweens.add({
+              targets: this.scene.pokemonInfoContainer,
+              alpha: 1,
+              duration: 1000,
+              onComplete: () => {
+                this.scene.pokemonInfoContainer.show(this.scene.getEnemyField()[1], false, 1, true);
+              }
+            })
+          }
+        })
+      }
+    }
 
     this.scene.ui.showText(i18next.t("battle:switchQuestion", { pokemonName: this.useName ? pokemon.name : i18next.t("battle:pokemon") }), null, () => {
       this.scene.ui.setMode(Mode.CONFIRM, () => {
@@ -2421,6 +2442,7 @@ export class CheckSwitchPhase extends BattlePhase {
           this.scene.getEnemyField()[i].getBattleInfo().flyoutMenu.flyoutText[3].text = "???"
           this.scene.getEnemyField()[i].getBattleInfo().flyoutMenu.flyoutText[2].setColor("#f8f8f8")
         }
+        //this.scene.pokemonInfoContainer.hide()
         this.end();
       }, () => {
         this.scene.ui.setMode(Mode.MESSAGE);
@@ -2432,6 +2454,7 @@ export class CheckSwitchPhase extends BattlePhase {
           this.scene.getEnemyField()[i].getBattleInfo().flyoutMenu.flyoutText[3].text = "???"
           this.scene.getEnemyField()[i].getBattleInfo().flyoutMenu.flyoutText[2].setColor("#f8f8f8")
         }
+        //this.scene.pokemonInfoContainer.hide()
         this.end();
       });
     });
