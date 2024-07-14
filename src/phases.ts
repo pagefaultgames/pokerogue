@@ -5140,10 +5140,10 @@ export class SwitchPhase extends BattlePhase {
     this.scene.ui.setMode(Mode.PARTY, this.isModal ? PartyUiMode.FAINT_SWITCH : PartyUiMode.POST_BATTLE_SWITCH, fieldIndex, (slotIndex: integer, option: PartyOption) => {
       if (slotIndex >= this.scene.currentBattle.getBattlerCount() && slotIndex < 6) {
         if (LoggerTools.isPreSwitch.value) {
-          LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "Pre-switch " + (option == PartyOption.PASS_BATON ? "+ Baton" : "") + " to " + LoggerTools.playerPokeName(this.scene, slotIndex))
+          LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "Pre-switch " + (option == PartyOption.PASS_BATON ? "+ Baton" : "") + " " + LoggerTools.playerPokeName(this.scene, fieldIndex) + "  to " + LoggerTools.playerPokeName(this.scene, slotIndex))
         }
         if (LoggerTools.isFaintSwitch.value) {
-          LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, (option == PartyOption.PASS_BATON ? "Baton" : "Switch") + " in " + LoggerTools.playerPokeName(this.scene, slotIndex))
+          LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, (option == PartyOption.PASS_BATON ? "Baton" : "Send") + " in " + LoggerTools.playerPokeName(this.scene, slotIndex))
         }
         this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, fieldIndex, slotIndex, this.doReturn, option === PartyOption.PASS_BATON));
       }

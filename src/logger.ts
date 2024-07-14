@@ -828,6 +828,8 @@ export function logPokemon(scene: BattleScene, floor: integer = undefined, slot:
   var pk: PokeData = exportPokemon(pokemon, encounterRarity)
   pk.source = pokemon
   pokemon.partyslot = slot;
+  if (wv.pokemon == undefined)
+    wv.pokemon = []
   if (wv.pokemon[slot] != undefined) {
     if (encounterRarity == "" || encounterRarity == undefined) {
       if (wv.pokemon[slot].rarity != undefined && wv.pokemon[slot].rarity != "???") pk.rarity = wv.pokemon[slot].rarity
@@ -1278,7 +1280,7 @@ function printIV(inData: string, indent: string, iv: IVData) {
   inData += ",\n" + indent + "  \"def\": " + iv.def
   inData += ",\n" + indent + "  \"spatk\": " + iv.spatk
   inData += ",\n" + indent + "  \"spdef\": " + iv.spdef
-  inData += ",\n" + indent + "  \"speed\": " + iv.speed
+  inData += ",\n" + indent + "  \"spe\": " + iv.speed
   inData += "\n" + indent + "}"
   return inData;
 }

@@ -87,7 +87,7 @@ export function getNatureIncrease(nature: Nature): string {
     case Nature.HASTY:
     case Nature.JOLLY:
     case Nature.NAIVE:
-      return "speed"
+      return "spe"
     case Nature.HARDY:
       //return "atk"
     case Nature.DOCILE:
@@ -97,7 +97,7 @@ export function getNatureIncrease(nature: Nature): string {
     case Nature.BASHFUL:
       //return "spdef"
     case Nature.QUIRKY:
-      //return "speed"
+      //return "spe"
     default:
       return ""
   }
@@ -128,7 +128,7 @@ export function getNatureDecrease(nature: Nature): string {
     case Nature.RELAXED:
     case Nature.QUIET:
     case Nature.SASSY:
-      return "speed"
+      return "spe"
     case Nature.HARDY:
       //return "atk"
     case Nature.DOCILE:
@@ -138,7 +138,7 @@ export function getNatureDecrease(nature: Nature): string {
     case Nature.BASHFUL:
       //return "spdef"
     case Nature.QUIRKY:
-      //return "speed"
+      //return "spe"
     default:
       return ""
   }
