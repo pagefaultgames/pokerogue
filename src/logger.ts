@@ -272,21 +272,21 @@ function checkForPokeInBiome(species: Species, pool: (Species | SpeciesTree)[]):
  * @returns [INDEX] NAME (example: `[1] Walking Wake` is a Walking Wake in the first party slot)
  */
 export function playerPokeName(scene: BattleScene, index: integer | Pokemon | PlayerPokemon) {
-  var species: PokemonSpecies[] = []
-  var dupeSpecies: PokemonSpecies[] = []
+  var species = []
+  var dupeSpecies = []
   for (var i = 0; i < scene.getParty().length; i++) {
-    if (!species.includes(scene.getParty()[i].species)) {
-      species.push(scene.getParty()[i].species)
-    } else if (!dupeSpecies.includes(scene.getParty()[i].species)) {
-      dupeSpecies.push(scene.getParty()[i].species)
+    if (!species.includes(scene.getParty()[i].name)) {
+      species.push(scene.getParty()[i].name)
+    } else if (!dupeSpecies.includes(scene.getParty()[i].name)) {
+      dupeSpecies.push(scene.getParty()[i].name)
     }
   }
   if (typeof index == "number") {
-    if (dupeSpecies.includes(scene.getParty()[index].species))
+    if (dupeSpecies.includes(scene.getParty()[index].name))
       return scene.getParty()[index].name + " (Slot " + (index  + 1) + ")"
     return scene.getParty()[index].name
   }
-  if (dupeSpecies.includes(index.species))
+  if (dupeSpecies.includes(index.name))
     return index.name + " (Slot " + (scene.getParty().indexOf(index as PlayerPokemon) + 1) + ")"
   return index.name
 }
@@ -299,21 +299,21 @@ export function playerPokeName(scene: BattleScene, index: integer | Pokemon | Pl
  * @returns [INDEX] NAME (example: `[2] Zigzagoon` is a Zigzagoon in the right slot (for a double battle) or in the second party slot (for a single battle against a Trainer))
  */
 export function enemyPokeName(scene: BattleScene, index: integer | Pokemon | EnemyPokemon) {
-  var species: PokemonSpecies[] = []
-  var dupeSpecies: PokemonSpecies[] = []
+  var species = []
+  var dupeSpecies = []
   for (var i = 0; i < scene.getEnemyParty().length; i++) {
-    if (!species.includes(scene.getEnemyParty()[i].species)) {
-      species.push(scene.getEnemyParty()[i].species)
-    } else if (!dupeSpecies.includes(scene.getEnemyParty()[i].species)) {
-      dupeSpecies.push(scene.getEnemyParty()[i].species)
+    if (!species.includes(scene.getEnemyParty()[i].name)) {
+      species.push(scene.getEnemyParty()[i].name)
+    } else if (!dupeSpecies.includes(scene.getEnemyParty()[i].name)) {
+      dupeSpecies.push(scene.getEnemyParty()[i].name)
     }
   }
   if (typeof index == "number") {
-    if (dupeSpecies.includes(scene.getEnemyParty()[index].species))
+    if (dupeSpecies.includes(scene.getEnemyParty()[index].name))
       return scene.getEnemyParty()[index].name + " (Slot " + (index  + 1) + ")"
     return scene.getEnemyParty()[index].name
   }
-  if (dupeSpecies.includes(index.species))
+  if (dupeSpecies.includes(index.name))
     return index.name + " (Slot " + (scene.getEnemyParty().indexOf(index as EnemyPokemon) + 1) + ")"
   return index.name
 }
