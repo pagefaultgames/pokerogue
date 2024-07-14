@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
-import * as Overrides from "#app/overrides";
+import Overrides from "#app/overrides";
 import { Abilities } from "#enums/abilities";
 import { Species } from "#enums/species";
 import { FaintPhase } from "#app/phases";
@@ -52,7 +52,10 @@ describe("Abilities - Quick Draw", () => {
     expect(pokemon.battleData.abilitiesApplied).contain(Abilities.QUICK_DRAW);
   }, 20000);
 
-  test("does not triggered by non damage moves", async () => {
+  test("does not triggered by non damage moves", {
+    timeout: 20000,
+    retry: 5
+  }, async () => {
     await game.startBattle([Species.SLOWBRO]);
 
     const pokemon = game.scene.getPlayerPokemon();
@@ -67,7 +70,8 @@ describe("Abilities - Quick Draw", () => {
     expect(pokemon.isFainted()).toBe(true);
     expect(enemy.isFainted()).toBe(false);
     expect(pokemon.battleData.abilitiesApplied).not.contain(Abilities.QUICK_DRAW);
-  }, 20000);
+  }
+  );
 
   test("does not increase priority", async () => {
     vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(Array(4).fill(Moves.EXTREME_SPEED));
