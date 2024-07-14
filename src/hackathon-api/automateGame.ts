@@ -2,6 +2,7 @@ import BattleScene from "#app/battle-scene.js";
 import { initWithStarters } from "./initWithStarters";
 import { BallCommand, SwitchCommand } from "./BattlePhaseAPI";
 import { CommandPhase } from "#app/phases.js";
+import { handleCheckSwitch } from "./handleCheckSwitch";
 
 /**
  * Automates the game
@@ -17,6 +18,10 @@ export const automateGame = async (game: Phaser.Game) => {
   // Initialise the game with three starter Pokémon.
   // Participants can change the species numbers to select different starters.
   const battleScene = await initWithStarters(game, [1, 155, 258]);
+
+  // Handles the check switch phase in a battle scene.
+  // Function switches to SwitchPhase if true, and switches to CommandPhase if false.
+  handleCheckSwitch(game, false);
 
   phaseApi(battleScene);
 
