@@ -873,7 +873,7 @@ export class TitlePhase extends Phase {
 
 
 
-//#region 04 Unavailable
+//#region 04 UnavailablePhase
 export class UnavailablePhase extends Phase {
   constructor(scene: BattleScene) {
     super(scene);
@@ -892,7 +892,7 @@ export class UnavailablePhase extends Phase {
 
 
 
-//#region 05 ReloadSession
+//#region 05 ReloadSessionPhase
 export class ReloadSessionPhase extends Phase {
   private systemDataStr: string;
 
@@ -949,7 +949,7 @@ export class OutdatedPhase extends Phase {
 
 
 
-//#region 07 SelectGender
+//#region 07 SelectGenderPhase
 export class SelectGenderPhase extends Phase {
   constructor(scene: BattleScene) {
     super(scene);
@@ -995,7 +995,7 @@ export class SelectGenderPhase extends Phase {
 
 
 
-//#region 08 SelectChallenge
+//#region 08 SelectChallengePhase
 export class SelectChallengePhase extends Phase {
   constructor(scene: BattleScene) {
     super(scene);
@@ -1015,7 +1015,7 @@ export class SelectChallengePhase extends Phase {
 
 
 
-//#region 09 SelectStarter
+//#region 09 SelectStarterPhase
 export class SelectStarterPhase extends Phase {
 
   constructor(scene: BattleScene) {
@@ -5907,8 +5907,11 @@ export class PokemonHealPhase extends CommonAnimPhase {
 
 //#region 69 AttemptCapturePhase
 export class AttemptCapturePhase extends PokemonPhase {
+  /** The Pokeball being used. */
   private pokeballType: PokeballType;
+  /** The Pokeball sprite. */
   private pokeball: Phaser.GameObjects.Sprite;
+  /** The sprite's original Y position. */
   private originalY: number;
 
   constructor(scene: BattleScene, targetIndex: integer, pokeballType: PokeballType) {
@@ -6080,29 +6083,26 @@ export class AttemptCapturePhase extends PokemonPhase {
   }
 
   catch() {
+    /** The Pokemon being caught. */
     const pokemon = this.getPokemon() as EnemyPokemon;
     this.scene.unshiftPhase(new VictoryPhase(this.scene, this.battlerIndex));
 
+    /** Used for achievements. */
     const speciesForm = !pokemon.fusionSpecies ? pokemon.getSpeciesForm() : pokemon.getFusionSpeciesForm();
 
-    if (speciesForm.abilityHidden && (pokemon.fusionSpecies ? pokemon.fusionAbilityIndex : pokemon.abilityIndex) === speciesForm.getAbilityCount() - 1) {
+    // Achievements
+    if (speciesForm.abilityHidden && (pokemon.fusionSpecies ? pokemon.fusionAbilityIndex : pokemon.abilityIndex) === speciesForm.getAbilityCount() - 1)
       this.scene.validateAchv(achvs.HIDDEN_ABILITY);
-    }
-
-    if (pokemon.species.subLegendary) {
+    if (pokemon.species.subLegendary)
       this.scene.validateAchv(achvs.CATCH_SUB_LEGENDARY);
-    }
-
-    if (pokemon.species.legendary) {
+    if (pokemon.species.legendary)
       this.scene.validateAchv(achvs.CATCH_LEGENDARY);
-    }
-
-    if (pokemon.species.mythical) {
+    if (pokemon.species.mythical)
       this.scene.validateAchv(achvs.CATCH_MYTHICAL);
-    }
 
+    // Show its info
     this.scene.pokemonInfoContainer.show(pokemon, true);
-
+    // Update new IVs
     this.scene.gameData.updateSpeciesDexIvs(pokemon.species.getRootSpeciesId(true), pokemon.ivs);
 
     this.scene.ui.showText(i18next.t("battle:pokemonCaught", { pokemonName: pokemon.name }), null, () => {
@@ -6139,9 +6139,13 @@ export class AttemptCapturePhase extends PokemonPhase {
       Promise.all([pokemon.hideInfo(), this.scene.gameData.setPokemonCaught(pokemon)]).then(() => {
         if (this.scene.getParty().length === 6) {
           const promptRelease = () => {
+            // Say that your party is full
             this.scene.ui.showText(i18next.t("battle:partyFull", { pokemonName: pokemon.name }), null, () => {
+              // Ask if you want to make room
               this.scene.pokemonInfoContainer.makeRoomForConfirmUi();
               this.scene.ui.setMode(Mode.CONFIRM, () => {
+                // YES
+                // Open up the party menu on the RELEASE setting
                 this.scene.ui.setMode(Mode.PARTY, PartyUiMode.RELEASE, this.fieldIndex, (slotIndex: integer, _option: PartyOption) => {
                   this.scene.ui.setMode(Mode.MESSAGE).then(() => {
                     if (slotIndex < 6) {
@@ -6152,7 +6156,8 @@ export class AttemptCapturePhase extends PokemonPhase {
                   });
                 });
               }, () => {
-                LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "Do Not Keep")
+                // NO
+                LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "Don't keep " + pokemon.name)
                 this.scene.ui.setMode(Mode.MESSAGE).then(() => {
                   removePokemon();
                   end();
@@ -6162,12 +6167,14 @@ export class AttemptCapturePhase extends PokemonPhase {
           };
           promptRelease();
         } else {
+          //LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, `${pokemon.name} added to party`)
           addToParty();
         }
       });
     }, 0, true);
   }
 
+  /** Remove the Poke Ball from the scene. */
   removePb() {
     this.scene.tweens.add({
       targets: this.pokeball,
@@ -6730,3 +6737,4 @@ export class TestMessagePhase extends MessagePhase {
     super(scene, message, null, true);
   }
 }
+//#endregion

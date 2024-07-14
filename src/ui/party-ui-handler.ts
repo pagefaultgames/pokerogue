@@ -407,6 +407,7 @@ export default class PartyUiHandler extends MessageUiHandler {
             this.showText(i18next.t("partyUiHandler:releaseConfirmation", { pokemonName: pokemon.name }), null, () => {
               ui.setModeWithoutClear(Mode.CONFIRM, () => {
                 ui.setMode(Mode.PARTY);
+                LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, `Add ${pokemon.name} to party, replacing ${this.scene.getParty()[this.cursor].name} (Slot ${this.cursor + 1})`)
                 this.doRelease(this.cursor);
               }, () => {
                 ui.setMode(Mode.PARTY);
@@ -933,7 +934,6 @@ export default class PartyUiHandler extends MessageUiHandler {
       this.clearPartySlots();
       this.scene.removePartyMemberModifiers(slotIndex);
       const releasedPokemon = this.scene.getParty().splice(slotIndex, 1)[0];
-      LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, `Release ${releasedPokemon.name} (Slot ${slotIndex + 1})`)
       releasedPokemon.destroy();
       this.populatePartySlots();
       if (this.cursor >= this.scene.getParty().length) {

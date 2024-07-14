@@ -10,11 +10,11 @@ export default class LogNameFormUiHandler extends FormModalUiHandler {
   name: string;
 
   getModalTitle(config?: ModalConfig): string {
-    return "Manage " + (this.name ? this.name : "Log");
+    return (this.name ? this.name : "Manage Log");
   }
 
   getFields(config?: ModalConfig): string[] {
-    return [ "Name", "Author(s)" ];
+    return [ "Name", "Author(s)", "Label" ];
   }
 
   getWidth(config?: ModalConfig): number {
@@ -67,6 +67,7 @@ export default class LogNameFormUiHandler extends FormModalUiHandler {
       const originalLoginAction = this.submitAction;
       this.inputs[0].setText(args[0].autofillfields[0])
       this.inputs[1].setText(args[0].autofillfields[1])
+      this.inputs[2].setText(args[0].autofillfields[2])
       this.submitAction = (_) => {
         console.log("submitAction")
         // Prevent overlapping overrides on action modification

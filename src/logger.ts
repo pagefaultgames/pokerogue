@@ -1189,7 +1189,7 @@ function printItemNoNewline(inData: string, indent: string, item: ItemData) {
 
 
 
-//#region 12 Manage Logs
+//#region 12 Ingame Menu
 
 /**
  * Sets the name, author, and [todo] label for a file.
@@ -1263,7 +1263,8 @@ export function generateEditOption(scene: BattleScene, i: integer, saves: any, p
       scene.ui.setMode(Mode.NAME_LOG, {
         autofillfields: [
           (JSON.parse(localStorage.getItem(logs[i][1])) as DRPD).title,
-          (JSON.parse(localStorage.getItem(logs[i][1])) as DRPD).authors.join(", ")
+          (JSON.parse(localStorage.getItem(logs[i][1])) as DRPD).authors.join(", "),
+          (JSON.parse(localStorage.getItem(logs[i][1])) as DRPD).label,
         ],
         buttonActions: [
           () => {
