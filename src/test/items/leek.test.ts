@@ -1,14 +1,14 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import Phase from "phaser";
 import GameManager from "#app/test/utils/gameManager";
-import * as overrides from "#app/overrides";
+import overrides from "#app/overrides";
 import { Species } from "#enums/species";
 import { Moves } from "#enums/moves";
-import { Stat } from "#app/data/pokemon-stat";
-import { SpeciesCritBoosterModifier } from "#app/modifier/modifier";
+import { CritBoosterModifier } from "#app/modifier/modifier";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import * as Utils from "#app/utils";
-import i18next from "#app/plugins/i18n";
+import { MoveEffectPhase, TurnStartPhase } from "#app/phases";
+import { BattlerIndex } from "#app/battle";
 
 describe("Items - Leek", () => {
   let phaserGame: Phaser.Game;
@@ -42,17 +42,15 @@ describe("Items - Leek", () => {
       Species.FARFETCHD
     ]);
 
-    const partyMember = game.scene.getParty()[0];
+    game.doAttack(0);
 
-    partyMember.stats[Stat.SPD] = 10;
-    partyMember.stats[Stat.ATK] = 1;
-    game.scene.getEnemyParty()[0].stats[Stat.SPD] = 1;
+    await game.phaseInterceptor.to(TurnStartPhase, false);
 
-    await game.doAttack(0);
+    vi.spyOn(game.scene.getCurrentPhase() as TurnStartPhase, "getOrder").mockReturnValue([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
 
-    await game.toNextTurn();
+    await game.phaseInterceptor.to(MoveEffectPhase);
 
-    expect(consoleSpy).toHaveBeenCalledWith("Applied", i18next.t("modifierType:ModifierType.LEEK.name"), "");
+    expect(consoleSpy).toHaveBeenCalledWith("Applied", "Leek", "");
   }, 20000);
 
   it("LEEK held by FARFETCHD", async() => {
@@ -60,17 +58,17 @@ describe("Items - Leek", () => {
       Species.FARFETCHD
     ]);
 
-    const partyMember = game.scene.getParty()[0];
+    const partyMember = game.scene.getPlayerPokemon();
 
     // Making sure modifier is not applied without holding item
     const critLevel = new Utils.IntegerHolder(0);
-    partyMember.scene.applyModifiers(SpeciesCritBoosterModifier, true, partyMember, critLevel);
+    partyMember.scene.applyModifiers(CritBoosterModifier, true, partyMember, critLevel);
 
     expect(critLevel.value).toBe(0);
 
     // Giving Leek to party member and testing if it applies
     partyMember.scene.addModifier(modifierTypes.LEEK().newModifier(partyMember), true);
-    partyMember.scene.applyModifiers(SpeciesCritBoosterModifier, true, partyMember, critLevel);
+    partyMember.scene.applyModifiers(CritBoosterModifier, true, partyMember, critLevel);
 
     expect(critLevel.value).toBe(2);
   }, 20000);
@@ -80,17 +78,17 @@ describe("Items - Leek", () => {
       Species.GALAR_FARFETCHD
     ]);
 
-    const partyMember = game.scene.getParty()[0];
+    const partyMember = game.scene.getPlayerPokemon();
 
     // Making sure modifier is not applied without holding item
     const critLevel = new Utils.IntegerHolder(0);
-    partyMember.scene.applyModifiers(SpeciesCritBoosterModifier, true, partyMember, critLevel);
+    partyMember.scene.applyModifiers(CritBoosterModifier, true, partyMember, critLevel);
 
     expect(critLevel.value).toBe(0);
 
     // Giving Leek to party member and testing if it applies
     partyMember.scene.addModifier(modifierTypes.LEEK().newModifier(partyMember), true);
-    partyMember.scene.applyModifiers(SpeciesCritBoosterModifier, true, partyMember, critLevel);
+    partyMember.scene.applyModifiers(CritBoosterModifier, true, partyMember, critLevel);
 
     expect(critLevel.value).toBe(2);
   }, 20000);
@@ -100,17 +98,17 @@ describe("Items - Leek", () => {
       Species.SIRFETCHD
     ]);
 
-    const partyMember = game.scene.getParty()[0];
+    const partyMember = game.scene.getPlayerPokemon();
 
     // Making sure modifier is not applied without holding item
     const critLevel = new Utils.IntegerHolder(0);
-    partyMember.scene.applyModifiers(SpeciesCritBoosterModifier, true, partyMember, critLevel);
+    partyMember.scene.applyModifiers(CritBoosterModifier, true, partyMember, critLevel);
 
     expect(critLevel.value).toBe(0);
 
     // Giving Leek to party member and testing if it applies
     partyMember.scene.addModifier(modifierTypes.LEEK().newModifier(partyMember), true);
-    partyMember.scene.applyModifiers(SpeciesCritBoosterModifier, true, partyMember, critLevel);
+    partyMember.scene.applyModifiers(CritBoosterModifier, true, partyMember, critLevel);
 
     expect(critLevel.value).toBe(2);
   }, 20000);
@@ -124,8 +122,9 @@ describe("Items - Leek", () => {
       Species.PIKACHU,
     ]);
 
-    const partyMember = game.scene.getParty()[0];
-    const ally = game.scene.getParty()[1];
+    const party = game.scene.getParty();
+    const partyMember = party[0];
+    const ally = party[1];
 
     // Fuse party members (taken from PlayerPokemon.fuse(...) function)
     partyMember.fusionSpecies = ally.species;
@@ -138,13 +137,13 @@ describe("Items - Leek", () => {
 
     // Making sure modifier is not applied without holding item
     const critLevel = new Utils.IntegerHolder(0);
-    partyMember.scene.applyModifiers(SpeciesCritBoosterModifier, true, partyMember, critLevel);
+    partyMember.scene.applyModifiers(CritBoosterModifier, true, partyMember, critLevel);
 
     expect(critLevel.value).toBe(0);
 
     // Giving Leek to party member and testing if it applies
     partyMember.scene.addModifier(modifierTypes.LEEK().newModifier(partyMember), true);
-    partyMember.scene.applyModifiers(SpeciesCritBoosterModifier, true, partyMember, critLevel);
+    partyMember.scene.applyModifiers(CritBoosterModifier, true, partyMember, critLevel);
 
     expect(critLevel.value).toBe(2);
   }, 20000);
@@ -158,8 +157,9 @@ describe("Items - Leek", () => {
       species[Utils.randInt(species.length)]
     ]);
 
-    const partyMember = game.scene.getParty()[0];
-    const ally = game.scene.getParty()[1];
+    const party = game.scene.getParty();
+    const partyMember = party[0];
+    const ally = party[1];
 
     // Fuse party members (taken from PlayerPokemon.fuse(...) function)
     partyMember.fusionSpecies = ally.species;
@@ -172,13 +172,13 @@ describe("Items - Leek", () => {
 
     // Making sure modifier is not applied without holding item
     const critLevel = new Utils.IntegerHolder(0);
-    partyMember.scene.applyModifiers(SpeciesCritBoosterModifier, true, partyMember, critLevel);
+    partyMember.scene.applyModifiers(CritBoosterModifier, true, partyMember, critLevel);
 
     expect(critLevel.value).toBe(0);
 
     // Giving Leek to party member and testing if it applies
     partyMember.scene.addModifier(modifierTypes.LEEK().newModifier(partyMember), true);
-    partyMember.scene.applyModifiers(SpeciesCritBoosterModifier, true, partyMember, critLevel);
+    partyMember.scene.applyModifiers(CritBoosterModifier, true, partyMember, critLevel);
 
     expect(critLevel.value).toBe(2);
   }, 20000);
@@ -188,17 +188,17 @@ describe("Items - Leek", () => {
       Species.PIKACHU
     ]);
 
-    const partyMember = game.scene.getParty()[0];
+    const partyMember = game.scene.getPlayerPokemon();
 
     // Making sure modifier is not applied without holding item
     const critLevel = new Utils.IntegerHolder(0);
-    partyMember.scene.applyModifiers(SpeciesCritBoosterModifier, true, partyMember, critLevel);
+    partyMember.scene.applyModifiers(CritBoosterModifier, true, partyMember, critLevel);
 
     expect(critLevel.value).toBe(0);
 
     // Giving Leek to party member and testing if it applies
     partyMember.scene.addModifier(modifierTypes.LEEK().newModifier(partyMember), true);
-    partyMember.scene.applyModifiers(SpeciesCritBoosterModifier, true, partyMember, critLevel);
+    partyMember.scene.applyModifiers(CritBoosterModifier, true, partyMember, critLevel);
 
     expect(critLevel.value).toBe(0);
   }, 20000);

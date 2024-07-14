@@ -1,14 +1,14 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import Phase from "phaser";
 import GameManager from "#app/test/utils/gameManager";
-import * as overrides from "#app/overrides";
+import overrides from "#app/overrides";
 import { Species } from "#enums/species";
 import { Moves } from "#enums/moves";
-import { Stat } from "#app/data/pokemon-stat";
 import { CritBoosterModifier } from "#app/modifier/modifier";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import * as Utils from "#app/utils";
-import i18next from "#app/plugins/i18n";
+import { MoveEffectPhase, TurnStartPhase } from "#app/phases";
+import { BattlerIndex } from "#app/battle";
 
 describe("Items - Scope Lens", () => {
   let phaserGame: Phaser.Game;
@@ -42,17 +42,15 @@ describe("Items - Scope Lens", () => {
       Species.GASTLY
     ]);
 
-    const partyMember = game.scene.getParty()[0];
+    game.doAttack(0);
 
-    partyMember.stats[Stat.SPD] = 10;
-    partyMember.stats[Stat.ATK] = 1;
-    game.scene.getEnemyParty()[0].stats[Stat.SPD] = 1;
+    await game.phaseInterceptor.to(TurnStartPhase, false);
 
-    await game.doAttack(0);
+    vi.spyOn(game.scene.getCurrentPhase() as TurnStartPhase, "getOrder").mockReturnValue([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
 
-    await game.toNextTurn();
+    await game.phaseInterceptor.to(MoveEffectPhase);
 
-    expect(consoleSpy).toHaveBeenCalledWith("Applied", i18next.t("modifierType:ModifierType.SCOPE_LENS.name"), "");
+    expect(consoleSpy).toHaveBeenCalledWith("Applied", "Scope Lens", "");
   }, 20000);
 
   it("SCOPE_LENS held by random pokemon", async() => {
@@ -60,7 +58,7 @@ describe("Items - Scope Lens", () => {
       Species.GASTLY
     ]);
 
-    const partyMember = game.scene.getParty()[0];
+    const partyMember = game.scene.getPlayerPokemon();
 
     // Making sure modifier is not applied without holding item
     const critLevel = new Utils.IntegerHolder(0);
