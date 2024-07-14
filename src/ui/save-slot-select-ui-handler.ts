@@ -309,13 +309,13 @@ class SessionSlot extends Phaser.GameObjects.Container {
     const slotWindow = addWindow(this.scene, 0, 0, 304, 52);
     this.add(slotWindow);
 
-    this.backer = this.scene.add.image(0, 0, `end_panel`)
-    this.backer.setOrigin(0.5, 0.5)
-    this.backer.setScale(304/909, 52/155)
-    this.backer.setPosition(102*1.5 - 1, 26)
-    this.backer.setSize(304, 52)
-    this.backer.setVisible(false)
-    this.add(this.backer)
+    //this.backer = this.scene.add.image(0, 0, `end_panel`)
+    //this.backer.setOrigin(0.5, 0.5)
+    //this.backer.setScale(304/909, 52/155)
+    //this.backer.setPosition(102*1.5 - 1, 26)
+    //this.backer.setSize(304, 52)
+    //this.backer.setVisible(false)
+    //this.add(this.backer)
 
     this.loadingLabel = addTextObject(this.scene, 152, 26, i18next.t("saveSlotSelectUiHandler:loading"), TextStyle.WINDOW);
     this.loadingLabel.setOrigin(0.5, 0.5);
@@ -342,8 +342,8 @@ class SessionSlot extends Phaser.GameObjects.Container {
     console.log(biomePanelIDs[data.arena.biome])
 
     if (allpanels.includes(biomePanelIDs[data.arena.biome])) {
-      this.backer.setTexture(`${biomePanelIDs[data.arena.biome]}_panel`)
-      this.backer.setVisible(true)
+      //this.backer.setTexture(`${biomePanelIDs[data.arena.biome]}_panel`)
+      //this.backer.setVisible(true)
     }
 
     const pokemonIconsContainer = this.scene.add.container(144, 4);
