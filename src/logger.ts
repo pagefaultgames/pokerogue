@@ -87,6 +87,8 @@ export function getLogs() {
  * @returns The name of the game mode, for use in naming a game log.
  */
 export function getMode(scene: BattleScene) {
+  if (scene.gameMode == undefined)
+    return "???"
   switch (scene.gameMode.modeId) {
     case GameModes.CLASSIC:
       return "Classic"
@@ -625,6 +627,16 @@ export function logShop(scene: BattleScene, floor: integer, action: string) {
   console.log(drpd)
   localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
 }
+export function logCapture(scene: BattleScene, floor: integer, target: EnemyPokemon) {
+  //if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
+  var drpd = getDRPD(scene)
+  console.log("Log Capture", drpd)
+  var wv: Wave = getWave(drpd, floor, scene)
+  var pkslot = target.partyslot
+  wv.pokemon[pkslot].captured = true;
+  console.log(drpd)
+  localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
+}
 /**
  * Retrieves a wave from the DRPD. If the wave doesn't exist, it creates a new one.
  * @param drpd The document to read from.
@@ -804,6 +816,8 @@ export function logPokemon(scene: BattleScene, floor: integer = undefined, slot:
   console.log("Log Enemy Pokemon", drpd)
   var wv: Wave = getWave(drpd, floor, scene)
   var pk: PokeData = exportPokemon(pokemon, encounterRarity)
+  pk.source = pokemon
+  pokemon.partyslot = slot;
   if (wv.pokemon[slot] != undefined) {
     if (encounterRarity == "" || encounterRarity == undefined) {
       if (wv.pokemon[slot].rarity != undefined && wv.pokemon[slot].rarity != "???") pk.rarity = wv.pokemon[slot].rarity
@@ -1124,7 +1138,7 @@ function printWave(inData: string, indent: string, wave: Wave): string {
       inData += indent + "  ]"
     }
   } else {
-    inData += ",\n" + indent + "  \"actions\": []"
+    inData += ",\n" + indent + "  \"actions\": [\"[No actions?]\"]"
   }
   inData += ",\n  " + indent + "\"shop\": \"" + wave.shop + "\""
   inData += ",\n  " + indent + "\"biome\": \"" + wave.biome + "\""

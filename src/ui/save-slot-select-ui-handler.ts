@@ -206,7 +206,7 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
       this.scene.add.existing(sessionSlot);
       this.sessionSlotsContainer.add(sessionSlot);
       this.sessionSlots.push(sessionSlot);
-      if (this.uiMode != SaveSlotUiMode.SAVE) {
+      if (this.uiMode != SaveSlotUiMode.SAVE && this.scene.showAutosaves) {
         for (var j = 0; j < LoggerTools.autoCheckpoints.length; j++) {
           var k = "sessionData" + (s ? s : "") + "_Guest_auto" + j
           if (localStorage.getItem(k) != null) {

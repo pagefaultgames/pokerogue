@@ -21,6 +21,7 @@ import MoveInfoOverlay from "./move-info-overlay";
 import i18next from "i18next";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { Moves } from "#enums/moves";
+import * as LoggerTools from "../logger";
 
 const defaultMessage = i18next.t("partyUiHandler:choosePokemon");
 
@@ -932,6 +933,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       this.clearPartySlots();
       this.scene.removePartyMemberModifiers(slotIndex);
       const releasedPokemon = this.scene.getParty().splice(slotIndex, 1)[0];
+      LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, `Release ${releasedPokemon.name} (Slot ${slotIndex + 1})`)
       releasedPokemon.destroy();
       this.populatePartySlots();
       if (this.cursor >= this.scene.getParty().length) {

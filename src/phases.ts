@@ -5717,7 +5717,6 @@ export class AttemptCapturePhase extends PokemonPhase {
                 this.scene.ui.setMode(Mode.PARTY, PartyUiMode.RELEASE, this.fieldIndex, (slotIndex: integer, _option: PartyOption) => {
                   this.scene.ui.setMode(Mode.MESSAGE).then(() => {
                     if (slotIndex < 6) {
-                      LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "Release " + LoggerTools.playerPokeName(this.scene, slotIndex))
                       addToParty();
                     } else {
                       promptRelease();
