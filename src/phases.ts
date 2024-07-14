@@ -73,7 +73,7 @@ import ChallengeData from "./system/challenge-data";
 import { Challenges } from "./enums/challenges"
 import PokemonData from "./system/pokemon-data"
 import * as LoggerTools from "./logger"
-import { getNatureName } from "./data/nature";
+import { getNatureDecrease, getNatureIncrease, getNatureName } from "./data/nature";
 import { GameDataType } from "./enums/game-data-type";
 import { Session } from "inspector";
 
@@ -3382,6 +3382,30 @@ export class BattleEndPhase extends BattlePhase {
     super.start();
 
     this.scene.currentBattle.addBattleScore(this.scene);
+
+    var drpd: LoggerTools.DRPD = LoggerTools.getDRPD(this.scene)
+    var wv: LoggerTools.Wave = LoggerTools.getWave(drpd, this.scene.currentBattle.waveIndex, this.scene)
+    var lastcount = 0;
+    var lastval = undefined;
+    var tempActions = wv.actions.slice();
+    wv.actions = []
+    // Loop through each action
+    for (var i = 0; i < tempActions.length; i++) {
+      if (tempActions[i] != lastval) {
+        if (lastcount > 0) {
+          wv.actions.push(lastval + (lastcount == 1 ? "" : " x" + lastcount))
+        }
+        lastval = tempActions[i]
+        lastcount = 1
+      } else {
+        lastcount++
+      }
+    }
+    if (lastcount > 0) {
+      wv.actions.push(lastval + (lastcount == 1 ? "" : " x" + lastcount))
+    }
+    console.log(tempActions, wv.actions)
+    LoggerTools.save(this.scene, drpd)
 
     this.scene.gameData.gameStats.battles++;
     if (this.scene.currentBattle.trainer) {

@@ -187,6 +187,11 @@ export function getDRPD(scene: BattleScene): DRPD {
   return drpd;
 }
 
+export function save(scene: BattleScene, drpd: DRPD) {
+  console.log(drpd)
+  localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
+}
+
 /**
  * Testing purposes only.
  */
