@@ -1,6 +1,6 @@
 import BattleScene from "#app/battle-scene.js";
 import { initWithStarters } from "./initWithStarters";
-import { BallCommand } from "./BattlePhaseAPI";
+import { BallCommand, SwitchCommand } from "./BattlePhaseAPI";
 import { CommandPhase } from "#app/phases.js";
 
 /**
@@ -35,6 +35,7 @@ const phaseApi = (scene: BattleScene) => {
     const currentPhase = scene.getCurrentPhase();
     if (currentPhase instanceof CommandPhase) {
       BallCommand(scene);
+      SwitchCommand(scene, 1); // Switch to next pokemon in team as an example
     } else {
       console.log("Some other phase not yet implemented");
     }
