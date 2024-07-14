@@ -59,10 +59,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "一隻寶可夢的{{moveType}}系招式威力提升20%。",
     },
     PokemonLevelIncrementModifierType: {
-      description: "一隻寶可夢等級提升1級。",
+      description: "Increases a Pokémon's level by {{levels}}.",
     },
     AllPokemonLevelIncrementModifierType: {
-      description: "所有成員寶可夢等級提升1級。",
+      description: "Increases all party members' level by {{levels}}.",
     },
     PokemonBaseStatBoosterModifierType: {
       description:
@@ -153,7 +153,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     SACRED_ASH: { name: "聖灰" },
     REVIVER_SEED: {
       name: "復活種子",
-      description: "恢復1隻瀕死寶可夢的HP至1/2。",
+      description: "受到技能攻擊傷害瀕死時，\n恢復該瀕死寶可夢的HP至1/2。",
     },
     ETHER: { name: "PP單項小補劑" },
     MAX_ETHER: { name: "PP單項全補劑" },

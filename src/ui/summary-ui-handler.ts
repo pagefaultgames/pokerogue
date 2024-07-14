@@ -15,7 +15,7 @@ import { Stat, getStatName } from "../data/pokemon-stat";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { StatusEffect } from "../data/status-effect";
 import { getBiomeName } from "../data/biomes";
-import { getNatureName, getNatureStatMultiplier } from "../data/nature";
+import { Nature, getNatureName, getNatureStatMultiplier } from "../data/nature";
 import { loggedInUser } from "../account";
 import { Variant, getVariantTint } from "#app/data/variant";
 import {Button} from "#enums/buttons";
@@ -122,7 +122,7 @@ export default class SummaryUiHandler extends UiHandler {
     this.tabSprite.setOrigin(1, 1);
     this.summaryContainer.add(this.tabSprite);
 
-    const summaryLabel = addTextObject(this.scene, 4, -165, "Pokémon Info", TextStyle.SUMMARY);
+    const summaryLabel = addTextObject(this.scene, 4, -165, i18next.t("pokemonSummary:pokemonInfo"), TextStyle.SUMMARY);
     summaryLabel.setOrigin(0, 1);
     this.summaryContainer.add(summaryLabel);
 
@@ -207,7 +207,7 @@ export default class SummaryUiHandler extends UiHandler {
 
     this.statusContainer.add(statusBg);
 
-    const statusLabel = addTextObject(this.scene, 3, 0, "Status", TextStyle.SUMMARY);
+    const statusLabel = addTextObject(this.scene, 3, 0, i18next.t("pokemonSummary:status"), TextStyle.SUMMARY);
     statusLabel.setOrigin(0, 0);
 
     this.statusContainer.add(statusLabel);
@@ -227,7 +227,7 @@ export default class SummaryUiHandler extends UiHandler {
     moveEffectBg.setOrigin(0, 0);
     this.moveEffectContainer.add(moveEffectBg);
 
-    const moveEffectLabels = addTextObject(this.scene, 8, 12, "Power\nAccuracy\nCategory", TextStyle.SUMMARY);
+    const moveEffectLabels = addTextObject(this.scene, 8, 12, i18next.t("pokemonSummary:powerAccuracyCategory"), TextStyle.SUMMARY);
     moveEffectLabels.setLineSpacing(9);
     moveEffectLabels.setOrigin(0, 0);
 
@@ -677,12 +677,7 @@ export default class SummaryUiHandler extends UiHandler {
       const profileContainer = this.scene.add.container(0, -pageBg.height);
       pageContainer.add(profileContainer);
 
-      const trainerLabel = addTextObject(this.scene, 7, 12, "OT/", TextStyle.SUMMARY_ALT);
-      trainerLabel.setOrigin(0, 0);
-      profileContainer.add(trainerLabel);
-
-      const trainerText = addTextObject(this.scene, 25, 12, loggedInUser?.username || "Unknown",
-        this.scene.gameData.gender === PlayerGender.FEMALE ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE);
+      const trainerText = addBBCodeTextObject(this.scene, 7, 12, `${i18next.t("pokemonSummary:ot")}/${getBBCodeFrag(loggedInUser?.username || i18next.t("pokemonSummary:unknown"), this.scene.gameData.gender === PlayerGender.FEMALE ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE)}`, TextStyle.SUMMARY_ALT);
       trainerText.setOrigin(0, 0);
       profileContainer.add(trainerText);
 
@@ -690,12 +685,12 @@ export default class SummaryUiHandler extends UiHandler {
       trainerIdText.setOrigin(0, 0);
       profileContainer.add(trainerIdText);
 
-      const typeLabel = addTextObject(this.scene, 7, 28, "Type/", TextStyle.WINDOW_ALT);
+      const typeLabel = addTextObject(this.scene, 7, 28, `${i18next.t("pokemonSummary:type")}/`, TextStyle.WINDOW_ALT);
       typeLabel.setOrigin(0, 0);
       profileContainer.add(typeLabel);
 
       const getTypeIcon = (index: integer, type: Type, tera: boolean = false) => {
-        const xCoord = 39 + 34 * index;
+        const xCoord = typeLabel.width * typeLabel.scale + 9 + 34 * index;
         const typeIcon = !tera
           ? this.scene.add.sprite(xCoord, 42, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`, Type[type].toLowerCase())          : this.scene.add.sprite(xCoord, 42, "type_tera");
         if (tera) {
@@ -796,7 +791,20 @@ export default class SummaryUiHandler extends UiHandler {
       this.passiveContainer?.nameText.setVisible(false);
       this.passiveContainer?.descriptionText.setVisible(false);
 
-      const memoString = `${getBBCodeFrag(Utils.toReadableString(getNatureName(this.pokemon.getNature())), TextStyle.SUMMARY_RED)}${getBBCodeFrag(" nature,", TextStyle.WINDOW_ALT)}\n${getBBCodeFrag(`${this.pokemon.metBiome === -1 ? "apparently " : ""}met at Lv`, TextStyle.WINDOW_ALT)}${getBBCodeFrag(this.pokemon.metLevel.toString(), TextStyle.SUMMARY_RED)}${getBBCodeFrag(",", TextStyle.WINDOW_ALT)}\n${getBBCodeFrag(getBiomeName(this.pokemon.metBiome), TextStyle.SUMMARY_RED)}${getBBCodeFrag(".", TextStyle.WINDOW_ALT)}`;
+      const closeFragment = getBBCodeFrag("", TextStyle.WINDOW_ALT);
+      const rawNature = Utils.toReadableString(Nature[this.pokemon.getNature()]);
+      const nature = `${getBBCodeFrag(Utils.toReadableString(getNatureName(this.pokemon.getNature())), TextStyle.SUMMARY_RED)}${closeFragment}`;
+
+      const memoString = i18next.t("pokemonSummary:memoString", {
+        metFragment: i18next.t(`pokemonSummary:metFragment.${this.pokemon.metBiome === -1? "apparently": "normal"}`, {
+          biome: `${getBBCodeFrag(getBiomeName(this.pokemon.metBiome), TextStyle.SUMMARY_RED)}${closeFragment}`,
+          level: `${getBBCodeFrag(this.pokemon.metLevel.toString(), TextStyle.SUMMARY_RED)}${closeFragment}`,
+        }),
+        natureFragment:
+          i18next.exists(`pokemonSummary:natureFragment.${rawNature}`) ?
+            i18next.t(`pokemonSummary:natureFragment.${rawNature}`, { nature: nature }) :
+            nature,
+      });
 
       const memoText = addBBCodeTextObject(this.scene, 7, 113, memoString, TextStyle.WINDOW_ALT);
       memoText.setOrigin(0, 0);
@@ -809,9 +817,7 @@ export default class SummaryUiHandler extends UiHandler {
       const stats = Utils.getEnumValues(Stat) as Stat[];
 
       stats.forEach((stat, s) => {
-        const statName = stat !== Stat.HP
-          ? getStatName(stat)
-          : "HP";
+        const statName = getStatName(stat);
         const rowIndex = s % 3;
         const colIndex = Math.floor(s / 3);
 
@@ -831,7 +837,7 @@ export default class SummaryUiHandler extends UiHandler {
       });
 
       const itemModifiers = (this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-          && (m as PokemonHeldItemModifier).pokemonId === this.pokemon.id, true) as PokemonHeldItemModifier[])
+          && m.pokemonId === this.pokemon.id, true) as PokemonHeldItemModifier[])
         .sort(modifierSortFunc);
 
       itemModifiers.forEach((item, i) => {
@@ -848,11 +854,11 @@ export default class SummaryUiHandler extends UiHandler {
       const relLvExp = getLevelRelExp(this.pokemon.level + 1, this.pokemon.species.growthRate);
       const expRatio = this.pokemon.level < this.scene.getMaxExpLevel() ? this.pokemon.levelExp / relLvExp : 0;
 
-      const expLabel = addTextObject(this.scene, 6, 112, "EXP. Points", TextStyle.SUMMARY);
+      const expLabel = addTextObject(this.scene, 6, 112, i18next.t("pokemonSummary:expPoints"), TextStyle.SUMMARY);
       expLabel.setOrigin(0, 0);
       statsContainer.add(expLabel);
 
-      const nextLvExpLabel = addTextObject(this.scene, 6, 128, "Next Lv.", TextStyle.SUMMARY);
+      const nextLvExpLabel = addTextObject(this.scene, 6, 128, i18next.t("pokemonSummary:nextLv"), TextStyle.SUMMARY);
       nextLvExpLabel.setOrigin(0, 0);
       statsContainer.add(nextLvExpLabel);
 
@@ -893,7 +899,7 @@ export default class SummaryUiHandler extends UiHandler {
       extraRowOverlay.setOrigin(0, 1);
       this.extraMoveRowContainer.add(extraRowOverlay);
 
-      const extraRowText = addTextObject(this.scene, 35, 0, this.summaryUiMode === SummaryUiMode.LEARN_MOVE ? this.newMove.name : "Cancel",
+      const extraRowText = addTextObject(this.scene, 35, 0, this.summaryUiMode === SummaryUiMode.LEARN_MOVE ? this.newMove.name : i18next.t("pokemonSummary:cancel"),
         this.summaryUiMode === SummaryUiMode.LEARN_MOVE ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY);
       extraRowText.setOrigin(0, 1);
       this.extraMoveRowContainer.add(extraRowText);
