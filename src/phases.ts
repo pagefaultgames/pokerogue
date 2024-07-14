@@ -5143,7 +5143,7 @@ export class SwitchPhase extends BattlePhase {
           LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "Pre-switch " + (option == PartyOption.PASS_BATON ? "+ Baton" : "") + " " + LoggerTools.playerPokeName(this.scene, fieldIndex) + "  to " + LoggerTools.playerPokeName(this.scene, slotIndex))
         }
         if (LoggerTools.isFaintSwitch.value) {
-          LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, (option == PartyOption.PASS_BATON ? "Baton" : "Send") + " in " + LoggerTools.playerPokeName(this.scene, slotIndex))
+          LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, (option == PartyOption.PASS_BATON ? "Baton" : "Send") + " out " + LoggerTools.playerPokeName(this.scene, slotIndex))
         }
         this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, fieldIndex, slotIndex, this.doReturn, option === PartyOption.PASS_BATON));
       }

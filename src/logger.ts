@@ -1,4 +1,4 @@
-//#region Imports
+//#region 00 Imports
 import i18next from "i18next";
 import * as Utils from "./utils";
 import Pokemon from "./field/pokemon";
@@ -20,7 +20,7 @@ import { randomUUID, UUID } from "node:crypto";
 
 
 
-// #region Variables
+// #region 01 Variables
 
 // Value holders
 export const rarities = []
@@ -53,7 +53,7 @@ export const acceptedVersions = [
 
 
 
-//#region Downloading
+//#region 02 Downloading
 /**
  * Saves a log to your device.
  * @param i The index of the log you want to save.
@@ -94,7 +94,7 @@ export function downloadLogByIDToSheet(i: integer) {
 
 
 
-// #region Log Handler
+// #region 03 Log Handler
 /**
  * Stores logs.
  * Generate a new list with `getLogs()`.
@@ -171,7 +171,7 @@ export function getMode(scene: BattleScene) {
 
 
 
-// #region Utilities
+// #region 04 Utilities
 
 /**
  * Pulls the current run's DRPD from LocalStorage using the run's RNG seed.
@@ -294,7 +294,7 @@ export function enemyPokeName(scene: BattleScene, index: integer | Pokemon | Ene
 
 
 
-// #region DRPD
+// #region 05 DRPD
 /**
  * Updates a DRPD, checkings its version and making any necessary changes to it in order to keep it up to date.
  * 
@@ -442,14 +442,15 @@ export function printDRPD(inData: string, indent: string, drpd: DRPD): string {
 
 
 
-// #region Wave
+// #region 06 Wave
 /**
- * A Wave is one individual battle in the run. Each group of ten waves has the same biome.
+ * A Wave is one individual battle in the run.
+ * Each group of ten waves has the same biome.
  */
 export interface Wave {
   /** The wave number. Used to label the wave, detect and delete duplicates, and automatically sort `DRPD.waves[]`. */
   id: integer,
-  /** Set to `true` if a reload is required to play this wave properly. Setting this value is the PITA I have ever dealt with. */
+  /** Set to `true` if a reload is required to play this wave properly.Setting this value is the PITA I have ever dealt with. */
   reload: boolean,
   /**
    * The specific type of wave.
@@ -758,9 +759,9 @@ export function getWave(drpd: DRPD, floor: integer, scene: BattleScene): Wave {
 
 
 
-// #region Pokémon
+// #region 07 Pokémon
 /**
- * A Pokémon.
+ * Stores information about a Pokémon.
  * 
  * This data type is used in `DRPD.starters` to list the player's starting Pokémon, or in `Wave.pokemon` to list the opponent(s) in a wild encounter.
  */
@@ -919,7 +920,10 @@ export function logTeam(scene: BattleScene, floor: integer = undefined) {
 
 
 
-// #region Nature
+// #region 08 Nature
+/**
+ * Information about a Pokémon's nature.
+ */
 export interface NatureData {
   /** The display name of this nature. */
   name: string,
@@ -963,7 +967,10 @@ function printNature(inData: string, indent: string, nature: NatureData) {
 
 
 
-// #region IVs
+// #region 09 IVs
+/**
+ * Information about a Pokémon's Individual Values (IVs).
+ */
 export interface IVData {
   /** Influences a Pokémon's maximum health. */
   hp: integer,
@@ -1019,7 +1026,13 @@ function printIV(inData: string, indent: string, iv: IVData) {
 
 
 
-// #region Trainer
+// #region 10 Trainer
+/**
+ * A Trainer that the player has to battle against.
+ * A Trainer will have 1-6 Pokémon in their party, depending on their difficulty.
+ * 
+ * If the wave has a Trainer, their party is not logged, and `Wave.pokemon` is left empty.
+ */
 export interface TrainerData {
   /** The trainer type's position in the Trainers enum.
    * @see Trainer
@@ -1079,7 +1092,7 @@ function printTrainer(inData: string, indent: string, trainer: TrainerData) {
 
 
 
-// #region Item
+// #region 11 Item
 /** An item held by a Pokémon. Quantities and ownership are recorded at the start of the battle, and do not reflect items being used up or stolen. */
 export interface ItemData {
   /** A type:key pair identifying the specific item.
@@ -1140,7 +1153,7 @@ function printItemNoNewline(inData: string, indent: string, item: ItemData) {
 
 
 
-//#region Manage Logs menu
+//#region 12 Manage Logs
 
 /**
  * Sets the name, author, and [todo] label for a file.
@@ -1264,7 +1277,10 @@ export function generateEditOption(scene: BattleScene, i: integer, saves: any, p
 
 
 
-//#region Logging Events
+//#region 13 Logging Events
+
+//        * The functions in this section are sorted in alphabetical order.
+
 /**
  * Logs the actions that the player took.
  * 
@@ -1291,6 +1307,12 @@ export function logActions(scene: BattleScene, floor: integer, action: string) {
   console.log(drpd)
   localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
 }
+/**
+ * Logs that a Pokémon was captured.
+ * @param scene The BattleScene. Used to get the log ID.
+ * @param floor The wave index to write to.
+ * @param target The Pokémon that you captured.
+ */
 export function logCapture(scene: BattleScene, floor: integer, target: EnemyPokemon) {
   //if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
   var drpd = getDRPD(scene)
@@ -1319,12 +1341,12 @@ export function logPlayerTeam(scene: BattleScene) {
   localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
 }
 /**
- * Logs a wild Pokemon to a wave's data.
+ * Logs a wild Pokémon to a wave's data.
  * @param scene The BattleScene. Used to retrieve the log ID.
  * @param floor The wave index to write to. Defaults to the current floor.
- * @param slot The slot to write to. In a single battle, 0 = the Pokemon that is out first. In a double battle, 0 = Left and 1 = Right.
+ * @param slot The slot to write to. In a single battle, 0 = the Pokémon that is out first. In a double battle, 0 = Left and 1 = Right.
  * @param pokemon The `EnemyPokemon` to store the data of. (Automatically converted via `exportPokemon`)
- * @param encounterRarity The rarity tier of this Pokemon. If not specified, it calculates this automatically by searching the current biome's species pool.
+ * @param encounterRarity The rarity tier of this Pokémon. If not specified, it calculates this automatically by searching the current biome's species pool.
  */
 export function logPokemon(scene: BattleScene, floor: integer = undefined, slot: integer, pokemon: EnemyPokemon, encounterRarity?: string) {
   if (floor == undefined) floor = scene.currentBattle.waveIndex
@@ -1438,6 +1460,11 @@ export function logTrainer(scene: BattleScene, floor: integer = undefined) {
 
 
 
+/**
+ * Flags a wave as a reset.
+ * @param scene The BattleScene. Used to get the log ID.
+ * @param floor The wave index to write to.
+ */
 export function flagReset(scene: BattleScene, floor: integer = undefined) {
   if (floor == undefined)
     floor = scene.currentBattle.waveIndex;
@@ -1449,6 +1476,11 @@ export function flagReset(scene: BattleScene, floor: integer = undefined) {
   console.log(drpd)
   localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
 }
+/**
+ * Flags a wave as a reset, unless this is your first time playing the wave.
+ * @param scene The BattleScene. Used to get the log ID.
+ * @param floor The wave index to write to.
+ */
 export function flagResetIfExists(scene: BattleScene, floor: integer = undefined) {
   if (floor == undefined)
     floor = scene.currentBattle.waveIndex;
@@ -1476,6 +1508,7 @@ export function flagResetIfExists(scene: BattleScene, floor: integer = undefined
  * Clears the action list for a wave.
  * @param scene The BattleScene. Used to get the log ID and trainer data.
  * @param floor The wave index to write to. Defaults to the current floor.
+ * @param softflag Rather than deleting everything right away, the actions will be cleared the next time we attempt to log an action.
  * 
  * @see logActions
  */
@@ -1499,7 +1532,7 @@ export function resetWaveActions(scene: BattleScene, floor: integer = undefined,
 
 
 
-//#region Deprecated
+//#region 14 Deprecated
 
 /**
  * Writes data to a new line.
