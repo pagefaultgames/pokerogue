@@ -10,7 +10,7 @@ import Trainer, { TrainerVariant } from "../../field/trainer";
 import { ExpBalanceModifier, ExpShareModifier, MultipleParticipantExpBonusModifier, PokemonExpBoosterModifier } from "#app/modifier/modifier";
 import { CustomModifierSettings, getModifierPoolForType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeGenerator, ModifierTypeOption, modifierTypes, PokemonHeldItemModifierType, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
 import { BattleEndPhase, EggLapsePhase, ExpPhase, ModifierRewardPhase, SelectModifierPhase, ShowPartyExpBarPhase, TrainerVictoryPhase } from "#app/phases";
-import { MysteryEncounterBattlePhase, MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phase";
+import { MysteryEncounterBattlePhase, MysteryEncounterPhase, MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phase";
 import * as Utils from "../../utils";
 import { isNullOrUndefined } from "#app/utils";
 import { TrainerType } from "#enums/trainer-type";
@@ -27,6 +27,7 @@ import { WIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/myst
 import { getTextWithColors, TextStyle } from "#app/ui/text";
 import * as Overrides from "#app/overrides";
 import { UiTheme } from "#enums/ui-theme";
+import { MysteryEncounterUiSettings } from "#app/ui/mystery-encounter-ui-handler";
 
 /**
  *
@@ -427,6 +428,11 @@ export function updatePlayerMoney(scene: BattleScene, changeValue: number, playS
   if (playSound) {
     scene.playSound("buy");
   }
+  if (changeValue < 0) {
+    scene.queueMessage(i18next.t("mysteryEncounter:paid_money", { amount: -changeValue }), null, true);
+  } else {
+    scene.queueMessage(i18next.t("mysteryEncounter:receive_money", { amount: changeValue }), null, true);
+  }
 }
 
 /**
@@ -459,7 +465,7 @@ export function generateModifierTypeOption(scene: BattleScene, modifier: () => M
 }
 
 /**
- *
+ * This function is intended for use inside onPreOptionPhase() of an encounter option
  * @param scene
  * @param onPokemonSelected - Any logic that needs to be performed when Pokemon is chosen
  * If a second option needs to be selected, onPokemonSelected should return a OptionSelectItem[] object
@@ -678,6 +684,16 @@ export function setEncounterExp(scene: BattleScene, participantIds: integer[], b
  * Can be used to exit an encounter without any battles or followup
  * Will skip any shops and rewards, and queue the next encounter phase as normal
  * @param scene
+ * @param followupOptionSelectSettings
+ */
+export function initFollowupOptionSelect(scene: BattleScene, followupOptionSelectSettings: MysteryEncounterUiSettings) {
+  scene.pushPhase(new MysteryEncounterPhase(scene, followupOptionSelectSettings));
+}
+
+/**
+ * Can be used to exit an encounter without any battles or followup
+ * Will skip any shops and rewards, and queue the next encounter phase as normal
+ * @param scene
  * @param addHealPhase - when true, will add a shop phase to end of encounter with 0 rewards but healing items are available
  */
 export function leaveEncounterWithoutBattle(scene: BattleScene, addHealPhase: boolean = false) {
@@ -688,7 +704,9 @@ export function leaveEncounterWithoutBattle(scene: BattleScene, addHealPhase: bo
 }
 
 export function handleMysteryEncounterVictory(scene: BattleScene, addHealPhase: boolean = false) {
-  if (scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.NO_BATTLE) {
+  if (scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.SAFARI_BATTLE) {
+    scene.pushPhase(new MysteryEncounterRewardsPhase(scene, addHealPhase));
+  } else if (scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.NO_BATTLE) {
     scene.pushPhase(new EggLapsePhase(scene));
     scene.pushPhase(new MysteryEncounterRewardsPhase(scene, addHealPhase));
   } else if (!scene.getEnemyParty().find(p => scene.currentBattle.mysteryEncounter.encounterVariant !== MysteryEncounterVariant.TRAINER_BATTLE ? p.isOnField() : !p?.isFainted(true))) {

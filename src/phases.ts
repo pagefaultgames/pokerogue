@@ -1650,7 +1650,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
     pokemon.untint(250, "Sine.easeIn");
     this.scene.updateFieldScale();
     pokemon.x += 16;
-    pokemon.y -= 16;
+    pokemon.y -= 20;
     pokemon.alpha = 0;
 
     // Ease pokemon in
@@ -1680,7 +1680,9 @@ export class SummonPhase extends PartyMemberPokemonPhase {
 
     pokemon.resetTurnData();
 
-    if (!this.loaded || this.scene.currentBattle.battleType === BattleType.TRAINER || this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER || (this.scene.currentBattle.waveIndex % 10) === 1) {
+    const addPostSummonForEncounter = this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER && !this.scene.currentBattle.mysteryEncounter?.disableAllPostSummon;
+
+    if (!this.loaded || this.scene.currentBattle.battleType === BattleType.TRAINER || (this.scene.currentBattle.waveIndex % 10) === 1 || addPostSummonForEncounter) {
       this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
       this.queuePostSummon();
     }

@@ -12,6 +12,16 @@ import { isNullOrUndefined } from "../utils";
 import { getPokeballAtlasKey } from "../data/pokeball";
 import { getEncounterText } from "#app/data/mystery-encounters/mystery-encounter-utils";
 
+export class MysteryEncounterUiSettings {
+  hideDescription?: boolean;
+  slideInDescription?: boolean;
+  overrideTitle?: string;
+  overrideDescription?: string;
+  overrideQuery?: string;
+  overrideOptions?: MysteryEncounterOption[];
+  startingCursorIndex?: number;
+}
+
 export default class MysteryEncounterUiHandler extends UiHandler {
   private cursorContainer: Phaser.GameObjects.Container;
   private cursorObj: Phaser.GameObjects.Image;
@@ -27,7 +37,8 @@ export default class MysteryEncounterUiHandler extends UiHandler {
   private descriptionScrollTween: Phaser.Tweens.Tween;
   private rarityBall: Phaser.GameObjects.Sprite;
 
-  private filteredEncounterOptions: MysteryEncounterOption[] = [];
+  private overrideSettings: MysteryEncounterUiSettings;
+  private encounterOptions: MysteryEncounterOption[] = [];
   private optionsMeetsReqs: boolean[];
 
   protected viewPartyIndex: integer = 0;
@@ -70,16 +81,21 @@ export default class MysteryEncounterUiHandler extends UiHandler {
   show(args: any[]): boolean {
     super.show(args);
 
+    this.overrideSettings = args[0] as MysteryEncounterUiSettings ?? {};
+    const showDescriptionContainer = isNullOrUndefined(this.overrideSettings?.hideDescription) ? true : !this.overrideSettings?.hideDescription;
+    const slideInDescription = isNullOrUndefined(this.overrideSettings?.slideInDescription) ? true : this.overrideSettings?.slideInDescription;
+    const startingCursorIndex = this.overrideSettings?.startingCursorIndex ?? 0;
+
     this.cursorContainer.setVisible(true);
-    this.descriptionContainer.setVisible(true);
+    this.descriptionContainer.setVisible(showDescriptionContainer);
     this.optionsContainer.setVisible(true);
-    this.displayEncounterOptions(!(args[0] as boolean || false));
+    this.displayEncounterOptions(slideInDescription);
     const cursor = this.getCursor();
     if (cursor === (this?.optionsContainer?.length || 0) - 1) {
       // Always resets cursor on view party button if it was last there
       this.setCursor(cursor);
     } else {
-      this.setCursor(0);
+      this.setCursor(startingCursorIndex);
     }
     if (this.blockInput) {
       setTimeout(() => {
@@ -100,12 +116,16 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
     if (button === Button.CANCEL || button === Button.ACTION) {
       if (button === Button.ACTION) {
-        const selected = this.filteredEncounterOptions[cursor];
+        const selected = this.encounterOptions[cursor];
         if (cursor === this.viewPartyIndex) {
           // Handle view party
           success = true;
+          const overrideSettings: MysteryEncounterUiSettings = {
+            ...this.overrideSettings,
+            slideInDescription: false
+          };
           this.scene.ui.setMode(Mode.PARTY, PartyUiMode.CHECK, -1, () => {
-            this.scene.ui.setMode(Mode.MYSTERY_ENCOUNTER, true);
+            this.scene.ui.setMode(Mode.MYSTERY_ENCOUNTER, overrideSettings);
             setTimeout(() => {
               this.setCursor(this.viewPartyIndex);
               this.unblockInput();
@@ -253,7 +273,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     if (this.blockInput) {
       this.blockInput = false;
       for (let i = 0; i < this.optionsContainer.length - 1; i++) {
-        const optionMode = this.filteredEncounterOptions[i].optionMode;
+        const optionMode = this.encounterOptions[i].optionMode;
         if (!this.optionsMeetsReqs[i] && (optionMode === EncounterOptionMode.DISABLED_OR_DEFAULT || optionMode === EncounterOptionMode.DISABLED_OR_SPECIAL)) {
           continue;
         }
@@ -296,7 +316,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
   displayEncounterOptions(slideInDescription: boolean = true): void {
     this.getUi().clearText();
     const mysteryEncounter = this.scene.currentBattle.mysteryEncounter;
-    this.filteredEncounterOptions = mysteryEncounter.options;
+    this.encounterOptions = this.overrideSettings?.overrideOptions ?? mysteryEncounter.options;
     this.optionsMeetsReqs = [];
 
     const titleText: string = getEncounterText(this.scene, mysteryEncounter.dialogue.encounterOptionsDialogue.title, TextStyle.TOOLTIP_TITLE);
@@ -307,11 +327,11 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     this.optionsContainer.removeAll();
 
     // Options Window
-    for (let i = 0; i < this.filteredEncounterOptions.length; i++) {
-      const option = this.filteredEncounterOptions[i];
+    for (let i = 0; i < this.encounterOptions.length; i++) {
+      const option = this.encounterOptions[i];
 
       let optionText;
-      switch (this.filteredEncounterOptions.length) {
+      switch (this.encounterOptions.length) {
       case 2:
         optionText = addBBCodeTextObject(this.scene, i % 2 === 0 ? 0 : 100, 8, "-", TextStyle.WINDOW, { wordWrap: { width: 558 }, fontSize: "80px", lineSpacing: -8 });
         break;
@@ -424,7 +444,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     }
 
     let text: string;
-    const cursorOption = this.filteredEncounterOptions[cursor];
+    const cursorOption = this.encounterOptions[cursor];
     const optionDialogue = cursorOption.dialogue;
     if (!this.optionsMeetsReqs[cursor] && (cursorOption.optionMode === EncounterOptionMode.DISABLED_OR_DEFAULT || cursorOption.optionMode === EncounterOptionMode.DISABLED_OR_SPECIAL) && optionDialogue.disabledButtonTooltip) {
       text = getEncounterText(this.scene, optionDialogue.disabledButtonTooltip, TextStyle.TOOLTIP_CONTENT);
@@ -474,6 +494,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
   clear(): void {
     super.clear();
+    this.overrideSettings = null;
     this.optionsContainer.setVisible(false);
     this.optionsContainer.removeAll(true);
     this.descriptionContainer.setVisible(false);

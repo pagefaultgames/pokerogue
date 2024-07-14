@@ -24,7 +24,8 @@ export enum MysteryEncounterVariant {
   TRAINER_BATTLE,
   WILD_BATTLE,
   BOSS_BATTLE,
-  NO_BATTLE
+  NO_BATTLE,
+  SAFARI_BATTLE
 }
 
 export enum MysteryEncounterTier {
@@ -117,6 +118,18 @@ export default interface IMysteryEncounter {
    * Defaults to 1
    */
   expMultiplier?: number;
+
+  /**
+   * When true, will never queue PostSummon phases from a SummonPhase
+   * Defaults to false
+   */
+  disableAllPostSummon?: boolean;
+
+  /**
+   * Used for keeping RNG consistent on session resets, but increments when cycling through multiple "Encounters" on the same wave
+   * You should never need to modify this
+   */
+  seedOffset?: any;
 
   /**
    * Generic property to set any custom data required for the encounter

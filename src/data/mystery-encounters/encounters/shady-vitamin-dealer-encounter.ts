@@ -28,15 +28,17 @@ export const ShadyVitaminDealerEncounter: IMysteryEncounter =
         fileRoot: "pokemon",
         hasShadow: true,
         repeat: true,
-        x: 10,
-        y: -1,
+        x: 12,
+        y: -5,
+        yShadowOffset: -5
       },
       {
         spriteKey: "b2w2_veteran_m",
         fileRoot: "mystery-encounters",
         hasShadow: true,
-        x: -10,
-        y: 2,
+        x: -12,
+        y: 3,
+        yShadowOffset: 3
       },
     ])
     .withIntroDialogue([

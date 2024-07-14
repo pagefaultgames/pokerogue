@@ -15,6 +15,7 @@ import { Tutorial, handleTutorial } from "../tutorial";
 import { IvScannerModifier } from "../modifier/modifier";
 import * as Utils from "../utils";
 import { isNullOrUndefined } from "../utils";
+import { MysteryEncounterUiSettings } from "#app/ui/mystery-encounter-ui-handler";
 
 /**
  * Will handle (in order):
@@ -26,8 +27,11 @@ import { isNullOrUndefined } from "../utils";
  * - Queuing of the MysteryEncounterOptionSelectedPhase
  */
 export class MysteryEncounterPhase extends Phase {
-  constructor(scene: BattleScene) {
+  followupOptionSelectSettings: MysteryEncounterUiSettings;
+
+  constructor(scene: BattleScene, followupOptionSelectSettings?: MysteryEncounterUiSettings) {
     super(scene);
+    this.followupOptionSelectSettings = followupOptionSelectSettings;
   }
 
   start() {
@@ -37,12 +41,18 @@ export class MysteryEncounterPhase extends Phase {
     this.scene.clearPhaseQueue();
     this.scene.clearPhaseQueueSplice();
 
-    // Sets flag that ME was encountered
-    // Can be used in later MEs to check for requirements to spawn, etc.
-    this.scene.mysteryEncounterData.encounteredEvents.push([this.scene.currentBattle.mysteryEncounter.encounterType, this.scene.currentBattle.mysteryEncounter.encounterTier]);
+    // Generates seed offset for RNG consistency, but incremented if the same MysteryEncounter has multiple option select cycles
+    const offset = this.scene.currentBattle.mysteryEncounter.seedOffset ?? this.scene.currentBattle.waveIndex * 1000;
+    this.scene.currentBattle.mysteryEncounter.seedOffset = offset + 512;
+
+    if (!this.followupOptionSelectSettings) {
+      // Sets flag that ME was encountered, only if this is not a followup option select phase
+      // Can be used in later MEs to check for requirements to spawn, etc.
+      this.scene.mysteryEncounterData.encounteredEvents.push([this.scene.currentBattle.mysteryEncounter.encounterType, this.scene.currentBattle.mysteryEncounter.encounterTier]);
+    }
 
     // Initiates encounter dialogue window and option select
-    this.scene.ui.setMode(Mode.MYSTERY_ENCOUNTER);
+    this.scene.ui.setMode(Mode.MYSTERY_ENCOUNTER, this.followupOptionSelectSettings);
   }
 
   handleOptionSelect(option: MysteryEncounterOption, index: number): boolean {
@@ -61,24 +71,24 @@ export class MysteryEncounterPhase extends Phase {
         return await option.onPreOptionPhase(this.scene)
           .then((result) => {
             if (isNullOrUndefined(result) || result) {
-              this.continueEncounter(index);
+              this.continueEncounter();
             }
           });
-      }, this.scene.currentBattle.waveIndex * 1000);
+      }, this.scene.currentBattle.mysteryEncounter.seedOffset);
     } else {
-      this.continueEncounter(index);
+      this.continueEncounter();
     }
 
     return true;
   }
 
-  continueEncounter(optionIndex: number) {
+  continueEncounter() {
     const endDialogueAndContinueEncounter = () => {
       this.scene.pushPhase(new MysteryEncounterOptionSelectedPhase(this.scene));
       this.end();
     };
 
-    const optionSelectDialogue = this.scene.currentBattle?.mysteryEncounter?.options?.[optionIndex]?.dialogue;
+    const optionSelectDialogue = this.scene.currentBattle?.mysteryEncounter?.selectedOption?.dialogue;
     if (optionSelectDialogue?.selected?.length > 0) {
       // Handle intermediate dialogue (between player selection event and the onOptionSelect logic)
       this.scene.ui.setMode(Mode.MESSAGE);
@@ -139,14 +149,14 @@ export class MysteryEncounterOptionSelectedPhase extends Phase {
           this.onOptionSelect(this.scene).finally(() => {
             this.end();
           });
-        }, this.scene.currentBattle.waveIndex * 1000);
+        }, this.scene.currentBattle.mysteryEncounter.seedOffset);
       });
     } else {
       this.scene.executeWithSeedOffset(() => {
         this.onOptionSelect(this.scene).finally(() => {
           this.end();
         });
-      }, this.scene.currentBattle.waveIndex * 1000);
+      }, this.scene.currentBattle.mysteryEncounter.seedOffset);
     }
   }
 
@@ -265,7 +275,7 @@ export class MysteryEncounterBattlePhase extends Phase {
       } else {
         const trainer = this.scene.currentBattle.trainer;
         let message: string;
-        scene.executeWithSeedOffset(() => message = Utils.randSeedItem(encounterMessages), scene.currentBattle.waveIndex * 1000);
+        scene.executeWithSeedOffset(() => message = Utils.randSeedItem(encounterMessages), this.scene.currentBattle.mysteryEncounter.seedOffset);
 
         const showDialogueAndSummon = () => {
           scene.ui.showDialogue(message, trainer.getName(TrainerSlot.NONE, true), null, () => {
@@ -390,6 +400,7 @@ export class MysteryEncounterRewardsPhase extends Phase {
         this.scene.tryRemovePhase(p => p instanceof SelectModifierPhase);
         this.scene.unshiftPhase(new SelectModifierPhase(this.scene, 0, null, { fillRemaining: false, rerollMultiplier: 0 }));
       }
+      // Do not use ME's seedOffset for rewards, these should always be consistent with waveIndex (once per wave)
     }, this.scene.currentBattle.waveIndex * 1000);
 
     this.scene.pushPhase(new PostMysteryEncounterPhase(this.scene));
@@ -423,7 +434,7 @@ export class PostMysteryEncounterPhase extends Phase {
               this.continueEncounter();
             }
           });
-      }, this.scene.currentBattle.waveIndex * 1000);
+      }, this.scene.currentBattle.mysteryEncounter.seedOffset);
     } else {
       this.continueEncounter();
     }

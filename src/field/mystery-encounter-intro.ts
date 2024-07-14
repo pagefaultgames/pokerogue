@@ -11,6 +11,7 @@ export class MysteryEncounterSpriteConfig {
   tint?: number;
   x?: number; // X offset
   y?: number; // Y offset
+  yShadowOffset?: number;
   scale?: number;
   isItem?: boolean; // For item sprites, set to true
 }
@@ -37,10 +38,10 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
       return;
     }
 
-    const getSprite = (spriteKey: string, hasShadow?: boolean) => {
+    const getSprite = (spriteKey: string, hasShadow?: boolean, yShadowOffset?: number) => {
       const ret = this.scene.addFieldSprite(0, 0, spriteKey);
       ret.setOrigin(0.5, 1);
-      ret.setPipeline(this.scene.spritePipeline, { tone: [0.0, 0.0, 0.0, 0.0], hasShadow: !!hasShadow });
+      ret.setPipeline(this.scene.spritePipeline, { tone: [0.0, 0.0, 0.0, 0.0], hasShadow: !!hasShadow, yShadowOffset: yShadowOffset ?? 0 });
       return ret;
     };
 
@@ -62,7 +63,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
       let sprite: GameObjects.Sprite;
       let tintSprite: GameObjects.Sprite;
       if (!config.isItem) {
-        sprite = getSprite(config.spriteKey, config.hasShadow);
+        sprite = getSprite(config.spriteKey, config.hasShadow, config.yShadowOffset);
         tintSprite = getSprite(config.spriteKey);
       } else {
         sprite = getItemSprite(config.spriteKey);
@@ -83,8 +84,8 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
           tintSprite.setPosition(origin + config.x, tintSprite.y);
         }
         if (config.y) {
-          sprite.setPosition(sprite.x, config.y);
-          tintSprite.setPosition(tintSprite.x, config.y);
+          sprite.setPosition(sprite.x, sprite.y + config.y);
+          tintSprite.setPosition(tintSprite.x, tintSprite.y + config.y);
         }
       } else {
         // Single sprite
