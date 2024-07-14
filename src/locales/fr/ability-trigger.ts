@@ -32,7 +32,7 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "protectStat": "{{abilityName}} de {{pokemonNameWithAffix}}\nempêche {{statName}} de baisser !",
   "statusEffectImmunityWithName": "{{abilityName}} de {{pokemonNameWithAffix}}\nl’empêche d’être {{statusEffectName}} !",
   "statusEffectImmunity": "{{abilityName}} de {{pokemonNameWithAffix}}\nempêche tout problème de statut !",
-  "battlerTagImmunity": "{{abilityName}} de {{pokemonNameWithAffix}}\nempêche {{battlerTagName}}!",
+  "battlerTagImmunity": "{{abilityName}} de {{pokemonNameWithAffix}}\nempêche {{battlerTagName}} !",
   "forewarn": "La capacité {{moveName}}\nde {{pokemonNameWithAffix}} a été détectée !",
   "frisk": "{{pokemonNameWithAffix}} fouille {{opponentName}}\net trouve son talent {{opponentAbilityName}} !",
   "postWeatherLapseHeal": "{{abilityName}} de {{pokemonNameWithAffix}}\nrestaure un peu ses PV !",
