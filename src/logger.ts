@@ -158,6 +158,7 @@ export interface Wave {
   actions: string[],
   shop: string,
   biome: string,
+  clearActionsFlag: boolean,
   trainer?: TrainerData,
   pokemon?: PokeData[]
 }
@@ -300,6 +301,7 @@ export function exportWave(scene: BattleScene): Wave {
     double: scene.currentBattle.double,
     actions: [],
     shop: "",
+    clearActionsFlag: false,
     biome: getBiomeName(scene.arena.biomeType)
   }
   if (ret.double == undefined) ret.double = false;
@@ -608,6 +610,11 @@ export function logActions(scene: BattleScene, floor: integer, action: string) {
   var drpd = getDRPD(scene)
   console.log("Log Action", drpd)
   var wv: Wave = getWave(drpd, floor, scene)
+  if (wv.clearActionsFlag) {
+    console.log("Triggered clearActionsFlag")
+    wv.clearActionsFlag = false
+    wv.actions = []
+  }
   wv.actions.push(action)
   console.log(drpd)
   localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
@@ -670,8 +677,9 @@ export function getWave(drpd: DRPD, floor: integer, scene: BattleScene): Wave {
       double: scene.currentBattle.double,
       actions: [],
       shop: "",
+      clearActionsFlag: false,
       biome: getBiomeName(scene.arena.biomeType),
-      pokemon: []
+      //pokemon: []
     }
     wv = drpd.waves[insertPos]
   }
@@ -724,7 +732,8 @@ export function getWave(drpd: DRPD, floor: integer, scene: BattleScene): Wave {
             actions: [],
             shop: "",
             biome: getBiomeName(scene.arena.biomeType),
-            pokemon: []
+            clearActionsFlag: false,
+            //pokemon: []
           }
           wv = drpd.waves[drpd.waves.length - 1]
         }
@@ -750,8 +759,9 @@ export function getWave(drpd: DRPD, floor: integer, scene: BattleScene): Wave {
             double: scene.currentBattle.double,
             actions: [],
             shop: "",
+            clearActionsFlag: false,
             biome: getBiomeName(scene.arena.biomeType),
-            pokemon: []
+            //pokemon: []
           }
           wv = drpd.waves[insertPos]
         }
@@ -873,9 +883,10 @@ export function logPokemon(scene: BattleScene, floor: integer = undefined, slot:
   if (pk.rarity == undefined)
     pk.rarity = "[Unknown]"
   wv.pokemon[slot] = pk;
-  while (wv.actions.length > 0)
-    wv.actions.pop()
-  wv.actions = []
+  //while (wv.actions.length > 0)
+    //wv.actions.pop()
+  //wv.actions = []
+  wv.clearActionsFlag = false;
   wv.shop = ""
   console.log(drpd)
   localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
@@ -885,13 +896,17 @@ export function logPokemon(scene: BattleScene, floor: integer = undefined, slot:
  * @param scene The BattleScene. Used to get the log ID and trainer data.
  * @param floor The wave index to write to. Defaults to the current floor.
  */
-export function resetWaveActions(scene: BattleScene, floor: integer = undefined) {
+export function resetWaveActions(scene: BattleScene, floor: integer = undefined, softflag: boolean) {
   if (floor == undefined) floor = scene.currentBattle.waveIndex
   if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
   var drpd = getDRPD(scene)
   console.log("Clear Actions", drpd)
   var wv: Wave = getWave(drpd, floor, scene)
-  wv.actions = []
+  if (softflag) {
+    wv.clearActionsFlag = true;
+  } else {
+    wv.actions = []
+  }
   console.log(drpd, wv)
   localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
 }

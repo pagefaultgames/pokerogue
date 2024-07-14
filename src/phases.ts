@@ -1406,7 +1406,7 @@ export class EncounterPhase extends BattlePhase {
     if (this.scene.currentBattle.waveIndex == 1) {
       LoggerTools.logPlayerTeam(this.scene)
     }
-    LoggerTools.resetWaveActions(this.scene)
+    LoggerTools.resetWaveActions(this.scene, undefined, true)
 
     if (LoggerTools.autoCheckpoints.includes(this.scene.currentBattle.waveIndex)) {
       this.scene.gameData.saveGameToAuto(this.scene)
@@ -5684,6 +5684,7 @@ export class AttemptCapturePhase extends PokemonPhase {
         this.removePb();
         this.end();
       };
+      LoggerTools.logCapture(this.scene, this.scene.currentBattle.waveIndex, pokemon)
       const removePokemon = () => {
         this.scene.addFaintedEnemyScore(pokemon);
         this.scene.getPlayerField().filter(p => p.isActive(true)).forEach(playerPokemon => playerPokemon.removeTagsBySourceId(pokemon.id));
