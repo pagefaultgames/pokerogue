@@ -1,4 +1,12 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  test,
+  vi,
+} from "vitest";
 import GameManager from "../utils/gameManager";
 import Phaser from "phaser";
 import * as Overrides from "#app/overrides";
@@ -28,16 +36,30 @@ describe("Abilities - COSTAR", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     vi.spyOn(Overrides, "DOUBLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.COSTAR);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.NASTY_PLOT, Moves.CURSE]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(
+      Abilities.COSTAR
+    );
+    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([
+      Moves.SPLASH,
+      Moves.NASTY_PLOT,
+      Moves.CURSE,
+    ]);
+    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([
+      Moves.SPLASH,
+      Moves.SPLASH,
+      Moves.SPLASH,
+      Moves.SPLASH,
+    ]);
   });
-
 
   test(
     "ability copies positive stat changes",
     async () => {
-      await game.startBattle([Species.MAGIKARP, Species.MAGIKARP, Species.FLAMIGO]);
+      await game.startBattle([
+        Species.MAGIKARP,
+        Species.MAGIKARP,
+        Species.FLAMIGO,
+      ]);
 
       let [leftPokemon, rightPokemon] = game.scene.getPlayerField();
       expect(leftPokemon).not.toBe(undefined);
@@ -60,15 +82,21 @@ describe("Abilities - COSTAR", () => {
       expect(leftPokemon.summonData.battleStats[BattleStat.SPATK]).toBe(+2);
       expect(rightPokemon.summonData.battleStats[BattleStat.SPATK]).toBe(+2);
     },
-    TIMEOUT,
+    TIMEOUT
   );
 
   test(
     "ability copies negative stat changes",
     async () => {
-      vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INTIMIDATE);
+      vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(
+        Abilities.INTIMIDATE
+      );
 
-      await game.startBattle([Species.MAGIKARP, Species.MAGIKARP, Species.FLAMIGO]);
+      await game.startBattle([
+        Species.MAGIKARP,
+        Species.MAGIKARP,
+        Species.FLAMIGO,
+      ]);
 
       let [leftPokemon, rightPokemon] = game.scene.getPlayerField();
       expect(leftPokemon).not.toBe(undefined);
@@ -86,6 +114,6 @@ describe("Abilities - COSTAR", () => {
       expect(leftPokemon.summonData.battleStats[BattleStat.ATK]).toBe(-2);
       expect(rightPokemon.summonData.battleStats[BattleStat.ATK]).toBe(-2);
     },
-    TIMEOUT,
+    TIMEOUT
   );
 });

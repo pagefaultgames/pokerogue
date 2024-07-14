@@ -2,6 +2,7 @@ import BattleScene from "#app/battle-scene.js";
 import { initWithStarters } from "./initWithStarters";
 import { BallCommand } from "./BattlePhaseAPI";
 import { CommandPhase } from "#app/phases.js";
+import { Phase } from "#app/phase.js";
 
 /**
  * Automates the game
@@ -28,11 +29,27 @@ export const automateGame = async (game: Phaser.Game) => {
   // for detailed information on available functions and their usage.
 };
 
+// const phaseApi = (scene: BattleScene) => {
+//   console.log(scene);
+
+//   const checkPhase = () => {
+//     const currentPhase = scene.getCurrentPhase();
+//     if (currentPhase instanceof CommandPhase) {
+//       BallCommand(scene);
+//     } else {
+//       console.log('Some other phase not yet implemented');
+//     }
+//   };
+//   // Check the phase every 100 milliseconds
+//   // TODO: Refactor to trigger this check after each phase update instead of using setInterval
+//   // May have to edit battle-scene to create some sort of callback every time its updated
+//   setInterval(checkPhase, 100);
+// };
+
 const phaseApi = (scene: BattleScene) => {
   console.log(scene);
 
-  const checkPhase = () => {
-    const currentPhase = scene.getCurrentPhase();
+  const checkPhase = (currentPhase: Phase) => {
     if (currentPhase instanceof CommandPhase) {
       BallCommand(scene);
     } else {
@@ -40,10 +57,8 @@ const phaseApi = (scene: BattleScene) => {
     }
   };
 
-  // Check the phase every 100 milliseconds
-  // TODO: Refactor to trigger this check after each phase update instead of using setInterval
-  // May have to edit battle-scene to create some sort of callback every time its updated
-  setInterval(checkPhase, 100);
+  // Add the checkPhase function as a listener for phase changes
+  scene.addPhaseChangeListener(checkPhase);
 };
 
 export default automateGame;
