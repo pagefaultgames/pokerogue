@@ -27,9 +27,22 @@ body:
         - Great
         - Ultra
         - Rogue
+        - Part of a "Quest"
         - Other or unsure (please specify)
     validations:
       required: true
+  - type: markdown # SEPARATOR
+    attributes:
+      value: |
+        ---
+  - type: input
+    id: rarity-other
+    attributes:
+      label: Rarity Tier - Other. Please Specify
+      description: If you chose `Other` on the `Rarity Tier` please specify it here
+      placeholder: e.g. "I'm unsure of whether this should be Common or Great"
+    validations:
+      required: false 
   - type: markdown # SEPARATOR
     attributes:
       value: |
@@ -50,7 +63,7 @@ body:
     id: description
     attributes:
       label: Description
-      description: Describe the event you are proposing. Explain its theme and how it's different from others.
+      description: Describe the event you are proposing. Explain its theme and how it's different from others. If the Event has any requirements to even trigger, detail them here too.
       placeholder: ie. "Fight or Flight is a common event where the player can fight a boss PKMN of the biome. The PKMN is stronger than usual, but also holds an item that's better than usual."
     validations:
       required: true
@@ -107,6 +120,18 @@ body:
         - OTHER (please specify)
     validations:
       required: true
+  - type: markdown # SEPARATOR
+    attributes:
+      value: |
+        ---
+  - type: input
+    id: biome-other
+    attributes:
+      label: Biome - Other. Please Specify
+      description: If you chose `Other` on the `Biome` please specify it here
+      placeholder: e.g. "I would like to only trigger at Graveyard at night!"
+    validations:
+      required: false 
   - type: markdown # SEPARATOR
     attributes:
       value: |
