@@ -3,7 +3,7 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
 export const pokemonForm: SimpleTranslationEntries = {
   // Battle forms
   "mega": "Mega-{{pokemonName}}",
-  "megaX": "Mega-{{pokemonName}} X",
+  "mega-x": "Mega-{{pokemonName}} X",
   "megaY": "Mega-{{pokemonName}} Y",
   "primal": "Proto-{{pokemonName}}",
   "gigantamax": "G-Dyna-{{pokemonName}}",
