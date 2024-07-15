@@ -1,5 +1,5 @@
 import { OptionTextDisplay } from "#app/data/mystery-encounters/mystery-encounter-dialogue";
-import { Moves } from "#app/enums/moves.js";
+import { Moves } from "#app/enums/moves";
 import { PlayerPokemon } from "#app/field/pokemon";
 import BattleScene from "../../battle-scene";
 import * as Utils from "../../utils";
