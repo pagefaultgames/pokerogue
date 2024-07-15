@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
-import * as overrides from "#app/overrides";
+import overrides from "#app/overrides";
 import { Species } from "#enums/species";
 import { TurnEndPhase, MoveEffectPhase } from "#app/phases";
 import { Moves } from "#enums/moves";
@@ -375,14 +375,16 @@ describe("Abilities - Magic Guard", () => {
 
     /**
     * Expect:
-    * - The player Pokemon (with Magic Guard) uses a non-attacking move with an HP cost but does lose HP from using it
+    * - The player Pokemon (with Magic Guard) uses a non-attacking move with an HP cost and thus loses HP from using it
     */
     expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
   }, TIMEOUT
   );
 
   it("Magic Guard prevents damage from abilities with PostTurnHurtIfSleepingAbAttr", async() => {
+    //Tests the ability Bad Dreams
     vi.spyOn(overrides, "STATUS_OVERRIDE", "get").mockReturnValue(StatusEffect.SLEEP);
+    //enemy pokemon is given Spore just in case player pokemon somehow awakens during test
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPORE, Moves.SPORE, Moves.SPORE, Moves.SPORE]);
     vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BAD_DREAMS);
 
@@ -395,26 +397,111 @@ describe("Abilities - Magic Guard", () => {
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
+    /**
+    * Expect:
+    * - The player Pokemon (with Magic Guard) should not lose HP due to this ability attribute
+    * - The player Pokemon is asleep
+    */
+    expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
+    expect(leadPokemon.status.effect).toBe(StatusEffect.SLEEP);
+  }, TIMEOUT
+  );
+
+  it("Magic Guard prevents damage from abilities with PostFaintContactDamageAbAttr", async() => {
+    //Tests the abilities Innards Out/Aftermath
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
+    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.AFTERMATH);
+
+    await game.startBattle([Species.MAGIKARP]);
+
+    const leadPokemon = game.scene.getPlayerPokemon();
+    expect(leadPokemon).toBeDefined();
+
+    const enemyPokemon = game.scene.getEnemyPokemon();
+    expect(enemyPokemon).toBeDefined();
+    enemyPokemon.hp = 1;
+
+    game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    /**
+    * Expect:
+    * - The player Pokemon (with Magic Guard) should not lose HP due to this ability attribute
+    * - The enemy Pokemon has fainted
+    */
+    expect(enemyPokemon.hp).toBe(0);
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
   }, TIMEOUT
   );
 
-  /*
   it("Magic Guard prevents damage from abilities with PostDefendContactDamageAbAttr", async() => {
+    //Tests the abilities Iron Barbs/Rough Skin
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
+    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.IRON_BARBS);
+
     await game.startBattle([Species.MAGIKARP]);
-    vi.spyOn(overrides, "STATUS_OVERRIDE", "get").mockReturnValue(StatusEffect.SLEEP);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPORE, Moves.SPORE, Moves.SPORE, Moves.SPORE]);
 
-    }, TIMEOUT
+    const leadPokemon = game.scene.getPlayerPokemon();
+    expect(leadPokemon).toBeDefined();
+
+    const enemyPokemon = game.scene.getEnemyPokemon();
+    expect(enemyPokemon).toBeDefined();
+
+    game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    /**
+    * Expect:
+    * - The player Pokemon (with Magic Guard) should not lose HP due to this ability attribute
+    * - The player Pokemon's move should have connected
+    */
+    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+    expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
+  }, TIMEOUT
   );
-*/
-  //Ability Immunities
-  //Iron Barbs/Rough Skin --> PostDefendContactDamageAbAttr
-  //Solar Power/Dry Skin --> PostWeatherLapseDamageAbAttr
-  //Bad Dreams --> PostTurnHurtIfSleepingAbAttr
-  //Aftermath/Innards Out --> PostFaintContactDamageAbAttr
-  //Liquid Ooze --> ReverseDrainAbAttr
-  //
-  //Gulp Missle (not implemented)
 
+  it("Magic Guard prevents damage from abilities with ReverseDrainAbAttr", async() => {
+    //Tests the ability Liquid Ooze
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.ABSORB]);
+    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.LIQUID_OOZE);
+
+    await game.startBattle([Species.MAGIKARP]);
+
+    const leadPokemon = game.scene.getPlayerPokemon();
+    expect(leadPokemon).toBeDefined();
+
+    const enemyPokemon = game.scene.getEnemyPokemon();
+    expect(enemyPokemon).toBeDefined();
+
+    game.doAttack(getMovePosition(game.scene, 0, Moves.ABSORB));
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    /**
+    * Expect:
+    * - The player Pokemon (with Magic Guard) should not lose HP due to this ability attribute
+    * - The player Pokemon's move should have connected
+    */
+    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+    expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
+  }, TIMEOUT
+  );
+
+  it("Magic Guard prevents HP loss from abilities with PostWeatherLapseDamageAbAttr", async() => {
+    //Tests the abilities Solar Power/Dry Skin
+    vi.spyOn(overrides, "PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.SOLAR_POWER);
+    vi.spyOn(overrides, "WEATHER_OVERRIDE", "get").mockReturnValue(WeatherType.SUNNY);
+
+    await game.startBattle([Species.MAGIKARP]);
+    const leadPokemon = game.scene.getPlayerPokemon();
+    expect(leadPokemon).toBeDefined();
+    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    /**
+    * Expect:
+    * - The player Pokemon (with Magic Guard) should not lose HP due to this ability attribute
+    */
+    expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
+  }, TIMEOUT
+  );
 });
