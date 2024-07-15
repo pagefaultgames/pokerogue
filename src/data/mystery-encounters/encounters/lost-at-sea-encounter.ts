@@ -13,7 +13,7 @@ const OPTION_2_REQUIRED_MOVE = Moves.FLY;
  * Can be a number between `0` - `100`.
  * The higher the more damage taken (100% = instant KO).
  */
-const DAMAGE_PERCENTAGE: number = 30; // 0 - 100
+const DAMAGE_PERCENTAGE: number = 25; // 0 - 100
 /** The i18n namespace for the encounter */
 const namepsace = "mysteryEncounter:lostAtSea";
 
