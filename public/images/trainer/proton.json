@@ -1,7 +1,7 @@
 {
 	"textures": [
 		{
-			"image": "flare_admin_xerosic.png",
+			"image": "proton.png",
 			"format": "RGBA8888",
 			"size": {
 				"w": 80,

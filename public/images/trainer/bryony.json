@@ -1,7 +1,7 @@
 {
 	"textures": [
 		{
-			"image": "rocket_admin_archer.png",
+			"image": "bryony.png",
 			"format": "RGBA8888",
 			"size": {
 				"w": 80,

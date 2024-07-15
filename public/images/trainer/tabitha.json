@@ -1,7 +1,7 @@
 {
 	"textures": [
 		{
-			"image": "rocket_admin_petrel.png",
+			"image": "tabitha.png",
 			"format": "RGBA8888",
 			"size": {
 				"w": 80,

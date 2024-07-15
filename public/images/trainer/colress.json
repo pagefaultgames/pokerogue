@@ -1,7 +1,7 @@
 {
 	"textures": [
 		{
-			"image": "plasma_admin_colress.png",
+			"image": "colress.png",
 			"format": "RGBA8888",
 			"size": {
 				"w": 328,
