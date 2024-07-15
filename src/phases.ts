@@ -5825,7 +5825,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
                           this.scene.ui.showText(i18next.t("battle:learnMoveAnd"), null, () => {
                             var W = LoggerTools.getWave(LoggerTools.getDRPD(this.scene), this.scene.currentBattle.waveIndex, this.scene)
                             if (W.shop != "") {
-                              LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, W.shop + " → replace " + pokemon.moveset[moveIndex].getName())
+                              LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, W.shop + " → learn " + new PokemonMove(this.moveId).getName() + " → replace " + pokemon.moveset[moveIndex].getName())
                             } else {
                               LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, LoggerTools.playerPokeName(this.scene, pokemon) + " | Learn " + new PokemonMove(this.moveId).getName() + " → replace " + pokemon.moveset[moveIndex].getName())
                             }
