@@ -89,6 +89,7 @@ export const battle: SimpleTranslationEntries = {
   "statSeverelyFell_other": "{{pokemonNameWithAffix}}의\n{{stats}}[[가]] 매우 크게 떨어졌다!",
   "statWontGoAnyLower_one": "{{pokemonNameWithAffix}}의\n{{stats}}[[는]] 더 떨어지지 않는다!",
   "statWontGoAnyLower_other": "{{pokemonNameWithAffix}}의\n{{stats}}[[는]] 더 떨어지지 않는다!",
+  "transformedIntoType": "{{pokemonName}} transformed\ninto the {{type}} type!",
   "retryBattle": "이 배틀의 처음부터 재도전하시겠습니까?",
   "unlockedSomething": "{{unlockedThing}}[[가]]\n해금되었다.",
   "congratulations": "축하합니다!",
