@@ -2,7 +2,7 @@ import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest
 import {generateStarter, getMovePosition,} from "#app/test/utils/gameManagerUtils";
 import {Mode} from "#app/ui/ui";
 import {GameModes} from "#app/game-mode";
-import * as overrides from "../../overrides";
+import overrides from "../../overrides";
 import {Command} from "#app/ui/command-ui-handler";
 import {
   CommandPhase, DamagePhase,

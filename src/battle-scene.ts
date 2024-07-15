@@ -49,7 +49,7 @@ import { SceneBase } from "./scene-base";
 import CandyBar from "./ui/candy-bar";
 import { Variant, variantData } from "./data/variant";
 import { Localizable } from "#app/interfaces/locales";
-import * as Overrides from "./overrides";
+import Overrides from "#app/overrides";
 import {InputsController} from "./inputs-controller";
 import {UiInputs} from "./ui-inputs";
 import { NewArenaEvent } from "./events/battle-scene";
@@ -1127,7 +1127,7 @@ export default class BattleScene extends SceneBase {
         this.arena.updatePoolsForTimeOfDay();
       }
       if (resetArenaState) {
-        this.arena.removeAllTags();
+        this.arena.resetArenaEffects();
         playerField.forEach((_, p) => this.unshiftPhase(new ReturnPhase(this, p)));
 
         for (const pokemon of this.getParty()) {

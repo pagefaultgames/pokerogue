@@ -3,7 +3,7 @@ import GameManager from "../utils/gameManager";
 import {
   Moves
 } from "#app/enums/moves.js";
-import * as overrides from "#app/overrides";
+import overrides from "#app/overrides";
 import { Abilities } from "#app/enums/abilities.js";
 import { BattlerIndex } from "#app/battle.js";
 import { getMovePosition } from "../utils/gameManagerUtils";
