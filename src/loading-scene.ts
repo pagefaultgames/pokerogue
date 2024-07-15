@@ -196,7 +196,9 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas("trainer_f_back_pb", "trainer");
 
     Utils.getEnumValues(TrainerType).map(tt => {
+      console.log("Loading trainer", tt);
       const config = trainerConfigs[tt];
+      console.log("Loading trainer", config);
       this.loadAtlas(config.getSpriteKey(), "trainer");
       if (config.doubleOnly || config.hasDouble) {
         this.loadAtlas(config.getSpriteKey(true), "trainer");

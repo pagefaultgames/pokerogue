@@ -1,11 +1,11 @@
 {
 	"textures": [
 		{
-			"image": "aqua_admin.png",
+			"image": "magma_admin_tabitha.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 73,
-				"h": 73
+				"w": 80,
+				"h": 80
 			},
 			"scale": 1,
 			"frames": [
@@ -18,16 +18,16 @@
 						"h": 80
 					},
 					"spriteSourceSize": {
-						"x": 17,
-						"y": 6,
-						"w": 46,
-						"h": 73
+						"x": 0,
+						"y": 0,
+						"w": 80,
+						"h": 80
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 46,
-						"h": 73
+						"w": 80,
+						"h": 80
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:efd07ff3ed1e610150a4b8ca18974343:d9b85b9eb11182e9e4669e2bd8b08694:72b7b50231708a9486d5f315824e4df1$"
+		"smartupdate": "$TexturePacker:SmartUpdate:831f5748dad92911b10a1cb358ee2dae:a3bf81bbaa3b49cad5e0e549cf94563b:bb6befc9383c9c08837183ae2a7a80c1$"
 	}
 }

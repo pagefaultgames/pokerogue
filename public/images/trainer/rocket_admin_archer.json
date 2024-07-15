@@ -1,11 +1,11 @@
 {
 	"textures": [
 		{
-			"image": "rocket_admin.png",
+			"image": "rocket_admin_archer.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 65,
-				"h": 65
+				"w": 80,
+				"h": 80
 			},
 			"scale": 1,
 			"frames": [
@@ -18,16 +18,16 @@
 						"h": 80
 					},
 					"spriteSourceSize": {
-						"x": 17,
-						"y": 9,
-						"w": 42,
-						"h": 65
+						"x": 0,
+						"y": 0,
+						"w": 80,
+						"h": 80
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 42,
-						"h": 65
+						"w": 80,
+						"h": 80
 					}
 				}
 			]

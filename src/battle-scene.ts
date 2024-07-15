@@ -1025,6 +1025,7 @@ export default class BattleScene extends SceneBase {
       newBattleType = battleConfig.battleType;
       this.executeWithSeedOffset(() => newTrainer = battleConfig.getTrainer(this), (battleConfig.seedOffsetWaveIndex || newWaveIndex) << 8);
       if (newTrainer) {
+        console.log("Fixed battle", newWaveIndex, newBattleType, newTrainer);
         this.field.add(newTrainer);
       }
     } else {
