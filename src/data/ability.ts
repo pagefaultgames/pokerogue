@@ -636,7 +636,7 @@ export class ReverseDrainAbAttr extends PostDefendAbAttr {
    * @returns true if healing should be reversed on a healing move, false otherwise.
    */
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
-    if (move.hasAttr(HitHealAttr) && !attacker.hasAbilityWithAttr(BlockNonDirectDamageAbAttr)) {
+    if (move.hasAttr(HitHealAttr)) {
       pokemon.scene.queueMessage(getPokemonMessage(attacker, " sucked up the liquid ooze!"));
       return true;
     }
@@ -3091,7 +3091,7 @@ export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
   applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
     let hadEffect: boolean = false;
     for (const opp of pokemon.getOpponents()) {
-      if (opp.status?.effect === StatusEffect.SLEEP || opp.hasAbility(Abilities.COMATOSE)) {
+      if ((opp.status?.effect === StatusEffect.SLEEP || opp.hasAbility(Abilities.COMATOSE)) && !opp.hasAbilityWithAttr(BlockNonDirectDamageAbAttr)) {
         opp.damageAndUpdate(Math.floor(Math.max(1, opp.getMaxHp() / 8)), HitResult.OTHER);
         pokemon.scene.queueMessage(i18next.t("abilityTriggers:badDreams", {pokemonName: getPokemonNameWithAffix(opp)}));
         hadEffect = true;
