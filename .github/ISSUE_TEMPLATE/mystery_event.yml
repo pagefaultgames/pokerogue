@@ -20,6 +20,7 @@ body:
     id: rarity
     attributes:
       label: Rarity Tier
+      description: Check out the [Event Proposal Guide](https://github.com/AsdarDevelops/PokeRogue-Events/blob/mystery-battle-events/MEs_Proposal_Guide.md#do-tiers-mean-anything) if you have not yet!
       multiple: false
       options:
         - Common
