@@ -9,7 +9,7 @@ body:
     attributes:
       label: Event Name
       description: Name of the event
-      placeholder: e.g Fight or Flight
+      placeholder: ie. "Fight or Flight"
     validations:
       required: true
   - type: markdown # SEPARATOR
@@ -20,7 +20,7 @@ body:
     id: rarity
     attributes:
       label: Rarity Tier
-      description: Check out the [Event Proposal Guide](https://github.com/AsdarDevelops/PokeRogue-Events/blob/mystery-battle-events/MEs_Proposal_Guide.md#do-tiers-mean-anything) if you have not yet!
+      description: Check out the [Event Proposal Guide](https://github.com/AsdarDevelops/PokeRogue-Events/blob/mystery-battle-events/MEs_Proposal_Guide.md) if you have not yet!
       multiple: false
       options:
         - Common
@@ -38,8 +38,8 @@ body:
     id: waves
     attributes:
       label: Waves
-      description: Classic/Challenge is 1 -200. Currently only 11-179 is supported.
-      placeholder: 1-200
+      description: Classic/Challenge ranges 1-200. Currently only 11-179 is supported.
+      placeholder: 11-179
     validations:
       required: true
   - type: markdown # SEPARATOR
@@ -50,8 +50,8 @@ body:
     id: description
     attributes:
       label: Description
-      description: Describe the event you are proposing
-      placeholder: What is it?
+      description: Describe the event you are proposing. Explain its theme and how it's different from others.
+      placeholder: ie. "Fight or Flight is a common event where the player can fight a boss PKMN of the biome. The PKMN is stronger than usual, but also holds an item that's better than usual."
     validations:
       required: true
   - type: markdown # SEPARATOR
@@ -62,11 +62,13 @@ body:
     id: biomes
     attributes:
       label: Biomes
-      description: Select all biomes where the event can occur
+      description: Select all biomes where the event can occur. "ANY, NON-EXTREME, CIVILIZATION and HUMAN are groups of biomes. Check the [Biomes part of the guide](https://github.com/AsdarDevelops/PokeRogue-Events/blob/mystery-battle-events/MEs_Proposal_Guide.md#biomes)."
       multiple: true
       options:
-        - ANY (no need to select all)
-        - NON-EXTREME (almost all except Space, Seabed, etc...)
+        - ANY
+        - NON-EXTREME
+        - HUMAN
+        - CIVILIZATION
         - TOWN
         - PLAINS
         - GRASS
@@ -135,9 +137,21 @@ body:
     attributes:
       label: Explanation/Notes on Design
       description: Explain why you think this design is right and what this Event brings to the table
-      placeholder: Explain why you think this design is right and what this Event brings to the table
+      placeholder: ie. "We need more simple Events that mix slightly higher stakes with slightly better rewards"
     validations:
       required: true
+  - type: markdown # SEPARATOR
+    attributes:
+      value: |
+        ---
+  - type: textarea
+    id: artist-notes
+    attributes:
+      label: Notes to Artists
+      description: Does your Event need custom spriting? If so, please detail them here (reference screenshots are helpful)
+      placeholder: Ie. "We currently don't have a Cynthia sprite while dressed in a Garchomp costume. RAWR! This is highly needed for my Event!"
+    validations:
+      required: false
   - type: markdown # SEPARATOR
     attributes:
       value: |
