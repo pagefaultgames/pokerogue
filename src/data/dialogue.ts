@@ -459,6 +459,20 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       ]
     }
   ],
+  [TrainerType.ROCKET_ADMIN]: [
+    {
+      encounter: [
+        "dialogue:rocket_admin.encounter.1",
+        "dialogue:rocket_admin.encounter.2",
+        "dialogue:rocket_admin.encounter.3",
+      ],
+      victory: [
+        "dialogue:rocket_admin.victory.1",
+        "dialogue:rocket_admin.victory.2",
+        "dialogue:rocket_admin.victory.3",
+      ]
+    }
+  ],
   [TrainerType.MAGMA_GRUNT]: [
     {
       encounter: [
@@ -466,6 +480,20 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       ],
       victory: [
         "dialogue:magma_grunt.victory.1"
+      ]
+    }
+  ],
+  [TrainerType.MAGMA_ADMIN]: [
+    {
+      encounter: [
+        "dialogue:magma_admin.encounter.1",
+        "dialogue:magma_admin.encounter.2",
+        "dialogue:magma_admin.encounter.3",
+      ],
+      victory: [
+        "dialogue:magma_admin.victory.1",
+        "dialogue:magma_admin.victory.2",
+        "dialogue:magma_admin.victory.3",
       ]
     }
   ],
@@ -479,6 +507,20 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       ]
     }
   ],
+  [TrainerType.AQUA_ADMIN]: [
+    {
+      encounter: [
+        "dialogue:aqua_admin.encounter.1",
+        "dialogue:aqua_admin.encounter.2",
+        "dialogue:aqua_admin.encounter.3",
+      ],
+      victory: [
+        "dialogue:aqua_admin.victory.1",
+        "dialogue:aqua_admin.victory.2",
+        "dialogue:aqua_admin.victory.3",
+      ]
+    }
+  ],
   [TrainerType.GALACTIC_GRUNT]: [
     {
       encounter: [
@@ -486,6 +528,20 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       ],
       victory: [
         "dialogue:galactic_grunt.victory.1"
+      ]
+    }
+  ],
+  [TrainerType.GALACTIC_ADMIN]: [
+    {
+      encounter: [
+        "dialogue:galactic_admin.encounter.1",
+        "dialogue:galactic_admin.encounter.2",
+        "dialogue:galactic_admin.encounter.3",
+      ],
+      victory: [
+        "dialogue:galactic_admin.victory.1",
+        "dialogue:galactic_admin.victory.2",
+        "dialogue:galactic_admin.victory.3",
       ]
     }
   ],
@@ -499,6 +555,20 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       ]
     }
   ],
+  [TrainerType.PLASMA_SAGE]: [
+    {
+      encounter: [
+        "dialogue:plasma_sage.encounter.1",
+        "dialogue:plasma_sage.encounter.2",
+        "dialogue:plasma_sage.encounter.3",
+      ],
+      victory: [
+        "dialogue:plasma_sage.victory.1",
+        "dialogue:plasma_sage.victory.2",
+        "dialogue:plasma_sage.victory.3",
+      ]
+    }
+  ],
   [TrainerType.FLARE_GRUNT]: [
     {
       encounter: [
@@ -506,6 +576,20 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       ],
       victory: [
         "dialogue:flare_grunt.victory.1"
+      ]
+    }
+  ],
+  [TrainerType.FLARE_ADMIN]: [
+    {
+      encounter: [
+        "dialogue:flare_admin.encounter.1",
+        "dialogue:flare_admin.encounter.2",
+        "dialogue:flare_admin.encounter.3",
+      ],
+      victory: [
+        "dialogue:flare_admin.victory.1",
+        "dialogue:flare_admin.victory.2",
+        "dialogue:flare_admin.victory.3",
       ]
     }
   ],
