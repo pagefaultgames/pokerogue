@@ -63,6 +63,8 @@ export const battle: SimpleTranslationEntries = {
   "eggHatching": "Oh?",
   "ivScannerUseQuestion": "Vuoi usare lo scanner di IV su {{pokemonName}}?",
   "stealEatBerry": "{{pokemonName}} ha rubato e mangiato\nla {{berryName}} di {{targetName}}!",
+  "ppHealBerry": "{{pokemonNameWithAffix}} recupera i PP della mossa {{moveName}}\ncon la sua {{berryName}}!",
+  "hpHealBerry": "{{pokemonNameWithAffix}} ristabilisce la sua salute\ncon la sua {{berryName}}!",
   "wildPokemonWithAffix": "{{pokemonName}} selvatico",
   "foePokemonWithAffix": "{{pokemonName}} avversario",
   "useMove": "{{pokemonNameWithAffix}} usa {{moveName}}!",

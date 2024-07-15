@@ -67,6 +67,8 @@ export const battle: SimpleTranslationEntries = {
   "useMove": "{{pokemonNameWithAffix}}의 {{moveName}}!",
   "drainMessage": "{{pokemonName}}[[로]]부터\n체력을 흡수했다!",
   "stealEatBerry": "{{pokemonName}}[[가]]\n{{targetName}}의 {{berryName}}[[를]] 빼앗아 먹었다!",
+  "ppHealBerry": "{{pokemonNameWithAffix}}[[는]] {{berryName}}[[로]]\n{{moveName}}의 PP를 회복했다!",
+  "hpHealBerry": "{{pokemonNameWithAffix}}[[는]] {{berryName}}[[로]]\n체력을 회복했다!",
   "regainHealth": "{{pokemonName}}[[는]]\n체력을 회복했다!",
   "fainted": "{{pokemonNameWithAffix}}[[는]] 쓰러졌다!",
   "statsAnd": "그리고",
@@ -150,6 +152,6 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsCritBoostOnRemove": "{{pokemonNameWithAffix}}[[는]] 평소로 돌아왔다.",
   "battlerTagsSaltCuredOnAdd": "{{pokemonNameWithAffix}}[[는]]\n소금에 절여졌다!",
   "battlerTagsSaltCuredLapse": "{{pokemonNameWithAffix}}[[는]] 소금절이의\n데미지를 입고 있다.",
-  "battlerTagsCursedOnAdd": "{{pokemonNameWithAffix}}[[는]]\n자신의 체력을 깎아서\n{{pokemonName}}에게 저주를 걸었다!",
+  "battlerTagsCursedOnAdd": "{{pokemonNameWithAffix}}[[는]] 자신의 체력을 깎아서\n{{pokemonName}}에게 저주를 걸었다!",
   "battlerTagsCursedLapse": "{{pokemonNameWithAffix}}[[는]]\n저주받고 있다!",
 } as const;

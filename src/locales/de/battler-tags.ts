@@ -1,12 +1,12 @@
 import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const battlerTags: SimpleTranslationEntries = {
-  "trappedDesc": "trapping",
-  "flinchedDesc": "flinching",
-  "confusedDesc": "confusion",
-  "infatuatedDesc": "infatuation",
-  "seedDesc": "seeding",
-  "nightmareDesc": "nightmares",
-  "ingrainDesc": "roots",
-  "drowsyDesc": "drowsiness",
+  "trappedDesc": "Wechselsperre",
+  "flinchedDesc": "Zurückschrecken",
+  "confusedDesc": "Verwirrung",
+  "infatuatedDesc": "Verliebt",
+  "seedDesc": "Bepflanzt",
+  "nightmareDesc": "Nachtmahr",
+  "ingrainDesc": "Verwurzlung",
+  "drowsyDesc": "Schläfrigkeit",
 } as const;
