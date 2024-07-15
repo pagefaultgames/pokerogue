@@ -1,6 +1,6 @@
 import { Abilities } from "#app/enums/abilities.js";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import * as overrides from "#app/overrides";
+import overrides from "#app/overrides";
 import {
   DamagePhase,
   MoveEffectPhase,
