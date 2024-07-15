@@ -2,6 +2,7 @@ import BattleScene from "../battle-scene";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
+import { unlockAll } from "./menu-ui-handler";
 import { addWindow } from "./ui-theme";
 import * as Utils from "../utils";
 import { argbFromRgba } from "@material/material-color-utilities";
@@ -41,6 +42,9 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
   protected blockInput: boolean;
 
   protected scrollCursor: integer = 0;
+
+  private konamiIndex: integer = 0;
+  static readonly konamiCode: Button[] = [Button.UP, Button.UP, Button.DOWN, Button.DOWN, Button.LEFT, Button.RIGHT, Button.LEFT, Button.RIGHT, Button.CANCEL, Button.ACTION];
 
   private cursorObj: Phaser.GameObjects.Image;
 
@@ -158,6 +162,20 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     const options = this.getOptionsWithScroll();
 
     let playSound = true;
+
+    if (ui.getMode() === Mode.TITLE) {
+      if (button === AbstractOptionSelectUiHandler.konamiCode[this.konamiIndex] && (Utils.isLocal || Utils.isBeta)) {
+        if (this.konamiIndex !== AbstractOptionSelectUiHandler.konamiCode.length - 1) {
+          this.konamiIndex += 1;
+        } else {
+          unlockAll(this.scene);
+          this.konamiIndex = 0;
+          return false;
+        }
+      } else {
+        this.konamiIndex = 0;
+      }
+    }
 
     if (button === Button.ACTION || button === Button.CANCEL) {
       if (this.blockInput) {

@@ -6,11 +6,16 @@ import { addWindow } from "./ui-theme";
 import MessageUiHandler from "./message-ui-handler";
 import { OptionSelectConfig, OptionSelectItem } from "./abstact-option-select-ui-handler";
 import { Tutorial, handleTutorial } from "../tutorial";
-import { updateUserInfo } from "../account";
+import { loggedInUser, updateUserInfo } from "../account";
 import i18next from "i18next";
 import {Button} from "#enums/buttons";
 import { GameDataType } from "#enums/game-data-type";
 import BgmBar from "#app/ui/bgm-bar";
+import { Species } from "#app/enums/species.js";
+import { DexAttr, AbilityAttr } from "#app/system/game-data.js";
+import { getPokemonSpecies, starterPassiveAbilities } from "../data/pokemon-species";
+import { Nature } from "../data/nature";
+import { Passive } from "../enums/passive";
 
 enum MenuOptions {
   GAME_SETTINGS,
@@ -22,13 +27,54 @@ enum MenuOptions {
   MANAGE_DATA,
   COMMUNITY,
   SAVE_AND_QUIT,
-  LOG_OUT
+  LOG_OUT,
 }
 
 let wikiUrl = "https://wiki.pokerogue.net/start";
 const discordUrl = "https://discord.gg/uWpTfdKG49";
 const githubUrl = "https://github.com/pagefaultgames/pokerogue";
 const redditUrl = "https://www.reddit.com/r/pokerogue";
+
+export function unlockAll(scene: BattleScene) {
+  if (Utils.isLocal || Utils.isBeta) {
+    const totalSpecies = Object.keys(Species).filter(s => !isNaN(Number(s)));
+    for (const species of totalSpecies) {
+      //const pokemonSpecies = Number(species) > 2000 ? allSpecies.find(s => s.speciesId === Number(species)) : allSpecies[Number(species) - 1]; // thie converts the species to a pokemon from allSpecies by checking regional variants and returning the normal species index
+      const pokemonSpecies = getPokemonSpecies(Number(species));
+      let dexAttrLength = Object.values(DexAttr).length; // this will be the final amount of bits to set; we start by getting the length of the DexAttr so we know how many things every pokemon will get at minimum
+      if (pokemonSpecies.forms?.length > 0) { // this checks if the specific pokemon has forms
+        dexAttrLength += pokemonSpecies.forms?.length; // if it does have forms, add it to the dexAttrLength
+      }
+      const natureAttrLength = Object.values(Nature).length; // this gets a list of all the natures to set bits for
+      let abilityAttr: number; // since pokemon can have 1, 2 or 3 abilities
+      switch (pokemonSpecies.getAbilityCount()) {
+      case 1: // if it's one ability, return one ability
+        abilityAttr = AbilityAttr.ABILITY_1;
+        break;
+      case 2: // if it's one ability and the hidden ability, return ability 1 and the hidden ability
+        abilityAttr = AbilityAttr.ABILITY_1 + AbilityAttr.ABILITY_HIDDEN;
+        break;
+      case 3: // if it's 3 abilities, return all three
+        abilityAttr = AbilityAttr.ABILITY_1 + AbilityAttr.ABILITY_2 + AbilityAttr.ABILITY_HIDDEN;
+        break;
+      }
+      scene.gameData.dexData[species].seenAttr = BigInt(Math.pow(2, dexAttrLength) - 1); // we can set these values as 2^n - 1 if n is one more than the total number of total bits compared to what we need
+      scene.gameData.dexData[species].caughtAttr = BigInt(Math.pow(2, dexAttrLength) - 1);
+      scene.gameData.dexData[species].natureAttr = Math.pow(2, natureAttrLength) - 1;
+      scene.gameData.dexData[species].caughtCount = 1;
+      scene.gameData.dexData[species].seenCount = 1;
+      scene.gameData.dexData[species].ivs = [31, 31, 31, 31, 31, 31];
+      if (scene.gameData.starterData[species]) { // this checks to make sure the species has a starter
+        scene.gameData.starterData[species].abilityAttr = abilityAttr; // if so, it sets the abilityAttr for the starter
+      }
+      if (starterPassiveAbilities[species]) { // checks to see if the species has a passive - this is different to the starter code above as this needs to check babies instead of evolutions (i.e. check pichu instead of pikachu)
+        scene.gameData.starterData[species].passiveAttr = Passive.UNLOCKED + Passive.ENABLED; // if so, it sets the passiveAttr for the starter to be
+      }
+    }
+    //scene.gameData.saveAll(scene, true, true, false, true); // I could not for the life of me figure out how to make it save
+    scene.ui.revertMode();
+  }
+}
 
 export default class MenuUiHandler extends MessageUiHandler {
   private menuContainer: Phaser.GameObjects.Container;
@@ -146,7 +192,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       });
     };
 
-    if (Utils.isLocal) {
+    if (Utils.isLocal || Utils.isBeta) {
       manageDataOptions.push({
         label: i18next.t("menuUiHandler:importSession"),
         handler: () => {
@@ -177,7 +223,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       },
       keepOpen: true
     });
-    if (Utils.isLocal) {
+    if (Utils.isLocal || Utils.isBeta) {
       manageDataOptions.push({
         label: i18next.t("menuUiHandler:importData"),
         handler: () => {
@@ -188,22 +234,30 @@ export default class MenuUiHandler extends MessageUiHandler {
         keepOpen: true
       });
     }
-    manageDataOptions.push(
-      {
-        label: i18next.t("menuUiHandler:exportData"),
-        handler: () => {
-          this.scene.gameData.tryExportData(GameDataType.SYSTEM);
-          return true;
-        },
-        keepOpen: true
+    manageDataOptions.push({
+      label: i18next.t("menuUiHandler:exportData"),
+      handler: () => {
+        this.scene.gameData.tryExportData(GameDataType.SYSTEM);
+        return true;
       },
-      {
-        label: i18next.t("menuUiHandler:cancel"),
+      keepOpen: true
+    });
+    if (Utils.isLocal || Utils.isBeta) {
+      manageDataOptions.push({
+        label: "Unlock All",
         handler: () => {
-          this.scene.ui.revertMode();
+          unlockAll(this.scene);
           return true;
         }
+      });
+    }
+    manageDataOptions.push({
+      label: i18next.t("menuUiHandler:cancel"),
+      handler: () => {
+        this.scene.ui.revertMode();
+        return true;
       }
+    }
     );
 
     this.manageDataConfig = {
@@ -332,6 +386,51 @@ export default class MenuUiHandler extends MessageUiHandler {
         success = true;
         break;
       case MenuOptions.MANAGE_DATA:
+        if (!bypassLogin && !this.manageDataConfig.options.some(o => o.label === i18next.t("menuUiHandler:linkDiscord") || o.label === i18next.t("menuUiHandler:unlinkDiscord"))) {
+          this.manageDataConfig.options.splice(this.manageDataConfig.options.length-1,0,
+            {
+              label: loggedInUser.discordId === "" ? i18next.t("menuUiHandler:linkDiscord") : i18next.t("menuUiHandler:unlinkDiscord"),
+              handler: () => {
+                if (loggedInUser?.discordId === "") {
+                  const token = Utils.getCookie(Utils.sessionIdKey);
+                  const redirectUri = encodeURIComponent(`${import.meta.env.VITE_SERVER_URL}/auth/discord/callback`);
+                  const discordId = import.meta.env.VITE_DISCORD_CLIENT_ID;
+                  const discordUrl = `https://discord.com/api/oauth2/authorize?client_id=${discordId}&redirect_uri=${redirectUri}&response_type=code&scope=identify&state=${token}`;
+                  window.open(discordUrl, "_self");
+                  return true;
+                } else {
+                  Utils.apiPost("/auth/discord/logout", undefined, undefined, true).then(res => {
+                    if (!res.ok) {
+                      console.error(`Unlink failed (${res.status}: ${res.statusText})`);
+                    }
+                    updateUserInfo().then(() => this.scene.reset(true, true));
+                  });
+                  return true;
+                }
+              }
+            },
+            {
+              label: loggedInUser?.googleId === "" ? i18next.t("menuUiHandler:linkGoogle") : i18next.t("menuUiHandler:unlinkGoogle"),
+              handler: () => {
+                if (loggedInUser?.googleId === "") {
+                  const token = Utils.getCookie(Utils.sessionIdKey);
+                  const redirectUri = encodeURIComponent(`${import.meta.env.VITE_SERVER_URL}/auth/google/callback`);
+                  const googleId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+                  const googleUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${googleId}&response_type=code&redirect_uri=${redirectUri}&scope=openid&state=${token}`;
+                  window.open(googleUrl, "_self");
+                  return true;
+                } else {
+                  Utils.apiPost("/auth/google/logout", undefined, undefined, true).then(res => {
+                    if (!res.ok) {
+                      console.error(`Unlink failed (${res.status}: ${res.statusText})`);
+                    }
+                    updateUserInfo().then(() => this.scene.reset(true, true));
+                  });
+                  return true;
+                }
+              }
+            });
+        }
         ui.setOverlayMode(Mode.MENU_OPTION_SELECT, this.manageDataConfig);
         success = true;
         break;

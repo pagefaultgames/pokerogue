@@ -1,16 +1,8 @@
 import * as Utils from "../utils";
+import { StatusEffect } from "#enums/status-effect";
 import i18next, { ParseKeys } from "i18next";
 
-export enum StatusEffect {
-  NONE,
-  POISON,
-  TOXIC,
-  PARALYSIS,
-  SLEEP,
-  FREEZE,
-  BURN,
-  FAINT
-}
+export { StatusEffect };
 
 export class Status {
   public effect: StatusEffect;

@@ -1,8 +1,11 @@
 import { ability } from "./ability";
 import { abilityTriggers } from "./ability-trigger";
+import { arenaFlyout } from "./arena-flyout";
 import { PGFachv, PGMachv } from "./achv";
 import { battle } from "./battle";
+import { battleInfo } from "./battle-info";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
+import { battlerTags } from "./battler-tags";
 import { berry } from "./berry";
 import { bgmName } from "./bgm-name";
 import { biome } from "./biome";
@@ -25,6 +28,7 @@ import { gameStatsUiHandler } from "./game-stats-ui-handler";
 import { growth } from "./growth";
 import { menu } from "./menu";
 import { menuUiHandler } from "./menu-ui-handler";
+import { modifier } from "./modifier";
 import { modifierType } from "./modifier-type";
 import { move } from "./move";
 import { nature } from "./nature";
@@ -32,6 +36,7 @@ import { pokeball } from "./pokeball";
 import { pokemon } from "./pokemon";
 import { pokemonInfo } from "./pokemon-info";
 import { pokemonInfoContainer } from "./pokemon-info-container";
+import { pokemonSummary } from "./pokemon-summary";
 import { saveSlotSelectUiHandler } from "./save-slot-select-ui-handler";
 import { splashMessages } from "./splash-messages";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
@@ -39,7 +44,7 @@ import { statusEffect } from "./status-effect";
 import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
-import { weather } from "./weather";
+import { terrain, weather } from "./weather";
 import { partyUiHandler } from "./party-ui-handler";
 import { settings } from "./settings.js";
 import { common } from "./common.js";
@@ -48,8 +53,11 @@ import { modifierSelectUiHandler } from "./modifier-select-ui-handler";
 export const koConfig = {
   ability: ability,
   abilityTriggers: abilityTriggers,
+  arenaFlyout: arenaFlyout,
   battle: battle,
+  battleInfo: battleInfo,
   battleMessageUiHandler: battleMessageUiHandler,
+  battlerTags: battlerTags,
   berry: berry,
   bgmName: bgmName,
   biome: biome,
@@ -73,6 +81,7 @@ export const koConfig = {
   growth: growth,
   menu: menu,
   menuUiHandler: menuUiHandler,
+  modifier: modifier,
   modifierType: modifierType,
   move: move,
   nature: nature,
@@ -80,11 +89,13 @@ export const koConfig = {
   pokemon: pokemon,
   pokemonInfo: pokemonInfo,
   pokemonInfoContainer: pokemonInfoContainer,
+  pokemonSummary: pokemonSummary,
   saveSlotSelectUiHandler: saveSlotSelectUiHandler,
   settings: settings,
   splashMessages: splashMessages,
   starterSelectUiHandler: starterSelectUiHandler,
   statusEffect: statusEffect,
+  terrain: terrain,
   titles: titles,
   trainerClasses: trainerClasses,
   trainerNames: trainerNames,

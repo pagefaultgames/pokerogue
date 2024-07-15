@@ -17,6 +17,7 @@ export const menu: SimpleTranslationEntries = {
   "username": "이름",
   "password": "비밀번호",
   "login": "로그인",
+  "orUse": "혹은",
   "register": "등록",
   "emptyUsername": "이름은 비워둘 수 없습니다",
   "invalidLoginUsername": "사용할 수 없는 이름입니다",

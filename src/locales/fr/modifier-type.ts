@@ -58,10 +58,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "Augmente de 20% la puissance des capacités de type {{moveType}} d’un Pokémon.",
     },
     "PokemonLevelIncrementModifierType": {
-      description: "Fait monter un Pokémon d’un niveau.",
+      description: "Fait monter un Pokémon de {{levels}} niveau·x.",
     },
     "AllPokemonLevelIncrementModifierType": {
-      description: "Fait monter toute l’équipe d’un niveau.",
+      description: "Fait monter toute l’équipe de {{levels}} niveau·x.",
     },
     "PokemonBaseStatBoosterModifierType": {
 	  description: "Augmente de 10% {{statName}} de base de son porteur. Plus les IV sont hauts, plus il peut en porter.",
@@ -151,7 +151,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SACRED_ASH": { name: "Cendre Sacrée" },
 
-    "REVIVER_SEED": { name: "Résugraine", description: "Réanime et restaure la moitié des PV de son porteur s’il tombe K.O. ." },
+    "REVIVER_SEED": { name: "Résugraine", description: "Réanime et restaure la moitié des PV de son porteur s’il est mis K.O. par une capacité directe." },
 
     "ETHER": { name: "Huile" },
     "MAX_ETHER": { name: "Huile Max" },

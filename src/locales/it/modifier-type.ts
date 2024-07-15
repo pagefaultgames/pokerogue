@@ -58,10 +58,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "Aumenta la potenza delle mosse di tipo {{moveType}} del 20% per un Pokémon.",
     },
     "PokemonLevelIncrementModifierType": {
-      description: "Fa salire un Pokémon di un livello.",
+      description: "Aumenta il livello di un Pokémon di {{levels}}.",
     },
     "AllPokemonLevelIncrementModifierType": {
-      description: "Aumenta il livello di tutti i Pokémon nel gruppo di 1.",
+      description: "Aumenta i livell di tutti i Pokémon della squadra di {{levels}}.",
     },
     "PokemonBaseStatBoosterModifierType": {
       description: "Aumenta {{statName}} di base del possessore del 10%.",
@@ -151,7 +151,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SACRED_ASH": { name: "Cenere magica" },
 
-    "REVIVER_SEED": { name: "Revitalseme", description: "Il possessore recupera 1/2 di PS in caso di KO." },
+    "REVIVER_SEED": { name: "Revitalseme", description: "Il possessore recupera 1/2 di PS in caso di KO causato da un colpo diretto." },
 
     "ETHER": { name: "Etere" },
     "MAX_ETHER": { name: "Etere max" },
