@@ -385,7 +385,7 @@ export function setEncounterRewards(scene: BattleScene, customShopRewards?: Cust
  * Will initialize exp phases into the phase queue (these are in addition to any combat or other exp earned)
  * Exp Share and Exp Balance will still function as normal
  * @param scene - Battle Scene
- * @param participantIds - ids of party pokemon that get full exp value. Other party members will receive Exp Share amounts
+ * @param participantId - id/s of party pokemon that get full exp value. Other party members will receive Exp Share amounts
  * @param baseExpValue - gives exp equivalent to a pokemon of the wave index's level.
  * Guidelines:
  * 36 - Sunkern (lowest in game)
@@ -399,7 +399,9 @@ export function setEncounterRewards(scene: BattleScene, customShopRewards?: Cust
  * https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_effort_value_yield_(Generation_IX)
  * @param useWaveIndex - set to false when directly passing the the full exp value instead of baseExpValue
  */
-export function setEncounterExp(scene: BattleScene, participantIds: integer[], baseExpValue: number, useWaveIndex: boolean = true) {
+export function setEncounterExp(scene: BattleScene, participantId: integer | integer[], baseExpValue: number, useWaveIndex: boolean = true) {
+  const participantIds = Array.isArray(participantId) ? participantId : [participantId];
+
   scene.currentBattle.mysteryEncounter.doEncounterExp = (scene: BattleScene) => {
     const party = scene.getParty();
     const expShareModifier = scene.findModifier(m => m instanceof ExpShareModifier) as ExpShareModifier;
@@ -672,4 +674,64 @@ export function calculateMEAggregateStats(scene: BattleScene, baseSpawnWeight: n
   const superRareMean = runs.reduce((a, b) => a + b[3], 0) / n;
 
   console.log(`Starting weight: ${baseSpawnWeight}\nAverage MEs per run: ${totalMean}\nStandard Deviation: ${totalStd}\nAvg Commons: ${commonMean}\nAvg Uncommons: ${uncommonMean}\nAvg Rares: ${rareMean}\nAvg Super Rares: ${superRareMean}`);
+}
+
+/**
+ * Takes care of handling player pokemon KO (with all its side effects)
+ *
+ * @param pokemon the player pokemon to KO
+ */
+export function koPlayerPokemon(pokemon: PlayerPokemon) {
+  pokemon.hp = 0;
+  pokemon.trySetStatus(StatusEffect.FAINT);
+  pokemon.updateInfo();
+}
+
+/**
+ * Handles applying hp changes to a player pokemon.
+ * Takes care of not going below `0`, above max-hp, adding `FNT` status correctly and updating the pokemon info.
+ * TODO: handle special cases like wonder-guard/ninjask
+ *
+ * @param pokemon the player pokemon to apply the hp change to
+ * @param damage the hp change amount. Positive for heal. Negative for damage
+ *
+ */
+function applyHpChangeToPokemon(pokemon: PlayerPokemon, value: number) {
+  const hpChange = Math.round(pokemon.hp + value);
+  const nextHp = Math.max(Math.min(hpChange, pokemon.getMaxHp()), 0);
+  if (nextHp === 0) {
+    koPlayerPokemon(pokemon);
+  } else {
+    pokemon.hp = nextHp;
+  }
+}
+
+/**
+ * Handles applying damage to a player pokemon
+ *
+ * @param pokemon the player pokemon to apply damage to
+ * @param damage the amount of damage to apply
+ * @see {@linkcode applyHpChangeToPokemon}
+ */
+export function applyDamageToPokemon(pokemon: PlayerPokemon, damage: number) {
+  if (damage <= 0) {
+    console.warn("Healing pokemon with `applyDamageToPokemon` is not recommended! Please use `applyHealToPokemon` instead.");
+  }
+
+  applyHpChangeToPokemon(pokemon, -damage);
+}
+
+/**
+ * Handles applying heal to a player pokemon
+ *
+ * @param pokemon the player pokemon to apply heal to
+ * @param heal the amount of heal to apply
+ * @see {@linkcode applyHpChangeToPokemon}
+ */
+export function applyHealToPokemon(pokemon: PlayerPokemon, heal: number) {
+  if (heal <= 0) {
+    console.warn("Damaging pokemong with `applyHealToPokemon` is not recommended! Please use `applyDamageToPokemon` instead.");
+  }
+
+  applyHpChangeToPokemon(pokemon, heal);
 }
