@@ -13,7 +13,7 @@ import { BattlerIndex } from "../battle";
 import { Terrain, TerrainType } from "../data/terrain";
 import { PostTerrainChangeAbAttr, PostWeatherChangeAbAttr, applyPostTerrainChangeAbAttrs, applyPostWeatherChangeAbAttrs } from "../data/ability";
 import Pokemon from "./pokemon";
-import * as Overrides from "../overrides";
+import Overrides from "../overrides";
 import { WeatherChangedEvent, TerrainChangedEvent, TagAddedEvent, TagRemovedEvent } from "../events/arena";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { Biome } from "#enums/biome";
@@ -384,6 +384,10 @@ export class Arena {
     return weatherMultiplier * terrainMultiplier;
   }
 
+  /**
+   * Gets the denominator for the chance for a trainer spawn
+   * @returns n where 1/n is the chance of a trainer battle
+   */
   getTrainerChance(): integer {
     switch (this.biomeType) {
     case Biome.METROPOLIS:
@@ -632,6 +636,12 @@ export class Arena {
 
       this.tags.splice(0, 1);
     }
+  }
+
+  /** Clears terrain and arena tags when entering new biome or trainer battle. */
+  resetArenaEffects(): void {
+    this.trySetTerrain(TerrainType.NONE, false, true);
+    this.removeAllTags();
   }
 
   preloadBgm(): void {

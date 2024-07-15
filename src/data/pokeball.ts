@@ -1,14 +1,10 @@
+import { PokeballType } from "#enums/pokeball";
 import BattleScene from "../battle-scene";
 import i18next from "i18next";
 
-export enum PokeballType {
-  POKEBALL,
-  GREAT_BALL,
-  ULTRA_BALL,
-  ROGUE_BALL,
-  MASTER_BALL,
-  LUXURY_BALL
-}
+export { PokeballType };
+
+export const MAX_PER_TYPE_POKEBALLS: integer = 99;
 
 export function getPokeballAtlasKey(type: PokeballType): string {
   switch (type) {

@@ -288,10 +288,11 @@ export const isLocal = (
 export const localServerUrl = import.meta.env.VITE_SERVER_URL ?? `http://${window.location.hostname}:${window.location.port+1}`;
 
 // Set the server URL based on whether it's local or not
-export const serverUrl = isLocal ? localServerUrl : "";
-export const apiUrl = isLocal ? serverUrl : "https://api.pokerogue.net";
+export const apiUrl = localServerUrl ?? "https://api.pokerogue.net";
 // used to disable api calls when isLocal is true and a server is not found
 export let isLocalServerConnected = true;
+
+export const isBeta = import.meta.env.MODE === "beta"; // this checks to see if the env mode is development. Technically this gives the same value for beta AND for dev envs
 
 export function setCookie(cName: string, cValue: string): void {
   const expiration = new Date();
@@ -408,6 +409,13 @@ export function formatText(unformattedText: string): string {
   }
 
   return text.join(" ");
+}
+
+export function toCamelCaseString(unformattedText: string): string {
+  if (!unformattedText) {
+    return "";
+  }
+  return unformattedText.split(/[_ ]/).filter(f => f).map((f, i) => i ? `${f[0].toUpperCase()}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join("");
 }
 
 export function rgbToHsv(r: integer, g: integer, b: integer) {
