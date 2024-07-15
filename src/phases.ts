@@ -6466,7 +6466,7 @@ export class SelectModifierPhase extends BattlePhase {
                     : modifierType.newModifier(party[slotIndex], option as integer)
                   : modifierType.newModifier(party[slotIndex], option - PartyOption.MOVE_1);
                 if (isPpRestoreModifier) {
-                  LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, modifierType.name + " → " + this.scene.getParty()[slotIndex].name)
+                  LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, modifierType.name + " → " + this.scene.getParty()[slotIndex].name + " → " + this.scene.getParty()[slotIndex].moveset[option - PartyOption.MOVE_1].getName())
                 } else if (isRememberMoveModifier) {
                   LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, modifierType.name + " → " + this.scene.getParty()[slotIndex].name)
                 } else if (isTmModifier) {
