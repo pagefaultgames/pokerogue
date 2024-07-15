@@ -2216,7 +2216,7 @@ export class ChargeAttr extends OverrideMoveEffectAttr {
           user.getMoveQueue().push({ move: move.id, targets: [ target.getBattlerIndex() ], ignorePP: true });
           if (this.sameTurn) {
             let movesetMove = user.moveset.find(m => m.moveId === move.id);
-            if (!movesetMove) { // account for Metronome usage, move does not exist in moveset
+            if (!movesetMove) { // account for any move that calls a ChargeAttr move when the ChargeAttr move does not exist in moveset
               movesetMove = new PokemonMove(move.id, 0, 0, true);
             }
             user.scene.pushMovePhase(new MovePhase(user.scene, user, [ target.getBattlerIndex() ], movesetMove, true), this.followUpPriority);
