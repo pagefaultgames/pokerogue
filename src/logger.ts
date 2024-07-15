@@ -446,6 +446,8 @@ export function printDRPD(inData: string, indent: string, drpd: DRPD): string {
   inData += ",\n" + indent + "  \"title\": \"" + drpd.title + "\""
   inData += ",\n" + indent + "  \"authors\": [\"" + drpd.authors.join("\", \"") + "\"]"
   inData += ",\n" + indent + "  \"date\": \"" + drpd.date + "\""
+  inData += ",\n" + indent + "  \"label\": \"" + drpd.label + "\""
+  inData += ",\n" + indent + "  \"uuid\": \"" + drpd.uuid + "\""
   if (drpd.waves) {
     inData += ",\n" + indent + "  \"waves\": [\n"
     var isFirst = true
@@ -459,6 +461,7 @@ export function printDRPD(inData: string, indent: string, drpd: DRPD): string {
         inData = printWave(inData, indent + "    ", drpd.waves[i])
       }
     }
+    inData += ",\n" + indent + "  ]\n"
   } else {
     inData += ",\n" + indent + "  \"waves\": []"
   }
