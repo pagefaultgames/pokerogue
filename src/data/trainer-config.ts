@@ -238,7 +238,6 @@ export class TrainerConfig {
       // Get the derived type for the double trainer since the sprite key is based on the derived type
       ret = TrainerType[this.getDerivedType(this.trainerTypeDouble)].toString().toLowerCase();
     }
-    console.log(ret);
     return ret;
   }
 
