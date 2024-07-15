@@ -1,5 +1,5 @@
 import { Ability, allAbilities } from "#app/data/ability";
-import { EnemyPartyConfig, getEncounterText, initBattleWithEnemyConfig, selectPokemonForOption, setEncounterRewards, } from "#app/data/mystery-encounters/mystery-encounter-utils";
+import { EnemyPartyConfig, initBattleWithEnemyConfig, selectPokemonForOption, setEncounterRewards, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { getNatureName, Nature } from "#app/data/nature";
 import { speciesStarters } from "#app/data/pokemon-species";
 import { Stat } from "#app/data/pokemon-stat";
@@ -16,6 +16,7 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "../../../battle-scene";
 import IMysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier, } from "../mystery-encounter";
 import { EncounterOptionMode, MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
+import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 
 /** The i18n namespace for the encounter */
 const namespace = "mysteryEncounter:training_session";
@@ -32,7 +33,9 @@ export const TrainingSessionEncounter: IMysteryEncounter =
         spriteKey: "training_gear",
         fileRoot: "mystery-encounters",
         hasShadow: true,
-        y: 3,
+        y: 6,
+        x: 5,
+        yShadowOffset: -2
       },
     ])
     .withIntroDialogue([
@@ -162,7 +165,7 @@ export const TrainingSessionEncounter: IMysteryEncounter =
               scene.addModifier(mod, true, false, false, true);
             }
             scene.updateModifiers(true);
-            scene.queueMessage(getEncounterText(scene, `${namespace}_battle_finished_1`), null, true);
+            queueEncounterMessage(scene, `${namespace}_battle_finished_1`);
           };
 
           setEncounterRewards(
@@ -234,11 +237,7 @@ export const TrainingSessionEncounter: IMysteryEncounter =
           scene.removePokemonFromPlayerParty(playerPokemon, false);
 
           const onBeforeRewardsPhase = () => {
-            scene.queueMessage(
-              getEncounterText(scene, `${namespace}_battle_finished_2`),
-              null,
-              true
-            );
+            queueEncounterMessage(scene, `${namespace}_battle_finished_2`);
             // Add the pokemon back to party with Nature change
             playerPokemon.setNature(encounter.misc.chosenNature);
             scene.gameData.setPokemonCaught(playerPokemon, false);
@@ -333,7 +332,7 @@ export const TrainingSessionEncounter: IMysteryEncounter =
           scene.removePokemonFromPlayerParty(playerPokemon, false);
 
           const onBeforeRewardsPhase = () => {
-            scene.queueMessage(getEncounterText(scene, `${namespace}_battle_finished_3`), null, true);
+            queueEncounterMessage(scene, `${namespace}_battle_finished_3`);
             // Add the pokemon back to party with ability change
             const abilityIndex = encounter.misc.abilityIndex;
             if (!!playerPokemon.getFusionSpeciesForm()) {

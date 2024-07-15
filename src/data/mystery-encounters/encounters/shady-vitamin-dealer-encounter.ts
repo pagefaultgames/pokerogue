@@ -1,4 +1,4 @@
-import { generateModifierTypeOption, leaveEncounterWithoutBattle, queueEncounterMessage, selectPokemonForOption, setEncounterExp, updatePlayerMoney, } from "#app/data/mystery-encounters/mystery-encounter-utils";
+import { generateModifierTypeOption, leaveEncounterWithoutBattle, selectPokemonForOption, setEncounterExp, updatePlayerMoney, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { StatusEffect } from "#app/data/status-effect";
 import Pokemon, { PlayerPokemon } from "#app/field/pokemon";
 import { modifierTypes } from "#app/modifier/modifier-type";
@@ -10,6 +10,7 @@ import BattleScene from "../../../battle-scene";
 import IMysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier, } from "../mystery-encounter";
 import { EncounterOptionMode, MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import { MoneyRequirement } from "../mystery-encounter-requirements";
+import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounter:shady_vitamin_dealer";

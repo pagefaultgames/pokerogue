@@ -1,11 +1,7 @@
 import {
-  getHighestLevelPlayerPokemon,
-  koPlayerPokemon,
   leaveEncounterWithoutBattle,
-  queueEncounterMessage,
-  setEncounterRewards,
-  showEncounterText,
-} from "#app/data/mystery-encounters/mystery-encounter-utils";
+  setEncounterRewards
+} from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { GameOverPhase } from "#app/phases";
 import { randSeedInt } from "#app/utils";
@@ -16,6 +12,8 @@ import IMysteryEncounter, {
   MysteryEncounterTier,
 } from "../mystery-encounter";
 import { EncounterOptionMode, MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
+import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { getHighestLevelPlayerPokemon, koPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 
 export const MysteriousChestEncounter: IMysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(
@@ -119,11 +117,8 @@ export const MysteriousChestEncounter: IMysteryEncounter =
             // Does this synchronously so that game over doesn't happen over result message
             await showEncounterText(scene, "mysteryEncounter:mysterious_chest_option_1_bad_result")
               .then(() => {
-                if (
-                  scene.getParty().filter((p) => p.isAllowedInBattle()).length ===
-                0
-                ) {
-                // All pokemon fainted, game over
+                if (scene.getParty().filter((p) => p.isAllowedInBattle()).length === 0) {
+                  // All pokemon fainted, game over
                   scene.clearPhaseQueue();
                   scene.unshiftPhase(new GameOverPhase(scene));
                 } else {

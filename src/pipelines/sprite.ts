@@ -452,7 +452,7 @@ export default class SpritePipeline extends FieldSpritePipeline {
     this.set1f("vCutoff", v1);
 
     const hasShadow = sprite.pipelineData["hasShadow"] as boolean;
-    const yShadowOffset = sprite.pipelineData["yShadowOffset"] as number;
+    const yShadowOffset = sprite.pipelineData["yShadowOffset"] as number ?? 0;
     if (hasShadow) {
       const isEntityObj = sprite.parentContainer instanceof Pokemon || sprite.parentContainer instanceof Trainer || sprite.parentContainer instanceof MysteryEncounterIntroVisuals;
       const field = isEntityObj ? sprite.parentContainer.parentContainer : sprite.parentContainer;

@@ -10,7 +10,8 @@ import { Status, StatusEffect } from "../../status-effect";
 import IMysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier, } from "../mystery-encounter";
 import { EncounterOptionMode, MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import { MoveRequirement } from "../mystery-encounter-requirements";
-import { EnemyPartyConfig, EnemyPokemonConfig, generateModifierTypeOption, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, queueEncounterMessage, setEncounterExp, setEncounterRewards, } from "../mystery-encounter-utils";
+import { EnemyPartyConfig, EnemyPokemonConfig, generateModifierTypeOption, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, setEncounterExp, setEncounterRewards, } from "../utils/encounter-phase-utils";
+import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 
 /** i18n namespace for the encounter */
 const namespace = "mysteryEncounter:sleeping_snorlax";

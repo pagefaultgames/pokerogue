@@ -2,9 +2,7 @@ import i18next from "i18next";
 import BattleScene from "../battle-scene";
 import { Phase } from "../phase";
 import { Mode } from "../ui/ui";
-import {
-  getEncounterText
-} from "../data/mystery-encounters/mystery-encounter-utils";
+import { hideMysteryEncounterIntroVisuals, OptionSelectSettings } from "../data/mystery-encounters/utils/encounter-phase-utils";
 import { CheckSwitchPhase, NewBattlePhase, ReturnPhase, ScanIvsPhase, SelectModifierPhase, SummonPhase, ToggleDoublePositionPhase } from "../phases";
 import MysteryEncounterOption from "../data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterVariant } from "../data/mystery-encounters/mystery-encounter";
@@ -15,7 +13,7 @@ import { Tutorial, handleTutorial } from "../tutorial";
 import { IvScannerModifier } from "../modifier/modifier";
 import * as Utils from "../utils";
 import { isNullOrUndefined } from "../utils";
-import { MysteryEncounterUiSettings } from "#app/ui/mystery-encounter-ui-handler";
+import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 
 /**
  * Will handle (in order):
@@ -27,11 +25,17 @@ import { MysteryEncounterUiSettings } from "#app/ui/mystery-encounter-ui-handler
  * - Queuing of the MysteryEncounterOptionSelectedPhase
  */
 export class MysteryEncounterPhase extends Phase {
-  followupOptionSelectSettings: MysteryEncounterUiSettings;
+  optionSelectSettings: OptionSelectSettings;
 
-  constructor(scene: BattleScene, followupOptionSelectSettings?: MysteryEncounterUiSettings) {
+  /**
+   *
+   * @param scene
+   * @param optionSelectSettings - allows overriding the typical options of an encounter with new ones
+   * Mostly useful for having repeated queries during a single encounter, where the queries and options may differ each time
+   */
+  constructor(scene: BattleScene, optionSelectSettings?: OptionSelectSettings) {
     super(scene);
-    this.followupOptionSelectSettings = followupOptionSelectSettings;
+    this.optionSelectSettings = optionSelectSettings;
   }
 
   start() {
@@ -45,14 +49,14 @@ export class MysteryEncounterPhase extends Phase {
     const offset = this.scene.currentBattle.mysteryEncounter.seedOffset ?? this.scene.currentBattle.waveIndex * 1000;
     this.scene.currentBattle.mysteryEncounter.seedOffset = offset + 512;
 
-    if (!this.followupOptionSelectSettings) {
+    if (!this.optionSelectSettings) {
       // Sets flag that ME was encountered, only if this is not a followup option select phase
       // Can be used in later MEs to check for requirements to spawn, etc.
       this.scene.mysteryEncounterData.encounteredEvents.push([this.scene.currentBattle.mysteryEncounter.encounterType, this.scene.currentBattle.mysteryEncounter.encounterTier]);
     }
 
     // Initiates encounter dialogue window and option select
-    this.scene.ui.setMode(Mode.MYSTERY_ENCOUNTER, this.followupOptionSelectSettings);
+    this.scene.ui.setMode(Mode.MYSTERY_ENCOUNTER, this.optionSelectSettings);
   }
 
   handleOptionSelect(option: MysteryEncounterOption, index: number): boolean {
@@ -144,7 +148,7 @@ export class MysteryEncounterOptionSelectedPhase extends Phase {
   start() {
     super.start();
     if (this.scene.currentBattle.mysteryEncounter.hideIntroVisuals) {
-      this.hideMysteryEncounterIntroVisuals().then(() => {
+      hideMysteryEncounterIntroVisuals(this.scene).then(() => {
         this.scene.executeWithSeedOffset(() => {
           this.onOptionSelect(this.scene).finally(() => {
             this.end();
@@ -158,32 +162,6 @@ export class MysteryEncounterOptionSelectedPhase extends Phase {
         });
       }, this.scene.currentBattle.mysteryEncounter.seedOffset);
     }
-  }
-
-  hideMysteryEncounterIntroVisuals(): Promise<boolean> {
-    return new Promise(resolve => {
-      const introVisuals = this.scene.currentBattle.mysteryEncounter.introVisuals;
-      if (introVisuals) {
-        // Hide
-        this.scene.tweens.add({
-          targets: introVisuals,
-          x: "+=16",
-          y: "-=16",
-          alpha: 0,
-          ease: "Sine.easeInOut",
-          duration: 750,
-          onComplete: () => {
-            this.scene.field.remove(introVisuals);
-            introVisuals.setVisible(false);
-            introVisuals.destroy();
-            this.scene.currentBattle.mysteryEncounter.introVisuals = null;
-            resolve(true);
-          }
-        });
-      } else {
-        resolve(true);
-      }
-    });
   }
 }
 

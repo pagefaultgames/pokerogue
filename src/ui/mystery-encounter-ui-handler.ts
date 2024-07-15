@@ -10,17 +10,8 @@ import MysteryEncounterOption, { EncounterOptionMode } from "../data/mystery-enc
 import * as Utils from "../utils";
 import { isNullOrUndefined } from "../utils";
 import { getPokeballAtlasKey } from "../data/pokeball";
-import { getEncounterText } from "#app/data/mystery-encounters/mystery-encounter-utils";
-
-export class MysteryEncounterUiSettings {
-  hideDescription?: boolean;
-  slideInDescription?: boolean;
-  overrideTitle?: string;
-  overrideDescription?: string;
-  overrideQuery?: string;
-  overrideOptions?: MysteryEncounterOption[];
-  startingCursorIndex?: number;
-}
+import { OptionSelectSettings } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 
 export default class MysteryEncounterUiHandler extends UiHandler {
   private cursorContainer: Phaser.GameObjects.Container;
@@ -37,7 +28,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
   private descriptionScrollTween: Phaser.Tweens.Tween;
   private rarityBall: Phaser.GameObjects.Sprite;
 
-  private overrideSettings: MysteryEncounterUiSettings;
+  private overrideSettings: OptionSelectSettings;
   private encounterOptions: MysteryEncounterOption[] = [];
   private optionsMeetsReqs: boolean[];
 
@@ -81,7 +72,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
   show(args: any[]): boolean {
     super.show(args);
 
-    this.overrideSettings = args[0] as MysteryEncounterUiSettings ?? {};
+    this.overrideSettings = args[0] as OptionSelectSettings ?? {};
     const showDescriptionContainer = isNullOrUndefined(this.overrideSettings?.hideDescription) ? true : !this.overrideSettings?.hideDescription;
     const slideInDescription = isNullOrUndefined(this.overrideSettings?.slideInDescription) ? true : this.overrideSettings?.slideInDescription;
     const startingCursorIndex = this.overrideSettings?.startingCursorIndex ?? 0;
@@ -100,7 +91,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     if (this.blockInput) {
       setTimeout(() => {
         this.unblockInput();
-      }, 1500);
+      }, 1000);
     }
     this.displayOptionTooltip();
 
@@ -120,7 +111,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
         if (cursor === this.viewPartyIndex) {
           // Handle view party
           success = true;
-          const overrideSettings: MysteryEncounterUiSettings = {
+          const overrideSettings: OptionSelectSettings = {
             ...this.overrideSettings,
             slideInDescription: false
           };
@@ -387,7 +378,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     descriptionTextMaskRect.setScale(6);
     descriptionTextMaskRect.fillStyle(0xFFFFFF);
     descriptionTextMaskRect.beginPath();
-    descriptionTextMaskRect.fillRect(6, 54, 206, 60);
+    descriptionTextMaskRect.fillRect(6, 53, 206, 57);
 
     const abilityDescriptionTextMask = descriptionTextMaskRect.createGeometryMask();
 

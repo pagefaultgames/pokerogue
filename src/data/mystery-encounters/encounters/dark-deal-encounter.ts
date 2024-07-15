@@ -9,7 +9,8 @@ import { PokeballType } from "../../pokeball";
 import { getPokemonSpecies } from "../../pokemon-species";
 import IMysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier, } from "../mystery-encounter";
 import { EncounterOptionMode, MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
-import { EnemyPartyConfig, EnemyPokemonConfig, getRandomPlayerPokemon, getRandomSpeciesByStarterTier, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, } from "../mystery-encounter-utils";
+import { EnemyPartyConfig, EnemyPokemonConfig, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, } from "../utils/encounter-phase-utils";
+import { getRandomPlayerPokemon, getRandomSpeciesByStarterTier } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounter:dark_deal";
