@@ -3728,7 +3728,7 @@ export const starterPassiveAbilities = {
   [Species.SINISTEA]: Abilities.SHADOW_SHIELD,
   [Species.HATENNA]: Abilities.FAIRY_AURA,
   [Species.IMPIDIMP]: Abilities.FUR_COAT,
-  [Species.MILCERY]: Abilities.MISTY_SURGE,
+  [Species.MILCERY]: Abilities.REGENERATOR,
   [Species.FALINKS]: Abilities.PARENTAL_BOND,
   [Species.PINCURCHIN]: Abilities.ELECTROMORPHOSIS,
   [Species.SNOM]: Abilities.SNOW_WARNING,
