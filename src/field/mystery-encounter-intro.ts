@@ -38,6 +38,8 @@ export class MysteryEncounterSpriteConfig {
   x?: number;
   /** Y offset */
   y?: number;
+  /** Y shadow offset */
+  yShadowOffset?: number;
   /** Sprite scale. `0` - `n` */
   scale?: number;
   /** If you are using an item sprite, set to `true` */
@@ -68,10 +70,10 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
       return;
     }
 
-    const getSprite = (spriteKey: string, hasShadow?: boolean) => {
+    const getSprite = (spriteKey: string, hasShadow?: boolean, yShadowOffset?: number) => {
       const ret = this.scene.addFieldSprite(0, 0, spriteKey);
       ret.setOrigin(0.5, 1);
-      ret.setPipeline(this.scene.spritePipeline, { tone: [0.0, 0.0, 0.0, 0.0], hasShadow: !!hasShadow });
+      ret.setPipeline(this.scene.spritePipeline, { tone: [0.0, 0.0, 0.0, 0.0], hasShadow: !!hasShadow, yShadowOffset: yShadowOffset ?? 0 });
       return ret;
     };
 
@@ -90,12 +92,13 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
     const spacingValue = Math.round((maxX - minX) / Math.max(this.spriteConfigs.filter(s => !s.x && !s.y).length, 1));
 
     this.spriteConfigs?.forEach((config) => {
-      const { spriteKey, isItem, hasShadow, scale, x, y, alpha } = config;
+      const { spriteKey, isItem, hasShadow, scale, x, y, yShadowOffset, alpha } = config;
 
       let sprite: GameObjects.Sprite;
       let tintSprite: GameObjects.Sprite;
+
       if (!isItem) {
-        sprite = getSprite(spriteKey, hasShadow);
+        sprite = getSprite(spriteKey, hasShadow, yShadowOffset);
         tintSprite = getSprite(spriteKey);
       } else {
         sprite = getItemSprite(spriteKey);
@@ -116,8 +119,8 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
           tintSprite.setPosition(origin + x, tintSprite.y);
         }
         if (y) {
-          sprite.setPosition(sprite.x, y);
-          tintSprite.setPosition(tintSprite.x, y);
+          sprite.setPosition(sprite.x, sprite.y + y);
+          tintSprite.setPosition(tintSprite.x, tintSprite.y + y);
         }
       } else {
         // Single sprite

@@ -6,7 +6,7 @@ import {
   selectPokemonForOption,
   setEncounterExp,
   setEncounterRewards,
-} from "#app/data/mystery-encounters/mystery-encounter-utils";
+} from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { TempBattleStat } from "#app/data/temp-battle-stat";
 import { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { modifierTypes } from "#app/modifier/modifier-type";

@@ -66,9 +66,10 @@ import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 import { MysteryEncounterVariant } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phase";
-import { getEncounterText, handleMysteryEncounterVictory } from "#app/data/mystery-encounters/mystery-encounter-utils";
+import { handleMysteryEncounterVictory } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import ModifierSelectUiHandler, { SHOP_OPTIONS_ROW_LIMIT } from "#app/ui/modifier-select-ui-handler";
 import { isNullOrUndefined } from "./utils";
+import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 
 const { t } = i18next;
 
@@ -1650,7 +1651,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
     pokemon.untint(250, "Sine.easeIn");
     this.scene.updateFieldScale();
     pokemon.x += 16;
-    pokemon.y -= 16;
+    pokemon.y -= 20;
     pokemon.alpha = 0;
 
     // Ease pokemon in
@@ -1680,7 +1681,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
 
     pokemon.resetTurnData();
 
-    if (!this.loaded || this.scene.currentBattle.battleType === BattleType.TRAINER || this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER || (this.scene.currentBattle.waveIndex % 10) === 1) {
+    if (!this.loaded || this.scene.currentBattle.battleType === BattleType.TRAINER || (this.scene.currentBattle.waveIndex % 10) === 1 || this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER) {
       this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
       this.queuePostSummon();
     }

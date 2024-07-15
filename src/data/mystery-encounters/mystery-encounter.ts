@@ -1,4 +1,4 @@
-import { EnemyPartyConfig } from "#app/data/mystery-encounters/mystery-encounter-utils";
+import { EnemyPartyConfig } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import Pokemon, { PlayerPokemon } from "#app/field/pokemon";
 import { isNullOrUndefined } from "#app/utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
@@ -24,7 +24,8 @@ export enum MysteryEncounterVariant {
   TRAINER_BATTLE,
   WILD_BATTLE,
   BOSS_BATTLE,
-  NO_BATTLE
+  NO_BATTLE,
+  SAFARI_BATTLE
 }
 
 export enum MysteryEncounterTier {
@@ -57,14 +58,16 @@ export default interface IMysteryEncounter {
    * Requirements
    */
   requirements?: EncounterSceneRequirement[];
+  /** Primary Pokemon is a single pokemon randomly selected from the party that meet ALL primary pokemon requirements */
   primaryPokemonRequirements?: EncounterPokemonRequirement[];
-  secondaryPokemonRequirements?: EncounterPokemonRequirement[]; // A list of requirements that must ALL be met by a subset of pokemon to trigger the event
+  /**
+   * Secondary Pokemon are pokemon that meet ALL secondary pokemon requirements
+   * Note that an individual requirement may require multiple pokemon, but the resulting pokemon after all secondary requirements are met may be lower than expected
+   * If the primary pokemon and secondary pokemon are the same and ExcludePrimaryFromSupportRequirements flag is true, primary pokemon may be promoted from secondary pool
+   */
+  secondaryPokemonRequirements?: EncounterPokemonRequirement[];
   excludePrimaryFromSupportRequirements?: boolean;
-  // Primary Pokemon is a single pokemon randomly selected from a set of pokemon that meet ALL primary pokemon requirements
   primaryPokemon?: PlayerPokemon;
-  // Support Pokemon are pokemon that meet ALL support pokemon requirements.
-  // Note that an individual requirement may require multiple pokemon, but the resulting pokemon after all secondary requirements are met may be lower than expected
-  // If the primary pokemon and supporting pokemon are the same and ExcludePrimaryFromSupportRequirements flag is true, primary pokemon may be promoted from secondary pool
   secondaryPokemon?: PlayerPokemon[];
 
   /**
@@ -117,7 +120,11 @@ export default interface IMysteryEncounter {
    * Defaults to 1
    */
   expMultiplier?: number;
-
+  /**
+   * Used for keeping RNG consistent on session resets, but increments when cycling through multiple "Encounters" on the same wave
+   * You should never need to modify this
+   */
+  seedOffset?: any;
   /**
    * Generic property to set any custom data required for the encounter
    * Extremely useful for carrying state/data between onPreOptionPhase/onOptionPhase/onPostOptionPhase

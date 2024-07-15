@@ -1,223 +1,30 @@
-import { BattleType } from "#app/battle";
-import { biomeLinks } from "#app/data/biomes";
-import { WIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
-import { Type } from "#app/data/type";
-import Pokemon, { FieldPosition, PlayerPokemon } from "#app/field/pokemon";
-import { ExpBalanceModifier, ExpShareModifier, MultipleParticipantExpBonusModifier, PokemonExpBoosterModifier } from "#app/modifier/modifier";
-import { CustomModifierSettings, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeGenerator, ModifierTypeOption, PokemonHeldItemModifierType, getModifierPoolForType, modifierTypes, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
-import * as Overrides from "#app/overrides";
-import { BattleEndPhase, EggLapsePhase, ExpPhase, ModifierRewardPhase, SelectModifierPhase, ShowPartyExpBarPhase, TrainerVictoryPhase } from "#app/phases";
-import { MysteryEncounterBattlePhase, MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phase";
-import PokemonData from "#app/system/pokemon-data";
-import { OptionSelectConfig, OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
-import { PartyOption, PartyUiMode } from "#app/ui/party-ui-handler";
-import { TextStyle, getTextWithColors } from "#app/ui/text";
-import { Mode } from "#app/ui/ui";
-import { isNullOrUndefined } from "#app/utils";
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { Biome } from "#enums/biome";
-import { Species } from "#enums/species";
-import { TrainerType } from "#enums/trainer-type";
-import { UiTheme } from "#enums/ui-theme";
 import i18next from "i18next";
-import BattleScene from "../../battle-scene";
-import Trainer, { TrainerVariant } from "../../field/trainer";
-import * as Utils from "../../utils";
-import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "../pokemon-species";
-import { Status, StatusEffect } from "../status-effect";
-import { TrainerConfig, TrainerSlot, trainerConfigs } from "../trainer-config";
-import { MysteryEncounterVariant } from "./mystery-encounter";
-
-/**
- *
- * Will never remove the player's last non-fainted Pokemon (if they only have 1)
- * Otherwise, picks a Pokemon completely at random and removes from the party
- * @param scene
- * @param isAllowedInBattle - default false. If true, only picks from unfainted mons. If there is only 1 unfainted mon left and doNotReturnLastAbleMon is also true, will return fainted mon
- * @param doNotReturnLastAbleMon - If true, will never return the last unfainted pokemon in the party. Useful when this function is being used to determine what Pokemon to remove from the party (Don't want to remove last unfainted)
- * @returns
- */
-export function getRandomPlayerPokemon(scene: BattleScene, isAllowedInBattle: boolean = false, doNotReturnLastAbleMon: boolean = false): PlayerPokemon {
-  const party = scene.getParty();
-  let chosenIndex: number;
-  let chosenPokemon: PlayerPokemon;
-  const unfaintedMons = party.filter(p => p.isAllowedInBattle());
-  const faintedMons = party.filter(p => !p.isAllowedInBattle());
-
-  if (doNotReturnLastAbleMon && unfaintedMons.length === 1) {
-    chosenIndex = Utils.randSeedInt(faintedMons.length);
-    chosenPokemon = faintedMons.at(chosenIndex);
-  } else if (isAllowedInBattle) {
-    chosenIndex = Utils.randSeedInt(unfaintedMons.length);
-    chosenPokemon = unfaintedMons.at(chosenIndex);
-  } else {
-    chosenIndex = Utils.randSeedInt(party.length);
-    chosenPokemon = party.at(chosenIndex);
-  }
-
-  return chosenPokemon;
-}
-
-// export function getTokensFromScene(scene: BattleScene, reqs: EncounterSceneRequirement[]): Array<[RegExp, String]> {
-//   const arr = [];
-//   if (scene) {
-//     for (const req of reqs) {
-//       req.getDialogueToken(scene);
-//     }
-//   }
-//   return arr;
-// }
-
-/**
- * Ties are broken by whatever mon is closer to the front of the party
- * @param scene
- * @param unfainted - default false. If true, only picks from unfainted mons.
- * @returns
- */
-export function getHighestLevelPlayerPokemon(scene: BattleScene, unfainted: boolean = false): PlayerPokemon {
-  const party = scene.getParty();
-  let pokemon: PlayerPokemon;
-  party.every(p => {
-    if (unfainted && p.isFainted()) {
-      return true;
-    }
-
-    pokemon = pokemon ? pokemon?.level < p?.level ? p : pokemon : p;
-    return true;
-  });
-
-  return pokemon;
-}
-
-/**
- * Ties are broken by whatever mon is closer to the front of the party
- * @param scene
- * @param unfainted - default false. If true, only picks from unfainted mons.
- * @returns
- */
-export function getLowestLevelPlayerPokemon(scene: BattleScene, unfainted: boolean = false): PlayerPokemon {
-  const party = scene.getParty();
-  let pokemon: PlayerPokemon;
-  party.every(p => {
-    if (unfainted && p.isFainted()) {
-      return true;
-    }
-
-    pokemon = pokemon ? pokemon?.level > p?.level ? p : pokemon : p;
-    return true;
-  });
-
-  return pokemon;
-}
-
-/**
- *
- * NOTE: This returns ANY random species, including those locked behind eggs, etc.
- * @param starterTiers
- * @param excludedSpecies
- * @param types
- * @returns
- */
-export function getRandomSpeciesByStarterTier(starterTiers: number | [number, number], excludedSpecies?: Species[], types?: Type[]): Species {
-  let min = starterTiers instanceof Array ? starterTiers[0] : starterTiers;
-  let max = starterTiers instanceof Array ? starterTiers[1] : starterTiers;
-
-  let filteredSpecies: [PokemonSpecies, number][] = Object.keys(speciesStarters)
-    .map(s => [parseInt(s) as Species, speciesStarters[s] as number])
-    .filter(s => getPokemonSpecies(s[0]) && (!excludedSpecies || !excludedSpecies.includes(s[0])))
-    .map(s => [getPokemonSpecies(s[0]), s[1]]);
-
-  if (!isNullOrUndefined(types) && types.length > 0) {
-    filteredSpecies = filteredSpecies.filter(s => types.includes(s[0].type1) || types.includes(s[0].type2));
-  }
-
-  // If no filtered mons exist at specified starter tiers, will expand starter search range until there are
-  // Starts by decrementing starter tier min until it is 0, then increments tier max up to 10
-  let tryFilterStarterTiers: [PokemonSpecies, number][] = filteredSpecies.filter(s => (s[1] >= min && s[1] <= max));
-  while (tryFilterStarterTiers.length === 0 && (min !== 0 && max !== 10)) {
-    if (min > 0) {
-      min--;
-    } else {
-      max++;
-    }
-
-    tryFilterStarterTiers = filteredSpecies.filter(s => s[1] >= min && s[1] <= max);
-  }
-
-  if (tryFilterStarterTiers.length > 0) {
-    const index = Utils.randSeedInt(tryFilterStarterTiers.length);
-    return Phaser.Math.RND.shuffle(tryFilterStarterTiers)[index][0].speciesId;
-  }
-
-  return Species.BULBASAUR;
-}
-
-export function koPlayerPokemon(pokemon: PlayerPokemon) {
-  pokemon.hp = 0;
-  pokemon.trySetStatus(StatusEffect.FAINT);
-  pokemon.updateInfo();
-}
-
-export function getEncounterText(scene: BattleScene, textKey: string, primaryStyle?: TextStyle, uiTheme: UiTheme = UiTheme.DEFAULT): string {
-  if (isNullOrUndefined(textKey)) {
-    return null;
-  }
-
-  const stringArray = [`${textKey}`] as any;
-  stringArray.raw = [`${textKey}`];
-  let textString: string = getTextWithDialogueTokens(scene, stringArray);
-
-  // Can only color the text if a Primary Style is defined
-  // primaryStyle is applied to all text that does not have its own specified style
-  if (primaryStyle) {
-    textString = getTextWithColors(textString, primaryStyle, uiTheme);
-  }
-
-  return textString;
-}
-
-function getTextWithDialogueTokens(scene: BattleScene, textKey: TemplateStringsArray): string {
-  if (isNullOrUndefined(textKey)) {
-    return null;
-  }
-
-  return i18next.t(textKey, scene.currentBattle?.mysteryEncounter?.dialogueTokens);
-}
-
-/**
- * Will queue a message in UI with injected encounter data tokens
- * @param scene
- * @param contentKey
- */
-export function queueEncounterMessage(scene: BattleScene, contentKey: string): void {
-  const text: string = getEncounterText(scene, contentKey);
-  scene.queueMessage(text, null, true);
-}
-
-/**
- * Will display a message in UI with injected encounter data tokens
- * @param scene
- * @param contentKey
- */
-export function showEncounterText(scene: BattleScene, contentKey: string): Promise<void> {
-  return new Promise<void>(resolve => {
-    const text: string = getEncounterText(scene, contentKey);
-    scene.ui.showText(text, null, () => resolve(), 0, true);
-  });
-}
-
-/**
- * Will display a dialogue (with speaker title) in UI with injected encounter data tokens
- * @param scene
- * @param textContentKey
- * @param speakerContentKey
- * @param callback
- */
-export function showEncounterDialogue(scene: BattleScene, textContentKey: string, speakerContentKey: string, callback?: Function) {
-  const text: string = getEncounterText(scene, textContentKey);
-  const speaker: string = getEncounterText(scene, speakerContentKey);
-  scene.ui.showDialogue(text, speaker, null, callback, 0, 0);
-}
+import { BattleType } from "#app/battle";
+import BattleScene from "../../../battle-scene";
+import PokemonSpecies from "../../pokemon-species";
+import { MysteryEncounterVariant } from "../mystery-encounter";
+import { Status, StatusEffect } from "../../status-effect";
+import { TrainerConfig, trainerConfigs, TrainerSlot } from "../../trainer-config";
+import Pokemon, { FieldPosition, PlayerPokemon } from "#app/field/pokemon";
+import Trainer, { TrainerVariant } from "../../../field/trainer";
+import { ExpBalanceModifier, ExpShareModifier, MultipleParticipantExpBonusModifier, PokemonExpBoosterModifier } from "#app/modifier/modifier";
+import { CustomModifierSettings, getModifierPoolForType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeGenerator, ModifierTypeOption, modifierTypes, PokemonHeldItemModifierType, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
+import { BattleEndPhase, EggLapsePhase, ExpPhase, ModifierRewardPhase, SelectModifierPhase, ShowPartyExpBarPhase, TrainerVictoryPhase } from "#app/phases";
+import { MysteryEncounterBattlePhase, MysteryEncounterPhase, MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phase";
+import * as Utils from "../../../utils";
+import { isNullOrUndefined } from "#app/utils";
+import { TrainerType } from "#enums/trainer-type";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import PokemonData from "#app/system/pokemon-data";
+import { Biome } from "#enums/biome";
+import { biomeLinks } from "#app/data/biomes";
+import { Mode } from "#app/ui/ui";
+import { PartyOption, PartyUiMode } from "#app/ui/party-ui-handler";
+import { OptionSelectConfig, OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
+import { WIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
+import * as Overrides from "#app/overrides";
+import MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
+import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 
 export class EnemyPokemonConfig {
   species: PokemonSpecies;
@@ -427,6 +234,11 @@ export function updatePlayerMoney(scene: BattleScene, changeValue: number, playS
   if (playSound) {
     scene.playSound("buy");
   }
+  if (changeValue < 0) {
+    scene.queueMessage(i18next.t("mysteryEncounter:paid_money", { amount: -changeValue }), null, true);
+  } else {
+    scene.queueMessage(i18next.t("mysteryEncounter:receive_money", { amount: changeValue }), null, true);
+  }
 }
 
 /**
@@ -459,7 +271,7 @@ export function generateModifierTypeOption(scene: BattleScene, modifier: () => M
 }
 
 /**
- *
+ * This function is intended for use inside onPreOptionPhase() of an encounter option
  * @param scene
  * @param onPokemonSelected - Any logic that needs to be performed when Pokemon is chosen
  * If a second option needs to be selected, onPokemonSelected should return a OptionSelectItem[] object
@@ -519,8 +331,7 @@ export function selectPokemonForOption(scene: BattleScene, onPokemonSelected: (p
             if (!textPromptKey) {
               displayOptions();
             } else {
-              const secondOptionSelectPrompt = getEncounterText(scene, textPromptKey, TextStyle.MESSAGE);
-              scene.ui.showText(secondOptionSelectPrompt, null, displayOptions, null, true);
+              showEncounterText(scene, textPromptKey).then(() => displayOptions());
             }
           });
         });
@@ -574,7 +385,7 @@ export function setEncounterRewards(scene: BattleScene, customShopRewards?: Cust
  * Will initialize exp phases into the phase queue (these are in addition to any combat or other exp earned)
  * Exp Share and Exp Balance will still function as normal
  * @param scene - Battle Scene
- * @param participantId - ids of party pokemon that get full exp value. Other party members will receive Exp Share amounts
+ * @param participantIds - ids of party pokemon that get full exp value. Other party members will receive Exp Share amounts
  * @param baseExpValue - gives exp equivalent to a pokemon of the wave index's level.
  * Guidelines:
  * 36 - Sunkern (lowest in game)
@@ -588,8 +399,7 @@ export function setEncounterRewards(scene: BattleScene, customShopRewards?: Cust
  * https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_effort_value_yield_(Generation_IX)
  * @param useWaveIndex - set to false when directly passing the the full exp value instead of baseExpValue
  */
-export function setEncounterExp(scene: BattleScene, participantId: integer | integer[], baseExpValue: number, useWaveIndex: boolean = true) {
-  const participantIds = Array.isArray(participantId) ? participantId : [participantId];
+export function setEncounterExp(scene: BattleScene, participantIds: integer[], baseExpValue: number, useWaveIndex: boolean = true) {
   scene.currentBattle.mysteryEncounter.doEncounterExp = (scene: BattleScene) => {
     const party = scene.getParty();
     const expShareModifier = scene.findModifier(m => m instanceof ExpShareModifier) as ExpShareModifier;
@@ -675,6 +485,26 @@ export function setEncounterExp(scene: BattleScene, participantId: integer | int
   };
 }
 
+export class OptionSelectSettings {
+  hideDescription?: boolean;
+  slideInDescription?: boolean;
+  overrideTitle?: string;
+  overrideDescription?: string;
+  overrideQuery?: string;
+  overrideOptions?: MysteryEncounterOption[];
+  startingCursorIndex?: number;
+}
+
+/**
+ * Can be used to queue a new series of Options to select for an Encounter
+ * MUST be used only in onOptionPhase, will not work in onPreOptionPhase or onPostOptionPhase
+ * @param scene
+ * @param optionSelectSettings
+ */
+export function initSubsequentOptionSelect(scene: BattleScene, optionSelectSettings: OptionSelectSettings) {
+  scene.pushPhase(new MysteryEncounterPhase(scene, optionSelectSettings));
+}
+
 /**
  * Can be used to exit an encounter without any battles or followup
  * Will skip any shops and rewards, and queue the next encounter phase as normal
@@ -689,7 +519,9 @@ export function leaveEncounterWithoutBattle(scene: BattleScene, addHealPhase: bo
 }
 
 export function handleMysteryEncounterVictory(scene: BattleScene, addHealPhase: boolean = false) {
-  if (scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.NO_BATTLE) {
+  if (scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.SAFARI_BATTLE) {
+    scene.pushPhase(new MysteryEncounterRewardsPhase(scene, addHealPhase));
+  } else if (scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.NO_BATTLE) {
     scene.pushPhase(new EggLapsePhase(scene));
     scene.pushPhase(new MysteryEncounterRewardsPhase(scene, addHealPhase));
   } else if (!scene.getEnemyParty().find(p => scene.currentBattle.mysteryEncounter.encounterVariant !== MysteryEncounterVariant.TRAINER_BATTLE ? p.isOnField() : !p?.isFainted(true))) {
@@ -702,6 +534,32 @@ export function handleMysteryEncounterVictory(scene: BattleScene, addHealPhase: 
       scene.pushPhase(new MysteryEncounterRewardsPhase(scene, addHealPhase));
     }
   }
+}
+
+export function hideMysteryEncounterIntroVisuals(scene: BattleScene): Promise<boolean> {
+  return new Promise(resolve => {
+    const introVisuals = scene.currentBattle.mysteryEncounter.introVisuals;
+    if (introVisuals) {
+      // Hide
+      scene.tweens.add({
+        targets: introVisuals,
+        x: "+=16",
+        y: "-=16",
+        alpha: 0,
+        ease: "Sine.easeInOut",
+        duration: 750,
+        onComplete: () => {
+          scene.field.remove(introVisuals);
+          introVisuals.setVisible(false);
+          introVisuals.destroy();
+          scene.currentBattle.mysteryEncounter.introVisuals = null;
+          resolve(true);
+        }
+      });
+    } else {
+      resolve(true);
+    }
+  });
 }
 
 /**
@@ -814,53 +672,4 @@ export function calculateMEAggregateStats(scene: BattleScene, baseSpawnWeight: n
   const superRareMean = runs.reduce((a, b) => a + b[3], 0) / n;
 
   console.log(`Starting weight: ${baseSpawnWeight}\nAverage MEs per run: ${totalMean}\nStandard Deviation: ${totalStd}\nAvg Commons: ${commonMean}\nAvg Uncommons: ${uncommonMean}\nAvg Rares: ${rareMean}\nAvg Super Rares: ${superRareMean}`);
-}
-
-/**
- * Handles applying hp changes to a player pokemon.
- * Takes care of not going below `0`, above max-hp, adding `FNT` status correctly and updating the pokemon info.
- * TODO: handle special cases like wonder-guard/ninjask
- *
- * @param pokemon the player pokemon to apply the hp change to
- * @param damage the hp change amount. Positive for heal. Negative for damage
- *
- */
-function applyHpChangeToPokemon(pokemon: PlayerPokemon, value: number) {
-  const hpChange = Math.round(pokemon.hp + value);
-  const nextHp = Math.max(Math.min(hpChange, pokemon.getMaxHp()), 0);
-  if (nextHp === 0) {
-    koPlayerPokemon(pokemon);
-  } else {
-    pokemon.hp = nextHp;
-  }
-}
-
-/**
- * Handles applying damage to a player pokemon
- *
- * @param pokemon the player pokemon to apply damage to
- * @param damage the amount of damage to apply
- * @see {@linkcode applyHpChangeToPokemon}
- */
-export function applyDamageToPokemon(pokemon: PlayerPokemon, damage: number) {
-  if (damage <= 0) {
-    console.warn("Healing pokemon with `applyDamageToPokemon` is not recommended! Please use `applyHealToPokemon` instead.");
-  }
-
-  applyHpChangeToPokemon(pokemon, -damage);
-}
-
-/**
- * Handles applying heal to a player pokemon
- *
- * @param pokemon the player pokemon to apply heal to
- * @param heal the amount of heal to apply
- * @see {@linkcode applyHpChangeToPokemon}
- */
-export function applyHealToPokemon(pokemon: PlayerPokemon, heal: number) {
-  if (heal <= 0) {
-    console.warn("Damaging pokemong with `applyHealToPokemon` is not recommended! Please use `applyDamageToPokemon` instead.");
-  }
-
-  applyHpChangeToPokemon(pokemon, heal);
 }

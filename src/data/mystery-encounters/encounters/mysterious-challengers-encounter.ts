@@ -2,7 +2,7 @@ import {
   EnemyPartyConfig,
   initBattleWithEnemyConfig,
   setEncounterRewards,
-} from "#app/data/mystery-encounters/mystery-encounter-utils";
+} from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import {
   trainerConfigs,
   TrainerPartyCompoundTemplate,

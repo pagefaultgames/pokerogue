@@ -4,10 +4,8 @@ import {
   EnemyPartyConfig,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle,
-  queueEncounterMessage,
-  setEncounterRewards,
-  showEncounterText,
-} from "#app/data/mystery-encounters/mystery-encounter-utils";
+  setEncounterRewards
+} from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { STEALING_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
 import Pokemon from "#app/field/pokemon";
 import { ModifierTier } from "#app/modifier/modifier-tier";
@@ -28,6 +26,7 @@ import IMysteryEncounter, {
   MysteryEncounterTier,
 } from "../mystery-encounter";
 import { MoveRequirement } from "../mystery-encounter-requirements";
+import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:fight_or_flight";
