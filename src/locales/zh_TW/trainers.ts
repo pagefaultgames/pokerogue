@@ -13,6 +13,20 @@ export const titles: SimpleTranslationEntries = {
   "rival": "勁敵",
   "professor": "博士",
   "frontier_brain": "開拓頭腦",
+  "rocket_boss": "Team Rocket Boss",
+  "magma_boss": "Team Magma Boss",
+  "aqua_boss": "Team Aqua Boss",
+  "galactic_boss": "Team Galactic Boss",
+  "plasma_boss": "Team Plasma Boss",
+  "flare_boss": "Team Flare Boss",
+
+  "rocket_admin": "Team Rocket Admin",
+  "magma_admin": "Team Magma Admin",
+  "aqua_admin": "Team Aqua Admin",
+  "galactic_commander": "Team Galactic Commander",
+  "plasma_sage": "Team Plasma Sage",
+  "plasma_admin": "Team Plasma Admin",
+  "flare_admin": "Team Flare Admin",
   // Maybe if we add the evil teams we can add "Team Rocket" and "Team Aqua" etc. here as well as "Team Rocket Boss" and "Team Aqua Admin" etc.
 } as const;
 
@@ -303,6 +317,29 @@ export const trainerNames: SimpleTranslationEntries = {
   // 勁敵 Rival
   "rival": "芬恩",
   "rival_female": "艾薇",
+
+  // Evil Team Admins
+  "archer": "Archer",
+  "ariana": "Ariana",
+  "proton": "Proton",
+  "petrel": "Petrel",
+  "tabitha": "Tabitha",
+  "courtney": "Courtney",
+  "shelly": "Shelly",
+  "matt": "Matt",
+  "mars": "Mars",
+  "jupiter": "Jupiter",
+  "saturn": "Saturn",
+  "zinzolin": "Zinzolin",
+  "colress": "Colress",
+  "xerosic": "Xerosic",
+  "bryony": "Bryony",
+
+  "maxie": "Maxie",
+  "archie": "Archie",
+  "cyrus": "Cyrus",
+  "ghetsis": "Ghetsis",
+  "lysandre": "Lysandre",
 
   // Double Names
   "blue_red_double": "青綠 & 赤紅",
