@@ -1,7 +1,7 @@
 {
 	"textures": [
 		{
-			"image": "galactic_commander_saturn.png",
+			"image": "saturn.png",
 			"format": "RGBA8888",
 			"size": {
 				"w": 80,

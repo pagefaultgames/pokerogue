@@ -1,7 +1,7 @@
 {
 	"textures": [
 		{
-			"image": "galactic_commander_mars.png",
+			"image": "jupiter.png",
 			"format": "RGBA8888",
 			"size": {
 				"w": 80,
