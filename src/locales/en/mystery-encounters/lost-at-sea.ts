@@ -9,14 +9,14 @@ export const lostAtSea = {
       label: "Use {{option1PrimaryName}}",
       label_disabled: "Can't {{option1RequiredMove}}",
       tooltip: "Use {{option1PrimaryName}} to guide you back. {{option1PrimaryName}} earns EXP as if having defeated a Lapras.",
-      tooltip_disabled: "You have no Pokémon that could learn {{option1RequiredMove}}",
+      tooltip_disabled: "You have no Pokémon to {{option1RequiredMove}} on",
       selected: "{{option1PrimaryName}} guides you back and earns EXP.",
     },
     2: {
       label: "Use {{option2PrimaryName}}",
       label_disabled: "Can't {{option2RequiredMove}}",
       tooltip: "Use {{option2PrimaryName}} to guide you back. {{option2PrimaryName}} earns EXP as if having defeated a Lapras.",
-      tooltip_disabled: "You have no Pokémon that could learn {{option2RequiredMove}}",
+      tooltip_disabled: "You have no Pokémon to {{option2RequiredMove}} with",
       selected: "{{option2PrimaryName}} guides you back and earns EXP.",
     },
     3: {

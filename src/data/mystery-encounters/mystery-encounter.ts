@@ -188,7 +188,6 @@ export default class IMysteryEncounter implements IMysteryEncounter {
     }
     let qualified: PlayerPokemon[] = scene.getParty();
     for (const req of this.primaryPokemonRequirements) {
-      console.log(req);
       if (req.meetsRequirement(scene)) {
         if (req instanceof EncounterPokemonRequirement) {
           qualified = qualified.filter(pkmn => req.queryParty(scene.getParty()).includes(pkmn));
