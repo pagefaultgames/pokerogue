@@ -636,7 +636,7 @@ export class ReverseDrainAbAttr extends PostDefendAbAttr {
    * @returns true if healing should be reversed on a healing move, false otherwise.
    */
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
-    if (move.hasAttr(HitHealAttr)) {
+    if (move.hasAttr(HitHealAttr) && !attacker.hasAbilityWithAttr(BlockNonDirectDamageAbAttr)) {
       pokemon.scene.queueMessage(getPokemonMessage(attacker, " sucked up the liquid ooze!"));
       return true;
     }
