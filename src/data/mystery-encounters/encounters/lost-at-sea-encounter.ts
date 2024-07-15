@@ -43,20 +43,11 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
   ])
   .withIntroDialogue([{ text: `${namepsace}:intro` }])
   .withOnInit((scene: BattleScene) => {
-    // const allowedPokemon = scene.getParty().filter((p) => p.isAllowedInBattle());
     const { mysteryEncounter } = scene.currentBattle;
 
     mysteryEncounter.setDialogueToken("damagePercentage", String(DAMAGE_PERCENTAGE));
     mysteryEncounter.setDialogueToken("option1RequiredMove", Moves[OPTION_1_REQUIRED_MOVE]);
     mysteryEncounter.setDialogueToken("option2RequiredMove", Moves[OPTION_2_REQUIRED_MOVE]);
-
-    // check for water pokemon
-    // surfablePkm = findPokemonThatCanLearnMove(allowedPokemon, Type.WATER);
-    // mysteryEncounter.setDialogueToken("waterPkm", surfablePkm?.name ?? "");
-
-    // check for flying pokemon
-    // flyingPkm = findPokemonThatCanLearnMove(allowedPokemon, Type.FLYING);
-    // mysteryEncounter.setDialogueToken("flyingPkm", flyingPkm?.name ?? "");
 
     return true;
   })
@@ -82,7 +73,7 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
           },
         ],
       })
-      .withOptionPhase(async (scene: BattleScene) => handleGuidingOptionPhase(scene, surfablePkm))
+      .withOptionPhase(async (scene: BattleScene) => handlePokemongGuidingYouPhase(scene, surfablePkm))
       .build()
   )
   .withOption(
@@ -104,7 +95,7 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
           },
         ],
       })
-      .withOptionPhase(async (scene: BattleScene) => handleGuidingOptionPhase(scene, flyingPkm))
+      .withOptionPhase(async (scene: BattleScene) => handlePokemongGuidingYouPhase(scene, flyingPkm))
       .build()
   )
   .withSimpleOption(
@@ -141,7 +132,7 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
  * @param scene Battle scene
  * @param guidePokemon pokemon choosen as a guide
  */
-function handleGuidingOptionPhase(scene: BattleScene, guidePokemon: PlayerPokemon) {
+function handlePokemongGuidingYouPhase(scene: BattleScene, guidePokemon: PlayerPokemon) {
   /** Base EXP value for guiding pokemon. Currently Lapras base-value */
   const baseExpValue: number = 187;
 
