@@ -78,10 +78,10 @@ export const biomePanelIDs: string[] = [
 ]
 export const allpanels: string[] = [
   "abyss",
-  //"badlands",
+  "badlands",
   "beach",
-  //"cave",
-  //"construction_site",
+  "cave",
+  "construction_site",
   //"desert",
   //"dojo",
   "end",
@@ -145,7 +145,7 @@ export class LoadingScene extends SceneBase {
       }
     }
     //this.loadImage(`abyss_panel`, "ui/windows");
-    //this.loadImage(`badlands_panel`, "ui/windows");
+//    this.loadImage(`badlands_panel`, "ui/windows");
     //this.loadImage(`beach_panel`, "ui/windows");
     //this.loadImage(`cave_panel`, "ui/windows");
     //this.loadImage(`construction_site_panel`, "ui/windows");
@@ -180,7 +180,7 @@ export class LoadingScene extends SceneBase {
 //    this.loadImage(`volcano_panel`, "ui/windows");
 //    this.loadImage(`wasteland_panel`, "ui/windows");
     for (var i = 0; i < allpanels.length; i++) {
-      this.loadImage(`${allpanels[i]}_panel`, "ui/windows");
+      this.loadImageNoLegacy(`${allpanels[i]}_panel`, "ui/windows");
     }
     this.loadAtlas("namebox", "ui");
     this.loadImage("pbinfo_player", "ui");
