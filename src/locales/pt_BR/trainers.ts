@@ -127,16 +127,22 @@ export const trainerClasses: SimpleTranslationEntries = {
   "youngster": "Jovem",
   "rocket_grunt": "Recruta da Equipe Rocket",
   "rocket_grunt_female": "Recruta da Equipe Rocket",
+  "rocket_admin": "Rocket Admin",
   "magma_grunt": "Recruta da Equipe Magma",
   "magma_grunt_female": "Recruta da Equipe Magma",
+  "magma_admin": "Magma Admin",
   "aqua_grunt": "Recruta da Equipe Aqua",
   "aqua_grunt_female": "Recruta da Equipe Aqua",
+  "aqua_admin": "Aqua Admin",
   "galactic_grunt": "Recruta da Equipe Galáctica",
   "galactic_grunt_female": "Recruta da Equipe Galáctica",
+  "galactic_admin": "Galactic Admin",
   "plasma_grunt": "Recruta da Equipe Plasma",
   "plasma_grunt_female": "Recruta da Equipe Plasma",
+  "plasma_sage": "Plasma Sage",
   "flare_grunt": "Recruta da Equipe Flare",
   "flare_grunt_female": "Recruta da Equipe Flare",
+  "flare_admin": "Flare Admin",
 } as const;
 
 // Names of special trainers like gym leaders, elite four, and the champion
