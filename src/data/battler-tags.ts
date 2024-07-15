@@ -1,6 +1,6 @@
 import { CommonAnim, CommonBattleAnim } from "./battle-anims";
 import { CommonAnimPhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
-import { getPokemonMessage, getPokemonNameWithAffix } from "../messages";
+import { getPokemonNameWithAffix } from "../messages";
 import Pokemon, { MoveResult, HitResult } from "../field/pokemon";
 import { Stat, getStatName } from "./pokemon-stat";
 import { StatusEffect } from "./status-effect";
@@ -146,7 +146,7 @@ export class TrappedTag extends BattlerTag {
   }
 
   getDescriptor(): string {
-    return "trapping";
+    return i18next.t("battlerTags:trappedDesc");
   }
 
   isSourceLinked(): boolean {
@@ -205,7 +205,7 @@ export class FlinchedTag extends BattlerTag {
   }
 
   getDescriptor(): string {
-    return "flinching";
+    return i18next.t("battlerTags:flinchedDesc");
   }
 }
 
@@ -285,7 +285,7 @@ export class ConfusedTag extends BattlerTag {
   }
 
   getDescriptor(): string {
-    return "confusion";
+    return i18next.t("battlerTags:confusedDesc");
   }
 }
 
@@ -395,7 +395,7 @@ export class InfatuatedTag extends BattlerTag {
   }
 
   getDescriptor(): string {
-    return "infatuation";
+    return i18next.t("battlerTags:infatuatedDesc");
   }
 }
 
@@ -452,7 +452,7 @@ export class SeedTag extends BattlerTag {
   }
 
   getDescriptor(): string {
-    return "seeding";
+    return i18next.t("battlerTags:seedDesc");
   }
 }
 
@@ -492,7 +492,7 @@ export class NightmareTag extends BattlerTag {
   }
 
   getDescriptor(): string {
-    return "nightmares";
+    return i18next.t("battlerTags:nightmareDesc");
   }
 }
 
@@ -647,7 +647,33 @@ export class IngrainTag extends TrappedTag {
   }
 
   getDescriptor(): string {
-    return "roots";
+    return i18next.t("battlerTags:ingrainDesc");
+  }
+}
+
+/**
+ * Octolock traps the target pokemon and reduces its DEF and SPDEF by one stage at the
+ * end of each turn.
+ */
+export class OctolockTag extends TrappedTag {
+  constructor(sourceId: number) {
+    super(BattlerTagType.OCTOLOCK, BattlerTagLapseType.TURN_END, 1, Moves.OCTOLOCK, sourceId);
+  }
+
+  canAdd(pokemon: Pokemon): boolean {
+    const isOctolocked = pokemon.getTag(BattlerTagType.OCTOLOCK);
+    return !isOctolocked;
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    const shouldLapse = lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
+
+    if (shouldLapse) {
+      pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.DEF, BattleStat.SPDEF], -1));
+      return true;
+    }
+
+    return false;
   }
 }
 
@@ -734,7 +760,7 @@ export class DrowsyTag extends BattlerTag {
   }
 
   getDescriptor(): string {
-    return "drowsiness";
+    return i18next.t("battlerTags:drowsyDesc");
   }
 }
 
@@ -1131,7 +1157,7 @@ export class CenterOfAttentionTag extends BattlerTag {
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, " became the center\nof attention!"));
+    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsCenterOfAttentionOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
   }
 }
 
@@ -1338,13 +1364,13 @@ export class MagnetRisenTag extends TypeImmuneTag {
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, " levitated with electromagnetism!"));
+    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsMagnetRisenOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
   }
 
   onRemove(pokemon: Pokemon): void {
     super.onRemove(pokemon);
 
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, " stopped levitating!"));
+    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsMagnetRisenOnRemove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
   }
 }
 
@@ -1681,6 +1707,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
     return new DestinyBondTag(sourceMove, sourceId);
   case BattlerTagType.ICE_FACE:
     return new IceFaceTag(sourceMove);
+  case BattlerTagType.OCTOLOCK:
+    return new OctolockTag(sourceId);
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
