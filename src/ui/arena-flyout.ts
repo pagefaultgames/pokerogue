@@ -12,6 +12,7 @@ import * as Utils from "../utils";
 import { getNatureDecrease, getNatureIncrease, getNatureName } from "#app/data/nature.js";
 import * as LoggerTools from "../logger"
 import { BattleEndPhase } from "#app/phases.js";
+import { Gender } from "#app/data/gender.js";
 
 /** Enum used to differentiate {@linkcode Arena} effects */
 enum ArenaEffectType {
@@ -210,7 +211,7 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
     this.flyoutTextHeader.text = "IVs"
     for (var i = 0; i < poke.length; i++) {
       if (i == 1 || true) {
-        this.flyoutTextPlayer.text += poke[i].name + "\n"
+        this.flyoutTextPlayer.text += poke[i].name + " " + (poke[i].gender == Gender.MALE ? "♂" : (poke[i].gender == Gender.FEMALE ? "♀" : "-")) + " " + poke[i].level + "\n"
         this.flyoutTextEnemy.text += poke[i].getAbility().name + " / " + (poke[i].isBoss() ? poke[i].getPassiveAbility().name + " / " : "") + getNatureName(poke[i].nature) + (getNatureIncrease(poke[i].nature) != "" ? " (+" + getNatureIncrease(poke[i].nature) + " -" + getNatureDecrease(poke[i].nature) + ")" : "") + "\n\n\n"
       }
       this.flyoutTextPlayer.text += "HP: " + poke[i].ivs[0]
