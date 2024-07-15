@@ -92,10 +92,6 @@ export enum MoveFlags {
    * Enables all hits of a multi-hit move to be accuracy checked individually
    */
   CHECK_ALL_HITS   = 1 << 17,
-  /**
-   * Moves that cannot be copied by {@linkcode Moves.SKETCH}
-   */
-  UNSKETCHABLE     = 1 << 18,
 }
 
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
@@ -517,11 +513,6 @@ export default class Move implements Localizable {
    */
   windMove(windMove?: boolean): this {
     this.setFlag(MoveFlags.WIND_MOVE, windMove);
-    return this;
-  }
-
-  unsketchableMove(unsketchableMove?: boolean): this {
-    this.setFlag(MoveFlags.UNSKETCHABLE, unsketchableMove);
     return this;
   }
 
@@ -5174,7 +5165,7 @@ export class MovesetCopyMoveAttr extends OverrideMoveEffectAttr {
  * This move copies the last used non-virtual move
  *  e.g. if Metronome is used, it copies Metronome itself, not the virtual move called by Metronome
  * Fails if the opponent has not yet used a move.
- * Fails if used on an uncopiable move, flagged with {@linkcode MoveFlags.UNSKETCHABLE}
+ * Fails if used on an uncopiable move, listed in unsketchableMoves in getCondition
  * Fails if the move is already in the user's moveset
  */
 export class SketchAttr extends MoveEffectAttr {
@@ -5223,7 +5214,19 @@ export class SketchAttr extends MoveEffectAttr {
         return false;
       }
 
-      if (allMoves[targetMove.move].hasFlag(MoveFlags.UNSKETCHABLE)) {
+      const unsketchableMoves = [
+        Moves.CHATTER,
+        Moves.MIRROR_MOVE,
+        Moves.SLEEP_TALK,
+        Moves.STRUGGLE,
+        Moves.SKETCH,
+        Moves.REVIVAL_BLESSING,
+        Moves.TERA_STARSTORM,
+        Moves.BREAKNECK_BLITZ__PHYSICAL,
+        Moves.BREAKNECK_BLITZ__SPECIAL
+      ];
+
+      if (unsketchableMoves.includes(targetMove.move)) {
         return false;
       }
 
@@ -5999,7 +6002,6 @@ export function initMoves() {
       .ignoresVirtual(),
     new StatusMove(Moves.MIRROR_MOVE, Type.FLYING, -1, 20, -1, 0, 1)
       .attr(CopyMoveAttr)
-      .unsketchableMove()
       .ignoresVirtual(),
     new AttackMove(Moves.SELF_DESTRUCT, Type.NORMAL, MoveCategory.PHYSICAL, 200, 100, 5, -1, 0, 1)
       .attr(SacrificialAttr)
@@ -6132,12 +6134,10 @@ export function initMoves() {
     new AttackMove(Moves.STRUGGLE, Type.NORMAL, MoveCategory.PHYSICAL, 50, -1, 1, -1, 0, 1)
       .attr(RecoilAttr, true, 0.25, true)
       .attr(TypelessAttr)
-      .unsketchableMove()
       .ignoresVirtual()
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
     new StatusMove(Moves.SKETCH, Type.NORMAL, -1, 1, -1, 0, 2)
       .attr(SketchAttr)
-      .unsketchableMove()
       .ignoresVirtual(),
     new AttackMove(Moves.TRIPLE_KICK, Type.FIGHTING, MoveCategory.PHYSICAL, 10, 90, 10, -1, 0, 2)
       .attr(MultiHitAttr, MultiHitType._3)
@@ -6267,7 +6267,6 @@ export function initMoves() {
     new SelfStatusMove(Moves.SLEEP_TALK, Type.NORMAL, -1, 10, -1, 0, 2)
       .attr(BypassSleepAttr)
       .attr(RandomMovesetMoveAttr)
-      .unsketchableMove()
       .condition(userSleptOrComatoseCondition)
       .target(MoveTarget.ALL_ENEMIES)
       .ignoresVirtual(),
@@ -6924,7 +6923,6 @@ export function initMoves() {
       .condition(failOnMaxCondition),
     new AttackMove(Moves.CHATTER, Type.FLYING, MoveCategory.SPECIAL, 65, 100, 20, 100, 0, 4)
       .attr(ConfuseAttr)
-      .unsketchableMove()
       .soundBased(),
     new AttackMove(Moves.JUDGMENT, Type.NORMAL, MoveCategory.SPECIAL, 100, 100, 10, -1, 0, 4)
       .attr(FormChangeItemTypeAttr),
@@ -8424,7 +8422,6 @@ export function initMoves() {
       .ignoresVirtual(),
     new AttackMove(Moves.TERA_STARSTORM, Type.NORMAL, MoveCategory.SPECIAL, 120, 100, 5, -1, 0, 9)
       .attr(TeraBlastCategoryAttr)
-      .unsketchableMove()
       .partial(),
     new AttackMove(Moves.FICKLE_BEAM, Type.DRAGON, MoveCategory.SPECIAL, 80, 100, 5, 30, 0, 9)
       .attr(PreMoveMessageAttr, doublePowerChanceMessageFunc)
