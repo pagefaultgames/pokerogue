@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
-import * as overrides from "#app/overrides";
+import overrides from "#app/overrides";
 import { Species } from "#enums/species";
 import {
   CommandPhase,
@@ -94,10 +94,10 @@ describe("Abilities - Sweet Veil", () => {
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    const drowsyMon = game.scene.getPlayerField().filter(p => !!p.getTag(BattlerTagType.DROWSY))[0];
+    const drowsyMon = game.scene.getPlayerField().find(p => !!p.getTag(BattlerTagType.DROWSY));
 
     await game.phaseInterceptor.to(CommandPhase);
-    game.doAttack(getMovePosition(game.scene, drowsyMon.getFieldIndex(), Moves.SPLASH));
+    game.doAttack(getMovePosition(game.scene, (drowsyMon.getBattlerIndex() as 0 | 1), Moves.SPLASH));
     game.doSwitchPokemon(2);
 
     await game.phaseInterceptor.to(TurnEndPhase);

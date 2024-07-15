@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
-import * as overrides from "#app/overrides";
+import overrides from "#app/overrides";
 import { Species } from "#enums/species";
 import {
   CommandPhase,
@@ -65,8 +65,10 @@ describe("Abilities - Pastel Veil", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
     expect(game.scene.getPlayerField().some(p => p.status?.effect === StatusEffect.POISON)).toBe(true);
 
+    const poisonedMon = game.scene.getPlayerField().find(p => p.status?.effect === StatusEffect.POISON);
+
     await game.phaseInterceptor.to(CommandPhase);
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.doAttack(getMovePosition(game.scene, (poisonedMon.getBattlerIndex() as 0 | 1), Moves.SPLASH));
     game.doSwitchPokemon(2);
     await game.phaseInterceptor.to(TurnEndPhase);
 
