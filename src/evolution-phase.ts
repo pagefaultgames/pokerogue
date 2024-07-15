@@ -195,7 +195,6 @@ export class EvolutionPhase extends Phase {
                           this.scene.ui.showText(i18next.t("menu:stoppedEvolving", { pokemonName: preName }), null, () => {
                             this.scene.ui.showText(i18next.t("menu:pauseEvolutionsQuestion", { pokemonName: preName }), null, () => {
                               const end = () => {
-                                LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "Cancel " + preName + "'s evolution")
                                 this.scene.ui.showText(null, 0);
                                 this.scene.playBgm();
                                 evolvedPokemon.destroy();
@@ -207,6 +206,7 @@ export class EvolutionPhase extends Phase {
                                 this.pokemon.pauseEvolutions = true;
                                 this.scene.ui.showText(i18next.t("menu:evolutionsPaused", { pokemonName: preName }), null, end, 3000);
                               }, () => {
+                                LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "Cancel " + preName + "'s evolution")
                                 this.scene.ui.revertMode();
                                 this.scene.time.delayedCall(3000, end);
                               });
