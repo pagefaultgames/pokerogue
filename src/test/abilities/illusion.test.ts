@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
-import * as overrides from "#app/overrides";
+import overrides from "#app/overrides";
 import { Species } from "#enums/species";
 import {
   TurnEndPhase,
@@ -59,5 +59,18 @@ describe("Abilities - Illusion", () => {
 
     expect(zorua.illusion.active).equals(false);
     expect(zoroark.illusion.active).equals(false);
+  });
+
+  it("trick the enemy", async () => {
+    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.FLAMETHROWER, Moves.PSYCHIC, Moves.TACKLE, Moves.TACKLE]);
+    await game.startBattle([Species.ZOROARK, Species.AXEW]);
+
+    const enemy = game.scene.getEnemyPokemon();
+    const zoroark = game.scene.getPlayerPokemon();
+
+    const flameThwowerEffectiveness = zoroark.getAttackMoveEffectiveness(enemy, enemy.getMoveset()[0], false, true);
+    const psychicEffectiveness = zoroark.getAttackMoveEffectiveness(enemy, enemy.getMoveset()[1], false, true);
+
+    expect(psychicEffectiveness).above(flameThwowerEffectiveness);
   });
 });

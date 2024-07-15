@@ -3740,7 +3740,7 @@ export class EnemyPokemon extends Pokemon {
             if ((move.name.endsWith(" (N)") || !move.applyConditions(this, target, move)) && ![Moves.SUCKER_PUNCH, Moves.UPPER_HAND, Moves.THUNDERCLAP].includes(move.id)) {
               targetScore = -20;
             } else if (move instanceof AttackMove) {
-              const effectiveness = target.getAttackMoveEffectiveness(this, pokemonMove, true);
+              const effectiveness = target.getAttackMoveEffectiveness(this, pokemonMove, false, true);
               if (target.isPlayer() !== this.isPlayer()) {
                 targetScore *= effectiveness;
                 if (this.isOfType(move.type)) {
