@@ -2257,7 +2257,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.speciesStarterMoves = [];
 
     if (species) {
-      this.scene.gameData.dexData[species.speciesId].caughtAttr = BigInt(9223372036854775807n);
       const dexEntry = this.scene.gameData.dexData[species.speciesId];
       const abilityAttr = this.scene.gameData.starterData[species.speciesId].abilityAttr;
       if (!dexEntry.caughtAttr) {
