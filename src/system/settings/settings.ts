@@ -102,7 +102,8 @@ export const SettingKeys = {
   Damage_Display: "DAMAGE_DISPLAY",
   LazyReloads: "FLAG_EVERY_RESET_AS_RELOAD",
   FancyBiome: "FANCY_BIOMES",
-  ShowAutosaves: "SHOW_AUTOSAVES"
+  ShowAutosaves: "SHOW_AUTOSAVES",
+  BiomePanels: "BIOME_PANELS"
 };
 
 /**
@@ -545,6 +546,19 @@ export const Setting: Array<Setting> = [
     requireReload: true
   },
   {
+    key: SettingKeys.BiomePanels,
+    label: "Biome Panels",
+    options: [{
+      label: "Off",
+      value: "Off"
+    }, {
+      label: "On",
+      value: "On"
+    }],
+    default: 0,
+    type: SettingType.DISPLAY,
+  },
+  {
     key: SettingKeys.ShowAutosaves,
     label: "Show Autosaves",
     options: [{
@@ -672,6 +686,8 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     scene.menuChangesBiome = Setting[index].options[value].value == "On"
   case SettingKeys.ShowAutosaves:
     scene.showAutosaves = Setting[index].options[value].value == "On"
+  case SettingKeys.BiomePanels:
+    scene.doBiomePanels = Setting[index].options[value].value == "On"
   case SettingKeys.Skip_Seen_Dialogues:
     scene.skipSeenDialogues = Setting[index].options[value].value === "On";
     break;

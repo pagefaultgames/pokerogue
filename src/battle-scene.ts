@@ -124,6 +124,7 @@ export default class BattleScene extends SceneBase {
   public lazyReloads: boolean = false;
   public menuChangesBiome: boolean = false;
   public showAutosaves: boolean = false;
+  public doBiomePanels: boolean = false;
   /**
    * Determines the condition for a notification should be shown for Candy Upgrades
    * - 0 = 'Off'
