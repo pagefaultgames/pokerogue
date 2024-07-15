@@ -1,8 +1,8 @@
 ---
 name: Art Request
 about: Create an art request for a specific Encounter
-title: "[ART]"
-labels: Art
+title: "[Art]"
+labels: ["art request"]
 assignees: ''
 
 ---
