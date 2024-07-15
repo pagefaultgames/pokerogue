@@ -1,21 +1,19 @@
 import i18next from "i18next";
 import { BattleType } from "#app/battle";
-import BattleScene from "../../battle-scene";
-import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "../pokemon-species";
-import { MysteryEncounterVariant } from "./mystery-encounter";
-import { Status, StatusEffect } from "../status-effect";
-import { TrainerConfig, trainerConfigs, TrainerSlot } from "../trainer-config";
+import BattleScene from "../../../battle-scene";
+import PokemonSpecies from "../../pokemon-species";
+import { MysteryEncounterVariant } from "../mystery-encounter";
+import { Status, StatusEffect } from "../../status-effect";
+import { TrainerConfig, trainerConfigs, TrainerSlot } from "../../trainer-config";
 import Pokemon, { FieldPosition, PlayerPokemon } from "#app/field/pokemon";
-import Trainer, { TrainerVariant } from "../../field/trainer";
+import Trainer, { TrainerVariant } from "../../../field/trainer";
 import { ExpBalanceModifier, ExpShareModifier, MultipleParticipantExpBonusModifier, PokemonExpBoosterModifier } from "#app/modifier/modifier";
 import { CustomModifierSettings, getModifierPoolForType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeGenerator, ModifierTypeOption, modifierTypes, PokemonHeldItemModifierType, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
 import { BattleEndPhase, EggLapsePhase, ExpPhase, ModifierRewardPhase, SelectModifierPhase, ShowPartyExpBarPhase, TrainerVictoryPhase } from "#app/phases";
-import { MysteryEncounterBattlePhase, MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phase";
-import * as Utils from "../../utils";
+import { MysteryEncounterBattlePhase, MysteryEncounterPhase, MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phase";
+import * as Utils from "../../../utils";
 import { isNullOrUndefined } from "#app/utils";
 import { TrainerType } from "#enums/trainer-type";
-import { Species } from "#enums/species";
-import { Type } from "#app/data/type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import PokemonData from "#app/system/pokemon-data";
 import { Biome } from "#enums/biome";
@@ -24,200 +22,9 @@ import { Mode } from "#app/ui/ui";
 import { PartyOption, PartyUiMode } from "#app/ui/party-ui-handler";
 import { OptionSelectConfig, OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import { WIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
-import { getTextWithColors, TextStyle } from "#app/ui/text";
 import * as Overrides from "#app/overrides";
-import { UiTheme } from "#enums/ui-theme";
-
-/**
- *
- * Will never remove the player's last non-fainted Pokemon (if they only have 1)
- * Otherwise, picks a Pokemon completely at random and removes from the party
- * @param scene
- * @param isAllowedInBattle - default false. If true, only picks from unfainted mons. If there is only 1 unfainted mon left and doNotReturnLastAbleMon is also true, will return fainted mon
- * @param doNotReturnLastAbleMon - If true, will never return the last unfainted pokemon in the party. Useful when this function is being used to determine what Pokemon to remove from the party (Don't want to remove last unfainted)
- * @returns
- */
-export function getRandomPlayerPokemon(scene: BattleScene, isAllowedInBattle: boolean = false, doNotReturnLastAbleMon: boolean = false): PlayerPokemon {
-  const party = scene.getParty();
-  let chosenIndex: number;
-  let chosenPokemon: PlayerPokemon;
-  const unfaintedMons = party.filter(p => p.isAllowedInBattle());
-  const faintedMons = party.filter(p => !p.isAllowedInBattle());
-
-  if (doNotReturnLastAbleMon && unfaintedMons.length === 1) {
-    chosenIndex = Utils.randSeedInt(faintedMons.length);
-    chosenPokemon = faintedMons.at(chosenIndex);
-  } else if (isAllowedInBattle) {
-    chosenIndex = Utils.randSeedInt(unfaintedMons.length);
-    chosenPokemon = unfaintedMons.at(chosenIndex);
-  } else {
-    chosenIndex = Utils.randSeedInt(party.length);
-    chosenPokemon = party.at(chosenIndex);
-  }
-
-  return chosenPokemon;
-}
-
-// export function getTokensFromScene(scene: BattleScene, reqs: EncounterSceneRequirement[]): Array<[RegExp, String]> {
-//   const arr = [];
-//   if (scene) {
-//     for (const req of reqs) {
-//       req.getDialogueToken(scene);
-//     }
-//   }
-//   return arr;
-// }
-
-/**
- * Ties are broken by whatever mon is closer to the front of the party
- * @param scene
- * @param unfainted - default false. If true, only picks from unfainted mons.
- * @returns
- */
-export function getHighestLevelPlayerPokemon(scene: BattleScene, unfainted: boolean = false): PlayerPokemon {
-  const party = scene.getParty();
-  let pokemon: PlayerPokemon;
-  party.every(p => {
-    if (unfainted && p.isFainted()) {
-      return true;
-    }
-
-    pokemon = pokemon ? pokemon?.level < p?.level ? p : pokemon : p;
-    return true;
-  });
-
-  return pokemon;
-}
-
-/**
- * Ties are broken by whatever mon is closer to the front of the party
- * @param scene
- * @param unfainted - default false. If true, only picks from unfainted mons.
- * @returns
- */
-export function getLowestLevelPlayerPokemon(scene: BattleScene, unfainted: boolean = false): PlayerPokemon {
-  const party = scene.getParty();
-  let pokemon: PlayerPokemon;
-  party.every(p => {
-    if (unfainted && p.isFainted()) {
-      return true;
-    }
-
-    pokemon = pokemon ? pokemon?.level > p?.level ? p : pokemon : p;
-    return true;
-  });
-
-  return pokemon;
-}
-
-/**
- *
- * NOTE: This returns ANY random species, including those locked behind eggs, etc.
- * @param starterTiers
- * @param excludedSpecies
- * @param types
- * @returns
- */
-export function getRandomSpeciesByStarterTier(starterTiers: number | [number, number], excludedSpecies?: Species[], types?: Type[]): Species {
-  let min = starterTiers instanceof Array ? starterTiers[0] : starterTiers;
-  let max = starterTiers instanceof Array ? starterTiers[1] : starterTiers;
-
-  let filteredSpecies: [PokemonSpecies, number][] = Object.keys(speciesStarters)
-    .map(s => [parseInt(s) as Species, speciesStarters[s] as number])
-    .filter(s => getPokemonSpecies(s[0]) && (!excludedSpecies || !excludedSpecies.includes(s[0])))
-    .map(s => [getPokemonSpecies(s[0]), s[1]]);
-
-  if (!isNullOrUndefined(types) && types.length > 0) {
-    filteredSpecies = filteredSpecies.filter(s => types.includes(s[0].type1) || types.includes(s[0].type2));
-  }
-
-  // If no filtered mons exist at specified starter tiers, will expand starter search range until there are
-  // Starts by decrementing starter tier min until it is 0, then increments tier max up to 10
-  let tryFilterStarterTiers: [PokemonSpecies, number][] = filteredSpecies.filter(s => (s[1] >= min && s[1] <= max));
-  while (tryFilterStarterTiers.length === 0 && (min !== 0 && max !== 10)) {
-    if (min > 0) {
-      min--;
-    } else {
-      max++;
-    }
-
-    tryFilterStarterTiers = filteredSpecies.filter(s => s[1] >= min && s[1] <= max);
-  }
-
-  if (tryFilterStarterTiers.length > 0) {
-    const index = Utils.randSeedInt(tryFilterStarterTiers.length);
-    return Phaser.Math.RND.shuffle(tryFilterStarterTiers)[index][0].speciesId;
-  }
-
-  return Species.BULBASAUR;
-}
-
-export function koPlayerPokemon(pokemon: PlayerPokemon) {
-  pokemon.hp = 0;
-  pokemon.trySetStatus(StatusEffect.FAINT);
-  pokemon.updateInfo();
-}
-
-export function getEncounterText(scene: BattleScene, textKey: string, primaryStyle?: TextStyle, uiTheme: UiTheme = UiTheme.DEFAULT): string {
-  if (isNullOrUndefined(textKey)) {
-    return null;
-  }
-
-  const stringArray = [`${textKey}`] as any;
-  stringArray.raw = [`${textKey}`];
-  let textString: string = getTextWithDialogueTokens(scene, stringArray);
-
-  // Can only color the text if a Primary Style is defined
-  // primaryStyle is applied to all text that does not have its own specified style
-  if (primaryStyle) {
-    textString = getTextWithColors(textString, primaryStyle, uiTheme);
-  }
-
-  return textString;
-}
-
-function getTextWithDialogueTokens(scene: BattleScene, textKey: TemplateStringsArray): string {
-  if (isNullOrUndefined(textKey)) {
-    return null;
-  }
-
-  return i18next.t(textKey, scene.currentBattle?.mysteryEncounter?.dialogueTokens);
-}
-
-/**
- * Will queue a message in UI with injected encounter data tokens
- * @param scene
- * @param contentKey
- */
-export function queueEncounterMessage(scene: BattleScene, contentKey: string): void {
-  const text: string = getEncounterText(scene, contentKey);
-  scene.queueMessage(text, null, true);
-}
-
-/**
- * Will display a message in UI with injected encounter data tokens
- * @param scene
- * @param contentKey
- */
-export function showEncounterText(scene: BattleScene, contentKey: string): Promise<void> {
-  return new Promise<void>(resolve => {
-    const text: string = getEncounterText(scene, contentKey);
-    scene.ui.showText(text, null, () => resolve(), 0, true);
-  });
-}
-
-/**
- * Will display a dialogue (with speaker title) in UI with injected encounter data tokens
- * @param scene
- * @param textContentKey
- * @param speakerContentKey
- * @param callback
- */
-export function showEncounterDialogue(scene: BattleScene, textContentKey: string, speakerContentKey: string, callback?: Function) {
-  const text: string = getEncounterText(scene, textContentKey);
-  const speaker: string = getEncounterText(scene, speakerContentKey);
-  scene.ui.showDialogue(text, speaker, null, callback, 0, 0);
-}
+import MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
+import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 
 export class EnemyPokemonConfig {
   species: PokemonSpecies;
@@ -427,6 +234,11 @@ export function updatePlayerMoney(scene: BattleScene, changeValue: number, playS
   if (playSound) {
     scene.playSound("buy");
   }
+  if (changeValue < 0) {
+    scene.queueMessage(i18next.t("mysteryEncounter:paid_money", { amount: -changeValue }), null, true);
+  } else {
+    scene.queueMessage(i18next.t("mysteryEncounter:receive_money", { amount: changeValue }), null, true);
+  }
 }
 
 /**
@@ -459,7 +271,7 @@ export function generateModifierTypeOption(scene: BattleScene, modifier: () => M
 }
 
 /**
- *
+ * This function is intended for use inside onPreOptionPhase() of an encounter option
  * @param scene
  * @param onPokemonSelected - Any logic that needs to be performed when Pokemon is chosen
  * If a second option needs to be selected, onPokemonSelected should return a OptionSelectItem[] object
@@ -519,8 +331,7 @@ export function selectPokemonForOption(scene: BattleScene, onPokemonSelected: (p
             if (!textPromptKey) {
               displayOptions();
             } else {
-              const secondOptionSelectPrompt = getEncounterText(scene, textPromptKey, TextStyle.MESSAGE);
-              scene.ui.showText(secondOptionSelectPrompt, null, displayOptions, null, true);
+              showEncounterText(scene, textPromptKey).then(() => displayOptions());
             }
           });
         });
@@ -674,6 +485,26 @@ export function setEncounterExp(scene: BattleScene, participantIds: integer[], b
   };
 }
 
+export class OptionSelectSettings {
+  hideDescription?: boolean;
+  slideInDescription?: boolean;
+  overrideTitle?: string;
+  overrideDescription?: string;
+  overrideQuery?: string;
+  overrideOptions?: MysteryEncounterOption[];
+  startingCursorIndex?: number;
+}
+
+/**
+ * Can be used to queue a new series of Options to select for an Encounter
+ * MUST be used only in onOptionPhase, will not work in onPreOptionPhase or onPostOptionPhase
+ * @param scene
+ * @param optionSelectSettings
+ */
+export function initSubsequentOptionSelect(scene: BattleScene, optionSelectSettings: OptionSelectSettings) {
+  scene.pushPhase(new MysteryEncounterPhase(scene, optionSelectSettings));
+}
+
 /**
  * Can be used to exit an encounter without any battles or followup
  * Will skip any shops and rewards, and queue the next encounter phase as normal
@@ -688,7 +519,9 @@ export function leaveEncounterWithoutBattle(scene: BattleScene, addHealPhase: bo
 }
 
 export function handleMysteryEncounterVictory(scene: BattleScene, addHealPhase: boolean = false) {
-  if (scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.NO_BATTLE) {
+  if (scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.SAFARI_BATTLE) {
+    scene.pushPhase(new MysteryEncounterRewardsPhase(scene, addHealPhase));
+  } else if (scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.NO_BATTLE) {
     scene.pushPhase(new EggLapsePhase(scene));
     scene.pushPhase(new MysteryEncounterRewardsPhase(scene, addHealPhase));
   } else if (!scene.getEnemyParty().find(p => scene.currentBattle.mysteryEncounter.encounterVariant !== MysteryEncounterVariant.TRAINER_BATTLE ? p.isOnField() : !p?.isFainted(true))) {
@@ -701,6 +534,32 @@ export function handleMysteryEncounterVictory(scene: BattleScene, addHealPhase: 
       scene.pushPhase(new MysteryEncounterRewardsPhase(scene, addHealPhase));
     }
   }
+}
+
+export function hideMysteryEncounterIntroVisuals(scene: BattleScene): Promise<boolean> {
+  return new Promise(resolve => {
+    const introVisuals = scene.currentBattle.mysteryEncounter.introVisuals;
+    if (introVisuals) {
+      // Hide
+      scene.tweens.add({
+        targets: introVisuals,
+        x: "+=16",
+        y: "-=16",
+        alpha: 0,
+        ease: "Sine.easeInOut",
+        duration: 750,
+        onComplete: () => {
+          scene.field.remove(introVisuals);
+          introVisuals.setVisible(false);
+          introVisuals.destroy();
+          scene.currentBattle.mysteryEncounter.introVisuals = null;
+          resolve(true);
+        }
+      });
+    } else {
+      resolve(true);
+    }
+  });
 }
 
 /**

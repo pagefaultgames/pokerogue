@@ -17,6 +17,10 @@ export const mysteryEncounter: SimpleTranslationEntries = {
   // DO NOT REMOVE
   "unit_test_dialogue": "{{test}}{{test}} {{test{{test}}}} {{test1}} {{test\}} {{test\\}} {{test\\\}} {test}}",
 
+  // General use content
+  "paid_money": "You paid ₽{{amount, number}}.",
+  "receive_money": "You received ₽{{amount, number}}!",
+
   // Mystery Encounters -- Common Tier
 
   "mysterious_chest_intro_message": "You found...@d{32} a chest?",
@@ -125,7 +129,7 @@ export const mysteryEncounter: SimpleTranslationEntries = {
   "field_trip_outro_good": "Thank you so much for your kindness!\nI hope the items I had were helpful!",
   "field_trip_outro_bad": "Come along children, we'll\nfind a better demonstration elsewhere.",
 
-  // Mystery Encounters -- Uncommon Tier
+  // Mystery Encounters -- Great Tier
 
   "mysterious_challengers_intro_message": "Mysterious challengers have appeared!",
   "mysterious_challengers_title": "Mysterious Challengers",
@@ -140,7 +144,35 @@ export const mysteryEncounter: SimpleTranslationEntries = {
   "mysterious_challengers_option_selected_message": "The trainer steps forward...",
   "mysterious_challengers_outro_win": "The mysterious challenger was defeated!",
 
-  // Mystery Encounters -- Rare Tier
+  "safari_zone_intro_message": "It's a safari zone!",
+  "safari_zone_title": "The Safari Zone",
+  "safari_zone_description": "There are all kinds of rare and special Pokémon that can be found here!\nIf you choose to enter, you'll have a time limit of 3 wild encounters where you can try to catch these special Pokémon.\n\nBeware, though. These Pokémon may flee before you're able to catch them!",
+  "safari_zone_query": "Would you like to enter?",
+  "safari_zone_option_1_label": "Enter",
+  "safari_zone_option_1_tooltip": "(-) Pay {{option1Money, money}}\n@[SUMMARY_GREEN]{(?) Safari Zone}",
+  "safari_zone_option_2_label": "Leave",
+  "safari_zone_option_2_tooltip": "(-) No Rewards",
+  "safari_zone_option_1_selected_message": "Time to test your luck!",
+  "safari_zone_option_2_selected_message": "You hurry along your way,\nwith a slight feeling of regret.",
+  "safari_zone_pokeball_option_label": "Throw a Pokéball",
+  "safari_zone_pokeball_option_tooltip": "(+) Throw a Pokéball",
+  "safari_zone_pokeball_option_selected": "You throw a Pokéball!",
+  "safari_zone_bait_option_label": "Throw bait",
+  "safari_zone_bait_option_tooltip": "(+) Increases Capture Rate\n(-) Chance to Increase Flee Rate",
+  "safari_zone_bait_option_selected": "You throw some bait!",
+  "safari_zone_mud_option_label": "Throw mud",
+  "safari_zone_mud_option_tooltip": "(+) Decreases Flee Rate\n(-) Chance to Decrease Capture Rate",
+  "safari_zone_mud_option_selected": "You throw some mud!",
+  "safari_zone_flee_option_label": "Flee",
+  "safari_zone_flee_option_tooltip": "(?) Flee from this Pokémon",
+  "safari_zone_pokemon_watching": "{{pokemonName}} is watching carefully!",
+  "safari_zone_pokemon_eating": "{{pokemonName}} is eating!",
+  "safari_zone_pokemon_busy_eating": "{{pokemonName}} is busy eating!",
+  "safari_zone_pokemon_angry": "{{pokemonName}} is angry!",
+  "safari_zone_pokemon_beside_itself_angry": "{{pokemonName}} is beside itself with anger!",
+  "safari_zone_remaining_count": "{{remainingCount}} Pokémon remaining!",
+
+  // Mystery Encounters -- Ultra Tier
 
   "training_session_intro_message": "You've come across some\ntraining tools and supplies.",
   "training_session_title": "Training Session",
@@ -163,7 +195,7 @@ export const mysteryEncounter: SimpleTranslationEntries = {
     $Its ability was changed to {{ability}}!`,
   "training_session_outro_win": "That was a successful training session!",
 
-  // Mystery Encounters -- Super Rare Tier
+  // Mystery Encounters -- Rogue Tier
 
   "dark_deal_intro_message": "A strange man in a tattered coat\nstands in your way...",
   "dark_deal_speaker": "Shady Guy",

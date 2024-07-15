@@ -10,6 +10,7 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { DepartmentStoreSaleEncounter } from "./encounters/department-store-sale-encounter";
 import { ShadyVitaminDealerEncounter } from "./encounters/shady-vitamin-dealer-encounter";
 import { FieldTripEncounter } from "./encounters/field-trip-encounter";
+import { SafariZoneEncounter } from "#app/data/mystery-encounters/encounters/safari-zone-encounter";
 
 // Spawn chance: (BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT + WIGHT_INCREMENT_ON_SPAWN_MISS * <number of missed spawns>) / 256
 export const BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT = 1;
@@ -162,10 +163,13 @@ export const mysteryEncountersByBiome = new Map<Biome, MysteryEncounterType[]>([
   [Biome.TALL_GRASS, []],
   [Biome.METROPOLIS, []],
   [Biome.FOREST, [
-    MysteryEncounterType.SLEEPING_SNORLAX
+    MysteryEncounterType.SLEEPING_SNORLAX,
+    MysteryEncounterType.SAFARI_ZONE
   ]],
   [Biome.SEA, []],
-  [Biome.SWAMP, []],
+  [Biome.SWAMP, [
+    MysteryEncounterType.SAFARI_ZONE
+  ]],
   [Biome.BEACH, []],
   [Biome.LAKE, []],
   [Biome.SEABED, []],
@@ -189,7 +193,9 @@ export const mysteryEncountersByBiome = new Map<Biome, MysteryEncounterType[]>([
   [Biome.ABYSS, []],
   [Biome.SPACE, []],
   [Biome.CONSTRUCTION_SITE, []],
-  [Biome.JUNGLE, []],
+  [Biome.JUNGLE, [
+    MysteryEncounterType.SAFARI_ZONE
+  ]],
   [Biome.FAIRY_CAVE, []],
   [Biome.TEMPLE, []],
   [Biome.SLUM, []],
@@ -208,6 +214,7 @@ export function initMysteryEncounters() {
   allMysteryEncounters[MysteryEncounterType.DEPARTMENT_STORE_SALE] = DepartmentStoreSaleEncounter;
   allMysteryEncounters[MysteryEncounterType.SHADY_VITAMIN_DEALER] = ShadyVitaminDealerEncounter;
   allMysteryEncounters[MysteryEncounterType.FIELD_TRIP] = FieldTripEncounter;
+  allMysteryEncounters[MysteryEncounterType.SAFARI_ZONE] = SafariZoneEncounter;
 
   // Add extreme encounters to biome map
   extremeBiomeEncounters.forEach(encounter => {
