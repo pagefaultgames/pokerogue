@@ -5752,6 +5752,7 @@ export function initMoves() {
     new AttackMove(Moves.THRASH, Type.NORMAL, MoveCategory.PHYSICAL, 120, 100, 10, -1, 0, 1)
       .attr(FrenzyAttr)
       .attr(MissEffectAttr, frenzyMissFunc)
+      .attr(NoEffectAttr, frenzyMissFunc)
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
     new AttackMove(Moves.DOUBLE_EDGE, Type.NORMAL, MoveCategory.PHYSICAL, 120, 100, 15, -1, 0, 1)
       .attr(RecoilAttr, false, 0.33)
@@ -5870,6 +5871,7 @@ export function initMoves() {
     new AttackMove(Moves.PETAL_DANCE, Type.GRASS, MoveCategory.SPECIAL, 120, 100, 10, -1, 0, 1)
       .attr(FrenzyAttr)
       .attr(MissEffectAttr, frenzyMissFunc)
+      .attr(NoEffectAttr, frenzyMissFunc)
       .makesContact()
       .danceMove()
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
@@ -6201,6 +6203,7 @@ export function initMoves() {
     new AttackMove(Moves.OUTRAGE, Type.DRAGON, MoveCategory.PHYSICAL, 120, 100, 10, -1, 0, 2)
       .attr(FrenzyAttr)
       .attr(MissEffectAttr, frenzyMissFunc)
+      .attr(NoEffectAttr, frenzyMissFunc)
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
     new StatusMove(Moves.SANDSTORM, Type.ROCK, -1, 10, -1, 0, 2)
       .attr(WeatherChangeAttr, WeatherType.SANDSTORM)
@@ -8044,6 +8047,7 @@ export function initMoves() {
       .makesContact(false)
       .attr(FrenzyAttr)
       .attr(MissEffectAttr, frenzyMissFunc)
+      .attr(NoEffectAttr, frenzyMissFunc)
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
     new AttackMove(Moves.WAVE_CRASH, Type.WATER, MoveCategory.PHYSICAL, 120, 100, 10, -1, 0, 8)
       .attr(RecoilAttr, false, 0.33)
