@@ -301,10 +301,9 @@ export default class MenuUiHandler extends MessageUiHandler {
 
     for (const option of this.optionContainer.list) {
       const isDisabled = this.disabledMenuOptions.includes(option.getData("optionIndex"));
-      if (isDisabled) {
-        const textOption = option as Phaser.GameObjects.Text;
-        setTextStyle(textOption, this.scene, TextStyle.WINDOW_DISABLED);
-      }
+
+      const textOption = option as Phaser.GameObjects.Text;
+      setTextStyle(textOption, this.scene, isDisabled ? TextStyle.WINDOW_DISABLED : TextStyle.WINDOW);
     }
 
     this.menuContainer.setVisible(true);
