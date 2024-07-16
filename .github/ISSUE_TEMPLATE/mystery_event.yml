@@ -9,7 +9,7 @@ body:
     attributes:
       label: Event Name
       description: Name of the event
-      placeholder: ie. "Fight or Flight"
+      placeholder: e.g. "Fight or Flight"
     validations:
       required: true
   - type: markdown # SEPARATOR
@@ -29,12 +29,7 @@ body:
         - Rogue
         - Part of a "Quest"
         - Other or unsure (please specify)
-    validations:
-      required: true
-  - type: markdown # SEPARATOR
-    attributes:
-      value: |
-        ---
+
   - type: input
     id: rarity-other
     attributes:
@@ -64,7 +59,7 @@ body:
     attributes:
       label: Description
       description: Describe the event you are proposing. Explain its theme and how it's different from others. If the Event has any requirements to even trigger, detail them here too.
-      placeholder: ie. "Fight or Flight is a common event where the player can fight a boss PKMN of the biome. The PKMN is stronger than usual, but also holds an item that's better than usual."
+      placeholder: e.g. "Fight or Flight is a common event where the player can fight a boss PKMN of the biome. The PKMN is stronger than usual, but also holds an item that's better than usual."
     validations:
       required: true
   - type: markdown # SEPARATOR
@@ -120,10 +115,7 @@ body:
         - OTHER (please specify)
     validations:
       required: true
-  - type: markdown # SEPARATOR
-    attributes:
-      value: |
-        ---
+
   - type: input
     id: biome-other
     attributes:
@@ -162,7 +154,7 @@ body:
     attributes:
       label: Explanation/Notes on Design
       description: Explain why you think this design is right and what this Event brings to the table
-      placeholder: ie. "We need more simple Events that mix slightly higher stakes with slightly better rewards"
+      placeholder: e.g. "We need more simple Events that mix slightly higher stakes with slightly better rewards"
     validations:
       required: true
   - type: markdown # SEPARATOR
