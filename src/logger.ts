@@ -1502,6 +1502,7 @@ export function flagReset(scene: BattleScene, floor: integer = undefined) {
   if (localStorage.getItem(getLogID(scene)) == null)
     localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
   var drpd = getDRPD(scene)
+  console.log("Flag Reset", drpd)
   var wv = getWave(drpd, floor, scene)
   wv.reload = true;
   console.log(drpd)
@@ -1526,7 +1527,11 @@ export function flagResetIfExists(scene: BattleScene, floor: integer = undefined
       }
     }
   }
-  if (!waveExists) return;
+  if (!waveExists) {
+    console.log("Skipped wave reset because this is not a reload", drpd)
+    return;
+  }
+  console.log("Flag reset as wave was already played before", drpd)
   var wv = getWave(drpd, floor, scene)
   wv.reload = true;
   console.log(drpd)
