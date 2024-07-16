@@ -1,4 +1,4 @@
-import { Weather, WeatherType } from "#app/data/weather.js";
+import { Weather, WeatherType } from "#app/data/weather";
 import { Biome } from "#app/enums/biome";
 import * as Overrides from "#app/overrides";
 import { vi } from "vitest";

@@ -1,8 +1,8 @@
-import { Button } from "#app/enums/buttons.js";
-import { MessagePhase } from "#app/phases.js";
-import { MysteryEncounterOptionSelectedPhase, MysteryEncounterPhase } from "#app/phases/mystery-encounter-phase.js";
-import MysteryEncounterUiHandler from "#app/ui/mystery-encounter-ui-handler.js";
-import { Mode } from "#app/ui/ui.js";
+import { Button } from "#app/enums/buttons";
+import { MessagePhase } from "#app/phases";
+import { MysteryEncounterOptionSelectedPhase, MysteryEncounterPhase } from "#app/phases/mystery-encounter-phase";
+import MysteryEncounterUiHandler from "#app/ui/mystery-encounter-ui-handler";
+import { Mode } from "#app/ui/ui";
 import GameManager from "../utils/gameManager";
 
 export async function runSelectMysteryEncounterOption(game: GameManager, optionNo: number) {
