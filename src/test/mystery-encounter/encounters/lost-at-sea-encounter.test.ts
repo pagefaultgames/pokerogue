@@ -1,13 +1,17 @@
+import Battle from "#app/battle.js";
 import { LostAtSeaEncounter } from "#app/data/mystery-encounters/encounters/lost-at-sea-encounter";
 import { EncounterOptionMode } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterTier } from "#app/data/mystery-encounters/mystery-encounter.js";
+import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
+import { Biome } from "#app/enums/biome.js";
 import { Button } from "#app/enums/buttons.js";
 import { Moves } from "#app/enums/moves";
 import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
 import { Species } from "#app/enums/species.js";
-import * as Overrides from "#app/overrides";
-import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phase.js";
+import { MessagePhase } from "#app/phases.js";
+import { MysteryEncounterOptionSelectedPhase, MysteryEncounterPhase } from "#app/phases/mystery-encounter-phase.js";
 import GameManager from "#app/test/utils/gameManager.js";
+import { workaround_reInitSceneWithOverrides } from "#app/test/utils/testUtils.js";
 import MysteryEncounterUiHandler from "#app/ui/mystery-encounter-ui-handler.js";
 import { Mode } from "#app/ui/ui.js";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -24,18 +28,18 @@ describe("Lost at Sea - Mystery Encounter", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(Overrides, "MYSTERY_ENCOUNTER_RATE_OVERRIDE", "get").mockReturnValue(100000);
-    vi.spyOn(Overrides, "MYSTERY_ENCOUNTER_OVERRIDE", "get").mockReturnValue(MysteryEncounterType.LOST_AT_SEA);
-    // vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(33);
-    // vi.spyOn(game.scene.currentBattle, "mysteryEncounter", "get").mockReturnValue(LostAtSeaEncounter);
+    game.override.mysteryEncounterChance(100);
+    game.override.startingBiome(Biome.SEA);
+    vi.spyOn(MysteryEncounters, "allMysteryEncounters", "get").mockReturnValue({ [MysteryEncounterType.LOST_AT_SEA]: LostAtSeaEncounter });
   });
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
   });
 
-  it("should have the correct properties", () => {
-    game.runToMysteryEncounter([Species.MAGIKARP, Species.GYARADOS]);
+  it("should have the correct properties", async () => {
+    await game.runToMysteryEncounter([Species.ABRA]);
+
     expect(LostAtSeaEncounter.encounterType).toBe(MysteryEncounterType.LOST_AT_SEA);
     expect(LostAtSeaEncounter.dialogue).toBeDefined();
     expect(LostAtSeaEncounter.dialogue.intro).toStrictEqual([{ text: `${namepsace}:intro` }]);
@@ -46,7 +50,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
   });
 
   it("should not run below wave 11", async () => {
-    vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(10);
+    game.override.startingWave(10);
 
     await game.runToMysteryEncounter();
 
@@ -56,7 +60,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
   });
 
   it("should not run above wave 179", async () => {
-    vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(180);
+    game.override.startingWave(180);
 
     await game.runToMysteryEncounter();
 
@@ -66,6 +70,8 @@ describe("Lost at Sea - Mystery Encounter", () => {
   });
 
   it("should set the correct dialog tokens during initialization", () => {
+    vi.spyOn(game.scene, "currentBattle", "get").mockReturnValue({ mysteryEncounter: LostAtSeaEncounter } as Battle);
+
     const { onInit } = LostAtSeaEncounter;
 
     expect(LostAtSeaEncounter.onInit).toBeDefined();
@@ -135,12 +141,13 @@ describe("Lost at Sea - Mystery Encounter", () => {
     });
 
     it("should apply 25% damage to all Pokemon", async () => {
-      vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(33);
+      game.override.startingWave(33);
 
+      workaround_reInitSceneWithOverrides(game);
       await game.runToMysteryEncounter([Species.ABRA]);
 
       game.onNextPrompt("MysteryEncounterPhase", Mode.MESSAGE, () => {
-        const uiHandler = game.scene.ui.getHandler();
+        const uiHandler = game.scene.ui.getHandler<MysteryEncounterUiHandler>();
         uiHandler.processInput(Button.ACTION);
       });
       game.onNextPrompt("MysteryEncounterPhase", Mode.MYSTERY_ENCOUNTER, () => {
@@ -150,10 +157,32 @@ describe("Lost at Sea - Mystery Encounter", () => {
         uiHandler.processInput(Button.ACTION);
       });
 
+      /** There is some inconsistency in the phase order here. Probably because of the workaround */
+      if (game.isCurrentPhase(MessagePhase)) {
+        game.onNextPrompt("MessagePhase", Mode.MESSAGE, () => {
+          const uiHandler = game.scene.ui.getHandler<MysteryEncounterUiHandler>();
+          uiHandler.processInput(Button.ACTION);
+        });
+        await game.phaseInterceptor.run(MessagePhase);
+      }
+
       await game.phaseInterceptor.run(MysteryEncounterPhase);
 
       const { encounteredEvents } = game.scene.mysteryEncounterData;
       expect(encounteredEvents.some(([type, tier]) => type === MysteryEncounterType.LOST_AT_SEA && tier === MysteryEncounterTier.COMMON)).toBe(true);
+
+      game.onNextPrompt("MysteryEncounterOptionSelectedPhase", Mode.MESSAGE, () => {
+        const uiHandler = game.scene.ui.getHandler<MysteryEncounterUiHandler>();
+        uiHandler.processInput(Button.ACTION);
+      });
+      await game.phaseInterceptor.run(MysteryEncounterOptionSelectedPhase);
+
+      const party = game.scene.getParty();
+      party.forEach((pkm) => {
+        const maxHp = pkm.getMaxHp();
+        const msg = `${pkm.name} should have receivd 25% damage: ${pkm.hp} / ${maxHp} HP`;
+        expect(pkm.hp, msg).toBe(maxHp - Math.floor(maxHp * 0.25));
+      });
     });
   });
 });
