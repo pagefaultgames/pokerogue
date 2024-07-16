@@ -59,10 +59,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "一隻寶可夢的{{moveType}}系招式威力提升20%。",
     },
     PokemonLevelIncrementModifierType: {
-      description: "一隻寶可夢等級提升1級。",
+      description: "Increases a Pokémon's level by {{levels}}.",
     },
     AllPokemonLevelIncrementModifierType: {
-      description: "所有成員寶可夢等級提升1級。",
+      description: "Increases all party members' level by {{levels}}.",
     },
     PokemonBaseStatBoosterModifierType: {
       description:
@@ -153,7 +153,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     SACRED_ASH: { name: "聖灰" },
     REVIVER_SEED: {
       name: "復活種子",
-      description: "恢復1隻瀕死寶可夢的HP至1/2。",
+      description: "受到技能攻擊傷害瀕死時，\n恢復該瀕死寶可夢的HP至1/2。",
     },
     ETHER: { name: "PP單項小補劑" },
     MAX_ETHER: { name: "PP單項全補劑" },
@@ -187,6 +187,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
     LUCKY_EGG: { name: "幸運蛋" },
     GOLDEN_EGG: { name: "金蛋" },
     SOOTHE_BELL: { name: "安撫之鈴" },
+    EVIOLITE: {
+      name: "進化奇石",
+      description: "進化的神奇石塊。攜帶後，還能進化的寶可夢的 防禦和特防就會提高。"
+    },
     SOUL_DEW: {
       name: "心之水滴",
       description: "增加寶可夢性格影響10% (加算)。",
@@ -296,6 +300,12 @@ export const modifierType: ModifierTypeTranslationEntries = {
       name: "融合硬幣",
       description: "增加1%野生融合寶可夢出現概率。",
     },
+  },
+  SpeciesBoosterItem: {
+    "LIGHT_BALL": { name: "電氣球", description: "讓皮卡丘攜帶後，攻擊和特攻就會 提高的神奇之球。" },
+    "THICK_CLUB": { name: "粗骨頭", description: "某種堅硬的骨頭。讓卡拉卡拉或嘎啦嘎啦攜帶後，攻擊就會提高。" },
+    "METAL_POWDER": { name: "金屬粉", description: "讓百變怪攜帶後，防禦就會提高的神奇粉末。非常細緻堅硬。" },
+    "QUICK_POWDER": { name: "速度粉", description: "讓百變怪攜帶後，速度就會提高的神奇粉末。非常細緻堅硬。" }
   },
   TempBattleStatBoosterItem: {
     x_attack: "力量強化",

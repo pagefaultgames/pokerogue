@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
-import * as Overrides from "#app/overrides";
+import Overrides from "#app/overrides";
 import { Moves } from "#enums/moves";
 import { Abilities } from "#enums/abilities";
 import { Species } from "#enums/species";
@@ -61,6 +61,37 @@ describe("Abilities - DISGUISE", () => {
       await game.phaseInterceptor.to(QuietFormChangePhase);
 
       expect(mimikyu.formIndex).toBe(baseForm);
+    },
+    TIMEOUT
+  );
+
+  test(
+    "damage taken should be equal to 1/8 of its maximum HP, rounded down",
+    async () => {
+      const baseForm = 0,
+        bustedForm = 1;
+
+      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.DARK_PULSE, Moves.DARK_PULSE, Moves.DARK_PULSE, Moves.DARK_PULSE]);
+      vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(20);
+      vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(20);
+      vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
+      vi.spyOn(Overrides, "STARTER_FORM_OVERRIDES", "get").mockReturnValue({
+        [Species.MIMIKYU]: baseForm,
+      });
+
+      await game.startBattle([Species.MIMIKYU]);
+
+      const mimikyu = game.scene.getPlayerPokemon();
+      const damage = (Math.floor(mimikyu.getMaxHp()/8));
+
+      expect(mimikyu).not.toBe(undefined);
+      expect(mimikyu.formIndex).toBe(baseForm);
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+      await game.phaseInterceptor.to(TurnEndPhase);
+
+      expect(mimikyu.formIndex).toBe(bustedForm);
+      expect(game.scene.getEnemyPokemon().turnData.currDamageDealt).toBe(damage);
     },
     TIMEOUT
   );

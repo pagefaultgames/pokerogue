@@ -58,10 +58,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "Erhöht die Stärke aller {{moveType}}-Attacken eines Pokémon um 20%.",
     },
     "PokemonLevelIncrementModifierType": {
-      description: "Erhöht das Level eines Pokémon um 1.",
+      description: "Erhöht das Level eines Pokémon um {{levels}}.",
     },
     "AllPokemonLevelIncrementModifierType": {
-      description: "Erhöht das Level aller Teammitglieder um 1.",
+      description: "Erhöht das Level aller Teammitglieder um {{levels}}.",
     },
     "PokemonBaseStatBoosterModifierType": {
       description: "Erhöht den {{statName}} Basiswert des Trägers um 10%. Das Stapellimit erhöht sich, je höher dein IS-Wert ist.",
@@ -151,7 +151,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SACRED_ASH": { name: "Zauberasche" },
 
-    "REVIVER_SEED": { name: "Belebersamen", description: "Belebt den Träger mit der Hälfte seiner KP wieder sollte er kampfunfähig werden." },
+    "REVIVER_SEED": { name: "Belebersamen", description: "Belebt den Träger mit der Hälfte seiner KP wieder,  sollte er  durch einen direkten Treffer kampfunfähig werden." },
 
     "ETHER": { name: "Äther" },
     "MAX_ETHER": { name: "Top-Äther" },
@@ -182,6 +182,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SOOTHE_BELL": { name: "Sanftglocke" },
 
+    "EVIOLITE": { name: "Evolith", description: "Ein mysteriöser Klumpen, der die Vert. u. Spez.-Vert. von Pokémon erhöht, die sich noch entwickeln können." },
+
     "SOUL_DEW": { name: "Seelentau", description: "Erhöht den Einfluss des Wesens eines Pokemon auf seine Werte um 10% (additiv)." },
 
     "NUGGET": { name: "Nugget" },
@@ -206,7 +208,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "FOCUS_BAND": { name: "Fokusband", description: "Fügt eine 10% Chance hinzu, dass Angriffe die zur Kampfunfähigkeit führen mit 1 KP überlebt werden." },
 
-    "QUICK_CLAW": { name: "Quick Claw", description: "Fügt eine 10% Change hinzu als erster anzugreifen. (Nach Prioritätsangriffen)." },
+    "QUICK_CLAW": { name: "Flinkklaue", description: "Fügt eine 10% Change hinzu als erster anzugreifen. (Nach Prioritätsangriffen)." },
 
     "KINGS_ROCK": { name: "King-Stein", description: "Fügt eine 10% Chance hinzu, dass der Gegner nach einem Angriff zurückschreckt." },
 
@@ -219,7 +221,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "BATON": { name: "Stab", description: "Ermöglicht das Weitergeben von Effekten beim Wechseln von Pokémon, wodurch auch Fallen umgangen werden." },
 
     "SHINY_CHARM": { name: "Schillerpin", description: "Erhöht die Chance deutlich, dass ein wildes Pokémon ein schillernd ist." },
-    "ABILITY_CHARM": { name: "Ability Charm", description: "Erhöht die Chance deutlich, dass ein wildes Pokémon eine versteckte Fähigkeit hat." },
+    "ABILITY_CHARM": { name: "Fähigkeitspin", description: "Erhöht die Chance deutlich, dass ein wildes Pokémon eine versteckte Fähigkeit hat." },
 
     "IV_SCANNER": { name: "IS-Scanner", description: "Erlaubt es die IS-Werte von wilden Pokémon zu scannen.\n(2 IS-Werte pro Staplung. Die besten IS-Werte zuerst)." },
 
@@ -239,6 +241,12 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_ENDURE_CHANCE": { "name": "Ausdauer-Marke" },
     "ENEMY_FUSED_CHANCE": { "name": "Fusionsmarke", "description": "Fügt eine 1%ige Chance hinzu, dass ein wildes Pokémon eine Fusion ist." },
 
+  },
+  SpeciesBoosterItem: {
+    "LIGHT_BALL": { name: "Kugelblitz", description: "Ein Item, das von Pikachu getragen werden kann. Es erhöht den Angriff und den Spezial-Angriff." },
+    "THICK_CLUB": { name: "Kampfknochen", description: "Ein Item, das von Tragosso oder Knogga getragen werden kann. Dieser harte Knochen erhöht den Angriff." },
+    "METAL_POWDER": { name: "Metallstaub", description: "Ein Item, das von Ditto getragen werden kann. Fein und doch hart, erhöht dieses sonderbare Pulver die Verteidigung." },
+    "QUICK_POWDER": { name: "Flottstaub", description: "Ein Item, das Ditto zum Tragen gegeben werden kann. Fein und doch hart, erhöht dieses sonderbare Pulver die Initiative." }
   },
   TempBattleStatBoosterItem: {
     "x_attack": "X-Angriff",

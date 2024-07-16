@@ -13,7 +13,7 @@ import { BattlerIndex } from "../battle";
 import { Terrain, TerrainType } from "../data/terrain";
 import { PostTerrainChangeAbAttr, PostWeatherChangeAbAttr, applyPostTerrainChangeAbAttrs, applyPostWeatherChangeAbAttrs } from "../data/ability";
 import Pokemon from "./pokemon";
-import * as Overrides from "../overrides";
+import Overrides from "../overrides";
 import { WeatherChangedEvent, TerrainChangedEvent, TagAddedEvent, TagRemovedEvent } from "../events/arena";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { Biome } from "#enums/biome";
@@ -384,6 +384,10 @@ export class Arena {
     return weatherMultiplier * terrainMultiplier;
   }
 
+  /**
+   * Gets the denominator for the chance for a trainer spawn
+   * @returns n where 1/n is the chance of a trainer battle
+   */
   getTrainerChance(): integer {
     switch (this.biomeType) {
     case Biome.METROPOLIS:
@@ -634,6 +638,12 @@ export class Arena {
     }
   }
 
+  /** Clears terrain and arena tags when entering new biome or trainer battle. */
+  resetArenaEffects(): void {
+    this.trySetTerrain(TerrainType.NONE, false, true);
+    this.removeAllTags();
+  }
+
   preloadBgm(): void {
     this.scene.loadBgm(this.bgm);
   }
@@ -661,7 +671,7 @@ export class Arena {
     case Biome.LAKE:
       return 5.350;
     case Biome.SEABED:
-      return 2.629;
+      return 2.600;
     case Biome.MOUNTAIN:
       return 4.018;
     case Biome.BADLANDS:
@@ -691,7 +701,7 @@ export class Arena {
     case Biome.ABYSS:
       return 5.130;
     case Biome.SPACE:
-      return 21.347;
+      return 20.036;
     case Biome.CONSTRUCTION_SITE:
       return 1.222;
     case Biome.JUNGLE:

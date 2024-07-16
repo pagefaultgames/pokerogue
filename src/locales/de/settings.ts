@@ -82,7 +82,7 @@ export const settings: SimpleTranslationEntries = {
   "buttonMenu": "Menü",
   "buttonSubmit": "Bestätigen",
   "buttonCancel": "Abbrechen",
-  "buttonStats": "Statistiken",
+  "buttonStats": "Statuswerte",
   "buttonCycleForm": "Form wechseln",
   "buttonCycleShiny": "Schillernd wechseln",
   "buttonCycleGender": "Geschlecht wechseln",
@@ -97,4 +97,5 @@ export const settings: SimpleTranslationEntries = {
   "gamepadSupport": "Controllerunterstützung",
   "showBgmBar": "Musiknamen anzeigen",
   "moveTouchControls": "Bewegung Touch Steuerung",
+  "shopOverlayOpacity": "Shop Overlay Deckkraft",
 } as const;
