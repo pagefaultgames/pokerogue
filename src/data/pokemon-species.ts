@@ -1073,7 +1073,7 @@ export function initSpecies() {
     new PokemonSpecies(Species.EEVEE, 1, false, false, false, "Evolution Pokémon", Type.NORMAL, null, 0.3, 6.5, Abilities.RUN_AWAY, Abilities.ADAPTABILITY, Abilities.ANTICIPATION, 325, 55, 55, 50, 45, 65, 55, 45, 50, 65, GrowthRate.MEDIUM_FAST, 87.5, false, true,
       new PokemonForm("Normal", "", Type.NORMAL, null, 0.3, 6.5, Abilities.RUN_AWAY, Abilities.ADAPTABILITY, Abilities.ANTICIPATION, 325, 55, 55, 50, 45, 65, 55, 45, 50, 65, false, null, true),
       new PokemonForm("Partner", "partner", Type.NORMAL, null, 0.3, 6.5, Abilities.RUN_AWAY, Abilities.ADAPTABILITY, Abilities.ANTICIPATION, 435, 65, 75, 70, 65, 85, 75, 45, 50, 65, false, null, true),
-      new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX, Type.STELLAR, Type.NORMAL, 18, 6.5, Abilities.PROTEAN, Abilities.PROTEAN, Abilities.PROTEAN, 535, 105, 95, 70, 95, 85, 85, 45, 50, 65), //+100 BST from Partner Form
+      new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX, Type.NORMAL, null, 18, 6.5, Abilities.PROTEAN, Abilities.PROTEAN, Abilities.PROTEAN, 535, 105, 95, 70, 95, 85, 85, 45, 50, 65), //+100 BST from Partner Form
     ),
     new PokemonSpecies(Species.VAPOREON, 1, false, false, false, "Bubble Jet Pokémon", Type.WATER, null, 1, 29, Abilities.WATER_ABSORB, Abilities.NONE, Abilities.HYDRATION, 525, 130, 65, 60, 110, 95, 65, 45, 50, 184, GrowthRate.MEDIUM_FAST, 87.5, false),
     new PokemonSpecies(Species.JOLTEON, 1, false, false, false, "Lightning Pokémon", Type.ELECTRIC, null, 0.8, 24.5, Abilities.VOLT_ABSORB, Abilities.NONE, Abilities.QUICK_FEET, 525, 65, 65, 60, 110, 95, 130, 45, 50, 184, GrowthRate.MEDIUM_FAST, 87.5, false),
