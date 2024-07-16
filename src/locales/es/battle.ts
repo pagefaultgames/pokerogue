@@ -89,6 +89,7 @@ export const battle: SimpleTranslationEntries = {
   "statSeverelyFell_other": "¡{{stats}} de\n{{pokemonNameWithAffix}} han bajado muchísimo!",
   "statWontGoAnyLower_one": "¡El {{stats}} de {{pokemonNameWithAffix}} no puede bajar más!",
   "statWontGoAnyLower_other": "¡{{stats}} de\n{{pokemonNameWithAffix}} no pueden bajar más!",
+  "transformedIntoType": "{{pokemonName}} transformed\ninto the {{type}} type!",
   "retryBattle": "Would you like to retry from the start of the battle?",
   "unlockedSomething": "{{unlockedThing}}\nhas been unlocked.",
   "congratulations": "Congratulations!",

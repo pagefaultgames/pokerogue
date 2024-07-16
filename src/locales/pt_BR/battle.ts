@@ -89,6 +89,7 @@ export const battle: SimpleTranslationEntries = {
   "statSeverelyFell_other": "{{stats}} de {{pokemonNameWithAffix}} diminuíram severamente!",
   "statWontGoAnyLower_one": "{{stats}} de {{pokemonNameWithAffix}} não vai mais diminuir!",
   "statWontGoAnyLower_other": "{{stats}} de {{pokemonNameWithAffix}} não vão mais diminuir!",
+  "transformedIntoType": "{{pokemonName}} transformed\ninto the {{type}} type!",
   "ppReduced": "O PP do movimento {{moveName}} de\n{{targetName}} foi reduzido em {{reduction}}!",
   "retryBattle": "Você gostaria de tentar novamente desde o início da batalha?",
   "unlockedSomething": "{{unlockedThing}}\nfoi desbloqueado.",
