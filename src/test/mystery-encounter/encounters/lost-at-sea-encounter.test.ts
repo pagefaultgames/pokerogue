@@ -1,20 +1,18 @@
-import Battle from "#app/battle.js";
+import Battle from "#app/battle";
 import { LostAtSeaEncounter } from "#app/data/mystery-encounters/encounters/lost-at-sea-encounter";
+import { MysteryEncounterTier } from "#app/data/mystery-encounters/mystery-encounter";
 import { EncounterOptionMode } from "#app/data/mystery-encounters/mystery-encounter-option";
-import { MysteryEncounterTier } from "#app/data/mystery-encounters/mystery-encounter.js";
 import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
-import { Biome } from "#app/enums/biome.js";
-import { Button } from "#app/enums/buttons.js";
+import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { WeatherType } from "#app/data/weather";
+import { Biome } from "#app/enums/biome";
 import { Moves } from "#app/enums/moves";
 import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
-import { Species } from "#app/enums/species.js";
-import { MessagePhase } from "#app/phases.js";
-import { MysteryEncounterOptionSelectedPhase, MysteryEncounterPhase } from "#app/phases/mystery-encounter-phase.js";
-import GameManager from "#app/test/utils/gameManager.js";
-import { workaround_reInitSceneWithOverrides } from "#app/test/utils/testUtils.js";
-import MysteryEncounterUiHandler from "#app/ui/mystery-encounter-ui-handler.js";
-import { Mode } from "#app/ui/ui.js";
+import { Species } from "#app/enums/species";
+import GameManager from "#app/test/utils/gameManager";
+import { workaround_reInitSceneWithOverrides } from "#app/test/utils/testUtils";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { runSelectMysteryEncounterOption } from "../encounterTestUtils";
 
 const namepsace = "mysteryEncounter:lostAtSea";
 
@@ -140,74 +138,26 @@ describe("Lost at Sea - Mystery Encounter", () => {
       });
     });
 
-    it("should apply 25% damage to all Pokemon", async () => {
+    it("should handle the option phase properly", async () => {
       game.override.startingWave(33);
+      game.override.weather(WeatherType.RAIN);
+      const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
 
       workaround_reInitSceneWithOverrides(game);
-      await game.runToMysteryEncounter([Species.ABRA]);
-
-      game.onNextPrompt("MysteryEncounterPhase", Mode.MESSAGE, () => {
-        const uiHandler = game.scene.ui.getHandler<MysteryEncounterUiHandler>();
-        uiHandler.processInput(Button.ACTION);
-      });
-      game.onNextPrompt("MysteryEncounterPhase", Mode.MYSTERY_ENCOUNTER, () => {
-        const uiHandler = game.scene.ui.getHandler<MysteryEncounterUiHandler>();
-        uiHandler.unblockInput();
-        uiHandler.processInput(Button.DOWN);
-        uiHandler.processInput(Button.ACTION);
-      });
-
-      /** There is some inconsistency in the phase order here. Probably because of the workaround */
-      if (game.isCurrentPhase(MessagePhase)) {
-        game.onNextPrompt("MessagePhase", Mode.MESSAGE, () => {
-          const uiHandler = game.scene.ui.getHandler<MysteryEncounterUiHandler>();
-          uiHandler.processInput(Button.ACTION);
-        });
-        await game.phaseInterceptor.run(MessagePhase);
-      }
-
-      await game.phaseInterceptor.run(MysteryEncounterPhase);
+      await game.runToMysteryEncounter([Species.ABRA, Species.ZEBSTRIKA, Species.BULBASAUR, Species.GROUDON]);
+      await runSelectMysteryEncounterOption(game, 3);
 
       const { encounteredEvents } = game.scene.mysteryEncounterData;
-      expect(encounteredEvents.some(([type, tier]) => type === MysteryEncounterType.LOST_AT_SEA && tier === MysteryEncounterTier.COMMON)).toBe(true);
-
-      game.onNextPrompt("MysteryEncounterOptionSelectedPhase", Mode.MESSAGE, () => {
-        const uiHandler = game.scene.ui.getHandler<MysteryEncounterUiHandler>();
-        uiHandler.processInput(Button.ACTION);
-      });
-      await game.phaseInterceptor.run(MysteryEncounterOptionSelectedPhase);
-
       const party = game.scene.getParty();
+
+      expect(encounteredEvents.some(([type, tier]) => type === MysteryEncounterType.LOST_AT_SEA && tier === MysteryEncounterTier.COMMON)).toBe(true);
       party.forEach((pkm) => {
         const maxHp = pkm.getMaxHp();
-        const msg = `${pkm.name} should have receivd 25% damage: ${pkm.hp} / ${maxHp} HP`;
-        expect(pkm.hp, msg).toBe(maxHp - Math.floor(maxHp * 0.25));
+        const expectMsg = `${pkm.name} should have receivd 25% damage: ${pkm.hp} / ${maxHp} HP`;
+
+        expect(pkm.hp, expectMsg).toBe(maxHp - Math.floor(maxHp * 0.25));
       });
+      expect(leaveEncounterWithoutBattleSpy).toBeCalled();
     });
   });
 });
-
-/*
-// Import necessary dependencies for testing
-import { describe, it, expect } from "vitest";
-import { LostAtSeaEncounter } from "../lost-at-sea-encounter";
-import BattleScene from "../../../battle-scene";
-
-describe("Lost At Sea Encounter Tests", () => {
-  it("should set the correct encounter properties", () => {
-    // Test the properties of the LostAtSeaEncounter object
-    // For example, test the encounter type, tier, scene wave range requirement, etc.
-    // You can use expect statements to check if the properties are set correctly
-  });
-
-  it("should handle the guiding pokemon phase correctly", () => {
-    // Create a mock BattleScene object for testing
-    const scene = new BattleScene(); // You may need to customize this based on your actual implementation
-
-    // Call the handlePokemongGuidingYouPhase function with the scene
-    handlePokemongGuidingYouPhase(scene);
-
-    // Use expect statements to verify the behavior of the function
-    // For example, check if the function sets the correct EXP value or handles cases where no guide pokemon is found
-  });
-});*/
