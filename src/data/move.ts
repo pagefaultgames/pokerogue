@@ -2538,7 +2538,8 @@ export class CutHpStatBoostAttr extends StatChangeAttr {
       }
       user.updateInfo().then(() => {
         const ret = super.apply(user, target, move, args);
-        if (this.levels === 6 && this.stats.length === 1) {
+        if (this.levels === 12 && this.stats.length === 1) {
+          //This message is specifically for Belly Drum
           user.scene.queueMessage(getPokemonMessage(user, ` cut its own HP\nand maximized its ${getBattleStatName(this.stats[0])}!`));
         }
         resolve(ret);
@@ -6205,7 +6206,7 @@ export function initMoves() {
     new StatusMove(Moves.SWEET_KISS, Type.FAIRY, 75, 10, -1, 0, 2)
       .attr(ConfuseAttr),
     new SelfStatusMove(Moves.BELLY_DRUM, Type.NORMAL, -1, 10, -1, 0, 2)
-      .attr(CutHpStatBoostAttr, [BattleStat.ATK], 6, 2),
+      .attr(CutHpStatBoostAttr, [BattleStat.ATK], 12, 2),
     new AttackMove(Moves.SLUDGE_BOMB, Type.POISON, MoveCategory.SPECIAL, 90, 100, 10, 30, 0, 2)
       .attr(StatusEffectAttr, StatusEffect.POISON)
       .ballBombMove(),
