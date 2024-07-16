@@ -2547,7 +2547,7 @@ export class CutHpStatBoostAttr extends StatChangeAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => user.getHpRatio() > 1 / this.cutRatio && this.stats.every(s => user.summonData.battleStats[s] < 6);
+    return (user, target, move) => user.getHpRatio() > 1 / this.cutRatio && this.stats.some(s => user.summonData.battleStats[s] < 6);
   }
 }
 
