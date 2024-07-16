@@ -604,20 +604,20 @@ export const PGMdialogue: DialogueTranslationEntries = {
    "aether_boss_lusamine_2": {
     "encounter": {
       1: `You hateful little Trainer! How dare you intrude upon this world that was meant for Nihilego and me? 
-		 $I will show you how wrong you were to come here!`
+          $I will show you how wrong you were to come here!`
     },
     "victory": {
       1: "Aaauuuughhhh!!"
     },
     "defeat": {
       1: `The world of my Ultra Beasts... 
-        $A world where the only thing that exists is the love between Nihilego and myself`
+          $A world where the only thing that exists is the love between Nihilego and myself`
     }
   }, 
   "skull_boss_guzma_1": {
     "encounter": {
       1: `Doesn't matter who I'm up against, I'm gonna beat them down! 
-         $That's what big bad Guzma is all about!`
+          $That's what big bad Guzma is all about!`
     },
     "victory": {
       1: "Tch. I'm gonna beat you down one of these days!"
@@ -656,11 +656,11 @@ export const PGMdialogue: DialogueTranslationEntries = {
     },
     "victory": {
       1: `I'd forgotten how great Pokémon battles are! It's been so long since I battled... 
-         $That sure was satisfying.`
+          $That sure was satisfying.`
     },
     "defeat": {
       1: `I suppose it must seem that I am doing something terrible. I don't expect you to understand. 
-         $But I must provide the Galar region with limitless energy to ensure everlasting prosperity.`
+          $But I must provide the Galar region with limitless energy to ensure everlasting prosperity.`
     }
   },  
   "brock": {
