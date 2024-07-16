@@ -1613,6 +1613,10 @@ export class StockpilingTag extends BattlerTag {
     [BattleStat.SPDEF]: 0
   };
 
+  constructor(sourceMove: Moves = Moves.NONE) {
+    super(BattlerTagType.STOCKPILING, BattlerTagLapseType.CUSTOM, 1, sourceMove);
+  }
+
   private onStatsChanged: StatChangeCallback = (_, statsChanged, statChanges) => {
     const defChange = statChanges[statsChanged.indexOf(BattleStat.DEF)] ?? 0;
     const spDefChange = statChanges[statsChanged.indexOf(BattleStat.SPDEF)] ?? 0;
@@ -1625,10 +1629,6 @@ export class StockpilingTag extends BattlerTag {
       this.statChangeCounts[BattleStat.SPDEF]++;
     }
   };
-
-  constructor(sourceMove: Moves) {
-    super(BattlerTagType.STOCKPILING, BattlerTagLapseType.CUSTOM, 1, sourceMove);
-  }
 
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
@@ -1657,7 +1657,7 @@ export class StockpilingTag extends BattlerTag {
       }));
 
       // Attempt to increase DEF and SPDEF by one stage, keeping track of successful changes.
-      pokemon.scene.phaseQueue.unshift(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.SPDEF, BattleStat.DEF], 1, true, false, true, this.onStatsChanged));
+      pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.SPDEF, BattleStat.DEF], 1, true, false, true, this.onStatsChanged));
     }
   }
 
@@ -1676,11 +1676,11 @@ export class StockpilingTag extends BattlerTag {
     const spDefChange = this.statChangeCounts[BattleStat.SPDEF];
 
     if (defChange) {
-      pokemon.scene.phaseQueue.unshift(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.DEF], -defChange, true, false, true));
+      pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.DEF], -defChange, true, false, true));
     }
 
     if (spDefChange) {
-      pokemon.scene.phaseQueue.unshift(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.SPDEF], -spDefChange, true, false, true));
+      pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.SPDEF], -spDefChange, true, false, true));
     }
   }
 }

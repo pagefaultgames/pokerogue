@@ -3272,7 +3272,7 @@ export class StockpilePowerAttr extends VariablePowerAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const stockpilingTag = user.getTag(BattlerTagType.STOCKPILING) as StockpilingTag;
+    const stockpilingTag = user.getTag(StockpilingTag);
 
     if (stockpilingTag?.stockpiledCount > 0) {
       const power = args[0] as Utils.IntegerHolder;
@@ -3290,7 +3290,7 @@ export class StockpilePowerAttr extends VariablePowerAttr {
  */
 export class SwallowHealAttr extends HealAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const stockpilingTag = user.getTag(BattlerTagType.STOCKPILING) as StockpilingTag;
+    const stockpilingTag = user.getTag(StockpilingTag);
 
     if (stockpilingTag?.stockpiledCount > 0) {
       const stockpiled = stockpilingTag.stockpiledCount;
@@ -3314,7 +3314,7 @@ export class SwallowHealAttr extends HealAttr {
   }
 }
 
-const hasStockpileStacksCondition: MoveConditionFunc = (user) => (user.getTag(BattlerTagType.STOCKPILING) as StockpilingTag)?.stockpiledCount > 0;
+const hasStockpileStacksCondition: MoveConditionFunc = (user) => user.getTag(StockpilingTag)?.stockpiledCount > 0;
 
 /**
  * Attribute used for multi-hit moves that increase power in increments of the
