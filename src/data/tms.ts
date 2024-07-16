@@ -44794,12 +44794,6 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_DECIDUEYE,
     Species.ETERNAL_FLOETTE,
   ],
-  [Moves.VOLT_TACKLE]: [
-    Species.PIKACHU,
-    Species.RAICHU,
-    Species.PICHU,
-    Species.ALOLA_RAICHU,
-  ],
   [Moves.MAGICAL_LEAF]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
@@ -60559,12 +60553,6 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_LILLIGANT,
     Species.HISUI_BRAVIARY,
   ],
-  [Moves.RELIC_SONG]: [
-    Species.MELOETTA,
-  ],
-  [Moves.SECRET_SWORD]: [
-    Species.KELDEO,
-  ],
   [Moves.SNARL]: [
     Species.EKANS,
     Species.ARBOK,
@@ -62920,9 +62908,6 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_MAROWAK,
     Species.GALAR_DARUMAKA,
     Species.GALAR_DARMANITAN,
-  ],
-  [Moves.DRAGON_ASCENT]: [
-    Species.RAYQUAZA,
   ],
   [Moves.DARKEST_LARIAT]: [
     Species.POLIWRATH,
@@ -68110,7 +68095,6 @@ export const tmPoolTiers: TmPoolTiers = {
   [Moves.MUD_SHOT]: ModifierTier.GREAT,
   [Moves.POISON_TAIL]: ModifierTier.GREAT,
   [Moves.COVET]: ModifierTier.GREAT,
-  [Moves.VOLT_TACKLE]: ModifierTier.ULTRA,
   [Moves.MAGICAL_LEAF]: ModifierTier.GREAT,
   [Moves.CALM_MIND]: ModifierTier.GREAT,
   [Moves.LEAF_BLADE]: ModifierTier.ULTRA,
@@ -68233,7 +68217,6 @@ export const tmPoolTiers: TmPoolTiers = {
   [Moves.DAZZLING_GLEAM]: ModifierTier.ULTRA,
   [Moves.INFESTATION]: ModifierTier.COMMON,
   [Moves.POWER_UP_PUNCH]: ModifierTier.GREAT,
-  [Moves.DRAGON_ASCENT]: ModifierTier.ULTRA,
   [Moves.DARKEST_LARIAT]: ModifierTier.GREAT,
   [Moves.HIGH_HORSEPOWER]: ModifierTier.ULTRA,
   [Moves.SOLAR_BLADE]: ModifierTier.GREAT,
