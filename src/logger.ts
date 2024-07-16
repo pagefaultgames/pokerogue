@@ -9,7 +9,7 @@ import { OptionSelectItem } from "./ui/abstact-option-select-ui-handler";
 import { PokemonHeldItemModifier } from "./modifier/modifier";
 import { getBiomeName, PokemonPools, SpeciesTree } from "./data/biomes";
 import { Mode } from "./ui/ui";
-import { TitlePhase } from "./phases";
+import { parseSlotData, TitlePhase } from "./phases";
 import Trainer from "./field/trainer";
 import { Species } from "./enums/species";
 import { GameMode, GameModes } from "./game-mode";
@@ -139,7 +139,14 @@ export function getLogs() {
     logs.pop()
   for (var i = 0; i < localStorage.length; i++) {
     if (localStorage.key(i).substring(0, 9) == "drpd_log:") {
-      logs.push(["drpd.json", localStorage.key(i), localStorage.key(i).substring(9), "drpd_items:" + localStorage.key(i).substring(9), "", ""])
+      logs.push(["drpd.json", localStorage.key(i), localStorage.key(i).substring(9), "", "", ""])
+      for (var j = 0; j < 5; j++) {
+        var D = parseSlotData(j)
+        if (D != undefined)
+          if (logs[logs.length - 1][2] == D.seed) {
+            logs[logs.length - 1][3] = j.toString()
+          }
+      }
     }
   }
 }
@@ -1300,6 +1307,59 @@ export function generateEditOption(scene: BattleScene, i: integer, saves: any, p
     op.item = logs[i][4]
   }
   return op;
+}
+/**
+ * Generates a UI option to save a log to your device.
+ * @param i The slot number. Corresponds to an index in `logs`.
+ * @param saves Your session data. Used to label logs if they match one of your save slots.
+ * @returns A UI option.
+ */
+export function generateEditHandler(scene: BattleScene, logId: string, callback: Function) {
+  var i;
+  for (var j = 0; j < logs.length; j++) {
+    if (logs[j][2] == logId) {
+      i = j;
+    }
+  }
+  if (i == undefined)
+    return; // Failed to find a log
+  return (): boolean => {
+    rarityslot[1] = logs[i][1]
+    //scene.phaseQueue[0].end()
+    scene.ui.setMode(Mode.NAME_LOG, {
+      autofillfields: [
+        (JSON.parse(localStorage.getItem(logs[i][1])) as DRPD).title,
+        (JSON.parse(localStorage.getItem(logs[i][1])) as DRPD).authors.join(", "),
+        (JSON.parse(localStorage.getItem(logs[i][1])) as DRPD).label,
+      ],
+      buttonActions: [
+        () => {
+          console.log("Rename")
+          scene.ui.playSelect();
+          callback()
+        },
+        () => {
+          console.log("Export")
+          scene.ui.playSelect();
+          downloadLogByID(i)
+          callback()
+        },
+        () => {
+          console.log("Export to Sheets")
+          scene.ui.playSelect();
+          downloadLogByIDToSheet(i)
+          callback()
+        },
+        () => {
+          console.log("Delete")
+          scene.ui.playSelect();
+          localStorage.removeItem(logs[i][1])
+          callback()
+        }
+      ]
+    });
+    return false;
+  }
 }
 
 //#endregion

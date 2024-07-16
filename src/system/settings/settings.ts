@@ -103,7 +103,10 @@ export const SettingKeys = {
   LazyReloads: "FLAG_EVERY_RESET_AS_RELOAD",
   FancyBiome: "FANCY_BIOMES",
   ShowAutosaves: "SHOW_AUTOSAVES",
-  BiomePanels: "BIOME_PANELS"
+  TitleScreenContinueMode: "TITLE_SCREEN_QUICKLOAD",
+  BiomePanels: "BIOME_PANELS",
+  DailyShinyLuck: "DAILY_LUCK",
+  QuickloadDisplay: "QUICKLOAD_MODE"
 };
 
 /**
@@ -189,6 +192,35 @@ export const Setting: Array<Setting> = [
       label: "On",
       value: "On"
     }],
+    default: 0,
+    type: SettingType.GENERAL,
+  },
+  {
+    key: SettingKeys.TitleScreenContinueMode,
+    label: "Quick Load",
+    options: [{
+      label: "Off",
+      value: "Off" // Shows "Continue" button on the home screen
+    }, {
+      label: "Daily",
+      value: "Daily" // Shows the last played Daily Run, or the last run if there are no Daily Runs
+    }, {
+      label: "Dailies",
+      value: "Dailies" // Shows all Daily Runs, or the last run if there are no Daily Runs
+    }, {
+      label: "Latest",
+      value: "Latest" // Shows the last run
+    }, {
+      label: "Both",
+      value: "Both" // Shows the last run and the last Daily Run, or only the last played game if it is a Daily Run
+    }],
+    default: 2,
+    type: SettingType.GENERAL,
+  },
+  {
+    key: SettingKeys.DailyShinyLuck,
+    label: "Daily Shiny Luck",
+    options: OFF_ON,
     default: 0,
     type: SettingType.GENERAL,
   },
@@ -688,6 +720,10 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     scene.showAutosaves = Setting[index].options[value].value == "On"
   case SettingKeys.BiomePanels:
     scene.doBiomePanels = Setting[index].options[value].value == "On"
+  case SettingKeys.DailyShinyLuck:
+    scene.disableDailyShinies = Setting[index].options[value].value == "Off"
+  case SettingKeys.QuickloadDisplay:
+    scene.quickloadDisplayMode  = Setting[index].options[value].value;
   case SettingKeys.Skip_Seen_Dialogues:
     scene.skipSeenDialogues = Setting[index].options[value].value === "On";
     break;

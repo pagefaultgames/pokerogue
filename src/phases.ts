@@ -652,6 +652,18 @@ export class TitlePhase extends Phase {
       handler: () => {
         this.scene.biomeChangeMode = false
         return this.logRenameMenu()
+        /*
+        this.scene.ui.setOverlayMode(Mode.LOG_HANDLER,
+          (k: string) => {
+            if (k === undefined) {
+              return this.showOptions();
+            }
+            console.log(k)
+          }, () => {
+            this.showOptions();
+          });
+        return true;
+        */
       }
     })
     options.push({
@@ -6496,7 +6508,7 @@ export class SelectModifierPhase extends BattlePhase {
   }
 
   getModifierTypeOptions(modifierCount: integer): ModifierTypeOption[] {
-    return getPlayerModifierTypeOptions(modifierCount, this.scene.getParty(), this.scene.lockModifierTiers ? this.modifierTiers : undefined);
+    return getPlayerModifierTypeOptions(modifierCount, this.scene.getParty(), this.scene.lockModifierTiers ? this.modifierTiers : undefined, this.scene);
   }
 
   addModifier(modifier: Modifier): Promise<boolean> {

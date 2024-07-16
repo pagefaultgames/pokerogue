@@ -85,7 +85,8 @@ export enum Mode {
   UNAVAILABLE,
   OUTDATED,
   CHALLENGE_SELECT,
-  NAME_LOG
+  NAME_LOG,
+  LOG_HANDLER
 }
 
 const transitionModes = [
@@ -98,7 +99,8 @@ const transitionModes = [
   Mode.EGG_LIST,
   Mode.EGG_GACHA,
   Mode.CHALLENGE_SELECT,
-  Mode.NAME_LOG
+  Mode.NAME_LOG,
+  Mode.LOG_HANDLER
 ];
 
 const noTransitionModes = [
@@ -184,7 +186,8 @@ export default class UI extends Phaser.GameObjects.Container {
       new UnavailableModalUiHandler(scene),
       new OutdatedModalUiHandler(scene),
       new GameChallengesUiHandler(scene),
-      new LogNameFormUiHandler(scene)
+      new LogNameFormUiHandler(scene),
+      new TargetSelectUiHandler(scene)
     ];
   }
 

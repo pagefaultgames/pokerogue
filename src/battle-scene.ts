@@ -125,6 +125,8 @@ export default class BattleScene extends SceneBase {
   public menuChangesBiome: boolean = false;
   public showAutosaves: boolean = false;
   public doBiomePanels: boolean = false;
+  public disableDailyShinies: boolean = true; // Disables shiny luck in Daily Runs to prevent affecting RNG
+  public quickloadDisplayMode: string = "Dailies";
   /**
    * Determines the condition for a notification should be shown for Candy Upgrades
    * - 0 = 'Off'
@@ -899,6 +901,32 @@ export default class BattleScene extends SceneBase {
       if (originY !== 0) {
         container.y -= icon.height * originY;
       }
+    }
+
+    return container;
+  }
+  addPkIcon(pokemon: PokemonSpecies, form: integer = 0, x: number, y: number, originX: number = 0.5, originY: number = 0.5, ignoreOverride: boolean = false): Phaser.GameObjects.Container {
+    const container = this.add.container(x, y);
+    container.setName(`${pokemon.name}-icon`);
+
+    const icon = this.add.sprite(0, 0, pokemon.getIconAtlasKey(form));
+    icon.setName(`sprite-${pokemon.name}-icon`);
+    icon.setFrame(pokemon.getIconId(true));
+    // Temporary fix to show pokemon's default icon if variant icon doesn't exist
+    if (icon.frame.name !== pokemon.getIconId(true)) {
+      console.log(`${pokemon.name}'s variant icon does not exist. Replacing with default.`);
+      icon.setTexture(pokemon.getIconAtlasKey(0));
+      icon.setFrame(pokemon.getIconId(true));
+    }
+    icon.setOrigin(0.5, 0);
+
+    container.add(icon);
+
+    if (originX !== 0.5) {
+      container.x -= icon.width * (originX - 0.5);
+    }
+    if (originY !== 0) {
+      container.y -= icon.height * originY;
     }
 
     return container;
@@ -2342,7 +2370,7 @@ export default class BattleScene extends SceneBase {
         if (isBoss) {
           count = Math.max(count, Math.floor(chances / 2));
         }
-        getEnemyModifierTypesForWave(difficultyWaveIndex, count, [ enemyPokemon ], this.currentBattle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD, upgradeChance)
+        getEnemyModifierTypesForWave(difficultyWaveIndex, count, [ enemyPokemon ], this.currentBattle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD, upgradeChance, this)
           .map(mt => mt.newModifier(enemyPokemon).add(this.enemyModifiers, false, this));
       });
 
