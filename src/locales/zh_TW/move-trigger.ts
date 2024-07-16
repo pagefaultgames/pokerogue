@@ -46,7 +46,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "copiedMove": "{{pokemonName}}\n複製了{{moveName}}!",
   "sketchedMove": "{{pokemonName}}\n對{{moveName}}進行了寫生！",
   "acquiredAbility": "{{pokemonName}}的特性\n變为{{abilityName}}了！",
-  "copiedTargetAbility": "{{pokemonName}}複製了\n{{targerName}}的{{abilityName}}！",
+  "copiedTargetAbility": "{{pokemonName}}複製了\n{{targetName}}的{{abilityName}}！",
   "transformedIntoTarget": "{{pokemonName}}\n變身成了{{targetName}}！",
   "tryingToTakeFoeDown": "{{pokemonName}}\n想和對手同歸於盡！",
   "cannotUseMove": "{{pokemonName}}\n無法使用{{moveName}}！"

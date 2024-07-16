@@ -46,7 +46,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "copiedMove": "{{pokemonName}} copie\nla capacité {{moveName}} !",
   "sketchedMove": "{{pokemonName}} utilise Gribouille\npour copier {{moveName}} !",
   "acquiredAbility": "Le talent de {{pokemonName}}\ndevient {{abilityName}} !",
-  "copiedTargetAbility": "{{pokemonName}} copie le talent\n{{abilityName}} de {{targerName}} !",
+  "copiedTargetAbility": "{{pokemonName}} copie le talent\n{{abilityName}} de {{targetName}} !",
   "transformedIntoTarget": "{{pokemonName}} prend\nl’apparence de {{targetName}} !",
   "tryingToTakeFoeDown": "{{pokemonName}} veut entrainer\nson assaillant dans sa chute !",
   "cannotUseMove": "{{pokemonName}} ne peut pas\nutiliser la capacité {{moveName}} !"

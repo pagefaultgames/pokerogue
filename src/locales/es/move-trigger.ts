@@ -46,7 +46,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "copiedMove": "{{pokemonName}} copied\n{{moveName}}!",
   "sketchedMove": "{{pokemonName}} sketched\n{{moveName}}!",
   "acquiredAbility": "The {{pokemonName}} acquired\n{{abilityName}}!",
-  "copiedTargetAbility": "{{pokemonName}} copied the {{targerName}}'s\n{{abilityName}}!",
+  "copiedTargetAbility": "{{pokemonName}} copied the {{targetName}}'s\n{{abilityName}}!",
   "transformedIntoTarget": "{{pokemonName}} transformed\ninto {{targetName}}!",
   "tryingToTakeFoeDown": "{{pokemonName}} is hoping to take its attacker down with it!",
   "cannotUseMove": "{{pokemonName}} cannot use {{moveName}}!"

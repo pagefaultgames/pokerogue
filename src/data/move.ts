@@ -2326,7 +2326,7 @@ export class SunlightChargeAttr extends ChargeAttr {
 export class ElectroShotChargeAttr extends ChargeAttr {
   private statIncreaseApplied: boolean;
   constructor() {
-    super(ChargeAnim.ELECTRO_SHOT_CHARGING, i18next.t("moveTriggers:absorbedElectricity"), null, true);
+    super(ChargeAnim.ELECTRO_SHOT_CHARGING, i18next.t("moveTriggers:absorbedElectricity", {pokemonName: "{USER}"}), null, true);
     // Add a flag because ChargeAttr skills use themselves twice instead of once over one-to-two turns
     this.statIncreaseApplied = false;
   }
@@ -5210,7 +5210,7 @@ export class MovesetCopyMoveAttr extends OverrideMoveEffectAttr {
     user.summonData.moveset = user.getMoveset().slice(0);
     user.summonData.moveset[thisMoveIndex] = new PokemonMove(copiedMove.id, 0, 0);
 
-    user.scene.queueMessage(i18next.t("moveTriggers: copiedMove", {pokemonName: getPokemonNameWithAffix(user), moveName: copiedMove.name}));
+    user.scene.queueMessage(i18next.t("moveTriggers:copiedMove", {pokemonName: getPokemonNameWithAffix(user), moveName: copiedMove.name}));
 
     return true;
   }
@@ -5547,7 +5547,7 @@ export class AttackedByItemAttr extends MoveAttr {
       }
 
       const itemName = heldItems[0]?.type?.name ?? "item";
-      target.scene.queueMessage(i18next.t("moveTriggers:attackedByItem", {pokemoneName: getPokemonNameWithAffix(target), itemName: itemName}));
+      target.scene.queueMessage(i18next.t("moveTriggers:attackedByItem", {pokemonName: getPokemonNameWithAffix(target), itemName: itemName}));
 
       return true;
     };
