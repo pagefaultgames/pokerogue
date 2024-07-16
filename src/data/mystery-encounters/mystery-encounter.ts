@@ -1,5 +1,5 @@
 import { EnemyPartyConfig } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import Pokemon, { PlayerPokemon } from "#app/field/pokemon";
+import Pokemon, { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { isNullOrUndefined } from "#app/utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "../../battle-scene";
@@ -18,6 +18,7 @@ import {
   StatusEffectRequirement,
   WaveRangeRequirement
 } from "./mystery-encounter-requirements";
+import { BattlerIndex } from "#app/battle";
 
 export enum MysteryEncounterVariant {
   DEFAULT,
@@ -34,6 +35,15 @@ export enum MysteryEncounterTier {
   ULTRA,
   ROGUE,
   MASTER // Not currently used
+}
+
+export class StartOfBattleEffect {
+  sourcePokemon?: Pokemon;
+  sourceBattlerIndex?: BattlerIndex;
+  targets: BattlerIndex[];
+  move: PokemonMove;
+  followUp?: boolean;
+  ignorePp?: boolean;
 }
 
 export default interface IMysteryEncounter {
@@ -90,6 +100,15 @@ export default interface IMysteryEncounter {
    * You probably shouldn't do anything with this unless you have a very specific need
    */
   introVisuals?: MysteryEncounterIntroVisuals;
+  /**
+   * Used for keeping RNG consistent on session resets, but increments when cycling through multiple "Encounters" on the same wave
+   * You should never need to modify this
+   */
+  seedOffset?: any;
+  /**
+   * Will be set by option select handlers automatically, and can be used to refer to which option was chosen by later phases
+   */
+  startOfBattleEffectsComplete?: boolean;
 
   /**
    * Flags
@@ -117,15 +136,14 @@ export default interface IMysteryEncounter {
    */
   selectedOption?: MysteryEncounterOption;
   /**
+   * Will be set by option select handlers automatically, and can be used to refer to which option was chosen by later phases
+   */
+  startOfBattleEffects?: StartOfBattleEffect[];
+  /**
    * Can be set higher or lower based on the type of battle or exp gained for an option/encounter
    * Defaults to 1
    */
   expMultiplier?: number;
-  /**
-   * Used for keeping RNG consistent on session resets, but increments when cycling through multiple "Encounters" on the same wave
-   * You should never need to modify this
-   */
-  seedOffset?: any;
   /**
    * Generic property to set any custom data required for the encounter
    * Extremely useful for carrying state/data between onPreOptionPhase/onOptionPhase/onPostOptionPhase
@@ -151,8 +169,10 @@ export default class IMysteryEncounter implements IMysteryEncounter {
     this.requirements = this.requirements ? this.requirements : [];
     this.hideBattleIntroMessage = !isNullOrUndefined(this.hideBattleIntroMessage) ? this.hideBattleIntroMessage : false;
     this.hideIntroVisuals = !isNullOrUndefined(this.hideIntroVisuals) ? this.hideIntroVisuals : true;
+    this.startOfBattleEffects = this.startOfBattleEffects ?? [];
 
     // Reset any dirty flags or encounter data
+    this.startOfBattleEffectsComplete = false;
     this.lockEncounterRewardTiers = true;
     this.dialogueTokens = {};
     this.enemyPartyConfigs = [];

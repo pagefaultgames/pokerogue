@@ -11,6 +11,7 @@ import { DepartmentStoreSaleEncounter } from "./encounters/department-store-sale
 import { ShadyVitaminDealerEncounter } from "./encounters/shady-vitamin-dealer-encounter";
 import { FieldTripEncounter } from "./encounters/field-trip-encounter";
 import { SafariZoneEncounter } from "#app/data/mystery-encounters/encounters/safari-zone-encounter";
+import { FieryFalloutEncounter } from "#app/data/mystery-encounters/encounters/fiery-fallout-encounter";
 
 // Spawn chance: (BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT + WIGHT_INCREMENT_ON_SPAWN_MISS * <number of missed spawns>) / 256
 export const BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT = 1;
@@ -184,7 +185,9 @@ export const mysteryEncountersByBiome = new Map<Biome, MysteryEncounterType[]>([
   [Biome.ICE_CAVE, []],
   [Biome.MEADOW, []],
   [Biome.POWER_PLANT, []],
-  [Biome.VOLCANO, []],
+  [Biome.VOLCANO, [
+    MysteryEncounterType.FIERY_FALLOUT
+  ]],
   [Biome.GRAVEYARD, []],
   [Biome.DOJO, []],
   [Biome.FACTORY, []],
@@ -215,6 +218,7 @@ export function initMysteryEncounters() {
   allMysteryEncounters[MysteryEncounterType.SHADY_VITAMIN_DEALER] = ShadyVitaminDealerEncounter;
   allMysteryEncounters[MysteryEncounterType.FIELD_TRIP] = FieldTripEncounter;
   allMysteryEncounters[MysteryEncounterType.SAFARI_ZONE] = SafariZoneEncounter;
+  allMysteryEncounters[MysteryEncounterType.FIERY_FALLOUT] = FieryFalloutEncounter;
 
   // Add extreme encounters to biome map
   extremeBiomeEncounters.forEach(encounter => {

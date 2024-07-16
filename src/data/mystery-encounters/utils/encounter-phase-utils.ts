@@ -1,5 +1,5 @@
 import i18next from "i18next";
-import { BattleType } from "#app/battle";
+import { BattlerIndex, BattleType } from "#app/battle";
 import BattleScene from "../../../battle-scene";
 import PokemonSpecies from "../../pokemon-species";
 import { MysteryEncounterVariant } from "../mystery-encounter";
@@ -9,7 +9,7 @@ import Pokemon, { FieldPosition, PlayerPokemon } from "#app/field/pokemon";
 import Trainer, { TrainerVariant } from "../../../field/trainer";
 import { ExpBalanceModifier, ExpShareModifier, MultipleParticipantExpBonusModifier, PokemonExpBoosterModifier } from "#app/modifier/modifier";
 import { CustomModifierSettings, getModifierPoolForType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeGenerator, ModifierTypeOption, modifierTypes, PokemonHeldItemModifierType, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
-import { BattleEndPhase, EggLapsePhase, ExpPhase, ModifierRewardPhase, SelectModifierPhase, ShowPartyExpBarPhase, TrainerVictoryPhase } from "#app/phases";
+import { BattleEndPhase, EggLapsePhase, ExpPhase, ModifierRewardPhase, MovePhase, SelectModifierPhase, ShowPartyExpBarPhase, TrainerVictoryPhase } from "#app/phases";
 import { MysteryEncounterBattlePhase, MysteryEncounterPhase, MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phase";
 import * as Utils from "../../../utils";
 import { isNullOrUndefined } from "#app/utils";
@@ -25,6 +25,7 @@ import { WIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/myst
 import * as Overrides from "#app/overrides";
 import MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
 import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { Gender } from "#app/data/gender";
 
 export class EnemyPokemonConfig {
   species: PokemonSpecies;
@@ -33,6 +34,7 @@ export class EnemyPokemonConfig {
   bossSegmentModifier?: number; // Additive to the determined segment number
   formIndex?: number;
   level?: number;
+  gender?: Gender;
   modifierTypes?: PokemonHeldItemModifierType[];
   dataSource?: PokemonData;
   tags?: BattlerTagType[];
@@ -48,6 +50,7 @@ export class EnemyPartyConfig {
   trainerConfig?: TrainerConfig; // More customizable option for configuring trainer battle
   pokemonConfigs?: EnemyPokemonConfig[];
   female?: boolean; // True for female trainer, false for male
+  disableSwitch?: boolean; // True will prevent player from switching
 }
 
 /**
@@ -161,6 +164,11 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
         enemyPokemon.formIndex = config.formIndex;
       }
 
+      // Set gender
+      if (!isNullOrUndefined(config.gender)) {
+        enemyPokemon.gender = config.gender;
+      }
+
       // Set Boss
       if (config.isBoss) {
         let segments = !isNullOrUndefined(config.bossSegments) ? config.bossSegments : scene.getEncounterBossSegments(scene.currentBattle.waveIndex, level, enemySpecies, true);
@@ -201,7 +209,7 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
     console.log(enemyPokemon.name, enemyPokemon.species.speciesId, enemyPokemon.stats);
   });
 
-  scene.pushPhase(new MysteryEncounterBattlePhase(scene));
+  scene.pushPhase(new MysteryEncounterBattlePhase(scene, partyConfig.disableSwitch));
 
   await Promise.all(loadEnemyAssets);
   battle.enemyParty.forEach((enemyPokemon_2, e_1) => {
@@ -560,6 +568,36 @@ export function hideMysteryEncounterIntroVisuals(scene: BattleScene): Promise<bo
       resolve(true);
     }
   });
+}
+
+export function handleEncounterStartOfBattleEffects(scene: BattleScene) {
+  const encounter = scene.currentBattle?.mysteryEncounter;
+  if (scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER && encounter.encounterVariant !== MysteryEncounterVariant.NO_BATTLE && !encounter.startOfBattleEffectsComplete) {
+    const effects = encounter.startOfBattleEffects;
+    effects.forEach(effect => {
+      let source;
+      if (effect.sourcePokemon) {
+        source = effect.sourcePokemon;
+      } else if (!isNullOrUndefined(effect.sourceBattlerIndex)) {
+        if (effect.sourceBattlerIndex === BattlerIndex.ATTACKER) {
+          source = scene.getEnemyField()[0];
+        } else if (effect.sourceBattlerIndex === BattlerIndex.ENEMY) {
+          source = scene.getEnemyField()[0];
+        } else if (effect.sourceBattlerIndex === BattlerIndex.ENEMY_2) {
+          source = scene.getEnemyField()[1];
+        } else if (effect.sourceBattlerIndex === BattlerIndex.PLAYER) {
+          source = scene.getPlayerField()[0];
+        } else if (effect.sourceBattlerIndex === BattlerIndex.PLAYER_2) {
+          source = scene.getPlayerField()[1];
+        }
+      } else {
+        source = scene.getEnemyField()[0];
+      }
+      scene.pushPhase(new MovePhase(scene, source, effect.targets, effect.move, effect.followUp, effect.followUp));
+    });
+
+    encounter.startOfBattleEffectsComplete = true;
+  }
 }
 
 /**

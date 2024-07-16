@@ -167,7 +167,6 @@ export function trainerThrowPokeball(scene: BattleScene, pokemon: EnemyPokemon, 
   pokeball.setOrigin(0.5, 0.625);
   scene.field.add(pokeball);
 
-  scene.playSound("pb_throw");
   scene.time.delayedCall(300, () => {
     scene.field.moveBelow(pokeball as Phaser.GameObjects.GameObject, pokemon);
   });
@@ -175,6 +174,8 @@ export function trainerThrowPokeball(scene: BattleScene, pokemon: EnemyPokemon, 
   return new Promise(resolve => {
     scene.trainer.setTexture(`trainer_${scene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back_pb`);
     scene.time.delayedCall(512, () => {
+      scene.playSound("pb_throw");
+
       // Trainer throw frames
       scene.trainer.setFrame("2");
       scene.time.delayedCall(256, () => {

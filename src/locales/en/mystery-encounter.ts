@@ -172,6 +172,26 @@ export const mysteryEncounter: SimpleTranslationEntries = {
   "safari_zone_pokemon_beside_itself_angry": "{{pokemonName}} is beside itself with anger!",
   "safari_zone_remaining_count": "{{remainingCount}} Pokémon remaining!",
 
+  "fiery_fallout_intro_message": "You encounter a blistering storm of smoke and ash!",
+  "fiery_fallout_title": "Fiery Fallout",
+  "fiery_fallout_description": "The whirling storm of ash and embers has cut visibility to nearly zero. It seems like there might be some... source that is causing these conditions. But what could be behind a phenomenon of this magnitude?",
+  "fiery_fallout_query": "What will you do?",
+  "fiery_fallout_option_1_label": "Find the source",
+  "fiery_fallout_option_1_tooltip": "(?) Discover the source\n(-) Hard Battle",
+  "fiery_fallout_option_2_label": "Hunker down",
+  "fiery_fallout_option_2_tooltip": "(-) Suffer the effects of the weather",
+  "fiery_fallout_option_3_label": "Your Fire types help",
+  "fiery_fallout_option_3_tooltip": "(+) End the conditions\n(+) Gain a Charcoal",
+  "fiery_fallout_option_3_disabled_tooltip": "You need at least 2 Fire Type Pokémon to choose this",
+  "fiery_fallout_option_1_selected": `You push through the storm, and find two Volcarona in the middle of a mating dance!
+    $They don't take kindly to the interruption and attack!`,
+  "fiery_fallout_option_2_selected": `The weather effects cause significant harm as you struggle to find shelter!
+    $Your party takes 30% Max HP damage!
+    $Your {burnTarget} also becomes burned!`,
+  // "fiery_fallout_boss_enraged": "The opposing {{enemyPokemon}} has become enraged!",
+  "fiery_fallout_option_3_selected": `Your {{primaryPokemonName}} and {{secondaryPokemonName}} guide you to where two Volcarona are in the middle of a mating dance!
+    $Thankfully, your Pokémon are able to calm them, and they depart without issue.`,
+
   // Mystery Encounters -- Ultra Tier
 
   "training_session_intro_message": "You've come across some\ntraining tools and supplies.",

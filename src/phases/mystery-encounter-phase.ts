@@ -173,8 +173,11 @@ export class MysteryEncounterOptionSelectedPhase extends Phase {
  * - Queue the SummonPhases, PostSummonPhases, etc., required to initialize the phase queue for a battle
  */
 export class MysteryEncounterBattlePhase extends Phase {
-  constructor(scene: BattleScene) {
+  disableSwitch: boolean;
+
+  constructor(scene: BattleScene, disableSwitch = false) {
     super(scene);
+    this.disableSwitch = disableSwitch;
   }
 
   start() {
@@ -219,7 +222,7 @@ export class MysteryEncounterBattlePhase extends Phase {
       }
 
       if (!scene.currentBattle.mysteryEncounter.hideBattleIntroMessage) {
-        scene.ui.showText(this.getBattleMessage(scene), null, () => this.endBattleSetup(scene), 1500);
+        scene.ui.showText(this.getBattleMessage(scene), null, () => this.endBattleSetup(scene), 500);
       } else {
         this.endBattleSetup(scene);
       }
@@ -302,7 +305,7 @@ export class MysteryEncounterBattlePhase extends Phase {
       scene.pushPhase(new ToggleDoublePositionPhase(scene, false));
     }
 
-    if (encounterVariant !== MysteryEncounterVariant.TRAINER_BATTLE && (scene.currentBattle.waveIndex > 1 || !scene.gameMode.isDaily)) {
+    if (encounterVariant !== MysteryEncounterVariant.TRAINER_BATTLE && !this.disableSwitch) {
       const minPartySize = scene.currentBattle.double ? 2 : 1;
       if (availablePartyMembers.length > minPartySize) {
         scene.pushPhase(new CheckSwitchPhase(scene, 0, scene.currentBattle.double));

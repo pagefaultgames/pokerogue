@@ -304,14 +304,14 @@ async function throwBait(scene: BattleScene, pokemon: EnemyPokemon): Promise<boo
   bait.setOrigin(0.5, 0.625);
   scene.field.add(bait);
 
-  scene.playSound("pb_throw");
-
   return new Promise(resolve => {
     scene.trainer.setTexture(`trainer_${scene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back_pb`);
     scene.time.delayedCall(512, () => {
+      scene.playSound("pb_throw");
+
       // Trainer throw frames
       scene.trainer.setFrame("2");
-      scene.time.delayedCall(256, () => {
+      scene.time.delayedCall(184, () => {
         scene.trainer.setFrame("3");
         scene.time.delayedCall(768, () => {
           scene.trainer.setTexture(`trainer_${scene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`);
@@ -366,18 +366,18 @@ async function throwMud(scene: BattleScene, pokemon: EnemyPokemon): Promise<bool
   const originalY: number = pokemon.y;
 
   const fpOffset = pokemon.getFieldPositionOffset();
-  const mud: Phaser.GameObjects.Sprite = scene.addFieldSprite(16 + 75, 80 + 25, "mud", "0001.png");
+  const mud: Phaser.GameObjects.Sprite = scene.addFieldSprite(16 + 75, 80 + 35, "mud", "0001.png");
   mud.setOrigin(0.5, 0.625);
   scene.field.add(mud);
-
-  scene.playSound("pb_throw");
 
   return new Promise(resolve => {
     scene.trainer.setTexture(`trainer_${scene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back_pb`);
     scene.time.delayedCall(512, () => {
+      scene.playSound("pb_throw");
+
       // Trainer throw frames
       scene.trainer.setFrame("2");
-      scene.time.delayedCall(256, () => {
+      scene.time.delayedCall(184, () => {
         scene.trainer.setFrame("3");
         scene.time.delayedCall(768, () => {
           scene.trainer.setTexture(`trainer_${scene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`);
@@ -395,32 +395,39 @@ async function throwMud(scene: BattleScene, pokemon: EnemyPokemon): Promise<bool
           scene.playSound("PRSFX- Sludge Bomb2");
           mud.setFrame("0002.png");
           // Mud splat
-          scene.time.delayedCall(512, () => {
+          scene.time.delayedCall(200, () => {
             mud.setFrame("0003.png");
-            scene.time.delayedCall(512, () => {
+            scene.time.delayedCall(400, () => {
               mud.setFrame("0004.png");
             });
           });
 
-          scene.time.delayedCall(1536, () => {
-            mud.destroy();
-            scene.tweens.add({
-              targets: pokemon,
-              duration: 300,
-              ease: "Cubic.easeOut",
-              yoyo: true,
-              y: originalY - 20,
-              loop: 1,
-              onStart: () => {
-                scene.playSound("PRSFX- Taunt2");
-              },
-              onLoop: () => {
-                scene.playSound("PRSFX- Taunt2");
-              },
-              onComplete: () => {
-                resolve(true);
-              }
-            });
+          // Fade mud then angry animation
+          scene.tweens.add({
+            targets: mud,
+            alpha: 0,
+            ease: "Cubic.easeIn",
+            duration: 1000,
+            onComplete: () => {
+              mud.destroy();
+              scene.tweens.add({
+                targets: pokemon,
+                duration: 300,
+                ease: "Cubic.easeOut",
+                yoyo: true,
+                y: originalY - 20,
+                loop: 1,
+                onStart: () => {
+                  scene.playSound("PRSFX- Taunt2");
+                },
+                onLoop: () => {
+                  scene.playSound("PRSFX- Taunt2");
+                },
+                onComplete: () => {
+                  resolve(true);
+                }
+              });
+            }
           });
         }
       });
