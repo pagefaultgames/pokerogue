@@ -53,12 +53,17 @@ export function addTextObject(scene: Phaser.Scene, x: number, y: number, content
 }
 
 export function setTextStyle(obj: Phaser.GameObjects.Text, scene: Phaser.Scene, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle) {
+  if (obj.getData("appliedStyle") === style) {
+    return;
+  }
+
   const [ scale, styleOptions, shadowColor, shadowXpos, shadowYpos ] = getTextStyleOptions(style, (scene as BattleScene).uiTheme, extraStyleOptions);
 
   obj.setScale(scale);
   obj.setShadow(shadowXpos, shadowYpos, shadowColor);
   if (obj.setStyle) {
     obj.setStyle(styleOptions);
+    obj.setData("appliedStyle", style);
   }
 
   if (!(styleOptions as Phaser.Types.GameObjects.Text.TextStyle).lineSpacing) {
