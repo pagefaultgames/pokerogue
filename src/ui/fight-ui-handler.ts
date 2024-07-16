@@ -682,7 +682,7 @@ export default class FightUiHandler extends UiHandler {
     if (Math.floor(dmgLow) >= target.hp) {
       koText = " (KO)"
     } else if (Math.ceil(dmgHigh) >= target.hp) {
-      var percentChance = (target.hp - dmgLow + 1) / (dmgHigh - dmgLow + 1)
+      var percentChance = 1 - ((target.hp - dmgLow + 1) / (dmgHigh - dmgLow + 1))
       koText = " (" + Math.round(percentChance * 100) + "% KO)"
     }
     if (target.getMoveEffectiveness(user, move) == undefined) {

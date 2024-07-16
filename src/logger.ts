@@ -1093,24 +1093,10 @@ export interface TrainerData {
  * @returns The Trainer data.
  */
 export function exportTrainer(trainer: Trainer): TrainerData {
-  if (trainer.config.getTitle(0, trainer.variant) == "Finn") {
-    return {
-      id: trainer.config.trainerType,
-      name: "Finn",
-      type: "Rival"
-    }
-  }
-  if (trainer.config.getTitle(0, trainer.variant) == "Ivy") {
-    return {
-      id: trainer.config.trainerType,
-      name: "Ivy",
-      type: "Rival"
-    }
-  }
   return {
     id: trainer.config.trainerType,
-    name: trainer.name,
-    type: trainer.config.getTitle(0, trainer.variant)
+    name: trainer.getNameOnly(),
+    type: trainer.getTitleOnly()
   }
 }
 /**
