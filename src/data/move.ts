@@ -4248,20 +4248,20 @@ export class RemoveArenaTrapAttr extends MoveEffectAttr {
       user.scene.arena.removeTagOnSide(ArenaTagType.TOXIC_SPIKES, ArenaTagSide.PLAYER);
       user.scene.arena.removeTagOnSide(ArenaTagType.STEALTH_ROCK, ArenaTagSide.PLAYER);
       user.scene.arena.removeTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.PLAYER);
-      user.scene.arena.removeTagOnSide(ArenaTagType.SAFEGUARD, ArenaTagSide.PLAYER);
+      // user.scene.arena.removeTagOnSide(ArenaTagType.SAFEGUARD, ArenaTagSide.PLAYER);
 
       user.scene.arena.removeTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.ENEMY);
       user.scene.arena.removeTagOnSide(ArenaTagType.TOXIC_SPIKES, ArenaTagSide.ENEMY);
       user.scene.arena.removeTagOnSide(ArenaTagType.STEALTH_ROCK, ArenaTagSide.ENEMY);
       user.scene.arena.removeTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.ENEMY);
-      user.scene.arena.removeTagOnSide(ArenaTagType.SAFEGUARD, ArenaTagSide.ENEMY);
+      // user.scene.arena.removeTagOnSide(ArenaTagType.SAFEGUARD, ArenaTagSide.ENEMY);
 
     } else {
       user.scene.arena.removeTagOnSide(ArenaTagType.SPIKES, target.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER);
       user.scene.arena.removeTagOnSide(ArenaTagType.TOXIC_SPIKES, target.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER);
       user.scene.arena.removeTagOnSide(ArenaTagType.STEALTH_ROCK, target.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER);
       user.scene.arena.removeTagOnSide(ArenaTagType.STICKY_WEB, target.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER);
-      user.scene.arena.removeTagOnSide(ArenaTagType.SAFEGUARD, target.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER);
+      // user.scene.arena.removeTagOnSide(ArenaTagType.SAFEGUARD, target.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER);
     }
 
     return true;
@@ -7645,6 +7645,7 @@ export function initMoves() {
       .attr(SwapArenaTagsAttr, [ArenaTagType.AURORA_VEIL, ArenaTagType.LIGHT_SCREEN, ArenaTagType.MIST, ArenaTagType.REFLECT, ArenaTagType.SPIKES, ArenaTagType.STEALTH_ROCK, ArenaTagType.STICKY_WEB, ArenaTagType.TAILWIND, ArenaTagType.TOXIC_SPIKES]),
     new AttackMove(Moves.MAX_FLARE, Type.FIRE, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.NEAR_ENEMY)
+      .attr(WeatherChangeAttr, WeatherType.SUNNY)
       .unimplemented()
       .ignoresVirtual(),
     new AttackMove(Moves.MAX_FLUTTERBY, Type.BUG, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
@@ -7653,6 +7654,7 @@ export function initMoves() {
       .ignoresVirtual(),
     new AttackMove(Moves.MAX_LIGHTNING, Type.ELECTRIC, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.NEAR_ENEMY)
+      .attr(TerrainChangeAttr, TerrainType.ELECTRIC)
       .unimplemented()
       .ignoresVirtual(),
     new AttackMove(Moves.MAX_STRIKE, Type.NORMAL, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
@@ -7669,6 +7671,7 @@ export function initMoves() {
       .ignoresVirtual(),
     new AttackMove(Moves.MAX_HAILSTORM, Type.ICE, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.NEAR_ENEMY)
+      .attr(WeatherChangeAttr, WeatherType.HAIL)
       .unimplemented()
       .ignoresVirtual(),
     new AttackMove(Moves.MAX_OOZE, Type.POISON, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
@@ -7677,6 +7680,7 @@ export function initMoves() {
       .ignoresVirtual(),
     new AttackMove(Moves.MAX_GEYSER, Type.WATER, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.NEAR_ENEMY)
+      .attr(WeatherChangeAttr, WeatherType.RAIN)
       .unimplemented()
       .ignoresVirtual(),
     new AttackMove(Moves.MAX_AIRSTREAM, Type.FLYING, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
@@ -7697,6 +7701,7 @@ export function initMoves() {
       .ignoresVirtual(),
     new AttackMove(Moves.MAX_ROCKFALL, Type.ROCK, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.NEAR_ENEMY)
+      .attr(WeatherChangeAttr, WeatherType.SANDSTORM)
       .unimplemented()
       .ignoresVirtual(),
     new AttackMove(Moves.MAX_QUAKE, Type.GROUND, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
