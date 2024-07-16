@@ -1,0 +1,54 @@
+import { Button } from "#app/enums/buttons.js";
+import { MessagePhase } from "#app/phases.js";
+import { MysteryEncounterOptionSelectedPhase, MysteryEncounterPhase } from "#app/phases/mystery-encounter-phase.js";
+import MysteryEncounterUiHandler from "#app/ui/mystery-encounter-ui-handler.js";
+import { Mode } from "#app/ui/ui.js";
+import GameManager from "../utils/gameManager";
+
+export async function runSelectMysteryEncounterOption(game: GameManager, optionNo: number) {
+  // Handle eventual weather messages (e.g. a downpour started!)
+  if (game.isCurrentPhase(MessagePhase)) {
+    game.onNextPrompt("MessagePhase", Mode.MESSAGE, () => {
+      const uiHandler = game.scene.ui.getHandler<MysteryEncounterUiHandler>();
+      uiHandler.processInput(Button.ACTION);
+    });
+    await game.phaseInterceptor.run(MessagePhase);
+  }
+
+  // dispose of intro messages
+  game.onNextPrompt("MysteryEncounterPhase", Mode.MESSAGE, () => {
+    const uiHandler = game.scene.ui.getHandler<MysteryEncounterUiHandler>();
+    uiHandler.processInput(Button.ACTION);
+  });
+  // select the desired option
+  game.onNextPrompt("MysteryEncounterPhase", Mode.MYSTERY_ENCOUNTER, () => {
+    const uiHandler = game.scene.ui.getHandler<MysteryEncounterUiHandler>();
+    uiHandler.unblockInput();
+
+    switch (optionNo) {
+    case 1:
+      // no movement needed. Default cursor position
+      break;
+    case 2:
+      uiHandler.processInput(Button.RIGHT);
+      break;
+    case 3:
+      uiHandler.processInput(Button.DOWN);
+      break;
+    case 4:
+      uiHandler.processInput(Button.RIGHT);
+      uiHandler.processInput(Button.DOWN);
+      break;
+    }
+
+    uiHandler.processInput(Button.ACTION);
+  });
+  await game.phaseInterceptor.run(MysteryEncounterPhase);
+
+  // run the selected options phase
+  game.onNextPrompt("MysteryEncounterOptionSelectedPhase", Mode.MESSAGE, () => {
+    const uiHandler = game.scene.ui.getHandler<MysteryEncounterUiHandler>();
+    uiHandler.processInput(Button.ACTION);
+  });
+  await game.phaseInterceptor.run(MysteryEncounterOptionSelectedPhase);
+}
