@@ -47,7 +47,7 @@ export function addTextObject(scene: Phaser.Scene, x: number, y: number, content
 }
 
 export function setTextStyle(obj: Phaser.GameObjects.Text, scene: Phaser.Scene, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle) {
-  if (obj.getData("appliedStyle") === style) {
+  if (obj.getData && obj.getData("appliedStyle") === style) {
     return;
   }
 
