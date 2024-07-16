@@ -1,3 +1,4 @@
+import { Weather, WeatherType } from "#app/data/weather.js";
 import { Biome } from "#app/enums/biome";
 import * as Overrides from "#app/overrides";
 import { vi } from "vitest";
@@ -9,7 +10,7 @@ export class OverridesHelper {
   constructor() {}
 
   /**
-   * Set the encounter chance for a mystery encounter.
+   * Override the encounter chance for a mystery encounter.
    * @param percentage the encounter chance in %
    */
   mysteryEncounterChance(percentage: number) {
@@ -20,7 +21,7 @@ export class OverridesHelper {
   }
 
   /**
-   * Set the starting biome
+   * Override the starting biome
    * @warning The biome will not be overridden unless you call `workaround_reInitSceneWithOverrides()` (testUtils)
    * @param biome the biome to set
    */
@@ -30,13 +31,31 @@ export class OverridesHelper {
   }
 
   /**
-   * Set the starting wave (index)
-   *
+   * Override the starting wave (index)
    * @param wave the wave (index) to set. Classic: `1`-`200`
    */
   startingWave(wave: number) {
     vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(wave);
     this.log(`Starting wave set to ${wave}!`);
+  }
+
+  /**
+   * Override the weather (type)
+   * @param type weather type to set
+   */
+  weather(type: WeatherType) {
+    vi.spyOn(Overrides, "WEATHER_OVERRIDE", "get").mockReturnValue(type);
+    this.log(`Weather set to ${Weather[type]} (=${type})!`);
+  }
+
+  /**
+   * Override the seed
+   * @warning The seed will not be overridden unless you call `workaround_reInitSceneWithOverrides()` (testUtils)
+   * @param seed the seed to set
+   */
+  seed(seed: string) {
+    vi.spyOn(Overrides, "SEED_OVERRIDE", "get").mockReturnValue(seed);
+    this.log(`Seed set to "${seed}"!`);
   }
 
   private log(...params: any[]) {
