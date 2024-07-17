@@ -9,7 +9,7 @@ import Pokemon, { FieldPosition, PlayerPokemon } from "#app/field/pokemon";
 import Trainer, { TrainerVariant } from "../../../field/trainer";
 import { ExpBalanceModifier, ExpShareModifier, MultipleParticipantExpBonusModifier, PokemonExpBoosterModifier } from "#app/modifier/modifier";
 import { CustomModifierSettings, getModifierPoolForType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeGenerator, ModifierTypeOption, modifierTypes, PokemonHeldItemModifierType, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
-import { BattleEndPhase, EggLapsePhase, ExpPhase, ModifierRewardPhase, SelectModifierPhase, ShowPartyExpBarPhase, TrainerVictoryPhase } from "#app/phases";
+import { BattleEndPhase, EggLapsePhase, ExpPhase, GameOverPhase, ModifierRewardPhase, SelectModifierPhase, ShowPartyExpBarPhase, TrainerVictoryPhase } from "#app/phases";
 import { MysteryEncounterBattlePhase, MysteryEncounterPhase, MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phase";
 import * as Utils from "../../../utils";
 import { isNullOrUndefined } from "#app/utils";
@@ -521,7 +521,11 @@ export function leaveEncounterWithoutBattle(scene: BattleScene, addHealPhase: bo
 }
 
 export function handleMysteryEncounterVictory(scene: BattleScene, addHealPhase: boolean = false) {
-  if (scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.SAFARI_BATTLE) {
+  const allowedPkm = scene.getParty().filter((pkm) => pkm.isAllowedInBattle());
+  if (allowedPkm.length === 0) {
+    scene.clearPhaseQueue();
+    scene.unshiftPhase(new GameOverPhase(scene));
+  } else if (scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.SAFARI_BATTLE) {
     scene.pushPhase(new MysteryEncounterRewardsPhase(scene, addHealPhase));
   } else if (scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.NO_BATTLE) {
     scene.pushPhase(new EggLapsePhase(scene));
