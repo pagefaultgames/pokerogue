@@ -23,7 +23,7 @@ export async function runSelectMysteryEncounterOption(game: GameManager, optionN
   // select the desired option
   game.onNextPrompt("MysteryEncounterPhase", Mode.MYSTERY_ENCOUNTER, () => {
     const uiHandler = game.scene.ui.getHandler<MysteryEncounterUiHandler>();
-    uiHandler.unblockInput();
+    uiHandler.unblockInput(); // input are blocked by 1s to prevent accidental input. Tests need to handle that
 
     switch (optionNo) {
     case 1:
