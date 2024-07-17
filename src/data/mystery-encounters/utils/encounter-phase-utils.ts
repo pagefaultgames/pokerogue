@@ -688,12 +688,14 @@ export function calculateMEAggregateStats(scene: BattleScene, baseSpawnWeight: n
 /**
  * Takes care of handling player pokemon KO (with all its side effects)
  *
+ * @param scene the battle scene
  * @param pokemon the player pokemon to KO
  */
-export function koPlayerPokemon(pokemon: PlayerPokemon) {
+export function koPlayerPokemon(scene: BattleScene, pokemon: PlayerPokemon) {
   pokemon.hp = 0;
   pokemon.trySetStatus(StatusEffect.FAINT);
   pokemon.updateInfo();
+  queueEncounterMessage(scene, i18next.t("battle:fainted", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
 }
 
 /**
@@ -709,8 +711,7 @@ function applyHpChangeToPokemon(scene: BattleScene, pokemon: PlayerPokemon, valu
   const hpChange = Math.round(pokemon.hp + value);
   const nextHp = Math.max(Math.min(hpChange, pokemon.getMaxHp()), 0);
   if (nextHp === 0) {
-    koPlayerPokemon(pokemon);
-    queueEncounterMessage(scene, i18next.t("battle:fainted", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+    koPlayerPokemon(scene, pokemon);
   } else {
     pokemon.hp = nextHp;
   }
