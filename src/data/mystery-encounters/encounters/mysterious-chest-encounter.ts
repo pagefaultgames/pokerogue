@@ -1,10 +1,10 @@
+import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import {
   leaveEncounterWithoutBattle,
   setEncounterRewards
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { getHighestLevelPlayerPokemon, koPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { ModifierTier } from "#app/modifier/modifier-tier";
-import { GameOverPhase } from "#app/phases";
-import { randSeedInt } from "#app/utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "../../../battle-scene";
 import IMysteryEncounter, {
@@ -12,8 +12,6 @@ import IMysteryEncounter, {
   MysteryEncounterTier,
 } from "../mystery-encounter";
 import { EncounterOptionMode, MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
-import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import { getHighestLevelPlayerPokemon, koPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 
 export const MysteriousChestEncounter: IMysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(
@@ -62,7 +60,8 @@ export const MysteriousChestEncounter: IMysteryEncounter =
         })
         .withOptionPhase(async (scene: BattleScene) => {
           // Open the chest
-          const roll = randSeedInt(100);
+          // const roll = randSeedInt(100);
+          const roll = 0;
           if (roll > 60) {
             // Choose between 2 COMMON / 2 GREAT tier items (40%)
             setEncounterRewards(scene, {
@@ -117,13 +116,13 @@ export const MysteriousChestEncounter: IMysteryEncounter =
             // Does this synchronously so that game over doesn't happen over result message
             await showEncounterText(scene, "mysteryEncounter:mysterious_chest_option_1_bad_result")
               .then(() => {
-                if (scene.getParty().filter((p) => p.isAllowedInBattle()).length === 0) {
-                  // All pokemon fainted, game over
-                  scene.clearPhaseQueue();
-                  scene.unshiftPhase(new GameOverPhase(scene));
-                } else {
-                  leaveEncounterWithoutBattle(scene);
-                }
+                // if (scene.getParty().filter((p) => p.isAllowedInBattle()).length === 0) {
+                //   // All pokemon fainted, game over
+                //   scene.clearPhaseQueue();
+                //   scene.unshiftPhase(new GameOverPhase(scene));
+                // } else {
+                leaveEncounterWithoutBattle(scene);
+                // }
               });
           }
         })
