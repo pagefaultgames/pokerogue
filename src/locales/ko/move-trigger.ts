@@ -38,7 +38,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "incineratedItem": "{{pokemonName}}[[는]] {{targetName}}의\n{{itemName}}[[를]] 불태워서 없애버렸다!",
   "knockedOffItem": "{{pokemonName}}[[는]] {{targetName}}의\n{{itemName}}[[를]] 탁 쳐서 떨구었다!",
   "tookMoveAttack": "{{pokemonName}}[[는]]\n{{moveName}} 공격을 끌어들였다!",
-  "cutOwnHpAndMaximizedStat": "{{pokemonName}}[[는]] 체력을 깎아서\n{{stateName}}[[를]] 풀 파워로 만들었다!",
+  "cutOwnHpAndMaximizedStat": "{{pokemonName}}[[는]] 체력을 깎아서\n{{statName}}[[를]] 풀 파워로 만들었다!",
   "copiedStatChanges": "{{pokemonName}}[[는]] {{targetName}}의\n능력 변화를 복사했다!",
   "magnitudeMessage": "매그니튜드{{magnitude}}!",
   "tookAimAtTarget": "{{pokemonName}}[[는]] 목표를\n{{targetName}}[[로]] 결정했다!",

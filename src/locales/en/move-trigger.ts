@@ -38,7 +38,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "incineratedItem": "{{pokemonName}} incinerated\n{{targetName}}'s {{itemName}}!",
   "knockedOffItem": "{{pokemonName}} knocked off\n{{targetName}}'s {{itemName}}!",
   "tookMoveAttack": "{{pokemonName}} took\nthe {{moveName}} attack!",
-  "cutOwnHpAndMaximizedStat": "{{pokemonName}} cut its own HP\nand maximized its {{stateName}}!",
+  "cutOwnHpAndMaximizedStat": "{{pokemonName}} cut its own HP\nand maximized its {{statName}}!",
   "copiedStatChanges": "{{pokemonName}} copied\n{{targetName}}'s stat changes!",
   "magnitudeMessage": "Magnitude {{magnitude}}!",
   "tookAimAtTarget": "{{pokemonName}} took aim\nat {{targetName}}!",

@@ -38,7 +38,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "incineratedItem": "{{pokemonName}} brule\nla {{itemName}} de {{targetName}} !",
   "knockedOffItem": "{{pokemonName}} fait tomber\nl’objet {{itemName}} de {{targetName}} !",
   "tookMoveAttack": "{{pokemonName}}\nsubit l’attaque {{moveName}} !",
-  "cutOwnHpAndMaximizedStat": "{{pokemonName}} sacrifie des PV\net monte son {{stateName}} au maximum !",
+  "cutOwnHpAndMaximizedStat": "{{pokemonName}} sacrifie des PV\net monte son {{statName}} au maximum !",
   "copiedStatChanges": "{{pokemonName}} copie\nles changements de stats de {{targetName}} !",
   "magnitudeMessage": "Ampleur {{magnitude}} !",
   "tookAimAtTarget": "{{pokemonName}} vise\n{{targetName}} !",

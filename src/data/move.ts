@@ -2535,7 +2535,7 @@ export class HalfHpStatMaxAttr extends StatChangeAttr {
       user.damageAndUpdate(Math.floor(user.getMaxHp() / 2), HitResult.OTHER, false, true);
       user.updateInfo().then(() => {
         const ret = super.apply(user, target, move, args);
-        user.scene.queueMessage(i18next.t("moveTriggers:cutOwnHpAndMaximizedStat", {pokemonName: getPokemonNameWithAffix(user), stateName: getBattleStatName(this.stats[BattleStat.ATK])}));
+        user.scene.queueMessage(i18next.t("moveTriggers:cutOwnHpAndMaximizedStat", {pokemonName: getPokemonNameWithAffix(user), statName: getBattleStatName(this.stats[BattleStat.ATK])}));
         resolve(ret);
       });
     });

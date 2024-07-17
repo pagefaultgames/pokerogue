@@ -38,7 +38,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "incineratedItem": "{{pokemonName}}燒掉了\n{{targetName}}的{{itemName}}！",
   "knockedOffItem": "{{pokemonName}}拍落了\n{{targetName}}的{{itemName}}！",
   "tookMoveAttack": "{{pokemonName}}\n受到了{{moveName}}的攻擊！",
-  "cutOwnHpAndMaximizedStat": "{{pokemonName}}\n削減體力並釋放了全部{{stateName}}!",
+  "cutOwnHpAndMaximizedStat": "{{pokemonName}}\n削減體力並釋放了全部{{statName}}!",
   "copiedStatChanges": "{{pokemonName}}複製了\n{{targetName}}的能力變化！",
   "magnitudeMessage": "震級{{magnitude}}！",
   "tookAimAtTarget": "{{pokemonName}}將目標對準了\n{{targetName}}！",
