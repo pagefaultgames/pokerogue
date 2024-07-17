@@ -39,8 +39,6 @@ describe("Abilities - Illusion", () => {
   it("create illusion at the start", async () => {
     await game.startBattle([Species.ZOROARK, Species.AXEW]);
 
-    //await game.phaseInterceptor.to(TurnInitPhase);
-
     const zoroark = game.scene.getPlayerPokemon();
     const zorua = game.scene.getEnemyPokemon();
 
@@ -102,4 +100,20 @@ describe("Abilities - Illusion", () => {
     expect(zoroark.illusion.active).equals(true);
   });
 
+  it("copy the shininess of the pokemon", async () => {
+    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SCARY_FACE, Moves.SCARY_FACE, Moves.SCARY_FACE, Moves.SCARY_FACE]);
+
+    await game.startBattle([Species.ABRA, Species.ZOROARK, Species.AXEW]);
+
+    const axew = game.scene.getParty().at(2);
+    axew.shiny = true;
+
+    game.doSwitchPokemon(1);
+
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    const zoroark = game.scene.getPlayerPokemon();
+    expect(zoroark.name).equals("Axew");
+    expect(zoroark.isShiny(true)).equals(true);
+  });
 });

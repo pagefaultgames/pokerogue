@@ -973,24 +973,24 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.fusionGender;
   }
 
-  isShiny(illusion: boolean = false): boolean {
-    if (!illusion && this.illusion.active) {
+  isShiny(useIllusion: boolean = false): boolean {
+    if (!useIllusion && this.illusion.active) {
       return this.illusion.shiny || (!!this.illusion.fusionSpecies && this.illusion.fusionShiny);
     } else {
-      return this.shiny || (this.isFusion(illusion) && this.fusionShiny);
+      return this.shiny || (this.isFusion(useIllusion) && this.fusionShiny);
     }
   }
 
-  isDoubleShiny(illusion: boolean = false): boolean {
-    if (!illusion && this.illusion.active) {
+  isDoubleShiny(useIllusion: boolean = false): boolean {
+    if (!useIllusion && this.illusion.active) {
       return this.isFusion(false) && this.illusion.shiny && this.illusion.fusionShiny;
     } else {
-      return this.isFusion(illusion) && this.shiny && this.fusionShiny;
+      return this.isFusion(useIllusion) && this.shiny && this.fusionShiny;
     }
   }
 
-  getVariant(illusion: boolean = false): Variant {
-    if (!illusion && this.illusion.active) {
+  getVariant(useIllusion: boolean = false): Variant {
+    if (!useIllusion && this.illusion.active) {
       return !this.isFusion(false) ? this.illusion.variant : Math.max(this.variant, this.fusionVariant) as Variant;
     } else {
       return !this.isFusion(true) ? this.variant : Math.max(this.variant, this.fusionVariant) as Variant;
@@ -1010,8 +1010,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.luck + (this.isFusion() ? this.fusionLuck : 0);
   }
 
-  isFusion(illusion: boolean = false): boolean {
-    if (illusion && this.illusion.active) {
+  isFusion(useIllusion: boolean = false): boolean {
+    if (useIllusion && this.illusion.active) {
       return !!this.illusion.fusionSpecies;
     } else {
       return !!this.fusionSpecies;
