@@ -15,7 +15,7 @@ export const lostAtSea = {
     2: {
       label: "{{option2PrimaryName}} can help",
       label_disabled: "Can't {{option2RequiredMove}}",
-      tooltip: "{{option2PrimaryName}} saves you.\n{{option2PrimaryName}} gains some EXP.",
+      tooltip: "(+) {{option2PrimaryName}} saves you.\n(+) {{option2PrimaryName}} gains some EXP.",
       tooltip_disabled: "You have no Pokémon to {{option2RequiredMove}} with",
       selected:
         "{{option2PrimaryName}} flies ahead of your boat, guiding you back on track.\n{{option2PrimaryName}} seems to also have gotten stronger in this time of need.",
