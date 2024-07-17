@@ -590,7 +590,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "Fools with no vision will continue to befoul this beautiful world."
     }
   },
-    "aether_boss_lusamine": {
+    "aether_boss_lusamine_1": {
     "encounter": {
       1: "It looks like I'll need to silence you first."
     },
