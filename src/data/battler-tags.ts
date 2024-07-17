@@ -487,7 +487,7 @@ export class FrenzyTag extends BattlerTag {
   onRemove(pokemon: Pokemon): void {
     super.onRemove(pokemon);
 
-    if (this.turnCount < 2) { // Only add the CONFUSED tag if the user has 1 or fewer remaining turns.
+    if (this.turnCount < 2) { // Only add CONFUSED tag if a disruption occurs on the final confusion-inducing turn of FRENZY
       pokemon.addTag(BattlerTagType.CONFUSED, pokemon.randSeedIntRange(2, 4));
     }
   }
