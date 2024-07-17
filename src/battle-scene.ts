@@ -1906,7 +1906,7 @@ export default class BattleScene extends SceneBase {
     case "battle_legendary_pecharunt": //SV Pecharunt Battle
       return 6.508;
     case "battle_rival": //BW Rival Battle
-      return 13.689;
+      return 14.110;
     case "battle_rival_2": //BW N Battle
       return 17.714;
     case "battle_rival_3": //BW Final N Battle
