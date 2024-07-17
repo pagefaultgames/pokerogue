@@ -50,6 +50,7 @@ export default interface IMysteryEncounter {
   hideBattleIntroMessage?: boolean;
   hideIntroVisuals?: boolean;
   catchAllowed?: boolean;
+  maxAllowedEncounters?: number;
   doEncounterExp?: (scene: BattleScene) => boolean;
   doEncounterRewards?: (scene: BattleScene) => boolean;
   onInit?: (scene: BattleScene) => boolean;
@@ -144,6 +145,8 @@ export default class IMysteryEncounter implements IMysteryEncounter {
     }
     this.encounterTier = this.encounterTier ? this.encounterTier : MysteryEncounterTier.COMMON;
     this.dialogue = this.dialogue ?? {};
+    // Default max is 1 for ROGUE encounters, 3 for others
+    this.maxAllowedEncounters = this.maxAllowedEncounters ?? this.encounterTier === MysteryEncounterTier.ROGUE ? 1 : 3;
     this.encounterVariant = MysteryEncounterVariant.DEFAULT;
     this.requirements = this.requirements ? this.requirements : [];
     this.hideBattleIntroMessage = !isNullOrUndefined(this.hideBattleIntroMessage) ? this.hideBattleIntroMessage : false;
@@ -440,15 +443,24 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * If not specified, defaults to COMMON
    * Tiers are:
    * COMMON 32/64 odds
-   * UNCOMMON 16/64 odds
-   * RARE 10/64 odds
-   * SUPER_RARE 6/64 odds
+   * GREAT 16/64 odds
+   * ULTRA 10/64 odds
+   * ROGUE 6/64 odds
    * ULTRA_RARE Not currently used
    * @param encounterTier
    * @returns
    */
   withEncounterTier(encounterTier: MysteryEncounterTier): this & Required<Pick<IMysteryEncounter, "encounterTier">> {
     return Object.assign(this, { encounterTier: encounterTier });
+  }
+
+  /**
+   * Sets the maximum number of times that an encounter can spawn in a given Classic run
+   * @param maxAllowedEncounters
+   * @returns
+   */
+  withMaxAllowedEncounters(maxAllowedEncounters: number): this & Required<Pick<IMysteryEncounter, "maxAllowedEncounters">> {
+    return Object.assign(this, { maxAllowedEncounters: maxAllowedEncounters });
   }
 
   /**
