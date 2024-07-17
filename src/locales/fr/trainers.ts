@@ -19,6 +19,9 @@ export const titles: SimpleTranslationEntries = {
   "galactic_boss": "Leader de la Team Galaxie",
   "plasma_boss": "Leader de la Team Plasma",
   "flare_boss": "Leader de la Team Flare",
+  "aether_boss": "Aether President",
+  "skull_boss": "Team Skull Boss",
+  "macro_boss": "Macro Cosmos's",
   // Maybe if we add the evil teams we can add "Team Rocket" and "Team Aqua" etc. here as well as "Team Rocket Boss" and "Team Aqua Admin" etc.
 } as const;
 
@@ -137,6 +140,12 @@ export const trainerClasses: SimpleTranslationEntries = {
   "plasma_grunt_female": "Sbire de la Team Plasma",
   "flare_grunt": "Sbire de la Team Flare",
   "flare_grunt_female": "Sbire de la Team Flare",
+  "aether_grunt": "Aether Foundation Employee",
+  "aether_grunt_female": "Aether Foundation Employee",
+  "skull_grunt": "Team Skull Grunt",
+  "skull_grunt_female": "Team Skull Grunt",
+  "macro_grunt": "Macro Cosmos Trainer",
+  "macro_grunt_female": "Macro Cosmos Trainer",
 } as const;
 
 // Names of special trainers like gym leaders, elite four, and the champion
