@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "1013-unremarkable.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 62,
+				"h": 62
+			},
+			"scale": 0.5,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 96,
+						"h": 96
+					},
+					"spriteSourceSize": {
+						"x": 29,
+						"y": 17,
+						"w": 38,
+						"h": 62
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 38,
+						"h": 62
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:95751bdea9cadd27651d5b76abdd25eb:ff7fa36c581728ae0dd7b9aefb464b40:ab56b9b47f4e6e1f2091324e9e9fd47e$"
+	}
+}

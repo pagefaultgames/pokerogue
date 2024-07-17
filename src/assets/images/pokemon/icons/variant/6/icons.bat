@@ -1,0 +1,1 @@
+cmd /c TexturePacker ./  ../configuration.tps --sheet ../../../../pokemon_icons_6v.png --data ../../../../pokemon_icons_6v.json --replace .png=

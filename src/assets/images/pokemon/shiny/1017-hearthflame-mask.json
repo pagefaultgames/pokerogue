@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "1017-hearthflame-mask.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 75,
+				"h": 75
+			},
+			"scale": 0.5,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 96,
+						"h": 96
+					},
+					"spriteSourceSize": {
+						"x": 18,
+						"y": 9,
+						"w": 57,
+						"h": 75
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 57,
+						"h": 75
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:fc3eb631a0fbd5eb3f9a73f4732dec3c:87665e7c5d65f7dc2fcb4f732790f043:e275996e79b44deeff5a1f982b7f749b$"
+	}
+}

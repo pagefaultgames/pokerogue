@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "namebox.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 20,
+				"h": 20
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "namebox",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 20,
+						"h": 20
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 20,
+						"h": 20
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 20,
+						"h": 20
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:b4b88c93438c49a9a290c11e4001b617:11fbe39458bee41a23e8baf1cebcaf96:39bb626d9e1ec7486391b28b387a1b39$"
+	}
+}

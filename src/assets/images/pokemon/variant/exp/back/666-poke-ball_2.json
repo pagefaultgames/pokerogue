@@ -1,0 +1,104 @@
+{
+	"textures": [
+		{
+			"image": "666-poke-ball_2.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 137,
+				"h": 137
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 67,
+						"h": 71
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 67,
+						"h": 68
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 67,
+						"h": 68
+					}
+				},
+				{
+					"filename": "0002.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 67,
+						"h": 71
+					},
+					"spriteSourceSize": {
+						"x": 16,
+						"y": 1,
+						"w": 43,
+						"h": 69
+					},
+					"frame": {
+						"x": 67,
+						"y": 0,
+						"w": 43,
+						"h": 69
+					}
+				},
+				{
+					"filename": "0004.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 67,
+						"h": 71
+					},
+					"spriteSourceSize": {
+						"x": 16,
+						"y": 1,
+						"w": 43,
+						"h": 69
+					},
+					"frame": {
+						"x": 0,
+						"y": 68,
+						"w": 43,
+						"h": 69
+					}
+				},
+				{
+					"filename": "0003.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 67,
+						"h": 71
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 3,
+						"w": 67,
+						"h": 68
+					},
+					"frame": {
+						"x": 43,
+						"y": 69,
+						"w": 67,
+						"h": 68
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:e744396a3b647429d050d678017c05ce:ec812f719dffcd362f0481d7d83c3476:8ec14f129d1691b8da504a13b661abed$"
+	}
+}

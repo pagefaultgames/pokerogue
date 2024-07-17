@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "1024-stellar.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 119,
+				"h": 119
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 119,
+						"h": 119
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 115,
+						"h": 119
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 115,
+						"h": 119
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:bc663acf2e62803fce6c3a525dc8dd98:ccd7d0de8a487235cfbd6f372afa931f:c1508f3b01ae78a28a1267fd6caa4f7b$"
+	}
+}
