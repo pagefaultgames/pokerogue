@@ -202,6 +202,7 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
       }
 
       enemyPokemon.initBattleInfo();
+      enemyPokemon.getBattleInfo().initInfo(enemyPokemon);
     }
 
     loadEnemyAssets.push(enemyPokemon.loadAssets());

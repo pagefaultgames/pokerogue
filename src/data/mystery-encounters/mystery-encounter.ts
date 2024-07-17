@@ -64,6 +64,7 @@ export default interface IMysteryEncounter {
   doEncounterExp?: (scene: BattleScene) => boolean;
   doEncounterRewards?: (scene: BattleScene) => boolean;
   onInit?: (scene: BattleScene) => boolean;
+  onVisualsStart?: (scene: BattleScene) => boolean;
 
   /**
    * Requirements
@@ -384,6 +385,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   doEncounterExp?: (scene: BattleScene) => boolean;
   doEncounterRewards?: (scene: BattleScene) => boolean;
   onInit?: (scene: BattleScene) => boolean;
+  onVisualsStart?: (scene: BattleScene) => boolean;
   hideBattleIntroMessage?: boolean;
   hideIntroVisuals?: boolean;
   enemyPartyConfigs?: EnemyPartyConfig[] = [];
@@ -596,6 +598,16 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    */
   withOnInit(onInit: (scene: BattleScene) => boolean): this & Required<Pick<IMysteryEncounter, "onInit">> {
     return Object.assign(this, { onInit: onInit });
+  }
+
+  /**
+   * Can be used to perform some extra logic (usually animations) when the enemy field is finished sliding in
+   *
+   * @param onVisualsStart - synchronous callback function to perform as soon as the enemy field finishes sliding in
+   * @returns
+   */
+  withOnVisualsStart(onVisualsStart: (scene: BattleScene) => boolean): this & Required<Pick<IMysteryEncounter, "onVisualsStart">> {
+    return Object.assign(this, { onVisualsStart: onVisualsStart });
   }
 
   /**

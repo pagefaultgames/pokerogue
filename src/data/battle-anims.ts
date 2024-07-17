@@ -102,6 +102,11 @@ export enum CommonAnim {
     LOCK_ON = 2120
 }
 
+export enum EncounterAnim {
+  MAGMA_BG,
+  MAGMA_SPOUT
+}
+
 export class AnimConfig {
   public id: integer;
   public graphic: string;
@@ -444,6 +449,7 @@ class AnimTimedAddBgEvent extends AnimTimedBgEvent {
 export const moveAnims = new Map<Moves, AnimConfig | [AnimConfig, AnimConfig]>();
 export const chargeAnims = new Map<ChargeAnim, AnimConfig | [AnimConfig, AnimConfig]>();
 export const commonAnims = new Map<CommonAnim, AnimConfig>();
+export const encounterAnims = new Map<EncounterAnim, AnimConfig>();
 
 export function initCommonAnims(scene: BattleScene): Promise<void> {
   return new Promise(resolve => {
@@ -511,6 +517,21 @@ export function initMoveAnim(scene: BattleScene, move: Moves): Promise<void> {
   });
 }
 
+export function initEncounterAnims(scene: BattleScene): Promise<void> {
+  return new Promise(resolve => {
+    const encounterAnimNames = Utils.getEnumKeys(EncounterAnim);
+    const encounterAnimIds = Utils.getEnumValues(EncounterAnim);
+    const encounterAnimFetches = [];
+    for (let ea = 0; ea < encounterAnimIds.length; ea++) {
+      const encounterAnimId = encounterAnimIds[ea];
+      encounterAnimFetches.push(scene.cachedFetch(`./battle-anims/encounter-${encounterAnimNames[ea].toLowerCase().replace(/\_/g, "-")}.json`)
+        .then(response => response.json())
+        .then(cas => encounterAnims.set(encounterAnimId, new AnimConfig(cas))));
+    }
+    Promise.allSettled(encounterAnimFetches).then(() => resolve());
+  });
+}
+
 export function initMoveChargeAnim(scene: BattleScene, chargeAnim: ChargeAnim): Promise<void> {
   return new Promise(resolve => {
     if (chargeAnims.has(chargeAnim)) {
@@ -562,6 +583,12 @@ function populateMoveChargeAnim(chargeAnim: ChargeAnim, animSource: any) {
 export function loadCommonAnimAssets(scene: BattleScene, startLoad?: boolean): Promise<void> {
   return new Promise(resolve => {
     loadAnimAssets(scene, Array.from(commonAnims.values()), startLoad).then(() => resolve());
+  });
+}
+
+export function loadEncounterAnimAssets(scene: BattleScene, startLoad?: boolean): Promise<void> {
+  return new Promise(resolve => {
+    loadAnimAssets(scene, Array.from(encounterAnims.values()), startLoad).then(() => resolve());
   });
 }
 
@@ -977,6 +1004,185 @@ export abstract class BattleAnim {
         }
       });
     }
+
+    private getGraphicFrameDataWithoutTarget(scene: BattleScene, frames: AnimFrame[], targetInitialX: number, targetInitialY: number): Map<integer, Map<AnimFrameTarget, GraphicFrameData>> {
+      const ret: Map<integer, Map<AnimFrameTarget, GraphicFrameData>> = new Map([
+        [AnimFrameTarget.GRAPHIC, new Map<AnimFrameTarget, GraphicFrameData>() ],
+        [AnimFrameTarget.USER, new Map<AnimFrameTarget, GraphicFrameData>() ],
+        [AnimFrameTarget.TARGET, new Map<AnimFrameTarget, GraphicFrameData>() ]
+      ]);
+
+      const userInitialX = 0;
+      const userInitialY = 0;
+      const userHalfHeight = 30;
+      const targetHalfHeight = 30;
+
+      let g = 0;
+      let u = 0;
+      let t = 0;
+
+      for (const frame of frames) {
+        let x = frame.x;
+        let y = frame.y;
+        let scaleX = (frame.zoomX / 100) * (!frame.mirror ? 1 : -1);
+        const scaleY = (frame.zoomY / 100);
+        switch (frame.focus) {
+        case AnimFocus.TARGET:
+          x += targetInitialX - targetFocusX;
+          y += (targetInitialY - targetHalfHeight) - targetFocusY;
+          break;
+        case AnimFocus.USER:
+          x += userInitialX - userFocusX;
+          y += (userInitialY - userHalfHeight) - userFocusY;
+          break;
+        case AnimFocus.USER_TARGET:
+          const point = transformPoint(this.srcLine[0], this.srcLine[1], this.srcLine[2], this.srcLine[3],
+            this.dstLine[0], this.dstLine[1] - userHalfHeight, this.dstLine[2], this.dstLine[3] - targetHalfHeight, x, y);
+          x = point[0];
+          y = point[1];
+          if (frame.target === AnimFrameTarget.GRAPHIC && isReversed(this.srcLine[0], this.srcLine[2], this.dstLine[0], this.dstLine[2])) {
+            scaleX = scaleX * -1;
+          }
+          break;
+        }
+        const angle = -frame.angle;
+        const key = frame.target === AnimFrameTarget.GRAPHIC ? g++ : frame.target === AnimFrameTarget.USER ? u++ : t++;
+        ret.get(frame.target).set(key, { x: x, y: y, scaleX: scaleX, scaleY: scaleY, angle: angle });
+      }
+
+      return ret;
+    }
+
+    playWithoutTargets(scene: BattleScene, targetInitialX: number, targetInitialY: number, frameTimeMult: number, callback?: Function) {
+      const spriteCache: SpriteCache = {
+        [AnimFrameTarget.GRAPHIC]: [],
+        [AnimFrameTarget.USER]: [],
+        [AnimFrameTarget.TARGET]: []
+      };
+      const spritePriorities: integer[] = [];
+
+      const cleanUpAndComplete = () => {
+        for (const ms of Object.values(spriteCache).flat()) {
+          if (ms) {
+            ms.destroy();
+          }
+        }
+        if (this.bgSprite) {
+          this.bgSprite.destroy();
+        }
+        if (callback) {
+          callback();
+        }
+      };
+
+      if (!scene.moveAnimations) {
+        return cleanUpAndComplete();
+      }
+
+      const anim = this.getAnim();
+
+      this.srcLine = [ userFocusX, userFocusY, targetFocusX, targetFocusY ];
+      this.dstLine = [ 150, 75, targetInitialX, targetInitialY ];
+
+      let r = anim.frames.length;
+      let f = 0;
+
+      scene.tweens.addCounter({
+        duration: Utils.getFrameMs(3) * frameTimeMult,
+        repeat: anim.frames.length,
+        onRepeat: () => {
+          const spriteFrames = anim.frames[f];
+          const frameData = this.getGraphicFrameDataWithoutTarget(scene, anim.frames[f], targetInitialX, targetInitialY);
+          const u = 0;
+          const t = 0;
+          let g = 0;
+          for (const frame of spriteFrames) {
+            if (frame.target !== AnimFrameTarget.GRAPHIC) {
+              console.log("Encounter animations do not support targets");
+              continue;
+            }
+
+            const sprites = spriteCache[AnimFrameTarget.GRAPHIC];
+            if (g === sprites.length) {
+              const newSprite: Phaser.GameObjects.Sprite = scene.addFieldSprite(0, 0, anim.graphic, 1);
+              sprites.push(newSprite);
+              scene.field.add(newSprite);
+              spritePriorities.push(1);
+            }
+
+            const graphicIndex = g++;
+            const moveSprite = sprites[graphicIndex];
+            if (spritePriorities[graphicIndex] !== frame.priority) {
+              spritePriorities[graphicIndex] = frame.priority;
+              const setSpritePriority = (priority: integer) => {
+                if (priority < 0) {
+                // Move to top of scene
+                  scene.field.moveTo(moveSprite, scene.field.getAll().length - 1);
+                } else if (priority < scene.field.getAll().length) {
+                // Indexes of field:
+                // 0 is scene background
+                // 1 is enemy field
+                  scene.field.moveTo(moveSprite, priority);
+                } else {
+                  setSpritePriority(-1);
+                }
+              };
+              setSpritePriority(frame.priority);
+            }
+            moveSprite.setFrame(frame.graphicFrame);
+            //console.log(AnimFocus[frame.focus]);
+
+            const graphicFrameData = frameData.get(frame.target).get(graphicIndex);
+            moveSprite.setPosition(graphicFrameData.x, graphicFrameData.y);
+            moveSprite.setAngle(graphicFrameData.angle);
+            moveSprite.setScale(graphicFrameData.scaleX,  graphicFrameData.scaleY);
+
+            moveSprite.setAlpha(frame.opacity / 255);
+            moveSprite.setVisible(frame.visible);
+            moveSprite.setBlendMode(frame.blendType === AnimBlendType.NORMAL ? Phaser.BlendModes.NORMAL : frame.blendType === AnimBlendType.ADD ? Phaser.BlendModes.ADD : Phaser.BlendModes.DIFFERENCE);
+          }
+          if (anim.frameTimedEvents.has(f)) {
+            for (const event of anim.frameTimedEvents.get(f)) {
+              r = Math.max((anim.frames.length - f) + event.execute(scene, this), r);
+            }
+          }
+          const targets = Utils.getEnumValues(AnimFrameTarget);
+          for (const i of targets) {
+            const count = i === AnimFrameTarget.GRAPHIC ? g : i === AnimFrameTarget.USER ? u : t;
+            if (count < spriteCache[i].length) {
+              const spritesToRemove = spriteCache[i].slice(count, spriteCache[i].length);
+              for (const rs of spritesToRemove) {
+                if (!rs.getData("locked") as boolean) {
+                  const spriteCacheIndex = spriteCache[i].indexOf(rs);
+                  spriteCache[i].splice(spriteCacheIndex, 1);
+                  if (i === AnimFrameTarget.GRAPHIC) {
+                    spritePriorities.splice(spriteCacheIndex, 1);
+                  }
+                  rs.destroy();
+                }
+              }
+            }
+          }
+          f++;
+          r--;
+        },
+        onComplete: () => {
+          for (const ms of Object.values(spriteCache).flat()) {
+            if (ms && !ms.getData("locked")) {
+              ms.destroy();
+            }
+          }
+          if (r) {
+            scene.tweens.addCounter({
+              duration: Utils.getFrameMs(r),
+              onComplete: () => cleanUpAndComplete()
+            });
+          } else {
+            cleanUpAndComplete();
+          }
+        }
+      });
+    }
 }
 
 export class CommonBattleAnim extends BattleAnim {
@@ -1042,6 +1248,24 @@ export class MoveChargeAnim extends MoveAnim {
     return chargeAnims.get(this.chargeAnim) instanceof AnimConfig
       ? chargeAnims.get(this.chargeAnim) as AnimConfig
       : chargeAnims.get(this.chargeAnim)[this.user.isPlayer() ? 0 : 1] as AnimConfig;
+  }
+}
+
+export class EncounterBattleAnim extends BattleAnim {
+  public encounterAnim: EncounterAnim;
+
+  constructor(encounterAnim: EncounterAnim, user: Pokemon, target?: Pokemon) {
+    super(user, target || user);
+
+    this.encounterAnim = encounterAnim;
+  }
+
+  getAnim(): AnimConfig {
+    return encounterAnims.get(this.encounterAnim);
+  }
+
+  isOppAnim(): boolean {
+    return false;
   }
 }
 

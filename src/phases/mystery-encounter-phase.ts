@@ -108,9 +108,9 @@ export class MysteryEncounterPhase extends Phase {
         }
 
         if (title) {
-          this.scene.ui.showDialogue(text, title, null, nextAction, 0, i === 0 ? 750 : 0);
+          this.scene.ui.showDialogue(text, title, null, nextAction, 0, i === 0 ? 300 : 0);
         } else {
-          this.scene.ui.showText(text, null, nextAction, i === 0 ? 750 : 0, true);
+          this.scene.ui.showText(text, null, nextAction, i === 0 ? 300 : 0, true);
         }
         i++;
       };
@@ -222,7 +222,7 @@ export class MysteryEncounterBattlePhase extends Phase {
       }
 
       if (!scene.currentBattle.mysteryEncounter.hideBattleIntroMessage) {
-        scene.ui.showText(this.getBattleMessage(scene), null, () => this.endBattleSetup(scene), 500);
+        scene.ui.showText(this.getBattleMessage(scene), null, () => this.endBattleSetup(scene), 0);
       } else {
         this.endBattleSetup(scene);
       }
@@ -243,7 +243,7 @@ export class MysteryEncounterBattlePhase extends Phase {
           this.endBattleSetup(scene);
         };
         if (!scene.currentBattle.mysteryEncounter.hideBattleIntroMessage) {
-          scene.ui.showText(this.getBattleMessage(scene), null, doTrainerSummon, 1500, true);
+          scene.ui.showText(this.getBattleMessage(scene), null, doTrainerSummon, 1000, true);
         } else {
           doTrainerSummon();
         }

@@ -12,8 +12,9 @@ import { Type } from "#app/data/type";
 import { BattlerIndex } from "#app/battle";
 import { PokemonMove } from "#app/field/pokemon";
 import { Moves } from "#enums/moves";
-import { initMoveAnim } from "#app/data/battle-anims";
+import { EncounterAnim, EncounterBattleAnim, initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
 import { WeatherType } from "#app/data/weather";
+import { randSeedInt } from "#app/utils";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:fiery_fallout";
@@ -34,7 +35,7 @@ export const FieryFalloutEncounter: IMysteryEncounter =
     .withOnInit((scene: BattleScene) => {
       const encounter = scene.currentBattle.mysteryEncounter;
 
-      // Calculate boss mon
+      // Calculate boss mons
       const volcaronaSpecies = getPokemonSpecies(Species.VOLCARONA);
       const config: EnemyPartyConfig = {
         levelAdditiveMultiplier: 0.25,
@@ -55,18 +56,27 @@ export const FieryFalloutEncounter: IMysteryEncounter =
       };
       encounter.enemyPartyConfigs = [config];
 
-      const spriteKey = volcaronaSpecies.getSpriteId(false, null, false, null);
-      encounter.spriteConfigs = [
-        {
-          spriteKey: spriteKey,
-          fileRoot: "pokemon",
-          tint: 0.9,
-          repeat: true
-        }
-      ];
-
       // Sets weather for 5 turns
       scene.arena.trySetWeather(WeatherType.SUNNY, true);
+
+      // Load animations/sfx for Volcarona moves
+      Promise.all([initMoveAnim(scene, Moves.QUIVER_DANCE), initMoveAnim(scene, Moves.FIRE_SPIN)])
+        .then(() => loadMoveAnimAssets(scene, [Moves.QUIVER_DANCE, Moves.FIRE_SPIN]));
+
+      return true;
+    })
+    .withOnVisualsStart((scene: BattleScene) => {
+      // Play animations
+      const background = new EncounterBattleAnim(EncounterAnim.MAGMA_BG, scene.getPlayerPokemon(), scene.getPlayerPokemon());
+      background.playWithoutTargets(scene, 200, 70, 2);
+      const animation = new EncounterBattleAnim(EncounterAnim.MAGMA_SPOUT, scene.getPlayerPokemon(), scene.getPlayerPokemon());
+      animation.playWithoutTargets(scene, 200, 70, 2);
+      const increment = 600;
+      for (let i = 3; i < 6; i++) {
+        scene.time.delayedCall((increment) * (i - 2), () => {
+          animation.playWithoutTargets(scene, 100 + randSeedInt(12) * 20, 110 - randSeedInt(10) * 15, 2);
+        });
+      }
 
       return true;
     })
@@ -86,22 +96,19 @@ export const FieryFalloutEncounter: IMysteryEncounter =
       async (scene: BattleScene) => {
         // Pick battle
         const encounter = scene.currentBattle.mysteryEncounter;
-        // TODO: play heat wave animation for weather effect
-        // await initMoveAnim(scene, Moves.HEAT_WAVE);
-        // await loadMoveAnimAssets(scene, [ Moves.HEAT_WAVE ], true);
-        // const heatWave = new MoveAnim(Moves.HEAT_WAVE, scene.getPlayerPokemon(), 0);
-        // heatWave.play(scene);
-
-        await initMoveAnim(scene, Moves.QUIVER_DANCE);
-        await initMoveAnim(scene, Moves.FIRE_SPIN);
-        await initMoveAnim(scene, Moves.HEAT_WAVE);
         const charcoal = generateModifierTypeOption(scene, modifierTypes.ATTACK_TYPE_BOOSTER, [Type.FIRE]);
         setEncounterRewards(scene, { guaranteedModifierTypeOptions: [charcoal], fillRemaining: true });
         encounter.startOfBattleEffects.push(
           {
             sourceBattlerIndex: BattlerIndex.ENEMY,
-            targets: [BattlerIndex.PLAYER, BattlerIndex.PLAYER_2],
-            move: new PokemonMove(Moves.HEAT_WAVE),
+            targets: [BattlerIndex.PLAYER],
+            move: new PokemonMove(Moves.FIRE_SPIN),
+            ignorePp: true
+          },
+          {
+            sourceBattlerIndex: BattlerIndex.ENEMY_2,
+            targets: [BattlerIndex.PLAYER_2],
+            move: new PokemonMove(Moves.FIRE_SPIN),
             ignorePp: true
           },
           {
@@ -114,18 +121,6 @@ export const FieryFalloutEncounter: IMysteryEncounter =
             sourceBattlerIndex: BattlerIndex.ENEMY_2,
             targets: [BattlerIndex.ENEMY_2],
             move: new PokemonMove(Moves.QUIVER_DANCE),
-            ignorePp: true
-          },
-          {
-            sourceBattlerIndex: BattlerIndex.ENEMY,
-            targets: [BattlerIndex.PLAYER],
-            move: new PokemonMove(Moves.FIRE_SPIN),
-            ignorePp: true
-          },
-          {
-            sourceBattlerIndex: BattlerIndex.ENEMY_2,
-            targets: [BattlerIndex.PLAYER_2],
-            move: new PokemonMove(Moves.FIRE_SPIN),
             ignorePp: true
           });
         await initBattleWithEnemyConfig(scene, scene.currentBattle.mysteryEncounter.enemyPartyConfigs[0]);

@@ -891,11 +891,6 @@ export class EncounterPhase extends BattlePhase {
     if (battle.battleType === BattleType.TRAINER) {
       loadEnemyAssets.push(battle.trainer.loadAssets().then(() => battle.trainer.initSprite()));
     } else if (battle.battleType === BattleType.MYSTERY_ENCOUNTER) {
-      // this.scene.getEnemyParty().forEach(p => {
-      //   this.scene.field.remove(p);
-      //   p.destroy();
-      // });
-      // this.scene.currentBattle.enemyParty = [];
       if (!battle.mysteryEncounter) {
         const newEncounter = this.scene.getMysteryEncounter(mysteryEncounter);
         battle.mysteryEncounter = newEncounter;
@@ -1080,6 +1075,10 @@ export class EncounterPhase extends BattlePhase {
     } else if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER) {
       const introVisuals = this.scene.currentBattle.mysteryEncounter.introVisuals;
       introVisuals.playAnim();
+
+      if (this.scene.currentBattle.mysteryEncounter.onVisualsStart) {
+        this.scene.currentBattle.mysteryEncounter.onVisualsStart(this.scene);
+      }
 
       const doEncounter = () => {
         this.scene.playBgm(undefined);
