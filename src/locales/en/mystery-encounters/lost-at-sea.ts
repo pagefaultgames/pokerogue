@@ -24,7 +24,7 @@ export const lostAtSea = {
       label: "Wander aimlessly",
       tooltip: "(-) Each of your Pokémon lose {{damagePercentage}}% of their total HP.",
       selected: `You float about in the boat, steering it aimlessly until you finally get back on track.
-                  $You and your Pokémon get very fatigued during the whole ordeal`,
+                  $You and your Pokémon get very fatigued during the whole ordeal.`,
     },
   },
   outro: "You are back on track."
