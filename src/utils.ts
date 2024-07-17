@@ -537,7 +537,7 @@ export function reverseValueToKeySetting(input) {
  * @param returnWithSpaces - Whether the returned string should have spaces between the words or not.
  * @returns The capitalized string.
  */
-export function capitalizeString(str: String, sep: String, lowerFirstChar: Boolean = true, returnWithSpaces: Boolean = false) {
+export function capitalizeString(str: string, sep: string, lowerFirstChar: boolean = true, returnWithSpaces: boolean = false) {
   if (str) {
     const splitedStr = str.toLowerCase().split(sep);
 
