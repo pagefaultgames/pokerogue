@@ -7,7 +7,7 @@ import { EncounterPokemonRequirement } from "../mystery-encounter-requirements";
 /**
  * {@linkcode CanLearnMoveRequirement} options
  */
-export interface CanlearnMoveRequirementOptions {
+export interface CanLearnMoveRequirementOptions {
   excludeLevelMoves?: boolean;
   excludeTmMoves?: boolean;
   excludeEggMoves?: boolean;
@@ -26,7 +26,7 @@ export class CanLearnMoveRequirement extends EncounterPokemonRequirement {
   private readonly excludeEggMoves?: boolean;
   private readonly includeFainted?: boolean;
 
-  constructor(requiredMoves: Moves | Moves[], options: CanlearnMoveRequirementOptions = {}) {
+  constructor(requiredMoves: Moves | Moves[], options: CanLearnMoveRequirementOptions = {}) {
     super();
     this.requiredMoves = Array.isArray(requiredMoves) ? requiredMoves : [requiredMoves];
 

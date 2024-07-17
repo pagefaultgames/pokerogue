@@ -5,7 +5,7 @@ import BattleScene from "../../battle-scene";
 import * as Utils from "../../utils";
 import { Type } from "../type";
 import { EncounterPokemonRequirement, EncounterSceneRequirement, MoneyRequirement, TypeRequirement } from "./mystery-encounter-requirements";
-import { CanLearnMoveRequirement, CanlearnMoveRequirementOptions } from "./requirements/can-learn-move-requirement";
+import { CanLearnMoveRequirement, CanLearnMoveRequirementOptions } from "./requirements/can-learn-move-requirement";
 
 export enum EncounterOptionMode {
   /** Default style */
@@ -202,10 +202,10 @@ export class MysteryEncounterOptionBuilder implements Partial<MysteryEncounterOp
    * Player is required to have a pokemon that can learn a certain move/moveset
    *
    * @param move the required move/moves
-   * @param options see {@linkcode CanlearnMoveRequirementOptions}
+   * @param options see {@linkcode CanLearnMoveRequirementOptions}
    * @returns
    */
-  withPokemonCanLearnMoveRequirement(move: Moves | Moves[], options?: CanlearnMoveRequirementOptions) {
+  withPokemonCanLearnMoveRequirement(move: Moves | Moves[], options?: CanLearnMoveRequirementOptions) {
     return this.withPrimaryPokemonRequirement(new CanLearnMoveRequirement(move, options));
   }
 
