@@ -5,7 +5,7 @@ import i18next from "i18next";
 import * as Utils from "../utils";
 import { PlayerGender } from "#enums/player-gender";
 import { ParseKeys } from "i18next";
-import { Challenge, SingleGenerationChallenge, SingleTypeChallenge } from "#app/data/challenge.js";
+import { Challenge, FreshStartChallenge, SingleGenerationChallenge, SingleTypeChallenge } from "#app/data/challenge.js";
 
 export enum AchvTier {
   COMMON,
@@ -276,6 +276,8 @@ export function getAchievementDescription(localizationKey: string): string {
   case "MONO_DARK":
   case "MONO_FAIRY":
     return i18next.t(`${genderPrefix}achv:MonoType.description` as ParseKeys, {"type": i18next.t(`pokemonInfo:Type.${localizationKey.slice(5)}`)});
+  case "FRESH_START":
+    return i18next.t(`${genderPrefix}achv:FRESH_START.description` as ParseKeys);
   default:
     return "";
   }
@@ -316,10 +318,10 @@ export const achvs = {
   CATCH_LEGENDARY: new Achv("CATCH_LEGENDARY", "", "CATCH_LEGENDARY.description","mb", 100).setSecret(),
   SEE_SHINY: new Achv("SEE_SHINY", "", "SEE_SHINY.description","pb_gold", 75),
   SHINY_PARTY: new Achv("SHINY_PARTY", "", "SHINY_PARTY.description","shiny_charm", 100).setSecret(true),
-  HATCH_MYTHICAL: new Achv("HATCH_MYTHICAL", "", "HATCH_MYTHICAL.description","pair_of_tickets", 75).setSecret(),
-  HATCH_SUB_LEGENDARY: new Achv("HATCH_SUB_LEGENDARY","",  "HATCH_SUB_LEGENDARY.description","mystic_ticket", 100).setSecret(),
-  HATCH_LEGENDARY: new Achv("HATCH_LEGENDARY","",  "HATCH_LEGENDARY.description","mystic_ticket", 125).setSecret(),
-  HATCH_SHINY: new Achv("HATCH_SHINY","",  "HATCH_SHINY.description","golden_mystic_ticket", 100).setSecret(),
+  HATCH_MYTHICAL: new Achv("HATCH_MYTHICAL", "", "HATCH_MYTHICAL.description","mystery_egg", 75).setSecret(),
+  HATCH_SUB_LEGENDARY: new Achv("HATCH_SUB_LEGENDARY","",  "HATCH_SUB_LEGENDARY.description","oval_stone", 100).setSecret(),
+  HATCH_LEGENDARY: new Achv("HATCH_LEGENDARY","",  "HATCH_LEGENDARY.description","lucky_egg", 125).setSecret(),
+  HATCH_SHINY: new Achv("HATCH_SHINY","",  "HATCH_SHINY.description","golden_egg", 100).setSecret(),
   HIDDEN_ABILITY: new Achv("HIDDEN_ABILITY","",  "HIDDEN_ABILITY.description","ability_charm", 75),
   PERFECT_IVS: new Achv("PERFECT_IVS","",  "PERFECT_IVS.description","blunder_policy", 100),
   CLASSIC_VICTORY: new Achv("CLASSIC_VICTORY","",  "CLASSIC_VICTORY.description","relic_crown", 150),
@@ -350,6 +352,7 @@ export const achvs = {
   MONO_DRAGON: new ChallengeAchv("MONO_DRAGON","", "MONO_DRAGON.description", "dragon_fang", 100, c => c instanceof SingleTypeChallenge && c.value === 16),
   MONO_DARK: new ChallengeAchv("MONO_DARK","", "MONO_DARK.description", "black_glasses", 100, c => c instanceof SingleTypeChallenge && c.value === 17),
   MONO_FAIRY: new ChallengeAchv("MONO_FAIRY","", "MONO_FAIRY.description", "fairy_feather", 100, c => c instanceof SingleTypeChallenge && c.value === 18),
+  FRESH_START: new ChallengeAchv("FRESH_START","", "FRESH_START.description", "mystic_ticket", 100, c => c instanceof FreshStartChallenge && c.value === 1),
 };
 
 export function initAchievements() {

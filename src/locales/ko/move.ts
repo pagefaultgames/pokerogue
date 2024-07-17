@@ -2937,7 +2937,7 @@ export const move: MoveTranslationEntries = {
   },
   bouncyBubble: {
     name: "생생버블",
-    effect: "물덩어리를 부딪쳐서 공격한다. 물을 흡수하여 데미지의 절만큼 HP를 회복한다."
+    effect: "물덩어리를 부딪쳐서 공격한다. 물을 흡수하여 준 데미지만큼 HP를 회복한다."
   },
   buzzyBuzz: {
     name: "찌릿찌릿일렉",
@@ -2981,8 +2981,7 @@ export const move: MoveTranslationEntries = {
   },
   dynamaxCannon: {
     name: "다이맥스포",
-    /* 다이맥스에서 200레벨로 조건 변경 */
-    effect: "코어에서 빔을 발사해서 공격한다. 상대의 레벨이 200보다 크면 데미지가 2배가 된다."
+    effect: "코어에서 빔을 발사해서 공격한다. 상대가 웨이브 레벨 최대치를 초과했다면, 초과한 정도에 비례하여 데미지가 최대 2배가 된다."
   },
   snipeShot: {
     name: "노려맞히기",

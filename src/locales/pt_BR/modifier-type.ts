@@ -4,11 +4,11 @@ export const modifierType: ModifierTypeTranslationEntries = {
   ModifierType: {
     "AddPokeballModifierType": {
       name: "{{modifierCount}}x {{pokeballName}}",
-      description: "Ganhe x{{modifierCount}} {{pokeballName}} (Mochila: {{pokeballAmount}}) \nChance de captura: {{catchRate}}.",
+      description: "Ganhe {{modifierCount}}x {{pokeballName}} (Mochila: {{pokeballAmount}}) \nChance de captura: {{catchRate}}.",
     },
     "AddVoucherModifierType": {
       name: "{{modifierCount}}x {{voucherTypeName}}",
-      description: "Ganhe x{{modifierCount}} {{voucherTypeName}}.",
+      description: "Ganhe {{modifierCount}}x {{voucherTypeName}}.",
     },
     "PokemonHeldItemModifierType": {
       extra: {
@@ -58,10 +58,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "Aumenta o poder dos ataques do tipo {{moveType}} de um Pokémon em 20%.",
     },
     "PokemonLevelIncrementModifierType": {
-      description: "Aumenta em 1 o nível de um Pokémon.",
+      description: "Aumenta em {{levels}} o nível de um Pokémon.",
     },
     "AllPokemonLevelIncrementModifierType": {
-      description: "Aumenta em 1 os níveis de todos os Pokémon.",
+      description: "Aumenta em {{levels}} o nível de todos os membros da equipe.",
     },
     "PokemonBaseStatBoosterModifierType": {
       description: "Aumenta o atributo base de {{statName}} em 10%. Quanto maior os IVs, maior o limite de aumento.",
@@ -151,7 +151,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SACRED_ASH": { name: "Cinza Sagrada" },
 
-    "REVIVER_SEED": { name: "Semente Reanimadora", description: "Após desmaiar, reanima com 50% de PS." },
+    "REVIVER_SEED": { name: "Semente Reanimadora", description: "Após desmaiar por um ataque direto, reanima com 50% de PS." },
 
     "ETHER": { name: "Éter" },
     "MAX_ETHER": { name: "Éter Máximo" },
@@ -181,6 +181,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "GOLDEN_EGG": { name: "Ovo Dourado" },
 
     "SOOTHE_BELL": { name: "Guizo" },
+
+    "EVIOLITE": { name: "Eviolita", description: "Esse misterioso caroço evolutivo aumenta os atributos de Defesa e Def. Esp. quando segurado por um Pokémon que ainda pode evoluir." },
 
     "SOUL_DEW": { name: "Joia da Alma", description: "Aumenta a influência da natureza de um Pokémon em seus atributos em 10% (cumulativo)." },
 
@@ -238,6 +240,12 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "Token de Cura Total", description: "Adiciona uma chance de 2.5% a cada turno de curar uma condição de status." },
     "ENEMY_ENDURE_CHANCE": { name: "Token de Persistência" },
     "ENEMY_FUSED_CHANCE": { name: "Token de Fusão", description: "Adiciona uma chance de 1% de que um Pokémon selvagem seja uma fusão." },
+  },
+  SpeciesBoosterItem: {
+    "LIGHT_BALL": { name: "Bola de Luz", description: "Orbe intrigante que aumenta os atributos de Ataque e Ataque Esp. de Pikachu." },
+    "THICK_CLUB": { name: "Osso Grosso", description: "Este duro osso de origem desconhecida aumenta o atributo de Ataque de Cubone ou Marowak." },
+    "METAL_POWDER": { name: "Pó Metálico", description: "Extremamente fino, porém duro, este pó estranho aumenta o atributo de Defesa de Ditto." },
+    "QUICK_POWDER": { name: "Pó Veloz", description: "Extremamente fino, porém duro, este pó estranho aumenta o atributo de Velocidade de Ditto." }
   },
   TempBattleStatBoosterItem: {
     "x_attack": "Ataque X",
@@ -402,7 +410,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "CHILL_DRIVE": "CrioDisco",
     "DOUSE_DRIVE": "HidroDisco",
 
-    "FIST_PLATE": "Placa de Punho",
+    "FIST_PLATE": "Placa do Punho",
     "SKY_PLATE": "Placa do Céu",
     "TOXIC_PLATE": "Placa Tóxica",
     "EARTH_PLATE": "Placa Terrestre",
@@ -412,15 +420,15 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "IRON_PLATE": "Placa de Ferro",
     "FLAME_PLATE": "Placa da Chama",
     "SPLASH_PLATE": "Placa de Respingo",
-    "MEADOW_PLATE": "Placa de Prado",
+    "MEADOW_PLATE": "Placa da Planície",
     "ZAP_PLATE": "Placa Elétrica",
     "MIND_PLATE": "Placa Mental",
     "ICICLE_PLATE": "Placa de Gelo",
-    "DRACO_PLATE": "Placa de Draco",
-    "DREAD_PLATE": "Placa do Pavor",
-    "PIXIE_PLATE": "Placa Duende",
+    "DRACO_PLATE": "Placa do Dragão",
+    "DREAD_PLATE": "Placa Sombria",
+    "PIXIE_PLATE": "Placa de Fada",
     "BLANK_PLATE": "Placa em Branco",
-    "LEGEND_PLATE": "Placa de Legenda",
+    "LEGEND_PLATE": "Placa Lendária",
     "FIGHTING_MEMORY": "Memória de Lutador",
     "FLYING_MEMORY": "Memória Voadora",
     "POISON_MEMORY": "Memória Venenosa",
@@ -436,7 +444,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "PSYCHIC_MEMORY": "Memória Psíquica",
     "ICE_MEMORY": "Memória de Gelo",
     "DRAGON_MEMORY": "Memória do Dragão",
-    "DARK_MEMORY": "Memória Negra",
+    "DARK_MEMORY": "Memória Sombria",
     "FAIRY_MEMORY": "Memória de Fada",
     "BLANK_MEMORY": "Memória Vazia",
   },

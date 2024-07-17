@@ -9,6 +9,7 @@ import { BattleSceneEventType, TurnEndEvent } from "../events/battle-scene";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import TimeOfDayWidget from "./time-of-day-widget";
 import * as Utils from "../utils";
+import i18next, {ParseKeys} from "i18next";
 
 /** Enum used to differentiate {@linkcode Arena} effects */
 enum ArenaEffectType {
@@ -33,7 +34,17 @@ interface ArenaEffectInfo {
   tagType?: ArenaTagType;
 }
 
-export default class ArenaFlyout extends Phaser.GameObjects.Container {
+export function getFieldEffectText(arenaTagType: string): string {
+  if (!arenaTagType || arenaTagType === ArenaTagType.NONE) {
+    return arenaTagType;
+  }
+  const effectName = Utils.toCamelCaseString(arenaTagType);
+  const i18nKey = `arenaFlyout:${effectName}` as ParseKeys;
+  const resultName = i18next.t(i18nKey);
+  return (!resultName || resultName === i18nKey) ? Utils.formatText(arenaTagType) : resultName;
+}
+
+export class ArenaFlyout extends Phaser.GameObjects.Container {
   /** An alias for the scene typecast to a {@linkcode BattleScene} */
   private battleScene: BattleScene;
 
@@ -89,6 +100,7 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
 
   constructor(scene: Phaser.Scene) {
     super(scene, 0, 0);
+    this.setName("arena-flyout");
     this.battleScene = this.scene as BattleScene;
 
     this.translationX = this.flyoutWidth;
@@ -110,7 +122,7 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
 
     this.flyoutContainer.add(this.flyoutWindowHeader);
 
-    this.flyoutTextHeader = addTextObject(this.scene, this.flyoutWidth / 2, 0, "Active Battle Effects", TextStyle.BATTLE_INFO);
+    this.flyoutTextHeader = addTextObject(this.scene, this.flyoutWidth / 2, 0, i18next.t("arenaFlyout:activeBattleEffects"), TextStyle.BATTLE_INFO);
     this.flyoutTextHeader.setFontSize(54);
     this.flyoutTextHeader.setAlign("center");
     this.flyoutTextHeader.setOrigin();
@@ -120,21 +132,21 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
     this.timeOfDayWidget = new TimeOfDayWidget(this.scene, (this.flyoutWidth / 2) + (this.flyoutWindowHeader.displayWidth / 2));
     this.flyoutContainer.add(this.timeOfDayWidget);
 
-    this.flyoutTextHeaderPlayer = addTextObject(this.scene, 6, 5, "Player", TextStyle.SUMMARY_BLUE);
+    this.flyoutTextHeaderPlayer = addTextObject(this.scene, 6, 5, i18next.t("arenaFlyout:player"), TextStyle.SUMMARY_BLUE);
     this.flyoutTextHeaderPlayer.setFontSize(54);
     this.flyoutTextHeaderPlayer.setAlign("left");
     this.flyoutTextHeaderPlayer.setOrigin(0, 0);
 
     this.flyoutContainer.add(this.flyoutTextHeaderPlayer);
 
-    this.flyoutTextHeaderField = addTextObject(this.scene, this.flyoutWidth / 2, 5, "Neutral", TextStyle.SUMMARY_GREEN);
+    this.flyoutTextHeaderField = addTextObject(this.scene, this.flyoutWidth / 2, 5, i18next.t("arenaFlyout:neutral"), TextStyle.SUMMARY_GREEN);
     this.flyoutTextHeaderField.setFontSize(54);
     this.flyoutTextHeaderField.setAlign("center");
     this.flyoutTextHeaderField.setOrigin(0.5, 0);
 
     this.flyoutContainer.add(this.flyoutTextHeaderField);
 
-    this.flyoutTextHeaderEnemy = addTextObject(this.scene, this.flyoutWidth - 6, 5, "Enemy", TextStyle.SUMMARY_RED);
+    this.flyoutTextHeaderEnemy = addTextObject(this.scene, this.flyoutWidth - 6, 5, i18next.t("arenaFlyout:enemy"), TextStyle.SUMMARY_RED);
     this.flyoutTextHeaderEnemy.setFontSize(54);
     this.flyoutTextHeaderEnemy.setAlign("right");
     this.flyoutTextHeaderEnemy.setOrigin(1, 0);
@@ -183,19 +195,7 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
     this.battleScene.arena.eventTarget.addEventListener(ArenaEventType.TAG_REMOVED,     this.onFieldEffectChangedEvent);
   }
 
-  /**
-   * Formats a string to title case
-   * @param unformattedText Text to be formatted
-   * @returns the formatted string
-   */
-  private formatText(unformattedText: string): string {
-    const text = unformattedText.split("_");
-    for (let i = 0; i < text.length; i++) {
-      text[i] = text[i].charAt(0).toUpperCase() + text[i].substring(1).toLowerCase();
-    }
 
-    return text.join(" ");
-  }
 
   /** Clears out the current string stored in all arena effect texts */
   private clearText() {
@@ -232,10 +232,7 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
         break;
       }
 
-      textObject.text += this.formatText(fieldEffectInfo.name);
-      if (fieldEffectInfo.effecType === ArenaEffectType.TERRAIN) {
-        textObject.text += " Terrain"; // Adds 'Terrain' since the enum does not contain it
-      }
+      textObject.text += fieldEffectInfo.name;
 
       if (fieldEffectInfo.maxDuration !== 0) {
         textObject.text += "  " + fieldEffectInfo.duration + "/" + fieldEffectInfo.maxDuration;
@@ -271,17 +268,17 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
       }
 
       const existingTrapTagIndex = isArenaTrapTag ? this.fieldEffectInfo.findIndex(e => tagAddedEvent.arenaTagType === e.tagType && arenaEffectType === e.effecType) : -1;
-      let name: string = ArenaTagType[tagAddedEvent.arenaTagType];
+      let name: string =  getFieldEffectText(ArenaTagType[tagAddedEvent.arenaTagType]);
 
-      if (isArenaTrapTag && tagAddedEvent.arenaTagMaxLayers > 1) {
+      if (isArenaTrapTag) {
         if (existingTrapTagIndex !== -1) {
-          this.fieldEffectInfo[existingTrapTagIndex].name = `${name} (${tagAddedEvent.arenaTagLayers})`;
+          const layers = tagAddedEvent.arenaTagMaxLayers > 1 ? ` (${tagAddedEvent.arenaTagLayers})` : "";
+          this.fieldEffectInfo[existingTrapTagIndex].name = `${name}${layers}`;
           break;
-        } else {
+        } else if (tagAddedEvent.arenaTagMaxLayers > 1) {
           name = `${name} (${tagAddedEvent.arenaTagLayers})`;
         }
       }
-
 
       this.fieldEffectInfo.push({
         name,
@@ -306,15 +303,15 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
 
       // Stores the old Weather/Terrain name in case it's in the array already
       const oldName =
-      fieldEffectChangedEvent instanceof WeatherChangedEvent
-        ? WeatherType[fieldEffectChangedEvent.oldWeatherType]
-        : TerrainType[fieldEffectChangedEvent.oldTerrainType];
+        getFieldEffectText(fieldEffectChangedEvent instanceof WeatherChangedEvent
+          ? WeatherType[fieldEffectChangedEvent.oldWeatherType]
+          : TerrainType[fieldEffectChangedEvent.oldTerrainType]);
       // Stores the new Weather/Terrain info
       const newInfo = {
         name:
-          fieldEffectChangedEvent instanceof WeatherChangedEvent
+          getFieldEffectText(fieldEffectChangedEvent instanceof WeatherChangedEvent
             ? WeatherType[fieldEffectChangedEvent.newWeatherType]
-            : TerrainType[fieldEffectChangedEvent.newTerrainType],
+            : TerrainType[fieldEffectChangedEvent.newTerrainType]),
         effecType: fieldEffectChangedEvent instanceof WeatherChangedEvent
           ? ArenaEffectType.WEATHER
           : ArenaEffectType.TERRAIN,

@@ -13,7 +13,17 @@ import { initAchievements } from "#app/system/achv.js";
 import { initVouchers } from "#app/system/voucher.js";
 import { initStatsKeys } from "#app/ui/game-stats-ui-handler";
 
-import { beforeAll } from "vitest";
+import { beforeAll, vi } from "vitest";
+
+/** Mock the override import to always return default values, ignoring any custom overrides. */
+vi.mock("#app/overrides", async (importOriginal) => {
+  const { defaultOverrides } = await importOriginal<typeof import("#app/overrides")>();
+
+  return {
+    default: defaultOverrides,
+    defaultOverrides
+  } satisfies typeof import("#app/overrides");
+});
 
 initVouchers();
 initAchievements();

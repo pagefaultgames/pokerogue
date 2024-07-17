@@ -3,7 +3,7 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales.js";
 export const settings: SimpleTranslationEntries = {
   "boy": "Ragazzo",
   "girl": "Ragazza",
-  "general": "General",
+  "general": "Generale",
   "display": "Display",
   "audio": "Audio",
   "gamepad": "Gamepad",
@@ -95,5 +95,7 @@ export const settings: SimpleTranslationEntries = {
   "alt": " (Alt)",
   "mute": "Mute",
   "controller": "Controller",
-  "gamepadSupport": "Gamepad Support"
+  "gamepadSupport": "Supporto Gamepad",
+  "showBgmBar": "Mostra Nomi Musica",
+  "shopOverlayOpacity": "Opacità Finestra Negozio"
 } as const;
