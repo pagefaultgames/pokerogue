@@ -4734,10 +4734,16 @@ export class PokemonHealPhase extends CommonAnimPhase {
     const fullHp = pokemon.getHpRatio() >= 1;
 
     const hasMessage = !!this.message;
+
+    const healBlock = pokemon.getTag(BattlerTagType.HEAL_BLOCK);
     const healOrDamage = (!fullHp || this.hpHealed < 0);
     let lastStatusEffect = StatusEffect.NONE;
 
-    if (healOrDamage) {
+    if (healBlock) {
+      this.scene.queueMessage(healBlock.onActivation(pokemon));
+      this.message = null;
+      super.end();
+    } else if (healOrDamage) {
       const hpRestoreMultiplier = new Utils.IntegerHolder(1);
       if (!this.revive) {
         this.scene.applyModifiers(HealingBoosterModifier, this.player, hpRestoreMultiplier);

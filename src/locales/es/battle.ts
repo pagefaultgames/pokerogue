@@ -154,5 +154,7 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsSaltCuredOnAdd": "{{pokemonNameWithAffix}} is being salt cured!",
   "battlerTagsSaltCuredLapse": "{{pokemonNameWithAffix}} is hurt by {{moveName}}!",
   "battlerTagsCursedOnAdd": "{{pokemonNameWithAffix}} cut its own HP and put a curse on the {{pokemonName}}!",
-  "battlerTagsCursedLapse": "{{pokemonNameWithAffix}} is afflicted by the Curse!"
+  "battlerTagsCursedLapse": "{{pokemonNameWithAffix}} is afflicted by the Curse!",
+  "battlerTagsHealBlock": "{{pokemonNameWithAffix}} can't restore its HP!",
+  "battlerTagsHealBlockOnRemove": "{{pokemonNameWithAffix}} can restore its HP again!",
 } as const;
