@@ -1882,6 +1882,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
                                    * screenMultiplier.value
                                    * twoStrikeMultiplier.value
                                    * criticalMultiplier.value
+                                   * glaiveRushModifier.value
                                    * randomMultiplier);
 
           if (isPhysical && source.status && source.status.effect === StatusEffect.BURN) {
