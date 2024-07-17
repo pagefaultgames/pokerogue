@@ -19,6 +19,9 @@ export const titles: SimpleTranslationEntries = {
   "galactic_boss": "갤럭시단 보스",
   "plasma_boss": "플라스마단 보스",
   "flare_boss": "플레어단 보스",
+  "aether_boss": "Aether President",
+  "skull_boss": "Team Skull Boss",
+  "macro_boss": "Macro Cosmos's",
   // Maybe if we add the evil teams we can add "Team Rocket" and "Team Aqua" etc. here as well as "Team Rocket Boss" and "Team Aqua Admin" etc.
 } as const;
 
@@ -137,6 +140,12 @@ export const trainerClasses: SimpleTranslationEntries = {
   "plasma_grunt_female": "플라스마단 조무래기",
   "flare_grunt": "플레어단 조무래기",
   "flare_grunt_female": "플레어단 조무래기",
+  "aether_grunt": "Aether Foundation Employee",
+  "aether_grunt_female": "Aether Foundation Employee",
+  "skull_grunt": "Team Skull Grunt",
+  "skull_grunt_female": "Team Skull Grunt",
+  "macro_grunt": "Macro Cosmos Trainer",
+  "macro_grunt_female": "Macro Cosmos Trainer",
 } as const;
 
 // Names of special trainers like gym leaders, elite four, and the champion
@@ -270,6 +279,9 @@ export const trainerNames: SimpleTranslationEntries = {
   "cyrus": "태홍",
   "ghetsis": "게치스",
   "lysandre": "플라드리",
+  "lusamine": "Lusamine",
+  "guzma": "Guzma",
+  "rose": "Rose",
 
   // Double Names
   "blue_red_double": "그린 & 레드",
