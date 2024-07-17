@@ -28,9 +28,9 @@ describe("Lost at Sea - Mystery Encounter", () => {
     game = new GameManager(phaserGame);
     game.override.mysteryEncounterChance(100);
     game.override.startingBiome(Biome.SEA);
-    vi.spyOn(MysteryEncounters, "allMysteryEncounters", "get").mockReturnValue({
-      [MysteryEncounterType.LOST_AT_SEA]: LostAtSeaEncounter,
-    });
+    vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
+      new Map<Biome, MysteryEncounterType[]>([[Biome.SEA, [MysteryEncounterType.LOST_AT_SEA]]])
+    );
   });
 
   afterEach(() => {
