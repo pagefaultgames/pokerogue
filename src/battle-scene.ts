@@ -2091,10 +2091,8 @@ export default class BattleScene extends SceneBase {
    * @returns boolean if a targetPhase was found and added
    */
   prependToPhase(phase: Phase, targetPhase: Constructor<Phase>): boolean {
-    // want to add the target phase before the targetPhase
     const targetIndex = this.phaseQueue.findIndex(ph => ph instanceof targetPhase);
 
-    // targetIndex === 1 iff findIndex() can't find a phase matching targetPhase
     if (targetIndex !== -1) {
       this.phaseQueue.splice(targetIndex, 0, phase);
       return true;

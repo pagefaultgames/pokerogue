@@ -4514,7 +4514,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
   	// This ensures that the switch out only happens when the conditions are met
 	  const switchOutTarget = this.user ? user : target;
 	  if (switchOutTarget instanceof PlayerPokemon) {
-	  	if (switchOutTarget.hp) {
+        if (switchOutTarget.hp > 0) {
 	  	  applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, switchOutTarget);
           // switchOut below sets the UI to select party(this is not a separate Phase), then adds a SwitchSummonPhase with selected 'mon
 	  	  (switchOutTarget as PlayerPokemon).switchOut(this.batonPass, true).then(() => resolve(true));
@@ -4531,7 +4531,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 	  	switchOutTarget.scene.field.remove(switchOutTarget);
 	  	user.scene.triggerPokemonFormChange(switchOutTarget, SpeciesFormChangeActiveTrigger, true);
 
-	  	if (switchOutTarget.hp) {
+	  	if (switchOutTarget.hp > 0) {
         // for opponent switching out
           user.scene.prependToPhase(new SwitchSummonPhase(user.scene, switchOutTarget.getFieldIndex(), user.scene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot), false, this.batonPass, false), MoveEndPhase);
         }
