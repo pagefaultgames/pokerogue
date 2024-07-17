@@ -1,7 +1,7 @@
 export const lostAtSea = {
   intro: "Wandering aimlessly, you effectively get nowhere.",
   title: "Lost at sea",
-  description: "The sea is turbulent in this area and you seem to be running out of fuel as well.\nThis is bad. Is there a way out of the situation?",
+  description: "The sea is turbulent in this area, and you seem to be running out of fuel.\nThis is bad. Is there a way out of the situation?",
   query: "What will you do?",
   option: {
     1: {
