@@ -30,8 +30,10 @@ describe("Abilities - Illusion", () => {
     vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.ZORUA);
     vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.ILLUSION);
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+    vi.spyOn(overrides, "OPP_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "WIDE_LENS", count: 3}]);
 
     vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.WORRY_SEED, Moves.SOAK, Moves.TACKLE, Moves.TACKLE]);
+    vi.spyOn(overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "WIDE_LENS", count: 3}]);
   });
 
   it("create illusion at the start", async () => {
@@ -48,7 +50,7 @@ describe("Abilities - Illusion", () => {
 
   });
 
-  it("break illusion after receiving damaging move and changing ability move", async () => {
+  it("disappear after receiving damaging move and changing ability move", async () => {
     await game.startBattle([Species.ZOROARK, Species.AXEW]);
     game.doAttack(getMovePosition(game.scene, 0, Moves.WORRY_SEED));
 
@@ -73,4 +75,31 @@ describe("Abilities - Illusion", () => {
 
     expect(psychicEffectiveness).above(flameThwowerEffectiveness);
   });
+
+  it("disappear if the ability is suppressed", async () => {
+    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NEUTRALIZING_GAS);
+    await game.startBattle([Species.KOFFING]);
+
+    const zorua = game.scene.getEnemyPokemon();
+
+    expect(zorua.illusion.active).equals(false);
+  });
+
+  it("do not disappear if the pokemon takes indirect damages", async () => {
+    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.GIGALITH);
+    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.SAND_STREAM);
+    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.WILL_O_WISP, Moves.WILL_O_WISP, Moves.WILL_O_WISP, Moves.WILL_O_WISP]);
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.FLARE_BLITZ]);
+
+    await game.startBattle([Species.ZOROARK, Species.AZUMARILL]);
+
+    game.doAttack(getMovePosition(game.scene, 0, Moves.FLARE_BLITZ));
+
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    const zoroark = game.scene.getPlayerPokemon();
+
+    expect(zoroark.illusion.active).equals(true);
+  });
+
 });

@@ -4736,7 +4736,7 @@ export function initAbilities() {
     new Ability(Abilities.ILLUSION, 5)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
-      //The pokemon genrate an illusion if it's available
+      //The pokemon generate an illusion if it's available
       .conditionalAttr((pokemon) => pokemon.illusion.available, IllusionPreSummonAbAttr, false)
       //The pokemon loses his illusion when he is damaged by a move
       .conditionalAttr((pokemon) => pokemon.illusion.active, IllusionBreakAbAttr, true)
