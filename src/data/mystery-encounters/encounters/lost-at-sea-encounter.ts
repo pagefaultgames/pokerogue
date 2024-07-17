@@ -12,7 +12,7 @@ const OPTION_2_REQUIRED_MOVE = Moves.FLY;
  * Can be a number between `0` - `100`.
  * The higher the more damage taken (100% = instant KO).
  */
-const DAMAGE_PERCENTAGE: number = 25; // 0 - 100
+const DAMAGE_PERCENTAGE: number = 25;
 /** The i18n namespace for the encounter */
 const namepsace = "mysteryEncounter:lostAtSea";
 
@@ -47,10 +47,7 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
   .withDescription(`${namepsace}:description`)
   .withQuery(`${namepsace}:query`)
   .withOption(
-    /**
-     * Option 1: Use a (non fainted) pokemon that can learn Surf to guide you back.
-     * Receives EXP similar to defeating a Lapras
-     */
+    // Option 1: Use a (non fainted) pokemon that can learn Surf to guide you back/
     new MysteryEncounterOptionBuilder()
       .withPokemonCanLearnMoveRequirement(OPTION_1_REQUIRED_MOVE)
       .withOptionMode(EncounterOptionMode.DISABLED_OR_DEFAULT)
@@ -69,10 +66,7 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
       .build()
   )
   .withOption(
-    /**
-     * Option 2: Use a (non fainted) pokemon that can learn fly to guide you back.
-     * Receives EXP similar to defeating a Lapras
-     */
+    //Option 2: Use a (non fainted) pokemon that can learn fly to guide you back.
     new MysteryEncounterOptionBuilder()
       .withPokemonCanLearnMoveRequirement(OPTION_2_REQUIRED_MOVE)
       .withOptionMode(EncounterOptionMode.DISABLED_OR_DEFAULT)
@@ -91,9 +85,7 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
       .build()
   )
   .withSimpleOption(
-    /**
-     * Option 3: Wander aimlessly. All pokemons lose {@linkcode DAMAGE_PERCENTAGE}}% of their HP (or KO on 0 HP).
-     */
+    // Option 3: Wander aimlessly
     {
       buttonLabel: `${namepsace}:option:3:label`,
       buttonTooltip: `${namepsace}:option:3:tooltip`,
@@ -109,13 +101,23 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
       allowedPokemon.forEach((pkm) => {
         const percentage = DAMAGE_PERCENTAGE / 100;
         const damage = Math.floor(pkm.getMaxHp() * percentage);
-        return applyDamageToPokemon(pkm, damage);
+        applyDamageToPokemon(pkm, damage);
+        if (pkm.isFainted()) {
+          scene.currentBattle.mysteryEncounter.dialogue.outro.push({
+            text: `${pkm.name} fainted!`,
+          });
+        }
       });
       leaveEncounterWithoutBattle(scene);
 
       return true;
     }
   )
+  .withOutroDialogue([
+    {
+      text: `${namepsace}:outro`,
+    },
+  ])
   .build();
 
 /**
