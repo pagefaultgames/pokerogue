@@ -29,8 +29,8 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
       fileRoot: "mystery-encounters",
       spriteKey: "buoy",
       hasShadow: false,
-      y: 5,
-      x: 10,
+      x: 20,
+      y: 3,
     },
   ])
   .withIntroDialogue([{ text: `${namepsace}:intro` }])
