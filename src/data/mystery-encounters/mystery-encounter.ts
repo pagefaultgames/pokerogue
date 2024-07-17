@@ -363,7 +363,6 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   doEncounterExp?: (scene: BattleScene) => boolean;
   doEncounterRewards?: (scene: BattleScene) => boolean;
   onInit?: (scene: BattleScene) => boolean;
-  onDone?: (scene: BattleScene) => boolean;
   hideBattleIntroMessage?: boolean;
   hideIntroVisuals?: boolean;
   enemyPartyConfigs?: EnemyPartyConfig[] = [];

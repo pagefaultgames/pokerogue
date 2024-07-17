@@ -114,16 +114,9 @@ export const MysteriousChestEncounter: IMysteryEncounter =
             scene.currentBattle.mysteryEncounter.setDialogueToken("pokeName", highestLevelPokemon.name);
             // Show which Pokemon was KOed, then leave encounter with no rewards
             // Does this synchronously so that game over doesn't happen over result message
-            await showEncounterText(scene, "mysteryEncounter:mysterious_chest_option_1_bad_result")
-              .then(() => {
-                // if (scene.getParty().filter((p) => p.isAllowedInBattle()).length === 0) {
-                //   // All pokemon fainted, game over
-                //   scene.clearPhaseQueue();
-                //   scene.unshiftPhase(new GameOverPhase(scene));
-                // } else {
-                leaveEncounterWithoutBattle(scene);
-                // }
-              });
+            await showEncounterText(scene, "mysteryEncounter:mysterious_chest_option_1_bad_result").then(() => {
+              leaveEncounterWithoutBattle(scene);
+            });
           }
         })
         .build()

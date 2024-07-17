@@ -1,4 +1,6 @@
+import { getPokemonSpecies } from "#app/data/pokemon-species.js";
 import { Moves } from "#app/enums/moves";
+import { Species } from "#app/enums/species.js";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "../../../battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier } from "../mystery-encounter";
@@ -62,7 +64,7 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
           },
         ],
       })
-      .withOptionPhase(async (scene: BattleScene) => handlePokemongGuidingYouPhase(scene))
+      .withOptionPhase(async (scene: BattleScene) => handlePokemonGuidingYouPhase(scene))
       .build()
   )
   .withOption(
@@ -81,7 +83,7 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
           },
         ],
       })
-      .withOptionPhase(async (scene: BattleScene) => handlePokemongGuidingYouPhase(scene))
+      .withOptionPhase(async (scene: BattleScene) => handlePokemonGuidingYouPhase(scene))
       .build()
   )
   .withSimpleOption(
@@ -122,13 +124,12 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
  * @param scene Battle scene
  * @param guidePokemon pokemon choosen as a guide
  */
-function handlePokemongGuidingYouPhase(scene: BattleScene) {
-  /** Base EXP value for guiding pokemon. Currently Lapras base-value */
-  const baseExpValue: number = 187;
+function handlePokemonGuidingYouPhase(scene: BattleScene) {
+  const laprasSpecies = getPokemonSpecies(Species.LAPRAS);
   const { mysteryEncounter } = scene.currentBattle;
 
   if (mysteryEncounter.selectedOption) {
-    setEncounterExp(scene, mysteryEncounter.selectedOption.primaryPokemon.id, baseExpValue, true);
+    setEncounterExp(scene, mysteryEncounter.selectedOption.primaryPokemon.id, laprasSpecies.baseExp, true);
   } else {
     console.warn("Lost at sea: No guide pokemon found but pokemon guides player. huh!?");
   }
