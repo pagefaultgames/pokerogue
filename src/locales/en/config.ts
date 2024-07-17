@@ -5,7 +5,9 @@ import { abilityTriggers } from "./ability-trigger";
 import { arenaFlyout } from "./arena-flyout";
 import { PGFachv, PGMachv } from "./achv";
 import { battle } from "./battle";
+import { battleInfo } from "./battle-info";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
+import { battlerTags } from "./battler-tags";
 import { berry } from "./berry";
 import { bgmName } from "./bgm-name";
 import { biome } from "./biome";
@@ -53,7 +55,9 @@ export const enConfig = {
   abilityTriggers: abilityTriggers,
   arenaFlyout: arenaFlyout,
   battle: battle,
+  battleInfo: battleInfo,
   battleMessageUiHandler: battleMessageUiHandler,
+  battlerTags: battlerTags,
   berry: berry,
   bgmName: bgmName,
   biome: biome,

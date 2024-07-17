@@ -34,4 +34,5 @@ export const splashMessages: SimpleTranslationEntries = {
   "alsoTryRadicalRed": "¡Prueba también Radical Red!",
   "eeveeExpo": "¡Eevee Expo!",
   "ynoproject": "¡YNOproject!",
+  "breedersInSpace": "Criadores... ¡EN EL ESPACIO!",
 } as const;

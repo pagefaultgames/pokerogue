@@ -32,5 +32,11 @@ export const challenges: TranslationEntries = {
     "value.0": "Aus",
     "value.1": "Regulär",
     "value.2": "Hardcore",
+  },
+  "freshStart": {
+    "name": "Neuanfang",
+    "desc": "Du kannst nur die ursprünglichen Starter verwenden, genau so, als hättest du gerade erst mit Pokérogue begonnen.",
+    "value.0": "Aus",
+    "value.1": "An",
   }
 } as const;
