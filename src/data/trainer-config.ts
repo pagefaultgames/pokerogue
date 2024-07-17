@@ -1231,7 +1231,7 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.AETHER_GRUNT]: new TrainerConfig(++t).setHasGenders("Aether Grunt Female").setHasDouble("Aether Foundation Employees").setMoneyMultiplier(1.0).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm("battle_plasma_grunt").setMixedBattleBgm("battle_aether_grunt").setVictoryBgm("victory_team_plasma").setPartyTemplateFunc(scene => getEvilGruntPartyTemplate(scene))
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [ Species.PIKIPEK, Species.SNUBBULL, Species.POLIWAG, Species.ROCKRUFF, Species.LILLIPUP, Species.MAREANIE, Species.ALOLA_DIGLETT, Species.YUNGOOS, Species.STARYU, Species.CORSOLA],
-      [TrainerPoolTier.UNCOMMON]: [ Species.FOMANTIS, Species.ALOLA_SANDSHREW, Species.ALOLA_VULPIX, Species.ORICORIO, Species.STUFFUL, Species.BOUNSWEET, Species.MINIOR, Species.DEWPIDER, Species.ALOLA_GEODUDE Species.TURTONATOR],
+      [TrainerPoolTier.UNCOMMON]: [ Species.FOMANTIS, Species.ALOLA_SANDSHREW, Species.ALOLA_VULPIX, Species.ORICORIO, Species.STUFFUL, Species.BOUNSWEET, Species.MINIOR, Species.DEWPIDER, Species.ALOLA_GEODUDE, Species.TURTONATOR],
       [TrainerPoolTier.RARE]: [ Species.ALOLA_EXEGGUTOR, Species.ORANGURU, Species.TOGEDEMARU, Species.PORYGON, Species.ALOLA_RAICHU, Species.PASSIMIAN, Species.GALAR_CORSOLA],
       [TrainerPoolTier.SUPER_RARE]: [Species.JANGMO_O, Species.BAGON]
     }),
