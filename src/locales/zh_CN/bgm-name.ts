@@ -79,11 +79,17 @@ export const bgmName: SimpleTranslationEntries = {
   "battle_galactic_grunt": "晶灿钻石·明亮珍珠「战斗！银河队」",
   "battle_plasma_grunt": "黑白「战斗！等离子团」",
   "battle_flare_grunt": "XY「战斗！闪焰队」",
+  "battle_aether_grunt": "SM Aether Foundation Battle",
+  "battle_skull_grunt": "SM Team Skull Battle",
+  "battle_macro_grunt": "SWSH Trainer Battle",
   "battle_rocket_boss": "究极日月「战斗！坂木」",
   "battle_aqua_magma_boss": "Ω红宝石α蓝宝石「战斗！水梧桐・赤焰松」",
   "battle_galactic_boss": "晶灿钻石·明亮珍珠「战斗！赤日」",
   "battle_plasma_boss": "黑2白2「战斗！魁奇思」",
   "battle_flare_boss": "XY「战斗！弗拉达利」",
+  "battle_aether_boss":  "SM Lusamine Battle",
+  "battle_skull_boss": "SM Guzma Battle",
+  "battle_macro_boss": "SWSH Rose Battle",
 
   // Biome Music
   "abyss": "空之探险队「黑暗小丘」",
