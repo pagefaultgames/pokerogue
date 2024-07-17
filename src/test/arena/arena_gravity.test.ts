@@ -30,8 +30,8 @@ describe("Arena - Gravity", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.GRAVITY]);
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
+    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.GRAVITY, Moves.FISSURE]);
+    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.UNNERVE);
     vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
     vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SHUCKLE);
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(new Array(4).fill(Moves.SPLASH));
@@ -55,5 +55,29 @@ describe("Arena - Gravity", () => {
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(moveToCheck.calculateBattleAccuracy).toHaveReturnedWith(100 * 1.67);
+  });
+
+  it("OHKO move accuracy is not affected", async () => {
+    vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(5);
+    vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(5);
+
+    /** See Fissure {@link https://bulbapedia.bulbagarden.net/wiki/Fissure_(move)} */
+    const moveToCheck = allMoves[Moves.FISSURE];
+
+    vi.spyOn(moveToCheck, "calculateBattleAccuracy");
+
+    // Setup Gravity on first turn
+    await game.startBattle([Species.PIKACHU]);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.GRAVITY));
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    expect(game.scene.arena.getTag(ArenaTagType.GRAVITY)).toBeDefined();
+
+    // Use OHKO move on second turn
+    await game.toNextTurn();
+    game.doAttack(getMovePosition(game.scene, 0, Moves.FISSURE));
+    await game.phaseInterceptor.to(MoveEffectPhase);
+
+    expect(moveToCheck.calculateBattleAccuracy).toHaveReturnedWith(30);
   });
 });
