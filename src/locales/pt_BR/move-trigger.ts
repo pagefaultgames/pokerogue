@@ -49,6 +49,6 @@ export const moveTriggers: SimpleTranslationEntries = {
   "copiedTargetAbility": "{{pokemonName}} copiou a habilidade\nde {{targetName}}!",
   "transformedIntoTarget": "{{pokemonName}} se transformou\nem um(a) {{targetName}}!",
   "tryingToTakeFoeDown": "{{pokemonName}} está tentando derrubar o atacante com ele!",
-  "addType": "{{typeName}} was added to\n{{pokemonName}}!",
+  "addType": "{{pokemonName}} recebeu\no tipo {{typeName}}!",
   "cannotUseMove": "{{pokemonName}} não pode usar {{moveName}}!"
 } as const;
