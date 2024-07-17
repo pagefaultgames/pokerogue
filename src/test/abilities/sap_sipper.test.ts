@@ -1,7 +1,7 @@
 import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
-import * as overrides from "#app/overrides";
+import overrides from "#app/overrides";
 import {
   MoveEndPhase, TurnEndPhase,
 } from "#app/phases";
@@ -139,10 +139,9 @@ describe("Abilities - Sap Sipper", () => {
     expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
   });
 
-  /*
   // TODO Add METRONOME outcome override
   // To run this testcase, manually modify the METRONOME move to always give SAP_SIPPER, then uncomment
-  it("activate once against multi-hit grass attacks (metronome)", async() => {
+  it.todo("activate once against multi-hit grass attacks (metronome)", async() => {
     const moveToUse = Moves.METRONOME;
     const enemyAbility = Abilities.SAP_SIPPER;
 
@@ -162,5 +161,4 @@ describe("Abilities - Sap Sipper", () => {
     expect(startingOppHp - game.scene.getEnemyParty()[0].hp).toBe(0);
     expect(game.scene.getEnemyParty()[0].summonData.battleStats[BattleStat.ATK]).toBe(1);
   });
-  */
 });

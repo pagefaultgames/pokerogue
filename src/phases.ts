@@ -50,7 +50,7 @@ import { fetchDailyRunSeed, getDailyRunStarters } from "./data/daily-run";
 import { GameMode, GameModes, getGameMode } from "./game-mode";
 import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "./data/pokemon-species";
 import i18next from "./plugins/i18n";
-import * as Overrides from "./overrides";
+import Overrides from "./overrides";
 import { TextStyle, addTextObject } from "./ui/text";
 import { Type } from "./data/type";
 import { BerryUsedEvent, EncounterPhaseEvent, MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./events/battle-scene";
@@ -65,6 +65,7 @@ import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
+import { applyChallenges, ChallengeType } from "./data/challenge";
 
 const { t } = i18next;
 
@@ -130,6 +131,16 @@ export class LoginPhase extends Phase {
                     }
                   ]
                 });
+              }, () => {
+                const redirectUri = encodeURIComponent(`${import.meta.env.VITE_SERVER_URL}/auth/discord/callback`);
+                const discordId = import.meta.env.VITE_DISCORD_CLIENT_ID;
+                const discordUrl = `https://discord.com/api/oauth2/authorize?client_id=${discordId}&redirect_uri=${redirectUri}&response_type=code&scope=identify`;
+                window.open(discordUrl, "_self");
+              }, () => {
+                const redirectUri = encodeURIComponent(`${import.meta.env.VITE_SERVER_URL}/auth/google/callback`);
+                const googleId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+                const googleUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${googleId}&redirect_uri=${redirectUri}&response_type=code&scope=openid`;
+                window.open(googleUrl, "_self");
               }
             ]
           });
@@ -614,6 +625,7 @@ export class SelectStarterPhase extends Phase {
         starterPokemon.generateFusionSpecies(true);
       }
       starterPokemon.setVisible(false);
+      applyChallenges(this.scene.gameMode, ChallengeType.STARTER_MODIFY, starterPokemon);
       party.push(starterPokemon);
       loadPokemonAssets.push(starterPokemon.loadAssets());
     });
@@ -1961,6 +1973,9 @@ export class CommandPhase extends FieldPhase {
           turnCommand.targets = [this.fieldIndex];
         }
         console.log(moveTargets, playerPokemon.name);
+        if (moveTargets.targets.length > 1 && moveTargets.multiple) {
+          this.scene.unshiftPhase(new SelectTargetPhase(this.scene, this.fieldIndex));
+        }
         if (moveTargets.targets.length <= 1 || moveTargets.multiple) {
           turnCommand.move.targets = moveTargets.targets;
         } else if (playerPokemon.getTag(BattlerTagType.CHARGING) && playerPokemon.getMoveQueue().length >= 1) {
@@ -2210,13 +2225,13 @@ export class SelectTargetPhase extends PokemonPhase {
 
     const turnCommand = this.scene.currentBattle.turnCommands[this.fieldIndex];
     const move = turnCommand.move?.move;
-    this.scene.ui.setMode(Mode.TARGET_SELECT, this.fieldIndex, move, (cursor: integer) => {
+    this.scene.ui.setMode(Mode.TARGET_SELECT, this.fieldIndex, move, (targets: BattlerIndex[]) => {
       this.scene.ui.setMode(Mode.MESSAGE);
-      if (cursor === -1) {
+      if (targets.length < 1) {
         this.scene.currentBattle.turnCommands[this.fieldIndex] = null;
         this.scene.unshiftPhase(new CommandPhase(this.scene, this.fieldIndex));
       } else {
-        turnCommand.targets = [cursor];
+        turnCommand.targets = targets;
       }
       if (turnCommand.command === Command.BALL && this.fieldIndex) {
         this.scene.currentBattle.turnCommands[this.fieldIndex - 1].skip = true;
@@ -3043,7 +3058,7 @@ export class MoveEffectPhase extends PokemonPhase {
     }
 
     // If the user should ignore accuracy on a target, check who the user targeted last turn and see if they match
-    if (user.getTag(BattlerTagType.IGNORE_ACCURACY) && (user.getLastXMoves().slice(1).find(() => true)?.targets || []).indexOf(target.getBattlerIndex()) !== -1) {
+    if (user.getTag(BattlerTagType.IGNORE_ACCURACY) && (user.getLastXMoves().find(() => true)?.targets || []).indexOf(target.getBattlerIndex()) !== -1) {
       return true;
     }
 
@@ -3415,12 +3430,13 @@ export class StatChangePhase extends PokemonPhase {
 
       if (relLevelStats.length > 1) {
         statsFragment = relLevelStats.length >= 5
-          ? "stats"
-          : `${relLevelStats.slice(0, -1).map(s => getBattleStatName(s)).join(", ")}${relLevelStats.length > 2 ? "," : ""} and ${getBattleStatName(relLevelStats[relLevelStats.length - 1])}`;
+          ? i18next.t("battle:stats")
+          : `${relLevelStats.slice(0, -1).map(s => getBattleStatName(s)).join(", ")}${relLevelStats.length > 2 ? "," : ""} ${i18next.t("battle:statsAnd")} ${getBattleStatName(relLevelStats[relLevelStats.length - 1])}`;
+        messages.push(getBattleStatLevelChangeDescription(getPokemonNameWithAffix(this.getPokemon()), statsFragment, Math.abs(parseInt(rl)), levels >= 1,relLevelStats.length));
       } else {
         statsFragment = getBattleStatName(relLevelStats[0]);
+        messages.push(getBattleStatLevelChangeDescription(getPokemonNameWithAffix(this.getPokemon()), statsFragment, Math.abs(parseInt(rl)), levels >= 1,relLevelStats.length));
       }
-      messages.push(getBattleStatLevelChangeDescription(getPokemonNameWithAffix(this.getPokemon()), statsFragment, Math.abs(parseInt(rl)), levels >= 1));
     });
 
     return messages;
@@ -3620,7 +3636,9 @@ export class DamagePhase extends PokemonPhase {
     super.start();
 
     if (this.damageResult === HitResult.ONE_HIT_KO) {
-      this.scene.toggleInvert(true);
+      if (this.scene.moveAnimations) {
+        this.scene.toggleInvert(true);
+      }
       this.scene.time.delayedCall(Utils.fixedInt(1000), () => {
         this.scene.toggleInvert(false);
         this.applyDamage();
@@ -4127,7 +4145,11 @@ export class RibbonModifierRewardPhase extends ModifierRewardPhase {
       this.scene.addModifier(newModifier).then(() => {
         this.scene.playSound("level_up_fanfare");
         this.scene.ui.setMode(Mode.MESSAGE);
-        this.scene.ui.showText(`${this.species.name} beat ${this.scene.gameMode.getName()} Mode for the first time!\nYou received ${newModifier.type.name}!`, null, () => {
+        this.scene.ui.showText(i18next.t("battle:beatModeFirstTime", {
+          speciesName: this.species.name,
+          gameMode: this.scene.gameMode.getName(),
+          newModifier: newModifier.type.name
+        }), null, () => {
           resolve();
         }, null, true, 1500);
       });
@@ -4158,7 +4180,7 @@ export class GameOverPhase extends BattlePhase {
     } else if (this.victory || !this.scene.enableRetries) {
       this.handleGameOver();
     } else {
-      this.scene.ui.showText("Would you like to retry from the start of the battle?", null, () => {
+      this.scene.ui.showText(i18next.t("battle:retryBattle"), null, () => {
         this.scene.ui.setMode(Mode.CONFIRM, () => {
           this.scene.ui.fadeOut(1250).then(() => {
             this.scene.reset();
@@ -4328,7 +4350,7 @@ export class EndCardPhase extends Phase {
     this.endCard.setScale(0.5);
     this.scene.field.add(this.endCard);
 
-    this.text = addTextObject(this.scene, this.scene.game.canvas.width / 12, (this.scene.game.canvas.height / 6) - 16, "Congratulations!", TextStyle.SUMMARY, { fontSize: "128px" });
+    this.text = addTextObject(this.scene, this.scene.game.canvas.width / 12, (this.scene.game.canvas.height / 6) - 16, i18next.t("battle:congratulations"), TextStyle.SUMMARY, { fontSize: "128px" });
     this.text.setOrigin(0.5);
     this.scene.field.add(this.text);
 
@@ -4358,7 +4380,7 @@ export class UnlockPhase extends Phase {
       this.scene.gameData.unlocks[this.unlockable] = true;
       this.scene.playSound("level_up_fanfare");
       this.scene.ui.setMode(Mode.MESSAGE);
-      this.scene.ui.showText(`${getUnlockableName(this.unlockable)}\nhas been unlocked.`, null, () => {
+      this.scene.ui.showText(i18next.t("battle:unlockedSomething", { unlockedThing: getUnlockableName(this.unlockable) }), null, () => {
         this.scene.time.delayedCall(1500, () => this.scene.arenaBg.setVisible(true));
         this.end();
       }, null, true, 1500);
@@ -4569,7 +4591,7 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
       // we still want to display the stats if activated
       this.scene.ui.getMessageHandler().promptLevelUpStats(this.partyMemberIndex, prevStats, false).then(() => this.end());
     }
-    if (this.level <= 100) {
+    if (this.lastLevel < 100) { // this feels like an unnecessary optimization
       const levelMoves = this.getPokemon().getLevelMoves(this.lastLevel + 1);
       for (const lm of levelMoves) {
         this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, lm[1]));
@@ -5142,7 +5164,7 @@ export class SelectModifierPhase extends BattlePhase {
           this.scene.ui.setModeWithoutClear(Mode.PARTY, PartyUiMode.MODIFIER_TRANSFER, -1, (fromSlotIndex: integer, itemIndex: integer, itemQuantity: integer, toSlotIndex: integer) => {
             if (toSlotIndex !== undefined && fromSlotIndex < 6 && toSlotIndex < 6 && fromSlotIndex !== toSlotIndex && itemIndex > -1) {
               const itemModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-                    && (m as PokemonHeldItemModifier).getTransferrable(true) && (m as PokemonHeldItemModifier).pokemonId === party[fromSlotIndex].id) as PokemonHeldItemModifier[];
+                    && m.isTransferrable && m.pokemonId === party[fromSlotIndex].id) as PokemonHeldItemModifier[];
               const itemModifier = itemModifiers[itemIndex];
               this.scene.tryTransferHeldItemModifier(itemModifier, party[toSlotIndex], true, itemQuantity);
             } else {

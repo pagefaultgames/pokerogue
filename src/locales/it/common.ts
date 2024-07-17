@@ -2,7 +2,7 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const common: SimpleTranslationEntries = {
   "start": "Inizia",
-  "luckIndicator": "Luck:",
+  "luckIndicator": "Fortuna:",
   "shinyOnHover": "Shiny",
   "commonShiny": "Comune",
   "rareShiny": "Raro",
