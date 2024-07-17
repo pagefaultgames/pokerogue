@@ -1,0 +1,54 @@
+# These are workflows use exclusively for the mystery events sub-project
+# It's basically a copy of eslint.yml & test.yml just aimed at a different branch
+
+name: Mystery Events workflows
+
+on:
+  # Trigger the workflow on push or pull request,
+  # but only for the mystery-battle-events branch
+  push:
+    branches:
+      - mystery-battle-events  # Trigger on push events to the mystery-battle-events branch
+  pull_request:
+    branches:
+      - mystery-battle-events  # Trigger on pull request events targeting the mystery-battle-events branch
+
+jobs:
+  run-linters:  # Define a job named "run-linters"
+    name: Run linters  # Human-readable name for the job
+    runs-on: ubuntu-latest  # Specify the latest Ubuntu runner for the job
+
+    steps:
+      - name: Check out Git repository  # Step to check out the repository
+        uses: actions/checkout@v2  # Use the checkout action version 2
+
+      - name: Set up Node.js  # Step to set up Node.js environment
+        uses: actions/setup-node@v1  # Use the setup-node action version 1
+        with:
+          node-version: 20  # Specify Node.js version 20
+
+      - name: Install Node.js dependencies  # Step to install Node.js dependencies
+        run: npm ci  # Use 'npm ci' to install dependencies
+
+      - name: eslint  # Step to run linters
+        run: npm run eslint-ci
+      run-tests:  # Define a job named "run-tests"
+  
+  run-tests:  # Define a job named "run-tests"
+    name: Run tests  # Human-readable name for the job
+    runs-on: ubuntu-latest  # Specify the latest Ubuntu runner for the job
+
+    steps:
+      - name: Check out Git repository  # Step to check out the repository
+        uses: actions/checkout@v4  # Use the checkout action version 4
+
+      - name: Set up Node.js  # Step to set up Node.js environment
+        uses: actions/setup-node@v4  # Use the setup-node action version 4
+        with:
+          node-version: 20  # Specify Node.js version 20
+
+      - name: Install Node.js dependencies  # Step to install Node.js dependencies
+        run: npm ci  # Use 'npm ci' to install dependencies
+
+      - name: tests  # Step to run tests
+        run: npm run test:silent
