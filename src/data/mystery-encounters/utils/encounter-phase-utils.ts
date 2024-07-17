@@ -1,30 +1,31 @@
-import i18next from "i18next";
 import { BattleType } from "#app/battle";
-import BattleScene from "../../../battle-scene";
-import PokemonSpecies from "../../pokemon-species";
-import { MysteryEncounterVariant } from "../mystery-encounter";
-import { Status, StatusEffect } from "../../status-effect";
-import { TrainerConfig, trainerConfigs, TrainerSlot } from "../../trainer-config";
+import { biomeLinks } from "#app/data/biomes";
+import MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
+import { WIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
+import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import Pokemon, { FieldPosition, PlayerPokemon } from "#app/field/pokemon";
-import Trainer, { TrainerVariant } from "../../../field/trainer";
+import { getPokemonNameWithAffix } from "#app/messages";
 import { ExpBalanceModifier, ExpShareModifier, MultipleParticipantExpBonusModifier, PokemonExpBoosterModifier } from "#app/modifier/modifier";
 import { CustomModifierSettings, getModifierPoolForType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeGenerator, ModifierTypeOption, modifierTypes, PokemonHeldItemModifierType, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
+import * as Overrides from "#app/overrides";
 import { BattleEndPhase, EggLapsePhase, ExpPhase, GameOverPhase, ModifierRewardPhase, SelectModifierPhase, ShowPartyExpBarPhase, TrainerVictoryPhase } from "#app/phases";
 import { MysteryEncounterBattlePhase, MysteryEncounterPhase, MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phase";
-import * as Utils from "../../../utils";
-import { isNullOrUndefined } from "#app/utils";
-import { TrainerType } from "#enums/trainer-type";
-import { BattlerTagType } from "#enums/battler-tag-type";
 import PokemonData from "#app/system/pokemon-data";
-import { Biome } from "#enums/biome";
-import { biomeLinks } from "#app/data/biomes";
-import { Mode } from "#app/ui/ui";
-import { PartyOption, PartyUiMode } from "#app/ui/party-ui-handler";
 import { OptionSelectConfig, OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
-import { WIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
-import * as Overrides from "#app/overrides";
-import MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
-import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { PartyOption, PartyUiMode } from "#app/ui/party-ui-handler";
+import { Mode } from "#app/ui/ui";
+import { isNullOrUndefined } from "#app/utils";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { Biome } from "#enums/biome";
+import { TrainerType } from "#enums/trainer-type";
+import i18next from "i18next";
+import BattleScene from "../../../battle-scene";
+import Trainer, { TrainerVariant } from "../../../field/trainer";
+import * as Utils from "../../../utils";
+import PokemonSpecies from "../../pokemon-species";
+import { Status, StatusEffect } from "../../status-effect";
+import { TrainerConfig, trainerConfigs, TrainerSlot } from "../../trainer-config";
+import { MysteryEncounterVariant } from "../mystery-encounter";
 
 export class EnemyPokemonConfig {
   species: PokemonSpecies;
@@ -699,16 +700,17 @@ export function koPlayerPokemon(pokemon: PlayerPokemon) {
  * Handles applying hp changes to a player pokemon.
  * Takes care of not going below `0`, above max-hp, adding `FNT` status correctly and updating the pokemon info.
  * TODO: handle special cases like wonder-guard/ninjask
- *
+ * @param scene the battle scene
  * @param pokemon the player pokemon to apply the hp change to
- * @param damage the hp change amount. Positive for heal. Negative for damage
+ * @param value the hp change amount. Positive for heal. Negative for damage
  *
  */
-function applyHpChangeToPokemon(pokemon: PlayerPokemon, value: number) {
+function applyHpChangeToPokemon(scene: BattleScene, pokemon: PlayerPokemon, value: number) {
   const hpChange = Math.round(pokemon.hp + value);
   const nextHp = Math.max(Math.min(hpChange, pokemon.getMaxHp()), 0);
   if (nextHp === 0) {
     koPlayerPokemon(pokemon);
+    queueEncounterMessage(scene, i18next.t("battle:fainted", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
   } else {
     pokemon.hp = nextHp;
   }
@@ -716,30 +718,30 @@ function applyHpChangeToPokemon(pokemon: PlayerPokemon, value: number) {
 
 /**
  * Handles applying damage to a player pokemon
- *
+ * @param scene the battle scene
  * @param pokemon the player pokemon to apply damage to
  * @param damage the amount of damage to apply
  * @see {@linkcode applyHpChangeToPokemon}
  */
-export function applyDamageToPokemon(pokemon: PlayerPokemon, damage: number) {
+export function applyDamageToPokemon(scene: BattleScene, pokemon: PlayerPokemon, damage: number) {
   if (damage <= 0) {
     console.warn("Healing pokemon with `applyDamageToPokemon` is not recommended! Please use `applyHealToPokemon` instead.");
   }
 
-  applyHpChangeToPokemon(pokemon, -damage);
+  applyHpChangeToPokemon(scene, pokemon, -damage);
 }
 
 /**
  * Handles applying heal to a player pokemon
- *
+ * @param scene the battle scene
  * @param pokemon the player pokemon to apply heal to
  * @param heal the amount of heal to apply
  * @see {@linkcode applyHpChangeToPokemon}
  */
-export function applyHealToPokemon(pokemon: PlayerPokemon, heal: number) {
+export function applyHealToPokemon(scene: BattleScene, pokemon: PlayerPokemon, heal: number) {
   if (heal <= 0) {
     console.warn("Damaging pokemong with `applyHealToPokemon` is not recommended! Please use `applyDamageToPokemon` instead.");
   }
 
-  applyHpChangeToPokemon(pokemon, heal);
+  applyHpChangeToPokemon(scene, pokemon, heal);
 }
