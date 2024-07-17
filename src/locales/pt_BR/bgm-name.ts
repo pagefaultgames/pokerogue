@@ -79,11 +79,17 @@ export const bgmName: SimpleTranslationEntries = {
   "battle_galactic_grunt": "BDSP Team Galactic Battle",
   "battle_plasma_grunt": "BW Team Plasma Battle",
   "battle_flare_grunt": "XY Team Flare Battle",
+  "battle_aether_grunt": "SM Aether Foundation Battle",
+  "battle_skull_grunt": "SM Team Skull Battle",
+  "battle_macro_grunt": "SWSH Trainer Battle",
   "battle_rocket_boss": "USUM Giovanni Battle",
   "battle_aqua_magma_boss": "ORAS Archie & Maxie Battle",
   "battle_galactic_boss": "BDSP Cyrus Battle",
   "battle_plasma_boss": "B2W2 Ghetsis Battle",
   "battle_flare_boss": "XY Lysandre Battle",
+  "battle_aether_boss":  "SM Lusamine Battle",
+  "battle_skull_boss": "SM Guzma Battle",
+  "battle_macro_boss": "SWSH Rose Battle",
 
   // Biome Music
   "abyss": "PMD EoS Dark Crater",
