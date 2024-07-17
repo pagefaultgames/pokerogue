@@ -4739,7 +4739,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
     const healOrDamage = (!fullHp || this.hpHealed < 0);
     let lastStatusEffect = StatusEffect.NONE;
 
-    if (healBlock) {
+    if (!!healBlock && healBlock instanceof HealBlockTag) {
       this.scene.queueMessage(healBlock.onActivation(pokemon));
       this.message = null;
       super.end();
