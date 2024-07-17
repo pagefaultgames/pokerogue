@@ -5,6 +5,7 @@ import {
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { getHighestLevelPlayerPokemon, koPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { ModifierTier } from "#app/modifier/modifier-tier";
+import { randSeedInt } from "#app/utils.js";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "../../../battle-scene";
 import IMysteryEncounter, {
@@ -60,8 +61,7 @@ export const MysteriousChestEncounter: IMysteryEncounter =
         })
         .withOptionPhase(async (scene: BattleScene) => {
           // Open the chest
-          // const roll = randSeedInt(100);
-          const roll = 0;
+          const roll = randSeedInt(100);
           if (roll > 60) {
             // Choose between 2 COMMON / 2 GREAT tier items (40%)
             setEncounterRewards(scene, {
