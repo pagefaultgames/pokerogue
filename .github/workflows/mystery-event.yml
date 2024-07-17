@@ -32,8 +32,7 @@ jobs:
 
       - name: eslint  # Step to run linters
         run: npm run eslint-ci
-      run-tests:  # Define a job named "run-tests"
-  
+
   run-tests:  # Define a job named "run-tests"
     name: Run tests  # Human-readable name for the job
     runs-on: ubuntu-latest  # Specify the latest Ubuntu runner for the job
