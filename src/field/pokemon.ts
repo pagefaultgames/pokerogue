@@ -237,7 +237,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
       return this.name;
     } catch (err) {
-      console.error(err);
+      console.error(`Failed to decode nickname for ${this.name}`, err);
       return this.name;
     }
   }
