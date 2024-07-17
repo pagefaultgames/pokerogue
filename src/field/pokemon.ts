@@ -231,7 +231,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
 
   getNameToRender() {
-    return this.nickname || this.name;
+    try {
+      return decodeURIComponent(escape(atob(this.nickname))) || this.name;
+    } catch (err) {
+      return this.name;
+    }
   }
 
   init(): void {

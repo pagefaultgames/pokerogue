@@ -47,8 +47,8 @@ export default class RenameFormUiHandler extends FormModalUiHandler {
         // if (!this.inputs[0].text) {
         //   return onFail();
         // }
-
-        config.buttonActions[0](this.inputs[0].text);
+        const sanitizedName = btoa(unescape(encodeURIComponent(this.inputs[0].text)));
+        config.buttonActions[0](sanitizedName);
         return true;
       };
       return true;
