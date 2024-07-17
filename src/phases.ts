@@ -4592,7 +4592,7 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
       // we still want to display the stats if activated
       this.scene.ui.getMessageHandler().promptLevelUpStats(this.partyMemberIndex, prevStats, false).then(() => this.end());
     }
-    if (this.level <= 100) {
+    if (this.lastLevel < 100) { // this feels like an unnecessary optimization
       const levelMoves = this.getPokemon().getLevelMoves(this.lastLevel + 1);
       for (const lm of levelMoves) {
         this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, lm[1]));
