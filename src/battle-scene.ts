@@ -49,7 +49,7 @@ import { SceneBase } from "./scene-base";
 import CandyBar from "./ui/candy-bar";
 import { Variant, variantData } from "./data/variant";
 import { Localizable } from "#app/interfaces/locales";
-import * as Overrides from "./overrides";
+import Overrides from "#app/overrides";
 import {InputsController} from "./inputs-controller";
 import {UiInputs} from "./ui-inputs";
 import { NewArenaEvent } from "./events/battle-scene";
@@ -1132,7 +1132,7 @@ export default class BattleScene extends SceneBase {
         this.arena.updatePoolsForTimeOfDay();
       }
       if (resetArenaState) {
-        this.arena.removeAllTags();
+        this.arena.resetArenaEffects();
         playerField.forEach((_, p) => this.unshiftPhase(new ReturnPhase(this, p)));
 
         for (const pokemon of this.getParty()) {
@@ -1996,11 +1996,8 @@ export default class BattleScene extends SceneBase {
    */
   unshiftPhase(phase: Phase): void {
     if (this.phaseQueuePrependSpliceIndex === -1) {
-      // .push() adds to end of array
       this.phaseQueuePrepend.push(phase);
     } else {
-      // .splice(index, num elements to remove, what to add)
-      // modifies array by inserting at index, removing num of elements after index
       this.phaseQueuePrepend.splice(this.phaseQueuePrependSpliceIndex, 0, phase);
     }
   }
@@ -2027,8 +2024,8 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
-   * is called by each Phase implementations "end()" by default
-   * dumps everything from phaseQueuePrepend to the start of of phaseQueue
+   * Is called by each Phase implementations "end()" by default
+   * We dump everything from phaseQueuePrepend to the start of of phaseQueue
    * then removes first Phase and starts it
    */
   shiftPhase(): void {
@@ -2038,23 +2035,17 @@ export default class BattleScene extends SceneBase {
       return;
     }
 
-    // resets the index, if it was changed via setPhaseQueueSplice()
     if (this.phaseQueuePrependSpliceIndex > -1) {
       this.clearPhaseQueueSplice();
     }
     if (this.phaseQueuePrepend.length) {
       while (this.phaseQueuePrepend.length) {
-        // appends phaseQueuePrepend to phaseQueue
-        // eg: phaseQueue = [4,5,6], phaseQUeuePrepend = [1,2,3]
-        // -> [1,2,3,4,5,6]
         this.phaseQueue.unshift(this.phaseQueuePrepend.pop());
       }
     }
-    // then starts from PhaseQueue, .shift() removes first elm of array
-    // populatePhaseQueue() adds a turnInit Phase at the end of phaseQueue (if the queue is emtpy)
     if (!this.phaseQueue.length) {
       this.populatePhaseQueue();
-      // clear the conditionalQueue if there are no phases left in the phaseQueue
+      // Clear the conditionalQueue if there are no phases left in the phaseQueue
       this.conditionalQueue = [];
     }
     this.currentPhase = this.phaseQueue.shift();
