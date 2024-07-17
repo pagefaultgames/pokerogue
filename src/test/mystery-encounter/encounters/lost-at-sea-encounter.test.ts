@@ -3,6 +3,7 @@ import { LostAtSeaEncounter } from "#app/data/mystery-encounters/encounters/lost
 import { EncounterOptionMode } from "#app/data/mystery-encounters/mystery-encounter-option";
 import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { getPokemonSpecies } from "#app/data/pokemon-species.js";
 import { Biome } from "#app/enums/biome";
 import { Moves } from "#app/enums/moves";
 import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
@@ -15,6 +16,8 @@ import { runSelectMysteryEncounterOption } from "../encounterTestUtils";
 const namepsace = "mysteryEncounter:lostAtSea";
 /** Blastoise for surf. Pidgeot for fly. Abra for none. */
 const defaultParty = [Species.BLASTOISE, Species.PIDGEOT, Species.ABRA];
+const defaultBiome = Biome.SEA;
+const defaultWave = 33;
 
 describe("Lost at Sea - Mystery Encounter", () => {
   let phaserGame: Phaser.Game;
@@ -24,10 +27,14 @@ describe("Lost at Sea - Mystery Encounter", () => {
     phaserGame = new Phaser.Game({ type: Phaser.HEADLESS });
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     game = new GameManager(phaserGame);
     game.override.mysteryEncounterChance(100);
-    game.override.startingBiome(Biome.SEA);
+    game.override.startingBiome(defaultBiome);
+    game.override.startingWave(defaultWave);
+    vi.spyOn(MysteryEncounters, "allMysteryEncounters", "get").mockReturnValue({
+      [MysteryEncounterType.LOST_AT_SEA]: LostAtSeaEncounter,
+    });
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([[Biome.SEA, [MysteryEncounterType.LOST_AT_SEA]]])
     );
@@ -38,7 +45,8 @@ describe("Lost at Sea - Mystery Encounter", () => {
   });
 
   it("should have the correct properties", async () => {
-    await game.runToMysteryEncounter([Species.ABRA]);
+    await workaround_reInitSceneWithOverrides(game);
+    await game.runToMysteryEncounter(defaultParty);
 
     expect(LostAtSeaEncounter.encounterType).toBe(MysteryEncounterType.LOST_AT_SEA);
     expect(LostAtSeaEncounter.dialogue).toBeDefined();
@@ -50,7 +58,12 @@ describe("Lost at Sea - Mystery Encounter", () => {
   });
 
   it("should not run outside of sea biome", async () => {
-    // TODO: a little tricky
+    game.override.startingBiome(Biome.MOUNTAIN);
+
+    await workaround_reInitSceneWithOverrides(game);
+
+    //expect the `TypeError: Cannot read properties of undefined (reading 'introVisuals')` error
+    await expect(() => game.runToMysteryEncounter()).rejects.toThrowError(/introVisuals/);
   });
 
   it("should not run below wave 11", async () => {
@@ -103,9 +116,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
     });
 
     it("should award exp to surfable PKM (Blastoise)", async () => {
-      const laprasBaseExp = 187;
-      const wave = 33;
-      game.override.startingWave(wave);
+      const laprasSpecies = getPokemonSpecies(Species.LAPRAS);
 
       await workaround_reInitSceneWithOverrides(game);
       await game.runToMysteryEncounter(defaultParty);
@@ -115,7 +126,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
 
       await runSelectMysteryEncounterOption(game, 2);
 
-      expect(blastoise.exp).toBe(expBefore + laprasBaseExp * wave);
+      expect(blastoise.exp).toBe(expBefore + laprasSpecies.baseExp * defaultWave);
     });
 
     it("should leave encounter without battle", async () => {
