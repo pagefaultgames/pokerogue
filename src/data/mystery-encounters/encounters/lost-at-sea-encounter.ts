@@ -1,5 +1,4 @@
 import { Moves } from "#app/enums/moves";
-import { Species } from "#app/enums/species";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "../../../battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier } from "../mystery-encounter";
@@ -27,14 +26,11 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
   .withSceneWaveRangeRequirement(11, 179)
   .withIntroSpriteConfigs([
     {
-      fileRoot: "pokemon",
-      spriteKey: `${Species.GYARADOS}`,
+      fileRoot: "mystery-encounters",
+      spriteKey: "buoy",
       hasShadow: false,
-      scale: 4,
-      y: 100,
-      x: 130,
-      tint: 0.75,
-      alpha: 0.25,
+      y: 5,
+      x: 10,
     },
   ])
   .withIntroDialogue([{ text: `${namepsace}:intro` }])
