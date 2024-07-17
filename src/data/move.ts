@@ -4786,7 +4786,7 @@ export class AddTypeAttr extends MoveEffectAttr {
     target.summonData.types = types;
     target.updateInfo();
 
-    user.scene.queueMessage(`${i18next.t(`pokemonInfo:Type.${Type[this.type]}`)} was added to\n` + getPokemonMessage(target, "!"));
+    user.scene.queueMessage(i18next.t("moveTriggers:addType", {typeName: i18next.t(`pokemonInfo:Type.${Type[this.type]}`), pokemonName: getPokemonNameWithAffix(target)}));
 
     return true;
   }

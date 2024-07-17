@@ -49,5 +49,6 @@ export const moveTriggers: SimpleTranslationEntries = {
   "copiedTargetAbility": "{{pokemonName}}複製了\n{{targetName}}的{{abilityName}}！",
   "transformedIntoTarget": "{{pokemonName}}\n變身成了{{targetName}}！",
   "tryingToTakeFoeDown": "{{pokemonName}}\n想和對手同歸於盡！",
+  "addType": "{{pokemonName}}\n增加了{{typeName}}屬性！",
   "cannotUseMove": "{{pokemonName}}\n無法使用{{moveName}}！"
 } as const;

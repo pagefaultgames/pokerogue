@@ -49,5 +49,6 @@ export const moveTriggers: SimpleTranslationEntries = {
   "copiedTargetAbility": "{{pokemonName}}[[는]] {{targetName}}의\n{{abilityName}}[[를]] 복사했다!",
   "transformedIntoTarget": "{{pokemonName}}[[는]]\n{{targetName}}[[로]] 변신했다!",
   "tryingToTakeFoeDown": "{{pokemonName}}[[는]] 상대를\n길동무로 삼으려 하고 있다!",
+  "addType": "{{typeName}} was added to\n{{pokemonName}}!",
   "cannotUseMove": "{{pokemonName}}[[는]]\n{{moveName}}[[를]] 쓸 수 없다!"
 } as const;
