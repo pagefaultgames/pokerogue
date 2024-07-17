@@ -522,10 +522,14 @@ export function leaveEncounterWithoutBattle(scene: BattleScene, addHealPhase: bo
 
 export function handleMysteryEncounterVictory(scene: BattleScene, addHealPhase: boolean = false) {
   const allowedPkm = scene.getParty().filter((pkm) => pkm.isAllowedInBattle());
+
   if (allowedPkm.length === 0) {
     scene.clearPhaseQueue();
     scene.unshiftPhase(new GameOverPhase(scene));
-  } else if (scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.SAFARI_BATTLE) {
+    return;
+  }
+
+  if (scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.SAFARI_BATTLE) {
     scene.pushPhase(new MysteryEncounterRewardsPhase(scene, addHealPhase));
   } else if (scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.NO_BATTLE) {
     scene.pushPhase(new EggLapsePhase(scene));
