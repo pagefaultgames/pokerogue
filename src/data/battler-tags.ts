@@ -480,14 +480,16 @@ export class NightmareTag extends BattlerTag {
 }
 
 export class FrenzyTag extends BattlerTag {
-  constructor(sourceMove: Moves, sourceId: integer) {
-    super(BattlerTagType.FRENZY, BattlerTagLapseType.CUSTOM, 1, sourceMove, sourceId);
+  constructor(turnCount: integer, sourceMove: Moves, sourceId: integer) {
+    super(BattlerTagType.FRENZY, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
   }
 
   onRemove(pokemon: Pokemon): void {
     super.onRemove(pokemon);
 
-    pokemon.addTag(BattlerTagType.CONFUSED, pokemon.randSeedIntRange(2, 4));
+    if (this.turnCount < 2) { // Only add the CONFUSED tag if the user has 1 or fewer remaining turns.
+      pokemon.addTag(BattlerTagType.CONFUSED, pokemon.randSeedIntRange(2, 4));
+    }
   }
 }
 
@@ -1588,7 +1590,7 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
   case BattlerTagType.NIGHTMARE:
     return new NightmareTag();
   case BattlerTagType.FRENZY:
-    return new FrenzyTag(sourceMove, sourceId);
+    return new FrenzyTag(turnCount, sourceMove, sourceId);
   case BattlerTagType.CHARGING:
     return new ChargingTag(sourceMove, sourceId);
   case BattlerTagType.ENCORE:
