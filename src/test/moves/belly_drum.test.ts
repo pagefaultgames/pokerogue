@@ -38,7 +38,7 @@ describe("Moves - BELLY DRUM", () => {
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH ]);
   });
 
-  //Bulbapedia Reference: https://bulbapedia.bulbagarden.net/wiki/fillet_away_(move)
+  //Bulbapedia Reference: https://bulbapedia.bulbagarden.net/wiki/Belly_Drum_(move)
 
   test("Belly Drum raises the user's Attack to its max, at the cost of 1/2 of its maximum HP",
     async() => {
