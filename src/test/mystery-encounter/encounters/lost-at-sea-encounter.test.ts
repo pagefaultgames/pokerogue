@@ -28,7 +28,9 @@ describe("Lost at Sea - Mystery Encounter", () => {
     game = new GameManager(phaserGame);
     game.override.mysteryEncounterChance(100);
     game.override.startingBiome(Biome.SEA);
-    vi.spyOn(MysteryEncounters, "allMysteryEncounters", "get").mockReturnValue({ [MysteryEncounterType.LOST_AT_SEA]: LostAtSeaEncounter });
+    vi.spyOn(MysteryEncounters, "allMysteryEncounters", "get").mockReturnValue({
+      [MysteryEncounterType.LOST_AT_SEA]: LostAtSeaEncounter,
+    });
   });
 
   afterEach(() => {
@@ -47,14 +49,16 @@ describe("Lost at Sea - Mystery Encounter", () => {
     expect(LostAtSeaEncounter.options.length).toBe(3);
   });
 
+  it("should not run outside of sea biome", async () => {
+    // TODO: a little tricky
+  });
+
   it("should not run below wave 11", async () => {
     game.override.startingWave(10);
 
     await game.runToMysteryEncounter();
 
-    const { currentBattle } = game.scene;
-    expect(currentBattle).toBeDefined();
-    expect(currentBattle.mysteryEncounter).toBeUndefined();
+    expect(game.scene.currentBattle.mysteryEncounter).toBeUndefined();
   });
 
   it("should not run above wave 179", async () => {
@@ -62,9 +66,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
 
     await game.runToMysteryEncounter();
 
-    const { currentBattle } = game.scene;
-    expect(currentBattle).toBeDefined();
-    expect(currentBattle.mysteryEncounter).toBeUndefined();
+    expect(game.scene.currentBattle.mysteryEncounter).toBeUndefined();
   });
 
   it("should set the correct dialog tokens during initialization", () => {
@@ -99,6 +101,37 @@ describe("Lost at Sea - Mystery Encounter", () => {
         ],
       });
     });
+
+    it("should award exp to surfable PKM (Blastoise)", async () => {
+      const laprasBaseExp = 187;
+      const wave = 33;
+      game.override.startingWave(wave);
+
+      await workaround_reInitSceneWithOverrides(game);
+      await game.runToMysteryEncounter(defaultParty);
+      const party = game.scene.getParty();
+      const blastoise = party.find((pkm) => pkm.species.speciesId === Species.PIDGEOT);
+      const expBefore = blastoise.exp;
+
+      await runSelectMysteryEncounterOption(game, 2);
+
+      expect(blastoise.exp).toBe(expBefore + laprasBaseExp * wave);
+    });
+
+    it("should leave encounter without battle", async () => {
+      game.override.startingWave(33);
+      const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
+
+      await workaround_reInitSceneWithOverrides(game);
+      await game.runToMysteryEncounter(defaultParty);
+      await runSelectMysteryEncounterOption(game, 1);
+
+      expect(leaveEncounterWithoutBattleSpy).toBeCalled();
+    });
+
+    it("should be disabled if no surfable PKM is in party", async () => {
+      // TODO
+    });
   });
 
   describe("Option 2 - Fly", () => {
@@ -120,22 +153,35 @@ describe("Lost at Sea - Mystery Encounter", () => {
       });
     });
 
-    it("should award exp to surfable pokemone (Blastoise)", async () => {
-      game.override.startingWave(33);
-      const setEncounterExpSpy = vi.spyOn(EncounterPhaseUtils, "setEncounterExp");
+    it("should award exp to flyable PKM (Pidgeot)", async () => {
+      const laprasBaseExp = 187;
+      const wave = 33;
+      game.override.startingWave(wave);
 
-      workaround_reInitSceneWithOverrides(game);
+      await workaround_reInitSceneWithOverrides(game);
       await game.runToMysteryEncounter(defaultParty);
-      let blastoise = game.scene.getParty().find((pkm) => pkm.species.speciesId === Species.BLASTOISE);
-      console.log("BLASTOISE EXP BEFORE: ", blastoise.exp);
+      const party = game.scene.getParty();
+      const pidgeot = party.find((pkm) => pkm.species.speciesId === Species.PIDGEOT);
+      const expBefore = pidgeot.exp;
 
       await runSelectMysteryEncounterOption(game, 2);
 
-      blastoise = game.scene.getParty().find((pkm) => pkm.species.speciesId === Species.BLASTOISE);
-      console.log("BLASTOISE EXP AFTER: ", blastoise.exp);
+      expect(pidgeot.exp).toBe(expBefore + laprasBaseExp * wave);
+    });
 
-      expect(blastoise.exp).toBe(128);
-      expect(setEncounterExpSpy).toHaveBeenCalledWith(expect.anything(), 128, expect.anything(), true);
+    it("should leave encounter without battle", async () => {
+      game.override.startingWave(33);
+      const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
+
+      await workaround_reInitSceneWithOverrides(game);
+      await game.runToMysteryEncounter(defaultParty);
+      await runSelectMysteryEncounterOption(game, 2);
+
+      expect(leaveEncounterWithoutBattleSpy).toBeCalled();
+    });
+
+    it("should be disabled if no flyable PKM is in party", async () => {
+      // TODO
     });
   });
 
@@ -156,20 +202,25 @@ describe("Lost at Sea - Mystery Encounter", () => {
       });
     });
 
-    it("should damage all party pokemon by 25%", async () => {
+    it("should damage all (allowed in battle) party PKM by 25%", async () => {
       game.override.startingWave(33);
 
-      workaround_reInitSceneWithOverrides(game);
+      await workaround_reInitSceneWithOverrides(game);
       await game.runToMysteryEncounter(defaultParty);
+
+      const party = game.scene.getParty();
+      const abra = party.find((pkm) => pkm.species.speciesId === Species.ABRA);
+      vi.spyOn(abra, "isAllowedInBattle").mockReturnValue(false);
+
       await runSelectMysteryEncounterOption(game, 3);
 
-      game.scene
-        .getParty()
-        .forEach((pkm) =>
-          expect(pkm.hp, `${pkm.name} should have receivd 25% damage: ${pkm.hp} / ${pkm.getMaxHp()} HP`).toBe(
-            pkm.getMaxHp() - Math.floor(pkm.getMaxHp() * 0.25)
-          )
-        );
+      const allowedPkm = party.filter((pkm) => pkm.isAllowedInBattle());
+      const notAllowedPkm = party.filter((pkm) => !pkm.isAllowedInBattle());
+      allowedPkm.forEach((pkm) =>
+        expect(pkm.hp, `${pkm.name} should have receivd 25% damage: ${pkm.hp} / ${pkm.getMaxHp()} HP`).toBe(pkm.getMaxHp() - Math.floor(pkm.getMaxHp() * 0.25))
+      );
+
+      notAllowedPkm.forEach((pkm) => expect(pkm.hp, `${pkm.name} should be full hp: ${pkm.hp} / ${pkm.getMaxHp()} HP`).toBe(pkm.getMaxHp()));
     });
 
     it("should leave encounter without battle", async () => {
