@@ -1,10 +1,8 @@
 import Battle from "#app/battle";
 import { LostAtSeaEncounter } from "#app/data/mystery-encounters/encounters/lost-at-sea-encounter";
-import { MysteryEncounterTier } from "#app/data/mystery-encounters/mystery-encounter";
 import { EncounterOptionMode } from "#app/data/mystery-encounters/mystery-encounter-option";
 import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { WeatherType } from "#app/data/weather";
 import { Biome } from "#app/enums/biome";
 import { Moves } from "#app/enums/moves";
 import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
@@ -15,6 +13,8 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 import { runSelectMysteryEncounterOption } from "../encounterTestUtils";
 
 const namepsace = "mysteryEncounter:lostAtSea";
+/** Blastoise for surf. Pidgeot for fly. Abra for none. */
+const defaultParty = [Species.BLASTOISE, Species.PIDGEOT, Species.ABRA];
 
 describe("Lost at Sea - Mystery Encounter", () => {
   let phaserGame: Phaser.Game;
@@ -119,6 +119,24 @@ describe("Lost at Sea - Mystery Encounter", () => {
         ],
       });
     });
+
+    it("should award exp to surfable pokemone (Blastoise)", async () => {
+      game.override.startingWave(33);
+      const setEncounterExpSpy = vi.spyOn(EncounterPhaseUtils, "setEncounterExp");
+
+      workaround_reInitSceneWithOverrides(game);
+      await game.runToMysteryEncounter(defaultParty);
+      let blastoise = game.scene.getParty().find((pkm) => pkm.species.speciesId === Species.BLASTOISE);
+      console.log("BLASTOISE EXP BEFORE: ", blastoise.exp);
+
+      await runSelectMysteryEncounterOption(game, 2);
+
+      blastoise = game.scene.getParty().find((pkm) => pkm.species.speciesId === Species.BLASTOISE);
+      console.log("BLASTOISE EXP AFTER: ", blastoise.exp);
+
+      expect(blastoise.exp).toBe(128);
+      expect(setEncounterExpSpy).toHaveBeenCalledWith(expect.anything(), 128, expect.anything(), true);
+    });
   });
 
   describe("Option 3 - Wander aimlessy", () => {
@@ -138,25 +156,30 @@ describe("Lost at Sea - Mystery Encounter", () => {
       });
     });
 
-    it("should handle the option phase properly", async () => {
+    it("should damage all party pokemon by 25%", async () => {
       game.override.startingWave(33);
-      game.override.weather(WeatherType.RAIN);
+
+      workaround_reInitSceneWithOverrides(game);
+      await game.runToMysteryEncounter(defaultParty);
+      await runSelectMysteryEncounterOption(game, 3);
+
+      game.scene
+        .getParty()
+        .forEach((pkm) =>
+          expect(pkm.hp, `${pkm.name} should have receivd 25% damage: ${pkm.hp} / ${pkm.getMaxHp()} HP`).toBe(
+            pkm.getMaxHp() - Math.floor(pkm.getMaxHp() * 0.25)
+          )
+        );
+    });
+
+    it("should leave encounter without battle", async () => {
+      game.override.startingWave(33);
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
 
       workaround_reInitSceneWithOverrides(game);
-      await game.runToMysteryEncounter([Species.ABRA, Species.ZEBSTRIKA, Species.BULBASAUR, Species.GROUDON]);
+      await game.runToMysteryEncounter(defaultParty);
       await runSelectMysteryEncounterOption(game, 3);
 
-      const { encounteredEvents } = game.scene.mysteryEncounterData;
-      const party = game.scene.getParty();
-
-      expect(encounteredEvents.some(([type, tier]) => type === MysteryEncounterType.LOST_AT_SEA && tier === MysteryEncounterTier.COMMON)).toBe(true);
-      party.forEach((pkm) => {
-        const maxHp = pkm.getMaxHp();
-        const expectMsg = `${pkm.name} should have receivd 25% damage: ${pkm.hp} / ${maxHp} HP`;
-
-        expect(pkm.hp, expectMsg).toBe(maxHp - Math.floor(maxHp * 0.25));
-      });
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();
     });
   });

@@ -1,13 +1,13 @@
 import { Button } from "#app/enums/buttons";
 import { MessagePhase } from "#app/phases";
-import { MysteryEncounterOptionSelectedPhase, MysteryEncounterPhase } from "#app/phases/mystery-encounter-phase";
+import { MysteryEncounterOptionSelectedPhase, MysteryEncounterPhase, MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phase";
 import MysteryEncounterUiHandler from "#app/ui/mystery-encounter-ui-handler";
 import { Mode } from "#app/ui/ui";
 import GameManager from "../utils/gameManager";
 
 export async function runSelectMysteryEncounterOption(game: GameManager, optionNo: number) {
-  // Handle eventual weather messages (e.g. a downpour started!)
   if (game.isCurrentPhase(MessagePhase)) {
+    // Handle eventual weather messages (e.g. a downpour started!)
     game.onNextPrompt("MessagePhase", Mode.MESSAGE, () => {
       const uiHandler = game.scene.ui.getHandler<MysteryEncounterUiHandler>();
       uiHandler.processInput(Button.ACTION);
@@ -51,4 +51,6 @@ export async function runSelectMysteryEncounterOption(game: GameManager, optionN
     uiHandler.processInput(Button.ACTION);
   });
   await game.phaseInterceptor.run(MysteryEncounterOptionSelectedPhase);
+
+  await game.phaseInterceptor.to(MysteryEncounterRewardsPhase);
 }
