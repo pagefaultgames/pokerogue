@@ -1,28 +1,28 @@
 export const lostAtSea = {
-  intro: "You are halucinating and starting to loose your bearings.",
+  intro: "Wandering aimlessly, you effectively get nowhere.",
   title: "Lost at sea",
   description:
-    "You get lost at sea. All you \"sea\" is water everywhere and the sun is burning bright. Certain Pokémons can help you get back on track unharmed.",
+    "The sea is turbulent in this area and you seem to be running out of fuel as well.\nThis is bad. Is there a way out of the situation?",
   query: "What will you do?",
   option: {
     1: {
-      label: "Use {{option1PrimaryName}}",
+      label: "{{option1PrimaryName}} can help",
       label_disabled: "Can't {{option1RequiredMove}}",
-      tooltip: "Use {{option1PrimaryName}} to guide you back. {{option1PrimaryName}} earns EXP as if having defeated a Lapras.",
+      tooltip: "{{option1PrimaryName}} saves you.\n{{option1PrimaryName}} gains some EXP.",
       tooltip_disabled: "You have no Pokémon to {{option1RequiredMove}} on",
-      selected: "{{option1PrimaryName}} guides you back and earns EXP.",
+      selected: "{{option1PrimaryName}} swims ahead, guiding you back on track.\n{{option1PrimaryName}} seems to also have gotten stronger in this time of need.",
     },
     2: {
-      label: "Use {{option2PrimaryName}}",
+      label: "{{option2PrimaryName}} can help",
       label_disabled: "Can't {{option2RequiredMove}}",
-      tooltip: "Use {{option2PrimaryName}} to guide you back. {{option2PrimaryName}} earns EXP as if having defeated a Lapras.",
+      tooltip: "{{option2PrimaryName}} saves you.\n{{option2PrimaryName}} gains some EXP.",
       tooltip_disabled: "You have no Pokémon to {{option2RequiredMove}} with",
-      selected: "{{option2PrimaryName}} guides you back and earns EXP.",
+      selected: "{{option2PrimaryName}} flies ahead of your boat, guiding you back on track.\n{{option2PrimaryName}} seems to also have gotten stronger in this time of need.",
     },
     3: {
       label: "Wander aimlessly",
-      tooltip: "Wander aimlessly until you're back. All your Pokémon lose {{damagePercentage}}% of their HP. Any below that are KO'd.",
-      selected: "You wander aimlessly around. After hours of wandering, you find your way back. You and your team take the toll.",
+      tooltip: "(-) Each of your Pokémon lose {{damagePercentage}}% of their total HP.",
+      selected: "You float about in the boat, steering it aimlessly until you finally get back on track. You and your Pokémon get very fatigued during the whole ordeal",
     },
   },
 };
