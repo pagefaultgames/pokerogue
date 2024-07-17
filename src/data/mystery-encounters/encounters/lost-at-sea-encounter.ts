@@ -1,8 +1,10 @@
 import { Moves } from "#app/enums/moves";
+import { getPokemonNameWithAffix } from "#app/messages";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "../../../battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier } from "../mystery-encounter";
 import { EncounterOptionMode, MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
+import { showEncounterText } from "../utils/encounter-dialogue-utils";
 import { applyDamageToPokemon, leaveEncounterWithoutBattle, setEncounterExp } from "../utils/encounter-phase-utils";
 
 const OPTION_1_REQUIRED_MOVE = Moves.SURF;
@@ -96,18 +98,20 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
       ],
     },
     async (scene: BattleScene) => {
+      const { mysteryEncounter } = scene.currentBattle;
       const allowedPokemon = scene.getParty().filter((p) => p.isAllowedInBattle());
 
-      allowedPokemon.forEach((pkm) => {
+      for (const pkm of allowedPokemon) {
         const percentage = DAMAGE_PERCENTAGE / 100;
         const damage = Math.floor(pkm.getMaxHp() * percentage);
         applyDamageToPokemon(pkm, damage);
+
         if (pkm.isFainted()) {
-          scene.currentBattle.mysteryEncounter.dialogue.outro.push({
-            text: `${pkm.name} fainted!`,
-          });
+          mysteryEncounter.setDialogueToken("pokemonNameWithAffix", getPokemonNameWithAffix(pkm));
+          await showEncounterText(scene, "battle:fainted");
         }
-      });
+      }
+
       leaveEncounterWithoutBattle(scene);
 
       return true;
