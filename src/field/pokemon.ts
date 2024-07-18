@@ -1859,6 +1859,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           stabMultiplier.value = Math.min(stabMultiplier.value + 0.5, 2.25);
         }
 
+        const targetCount = getMoveTargets(source, move.id).targets.length;
+        const targetMultiplier = targetCount > 1 ? 0.75 : 1;
+
         applyMoveAttrs(VariableAtkAttr, source, this, move, sourceAtk);
         applyMoveAttrs(VariableDefAttr, source, this, move, targetDef);
 
@@ -1879,6 +1882,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
                                    * arenaAttackTypeMultiplier.value
                                    * screenMultiplier.value
                                    * twoStrikeMultiplier.value
+                                   * targetMultiplier
                                    * criticalMultiplier.value
                                    * randomMultiplier);
 

@@ -112,7 +112,7 @@ export const bgmName: SimpleTranslationEntries = {
   "ruins": "불가사의 던전 하늘의 탐험대 봉인의 암반",
   "sea": "불가사의 던전 하늘의 탐험대 바닷가 동굴",
   "seabed": "Firel - Seabed", // The composer thinks about a more creative name
-  "slum": "불가사의 던전 하늘의 탐험대 하늘 꼭대기 해변",
+  "slum": "Andr06 - Sneaky Snom", // Name defined by the composer
   "snowy_forest": "불가사의 던전 하늘의 탐험대 하늘 꼭대기 설원",
   "space": "Firel - Aether",
   "swamp": "불가사의 던전 하늘의 탐험대 폐쇄되어진 바다",
