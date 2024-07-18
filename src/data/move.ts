@@ -2098,9 +2098,7 @@ export class WeatherChangeAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    // adding clause CHILLY_RECEPTION, so move doesn't fail when it's already snowing: since the move still allows a switch out
     return (user, target, move) => !user.scene.arena.weather || (user.scene.arena.weather.weatherType !== this.weatherType && !user.scene.arena.weather.isImmutable());
-
   }
 }
 
@@ -4563,7 +4561,6 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 
   getCondition(): MoveConditionFunc {
     return (user, target, move) => (move.category !== MoveCategory.STATUS || this.getSwitchOutCondition()(user, target, move));
-
   }
 
   getFailedText(user: Pokemon, target: Pokemon, move: Move, cancelled: Utils.BooleanHolder): string | null {
