@@ -468,7 +468,7 @@ export function printDRPD(inData: string, indent: string, drpd: DRPD): string {
         inData = printWave(inData, indent + "    ", drpd.waves[i])
       }
     }
-    inData += ",\n" + indent + "  ]\n"
+    inData += "\n" + indent + "  ]\n"
   } else {
     inData += ",\n" + indent + "  \"waves\": []"
   }
