@@ -1,7 +1,7 @@
 # These are workflows use exclusively for the mystery events sub-project
 # It's basically a copy of eslint.yml & test.yml just aimed at a different branch
 
-name: Mystery Events workflows
+name: MysteryEvents
 
 on:
   # Trigger the workflow on push or pull request,
@@ -50,4 +50,4 @@ jobs:
         run: npm ci  # Use 'npm ci' to install dependencies
 
       - name: tests  # Step to run tests
-        run: npm run test:silent
+        run: npm run test${{ runner.debug == '0' &&':silent' }} # silent on default. if debug run loud
