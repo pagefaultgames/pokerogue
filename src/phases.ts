@@ -2601,17 +2601,17 @@ export class MovePhase extends BattlePhase {
     console.log(Moves[this.move.moveId]);
 
     /**
-     * Check if move is disabled or out of PP. If so, end the move immediately (take no action).
+     * Check if move is disabled or unusable (e.g. because it's out of PP due to a mid-turn Spite).
      */
     if (!this.canMove()) {
       if (this.move.moveId && this.pokemon.summonData?.disabledMove === this.move.moveId) {
         this.scene.queueMessage(`${this.move.getName()} is disabled!`);
-      }
-      if (this.pokemon.isActive(true) && this.move.ppUsed >= this.move.getMovePp()) { // if the move PP was reduced from Spite or otherwise, the move fails
-        this.fail();
+
+      } else {
         this.showMoveText();
         this.showFailedText();
       }
+
       return this.end();
     }
 
