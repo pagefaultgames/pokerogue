@@ -16,16 +16,16 @@ import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { PartyHealPhase } from "#app/phases";
 
 /** i18n namespace for the encounter */
-const namespace = "mysteryEncounter:sleeping_snorlax";
+const namespace = "mysteryEncounter:slumberingSnorlax";
 
 /**
  * Sleeping Snorlax encounter.
  * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/103 | GitHub Issue #103}
  * @see For biome requirements check [mysteryEncountersByBiome](../mystery-encounters.ts)
  */
-export const SleepingSnorlaxEncounter: IMysteryEncounter =
+export const SlumberingSnorlaxEncounter: IMysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(
-    MysteryEncounterType.SLEEPING_SNORLAX
+    MysteryEncounterType.SLUMBERING_SNORLAX
   )
     .withEncounterTier(MysteryEncounterTier.GREAT)
     .withSceneWaveRangeRequirement(10, 180) // waves 10 to 180
@@ -44,7 +44,7 @@ export const SleepingSnorlaxEncounter: IMysteryEncounter =
     ])
     .withIntroDialogue([
       {
-        text: `${namespace}_intro_message`,
+        text: `${namespace}:intro`,
       },
     ])
     .withOnInit((scene: BattleScene) => {
@@ -70,16 +70,16 @@ export const SleepingSnorlaxEncounter: IMysteryEncounter =
 
       return true;
     })
-    .withTitle(`${namespace}_title`)
-    .withDescription(`${namespace}_description`)
-    .withQuery(`${namespace}_query`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}_option_1_label`,
-        buttonTooltip: `${namespace}_option_1_tooltip`,
+        buttonLabel: `${namespace}:option:1:label`,
+        buttonTooltip: `${namespace}:option:1:tooltip`,
         selected: [
           {
-            text: `${namespace}_option_1_selected_message`,
+            text: `${namespace}:option:1:selected`,
           },
         ],
       },
@@ -105,11 +105,11 @@ export const SleepingSnorlaxEncounter: IMysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}_option_2_label`,
-        buttonTooltip: `${namespace}_option_2_tooltip`,
+        buttonLabel: `${namespace}:option:2:label`,
+        buttonTooltip: `${namespace}:option:2:tooltip`,
         selected: [
           {
-            text: `${namespace}_option_2_selected_message`,
+            text: `${namespace}:option:2:selected`,
           },
         ],
       },
@@ -117,7 +117,7 @@ export const SleepingSnorlaxEncounter: IMysteryEncounter =
         // Fall asleep waiting for Snorlax
         // Full heal party
         scene.unshiftPhase(new PartyHealPhase(scene, true));
-        queueEncounterMessage(scene, `${namespace}_option_2_good_result`);
+        queueEncounterMessage(scene, `${namespace}:option:2:rest_result`);
         leaveEncounterWithoutBattle(scene);
       }
     )
@@ -126,15 +126,19 @@ export const SleepingSnorlaxEncounter: IMysteryEncounter =
         .withOptionMode(EncounterOptionMode.DISABLED_OR_SPECIAL)
         .withPrimaryPokemonRequirement(new MoveRequirement(STEALING_MOVES))
         .withDialogue({
-          buttonLabel: `${namespace}_option_3_label`,
-          buttonTooltip: `${namespace}_option_3_tooltip`,
-          disabledButtonTooltip: `${namespace}_option_3_disabled_tooltip`,
+          buttonLabel: `${namespace}:option:3:label`,
+          buttonTooltip: `${namespace}:option:3:tooltip`,
+          disabledButtonTooltip: `${namespace}:option:3:disabled_tooltip`,
+          selected: [
+            {
+              text: `${namespace}:option:3:selected`
+            }
+          ]
         })
         .withOptionPhase(async (scene: BattleScene) => {
           // Steal the Snorlax's Leftovers
           const instance = scene.currentBattle.mysteryEncounter;
           setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.LEFTOVERS], fillRemaining: false });
-          queueEncounterMessage(scene, `${namespace}_option_3_good_result`);
           // Snorlax exp to Pokemon that did the stealing
           setEncounterExp(scene, instance.primaryPokemon.id, getPokemonSpecies(Species.SNORLAX).baseExp);
           leaveEncounterWithoutBattle(scene);

@@ -1,31 +1,28 @@
-export const sleepingSnorlaxDialogue = {
-  intro: "Wandering aimlessly through the sea, you've effectively gotten nowhere.",
-  title: "Lost at Sea",
-  description: "The sea is turbulent in this area, and you're running out of energy.\nThis is bad. Is there a way out of the situation?",
+export const slumberingSnorlaxDialogue = {
+  intro: `As you walk down a narrow pathway, you see a towering silhouette blocking your path.
+  $You get closer to see a Snorlax sleeping peacefully.\nIt seems like there's no way around it.`,
+  title: "Slumbering Snorlax",
+  description: "You could attack it to try and get it to move, or simply wait for it to wake up. Who knows how long that could take, though...",
   query: "What will you do?",
   option: {
     1: {
-      label: "{{option1PrimaryName}} can help",
-      label_disabled: "Can't {{option1RequiredMove}}",
-      tooltip: "(+) {{option1PrimaryName}} saves you\n(+) {{option1PrimaryName}} gains some EXP",
-      tooltip_disabled: "You have no Pokémon to {{option1RequiredMove}} on",
-      selected: `{{option1PrimaryName}} swims ahead, guiding you back on track.
-        \${{option1PrimaryName}} seems to also have gotten stronger in this time of need!`,
+      label: "Battle it",
+      tooltip: "(-) Fight Sleeping Snorlax\n(+) Special Reward",
+      selected: "You approach the\nPokémon without fear.",
     },
     2: {
-      label: "{{option2PrimaryName}} can help",
-      label_disabled: "Can't {{option2RequiredMove}}",
-      tooltip: "(+) {{option2PrimaryName}} saves you\n(+) {{option2PrimaryName}} gains some EXP",
-      tooltip_disabled: "You have no Pokémon to {{option2RequiredMove}} with",
-      selected: `{{option2PrimaryName}} flies ahead of your boat, guiding you back on track.
-        \${{option2PrimaryName}} seems to also have gotten stronger in this time of need!`,
+      label: "Wait for it to move",
+      tooltip: "(-) Wait a Long Time\n(+) Recover Party",
+      selected: `.@d{32}.@d{32}.@d{32}
+        $You wait for a time, but the Snorlax's yawns make your party sleepy...`,
+      rest_result: "When you all awaken, the Snorlax is no where to be found -\nbut your Pokémon are all healed!",
     },
     3: {
-      label: "Wander aimlessly",
-      tooltip: "(-) Each of your Pokémon lose {{damagePercentage}}% of their total HP",
-      selected: `You float about in the boat, steering without direction until you finally spot a landmark you remember.
-        $You and your Pokémon are fatigued from the whole ordeal.`,
+      label: "Steal its item",
+      tooltip: "(+) {{option3PrimaryName}} uses {{option3PrimaryMove}}\n(+) Special Reward",
+      disabled_tooltip: "Your Pokémon need to know certain moves to choose this",
+      selected: `Your {{option3PrimaryName}} uses {{option3PrimaryMove}}!
+        $@s{item_fanfare}It steals Leftovers off the sleeping\nSnorlax and you make out like bandits!`,
     },
-  },
-  outro: "You are back on track."
+  }
 };

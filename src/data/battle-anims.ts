@@ -103,6 +103,11 @@ export enum CommonAnim {
     LOCK_ON = 2120
 }
 
+/**
+ * Animations used for Mystery Encounters
+ * These are custom animations that may or may not work in any other circumstance
+ * Use at your own risk
+ */
 export enum EncounterAnim {
   MAGMA_BG,
   MAGMA_SPOUT
@@ -520,23 +525,26 @@ export function initMoveAnim(scene: BattleScene, move: Moves): Promise<void> {
   });
 }
 
-export function initEncounterAnims(scene: BattleScene, anims: EncounterAnim | EncounterAnim[]): Promise<void> {
+/**
+ * Fetches animation configs to be used in a Mystery Encounter
+ * @param scene
+ * @param anims - one or more animations to fetch
+ */
+export async function initEncounterAnims(scene: BattleScene, anims: EncounterAnim | EncounterAnim[]): Promise<void> {
   anims = anims instanceof Array ? anims : [anims];
-  return new Promise(resolve => {
-    const encounterAnimNames = Utils.getEnumKeys(EncounterAnim);
-    const encounterAnimIds = Utils.getEnumValues(EncounterAnim);
-    const encounterAnimFetches = [];
-    for (const anim of anims) {
-      if (encounterAnims.has(anim) && !isNullOrUndefined(encounterAnims.get(anim))) {
-        continue;
-      }
-      const encounterAnimId = encounterAnimIds[anim];
-      encounterAnimFetches.push(scene.cachedFetch(`./battle-anims/encounter-${encounterAnimNames[anim].toLowerCase().replace(/\_/g, "-")}.json`)
-        .then(response => response.json())
-        .then(cas => encounterAnims.set(encounterAnimId, new AnimConfig(cas))));
+  const encounterAnimNames = Utils.getEnumKeys(EncounterAnim);
+  const encounterAnimIds = Utils.getEnumValues(EncounterAnim);
+  const encounterAnimFetches = [];
+  for (const anim of anims) {
+    if (encounterAnims.has(anim) && !isNullOrUndefined(encounterAnims.get(anim))) {
+      continue;
     }
-    Promise.allSettled(encounterAnimFetches).then(() => resolve());
-  });
+    const encounterAnimId = encounterAnimIds[anim];
+    encounterAnimFetches.push(scene.cachedFetch(`./battle-anims/encounter-${encounterAnimNames[anim].toLowerCase().replace(/\_/g, "-")}.json`)
+      .then(response => response.json())
+      .then(cas => encounterAnims.set(encounterAnimId, new AnimConfig(cas))));
+  }
+  await Promise.allSettled(encounterAnimFetches);
 }
 
 export function initMoveChargeAnim(scene: BattleScene, chargeAnim: ChargeAnim): Promise<void> {
@@ -593,10 +601,14 @@ export function loadCommonAnimAssets(scene: BattleScene, startLoad?: boolean): P
   });
 }
 
-export function loadEncounterAnimAssets(scene: BattleScene, startLoad?: boolean): Promise<void> {
-  return new Promise(resolve => {
-    loadAnimAssets(scene, Array.from(encounterAnims.values()), startLoad).then(() => resolve());
-  });
+/**
+ * Loads encounter animation assets to scene
+ * MUST be called after [initEncounterAnims()](./battle-anims.ts) to load all required animations properly
+ * @param scene
+ * @param startLoad
+ */
+export async function loadEncounterAnimAssets(scene: BattleScene, startLoad?: boolean): Promise<void> {
+  await loadAnimAssets(scene, Array.from(encounterAnims.values()), startLoad);
 }
 
 export function loadMoveAnimAssets(scene: BattleScene, moveIds: Moves[], startLoad?: boolean): Promise<void> {

@@ -19,6 +19,8 @@ import { getPokemonNameWithAffix } from "#app/messages";
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:safariZone";
 
+const TRAINER_THROW_ANIMATION_TIMES = [512, 184, 768];
+
 /**
  * Safari Zone encounter.
  * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/39 | GitHub Issue #39}
@@ -314,14 +316,14 @@ async function throwBait(scene: BattleScene, pokemon: EnemyPokemon): Promise<boo
 
   return new Promise(resolve => {
     scene.trainer.setTexture(`trainer_${scene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back_pb`);
-    scene.time.delayedCall(512, () => {
+    scene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[0], () => {
       scene.playSound("pb_throw");
 
       // Trainer throw frames
       scene.trainer.setFrame("2");
-      scene.time.delayedCall(184, () => {
+      scene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[1], () => {
         scene.trainer.setFrame("3");
-        scene.time.delayedCall(768, () => {
+        scene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[2], () => {
           scene.trainer.setTexture(`trainer_${scene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`);
         });
       });
@@ -380,14 +382,14 @@ async function throwMud(scene: BattleScene, pokemon: EnemyPokemon): Promise<bool
 
   return new Promise(resolve => {
     scene.trainer.setTexture(`trainer_${scene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back_pb`);
-    scene.time.delayedCall(512, () => {
+    scene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[0], () => {
       scene.playSound("pb_throw");
 
       // Trainer throw frames
       scene.trainer.setFrame("2");
-      scene.time.delayedCall(184, () => {
+      scene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[1], () => {
         scene.trainer.setFrame("3");
-        scene.time.delayedCall(768, () => {
+        scene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[2], () => {
           scene.trainer.setTexture(`trainer_${scene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`);
         });
       });
