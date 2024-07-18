@@ -1,4 +1,4 @@
-# These are workflows use exclusively for the mystery events sub-project
+# These are workflows used exclusively for the mystery events sub-project
 # It's basically a copy of eslint.yml & test.yml just aimed at a different branch
 
 name: MysteryEvents
