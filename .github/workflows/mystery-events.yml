@@ -50,4 +50,4 @@ jobs:
         run: npm ci  # Use 'npm ci' to install dependencies
 
       - name: tests  # Step to run tests
-        run: npm run test${{ runner.debug == '0' &&':silent' }} # silent on default. if debug run loud
+        run: npm run test${{ runner.debug == '0' &&':silent' || '' }} # silent on default. if debug run loud
