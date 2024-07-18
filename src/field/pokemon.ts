@@ -274,9 +274,18 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns {boolean} True if pokemon is allowed in battle
    */
   isAllowedInBattle(): boolean {
+    return !this.isFainted() && this.isAllowed();
+  }
+
+  /**
+   * Check if this pokemon is allowed (no challenge exclusion)
+   * This is frequently a better alternative to {@link isFainted}
+   * @returns {boolean} True if pokemon is allowed in battle
+   */
+  isAllowed(): boolean {
     const challengeAllowed = new Utils.BooleanHolder(true);
     applyChallenges(this.scene.gameMode, ChallengeType.POKEMON_IN_BATTLE, this, challengeAllowed);
-    return !this.isFainted() && challengeAllowed.value;
+    return challengeAllowed.value;
   }
 
   isActive(onField?: boolean): boolean {
@@ -1317,6 +1326,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     return ret;
+  }
+
+  /**
+   * Get a list of all egg moves
+   *
+   * @returns list of egg moves
+   */
+  getEggMoves() : Moves[] {
+    return speciesEggMoves[this.species.speciesId];
   }
 
   setMove(moveIndex: integer, moveId: Moves): void {

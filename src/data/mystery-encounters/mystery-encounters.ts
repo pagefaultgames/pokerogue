@@ -1,15 +1,16 @@
-import IMysteryEncounter from "./mystery-encounter";
+import { Biome } from "#enums/biome";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { DarkDealEncounter } from "./encounters/dark-deal-encounter";
+import { DepartmentStoreSaleEncounter } from "./encounters/department-store-sale-encounter";
+import { FieldTripEncounter } from "./encounters/field-trip-encounter";
+import { FightOrFlightEncounter } from "./encounters/fight-or-flight-encounter";
+import { LostAtSeaEncounter } from "./encounters/lost-at-sea-encounter";
 import { MysteriousChallengersEncounter } from "./encounters/mysterious-challengers-encounter";
 import { MysteriousChestEncounter } from "./encounters/mysterious-chest-encounter";
-import { FightOrFlightEncounter } from "./encounters/fight-or-flight-encounter";
-import { TrainingSessionEncounter } from "./encounters/training-session-encounter";
-import { Biome } from "#enums/biome";
-import { SleepingSnorlaxEncounter } from "./encounters/sleeping-snorlax-encounter";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { DepartmentStoreSaleEncounter } from "./encounters/department-store-sale-encounter";
 import { ShadyVitaminDealerEncounter } from "./encounters/shady-vitamin-dealer-encounter";
-import { FieldTripEncounter } from "./encounters/field-trip-encounter";
+import { SleepingSnorlaxEncounter } from "./encounters/sleeping-snorlax-encounter";
+import { TrainingSessionEncounter } from "./encounters/training-session-encounter";
+import IMysteryEncounter from "./mystery-encounter";
 import { SafariZoneEncounter } from "#app/data/mystery-encounters/encounters/safari-zone-encounter";
 import { FieryFalloutEncounter } from "#app/data/mystery-encounters/encounters/fiery-fallout-encounter";
 
@@ -167,7 +168,10 @@ export const mysteryEncountersByBiome = new Map<Biome, MysteryEncounterType[]>([
     MysteryEncounterType.SLEEPING_SNORLAX,
     MysteryEncounterType.SAFARI_ZONE
   ]],
-  [Biome.SEA, []],
+
+  [Biome.SEA, [
+    MysteryEncounterType.LOST_AT_SEA
+  ]],
   [Biome.SWAMP, [
     MysteryEncounterType.SAFARI_ZONE
   ]],
@@ -218,6 +222,7 @@ export function initMysteryEncounters() {
   allMysteryEncounters[MysteryEncounterType.SHADY_VITAMIN_DEALER] = ShadyVitaminDealerEncounter;
   allMysteryEncounters[MysteryEncounterType.FIELD_TRIP] = FieldTripEncounter;
   allMysteryEncounters[MysteryEncounterType.SAFARI_ZONE] = SafariZoneEncounter;
+  allMysteryEncounters[MysteryEncounterType.LOST_AT_SEA] = LostAtSeaEncounter;
   allMysteryEncounters[MysteryEncounterType.FIERY_FALLOUT] = FieryFalloutEncounter;
 
   // Add extreme encounters to biome map

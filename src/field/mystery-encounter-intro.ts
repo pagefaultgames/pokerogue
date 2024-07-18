@@ -2,18 +2,50 @@ import { GameObjects } from "phaser";
 import BattleScene from "../battle-scene";
 import IMysteryEncounter from "../data/mystery-encounters/mystery-encounter";
 
+type KnownFileRoot =
+  | "trainer"
+  | "pokemon"
+  | "arenas"
+  | "battle_anims"
+  | "cg"
+  | "character"
+  | "effect"
+  | "egg"
+  | "events"
+  | "inputs"
+  | "items"
+  | "mystery-encounters"
+  | "pokeball"
+  | "pokemon"
+  | "statuses"
+  | "trainer"
+  | "ui";
+
 export class MysteryEncounterSpriteConfig {
-  spriteKey: string; // e.g. "ace_trainer_f"
-  fileRoot: string; // "trainer" for trainer sprites, "pokemon" for pokemon, etc. Refer to /public/images directory for the folder name
-  hasShadow?: boolean = false; // Spawns shadow underneath sprite
-  disableAnimation?: boolean = false; // Animates frames or not
-  repeat?: boolean = false; // Cycles animation
+  /** The sprite key (which is the image file name). e.g. "ace_trainer_f" */
+  spriteKey: string;
+  /** Refer to [/public/images](../../public/images) directorty for all folder names */
+  fileRoot: KnownFileRoot & string;
+  /** Enable shadow. Defaults to `false` */
+  hasShadow?: boolean = false;
+  /** Disable animation. Defaults to `false` */
+  disableAnimation?: boolean = false;
+  /** Repeat the animation. Defaults to `false` */
+  repeat?: boolean = false;
+  /** Tint color. `0` - `1`. Higher means darker tint. */
   tint?: number;
-  x?: number; // X offset
-  y?: number; // Y offset
+  /** X offset */
+  x?: number;
+  /** Y offset */
+  y?: number;
+  /** Y shadow offset */
   yShadowOffset?: number;
+  /** Sprite scale. `0` - `n` */
   scale?: number;
-  isItem?: boolean; // For item sprites, set to true
+  /** If you are using an item sprite, set to `true` */
+  isItem?: boolean;
+  /** The sprites alpha. `0` - `1` The lower the number, the more transparent */
+  alpha?: number;
 }
 
 /**
@@ -60,32 +92,35 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
     const spacingValue = Math.round((maxX - minX) / Math.max(this.spriteConfigs.filter(s => !s.x && !s.y).length, 1));
 
     this.spriteConfigs?.forEach((config) => {
+      const { spriteKey, isItem, hasShadow, scale, x, y, yShadowOffset, alpha } = config;
+
       let sprite: GameObjects.Sprite;
       let tintSprite: GameObjects.Sprite;
-      if (!config.isItem) {
-        sprite = getSprite(config.spriteKey, config.hasShadow, config.yShadowOffset);
-        tintSprite = getSprite(config.spriteKey);
+
+      if (!isItem) {
+        sprite = getSprite(spriteKey, hasShadow, yShadowOffset);
+        tintSprite = getSprite(spriteKey);
       } else {
-        sprite = getItemSprite(config.spriteKey);
-        tintSprite = getItemSprite(config.spriteKey);
+        sprite = getItemSprite(spriteKey);
+        tintSprite = getItemSprite(spriteKey);
       }
 
       tintSprite.setVisible(false);
 
-      if (config.scale) {
-        sprite.setScale(config.scale);
-        tintSprite.setScale(config.scale);
+      if (scale) {
+        sprite.setScale(scale);
+        tintSprite.setScale(scale);
       }
 
       // Sprite offset from origin
-      if (config.x || config.y) {
-        if (config.x) {
-          sprite.setPosition(origin + config.x, sprite.y);
-          tintSprite.setPosition(origin + config.x, tintSprite.y);
+      if (x || y) {
+        if (x) {
+          sprite.setPosition(origin + x, sprite.y);
+          tintSprite.setPosition(origin + x, tintSprite.y);
         }
-        if (config.y) {
-          sprite.setPosition(sprite.x, sprite.y + config.y);
-          tintSprite.setPosition(tintSprite.x, tintSprite.y + config.y);
+        if (y) {
+          sprite.setPosition(sprite.x, sprite.y + y);
+          tintSprite.setPosition(tintSprite.x, tintSprite.y + y);
         }
       } else {
         // Single sprite
@@ -98,6 +133,11 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
           tintSprite.x = minX + (n + 0.5) * spacingValue + origin;
           n++;
         }
+      }
+
+      if (alpha) {
+        sprite.setAlpha(alpha);
+        tintSprite.setAlpha(alpha);
       }
 
       this.add(sprite);

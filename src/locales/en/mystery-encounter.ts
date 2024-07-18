@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/interfaces/locales";
+import { lostAtSea } from "./mystery-encounters/lost-at-sea";
 
 /**
  * Patterns that can be used:
@@ -13,7 +13,7 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
  * Any '(+)' or '(-)' type of tooltip will auto-color to green/blue respectively. THIS ONLY OCCURS FOR OPTION TOOLTIPS, NOWHERE ELSE
  * Other types of '(...)' tooltips will have to specify the text color manually by using '@[SUMMARY_GREEN]{<text>}' pattern
  */
-export const mysteryEncounter: SimpleTranslationEntries = {
+export const mysteryEncounter = {
   // DO NOT REMOVE
   "unit_test_dialogue": "{{test}}{{test}} {{test{{test}}}} {{test1}} {{test\}} {{test\\}} {{test\\\}} {test}}",
 
@@ -260,4 +260,5 @@ export const mysteryEncounter: SimpleTranslationEntries = {
   $@s{item_fanfare}You gained a Berry!`,
   "sleeping_snorlax_option_3_good_result": "Your {{option3PrimaryName}} uses {{option3PrimaryMove}}! @s{item_fanfare}It steals Leftovers off the sleeping Snorlax and you make out like bandits!",
 
+  lostAtSea,
 } as const;

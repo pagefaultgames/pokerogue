@@ -9,5 +9,6 @@ export enum MysteryEncounterType {
   SHADY_VITAMIN_DEALER,
   FIELD_TRIP,
   SAFARI_ZONE,
+  LOST_AT_SEA, //might be generalized later on
   FIERY_FALLOUT
 }
