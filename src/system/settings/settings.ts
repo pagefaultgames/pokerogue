@@ -105,8 +105,7 @@ export const SettingKeys = {
   ShowAutosaves: "SHOW_AUTOSAVES",
   TitleScreenContinueMode: "TITLE_SCREEN_QUICKLOAD",
   BiomePanels: "BIOME_PANELS",
-  DailyShinyLuck: "DAILY_LUCK",
-  QuickloadDisplay: "QUICKLOAD_MODE"
+  DailyShinyLuck: "DAILY_LUCK"
 };
 
 /**
@@ -214,7 +213,7 @@ export const Setting: Array<Setting> = [
       label: "Both",
       value: "Both" // Shows the last run and the last Daily Run, or only the last played game if it is a Daily Run
     }],
-    default: 2,
+    default: 1,
     type: SettingType.GENERAL,
   },
   {
@@ -722,7 +721,7 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     scene.doBiomePanels = Setting[index].options[value].value == "On"
   case SettingKeys.DailyShinyLuck:
     scene.disableDailyShinies = Setting[index].options[value].value == "Off"
-  case SettingKeys.QuickloadDisplay:
+  case SettingKeys.TitleScreenContinueMode:
     scene.quickloadDisplayMode  = Setting[index].options[value].value;
   case SettingKeys.Skip_Seen_Dialogues:
     scene.skipSeenDialogues = Setting[index].options[value].value === "On";

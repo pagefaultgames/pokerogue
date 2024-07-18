@@ -403,12 +403,12 @@ export class TitlePhase extends Phase {
     });
   }
 
-  getLastSave(log?: boolean, dailyOnly?: boolean): SessionSaveData {
+  getLastSave(log?: boolean, dailyOnly?: boolean, noDaily?: boolean): SessionSaveData {
     var saves: Array<Array<any>> = [];
     for (var i = 0; i < 5; i++) {
       var s = parseSlotData(i);
       if (s != undefined) {
-        if (!dailyOnly || s.gameMode == GameModes.DAILY) {
+        if ((!noDaily && !dailyOnly) || (s.gameMode == GameModes.DAILY && dailyOnly) || (s.gameMode != GameModes.DAILY && noDaily)) {
           saves.push([i, s, s.timestamp]);
         }
       }
@@ -418,6 +418,36 @@ export class TitlePhase extends Phase {
     if (saves == undefined) return undefined;
     if (saves[0] == undefined) return undefined;
     return saves[0][1]
+  }
+  getLastSavesOfEach(log?: boolean): SessionSaveData[] {
+    var saves: Array<Array<any>> = [];
+    for (var i = 0; i < 5; i++) {
+      var s = parseSlotData(i);
+      if (s != undefined) {
+        saves.push([i, s, s.timestamp]);
+      }
+    }
+    saves.sort((a, b): integer => {return b[2] - a[2]})
+    if (log) console.log(saves)
+    if (saves == undefined) return undefined;
+    if (saves[0] == undefined) return undefined;
+    var validSaves = []
+    var hasNormal = false;
+    var hasDaily = false;
+    for (var i = 0; i < saves.length; i++) {
+      if (saves[i][1].gameMode == GameModes.DAILY && !hasDaily) {
+        hasDaily = true;
+        validSaves.push(saves[i])
+      }
+      if (saves[i][1].gameMode != GameModes.DAILY && !hasNormal) {
+        hasNormal = true;
+        validSaves.push(saves[i])
+      }
+    }
+    console.log(saves, validSaves)
+    if (validSaves.length == 0)
+      return undefined;
+    return validSaves.map(f => f[1]);
   }
   getSaves(log?: boolean, dailyOnly?: boolean): SessionSaveData[] {
     var saves: Array<Array<any>> = [];
@@ -549,10 +579,32 @@ export class TitlePhase extends Phase {
     // Replaces 'Continue' with all Daily Run saves, sorted by when they last saved
     // If there are no daily runs, it instead shows the most recently saved run
     // If this fails too, there are no saves, and the option does not appear
-    var lastsaves = this.getSaves(false, true);
-    //lastsaves = this.getSavesUnsorted()
-    if (lastsaves != undefined && lastsaves.length > 0) {
-      lastsaves.forEach(lastsave => {
+    var lastsaves = this.getSaves(false, true); // Gets all Daily Runs sorted by last play time
+    var lastsave = this.getLastSave(); // Gets the last save you played
+    var ls1 = this.getLastSave(false, true)
+    var ls2 = this.getLastSavesOfEach()
+    switch (true) {
+      case (this.scene.quickloadDisplayMode == "Daily" && this.getLastSave(false, true) != undefined):
+        options.push({
+          label: (ls1.description ? ls1.description : "[???]"),
+          handler: () => {
+            this.loadSaveSlot(ls1.slot);
+            return true;
+          }
+        })
+        break;
+      case this.scene.quickloadDisplayMode == "Dailies" && this.getLastSave(false, true) != undefined:
+        lastsaves.forEach(lastsave1 => {
+          options.push({
+            label: (lastsave1.description ? lastsave1.description : "[???]"),
+            handler: () => {
+              this.loadSaveSlot(lastsave1.slot);
+              return true;
+            }
+          })
+        })
+        break;
+      case lastsave != undefined && (this.scene.quickloadDisplayMode == "Latest" || ((this.scene.quickloadDisplayMode == "Daily" || this.scene.quickloadDisplayMode == "Dailies") && this.getLastSave(false, true) == undefined)):
         options.push({
           label: (lastsave.description ? lastsave.description : "[???]"),
           handler: () => {
@@ -560,20 +612,19 @@ export class TitlePhase extends Phase {
             return true;
           }
         })
-      })
-    } else {
-      var lastsave = this.getLastSave(false);
-      if (lastsave != undefined) {
-        options.push({
-          label: (lastsave.description ? lastsave.description : "[???]"),
-          handler: () => {
-            this.loadSaveSlot(lastsave.slot);
-            return true;
-          }
+        break;
+      case this.scene.quickloadDisplayMode == "Both" && ls2 != undefined:
+        ls2.forEach(lastsave2 => {
+          options.push({
+            label: (lastsave2.description ? lastsave2.description : "[???]"),
+            handler: () => {
+              this.loadSaveSlot(lastsave2.slot);
+              return true;
+            }
+          })
         })
-      } else {
-        console.log("Failed to get last save")
-        this.getLastSave(true)
+        break;
+      default: // If set to "Off" or all above conditions failed
         if (loggedInUser.lastSessionSlot > -1) {
           options.push({
             label: i18next.t("continue", null, { ns: "menu"}),
@@ -583,7 +634,7 @@ export class TitlePhase extends Phase {
             }
           });
         }
-      }
+        break;
     }
     options.push({
       label: i18next.t("menu:newGame"),
