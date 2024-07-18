@@ -135,7 +135,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
         // TODO: If we need to handle cancel option? Maybe default logic to leave/run from encounter idk
       }
     } else {
-      switch (this.optionsContainer.length) {
+      switch (this.optionsContainer.list.length) {
       case 3:
         success = this.handleTwoOptionMoveInput(button);
         break;

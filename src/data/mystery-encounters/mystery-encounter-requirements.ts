@@ -31,12 +31,10 @@ export abstract class EncounterSceneRequirement implements EncounterRequirement 
 }
 
 export abstract class EncounterPokemonRequirement implements EncounterRequirement {
-  minNumberOfPokemon: number;
-  invertQuery: boolean;
+  public minNumberOfPokemon: number;
+  public invertQuery: boolean;
 
-  meetsRequirement(scene: BattleScene): boolean {
-    throw new Error("Method not implemented.");
-  }
+  abstract meetsRequirement(scene: BattleScene): boolean;
 
   /**
    * Returns all party members that are compatible with this requirement. For non pokemon related requirements, the entire party is returned.
@@ -331,11 +329,13 @@ export class NatureRequirement extends EncounterPokemonRequirement {
 
 export class TypeRequirement extends EncounterPokemonRequirement {
   requiredType: Type[];
+  excludeFainted: boolean;
   minNumberOfPokemon: number;
   invertQuery: boolean;
 
-  constructor(type: Type | Type[], minNumberOfPokemon: number = 1, invertQuery: boolean = false) {
+  constructor(type: Type | Type[], excludeFainted: boolean = true, minNumberOfPokemon: number = 1, invertQuery: boolean = false) {
     super();
+    this.excludeFainted = excludeFainted;
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
     if (type instanceof Array) {
@@ -347,10 +347,16 @@ export class TypeRequirement extends EncounterPokemonRequirement {
   }
 
   meetsRequirement(scene: BattleScene): boolean {
-    const partyPokemon = scene.getParty();
+    let partyPokemon = scene.getParty();
+
     if (isNullOrUndefined(partyPokemon) || this?.requiredType?.length < 0) {
       return false;
     }
+
+    if (!this.excludeFainted) {
+      partyPokemon = partyPokemon.filter((pokemon) => !pokemon.isFainted());
+    }
+
     return this.queryParty(partyPokemon).length >= this.minNumberOfPokemon;
   }
 
@@ -946,3 +952,5 @@ export class WeightRequirement extends EncounterPokemonRequirement {
     return ["weight", pokemon.getWeight().toString()];
   }
 }
+
+

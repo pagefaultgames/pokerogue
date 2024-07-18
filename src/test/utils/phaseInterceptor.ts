@@ -8,6 +8,7 @@ import {
   EncounterPhase,
   EnemyCommandPhase,
   FaintPhase,
+  LearnMovePhase,
   LoginPhase,
   MessagePhase,
   MoveEffectPhase,
@@ -41,6 +42,7 @@ import {
   MysteryEncounterBattlePhase,
   MysteryEncounterOptionSelectedPhase,
   MysteryEncounterPhase,
+  MysteryEncounterRewardsPhase,
   PostMysteryEncounterPhase
 } from "#app/phases/mystery-encounter-phase";
 
@@ -100,11 +102,13 @@ export default class PhaseInterceptor {
     [MysteryEncounterPhase, this.startPhase],
     [MysteryEncounterOptionSelectedPhase, this.startPhase],
     [MysteryEncounterBattlePhase, this.startPhase],
-    [PostMysteryEncounterPhase, this.startPhase]
+    [MysteryEncounterRewardsPhase, this.startPhase],
+    [PostMysteryEncounterPhase, this.startPhase],
+    [LearnMovePhase, this.startPhase]
   ];
 
   private endBySetMode = [
-    TitlePhase, SelectGenderPhase, CommandPhase, SelectModifierPhase
+    TitlePhase, SelectGenderPhase, CommandPhase, SelectModifierPhase, PostMysteryEncounterPhase
   ];
 
   /**

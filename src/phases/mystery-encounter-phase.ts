@@ -4,7 +4,7 @@ import { Phase } from "../phase";
 import { Mode } from "../ui/ui";
 import { hideMysteryEncounterIntroVisuals, OptionSelectSettings } from "../data/mystery-encounters/utils/encounter-phase-utils";
 import { CheckSwitchPhase, NewBattlePhase, ReturnPhase, ScanIvsPhase, SelectModifierPhase, SummonPhase, ToggleDoublePositionPhase } from "../phases";
-import MysteryEncounterOption from "../data/mystery-encounters/mystery-encounter-option";
+import MysteryEncounterOption, { OptionPhaseCallback } from "../data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterVariant } from "../data/mystery-encounters/mystery-encounter";
 import { getCharVariantFromDialogue } from "../data/dialogue";
 import { TrainerSlot } from "../data/trainer-config";
@@ -138,7 +138,7 @@ export class MysteryEncounterPhase extends Phase {
  * Any phase that is meant to follow this one MUST be queued via the onOptionSelect() logic of the selected option
  */
 export class MysteryEncounterOptionSelectedPhase extends Phase {
-  onOptionSelect: (scene: BattleScene) => Promise<boolean | void>;
+  onOptionSelect: OptionPhaseCallback;
 
   constructor(scene: BattleScene) {
     super(scene);
@@ -394,7 +394,7 @@ export class MysteryEncounterRewardsPhase extends Phase {
  * - Queuing of the next wave
  */
 export class PostMysteryEncounterPhase extends Phase {
-  onPostOptionSelect: (scene: BattleScene) => Promise<void | boolean>;
+  onPostOptionSelect: OptionPhaseCallback;
 
   constructor(scene: BattleScene) {
     super(scene);

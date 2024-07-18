@@ -2678,7 +2678,7 @@ export default class BattleScene extends SceneBase {
     let availableEncounters: IMysteryEncounter[] = [];
     // New encounter will never be the same as the most recent encounter
     const previousEncounter = this.mysteryEncounterData.encounteredEvents?.length > 0 ? this.mysteryEncounterData.encounteredEvents[this.mysteryEncounterData.encounteredEvents.length - 1][0] : null;
-    const biomeMysteryEncounters = mysteryEncountersByBiome.get(this.arena.biomeType);
+    const biomeMysteryEncounters = mysteryEncountersByBiome.get(this.arena.biomeType) ?? [];
     // If no valid encounters exist at tier, checks next tier down, continuing until there are some encounters available
     while (availableEncounters.length === 0 && tier >= 0) {
       availableEncounters = biomeMysteryEncounters

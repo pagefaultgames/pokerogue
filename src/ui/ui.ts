@@ -234,8 +234,8 @@ export default class UI extends Phaser.GameObjects.Container {
     (this.scene as BattleScene).uiContainer.add(this.tooltipContainer);
   }
 
-  getHandler(): UiHandler {
-    return this.handlers[this.mode];
+  getHandler<H extends UiHandler = UiHandler>(): H  {
+    return this.handlers[this.mode] as H;
   }
 
   getMessageHandler(): BattleMessageUiHandler {

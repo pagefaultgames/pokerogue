@@ -198,7 +198,6 @@ export default class IMysteryEncounter implements IMysteryEncounter {
     }
     let qualified: PlayerPokemon[] = scene.getParty();
     for (const req of this.primaryPokemonRequirements) {
-      console.log(req);
       if (req.meetsRequirement(scene)) {
         if (req instanceof EncounterPokemonRequirement) {
           qualified = qualified.filter(pkmn => req.queryParty(scene.getParty()).includes(pkmn));
@@ -382,8 +381,11 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   }
 
   /**
-   * Defines an option for the encounter
-   * There should be at least 2 options defined and no more than 4
+   * Defines an option for the encounter.
+   * Use for complex options.
+   * There should be at least 2 options defined and no more than 4.
+   * If easy/streamlined use {@linkcode MysteryEncounterBuilder.withOptionPhase}
+   *
    * @param option - MysteryEncounterOption to add, can use MysteryEncounterOptionBuilder to create instance
    * @returns
    */
@@ -399,8 +401,10 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   }
 
   /**
-   * Adds a streamlined option phase.
-   * Only use if no pre-/post-options or condtions necessary.
+   * Defines an option + phasefor the encounter.
+   * Use for easy/streamlined options.
+   * There should be at least 2 options defined and no more than 4.
+   * If complex use {@linkcode MysteryEncounterBuilder.withOption}
    *
    * @param dialogue - {@linkcode OptionTextDisplay}
    * @param callback - {@linkcode OptionPhaseCallback}

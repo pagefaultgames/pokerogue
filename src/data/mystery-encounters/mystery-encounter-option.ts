@@ -1,8 +1,11 @@
 import { OptionTextDisplay } from "#app/data/mystery-encounters/mystery-encounter-dialogue";
+import { Moves } from "#app/enums/moves";
 import { PlayerPokemon } from "#app/field/pokemon";
 import BattleScene from "../../battle-scene";
 import * as Utils from "../../utils";
-import { EncounterPokemonRequirement, EncounterSceneRequirement, MoneyRequirement } from "./mystery-encounter-requirements";
+import { Type } from "../type";
+import { EncounterPokemonRequirement, EncounterSceneRequirement, MoneyRequirement, TypeRequirement } from "./mystery-encounter-requirements";
+import { CanLearnMoveRequirement, CanLearnMoveRequirementOptions } from "./requirements/can-learn-move-requirement";
 
 export enum EncounterOptionMode {
   /** Default style */
@@ -65,7 +68,6 @@ export default class MysteryEncounterOption implements MysteryEncounterOption {
     }
     let qualified: PlayerPokemon[] = scene.getParty();
     for (const req of this.primaryPokemonRequirements) {
-      console.log(req);
       if (req.meetsRequirement(scene)) {
         if (req instanceof EncounterPokemonRequirement) {
           qualified = qualified.filter(pkmn => req.queryParty(scene.getParty()).includes(pkmn));
@@ -183,12 +185,42 @@ export class MysteryEncounterOptionBuilder implements Partial<MysteryEncounterOp
     return Object.assign(this, { primaryPokemonRequirements: this.primaryPokemonRequirements });
   }
 
+  /**
+   * Player is required to have certain type/s of pokemon in his party (with optional min number of pokemons with that type)
+   *
+   * @param type the required type/s
+   * @param excludeFainted whether to exclude fainted pokemon
+   * @param minNumberOfPokemon number of pokemons to have that type
+   * @param invertQuery
+   * @returns
+   */
+  withPokemonTypeRequirement(type: Type | Type[], excludeFainted?: boolean, minNumberOfPokemon?: number, invertQuery?: boolean) {
+    return this.withPrimaryPokemonRequirement(new TypeRequirement(type, excludeFainted, minNumberOfPokemon, invertQuery));
+  }
+
+  /**
+   * Player is required to have a pokemon that can learn a certain move/moveset
+   *
+   * @param move the required move/moves
+   * @param options see {@linkcode CanLearnMoveRequirementOptions}
+   * @returns
+   */
+  withPokemonCanLearnMoveRequirement(move: Moves | Moves[], options?: CanLearnMoveRequirementOptions) {
+    return this.withPrimaryPokemonRequirement(new CanLearnMoveRequirement(move, options));
+  }
+
   withSecondaryPokemonRequirement(requirement: EncounterPokemonRequirement, excludePrimaryFromSecondaryRequirements?: boolean): this & Required<Pick<MysteryEncounterOption, "secondaryPokemonRequirements">> {
     this.secondaryPokemonRequirements.push(requirement);
     this.excludePrimaryFromSecondaryRequirements = excludePrimaryFromSecondaryRequirements;
     return Object.assign(this, { secondaryPokemonRequirements: this.secondaryPokemonRequirements });
   }
 
+  /**
+   * Se the full dialogue object to the option. Will override anything already set
+   *
+   * @param dialogue see {@linkcode OptionTextDisplay}
+   * @returns
+   */
   withDialogue(dialogue: OptionTextDisplay) {
     this.dialogue = dialogue;
     return this;
