@@ -110,13 +110,15 @@ export default class LogSelectUiHandler extends MessageUiHandler {
       const originalCallback = this.selectCallback;
       const cursor = this.cursor + this.scrollCursor;
       var k = this.sessionSlots[cursor].key
-      var file = JSON.parse(localStorage.getItem(k)) as LoggerTools.DRPD;
-      console.log(k, file)
-      LoggerTools.generateEditHandlerForLog(this.scene, this.sessionSlots[cursor].logIndex, () => {
-        this.selectCallback = null;
-        originalCallback(k)
-      })()
-      success = true;
+      if (k != undefined) {
+        var file = JSON.parse(localStorage.getItem(k)) as LoggerTools.DRPD;
+        console.log(k, file)
+        LoggerTools.generateEditHandlerForLog(this.scene, this.sessionSlots[cursor].logIndex, () => {
+          this.selectCallback = null;
+          originalCallback(k)
+        })()
+        success = true;
+      }
     } else if (button === Button.CANCEL) {
       this.quitCallback(undefined);
     } else {
