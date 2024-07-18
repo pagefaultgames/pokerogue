@@ -112,7 +112,7 @@ export const bgmName: SimpleTranslationEntries = {
   "ruins": "PDM EdS - Ruine Scellée",
   "sea": "PDM EdS - Caverne Saline",
   "seabed": "Firel - Seabed", // The composer thinks about a more creative name
-  "slum": "PDM EdS - Pic Céleste (côte)",
+  "slum": "Andr06 - Sneaky Snom", // Name defined by the composer
   "snowy_forest": "PDM EdS - Pic Céleste (plaine enneigée)",
   "space": "Firel - Aether",
   "swamp": "PDM EdS - Mer Fermée",
