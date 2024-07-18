@@ -96,6 +96,7 @@ export enum MoveFlags {
 
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
 type UserMoveConditionFunc = (user: Pokemon, move: Move) => boolean;
+type MoveApplyFunc = (user:Pokemon, target: Pokemon, move: Move, args: any[]) => boolean| Promise<Boolean>;
 
 export default class Move implements Localizable {
   public id: Moves;
@@ -4633,6 +4634,40 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
   }
 }
 
+export class StatusForceSwitchOutAttr extends ForceSwitchOutAttr {
+  // inherit from ForceSwitchOutAttr
+
+  /** the extra apply function to be called */
+  private statusApplyFunc: MoveApplyFunc;
+  /** the extra status check to be called */
+  private statusCondFunc: MoveConditionFunc ;
+
+  /**
+   * This class extends ForceSwitchOutAttr, we can think of this class as ForceSwitchOut with "something extra" in it's apply() and getConditions() functions
+   * @param user boolean for if this is the user switching out
+   * @param batonPass boolean if the switch is baton pass
+   * @param statusApplyFunc {@linkcode MoveApplyFunc} the additional apply() function to run
+   * @param statusCondFunc {@linkcode MoveConditionFunc} the additional move condition function to run
+   */
+  constructor(user?: boolean, batonPass?: boolean, statusApplyFunc?, statusCondFunc? ) {
+    super(user, batonPass);
+    this.statusApplyFunc = statusApplyFunc;
+    this.statusCondFunc = statusCondFunc;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
+
+    this.statusApplyFunc(user, target, move, args);
+    return super.apply(user, target, move, args);
+
+  }
+
+  getCondition(): MoveConditionFunc {
+    // returns True/False for if the move should fail or not: currently logic is an OR. ie: if either condition returns true, then the move should be executed
+    return (user, target, move) => this.statusCondFunc(user, target, move) || super.getSwitchOutCondition()(user, target, move);
+  }
+
+}
 export class RemoveTypeAttr extends MoveEffectAttr {
 
   private removedType: Type;
@@ -8326,8 +8361,10 @@ export function initMoves() {
     new SelfStatusMove(Moves.CHILLY_RECEPTION, Type.ICE, -1, 10, -1, 0, 9)
       //.attr(MessageHeaderAttr, )
       .attr(PreMoveMessageAttr, (user, move) => getPokemonMessage(user, " is preparing to tell a chillingly bad joke!"))
-      .attr(WeatherChangeAttr, WeatherType.SNOW)
-      .attr(ForceSwitchOutAttr, true, false),
+      .attr(StatusForceSwitchOutAttr, true, false,
+        (user: Pokemon, target: Pokemon, move: Move, args: any[]) => user.scene.arena.trySetWeather(WeatherType.SNOW, true),
+        (user, target, move) => (user.scene.arena.weather?.weatherType === WeatherType.SNOW) ? false : true
+      ),
     new SelfStatusMove(Moves.TIDY_UP, Type.NORMAL, -1, 10, -1, 0, 9)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPD ], 1, true, null, true, true)
       .attr(RemoveArenaTrapAttr, true),
