@@ -168,6 +168,113 @@ export default class Trainer extends Phaser.GameObjects.Container {
     // Return the formatted name, including the title if it is set.
     return title ? `${title} ${name}` : name;
   }
+  getNameOnly(trainerSlot: TrainerSlot = TrainerSlot.NONE): string {
+    // Get the base title based on the trainer slot and variant.
+    let name = this.config.getTitle(trainerSlot, this.variant);
+
+    // Determine the title to include based on the configuration and includeTitle flag.
+    let title = true && this.config.title ? this.config.title : null;
+
+    if (this.name === "" && name.toLowerCase().includes("grunt")) {
+      // This is a evil team grunt so we localize it by only using the "name" as the title
+      title = i18next.t(`trainerClasses:${name.toLowerCase().replace(/\s/g, "_")}`);
+      console.log("Localized grunt name: " + title);
+      // Since grunts are not named we can just return the title
+      return title;
+    }
+
+    // If the trainer has a name (not null or undefined).
+    if (this.name) {
+      // If the title should be included.
+      if (true) {
+        // Check if the internationalization (i18n) system is initialized.
+        if (!getIsInitialized()) {
+          // Initialize the i18n system if it is not already initialized.
+          initI18n();
+        }
+        // Get the localized trainer class name from the i18n file and set it as the title.
+        // This is used for trainer class names, not titles like "Elite Four, Champion, etc."
+        title = i18next.t(`trainerClasses:${name.toLowerCase().replace(/\s/g, "_")}`);
+      }
+
+      // If no specific trainer slot is set.
+      if (!trainerSlot) {
+        // Use the trainer's name.
+        name = this.name;
+        // If there is a partner name, concatenate it with the trainer's name using "&".
+        if (this.partnerName) {
+          name = `${name} & ${this.partnerName}`;
+        }
+      } else {
+        // Assign the name based on the trainer slot:
+        // Use 'this.name' if 'trainerSlot' is TRAINER.
+        // Otherwise, use 'this.partnerName' if it exists, or 'this.name' if it doesn't.
+        name = trainerSlot === TrainerSlot.TRAINER ? this.name : this.partnerName || this.name;
+      }
+    }
+
+    if (this.config.titleDouble && this.variant === TrainerVariant.DOUBLE && !this.config.doubleOnly) {
+      title = this.config.titleDouble;
+      name = i18next.t(`trainerNames:${this.config.nameDouble.toLowerCase().replace(/\s/g, "_")}`);
+    }
+
+    // Return the formatted name, including the title if it is set.
+    return name || "";
+  }
+  getTitleOnly(trainerSlot: TrainerSlot = TrainerSlot.NONE): string {
+    // Get the base title based on the trainer slot and variant.
+    let name = this.config.getTitle(trainerSlot, this.variant);
+
+    // Determine the title to include based on the configuration and includeTitle flag.
+    let title = true && this.config.title ? this.config.title : null;
+
+    if (this.name === "" && name.toLowerCase().includes("grunt")) {
+      return "Grunt";
+      // This is a evil team grunt so we localize it by only using the "name" as the title
+      title = i18next.t(`trainerClasses:${name.toLowerCase().replace(/\s/g, "_")}`);
+      console.log("Localized grunt name: " + title);
+      // Since grunts are not named we can just return the title
+      return title;
+    }
+
+    // If the trainer has a name (not null or undefined).
+    if (this.name) {
+      // If the title should be included.
+      if (true) {
+        // Check if the internationalization (i18n) system is initialized.
+        if (!getIsInitialized()) {
+          // Initialize the i18n system if it is not already initialized.
+          initI18n();
+        }
+        // Get the localized trainer class name from the i18n file and set it as the title.
+        // This is used for trainer class names, not titles like "Elite Four, Champion, etc."
+        title = i18next.t(`trainerClasses:${name.toLowerCase().replace(/\s/g, "_")}`);
+      }
+
+      // If no specific trainer slot is set.
+      if (!trainerSlot) {
+        // Use the trainer's name.
+        name = this.name;
+        // If there is a partner name, concatenate it with the trainer's name using "&".
+        if (this.partnerName) {
+          name = `${name} & ${this.partnerName}`;
+        }
+      } else {
+        // Assign the name based on the trainer slot:
+        // Use 'this.name' if 'trainerSlot' is TRAINER.
+        // Otherwise, use 'this.partnerName' if it exists, or 'this.name' if it doesn't.
+        name = trainerSlot === TrainerSlot.TRAINER ? this.name : this.partnerName || this.name;
+      }
+    }
+
+    if (this.config.titleDouble && this.variant === TrainerVariant.DOUBLE && !this.config.doubleOnly) {
+      title = this.config.titleDouble;
+      name = i18next.t(`trainerNames:${this.config.nameDouble.toLowerCase().replace(/\s/g, "_")}`);
+    }
+
+    // Return the formatted name, including the title if it is set.
+    return title || "";
+  }
 
 
   isDouble(): boolean {

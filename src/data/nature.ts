@@ -61,6 +61,89 @@ export function getNatureName(nature: Nature, includeStatEffects: boolean = fals
   return ret;
 }
 
+export function getNatureIncrease(nature: Nature) {
+  switch (nature) {
+    case Nature.LONELY:
+    case Nature.BRAVE:
+    case Nature.ADAMANT:
+    case Nature.NAUGHTY:
+      return "atk";
+    case Nature.BOLD:
+    case Nature.RELAXED:
+    case Nature.IMPISH:
+    case Nature.LAX:
+      return "def";
+    case Nature.MODEST:
+    case Nature.MILD:
+    case Nature.QUIET:
+    case Nature.RASH:
+      return "spatk";
+    case Nature.CALM:
+    case Nature.GENTLE:
+    case Nature.SASSY:
+    case Nature.CAREFUL:
+      return "spdef";
+    case Nature.TIMID:
+    case Nature.HASTY:
+    case Nature.JOLLY:
+    case Nature.NAIVE:
+      return "spe"
+    case Nature.HARDY:
+      //return "atk"
+    case Nature.DOCILE:
+      //return "def"
+    case Nature.SERIOUS:
+      //return "spatk"
+    case Nature.BASHFUL:
+      //return "spdef"
+    case Nature.QUIRKY:
+      //return "spe"
+    default:
+      return ""
+  }
+}
+export function getNatureDecrease(nature: Nature) {
+  switch (nature) {
+    case Nature.BOLD:
+    case Nature.TIMID:
+    case Nature.MODEST:
+    case Nature.CALM:
+      return "atk";
+    case Nature.LONELY:
+    case Nature.HASTY:
+    case Nature.MILD:
+    case Nature.GENTLE:
+      return "def"
+    case Nature.ADAMANT:
+    case Nature.IMPISH:
+    case Nature.JOLLY:
+    case Nature.CAREFUL:
+      return "spatk"
+    case Nature.NAUGHTY:
+    case Nature.LAX:
+    case Nature.NAIVE:
+    case Nature.RASH:
+      return "spdef"
+    case Nature.BRAVE:
+    case Nature.RELAXED:
+    case Nature.QUIET:
+    case Nature.SASSY:
+      return "spe"
+    case Nature.HARDY:
+      //return "atk"
+    case Nature.DOCILE:
+      //return "def"
+    case Nature.SERIOUS:
+      //return "spatk"
+    case Nature.BASHFUL:
+      //return "spdef"
+    case Nature.QUIRKY:
+      //return "spe"
+    default:
+      return ""
+  }
+}
+
 export function getNatureStatMultiplier(nature: Nature, stat: Stat): number {
   switch (stat) {
   case Stat.ATK:

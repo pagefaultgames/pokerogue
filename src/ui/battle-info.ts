@@ -11,6 +11,7 @@ import { BattleStat } from "#app/data/battle-stat";
 import BattleFlyout from "./battle-flyout";
 import { WindowVariant, addWindow } from "./ui-theme";
 import i18next from "i18next";
+import { calcDamage } from "./fight-ui-handler";
 
 const battleStatOrder = [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.ACC, BattleStat.EVA, BattleStat.SPD ];
 
@@ -472,6 +473,11 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       ease: "Sine.easeInOut",
       alpha: visible ? 1 : 0
     });
+    if (visible) {
+      (this.scene as BattleScene).arenaFlyout.printIVs()
+    } else {
+      (this.scene as BattleScene).arenaFlyout.updateFieldText()
+    }
   }
 
   updateBossSegments(pokemon: EnemyPokemon): void {
@@ -921,7 +927,8 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     if (visible) {
       this.effectivenessContainer?.setVisible(false);
     } else {
-      this.updateEffectiveness(this.currentEffectiveness);
+      //this.updateEffectiveness(this.currentEffectiveness);
+      this.effectivenessContainer?.setVisible(true);
     }
     if (!this.override) this.switchIconVisibility(visible);
     // this.teamIconOver[ballindex].setAlpha(0.4, 0.4, 0.7, 0.7)

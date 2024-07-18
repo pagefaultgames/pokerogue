@@ -207,7 +207,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
     this.setVisible(false);
   }
 
-  show(pokemon: Pokemon, showMoves: boolean = false, speedMultiplier: number = 1): Promise<void> {
+  show(pokemon: Pokemon, showMoves: boolean = false, speedMultiplier: number = 1, lessInfo: boolean = false): Promise<void> {
     return new Promise<void>(resolve => {
       const caughtAttr = BigInt(pokemon.scene.gameData.dexData[pokemon.species.speciesId].caughtAttr);
       if (pokemon.gender > Gender.GENDERLESS) {
@@ -290,6 +290,11 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
         this.pokemonNatureLabelText.setColor(getTextColor(TextStyle.WINDOW, false, this.scene.uiTheme));
         this.pokemonNatureLabelText.setShadowColor(getTextColor(TextStyle.WINDOW, true, this.scene.uiTheme));
       }
+      
+      this.pokemonAbilityText.setVisible(!lessInfo)
+      this.pokemonAbilityLabelText.setVisible(!lessInfo)
+      this.pokemonNatureText.setVisible(!lessInfo)
+      this.pokemonNatureLabelText.setVisible(!lessInfo)
 
       const isFusion = pokemon.isFusion();
       const doubleShiny = isFusion && pokemon.shiny && pokemon.fusionShiny;
@@ -328,7 +333,11 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
         ? this.scene.gameData.dexData[starterSpeciesId].ivs
         : null;
 
-      this.statsContainer.updateIvs(pokemon.ivs, originalIvs);
+      if (lessInfo) {
+        this.statsContainer.updateIvs(pokemon.species.baseStats, undefined, 255);
+      } else {
+        this.statsContainer.updateIvs(pokemon.ivs, originalIvs);
+      }
 
       this.scene.tweens.add({
         targets: this,

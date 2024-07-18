@@ -40,6 +40,12 @@ export class SceneBase extends Phaser.Scene {
       this.load.image(`${key}_legacy`, this.getCachedUrl(`images/${folder}/${filename}`));
     }
   }
+  loadImageNoLegacy(key: string, folder: string, filename?: string) {
+    if (!filename) {
+      filename = `${key}.png`;
+    }
+    this.load.image(key, this.getCachedUrl(`images/${folder}/${filename}`));
+  }
 
   loadSpritesheet(key: string, folder: string, size: integer, filename?: string) {
     if (!filename) {

@@ -43,7 +43,8 @@ const AUTO_DISABLED: SettingOption[] = [
 export enum SettingType {
   GENERAL,
   DISPLAY,
-  AUDIO
+  AUDIO,
+  MOD
 }
 
 type SettingOption = {
@@ -98,7 +99,14 @@ export const SettingKeys = {
   SE_Volume: "SE_VOLUME",
   Music_Preference: "MUSIC_PREFERENCE",
   Show_BGM_Bar: "SHOW_BGM_BAR",
-  Show_Pokemon_Teams: "SHOW_POKEMON_TEAMS"
+  Show_Pokemon_Teams: "SHOW_POKEMON_TEAMS",
+  Damage_Display: "DAMAGE_DISPLAY",
+  LazyReloads: "FLAG_EVERY_RESET_AS_RELOAD",
+  FancyBiome: "FANCY_BIOMES",
+  ShowAutosaves: "SHOW_AUTOSAVES",
+  TitleScreenContinueMode: "TITLE_SCREEN_QUICKLOAD",
+  BiomePanels: "BIOME_PANELS",
+  DailyShinyLuck: "DAILY_LUCK"
 };
 
 /**
@@ -144,6 +152,77 @@ export const Setting: Array<Setting> = [
     ],
     default: 3,
     type: SettingType.GENERAL
+  },
+  {
+    key: SettingKeys.Damage_Display,
+    label: "Damage Display",
+    options: [{
+      label: "Off",
+      value: "Off"
+    }, {
+      label: "Value",
+      value: "Value"
+    }, {
+      label: "Percent",
+      value: "Percent"
+    }],
+    default: 0,
+    type: SettingType.GENERAL,
+  },
+  {
+    key: SettingKeys.LazyReloads,
+    label: "Lazy Reloads",
+    options: [{
+      label: "Off",
+      value: "Off"
+    }, {
+      label: "On",
+      value: "On"
+    }],
+    default: 0,
+    type: SettingType.GENERAL,
+  },
+  {
+    key: SettingKeys.FancyBiome,
+    label: "Fancy Title Screen",
+    options: [{
+      label: "Off",
+      value: "Off"
+    }, {
+      label: "On",
+      value: "On"
+    }],
+    default: 0,
+    type: SettingType.GENERAL,
+  },
+  {
+    key: SettingKeys.TitleScreenContinueMode,
+    label: "Quick Load",
+    options: [{
+      label: "Off",
+      value: "Off" // Shows "Continue" button on the home screen
+    }, {
+      label: "Daily",
+      value: "Daily" // Shows the last played Daily Run, or the last run if there are no Daily Runs
+    }, {
+      label: "Dailies",
+      value: "Dailies" // Shows all Daily Runs, or the last run if there are no Daily Runs
+    }, {
+      label: "Latest",
+      value: "Latest" // Shows the last run
+    }, {
+      label: "Both",
+      value: "Both" // Shows the last run and the last Daily Run, or only the last played game if it is a Daily Run
+    }],
+    default: 1,
+    type: SettingType.GENERAL,
+  },
+  {
+    key: SettingKeys.DailyShinyLuck,
+    label: "Daily Shiny Luck",
+    options: OFF_ON,
+    default: 0,
+    type: SettingType.GENERAL,
   },
   {
     key: SettingKeys.HP_Bar_Speed,
@@ -519,6 +598,32 @@ export const Setting: Array<Setting> = [
     requireReload: true
   },
   {
+    key: SettingKeys.BiomePanels,
+    label: "Biome Panels",
+    options: [{
+      label: "Off",
+      value: "Off"
+    }, {
+      label: "On",
+      value: "On"
+    }],
+    default: 0,
+    type: SettingType.DISPLAY,
+  },
+  {
+    key: SettingKeys.ShowAutosaves,
+    label: "Show Autosaves",
+    options: [{
+      label: "Off",
+      value: "Off"
+    }, {
+      label: "On",
+      value: "On"
+    }],
+    default: 0,
+    type: SettingType.DISPLAY,
+  },
+  {
     key: SettingKeys.Master_Volume,
     label: i18next.t("settings:masterVolume"),
     options: VOLUME_OPTIONS,
@@ -625,6 +730,20 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
   case SettingKeys.Enable_Retries:
     scene.enableRetries = Setting[index].options[value].value === "On";
     break;
+  case SettingKeys.Damage_Display:
+    scene.damageDisplay = Setting[index].options[value].value
+  case SettingKeys.LazyReloads:
+    scene.lazyReloads = Setting[index].options[value].value == "On"
+  case SettingKeys.FancyBiome:
+    scene.menuChangesBiome = Setting[index].options[value].value == "On"
+  case SettingKeys.ShowAutosaves:
+    scene.showAutosaves = Setting[index].options[value].value == "On"
+  case SettingKeys.BiomePanels:
+    scene.doBiomePanels = Setting[index].options[value].value == "On"
+  case SettingKeys.DailyShinyLuck:
+    scene.disableDailyShinies = Setting[index].options[value].value == "Off"
+  case SettingKeys.TitleScreenContinueMode:
+    scene.quickloadDisplayMode  = Setting[index].options[value].value;
   case SettingKeys.Skip_Seen_Dialogues:
     scene.skipSeenDialogues = Setting[index].options[value].value === "On";
     break;

@@ -5,11 +5,27 @@ import { Command } from "./command-ui-handler";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import * as Utils from "../utils";
-import { CommandPhase } from "../phases";
-import { MoveCategory } from "#app/data/move.js";
+import { CommandPhase, MoveEffectPhase } from "../phases";
+import Move, * as MoveData from "../data/move";
 import i18next from "i18next";
 import {Button} from "#enums/buttons";
-import Pokemon, { PokemonMove } from "#app/field/pokemon.js";
+import Pokemon, { DamageResult, EnemyPokemon, HitResult, PlayerPokemon, PokemonMove } from "#app/field/pokemon.js";
+import Battle from "#app/battle.js";
+import { Stat } from "#app/data/pokemon-stat.js";
+import { Abilities } from "#app/enums/abilities.js";
+import { WeatherType } from "#app/data/weather.js";
+import { Moves } from "#app/enums/moves.js";
+import { AddSecondStrikeAbAttr, AllyMoveCategoryPowerBoostAbAttr, AlwaysHitAbAttr, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreDefendAbAttrsNoApply, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, ConditionalCritAbAttr, DamageBoostAbAttr, FieldMoveTypePowerBoostAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentEvasionAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, MoveTypeChangeAttr, MultCritAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, StabBoostAbAttr, TypeImmunityAbAttr, UserFieldMoveTypePowerBoostAbAttr, VariableMovePowerAbAttr, WonderSkinAbAttr } from "#app/data/ability.js";
+import { ArenaTagType } from "#app/enums/arena-tag-type.js";
+import { ArenaTagSide, WeakenMoveScreenTag, WeakenMoveTypeTag } from "#app/data/arena-tag.js";
+import { BattlerTagLapseType, HelpingHandTag, SemiInvulnerableTag, TypeBoostTag } from "#app/data/battler-tags.js";
+import { TerrainType } from "#app/data/terrain.js";
+import { AttackTypeBoosterModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, PokemonMoveAccuracyBoosterModifier, PokemonMultiHitModifier, TempBattleStatBoosterModifier } from "#app/modifier/modifier.js";
+import { BattlerTagType } from "#app/enums/battler-tag-type.js";
+import { TempBattleStat } from "#app/data/temp-battle-stat.js";
+import { StatusEffect } from "#app/data/status-effect.js";
+import { BattleStat } from "#app/data/battle-stat.js";
+import { PokemonMultiHitModifierType } from "#app/modifier/modifier-type.js";
 
 export default class FightUiHandler extends UiHandler {
   private movesContainer: Phaser.GameObjects.Container;
@@ -153,6 +169,535 @@ export default class FightUiHandler extends UiHandler {
     return !this.fieldIndex ? this.cursor : this.cursor2;
   }
 
+  simulateAttack(scene: BattleScene, user: Pokemon, target: Pokemon, move: Move) {
+    let result: HitResult;
+    const damage1 = new Utils.NumberHolder(0);
+    const damage2 = new Utils.NumberHolder(0);
+    const defendingSidePlayField = target.isPlayer() ? this.scene.getPlayerField() : this.scene.getEnemyField();
+
+    const variableCategory = new Utils.IntegerHolder(move.category);
+    MoveData.applyMoveAttrs(MoveData.VariableMoveCategoryAttr, user, target, move, variableCategory);
+    const moveCategory = variableCategory.value as MoveData.MoveCategory;
+
+    const typeChangeMovePowerMultiplier = new Utils.NumberHolder(1);
+    MoveData.applyMoveAttrs(MoveData.VariableMoveTypeAttr, user, target, move);
+    applyPreAttackAbAttrs(MoveTypeChangeAttr, user, target, move, typeChangeMovePowerMultiplier);
+    const types = target.getTypes(true, true);
+
+    const cancelled = new Utils.BooleanHolder(false);
+    const typeless = move.hasAttr(MoveData.TypelessAttr);
+    const typeMultiplier = new Utils.NumberHolder(!typeless && (moveCategory !== MoveData.MoveCategory.STATUS || move.getAttrs(MoveData.StatusMoveTypeImmunityAttr).find(attr => types.includes(attr.immuneType)))
+      ? target.getAttackTypeEffectiveness(move.type, user, false, false)
+      : 1);
+    MoveData.applyMoveAttrs(MoveData.VariableMoveTypeMultiplierAttr, user, target, move, typeMultiplier);
+    if (typeless) {
+      typeMultiplier.value = 1;
+    }
+    if (types.find(t => move.isTypeImmune(user, target, t))) {
+      typeMultiplier.value = 0;
+    }
+
+    // Apply arena tags for conditional protection
+    if (!move.checkFlag(MoveData.MoveFlags.IGNORE_PROTECT, user, target) && !move.isAllyTarget()) {
+      const defendingSide = target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
+      this.scene.arena.applyTagsForSide(ArenaTagType.QUICK_GUARD, defendingSide, cancelled, this, move.priority);
+      this.scene.arena.applyTagsForSide(ArenaTagType.WIDE_GUARD, defendingSide, cancelled, this, move.moveTarget);
+      this.scene.arena.applyTagsForSide(ArenaTagType.MAT_BLOCK, defendingSide, cancelled, this, move.category);
+      this.scene.arena.applyTagsForSide(ArenaTagType.CRAFTY_SHIELD, defendingSide, cancelled, this, move.category, move.moveTarget);
+    }
+
+    switch (moveCategory) {
+    case MoveData.MoveCategory.PHYSICAL:
+    case MoveData.MoveCategory.SPECIAL:
+      const isPhysical = moveCategory === MoveData.MoveCategory.PHYSICAL;
+      const power = new Utils.NumberHolder(move.power);
+      const sourceTeraType = user.getTeraType();
+      if (sourceTeraType !== Type.UNKNOWN && sourceTeraType === move.type && power.value < 60 && move.priority <= 0 && !move.hasAttr(MoveData.MultiHitAttr) && !this.scene.findModifier(m => m instanceof PokemonMultiHitModifier && m.pokemonId === user.id)) {
+        power.value = 60;
+      }
+      applyPreAttackAbAttrs(VariableMovePowerAbAttr, user, target, move, power);
+
+      if (user.getAlly()?.hasAbilityWithAttr(AllyMoveCategoryPowerBoostAbAttr)) {
+        applyPreAttackAbAttrs(AllyMoveCategoryPowerBoostAbAttr, user, target, move, power);
+      }
+
+      const fieldAuras = new Set(
+        this.scene.getField(true)
+          .map((p) => p.getAbilityAttrs(FieldMoveTypePowerBoostAbAttr) as FieldMoveTypePowerBoostAbAttr[])
+          .flat(),
+      );
+      for (const aura of fieldAuras) {
+        // The only relevant values are `move` and the `power` holder
+        aura.applyPreAttack(null, null, null, move, [power]);
+      }
+
+      const alliedField: Pokemon[] = user instanceof PlayerPokemon ? this.scene.getPlayerField() : this.scene.getEnemyField();
+      alliedField.forEach(p => applyPreAttackAbAttrs(UserFieldMoveTypePowerBoostAbAttr, p, user, move, power));
+
+      power.value *= typeChangeMovePowerMultiplier.value;
+
+      if (!typeless) {
+        if (target.hasAbilityWithAttr(TypeImmunityAbAttr)) {
+          //
+        }
+        applyPreDefendAbAttrsNoApply(TypeImmunityAbAttr, user, target, move, cancelled, typeMultiplier);
+        MoveData.applyMoveAttrs(MoveData.NeutralDamageAgainstFlyingTypeMultiplierAttr, user, target, move, typeMultiplier);
+      }
+      if (!cancelled.value) {
+        applyPreDefendAbAttrs(MoveImmunityAbAttr, user, target, move, cancelled, typeMultiplier);
+        defendingSidePlayField.forEach((p) => applyPreDefendAbAttrs(FieldPriorityMoveImmunityAbAttr, p, user, move, cancelled, typeMultiplier));
+      }
+
+      if (cancelled.value) {
+        //user.stopMultiHit(target);
+        result = HitResult.NO_EFFECT;
+      } else {
+        const typeBoost = user.findTag(t => t instanceof TypeBoostTag && t.boostedType === move.type) as TypeBoostTag;
+        if (typeBoost) {
+          power.value *= typeBoost.boostValue;
+          if (typeBoost.oneUse) {
+            //user.removeTag(typeBoost.tagType);
+          }
+        }
+        const arenaAttackTypeMultiplier = new Utils.NumberHolder(this.scene.arena.getAttackTypeMultiplier(move.type, user.isGrounded()));
+        MoveData.applyMoveAttrs(MoveData.IgnoreWeatherTypeDebuffAttr, user, target, move, arenaAttackTypeMultiplier);
+        if (this.scene.arena.getTerrainType() === TerrainType.GRASSY && target.isGrounded() && move.type === Type.GROUND && move.moveTarget === MoveData.MoveTarget.ALL_NEAR_OTHERS) {
+          power.value /= 2;
+        }
+
+        MoveData.applyMoveAttrs(MoveData.VariablePowerAttr, user, target, move, power);
+
+        this.scene.applyModifiers(PokemonMultiHitModifier, user.isPlayer(), user, new Utils.IntegerHolder(0), power);
+        if (!typeless) {
+          this.scene.arena.applyTags(WeakenMoveTypeTag, move.type, power);
+          this.scene.applyModifiers(AttackTypeBoosterModifier, user.isPlayer(), user, move.type, power);
+        }
+        if (user.getTag(HelpingHandTag)) {
+          power.value *= 1.5;
+        }
+        let isCritical: boolean = true;
+        const critOnly = new Utils.BooleanHolder(false);
+        const critAlways = user.getTag(BattlerTagType.ALWAYS_CRIT);
+        MoveData.applyMoveAttrs(MoveData.CritOnlyAttr, user, target, move, critOnly);
+        applyAbAttrs(ConditionalCritAbAttr, user, null, critOnly, target, move);
+        if (isCritical) {
+          const blockCrit = new Utils.BooleanHolder(false);
+          applyAbAttrs(BlockCritAbAttr, target, null, blockCrit);
+          if (blockCrit.value) {
+            isCritical = false;
+          }
+        }
+        const sourceAtk = new Utils.IntegerHolder(user.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK, target, null, false));
+        const targetDef = new Utils.IntegerHolder(target.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF, user, move, false));
+        const sourceAtkCrit = new Utils.IntegerHolder(user.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK, target, null, isCritical));
+        const targetDefCrit = new Utils.IntegerHolder(target.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF, user, move, isCritical));
+        const criticalMultiplier = new Utils.NumberHolder(isCritical ? 1.5 : 1);
+        applyAbAttrs(MultCritAbAttr, user, null, criticalMultiplier);
+        const screenMultiplier = new Utils.NumberHolder(1);
+        if (!isCritical) {
+          this.scene.arena.applyTagsForSide(WeakenMoveScreenTag, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY, move.category, this.scene.currentBattle.double, screenMultiplier);
+        }
+        const isTypeImmune = (typeMultiplier.value * arenaAttackTypeMultiplier.value) === 0;
+        const sourceTypes = user.getTypes();
+        const matchesSourceType = sourceTypes[0] === move.type || (sourceTypes.length > 1 && sourceTypes[1] === move.type);
+        const stabMultiplier = new Utils.NumberHolder(1);
+        if (sourceTeraType === Type.UNKNOWN && matchesSourceType) {
+          stabMultiplier.value += 0.5;
+        } else if (sourceTeraType !== Type.UNKNOWN && sourceTeraType === move.type) {
+          stabMultiplier.value += 0.5;
+        }
+
+        applyAbAttrs(StabBoostAbAttr, user, null, stabMultiplier);
+
+        if (sourceTeraType !== Type.UNKNOWN && matchesSourceType) {
+          stabMultiplier.value = Math.min(stabMultiplier.value + 0.5, 2.25);
+        }
+
+        MoveData.applyMoveAttrs(MoveData.VariableAtkAttr, user, target, move, sourceAtk);
+        MoveData.applyMoveAttrs(MoveData.VariableDefAttr, user, target, move, targetDef);
+        MoveData.applyMoveAttrs(MoveData.VariableAtkAttr, user, target, move, sourceAtkCrit);
+        MoveData.applyMoveAttrs(MoveData.VariableDefAttr, user, target, move, targetDefCrit);
+
+        const effectPhase = this.scene.getCurrentPhase();
+        let numTargets = 1;
+        if (effectPhase instanceof MoveEffectPhase) {
+          numTargets = effectPhase.getTargets().length;
+        }
+        const twoStrikeMultiplier = new Utils.NumberHolder(1);
+        applyPreAttackAbAttrs(AddSecondStrikeAbAttr, user, target, move, numTargets, new Utils.IntegerHolder(0), twoStrikeMultiplier);
+
+        if (!isTypeImmune) {
+          damage1.value = Math.ceil(((((2 * user.level / 5 + 2) * power.value * sourceAtk.value / targetDef.value) / 50) + 2) * stabMultiplier.value * typeMultiplier.value * arenaAttackTypeMultiplier.value * screenMultiplier.value * twoStrikeMultiplier.value * 0.85); // low roll
+          damage2.value = Math.ceil(((((2 * user.level / 5 + 2) * power.value * sourceAtkCrit.value / targetDefCrit.value) / 50) + 2) * stabMultiplier.value * typeMultiplier.value * arenaAttackTypeMultiplier.value * screenMultiplier.value * twoStrikeMultiplier.value * criticalMultiplier.value); // high roll crit
+          if (isPhysical && user.status && user.status.effect === StatusEffect.BURN) {
+            if (!move.hasAttr(MoveData.BypassBurnDamageReductionAttr)) {
+              const burnDamageReductionCancelled = new Utils.BooleanHolder(false);
+              applyAbAttrs(BypassBurnDamageReductionAbAttr, user, burnDamageReductionCancelled);
+              if (!burnDamageReductionCancelled.value) {
+                damage1.value = Math.floor(damage1.value / 2);
+                damage2.value = Math.floor(damage2.value / 2);
+              }
+            }
+          }
+
+          applyPreAttackAbAttrs(DamageBoostAbAttr, user, target, move, damage1);
+          applyPreAttackAbAttrs(DamageBoostAbAttr, user, target, move, damage2);
+
+          /**
+           * For each {@link HitsTagAttr} the move has, doubles the damage of the move if:
+           * The target has a {@link BattlerTagType} that this move interacts with
+           * AND
+           * The move doubles damage when used against that tag
+           */
+          move.getAttrs(MoveData.HitsTagAttr).filter(hta => hta.doubleDamage).forEach(hta => {
+            if (target.getTag(hta.tagType)) {
+              damage1.value *= 2;
+              damage2.value *= 2;
+            }
+          });
+        }
+
+        if (this.scene.arena.terrain?.terrainType === TerrainType.MISTY && target.isGrounded() && move.type === Type.DRAGON) {
+          damage1.value = Math.floor(damage1.value / 2);
+          damage2.value = Math.floor(damage2.value / 2);
+        }
+
+        const fixedDamage = new Utils.IntegerHolder(0);
+        MoveData.applyMoveAttrs(MoveData.FixedDamageAttr, user, target, move, fixedDamage);
+        if (!isTypeImmune && fixedDamage.value) {
+          damage1.value = fixedDamage.value;
+          damage2.value = fixedDamage.value;
+          isCritical = false;
+          result = HitResult.EFFECTIVE;
+        }
+
+        if (!result) {
+          if (!typeMultiplier.value) {
+            result = move.id === Moves.SHEER_COLD ? HitResult.IMMUNE : HitResult.NO_EFFECT;
+          } else {
+            const oneHitKo = new Utils.BooleanHolder(false);
+            MoveData.applyMoveAttrs(MoveData.OneHitKOAttr, user, target, move, oneHitKo);
+            if (oneHitKo.value) {
+              result = HitResult.ONE_HIT_KO;
+              isCritical = false;
+              damage1.value = target.hp;
+              damage2.value = target.hp;
+            } else if (typeMultiplier.value >= 2) {
+              result = HitResult.SUPER_EFFECTIVE;
+            } else if (typeMultiplier.value >= 1) {
+              result = HitResult.EFFECTIVE;
+            } else {
+              result = HitResult.NOT_VERY_EFFECTIVE;
+            }
+          }
+        }
+
+        if (!fixedDamage.value) {
+          if (!user.isPlayer()) {
+            this.scene.applyModifiers(EnemyDamageBoosterModifier, false, damage1);
+            this.scene.applyModifiers(EnemyDamageBoosterModifier, false, damage2);
+          }
+          if (!target.isPlayer()) {
+            this.scene.applyModifiers(EnemyDamageReducerModifier, false, damage1);
+            this.scene.applyModifiers(EnemyDamageReducerModifier, false, damage2);
+          }
+        }
+
+        MoveData.applyMoveAttrs(MoveData.ModifiedDamageAttr, user, target, move, damage1);
+        MoveData.applyMoveAttrs(MoveData.ModifiedDamageAttr, user, target, move, damage2);
+        applyPreDefendAbAttrs(ReceivedMoveDamageMultiplierAbAttr, user, target, move, cancelled, damage1);
+        applyPreDefendAbAttrs(ReceivedMoveDamageMultiplierAbAttr, user, target, move, cancelled, damage2);
+
+        //console.log("damage (min)", damage1.value, move.name, power.value, sourceAtk, targetDef);
+        //console.log("damage (max)", damage2.value, move.name, power.value, sourceAtkCrit, targetDefCrit);
+
+        // In case of fatal damage, this tag would have gotten cleared before we could lapse it.
+        const destinyTag = target.getTag(BattlerTagType.DESTINY_BOND);
+
+        const oneHitKo = result === HitResult.ONE_HIT_KO;
+        if (damage1.value) {
+          if (target.getHpRatio() === 1) {
+            applyPreDefendAbAttrs(PreDefendFullHpEndureAbAttr, target, user, move, cancelled, damage1);
+          }
+        }
+        if (damage2.value) {
+          if (target.getHpRatio() === 1) {
+            applyPreDefendAbAttrs(PreDefendFullHpEndureAbAttr, target, user, move, cancelled, damage2);
+          }
+        }
+      }
+      break;
+    case MoveData.MoveCategory.STATUS:
+      if (!typeless) {
+        applyPreDefendAbAttrsNoApply(TypeImmunityAbAttr, target, user, move, cancelled, typeMultiplier);
+      }
+      if (!cancelled.value) {
+        applyPreDefendAbAttrs(MoveImmunityAbAttr, target, user, move, cancelled, typeMultiplier);
+        defendingSidePlayField.forEach((p) => applyPreDefendAbAttrs(FieldPriorityMoveImmunityAbAttr, p, user, move, cancelled, typeMultiplier));
+      }
+      if (!typeMultiplier.value) {
+        return -1
+      }
+      result = cancelled.value || !typeMultiplier.value ? HitResult.NO_EFFECT : HitResult.STATUS;
+      break;
+    }
+    return [damage1.value, damage2.value]
+  }
+
+  calculateAccuracy(user: Pokemon, target: Pokemon, move: PokemonMove) {
+    if (this.scene.currentBattle.double && false) {
+      switch (move.getMove().moveTarget) {
+        case MoveData.MoveTarget.USER: // Targets yourself
+          return -1; // Moves targeting yourself always hit
+        case MoveData.MoveTarget.OTHER: // Targets one Pokemon
+          return move.getMove().accuracy
+        case MoveData.MoveTarget.ALL_OTHERS: // Targets all Pokemon
+          return move.getMove().accuracy;
+        case MoveData.MoveTarget.NEAR_OTHER: // Targets a Pokemon adjacent to the user
+          return move.getMove().accuracy;
+        case MoveData.MoveTarget.ALL_NEAR_OTHERS: // Targets all Pokemon adjacent to the user
+          return move.getMove().accuracy;
+        case MoveData.MoveTarget.NEAR_ENEMY: // Targets an opponent adjacent to the user
+          return move.getMove().accuracy;
+        case MoveData.MoveTarget.ALL_NEAR_ENEMIES: // Targets all opponents adjacent to the user
+          return move.getMove().accuracy;
+        case MoveData.MoveTarget.RANDOM_NEAR_ENEMY: // Targets a random opponent adjacent to the user
+          return move.getMove().accuracy;
+        case MoveData.MoveTarget.ALL_ENEMIES: // Targets all opponents
+          return move.getMove().accuracy;
+        case MoveData.MoveTarget.ATTACKER: // Counter move
+          return move.getMove().accuracy;
+        case MoveData.MoveTarget.NEAR_ALLY: // Targets an adjacent ally
+          return move.getMove().accuracy;
+        case MoveData.MoveTarget.ALLY: // Targets an ally
+          return move.getMove().accuracy;
+        case MoveData.MoveTarget.USER_OR_NEAR_ALLY: // Targets an ally or yourself
+          return move.getMove().accuracy;
+        case MoveData.MoveTarget.USER_AND_ALLIES: // Targets all on your side
+          return move.getMove().accuracy;
+        case MoveData.MoveTarget.ALL: // Targets everyone
+          return move.getMove().accuracy;
+        case MoveData.MoveTarget.USER_SIDE: // Targets your field
+          return move.getMove().accuracy;
+        case MoveData.MoveTarget.ENEMY_SIDE: // Targets enemy field
+          return -1; // Moves placing entry hazards always hit
+        case MoveData.MoveTarget.BOTH_SIDES: // Targets the entire field
+          return move.getMove().accuracy;
+        case MoveData.MoveTarget.PARTY: // Targets all of the Player's Pokemon, including ones that aren't active
+          return move.getMove().accuracy;
+        case MoveData.MoveTarget.CURSE:
+          return move.getMove().accuracy;
+      }
+    }
+    // Moves targeting the user and entry hazards can't miss
+    if ([MoveData.MoveTarget.USER, MoveData.MoveTarget.ENEMY_SIDE].includes(move.getMove().moveTarget)) {
+      return -1;
+    }
+    if (target == undefined) return move.getMove().accuracy;
+    // If either Pokemon has No Guard, 
+    if (user.hasAbilityWithAttr(AlwaysHitAbAttr) || target.hasAbilityWithAttr(AlwaysHitAbAttr)) {
+      return -1;
+    }
+    // If the user should ignore accuracy on a target, check who the user targeted last turn and see if they match
+    if (user.getTag(BattlerTagType.IGNORE_ACCURACY) && (user.getLastXMoves().slice(1).find(() => true)?.targets || []).indexOf(target.getBattlerIndex()) !== -1) {
+      return -1;
+    }
+
+    const hiddenTag = target.getTag(SemiInvulnerableTag);
+    if (hiddenTag && !move.getMove().getAttrs(MoveData.HitsTagAttr).some(hta => hta.tagType === hiddenTag.tagType)) {
+      return 0;
+    }
+    const moveAccuracy = new Utils.NumberHolder(move.getMove().accuracy);
+
+    MoveData.applyMoveAttrs(MoveData.VariableAccuracyAttr, user, target, move.getMove(), moveAccuracy);
+    applyPreDefendAbAttrs(WonderSkinAbAttr, target, user, move.getMove(), { value: false }, moveAccuracy);
+
+    if (moveAccuracy.value === -1) {
+      return -1;
+    }
+
+    const isOhko = move.getMove().hasAttr(MoveData.OneHitKOAccuracyAttr);
+
+    if (!isOhko) {
+      user.scene.applyModifiers(PokemonMoveAccuracyBoosterModifier, user.isPlayer(), user, moveAccuracy);
+    }
+
+    if (this.scene.arena.weather?.weatherType === WeatherType.FOG) {
+      moveAccuracy.value = Math.floor(moveAccuracy.value * 0.9);
+    }
+
+    if (!isOhko && this.scene.arena.getTag(ArenaTagType.GRAVITY)) {
+      moveAccuracy.value = Math.floor(moveAccuracy.value * 1.67);
+    }
+
+    const userAccuracyLevel = new Utils.IntegerHolder(user.summonData.battleStats[BattleStat.ACC]);
+    const targetEvasionLevel = new Utils.IntegerHolder(target.summonData.battleStats[BattleStat.EVA]);
+    applyAbAttrs(IgnoreOpponentStatChangesAbAttr, target, null, userAccuracyLevel);
+    applyAbAttrs(IgnoreOpponentStatChangesAbAttr, user, null, targetEvasionLevel);
+    applyAbAttrs(IgnoreOpponentEvasionAbAttr, user, null, targetEvasionLevel);
+    MoveData.applyMoveAttrs(MoveData.IgnoreOpponentStatChangesAttr, user, target, move.getMove(), targetEvasionLevel);
+    this.scene.applyModifiers(TempBattleStatBoosterModifier, user.isPlayer(), TempBattleStat.ACC, userAccuracyLevel);
+
+    const accuracyMultiplier = new Utils.NumberHolder(1);
+    if (userAccuracyLevel.value !== targetEvasionLevel.value) {
+      accuracyMultiplier.value = userAccuracyLevel.value > targetEvasionLevel.value
+        ? (3 + Math.min(userAccuracyLevel.value - targetEvasionLevel.value, 6)) / 3
+        : 3 / (3 + Math.min(targetEvasionLevel.value - userAccuracyLevel.value, 6));
+    }
+
+    applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, user, BattleStat.ACC, accuracyMultiplier, move.getMove());
+
+    const evasionMultiplier = new Utils.NumberHolder(1);
+    applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, target, BattleStat.EVA, evasionMultiplier);
+
+    accuracyMultiplier.value /= evasionMultiplier.value;
+
+    return moveAccuracy.value * accuracyMultiplier.value
+  }
+
+  calcDamage(scene: BattleScene, user: PlayerPokemon, target: Pokemon, move: PokemonMove) {
+    /*
+    var power = move.getMove().power
+    var myAtk = 0
+    var theirDef = 0
+    var myAtkC = 0
+    var theirDefC = 0
+    switch (move.getMove().category) {
+      case MoveData.MoveCategory.PHYSICAL:
+        myAtk = user.getBattleStat(Stat.ATK, target, move.getMove())
+        myAtkC = user.getBattleStat(Stat.ATK, target, move.getMove(), true)
+        theirDef = target.getBattleStat(Stat.DEF, user, move.getMove())
+        theirDefC = target.getBattleStat(Stat.DEF, user, move.getMove(), true)
+        break;
+      case MoveData.MoveCategory.SPECIAL:
+        myAtk = user.getBattleStat(Stat.SPATK, target, move.getMove())
+        myAtkC = user.getBattleStat(Stat.SPATK, target, move.getMove(), true)
+        theirDef = target.getBattleStat(Stat.SPDEF, user, move.getMove())
+        theirDefC = target.getBattleStat(Stat.SPDEF, user, move.getMove(), true)
+        break;
+      case MoveData.MoveCategory.STATUS:
+        return "---"
+    }
+    var stabBonus = 1
+    var types = user.getTypes()
+    // Apply STAB bonus
+    for (var i = 0; i < types.length; i++) {
+      if (types[i] == move.getMove().type) {
+        stabBonus = 1.5
+      }
+    }
+    // Apply Tera Type bonus
+    if (stabBonus == 1.5) {
+      // STAB
+      if (move.getMove().type == user.getTeraType()) {
+        stabBonus = 2
+      }
+    } else if (move.getMove().type == user.getTeraType()) {
+      stabBonus = 1.5
+    }
+    // Apply adaptability
+    if (stabBonus == 2) {
+      // Tera-STAB
+      if (move.getMove().type == user.getTeraType()) {
+        stabBonus = 2.25
+      }
+    } else if (stabBonus == 1.5) {
+      // STAB or Tera
+      if (move.getMove().type == user.getTeraType()) {
+        stabBonus = 2
+      }
+    } else if (move.getMove().type == user.getTeraType()) {
+      // Adaptability
+      stabBonus = 1.5
+    }
+    var weatherBonus = 1
+    if (this.scene.arena.weather.weatherType == WeatherType.RAIN || this.scene.arena.weather.weatherType == WeatherType.HEAVY_RAIN) {
+      if (move.getMove().type == Type.WATER) {
+        weatherBonus = 1.5
+      }
+      if (move.getMove().type == Type.FIRE) {
+        weatherBonus = this.scene.arena.weather.weatherType == WeatherType.HEAVY_RAIN ? 0 : 0.5
+      }
+    }
+    if (this.scene.arena.weather.weatherType == WeatherType.SUNNY || this.scene.arena.weather.weatherType == WeatherType.HARSH_SUN) {
+      if (move.getMove().type == Type.FIRE) {
+        weatherBonus = 1.5
+      }
+      if (move.getMove().type == Type.WATER) {
+        weatherBonus = this.scene.arena.weather.weatherType == WeatherType.HARSH_SUN ? 0 : (move.moveId == Moves.HYDRO_STEAM ? 1.5 : 0.5)
+      }
+    }
+    var typeBonus = target.getAttackMoveEffectiveness(user, move)
+    var modifiers = stabBonus * weatherBonus
+    */
+    var dmgHigh = 0
+    var dmgLow = 0
+    // dmgLow = (((2*user.level/5 + 2) * power * myAtk / theirDef)/50 + 2) * 0.85 * modifiers
+    // dmgHigh = (((2*user.level/5 + 2) * power * myAtkC / theirDefC)/50 + 2) * 1.5 * modifiers
+    var out = this.simulateAttack(scene, user, target, move.getMove())
+    var minHits = 1
+    var maxHits = 1
+    var mh = move.getMove().getAttrs(MoveData.MultiHitAttr)
+    for (var i = 0; i < mh.length; i++) {
+      var mh2 = mh[i] as MoveData.MultiHitAttr
+      switch (mh2.multiHitType) {
+        case MoveData.MultiHitType._2:
+          minHits = 2;
+          maxHits = 2;
+        case MoveData.MultiHitType._2_TO_5:
+          minHits = 2;
+          maxHits = 5;
+        case MoveData.MultiHitType._3:
+          minHits = 3;
+          maxHits = 3;
+        case MoveData.MultiHitType._10:
+          minHits = 10;
+          maxHits = 10;
+        case MoveData.MultiHitType.BEAT_UP:
+          const party = user.isPlayer() ? user.scene.getParty() : user.scene.getEnemyParty();
+          // No status means the ally pokemon can contribute to Beat Up
+          minHits = party.reduce((total, pokemon) => {
+            return total + (pokemon.id === user.id ? 1 : pokemon?.status && pokemon.status.effect !== StatusEffect.NONE ? 0 : 1);
+          }, 0);
+          maxHits = minHits
+      }
+    }
+    var h = user.getHeldItems()
+    for (var i = 0; i < h.length; i++) {
+      if (h[i].type instanceof PokemonMultiHitModifierType) {
+        minHits += h[i].getStackCount()
+        maxHits += h[i].getStackCount()
+      }
+    }
+    dmgLow = out[0] * minHits
+    dmgHigh = out[1] * maxHits
+    /*
+    if (user.hasAbility(Abilities.PARENTAL_BOND)) {
+      // Second hit deals 0.25x damage
+      dmgLow *= 1.25
+      dmgHigh *= 1.25
+    }
+    */
+    var koText = ""
+    if (Math.floor(dmgLow) >= target.hp) {
+      koText = " (KO)"
+    } else if (Math.ceil(dmgHigh) >= target.hp) {
+      var percentChance = 1 - ((target.hp - dmgLow + 1) / (dmgHigh - dmgLow + 1))
+      koText = " (" + Math.round(percentChance * 100) + "% KO)"
+    }
+    if (target.getMoveEffectiveness(user, move) == undefined) {
+      return "---"
+    }
+    if (scene.damageDisplay == "Value")
+      return target.getMoveEffectiveness(user, move) + "x - " + (Math.round(dmgLow) == Math.round(dmgHigh) ? Math.round(dmgLow).toString() : Math.round(dmgLow) + "-" + Math.round(dmgHigh)) + koText
+    dmgLow = Math.round((dmgLow)/target.getBattleStat(Stat.HP)*100)
+    dmgHigh = Math.round((dmgHigh)/target.getBattleStat(Stat.HP)*100)
+    if (scene.damageDisplay == "Percent")
+      return target.getMoveEffectiveness(user, move) + "x - " + (dmgLow == dmgHigh ? dmgLow + "%" : dmgLow + "%-" + dmgHigh + "%") + koText
+    if (scene.damageDisplay == "Off")
+      return target.getMoveEffectiveness(user, move) + "x"
+  }
+
   setCursor(cursor: integer): boolean {
     const ui = this.getUi();
 
@@ -178,16 +723,22 @@ export default class FightUiHandler extends UiHandler {
     if (hasMove) {
       const pokemonMove = moveset[cursor];
       this.typeIcon.setTexture(`types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`, Type[pokemonMove.getMove().type].toLowerCase()).setScale(0.8);
-      this.moveCategoryIcon.setTexture("categories", MoveCategory[pokemonMove.getMove().category].toLowerCase()).setScale(1.0);
+      this.moveCategoryIcon.setTexture("categories", MoveData.MoveCategory[pokemonMove.getMove().category].toLowerCase()).setScale(1.0);
 
       const power = pokemonMove.getMove().power;
       const accuracy = pokemonMove.getMove().accuracy;
       const maxPP = pokemonMove.getMovePp();
       const pp = maxPP - pokemonMove.ppUsed;
 
+      const accuracy1 = this.calculateAccuracy(pokemon, this.scene.getEnemyField()[0], pokemonMove)
+      const accuracy2 = this.calculateAccuracy(pokemon, this.scene.getEnemyField()[1], pokemonMove)
+
       this.ppText.setText(`${Utils.padInt(pp, 2, "  ")}/${Utils.padInt(maxPP, 2, "  ")}`);
       this.powerText.setText(`${power >= 0 ? power : "---"}`);
       this.accuracyText.setText(`${accuracy >= 0 ? accuracy : "---"}`);
+      this.accuracyText.setText(`${accuracy1 >= 0 ? Math.round(accuracy1) : "---"}`);
+      if (this.scene.getEnemyField()[1] != undefined)
+        this.accuracyText.setText(`${accuracy1 >= 0 ? Math.round(accuracy1) : "---"}/${accuracy2 >= 0 ? Math.round(accuracy2) : "---"}`);
 
       const ppPercentLeft = pp / maxPP;
 
@@ -207,6 +758,7 @@ export default class FightUiHandler extends UiHandler {
 
       pokemon.getOpponents().forEach((opponent) => {
         opponent.updateEffectiveness(this.getEffectivenessText(pokemon, opponent, pokemonMove));
+        opponent.updateEffectiveness(this.calcDamage(this.scene, pokemon, opponent, pokemonMove));
       });
     }
 
@@ -311,4 +863,334 @@ export default class FightUiHandler extends UiHandler {
     }
     this.cursorObj = null;
   }
+}
+
+export function simulateAttack(scene: BattleScene, user: Pokemon, target: Pokemon, move: Move) {
+  let result: HitResult;
+  const damage1 = new Utils.NumberHolder(0);
+  const damage2 = new Utils.NumberHolder(0);
+  const defendingSidePlayField = target.isPlayer() ? scene.getPlayerField() : scene.getEnemyField();
+
+  const variableCategory = new Utils.IntegerHolder(move.category);
+  MoveData.applyMoveAttrs(MoveData.VariableMoveCategoryAttr, user, target, move, variableCategory);
+  const moveCategory = variableCategory.value as MoveData.MoveCategory;
+
+  const typeChangeMovePowerMultiplier = new Utils.NumberHolder(1);
+  MoveData.applyMoveAttrs(MoveData.VariableMoveTypeAttr, user, target, move);
+  applyPreAttackAbAttrs(MoveTypeChangeAttr, user, target, move, typeChangeMovePowerMultiplier);
+  const types = target.getTypes(true, true);
+
+  const cancelled = new Utils.BooleanHolder(false);
+  const typeless = move.hasAttr(MoveData.TypelessAttr);
+  const typeMultiplier = new Utils.NumberHolder(!typeless && (moveCategory !== MoveData.MoveCategory.STATUS || move.getAttrs(MoveData.StatusMoveTypeImmunityAttr).find(attr => types.includes(attr.immuneType)))
+    ? target.getAttackTypeEffectiveness(move.type, user, false, false)
+    : 1);
+  MoveData.applyMoveAttrs(MoveData.VariableMoveTypeMultiplierAttr, user, target, move, typeMultiplier);
+  if (typeless) {
+    typeMultiplier.value = 1;
+  }
+  if (types.find(t => move.isTypeImmune(user, target, t))) {
+    typeMultiplier.value = 0;
+  }
+
+  // Apply arena tags for conditional protection
+  if (!move.checkFlag(MoveData.MoveFlags.IGNORE_PROTECT, user, target) && !move.isAllyTarget()) {
+    const defendingSide = target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
+    scene.arena.applyTagsForSide(ArenaTagType.QUICK_GUARD, defendingSide, cancelled, this, move.priority);
+    scene.arena.applyTagsForSide(ArenaTagType.WIDE_GUARD, defendingSide, cancelled, this, move.moveTarget);
+    scene.arena.applyTagsForSide(ArenaTagType.MAT_BLOCK, defendingSide, cancelled, this, move.category);
+    scene.arena.applyTagsForSide(ArenaTagType.CRAFTY_SHIELD, defendingSide, cancelled, this, move.category, move.moveTarget);
+  }
+
+  switch (moveCategory) {
+  case MoveData.MoveCategory.PHYSICAL:
+  case MoveData.MoveCategory.SPECIAL:
+    const isPhysical = moveCategory === MoveData.MoveCategory.PHYSICAL;
+    const power = new Utils.NumberHolder(move.power);
+    const sourceTeraType = user.getTeraType();
+    if (sourceTeraType !== Type.UNKNOWN && sourceTeraType === move.type && power.value < 60 && move.priority <= 0 && !move.hasAttr(MoveData.MultiHitAttr) && !scene.findModifier(m => m instanceof PokemonMultiHitModifier && m.pokemonId === user.id)) {
+      power.value = 60;
+    }
+    applyPreAttackAbAttrs(VariableMovePowerAbAttr, user, target, move, power);
+
+    if (user.getAlly()?.hasAbilityWithAttr(AllyMoveCategoryPowerBoostAbAttr)) {
+      applyPreAttackAbAttrs(AllyMoveCategoryPowerBoostAbAttr, user, target, move, power);
+    }
+
+    const fieldAuras = new Set(
+      scene.getField(true)
+        .map((p) => p.getAbilityAttrs(FieldMoveTypePowerBoostAbAttr) as FieldMoveTypePowerBoostAbAttr[])
+        .flat(),
+    );
+    for (const aura of fieldAuras) {
+      // The only relevant values are `move` and the `power` holder
+      aura.applyPreAttack(null, null, null, move, [power]);
+    }
+
+    const alliedField: Pokemon[] = user instanceof PlayerPokemon ? scene.getPlayerField() : scene.getEnemyField();
+    alliedField.forEach(p => applyPreAttackAbAttrs(UserFieldMoveTypePowerBoostAbAttr, p, user, move, power));
+
+    power.value *= typeChangeMovePowerMultiplier.value;
+
+    if (!typeless) {
+      applyPreDefendAbAttrs(TypeImmunityAbAttr, user, target, move, cancelled, typeMultiplier);
+      MoveData.applyMoveAttrs(MoveData.NeutralDamageAgainstFlyingTypeMultiplierAttr, user, target, move, typeMultiplier);
+    }
+    if (!cancelled.value) {
+      applyPreDefendAbAttrs(MoveImmunityAbAttr, user, target, move, cancelled, typeMultiplier);
+      defendingSidePlayField.forEach((p) => applyPreDefendAbAttrs(FieldPriorityMoveImmunityAbAttr, p, user, move, cancelled, typeMultiplier));
+    }
+
+    if (cancelled.value) {
+      //user.stopMultiHit(target);
+      result = HitResult.NO_EFFECT;
+    } else {
+      const typeBoost = user.findTag(t => t instanceof TypeBoostTag && t.boostedType === move.type) as TypeBoostTag;
+      if (typeBoost) {
+        power.value *= typeBoost.boostValue;
+        if (typeBoost.oneUse) {
+          //user.removeTag(typeBoost.tagType);
+        }
+      }
+      const arenaAttackTypeMultiplier = new Utils.NumberHolder(scene.arena.getAttackTypeMultiplier(move.type, user.isGrounded()));
+      MoveData.applyMoveAttrs(MoveData.IgnoreWeatherTypeDebuffAttr, user, target, move, arenaAttackTypeMultiplier);
+      if (scene.arena.getTerrainType() === TerrainType.GRASSY && target.isGrounded() && move.type === Type.GROUND && move.moveTarget === MoveData.MoveTarget.ALL_NEAR_OTHERS) {
+        power.value /= 2;
+      }
+
+      MoveData.applyMoveAttrs(MoveData.VariablePowerAttr, user, target, move, power);
+
+      scene.applyModifiers(PokemonMultiHitModifier, user.isPlayer(), user, new Utils.IntegerHolder(0), power);
+      if (!typeless) {
+        scene.arena.applyTags(WeakenMoveTypeTag, move.type, power);
+        scene.applyModifiers(AttackTypeBoosterModifier, user.isPlayer(), user, move.type, power);
+      }
+      if (user.getTag(HelpingHandTag)) {
+        power.value *= 1.5;
+      }
+      let isCritical: boolean = true;
+      const critOnly = new Utils.BooleanHolder(false);
+      const critAlways = user.getTag(BattlerTagType.ALWAYS_CRIT);
+      MoveData.applyMoveAttrs(MoveData.CritOnlyAttr, user, target, move, critOnly);
+      applyAbAttrs(ConditionalCritAbAttr, user, null, critOnly, target, move);
+      if (isCritical) {
+        const blockCrit = new Utils.BooleanHolder(false);
+        applyAbAttrs(BlockCritAbAttr, target, null, blockCrit);
+        if (blockCrit.value) {
+          isCritical = false;
+        }
+      }
+      const sourceAtk = new Utils.IntegerHolder(user.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK, target, null, false));
+      const targetDef = new Utils.IntegerHolder(target.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF, user, move, false));
+      const sourceAtkCrit = new Utils.IntegerHolder(user.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK, target, null, isCritical));
+      const targetDefCrit = new Utils.IntegerHolder(target.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF, user, move, isCritical));
+      const criticalMultiplier = new Utils.NumberHolder(isCritical ? 1.5 : 1);
+      applyAbAttrs(MultCritAbAttr, user, null, criticalMultiplier);
+      const screenMultiplier = new Utils.NumberHolder(1);
+      if (!isCritical) {
+        scene.arena.applyTagsForSide(WeakenMoveScreenTag, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY, move.category, scene.currentBattle.double, screenMultiplier);
+      }
+      const isTypeImmune = (typeMultiplier.value * arenaAttackTypeMultiplier.value) === 0;
+      const sourceTypes = user.getTypes();
+      const matchesSourceType = sourceTypes[0] === move.type || (sourceTypes.length > 1 && sourceTypes[1] === move.type);
+      const stabMultiplier = new Utils.NumberHolder(1);
+      if (sourceTeraType === Type.UNKNOWN && matchesSourceType) {
+        stabMultiplier.value += 0.5;
+      } else if (sourceTeraType !== Type.UNKNOWN && sourceTeraType === move.type) {
+        stabMultiplier.value += 0.5;
+      }
+
+      applyAbAttrs(StabBoostAbAttr, user, null, stabMultiplier);
+
+      if (sourceTeraType !== Type.UNKNOWN && matchesSourceType) {
+        stabMultiplier.value = Math.min(stabMultiplier.value + 0.5, 2.25);
+      }
+
+      MoveData.applyMoveAttrs(MoveData.VariableAtkAttr, user, target, move, sourceAtk);
+      MoveData.applyMoveAttrs(MoveData.VariableDefAttr, user, target, move, targetDef);
+      MoveData.applyMoveAttrs(MoveData.VariableAtkAttr, user, target, move, sourceAtkCrit);
+      MoveData.applyMoveAttrs(MoveData.VariableDefAttr, user, target, move, targetDefCrit);
+
+      const effectPhase = scene.getCurrentPhase();
+      let numTargets = 1;
+      if (effectPhase instanceof MoveEffectPhase) {
+        numTargets = effectPhase.getTargets().length;
+      }
+      const twoStrikeMultiplier = new Utils.NumberHolder(1);
+      applyPreAttackAbAttrs(AddSecondStrikeAbAttr, user, target, move, numTargets, new Utils.IntegerHolder(0), twoStrikeMultiplier);
+
+      if (!isTypeImmune) {
+        damage1.value = Math.ceil(((((2 * user.level / 5 + 2) * power.value * sourceAtk.value / targetDef.value) / 50) + 2) * stabMultiplier.value * typeMultiplier.value * arenaAttackTypeMultiplier.value * screenMultiplier.value * twoStrikeMultiplier.value * 0.85); // low roll
+        damage2.value = Math.ceil(((((2 * user.level / 5 + 2) * power.value * sourceAtkCrit.value / targetDefCrit.value) / 50) + 2) * stabMultiplier.value * typeMultiplier.value * arenaAttackTypeMultiplier.value * screenMultiplier.value * twoStrikeMultiplier.value * criticalMultiplier.value); // high roll crit
+        if (isPhysical && user.status && user.status.effect === StatusEffect.BURN) {
+          if (!move.hasAttr(MoveData.BypassBurnDamageReductionAttr)) {
+            const burnDamageReductionCancelled = new Utils.BooleanHolder(false);
+            applyAbAttrs(BypassBurnDamageReductionAbAttr, user, burnDamageReductionCancelled);
+            if (!burnDamageReductionCancelled.value) {
+              damage1.value = Math.floor(damage1.value / 2);
+              damage2.value = Math.floor(damage2.value / 2);
+            }
+          }
+        }
+
+        applyPreAttackAbAttrs(DamageBoostAbAttr, user, target, move, damage1);
+        applyPreAttackAbAttrs(DamageBoostAbAttr, user, target, move, damage2);
+
+        /**
+         * For each {@link HitsTagAttr} the move has, doubles the damage of the move if:
+         * The target has a {@link BattlerTagType} that this move interacts with
+         * AND
+         * The move doubles damage when used against that tag
+         */
+        move.getAttrs(MoveData.HitsTagAttr).filter(hta => hta.doubleDamage).forEach(hta => {
+          if (target.getTag(hta.tagType)) {
+            damage1.value *= 2;
+            damage2.value *= 2;
+          }
+        });
+      }
+
+      if (scene.arena.terrain?.terrainType === TerrainType.MISTY && target.isGrounded() && move.type === Type.DRAGON) {
+        damage1.value = Math.floor(damage1.value / 2);
+        damage2.value = Math.floor(damage2.value / 2);
+      }
+
+      const fixedDamage = new Utils.IntegerHolder(0);
+      MoveData.applyMoveAttrs(MoveData.FixedDamageAttr, user, target, move, fixedDamage);
+      if (!isTypeImmune && fixedDamage.value) {
+        damage1.value = fixedDamage.value;
+        damage2.value = fixedDamage.value;
+        isCritical = false;
+        result = HitResult.EFFECTIVE;
+      }
+
+      if (!result) {
+        if (!typeMultiplier.value) {
+          result = move.id === Moves.SHEER_COLD ? HitResult.IMMUNE : HitResult.NO_EFFECT;
+        } else {
+          const oneHitKo = new Utils.BooleanHolder(false);
+          MoveData.applyMoveAttrs(MoveData.OneHitKOAttr, user, target, move, oneHitKo);
+          if (oneHitKo.value) {
+            result = HitResult.ONE_HIT_KO;
+            isCritical = false;
+            damage1.value = target.hp;
+            damage2.value = target.hp;
+          } else if (typeMultiplier.value >= 2) {
+            result = HitResult.SUPER_EFFECTIVE;
+          } else if (typeMultiplier.value >= 1) {
+            result = HitResult.EFFECTIVE;
+          } else {
+            result = HitResult.NOT_VERY_EFFECTIVE;
+          }
+        }
+      }
+
+      if (!fixedDamage.value) {
+        if (!user.isPlayer()) {
+          scene.applyModifiers(EnemyDamageBoosterModifier, false, damage1);
+          scene.applyModifiers(EnemyDamageBoosterModifier, false, damage2);
+        }
+        if (!target.isPlayer()) {
+          scene.applyModifiers(EnemyDamageReducerModifier, false, damage1);
+          scene.applyModifiers(EnemyDamageReducerModifier, false, damage2);
+        }
+      }
+
+      MoveData.applyMoveAttrs(MoveData.ModifiedDamageAttr, user, target, move, damage1);
+      MoveData.applyMoveAttrs(MoveData.ModifiedDamageAttr, user, target, move, damage2);
+      applyPreDefendAbAttrs(ReceivedMoveDamageMultiplierAbAttr, user, target, move, cancelled, damage1);
+      applyPreDefendAbAttrs(ReceivedMoveDamageMultiplierAbAttr, user, target, move, cancelled, damage2);
+      const destinyTag = target.getTag(BattlerTagType.DESTINY_BOND);
+
+      const oneHitKo = result === HitResult.ONE_HIT_KO;
+      if (damage1.value) {
+        if (target.getHpRatio() === 1) {
+          applyPreDefendAbAttrs(PreDefendFullHpEndureAbAttr, target, user, move, cancelled, damage1);
+        }
+      }
+      if (damage2.value) {
+        if (target.getHpRatio() === 1) {
+          applyPreDefendAbAttrs(PreDefendFullHpEndureAbAttr, target, user, move, cancelled, damage2);
+        }
+      }
+    }
+    break;
+  case MoveData.MoveCategory.STATUS:
+    if (!typeless) {
+      applyPreDefendAbAttrs(TypeImmunityAbAttr, target, user, move, cancelled, typeMultiplier);
+    }
+    if (!cancelled.value) {
+      applyPreDefendAbAttrs(MoveImmunityAbAttr, target, user, move, cancelled, typeMultiplier);
+      defendingSidePlayField.forEach((p) => applyPreDefendAbAttrs(FieldPriorityMoveImmunityAbAttr, p, user, move, cancelled, typeMultiplier));
+    }
+    if (!typeMultiplier.value) {
+      return -1
+    }
+    result = cancelled.value || !typeMultiplier.value ? HitResult.NO_EFFECT : HitResult.STATUS;
+    break;
+  }
+  return [damage1.value, damage2.value]
+}
+
+export function calcDamage(scene: BattleScene, user: PlayerPokemon, target: Pokemon, move: PokemonMove) {
+  var dmgHigh = 0
+  var dmgLow = 0
+  // dmgLow = (((2*user.level/5 + 2) * power * myAtk / theirDef)/50 + 2) * 0.85 * modifiers
+  // dmgHigh = (((2*user.level/5 + 2) * power * myAtkC / theirDefC)/50 + 2) * 1.5 * modifiers
+  var out = this.simulateAttack(scene, user, target, move.getMove())
+  var minHits = 1
+  var maxHits = 1
+  var mh = move.getMove().getAttrs(MoveData.MultiHitAttr)
+  for (var i = 0; i < mh.length; i++) {
+    var mh2 = mh[i] as MoveData.MultiHitAttr
+    switch (mh2.multiHitType) {
+      case MoveData.MultiHitType._2:
+        minHits = 2;
+        maxHits = 2;
+      case MoveData.MultiHitType._2_TO_5:
+        minHits = 2;
+        maxHits = 5;
+      case MoveData.MultiHitType._3:
+        minHits = 3;
+        maxHits = 3;
+      case MoveData.MultiHitType._10:
+        minHits = 10;
+        maxHits = 10;
+      case MoveData.MultiHitType.BEAT_UP:
+        const party = user.isPlayer() ? user.scene.getParty() : user.scene.getEnemyParty();
+        // No status means the ally pokemon can contribute to Beat Up
+        minHits = party.reduce((total, pokemon) => {
+          return total + (pokemon.id === user.id ? 1 : pokemon?.status && pokemon.status.effect !== StatusEffect.NONE ? 0 : 1);
+        }, 0);
+        maxHits = minHits
+    }
+  }
+  var h = user.getHeldItems()
+  for (var i = 0; i < h.length; i++) {
+    if (h[i].type instanceof PokemonMultiHitModifierType) {
+      minHits += h[i].getStackCount()
+      maxHits += h[i].getStackCount()
+    }
+  }
+  dmgLow = out[0] * minHits
+  dmgHigh = out[1] * maxHits
+  /*
+  if (user.hasAbility(Abilities.PARENTAL_BOND)) {
+    // Second hit deals 0.25x damage
+    dmgLow *= 1.25
+    dmgHigh *= 1.25
+  }
+  */
+  var koText = ""
+  if (Math.floor(dmgLow) >= target.hp) {
+    koText = " (KO)"
+  } else if (Math.ceil(dmgHigh) >= target.hp) {
+    var percentChance = (target.hp - dmgLow + 1) / (dmgHigh - dmgLow + 1)
+    koText = " (" + Math.round(percentChance * 100) + "% KO)"
+  }
+  return (Math.round(dmgLow) == Math.round(dmgHigh) ? Math.round(dmgLow).toString() : Math.round(dmgLow) + "-" + Math.round(dmgHigh)) + koText
+  dmgLow = Math.round((dmgLow)/target.getBattleStat(Stat.HP)*100)
+  dmgHigh = Math.round((dmgHigh)/target.getBattleStat(Stat.HP)*100)
+  return (dmgLow == dmgHigh ? dmgLow + "%" : dmgLow + "%-" + dmgHigh + "%") + koText
+  return "???"
 }

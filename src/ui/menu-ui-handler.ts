@@ -22,6 +22,7 @@ enum MenuOptions {
   MANAGE_DATA,
   COMMUNITY,
   SAVE_AND_QUIT,
+  SAVE_AND_REFRESH,
   LOG_OUT
 }
 
@@ -356,6 +357,23 @@ export default class MenuUiHandler extends MessageUiHandler {
           error = true;
         }
         break;
+        case MenuOptions.SAVE_AND_REFRESH:
+          if (this.scene.currentBattle) {
+            success = true;
+            if (this.scene.currentBattle.turn > 1) {
+              ui.showText(i18next.t("menuUiHandler:losingProgressionWarning"), null, () => {
+                ui.setOverlayMode(Mode.CONFIRM, () => this.scene.gameData.saveAll(this.scene, true, true, true, true).then(() => this.scene.reset(true)), () => {
+                  ui.revertMode();
+                  ui.showText(null, 0);
+                }, false, -98);
+              });
+            } else {
+              this.scene.gameData.saveAll(this.scene, true, true, true, true).then(() => this.scene.reset(true));
+            }
+          } else {
+            error = true;
+          }
+          break;
       case MenuOptions.LOG_OUT:
         success = true;
         const doLogout = () => {

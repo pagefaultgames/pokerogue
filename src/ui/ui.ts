@@ -46,6 +46,7 @@ import SettingsDisplayUiHandler from "./settings/settings-display-ui-handler";
 import SettingsAudioUiHandler from "./settings/settings-audio-ui-handler";
 import { PlayerGender } from "#enums/player-gender";
 import BgmBar from "#app/ui/bgm-bar";
+import LogNameFormUiHandler from "./log-name-form-ui-handler";
 
 export enum Mode {
   MESSAGE,
@@ -83,7 +84,9 @@ export enum Mode {
   SESSION_RELOAD,
   UNAVAILABLE,
   OUTDATED,
-  CHALLENGE_SELECT
+  CHALLENGE_SELECT,
+  NAME_LOG,
+  LOG_HANDLER
 }
 
 const transitionModes = [
@@ -95,7 +98,9 @@ const transitionModes = [
   Mode.EGG_HATCH_SCENE,
   Mode.EGG_LIST,
   Mode.EGG_GACHA,
-  Mode.CHALLENGE_SELECT
+  Mode.CHALLENGE_SELECT,
+  Mode.NAME_LOG,
+  Mode.LOG_HANDLER
 ];
 
 const noTransitionModes = [
@@ -180,7 +185,9 @@ export default class UI extends Phaser.GameObjects.Container {
       new SessionReloadModalUiHandler(scene),
       new UnavailableModalUiHandler(scene),
       new OutdatedModalUiHandler(scene),
-      new GameChallengesUiHandler(scene)
+      new GameChallengesUiHandler(scene),
+      new LogNameFormUiHandler(scene),
+      new TargetSelectUiHandler(scene)
     ];
   }
 

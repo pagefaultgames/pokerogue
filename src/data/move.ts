@@ -1590,7 +1590,7 @@ export class IncrementMovePriorityAttr extends MoveAttr {
  * @see {@linkcode apply}
  */
 export class MultiHitAttr extends MoveAttr {
-  private multiHitType: MultiHitType;
+  public multiHitType: MultiHitType;
 
   constructor(multiHitType?: MultiHitType) {
     super();
@@ -4218,7 +4218,7 @@ export class AddArenaTagAttr extends MoveEffectAttr {
   public selfSideTarget: boolean;
 
   constructor(tagType: ArenaTagType, turnCount?: integer, failOnOverlap: boolean = false, selfSideTarget: boolean = false) {
-    super(true, MoveEffectTrigger.POST_APPLY, true);
+    super(true, MoveEffectTrigger.POST_APPLY);
 
     this.tagType = tagType;
     this.turnCount = turnCount;
@@ -4717,7 +4717,7 @@ export class AddTypeAttr extends MoveEffectAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const types = target.getTypes().slice(0, 2).filter(t => t !== Type.UNKNOWN); // TODO: Figure out some way to actually check if another version of this effect is already applied
+    const types = target.getTypes().slice(0, 2).filter(t => t !== Type.UNKNOWN).map(t => t as Type); // TODO: Figure out some way to actually check if another version of this effect is already applied
     types.push(this.type);
     target.summonData.types = types;
     target.updateInfo();

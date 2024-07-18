@@ -21,6 +21,7 @@ import MoveInfoOverlay from "./move-info-overlay";
 import i18next from "i18next";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { Moves } from "#enums/moves";
+import * as LoggerTools from "../logger";
 
 const defaultMessage = i18next.t("partyUiHandler:choosePokemon");
 
@@ -63,7 +64,7 @@ export enum PartyOption {
 }
 
 export type PartySelectCallback = (cursor: integer, option: PartyOption) => void;
-export type PartyModifierTransferSelectCallback = (fromCursor: integer, index: integer, itemQuantity?: integer, toCursor?: integer) => void;
+export type PartyModifierTransferSelectCallback = (fromCursor: integer, index: integer, itemQuantity?: integer, toCursor?: integer, isAll?: boolean, isFirst?: boolean) => void;
 export type PartyModifierSpliceSelectCallback = (fromCursor: integer, toCursor?: integer) => void;
 export type PokemonSelectFilter = (pokemon: PlayerPokemon) => string;
 export type PokemonModifierTransferSelectFilter = (pokemon: PlayerPokemon, modifier: PokemonHeldItemModifier) => string;
@@ -108,6 +109,8 @@ export default class PartyUiHandler extends MessageUiHandler {
   private moveSelectFilter: PokemonMoveSelectFilter;
   private tmMoveId: Moves;
   private showMovePp: boolean;
+
+  private incomingMon: string;
 
   private iconAnimHandler: PokemonIconAnimHandler;
 
@@ -250,6 +253,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       : PartyUiHandler.FilterAllMoves;
     this.tmMoveId = args.length > 5 && args[5] ? args[5] : Moves.NONE;
     this.showMovePp = args.length > 6 && args[6];
+    this.incomingMon = args.length > 7 && args[7] ? args[7] : undefined
 
     this.partyContainer.setVisible(true);
     this.partyBg.setTexture(`party_bg${this.scene.currentBattle.double ? "_double" : ""}`);
@@ -283,7 +287,15 @@ export default class PartyUiHandler extends MessageUiHandler {
     if (this.optionsMode) {
       const option = this.options[this.optionsCursor];
       if (button === Button.ACTION) {
+        //console.log("Menu Action (" + option + " - targ " + PartyOption.RELEASE + ")")
         const pokemon = this.scene.getParty()[this.cursor];
+        if (option === PartyOption.RELEASE) {
+          if (this.incomingMon != undefined) {
+            LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, `Add ${this.incomingMon}, replacing ${this.scene.getParty()[this.cursor].name} (Slot ${this.cursor + 1})`)
+          } else {
+            LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, `Release ${this.scene.getParty()[this.cursor].name} (Slot ${this.cursor + 1})`)
+          }
+        }
         if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER && !this.transferMode && option !== PartyOption.CANCEL) {
           this.startTransfer();
           this.clearOptions();
@@ -326,7 +338,7 @@ export default class PartyUiHandler extends MessageUiHandler {
               if (option === PartyOption.TRANSFER) {
                 if (this.transferCursor !== this.cursor) {
                   if (this.transferAll) {
-                    getTransferrableItemsFromPokemon(this.scene.getParty()[this.transferCursor]).forEach((_, i) => (this.selectCallback as PartyModifierTransferSelectCallback)(this.transferCursor, i, this.transferQuantitiesMax[i], this.cursor));
+                    getTransferrableItemsFromPokemon(this.scene.getParty()[this.transferCursor]).forEach((_, i) => (this.selectCallback as PartyModifierTransferSelectCallback)(this.transferCursor, i, this.transferQuantitiesMax[i], this.cursor, true, i == 0));
                   } else {
                     (this.selectCallback as PartyModifierTransferSelectCallback)(this.transferCursor, this.transferOptionCursor, this.transferQuantities[this.transferOptionCursor], this.cursor);
                   }

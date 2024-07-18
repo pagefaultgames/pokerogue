@@ -9,6 +9,10 @@ import { BattleSceneEventType, TurnEndEvent } from "../events/battle-scene";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import TimeOfDayWidget from "./time-of-day-widget";
 import * as Utils from "../utils";
+import { getNatureDecrease, getNatureIncrease, getNatureName } from "#app/data/nature.js";
+import * as LoggerTools from "../logger"
+import { BattleEndPhase } from "#app/phases.js";
+import { Gender } from "#app/data/gender.js";
 
 /** Enum used to differentiate {@linkcode Arena} effects */
 enum ArenaEffectType {
@@ -191,13 +195,44 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
     this.flyoutTextPlayer.text = "";
     this.flyoutTextField.text = "";
     this.flyoutTextEnemy.text = "";
+    this.flyoutTextPlayer.setPosition(6, 13)
+    this.flyoutTextPlayer.setFontSize(48);
+  }
+
+  public printIVs() {
+    this.clearText()
+    var poke = (this.scene as BattleScene).getEnemyField()
+    this.flyoutTextPlayer.text = ""
+    this.flyoutTextField.text = ""
+    this.flyoutTextEnemy.text = ""
+    this.flyoutTextHeaderField.text = "Stats"
+    this.flyoutTextHeaderPlayer.text = ""
+    this.flyoutTextHeaderEnemy.text = ""
+    this.flyoutTextHeader.text = "IVs"
+    for (var i = 0; i < poke.length; i++) {
+      if (i == 1 || true) {
+        this.flyoutTextPlayer.text += poke[i].name + " " + (poke[i].gender == Gender.MALE ? "♂" : (poke[i].gender == Gender.FEMALE ? "♀" : "-")) + " " + poke[i].level + "\n"
+        this.flyoutTextEnemy.text += poke[i].getAbility().name + " / " + (poke[i].isBoss() ? poke[i].getPassiveAbility().name + " / " : "") + getNatureName(poke[i].nature) + (getNatureIncrease(poke[i].nature) != "" ? " (+" + getNatureIncrease(poke[i].nature) + " -" + getNatureDecrease(poke[i].nature) + ")" : "") + "\n\n\n"
+      }
+      this.flyoutTextPlayer.text += "HP: " + poke[i].ivs[0]
+      this.flyoutTextPlayer.text += ", Atk: " + poke[i].ivs[1]
+      this.flyoutTextPlayer.text += ", Def: " + poke[i].ivs[2]
+      this.flyoutTextPlayer.text += ", Sp.A: " + poke[i].ivs[3]
+      this.flyoutTextPlayer.text += ", Sp.D: " + poke[i].ivs[4]
+      this.flyoutTextPlayer.text += ", Speed: " + poke[i].ivs[5] + "\n\n"
+    }
   }
 
   /** Parses through all set Arena Effects and puts them into the proper {@linkcode Phaser.GameObjects.Text} object */
-  private updateFieldText() {
+  public updateFieldText() {
     this.clearText();
 
     this.fieldEffectInfo.sort((infoA, infoB) => infoA.duration - infoB.duration);
+
+    this.flyoutTextHeaderPlayer.text = "Player"
+    this.flyoutTextHeaderField.text = "Neutral"
+    this.flyoutTextHeaderEnemy.text = "Enemy"
+    this.flyoutTextHeader.text = "Active Battle Effects"
 
     for (let i = 0; i < this.fieldEffectInfo.length; i++) {
       const fieldEffectInfo = this.fieldEffectInfo[i];
@@ -231,6 +266,37 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
       }
 
       textObject.text += "\n";
+    }
+    this.flyoutTextPlayer.text = ""
+    this.flyoutTextField.text = ""
+    this.flyoutTextEnemy.text = ""
+    this.flyoutTextHeaderField.text = ""
+    this.flyoutTextHeaderPlayer.text = ""
+    this.flyoutTextHeaderEnemy.text = ""
+    this.flyoutTextHeader.text = "Game Logs"
+    this.flyoutTextPlayer.setPosition(6, 4)
+    this.flyoutTextPlayer.setFontSize(30);
+    var instructions = []
+    var drpd = LoggerTools.getDRPD(this.scene as BattleScene);
+    var doWaveInstructions = true;
+    for (var i = 0; i < drpd.waves.length && drpd.waves[i] != undefined && doWaveInstructions; i++) {
+      if (drpd.waves[i].id > (this.scene as BattleScene).currentBattle.waveIndex) {
+        doWaveInstructions = false;
+      } else {
+        instructions.push("")
+        instructions.push("Wave " + drpd.waves[i].id)
+        for (var j = 0; j < drpd.waves[i].actions.length; j++) {
+          instructions.push("- " + drpd.waves[i].actions[j])
+        }
+        if (drpd.waves[i].shop != "")
+          instructions.push("Reward: " + drpd.waves[i].shop)
+      }
+    }
+    for (var i = instructions.length - 10; i < instructions.length; i++) {
+      if (i >= 0) {
+        this.flyoutTextPlayer.text += instructions[i]
+      }
+      this.flyoutTextPlayer.text += "\n"
     }
   }
 

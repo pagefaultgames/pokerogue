@@ -51,7 +51,7 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
   private flyoutContainer: Phaser.GameObjects.Container;
 
   /** The array of {@linkcode Phaser.GameObjects.Text} objects which are drawn on the flyout */
-  private flyoutText: Phaser.GameObjects.Text[] = new Array(4);
+  public flyoutText: Phaser.GameObjects.Text[] = new Array(4);
   /** The array of {@linkcode MoveInfo} used to track moves for the {@linkcode Pokemon} linked to the flyout */
   private moveInfo: MoveInfo[] = new Array();
 

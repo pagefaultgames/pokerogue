@@ -1,5 +1,6 @@
 import i18next from "i18next";
 import { MoneyFormat } from "#enums/money-format";
+import * as LoggerTools from "./logger"
 
 export const MissingTextureKey = "__MISSING";
 
