@@ -2541,7 +2541,7 @@ export class CutHpStatBoostAttr extends StatChangeAttr {
         const ret = super.apply(user, target, move, args);
         //This if-block is specifically for Belly Drum and its unique message
         if (this.levels === 12 && this.stats.length === 1) {
-          user.scene.queueMessage(getPokemonMessage(user, ` cut its own HP\nand maximized its ${getBattleStatName(this.stats[0])}!`));
+          user.scene.queueMessage(i18next.t("moveTriggers:cutOwnHpAndMaximizedStat", {pokemonName: getPokemonNameWithAffix(user), statName: getBattleStatName(this.stats[0])}));
         }
         resolve(ret);
       });
