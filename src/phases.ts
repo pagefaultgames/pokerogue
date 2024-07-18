@@ -2567,7 +2567,7 @@ export class MovePhase extends BattlePhase {
 
   /**
    * @param followUp Indicates that the move being uses is a "follow-up" - for example, a move being used by Metronome or Dancer.
-   *                 Follow-ups bypass a few failure conditions, including flinches, sleep/paralysis/freeze checks, and
+   *                 Follow-ups bypass a few failure conditions, including flinches, sleep/paralysis/freeze and volatile status checks, etc.
    */
   constructor(scene: BattleScene, pokemon: Pokemon, targets: BattlerIndex[], move: PokemonMove, followUp?: boolean, ignorePp?: boolean) {
     super(scene);
