@@ -293,10 +293,12 @@ export function playerPokeName(scene: BattleScene, index: integer | Pokemon | Pl
     }
   }
   if (typeof index == "number") {
+    //console.log(scene.getParty()[index], species, dupeSpecies)
     if (dupeSpecies.includes(scene.getParty()[index].name))
       return scene.getParty()[index].name + " (Slot " + (index  + 1) + ")"
     return scene.getParty()[index].name
   }
+  //console.log(index.name, species, dupeSpecies)
   if (dupeSpecies.includes(index.name))
     return index.name + " (Slot " + (scene.getParty().indexOf(index as PlayerPokemon) + 1) + ")"
   return index.name
@@ -320,10 +322,12 @@ export function enemyPokeName(scene: BattleScene, index: integer | Pokemon | Ene
     }
   }
   if (typeof index == "number") {
+    //console.log(scene.getEnemyParty()[index], species, dupeSpecies)
     if (dupeSpecies.includes(scene.getEnemyParty()[index].name))
       return scene.getEnemyParty()[index].name + " (Slot " + (index  + 1) + ")"
     return scene.getEnemyParty()[index].name
   }
+  //console.log(index.name, species, dupeSpecies)
   if (dupeSpecies.includes(index.name))
     return index.name + " (Slot " + (scene.getEnemyParty().indexOf(index as EnemyPokemon) + 1) + ")"
   return index.name
