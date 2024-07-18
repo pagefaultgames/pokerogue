@@ -3,266 +3,266 @@ import { AchievementTranslationEntries } from "#app/interfaces/locales.js";
 // Achievement translations for the when the player character is male
 export const PGMachv: AchievementTranslationEntries = {
   "Achievements": {
-    name: "Achievements",
+    name: "実績",
   },
   "Locked": {
-    name: "Locked",
+    name: "なし",
   },
 
   "MoneyAchv": {
-    description: "Accumulate a total of ₽{{moneyAmount}}",
+    description: "一回のランで　₽{{moneyAmount}}を 稼ぐ",
   },
   "10K_MONEY": {
-    name: "Money Haver",
+    name: "お金を持つ人",
   },
   "100K_MONEY": {
-    name: "Rich",
+    name: "富豪",
   },
   "1M_MONEY": {
-    name: "Millionaire",
+    name: "百万長者",
   },
   "10M_MONEY": {
-    name: "One Percenter",
+    name: "超富裕層",
   },
 
   "DamageAchv": {
-    description: "Inflict {{damageAmount}} damage in one hit",
+    description: "一撃で {{damageAmount}}ダメージを 与える",
   },
   "250_DMG": {
-    name: "Hard Hitter",
+    name: "力持ち",
   },
   "1000_DMG": {
-    name: "Harder Hitter",
+    name: "強者",
   },
   "2500_DMG": {
-    name: "That's a Lotta Damage!",
+    name: "カカロット",
   },
   "10000_DMG": {
-    name: "One Punch Man",
+    name: "ワンパンマン",
   },
 
   "HealAchv": {
-    description: "Heal {{healAmount}} {{HP}} at once with a move, ability, or held item",
+    description: "一つの　技や 特性や 持っているアイテムで　{{healAmount}}{{HP}}を　一気に　回復する",
   },
   "250_HEAL": {
-    name: "Novice Healer",
+    name: "回復発見者",
   },
   "1000_HEAL": {
-    name: "Big Healer",
+    name: "大いなる治療者",
   },
   "2500_HEAL": {
-    name: "Cleric",
+    name: "回復達人",
   },
   "10000_HEAL": {
-    name: "Recovery Master",
+    name: "スクナビコナ",
   },
 
   "LevelAchv": {
-    description: "Level up a Pokémon to Lv{{level}}",
+    description: "一つの　ポケモンを Lv{{level}}まで レベルアップする",
   },
   "LV_100": {
-    name: "But Wait, There's More!",
+    name: "まだまだだよ",
   },
   "LV_250": {
-    name: "Elite",
+    name: "天王",
   },
   "LV_1000": {
-    name: "To Go Even Further Beyond",
+    name: "向こうの向こうを超え",
   },
 
   "RibbonAchv": {
-    description: "Accumulate a total of {{ribbonAmount}} Ribbons",
+    description: "{{ribbonAmount}}巻の リボンを 積もる",
   },
   "10_RIBBONS": {
-    name: "Pokémon League Champion",
+    name: "ポケモンリーグチャンピオン",
   },
   "25_RIBBONS": {
-    name: "Great League Champion",
+    name: "スーパーリーグチャンピオン",
   },
   "50_RIBBONS": {
-    name: "Ultra League Champion",
+    name: "ハイパーリーグチャンピオン",
   },
   "75_RIBBONS": {
-    name: "Rogue League Champion",
+    name: "ローグリーグチャンピオン",
   },
   "100_RIBBONS": {
-    name: "Master League Champion",
+    name: "マスターリーグチャンピオン",
   },
 
   "TRANSFER_MAX_BATTLE_STAT": {
-    name: "Teamwork",
-    description: "Baton pass to another party member with at least one stat maxed out",
+    name: "同力",
+    description: "少なくとも 一つの 能力を さいだいまで あげて 他の　手持ちポケモンに　バトンタッチする",
   },
   "MAX_FRIENDSHIP": {
-    name: "Friendmaxxing",
-    description: "Reach max friendship on a Pokémon",
+    name: "マブダチ",
+    description: "一つの 手持ちポケモンの　仲良し度を　さいだいに　上げる",
   },
   "MEGA_EVOLVE": {
-    name: "Megamorph",
-    description: "Mega evolve a Pokémon",
+    name: "ザ・アブソリュート",
+    description: "一つの　手持ちポケモンを　メガシンカさせる",
   },
   "GIGANTAMAX": {
-    name: "Absolute Unit",
-    description: "Gigantamax a Pokémon",
+    name: "太―くて　堪らない",
+    description: "一つの　手持ちポケモンを　キョダイマックスさせる",
   },
   "TERASTALLIZE": {
-    name: "STAB Enthusiast",
-    description: "Terastallize a Pokémon",
+    name: "一致好き",
+    description: "一つの　手持ちポケモンを　テラスタルさせる",
   },
   "STELLAR_TERASTALLIZE": {
-    name: "The Hidden Type",
-    description: "Stellar Terastallize a Pokémon",
+    name: "隠れたタイプ",
+    description: "一つの　手持ちポケモンを　ステラ・テラスタルさせる",
   },
   "SPLICE": {
-    name: "Infinite Fusion",
-    description: "Splice two Pokémon together with DNA Splicers",
+    name: "インフィニット・フュジョン",
+    description: "いでんしのくさびで　二つの　ポケモンを　吸収合体させる",
   },
   "MINI_BLACK_HOLE": {
-    name: "A Hole Lot of Items",
-    description: "Acquire a Mini Black Hole",
+    name: "アイテムホーリック",
+    description: "ミニブラックホールを　みつける",
   },
   "CATCH_MYTHICAL": {
-    name: "Mythical",
-    description: "Catch a mythical Pokémon",
+    name: "幻",
+    description: "幻の　ポケモンを　捕まえる",
   },
   "CATCH_SUB_LEGENDARY": {
-    name: "(Sub-)Legendary",
-    description: "Catch a sub-legendary Pokémon",
+    name: "準・伝説",
+    description: "準伝説の　ポケモンを　捕まえる",
   },
   "CATCH_LEGENDARY": {
-    name: "Legendary",
-    description: "Catch a legendary Pokémon",
+    name: "ザ・伝説",
+    description: "伝説の　ポケモンを　捕まえる",
   },
   "SEE_SHINY": {
-    name: "Shiny",
-    description: "Find a shiny Pokémon in the wild",
+    name: "色とりどりに光る",
+    description: "野生の　色違いポケモンを　みつける",
   },
   "SHINY_PARTY": {
-    name: "That's Dedication",
-    description: "Have a full party of shiny Pokémon",
+    name: "きらきら努力家",
+    description: "手持ちポケモンが　全員　色違いポケモンに　する",
   },
   "HATCH_MYTHICAL": {
-    name: "Mythical Egg",
-    description: "Hatch a mythical Pokémon from an egg",
+    name: "幻のたまご",
+    description: "幻の　ポケモンを　タマゴから　生まれる",
   },
   "HATCH_SUB_LEGENDARY": {
-    name: "Sub-Legendary Egg",
-    description: "Hatch a sub-legendary Pokémon from an egg",
+    name: "準・伝説のたまご",
+    description: "準伝説の　ポケモンを　タマゴから　生まれる",
   },
   "HATCH_LEGENDARY": {
-    name: "Legendary Egg",
-    description: "Hatch a legendary Pokémon from an egg",
+    name: "伝説のたまご",
+    description: "伝説の　ポケモンを　タマゴから　生まれる",
   },
   "HATCH_SHINY": {
-    name: "Shiny Egg",
-    description: "Hatch a shiny Pokémon from an egg",
+    name: "色違いたまご",
+    description: "色違いポケモンを　タマゴから　生まれる",
   },
   "HIDDEN_ABILITY": {
-    name: "Hidden Potential",
-    description: "Catch a Pokémon with a hidden ability",
+    name: "底力",
+    description: "隠れ特性がある　ポケモンを　捕まえる",
   },
   "PERFECT_IVS": {
-    name: "Certificate of Authenticity",
-    description: "Get perfect IVs on a Pokémon",
+    name: "個体値の賞状",
+    description: "一つの　ポケモンの　個体値が　すべて　さいだいに　なるように　する",
   },
   "CLASSIC_VICTORY": {
-    name: "Undefeated",
-    description: "Beat the game in classic mode",
+    name: "無双",
+    description: "クラシックモードを　クリアする",
   },
 
   "MONO_GEN_ONE": {
-    name: "The Original Rival",
-    description: "Complete the generation one only challenge.",
+    name: "原始",
+    description: "１せだいの　たんいつせだいチャレンジを　クリアする",
   },
   "MONO_GEN_TWO": {
-    name: "Generation 1.5",
-    description: "Complete the generation two only challenge.",
+    name: "懐かしいカン・ジョウ",
+    description: "２せだいの　たんいつせだいチャレンジを　クリアする",
   },
   "MONO_GEN_THREE": {
-    name: "Too much water?",
-    description: "Complete the generation three only challenge.",
+    name: "水浸し",
+    description: "３せだいの　たんいつせだいチャレンジを　クリアする",
   },
   "MONO_GEN_FOUR": {
-    name: "Is she really the hardest?",
-    description: "Complete the generation four only challenge.",
+    name: "神々の地",
+    description: "４せだいの　たんいつせだいチャレンジを　クリアする",
   },
   "MONO_GEN_FIVE": {
-    name: "All Original",
-    description: "Complete the generation five only challenge.",
+    name: "ニューヨーカー",
+    description: "５せだいの　たんいつせだいチャレンジを　クリアする",
   },
   "MONO_GEN_SIX": {
-    name: "Almost Royalty",
-    description: "Complete the generation six only challenge.",
+    name: "サヴァサヴァ",
+    description: "６せだいの　たんいつせだいチャレンジを　クリアする",
   },
   "MONO_GEN_SEVEN": {
-    name: "Only Technically",
-    description: "Complete the generation seven only challenge.",
+    name: "アローラ・オエ",
+    description: "７せだいの　たんいつせだいチャレンジを　クリアする",
   },
   "MONO_GEN_EIGHT": {
-    name: "A Champion Time!",
-    description: "Complete the generation eight only challenge.",
+    name: "チャンピオン　タイムを　楽しめ！",
+    description: "８せだいの　たんいつせだいチャレンジを　クリアする",
   },
   "MONO_GEN_NINE": {
-    name: "She was going easy on you",
-    description: "Complete the generation nine only challenge.",
+    name: "ネモに甘えたでしょう",
+    description: "９せだいの　たんいつせだいチャレンジを　クリアする",
   },
 
   "MonoType": {
-    description: "Complete the {{type}} monotype challenge.",
+    description: "{{type}}タイプの　たんいつタイプチャレンジを　クリアする",
   },
   "MONO_NORMAL": {
-    name: "Mono NORMAL",
+    name: "凡人",
   },
   "MONO_FIGHTING": {
-    name: "I Know Kung Fu",
+    name: "八千以上だ",
   },
   "MONO_FLYING": {
-    name: "Mono FLYING",
+    name: "翼をください",
   },
   "MONO_POISON": {
-    name: "Kanto's Favourite",
+    name: "カントーの名物",
   },
   "MONO_GROUND": {
-    name: "Mono GROUND",
+    name: "地面が震えてー砕けたー",
   },
   "MONO_ROCK": {
-    name: "Brock Hard",
+    name: "タケシの挑戦状",
   },
   "MONO_BUG": {
-    name: "Sting Like A Beedrill",
+    name: "チョウチョウせんしゃ",
   },
   "MONO_GHOST": {
-    name: "Who you gonna call?",
+    name: "零",
   },
   "MONO_STEEL": {
-    name: "Mono STEEL",
+    name: "ハガネーター",
   },
   "MONO_FIRE": {
-    name: "Mono FIRE",
+    name: "NIGHT　OF　FIRE",
   },
   "MONO_WATER": {
-    name: "When It Rains, It Pours",
+    name: "土砂降リスト",
   },
   "MONO_GRASS": {
-    name: "Mono GRASS",
+    name: "ｗｗｗ",
   },
   "MONO_ELECTRIC": {
-    name: "Mono ELECTRIC",
+    name: "パチピカペコ",
   },
   "MONO_PSYCHIC": {
-    name: "Mono PSYCHIC",
+    name: "陽キャ",
   },
   "MONO_ICE": {
-    name: "Mono ICE",
+    name: "ありのまま",
   },
   "MONO_DRAGON": {
-    name: "Mono DRAGON",
+    name: "龍が如く",
   },
   "MONO_DARK": {
-    name: "It's just a phase",
+    name: "陰キャ",
   },
   "MONO_FAIRY": {
-    name: "Mono FAIRY",
+    name: "あらハート満タンになった",
   },
 } as const;
 
