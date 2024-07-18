@@ -32,11 +32,11 @@ describe("Lost at Sea - Mystery Encounter", () => {
     game.override.mysteryEncounterChance(100);
     game.override.startingBiome(defaultBiome);
     game.override.startingWave(defaultWave);
-    vi.spyOn(MysteryEncounters, "allMysteryEncounters", "get").mockReturnValue({
-      [MysteryEncounterType.LOST_AT_SEA]: LostAtSeaEncounter,
-    });
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
-      new Map<Biome, MysteryEncounterType[]>([[Biome.SEA, [MysteryEncounterType.LOST_AT_SEA]]])
+      new Map<Biome, MysteryEncounterType[]>([
+        [Biome.SEA, [MysteryEncounterType.LOST_AT_SEA]],
+        [Biome.MOUNTAIN, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
+      ])
     );
   });
 
@@ -57,13 +57,12 @@ describe("Lost at Sea - Mystery Encounter", () => {
     expect(LostAtSeaEncounter.options.length).toBe(3);
   });
 
-  it("should not run outside of sea biome", async () => {
+  it("should not spawn outside of sea biome", async () => {
     game.override.startingBiome(Biome.MOUNTAIN);
-
     await workaround_reInitSceneWithOverrides(game);
+    await game.runToMysteryEncounter();
 
-    //expect the `TypeError: Cannot read properties of undefined (reading 'introVisuals')` error
-    await expect(() => game.runToMysteryEncounter()).rejects.toThrowError(/introVisuals/);
+    expect(game.scene.currentBattle.mysteryEncounter.encounterType).not.toBe(MysteryEncounterType.LOST_AT_SEA);
   });
 
   it("should not run below wave 11", async () => {
