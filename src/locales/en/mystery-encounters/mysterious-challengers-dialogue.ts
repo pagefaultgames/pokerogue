@@ -1,31 +1,22 @@
 export const mysteriousChallengersDialogue = {
-  intro: "Wandering aimlessly through the sea, you've effectively gotten nowhere.",
-  title: "Lost at Sea",
-  description: "The sea is turbulent in this area, and you're running out of energy.\nThis is bad. Is there a way out of the situation?",
-  query: "What will you do?",
+  intro: "Mysterious challengers have appeared!",
+  title: "Mysterious Challengers",
+  description: "If you defeat a challenger, you might impress them enough to receive a boon. But some look tough, are you up to the challenge?",
+  query: "Who will you battle?",
   option: {
     1: {
-      label: "{{option1PrimaryName}} can help",
-      label_disabled: "Can't {{option1RequiredMove}}",
-      tooltip: "(+) {{option1PrimaryName}} saves you\n(+) {{option1PrimaryName}} gains some EXP",
-      tooltip_disabled: "You have no Pokémon to {{option1RequiredMove}} on",
-      selected: `{{option1PrimaryName}} swims ahead, guiding you back on track.
-        \${{option1PrimaryName}} seems to also have gotten stronger in this time of need!`,
+      label: "A clever, mindful foe",
+      tooltip: "(-) Standard Battle\n(+) Move Item Rewards",
     },
     2: {
-      label: "{{option2PrimaryName}} can help",
-      label_disabled: "Can't {{option2RequiredMove}}",
-      tooltip: "(+) {{option2PrimaryName}} saves you\n(+) {{option2PrimaryName}} gains some EXP",
-      tooltip_disabled: "You have no Pokémon to {{option2RequiredMove}} with",
-      selected: `{{option2PrimaryName}} flies ahead of your boat, guiding you back on track.
-        \${{option2PrimaryName}} seems to also have gotten stronger in this time of need!`,
+      label: "A strong foe",
+      tooltip: "(-) Hard Battle\n(+) Good Rewards",
     },
     3: {
-      label: "Wander aimlessly",
-      tooltip: "(-) Each of your Pokémon lose {{damagePercentage}}% of their total HP",
-      selected: `You float about in the boat, steering without direction until you finally spot a landmark you remember.
-        $You and your Pokémon are fatigued from the whole ordeal.`,
+      label: "The mightiest foe",
+      tooltip: "(-) Brutal Battle\n(+) Great Rewards",
     },
+    selected: "The trainer steps forward...",
   },
-  outro: "You are back on track."
+  outro: "The mysterious challenger was defeated!"
 };

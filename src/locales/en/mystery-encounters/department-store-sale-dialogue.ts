@@ -1,31 +1,29 @@
 export const departmentStoreSaleDialogue = {
-  intro: "Wandering aimlessly through the sea, you've effectively gotten nowhere.",
-  title: "Lost at Sea",
-  description: "The sea is turbulent in this area, and you're running out of energy.\nThis is bad. Is there a way out of the situation?",
-  query: "What will you do?",
+  intro: "It's a lady with a ton of shopping bags.",
+  speaker: "Shopper",
+  intro_dialogue: `Hello! Are you here for\nthe amazing sales too?
+    $There's a special coupon that you can\nredeem for a free item during the sale!
+    $I have an extra one. Here you go!`,
+  title: "Department Store Sale",
+  description: "There is merchandise in every direction! It looks like there are 4 counters where you can redeem the coupon for various items. The possibilities are endless!",
+  query: "Which counter will you go to?",
   option: {
     1: {
-      label: "{{option1PrimaryName}} can help",
-      label_disabled: "Can't {{option1RequiredMove}}",
-      tooltip: "(+) {{option1PrimaryName}} saves you\n(+) {{option1PrimaryName}} gains some EXP",
-      tooltip_disabled: "You have no Pokémon to {{option1RequiredMove}} on",
-      selected: `{{option1PrimaryName}} swims ahead, guiding you back on track.
-        \${{option1PrimaryName}} seems to also have gotten stronger in this time of need!`,
+      label: "TM Counter",
+      tooltip: "(+) TM Shop",
     },
     2: {
-      label: "{{option2PrimaryName}} can help",
-      label_disabled: "Can't {{option2RequiredMove}}",
-      tooltip: "(+) {{option2PrimaryName}} saves you\n(+) {{option2PrimaryName}} gains some EXP",
-      tooltip_disabled: "You have no Pokémon to {{option2RequiredMove}} with",
-      selected: `{{option2PrimaryName}} flies ahead of your boat, guiding you back on track.
-        \${{option2PrimaryName}} seems to also have gotten stronger in this time of need!`,
+      label: "Vitamin Counter",
+      tooltip: "(+) Vitamin Shop",
     },
     3: {
-      label: "Wander aimlessly",
-      tooltip: "(-) Each of your Pokémon lose {{damagePercentage}}% of their total HP",
-      selected: `You float about in the boat, steering without direction until you finally spot a landmark you remember.
-        $You and your Pokémon are fatigued from the whole ordeal.`,
+      label: "Battle Item Counter",
+      tooltip: "(+) X Item Shop",
+    },
+    4: {
+      label: "Pokéball Counter",
+      tooltip: "(+) Pokéball Shop",
     },
   },
-  outro: "You are back on track."
+  outro: "What a deal! You should shop there more often."
 };

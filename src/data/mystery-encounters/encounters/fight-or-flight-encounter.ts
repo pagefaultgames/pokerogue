@@ -27,9 +27,10 @@ import IMysteryEncounter, {
 } from "../mystery-encounter";
 import { MoveRequirement } from "../mystery-encounter-requirements";
 import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { getPokemonNameWithAffix } from "#app/messages";
 
 /** the i18n namespace for the encounter */
-const namespace = "mysteryEncounter:fight_or_flight";
+const namespace = "mysteryEncounter:fightOrFlight";
 
 /**
  * Fight or Flight encounter.
@@ -159,7 +160,7 @@ export const FightOrFlightEncounter: IMysteryEncounter =
             const config = scene.currentBattle.mysteryEncounter.enemyPartyConfigs[0];
             config.pokemonConfigs[0].tags = [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON];
             config.pokemonConfigs[0].mysteryEncounterBattleEffects = (pokemon: Pokemon) => {
-              pokemon.scene.currentBattle.mysteryEncounter.setDialogueToken("enemyPokemon", pokemon.name);
+              pokemon.scene.currentBattle.mysteryEncounter.setDialogueToken("enemyPokemon", getPokemonNameWithAffix(pokemon));
               queueEncounterMessage(pokemon.scene, `${namespace}:boss_enraged`);
               pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD], 1));
             };

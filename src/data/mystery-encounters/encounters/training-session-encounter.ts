@@ -19,7 +19,7 @@ import { EncounterOptionMode, MysteryEncounterOptionBuilder } from "../mystery-e
 import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 
 /** The i18n namespace for the encounter */
-const namespace = "mysteryEncounter:training_session";
+const namespace = "mysteryEncounter:trainingSession";
 
 /**
  * Training Session encounter.
@@ -45,21 +45,21 @@ export const TrainingSessionEncounter: IMysteryEncounter =
     ])
     .withIntroDialogue([
       {
-        text: `${namespace}_intro_message`,
+        text: `${namespace}:intro`,
       },
     ])
-    .withTitle(`${namespace}_title`)
-    .withDescription(`${namespace}_description`)
-    .withQuery(`${namespace}_query`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withOption(
       new MysteryEncounterOptionBuilder()
         .withOptionMode(EncounterOptionMode.DEFAULT)
         .withDialogue({
-          buttonLabel: `${namespace}_option_1_label`,
-          buttonTooltip: `${namespace}_option_1_tooltip`,
+          buttonLabel: `${namespace}:option:1:label`,
+          buttonTooltip: `${namespace}:option:1:tooltip`,
           selected: [
             {
-              text: `${namespace}_option_selected_message`,
+              text: `${namespace}:option:selected`,
             },
           ],
         })
@@ -170,7 +170,7 @@ export const TrainingSessionEncounter: IMysteryEncounter =
               scene.addModifier(mod, true, false, false, true);
             }
             scene.updateModifiers(true);
-            queueEncounterMessage(scene, `${namespace}_battle_finished_1`);
+            queueEncounterMessage(scene, `${namespace}:option:1:finished`);
           };
 
           setEncounterRewards(
@@ -188,12 +188,12 @@ export const TrainingSessionEncounter: IMysteryEncounter =
       new MysteryEncounterOptionBuilder()
         .withOptionMode(EncounterOptionMode.DEFAULT)
         .withDialogue({
-          buttonLabel: `${namespace}_option_2_label`,
-          buttonTooltip: `${namespace}_option_2_tooltip`,
-          secondOptionPrompt: `${namespace}_option_2_select_prompt`,
+          buttonLabel: `${namespace}:option:2:label`,
+          buttonTooltip: `${namespace}:option:2:tooltip`,
+          secondOptionPrompt: `${namespace}:option:2:select_prompt`,
           selected: [
             {
-              text: `${namespace}_option_selected_message`,
+              text: `${namespace}:option:selected`,
             },
           ],
         })
@@ -242,7 +242,7 @@ export const TrainingSessionEncounter: IMysteryEncounter =
           scene.removePokemonFromPlayerParty(playerPokemon, false);
 
           const onBeforeRewardsPhase = () => {
-            queueEncounterMessage(scene, `${namespace}_battle_finished_2`);
+            queueEncounterMessage(scene, `${namespace}:option:2:finished`);
             // Add the pokemon back to party with Nature change
             playerPokemon.setNature(encounter.misc.chosenNature);
             scene.gameData.setPokemonCaught(playerPokemon, false);
@@ -270,12 +270,12 @@ export const TrainingSessionEncounter: IMysteryEncounter =
       new MysteryEncounterOptionBuilder()
         .withOptionMode(EncounterOptionMode.DEFAULT)
         .withDialogue({
-          buttonLabel: `${namespace}_option_3_label`,
-          buttonTooltip: `${namespace}_option_3_tooltip`,
-          secondOptionPrompt: `${namespace}_option_3_select_prompt`,
+          buttonLabel: `${namespace}:option:3:label`,
+          buttonTooltip: `${namespace}:option:3:tooltip`,
+          secondOptionPrompt: `${namespace}:option:3:select_prompt`,
           selected: [
             {
-              text: `${namespace}_option_selected_message`,
+              text: `${namespace}:option:selected`,
             },
           ],
         })
@@ -337,7 +337,7 @@ export const TrainingSessionEncounter: IMysteryEncounter =
           scene.removePokemonFromPlayerParty(playerPokemon, false);
 
           const onBeforeRewardsPhase = () => {
-            queueEncounterMessage(scene, `${namespace}_battle_finished_3`);
+            queueEncounterMessage(scene, `${namespace}:option:3:finished`);
             // Add the pokemon back to party with ability change
             const abilityIndex = encounter.misc.abilityIndex;
             if (!!playerPokemon.getFusionSpeciesForm()) {

@@ -1,31 +1,28 @@
 export const fieryFalloutDialogue = {
-  intro: "Wandering aimlessly through the sea, you've effectively gotten nowhere.",
-  title: "Lost at Sea",
-  description: "The sea is turbulent in this area, and you're running out of energy.\nThis is bad. Is there a way out of the situation?",
+  intro: "You encounter a blistering storm of smoke and ash!",
+  title: "Fiery Fallout",
+  description: "The whirling ash and embers have cut visibility to nearly zero. It seems like there might be some... source that is causing these conditions. But what could be behind a phenomenon of this magnitude?",
   query: "What will you do?",
   option: {
     1: {
-      label: "{{option1PrimaryName}} can help",
-      label_disabled: "Can't {{option1RequiredMove}}",
-      tooltip: "(+) {{option1PrimaryName}} saves you\n(+) {{option1PrimaryName}} gains some EXP",
-      tooltip_disabled: "You have no Pokémon to {{option1RequiredMove}} on",
-      selected: `{{option1PrimaryName}} swims ahead, guiding you back on track.
-        \${{option1PrimaryName}} seems to also have gotten stronger in this time of need!`,
+      label: "Find the source",
+      tooltip: "(?) Discover the source\n(-) Hard Battle",
+      selected: `You push through the storm, and find two Volcarona in the middle of a mating dance!
+        $They don't take kindly to the interruption and attack!`,
     },
     2: {
-      label: "{{option2PrimaryName}} can help",
-      label_disabled: "Can't {{option2RequiredMove}}",
-      tooltip: "(+) {{option2PrimaryName}} saves you\n(+) {{option2PrimaryName}} gains some EXP",
-      tooltip_disabled: "You have no Pokémon to {{option2RequiredMove}} with",
-      selected: `{{option2PrimaryName}} flies ahead of your boat, guiding you back on track.
-        \${{option2PrimaryName}} seems to also have gotten stronger in this time of need!`,
+      label: "Hunker down",
+      tooltip: "(-) Suffer the effects of the weather",
+      selected: `The weather effects cause significant harm as you struggle to find shelter!
+        $Your party takes 30% Max HP damage!
+        $Your {burnTarget} also becomes burned!`,
     },
     3: {
-      label: "Wander aimlessly",
-      tooltip: "(-) Each of your Pokémon lose {{damagePercentage}}% of their total HP",
-      selected: `You float about in the boat, steering without direction until you finally spot a landmark you remember.
-        $You and your Pokémon are fatigued from the whole ordeal.`,
+      label: "Your Fire types help",
+      tooltip: "(+) End the conditions\n(+) Gain a Charcoal",
+      disabled_tooltip: "You need at least 2 Fire Type Pokémon to choose this",
+      selected: `Your {{primaryPokemonName}} and {{secondaryPokemonName}} guide you to where two Volcarona are in the middle of a mating dance!
+        $Thankfully, your Pokémon are able to calm them, and they depart without issue.`,
     },
-  },
-  outro: "You are back on track."
+  }
 };

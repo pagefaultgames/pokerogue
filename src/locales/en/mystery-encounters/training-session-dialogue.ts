@@ -1,31 +1,30 @@
 export const trainingSessionDialogue = {
-  intro: "Wandering aimlessly through the sea, you've effectively gotten nowhere.",
-  title: "Lost at Sea",
-  description: "The sea is turbulent in this area, and you're running out of energy.\nThis is bad. Is there a way out of the situation?",
-  query: "What will you do?",
+  intro: "You've come across some\ntraining tools and supplies.",
+  title: "Training Session",
+  description: "These supplies look like they could be used to train a member of your party! There are a few ways you could train your Pokémon, by battling against it with the rest of your team.",
+  query: "How should you train?",
   option: {
     1: {
-      label: "{{option1PrimaryName}} can help",
-      label_disabled: "Can't {{option1RequiredMove}}",
-      tooltip: "(+) {{option1PrimaryName}} saves you\n(+) {{option1PrimaryName}} gains some EXP",
-      tooltip_disabled: "You have no Pokémon to {{option1RequiredMove}} on",
-      selected: `{{option1PrimaryName}} swims ahead, guiding you back on track.
-        \${{option1PrimaryName}} seems to also have gotten stronger in this time of need!`,
+      label: "Light Training",
+      tooltip: "(-) Light Battle\n(+) Improve 2 Random IVs of Pokémon",
+      finished: `{{selectedPokemon}} returns, feeling\nworn out but accomplished!
+        $Its {{stat1}} and {{stat2}} IVs were improved!`,
     },
     2: {
-      label: "{{option2PrimaryName}} can help",
-      label_disabled: "Can't {{option2RequiredMove}}",
-      tooltip: "(+) {{option2PrimaryName}} saves you\n(+) {{option2PrimaryName}} gains some EXP",
-      tooltip_disabled: "You have no Pokémon to {{option2RequiredMove}} with",
-      selected: `{{option2PrimaryName}} flies ahead of your boat, guiding you back on track.
-        \${{option2PrimaryName}} seems to also have gotten stronger in this time of need!`,
+      label: "Moderate Training",
+      tooltip: "(-) Moderate Battle\n(+) Change Pokémon's Nature",
+      select_prompt: "Select a new nature\nto train your Pokémon in.",
+      finished: `{{selectedPokemon}} returns, feeling\nworn out but accomplished!
+        $Its nature was changed to {{nature}}!`,
     },
     3: {
-      label: "Wander aimlessly",
+      label: "Heavy Training",
       tooltip: "(-) Each of your Pokémon lose {{damagePercentage}}% of their total HP",
-      selected: `You float about in the boat, steering without direction until you finally spot a landmark you remember.
-        $You and your Pokémon are fatigued from the whole ordeal.`,
+      select_prompt: "Select a new ability\nto train your Pokémon in.",
+      finished: `{{selectedPokemon}} returns, feeling\nworn out but accomplished!
+        $Its ability was changed to {{ability}}!`,
     },
+    selected: "{{selectedPokemon}} moves across\nthe clearing to face you...",
   },
-  outro: "You are back on track."
+  outro: "That was a successful training session!",
 };

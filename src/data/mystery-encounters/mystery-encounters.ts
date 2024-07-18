@@ -8,7 +8,7 @@ import { LostAtSeaEncounter } from "./encounters/lost-at-sea-encounter";
 import { MysteriousChallengersEncounter } from "./encounters/mysterious-challengers-encounter";
 import { MysteriousChestEncounter } from "./encounters/mysterious-chest-encounter";
 import { ShadyVitaminDealerEncounter } from "./encounters/shady-vitamin-dealer-encounter";
-import { SleepingSnorlaxEncounter } from "./encounters/sleeping-snorlax-encounter";
+import { SlumberingSnorlaxEncounter } from "./encounters/slumbering-snorlax-encounter";
 import { TrainingSessionEncounter } from "./encounters/training-session-encounter";
 import IMysteryEncounter from "./mystery-encounter";
 import { SafariZoneEncounter } from "#app/data/mystery-encounters/encounters/safari-zone-encounter";
@@ -159,10 +159,10 @@ const anyBiomeEncounters: MysteryEncounterType[] = [
 export const mysteryEncountersByBiome = new Map<Biome, MysteryEncounterType[]>([
   [Biome.TOWN, []],
   [Biome.PLAINS, [
-    MysteryEncounterType.SLEEPING_SNORLAX
+    MysteryEncounterType.SLUMBERING_SNORLAX
   ]],
   [Biome.GRASS, [
-    MysteryEncounterType.SLEEPING_SNORLAX,
+    MysteryEncounterType.SLUMBERING_SNORLAX,
   ]],
   [Biome.TALL_GRASS, []],
   [Biome.METROPOLIS, []],
@@ -214,7 +214,7 @@ export function initMysteryEncounters() {
   allMysteryEncounters[MysteryEncounterType.DARK_DEAL] = DarkDealEncounter;
   allMysteryEncounters[MysteryEncounterType.FIGHT_OR_FLIGHT] = FightOrFlightEncounter;
   allMysteryEncounters[MysteryEncounterType.TRAINING_SESSION] = TrainingSessionEncounter;
-  allMysteryEncounters[MysteryEncounterType.SLEEPING_SNORLAX] = SleepingSnorlaxEncounter;
+  allMysteryEncounters[MysteryEncounterType.SLUMBERING_SNORLAX] = SlumberingSnorlaxEncounter;
   allMysteryEncounters[MysteryEncounterType.DEPARTMENT_STORE_SALE] = DepartmentStoreSaleEncounter;
   allMysteryEncounters[MysteryEncounterType.SHADY_VITAMIN_DEALER] = ShadyVitaminDealerEncounter;
   allMysteryEncounters[MysteryEncounterType.FIELD_TRIP] = FieldTripEncounter;

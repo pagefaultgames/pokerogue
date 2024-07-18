@@ -5,7 +5,6 @@ import IMysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier, Myste
 import MysteryEncounterOption, { EncounterOptionMode, MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { TrainerSlot } from "#app/data/trainer-config";
 import { ScanIvsPhase, SummonPhase, VictoryPhase } from "#app/phases";
-import i18next from "i18next";
 import { HiddenAbilityRateBoosterModifier, IvScannerModifier } from "#app/modifier/modifier";
 import { EnemyPokemon } from "#app/field/pokemon";
 import { PokeballType } from "#app/data/pokeball";
@@ -14,10 +13,11 @@ import { IntegerHolder, randSeedInt } from "#app/utils";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { MoneyRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { doPlayerFlee, doPokemonFlee, getRandomSpeciesByStarterTier, trainerThrowPokeball } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { getEncounterText, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { getPokemonNameWithAffix } from "#app/messages";
 
 /** the i18n namespace for the encounter */
-const namespace = "mysteryEncounter:safari_zone";
+const namespace = "mysteryEncounter:safariZone";
 
 /**
  * Safari Zone encounter.
@@ -41,21 +41,21 @@ export const SafariZoneEncounter: IMysteryEncounter =
     ])
     .withIntroDialogue([
       {
-        text: `${namespace}_intro_message`,
+        text: `${namespace}:intro`,
       },
     ])
-    .withTitle(`${namespace}_title`)
-    .withDescription(`${namespace}_description`)
-    .withQuery(`${namespace}_query`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withOption(new MysteryEncounterOptionBuilder()
       .withOptionMode(EncounterOptionMode.DISABLED_OR_DEFAULT)
       .withSceneRequirement(new MoneyRequirement(0, 2.75)) // Cost equal to 1 Max Revive
       .withDialogue({
-        buttonLabel: `${namespace}_option_1_label`,
-        buttonTooltip: `${namespace}_option_1_tooltip`,
+        buttonLabel: `${namespace}:option:1:label`,
+        buttonTooltip: `${namespace}:option:1:tooltip`,
         selected: [
           {
-            text: `${namespace}_option_1_selected_message`,
+            text: `${namespace}:option:1:selected`,
           },
         ],
       })
@@ -67,6 +67,7 @@ export const SafariZoneEncounter: IMysteryEncounter =
           safariPokemonRemaining: 3
         };
         updatePlayerMoney(scene, -(encounter.options[0].requirements[0] as MoneyRequirement).requiredMoney);
+        // Load bait/mud assets
         scene.loadSe("PRSFX- Bug Bite", "battle_anims");
         scene.loadSe("PRSFX- Sludge Bomb2", "battle_anims");
         scene.loadSe("PRSFX- Taunt2", "battle_anims");
@@ -80,11 +81,11 @@ export const SafariZoneEncounter: IMysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}_option_2_label`,
-        buttonTooltip: `${namespace}_option_2_tooltip`,
+        buttonLabel: `${namespace}:option:2:label`,
+        buttonTooltip: `${namespace}:option:2:tooltip`,
         selected: [
           {
-            text: `${namespace}_option_2_selected_message`,
+            text: `${namespace}:option:2:selected`,
           },
         ],
       },
@@ -115,11 +116,11 @@ const safariZoneGameOptions: MysteryEncounterOption[] = [
   new MysteryEncounterOptionBuilder()
     .withOptionMode(EncounterOptionMode.DEFAULT)
     .withDialogue({
-      buttonLabel: `${namespace}_pokeball_option_label`,
-      buttonTooltip: `${namespace}_pokeball_option_tooltip`,
+      buttonLabel: `${namespace}:safari:1:label`,
+      buttonTooltip: `${namespace}:safari:1:tooltip`,
       selected: [
         {
-          text: `${namespace}_pokeball_option_selected`,
+          text: `${namespace}:safari:1:selected`,
         }
       ],
     })
@@ -149,11 +150,11 @@ const safariZoneGameOptions: MysteryEncounterOption[] = [
   new MysteryEncounterOptionBuilder()
     .withOptionMode(EncounterOptionMode.DEFAULT)
     .withDialogue({
-      buttonLabel: `${namespace}_bait_option_label`,
-      buttonTooltip: `${namespace}_bait_option_tooltip`,
+      buttonLabel: `${namespace}:safari:2:label`,
+      buttonTooltip: `${namespace}:safari:2:tooltip`,
       selected: [
         {
-          text: `${namespace}_bait_option_selected`,
+          text: `${namespace}:safari:2:selected`,
         },
       ],
     })
@@ -167,9 +168,9 @@ const safariZoneGameOptions: MysteryEncounterOption[] = [
       // 80% chance to increase flee stage +1
       const fleeChangeResult = tryChangeFleeStage(scene, 1, 8);
       if (!fleeChangeResult) {
-        await showEncounterText(scene, i18next.t(`${namespace}_pokemon_busy_eating`, { pokemonName: pokemon.name }), 1500, false );
+        await showEncounterText(scene, getEncounterText(scene, `${namespace}:safari:busy_eating`), 1000, false );
       } else {
-        await showEncounterText(scene, i18next.t(`${namespace}_pokemon_eating`, { pokemonName: pokemon.name }), 1500, false);
+        await showEncounterText(scene, getEncounterText(scene, `${namespace}:safari:eating`), 1000, false);
       }
 
       await doEndTurn(scene, 1);
@@ -179,11 +180,11 @@ const safariZoneGameOptions: MysteryEncounterOption[] = [
   new MysteryEncounterOptionBuilder()
     .withOptionMode(EncounterOptionMode.DEFAULT)
     .withDialogue({
-      buttonLabel: `${namespace}_mud_option_label`,
-      buttonTooltip: `${namespace}_mud_option_tooltip`,
+      buttonLabel: `${namespace}:safari:3:label`,
+      buttonTooltip: `${namespace}:safari:3:tooltip`,
       selected: [
         {
-          text: `${namespace}_mud_option_selected`,
+          text: `${namespace}:safari:3:selected`,
         },
       ],
     })
@@ -196,9 +197,9 @@ const safariZoneGameOptions: MysteryEncounterOption[] = [
       // 80% chance to decrease catch stage -1
       const catchChangeResult = tryChangeCatchStage(scene, -1, 8);
       if (!catchChangeResult) {
-        await showEncounterText(scene, i18next.t(`${namespace}_pokemon_beside_itself_angry`, { pokemonName: pokemon.name }), 1500, false );
+        await showEncounterText(scene, getEncounterText(scene, `${namespace}:safari:beside_itself_angry`), 1000, false );
       } else {
-        await showEncounterText(scene, i18next.t(`${namespace}_pokemon_angry`, { pokemonName: pokemon.name }), 1500, false );
+        await showEncounterText(scene, getEncounterText(scene, `${namespace}:safari:angry`), 1000, false );
       }
 
       await doEndTurn(scene, 2);
@@ -208,8 +209,8 @@ const safariZoneGameOptions: MysteryEncounterOption[] = [
   new MysteryEncounterOptionBuilder()
     .withOptionMode(EncounterOptionMode.DEFAULT)
     .withDialogue({
-      buttonLabel: `${namespace}_flee_option_label`,
-      buttonTooltip: `${namespace}_flee_option_tooltip`,
+      buttonLabel: `${namespace}:safari:4:label`,
+      buttonTooltip: `${namespace}:safari:4:tooltip`,
     })
     .withOptionPhase(async (scene: BattleScene) => {
       // Flee option
@@ -231,7 +232,8 @@ const safariZoneGameOptions: MysteryEncounterOption[] = [
 async function summonSafariPokemon(scene: BattleScene) {
   const encounter = scene.currentBattle.mysteryEncounter;
   // Message pokemon remaining
-  scene.queueMessage(i18next.t(`${namespace}_remaining_count`, { remainingCount: encounter.misc.safariPokemonRemaining}), null, true);
+  encounter.setDialogueToken("remainingCount", encounter.misc.safariPokemonRemaining);
+  scene.queueMessage(getEncounterText(scene, `${namespace}:safari:remaining_count`), null, true);
 
   // Generate pokemon using safariPokemonRemaining so they are always the same pokemon no matter how many turns are taken
   // Safari pokemon roll twice on shiny and HA chances, but are otherwise normal
@@ -279,7 +281,8 @@ async function summonSafariPokemon(scene: BattleScene) {
 
   scene.unshiftPhase(new SummonPhase(scene, 0, false));
 
-  showEncounterText(scene, i18next.t("battle:singleWildAppeared", { pokemonName: pokemon.name }), 1500, false)
+  encounter.setDialogueToken("pokemonName", getPokemonNameWithAffix(pokemon));
+  showEncounterText(scene, getEncounterText(scene, "battle:singleWildAppeared"), 1500, false)
     .then(() => {
       const ivScannerModifier = scene.findModifier(m => m instanceof IvScannerModifier);
       if (ivScannerModifier) {
@@ -484,7 +487,7 @@ async function doEndTurn(scene: BattleScene, cursorIndex: number) {
       leaveEncounterWithoutBattle(scene, true);
     }
   } else {
-    scene.queueMessage(i18next.t(`${namespace}_pokemon_watching`, { pokemonName: pokemon.name }), 0, null, 1000);
+    scene.queueMessage(getEncounterText(scene, `${namespace}:safari:watching`), 0, null, 1000);
     initSubsequentOptionSelect(scene, { overrideOptions: safariZoneGameOptions, startingCursorIndex: cursorIndex, hideDescription: true });
   }
 }

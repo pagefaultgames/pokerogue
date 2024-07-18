@@ -21,7 +21,7 @@ import IMysteryEncounter, {
 } from "../mystery-encounter";
 
 /** the i18n namespace for the encounter */
-const namespace = "mysteryEncounter:mysterious_challengers";
+const namespace = "mysteryEncounter:mysteriousChallengers";
 
 /**
  * Mysterious Challengers encounter.
@@ -37,7 +37,7 @@ export const MysteriousChallengersEncounter: IMysteryEncounter =
     .withIntroSpriteConfigs([]) // These are set in onInit()
     .withIntroDialogue([
       {
-        text: `${namespace}_intro_message`,
+        text: `${namespace}:intro`,
       },
     ])
     .withOnInit((scene: BattleScene) => {
@@ -126,16 +126,16 @@ export const MysteriousChallengersEncounter: IMysteryEncounter =
 
       return true;
     })
-    .withTitle(`${namespace}_title`)
-    .withDescription(`${namespace}_description`)
-    .withQuery(`${namespace}_query`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}_option_1_label`,
-        buttonTooltip: `${namespace}_option_1_tooltip`,
+        buttonLabel: `${namespace}:option:1:label`,
+        buttonTooltip: `${namespace}:option:1:tooltip`,
         selected: [
           {
-            text: `${namespace}_option_selected_message`,
+            text: `${namespace}:option:selected`,
           },
         ],
       },
@@ -156,11 +156,11 @@ export const MysteriousChallengersEncounter: IMysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}_option_2_label`,
-        buttonTooltip: `${namespace}_option_2_tooltip`,
+        buttonLabel: `${namespace}:option:2:label`,
+        buttonTooltip: `${namespace}:option:2:tooltip`,
         selected: [
           {
-            text: `${namespace}_option_selected_message`,
+            text: `${namespace}:option:selected`,
           },
         ],
       },
@@ -181,11 +181,11 @@ export const MysteriousChallengersEncounter: IMysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}_option_3_label`,
-        buttonTooltip: `${namespace}_option_3_tooltip`,
+        buttonLabel: `${namespace}:option:3:label`,
+        buttonTooltip: `${namespace}:option:3:tooltip`,
         selected: [
           {
-            text: `${namespace}_option_selected_message`,
+            text: `${namespace}:option:selected`,
           },
         ],
       },
@@ -209,7 +209,7 @@ export const MysteriousChallengersEncounter: IMysteryEncounter =
     )
     .withOutroDialogue([
       {
-        text: `${namespace}_outro_win`,
+        text: `${namespace}:outro`,
       },
     ])
     .build();

@@ -12,7 +12,7 @@ import GameManager from "#app/test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { runSelectMysteryEncounterOption } from "../encounterTestUtils";
 
-const namespace = "mysteryEncounter:lostAtSeaDialogue";
+const namespace = "mysteryEncounter:lostAtSea";
 /** Blastoise for surf. Pidgeot for fly. Abra for none. */
 const defaultParty = [Species.BLASTOISE, Species.PIDGEOT, Species.ABRA];
 const defaultBiome = Biome.SEA;
@@ -123,7 +123,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
       await runSelectMysteryEncounterOption(game, 2);
 
       expect(blastoise.exp).toBe(expBefore + laprasSpecies.baseExp * defaultWave);
-    }, 10000000);
+    });
 
     it("should leave encounter without battle", async () => {
       game.override.startingWave(33);
@@ -178,7 +178,6 @@ describe("Lost at Sea - Mystery Encounter", () => {
       game.override.startingWave(33);
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
 
-      // await workaround_reInitSceneWithOverrides(game);
       await game.runToMysteryEncounter(defaultParty);
       await runSelectMysteryEncounterOption(game, 2);
 

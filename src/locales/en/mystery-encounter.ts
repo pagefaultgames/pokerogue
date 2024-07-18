@@ -8,7 +8,7 @@ import { fieryFalloutDialogue } from "#app/locales/en/mystery-encounters/fiery-f
 import { fightOrFlightDialogue } from "#app/locales/en/mystery-encounters/fight-or-flight-dialogue";
 import { safariZoneDialogue } from "#app/locales/en/mystery-encounters/safari-zone-dialogue";
 import { shadyVitaminDealerDialogue } from "#app/locales/en/mystery-encounters/shady-vitamin-dealer-dialogue";
-import { sleepingSnorlaxDialogue } from "#app/locales/en/mystery-encounters/sleeping-snorlax-dialogue";
+import { slumberingSnorlaxDialogue } from "#app/locales/en/mystery-encounters/slumbering-snorlax-dialogue";
 import { trainingSessionDialogue } from "#app/locales/en/mystery-encounters/training-session-dialogue";
 
 /**
@@ -32,184 +32,11 @@ export const mysteryEncounter = {
   "paid_money": "You paid ₽{{amount, number}}.",
   "receive_money": "You received ₽{{amount, number}}!",
 
-  "department_store_sale_intro_message": "It's a lady with a ton of shopping bags.",
-  "department_store_sale_speaker": "Shopper",
-  "department_store_sale_intro_dialogue": `Hello! Are you here for\nthe amazing sales too?
-    $There's a special coupon that you can\nredeem for a free item during the sale!
-    $I have an extra one. Here you go!`,
-  "department_store_sale_title": "Department Store Sale",
-  "department_store_sale_description": "There is merchandise in every direction! It looks like there are 4 counters where you can redeem the coupon for various items. The possibilities are endless!",
-  "department_store_sale_query": "Which counter will you go to?",
-  "department_store_sale_option_1_label": "TM Counter",
-  "department_store_sale_option_1_tooltip": "(+) TM Shop",
-  "department_store_sale_option_2_label": "Vitamin Counter",
-  "department_store_sale_option_2_tooltip": "(+) Vitamin Shop",
-  "department_store_sale_option_3_label": "Battle Item Counter",
-  "department_store_sale_option_3_tooltip": "(+) X Item Shop",
-  "department_store_sale_option_4_label": "Pokéball Counter",
-  "department_store_sale_option_4_tooltip": "(+) Pokéball Shop",
-  "department_store_sale_outro": "What a deal! You should shop there more often.",
-
-  "shady_vitamin_dealer_intro_message": "A man in a dark coat approaches you.",
-  "shady_vitamin_dealer_speaker": "Shady Salesman",
-  "shady_vitamin_dealer_intro_dialogue": `.@d{16}.@d{16}.@d{16}
-    $I've got the goods if you've got the money.
-    $Make sure your Pokémon can handle it though.`,
-  "shady_vitamin_dealer_title": "The Vitamin Dealer",
-  "shady_vitamin_dealer_description": "The man opens his jacket to reveal some Pokémon vitamins. The numbers he quotes seem like a really good deal. Almost too good...\nHe offers two package deals to choose from.",
-  "shady_vitamin_dealer_query": "Which deal will choose?",
-  "shady_vitamin_dealer_invalid_selection": "Pokémon must be healthy enough.",
-  "shady_vitamin_dealer_option_1_label": "The Cheap Deal",
-  "shady_vitamin_dealer_option_1_tooltip": "(-) Pay {{option1Money, money}}\n(-) Side Effects?\n(+) Chosen Pokémon Gains 2 Random Vitamins",
-  "shady_vitamin_dealer_option_2_label": "The Pricey Deal",
-  "shady_vitamin_dealer_option_2_tooltip": "(-) Pay {{option2Money, money}}\n(-) Side Effects?\n(+) Chosen Pokémon Gains 2 Random Vitamins",
-  "shady_vitamin_dealer_option_selected": `The man hands you two bottles and quickly disappears.
-    \${{selectedPokemon}} gained {{boost1}} and {{boost2}} boosts!`,
-  "shady_vitamin_dealer_damage_only": `But the medicine had some side effects!
-  $Your {{selectedPokemon}} takes some damage...`,
-  "shady_vitamin_dealer_bad_poison": `But the medicine had some side effects!
-  $Your {{selectedPokemon}} takes some damage\nand becomes badly poisoned...`,
-  "shady_vitamin_dealer_poison": `But the medicine had some side effects!
-  $Your {{selectedPokemon}} becomes poisoned...`,
-  "shady_vitamin_dealer_no_bad_effects": "Looks like there were no side-effects this time.",
-  "shady_vitamin_dealer_option_3_label": "Leave",
-  "shady_vitamin_dealer_option_3_tooltip": "(-) No Rewards",
-
-  "field_trip_intro_message": "It's a teacher and some school children!",
-  "field_trip_speaker": "Teacher",
-  "field_trip_intro_dialogue": `Hello, there! Would you be able to\nspare a minute for my students?
-    $I'm teaching them about Pokémon moves\nand would love to show them a demonstration.
-    $Would you mind showing us one of\nthe moves your Pokémon can use?`,
-  "field_trip_title": "Field Trip",
-  "field_trip_description": "A teacher is requesting a move demonstration from a Pokémon. Depending on the move you choose, she might have something useful for you in exchange.",
-  "field_trip_query": "Which move category will you show off?",
-  "field_trip_option_1_label": "A Physical Move",
-  "field_trip_option_1_tooltip": "(+) Physical Item Rewards",
-  "field_trip_option_2_label": "A Special Move",
-  "field_trip_option_2_tooltip": "(+) Special Item Rewards",
-  "field_trip_option_3_label": "A Status Move",
-  "field_trip_option_3_tooltip": "(+) Status Item Rewards",
-  "field_trip_second_option_prompt": "Choose a move for your Pokémon to use.",
-  "field_trip_option_selected": "{{pokeName}} shows off an awesome display of {{move}}!",
-  "field_trip_option_incorrect": `...
-    $That isn't a {{moveCategory}} move!
-    $I'm sorry, but I can't give you anything.`,
-  "field_trip_lesson_learned": `Looks like you learned a valuable lesson?
-    $Your Pokémon also gained some knowledge.`,
-  "field_trip_outro_good": "Thank you so much for your kindness!\nI hope the items I had were helpful!",
-  "field_trip_outro_bad": "Come along children, we'll\nfind a better demonstration elsewhere.",
-
-  // Mystery Encounters -- Great Tier
-
-  "mysterious_challengers_intro_message": "Mysterious challengers have appeared!",
-  "mysterious_challengers_title": "Mysterious Challengers",
-  "mysterious_challengers_description": "If you defeat a challenger, you might impress them enough to receive a boon. But some look tough, are you up to the challenge?",
-  "mysterious_challengers_query": "Who will you battle?",
-  "mysterious_challengers_option_1_label": "A clever, mindful foe",
-  "mysterious_challengers_option_1_tooltip": "(-) Standard Battle\n(+) Move Item Rewards",
-  "mysterious_challengers_option_2_label": "A strong foe",
-  "mysterious_challengers_option_2_tooltip": "(-) Hard Battle\n(+) Good Rewards",
-  "mysterious_challengers_option_3_label": "The mightiest foe",
-  "mysterious_challengers_option_3_tooltip": "(-) Brutal Battle\n(+) Great Rewards",
-  "mysterious_challengers_option_selected_message": "The trainer steps forward...",
-  "mysterious_challengers_outro_win": "The mysterious challenger was defeated!",
-
-  "safari_zone_intro_message": "It's a safari zone!",
-  "safari_zone_title": "The Safari Zone",
-  "safari_zone_description": "There are all kinds of rare and special Pokémon that can be found here!\nIf you choose to enter, you'll have a time limit of 3 wild encounters where you can try to catch these special Pokémon.\n\nBeware, though. These Pokémon may flee before you're able to catch them!",
-  "safari_zone_query": "Would you like to enter?",
-  "safari_zone_option_1_label": "Enter",
-  "safari_zone_option_1_tooltip": "(-) Pay {{option1Money, money}}\n@[SUMMARY_GREEN]{(?) Safari Zone}",
-  "safari_zone_option_2_label": "Leave",
-  "safari_zone_option_2_tooltip": "(-) No Rewards",
-  "safari_zone_option_1_selected_message": "Time to test your luck!",
-  "safari_zone_option_2_selected_message": "You hurry along your way,\nwith a slight feeling of regret.",
-  "safari_zone_pokeball_option_label": "Throw a Pokéball",
-  "safari_zone_pokeball_option_tooltip": "(+) Throw a Pokéball",
-  "safari_zone_pokeball_option_selected": "You throw a Pokéball!",
-  "safari_zone_bait_option_label": "Throw bait",
-  "safari_zone_bait_option_tooltip": "(+) Increases Capture Rate\n(-) Chance to Increase Flee Rate",
-  "safari_zone_bait_option_selected": "You throw some bait!",
-  "safari_zone_mud_option_label": "Throw mud",
-  "safari_zone_mud_option_tooltip": "(+) Decreases Flee Rate\n(-) Chance to Decrease Capture Rate",
-  "safari_zone_mud_option_selected": "You throw some mud!",
-  "safari_zone_flee_option_label": "Flee",
-  "safari_zone_flee_option_tooltip": "(?) Flee from this Pokémon",
-  "safari_zone_pokemon_watching": "{{pokemonName}} is watching carefully!",
-  "safari_zone_pokemon_eating": "{{pokemonName}} is eating!",
-  "safari_zone_pokemon_busy_eating": "{{pokemonName}} is busy eating!",
-  "safari_zone_pokemon_angry": "{{pokemonName}} is angry!",
-  "safari_zone_pokemon_beside_itself_angry": "{{pokemonName}} is beside itself with anger!",
-  "safari_zone_remaining_count": "{{remainingCount}} Pokémon remaining!",
-
-  "fiery_fallout_intro_message": "You encounter a blistering storm of smoke and ash!",
-  "fiery_fallout_title": "Fiery Fallout",
-  "fiery_fallout_description": "The whirling storm of ash and embers has cut visibility to nearly zero. It seems like there might be some... source that is causing these conditions. But what could be behind a phenomenon of this magnitude?",
-  "fiery_fallout_query": "What will you do?",
-  "fiery_fallout_option_1_label": "Find the source",
-  "fiery_fallout_option_1_tooltip": "(?) Discover the source\n(-) Hard Battle",
-  "fiery_fallout_option_2_label": "Hunker down",
-  "fiery_fallout_option_2_tooltip": "(-) Suffer the effects of the weather",
-  "fiery_fallout_option_3_label": "Your Fire types help",
-  "fiery_fallout_option_3_tooltip": "(+) End the conditions\n(+) Gain a Charcoal",
-  "fiery_fallout_option_3_disabled_tooltip": "You need at least 2 Fire Type Pokémon to choose this",
-  "fiery_fallout_option_1_selected": `You push through the storm, and find two Volcarona in the middle of a mating dance!
-    $They don't take kindly to the interruption and attack!`,
-  "fiery_fallout_option_2_selected": `The weather effects cause significant harm as you struggle to find shelter!
-    $Your party takes 30% Max HP damage!
-    $Your {burnTarget} also becomes burned!`,
-  // "fiery_fallout_boss_enraged": "The opposing {{enemyPokemon}} has become enraged!",
-  "fiery_fallout_option_3_selected": `Your {{primaryPokemonName}} and {{secondaryPokemonName}} guide you to where two Volcarona are in the middle of a mating dance!
-    $Thankfully, your Pokémon are able to calm them, and they depart without issue.`,
-
-  // Mystery Encounters -- Ultra Tier
-
-  "training_session_intro_message": "You've come across some\ntraining tools and supplies.",
-  "training_session_title": "Training Session",
-  "training_session_description": "These supplies look like they could be used to train a member of your party! There are a few ways you could train your Pokémon, by battling against it with the rest of your team.",
-  "training_session_query": "How should you train?",
-  "training_session_option_1_label": "Light Training",
-  "training_session_option_1_tooltip": "(-) Light Battle\n(+) Improve 2 Random IVs of Pokémon",
-  "training_session_option_2_label": "Moderate Training",
-  "training_session_option_2_tooltip": "(-) Moderate Battle\n(+) Change Pokémon's Nature",
-  "training_session_option_2_select_prompt": "Select a new nature\nto train your Pokémon in.",
-  "training_session_option_3_label": "Heavy Training",
-  "training_session_option_3_tooltip": "(-) Harsh Battle\n(+) Change Pokémon's Ability",
-  "training_session_option_3_select_prompt": "Select a new ability\nto train your Pokémon in.",
-  "training_session_option_selected_message": "{{selectedPokemon}} moves across\nthe clearing to face you...",
-  "training_session_battle_finished_1": `{{selectedPokemon}} returns, feeling\nworn out but accomplished!
-    $Its {{stat1}} and {{stat2}} IVs were improved!`,
-  "training_session_battle_finished_2": `{{selectedPokemon}} returns, feeling\nworn out but accomplished!
-    $Its nature was changed to {{nature}}!`,
-  "training_session_battle_finished_3": `{{selectedPokemon}} returns, feeling\nworn out but accomplished!
-    $Its ability was changed to {{ability}}!`,
-  "training_session_outro_win": "That was a successful training session!",
-
-  // Mystery Encounters -- Rogue Tier
-
-  "sleeping_snorlax_intro_message": `As you walk down a narrow pathway, you see a towering silhouette blocking your path.
-  $You get closer to see a Snorlax sleeping peacefully.\nIt seems like there's no way around it.`,
-  "sleeping_snorlax_title": "Sleeping Snorlax",
-  "sleeping_snorlax_description": "You could attack it to try and get it to move, or simply wait for it to wake up. Who knows how long that could take, though...",
-  "sleeping_snorlax_query": "What will you do?",
-  "sleeping_snorlax_option_1_label": "Fight it",
-  "sleeping_snorlax_option_1_tooltip": "(-) Fight Sleeping Snorlax",
-  "sleeping_snorlax_option_2_label": "Wait for it to move",
-  "sleeping_snorlax_option_2_tooltip": "@[SUMMARY_BLUE]{(75%) Wait a short time}\n@[SUMMARY_BLUE]{(25%) Wait a long time}",
-  "sleeping_snorlax_option_3_label": "Steal its item",
-  "sleeping_snorlax_option_3_tooltip": "(+) {{option3PrimaryName}} uses {{option3PrimaryMove}}\n(+) Leftovers",
-  "sleeping_snorlax_option_3_disabled_tooltip": "Your Pokémon need to know certain moves to choose this",
-  "sleeping_snorlax_option_1_selected_message": "You approach the\nPokémon without fear.",
-  "sleeping_snorlax_option_2_selected_message": `.@d{32}.@d{32}.@d{32}
-  $You wait for a time, but the Snorlax's yawns make your party sleepy...`,
-  "sleeping_snorlax_option_2_good_result": "When you all awaken, the Snorlax is no where to be found -\nbut your Pokémon are all healed!",
-  "sleeping_snorlax_option_3_good_result": "Your {{option3PrimaryName}} uses {{option3PrimaryMove}}! @s{item_fanfare}It steals Leftovers off the sleeping Snorlax and you make out like bandits!",
-
   mysteriousChallengers: mysteriousChallengersDialogue,
   mysteriousChest: mysteriousChestDialogue,
   darkDeal: darkDealDialogue,
   fightOrFlight: fightOrFlightDialogue,
-  sleepingSnorlax: sleepingSnorlaxDialogue,
+  slumberingSnorlax: slumberingSnorlaxDialogue,
   trainingSession: trainingSessionDialogue,
   departmentStoreSale: departmentStoreSaleDialogue,
   shadyVitaminDealer: shadyVitaminDealerDialogue,

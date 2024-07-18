@@ -1,31 +1,46 @@
 export const safariZoneDialogue = {
-  intro: "Wandering aimlessly through the sea, you've effectively gotten nowhere.",
-  title: "Lost at Sea",
-  description: "The sea is turbulent in this area, and you're running out of energy.\nThis is bad. Is there a way out of the situation?",
-  query: "What will you do?",
+  intro: "It's a safari zone!",
+  title: "The Safari Zone",
+  description: "There are all kinds of rare and special Pokémon that can be found here!\nIf you choose to enter, you'll have a time limit of 3 wild encounters where you can try to catch these special Pokémon.\n\nBeware, though. These Pokémon may flee before you're able to catch them!",
+  query: "Would you like to enter?",
   option: {
     1: {
-      label: "{{option1PrimaryName}} can help",
-      label_disabled: "Can't {{option1RequiredMove}}",
-      tooltip: "(+) {{option1PrimaryName}} saves you\n(+) {{option1PrimaryName}} gains some EXP",
-      tooltip_disabled: "You have no Pokémon to {{option1RequiredMove}} on",
-      selected: `{{option1PrimaryName}} swims ahead, guiding you back on track.
-        \${{option1PrimaryName}} seems to also have gotten stronger in this time of need!`,
+      label: "Enter",
+      tooltip: "(-) Pay {{option1Money, money}}\n@[SUMMARY_GREEN]{(?) Safari Zone}",
+      selected: "Time to test your luck!",
     },
     2: {
-      label: "{{option2PrimaryName}} can help",
-      label_disabled: "Can't {{option2RequiredMove}}",
-      tooltip: "(+) {{option2PrimaryName}} saves you\n(+) {{option2PrimaryName}} gains some EXP",
-      tooltip_disabled: "You have no Pokémon to {{option2RequiredMove}} with",
-      selected: `{{option2PrimaryName}} flies ahead of your boat, guiding you back on track.
-        \${{option2PrimaryName}} seems to also have gotten stronger in this time of need!`,
-    },
-    3: {
-      label: "Wander aimlessly",
-      tooltip: "(-) Each of your Pokémon lose {{damagePercentage}}% of their total HP",
-      selected: `You float about in the boat, steering without direction until you finally spot a landmark you remember.
-        $You and your Pokémon are fatigued from the whole ordeal.`,
+      label: "Leave",
+      tooltip: "(-) No Rewards",
+      selected: "You hurry along your way,\nwith a slight feeling of regret.",
     },
   },
-  outro: "You are back on track."
+  safari: {
+    1: {
+      label: "Throw a Pokéball",
+      tooltip: "(+) Throw a Pokéball",
+      selected: "You throw a Pokéball!",
+    },
+    2: {
+      label: "Throw bait",
+      tooltip: "(+) Increases Capture Rate\n(-) Chance to Increase Flee Rate",
+      selected: "You throw some bait!",
+    },
+    3: {
+      label: "Throw mud",
+      tooltip: "(+) Decreases Flee Rate\n(-) Chance to Decrease Capture Rate",
+      selected: "You throw some mud!",
+    },
+    4: {
+      label: "Flee",
+      tooltip: "(?) Flee from this Pokémon",
+    },
+    watching: "{{pokemonName}} is watching carefully!",
+    eating: "{{pokemonName}} is eating!",
+    busy_eating: "{{pokemonName}} is busy eating!",
+    angry: "{{pokemonName}} is angry!",
+    beside_itself_angry: "{{pokemonName}} is beside itself with anger!",
+    remaining_count: "{{remainingCount}} Pokémon remaining!",
+  },
+  outro: "That was a fun little excursion!"
 };

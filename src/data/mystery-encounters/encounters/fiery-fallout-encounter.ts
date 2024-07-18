@@ -17,7 +17,7 @@ import { WeatherType } from "#app/data/weather";
 import { randSeedInt } from "#app/utils";
 
 /** the i18n namespace for the encounter */
-const namespace = "mysteryEncounter:fiery_fallout";
+const namespace = "mysteryEncounter:fieryFallout";
 
 /**
  * Fiery Fallout encounter.
@@ -35,7 +35,7 @@ export const FieryFalloutEncounter: IMysteryEncounter =
     .withAnimations(EncounterAnim.MAGMA_BG, EncounterAnim.MAGMA_SPOUT)
     .withIntroDialogue([
       {
-        text: `${namespace}_intro_message`,
+        text: `${namespace}:intro`,
       },
     ])
     .withOnInit((scene: BattleScene) => {
@@ -85,16 +85,16 @@ export const FieryFalloutEncounter: IMysteryEncounter =
 
       return true;
     })
-    .withTitle(`${namespace}_title`)
-    .withDescription(`${namespace}_description`)
-    .withQuery(`${namespace}_query`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}_option_1_label`,
-        buttonTooltip: `${namespace}_option_1_tooltip`,
+        buttonLabel: `${namespace}:option:1:label`,
+        buttonTooltip: `${namespace}:option:1:tooltip`,
         selected: [
           {
-            text: `${namespace}_option_1_selected`,
+            text: `${namespace}:option:1:selected`,
           },
         ],
       },
@@ -133,11 +133,11 @@ export const FieryFalloutEncounter: IMysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}_option_2_label`,
-        buttonTooltip: `${namespace}_option_2_tooltip`,
+        buttonLabel: `${namespace}:option:2:label`,
+        buttonTooltip: `${namespace}:option:2:tooltip`,
         selected: [
           {
-            text: `${namespace}_option_2_selected`,
+            text: `${namespace}:option:2:selected`,
           },
         ],
       },
@@ -152,11 +152,12 @@ export const FieryFalloutEncounter: IMysteryEncounter =
         .withOptionMode(EncounterOptionMode.DISABLED_OR_SPECIAL)
         .withPrimaryPokemonRequirement(new TypeRequirement(Type.FIRE, true,2)) // Will set option2PrimaryName and option2PrimaryMove dialogue tokens automatically
         .withDialogue({
-          buttonLabel: `${namespace}_option_3_label`,
-          buttonTooltip: `${namespace}_option_3_tooltip`,
+          buttonLabel: `${namespace}:option:3:label`,
+          buttonTooltip: `${namespace}:option:3:tooltip`,
+          disabledButtonTooltip: `${namespace}:option:3:disabled_tooltip`,
           selected: [
             {
-              text: `${namespace}_option_3_selected`,
+              text: `${namespace}:option:3:selected`,
             },
           ],
         })

@@ -1,31 +1,33 @@
 export const fieldTripDialogue = {
-  intro: "Wandering aimlessly through the sea, you've effectively gotten nowhere.",
-  title: "Lost at Sea",
-  description: "The sea is turbulent in this area, and you're running out of energy.\nThis is bad. Is there a way out of the situation?",
-  query: "What will you do?",
+  intro: "It's a teacher and some school children!",
+  speaker: "Teacher",
+  intro_dialogue: `Hello, there! Would you be able to\nspare a minute for my students?
+    $I'm teaching them about Pokémon moves\nand would love to show them a demonstration.
+    $Would you mind showing us one of\nthe moves your Pokémon can use?`,
+  title: "Field Trip",
+  description: "A teacher is requesting a move demonstration from a Pokémon. Depending on the move you choose, she might have something useful for you in exchange.",
+  query: "Which move category will you show off?",
   option: {
     1: {
-      label: "{{option1PrimaryName}} can help",
-      label_disabled: "Can't {{option1RequiredMove}}",
-      tooltip: "(+) {{option1PrimaryName}} saves you\n(+) {{option1PrimaryName}} gains some EXP",
-      tooltip_disabled: "You have no Pokémon to {{option1RequiredMove}} on",
-      selected: `{{option1PrimaryName}} swims ahead, guiding you back on track.
-        \${{option1PrimaryName}} seems to also have gotten stronger in this time of need!`,
+      label: "A Physical Move",
+      tooltip: "(+) Physical Item Rewards",
     },
     2: {
-      label: "{{option2PrimaryName}} can help",
-      label_disabled: "Can't {{option2RequiredMove}}",
-      tooltip: "(+) {{option2PrimaryName}} saves you\n(+) {{option2PrimaryName}} gains some EXP",
-      tooltip_disabled: "You have no Pokémon to {{option2RequiredMove}} with",
-      selected: `{{option2PrimaryName}} flies ahead of your boat, guiding you back on track.
-        \${{option2PrimaryName}} seems to also have gotten stronger in this time of need!`,
+      label: "A Special Move",
+      tooltip: "(+) Special Item Rewards",
     },
     3: {
-      label: "Wander aimlessly",
-      tooltip: "(-) Each of your Pokémon lose {{damagePercentage}}% of their total HP",
-      selected: `You float about in the boat, steering without direction until you finally spot a landmark you remember.
-        $You and your Pokémon are fatigued from the whole ordeal.`,
+      label: "A Status Move",
+      tooltip: "(+) Status Item Rewards",
     },
+    selected: "{{pokeName}} shows off an awesome display of {{move}}!",
+    incorrect: `...
+      $That isn't a {{moveCategory}} move!
+      $I'm sorry, but I can't give you anything.`,
+    lesson_learned: `Looks like you learned a valuable lesson?
+      $Your Pokémon also gained some knowledge.`
   },
-  outro: "You are back on track."
+  second_option_prompt: "Choose a move for your Pokémon to use.",
+  outro_good: "Thank you so much for your kindness!\nI hope the items I had were helpful!",
+  outro_bad: "Come along children, we'll\nfind a better demonstration elsewhere."
 };

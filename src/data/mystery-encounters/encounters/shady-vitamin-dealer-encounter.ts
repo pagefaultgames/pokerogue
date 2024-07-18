@@ -5,15 +5,14 @@ import { modifierTypes } from "#app/modifier/modifier-type";
 import { randSeedInt } from "#app/utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
-import i18next from "i18next";
 import BattleScene from "../../../battle-scene";
 import IMysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier, } from "../mystery-encounter";
 import { EncounterOptionMode, MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import { MoneyRequirement } from "../mystery-encounter-requirements";
-import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { getEncounterText, queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 
 /** the i18n namespace for this encounter */
-const namespace = "mysteryEncounter:shady_vitamin_dealer";
+const namespace = "mysteryEncounter:shadyVitaminDealer";
 
 /**
  * Shady Vitamin Dealer encounter.
@@ -49,26 +48,26 @@ export const ShadyVitaminDealerEncounter: IMysteryEncounter =
     ])
     .withIntroDialogue([
       {
-        text: `${namespace}_intro_message`,
+        text: `${namespace}:intro`,
       },
       {
-        text: `${namespace}_intro_dialogue`,
-        speaker: `${namespace}_speaker`,
+        text: `${namespace}:intro_dialogue`,
+        speaker: `${namespace}:speaker`,
       },
     ])
-    .withTitle(`${namespace}_title`)
-    .withDescription(`${namespace}_description`)
-    .withQuery(`${namespace}_query`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withOption(
       new MysteryEncounterOptionBuilder()
         .withOptionMode(EncounterOptionMode.DISABLED_OR_DEFAULT)
         .withSceneMoneyRequirement(0, 2) // Wave scaling money multiplier of 2
         .withDialogue({
-          buttonLabel: `${namespace}_option_1_label`,
-          buttonTooltip: `${namespace}_option_1_tooltip`,
+          buttonLabel: `${namespace}:option:1:label`,
+          buttonTooltip: `${namespace}:option:1:tooltip`,
           selected: [
             {
-              text: `${namespace}_option_selected`,
+              text: `${namespace}:option:selected`,
             },
           ],
         })
@@ -95,7 +94,7 @@ export const ShadyVitaminDealerEncounter: IMysteryEncounter =
             // If pokemon meets primary pokemon reqs, it can be selected
             const meetsReqs = encounter.pokemonMeetsPrimaryRequirements(scene, pokemon);
             if (!meetsReqs) {
-              return i18next.t(`${namespace}_invalid_selection`);
+              return getEncounterText(scene, `${namespace}:invalid_selection`);
             }
 
             return null;
@@ -130,13 +129,13 @@ export const ShadyVitaminDealerEncounter: IMysteryEncounter =
           if (randSeedInt(10) < 8) {
             if (chosenPokemon.trySetStatus(StatusEffect.TOXIC)) {
               // Toxic applied
-              queueEncounterMessage(scene, `${namespace}_bad_poison`);
+              queueEncounterMessage(scene, `${namespace}:bad_poison`);
             } else {
               // Pokemon immune or something else prevents status
-              queueEncounterMessage(scene, `${namespace}_damage_only`);
+              queueEncounterMessage(scene, `${namespace}:damage_only`);
             }
           } else {
-            queueEncounterMessage(scene, `${namespace}_damage_only`);
+            queueEncounterMessage(scene, `${namespace}:damage_only`);
           }
 
           setEncounterExp(scene, [chosenPokemon.id], 100);
@@ -150,11 +149,11 @@ export const ShadyVitaminDealerEncounter: IMysteryEncounter =
         .withOptionMode(EncounterOptionMode.DISABLED_OR_DEFAULT)
         .withSceneMoneyRequirement(0, 5) // Wave scaling money multiplier of 5
         .withDialogue({
-          buttonLabel: `${namespace}_option_2_label`,
-          buttonTooltip: `${namespace}_option_2_tooltip`,
+          buttonLabel: `${namespace}:option:2:label`,
+          buttonTooltip: `${namespace}:option:2:tooltip`,
           selected: [
             {
-              text: `${namespace}_option_selected`,
+              text: `${namespace}:option:selected`,
             },
           ],
         })
@@ -181,7 +180,7 @@ export const ShadyVitaminDealerEncounter: IMysteryEncounter =
             // If pokemon meets primary pokemon reqs, it can be selected
             const meetsReqs = encounter.pokemonMeetsPrimaryRequirements(scene, pokemon);
             if (!meetsReqs) {
-              return i18next.t(`${namespace}_invalid_selection`);
+              return getEncounterText(scene, `${namespace}:invalid_selection`);
             }
 
             return null;
@@ -212,13 +211,13 @@ export const ShadyVitaminDealerEncounter: IMysteryEncounter =
           if (randSeedInt(10) < 2) {
             if (chosenPokemon.trySetStatus(StatusEffect.POISON)) {
               // Poison applied
-              queueEncounterMessage(scene, `${namespace}_poison`);
+              queueEncounterMessage(scene, `${namespace}:poison`);
             } else {
               // Pokemon immune or something else prevents status
-              queueEncounterMessage(scene, `${namespace}_no_bad_effects`);
+              queueEncounterMessage(scene, `${namespace}:no_bad_effects`);
             }
           } else {
-            queueEncounterMessage(scene, `${namespace}_no_bad_effects`);
+            queueEncounterMessage(scene, `${namespace}:no_bad_effects`);
           }
 
           setEncounterExp(scene, [chosenPokemon.id], 100);
@@ -229,8 +228,8 @@ export const ShadyVitaminDealerEncounter: IMysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}_option_3_label`,
-        buttonTooltip: `${namespace}_option_3_tooltip`,
+        buttonLabel: `${namespace}:option:3:label`,
+        buttonTooltip: `${namespace}:option:3:tooltip`,
       },
       async (scene: BattleScene) => {
         // Leave encounter with no rewards or exp
