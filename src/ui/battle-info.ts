@@ -551,18 +551,20 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     }
     var total_visible = 0
     for (var i = 0; i < P.length; i++) {
-      states[i] = "ball"
-      if (!party[i].hp) {
-        states[i] = "faint"
-      } else if (party[i].status) {
-        states[i] = (this.scene as BattleScene).showTeamSprites ? "ball" : "status"
+      if (P[i] != undefined) {
+        states[i] = "ball"
+        if (!party[i].hp) {
+          states[i] = "faint"
+        } else if (party[i].status) {
+          states[i] = (this.scene as BattleScene).showTeamSprites ? "ball" : "status"
+        }
+        if (P[i].isOnField()) {
+          //console.log(P[i].name + " is in battle; set it as seen")
+          P[i].usedInBattle = true
+        }
+        if (P[i].usedInBattle) total_visible++;
+        //console.log(P[i].name, P[i].getIconAtlasKey(true))
       }
-      if (P[i].isOnField()) {
-        //console.log(P[i].name + " is in battle; set it as seen")
-        P[i].usedInBattle = true
-      }
-      if (P[i].usedInBattle) total_visible++;
-      //console.log(P[i].name, P[i].getIconAtlasKey(true))
     }
     console.log("Updating ball icons for party (" + P.length + ")")
     if (staticparty.length > 0) {
@@ -713,6 +715,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
         if (this.lastStatus !== StatusEffect.NONE) {
           this.statusIndicator.setFrame(StatusEffect[this.lastStatus].toLowerCase());
+          this.statusIndicator.setVisible(!!this.lastStatus);
         } else if (this.player) {
           this.statusIndicator.setVisible(!!this.lastStatus);
         } else {
@@ -987,8 +990,9 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       targets: this.statusIndicator,
       duration: Utils.fixedInt(125),
       ease: "Sine.easeInOut",
-      alpha: visible && this.iconsActive ? 0 : (!!this.lastStatus ? 1 : 0)
+      alpha: visible && this.iconsActive ? 0 : (this.lastStatus == 0 ? 0 : 1)
     });
+    console.log(this.iconsActive, this.lastStatus, this.statusIndicator.visible, this.statusIndicator.alpha)
   }
 
   /**

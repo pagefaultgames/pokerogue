@@ -721,6 +721,21 @@ export function getWave(drpd: DRPD, floor: integer, scene: BattleScene): Wave {
     }
   }
   if (wv == undefined) {
+    if (scene.gameMode.modeId != GameModes.DAILY) {
+      drpd.waves.push({
+        id: floor,
+        reload: false,
+        //type: floor % 10 == 0 ? "boss" : (floor % 10 == 5 ? "trainer" : "wild"),
+        type: floor % 10 == 0 ? "boss" : "wild",
+        double: scene.currentBattle.double,
+        actions: [],
+        shop: "",
+        biome: getBiomeName(scene.arena.biomeType),
+        clearActionsFlag: false,
+        //pokemon: []
+      })
+      return drpd.waves[drpd.waves.length - 1]
+    }
     console.error("Out of wave slots??")
     scene.ui.showText("Out of wave slots!\nClearing duplicates...", null, () => {
       for (var i = 0; i < drpd.waves.length - 1; i++) {
@@ -1389,7 +1404,7 @@ export function generateEditHandler(scene: BattleScene, logId: string, callback:
 export function logActions(scene: BattleScene, floor: integer, action: string) {
   if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
   var drpd = getDRPD(scene)
-  console.log("Log Action", drpd)
+  console.log(`Logging an action: "${action}"`)
   var wv: Wave = getWave(drpd, floor, scene)
   if (wv.double == undefined)
     wv.double = false
@@ -1399,7 +1414,7 @@ export function logActions(scene: BattleScene, floor: integer, action: string) {
     wv.actions = []
   }
   wv.actions.push(action)
-  console.log(drpd)
+  console.log("--> ", drpd)
   localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
 }
 /**
@@ -1413,7 +1428,34 @@ export function logActions(scene: BattleScene, floor: integer, action: string) {
 export function appendAction(scene: BattleScene, floor: integer, action: string) {
   if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
   var drpd = getDRPD(scene)
-  console.log("Append to Action", drpd)
+  var wv: Wave = getWave(drpd, floor, scene)
+  if (wv.clearActionsFlag) {
+    console.log("Triggered clearActionsFlag")
+    wv.clearActionsFlag = false
+    wv.actions = []
+  }
+  console.log(`Appending to an action: "${wv.actions[wv.actions.length - 1]}" + "${action}"`)
+  if (wv.double == undefined)
+    wv.double = false
+  wv.actions[wv.actions.length - 1] = wv.actions[wv.actions.length - 1] + action
+  console.log("--> ", drpd)
+  localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
+}
+/**
+ * Logs the actions that the player took.
+ * 
+ * This includes attacks you perform, items you transfer during the shop, Poke Balls you throw, running from battl, (or attempting to), and switching (including pre-switches).
+ * @param scene The BattleScene. Used to get the log ID.
+ * @param floor The wave index to write to.
+ * @param action The text you want to add to the actions list.
+ * 
+ * @see resetWaveActions
+ */
+export function getActionCount(scene: BattleScene, floor: integer) {
+  if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
+  var drpd = getDRPD(scene)
+  console.log(`Checking action count`)
+  console.log(drpd)
   var wv: Wave = getWave(drpd, floor, scene)
   if (wv.double == undefined)
     wv.double = false
@@ -1422,9 +1464,7 @@ export function appendAction(scene: BattleScene, floor: integer, action: string)
     wv.clearActionsFlag = false
     wv.actions = []
   }
-  wv.actions[wv.actions.length - 1] = wv.actions[wv.actions.length - 1] + action
-  console.log(drpd)
-  localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
+  return (wv.actions.length)
 }
 /**
  * Logs that a Pokémon was captured.
@@ -1435,11 +1475,11 @@ export function appendAction(scene: BattleScene, floor: integer, action: string)
 export function logCapture(scene: BattleScene, floor: integer, target: EnemyPokemon) {
   //if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
   var drpd = getDRPD(scene)
-  console.log("Log Capture", drpd)
+  console.log(`Logging successful capture: ${target.name}`)
   var wv: Wave = getWave(drpd, floor, scene)
   var pkslot = target.partyslot
   wv.pokemon[pkslot].captured = true;
-  console.log(drpd)
+  console.log("--> ", drpd)
   localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
 }
 /**
@@ -1451,12 +1491,12 @@ export function logCapture(scene: BattleScene, floor: integer, target: EnemyPoke
 export function logPlayerTeam(scene: BattleScene) {
   if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
   var drpd = getDRPD(scene)
-  console.log("Log Player Starters", drpd)
+  console.log(`Logging player starters: ${scene.getParty().map(p => p.name).join(", ")}`)
   var P = scene.getParty()
   for (var i = 0; i < P.length; i++) {
     drpd.starters[i] = exportPokemon(P[i])
   }
-  console.log(drpd)
+  console.log("--> ", drpd)
   localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
 }
 /**
@@ -1471,7 +1511,7 @@ export function logPokemon(scene: BattleScene, floor: integer = undefined, slot:
   if (floor == undefined) floor = scene.currentBattle.waveIndex
   if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
   var drpd = getDRPD(scene)
-  console.log("Log Enemy Pokemon", drpd)
+  console.log(`Logging opposing team member: ${pokemon.name}`)
   var wv: Wave = getWave(drpd, floor, scene)
   var pk: PokeData = exportPokemon(pokemon, encounterRarity)
   pk.source = pokemon
@@ -1538,7 +1578,7 @@ export function logPokemon(scene: BattleScene, floor: integer = undefined, slot:
   //wv.actions = []
   wv.clearActionsFlag = false;
   wv.shop = ""
-  console.log(drpd)
+  console.log("--> ", drpd)
   localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
 }
 /**
@@ -1550,10 +1590,10 @@ export function logPokemon(scene: BattleScene, floor: integer = undefined, slot:
 export function logShop(scene: BattleScene, floor: integer, action: string) {
   if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
   var drpd = getDRPD(scene)
-  console.log("Log Shop Item", drpd)
+  console.log(`Logging shop result: "${action}"`)
   var wv: Wave = getWave(drpd, floor, scene)
   wv.shop = action
-  console.log(drpd)
+  console.log("--> ", drpd)
   localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
 }
 /**
@@ -1566,12 +1606,12 @@ export function logTrainer(scene: BattleScene, floor: integer = undefined) {
   if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
   var drpd: DRPD = JSON.parse(localStorage.getItem(getLogID(scene))) as DRPD;
   drpd = updateLog(drpd);
-  console.log("Log Trainer", drpd)
+  console.log(`Logging trainer: ${scene.currentBattle.trainer.getTitleOnly()} ${scene.currentBattle.trainer.getNameOnly()}`)
   var wv: Wave = getWave(drpd, floor, scene)
   var t: TrainerData = exportTrainer(scene.currentBattle.trainer)
   wv.trainer = t
   wv.type = "trainer"
-  console.log(drpd)
+  console.log("--> ", drpd)
   localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
 }
 
@@ -1593,7 +1633,7 @@ export function flagReset(scene: BattleScene, floor: integer = undefined) {
   console.log("Flag Reset", drpd)
   var wv = getWave(drpd, floor, scene)
   wv.reload = true;
-  console.log(drpd)
+  console.log("--> ", drpd)
   localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
 }
 /**
@@ -1622,7 +1662,7 @@ export function flagResetIfExists(scene: BattleScene, floor: integer = undefined
   console.log("Flag reset as wave was already played before", drpd)
   var wv = getWave(drpd, floor, scene)
   wv.reload = true;
-  console.log(drpd)
+  console.log("--> ", drpd)
   localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
 }
 
@@ -1647,7 +1687,7 @@ export function resetWaveActions(scene: BattleScene, floor: integer = undefined,
   } else {
     wv.actions = []
   }
-  console.log(drpd, wv)
+  console.log("--> ", drpd)
   localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
 }
 //#endregion
