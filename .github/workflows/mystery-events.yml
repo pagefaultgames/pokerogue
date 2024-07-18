@@ -14,8 +14,8 @@ on:
       - mystery-battle-events  # Trigger on pull request events targeting the mystery-battle-events branch
 
 jobs:
-  run-linters:  # Define a job named "run-linters"
-    name: Run linters  # Human-readable name for the job
+  lint:  # Define a job named "run-linters"
+    name: Lint  # Human-readable name for the job
     runs-on: ubuntu-latest  # Specify the latest Ubuntu runner for the job
 
     steps:
@@ -33,8 +33,8 @@ jobs:
       - name: eslint  # Step to run linters
         run: npm run eslint-ci
 
-  run-tests:  # Define a job named "run-tests"
-    name: Run tests  # Human-readable name for the job
+  test:  # Define a job named "run-tests"
+    name: Test  # Human-readable name for the job
     runs-on: ubuntu-latest  # Specify the latest Ubuntu runner for the job
 
     steps:
