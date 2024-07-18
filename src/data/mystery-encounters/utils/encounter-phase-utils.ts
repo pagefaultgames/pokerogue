@@ -555,8 +555,10 @@ export function handleMysteryEncounterVictory(scene: BattleScene, addHealPhase: 
     return;
   }
 
-  if (scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.SAFARI_BATTLE) {
-    scene.pushPhase(new MysteryEncounterRewardsPhase(scene, addHealPhase));
+  // If in repeated encounter variant, do nothing
+  // Variant must eventually be swapped in order to handle "true" end of the encounter
+  if (scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.REPEATED_ENCOUNTER) {
+    return;
   } else if (scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.NO_BATTLE) {
     scene.pushPhase(new EggLapsePhase(scene));
     scene.pushPhase(new MysteryEncounterRewardsPhase(scene, addHealPhase));

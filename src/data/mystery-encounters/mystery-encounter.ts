@@ -27,7 +27,7 @@ export enum MysteryEncounterVariant {
   WILD_BATTLE,
   BOSS_BATTLE,
   NO_BATTLE,
-  SAFARI_BATTLE
+  REPEATED_ENCOUNTER
 }
 
 export enum MysteryEncounterTier {
@@ -38,7 +38,7 @@ export enum MysteryEncounterTier {
   MASTER // Not currently used
 }
 
-export class StartOfBattleEffect {
+export interface StartOfBattleEffect {
   sourcePokemon?: Pokemon;
   sourceBattlerIndex?: BattlerIndex;
   targets: BattlerIndex[];
@@ -108,10 +108,6 @@ export default interface IMysteryEncounter {
    * You should never need to modify this
    */
   seedOffset?: any;
-  /**
-   * Will be set by option select handlers automatically, and can be used to refer to which option was chosen by later phases
-   */
-  startOfBattleEffectsComplete?: boolean;
 
   /**
    * Flags
@@ -134,6 +130,10 @@ export default interface IMysteryEncounter {
    * Will be set to false after a shop is shown (so can't reroll same rarity items for free)
    */
   lockEncounterRewardTiers?: boolean;
+  /**
+   * Will be set automatically, indicates special moves in startOfBattleEffects are complete (so will not repeat)
+   */
+  startOfBattleEffectsComplete?: boolean;
   /**
    * Will be set by option select handlers automatically, and can be used to refer to which option was chosen by later phases
    */
@@ -473,6 +473,8 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
 
   /**
    * Defines any EncounterAnim animations that are intended to be used during the encounter
+   * EncounterAnims can be played at any point during an encounter or callback
+   * They just need to be specified here so that resources are loaded on encounter init
    * @param encounterAnimations
    * @returns
    */

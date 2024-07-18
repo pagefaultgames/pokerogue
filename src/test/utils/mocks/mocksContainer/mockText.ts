@@ -17,6 +17,7 @@ export default class MockText {
     // Phaser.GameObjects.Text.prototype.updateText = () => null;
     // Phaser.Textures.TextureManager.prototype.addCanvas = () => {};
     UI.prototype.showText = this.showText;
+    UI.prototype.showDialogue = this.showDialogue;
     // super(scene, x, y);
     // this.phaserText = new Phaser.GameObjects.Text(scene, x, y, content, styleOptions);
   }
@@ -74,6 +75,13 @@ export default class MockText {
 
   showText(text, delay, callback, callbackDelay, prompt, promptDelay) {
     this.scene.messageWrapper.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
+    if (callback) {
+      callback();
+    }
+  }
+
+  showDialogue(text, name, delay, callback, callbackDelay, promptDelay) {
+    this.scene.messageWrapper.showDialogue(text, name, delay, callback, callbackDelay, promptDelay);
     if (callback) {
       callback();
     }

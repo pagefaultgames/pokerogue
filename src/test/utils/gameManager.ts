@@ -62,7 +62,7 @@ export default class GameManager {
     this.phaseInterceptor = new PhaseInterceptor(this.scene);
     this.textInterceptor = new TextInterceptor(this.scene);
     this.gameWrapper.setScene(this.scene);
-    this.override = new OverridesHelper();
+    this.override = new OverridesHelper(this);
   }
 
   /**

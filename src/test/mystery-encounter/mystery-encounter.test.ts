@@ -1,5 +1,4 @@
-import { afterEach, beforeAll, beforeEach, expect, describe, it, vi } from "vitest";
-import * as overrides from "../../overrides";
+import { afterEach, beforeAll, beforeEach, expect, describe, it } from "vitest";
 import GameManager from "#app/test/utils/gameManager";
 import Phaser from "phaser";
 import { Species } from "#enums/species";
@@ -22,16 +21,9 @@ describe("Mystery Encounters", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(overrides, "MYSTERY_ENCOUNTER_RATE_OVERRIDE", "get").mockReturnValue(256);
-    vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(11);
-    vi.spyOn(overrides, "MYSTERY_ENCOUNTER_OVERRIDE", "get").mockReturnValue(MysteryEncounterType.MYSTERIOUS_CHALLENGERS);
-
-    // Seed guarantees wild encounter to be replaced by ME
-    vi.spyOn(game.scene, "resetSeed").mockImplementation(() => {
-      game.scene.waveSeed = "test";
-      Phaser.Math.RND.sow([game.scene.waveSeed]);
-      game.scene.rngCounter = 0;
-    });
+    game.override.startingWave(11);
+    game.override.mysteryEncounterChance(100);
+    game.override.mysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS);
   });
 
   it("Spawns a mystery encounter", async () => {

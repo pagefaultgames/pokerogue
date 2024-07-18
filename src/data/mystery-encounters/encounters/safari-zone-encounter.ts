@@ -57,7 +57,7 @@ export const SafariZoneEncounter: IMysteryEncounter =
       .withOptionPhase(async (scene: BattleScene) => {
         // Start safari encounter
         const encounter = scene.currentBattle.mysteryEncounter;
-        encounter.encounterVariant = MysteryEncounterVariant.SAFARI_BATTLE;
+        encounter.encounterVariant = MysteryEncounterVariant.REPEATED_ENCOUNTER;
         encounter.misc = {
           safariPokemonRemaining: 3
         };
@@ -463,14 +463,15 @@ function tryChangeCatchStage(scene: BattleScene, change: number, chance?: number
   return true;
 }
 
-async function doEndTurn(scene: BattleScene, cursorIndex: number, message?: string) {
-  const pokemon = scene.currentBattle.mysteryEncounter.misc.pokemon;
-  const isFlee = isPokemonFlee(pokemon, scene.currentBattle.mysteryEncounter.misc.fleeStage);
+async function doEndTurn(scene: BattleScene, cursorIndex: number) {
+  const encounter = scene.currentBattle.mysteryEncounter;
+  const pokemon = encounter.misc.pokemon;
+  const isFlee = isPokemonFlee(pokemon, encounter.misc.fleeStage);
   if (isFlee) {
     // Pokemon flees!
     await doPokemonFlee(scene, pokemon);
     // Check how many safari pokemon left
-    if (scene.currentBattle.mysteryEncounter.misc.safariPokemonRemaining > 0) {
+    if (encounter.misc.safariPokemonRemaining > 0) {
       await summonSafariPokemon(scene);
       initSubsequentOptionSelect(scene, { overrideOptions: safariZoneGameOptions, startingCursorIndex: cursorIndex, hideDescription: true });
     } else {

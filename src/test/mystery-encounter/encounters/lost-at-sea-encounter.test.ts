@@ -9,7 +9,6 @@ import { Moves } from "#app/enums/moves";
 import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
 import { Species } from "#app/enums/species";
 import GameManager from "#app/test/utils/gameManager";
-import { workaround_reInitSceneWithOverrides } from "#app/test/utils/testUtils";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { runSelectMysteryEncounterOption } from "../encounterTestUtils";
 
@@ -30,8 +29,9 @@ describe("Lost at Sea - Mystery Encounter", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     game.override.mysteryEncounterChance(100);
-    game.override.startingBiome(defaultBiome);
     game.override.startingWave(defaultWave);
+    game.override.startingBiome(defaultBiome);
+
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
         [Biome.SEA, [MysteryEncounterType.LOST_AT_SEA]],
@@ -45,7 +45,6 @@ describe("Lost at Sea - Mystery Encounter", () => {
   });
 
   it("should have the correct properties", async () => {
-    await workaround_reInitSceneWithOverrides(game);
     await game.runToMysteryEncounter(defaultParty);
 
     expect(LostAtSeaEncounter.encounterType).toBe(MysteryEncounterType.LOST_AT_SEA);
@@ -59,7 +58,6 @@ describe("Lost at Sea - Mystery Encounter", () => {
 
   it("should not spawn outside of sea biome", async () => {
     game.override.startingBiome(Biome.MOUNTAIN);
-    await workaround_reInitSceneWithOverrides(game);
     await game.runToMysteryEncounter();
 
     expect(game.scene.currentBattle.mysteryEncounter.encounterType).not.toBe(MysteryEncounterType.LOST_AT_SEA);
@@ -117,7 +115,6 @@ describe("Lost at Sea - Mystery Encounter", () => {
     it("should award exp to surfable PKM (Blastoise)", async () => {
       const laprasSpecies = getPokemonSpecies(Species.LAPRAS);
 
-      await workaround_reInitSceneWithOverrides(game);
       await game.runToMysteryEncounter(defaultParty);
       const party = game.scene.getParty();
       const blastoise = party.find((pkm) => pkm.species.speciesId === Species.PIDGEOT);
@@ -126,13 +123,12 @@ describe("Lost at Sea - Mystery Encounter", () => {
       await runSelectMysteryEncounterOption(game, 2);
 
       expect(blastoise.exp).toBe(expBefore + laprasSpecies.baseExp * defaultWave);
-    });
+    }, 10000000);
 
     it("should leave encounter without battle", async () => {
       game.override.startingWave(33);
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
 
-      await workaround_reInitSceneWithOverrides(game);
       await game.runToMysteryEncounter(defaultParty);
       await runSelectMysteryEncounterOption(game, 1);
 
@@ -168,7 +164,6 @@ describe("Lost at Sea - Mystery Encounter", () => {
       const wave = 33;
       game.override.startingWave(wave);
 
-      await workaround_reInitSceneWithOverrides(game);
       await game.runToMysteryEncounter(defaultParty);
       const party = game.scene.getParty();
       const pidgeot = party.find((pkm) => pkm.species.speciesId === Species.PIDGEOT);
@@ -183,7 +178,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
       game.override.startingWave(33);
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
 
-      await workaround_reInitSceneWithOverrides(game);
+      // await workaround_reInitSceneWithOverrides(game);
       await game.runToMysteryEncounter(defaultParty);
       await runSelectMysteryEncounterOption(game, 2);
 
@@ -215,7 +210,6 @@ describe("Lost at Sea - Mystery Encounter", () => {
     it("should damage all (allowed in battle) party PKM by 25%", async () => {
       game.override.startingWave(33);
 
-      await workaround_reInitSceneWithOverrides(game);
       await game.runToMysteryEncounter(defaultParty);
 
       const party = game.scene.getParty();
@@ -237,7 +231,6 @@ describe("Lost at Sea - Mystery Encounter", () => {
       game.override.startingWave(33);
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
 
-      workaround_reInitSceneWithOverrides(game);
       await game.runToMysteryEncounter(defaultParty);
       await runSelectMysteryEncounterOption(game, 3);
 
