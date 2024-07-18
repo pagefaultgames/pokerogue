@@ -13,7 +13,7 @@ import { EnemyPartyConfig, EnemyPokemonConfig, initBattleWithEnemyConfig, leaveE
 import { getRandomPlayerPokemon, getRandomSpeciesByStarterTier } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 
 /** i18n namespace for encounter */
-const namespace = "mysteryEncounter:dark_deal";
+const namespace = "mysteryEncounter:darkDeal";
 
 /** Exclude Ultra Beasts (inludes Cosmog/Solgaleo/Lunala/Necrozma), Paradox (includes Miraidon/Koraidon), Eternatus, and egg-locked mythicals */
 const excludedBosses = [
@@ -91,32 +91,32 @@ export const DarkDealEncounter: IMysteryEncounter =
     ])
     .withIntroDialogue([
       {
-        text: `${namespace}_intro_message`,
+        text: `${namespace}:intro`,
       },
       {
-        speaker: `${namespace}_speaker`,
-        text: `${namespace}_intro_dialogue`,
+        speaker: `${namespace}:speaker`,
+        text: `${namespace}:intro_dialogue`,
       },
     ])
     .withSceneWaveRangeRequirement(30, 180) // waves 30 to 180
     .withScenePartySizeRequirement(2, 6) // Must have at least 2 pokemon in party
     .withCatchAllowed(true)
-    .withTitle(`${namespace}_title`)
-    .withDescription(`${namespace}_description`)
-    .withQuery(`${namespace}_query`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withOption(
       new MysteryEncounterOptionBuilder()
         .withOptionMode(EncounterOptionMode.DEFAULT)
         .withDialogue({
-          buttonLabel: `${namespace}_option_1_label`,
-          buttonTooltip: `${namespace}_option_1_tooltip`,
+          buttonLabel: `${namespace}:option:1:label`,
+          buttonTooltip: `${namespace}:option:1:tooltip`,
           selected: [
             {
-              speaker: `${namespace}_speaker`,
-              text: `${namespace}_option_1_selected`,
+              speaker: `${namespace}:speaker`,
+              text: `${namespace}:option:1:selected_dialogue`,
             },
             {
-              text: `${namespace}_option_1_selected_message`,
+              text: `${namespace}:option:1:selected_message`,
             },
           ],
         })
@@ -126,10 +126,7 @@ export const DarkDealEncounter: IMysteryEncounter =
           const removedPokemon = getRandomPlayerPokemon(scene, false, true);
           scene.removePokemonFromPlayerParty(removedPokemon);
 
-          scene.currentBattle.mysteryEncounter.setDialogueToken(
-            "pokeName",
-            removedPokemon.name
-          );
+          scene.currentBattle.mysteryEncounter.setDialogueToken("pokeName", removedPokemon.name);
 
           // Store removed pokemon types
           scene.currentBattle.mysteryEncounter.misc = [
@@ -158,7 +155,6 @@ export const DarkDealEncounter: IMysteryEncounter =
             pokemonConfig.formIndex = 0;
           }
           const config: EnemyPartyConfig = {
-            levelAdditiveMultiplier: 0.75,
             pokemonConfigs: [pokemonConfig],
           };
           return initBattleWithEnemyConfig(scene, config);
@@ -167,12 +163,12 @@ export const DarkDealEncounter: IMysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}_option_2_label`,
-        buttonTooltip: `${namespace}_option_2_tooltip`,
+        buttonLabel: `${namespace}:option:2:label`,
+        buttonTooltip: `${namespace}:option:2:tooltip`,
         selected: [
           {
-            speaker: `${namespace}_speaker`,
-            text: `${namespace}_option_2_selected`,
+            speaker: `${namespace}:speaker`,
+            text: `${namespace}:option:2:selected`,
           },
         ],
       },
@@ -184,7 +180,7 @@ export const DarkDealEncounter: IMysteryEncounter =
     )
     .withOutroDialogue([
       {
-        text: `${namespace}_outro`
+        text: `${namespace}:outro`
       }
     ])
     .build();

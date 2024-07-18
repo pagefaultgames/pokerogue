@@ -43,8 +43,8 @@ export interface StartOfBattleEffect {
   sourceBattlerIndex?: BattlerIndex;
   targets: BattlerIndex[];
   move: PokemonMove;
+  ignorePp: boolean;
   followUp?: boolean;
-  ignorePp?: boolean;
 }
 
 export default interface IMysteryEncounter {

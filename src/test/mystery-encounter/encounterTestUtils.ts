@@ -1,6 +1,6 @@
 import { Button } from "#app/enums/buttons";
 import { MessagePhase, VictoryPhase } from "#app/phases";
-import { MysteryEncounterPhase, MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phase";
+import { MysteryEncounterPhase, MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phases";
 import MysteryEncounterUiHandler from "#app/ui/mystery-encounter-ui-handler";
 import { Mode } from "#app/ui/ui";
 import GameManager from "../utils/gameManager";

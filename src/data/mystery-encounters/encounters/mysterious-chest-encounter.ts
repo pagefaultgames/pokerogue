@@ -9,7 +9,7 @@ import IMysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier, } fro
 import { EncounterOptionMode, MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 
 /** i18n namespace for encounter */
-const namespace = "mysteryEncounter:dark_deal";
+const namespace = "mysteryEncounter:mysteriousChest";
 
 /**
  * Mysterious Chest encounter.

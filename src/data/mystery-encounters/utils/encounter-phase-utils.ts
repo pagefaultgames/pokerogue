@@ -3,13 +3,13 @@ import { biomeLinks } from "#app/data/biomes";
 import MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
 import { WIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
 import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import Pokemon, { FieldPosition, PlayerPokemon } from "#app/field/pokemon";
+import Pokemon, { FieldPosition, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { ExpBalanceModifier, ExpShareModifier, MultipleParticipantExpBonusModifier, PokemonExpBoosterModifier } from "#app/modifier/modifier";
 import { CustomModifierSettings, getModifierPoolForType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeGenerator, ModifierTypeOption, modifierTypes, PokemonHeldItemModifierType, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
 import * as Overrides from "#app/overrides";
 import { BattleEndPhase, EggLapsePhase, ExpPhase, GameOverPhase, ModifierRewardPhase, MovePhase, SelectModifierPhase, ShowPartyExpBarPhase, TrainerVictoryPhase } from "#app/phases";
-import { MysteryEncounterBattlePhase, MysteryEncounterPhase, MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phase";
+import { MysteryEncounterBattlePhase, MysteryEncounterBattleStartCleanupPhase, MysteryEncounterPhase, MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phases";
 import PokemonData from "#app/system/pokemon-data";
 import { OptionSelectConfig, OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import { PartyOption, PartyUiMode } from "#app/ui/party-ui-handler";
@@ -30,25 +30,27 @@ import { Gender } from "#app/data/gender";
 import { Moves } from "#enums/moves";
 import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
 
-export class EnemyPokemonConfig {
+export interface EnemyPokemonConfig {
   species: PokemonSpecies;
-  isBoss: boolean = false;
+  isBoss: boolean;
   bossSegments?: number;
   bossSegmentModifier?: number; // Additive to the determined segment number
   formIndex?: number;
   level?: number;
   gender?: Gender;
-  modifierTypes?: PokemonHeldItemModifierType[];
-  dataSource?: PokemonData;
-  tags?: BattlerTagType[];
-  mysteryEncounterBattleEffects?: (pokemon: Pokemon) => void;
-  status?: StatusEffect;
   passive?: boolean;
+  moveSet?: Moves[];
+  /** Can set just the status, or pass a timer on the status turns */
+  status?: StatusEffect | [StatusEffect, number];
+  mysteryEncounterBattleEffects?: (pokemon: Pokemon) => void;
+  modifierTypes?: PokemonHeldItemModifierType[];
+  tags?: BattlerTagType[];
+  dataSource?: PokemonData;
 }
 
-export class EnemyPartyConfig {
-  levelAdditiveMultiplier?: number = 0; // Formula for enemy: level += waveIndex / 10 * levelAdditive
-  doubleBattle?: boolean = false;
+export interface EnemyPartyConfig {
+  levelAdditiveMultiplier?: number; // Formula for enemy: level += waveIndex / 10 * levelAdditive
+  doubleBattle?: boolean;
   trainerType?: TrainerType; // Generates trainer battle solely off trainer type
   trainerConfig?: TrainerConfig; // More customizable option for configuring trainer battle
   pokemonConfigs?: EnemyPokemonConfig[];
@@ -167,11 +169,6 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
         enemyPokemon.formIndex = config.formIndex;
       }
 
-      // Set gender
-      if (!isNullOrUndefined(config.gender)) {
-        enemyPokemon.gender = config.gender;
-      }
-
       // Set Boss
       if (config.isBoss) {
         let segments = !isNullOrUndefined(config.bossSegments) ? config.bossSegments : scene.getEncounterBossSegments(scene.currentBattle.waveIndex, level, enemySpecies, true);
@@ -189,20 +186,39 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
       // Set Status
       if (partyConfig.pokemonConfigs[e].status) {
         // Default to cureturn 3 for sleep
-        const cureTurn = partyConfig.pokemonConfigs[e].status === StatusEffect.SLEEP ? 3 : null;
-        enemyPokemon.status = new Status(partyConfig.pokemonConfigs[e].status, 0, cureTurn);
+        const status = partyConfig.pokemonConfigs[e].status instanceof Array ? partyConfig.pokemonConfigs[e].status[0] : partyConfig.pokemonConfigs[e].status;
+        const cureTurn = partyConfig.pokemonConfigs[e].status instanceof Array ? partyConfig.pokemonConfigs[e].status[1] : partyConfig.pokemonConfigs[e].status === StatusEffect.SLEEP ? 3 : null;
+        enemyPokemon.status = new Status(status, 0, cureTurn);
+      }
+
+      // Set summon data fields
+
+      // Set gender
+      if (!isNullOrUndefined(config.gender)) {
+        enemyPokemon.gender = config.gender;
+        enemyPokemon.summonData.gender = config.gender;
+      }
+
+      // Set moves
+      if (config?.moveSet?.length > 0) {
+        const moves = config.moveSet.map(m => new PokemonMove(m));
+        enemyPokemon.moveset = moves;
+        enemyPokemon.summonData.moveset = moves;
       }
 
       // Set tags
       if (config.tags?.length > 0) {
         const tags = config.tags;
         tags.forEach(tag => enemyPokemon.addTag(tag));
-        // mysteryEncounterBattleEffects can be used IFF MYSTERY_ENCOUNTER_POST_SUMMON tag is applied
-        enemyPokemon.summonData.mysteryEncounterBattleEffects = config.mysteryEncounterBattleEffects;
-
-        // Requires re-priming summon data so that tags are not cleared on SummonPhase
-        enemyPokemon.primeSummonData(enemyPokemon.summonData);
       }
+
+      // mysteryEncounterBattleEffects will only be used IFF MYSTERY_ENCOUNTER_POST_SUMMON tag is applied
+      if (config.mysteryEncounterBattleEffects) {
+        enemyPokemon.mysteryEncounterBattleEffects = config.mysteryEncounterBattleEffects;
+      }
+
+      // Requires re-priming summon data to update everything properly
+      enemyPokemon.primeSummonData(enemyPokemon.summonData);
 
       enemyPokemon.initBattleInfo();
       enemyPokemon.getBattleInfo().initInfo(enemyPokemon);
@@ -625,6 +641,9 @@ export function handleEncounterStartOfBattleEffects(scene: BattleScene) {
       }
       scene.pushPhase(new MovePhase(scene, source, effect.targets, effect.move, effect.followUp, effect.followUp));
     });
+
+    // Pseudo turn end phase to reset flinch states, Endure, etc.
+    scene.pushPhase(new MysteryEncounterBattleStartCleanupPhase(scene));
 
     encounter.startOfBattleEffectsComplete = true;
   }

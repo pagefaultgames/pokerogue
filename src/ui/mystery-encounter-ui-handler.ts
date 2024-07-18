@@ -4,7 +4,7 @@ import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import { Button } from "#enums/buttons";
 import { addWindow, WindowVariant } from "./ui-theme";
-import { MysteryEncounterPhase } from "../phases/mystery-encounter-phase";
+import { MysteryEncounterPhase } from "../phases/mystery-encounter-phases";
 import { PartyUiMode } from "./party-ui-handler";
 import MysteryEncounterOption, { EncounterOptionMode } from "../data/mystery-encounters/mystery-encounter-option";
 import * as Utils from "../utils";

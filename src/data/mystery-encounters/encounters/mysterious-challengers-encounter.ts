@@ -99,7 +99,7 @@ export const MysteriousChallengersEncounter: IMysteryEncounter =
       const brutalSpriteKey = brutalConfig.getSpriteKey(female, brutalConfig.doubleOnly);
       encounter.enemyPartyConfigs.push({
         trainerConfig: brutalConfig,
-        levelAdditiveMultiplier: 1.1,
+        levelAdditiveMultiplier: 1,
         female: female,
       });
 

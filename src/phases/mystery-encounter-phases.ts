@@ -14,6 +14,7 @@ import { IvScannerModifier } from "../modifier/modifier";
 import * as Utils from "../utils";
 import { isNullOrUndefined } from "../utils";
 import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { BattlerTagLapseType } from "#app/data/battler-tags";
 
 /**
  * Will handle (in order):
@@ -162,6 +163,28 @@ export class MysteryEncounterOptionSelectedPhase extends Phase {
         });
       }, this.scene.currentBattle.mysteryEncounter.seedOffset);
     }
+  }
+}
+
+/**
+ * Runs at the beginning of an Encounter's battle
+ * Will cleanup any residual flinches, Endure, etc. that are left over from startOfBattleEffects
+ * See [TurnEndPhase](../phases.ts) for more details
+ */
+export class MysteryEncounterBattleStartCleanupPhase extends Phase {
+  constructor(scene: BattleScene) {
+    super(scene);
+  }
+
+  start() {
+    super.start();
+
+    const field = this.scene.getField(true).filter(p => p.summonData);
+    field.forEach(pokemon => {
+      pokemon.lapseTags(BattlerTagLapseType.TURN_END);
+    });
+
+    this.end();
   }
 }
 

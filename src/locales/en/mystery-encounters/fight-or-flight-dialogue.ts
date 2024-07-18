@@ -1,31 +1,31 @@
 export const fightOrFlightDialogue = {
-  intro: "Wandering aimlessly, you effectively get nowhere.",
-  title: "Lost at sea",
-  description: "The sea is turbulent in this area, and you seem to be running out of fuel.\nThis is bad. Is there a way out of the situation?",
+  intro: "Something shiny is sparkling\non the ground near that Pokémon!",
+  title: "Fight or Flight",
+  description: "It looks like there's a strong Pokémon guarding an item. Battling is the straightforward approach, but this Pokémon looks strong. You could also try to sneak around, though the Pokémon might catch you.",
   query: "What will you do?",
   option: {
     1: {
-      label: "{{option1PrimaryName}} can help",
-      label_disabled: "Can't {{option1RequiredMove}}",
-      tooltip: "(+) {{option1PrimaryName}} saves you.\n(+) {{option1PrimaryName}} gains some EXP.",
-      tooltip_disabled: "You have no Pokémon to {{option1RequiredMove}} on",
-      selected:
-        "{{option1PrimaryName}} swims ahead, guiding you back on track.\n{{option1PrimaryName}} seems to also have gotten stronger in this time of need.",
+      label: "Battle the Pokémon",
+      tooltip: "(-) Hard Battle\n(+) New Item",
+      selected: "You approach the\nPokémon without fear.",
     },
     2: {
       label: "{{option2PrimaryName}} can help",
-      label_disabled: "Can't {{option2RequiredMove}}",
-      tooltip: "(+) {{option2PrimaryName}} saves you.\n(+) {{option2PrimaryName}} gains some EXP.",
-      tooltip_disabled: "You have no Pokémon to {{option2RequiredMove}} with",
-      selected:
-        "{{option2PrimaryName}} flies ahead of your boat, guiding you back on track.\n{{option2PrimaryName}} seems to also have gotten stronger in this time of need.",
+      tooltip: "@[SUMMARY_GREEN]{(35%) Steal Item}\n@[SUMMARY_BLUE]{(65%) Harder Battle}",
+      tooltip_special: "(+) {{option2PrimaryName}} uses {{option2PrimaryMove}}",
+      good_result: `.@d{32}.@d{32}.@d{32}
+        $You manage to sneak your way\npast and grab the item!`,
+      special_result: `.@d{32}.@d{32}.@d{32}
+        $Your {{option2PrimaryName}} helps you out and uses {{option2PrimaryMove}}!
+        $ You nabbed the item!`,
+      bad_result: `.@d{32}.@d{32}.@d{32}
+        $The Pokémon catches you\nas you try to sneak around!`,
+      boss_enraged: "The opposing {{enemyPokemon}} has become enraged!"
     },
     3: {
-      label: "Wander aimlessly",
-      tooltip: "(-) Each of your Pokémon lose {{damagePercentage}}% of their total HP.",
-      selected: `You float about in the boat, steering it aimlessly until you finally get back on track.
-                  $You and your Pokémon get very fatigued during the whole ordeal.`,
+      label: "Leave",
+      tooltip: "(-) No Rewards",
+      selected: "You leave the strong Pokémon\nwith its prize and continue on.",
     },
-  },
-  outro: "You are back on track."
+  }
 };

@@ -44,7 +44,7 @@ import {
   MysteryEncounterPhase,
   MysteryEncounterRewardsPhase,
   PostMysteryEncounterPhase
-} from "#app/phases/mystery-encounter-phase";
+} from "#app/phases/mystery-encounter-phases";
 
 export default class PhaseInterceptor {
   public scene;

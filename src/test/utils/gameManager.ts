@@ -34,7 +34,7 @@ import { Button } from "#enums/buttons";
 import { BattlerIndex } from "#app/battle.js";
 import TargetSelectUiHandler from "#app/ui/target-select-ui-handler.js";
 import BattleMessageUiHandler from "#app/ui/battle-message-ui-handler";
-import {MysteryEncounterPhase} from "#app/phases/mystery-encounter-phase";
+import {MysteryEncounterPhase} from "#app/phases/mystery-encounter-phases";
 import { OverridesHelper } from "./overridesHelper";
 
 /**

@@ -1,4 +1,15 @@
 import { lostAtSeaDialogue } from "./mystery-encounters/lost-at-sea-dialogue";
+import { mysteriousChestDialogue } from "#app/locales/en/mystery-encounters/mysterious-chest-dialogue";
+import { mysteriousChallengersDialogue } from "#app/locales/en/mystery-encounters/mysterious-challengers-dialogue";
+import { darkDealDialogue } from "#app/locales/en/mystery-encounters/dark-deal-dialogue";
+import { departmentStoreSaleDialogue } from "#app/locales/en/mystery-encounters/department-store-sale-dialogue";
+import { fieldTripDialogue } from "#app/locales/en/mystery-encounters/field-trip-dialogue";
+import { fieryFalloutDialogue } from "#app/locales/en/mystery-encounters/fiery-fallout-dialogue";
+import { fightOrFlightDialogue } from "#app/locales/en/mystery-encounters/fight-or-flight-dialogue";
+import { safariZoneDialogue } from "#app/locales/en/mystery-encounters/safari-zone-dialogue";
+import { shadyVitaminDealerDialogue } from "#app/locales/en/mystery-encounters/shady-vitamin-dealer-dialogue";
+import { sleepingSnorlaxDialogue } from "#app/locales/en/mystery-encounters/sleeping-snorlax-dialogue";
+import { trainingSessionDialogue } from "#app/locales/en/mystery-encounters/training-session-dialogue";
 
 /**
  * Patterns that can be used:
@@ -20,47 +31,6 @@ export const mysteryEncounter = {
   // General use content
   "paid_money": "You paid ₽{{amount, number}}.",
   "receive_money": "You received ₽{{amount, number}}!",
-
-  // Mystery Encounters -- Common Tier
-
-  "mysterious_chest_intro_message": "You found...@d{32} a chest?",
-  "mysterious_chest_title": "The Mysterious Chest",
-  "mysterious_chest_description": "A beautifully ornamented chest stands on the ground. There must be something good inside... right?",
-  "mysterious_chest_query": "Will you open it?",
-  "mysterious_chest_option_1_label": "Open it",
-  "mysterious_chest_option_1_tooltip": "@[SUMMARY_BLUE]{(35%) Something terrible}\n@[SUMMARY_GREEN]{(40%) Okay Rewards}\n@[SUMMARY_GREEN]{(20%) Good Rewards}\n@[SUMMARY_GREEN]{(4%) Great Rewards}\n@[SUMMARY_GREEN]{(1%) Amazing Rewards}",
-  "mysterious_chest_option_2_label": "It's too risky, leave",
-  "mysterious_chest_option_2_tooltip": "(-) No Rewards",
-  "mysterious_chest_option_1_selected_message": "You open the chest to find...",
-  "mysterious_chest_option_2_selected_message": "You hurry along your way,\nwith a slight feeling of regret.",
-  "mysterious_chest_option_1_normal_result": "Just some normal tools and items.",
-  "mysterious_chest_option_1_good_result": "Some pretty nice tools and items.",
-  "mysterious_chest_option_1_great_result": "A couple great tools and items!",
-  "mysterious_chest_option_1_amazing_result": "Whoa! An amazing item!",
-  "mysterious_chest_option_1_bad_result": `Oh no!@d{32}\nThe chest was trapped!
-  $Your {{pokeName}} jumps in front of you\nbut is KOed in the process.`,
-
-  "fight_or_flight_intro_message": "Something shiny is sparkling\non the ground near that Pokémon!",
-  "fight_or_flight_title": "Fight or Flight",
-  "fight_or_flight_description": "It looks like there's a strong Pokémon guarding an item. Battling is the straightforward approach, but this Pokémon looks strong. You could also try to sneak around, though the Pokémon might catch you.",
-  "fight_or_flight_query": "What will you do?",
-  "fight_or_flight_option_1_label": "Battle the Pokémon",
-  "fight_or_flight_option_1_tooltip": "(-) Hard Battle\n(+) New Item",
-  "fight_or_flight_option_2_label": "Steal the item",
-  "fight_or_flight_option_2_tooltip": "@[SUMMARY_GREEN]{(35%) Steal Item}\n@[SUMMARY_BLUE]{(65%) Harder Battle}",
-  "fight_or_flight_option_2_steal_tooltip": "(+) {{option2PrimaryName}} uses {{option2PrimaryMove}}",
-  "fight_or_flight_option_3_label": "Leave",
-  "fight_or_flight_option_3_tooltip": "(-) No Rewards",
-  "fight_or_flight_option_1_selected_message": "You approach the\nPokémon without fear.",
-  "fight_or_flight_option_2_good_result": `.@d{32}.@d{32}.@d{32}
-  $You manage to sneak your way\npast and grab the item!`,
-  "fight_or_flight_option_2_steal_result": `.@d{32}.@d{32}.@d{32}
-  $Your {{option2PrimaryName}} helps you out and uses {{option2PrimaryMove}}!
-  $ You nabbed the item!`,
-  "fight_or_flight_option_2_bad_result": `.@d{32}.@d{32}.@d{32}
-  $The Pokémon catches you\nas you try to sneak around!`,
-  "fight_or_flight_boss_enraged": "The opposing {{enemyPokemon}} has become enraged!",
-  "fight_or_flight_option_3_selected": "You leave the strong Pokémon\nwith its prize and continue on.",
 
   "department_store_sale_intro_message": "It's a lady with a ton of shopping bags.",
   "department_store_sale_speaker": "Shopper",
@@ -217,28 +187,6 @@ export const mysteryEncounter = {
 
   // Mystery Encounters -- Rogue Tier
 
-  "dark_deal_intro_message": "A strange man in a tattered coat\nstands in your way...",
-  "dark_deal_speaker": "Shady Guy",
-  "dark_deal_intro_dialogue": `Hey, you!
-    $I've been working on a new device\nto bring out a Pokémon's latent power!
-    $It completely rebinds the Pokémon's atoms\nat a molecular level into a far more powerful form.
-    $Hehe...@d{64} I just need some sac-@d{32}\nErr, test subjects, to prove it works.`,
-  "dark_deal_title": "Dark Deal",
-  "dark_deal_description": "The disturbing fellow holds up some Pokéballs.\n\"I'll make it worth your while! You can have these strong Pokéballs as payment, All I need is a Pokémon from your team! Hehe...\"",
-  "dark_deal_query": "What will you do?",
-  "dark_deal_option_1_label": "Accept",
-  "dark_deal_option_1_tooltip": "(+) 5 Rogue Balls\n(?) Enhance a Random Pokémon",
-  "dark_deal_option_2_label": "Refuse",
-  "dark_deal_option_2_tooltip": "(-) No Rewards",
-  "dark_deal_option_1_selected": `Let's see, that {{pokeName}} will do nicely!
-  $Remember, I'm not responsible\nif anything bad happens!@d{32} Hehe...`,
-  "dark_deal_option_1_selected_message": `The man hands you 5 Rogue Balls.
-  \${{pokeName}} hops into the strange machine...
-  $Flashing lights and weird noises\nstart coming from the machine!
-  $...@d{96} Something emerges\nfrom the device, raging wildly!`,
-  "dark_deal_option_2_selected": "Not gonna help a poor fellow out?\nPah!",
-  "dark_deal_outro": "After the harrowing encounter,\nyou collect yourself and depart.",
-
   "sleeping_snorlax_intro_message": `As you walk down a narrow pathway, you see a towering silhouette blocking your path.
   $You get closer to see a Snorlax sleeping peacefully.\nIt seems like there's no way around it.`,
   "sleeping_snorlax_title": "Sleeping Snorlax",
@@ -253,12 +201,20 @@ export const mysteryEncounter = {
   "sleeping_snorlax_option_3_disabled_tooltip": "Your Pokémon need to know certain moves to choose this",
   "sleeping_snorlax_option_1_selected_message": "You approach the\nPokémon without fear.",
   "sleeping_snorlax_option_2_selected_message": `.@d{32}.@d{32}.@d{32}
-  $You wait for a time, but the Snorlax's yawns make your party sleepy.`,
-  "sleeping_snorlax_option_2_good_result": "When you all awaken, the Snorlax is no where to be found - but your Pokémon are all healed!",
-  "sleeping_snorlax_option_2_bad_result": `Your {{primaryName}} is still asleep...
-  $But on the bright side, the Snorlax left something behind...
-  $@s{item_fanfare}You gained a Berry!`,
+  $You wait for a time, but the Snorlax's yawns make your party sleepy...`,
+  "sleeping_snorlax_option_2_good_result": "When you all awaken, the Snorlax is no where to be found -\nbut your Pokémon are all healed!",
   "sleeping_snorlax_option_3_good_result": "Your {{option3PrimaryName}} uses {{option3PrimaryMove}}! @s{item_fanfare}It steals Leftovers off the sleeping Snorlax and you make out like bandits!",
 
+  mysteriousChallengers: mysteriousChallengersDialogue,
+  mysteriousChest: mysteriousChestDialogue,
+  darkDeal: darkDealDialogue,
+  fightOrFlight: fightOrFlightDialogue,
+  sleepingSnorlax: sleepingSnorlaxDialogue,
+  trainingSession: trainingSessionDialogue,
+  departmentStoreSale: departmentStoreSaleDialogue,
+  shadyVitaminDealer: shadyVitaminDealerDialogue,
+  fieldTrip: fieldTripDialogue,
+  safariZone: safariZoneDialogue,
   lostAtSea: lostAtSeaDialogue,
+  fieryFallout: fieryFalloutDialogue,
 } as const;

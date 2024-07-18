@@ -12,7 +12,7 @@ import GameManager from "#app/test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { runSelectMysteryEncounterOption } from "../encounterTestUtils";
 
-const namepsace = "mysteryEncounter:lostAtSeaDialogue";
+const namespace = "mysteryEncounter:lostAtSeaDialogue";
 /** Blastoise for surf. Pidgeot for fly. Abra for none. */
 const defaultParty = [Species.BLASTOISE, Species.PIDGEOT, Species.ABRA];
 const defaultBiome = Biome.SEA;
@@ -49,10 +49,10 @@ describe("Lost at Sea - Mystery Encounter", () => {
 
     expect(LostAtSeaEncounter.encounterType).toBe(MysteryEncounterType.LOST_AT_SEA);
     expect(LostAtSeaEncounter.dialogue).toBeDefined();
-    expect(LostAtSeaEncounter.dialogue.intro).toStrictEqual([{ text: `${namepsace}:intro` }]);
-    expect(LostAtSeaEncounter.dialogue.encounterOptionsDialogue.title).toBe(`${namepsace}:title`);
-    expect(LostAtSeaEncounter.dialogue.encounterOptionsDialogue.description).toBe(`${namepsace}:description`);
-    expect(LostAtSeaEncounter.dialogue.encounterOptionsDialogue.query).toBe(`${namepsace}:query`);
+    expect(LostAtSeaEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}:intro` }]);
+    expect(LostAtSeaEncounter.dialogue.encounterOptionsDialogue.title).toBe(`${namespace}:title`);
+    expect(LostAtSeaEncounter.dialogue.encounterOptionsDialogue.description).toBe(`${namespace}:description`);
+    expect(LostAtSeaEncounter.dialogue.encounterOptionsDialogue.query).toBe(`${namespace}:query`);
     expect(LostAtSeaEncounter.options.length).toBe(3);
   });
 
@@ -100,13 +100,13 @@ describe("Lost at Sea - Mystery Encounter", () => {
       expect(option1.optionMode).toBe(EncounterOptionMode.DISABLED_OR_DEFAULT);
       expect(option1.dialogue).toBeDefined();
       expect(option1.dialogue).toStrictEqual({
-        buttonLabel: `${namepsace}:option:1:label`,
-        disabledButtonLabel: `${namepsace}:option:1:label_disabled`,
-        buttonTooltip: `${namepsace}:option:1:tooltip`,
-        disabledButtonTooltip: `${namepsace}:option:1:tooltip_disabled`,
+        buttonLabel: `${namespace}:option:1:label`,
+        disabledButtonLabel: `${namespace}:option:1:label_disabled`,
+        buttonTooltip: `${namespace}:option:1:tooltip`,
+        disabledButtonTooltip: `${namespace}:option:1:tooltip_disabled`,
         selected: [
           {
-            text: `${namepsace}:option:1:selected`,
+            text: `${namespace}:option:1:selected`,
           },
         ],
       });
@@ -147,13 +147,13 @@ describe("Lost at Sea - Mystery Encounter", () => {
       expect(option2.optionMode).toBe(EncounterOptionMode.DISABLED_OR_DEFAULT);
       expect(option2.dialogue).toBeDefined();
       expect(option2.dialogue).toStrictEqual({
-        buttonLabel: `${namepsace}:option:2:label`,
-        disabledButtonLabel: `${namepsace}:option:2:label_disabled`,
-        buttonTooltip: `${namepsace}:option:2:tooltip`,
-        disabledButtonTooltip: `${namepsace}:option:2:tooltip_disabled`,
+        buttonLabel: `${namespace}:option:2:label`,
+        disabledButtonLabel: `${namespace}:option:2:label_disabled`,
+        buttonTooltip: `${namespace}:option:2:tooltip`,
+        disabledButtonTooltip: `${namespace}:option:2:tooltip_disabled`,
         selected: [
           {
-            text: `${namepsace}:option:2:selected`,
+            text: `${namespace}:option:2:selected`,
           },
         ],
       });
@@ -197,11 +197,11 @@ describe("Lost at Sea - Mystery Encounter", () => {
       expect(option3.optionMode).toBe(EncounterOptionMode.DEFAULT);
       expect(option3.dialogue).toBeDefined();
       expect(option3.dialogue).toStrictEqual({
-        buttonLabel: `${namepsace}:option:3:label`,
-        buttonTooltip: `${namepsace}:option:3:tooltip`,
+        buttonLabel: `${namespace}:option:3:label`,
+        buttonTooltip: `${namespace}:option:3:tooltip`,
         selected: [
           {
-            text: `${namepsace}:option:3:selected`,
+            text: `${namespace}:option:3:selected`,
           },
         ],
       });

@@ -158,14 +158,15 @@ const anyBiomeEncounters: MysteryEncounterType[] = [
  */
 export const mysteryEncountersByBiome = new Map<Biome, MysteryEncounterType[]>([
   [Biome.TOWN, []],
-  [Biome.PLAINS, []],
+  [Biome.PLAINS, [
+    MysteryEncounterType.SLEEPING_SNORLAX
+  ]],
   [Biome.GRASS, [
     MysteryEncounterType.SLEEPING_SNORLAX,
   ]],
   [Biome.TALL_GRASS, []],
   [Biome.METROPOLIS, []],
   [Biome.FOREST, [
-    MysteryEncounterType.SLEEPING_SNORLAX,
     MysteryEncounterType.SAFARI_ZONE
   ]],
 
@@ -178,13 +179,9 @@ export const mysteryEncountersByBiome = new Map<Biome, MysteryEncounterType[]>([
   [Biome.BEACH, []],
   [Biome.LAKE, []],
   [Biome.SEABED, []],
-  [Biome.MOUNTAIN, [
-    MysteryEncounterType.SLEEPING_SNORLAX
-  ]],
+  [Biome.MOUNTAIN, []],
   [Biome.BADLANDS, []],
-  [Biome.CAVE, [
-    MysteryEncounterType.SLEEPING_SNORLAX
-  ]],
+  [Biome.CAVE, []],
   [Biome.DESERT, []],
   [Biome.ICE_CAVE, []],
   [Biome.MEADOW, []],
