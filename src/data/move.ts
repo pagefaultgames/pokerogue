@@ -2099,26 +2099,8 @@ export class WeatherChangeAttr extends MoveEffectAttr {
 
   getCondition(): MoveConditionFunc {
     // adding clause CHILLY_RECEPTION, so move doesn't fail when it's already snowing: since the move still allows a switch out
-    return (user, target, move) => {
+    return (user, target, move) => !user.scene.arena.weather || (user.scene.arena.weather.weatherType !== this.weatherType && !user.scene.arena.weather.isImmutable());
 
-      if (move.id === Moves.CHILLY_RECEPTION) {
-        // in the case of CHILLY_RECEPTION: if trySetWeather(...) === False AND getSwitchOut() === False, then it's false
-
-        // know that in this case a ForceSwithcOutAttr must exist, so no error checking needed
-
-        // if can't switch out, and it's snowing, then move fails
-        if ( move.getAttrs(ForceSwitchOutAttr)[0].getSwitchOutCondition()(user, target, move) === false &&  user.scene.arena.weather?.weatherType === WeatherType.SNOW ) {
-          return false;
-        }
-
-        // else if can set weather to snow, or can switch out, then move succeeds
-        return user.scene.arena.trySetWeather(this.weatherType, true) || move.getAttrs(ForceSwitchOutAttr)[0].getSwitchOutCondition()(user, target, move);
-      }
-
-
-      return !user.scene.arena.weather || (user.scene.arena.weather.weatherType !== this.weatherType && !user.scene.arena.weather.isImmutable());
-
-    };
   }
 }
 
@@ -4580,15 +4562,8 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => {
+    return (user, target, move) => (move.category !== MoveCategory.STATUS || this.getSwitchOutCondition()(user, target, move));
 
-      // add bypass here for CHILLY, since it's a status move that shouldn't fail when getSwitchOutCondition fails (moves like u_turn aren't STATUS so they still pass)
-      if (move.id === Moves.CHILLY_RECEPTION) {
-        return true;
-      }
-
-      return (move.category !== MoveCategory.STATUS || this.getSwitchOutCondition()(user, target, move));
-    };
   }
 
   getFailedText(user: Pokemon, target: Pokemon, move: Move, cancelled: Utils.BooleanHolder): string | null {
