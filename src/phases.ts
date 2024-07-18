@@ -2930,8 +2930,8 @@ export class MoveEffectPhase extends PokemonPhase {
             this.scene.queueMessage(i18next.t("battle:attackMissed", { pokemonNameWithAffix: getPokemonNameWithAffix(target) }));
             if (moveHistoryEntry.result === MoveResult.PENDING) {
               moveHistoryEntry.result = MoveResult.MISS;
-              user.pushMoveHistory(moveHistoryEntry);
             }
+            user.pushMoveHistory(moveHistoryEntry);
             applyMoveAttrs(MissEffectAttr, user, null, move);
             continue;
           }
