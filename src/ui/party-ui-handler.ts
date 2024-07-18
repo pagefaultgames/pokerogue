@@ -110,6 +110,8 @@ export default class PartyUiHandler extends MessageUiHandler {
   private tmMoveId: Moves;
   private showMovePp: boolean;
 
+  private incomingMon: string;
+
   private iconAnimHandler: PokemonIconAnimHandler;
 
   private static FilterAll = (_pokemon: PlayerPokemon) => null;
@@ -251,6 +253,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       : PartyUiHandler.FilterAllMoves;
     this.tmMoveId = args.length > 5 && args[5] ? args[5] : Moves.NONE;
     this.showMovePp = args.length > 6 && args[6];
+    this.incomingMon = args.length > 7 && args[7] ? args[7] : undefined
 
     this.partyContainer.setVisible(true);
     this.partyBg.setTexture(`party_bg${this.scene.currentBattle.double ? "_double" : ""}`);
@@ -284,7 +287,15 @@ export default class PartyUiHandler extends MessageUiHandler {
     if (this.optionsMode) {
       const option = this.options[this.optionsCursor];
       if (button === Button.ACTION) {
+        //console.log("Menu Action (" + option + " - targ " + PartyOption.RELEASE + ")")
         const pokemon = this.scene.getParty()[this.cursor];
+        if (option === PartyOption.RELEASE) {
+          if (this.incomingMon != undefined) {
+            LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, `Add ${this.incomingMon}, replacing ${this.scene.getParty()[this.cursor].name} (Slot ${this.cursor + 1})`)
+          } else {
+            LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, `Release ${this.scene.getParty()[this.cursor].name} (Slot ${this.cursor + 1})`)
+          }
+        }
         if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER && !this.transferMode && option !== PartyOption.CANCEL) {
           this.startTransfer();
           this.clearOptions();
@@ -407,7 +418,6 @@ export default class PartyUiHandler extends MessageUiHandler {
             this.showText(i18next.t("partyUiHandler:releaseConfirmation", { pokemonName: pokemon.name }), null, () => {
               ui.setModeWithoutClear(Mode.CONFIRM, () => {
                 ui.setMode(Mode.PARTY);
-                LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, `Add ${pokemon.name} to party, replacing ${this.scene.getParty()[this.cursor].name} (Slot ${this.cursor + 1})`)
                 this.doRelease(this.cursor);
               }, () => {
                 ui.setMode(Mode.PARTY);

@@ -6142,6 +6142,8 @@ export class AttemptCapturePhase extends PokemonPhase {
     this.scene.pokemonInfoContainer.show(pokemon, true);
     // Update new IVs
     this.scene.gameData.updateSpeciesDexIvs(pokemon.species.getRootSpeciesId(true), pokemon.ivs);
+    
+    LoggerTools.appendAction(this.scene, this.scene.currentBattle.waveIndex, ` (Catches ${pokemon.name})`)
 
     this.scene.ui.showText(i18next.t("battle:pokemonCaught", { pokemonName: pokemon.name }), null, () => {
       const end = () => {
@@ -6192,7 +6194,7 @@ export class AttemptCapturePhase extends PokemonPhase {
                       promptRelease();
                     }
                   });
-                });
+                }, undefined, undefined, undefined, undefined, pokemon.name);
               }, () => {
                 // NO
                 LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "Don't keep " + pokemon.name)
@@ -6249,7 +6251,7 @@ export class AttemptRunPhase extends PokemonPhase {
 
     if (playerPokemon.randSeedInt(256) < escapeChance.value) {
       this.scene.playSound("flee");
-      LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, "")
+      LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, "Fled")
       this.scene.queueMessage(i18next.t("battle:runAwaySuccess"), null, true, 500);
 
       this.scene.tweens.add({

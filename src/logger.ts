@@ -1399,6 +1399,30 @@ export function logActions(scene: BattleScene, floor: integer, action: string) {
   localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
 }
 /**
+ * Logs the actions that the player took, adding text to the most recent action.
+ * @param scene The BattleScene. Used to get the log ID.
+ * @param floor The wave index to write to.
+ * @param action The text you want to add to the actions list.
+ * 
+ * @see resetWaveActions
+ */
+export function appendAction(scene: BattleScene, floor: integer, action: string) {
+  if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
+  var drpd = getDRPD(scene)
+  console.log("Append to Action", drpd)
+  var wv: Wave = getWave(drpd, floor, scene)
+  if (wv.double == undefined)
+    wv.double = false
+  if (wv.clearActionsFlag) {
+    console.log("Triggered clearActionsFlag")
+    wv.clearActionsFlag = false
+    wv.actions = []
+  }
+  wv.actions[wv.actions.length - 1] = wv.actions[wv.actions.length - 1] + action
+  console.log(drpd)
+  localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
+}
+/**
  * Logs that a Pokémon was captured.
  * @param scene The BattleScene. Used to get the log ID.
  * @param floor The wave index to write to.
