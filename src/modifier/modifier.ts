@@ -875,6 +875,97 @@ export class SpeciesStatBoosterModifier extends StatBoosterModifier {
 }
 
 /**
+ * Modifier used for held items that apply critical-hit stage boost(s).
+ * @extends PokemonHeldItemModifier
+ * @see {@linkcode apply}
+ */
+export class CritBoosterModifier extends PokemonHeldItemModifier {
+  /** The amount of stages by which the held item increases the current critical-hit stage value */
+  protected stageIncrement: number;
+
+  constructor(type: ModifierType, pokemonId: integer, stageIncrement: number, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+
+    this.stageIncrement = stageIncrement;
+  }
+
+  clone() {
+    return new CritBoosterModifier(this.type, this.pokemonId, this.stageIncrement, this.stackCount);
+  }
+
+  getArgs(): any[] {
+    return super.getArgs().concat(this.stageIncrement);
+  }
+
+  matchType(modifier: Modifier): boolean {
+    if (modifier instanceof CritBoosterModifier) {
+      return (modifier as CritBoosterModifier).stageIncrement === this.stageIncrement;
+    }
+
+    return false;
+  }
+
+  /**
+   * Increases the current critical-hit stage value by {@linkcode stageIncrement}.
+   * @param args [0] {@linkcode Pokemon} N/A
+   *             [1] {@linkcode Utils.IntegerHolder} that holds the resulting critical-hit level
+   * @returns true if the critical-hit stage boost applies successfully, false otherwise
+   */
+  apply(args: any[]): boolean {
+    const critStage = args[1] as Utils.NumberHolder;
+
+    critStage.value += this.stageIncrement;
+    return true;
+  }
+
+  getMaxHeldItemCount(_pokemon: Pokemon): number {
+    return 1;
+  }
+}
+
+/**
+ * Modifier used for held items that apply critical-hit stage boost(s)
+ * if the holder is of a specific {@linkcode Species}.
+ * @extends CritBoosterModifier
+ * @see {@linkcode shouldApply}
+ */
+export class SpeciesCritBoosterModifier extends CritBoosterModifier {
+  /** The species that the held item's critical-hit stage boost applies to */
+  private species: Species[];
+
+  constructor(type: ModifierType, pokemonId: integer, stageIncrement: number, species: Species[], stackCount?: integer) {
+    super(type, pokemonId, stageIncrement, stackCount);
+
+    this.species = species;
+  }
+
+  clone() {
+    return new SpeciesCritBoosterModifier(this.type, this.pokemonId, this.stageIncrement, this.species, this.stackCount);
+  }
+
+  getArgs(): any[] {
+    return [ ...super.getArgs(), this.species ];
+  }
+
+  matchType(modifier: Modifier): boolean {
+    return modifier instanceof SpeciesCritBoosterModifier;
+  }
+
+  /**
+   * Checks if the holder's {@linkcode Species} (or its fused species) is listed
+   * in {@linkcode species}.
+   * @param args [0] {@linkcode Pokemon} that holds the held item
+   *             [1] {@linkcode Utils.IntegerHolder} N/A
+   * @returns true if the critical-hit level can be incremented, false otherwise
+   */
+  shouldApply(args: any[]) {
+    const holder = args[0] as Pokemon;
+
+    return super.shouldApply(args) && (this.species.includes(holder.getSpeciesForm(true).speciesId) || (holder.isFusion() && this.species.includes(holder.getFusionSpeciesForm(true).speciesId)));
+  }
+}
+
+/**
  * Applies Specific Type item boosts (e.g., Magnet)
  */
 export class AttackTypeBoosterModifier extends PokemonHeldItemModifier {
