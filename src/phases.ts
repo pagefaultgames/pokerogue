@@ -381,7 +381,7 @@ export class TitlePhase extends Phase {
 
   start(): void {
     super.start();
-    console.log(LoggerTools.importDocument(JSON.stringify(LoggerTools.newDocument())))
+    //console.log(LoggerTools.importDocument(JSON.stringify(LoggerTools.newDocument())))
 
     this.scene.ui.clearText();
     this.scene.ui.fadeIn(250);
@@ -2678,29 +2678,27 @@ export class TurnInitPhase extends FieldPhase {
     });
 
     var Pt = this.scene.getEnemyParty()
-    var Pt2 = Pt.slice()
-    if (Pt2.length > 1) {
-      Pt2[1] = Pt[0]
-      Pt2[0] = Pt[1]
-    }
+    var Pt1 = [this.scene.getEnemyParty()[0], this.scene.getEnemyParty()[2], this.scene.getEnemyParty()[4]]
+    var Pt2 = [this.scene.getEnemyParty()[1], this.scene.getEnemyParty()[3], this.scene.getEnemyParty()[5]]
     Pt.forEach((pokemon, i) => {
-      if (pokemon.hasTrainer() || true) {
-        console.log(i)
-        if (pokemon.getFieldIndex() == 1 && pokemon.isOnField()) {
-          // Switch this to cycle between
-          //   - hiding the top mon's team bar
-          //   - showing the bottom mon's team bar with its active slots reversed
-          if (false) {
-            pokemon.getBattleInfo().displayParty(Pt)
-            Pt[0].getBattleInfo().switchIconVisibility(false); // Make the top mon's team bar go away
-            Pt[0].getBattleInfo().iconsActive = false; // Prevent the top mon from re-opening its bar
+      if (pokemon != undefined)
+        if (pokemon.hasTrainer() || true) {
+          console.log(i)
+          if (pokemon.getFieldIndex() == 1 && pokemon.isOnField()) {
+            // Switch this to cycle between
+            //   - hiding the top mon's team bar
+            //   - showing the bottom mon's team bar with its active slots reversed
+            if (false) {
+              pokemon.getBattleInfo().displayParty(Pt)
+              Pt[0].getBattleInfo().switchIconVisibility(false); // Make the top mon's team bar go away
+              Pt[0].getBattleInfo().iconsActive = false; // Prevent the top mon from re-opening its bar
+            } else {
+              pokemon.getBattleInfo().displayParty(Pt2)
+            }
           } else {
-            pokemon.getBattleInfo().displayParty(Pt2)
+            pokemon.getBattleInfo().displayParty((this.scene.currentBattle.double ? Pt1 : Pt))
           }
-        } else {
-          pokemon.getBattleInfo().displayParty(Pt)
         }
-      }
     })
 
     this.scene.pushPhase(new TurnStartPhase(this.scene));
@@ -2772,7 +2770,7 @@ export class CommandPhase extends FieldPhase {
       } else {
         const moveIndex = playerPokemon.getMoveset().findIndex(m => m.moveId === queuedMove.move);
         if (moveIndex > -1 && playerPokemon.getMoveset()[moveIndex].isUsable(playerPokemon, queuedMove.ignorePP)) {
-          this.handleCommand(Command.FIGHT, moveIndex, queuedMove.ignorePP, { targets: queuedMove.targets, multiple: queuedMove.targets.length > 1 });
+          this.handleCommand(Command.FIGHT, moveIndex, queuedMove.ignorePP, { targets: queuedMove.targets, multiple: queuedMove.targets.length > 1, isContinuing: true });
         } else {
           this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
         }
@@ -3163,7 +3161,12 @@ export class TurnStartPhase extends FieldPhase {
         //this.scene.unshiftPhase(new AttemptCapturePhase(this.scene, turnCommand.targets[0] % 2, turnCommand.cursor));
         break;
       case Command.POKEMON:
-        LoggerTools.Actions[pokemon.getBattlerIndex()] = ((turnCommand.args[0] as boolean) ? "Baton" : "Switch") + " " + LoggerTools.playerPokeName(this.scene, pokemon) + " to " + LoggerTools.playerPokeName(this.scene, turnCommand.cursor)
+        if (this.scene.currentBattle.double) {
+          LoggerTools.Actions[pokemon.getBattlerIndex()] = ((turnCommand.args[0] as boolean) ? "Baton" : "Switch") + " " + LoggerTools.playerPokeName(this.scene, pokemon) + " to " + LoggerTools.playerPokeName(this.scene, turnCommand.cursor)
+        } else {
+          //LoggerTools.Actions[pokemon.getBattlerIndex()] = ((turnCommand.args[0] as boolean) ? "Baton" : "Switch") + " " + LoggerTools.playerPokeName(this.scene, pokemon) + " to " + LoggerTools.playerPokeName(this.scene, turnCommand.cursor)
+          LoggerTools.Actions[pokemon.getBattlerIndex()] = ((turnCommand.args[0] as boolean) ? "Baton" : "Switch") + " to " + LoggerTools.playerPokeName(this.scene, turnCommand.cursor)
+        }
         break;
       case Command.RUN:
         LoggerTools.Actions[pokemon.getBattlerIndex()] = "Run"
@@ -3244,11 +3247,11 @@ export class TurnStartPhase extends FieldPhase {
               console.log(turnCommand.targets, turnCommand.move.targets)
               LoggerTools.Actions[pokemon.getBattlerIndex()] = mv.getName()
               if (this.scene.currentBattle.double) {
-                var targIDs = ["Counter", "Self", "Ally", "L", "R"]
+                var targIDs = ["Self", "Self", "Ally", "L", "R"]
                 if (pokemon.getBattlerIndex() == 1) targIDs = ["Counter", "Ally", "Self", "L", "R"]
                 LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
               } else {
-                var targIDs = ["Counter", "", "", "", ""]
+                var targIDs = ["Self", "", "", "", ""]
                 var myField = this.scene.getField()
                 if (myField[0])
                   targIDs[1] = myField[0].name
@@ -3264,32 +3267,36 @@ export class TurnStartPhase extends FieldPhase {
               console.log(mv.getName(), targets)
             }
           } else {
-            console.log("turncommand = ", turnCommand, " -- running BOTTO< block")
+            console.log("turncommand = ", turnCommand, " -- running BOTTOM block")
             const playerPhase = new MovePhase(this.scene, pokemon, turnCommand.targets || turnCommand.move.targets, move, false, queuedMove.ignorePP);
             var targets = turnCommand.targets || turnCommand.move.targets
             var mv = move
             if (pokemon.isPlayer()) {
               console.log(turnCommand.targets, turnCommand.move.targets)
-              LoggerTools.Actions[pokemon.getBattlerIndex()] = mv.getName()
-              if (this.scene.currentBattle.double) {
-                var targIDs = ["Counter", "Self", "Ally", "L", "R"]
-                if (pokemon.getBattlerIndex() == 1) targIDs = ["Counter", "Ally", "Self", "L", "R"]
-                LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+              if (turnCommand.args[1] && turnCommand.args[1].isContinuing != undefined) {
+                console.log(mv.getName(), targets)
               } else {
-                var targIDs = ["Counter", "", "", "", ""]
-                var myField = this.scene.getField()
-                if (myField[0])
-                  targIDs[1] = myField[0].name
-                if (myField[1])
-                  targIDs[2] = myField[1].name
-                var eField = this.scene.getEnemyField()
-                if (eField[0])
-                  targIDs[3] = eField[0].name
-                if (eField[1])
-                  targIDs[4] = eField[1].name
-                //LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+                LoggerTools.Actions[pokemon.getBattlerIndex()] = mv.getName()
+                if (this.scene.currentBattle.double) {
+                  var targIDs = ["Self", "Self", "Ally", "L", "R"]
+                  if (pokemon.getBattlerIndex() == 1) targIDs = ["Counter", "Ally", "Self", "L", "R"]
+                  LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+                } else {
+                  var targIDs = ["Self", "", "", "", ""]
+                  var myField = this.scene.getField()
+                  if (myField[0])
+                    targIDs[1] = myField[0].name
+                  if (myField[1])
+                    targIDs[2] = myField[1].name
+                  var eField = this.scene.getEnemyField()
+                  if (eField[0])
+                    targIDs[3] = eField[0].name
+                  if (eField[1])
+                    targIDs[4] = eField[1].name
+                  //LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+                }
+                console.log(mv.getName(), targets)
               }
-              console.log(mv.getName(), targets)
             }
             this.scene.pushPhase(playerPhase);
           }
@@ -3477,30 +3484,6 @@ export class BattleEndPhase extends BattlePhase {
 
     this.scene.currentBattle.addBattleScore(this.scene);
 
-    var drpd: LoggerTools.DRPD = LoggerTools.getDRPD(this.scene)
-    var wv: LoggerTools.Wave = LoggerTools.getWave(drpd, this.scene.currentBattle.waveIndex, this.scene)
-    var lastcount = 0;
-    var lastval = undefined;
-    var tempActions = wv.actions.slice();
-    wv.actions = []
-    // Loop through each action
-    for (var i = 0; i < tempActions.length; i++) {
-      if (tempActions[i] != lastval) {
-        if (lastcount > 0) {
-          wv.actions.push(lastval + (lastcount == 1 ? "" : " x" + lastcount))
-        }
-        lastval = tempActions[i]
-        lastcount = 1
-      } else {
-        lastcount++
-      }
-    }
-    if (lastcount > 0) {
-      wv.actions.push(lastval + (lastcount == 1 ? "" : " x" + lastcount))
-    }
-    console.log(tempActions, wv.actions)
-    LoggerTools.save(this.scene, drpd)
-
     this.scene.gameData.gameStats.battles++;
     if (this.scene.currentBattle.trainer) {
       this.scene.gameData.gameStats.trainersDefeated++;
@@ -3541,6 +3524,36 @@ export class BattleEndPhase extends BattlePhase {
         this.scene.removeModifier(m);
       }
     }
+
+    var drpd: LoggerTools.DRPD = LoggerTools.getDRPD(this.scene)
+    var wv: LoggerTools.Wave = LoggerTools.getWave(drpd, this.scene.currentBattle.waveIndex, this.scene)
+    var lastcount = 0;
+    var lastval = undefined;
+    var tempActions = wv.actions.slice();
+    var prevWaveActions = []
+    wv.actions = []
+    // Loop through each action
+    for (var i = 0; i < tempActions.length; i++) {
+      if (tempActions[i].substring(0, 10) == "[MOVEBACK]") {
+        prevWaveActions.push(tempActions[i].substring(10))
+      } else if (tempActions[i] != lastval) {
+        if (lastcount > 0) {
+          wv.actions.push(lastval + (lastcount == 1 ? "" : " x" + lastcount))
+        }
+        lastval = tempActions[i]
+        lastcount = 1
+      } else {
+        lastcount++
+      }
+    }
+    if (lastcount > 0) {
+      wv.actions.push(lastval + (lastcount == 1 ? "" : " x" + lastcount))
+    }
+    console.log(tempActions, wv.actions)
+    var wv2: LoggerTools.Wave = LoggerTools.getWave(drpd, this.scene.currentBattle.waveIndex - 1, this.scene)
+    wv2.actions = wv2.actions.concat(prevWaveActions)
+    console.log(drpd)
+    LoggerTools.save(this.scene, drpd)
 
     this.scene.updateModifiers().then(() => this.end());
   }
@@ -5871,7 +5884,8 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
                       if (W.shop != "") {
                         LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, W.shop + "; skip learning it")
                       } else {
-                        LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, LoggerTools.playerPokeName(this.scene, pokemon) + " | Skip " + move.name)
+                        var actions = LoggerTools.getActionCount(this.scene, this.scene.currentBattle.waveIndex)
+                        LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, (actions == 0 ? "[MOVEBACK]" : "") + LoggerTools.playerPokeName(this.scene, pokemon) + " | Skip " + move.name)
                       }
                       this.scene.ui.showText(i18next.t("battle:learnMoveNotLearned", { pokemonName: pokemon.name, moveName: move.name }), null, () => this.end(), null, true);
                     }, () => {
@@ -5898,7 +5912,8 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
                             if (W.shop != "") {
                               LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, W.shop + " → learn " + new PokemonMove(this.moveId).getName() + " → replace " + pokemon.moveset[moveIndex].getName())
                             } else {
-                              LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, LoggerTools.playerPokeName(this.scene, pokemon) + " | Learn " + new PokemonMove(this.moveId).getName() + " → replace " + pokemon.moveset[moveIndex].getName())
+                              var actions = LoggerTools.getActionCount(this.scene, this.scene.currentBattle.waveIndex)
+                              LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, (actions == 0 ? "[MOVEBACK]" : "") + LoggerTools.playerPokeName(this.scene, pokemon) + " | Learn " + new PokemonMove(this.moveId).getName() + " → replace " + pokemon.moveset[moveIndex].getName())
                             }
                             pokemon.setMove(moveIndex, Moves.NONE);
                             this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, this.moveId));
