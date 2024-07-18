@@ -1433,7 +1433,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     },
     "victory": {
       1: `좋아! 꼬마야, 정말로, 인상적이었단다.
-                $Y네 포켓몬은 너를 믿고 승리를 위해 최선을 다했구나.
+                $네 포켓몬은 너를 믿고 승리를 위해 최선을 다했구나.
                 $비록 내가 졌지만, 좋아서 바보같이 웃음이 나오는구나!`,
     },
     "defeat": {
