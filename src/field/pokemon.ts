@@ -108,6 +108,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   private shinySparkle: Phaser.GameObjects.Sprite;
 
+  public usedInBattle: boolean = false;
   public partyslot: integer;
 
   constructor(scene: BattleScene, x: number, y: number, species: PokemonSpecies, level: integer, abilityIndex?: integer, formIndex?: integer, gender?: Gender, shiny?: boolean, variant?: Variant, ivs?: integer[], nature?: Nature, dataSource?: Pokemon | PokemonData) {
@@ -1695,6 +1696,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   toggleFlyout(visible: boolean): void {
     this.battleInfo.toggleFlyout(visible);
+  }
+  toggleTeamTray(visible: boolean): void {
+    this.battleInfo.toggleTeamTray(visible);
   }
 
   addExp(exp: integer) {
