@@ -45,6 +45,8 @@ describe("Abilities - Magic Guard", () => {
     vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
   });
 
+  //Bulbapedia Reference: https://bulbapedia.bulbagarden.net/wiki/Magic_Guard_(Ability)
+
   it(
     "ability should prevent damage caused by weather",
     async () => {
