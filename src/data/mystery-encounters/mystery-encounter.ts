@@ -19,6 +19,7 @@ import {
   WaveRangeRequirement
 } from "./mystery-encounter-requirements";
 import { BattlerIndex } from "#app/battle";
+import { EncounterAnim } from "#app/data/battle-anims";
 
 export enum MysteryEncounterVariant {
   DEFAULT,
@@ -57,6 +58,7 @@ export default interface IMysteryEncounter {
    * Optional params
    */
   encounterTier?: MysteryEncounterTier;
+  encounterAnimations?: EncounterAnim[];
   hideBattleIntroMessage?: boolean;
   hideIntroVisuals?: boolean;
   catchAllowed?: boolean;
@@ -192,13 +194,6 @@ export default class IMysteryEncounter implements IMysteryEncounter {
     const sceneReq = !this.requirements.some(requirement => !requirement.meetsRequirement(scene));
     const secReqs = this.meetsSecondaryRequirementAndSecondaryPokemonSelected(scene); // secondary is checked first to handle cases of primary overlapping with secondary
     const priReqs = this.meetsPrimaryRequirementAndPrimaryPokemonSelected(scene);
-
-    // console.log("-------" + MysteryEncounterType[this.encounterType] + " Encounter Check -------");
-    // console.log(this);
-    // console.log( "sceneCheck: " + sceneReq);
-    // console.log( "primaryCheck: " +  priReqs);
-    // console.log( "secondaryCheck: " +  secReqs);
-    // console.log(MysteryEncounterTier[this.encounterTier]);
 
     return sceneReq && secReqs && priReqs;
   }
@@ -377,6 +372,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
 
   dialogue?: MysteryEncounterDialogue;
   encounterTier?: MysteryEncounterTier;
+  encounterAnimations?: EncounterAnim[];
   requirements?: EncounterSceneRequirement[] = [];
   primaryPokemonRequirements?: EncounterPokemonRequirement[] = [];
   secondaryPokemonRequirements ?: EncounterPokemonRequirement[] = [];
@@ -469,6 +465,16 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    */
   withEncounterTier(encounterTier: MysteryEncounterTier): this & Required<Pick<IMysteryEncounter, "encounterTier">> {
     return Object.assign(this, { encounterTier: encounterTier });
+  }
+
+  /**
+   * Defines any EncounterAnim animations that are intended to be used during the encounter
+   * @param encounterAnimations
+   * @returns
+   */
+  withAnimations(...encounterAnimations: EncounterAnim[]): this & Required<Pick<IMysteryEncounter, "encounterAnimations">> {
+    encounterAnimations = encounterAnimations instanceof Array ? encounterAnimations : [encounterAnimations];
+    return Object.assign(this, { encounterAnimations: encounterAnimations });
   }
 
   /**

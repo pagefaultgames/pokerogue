@@ -9,7 +9,7 @@ import { Stat } from "./data/pokemon-stat";
 import { BerryModifier, BypassSpeedChanceModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyPersistentModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HitHealModifier, IvScannerModifier, LapsingPersistentModifier, LapsingPokemonHeldItemModifier, MapModifier, Modifier, MoneyInterestModifier, MoneyMultiplierModifier, MultipleParticipantExpBonusModifier, overrideHeldItems, overrideModifiers, PersistentModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, PokemonMoveAccuracyBoosterModifier, PokemonMultiHitModifier, SwitchEffectTransferModifier, TempBattleStatBoosterModifier, TurnHealModifier, TurnHeldItemTransferModifier, TurnStatusEffectModifier } from "./modifier/modifier";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./data/pokeball";
-import { CommonAnim, CommonBattleAnim, initMoveAnim, loadMoveAnimAssets, MoveAnim } from "./data/battle-anims";
+import { CommonAnim, CommonBattleAnim, initEncounterAnims, initMoveAnim, loadEncounterAnimAssets, loadMoveAnimAssets, MoveAnim } from "./data/battle-anims";
 import { getStatusEffectActivationText, getStatusEffectCatchRateMultiplier, getStatusEffectHealText, getStatusEffectObtainText, getStatusEffectOverlapText, StatusEffect } from "./data/status-effect";
 import { SummaryUiMode } from "./ui/summary-ui-handler";
 import EvolutionSceneHandler from "./ui/evolution-scene-handler";
@@ -831,6 +831,11 @@ export class EncounterPhase extends BattlePhase {
         }
         mysteryEncounter.populateDialogueTokensFromRequirements(this.scene);
       }, this.scene.currentBattle.waveIndex);
+
+      // Add any special encounter animations to load
+      if (mysteryEncounter.encounterAnimations && mysteryEncounter.encounterAnimations.length > 0) {
+        loadEnemyAssets.push(initEncounterAnims(this.scene, mysteryEncounter.encounterAnimations).then(() => loadEncounterAnimAssets(this.scene, true)));
+      }
 
       // Add intro visuals for mystery encounter
       mysteryEncounter.initIntroVisuals(this.scene);

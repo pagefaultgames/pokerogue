@@ -26,6 +26,8 @@ import * as Overrides from "#app/overrides";
 import MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
 import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { Gender } from "#app/data/gender";
+import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
+import { Moves } from "#enums/moves";
 
 export class EnemyPokemonConfig {
   species: PokemonSpecies;
@@ -228,6 +230,20 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
     const customModifiers = partyConfig?.pokemonConfigs?.map(config => config?.modifierTypes);
     scene.generateEnemyModifiers(customModifiers);
   }
+}
+
+/**
+ * Load special move animations/sfx for hard-coded encounter-specific moves that a pokemon uses at the start of an encounter
+ * See: [startOfBattleEffects](IMysteryEncounter.startOfBattleEffects) for more details
+ *
+ * This promise does not need to be awaited on if called in an encounter onInit (will just load lazily)
+ * @param scene
+ * @param moves
+ */
+export function initCustomMovesForEncounter(scene: BattleScene, moves: Moves | Moves[]) {
+  moves = moves instanceof Array ? moves : [moves];
+  return Promise.all(moves.map(move => initMoveAnim(scene, move)))
+    .then(() => loadMoveAnimAssets(scene, moves));
 }
 
 /**

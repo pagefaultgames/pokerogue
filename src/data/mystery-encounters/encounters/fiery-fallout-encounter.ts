@@ -1,5 +1,5 @@
 import { EncounterOptionMode, MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
-import { EnemyPartyConfig, generateModifierTypeOption, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, setEncounterExp, setEncounterRewards } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { EnemyPartyConfig, generateModifierTypeOption, initBattleWithEnemyConfig, initCustomMovesForEncounter, leaveEncounterWithoutBattle, setEncounterExp, setEncounterRewards } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { modifierTypes, } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "../../../battle-scene";
@@ -12,7 +12,7 @@ import { Type } from "#app/data/type";
 import { BattlerIndex } from "#app/battle";
 import { PokemonMove } from "#app/field/pokemon";
 import { Moves } from "#enums/moves";
-import { EncounterAnim, EncounterBattleAnim, initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
+import { EncounterAnim, EncounterBattleAnim } from "#app/data/battle-anims";
 import { WeatherType } from "#app/data/weather";
 import { randSeedInt } from "#app/utils";
 
@@ -27,6 +27,7 @@ export const FieryFalloutEncounter: IMysteryEncounter =
     .withSceneWaveRangeRequirement(40, 180) // waves 10 to 180
     .withCatchAllowed(true)
     .withIntroSpriteConfigs([]) // Set in onInit()
+    .withAnimations(EncounterAnim.MAGMA_BG, EncounterAnim.MAGMA_SPOUT)
     .withIntroDialogue([
       {
         text: `${namespace}_intro_message`,
@@ -60,21 +61,20 @@ export const FieryFalloutEncounter: IMysteryEncounter =
       scene.arena.trySetWeather(WeatherType.SUNNY, true);
 
       // Load animations/sfx for Volcarona moves
-      Promise.all([initMoveAnim(scene, Moves.QUIVER_DANCE), initMoveAnim(scene, Moves.FIRE_SPIN)])
-        .then(() => loadMoveAnimAssets(scene, [Moves.QUIVER_DANCE, Moves.FIRE_SPIN]));
+      initCustomMovesForEncounter(scene, [Moves.FIRE_SPIN, Moves.QUIVER_DANCE]);
 
       return true;
     })
     .withOnVisualsStart((scene: BattleScene) => {
       // Play animations
       const background = new EncounterBattleAnim(EncounterAnim.MAGMA_BG, scene.getPlayerPokemon(), scene.getPlayerPokemon());
-      background.playWithoutTargets(scene, 200, 70, 2);
+      background.playWithoutTargets(scene, 200, 70, 2, 3);
       const animation = new EncounterBattleAnim(EncounterAnim.MAGMA_SPOUT, scene.getPlayerPokemon(), scene.getPlayerPokemon());
-      animation.playWithoutTargets(scene, 200, 70, 2);
+      animation.playWithoutTargets(scene, 100, 100, 2);
       const increment = 600;
       for (let i = 3; i < 6; i++) {
         scene.time.delayedCall((increment) * (i - 2), () => {
-          animation.playWithoutTargets(scene, 100 + randSeedInt(12) * 20, 110 - randSeedInt(10) * 15, 2);
+          animation.playWithoutTargets(scene, randSeedInt(12) * 15, 150 - randSeedInt(10) * 15, 2);
         });
       }
 

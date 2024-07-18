@@ -7,7 +7,7 @@ import {Constructor, isNullOrUndefined} from "#app/utils";
 import * as Utils from "./utils";
 import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier, FusePokemonModifier, PokemonFormChangeItemModifier, TerastallizeModifier, overrideModifiers, overrideHeldItems } from "./modifier/modifier";
 import { PokeballType } from "./data/pokeball";
-import { initCommonAnims, initEncounterAnims, initMoveAnim, loadCommonAnimAssets, loadEncounterAnimAssets, loadMoveAnimAssets, populateAnims } from "./data/battle-anims";
+import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets, populateAnims } from "./data/battle-anims";
 import { Phase } from "./phase";
 import { initGameSpeed } from "./system/game-speed";
 import { Arena, ArenaBase } from "./field/arena";
@@ -555,7 +555,6 @@ export default class BattleScene extends SceneBase {
     Promise.all([
       Promise.all(loadPokemonAssets),
       initCommonAnims(this).then(() => loadCommonAnimAssets(this, true)),
-      initEncounterAnims(this).then(() => loadEncounterAnimAssets(this, true)),
       Promise.all([ Moves.TACKLE, Moves.TAIL_WHIP, Moves.FOCUS_ENERGY, Moves.STRUGGLE ].map(m => initMoveAnim(this, m))).then(() => loadMoveAnimAssets(this, defaultMoves, true)),
       this.initStarterColors()
     ]).then(() => {

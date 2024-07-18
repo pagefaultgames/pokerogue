@@ -6,6 +6,7 @@ import * as Utils from "../utils";
 import { BattlerIndex } from "../battle";
 import { Element } from "json-stable-stringify";
 import { Moves } from "#enums/moves";
+import { isNullOrUndefined } from "../utils";
 //import fs from 'vite-plugin-fs/browser';
 
 export enum AnimFrameTarget {
@@ -307,7 +308,7 @@ abstract class AnimTimedEvent {
     this.resourceName = resourceName;
   }
 
-    abstract execute(scene: BattleScene, battleAnim: BattleAnim): integer;
+    abstract execute(scene: BattleScene, battleAnim: BattleAnim, priority?: number): integer;
 
     abstract getEventType(): string;
 }
@@ -325,7 +326,7 @@ class AnimTimedSoundEvent extends AnimTimedEvent {
     }
   }
 
-  execute(scene: BattleScene, battleAnim: BattleAnim): integer {
+  execute(scene: BattleScene, battleAnim: BattleAnim, priority?: number): integer {
     const soundConfig = { rate: (this.pitch * 0.01), volume: (this.volume * 0.01) };
     if (this.resourceName) {
       try {
@@ -387,7 +388,7 @@ class AnimTimedUpdateBgEvent extends AnimTimedBgEvent {
     super(frameIndex, resourceName, source);
   }
 
-  execute(scene: BattleScene, moveAnim: MoveAnim): integer {
+  execute(scene: BattleScene, moveAnim: MoveAnim, priority?: number): integer {
     const tweenProps = {};
     if (this.bgX !== undefined) {
       tweenProps["x"] = (this.bgX * 0.5) - 320;
@@ -417,7 +418,7 @@ class AnimTimedAddBgEvent extends AnimTimedBgEvent {
     super(frameIndex, resourceName, source);
   }
 
-  execute(scene: BattleScene, moveAnim: MoveAnim): integer {
+  execute(scene: BattleScene, moveAnim: MoveAnim, priority?: number): integer {
     if (moveAnim.bgSprite) {
       moveAnim.bgSprite.destroy();
     }
@@ -429,7 +430,9 @@ class AnimTimedAddBgEvent extends AnimTimedBgEvent {
     moveAnim.bgSprite.setAlpha(this.opacity / 255);
     scene.field.add(moveAnim.bgSprite);
     const fieldPokemon = scene.getEnemyPokemon() || scene.getPlayerPokemon();
-    if (fieldPokemon?.isOnField()) {
+    if (!isNullOrUndefined(priority)) {
+      scene.field.moveTo(moveAnim.bgSprite as Phaser.GameObjects.GameObject, priority);
+    } else if (fieldPokemon?.isOnField()) {
       scene.field.moveBelow(moveAnim.bgSprite as Phaser.GameObjects.GameObject, fieldPokemon);
     }
 
@@ -517,14 +520,18 @@ export function initMoveAnim(scene: BattleScene, move: Moves): Promise<void> {
   });
 }
 
-export function initEncounterAnims(scene: BattleScene): Promise<void> {
+export function initEncounterAnims(scene: BattleScene, anims: EncounterAnim | EncounterAnim[]): Promise<void> {
+  anims = anims instanceof Array ? anims : [anims];
   return new Promise(resolve => {
     const encounterAnimNames = Utils.getEnumKeys(EncounterAnim);
     const encounterAnimIds = Utils.getEnumValues(EncounterAnim);
     const encounterAnimFetches = [];
-    for (let ea = 0; ea < encounterAnimIds.length; ea++) {
-      const encounterAnimId = encounterAnimIds[ea];
-      encounterAnimFetches.push(scene.cachedFetch(`./battle-anims/encounter-${encounterAnimNames[ea].toLowerCase().replace(/\_/g, "-")}.json`)
+    for (const anim of anims) {
+      if (encounterAnims.has(anim) && !isNullOrUndefined(encounterAnims.get(anim))) {
+        continue;
+      }
+      const encounterAnimId = encounterAnimIds[anim];
+      encounterAnimFetches.push(scene.cachedFetch(`./battle-anims/encounter-${encounterAnimNames[anim].toLowerCase().replace(/\_/g, "-")}.json`)
         .then(response => response.json())
         .then(cas => encounterAnims.set(encounterAnimId, new AnimConfig(cas))));
     }
@@ -1005,17 +1012,12 @@ export abstract class BattleAnim {
       });
     }
 
-    private getGraphicFrameDataWithoutTarget(scene: BattleScene, frames: AnimFrame[], targetInitialX: number, targetInitialY: number): Map<integer, Map<AnimFrameTarget, GraphicFrameData>> {
+    private getGraphicFrameDataWithoutTarget(frames: AnimFrame[], targetInitialX: number, targetInitialY: number): Map<integer, Map<AnimFrameTarget, GraphicFrameData>> {
       const ret: Map<integer, Map<AnimFrameTarget, GraphicFrameData>> = new Map([
         [AnimFrameTarget.GRAPHIC, new Map<AnimFrameTarget, GraphicFrameData>() ],
         [AnimFrameTarget.USER, new Map<AnimFrameTarget, GraphicFrameData>() ],
         [AnimFrameTarget.TARGET, new Map<AnimFrameTarget, GraphicFrameData>() ]
       ]);
-
-      const userInitialX = 0;
-      const userInitialY = 0;
-      const userHalfHeight = 30;
-      const targetHalfHeight = 30;
 
       let g = 0;
       let u = 0;
@@ -1024,27 +1026,10 @@ export abstract class BattleAnim {
       for (const frame of frames) {
         let x = frame.x;
         let y = frame.y;
-        let scaleX = (frame.zoomX / 100) * (!frame.mirror ? 1 : -1);
+        const scaleX = (frame.zoomX / 100) * (!frame.mirror ? 1 : -1);
         const scaleY = (frame.zoomY / 100);
-        switch (frame.focus) {
-        case AnimFocus.TARGET:
-          x += targetInitialX - targetFocusX;
-          y += (targetInitialY - targetHalfHeight) - targetFocusY;
-          break;
-        case AnimFocus.USER:
-          x += userInitialX - userFocusX;
-          y += (userInitialY - userHalfHeight) - userFocusY;
-          break;
-        case AnimFocus.USER_TARGET:
-          const point = transformPoint(this.srcLine[0], this.srcLine[1], this.srcLine[2], this.srcLine[3],
-            this.dstLine[0], this.dstLine[1] - userHalfHeight, this.dstLine[2], this.dstLine[3] - targetHalfHeight, x, y);
-          x = point[0];
-          y = point[1];
-          if (frame.target === AnimFrameTarget.GRAPHIC && isReversed(this.srcLine[0], this.srcLine[2], this.dstLine[0], this.dstLine[2])) {
-            scaleX = scaleX * -1;
-          }
-          break;
-        }
+        x += targetInitialX;
+        y += targetInitialY;
         const angle = -frame.angle;
         const key = frame.target === AnimFrameTarget.GRAPHIC ? g++ : frame.target === AnimFrameTarget.USER ? u++ : t++;
         ret.get(frame.target).set(key, { x: x, y: y, scaleX: scaleX, scaleY: scaleY, angle: angle });
@@ -1053,7 +1038,20 @@ export abstract class BattleAnim {
       return ret;
     }
 
-    playWithoutTargets(scene: BattleScene, targetInitialX: number, targetInitialY: number, frameTimeMult: number, callback?: Function) {
+    /**
+     *
+     * @param scene
+     * @param targetInitialX
+     * @param targetInitialY
+     * @param frameTimeMult
+     * @param frameTimedEventPriority
+     * - 0 is behind all other sprites (except BG)
+     * - 1 on top of player field
+     * - 3 is on top of both fields
+     * - 5 is on top of player sprite
+     * @param callback
+     */
+    playWithoutTargets(scene: BattleScene, targetInitialX: number, targetInitialY: number, frameTimeMult: number, frameTimedEventPriority?: 0 | 1 | 3 | 5, callback?: Function) {
       const spriteCache: SpriteCache = {
         [AnimFrameTarget.GRAPHIC]: [],
         [AnimFrameTarget.USER]: [],
@@ -1087,12 +1085,17 @@ export abstract class BattleAnim {
       let r = anim.frames.length;
       let f = 0;
 
+      const fieldSprites = scene.field.getAll();
+      const playerFieldSprite = fieldSprites[1];
+      const enemyFieldSprite = fieldSprites[3];
+      const trainerSprite = fieldSprites[5];
+
       scene.tweens.addCounter({
         duration: Utils.getFrameMs(3) * frameTimeMult,
         repeat: anim.frames.length,
         onRepeat: () => {
           const spriteFrames = anim.frames[f];
-          const frameData = this.getGraphicFrameDataWithoutTarget(scene, anim.frames[f], targetInitialX, targetInitialY);
+          const frameData = this.getGraphicFrameDataWithoutTarget(anim.frames[f], targetInitialX, targetInitialY);
           const u = 0;
           const t = 0;
           let g = 0;
@@ -1116,13 +1119,29 @@ export abstract class BattleAnim {
               spritePriorities[graphicIndex] = frame.priority;
               const setSpritePriority = (priority: integer) => {
                 if (priority < 0) {
-                // Move to top of scene
+                  // Move to top of scene
                   scene.field.moveTo(moveSprite, scene.field.getAll().length - 1);
-                } else if (priority < scene.field.getAll().length) {
-                // Indexes of field:
-                // 0 is scene background
-                // 1 is enemy field
-                  scene.field.moveTo(moveSprite, priority);
+                } else if (priority === 1) {
+                  // Move above player field
+                  if (playerFieldSprite) {
+                    scene.field.moveAbove(moveSprite as Phaser.GameObjects.GameObject, playerFieldSprite);
+                  } else {
+                    setSpritePriority(-1);
+                  }
+                } else if (priority === 3) {
+                  // Move above player enemy field
+                  if (enemyFieldSprite) {
+                    scene.field.moveAbove(moveSprite as Phaser.GameObjects.GameObject, enemyFieldSprite);
+                  } else {
+                    setSpritePriority(-1);
+                  }
+                } else if (priority === 5) {
+                  // Move above player trainer sprite
+                  if (trainerSprite) {
+                    scene.field.moveAbove(moveSprite as Phaser.GameObjects.GameObject, trainerSprite);
+                  } else {
+                    setSpritePriority(-1);
+                  }
                 } else {
                   setSpritePriority(-1);
                 }
@@ -1143,7 +1162,7 @@ export abstract class BattleAnim {
           }
           if (anim.frameTimedEvents.has(f)) {
             for (const event of anim.frameTimedEvents.get(f)) {
-              r = Math.max((anim.frames.length - f) + event.execute(scene, this), r);
+              r = Math.max((anim.frames.length - f) + event.execute(scene, this, frameTimedEventPriority), r);
             }
           }
           const targets = Utils.getEnumValues(AnimFrameTarget);
