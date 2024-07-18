@@ -23,6 +23,11 @@ import IMysteryEncounter, {
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:mysterious_challengers";
 
+/**
+ * Mysterious Challengers encounter.
+ * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/41 | GitHub Issue #41}
+ * @see For biome requirements check [mysteryEncountersByBiome](../mystery-encounters.ts)
+ */
 export const MysteriousChallengersEncounter: IMysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(
     MysteryEncounterType.MYSTERIOUS_CHALLENGERS

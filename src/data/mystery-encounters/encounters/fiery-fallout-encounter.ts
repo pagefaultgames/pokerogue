@@ -19,6 +19,11 @@ import { randSeedInt } from "#app/utils";
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:fiery_fallout";
 
+/**
+ * Fiery Fallout encounter.
+ * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/88 | GitHub Issue #88}
+ * @see For biome requirements check [mysteryEncountersByBiome](../mystery-encounters.ts)
+ */
 export const FieryFalloutEncounter: IMysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(
     MysteryEncounterType.FIERY_FALLOUT

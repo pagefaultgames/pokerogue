@@ -16,7 +16,7 @@ const OPTION_2_REQUIRED_MOVE = Moves.FLY;
  */
 const DAMAGE_PERCENTAGE: number = 25;
 /** The i18n namespace for the encounter */
-const namepsace = "mysteryEncounter:lostAtSea";
+const namepsace = "mysteryEncounter:lostAtSeaDialogue";
 
 /**
  * Lost at sea encounter.

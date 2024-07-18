@@ -15,6 +15,11 @@ import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encoun
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounter:shady_vitamin_dealer";
 
+/**
+ * Shady Vitamin Dealer encounter.
+ * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/34 | GitHub Issue #34}
+ * @see For biome requirements check [mysteryEncountersByBiome](../mystery-encounters.ts)
+ */
 export const ShadyVitaminDealerEncounter: IMysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(
     MysteryEncounterType.SHADY_VITAMIN_DEALER

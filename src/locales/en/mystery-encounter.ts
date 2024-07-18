@@ -1,4 +1,4 @@
-import { lostAtSea } from "./mystery-encounters/lost-at-sea";
+import { lostAtSeaDialogue } from "./mystery-encounters/lost-at-sea-dialogue";
 
 /**
  * Patterns that can be used:
@@ -260,5 +260,5 @@ export const mysteryEncounter = {
   $@s{item_fanfare}You gained a Berry!`,
   "sleeping_snorlax_option_3_good_result": "Your {{option3PrimaryName}} uses {{option3PrimaryMove}}! @s{item_fanfare}It steals Leftovers off the sleeping Snorlax and you make out like bandits!",
 
-  lostAtSea,
+  lostAtSea: lostAtSeaDialogue,
 } as const;

@@ -21,6 +21,11 @@ import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encoun
 /** The i18n namespace for the encounter */
 const namespace = "mysteryEncounter:training_session";
 
+/**
+ * Training Session encounter.
+ * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/43 | GitHub Issue #43}
+ * @see For biome requirements check [mysteryEncountersByBiome](../mystery-encounters.ts)
+ */
 export const TrainingSessionEncounter: IMysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(
     MysteryEncounterType.TRAINING_SESSION

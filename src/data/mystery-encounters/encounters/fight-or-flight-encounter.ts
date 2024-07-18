@@ -31,6 +31,11 @@ import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-enco
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:fight_or_flight";
 
+/**
+ * Fight or Flight encounter.
+ * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/24 | GitHub Issue #24}
+ * @see For biome requirements check [mysteryEncountersByBiome](../mystery-encounters.ts)
+ */
 export const FightOrFlightEncounter: IMysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(
     MysteryEncounterType.FIGHT_OR_FLIGHT

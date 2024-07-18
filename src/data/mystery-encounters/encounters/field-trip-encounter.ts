@@ -21,6 +21,11 @@ import IMysteryEncounter, {
 /** i18n namespace for the encounter */
 const namespace = "mysteryEncounter:field_trip";
 
+/**
+ * Field Trip encounter.
+ * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/17 | GitHub Issue #17}
+ * @see For biome requirements check [mysteryEncountersByBiome](../mystery-encounters.ts)
+ */
 export const FieldTripEncounter: IMysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.FIELD_TRIP)
     .withEncounterTier(MysteryEncounterTier.COMMON)

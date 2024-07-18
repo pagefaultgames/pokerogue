@@ -16,11 +16,16 @@ import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encoun
 /** i18n namespace for the encounter */
 const namespace = "mysteryEncounter:sleeping_snorlax";
 
+/**
+ * Sleeping Snorlax encounter.
+ * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/103 | GitHub Issue #103}
+ * @see For biome requirements check [mysteryEncountersByBiome](../mystery-encounters.ts)
+ */
 export const SleepingSnorlaxEncounter: IMysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(
     MysteryEncounterType.SLEEPING_SNORLAX
   )
-    .withEncounterTier(MysteryEncounterTier.ULTRA)
+    .withEncounterTier(MysteryEncounterTier.GREAT)
     .withSceneWaveRangeRequirement(10, 180) // waves 10 to 180
     .withCatchAllowed(true)
     .withHideWildIntroMessage(true)
@@ -110,12 +115,7 @@ export const SleepingSnorlaxEncounter: IMysteryEncounter =
           const p = instance.primaryPokemon;
           p.status = new Status(StatusEffect.SLEEP, 0, 3);
           p.updateInfo(true);
-          // const sitrus = (modifierTypes.BERRY?.() as ModifierTypeGenerator).generateType(scene.getParty(), [BerryType.SITRUS]);
-          const sitrus = generateModifierTypeOption(
-            scene,
-            modifierTypes.BERRY,
-            [BerryType.SITRUS]
-          );
+          const sitrus = generateModifierTypeOption(scene, modifierTypes.BERRY, [BerryType.SITRUS]);
 
           setEncounterRewards(scene, {
             guaranteedModifierTypeOptions: [sitrus],

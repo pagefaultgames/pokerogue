@@ -19,6 +19,11 @@ import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:safari_zone";
 
+/**
+ * Safari Zone encounter.
+ * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/39 | GitHub Issue #39}
+ * @see For biome requirements check [mysteryEncountersByBiome](../mystery-encounters.ts)
+ */
 export const SafariZoneEncounter: IMysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.SAFARI_ZONE)
     .withEncounterTier(MysteryEncounterTier.GREAT)

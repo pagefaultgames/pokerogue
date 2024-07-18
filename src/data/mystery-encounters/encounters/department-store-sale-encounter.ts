@@ -15,6 +15,11 @@ import IMysteryEncounter, {
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounter:department_store_sale";
 
+/**
+ * Department Store Sale encounter.
+ * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/33 | GitHub Issue #33}
+ * @see For biome requirements check [mysteryEncountersByBiome](../mystery-encounters.ts)
+ */
 export const DepartmentStoreSaleEncounter: IMysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.DEPARTMENT_STORE_SALE)
     .withEncounterTier(MysteryEncounterTier.COMMON)

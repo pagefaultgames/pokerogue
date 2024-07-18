@@ -15,7 +15,7 @@ import { getRandomPlayerPokemon, getRandomSpeciesByStarterTier } from "#app/data
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounter:dark_deal";
 
-// Exclude Ultra Beasts, Paradox, Necrozma, Eternatus, and egg-locked mythicals
+/** Exclude Ultra Beasts (inludes Cosmog/Solgaleo/Lunala/Necrozma), Paradox (includes Miraidon/Koraidon), Eternatus, and egg-locked mythicals */
 const excludedBosses = [
   Species.NECROZMA,
   Species.COSMOG,
@@ -68,6 +68,11 @@ const excludedBosses = [
   Species.PECHARUNT,
 ];
 
+/**
+ * Dark Deal encounter.
+ * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/61 | GitHub Issue #61}
+ * @see For biome requirements check [mysteryEncountersByBiome](../mystery-encounters.ts)
+ */
 export const DarkDealEncounter: IMysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.DARK_DEAL)
     .withEncounterTier(MysteryEncounterTier.ROGUE)

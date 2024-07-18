@@ -12,7 +12,7 @@ import GameManager from "#app/test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { runSelectMysteryEncounterOption } from "../encounterTestUtils";
 
-const namepsace = "mysteryEncounter:lostAtSea";
+const namepsace = "mysteryEncounter:lostAtSeaDialogue";
 /** Blastoise for surf. Pidgeot for fly. Abra for none. */
 const defaultParty = [Species.BLASTOISE, Species.PIDGEOT, Species.ABRA];
 const defaultBiome = Biome.SEA;

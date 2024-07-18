@@ -14,6 +14,11 @@ import IMysteryEncounter, {
 } from "../mystery-encounter";
 import { EncounterOptionMode, MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 
+/**
+ * Mysterious Chest encounter.
+ * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/32 | GitHub Issue #32}
+ * @see For biome requirements check [mysteryEncountersByBiome](../mystery-encounters.ts)
+ */
 export const MysteriousChestEncounter: IMysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(
     MysteryEncounterType.MYSTERIOUS_CHEST
