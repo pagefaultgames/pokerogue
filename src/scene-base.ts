@@ -12,7 +12,7 @@ export class SceneBase extends Phaser.Scene {
    */
   public readonly scaledCanvas = {
     width: 1920 / 6,
-    height: 1080 / 6
+    height: 1080 / 6,
   };
   constructor(config?: string | Phaser.Types.Scenes.SettingsConfig) {
     super(config);
@@ -27,6 +27,16 @@ export class SceneBase extends Phaser.Scene {
       }
     }
     return url;
+  }
+
+  loadImageAsset(key: string, img: string, legacyImg?: string) {
+    this.load.image(key, img);
+
+    if (legacyImg) {
+      legacyCompatibleImages.push(key);
+      console.log("Load legacy image asset: ", `${key}_legacy`);
+      this.load.image(`${key}_legacy`, legacyImg);
+    }
   }
 
   loadImage(key: string, folder: string, filename?: string) {
@@ -50,6 +60,16 @@ export class SceneBase extends Phaser.Scene {
       legacyCompatibleImages.push(key);
       folder = folder.replace("ui", "ui/legacy");
       this.load.spritesheet(`${key}_legacy`, this.getCachedUrl(`images/${folder}/${filename}`), { frameWidth: size, frameHeight: size });
+    }
+  }
+
+  loadAtlasAsset(key: string, img: string, json: any, legacyImg?: string, legacyJson?: any) {
+    this.load.atlas(key, img, json);
+
+    if (legacyImg) {
+      legacyCompatibleImages.push(key);
+      console.log("Load legacy atlast asset: ", `${key}_legacy`);
+      this.load.atlas(`${key}_legacy`, legacyImg, legacyJson);
     }
   }
 
@@ -78,7 +98,7 @@ export class SceneBase extends Phaser.Scene {
       folder += "/";
     }
     if (!Array.isArray(filenames)) {
-      filenames = [ filenames ];
+      filenames = [filenames];
     }
     for (const f of filenames as string[]) {
       this.load.audio(key, this.getCachedUrl(`audio/se/${folder}${f}`));

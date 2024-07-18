@@ -1,27 +1,30 @@
-import { GachaType } from "./enums/gacha-types";
-import { trainerConfigs } from "./data/trainer-config";
-import { getBiomeHasProps } from "./field/arena";
-import CacheBustedLoaderPlugin from "./plugins/cache-busted-loader-plugin";
-import { SceneBase } from "./scene-base";
-import { WindowVariant, getWindowVariantSuffix } from "./ui/ui-theme";
-import { isMobile } from "./touch-controls";
-import * as Utils from "./utils";
-import { initI18n } from "./plugins/i18n";
-import {initPokemonPrevolutions} from "#app/data/pokemon-evolutions";
-import {initBiomes} from "#app/data/biomes";
-import {initEggMoves} from "#app/data/egg-moves";
-import {initPokemonForms} from "#app/data/pokemon-forms";
-import {initSpecies} from "#app/data/pokemon-species";
-import {initMoves} from "#app/data/move";
-import {initAbilities} from "#app/data/ability";
-import {initAchievements} from "#app/system/achv";
-import {initTrainerTypeDialogue} from "#app/data/dialogue";
-import { initChallenges } from "./data/challenge";
-import i18next from "i18next";
-import { initStatsKeys } from "./ui/game-stats-ui-handler";
-import { initVouchers } from "./system/voucher";
+import { initAbilities } from "#app/data/ability";
+import { initBiomes } from "#app/data/biomes";
+import { initTrainerTypeDialogue } from "#app/data/dialogue";
+import { initEggMoves } from "#app/data/egg-moves";
+import { initMoves } from "#app/data/move";
+import { initPokemonPrevolutions } from "#app/data/pokemon-evolutions";
+import { initPokemonForms } from "#app/data/pokemon-forms";
+import { initSpecies } from "#app/data/pokemon-species";
+import { initAchievements } from "#app/system/achv";
 import { Biome } from "#enums/biome";
 import { TrainerType } from "#enums/trainer-type";
+import i18next from "i18next";
+import { legacyUiAtlases, legacyUiImages } from "./assets/images/ui/legacy/legacy-ui-assets";
+import { legacyUiWindowImages } from "./assets/images/ui/legacy/windows/legacy-ui-window-assets";
+import { uiAtlases, uiImages } from "./assets/images/ui/ui-assets";
+import { uiWindowImages } from "./assets/images/ui/windows/ui-window-assets";
+import { initChallenges } from "./data/challenge";
+import { trainerConfigs } from "./data/trainer-config";
+import { GachaType } from "./enums/gacha-types";
+import { getBiomeHasProps } from "./field/arena";
+import CacheBustedLoaderPlugin from "./plugins/cache-busted-loader-plugin";
+import { initI18n } from "./plugins/i18n";
+import { SceneBase } from "./scene-base";
+import { initVouchers } from "./system/voucher";
+import { isMobile } from "./touch-controls";
+import { initStatsKeys } from "./ui/game-stats-ui-handler";
+import * as Utils from "./utils";
 
 export class LoadingScene extends SceneBase {
   readonly LOAD_EVENTS = Phaser.Loader.Events;
@@ -41,126 +44,27 @@ export class LoadingScene extends SceneBase {
     this.loadImage("logo", "");
     this.loadImage("pride-update", "events");
 
-    // Load menu images
-    this.loadAtlas("bg", "ui");
-    this.loadAtlas("prompt", "ui");
-    this.loadImage("candy", "ui");
-    this.loadImage("candy_overlay", "ui");
-    this.loadImage("cursor", "ui");
-    this.loadImage("cursor_reverse", "ui");
-    for (const wv of Utils.getEnumValues(WindowVariant)) {
-      for (let w = 1; w <= 5; w++) {
-        this.loadImage(`window_${w}${getWindowVariantSuffix(wv)}`, "ui/windows");
-      }
-    }
-    this.loadAtlas("namebox", "ui");
-    this.loadImage("pbinfo_player", "ui");
-    this.loadImage("pbinfo_player_stats", "ui");
-    this.loadImage("pbinfo_player_mini", "ui");
-    this.loadImage("pbinfo_player_mini_stats", "ui");
-    this.loadAtlas("pbinfo_player_type", "ui");
-    this.loadAtlas("pbinfo_player_type1", "ui");
-    this.loadAtlas("pbinfo_player_type2", "ui");
-    this.loadImage("pbinfo_enemy_mini", "ui");
-    this.loadImage("pbinfo_enemy_mini_stats", "ui");
-    this.loadImage("pbinfo_enemy_boss", "ui");
-    this.loadImage("pbinfo_enemy_boss_stats", "ui");
-    this.loadAtlas("pbinfo_enemy_type", "ui");
-    this.loadAtlas("pbinfo_enemy_type1", "ui");
-    this.loadAtlas("pbinfo_enemy_type2", "ui");
-    this.loadAtlas("pbinfo_stat", "ui");
-    this.loadAtlas("pbinfo_stat_numbers", "ui");
-    this.loadImage("overlay_lv", "ui");
-    this.loadAtlas("numbers", "ui");
-    this.loadAtlas("numbers_red", "ui");
-    this.loadAtlas("overlay_hp", "ui");
-    this.loadAtlas("overlay_hp_boss", "ui");
-    this.loadImage("overlay_exp", "ui");
-    this.loadImage("icon_owned", "ui");
-    this.loadImage("ability_bar_left", "ui");
-    this.loadImage("bgm_bar", "ui");
-    this.loadImage("party_exp_bar", "ui");
-    this.loadImage("achv_bar", "ui");
-    this.loadImage("achv_bar_2", "ui");
-    this.loadImage("achv_bar_3", "ui");
-    this.loadImage("achv_bar_4", "ui");
-    this.loadImage("achv_bar_5", "ui");
-    this.loadImage("shiny_star", "ui", "shiny.png");
-    this.loadImage("shiny_star_1", "ui", "shiny_1.png");
-    this.loadImage("shiny_star_2", "ui", "shiny_2.png");
-    this.loadImage("shiny_star_small", "ui", "shiny_small.png");
-    this.loadImage("shiny_star_small_1", "ui", "shiny_small_1.png");
-    this.loadImage("shiny_star_small_2", "ui", "shiny_small_2.png");
-    this.loadImage("passive_bg", "ui", "passive_bg.png");
-    this.loadAtlas("shiny_icons", "ui");
-    this.loadImage("ha_capsule", "ui", "ha_capsule.png");
-    this.loadImage("champion_ribbon", "ui", "champion_ribbon.png");
-    this.loadImage("icon_spliced", "ui");
-    this.loadImage("icon_tera", "ui");
-    this.loadImage("type_tera", "ui");
-    this.loadAtlas("type_bgs", "ui");
+    //load ui images
+    Object.entries(uiImages).forEach(([key, img]) => {
+      const legacyImg = legacyUiImages[`${key}_legacy`];
+      this.loadImageAsset(key, img, legacyImg);
+    });
 
-    this.loadImage("dawn_icon_fg", "ui");
-    this.loadImage("dawn_icon_mg", "ui");
-    this.loadImage("dawn_icon_bg", "ui");
-    this.loadImage("day_icon_fg", "ui");
-    this.loadImage("day_icon_mg", "ui");
-    this.loadImage("day_icon_bg", "ui");
-    this.loadImage("dusk_icon_fg", "ui");
-    this.loadImage("dusk_icon_mg", "ui");
-    this.loadImage("dusk_icon_bg", "ui");
-    this.loadImage("night_icon_fg", "ui");
-    this.loadImage("night_icon_mg", "ui");
-    this.loadImage("night_icon_bg", "ui");
+    // load ui atlases
+    Object.entries(uiAtlases).forEach(([key, [img, json]]) => {
+      const [legacyImg, legacyJson] = legacyUiAtlases[`${key}_legacy`] ?? [undefined, undefined];
+      this.loadAtlasAsset(key, String(img), json, legacyImg, legacyJson);
+    });
 
-    this.loadImage("pb_tray_overlay_player", "ui");
-    this.loadImage("pb_tray_overlay_enemy", "ui");
-    this.loadAtlas("pb_tray_ball", "ui");
-
-    this.loadImage("party_bg", "ui");
-    this.loadImage("party_bg_double", "ui");
-    this.loadAtlas("party_slot_main", "ui");
-    this.loadAtlas("party_slot", "ui");
-    this.loadImage("party_slot_overlay_lv", "ui");
-    this.loadImage("party_slot_hp_bar", "ui");
-    this.loadAtlas("party_slot_hp_overlay", "ui");
-    this.loadAtlas("party_pb", "ui");
-    this.loadAtlas("party_cancel", "ui");
-
-    this.loadImage("summary_bg", "ui");
-    this.loadImage("summary_overlay_shiny", "ui");
-    this.loadImage("summary_profile", "ui");
-    this.loadImage("summary_profile_prompt_z", "ui");      // The pixel Z button prompt
-    this.loadImage("summary_profile_prompt_a", "ui");     // The pixel A button prompt
-    this.loadImage("summary_profile_ability", "ui");      // Pixel text 'ABILITY'
-    this.loadImage("summary_profile_passive", "ui");      // Pixel text 'PASSIVE'
-    this.loadImage("summary_status", "ui");
-    this.loadImage("summary_stats", "ui");
-    this.loadImage("summary_stats_overlay_exp", "ui");
-    this.loadImage("summary_moves", "ui");
-    this.loadImage("summary_moves_effect", "ui");
-    this.loadImage("summary_moves_overlay_row", "ui");
-    this.loadImage("summary_moves_overlay_pp", "ui");
-    this.loadAtlas("summary_moves_cursor", "ui");
-    for (let t = 1; t <= 3; t++) {
-      this.loadImage(`summary_tabs_${t}`, "ui");
-    }
-
-    this.loadImage("starter_select_bg", "ui");
-    this.loadImage("select_cursor", "ui");
-    this.loadImage("select_cursor_highlight", "ui");
-    this.loadImage("select_cursor_highlight_thick", "ui");
-    this.loadImage("select_cursor_pokerus", "ui");
-    this.loadImage("select_gen_cursor", "ui");
-    this.loadImage("select_gen_cursor_highlight", "ui");
-
-    this.loadImage("saving_icon", "ui");
-    this.loadImage("discord", "ui");
-    this.loadImage("google", "ui");
+    // Load window images
+    Object.entries(uiWindowImages).forEach(([key, img]) => {
+      const legacyAsset = legacyUiWindowImages[`${key}_legacy`];
+      this.loadImageAsset(key, img, legacyAsset);
+    });
 
     this.loadImage("default_bg", "arenas");
     // Load arena images
-    Utils.getEnumValues(Biome).map(bt => {
+    Utils.getEnumValues(Biome).map((bt) => {
       const btKey = Biome[bt].toLowerCase();
       const isBaseAnimated = btKey === "end";
       const baseAKey = `${btKey}_a`;
@@ -178,7 +82,7 @@ export class LoadingScene extends SceneBase {
       }
       if (getBiomeHasProps(bt)) {
         for (let p = 1; p <= 3; p++) {
-          const isPropAnimated = p === 3 && [ "power_plant", "end" ].find(b => b === btKey);
+          const isPropAnimated = p === 3 && ["power_plant", "end"].find((b) => b === btKey);
           const propKey = `${btKey}_b_${p}`;
           if (!isPropAnimated) {
             this.loadImage(propKey, "arenas");
@@ -198,7 +102,7 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas("trainer_f_back", "trainer");
     this.loadAtlas("trainer_f_back_pb", "trainer");
 
-    Utils.getEnumValues(TrainerType).map(tt => {
+    Utils.getEnumValues(TrainerType).map((tt) => {
       const config = trainerConfigs[tt];
       this.loadAtlas(config.getSpriteKey(), "trainer");
       if (config.doubleOnly || config.hasDouble) {
@@ -240,7 +144,6 @@ export class LoadingScene extends SceneBase {
       this.loadAtlas("types", "");
     }
 
-
     this.loadAtlas("statuses", "");
     this.loadAtlas("categories", "");
 
@@ -249,7 +152,7 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas("egg_icons", "egg");
     this.loadAtlas("egg_shard", "egg");
     this.loadAtlas("egg_lightrays", "egg");
-    Utils.getEnumKeys(GachaType).forEach(gt => {
+    Utils.getEnumKeys(GachaType).forEach((gt) => {
       const key = gt.toLowerCase();
       this.loadImage(`gacha_${key}`, "egg");
       this.loadAtlas(`gacha_underlay_${key}`, "egg");
@@ -419,7 +322,7 @@ export class LoadingScene extends SceneBase {
       style: {
         font: "48px emerald",
         color: "#ffffff",
-        align: "center"
+        align: "center",
       },
     });
     disclaimerDescriptionText.setOrigin(0.5, 0.5);
@@ -427,7 +330,7 @@ export class LoadingScene extends SceneBase {
     loadingGraphics.push(bg, graphics, progressBar, progressBox, logo, percentText, assetText, disclaimerText, disclaimerDescriptionText);
 
     if (!mobile) {
-      loadingGraphics.map(g => g.setVisible(false));
+      loadingGraphics.map((g) => g.setVisible(false));
     }
 
     const intro = this.add.video(0, 0);
@@ -439,7 +342,7 @@ export class LoadingScene extends SceneBase {
         ease: "Sine.easeIn",
         onComplete: () => video.destroy(),
       });
-      loadingGraphics.forEach(g => g.setVisible(true));
+      loadingGraphics.forEach((g) => g.setVisible(true));
     });
     intro.setOrigin(0, 0);
     intro.setScale(3);
@@ -454,7 +357,7 @@ export class LoadingScene extends SceneBase {
       intro.play();
     });
 
-    this.load.on(this.LOAD_EVENTS.PROGRESS , (progress: number) => {
+    this.load.on(this.LOAD_EVENTS.PROGRESS, (progress: number) => {
       percentText.setText(`${Math.floor(progress * 100)}%`);
       progressBar.clear();
       progressBar.fillStyle(0xffffff, 0.8);
@@ -479,7 +382,7 @@ export class LoadingScene extends SceneBase {
       }
     });
 
-    this.load.on(this.LOAD_EVENTS.COMPLETE, () => loadingGraphics.forEach(go => go.destroy()));
+    this.load.on(this.LOAD_EVENTS.COMPLETE, () => loadingGraphics.forEach((go) => go.destroy()));
   }
 
   get gameHeight() {
