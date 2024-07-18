@@ -1,7 +1,7 @@
-export const lostAtSeaDialogue = {
-  intro: "Wandering aimlessly through the sea, you've effectively gotten nowhere.",
-  title: "Lost at Sea",
-  description: "The sea is turbulent in this area, and you're running out of energy.\nThis is bad. Is there a way out of the situation?",
+export const sleepingSnorlaxDialogue = {
+  intro: "Wandering aimlessly, you effectively get nowhere.",
+  title: "Lost at sea",
+  description: "The sea is turbulent in this area, and you seem to be running out of fuel.\nThis is bad. Is there a way out of the situation?",
   query: "What will you do?",
   option: {
     1: {
@@ -9,16 +9,16 @@ export const lostAtSeaDialogue = {
       label_disabled: "Can't {{option1RequiredMove}}",
       tooltip: "(+) {{option1PrimaryName}} saves you.\n(+) {{option1PrimaryName}} gains some EXP.",
       tooltip_disabled: "You have no Pokémon to {{option1RequiredMove}} on",
-      selected: `{{option1PrimaryName}} swims ahead, guiding you back on track.
-        \${{option1PrimaryName}} seems to also have gotten stronger in this time of need!`,
+      selected:
+        "{{option1PrimaryName}} swims ahead, guiding you back on track.\n{{option1PrimaryName}} seems to also have gotten stronger in this time of need.",
     },
     2: {
       label: "{{option2PrimaryName}} can help",
       label_disabled: "Can't {{option2RequiredMove}}",
       tooltip: "(+) {{option2PrimaryName}} saves you.\n(+) {{option2PrimaryName}} gains some EXP.",
       tooltip_disabled: "You have no Pokémon to {{option2RequiredMove}} with",
-      selected: `{{option2PrimaryName}} flies ahead of your boat, guiding you back on track.
-        \${{option2PrimaryName}} seems to also have gotten stronger in this time of need!`,
+      selected:
+        "{{option2PrimaryName}} flies ahead of your boat, guiding you back on track.\n{{option2PrimaryName}} seems to also have gotten stronger in this time of need.",
     },
     3: {
       label: "Wander aimlessly",

@@ -1,18 +1,15 @@
 import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import {
-  leaveEncounterWithoutBattle,
-  setEncounterRewards
-} from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { leaveEncounterWithoutBattle, setEncounterRewards } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { getHighestLevelPlayerPokemon, koPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { randSeedInt } from "#app/utils.js";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "../../../battle-scene";
-import IMysteryEncounter, {
-  MysteryEncounterBuilder,
-  MysteryEncounterTier,
-} from "../mystery-encounter";
+import IMysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier, } from "../mystery-encounter";
 import { EncounterOptionMode, MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
+
+/** i18n namespace for encounter */
+const namespace = "mysteryEncounter:dark_deal";
 
 /**
  * Mysterious Chest encounter.
@@ -20,9 +17,7 @@ import { EncounterOptionMode, MysteryEncounterOptionBuilder } from "../mystery-e
  * @see For biome requirements check [mysteryEncountersByBiome](../mystery-encounters.ts)
  */
 export const MysteriousChestEncounter: IMysteryEncounter =
-  MysteryEncounterBuilder.withEncounterType(
-    MysteryEncounterType.MYSTERIOUS_CHEST
-  )
+  MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.MYSTERIOUS_CHEST)
     .withEncounterTier(MysteryEncounterTier.COMMON)
     .withSceneWaveRangeRequirement(10, 180) // waves 2 to 180
     .withHideIntroVisuals(false)
@@ -39,21 +34,21 @@ export const MysteriousChestEncounter: IMysteryEncounter =
     ])
     .withIntroDialogue([
       {
-        text: "mysteryEncounter:mysterious_chest_intro_message",
+        text: "${namespace}:intro:message",
       },
     ])
-    .withTitle("mysteryEncounter:mysterious_chest_title")
-    .withDescription("mysteryEncounter:mysterious_chest_description")
-    .withQuery("mysteryEncounter:mysterious_chest_query")
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withOption(
       new MysteryEncounterOptionBuilder()
         .withOptionMode(EncounterOptionMode.DEFAULT)
         .withDialogue({
-          buttonLabel: "mysteryEncounter:mysterious_chest_option_1_label",
-          buttonTooltip: "mysteryEncounter:mysterious_chest_option_1_tooltip",
+          buttonLabel: `${namespace}:option:1:label`,
+          buttonTooltip: `${namespace}:option:1:tooltip`,
           selected: [
             {
-              text: "mysteryEncounter:mysterious_chest_option_1_selected_message",
+              text: `${namespace}:option:1:selected`,
             },
           ],
         })
@@ -78,7 +73,7 @@ export const MysteriousChestEncounter: IMysteryEncounter =
               ],
             });
             // Display result message then proceed to rewards
-            queueEncounterMessage(scene, "mysteryEncounter:mysterious_chest_option_1_normal_result");
+            queueEncounterMessage(scene, `${namespace}:option:1:normal`);
             leaveEncounterWithoutBattle(scene);
           } else if (roll > 40) {
             // Choose between 3 ULTRA tier items (20%)
@@ -90,7 +85,7 @@ export const MysteriousChestEncounter: IMysteryEncounter =
               ],
             });
             // Display result message then proceed to rewards
-            queueEncounterMessage(scene, "mysteryEncounter:mysterious_chest_option_1_good_result");
+            queueEncounterMessage(scene, `${namespace}:option:1:good`);
             leaveEncounterWithoutBattle(scene);
           } else if (roll > 36) {
             // Choose between 2 ROGUE tier items (4%)
@@ -98,7 +93,7 @@ export const MysteriousChestEncounter: IMysteryEncounter =
               guaranteedModifierTiers: [ModifierTier.ROGUE, ModifierTier.ROGUE],
             });
             // Display result message then proceed to rewards
-            queueEncounterMessage(scene, "mysteryEncounter:mysterious_chest_option_1_great_result");
+            queueEncounterMessage(scene, `${namespace}:option:1:great`);
             leaveEncounterWithoutBattle(scene);
           } else if (roll > 35) {
             // Choose 1 MASTER tier item (1%)
@@ -106,7 +101,7 @@ export const MysteriousChestEncounter: IMysteryEncounter =
               guaranteedModifierTiers: [ModifierTier.MASTER],
             });
             // Display result message then proceed to rewards
-            queueEncounterMessage(scene, "mysteryEncounter:mysterious_chest_option_1_amazing_result");
+            queueEncounterMessage(scene, `${namespace}:option:1:amazing`);
             leaveEncounterWithoutBattle(scene);
           } else {
             // Your highest level unfainted Pok�mon gets OHKO. Progress with no rewards (35%)
@@ -119,7 +114,7 @@ export const MysteriousChestEncounter: IMysteryEncounter =
             scene.currentBattle.mysteryEncounter.setDialogueToken("pokeName", highestLevelPokemon.name);
             // Show which Pokemon was KOed, then leave encounter with no rewards
             // Does this synchronously so that game over doesn't happen over result message
-            await showEncounterText(scene, "mysteryEncounter:mysterious_chest_option_1_bad_result").then(() => {
+            await showEncounterText(scene, `${namespace}:option:1:bad`).then(() => {
               leaveEncounterWithoutBattle(scene);
             });
           }
@@ -128,11 +123,11 @@ export const MysteriousChestEncounter: IMysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: "mysteryEncounter:mysterious_chest_option_2_label",
-        buttonTooltip: "mysteryEncounter:mysterious_chest_option_2_tooltip",
+        buttonLabel: `${namespace}:option:2:label`,
+        buttonTooltip: `${namespace}:option:2:tooltip`,
         selected: [
           {
-            text: "mysteryEncounter:mysterious_chest_option_2_selected_message",
+            text: `${namespace}:option:2:selected`,
           },
         ],
       },
