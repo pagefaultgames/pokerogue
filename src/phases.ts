@@ -19,7 +19,7 @@ import { biomeLinks, getBiomeName } from "./data/biomes";
 import { ModifierTier } from "./modifier/modifier-tier";
 import { FusePokemonModifierType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, PokemonPpRestoreModifierType, PokemonPpUpModifierType, RememberMoveModifierType, TmModifierType, getDailyRunStarterModifiers, getEnemyBuffModifierForWave, getModifierType, getPlayerModifierTypeOptions, getPlayerShopModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { BattlerTagLapseType, CenterOfAttentionTag, EncoreTag, ProtectedTag, SemiInvulnerableTag, TrappedTag } from "./data/battler-tags";
+import { BattlerTagLapseType, CenterOfAttentionTag, EncoreTag, ProtectedTag, SemiInvulnerableTag, TrappedTag, HealBlockTag } from "./data/battler-tags";
 import { getPokemonMessage, getPokemonNameWithAffix } from "./messages";
 import { Starter } from "./ui/starter-select-ui-handler";
 import { Gender } from "./data/gender";
@@ -4738,17 +4738,23 @@ export class PokemonHealPhase extends CommonAnimPhase {
     const healBlock = pokemon.getTag(BattlerTagType.HEAL_BLOCK);
     const healOrDamage = (!fullHp || this.hpHealed < 0);
     let lastStatusEffect = StatusEffect.NONE;
+    const hpRestoreMultiplier = new Utils.IntegerHolder(1);
+    const healAmount = new Utils.NumberHolder(Math.floor(this.hpHealed * hpRestoreMultiplier.value));
 
     if (!!healBlock && healBlock instanceof HealBlockTag) {
-      this.scene.queueMessage(healBlock.onActivation(pokemon));
-      this.message = null;
-      super.end();
+      if (healAmount.value < 0) {
+        pokemon.damageAndUpdate(healAmount.value * -1, HitResult.HEAL as DamageResult);
+        healAmount.value = 0;
+        pokemon.updateInfo().then(() => super.end());
+      } else {
+        this.scene.queueMessage(healBlock.onActivation(pokemon));
+        this.message = null;
+        super.end();
+      }
     } else if (healOrDamage) {
-      const hpRestoreMultiplier = new Utils.IntegerHolder(1);
       if (!this.revive) {
         this.scene.applyModifiers(HealingBoosterModifier, this.player, hpRestoreMultiplier);
       }
-      const healAmount = new Utils.NumberHolder(Math.floor(this.hpHealed * hpRestoreMultiplier.value));
       if (healAmount.value < 0) {
         pokemon.damageAndUpdate(healAmount.value * -1, HitResult.HEAL as DamageResult);
         healAmount.value = 0;
@@ -4771,7 +4777,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
         lastStatusEffect = pokemon.status.effect;
         pokemon.resetStatus();
       }
-      pokemon.updateInfo().then(() => super.end());
+
     } else if (this.healStatus && !this.revive && pokemon.status) {
       lastStatusEffect = pokemon.status.effect;
       pokemon.resetStatus();
