@@ -42,7 +42,7 @@ export class LoadingScene extends SceneBase {
 
     this.loadImage("loading_bg", "arenas");
     this.loadImage("logo", "");
-    this.loadImage("pride-update", "events");
+    // this.loadImage("pride-update", "events");
 
     //load ui images
     Object.entries(uiImages).forEach(([key, img]) => {
