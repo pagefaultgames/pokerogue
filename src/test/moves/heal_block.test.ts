@@ -43,6 +43,35 @@ describe("Moves - Heal Block", () => {
 
   //Bulbapedia Reference: https://bulbapedia.bulbagarden.net/wiki/Heal_Block_(move)
 
+  test("Heal Block lasts 5 turns on the afflicted Pokemon",
+    async() => {
+      vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH ]);
+
+      await game.startBattle([Species.MAGIKARP]);
+
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).toBeDefined();
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.HEAL_BLOCK));
+      await game.phaseInterceptor.to(TurnEndPhase);
+
+      let count = 1;
+      expect(enemyPokemon.getTag(BattlerTagType.HEAL_BLOCK)).toBeDefined();
+      while (enemyPokemon.getTag(BattlerTagType.HEAL_BLOCK)) {
+        game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+        await game.phaseInterceptor.to(TurnEndPhase);
+        count++;
+      }
+      /**
+    * Expect:
+    * - The enemy Pokemon has Heal Block
+    * - Heal Block lasts 5 turns
+    */
+      expect(count).toBe(5);
+    }, TIMEOUT
+  );
+
+
   test("HP-draining moves should still inflict damage, but fail to restore HP",
   	async() => {
   		vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.ABSORB, Moves.ABSORB, Moves.ABSORB, Moves.ABSORB ]);
