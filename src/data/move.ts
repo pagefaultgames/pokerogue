@@ -4515,10 +4515,10 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 	  const switchOutTarget = this.user ? user : target;
 	  if (switchOutTarget instanceof PlayerPokemon) {
         if (switchOutTarget.hp > 0) {
-	  	  applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, switchOutTarget);
+          applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, switchOutTarget);
           // switchOut below sets the UI to select party(this is not a separate Phase), then adds a SwitchSummonPhase with selected 'mon
-	  	  (switchOutTarget as PlayerPokemon).switchOut(this.batonPass, true).then(() => resolve(true));
-	  	} else {
+          (switchOutTarget as PlayerPokemon).switchOut(this.batonPass, true).then(() => resolve(true));
+        } else {
           resolve(false);
         }
 	  	return;
