@@ -19,7 +19,7 @@ export const ability: AbilityTranslationEntries = {
   },
   sturdy: {
     name: "がんじょう",
-    description: "相手の 技を 受けても 一撃で 倒されることが ない。 一撃必殺技も 効かない。",
+    description: "HPが 満タンのとき 技を 受けても 一撃で 倒されることが ない。 一撃必殺技も 効かない。",
   },
   damp: {
     name: "しめりけ",
@@ -114,8 +114,8 @@ export const ability: AbilityTranslationEntries = {
     description: "自分が なってしまった どくや まひや やけどを 相手に うつす。",
   },
   clearBody: {
-    name: "クリアボディ",
-    description: "相手の 技や 特性で 能力を 下げられない。",
+    name: "クリアボディ",//Should this be 相手や　味方 as the ability also affects allies?
+    description: "相手の 技や 特性で 能力を 下げられない。", 
   },
   naturalCure: {
     name: "しぜんかいふく",
@@ -138,11 +138,11 @@ export const ability: AbilityTranslationEntries = {
     description: "天気が 晴れのとき 素早さが 上がる。",
   },
   illuminate: {
-    name: "はっこう",
-    description: "By illuminating its surroundings, the Pokémon raises the likelihood of meeting wild Pokémon and prevents its accuracy from being lowered.",
+    name: "はっこう", //Does it really have both effects in Pokerogue?
+    description: "あたりを 明るくする ことで 野生の ポケモンに 遭遇 しやすくなる。 その上、　命中率を 下げられない。",
   },
   trace: {
-    name: "トレース",
+    name: "トレース",　
     description: "登場 したとき 相手の 特性を トレースして 同じ 特性に なる。",
   },
   hugePower: {
@@ -210,8 +210,8 @@ export const ability: AbilityTranslationEntries = {
     description: "力自慢の ハサミを 持っているので 相手に 攻撃を 下げられない。",
   },
   pickup: {
-    name: "ものひろい",
-    description: "The Pokémon may pick up the item an opposing Pokémon held during a battle.",
+    name: "ものひろい",//Does this look good/clear?
+    description: "戦闘が 終わったとき　相手の 持っていた　道具や　きのみを 一つ 拾ってくる ことが ある。",
   },
   truant: {
     name: "なまけ",
@@ -226,11 +226,11 @@ export const ability: AbilityTranslationEntries = {
     description: "自分に 触った 相手を メロメロに することが ある。",
   },
   plus: {
-    name: "プラス",
+    name: "プラス", //Change to 味方の場？
     description: "プラスか マイナスの 特性を 持つ ポケモンが 仲間に いると 自分の 特攻が 上がる。",
   },
   minus: {
-    name: "マイナス",
+    name: "マイナス", //Change to 味方の場？
     description: "プラスか マイナスの 特性を 持つ ポケモンが 仲間に いると 自分の 特攻が 上がる。",
   },
   forecast: {
@@ -323,7 +323,7 @@ export const ability: AbilityTranslationEntries = {
   },
   snowCloak: {
     name: "ゆきがくれ",
-    description: "Boosts the Pokémon's evasiveness in snow.",
+    description: "天気が ゆきのとき 回避率が 上がる。",
   },
   gluttony: {
     name: "くいしんぼう",
@@ -459,7 +459,7 @@ export const ability: AbilityTranslationEntries = {
   },
   iceBody: {
     name: "アイスボディ",
-    description: "The Pokémon gradually regains HP in snow.",
+    description: "天気が ゆきのとき ＨＰを 少しずつ 回復 する。",
   },
   solidRock: {
     name: "ハードロック",
@@ -467,11 +467,11 @@ export const ability: AbilityTranslationEntries = {
   },
   snowWarning: {
     name: "ゆきふらし",
-    description: "The Pokémon makes it snow when it enters a battle.",
+    description: "登場 したときに 天気を ゆきに する。",
   },
   honeyGather: {
-    name: "みつあつめ",
-    description: "戦闘が 終わったとき あまいミツを 拾うことが ある。",
+    name: "みつあつめ",//Looks okay?
+    description: "戦闘が 終わったとき あまいミツを 拾うことが ある。 拾ったら　あまいミツが　売られて　お金を　もらう。",
   },
   frisk: {
     name: "おみとおし",
@@ -619,7 +619,7 @@ export const ability: AbilityTranslationEntries = {
   },
   rattled: {
     name: "びびり",
-    description: "Intimidate or being hit by a Dark-, Ghost-, or Bug-type move will scare the Pokémon and boost its Speed stat.",
+    description: "あく ゴースト むしタイプの 攻撃を 受けたり いかくを されると びびって 素早さが 上がる。",
   },
   magicBounce: {
     name: "マジックミラー",
@@ -807,7 +807,7 @@ export const ability: AbilityTranslationEntries = {
   },
   slushRush: {
     name: "ゆきかき",
-    description: "Boosts the Pokémon's Speed stat in snow.",
+    description: "天気が ゆき のとき 素早さが 上がる。",
   },
   longReach: {
     name: "えんかく",
@@ -947,7 +947,7 @@ export const ability: AbilityTranslationEntries = {
   },
   ballFetch: {
     name: "たまひろい",
-    description: "The Pokémon will fetch the Poké Ball from the first failed throw of the battle.",
+    description: "1回目に 投げて 失敗 した モンスターボールを 拾ってくる。",
   },
   cottonDown: {
     name: "わたげ",
@@ -1071,174 +1071,174 @@ export const ability: AbilityTranslationEntries = {
   },
   lingeringAroma: {
     name: "とれないにおい",
-    description: "Contact with the Pokémon changes the attacker's Ability to Lingering Aroma.",
+    description: "相手に 触られると とれないにおいが 相手に うつってしまう。",
   },
   seedSower: {
     name: "こぼれダネ",
-    description: "Turns the ground into Grassy Terrain when the Pokémon is hit by an attack.",
+    description: "攻撃を 受けると グラスフィールドに する。",
   },
   thermalExchange: {
     name: "ねつこうかん",
-    description: "Boosts the Attack stat when the Pokémon is hit by a Fire-type move. The Pokémon also cannot be burned.",
+    description: "ほのおタイプの 技を 受けると 攻撃が 上がる。 やけど状態に ならない。",
   },
   angerShell: {
     name: "いかりのこうら",
-    description: "When an attack causes its HP to drop to half or less, the Pokémon gets angry. This lowers its Defense and Sp. Def stats but boosts its Attack, Sp. Atk, and Speed stats.",
+    description: "相手の攻撃で HPが 半分に なると 怒りで 防御と 特防が 下がるが 攻撃 特攻 素早さが 上がる。",
   },
   purifyingSalt: {
     name: "きよめのしお",
-    description: "The Pokémon's pure salt protects it from status conditions and halves the damage taken from Ghost-type moves.",
+    description: "清らかな塩で 状態異常に ならない。 ゴーストタイプの 技の ダメージを 半減させる。",
   },
   wellBakedBody: {
     name: "こんがりボディ",
-    description: "The Pokémon takes no damage when hit by Fire-type moves. Instead, its Defense stat is sharply boosted.",
+    description: "ほのおタイプの 技を 受けると ダメージを 受けずに 防御が ぐーんと 上がる。",
   },
   windRider: {
     name: "かぜのり",
-    description: "Boosts the Pokémon's Attack stat if Tailwind takes effect or if the Pokémon is hit by a wind move. The Pokémon also takes no damage from wind moves.",
+    description: "おいかぜが 吹いたり 風技を 受けると ダメージを 受けずに 攻撃が 上がる。",
   },
   guardDog: {
     name: "ばんけん",
-    description: "Boosts the Pokémon's Attack stat if intimidated. Moves and items that would force the Pokémon to switch out also fail to work.",
+    description: "いかく されると 攻撃が 上がる。 ポケモンを 入れ替えさせる 技や 道具が 効かない。",
   },
   rockyPayload: {
     name: "いわはこび",
-    description: "Powers up Rock-type moves.",
+    description: "いわタイプの 技の 威力が 上がる。",
   },
   windPower: {
-    name: "ふうりょくでんき",
-    description: "The Pokémon becomes charged when it is hit by a wind move, boosting the power of the next Electric-type move the Pokémon uses.",
+    name: "ふうりょくでんき",//Added extra explanation for what じゅうでん　状態 entails and that Tailwind affect the ability as well.
+    description: "味方の　場に　おいかぜが出たり　風技を 受けると じゅうでん 状態に なることによって　次に出す　でんきタイプの　威力が　２倍に　なる。",
   },
   zeroToHero: {
     name: "マイティチェンジ",
-    description: "The Pokémon transforms into its Hero Form when it switches out.",
+    description: "手持ちに ひっこむと マイティフォルムに 変化する。",
   },
   commander: {
     name: "しれいとう",
-    description: "When the Pokémon enters a battle, it goes inside the mouth of an ally Dondozo if one is on the field. The Pokémon then issues commands from there.",
+    description: "登場したとき 味方に ヘイラッシャが いると 口の中に 入って そこから 指令を だす。",
   },
   electromorphosis: {
     name: "でんきにかえる",
-    description: "The Pokémon becomes charged when it takes damage, boosting the power of the next Electric-type move the Pokémon uses.",
+    description: "ダメージを 受けると じゅうでん 状態に なることによって　次に出す　でんきタイプの　威力が　２倍に　なる。",
   },
   protosynthesis: {
     name: "こだいかっせい",
-    description: "Boosts the Pokémon's most proficient stat in harsh sunlight or if the Pokémon is holding Booster Energy.",
+    description: "ブーストエナジーを 持たせるか 天気が 晴れのとき いちばん 高い能力が 上がる。",
   },
   quarkDrive: {
     name: "クォークチャージ",
-    description: "Boosts the Pokémon's most proficient stat on Electric Terrain or if the Pokémon is holding Booster Energy.",
+    description: "ブーストエナジーを 持たせるか エレキフィールドのとき いちばん 高い能力が 上がる。",
   },
   goodAsGold: {
     name: "おうごんのからだ",
-    description: "A body of pure, solid gold gives the Pokémon full immunity to other Pokémon's status moves.",
+    description: "酸化せず 丈夫な 黄金の体は 相手からの 変化技を 受けない。",
   },
   vesselOfRuin: {
     name: "わざわいのうつわ",
-    description: "The power of the Pokémon's ruinous vessel lowers the Sp. Atk stats of all Pokémon except itself.",
+    description: "災厄を 呼ぶ 器の力で 自分以外の 特攻が 弱くなる。",
   },
   swordOfRuin: {
     name: "わざわいのつるぎ",
-    description: "The power of the Pokémon's ruinous sword lowers the Defense stats of all Pokémon except itself.",
+    description: "災厄を 呼ぶ 剣の力で 自分以外の 防御が 弱くなる。",
   },
   tabletsOfRuin: {
     name: "わざわいのおふだ",
-    description: "The power of the Pokémon's ruinous wooden tablets lowers the Attack stats of all Pokémon except itself.",
+    description: "災厄を 呼ぶ 木札の力で 自分以外の 攻撃が 弱くなる。",
   },
   beadsOfRuin: {
     name: "わざわいのたま",
-    description: "The power of the Pokémon's ruinous beads lowers the Sp. Def stats of all Pokémon except itself.",
+    description: "災厄を 呼ぶ 勾玉の力で 自分以外の 特防が 弱くなる。",
   },
   orichalcumPulse: {
     name: "ひひいろのこどう",
-    description: "Turns the sunlight harsh when the Pokémon enters a battle. The ancient pulse thrumming through the Pokémon also boosts its Attack stat in harsh sunlight.",
+    description: "登場したとき 天気を 晴れにする。 日差しが 強いと 古代の 鼓動により 攻撃が 高まる。",
   },
   hadronEngine: {
     name: "ハドロンエンジン",
-    description: "Turns the ground into Electric Terrain when the Pokémon enters a battle. The futuristic engine within the Pokémon also boosts its Sp. Atk stat on Electric Terrain.",
+    description: "登場したとき エレキフィールドを はる。 エレキフィールドだと 未来の 機関により 特攻が 高まる。",
   },
   opportunist: {
     name: "びんじょう",
-    description: "If an opponent's stat is boosted, the Pokémon seizes the opportunity to boost the same stat for itself.",
+    description: "相手の 能力が 上がったとき 自分も 便乗して 同じように 能力を 上げる。",
   },
   cudChew: {
     name: "はんすう",
-    description: "When the Pokémon eats a Berry, it will regurgitate that Berry at the end of the next turn and eat it one more time.",
+    description: "きのみを 食べると 次のターンの 終わりに 胃から 出して もう1回だけ 食べる。",
   },
   sharpness: {
     name: "きれあじ",
-    description: "Powers up slicing moves.",
+    description: "相手を 切る技の 威力が 上がる。",
   },
   supremeOverlord: {
     name: "そうだいしょう",
-    description: "When the Pokémon enters a battle, its Attack and Sp. Atk stats are slightly boosted for each of the allies in its party that have already been defeated.",
+    description: "登場したとき 今まで 倒された 味方の 数が 多いほど 少しずつ 攻撃と 特攻が 上がる。",
   },
   costar: {
     name: "きょうえん",
-    description: "When the Pokémon enters a battle, it copies an ally's stat changes.",
+    description: "登場 したときに 味方の 能力変化を コピーする。",
   },
   toxicDebris: {
     name: "どくげしょう",
-    description: "Scatters poison spikes at the feet of the opposing team when the Pokémon takes damage from physical moves.",
+    description: "物理技で ダメージを 受けると 相手の 足下に どくびしが ちらばる。",
   },
   armorTail: {
-    name: "テイルアーマー",
-    description: "The mysterious tail covering the Pokémon's head makes opponents unable to use priority moves against the Pokémon or its allies.",
+    name: "テイルアーマー", //Changed from こちらに in original to 味方の場に for clarity、 does that work?
+    description: "頭を包む 謎のしっぽが 味方の場に むかって 先制技を 出せない ようにする。",
   },
   earthEater: {
     name: "どしょく",
-    description: "If hit by a Ground-type move, the Pokémon has its HP restored instead of taking damage.",
+    description: "じめんタイプの 技を 受けると ダメージを 受けずに 回復する。",
   },
   myceliumMight: {
     name: "きんしのちから",
-    description: "The Pokémon will always act more slowly when using status moves, but these moves will be unimpeded by the Ability of the target.",
+    description: "変化技を 出すとき 必ず 行動が 遅くなるが 相手の 特性に ジャマされない。",
   },
   mindsEye: {
     name: "しんがん",
-    description: "The Pokémon ignores changes to opponents' evasiveness, its accuracy can't be lowered, and it can hit Ghost types with Normal- and Fighting-type moves.",
+    description: "ノーマル かくとうタイプの技を ゴーストタイプに 当てることが できる。 相手の 回避率の 変化を 無視し 命中率も 下げられない。",
   },
   supersweetSyrup: {
     name: "かんろなミツ",
-    description: "A sickly sweet scent spreads across the field the first time the Pokémon enters a battle, lowering the evasiveness of opposing Pokémon.",
+    description: "最初に 登場 したとき 甘ったるい 蜜の香りを ふりまいて 相手の 回避率を 下げる。",
   },
   hospitality: {
     name: "おもてなし",
-    description: "When the Pokémon enters a battle, it showers its ally with hospitality, restoring a small amount of the ally's HP.",
+    description: "登場したとき 味方を もてなして HPを 少しだけ 回復してあげる。",
   },
   toxicChain: {
     name: "どくのくさり",
-    description: "The power of the Pokémon's toxic chain may badly poison any target the Pokémon hits with a move.",
+    description: "毒素を ふくんだ 鎖の力で 技を 当てた 相手を 猛毒の状態に することが ある。",
   },
   embodyAspectTeal: {
     name: "おもかげやどし",
-    description: "The Pokémon's heart fills with memories, causing the Teal Mask to shine and the Pokémon's Speed stat to be boosted.",
+    description: "思い出を 心に 宿すことで みどりのめんを かがやかせ 自分の 素早さを 上げる。",
   },
   embodyAspectWellspring: {
     name: "おもかげやどし",
-    description: "The Pokémon's heart fills with memories, causing the Wellspring Mask to shine and the Pokémon's Sp. Def stat to be boosted.",
+    description: "思い出を 心に 宿すことで いどのめんを かがやかせ 自分の 特防を 上げる。",
   },
   embodyAspectHearthflame: {
     name: "おもかげやどし",
-    description: "The Pokémon's heart fills with memories, causing the Hearthflame Mask to shine and the Pokémon's Attack stat to be boosted.",
+    description: "思い出を 心に 宿すことで かまどのめんを かがやかせ 自分の 攻撃を 上げる。",
   },
   embodyAspectCornerstone: {
     name: "おもかげやどし",
-    description: "The Pokémon's heart fills with memories, causing the Cornerstone Mask to shine and the Pokémon's Defense stat to be boosted.",
+    description: "思い出を 心に 宿すことで かまどのめんを かがやかせ 自分の 攻撃を 上げる。",
   },
   teraShift: {
     name: "テラスチェンジ",
-    description: "When the Pokémon enters a battle, it absorbs the energy around itself and transforms into its Terastal Form.",
+    description: "登場したとき 周囲の エネルギーを 吸収し テラスタルフォルムに 変化する。",
   },
   teraShell: {
     name: "テラスシェル",
-    description: "The Pokémon's shell contains the powers of each type. All damage-dealing moves that hit the Pokémon when its HP is full will not be very effective.",
+    description: "全タイプの力を 秘めた甲羅は HPが 満タンの ときに 受ける ダメージを すべて 今ひとつに する。",
   },
   teraformZero: {
     name: "ゼロフォーミング",
-    description: "When Terapagos changes into its Stellar Form, it uses its hidden powers to eliminate all effects of weather and terrain, reducing them to zero.",
+    description: "テラパゴスが ステラフォルムに なったとき 秘められた力で 天気と フィールドの 影響を すべて ゼロにする。",
   },
   poisonPuppeteer: {
     name: "どくくぐつ",
-    description: "Pokémon poisoned by Pecharunt's moves will also become confused.",
+    description: "モモワロウの 技によって どく状態に なった 相手は こんらん状態にも なってしまう。",
   },
 } as const;
