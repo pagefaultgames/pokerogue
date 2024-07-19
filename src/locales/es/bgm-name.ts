@@ -110,7 +110,7 @@ export const bgmName: SimpleTranslationEntries = {
   "plains": "PMD EoS - Pradera de la Cumbre del Cielo",
   "power_plant": "PMD EoS - Pradera Destello",
   "ruins": "PMD EoS - Sima Hermética",
-  "sea": "PMD EoS - Cueva Aguamar",
+  "sea": "Andr06 - Marine Mystique", // Name defined by the composer
   "seabed": "Firel - Seabed", // The composer thinks about a more creative name
   "slum": "Andr06 - Sneaky Snom", // Name defined by the composer
   "snowy_forest": "PMD EoS - Campo nevado de la Cumbre del Cielo",
