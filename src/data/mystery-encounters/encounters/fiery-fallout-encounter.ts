@@ -186,7 +186,8 @@ export const FieryFalloutEncounter: IMysteryEncounter =
         // Burn random member
         const burnable = nonFireTypes.filter(p => isNullOrUndefined(p.status) || isNullOrUndefined(p.status.effect) || p.status?.effect === StatusEffect.BURN);
         if (burnable?.length > 0) {
-          const chosenPokemon = burnable[randSeedInt(burnable.length - 1)];
+          const roll = randSeedInt(burnable.length);
+          const chosenPokemon = burnable[roll];
           if (chosenPokemon.trySetStatus(StatusEffect.BURN)) {
             // Burn applied
             encounter.setDialogueToken("burnedPokemon", chosenPokemon.name);
