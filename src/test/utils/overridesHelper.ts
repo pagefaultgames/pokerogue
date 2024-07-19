@@ -87,7 +87,7 @@ export class OverridesHelper {
    * @param seed the seed to set
    * @returns spy instance
    */
-  seed(seed: string): MockInstance {
+  seed(seed: string) {
     const spy = vi.spyOn(this.game.scene, "resetSeed").mockImplementation(() => {
       this.game.scene.waveSeed = seed;
       Phaser.Math.RND.sow([seed]);
