@@ -227,9 +227,11 @@ export default class GameWrapper {
       graphics: (config) => new MockGraphics(mockTextureManager, config),
       rexTransitionImagePack: () => ({
         transit: () => null,
+        once: vi.fn(),
       }),
     };
     this.scene.time = new MockClock(this.scene);
+    this.scene.remove = vi.fn();
   }
 }
 
