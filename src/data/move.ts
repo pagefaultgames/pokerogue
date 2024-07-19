@@ -2284,7 +2284,7 @@ export class ChargeAttr extends OverrideMoveEffectAttr {
             if (!movesetMove) { // account for any move that calls a ChargeAttr move when the ChargeAttr move does not exist in moveset
               movesetMove = new PokemonMove(move.id, 0, 0, true);
             }
-            user.scene.pushMovePhase(new MovePhase(user.scene, user, [ target.getBattlerIndex() ], movesetMove, true), this.followUpPriority);
+            user.scene.pushMovePhase(new MovePhase(user.scene, user, [ target.getBattlerIndex() ], movesetMove, true), this.followUpPriority, this.sameTurn);
           }
           user.addTag(BattlerTagType.CHARGING, 1, move.id, user.id);
           resolve(true);

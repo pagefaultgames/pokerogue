@@ -2586,6 +2586,8 @@ export class MovePhase extends BattlePhase {
     this.ignorePp = !!ignorePp;
     this.failed = false;
     this.cancelled = false;
+
+    console.log("created MovePhase", { move: move.getName(), followUp: this.followUp, ignorePp: this.ignorePp, cancelled: this.cancelled, failed: this.failed });
   }
 
   canMove(): boolean {
@@ -2606,6 +2608,7 @@ export class MovePhase extends BattlePhase {
     super.start();
 
     console.log(Moves[this.move.moveId]);
+    console.log("started MovePhase", { move: this.move.getName(), followUp: this.followUp, ignorePp: this.ignorePp, cancelled: this.cancelled, failed: this.failed });
 
     if (!this.canMove()) {
       if (this.move.moveId && this.pokemon.summonData?.disabledMove === this.move.moveId) {
@@ -2674,6 +2677,7 @@ export class MovePhase extends BattlePhase {
     });
 
     const doMove = () => {
+      console.log("started doMove", { move: this.move.getName(), followUp: this.followUp, ignorePp: this.ignorePp, cancelled: this.cancelled, failed: this.failed });
       this.pokemon.turnData.acted = true; // Record that the move was attempted, even if it fails
 
       this.pokemon.lapseTags(BattlerTagLapseType.PRE_MOVE);
@@ -2691,6 +2695,7 @@ export class MovePhase extends BattlePhase {
       }
 
       if (!this.followUp && this.canMove() && !this.cancelled) {
+        console.log("lapsing MOVE tags", { move: this.move.getName(), followUp: this.followUp, ignorePp: this.ignorePp, cancelled: this.cancelled, failed: this.failed });
         this.pokemon.lapseTags(BattlerTagLapseType.MOVE);
       }
 
@@ -2705,6 +2710,7 @@ export class MovePhase extends BattlePhase {
         this.pokemon.pushMoveHistory({ move: Moves.NONE, result: MoveResult.FAIL });
 
         this.pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT); // Remove any tags from moves like Fly/Dive/etc.
+        console.log("lapsing MOVE_EFFECT tags", { move: this.move.getName(), followUp: this.followUp, ignorePp: this.ignorePp, cancelled: this.cancelled, failed: this.failed });
         moveQueue.shift(); // Remove the second turn of charge moves
         return this.end();
       }
@@ -2735,6 +2741,7 @@ export class MovePhase extends BattlePhase {
       }
 
       if (!allMoves[this.move.moveId].hasAttr(CopyMoveAttr)) {
+        console.log("setting currentBattle.lastMove", { move: this.move.getName(), followUp: this.followUp, ignorePp: this.ignorePp, cancelled: this.cancelled, failed: this.failed });
         this.scene.currentBattle.lastMove = this.move.moveId;
       }
 
@@ -2757,10 +2764,12 @@ export class MovePhase extends BattlePhase {
        * regardless of whether the move successfully executes or not.
        */
       if (success || [Moves.ROAR, Moves.WHIRLWIND, Moves.TRICK_OR_TREAT, Moves.FORESTS_CURSE].includes(this.move.moveId)) {
+        console.log("success; applying pre-attack abilities", { move: this.move.getName(), followUp: this.followUp, ignorePp: this.ignorePp, cancelled: this.cancelled, failed: this.failed });
         applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, this.move.getMove());
       }
 
       if (success) {
+        console.log("queueing effect phase", { move: this.move.getName(), followUp: this.followUp, ignorePp: this.ignorePp, cancelled: this.cancelled, failed: this.failed });
         this.scene.unshiftPhase(this.getEffectPhase());
       } else {
         this.pokemon.pushMoveHistory({ move: this.move.moveId, targets: this.targets, result: MoveResult.FAIL, virtual: this.move.virtual });
@@ -2856,7 +2865,10 @@ export class MovePhase extends BattlePhase {
 
   end() {
     if (!this.followUp && this.canMove()) {
+      console.log("unshifting MoveEndPhase", { move: this.move.getName(), followUp: this.followUp, ignorePp: this.ignorePp, cancelled: this.cancelled, failed: this.failed });
       this.scene.unshiftPhase(new MoveEndPhase(this.scene, this.pokemon.getBattlerIndex()));
+    } else {
+      console.log("did not unshift MoveEndPhase", { move: this.move.getName(), followUp: this.followUp, ignorePp: this.ignorePp, cancelled: this.cancelled, failed: this.failed });
     }
 
     super.end();
@@ -2895,14 +2907,19 @@ export class MoveEffectPhase extends PokemonPhase {
 
     // Assume single target for override
     applyMoveAttrs(OverrideMoveEffectAttr, user, this.getTarget(), move, overridden, this.move.virtual).then(() => {
+      console.log("after OverrideMoveEffectAttr applied", { move: this.move.getName(), overridden: overridden.value, virtual: this.move.virtual });
 
       if (overridden.value) {
         return this.end();
       }
 
+      console.log("lapsing MOVE_EFFECT tags", { move: this.move.getName(), overridden: overridden.value, virtual: this.move.virtual });
+
       user.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
 
       if (user.turnData.hitsLeft === undefined) {
+        console.log("calculating hit count", { move: this.move.getName(), overridden: overridden.value, virtual: this.move.virtual });
+
         const hitCount = new Utils.IntegerHolder(1);
         // Assume single target for multi hit
         applyMoveAttrs(MultiHitAttr, user, this.getTarget(), move, hitCount);
@@ -2915,6 +2932,7 @@ export class MoveEffectPhase extends PokemonPhase {
 
       const moveHistoryEntry = { move: this.move.moveId, targets: this.targets, result: MoveResult.PENDING, virtual: this.move.virtual };
 
+      console.log("checking hits", { move: this.move.getName(), overridden: overridden.value, virtual: this.move.virtual });
       const targetHitChecks = Object.fromEntries(targets.map(p => [p.getBattlerIndex(), this.hitCheck(p)]));
       const activeTargets = targets.map(t => t.isActive(true));
       if (!activeTargets.length || (!move.hasAttr(VariableTargetAttr) && !move.isMultiTarget() && !targetHitChecks[this.targets[0]])) {
@@ -2970,10 +2988,12 @@ export class MoveEffectPhase extends PokemonPhase {
               user, target, move).then(() => {
               if (hitResult !== HitResult.FAIL) {
                 const chargeEffect = !!move.getAttrs(ChargeAttr).find(ca => ca.usedChargeEffect(user, this.getTarget(), move));
+                console.log("applying move effect attrs", {move: this.move.getName(), hitResult, chargeEffect });
                 // Charge attribute with charge effect takes all effect attributes and applies them to charge stage, so ignore them if this is present
                 Utils.executeIf(!chargeEffect, () => applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && attr.trigger === MoveEffectTrigger.POST_APPLY
                     && attr.selfTarget && (!attr.firstHitOnly || firstHit) && (!attr.lastHitOnly || lastHit), user, target, move)).then(() => {
                   if (hitResult !== HitResult.NO_EFFECT) {
+                    console.log("doing charge", {move: this.move.getName(), hitResult, chargeEffect });
                     applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.POST_APPLY
                       && !(attr as MoveEffectAttr).selfTarget && (!attr.firstHitOnly || firstHit) && (!attr.lastHitOnly || lastHit), user, target, this.move.getMove()).then(() => {
                       if (hitResult < HitResult.NO_EFFECT && !target.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr)) {

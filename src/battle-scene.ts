@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 import UI from "./ui/ui";
-import { NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, TurnInitPhase, ReturnPhase, LevelCapPhase, ShowTrainerPhase, LoginPhase, MovePhase, TitlePhase, SwitchPhase } from "./phases";
+import { NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, TurnInitPhase, ReturnPhase, LevelCapPhase, ShowTrainerPhase, LoginPhase, MovePhase, TitlePhase, SwitchPhase, WeatherEffectPhase } from "./phases";
 import Pokemon, { PlayerPokemon, EnemyPokemon } from "./field/pokemon";
 import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies } from "./data/pokemon-species";
 import { Constructor } from "#app/utils";
@@ -2073,10 +2073,21 @@ export default class BattleScene extends SceneBase {
     return false;
   }
 
-  pushMovePhase(movePhase: MovePhase, priorityOverride?: integer): void {
+  pushMovePhase(movePhase: MovePhase, priorityOverride?: integer, forceSameTurn?: boolean): void {
     const movePriority = new Utils.IntegerHolder(priorityOverride !== undefined ? priorityOverride : movePhase.move.getMove().priority);
+
     applyAbAttrs(IncrementMovePriorityAbAttr, movePhase.pokemon, null, movePhase.move.getMove(), movePriority);
-    const lowerPriorityPhase = this.phaseQueue.find(p => p instanceof MovePhase && p.move.getMove().priority < movePriority.value);
+
+    const lowerPriorityPhase = this.phaseQueue.find(p => {
+      if (p instanceof MovePhase && p.move.getMove().priority < movePriority.value) {
+        return true;
+      } else if (forceSameTurn && p instanceof WeatherEffectPhase) { // the first pre-turn-end phase pushed by TurnStartPhase
+        return true;
+      } else {
+        return false;
+      }
+    });
+
     if (lowerPriorityPhase) {
       this.phaseQueue.splice(this.phaseQueue.indexOf(lowerPriorityPhase), 0, movePhase);
     } else {
