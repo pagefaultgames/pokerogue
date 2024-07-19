@@ -1,21 +1,21 @@
 import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const egg: SimpleTranslationEntries = {
-  "egg": "たまご",
+  "egg": "タマゴ",
   "greatTier": "レア",
-  "ultraTier": "エピック",
+  "ultraTier": "超レア",
   "masterTier": "伝説",
-  "defaultTier": "コモン",
+  "defaultTier": "ふつう",
   "hatchWavesMessageSoon": "なかから おとが きこえてくる! もうすぐ うまれそう！",
   "hatchWavesMessageClose": "ときどき うごいている みたい。 うまれるまで もう ちょっとかな？",
   "hatchWavesMessageNotClose": "なにが うまれてくるのかな? うまれるまで まだまだ じかんが かかりそう。",
   "hatchWavesMessageLongTime": "この タマゴは うまれるまで かなり じかんが かかりそう。",
   "gachaTypeLegendary": "伝説確率アップ",
-  "gachaTypeMove": "レアなたまご技の確率アップ",
+  "gachaTypeMove": "レアなタマゴわざ確率アップ",
   "gachaTypeShiny": "色違い確率アップ",
   "selectMachine": "ガチャマシンを選択",
-  "notEnoughVouchers": "たまごクーポンが足りません！",
-  "tooManyEggs": "たまごが一杯です!",
+  "notEnoughVouchers": "タマゴクーポンが足りません！",
+  "tooManyEggs": "タマゴが一杯です!",
   "pull": "回引く",
-  "pulls": "連ガチャ"
+  "pulls": "回引く"
 } as const;
