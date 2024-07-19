@@ -4765,7 +4765,9 @@ export class RandomMovesetMoveAttr extends OverrideMoveEffectAttr {
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const moveset = (!this.enemyMoveset ? user : target).getMoveset();
-    const moves = moveset.filter(m => !m.getMove().hasFlag(MoveFlags.IGNORE_VIRTUAL));
+    const allies = moveset.concat(user.scene.getParty().map(p => p.moveset).flat());
+
+    const moves = allies.filter(m => !m.getMove().hasFlag(MoveFlags.IGNORE_VIRTUAL));
     if (moves.length) {
       const move = moves[user.randSeedInt(moves.length)];
       const moveIndex = moveset.findIndex(m => m.moveId === move.moveId);
