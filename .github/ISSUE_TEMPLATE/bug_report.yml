@@ -1,6 +1,6 @@
 name: Bug Report
 description: Create a report to help us improve
-title: "[Bug]: "
+title: "[Bug] "
 labels: ["bug"]
 body:
   - type: markdown
@@ -14,6 +14,10 @@ body:
       description: A clear and concise description of what the bug is.
     validations:
       required: true
+  - type: markdown
+    attributes:
+      value: |
+        ---
   - type: textarea
     id: session-file
     attributes:
@@ -28,6 +32,10 @@ body:
       description: Open Menu → ManageData → Export Data. The file should now be in your `/Downloads` directory. Change the file extension type from `.prsv` to `.txt` (How to [Windows](https://www.guidingtech.com/how-to-change-file-type-on-windows/) | [Mac](https://support.apple.com/guide/mac-help/show-or-hide-filename-extensions-on-mac-mchlp2304/mac) | [iOS](https://www.guidingtech.com/change-file-type-extension-on-iphone/)).
     validations:
       required: false
+  - type: markdown
+    attributes:
+      value: |
+        ---
   - type: textarea
     id: expected-behavior
     attributes:
@@ -35,6 +43,10 @@ body:
       description: A clear and concise description of what you expected to happen. If it is an existing move or ability
     validations:
       required: true
+  - type: markdown
+    attributes:
+      value: |
+        ---
   - type: textarea
     id: media
     attributes:
@@ -42,6 +54,10 @@ body:
       description:  If applicable, add screenshots or videos to help explain your problem.
     validations:
       required: false
+  - type: markdown
+    attributes:
+      value: |
+        ---
   - type: dropdown
     id: os
     attributes:
@@ -62,6 +78,10 @@ body:
       label: If other please specify
     validations:
       required: false
+  - type: markdown
+    attributes:
+      value: |
+        ---
   - type: dropdown
     id: browser
     attributes:
@@ -82,6 +102,10 @@ body:
       label: If other please specify
     validations:
       required: false
+  - type: markdown
+    attributes:
+      value: |
+        ---
   - type: textarea
     id: additional-context
     attributes:
