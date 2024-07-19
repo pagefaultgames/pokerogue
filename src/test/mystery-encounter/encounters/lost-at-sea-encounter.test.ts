@@ -64,7 +64,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
   });
 
   it("should not run below wave 11", async () => {
-    game.override.startingWave(10);
+    game.override.startingWave(9);
 
     await game.runToMysteryEncounter();
 
@@ -72,7 +72,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
   });
 
   it("should not run above wave 179", async () => {
-    game.override.startingWave(180);
+    game.override.startingWave(181);
 
     await game.runToMysteryEncounter();
 
