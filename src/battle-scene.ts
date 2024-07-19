@@ -68,6 +68,7 @@ import { UiTheme } from "#enums/ui-theme";
 import { TimedEventManager } from "#app/timed-event-manager.js";
 import i18next from "i18next";
 import {TrainerType} from "#enums/trainer-type";
+import { LoadingScene } from "./loading-scene";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -319,6 +320,7 @@ export default class BattleScene extends SceneBase {
   }
 
   create() {
+    this.scene.remove(LoadingScene.KEY);
     initGameSpeed.apply(this);
     this.inputController = new InputsController(this);
     this.uiInputs = new UiInputs(this, this.inputController);
@@ -369,7 +371,7 @@ export default class BattleScene extends SceneBase {
 
     this.fieldUI = fieldUI;
 
-    const transition = (this.make as any).rexTransitionImagePack({
+    const transition = this.make.rexTransitionImagePack({
       x: 0,
       y: 0,
       scale: 6,
@@ -381,7 +383,10 @@ export default class BattleScene extends SceneBase {
       mode: "blinds",
       ease: "Cubic.easeInOut",
       duration: 1250,
-      oncomplete: () => transition.destroy()
+    });
+    transition.once("complete", () => {
+      this.textures.remove("loading_bg");
+      transition.destroy();
     });
 
     this.add.existing(transition);
