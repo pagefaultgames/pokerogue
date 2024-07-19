@@ -5386,10 +5386,10 @@ export class SelectModifierPhase extends BattlePhase {
         return true;
       case 1:
         if (typeOptions.length === 0) {
-          this.scene.ui.revertMode();
+          this.scene.ui.clearText();
           this.scene.ui.setMode(Mode.MESSAGE);
           super.end();
-          return;
+          return true;
         }
         modifierType = typeOptions[cursor].type;
         break;
