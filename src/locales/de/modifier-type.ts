@@ -153,7 +153,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "REVIVER_SEED": { name: "Belebersamen", description: "Belebt den Träger mit der Hälfte seiner KP wieder,  sollte er  durch einen direkten Treffer kampfunfähig werden." },
 
-    "WHITE_HERB": { name: "Schlohkraut", description: "An item to be held by a Pokémon. It will restore any lowered stat in battle." },
+    "WHITE_HERB": { name: "Schlohkraut", description: "Ein Item zum Tragen. Es hebt einmalig jede negative Statuswertveränderung auf." },
 
     "ETHER": { name: "Äther" },
     "MAX_ETHER": { name: "Top-Äther" },
