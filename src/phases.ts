@@ -1711,7 +1711,7 @@ export class EncounterPhase extends BattlePhase {
         if (w.turnIndex == undefined) w.turnIndex = 0
         // If any data has been written for this wave
         if (w.initialActions.length > 0 || w.modifiers.length > 0 || w.turnIndex > 0) {
-          this.scene.ui.showText("This wave has existing data.\nClear it?", undefined, () => {
+          this.scene.ui.showText("This wave has existing enemy move data.\nClear it?", undefined, () => {
             this.scene.ui.setMode(Mode.CONFIRM, () => {
               //this.scene.ui.revertMode()
               this.scene.ui.clearText()
