@@ -26,6 +26,7 @@ import PokemonSpecies from "../../pokemon-species";
 import { Status, StatusEffect } from "../../status-effect";
 import { TrainerConfig, trainerConfigs, TrainerSlot } from "../../trainer-config";
 import { MysteryEncounterVariant } from "../mystery-encounter";
+import { Nature } from "#app/data/nature";
 
 export class EnemyPokemonConfig {
   species: PokemonSpecies;
@@ -34,6 +35,8 @@ export class EnemyPokemonConfig {
   bossSegmentModifier?: number; // Additive to the determined segment number
   formIndex?: number;
   level?: number;
+  nature?: Nature;
+  ivs?: [integer, integer, integer, integer, integer, integer];
   modifierTypes?: PokemonHeldItemModifierType[];
   dataSource?: PokemonData;
   tags?: BattlerTagType[];
@@ -180,15 +183,25 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
       }
 
       // Set Passive
-      if (partyConfig.pokemonConfigs[e].passive) {
+      if (config.passive) {
         enemyPokemon.passive = true;
       }
 
+      // Set Nature
+      if (config.nature) {
+        enemyPokemon.nature = config.nature;
+      }
+
+      // Set IVs
+      if (config.ivs) {
+        enemyPokemon.ivs = config.ivs;
+      }
+
       // Set Status
-      if (partyConfig.pokemonConfigs[e].status) {
+      if (config.status) {
         // Default to cureturn 3 for sleep
-        const cureTurn = partyConfig.pokemonConfigs[e].status === StatusEffect.SLEEP ? 3 : null;
-        enemyPokemon.status = new Status(partyConfig.pokemonConfigs[e].status, 0, cureTurn);
+        const cureTurn = config.status === StatusEffect.SLEEP ? 3 : null;
+        enemyPokemon.status = new Status(config.status, 0, cureTurn);
       }
 
       // Set tags
