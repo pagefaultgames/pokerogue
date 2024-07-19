@@ -1038,8 +1038,7 @@ export abstract class BattleAnim {
       let t = 0;
 
       for (const frame of frames) {
-        let x = frame.x;
-        let y = frame.y;
+        let { x , y } = frame;
         const scaleX = (frame.zoomX / 100) * (!frame.mirror ? 1 : -1);
         const scaleY = (frame.zoomY / 100);
         x += targetInitialX;

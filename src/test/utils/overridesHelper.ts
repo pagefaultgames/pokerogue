@@ -21,7 +21,7 @@ export class OverridesHelper {
    * @param percentage the encounter chance in %
    * @returns spy instance
    */
-  mysteryEncounterChance(percentage: number): MockInstance {
+  mysteryEncounterChance(percentage: number) {
     const maxRate: number = 256; // 100%
     const rate = maxRate * (percentage / 100);
     const spy = vi.spyOn(Overrides, "MYSTERY_ENCOUNTER_RATE_OVERRIDE", "get").mockReturnValue(rate);
@@ -66,7 +66,7 @@ export class OverridesHelper {
    * @param wave the wave (index) to set. Classic: `1`-`200`
    * @returns spy instance
    */
-  startingWave(wave: number): MockInstance {
+  startingWave(wave: number) {
     const spy = vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(wave);
     this.log(`Starting wave set to ${wave}!`);
     return spy;
@@ -88,7 +88,7 @@ export class OverridesHelper {
    * @param type weather type to set
    * @returns spy instance
    */
-  weather(type: WeatherType): MockInstance {
+  weather(type: WeatherType) {
     const spy = vi.spyOn(Overrides, "WEATHER_OVERRIDE", "get").mockReturnValue(type);
     this.log(`Weather set to ${Weather[type]} (=${type})!`);
     return spy;
@@ -99,7 +99,7 @@ export class OverridesHelper {
    * @param seed the seed to set
    * @returns spy instance
    */
-  seed(seed: string): MockInstance {
+  seed(seed: string) {
     const spy = vi.spyOn(this.game.scene, "resetSeed").mockImplementation(() => {
       this.game.scene.waveSeed = seed;
       Phaser.Math.RND.sow([seed]);

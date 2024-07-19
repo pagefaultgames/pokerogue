@@ -36,7 +36,7 @@ const DAMAGE_PERCENTAGE: number = 20;
 export const FieryFalloutEncounter: IMysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.FIERY_FALLOUT)
     .withEncounterTier(MysteryEncounterTier.COMMON)
-    .withSceneWaveRangeRequirement(40, 180) // waves 10 to 180
+    .withSceneWaveRangeRequirement(40, 180)
     .withCatchAllowed(true)
     .withIntroSpriteConfigs([]) // Set in onInit()
     .withAnimations(EncounterAnim.MAGMA_BG, EncounterAnim.MAGMA_SPOUT)
@@ -186,7 +186,8 @@ export const FieryFalloutEncounter: IMysteryEncounter =
         // Burn random member
         const burnable = nonFireTypes.filter(p => isNullOrUndefined(p.status) || isNullOrUndefined(p.status.effect) || p.status?.effect === StatusEffect.BURN);
         if (burnable?.length > 0) {
-          const chosenPokemon = burnable[randSeedInt(burnable.length - 1)];
+          const roll = randSeedInt(burnable.length);
+          const chosenPokemon = burnable[roll];
           if (chosenPokemon.trySetStatus(StatusEffect.BURN)) {
             // Burn applied
             encounter.setDialogueToken("burnedPokemon", chosenPokemon.name);
