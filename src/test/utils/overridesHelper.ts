@@ -20,7 +20,7 @@ export class OverridesHelper {
    * @param percentage the encounter chance in %
    * @returns spy instance
    */
-  mysteryEncounterChance(percentage: number): MockInstance {
+  mysteryEncounterChance(percentage: number) {
     const maxRate: number = 256; // 100%
     const rate = maxRate * (percentage / 100);
     const spy = vi.spyOn(Overrides, "MYSTERY_ENCOUNTER_RATE_OVERRIDE", "get").mockReturnValue(rate);
