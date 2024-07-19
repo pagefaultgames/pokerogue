@@ -1557,6 +1557,15 @@ export class SwitchSummonPhase extends SummonPhase {
 
   private lastPokemon: Pokemon;
 
+  /**
+   * Constructor for creating a new SwitchSummonPhase
+   * @param scene {@linkcode BattleScene} the scene the phase is associated with
+   * @param fieldIndex integer representing position on the battle field
+   * @param slotIndex integer for the index of pokemon (in party of 6) to switch into
+   * @param doReturn boolean whether to render "comeback" dialogue
+   * @param batonPass boolean if the switch is from baton pass
+   * @param player boolean if the switch is from the player
+   */
   constructor(scene: BattleScene, fieldIndex: integer, slotIndex: integer, doReturn: boolean, batonPass: boolean, player?: boolean) {
     super(scene, fieldIndex, player !== undefined ? player : true);
 
@@ -1580,6 +1589,8 @@ export class SwitchSummonPhase extends SummonPhase {
       }
     }
 
+    // if doReturn === False OR slotIndex !== -1 (slotIndex is valid) and the pokemon doesn't exist/is false
+    // then switchAndSummon(), manually pick pokemon to switch into
     if (!this.doReturn || (this.slotIndex !== -1 && !(this.player ? this.scene.getParty() : this.scene.getEnemyParty())[this.slotIndex])) {
       if (this.player) {
         return this.switchAndSummon();
@@ -4594,7 +4605,7 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
       // we still want to display the stats if activated
       this.scene.ui.getMessageHandler().promptLevelUpStats(this.partyMemberIndex, prevStats, false).then(() => this.end());
     }
-    if (this.level <= 100) {
+    if (this.lastLevel < 100) { // this feels like an unnecessary optimization
       const levelMoves = this.getPokemon().getLevelMoves(this.lastLevel + 1);
       for (const lm of levelMoves) {
         this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, lm[1]));
