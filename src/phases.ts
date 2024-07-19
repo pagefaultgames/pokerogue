@@ -2332,15 +2332,13 @@ export class TurnStartPhase extends FieldPhase {
     });
 
     let orderIndex = 0;
-
-    this.queueMoveHeaders(moveOrder);
+    
     for (const o of moveOrder) {
 
       const pokemon = field[o];
       const turnCommand = this.scene.currentBattle.turnCommands[o];
 
       if (turnCommand.skip) {
-        this.scene.tryRemovePhase(phase => phase instanceof MoveHeaderPhase && phase.pokemon === pokemon);
         continue;
       }
 
@@ -2352,6 +2350,9 @@ export class TurnStartPhase extends FieldPhase {
           continue;
         }
         const move = pokemon.getMoveset().find(m => m.moveId === queuedMove.move) || new PokemonMove(queuedMove.move);
+        if (move.getMove().hasAttr(MoveHeaderAttr)) {
+          this.scene.unshiftPhase(new MoveHeaderPhase(this.scene, pokemon, move));
+        }
         if (pokemon.isPlayer()) {
           if (turnCommand.cursor === -1) {
             this.scene.pushPhase(new MovePhase(this.scene, pokemon, turnCommand.targets || turnCommand.move.targets, move));
@@ -2411,23 +2412,6 @@ export class TurnStartPhase extends FieldPhase {
      * this is important since stuff like SwitchSummon, AttemptRun, AttemptCapture Phases break the "flow" and should take precedence
      */
     this.end();
-  }
-
-  queueMoveHeaders(moveOrder: BattlerIndex[]): void {
-    moveOrder.forEach(o => {
-      const pokemon = this.scene.getField()[o];
-      const turnCommand = this.scene.currentBattle.turnCommands[o];
-
-      if (turnCommand.command === Command.FIGHT) {
-        const queuedMove = turnCommand.move;
-        if (!!queuedMove) {
-          const move = pokemon.getMoveset().find(m => m.moveId === queuedMove.move) || new PokemonMove(queuedMove.move);
-          if (move.getMove().hasAttr(MoveHeaderAttr)) {
-            this.scene.pushPhase(new MoveHeaderPhase(this.scene, pokemon, move));
-          }
-        }
-      }
-    });
   }
 }
 
