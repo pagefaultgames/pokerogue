@@ -21,7 +21,7 @@ const namespace = "mysteryEncounter:lostAtSea";
 /**
  * Lost at sea encounter.
  * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/9 | GitHub Issue #9}
- * @see For biome requirements check [mysteryEncountersByBiome](../mystery-encounters.ts)
+ * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
 export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.LOST_AT_SEA)
   .withEncounterTier(MysteryEncounterTier.COMMON)

@@ -50,7 +50,7 @@ export function doTrainerExclamation(scene: BattleScene) {
     }
   });
 
-  scene.playSound("GEN8- Exclaim.wav");
+  scene.playSound("GEN8- Exclaim.wav", { volume: 0.8 });
 }
 
 export interface EnemyPokemonConfig {
@@ -417,10 +417,10 @@ export function selectPokemonForOption(scene: BattleScene, onPokemonSelected: (p
  * Can have shop displayed or skipped
  * @param scene - Battle Scene
  * @param customShopRewards - adds a shop phase with the specified rewards / reward tiers
- * @param nonShopRewards - will add a non-shop reward phase for each specified item/modifier (can happen in addition to a shop)
+ * @param nonShopPlayerItemRewards - will add a non-shop reward phase for each specified item/modifier (can happen in addition to a shop)
  * @param preRewardsCallback - can execute an arbitrary callback before the new phases if necessary (useful for updating items/party/injecting new phases before MysteryEncounterRewardsPhase)
  */
-export function setEncounterRewards(scene: BattleScene, customShopRewards?: CustomModifierSettings, nonShopRewards?: ModifierTypeFunc[], preRewardsCallback?: Function) {
+export function setEncounterRewards(scene: BattleScene, customShopRewards?: CustomModifierSettings, nonShopPlayerItemRewards?: ModifierTypeFunc[], preRewardsCallback?: Function) {
   scene.currentBattle.mysteryEncounter.doEncounterRewards = (scene: BattleScene) => {
     if (preRewardsCallback) {
       preRewardsCallback();
@@ -432,8 +432,8 @@ export function setEncounterRewards(scene: BattleScene, customShopRewards?: Cust
       scene.tryRemovePhase(p => p instanceof SelectModifierPhase);
     }
 
-    if (nonShopRewards?.length > 0) {
-      nonShopRewards.forEach((reward) => {
+    if (nonShopPlayerItemRewards?.length > 0) {
+      nonShopPlayerItemRewards.forEach((reward) => {
         scene.unshiftPhase(new ModifierRewardPhase(scene, reward));
       });
     } else {
@@ -679,7 +679,7 @@ export function handleEncounterStartOfBattleEffects(scene: BattleScene) {
       } else {
         source = scene.getEnemyField()[0];
       }
-      scene.pushPhase(new MovePhase(scene, source, effect.targets, effect.move, effect.followUp, effect.followUp));
+      scene.pushPhase(new MovePhase(scene, source, effect.targets, effect.move, effect.followUp, effect.ignorePp));
     });
 
     // Pseudo turn end phase to reset flinch states, Endure, etc.

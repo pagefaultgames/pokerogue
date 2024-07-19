@@ -17,7 +17,7 @@ const namespace = "mysteryEncounter:shadyVitaminDealer";
 /**
  * Shady Vitamin Dealer encounter.
  * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/34 | GitHub Issue #34}
- * @see For biome requirements check [mysteryEncountersByBiome](../mystery-encounters.ts)
+ * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
 export const ShadyVitaminDealerEncounter: IMysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(

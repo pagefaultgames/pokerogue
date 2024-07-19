@@ -1,15 +1,16 @@
 import { Button } from "#app/enums/buttons";
-import { MessagePhase, VictoryPhase } from "#app/phases";
+import { CommandPhase, MessagePhase, VictoryPhase } from "#app/phases";
 import { MysteryEncounterPhase, MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phases";
 import MysteryEncounterUiHandler from "#app/ui/mystery-encounter-ui-handler";
 import { Mode } from "#app/ui/ui";
 import GameManager from "../utils/gameManager";
 import MessageUiHandler from "#app/ui/message-ui-handler";
+import { Status, StatusEffect } from "#app/data/status-effect";
 
-export async function runSelectMysteryEncounterOption(game: GameManager, optionNo: number) {
+export async function runSelectMysteryEncounterOption(game: GameManager, optionNo: number, isBattle: boolean = false) {
   // Handle any eventual queued messages (e.g. weather phase, etc.)
   game.onNextPrompt("MessagePhase", Mode.MESSAGE, () => {
-    const uiHandler = game.scene.ui.getHandler<MysteryEncounterUiHandler>();
+    const uiHandler = game.scene.ui.getHandler<MessageUiHandler>();
     uiHandler.processInput(Button.ACTION);
   });
 
@@ -23,7 +24,7 @@ export async function runSelectMysteryEncounterOption(game: GameManager, optionN
     uiHandler.processInput(Button.ACTION);
   });
 
-  await game.phaseInterceptor.run(MysteryEncounterPhase);
+  await game.phaseInterceptor.to(MysteryEncounterPhase, true);
 
   // select the desired option
   const uiHandler = game.scene.ui.getHandler<MysteryEncounterUiHandler>();
@@ -73,5 +74,23 @@ export async function runSelectMysteryEncounterOption(game: GameManager, optionN
     uiHandler.processInput(Button.ACTION);
   });
 
-  await game.phaseInterceptor.to(MysteryEncounterRewardsPhase);
+  if (isBattle) {
+    await game.phaseInterceptor.to(CommandPhase);
+  } else {
+    await game.phaseInterceptor.to(MysteryEncounterRewardsPhase);
+  }
+}
+
+export async function skipBattleRunMysteryEncounterRewardsPhase(game: GameManager) {
+  game.scene.clearPhaseQueue();
+  game.scene.clearPhaseQueueSplice();
+  game.scene.getEnemyParty().forEach(p => {
+    p.hp = 0;
+    p.status = new Status(StatusEffect.FAINT);
+    game.scene.field.remove(p);
+  });
+  game.scene.unshiftPhase(new VictoryPhase(game.scene, 0));
+  game.endPhase();
+  game.phaseInterceptor.superEndPhase();
+  await game.phaseInterceptor.to(MysteryEncounterRewardsPhase, true);
 }

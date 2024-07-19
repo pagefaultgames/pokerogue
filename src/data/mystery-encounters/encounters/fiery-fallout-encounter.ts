@@ -31,7 +31,7 @@ const DAMAGE_PERCENTAGE: number = 20;
 /**
  * Fiery Fallout encounter.
  * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/88 | GitHub Issue #88}
- * @see For biome requirements check [mysteryEncountersByBiome](../mystery-encounters.ts)
+ * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
 export const FieryFalloutEncounter: IMysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.FIERY_FALLOUT)
@@ -127,8 +127,13 @@ export const FieryFalloutEncounter: IMysteryEncounter =
       async (scene: BattleScene) => {
         // Pick battle
         const encounter = scene.currentBattle.mysteryEncounter;
-        const charcoal = generateModifierTypeOption(scene, modifierTypes.ATTACK_TYPE_BOOSTER, [Type.FIRE]);
-        setEncounterRewards(scene, { guaranteedModifierTypeOptions: [charcoal], fillRemaining: true });
+        setEncounterRewards(scene,
+          { fillRemaining: true },
+          null,
+          () => {
+            giveLeadPokemonCharcoal(scene);
+          });
+
         encounter.startOfBattleEffects.push(
           {
             sourceBattlerIndex: BattlerIndex.ENEMY,
@@ -196,8 +201,8 @@ export const FieryFalloutEncounter: IMysteryEncounter =
     .withOption(
       new MysteryEncounterOptionBuilder()
         .withOptionMode(EncounterOptionMode.DISABLED_OR_SPECIAL)
-        .withPrimaryPokemonRequirement(new TypeRequirement(Type.FIRE, true,1)) // Will set option3PrimaryName dialogue token automatically
-        .withSecondaryPokemonRequirement(new TypeRequirement(Type.FIRE, true,1)) // Will set option3SecondaryName dialogue token automatically
+        .withPrimaryPokemonRequirement(new TypeRequirement(Type.STEEL, true,1)) // Will set option3PrimaryName dialogue token automatically
+        .withSecondaryPokemonRequirement(new TypeRequirement(Type.STEEL, true,1)) // Will set option3SecondaryName dialogue token automatically
         .withDialogue({
           buttonLabel: `${namespace}:option:3:label`,
           buttonTooltip: `${namespace}:option:3:tooltip`,
@@ -215,8 +220,12 @@ export const FieryFalloutEncounter: IMysteryEncounter =
           // Fire types help calm the Volcarona
           const encounter = scene.currentBattle.mysteryEncounter;
           transitionMysteryEncounterIntroVisuals(scene);
-          const charcoal = generateModifierTypeOption(scene, modifierTypes.ATTACK_TYPE_BOOSTER, [Type.FIRE]);
-          setEncounterRewards(scene, { guaranteedModifierTypeOptions: [charcoal], fillRemaining: true });
+          setEncounterRewards(scene,
+            { fillRemaining: true },
+            null,
+            () => {
+              giveLeadPokemonCharcoal(scene);
+            });
 
           const primary = encounter.options[2].primaryPokemon;
           const secondary = encounter.options[2].secondaryPokemon[0];
@@ -227,3 +236,15 @@ export const FieryFalloutEncounter: IMysteryEncounter =
         .build()
     )
     .build();
+
+function giveLeadPokemonCharcoal(scene: BattleScene) {
+  // Give first party pokemon Charcoal for free at end of battle
+  const leadPokemon = scene.getParty()?.[0];
+  if (leadPokemon) {
+    const charcoal = generateModifierTypeOption(scene, modifierTypes.ATTACK_TYPE_BOOSTER, [Type.FIRE]);
+    scene.addModifier(charcoal.type.newModifier(leadPokemon), true);
+    scene.updateModifiers();
+    scene.currentBattle.mysteryEncounter.setDialogueToken("leadPokemon", leadPokemon.name);
+    queueEncounterMessage(scene, `${namespace}:found_charcoal`);
+  }
+}

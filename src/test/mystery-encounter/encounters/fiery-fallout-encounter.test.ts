@@ -5,6 +5,16 @@ import { Species } from "#app/enums/species";
 import GameManager from "#app/test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { FieryFalloutEncounter } from "#app/data/mystery-encounters/encounters/fiery-fallout-encounter";
+import Battle from "#app/battle";
+import { Gender } from "#app/data/gender";
+import { getPokemonSpecies } from "#app/data/pokemon-species";
+import * as BattleAnims from "#app/data/battle-anims";
+import { EncounterOptionMode } from "#app/data/mystery-encounters/mystery-encounter-option";
+import { runSelectMysteryEncounterOption, skipBattleRunMysteryEncounterRewardsPhase } from "#test/mystery-encounter/encounterTestUtils";
+import { CommandPhase, MovePhase, SelectModifierPhase } from "#app/phases";
+import { Moves } from "#enums/moves";
+import BattleScene from "#app/battle-scene";
+import { PokemonHeldItemModifier } from "#app/modifier/modifier";
 
 const namespace = "mysteryEncounter:fieryFallout";
 /** Arcanine and Ninetails for 2 Fire types. Lapras for burnable mon. */
@@ -15,6 +25,7 @@ const defaultWave = 45;
 describe("Fiery Fallout - Mystery Encounter", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
+  let scene: BattleScene;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({ type: Phaser.HEADLESS });
@@ -22,13 +33,14 @@ describe("Fiery Fallout - Mystery Encounter", () => {
 
   beforeEach(async () => {
     game = new GameManager(phaserGame);
+    scene = game.scene;
     game.override.mysteryEncounterChance(100);
     game.override.startingWave(defaultWave);
     game.override.startingBiome(defaultBiome);
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
-        [Biome.SEA, [MysteryEncounterType.FIERY_FALLOUT]],
+        [Biome.VOLCANO, [MysteryEncounterType.FIERY_FALLOUT]],
         [Biome.MOUNTAIN, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
       ])
     );
@@ -54,7 +66,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
     game.override.startingBiome(Biome.MOUNTAIN);
     await game.runToMysteryEncounter();
 
-    expect(game.scene.currentBattle.mysteryEncounter.encounterType).not.toBe(MysteryEncounterType.LOST_AT_SEA);
+    expect(scene.currentBattle.mysteryEncounter.encounterType).not.toBe(MysteryEncounterType.LOST_AT_SEA);
   });
 
   it("should not run below wave 41", async () => {
@@ -62,7 +74,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
 
     await game.runToMysteryEncounter();
 
-    expect(game.scene.currentBattle.mysteryEncounter.encounterType).not.toBe(MysteryEncounterType.FIERY_FALLOUT);
+    expect(scene.currentBattle.mysteryEncounter.encounterType).not.toBe(MysteryEncounterType.FIERY_FALLOUT);
   });
 
   it("should not run above wave 179", async () => {
@@ -70,164 +82,186 @@ describe("Fiery Fallout - Mystery Encounter", () => {
 
     await game.runToMysteryEncounter();
 
-    expect(game.scene.currentBattle.mysteryEncounter).toBeUndefined();
+    expect(scene.currentBattle.mysteryEncounter).toBeUndefined();
   });
 
-  // it("should set the correct dialog tokens during initialization", () => {
-  //   vi.spyOn(game.scene, "currentBattle", "get").mockReturnValue({ mysteryEncounter: FieryFalloutEncounter } as Battle);
-  //
-  //   const { onInit } = FieryFalloutEncounter;
-  //
-  //   expect(FieryFalloutEncounter.onInit).toBeDefined();
-  //
-  //   const onInitResult = onInit(game.scene);
-  //
-  //   expect(FieryFalloutEncounter.dialogueTokens?.damagePercentage).toBe("25");
-  //   expect(FieryFalloutEncounter.dialogueTokens?.option1RequiredMove).toBe(Moves[Moves.SURF]);
-  //   expect(FieryFalloutEncounter.dialogueTokens?.option2RequiredMove).toBe(Moves[Moves.FLY]);
-  //   expect(onInitResult).toBe(true);
-  // });
+  it("should initialize fully ", async () => {
+    vi.spyOn(scene, "currentBattle", "get").mockReturnValue({ mysteryEncounter: FieryFalloutEncounter } as Battle);
+    const weatherSpy = vi.spyOn(scene.arena, "trySetWeather").mockReturnValue(true);
+    const moveInitSpy = vi.spyOn(BattleAnims, "loadMoveAnimAssets");
+    const moveLoadSpy = vi.spyOn(BattleAnims, "loadMoveAnimAssets");
 
-  // describe("Option 1 - Fight 2 Volcarona", () => {
-  // it("should have the correct properties", () => {
-  //   const option1 = LostAtSeaEncounter.options[0];
-  //   expect(option1.optionMode).toBe(EncounterOptionMode.DISABLED_OR_DEFAULT);
-  //   expect(option1.dialogue).toBeDefined();
-  //   expect(option1.dialogue).toStrictEqual({
-  //     buttonLabel: `${namespace}:option:1:label`,
-  //     disabledButtonLabel: `${namespace}:option:1:label_disabled`,
-  //     buttonTooltip: `${namespace}:option:1:tooltip`,
-  //     disabledButtonTooltip: `${namespace}:option:1:tooltip_disabled`,
-  //     selected: [
-  //       {
-  //         text: `${namespace}:option:1:selected`,
-  //       },
-  //     ],
-  //   });
-  // });
-  //
-  // it("should award exp to surfable PKM (Blastoise)", async () => {
-  //   const laprasSpecies = getPokemonSpecies(Species.LAPRAS);
-  //
-  //   await game.runToMysteryEncounter(defaultParty);
-  //   const party = game.scene.getParty();
-  //   const blastoise = party.find((pkm) => pkm.species.speciesId === Species.PIDGEOT);
-  //   const expBefore = blastoise.exp;
-  //
-  //   await runSelectMysteryEncounterOption(game, 2);
-  //
-  //   expect(blastoise.exp).toBe(expBefore + Math.floor(laprasSpecies.baseExp * defaultWave / 5 + 1));
-  // });
-  //
-  // it("should leave encounter without battle", async () => {
-  //   game.override.startingWave(33);
-  //   const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
-  //
-  //   await game.runToMysteryEncounter(defaultParty);
-  //   await runSelectMysteryEncounterOption(game, 1);
-  //
-  //   expect(leaveEncounterWithoutBattleSpy).toBeCalled();
-  // });
-  //
-  // it("should be disabled if no surfable PKM is in party", async () => {
-  //   // TODO
-  // });
-  // });
+    const { onInit } = FieryFalloutEncounter;
 
-  // describe("Option 2 - Suffer the weather", () => {
-  // it("should have the correct properties", () => {
-  //   const option2 = LostAtSeaEncounter.options[1];
-  //
-  //   expect(option2.optionMode).toBe(EncounterOptionMode.DISABLED_OR_DEFAULT);
-  //   expect(option2.dialogue).toBeDefined();
-  //   expect(option2.dialogue).toStrictEqual({
-  //     buttonLabel: `${namespace}:option:2:label`,
-  //     disabledButtonLabel: `${namespace}:option:2:label_disabled`,
-  //     buttonTooltip: `${namespace}:option:2:tooltip`,
-  //     disabledButtonTooltip: `${namespace}:option:2:tooltip_disabled`,
-  //     selected: [
-  //       {
-  //         text: `${namespace}:option:2:selected`,
-  //       },
-  //     ],
-  //   });
-  // });
-  //
-  // it("should award exp to flyable PKM (Pidgeot)", async () => {
-  //   const laprasBaseExp = 187;
-  //   const wave = 33;
-  //   game.override.startingWave(wave);
-  //
-  //   await game.runToMysteryEncounter(defaultParty);
-  //   const party = game.scene.getParty();
-  //   const pidgeot = party.find((pkm) => pkm.species.speciesId === Species.PIDGEOT);
-  //   const expBefore = pidgeot.exp;
-  //
-  //   await runSelectMysteryEncounterOption(game, 2);
-  //
-  //   expect(pidgeot.exp).toBe(expBefore + Math.floor(laprasBaseExp * defaultWave / 5 + 1));
-  // });
-  //
-  // it("should leave encounter without battle", async () => {
-  //   game.override.startingWave(33);
-  //   const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
-  //
-  //   await game.runToMysteryEncounter(defaultParty);
-  //   await runSelectMysteryEncounterOption(game, 2);
-  //
-  //   expect(leaveEncounterWithoutBattleSpy).toBeCalled();
-  // });
-  //
-  // it("should be disabled if no flyable PKM is in party", async () => {
-  //   // TODO
-  // });
-  // });
+    expect(FieryFalloutEncounter.onInit).toBeDefined();
 
-  // describe("Option 3 - use FIRE types", () => {
-  // it("should have the correct properties", () => {
-  //   const option3 = LostAtSeaEncounter.options[2];
-  //
-  //   expect(option3.optionMode).toBe(EncounterOptionMode.DEFAULT);
-  //   expect(option3.dialogue).toBeDefined();
-  //   expect(option3.dialogue).toStrictEqual({
-  //     buttonLabel: `${namespace}:option:3:label`,
-  //     buttonTooltip: `${namespace}:option:3:tooltip`,
-  //     selected: [
-  //       {
-  //         text: `${namespace}:option:3:selected`,
-  //       },
-  //     ],
-  //   });
-  // });
-  //
-  // it("should damage all (allowed in battle) party PKM by 25%", async () => {
-  //   game.override.startingWave(33);
-  //
-  //   await game.runToMysteryEncounter(defaultParty);
-  //
-  //   const party = game.scene.getParty();
-  //   const abra = party.find((pkm) => pkm.species.speciesId === Species.ABRA);
-  //   vi.spyOn(abra, "isAllowedInBattle").mockReturnValue(false);
-  //
-  //   await runSelectMysteryEncounterOption(game, 3);
-  //
-  //   const allowedPkm = party.filter((pkm) => pkm.isAllowedInBattle());
-  //   const notAllowedPkm = party.filter((pkm) => !pkm.isAllowedInBattle());
-  //   allowedPkm.forEach((pkm) =>
-  //     expect(pkm.hp, `${pkm.name} should have receivd 25% damage: ${pkm.hp} / ${pkm.getMaxHp()} HP`).toBe(pkm.getMaxHp() - Math.floor(pkm.getMaxHp() * 0.25))
-  //   );
-  //
-  //   notAllowedPkm.forEach((pkm) => expect(pkm.hp, `${pkm.name} should be full hp: ${pkm.hp} / ${pkm.getMaxHp()} HP`).toBe(pkm.getMaxHp()));
-  // });
-  //
-  // it("should leave encounter without battle", async () => {
-  //   game.override.startingWave(33);
-  //   const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
-  //
-  //   await game.runToMysteryEncounter(defaultParty);
-  //   await runSelectMysteryEncounterOption(game, 3);
-  //
-  //   expect(leaveEncounterWithoutBattleSpy).toBeCalled();
-  // });
-  // });
+    const onInitResult = onInit(scene);
+
+    expect(FieryFalloutEncounter.enemyPartyConfigs).toEqual([
+      {
+        pokemonConfigs: [
+          {
+            species: getPokemonSpecies(Species.VOLCARONA),
+            isBoss: false,
+            gender: Gender.MALE
+          },
+          {
+            species: getPokemonSpecies(Species.VOLCARONA),
+            isBoss: false,
+            gender: Gender.FEMALE
+          }
+        ],
+        doubleBattle: true,
+        disableSwitch: true
+      }
+    ]);
+    expect(weatherSpy).toHaveBeenCalledTimes(1);
+    await vi.waitFor(() => expect(moveInitSpy).toHaveBeenCalled());
+    await vi.waitFor(() => expect(moveLoadSpy).toHaveBeenCalled());
+    expect(onInitResult).toBe(true);
+  });
+
+  describe("Option 1 - Fight 2 Volcarona", () => {
+    it("should have the correct properties", () => {
+      const option1 = FieryFalloutEncounter.options[0];
+      expect(option1.optionMode).toBe(EncounterOptionMode.DEFAULT);
+      expect(option1.dialogue).toBeDefined();
+      expect(option1.dialogue).toStrictEqual({
+        buttonLabel: `${namespace}:option:1:label`,
+        buttonTooltip: `${namespace}:option:1:tooltip`,
+        selected: [
+          {
+            text: `${namespace}:option:1:selected`,
+          },
+        ],
+      });
+    });
+
+    it("should start battle against 2 Volcarona", async () => {
+      const phaseSpy = vi.spyOn(scene, "pushPhase");
+
+      await game.runToMysteryEncounter(defaultParty);
+      await runSelectMysteryEncounterOption(game, 1, true);
+
+      const enemyField = scene.getEnemyField();
+      expect(scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
+      expect(enemyField.length).toBe(2);
+      expect(enemyField[0].species.speciesId).toBe(Species.VOLCARONA);
+      expect(enemyField[1].species.speciesId).toBe(Species.VOLCARONA);
+      expect(enemyField[0].gender).not.toEqual(enemyField[1].gender); // Should be opposite gender
+
+      const movePhases = phaseSpy.mock.calls.filter(p => p[0] instanceof MovePhase).map(p => p[0]);
+      expect(movePhases.length).toBe(4);
+      expect(movePhases.filter(p => (p as MovePhase).move.moveId === Moves.FIRE_SPIN).length).toBe(2); // Fire spin used twice before battle
+      expect(movePhases.filter(p => (p as MovePhase).move.moveId === Moves.QUIVER_DANCE).length).toBe(2); // Quiver Dance used twice before battle
+    });
+
+    it("should give charcoal to lead pokemon", async () => {
+      await game.runToMysteryEncounter(defaultParty);
+      await runSelectMysteryEncounterOption(game, 1, true);
+      await skipBattleRunMysteryEncounterRewardsPhase(game);
+      await game.phaseInterceptor.to(SelectModifierPhase, false);
+      expect(scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);
+
+      const leadPokemonId = scene.getParty()?.[0].id;
+      const leadPokemonItems = scene.findModifiers(m => m instanceof PokemonHeldItemModifier
+        && (m as PokemonHeldItemModifier).pokemonId === leadPokemonId, true) as PokemonHeldItemModifier[];
+      const charcoal = leadPokemonItems.find(i => i.type.name === "Charcoal");
+      expect(charcoal).toBeDefined;
+    });
+  });
+
+  describe("Option 2 - Suffer the weather", () => {
+    it("should have the correct properties", () => {
+      const option1 = FieryFalloutEncounter.options[0];
+      expect(option1.optionMode).toBe(EncounterOptionMode.DEFAULT);
+      expect(option1.dialogue).toBeDefined();
+      expect(option1.dialogue).toStrictEqual({
+        buttonLabel: `${namespace}:option:2:label`,
+        buttonTooltip: `${namespace}:option:2:tooltip`,
+        selected: [
+          {
+            text: `${namespace}:option:2:selected`,
+          },
+        ],
+      });
+    });
+
+    it("should damage all (allowed in battle) party PKM by 25%", async () => {
+      game.override.startingWave(33);
+
+      await game.runToMysteryEncounter(defaultParty);
+
+      const party = scene.getParty();
+      const abra = party.find((pkm) => pkm.species.speciesId === Species.ABRA);
+      vi.spyOn(abra, "isAllowedInBattle").mockReturnValue(false);
+
+      await runSelectMysteryEncounterOption(game, 3);
+
+      const allowedPkm = party.filter((pkm) => pkm.isAllowedInBattle());
+      const notAllowedPkm = party.filter((pkm) => !pkm.isAllowedInBattle());
+      allowedPkm.forEach((pkm) =>
+        expect(pkm.hp, `${pkm.name} should have receivd 25% damage: ${pkm.hp} / ${pkm.getMaxHp()} HP`).toBe(pkm.getMaxHp() - Math.floor(pkm.getMaxHp() * 0.25))
+      );
+
+      notAllowedPkm.forEach((pkm) => expect(pkm.hp, `${pkm.name} should be full hp: ${pkm.hp} / ${pkm.getMaxHp()} HP`).toBe(pkm.getMaxHp()));
+    });
+
+    it("should leave encounter without battle", async () => {
+      game.override.startingWave(33);
+      const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
+
+      await game.runToMysteryEncounter(defaultParty);
+      await runSelectMysteryEncounterOption(game, 3);
+
+      expect(leaveEncounterWithoutBattleSpy).toBeCalled();
+    });
+  });
+
+  describe("Option 3 - use FIRE types", () => {
+    it("should have the correct properties", () => {
+      const option1 = FieryFalloutEncounter.options[0];
+      expect(option1.optionMode).toBe(EncounterOptionMode.DEFAULT);
+      expect(option1.dialogue).toBeDefined();
+      expect(option1.dialogue).toStrictEqual({
+        buttonLabel: `${namespace}:option:1:label`,
+        buttonTooltip: `${namespace}:option:1:tooltip`,
+        selected: [
+          {
+            text: `${namespace}:option:1:selected`,
+          },
+        ],
+      });
+    });
+
+    it("should damage all (allowed in battle) party PKM by 25%", async () => {
+      game.override.startingWave(33);
+
+      await game.runToMysteryEncounter(defaultParty);
+
+      const party = scene.getParty();
+      const abra = party.find((pkm) => pkm.species.speciesId === Species.ABRA);
+      vi.spyOn(abra, "isAllowedInBattle").mockReturnValue(false);
+
+      await runSelectMysteryEncounterOption(game, 3);
+
+      const allowedPkm = party.filter((pkm) => pkm.isAllowedInBattle());
+      const notAllowedPkm = party.filter((pkm) => !pkm.isAllowedInBattle());
+      allowedPkm.forEach((pkm) =>
+        expect(pkm.hp, `${pkm.name} should have receivd 25% damage: ${pkm.hp} / ${pkm.getMaxHp()} HP`).toBe(pkm.getMaxHp() - Math.floor(pkm.getMaxHp() * 0.25))
+      );
+
+      notAllowedPkm.forEach((pkm) => expect(pkm.hp, `${pkm.name} should be full hp: ${pkm.hp} / ${pkm.getMaxHp()} HP`).toBe(pkm.getMaxHp()));
+    });
+
+    it("should leave encounter without battle", async () => {
+      game.override.startingWave(33);
+      const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
+
+      await game.runToMysteryEncounter(defaultParty);
+      await runSelectMysteryEncounterOption(game, 3);
+
+      expect(leaveEncounterWithoutBattleSpy).toBeCalled();
+    });
+  });
 });

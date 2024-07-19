@@ -184,7 +184,7 @@ export class MysteryEncounterBattleStartCleanupPhase extends Phase {
       pokemon.lapseTags(BattlerTagLapseType.TURN_END);
     });
 
-    this.end();
+    super.end();
   }
 }
 

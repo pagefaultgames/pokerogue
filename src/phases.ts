@@ -1101,11 +1101,6 @@ export class EncounterPhase extends BattlePhase {
           this.scene.ui.clearText();
           this.scene.ui.getMessageHandler().hideNameText();
 
-          // Can add any additional unshift phases here before MysteryEncounterPhase begins (and all phase queues are cleared)
-          if (this.scene.currentBattle.mysteryEncounter.onPreMysteryEncounterPhase) {
-            this.scene.currentBattle.mysteryEncounter.onPreMysteryEncounterPhase(this.scene);
-          }
-
           this.scene.unshiftPhase(new MysteryEncounterPhase(this.scene));
           this.end();
         };

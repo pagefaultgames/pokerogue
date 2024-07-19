@@ -26,7 +26,7 @@ const namespace = "mysteryEncounter:mysteriousChallengers";
 /**
  * Mysterious Challengers encounter.
  * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/41 | GitHub Issue #41}
- * @see For biome requirements check [mysteryEncountersByBiome](../mystery-encounters.ts)
+ * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
 export const MysteriousChallengersEncounter: IMysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(

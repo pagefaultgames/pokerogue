@@ -104,7 +104,8 @@ export default class PhaseInterceptor {
     [MysteryEncounterBattlePhase, this.startPhase],
     [MysteryEncounterRewardsPhase, this.startPhase],
     [PostMysteryEncounterPhase, this.startPhase],
-    [LearnMovePhase, this.startPhase]
+    [LearnMovePhase, this.startPhase],
+    // [CommonAnimPhase, this.startPhase]
   ];
 
   private endBySetMode = [

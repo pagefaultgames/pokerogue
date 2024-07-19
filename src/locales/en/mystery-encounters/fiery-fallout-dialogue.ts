@@ -8,7 +8,7 @@ export const fieryFalloutDialogue = {
       label: "Find the source",
       tooltip: "(?) Discover the source\n(-) Hard Battle",
       selected: `You push through the storm, and find two Volcarona in the middle of a mating dance!
-        $They don't take kindly to the interruption and attack!`,
+        $They don't take kindly to the interruption and attack!`
     },
     2: {
       label: "Hunker down",
@@ -24,5 +24,7 @@ export const fieryFalloutDialogue = {
       selected: `Your {{option3PrimaryName}} and {{option3SecondaryName}} guide you to where two Volcarona are in the middle of a mating dance!
         $Thankfully, your Pokémon are able to calm them,\nand they depart without issue.`,
     },
-  }
+  },
+  found_charcoal: `After the weather clears,\nyour {{leadPokemon}} spots something on the ground.
+    $@s{item_fanfare}{{leadPokemon}} gained a Charcoal!`
 };

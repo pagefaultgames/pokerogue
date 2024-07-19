@@ -24,7 +24,7 @@ const TRAINER_THROW_ANIMATION_TIMES = [512, 184, 768];
 /**
  * Safari Zone encounter.
  * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/39 | GitHub Issue #39}
- * @see For biome requirements check [mysteryEncountersByBiome](../mystery-encounters.ts)
+ * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
 export const SafariZoneEncounter: IMysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.SAFARI_ZONE)

@@ -71,8 +71,6 @@ export default interface IMysteryEncounter {
   onInit?: (scene: BattleScene) => boolean;
   /** Event when battlefield visuals have finished sliding in and the encounter dialogue begins */
   onVisualsStart?: (scene: BattleScene) => boolean;
-  /** Event right before MysteryEncounterPhase begins. Use for unshifting any phases before the actual encounter */
-  onPreMysteryEncounterPhase?: (scene: BattleScene) => boolean;
   /** Will provide the player party EXP before rewards are displayed for that wave */
   doEncounterExp?: (scene: BattleScene) => boolean;
   /** Will provide the player a rewards shop for that wave */
@@ -392,7 +390,6 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   doEncounterRewards?: (scene: BattleScene) => boolean;
   onInit?: (scene: BattleScene) => boolean;
   onVisualsStart?: (scene: BattleScene) => boolean;
-  onPreMysteryEncounterPhase?: (scene: BattleScene) => boolean;
 
   hideBattleIntroMessage?: boolean;
   hideIntroVisuals?: boolean;
@@ -623,18 +620,6 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    */
   withOnInit(onInit: (scene: BattleScene) => boolean): this & Required<Pick<IMysteryEncounter, "onInit">> {
     return Object.assign(this, { onInit: onInit });
-  }
-
-  /**
-   * Event callback right before MysteryEncounterPhase begins.
-   * Use for unshifting any last-minute phases before the actual encounter, as all phases are cleared and reset at that point.
-   * Example: set the weather before encounter begins
-   *
-   * @param onVisualsStart - synchronous callback function to perform immediately before MysteryEncounterPhase begins
-   * @returns
-   */
-  withOnPreMysteryEncounterPhase(onPreMysteryEncounterPhase: (scene: BattleScene) => boolean): this & Required<Pick<IMysteryEncounter, "onPreMysteryEncounterPhase">> {
-    return Object.assign(this, { onPreMysteryEncounterPhase: onPreMysteryEncounterPhase });
   }
 
   /**

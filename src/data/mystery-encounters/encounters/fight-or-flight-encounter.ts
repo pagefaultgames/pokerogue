@@ -35,7 +35,7 @@ const namespace = "mysteryEncounter:fightOrFlight";
 /**
  * Fight or Flight encounter.
  * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/24 | GitHub Issue #24}
- * @see For biome requirements check [mysteryEncountersByBiome](../mystery-encounters.ts)
+ * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
 export const FightOrFlightEncounter: IMysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(
