@@ -636,11 +636,11 @@ export function transitionMysteryEncounterIntroVisuals(scene: BattleScene, hide:
       // Transition
       scene.tweens.add({
         targets: introVisuals,
-        x: hide ? "+=16" : "-=16",
-        y: hide ? "-=16" : "+=16",
+        x: `${hide? "+" : "-"}=16`,
+        y: `${hide ? "-" : "+"}=16`,
         alpha: hide ? 0 : 1,
         ease: "Sine.easeInOut",
-        duration: duration,
+        duration,
         onComplete: () => {
           if (hide && destroy) {
             scene.field.remove(introVisuals);

@@ -45,7 +45,7 @@ export class OverridesHelper {
    * @param encounterType
    * @returns spy instance
    */
-  mysteryEncounter(encounterType: MysteryEncounterType): MockInstance {
+  mysteryEncounter(encounterType: MysteryEncounterType) {
     const spy = vi.spyOn(overrides, "MYSTERY_ENCOUNTER_OVERRIDE", "get").mockReturnValue(encounterType);
     this.log(`Mystery encounter override set to ${encounterType}!`);
     return spy;
