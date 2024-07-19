@@ -2632,74 +2632,10 @@ export class MoveHeaderPhase extends BattlePhase {
     super.start();
 
     if (this.canMove()) {
-      /**
-       * Preemptively apply status effects (Paralysis, Sleep, and Freeze).
-       * If this move would be cancelled by the user's status, it's cancelled
-       * here before applying header effects.
-       * If the user has one of these statuses, but the move isn't cancelled, the same status
-       * check in this move's respective `MovePhase` is ignored.
-       */
-      if (this.pokemon.status && !this.pokemon.status.isPostTurn()) {
-        this.pokemon.status.incrementTurn();
-        let activated = false;
-        let healed = false;
-
-        switch (this.pokemon.status.effect) {
-        case StatusEffect.PARALYSIS:
-          if (!this.pokemon.randSeedInt(4)) {
-            activated = true;
-          }
-          break;
-        case StatusEffect.SLEEP:
-          healed = this.pokemon.status.turnCount === this.pokemon.status.cureTurn;
-          activated = !healed;
-          break;
-        case StatusEffect.FREEZE:
-          healed = !!this.move.getMove().findAttr(attr => attr instanceof HealStatusEffectAttr && attr.selfTarget && attr.isOfEffect(StatusEffect.FREEZE)) || !this.pokemon.randSeedInt(5);
-          activated = !healed;
-          break;
-        }
-
-        if (activated) {
-          this.scene.queueMessage(getStatusEffectActivationText(this.pokemon.status.effect, getPokemonNameWithAffix(this.pokemon)));
-          this.scene.unshiftPhase(new CommonAnimPhase(this.scene, this.pokemon.getBattlerIndex(), undefined, CommonAnim.POISON + (this.pokemon.status.effect - 1)));
-          this.cancelMove();
-          this.end();
-        } else {
-          if (healed) {
-            this.scene.queueMessage(getStatusEffectHealText(this.pokemon.status.effect, getPokemonNameWithAffix(this.pokemon)));
-            this.pokemon.resetStatus();
-            this.pokemon.updateInfo();
-          }
-          const movePhase = this.scene.findPhase(phase => phase instanceof MovePhase && phase.pokemon === this.pokemon);
-          if (movePhase instanceof MovePhase) {
-            movePhase.setIgnoreStatusCheck();
-          }
-          applyMoveAttrs(MoveHeaderAttr, this.pokemon, null, this.move.getMove()).then(() => this.end());
-        }
-      } else {
-        applyMoveAttrs(MoveHeaderAttr, this.pokemon, null, this.move.getMove()).then(() => this.end());
-      }
+      applyMoveAttrs(MoveHeaderAttr, this.pokemon, null, this.move.getMove()).then(() => this.end());
     } else {
       this.end();
     }
-  }
-
-  cancelMove(): void {
-    this.pokemon.turnData.acted = true; // Record that the move was attempted
-
-    this.pokemon.lapseTags(BattlerTagLapseType.PRE_MOVE);
-
-    const moveQueue = this.pokemon.getMoveQueue();
-
-    // Record a failed move so Abilities like Truant don't trigger next turn and soft-lock
-    this.pokemon.pushMoveHistory({ move: Moves.NONE, result: MoveResult.FAIL });
-
-    this.pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT); // Remove any tags from moves like Fly/Dive/etc.
-    moveQueue.shift(); // Remove the second turn of charge moves
-
-    // Remove the MovePhase from this turn with the same user Pokemon
-    this.scene.tryRemovePhase(phase => phase instanceof MovePhase && phase.pokemon === this.pokemon);
   }
 }
 
@@ -2711,7 +2647,6 @@ export class MovePhase extends BattlePhase {
   protected ignorePp: boolean;
   protected failed: boolean;
   protected cancelled: boolean;
-  protected ignoreStatusCheck: boolean;
 
   constructor(scene: BattleScene, pokemon: Pokemon, targets: BattlerIndex[], move: PokemonMove, followUp?: boolean, ignorePp?: boolean) {
     super(scene);
@@ -2723,7 +2658,6 @@ export class MovePhase extends BattlePhase {
     this.ignorePp = !!ignorePp;
     this.failed = false;
     this.cancelled = false;
-    this.ignoreStatusCheck = false;
   }
 
   canMove(): boolean {
@@ -2927,7 +2861,7 @@ export class MovePhase extends BattlePhase {
       this.end();
     };
 
-    if (!this.followUp && this.pokemon.status && !this.pokemon.status.isPostTurn() && !this.ignoreStatusCheck) {
+    if (!this.followUp && this.pokemon.status && !this.pokemon.status.isPostTurn()) {
       this.pokemon.status.incrementTurn();
       let activated = false;
       let healed = false;
@@ -2998,10 +2932,6 @@ export class MovePhase extends BattlePhase {
 
   showFailedText(failedText: string = null): void {
     this.scene.queueMessage(failedText || i18next.t("battle:attackFailed"));
-  }
-
-  setIgnoreStatusCheck(): void {
-    this.ignoreStatusCheck = true;
   }
 
   end() {

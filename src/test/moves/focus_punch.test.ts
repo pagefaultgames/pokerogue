@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import GameManager from "../utils/gameManager";
 import * as Overrides from "#app/overrides";
 import { Species } from "#enums/species";
@@ -7,7 +7,6 @@ import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { getMovePosition } from "../utils/gameManagerUtils";
 import { BerryPhase, MessagePhase } from "#app/phases.js";
-import { StatusEffect } from "#app/data/status-effect.js";
 
 const TIMEOUT = 20 * 1000;
 
@@ -37,7 +36,7 @@ describe("Moves - Focus Punch", () => {
     vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
   });
 
-  test(
+  it(
     "move should deal damage at the end of turn if uninterrupted",
     async () => {
       await game.startBattle([Species.CHARIZARD]);
@@ -65,7 +64,7 @@ describe("Moves - Focus Punch", () => {
     }, TIMEOUT
   );
 
-  test(
+  it(
     "move should fail if the user is hit",
     async () => {
       vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
@@ -95,7 +94,7 @@ describe("Moves - Focus Punch", () => {
     }, TIMEOUT
   );
 
-  test(
+  it(
     "move should be cancelled if the user is asleep",
     async () => {
       vi.spyOn(Overrides, "STATUS_OVERRIDE", "get").mockReturnValue(StatusEffect.SLEEP);
@@ -121,7 +120,7 @@ describe("Moves - Focus Punch", () => {
     }, TIMEOUT
   );
 
-  test(
+  it(
     "move should be cancelled if the user falls asleep mid-turn",
     async () => {
       vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPORE, Moves.SPORE, Moves.SPORE, Moves.SPORE]);
