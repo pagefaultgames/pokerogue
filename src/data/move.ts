@@ -3259,9 +3259,8 @@ export class WaterShurikenPowerAttr extends VariablePowerAttr {
 
 /**
  * Attribute used to calculate the power of attacks that scale with Stockpile stacks (i.e. Spit Up).
- * Does NOT remove stockpiled stacks.
  */
-export class StockpilePowerAttr extends VariablePowerAttr {
+export class SpitUpPowerAttr extends VariablePowerAttr {
   private multiplier: number = 0;
 
   constructor(multiplier: number) {
@@ -6544,7 +6543,7 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.STOCKPILING, true),
     new AttackMove(Moves.SPIT_UP, Type.NORMAL, MoveCategory.SPECIAL, -1, -1, 10, -1, 0, 3)
       .condition(hasStockpileStacksCondition)
-      .attr(StockpilePowerAttr, 100)
+      .attr(SpitUpPowerAttr, 100)
       .attr(RemoveBattlerTagAttr, [BattlerTagType.STOCKPILING], true),
     new SelfStatusMove(Moves.SWALLOW, Type.NORMAL, -1, 10, -1, 0, 3)
       .condition(hasStockpileStacksCondition)
