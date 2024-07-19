@@ -49,11 +49,11 @@ import { SceneBase } from "./scene-base";
 import CandyBar from "./ui/candy-bar";
 import { Variant, variantData } from "./data/variant";
 import { Localizable } from "#app/interfaces/locales";
-import * as Overrides from "./overrides";
+import Overrides from "#app/overrides";
 import {InputsController} from "./inputs-controller";
 import {UiInputs} from "./ui-inputs";
 import { NewArenaEvent } from "./events/battle-scene";
-import ArenaFlyout from "./ui/arena-flyout";
+import { ArenaFlyout } from "./ui/arena-flyout";
 import { EaseType } from "#enums/ease-type";
 import { Abilities } from "#enums/abilities";
 import { BattleSpec } from "#enums/battle-spec";
@@ -66,6 +66,8 @@ import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { UiTheme } from "#enums/ui-theme";
 import { TimedEventManager } from "#app/timed-event-manager.js";
+import i18next from "i18next";
+import {TrainerType} from "#enums/trainer-type";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -222,6 +224,9 @@ export default class BattleScene extends SceneBase {
 
   private fieldOverlay: Phaser.GameObjects.Rectangle;
   private shopOverlay: Phaser.GameObjects.Rectangle;
+  private shopOverlayShown: boolean = false;
+  private shopOverlayOpacity: number = .80;
+
   public modifiers: PersistentModifier[];
   private enemyModifiers: PersistentModifier[];
   public uiContainer: Phaser.GameObjects.Container;
@@ -463,7 +468,7 @@ export default class BattleScene extends SceneBase {
     this.luckText.setVisible(false);
     this.fieldUI.add(this.luckText);
 
-    this.luckLabelText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, "Luck:", TextStyle.PARTY, { fontSize: "54px" });
+    this.luckLabelText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, i18next.t("common:luckIndicator"), TextStyle.PARTY, { fontSize: "54px" });
     this.luckLabelText.setName("text-luck-label");
     this.luckLabelText.setOrigin(1, 0.5);
     this.luckLabelText.setVisible(false);
@@ -1045,6 +1050,10 @@ export default class BattleScene extends SceneBase {
           this.applyModifiers(DoubleBattleChanceBoosterModifier, true, doubleChance);
           playerField.forEach(p => applyAbAttrs(DoubleBattleChanceAbAttr, p, null, doubleChance));
           doubleTrainer = !Utils.randSeedInt(doubleChance.value);
+          // Add a check that special trainers can't be double except for tate and liza - they should use the normal double chance
+          if (trainerConfigs[trainerType].trainerTypeDouble && !(trainerType === TrainerType.TATE || trainerType === TrainerType.LIZA)) {
+            doubleTrainer = false;
+          }
         }
         newTrainer = trainerData !== undefined ? trainerData.toTrainer(this) : new Trainer(this, trainerType, doubleTrainer ? TrainerVariant.DOUBLE : Utils.randSeedInt(2) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT);
         this.field.add(newTrainer);
@@ -1118,7 +1127,7 @@ export default class BattleScene extends SceneBase {
         this.arena.updatePoolsForTimeOfDay();
       }
       if (resetArenaState) {
-        this.arena.removeAllTags();
+        this.arena.resetArenaEffects();
         playerField.forEach((_, p) => this.unshiftPhase(new ReturnPhase(this, p)));
 
         for (const pokemon of this.getParty()) {
@@ -1226,6 +1235,7 @@ export default class BattleScene extends SceneBase {
     case Species.ZARUDE:
     case Species.SQUAWKABILLY:
     case Species.TATSUGIRI:
+    case Species.GIMMIGHOUL:
     case Species.PALDEA_TAUROS:
       return Utils.randSeedInt(species.forms.length);
     case Species.PIKACHU:
@@ -1421,19 +1431,29 @@ export default class BattleScene extends SceneBase {
     });
   }
 
+  updateShopOverlayOpacity(value: number): void {
+    this.shopOverlayOpacity = value;
+
+    if (this.shopOverlayShown) {
+      this.shopOverlay.setAlpha(this.shopOverlayOpacity);
+    }
+  }
+
   showShopOverlay(duration: integer): Promise<void> {
+    this.shopOverlayShown = true;
     return new Promise(resolve => {
       this.tweens.add({
         targets: this.shopOverlay,
-        alpha: 0.8,
+        alpha: this.shopOverlayOpacity,
         ease: "Sine.easeOut",
-        duration: duration,
+        duration,
         onComplete: () => resolve()
       });
     });
   }
 
   hideShopOverlay(duration: integer): Promise<void> {
+    this.shopOverlayShown = false;
     return new Promise(resolve => {
       this.tweens.add({
         targets: this.shopOverlay,
@@ -1875,6 +1895,8 @@ export default class BattleScene extends SceneBase {
       return 0.175;
     case "battle_legendary_ruinous": //SV Treasures of Ruin Battle
       return 6.333;
+    case "battle_legendary_kor_mir": //SV Depths of Area Zero Battle
+      return 6.442;
     case "battle_legendary_loyal_three": //SV Loyal Three Battle
       return 6.500;
     case "battle_legendary_ogerpon": //SV Ogerpon Battle
@@ -1884,7 +1906,7 @@ export default class BattleScene extends SceneBase {
     case "battle_legendary_pecharunt": //SV Pecharunt Battle
       return 6.508;
     case "battle_rival": //BW Rival Battle
-      return 13.689;
+      return 14.110;
     case "battle_rival_2": //BW N Battle
       return 17.714;
     case "battle_rival_3": //BW Final N Battle
@@ -2059,6 +2081,24 @@ export default class BattleScene extends SceneBase {
       this.phaseQueue.splice(this.phaseQueue.indexOf(lowerPriorityPhase), 0, movePhase);
     } else {
       this.pushPhase(movePhase);
+    }
+  }
+
+  /**
+   * Tries to add the input phase to index before target phase in the phaseQueue, else simply calls unshiftPhase()
+   * @param phase {@linkcode Phase} the phase to be added
+   * @param targetPhase {@linkcode Phase} the type of phase to search for in phaseQueue
+   * @returns boolean if a targetPhase was found and added
+   */
+  prependToPhase(phase: Phase, targetPhase: Constructor<Phase>): boolean {
+    const targetIndex = this.phaseQueue.findIndex(ph => ph instanceof targetPhase);
+
+    if (targetIndex !== -1) {
+      this.phaseQueue.splice(targetIndex, 0, phase);
+      return true;
+    } else {
+      this.unshiftPhase(phase);
+      return false;
     }
   }
 

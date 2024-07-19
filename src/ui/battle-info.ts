@@ -10,6 +10,7 @@ import { getVariantTint } from "#app/data/variant";
 import { BattleStat } from "#app/data/battle-stat";
 import BattleFlyout from "./battle-flyout";
 import { WindowVariant, addWindow } from "./ui-theme";
+import i18next from "i18next";
 
 const battleStatOrder = [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.ACC, BattleStat.EVA, BattleStat.SPD ];
 
@@ -117,7 +118,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       this.championRibbon.setName("icon_champion_ribbon");
       this.championRibbon.setVisible(false);
       this.championRibbon.setOrigin(0, 0);
-      this.championRibbon.setPositionRelative(this.nameText, 11.75, 11.75);
+      this.championRibbon.setPositionRelative(this.nameText, 8, 11.75);
       this.add(this.championRibbon);
     }
 
@@ -315,9 +316,9 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.shinyIcon.setTint(getVariantTint(baseVariant));
     if (this.shinyIcon.visible) {
       const shinyDescriptor = doubleShiny || baseVariant ?
-        `${baseVariant === 2 ? "Epic" : baseVariant === 1 ? "Rare" : "Common"}${doubleShiny ? `/${pokemon.fusionVariant === 2 ? "Epic" : pokemon.fusionVariant === 1 ? "Rare" : "Common"}` : ""}`
+        `${baseVariant === 2 ? i18next.t("common:epicShiny") : baseVariant === 1 ? i18next.t("common:rareShiny") : i18next.t("common:commonShiny")}${doubleShiny ? `/${pokemon.fusionVariant === 2 ? i18next.t("common:epicShiny") : pokemon.fusionVariant === 1 ? i18next.t("common:rareShiny") : i18next.t("common:commonShiny")}` : ""}`
         : "";
-      this.shinyIcon.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, `Shiny${shinyDescriptor ? ` (${shinyDescriptor})` : ""}`));
+      this.shinyIcon.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, `${i18next.t("common:shinyOnHover")}${shinyDescriptor ? ` (${shinyDescriptor})` : ""}`));
       this.shinyIcon.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
     }
 
@@ -328,6 +329,11 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     }
 
     if (!this.player) {
+      if (this.nameText.visible) {
+        this.nameText.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, i18next.t("battleInfo:generation", { generation: i18next.t(`starterSelectUiHandler:gen${pokemon.species.generation}`) })));
+        this.nameText.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
+      }
+
       const dexEntry = pokemon.scene.gameData.dexData[pokemon.species.speciesId];
       this.ownedIcon.setVisible(!!dexEntry.caughtAttr);
       const opponentPokemonDexAttr = pokemon.getDexAttr();
@@ -532,11 +538,11 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         if (this.lastStatus !== StatusEffect.NONE) {
           this.statusIndicator.setFrame(StatusEffect[this.lastStatus].toLowerCase());
         }
-        this.statusIndicator.setVisible(!!this.lastStatus);
 
-        if (!this.player && this.ownedIcon.visible) {
-          this.ownedIcon.setAlpha(this.statusIndicator.visible ? 0 : 1);
-        }
+        const offsetX = !this.player ? (this.ownedIcon.visible ? 8 : 0) + (this.championRibbon.visible ? 8 : 0) : 0;
+        this.statusIndicator.setPositionRelative(this.nameText, offsetX, 11.5);
+
+        this.statusIndicator.setVisible(!!this.lastStatus);
       }
 
       const types = pokemon.getTypes(true);
@@ -644,6 +650,10 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
     this.nameText.setText(displayName);
     this.lastName = pokemon.name;
+
+    if (this.nameText.visible) {
+      this.nameText.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.nameText.width, this.nameText.height), Phaser.Geom.Rectangle.Contains);
+    }
   }
 
   updatePokemonExp(pokemon: Pokemon, instant?: boolean, levelDurationMultiplier: number = 1): Promise<void> {

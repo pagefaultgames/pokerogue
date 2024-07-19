@@ -58,10 +58,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "Increases the power of a Pokémon's {{moveType}}-type moves by 20%.",
     },
     "PokemonLevelIncrementModifierType": {
-      description: "Increases a Pokémon's level by 1.",
+      description: "Increases a Pokémon's level by {{levels}}.",
     },
     "AllPokemonLevelIncrementModifierType": {
-      description: "Increases all party members' level by 1.",
+      description: "Increases all party members' level by {{levels}}.",
     },
     "PokemonBaseStatBoosterModifierType": {
       description: "Increases the holder's base {{statName}} by 10%. The higher your IVs, the higher the stack limit.",
@@ -151,7 +151,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SACRED_ASH": { name: "Sacred Ash" },
 
-    "REVIVER_SEED": { name: "Reviver Seed", description: "Revives the holder for 1/2 HP upon fainting." },
+    "REVIVER_SEED": { name: "Reviver Seed", description: "Revives the holder for 1/2 HP upon fainting from a direct hit." },
 
     "ETHER": { name: "Ether" },
     "MAX_ETHER": { name: "Max Ether" },
@@ -181,6 +181,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "GOLDEN_EGG": { name: "Golden Egg" },
 
     "SOOTHE_BELL": { name: "Soothe Bell" },
+
+    "SCOPE_LENS": { name: "Scope Lens", description: "It's a lens for scoping out weak points. It boosts the holder's critical-hit ratio."},
+    "LEEK": { name: "Leek", description: "This very long and stiff stalk of leek boosts the critical-hit ratio of Farfetch'd's moves."},
 
     "EVIOLITE": { name: "Eviolite", description: "This mysterious evolutionary lump boosts the Defense and Sp. Def stats when held by a Pokémon that can still evolve." },
 
