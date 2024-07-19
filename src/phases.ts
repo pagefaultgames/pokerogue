@@ -4599,7 +4599,7 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
       this.scene.ui.getMessageHandler().promptLevelUpStats(this.partyMemberIndex, prevStats, false).then(() => this.end());
     }
     if (this.lastLevel < 100) { // this feels like an unnecessary optimization
-      const levelMoves = this.getPokemon().getLevelMoves(this.lastLevel + 1);
+      const levelMoves = this.getPokemon().getLevelMoves(this.lastLevel + 1, false, false, false, false);
       for (const lm of levelMoves) {
         this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, lm[1]));
       }

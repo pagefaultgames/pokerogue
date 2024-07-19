@@ -1263,7 +1263,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param {boolean} includeRelearnerMoves Whether to include moves that would require a relearner. Note the move relearner inherently allows evolution moves
    * @returns {LevelMoves} A list of moves and the levels they can be learned at
    */
-  getLevelMoves(startingLevel?: integer, includeEvolutionMoves: boolean = false, simulateEvolutionChain: boolean = false, includeRelearnerMoves: boolean = false): LevelMoves {
+  getLevelMoves(startingLevel?: integer, includeEvolutionMoves: boolean = false, simulateEvolutionChain: boolean = false, includeRelearnerMoves: boolean = false, includeStarterMoves: boolean = true): LevelMoves {
     const ret: LevelMoves = [];
     let levelMoves: LevelMoves = [];
     if (!startingLevel) {
@@ -1281,7 +1281,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         }
       }
     } else {
-      levelMoves = this.getSpeciesForm(true).getLevelMoves().filter(lm => (includeEvolutionMoves && lm[0] === 0) || (includeRelearnerMoves && lm[0] === -1) || lm[0] > 0);
+      levelMoves = this.getSpeciesForm(true).getLevelMoves().filter(lm => (includeStarterMoves && lm[0] === 1) || (includeEvolutionMoves && lm[0] === 0) || (includeRelearnerMoves && lm[0] === -1) || lm[0] > 1);
     }
     if (this.fusionSpecies) {
       if (simulateEvolutionChain) {
@@ -1296,7 +1296,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           }
         }
       } else {
-        levelMoves.push(...this.getFusionSpeciesForm(true).getLevelMoves().filter(lm => (includeEvolutionMoves && lm[0] === 0) || (includeRelearnerMoves && lm[0] === -1) || lm[0] > 0));
+        levelMoves.push(...this.getFusionSpeciesForm(true).getLevelMoves().filter(lm => (includeStarterMoves && lm[0] === 1) || (includeEvolutionMoves && lm[0] === 0) || (includeRelearnerMoves && lm[0] === -1) || lm[0] > 1));
       }
     }
     levelMoves.sort((lma: [integer, integer], lmb: [integer, integer]) => lma[0] > lmb[0] ? 1 : lma[0] < lmb[0] ? -1 : 0);
