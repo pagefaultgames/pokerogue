@@ -1,5 +1,5 @@
 import { EncounterOptionMode, MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
-import { EnemyPartyConfig, generateModifierTypeOption, initBattleWithEnemyConfig, initCustomMovesForEncounter, leaveEncounterWithoutBattle, setEncounterExp, setEncounterRewards } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { applyDamageToPokemon, EnemyPartyConfig, generateModifierTypeOption, initBattleWithEnemyConfig, initCustomMovesForEncounter, leaveEncounterWithoutBattle, setEncounterExp, setEncounterRewards, transitionMysteryEncounterIntroVisuals } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { modifierTypes, } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "../../../battle-scene";
@@ -14,10 +14,19 @@ import { PokemonMove } from "#app/field/pokemon";
 import { Moves } from "#enums/moves";
 import { EncounterAnim, EncounterBattleAnim } from "#app/data/battle-anims";
 import { WeatherType } from "#app/data/weather";
-import { randSeedInt } from "#app/utils";
+import { isNullOrUndefined, randSeedInt } from "#app/utils";
+import { StatusEffect } from "#app/data/status-effect";
+import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:fieryFallout";
+
+/**
+ * Damage percentage taken when suffering the heat.
+ * Can be a number between `0` - `100`.
+ * The higher the more damage taken (100% = instant KO).
+ */
+const DAMAGE_PERCENTAGE: number = 20;
 
 /**
  * Fiery Fallout encounter.
@@ -25,14 +34,13 @@ const namespace = "mysteryEncounter:fieryFallout";
  * @see For biome requirements check [mysteryEncountersByBiome](../mystery-encounters.ts)
  */
 export const FieryFalloutEncounter: IMysteryEncounter =
-  MysteryEncounterBuilder.withEncounterType(
-    MysteryEncounterType.FIERY_FALLOUT
-  )
+  MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.FIERY_FALLOUT)
     .withEncounterTier(MysteryEncounterTier.COMMON)
     .withSceneWaveRangeRequirement(40, 180) // waves 10 to 180
     .withCatchAllowed(true)
     .withIntroSpriteConfigs([]) // Set in onInit()
     .withAnimations(EncounterAnim.MAGMA_BG, EncounterAnim.MAGMA_SPOUT)
+    .withAutoHideIntroVisuals(false)
     .withIntroDialogue([
       {
         text: `${namespace}:intro`,
@@ -44,7 +52,6 @@ export const FieryFalloutEncounter: IMysteryEncounter =
       // Calculate boss mons
       const volcaronaSpecies = getPokemonSpecies(Species.VOLCARONA);
       const config: EnemyPartyConfig = {
-        levelAdditiveMultiplier: 0.25,
         pokemonConfigs: [
           {
             species: volcaronaSpecies,
@@ -62,11 +69,30 @@ export const FieryFalloutEncounter: IMysteryEncounter =
       };
       encounter.enemyPartyConfigs = [config];
 
-      // Sets weather for 5 turns
-      scene.arena.trySetWeather(WeatherType.SUNNY, true);
+      // Load hidden Volcarona sprites
+      encounter.spriteConfigs = [
+        {
+          spriteKey: volcaronaSpecies.getSpriteId(false),
+          fileRoot: "pokemon",
+          repeat: true,
+          hidden: true,
+          hasShadow: true,
+          x: -20
+        },
+        {
+          spriteKey: volcaronaSpecies.getSpriteId(true ),
+          fileRoot: "pokemon",
+          repeat: true,
+          hidden: true,
+          hasShadow: true,
+          x: 20
+        },
+      ];
 
       // Load animations/sfx for Volcarona moves
       initCustomMovesForEncounter(scene, [Moves.FIRE_SPIN, Moves.QUIVER_DANCE]);
+
+      scene.arena.trySetWeather(WeatherType.SUNNY, true);
 
       return true;
     })
@@ -75,13 +101,13 @@ export const FieryFalloutEncounter: IMysteryEncounter =
       const background = new EncounterBattleAnim(EncounterAnim.MAGMA_BG, scene.getPlayerPokemon(), scene.getPlayerPokemon());
       background.playWithoutTargets(scene, 200, 70, 2, 3);
       const animation = new EncounterBattleAnim(EncounterAnim.MAGMA_SPOUT, scene.getPlayerPokemon(), scene.getPlayerPokemon());
-      animation.playWithoutTargets(scene, 100, 100, 2);
-      const increment = 600;
-      for (let i = 3; i < 6; i++) {
-        scene.time.delayedCall((increment) * (i - 2), () => {
-          animation.playWithoutTargets(scene, randSeedInt(12) * 15, 150 - randSeedInt(10) * 15, 2);
-        });
-      }
+      animation.playWithoutTargets(scene, 80, 100, 2);
+      scene.time.delayedCall(600, () => {
+        animation.playWithoutTargets(scene, -20, 100, 2);
+      });
+      scene.time.delayedCall(1200, () => {
+        animation.playWithoutTargets(scene, 140, 150, 2);
+      });
 
       return true;
     })
@@ -142,15 +168,36 @@ export const FieryFalloutEncounter: IMysteryEncounter =
         ],
       },
       async (scene: BattleScene) => {
-        // Damage party and burn 1 random member
+        // Damage non-fire types and burn 1 random non-fire type member
+        const encounter = scene.currentBattle.mysteryEncounter;
+        const nonFireTypes = scene.getParty().filter((p) => !p.getTypes().includes(Type.FIRE));
+
+        for (const pkm of nonFireTypes) {
+          const percentage = DAMAGE_PERCENTAGE / 100;
+          const damage = Math.floor(pkm.getMaxHp() * percentage);
+          applyDamageToPokemon(scene, pkm, damage);
+        }
+
+        // Burn random member
+        const burnable = nonFireTypes.filter(p => isNullOrUndefined(p.status) || isNullOrUndefined(p.status.effect) || p.status?.effect === StatusEffect.BURN);
+        if (burnable?.length > 0) {
+          const chosenPokemon = burnable[randSeedInt(burnable.length - 1)];
+          if (chosenPokemon.trySetStatus(StatusEffect.BURN)) {
+            // Burn applied
+            encounter.setDialogueToken("burnedPokemon", chosenPokemon.name);
+            queueEncounterMessage(scene, `${namespace}:option:2:target_burned`);
+          }
+        }
+
         // No rewards
-        leaveEncounterWithoutBattle(scene);
+        leaveEncounterWithoutBattle(scene, true);
       }
     )
     .withOption(
       new MysteryEncounterOptionBuilder()
         .withOptionMode(EncounterOptionMode.DISABLED_OR_SPECIAL)
-        .withPrimaryPokemonRequirement(new TypeRequirement(Type.FIRE, true,2)) // Will set option2PrimaryName and option2PrimaryMove dialogue tokens automatically
+        .withPrimaryPokemonRequirement(new TypeRequirement(Type.FIRE, true,1)) // Will set option3PrimaryName dialogue token automatically
+        .withSecondaryPokemonRequirement(new TypeRequirement(Type.FIRE, true,1)) // Will set option3SecondaryName dialogue token automatically
         .withDialogue({
           buttonLabel: `${namespace}:option:3:label`,
           buttonTooltip: `${namespace}:option:3:tooltip`,
@@ -161,12 +208,20 @@ export const FieryFalloutEncounter: IMysteryEncounter =
             },
           ],
         })
+        .withPreOptionPhase(async (scene: BattleScene) => {
+          transitionMysteryEncounterIntroVisuals(scene, false, false, 2000);
+        })
         .withOptionPhase(async (scene: BattleScene) => {
           // Fire types help calm the Volcarona
-          // const encounter = scene.currentBattle.mysteryEncounter;
+          const encounter = scene.currentBattle.mysteryEncounter;
+          transitionMysteryEncounterIntroVisuals(scene);
           const charcoal = generateModifierTypeOption(scene, modifierTypes.ATTACK_TYPE_BOOSTER, [Type.FIRE]);
           setEncounterRewards(scene, { guaranteedModifierTypeOptions: [charcoal], fillRemaining: true });
-          setEncounterExp(scene, scene.getParty().map(p => p.id), 500);
+
+          const primary = encounter.options[2].primaryPokemon;
+          const secondary = encounter.options[2].secondaryPokemon[0];
+
+          setEncounterExp(scene, [primary.id, secondary.id], getPokemonSpecies(Species.VOLCARONA).baseExp * 2);
           leaveEncounterWithoutBattle(scene);
         })
         .build()

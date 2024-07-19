@@ -11,7 +11,7 @@
         "target": 2,
         "graphicFrame": 0,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -23,7 +23,7 @@
         "target": 2,
         "graphicFrame": 0,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -35,6 +35,7 @@
         "target": 2,
         "graphicFrame": 0,
         "opacity": 255,
+        "priority": 4,
         "focus": 1
       }
     ],
@@ -48,7 +49,7 @@
         "target": 2,
         "graphicFrame": 1,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -60,7 +61,7 @@
         "target": 2,
         "graphicFrame": 1,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -72,6 +73,7 @@
         "target": 2,
         "graphicFrame": 1,
         "opacity": 255,
+        "priority": 4,
         "focus": 1
       }
     ],
@@ -85,7 +87,7 @@
         "target": 2,
         "graphicFrame": 2,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -97,7 +99,7 @@
         "target": 2,
         "graphicFrame": 2,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -109,6 +111,7 @@
         "target": 2,
         "graphicFrame": 2,
         "opacity": 255,
+        "priority": 4,
         "focus": 1
       }
     ],
@@ -122,7 +125,7 @@
         "target": 2,
         "graphicFrame": 3,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -134,7 +137,7 @@
         "target": 2,
         "graphicFrame": 3,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -146,6 +149,7 @@
         "target": 2,
         "graphicFrame": 3,
         "opacity": 255,
+        "priority": 4,
         "focus": 1
       }
     ],
@@ -159,7 +163,7 @@
         "target": 2,
         "graphicFrame": 4,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -171,7 +175,7 @@
         "target": 2,
         "graphicFrame": 4,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -183,6 +187,7 @@
         "target": 2,
         "graphicFrame": 4,
         "opacity": 255,
+        "priority": 4,
         "focus": 1
       }
     ],
@@ -196,7 +201,7 @@
         "target": 2,
         "graphicFrame": 5,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -208,7 +213,7 @@
         "target": 2,
         "graphicFrame": 5,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -220,6 +225,7 @@
         "target": 2,
         "graphicFrame": 5,
         "opacity": 255,
+        "priority": 4,
         "focus": 1
       }
     ],
@@ -233,7 +239,7 @@
         "target": 2,
         "graphicFrame": 6,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -245,7 +251,7 @@
         "target": 2,
         "graphicFrame": 6,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -257,6 +263,7 @@
         "target": 2,
         "graphicFrame": 6,
         "opacity": 255,
+        "priority": 4,
         "focus": 1
       }
     ],
@@ -270,7 +277,7 @@
         "target": 2,
         "graphicFrame": 7,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -282,7 +289,7 @@
         "target": 2,
         "graphicFrame": 7,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -294,6 +301,7 @@
         "target": 2,
         "graphicFrame": 7,
         "opacity": 255,
+        "priority": 4,
         "focus": 1
       }
     ],
@@ -307,7 +315,7 @@
         "target": 2,
         "graphicFrame": 8,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -319,6 +327,7 @@
         "target": 2,
         "graphicFrame": 8,
         "opacity": 255,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -330,6 +339,7 @@
         "target": 2,
         "graphicFrame": 8,
         "opacity": 255,
+        "priority": 4,
         "focus": 1
       }
     ],
@@ -343,7 +353,7 @@
         "target": 2,
         "graphicFrame": 9,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -355,6 +365,7 @@
         "target": 2,
         "graphicFrame": 9,
         "opacity": 255,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -366,7 +377,7 @@
         "target": 2,
         "graphicFrame": 9,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       }
     ],
@@ -380,6 +391,7 @@
         "target": 2,
         "graphicFrame": 10,
         "opacity": 255,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -391,6 +403,7 @@
         "target": 2,
         "graphicFrame": 10,
         "opacity": 255,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -402,7 +415,7 @@
         "target": 2,
         "graphicFrame": 10,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       }
     ],
@@ -416,6 +429,7 @@
         "target": 2,
         "graphicFrame": 7,
         "opacity": 255,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -427,7 +441,7 @@
         "target": 2,
         "graphicFrame": 7,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -439,7 +453,7 @@
         "target": 2,
         "graphicFrame": 7,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       }
     ],
@@ -453,7 +467,7 @@
         "target": 2,
         "graphicFrame": 8,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -465,7 +479,7 @@
         "target": 2,
         "graphicFrame": 8,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -477,6 +491,7 @@
         "target": 2,
         "graphicFrame": 8,
         "opacity": 255,
+        "priority": 4,
         "focus": 1
       }
     ],
@@ -490,7 +505,7 @@
         "target": 2,
         "graphicFrame": 9,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -502,6 +517,7 @@
         "target": 2,
         "graphicFrame": 9,
         "opacity": 255,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -513,6 +529,7 @@
         "target": 2,
         "graphicFrame": 9,
         "opacity": 255,
+        "priority": 4,
         "focus": 1
       }
     ],
@@ -526,7 +543,7 @@
         "target": 2,
         "graphicFrame": 10,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -538,6 +555,7 @@
         "target": 2,
         "graphicFrame": 10,
         "opacity": 255,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -549,7 +567,8 @@
         "target": 2,
         "graphicFrame": 10,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
+        "priority": 4,
         "focus": 1
       }
     ],
@@ -563,7 +582,7 @@
         "target": 2,
         "graphicFrame": 6,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -575,7 +594,7 @@
         "target": 2,
         "graphicFrame": 6,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -587,6 +606,7 @@
         "target": 2,
         "graphicFrame": 6,
         "opacity": 255,
+        "priority": 4,
         "focus": 1
       }
     ],
@@ -600,7 +620,7 @@
         "target": 2,
         "graphicFrame": 5,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -612,7 +632,7 @@
         "target": 2,
         "graphicFrame": 5,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -624,6 +644,7 @@
         "target": 2,
         "graphicFrame": 5,
         "opacity": 255,
+        "priority": 4,
         "focus": 1
       }
     ],
@@ -637,7 +658,7 @@
         "target": 2,
         "graphicFrame": 4,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -649,7 +670,7 @@
         "target": 2,
         "graphicFrame": 4,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -661,6 +682,7 @@
         "target": 2,
         "graphicFrame": 4,
         "opacity": 255,
+        "priority": 4,
         "focus": 1
       }
     ],
@@ -674,7 +696,7 @@
         "target": 2,
         "graphicFrame": 3,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -686,7 +708,7 @@
         "target": 2,
         "graphicFrame": 3,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -698,6 +720,7 @@
         "target": 2,
         "graphicFrame": 3,
         "opacity": 255,
+        "priority": 4,
         "focus": 1
       }
     ],
@@ -711,7 +734,7 @@
         "target": 2,
         "graphicFrame": 2,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -723,7 +746,7 @@
         "target": 2,
         "graphicFrame": 2,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -735,6 +758,7 @@
         "target": 2,
         "graphicFrame": 2,
         "opacity": 255,
+        "priority": 4,
         "focus": 1
       }
     ],
@@ -748,7 +772,7 @@
         "target": 2,
         "graphicFrame": 1,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -760,7 +784,7 @@
         "target": 2,
         "graphicFrame": 1,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -772,6 +796,7 @@
         "target": 2,
         "graphicFrame": 1,
         "opacity": 255,
+        "priority": 4,
         "focus": 1
       }
     ],
@@ -785,7 +810,7 @@
         "target": 2,
         "graphicFrame": 0,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -797,7 +822,7 @@
         "target": 2,
         "graphicFrame": 0,
         "opacity": 255,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -809,6 +834,7 @@
         "target": 2,
         "graphicFrame": 0,
         "opacity": 255,
+        "priority": 4,
         "focus": 1
       }
     ],
@@ -822,7 +848,7 @@
         "target": 2,
         "graphicFrame": 0,
         "opacity": 130,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -834,7 +860,7 @@
         "target": 2,
         "graphicFrame": 0,
         "opacity": 130,
-        "priority": 1,
+        "priority": 4,
         "focus": 1
       },
       {
@@ -846,6 +872,7 @@
         "target": 2,
         "graphicFrame": 0,
         "opacity": 140,
+        "priority": 4,
         "focus": 1
       }
     ]

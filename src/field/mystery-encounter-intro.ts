@@ -32,6 +32,8 @@ export class MysteryEncounterSpriteConfig {
   disableAnimation?: boolean = false;
   /** Repeat the animation. Defaults to `false` */
   repeat?: boolean = false;
+  /** Hidden at start of encounter. Defaults to `false` */
+  hidden?: boolean = false;
   /** Tint color. `0` - `1`. Higher means darker tint. */
   tint?: number;
   /** X offset */
@@ -105,6 +107,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
         tintSprite = getItemSprite(spriteKey);
       }
 
+      sprite.setVisible(!config.hidden);
       tintSprite.setVisible(false);
 
       if (scale) {
@@ -344,6 +347,13 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
     tintSprites.map(tintSprite => {
       this.untint(tintSprite, duration, ease);
     });
+  }
+
+  setVisible(value: boolean): this {
+    this.getSprites().forEach(sprite => {
+      sprite.setVisible(value);
+    });
+    return super.setVisible(value);
   }
 }
 

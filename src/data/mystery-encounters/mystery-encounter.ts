@@ -60,13 +60,23 @@ export default interface IMysteryEncounter {
   encounterTier?: MysteryEncounterTier;
   encounterAnimations?: EncounterAnim[];
   hideBattleIntroMessage?: boolean;
-  hideIntroVisuals?: boolean;
+  autoHideIntroVisuals?: boolean;
   catchAllowed?: boolean;
   maxAllowedEncounters?: number;
-  doEncounterExp?: (scene: BattleScene) => boolean;
-  doEncounterRewards?: (scene: BattleScene) => boolean;
+
+  /**
+   * Event callback functions
+   */
+  /** Event when Encounter is first loaded, use it for data conditioning */
   onInit?: (scene: BattleScene) => boolean;
+  /** Event when battlefield visuals have finished sliding in and the encounter dialogue begins */
   onVisualsStart?: (scene: BattleScene) => boolean;
+  /** Event right before MysteryEncounterPhase begins. Use for unshifting any phases before the actual encounter */
+  onPreMysteryEncounterPhase?: (scene: BattleScene) => boolean;
+  /** Will provide the player party EXP before rewards are displayed for that wave */
+  doEncounterExp?: (scene: BattleScene) => boolean;
+  /** Will provide the player a rewards shop for that wave */
+  doEncounterRewards?: (scene: BattleScene) => boolean;
 
   /**
    * Requirements
@@ -171,7 +181,7 @@ export default class IMysteryEncounter implements IMysteryEncounter {
     this.encounterVariant = MysteryEncounterVariant.DEFAULT;
     this.requirements = this.requirements ? this.requirements : [];
     this.hideBattleIntroMessage = !isNullOrUndefined(this.hideBattleIntroMessage) ? this.hideBattleIntroMessage : false;
-    this.hideIntroVisuals = !isNullOrUndefined(this.hideIntroVisuals) ? this.hideIntroVisuals : true;
+    this.autoHideIntroVisuals = !isNullOrUndefined(this.autoHideIntroVisuals) ? this.autoHideIntroVisuals : true;
     this.startOfBattleEffects = this.startOfBattleEffects ?? [];
 
     // Reset any dirty flags or encounter data
@@ -377,10 +387,13 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   secondaryPokemonRequirements ?: EncounterPokemonRequirement[] = [];
   excludePrimaryFromSupportRequirements?: boolean;
   dialogueTokens?: Record<string, string>;
+
   doEncounterExp?: (scene: BattleScene) => boolean;
   doEncounterRewards?: (scene: BattleScene) => boolean;
   onInit?: (scene: BattleScene) => boolean;
   onVisualsStart?: (scene: BattleScene) => boolean;
+  onPreMysteryEncounterPhase?: (scene: BattleScene) => boolean;
+
   hideBattleIntroMessage?: boolean;
   hideIntroVisuals?: boolean;
   enemyPartyConfigs?: EnemyPartyConfig[] = [];
@@ -613,6 +626,18 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   }
 
   /**
+   * Event callback right before MysteryEncounterPhase begins.
+   * Use for unshifting any last-minute phases before the actual encounter, as all phases are cleared and reset at that point.
+   * Example: set the weather before encounter begins
+   *
+   * @param onVisualsStart - synchronous callback function to perform immediately before MysteryEncounterPhase begins
+   * @returns
+   */
+  withOnPreMysteryEncounterPhase(onPreMysteryEncounterPhase: (scene: BattleScene) => boolean): this & Required<Pick<IMysteryEncounter, "onPreMysteryEncounterPhase">> {
+    return Object.assign(this, { onPreMysteryEncounterPhase: onPreMysteryEncounterPhase });
+  }
+
+  /**
    * Can be used to perform some extra logic (usually animations) when the enemy field is finished sliding in
    *
    * @param onVisualsStart - synchronous callback function to perform as soon as the enemy field finishes sliding in
@@ -651,11 +676,11 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   }
 
   /**
-   * @param hideIntroVisuals - if false, will not hide the intro visuals that are displayed at the beginning of encounter
+   * @param autoHideIntroVisuals - if false, will not hide the intro visuals that are displayed at the beginning of encounter
    * @returns
    */
-  withHideIntroVisuals(hideIntroVisuals: boolean): this & Required<Pick<IMysteryEncounter, "hideIntroVisuals">> {
-    return Object.assign(this, { hideIntroVisuals: hideIntroVisuals });
+  withAutoHideIntroVisuals(autoHideIntroVisuals: boolean): this & Required<Pick<IMysteryEncounter, "autoHideIntroVisuals">> {
+    return Object.assign(this, { autoHideIntroVisuals: autoHideIntroVisuals });
   }
 
   /**

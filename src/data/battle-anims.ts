@@ -718,14 +718,16 @@ export abstract class BattleAnim {
   public target: Pokemon;
   public sprites: Phaser.GameObjects.Sprite[];
   public bgSprite: Phaser.GameObjects.TileSprite | Phaser.GameObjects.Rectangle;
+  public playOnEmptyField: boolean;
 
   private srcLine: number[];
   private dstLine: number[];
 
-  constructor(user: Pokemon, target: Pokemon) {
+  constructor(user: Pokemon, target: Pokemon, playOnEmptyField: boolean = false) {
     this.user = user;
     this.target = target;
     this.sprites = [];
+    this.playOnEmptyField = playOnEmptyField;
   }
 
     abstract getAnim(): AnimConfig;
@@ -799,7 +801,7 @@ export abstract class BattleAnim {
       const user = !isOppAnim ? this.user : this.target;
       const target = !isOppAnim ? this.target : this.user;
 
-      if (!target.isOnField()) {
+      if (!target.isOnField() && !this.playOnEmptyField) {
         if (callback) {
           callback();
         }
@@ -1097,10 +1099,7 @@ export abstract class BattleAnim {
       let r = anim.frames.length;
       let f = 0;
 
-      const fieldSprites = scene.field.getAll();
-      const playerFieldSprite = fieldSprites[1];
-      const enemyFieldSprite = fieldSprites[3];
-      const trainerSprite = fieldSprites[5];
+      const existingFieldSprites = [...scene.field.getAll()];
 
       scene.tweens.addCounter({
         duration: Utils.getFrameMs(3) * frameTimeMult,
@@ -1127,41 +1126,24 @@ export abstract class BattleAnim {
 
             const graphicIndex = g++;
             const moveSprite = sprites[graphicIndex];
-            if (spritePriorities[graphicIndex] !== frame.priority) {
-              spritePriorities[graphicIndex] = frame.priority;
+            spritePriorities[graphicIndex] = frame.priority;
+            if (!isNullOrUndefined(frame.priority)) {
               const setSpritePriority = (priority: integer) => {
-                if (priority < 0) {
-                  // Move to top of scene
-                  scene.field.moveTo(moveSprite, scene.field.getAll().length - 1);
-                } else if (priority === 1) {
-                  // Move above player field
-                  if (playerFieldSprite) {
-                    scene.field.moveAbove(moveSprite as Phaser.GameObjects.GameObject, playerFieldSprite);
+                try {
+                  if (existingFieldSprites.length > priority) {
+                    // Move to specified priority index
+                    scene.field.moveTo(moveSprite, scene.field.getIndex(existingFieldSprites[priority]));
                   } else {
-                    setSpritePriority(-1);
+                    // Move to top of scene
+                    scene.field.moveTo(moveSprite, scene.field.getAll().length - 1);
                   }
-                } else if (priority === 3) {
-                  // Move above player enemy field
-                  if (enemyFieldSprite) {
-                    scene.field.moveAbove(moveSprite as Phaser.GameObjects.GameObject, enemyFieldSprite);
-                  } else {
-                    setSpritePriority(-1);
-                  }
-                } else if (priority === 5) {
-                  // Move above player trainer sprite
-                  if (trainerSprite) {
-                    scene.field.moveAbove(moveSprite as Phaser.GameObjects.GameObject, trainerSprite);
-                  } else {
-                    setSpritePriority(-1);
-                  }
-                } else {
-                  setSpritePriority(-1);
+                } catch (ignored) {
+                  console.log("index is no longer valid");
                 }
               };
               setSpritePriority(frame.priority);
             }
             moveSprite.setFrame(frame.graphicFrame);
-            //console.log(AnimFocus[frame.focus]);
 
             const graphicFrameData = frameData.get(frame.target).get(graphicIndex);
             moveSprite.setPosition(graphicFrameData.x, graphicFrameData.y);
@@ -1219,8 +1201,8 @@ export abstract class BattleAnim {
 export class CommonBattleAnim extends BattleAnim {
   public commonAnim: CommonAnim;
 
-  constructor(commonAnim: CommonAnim, user: Pokemon, target?: Pokemon) {
-    super(user, target || user);
+  constructor(commonAnim: CommonAnim, user: Pokemon, target?: Pokemon, playOnEmptyField: boolean = false) {
+    super(user, target || user, playOnEmptyField);
 
     this.commonAnim = commonAnim;
   }

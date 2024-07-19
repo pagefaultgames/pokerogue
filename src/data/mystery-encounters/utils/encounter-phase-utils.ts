@@ -30,6 +30,29 @@ import { Gender } from "#app/data/gender";
 import { Moves } from "#enums/moves";
 import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
 
+export function doTrainerExclamation(scene: BattleScene) {
+  const exclamationSprite = scene.addFieldSprite(0, 0, "exclaim");
+  exclamationSprite.setName("exclamation");
+  scene.field.add(exclamationSprite);
+  scene.field.moveTo(exclamationSprite, scene.field.list.length - 1);
+  exclamationSprite.setVisible(true);
+  exclamationSprite.setPosition(110, 68);
+  scene.tweens.add({
+    targets: exclamationSprite,
+    y: "-=25",
+    ease: "Cubic.easeOut",
+    duration: 300,
+    yoyo: true,
+    onComplete: () => {
+      scene.time.delayedCall(800, () => {
+        scene.field.remove(exclamationSprite, true);
+      });
+    }
+  });
+
+  scene.playSound("GEN8- Exclaim.wav");
+}
+
 export interface EnemyPokemonConfig {
   species: PokemonSpecies;
   isBoss: boolean;
@@ -452,7 +475,7 @@ export function setEncounterExp(scene: BattleScene, participantId: integer | int
     const nonFaintedPartyMembers = party.filter(p => p.hp);
     const expPartyMembers = nonFaintedPartyMembers.filter(p => p.level < scene.getMaxExpLevel());
     const partyMemberExp = [];
-    let expValue = baseExpValue * (useWaveIndex ? scene.currentBattle.waveIndex : 1);
+    let expValue = baseExpValue * (useWaveIndex ? scene.currentBattle.waveIndex : 1) / 5 + 1;
 
     if (participantIds?.length > 0) {
       if (scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.TRAINER_BATTLE) {
@@ -590,23 +613,40 @@ export function handleMysteryEncounterVictory(scene: BattleScene, addHealPhase: 
   }
 }
 
-export function hideMysteryEncounterIntroVisuals(scene: BattleScene): Promise<boolean> {
+/**
+ *
+ * @param scene
+ * @param hide - If true, performs ease out and hide visuals. If false, eases in visuals. Defaults to true
+ * @param destroy - If true, will destroy visuals ONLY ON HIDE TRANSITION. Does nothing on show. Defaults to true
+ * @param duration
+ */
+export function transitionMysteryEncounterIntroVisuals(scene: BattleScene, hide: boolean = true, destroy: boolean = true, duration: number = 750): Promise<boolean> {
   return new Promise(resolve => {
     const introVisuals = scene.currentBattle.mysteryEncounter.introVisuals;
     if (introVisuals) {
-      // Hide
+      if (!hide) {
+        // Make sure visuals are in proper state for showing
+        introVisuals.setVisible(true);
+        introVisuals.x += 16;
+        introVisuals.y -= 16;
+        introVisuals.alpha = 0;
+      }
+
+      // Transition
       scene.tweens.add({
         targets: introVisuals,
-        x: "+=16",
-        y: "-=16",
-        alpha: 0,
+        x: hide ? "+=16" : "-=16",
+        y: hide ? "-=16" : "+=16",
+        alpha: hide ? 0 : 1,
         ease: "Sine.easeInOut",
-        duration: 750,
+        duration: duration,
         onComplete: () => {
-          scene.field.remove(introVisuals);
-          introVisuals.setVisible(false);
-          introVisuals.destroy();
-          scene.currentBattle.mysteryEncounter.introVisuals = null;
+          if (hide && destroy) {
+            scene.field.remove(introVisuals);
+            introVisuals.setVisible(false);
+            introVisuals.destroy();
+            scene.currentBattle.mysteryEncounter.introVisuals = null;
+          }
           resolve(true);
         }
       });

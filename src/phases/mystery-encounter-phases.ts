@@ -2,7 +2,7 @@ import i18next from "i18next";
 import BattleScene from "../battle-scene";
 import { Phase } from "../phase";
 import { Mode } from "../ui/ui";
-import { hideMysteryEncounterIntroVisuals, OptionSelectSettings } from "../data/mystery-encounters/utils/encounter-phase-utils";
+import { transitionMysteryEncounterIntroVisuals, OptionSelectSettings } from "../data/mystery-encounters/utils/encounter-phase-utils";
 import { CheckSwitchPhase, NewBattlePhase, ReturnPhase, ScanIvsPhase, SelectModifierPhase, SummonPhase, ToggleDoublePositionPhase } from "../phases";
 import MysteryEncounterOption, { OptionPhaseCallback } from "../data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterVariant } from "../data/mystery-encounters/mystery-encounter";
@@ -148,8 +148,8 @@ export class MysteryEncounterOptionSelectedPhase extends Phase {
 
   start() {
     super.start();
-    if (this.scene.currentBattle.mysteryEncounter.hideIntroVisuals) {
-      hideMysteryEncounterIntroVisuals(this.scene).then(() => {
+    if (this.scene.currentBattle.mysteryEncounter.autoHideIntroVisuals) {
+      transitionMysteryEncounterIntroVisuals(this.scene).then(() => {
         this.scene.executeWithSeedOffset(() => {
           this.onOptionSelect(this.scene).finally(() => {
             this.end();

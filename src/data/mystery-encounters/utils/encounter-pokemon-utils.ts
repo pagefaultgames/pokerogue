@@ -405,8 +405,9 @@ function removePb(scene: BattleScene, pokeball: Phaser.GameObjects.Sprite) {
   });
 }
 
-export function doPokemonFlee(scene: BattleScene, pokemon: EnemyPokemon): Promise<void> {
-  return new Promise<void>(resolve => {
+export async function doPokemonFlee(scene: BattleScene, pokemon: EnemyPokemon): Promise<void> {
+  await new Promise<void>(resolve => {
+    scene.playSound("flee");
     // Ease pokemon out
     scene.tweens.add({
       targets: pokemon,

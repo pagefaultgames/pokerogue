@@ -67,7 +67,7 @@ import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 import { MysteryEncounterVariant } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
-import { handleEncounterStartOfBattleEffects, handleMysteryEncounterVictory } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { doTrainerExclamation, handleEncounterStartOfBattleEffects, handleMysteryEncounterVictory } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import ModifierSelectUiHandler, { SHOP_OPTIONS_ROW_LIMIT } from "#app/ui/modifier-select-ui-handler";
 import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 
@@ -901,6 +901,15 @@ export class EncounterPhase extends BattlePhase {
         battle.mysteryEncounter = newEncounter;
       }
       loadEnemyAssets.push(battle.mysteryEncounter.introVisuals.loadAssets().then(() => battle.mysteryEncounter.introVisuals.initSprite()));
+      // Load Mystery Encounter Exclamation bubble and sfx
+      loadEnemyAssets.push(new Promise<void>(resolve => {
+        this.scene.loadSe("GEN8- Exclaim.wav", "battle_anims", "GEN8- Exclaim.wav");
+        this.scene.loadAtlas("exclaim", "mystery-encounters");
+        this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => resolve());
+        if (!this.scene.load.isLoading()) {
+          this.scene.load.start();
+        }
+      }));
     } else {
       // This block only applies for double battles to init the boss segments (idk why it's split up like this)
       if (battle.enemyParty.filter(p => p.isBoss()).length > 1) {
@@ -1091,8 +1100,13 @@ export class EncounterPhase extends BattlePhase {
         const doShowEncounterOptions = () => {
           this.scene.ui.clearText();
           this.scene.ui.getMessageHandler().hideNameText();
-          this.scene.unshiftPhase(new MysteryEncounterPhase(this.scene));
 
+          // Can add any additional unshift phases here before MysteryEncounterPhase begins (and all phase queues are cleared)
+          if (this.scene.currentBattle.mysteryEncounter.onPreMysteryEncounterPhase) {
+            this.scene.currentBattle.mysteryEncounter.onPreMysteryEncounterPhase(this.scene);
+          }
+
+          this.scene.unshiftPhase(new MysteryEncounterPhase(this.scene));
           this.end();
         };
 
@@ -1125,6 +1139,7 @@ export class EncounterPhase extends BattlePhase {
       if (!encounterMessage) {
         doEncounter();
       } else {
+        doTrainerExclamation(this.scene);
         this.scene.ui.showDialogue(encounterMessage, "???", null, () => {
           this.scene.charSprite.hide().then(() => this.scene.hideFieldOverlay(250).then(() => doEncounter()));
         });
@@ -2706,12 +2721,14 @@ export class NewBattlePhase extends BattlePhase {
 export class CommonAnimPhase extends PokemonPhase {
   private anim: CommonAnim;
   private targetIndex: integer;
+  private playOnEmptyField: boolean;
 
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex, targetIndex: BattlerIndex, anim: CommonAnim) {
+  constructor(scene: BattleScene, battlerIndex: BattlerIndex, targetIndex: BattlerIndex, anim: CommonAnim, playOnEmptyField: boolean = false) {
     super(scene, battlerIndex);
 
     this.anim = anim;
     this.targetIndex = targetIndex;
+    this.playOnEmptyField = playOnEmptyField;
   }
 
   setAnimation(anim: CommonAnim) {
@@ -2719,7 +2736,8 @@ export class CommonAnimPhase extends PokemonPhase {
   }
 
   start() {
-    new CommonBattleAnim(this.anim, this.getPokemon(), this.targetIndex !== undefined ? (this.player ? this.scene.getEnemyField() : this.scene.getPlayerField())[this.targetIndex] : this.getPokemon()).play(this.scene, () => {
+    const target = this.targetIndex !== undefined ? (this.player ? this.scene.getEnemyField() : this.scene.getPlayerField())[this.targetIndex] : this.getPokemon();
+    new CommonBattleAnim(this.anim, this.getPokemon(), target, this.playOnEmptyField).play(this.scene, () => {
       this.end();
     });
   }

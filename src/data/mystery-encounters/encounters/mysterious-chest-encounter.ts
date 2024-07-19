@@ -20,7 +20,7 @@ export const MysteriousChestEncounter: IMysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.MYSTERIOUS_CHEST)
     .withEncounterTier(MysteryEncounterTier.COMMON)
     .withSceneWaveRangeRequirement(10, 180) // waves 2 to 180
-    .withHideIntroVisuals(false)
+    .withAutoHideIntroVisuals(false)
     .withIntroSpriteConfigs([
       {
         spriteKey: "chest_blue",

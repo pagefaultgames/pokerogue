@@ -48,7 +48,7 @@ export const DepartmentStoreSaleEncounter: IMysteryEncounter =
         speaker: `${namespace}:speaker`,
       },
     ])
-    .withHideIntroVisuals(false)
+    .withAutoHideIntroVisuals(false)
     .withTitle(`${namespace}:title`)
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)
