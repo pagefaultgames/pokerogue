@@ -207,10 +207,11 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
       }
 
       // Set Status
-      if (partyConfig.pokemonConfigs[e].status) {
+      const statusEffects = partyConfig.pokemonConfigs[e].status;
+      if (statusEffects) {
         // Default to cureturn 3 for sleep
-        const status = partyConfig.pokemonConfigs[e].status instanceof Array ? partyConfig.pokemonConfigs[e].status[0] : partyConfig.pokemonConfigs[e].status;
-        const cureTurn = partyConfig.pokemonConfigs[e].status instanceof Array ? partyConfig.pokemonConfigs[e].status[1] : partyConfig.pokemonConfigs[e].status === StatusEffect.SLEEP ? 3 : null;
+        const status = Array.isArray(statusEffects) ? statusEffects[0] : statusEffects;
+        const cureTurn = Array.isArray(statusEffects) ? statusEffects[1] : statusEffects === StatusEffect.SLEEP ? 3 : null;
         enemyPokemon.status = new Status(status, 0, cureTurn);
       }
 
@@ -281,7 +282,7 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
  * @param moves
  */
 export function initCustomMovesForEncounter(scene: BattleScene, moves: Moves | Moves[]) {
-  moves = moves instanceof Array ? moves : [moves];
+  moves = Array.isArray(moves) ? moves : [moves];
   return Promise.all(moves.map(move => initMoveAnim(scene, move)))
     .then(() => loadMoveAnimAssets(scene, moves));
 }

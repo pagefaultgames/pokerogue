@@ -489,8 +489,8 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * @returns
    */
   withAnimations(...encounterAnimations: EncounterAnim[]): this & Required<Pick<IMysteryEncounter, "encounterAnimations">> {
-    encounterAnimations = encounterAnimations instanceof Array ? encounterAnimations : [encounterAnimations];
-    return Object.assign(this, { encounterAnimations: encounterAnimations });
+    const animations = Array.isArray(encounterAnimations) ? encounterAnimations : [encounterAnimations];
+    return Object.assign(this, { encounterAnimations: animations });
   }
 
   /**

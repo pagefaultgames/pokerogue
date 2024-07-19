@@ -528,10 +528,10 @@ export function initMoveAnim(scene: BattleScene, move: Moves): Promise<void> {
 /**
  * Fetches animation configs to be used in a Mystery Encounter
  * @param scene
- * @param anims - one or more animations to fetch
+ * @param encounterAnim - one or more animations to fetch
  */
-export async function initEncounterAnims(scene: BattleScene, anims: EncounterAnim | EncounterAnim[]): Promise<void> {
-  anims = anims instanceof Array ? anims : [anims];
+export async function initEncounterAnims(scene: BattleScene, encounterAnim: EncounterAnim | EncounterAnim[]): Promise<void> {
+  const anims = Array.isArray(encounterAnim) ? encounterAnim : [encounterAnim];
   const encounterAnimNames = Utils.getEnumKeys(EncounterAnim);
   const encounterAnimIds = Utils.getEnumValues(EncounterAnim);
   const encounterAnimFetches = [];

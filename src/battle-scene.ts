@@ -2650,7 +2650,7 @@ export default class BattleScene extends SceneBase {
       return encounter;
     }
 
-    // Common / Uncommon / Rare / Super Rare
+    // Common / Great / Ultra / Rogue
     const tierWeights = [64, 40, 21, 3];
 
     // Adjust tier weights by previously encountered events to lower odds of only common/uncommons in run

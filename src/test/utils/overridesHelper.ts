@@ -61,6 +61,17 @@ export class OverridesHelper {
   }
 
   /**
+   * Override each wave to have or not have standard trainer battles
+   * @returns spy instance
+   * @param isTrainer
+   */
+  trainerWave(isTrainer: boolean): MockInstance {
+    const spy = vi.spyOn(this.game.scene.gameMode, "isWaveTrainer").mockReturnValue(isTrainer);
+    this.log(`${isTrainer? "forcing" : "ignoring"} trainer waves!`);
+    return spy;
+  }
+
+  /**
    * Override the weather (type)
    * @param type weather type to set
    * @returns spy instance

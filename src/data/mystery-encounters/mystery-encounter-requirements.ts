@@ -103,12 +103,7 @@ export class TimeOfDayRequirement extends EncounterSceneRequirement {
 
   constructor(timeOfDay: TimeOfDay | TimeOfDay[]) {
     super();
-    if (timeOfDay instanceof Array) {
-      this.requiredTimeOfDay = timeOfDay;
-    } else {
-      this.requiredTimeOfDay = [];
-      this.requiredTimeOfDay.push(timeOfDay);
-    }
+    this.requiredTimeOfDay = Array.isArray(timeOfDay) ? timeOfDay : [timeOfDay];
   }
 
   meetsRequirement(scene: BattleScene): boolean {
@@ -130,12 +125,7 @@ export class WeatherRequirement extends EncounterSceneRequirement {
 
   constructor(weather: WeatherType | WeatherType[]) {
     super();
-    if (weather instanceof Array) {
-      this.requiredWeather = weather;
-    } else {
-      this.requiredWeather = [];
-      this.requiredWeather.push(weather);
-    }
+    this.requiredWeather = Array.isArray(weather) ? weather : [weather];
   }
 
   meetsRequirement(scene: BattleScene): boolean {
@@ -185,12 +175,7 @@ export class PersistentModifierRequirement extends EncounterSceneRequirement {
   requiredItems?: ModifierType[]; // TODO: not implemented
   constructor(item: ModifierType | ModifierType[]) {
     super();
-    if (item instanceof Array) {
-      this.requiredItems = item;
-    } else {
-      this.requiredItems = [];
-      this.requiredItems.push(item);
-    }
+    this.requiredItems = Array.isArray(item) ? item : [item];
   }
 
   meetsRequirement(scene: BattleScene): boolean {
@@ -251,12 +236,7 @@ export class SpeciesRequirement extends EncounterPokemonRequirement {
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
-    if (species instanceof Array) {
-      this.requiredSpecies = species;
-    } else {
-      this.requiredSpecies = [];
-      this.requiredSpecies.push(species);
-    }
+    this.requiredSpecies = Array.isArray(species) ? species : [species];
   }
 
   meetsRequirement(scene: BattleScene): boolean {
@@ -294,12 +274,7 @@ export class NatureRequirement extends EncounterPokemonRequirement {
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
-    if (nature instanceof Array) {
-      this.requiredNature = nature;
-    } else {
-      this.requiredNature = [];
-      this.requiredNature.push(nature);
-    }
+    this.requiredNature = Array.isArray(nature) ? nature : [nature];
   }
 
   meetsRequirement(scene: BattleScene): boolean {
@@ -338,12 +313,7 @@ export class TypeRequirement extends EncounterPokemonRequirement {
     this.excludeFainted = excludeFainted;
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
-    if (type instanceof Array) {
-      this.requiredType = type;
-    } else {
-      this.requiredType = [];
-      this.requiredType.push(type);
-    }
+    this.requiredType = Array.isArray(type) ? type : [type];
   }
 
   meetsRequirement(scene: BattleScene): boolean {
@@ -388,12 +358,7 @@ export class MoveRequirement extends EncounterPokemonRequirement {
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
-    if (moves instanceof Array) {
-      this.requiredMoves = moves;
-    } else {
-      this.requiredMoves = [];
-      this.requiredMoves.push(moves);
-    }
+    this.requiredMoves = Array.isArray(moves) ? moves : [moves];
   }
 
   meetsRequirement(scene: BattleScene): boolean {
@@ -437,12 +402,7 @@ export class CompatibleMoveRequirement extends EncounterPokemonRequirement {
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
-    if (learnableMove instanceof Array) {
-      this.requiredMoves = learnableMove;
-    } else {
-      this.requiredMoves = [];
-      this.requiredMoves.push(learnableMove);
-    }
+    this.requiredMoves = Array.isArray(learnableMove) ? learnableMove : [learnableMove];
   }
 
   meetsRequirement(scene: BattleScene): boolean {
@@ -482,12 +442,7 @@ export class EvolutionTargetSpeciesRequirement extends EncounterPokemonRequireme
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
-    if (evolutionTargetSpecies instanceof Array) {
-      this.requiredEvolutionTargetSpecies = evolutionTargetSpecies;
-    } else {
-      this.requiredEvolutionTargetSpecies = [];
-      this.requiredEvolutionTargetSpecies.push(evolutionTargetSpecies);
-    }
+    this.requiredEvolutionTargetSpecies = Array.isArray(evolutionTargetSpecies) ? evolutionTargetSpecies : [evolutionTargetSpecies];
   }
 
   meetsRequirement(scene: BattleScene): boolean {
@@ -526,12 +481,7 @@ export class AbilityRequirement extends EncounterPokemonRequirement {
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
-    if (abilities instanceof Array) {
-      this.requiredAbilities = abilities;
-    } else {
-      this.requiredAbilities = [];
-      this.requiredAbilities.push(abilities);
-    }
+    this.requiredAbilities = Array.isArray(abilities) ? abilities : [abilities];
   }
 
   meetsRequirement(scene: BattleScene): boolean {
@@ -571,12 +521,7 @@ export class StatusEffectRequirement extends EncounterPokemonRequirement {
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
-    if (statusEffect instanceof Array) {
-      this.requiredStatusEffect = statusEffect;
-    } else {
-      this.requiredStatusEffect = [];
-      this.requiredStatusEffect.push(statusEffect);
-    }
+    this.requiredStatusEffect = Array.isArray(statusEffect) ? statusEffect : [statusEffect];
   }
 
   meetsRequirement(scene: BattleScene): boolean {
@@ -646,12 +591,7 @@ export class CanFormChangeWithItemRequirement extends EncounterPokemonRequiremen
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
-    if (formChangeItem instanceof Array) {
-      this.requiredFormChangeItem = formChangeItem;
-    } else {
-      this.requiredFormChangeItem = [];
-      this.requiredFormChangeItem.push(formChangeItem);
-    }
+    this.requiredFormChangeItem = Array.isArray(formChangeItem) ? formChangeItem : [formChangeItem];
   }
 
   meetsRequirement(scene: BattleScene): boolean {
@@ -703,12 +643,7 @@ export class CanEvolveWithItemRequirement extends EncounterPokemonRequirement {
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
-    if (evolutionItems instanceof Array) {
-      this.requiredEvolutionItem = evolutionItems;
-    } else {
-      this.requiredEvolutionItem = [];
-      this.requiredEvolutionItem.push(evolutionItems);
-    }
+    this.requiredEvolutionItem = Array.isArray(evolutionItems) ? evolutionItems : [evolutionItems];
   }
 
   meetsRequirement(scene: BattleScene): boolean {
@@ -757,12 +692,7 @@ export class HeldItemRequirement extends EncounterPokemonRequirement {
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
-    if (heldItem instanceof Array) {
-      this.requiredHeldItemModifier = heldItem;
-    } else {
-      this.requiredHeldItemModifier = [];
-      this.requiredHeldItemModifier.push(heldItem);
-    }
+    this.requiredHeldItemModifier = Array.isArray(heldItem) ? heldItem : [heldItem];
   }
 
   meetsRequirement(scene: BattleScene): boolean {

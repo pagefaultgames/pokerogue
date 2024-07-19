@@ -89,8 +89,7 @@ export async function skipBattleRunMysteryEncounterRewardsPhase(game: GameManage
     p.status = new Status(StatusEffect.FAINT);
     game.scene.field.remove(p);
   });
-  game.scene.unshiftPhase(new VictoryPhase(game.scene, 0));
-  game.endPhase();
+  game.scene.pushPhase(new VictoryPhase(game.scene, 0));
   game.phaseInterceptor.superEndPhase();
   await game.phaseInterceptor.to(MysteryEncounterRewardsPhase, true);
 }

@@ -98,8 +98,8 @@ export function getLowestLevelPlayerPokemon(scene: BattleScene, unfainted: boole
  * @returns
  */
 export function getRandomSpeciesByStarterTier(starterTiers: number | [number, number], excludedSpecies?: Species[], types?: Type[]): Species {
-  let min = starterTiers instanceof Array ? starterTiers[0] : starterTiers;
-  let max = starterTiers instanceof Array ? starterTiers[1] : starterTiers;
+  let min = Array.isArray(starterTiers) ? starterTiers[0] : starterTiers;
+  let max = Array.isArray(starterTiers) ? starterTiers[1] : starterTiers;
 
   let filteredSpecies: [PokemonSpecies, number][] = Object.keys(speciesStarters)
     .map(s => [parseInt(s) as Species, speciesStarters[s] as number])

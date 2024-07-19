@@ -24,6 +24,7 @@ describe("Mystery Encounters", () => {
     game.override.startingWave(11);
     game.override.mysteryEncounterChance(100);
     game.override.mysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS);
+    game.override.trainerWave(false);
   });
 
   it("Spawns a mystery encounter", async () => {

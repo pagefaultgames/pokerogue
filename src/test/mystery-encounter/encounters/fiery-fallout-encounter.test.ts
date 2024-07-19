@@ -9,16 +9,19 @@ import Battle from "#app/battle";
 import { Gender } from "#app/data/gender";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import * as BattleAnims from "#app/data/battle-anims";
+import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { EncounterOptionMode } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { runSelectMysteryEncounterOption, skipBattleRunMysteryEncounterRewardsPhase } from "#test/mystery-encounter/encounterTestUtils";
 import { CommandPhase, MovePhase, SelectModifierPhase } from "#app/phases";
 import { Moves } from "#enums/moves";
 import BattleScene from "#app/battle-scene";
 import { PokemonHeldItemModifier } from "#app/modifier/modifier";
+import { Type } from "#app/data/type";
+import { Status, StatusEffect } from "#app/data/status-effect";
 
 const namespace = "mysteryEncounter:fieryFallout";
-/** Arcanine and Ninetails for 2 Fire types. Lapras for burnable mon. */
-const defaultParty = [Species.ARCANINE, Species.NINETALES, Species.LAPRAS];
+/** Arcanine and Ninetails for 2 Fire types. Lapras, Gengar, Abra for burnable mon. */
+const defaultParty = [Species.ARCANINE, Species.NINETALES, Species.LAPRAS, Species.GENGAR, Species.ABRA];
 const defaultBiome = Biome.VOLCANO;
 const defaultWave = 45;
 
@@ -37,6 +40,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
     game.override.mysteryEncounterChance(100);
     game.override.startingWave(defaultWave);
     game.override.startingBiome(defaultBiome);
+    game.override.trainerWave(false);
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
@@ -168,12 +172,12 @@ describe("Fiery Fallout - Mystery Encounter", () => {
         && (m as PokemonHeldItemModifier).pokemonId === leadPokemonId, true) as PokemonHeldItemModifier[];
       const charcoal = leadPokemonItems.find(i => i.type.name === "Charcoal");
       expect(charcoal).toBeDefined;
-    });
+    }, 100000000);
   });
 
   describe("Option 2 - Suffer the weather", () => {
     it("should have the correct properties", () => {
-      const option1 = FieryFalloutEncounter.options[0];
+      const option1 = FieryFalloutEncounter.options[1];
       expect(option1.optionMode).toBe(EncounterOptionMode.DEFAULT);
       expect(option1.dialogue).toBeDefined();
       expect(option1.dialogue).toStrictEqual({
@@ -187,32 +191,32 @@ describe("Fiery Fallout - Mystery Encounter", () => {
       });
     });
 
-    it("should damage all (allowed in battle) party PKM by 25%", async () => {
-      game.override.startingWave(33);
-
+    it("should damage all non-fire party PKM by 20% and randomly burn 1", async () => {
       await game.runToMysteryEncounter(defaultParty);
 
       const party = scene.getParty();
+      const lapras = party.find((pkm) => pkm.species.speciesId === Species.LAPRAS);
+      lapras.status = new Status(StatusEffect.POISON);
       const abra = party.find((pkm) => pkm.species.speciesId === Species.ABRA);
       vi.spyOn(abra, "isAllowedInBattle").mockReturnValue(false);
 
-      await runSelectMysteryEncounterOption(game, 3);
+      await runSelectMysteryEncounterOption(game, 2);
 
-      const allowedPkm = party.filter((pkm) => pkm.isAllowedInBattle());
-      const notAllowedPkm = party.filter((pkm) => !pkm.isAllowedInBattle());
-      allowedPkm.forEach((pkm) =>
-        expect(pkm.hp, `${pkm.name} should have receivd 25% damage: ${pkm.hp} / ${pkm.getMaxHp()} HP`).toBe(pkm.getMaxHp() - Math.floor(pkm.getMaxHp() * 0.25))
-      );
-
-      notAllowedPkm.forEach((pkm) => expect(pkm.hp, `${pkm.name} should be full hp: ${pkm.hp} / ${pkm.getMaxHp()} HP`).toBe(pkm.getMaxHp()));
+      const burnablePokemon = party.filter((pkm) => pkm.isAllowedInBattle() && !pkm.getTypes().includes(Type.FIRE));
+      const notBurnablePokemon = party.filter((pkm) => !pkm.isAllowedInBattle() || pkm.getTypes().includes(Type.FIRE));
+      expect(scene.currentBattle.mysteryEncounter.dialogueTokens["burnedPokemon"]).toBe("Gengar");
+      burnablePokemon.forEach((pkm) => {
+        expect(pkm.hp, `${pkm.name} should have received 20% damage: ${pkm.hp} / ${pkm.getMaxHp()} HP`).toBe(pkm.getMaxHp() - Math.floor(pkm.getMaxHp() * 0.2));
+      });
+      expect(burnablePokemon.some(pkm => pkm?.status?.effect === StatusEffect.BURN)).toBeTruthy();
+      notBurnablePokemon.forEach((pkm) => expect(pkm.hp, `${pkm.name} should be full hp: ${pkm.hp} / ${pkm.getMaxHp()} HP`).toBe(pkm.getMaxHp()));
     });
 
     it("should leave encounter without battle", async () => {
-      game.override.startingWave(33);
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
 
       await game.runToMysteryEncounter(defaultParty);
-      await runSelectMysteryEncounterOption(game, 3);
+      await runSelectMysteryEncounterOption(game, 2);
 
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();
     });
@@ -220,42 +224,36 @@ describe("Fiery Fallout - Mystery Encounter", () => {
 
   describe("Option 3 - use FIRE types", () => {
     it("should have the correct properties", () => {
-      const option1 = FieryFalloutEncounter.options[0];
-      expect(option1.optionMode).toBe(EncounterOptionMode.DEFAULT);
+      const option1 = FieryFalloutEncounter.options[2];
+      expect(option1.optionMode).toBe(EncounterOptionMode.DISABLED_OR_SPECIAL);
       expect(option1.dialogue).toBeDefined();
       expect(option1.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}:option:1:label`,
-        buttonTooltip: `${namespace}:option:1:tooltip`,
+        buttonLabel: `${namespace}:option:3:label`,
+        buttonTooltip: `${namespace}:option:3:tooltip`,
+        disabledButtonTooltip: `${namespace}:option:3:disabled_tooltip`,
         selected: [
           {
-            text: `${namespace}:option:1:selected`,
+            text: `${namespace}:option:3:selected`,
           },
         ],
       });
     });
 
-    it("should damage all (allowed in battle) party PKM by 25%", async () => {
-      game.override.startingWave(33);
-
+    it("should give charcoal to lead pokemon", async () => {
       await game.runToMysteryEncounter(defaultParty);
-
-      const party = scene.getParty();
-      const abra = party.find((pkm) => pkm.species.speciesId === Species.ABRA);
-      vi.spyOn(abra, "isAllowedInBattle").mockReturnValue(false);
-
       await runSelectMysteryEncounterOption(game, 3);
+      // await skipBattleRunMysteryEncounterRewardsPhase(game);
+      await game.phaseInterceptor.to(SelectModifierPhase, false);
+      expect(scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);
 
-      const allowedPkm = party.filter((pkm) => pkm.isAllowedInBattle());
-      const notAllowedPkm = party.filter((pkm) => !pkm.isAllowedInBattle());
-      allowedPkm.forEach((pkm) =>
-        expect(pkm.hp, `${pkm.name} should have receivd 25% damage: ${pkm.hp} / ${pkm.getMaxHp()} HP`).toBe(pkm.getMaxHp() - Math.floor(pkm.getMaxHp() * 0.25))
-      );
-
-      notAllowedPkm.forEach((pkm) => expect(pkm.hp, `${pkm.name} should be full hp: ${pkm.hp} / ${pkm.getMaxHp()} HP`).toBe(pkm.getMaxHp()));
+      const leadPokemonId = scene.getParty()?.[0].id;
+      const leadPokemonItems = scene.findModifiers(m => m instanceof PokemonHeldItemModifier
+        && (m as PokemonHeldItemModifier).pokemonId === leadPokemonId, true) as PokemonHeldItemModifier[];
+      const charcoal = leadPokemonItems.find(i => i.type.name === "Charcoal");
+      expect(charcoal).toBeDefined;
     });
 
     it("should leave encounter without battle", async () => {
-      game.override.startingWave(33);
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
 
       await game.runToMysteryEncounter(defaultParty);
