@@ -122,7 +122,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
 
       await runSelectMysteryEncounterOption(game, 2);
 
-      expect(blastoise.exp).toBe(expBefore + laprasSpecies.baseExp * defaultWave);
+      expect(blastoise.exp).toBe(expBefore + Math.floor(laprasSpecies.baseExp * defaultWave / 5 + 1));
     });
 
     it("should leave encounter without battle", async () => {
@@ -171,7 +171,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
 
       await runSelectMysteryEncounterOption(game, 2);
 
-      expect(pidgeot.exp).toBe(expBefore + laprasBaseExp * wave);
+      expect(pidgeot.exp).toBe(expBefore + Math.floor(laprasBaseExp * defaultWave / 5 + 1));
     });
 
     it("should leave encounter without battle", async () => {

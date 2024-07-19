@@ -34,7 +34,7 @@ export function doTrainerExclamation(scene: BattleScene) {
   const exclamationSprite = scene.addFieldSprite(0, 0, "exclaim");
   exclamationSprite.setName("exclamation");
   scene.field.add(exclamationSprite);
-  scene.field.moveTo(exclamationSprite, scene.field.list.length - 1);
+  scene.field.moveTo(exclamationSprite, scene.field.getAll().length - 1);
   exclamationSprite.setVisible(true);
   exclamationSprite.setPosition(110, 68);
   scene.tweens.add({
@@ -475,7 +475,7 @@ export function setEncounterExp(scene: BattleScene, participantId: integer | int
     const nonFaintedPartyMembers = party.filter(p => p.hp);
     const expPartyMembers = nonFaintedPartyMembers.filter(p => p.level < scene.getMaxExpLevel());
     const partyMemberExp = [];
-    let expValue = baseExpValue * (useWaveIndex ? scene.currentBattle.waveIndex : 1) / 5 + 1;
+    let expValue = Math.floor(baseExpValue * (useWaveIndex ? scene.currentBattle.waveIndex : 1) / 5 + 1);
 
     if (participantIds?.length > 0) {
       if (scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.TRAINER_BATTLE) {

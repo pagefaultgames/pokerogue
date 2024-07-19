@@ -1038,8 +1038,6 @@ export default class BattleScene extends SceneBase {
 
     const playerField = this.getPlayerField();
 
-    this.newArena(Biome.VOLCANO);
-
     if (this.gameMode.isFixedBattle(newWaveIndex) && trainerData === undefined) {
       battleConfig = this.gameMode.getFixedBattle(newWaveIndex);
       newDouble = battleConfig.double;
