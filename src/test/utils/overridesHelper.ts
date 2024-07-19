@@ -54,7 +54,7 @@ export class OverridesHelper {
    * @param wave the wave (index) to set. Classic: `1`-`200`
    * @returns spy instance
    */
-  startingWave(wave: number): MockInstance {
+  startingWave(wave: number) {
     const spy = vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(wave);
     this.log(`Starting wave set to ${wave}!`);
     return spy;
