@@ -76,7 +76,7 @@ export class OverridesHelper {
    * @param type weather type to set
    * @returns spy instance
    */
-  weather(type: WeatherType): MockInstance {
+  weather(type: WeatherType) {
     const spy = vi.spyOn(Overrides, "WEATHER_OVERRIDE", "get").mockReturnValue(type);
     this.log(`Weather set to ${Weather[type]} (=${type})!`);
     return spy;
