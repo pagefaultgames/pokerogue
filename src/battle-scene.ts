@@ -1906,7 +1906,7 @@ export default class BattleScene extends SceneBase {
     case "battle_legendary_pecharunt": //SV Pecharunt Battle
       return 6.508;
     case "battle_rival": //BW Rival Battle
-      return 13.689;
+      return 14.110;
     case "battle_rival_2": //BW N Battle
       return 17.714;
     case "battle_rival_3": //BW Final N Battle
@@ -2081,6 +2081,24 @@ export default class BattleScene extends SceneBase {
       this.phaseQueue.splice(this.phaseQueue.indexOf(lowerPriorityPhase), 0, movePhase);
     } else {
       this.pushPhase(movePhase);
+    }
+  }
+
+  /**
+   * Tries to add the input phase to index before target phase in the phaseQueue, else simply calls unshiftPhase()
+   * @param phase {@linkcode Phase} the phase to be added
+   * @param targetPhase {@linkcode Phase} the type of phase to search for in phaseQueue
+   * @returns boolean if a targetPhase was found and added
+   */
+  prependToPhase(phase: Phase, targetPhase: Constructor<Phase>): boolean {
+    const targetIndex = this.phaseQueue.findIndex(ph => ph instanceof targetPhase);
+
+    if (targetIndex !== -1) {
+      this.phaseQueue.splice(targetIndex, 0, phase);
+      return true;
+    } else {
+      this.unshiftPhase(phase);
+      return false;
     }
   }
 
