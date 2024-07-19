@@ -2251,9 +2251,9 @@ export class ChargeAttr extends OverrideMoveEffectAttr {
   private tagType: BattlerTagType;
   private chargeEffect: boolean;
   public sameTurn: boolean;
-  public followUpPriority: integer;
+  public chargePriority: integer;
 
-  constructor(chargeAnim: ChargeAnim, chargeText: string, tagType?: BattlerTagType, chargeEffect: boolean = false, sameTurn: boolean = false, followUpPriority?: integer) {
+  constructor(chargeAnim: ChargeAnim, chargeText: string, tagType?: BattlerTagType, chargeEffect: boolean = false, sameTurn: boolean = false, chargePriority?: integer) {
     super();
 
     this.chargeAnim = chargeAnim;
@@ -2261,7 +2261,7 @@ export class ChargeAttr extends OverrideMoveEffectAttr {
     this.tagType = tagType;
     this.chargeEffect = chargeEffect;
     this.sameTurn = sameTurn;
-    this.followUpPriority = followUpPriority;
+    this.chargePriority = chargePriority;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
@@ -2284,7 +2284,7 @@ export class ChargeAttr extends OverrideMoveEffectAttr {
             if (!movesetMove) { // account for any move that calls a ChargeAttr move when the ChargeAttr move does not exist in moveset
               movesetMove = new PokemonMove(move.id, 0, 0, true);
             }
-            user.scene.pushMovePhase(new MovePhase(user.scene, user, [ target.getBattlerIndex() ], movesetMove, true), this.followUpPriority, this.sameTurn);
+            user.scene.pushMovePhase(new MovePhase(user.scene, user, [ target.getBattlerIndex() ], movesetMove, true), this.sameTurn);
           }
           user.addTag(BattlerTagType.CHARGING, 1, move.id, user.id);
           resolve(true);
@@ -7710,8 +7710,8 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.ATK, -1),
     new StatusMove(Moves.INSTRUCT, Type.PSYCHIC, -1, 15, -1, 0, 7)
       .unimplemented(),
-    new AttackMove(Moves.BEAK_BLAST, Type.FLYING, MoveCategory.PHYSICAL, 100, 100, 15, -1, 5, 7)
-      .attr(ChargeAttr, ChargeAnim.BEAK_BLAST_CHARGING, "started\nheating up its beak!", undefined, false, true, -3)
+    new AttackMove(Moves.BEAK_BLAST, Type.FLYING, MoveCategory.PHYSICAL, 100, 100, 15, -1, -3, 7)
+      .attr(ChargeAttr, ChargeAnim.BEAK_BLAST_CHARGING, "started\nheating up its beak!", undefined, false, true, 5)
       .ballBombMove()
       .makesContact(false)
       .partial(),

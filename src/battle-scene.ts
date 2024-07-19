@@ -2073,8 +2073,8 @@ export default class BattleScene extends SceneBase {
     return false;
   }
 
-  pushMovePhase(movePhase: MovePhase, priorityOverride?: integer, forceSameTurn?: boolean): void {
-    const movePriority = new Utils.IntegerHolder(priorityOverride !== undefined ? priorityOverride : movePhase.move.getMove().priority);
+  pushMovePhase(movePhase: MovePhase, forceSameTurn?: boolean): void {
+    const movePriority = new Utils.IntegerHolder(movePhase.move.getMove().priority);
 
     applyAbAttrs(IncrementMovePriorityAbAttr, movePhase.pokemon, null, movePhase.move.getMove(), movePriority);
 

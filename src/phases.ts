@@ -1,7 +1,7 @@
 import BattleScene, { bypassLogin } from "./battle-scene";
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition, HitResult, TurnMove } from "./field/pokemon";
 import * as Utils from "./utils";
-import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, PreMoveMessageAttr, HealStatusEffectAttr, IgnoreOpponentStatChangesAttr, NoEffectAttr, BypassRedirectAttr, FixedDamageAttr, PostVictoryStatChangeAttr, OneHitKOAccuracyAttr, ForceSwitchOutAttr, VariableTargetAttr, IncrementMovePriorityAttr } from "./data/move";
+import Move, { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, PreMoveMessageAttr, HealStatusEffectAttr, IgnoreOpponentStatChangesAttr, NoEffectAttr, BypassRedirectAttr, FixedDamageAttr, PostVictoryStatChangeAttr, OneHitKOAccuracyAttr, ForceSwitchOutAttr, VariableTargetAttr, IncrementMovePriorityAttr } from "./data/move";
 import { Mode } from "./ui/ui";
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
@@ -2288,8 +2288,8 @@ export class TurnStartPhase extends FieldPhase {
         const aMove = allMoves[aCommand.move.move];
         const bMove = allMoves[bCommand.move.move];
 
-        const aPriority = new Utils.IntegerHolder(aMove.priority);
-        const bPriority = new Utils.IntegerHolder(bMove.priority);
+        const aPriority = new Utils.IntegerHolder(this.getMoveOrChargePriority(aMove));
+        const bPriority = new Utils.IntegerHolder(this.getMoveOrChargePriority(bMove));
 
         applyMoveAttrs(IncrementMovePriorityAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === a), null, aMove, aPriority);
         applyMoveAttrs(IncrementMovePriorityAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === b), null, bMove, bPriority);
@@ -2382,6 +2382,22 @@ export class TurnStartPhase extends FieldPhase {
     this.scene.pushPhase(new TurnEndPhase(this.scene));
 
     this.end();
+  }
+
+  /**
+   * Determines the priority of a move, taking charge steps into account.
+   *
+   * Assumes that charge steps are never lower priority than the move they're charging.
+   */
+  private getMoveOrChargePriority(move: Move): integer {
+    const chargeAttr = move.findAttr(a => a instanceof ChargeAttr) as ChargeAttr;
+
+    if (!chargeAttr || chargeAttr.chargePriority === null || chargeAttr.chargePriority === undefined) {
+      return move.priority;
+
+    } else {
+      return Math.max(chargeAttr.chargePriority, move.priority);
+    }
   }
 }
 
