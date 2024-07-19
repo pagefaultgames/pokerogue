@@ -17,6 +17,10 @@ import { Type } from "#app/data/type";
 import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "#app/data/pokemon-species";
 import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 
+export interface MysteryEncounterPokemonData {
+  spriteScale?: number
+}
+
 /**
  *
  * Will never remove the player's last non-fainted Pokemon (if they only have 1)

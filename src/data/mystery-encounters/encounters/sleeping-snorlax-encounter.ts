@@ -50,6 +50,7 @@ export const SleepingSnorlaxEncounter: IMysteryEncounter =
         species: bossSpecies,
         isBoss: true,
         status: StatusEffect.SLEEP,
+        spriteScale: 1.5
       };
       const config: EnemyPartyConfig = {
         levelAdditiveMultiplier: 2,

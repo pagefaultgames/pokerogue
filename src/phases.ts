@@ -1667,6 +1667,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
         pokemon.cry(pokemon.getHpRatio() > 0.25 ? undefined : { rate: 0.85 });
         pokemon.getSprite().clearTint();
         pokemon.resetSummonData();
+        this.scene.updateFieldScale();
         this.scene.time.delayedCall(1000, () => this.end());
       }
     });

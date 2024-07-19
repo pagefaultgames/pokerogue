@@ -40,6 +40,7 @@ export class EnemyPokemonConfig {
   mysteryEncounterBattleEffects?: (pokemon: Pokemon) => void;
   status?: StatusEffect;
   passive?: boolean;
+  spriteScale?: number;
 }
 
 export class EnemyPartyConfig {
@@ -160,6 +161,13 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
       // Set form
       if (!isNullOrUndefined(config.formIndex)) {
         enemyPokemon.formIndex = config.formIndex;
+      }
+
+      // Set scale
+      if (!isNullOrUndefined(config.spriteScale)) {
+        enemyPokemon.mysteryEncounterData = {
+          spriteScale: config.spriteScale
+        };
       }
 
       // Set Boss
