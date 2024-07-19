@@ -1,8 +1,12 @@
 import { defineConfig, loadEnv } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
+import { minifyJsonPlugin } from "./src/plugins/vite/vite-minify-json-plugin";
 
 export const defaultConfig = {
-	plugins: [tsconfigPaths() as any],
+	plugins: [
+		tsconfigPaths() as any, 
+		minifyJsonPlugin(["images", "battle-anims"], true)
+	],
 	clearScreen: false,
 	build: {
 		minify: 'esbuild' as const,
