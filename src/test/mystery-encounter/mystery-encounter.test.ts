@@ -24,24 +24,18 @@ describe("Mystery Encounters", () => {
     game.override.startingWave(11);
     game.override.mysteryEncounterChance(100);
     game.override.mysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS);
-    game.override.trainerWave(false);
+    game.override.disableTrainerWave(true);
   });
 
   it("Spawns a mystery encounter", async () => {
-    await game.runToMysteryEncounter([
-      Species.CHARIZARD,
-      Species.VOLCARONA
-    ]);
+    await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, [Species.CHARIZARD, Species.VOLCARONA]);
 
     await game.phaseInterceptor.to(MysteryEncounterPhase, false);
     expect(game.scene.getCurrentPhase().constructor.name).toBe(MysteryEncounterPhase.name);
   });
 
   it("", async () => {
-    await game.runToMysteryEncounter([
-      Species.CHARIZARD,
-      Species.VOLCARONA
-    ]);
+    await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, [Species.CHARIZARD, Species.VOLCARONA]);
 
     await game.phaseInterceptor.to(MysteryEncounterPhase, false);
     expect(game.scene.getCurrentPhase().constructor.name).toBe(MysteryEncounterPhase.name);

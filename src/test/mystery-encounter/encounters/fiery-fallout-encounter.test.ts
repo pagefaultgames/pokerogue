@@ -18,6 +18,7 @@ import BattleScene from "#app/battle-scene";
 import { PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { Type } from "#app/data/type";
 import { Status, StatusEffect } from "#app/data/status-effect";
+import { MysteryEncounterTier } from "#app/data/mystery-encounters/mystery-encounter";
 
 const namespace = "mysteryEncounter:fieryFallout";
 /** Arcanine and Ninetails for 2 Fire types. Lapras, Gengar, Abra for burnable mon. */
@@ -38,9 +39,10 @@ describe("Fiery Fallout - Mystery Encounter", () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
     game.override.mysteryEncounterChance(100);
+    game.override.mysteryEncounterTier(MysteryEncounterTier.COMMON);
     game.override.startingWave(defaultWave);
     game.override.startingBiome(defaultBiome);
-    game.override.trainerWave(false);
+    game.override.disableTrainerWave(true);
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
@@ -55,9 +57,11 @@ describe("Fiery Fallout - Mystery Encounter", () => {
   });
 
   it("should have the correct properties", async () => {
-    await game.runToMysteryEncounter(defaultParty);
+    game.override.mysteryEncounter(MysteryEncounterType.FIERY_FALLOUT);
+    await game.runToMysteryEncounter(MysteryEncounterType.FIERY_FALLOUT, defaultParty);
 
     expect(FieryFalloutEncounter.encounterType).toBe(MysteryEncounterType.FIERY_FALLOUT);
+    expect(FieryFalloutEncounter.encounterTier).toBe(MysteryEncounterTier.COMMON);
     expect(FieryFalloutEncounter.dialogue).toBeDefined();
     expect(FieryFalloutEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}:intro` }]);
     expect(FieryFalloutEncounter.dialogue.encounterOptionsDialogue.title).toBe(`${namespace}:title`);
@@ -126,6 +130,10 @@ describe("Fiery Fallout - Mystery Encounter", () => {
   });
 
   describe("Option 1 - Fight 2 Volcarona", () => {
+    beforeEach(async () => {
+      game.override.mysteryEncounter(MysteryEncounterType.FIERY_FALLOUT);
+    });
+
     it("should have the correct properties", () => {
       const option1 = FieryFalloutEncounter.options[0];
       expect(option1.optionMode).toBe(EncounterOptionMode.DEFAULT);
@@ -144,7 +152,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
     it("should start battle against 2 Volcarona", async () => {
       const phaseSpy = vi.spyOn(scene, "pushPhase");
 
-      await game.runToMysteryEncounter(defaultParty);
+      await game.runToMysteryEncounter(MysteryEncounterType.FIERY_FALLOUT, defaultParty);
       await runSelectMysteryEncounterOption(game, 1, true);
 
       const enemyField = scene.getEnemyField();
@@ -161,7 +169,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
     });
 
     it("should give charcoal to lead pokemon", async () => {
-      await game.runToMysteryEncounter(defaultParty);
+      await game.runToMysteryEncounter(MysteryEncounterType.FIERY_FALLOUT, defaultParty);
       await runSelectMysteryEncounterOption(game, 1, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
@@ -176,6 +184,10 @@ describe("Fiery Fallout - Mystery Encounter", () => {
   });
 
   describe("Option 2 - Suffer the weather", () => {
+    beforeEach(async () => {
+      game.override.mysteryEncounter(MysteryEncounterType.FIERY_FALLOUT);
+    });
+
     it("should have the correct properties", () => {
       const option1 = FieryFalloutEncounter.options[1];
       expect(option1.optionMode).toBe(EncounterOptionMode.DEFAULT);
@@ -192,7 +204,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
     });
 
     it("should damage all non-fire party PKM by 20% and randomly burn 1", async () => {
-      await game.runToMysteryEncounter(defaultParty);
+      await game.runToMysteryEncounter(MysteryEncounterType.FIERY_FALLOUT, defaultParty);
 
       const party = scene.getParty();
       const lapras = party.find((pkm) => pkm.species.speciesId === Species.LAPRAS);
@@ -215,7 +227,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
     it("should leave encounter without battle", async () => {
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
 
-      await game.runToMysteryEncounter(defaultParty);
+      await game.runToMysteryEncounter(MysteryEncounterType.FIERY_FALLOUT, defaultParty);
       await runSelectMysteryEncounterOption(game, 2);
 
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();
@@ -223,6 +235,10 @@ describe("Fiery Fallout - Mystery Encounter", () => {
   });
 
   describe("Option 3 - use FIRE types", () => {
+    beforeEach(async () => {
+      game.override.mysteryEncounter(MysteryEncounterType.FIERY_FALLOUT);
+    });
+
     it("should have the correct properties", () => {
       const option1 = FieryFalloutEncounter.options[2];
       expect(option1.optionMode).toBe(EncounterOptionMode.DISABLED_OR_SPECIAL);
@@ -240,7 +256,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
     });
 
     it("should give charcoal to lead pokemon", async () => {
-      await game.runToMysteryEncounter(defaultParty);
+      await game.runToMysteryEncounter(MysteryEncounterType.FIERY_FALLOUT, defaultParty);
       await runSelectMysteryEncounterOption(game, 3);
       // await skipBattleRunMysteryEncounterRewardsPhase(game);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
@@ -256,7 +272,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
     it("should leave encounter without battle", async () => {
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
 
-      await game.runToMysteryEncounter(defaultParty);
+      await game.runToMysteryEncounter(MysteryEncounterType.FIERY_FALLOUT, defaultParty);
       await runSelectMysteryEncounterOption(game, 3);
 
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();

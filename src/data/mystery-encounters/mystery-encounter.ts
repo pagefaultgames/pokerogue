@@ -27,15 +27,19 @@ export enum MysteryEncounterVariant {
   WILD_BATTLE,
   BOSS_BATTLE,
   NO_BATTLE,
+  /** For spawning new encounter queries instead of continuing to next wave */
   REPEATED_ENCOUNTER
 }
 
+/**
+ * Enum values are base spawn weights of each tier
+ */
 export enum MysteryEncounterTier {
-  COMMON,
-  GREAT,
-  ULTRA,
-  ROGUE,
-  MASTER // Not currently used
+  COMMON = 64,
+  GREAT = 40,
+  ULTRA = 21,
+  ROGUE = 3,
+  MASTER = 0 // Not currently used
 }
 
 export interface StartOfBattleEffect {
@@ -438,7 +442,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * @param callback - {@linkcode OptionPhaseCallback}
    * @returns
    */
-  withSimpleOption(dialogue: OptionTextDisplay, callback: OptionPhaseCallback) {
+  withSimpleOption(dialogue: OptionTextDisplay, callback: OptionPhaseCallback): this {
     return this.withOption(new MysteryEncounterOptionBuilder().withOptionMode(EncounterOptionMode.DEFAULT).withDialogue(dialogue).withOptionPhase(callback).build());
   }
 

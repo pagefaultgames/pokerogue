@@ -5,6 +5,7 @@ import { MockInstance, vi } from "vitest";
 import GameManager from "#test/utils/gameManager";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import * as overrides from "#app/overrides";
+import { MysteryEncounterTier } from "#app/data/mystery-encounters/mystery-encounter";
 
 /**
  * Helper to handle overrides in tests
@@ -25,6 +26,17 @@ export class OverridesHelper {
     const rate = maxRate * (percentage / 100);
     const spy = vi.spyOn(Overrides, "MYSTERY_ENCOUNTER_RATE_OVERRIDE", "get").mockReturnValue(rate);
     this.log(`Mystery encounter chance set to ${percentage}% (=${rate})!`);
+    return spy;
+  }
+
+  /**
+   * Override the encounter chance for a mystery encounter.
+   * @returns spy instance
+   * @param tier
+   */
+  mysteryEncounterTier(tier: MysteryEncounterTier): MockInstance {
+    const spy = vi.spyOn(Overrides, "MYSTERY_ENCOUNTER_TIER_OVERRIDE", "get").mockReturnValue(tier);
+    this.log(`Mystery encounter tier set to ${tier}!`);
     return spy;
   }
 
@@ -63,11 +75,11 @@ export class OverridesHelper {
   /**
    * Override each wave to have or not have standard trainer battles
    * @returns spy instance
-   * @param isTrainer
+   * @param disable - true
    */
-  trainerWave(isTrainer: boolean): MockInstance {
-    const spy = vi.spyOn(this.game.scene.gameMode, "isWaveTrainer").mockReturnValue(isTrainer);
-    this.log(`${isTrainer? "forcing" : "ignoring"} trainer waves!`);
+  disableTrainerWave(disable: boolean): MockInstance {
+    const spy = vi.spyOn(this.game.scene.gameMode, "isWaveTrainer").mockReturnValue(!disable);
+    this.log(`Standard trainer waves are ${disable? "disabled" : "enabled"}!`);
     return spy;
   }
 

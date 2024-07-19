@@ -36,6 +36,8 @@ import TargetSelectUiHandler from "#app/ui/target-select-ui-handler.js";
 import BattleMessageUiHandler from "#app/ui/battle-message-ui-handler";
 import {MysteryEncounterPhase} from "#app/phases/mystery-encounter-phases";
 import { OverridesHelper } from "./overridesHelper";
+import { expect } from "vitest";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -144,10 +146,11 @@ export default class GameManager {
 
   /**
    * Runs the game to a mystery encounter phase.
+   * @param encounterType - if specified, will expect encounter to have been spawned
    * @param species - Optional array of species for party.
    * @returns A promise that resolves when the EncounterPhase ends.
    */
-  async runToMysteryEncounter(species?: Species[]) {
+  async runToMysteryEncounter(encounterType?: MysteryEncounterType, species?: Species[]) {
     await this.runToTitle();
 
     this.onNextPrompt("TitlePhase", Mode.TITLE, () => {
@@ -164,6 +167,9 @@ export default class GameManager {
     }, () => this.isCurrentPhase(MysteryEncounterPhase), true);
 
     await this.phaseInterceptor.run(EncounterPhase);
+    if (encounterType) {
+      expect(this.scene.currentBattle?.mysteryEncounter?.encounterType).toBe(encounterType);
+    }
   }
 
   /**

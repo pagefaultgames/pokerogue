@@ -2650,8 +2650,8 @@ export default class BattleScene extends SceneBase {
       return encounter;
     }
 
-    // Common / Great / Ultra / Rogue
-    const tierWeights = [64, 40, 21, 3];
+    // See Enum values for base tier weights
+    const tierWeights = [MysteryEncounterTier.COMMON, MysteryEncounterTier.GREAT, MysteryEncounterTier.ULTRA, MysteryEncounterTier.ROGUE];
 
     // Adjust tier weights by previously encountered events to lower odds of only common/uncommons in run
     this.mysteryEncounterData.encounteredEvents.forEach(val => {

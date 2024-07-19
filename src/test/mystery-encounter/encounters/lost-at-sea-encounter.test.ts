@@ -11,6 +11,7 @@ import { Species } from "#app/enums/species";
 import GameManager from "#app/test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { runSelectMysteryEncounterOption } from "../encounterTestUtils";
+import { MysteryEncounterTier } from "#app/data/mystery-encounters/mystery-encounter";
 
 const namespace = "mysteryEncounter:lostAtSea";
 /** Blastoise for surf. Pidgeot for fly. Abra for none. */
@@ -31,7 +32,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
     game.override.mysteryEncounterChance(100);
     game.override.startingWave(defaultWave);
     game.override.startingBiome(defaultBiome);
-    game.override.trainerWave(false);
+    game.override.disableTrainerWave(true);
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
@@ -46,9 +47,11 @@ describe("Lost at Sea - Mystery Encounter", () => {
   });
 
   it("should have the correct properties", async () => {
-    await game.runToMysteryEncounter(defaultParty);
+    game.override.mysteryEncounter(MysteryEncounterType.LOST_AT_SEA);
+    await game.runToMysteryEncounter(MysteryEncounterType.LOST_AT_SEA, defaultParty);
 
     expect(LostAtSeaEncounter.encounterType).toBe(MysteryEncounterType.LOST_AT_SEA);
+    expect(LostAtSeaEncounter.encounterTier).toBe(MysteryEncounterTier.COMMON);
     expect(LostAtSeaEncounter.dialogue).toBeDefined();
     expect(LostAtSeaEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}:intro` }]);
     expect(LostAtSeaEncounter.dialogue.encounterOptionsDialogue.title).toBe(`${namespace}:title`);
@@ -96,6 +99,10 @@ describe("Lost at Sea - Mystery Encounter", () => {
   });
 
   describe("Option 1 - Surf", () => {
+    beforeEach(async () => {
+      game.override.mysteryEncounter(MysteryEncounterType.LOST_AT_SEA);
+    });
+
     it("should have the correct properties", () => {
       const option1 = LostAtSeaEncounter.options[0];
       expect(option1.optionMode).toBe(EncounterOptionMode.DISABLED_OR_DEFAULT);
@@ -116,7 +123,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
     it("should award exp to surfable PKM (Blastoise)", async () => {
       const laprasSpecies = getPokemonSpecies(Species.LAPRAS);
 
-      await game.runToMysteryEncounter(defaultParty);
+      await game.runToMysteryEncounter(MysteryEncounterType.LOST_AT_SEA, defaultParty);
       const party = game.scene.getParty();
       const blastoise = party.find((pkm) => pkm.species.speciesId === Species.PIDGEOT);
       const expBefore = blastoise.exp;
@@ -130,7 +137,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
       game.override.startingWave(33);
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
 
-      await game.runToMysteryEncounter(defaultParty);
+      await game.runToMysteryEncounter(MysteryEncounterType.LOST_AT_SEA, defaultParty);
       await runSelectMysteryEncounterOption(game, 1);
 
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();
@@ -142,6 +149,10 @@ describe("Lost at Sea - Mystery Encounter", () => {
   });
 
   describe("Option 2 - Fly", () => {
+    beforeEach(async () => {
+      game.override.mysteryEncounter(MysteryEncounterType.LOST_AT_SEA);
+    });
+
     it("should have the correct properties", () => {
       const option2 = LostAtSeaEncounter.options[1];
 
@@ -165,7 +176,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
       const wave = 33;
       game.override.startingWave(wave);
 
-      await game.runToMysteryEncounter(defaultParty);
+      await game.runToMysteryEncounter(MysteryEncounterType.LOST_AT_SEA, defaultParty);
       const party = game.scene.getParty();
       const pidgeot = party.find((pkm) => pkm.species.speciesId === Species.PIDGEOT);
       const expBefore = pidgeot.exp;
@@ -179,7 +190,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
       game.override.startingWave(33);
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
 
-      await game.runToMysteryEncounter(defaultParty);
+      await game.runToMysteryEncounter(MysteryEncounterType.LOST_AT_SEA, defaultParty);
       await runSelectMysteryEncounterOption(game, 2);
 
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();
@@ -191,6 +202,10 @@ describe("Lost at Sea - Mystery Encounter", () => {
   });
 
   describe("Option 3 - Wander aimlessy", () => {
+    beforeEach(async () => {
+      game.override.mysteryEncounter(MysteryEncounterType.LOST_AT_SEA);
+    });
+
     it("should have the correct properties", () => {
       const option3 = LostAtSeaEncounter.options[2];
 
@@ -210,7 +225,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
     it("should damage all (allowed in battle) party PKM by 25%", async () => {
       game.override.startingWave(33);
 
-      await game.runToMysteryEncounter(defaultParty);
+      await game.runToMysteryEncounter(MysteryEncounterType.LOST_AT_SEA, defaultParty);
 
       const party = game.scene.getParty();
       const abra = party.find((pkm) => pkm.species.speciesId === Species.ABRA);
@@ -231,7 +246,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
       game.override.startingWave(33);
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
 
-      await game.runToMysteryEncounter(defaultParty);
+      await game.runToMysteryEncounter(MysteryEncounterType.LOST_AT_SEA, defaultParty);
       await runSelectMysteryEncounterOption(game, 3);
 
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();

@@ -35,20 +35,14 @@ describe("Mystery Encounter Phases", () => {
 
   describe("MysteryEncounterPhase", () => {
     it("Runs to MysteryEncounterPhase", async() => {
-      await game.runToMysteryEncounter([
-        Species.CHARIZARD,
-        Species.VOLCARONA
-      ]);
+      await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, [Species.CHARIZARD, Species.VOLCARONA]);
 
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
       expect(game.scene.getCurrentPhase().constructor.name).toBe(MysteryEncounterPhase.name);
     });
 
     it("Runs MysteryEncounterPhase", async() => {
-      await game.runToMysteryEncounter([
-        Species.CHARIZARD,
-        Species.VOLCARONA
-      ]);
+      await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, [Species.CHARIZARD, Species.VOLCARONA]);
 
       game.onNextPrompt("MysteryEncounterPhase", Mode.MYSTERY_ENCOUNTER, () => {
         // End phase early for test
@@ -65,10 +59,7 @@ describe("Mystery Encounter Phases", () => {
     it("Selects an option for MysteryEncounterPhase", async() => {
       const dialogueSpy = vi.spyOn(game.scene.ui, "showDialogue");
       const messageSpy = vi.spyOn(game.scene.ui, "showText");
-      await game.runToMysteryEncounter([
-        Species.CHARIZARD,
-        Species.VOLCARONA
-      ]);
+      await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, [Species.CHARIZARD, Species.VOLCARONA]);
 
       game.onNextPrompt("MysteryEncounterPhase", Mode.MESSAGE, () => {
         const handler = game.scene.ui.getHandler() as MessageUiHandler;
