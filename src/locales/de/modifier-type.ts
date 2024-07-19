@@ -58,10 +58,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "Erhöht die Stärke aller {{moveType}}-Attacken eines Pokémon um 20%.",
     },
     "PokemonLevelIncrementModifierType": {
-      description: "Erhöht das Level eines Pokémon um 1.",
+      description: "Erhöht das Level eines Pokémon um {{levels}}.",
     },
     "AllPokemonLevelIncrementModifierType": {
-      description: "Erhöht das Level aller Teammitglieder um 1.",
+      description: "Erhöht das Level aller Teammitglieder um {{levels}}.",
     },
     "PokemonBaseStatBoosterModifierType": {
       description: "Erhöht den {{statName}} Basiswert des Trägers um 10%. Das Stapellimit erhöht sich, je höher dein IS-Wert ist.",
@@ -184,6 +184,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SOOTHE_BELL": { name: "Sanftglocke" },
 
+    "SCOPE_LENS": { name: "Scope-Linse", description: "Ein Item zum Tragen. Es erhöht die Volltrefferquote." },
+    "LEEK": { name: "Lauchstange", description: "Ein Item, das von Porenta getragen werden kann. Diese lange Lauchstange erhöht die Volltrefferquote stark." },
+
     "EVIOLITE": { name: "Evolith", description: "Ein mysteriöser Klumpen, der die Vert. u. Spez.-Vert. von Pokémon erhöht, die sich noch entwickeln können." },
 
     "SOUL_DEW": { name: "Seelentau", description: "Erhöht den Einfluss des Wesens eines Pokemon auf seine Werte um 10% (additiv)." },
@@ -210,7 +213,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "FOCUS_BAND": { name: "Fokusband", description: "Fügt eine 10% Chance hinzu, dass Angriffe die zur Kampfunfähigkeit führen mit 1 KP überlebt werden." },
 
-    "QUICK_CLAW": { name: "Quick Claw", description: "Fügt eine 10% Change hinzu als erster anzugreifen. (Nach Prioritätsangriffen)." },
+    "QUICK_CLAW": { name: "Flinkklaue", description: "Fügt eine 10% Change hinzu als erster anzugreifen. (Nach Prioritätsangriffen)." },
 
     "KINGS_ROCK": { name: "King-Stein", description: "Fügt eine 10% Chance hinzu, dass der Gegner nach einem Angriff zurückschreckt." },
 
@@ -223,7 +226,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "BATON": { name: "Stab", description: "Ermöglicht das Weitergeben von Effekten beim Wechseln von Pokémon, wodurch auch Fallen umgangen werden." },
 
     "SHINY_CHARM": { name: "Schillerpin", description: "Erhöht die Chance deutlich, dass ein wildes Pokémon ein schillernd ist." },
-    "ABILITY_CHARM": { name: "Ability Charm", description: "Erhöht die Chance deutlich, dass ein wildes Pokémon eine versteckte Fähigkeit hat." },
+    "ABILITY_CHARM": { name: "Fähigkeitspin", description: "Erhöht die Chance deutlich, dass ein wildes Pokémon eine versteckte Fähigkeit hat." },
 
     "IV_SCANNER": { name: "IS-Scanner", description: "Erlaubt es die IS-Werte von wilden Pokémon zu scannen.\n(2 IS-Werte pro Staplung. Die besten IS-Werte zuerst)." },
 

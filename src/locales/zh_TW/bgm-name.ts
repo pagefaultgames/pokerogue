@@ -110,9 +110,9 @@ export const bgmName: SimpleTranslationEntries = {
   "plains": "PMD EoS Sky Peak Prairie",
   "power_plant": "PMD EoS Far Amp Plains",
   "ruins": "PMD EoS Deep Sealed Ruin",
-  "sea": "PMD EoS Brine Cave",
+  "sea": "Andr06 - Marine Mystique", // Name defined by the composer
   "seabed": "Firel - Seabed", // The composer thinks about a more creative name
-  "slum": "PMD EoS Sky Peak Coast",
+  "slum": "Andr06 - Sneaky Snom", // Name defined by the composer
   "snowy_forest": "PMD EoS Sky Peak Snowfield",
   "space": "Firel - Aether",
   "swamp": "PMD EoS Surrounded Sea",

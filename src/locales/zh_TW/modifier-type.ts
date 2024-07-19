@@ -59,10 +59,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "一隻寶可夢的{{moveType}}系招式威力提升20%。",
     },
     PokemonLevelIncrementModifierType: {
-      description: "一隻寶可夢等級提升1級。",
+      description: "Increases a Pokémon's level by {{levels}}.",
     },
     AllPokemonLevelIncrementModifierType: {
-      description: "所有成員寶可夢等級提升1級。",
+      description: "Increases all party members' level by {{levels}}.",
     },
     PokemonBaseStatBoosterModifierType: {
       description:
@@ -191,6 +191,14 @@ export const modifierType: ModifierTypeTranslationEntries = {
     LUCKY_EGG: { name: "幸運蛋" },
     GOLDEN_EGG: { name: "金蛋" },
     SOOTHE_BELL: { name: "安撫之鈴" },
+    SCOPE_LENS: {
+      name: "焦點鏡",
+      description: "能看見弱點的鏡片。攜帶它的寶可夢的招式 會變得容易擊中要害。"
+    },
+    LEEK: {
+      name: "大蔥",
+      description: "非常長且堅硬的莖。讓大蔥鴨攜帶後，招式會 變得容易擊中要害。"
+    },
     EVIOLITE: {
       name: "進化奇石",
       description: "進化的神奇石塊。攜帶後，還能進化的寶可夢的 防禦和特防就會提高。"

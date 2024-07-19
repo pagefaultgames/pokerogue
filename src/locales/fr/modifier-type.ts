@@ -58,10 +58,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "Augmente de 20% la puissance des capacités de type {{moveType}} d’un Pokémon.",
     },
     "PokemonLevelIncrementModifierType": {
-      description: "Fait monter un Pokémon d’un niveau.",
+      description: "Fait monter un Pokémon de {{levels}} niveau·x.",
     },
     "AllPokemonLevelIncrementModifierType": {
-      description: "Fait monter toute l’équipe d’un niveau.",
+      description: "Fait monter toute l’équipe de {{levels}} niveau·x.",
     },
     "PokemonBaseStatBoosterModifierType": {
 	  description: "Augmente de 10% {{statName}} de base de son porteur. Plus les IV sont hauts, plus il peut en porter.",
@@ -183,6 +183,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "GOLDEN_EGG": { name: "Œuf d’Or" },
 
     "SOOTHE_BELL": { name: "Grelot Zen" },
+
+    "SCOPE_LENS": { name: "Lentilscope", description: "Une lentille qui augmente le taux de critiques du porteur." },
+    "LEEK": { name: "Poireau", description: "Objet à faire tenir à Canarticho. Un poireau très long et solide qui augmente son taux de critiques." },
 
     "EVIOLITE": { name: "Évoluroc", description: "Un étrange concentré d’évolution qui augmente la Défense et la Défense Spéciale d’un Pokémon pouvant évoluer." },
 
