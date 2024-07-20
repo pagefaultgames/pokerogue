@@ -47,13 +47,8 @@ export const rarities = []
 export const rarityslot = [0, ""]
 /** Stores a list of the user's battle actions in a turn.
  * 
- * Its contents are printed to the current wave's `actions` list, separated by pipes `|`, when the turn begins playing out. */
+ * Its contents are printed to the current wave's actions list, separated by pipes `|`, when the turn begins playing out. */
 export const Actions = []
-/** Stores a list of the opponent's battle actions in a turn.
- * 
- * Its contents are printed to the current wave's `initialActions` list, separated by pipes `|`, when the turn begins playing out.
-*/
-export const EnemyActions = []
 
 // Booleans
 export const isPreSwitch: Utils.BooleanHolder = new Utils.BooleanHolder(false);
@@ -217,7 +212,7 @@ export function getDRPD(scene: BattleScene): DRPD {
 }
 
 export function save(scene: BattleScene, drpd: DRPD) {
-  console.log("--> ", drpd)
+  console.log(drpd)
   localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
 }
 
@@ -566,7 +561,6 @@ export interface Wave {
    */
   trainer?: TrainerData,
   /** The Pokémon that you have to battle against.
-   * 
    * Not included if this is a trainer battle.
    * @see PokeData
    * @see Wave.type
@@ -574,20 +568,11 @@ export interface Wave {
   pokemon?: PokeData[],
   /**
    * Contains the first 3 turns or so of the enemy's actions.
-   * 
    * Used to check for refreshes.
    */
   initialActions: string[],
   /**
-   * The current writing index in the `initialActions` array.
-   * 
-   * Used to track changes between this wave's actions and the previous one
-   * @see Wave.initialActions
-   */
-  turnIndex: integer,
-  /**
    * Contains the names of the first set of modifier rewards.
-   * 
    * Used to check for refreshes.
    */
   modifiers: string[]
@@ -608,7 +593,6 @@ export function exportWave(scene: BattleScene): Wave {
     clearActionsFlag: false,
     biome: getBiomeName(scene.arena.biomeType),
     initialActions: [],
-    turnIndex: 0,
     modifiers: []
   }
   if (ret.double == undefined) ret.double = false;
@@ -726,7 +710,7 @@ function printWave(inData: string, indent: string, wave: Wave): string {
 export function getWave(drpd: DRPD, floor: integer, scene: BattleScene): Wave {
   var wv: Wave;
   var insertPos: integer;
-  //console.log(drpd.waves)
+  console.log(drpd.waves)
   for (var i = 0; i < drpd.waves.length; i++) {
     if (drpd.waves[i] != undefined && drpd.waves[i] != null) {
       if (drpd.waves[i].id == floor) {
@@ -752,7 +736,6 @@ export function getWave(drpd: DRPD, floor: integer, scene: BattleScene): Wave {
       clearActionsFlag: false,
       biome: getBiomeName(scene.arena.biomeType),
       initialActions: [],
-      turnIndex: 0,
       modifiers: [],
       //pokemon: []
     }
@@ -788,7 +771,6 @@ export function getWave(drpd: DRPD, floor: integer, scene: BattleScene): Wave {
         biome: getBiomeName(scene.arena.biomeType),
         clearActionsFlag: false,
         initialActions: [],
-        turnIndex: 0,
         modifiers: [],
         //pokemon: []
       })
@@ -827,7 +809,6 @@ export function getWave(drpd: DRPD, floor: integer, scene: BattleScene): Wave {
             biome: getBiomeName(scene.arena.biomeType),
             clearActionsFlag: false,
             initialActions: [],
-            turnIndex: 0,
             modifiers: [],
             //pokemon: []
           }
@@ -858,7 +839,6 @@ export function getWave(drpd: DRPD, floor: integer, scene: BattleScene): Wave {
             clearActionsFlag: false,
             biome: getBiomeName(scene.arena.biomeType),
             initialActions: [],
-            turnIndex: 0,
             modifiers: [],
             //pokemon: []
           }
@@ -1523,34 +1503,10 @@ export function logActions(scene: BattleScene, floor: integer, action: string) {
     console.log("Triggered clearActionsFlag")
     wv.clearActionsFlag = false
     wv.actions = []
-    wv.turnIndex = 0
   }
   wv.actions.push(action)
-  save(scene, drpd)
-}
-/**
- * Logs an opposing Pokemon's attack. If there is existing data, and it is different from the new data, a reload is flagged.
- * @param scene The BattleScene. Used to get the log ID.
- * @param floor The wave index to write to. Defaults to the current wave.
- * @param action The action to write.
- */
-export function logEnemyAction(scene: BattleScene, floor: integer = undefined, action: string) {
-  if (floor == undefined)
-    floor = scene.currentBattle.waveIndex;
-  var drpd = getDRPD(scene)
-  var wv = getWave(drpd, floor, scene)
-  if (wv.turnIndex >= EnemyEventLogCount) {
-    // Don't log any actions if we already logged the maximum amount
-    return;
-  }
-  console.log(`Log enemy action: "${action}" (Turn ${wv.turnIndex})`, drpd)
-  if (wv.initialActions[wv.turnIndex] != undefined && wv.initialActions[wv.turnIndex] != action) {
-    console.log(`New action (${action}) is different from old action (${wv.initialActions[wv.turnIndex]})! Flagging a reload`)
-    wv.reload = true
-  }
-  wv.initialActions[wv.turnIndex] = action
-  wv.turnIndex++
-  save(scene, drpd)
+  console.log("--> ", drpd)
+  localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
 }
 /**
  * Logs the actions that the player took, adding text to the most recent action.
@@ -1568,13 +1524,13 @@ export function appendAction(scene: BattleScene, floor: integer, action: string)
     console.log("Triggered clearActionsFlag")
     wv.clearActionsFlag = false
     wv.actions = []
-    wv.turnIndex = 0
   }
   console.log(`Appending to an action: "${wv.actions[wv.actions.length - 1]}" + "${action}"`)
   if (wv.double == undefined)
     wv.double = false
   wv.actions[wv.actions.length - 1] = wv.actions[wv.actions.length - 1] + action
-  save(scene, drpd)
+  console.log("--> ", drpd)
+  localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
 }
 /**
  * Logs the actions that the player took.
@@ -1597,7 +1553,6 @@ export function getActionCount(scene: BattleScene, floor: integer) {
     console.log("Triggered clearActionsFlag")
     wv.clearActionsFlag = false
     wv.actions = []
-    wv.turnIndex = 0
   }
   return (wv.actions.length)
 }
@@ -1614,30 +1569,8 @@ export function logCapture(scene: BattleScene, floor: integer, target: EnemyPoke
   var wv: Wave = getWave(drpd, floor, scene)
   var pkslot = target.partyslot
   wv.pokemon[pkslot].captured = true;
-  save(scene, drpd)
-}
-/**
- * Logs the player's modifiers/loot. If there is existing data, and it is different from the new data, a reload is flagged.
- * @param scene The BattleScene. Used to get the log ID.
- * @param floor The wave index to write to. Defaults to the current wave.
- * @param logModifiers The action to write.
- */
-export function logModifiers(scene: BattleScene, floor: integer = undefined, modifiers: string[]) {
-  if (floor == undefined)
-    floor = scene.currentBattle.waveIndex;
-  var drpd = getDRPD(scene)
-  var wv = getWave(drpd, floor, scene)
-  console.log("Log modifiers list", drpd)
-  if (wv.modifiers.length > 0 && wv.modifiers.join(", ") != modifiers.join(", ")) {
-    console.log("The modifiers list changed!")
-    for (var i = 0; i < wv.modifiers.length; i++) {
-      console.log(wv.modifiers[i], modifiers[i])
-      console.log("Flagging a reload")
-    }
-    wv.reload = true
-  }
-  wv.modifiers = modifiers
-  save(scene, drpd)
+  console.log("--> ", drpd)
+  localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
 }
 /**
  * Logs the player's current party.
@@ -1652,7 +1585,8 @@ export function logPlayerTeam(scene: BattleScene) {
   for (var i = 0; i < P.length; i++) {
     drpd.starters[i] = exportPokemon(P[i])
   }
-  save(scene, drpd)
+  console.log("--> ", drpd)
+  localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
 }
 /**
  * Logs a wild Pokémon to a wave's data.
@@ -1732,7 +1666,8 @@ export function logPokemon(scene: BattleScene, floor: integer = undefined, slot:
   //wv.actions = []
   wv.clearActionsFlag = false;
   wv.shop = ""
-  save(scene, drpd)
+  console.log("--> ", drpd)
+  localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
 }
 /**
  * Logs what the player took from the rewards pool and, if applicable, who they used it on.
@@ -1746,7 +1681,8 @@ export function logShop(scene: BattleScene, floor: integer, action: string) {
   console.log(`Logging shop result: "${action}"`)
   var wv: Wave = getWave(drpd, floor, scene)
   wv.shop = action
-  save(scene, drpd)
+  console.log("--> ", drpd)
+  localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
 }
 /**
  * Logs the current floor's Trainer.
@@ -1763,33 +1699,18 @@ export function logTrainer(scene: BattleScene, floor: integer = undefined) {
   var t: TrainerData = exportTrainer(scene.currentBattle.trainer)
   wv.trainer = t
   wv.type = "trainer"
-  save(scene, drpd)
+  console.log("--> ", drpd)
+  localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
 }
 
 
 
 
 
-/**
- * Logs the player's modifiers/loot. If there is existing data, and it is different from the new data, a reload is flagged.
- * @param scene The BattleScene. Used to get the log ID.
- * @param floor The wave index to write to. Defaults to the current wave.
- */
-export function deleteReloadDetectionData(scene: BattleScene, floor: integer = undefined) {
-  if (floor == undefined)
-    floor = scene.currentBattle.waveIndex;
-  var drpd = getDRPD(scene)
-  var wv = getWave(drpd, floor, scene)
-  console.log("Clear action & modifier storage", drpd)
-  wv.modifiers = []
-  wv.initialActions = []
-  wv.turnIndex = 0
-  save(scene, drpd)
-}
 /**
  * Flags a wave as a reset.
  * @param scene The BattleScene. Used to get the log ID.
- * @param floor The wave index to write to. Defaults to the current wave.
+ * @param floor The wave index to write to.
  */
 export function flagReset(scene: BattleScene, floor: integer = undefined) {
   if (floor == undefined)
@@ -1800,7 +1721,8 @@ export function flagReset(scene: BattleScene, floor: integer = undefined) {
   console.log("Flag Reset", drpd)
   var wv = getWave(drpd, floor, scene)
   wv.reload = true;
-  save(scene, drpd)
+  console.log("--> ", drpd)
+  localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
 }
 /**
  * Flags a wave as a reset, unless this is your first time playing the wave.
@@ -1828,7 +1750,8 @@ export function flagResetIfExists(scene: BattleScene, floor: integer = undefined
   console.log("Flag reset as wave was already played before", drpd)
   var wv = getWave(drpd, floor, scene)
   wv.reload = true;
-  save(scene, drpd)
+  console.log("--> ", drpd)
+  localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
 }
 
 
@@ -1850,9 +1773,9 @@ export function resetWaveActions(scene: BattleScene, floor: integer = undefined,
   if (softflag) {
     wv.clearActionsFlag = true;
   } else {
-    wv.actions = [];
-    wv.turnIndex = 0;
+    wv.actions = []
   }
-  save(scene, drpd)
+  console.log("--> ", drpd)
+  localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
 }
 //#endregion
