@@ -26,9 +26,8 @@ import { BattlerTagLapseType } from "#app/data/battler-tags";
  * - Queuing of the MysteryEncounterOptionSelectedPhase
  */
 export class MysteryEncounterPhase extends Phase {
+  private readonly FIRST_DIALOGUE_PROMPT_DELAY = 300;
   optionSelectSettings: OptionSelectSettings;
-
-  private FIRST_DIALOGUE_PROMPT_DELAY = 300;
 
   /**
    *
@@ -108,12 +107,12 @@ export class MysteryEncounterPhase extends Phase {
           title = getEncounterText(this.scene, dialogue.speaker);
         }
 
-        if (title) {
-          this.scene.ui.showDialogue(text, title, null, nextAction, 0, i === 0 ? this.FIRST_DIALOGUE_PROMPT_DELAY : 0);
-        } else {
-          this.scene.ui.showText(text, null, nextAction, i === 0 ? this.FIRST_DIALOGUE_PROMPT_DELAY : 0, true);
-        }
         i++;
+        if (title) {
+          this.scene.ui.showDialogue(text, title, null, nextAction, 0, i === 1 ? this.FIRST_DIALOGUE_PROMPT_DELAY : 0);
+        } else {
+          this.scene.ui.showText(text, null, nextAction, i === 1 ? this.FIRST_DIALOGUE_PROMPT_DELAY : 0, true);
+        }
       };
 
       showNextDialogue();
@@ -420,6 +419,7 @@ export class MysteryEncounterRewardsPhase extends Phase {
  * - Queuing of the next wave
  */
 export class PostMysteryEncounterPhase extends Phase {
+  private readonly FIRST_DIALOGUE_PROMPT_DELAY = 750;
   onPostOptionSelect: OptionPhaseCallback;
 
   constructor(scene: BattleScene) {
@@ -462,13 +462,13 @@ export class PostMysteryEncounterPhase extends Phase {
           title = getEncounterText(this.scene, dialogue.speaker);
         }
 
+        i++;
         this.scene.ui.setMode(Mode.MESSAGE);
         if (title) {
-          this.scene.ui.showDialogue(text, title, null, nextAction, 0, i === 0 ? 750 : 0);
+          this.scene.ui.showDialogue(text, title, null, nextAction, 0, i === 1 ? this.FIRST_DIALOGUE_PROMPT_DELAY : 0);
         } else {
-          this.scene.ui.showText(text, null, nextAction, i === 0 ? 750 : 0, true);
+          this.scene.ui.showText(text, null, nextAction, i === 1 ? this.FIRST_DIALOGUE_PROMPT_DELAY : 0, true);
         }
-        i++;
       };
 
       showNextDialogue();

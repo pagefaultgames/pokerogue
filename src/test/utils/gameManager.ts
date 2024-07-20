@@ -38,6 +38,7 @@ import {MysteryEncounterPhase} from "#app/phases/mystery-encounter-phases";
 import { OverridesHelper } from "./overridesHelper";
 import { expect } from "vitest";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { isNullOrUndefined } from "#app/utils";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -151,6 +152,11 @@ export default class GameManager {
    * @returns A promise that resolves when the EncounterPhase ends.
    */
   async runToMysteryEncounter(encounterType?: MysteryEncounterType, species?: Species[]) {
+    if (!isNullOrUndefined(encounterType)) {
+      this.override.disableTrainerWave(true);
+      this.override.mysteryEncounter(encounterType);
+    }
+
     await this.runToTitle();
 
     this.onNextPrompt("TitlePhase", Mode.TITLE, () => {
@@ -167,7 +173,7 @@ export default class GameManager {
     }, () => this.isCurrentPhase(MysteryEncounterPhase), true);
 
     await this.phaseInterceptor.run(EncounterPhase);
-    if (encounterType) {
+    if (!isNullOrUndefined(encounterType)) {
       expect(this.scene.currentBattle?.mysteryEncounter?.encounterType).toBe(encounterType);
     }
   }

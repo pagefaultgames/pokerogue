@@ -54,7 +54,7 @@ export function doTrainerExclamation(scene: BattleScene) {
     }
   });
 
-  scene.playSound("GEN8- Exclaim.wav", { volume: 0.8 });
+  scene.playSound("GEN8- Exclaim.wav", { volume: 0.7 });
 }
 
 export interface EnemyPokemonConfig {

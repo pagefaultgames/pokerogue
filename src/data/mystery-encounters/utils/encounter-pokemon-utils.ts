@@ -207,7 +207,7 @@ export function applyHealToPokemon(scene: BattleScene, pokemon: PlayerPokemon, h
 export function modifyPlayerPokemonBST(pokemon: PlayerPokemon, value: number) {
   pokemon.getSpeciesForm().baseStats = [...pokemon.getSpeciesForm().baseStats].map(v => {
     const newVal = Math.floor(v + value);
-    return Math.min(newVal, 1);
+    return Math.max(newVal, 1);
   });
   pokemon.calculateStats();
   pokemon.updateInfo();

@@ -24,7 +24,7 @@ const namespace = "mysteryEncounter:fieryFallout";
 /** Arcanine and Ninetails for 2 Fire types. Lapras, Gengar, Abra for burnable mon. */
 const defaultParty = [Species.ARCANINE, Species.NINETALES, Species.LAPRAS, Species.GENGAR, Species.ABRA];
 const defaultBiome = Biome.VOLCANO;
-const defaultWave = 45;
+const defaultWave = 56;
 
 describe("Fiery Fallout - Mystery Encounter", () => {
   let phaserGame: Phaser.Game;
@@ -42,7 +42,6 @@ describe("Fiery Fallout - Mystery Encounter", () => {
     game.override.mysteryEncounterTier(MysteryEncounterTier.COMMON);
     game.override.startingWave(defaultWave);
     game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWave(true);
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
@@ -54,6 +53,8 @@ describe("Fiery Fallout - Mystery Encounter", () => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
+    vi.clearAllMocks();
+    vi.resetAllMocks();
   });
 
   it("should have the correct properties", async () => {
@@ -74,7 +75,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
     game.override.startingBiome(Biome.MOUNTAIN);
     await game.runToMysteryEncounter();
 
-    expect(scene.currentBattle.mysteryEncounter.encounterType).not.toBe(MysteryEncounterType.FIERY_FALLOUT);
+    expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.FIERY_FALLOUT);
   });
 
   it("should not run below wave 41", async () => {
@@ -82,7 +83,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
 
     await game.runToMysteryEncounter();
 
-    expect(scene.currentBattle.mysteryEncounter.encounterType).not.toBe(MysteryEncounterType.FIERY_FALLOUT);
+    expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.FIERY_FALLOUT);
   });
 
   it("should not run above wave 179", async () => {
@@ -96,7 +97,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
   it("should initialize fully ", async () => {
     vi.spyOn(scene, "currentBattle", "get").mockReturnValue({ mysteryEncounter: FieryFalloutEncounter } as Battle);
     const weatherSpy = vi.spyOn(scene.arena, "trySetWeather").mockReturnValue(true);
-    const moveInitSpy = vi.spyOn(BattleAnims, "loadMoveAnimAssets");
+    const moveInitSpy = vi.spyOn(BattleAnims, "initMoveAnim");
     const moveLoadSpy = vi.spyOn(BattleAnims, "loadMoveAnimAssets");
 
     const { onInit } = FieryFalloutEncounter;
@@ -130,10 +131,6 @@ describe("Fiery Fallout - Mystery Encounter", () => {
   });
 
   describe("Option 1 - Fight 2 Volcarona", () => {
-    beforeEach(async () => {
-      game.override.mysteryEncounter(MysteryEncounterType.FIERY_FALLOUT);
-    });
-
     it("should have the correct properties", () => {
       const option1 = FieryFalloutEncounter.options[0];
       expect(option1.optionMode).toBe(EncounterOptionMode.DEFAULT);
@@ -180,14 +177,10 @@ describe("Fiery Fallout - Mystery Encounter", () => {
         && (m as PokemonHeldItemModifier).pokemonId === leadPokemonId, true) as PokemonHeldItemModifier[];
       const charcoal = leadPokemonItems.find(i => i.type.name === "Charcoal");
       expect(charcoal).toBeDefined;
-    }, 100000000);
+    });
   });
 
   describe("Option 2 - Suffer the weather", () => {
-    beforeEach(async () => {
-      game.override.mysteryEncounter(MysteryEncounterType.FIERY_FALLOUT);
-    });
-
     it("should have the correct properties", () => {
       const option1 = FieryFalloutEncounter.options[1];
       expect(option1.optionMode).toBe(EncounterOptionMode.DEFAULT);
@@ -235,10 +228,6 @@ describe("Fiery Fallout - Mystery Encounter", () => {
   });
 
   describe("Option 3 - use FIRE types", () => {
-    beforeEach(async () => {
-      game.override.mysteryEncounter(MysteryEncounterType.FIERY_FALLOUT);
-    });
-
     it("should have the correct properties", () => {
       const option1 = FieryFalloutEncounter.options[2];
       expect(option1.optionMode).toBe(EncounterOptionMode.DISABLED_OR_SPECIAL);

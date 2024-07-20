@@ -243,7 +243,7 @@ describe("Mystery Encounter Utils", () => {
       arceus.hp = 100;
       expect(arceus.isAllowedInBattle()).toBe(true);
 
-      koPlayerPokemon(arceus);
+      koPlayerPokemon(scene, arceus);
       expect(arceus.isAllowedInBattle()).toBe(false);
     });
   });

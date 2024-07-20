@@ -32,7 +32,6 @@ describe("Lost at Sea - Mystery Encounter", () => {
     game.override.mysteryEncounterChance(100);
     game.override.startingWave(defaultWave);
     game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWave(true);
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
@@ -44,6 +43,8 @@ describe("Lost at Sea - Mystery Encounter", () => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
+    vi.clearAllMocks();
+    vi.resetAllMocks();
   });
 
   it("should have the correct properties", async () => {
@@ -99,10 +100,6 @@ describe("Lost at Sea - Mystery Encounter", () => {
   });
 
   describe("Option 1 - Surf", () => {
-    beforeEach(async () => {
-      game.override.mysteryEncounter(MysteryEncounterType.LOST_AT_SEA);
-    });
-
     it("should have the correct properties", () => {
       const option1 = LostAtSeaEncounter.options[0];
       expect(option1.optionMode).toBe(EncounterOptionMode.DISABLED_OR_DEFAULT);
@@ -149,10 +146,6 @@ describe("Lost at Sea - Mystery Encounter", () => {
   });
 
   describe("Option 2 - Fly", () => {
-    beforeEach(async () => {
-      game.override.mysteryEncounter(MysteryEncounterType.LOST_AT_SEA);
-    });
-
     it("should have the correct properties", () => {
       const option2 = LostAtSeaEncounter.options[1];
 
@@ -202,10 +195,6 @@ describe("Lost at Sea - Mystery Encounter", () => {
   });
 
   describe("Option 3 - Wander aimlessy", () => {
-    beforeEach(async () => {
-      game.override.mysteryEncounter(MysteryEncounterType.LOST_AT_SEA);
-    });
-
     it("should have the correct properties", () => {
       const option3 = LostAtSeaEncounter.options[2];
 
