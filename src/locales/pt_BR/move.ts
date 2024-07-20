@@ -2281,8 +2281,8 @@ export const move: MoveTranslationEntries = {
     name: "Parabolic Charge",
     effect: "O usuário ataca tudo ao seu redor. Os PS do usuário são restaurados pela metade do dano recebido por aqueles que foram atingidos."
   },
-  "forest’SCurse": {
-    name: "Forest’s Curse",
+  "forestsCurse": {
+    name: "Forest's Curse",
     effect: "O usuário conjura uma maldição da floresta no alvo. Isso adiciona o tipo Planta à tipagem do alvo."
   },
   "petalBlizzard": {
@@ -2461,8 +2461,8 @@ export const move: MoveTranslationEntries = {
     name: "Thousand Waves",
     effect: "O usuário ataca com tremores que se dispersam pelo chão. Alvos atingidos não podem fugir da batalha."
   },
-  "land’SWrath": {
-    name: "Land’s Wrath",
+  "landsWrath": {
+    name: "Land's Wrath",
     effect: "O usuário reúne a energia da terra e foca esse poder nos Pokémon oponentes para causar dano."
   },
   "lightOfRuin": {
