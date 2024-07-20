@@ -206,7 +206,9 @@ export function getMode(scene: BattleScene) {
  */
 export function getDRPD(scene: BattleScene): DRPD {
   if (localStorage.getItem(getLogID(scene)) == null) {
-    localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
+    var D = newDocument(getMode(scene) + " Run")
+    D.seed = scene.seed
+    localStorage.setItem(getLogID(scene), JSON.stringify(D))
   }
   var drpd: DRPD = JSON.parse(localStorage.getItem(getLogID(scene))) as DRPD;
   if (drpd == undefined || drpd == null)
@@ -364,6 +366,124 @@ export function enemyPokeName(scene: BattleScene, index: integer | Pokemon | Ene
 
 // #region 05 DRPD
 /**
+ * The Daily Run Pathing Description (DRPD) Specification is a JSON standard for organizing the information about a daily run.
+ */
+export interface DRPD {
+  /** The version of this run. @see DRPD_Version */
+  version: string,
+  /** The run seed for this day. */
+  seed: string,
+  /** The display name of this run. Not to be confused with `label`. Entered by the user. */
+  title?: string,
+  /** The webpage path and internal name of this run. Entered by the user. Not to be confused with `title`, which is only a cosmetic identifier. */
+  label: string,
+  /** A unique ID for this run. Currently unused, but may be used in the future. */
+  uuid: string,
+  /** The name(s) of the users that worked on this run. Entered by the user. */
+  authors: string[],
+  /** The date that this document was created on. Does NOT automatically detect the date of daily runs (It can't) */
+  date: string,
+  /**
+   * A list of all the waves in this Daily Run.
+   * 
+   * A completed Daily Run will have 50 waves.
+   * 
+   * This array automatically sorts by wave number, with blank slots being pushed to the bottom.
+   * 
+   * @see Wave
+   */
+  waves: Wave[],
+  /** The Pokemon that the player started with. Daily runs will have 3. @see PokeData */
+  starters?: PokeData[]
+}
+/**
+ * Imports a string as a DRPD.
+ * @param drpd The JSON string to import.
+ * @returns The imported document.
+ */
+export function importDocument(drpd: string): DRPD {
+  return JSON.parse(drpd) as DRPD;
+}
+/**
+ * Creates a new document in the DRPD format
+ * @param name (Optional) The name for the file. Defaults to "Untitled Run".
+ * @param authorName (Optional) The author(s) of the file. Defaults to "Write your name here".
+ * @returns The fresh DRPD document.
+ */
+export function newDocument(name: string = "Untitled Run", authorName: string | string[] = "Write your name here"): DRPD {
+  var ret: DRPD = {
+    version: DRPD_Version,
+    seed: "",
+    title: name,
+    label: "",
+    uuid: undefined,
+    authors: (Array.isArray(authorName) ? authorName : [authorName]),
+    date: new Date().getUTCFullYear() + "-" + (new Date().getUTCMonth() + 1 < 10 ? "0" : "") + (new Date().getUTCMonth() + 1) + "-" + (new Date().getUTCDate() < 10 ? "0" : "") + new Date().getUTCDate(),
+    waves: new Array(50),
+    starters: new Array(3),
+  }
+  var RState = Phaser.Math.RND.state()
+  ret.uuid = Phaser.Math.RND.uuid()
+  Phaser.Math.RND.state(RState)
+  return ret;
+}
+/**
+ * Prints a DRPD as a string, for saving it to your device.
+ * @param inData The data to add on to.
+ * @param indent The indent string (just a bunch of spaces).
+ * @param drpd The `DRPD` to export.
+ * @returns `inData`, with all the DRPD's data appended to it.
+ * 
+ * @see downloadLogByID
+ */
+export function printDRPD(inData: string, indent: string, drpd: DRPD): string {
+  console.log("Printing for sheet?: " + SheetsMode.value)
+  inData += indent + "{"
+  inData += "\n" + indent + "  \"version\": \"" + drpd.version + "\""
+  inData += ",\n" + indent + "  \"seed\": \"" + drpd.seed + "\""
+  inData += ",\n" + indent + "  \"title\": \"" + drpd.title + "\""
+  inData += ",\n" + indent + "  \"authors\": [\"" + drpd.authors.join("\", \"") + "\"]"
+  inData += ",\n" + indent + "  \"date\": \"" + drpd.date + "\""
+  inData += ",\n" + indent + "  \"label\": \"" + drpd.label + "\""
+  inData += ",\n" + indent + "  \"uuid\": \"" + drpd.uuid + "\""
+  if (drpd.waves) {
+    inData += ",\n" + indent + "  \"waves\": [\n"
+    var isFirst = true
+    for (var i = 0; i < drpd.waves.length; i++) {
+      if (drpd.waves[i] != undefined && drpd.waves[i] != null) {
+        if (isFirst) {
+          isFirst = false;
+        } else {
+          inData += ",\n"
+        }
+        inData = printWave(inData, indent + "    ", drpd.waves[i])
+      }
+    }
+    inData += "\n" + indent + "  ]\n"
+  } else {
+    inData += ",\n" + indent + "  \"waves\": []"
+  }
+  inData += ",\n" + indent + "  \"starters\": [\n"
+  var isFirst = true
+  for (var i = 0; i < drpd.starters.length; i++) {
+    if (drpd.starters[i] != undefined && drpd.starters[i] != null) {
+      if (isFirst) {
+        isFirst = false;
+      } else {
+        inData += ",\n"
+      }
+      inData = printPoke(inData, indent + "    ", drpd.starters[i])
+    }
+  }
+  inData += "\n" + indent + "  ]\n" + indent + "}"
+  return inData;
+}
+
+
+
+
+
+/**
  * Updates a DRPD, checkings its version and making any necessary changes to it in order to keep it up to date.
  * 
  * @param drpd The DRPD document to update. Its version will be read automatically.
@@ -405,120 +525,6 @@ function updateLog(drpd: DRPD): DRPD {
     drpd.label = "route"
   } // 1.0.0a → 1.1.0
   return drpd;
-}
-
-
-
-
-
-/**
- * The Daily Run Pathing Description (DRPD) Specification is a JSON standard for organizing the information about a daily run.
- */
-export interface DRPD {
-  /** The version of this run. @see DRPD_Version */
-  version: string,
-  /** The display name of this run. Not to be confused with `label`. Entered by the user. */
-  title?: string,
-  /** The webpage path and internal name of this run. Entered by the user. Not to be confused with `title`, which is only a cosmetic identifier. */
-  label: string,
-  /** A unique ID for this run. Currently unused, but may be used in the future. */
-  uuid: string,
-  /** The name(s) of the users that worked on this run. Entered by the user. */
-  authors: string[],
-  /** The date that this document was created on. Does NOT automatically detect the date of daily runs (It can't) */
-  date: string,
-  /**
-   * A list of all the waves in this Daily Run.
-   * 
-   * A completed Daily Run will have 50 waves.
-   * 
-   * This array automatically sorts by wave number, with blank slots being pushed to the bottom.
-   * 
-   * @see Wave
-   */
-  waves: Wave[],
-  /** The Pokemon that the player started with. Daily runs will have 3. @see PokeData */
-  starters?: PokeData[]
-}
-/**
- * Imports a string as a DRPD.
- * @param drpd The JSON string to import.
- * @returns The imported document.
- */
-export function importDocument(drpd: string): DRPD {
-  return JSON.parse(drpd) as DRPD;
-}
-/**
- * Creates a new document in the DRPD format
- * @param name (Optional) The name for the file. Defaults to "Untitled Run".
- * @param authorName (Optional) The author(s) of the file. Defaults to "Write your name here".
- * @returns The fresh DRPD document.
- */
-export function newDocument(name: string = "Untitled Run", authorName: string | string[] = "Write your name here"): DRPD {
-  var ret: DRPD = {
-    version: DRPD_Version,
-    title: name,
-    label: "",
-    uuid: undefined,
-    authors: (Array.isArray(authorName) ? authorName : [authorName]),
-    date: new Date().getUTCFullYear() + "-" + (new Date().getUTCMonth() + 1 < 10 ? "0" : "") + (new Date().getUTCMonth() + 1) + "-" + (new Date().getUTCDate() < 10 ? "0" : "") + new Date().getUTCDate(),
-    waves: new Array(50),
-    starters: new Array(3),
-  }
-  var RState = Phaser.Math.RND.state()
-  ret.uuid = Phaser.Math.RND.uuid()
-  Phaser.Math.RND.state(RState)
-  return ret;
-}
-/**
- * Prints a DRPD as a string, for saving it to your device.
- * @param inData The data to add on to.
- * @param indent The indent string (just a bunch of spaces).
- * @param drpd The `DRPD` to export.
- * @returns `inData`, with all the DRPD's data appended to it.
- * 
- * @see downloadLogByID
- */
-export function printDRPD(inData: string, indent: string, drpd: DRPD): string {
-  console.log("Printing for sheet?: " + SheetsMode.value)
-  inData += indent + "{"
-  inData += "\n" + indent + "  \"version\": \"" + drpd.version + "\""
-  inData += ",\n" + indent + "  \"title\": \"" + drpd.title + "\""
-  inData += ",\n" + indent + "  \"authors\": [\"" + drpd.authors.join("\", \"") + "\"]"
-  inData += ",\n" + indent + "  \"date\": \"" + drpd.date + "\""
-  inData += ",\n" + indent + "  \"label\": \"" + drpd.label + "\""
-  inData += ",\n" + indent + "  \"uuid\": \"" + drpd.uuid + "\""
-  if (drpd.waves) {
-    inData += ",\n" + indent + "  \"waves\": [\n"
-    var isFirst = true
-    for (var i = 0; i < drpd.waves.length; i++) {
-      if (drpd.waves[i] != undefined && drpd.waves[i] != null) {
-        if (isFirst) {
-          isFirst = false;
-        } else {
-          inData += ",\n"
-        }
-        inData = printWave(inData, indent + "    ", drpd.waves[i])
-      }
-    }
-    inData += "\n" + indent + "  ]\n"
-  } else {
-    inData += ",\n" + indent + "  \"waves\": []"
-  }
-  inData += ",\n" + indent + "  \"starters\": [\n"
-  var isFirst = true
-  for (var i = 0; i < drpd.starters.length; i++) {
-    if (drpd.starters[i] != undefined && drpd.starters[i] != null) {
-      if (isFirst) {
-        isFirst = false;
-      } else {
-        inData += ",\n"
-      }
-      inData = printPoke(inData, indent + "    ", drpd.starters[i])
-    }
-  }
-  inData += "\n" + indent + "  ]\n" + indent + "}"
-  return inData;
 }
 // #endregion
 
@@ -1737,11 +1743,11 @@ export function logPokemon(scene: BattleScene, floor: integer = undefined, slot:
 /**
  * Logs what the player took from the rewards pool and, if applicable, who they used it on.
  * @param scene The BattleScene. Used to get the log ID.
- * @param floor The wave index to write to.
+ * @param floor The wave index to write to. Defaults to the current floor.
  * @param action The shop action. Left blank if there was no shop this floor or if you ran away. Logged as "Skip taking items" if you didn't take anything for some reason.
  */
 export function logShop(scene: BattleScene, floor: integer, action: string) {
-  if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
+  if (floor == undefined) floor = scene.currentBattle.waveIndex
   var drpd = getDRPD(scene)
   console.log(`Logging shop result: "${action}"`)
   var wv: Wave = getWave(drpd, floor, scene)
@@ -1755,7 +1761,6 @@ export function logShop(scene: BattleScene, floor: integer, action: string) {
  */
 export function logTrainer(scene: BattleScene, floor: integer = undefined) {
   if (floor == undefined) floor = scene.currentBattle.waveIndex
-  if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
   var drpd: DRPD = JSON.parse(localStorage.getItem(getLogID(scene))) as DRPD;
   drpd = updateLog(drpd);
   console.log(`Logging trainer: ${scene.currentBattle.trainer.getTitleOnly()} ${scene.currentBattle.trainer.getNameOnly()}`)
@@ -1794,8 +1799,6 @@ export function deleteReloadDetectionData(scene: BattleScene, floor: integer = u
 export function flagReset(scene: BattleScene, floor: integer = undefined) {
   if (floor == undefined)
     floor = scene.currentBattle.waveIndex;
-  if (localStorage.getItem(getLogID(scene)) == null)
-    localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
   var drpd = getDRPD(scene)
   console.log("Flag Reset", drpd)
   var wv = getWave(drpd, floor, scene)
@@ -1805,13 +1808,11 @@ export function flagReset(scene: BattleScene, floor: integer = undefined) {
 /**
  * Flags a wave as a reset, unless this is your first time playing the wave.
  * @param scene The BattleScene. Used to get the log ID.
- * @param floor The wave index to write to.
+ * @param floor The wave index to write to. Defaults to the current floor.
  */
 export function flagResetIfExists(scene: BattleScene, floor: integer = undefined) {
   if (floor == undefined)
     floor = scene.currentBattle.waveIndex;
-  if (localStorage.getItem(getLogID(scene)) == null)
-    localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
   var drpd = getDRPD(scene)
   var waveExists = false
   for (var i = 0; i < drpd.waves.length; i++) {
@@ -1843,7 +1844,6 @@ export function flagResetIfExists(scene: BattleScene, floor: integer = undefined
  */
 export function resetWaveActions(scene: BattleScene, floor: integer = undefined, softflag: boolean) {
   if (floor == undefined) floor = scene.currentBattle.waveIndex
-  if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
   var drpd = getDRPD(scene)
   console.log("Clear Actions", drpd)
   var wv: Wave = getWave(drpd, floor, scene)
