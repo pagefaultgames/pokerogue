@@ -7946,6 +7946,48 @@
 						"w": 16,
 						"h": 16
 					}
+				},
+				{
+					"filename": "super_evo_item",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 8,
+						"y": 8,
+						"w": 16,
+						"h": 16
+					},
+					"frame": {
+						"x": 379,
+						"y": 397,
+						"w": 16,
+						"h": 16
+					}
+				},
+				{
+					"filename": "super_evo_item_fusion",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 8,
+						"y": 8,
+						"w": 16,
+						"h": 16
+					},
+					"frame": {
+						"x": 397,
+						"y": 397,
+						"w": 16,
+						"h": 16
+					}
 				}
 			]
 		}

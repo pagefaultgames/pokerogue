@@ -898,8 +898,8 @@ export class EvolutionItemModifierType extends PokemonModifierType implements Ge
         if (pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId) && pokemonEvolutions[pokemon.species.speciesId].filter(e => (e.item === this.evolutionItem || this.evolutionItem === EvolutionItem.SUPER_EVO_ITEM)
           && (!e.condition || e.condition.predicate(pokemon) || this.evolutionItem === EvolutionItem.SUPER_EVO_ITEM)).length && (pokemon.getFormKey() !== SpeciesFormKey.GIGANTAMAX || this.evolutionItem === EvolutionItem.SUPER_EVO_ITEM)) {
           return null;
-        } else if (pokemon.isFusion() && pokemonEvolutions.hasOwnProperty(pokemon.fusionSpecies.speciesId) && pokemonEvolutions[pokemon.fusionSpecies.speciesId].filter(e => (e.item === this.evolutionItem || this.evolutionItem === EvolutionItem.SUPER_EVO_ITEM_F)
-        && (!e.condition || e.condition.predicate(pokemon) || this.evolutionItem === EvolutionItem.SUPER_EVO_ITEM_F)).length && (pokemon.getFusionFormKey() !== SpeciesFormKey.GIGANTAMAX || this.evolutionItem === EvolutionItem.SUPER_EVO_ITEM_F)) {
+        } else if (pokemon.isFusion() && pokemonEvolutions.hasOwnProperty(pokemon.fusionSpecies.speciesId) && pokemonEvolutions[pokemon.fusionSpecies.speciesId].filter(e => (e.item === this.evolutionItem || this.evolutionItem === EvolutionItem.SUPER_EVO_ITEM_FUSION)
+        && (!e.condition || e.condition.predicate(pokemon) || this.evolutionItem === EvolutionItem.SUPER_EVO_ITEM_FUSION)).length && (pokemon.getFusionFormKey() !== SpeciesFormKey.GIGANTAMAX || this.evolutionItem === EvolutionItem.SUPER_EVO_ITEM_FUSION)) {
           return null;
         }
 
@@ -1319,7 +1319,7 @@ export const modifierTypes = {
   RARE_EVOLUTION_ITEM: () => new EvolutionItemModifierTypeGenerator(true),
   FORM_CHANGE_ITEM: () => new FormChangeItemModifierTypeGenerator(),
   FORCE_EVOLVE_ITEM: () => new EvolutionItemModifierType(EvolutionItem.SUPER_EVO_ITEM),
-  FORCE_FUSE_EVOLVE_ITEM: () => new EvolutionItemModifierType(EvolutionItem.SUPER_EVO_ITEM_F),
+  FORCE_FUSE_EVOLVE_ITEM: () => new EvolutionItemModifierType(EvolutionItem.SUPER_EVO_ITEM_FUSION),
 
   MEGA_BRACELET: () => new ModifierType("modifierType:ModifierType.MEGA_BRACELET", "mega_bracelet", (type, _args) => new Modifiers.MegaEvolutionAccessModifier(type)),
   DYNAMAX_BAND: () => new ModifierType("modifierType:ModifierType.DYNAMAX_BAND", "dynamax_band", (type, _args) => new Modifiers.GigantamaxAccessModifier(type)),

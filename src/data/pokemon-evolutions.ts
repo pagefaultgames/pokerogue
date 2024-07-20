@@ -54,7 +54,7 @@ export enum EvolutionItem {
   SYRUPY_APPLE,
 
   SUPER_EVO_ITEM,
-  SUPER_EVO_ITEM_F
+  SUPER_EVO_ITEM_FUSION
 }
 
 export type EvolutionConditionPredicate = (p: Pokemon) => boolean;

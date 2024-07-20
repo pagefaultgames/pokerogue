@@ -329,6 +329,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "SCROLL_OF_DARKNESS": "Scroll Of Darkness",
     "SCROLL_OF_WATERS": "Scroll Of Waters",
     "SYRUPY_APPLE": "Syrupy Apple",
+
+    "SUPER_EVO_ITEM": "Evolve Pokémon",
+    "SUPER_EVO_ITEM_FUSION": "Evolve Fusion",
   },
   FormChangeItem: {
     "NONE": "None",
