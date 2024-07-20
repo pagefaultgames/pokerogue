@@ -51,7 +51,10 @@ export enum EvolutionItem {
   METAL_ALLOY,
   SCROLL_OF_DARKNESS,
   SCROLL_OF_WATERS,
-  SYRUPY_APPLE
+  SYRUPY_APPLE,
+
+  SUPER_EVO_ITEM,
+  SUPER_EVO_ITEM_F
 }
 
 export type EvolutionConditionPredicate = (p: Pokemon) => boolean;

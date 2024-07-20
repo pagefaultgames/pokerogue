@@ -8,7 +8,7 @@ import { Stat } from "../data/pokemon-stat";
 import { addTextObject, TextStyle } from "../ui/text";
 import { Type } from "../data/type";
 import { EvolutionPhase } from "../evolution-phase";
-import { FusionSpeciesFormEvolution, pokemonEvolutions, pokemonPrevolutions } from "../data/pokemon-evolutions";
+import { EvolutionItem, FusionSpeciesFormEvolution, pokemonEvolutions, pokemonPrevolutions } from "../data/pokemon-evolutions";
 import {getPokemonMessage, getPokemonNameWithAffix} from "../messages";
 import * as Utils from "../utils";
 import { TempBattleStat } from "../data/temp-battle-stat";
@@ -1531,16 +1531,18 @@ export class EvolutionItemModifier extends ConsumablePokemonModifier {
   apply(args: any[]): boolean {
     const pokemon = args[0] as PlayerPokemon;
 
+    var bypassC = EvolutionItem.SUPER_EVO_ITEM === (this.type as ModifierTypes.EvolutionItemModifierType).evolutionItem
     let matchingEvolution = pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId)
-      ? pokemonEvolutions[pokemon.species.speciesId].find(e => e.item === (this.type as ModifierTypes.EvolutionItemModifierType).evolutionItem
+      ? pokemonEvolutions[pokemon.species.speciesId].find(e => (e.item === (this.type as ModifierTypes.EvolutionItemModifierType).evolutionItem || bypassC)
         && (e.evoFormKey === null || (e.preFormKey || "") === pokemon.getFormKey())
-        && (!e.condition || e.condition.predicate(pokemon)))
+        && (!e.condition || e.condition.predicate(pokemon) || bypassC))
       : null;
 
     if (!matchingEvolution && pokemon.isFusion()) {
-      matchingEvolution = pokemonEvolutions[pokemon.fusionSpecies.speciesId].find(e => e.item === (this.type as ModifierTypes.EvolutionItemModifierType).evolutionItem
+      var bypassC = EvolutionItem.SUPER_EVO_ITEM_F === (this.type as ModifierTypes.EvolutionItemModifierType).evolutionItem
+      matchingEvolution = pokemonEvolutions[pokemon.fusionSpecies.speciesId].find(e => (e.item === (this.type as ModifierTypes.EvolutionItemModifierType).evolutionItem || bypassC)
         && (e.evoFormKey === null || (e.preFormKey || "") === pokemon.getFusionFormKey())
-        && (!e.condition || e.condition.predicate(pokemon)));
+        && (!e.condition || e.condition.predicate(pokemon) || bypassC));
       if (matchingEvolution) {
         matchingEvolution = new FusionSpeciesFormEvolution(pokemon.species.speciesId, matchingEvolution);
       }
