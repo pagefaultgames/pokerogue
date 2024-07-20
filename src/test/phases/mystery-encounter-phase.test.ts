@@ -28,7 +28,6 @@ describe("Mystery Encounter Phases", () => {
     game = new GameManager(phaserGame);
     game.override.startingWave(11);
     game.override.mysteryEncounterChance(100);
-    game.override.mysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS);
     // Seed guarantees wild encounter to be replaced by ME
     game.override.seed("test");
   });

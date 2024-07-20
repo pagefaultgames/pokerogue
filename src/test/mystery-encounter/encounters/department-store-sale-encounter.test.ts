@@ -36,7 +36,7 @@ describe("Department Store Sale - Mystery Encounter", () => {
     game.override.mysteryEncounterTier(MysteryEncounterTier.COMMON);
     game.override.startingWave(defaultWave);
     game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWave(true);
+    game.override.disableTrainerWaves(true);
 
     const biomeMap = new Map<Biome, MysteryEncounterType[]>([
       [Biome.VOLCANO, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
@@ -54,7 +54,6 @@ describe("Department Store Sale - Mystery Encounter", () => {
   });
 
   it("should have the correct properties", async () => {
-    game.override.mysteryEncounter(MysteryEncounterType.DEPARTMENT_STORE_SALE);
     await game.runToMysteryEncounter(MysteryEncounterType.DEPARTMENT_STORE_SALE, defaultParty);
 
     expect(DepartmentStoreSaleEncounter.encounterType).toBe(MysteryEncounterType.DEPARTMENT_STORE_SALE);

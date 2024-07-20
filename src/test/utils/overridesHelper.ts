@@ -6,6 +6,8 @@ import GameManager from "#test/utils/gameManager";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import * as overrides from "#app/overrides";
 import { MysteryEncounterTier } from "#app/data/mystery-encounters/mystery-encounter";
+import * as GameMode from "#app/game-mode";
+import { GameModes, getGameMode } from "#app/game-mode";
 
 /**
  * Helper to handle overrides in tests
@@ -77,8 +79,13 @@ export class OverridesHelper {
    * @returns spy instance
    * @param disable - true
    */
-  disableTrainerWave(disable: boolean): MockInstance {
-    const spy = vi.spyOn(this.game.scene.gameMode, "isWaveTrainer").mockReturnValue(!disable);
+  disableTrainerWaves(disable: boolean): MockInstance {
+    const realFn = getGameMode;
+    const spy = vi.spyOn(GameMode, "getGameMode").mockImplementation((gameMode: GameModes) => {
+      const mode = realFn(gameMode);
+      mode.hasTrainers = !disable;
+      return mode;
+    });
     this.log(`Standard trainer waves are ${disable? "disabled" : "enabled"}!`);
     return spy;
   }

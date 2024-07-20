@@ -153,7 +153,7 @@ export default class GameManager {
    */
   async runToMysteryEncounter(encounterType?: MysteryEncounterType, species?: Species[]) {
     if (!isNullOrUndefined(encounterType)) {
-      this.override.disableTrainerWave(true);
+      this.override.disableTrainerWaves(true);
       this.override.mysteryEncounter(encounterType);
     }
 

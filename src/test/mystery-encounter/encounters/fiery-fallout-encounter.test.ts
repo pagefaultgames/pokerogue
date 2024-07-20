@@ -58,7 +58,6 @@ describe("Fiery Fallout - Mystery Encounter", () => {
   });
 
   it("should have the correct properties", async () => {
-    game.override.mysteryEncounter(MysteryEncounterType.FIERY_FALLOUT);
     await game.runToMysteryEncounter(MysteryEncounterType.FIERY_FALLOUT, defaultParty);
 
     expect(FieryFalloutEncounter.encounterType).toBe(MysteryEncounterType.FIERY_FALLOUT);

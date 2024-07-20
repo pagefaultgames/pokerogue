@@ -60,7 +60,6 @@ describe("The Strong Stuff - Mystery Encounter", () => {
   });
 
   it("should have the correct properties", async () => {
-    game.override.mysteryEncounter(MysteryEncounterType.THE_STRONG_STUFF);
     await game.runToMysteryEncounter(MysteryEncounterType.THE_STRONG_STUFF, defaultParty);
 
     expect(TheStrongStuffEncounter.encounterType).toBe(MysteryEncounterType.THE_STRONG_STUFF);

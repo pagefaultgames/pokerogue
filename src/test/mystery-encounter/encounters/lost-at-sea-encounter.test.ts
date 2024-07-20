@@ -48,7 +48,6 @@ describe("Lost at Sea - Mystery Encounter", () => {
   });
 
   it("should have the correct properties", async () => {
-    game.override.mysteryEncounter(MysteryEncounterType.LOST_AT_SEA);
     await game.runToMysteryEncounter(MysteryEncounterType.LOST_AT_SEA, defaultParty);
 
     expect(LostAtSeaEncounter.encounterType).toBe(MysteryEncounterType.LOST_AT_SEA);
