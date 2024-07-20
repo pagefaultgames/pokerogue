@@ -50,4 +50,4 @@ jobs:
         run: npm ci  # Use 'npm ci' to install dependencies
 
       - name: tests  # Step to run tests
-        run: npm run test${{ runner.debug == '0' &&':silent' || '' }} --retry=3 # silent on default. if debug run loud. Retry failed tests up to 3 times
+        run: npm run test${{ runner.debug == '0' &&':silent' || '' }} -- --retry=3 # silent on default. if debug run loud. Retry failed tests up to 3 times
