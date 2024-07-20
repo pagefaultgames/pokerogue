@@ -1568,6 +1568,11 @@ export class EncounterPhase extends BattlePhase {
     }
     if (this.scene.currentBattle.waveIndex == 1) {
       LoggerTools.logPlayerTeam(this.scene)
+      if (this.scene.gameMode.modeId == GameModes.DAILY && this.scene.disableDailyShinies) {
+        this.scene.getParty().forEach(p => {
+          p.species.luckOverride = 0; // Disable shiny luck for party members
+        })
+      }
     }
     LoggerTools.resetWaveActions(this.scene, undefined, true)
 
