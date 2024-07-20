@@ -349,6 +349,10 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
     });
   }
 
+  /**
+   * Sets container and all child sprites to visible
+   * @param value - true for visible, false for hidden
+   */
   setVisible(value: boolean): this {
     this.getSprites().forEach(sprite => {
       sprite.setVisible(value);

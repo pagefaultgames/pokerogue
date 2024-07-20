@@ -64,7 +64,7 @@ export const SafariZoneEncounter: IMysteryEncounter =
       .withOptionPhase(async (scene: BattleScene) => {
         // Start safari encounter
         const encounter = scene.currentBattle.mysteryEncounter;
-        encounter.encounterVariant = MysteryEncounterVariant.REPEATED_ENCOUNTER;
+        encounter.encounterVariant = MysteryEncounterVariant.CONTINUOUS_ENCOUNTER;
         encounter.misc = {
           safariPokemonRemaining: 3
         };

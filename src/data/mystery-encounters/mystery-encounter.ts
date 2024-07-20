@@ -28,7 +28,7 @@ export enum MysteryEncounterVariant {
   BOSS_BATTLE,
   NO_BATTLE,
   /** For spawning new encounter queries instead of continuing to next wave */
-  REPEATED_ENCOUNTER
+  CONTINUOUS_ENCOUNTER
 }
 
 /**
@@ -115,11 +115,6 @@ export default interface IMysteryEncounter {
    * You probably shouldn't do anything with this unless you have a very specific need
    */
   introVisuals?: MysteryEncounterIntroVisuals;
-  /**
-   * Used for keeping RNG consistent on session resets, but increments when cycling through multiple "Encounters" on the same wave
-   * You should never need to modify this
-   */
-  seedOffset?: any;
 
   /**
    * Flags
@@ -172,6 +167,12 @@ export default interface IMysteryEncounter {
  * Unless you know what you're doing, you should use MysteryEncounterBuilder to create an instance for this class
  */
 export default class IMysteryEncounter implements IMysteryEncounter {
+  /**
+   * Used for keeping RNG consistent on session resets, but increments when cycling through multiple "Encounters" on the same wave
+   * You should only need to interact via getter/update methods
+   */
+  private seedOffset?: any;
+
   constructor(encounter: IMysteryEncounter) {
     if (!isNullOrUndefined(encounter)) {
       Object.assign(this, encounter);
@@ -371,6 +372,20 @@ export default class IMysteryEncounter implements IMysteryEncounter {
     this.dialogueTokens[key] = value;
   }
 
+  getSeedOffset?() {
+    return this.seedOffset;
+  }
+
+  /**
+   * Maintains seed offset for RNG consistency
+   * Increments if the same MysteryEncounter has multiple option select cycles
+   * @param scene
+   */
+  updateSeedOffset?(scene: BattleScene) {
+    const currentOffset = this.seedOffset ?? scene.currentBattle.waveIndex * 1000;
+    this.seedOffset = currentOffset + 512;
+  }
+
   private capitalizeFirstLetter?(str: string) {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
@@ -442,7 +457,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * @param callback - {@linkcode OptionPhaseCallback}
    * @returns
    */
-  withSimpleOption(dialogue: OptionTextDisplay, callback: OptionPhaseCallback): this {
+  withSimpleOption(dialogue: OptionTextDisplay, callback: OptionPhaseCallback): this & Pick<IMysteryEncounter, "options"> {
     return this.withOption(new MysteryEncounterOptionBuilder().withOptionMode(EncounterOptionMode.DEFAULT).withDialogue(dialogue).withOptionPhase(callback).build());
   }
 

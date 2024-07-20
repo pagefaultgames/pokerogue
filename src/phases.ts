@@ -67,7 +67,7 @@ import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 import { MysteryEncounterVariant } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
-import { doTrainerExclamation, handleEncounterStartOfBattleEffects, handleMysteryEncounterVictory } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { doTrainerExclamation, handleMysteryEncounterBattleStartEffects, handleMysteryEncounterVictory } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import ModifierSelectUiHandler, { SHOP_OPTIONS_ROW_LIMIT } from "#app/ui/modifier-select-ui-handler";
 import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 
@@ -2053,8 +2053,7 @@ export class TurnInitPhase extends FieldPhase {
     //this.scene.pushPhase(new MoveAnimTestPhase(this.scene));
     this.scene.eventTarget.dispatchEvent(new TurnInitEvent());
 
-    // Start of battle effects for Mystery Encounters
-    handleEncounterStartOfBattleEffects(this.scene);
+    handleMysteryEncounterBattleStartEffects(this.scene);
 
     this.scene.getField().forEach((pokemon, i) => {
       if (pokemon?.isActive()) {

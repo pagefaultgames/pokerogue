@@ -30,6 +30,10 @@ import { Gender } from "#app/data/gender";
 import { Moves } from "#enums/moves";
 import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
 
+/**
+ * Animates exclamation sprite over trainer's head at start of encounter
+ * @param scene
+ */
 export function doTrainerExclamation(scene: BattleScene) {
   const exclamationSprite = scene.addFieldSprite(0, 0, "exclaim");
   exclamationSprite.setName("exclamation");
@@ -476,6 +480,7 @@ export function setEncounterExp(scene: BattleScene, participantId: integer | int
     const nonFaintedPartyMembers = party.filter(p => p.hp);
     const expPartyMembers = nonFaintedPartyMembers.filter(p => p.level < scene.getMaxExpLevel());
     const partyMemberExp = [];
+    // EXP value calculation is based off Pokemon.getExpValue
     let expValue = Math.floor(baseExpValue * (useWaveIndex ? scene.currentBattle.waveIndex : 1) / 5 + 1);
 
     if (participantIds?.length > 0) {
@@ -597,7 +602,7 @@ export function handleMysteryEncounterVictory(scene: BattleScene, addHealPhase: 
 
   // If in repeated encounter variant, do nothing
   // Variant must eventually be swapped in order to handle "true" end of the encounter
-  if (scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.REPEATED_ENCOUNTER) {
+  if (scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.CONTINUOUS_ENCOUNTER) {
     return;
   } else if (scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.NO_BATTLE) {
     scene.pushPhase(new EggLapsePhase(scene));
@@ -657,7 +662,12 @@ export function transitionMysteryEncounterIntroVisuals(scene: BattleScene, hide:
   });
 }
 
-export function handleEncounterStartOfBattleEffects(scene: BattleScene) {
+/**
+ * Will queue moves for any pokemon to use before the first CommandPhase of a battle
+ * Mostly useful for allowing MysteryEncounter enemies to "cheat" and use moves before the first turn
+ * @param scene
+ */
+export function handleMysteryEncounterBattleStartEffects(scene: BattleScene) {
   const encounter = scene.currentBattle?.mysteryEncounter;
   if (scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER && encounter.encounterVariant !== MysteryEncounterVariant.NO_BATTLE && !encounter.startOfBattleEffectsComplete) {
     const effects = encounter.startOfBattleEffects;

@@ -74,7 +74,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
     game.override.startingBiome(Biome.MOUNTAIN);
     await game.runToMysteryEncounter();
 
-    expect(scene.currentBattle.mysteryEncounter.encounterType).not.toBe(MysteryEncounterType.LOST_AT_SEA);
+    expect(scene.currentBattle.mysteryEncounter.encounterType).not.toBe(MysteryEncounterType.FIERY_FALLOUT);
   });
 
   it("should not run below wave 41", async () => {

@@ -7,6 +7,12 @@ import GameManager from "../utils/gameManager";
 import MessageUiHandler from "#app/ui/message-ui-handler";
 import { Status, StatusEffect } from "#app/data/status-effect";
 
+/**
+ * Runs a MysteryEncounter to either the start of a battle, or to the MysteryEncounterRewardsPhase, depending on the option selected
+ * @param game
+ * @param optionNo - human number, not index
+ * @param isBattle - if selecting option should lead to battle, set to true
+ */
 export async function runSelectMysteryEncounterOption(game: GameManager, optionNo: number, isBattle: boolean = false) {
   // Handle any eventual queued messages (e.g. weather phase, etc.)
   game.onNextPrompt("MessagePhase", Mode.MESSAGE, () => {
@@ -81,6 +87,10 @@ export async function runSelectMysteryEncounterOption(game: GameManager, optionN
   }
 }
 
+/**
+ * For any MysteryEncounter that has a battle, can call this to skip battle and proceed to MysteryEncounterRewardsPhase
+ * @param game
+ */
 export async function skipBattleRunMysteryEncounterRewardsPhase(game: GameManager) {
   game.scene.clearPhaseQueue();
   game.scene.clearPhaseQueueSplice();

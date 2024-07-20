@@ -28,6 +28,8 @@ import { BattlerTagLapseType } from "#app/data/battler-tags";
 export class MysteryEncounterPhase extends Phase {
   optionSelectSettings: OptionSelectSettings;
 
+  private FIRST_DIALOGUE_PROMPT_DELAY = 300;
+
   /**
    *
    * @param scene
@@ -46,9 +48,7 @@ export class MysteryEncounterPhase extends Phase {
     this.scene.clearPhaseQueue();
     this.scene.clearPhaseQueueSplice();
 
-    // Generates seed offset for RNG consistency, but incremented if the same MysteryEncounter has multiple option select cycles
-    const offset = this.scene.currentBattle.mysteryEncounter.seedOffset ?? this.scene.currentBattle.waveIndex * 1000;
-    this.scene.currentBattle.mysteryEncounter.seedOffset = offset + 512;
+    this.scene.currentBattle.mysteryEncounter.updateSeedOffset(this.scene);
 
     if (!this.optionSelectSettings) {
       // Sets flag that ME was encountered, only if this is not a followup option select phase
@@ -79,7 +79,7 @@ export class MysteryEncounterPhase extends Phase {
               this.continueEncounter();
             }
           });
-      }, this.scene.currentBattle.mysteryEncounter.seedOffset);
+      }, this.scene.currentBattle.mysteryEncounter.getSeedOffset());
     } else {
       this.continueEncounter();
     }
@@ -109,9 +109,9 @@ export class MysteryEncounterPhase extends Phase {
         }
 
         if (title) {
-          this.scene.ui.showDialogue(text, title, null, nextAction, 0, i === 0 ? 300 : 0);
+          this.scene.ui.showDialogue(text, title, null, nextAction, 0, i === 0 ? this.FIRST_DIALOGUE_PROMPT_DELAY : 0);
         } else {
-          this.scene.ui.showText(text, null, nextAction, i === 0 ? 300 : 0, true);
+          this.scene.ui.showText(text, null, nextAction, i === 0 ? this.FIRST_DIALOGUE_PROMPT_DELAY : 0, true);
         }
         i++;
       };
@@ -154,14 +154,14 @@ export class MysteryEncounterOptionSelectedPhase extends Phase {
           this.onOptionSelect(this.scene).finally(() => {
             this.end();
           });
-        }, this.scene.currentBattle.mysteryEncounter.seedOffset);
+        }, this.scene.currentBattle.mysteryEncounter.getSeedOffset());
       });
     } else {
       this.scene.executeWithSeedOffset(() => {
         this.onOptionSelect(this.scene).finally(() => {
           this.end();
         });
-      }, this.scene.currentBattle.mysteryEncounter.seedOffset);
+      }, this.scene.currentBattle.mysteryEncounter.getSeedOffset());
     }
   }
 }
@@ -279,7 +279,7 @@ export class MysteryEncounterBattlePhase extends Phase {
       } else {
         const trainer = this.scene.currentBattle.trainer;
         let message: string;
-        scene.executeWithSeedOffset(() => message = Utils.randSeedItem(encounterMessages), this.scene.currentBattle.mysteryEncounter.seedOffset);
+        scene.executeWithSeedOffset(() => message = Utils.randSeedItem(encounterMessages), this.scene.currentBattle.mysteryEncounter.getSeedOffset());
 
         const showDialogueAndSummon = () => {
           scene.ui.showDialogue(message, trainer.getName(TrainerSlot.NONE, true), null, () => {
@@ -438,7 +438,7 @@ export class PostMysteryEncounterPhase extends Phase {
               this.continueEncounter();
             }
           });
-      }, this.scene.currentBattle.mysteryEncounter.seedOffset);
+      }, this.scene.currentBattle.mysteryEncounter.getSeedOffset());
     } else {
       this.continueEncounter();
     }
