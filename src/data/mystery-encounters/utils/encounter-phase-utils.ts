@@ -1,15 +1,14 @@
-import { BattleType } from "#app/battle";
+import { BattlerIndex, BattleType } from "#app/battle";
 import { biomeLinks } from "#app/data/biomes";
 import MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
 import { WIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
-import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import Pokemon, { FieldPosition, PlayerPokemon } from "#app/field/pokemon";
-import { getPokemonNameWithAffix } from "#app/messages";
+import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import Pokemon, { FieldPosition, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { ExpBalanceModifier, ExpShareModifier, MultipleParticipantExpBonusModifier, PokemonExpBoosterModifier } from "#app/modifier/modifier";
 import { CustomModifierSettings, getModifierPoolForType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeGenerator, ModifierTypeOption, modifierTypes, PokemonHeldItemModifierType, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
 import * as Overrides from "#app/overrides";
-import { BattleEndPhase, EggLapsePhase, ExpPhase, GameOverPhase, ModifierRewardPhase, SelectModifierPhase, ShowPartyExpBarPhase, TrainerVictoryPhase } from "#app/phases";
-import { MysteryEncounterBattlePhase, MysteryEncounterPhase, MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phase";
+import { BattleEndPhase, EggLapsePhase, ExpPhase, GameOverPhase, ModifierRewardPhase, MovePhase, SelectModifierPhase, ShowPartyExpBarPhase, TrainerVictoryPhase } from "#app/phases";
+import { MysteryEncounterBattlePhase, MysteryEncounterBattleStartCleanupPhase, MysteryEncounterPhase, MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phases";
 import PokemonData from "#app/system/pokemon-data";
 import { OptionSelectConfig, OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import { PartyOption, PartyUiMode } from "#app/ui/party-ui-handler";
@@ -26,33 +25,67 @@ import PokemonSpecies from "../../pokemon-species";
 import { Status, StatusEffect } from "../../status-effect";
 import { TrainerConfig, trainerConfigs, TrainerSlot } from "../../trainer-config";
 import { MysteryEncounterVariant } from "../mystery-encounter";
+import { Gender } from "#app/data/gender";
 import { Nature } from "#app/data/nature";
+import { Moves } from "#enums/moves";
+import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
 
-export class EnemyPokemonConfig {
-  species: PokemonSpecies;
-  isBoss: boolean = false;
-  bossSegments?: number;
-  bossSegmentModifier?: number; // Additive to the determined segment number
-  formIndex?: number;
-  level?: number;
-  nature?: Nature;
-  ivs?: [integer, integer, integer, integer, integer, integer];
-  modifierTypes?: PokemonHeldItemModifierType[];
-  dataSource?: PokemonData;
-  tags?: BattlerTagType[];
-  mysteryEncounterBattleEffects?: (pokemon: Pokemon) => void;
-  status?: StatusEffect;
-  passive?: boolean;
-  spriteScale?: number;
+/**
+ * Animates exclamation sprite over trainer's head at start of encounter
+ * @param scene
+ */
+export function doTrainerExclamation(scene: BattleScene) {
+  const exclamationSprite = scene.addFieldSprite(0, 0, "exclaim");
+  exclamationSprite.setName("exclamation");
+  scene.field.add(exclamationSprite);
+  scene.field.moveTo(exclamationSprite, scene.field.getAll().length - 1);
+  exclamationSprite.setVisible(true);
+  exclamationSprite.setPosition(110, 68);
+  scene.tweens.add({
+    targets: exclamationSprite,
+    y: "-=25",
+    ease: "Cubic.easeOut",
+    duration: 300,
+    yoyo: true,
+    onComplete: () => {
+      scene.time.delayedCall(800, () => {
+        scene.field.remove(exclamationSprite, true);
+      });
+    }
+  });
+
+  scene.playSound("GEN8- Exclaim.wav", { volume: 0.8 });
 }
 
-export class EnemyPartyConfig {
-  levelAdditiveMultiplier?: number = 0; // Formula for enemy: level += waveIndex / 10 * levelAdditive
-  doubleBattle?: boolean = false;
+export interface EnemyPokemonConfig {
+  species: PokemonSpecies;
+  isBoss: boolean;
+  bossSegments?: number;
+  bossSegmentModifier?: number; // Additive to the determined segment number
+  spriteScale?: number;
+  formIndex?: number;
+  level?: number;
+  gender?: Gender;
+  passive?: boolean;
+  moveSet?: Moves[];
+  nature?: Nature;
+  ivs?: [integer, integer, integer, integer, integer, integer];
+  /** Can set just the status, or pass a timer on the status turns */
+  status?: StatusEffect | [StatusEffect, number];
+  mysteryEncounterBattleEffects?: (pokemon: Pokemon) => void;
+  modifierTypes?: PokemonHeldItemModifierType[];
+  tags?: BattlerTagType[];
+  dataSource?: PokemonData;
+}
+
+export interface EnemyPartyConfig {
+  levelAdditiveMultiplier?: number; // Formula for enemy: level += waveIndex / 10 * levelAdditive
+  doubleBattle?: boolean;
   trainerType?: TrainerType; // Generates trainer battle solely off trainer type
   trainerConfig?: TrainerConfig; // More customizable option for configuring trainer battle
   pokemonConfigs?: EnemyPokemonConfig[];
   female?: boolean; // True for female trainer, false for male
+  disableSwitch?: boolean; // True will prevent player from switching
 }
 
 /**
@@ -198,24 +231,45 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
       }
 
       // Set Status
-      if (config.status) {
+      const statusEffects = config.status;
+      if (statusEffects) {
         // Default to cureturn 3 for sleep
-        const cureTurn = config.status === StatusEffect.SLEEP ? 3 : null;
-        enemyPokemon.status = new Status(config.status, 0, cureTurn);
+        const status = Array.isArray(statusEffects) ? statusEffects[0] : statusEffects;
+        const cureTurn = Array.isArray(statusEffects) ? statusEffects[1] : statusEffects === StatusEffect.SLEEP ? 3 : null;
+        enemyPokemon.status = new Status(status, 0, cureTurn);
+      }
+
+      // Set summon data fields
+
+      // Set gender
+      if (!isNullOrUndefined(config.gender)) {
+        enemyPokemon.gender = config.gender;
+        enemyPokemon.summonData.gender = config.gender;
+      }
+
+      // Set moves
+      if (config?.moveSet?.length > 0) {
+        const moves = config.moveSet.map(m => new PokemonMove(m));
+        enemyPokemon.moveset = moves;
+        enemyPokemon.summonData.moveset = moves;
       }
 
       // Set tags
       if (config.tags?.length > 0) {
         const tags = config.tags;
         tags.forEach(tag => enemyPokemon.addTag(tag));
-        // mysteryEncounterBattleEffects can be used IFF MYSTERY_ENCOUNTER_POST_SUMMON tag is applied
-        enemyPokemon.summonData.mysteryEncounterBattleEffects = config.mysteryEncounterBattleEffects;
-
-        // Requires re-priming summon data so that tags are not cleared on SummonPhase
-        enemyPokemon.primeSummonData(enemyPokemon.summonData);
       }
 
+      // mysteryEncounterBattleEffects will only be used IFF MYSTERY_ENCOUNTER_POST_SUMMON tag is applied
+      if (config.mysteryEncounterBattleEffects) {
+        enemyPokemon.mysteryEncounterBattleEffects = config.mysteryEncounterBattleEffects;
+      }
+
+      // Requires re-priming summon data to update everything properly
+      enemyPokemon.primeSummonData(enemyPokemon.summonData);
+
       enemyPokemon.initBattleInfo();
+      enemyPokemon.getBattleInfo().initInfo(enemyPokemon);
     }
 
     loadEnemyAssets.push(enemyPokemon.loadAssets());
@@ -223,7 +277,7 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
     console.log(enemyPokemon.name, enemyPokemon.species.speciesId, enemyPokemon.stats);
   });
 
-  scene.pushPhase(new MysteryEncounterBattlePhase(scene));
+  scene.pushPhase(new MysteryEncounterBattlePhase(scene, partyConfig.disableSwitch));
 
   await Promise.all(loadEnemyAssets);
   battle.enemyParty.forEach((enemyPokemon_2, e_1) => {
@@ -241,6 +295,20 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
     const customModifiers = partyConfig?.pokemonConfigs?.map(config => config?.modifierTypes);
     scene.generateEnemyModifiers(customModifiers);
   }
+}
+
+/**
+ * Load special move animations/sfx for hard-coded encounter-specific moves that a pokemon uses at the start of an encounter
+ * See: [startOfBattleEffects](IMysteryEncounter.startOfBattleEffects) for more details
+ *
+ * This promise does not need to be awaited on if called in an encounter onInit (will just load lazily)
+ * @param scene
+ * @param moves
+ */
+export function initCustomMovesForEncounter(scene: BattleScene, moves: Moves | Moves[]) {
+  moves = Array.isArray(moves) ? moves : [moves];
+  return Promise.all(moves.map(move => initMoveAnim(scene, move)))
+    .then(() => loadMoveAnimAssets(scene, moves));
 }
 
 /**
@@ -374,10 +442,10 @@ export function selectPokemonForOption(scene: BattleScene, onPokemonSelected: (p
  * Can have shop displayed or skipped
  * @param scene - Battle Scene
  * @param customShopRewards - adds a shop phase with the specified rewards / reward tiers
- * @param nonShopRewards - will add a non-shop reward phase for each specified item/modifier (can happen in addition to a shop)
+ * @param nonShopPlayerItemRewards - will add a non-shop reward phase for each specified item/modifier (can happen in addition to a shop)
  * @param preRewardsCallback - can execute an arbitrary callback before the new phases if necessary (useful for updating items/party/injecting new phases before MysteryEncounterRewardsPhase)
  */
-export function setEncounterRewards(scene: BattleScene, customShopRewards?: CustomModifierSettings, nonShopRewards?: ModifierTypeFunc[], preRewardsCallback?: Function) {
+export function setEncounterRewards(scene: BattleScene, customShopRewards?: CustomModifierSettings, nonShopPlayerItemRewards?: ModifierTypeFunc[], preRewardsCallback?: Function) {
   scene.currentBattle.mysteryEncounter.doEncounterRewards = (scene: BattleScene) => {
     if (preRewardsCallback) {
       preRewardsCallback();
@@ -389,8 +457,8 @@ export function setEncounterRewards(scene: BattleScene, customShopRewards?: Cust
       scene.tryRemovePhase(p => p instanceof SelectModifierPhase);
     }
 
-    if (nonShopRewards?.length > 0) {
-      nonShopRewards.forEach((reward) => {
+    if (nonShopPlayerItemRewards?.length > 0) {
+      nonShopPlayerItemRewards.forEach((reward) => {
         scene.unshiftPhase(new ModifierRewardPhase(scene, reward));
       });
     } else {
@@ -432,7 +500,8 @@ export function setEncounterExp(scene: BattleScene, participantId: integer | int
     const nonFaintedPartyMembers = party.filter(p => p.hp);
     const expPartyMembers = nonFaintedPartyMembers.filter(p => p.level < scene.getMaxExpLevel());
     const partyMemberExp = [];
-    let expValue = baseExpValue * (useWaveIndex ? scene.currentBattle.waveIndex : 1);
+    // EXP value calculation is based off Pokemon.getExpValue
+    let expValue = Math.floor(baseExpValue * (useWaveIndex ? scene.currentBattle.waveIndex : 1) / 5 + 1);
 
     if (participantIds?.length > 0) {
       if (scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.TRAINER_BATTLE) {
@@ -551,8 +620,10 @@ export function handleMysteryEncounterVictory(scene: BattleScene, addHealPhase: 
     return;
   }
 
-  if (scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.SAFARI_BATTLE) {
-    scene.pushPhase(new MysteryEncounterRewardsPhase(scene, addHealPhase));
+  // If in repeated encounter variant, do nothing
+  // Variant must eventually be swapped in order to handle "true" end of the encounter
+  if (scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.CONTINUOUS_ENCOUNTER) {
+    return;
   } else if (scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.NO_BATTLE) {
     scene.pushPhase(new EggLapsePhase(scene));
     scene.pushPhase(new MysteryEncounterRewardsPhase(scene, addHealPhase));
@@ -568,23 +639,40 @@ export function handleMysteryEncounterVictory(scene: BattleScene, addHealPhase: 
   }
 }
 
-export function hideMysteryEncounterIntroVisuals(scene: BattleScene): Promise<boolean> {
+/**
+ *
+ * @param scene
+ * @param hide - If true, performs ease out and hide visuals. If false, eases in visuals. Defaults to true
+ * @param destroy - If true, will destroy visuals ONLY ON HIDE TRANSITION. Does nothing on show. Defaults to true
+ * @param duration
+ */
+export function transitionMysteryEncounterIntroVisuals(scene: BattleScene, hide: boolean = true, destroy: boolean = true, duration: number = 750): Promise<boolean> {
   return new Promise(resolve => {
     const introVisuals = scene.currentBattle.mysteryEncounter.introVisuals;
     if (introVisuals) {
-      // Hide
+      if (!hide) {
+        // Make sure visuals are in proper state for showing
+        introVisuals.setVisible(true);
+        introVisuals.x += 16;
+        introVisuals.y -= 16;
+        introVisuals.alpha = 0;
+      }
+
+      // Transition
       scene.tweens.add({
         targets: introVisuals,
-        x: "+=16",
-        y: "-=16",
-        alpha: 0,
+        x: `${hide? "+" : "-"}=16`,
+        y: `${hide ? "-" : "+"}=16`,
+        alpha: hide ? 0 : 1,
         ease: "Sine.easeInOut",
-        duration: 750,
+        duration,
         onComplete: () => {
-          scene.field.remove(introVisuals);
-          introVisuals.setVisible(false);
-          introVisuals.destroy();
-          scene.currentBattle.mysteryEncounter.introVisuals = null;
+          if (hide && destroy) {
+            scene.field.remove(introVisuals);
+            introVisuals.setVisible(false);
+            introVisuals.destroy();
+            scene.currentBattle.mysteryEncounter.introVisuals = null;
+          }
           resolve(true);
         }
       });
@@ -592,6 +680,44 @@ export function hideMysteryEncounterIntroVisuals(scene: BattleScene): Promise<bo
       resolve(true);
     }
   });
+}
+
+/**
+ * Will queue moves for any pokemon to use before the first CommandPhase of a battle
+ * Mostly useful for allowing MysteryEncounter enemies to "cheat" and use moves before the first turn
+ * @param scene
+ */
+export function handleMysteryEncounterBattleStartEffects(scene: BattleScene) {
+  const encounter = scene.currentBattle?.mysteryEncounter;
+  if (scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER && encounter.encounterVariant !== MysteryEncounterVariant.NO_BATTLE && !encounter.startOfBattleEffectsComplete) {
+    const effects = encounter.startOfBattleEffects;
+    effects.forEach(effect => {
+      let source;
+      if (effect.sourcePokemon) {
+        source = effect.sourcePokemon;
+      } else if (!isNullOrUndefined(effect.sourceBattlerIndex)) {
+        if (effect.sourceBattlerIndex === BattlerIndex.ATTACKER) {
+          source = scene.getEnemyField()[0];
+        } else if (effect.sourceBattlerIndex === BattlerIndex.ENEMY) {
+          source = scene.getEnemyField()[0];
+        } else if (effect.sourceBattlerIndex === BattlerIndex.ENEMY_2) {
+          source = scene.getEnemyField()[1];
+        } else if (effect.sourceBattlerIndex === BattlerIndex.PLAYER) {
+          source = scene.getPlayerField()[0];
+        } else if (effect.sourceBattlerIndex === BattlerIndex.PLAYER_2) {
+          source = scene.getPlayerField()[1];
+        }
+      } else {
+        source = scene.getEnemyField()[0];
+      }
+      scene.pushPhase(new MovePhase(scene, source, effect.targets, effect.move, effect.followUp, effect.ignorePp));
+    });
+
+    // Pseudo turn end phase to reset flinch states, Endure, etc.
+    scene.pushPhase(new MysteryEncounterBattleStartCleanupPhase(scene));
+
+    encounter.startOfBattleEffectsComplete = true;
+  }
 }
 
 /**
@@ -704,66 +830,4 @@ export function calculateMEAggregateStats(scene: BattleScene, baseSpawnWeight: n
   const superRareMean = runs.reduce((a, b) => a + b[3], 0) / n;
 
   console.log(`Starting weight: ${baseSpawnWeight}\nAverage MEs per run: ${totalMean}\nStandard Deviation: ${totalStd}\nAvg Commons: ${commonMean}\nAvg Uncommons: ${uncommonMean}\nAvg Rares: ${rareMean}\nAvg Super Rares: ${superRareMean}`);
-}
-
-/**
- * Takes care of handling player pokemon KO (with all its side effects)
- *
- * @param scene the battle scene
- * @param pokemon the player pokemon to KO
- */
-export function koPlayerPokemon(scene: BattleScene, pokemon: PlayerPokemon) {
-  pokemon.hp = 0;
-  pokemon.trySetStatus(StatusEffect.FAINT);
-  pokemon.updateInfo();
-  queueEncounterMessage(scene, i18next.t("battle:fainted", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
-}
-
-/**
- * Handles applying hp changes to a player pokemon.
- * Takes care of not going below `0`, above max-hp, adding `FNT` status correctly and updating the pokemon info.
- * TODO: handle special cases like wonder-guard/ninjask
- * @param scene the battle scene
- * @param pokemon the player pokemon to apply the hp change to
- * @param value the hp change amount. Positive for heal. Negative for damage
- *
- */
-function applyHpChangeToPokemon(scene: BattleScene, pokemon: PlayerPokemon, value: number) {
-  const hpChange = Math.round(pokemon.hp + value);
-  const nextHp = Math.max(Math.min(hpChange, pokemon.getMaxHp()), 0);
-  if (nextHp === 0) {
-    koPlayerPokemon(scene, pokemon);
-  } else {
-    pokemon.hp = nextHp;
-  }
-}
-
-/**
- * Handles applying damage to a player pokemon
- * @param scene the battle scene
- * @param pokemon the player pokemon to apply damage to
- * @param damage the amount of damage to apply
- * @see {@linkcode applyHpChangeToPokemon}
- */
-export function applyDamageToPokemon(scene: BattleScene, pokemon: PlayerPokemon, damage: number) {
-  if (damage <= 0) {
-    console.warn("Healing pokemon with `applyDamageToPokemon` is not recommended! Please use `applyHealToPokemon` instead.");
-  }
-
-  applyHpChangeToPokemon(scene, pokemon, -damage);
-}
-
-/**
- * Handles applying heal to a player pokemon
- * @param scene the battle scene
- * @param pokemon the player pokemon to apply heal to
- * @param heal the amount of heal to apply
- * @see {@linkcode applyHpChangeToPokemon}
- */
-export function applyHealToPokemon(scene: BattleScene, pokemon: PlayerPokemon, heal: number) {
-  if (heal <= 0) {
-    console.warn("Damaging pokemong with `applyHealToPokemon` is not recommended! Please use `applyDamageToPokemon` instead.");
-  }
-
-  applyHpChangeToPokemon(scene, pokemon, heal);
 }

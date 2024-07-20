@@ -1,5 +1,5 @@
 import { EnemyPartyConfig } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import Pokemon, { PlayerPokemon } from "#app/field/pokemon";
+import Pokemon, { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { isNullOrUndefined } from "#app/utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "../../battle-scene";
@@ -18,6 +18,8 @@ import {
   StatusEffectRequirement,
   WaveRangeRequirement
 } from "./mystery-encounter-requirements";
+import { BattlerIndex } from "#app/battle";
+import { EncounterAnim } from "#app/data/battle-anims";
 
 export enum MysteryEncounterVariant {
   DEFAULT,
@@ -25,15 +27,28 @@ export enum MysteryEncounterVariant {
   WILD_BATTLE,
   BOSS_BATTLE,
   NO_BATTLE,
-  SAFARI_BATTLE
+  /** For spawning new encounter queries instead of continuing to next wave */
+  CONTINUOUS_ENCOUNTER
 }
 
+/**
+ * Enum values are base spawn weights of each tier
+ */
 export enum MysteryEncounterTier {
-  COMMON,
-  GREAT,
-  ULTRA,
-  ROGUE,
-  MASTER // Not currently used
+  COMMON = 64,
+  GREAT = 40,
+  ULTRA = 21,
+  ROGUE = 3,
+  MASTER = 0 // Not currently used
+}
+
+export interface StartOfBattleEffect {
+  sourcePokemon?: Pokemon;
+  sourceBattlerIndex?: BattlerIndex;
+  targets: BattlerIndex[];
+  move: PokemonMove;
+  ignorePp: boolean;
+  followUp?: boolean;
 }
 
 export default interface IMysteryEncounter {
@@ -47,13 +62,23 @@ export default interface IMysteryEncounter {
    * Optional params
    */
   encounterTier?: MysteryEncounterTier;
+  encounterAnimations?: EncounterAnim[];
   hideBattleIntroMessage?: boolean;
-  hideIntroVisuals?: boolean;
+  autoHideIntroVisuals?: boolean;
   catchAllowed?: boolean;
   maxAllowedEncounters?: number;
-  doEncounterExp?: (scene: BattleScene) => boolean;
-  doEncounterRewards?: (scene: BattleScene) => boolean;
+
+  /**
+   * Event callback functions
+   */
+  /** Event when Encounter is first loaded, use it for data conditioning */
   onInit?: (scene: BattleScene) => boolean;
+  /** Event when battlefield visuals have finished sliding in and the encounter dialogue begins */
+  onVisualsStart?: (scene: BattleScene) => boolean;
+  /** Will provide the player party EXP before rewards are displayed for that wave */
+  doEncounterExp?: (scene: BattleScene) => boolean;
+  /** Will provide the player a rewards shop for that wave */
+  doEncounterRewards?: (scene: BattleScene) => boolean;
 
   /**
    * Requirements
@@ -113,19 +138,22 @@ export default interface IMysteryEncounter {
    */
   lockEncounterRewardTiers?: boolean;
   /**
+   * Will be set automatically, indicates special moves in startOfBattleEffects are complete (so will not repeat)
+   */
+  startOfBattleEffectsComplete?: boolean;
+  /**
    * Will be set by option select handlers automatically, and can be used to refer to which option was chosen by later phases
    */
   selectedOption?: MysteryEncounterOption;
+  /**
+   * Will be set by option select handlers automatically, and can be used to refer to which option was chosen by later phases
+   */
+  startOfBattleEffects?: StartOfBattleEffect[];
   /**
    * Can be set higher or lower based on the type of battle or exp gained for an option/encounter
    * Defaults to 1
    */
   expMultiplier?: number;
-  /**
-   * Used for keeping RNG consistent on session resets, but increments when cycling through multiple "Encounters" on the same wave
-   * You should never need to modify this
-   */
-  seedOffset?: any;
   /**
    * Generic property to set any custom data required for the encounter
    * Extremely useful for carrying state/data between onPreOptionPhase/onOptionPhase/onPostOptionPhase
@@ -139,6 +167,12 @@ export default interface IMysteryEncounter {
  * Unless you know what you're doing, you should use MysteryEncounterBuilder to create an instance for this class
  */
 export default class IMysteryEncounter implements IMysteryEncounter {
+  /**
+   * Used for keeping RNG consistent on session resets, but increments when cycling through multiple "Encounters" on the same wave
+   * You should only need to interact via getter/update methods
+   */
+  private seedOffset?: any;
+
   constructor(encounter: IMysteryEncounter) {
     if (!isNullOrUndefined(encounter)) {
       Object.assign(this, encounter);
@@ -150,9 +184,11 @@ export default class IMysteryEncounter implements IMysteryEncounter {
     this.encounterVariant = MysteryEncounterVariant.DEFAULT;
     this.requirements = this.requirements ? this.requirements : [];
     this.hideBattleIntroMessage = !isNullOrUndefined(this.hideBattleIntroMessage) ? this.hideBattleIntroMessage : false;
-    this.hideIntroVisuals = !isNullOrUndefined(this.hideIntroVisuals) ? this.hideIntroVisuals : true;
+    this.autoHideIntroVisuals = !isNullOrUndefined(this.autoHideIntroVisuals) ? this.autoHideIntroVisuals : true;
+    this.startOfBattleEffects = this.startOfBattleEffects ?? [];
 
     // Reset any dirty flags or encounter data
+    this.startOfBattleEffectsComplete = false;
     this.lockEncounterRewardTiers = true;
     this.dialogueTokens = {};
     this.enemyPartyConfigs = [];
@@ -171,13 +207,6 @@ export default class IMysteryEncounter implements IMysteryEncounter {
     const sceneReq = !this.requirements.some(requirement => !requirement.meetsRequirement(scene));
     const secReqs = this.meetsSecondaryRequirementAndSecondaryPokemonSelected(scene); // secondary is checked first to handle cases of primary overlapping with secondary
     const priReqs = this.meetsPrimaryRequirementAndPrimaryPokemonSelected(scene);
-
-    // console.log("-------" + MysteryEncounterType[this.encounterType] + " Encounter Check -------");
-    // console.log(this);
-    // console.log( "sceneCheck: " + sceneReq);
-    // console.log( "primaryCheck: " +  priReqs);
-    // console.log( "secondaryCheck: " +  secReqs);
-    // console.log(MysteryEncounterTier[this.encounterTier]);
 
     return sceneReq && secReqs && priReqs;
   }
@@ -343,6 +372,27 @@ export default class IMysteryEncounter implements IMysteryEncounter {
     this.dialogueTokens[key] = value;
   }
 
+  /**
+   * If an encounter uses {@link MysteryEncounterVariant.CONTINUOUS_ENCOUNTER},
+   * should rely on this value for seed offset instead of wave index.
+   *
+   * This offset is incremented for each new {@link MysteryEncounterPhase} that occurs,
+   * so multi-encounter RNG will be consistent on resets and not be affected by number of turns, move RNG, etc.
+   */
+  getSeedOffset?() {
+    return this.seedOffset;
+  }
+
+  /**
+   * Maintains seed offset for RNG consistency
+   * Increments if the same MysteryEncounter has multiple option select cycles
+   * @param scene
+   */
+  updateSeedOffset?(scene: BattleScene) {
+    const currentOffset = this.seedOffset ?? scene.currentBattle.waveIndex * 1000;
+    this.seedOffset = currentOffset + 512;
+  }
+
   private capitalizeFirstLetter?(str: string) {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
@@ -355,14 +405,18 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
 
   dialogue?: MysteryEncounterDialogue;
   encounterTier?: MysteryEncounterTier;
+  encounterAnimations?: EncounterAnim[];
   requirements?: EncounterSceneRequirement[] = [];
   primaryPokemonRequirements?: EncounterPokemonRequirement[] = [];
   secondaryPokemonRequirements ?: EncounterPokemonRequirement[] = [];
   excludePrimaryFromSupportRequirements?: boolean;
   dialogueTokens?: Record<string, string>;
+
   doEncounterExp?: (scene: BattleScene) => boolean;
   doEncounterRewards?: (scene: BattleScene) => boolean;
   onInit?: (scene: BattleScene) => boolean;
+  onVisualsStart?: (scene: BattleScene) => boolean;
+
   hideBattleIntroMessage?: boolean;
   hideIntroVisuals?: boolean;
   enemyPartyConfigs?: EnemyPartyConfig[] = [];
@@ -410,7 +464,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * @param callback - {@linkcode OptionPhaseCallback}
    * @returns
    */
-  withSimpleOption(dialogue: OptionTextDisplay, callback: OptionPhaseCallback) {
+  withSimpleOption(dialogue: OptionTextDisplay, callback: OptionPhaseCallback): this & Pick<IMysteryEncounter, "options"> {
     return this.withOption(new MysteryEncounterOptionBuilder().withOptionMode(EncounterOptionMode.DEFAULT).withDialogue(dialogue).withOptionPhase(callback).build());
   }
 
@@ -451,6 +505,18 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    */
   withEncounterTier(encounterTier: MysteryEncounterTier): this & Required<Pick<IMysteryEncounter, "encounterTier">> {
     return Object.assign(this, { encounterTier: encounterTier });
+  }
+
+  /**
+   * Defines any EncounterAnim animations that are intended to be used during the encounter
+   * EncounterAnims can be played at any point during an encounter or callback
+   * They just need to be specified here so that resources are loaded on encounter init
+   * @param encounterAnimations
+   * @returns
+   */
+  withAnimations(...encounterAnimations: EncounterAnim[]): this & Required<Pick<IMysteryEncounter, "encounterAnimations">> {
+    const animations = Array.isArray(encounterAnimations) ? encounterAnimations : [encounterAnimations];
+    return Object.assign(this, { encounterAnimations: animations });
   }
 
   /**
@@ -583,6 +649,16 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   }
 
   /**
+   * Can be used to perform some extra logic (usually animations) when the enemy field is finished sliding in
+   *
+   * @param onVisualsStart - synchronous callback function to perform as soon as the enemy field finishes sliding in
+   * @returns
+   */
+  withOnVisualsStart(onVisualsStart: (scene: BattleScene) => boolean): this & Required<Pick<IMysteryEncounter, "onVisualsStart">> {
+    return Object.assign(this, { onVisualsStart: onVisualsStart });
+  }
+
+  /**
    * Defines any enemies to use for a battle from the mystery encounter
    * @param enemyPartyConfig
    * @returns
@@ -611,11 +687,11 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   }
 
   /**
-   * @param hideIntroVisuals - if false, will not hide the intro visuals that are displayed at the beginning of encounter
+   * @param autoHideIntroVisuals - if false, will not hide the intro visuals that are displayed at the beginning of encounter
    * @returns
    */
-  withHideIntroVisuals(hideIntroVisuals: boolean): this & Required<Pick<IMysteryEncounter, "hideIntroVisuals">> {
-    return Object.assign(this, { hideIntroVisuals: hideIntroVisuals });
+  withAutoHideIntroVisuals(autoHideIntroVisuals: boolean): this & Required<Pick<IMysteryEncounter, "autoHideIntroVisuals">> {
+    return Object.assign(this, { autoHideIntroVisuals: autoHideIntroVisuals });
   }
 
   /**

@@ -317,7 +317,7 @@ export class Arena {
     this.eventTarget.dispatchEvent(new WeatherChangedEvent(oldWeatherType, this.weather?.weatherType, this.weather?.turnsLeft));
 
     if (this.weather) {
-      this.scene.unshiftPhase(new CommonAnimPhase(this.scene, undefined, undefined, CommonAnim.SUNNY + (weather - 1)));
+      this.scene.unshiftPhase(new CommonAnimPhase(this.scene, undefined, undefined, CommonAnim.SUNNY + (weather - 1), true));
       this.scene.queueMessage(getWeatherStartMessage(weather));
     } else {
       this.scene.queueMessage(getWeatherClearMessage(oldWeatherType));

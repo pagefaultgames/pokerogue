@@ -23,12 +23,6 @@ export class EncounterOptionsDialogue {
   options?: [...OptionTextDisplay[]]; // Options array with minimum 2 options
 }
 
-export default class MysteryEncounterDialogue {
-  intro?: TextDisplay[];
-  encounterOptionsDialogue?: EncounterOptionsDialogue;
-  outro?: TextDisplay[];
-}
-
 /**
  * Example MysteryEncounterDialogue object:
  *
@@ -72,3 +66,9 @@ export default class MysteryEncounterDialogue {
  }
  *
  */
+export default class MysteryEncounterDialogue {
+  intro?: TextDisplay[];
+  encounterOptionsDialogue?: EncounterOptionsDialogue;
+  outro?: TextDisplay[];
+}
+

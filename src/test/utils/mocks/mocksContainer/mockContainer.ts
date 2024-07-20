@@ -154,6 +154,10 @@ export default class MockContainer {
     // Sends this Game Object to the back of its parent's display list.
   }
 
+  moveTo(obj) {
+    // Moves this Game Object to the given index in the list.
+  }
+
   moveAbove(obj) {
     // Moves this Game Object to be above the given Game Object in the display list.
   }

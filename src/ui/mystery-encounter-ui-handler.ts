@@ -4,7 +4,7 @@ import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import { Button } from "#enums/buttons";
 import { addWindow, WindowVariant } from "./ui-theme";
-import { MysteryEncounterPhase } from "../phases/mystery-encounter-phase";
+import { MysteryEncounterPhase } from "../phases/mystery-encounter-phases";
 import { PartyUiMode } from "./party-ui-handler";
 import MysteryEncounterOption, { EncounterOptionMode } from "../data/mystery-encounters/mystery-encounter-option";
 import * as Utils from "../utils";
@@ -12,6 +12,7 @@ import { isNullOrUndefined } from "../utils";
 import { getPokeballAtlasKey } from "../data/pokeball";
 import { OptionSelectSettings } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { MysteryEncounterTier } from "#app/data/mystery-encounters/mystery-encounter";
 
 export default class MysteryEncounterUiHandler extends UiHandler {
   private cursorContainer: Phaser.GameObjects.Container;
@@ -368,7 +369,11 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     titleTextObject.setPosition(72 - titleTextObject.displayWidth / 2, 5.5);
 
     // Rarity of encounter
-    const ballType = getPokeballAtlasKey(mysteryEncounter.encounterTier as number);
+    const index = mysteryEncounter.encounterTier === MysteryEncounterTier.COMMON ? 0 :
+      mysteryEncounter.encounterTier === MysteryEncounterTier.GREAT ? 1 :
+        mysteryEncounter.encounterTier === MysteryEncounterTier.ULTRA ? 2 :
+          mysteryEncounter.encounterTier === MysteryEncounterTier.ROGUE ? 3 : 4;
+    const ballType = getPokeballAtlasKey(index);
     this.rarityBall.setTexture("pb", ballType);
 
     const descriptionTextObject = addBBCodeTextObject(this.scene, 6, 25, descriptionText, TextStyle.TOOLTIP_CONTENT, { wordWrap: { width: 830 } });

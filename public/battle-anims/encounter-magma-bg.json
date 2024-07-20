@@ -1,0 +1,66 @@
+{
+  "frames": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    []
+  ],
+  "frameTimedEvents": {
+    "0": [
+      {
+        "frameIndex": 0,
+        "resourceName": "PRAS- Fire BG",
+        "bgX": 0,
+        "bgY": 0,
+        "opacity": 0,
+        "duration": 35,
+        "eventType": "AnimTimedAddBgEvent"
+      },
+      {
+        "frameIndex": 0,
+        "resourceName": "",
+        "bgX": 0,
+        "bgY": 0,
+        "opacity": 255,
+        "duration": 12,
+        "eventType": "AnimTimedUpdateBgEvent"
+      }
+    ],
+    "25": [
+      {
+        "frameIndex": 25,
+        "resourceName": "",
+        "bgX": 0,
+        "bgY": 0,
+        "opacity": 0,
+        "duration": 8,
+        "eventType": "AnimTimedUpdateBgEvent"
+      }
+    ]
+  },
+  "position": 1,
+  "hue": 0
+}

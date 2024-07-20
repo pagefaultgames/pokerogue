@@ -17,9 +17,9 @@ export const theStrongStuffDialogue = {
     2: {
       label: "Battle the Shuckle",
       tooltip: "(-) Hard Battle\n(+) Special Rewards",
-      selected:
-        "{{option2PrimaryName}} flies ahead of your boat, guiding you back on track.\n{{option2PrimaryName}} seems to also have gotten stronger in this time of need.",
+      selected: "Enraged, the Shuckle drinks some of its juice and attacks!",
+      stat_boost: "The Shuckle's juice boosts its stats!",
     },
   },
-  outro: "You are back on track."
+  outro: "What a bizarre turn of events."
 };

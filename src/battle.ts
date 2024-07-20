@@ -206,7 +206,7 @@ export default class Battle {
   getBgmOverride(scene: BattleScene): string {
     const battlers = this.enemyParty.slice(0, this.getBattlerCount());
     if (this.battleType === BattleType.TRAINER || this.mysteryEncounter?.encounterVariant === MysteryEncounterVariant.TRAINER_BATTLE) {
-      if (!this.started && this.trainer.config.encounterBgm && this.trainer.getEncounterMessages()?.length) {
+      if (!this.started && this.trainer.config.encounterBgm && this.trainer.getEncounterMessages().length) {
         return `encounter_${this.trainer.getEncounterBgm()}`;
       }
       if (scene.musicPreference === 0) {
