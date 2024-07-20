@@ -11,5 +11,6 @@ export enum MysteryEncounterType {
   SAFARI_ZONE,
   LOST_AT_SEA, //might be generalized later on
   FIERY_FALLOUT,
-  THE_STRONG_STUFF
+  THE_STRONG_STUFF,
+  POKEMON_SALESMAN
 }

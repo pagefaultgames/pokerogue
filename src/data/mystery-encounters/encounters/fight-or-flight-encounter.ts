@@ -87,6 +87,7 @@ export const FightOrFlightEncounter: IMysteryEncounter =
           y: -5,
           scale: 0.75,
           isItem: true,
+          disableAnimation: true
         },
         {
           spriteKey: bossSpriteKey,

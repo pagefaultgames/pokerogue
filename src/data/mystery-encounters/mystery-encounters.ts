@@ -14,6 +14,7 @@ import IMysteryEncounter from "./mystery-encounter";
 import { SafariZoneEncounter } from "#app/data/mystery-encounters/encounters/safari-zone-encounter";
 import { FieryFalloutEncounter } from "#app/data/mystery-encounters/encounters/fiery-fallout-encounter";
 import { TheStrongStuffEncounter } from "#app/data/mystery-encounters/encounters/the-strong-stuff-encounter";
+import { PokemonSalesmanEncounter } from "#app/data/mystery-encounters/encounters/pokemon-salesman-encounter";
 
 // Spawn chance: (BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT + WIGHT_INCREMENT_ON_SPAWN_MISS * <number of missed spawns>) / 256
 export const BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT = 1;
@@ -132,13 +133,13 @@ const nonExtremeBiomeEncounters: MysteryEncounterType[] = [
 
 const humanTransitableBiomeEncounters: MysteryEncounterType[] = [
   MysteryEncounterType.MYSTERIOUS_CHALLENGERS,
-  MysteryEncounterType.SHADY_VITAMIN_DEALER
+  MysteryEncounterType.SHADY_VITAMIN_DEALER,
+  MysteryEncounterType.POKEMON_SALESMAN
 ];
 
 const civilizationBiomeEncounters: MysteryEncounterType[] = [
   MysteryEncounterType.DEPARTMENT_STORE_SALE
 ];
-
 
 /**
  * To add an encounter to every biome possible, use this array
@@ -225,6 +226,7 @@ export function initMysteryEncounters() {
   allMysteryEncounters[MysteryEncounterType.LOST_AT_SEA] = LostAtSeaEncounter;
   allMysteryEncounters[MysteryEncounterType.FIERY_FALLOUT] = FieryFalloutEncounter;
   allMysteryEncounters[MysteryEncounterType.THE_STRONG_STUFF] = TheStrongStuffEncounter;
+  allMysteryEncounters[MysteryEncounterType.POKEMON_SALESMAN] = PokemonSalesmanEncounter;
 
   // Add extreme encounters to biome map
   extremeBiomeEncounters.forEach(encounter => {

@@ -19,6 +19,11 @@ import { BerryType } from "#enums/berry-type";
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:theStrongStuff";
 
+/**
+ * Pokemon Salesman encounter.
+ * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/54 | GitHub Issue #54}
+ * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
+ */
 export const TheStrongStuffEncounter: IMysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.THE_STRONG_STUFF)
     .withEncounterTier(MysteryEncounterTier.COMMON)
@@ -28,12 +33,13 @@ export const TheStrongStuffEncounter: IMysteryEncounter =
     .withIntroSpriteConfigs([
       {
         spriteKey: "berry_juice",
-        fileRoot: "mystery-encounters",
+        fileRoot: "items",
         hasShadow: true,
+        isItem: true,
         scale: 1.5,
         x: -15,
         y: 3,
-        yShadow: 0
+        disableAnimation: true
       },
       {
         spriteKey: Species.SHUCKLE.toString(),

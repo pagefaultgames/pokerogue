@@ -621,6 +621,27 @@ export class PokemonBaseStatBoosterModifierType extends PokemonHeldItemModifierT
   }
 }
 
+export class PokemonBaseStatTotalModifierType extends PokemonHeldItemModifierType implements GeneratedPersistentModifierType {
+  private readonly statModifier: integer;
+
+  constructor(statModifier: integer) {
+    super("modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE", "berry_juice", (_type, args) => new Modifiers.PokemonBaseStatTotalModifier(this, (args[0] as Pokemon).id, this.statModifier));
+    this.statModifier = statModifier;
+  }
+
+  getDescription(scene: BattleScene): string {
+    return i18next.t("modifierType:ModifierType.PokemonBaseStatTotalModifierType.description", {
+      increaseDecrease: i18next.t(this.statModifier >= 0 ? "modifierType:ModifierType.PokemonBaseStatTotalModifierType.extra.increase" : "modifierType:ModifierType.PokemonBaseStatTotalModifierType.extra.decrease"),
+      blessCurse: i18next.t(this.statModifier >= 0 ? "modifierType:ModifierType.PokemonBaseStatTotalModifierType.extra.blessed" : "modifierType:ModifierType.PokemonBaseStatTotalModifierType.extra.cursed"),
+      statValue: this.statModifier,
+    });
+  }
+
+  getPregenArgs(): any[] {
+    return [ this.statModifier ];
+  }
+}
+
 class AllPokemonFullHpRestoreModifierType extends ModifierType {
   private descriptionKey: string;
 
@@ -1354,6 +1375,13 @@ export const modifierTypes = {
   ENEMY_STATUS_EFFECT_HEAL_CHANCE: () => new ModifierType("modifierType:ModifierType.ENEMY_STATUS_EFFECT_HEAL_CHANCE", "wl_full_heal", (type, _args) => new Modifiers.EnemyStatusEffectHealChanceModifier(type, 2.5, 10)),
   ENEMY_ENDURE_CHANCE: () => new EnemyEndureChanceModifierType("modifierType:ModifierType.ENEMY_ENDURE_CHANCE", "wl_reset_urge", 2),
   ENEMY_FUSED_CHANCE: () => new ModifierType("modifierType:ModifierType.ENEMY_FUSED_CHANCE", "wl_custom_spliced", (type, _args) => new Modifiers.EnemyFusionChanceModifier(type, 1)),
+
+  MYSTERY_ENCOUNTER_SHUCKLE_JUICE: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
+    if (pregenArgs) {
+      return new PokemonBaseStatTotalModifierType(pregenArgs[0] as integer);
+    }
+    return new PokemonBaseStatTotalModifierType(Utils.randSeedInt(20));
+  }),
 };
 
 interface ModifierPool {
