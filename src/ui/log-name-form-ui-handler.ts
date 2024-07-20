@@ -54,22 +54,23 @@ export default class LogNameFormUiHandler extends FormModalUiHandler {
     //const label = addTextObject(this.scene, 10, 87, "Clicking Export or ExSheets does NOT save any text you entered\nPress \"Rename\", then reopen this menu and click Export", TextStyle.TOOLTIP_CONTENT, { fontSize: "42px" });
     //this.modalContainer.add(label);
 
-    this.inputs[0].maxLength = 99
-    this.inputs[1].maxLength = 200
+    this.inputs[0].maxLength = 99;
+    this.inputs[1].maxLength = 200;
   }
 
   show(args: any[]): boolean {
-    this.name = args[0].autofillfields[0]
+    console.log(args)
+    this.name = args[0].autofillfields[0];
     if (super.show(args)) {
       const config = args[0] as ModalConfig;
-      console.log("Shown", args)
+      console.log("Shown", args);
 
       const originalLoginAction = this.submitAction;
-      this.inputs[0].setText(args[0].autofillfields[0])
-      this.inputs[1].setText(args[0].autofillfields[1])
-      this.inputs[2].setText(args[0].autofillfields[2])
+      this.inputs[0].setText(args[0].autofillfields[0]);
+      this.inputs[1].setText(args[0].autofillfields[1]);
+      this.inputs[2].setText(args[0].autofillfields[2]);
       this.submitAction = (_) => {
-        console.log("submitAction")
+        console.log("submitAction");
         // Prevent overlapping overrides on action modification
         this.submitAction = originalLoginAction;
         this.sanitizeInputs();
@@ -81,21 +82,21 @@ export default class LogNameFormUiHandler extends FormModalUiHandler {
         if (!this.inputs[0].text) {
           //return onFail(i18next.t("menu:emptyUsername"));
         }
-        console.log(`Calling LoggerTools.setFileInfo(${this.inputs[0].text}, ${this.inputs[1].text.split(",")})`)
-        LoggerTools.setFileInfo(this.inputs[0].text, this.inputs[1].text.split(","))
-        console.log(`Calling originalLoginAction()`)
-        originalLoginAction()
+        console.log(`Calling LoggerTools.setFileInfo(${this.inputs[0].text}, ${this.inputs[1].text.split(",")})`);
+        LoggerTools.setFileInfo(this.inputs[0].text, this.inputs[1].text.split(","));
+        console.log("Calling originalLoginAction()");
+        originalLoginAction();
       };
-      const exportaction1 = config.buttonActions[1]
+      const exportaction1 = config.buttonActions[1];
       config.buttonActions[1] = (_) => {
-        LoggerTools.setFileInfo(this.inputs[0].text, this.inputs[1].text.split(","))
-        exportaction1()
-      }
-      const exportaction2 = config.buttonActions[2]
+        LoggerTools.setFileInfo(this.inputs[0].text, this.inputs[1].text.split(","));
+        exportaction1();
+      };
+      const exportaction2 = config.buttonActions[2];
       config.buttonActions[2] = (_) => {
-        LoggerTools.setFileInfo(this.inputs[0].text, this.inputs[1].text.split(","))
-        exportaction2()
-      }
+        LoggerTools.setFileInfo(this.inputs[0].text, this.inputs[1].text.split(","));
+        exportaction2();
+      };
 
       return true;
     }
