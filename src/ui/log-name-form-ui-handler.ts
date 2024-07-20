@@ -83,18 +83,18 @@ export default class LogNameFormUiHandler extends FormModalUiHandler {
           //return onFail(i18next.t("menu:emptyUsername"));
         }
         console.log(`Calling LoggerTools.setFileInfo(${this.inputs[0].text}, ${this.inputs[1].text.split(",")})`);
-        LoggerTools.setFileInfo(this.inputs[0].text, this.inputs[1].text.split(","), this.inputs[2].text);
+        LoggerTools.setFileInfo(this.inputs[0].text, this.inputs[1].text.split(","));
         console.log("Calling originalLoginAction()");
         originalLoginAction();
       };
       const exportaction1 = config.buttonActions[1];
       config.buttonActions[1] = (_) => {
-        LoggerTools.setFileInfo(this.inputs[0].text, this.inputs[1].text.split(","), this.inputs[2].text);
+        LoggerTools.setFileInfo(this.inputs[0].text, this.inputs[1].text.split(","));
         exportaction1();
       };
       const exportaction2 = config.buttonActions[2];
       config.buttonActions[2] = (_) => {
-        LoggerTools.setFileInfo(this.inputs[0].text, this.inputs[1].text.split(","), this.inputs[2].text);
+        LoggerTools.setFileInfo(this.inputs[0].text, this.inputs[1].text.split(","));
         exportaction2();
       };
 
