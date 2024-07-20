@@ -430,6 +430,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "victory": {
       1: "Mon futur me semble guère radieux."
     },
+  },
   "aether_grunt": {
     "encounter": {
       1: "I'll fight you with all I have to wipe you out!"
