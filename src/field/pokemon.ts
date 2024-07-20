@@ -101,6 +101,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public battleSummonData: PokemonBattleSummonData;
   public turnData: PokemonTurnData;
 
+  /** Used by Mystery Encounters to execute pokemon-specific logic (such as stat boosts) at start of battle */
+  public mysteryEncounterBattleEffects: (pokemon: Pokemon) => void = null;
+
   public fieldPosition: FieldPosition;
 
   public maskEnabled: boolean;
@@ -3931,7 +3934,6 @@ export class PokemonSummonData {
   public moveset: PokemonMove[];
   // If not initialized this value will not be populated from save data.
   public types: Type[] = null;
-  public mysteryEncounterBattleEffects: (pokemon: Pokemon) => void = null;
 }
 
 export class PokemonBattleData {

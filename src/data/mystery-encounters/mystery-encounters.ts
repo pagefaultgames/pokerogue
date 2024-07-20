@@ -8,10 +8,11 @@ import { LostAtSeaEncounter } from "./encounters/lost-at-sea-encounter";
 import { MysteriousChallengersEncounter } from "./encounters/mysterious-challengers-encounter";
 import { MysteriousChestEncounter } from "./encounters/mysterious-chest-encounter";
 import { ShadyVitaminDealerEncounter } from "./encounters/shady-vitamin-dealer-encounter";
-import { SleepingSnorlaxEncounter } from "./encounters/sleeping-snorlax-encounter";
+import { SlumberingSnorlaxEncounter } from "./encounters/slumbering-snorlax-encounter";
 import { TrainingSessionEncounter } from "./encounters/training-session-encounter";
 import IMysteryEncounter from "./mystery-encounter";
 import { SafariZoneEncounter } from "#app/data/mystery-encounters/encounters/safari-zone-encounter";
+import { FieryFalloutEncounter } from "#app/data/mystery-encounters/encounters/fiery-fallout-encounter";
 
 // Spawn chance: (BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT + WIGHT_INCREMENT_ON_SPAWN_MISS * <number of missed spawns>) / 256
 export const BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT = 1;
@@ -157,14 +158,15 @@ const anyBiomeEncounters: MysteryEncounterType[] = [
  */
 export const mysteryEncountersByBiome = new Map<Biome, MysteryEncounterType[]>([
   [Biome.TOWN, []],
-  [Biome.PLAINS, []],
+  [Biome.PLAINS, [
+    MysteryEncounterType.SLUMBERING_SNORLAX
+  ]],
   [Biome.GRASS, [
-    MysteryEncounterType.SLEEPING_SNORLAX,
+    MysteryEncounterType.SLUMBERING_SNORLAX,
   ]],
   [Biome.TALL_GRASS, []],
   [Biome.METROPOLIS, []],
   [Biome.FOREST, [
-    MysteryEncounterType.SLEEPING_SNORLAX,
     MysteryEncounterType.SAFARI_ZONE
   ]],
 
@@ -177,18 +179,16 @@ export const mysteryEncountersByBiome = new Map<Biome, MysteryEncounterType[]>([
   [Biome.BEACH, []],
   [Biome.LAKE, []],
   [Biome.SEABED, []],
-  [Biome.MOUNTAIN, [
-    MysteryEncounterType.SLEEPING_SNORLAX
-  ]],
+  [Biome.MOUNTAIN, []],
   [Biome.BADLANDS, []],
-  [Biome.CAVE, [
-    MysteryEncounterType.SLEEPING_SNORLAX
-  ]],
+  [Biome.CAVE, []],
   [Biome.DESERT, []],
   [Biome.ICE_CAVE, []],
   [Biome.MEADOW, []],
   [Biome.POWER_PLANT, []],
-  [Biome.VOLCANO, []],
+  [Biome.VOLCANO, [
+    MysteryEncounterType.FIERY_FALLOUT
+  ]],
   [Biome.GRAVEYARD, []],
   [Biome.DOJO, []],
   [Biome.FACTORY, []],
@@ -214,12 +214,13 @@ export function initMysteryEncounters() {
   allMysteryEncounters[MysteryEncounterType.DARK_DEAL] = DarkDealEncounter;
   allMysteryEncounters[MysteryEncounterType.FIGHT_OR_FLIGHT] = FightOrFlightEncounter;
   allMysteryEncounters[MysteryEncounterType.TRAINING_SESSION] = TrainingSessionEncounter;
-  allMysteryEncounters[MysteryEncounterType.SLEEPING_SNORLAX] = SleepingSnorlaxEncounter;
+  allMysteryEncounters[MysteryEncounterType.SLUMBERING_SNORLAX] = SlumberingSnorlaxEncounter;
   allMysteryEncounters[MysteryEncounterType.DEPARTMENT_STORE_SALE] = DepartmentStoreSaleEncounter;
   allMysteryEncounters[MysteryEncounterType.SHADY_VITAMIN_DEALER] = ShadyVitaminDealerEncounter;
   allMysteryEncounters[MysteryEncounterType.FIELD_TRIP] = FieldTripEncounter;
   allMysteryEncounters[MysteryEncounterType.SAFARI_ZONE] = SafariZoneEncounter;
   allMysteryEncounters[MysteryEncounterType.LOST_AT_SEA] = LostAtSeaEncounter;
+  allMysteryEncounters[MysteryEncounterType.FIERY_FALLOUT] = FieryFalloutEncounter;
 
   // Add extreme encounters to biome map
   extremeBiomeEncounters.forEach(encounter => {

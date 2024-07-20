@@ -13,8 +13,13 @@ import IMysteryEncounter, {
 } from "../mystery-encounter";
 
 /** i18n namespace for encounter */
-const namespace = "mysteryEncounter:department_store_sale";
+const namespace = "mysteryEncounter:departmentStoreSale";
 
+/**
+ * Department Store Sale encounter.
+ * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/33 | GitHub Issue #33}
+ * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
+ */
 export const DepartmentStoreSaleEncounter: IMysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.DEPARTMENT_STORE_SALE)
     .withEncounterTier(MysteryEncounterTier.COMMON)
@@ -36,21 +41,21 @@ export const DepartmentStoreSaleEncounter: IMysteryEncounter =
     ])
     .withIntroDialogue([
       {
-        text: `${namespace}_intro_message`,
+        text: `${namespace}:intro`,
       },
       {
-        text: `${namespace}_intro_dialogue`,
-        speaker: `${namespace}_speaker`,
+        text: `${namespace}:intro_dialogue`,
+        speaker: `${namespace}:speaker`,
       },
     ])
-    .withHideIntroVisuals(false)
-    .withTitle(`${namespace}_title`)
-    .withDescription(`${namespace}_description`)
-    .withQuery(`${namespace}_query`)
+    .withAutoHideIntroVisuals(false)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}_option_1_label`,
-        buttonTooltip: `${namespace}_option_1_tooltip`,
+        buttonLabel: `${namespace}:option:1:label`,
+        buttonTooltip: `${namespace}:option:1:tooltip`,
       },
       async (scene: BattleScene) => {
         // Choose TMs
@@ -75,8 +80,8 @@ export const DepartmentStoreSaleEncounter: IMysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}_option_2_label`,
-        buttonTooltip: `${namespace}_option_2_tooltip`,
+        buttonLabel: `${namespace}:option:2:label`,
+        buttonTooltip: `${namespace}:option:2:tooltip`,
       },
       async (scene: BattleScene) => {
         // Choose Vitamins
@@ -99,8 +104,8 @@ export const DepartmentStoreSaleEncounter: IMysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}_option_3_label`,
-        buttonTooltip: `${namespace}_option_3_tooltip`,
+        buttonLabel: `${namespace}:option:3:label`,
+        buttonTooltip: `${namespace}:option:3:tooltip`,
       },
       async (scene: BattleScene) => {
         // Choose X Items
@@ -123,8 +128,8 @@ export const DepartmentStoreSaleEncounter: IMysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}_option_4_label`,
-        buttonTooltip: `${namespace}_option_4_tooltip`,
+        buttonLabel: `${namespace}:option:4:label`,
+        buttonTooltip: `${namespace}:option:4:tooltip`,
       },
       async (scene: BattleScene) => {
         // Choose Pokeballs
@@ -149,4 +154,9 @@ export const DepartmentStoreSaleEncounter: IMysteryEncounter =
         leaveEncounterWithoutBattle(scene);
       }
     )
+    .withOutroDialogue([
+      {
+        text: `${namespace}:outro`,
+      }
+    ])
     .build();

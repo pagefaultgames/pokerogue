@@ -27,10 +27,16 @@ import IMysteryEncounter, {
 } from "../mystery-encounter";
 import { MoveRequirement } from "../mystery-encounter-requirements";
 import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { getPokemonNameWithAffix } from "#app/messages";
 
 /** the i18n namespace for the encounter */
-const namespace = "mysteryEncounter:fight_or_flight";
+const namespace = "mysteryEncounter:fightOrFlight";
 
+/**
+ * Fight or Flight encounter.
+ * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/24 | GitHub Issue #24}
+ * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
+ */
 export const FightOrFlightEncounter: IMysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(
     MysteryEncounterType.FIGHT_OR_FLIGHT
@@ -97,23 +103,23 @@ export const FightOrFlightEncounter: IMysteryEncounter =
       const primaryPokemon = encounter.options[1].primaryPokemon;
       if (primaryPokemon) {
         // Use primaryPokemon to execute the thievery
-        encounter.options[1].dialogue.buttonTooltip = `${namespace}_option_2_steal_tooltip`;
+        encounter.options[1].dialogue.buttonTooltip = `${namespace}:option:2:tooltip_special`;
       } else {
-        encounter.options[1].dialogue.buttonTooltip = `${namespace}_option_2_tooltip`;
+        encounter.options[1].dialogue.buttonTooltip = `${namespace}:option:2:tooltip`;
       }
 
       return true;
     })
-    .withTitle(`${namespace}_title`)
-    .withDescription(`${namespace}_description`)
-    .withQuery(`${namespace}_query`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}_option_1_label`,
-        buttonTooltip: `${namespace}_option_1_tooltip`,
+        buttonLabel: `${namespace}:option:1:label`,
+        buttonTooltip: `${namespace}:option:1:tooltip`,
         selected: [
           {
-            text: `${namespace}_option_1_selected_message`,
+            text: `${namespace}:option:1:selected`,
           },
         ],
       },
@@ -130,8 +136,8 @@ export const FightOrFlightEncounter: IMysteryEncounter =
         .withOptionMode(EncounterOptionMode.DEFAULT_OR_SPECIAL)
         .withPrimaryPokemonRequirement(new MoveRequirement(STEALING_MOVES)) // Will set option2PrimaryName and option2PrimaryMove dialogue tokens automatically
         .withDialogue({
-          buttonLabel: `${namespace}_option_2_label`,
-          buttonTooltip: `${namespace}_option_2_tooltip`,
+          buttonLabel: `${namespace}:option:2:label`,
+          buttonTooltip: `${namespace}:option:2:tooltip`,
         })
         .withOptionPhase(async (scene: BattleScene) => {
           // Pick steal
@@ -143,7 +149,7 @@ export const FightOrFlightEncounter: IMysteryEncounter =
           const primaryPokemon = encounter.options[1].primaryPokemon;
           if (primaryPokemon) {
             // Use primaryPokemon to execute the thievery
-            await showEncounterText(scene, `${namespace}_option_2_steal_result`);
+            await showEncounterText(scene, `${namespace}:option:2:steal_result`);
             leaveEncounterWithoutBattle(scene);
             return;
           }
@@ -154,16 +160,16 @@ export const FightOrFlightEncounter: IMysteryEncounter =
             const config = scene.currentBattle.mysteryEncounter.enemyPartyConfigs[0];
             config.pokemonConfigs[0].tags = [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON];
             config.pokemonConfigs[0].mysteryEncounterBattleEffects = (pokemon: Pokemon) => {
-              pokemon.scene.currentBattle.mysteryEncounter.setDialogueToken("enemyPokemon", pokemon.name);
-              queueEncounterMessage(pokemon.scene, `${namespace}_boss_enraged`);
+              pokemon.scene.currentBattle.mysteryEncounter.setDialogueToken("enemyPokemon", getPokemonNameWithAffix(pokemon));
+              queueEncounterMessage(pokemon.scene, `${namespace}:boss_enraged`);
               pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD], 1));
             };
-            await showEncounterText(scene, `${namespace}_option_2_bad_result`);
+            await showEncounterText(scene, `${namespace}:option:2:bad_result`);
             await initBattleWithEnemyConfig(scene, config);
           } else {
             // Steal item (37.5%)
             // Display result message then proceed to rewards
-            await showEncounterText(scene, `${namespace}_option_2_good_result`);
+            await showEncounterText(scene, `${namespace}:option:2:good_result`);
             leaveEncounterWithoutBattle(scene);
           }
         })
@@ -171,11 +177,11 @@ export const FightOrFlightEncounter: IMysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}_option_3_label`,
-        buttonTooltip: `${namespace}_option_3_tooltip`,
+        buttonLabel: `${namespace}:option:3:label`,
+        buttonTooltip: `${namespace}:option:3:tooltip`,
         selected: [
           {
-            text: `${namespace}_option_3_selected`,
+            text: `${namespace}:option:3:selected`,
           },
         ],
       },

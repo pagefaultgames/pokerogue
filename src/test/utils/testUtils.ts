@@ -1,6 +1,5 @@
 import i18next, { type ParseKeys } from "i18next";
 import { vi } from "vitest";
-import GameManager from "./gameManager";
 
 /**
  * Sets up the i18next mock.
@@ -21,16 +20,4 @@ export function mockI18next() {
  */
 export function arrayOfRange(start: integer, end: integer) {
   return Array.from({ length: end - start }, (_v, k) => k + start);
-}
-
-/**
- * Woraround to reinitialize the game scene with overrides being set properly.
- * By default the scene is initialized without all overrides even having a chance to be applied.
- * @warning USE AT YOUR OWN RISK! Might be deleted in the future
- * @param game The game manager
- * @deprecated
- */
-export async function workaround_reInitSceneWithOverrides(game: GameManager) {
-  await game.runToTitle();
-  game.gameWrapper.setScene(game.scene);
 }

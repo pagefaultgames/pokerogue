@@ -2,7 +2,7 @@ import i18next from "i18next";
 import BattleScene from "../battle-scene";
 import { Phase } from "../phase";
 import { Mode } from "../ui/ui";
-import { hideMysteryEncounterIntroVisuals, OptionSelectSettings } from "../data/mystery-encounters/utils/encounter-phase-utils";
+import { transitionMysteryEncounterIntroVisuals, OptionSelectSettings } from "../data/mystery-encounters/utils/encounter-phase-utils";
 import { CheckSwitchPhase, NewBattlePhase, ReturnPhase, ScanIvsPhase, SelectModifierPhase, SummonPhase, ToggleDoublePositionPhase } from "../phases";
 import MysteryEncounterOption, { OptionPhaseCallback } from "../data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterVariant } from "../data/mystery-encounters/mystery-encounter";
@@ -14,6 +14,7 @@ import { IvScannerModifier } from "../modifier/modifier";
 import * as Utils from "../utils";
 import { isNullOrUndefined } from "../utils";
 import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { BattlerTagLapseType } from "#app/data/battler-tags";
 
 /**
  * Will handle (in order):
@@ -26,6 +27,8 @@ import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-d
  */
 export class MysteryEncounterPhase extends Phase {
   optionSelectSettings: OptionSelectSettings;
+
+  private FIRST_DIALOGUE_PROMPT_DELAY = 300;
 
   /**
    *
@@ -45,9 +48,7 @@ export class MysteryEncounterPhase extends Phase {
     this.scene.clearPhaseQueue();
     this.scene.clearPhaseQueueSplice();
 
-    // Generates seed offset for RNG consistency, but incremented if the same MysteryEncounter has multiple option select cycles
-    const offset = this.scene.currentBattle.mysteryEncounter.seedOffset ?? this.scene.currentBattle.waveIndex * 1000;
-    this.scene.currentBattle.mysteryEncounter.seedOffset = offset + 512;
+    this.scene.currentBattle.mysteryEncounter.updateSeedOffset(this.scene);
 
     if (!this.optionSelectSettings) {
       // Sets flag that ME was encountered, only if this is not a followup option select phase
@@ -78,7 +79,7 @@ export class MysteryEncounterPhase extends Phase {
               this.continueEncounter();
             }
           });
-      }, this.scene.currentBattle.mysteryEncounter.seedOffset);
+      }, this.scene.currentBattle.mysteryEncounter.getSeedOffset());
     } else {
       this.continueEncounter();
     }
@@ -108,9 +109,9 @@ export class MysteryEncounterPhase extends Phase {
         }
 
         if (title) {
-          this.scene.ui.showDialogue(text, title, null, nextAction, 0, i === 0 ? 750 : 0);
+          this.scene.ui.showDialogue(text, title, null, nextAction, 0, i === 0 ? this.FIRST_DIALOGUE_PROMPT_DELAY : 0);
         } else {
-          this.scene.ui.showText(text, null, nextAction, i === 0 ? 750 : 0, true);
+          this.scene.ui.showText(text, null, nextAction, i === 0 ? this.FIRST_DIALOGUE_PROMPT_DELAY : 0, true);
         }
         i++;
       };
@@ -147,21 +148,43 @@ export class MysteryEncounterOptionSelectedPhase extends Phase {
 
   start() {
     super.start();
-    if (this.scene.currentBattle.mysteryEncounter.hideIntroVisuals) {
-      hideMysteryEncounterIntroVisuals(this.scene).then(() => {
+    if (this.scene.currentBattle.mysteryEncounter.autoHideIntroVisuals) {
+      transitionMysteryEncounterIntroVisuals(this.scene).then(() => {
         this.scene.executeWithSeedOffset(() => {
           this.onOptionSelect(this.scene).finally(() => {
             this.end();
           });
-        }, this.scene.currentBattle.mysteryEncounter.seedOffset);
+        }, this.scene.currentBattle.mysteryEncounter.getSeedOffset());
       });
     } else {
       this.scene.executeWithSeedOffset(() => {
         this.onOptionSelect(this.scene).finally(() => {
           this.end();
         });
-      }, this.scene.currentBattle.mysteryEncounter.seedOffset);
+      }, this.scene.currentBattle.mysteryEncounter.getSeedOffset());
     }
+  }
+}
+
+/**
+ * Runs at the beginning of an Encounter's battle
+ * Will cleanup any residual flinches, Endure, etc. that are left over from startOfBattleEffects
+ * See [TurnEndPhase](../phases.ts) for more details
+ */
+export class MysteryEncounterBattleStartCleanupPhase extends Phase {
+  constructor(scene: BattleScene) {
+    super(scene);
+  }
+
+  start() {
+    super.start();
+
+    const field = this.scene.getField(true).filter(p => p.summonData);
+    field.forEach(pokemon => {
+      pokemon.lapseTags(BattlerTagLapseType.TURN_END);
+    });
+
+    super.end();
   }
 }
 
@@ -173,8 +196,11 @@ export class MysteryEncounterOptionSelectedPhase extends Phase {
  * - Queue the SummonPhases, PostSummonPhases, etc., required to initialize the phase queue for a battle
  */
 export class MysteryEncounterBattlePhase extends Phase {
-  constructor(scene: BattleScene) {
+  disableSwitch: boolean;
+
+  constructor(scene: BattleScene, disableSwitch = false) {
     super(scene);
+    this.disableSwitch = disableSwitch;
   }
 
   start() {
@@ -219,7 +245,7 @@ export class MysteryEncounterBattlePhase extends Phase {
       }
 
       if (!scene.currentBattle.mysteryEncounter.hideBattleIntroMessage) {
-        scene.ui.showText(this.getBattleMessage(scene), null, () => this.endBattleSetup(scene), 1500);
+        scene.ui.showText(this.getBattleMessage(scene), null, () => this.endBattleSetup(scene), 0);
       } else {
         this.endBattleSetup(scene);
       }
@@ -240,7 +266,7 @@ export class MysteryEncounterBattlePhase extends Phase {
           this.endBattleSetup(scene);
         };
         if (!scene.currentBattle.mysteryEncounter.hideBattleIntroMessage) {
-          scene.ui.showText(this.getBattleMessage(scene), null, doTrainerSummon, 1500, true);
+          scene.ui.showText(this.getBattleMessage(scene), null, doTrainerSummon, 1000, true);
         } else {
           doTrainerSummon();
         }
@@ -253,7 +279,7 @@ export class MysteryEncounterBattlePhase extends Phase {
       } else {
         const trainer = this.scene.currentBattle.trainer;
         let message: string;
-        scene.executeWithSeedOffset(() => message = Utils.randSeedItem(encounterMessages), this.scene.currentBattle.mysteryEncounter.seedOffset);
+        scene.executeWithSeedOffset(() => message = Utils.randSeedItem(encounterMessages), this.scene.currentBattle.mysteryEncounter.getSeedOffset());
 
         const showDialogueAndSummon = () => {
           scene.ui.showDialogue(message, trainer.getName(TrainerSlot.NONE, true), null, () => {
@@ -302,7 +328,7 @@ export class MysteryEncounterBattlePhase extends Phase {
       scene.pushPhase(new ToggleDoublePositionPhase(scene, false));
     }
 
-    if (encounterVariant !== MysteryEncounterVariant.TRAINER_BATTLE && (scene.currentBattle.waveIndex > 1 || !scene.gameMode.isDaily)) {
+    if (encounterVariant !== MysteryEncounterVariant.TRAINER_BATTLE && !this.disableSwitch) {
       const minPartySize = scene.currentBattle.double ? 2 : 1;
       if (availablePartyMembers.length > minPartySize) {
         scene.pushPhase(new CheckSwitchPhase(scene, 0, scene.currentBattle.double));
@@ -412,7 +438,7 @@ export class PostMysteryEncounterPhase extends Phase {
               this.continueEncounter();
             }
           });
-      }, this.scene.currentBattle.mysteryEncounter.seedOffset);
+      }, this.scene.currentBattle.mysteryEncounter.getSeedOffset());
     } else {
       this.continueEncounter();
     }

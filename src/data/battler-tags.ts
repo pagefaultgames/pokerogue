@@ -1554,7 +1554,7 @@ export class MysteryEncounterPostSummonTag extends BattlerTag {
       const cancelled = new Utils.BooleanHolder(false);
       applyAbAttrs(ProtectStatAbAttr, pokemon, cancelled);
       if (!cancelled.value) {
-        const mysteryEncounterBattleEffects = pokemon.summonData.mysteryEncounterBattleEffects;
+        const mysteryEncounterBattleEffects = pokemon.mysteryEncounterBattleEffects;
         if (mysteryEncounterBattleEffects) {
           mysteryEncounterBattleEffects(pokemon);
         }

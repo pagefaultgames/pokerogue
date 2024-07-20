@@ -36,16 +36,12 @@ describe("Mystery Encounter Utils", () => {
   describe("getRandomPlayerPokemon", () => {
     it("gets a random pokemon from player party", () => {
       // Seeds are calculated to return index 0 first, 1 second (if both pokemon are legal)
-      scene.waveSeed = "random";
-      Phaser.Math.RND.sow([scene.waveSeed]);
-      scene.rngCounter = 0;
+      game.override.seed("random");
 
       let result = getRandomPlayerPokemon(scene);
       expect(result.species.speciesId).toBe(Species.MANAPHY);
 
-      scene.waveSeed = "random2";
-      Phaser.Math.RND.sow([scene.waveSeed]);
-      scene.rngCounter = 0;
+      game.override.seed("random2");
 
       result = getRandomPlayerPokemon(scene);
       expect(result.species.speciesId).toBe(Species.ARCEUS);
@@ -60,16 +56,12 @@ describe("Mystery Encounter Utils", () => {
       });
 
       // Seeds are calculated to return index 0 first, 1 second (if both pokemon are legal)
-      scene.waveSeed = "random";
-      Phaser.Math.RND.sow([scene.waveSeed]);
-      scene.rngCounter = 0;
+      game.override.seed("random");
 
       let result = getRandomPlayerPokemon(scene);
       expect(result.species.speciesId).toBe(Species.MANAPHY);
 
-      scene.waveSeed = "random2";
-      Phaser.Math.RND.sow([scene.waveSeed]);
-      scene.rngCounter = 0;
+      game.override.seed("random2");
 
       result = getRandomPlayerPokemon(scene);
       expect(result.species.speciesId).toBe(Species.ARCEUS);
@@ -83,16 +75,12 @@ describe("Mystery Encounter Utils", () => {
       party[0].updateInfo();
 
       // Seeds are calculated to return index 0 first, 1 second (if both pokemon are legal)
-      scene.waveSeed = "random";
-      Phaser.Math.RND.sow([scene.waveSeed]);
-      scene.rngCounter = 0;
+      game.override.seed("random");
 
       let result = getRandomPlayerPokemon(scene, true);
       expect(result.species.speciesId).toBe(Species.MANAPHY);
 
-      scene.waveSeed = "random2";
-      Phaser.Math.RND.sow([scene.waveSeed]);
-      scene.rngCounter = 0;
+      game.override.seed("random2");
 
       result = getRandomPlayerPokemon(scene, true);
       expect(result.species.speciesId).toBe(Species.MANAPHY);
@@ -106,16 +94,12 @@ describe("Mystery Encounter Utils", () => {
       party[0].updateInfo();
 
       // Seeds are calculated to return index 0 first, 1 second (if both pokemon are legal)
-      scene.waveSeed = "random";
-      Phaser.Math.RND.sow([scene.waveSeed]);
-      scene.rngCounter = 0;
+      game.override.seed("random");
 
       let result = getRandomPlayerPokemon(scene, true, false);
       expect(result.species.speciesId).toBe(Species.MANAPHY);
 
-      scene.waveSeed = "random2";
-      Phaser.Math.RND.sow([scene.waveSeed]);
-      scene.rngCounter = 0;
+      game.override.seed("random2");
 
       result = getRandomPlayerPokemon(scene, true, false);
       expect(result.species.speciesId).toBe(Species.MANAPHY);
@@ -129,16 +113,12 @@ describe("Mystery Encounter Utils", () => {
       party[0].updateInfo();
 
       // Seeds are calculated to return index 0 first, 1 second (if both pokemon are legal)
-      scene.waveSeed = "random";
-      Phaser.Math.RND.sow([scene.waveSeed]);
-      scene.rngCounter = 0;
+      game.override.seed("random");
 
       let result = getRandomPlayerPokemon(scene, true, true);
       expect(result.species.speciesId).toBe(Species.ARCEUS);
 
-      scene.waveSeed = "random2";
-      Phaser.Math.RND.sow([scene.waveSeed]);
-      scene.rngCounter = 0;
+      game.override.seed("random2");
 
       result = getRandomPlayerPokemon(scene, true, true);
       expect(result.species.speciesId).toBe(Species.ARCEUS);

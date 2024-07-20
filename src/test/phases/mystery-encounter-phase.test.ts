@@ -1,14 +1,14 @@
-import {afterEach, beforeAll, beforeEach, expect, describe, it, vi} from "vitest";
-import * as overrides from "../../overrides";
+import {afterEach, beforeAll, beforeEach, expect, describe, it, vi } from "vitest";
 import GameManager from "#app/test/utils/gameManager";
 import Phaser from "phaser";
 import {Species} from "#enums/species";
-import {MysteryEncounterOptionSelectedPhase, MysteryEncounterPhase} from "#app/phases/mystery-encounter-phase";
+import { MysteryEncounterOptionSelectedPhase, MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import {Mode} from "#app/ui/ui";
 import {Button} from "#enums/buttons";
 import MysteryEncounterUiHandler from "#app/ui/mystery-encounter-ui-handler";
 import {MysteryEncounterType} from "#enums/mystery-encounter-type";
 import {MysteryEncounterTier} from "#app/data/mystery-encounters/mystery-encounter";
+import MessageUiHandler from "#app/ui/message-ui-handler";
 
 describe("Mystery Encounter Phases", () => {
   let phaserGame: Phaser.Game;
@@ -26,34 +26,23 @@ describe("Mystery Encounter Phases", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(overrides, "MYSTERY_ENCOUNTER_RATE_OVERRIDE", "get").mockReturnValue(256);
-    vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(11);
-    vi.spyOn(overrides, "MYSTERY_ENCOUNTER_OVERRIDE", "get").mockReturnValue(MysteryEncounterType.MYSTERIOUS_CHALLENGERS);
-
+    game.override.startingWave(11);
+    game.override.mysteryEncounterChance(100);
+    game.override.mysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS);
     // Seed guarantees wild encounter to be replaced by ME
-    vi.spyOn(game.scene, "resetSeed").mockImplementation(() => {
-      game.scene.waveSeed = "test";
-      Phaser.Math.RND.sow([ game.scene.waveSeed ]);
-      game.scene.rngCounter = 0;
-    });
+    game.override.seed("test");
   });
 
   describe("MysteryEncounterPhase", () => {
     it("Runs to MysteryEncounterPhase", async() => {
-      await game.runToMysteryEncounter([
-        Species.CHARIZARD,
-        Species.VOLCARONA
-      ]);
+      await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, [Species.CHARIZARD, Species.VOLCARONA]);
 
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
       expect(game.scene.getCurrentPhase().constructor.name).toBe(MysteryEncounterPhase.name);
     });
 
     it("Runs MysteryEncounterPhase", async() => {
-      await game.runToMysteryEncounter([
-        Species.CHARIZARD,
-        Species.VOLCARONA
-      ]);
+      await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, [Species.CHARIZARD, Species.VOLCARONA]);
 
       game.onNextPrompt("MysteryEncounterPhase", Mode.MYSTERY_ENCOUNTER, () => {
         // End phase early for test
@@ -70,27 +59,28 @@ describe("Mystery Encounter Phases", () => {
     it("Selects an option for MysteryEncounterPhase", async() => {
       const dialogueSpy = vi.spyOn(game.scene.ui, "showDialogue");
       const messageSpy = vi.spyOn(game.scene.ui, "showText");
-      await game.runToMysteryEncounter([
-        Species.CHARIZARD,
-        Species.VOLCARONA
-      ]);
+      await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, [Species.CHARIZARD, Species.VOLCARONA]);
 
-      game.onNextPrompt("MysteryEncounterPhase", Mode.MYSTERY_ENCOUNTER, () => {
-        // Select option 1 for encounter
-        const handler = game.scene.ui.getHandler() as MysteryEncounterUiHandler;
-        handler.unblockInput();
+      game.onNextPrompt("MysteryEncounterPhase", Mode.MESSAGE, () => {
+        const handler = game.scene.ui.getHandler() as MessageUiHandler;
         handler.processInput(Button.ACTION);
-      }, () => !game.isCurrentPhase(MysteryEncounterPhase));
+      });
+
       await game.phaseInterceptor.run(MysteryEncounterPhase);
 
-      // After option selected
-      expect(game.scene.getCurrentPhase().constructor.name).toBe(MysteryEncounterOptionSelectedPhase.name);
+      // Select option 1 for encounter
+      const handler = game.scene.ui.getHandler() as MysteryEncounterUiHandler;
+      handler.unblockInput();
+      handler.processInput(Button.ACTION);
+
+      // Waitfor required so that option select messages and preOptionPhase logic are handled
+      await vi.waitFor(() => expect(game.scene.getCurrentPhase().constructor.name).toBe(MysteryEncounterOptionSelectedPhase.name));
       expect(game.scene.ui.getMode()).toBe(Mode.MESSAGE);
       expect(dialogueSpy).toHaveBeenCalledTimes(1);
       expect(messageSpy).toHaveBeenCalledTimes(2);
       expect(dialogueSpy).toHaveBeenCalledWith("What's this?", "???", null, expect.any(Function));
       expect(messageSpy).toHaveBeenCalledWith("Mysterious challengers have appeared!", null, expect.any(Function), 750, true);
-      expect(messageSpy).toHaveBeenCalledWith("The trainer steps forward...", null, expect.any(Function), 750, true);
+      expect(messageSpy).toHaveBeenCalledWith("The trainer steps forward...", null, expect.any(Function), 300, true);
     });
   });
 

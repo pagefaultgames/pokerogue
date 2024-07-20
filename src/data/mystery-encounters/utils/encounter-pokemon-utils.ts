@@ -98,8 +98,8 @@ export function getLowestLevelPlayerPokemon(scene: BattleScene, unfainted: boole
  * @returns
  */
 export function getRandomSpeciesByStarterTier(starterTiers: number | [number, number], excludedSpecies?: Species[], types?: Type[]): Species {
-  let min = starterTiers instanceof Array ? starterTiers[0] : starterTiers;
-  let max = starterTiers instanceof Array ? starterTiers[1] : starterTiers;
+  let min = Array.isArray(starterTiers) ? starterTiers[0] : starterTiers;
+  let max = Array.isArray(starterTiers) ? starterTiers[1] : starterTiers;
 
   let filteredSpecies: [PokemonSpecies, number][] = Object.keys(speciesStarters)
     .map(s => [parseInt(s) as Species, speciesStarters[s] as number])
@@ -167,7 +167,6 @@ export function trainerThrowPokeball(scene: BattleScene, pokemon: EnemyPokemon, 
   pokeball.setOrigin(0.5, 0.625);
   scene.field.add(pokeball);
 
-  scene.playSound("pb_throw");
   scene.time.delayedCall(300, () => {
     scene.field.moveBelow(pokeball as Phaser.GameObjects.GameObject, pokemon);
   });
@@ -175,6 +174,8 @@ export function trainerThrowPokeball(scene: BattleScene, pokemon: EnemyPokemon, 
   return new Promise(resolve => {
     scene.trainer.setTexture(`trainer_${scene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back_pb`);
     scene.time.delayedCall(512, () => {
+      scene.playSound("pb_throw");
+
       // Trainer throw frames
       scene.trainer.setFrame("2");
       scene.time.delayedCall(256, () => {
@@ -404,8 +405,9 @@ function removePb(scene: BattleScene, pokeball: Phaser.GameObjects.Sprite) {
   });
 }
 
-export function doPokemonFlee(scene: BattleScene, pokemon: EnemyPokemon): Promise<void> {
-  return new Promise<void>(resolve => {
+export async function doPokemonFlee(scene: BattleScene, pokemon: EnemyPokemon): Promise<void> {
+  await new Promise<void>(resolve => {
+    scene.playSound("flee");
     // Ease pokemon out
     scene.tweens.add({
       targets: pokemon,

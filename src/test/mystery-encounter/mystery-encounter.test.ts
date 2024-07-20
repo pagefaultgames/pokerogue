@@ -1,9 +1,8 @@
-import { afterEach, beforeAll, beforeEach, expect, describe, it, vi } from "vitest";
-import * as overrides from "../../overrides";
+import { afterEach, beforeAll, beforeEach, expect, describe, it } from "vitest";
 import GameManager from "#app/test/utils/gameManager";
 import Phaser from "phaser";
 import { Species } from "#enums/species";
-import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phase";
+import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 
 describe("Mystery Encounters", () => {
@@ -22,33 +21,21 @@ describe("Mystery Encounters", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(overrides, "MYSTERY_ENCOUNTER_RATE_OVERRIDE", "get").mockReturnValue(256);
-    vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(11);
-    vi.spyOn(overrides, "MYSTERY_ENCOUNTER_OVERRIDE", "get").mockReturnValue(MysteryEncounterType.MYSTERIOUS_CHALLENGERS);
-
-    // Seed guarantees wild encounter to be replaced by ME
-    vi.spyOn(game.scene, "resetSeed").mockImplementation(() => {
-      game.scene.waveSeed = "test";
-      Phaser.Math.RND.sow([game.scene.waveSeed]);
-      game.scene.rngCounter = 0;
-    });
+    game.override.startingWave(11);
+    game.override.mysteryEncounterChance(100);
+    game.override.mysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS);
+    game.override.disableTrainerWave(true);
   });
 
   it("Spawns a mystery encounter", async () => {
-    await game.runToMysteryEncounter([
-      Species.CHARIZARD,
-      Species.VOLCARONA
-    ]);
+    await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, [Species.CHARIZARD, Species.VOLCARONA]);
 
     await game.phaseInterceptor.to(MysteryEncounterPhase, false);
     expect(game.scene.getCurrentPhase().constructor.name).toBe(MysteryEncounterPhase.name);
   });
 
   it("", async () => {
-    await game.runToMysteryEncounter([
-      Species.CHARIZARD,
-      Species.VOLCARONA
-    ]);
+    await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, [Species.CHARIZARD, Species.VOLCARONA]);
 
     await game.phaseInterceptor.to(MysteryEncounterPhase, false);
     expect(game.scene.getCurrentPhase().constructor.name).toBe(MysteryEncounterPhase.name);
