@@ -721,7 +721,7 @@ export default class SummaryUiHandler extends UiHandler {
         luckLabelText.setOrigin(0, 0);
         profileContainer.add(luckLabelText);
 
-        const luckText = addTextObject(this.scene, 141 + luckLabelText.displayWidth + 2, 28, this.pokemon.getLuck().toString(), TextStyle.SUMMARY);
+        const luckText = addTextObject(this.scene, 141 + luckLabelText.displayWidth + 2, 28, this.pokemon.species.luckOverride ? `(${this.pokemon.species.luckOverride.toString()})` : this.pokemon.getLuck().toString(), TextStyle.SUMMARY);
         luckText.setOrigin(0, 0);
         luckText.setTint(getVariantTint((Math.min(this.pokemon.getLuck() - 1, 2)) as Variant));
         profileContainer.add(luckText);

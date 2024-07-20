@@ -564,6 +564,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
   public genderDiffs: boolean;
   public canChangeForm: boolean;
   public forms: PokemonForm[];
+  public luckOverride: integer;
 
   constructor(id: Species, generation: integer, subLegendary: boolean, legendary: boolean, mythical: boolean, species: string,
     type1: Type, type2: Type, height: number, weight: number, ability1: Abilities, ability2: Abilities, abilityHidden: Abilities,

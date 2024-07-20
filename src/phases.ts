@@ -3193,12 +3193,7 @@ export class TurnStartPhase extends FieldPhase {
         //this.scene.unshiftPhase(new AttemptCapturePhase(this.scene, turnCommand.targets[0] % 2, turnCommand.cursor));
         break;
       case Command.POKEMON:
-        if (this.scene.currentBattle.double) {
-          LoggerTools.Actions[pokemon.getBattlerIndex()] = ((turnCommand.args[0] as boolean) ? "Baton" : "Switch") + " " + LoggerTools.playerPokeName(this.scene, pokemon) + " to " + LoggerTools.playerPokeName(this.scene, turnCommand.cursor)
-        } else {
-          //LoggerTools.Actions[pokemon.getBattlerIndex()] = ((turnCommand.args[0] as boolean) ? "Baton" : "Switch") + " " + LoggerTools.playerPokeName(this.scene, pokemon) + " to " + LoggerTools.playerPokeName(this.scene, turnCommand.cursor)
-          LoggerTools.Actions[pokemon.getBattlerIndex()] = ((turnCommand.args[0] as boolean) ? "Baton" : "Switch") + " to " + LoggerTools.playerPokeName(this.scene, turnCommand.cursor)
-        }
+        LoggerTools.Actions[pokemon.getBattlerIndex()] = ((turnCommand.args[0] as boolean) ? "Baton" : "Switch")
         break;
       case Command.RUN:
         LoggerTools.Actions[pokemon.getBattlerIndex()] = "Run"
@@ -3385,7 +3380,7 @@ export class TurnStartPhase extends FieldPhase {
 
     if (LoggerTools.Actions.length > 1 && (LoggerTools.Actions[0] == "" || LoggerTools.Actions[0] == undefined || LoggerTools.Actions[0] == null))
       LoggerTools.Actions.shift() // If the left slot isn't doing anything, delete its entry
-    LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, LoggerTools.Actions.join(" | "))
+    LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, LoggerTools.Actions.join(" & "))
     LoggerTools.logEnemyAction(this.scene, this.scene.currentBattle.waveIndex, LoggerTools.EnemyActions.join(" | "))
 
     this.end();
@@ -5682,7 +5677,9 @@ export class SwitchPhase extends BattlePhase {
           LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "Pre-switch " + (option == PartyOption.PASS_BATON ? "+ Baton" : "") + " " + LoggerTools.playerPokeName(this.scene, fieldIndex) + "  to " + LoggerTools.playerPokeName(this.scene, slotIndex))
         }
         if (LoggerTools.isFaintSwitch.value) {
-          LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, (option == PartyOption.PASS_BATON ? "Baton" : "Send") + " out " + LoggerTools.playerPokeName(this.scene, slotIndex))
+          LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, (option == PartyOption.PASS_BATON ? "Baton" : "Send") + " in " + LoggerTools.playerPokeName(this.scene, slotIndex))
+        } else {
+          LoggerTools.Actions[this.scene.getParty()[fieldIndex].getBattlerIndex()] += " to " + LoggerTools.playerPokeName(this.scene, slotIndex)
         }
         this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, fieldIndex, slotIndex, this.doReturn, option === PartyOption.PASS_BATON));
       }

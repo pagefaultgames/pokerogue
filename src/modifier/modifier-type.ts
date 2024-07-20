@@ -2082,7 +2082,7 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
     if (player && tierValue) {
       var partyLuckValue = getPartyLuckValue(party);
       if (scene) {
-        if (scene.gameMode.modeId == GameModes.DAILY && scene.disableDailyShinies) {
+        if (scene.gameMode.modeId == GameModes.DAILY && scene.disableDailyShinies && false) {
           partyLuckValue = 0
         }
       }
@@ -2110,9 +2110,9 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
   } else if (upgradeCount === undefined && player) {
     upgradeCount = 0;
     if (tier < ModifierTier.MASTER) {
-      var partyShinyCount = party.filter(p => p.isShiny() && !p.isFainted()).length;
+      var partyShinyCount = party.filter(p => p.isShiny() && !p.isFainted() && (!this.scene.disableDailyShinies || p.species.luckOverride != 0)).length;
       if (scene) {
-        if (scene.gameMode.modeId == GameModes.DAILY && scene.disableDailyShinies) {
+        if (scene.gameMode.modeId == GameModes.DAILY && scene.disableDailyShinies && false) {
           partyShinyCount = 0
         }
       }

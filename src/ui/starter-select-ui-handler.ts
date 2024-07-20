@@ -2593,6 +2593,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.starterSelectCallback = null;
           originalStarterSelectCallback(new Array(this.starterGens.length).fill(0).map(function (_, i) {
             const starterSpecies = thisObj.genSpecies[thisObj.starterGens[i]][thisObj.starterCursors[i]];
+            if (this.scene.disableDailyShinies) {
+              starterSpecies.luckOverride = 0;
+            }
             return {
               species: starterSpecies,
               dexAttr: thisObj.starterAttr[i],

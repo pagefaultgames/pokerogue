@@ -826,7 +826,18 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getLuck(): integer {
-    return this.luck + (this.isFusion() ? this.fusionLuck : 0);
+    var L1 = this.luck
+    var L2 = 0
+    if (this.species.luckOverride) {
+      L1 = this.species.luckOverride
+    }
+    if (this.isFusion()) {
+      L2 = this.fusionLuck
+      if (this.fusionSpecies.luckOverride) {
+        L2 = this.fusionSpecies.luckOverride
+      }
+    }
+    return L1 + L2;
   }
 
   isFusion(): boolean {
