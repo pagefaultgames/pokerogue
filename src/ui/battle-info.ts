@@ -553,9 +553,9 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     for (var i = 0; i < P.length; i++) {
       if (P[i] != undefined) {
         states[i] = "ball"
-        if (!party[i].hp) {
+        if (!P[i].hp) {
           states[i] = "faint"
-        } else if (party[i].status) {
+        } else if (P[i].status) {
           states[i] = (this.scene as BattleScene).showTeamSprites ? "ball" : "status"
         }
         if (P[i].isOnField()) {
