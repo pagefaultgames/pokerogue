@@ -430,6 +430,29 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "victory": {
       1: "Mon futur me semble guère radieux."
     },
+  "aether_grunt": {
+    "encounter": {
+      1: "I'll fight you with all I have to wipe you out!"
+    },
+    "victory": {
+      1: "Hmph! You seem to have a lot of skill."
+    },
+  },    
+  "skull_grunt": {
+    "encounter": {
+      1: "We're not bad-we're just hard!"
+    },
+    "victory": {
+      1: "Huh? Is it over already?"
+    },
+  },
+  "macro_grunt": {
+    "encounter": {
+      1: "It looks like this is the end of the line for you!"
+    },
+    "victory": {
+      1: "I have little choice but to respectfully retreat."
+    }, 
   },
   "rocket_boss_giovanni_1": {
     "encounter": {
@@ -561,6 +584,68 @@ export const PGMdialogue: DialogueTranslationEntries = {
     },
     "defeat": {
       1: "Les ignorants sans aucune vision n’auront donc de cesse de souiller ce monde."
+    }
+  },
+    "aether_boss_lusamine_1": {
+    "encounter": {
+      1: "It looks like I'll need to silence you first."
+    },
+    "victory": {
+      1: `How.. how can you be so awful!
+          $With Nihilego's power, I will show you how wrong you were to come here!`
+    },
+    "defeat": {
+      1: "Hmph..."
+    }
+  },  
+   "aether_boss_lusamine_2": {
+    "encounter": {
+      1: `The world of my Ultra Beasts... 
+          $A world where the only thing that exists is the love between Nihilego and myself`
+    },
+    "victory": {
+      1: `You hateful little Trainer! How dare you intrude upon this world that was meant for Nihilego and me?  
+          $Aaauuuughhhh!!`
+    },
+    "defeat": {
+      1: "Lillie.."
+    }
+  }, 
+  "skull_boss_guzma_1": {
+    "encounter": {
+      1: `The hated boss who beats you down and beats you down and never lets up...
+          $Yeah. Big bad Guzma is here!`
+    },
+    "victory": {
+      1: "Tch. I'm gonna beat you down one of these days!"
+    },
+    "defeat": {
+      1: "And you came all the way out here just for that, huh?"
+    }
+  },
+  "skull_boss_guzma_2": {
+    "encounter": {
+      1: `Doesn't matter who I'm up against, I'm gonna beat them down! 
+          $That's what big bad Guzma is all about!`
+    },
+    "victory": {
+      1: "Guzma!!! What is wrong with you?!"
+    },
+    "defeat": {
+      1: "Y'all are stupid!"
+    }
+  },
+  "macro_boss_rose_1": {
+    "encounter": {
+      1: `The future is more important than just one day! We must take action in order to avert tragedy! 
+          $So that all can look forward to a better future!`
+    },
+    "victory": {
+      1: `You still don't understand, young Champion... 
+          $We... No, I am going to change the course of history!`
+    },
+    "defeat": {
+      1: "You still don't understand a thing!"
     }
   },
   "brock": {
