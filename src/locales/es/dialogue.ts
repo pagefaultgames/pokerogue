@@ -587,7 +587,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "Los idiotas sin ningún tipo de visión continuarán asediando este mundo."
     }
   },
-    "aether_boss_lusamine_1": {
+  "aether_boss_lusamine_1": {
     "encounter": {
       1: "It looks like I'll need to silence you first."
     },
@@ -599,7 +599,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "Hmph..."
     }
   },  
-   "aether_boss_lusamine_2": {
+  "aether_boss_lusamine_2": {
     "encounter": {
       1: `The world of my Ultra Beasts... 
           $A world where the only thing that exists is the love between Nihilego and myself`
