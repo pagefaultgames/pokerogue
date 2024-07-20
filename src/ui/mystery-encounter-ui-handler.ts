@@ -136,7 +136,8 @@ export default class MysteryEncounterUiHandler extends UiHandler {
         // TODO: If we need to handle cancel option? Maybe default logic to leave/run from encounter idk
       }
     } else {
-      switch (this.optionsContainer.list.length) {
+      switch (this.optionsContainer.getAll()?.length) {
+      default:
       case 3:
         success = this.handleTwoOptionMoveInput(button);
         break;
@@ -285,7 +286,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
       this.cursor = cursor;
     }
 
-    this.viewPartyIndex = this.optionsContainer.list?.length - 1;
+    this.viewPartyIndex = this.optionsContainer.getAll()?.length - 1;
 
     if (!this.cursorObj) {
       this.cursorObj = this.scene.add.image(0, 0, "cursor");
@@ -294,11 +295,11 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
     if (cursor === this.viewPartyIndex) {
       this.cursorObj.setPosition(246, -17);
-    } else if (this.optionsContainer.list?.length === 3) { // 2 Options
+    } else if (this.optionsContainer.getAll()?.length === 3) { // 2 Options
       this.cursorObj.setPosition(-10.5 + (cursor % 2 === 1 ? 100 : 0), 15);
-    } else if (this.optionsContainer.list?.length === 4) { // 3 Options
+    } else if (this.optionsContainer.getAll()?.length === 4) { // 3 Options
       this.cursorObj.setPosition(-10.5 + (cursor % 2 === 1 ? 100 : 0), 7 + (cursor > 1 ? 16 : 0));
-    } else if (this.optionsContainer.list?.length === 5) { // 4 Options
+    } else if (this.optionsContainer.getAll()?.length === 5) { // 4 Options
       this.cursorObj.setPosition(-10.5 + (cursor % 2 === 1 ? 100 : 0), 7 + (cursor > 1 ? 16 : 0));
     }
 
