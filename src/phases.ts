@@ -1705,30 +1705,6 @@ export class EncounterPhase extends BattlePhase {
         }
       }
     }
-    // Get this run's log (or generate it, if there isn't one)
-    var d = LoggerTools.getDRPD(this.scene)
-    if (d != undefined) {
-      // Get the current wave (or generate one, if there isn't any data)
-      var w = LoggerTools.getWave(d, this.scene.currentBattle.waveIndex, this.scene)
-      if (w != undefined) {
-        if (w.initialActions == undefined) w.initialActions = []
-        if (w.modifiers == undefined) w.modifiers = []
-        if (w.turnIndex == undefined) w.turnIndex = 0
-        // If any data has been written for this wave
-        if (w.initialActions.length > 0 || w.modifiers.length > 0 || w.turnIndex > 0) {
-          this.scene.ui.showText("This wave has existing enemy move data.\nClear it?", undefined, () => {
-            this.scene.ui.setMode(Mode.CONFIRM, () => {
-              //this.scene.ui.revertMode()
-              this.scene.ui.clearText()
-              LoggerTools.deleteReloadDetectionData(this.scene)
-            }, () => {
-              //this.scene.ui.revertMode()
-              this.scene.ui.clearText()
-            })
-          }, 500)
-        }
-      }
-    }
     handleTutorial(this.scene, Tutorial.Access_Menu).then(() => super.end());
   }
 
