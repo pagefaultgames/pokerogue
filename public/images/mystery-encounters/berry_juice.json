@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "berry_juice.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 24,
+				"h": 23
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 24,
+						"h": 24
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 2,
+						"w": 22,
+						"h": 21
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 22,
+						"h": 21
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:04685a0eb6ef9095824b65408ec1b38f:9891674d538df100fcddde29330c21ae:927f117bdb1c2a27226a5540ce00ee8b$"
+	}
+}

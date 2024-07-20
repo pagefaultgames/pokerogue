@@ -50,6 +50,7 @@ import { BerryType } from "#enums/berry-type";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 
 export enum FieldPosition {
   CENTER,
@@ -100,6 +101,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public battleData: PokemonBattleData;
   public battleSummonData: PokemonBattleSummonData;
   public turnData: PokemonTurnData;
+  public mysteryEncounterData: MysteryEncounterPokemonData;
 
   /** Used by Mystery Encounters to execute pokemon-specific logic (such as stat boosts) at start of battle */
   public mysteryEncounterBattleEffects: (pokemon: Pokemon) => void = null;
@@ -524,6 +526,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const formKey = this.getFormKey();
     if (formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1 || formKey.indexOf(SpeciesFormKey.ETERNAMAX) > -1) {
       return 1.5;
+    } else if (this?.mysteryEncounterData?.spriteScale) {
+      return this.mysteryEncounterData.spriteScale;
     }
     return 1;
   }

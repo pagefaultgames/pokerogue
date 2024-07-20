@@ -38,7 +38,7 @@ export const SafariZoneEncounter: IMysteryEncounter =
         hasShadow: true,
         x: 4,
         y: 10,
-        yShadowOffset: 3
+        yShadow: 3
       },
     ])
     .withIntroDialogue([

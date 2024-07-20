@@ -12,6 +12,7 @@ import { isNullOrUndefined } from "../utils";
 import { getPokeballAtlasKey } from "../data/pokeball";
 import { OptionSelectSettings } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { MysteryEncounterTier } from "#app/data/mystery-encounters/mystery-encounter";
 
 export default class MysteryEncounterUiHandler extends UiHandler {
   private cursorContainer: Phaser.GameObjects.Container;
@@ -135,7 +136,8 @@ export default class MysteryEncounterUiHandler extends UiHandler {
         // TODO: If we need to handle cancel option? Maybe default logic to leave/run from encounter idk
       }
     } else {
-      switch (this.optionsContainer.list.length) {
+      switch (this.optionsContainer.getAll()?.length) {
+      default:
       case 3:
         success = this.handleTwoOptionMoveInput(button);
         break;
@@ -284,7 +286,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
       this.cursor = cursor;
     }
 
-    this.viewPartyIndex = this.optionsContainer.length - 1;
+    this.viewPartyIndex = this.optionsContainer.getAll()?.length - 1;
 
     if (!this.cursorObj) {
       this.cursorObj = this.scene.add.image(0, 0, "cursor");
@@ -293,11 +295,11 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
     if (cursor === this.viewPartyIndex) {
       this.cursorObj.setPosition(246, -17);
-    } else if (this.optionsContainer.length === 3) { // 2 Options
+    } else if (this.optionsContainer.getAll()?.length === 3) { // 2 Options
       this.cursorObj.setPosition(-10.5 + (cursor % 2 === 1 ? 100 : 0), 15);
-    } else if (this.optionsContainer.length === 4) { // 3 Options
+    } else if (this.optionsContainer.getAll()?.length === 4) { // 3 Options
       this.cursorObj.setPosition(-10.5 + (cursor % 2 === 1 ? 100 : 0), 7 + (cursor > 1 ? 16 : 0));
-    } else if (this.optionsContainer.length === 5) { // 4 Options
+    } else if (this.optionsContainer.getAll()?.length === 5) { // 4 Options
       this.cursorObj.setPosition(-10.5 + (cursor % 2 === 1 ? 100 : 0), 7 + (cursor > 1 ? 16 : 0));
     }
 
@@ -368,7 +370,11 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     titleTextObject.setPosition(72 - titleTextObject.displayWidth / 2, 5.5);
 
     // Rarity of encounter
-    const ballType = getPokeballAtlasKey(mysteryEncounter.encounterTier as number);
+    const index = mysteryEncounter.encounterTier === MysteryEncounterTier.COMMON ? 0 :
+      mysteryEncounter.encounterTier === MysteryEncounterTier.GREAT ? 1 :
+        mysteryEncounter.encounterTier === MysteryEncounterTier.ULTRA ? 2 :
+          mysteryEncounter.encounterTier === MysteryEncounterTier.ROGUE ? 3 : 4;
+    const ballType = getPokeballAtlasKey(index);
     this.rarityBall.setTexture("pb", ballType);
 
     const descriptionTextObject = addBBCodeTextObject(this.scene, 6, 25, descriptionText, TextStyle.TOOLTIP_CONTENT, { wordWrap: { width: 830 } });

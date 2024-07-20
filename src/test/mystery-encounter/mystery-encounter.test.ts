@@ -23,8 +23,6 @@ describe("Mystery Encounters", () => {
     game = new GameManager(phaserGame);
     game.override.startingWave(11);
     game.override.mysteryEncounterChance(100);
-    game.override.mysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS);
-    game.override.disableTrainerWave(true);
   });
 
   it("Spawns a mystery encounter", async () => {

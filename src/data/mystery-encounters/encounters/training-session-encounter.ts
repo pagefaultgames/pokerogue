@@ -40,7 +40,7 @@ export const TrainingSessionEncounter: IMysteryEncounter =
         hasShadow: true,
         y: 6,
         x: 5,
-        yShadowOffset: -2
+        yShadow: -2
       },
     ])
     .withIntroDialogue([

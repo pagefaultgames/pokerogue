@@ -10,6 +10,7 @@ import IMysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier, } fro
 import { EncounterOptionMode, MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import { MoneyRequirement } from "../mystery-encounter-requirements";
 import { getEncounterText, queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { applyDamageToPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounter:shadyVitaminDealer";
@@ -35,7 +36,7 @@ export const ShadyVitaminDealerEncounter: IMysteryEncounter =
         repeat: true,
         x: 12,
         y: -5,
-        yShadowOffset: -5
+        yShadow: -5
       },
       {
         spriteKey: "b2w2_veteran_m",
@@ -43,7 +44,7 @@ export const ShadyVitaminDealerEncounter: IMysteryEncounter =
         hasShadow: true,
         x: -12,
         y: 3,
-        yShadowOffset: 3
+        yShadow: 3
       },
     ])
     .withIntroDialogue([
@@ -122,8 +123,7 @@ export const ShadyVitaminDealerEncounter: IMysteryEncounter =
           const chosenPokemon = encounter.misc.chosenPokemon;
 
           // Pokemon takes 1/3 max HP damage
-          const damage = Math.round(chosenPokemon.getMaxHp() / 3);
-          chosenPokemon.hp = Math.max(chosenPokemon.hp - damage, 0);
+          applyDamageToPokemon(scene, chosenPokemon, Math.floor(chosenPokemon.getMaxHp() / 3));
 
           // Roll for poison (80%)
           if (randSeedInt(10) < 8) {

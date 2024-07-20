@@ -2,9 +2,8 @@ import { BattlerIndex, BattleType } from "#app/battle";
 import { biomeLinks } from "#app/data/biomes";
 import MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
 import { WIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
-import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import Pokemon, { FieldPosition, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
-import { getPokemonNameWithAffix } from "#app/messages";
 import { ExpBalanceModifier, ExpShareModifier, MultipleParticipantExpBonusModifier, PokemonExpBoosterModifier } from "#app/modifier/modifier";
 import { CustomModifierSettings, getModifierPoolForType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeGenerator, ModifierTypeOption, modifierTypes, PokemonHeldItemModifierType, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
 import * as Overrides from "#app/overrides";
@@ -27,6 +26,7 @@ import { Status, StatusEffect } from "../../status-effect";
 import { TrainerConfig, trainerConfigs, TrainerSlot } from "../../trainer-config";
 import { MysteryEncounterVariant } from "../mystery-encounter";
 import { Gender } from "#app/data/gender";
+import { Nature } from "#app/data/nature";
 import { Moves } from "#enums/moves";
 import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
 
@@ -54,7 +54,7 @@ export function doTrainerExclamation(scene: BattleScene) {
     }
   });
 
-  scene.playSound("GEN8- Exclaim.wav", { volume: 0.8 });
+  scene.playSound("GEN8- Exclaim.wav", { volume: 0.7 });
 }
 
 export interface EnemyPokemonConfig {
@@ -62,11 +62,14 @@ export interface EnemyPokemonConfig {
   isBoss: boolean;
   bossSegments?: number;
   bossSegmentModifier?: number; // Additive to the determined segment number
+  spriteScale?: number;
   formIndex?: number;
   level?: number;
   gender?: Gender;
   passive?: boolean;
   moveSet?: Moves[];
+  nature?: Nature;
+  ivs?: [integer, integer, integer, integer, integer, integer];
   /** Can set just the status, or pass a timer on the status turns */
   status?: StatusEffect | [StatusEffect, number];
   mysteryEncounterBattleEffects?: (pokemon: Pokemon) => void;
@@ -196,6 +199,13 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
         enemyPokemon.formIndex = config.formIndex;
       }
 
+      // Set scale
+      if (!isNullOrUndefined(config.spriteScale)) {
+        enemyPokemon.mysteryEncounterData = {
+          spriteScale: config.spriteScale
+        };
+      }
+
       // Set Boss
       if (config.isBoss) {
         let segments = !isNullOrUndefined(config.bossSegments) ? config.bossSegments : scene.getEncounterBossSegments(scene.currentBattle.waveIndex, level, enemySpecies, true);
@@ -206,12 +216,22 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
       }
 
       // Set Passive
-      if (partyConfig.pokemonConfigs[e].passive) {
+      if (config.passive) {
         enemyPokemon.passive = true;
       }
 
+      // Set Nature
+      if (config.nature) {
+        enemyPokemon.nature = config.nature;
+      }
+
+      // Set IVs
+      if (config.ivs) {
+        enemyPokemon.ivs = config.ivs;
+      }
+
       // Set Status
-      const statusEffects = partyConfig.pokemonConfigs[e].status;
+      const statusEffects = config.status;
       if (statusEffects) {
         // Default to cureturn 3 for sleep
         const status = Array.isArray(statusEffects) ? statusEffects[0] : statusEffects;
@@ -810,66 +830,4 @@ export function calculateMEAggregateStats(scene: BattleScene, baseSpawnWeight: n
   const superRareMean = runs.reduce((a, b) => a + b[3], 0) / n;
 
   console.log(`Starting weight: ${baseSpawnWeight}\nAverage MEs per run: ${totalMean}\nStandard Deviation: ${totalStd}\nAvg Commons: ${commonMean}\nAvg Uncommons: ${uncommonMean}\nAvg Rares: ${rareMean}\nAvg Super Rares: ${superRareMean}`);
-}
-
-/**
- * Takes care of handling player pokemon KO (with all its side effects)
- *
- * @param scene the battle scene
- * @param pokemon the player pokemon to KO
- */
-export function koPlayerPokemon(scene: BattleScene, pokemon: PlayerPokemon) {
-  pokemon.hp = 0;
-  pokemon.trySetStatus(StatusEffect.FAINT);
-  pokemon.updateInfo();
-  queueEncounterMessage(scene, i18next.t("battle:fainted", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
-}
-
-/**
- * Handles applying hp changes to a player pokemon.
- * Takes care of not going below `0`, above max-hp, adding `FNT` status correctly and updating the pokemon info.
- * TODO: handle special cases like wonder-guard/ninjask
- * @param scene the battle scene
- * @param pokemon the player pokemon to apply the hp change to
- * @param value the hp change amount. Positive for heal. Negative for damage
- *
- */
-function applyHpChangeToPokemon(scene: BattleScene, pokemon: PlayerPokemon, value: number) {
-  const hpChange = Math.round(pokemon.hp + value);
-  const nextHp = Math.max(Math.min(hpChange, pokemon.getMaxHp()), 0);
-  if (nextHp === 0) {
-    koPlayerPokemon(scene, pokemon);
-  } else {
-    pokemon.hp = nextHp;
-  }
-}
-
-/**
- * Handles applying damage to a player pokemon
- * @param scene the battle scene
- * @param pokemon the player pokemon to apply damage to
- * @param damage the amount of damage to apply
- * @see {@linkcode applyHpChangeToPokemon}
- */
-export function applyDamageToPokemon(scene: BattleScene, pokemon: PlayerPokemon, damage: number) {
-  if (damage <= 0) {
-    console.warn("Healing pokemon with `applyDamageToPokemon` is not recommended! Please use `applyHealToPokemon` instead.");
-  }
-
-  applyHpChangeToPokemon(scene, pokemon, -damage);
-}
-
-/**
- * Handles applying heal to a player pokemon
- * @param scene the battle scene
- * @param pokemon the player pokemon to apply heal to
- * @param heal the amount of heal to apply
- * @see {@linkcode applyHpChangeToPokemon}
- */
-export function applyHealToPokemon(scene: BattleScene, pokemon: PlayerPokemon, heal: number) {
-  if (heal <= 0) {
-    console.warn("Damaging pokemong with `applyHealToPokemon` is not recommended! Please use `applyDamageToPokemon` instead.");
-  }
-
-  applyHpChangeToPokemon(scene, pokemon, heal);
 }

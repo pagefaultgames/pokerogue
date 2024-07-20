@@ -15,7 +15,12 @@ import { PartyOption, PartyUiMode } from "#app/ui/party-ui-handler";
 import { Species } from "#enums/species";
 import { Type } from "#app/data/type";
 import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "#app/data/pokemon-species";
-import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { getPokemonNameWithAffix } from "#app/messages";
+
+export interface MysteryEncounterPokemonData {
+  spriteScale?: number
+}
 
 /**
  *
@@ -131,9 +136,80 @@ export function getRandomSpeciesByStarterTier(starterTiers: number | [number, nu
   return Species.BULBASAUR;
 }
 
-export function koPlayerPokemon(pokemon: PlayerPokemon) {
+/**
+ * Takes care of handling player pokemon KO (with all its side effects)
+ *
+ * @param scene the battle scene
+ * @param pokemon the player pokemon to KO
+ */
+export function koPlayerPokemon(scene: BattleScene, pokemon: PlayerPokemon) {
   pokemon.hp = 0;
   pokemon.trySetStatus(StatusEffect.FAINT);
+  pokemon.updateInfo();
+  queueEncounterMessage(scene, i18next.t("battle:fainted", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+}
+
+/**
+ * Handles applying hp changes to a player pokemon.
+ * Takes care of not going below `0`, above max-hp, adding `FNT` status correctly and updating the pokemon info.
+ * TODO: handle special cases like wonder-guard/ninjask
+ * @param scene the battle scene
+ * @param pokemon the player pokemon to apply the hp change to
+ * @param value the hp change amount. Positive for heal. Negative for damage
+ *
+ */
+function applyHpChangeToPokemon(scene: BattleScene, pokemon: PlayerPokemon, value: number) {
+  const hpChange = Math.round(pokemon.hp + value);
+  const nextHp = Math.max(Math.min(hpChange, pokemon.getMaxHp()), 0);
+  if (nextHp === 0) {
+    koPlayerPokemon(scene, pokemon);
+  } else {
+    pokemon.hp = nextHp;
+  }
+}
+
+/**
+ * Handles applying damage to a player pokemon
+ * @param scene the battle scene
+ * @param pokemon the player pokemon to apply damage to
+ * @param damage the amount of damage to apply
+ * @see {@linkcode applyHpChangeToPokemon}
+ */
+export function applyDamageToPokemon(scene: BattleScene, pokemon: PlayerPokemon, damage: number) {
+  if (damage <= 0) {
+    console.warn("Healing pokemon with `applyDamageToPokemon` is not recommended! Please use `applyHealToPokemon` instead.");
+  }
+
+  applyHpChangeToPokemon(scene, pokemon, -damage);
+}
+
+/**
+ * Handles applying heal to a player pokemon
+ * @param scene the battle scene
+ * @param pokemon the player pokemon to apply heal to
+ * @param heal the amount of heal to apply
+ * @see {@linkcode applyHpChangeToPokemon}
+ */
+export function applyHealToPokemon(scene: BattleScene, pokemon: PlayerPokemon, heal: number) {
+  if (heal <= 0) {
+    console.warn("Damaging pokemong with `applyHealToPokemon` is not recommended! Please use `applyDamageToPokemon` instead.");
+  }
+
+  applyHpChangeToPokemon(scene, pokemon, heal);
+}
+
+/**
+ * Will modify all of a Pokemon's base stats by a flat value
+ * Base stats can never go below 1
+ * @param pokemon
+ * @param value
+ */
+export function modifyPlayerPokemonBST(pokemon: PlayerPokemon, value: number) {
+  pokemon.getSpeciesForm().baseStats = [...pokemon.getSpeciesForm().baseStats].map(v => {
+    const newVal = Math.floor(v + value);
+    return Math.max(newVal, 1);
+  });
+  pokemon.calculateStats();
   pokemon.updateInfo();
 }
 

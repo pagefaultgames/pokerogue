@@ -1107,18 +1107,19 @@ export class EncounterPhase extends BattlePhase {
 
         if (showEncounterMessage) {
           const introDialogue = this.scene.currentBattle.mysteryEncounter.dialogue.intro;
+          const FIRST_DIALOGUE_PROMPT_DELAY = 750;
           let i = 0;
           const showNextDialogue = () => {
             const nextAction = i === introDialogue.length - 1 ? doShowEncounterOptions : showNextDialogue;
             const dialogue = introDialogue[i];
             const title = getEncounterText(this.scene, dialogue.speaker);
             const text = getEncounterText(this.scene, dialogue.text);
-            if (title) {
-              this.scene.ui.showDialogue(text, title, null, nextAction, 0, i === 0 ? 750 : 0);
-            } else {
-              this.scene.ui.showText(text, null, nextAction, i === 0 ? 750 : 0, true);
-            }
             i++;
+            if (title) {
+              this.scene.ui.showDialogue(text, title, null, nextAction, 0, i === 1 ? FIRST_DIALOGUE_PROMPT_DELAY : 0);
+            } else {
+              this.scene.ui.showText(text, null, nextAction, i === 1 ? FIRST_DIALOGUE_PROMPT_DELAY : 0, true);
+            }
           };
 
           if (introDialogue.length > 0) {
@@ -1686,6 +1687,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
         pokemon.cry(pokemon.getHpRatio() > 0.25 ? undefined : { rate: 0.85 });
         pokemon.getSprite().clearTint();
         pokemon.resetSummonData();
+        this.scene.updateFieldScale();
         this.scene.time.delayedCall(1000, () => this.end());
       }
     });

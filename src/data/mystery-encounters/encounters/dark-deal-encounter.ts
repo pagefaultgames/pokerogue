@@ -4,7 +4,7 @@ import { isNullOrUndefined, randSeedInt } from "#app/utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
 import BattleScene from "../../../battle-scene";
-import { AddPokeballModifierType } from "../../../modifier/modifier-type";
+import { AddPokeballModifierType } from "#app/modifier/modifier-type";
 import { PokeballType } from "../../pokeball";
 import { getPokemonSpecies } from "../../pokemon-species";
 import IMysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier, } from "../mystery-encounter";

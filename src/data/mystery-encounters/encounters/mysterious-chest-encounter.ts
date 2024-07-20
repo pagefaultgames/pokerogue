@@ -28,7 +28,7 @@ export const MysteriousChestEncounter: IMysteryEncounter =
         hasShadow: true,
         x: 4,
         y: 10,
-        yShadowOffset: 3,
+        yShadow: 3,
         disableAnimation: true, // Re-enabled after option select
       },
     ])
@@ -109,7 +109,7 @@ export const MysteriousChestEncounter: IMysteryEncounter =
               scene,
               true
             );
-            koPlayerPokemon(highestLevelPokemon);
+            koPlayerPokemon(scene, highestLevelPokemon);
 
             scene.currentBattle.mysteryEncounter.setDialogueToken("pokeName", highestLevelPokemon.name);
             // Show which Pokemon was KOed, then leave encounter with no rewards

@@ -10,6 +10,7 @@ import { safariZoneDialogue } from "#app/locales/en/mystery-encounters/safari-zo
 import { shadyVitaminDealerDialogue } from "#app/locales/en/mystery-encounters/shady-vitamin-dealer-dialogue";
 import { slumberingSnorlaxDialogue } from "#app/locales/en/mystery-encounters/slumbering-snorlax-dialogue";
 import { trainingSessionDialogue } from "#app/locales/en/mystery-encounters/training-session-dialogue";
+import { theStrongStuffDialogue } from "#app/locales/en/mystery-encounters/the-strong-stuff-dialogue";
 
 /**
  * Patterns that can be used:
@@ -44,4 +45,5 @@ export const mysteryEncounter = {
   safariZone: safariZoneDialogue,
   lostAtSea: lostAtSeaDialogue,
   fieryFallout: fieryFalloutDialogue,
+  theStrongStuff: theStrongStuffDialogue,
 } as const;

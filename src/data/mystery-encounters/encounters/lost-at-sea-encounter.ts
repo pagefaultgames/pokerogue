@@ -5,7 +5,8 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "../../../battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier } from "../mystery-encounter";
 import { EncounterOptionMode, MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
-import { applyDamageToPokemon, leaveEncounterWithoutBattle, setEncounterExp } from "../utils/encounter-phase-utils";
+import { leaveEncounterWithoutBattle, setEncounterExp } from "../utils/encounter-phase-utils";
+import { applyDamageToPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 
 const OPTION_1_REQUIRED_MOVE = Moves.SURF;
 const OPTION_2_REQUIRED_MOVE = Moves.FLY;
