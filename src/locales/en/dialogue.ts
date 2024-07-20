@@ -595,7 +595,8 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "It looks like I'll need to silence you first."
     },
     "victory": {
-      1: "How.. how can you be so awful!"
+      1: `How.. how can you be so awful!
+          $With Nihilego's power, I will show you how wrong you were to come here!`
     },
     "defeat": {
       1: "Hmph..."
@@ -603,21 +604,21 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },  
    "aether_boss_lusamine_2": {
     "encounter": {
-      1: `You hateful little Trainer! How dare you intrude upon this world that was meant for Nihilego and me? 
-          $I will show you how wrong you were to come here!`
-    },
-    "victory": {
-      1: "Aaauuuughhhh!!"
-    },
-    "defeat": {
       1: `The world of my Ultra Beasts... 
           $A world where the only thing that exists is the love between Nihilego and myself`
+    },
+    "victory": {
+      1: `You hateful little Trainer! How dare you intrude upon this world that was meant for Nihilego and me?  
+          $Aaauuuughhhh!!`
+    },
+    "defeat": {
+      1: "Lillie.."
     }
   }, 
   "skull_boss_guzma_1": {
     "encounter": {
-      1: `Doesn't matter who I'm up against, I'm gonna beat them down! 
-          $That's what big bad Guzma is all about!`
+      1: `The hated boss who beats you down and beats you down and never lets up...
+          $Yeah. Big bad Guzma is here!`
     },
     "victory": {
       1: "Tch. I'm gonna beat you down one of these days!"
@@ -628,7 +629,8 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "skull_boss_guzma_2": {
     "encounter": {
-      1: "Wanna see what destruction looks like? Here it is in human form-it's your boy Guzma!"
+      1: `Doesn't matter who I'm up against, I'm gonna beat them down! 
+          $That's what big bad Guzma is all about!`
     },
     "victory": {
       1: "Guzma!!! What is wrong with you?!"
