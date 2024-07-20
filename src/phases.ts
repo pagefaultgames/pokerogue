@@ -5893,7 +5893,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
                         LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, W.shop + "; skip learning it")
                       } else {
                         var actions = LoggerTools.getActionCount(this.scene, this.scene.currentBattle.waveIndex)
-                        LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, (actions == 0 ? "" : "") + LoggerTools.playerPokeName(this.scene, pokemon) + " | Skip " + move.name)
+                        LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, (actions == 0 ? "[MOVEBACK]" : "") + LoggerTools.playerPokeName(this.scene, pokemon) + " | Skip " + move.name)
                       }
                       this.scene.ui.showText(i18next.t("battle:learnMoveNotLearned", { pokemonName: pokemon.name, moveName: move.name }), null, () => this.end(), null, true);
                     }, () => {
@@ -5921,7 +5921,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
                               LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, W.shop + " → learn " + new PokemonMove(this.moveId).getName() + " → replace " + pokemon.moveset[moveIndex].getName())
                             } else {
                               var actions = LoggerTools.getActionCount(this.scene, this.scene.currentBattle.waveIndex)
-                              LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, (actions == 0 ? "" : "") + LoggerTools.playerPokeName(this.scene, pokemon) + " | Learn " + new PokemonMove(this.moveId).getName() + " → replace " + pokemon.moveset[moveIndex].getName())
+                              LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, (actions == 0 ? "[MOVEBACK]" : "") + LoggerTools.playerPokeName(this.scene, pokemon) + " | Learn " + new PokemonMove(this.moveId).getName() + " → replace " + pokemon.moveset[moveIndex].getName())
                             }
                             pokemon.setMove(moveIndex, Moves.NONE);
                             this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, this.moveId));
