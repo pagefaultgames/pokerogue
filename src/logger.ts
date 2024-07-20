@@ -14,6 +14,25 @@ import Trainer from "./field/trainer";
 import { Species } from "./enums/species";
 import { GameMode, GameModes } from "./game-mode";
 import PokemonSpecies from "./data/pokemon-species";
+
+/*
+SECTIONS
+00 Imports         import statements, as well as this list.
+01 Variables       Contains variables, constants, value holders, and the like.
+02 Downloading     Functions for exporting DRPD data to .json files.
+03 Log Handler     Catalogs and manages the log array.
+04 Utilities       General functions.
+05 DRPD            Stores data about a run.
+06 Wave            Stores data about a Wave.
+07 Pokémon         Stores data about a Pokémon.
+08 Nature          Stores data about a Pokémon's Nature.
+09 IVs             Stores data about a Pokémon's Individual Values (IVs).
+10 Trainer         Stores data about the opposing Trainer, if any.
+11 Item            Stores data about held items.
+12 Ingame Menu     Functions for the "Manage Logs" menu ingame.
+13 Logging Events  Functions for adding data to the logger.
+*/
+
 //#endregion
 
 
