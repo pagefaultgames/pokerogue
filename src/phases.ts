@@ -1700,30 +1700,6 @@ export class EncounterPhase extends BattlePhase {
         }
       }
     }
-    // Get this run's log (or generate it, if there isn't one)
-    var d = LoggerTools.getDRPD(this.scene)
-    if (d != undefined) {
-      // Get the current wave (or generate one, if there isn't any data)
-      var w = LoggerTools.getWave(d, this.scene.currentBattle.waveIndex, this.scene)
-      if (w != undefined) {
-        if (w.initialActions == undefined) w.initialActions = []
-        if (w.modifiers == undefined) w.modifiers = []
-        if (w.turnIndex == undefined) w.turnIndex = 0
-        // If any data has been written for this wave
-        if (w.initialActions.length > 0 || w.modifiers.length > 0 || w.turnIndex > 0) {
-          this.scene.ui.showText("This wave has existing data.\nClear it?", undefined, () => {
-            this.scene.ui.setMode(Mode.CONFIRM, () => {
-              //this.scene.ui.revertMode()
-              this.scene.ui.clearText()
-              LoggerTools.deleteReloadDetectionData(this.scene)
-            }, () => {
-              //this.scene.ui.revertMode()
-              this.scene.ui.clearText()
-            })
-          }, 500)
-        }
-      }
-    }
     handleTutorial(this.scene, Tutorial.Access_Menu).then(() => super.end());
   }
 
@@ -3336,7 +3312,6 @@ export class TurnStartPhase extends FieldPhase {
           this.scene.pushPhase(new MovePhase(this.scene, pokemon, turnCommand.targets || turnCommand.move.targets, move, false, queuedMove.ignorePP));
           var targets = turnCommand.targets || turnCommand.move.targets
           var mv = new PokemonMove(queuedMove.move)
-          LoggerTools.EnemyActions[pokemon.getBattlerIndex() - 2] = move.getName()
         }
         break;
       case Command.BALL:
@@ -3385,8 +3360,8 @@ export class TurnStartPhase extends FieldPhase {
 
     if (LoggerTools.Actions.length > 1 && (LoggerTools.Actions[0] == "" || LoggerTools.Actions[0] == undefined || LoggerTools.Actions[0] == null))
       LoggerTools.Actions.shift() // If the left slot isn't doing anything, delete its entry
+
     LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, LoggerTools.Actions.join(" | "))
-    LoggerTools.logEnemyAction(this.scene, this.scene.currentBattle.waveIndex, LoggerTools.EnemyActions.join(" | "))
 
     this.end();
   }
@@ -6428,6 +6403,12 @@ export class SelectModifierPhase extends BattlePhase {
   start() {
     super.start();
 
+    if (!this.rerollCount) {
+      this.updateSeed();
+    } else {
+      this.scene.reroll = false;
+    }
+
     const party = this.scene.getParty();
     regenerateModifierPoolThresholds(party, this.getPoolType(), this.rerollCount);
     const modifierCount = new Utils.IntegerHolder(3);
@@ -6599,13 +6580,6 @@ export class SelectModifierPhase extends BattlePhase {
       } else {
         LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, modifierType.name)
         applyModifier(modifierType.newModifier());
-      }
-
-      if (!this.rerollCount) {
-        this.updateSeed();
-        LoggerTools.logModifiers(this.scene, undefined, typeOptions.map(v => v.type.name))
-      } else {
-        this.scene.reroll = false;
       }
 
       return !cost;
