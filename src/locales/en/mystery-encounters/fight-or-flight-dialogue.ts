@@ -10,7 +10,8 @@ export const fightOrFlightDialogue = {
       selected: "You approach the\nPokémon without fear.",
     },
     2: {
-      label: "{{option2PrimaryName}} can help",
+      label: "Steal the item",
+      label_special: "{{option2PrimaryName}} can help",
       tooltip: "@[SUMMARY_GREEN]{(35%) Steal Item}\n@[SUMMARY_BLUE]{(65%) Harder Battle}",
       tooltip_special: "(+) {{option2PrimaryName}} uses {{option2PrimaryMove}}",
       good_result: `.@d{32}.@d{32}.@d{32}

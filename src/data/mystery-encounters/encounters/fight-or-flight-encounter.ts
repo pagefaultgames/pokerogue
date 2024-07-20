@@ -48,7 +48,7 @@ export const FightOrFlightEncounter: IMysteryEncounter =
     .withIntroSpriteConfigs([]) // Set in onInit()
     .withIntroDialogue([
       {
-        text: `${namespace}_intro_message`,
+        text: `${namespace}:intro`,
       },
     ])
     .withOnInit((scene: BattleScene) => {
@@ -104,8 +104,10 @@ export const FightOrFlightEncounter: IMysteryEncounter =
       const primaryPokemon = encounter.options[1].primaryPokemon;
       if (primaryPokemon) {
         // Use primaryPokemon to execute the thievery
+        encounter.options[1].dialogue.buttonLabel = `${namespace}:option:2:label_special`;
         encounter.options[1].dialogue.buttonTooltip = `${namespace}:option:2:tooltip_special`;
       } else {
+        encounter.options[1].dialogue.buttonLabel = `${namespace}:option:2:label`;
         encounter.options[1].dialogue.buttonTooltip = `${namespace}:option:2:tooltip`;
       }
 

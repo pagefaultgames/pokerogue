@@ -34,7 +34,7 @@ export const MysteriousChestEncounter: IMysteryEncounter =
     ])
     .withIntroDialogue([
       {
-        text: "${namespace}:intro:message",
+        text: "${namespace}:intro",
       },
     ])
     .withTitle(`${namespace}:title`)

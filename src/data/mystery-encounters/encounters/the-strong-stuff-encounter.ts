@@ -20,7 +20,7 @@ import { BerryType } from "#enums/berry-type";
 const namespace = "mysteryEncounter:theStrongStuff";
 
 /**
- * Pokemon Salesman encounter.
+ * The Strong Stuff encounter.
  * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/54 | GitHub Issue #54}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */

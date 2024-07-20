@@ -19,7 +19,7 @@ export const trainingSessionDialogue = {
     },
     3: {
       label: "Heavy Training",
-      tooltip: "(-) Each of your Pokémon lose {{damagePercentage}}% of their total HP",
+      tooltip: "(-) Harsh Battle\n(+) Change Pokémon's Ability",
       select_prompt: "Select a new ability\nto train your Pokémon in.",
       finished: `{{selectedPokemon}} returns, feeling\nworn out but accomplished!
         $Its ability was changed to {{ability}}!`,
