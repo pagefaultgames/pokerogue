@@ -372,6 +372,13 @@ export default class IMysteryEncounter implements IMysteryEncounter {
     this.dialogueTokens[key] = value;
   }
 
+  /**
+   * If an encounter uses {@link MysteryEncounterVariant.CONTINUOUS_ENCOUNTER},
+   * should rely on this value for seed offset instead of wave index.
+   *
+   * This offset is incremented for each new {@link MysteryEncounterPhase} that occurs,
+   * so multi-encounter RNG will be consistent on resets and not be affected by number of turns, move RNG, etc.
+   */
   getSeedOffset?() {
     return this.seedOffset;
   }
