@@ -201,6 +201,8 @@ export function getMode(scene: BattleScene) {
 
 /**
  * Pulls the current run's DRPD from LocalStorage using the run's RNG seed.
+ * 
+ * When loaded, the file is automatically updated and assigned a seed
  * @param scene The BattleScene. Used to get the wave number, which is what determines the name of the log we need.
  * @returns The DRPD file, or `null` if there is no file for this run.
  */
@@ -224,7 +226,7 @@ export function save(scene: BattleScene, drpd: DRPD) {
 }
 
 /**
- * Testing purposes only.
+ * Testing purposes only. Currently unused.
  */
 export const RNGState: number[] = []
 
