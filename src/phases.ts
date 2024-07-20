@@ -1571,7 +1571,7 @@ export class EncounterPhase extends BattlePhase {
     LoggerTools.resetWaveActions(this.scene, undefined, true)
 
     if (LoggerTools.autoCheckpoints.includes(this.scene.currentBattle.waveIndex)) {
-      this.scene.gameData.saveGameToAuto(this.scene)
+      //this.scene.gameData.saveGameToAuto(this.scene)
     }
 
     if (this.scene.currentBattle.battleType === BattleType.WILD) {
@@ -2678,8 +2678,15 @@ export class TurnInitPhase extends FieldPhase {
     });
 
     var Pt = this.scene.getEnemyParty()
-    var Pt1 = [this.scene.getEnemyParty()[0], this.scene.getEnemyParty()[2], this.scene.getEnemyParty()[4]]
-    var Pt2 = [this.scene.getEnemyParty()[1], this.scene.getEnemyParty()[3], this.scene.getEnemyParty()[5]]
+    var Pt1 = []
+    var Pt2 = []
+    for (var i = 0; i < Pt.length; i++) {
+      if (i % 2 == 0) {
+        Pt1.push(Pt[i])
+      } else {
+        Pt2.push(Pt[i])
+      }
+    }
     Pt.forEach((pokemon, i) => {
       if (pokemon != undefined)
         if (pokemon.hasTrainer() || true) {
