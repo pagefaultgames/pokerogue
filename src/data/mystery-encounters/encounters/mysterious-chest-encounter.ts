@@ -28,7 +28,7 @@ export const MysteriousChestEncounter: IMysteryEncounter =
         hasShadow: true,
         x: 4,
         y: 10,
-        yShadowOffset: 3,
+        yShadow: 3,
         disableAnimation: true, // Re-enabled after option select
       },
     ])

@@ -119,7 +119,7 @@ export const EGG_GACHA_PULL_COUNT_OVERRIDE: number = 0;
 // 1 to 256, set to null to ignore
 export const MYSTERY_ENCOUNTER_RATE_OVERRIDE: number = 256;
 export const MYSTERY_ENCOUNTER_TIER_OVERRIDE: MysteryEncounterTier = null;
-export const MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType = MysteryEncounterType.SLEEPING_SNORLAX;
+export const MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType = MysteryEncounterType.THE_STRONG_STUFF;
 
 /**
  * MODIFIER / ITEM OVERRIDES

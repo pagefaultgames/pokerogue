@@ -31,7 +31,7 @@ export const ShadyVitaminDealerEncounter: IMysteryEncounter =
         repeat: true,
         x: 12,
         y: -5,
-        yShadowOffset: -5
+        yShadow: -5
       },
       {
         spriteKey: "b2w2_veteran_m",
@@ -39,7 +39,7 @@ export const ShadyVitaminDealerEncounter: IMysteryEncounter =
         hasShadow: true,
         x: -12,
         y: 3,
-        yShadowOffset: 3
+        yShadow: 3
       },
     ])
     .withIntroDialogue([

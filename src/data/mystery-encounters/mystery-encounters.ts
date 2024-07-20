@@ -12,6 +12,7 @@ import { SleepingSnorlaxEncounter } from "./encounters/sleeping-snorlax-encounte
 import { TrainingSessionEncounter } from "./encounters/training-session-encounter";
 import IMysteryEncounter from "./mystery-encounter";
 import { SafariZoneEncounter } from "#app/data/mystery-encounters/encounters/safari-zone-encounter";
+import { TheStrongStuffEncounter } from "#app/data/mystery-encounters/encounters/the-strong-stuff-encounter";
 
 // Spawn chance: (BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT + WIGHT_INCREMENT_ON_SPAWN_MISS * <number of missed spawns>) / 256
 export const BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT = 1;
@@ -220,6 +221,7 @@ export function initMysteryEncounters() {
   allMysteryEncounters[MysteryEncounterType.FIELD_TRIP] = FieldTripEncounter;
   allMysteryEncounters[MysteryEncounterType.SAFARI_ZONE] = SafariZoneEncounter;
   allMysteryEncounters[MysteryEncounterType.LOST_AT_SEA] = LostAtSeaEncounter;
+  allMysteryEncounters[MysteryEncounterType.THE_STRONG_STUFF] = TheStrongStuffEncounter;
 
   // Add extreme encounters to biome map
   extremeBiomeEncounters.forEach(encounter => {

@@ -1,4 +1,5 @@
 import { lostAtSea } from "./mystery-encounters/lost-at-sea";
+import { theStrongStuffDialogue } from "#app/locales/en/mystery-encounters/the-strong-stuff-dialogue";
 
 /**
  * Patterns that can be used:
@@ -241,4 +242,5 @@ export const mysteryEncounter = {
   "sleeping_snorlax_option_3_good_result": "Your {{option3PrimaryName}} uses {{option3PrimaryMove}}! @s{item_fanfare}It steals Leftovers off the sleeping Snorlax and you make out like bandits!",
 
   lostAtSea,
+  theStrongStuff: theStrongStuffDialogue,
 } as const;
