@@ -22,20 +22,9 @@ import PokemonSpecies from "./data/pokemon-species";
 
 // #region 01 Variables
 
-// Value holders
-export const rarities = []
-export const rarityslot = [0, ""]
-export const Actions = []
-
-// Booleans
-export const isPreSwitch: Utils.BooleanHolder = new Utils.BooleanHolder(false);
-export const isFaintSwitch: Utils.BooleanHolder = new Utils.BooleanHolder(false);
-export const SheetsMode = new Utils.BooleanHolder(false)
-
-// (unused) Stores the current DRPD
-/** @deprecated */
-export var StoredLog: DRPD = undefined;
-
+// constants
+/** The number of enemy actions to log. */
+export const EnemyEventLogCount = 3
 /** The current DRPD version. */
 export const DRPD_Version = "1.1.0"
 /** (Unused / reference only) All the log versions that this mod can keep updated.
@@ -46,6 +35,25 @@ export const acceptedVersions = [
   "1.0.0a",
   "1.1.0",
 ]
+
+// Value holders
+/** Holds the encounter rarities for the Pokemon in this wave. */
+export const rarities = []
+/** Used to store rarity tier between files when calculating and storing a Pokemon's encounter rarity.
+ * 
+ * The second index is (very lazily) used to store a log's name/seed for `setFileInfo`.
+ * @see setFileInfo
+ */
+export const rarityslot = [0, ""]
+/** Stores a list of the user's battle actions in a turn.
+ * 
+ * Its contents are printed to the current wave's actions list, separated by pipes `|`, when the turn begins playing out. */
+export const Actions = []
+
+// Booleans
+export const isPreSwitch: Utils.BooleanHolder = new Utils.BooleanHolder(false);
+export const isFaintSwitch: Utils.BooleanHolder = new Utils.BooleanHolder(false);
+export const SheetsMode = new Utils.BooleanHolder(false)
 
 // #endregion
 
@@ -95,6 +103,12 @@ export function downloadLogByIDToSheet(i: integer) {
 
 
 // #region 03 Log Handler
+
+
+// These are general utilities for keeping track of the user's logs.
+// For the functions that log the player's actions, see "13. Logging Events"
+
+
 /**
  * Stores logs.
  * Generate a new list with `getLogs()`.
@@ -186,6 +200,9 @@ export function getMode(scene: BattleScene) {
  * @returns The DRPD file, or `null` if there is no file for this run.
  */
 export function getDRPD(scene: BattleScene): DRPD {
+  if (localStorage.getItem(getLogID(scene)) == null) {
+    localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
+  }
   var drpd: DRPD = JSON.parse(localStorage.getItem(getLogID(scene))) as DRPD;
   if (drpd == undefined || drpd == null)
     return null;
@@ -548,7 +565,17 @@ export interface Wave {
    * @see PokeData
    * @see Wave.type
    */
-  pokemon?: PokeData[]
+  pokemon?: PokeData[],
+  /**
+   * Contains the first 3 turns or so of the enemy's actions.
+   * Used to check for refreshes.
+   */
+  initialActions: string[],
+  /**
+   * Contains the names of the first set of modifier rewards.
+   * Used to check for refreshes.
+   */
+  modifiers: string[]
 }
 /**
  * Exports the current battle as a `Wave`.
@@ -564,7 +591,9 @@ export function exportWave(scene: BattleScene): Wave {
     actions: [],
     shop: "",
     clearActionsFlag: false,
-    biome: getBiomeName(scene.arena.biomeType)
+    biome: getBiomeName(scene.arena.biomeType),
+    initialActions: [],
+    modifiers: []
   }
   if (ret.double == undefined) ret.double = false;
   switch (ret.type) {
@@ -706,6 +735,8 @@ export function getWave(drpd: DRPD, floor: integer, scene: BattleScene): Wave {
       shop: "",
       clearActionsFlag: false,
       biome: getBiomeName(scene.arena.biomeType),
+      initialActions: [],
+      modifiers: [],
       //pokemon: []
     }
     wv = drpd.waves[insertPos]
@@ -739,6 +770,8 @@ export function getWave(drpd: DRPD, floor: integer, scene: BattleScene): Wave {
         shop: "",
         biome: getBiomeName(scene.arena.biomeType),
         clearActionsFlag: false,
+        initialActions: [],
+        modifiers: [],
         //pokemon: []
       })
       return drpd.waves[drpd.waves.length - 1]
@@ -775,6 +808,8 @@ export function getWave(drpd: DRPD, floor: integer, scene: BattleScene): Wave {
             shop: "",
             biome: getBiomeName(scene.arena.biomeType),
             clearActionsFlag: false,
+            initialActions: [],
+            modifiers: [],
             //pokemon: []
           }
           wv = drpd.waves[drpd.waves.length - 1]
@@ -803,6 +838,8 @@ export function getWave(drpd: DRPD, floor: integer, scene: BattleScene): Wave {
             shop: "",
             clearActionsFlag: false,
             biome: getBiomeName(scene.arena.biomeType),
+            initialActions: [],
+            modifiers: [],
             //pokemon: []
           }
           wv = drpd.waves[insertPos]
@@ -1219,12 +1256,12 @@ function printItemNoNewline(inData: string, indent: string, item: ItemData) {
 //#region 12 Ingame Menu
 
 /**
- * Sets the name, author, and [todo] label for a file.
+ * Sets the name, author, and label for a file.
  * @param title The display name of the file.
  * @param authors The author(s) of the file.
  * @todo Add label field.
  */
-export function setFileInfo(title: string, authors: string[]) {
+export function setFileInfo(title: string, authors: string[], label: string) {
   console.log("Setting file " + rarityslot[1] + " to " + title + " / [" + authors.join(", ") + "]")
   var fileID = rarityslot[1] as string
   var drpd = JSON.parse(localStorage.getItem(fileID)) as DRPD;
@@ -1245,6 +1282,7 @@ export function setFileInfo(title: string, authors: string[]) {
     }
   }
   drpd.authors = authors;
+  drpd.label = label;
   localStorage.setItem(fileID, JSON.stringify(drpd))
 }
 
@@ -1449,13 +1487,13 @@ export function generateEditHandlerForLog(scene: BattleScene, i: integer, callba
  * 
  * This includes attacks you perform, items you transfer during the shop, Poke Balls you throw, running from battl, (or attempting to), and switching (including pre-switches).
  * @param scene The BattleScene. Used to get the log ID.
- * @param floor The wave index to write to.
+ * @param floor The wave index to write to. Defaults to the current floor.
  * @param action The text you want to add to the actions list.
  * 
  * @see resetWaveActions
  */
 export function logActions(scene: BattleScene, floor: integer, action: string) {
-  if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
+  if (floor == undefined) floor = scene.currentBattle.waveIndex
   var drpd = getDRPD(scene)
   console.log(`Logging an action: "${action}"`)
   var wv: Wave = getWave(drpd, floor, scene)
@@ -1473,13 +1511,13 @@ export function logActions(scene: BattleScene, floor: integer, action: string) {
 /**
  * Logs the actions that the player took, adding text to the most recent action.
  * @param scene The BattleScene. Used to get the log ID.
- * @param floor The wave index to write to.
+ * @param floor The wave index to write to. Defaults to the current floor.
  * @param action The text you want to add to the actions list.
  * 
  * @see resetWaveActions
  */
 export function appendAction(scene: BattleScene, floor: integer, action: string) {
-  if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
+  if (floor == undefined) floor = scene.currentBattle.waveIndex
   var drpd = getDRPD(scene)
   var wv: Wave = getWave(drpd, floor, scene)
   if (wv.clearActionsFlag) {
@@ -1505,7 +1543,6 @@ export function appendAction(scene: BattleScene, floor: integer, action: string)
  * @see resetWaveActions
  */
 export function getActionCount(scene: BattleScene, floor: integer) {
-  if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
   var drpd = getDRPD(scene)
   console.log(`Checking action count`)
   console.log(drpd)
@@ -1522,11 +1559,11 @@ export function getActionCount(scene: BattleScene, floor: integer) {
 /**
  * Logs that a Pokémon was captured.
  * @param scene The BattleScene. Used to get the log ID.
- * @param floor The wave index to write to.
+ * @param floor The wave index to write to. Defaults to the current floor.
  * @param target The Pokémon that you captured.
  */
 export function logCapture(scene: BattleScene, floor: integer, target: EnemyPokemon) {
-  //if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
+  if (floor == undefined) floor = scene.currentBattle.waveIndex
   var drpd = getDRPD(scene)
   console.log(`Logging successful capture: ${target.name}`)
   var wv: Wave = getWave(drpd, floor, scene)
@@ -1542,7 +1579,6 @@ export function logCapture(scene: BattleScene, floor: integer, target: EnemyPoke
  * @param scene  The BattleScene. Used to get the log ID and the player's party.
  */
 export function logPlayerTeam(scene: BattleScene) {
-  if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
   var drpd = getDRPD(scene)
   console.log(`Logging player starters: ${scene.getParty().map(p => p.name).join(", ")}`)
   var P = scene.getParty()
@@ -1562,7 +1598,6 @@ export function logPlayerTeam(scene: BattleScene) {
  */
 export function logPokemon(scene: BattleScene, floor: integer = undefined, slot: integer, pokemon: EnemyPokemon, encounterRarity?: string) {
   if (floor == undefined) floor = scene.currentBattle.waveIndex
-  if (localStorage.getItem(getLogID(scene)) == null) localStorage.setItem(getLogID(scene), JSON.stringify(newDocument(getMode(scene) + " Run")))
   var drpd = getDRPD(scene)
   console.log(`Logging opposing team member: ${pokemon.name}`)
   var wv: Wave = getWave(drpd, floor, scene)
@@ -1742,175 +1777,5 @@ export function resetWaveActions(scene: BattleScene, floor: integer = undefined,
   }
   console.log("--> ", drpd)
   localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
-}
-//#endregion
-
-
-
-
-
-//#region 14 Deprecated
-
-/**
- * Writes data to a new line.
- * @param keyword The identifier key for the log you're writing to
- * @param data The string you're writing to the given log
- * @deprecated
- */
-export function toLog(keyword: string, data: string) {
-  localStorage.setItem(logs[logKeys.indexOf(keyword)][1], localStorage.getItem(logs[logKeys.indexOf(keyword)][1] + "\n" + data))
-}
-/**
- * Writes data on the same line you were on.
- * @param keyword The identifier key for the log you're writing to
- * @param data The string you're writing to the given log
- * @deprecated
- */
-export function appendLog(keyword: string, data: string) {
-  localStorage.setItem(logs[logKeys.indexOf(keyword)][1], localStorage.getItem(logs[logKeys.indexOf(keyword)][1] + data))
-}
-/**
- * Saves a log to your device.
- * @param keyword The identifier key for the log you want to save.
- * @deprecated
- */
-export function downloadLog(keyword: string) {
-  var d = JSON.parse(localStorage.getItem(logs[logKeys.indexOf(keyword)][1]))
-  const blob = new Blob([ printDRPD("", "", d as DRPD) ], {type: "text/json"});
-  const link = document.createElement("a");
-  link.href = window.URL.createObjectURL(blob);
-  var date: string = (d as DRPD).date
-  var filename: string = date[0] + date[1] + "_" + date[3] + date[4] + "_" + date[6] + date[7] + date[8] + date[9] + "_route.json"
-  link.download = `${filename}`;
-  link.click();
-  link.remove();
-}
-/**
- * 
- * Clears all data from a log.
- * @param keyword The identifier key for the log you want to reste
- * @deprecated
- */
-export function clearLog(keyword: string) {
-  localStorage.setItem(logs[logKeys.indexOf(keyword)][1], "---- " + logs[logKeys.indexOf(keyword)][3] + " ----" + logs[logKeys.indexOf(keyword)][5])
-}
-
-/**
- * Generates an option to create a new log.
- * 
- * Not used.
- * @param i The slot number. Corresponds to an index in `logs`.
- * @param scene The current scene. Not used.
- * @param o The current game phase. Used to return to the previous menu. Not necessary anymore lol
- * @returns A UI option.
- * 
- * wow this function sucks
- * @deprecated
- */
-export function generateAddOption(i: integer, scene: BattleScene, o: TitlePhase) {
-  var op: OptionSelectItem = {
-    label: "Generate log " + logs[i][0],
-    handler: () => {
-      localStorage.setItem(logs[i][1], JSON.stringify(newDocument()))
-      o.callEnd();
-      return true;
-    }
-  }
-  return op;
-}
-/**
- * A sort function, used to sort csv columns.
- * 
- * No longer used as we are using .json format instead.
- * @deprecated
- */
-export function dataSorter(a: string, b: string) {
-  var da = a.split(",")
-  var db = b.split(",")
-  if (da[0] == "---- " + logs[logKeys.indexOf("e")][3] + " ----") {
-    return -1;
-  }
-  if (db[0] == "---- " + logs[logKeys.indexOf("e")][3] + " ----") {
-    return 1;
-  }
-  if (da[0] == db[0]) {
-    return ((da[1] as any) * 1) - ((db[1] as any) * 1)
-  }
-  return ((da[0] as any) * 1) - ((db[0] as any) * 1)
-}
-/**
- * Writes or replaces a csv row.
- * 
- * No longer used as we are using .json format instead.
- * @param keyword The keyword/ID of the log to write to.
- * @param newLine The data to write.
- * @param floor The floor to write to. Used for sorting.
- * @param slot  The slot to write to. Used for sorting.
- * @deprecated
- */
-export function setRow(keyword: string, newLine: string, floor: integer, slot: integer) {
-  var data = localStorage.getItem(logs[logKeys.indexOf(keyword)][1]).split("\n")
-  data.sort(dataSorter)
-  var idx = 1
-  if (slot == -1) {
-    while (idx < data.length && (data[idx].split(",")[0] as any) * 1 < floor) {
-      idx++
-    }
-    idx--
-    slot = ((data[idx].split(",")[1] as any) * 1) + 1
-  } else {
-    while (idx < data.length && (data[idx].split(",")[0] as any) * 1 <= floor && (data[idx].split(",")[1] as any) * 1 <= slot) {
-      idx++
-    }
-    idx--
-    for (var i = 0; i < data.length; i++) {
-      if (data[i] == ",,,,,,,,,,,,,,,,") {
-        data.splice(i, 1)
-        if (idx > i) idx--
-        i--
-      }
-    }
-    console.log((data[idx].split(",")[0] as any) * 1, floor, (data[idx].split(",")[1] as any) * 1, slot)
-    if (idx < data.length && (data[idx].split(",")[0] as any) * 1 == floor && (data[idx].split(",")[1] as any) * 1 == slot) {
-      data[idx] = newLine
-      console.log("Overwrote data at " + idx)
-      var i: number;
-      for (i = 0; i < Math.max(0, idx - 2) && i < 2; i++) {
-        console.log(i + " " + data[i])
-      }
-      if (i == 3 && i != Math.min(0, idx - 2)) {
-        console.log("...")
-      }
-      for (i = Math.max(0, idx - 2); i <= idx + 2 && i < data.length; i++) {
-        console.log(i + (i == idx ? " >> " : " ") + data[i])
-      }
-      localStorage.setItem(logs[logKeys.indexOf(keyword)][1], data.join("\n"));
-      return;
-    }
-    idx++
-  }
-  for (var i = 0; i < data.length; i++) {
-    if (data[i] == ",,,,,,,,,,,,,,,,") {
-      data.splice(i, 1)
-      if (idx > i) idx--
-      i--
-    }
-  }
-  console.log("Inserted data at " + idx)
-  var i: number;
-  for (i = 0; i < Math.max(0, idx - 2) && i < 2; i++) {
-    console.log(i + " " + data[i])
-  }
-  if (i == 3 && i != Math.min(0, idx - 2)) {
-    console.log("...")
-  }
-  for (i = Math.max(0, idx - 2); i < idx; i++) {
-    console.log(i + " " + data[i])
-  }
-  console.log(i + " >> " + newLine)
-  for (i = idx; i <= idx + 2 && i < data.length; i++) {
-    console.log(i + " " + data[i])
-  }
-  localStorage.setItem(logs[logKeys.indexOf(keyword)][1], data.slice(0, idx).join("\n") + "\n" + newLine + (data.slice(idx).length == 0 ? "" : "\n") + data.slice(idx).join("\n"));
 }
 //#endregion
