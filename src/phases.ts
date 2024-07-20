@@ -702,20 +702,19 @@ export class TitlePhase extends Phase {
       label: "Manage Logs",
       handler: () => {
         this.scene.biomeChangeMode = false
-        //return this.logRenameMenu()
-        //
+        return this.logRenameMenu()
+        /*
         this.scene.ui.setOverlayMode(Mode.LOG_HANDLER,
           (k: string) => {
             if (k === undefined) {
               return this.showOptions();
             }
             console.log(k)
-            this.showOptions();
           }, () => {
             this.showOptions();
           });
         return true;
-        //
+        */
       }
     })
     options.push({

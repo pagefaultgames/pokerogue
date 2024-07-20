@@ -15,10 +15,9 @@ import { loggedInUser } from "#app/account.js";
 import { allpanels, biomePanelIDs } from "../loading-scene"
 import { getBiomeName } from "#app/data/biomes.js";
 import { Species } from "#app/enums/species.js";
-import { allSpecies, getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species.js";
+import { getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species.js";
 
 const sessionSlotCount = 5;
-const gap = 20;
 
 export type LogSelectCallback = (key: string) => void;
 
@@ -31,15 +30,12 @@ export default class LogSelectUiHandler extends MessageUiHandler {
   private sessionSlots: SessionSlot[];
 
   private selectCallback: LogSelectCallback;
-  private quitCallback: LogSelectCallback;
 
   private scrollCursor: integer = 0;
 
   private cursorObj: Phaser.GameObjects.NineSlice;
 
   private sessionSlotsContainerInitialY: number;
-
-  private extrasLabel: Phaser.GameObjects.Text
 
   constructor(scene: BattleScene) {
     super(scene, Mode.LOG_HANDLER);
@@ -73,10 +69,6 @@ export default class LogSelectUiHandler extends MessageUiHandler {
     this.message.setOrigin(0, 0);
     this.saveSlotSelectMessageBoxContainer.add(this.message);
 
-    this.extrasLabel = addTextObject(this.scene, 40, 56 * 5 + 5, "Other Files", TextStyle.WINDOW);
-    this.extrasLabel.setAlign("center");
-    this.sessionSlotsContainer.add(this.extrasLabel);
-
     this.sessionSlots = [];
   }
 
@@ -88,9 +80,6 @@ export default class LogSelectUiHandler extends MessageUiHandler {
     super.show(args);
 
     this.selectCallback = args[0] as LogSelectCallback;
-    this.quitCallback = args[1] as LogSelectCallback;
-    
-    console.log(this.selectCallback)
 
     this.saveSlotSelectContainer.setVisible(true);
     this.populateSessionSlots();
@@ -106,19 +95,18 @@ export default class LogSelectUiHandler extends MessageUiHandler {
     let success = false;
     let error = false;
 
-    if (button === Button.ACTION) {
+    if (button === Button.ACTION || button === Button.CANCEL) {
       const originalCallback = this.selectCallback;
-      const cursor = this.cursor + this.scrollCursor;
-      var k = this.sessionSlots[cursor].key
-      var file = JSON.parse(localStorage.getItem(k)) as LoggerTools.DRPD;
-      console.log(k, file)
-      LoggerTools.generateEditHandlerForLog(this.scene, this.sessionSlots[cursor].logIndex, () => {
+      if (button === Button.ACTION) {
+        const cursor = this.cursor + this.scrollCursor;
         this.selectCallback = null;
-        originalCallback(k)
-      })()
-      success = true;
-    } else if (button === Button.CANCEL) {
-      this.quitCallback(undefined);
+        originalCallback(this.sessionSlots[cursor].key);
+        success = true;
+      } else {
+        this.selectCallback = null;
+        originalCallback(undefined);
+        success = true;
+      }
     } else {
       switch (button) {
       case Button.UP:
@@ -159,7 +147,6 @@ export default class LogSelectUiHandler extends MessageUiHandler {
           const sessionSlot = new SessionSlot(this.scene, s, ypos);
           ypos++
           sessionSlot.load(LoggerTools.logs[i][1]);
-          sessionSlot.logIndex = i
           this.scene.add.existing(sessionSlot);
           this.sessionSlotsContainer.add(sessionSlot);
           this.sessionSlots.push(sessionSlot);
@@ -167,11 +154,11 @@ export default class LogSelectUiHandler extends MessageUiHandler {
       }
       if (!found) {
         const sessionSlot = new SessionSlot(this.scene, s, ypos);
-        ypos++
-        sessionSlot.load(undefined);
-        this.scene.add.existing(sessionSlot);
-        this.sessionSlotsContainer.add(sessionSlot);
-        this.sessionSlots.push(sessionSlot);
+          ypos++
+          sessionSlot.load(undefined);
+          this.scene.add.existing(sessionSlot);
+          this.sessionSlotsContainer.add(sessionSlot);
+          this.sessionSlots.push(sessionSlot);
       }
     }
     for (var i = 0; i < LoggerTools.logs.length; i++) {
@@ -179,7 +166,6 @@ export default class LogSelectUiHandler extends MessageUiHandler {
         const sessionSlot = new SessionSlot(this.scene, undefined, ypos);
         ypos++
         sessionSlot.load(LoggerTools.logs[i][1]);
-        sessionSlot.logIndex = i
         this.scene.add.existing(sessionSlot);
         this.sessionSlotsContainer.add(sessionSlot);
         this.sessionSlots.push(sessionSlot);
@@ -209,7 +195,7 @@ export default class LogSelectUiHandler extends MessageUiHandler {
       this.cursorObj.setOrigin(0, 0);
       this.sessionSlotsContainer.add(this.cursorObj);
     }
-    this.cursorObj.setPosition(4, 4 + (cursor + this.scrollCursor) * 56 + ((cursor + this.scrollCursor) > 4 ? gap : 0));
+    this.cursorObj.setPosition(4, 4 + (cursor + this.scrollCursor) * 56);
 
     return changed;
   }
@@ -222,7 +208,7 @@ export default class LogSelectUiHandler extends MessageUiHandler {
       this.setCursor(this.cursor);
       this.scene.tweens.add({
         targets: this.sessionSlotsContainer,
-        y: this.sessionSlotsContainerInitialY - 56 * scrollCursor - ((this.cursor + this.scrollCursor) > 4 ? gap : 0),
+        y: this.sessionSlotsContainerInitialY - 56 * scrollCursor,
         duration: Utils.fixedInt(325),
         ease: "Sine.easeInOut"
       });
@@ -259,10 +245,9 @@ class SessionSlot extends Phaser.GameObjects.Container {
   public wv: integer;
   public key: string;
   private loadingLabel: Phaser.GameObjects.Text;
-  public logIndex: integer;
 
   constructor(scene: BattleScene, slotId: integer = undefined, ypos: integer, autoSlot?: integer) {
-    super(scene, 0, ypos * 56 + (ypos > 4 ? gap : 0));
+    super(scene, 0, ypos * 56);
 
     this.slotId = slotId;
     this.autoSlot = autoSlot
@@ -284,7 +269,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
     var lbl = `???`
     lbl = data.title
     if (this.slotId) {
-      lbl = `[${this.slotId + 1}] ${lbl}`
+      lbl = `[${this.slotId}] ${lbl}`
     }
     console.log(data, this.slotId, this.autoSlot, lbl)
     const gameModeLabel = addTextObject(this.scene, 8, 5, lbl, TextStyle.WINDOW);
@@ -293,13 +278,8 @@ class SessionSlot extends Phaser.GameObjects.Container {
     const timestampLabel = addTextObject(this.scene, 8, 19, data.date, TextStyle.WINDOW);
     this.add(timestampLabel);
 
-    const playTimeLabel = addTextObject(this.scene, 8, 33, data.version + " / Path: " + (data.label || ""), TextStyle.WINDOW);
+    const playTimeLabel = addTextObject(this.scene, 8, 33, data.version + " / " + (data.label || "") + " / " + (data.uuid || ""), TextStyle.WINDOW);
     this.add(playTimeLabel);
-
-    if (data.starters[0] == null) {
-      const timestampLabel = addTextObject(this.scene, 144, 10, "No Starter data", TextStyle.WINDOW);
-      this.add(timestampLabel);
-    }
 
     const pokemonIconsContainer = this.scene.add.container(144, 4);
     if (false || data.starters)
@@ -308,17 +288,16 @@ class SessionSlot extends Phaser.GameObjects.Container {
         return;
       const iconContainer = this.scene.add.container(26 * i, 0);
       iconContainer.setScale(0.75);
-      console.log(p.id, Utils.getEnumKeys(Species)[Utils.getEnumValues(Species).indexOf(p.id)])
 
-      //if (Utils.getEnumValues(Species)[p.id] == undefined)
-        //return;
+      if (Utils.getEnumValues(Species)[p.id] == undefined)
+        return;
 
-      //if (getPokemonSpecies(Utils.getEnumValues(Species)[p.id]) == undefined)
-        //return;
+      if (getPokemonSpecies(Utils.getEnumValues(Species)[p.id]) == undefined)
+        return;
 
-      const icon = this.scene.addPkIcon(allSpecies[Utils.getEnumValues(Species).indexOf(p.id)], 0, 0, 0, 0, 0);
+      const icon = this.scene.addPkIcon(getPokemonSpecies(Utils.getEnumValues(Species)[p.id]), 0, 0, 0, 0, 0);
 
-      const text = addTextObject(this.scene, 32, 20, ``, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
+      const text = addTextObject(this.scene, 32, 20, `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(p.level, 1000)}`, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
       text.setShadow(0, 0, null);
       text.setStroke("#424242", 14);
       text.setOrigin(1, 0);

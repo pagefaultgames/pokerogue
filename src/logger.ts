@@ -888,7 +888,7 @@ export interface PokeData {
  */
 export function exportPokemon(pokemon: Pokemon, encounterRarity?: string): PokeData {
   return {
-    id: Utils.getEnumValues(Species).indexOf(pokemon.species.speciesId),
+    id: pokemon.species.speciesId,
     name: pokemon.species.getName(),
     ability: pokemon.getAbility().name,
     isHiddenAbility: pokemon.hasAbility(pokemon.species.abilityHidden),
@@ -1350,51 +1350,6 @@ export function generateEditHandler(scene: BattleScene, logId: string, callback:
   }
   if (i == undefined)
     return; // Failed to find a log
-  return (): boolean => {
-    rarityslot[1] = logs[i][1]
-    //scene.phaseQueue[0].end()
-    scene.ui.setMode(Mode.NAME_LOG, {
-      autofillfields: [
-        (JSON.parse(localStorage.getItem(logs[i][1])) as DRPD).title,
-        (JSON.parse(localStorage.getItem(logs[i][1])) as DRPD).authors.join(", "),
-        (JSON.parse(localStorage.getItem(logs[i][1])) as DRPD).label,
-      ],
-      buttonActions: [
-        () => {
-          console.log("Rename")
-          scene.ui.playSelect();
-          callback()
-        },
-        () => {
-          console.log("Export")
-          scene.ui.playSelect();
-          downloadLogByID(i)
-          callback()
-        },
-        () => {
-          console.log("Export to Sheets")
-          scene.ui.playSelect();
-          downloadLogByIDToSheet(i)
-          callback()
-        },
-        () => {
-          console.log("Delete")
-          scene.ui.playSelect();
-          localStorage.removeItem(logs[i][1])
-          callback()
-        }
-      ]
-    });
-    return false;
-  }
-}
-/**
- * Generates a UI option to save a log to your device.
- * @param i The slot number. Corresponds to an index in `logs`.
- * @param saves Your session data. Used to label logs if they match one of your save slots.
- * @returns A UI option.
- */
-export function generateEditHandlerForLog(scene: BattleScene, i: integer, callback: Function) {
   return (): boolean => {
     rarityslot[1] = logs[i][1]
     //scene.phaseQueue[0].end()
