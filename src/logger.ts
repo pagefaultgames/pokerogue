@@ -348,13 +348,6 @@ export function enemyPokeName(scene: BattleScene, index: integer | Pokemon | Ene
  * @see DRPD
  */
 function updateLog(drpd: DRPD): DRPD {
-  if (drpd.date[2] == "-") {
-    var date_month = drpd.date.substring(0, 2)
-    var date_day = drpd.date.substring(3, 5)
-    var date_year = drpd.date.substring(6, 10)
-    console.log(`Corrected date from ${drpd.date} to ${date_year}-${date_month}-${date_day}`)
-    drpd.date = `${date_year}-${date_month}-${date_day}`
-  }
   if (drpd.version == "1.0.0") {
     drpd.version = "1.0.0a"
     console.log("Updated to 1.0.0a - changed item IDs to strings")
@@ -1228,7 +1221,6 @@ export function setFileInfo(title: string, authors: string[]) {
   console.log("Setting file " + rarityslot[1] + " to " + title + " / [" + authors.join(", ") + "]")
   var fileID = rarityslot[1] as string
   var drpd = JSON.parse(localStorage.getItem(fileID)) as DRPD;
-  drpd = updateLog(drpd)
   drpd.title = title;
   for (var i = 0; i < authors.length; i++) {
     while (authors[i][0] == " ") {
