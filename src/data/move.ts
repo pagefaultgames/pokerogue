@@ -4754,61 +4754,20 @@ export class FirstMoveTypeAttr extends MoveEffectAttr {
   }
 }
 
-export class RandomMovesetMoveAttr extends OverrideMoveEffectAttr {
-  private enemyMoveset: boolean;
-
-  constructor(enemyMoveset?: boolean) {
-    super();
-
-    this.enemyMoveset = enemyMoveset;
-  }
-
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const moveset = (!this.enemyMoveset ? user : target).getMoveset();
-    const allies = user.scene.getParty().filter(p => p !== user);
-    const partyMoveset = moveset.concat(allies.map(p => p.moveset).flat());
-
-    const moves = partyMoveset.filter(m => !m.getMove().hasFlag(MoveFlags.IGNORE_VIRTUAL));
-    if (moves.length) {
-      const move = moves[user.randSeedInt(moves.length)];
-      const moveIndex = moveset.findIndex(m => m.moveId === move.moveId);
-      const moveTargets = getMoveTargets(user, move.moveId);
-      if (!moveTargets.targets.length) {
-        return false;
-      }
-      let selectTargets: BattlerIndex[];
-      switch (true) {
-      case (moveTargets.multiple || moveTargets.targets.length === 1): {
-        selectTargets = moveTargets.targets;
-        break;
-      }
-      case (moveTargets.targets.indexOf(target.getBattlerIndex()) > -1): {
-        selectTargets = [ target.getBattlerIndex() ];
-        break;
-      }
-      default: {
-        moveTargets.targets.splice(moveTargets.targets.indexOf(user.getAlly().getBattlerIndex()));
-        selectTargets =  [ moveTargets.targets[user.randSeedInt(moveTargets.targets.length)] ];
-        break;
-      }
-      }
-      const targets = selectTargets;
-      user.getMoveQueue().push({ move: move.moveId, targets: targets, ignorePP: true });
-      user.scene.unshiftPhase(new MovePhase(user.scene, user, targets, moveset[moveIndex], true));
-      return true;
-    }
-
-    return false;
-  }
-}
 
 export class RandomMoveAttr extends OverrideMoveEffectAttr {
+  protected moveId: number;
+  constructor() {
+    super();
+  }
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
-      const moveIds = Utils.getEnumValues(Moves).filter(m => !allMoves[m].hasFlag(MoveFlags.IGNORE_VIRTUAL) && !allMoves[m].name.endsWith(" (N)"));
-      const moveId = moveIds[user.randSeedInt(moveIds.length)];
+      if (!this.moveId) {
+        const moveIds = Utils.getEnumValues(Moves).filter(m => !allMoves[m].hasFlag(MoveFlags.IGNORE_VIRTUAL) && !allMoves[m].name.endsWith(" (N)"));
+        this.moveId = moveIds[user.randSeedInt(moveIds.length)];
+      }
 
-      const moveTargets = getMoveTargets(user, moveId);
+      const moveTargets = getMoveTargets(user, this.moveId);
       if (!moveTargets.targets.length) {
         resolve(false);
         return;
@@ -4818,12 +4777,41 @@ export class RandomMoveAttr extends OverrideMoveEffectAttr {
         : moveTargets.targets.indexOf(target.getBattlerIndex()) > -1
           ? [ target.getBattlerIndex() ]
           : [ moveTargets.targets[user.randSeedInt(moveTargets.targets.length)] ];
-      user.getMoveQueue().push({ move: moveId, targets: targets, ignorePP: true });
-      user.scene.unshiftPhase(new MovePhase(user.scene, user, targets, new PokemonMove(moveId, 0, 0, true), true));
-      initMoveAnim(user.scene, moveId).then(() => {
-        loadMoveAnimAssets(user.scene, [ moveId ], true)
+      user.getMoveQueue().push({ move: this.moveId, targets: targets, ignorePP: true });
+      user.scene.unshiftPhase(new MovePhase(user.scene, user, targets, new PokemonMove(this.moveId, 0, 0, true), true));
+      initMoveAnim(user.scene, this.moveId).then(() => {
+        loadMoveAnimAssets(user.scene, [ this.moveId ], true)
           .then(() => resolve(true));
       });
+    });
+  }
+}
+
+export class RandomMovesetMoveAttr extends RandomMoveAttr {
+  private includeParty: boolean;
+  constructor(includeParty?: boolean) {
+    super();
+    this.includeParty = includeParty;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
+    // includeParty will be true for Assist, false for Sleep Talk
+    let allies: Pokemon[];
+    if (this.includeParty) {
+      allies = user.isPlayer() ? user.scene.getParty() : user.scene.getEnemyParty();
+    } else {
+      allies = [user];
+    }
+
+    return new Promise(resolve => {
+      const partyMoveset = allies.map(p => p.moveset).flat();
+      const moves = partyMoveset.filter(m => !m.getMove().hasFlag(MoveFlags.IGNORE_VIRTUAL) && !m.getMove().name.endsWith(" (N)")); // refactor possible moves depending on sleep talk vs assist
+      if (!moves.length) {
+        resolve(false);
+        return;
+      }
+      this.moveId = moves[user.randSeedInt(moves.length)].moveId;
+      super.apply(user, target, move, args).then(result => resolve(result));
     });
   }
 }
@@ -6239,9 +6227,9 @@ export function initMoves() {
       .condition((user, target, move) => user.isOppositeGender(target)),
     new SelfStatusMove(Moves.SLEEP_TALK, Type.NORMAL, -1, 10, -1, 0, 2)
       .attr(BypassSleepAttr)
-      .attr(RandomMovesetMoveAttr)
+      .attr(RandomMovesetMoveAttr, false)
       .condition(userSleptOrComatoseCondition)
-      .target(MoveTarget.ALL_ENEMIES)
+      .target(MoveTarget.NEAR_ENEMY)
       .ignoresVirtual(),
     new StatusMove(Moves.HEAL_BELL, Type.NORMAL, -1, 5, -1, 0, 2)
       .attr(PartyStatusCureAttr, i18next.t("moveTriggers:bellChimed"), Abilities.SOUNDPROOF)
