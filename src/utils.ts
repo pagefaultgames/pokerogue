@@ -305,6 +305,10 @@ export function removeCookie(cName: string): void {
 }
 
 export function getCookie(cName: string): string {
+  if (document.cookie.indexOf(cName) !== document.cookie.lastIndexOf(cName)) {
+    document.cookie = `${cName}=;Secure;SameSite=Strict;Domain=${window.location.hostname};Path=/;Expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+    return "";
+  }
   const name = `${cName}=`;
   const ca = document.cookie.split(";");
   for (let i = 0; i < ca.length; i++) {
