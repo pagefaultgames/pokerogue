@@ -305,8 +305,9 @@ export function removeCookie(cName: string): void {
 }
 
 export function getCookie(cName: string): string {
-  if (document.cookie.indexOf(cName) !== document.cookie.lastIndexOf(cName)) {
-    document.cookie = `${cName}=;Secure;SameSite=Strict;Domain=${window.location.hostname};Path=/;Expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+  // check if there are multiple cookies with the same name and delete them
+  if (document.cookie.split(";").filter(c => c.includes(cName)).length > 1) {
+    removeCookie(cName);
     return "";
   }
   const name = `${cName}=`;
