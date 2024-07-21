@@ -462,7 +462,7 @@ export default class MenuUiHandler extends MessageUiHandler {
             if (!res.ok) {
               console.error(`Log out failed (${res.status}: ${res.statusText})`);
             }
-            Utils.setCookie(Utils.sessionIdKey, "");
+            Utils.removeCookie(Utils.sessionIdKey);
             updateUserInfo().then(() => this.scene.reset(true, true));
           });
         };
