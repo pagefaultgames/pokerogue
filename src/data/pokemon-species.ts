@@ -178,7 +178,14 @@ export abstract class PokemonSpeciesForm {
   }
 
   getAbilityCount(): integer {
-    return this.ability2 ? this.abilityHidden ? 3 : 2 : this.abilityHidden ? 2 : 1;
+    let count = 1;
+    if (this.ability2) {
+      count += 1;
+    }
+    if (this.abilityHidden) {
+      count += 1;
+    }
+    return count;
   }
 
   getAbility(abilityIndex: integer): Abilities {
