@@ -1930,11 +1930,11 @@ export default class BattleScene extends SceneBase {
     case "battle_flare_grunt": //XY Team Flare Battle
       return 4.228;
     case "battle_aether_grunt": // Battle!(Aether Foundation)
-      return 16.00; 
+      return 16.00;
     case "battle_skull_grunt": // Battle!(Team Skull)
       return 20.87;
     case "battle_macro_grunt": // Battle!(Trainer) Sword / Shield
-      return 11.56;    	  
+      return 11.56;
     case "battle_rocket_boss": //USUM Giovanni Battle
       return 9.115;
     case "battle_aqua_magma_boss": //ORAS Archie & Maxie Battle
@@ -1946,11 +1946,11 @@ export default class BattleScene extends SceneBase {
     case "battle_flare_boss": //XY Lysandre Battle
       return 8.085;
     case "battle_aether_boss": //Battle!(Lusamine)
-      return 11.33; 
+      return 11.33;
     case "battle_skull_boss": //Battle!(Team Skull Boss)
       return 13.13;
     case "battle_macro_boss": //Battle!(Rose)
-      return 11.42;     	  
+      return 11.42;
     }
 
     return 0;

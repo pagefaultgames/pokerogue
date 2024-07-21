@@ -538,7 +538,7 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
         "dialogue:macro_grunt.victory.1"
       ]
     }
-  ],     
+  ],
   [TrainerType.ROCKET_BOSS_GIOVANNI_1]: [
     {
       encounter: [
@@ -707,7 +707,7 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
         "dialogue:aether_boss_lusamine_1.defeat.1"
       ]
     }
-  ],	    
+  ],
   [TrainerType.LUSAMINE_2]: [
     {
       encounter: [
@@ -772,7 +772,7 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
         "dialogue:macro_boss_rose_2.defeat.1"
       ]
     }
-  ],  
+  ],
   [TrainerType.BROCK]: {
     encounter: [
       "dialogue:brock.encounter.1",

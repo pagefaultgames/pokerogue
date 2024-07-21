@@ -90,7 +90,7 @@ export const bgmName: SimpleTranslationEntries = {
   "battle_aether_boss":  "SM Lusamine Battle",
   "battle_skull_boss": "SM Guzma Battle",
   "battle_macro_boss": "SWSH Rose Battle",
-  
+
   // Biome Music
   "abyss": "PMD EoS - Cráter Oscuro",
   "badlands": "PMD EoS - Valle Desolado",

@@ -438,7 +438,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "victory": {
       1: "Hmph! You seem to have a lot of skill."
     },
-  },    
+  },
   "skull_grunt": {
     "encounter": {
       1: "We're not bad-we're just hard!"
@@ -454,7 +454,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "victory": {
       1: "I have little choice but to respectfully retreat."
     },
-  },  
+  },
   "rocket_boss_giovanni_1": {
     "encounter": {
       1: "Bien. Je dois admettre que je suis impressionné de te voir ici !"
@@ -598,7 +598,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "defeat": {
       1: "Hmph..."
     }
-  },  
+  },
   "aether_boss_lusamine_2": {
     "encounter": {
       1: `The world of my Ultra Beasts... 
@@ -611,7 +611,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "defeat": {
       1: "Lillie.."
     }
-  }, 
+  },
   "skull_boss_guzma_1": {
     "encounter": {
       1: `The hated boss who beats you down and beats you down and never lets up...
@@ -661,7 +661,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: `I suppose it must seem that I am doing something terrible. I don't expect you to understand. 
           $But I must provide the Galar region with limitless energy to ensure everlasting prosperity.`
     }
-  },  
+  },
   "brock": {
     "encounter": {
       1: "My expertise on Rock-type Pokémon will take you down! Come on!",
