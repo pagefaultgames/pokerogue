@@ -189,7 +189,19 @@ export abstract class PokemonSpeciesForm {
   }
 
   getAbility(abilityIndex: integer): Abilities {
-    return !abilityIndex ? this.ability1 : abilityIndex === 1 && this.ability2 ? this.ability2 : this.abilityHidden;
+    let ret: Abilities;
+    if (abilityIndex === 0) {
+      ret = this.ability1;
+    } else if (abilityIndex === 1) {
+      if (this.ability2 !== Abilities.NONE) {
+        ret = this.ability2;
+      } else {
+        ret = this.abilityHidden;
+      }
+    } else {
+      ret = this.abilityHidden;
+    }
+    return ret;
   }
 
   getLevelMoves(): LevelMoves {
