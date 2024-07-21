@@ -602,7 +602,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   "aether_boss_lusamine_2": {
     "encounter": {
       1: `The world of my Ultra Beasts... 
-          $A world where the only thing that exists is the love between Nihilego and myself`
+          $A world where the only thing that exists is the love between Nihilego and myself.`
     },
     "victory": {
       1: `You hateful little Trainer! How dare you intrude upon this world that was meant for Nihilego and me?  
