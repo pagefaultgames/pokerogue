@@ -1785,7 +1785,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.LOPUNNY ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.formIndex = 1;
-      p.generateName();      
+      p.generateName();
     }))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.MAGEARNA ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
@@ -1863,12 +1863,12 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.MASTER_BALL;
       p.formIndex = 1;
-      p.generateName();      
+      p.generateName();
     }))
     .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.COPPERAJAH ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
       p.generateAndPopulateMoveset();
       p.formIndex = 1;
-      p.generateName();      
+      p.generateName();
     })),
 };
