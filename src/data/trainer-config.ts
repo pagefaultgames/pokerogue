@@ -1769,7 +1769,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.LOPUNNY ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.formIndex = 1;
-      p.generateName();      
+      p.generateName();
     }))
     .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.CLEFABLE ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
