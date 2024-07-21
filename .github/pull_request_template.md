@@ -28,6 +28,7 @@
 - [ ] There is no overlap with another PR?
 - [ ] The PR is self-contained and cannot be split into smaller PRs?
 - [ ] Have I provided a clear explanation of the changes?
+- [ ] Have I considered writing automated tests for thr issue ?
 - [ ] Have I tested the changes (manually)?
     - [ ] Are all unit tests still passing? (`npm run test`)
 - [ ] Are the changes visual?
