@@ -5825,7 +5825,6 @@ export function initMoves() {
     new AttackMove(Moves.WING_ATTACK, Type.FLYING, MoveCategory.PHYSICAL, 60, 100, 35, -1, 0, 1),
     new StatusMove(Moves.WHIRLWIND, Type.NORMAL, -1, 20, -1, -6, 1)
       .attr(ForceSwitchOutAttr)
-      .attr(HitsTagAttr, BattlerTagType.FLYING, false)
       .hidesTarget()
       .windMove(),
     new AttackMove(Moves.FLY, Type.FLYING, MoveCategory.PHYSICAL, 90, 95, 15, -1, 0, 1)
@@ -7253,6 +7252,7 @@ export function initMoves() {
     new AttackMove(Moves.LEAF_TORNADO, Type.GRASS, MoveCategory.SPECIAL, 65, 90, 10, 50, 0, 5)
       .attr(StatChangeAttr, BattleStat.ACC, -1),
     new AttackMove(Moves.STEAMROLLER, Type.BUG, MoveCategory.PHYSICAL, 65, 100, 20, 30, 0, 5)
+      .attr(HitsTagAttr, BattlerTagType.MINIMIZED, true)
       .attr(FlinchAttr),
     new SelfStatusMove(Moves.COTTON_GUARD, Type.GRASS, -1, 10, -1, 0, 5)
       .attr(StatChangeAttr, BattleStat.DEF, 3, true),
@@ -7732,6 +7732,7 @@ export function initMoves() {
       .partial()
       .ignoresVirtual(),
     new AttackMove(Moves.MALICIOUS_MOONSAULT, Type.DARK, MoveCategory.PHYSICAL, 180, -1, 1, -1, 0, 7)
+      .attr(HitsTagAttr, BattlerTagType.MINIMIZED, true)
       .partial()
       .ignoresVirtual(),
     new AttackMove(Moves.OCEANIC_OPERETTA, Type.WATER, MoveCategory.SPECIAL, 195, -1, 1, -1, 0, 7)
