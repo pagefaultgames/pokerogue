@@ -412,6 +412,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "BURN_DRIVE": "블레이즈카세트",
     "CHILL_DRIVE": "프리즈카세트",
     "DOUSE_DRIVE": "아쿠아카세트",
+    "ULTRANECROZIUM_Z": "Ultranecrozium Z",
 
     "FIST_PLATE": "주먹플레이트",
     "SKY_PLATE": "푸른하늘플레이트",

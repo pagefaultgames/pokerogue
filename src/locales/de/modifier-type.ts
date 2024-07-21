@@ -414,6 +414,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "BURN_DRIVE": "Flammenmodul",
     "CHILL_DRIVE": "Gefriermodul",
     "DOUSE_DRIVE": "Aquamodul",
+    "ULTRANECROZIUM_Z": "Ultranecrozium Z",
 
     "FIST_PLATE": "Fausttafel",
     "SKY_PLATE": "Wolkentafel",
