@@ -25984,8 +25984,6 @@ export const tmSpecies: TmSpecies = {
     Species.ARCTIBAX,
     Species.BAXCALIBUR,
     Species.DIPPLIN,
-    Species.POLTCHAGEIST,
-    Species.SINISTCHA,
     Species.OKIDOGI,
     Species.MUNKIDORI,
     Species.FEZANDIPITI,
