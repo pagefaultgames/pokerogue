@@ -179,10 +179,10 @@ export abstract class PokemonSpeciesForm {
 
   getAbilityCount(): integer {
     let count = 1;
-    if (this.ability2) {
+    if (this.ability2 !== Abilities.NONE) {
       count += 1;
     }
-    if (this.abilityHidden) {
+    if (this.abilityHidden !== Abilities.NONE) {
       count += 1;
     }
     return count;
