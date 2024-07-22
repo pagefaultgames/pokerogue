@@ -3,7 +3,7 @@ import { BerryTranslationEntries } from "#app/interfaces/locales";
 export const berry: BerryTranslationEntries = {
   "SITRUS": {
     name: "オボンのみ",
-    effect: "HP 50%いかのとき HPを 25パーセント かいふくする",
+    effect: "HP 50%いかのとき HPを 25% かいふくする",
   },
   "LUM": {
     name: "ラムのみ",
@@ -11,7 +11,7 @@ export const berry: BerryTranslationEntries = {
   },
   "ENIGMA": {
     name: "ナゾのみ",
-    effect: "こうかばつぐんの わざを うけたとき HPを 25パーセント かいふくする",
+    effect: "こうかばつぐんの わざを うけたとき HPを 25% かいふくする",
   },
   "LIECHI": {
     name: "チイラのみ",
