@@ -3,6 +3,8 @@ import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
 import overrides from "#app/overrides";
 import { Species } from "#enums/species";
+import { Gender } from "../../data/gender";
+import { PokeballType } from "../../data/pokeball";
 import {
   TurnEndPhase,
 } from "#app/phases";
@@ -61,7 +63,16 @@ describe("Abilities - Illusion", () => {
     expect(zoroark.illusion.active).equals(false);
   });
 
-  it("trick the enemy", async () => {
+  it("disappear if the ability is suppressed", async () => {
+    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NEUTRALIZING_GAS);
+    await game.startBattle([Species.KOFFING]);
+
+    const zorua = game.scene.getEnemyPokemon();
+
+    expect(zorua.illusion.active).equals(false);
+  });
+
+  it("trick the enemy AI", async () => {
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.FLAMETHROWER, Moves.PSYCHIC, Moves.TACKLE, Moves.TACKLE]);
     await game.startBattle([Species.ZOROARK, Species.AXEW]);
 
@@ -72,15 +83,6 @@ describe("Abilities - Illusion", () => {
     const psychicEffectiveness = zoroark.getAttackMoveEffectiveness(enemy, enemy.getMoveset()[1], false, true);
 
     expect(psychicEffectiveness).above(flameThwowerEffectiveness);
-  });
-
-  it("disappear if the ability is suppressed", async () => {
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NEUTRALIZING_GAS);
-    await game.startBattle([Species.KOFFING]);
-
-    const zorua = game.scene.getEnemyPokemon();
-
-    expect(zorua.illusion.active).equals(false);
   });
 
   it("do not disappear if the pokemon takes indirect damages", async () => {
@@ -100,13 +102,16 @@ describe("Abilities - Illusion", () => {
     expect(zoroark.illusion.active).equals(true);
   });
 
-  it("copy the shininess of the pokemon", async () => {
+  it("copy the the name, the nickname, the gender, the shininess and the pokeball of the pokemon", async () => {
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SCARY_FACE, Moves.SCARY_FACE, Moves.SCARY_FACE, Moves.SCARY_FACE]);
 
     await game.startBattle([Species.ABRA, Species.ZOROARK, Species.AXEW]);
 
     const axew = game.scene.getParty().at(2);
     axew.shiny = true;
+    axew.nickname = btoa(unescape(encodeURIComponent("axew nickname")));
+    axew.gender = Gender.FEMALE;
+    axew.pokeball = PokeballType.GREAT_BALL;
 
     game.doSwitchPokemon(1);
 
@@ -114,6 +119,9 @@ describe("Abilities - Illusion", () => {
 
     const zoroark = game.scene.getPlayerPokemon();
     expect(zoroark.name).equals("Axew");
+    expect(zoroark.getNameToRender()).equals("axew nickname");
+    expect(zoroark.getGender(false, true)).equals(Gender.FEMALE);
     expect(zoroark.isShiny(true)).equals(true);
+    expect(zoroark.illusion.pokeball).equals(PokeballType.GREAT_BALL);
   });
 });
