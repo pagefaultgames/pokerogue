@@ -7,15 +7,15 @@ export const challenges: TranslationEntries = {
     "name": "Mono Gen",
     "desc": "You can only use Pokémon from Generation {{gen}}.",
     "desc_default": "You can only use Pokémon from the chosen generation.",
-    "gen_1": "I",
-    "gen_2": "II",
-    "gen_3": "III",
-    "gen_4": "IV",
-    "gen_5": "V",
-    "gen_6": "VI",
-    "gen_7": "VII",
-    "gen_8": "VIII",
-    "gen_9": "IX",
+    "gen_1": "one",
+    "gen_2": "two",
+    "gen_3": "three",
+    "gen_4": "four",
+    "gen_5": "five",
+    "gen_6": "six",
+    "gen_7": "seven",
+    "gen_8": "eight",
+    "gen_9": "nine",
   },
   "singleType": {
     "name": "Mono Type",
@@ -23,4 +23,10 @@ export const challenges: TranslationEntries = {
     "desc_default": "You can only use Pokémon of the chosen type."
     //types in pokemon-info
   },
+  "freshStart": {
+    "name": "Fresh Start",
+    "desc": "You can only use the original starters, and only as if you had just started pokerogue.",
+    "value.0": "Off",
+    "value.1": "On",
+  }
 } as const;
