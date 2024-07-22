@@ -292,13 +292,24 @@ export const apiUrl = localServerUrl ?? "https://api.pokerogue.net";
 // used to disable api calls when isLocal is true and a server is not found
 export let isLocalServerConnected = true;
 
+export const isBeta = import.meta.env.MODE === "beta"; // this checks to see if the env mode is development. Technically this gives the same value for beta AND for dev envs
+
 export function setCookie(cName: string, cValue: string): void {
   const expiration = new Date();
   expiration.setTime(new Date().getTime() + 3600000 * 24 * 30 * 3/*7*/);
-  document.cookie = `${cName}=${cValue};Secure;SameSite=Strict;Path=/;Expires=${expiration.toUTCString()}`;
+  document.cookie = `${cName}=${cValue};Secure;SameSite=Strict;Domain=${window.location.hostname};Path=/;Expires=${expiration.toUTCString()}`;
+}
+
+export function removeCookie(cName: string): void {
+  document.cookie = `${cName}=;Secure;SameSite=Strict;Domain=${window.location.hostname};Path=/;Expires=Thu, 01 Jan 1970 00:00:00 GMT`;
 }
 
 export function getCookie(cName: string): string {
+  // check if there are multiple cookies with the same name and delete them
+  if (document.cookie.split(";").filter(c => c.includes(cName)).length > 1) {
+    removeCookie(cName);
+    return "";
+  }
   const name = `${cName}=`;
   const ca = document.cookie.split(";");
   for (let i = 0; i < ca.length; i++) {
@@ -407,6 +418,13 @@ export function formatText(unformattedText: string): string {
   }
 
   return text.join(" ");
+}
+
+export function toCamelCaseString(unformattedText: string): string {
+  if (!unformattedText) {
+    return "";
+  }
+  return unformattedText.split(/[_ ]/).filter(f => f).map((f, i) => i ? `${f[0].toUpperCase()}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join("");
 }
 
 export function rgbToHsv(r: integer, g: integer, b: integer) {
