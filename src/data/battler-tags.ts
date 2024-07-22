@@ -32,11 +32,11 @@ export enum BattlerTagLapseType {
 export class BattlerTag {
   public tagType: BattlerTagType;
   public lapseType: BattlerTagLapseType[];
-  public turnCount: integer;
+  public turnCount: number;
   public sourceMove: Moves;
-  public sourceId?: integer;
+  public sourceId?: number;
 
-  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType | BattlerTagLapseType[], turnCount: integer, sourceMove: Moves, sourceId?: integer) {
+  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType | BattlerTagLapseType[], turnCount: number, sourceMove: Moves, sourceId?: number) {
     this.tagType = tagType;
     this.lapseType = typeof lapseType === "number" ? [ lapseType ] : lapseType;
     this.turnCount = turnCount;
@@ -115,7 +115,7 @@ export class RechargingTag extends BattlerTag {
 }
 
 export class TrappedTag extends BattlerTag {
-  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, turnCount: integer, sourceMove: Moves, sourceId: integer) {
+  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, turnCount: number, sourceMove: Moves, sourceId: number) {
     super(tagType, lapseType, turnCount, sourceMove, sourceId);
   }
 
@@ -218,7 +218,7 @@ export class InterruptedTag extends BattlerTag {
  * BattlerTag that represents the {@link https://bulbapedia.bulbagarden.net/wiki/Confusion_(status_condition) Confusion} status condition
  */
 export class ConfusedTag extends BattlerTag {
-  constructor(turnCount: integer, sourceMove: Moves) {
+  constructor(turnCount: number, sourceMove: Moves) {
     super(BattlerTagType.CONFUSED, BattlerTagLapseType.MOVE, turnCount, sourceMove);
   }
 
@@ -278,7 +278,7 @@ export class ConfusedTag extends BattlerTag {
  * @see {@linkcode apply}
  */
 export class DestinyBondTag extends BattlerTag {
-  constructor(sourceMove: Moves, sourceId: integer) {
+  constructor(sourceMove: Moves, sourceId: number) {
     super(BattlerTagType.DESTINY_BOND, BattlerTagLapseType.PRE_MOVE, 1, sourceMove, sourceId);
   }
 
@@ -321,7 +321,7 @@ export class DestinyBondTag extends BattlerTag {
 }
 
 export class InfatuatedTag extends BattlerTag {
-  constructor(sourceMove: integer, sourceId: integer) {
+  constructor(sourceMove: number, sourceId: number) {
     super(BattlerTagType.INFATUATED, BattlerTagLapseType.MOVE, 1, sourceMove, sourceId);
   }
 
@@ -383,9 +383,9 @@ export class InfatuatedTag extends BattlerTag {
 }
 
 export class SeedTag extends BattlerTag {
-  private sourceIndex: integer;
+  private sourceIndex: number;
 
-  constructor(sourceId: integer) {
+  constructor(sourceId: number) {
     super(BattlerTagType.SEEDED, BattlerTagLapseType.TURN_END, 1, Moves.LEECH_SEED, sourceId);
   }
 
@@ -480,7 +480,7 @@ export class NightmareTag extends BattlerTag {
 }
 
 export class FrenzyTag extends BattlerTag {
-  constructor(turnCount: integer, sourceMove: Moves, sourceId: integer) {
+  constructor(turnCount: number, sourceMove: Moves, sourceId: number) {
     super(BattlerTagType.FRENZY, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
   }
 
@@ -494,7 +494,7 @@ export class FrenzyTag extends BattlerTag {
 }
 
 export class ChargingTag extends BattlerTag {
-  constructor(sourceMove: Moves, sourceId: integer) {
+  constructor(sourceMove: Moves, sourceId: number) {
     super(BattlerTagType.CHARGING, BattlerTagLapseType.CUSTOM, 1, sourceMove, sourceId);
   }
 }
@@ -502,7 +502,7 @@ export class ChargingTag extends BattlerTag {
 export class EncoreTag extends BattlerTag {
   public moveId: Moves;
 
-  constructor(sourceId: integer) {
+  constructor(sourceId: number) {
     super(BattlerTagType.ENCORE, BattlerTagLapseType.AFTER_MOVE, 3, Moves.ENCORE, sourceId);
   }
 
@@ -575,7 +575,7 @@ export class EncoreTag extends BattlerTag {
 }
 
 export class HelpingHandTag extends BattlerTag {
-  constructor(sourceId: integer) {
+  constructor(sourceId: number) {
     super(BattlerTagType.HELPING_HAND, BattlerTagLapseType.TURN_END, 1, Moves.HELPING_HAND, sourceId);
   }
 
@@ -594,7 +594,7 @@ export class HelpingHandTag extends BattlerTag {
  * @extends TrappedTag
  */
 export class IngrainTag extends TrappedTag {
-  constructor(sourceId: integer) {
+  constructor(sourceId: number) {
     super(BattlerTagType.INGRAIN, BattlerTagLapseType.TURN_END, 1, Moves.INGRAIN, sourceId);
   }
 
@@ -752,7 +752,7 @@ export class DrowsyTag extends BattlerTag {
 export abstract class DamagingTrapTag extends TrappedTag {
   private commonAnim: CommonAnim;
 
-  constructor(tagType: BattlerTagType, commonAnim: CommonAnim, turnCount: integer, sourceMove: Moves, sourceId: integer) {
+  constructor(tagType: BattlerTagType, commonAnim: CommonAnim, turnCount: number, sourceMove: Moves, sourceId: number) {
     super(tagType, BattlerTagLapseType.TURN_END, turnCount, sourceMove, sourceId);
 
     this.commonAnim = commonAnim;
@@ -796,7 +796,7 @@ export abstract class DamagingTrapTag extends TrappedTag {
 }
 
 export class BindTag extends DamagingTrapTag {
-  constructor(turnCount: integer, sourceId: integer) {
+  constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.BIND, CommonAnim.BIND, turnCount, Moves.BIND, sourceId);
   }
 
@@ -810,7 +810,7 @@ export class BindTag extends DamagingTrapTag {
 }
 
 export class WrapTag extends DamagingTrapTag {
-  constructor(turnCount: integer, sourceId: integer) {
+  constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.WRAP, CommonAnim.WRAP, turnCount, Moves.WRAP, sourceId);
   }
 
@@ -823,7 +823,7 @@ export class WrapTag extends DamagingTrapTag {
 }
 
 export abstract class VortexTrapTag extends DamagingTrapTag {
-  constructor(tagType: BattlerTagType, commonAnim: CommonAnim, turnCount: integer, sourceMove: Moves, sourceId: integer) {
+  constructor(tagType: BattlerTagType, commonAnim: CommonAnim, turnCount: number, sourceMove: Moves, sourceId: number) {
     super(tagType, commonAnim, turnCount, sourceMove, sourceId);
   }
 
@@ -833,19 +833,19 @@ export abstract class VortexTrapTag extends DamagingTrapTag {
 }
 
 export class FireSpinTag extends VortexTrapTag {
-  constructor(turnCount: integer, sourceId: integer) {
+  constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.FIRE_SPIN, CommonAnim.FIRE_SPIN, turnCount, Moves.FIRE_SPIN, sourceId);
   }
 }
 
 export class WhirlpoolTag extends VortexTrapTag {
-  constructor(turnCount: integer, sourceId: integer) {
+  constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.WHIRLPOOL, CommonAnim.WHIRLPOOL, turnCount, Moves.WHIRLPOOL, sourceId);
   }
 }
 
 export class ClampTag extends DamagingTrapTag {
-  constructor(turnCount: integer, sourceId: integer) {
+  constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.CLAMP, CommonAnim.CLAMP, turnCount, Moves.CLAMP, sourceId);
   }
 
@@ -858,7 +858,7 @@ export class ClampTag extends DamagingTrapTag {
 }
 
 export class SandTombTag extends DamagingTrapTag {
-  constructor(turnCount: integer, sourceId: integer) {
+  constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.SAND_TOMB, CommonAnim.SAND_TOMB, turnCount, Moves.SAND_TOMB, sourceId);
   }
 
@@ -871,7 +871,7 @@ export class SandTombTag extends DamagingTrapTag {
 }
 
 export class MagmaStormTag extends DamagingTrapTag {
-  constructor(turnCount: integer, sourceId: integer) {
+  constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.MAGMA_STORM, CommonAnim.MAGMA_STORM, turnCount, Moves.MAGMA_STORM, sourceId);
   }
 
@@ -881,7 +881,7 @@ export class MagmaStormTag extends DamagingTrapTag {
 }
 
 export class SnapTrapTag extends DamagingTrapTag {
-  constructor(turnCount: integer, sourceId: integer) {
+  constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.SNAP_TRAP, CommonAnim.SNAP_TRAP, turnCount, Moves.SNAP_TRAP, sourceId);
   }
 
@@ -891,7 +891,7 @@ export class SnapTrapTag extends DamagingTrapTag {
 }
 
 export class ThunderCageTag extends DamagingTrapTag {
-  constructor(turnCount: integer, sourceId: integer) {
+  constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.THUNDER_CAGE, CommonAnim.THUNDER_CAGE, turnCount, Moves.THUNDER_CAGE, sourceId);
   }
 
@@ -904,7 +904,7 @@ export class ThunderCageTag extends DamagingTrapTag {
 }
 
 export class InfestationTag extends DamagingTrapTag {
-  constructor(turnCount: integer, sourceId: integer) {
+  constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.INFESTATION, CommonAnim.INFESTATION, turnCount, Moves.INFESTATION, sourceId);
   }
 
@@ -946,9 +946,9 @@ export class ProtectedTag extends BattlerTag {
 }
 
 export class ContactDamageProtectedTag extends ProtectedTag {
-  private damageRatio: integer;
+  private damageRatio: number;
 
-  constructor(sourceMove: Moves, damageRatio: integer) {
+  constructor(sourceMove: Moves, damageRatio: number) {
     super(sourceMove, BattlerTagType.SPIKY_SHIELD);
 
     this.damageRatio = damageRatio;
@@ -982,9 +982,9 @@ export class ContactDamageProtectedTag extends ProtectedTag {
 
 export class ContactStatChangeProtectedTag extends ProtectedTag {
   private stat: BattleStat;
-  private levels: integer;
+  private levels: number;
 
-  constructor(sourceMove: Moves, tagType: BattlerTagType, stat: BattleStat, levels: integer) {
+  constructor(sourceMove: Moves, tagType: BattlerTagType, stat: BattleStat, levels: number) {
     super(sourceMove, tagType);
 
     this.stat = stat;
@@ -1093,7 +1093,7 @@ export class SturdyTag extends BattlerTag {
 }
 
 export class PerishSongTag extends BattlerTag {
-  constructor(turnCount: integer) {
+  constructor(turnCount: number) {
     super(BattlerTagType.PERISH_SONG, BattlerTagLapseType.TURN_END, turnCount, Moves.PERISH_SONG);
   }
 
@@ -1149,7 +1149,7 @@ export class CenterOfAttentionTag extends BattlerTag {
 export class AbilityBattlerTag extends BattlerTag {
   public ability: Abilities;
 
-  constructor(tagType: BattlerTagType, ability: Abilities, lapseType: BattlerTagLapseType, turnCount: integer) {
+  constructor(tagType: BattlerTagType, ability: Abilities, lapseType: BattlerTagLapseType, turnCount: number) {
     super(tagType, lapseType, turnCount, undefined);
 
     this.ability = ability;
@@ -1237,7 +1237,7 @@ export class HighestStatBoostTag extends AbilityBattlerTag {
 
     const stats = [ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD ];
     let highestStat: Stat;
-    stats.map(s => pokemon.getBattleStat(s)).reduce((highestValue: integer, value: integer, i: integer) => {
+    stats.map(s => pokemon.getBattleStat(s)).reduce((highestValue: number, value: number, i: number) => {
       if (value > highestValue) {
         highestStat = stats[i];
         return value;
@@ -1303,7 +1303,7 @@ export class TerrainHighestStatBoostTag extends HighestStatBoostTag implements T
 }
 
 export class SemiInvulnerableTag extends BattlerTag {
-  constructor(tagType: BattlerTagType, turnCount: integer, sourceMove: Moves) {
+  constructor(tagType: BattlerTagType, turnCount: number, sourceMove: Moves) {
     super(tagType, BattlerTagLapseType.MOVE_EFFECT, turnCount, sourceMove);
   }
 
@@ -1435,9 +1435,9 @@ export class ReceiveDoubleDamageTag extends BattlerTag {
 }
 
 export class SaltCuredTag extends BattlerTag {
-  private sourceIndex: integer;
+  private sourceIndex: number;
 
-  constructor(sourceId: integer) {
+  constructor(sourceId: number) {
     super(BattlerTagType.SALT_CURED, BattlerTagLapseType.TURN_END, 1, Moves.SALT_CURE, sourceId);
   }
 
@@ -1484,9 +1484,9 @@ export class SaltCuredTag extends BattlerTag {
 }
 
 export class CursedTag extends BattlerTag {
-  private sourceIndex: integer;
+  private sourceIndex: number;
 
-  constructor(sourceId: integer) {
+  constructor(sourceId: number) {
     super(BattlerTagType.CURSED, BattlerTagLapseType.TURN_END, 1, Moves.CURSE, sourceId);
   }
 
@@ -1585,7 +1585,7 @@ export class IceFaceTag extends BattlerTag {
   }
 }
 
-export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourceMove: Moves, sourceId: integer): BattlerTag {
+export function getBattlerTag(tagType: BattlerTagType, turnCount: number, sourceMove: Moves, sourceId: number): BattlerTag {
   switch (tagType) {
   case BattlerTagType.RECHARGING:
     return new RechargingTag(sourceMove);
