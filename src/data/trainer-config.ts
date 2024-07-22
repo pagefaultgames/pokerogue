@@ -1855,7 +1855,6 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.EMPOLEON ]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.AEGISLASH, Species.GHOLDENGO ]))
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.IRON_CROWN, Species.COBALION ]))
-    }))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.MELMETAL ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
       p.generateAndPopulateMoveset();
