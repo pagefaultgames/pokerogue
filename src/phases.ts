@@ -2168,6 +2168,15 @@ export class CommandPhase extends FieldPhase {
   }
 }
 
+/**
+ * Phase for determining an enemy AI's action for the next turn.
+ * During this phase, the enemy decides whether to switch (if it has a trainer)
+ * or to use a move from its moveset.
+ *
+ * For more information on how the Enemy AI works, see docs/enemy-ai.md
+ * @see {@linkcode Pokemon.getMatchupScore}
+ * @see {@linkcode EnemyPokemon.getNextMove}
+ */
 export class EnemyCommandPhase extends FieldPhase {
   protected fieldIndex: integer;
 
@@ -2186,6 +2195,15 @@ export class EnemyCommandPhase extends FieldPhase {
 
     const trainer = battle.trainer;
 
+    /**
+     * If the enemy has a trainer, decide whether or not the enemy should switch
+     * to another member in its party.
+     *
+     * This block compares the active enemy Pokemon's {@linkcode Pokemon.getMatchupScore | matchup score}
+     * against the active player Pokemon with the enemy party's other non-fainted Pokemon. If a party
+     * member's matchup score is 3x the active enemy's score (or 2x for "boss" trainers),
+     * the enemy will switch to that Pokemon.
+     */
     if (trainer && !enemyPokemon.getMoveQueue().length) {
       const opponents = enemyPokemon.getOpponents();
 
@@ -2217,6 +2235,7 @@ export class EnemyCommandPhase extends FieldPhase {
       }
     }
 
+    /** Select a move to use (and a target to use it against, if applicable) */
     const nextMove = enemyPokemon.getNextMove();
 
     this.scene.currentBattle.turnCommands[this.fieldIndex + BattlerIndex.ENEMY] =
