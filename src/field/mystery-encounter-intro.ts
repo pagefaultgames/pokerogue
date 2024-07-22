@@ -173,6 +173,9 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
         }
       });
 
+      // Load dex progress icon
+      this.scene.loadAtlas("encounter_radar", "mystery-encounters");
+
       this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
         this.spriteConfigs.every((config) => {
           if (config.isItem) {

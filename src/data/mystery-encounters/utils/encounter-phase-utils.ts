@@ -316,6 +316,7 @@ export function initCustomMovesForEncounter(scene: BattleScene, moves: Moves | M
  * @param scene - Battle Scene
  * @param changeValue
  * @param playSound
+ * @param showMessage
  */
 export function updatePlayerMoney(scene: BattleScene, changeValue: number, playSound: boolean = true, showMessage: boolean = true) {
   scene.money = Math.min(Math.max(scene.money + changeValue, 0), Number.MAX_SAFE_INTEGER);

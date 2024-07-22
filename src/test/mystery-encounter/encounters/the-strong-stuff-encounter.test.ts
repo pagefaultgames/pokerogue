@@ -22,6 +22,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { PokemonMove } from "#app/field/pokemon";
 import { Mode } from "#app/ui/ui";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
+import { PokemonBaseStatTotalModifier } from "#app/modifier/modifier";
 
 const namespace = "mysteryEncounter:theStrongStuff";
 const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
@@ -153,7 +154,9 @@ describe("The Strong Stuff - Mystery Encounter", () => {
       await runSelectMysteryEncounterOption(game, 1);
 
       const bstsAfter = scene.getParty().map(p => {
-        return p.getSpeciesForm().getBaseStatTotal();
+        const baseStats = p.getSpeciesForm().baseStats.slice(0);
+        scene.applyModifiers(PokemonBaseStatTotalModifier, true, p, baseStats);
+        return baseStats.reduce((a, b) => a + b);
       });
 
       expect(bstsAfter[0]).toEqual(bstsPrior[0] - 20 * 6);

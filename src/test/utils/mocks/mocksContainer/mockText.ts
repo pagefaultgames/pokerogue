@@ -248,6 +248,14 @@ export default class MockText {
     };
   }
 
+  disableInteractive() {
+    // Disables interaction with this Game Object.
+  }
+
+  clearTint() {
+    // Clears tint on this Game Object.
+  }
+
   add(obj) {
     // Adds a child to this Game Object.
     this.list.push(obj);
