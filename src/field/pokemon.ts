@@ -1837,6 +1837,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         const arenaAttackTypeMultiplier = new Utils.NumberHolder(this.scene.arena.getAttackTypeMultiplier(move.type, source.isGrounded()));
         applyMoveAttrs(IgnoreWeatherTypeDebuffAttr, source, this, move, arenaAttackTypeMultiplier);
 
+        const glaiveRushModifier = new Utils.IntegerHolder(1);
+        if (this.getTag(BattlerTagType.RECEIVE_DOUBLE_DAMAGE)) {
+          glaiveRushModifier.value = 2;
+        }
         let isCritical: boolean;
         const critOnly = new Utils.BooleanHolder(false);
         const critAlways = source.getTag(BattlerTagType.ALWAYS_CRIT);
@@ -1921,6 +1925,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
                                    * twoStrikeMultiplier.value
                                    * targetMultiplier
                                    * criticalMultiplier.value
+                                   * glaiveRushModifier.value
                                    * randomMultiplier);
 
           if (isPhysical && source.status && source.status.effect === StatusEffect.BURN) {

@@ -3073,6 +3073,10 @@ export class MoveEffectPhase extends PokemonPhase {
       return true;
     }
 
+    if (target.getTag(BattlerTagType.ALWAYS_GET_HIT)) {
+      return true;
+    }
+
     const hiddenTag = target.getTag(SemiInvulnerableTag);
     if (hiddenTag && !this.move.getMove().getAttrs(HitsTagAttr).some(hta => hta.tagType === hiddenTag.tagType)) {
       return false;

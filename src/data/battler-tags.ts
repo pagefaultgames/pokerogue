@@ -1420,6 +1420,18 @@ export class IgnoreAccuracyTag extends BattlerTag {
   }
 }
 
+export class AlwaysGetHitTag extends BattlerTag {
+  constructor(sourceMove: Moves) {
+    super(BattlerTagType.ALWAYS_GET_HIT, BattlerTagLapseType.PRE_MOVE, 1, sourceMove);
+  }
+}
+
+export class ReceiveDoubleDamageTag extends BattlerTag {
+  constructor(sourceMove: Moves) {
+    super(BattlerTagType.RECEIVE_DOUBLE_DAMAGE, BattlerTagLapseType.PRE_MOVE, 1, sourceMove);
+  }
+}
+
 export class SaltCuredTag extends BattlerTag {
   private sourceIndex: integer;
 
@@ -1668,6 +1680,10 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
     return new BattlerTag(tagType, BattlerTagLapseType.AFTER_MOVE, turnCount, sourceMove);
   case BattlerTagType.IGNORE_ACCURACY:
     return new IgnoreAccuracyTag(sourceMove);
+  case BattlerTagType.ALWAYS_GET_HIT:
+    return new AlwaysGetHitTag(sourceMove);
+  case BattlerTagType.RECEIVE_DOUBLE_DAMAGE:
+    return new ReceiveDoubleDamageTag(sourceMove);
   case BattlerTagType.BYPASS_SLEEP:
     return new BattlerTag(BattlerTagType.BYPASS_SLEEP, BattlerTagLapseType.TURN_END, turnCount, sourceMove);
   case BattlerTagType.IGNORE_FLYING:
