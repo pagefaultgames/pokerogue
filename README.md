@@ -112,6 +112,7 @@ Check out [Github Issues](https://github.com/pagefaultgames/pokerogue/issues) to
   - mangalos810
   - Involuntary-Twitch
   - selstar
+  - koda_want_to_sleep
 
 ### 🎨 Move Animations
   - Pokémon Reborn

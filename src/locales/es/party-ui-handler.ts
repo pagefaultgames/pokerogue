@@ -16,6 +16,7 @@ export const partyUiHandler: SimpleTranslationEntries = {
   "PASS_BATON": "Relevo",
   "UNPAUSE_EVOLUTION": "Reanudar Evolución",
   "REVIVE": "Revivir",
+  "RENAME": "Rename",
 
   "choosePokemon": "Elige a un Pokémon.",
   "doWhatWithThisPokemon": "¿Que quieres hacer con este Pokémon?",

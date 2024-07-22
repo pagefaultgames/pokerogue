@@ -278,8 +278,8 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.updateNameText(pokemon);
     const nameTextWidth = this.nameText.displayWidth;
 
-    this.name = pokemon.name;
-    this.box.name = pokemon.name;
+    this.name = pokemon.getNameToRender();
+    this.box.name = pokemon.getNameToRender();
 
     this.flyoutMenu?.initInfo(pokemon);
 
@@ -512,7 +512,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       this.genderText.setText(getGenderSymbol(gender));
       this.genderText.setColor(getGenderColor(gender));
 
-      const nameUpdated = this.lastName !== pokemon.name;
+      const nameUpdated = this.lastName !== pokemon.getNameToRender();
 
       if (nameUpdated) {
         this.updateNameText(pokemon);
@@ -651,7 +651,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   }
 
   updateNameText(pokemon: Pokemon): void {
-    let displayName = pokemon.name.replace(/[♂♀]/g, "");
+    let displayName = pokemon.getNameToRender().replace(/[♂♀]/g, "");
     let nameTextWidth: number;
 
     const nameSizeTest = addTextObject(this.scene, 0, 0, displayName, TextStyle.BATTLE_INFO);
@@ -667,7 +667,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     nameSizeTest.destroy();
 
     this.nameText.setText(displayName);
-    this.lastName = pokemon.name;
+    this.lastName = pokemon.getNameToRender();
 
     if (this.nameText.visible) {
       this.nameText.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.nameText.width, this.nameText.height), Phaser.Geom.Rectangle.Contains);

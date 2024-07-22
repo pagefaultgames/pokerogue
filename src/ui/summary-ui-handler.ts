@@ -302,7 +302,7 @@ export default class SummaryUiHandler extends UiHandler {
     });
     this.pokemon.cry();
 
-    this.nameText.setText(this.pokemon.illusion.active ? this.pokemon.illusion.name : this.pokemon.name);
+    this.nameText.setText(this.pokemon.getNameToRender(false));
 
     const isFusion = this.pokemon.isFusion();
 
