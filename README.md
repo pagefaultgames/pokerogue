@@ -56,7 +56,7 @@ Check out [Github Issues](https://github.com/pagefaultgames/pokerogue/issues) to
   - Pokémon Scarlet/Violet
   - Firel (Custom Laboratory, Metropolis, Seabed, and Space biome music)
   - Lmz (Custom Jungle biome music)
-  - Andr06 (Custom Slum biome music)
+  - Andr06 (Custom Slum and Sea biome music)
 
 ### 🎵 Sound Effects
   - Pokémon Emerald
@@ -112,6 +112,7 @@ Check out [Github Issues](https://github.com/pagefaultgames/pokerogue/issues) to
   - mangalos810
   - Involuntary-Twitch
   - selstar
+  - koda_want_to_sleep
 
 ### 🎨 Move Animations
   - Pokémon Reborn

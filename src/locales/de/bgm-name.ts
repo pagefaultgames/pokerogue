@@ -110,7 +110,7 @@ export const bgmName: SimpleTranslationEntries = {
   "plains": "PMD Erkundungsteam Himmel Himmelsgipfel-Prärie",
   "power_plant": "PMD Erkundungsteam Himmel Weite Ampere-Ebene",
   "ruins": "PMD Erkundungsteam Himmel Tiefes Ruinenverlies",
-  "sea": "PMD Erkundungsteam Himmel Salzwasserhöhle",
+  "sea": "Andr06 - Marine Mystique", // Name defined by the composer
   "seabed": "Firel - Seabed", // The composer thinks about a more creative name
   "slum": "Andr06 - Sneaky Snom", // Name defined by the composer
   "snowy_forest": "PMD Erkundungsteam Himmel Himmelsgipfel-Schneefeld",

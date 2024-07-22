@@ -297,10 +297,19 @@ export const isBeta = import.meta.env.MODE === "beta"; // this checks to see if 
 export function setCookie(cName: string, cValue: string): void {
   const expiration = new Date();
   expiration.setTime(new Date().getTime() + 3600000 * 24 * 30 * 3/*7*/);
-  document.cookie = `${cName}=${cValue};Secure;SameSite=Strict;Path=/;Expires=${expiration.toUTCString()}`;
+  document.cookie = `${cName}=${cValue};Secure;SameSite=Strict;Domain=${window.location.hostname};Path=/;Expires=${expiration.toUTCString()}`;
+}
+
+export function removeCookie(cName: string): void {
+  document.cookie = `${cName}=;Secure;SameSite=Strict;Domain=${window.location.hostname};Path=/;Expires=Thu, 01 Jan 1970 00:00:00 GMT`;
 }
 
 export function getCookie(cName: string): string {
+  // check if there are multiple cookies with the same name and delete them
+  if (document.cookie.split(";").filter(c => c.includes(cName)).length > 1) {
+    removeCookie(cName);
+    return "";
+  }
   const name = `${cName}=`;
   const ca = document.cookie.split(";");
   for (let i = 0; i < ca.length; i++) {
