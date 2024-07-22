@@ -12,6 +12,7 @@ import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { StatusEffect } from "#app/data/status-effect.js";
 import { allAbilities } from "#app/data/ability.js";
 import { Abilities } from "#app/enums/abilities.js";
+import { BattlerIndex } from "#app/battle.js";
 
 describe("Abilities - Pastel Veil", () => {
   let phaserGame: Phaser.Game;
@@ -69,7 +70,7 @@ describe("Abilities - Pastel Veil", () => {
     const poisonedMon = game.scene.getPlayerField().find(p => p.status?.effect === StatusEffect.POISON);
 
     await game.phaseInterceptor.to(CommandPhase);
-    game.doAttack(getMovePosition(game.scene, (poisonedMon.getBattlerIndex() as 0 | 1), Moves.SPLASH));
+    game.doAttack(getMovePosition(game.scene, (poisonedMon.getBattlerIndex() as BattlerIndex.PLAYER | BattlerIndex.PLAYER_2), Moves.SPLASH));
     game.doSwitchPokemon(2);
     await game.phaseInterceptor.to(TurnEndPhase);
 

@@ -13,6 +13,7 @@ import { Moves } from "#enums/moves";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
 import { Abilities } from "#app/enums/abilities.js";
+import { BattlerIndex } from "#app/battle.js";
 
 describe("Abilities - Sweet Veil", () => {
   let phaserGame: Phaser.Game;
@@ -99,7 +100,7 @@ describe("Abilities - Sweet Veil", () => {
     const drowsyMon = game.scene.getPlayerField().find(p => !!p.getTag(BattlerTagType.DROWSY));
 
     await game.phaseInterceptor.to(CommandPhase);
-    game.doAttack(getMovePosition(game.scene, (drowsyMon.getBattlerIndex() as 0 | 1), Moves.SPLASH));
+    game.doAttack(getMovePosition(game.scene, (drowsyMon.getBattlerIndex() as BattlerIndex.PLAYER | BattlerIndex.PLAYER_2), Moves.SPLASH));
     game.doSwitchPokemon(2);
 
     await game.phaseInterceptor.to(TurnEndPhase);
