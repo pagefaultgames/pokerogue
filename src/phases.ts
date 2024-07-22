@@ -2942,6 +2942,7 @@ export class MoveEffectPhase extends PokemonPhase {
             if (moveHistoryEntry.result === MoveResult.PENDING) {
               moveHistoryEntry.result = MoveResult.MISS;
             }
+            user.pushMoveHistory(moveHistoryEntry);
             applyMoveAttrs(MissEffectAttr, user, null, move);
             continue;
           }
