@@ -1253,36 +1253,36 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Computes the given Pokemon's matchup score against this Pokemon
-   * @param pokemon The Pokemon to compare this Pokemon against
+   * @param opponent The Pokemon to compare this Pokemon against
    * @returns A score value based on how favorable this Pokemon is when fighting the given Pokemon
    */
-  getMatchupScore(pokemon: Pokemon): number {
+  getMatchupScore(opponent: Pokemon): number {
     const types = this.getTypes(true);
-    const enemyTypes = pokemon.getTypes(true, true);
-    /** Is this Pokemon faster than the given Pokemon? */
-    const outspeed = (this.isActive(true) ? this.getBattleStat(Stat.SPD, pokemon) : this.getStat(Stat.SPD)) >= pokemon.getBattleStat(Stat.SPD, this);
+    const enemyTypes = opponent.getTypes(true, true);
+    /** Is this Pokemon faster than the opponent? */
+    const outspeed = (this.isActive(true) ? this.getBattleStat(Stat.SPD, opponent) : this.getStat(Stat.SPD)) >= opponent.getBattleStat(Stat.SPD, this);
     /**
-     * Based on how effective this Pokemon's types are offensively against the given Pokemon's types.
-     * This score is increased by 25 percent if this Pokemon is faster than the given Pokemon.
+     * Based on how effective this Pokemon's types are offensively against the opponent's types.
+     * This score is increased by 25 percent if this Pokemon is faster than the opponent.
      */
-    let atkScore = pokemon.getAttackTypeEffectiveness(types[0], this) * (outspeed ? 1.25 : 1);
+    let atkScore = opponent.getAttackTypeEffectiveness(types[0], this) * (outspeed ? 1.25 : 1);
     /**
-     * Based on how effectively this Pokemon defends against the given Pokemon's types.
+     * Based on how effectively this Pokemon defends against the opponent's types.
      * This score cannot be higher than 4.
      */
-    let defScore = 1 / Math.max(this.getAttackTypeEffectiveness(enemyTypes[0], pokemon), 0.25);
+    let defScore = 1 / Math.max(this.getAttackTypeEffectiveness(enemyTypes[0], opponent), 0.25);
     if (types.length > 1) {
-      atkScore *= pokemon.getAttackTypeEffectiveness(types[1], this);
+      atkScore *= opponent.getAttackTypeEffectiveness(types[1], this);
     }
     if (enemyTypes.length > 1) {
-      defScore *= (1 / Math.max(this.getAttackTypeEffectiveness(enemyTypes[1], pokemon), 0.25));
+      defScore *= (1 / Math.max(this.getAttackTypeEffectiveness(enemyTypes[1], opponent), 0.25));
     }
     /**
-     * Based on this Pokemon's HP ratio compared to that of the given Pokemon.
-     * This ratio is multiplied by 1.5 if this Pokemon outspeeds the given Pokemon;
+     * Based on this Pokemon's HP ratio compared to that of the opponent.
+     * This ratio is multiplied by 1.5 if this Pokemon outspeeds the opponent;
      * however, the final ratio cannot be higher than 1.
      */
-    let hpDiffRatio = this.getHpRatio() + (1 - pokemon.getHpRatio());
+    let hpDiffRatio = this.getHpRatio() + (1 - opponent.getHpRatio());
     if (outspeed) {
       hpDiffRatio = Math.min(hpDiffRatio * 1.5, 1);
     }
