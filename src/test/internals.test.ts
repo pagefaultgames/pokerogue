@@ -22,7 +22,7 @@ describe("Internals", () => {
     game = new GameManager(phaserGame);
   });
 
-  it("PokemonSpeciesForm - .getAbilityCount() and .getAbility()", async () => {
+  it("should provide Eevee with 3 defined abilities", async () => {
     await game.runToSummon([Species.EEVEE]);
     const eevee = game.scene.getPlayerPokemon();
 
@@ -33,11 +33,11 @@ describe("Internals", () => {
     expect(eevee.getSpeciesForm().getAbility(2)).toBe(Abilities.ANTICIPATION);
   });
 
-  it("Pokemon.abilityIndex definition", async () => {
+  it("should set Eeeve abilityIndex between 0-2", async () => {
     await game.runToSummon([Species.EEVEE]);
     const eevee = game.scene.getPlayerPokemon();
 
-    const abilityIndexInRange = ([0, 1, 2].includes(eevee.abilityIndex));
-    expect(abilityIndexInRange).toBe(true);
+    expect(eevee.abilityIndex).toBeGreaterThanOrEqual(0);
+    expect(eevee.abilityIndex).toBeLessThanOrEqual(2);
   });
 });
