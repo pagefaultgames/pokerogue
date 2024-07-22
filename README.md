@@ -54,7 +54,7 @@ Check out [Github Issues](https://github.com/pagefaultgames/pokerogue/issues) to
   - Pokémon Ultra Sun/Ultra Moon
   - Pokémon Sword/Shield
   - Pokémon Scarlet/Violet
-  - Firel (Custom Metropolis and Laboratory biome music)
+  - Firel (Custom Laboratory, Metropolis, Seabed, and Space biome music)
   - Lmz (Custom Jungle biome music)
 
 ### 🎵 Sound Effects

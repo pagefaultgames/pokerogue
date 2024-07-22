@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 /**
  * The weather namespace holds text displayed when weather is active during a battle
@@ -40,5 +40,27 @@ export const weather: SimpleTranslationEntries = {
 
   "strongWindsStartMessage": "Ventos fortes apareceram!",
   "strongWindsLapseMessage": "Os ventos fortes continuam.",
+  "strongWindsEffectMessage": "The mysterious air current weakened the attack!",
   "strongWindsClearMessage": "Os ventos fortes diminuíram.",
+};
+
+export const terrain: SimpleTranslationEntries = {
+  "misty": "Enevoado",
+  "mistyStartMessage": "Uma névoa se espalhou pelo campo de batalha!",
+  "mistyClearMessage": "A névou sumiu do campo de batalha.",
+  "mistyBlockMessage": "{{pokemonNameWithAffix}} se envolveu com uma névoa protetora!",
+
+  "electric": "Elétrico",
+  "electricStartMessage": "Uma corrente elétrica se espalhou pelo campo de batalha!",
+  "electricClearMessage": "A eletricidade sumiu do campo de batalha.",
+
+  "grassy": "de Plantas",
+  "grassyStartMessage": "Grama cresceu para cobrir o campo de batalha!",
+  "grassyClearMessage": "A grama sumiu do campo de batalha.",
+
+  "psychic": "Psíquico",
+  "psychicStartMessage": "O campo de batalha ficou esquisito!",
+  "psychicClearMessage": "A esquisitice sumiu do campo de batalha",
+
+  "defaultBlockMessage": "{{pokemonNameWithAffix}} está protegido pelo Terreno {{terrainName}}!"
 };
