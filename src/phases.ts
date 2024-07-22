@@ -98,7 +98,7 @@ export class LoginPhase extends Phase {
           const loadData = () => {
             updateUserInfo().then(success => {
               if (!success[0]) {
-                Utils.setCookie(Utils.sessionIdKey, "");
+                Utils.removeCookie(Utils.sessionIdKey);
                 this.scene.reset(true, true);
                 return;
               }
@@ -119,7 +119,7 @@ export class LoginPhase extends Phase {
                       this.scene.ui.playSelect();
                       updateUserInfo().then(success => {
                         if (!success[0]) {
-                          Utils.setCookie(Utils.sessionIdKey, "");
+                          Utils.removeCookie(Utils.sessionIdKey);
                           this.scene.reset(true, true);
                           return;
                         }
@@ -134,7 +134,7 @@ export class LoginPhase extends Phase {
               }, () => {
                 const redirectUri = encodeURIComponent(`${import.meta.env.VITE_SERVER_URL}/auth/discord/callback`);
                 const discordId = import.meta.env.VITE_DISCORD_CLIENT_ID;
-                const discordUrl = `https://discord.com/api/oauth2/authorize?client_id=${discordId}&redirect_uri=${redirectUri}&response_type=code&scope=identify`;
+                const discordUrl = `https://discord.com/api/oauth2/authorize?client_id=${discordId}&redirect_uri=${redirectUri}&response_type=code&scope=identify&prompt=none`;
                 window.open(discordUrl, "_self");
               }, () => {
                 const redirectUri = encodeURIComponent(`${import.meta.env.VITE_SERVER_URL}/auth/google/callback`);
@@ -145,7 +145,7 @@ export class LoginPhase extends Phase {
             ]
           });
         } else if (statusCode === 401) {
-          Utils.setCookie(Utils.sessionIdKey, "");
+          Utils.removeCookie(Utils.sessionIdKey);
           this.scene.reset(true, true);
         } else {
           this.scene.unshiftPhase(new UnavailablePhase(this.scene));
