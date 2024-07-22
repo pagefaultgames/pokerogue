@@ -182,6 +182,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SOOTHE_BELL": { name: "Camp. Alivio" },
 
+    "SCOPE_LENS": { name: "Periscopio", description: "Aumenta la probabilidad de asestar un golpe crítico." },
+    "LEEK": { name: "Puerro", description: "Puerro muy largo y duro que aumenta la probabilidad de asestar un golpe crítico. Debe llevarlo Farfetch'd." },
+
     "EVIOLITE": { name: "Mineral Evolutivo", description: "Roca misteriosa. El Pokémon portador aumentará su Defensa y su Defensa Especial si aún puede evolucionar." },
 
     "SOUL_DEW": { name: "Rocío bondad", description: "Aumenta la influencia de la naturaleza de un Pokémon en sus estadísticas en un 10% (aditivo)." },

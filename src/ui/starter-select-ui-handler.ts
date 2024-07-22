@@ -1715,6 +1715,16 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.scene.gameData.starterData[speciesId].moveset = this.starterMoveset.slice(0) as StarterMoveset;
     }
     this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, undefined, false);
+
+    // switch moves of starter if exists
+    if (this.starterMovesets.length) {
+      Array.from({ length: this.starterGens.length }, (_, i) => {
+        const starterSpecies = this.genSpecies[this.starterGens[i]][this.starterCursors[i]];
+        if (starterSpecies.speciesId === speciesId) {
+          this.starterMovesets[i] = this.starterMoveset;
+        }
+      });
+    }
   }
 
   updateButtonIcon(iconSetting, gamepadType, iconElement, controlLabel): void {
