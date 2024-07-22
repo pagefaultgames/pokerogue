@@ -5829,9 +5829,7 @@ export const allMoves: Move[] = [
   new SelfStatusMove(Moves.NONE, Type.NORMAL, MoveCategory.STATUS, -1, -1, 0, 1),
 ];
 
-export const selfStatLowerMoves: Moves[] = [
-
-];
+export const selfStatLowerMoves: Moves[] = [];
 
 export function initMoves() {
   allMoves.push(
