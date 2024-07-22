@@ -73,7 +73,7 @@
 					}
 				},
 				{
-					"filename": "ribbon-gen4",
+					"filename": "ribbon_gen4",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -94,7 +94,7 @@
 					}
 				},
 				{
-					"filename": "ribbon-gen2",
+					"filename": "ribbon_gen2",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -241,7 +241,7 @@
 					}
 				},
 				{
-					"filename": "ribbon-gen3",
+					"filename": "ribbon_gen3",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -262,7 +262,7 @@
 					}
 				},
 				{
-					"filename": "ribbon-gen7",
+					"filename": "ribbon_gen7",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -283,7 +283,7 @@
 					}
 				},
 				{
-					"filename": "ribbon-gen9",
+					"filename": "ribbon_gen9",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -325,7 +325,7 @@
 					}
 				},
 				{
-					"filename": "ribbon-gen1",
+					"filename": "ribbon_gen1",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -346,7 +346,7 @@
 					}
 				},
 				{
-					"filename": "ribbon-gen5",
+					"filename": "ribbon_gen5",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -367,7 +367,7 @@
 					}
 				},
 				{
-					"filename": "ribbon-gen6",
+					"filename": "ribbon_gen6",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -745,7 +745,7 @@
 					}
 				},
 				{
-					"filename": "ribbon-gen8",
+					"filename": "ribbon_gen8",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -8037,6 +8037,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:6b2a4560d5cf30251c4b4c3be9f16589:f1e153f025227c53855c501b67bcbe1b:110e074689c9edd2c54833ce2e4d9270$"
+		"smartupdate": "$TexturePacker:SmartUpdate:2bcc15d39fc2d75e1aa1b65f2ab7d856:f1e153f025227c53855c501b67bcbe1b:110e074689c9edd2c54833ce2e4d9270$"
 	}
 }
