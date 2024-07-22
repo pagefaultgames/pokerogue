@@ -66,6 +66,16 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "PokemonBaseStatBoosterModifierType": {
       description: "Increases the holder's base {{statName}} by 10%. The higher your IVs, the higher the stack limit.",
     },
+    "PokemonBaseStatTotalModifierType": {
+      name: "Shuckle Juice",
+      description: "{{increaseDecrease}} all of the holder's base stats by {{statValue}}. You were {{blessCurse}} by the Shuckle.",
+      extra: {
+        "increase": "Increases",
+        "decrease": "Decreases",
+        "blessed": "blessed",
+        "cursed": "cursed"
+      },
+    },
     "AllPokemonFullHpRestoreModifierType": {
       description: "Restores 100% HP for all Pokémon.",
     },
@@ -240,6 +250,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "Full Heal Token", description: "Adds a 2.5% chance every turn to heal a status condition." },
     "ENEMY_ENDURE_CHANCE": { name: "Endure Token" },
     "ENEMY_FUSED_CHANCE": { name: "Fusion Token", description: "Adds a 1% chance that a wild Pokémon will be a fusion." },
+
+    "MYSTERY_ENCOUNTER_SHUCKLE_JUICE": { name: "Shuckle Juice" },
   },
   SpeciesBoosterItem: {
     "LIGHT_BALL": { name: "Light Ball", description: "It's a mysterious orb that boosts Pikachu's Attack and Sp. Atk stats." },

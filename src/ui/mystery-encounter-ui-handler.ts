@@ -13,6 +13,7 @@ import { getPokeballAtlasKey } from "../data/pokeball";
 import { OptionSelectSettings } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { MysteryEncounterTier } from "#app/data/mystery-encounters/mystery-encounter";
+import i18next from "i18next";
 
 export default class MysteryEncounterUiHandler extends UiHandler {
   private cursorContainer: Phaser.GameObjects.Container;
@@ -28,6 +29,10 @@ export default class MysteryEncounterUiHandler extends UiHandler {
   private descriptionContainer: Phaser.GameObjects.Container;
   private descriptionScrollTween: Phaser.Tweens.Tween;
   private rarityBall: Phaser.GameObjects.Sprite;
+
+  private dexProgressWindow: Phaser.GameObjects.NineSlice;
+  private dexProgressContainer: Phaser.GameObjects.Container;
+  private showDexProgress: boolean = false;
 
   private overrideSettings: OptionSelectSettings;
   private encounterOptions: MysteryEncounterOption[] = [];
@@ -50,6 +55,9 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     this.optionsContainer = this.scene.add.container(12, -38.7);
     this.optionsContainer.setVisible(false);
     ui.add(this.optionsContainer);
+    this.dexProgressContainer = this.scene.add.container(214, -43);
+    this.dexProgressContainer.setVisible(false);
+    ui.add(this.dexProgressContainer);
     this.descriptionContainer = this.scene.add.container(0, -152);
     this.descriptionContainer.setVisible(false);
     ui.add(this.descriptionContainer);
@@ -65,9 +73,23 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     this.tooltipWindow = addWindow(this.scene, 0, 0, 110, 48, false, false, 0, 0, WindowVariant.THIN);
     this.tooltipContainer.add(this.tooltipWindow);
 
+    this.dexProgressWindow = addWindow(this.scene, 0, 0, 24, 28, false, false, 0, 0, WindowVariant.THIN);
+    this.dexProgressContainer.add(this.dexProgressWindow);
+
     this.rarityBall = this.scene.add.sprite(141, 9, "pb");
     this.rarityBall.setScale(0.75);
     this.descriptionContainer.add(this.rarityBall);
+
+    const dexProgressIndicator = this.scene.add.sprite(12, 9,  "encounter_radar");
+    dexProgressIndicator.setScale(0.85);
+    this.dexProgressContainer.add(dexProgressIndicator);
+    this.dexProgressContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, 24, 28), Phaser.Geom.Rectangle.Contains);
+    this.dexProgressContainer.on("pointerover", () => {
+      (this.scene as BattleScene).ui.showTooltip(null, i18next.t("mysteryEncounter:affects_pokedex"), true);
+    });
+    this.dexProgressContainer.on("pointerout", () => {
+      (this.scene as BattleScene).ui.hideTooltip();
+    });
   }
 
   show(args: any[]): boolean {
@@ -81,6 +103,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     this.cursorContainer.setVisible(true);
     this.descriptionContainer.setVisible(showDescriptionContainer);
     this.optionsContainer.setVisible(true);
+    this.dexProgressContainer.setVisible(true);
     this.displayEncounterOptions(slideInDescription);
     const cursor = this.getCursor();
     if (cursor === (this?.optionsContainer?.length || 0) - 1) {
@@ -317,7 +340,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     const queryText: string = getEncounterText(this.scene, mysteryEncounter.dialogue.encounterOptionsDialogue.query, TextStyle.TOOLTIP_CONTENT);
 
     // Clear options container (except cursor)
-    this.optionsContainer.removeAll();
+    this.optionsContainer.removeAll(true);
 
     // Options Window
     for (let i = 0; i < this.encounterOptions.length; i++) {
@@ -437,6 +460,8 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
     if (isNullOrUndefined(cursor) || cursor > this.optionsContainer.length - 2) {
       // Ignore hovers on view party button
+      // Hide dex progress if visible
+      this.showHideDexProgress(false);
       return;
     }
 
@@ -487,6 +512,13 @@ export default class MysteryEncounterUiHandler extends UiHandler {
         });
       }
     }
+
+    // Dex progress indicator
+    if (cursorOption.hasDexProgress && !this.showDexProgress) {
+      this.showHideDexProgress(true);
+    } else if (!cursorOption.hasDexProgress) {
+      this.showHideDexProgress(false);
+    }
   }
 
   clear(): void {
@@ -494,6 +526,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     this.overrideSettings = null;
     this.optionsContainer.setVisible(false);
     this.optionsContainer.removeAll(true);
+    this.dexProgressContainer.setVisible(false);
     this.descriptionContainer.setVisible(false);
     this.tooltipContainer.setVisible(false);
     // Keeps container background and pokeball
@@ -507,5 +540,31 @@ export default class MysteryEncounterUiHandler extends UiHandler {
       this.cursorObj.destroy();
     }
     this.cursorObj = null;
+  }
+
+  /**
+   *
+   * @param show - if true does show, if false does hide
+   */
+  showHideDexProgress(show: boolean) {
+    if (show && !this.showDexProgress) {
+      this.showDexProgress = true;
+      this.scene.tweens.killTweensOf(this.dexProgressContainer);
+      this.scene.tweens.add({
+        targets: this.dexProgressContainer,
+        y: -63,
+        ease: "Sine.easeInOut",
+        duration: 750
+      });
+    } else if (!show && this.showDexProgress) {
+      this.showDexProgress = false;
+      this.scene.tweens.killTweensOf(this.dexProgressContainer);
+      this.scene.tweens.add({
+        targets: this.dexProgressContainer,
+        y: -43,
+        ease: "Sine.easeInOut",
+        duration: 750,
+      });
+    }
   }
 }

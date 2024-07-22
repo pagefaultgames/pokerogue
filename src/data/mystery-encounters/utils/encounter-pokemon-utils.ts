@@ -17,6 +17,7 @@ import { Type } from "#app/data/type";
 import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "#app/data/pokemon-species";
 import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { getPokemonNameWithAffix } from "#app/messages";
+import { modifierTypes } from "#app/modifier/modifier-type";
 
 export interface MysteryEncounterPokemonData {
   spriteScale?: number
@@ -204,13 +205,11 @@ export function applyHealToPokemon(scene: BattleScene, pokemon: PlayerPokemon, h
  * @param pokemon
  * @param value
  */
-export function modifyPlayerPokemonBST(pokemon: PlayerPokemon, value: number) {
-  pokemon.getSpeciesForm().baseStats = [...pokemon.getSpeciesForm().baseStats].map(v => {
-    const newVal = Math.floor(v + value);
-    return Math.max(newVal, 1);
-  });
+export async function modifyPlayerPokemonBST(pokemon: PlayerPokemon, value: number) {
+  const modType = modifierTypes.MYSTERY_ENCOUNTER_SHUCKLE_JUICE().generateType(null, [value]);
+  const modifier = modType.newModifier(pokemon);
+  await pokemon.scene.addModifier(modifier, false, false, false, true);
   pokemon.calculateStats();
-  pokemon.updateInfo();
 }
 
 /**
@@ -387,7 +386,7 @@ function failCatch(scene: BattleScene, pokemon: EnemyPokemon, originalY: number,
   });
 }
 
-function catchPokemon(scene: BattleScene, pokemon: EnemyPokemon, pokeball: Phaser.GameObjects.Sprite, pokeballType: PokeballType): Promise<void> {
+export async function catchPokemon(scene: BattleScene, pokemon: EnemyPokemon, pokeball: Phaser.GameObjects.Sprite, pokeballType: PokeballType, isObtain: boolean = false): Promise<void> {
   scene.unshiftPhase(new VictoryPhase(scene, BattlerIndex.ENEMY));
 
   const speciesForm = !pokemon.fusionSpecies ? pokemon.getSpeciesForm() : pokemon.getFusionSpeciesForm();
@@ -413,14 +412,16 @@ function catchPokemon(scene: BattleScene, pokemon: EnemyPokemon, pokeball: Phase
   scene.gameData.updateSpeciesDexIvs(pokemon.species.getRootSpeciesId(true), pokemon.ivs);
 
   return new Promise(resolve => {
-    scene.ui.showText(i18next.t("battle:pokemonCaught", { pokemonName: pokemon.name }), null, () => {
+    scene.ui.showText(i18next.t(isObtain ? "battle:pokemonObtained" : "battle:pokemonCaught", { pokemonName: pokemon.name }), null, () => {
       const end = () => {
         scene.pokemonInfoContainer.hide();
         removePb(scene, pokeball);
         resolve();
       };
       const removePokemon = () => {
-        scene.field.remove(pokemon, true);
+        if (pokemon) {
+          scene.field.remove(pokemon, true);
+        }
       };
       const addToParty = () => {
         const newPokemon = pokemon.addToParty(pokeballType);
@@ -471,14 +472,18 @@ function catchPokemon(scene: BattleScene, pokemon: EnemyPokemon, pokeball: Phase
 }
 
 function removePb(scene: BattleScene, pokeball: Phaser.GameObjects.Sprite) {
-  scene.tweens.add({
-    targets: pokeball,
-    duration: 250,
-    delay: 250,
-    ease: "Sine.easeIn",
-    alpha: 0,
-    onComplete: () => pokeball.destroy()
-  });
+  if (pokeball) {
+    scene.tweens.add({
+      targets: pokeball,
+      duration: 250,
+      delay: 250,
+      ease: "Sine.easeIn",
+      alpha: 0,
+      onComplete: () => {
+        pokeball.destroy();
+      }
+    });
+  }
 }
 
 export async function doPokemonFlee(scene: BattleScene, pokemon: EnemyPokemon): Promise<void> {

@@ -144,20 +144,23 @@ export class WeatherRequirement extends EncounterSceneRequirement {
 
 export class PartySizeRequirement extends EncounterSceneRequirement {
   partySizeRange: [number, number];
+  excludeFainted: boolean;
 
   /**
    * Used for specifying a party size requirement
    * If min and max are equivalent, will check for exact size
    * @param partySizeRange - [min, max]
+   * @param excludeFainted
    */
-  constructor(partySizeRange: [number, number]) {
+  constructor(partySizeRange: [number, number], excludeFainted: boolean) {
     super();
     this.partySizeRange = partySizeRange;
+    this.excludeFainted = excludeFainted;
   }
 
   meetsRequirement(scene: BattleScene): boolean {
     if (!isNullOrUndefined(this?.partySizeRange) && this.partySizeRange?.[0] <= this.partySizeRange?.[1]) {
-      const partySize = scene.getParty().length;
+      const partySize = this.excludeFainted ? scene.getParty().filter(p => p.isAllowedInBattle()).length : scene.getParty().length;
       if (partySize >= 0 && (this?.partySizeRange?.[0] >= 0 && this.partySizeRange?.[0] > partySize) || (this?.partySizeRange?.[1] >= 0 && this.partySizeRange?.[1] < partySize)) {
         return false;
       }

@@ -3,7 +3,7 @@ import { EnemyPartyConfig, initBattleWithEnemyConfig, selectPokemonForOption, se
 import { getNatureName, Nature } from "#app/data/nature";
 import { speciesStarters } from "#app/data/pokemon-species";
 import { Stat } from "#app/data/pokemon-stat";
-import { PlayerPokemon } from "#app/field/pokemon";
+import Pokemon, { PlayerPokemon } from "#app/field/pokemon";
 import { pokemonInfo } from "#app/locales/en/pokemon-info";
 import { PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
@@ -16,7 +16,7 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "../../../battle-scene";
 import IMysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier, } from "../mystery-encounter";
 import { EncounterOptionMode, MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
-import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { getEncounterText, queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 
 /** The i18n namespace for the encounter */
 const namespace = "mysteryEncounter:trainingSession";
@@ -27,11 +27,10 @@ const namespace = "mysteryEncounter:trainingSession";
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
 export const TrainingSessionEncounter: IMysteryEncounter =
-  MysteryEncounterBuilder.withEncounterType(
-    MysteryEncounterType.TRAINING_SESSION
-  )
+  MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.TRAINING_SESSION)
     .withEncounterTier(MysteryEncounterTier.ULTRA)
     .withSceneWaveRangeRequirement(10, 180) // waves 10 to 180
+    .withScenePartySizeRequirement(2, 6, true) // Must have at least 2 unfainted pokemon in party
     .withHideWildIntroMessage(true)
     .withIntroSpriteConfigs([
       {
@@ -46,7 +45,7 @@ export const TrainingSessionEncounter: IMysteryEncounter =
     .withIntroDialogue([
       {
         text: `${namespace}:intro`,
-      },
+      }
     ])
     .withTitle(`${namespace}:title`)
     .withDescription(`${namespace}:description`)
@@ -54,6 +53,7 @@ export const TrainingSessionEncounter: IMysteryEncounter =
     .withOption(
       new MysteryEncounterOptionBuilder()
         .withOptionMode(EncounterOptionMode.DEFAULT)
+        .withHasDexProgress(true)
         .withDialogue({
           buttonLabel: `${namespace}:option:1:label`,
           buttonTooltip: `${namespace}:option:1:tooltip`,
@@ -71,7 +71,17 @@ export const TrainingSessionEncounter: IMysteryEncounter =
             };
           };
 
-          return selectPokemonForOption(scene, onPokemonSelected);
+          // Only Pokemon that are not KOed/legal can be trained
+          const selectableFilter = (pokemon: Pokemon) => {
+            const meetsReqs = pokemon.isAllowedInBattle();
+            if (!meetsReqs) {
+              return getEncounterText(scene, `${namespace}:invalid_selection`);
+            }
+
+            return null;
+          };
+
+          return selectPokemonForOption(scene, onPokemonSelected, null, selectableFilter);
         })
         .withOptionPhase(async (scene: BattleScene) => {
           const encounter = scene.currentBattle.mysteryEncounter;
@@ -187,6 +197,7 @@ export const TrainingSessionEncounter: IMysteryEncounter =
     .withOption(
       new MysteryEncounterOptionBuilder()
         .withOptionMode(EncounterOptionMode.DEFAULT)
+        .withHasDexProgress(true)
         .withDialogue({
           buttonLabel: `${namespace}:option:2:label`,
           buttonTooltip: `${namespace}:option:2:tooltip`,
@@ -220,7 +231,17 @@ export const TrainingSessionEncounter: IMysteryEncounter =
             });
           };
 
-          return selectPokemonForOption(scene, onPokemonSelected);
+          // Only Pokemon that are not KOed/legal can be trained
+          const selectableFilter = (pokemon: Pokemon) => {
+            const meetsReqs = pokemon.isAllowedInBattle();
+            if (!meetsReqs) {
+              return getEncounterText(scene, `${namespace}:invalid_selection`);
+            }
+
+            return null;
+          };
+
+          return selectPokemonForOption(scene, onPokemonSelected, null, selectableFilter);
         })
         .withOptionPhase(async (scene: BattleScene) => {
           const encounter = scene.currentBattle.mysteryEncounter;
@@ -269,6 +290,7 @@ export const TrainingSessionEncounter: IMysteryEncounter =
     .withOption(
       new MysteryEncounterOptionBuilder()
         .withOptionMode(EncounterOptionMode.DEFAULT)
+        .withHasDexProgress(true)
         .withDialogue({
           buttonLabel: `${namespace}:option:3:label`,
           buttonTooltip: `${namespace}:option:3:tooltip`,
@@ -311,7 +333,17 @@ export const TrainingSessionEncounter: IMysteryEncounter =
             });
           };
 
-          return selectPokemonForOption(scene, onPokemonSelected);
+          // Only Pokemon that are not KOed/legal can be trained
+          const selectableFilter = (pokemon: Pokemon) => {
+            const meetsReqs = pokemon.isAllowedInBattle();
+            if (!meetsReqs) {
+              return getEncounterText(scene, `${namespace}:invalid_selection`);
+            }
+
+            return null;
+          };
+
+          return selectPokemonForOption(scene, onPokemonSelected, null, selectableFilter);
         })
         .withOptionPhase(async (scene: BattleScene) => {
           const encounter = scene.currentBattle.mysteryEncounter;
@@ -393,23 +425,12 @@ export const TrainingSessionEncounter: IMysteryEncounter =
     )
     .build();
 
-function getEnemyConfig(
-  scene: BattleScene,
-  playerPokemon: PlayerPokemon,
-  segments: number,
-  modifiers: ModifiersHolder
-): EnemyPartyConfig {
+function getEnemyConfig(scene: BattleScene, playerPokemon: PlayerPokemon,segments: number,modifiers: ModifiersHolder): EnemyPartyConfig {
   playerPokemon.resetSummonData();
 
   // Passes modifiers by reference
-  modifiers.value = scene.findModifiers(
-    (m) =>
-      m instanceof PokemonHeldItemModifier &&
-      (m as PokemonHeldItemModifier).pokemonId === playerPokemon.id
-  ) as PokemonHeldItemModifier[];
-  const modifierTypes = modifiers.value.map(
-    (mod) => mod.type
-  ) as PokemonHeldItemModifierType[];
+  modifiers.value = scene.findModifiers((m) => m instanceof PokemonHeldItemModifier && (m as PokemonHeldItemModifier).pokemonId === playerPokemon.id) as PokemonHeldItemModifier[];
+  const modifierTypes = modifiers.value.map((mod) => mod.type) as PokemonHeldItemModifierType[];
 
   const data = new PokemonData(playerPokemon);
   return {

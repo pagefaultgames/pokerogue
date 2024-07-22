@@ -708,6 +708,55 @@ export class PokemonBaseStatModifier extends PokemonHeldItemModifier {
   }
 }
 
+export class PokemonBaseStatTotalModifier extends PokemonHeldItemModifier {
+  private statModifier: integer;
+
+  constructor(type: ModifierTypes.PokemonBaseStatTotalModifierType, pokemonId: integer, statModifier: integer, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+    this.statModifier = statModifier;
+  }
+
+  matchType(modifier: Modifier): boolean {
+    if (modifier instanceof PokemonBaseStatTotalModifier) {
+      return (modifier as PokemonBaseStatTotalModifier).statModifier === this.statModifier;
+    }
+    return false;
+  }
+
+  clone(): PersistentModifier {
+    return new PokemonBaseStatTotalModifier(this.type as ModifierTypes.PokemonBaseStatTotalModifierType, this.pokemonId, this.statModifier, this.stackCount);
+  }
+
+  getArgs(): any[] {
+    return super.getArgs().concat(this.statModifier);
+  }
+
+  shouldApply(args: any[]): boolean {
+    return super.shouldApply(args) && args.length === 2 && args[1] instanceof Array;
+  }
+
+  apply(args: any[]): boolean {
+    args[1].forEach((v, i) => {
+      const newVal = Math.floor(v + this.statModifier);
+      args[1][i] = Math.min(Math.max(newVal, 1), 999999);
+    });
+
+    return true;
+  }
+
+  getTransferrable(_withinParty: boolean): boolean {
+    return false;
+  }
+
+  getScoreMultiplier(): number {
+    return 1.2;
+  }
+
+  getMaxHeldItemCount(pokemon: Pokemon): integer {
+    return 2;
+  }
+}
+
 /**
  * Modifier used for held items that apply {@linkcode Stat} boost(s)
  * using a multiplier.

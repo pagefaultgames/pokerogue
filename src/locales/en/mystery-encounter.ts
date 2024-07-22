@@ -11,6 +11,7 @@ import { shadyVitaminDealerDialogue } from "#app/locales/en/mystery-encounters/s
 import { slumberingSnorlaxDialogue } from "#app/locales/en/mystery-encounters/slumbering-snorlax-dialogue";
 import { trainingSessionDialogue } from "#app/locales/en/mystery-encounters/training-session-dialogue";
 import { theStrongStuffDialogue } from "#app/locales/en/mystery-encounters/the-strong-stuff-dialogue";
+import { pokemonSalesmanDialogue } from "#app/locales/en/mystery-encounters/pokemon-salesman-dialogue";
 
 /**
  * Patterns that can be used:
@@ -32,6 +33,7 @@ export const mysteryEncounter = {
   // General use content
   "paid_money": "You paid ₽{{amount, number}}.",
   "receive_money": "You received ₽{{amount, number}}!",
+  "affects_pokedex": "Affects Pokédex Data",
 
   mysteriousChallengers: mysteriousChallengersDialogue,
   mysteriousChest: mysteriousChestDialogue,
@@ -46,4 +48,5 @@ export const mysteryEncounter = {
   lostAtSea: lostAtSeaDialogue,
   fieryFallout: fieryFalloutDialogue,
   theStrongStuff: theStrongStuffDialogue,
+  pokemonSalesman: pokemonSalesmanDialogue
 } as const;

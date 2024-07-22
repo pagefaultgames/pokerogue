@@ -3,6 +3,7 @@ export const trainingSessionDialogue = {
   title: "Training Session",
   description: "These supplies look like they could be used to train a member of your party! There are a few ways you could train your Pokémon, by battling against it with the rest of your team.",
   query: "How should you train?",
+  invalid_selection: "Pokémon must be healthy enough.",
   option: {
     1: {
       label: "Light Training",
@@ -19,7 +20,7 @@ export const trainingSessionDialogue = {
     },
     3: {
       label: "Heavy Training",
-      tooltip: "(-) Each of your Pokémon lose {{damagePercentage}}% of their total HP",
+      tooltip: "(-) Harsh Battle\n(+) Change Pokémon's Ability",
       select_prompt: "Select a new ability\nto train your Pokémon in.",
       finished: `{{selectedPokemon}} returns, feeling\nworn out but accomplished!
         $Its ability was changed to {{ability}}!`,

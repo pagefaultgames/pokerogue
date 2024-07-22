@@ -16,6 +16,7 @@ export const battle: SimpleTranslationEntries = {
   "moneyWon": "You got\n₽{{moneyAmount}} for winning!",
   "moneyPickedUp": "You picked up ₽{{moneyAmount}}!",
   "pokemonCaught": "{{pokemonName}} was caught!",
+  "pokemonObtained": "You got {{pokemonName}}!",
   "pokemonBrokeFree": "Oh no!\nThe Pokémon broke free!",
   "pokemonFled": "The wild {{pokemonName}} fled!",
   "playerFled": "You fled from the {{pokemonName}}!",

@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "encounter_radar.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 17,
+				"h": 16
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 15,
+						"h": 14
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 15,
+						"h": 14
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 15,
+						"h": 14
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:eb3445f19546ab36edb2909c89b8aa86:c8de156a28ef70ee4ddf70cffe1ba3ba:e7008b81ccf0cb0325145a809afa6165$"
+	}
+}

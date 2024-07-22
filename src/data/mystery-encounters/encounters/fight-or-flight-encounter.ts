@@ -48,7 +48,7 @@ export const FightOrFlightEncounter: IMysteryEncounter =
     .withIntroSpriteConfigs([]) // Set in onInit()
     .withIntroDialogue([
       {
-        text: `${namespace}_intro_message`,
+        text: `${namespace}:intro`,
       },
     ])
     .withOnInit((scene: BattleScene) => {
@@ -87,6 +87,7 @@ export const FightOrFlightEncounter: IMysteryEncounter =
           y: -5,
           scale: 0.75,
           isItem: true,
+          disableAnimation: true
         },
         {
           spriteKey: bossSpriteKey,
@@ -149,7 +150,7 @@ export const FightOrFlightEncounter: IMysteryEncounter =
           const primaryPokemon = encounter.options[1].primaryPokemon;
           if (primaryPokemon) {
             // Use primaryPokemon to execute the thievery
-            await showEncounterText(scene, `${namespace}:option:2:steal_result`);
+            await showEncounterText(scene, `${namespace}:option:2:special_result`);
             leaveEncounterWithoutBattle(scene);
             return;
           }
