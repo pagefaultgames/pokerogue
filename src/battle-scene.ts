@@ -181,11 +181,16 @@ export default class BattleScene extends SceneBase {
   public gameData: GameData;
   public sessionSlotId: integer;
 
+  /** PhaseQueue: dequeue/remove the first element to get the next phase */
   public phaseQueue: Phase[];
   public conditionalQueue: Array<[() => boolean, Phase]>;
+  /** PhaseQueuePrepend: is a temp storage of what will be added to PhaseQueue */
   private phaseQueuePrepend: Phase[];
+
+  /** overrides default of inserting phases to end of phaseQueuePrepend array, useful or inserting Phases "out of order" */
   private phaseQueuePrependSpliceIndex: integer;
   private nextCommandPhaseQueue: Phase[];
+
   private currentPhase: Phase;
   private standbyPhase: Phase;
   public field: Phaser.GameObjects.Container;
@@ -1907,7 +1912,7 @@ export default class BattleScene extends SceneBase {
     case "battle_legendary_pecharunt": //SV Pecharunt Battle
       return 6.508;
     case "battle_rival": //BW Rival Battle
-      return 13.689;
+      return 14.110;
     case "battle_rival_2": //BW N Battle
       return 17.714;
     case "battle_rival_3": //BW Final N Battle
@@ -1962,6 +1967,7 @@ export default class BattleScene extends SceneBase {
     return this.standbyPhase;
   }
 
+
   /**
    * Adds a phase to the conditional queue and ensures it is executed only when the specified condition is met.
    *
@@ -1976,11 +1982,19 @@ export default class BattleScene extends SceneBase {
     this.conditionalQueue.push([condition, phase]);
   }
 
-
+  /**
+   * Adds a phase to nextCommandPhaseQueue, as long as boolean passed in is false
+   * @param phase {@linkcode Phase} the phase to add
+   * @param defer boolean on which queue to add to, defaults to false, and adds to phaseQueue
+   */
   pushPhase(phase: Phase, defer: boolean = false): void {
     (!defer ? this.phaseQueue : this.nextCommandPhaseQueue).push(phase);
   }
 
+  /**
+   * Adds Phase to the end of phaseQueuePrepend, or at phaseQueuePrependSpliceIndex
+   * @param phase {@linkcode Phase} the phase to add
+   */
   unshiftPhase(phase: Phase): void {
     if (this.phaseQueuePrependSpliceIndex === -1) {
       this.phaseQueuePrepend.push(phase);
@@ -1989,18 +2003,32 @@ export default class BattleScene extends SceneBase {
     }
   }
 
+  /**
+   * Clears the phaseQueue
+   */
   clearPhaseQueue(): void {
     this.phaseQueue.splice(0, this.phaseQueue.length);
   }
 
+  /**
+   * Used by function unshiftPhase(), sets index to start inserting at current length instead of the end of the array, useful if phaseQueuePrepend gets longer with Phases
+   */
   setPhaseQueueSplice(): void {
     this.phaseQueuePrependSpliceIndex = this.phaseQueuePrepend.length;
   }
 
+  /**
+   * Resets phaseQueuePrependSpliceIndex to -1, implies that calls to unshiftPhase will insert at end of phaseQueuePrepend
+   */
   clearPhaseQueueSplice(): void {
     this.phaseQueuePrependSpliceIndex = -1;
   }
 
+  /**
+   * Is called by each Phase implementations "end()" by default
+   * We dump everything from phaseQueuePrepend to the start of of phaseQueue
+   * then removes first Phase and starts it
+   */
   shiftPhase(): void {
     if (this.standbyPhase) {
       this.currentPhase = this.standbyPhase;
@@ -2018,7 +2046,7 @@ export default class BattleScene extends SceneBase {
     }
     if (!this.phaseQueue.length) {
       this.populatePhaseQueue();
-      // clear the conditionalQueue if there are no phases left in the phaseQueue
+      // Clear the conditionalQueue if there are no phases left in the phaseQueue
       this.conditionalQueue = [];
     }
     this.currentPhase = this.phaseQueue.shift();
@@ -2085,15 +2113,46 @@ export default class BattleScene extends SceneBase {
     }
   }
 
+  /**
+   * Tries to add the input phase to index before target phase in the phaseQueue, else simply calls unshiftPhase()
+   * @param phase {@linkcode Phase} the phase to be added
+   * @param targetPhase {@linkcode Phase} the type of phase to search for in phaseQueue
+   * @returns boolean if a targetPhase was found and added
+   */
+  prependToPhase(phase: Phase, targetPhase: Constructor<Phase>): boolean {
+    const targetIndex = this.phaseQueue.findIndex(ph => ph instanceof targetPhase);
+
+    if (targetIndex !== -1) {
+      this.phaseQueue.splice(targetIndex, 0, phase);
+      return true;
+    } else {
+      this.unshiftPhase(phase);
+      return false;
+    }
+  }
+
+  /**
+   * Adds a MessagePhase, either to PhaseQueuePrepend or nextCommandPhaseQueue
+   * @param message string for MessagePhase
+   * @param callbackDelay optional param for MessagePhase constructor
+   * @param prompt optional param for MessagePhase constructor
+   * @param promptDelay optional param for MessagePhase constructor
+   * @param defer boolean for which queue to add it to, false -> add to PhaseQueuePrepend, true -> nextCommandPhaseQueue
+   */
   queueMessage(message: string, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer, defer?: boolean) {
     const phase = new MessagePhase(this, message, callbackDelay, prompt, promptDelay);
     if (!defer) {
+      // adds to the end of PhaseQueuePrepend
       this.unshiftPhase(phase);
     } else {
+      //remember that pushPhase adds it to nextCommandPhaseQueue
       this.pushPhase(phase);
     }
   }
 
+  /**
+   * Moves everything from nextCommandPhaseQueue to phaseQueue (keeping order)
+   */
   populatePhaseQueue(): void {
     if (this.nextCommandPhaseQueue.length) {
       this.phaseQueue.push(...this.nextCommandPhaseQueue);

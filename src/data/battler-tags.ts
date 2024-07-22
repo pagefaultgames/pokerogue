@@ -335,7 +335,7 @@ export class InfatuatedTag extends BattlerTag {
     pokemon.scene.queueMessage(
       i18next.t("battle:battlerTagsInfatuatedOnAdd", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        sourcePokemonName: pokemon.scene.getPokemonById(this.sourceId).name
+        sourcePokemonName: getPokemonNameWithAffix(pokemon.scene.getPokemonById(this.sourceId))
       })
     );
   }
@@ -353,7 +353,7 @@ export class InfatuatedTag extends BattlerTag {
       pokemon.scene.queueMessage(
         i18next.t("battle:battlerTagsInfatuatedLapse", {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-          sourcePokemonName: pokemon.scene.getPokemonById(this.sourceId).name
+          sourcePokemonName: getPokemonNameWithAffix(pokemon.scene.getPokemonById(this.sourceId))
         })
       );
       pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, pokemon.getBattlerIndex(), undefined, CommonAnim.ATTRACT));
@@ -581,7 +581,7 @@ export class HelpingHandTag extends BattlerTag {
     pokemon.scene.queueMessage(
       i18next.t("battle:battlerTagsHelpingHandOnAdd", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon.scene.getPokemonById(this.sourceId)),
-        pokemonName: pokemon.name
+        pokemonName: getPokemonNameWithAffix(pokemon)
       })
     );
   }
@@ -682,7 +682,7 @@ export class AquaRingTag extends BattlerTag {
           Math.floor(pokemon.getMaxHp() / 16),
           i18next.t("battle:battlerTagsAquaRingLapse", {
             moveName: this.getMoveName(),
-            pokemonName: pokemon.name
+            pokemonName: getPokemonNameWithAffix(pokemon)
           }),
           true));
     }
@@ -801,7 +801,7 @@ export class BindTag extends DamagingTrapTag {
   getTrapMessage(pokemon: Pokemon): string {
     return i18next.t("battle:battlerTagsBindOnTrap", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      sourcePokemonName: pokemon.scene.getPokemonById(this.sourceId).name,
+      sourcePokemonName: getPokemonNameWithAffix(pokemon.scene.getPokemonById(this.sourceId)),
       moveName: this.getMoveName()
     });
   }
@@ -815,7 +815,7 @@ export class WrapTag extends DamagingTrapTag {
   getTrapMessage(pokemon: Pokemon): string {
     return i18next.t("battle:battlerTagsWrapOnTrap", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      sourcePokemonName: pokemon.scene.getPokemonById(this.sourceId).name
+      sourcePokemonName: getPokemonNameWithAffix(pokemon.scene.getPokemonById(this.sourceId))
     });
   }
 }
@@ -850,7 +850,7 @@ export class ClampTag extends DamagingTrapTag {
   getTrapMessage(pokemon: Pokemon): string {
     return i18next.t("battle:battlerTagsClampOnTrap", {
       sourcePokemonNameWithAffix: getPokemonNameWithAffix(pokemon.scene.getPokemonById(this.sourceId)),
-      pokemonName: pokemon.name,
+      pokemonName: getPokemonNameWithAffix(pokemon),
     });
   }
 }
@@ -1420,6 +1420,18 @@ export class IgnoreAccuracyTag extends BattlerTag {
   }
 }
 
+export class AlwaysGetHitTag extends BattlerTag {
+  constructor(sourceMove: Moves) {
+    super(BattlerTagType.ALWAYS_GET_HIT, BattlerTagLapseType.PRE_MOVE, 1, sourceMove);
+  }
+}
+
+export class ReceiveDoubleDamageTag extends BattlerTag {
+  constructor(sourceMove: Moves) {
+    super(BattlerTagType.RECEIVE_DOUBLE_DAMAGE, BattlerTagLapseType.PRE_MOVE, 1, sourceMove);
+  }
+}
+
 export class SaltCuredTag extends BattlerTag {
   private sourceIndex: integer;
 
@@ -1668,6 +1680,10 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
     return new BattlerTag(tagType, BattlerTagLapseType.AFTER_MOVE, turnCount, sourceMove);
   case BattlerTagType.IGNORE_ACCURACY:
     return new IgnoreAccuracyTag(sourceMove);
+  case BattlerTagType.ALWAYS_GET_HIT:
+    return new AlwaysGetHitTag(sourceMove);
+  case BattlerTagType.RECEIVE_DOUBLE_DAMAGE:
+    return new ReceiveDoubleDamageTag(sourceMove);
   case BattlerTagType.BYPASS_SLEEP:
     return new BattlerTag(BattlerTagType.BYPASS_SLEEP, BattlerTagLapseType.TURN_END, turnCount, sourceMove);
   case BattlerTagType.IGNORE_FLYING:
