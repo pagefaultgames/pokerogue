@@ -21,6 +21,15 @@ where
 - $\text{defScore}$ is the inverse of the opposing Pokémon's $\text{atkScore}$ against the source Pokémon's defensive typing, or $(\prod_{\text{types}} \text{typeEffectiveness}(\text{type}, \text{sourcePokemon}))^{-1}$. Unlike $\text{atkScore}$, $\text{defScore}$ is capped at a maximum score of 4.
 - $\text{hpDiffRatio}= \text{sourceHpRatio}-\text{oppHpRatio}+1$. This is further multiplied by 1.5 if the source Pokémon has a higher Speed stat than the opposing Pokémon; however, $\text{hpDiffRatio}$ cannot be higher than 1.
 
+The maximum possible matchup score a Pokémon could have against a single opponent is $(16+16)\times 2=64$, which occurs when
+- the Pokémon hits its opponent for 4x super effective damage with both of its types.
+- the Pokémon is immune to or resists both of the opponent's types by 4x.
+- the Pokémon is at max HP while the opponent's HP ratio is near zero.
+
+In most situations, though, a Pokémon's matchup score against an opponent will be at most 16, which is equivalent to having two super effective types and resisting both of the opponent's types with the same HP ratios as before.
+
+The minimum possible matchup score a Pokémon could have against a single opponent is near zero, which occurs when the Pokémon's HP ratio is near zero while the opponent is at max HP. However, a Pokémon's matchup score can also be very low when its type(s) are 4x weak to and/or resisted by its opponent's types.
+
 ### Determining Switches in EnemyCommandPhase
 
 The `EnemyCommandPhase` follows this process to determine whether or not an enemy Pokémon should switch on each turn during a Trainer battle.

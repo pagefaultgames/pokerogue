@@ -1252,7 +1252,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Computes the given Pokemon's matchup score against this Pokemon
+   * Computes the given Pokemon's matchup score against this Pokemon.
+   * In most cases, this score ranges from near-zero to 16, but the maximum possible matchup score is 64.
    * @param opponent The Pokemon to compare this Pokemon against
    * @returns A score value based on how favorable this Pokemon is when fighting the given Pokemon
    */
