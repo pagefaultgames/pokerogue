@@ -301,8 +301,8 @@ export function setCookie(cName: string, cValue: string): void {
 }
 
 export function removeCookie(cName: string): void {
-  document.cookie = `${cName}=;Secure;SameSite=Strict;Domain=${window.location.hostname};Path=/;Expires=Thu, 01 Jan 1970 00:00:00 GMT`;
-  document.cookie = `${cName}=;Secure;SameSite=Strict;Path=/;Expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+  document.cookie = `${cName}=;Secure;SameSite=Strict;Domain=${window.location.hostname};Path=/;Max-Age=-1`;
+  document.cookie = `${cName}=;Secure;SameSite=Strict;Path=/;Max-Age=-1`; // legacy cookie without domain, for older cookies to prevent a login loop
 }
 
 export function getCookie(cName: string): string {
