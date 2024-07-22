@@ -34,8 +34,8 @@ export const MysteriousChestEncounter: IMysteryEncounter =
     ])
     .withIntroDialogue([
       {
-        text: "${namespace}:intro",
-      },
+        text: `${namespace}:intro`,
+      }
     ])
     .withTitle(`${namespace}:title`)
     .withDescription(`${namespace}:description`)

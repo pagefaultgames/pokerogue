@@ -67,7 +67,7 @@ import { UiTheme } from "#enums/ui-theme";
 import { TimedEventManager } from "#app/timed-event-manager.js";
 import i18next from "i18next";
 import IMysteryEncounter, { MysteryEncounterTier, MysteryEncounterVariant } from "./data/mystery-encounters/mystery-encounter";
-import { allMysteryEncounters, AVERAGE_ENCOUNTERS_PER_RUN_TARGET, BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT, mysteryEncountersByBiome, WIGHT_INCREMENT_ON_SPAWN_MISS } from "./data/mystery-encounters/mystery-encounters";
+import { allMysteryEncounters, AVERAGE_ENCOUNTERS_PER_RUN_TARGET, BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT, mysteryEncountersByBiome, WEIGHT_INCREMENT_ON_SPAWN_MISS } from "./data/mystery-encounters/mystery-encounters";
 import { MysteryEncounterData } from "#app/data/mystery-encounters/mystery-encounter-data";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 
@@ -1074,7 +1074,7 @@ export default class BattleScene extends SceneBase {
       // let testStartingWeight = 0;
       // while (testStartingWeight < 3) {
       //   calculateMEAggregateStats(this, testStartingWeight);
-      //   testStartingWeight += 1;
+      //   testStartingWeight += 2;
       // }
       // Check for mystery encounter
       // Can only occur in place of a standard wild battle, waves 10-180
@@ -1098,7 +1098,7 @@ export default class BattleScene extends SceneBase {
           // Reset base spawn weight
           this.mysteryEncounterData.encounterSpawnChance = BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT;
         } else {
-          this.mysteryEncounterData.encounterSpawnChance = sessionEncounterRate + WIGHT_INCREMENT_ON_SPAWN_MISS;
+          this.mysteryEncounterData.encounterSpawnChance = sessionEncounterRate + WEIGHT_INCREMENT_ON_SPAWN_MISS;
         }
       }
     }

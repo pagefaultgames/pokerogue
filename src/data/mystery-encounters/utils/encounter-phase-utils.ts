@@ -1,7 +1,7 @@
 import { BattlerIndex, BattleType } from "#app/battle";
 import { biomeLinks } from "#app/data/biomes";
 import MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
-import { WIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
+import { WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
 import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import Pokemon, { FieldPosition, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { ExpBalanceModifier, ExpShareModifier, MultipleParticipantExpBonusModifier, PokemonExpBoosterModifier } from "#app/modifier/modifier";
@@ -317,17 +317,19 @@ export function initCustomMovesForEncounter(scene: BattleScene, moves: Moves | M
  * @param changeValue
  * @param playSound
  */
-export function updatePlayerMoney(scene: BattleScene, changeValue: number, playSound: boolean = true) {
-  scene.money += changeValue;
+export function updatePlayerMoney(scene: BattleScene, changeValue: number, playSound: boolean = true, showMessage: boolean = true) {
+  scene.money = Math.min(Math.max(scene.money + changeValue, 0), Number.MAX_SAFE_INTEGER);
   scene.updateMoneyText();
   scene.animateMoneyChanged(false);
   if (playSound) {
     scene.playSound("buy");
   }
-  if (changeValue < 0) {
-    scene.queueMessage(i18next.t("mysteryEncounter:paid_money", { amount: -changeValue }), null, true);
-  } else {
-    scene.queueMessage(i18next.t("mysteryEncounter:receive_money", { amount: changeValue }), null, true);
+  if (showMessage) {
+    if (changeValue < 0) {
+      scene.queueMessage(i18next.t("mysteryEncounter:paid_money", { amount: -changeValue }), null, true);
+    } else {
+      scene.queueMessage(i18next.t("mysteryEncounter:receive_money", { amount: changeValue }), null, true);
+    }
   }
 }
 
@@ -399,6 +401,7 @@ export function selectPokemonForOption(scene: BattleScene, onPokemonSelected: (p
               }).concat({
                 label: i18next.t("menu:cancel"),
                 handler: () => {
+                  scene.ui.clearText();
                   scene.ui.setMode(Mode.MYSTERY_ENCOUNTER);
                   resolve(false);
                   return true;
@@ -730,12 +733,18 @@ export function calculateMEAggregateStats(scene: BattleScene, baseSpawnWeight: n
   const numRuns = 1000;
   let run = 0;
   const targetEncountersPerRun = 15; // AVERAGE_ENCOUNTERS_PER_RUN_TARGET
+  const biomes = Object.keys(Biome).filter(key => isNaN(Number(key)));
+  const alwaysPickTheseBiomes = [Biome.ISLAND, Biome.ABYSS, Biome.WASTELAND, Biome.FAIRY_CAVE, Biome.TEMPLE, Biome.LABORATORY, Biome.SPACE, Biome.WASTELAND];
 
-  const calculateNumEncounters = (): number[] => {
+  const calculateNumEncounters = (): any[] => {
     let encounterRate = baseSpawnWeight; // BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT
     const numEncounters = [0, 0, 0, 0];
+    const encountersByBiome = new Map<string, number>(biomes.map(b => [b, 0]));
+    const validMEfloorsByBiome = new Map<string, number>(biomes.map(b => [b, 0]));
     let currentBiome = Biome.TOWN;
     let currentArena = scene.newArena(currentBiome);
+    scene.setSeed(Utils.randomString(24));
+    scene.resetSeed();
     for (let i = 10; i < 180; i++) {
       // Boss
       if (i % 10 === 0) {
@@ -748,10 +757,17 @@ export function calculateMEAggregateStats(scene: BattleScene, baseSpawnWeight: n
           let biomes: Biome[];
           scene.executeWithSeedOffset(() => {
             biomes = (biomeLinks[currentBiome] as (Biome | [Biome, integer])[])
-              .filter(b => !Array.isArray(b) || !Utils.randSeedInt(b[1]))
+              .filter(b => {
+                return !Array.isArray(b) || !Utils.randSeedInt(b[1]);
+              })
               .map(b => !Array.isArray(b) ? b : b[0]);
-          }, i);
-          currentBiome = biomes[Utils.randSeedInt(biomes.length)];
+          }, i * 100);
+          const specialBiomes = biomes.filter(b => alwaysPickTheseBiomes.includes(b));
+          if (specialBiomes.length > 0) {
+            currentBiome = specialBiomes[Utils.randSeedInt(specialBiomes.length)];
+          } else {
+            currentBiome = biomes[Utils.randSeedInt(biomes.length)];
+          }
         } else if (biomeLinks.hasOwnProperty(currentBiome)) {
           currentBiome = (biomeLinks[currentBiome] as Biome);
         } else {
@@ -778,6 +794,7 @@ export function calculateMEAggregateStats(scene: BattleScene, baseSpawnWeight: n
       // Otherwise, roll encounter
 
       const roll = Utils.randSeedInt(256);
+      validMEfloorsByBiome.set(Biome[currentBiome], validMEfloorsByBiome.get(Biome[currentBiome]) + 1);
 
       // If total number of encounters is lower than expected for the run, slightly favor a new encounter
       // Do the reverse as well
@@ -803,31 +820,63 @@ export function calculateMEAggregateStats(scene: BattleScene, baseSpawnWeight: n
         const rareThreshold = totalWeight - tierWeights[0] - tierWeights[1] - tierWeights[2]; // 64 - 32 - 16 - 10 = 6
 
         tierValue > commonThreshold ? ++numEncounters[0] : tierValue > uncommonThreshold ? ++numEncounters[1] : tierValue > rareThreshold ? ++numEncounters[2] : ++numEncounters[3];
+        encountersByBiome.set(Biome[currentBiome], encountersByBiome.get(Biome[currentBiome]) + 1);
       } else {
-        encounterRate += WIGHT_INCREMENT_ON_SPAWN_MISS;
+        encounterRate += WEIGHT_INCREMENT_ON_SPAWN_MISS;
       }
     }
 
-    return numEncounters;
+    return [numEncounters, encountersByBiome, validMEfloorsByBiome];
   };
 
-  const runs = [];
+  const encounterRuns: number[][] = [];
+  const encountersByBiomeRuns: Map<string, number>[] = [];
+  const validFloorsByBiome: Map<string, number>[] = [];
   while (run < numRuns) {
     scene.executeWithSeedOffset(() => {
-      const numEncounters = calculateNumEncounters();
-      runs.push(numEncounters);
+      const [numEncounters, encountersByBiome, validMEfloorsByBiome] = calculateNumEncounters();
+      encounterRuns.push(numEncounters);
+      encountersByBiomeRuns.push(encountersByBiome);
+      validFloorsByBiome.push(validMEfloorsByBiome);
     }, 1000 * run);
     run++;
   }
 
-  const n = runs.length;
-  const totalEncountersInRun = runs.map(run => run.reduce((a, b) => a + b));
+  const n = encounterRuns.length;
+  const totalEncountersInRun = encounterRuns.map(run => run.reduce((a, b) => a + b));
   const totalMean = totalEncountersInRun.reduce((a, b) => a + b) / n;
   const totalStd = Math.sqrt(totalEncountersInRun.map(x => Math.pow(x - totalMean, 2)).reduce((a, b) => a + b) / n);
-  const commonMean = runs.reduce((a, b) => a + b[0], 0) / n;
-  const uncommonMean = runs.reduce((a, b) => a + b[1], 0) / n;
-  const rareMean = runs.reduce((a, b) => a + b[2], 0) / n;
-  const superRareMean = runs.reduce((a, b) => a + b[3], 0) / n;
+  const commonMean = encounterRuns.reduce((a, b) => a + b[0], 0) / n;
+  const uncommonMean = encounterRuns.reduce((a, b) => a + b[1], 0) / n;
+  const rareMean = encounterRuns.reduce((a, b) => a + b[2], 0) / n;
+  const superRareMean = encounterRuns.reduce((a, b) => a + b[3], 0) / n;
 
-  console.log(`Starting weight: ${baseSpawnWeight}\nAverage MEs per run: ${totalMean}\nStandard Deviation: ${totalStd}\nAvg Commons: ${commonMean}\nAvg Uncommons: ${uncommonMean}\nAvg Rares: ${rareMean}\nAvg Super Rares: ${superRareMean}`);
+  const encountersPerRunPerBiome = encountersByBiomeRuns.reduce((a, b) => {
+    for (const biome of a.keys()) {
+      a.set(biome, a.get(biome) + b.get(biome));
+    }
+    return a;
+  });
+  const meanEncountersPerRunPerBiome: Map<string, number> = new Map<string, number>();
+  encountersPerRunPerBiome.forEach((value, key) => {
+    meanEncountersPerRunPerBiome.set(key, value / n);
+  });
+
+  const validMEFloorsPerRunPerBiome = validFloorsByBiome.reduce((a, b) => {
+    for (const biome of a.keys()) {
+      a.set(biome, a.get(biome) + b.get(biome));
+    }
+    return a;
+  });
+  const meanMEFloorsPerRunPerBiome: Map<string, number> = new Map<string, number>();
+  validMEFloorsPerRunPerBiome.forEach((value, key) => {
+    meanMEFloorsPerRunPerBiome.set(key, value / n);
+  });
+
+  let stats = `Starting weight: ${baseSpawnWeight}\nAverage MEs per run: ${totalMean}\nStandard Deviation: ${totalStd}\nAvg Commons: ${commonMean}\nAvg Greats: ${uncommonMean}\nAvg Ultras: ${rareMean}\nAvg Rogues: ${superRareMean}\n`;
+
+  const meanEncountersPerRunPerBiomeSorted = [...meanEncountersPerRunPerBiome.entries()].sort((e1, e2) => e2[1] - e1[1]);
+  meanEncountersPerRunPerBiomeSorted.forEach(value => stats = stats + `${value[0]}: avg valid floors ${meanMEFloorsPerRunPerBiome.get(value[0])}, avg MEs ${value[1]},\n`);
+
+  console.log(stats);
 }

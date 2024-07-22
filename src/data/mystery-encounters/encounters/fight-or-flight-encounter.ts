@@ -150,7 +150,7 @@ export const FightOrFlightEncounter: IMysteryEncounter =
           const primaryPokemon = encounter.options[1].primaryPokemon;
           if (primaryPokemon) {
             // Use primaryPokemon to execute the thievery
-            await showEncounterText(scene, `${namespace}:option:2:steal_result`);
+            await showEncounterText(scene, `${namespace}:option:2:special_result`);
             leaveEncounterWithoutBattle(scene);
             return;
           }

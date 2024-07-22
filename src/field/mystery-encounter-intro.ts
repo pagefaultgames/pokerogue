@@ -17,6 +17,13 @@ type KnownFileRoot =
   | "mystery-encounters"
   | "pokeball"
   | "pokemon"
+  | "pokemon/back"
+  | "pokemon/exp"
+  | "pokemon/female"
+  | "pokemon/icons"
+  | "pokemon/input"
+  | "pokemon/shiny"
+  | "pokemon/variant"
   | "statuses"
   | "trainer"
   | "ui";
@@ -25,7 +32,7 @@ export class MysteryEncounterSpriteConfig {
   /** The sprite key (which is the image file name). e.g. "ace_trainer_f" */
   spriteKey: string;
   /** Refer to [/public/images](../../public/images) directorty for all folder names */
-  fileRoot: KnownFileRoot & string;
+  fileRoot: KnownFileRoot & string | string;
   /** Enable shadow. Defaults to `false` */
   hasShadow?: boolean = false;
   /** Disable animation. Defaults to `false` */
@@ -44,6 +51,8 @@ export class MysteryEncounterSpriteConfig {
   yShadow?: number;
   /** Sprite scale. `0` - `n` */
   scale?: number;
+  /** If you are using a Pokemon sprite, set to `true`. This will ensure variant, form, gender, shiny sprites are loaded properly */
+  isPokemon?: boolean;
   /** If you are using an item sprite, set to `true` */
   isItem?: boolean;
   /** The sprites alpha. `0` - `1` The lower the number, the more transparent */
@@ -155,10 +164,12 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
       }
 
       this.spriteConfigs.forEach((config) => {
-        if (!config.isItem) {
-          this.scene.loadAtlas(config.spriteKey, config.fileRoot);
-        } else {
+        if (config.isPokemon) {
+          this.scene.loadPokemonAtlas(config.spriteKey, config.fileRoot);
+        } else if (config.isItem) {
           this.scene.loadAtlas("items", "");
+        } else {
+          this.scene.loadAtlas(config.spriteKey, config.fileRoot);
         }
       });
 

@@ -403,7 +403,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   options?: [MysteryEncounterOption, MysteryEncounterOption, ...MysteryEncounterOption[]] = [null, null];
   spriteConfigs?: MysteryEncounterSpriteConfig[];
 
-  dialogue?: MysteryEncounterDialogue;
+  dialogue?: MysteryEncounterDialogue = {};
   encounterTier?: MysteryEncounterTier;
   encounterAnimations?: EncounterAnim[];
   requirements?: EncounterSceneRequirement[] = [];
@@ -460,12 +460,31 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * There should be at least 2 options defined and no more than 4.
    * If complex use {@linkcode MysteryEncounterBuilder.withOption}
    *
+   * @param hasDexProgress -
    * @param dialogue - {@linkcode OptionTextDisplay}
    * @param callback - {@linkcode OptionPhaseCallback}
    * @returns
    */
   withSimpleOption(dialogue: OptionTextDisplay, callback: OptionPhaseCallback): this & Pick<IMysteryEncounter, "options"> {
     return this.withOption(new MysteryEncounterOptionBuilder().withOptionMode(EncounterOptionMode.DEFAULT).withDialogue(dialogue).withOptionPhase(callback).build());
+  }
+
+  /**
+   * Defines an option + phasefor the encounter.
+   * Use for easy/streamlined options.
+   * There should be at least 2 options defined and no more than 4.
+   * If complex use {@linkcode MysteryEncounterBuilder.withOption}
+   *
+   * @param dialogue - {@linkcode OptionTextDisplay}
+   * @param callback - {@linkcode OptionPhaseCallback}
+   * @returns
+   */
+  withSimpleDexProgressOption(dialogue: OptionTextDisplay, callback: OptionPhaseCallback): this & Pick<IMysteryEncounter, "options"> {
+    return this.withOption(new MysteryEncounterOptionBuilder()
+      .withOptionMode(EncounterOptionMode.DEFAULT)
+      .withHasDexProgress(true)
+      .withDialogue(dialogue)
+      .withOptionPhase(callback).build());
   }
 
   /**
@@ -478,7 +497,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
     return Object.assign(this, { spriteConfigs: spriteConfigs });
   }
 
-  withIntroDialogue(dialogue: MysteryEncounterDialogue["intro"] = []) {
+  withIntroDialogue(dialogue: MysteryEncounterDialogue["intro"] = []): this {
     this.dialogue = {...this.dialogue, intro: dialogue };
     return this;
   }
@@ -550,7 +569,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * @param max optional max wave. If not given, defaults to min => exact wave
    * @returns
    */
-  withSceneWaveRangeRequirement(min: number, max?: number) {
+  withSceneWaveRangeRequirement(min: number, max?: number): this & Required<Pick<IMysteryEncounter, "requirements">> {
     return this.withSceneRequirement(new WaveRangeRequirement([min, max ?? min]));
   }
 
@@ -559,10 +578,11 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    *
    * @param min min wave (or exact size if only min is given)
    * @param max optional max size. If not given, defaults to min => exact wave
+   * @param excludeFainted - if true, only counts unfainted mons
    * @returns
    */
-  withScenePartySizeRequirement(min: number, max?: number) {
-    return this.withSceneRequirement(new PartySizeRequirement([min, max ?? min]));
+  withScenePartySizeRequirement(min: number, max?: number, excludeFainted?: boolean): this & Required<Pick<IMysteryEncounter, "requirements">> {
+    return this.withSceneRequirement(new PartySizeRequirement([min, max ?? min], excludeFainted));
   }
 
   /**
@@ -700,7 +720,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * @param title - title of the encounter
    * @returns
    */
-  withTitle(title: string) {
+  withTitle(title: string): this {
     const encounterOptionsDialogue = this.dialogue.encounterOptionsDialogue ?? {};
 
     this.dialogue = {
@@ -720,7 +740,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * @param description - description of the encounter
    * @returns
    */
-  withDescription(description: string) {
+  withDescription(description: string): this {
     const encounterOptionsDialogue = this.dialogue.encounterOptionsDialogue ?? {};
 
     this.dialogue = {
@@ -740,7 +760,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * @param query - query to use for the encounter
    * @returns
    */
-  withQuery(query: string) {
+  withQuery(query: string): this {
     const encounterOptionsDialogue = this.dialogue.encounterOptionsDialogue ?? {};
 
     this.dialogue = {
@@ -760,7 +780,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * @param dialogue - outro dialogue/s
    * @returns
    */
-  withOutroDialogue(dialogue: MysteryEncounterDialogue["outro"] = []) {
+  withOutroDialogue(dialogue: MysteryEncounterDialogue["outro"] = []): this {
     this.dialogue = {...this.dialogue, outro: dialogue };
     return this;
   }
@@ -768,10 +788,9 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   /**
    * Builds the mystery encounter
    *
-   * @param this - MysteryEncounter
    * @returns
    */
-  build(this: IMysteryEncounter) {
+  build(this: IMysteryEncounter): IMysteryEncounter {
     return new IMysteryEncounter(this);
   }
 }

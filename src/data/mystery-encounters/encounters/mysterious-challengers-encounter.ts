@@ -169,7 +169,7 @@ export const MysteriousChallengersEncounter: IMysteryEncounter =
         // Spawn hard fight with ULTRA/GREAT reward (can improve with luck)
         const config: EnemyPartyConfig = encounter.enemyPartyConfigs[1];
 
-        setEncounterRewards(scene, { guaranteedModifierTiers: [ModifierTier.ULTRA, ModifierTier.GREAT, ModifierTier.GREAT], fillRemaining: true });
+        setEncounterRewards(scene, { guaranteedModifierTiers: [ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.GREAT, ModifierTier.GREAT], fillRemaining: true });
 
         // Seed offsets to remove possibility of different trainers having exact same teams
         let ret;
@@ -197,7 +197,7 @@ export const MysteriousChallengersEncounter: IMysteryEncounter =
         // To avoid player level snowballing from picking this option
         encounter.expMultiplier = 0.9;
 
-        setEncounterRewards(scene, { guaranteedModifierTiers: [ModifierTier.ROGUE, ModifierTier.ULTRA, ModifierTier.GREAT], fillRemaining: true });
+        setEncounterRewards(scene, { guaranteedModifierTiers: [ModifierTier.ROGUE, ModifierTier.ROGUE, ModifierTier.ULTRA, ModifierTier.GREAT], fillRemaining: true });
 
         // Seed offsets to remove possibility of different trainers having exact same teams
         let ret;

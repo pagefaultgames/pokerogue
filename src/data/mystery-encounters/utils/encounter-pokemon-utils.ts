@@ -386,7 +386,7 @@ function failCatch(scene: BattleScene, pokemon: EnemyPokemon, originalY: number,
   });
 }
 
-export async function catchPokemon(scene: BattleScene, pokemon: EnemyPokemon, pokeball: Phaser.GameObjects.Sprite, pokeballType: PokeballType): Promise<void> {
+export async function catchPokemon(scene: BattleScene, pokemon: EnemyPokemon, pokeball: Phaser.GameObjects.Sprite, pokeballType: PokeballType, isObtain: boolean = false): Promise<void> {
   scene.unshiftPhase(new VictoryPhase(scene, BattlerIndex.ENEMY));
 
   const speciesForm = !pokemon.fusionSpecies ? pokemon.getSpeciesForm() : pokemon.getFusionSpeciesForm();
@@ -412,14 +412,16 @@ export async function catchPokemon(scene: BattleScene, pokemon: EnemyPokemon, po
   scene.gameData.updateSpeciesDexIvs(pokemon.species.getRootSpeciesId(true), pokemon.ivs);
 
   return new Promise(resolve => {
-    scene.ui.showText(i18next.t("battle:pokemonCaught", { pokemonName: pokemon.name }), null, () => {
+    scene.ui.showText(i18next.t(isObtain ? "battle:pokemonObtained" : "battle:pokemonCaught", { pokemonName: pokemon.name }), null, () => {
       const end = () => {
         scene.pokemonInfoContainer.hide();
         removePb(scene, pokeball);
         resolve();
       };
       const removePokemon = () => {
-        scene.field.remove(pokemon, true);
+        if (pokemon) {
+          scene.field.remove(pokemon, true);
+        }
       };
       const addToParty = () => {
         const newPokemon = pokemon.addToParty(pokeballType);
@@ -470,14 +472,18 @@ export async function catchPokemon(scene: BattleScene, pokemon: EnemyPokemon, po
 }
 
 function removePb(scene: BattleScene, pokeball: Phaser.GameObjects.Sprite) {
-  scene.tweens.add({
-    targets: pokeball,
-    duration: 250,
-    delay: 250,
-    ease: "Sine.easeIn",
-    alpha: 0,
-    onComplete: () => pokeball.destroy()
-  });
+  if (pokeball) {
+    scene.tweens.add({
+      targets: pokeball,
+      duration: 250,
+      delay: 250,
+      ease: "Sine.easeIn",
+      alpha: 0,
+      onComplete: () => {
+        pokeball.destroy();
+      }
+    });
+  }
 }
 
 export async function doPokemonFlee(scene: BattleScene, pokemon: EnemyPokemon): Promise<void> {

@@ -18,7 +18,7 @@ import { PokemonSalesmanEncounter } from "#app/data/mystery-encounters/encounter
 
 // Spawn chance: (BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT + WIGHT_INCREMENT_ON_SPAWN_MISS * <number of missed spawns>) / 256
 export const BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT = 1;
-export const WIGHT_INCREMENT_ON_SPAWN_MISS = 5;
+export const WEIGHT_INCREMENT_ON_SPAWN_MISS = 5;
 export const AVERAGE_ENCOUNTERS_PER_RUN_TARGET = 15;
 
 export const EXTREME_ENCOUNTER_BIOMES = [

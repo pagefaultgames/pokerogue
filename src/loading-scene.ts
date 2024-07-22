@@ -273,6 +273,8 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas("xbox", "inputs");
     this.loadAtlas("keyboard", "inputs");
 
+    this.loadAtlas("encounter_radar", "mystery-encounters");
+
     this.loadSe("select");
     this.loadSe("menu_open");
     this.loadSe("hit");

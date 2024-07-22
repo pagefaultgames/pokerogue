@@ -3,6 +3,7 @@ export const trainingSessionDialogue = {
   title: "Training Session",
   description: "These supplies look like they could be used to train a member of your party! There are a few ways you could train your Pokémon, by battling against it with the rest of your team.",
   query: "How should you train?",
+  invalid_selection: "Pokémon must be healthy enough.",
   option: {
     1: {
       label: "Light Training",

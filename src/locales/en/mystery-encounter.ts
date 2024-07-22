@@ -33,6 +33,7 @@ export const mysteryEncounter = {
   // General use content
   "paid_money": "You paid ₽{{amount, number}}.",
   "receive_money": "You received ₽{{amount, number}}!",
+  "affects_pokedex": "Affects Pokédex Data",
 
   mysteriousChallengers: mysteriousChallengersDialogue,
   mysteriousChest: mysteriousChestDialogue,

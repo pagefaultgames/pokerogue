@@ -6,6 +6,7 @@ import * as Utils from "../../utils";
 import { Type } from "../type";
 import { EncounterPokemonRequirement, EncounterSceneRequirement, MoneyRequirement, TypeRequirement } from "./mystery-encounter-requirements";
 import { CanLearnMoveRequirement, CanLearnMoveRequirementOptions } from "./requirements/can-learn-move-requirement";
+import { isNullOrUndefined } from "../../utils";
 
 export enum EncounterOptionMode {
   /** Default style */
@@ -23,6 +24,9 @@ export type OptionPhaseCallback = (scene: BattleScene) => Promise<void | boolean
 
 export default interface MysteryEncounterOption {
   optionMode: EncounterOptionMode;
+
+  hasDexProgress?: boolean;
+
   requirements?: EncounterSceneRequirement[];
   primaryPokemonRequirements?: EncounterPokemonRequirement[];
   secondaryPokemonRequirements?: EncounterPokemonRequirement[];
@@ -47,6 +51,7 @@ export default interface MysteryEncounterOption {
 export default class MysteryEncounterOption implements MysteryEncounterOption {
   constructor(option: MysteryEncounterOption) {
     Object.assign(this, option);
+    this.hasDexProgress = !isNullOrUndefined(this.hasDexProgress) ? this.hasDexProgress : false;
     this.requirements = this.requirements ? this.requirements : [];
     this.primaryPokemonRequirements = this.primaryPokemonRequirements ? this.primaryPokemonRequirements : [];
     this.secondaryPokemonRequirements = this.secondaryPokemonRequirements ? this.secondaryPokemonRequirements : [];
@@ -153,6 +158,10 @@ export class MysteryEncounterOptionBuilder implements Partial<MysteryEncounterOp
 
   withOptionMode(optionMode: EncounterOptionMode): this & Pick<MysteryEncounterOption, "optionMode"> {
     return Object.assign(this, { optionMode });
+  }
+
+  withHasDexProgress(hasDexProgress: boolean): this & Required<Pick<MysteryEncounterOption, "hasDexProgress">> {
+    return Object.assign(this, { hasDexProgress: hasDexProgress });
   }
 
   withSceneRequirement(requirement: EncounterSceneRequirement): this & Required<Pick<MysteryEncounterOption, "requirements">> {

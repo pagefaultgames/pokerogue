@@ -63,10 +63,12 @@ export function showEncounterText(scene: BattleScene, contentKey: string, callba
  * @param scene
  * @param textContentKey
  * @param speakerContentKey
- * @param callback
+ * @param callbackDelay
  */
-export function showEncounterDialogue(scene: BattleScene, textContentKey: string, speakerContentKey: string, callback?: Function) {
-  const text: string = getEncounterText(scene, textContentKey);
-  const speaker: string = getEncounterText(scene, speakerContentKey);
-  scene.ui.showDialogue(text, speaker, null, callback, 0, 0);
+export function showEncounterDialogue(scene: BattleScene, textContentKey: string, speakerContentKey: string, callbackDelay: number = 0): Promise<void> {
+  return new Promise<void>(resolve => {
+    const text: string = getEncounterText(scene, textContentKey);
+    const speaker: string = getEncounterText(scene, speakerContentKey);
+    scene.ui.showDialogue(text, speaker, null, () => resolve(), callbackDelay);
+  });
 }
