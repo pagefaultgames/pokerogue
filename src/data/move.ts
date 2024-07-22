@@ -955,9 +955,9 @@ export class MoveEffectAttr extends MoveAttr {
    * @param selfEffect {@linkcode Boolean} if move targets user.
    * @returns Move chance value.
    */
-  getMoveChance(user: Pokemon, target: Pokemon, move: Move, selfEffect?: Boolean): integer {
+  getMoveChance(user: Pokemon, target: Pokemon, move: Move, selfEffect?: Boolean, showAbility?: Boolean): integer {
     const moveChance = new Utils.NumberHolder(move.chance);
-    applyAbAttrs(MoveEffectChanceMultiplierAbAttr, user, null, moveChance, move, target, selfEffect);
+    applyAbAttrs(MoveEffectChanceMultiplierAbAttr, user, null, moveChance, move, target, selfEffect, showAbility);
     applyPreDefendAbAttrs(IgnoreMoveEffectsAbAttr,target,user,null,null, moveChance);
     return moveChance.value;
   }
@@ -1805,7 +1805,7 @@ export class StatusEffectAttr extends MoveEffectAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const moveChance = this.getMoveChance(user,target,move,this.selfTarget);
+    const moveChance = this.getMoveChance(user, target, move, this.selfTarget, true);
     const statusCheck = moveChance < 0 || moveChance === 100 || user.randSeedInt(100) < moveChance;
     if (statusCheck) {
       const pokemon = this.selfTarget ? user : target;
@@ -1826,7 +1826,7 @@ export class StatusEffectAttr extends MoveEffectAttr {
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    const moveChance = this.getMoveChance(user,target,move,this.selfTarget);
+    const moveChance = this.getMoveChance(user, target, move, this.selfTarget, false);
     return !(this.selfTarget ? user : target).status && (this.selfTarget ? user : target).canSetStatus(this.effect, true, false, user) ? Math.floor(moveChance * -0.1) : 0;
   }
 }
@@ -1846,7 +1846,7 @@ export class MultiStatusEffectAttr extends StatusEffectAttr {
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    const moveChance = this.getMoveChance(user,target,move,this.selfTarget);
+    const moveChance = this.getMoveChance(user, target, move, this.selfTarget, false);
     return !(this.selfTarget ? user : target).status && (this.selfTarget ? user : target).canSetStatus(this.effect, true, false, user) ? Math.floor(moveChance * -0.1) : 0;
   }
 }
@@ -2450,7 +2450,7 @@ export class StatChangeAttr extends MoveEffectAttr {
       return false;
     }
 
-    const moveChance = this.getMoveChance(user,target,move,this.selfTarget);
+    const moveChance = this.getMoveChance(user, target, move, this.selfTarget, true);
     if (moveChance < 0 || moveChance === 100 || user.randSeedInt(100) < moveChance) {
       const levels = this.getLevels(user);
       user.scene.unshiftPhase(new StatChangePhase(user.scene, (this.selfTarget ? user : target).getBattlerIndex(), this.selfTarget, this.stats, levels, this.showMessage));
@@ -4048,7 +4048,7 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
       return false;
     }
 
-    const moveChance = this.getMoveChance(user,target,move,this.selfTarget);
+    const moveChance = this.getMoveChance(user, target, move, this.selfTarget, true);
     if (moveChance < 0 || moveChance === 100 || user.randSeedInt(100) < moveChance) {
       return (this.selfTarget ? user : target).addTag(this.tagType,  user.randSeedInt(this.turnCountMax - this.turnCountMin, this.turnCountMin), move.id, user.id);
     }
@@ -4107,7 +4107,7 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
-    let moveChance = this.getMoveChance(user,target,move,this.selfTarget);
+    let moveChance = this.getMoveChance(user,target,move,this.selfTarget, false);
     if (moveChance < 0) {
       moveChance = 100;
     }
@@ -4416,7 +4416,7 @@ export class AddArenaTrapTagHitAttr extends AddArenaTagAttr {
    * @param move {@linkcode Move} being used
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const moveChance = this.getMoveChance(user,target,move,this.selfTarget);
+    const moveChance = this.getMoveChance(user,target,move,this.selfTarget, true);
     const side = (this.selfSideTarget ? user : target).isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
     const tag = user.scene.arena.getTagOnSide(this.tagType, side) as ArenaTrapTag;
     if ((moveChance < 0 || moveChance === 100 || user.randSeedInt(100) < moveChance)) {
