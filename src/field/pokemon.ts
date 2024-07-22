@@ -50,6 +50,7 @@ import { BerryType } from "#enums/berry-type";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { getPokemonNameWithAffix } from "#app/messages.js";
 
 export enum FieldPosition {
   CENTER,
@@ -60,6 +61,7 @@ export enum FieldPosition {
 export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public id: integer;
   public name: string;
+  public nickname: string;
   public species: PokemonSpecies;
   public formIndex: integer;
   public abilityIndex: integer;
@@ -153,6 +155,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         this.variant = 0;
       }
       this.nature = dataSource.nature || 0 as Nature;
+      this.nickname = dataSource.nickname;
       this.natureOverride = dataSource.natureOverride !== undefined ? dataSource.natureOverride : -1;
       this.moveset = dataSource.moveset;
       this.status = dataSource.status;
@@ -224,6 +227,19 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     this.calculateStats();
+  }
+
+
+  getNameToRender() {
+    try {
+      if (this.nickname) {
+        return decodeURIComponent(escape(atob(this.nickname)));
+      }
+      return this.name;
+    } catch (err) {
+      console.error(`Failed to decode nickname for ${this.name}`, err);
+      return this.name;
+    }
   }
 
   init(): void {
@@ -2047,7 +2063,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             this.scene.queueMessage(i18next.t("battle:hitResultNotVeryEffective"));
             break;
           case HitResult.NO_EFFECT:
-            this.scene.queueMessage(i18next.t("battle:hitResultNoEffect", { pokemonName: this.name }));
+            this.scene.queueMessage(i18next.t("battle:hitResultNoEffect", { pokemonName: getPokemonNameWithAffix(this) }));
             break;
           case HitResult.IMMUNE:
             this.scene.queueMessage(`${this.name} is unaffected!`);
@@ -2080,7 +2096,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         defendingSidePlayField.forEach((p) => applyPreDefendAbAttrs(FieldPriorityMoveImmunityAbAttr, p, source, move, cancelled, typeMultiplier));
       }
       if (!typeMultiplier.value) {
-        this.scene.queueMessage(i18next.t("battle:hitResultNoEffect", { pokemonName: this.name }));
+        this.scene.queueMessage(i18next.t("battle:hitResultNoEffect", { pokemonName: getPokemonNameWithAffix(this) }));
       }
       result = cancelled.value || !typeMultiplier.value ? HitResult.NO_EFFECT : HitResult.STATUS;
       break;
