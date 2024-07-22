@@ -3748,7 +3748,7 @@ export class EnemyPokemon extends Pokemon {
             const target = this.scene.getField()[mt];
             /**
              * The "target score" of a move is given by the move's user benefit score + the move's target benefit score.
-             * If the target is an ally, the target score is multiplied by -1.
+             * If the target is an ally, the target benefit score is multiplied by -1.
              */
             let targetScore = move.getUserBenefitScore(this, target, move) + move.getTargetBenefitScore(this, target, move) * (mt < BattlerIndex.ENEMY === this.isPlayer() ? 1 : -1);
             if (Number.isNaN(targetScore)) {

@@ -61,9 +61,9 @@ In `getNextMove()`, the enemy Pokémon chooses a move to use in the following st
 
 ### Calculating Move and Target Scores
 
-As part of the move selection process, the enemy Pokémon must compute a **target score (TS)** for each legal target for each move in its move pool. The base target score for all moves is a combination of the move's **user benefit score (UBS)** and **target benefit score (TBS)**, and is multiplied by -1 if the target is the user's ally.
+As part of the move selection process, the enemy Pokémon must compute a **target score (TS)** for each legal target for each move in its move pool. The base target score for all moves is a combination of the move's **user benefit score (UBS)** and **target benefit score (TBS)**.
 
-$$\text{TS(move, target)}=(\text{UBS}+\text{TBS}) \times \begin{cases} -1 && \text{if target is an ally}\\ 1 && \text{otherwise} \end{cases}$$
+$$\text{TS(move, target)}=\text{UBS}+\text{TBS} \times \begin{cases} -1 && \text{if target is an opponent}\\ 1 && \text{otherwise} \end{cases}$$
 
 A move's UBS and TBS are computed with the respective functions in the `Move` class:
 
@@ -72,7 +72,9 @@ getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer;
 getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer;
 ```
 
-Logically, these functions are very similar &ndash; they add up their respective benefit scores from each of the move's attributes (as determined by `attr.getUserBenefitScore`, and `attr.getTargetBenefitScore`, respectively) and return the total benefit score. The key difference, though, between the UBS and TBS of a move is that the TBS also influences the move's target selection (when applicable).
+Logically, these functions are very similar &ndash; they add up their respective benefit scores from each of the move's attributes (as determined by `attr.getUserBenefitScore`, and `attr.getTargetBenefitScore`, respectively) and return the total benefit score. However, there are two key functional differences in how the UBS and TBS of a move are handled:
+1. In addition to influencing move selection, a move's TBS also influences target selection for that move, whereas UBS has no influence.
+2. When evaluating the target score of a move against an opposing Pokémon, the move's TBS is multiplied by -1, whereas the move's UBS does not change. For this reason, move attributes return negative values for their TBS to reward using the move against an enemy.
 
 #### Calculating Target Benefit Score (TBS) for Attack Moves
 
@@ -118,7 +120,7 @@ The final step to calculate an attack move's target score (TS) is to multiply th
 
 The enemy's target selection for single-target moves works in a very similar way to its move selection. Each potential target is given a **target selection score (TSS)** which is based on the move's [target benefit score](#calculating-move-and-target-scores) for that target:
 
-$$\text{TSS} = \text{TBS} \times \begin{cases} -1 && \text{if target is an ally} \\ 1 && \text{otherwise} \end{cases}$$
+$$\text{TSS} = \text{TBS} \times \begin{cases} -1 && \text{if target is an opponent} \\ 1 && \text{otherwise} \end{cases}$$
 
 Once the TSS is calculated for each target, the target is selected as follows:
 1. Sort the targets (indexes) in decreasing order of their target selection scores (or weights). Let $t_i$ be the index of the *i*-th target in the sorted list, and let $w_i$ be that target's corresponding TSS.
