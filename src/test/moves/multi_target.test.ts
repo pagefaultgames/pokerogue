@@ -43,10 +43,7 @@ describe("Moves - Multi target", () => {
 
   it("1v1 - target all near others - check modifier", () => checkTargetMultiplier(game, Moves.EARTHQUAKE, true, true, false), TIMEOUT);
 
-  it("2v2 (immune) - target all near others - check modifier", () => {
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.LEVITATE);
-    checkTargetMultiplier(game, Moves.EARTHQUAKE, false, false, true);
-  }, TIMEOUT);
+  it("2v2 (immune) - target all near others - check modifier", () => checkTargetMultiplier(game, Moves.EARTHQUAKE, false, false, true, Abilities.LEVITATE), TIMEOUT);
 
   it("2v2 (immune) - target all near others - damage decrase", () => checkDamageDecrease(game, Moves.EARTHQUAKE, false, false, true, Abilities.LEVITATE), TIMEOUT);
 
@@ -64,17 +61,15 @@ describe("Moves - Multi target", () => {
 
   it("1v1 - target all near enemies - check modifier", () => checkTargetMultiplier(game, Moves.HYPER_VOICE, true, true, false), TIMEOUT);
 
-  it("2v2 (immune) - target all near enemies - check modifier", () => {
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.SOUNDPROOF);
-    checkTargetMultiplier(game, Moves.HYPER_VOICE, false, false, true);
-  }, TIMEOUT);
+  it("2v2 (immune) - target all near enemies - check modifier", () => checkTargetMultiplier(game, Moves.HYPER_VOICE, false, false, true, Abilities.SOUNDPROOF), TIMEOUT);
 
   it("2v2 (immune) - target all near enemies - damage decrase", () => checkDamageDecrease(game, Moves.HYPER_VOICE, false, false, true, Abilities.SOUNDPROOF), TIMEOUT);
 
 });
 
-async function checkTargetMultiplier(game: GameManager, attackMove: Moves, killAlly: boolean, killSecondEnemy: boolean, shouldMultiplied: boolean) {
+async function checkTargetMultiplier(game: GameManager, attackMove: Moves, killAlly: boolean, killSecondEnemy: boolean, shouldMultiplied: boolean, oppAbility?: Abilities) {
   // play an attack and check target count
+  vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(oppAbility ? oppAbility : Abilities.BALL_FETCH);
   await game.startBattle();
 
   const playerPokemonRepr = game.scene.getPlayerField();
@@ -172,6 +167,7 @@ function beforeTrial(phaserGame: Phaser.Game, single: boolean = false) {
   vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(false);
   vi.spyOn(overrides, "DOUBLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
   vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.EARTHQUAKE, Moves.HYPER_VOICE, Moves.SURF, Moves.SPLASH]);
+  vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
   vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
   vi.spyOn(overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
   vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(50);

@@ -1815,7 +1815,7 @@ export class PokemonExpBoosterModifier extends PokemonHeldItemModifier {
   }
 
   apply(args: any[]): boolean {
-    (args[1] as Utils.NumberHolder).value = Math.floor((args[1] as Utils.NumberHolder).value * (1 + (this.getStackCount() * this.boostMultiplier)));
+    (args[1] as Utils.NumberHolder).value += (this.getStackCount() * this.boostMultiplier);
 
     return true;
   }

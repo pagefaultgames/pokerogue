@@ -23,7 +23,7 @@ import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoo
 import { WeatherType } from "../data/weather";
 import { TempBattleStat } from "../data/temp-battle-stat";
 import { ArenaTagSide, WeakenMoveScreenTag } from "../data/arena-tag";
-import { Ability, AbAttr, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, PreApplyBattlerTagAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldBattleStatMultiplierAbAttrs, FieldMultiplyBattleStatAbAttr, AddSecondStrikeAbAttr } from "../data/ability";
+import { Ability, AbAttr, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, PreApplyBattlerTagAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldBattleStatMultiplierAbAttrs, FieldMultiplyBattleStatAbAttr, AddSecondStrikeAbAttr, IgnoreOpponentEvasionAbAttr } from "../data/ability";
 import PokemonData from "../system/pokemon-data";
 import { BattlerIndex } from "../battle";
 import { Mode } from "../ui/ui";
@@ -50,6 +50,7 @@ import { BerryType } from "#enums/berry-type";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { getPokemonNameWithAffix } from "#app/messages.js";
 
 export enum FieldPosition {
   CENTER,
@@ -60,6 +61,7 @@ export enum FieldPosition {
 export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public id: integer;
   public name: string;
+  public nickname: string;
   public species: PokemonSpecies;
   public formIndex: integer;
   public abilityIndex: integer;
@@ -153,6 +155,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         this.variant = 0;
       }
       this.nature = dataSource.nature || 0 as Nature;
+      this.nickname = dataSource.nickname;
       this.natureOverride = dataSource.natureOverride !== undefined ? dataSource.natureOverride : -1;
       this.moveset = dataSource.moveset;
       this.status = dataSource.status;
@@ -224,6 +227,19 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     this.calculateStats();
+  }
+
+
+  getNameToRender() {
+    try {
+      if (this.nickname) {
+        return decodeURIComponent(escape(atob(this.nickname)));
+      }
+      return this.name;
+    } catch (err) {
+      console.error(`Failed to decode nickname for ${this.name}`, err);
+      return this.name;
+    }
   }
 
   init(): void {
@@ -1738,6 +1754,43 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return (this.isPlayer() ? this.scene.getPlayerField() : this.scene.getEnemyField())[this.getFieldIndex() ? 0 : 1];
   }
 
+  /**
+   * Calculates the accuracy multiplier of the user against a target.
+   *
+   * This method considers various factors such as the user's accuracy level, the target's evasion level,
+   * abilities, and modifiers to compute the final accuracy multiplier.
+   *
+   * @param target {@linkcode Pokemon} - The target Pokémon against which the move is used.
+   * @param sourceMove {@linkcode Move}  - The move being used by the user.
+   * @returns The calculated accuracy multiplier.
+   */
+  getAccuracyMultiplier(target: Pokemon, sourceMove: Move): number {
+    const userAccuracyLevel = new Utils.IntegerHolder(this.summonData.battleStats[BattleStat.ACC]);
+    const targetEvasionLevel = new Utils.IntegerHolder(target.summonData.battleStats[BattleStat.EVA]);
+
+    applyAbAttrs(IgnoreOpponentStatChangesAbAttr, target, null, userAccuracyLevel);
+    applyAbAttrs(IgnoreOpponentStatChangesAbAttr, this, null, targetEvasionLevel);
+    applyAbAttrs(IgnoreOpponentEvasionAbAttr, this, null, targetEvasionLevel);
+    applyMoveAttrs(IgnoreOpponentStatChangesAttr, this, target, sourceMove, targetEvasionLevel);
+    this.scene.applyModifiers(TempBattleStatBoosterModifier, this.isPlayer(), TempBattleStat.ACC, userAccuracyLevel);
+
+    const accuracyMultiplier = new Utils.NumberHolder(1);
+    if (userAccuracyLevel.value !== targetEvasionLevel.value) {
+      accuracyMultiplier.value = userAccuracyLevel.value > targetEvasionLevel.value
+        ? (3 + Math.min(userAccuracyLevel.value - targetEvasionLevel.value, 6)) / 3
+        : 3 / (3 + Math.min(targetEvasionLevel.value - userAccuracyLevel.value, 6));
+    }
+
+    applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, this, BattleStat.ACC, accuracyMultiplier, sourceMove);
+
+    const evasionMultiplier = new Utils.NumberHolder(1);
+    applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, target, BattleStat.EVA, evasionMultiplier);
+
+    accuracyMultiplier.value /= evasionMultiplier.value;
+
+    return accuracyMultiplier.value;
+  }
+
   apply(source: Pokemon, move: Move): HitResult {
     let result: HitResult;
     const damage = new Utils.NumberHolder(0);
@@ -1800,6 +1853,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         const arenaAttackTypeMultiplier = new Utils.NumberHolder(this.scene.arena.getAttackTypeMultiplier(move.type, source.isGrounded()));
         applyMoveAttrs(IgnoreWeatherTypeDebuffAttr, source, this, move, arenaAttackTypeMultiplier);
 
+        const glaiveRushModifier = new Utils.IntegerHolder(1);
+        if (this.getTag(BattlerTagType.RECEIVE_DOUBLE_DAMAGE)) {
+          glaiveRushModifier.value = 2;
+        }
         let isCritical: boolean;
         const critOnly = new Utils.BooleanHolder(false);
         const critAlways = source.getTag(BattlerTagType.ALWAYS_CRIT);
@@ -1884,6 +1941,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
                                    * twoStrikeMultiplier.value
                                    * targetMultiplier
                                    * criticalMultiplier.value
+                                   * glaiveRushModifier.value
                                    * randomMultiplier);
 
           if (isPhysical && source.status && source.status.effect === StatusEffect.BURN) {
@@ -1977,6 +2035,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
            */
           damage.value = this.damageAndUpdate(damage.value, result as DamageResult, isCritical, isOneHitKo, isOneHitKo, true);
           this.turnData.damageTaken += damage.value;
+
           if (isCritical) {
             this.scene.queueMessage(i18next.t("battle:hitResultCriticalHit"));
           }
@@ -1996,7 +2055,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           }
         }
 
-        if (source.turnData.hitsLeft === 1) {
+        // want to include is.Fainted() in case multi hit move ends early, still want to render message
+        if (source.turnData.hitsLeft === 1 || this.isFainted()) {
           switch (result) {
           case HitResult.SUPER_EFFECTIVE:
             this.scene.queueMessage(i18next.t("battle:hitResultSuperEffective"));
@@ -2005,7 +2065,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             this.scene.queueMessage(i18next.t("battle:hitResultNotVeryEffective"));
             break;
           case HitResult.NO_EFFECT:
-            this.scene.queueMessage(i18next.t("battle:hitResultNoEffect", { pokemonName: this.name }));
+            this.scene.queueMessage(i18next.t("battle:hitResultNoEffect", { pokemonName: getPokemonNameWithAffix(this) }));
             break;
           case HitResult.IMMUNE:
             this.scene.queueMessage(`${this.name} is unaffected!`);
@@ -2017,13 +2077,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         }
 
         if (this.isFainted()) {
+          // set splice index here, so future scene queues happen before FaintedPhase
+          this.scene.setPhaseQueueSplice();
           this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), isOneHitKo));
           this.resetSummonData();
         }
 
         if (damage) {
-          this.scene.clearPhaseQueueSplice();
-
           const attacker = this.scene.getPokemonById(source.id);
           destinyTag?.lapse(attacker, BattlerTagLapseType.CUSTOM);
         }
@@ -2038,7 +2098,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         defendingSidePlayField.forEach((p) => applyPreDefendAbAttrs(FieldPriorityMoveImmunityAbAttr, p, source, move, cancelled, typeMultiplier));
       }
       if (!typeMultiplier.value) {
-        this.scene.queueMessage(i18next.t("battle:hitResultNoEffect", { pokemonName: this.name }));
+        this.scene.queueMessage(i18next.t("battle:hitResultNoEffect", { pokemonName: getPokemonNameWithAffix(this) }));
       }
       result = cancelled.value || !typeMultiplier.value ? HitResult.NO_EFFECT : HitResult.STATUS;
       break;
@@ -2047,6 +2107,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return result;
   }
 
+  /**
+   * Called by damageAndUpdate()
+   * @param damage integer
+   * @param ignoreSegments boolean, not currently used
+   * @param preventEndure  used to update damage if endure or sturdy
+   * @param ignoreFaintPhase  flag on wheter to add FaintPhase if pokemon after applying damage faints
+   * @returns integer representing damage
+   */
   damage(damage: integer, ignoreSegments: boolean = false, preventEndure: boolean = false, ignoreFaintPhase: boolean = false): integer {
     if (this.isFainted()) {
       return 0;
@@ -2068,9 +2136,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     damage = Math.min(damage, this.hp);
-
     this.hp = this.hp - damage;
     if (this.isFainted() && !ignoreFaintPhase) {
+      /**
+       * When adding the FaintPhase, want to toggle future unshiftPhase() and queueMessage() calls
+       * to appear before the FaintPhase (as FaintPhase will potentially end the encounter and add Phases such as
+       * GameOverPhase, VictoryPhase, etc.. that will interfere with anything else that happens during this MoveEffectPhase)
+       *
+       * Once the MoveEffectPhase is over (and calls it's .end() function, shiftPhase() will reset the PhaseQueueSplice via clearPhaseQueueSplice() )
+       */
+      this.scene.setPhaseQueueSplice();
       this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), preventEndure));
       this.resetSummonData();
     }
@@ -2078,6 +2153,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return damage;
   }
 
+  /**
+   * Called by apply(), given the damage, adds a new DamagePhase and actually updates HP values, etc.
+   * @param damage integer - passed to damage()
+   * @param result an enum if it's super effective, not very, etc.
+   * @param critical boolean if move is a critical hit
+   * @param ignoreSegments boolean, passed to damage() and not used currently
+   * @param preventEndure boolean, ignore endure properties of pokemon, passed to damage()
+   * @param ignoreFaintPhase boolean to ignore adding a FaintPhase, passsed to damage()
+   * @returns integer of damage done
+   */
   damageAndUpdate(damage: integer, result?: DamageResult, critical: boolean = false, ignoreSegments: boolean = false, preventEndure: boolean = false, ignoreFaintPhase: boolean = false): integer {
     const damagePhase = new DamagePhase(this.scene, this.getBattlerIndex(), damage, result as DamageResult, critical);
     this.scene.unshiftPhase(damagePhase);
