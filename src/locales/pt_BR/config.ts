@@ -1,8 +1,11 @@
 import { ability } from "./ability";
 import { abilityTriggers } from "./ability-trigger";
+import { arenaFlyout } from "./arena-flyout";
 import { PGFachv, PGMachv } from "./achv";
 import { battle } from "./battle";
+import { battleInfo } from "./battle-info";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
+import { battlerTags } from "./battler-tags";
 import { berry } from "./berry";
 import { bgmName } from "./bgm-name";
 import { biome } from "./biome";
@@ -33,6 +36,7 @@ import { pokeball } from "./pokeball";
 import { pokemon } from "./pokemon";
 import { pokemonInfo } from "./pokemon-info";
 import { pokemonInfoContainer } from "./pokemon-info-container";
+import { pokemonSummary } from "./pokemon-summary";
 import { saveSlotSelectUiHandler } from "./save-slot-select-ui-handler";
 import { splashMessages } from "./splash-messages";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
@@ -49,8 +53,11 @@ import { modifierSelectUiHandler } from "./modifier-select-ui-handler";
 export const ptBrConfig = {
   ability: ability,
   abilityTriggers: abilityTriggers,
+  arenaFlyout: arenaFlyout,
   battle: battle,
+  battleInfo: battleInfo,
   battleMessageUiHandler: battleMessageUiHandler,
+  battlerTags: battlerTags,
   berry: berry,
   bgmName: bgmName,
   biome: biome,
@@ -82,6 +89,7 @@ export const ptBrConfig = {
   pokemon: pokemon,
   pokemonInfo: pokemonInfo,
   pokemonInfoContainer: pokemonInfoContainer,
+  pokemonSummary: pokemonSummary,
   saveSlotSelectUiHandler: saveSlotSelectUiHandler,
   statusEffect: statusEffect,
   terrain: terrain,

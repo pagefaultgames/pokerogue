@@ -1,7 +1,7 @@
 import {afterEach, beforeAll, beforeEach, describe, expect, test, vi} from "vitest";
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
-import * as overrides from "#app/overrides";
+import overrides from "#app/overrides";
 import { Species } from "#app/enums/species.js";
 import { Moves } from "#app/enums/moves.js";
 import { getMovePosition } from "../utils/gameManagerUtils";

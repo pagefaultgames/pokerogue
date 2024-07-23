@@ -13,7 +13,7 @@ import { BattlerIndex } from "../battle";
 import { Terrain, TerrainType } from "../data/terrain";
 import { PostTerrainChangeAbAttr, PostWeatherChangeAbAttr, applyPostTerrainChangeAbAttrs, applyPostWeatherChangeAbAttrs } from "../data/ability";
 import Pokemon from "./pokemon";
-import * as Overrides from "../overrides";
+import Overrides from "../overrides";
 import { WeatherChangedEvent, TerrainChangedEvent, TagAddedEvent, TagRemovedEvent } from "../events/arena";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { Biome } from "#enums/biome";
@@ -638,6 +638,12 @@ export class Arena {
     }
   }
 
+  /** Clears terrain and arena tags when entering new biome or trainer battle. */
+  resetArenaEffects(): void {
+    this.trySetTerrain(TerrainType.NONE, false, true);
+    this.removeAllTags();
+  }
+
   preloadBgm(): void {
     this.scene.loadBgm(this.bgm);
   }
@@ -657,7 +663,7 @@ export class Arena {
     case Biome.FOREST:
       return 4.294;
     case Biome.SEA:
-      return 1.672;
+      return 0.024;
     case Biome.SWAMP:
       return 4.461;
     case Biome.BEACH:
@@ -709,7 +715,7 @@ export class Arena {
     case Biome.LABORATORY:
       return 114.862;
     case Biome.SLUM:
-      return 1.221;
+      return 0.000;
     case Biome.SNOWY_FOREST:
       return 3.047;
     }

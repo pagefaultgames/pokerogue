@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import GameManager from "../utils/gameManager";
 import Phaser from "phaser";
-import * as Overrides from "#app/overrides";
+import Overrides from "#app/overrides";
 import { BattleStat } from "#app/data/battle-stat.js";
 import { CommandPhase, MessagePhase } from "#app/phases.js";
 import { getMovePosition } from "../utils/gameManagerUtils";

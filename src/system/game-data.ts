@@ -4,7 +4,7 @@ import Pokemon, { EnemyPokemon, PlayerPokemon } from "../field/pokemon";
 import { pokemonEvolutions, pokemonPrevolutions } from "../data/pokemon-evolutions";
 import PokemonSpecies, { allSpecies, getPokemonSpecies, noStarterFormKeys, speciesStarters } from "../data/pokemon-species";
 import * as Utils from "../utils";
-import * as Overrides from "../overrides";
+import Overrides from "../overrides";
 import PokemonData from "./pokemon-data";
 import PersistentModifierData from "./modifier-data";
 import ArenaData from "./arena-data";
@@ -40,6 +40,7 @@ import { GameDataType } from "#enums/game-data-type";
 import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
+import { applyChallenges, ChallengeType } from "#app/data/challenge.js";
 
 export const defaultStarterSpecies: Species[] = [
   Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE,
@@ -572,6 +573,8 @@ export class GameData {
       // Account for past key oversight
       dataStr = dataStr.replace(/\$pAttr/g, "$pa");
     }
+    dataStr = dataStr.replace(/"trainerId":\d+/g, `"trainerId":${this.trainerId}`);
+    dataStr = dataStr.replace(/"secretId":\d+/g, `"secretId":${this.secretId}`);
     const fromKeys = shorten ? Object.keys(systemShortKeys) : Object.values(systemShortKeys);
     const toKeys = shorten ? Object.values(systemShortKeys) : Object.keys(systemShortKeys);
     for (const k in fromKeys) {
@@ -1676,7 +1679,10 @@ export class GameData {
       value = decrementValue(value);
     }
 
-    return value;
+    const cost = new Utils.NumberHolder(value);
+    applyChallenges(this.scene.gameMode, ChallengeType.STARTER_COST, speciesId, cost);
+
+    return cost.value;
   }
 
   getFormIndex(attr: bigint): integer {

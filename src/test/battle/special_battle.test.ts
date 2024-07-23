@@ -1,6 +1,6 @@
 import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
 import {Mode} from "#app/ui/ui";
-import * as overrides from "../../overrides";
+import overrides from "../../overrides";
 import {
   CommandPhase,
 } from "#app/phases";

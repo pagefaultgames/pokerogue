@@ -2,7 +2,7 @@ import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest
 import {generateStarter, getMovePosition,} from "#app/test/utils/gameManagerUtils";
 import {Mode} from "#app/ui/ui";
 import {GameModes} from "#app/game-mode";
-import * as overrides from "../../overrides";
+import overrides from "../../overrides";
 import {Command} from "#app/ui/command-ui-handler";
 import {
   CommandPhase, DamagePhase,
@@ -151,8 +151,8 @@ describe("Test Battle Phase", () => {
 
   it("test remove random battle seed int", async() => {
     for (let i=0; i<10; i++) {
-      const rand = game.scene.randBattleSeedInt(15);
-      expect(rand).toBe(14);
+      const rand = game.scene.randBattleSeedInt(16);
+      expect(rand).toBe(15);
     }
   });
 

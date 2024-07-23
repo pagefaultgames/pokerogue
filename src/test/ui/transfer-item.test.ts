@@ -2,7 +2,7 @@ import { BerryType } from "#app/enums/berry-type";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import { Button } from "#app/enums/buttons";
-import * as overrides from "#app/overrides";
+import overrides from "#app/overrides";
 import {
   BattleEndPhase,
   SelectModifierPhase

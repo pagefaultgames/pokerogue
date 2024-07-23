@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
-import * as Overrides from "#app/overrides";
+import Overrides from "#app/overrides";
 import { Moves } from "#enums/moves";
 import { Abilities } from "#enums/abilities";
 import { Species } from "#enums/species";
