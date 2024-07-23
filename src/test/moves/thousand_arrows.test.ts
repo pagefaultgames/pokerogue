@@ -43,13 +43,7 @@ describe("Moves - Thousand Arrows", () => {
     async () => {
       await game.startBattle([ Species.ILLUMISE ]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
-      expect(leadPokemon).toBeDefined();
-
       const enemyPokemon = game.scene.getEnemyPokemon();
-      expect(enemyPokemon).toBeDefined();
-
-      const enemyStartingHp = enemyPokemon.hp;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.THOUSAND_ARROWS));
 
@@ -60,7 +54,7 @@ describe("Moves - Thousand Arrows", () => {
       await game.phaseInterceptor.to(BerryPhase, false);
 
       expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeDefined();
-      expect(enemyPokemon.hp).toBeLessThan(enemyStartingHp);
+      expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
     }, TIMEOUT
   );
 
@@ -72,13 +66,7 @@ describe("Moves - Thousand Arrows", () => {
 
       await game.startBattle([ Species.ILLUMISE ]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
-      expect(leadPokemon).toBeDefined();
-
       const enemyPokemon = game.scene.getEnemyPokemon();
-      expect(enemyPokemon).toBeDefined();
-
-      const enemyStartingHp = enemyPokemon.hp;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.THOUSAND_ARROWS));
 
@@ -89,7 +77,7 @@ describe("Moves - Thousand Arrows", () => {
       await game.phaseInterceptor.to(BerryPhase, false);
 
       expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeDefined();
-      expect(enemyPokemon.hp).toBeLessThan(enemyStartingHp);
+      expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
     }, TIMEOUT
   );
 
@@ -100,11 +88,7 @@ describe("Moves - Thousand Arrows", () => {
 
       await game.startBattle([ Species.ILLUMISE ]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
-      expect(leadPokemon).toBeDefined();
-
       const enemyPokemon = game.scene.getEnemyPokemon();
-      expect(enemyPokemon).toBeDefined();
 
       enemyPokemon.addTag(BattlerTagType.MAGNET_RISEN, null, Moves.MAGNET_RISE);
 
