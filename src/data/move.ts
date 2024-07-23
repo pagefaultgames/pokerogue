@@ -5024,8 +5024,10 @@ export class RandomMoveAttr extends OverrideMoveEffectAttr {
 
 export class RandomMovesetMoveAttr extends RandomMoveAttr {
   private includeParty: boolean;
-  constructor(includeParty?: boolean) {
+  private invalidMoves: Moves[];
+  constructor(invalidMoves: Moves[], includeParty?: boolean) {
     super();
+    this.invalidMoves = invalidMoves;
     this.includeParty = includeParty;
   }
 
@@ -5040,7 +5042,8 @@ export class RandomMovesetMoveAttr extends RandomMoveAttr {
 
     return new Promise(resolve => {
       const partyMoveset = allies.map(p => p.moveset).flat();
-      const moves = partyMoveset.filter(m => !m.getMove().hasFlag(MoveFlags.IGNORE_VIRTUAL) && !m.getMove().name.endsWith(" (N)")); // refactor possible moves depending on sleep talk vs assist
+      const moves = partyMoveset.filter(m => !this.invalidMoves.includes(m.moveId) && !m.getMove().name.endsWith(" (N)"));
+
       if (!moves.length) {
         resolve(false);
         return;
@@ -5050,6 +5053,93 @@ export class RandomMovesetMoveAttr extends RandomMoveAttr {
     });
   }
 }
+
+const invalidAssistMoves: Moves[] = [
+  Moves.ASSIST,
+  Moves.BANEFUL_BUNKER,
+  Moves.BEAK_BLAST,
+  Moves.BELCH,
+  Moves.BESTOW,
+  Moves.BOUNCE,
+  Moves.CELEBRATE,
+  Moves.CHATTER,
+  Moves.CIRCLE_THROW,
+  Moves.COPYCAT,
+  Moves.COUNTER,
+  Moves.COVET,
+  Moves.DESTINY_BOND,
+  Moves.DETECT,
+  Moves.DIG,
+  Moves.DIVE,
+  Moves.DRAGON_TAIL,
+  Moves.ENDURE,
+  Moves.FEINT,
+  Moves.FLY,
+  Moves.FOCUS_PUNCH,
+  Moves.FOLLOW_ME,
+  Moves.HELPING_HAND,
+  Moves.HOLD_HANDS,
+  Moves.KINGS_SHIELD,
+  Moves.MAT_BLOCK,
+  Moves.ME_FIRST,
+  Moves.METRONOME,
+  Moves.MIMIC,
+  Moves.MIRROR_COAT,
+  Moves.MIRROR_MOVE,
+  Moves.NATURE_POWER,
+  Moves.PHANTOM_FORCE,
+  Moves.PROTECT,
+  Moves.RAGE_POWDER,
+  Moves.ROAR,
+  Moves.SHADOW_FORCE,
+  Moves.SHELL_TRAP,
+  Moves.SKETCH,
+  Moves.SKY_DROP,
+  Moves.SLEEP_TALK,
+  Moves.SNATCH,
+  Moves.SPIKY_SHIELD,
+  Moves.SPOTLIGHT,
+  Moves.STRUGGLE,
+  Moves.SWITCHEROO,
+  Moves.THIEF,
+  Moves.TRANSFORM,
+  Moves.TRICK,
+  Moves.WHIRLWIND,
+];
+
+// Commented moves are not usable in Gen 8, but may have been usable in Gen 7
+const invalidSleepTalkMoves: Moves[] = [
+  // Moves.ASSIST,
+  Moves.BELCH,
+  // Moves.BEAK_BLAST,
+  // Moves.BIDE,
+  Moves.BOUNCE,
+  Moves.COPYCAT,
+  Moves.DIG,
+  Moves.DIVE,
+  Moves.DYNAMAX_CANNON,
+  Moves.FREEZE_SHOCK,
+  Moves.FLY,
+  Moves.FOCUS_PUNCH,
+  // Moves.GEOMANCY,
+  Moves.ICE_BURN,
+  Moves.ME_FIRST,
+  Moves.METRONOME,
+  // Moves.MIRROR_MOVE,
+  Moves.MIMIC,
+  Moves.PHANTOM_FORCE,
+  // Moves.RAZOR_WIND,
+  // Moves.SHADOW_FORCE,
+  Moves.SHELL_TRAP,
+  // Moves.SKETCH,
+  Moves.SKULL_BASH,
+  Moves.SKY_ATTACK,
+  // Moves.SKY_DROP,
+  Moves.SOLAR_BLADE,
+  Moves.SOLAR_BEAM,
+  Moves.STRUGGLE,
+  Moves.UPROAR,
+];
 
 export class NaturePowerAttr extends OverrideMoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
@@ -6528,7 +6618,7 @@ export function initMoves() {
       .condition((user, target, move) => user.isOppositeGender(target)),
     new SelfStatusMove(Moves.SLEEP_TALK, Type.NORMAL, -1, 10, -1, 0, 2)
       .attr(BypassSleepAttr)
-      .attr(RandomMovesetMoveAttr, false)
+      .attr(RandomMovesetMoveAttr, invalidSleepTalkMoves, false)
       .condition(userSleptOrComatoseCondition)
       .target(MoveTarget.NEAR_ENEMY)
       .ignoresVirtual(),
@@ -6717,7 +6807,7 @@ export function initMoves() {
       .triageMove()
       .attr(AddArenaTagAttr, ArenaTagType.WISH, 2, true),
     new SelfStatusMove(Moves.ASSIST, Type.NORMAL, -1, 20, -1, 0, 3)
-      .attr(RandomMovesetMoveAttr, true)
+      .attr(RandomMovesetMoveAttr, invalidAssistMoves, true)
       .ignoresVirtual(),
     new SelfStatusMove(Moves.INGRAIN, Type.GRASS, -1, 20, -1, 0, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.INGRAIN, true, true),
