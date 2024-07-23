@@ -98,23 +98,13 @@ In addition to the base score from `Move.getTargetBenefitScore()`, attack moves 
 More specifically, the following steps are taken to compute the move's `attackScore`:
 1. Compute a multiplier based on the move's type effectiveness: 
 
-   $\text{typeMult}=\begin{cases} 
-     2  && \text{if move is super effective (or better)}\\
-     -2 && \text{otherwise}
-   \end{cases}$
+   $\text{typeMult}=\begin{cases} 2 && \text{if move is super effective (or better)}\\ -2 && \text{otherwise} \end{cases}$
 2. Compute a multiplier based on the move's category and the user's offensive stats:
    1. Compute 
-      $\text{statRatio}=\begin{cases}
-        \frac{\text{userSpAtk}}{\text{userAtk}} && \text{if move is physical}\\
-        \frac{\text{userAtk}}{\text{userSpAtk}} && \text{otherwise}
-      \end{cases}$
+      $\text{statRatio}=\begin{cases} \frac{\text{userSpAtk}}{\text{userAtk}} && \text{if move is physical}\\ \frac{\text{userAtk}}{\text{userSpAtk}} && \text{otherwise} \end{cases}$
    2. Compute the stat-based multiplier:
 
-      $\text{statMult}=\begin{cases}
-        2   && \text{if statRatio}\le 0.75\\
-        1.5 && \text{if }0.75 < \text{statRatio}\le 0.875\\
-        1   && \text{otherwise}
-      \end{cases}$
+      $\text{statMult}=\begin{cases} 2 && \text{if statRatio}\le 0.75\\ 1.5 && \text{if }0.75 < \text{statRatio}\le 0.875\\ 1 && \text{otherwise} \end{cases}$
 3. Calculate the move's `attackScore`:
 
    $\text{attackScore} = (\text{typeMult}\times \text{statMult})+\lfloor \frac{\text{power}}{5} \rfloor$
@@ -140,10 +130,7 @@ Once the TSS is calculated for each target, the target is selected as follows:
 1. Sort the targets (indexes) in decreasing order of their target selection scores (or weights). Let $t_i$ be the index of the *i*-th target in the sorted list, and let $w_i$ be that target's corresponding TSS.
 2. Normalize the weights. Let $w_n$ be the lowest-weighted target in the sorted list, then:
    
-   $W_i=\begin{cases}
-     w_i + |w_n| && \text{if } w_n \text{ is negative}\\
-     w_i && \text{otherwise}
-   \end{cases}$
+   $W_i=\begin{cases} w_i + |w_n| && \text{if } w_n \text{ is negative}\\ w_i && \text{otherwise} \end{cases}$
 3. Remove all weights from the list such that $W_i < \frac{W_0}{2}$
 4. Generate a random integer $R=\text{rand}(0, W_{\text{total}})$ where $W_{\text{total}}$ is the sum of all the remaining weights after Step 3.
 5. For each target $(t_i, W_i)$,
@@ -177,7 +164,7 @@ $$\text{MUScore} = (\text{atkScore}+\text{defScore}) * \text{hpDiffRatio} $$
 - Defensively, Heatmor's Fire typing resists Dachsbun's Fairy typing, so its `defScore` is 2. However, because of Dachsbun's Fire immunity granted by Well-Baked Body, Heatmor's `atkScore` against Dachsbun is 0. With both Pokémon at maximum HP, Heatmor's total matchup score is 2.
 - Excadrill's Steel typing also resists Fairy, so its `defScore` is also 2. In this case, though, Steel is also super effective against Fairy, so Excadrill's base `atkScore` is 2. If Excadrill outspeeds Dachsbun (possibly due to it having a +Spd nature or holding a Carbos), its `atkScore` is further increased to 2.5. Since both Pokémon are at maximum HP, Excadrill's total matchup score is 4 (or 4.5 if it outspeeds).
 
-Based on the enemy party's matchup scores, whether or not the trainer switches out Heatmor for Excadrill depends on the trainer's type. The difference in matchup scores is enough to cause a switch to Excadrill for boss trainers (e.g. gym leaders) but not for regular trainers. For this example, we'll assume the trainer is a boss and, therefore, switches to Excadrill on this turn.
+Based on the enemy party's matchup scores, whether or not the trainer switches out Heatmor for Excadrill depends on the trainer's type. The difference in matchup scores is enough to cause a switch to Excadrill for boss trainers (e.g. gym leaders) but not for regular trainers. For this example, we'll assume the trainer is a boss and, therefore, decides to switch to Excadrill on this turn.
 
 ### Turn 2
 
