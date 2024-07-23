@@ -15,6 +15,5 @@
 
 ## Accessibility
 ### Links
-- [https://bdadyslexia.org.uk/advice/employers/creating-a-dyslexia-friendly-workplace/dyslexia-friendly-style-guide](Dyslexia)
-- [https://ets.osu.edu/digital-accessibility/color-guidelines-digital-accessibility](Colorblindness)
-
+- [Dyslexia](https://bdadyslexia.org.uk/advice/employers/creating-a-dyslexia-friendly-workplace/dyslexia-friendly-style-guide)
+- [Colorblindness](https://ets.osu.edu/digital-accessibility/color-guidelines-digital-accessibility)
