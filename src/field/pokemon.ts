@@ -1254,7 +1254,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Computes the given Pokemon's matchup score against this Pokemon.
    * In most cases, this score ranges from near-zero to 16, but the maximum possible matchup score is 64.
-   * @param opponent The Pokemon to compare this Pokemon against
+   * @param opponent {@linkcode Pokemon} The Pokemon to compare this Pokemon against
    * @returns A score value based on how favorable this Pokemon is when fighting the given Pokemon
    */
   getMatchupScore(opponent: Pokemon): number {
@@ -3825,7 +3825,7 @@ export class EnemyPokemon extends Pokemon {
 
   /**
    * Determines the Pokemon the given move would target if used by this Pokemon
-   * @param moveId The move to be used
+   * @param moveId {@linkcode Moves} The move to be used
    * @returns The indexes of the Pokemon the given move would target
    */
   getNextTargets(moveId: Moves): BattlerIndex[] {
