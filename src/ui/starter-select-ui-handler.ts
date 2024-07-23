@@ -508,9 +508,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     starterBoxContainer.add(this.cursorObj);
 
-      for (const species of allSpecies) {
-        if (!speciesStarters.hasOwnProperty(species.speciesId) || !species.isObtainable()) {
-          continue;
+    for (const species of allSpecies) {
+      if (!speciesStarters.hasOwnProperty(species.speciesId) || !species.isObtainable()) {
+        continue;
       }
 
       starterSpecies.push(species.speciesId);
@@ -2849,6 +2849,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           startRun();
         }, cancel, null, null, 19);
       });
+    } else {
+      const handler = this.scene.ui.getHandler() as AwaitableUiHandler;
+      handler.tutorialActive = true;
+      this.scene.ui.showText(i18next.t("starterSelectUiHandler:invalidParty"), null, () => this.scene.ui.showText(null, 0, () => handler.tutorialActive = false), null, true);
     }
     return true;
   }
