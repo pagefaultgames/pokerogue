@@ -26,17 +26,21 @@ describe("Abilities - Quick Draw", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     vi.spyOn(Overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+
+    vi.spyOn(Overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.QUICK_DRAW);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.TAIL_WHIP]);
+
     vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
+    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
+    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(Array(4).fill(Moves.TACKLE));
 
     vi.spyOn(allAbilities[Abilities.QUICK_DRAW].getAttrs(BypassSpeedChanceAbAttr)[0], "chance", "get").mockReturnValue(100);
   });
 
   test("makes pokemon going first in its priority bracket", async () => {
-    await game.startBattle([Species.SLOWBRO]);
+    await game.startBattle();
 
     const pokemon = game.scene.getPlayerPokemon();
     const enemy = game.scene.getEnemyPokemon();
@@ -56,7 +60,7 @@ describe("Abilities - Quick Draw", () => {
     timeout: 20000,
     retry: 5
   }, async () => {
-    await game.startBattle([Species.SLOWBRO]);
+    await game.startBattle();
 
     const pokemon = game.scene.getPlayerPokemon();
     const enemy = game.scene.getEnemyPokemon();
@@ -76,7 +80,7 @@ describe("Abilities - Quick Draw", () => {
   test("does not increase priority", async () => {
     vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(Array(4).fill(Moves.EXTREME_SPEED));
 
-    await game.startBattle([Species.SLOWBRO]);
+    await game.startBattle();
 
     const pokemon = game.scene.getPlayerPokemon();
     const enemy = game.scene.getEnemyPokemon();

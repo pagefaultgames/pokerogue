@@ -2281,8 +2281,8 @@ export const move: MoveTranslationEntries = {
     name: "Parabolic Charge",
     effect: "O usuário ataca tudo ao seu redor. Os PS do usuário são restaurados pela metade do dano recebido por aqueles que foram atingidos."
   },
-  "forest’SCurse": {
-    name: "Forest’s Curse",
+  "forestsCurse": {
+    name: "Forest's Curse",
     effect: "O usuário conjura uma maldição da floresta no alvo. Isso adiciona o tipo Planta à tipagem do alvo."
   },
   "petalBlizzard": {
@@ -2349,8 +2349,8 @@ export const move: MoveTranslationEntries = {
     name: "Fairy Lock",
     effect: "Bloqueando o campo de batalha, o usuário previne que todos os Pokémon fujam durante o próximo turno."
   },
-  "king’SShield": {
-    name: "King’s Shield",
+  "kingsShield": {
+    name: "King's Shield",
     effect: "O usuário assume uma posição defensiva enquanto protege a si mesmo de dano. Isto duramente diminui o Ataque de qualquer um que faça contato direto."
   },
   "playNice": {
@@ -2461,8 +2461,8 @@ export const move: MoveTranslationEntries = {
     name: "Thousand Waves",
     effect: "O usuário ataca com tremores que se dispersam pelo chão. Alvos atingidos não podem fugir da batalha."
   },
-  "land’SWrath": {
-    name: "Land’s Wrath",
+  "landsWrath": {
+    name: "Land's Wrath",
     effect: "O usuário reúne a energia da terra e foca esse poder nos Pokémon oponentes para causar dano."
   },
   "lightOfRuin": {
@@ -2873,547 +2873,547 @@ export const move: MoveTranslationEntries = {
     name: "Multi-Attack",
     effect: "Se envolvendo em energia concentrada, o usuário acerta o alvo. A memória segurada determina o tipo do movimento."
   },
-  "10,000,000VoltThunderbolt": {
+  "tenMillionVoltThunderbolt": {
     name: "10,000,000 Volt Thunderbolt",
     effect: "Usando seu Poder Z, o Pikachu de boné acumula eletricidade e despeja-a. Golpes críticos acertam mais facilmente."
   },
-  mindBlown: {
+  "mindBlown": {
     name: "Mind Blown",
     effect: "O usuário ataca tudo ao seu redor fazendo sua própria cabeça explodir. Isso também causa dano ao usuário."
   },
-  plasmaFists: {
+  "plasmaFists": {
     name: "Plasma Fists",
     effect: "O usuário ataca com punhos carregados eletricamente. Este movimento transforma movimentos do tipo Normal em movimentos do tipo Elétrico."
   },
-  photonGeyser: {
+  "photonGeyser": {
     name: "Photon Geyser",
     effect: "O usuário ataca o alvo com um pilar de luz. Este movimento causa dano de Ataque ou Ataque Especial—o que for maior para o usuário."
   },
-  lightThatBurnsTheSky: {
+  "lightThatBurnsTheSky": {
     name: "Light That Burns the Sky",
     effect: "Este ataque causa dano de Ataque ou Ataque Especial—o que for maior para o usuário, Necrozma. Este movimento ignora a Habilidade do alvo."
   },
-  searingSunrazeSmash: {
+  "searingSunrazeSmash": {
     name: "Searing Sunraze Smash",
     effect: "Após obter o Z-Power, o usuário, Solgaleo, ataca o alvo com força total. Este movimento pode ignorar o efeito da Habilidade do alvo."
   },
-  menacingMoonrazeMaelstrom: {
+  "menacingMoonrazeMaelstrom": {
     name: "Menacing Moonraze Maelstrom",
     effect: "Após obter o Z-Power, o usuário, Lunala, ataca o alvo com força total. Este movimento pode ignorar o efeito da Habilidade do alvo."
   },
-  letsSnuggleForever: {
+  "letsSnuggleForever": {
     name: "Let's Snuggle Forever",
     effect: "Após obter o Z-Power, o usuário, Mimikyu, soca o alvo com força total."
   },
-  splinteredStormshards: {
+  "splinteredStormshards": {
     name: "Splintered Stormshards",
     effect: "Após obter o Z-Power, o usuário, Lycanroc, ataca o alvo com força total. Este movimento nega o efeito no campo de batalha."
   },
-  clangorousSoulblaze: {
+  "clangorousSoulblaze": {
     name: "Clangorous Soulblaze",
     effect: "Após obter o Z-Power, o usuário, Kommo-o, ataca os Pokémon adversários com força total. Este movimento aumenta os atributos do usuário."
   },
-  zippyZap: {
+  "zippyZap": {
     name: "Zippy Zap",
     effect: "O usuário ataca o alvo com rajadas de eletricidade em alta velocidade. Esse movimento sempre vai primeiro e aumenta a Evasão do usuário."
   },
-  splishySplash: {
+  "splishySplash": {
     name: "Splishy Splash",
     effect: "O usuário carrega uma onda enorme com eletricidade e atinge os Pokémon adversários com a onda. Isso também pode deixar os Pokémon adversários paralisados."
   },
-  floatyFall: {
+  "floatyFall": {
     name: "Floaty Fall",
     effect: "O usuário flutua no ar e então mergulha em um ângulo íngreme para atacar o alvo. Isso também pode fazer o alvo hesitar."
   },
-  pikaPapow: {
+  "pikaPapow": {
     name: "Pika Papow",
     effect: "Quanto mais o Pikachu ama seu Treinador, maior o poder do movimento. Nunca erra."
   },
-  bouncyBubble: {
+  "bouncyBubble": {
     name: "Bouncy Bubble",
     effect: "O usuário ataca atirando bolhas de água no alvo. Em seguida, absorve água e restaura seu HP pelo mesmo valor de dano causado ao alvo."
   },
-  buzzyBuzz: {
+  "buzzyBuzz": {
     name: "Buzzy Buzz",
     effect: "O usuário dispara um choque de eletricidade para atacar o alvo. Isso também deixa o alvo paralisado."
   },
-  sizzlySlide: {
+  "sizzlySlide": {
     name: "Sizzly Slide",
     effect: "O usuário se envolve em fogo e carrega contra o alvo. Isso também deixa o alvo queimado."
   },
-  glitzyGlow: {
+  "glitzyGlow": {
     name: "Glitzy Glow",
     effect: "O usuário bombardeia o alvo com força telecinética. Uma parede maravilhosa de luz é erguida para enfraquecer o poder dos movimentos especiais dos Pokémon adversários."
   },
-  baddyBad: {
+  "baddyBad": {
     name: "Baddy Bad",
     effect: "O usuário age mal e ataca o alvo. Uma parede maravilhosa de luz é erguida para enfraquecer o poder dos movimentos físicos dos Pokémon adversários."
   },
-  sappySeed: {
+  "sappySeed": {
     name: "Sappy Seed",
     effect: "O usuário cresce um caule gigantesco que espalha sementes para atacar o alvo. As sementes drenam o HP do alvo a cada turno."
   },
-  freezyFrost: {
+  "freezyFrost": {
     name: "Freezy Frost",
     effect: "O usuário ataca com um cristal feito de névoa congelada fria. Isso elimina todas as mudanças de atributo entre todos os Pokémon envolvidos na batalha."
   },
-  sparklySwirl: {
+  "sparklySwirl": {
     name: "Sparkly Swirl",
     effect: "O usuário ataca o alvo envolvendo-o com um redemoinho de um aroma esmagador. Isso também cura todas as condições de status do grupo do usuário."
   },
-  veeveeVolley: {
+  "veeveeVolley": {
     name: "Veevee Volley",
     effect: "Quanto mais o Eevee ama seu Treinador, maior o poder do movimento. Nunca erra."
   },
-  doubleIronBash: {
+  "doubleIronBash": {
     name: "Double Iron Bash",
     effect: "O usuário gira, centrando a porca hexagonal em seu peito e depois ataca com seus braços duas vezes seguidas. Isso também pode fazer o alvo hesitar."
   },
-  maxGuard: {
+  "maxGuard": {
     name: "Max Guard",
     effect: "Este movimento permite ao usuário proteger-se de todos os ataques. Sua chance de falhar aumenta se for usado em sucessão."
   },
-  dynamaxCannon: {
+  "dynamaxCannon": {
     name: "Dynamax Cannon",
     effect: "O usuário libera um forte feixe de seu núcleo. Este movimento causa até o dobro do dano se o alvo estiver com seu nível acima do limite."
   },
-  snipeShot: {
+  "snipeShot": {
     name: "Snipe Shot",
     effect: "O usuário ignora os efeitos dos movimentos e Habilidades dos Pokémon adversários que atraem movimentos, permitindo que este movimento atinja o alvo escolhido."
   },
-  jawLock: {
+  "jawLock": {
     name: "Jaw Lock",
     effect: "Este movimento impede o usuário e o alvo de trocarem de lugar até que um deles desmaie. O efeito desaparece se qualquer um dos Pokémon deixar o campo."
   },
-  stuffCheeks: {
+  "stuffCheeks": {
     name: "Stuff Cheeks",
     effect: "O usuário come sua Fruta segurada, depois aumenta muito seu atributo de Defesa."
   },
-  noRetreat: {
+  "noRetreat": {
     name: "No Retreat",
     effect: "Este movimento aumenta todos os atributos do usuário, mas impede o usuário de trocar de lugar ou fugir."
   },
-  tarShot: {
+  "tarShot": {
     name: "Tar Shot",
     effect: "O usuário derrama alcatrão pegajoso sobre o alvo, diminuindo o atributo de Velocidade do alvo. O alvo se torna mais fraco contra movimentos do tipo Fogo."
   },
-  magicPowder: {
+  "magicPowder": {
     name: "Magic Powder",
     effect: "O usuário espalha uma nuvem de pó mágico que muda o alvo para o tipo Psíquico."
   },
-  dragonDarts: {
+  "dragonDarts": {
     name: "Dragon Darts",
     effect: "O usuário ataca duas vezes usando Dreepy. Se houver dois alvos, este movimento atinge cada alvo uma vez."
   },
-  teatime: {
+  "teatime": {
     name: "Teatime",
     effect: "O usuário faz hora do chá com todos os Pokémon na batalha. Cada Pokémon come sua Fruta segurada."
   },
-  octolock: {
+  "octolock": {
     name: "Octolock",
     effect: "O usuário prende o alvo e impede que ele fuja. Este movimento também diminui os atributos de Defesa e Def. Esp. do alvo a cada turno."
   },
-  boltBeak: {
+  "boltBeak": {
     name: "Bolt Beak",
     effect: "O usuário fere o alvo com seu bico eletrificado. Se o usuário atacar antes do alvo, o poder deste movimento é dobrado."
   },
-  fishiousRend: {
+  "fishiousRend": {
     name: "Fishious Rend",
     effect: "O usuário fere o alvo com suas brânquias duras. Se o usuário atacar antes do alvo, o poder deste movimento é dobrado."
   },
-  courtChange: {
+  "courtChange": {
     name: "Court Change",
     effect: "Com seu poder misterioso, o usuário troca os efeitos de cada lado do campo."
   },
-  maxFlare: {
+  "maxFlare": {
     name: "Max Flare",
     effect: "Este é um ataque do tipo Fogo que Pokémon Dynamax usam. O usuário intensifica o sol por cinco turnos."
   },
-  maxFlutterby: {
+  "maxFlutterby": {
     name: "Max Flutterby",
     effect: "Este é um ataque do tipo Inseto que Pokémon Dynamax usam. Isso diminui o atributo de Atq. Esp. do alvo."
   },
-  maxLightning: {
+  "maxLightning": {
     name: "Max Lightning",
     effect: "Este é um ataque do tipo Elétrico que Pokémon Dynamax usam. O usuário transforma o chão em Terreno Elétrico por cinco turnos."
   },
-  maxStrike: {
+  "maxStrike": {
     name: "Max Strike",
     effect: "Este é um ataque do tipo Normal que Pokémon Dynamax usam. Isso diminui o atributo de Velocidade do alvo."
   },
-  maxKnuckle: {
+  "maxKnuckle": {
     name: "Max Knuckle",
     effect: "Este é um ataque do tipo Lutador que Pokémon Dynamax usam. Isso aumenta os atributos de Ataque dos Pokémon aliados."
   },
-  maxPhantasm: {
+  "maxPhantasm": {
     name: "Max Phantasm",
     effect: "Este é um ataque do tipo Fantasma que Pokémon Dynamax usam. Isso diminui o atributo de Defesa do alvo."
   },
-  maxHailstorm: {
+  "maxHailstorm": {
     name: "Max Hailstorm",
     effect: "Este é um ataque do tipo Gelo que Pokémon Dynamax usam. O usuário convoca uma tempestade de granizo que dura cinco turnos."
   },
-  maxOoze: {
+  "maxOoze": {
     name: "Max Ooze",
     effect: "Este é um ataque do tipo Veneno que Pokémon Dynamax usam. Isso aumenta os atributos de Atq. Esp. dos Pokémon aliados."
   },
-  maxGeyser: {
+  "maxGeyser": {
     name: "Max Geyser",
     effect: "Este é um ataque do tipo Água que Pokémon Dynamax usam. O usuário convoca uma chuva pesada que cai por cinco turnos."
   },
-  maxAirstream: {
+  "maxAirstream": {
     name: "Max Airstream",
     effect: "Este é um ataque do tipo Voador que Pokémon Dynamax usam. Isso aumenta os atributos de Velocidade dos Pokémon aliados."
   },
-  maxStarfall: {
+  "maxStarfall": {
     name: "Max Starfall",
     effect: "Este é um ataque do tipo Fada que Pokémon Dynamax usam. O usuário transforma o chão em Terreno de Nevoeiro por cinco turnos."
   },
-  maxWyrmwind: {
+  "maxWyrmwind": {
     name: "Max Wyrmwind",
     effect: "Este é um ataque do tipo Dragão que Pokémon Dynamax usam. Isso diminui o atributo de Ataque do alvo."
   },
-  maxMindstorm: {
+  "maxMindstorm": {
     name: "Max Mindstorm",
     effect: "Este é um ataque do tipo Psíquico que Pokémon Dynamax usam. O usuário transforma o chão em Terreno Psíquico por cinco turnos."
   },
-  maxRockfall: {
+  "maxRockfall": {
     name: "Max Rockfall",
     effect: "Este é um ataque do tipo Pedra que Pokémon Dynamax usam. O usuário convoca uma tempestade de areia que dura cinco turnos."
   },
-  maxQuake: {
+  "maxQuake": {
     name: "Max Quake",
     effect: "Este é um ataque do tipo Terra que Pokémon Dynamax usam. Isso aumenta os atributos de Def. Esp. dos Pokémon aliados."
   },
-  maxDarkness: {
+  "maxDarkness": {
     name: "Max Darkness",
     effect: "Este é um ataque do tipo Sombrio que Pokémon Dynamax usam. Isso diminui o atributo de Def. Esp. do alvo."
   },
-  maxOvergrowth: {
+  "maxOvergrowth": {
     name: "Max Overgrowth",
     effect: "Este é um ataque do tipo Grama que Pokémon Dynamax usam. O usuário transforma o chão em Terreno de Grama por cinco turnos."
   },
-  maxSteelspike: {
+  "maxSteelspike": {
     name: "Max Steelspike",
     effect: "Este é um ataque do tipo Aço que Pokémon Dynamax usam. Isso aumenta os atributos de Defesa dos Pokémon aliados."
   },
-  clangorousSoul: {
+  "clangorousSoul": {
     name: "Clangorous Soul",
     effect: "O usuário aumenta todos os seus atributos usando um pouco de seu HP."
   },
-  bodyPress: {
+  "bodyPress": {
     name: "Body Press",
     effect: "O usuário ataca pressionando seu corpo contra o alvo. Quanto maior a Defesa do usuário, mais dano pode infligir ao alvo."
   },
-  decorate: {
+  "decorate": {
     name: "Decorate",
     effect: "O usuário aumenta muito os atributos de Ataque e Atq. Esp. do alvo decorando o alvo."
   },
-  drumBeating: {
+  "drumBeating": {
     name: "Drum Beating",
     effect: "O usuário toca seu tambor, controlando as raízes do tambor para atacar o alvo. Isso também diminui o atributo de Velocidade do alvo."
   },
-  snapTrap: {
+  "snapTrap": {
     name: "Snap Trap",
     effect: "O usuário prende o alvo em uma armadilha rápida por quatro ou cinco turnos."
   },
-  pyroBall: {
+  "pyroBall": {
     name: "Pyro Ball",
     effect: "O usuário ataca acendendo uma pequena pedra e lançando-a como uma bola de fogo no alvo. Isso também pode deixar o alvo queimado."
   },
-  behemothBlade: {
+  "behemothBlade": {
     name: "Behemoth Blade",
     effect: "O usuário empunha uma espada grande e poderosa usando todo o seu corpo e corta o alvo em um ataque vigoroso."
   },
-  behemothBash: {
+  "behemothBash": {
     name: "Behemoth Bash",
     effect: "O corpo do usuário se torna um escudo firme e atinge o alvo com força."
   },
-  auraWheel: {
+  "auraWheel": {
     name: "Aura Wheel",
     effect: "Morpeko ataca e aumenta sua Velocidade com a energia armazenada em suas bochechas. O tipo deste movimento muda dependendo da forma do usuário."
   },
-  breakingSwipe: {
+  "breakingSwipe": {
     name: "Breaking Swipe",
     effect: "O usuário balança sua cauda dura violentamente e ataca os Pokémon adversários. Isso também diminui os atributos de Ataque deles."
   },
-  branchPoke: {
+  "branchPoke": {
     name: "Branch Poke",
     effect: "O usuário ataca o alvo cutucando-o com um galho pontiagudo."
   },
-  overdrive: {
+  "overdrive": {
     name: "Overdrive",
     effect: "O usuário ataca os Pokémon adversários vibrando uma guitarra ou baixo, causando um eco enorme e uma vibração forte."
   },
-  appleAcid: {
+  "appleAcid": {
     name: "Apple Acid",
     effect: "O usuário ataca o alvo com um líquido ácido criado a partir de maçãs azedas. Isso também diminui o atributo de Def. Esp. do alvo."
   },
-  gravApple: {
+  "gravApple": {
     name: "Grav Apple",
     effect: "O usuário inflige dano derrubando uma maçã de cima. Isso também diminui o atributo de Defesa do alvo."
   },
-  spiritBreak: {
+  "spiritBreak": {
     name: "Spirit Break",
     effect: "O usuário ataca o alvo com tanta força que poderia quebrar o espírito do alvo. Isso também diminui o atributo de Atq. Esp. do alvo."
   },
-  strangeSteam: {
+  "strangeSteam": {
     name: "Strange Steam",
     effect: "O usuário ataca o alvo emitindo vapor. Isso também pode deixar o alvo confuso."
   },
-  lifeDew: {
+  "lifeDew": {
     name: "Life Dew",
     effect: "O usuário espalha água misteriosa ao redor e restaura o HP de si mesmo e de seus Pokémon aliados na batalha."
   },
-  obstruct: {
+  "obstruct": {
     name: "Obstruct",
     effect: "Este movimento permite ao usuário proteger-se de todos os ataques. Sua chance de falhar aumenta se for usado em sucessão. Contato direto reduz severamente o atributo de Defesa do atacante."
   },
-  falseSurrender: {
+  "falseSurrender": {
     name: "False Surrender",
     effect: "O usuário finge abaixar a cabeça, mas então esfaqueia o alvo com seus cabelos desgrenhados. Este ataque nunca erra."
   },
-  meteorAssault: {
+  "meteorAssault": {
     name: "Meteor Assault",
     effect: "O usuário ataca selvagemente com seu alho-poró grosso. O usuário não pode se mover na próxima rodada, porque a força deste movimento o faz cambalear."
   },
-  eternabeam: {
+  "eternabeam": {
     name: "Eternabeam",
     effect: "Este é o ataque mais poderoso de Eternatus em sua forma original. O usuário não pode se mover na próxima rodada."
   },
-  steelBeam: {
+  "steelBeam": {
     name: "Steel Beam",
     effect: "O usuário dispara um feixe de aço que coletou de todo o seu corpo. Isso também causa dano ao usuário."
   },
-  expandingForce: {
+  "expandingForce": {
     name: "Expanding Force",
     effect: "O usuário ataca o alvo com seu poder psíquico. O poder deste movimento aumenta e danifica todos os Pokémon adversários no Terreno Psíquico."
   },
-  steelRoller: {
+  "steelRoller": {
     name: "Steel Roller",
     effect: "O usuário ataca enquanto destrói o terreno. Este movimento falha quando o chão não foi transformado em um terreno."
   },
-  scaleShot: {
+  "scaleShot": {
     name: "Scale Shot",
     effect: "O usuário ataca atirando escamas de duas a cinco vezes seguidas. Este movimento aumenta o atributo de Velocidade do usuário, mas diminui seu atributo de Defesa."
   },
-  meteorBeam: {
+  "meteorBeam": {
     name: "Meteor Beam",
     effect: "Neste ataque de dois turnos, o usuário reúne energia espacial e aumenta seu atributo de Atq. Esp., depois ataca o alvo no próximo turno."
   },
-  shellSideArm: {
+  "shellSideArm": {
     name: "Shell Side Arm",
     effect: "Este movimento causa dano físico ou especial, o que for mais eficaz. Isso também pode envenenar o alvo."
   },
-  mistyExplosion: {
+  "mistyExplosion": {
     name: "Misty Explosion",
     effect: "O usuário ataca tudo ao seu redor e desmaia ao usar este movimento. O poder deste movimento é aumentado no Terreno de Nevoeiro."
   },
-  grassyGlide: {
+  "grassyGlide": {
     name: "Grassy Glide",
     effect: "Deslizando no chão, o usuário ataca o alvo. Este movimento sempre ataca primeiro no Terreno de Grama."
   },
-  risingVoltage: {
+  "risingVoltage": {
     name: "Rising Voltage",
     effect: "O usuário ataca com a voltagem elétrica que sobe do chão. O poder deste movimento dobra quando o alvo está no Terreno Elétrico."
   },
-  terrainPulse: {
+  "terrainPulse": {
     name: "Terrain Pulse",
     effect: "O usuário utiliza o poder do terreno para atacar. O tipo e o poder deste movimento mudam dependendo do terreno em que é usado."
   },
-  skitterSmack: {
+  "skitterSmack": {
     name: "Skitter Smack",
     effect: "O usuário corre por trás do alvo para atacar. Isso também diminui o atributo de Atq. Esp. do alvo."
   },
-  burningJealousy: {
+  "burningJealousy": {
     name: "Burning Jealousy",
     effect: "O usuário ataca com energia da inveja. Isso deixa todos os Pokémon adversários que tiveram seus atributos aumentados durante o turno com uma queimadura."
   },
-  lashOut: {
+  "lashOut": {
     name: "Lash Out",
     effect: "O usuário ataca para desabafar sua frustração contra o alvo. Se os atributos do usuário foram diminuídos durante este turno, o poder deste movimento é dobrado."
   },
-  poltergeist: {
+  "poltergeist": {
     name: "Poltergeist",
     effect: "O usuário ataca o alvo controlando o item do alvo. O movimento falha se o alvo não tiver um item."
   },
-  corrosiveGas: {
+  "corrosiveGas": {
     name: "Corrosive Gas",
     effect: "O usuário envolve tudo ao seu redor com gás altamente ácido e derrete os itens que eles seguram."
   },
-  coaching: {
+  "coaching": {
     name: "Coaching",
     effect: "O usuário treina adequadamente seus Pokémon aliados, aumentando seus atributos de Ataque e Defesa."
   },
-  flipTurn: {
+  "flipTurn": {
     name: "Flip Turn",
     effect: "Após fazer seu ataque, o usuário corre para trocar de lugar com um Pokémon do grupo à espera."
   },
-  tripleAxel: {
+  "tripleAxel": {
     name: "Triple Axel",
     effect: "Um ataque de três chutes consecutivos que se torna mais poderoso a cada acerto bem-sucedido."
   },
-  dualWingbeat: {
+  "dualWingbeat": {
     name: "Dual Wingbeat",
     effect: "O usuário atinge o alvo com suas asas. O alvo é atingido duas vezes seguidas."
   },
-  scorchingSands: {
+  "scorchingSands": {
     name: "Scorching Sands",
     effect: "O usuário joga areia escaldante no alvo para atacar. Isso também pode deixar o alvo queimado."
   },
-  jungleHealing: {
+  "jungleHealing": {
     name: "Jungle Healing",
     effect: "O usuário se torna um com a selva, restaurando HP e curando quaisquer condições de status de si mesmo e de seus Pokémon aliados na batalha."
   },
-  wickedBlow: {
+  "wickedBlow": {
     name: "Wicked Blow",
     effect: "O usuário, tendo dominado o estilo Sombrio, atinge o alvo com um golpe feroz. Este ataque sempre resulta em um acerto crítico."
   },
-  surgingStrikes: {
+  "surgingStrikes": {
     name: "Surging Strikes",
     effect: "O usuário, tendo dominado o estilo Água, atinge o alvo com um movimento fluido três vezes seguidas. Estes ataques sempre resultam em acertos críticos."
   },
-  thunderCage: {
+  "thunderCage": {
     name: "Thunder Cage",
     effect: "O usuário prende o alvo em uma gaiola de eletricidade cintilante por quatro ou cinco turnos."
   },
-  dragonEnergy: {
+  "dragonEnergy": {
     name: "Dragon Energy",
     effect: "Convertendo sua força vital em poder, o usuário ataca os Pokémon adversários. Quanto menor o HP do usuário, menor o poder do movimento."
   },
-  freezingGlare: {
+  "freezingGlare": {
     name: "Freezing Glare",
     effect: "O usuário dispara seu poder psíquico dos olhos para atacar. Isso também pode deixar o alvo congelado."
   },
-  fieryWrath: {
+  "fieryWrath": {
     name: "Fiery Wrath",
     effect: "O usuário transforma sua ira em uma aura semelhante ao fogo para atacar. Isso também pode fazer os Pokémon adversários hesitarem."
   },
-  thunderousKick: {
+  "thunderousKick": {
     name: "Thunderous Kick",
     effect: "O usuário oprime o alvo com movimento semelhante ao relâmpago antes de entregar um chute. Isso também diminui o atributo de Defesa do alvo."
   },
-  glacialLance: {
+  "glacialLance": {
     name: "Glacial Lance",
     effect: "O usuário ataca lançando uma lança de gelo envolta em nevasca nos Pokémon adversários."
   },
-  astralBarrage: {
+  "astralBarrage": {
     name: "Astral Barrage",
     effect: "O usuário ataca enviando uma quantidade assustadora de pequenos fantasmas nos Pokémon adversários."
   },
-  eerieSpell: {
+  "eerieSpell": {
     name: "Eerie Spell",
     effect: "O usuário ataca com seu tremendo poder psíquico. Isso também remove 3 PP do último movimento usado pelo alvo."
   },
-  direClaw: {
+  "direClaw": {
     name: "Dire Claw",
     effect: "O usuário ataca o alvo com garras destruidoras. Isso também pode deixar o alvo envenenado, paralisado ou adormecido."
   },
-  psyshieldBash: {
+  "psyshieldBash": {
     name: "Psyshield Bash",
     effect: "Envoltando-se em energia psíquica, o usuário se choca contra o alvo. Isso também aumenta o atributo de Defesa do usuário."
   },
-  powerShift: {
+  "powerShift": {
     name: "Power Shift",
     effect: "O usuário troca seus atributos de Ataque e Defesa."
   },
-  stoneAxe: {
+  "stoneAxe": {
     name: "Stone Axe",
     effect: "O usuário balança seus machados de pedra no alvo. Fragmentos de pedra deixados para trás por este ataque flutuam ao redor do alvo."
   },
-  springtideStorm: {
+  "springtideStorm": {
     name: "Springtide Storm",
     effect: "O usuário ataca envolvendo os Pokémon adversários em ventos ferozes repletos de amor e ódio. Isso também pode diminuir os atributos de Ataque deles."
   },
-  mysticalPower: {
+  "mysticalPower": {
     name: "Mystical Power",
     effect: "O usuário ataca emitindo um poder misterioso. Isso também aumenta o atributo de Atq. Esp. do usuário."
   },
-  ragingFury: {
+  "ragingFury": {
     name: "Raging Fury",
     effect: "O usuário se enfurece espalhando chamas por dois ou três turnos. O usuário então fica confuso."
   },
-  waveCrash: {
+  "waveCrash": {
     name: "Wave Crash",
     effect: "O usuário se envolve em água e atinge o alvo com todo o corpo para infligir dano. Isso também causa muito dano ao usuário."
   },
-  chloroblast: {
+  "chloroblast": {
     name: "Chloroblast",
     effect: "O usuário lança sua clorofila acumulada para infligir dano no alvo. Isso também causa dano ao usuário."
   },
-  mountainGale: {
+  "mountainGale": {
     name: "Mountain Gale",
     effect: "O usuário arremessa pedaços gigantes de gelo no alvo para infligir dano. Isso também pode fazer o alvo hesitar."
   },
-  victoryDance: {
+  "victoryDance": {
     name: "Victory Dance",
     effect: "O usuário realiza uma dança intensa para inaugurar a vitória, aumentando seus atributos de Ataque, Defesa e Velocidade."
   },
-  headlongRush: {
+  "headlongRush": {
     name: "Headlong Rush",
     effect: "O usuário se choca contra o alvo em um ataque de corpo inteiro. Isso também diminui os atributos de Defesa e Def. Esp. do usuário."
   },
-  barbBarrage: {
+  "barbBarrage": {
     name: "Barb Barrage",
     effect: "O usuário lança inúmeras barbas tóxicas para infligir dano. O poder deste movimento é dobrado se o alvo já estiver envenenado."
   },
-  esperWing: {
+  "esperWing": {
     name: "Esper Wing",
     effect: "O usuário corta o alvo com asas enriquecidas com aura. Isso também aumenta o atributo de Velocidade do usuário. Este movimento tem uma chance aumentada de causar um acerto crítico."
   },
-  bitterMalice: {
+  "bitterMalice": {
     name: "Bitter Malice",
     effect: "O usuário ataca o alvo com um ressentimento arrepiante. Isso também diminui o atributo de Ataque do alvo."
   },
-  shelter: {
+  "shelter": {
     name: "Shelter",
     effect: "O usuário torna sua pele tão dura quanto um escudo de ferro, aumentando muito seu atributo de Defesa."
   },
-  tripleArrows: {
+  "tripleArrows": {
     name: "Triple Arrows",
     effect: "O usuário chuta e depois dispara três flechas. Este movimento tem uma chance aumentada de causar um acerto crítico e também pode diminuir o atributo de Defesa do alvo ou fazê-lo hesitar."
   },
-  infernalParade: {
+  "infernalParade": {
     name: "Infernal Parade",
     effect: "O usuário ataca com miríades de bolas de fogo. Isso também pode deixar o alvo queimado. O poder deste movimento é dobrado se o alvo tiver uma condição de status."
   },
-  ceaselessEdge: {
+  "ceaselessEdge": {
     name: "Ceaseless Edge",
     effect: "O usuário corta sua lâmina de concha no alvo. Fragmentos de concha deixados para trás por este ataque permanecem espalhados sob o alvo como espinhos."
   },
-  bleakwindStorm: {
+  "bleakwindStorm": {
     name: "Bleakwind Storm",
     effect: "O usuário ataca com ventos selvagemente frios que fazem tanto o corpo quanto o espírito tremerem. Isso também pode diminuir os atributos de Velocidade dos Pokémon adversários."
   },
-  wildboltStorm: {
+  "wildboltStorm": {
     name: "Wildbolt Storm",
     effect: "O usuário invoca uma tempestade trovejante e ataca selvagemente com relâmpagos e vento. Isso também pode deixar os Pokémon adversários paralisados."
   },
-  sandsearStorm: {
+  "sandsearStorm": {
     name: "Sandsear Storm",
     effect: "O usuário ataca envolvendo os Pokémon adversários em ventos ferozes e areia escaldante. Isso também pode deixá-los queimados."
   },
-  lunarBlessing: {
+  "lunarBlessing": {
     name: "Lunar Blessing",
     effect: "O usuário recebe uma bênção do crescente lunar, restaurando HP e curando condições de status para si mesmo e seus Pokémon aliados atualmente na batalha."
   },
-  takeHeart: {
+  "takeHeart": {
     name: "Take Heart",
     effect: "O usuário levanta o espírito, curando suas próprias condições de status e aumentando seus atributos de Atq. Esp. e Def. Esp."
   },
-  gMaxWildfire: {
+  "gMaxWildfire": {
     name: "G-Max Wildfire",
     effect: "Um ataque do tipo Fogo que o Gigantamax Charizard usa. Este movimento continua causando dano aos oponentes por quatro turnos."
   },
-  gMaxBefuddle: {
+  "gMaxBefuddle": {
     name: "G-Max Befuddle",
     effect: "Um ataque do tipo Inseto que o Gigantamax Butterfree usa. Este movimento inflige as condições de envenenado, paralisado ou adormecido nos oponentes."
   },
-  gMaxVoltCrash: {
+  "gMaxVoltCrash": {
     name: "G-Max Volt Crash",
     effect: "Um ataque do tipo Elétrico que o Gigantamax Pikachu usa. Este movimento paralisa os oponentes."
   },
-  gMaxGoldRush: {
+  "gMaxGoldRush": {
     name: "G-Max Gold Rush",
     effect: "Um ataque do tipo Normal que o Gigantamax Meowth usa. Este movimento confunde os oponentes e também ganha dinheiro extra."
   },

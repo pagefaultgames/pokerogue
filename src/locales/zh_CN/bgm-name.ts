@@ -110,9 +110,9 @@ export const bgmName: SimpleTranslationEntries = {
   "plains": "空之探险队「天空顶端（草原）」",
   "power_plant": "空之探险队「电气平原 深处」",
   "ruins": "空之探险队「封印岩地 深处」",
-  "sea": "空之探险队「石滩洞窟」",
+  "sea": "Andr06 - Marine Mystique", // Name defined by the composer
   "seabed": "Firel - 海底", // The composer thinks about a more creative name
-  "slum": "空之探险队「天空顶端（岩场）」",
+  "slum": "Andr06 - Sneaky Snom", // Name defined by the composer
   "snowy_forest": "空之探险队「天空顶端（雪山）」",
   "space": "Firel - 太空",
   "swamp": "空之探险队「封闭之海」",

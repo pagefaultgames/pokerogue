@@ -39,6 +39,7 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import {Button} from "#enums/buttons";
 import { EggSourceType } from "#app/enums/egg-source-types.js";
+import AwaitableUiHandler from "./awaitable-ui-handler";
 import { DropDown, DropDownOption, DropDownState, DropDownType } from "./dropdown";
 import { StarterContainer } from "./starter-container";
 import { DropDownColumn, FilterBar } from "./filter-bar";
@@ -209,6 +210,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private moveInfoOverlay : MoveInfoOverlay;
 
   private statsMode: boolean;
+  private starterIconsCursorXOffset: number = -2;
+  private starterIconsCursorYOffset: number = 1;
+  private starterIconsCursorIndex: number;
   private filterMode: boolean;
   private dexAttrCursor: bigint = 0n;
   private abilityCursor: number = -1;
@@ -242,6 +246,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private starterCursorObjs: Phaser.GameObjects.Image[];
   private pokerusCursorObjs: Phaser.GameObjects.Image[];
   private starterIcons: Phaser.GameObjects.Sprite[];
+  private starterIconsCursorObj: Phaser.GameObjects.Image;
   private valueLimitLabel: Phaser.GameObjects.Text;
   private startCursorObj: Phaser.GameObjects.NineSlice;
   // private starterValueLabels: Phaser.GameObjects.Text[];
@@ -495,11 +500,35 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     this.cursorObj = this.scene.add.image(0, 0, "select_cursor");
     this.cursorObj.setOrigin(0, 0);
+    // TODO: check x
+    this.starterIconsCursorObj = this.scene.add.image(111, 64, "select_gen_cursor");
+    this.starterIconsCursorObj.setName("starter-icons-cursor");
+    this.starterIconsCursorObj.setVisible(false);
+    this.starterIconsCursorObj.setOrigin(0, 0);
+    this.starterSelectContainer.add(this.starterIconsCursorObj);
+
     starterBoxContainer.add(this.cursorObj);
 
-    for (const species of allSpecies) {
-      if (!speciesStarters.hasOwnProperty(species.speciesId) || !species.isObtainable()) {
-        continue;
+      for (const species of allSpecies) {
+        if (!speciesStarters.hasOwnProperty(species.speciesId) || species.generation !== g + 1 || !species.isObtainable()) {
+          continue;
+        }
+        starterSpecies.push(species.speciesId);
+        this.speciesLoaded.set(species.speciesId, false);
+        this.genSpecies[g].push(species);
+        const defaultDexAttr = this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true);
+        const defaultProps = this.scene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
+        const position = calcIconPosition(s);
+        const icon = this.scene.add.sprite(position.x - 2, position.y + 2, species.getIconAtlasKey(defaultProps.formIndex, defaultProps.shiny, defaultProps.variant));
+        icon.setScale(0.5);
+        icon.setOrigin(0, 0);
+        icon.setFrame(species.getIconId(defaultProps.female, defaultProps.formIndex, defaultProps.shiny, defaultProps.variant));
+        this.checkIconId(icon, species, defaultProps.female, defaultProps.formIndex, defaultProps.shiny, defaultProps.variant);
+        icon.setTint(0);
+        this.starterSelectGenIconContainers[g].add(icon);
+        this.iconAnimHandler.addOrUpdate(icon, PokemonIconAnimMode.NONE);
+        s++;
+>>>>>>> e84649854dfaff5dc02da255a09496332ba47e9c
       }
 
       starterSpecies.push(species.speciesId);
@@ -1029,7 +1058,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.toggleStatsMode(false);
         success = true;
       } else if (this.starterSpecies.length) {
-        this.popStarter();
+        this.popStarter(this.starterSpecies.length - 1);
         success = true;
         this.updateInstructions();
       } else {
@@ -1043,7 +1072,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.scene.getCurrentPhase().end();
         success = true;
       }
-    } else if (this.startCursorObj.visible) {
+    } else if (this.startCursorObj.visible) { // this checks to see if the start button is selected
+      const genStarters = this.starterSelectGenIconContainers[this.getGenCursorWithScroll()].getAll().length;
+      const rows = Math.ceil(genStarters / 9);
       switch (button) {
       case Button.ACTION:
         if (this.tryStart(true)) {
@@ -1054,16 +1085,17 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         break;
       case Button.UP:
         this.startCursorObj.setVisible(false);
-        this.setFilterMode(true);
-        this.scrollCursor = 0;
-        this.updateScroll();
+        if (this.starterCursors.length > 0) {
+          this.starterIconsCursorIndex = this.starterCursors.length - 1;
+          this.moveStarterIconsCursor(this.starterIconsCursorIndex);
+        } else {
+          this.setFilterMode(true);
+        }
         success = true;
         break;
       case Button.DOWN:
         this.startCursorObj.setVisible(false);
         this.setFilterMode(true);
-        this.scrollCursor = 0;
-        this.updateScroll();
         success = true;
         break;
       case Button.LEFT:
@@ -1134,6 +1166,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         break;
       }
     } else {
+      /**
+       * This code generates the menu for a pokemon when you press the action button
+       * This works in modules; it does a check for each option to see if it's valid, and if so, will add that option to the menu
+       * As an example, if you try to add an invalid pokemon, the "Add to Party" option won't show up
+       * But if you can still use candies or change natures, those menu items will be added
+       * Once it's all done, it displays the menu for you
+      **/
       if (button === Button.ACTION) {
         if (!this.speciesStarterDexEntry?.caughtAttr) {
           error = true;
@@ -1204,9 +1243,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 ui.setMode(Mode.STARTER_SELECT);
                 return true;
               }
-            }
-          ];
-          if (this.speciesStarterMoves.length > 1) {
+            }];
+          if (this.speciesStarterMoves.length > 1) { // this lets you change the pokemon moves
             const showSwapOptions = (moveset: StarterMoveset) => {
               ui.setMode(Mode.STARTER_SELECT).then(() => {
                 ui.showText(i18next.t("starterSelectUiHandler:selectMoveSwapOut"), null, () => {
@@ -1338,7 +1376,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           }
           const candyCount = starterData.candyCount;
           const passiveAttr = starterData.passiveAttr;
-          if (passiveAttr & PassiveAttr.UNLOCKED) {
+          if (passiveAttr & PassiveAttr.UNLOCKED) { // this is for enabling and disabling the passive
             if (!(passiveAttr & PassiveAttr.ENABLED)) {
               options.push({
                 label: i18next.t("starterSelectUiHandler:enablePassive"),
@@ -1361,11 +1399,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               });
             }
           }
-          const showUseCandies = () => {
+          const showUseCandies = () => { // this lets you use your candies
             const options = [];
             if (!(passiveAttr & PassiveAttr.UNLOCKED)) {
               const passiveCost = getPassiveCandyCount(speciesStarters[this.lastSpecies.speciesId]);
               options.push({
+
                 label: `x${passiveCost} ${i18next.t("starterSelectUiHandler:unlockPassive")} (${allAbilities[starterPassiveAbilities[this.lastSpecies.speciesId]].name})`,
                 handler: () => {
                   if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= passiveCost) {
@@ -1512,6 +1551,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           starterAttributes = this.starterPreferences[this.lastSpecies.speciesId] = {};
         }
         switch (button) {
+
         case Button.CYCLE_SHINY:
           if (this.canCycleShiny) {
             const newVariant = props.variant;
@@ -1616,62 +1656,86 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             success = true;
           }
           break;
-        case Button.UP:
-          if (currentRow > 0) {
-            if (this.scrollCursor > 0 && currentRow - this.scrollCursor === 0) {
-              this.scrollCursor--;
-              this.updateScroll();
-            }
 
-            success = this.setCursor(this.cursor - 9);
+        case Button.UP:
+          if (!this.starterIconsCursorObj.visible) {
+            if (currentRow > 0) {
+              if (this.scrollCursor > 0 && currentRow - this.scrollCursor === 0) {
+                this.scrollCursor--;
+                this.updateScroll();
+              }
+  
+              success = this.setCursor(this.cursor - 9);
+            } else {
+              this.filterBarCursor = this.filterBar.getNearestFilter(this.filteredStarterContainers[this.cursor]);
+              this.setFilterMode(true);
+              success = true;
+            }
           } else {
-            this.filterBarCursor = this.filterBar.getNearestFilter(this.filteredStarterContainers[this.cursor]);
-            this.setFilterMode(true);
-            success = true;
+            if (this.starterIconsCursorIndex === 0) {
+              this.starterIconsCursorObj.setVisible(false);
+              this.setSpecies(null);
+              this.setFilterMode(true);
+            } else {
+              this.starterIconsCursorIndex--;
+              this.moveStarterIconsCursor(this.starterIconsCursorIndex);
+            }
           }
           break;
         case Button.DOWN:
-          if (currentRow < numOfRows - 1) { // not last row
-            if (currentRow - this.scrollCursor === 8) { // last row of visible starters
-              this.scrollCursor++;
+          if (!this.starterIconsCursorObj.visible) {
+            if (currentRow < numOfRows - 1) { // not last row
+              if (currentRow - this.scrollCursor === 8) { // last row of visible starters
+                this.scrollCursor++;
+              }
+              success = this.setCursor(this.cursor + 9);
+              this.updateScroll();
+            } else { // last row
+              this.setFilterMode(true);
+              success = true;
             }
-            success = this.setCursor(this.cursor + 9);
-            this.updateScroll();
-          } else { // last row
-            this.setFilterMode(true);
-            success = true;
+          } else {
+            if (this.starterIconsCursorIndex <= this.starterCursors.length - 2) {
+              this.starterIconsCursorIndex++;
+              this.moveStarterIconsCursor(this.starterIconsCursorIndex);
+            } else {
+              this.starterIconsCursorObj.setVisible(false);
+              this.setSpecies(null);
+              this.startCursorObj.setVisible(true);
+            }
           }
           break;
         case Button.LEFT:
-          if (this.cursor % 9 !== 0) {
-            success = this.setCursor(this.cursor - 1);
-          } else {
-            if (this.starterSpecies.length === 0 || onScreenNumberOfRows - onScreenCurrentRow > 4) {
-              // just wrap around to the last column
-              success = this.setCursor(this.cursor + Math.min(8, numberOfStarters - this.cursor));
+          if (!this.starterIconsCursorObj.visible) {
+            if (this.cursor % 9 !== 0) {
+              success = this.setCursor(this.cursor - 1);
             } else {
-              this.cursorObj.setVisible(false);
-              this.setSpecies(null);
-              this.startCursorObj.setVisible(true);
-              success = true;
+              if (this.starterSpecies.length === 0 || onScreenNumberOfRows - onScreenCurrentRow > 4) {
+                // just wrap around to the last column
+                success = this.setCursor(this.cursor + Math.min(8, numberOfStarters - this.cursor));
+              } else {
+                this.cursorObj.setVisible(false);
+                this.setSpecies(null);
+                this.startCursorObj.setVisible(true);
+                success = true;
+              }
             }
+          } else {
+            this.starterIconsCursorObj.setVisible(false);
+            this.setGenMode(false);
+            const rowToUse = Math.min(this.starterIconsCursorIndex + 3, rows - 1);
+            this.setCursor(Math.min((rowToUse * 9) + 8, genStarters - 1));
+            success = true;
           }
           break;
         case Button.RIGHT:
-          // is not right edge
-          if (this.cursor % 9 < (currentRow < numOfRows - 1 ? 8 : (numberOfStarters - 1) % 9)) {
+          if (this.cursor % 9 < (row < rows - 1 ? 8 : (genStarters - 1) % 9)) {
             success = this.setCursor(this.cursor + 1);
           } else {
-            // in right edge
-            if (this.starterSpecies.length === 0 || onScreenNumberOfRows - onScreenCurrentRow > 4) {
-              // just wrap around to the first column
-              success = this.setCursor(this.cursor - Math.min(8, this.cursor % 9));
-            } else {
-              this.cursorObj.setVisible(false);
-              this.setSpecies(null);
+            if (row >= Math.min(5, rows - 1)) {
               this.startCursorObj.setVisible(true);
-              success = true;
             }
+            success = this.setGenMode(true);
           }
           break;
         }
@@ -1732,6 +1796,16 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.scene.gameData.starterData[speciesId].moveset = this.starterMoveset.slice(0) as StarterMoveset;
     }
     this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, undefined, false);
+
+    // switch moves of starter if exists
+    if (this.starterMovesets.length) {
+      Array.from({ length: this.starterGens.length }, (_, i) => {
+        const starterSpecies = this.genSpecies[this.starterGens[i]][this.starterCursors[i]];
+        if (starterSpecies.speciesId === speciesId) {
+          this.starterMovesets[i] = this.starterMoveset;
+        }
+      });
+    }
   }
 
   updateButtonIcon(iconSetting, gamepadType, iconElement, controlLabel): void {
@@ -2056,8 +2130,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.setCursor(filterMode ? this.filterBarCursor : this.cursor);
       if (filterMode) {
         this.setSpecies(null);
-      } else {
-        this.filterBar.hideDropDowns();
       }
 
       return true;
@@ -2066,7 +2138,17 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     return false;
   }
 
-
+  moveStarterIconsCursor(index: number): void {
+    this.starterIconsCursorObj.x = this.starterIcons[index].x + this.starterIconsCursorXOffset;
+    this.starterIconsCursorObj.y = this.starterIcons[index].y + this.starterIconsCursorYOffset;
+    if (this.starterCursors.length > 0) {
+      this.starterIconsCursorObj.setVisible(true);
+      this.setSpecies(this.genSpecies[this.starterGens[index]][this.starterCursors[index]]);
+    } else {
+      this.starterIconsCursorObj.setVisible(false);
+      this.setSpecies(null);
+    }
+  }
 
   setSpecies(species: PokemonSpecies) {
     this.speciesStarterDexEntry = species ? this.scene.gameData.dexData[species.speciesId] : null;
@@ -2577,15 +2659,42 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     }
   }
 
-  popStarter(): void {
-    this.starterSpecies.pop();
-    this.starterAttr.pop();
-    this.starterAbilityIndexes.pop();
-    this.starterNatures.pop();
-    this.starterMovesets.pop();
-    this.starterCursorObjs[this.starterSpecies.length].setVisible(false);
-    this.starterIcons[this.starterSpecies.length].setTexture("pokemon_icons_0");
-    this.starterIcons[this.starterSpecies.length].setFrame("unknown");
+  popStarter(index: number): void {
+    this.starterSpecies.splice(index, 1);
+    this.starterAttr.splice(index, 1);
+    this.starterAbilityIndexes.splice(index, 1);
+    this.starterNatures.splice(index, 1);
+    this.starterMovesets.splice(index, 1);
+
+    //TODO: check loop
+    for (let s = 0; s < this.starterCursors.length; s++) {
+      const species = this.genSpecies[this.starterGens[s]][this.starterCursors[s]];
+      const currentDexAttr = this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true);
+      const props = this.scene.gameData.getSpeciesDexAttrProps(species, currentDexAttr);
+      this.starterIcons[s].setTexture(species.getIconAtlasKey(props.formIndex, props.shiny, props.variant));
+      this.starterIcons[s].setFrame(species.getIconId(props.female, props.formIndex, props.shiny, props.variant));
+      if (s >= index) {
+        this.starterCursorObjs[s].setPosition(this.starterCursorObjs[s + 1].x, this.starterCursorObjs[s + 1].y);
+        this.starterCursorObjs[s].setVisible(this.starterCursorObjs[s + 1].visible);
+      }
+    }
+    this.starterCursorObjs[this.starterCursors.length].setVisible(false);
+    this.starterIcons[this.starterCursors.length].setTexture("pokemon_icons_0");
+    this.starterIcons[this.starterCursors.length].setFrame("unknown");
+
+    if (this.starterIconsCursorObj.visible) {
+      if (this.starterIconsCursorIndex === this.starterCursors.length) {
+        if (this.starterCursors.length > 0) {
+          this.starterIconsCursorIndex--;
+        } else {
+          this.starterIconsCursorObj.setVisible(false);
+          this.setSpecies(null);
+          this.setFilterMode(true);
+        }
+      }
+      this.moveStarterIconsCursor(this.starterIconsCursorIndex);
+    }
+
     this.tryUpdateValue();
   }
 
@@ -2706,7 +2815,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const cancel = () => {
       ui.setMode(Mode.STARTER_SELECT);
       if (!manualTrigger) {
-        this.popStarter();
+        this.popStarter(this.starterGens.length - 1);
       }
       this.clearText();
     };
