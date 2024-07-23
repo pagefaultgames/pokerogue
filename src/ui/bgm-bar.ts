@@ -62,6 +62,16 @@ export default class BgmBar extends Phaser.GameObjects.Container {
     @param {boolean} visible Whether to show or hide the BGM bar.
    */
   public toggleBgmBar(visible: boolean): void {
+    /*
+      Prevents the bar from being displayed if musicText is completely empty.
+      This can be the case, for example, when the game's 1st music track takes a long time to reach the client,
+      and the menu is opened before it is played.
+    */
+    if (this.musicText.text === "") {
+      this.setVisible(false);
+      return;
+    }
+
     if (!(this.scene as BattleScene).showBgmBar) {
       this.setVisible(false);
       return;
