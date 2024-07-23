@@ -510,25 +510,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     starterBoxContainer.add(this.cursorObj);
 
       for (const species of allSpecies) {
-        if (!speciesStarters.hasOwnProperty(species.speciesId) || species.generation !== g + 1 || !species.isObtainable()) {
+        if (!speciesStarters.hasOwnProperty(species.speciesId) || !species.isObtainable()) {
           continue;
-        }
-        starterSpecies.push(species.speciesId);
-        this.speciesLoaded.set(species.speciesId, false);
-        this.genSpecies[g].push(species);
-        const defaultDexAttr = this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true);
-        const defaultProps = this.scene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
-        const position = calcIconPosition(s);
-        const icon = this.scene.add.sprite(position.x - 2, position.y + 2, species.getIconAtlasKey(defaultProps.formIndex, defaultProps.shiny, defaultProps.variant));
-        icon.setScale(0.5);
-        icon.setOrigin(0, 0);
-        icon.setFrame(species.getIconId(defaultProps.female, defaultProps.formIndex, defaultProps.shiny, defaultProps.variant));
-        this.checkIconId(icon, species, defaultProps.female, defaultProps.formIndex, defaultProps.shiny, defaultProps.variant);
-        icon.setTint(0);
-        this.starterSelectGenIconContainers[g].add(icon);
-        this.iconAnimHandler.addOrUpdate(icon, PokemonIconAnimMode.NONE);
-        s++;
->>>>>>> e84649854dfaff5dc02da255a09496332ba47e9c
       }
 
       starterSpecies.push(species.speciesId);
@@ -1073,8 +1056,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         success = true;
       }
     } else if (this.startCursorObj.visible) { // this checks to see if the start button is selected
-      const genStarters = this.starterSelectGenIconContainers[this.getGenCursorWithScroll()].getAll().length;
-      const rows = Math.ceil(genStarters / 9);
       switch (button) {
       case Button.ACTION:
         if (this.tryStart(true)) {
@@ -1085,8 +1066,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         break;
       case Button.UP:
         this.startCursorObj.setVisible(false);
-        if (this.starterCursors.length > 0) {
-          this.starterIconsCursorIndex = this.starterCursors.length - 1;
+        if (this.starterSpecies.length > 0) {
+          this.starterIconsCursorIndex = this.starterSpecies.length - 1;
           this.moveStarterIconsCursor(this.starterIconsCursorIndex);
         } else {
           this.setFilterMode(true);
@@ -1166,13 +1147,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         break;
       }
     } else {
-      /**
-       * This code generates the menu for a pokemon when you press the action button
-       * This works in modules; it does a check for each option to see if it's valid, and if so, will add that option to the menu
-       * As an example, if you try to add an invalid pokemon, the "Add to Party" option won't show up
-       * But if you can still use candies or change natures, those menu items will be added
-       * Once it's all done, it displays the menu for you
-      **/
       if (button === Button.ACTION) {
         if (!this.speciesStarterDexEntry?.caughtAttr) {
           error = true;
@@ -1243,7 +1217,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 ui.setMode(Mode.STARTER_SELECT);
                 return true;
               }
-            }];
+            }
+          ];
           if (this.speciesStarterMoves.length > 1) { // this lets you change the pokemon moves
             const showSwapOptions = (moveset: StarterMoveset) => {
               ui.setMode(Mode.STARTER_SELECT).then(() => {
@@ -1404,7 +1379,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             if (!(passiveAttr & PassiveAttr.UNLOCKED)) {
               const passiveCost = getPassiveCandyCount(speciesStarters[this.lastSpecies.speciesId]);
               options.push({
-
                 label: `x${passiveCost} ${i18next.t("starterSelectUiHandler:unlockPassive")} (${allAbilities[starterPassiveAbilities[this.lastSpecies.speciesId]].name})`,
                 handler: () => {
                   if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= passiveCost) {
@@ -1551,7 +1525,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           starterAttributes = this.starterPreferences[this.lastSpecies.speciesId] = {};
         }
         switch (button) {
-
         case Button.CYCLE_SHINY:
           if (this.canCycleShiny) {
             const newVariant = props.variant;
@@ -1656,7 +1629,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             success = true;
           }
           break;
-
         case Button.UP:
           if (!this.starterIconsCursorObj.visible) {
             if (currentRow > 0) {
@@ -1695,7 +1667,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               success = true;
             }
           } else {
-            if (this.starterIconsCursorIndex <= this.starterCursors.length - 2) {
+            if (this.starterIconsCursorIndex <= this.starterSpecies.length - 2) {
               this.starterIconsCursorIndex++;
               this.moveStarterIconsCursor(this.starterIconsCursorIndex);
             } else {
@@ -1721,22 +1693,27 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               }
             }
           } else {
-            this.starterIconsCursorObj.setVisible(false);
-            this.setGenMode(false);
-            const rowToUse = Math.min(this.starterIconsCursorIndex + 3, rows - 1);
-            this.setCursor(Math.min((rowToUse * 9) + 8, genStarters - 1));
+            // this.starterIconsCursorObj.setVisible(false);
+            // this.setFilterMode(false);
+            // const rowToUse = Math.min(this.starterIconsCursorIndex + 3, rows - 1);
+            // this.setCursor(Math.min((rowToUse * 9) + 8, genStarters - 1));
+            // TODO - implement this
+            console.log("TBA");
             success = true;
           }
           break;
         case Button.RIGHT:
-          if (this.cursor % 9 < (row < rows - 1 ? 8 : (genStarters - 1) % 9)) {
-            success = this.setCursor(this.cursor + 1);
-          } else {
-            if (row >= Math.min(5, rows - 1)) {
-              this.startCursorObj.setVisible(true);
-            }
-            success = this.setGenMode(true);
-          }
+          // if (this.cursor % 9 < (row < rows - 1 ? 8 : (genStarters - 1) % 9)) {
+          //   success = this.setCursor(this.cursor + 1);
+          // } else {
+          //   if (row >= Math.min(5, rows - 1)) {
+          //     this.startCursorObj.setVisible(true);
+          //   }
+          //   success = this.setGenMode(true);
+          // }
+
+          console.log("TBA");
+          success = true;
           break;
         }
       }
@@ -1799,8 +1776,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     // switch moves of starter if exists
     if (this.starterMovesets.length) {
-      Array.from({ length: this.starterGens.length }, (_, i) => {
-        const starterSpecies = this.genSpecies[this.starterGens[i]][this.starterCursors[i]];
+      Array.from({ length: this.starterSpecies.length }, (_, i) => {
+        const starterSpecies = this.starterSpecies[i];
         if (starterSpecies.speciesId === speciesId) {
           this.starterMovesets[i] = this.starterMoveset;
         }
@@ -2141,9 +2118,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   moveStarterIconsCursor(index: number): void {
     this.starterIconsCursorObj.x = this.starterIcons[index].x + this.starterIconsCursorXOffset;
     this.starterIconsCursorObj.y = this.starterIcons[index].y + this.starterIconsCursorYOffset;
-    if (this.starterCursors.length > 0) {
+    if (this.starterSpecies.length > 0) {
       this.starterIconsCursorObj.setVisible(true);
-      this.setSpecies(this.genSpecies[this.starterGens[index]][this.starterCursors[index]]);
+      //TODO: check this
+      console.log("To be checked");
+      this.setSpecies(this.starterSpecies[index]);
     } else {
       this.starterIconsCursorObj.setVisible(false);
       this.setSpecies(null);
@@ -2667,8 +2646,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.starterMovesets.splice(index, 1);
 
     //TODO: check loop
-    for (let s = 0; s < this.starterCursors.length; s++) {
-      const species = this.genSpecies[this.starterGens[s]][this.starterCursors[s]];
+    for (let s = 0; s < this.starterSpecies.length; s++) {
+      const species = this.starterSpecies[s];
       const currentDexAttr = this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true);
       const props = this.scene.gameData.getSpeciesDexAttrProps(species, currentDexAttr);
       this.starterIcons[s].setTexture(species.getIconAtlasKey(props.formIndex, props.shiny, props.variant));
@@ -2678,13 +2657,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.starterCursorObjs[s].setVisible(this.starterCursorObjs[s + 1].visible);
       }
     }
-    this.starterCursorObjs[this.starterCursors.length].setVisible(false);
-    this.starterIcons[this.starterCursors.length].setTexture("pokemon_icons_0");
-    this.starterIcons[this.starterCursors.length].setFrame("unknown");
+    this.starterCursorObjs[this.starterSpecies.length].setVisible(false);
+    this.starterIcons[this.starterSpecies.length].setTexture("pokemon_icons_0");
+    this.starterIcons[this.starterSpecies.length].setFrame("unknown");
 
     if (this.starterIconsCursorObj.visible) {
-      if (this.starterIconsCursorIndex === this.starterCursors.length) {
-        if (this.starterCursors.length > 0) {
+      if (this.starterIconsCursorIndex === this.starterSpecies.length) {
+        if (this.starterSpecies.length > 0) {
           this.starterIconsCursorIndex--;
         } else {
           this.starterIconsCursorObj.setVisible(false);
@@ -2815,7 +2794,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const cancel = () => {
       ui.setMode(Mode.STARTER_SELECT);
       if (!manualTrigger) {
-        this.popStarter(this.starterGens.length - 1);
+        this.popStarter(this.starterSpecies.length - 1);
       }
       this.clearText();
     };
@@ -2921,7 +2900,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.blockInput = false;
 
     while (this.starterSpecies.length) {
-      this.popStarter();
+      this.popStarter(this.starterSpecies.length - 1);
     }
 
     if (this.statsMode) {
