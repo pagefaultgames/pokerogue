@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import Phase from "phaser";
 import GameManager from "#app/test/utils/gameManager";
-import overrides from "#app/overrides";
+import Overrides from "#app/overrides";
 import { Abilities } from "#app/enums/abilities.js";
 import { PokemonExpBoosterModifier } from "#app/modifier/modifier.js";
 import * as Utils from "#app/utils";
@@ -23,13 +23,13 @@ describe("EXP Modifier Items", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
+    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
+    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
   });
 
   it("EXP booster items stack additively", async() => {
-    vi.spyOn(overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "LUCKY_EGG"}, {name: "GOLDEN_EGG"}]);
+    vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "LUCKY_EGG"}, {name: "GOLDEN_EGG"}]);
     await game.startBattle();
 
     const partyMember = game.scene.getPlayerPokemon();
