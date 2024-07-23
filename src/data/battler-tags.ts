@@ -92,25 +92,29 @@ export interface TerrainBattlerTag {
   terrainTypes: TerrainType[];
 }
 
+/**
+ * BattlerTag that represents the "recharge" effects of moves like Hyper Beam.
+ */
 export class RechargingTag extends BattlerTag {
   constructor(sourceMove: Moves) {
-    super(BattlerTagType.RECHARGING, BattlerTagLapseType.PRE_MOVE, 1, sourceMove);
+    super(BattlerTagType.RECHARGING, [ BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END ], 2, sourceMove);
   }
 
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
+    // Queue a placeholder move for the Pokemon to "use" next turn
     pokemon.getMoveQueue().push({ move: Moves.NONE, targets: [] });
   }
 
+  /** Cancels the source's move this turn and queues a "__ must recharge!" message */
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    super.lapse(pokemon, lapseType);
-
-    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsRechargingLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
-    (pokemon.scene.getCurrentPhase() as MovePhase).cancel();
-    pokemon.getMoveQueue().shift();
-
-    return true;
+    if (lapseType === BattlerTagLapseType.PRE_MOVE) {
+      pokemon.scene.queueMessage(i18next.t("battle:battlerTagsRechargingLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+      (pokemon.scene.getCurrentPhase() as MovePhase).cancel();
+      pokemon.getMoveQueue().shift();
+    }
+    return super.lapse(pokemon, lapseType);
   }
 }
 
