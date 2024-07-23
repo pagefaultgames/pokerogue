@@ -592,8 +592,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "It looks like I'll need to silence you first."
     },
     "victory": {
-      1: `How.. how can you be so awful!
-          $With Nihilego's power, I will show you how wrong you were to come here!`
+      1: "How.. how can you be so awful!"
     },
     "defeat": {
       1: "Hmph..."
@@ -601,15 +600,16 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "aether_boss_lusamine_2": {
     "encounter": {
-      1: `The world of my Ultra Beasts... 
-          $A world where the only thing that exists is the love between Nihilego and myself.`
+      1: `The world of my Ultra Beasts...
+          $A world where the only thing that exists is the love between Nihilego and myself.
+          $With Nihilego's power, I will show you how wrong you were to come here!`
     },
     "victory": {
-      1: `You hateful little Trainer! How dare you intrude upon this world that was meant for Nihilego and me?  
+      1: `You hateful little Trainer! How dare you intrude upon this world that was meant for Nihilego and me?
           $Aaauuuughhhh!!`
     },
     "defeat": {
-      1: "Lillie.."
+      1: "All that I want is my precious beast! I don't care about any of the rest of you!"
     }
   },
   "skull_boss_guzma_1": {
@@ -626,7 +626,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "skull_boss_guzma_2": {
     "encounter": {
-      1: `Doesn't matter who I'm up against, I'm gonna beat them down! 
+      1: `Doesn't matter who I'm up against, I'm gonna beat them down!
           $That's what big bad Guzma is all about!`
     },
     "victory": {
@@ -638,11 +638,11 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "macro_boss_rose_1": {
     "encounter": {
-      1: `The future is more important than just one day! We must take action in order to avert tragedy! 
-          $So that all can look forward to a better future!`
+      1: `I must provide limitless energy to ensure everlasting prosperity for everyone...
+          $It is my purpose, my duty, my destiny!`
     },
     "victory": {
-      1: `You still don't understand, young Champion... 
+      1: `You still don't understand, trainer...
           $We... No, I am going to change the course of history!`
     },
     "defeat": {
@@ -651,14 +651,17 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "macro_boss_rose_2": {
     "encounter": {
-      1: "I think it's time I brought about the Darkest Day. For the sake of Galar's future, of course!"
+      1: `I'm committed to solving the energy problem in the Galar region—and, of course, around the world.
+          $My experience and accomplishments that made Macro Cosmos a success are proof my methods work.
+          $I don't intend to change my mind, even if I lose.`
+
     },
     "victory": {
-      1: `I'd forgotten how great Pokémon battles are! It's been so long since I battled... 
-          $That sure was satisfying.`
+      1: `I'd forgotten how great Pokémon battles are! It's been so long since I battled...
+          $That sure was satisfying, I accept defeat for this battle.`
     },
     "defeat": {
-      1: `I suppose it must seem that I am doing something terrible. I don't expect you to understand. 
+      1: `I suppose it must seem that I am doing something terrible. I don't expect you to understand.
           $But I must provide the Galar region with limitless energy to ensure everlasting prosperity.`
     }
   },
