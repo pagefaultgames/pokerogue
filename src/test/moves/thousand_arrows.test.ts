@@ -4,8 +4,7 @@ import GameManager from "#app/test/utils/gameManager";
 import overrides from "#app/overrides";
 import {
   BerryPhase,
-  MoveEffectPhase,
-  TurnEndPhase
+  MoveEffectPhase
 } from "#app/phases";
 import {getMovePosition} from "#app/test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
@@ -98,7 +97,7 @@ describe("Moves - Thousand Arrows", () => {
     "move should hit and ground targets under the effects of Magnet Rise",
     async () => {
       vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SNORLAX);
-      
+
       await game.startBattle([ Species.ILLUMISE ]);
 
       const leadPokemon = game.scene.getPlayerPokemon();
@@ -117,5 +116,5 @@ describe("Moves - Thousand Arrows", () => {
       expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeDefined();
       expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
     }
-  )
+  );
 });
