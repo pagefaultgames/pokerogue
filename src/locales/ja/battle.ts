@@ -64,7 +64,7 @@ export const battle: SimpleTranslationEntries = {
   "stealEatBerry": "{{pokemonName}}は {{targetName}}の\n{{berryName}}を　うばって　たべた!",
   "fainted": "{{pokemonNameWithAffix}}は たおれた！",
   "statRose": "{{pokemonNameWithAffix}}の {{stats}}が　あがった！",
-  "statSharplyRose": "{{pokemonNameWithAffix}}の {{stats}}が ぐーんと あがった"！,
+  "statSharplyRose": "{{pokemonNameWithAffix}}の {{stats}}が ぐーんと あがった！",
   "statRoseDrastically": "{{pokemonNameWithAffix}}の {{stats}}が ぐぐーんと あがった！",
   "statWontGoAnyHigher": "{{pokemonNameWithAffix}}の {{stats}}が これいじょう　あがらない！",
   "statFell": "{{pokemonNameWithAffix}}の {{stats}}が　さがった！",
