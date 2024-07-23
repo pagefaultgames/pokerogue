@@ -121,6 +121,11 @@ export default class LogSelectUiHandler extends MessageUiHandler {
       }
     } else if (button === Button.CANCEL) {
       this.quitCallback(undefined);
+    } else if (button === Button.LEFT) {
+      this.scene.chaosmode = !this.scene.chaosmode
+      console.log("Toggled Chaos Mode " + (this.scene.chaosmode ? "ON" : "OFF"))
+      this.showText("Toggled Chaos Mode " + (this.scene.chaosmode ? "ON" : "OFF") + "\n(press LEFT to toggle)", undefined, () => {this.saveSlotSelectMessageBoxContainer.setVisible(false)}, 6000)
+      success = true
     } else {
       switch (button) {
       case Button.UP:
@@ -310,7 +315,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
         return;
       const iconContainer = this.scene.add.container(26 * i, 0);
       iconContainer.setScale(0.75);
-      console.log(p.id, Utils.getEnumKeys(Species)[Utils.getEnumValues(Species).indexOf(p.id)])
+      //console.log(p.id, Utils.getEnumKeys(Species)[Utils.getEnumValues(Species).indexOf(p.id)], Utils.getEnumKeys(Species)[allSpecies[Utils.getEnumValues(Species).indexOf(p.id)].speciesId])
 
       //if (Utils.getEnumValues(Species)[p.id] == undefined)
         //return;
@@ -318,7 +323,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
       //if (getPokemonSpecies(Utils.getEnumValues(Species)[p.id]) == undefined)
         //return;
 
-      const icon = this.scene.addPkIcon(allSpecies[Utils.getEnumValues(Species).indexOf(p.id)], 0, 0, 0, 0, 0);
+      const icon = this.scene.addPkIcon(getPokemonSpecies(Utils.getEnumValues(Species)[allSpecies[Utils.getEnumValues(Species).indexOf(p.id)].speciesId]), 0, 0, 0, 0, 0);
 
       const text = addTextObject(this.scene, 32, 20, ``, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
       text.setShadow(0, 0, null);

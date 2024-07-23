@@ -129,6 +129,7 @@ export default class BattleScene extends SceneBase {
   public doBiomePanels: boolean = false;
   public disableDailyShinies: boolean = true; // Disables shiny luck in Daily Runs to prevent affecting RNG
   public quickloadDisplayMode: string = "Dailies";
+  public chaosmode: boolean = false;
   /**
    * Determines the condition for a notification should be shown for Candy Upgrades
    * - 0 = 'Off'

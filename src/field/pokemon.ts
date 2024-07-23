@@ -134,6 +134,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       : (species.abilityHidden && hasHiddenAbility ? species.ability2 ? 2 : 1 : species.ability2 ? randAbilityIndex : 0);
     if (formIndex !== undefined) {
       this.formIndex = formIndex;
+    } else if (species.formIndex != undefined) {
+      this.formIndex = species.formIndex
     }
     if (gender !== undefined) {
       this.gender = gender;
