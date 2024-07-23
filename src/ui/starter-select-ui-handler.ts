@@ -500,7 +500,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     this.cursorObj = this.scene.add.image(0, 0, "select_cursor");
     this.cursorObj.setOrigin(0, 0);
-    // TODO: check x
     this.starterIconsCursorObj = this.scene.add.image(289, 64, "select_gen_cursor");
     this.starterIconsCursorObj.setName("starter-icons-cursor");
     this.starterIconsCursorObj.setVisible(false);
@@ -1076,19 +1075,20 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         break;
       case Button.DOWN:
         this.startCursorObj.setVisible(false);
-        this.setFilterMode(true);
+        this.starterIconsCursorIndex = 0;
+        this.moveStarterIconsCursor(this.starterIconsCursorIndex);
         success = true;
         break;
       case Button.LEFT:
         this.startCursorObj.setVisible(false);
         this.cursorObj.setVisible(true);
-        success = this.setCursor(onScreenFirstIndex + onScreenCurrentRow * 9 + 8); // set last column
+        success = this.setCursor(onScreenFirstIndex + (onScreenNumberOfRows-1) * 9 + 8); // set last column
         success = true;
         break;
       case Button.RIGHT:
         this.startCursorObj.setVisible(false);
         this.cursorObj.setVisible(true);
-        success = this.setCursor(onScreenFirstIndex + onScreenCurrentRow * 9); // set first column
+        success = this.setCursor(onScreenFirstIndex + (onScreenNumberOfRows-1) * 9); // set first column
         success = true;
         break;
       }
@@ -1636,7 +1636,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 this.scrollCursor--;
                 this.updateScroll();
               }
-  
               success = this.setCursor(this.cursor - 9);
             } else {
               this.filterBarCursor = this.filterBar.getNearestFilter(this.filteredStarterContainers[this.cursor]);
@@ -1647,11 +1646,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             if (this.starterIconsCursorIndex === 0) {
               this.starterIconsCursorObj.setVisible(false);
               this.setSpecies(null);
-              this.setFilterMode(true);
+              this.startCursorObj.setVisible(true);
             } else {
               this.starterIconsCursorIndex--;
               this.moveStarterIconsCursor(this.starterIconsCursorIndex);
             }
+            success = true;
           }
           break;
         case Button.DOWN:
@@ -1675,6 +1675,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               this.setSpecies(null);
               this.startCursorObj.setVisible(true);
             }
+            success = true;
           }
           break;
         case Button.LEFT:
@@ -1682,39 +1683,64 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             if (this.cursor % 9 !== 0) {
               success = this.setCursor(this.cursor - 1);
             } else {
-              if (this.starterSpecies.length === 0 || onScreenNumberOfRows - onScreenCurrentRow > 4) {
+              if (this.starterSpecies.length === 0) {
                 // just wrap around to the last column
                 success = this.setCursor(this.cursor + Math.min(8, numberOfStarters - this.cursor));
+              } else if (onScreenCurrentRow < 3) {
+                // always to the first starter
+                this.cursorObj.setVisible(false);
+                this.starterIconsCursorIndex = 0;
+                this.moveStarterIconsCursor(this.starterIconsCursorIndex);
+              } else if (onScreenCurrentRow < 7) {
+                this.cursorObj.setVisible(false);
+                this.starterIconsCursorIndex = Math.min(onScreenCurrentRow-2, this.starterSpecies.length - 1);
+                this.moveStarterIconsCursor(this.starterIconsCursorIndex);
               } else {
                 this.cursorObj.setVisible(false);
                 this.setSpecies(null);
                 this.startCursorObj.setVisible(true);
-                success = true;
               }
+              success = true;
             }
           } else {
-            // this.starterIconsCursorObj.setVisible(false);
-            // this.setFilterMode(false);
-            // const rowToUse = Math.min(this.starterIconsCursorIndex + 3, rows - 1);
-            // this.setCursor(Math.min((rowToUse * 9) + 8, genStarters - 1));
-            // TODO - implement this
-            console.log("TBA");
-            success = true;
+            this.starterIconsCursorObj.setVisible(false);
+            this.cursorObj.setVisible(true);
+            success = this.setCursor(Math.min(onScreenFirstIndex + (this.starterIconsCursorIndex + 2) * 9 + 8,onScreenLastIndex)); // set last column
           }
           break;
         case Button.RIGHT:
-          // if (this.cursor % 9 < (row < rows - 1 ? 8 : (genStarters - 1) % 9)) {
-          //   success = this.setCursor(this.cursor + 1);
-          // } else {
-          //   if (row >= Math.min(5, rows - 1)) {
-          //     this.startCursorObj.setVisible(true);
-          //   }
-          //   success = this.setGenMode(true);
-          // }
-
-          console.log("TBA");
-          success = true;
-          break;
+          if (!this.starterIconsCursorObj.visible) {
+            // is not right edge
+            if (this.cursor % 9 < (currentRow < numOfRows - 1 ? 8 : (numberOfStarters - 1) % 9)) {
+              success = this.setCursor(this.cursor + 1);
+            } else {
+              // in right edge
+              if (this.starterSpecies.length === 0) {
+                // just wrap around to the first column
+                success = this.setCursor(this.cursor - Math.min(8, this.cursor % 9));
+              } else if (onScreenCurrentRow < 3) {
+                // always to the first starter
+                this.cursorObj.setVisible(false);
+                this.starterIconsCursorIndex = 0;
+                this.moveStarterIconsCursor(this.starterIconsCursorIndex);
+              } else if (onScreenCurrentRow < 7) {
+                this.cursorObj.setVisible(false);
+                this.starterIconsCursorIndex = Math.min(onScreenCurrentRow-2, this.starterSpecies.length - 1);
+                this.moveStarterIconsCursor(this.starterIconsCursorIndex);
+              } else {
+                this.cursorObj.setVisible(false);
+                this.setSpecies(null);
+                this.startCursorObj.setVisible(true);
+              }
+              success = true;
+            }
+            break;
+          } else {
+            this.starterIconsCursorObj.setVisible(false);
+            this.cursorObj.setVisible(true);
+            success = this.setCursor(Math.min(onScreenFirstIndex + (this.starterIconsCursorIndex + 2) * 9, onScreenLastIndex - (onScreenLastIndex % 9))); // set first column
+            break;
+          }
         }
       }
     }
@@ -2120,8 +2146,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.starterIconsCursorObj.y = this.starterIcons[index].y + this.starterIconsCursorYOffset;
     if (this.starterSpecies.length > 0) {
       this.starterIconsCursorObj.setVisible(true);
-      //TODO: check this
-      console.log("To be checked");
       this.setSpecies(this.starterSpecies[index]);
     } else {
       this.starterIconsCursorObj.setVisible(false);
@@ -2645,7 +2669,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.starterNatures.splice(index, 1);
     this.starterMovesets.splice(index, 1);
 
-    //TODO: check loop
     for (let s = 0; s < this.starterSpecies.length; s++) {
       const species = this.starterSpecies[s];
       const currentDexAttr = this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true);
