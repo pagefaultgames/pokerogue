@@ -4,7 +4,7 @@ import Pokemon, { EnemyPokemon, PlayerPokemon } from "../field/pokemon";
 import { pokemonEvolutions, pokemonPrevolutions } from "../data/pokemon-evolutions";
 import PokemonSpecies, { allSpecies, getPokemonSpecies, noStarterFormKeys, speciesStarters } from "../data/pokemon-species";
 import * as Utils from "../utils";
-import Overrides from "../overrides";
+import Overrides from "#app/overrides";
 import PokemonData from "./pokemon-data";
 import PersistentModifierData from "./modifier-data";
 import ArenaData from "./arena-data";

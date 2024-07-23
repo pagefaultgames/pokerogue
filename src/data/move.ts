@@ -6315,6 +6315,7 @@ export function initMoves() {
       .attr(ResistLastMoveTypeAttr)
       .partial(), // Checks the move's original typing and not if its type is changed through some other means
     new AttackMove(Moves.AEROBLAST, Type.FLYING, MoveCategory.SPECIAL, 100, 95, 5, -1, 0, 2)
+      .windMove()
       .attr(HighCritAttr),
     new StatusMove(Moves.COTTON_SPORE, Type.GRASS, 100, 40, -1, 0, 2)
       .attr(StatChangeAttr, BattleStat.SPD, -2)
@@ -7535,6 +7536,7 @@ export function initMoves() {
       .attr(NeutralDamageAgainstFlyingTypeMultiplierAttr)
       .attr(AddBattlerTagAttr, BattlerTagType.IGNORE_FLYING, false, false, 1, 1, true)
       .attr(HitsTagAttr, BattlerTagType.FLYING, false)
+      .attr(HitsTagAttr, BattlerTagType.MAGNET_RISEN, false)
       .attr(AddBattlerTagAttr, BattlerTagType.INTERRUPTED)
       .attr(RemoveBattlerTagAttr, [BattlerTagType.FLYING, BattlerTagType.MAGNET_RISEN])
       .makesContact(false)

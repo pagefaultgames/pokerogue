@@ -37,7 +37,7 @@ import { Nature, getNatureStatMultiplier } from "../data/nature";
 import { SpeciesFormChange, SpeciesFormChangeActiveTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangeStatusEffectTrigger } from "../data/pokemon-forms";
 import { TerrainType } from "../data/terrain";
 import { TrainerSlot } from "../data/trainer-config";
-import Overrides from "../overrides";
+import Overrides from "#app/overrides";
 import i18next from "i18next";
 import { speciesEggMoves } from "../data/egg-moves";
 import { ModifierTier } from "../modifier/modifier-tier";
@@ -1360,7 +1360,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   getAttackMoveEffectiveness(source: Pokemon, pokemonMove: PokemonMove, ignoreAbility: boolean = false, useIllusion: boolean = false): TypeDamageMultiplier {
     const move = pokemonMove.getMove();
     const typeless = move.hasAttr(TypelessAttr);
-    const typeMultiplier = new Utils.NumberHolder(this.getAttackTypeEffectiveness(move.type, source, undefined, undefined, useIllusion));
+    const typeMultiplier = new Utils.NumberHolder(this.getAttackTypeEffectiveness(move, source, undefined, undefined, useIllusion));
     const cancelled = new Utils.BooleanHolder(false);
     applyMoveAttrs(VariableMoveTypeMultiplierAttr, source, this, move, typeMultiplier);
     if (!typeless && !ignoreAbility) {
@@ -1375,14 +1375,21 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Calculates the type effectiveness multiplier for an attack type
-   * @param moveType Type of the move
+   * @param moveOrType The move being used, or a type if the move is unknown
    * @param source the Pokemon using the move
    * @param ignoreStrongWinds whether or not this ignores strong winds (anticipation, forewarn, stealth rocks)
    * @param simulated tag to only apply the strong winds effect message when the move is used
    * @param {boolean} useIllusion - Whether we want the attack type effectiveness on the illusion or not
    * @returns a multiplier for the type effectiveness
    */
-  getAttackTypeEffectiveness(moveType: Type, source?: Pokemon, ignoreStrongWinds: boolean = false, simulated: boolean = true, useIllusion: boolean = false): TypeDamageMultiplier {
+  getAttackTypeEffectiveness(moveOrType: Move | Type, source?: Pokemon, ignoreStrongWinds: boolean = false, simulated: boolean = true, useIllusion: boolean = false): TypeDamageMultiplier {
+    const move = (moveOrType instanceof Move)
+      ? moveOrType
+      : undefined;
+    const moveType = (moveOrType instanceof Move)
+      ? move.type
+      : moveOrType;
+
     if (moveType === Type.STELLAR) {
       return this.isTerastallized() ? 2 : 1;
     }
@@ -1410,9 +1417,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
 
-    if (!!this.summonData?.tags.find((tag) => tag instanceof TypeImmuneTag && tag.immuneType === moveType)) {
-      multiplier = 0;
-    }
+    const immuneTags = this.findTags(tag => tag instanceof TypeImmuneTag && tag.immuneType === moveType);
+    immuneTags.forEach(tag => {
+      if (move !== undefined) {
+        const hitsTagAttrs = move.getAttrs(HitsTagAttr).filter(attr => attr.tagType === tag.tagType);
+        if (hitsTagAttrs.length === 0) {
+          multiplier = 0;
+        }
+      }
+    });
 
     return multiplier;
   }
@@ -1997,7 +2010,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const cancelled = new Utils.BooleanHolder(false);
     const typeless = move.hasAttr(TypelessAttr);
     const typeMultiplier = new Utils.NumberHolder(!typeless && (moveCategory !== MoveCategory.STATUS || move.getAttrs(StatusMoveTypeImmunityAttr).find(attr => types.includes(attr.immuneType)))
-      ? this.getAttackTypeEffectiveness(move.type, source, false, false)
+      ? this.getAttackTypeEffectiveness(move, source, false, false)
       : 1);
     applyMoveAttrs(VariableMoveTypeMultiplierAttr, source, this, move, typeMultiplier);
     if (typeless) {
@@ -3486,14 +3499,26 @@ export class PlayerPokemon extends Pokemon {
       }
       this.generateName();
       if (!isFusion) {
-        const abilityCount = this.getSpeciesForm().getAbilityCount();
-        if (this.abilityIndex >= abilityCount) { // Shouldn't happen
-          this.abilityIndex = abilityCount - 1;
+        // If a pokemon has its second ability and it evolves into a pokemon that doesn't have a second ability, switch to its first ability instead of its hidden ability
+        if (this.getSpeciesForm().ability2 === Abilities.NONE && this.abilityIndex === 1) {
+          this.abilityIndex = 0;
         }
-      } else {
+        // Prevent pokemon with an illegal ability value from breaking things too badly
+        const abilityCount = this.getSpeciesForm().getAbilityCount();
+        if (this.abilityIndex >= abilityCount) {
+          console.warn("this.abilityIndex is somehow an illegal value, please report this");
+          console.warn(this.abilityIndex);
+          this.abilityIndex = 0;
+        }
+      } else { // Do the same as above, but for fusions
+        if (this.getFusionSpeciesForm().ability2 === Abilities.NONE && this.fusionAbilityIndex === 1) {
+          this.fusionAbilityIndex = 0;
+        }
         const abilityCount = this.getFusionSpeciesForm().getAbilityCount();
-        if (this.fusionAbilityIndex >= abilityCount) {// Shouldn't happen
-          this.fusionAbilityIndex = abilityCount - 1;
+        if (this.fusionAbilityIndex >= abilityCount) {
+          console.warn("this.fusionAbilityIndex is somehow an illegal value, please report this");
+          console.warn(this.fusionAbilityIndex);
+          this.fusionAbilityIndex = 0;
         }
       }
       this.compatibleTms.splice(0, this.compatibleTms.length);
