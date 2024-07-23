@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
-import overrides from "#app/overrides";
+import Overrides from "#app/overrides";
 import { Moves } from "#enums/moves";
 import { getMoveTargets } from "#app/data/move.js";
 import { Abilities } from "#app/enums/abilities.js";
@@ -69,7 +69,7 @@ describe("Moves - Multi target", () => {
 
 async function checkTargetMultiplier(game: GameManager, attackMove: Moves, killAlly: boolean, killSecondEnemy: boolean, shouldMultiplied: boolean, oppAbility?: Abilities) {
   // play an attack and check target count
-  vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(oppAbility ? oppAbility : Abilities.BALL_FETCH);
+  vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(oppAbility ? oppAbility : Abilities.BALL_FETCH);
   await game.startBattle();
 
   const playerPokemonRepr = game.scene.getPlayerField();
@@ -164,15 +164,14 @@ function leaveOneEnemyPokemon(game: GameManager) {
 
 function beforeTrial(phaserGame: Phaser.Game, single: boolean = false) {
   const game = new GameManager(phaserGame);
-  vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(false);
-  vi.spyOn(overrides, "DOUBLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
-  vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.EARTHQUAKE, Moves.HYPER_VOICE, Moves.SURF, Moves.SPLASH]);
-  vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
-  vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
-  vi.spyOn(overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
-  vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(50);
-  vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(40);
-  vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.EEVEE);
+  vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
+  vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.EARTHQUAKE, Moves.HYPER_VOICE, Moves.SURF, Moves.SPLASH]);
+  vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
+  vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+  vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
+  vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(50);
+  vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(40);
+  vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.EEVEE);
   return game;
 }
 
