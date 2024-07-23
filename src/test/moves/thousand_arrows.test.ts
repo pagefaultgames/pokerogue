@@ -84,7 +84,7 @@ describe("Moves - Thousand Arrows", () => {
   it(
     "move should hit and ground targets under the effects of Magnet Rise",
     async () => {
-      vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SNORLAX);
+      vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SNORLAX);
 
       await game.startBattle([ Species.ILLUMISE ]);
 
