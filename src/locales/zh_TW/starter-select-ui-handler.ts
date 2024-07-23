@@ -6,7 +6,8 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
  * account interactions, descriptive text, etc.
  */
 export const starterSelectUiHandler: SimpleTranslationEntries = {
-  "confirmStartTeam":"使用這些寶可夢開始嗎?",
+  "confirmStartTeam": "使用這些寶可夢開始嗎?",
+  "invalidParty": "This is not a valid starting party!",
   "gen1": "I",
   "gen2": "II",
   "gen3": "III",
