@@ -210,7 +210,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private moveInfoOverlay : MoveInfoOverlay;
 
   private statsMode: boolean;
-  private starterIconsCursorXOffset: number = -2;
+  private starterIconsCursorXOffset: number = -3;
   private starterIconsCursorYOffset: number = 1;
   private starterIconsCursorIndex: number;
   private filterMode: boolean;
@@ -469,7 +469,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     startLabel.setOrigin(0.5, 0);
     this.starterSelectContainer.add(startLabel);
 
-    this.startCursorObj = this.scene.add.nineslice(288, 160, "select_cursor", null, 26, 15, 6, 6, 6, 6);
+    this.startCursorObj = this.scene.add.nineslice(289, 160, "select_cursor", null, 26, 15, 6, 6, 6, 6);
     this.startCursorObj.setVisible(false);
     this.startCursorObj.setOrigin(0, 0);
     this.starterSelectContainer.add(this.startCursorObj);
@@ -501,7 +501,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.cursorObj = this.scene.add.image(0, 0, "select_cursor");
     this.cursorObj.setOrigin(0, 0);
     // TODO: check x
-    this.starterIconsCursorObj = this.scene.add.image(111, 64, "select_gen_cursor");
+    this.starterIconsCursorObj = this.scene.add.image(289, 64, "select_gen_cursor");
     this.starterIconsCursorObj.setName("starter-icons-cursor");
     this.starterIconsCursorObj.setVisible(false);
     this.starterIconsCursorObj.setOrigin(0, 0);
