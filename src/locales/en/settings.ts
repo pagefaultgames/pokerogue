@@ -43,7 +43,7 @@ export const settings: SimpleTranslationEntries = {
   "moveAnimations": "Move Animations",
   "showStatsOnLevelUp": "Show Stats on Level Up",
   "candyUpgradeNotification": "Candy Upgrade Notification",
-  "passivesFirst": "Passives First",
+  "passivesOnly": "Passives Only",
   "candyUpgradeDisplay": "Candy Upgrade Display",
   "icon": "Icon",
   "animation": "Animation",

@@ -862,18 +862,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   /**
-   * Determines if a passive upgrade has been unlocked for the given species ID
-   * @param speciesId The ID of the species to check the passive of
-   * @returns true if the passive has been unlocked
-   */
-  isPassiveUnlocked(speciesId: number): boolean {
-    // Get this species ID's starter data
-    const starterData = this.scene.gameData.starterData[speciesId];
-
-    return !!(starterData.passiveAttr & PassiveAttr.UNLOCKED);
-  }
-
-  /**
    * Determines if a passive upgrade is available for the given species ID
    * @param speciesId The ID of the species to check the passive of
    * @returns true if the user has enough candies and a passive has not been unlocked already
@@ -884,18 +872,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     return starterData.candyCount >= getPassiveCandyCount(speciesStarters[speciesId])
       && !(starterData.passiveAttr & PassiveAttr.UNLOCKED);
-  }
-
-  /**
-   * Determines if a passive upgrade is maxed for the given species ID
-   * @param speciesId The ID of the species to check the passive of
-   * @returns true if the passive has been maxed
-   */
-  isValueReductionMaxed(speciesId: number): boolean {
-    // Get this species ID's starter data
-    const starterData = this.scene.gameData.starterData[speciesId];
-
-    return starterData.valueReduction >= VALUE_REDUCTION_MAX;
   }
 
   /**
@@ -961,14 +937,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
       ],};
 
-    const isPassiveUnlocked = this.isPassiveUnlocked(species.speciesId);
     const isPassiveAvailable = this.isPassiveAvailable(species.speciesId);
-    const isValueReductionMaxed = this.isValueReductionMaxed(species.speciesId);
     const isValueReductionAvailable = this.isValueReductionAvailable(species.speciesId);
     const isEggAvailable = this.isSameSpeciesEggAvailable(species.speciesId);
-    // 'Passives First' mode
+    // 'Passives Only' mode
     if (this.scene.candyUpgradeNotification === 1) {
-      if (isPassiveAvailable || (isPassiveUnlocked && isValueReductionAvailable) || (isPassiveUnlocked && isValueReductionMaxed && isEggAvailable)) {
+      if (isPassiveAvailable) {
         this.scene.tweens.chain(tweenChain).paused = startPaused;
       }
     // 'On' mode
@@ -992,20 +966,18 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       return;
     }
 
-    const isPassiveUnlocked = this.isPassiveUnlocked(species.speciesId);
     const isPassiveAvailable = this.isPassiveAvailable(species.speciesId);
-    const isValueReductionMaxed = this.isValueReductionMaxed(species.speciesId);
     const isValueReductionAvailable = this.isValueReductionAvailable(species.speciesId);
     const isEggAvailable = this.isSameSpeciesEggAvailable(species.speciesId);
-    // 'Passives First' mode
+    // 'Passives Only' mode
     if (this.scene.candyUpgradeNotification === 1) {
-      starter.candyUpgradeIcon.setVisible(slotVisible && (isPassiveAvailable || (isPassiveUnlocked && isValueReductionAvailable) || (isPassiveUnlocked && isValueReductionMaxed && isEggAvailable)));
+      starter.candyUpgradeIcon.setVisible(slotVisible && isPassiveAvailable);
       starter.candyUpgradeOverlayIcon.setVisible(slotVisible && starter.candyUpgradeIcon.visible);
 
       // 'On' mode
     } else if (this.scene.candyUpgradeNotification === 2) {
       starter.candyUpgradeIcon.setVisible(
-        slotVisible && (isPassiveAvailable || this.isValueReductionAvailable(species.speciesId) || isEggAvailable));
+        slotVisible && (isPassiveAvailable || isValueReductionAvailable || isEggAvailable));
       starter.candyUpgradeOverlayIcon.setVisible(slotVisible && starter.candyUpgradeIcon.visible);
     }
   }

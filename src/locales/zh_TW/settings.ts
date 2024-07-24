@@ -43,7 +43,7 @@ export const settings: SimpleTranslationEntries = {
   "moveAnimations": "招式動畫",
   "showStatsOnLevelUp": "升級時顯示能力值",
   "candyUpgradeNotification": "糖果升級提示",
-  "passivesFirst": "優先被動",
+  "passivesOnly": "僅被動",
   "candyUpgradeDisplay": "糖果升級顯示",
   "icon": "圖標",
   "animation": "動畫",
