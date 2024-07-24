@@ -804,6 +804,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.setNature(nature);
   }
 
+  isFullHp(): boolean {
+    return this.hp >= this.getMaxHp();
+  }
+
   getMaxHp(): integer {
     return this.getStat(Stat.HP);
   }
@@ -2046,7 +2050,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         const destinyTag = this.getTag(BattlerTagType.DESTINY_BOND);
 
         if (damage.value) {
-          if (this.getHpRatio() === 1) {
+          if (this.isFullHp()) {
             applyPreDefendAbAttrs(PreDefendFullHpEndureAbAttr, this, source, move, cancelled, damage);
           } else if (!this.isPlayer() && damage.value >= this.hp) {
             this.scene.applyModifiers(EnemyEndureChanceModifier, false, this);

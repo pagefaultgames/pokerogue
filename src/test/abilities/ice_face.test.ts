@@ -48,7 +48,7 @@ describe("Abilities - Ice Face", () => {
 
     const eiscue = game.scene.getEnemyPokemon();
 
-    expect(eiscue.hp).equals(eiscue.getMaxHp());
+    expect(eiscue.isFullHp()).toBe(true);
     expect(eiscue.formIndex).toBe(noiceForm);
     expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBe(undefined);
   });
@@ -65,7 +65,7 @@ describe("Abilities - Ice Face", () => {
 
     // First hit
     await game.phaseInterceptor.to(MoveEffectPhase);
-    expect(eiscue.hp).equals(eiscue.getMaxHp());
+    expect(eiscue.isFullHp()).toBe(true);
     expect(eiscue.formIndex).toBe(icefaceForm);
     expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeUndefined();
 
@@ -120,7 +120,7 @@ describe("Abilities - Ice Face", () => {
 
     const eiscue = game.scene.getEnemyPokemon();
 
-    expect(eiscue.hp).equals(eiscue.getMaxHp());
+    expect(eiscue.isFullHp()).toBe(true);
     expect(eiscue.formIndex).toBe(noiceForm);
     expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBe(undefined);
 
@@ -143,7 +143,7 @@ describe("Abilities - Ice Face", () => {
 
     expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBe(undefined);
     expect(eiscue.formIndex).toBe(noiceForm);
-    expect(eiscue.hp).equals(eiscue.getMaxHp());
+    expect(eiscue.isFullHp()).toBe(true);
 
     await game.toNextTurn();
     game.doSwitchPokemon(1);
@@ -189,7 +189,7 @@ describe("Abilities - Ice Face", () => {
 
     expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBe(undefined);
     expect(eiscue.formIndex).toBe(noiceForm);
-    expect(eiscue.hp).equals(eiscue.getMaxHp());
+    expect(eiscue.isFullHp()).toBe(true);
 
     await game.toNextTurn();
     game.doSwitchPokemon(1);

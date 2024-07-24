@@ -44,7 +44,7 @@ describe("Abilities - Wind Rider", () => {
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(shiftry.hp).equals(shiftry.getMaxHp());
+    expect(shiftry.isFullHp()).toBe(true);
     expect(shiftry.summonData.battleStats[BattleStat.ATK]).toBe(1);
   });
 
@@ -108,7 +108,7 @@ describe("Abilities - Wind Rider", () => {
     const shiftry = game.scene.getPlayerPokemon();
 
     expect(shiftry.summonData.battleStats[BattleStat.ATK]).toBe(0);
-    expect(shiftry.hp).equals(shiftry.getMaxHp());
+    expect(shiftry.isFullHp()).toBe(true);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.SANDSTORM));
 
