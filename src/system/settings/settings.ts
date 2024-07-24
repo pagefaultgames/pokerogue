@@ -1,13 +1,13 @@
-import SettingsUiHandler from "#app/ui/settings/settings-ui-handler";
 import { Mode } from "#app/ui/ui";
+import i18next from "i18next";
+import BattleScene from "../../battle-scene";
+import { hasTouchscreen } from "../../touch-controls";
+import { updateWindowType } from "../../ui/ui-theme";
+import { CandyUpgradeNotificationChangedEvent } from "../../events/battle-scene";
+import SettingsUiHandler from "#app/ui/settings/settings-ui-handler";
 import { EaseType } from "#enums/ease-type";
 import { MoneyFormat } from "#enums/money-format";
 import { PlayerGender } from "#enums/player-gender";
-import i18next from "i18next";
-import BattleScene from "../../battle-scene";
-import { CandyUpgradeNotificationChangedEvent } from "../../events/battle-scene";
-import { hasTouchscreen } from "../../touch-controls";
-import { updateWindowType } from "../../ui/ui-theme";
 
 const VOLUME_OPTIONS: SettingOption[] = new Array(11).fill(null).map((_, i) => i ? {
   value: (i * 10).toString(),
@@ -377,7 +377,7 @@ export const Setting: Array<Setting> = [
         label: i18next.t("settings:off")
       },
       {
-        value: "Passives First",
+        value: "Passives Only",
         label: i18next.t("settings:passivesOnly")
       },
       {
