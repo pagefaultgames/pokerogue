@@ -352,7 +352,7 @@ export const achvs = {
   MONO_DRAGON: new ChallengeAchv("MONO_DRAGON","", "MONO_DRAGON.description", "dragon_fang", 100, c => c instanceof SingleTypeChallenge && c.value === 16),
   MONO_DARK: new ChallengeAchv("MONO_DARK","", "MONO_DARK.description", "black_glasses", 100, c => c instanceof SingleTypeChallenge && c.value === 17),
   MONO_FAIRY: new ChallengeAchv("MONO_FAIRY","", "MONO_FAIRY.description", "fairy_feather", 100, c => c instanceof SingleTypeChallenge && c.value === 18),
-  FRESH_START: new ChallengeAchv("FRESH_START","", "FRESH_START.description", "mystic_ticket", 100, c => c instanceof FreshStartChallenge && c.value === 1),
+  FRESH_START: new ChallengeAchv("FRESH_START","", "FRESH_START.description", "reviver_seed", 100, c => c instanceof FreshStartChallenge && c.value === 1),
 };
 
 export function initAchievements() {
