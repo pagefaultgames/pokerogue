@@ -19,9 +19,9 @@ export const titles: SimpleTranslationEntries = {
   "galactic_boss": "Galaktik-Boss",
   "plasma_boss": "Weiser von Team Plasma", // This is on purpose, since "Ghetsis" is never mentioned as the boss of team plasma in the game but as "Weiser"
   "flare_boss": "Flare-Boss",
-  "aether_boss": "Aether President",
-  "skull_boss": "Team Skull Boss",
-  "macro_boss": "Macro Cosmos's",
+  "aether_boss": "Æther-Präsidentin",
+  "skull_boss": "Skull-Boss",
+  "macro_boss": "Geschäftsführer von Macro Cosmos",
   // Maybe if we add the evil teams we can add "Team Rocket" and "Team Aqua" etc. here as well as "Team Rocket Boss" and "Team Aqua Admin" etc.
 } as const;
 
@@ -146,12 +146,12 @@ export const trainerClasses: SimpleTranslationEntries = {
   "flare_grunt": "Rüpel von Team Flare",
   "flare_grunt_female": "Rüpel von Team Flare",
   "flare_grunts": "Rüpel von Team Flare",
-  "aether_grunt": "Aether Foundation Employee",
-  "aether_grunt_female": "Aether Foundation Employee",
-  "skull_grunt": "Team Skull Grunt",
-  "skull_grunt_female": "Team Skull Grunt",
-  "macro_grunt": "Macro Cosmos Trainer",
-  "macro_grunt_female": "Macro Cosmos Trainer",
+  "aether_grunt": "Æther Foundation Personal",
+  "aether_grunt_female": "Æther Foundation Personal",
+  "skull_grunt": "Rüpel von Team Skull",
+  "skull_grunt_female": "Rüpel von Team Skull",
+  "macro_grunt": "Macro Cosmos",
+  "macro_grunt_female": "Macro Cosmos",
 } as const;
 
 // Names of special trainers like gym leaders, elite four, and the champion
@@ -285,8 +285,8 @@ export const trainerNames: SimpleTranslationEntries = {
   "cyrus": "Zyrus",
   "ghetsis": "G-Cis",
   "lysandre": "Flordelis",
-  "lusamine": "Lusamine",
-  "guzma": "Guzma",
+  "lusamine": "Samantha",
+  "guzma": "Bromley",
   "rose": "Rose",
 
   // Double Names
