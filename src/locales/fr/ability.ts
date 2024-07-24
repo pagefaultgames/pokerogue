@@ -1,4 +1,4 @@
-import { AbilityTranslationEntries } from "#app/plugins/i18n.js";
+import { AbilityTranslationEntries } from "#app/interfaces/locales.js";
 
 export const ability: AbilityTranslationEntries = {
   stench: {
@@ -897,7 +897,7 @@ export const ability: AbilityTranslationEntries = {
     name: "Boost Chimère",
     description: "Augmente la stat la plus élevée du Pokémon quand il met K.O. un autre Pokémon.",
   },
-  rKSSystem: {
+  rksSystem: {
     name: "Système Alpha",
     description: "Change le type du Pokémon en fonction de la ROM équipée.",
   },

@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const gameStatsUiHandler: SimpleTranslationEntries = {
   "stats": "Estatísticas",
@@ -27,7 +27,7 @@ export const gameStatsUiHandler: SimpleTranslationEntries = {
   "subLegendsHatched": "Sub-Lendários Chocados",
   "legendsSeen": "Lendários Vistos",
   "legendsCaught": "Lendários Capturados",
-  "legendsHatched": "Legendários Chocados",
+  "legendsHatched": "Lendários Chocados",
   "mythicalsSeen": "Míticos Vistos",
   "mythicalsCaught": "Míticos Capturados",
   "mythicalsHatched": "Míticos Chocados",

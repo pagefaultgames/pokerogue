@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const splashMessages: SimpleTranslationEntries = {
   "battlesWon": "Batalhas Ganhas!",
@@ -34,4 +34,5 @@ export const splashMessages: SimpleTranslationEntries = {
   "alsoTryRadicalRed": "Também Jogue Radical Red!",
   "eeveeExpo": "Eevee Expo!",
   "ynoproject": "YNOproject!",
+  "breedersInSpace": "Criadores Pokémon no Espaço!",
 } as const;

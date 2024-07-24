@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const pokemon: SimpleTranslationEntries = {
   "bulbasaur": "Bisasam",
@@ -283,7 +283,7 @@ export const pokemon: SimpleTranslationEntries = {
   "ralts": "Trasla",
   "kirlia": "Kirlia",
   "gardevoir": "Gardevoir",
-  "surskit": "Geweiher",
+  "surskit": "Gehweiher",
   "masquerain": "Maskeregen",
   "shroomish": "Knilz",
   "breloom": "Kapilz",

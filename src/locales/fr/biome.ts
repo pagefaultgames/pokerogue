@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const biome: SimpleTranslationEntries = {
   "unknownLocation": "vous avez oublié où",
@@ -16,7 +16,7 @@ export const biome: SimpleTranslationEntries = {
   "MOUNTAIN": "Montagne",
   "BADLANDS": "Terres Sauvages",
   "CAVE": "Grotte",
-  "DESERT": "Desert",
+  "DESERT": "Désert",
   "ICE_CAVE": "Caverne Gelée",
   "MEADOW": "Prairie",
   "POWER_PLANT": "Centrale",

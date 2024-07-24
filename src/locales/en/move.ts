@@ -1,4 +1,4 @@
-import { MoveTranslationEntries } from "#app/plugins/i18n";
+import { MoveTranslationEntries } from "#app/interfaces/locales";
 
 export const move: MoveTranslationEntries = {
   "pound": {
@@ -2931,7 +2931,7 @@ export const move: MoveTranslationEntries = {
   },
   "bouncyBubble": {
     name: "Bouncy Bubble",
-    effect: "The user attacks by shooting water bubbles at the target. It then absorbs water and restores its HP by half the damage taken by the target."
+    effect: "The user attacks by shooting water bubbles at the target. It then absorbs water and restores its HP by the damage taken by the target."
   },
   "buzzyBuzz": {
     name: "Buzzy Buzz",
@@ -2975,7 +2975,7 @@ export const move: MoveTranslationEntries = {
   },
   "dynamaxCannon": {
     name: "Dynamax Cannon",
-    effect: "The user unleashes a strong beam from its core. This move deals twice the damage if the target is over level 200."
+    effect: "The user unleashes a strong beam from its core. Deals up to twice the damage if the target is overly leveled."
   },
   "snipeShot": {
     name: "Snipe Shot",

@@ -1,15 +1,15 @@
+import i18next from "i18next";
 import BattleScene, { PokeballCounts, bypassLogin } from "../battle-scene";
 import Pokemon, { EnemyPokemon, PlayerPokemon } from "../field/pokemon";
 import { pokemonEvolutions, pokemonPrevolutions } from "../data/pokemon-evolutions";
 import PokemonSpecies, { allSpecies, getPokemonSpecies, noStarterFormKeys, speciesStarters } from "../data/pokemon-species";
-import { Species, defaultStarterSpecies } from "../data/enums/species";
 import * as Utils from "../utils";
-import * as Overrides from "../overrides";
+import Overrides from "#app/overrides";
 import PokemonData from "./pokemon-data";
 import PersistentModifierData from "./modifier-data";
 import ArenaData from "./arena-data";
 import { Unlockables } from "./unlockables";
-import { GameModes, gameModes } from "../game-mode";
+import { GameModes, getGameMode } from "../game-mode";
 import { BattleType } from "../battle";
 import TrainerData from "./trainer-data";
 import { trainerConfigs } from "../data/trainer-config";
@@ -24,7 +24,6 @@ import { clientSessionId, loggedInUser, updateUserInfo } from "../account";
 import { Nature } from "../data/nature";
 import { GameStats } from "./game-stats";
 import { Tutorial } from "../tutorial";
-import { Moves } from "../data/enums/moves";
 import { speciesEggMoves } from "../data/egg-moves";
 import { allMoves } from "../data/move";
 import { TrainerVariant } from "../field/trainer";
@@ -32,29 +31,30 @@ import { OutdatedPhase, ReloadSessionPhase } from "#app/phases";
 import { Variant, variantData } from "#app/data/variant";
 import {setSettingGamepad, SettingGamepad, settingGamepadDefaults} from "./settings/settings-gamepad";
 import {setSettingKeyboard, SettingKeyboard} from "#app/system/settings/settings-keyboard";
-import { TerrainChangedEvent, WeatherChangedEvent } from "#app/field/arena-events.js";
-import { Device } from "#app/enums/devices.js";
+import { TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena.js";
+import { EnemyAttackStatusEffectChanceModifier } from "../modifier/modifier";
+import { StatusEffect } from "#app/data/status-effect.js";
+import ChallengeData from "./challenge-data";
+import { Device } from "#enums/devices";
+import { GameDataType } from "#enums/game-data-type";
+import { Moves } from "#enums/moves";
+import { PlayerGender } from "#enums/player-gender";
+import { Species } from "#enums/species";
+import { applyChallenges, ChallengeType } from "#app/data/challenge.js";
+
+export const defaultStarterSpecies: Species[] = [
+  Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE,
+  Species.CHIKORITA, Species.CYNDAQUIL, Species.TOTODILE,
+  Species.TREECKO, Species.TORCHIC, Species.MUDKIP,
+  Species.TURTWIG, Species.CHIMCHAR, Species.PIPLUP,
+  Species.SNIVY, Species.TEPIG, Species.OSHAWOTT,
+  Species.CHESPIN, Species.FENNEKIN, Species.FROAKIE,
+  Species.ROWLET, Species.LITTEN, Species.POPPLIO,
+  Species.GROOKEY, Species.SCORBUNNY, Species.SOBBLE,
+  Species.SPRIGATITO, Species.FUECOCO, Species.QUAXLY
+];
 
 const saveKey = "x0i2O7WRiANTqPmZ"; // Temporary; secure encryption is not yet necessary
-
-export enum GameDataType {
-  SYSTEM,
-  SESSION,
-  SETTINGS,
-  TUTORIALS,
-  SEEN_DIALOGUES
-}
-
-export enum PlayerGender {
-  UNSET,
-  MALE,
-  FEMALE
-}
-
-export enum Passive {
-  UNLOCKED = 1,
-  ENABLED = 2
-}
 
 export function getDataTypeKey(dataType: GameDataType, slotId: integer = 0): string {
   switch (dataType) {
@@ -75,13 +75,13 @@ export function getDataTypeKey(dataType: GameDataType, slotId: integer = 0): str
   }
 }
 
-function encrypt(data: string, bypassLogin: boolean): string {
+export function encrypt(data: string, bypassLogin: boolean): string {
   return (bypassLogin
     ? (data: string) => btoa(data)
     : (data: string) => AES.encrypt(data, saveKey))(data);
 }
 
-function decrypt(data: string, bypassLogin: boolean): string {
+export function decrypt(data: string, bypassLogin: boolean): string {
   return (bypassLogin
     ? (data: string) => atob(data)
     : (data: string) => AES.decrypt(data, saveKey).toString(enc.Utf8))(data);
@@ -122,6 +122,7 @@ export interface SessionSaveData {
   trainer: TrainerData;
   gameVersion: string;
   timestamp: integer;
+  challenges: ChallengeData[];
 }
 
 interface Unlocks {
@@ -137,7 +138,7 @@ interface VoucherUnlocks {
 }
 
 export interface VoucherCounts {
-	[type: string]: integer;
+    [type: string]: integer;
 }
 
 export interface DexData {
@@ -186,6 +187,46 @@ export interface StarterFormMoveData {
 
 export interface StarterMoveData {
   [key: integer]: StarterMoveset | StarterFormMoveData
+}
+
+export interface StarterAttributes {
+  nature?: integer;
+  ability?: integer;
+  variant?: integer;
+  form?: integer;
+  female?: boolean;
+}
+
+export interface StarterPreferences {
+  [key: integer]: StarterAttributes;
+}
+
+// the latest data saved/loaded for the Starter Preferences. Required to reduce read/writes. Initialize as "{}", since this is the default value and no data needs to be stored if present.
+// if they ever add private static variables, move this into StarterPrefs
+const StarterPrefers_DEFAULT : string = "{}";
+let StarterPrefers_private_latest : string = StarterPrefers_DEFAULT;
+
+// This is its own class as StarterPreferences...
+// - don't need to be loaded on startup
+// - isn't stored with other data
+// - don't require to be encrypted
+// - shouldn't require calls outside of the starter selection
+export class StarterPrefs {
+  // called on starter selection show once
+  static load(): StarterPreferences {
+    return JSON.parse(
+      StarterPrefers_private_latest = (localStorage.getItem(`starterPrefs_${loggedInUser?.username}`) || StarterPrefers_DEFAULT)
+    );
+  }
+
+  // called on starter selection clear, always
+  static save(prefs: StarterPreferences): void {
+    const pStr : string = JSON.stringify(prefs);
+    if (pStr !== StarterPrefers_private_latest) {
+      // something changed, store the update
+      localStorage.setItem(`starterPrefs_${loggedInUser?.username}`, pStr);
+    }
+  }
 }
 
 export interface StarterDataEntry {
@@ -314,7 +355,7 @@ export class GameData {
       localStorage.setItem(`data_${loggedInUser.username}`, encrypt(systemData, bypassLogin));
 
       if (!bypassLogin) {
-        Utils.apiPost(`savedata/update?datatype=${GameDataType.SYSTEM}&clientSessionId=${clientSessionId}`, systemData, undefined, true)
+        Utils.apiPost(`savedata/system/update?clientSessionId=${clientSessionId}`, systemData, undefined, true)
           .then(response => response.text())
           .then(error => {
             this.scene.ui.savingIcon.hide();
@@ -348,7 +389,7 @@ export class GameData {
       }
 
       if (!bypassLogin) {
-        Utils.apiFetch(`savedata/system?clientSessionId=${clientSessionId}`, true)
+        Utils.apiFetch(`savedata/system/get?clientSessionId=${clientSessionId}`, true)
           .then(response => response.text())
           .then(response => {
             if (!response.length || response[0] !== "{") {
@@ -508,7 +549,7 @@ export class GameData {
     });
   }
 
-  private parseSystemData(dataStr: string): SystemSaveData {
+  parseSystemData(dataStr: string): SystemSaveData {
     return JSON.parse(dataStr, (k: string, v: any) => {
       if (k === "gameStats") {
         return new GameStats(v);
@@ -527,11 +568,13 @@ export class GameData {
     }) as SystemSaveData;
   }
 
-  private convertSystemDataStr(dataStr: string, shorten: boolean = false): string {
+  convertSystemDataStr(dataStr: string, shorten: boolean = false): string {
     if (!shorten) {
       // Account for past key oversight
       dataStr = dataStr.replace(/\$pAttr/g, "$pa");
     }
+    dataStr = dataStr.replace(/"trainerId":\d+/g, `"trainerId":${this.trainerId}`);
+    dataStr = dataStr.replace(/"secretId":\d+/g, `"secretId":${this.secretId}`);
     const fromKeys = shorten ? Object.keys(systemShortKeys) : Object.values(systemShortKeys);
     const toKeys = shorten ? Object.values(systemShortKeys) : Object.keys(systemShortKeys);
     for (const k in fromKeys) {
@@ -546,7 +589,7 @@ export class GameData {
       return true;
     }
 
-    const response = await Utils.apiPost("savedata/system/verify", JSON.stringify({ clientSessionId: clientSessionId }), undefined, true)
+    const response = await Utils.apiFetch(`savedata/system/verify?clientSessionId=${clientSessionId}`, true)
       .then(response => response.json());
 
     if (!response.valid) {
@@ -795,7 +838,8 @@ export class GameData {
       battleType: scene.currentBattle.battleType,
       trainer: scene.currentBattle.battleType === BattleType.TRAINER ? new TrainerData(scene.currentBattle.trainer) : null,
       gameVersion: scene.game.config.gameVersion,
-      timestamp: new Date().getTime()
+      timestamp: new Date().getTime(),
+      challenges: scene.gameMode.challenges.map(c => new ChallengeData(c))
     } as SessionSaveData;
   }
 
@@ -815,7 +859,7 @@ export class GameData {
       };
 
       if (!bypassLogin && !localStorage.getItem(`sessionData${slotId ? slotId : ""}_${loggedInUser.username}`)) {
-        Utils.apiFetch(`savedata/session?slot=${slotId}&clientSessionId=${clientSessionId}`, true)
+        Utils.apiFetch(`savedata/session/get?slot=${slotId}&clientSessionId=${clientSessionId}`, true)
           .then(response => response.text())
           .then(async response => {
             if (!response.length || response[0] !== "{") {
@@ -841,10 +885,13 @@ export class GameData {
   loadSession(scene: BattleScene, slotId: integer, sessionData?: SessionSaveData): Promise<boolean> {
     return new Promise(async (resolve, reject) => {
       try {
-        const initSessionFromData = async sessionData => {
+        const initSessionFromData = async (sessionData: SessionSaveData) => {
           console.debug(sessionData);
 
-          scene.gameMode = gameModes[sessionData.gameMode || GameModes.CLASSIC];
+          scene.gameMode = getGameMode(sessionData.gameMode || GameModes.CLASSIC);
+          if (sessionData.challenges) {
+            scene.gameMode.challenges = sessionData.challenges.map(c => c.toChallenge());
+          }
 
           scene.setSeed(sessionData.seed || scene.game.config.seed[0]);
           scene.resetSeed();
@@ -960,7 +1007,7 @@ export class GameData {
         if (success !== null && !success) {
           return resolve(false);
         }
-        Utils.apiFetch(`savedata/delete?datatype=${GameDataType.SESSION}&slot=${slotId}&clientSessionId=${clientSessionId}`, true).then(response => {
+        Utils.apiFetch(`savedata/session/delete?slot=${slotId}&clientSessionId=${clientSessionId}`, true).then(response => {
           if (response.ok) {
             loggedInUser.lastSessionSlot = -1;
             localStorage.removeItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ""}_${loggedInUser.username}`);
@@ -1024,7 +1071,7 @@ export class GameData {
           return resolve([false, false]);
         }
         const sessionData = this.getSessionSaveData(scene);
-        Utils.apiPost(`savedata/clear?slot=${slotId}&trainerId=${this.trainerId}&secretId=${this.secretId}&clientSessionId=${clientSessionId}`, JSON.stringify(sessionData), undefined, true).then(response => {
+        Utils.apiPost(`savedata/session/clear?slot=${slotId}&trainerId=${this.trainerId}&secretId=${this.secretId}&clientSessionId=${clientSessionId}`, JSON.stringify(sessionData), undefined, true).then(response => {
           if (response.ok) {
             loggedInUser.lastSessionSlot = -1;
             localStorage.removeItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ""}_${loggedInUser.username}`);
@@ -1078,6 +1125,9 @@ export class GameData {
           if (md?.className === "ExpBalanceModifier") { // Temporarily limit EXP Balance until it gets reworked
             md.stackCount = Math.min(md.stackCount, 4);
           }
+          if (md instanceof EnemyAttackStatusEffectChanceModifier && md.effect === StatusEffect.FREEZE || md.effect === StatusEffect.SLEEP) {
+            continue;
+          }
           ret.push(new PersistentModifierData(md, player));
         }
         return ret;
@@ -1085,6 +1135,17 @@ export class GameData {
 
       if (k === "arena") {
         return new ArenaData(v);
+      }
+
+      if (k === "challenges") {
+        const ret: ChallengeData[] = [];
+        if (v === null) {
+          v = [];
+        }
+        for (const c of v) {
+          ret.push(new ChallengeData(c));
+        }
+        return ret;
       }
 
       return v;
@@ -1167,7 +1228,7 @@ export class GameData {
         link.remove();
       };
       if (!bypassLogin && dataType < GameDataType.SETTINGS) {
-        Utils.apiFetch(`savedata/${dataType === GameDataType.SYSTEM ? "system" : "session"}?clientSessionId=${clientSessionId}${dataType === GameDataType.SESSION ? `&slot=${slotId}` : ""}`, true)
+        Utils.apiFetch(`savedata/${dataType === GameDataType.SYSTEM ? "system" : "session"}/get?clientSessionId=${clientSessionId}${dataType === GameDataType.SESSION ? `&slot=${slotId}` : ""}`, true)
           .then(response => response.text())
           .then(response => {
             if (!response.length || response[0] !== "{") {
@@ -1208,9 +1269,11 @@ export class GameData {
 
         reader.onload = (_ => {
           return e => {
+            let dataName: string;
             let dataStr = AES.decrypt(e.target.result.toString(), saveKey).toString(enc.Utf8);
             let valid = false;
             try {
+              dataName = GameDataType[dataType].toLowerCase();
               switch (dataType) {
               case GameDataType.SYSTEM:
                 dataStr = this.convertSystemDataStr(dataStr);
@@ -1230,38 +1293,28 @@ export class GameData {
               console.error(ex);
             }
 
-            let dataName: string;
-            switch (dataType) {
-            case GameDataType.SYSTEM:
-              dataName = "save";
-              break;
-            case GameDataType.SESSION:
-              dataName = "session";
-              break;
-            case GameDataType.SETTINGS:
-              dataName = "settings";
-              break;
-            case GameDataType.TUTORIALS:
-              dataName = "tutorials";
-              break;
-            }
-
             const displayError = (error: string) => this.scene.ui.showText(error, null, () => this.scene.ui.showText(null, 0), Utils.fixedInt(1500));
 
             if (!valid) {
               return this.scene.ui.showText(`Your ${dataName} data could not be loaded. It may be corrupted.`, null, () => this.scene.ui.showText(null, 0), Utils.fixedInt(1500));
             }
-            this.scene.ui.revertMode();
+
             this.scene.ui.showText(`Your ${dataName} data will be overridden and the page will reload. Proceed?`, null, () => {
               this.scene.ui.setOverlayMode(Mode.CONFIRM, () => {
                 localStorage.setItem(dataKey, encrypt(dataStr, bypassLogin));
 
                 if (!bypassLogin && dataType < GameDataType.SETTINGS) {
                   updateUserInfo().then(success => {
-                    if (!success) {
+                    if (!success[0]) {
                       return displayError(`Could not contact the server. Your ${dataName} data could not be imported.`);
                     }
-                    Utils.apiPost(`savedata/update?datatype=${dataType}${dataType === GameDataType.SESSION ? `&slot=${slotId}` : ""}&trainerId=${this.trainerId}&secretId=${this.secretId}&clientSessionId=${clientSessionId}`, dataStr, undefined, true)
+                    let url: string;
+                    if (dataType === GameDataType.SESSION) {
+                      url = `savedata/session/update?slot=${slotId}&trainerId=${this.trainerId}&secretId=${this.secretId}&clientSessionId=${clientSessionId}`;
+                    } else {
+                      url = `savedata/system/update?trainerId=${this.trainerId}&secretId=${this.secretId}&clientSessionId=${clientSessionId}`;
+                    }
+                    Utils.apiPost(url, dataStr, undefined, true)
                       .then(response => response.text())
                       .then(error => {
                         if (error) {
@@ -1436,7 +1489,7 @@ export class GameData {
 
       if (newCatch && speciesStarters.hasOwnProperty(species.speciesId)) {
         this.scene.playSound("level_up_fanfare");
-        this.scene.ui.showText(`${species.name} has been\nadded as a starter!`, null, () => checkPrevolution(), null, true);
+        this.scene.ui.showText(i18next.t("battle:addedAsAStarter", { pokemonName: species.name }), null, () => checkPrevolution(), null, true);
       } else {
         checkPrevolution();
       }
@@ -1502,7 +1555,9 @@ export class GameData {
       this.starterData[speciesId].eggMoves |= value;
 
       this.scene.playSound("level_up_fanfare");
-      this.scene.ui.showText(`${eggMoveIndex === 3 ? "Rare " : ""}Egg Move unlocked: ${allMoves[speciesEggMoves[speciesId][eggMoveIndex]].name}`, null, () => resolve(true), null, true);
+
+      const moveName = allMoves[speciesEggMoves[speciesId][eggMoveIndex]].name;
+      this.scene.ui.showText(eggMoveIndex === 3 ? i18next.t("egg:rareEggMoveUnlock", { moveName: moveName }) : i18next.t("egg:eggMoveUnlock", { moveName: moveName }), null, () => resolve(true), null, true);
     });
   }
 
@@ -1624,7 +1679,10 @@ export class GameData {
       value = decrementValue(value);
     }
 
-    return value;
+    const cost = new Utils.NumberHolder(value);
+    applyChallenges(this.scene.gameMode, ChallengeType.STARTER_COST, speciesId, cost);
+
+    return cost.value;
   }
 
   getFormIndex(attr: bigint): integer {

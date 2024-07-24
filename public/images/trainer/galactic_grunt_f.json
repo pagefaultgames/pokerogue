@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "galactic_grunt_f.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 68,
+				"h": 68
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 80,
+						"h": 80
+					},
+					"spriteSourceSize": {
+						"x": 10,
+						"y": 11,
+						"w": 57,
+						"h": 68
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 57,
+						"h": 68
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:3012867f03f02c4ee67a8ab3ad5a000e:77a5f60f1adc158664b3b2ee17bf30fe:7e8259b5177c0a76e5d02d6bdc66affe$"
+	}
+}

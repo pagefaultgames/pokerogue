@@ -15,19 +15,19 @@
 					"trimmed": false,
 					"sourceSize": {
 						"w": 37,
-						"h": 35
+						"h": 37
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
 						"w": 37,
-						"h": 35
+						"h": 37
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
 						"w": 37,
-						"h": 35
+						"h": 37
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:fa61a53a0684a1d00e0ed5d6737743af:3e6463caf33bbb58cfba4bd9c20890aa:37281ac0aa1e619ef385b889b64064b7$"
+		"smartupdate": "$TexturePacker:SmartUpdate:241dff4083e172e8503b54a7f0210f8d:982b194223ffeef2ba672b3c5979a426:37281ac0aa1e619ef385b889b64064b7$"
 	}
 }

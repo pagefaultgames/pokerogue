@@ -14,6 +14,7 @@ import EvolutionSceneHandler from "./evolution-scene-handler";
 import TargetSelectUiHandler from "./target-select-ui-handler";
 import SettingsUiHandler from "./settings/settings-ui-handler";
 import SettingsGamepadUiHandler from "./settings/settings-gamepad-ui-handler";
+import GameChallengesUiHandler from "./challenges-select-ui-handler";
 import { TextStyle, addTextObject } from "./text";
 import AchvBar from "./achv-bar";
 import MenuUiHandler from "./menu-ui-handler";
@@ -36,13 +37,16 @@ import SavingIconHandler from "./saving-icon-handler";
 import UnavailableModalUiHandler from "./unavailable-modal-ui-handler";
 import OutdatedModalUiHandler from "./outdated-modal-ui-handler";
 import SessionReloadModalUiHandler from "./session-reload-modal-ui-handler";
-import {Button} from "../enums/buttons";
+import {Button} from "#enums/buttons";
 import i18next, {ParseKeys} from "i18next";
-import {PlayerGender} from "#app/system/game-data";
 import GamepadBindingUiHandler from "./settings/gamepad-binding-ui-handler";
 import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";
 import KeyboardBindingUiHandler from "#app/ui/settings/keyboard-binding-ui-handler";
-import SettingsAccessibilityUiHandler from "./settings/settings-accessiblity-ui-handler";
+import SettingsDisplayUiHandler from "./settings/settings-display-ui-handler";
+import SettingsAudioUiHandler from "./settings/settings-audio-ui-handler";
+import { PlayerGender } from "#enums/player-gender";
+import BgmBar from "#app/ui/bgm-bar";
+import RenameFormUiHandler from "./rename-form-ui-handler";
 
 export enum Mode {
   MESSAGE,
@@ -63,7 +67,8 @@ export enum Mode {
   MENU,
   MENU_OPTION_SELECT,
   SETTINGS,
-  SETTINGS_ACCESSIBILITY,
+  SETTINGS_DISPLAY,
+  SETTINGS_AUDIO,
   SETTINGS_GAMEPAD,
   GAMEPAD_BINDING,
   SETTINGS_KEYBOARD,
@@ -78,7 +83,9 @@ export enum Mode {
   LOADING,
   SESSION_RELOAD,
   UNAVAILABLE,
-  OUTDATED
+  OUTDATED,
+  CHALLENGE_SELECT,
+  RENAME_POKEMON
 }
 
 const transitionModes = [
@@ -89,7 +96,8 @@ const transitionModes = [
   Mode.EVOLUTION_SCENE,
   Mode.EGG_HATCH_SCENE,
   Mode.EGG_LIST,
-  Mode.EGG_GACHA
+  Mode.EGG_GACHA,
+  Mode.CHALLENGE_SELECT
 ];
 
 const noTransitionModes = [
@@ -101,7 +109,8 @@ const noTransitionModes = [
   Mode.GAMEPAD_BINDING,
   Mode.KEYBOARD_BINDING,
   Mode.SETTINGS,
-  Mode.SETTINGS_ACCESSIBILITY,
+  Mode.SETTINGS_AUDIO,
+  Mode.SETTINGS_DISPLAY,
   Mode.SETTINGS_GAMEPAD,
   Mode.SETTINGS_KEYBOARD,
   Mode.ACHIEVEMENTS,
@@ -112,7 +121,8 @@ const noTransitionModes = [
   Mode.LOADING,
   Mode.SESSION_RELOAD,
   Mode.UNAVAILABLE,
-  Mode.OUTDATED
+  Mode.OUTDATED,
+  Mode.RENAME_POKEMON
 ];
 
 export default class UI extends Phaser.GameObjects.Container {
@@ -121,6 +131,7 @@ export default class UI extends Phaser.GameObjects.Container {
   public handlers: UiHandler[];
   private overlay: Phaser.GameObjects.Rectangle;
   public achvBar: AchvBar;
+  public bgmBar: BgmBar;
   public savingIcon: SavingIconHandler;
 
   private tooltipContainer: Phaser.GameObjects.Container;
@@ -153,8 +164,10 @@ export default class UI extends Phaser.GameObjects.Container {
       new OptionSelectUiHandler(scene),
       new MenuUiHandler(scene),
       new OptionSelectUiHandler(scene, Mode.MENU_OPTION_SELECT),
+      // settings
       new SettingsUiHandler(scene),
-      new SettingsAccessibilityUiHandler(scene),
+      new SettingsDisplayUiHandler(scene),
+      new SettingsAudioUiHandler(scene),
       new SettingsGamepadUiHandler(scene),
       new GamepadBindingUiHandler(scene),
       new SettingsKeyboardUiHandler(scene),
@@ -169,15 +182,19 @@ export default class UI extends Phaser.GameObjects.Container {
       new LoadingModalUiHandler(scene),
       new SessionReloadModalUiHandler(scene),
       new UnavailableModalUiHandler(scene),
-      new OutdatedModalUiHandler(scene)
+      new OutdatedModalUiHandler(scene),
+      new GameChallengesUiHandler(scene),
+      new RenameFormUiHandler(scene),
     ];
   }
 
   setup(): void {
+    this.setName(`ui-${Mode[this.mode]}`);
     for (const handler of this.handlers) {
       handler.setup();
     }
     this.overlay = this.scene.add.rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6, 0);
+    this.overlay.setName("rect-ui-overlay");
     this.overlay.setOrigin(0, 0);
     (this.scene as BattleScene).uiContainer.add(this.overlay);
     this.overlay.setVisible(false);
@@ -196,15 +213,19 @@ export default class UI extends Phaser.GameObjects.Container {
 
   private setupTooltip() {
     this.tooltipContainer = this.scene.add.container(0, 0);
+    this.tooltipContainer.setName("tooltip");
     this.tooltipContainer.setVisible(false);
 
     this.tooltipBg = addWindow(this.scene as BattleScene, 0, 0, 128, 31);
+    this.tooltipBg.setName("window-tooltip-bg");
     this.tooltipBg.setOrigin(0, 0);
 
     this.tooltipTitle = addTextObject(this.scene, 64, 4, "", TextStyle.TOOLTIP_TITLE);
+    this.tooltipTitle.setName("text-tooltip-title");
     this.tooltipTitle.setOrigin(0.5, 0);
 
     this.tooltipContent = addTextObject(this.scene, 6, 16, "", TextStyle.TOOLTIP_CONTENT);
+    this.tooltipContent.setName("text-tooltip-content");
     this.tooltipContent.setWordWrapWidth(696);
 
     this.tooltipContainer.add(this.tooltipBg);
@@ -232,7 +253,6 @@ export default class UI extends Phaser.GameObjects.Container {
       battleScene?.processInfoButton(pressed);
       return true;
     }
-
     battleScene?.processInfoButton(false);
     return true;
   }

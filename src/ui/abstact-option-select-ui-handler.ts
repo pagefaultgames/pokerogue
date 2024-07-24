@@ -2,10 +2,11 @@ import BattleScene from "../battle-scene";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
+import { unlockAll } from "./menu-ui-handler";
 import { addWindow } from "./ui-theme";
 import * as Utils from "../utils";
 import { argbFromRgba } from "@material/material-color-utilities";
-import {Button} from "../enums/buttons";
+import {Button} from "#enums/buttons";
 
 export interface OptionSelectConfig {
   xOffset?: number;
@@ -14,15 +15,17 @@ export interface OptionSelectConfig {
   maxOptions?: integer;
   delay?: integer;
   noCancel?: boolean;
+  supportHover?: boolean;
 }
 
 export interface OptionSelectItem {
   label: string;
   handler: () => boolean;
+  onHover?: () => void;
   keepOpen?: boolean;
   overrideSound?: boolean;
   item?: string;
-  itemArgs?: any[]
+  itemArgs?: any[];
 }
 
 const scrollUpLabel = "↑";
@@ -40,6 +43,9 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
   protected scrollCursor: integer = 0;
 
+  private konamiIndex: integer = 0;
+  static readonly konamiCode: Button[] = [Button.UP, Button.UP, Button.DOWN, Button.DOWN, Button.LEFT, Button.RIGHT, Button.LEFT, Button.RIGHT, Button.CANCEL, Button.ACTION];
+
   private cursorObj: Phaser.GameObjects.Image;
 
   constructor(scene: BattleScene, mode?: Mode) {
@@ -56,10 +62,12 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     const ui = this.getUi();
 
     this.optionSelectContainer = this.scene.add.container((this.scene.game.canvas.width / 6) - 1, -48);
+    this.optionSelectContainer.setName(`option-select-${Mode[this.mode]}`);
     this.optionSelectContainer.setVisible(false);
     ui.add(this.optionSelectContainer);
 
     this.optionSelectBg = addWindow(this.scene, 0, 0, this.getWindowWidth(), this.getWindowHeight());
+    this.optionSelectBg.setName("option-select-bg");
     this.optionSelectBg.setOrigin(1, 1);
     this.optionSelectContainer.add(this.optionSelectBg);
 
@@ -80,6 +88,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     }
 
     this.optionSelectText = addTextObject(this.scene, 0, 0, options.map(o => o.item ? `    ${o.label}` : o.label).join("\n"), TextStyle.WINDOW, { maxLines: options.length });
+    this.optionSelectText.setName("text-option-select");
     this.optionSelectText.setLineSpacing(12);
     this.optionSelectContainer.add(this.optionSelectText);
     this.optionSelectContainer.setPosition((this.scene.game.canvas.width / 6) - 1 - (this.config?.xOffset || 0), -48 + (this.config?.yOffset || 0));
@@ -154,6 +163,20 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
     let playSound = true;
 
+    if (ui.getMode() === Mode.TITLE) {
+      if (button === AbstractOptionSelectUiHandler.konamiCode[this.konamiIndex] && (Utils.isLocal || Utils.isBeta)) {
+        if (this.konamiIndex !== AbstractOptionSelectUiHandler.konamiCode.length - 1) {
+          this.konamiIndex += 1;
+        } else {
+          unlockAll(this.scene);
+          this.konamiIndex = 0;
+          return false;
+        }
+      } else {
+        this.konamiIndex = 0;
+      }
+    }
+
     if (button === Button.ACTION || button === Button.CANCEL) {
       if (this.blockInput) {
         ui.playError();
@@ -192,6 +215,10 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
           success = this.setCursor(this.cursor + 1);
         }
         break;
+      }
+      if (this.config?.supportHover) {
+        // handle hover code if the element supports hover-handlers and the option has the optional hover-handler set.
+        this.config?.options[this.cursor + (this.scrollCursor - (this.scrollCursor ? 1 : 0))]?.onHover?.();
       }
     }
 

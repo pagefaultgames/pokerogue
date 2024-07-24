@@ -9,6 +9,8 @@ import { Type, getTypeRgb } from "../data/type";
 import { getVariantTint } from "#app/data/variant";
 import { BattleStat } from "#app/data/battle-stat";
 import BattleFlyout from "./battle-flyout";
+import { WindowVariant, addWindow } from "./ui-theme";
+import i18next from "i18next";
 
 const battleStatOrder = [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.ACC, BattleStat.EVA, BattleStat.SPD ];
 
@@ -52,6 +54,13 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   private type3Icon: Phaser.GameObjects.Sprite;
   private expBar: Phaser.GameObjects.Image;
 
+  // #region Type effectiveness hint objects
+  private effectivenessContainer: Phaser.GameObjects.Container;
+  private effectivenessWindow: Phaser.GameObjects.NineSlice;
+  private effectivenessText: Phaser.GameObjects.Text;
+  private currentEffectiveness?: string;
+  // #endregion
+
   public expMaskRect: Phaser.GameObjects.Graphics;
 
   private statsContainer: Phaser.GameObjects.Container;
@@ -59,7 +68,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   private statValuesContainer: Phaser.GameObjects.Container;
   private statNumbers: Phaser.GameObjects.Sprite[];
 
-  public flyoutMenu: BattleFlyout;
+  public flyoutMenu?: BattleFlyout;
 
   constructor(scene: Phaser.Scene, x: number, y: number, player: boolean) {
     super(scene, x, y);
@@ -109,7 +118,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       this.championRibbon.setName("icon_champion_ribbon");
       this.championRibbon.setVisible(false);
       this.championRibbon.setOrigin(0, 0);
-      this.championRibbon.setPositionRelative(this.nameText, 11.75, 11.75);
+      this.championRibbon.setPositionRelative(this.nameText, 8, 11.75);
       this.add(this.championRibbon);
     }
 
@@ -250,14 +259,27 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.type3Icon.setName("icon_type_3");
     this.type3Icon.setOrigin(0, 0);
     this.add(this.type3Icon);
+
+    if (!this.player) {
+      this.effectivenessContainer = this.scene.add.container(0, 0);
+      this.effectivenessContainer.setPositionRelative(this.type1Icon, 22, 4);
+      this.effectivenessContainer.setVisible(false);
+      this.add(this.effectivenessContainer);
+
+      this.effectivenessText = addTextObject(this.scene, 5, 4.5, "", TextStyle.BATTLE_INFO);
+      this.effectivenessWindow = addWindow((this.scene as BattleScene), 0, 0, 0, 20, false, false, null, null, WindowVariant.XTHIN);
+
+      this.effectivenessContainer.add(this.effectivenessWindow);
+      this.effectivenessContainer.add(this.effectivenessText);
+    }
   }
 
   initInfo(pokemon: Pokemon) {
     this.updateNameText(pokemon);
     const nameTextWidth = this.nameText.displayWidth;
 
-    this.name = pokemon.name;
-    this.box.name = pokemon.name;
+    this.name = pokemon.getNameToRender();
+    this.box.name = pokemon.getNameToRender();
 
     this.flyoutMenu?.initInfo(pokemon);
 
@@ -294,9 +316,9 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.shinyIcon.setTint(getVariantTint(baseVariant));
     if (this.shinyIcon.visible) {
       const shinyDescriptor = doubleShiny || baseVariant ?
-        `${baseVariant === 2 ? "Epic" : baseVariant === 1 ? "Rare" : "Common"}${doubleShiny ? `/${pokemon.fusionVariant === 2 ? "Epic" : pokemon.fusionVariant === 1 ? "Rare" : "Common"}` : ""}`
+        `${baseVariant === 2 ? i18next.t("common:epicShiny") : baseVariant === 1 ? i18next.t("common:rareShiny") : i18next.t("common:commonShiny")}${doubleShiny ? `/${pokemon.fusionVariant === 2 ? i18next.t("common:epicShiny") : pokemon.fusionVariant === 1 ? i18next.t("common:rareShiny") : i18next.t("common:commonShiny")}` : ""}`
         : "";
-      this.shinyIcon.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, `Shiny${shinyDescriptor ? ` (${shinyDescriptor})` : ""}`));
+      this.shinyIcon.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, `${i18next.t("common:shinyOnHover")}${shinyDescriptor ? ` (${shinyDescriptor})` : ""}`));
       this.shinyIcon.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
     }
 
@@ -307,6 +329,11 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     }
 
     if (!this.player) {
+      if (this.nameText.visible) {
+        this.nameText.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, i18next.t("battleInfo:generation", { generation: i18next.t(`starterSelectUiHandler:gen${pokemon.species.generation}`) })));
+        this.nameText.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
+      }
+
       const dexEntry = pokemon.scene.gameData.dexData[pokemon.species.speciesId];
       this.ownedIcon.setVisible(!!dexEntry.caughtAttr);
       const opponentPokemonDexAttr = pokemon.getDexAttr();
@@ -480,7 +507,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         return resolve();
       }
 
-      const nameUpdated = this.lastName !== pokemon.name;
+      const nameUpdated = this.lastName !== pokemon.getNameToRender();
 
       if (nameUpdated) {
         this.updateNameText(pokemon);
@@ -511,11 +538,11 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         if (this.lastStatus !== StatusEffect.NONE) {
           this.statusIndicator.setFrame(StatusEffect[this.lastStatus].toLowerCase());
         }
-        this.statusIndicator.setVisible(!!this.lastStatus);
 
-        if (!this.player && this.ownedIcon.visible) {
-          this.ownedIcon.setAlpha(this.statusIndicator.visible ? 0 : 1);
-        }
+        const offsetX = !this.player ? (this.ownedIcon.visible ? 8 : 0) + (this.championRibbon.visible ? 8 : 0) : 0;
+        this.statusIndicator.setPositionRelative(this.nameText, offsetX, 11.5);
+
+        this.statusIndicator.setVisible(!!this.lastStatus);
       }
 
       const types = pokemon.getTypes(true);
@@ -607,7 +634,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   }
 
   updateNameText(pokemon: Pokemon): void {
-    let displayName = pokemon.name.replace(/[♂♀]/g, "");
+    let displayName = pokemon.getNameToRender().replace(/[♂♀]/g, "");
     let nameTextWidth: number;
 
     const nameSizeTest = addTextObject(this.scene, 0, 0, displayName, TextStyle.BATTLE_INFO);
@@ -622,7 +649,11 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     nameSizeTest.destroy();
 
     this.nameText.setText(displayName);
-    this.lastName = pokemon.name;
+    this.lastName = pokemon.getNameToRender();
+
+    if (this.nameText.visible) {
+      this.nameText.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.nameText.width, this.nameText.height), Phaser.Geom.Rectangle.Contains);
+    }
   }
 
   updatePokemonExp(pokemon: Pokemon, instant?: boolean, levelDurationMultiplier: number = 1): Promise<void> {
@@ -709,6 +740,39 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     battleStatOrder.map((s, i) => {
       this.statNumbers[i].setFrame(battleStats[s].toString());
     });
+  }
+
+  /**
+   * Request the flyoutMenu to toggle if available and hides or shows the effectiveness window where necessary
+   */
+  toggleFlyout(visible: boolean): void {
+    this.flyoutMenu?.toggleFlyout(visible);
+
+    if (visible) {
+      this.effectivenessContainer?.setVisible(false);
+    } else {
+      this.updateEffectiveness(this.currentEffectiveness);
+    }
+  }
+
+  /**
+   * Show or hide the type effectiveness multiplier window
+   * Passing undefined will hide the window
+   */
+  updateEffectiveness(effectiveness?: string) {
+    if (this.player) {
+      return;
+    }
+    this.currentEffectiveness = effectiveness;
+
+    if (!(this.scene as BattleScene).typeHints || effectiveness === undefined || this.flyoutMenu.flyoutVisible) {
+      this.effectivenessContainer.setVisible(false);
+      return;
+    }
+
+    this.effectivenessText.setText(effectiveness);
+    this.effectivenessWindow.width = 10 + this.effectivenessText.displayWidth;
+    this.effectivenessContainer.setVisible(true);
   }
 
   getBaseY(): number {

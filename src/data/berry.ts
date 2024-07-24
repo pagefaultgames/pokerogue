@@ -1,26 +1,13 @@
 import { PokemonHealPhase, StatChangePhase } from "../phases";
-import { getPokemonMessage } from "../messages";
+import { getPokemonNameWithAffix } from "../messages";
 import Pokemon, { HitResult } from "../field/pokemon";
 import { BattleStat } from "./battle-stat";
-import { BattlerTagType } from "./enums/battler-tag-type";
 import { getStatusEffectHealText } from "./status-effect";
 import * as Utils from "../utils";
 import { DoubleBerryEffectAbAttr, ReduceBerryUseThresholdAbAttr, applyAbAttrs } from "./ability";
-import i18next from "../plugins/i18n";
-
-export enum BerryType {
-  SITRUS,
-  LUM,
-  ENIGMA,
-  LIECHI,
-  GANLON,
-  PETAYA,
-  APICOT,
-  SALAC,
-  LANSAT,
-  STARF,
-  LEPPA
-}
+import i18next from "i18next";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { BerryType } from "#enums/berry-type";
 
 export function getBerryName(berryType: BerryType): string {
   return i18next.t(`berry:${BerryType[berryType]}.name`);
@@ -85,7 +72,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
       const hpHealed = new Utils.NumberHolder(Math.floor(pokemon.getMaxHp() / 4));
       applyAbAttrs(DoubleBerryEffectAbAttr, pokemon, null, hpHealed);
       pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.getBattlerIndex(),
-        hpHealed.value, getPokemonMessage(pokemon, `'s ${getBerryName(berryType)}\nrestored its HP!`), true));
+        hpHealed.value, i18next.t("battle:hpHealBerry", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), berryName: getBerryName(berryType) }), true));
     };
   case BerryType.LUM:
     return (pokemon: Pokemon) => {
@@ -93,13 +80,10 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
         pokemon.battleData.berriesEaten.push(berryType);
       }
       if (pokemon.status) {
-        pokemon.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectHealText(pokemon.status.effect)));
-        pokemon.resetStatus();
-        pokemon.updateInfo();
+        pokemon.scene.queueMessage(getStatusEffectHealText(pokemon.status.effect, getPokemonNameWithAffix(pokemon)));
       }
-      if (pokemon.getTag(BattlerTagType.CONFUSED)) {
-        pokemon.lapseTag(BattlerTagType.CONFUSED);
-      }
+      pokemon.resetStatus(true, true);
+      pokemon.updateInfo();
     };
   case BerryType.LIECHI:
   case BerryType.GANLON:
@@ -139,7 +123,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
       const ppRestoreMove = pokemon.getMoveset().find(m => !m.getPpRatio()) ? pokemon.getMoveset().find(m => !m.getPpRatio()) : pokemon.getMoveset().find(m => m.getPpRatio() < 1);
       if (ppRestoreMove !== undefined) {
         ppRestoreMove.ppUsed = Math.max(ppRestoreMove.ppUsed - 10, 0);
-        pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` restored PP to its move ${ppRestoreMove.getName()}\nusing its ${getBerryName(berryType)}!`));
+        pokemon.scene.queueMessage(i18next.t("battle:ppHealBerry", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: ppRestoreMove.getName(), berryName: getBerryName(berryType) }));
       }
     };
   }

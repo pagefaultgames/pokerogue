@@ -1,14 +1,15 @@
-import * as Utils from "../utils";
 import { addTextObject, TextStyle } from "./text";
 import BattleScene from "#app/battle-scene.js";
-import { ArenaTagSide } from "#app/data/arena-tag.js";
+import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag.js";
 import { WeatherType } from "#app/data/weather.js";
 import { TerrainType } from "#app/data/terrain.js";
 import { addWindow, WindowVariant } from "./ui-theme";
-import { ArenaEvent, ArenaEventType, TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#app/field/arena-events.js";
-import { BattleSceneEventType, TurnEndEvent } from "#app/battle-scene-events.js";
-import { ArenaTagType } from "#app/data/enums/arena-tag-type.js";
-import { TimeOfDay } from "#app/data/enums/time-of-day.js";
+import { ArenaEvent, ArenaEventType, TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena.js";
+import { BattleSceneEventType, TurnEndEvent } from "../events/battle-scene";
+import { ArenaTagType } from "#enums/arena-tag-type";
+import TimeOfDayWidget from "./time-of-day-widget";
+import * as Utils from "../utils";
+import i18next, {ParseKeys} from "i18next";
 
 /** Enum used to differentiate {@linkcode Arena} effects */
 enum ArenaEffectType {
@@ -23,15 +24,27 @@ interface ArenaEffectInfo {
   /** The enum string representation of the effect */
   name: string;
   /** {@linkcode ArenaEffectType} type of effect */
-  type: ArenaEffectType,
+  effecType: ArenaEffectType,
 
   /** The maximum duration set by the effect */
   maxDuration: number;
   /** The current duration left on the effect */
   duration: number;
+  /** The arena tag type being added */
+  tagType?: ArenaTagType;
 }
 
-export default class ArenaFlyout extends Phaser.GameObjects.Container {
+export function getFieldEffectText(arenaTagType: string): string {
+  if (!arenaTagType || arenaTagType === ArenaTagType.NONE) {
+    return arenaTagType;
+  }
+  const effectName = Utils.toCamelCaseString(arenaTagType);
+  const i18nKey = `arenaFlyout:${effectName}` as ParseKeys;
+  const resultName = i18next.t(i18nKey);
+  return (!resultName || resultName === i18nKey) ? Utils.formatText(arenaTagType) : resultName;
+}
+
+export class ArenaFlyout extends Phaser.GameObjects.Container {
   /** An alias for the scene typecast to a {@linkcode BattleScene} */
   private battleScene: BattleScene;
 
@@ -60,8 +73,7 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
   /** The {@linkcode Phaser.GameObjects.Text} that goes inside of the header */
   private flyoutTextHeader: Phaser.GameObjects.Text;
 
-  /** The {@linkcode Phaser.GameObjects.Sprite} that represents the current time of day */
-  private timeOfDayIcon: Phaser.GameObjects.Sprite;
+  private timeOfDayWidget: TimeOfDayWidget;
 
   /** The {@linkcode Phaser.GameObjects.Text} header used to indicate the player's effects */
   private flyoutTextHeaderPlayer: Phaser.GameObjects.Text;
@@ -81,14 +93,14 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
   private readonly fieldEffectInfo: ArenaEffectInfo[] = [];
 
   // Stores callbacks in a variable so they can be unsubscribed from when destroyed
-  private onNewArenaEvent =  (event: Event) => this.onNewArena(event);
-  private onTurnInitEvent =  (event: Event) => this.onTurnInit(event);
-  private onTurnEndEvent =   (event: Event) => this.onTurnEnd(event);
+  private readonly onNewArenaEvent =  (event: Event) => this.onNewArena(event);
+  private readonly onTurnEndEvent =   (event: Event) => this.onTurnEnd(event);
 
-  private onFieldEffectChangedEvent = (event: Event) => this.onFieldEffectChanged(event);
+  private readonly onFieldEffectChangedEvent = (event: Event) => this.onFieldEffectChanged(event);
 
   constructor(scene: Phaser.Scene) {
     super(scene, 0, 0);
+    this.setName("arena-flyout");
     this.battleScene = this.scene as BattleScene;
 
     this.translationX = this.flyoutWidth;
@@ -110,33 +122,31 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
 
     this.flyoutContainer.add(this.flyoutWindowHeader);
 
-    this.flyoutTextHeader = addTextObject(this.scene, this.flyoutWidth / 2, 0, "Active Battle Effects", TextStyle.BATTLE_INFO);
+    this.flyoutTextHeader = addTextObject(this.scene, this.flyoutWidth / 2, 0, i18next.t("arenaFlyout:activeBattleEffects"), TextStyle.BATTLE_INFO);
     this.flyoutTextHeader.setFontSize(54);
     this.flyoutTextHeader.setAlign("center");
     this.flyoutTextHeader.setOrigin();
 
     this.flyoutContainer.add(this.flyoutTextHeader);
 
-    this.timeOfDayIcon = this.scene.add.sprite((this.flyoutWidth / 2) + (this.flyoutWindowHeader.displayWidth / 2), 0, "dawn_icon").setOrigin();
-    this.timeOfDayIcon.setVisible(false);
+    this.timeOfDayWidget = new TimeOfDayWidget(this.scene, (this.flyoutWidth / 2) + (this.flyoutWindowHeader.displayWidth / 2));
+    this.flyoutContainer.add(this.timeOfDayWidget);
 
-    this.flyoutContainer.add(this.timeOfDayIcon);
-
-    this.flyoutTextHeaderPlayer = addTextObject(this.scene, 6, 5, "Player", TextStyle.SUMMARY_BLUE);
+    this.flyoutTextHeaderPlayer = addTextObject(this.scene, 6, 5, i18next.t("arenaFlyout:player"), TextStyle.SUMMARY_BLUE);
     this.flyoutTextHeaderPlayer.setFontSize(54);
     this.flyoutTextHeaderPlayer.setAlign("left");
     this.flyoutTextHeaderPlayer.setOrigin(0, 0);
 
     this.flyoutContainer.add(this.flyoutTextHeaderPlayer);
 
-    this.flyoutTextHeaderField = addTextObject(this.scene, this.flyoutWidth / 2, 5, "Neutral", TextStyle.SUMMARY_GREEN);
+    this.flyoutTextHeaderField = addTextObject(this.scene, this.flyoutWidth / 2, 5, i18next.t("arenaFlyout:neutral"), TextStyle.SUMMARY_GREEN);
     this.flyoutTextHeaderField.setFontSize(54);
     this.flyoutTextHeaderField.setAlign("center");
     this.flyoutTextHeaderField.setOrigin(0.5, 0);
 
     this.flyoutContainer.add(this.flyoutTextHeaderField);
 
-    this.flyoutTextHeaderEnemy = addTextObject(this.scene, this.flyoutWidth - 6, 5, "Enemy", TextStyle.SUMMARY_RED);
+    this.flyoutTextHeaderEnemy = addTextObject(this.scene, this.flyoutWidth - 6, 5, i18next.t("arenaFlyout:enemy"), TextStyle.SUMMARY_RED);
     this.flyoutTextHeaderEnemy.setFontSize(54);
     this.flyoutTextHeaderEnemy.setAlign("right");
     this.flyoutTextHeaderEnemy.setOrigin(1, 0);
@@ -172,16 +182,7 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
 
     // Subscribes to required events available on game start
     this.battleScene.eventTarget.addEventListener(BattleSceneEventType.NEW_ARENA, this.onNewArenaEvent);
-    this.battleScene.eventTarget.addEventListener(BattleSceneEventType.TURN_INIT, this.onTurnInitEvent);
     this.battleScene.eventTarget.addEventListener(BattleSceneEventType.TURN_END,  this.onTurnEndEvent);
-  }
-
-  private setTimeOfDayIcon() {
-    this.timeOfDayIcon.setTexture(TimeOfDay[this.battleScene.arena.getTimeOfDay()].toLowerCase() + "_icon");
-  }
-
-  private onTurnInit(event: Event) {
-    this.setTimeOfDayIcon();
   }
 
   private onNewArena(event: Event) {
@@ -192,23 +193,9 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
     this.battleScene.arena.eventTarget.addEventListener(ArenaEventType.TERRAIN_CHANGED, this.onFieldEffectChangedEvent);
     this.battleScene.arena.eventTarget.addEventListener(ArenaEventType.TAG_ADDED,       this.onFieldEffectChangedEvent);
     this.battleScene.arena.eventTarget.addEventListener(ArenaEventType.TAG_REMOVED,     this.onFieldEffectChangedEvent);
-
-    this.setTimeOfDayIcon();
   }
 
-  /**
-   * Formats a string to title case
-   * @param unformattedText Text to be formatted
-   * @returns the formatted string
-   */
-  private formatText(unformattedText: string): string {
-    const text = unformattedText.split("_");
-    for (let i = 0; i < text.length; i++) {
-      text[i] = text[i].charAt(0).toUpperCase() + text[i].substring(1).toLowerCase();
-    }
 
-    return text.join(" ");
-  }
 
   /** Clears out the current string stored in all arena effect texts */
   private clearText() {
@@ -228,7 +215,7 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
 
       // Creates a proxy object to decide which text object needs to be updated
       let textObject: Phaser.GameObjects.Text;
-      switch (fieldEffectInfo.type) {
+      switch (fieldEffectInfo.effecType) {
       case ArenaEffectType.PLAYER:
         textObject = this.flyoutTextPlayer;
         break;
@@ -245,10 +232,7 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
         break;
       }
 
-      textObject.text += this.formatText(fieldEffectInfo.name);
-      if (fieldEffectInfo.type === ArenaEffectType.TERRAIN) {
-        textObject.text += " Terrain"; // Adds 'Terrain' since the enum does not contain it
-      }
+      textObject.text += fieldEffectInfo.name;
 
       if (fieldEffectInfo.maxDuration !== 0) {
         textObject.text += "  " + fieldEffectInfo.duration + "/" + fieldEffectInfo.maxDuration;
@@ -272,19 +256,42 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
     switch (arenaEffectChangedEvent.constructor) {
     case TagAddedEvent:
       const tagAddedEvent = arenaEffectChangedEvent as TagAddedEvent;
+      const isArenaTrapTag = this.battleScene.arena.getTag(tagAddedEvent.arenaTagType) instanceof ArenaTrapTag;
+      let arenaEffectType: ArenaEffectType;
+
+      if (tagAddedEvent.arenaTagSide === ArenaTagSide.BOTH) {
+        arenaEffectType = ArenaEffectType.FIELD;
+      } else if (tagAddedEvent.arenaTagSide === ArenaTagSide.PLAYER) {
+        arenaEffectType = ArenaEffectType.PLAYER;
+      } else {
+        arenaEffectType = ArenaEffectType.ENEMY;
+      }
+
+      const existingTrapTagIndex = isArenaTrapTag ? this.fieldEffectInfo.findIndex(e => tagAddedEvent.arenaTagType === e.tagType && arenaEffectType === e.effecType) : -1;
+      let name: string =  getFieldEffectText(ArenaTagType[tagAddedEvent.arenaTagType]);
+
+      if (isArenaTrapTag) {
+        if (existingTrapTagIndex !== -1) {
+          const layers = tagAddedEvent.arenaTagMaxLayers > 1 ? ` (${tagAddedEvent.arenaTagLayers})` : "";
+          this.fieldEffectInfo[existingTrapTagIndex].name = `${name}${layers}`;
+          break;
+        } else if (tagAddedEvent.arenaTagMaxLayers > 1) {
+          name = `${name} (${tagAddedEvent.arenaTagLayers})`;
+        }
+      }
+
       this.fieldEffectInfo.push({
-        name: ArenaTagType[tagAddedEvent.arenaTagType],
-        type: tagAddedEvent.arenaTagSide === ArenaTagSide.BOTH
-          ? ArenaEffectType.FIELD
-          : tagAddedEvent.arenaTagSide === ArenaTagSide.PLAYER
-            ? ArenaEffectType.PLAYER
-            : ArenaEffectType.ENEMY,
+        name,
+        effecType: arenaEffectType,
         maxDuration: tagAddedEvent.duration,
-        duration: tagAddedEvent.duration});
+        duration: tagAddedEvent.duration,
+        tagType: tagAddedEvent.arenaTagType
+      });
       break;
     case TagRemovedEvent:
       const tagRemovedEvent = arenaEffectChangedEvent as TagRemovedEvent;
-      foundIndex = this.fieldEffectInfo.findIndex(info => info.name === ArenaTagType[tagRemovedEvent.arenaTagType]);
+      foundIndex = this.fieldEffectInfo.findIndex(info => info.tagType === tagRemovedEvent.arenaTagType);
+
       if (foundIndex !== -1) { // If the tag was being tracked, remove it
         this.fieldEffectInfo.splice(foundIndex, 1);
       }
@@ -296,16 +303,16 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
 
       // Stores the old Weather/Terrain name in case it's in the array already
       const oldName =
-      fieldEffectChangedEvent instanceof WeatherChangedEvent
-        ? WeatherType[fieldEffectChangedEvent.oldWeatherType]
-        : TerrainType[fieldEffectChangedEvent.oldTerrainType];
+        getFieldEffectText(fieldEffectChangedEvent instanceof WeatherChangedEvent
+          ? WeatherType[fieldEffectChangedEvent.oldWeatherType]
+          : TerrainType[fieldEffectChangedEvent.oldTerrainType]);
       // Stores the new Weather/Terrain info
       const newInfo = {
         name:
-          fieldEffectChangedEvent instanceof WeatherChangedEvent
+          getFieldEffectText(fieldEffectChangedEvent instanceof WeatherChangedEvent
             ? WeatherType[fieldEffectChangedEvent.newWeatherType]
-            : TerrainType[fieldEffectChangedEvent.newTerrainType],
-        type: fieldEffectChangedEvent instanceof WeatherChangedEvent
+            : TerrainType[fieldEffectChangedEvent.newTerrainType]),
+        effecType: fieldEffectChangedEvent instanceof WeatherChangedEvent
           ? ArenaEffectType.WEATHER
           : ArenaEffectType.TERRAIN,
         maxDuration: fieldEffectChangedEvent.duration,
@@ -360,17 +367,18 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
    * Animates the flyout to either show or hide it by applying a fade and translation
    * @param visible Should the flyout be shown?
    */
-  toggleFlyout(visible: boolean): void {
+  public toggleFlyout(visible: boolean): void {
     this.scene.tweens.add({
       targets: this.flyoutParent,
       x: visible ? this.anchorX : this.anchorX - this.translationX,
       duration: Utils.fixedInt(125),
       ease: "Sine.easeInOut",
       alpha: visible ? 1 : 0,
+      onComplete: () => this.timeOfDayWidget.parentVisible = visible,
     });
   }
 
-  destroy(fromScene?: boolean): void {
+  public destroy(fromScene?: boolean): void {
     this.battleScene.eventTarget.removeEventListener(BattleSceneEventType.NEW_ARENA, this.onNewArenaEvent);
     this.battleScene.eventTarget.removeEventListener(BattleSceneEventType.TURN_END,  this.onTurnEndEvent);
 
@@ -379,6 +387,6 @@ export default class ArenaFlyout extends Phaser.GameObjects.Container {
     this.battleScene.arena.eventTarget.removeEventListener(ArenaEventType.TAG_ADDED,       this.onFieldEffectChangedEvent);
     this.battleScene.arena.eventTarget.removeEventListener(ArenaEventType.TAG_REMOVED,     this.onFieldEffectChangedEvent);
 
-    super.destroy();
+    super.destroy(fromScene);
   }
 }
