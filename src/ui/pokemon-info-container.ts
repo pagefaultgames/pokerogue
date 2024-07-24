@@ -147,17 +147,13 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
     this.pokemonFormLabelText.setOrigin(1, 0);
     this.pokemonFormLabelText.setVisible(false);
     this.add(this.pokemonFormLabelText);
-    this.pokemonGenderLabelText = addTextObject(this.scene, infoContainerLabelXPos, 18, i18next.t("pokemonInfoContainer:gender"), TextStyle.WINDOW, { fontSize: infoContainerTextSize }, { width: 29 });
-    this.pokemonGenderLabelText.setOrigin(1, 0);
-    this.pokemonGenderLabelText.setVisible(false);
-    this.add(this.pokemonGenderLabelText);
 
     this.pokemonFormText = addTextObject(this.scene, infoContainerTextXPos, 19, "", TextStyle.WINDOW, { fontSize: infoContainerTextSize });
     this.pokemonFormText.setOrigin(0, 0);
     this.pokemonFormText.setVisible(false);
     this.add(this.pokemonFormText);
 
-    this.pokemonGenderText = addTextObject(this.scene, -42, -61, "", TextStyle.WINDOW, { fontSize: infoContainerTextSize });
+    this.pokemonGenderText = addTextObject(this.scene, -42, -61, "", TextStyle.WINDOW, { fontSize: infoContainerTextSize }, { width: 29 });
     this.pokemonGenderText.setOrigin(0, 0);
     this.pokemonGenderText.setVisible(false);
     this.pokemonGenderText.setName("text-pkmn-gender");
@@ -169,8 +165,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
     this.pokemonGenderNewText.setName("text-pkmn-new-gender");
     this.add(this.pokemonGenderNewText);
 
-    this.pokemonAbilityLabelText = addTextObject(this.scene, infoContainerLabelXPos, 29, i18next.t("pokemonInfoContainer:ability"), TextStyle.WINDOW, { fontSize: infoContainerTextSize });
-    this.pokemonAbilityLabelText = addTextObject(this.scene, infoContainerLabelXPos, 28, i18next.t("pokemonInfoContainer:ability"), TextStyle.WINDOW, { fontSize: infoContainerTextSize }, { width: 29 });
+    this.pokemonAbilityLabelText = addTextObject(this.scene, infoContainerLabelXPos, 29, i18next.t("pokemonInfoContainer:ability"), TextStyle.WINDOW, { fontSize: infoContainerTextSize }, { width: 29 });
     this.pokemonAbilityLabelText.setOrigin(1, 0);
     this.pokemonAbilityLabelText.setName("text-pkmn-ability-label");
     this.add(this.pokemonAbilityLabelText);
