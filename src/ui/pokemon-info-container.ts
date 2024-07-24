@@ -24,7 +24,9 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     infoContainerTextSize: "64px"
   },
   "de": {
-    infoContainerTextSize: "64px"
+    infoContainerTextSize: "60px",
+    infoContainerLabelXPos: -15,
+    infoContainerTextXPos: -12,
   },
   "es": {
     infoContainerTextSize: "64px"
@@ -180,7 +182,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
     this.pokemonNatureLabelText.setName("text-pkmn-nature-label");
     this.add(this.pokemonNatureLabelText);
 
-    this.pokemonNatureText = addBBCodeTextObject(this.scene, infoContainerTextXPos, 39, "", TextStyle.WINDOW, { fontSize: infoContainerTextSize, lineSpacing: 3, maxLines: 2 });
+    this.pokemonNatureText = addBBCodeTextObject(this.scene, infoContainerTextXPos, 39, "", TextStyle.WINDOW, { fontSize: infoContainerTextSize });
     this.pokemonNatureText.setOrigin(0, 0);
     this.pokemonNatureText.setName("text-pkmn-nature");
     this.add(this.pokemonNatureText);
