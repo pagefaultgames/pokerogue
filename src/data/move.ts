@@ -4337,7 +4337,6 @@ export class RemoveArenaTrapAttr extends MoveEffectAttr {
       user.scene.arena.removeTagOnSide(ArenaTagType.TOXIC_SPIKES, ArenaTagSide.PLAYER);
       user.scene.arena.removeTagOnSide(ArenaTagType.STEALTH_ROCK, ArenaTagSide.PLAYER);
       user.scene.arena.removeTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.PLAYER);
-      
 
       user.scene.arena.removeTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.ENEMY);
       user.scene.arena.removeTagOnSide(ArenaTagType.TOXIC_SPIKES, ArenaTagSide.ENEMY);
