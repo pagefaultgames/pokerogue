@@ -75,7 +75,7 @@ In `getNextMove()`, the enemy Pokémon chooses a move to use in the following st
 
 As part of the move selection process, the enemy Pokémon must compute a **target score (TS)** for each legal target for each move in its move pool. The base target score for all moves is a combination of the move's **user benefit score (UBS)** and **target benefit score (TBS)**.
 
-$$\text{TS(move, target)}=\text{UBS}+\text{TBS} \times \begin{cases} -1 && \text{if target is an opponent}\\ 1 && \text{otherwise} \end{cases}$$
+![equation](https://latex.codecogs.com/png.image?%5Cinline%20%5Cdpi%7B100%7D%5Cbg%7Bwhite%7D%5Ctext%7BTS%7D=%5Ctext%7BUBS%7D&plus;%5Ctext%7BTBS%7D%5Ctimes%5Cleft%5C%7B%5Cbegin%7Bmatrix%7D-1&%5Ctext%7Bif%20target%20is%20an%20opponent%7D%5C%5C1&%5Ctext%7Botherwise%7D%5C%5C%5Cend%7Bmatrix%7D%5Cright.)
 
 A move's UBS and TBS are computed with the respective functions in the `Move` class:
 
@@ -98,14 +98,14 @@ In addition to the base score from `Move.getTargetBenefitScore()`, attack moves 
 More specifically, the following steps are taken to compute the move's `attackScore`:
 1. Compute a multiplier based on the move's type effectiveness: 
 
-   $$\text{typeMult}=\begin{cases} 2 && \text{if move is super effective (or better)}\\ -2 && \text{otherwise} \end{cases}$$
+   ![typeMultEqn](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D%5Cbg%7Bwhite%7D%5Ctext%7BtypeMult%7D=%5Cleft%5C%7B%5Cbegin%7Bmatrix%7D2&&%5Ctext%7Bif%20move%20is%20super%20effective(or%20better)%7D%5C%5C-2&&%5Ctext%7Botherwise%7D%5C%5C%5Cend%7Bmatrix%7D%5Cright.)
 2. Compute a multiplier based on the move's category and the user's offensive stats:
    1. Compute the user's offensive stat ratio:
       
-      $$\text{statRatio}=\begin{cases} \frac{\text{userSpAtk}}{\text{userAtk}} && \text{if move is physical}\\ \frac{\text{userAtk}}{\text{userSpAtk}} && \text{otherwise} \end{cases}$$
+      ![statRatioEqn](https://latex.codecogs.com/png.image?%5Cinline%20%5Cdpi%7B100%7D%5Cbg%7Bwhite%7D%5Ctext%7BstatRatio%7D=%5Cleft%5C%7B%5Cbegin%7Bmatrix%7D%5Cfrac%7B%5Ctext%7BuserSpAtk%7D%7D%7B%5Ctext%7BuserAtk%7D%7D&%5Ctext%7Bif%20move%20is%20physical%7D%5C%5C%5Cfrac%7B%5Ctext%7BuserAtk%7D%7D%7B%5Ctext%7BuserSpAtk%7D%7D&%5Ctext%7Botherwise%7D%5C%5C%5Cend%7Bmatrix%7D%5Cright.)
    2. Compute the stat-based multiplier:
 
-      $$\text{statMult}=\begin{cases} 2 && \text{if statRatio}\le 0.75\\ 1.5 && \text{if }0.75 < \text{statRatio}\le 0.875\\ 1 && \text{otherwise} \end{cases}$$
+      ![statMultEqn](https://latex.codecogs.com/png.image?%5Cinline%20%5Cdpi%7B100%7D%5Cbg%7Bwhite%7D%5Ctext%7BstatMult%7D=%5Cleft%5C%7B%5Cbegin%7Bmatrix%7D2&%5Ctext%7Bif%20statRatio%7D%5Cle%200.75%5C%5C1.5&%5Ctext%7Bif%5C;%7D0.75%5Cle%5Ctext%7BstatRatio%7D%5Cle%200.875%5C%5C1&%5Ctext%7Botherwise%7D%5C%5C%5Cend%7Bmatrix%7D%5Cright.)
 3. Calculate the move's `attackScore`:
 
    $\text{attackScore} = (\text{typeMult}\times \text{statMult})+\lfloor \frac{\text{power}}{5} \rfloor$
@@ -125,13 +125,13 @@ The final step to calculate an attack move's target score (TS) is to multiply th
 
 The enemy's target selection for single-target moves works in a very similar way to its move selection. Each potential target is given a **target selection score (TSS)** which is based on the move's [target benefit score](#calculating-move-and-target-scores) for that target:
 
-$$\text{TSS} = \text{TBS} \times \begin{cases} -1 && \text{if target is an opponent} \\ 1 && \text{otherwise} \end{cases}$$
+![TSSEqn](https://latex.codecogs.com/png.image?%5Cinline%20%5Cdpi%7B100%7D%5Cbg%7Bwhite%7D%5Ctext%7BTSS%7D=%5Ctext%7BTBS%7D%5Ctimes%5Cleft%5C%7B%5Cbegin%7Bmatrix%7D-1&%5Ctext%7Bif%20target%20is%20an%20opponent%7D%5C%5C1&%5Ctext%7Botherwise%7D%5C%5C%5Cend%7Bmatrix%7D%5Cright.)
 
 Once the TSS is calculated for each target, the target is selected as follows:
 1. Sort the targets (indexes) in decreasing order of their target selection scores (or weights). Let $t_i$ be the index of the *i*-th target in the sorted list, and let $w_i$ be that target's corresponding TSS.
 2. Normalize the weights. Let $w_n$ be the lowest-weighted target in the sorted list, then:
    
-   $$W_i=\begin{cases} w_i + |w_n| && \text{if } w_n \text{ is negative}\\ w_i && \text{otherwise} \end{cases}$$
+   ![normWeightEqn](https://latex.codecogs.com/png.image?%5Cinline%20%5Cdpi%7B100%7D%5Cbg%7Bwhite%7DW_i=%5Cleft%5C%7B%5Cbegin%7Bmatrix%7Dw_i&plus;%7Cw_n%7C&%5Ctext%7Bif%5C;%7Dw_n%5C;%5Ctext%7Bis%20negative%7D%5C%5Cw_i&%5Ctext%7Botherwise%7D%5C%5C%5Cend%7Bmatrix%7D%5Cright.)
 3. Remove all weights from the list such that $W_i < \frac{W_0}{2}$
 4. Generate a random integer $R=\text{rand}(0, W_{\text{total}})$ where $W_{\text{total}}$ is the sum of all the remaining weights after Step 3.
 5. For each target $(t_i, W_i)$,
