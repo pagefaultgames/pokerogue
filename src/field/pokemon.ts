@@ -37,7 +37,7 @@ import { Nature, getNatureStatMultiplier } from "../data/nature";
 import { SpeciesFormChange, SpeciesFormChangeActiveTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangeStatusEffectTrigger } from "../data/pokemon-forms";
 import { TerrainType } from "../data/terrain";
 import { TrainerSlot } from "../data/trainer-config";
-import Overrides from "../overrides";
+import Overrides from "#app/overrides";
 import i18next from "i18next";
 import { speciesEggMoves } from "../data/egg-moves";
 import { ModifierTier } from "../modifier/modifier-tier";
@@ -50,6 +50,7 @@ import { BerryType } from "#enums/berry-type";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { getPokemonNameWithAffix } from "#app/messages.js";
 
 export enum FieldPosition {
   CENTER,
@@ -60,6 +61,7 @@ export enum FieldPosition {
 export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public id: integer;
   public name: string;
+  public nickname: string;
   public species: PokemonSpecies;
   public formIndex: integer;
   public abilityIndex: integer;
@@ -126,9 +128,19 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.species = species;
     this.pokeball = dataSource?.pokeball || PokeballType.POKEBALL;
     this.level = level;
-    this.abilityIndex = abilityIndex !== undefined
-      ? abilityIndex
-      : (species.abilityHidden && hasHiddenAbility ? species.ability2 ? 2 : 1 : species.ability2 ? randAbilityIndex : 0);
+    // Determine the ability index
+    if (abilityIndex !== undefined) {
+      this.abilityIndex = abilityIndex; // Use the provided ability index if it is defined
+    } else {
+      // If abilityIndex is not provided, determine it based on species and hidden ability
+      if (species.abilityHidden && hasHiddenAbility) {
+        // If the species has a hidden ability and the hidden ability is present
+        this.abilityIndex = species.ability2 ? 2 : 1; // Use ability index 2 if species has a second ability, otherwise use 1
+      } else {
+        // If there is no hidden ability or species does not have a hidden ability
+        this.abilityIndex = species.ability2 ? randAbilityIndex : 0; // Use random ability index if species has a second ability, otherwise use 0
+      }
+    }
     if (formIndex !== undefined) {
       this.formIndex = formIndex;
     }
@@ -153,6 +165,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         this.variant = 0;
       }
       this.nature = dataSource.nature || 0 as Nature;
+      this.nickname = dataSource.nickname;
       this.natureOverride = dataSource.natureOverride !== undefined ? dataSource.natureOverride : -1;
       this.moveset = dataSource.moveset;
       this.status = dataSource.status;
@@ -224,6 +237,19 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     this.calculateStats();
+  }
+
+
+  getNameToRender() {
+    try {
+      if (this.nickname) {
+        return decodeURIComponent(escape(atob(this.nickname)));
+      }
+      return this.name;
+    } catch (err) {
+      console.error(`Failed to decode nickname for ${this.name}`, err);
+      return this.name;
+    }
   }
 
   init(): void {
@@ -1154,7 +1180,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   getAttackMoveEffectiveness(source: Pokemon, pokemonMove: PokemonMove, ignoreAbility: boolean = false): TypeDamageMultiplier {
     const move = pokemonMove.getMove();
     const typeless = move.hasAttr(TypelessAttr);
-    const typeMultiplier = new Utils.NumberHolder(this.getAttackTypeEffectiveness(move.type, source));
+    const typeMultiplier = new Utils.NumberHolder(this.getAttackTypeEffectiveness(move, source));
     const cancelled = new Utils.BooleanHolder(false);
     applyMoveAttrs(VariableMoveTypeMultiplierAttr, source, this, move, typeMultiplier);
     if (!typeless && !ignoreAbility) {
@@ -1169,13 +1195,20 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Calculates the type effectiveness multiplier for an attack type
-   * @param moveType Type of the move
+   * @param moveOrType The move being used, or a type if the move is unknown
    * @param source the Pokemon using the move
    * @param ignoreStrongWinds whether or not this ignores strong winds (anticipation, forewarn, stealth rocks)
    * @param simulated tag to only apply the strong winds effect message when the move is used
    * @returns a multiplier for the type effectiveness
    */
-  getAttackTypeEffectiveness(moveType: Type, source?: Pokemon, ignoreStrongWinds: boolean = false, simulated: boolean = true): TypeDamageMultiplier {
+  getAttackTypeEffectiveness(moveOrType: Move | Type, source?: Pokemon, ignoreStrongWinds: boolean = false, simulated: boolean = true): TypeDamageMultiplier {
+    const move = (moveOrType instanceof Move)
+      ? moveOrType
+      : undefined;
+    const moveType = (moveOrType instanceof Move)
+      ? move.type
+      : moveOrType;
+
     if (moveType === Type.STELLAR) {
       return this.isTerastallized() ? 2 : 1;
     }
@@ -1203,9 +1236,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
 
-    if (!!this.summonData?.tags.find((tag) => tag instanceof TypeImmuneTag && tag.immuneType === moveType)) {
-      multiplier = 0;
-    }
+    const immuneTags = this.findTags(tag => tag instanceof TypeImmuneTag && tag.immuneType === moveType);
+    immuneTags.forEach(tag => {
+      if (move !== undefined) {
+        const hitsTagAttrs = move.getAttrs(HitsTagAttr).filter(attr => attr.tagType === tag.tagType);
+        if (hitsTagAttrs.length === 0) {
+          multiplier = 0;
+        }
+      }
+    });
 
     return multiplier;
   }
@@ -1790,7 +1829,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const cancelled = new Utils.BooleanHolder(false);
     const typeless = move.hasAttr(TypelessAttr);
     const typeMultiplier = new Utils.NumberHolder(!typeless && (moveCategory !== MoveCategory.STATUS || move.getAttrs(StatusMoveTypeImmunityAttr).find(attr => types.includes(attr.immuneType)))
-      ? this.getAttackTypeEffectiveness(move.type, source, false, false)
+      ? this.getAttackTypeEffectiveness(move, source, false, false)
       : 1);
     applyMoveAttrs(VariableMoveTypeMultiplierAttr, source, this, move, typeMultiplier);
     if (typeless) {
@@ -2019,6 +2058,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
            */
           damage.value = this.damageAndUpdate(damage.value, result as DamageResult, isCritical, isOneHitKo, isOneHitKo, true);
           this.turnData.damageTaken += damage.value;
+
           if (isCritical) {
             this.scene.queueMessage(i18next.t("battle:hitResultCriticalHit"));
           }
@@ -2038,7 +2078,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           }
         }
 
-        if (source.turnData.hitsLeft === 1) {
+        // want to include is.Fainted() in case multi hit move ends early, still want to render message
+        if (source.turnData.hitsLeft === 1 || this.isFainted()) {
           switch (result) {
           case HitResult.SUPER_EFFECTIVE:
             this.scene.queueMessage(i18next.t("battle:hitResultSuperEffective"));
@@ -2047,7 +2088,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             this.scene.queueMessage(i18next.t("battle:hitResultNotVeryEffective"));
             break;
           case HitResult.NO_EFFECT:
-            this.scene.queueMessage(i18next.t("battle:hitResultNoEffect", { pokemonName: this.name }));
+            this.scene.queueMessage(i18next.t("battle:hitResultNoEffect", { pokemonName: getPokemonNameWithAffix(this) }));
             break;
           case HitResult.IMMUNE:
             this.scene.queueMessage(`${this.name} is unaffected!`);
@@ -2059,13 +2100,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         }
 
         if (this.isFainted()) {
+          // set splice index here, so future scene queues happen before FaintedPhase
+          this.scene.setPhaseQueueSplice();
           this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), isOneHitKo));
           this.resetSummonData();
         }
 
         if (damage) {
-          this.scene.clearPhaseQueueSplice();
-
           const attacker = this.scene.getPokemonById(source.id);
           destinyTag?.lapse(attacker, BattlerTagLapseType.CUSTOM);
         }
@@ -2080,7 +2121,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         defendingSidePlayField.forEach((p) => applyPreDefendAbAttrs(FieldPriorityMoveImmunityAbAttr, p, source, move, cancelled, typeMultiplier));
       }
       if (!typeMultiplier.value) {
-        this.scene.queueMessage(i18next.t("battle:hitResultNoEffect", { pokemonName: this.name }));
+        this.scene.queueMessage(i18next.t("battle:hitResultNoEffect", { pokemonName: getPokemonNameWithAffix(this) }));
       }
       result = cancelled.value || !typeMultiplier.value ? HitResult.NO_EFFECT : HitResult.STATUS;
       break;
@@ -2089,6 +2130,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return result;
   }
 
+  /**
+   * Called by damageAndUpdate()
+   * @param damage integer
+   * @param ignoreSegments boolean, not currently used
+   * @param preventEndure  used to update damage if endure or sturdy
+   * @param ignoreFaintPhase  flag on wheter to add FaintPhase if pokemon after applying damage faints
+   * @returns integer representing damage
+   */
   damage(damage: integer, ignoreSegments: boolean = false, preventEndure: boolean = false, ignoreFaintPhase: boolean = false): integer {
     if (this.isFainted()) {
       return 0;
@@ -2110,9 +2159,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     damage = Math.min(damage, this.hp);
-
     this.hp = this.hp - damage;
     if (this.isFainted() && !ignoreFaintPhase) {
+      /**
+       * When adding the FaintPhase, want to toggle future unshiftPhase() and queueMessage() calls
+       * to appear before the FaintPhase (as FaintPhase will potentially end the encounter and add Phases such as
+       * GameOverPhase, VictoryPhase, etc.. that will interfere with anything else that happens during this MoveEffectPhase)
+       *
+       * Once the MoveEffectPhase is over (and calls it's .end() function, shiftPhase() will reset the PhaseQueueSplice via clearPhaseQueueSplice() )
+       */
+      this.scene.setPhaseQueueSplice();
       this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), preventEndure));
       this.resetSummonData();
     }
@@ -2120,6 +2176,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return damage;
   }
 
+  /**
+   * Called by apply(), given the damage, adds a new DamagePhase and actually updates HP values, etc.
+   * @param damage integer - passed to damage()
+   * @param result an enum if it's super effective, not very, etc.
+   * @param critical boolean if move is a critical hit
+   * @param ignoreSegments boolean, passed to damage() and not used currently
+   * @param preventEndure boolean, ignore endure properties of pokemon, passed to damage()
+   * @param ignoreFaintPhase boolean to ignore adding a FaintPhase, passsed to damage()
+   * @returns integer of damage done
+   */
   damageAndUpdate(damage: integer, result?: DamageResult, critical: boolean = false, ignoreSegments: boolean = false, preventEndure: boolean = false, ignoreFaintPhase: boolean = false): integer {
     const damagePhase = new DamagePhase(this.scene, this.getBattlerIndex(), damage, result as DamageResult, critical);
     this.scene.unshiftPhase(damagePhase);
@@ -2166,13 +2232,19 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return false;
   }
 
+  /** @overload */
+  getTag(tagType: BattlerTagType): BattlerTag;
+
+  /** @overload */
+  getTag<T extends BattlerTag>(tagType: Constructor<T>): T;
+
   getTag(tagType: BattlerTagType | Constructor<BattlerTag>): BattlerTag {
     if (!this.summonData) {
       return null;
     }
-    return typeof(tagType) === "string"
-      ? this.summonData.tags.find(t => t.tagType === tagType)
-      : this.summonData.tags.find(t => t instanceof tagType);
+    return tagType instanceof Function
+      ? this.summonData.tags.find(t => t instanceof tagType)
+      : this.summonData.tags.find(t => t.tagType === tagType);
   }
 
   findTag(tagFilter: ((tag: BattlerTag) => boolean)) {
@@ -2180,15 +2252,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return null;
     }
     return this.summonData.tags.find(t => tagFilter(t));
-  }
-
-  getTags(tagType: BattlerTagType | Constructor<BattlerTag>): BattlerTag[] {
-    if (!this.summonData) {
-      return [];
-    }
-    return typeof(tagType) === "string"
-      ? this.summonData.tags.filter(t => t.tagType === tagType)
-      : this.summonData.tags.filter(t => t instanceof tagType);
   }
 
   findTags(tagFilter: ((tag: BattlerTag) => boolean)): BattlerTag[] {
@@ -3251,14 +3314,19 @@ export class PlayerPokemon extends Pokemon {
       }
       this.generateName();
       if (!isFusion) {
+        // Prevent pokemon with an illegal ability value from breaking things too badly
         const abilityCount = this.getSpeciesForm().getAbilityCount();
-        if (this.abilityIndex >= abilityCount) { // Shouldn't happen
-          this.abilityIndex = abilityCount - 1;
+        if (this.abilityIndex >= abilityCount) {
+          console.warn("this.abilityIndex is somehow an illegal value, please report this");
+          console.warn(this.abilityIndex);
+          this.abilityIndex = 0;
         }
-      } else {
+      } else { // Do the same as above, but for fusions
         const abilityCount = this.getFusionSpeciesForm().getAbilityCount();
-        if (this.fusionAbilityIndex >= abilityCount) {// Shouldn't happen
-          this.fusionAbilityIndex = abilityCount - 1;
+        if (this.fusionAbilityIndex >= abilityCount) {
+          console.warn("this.fusionAbilityIndex is somehow an illegal value, please report this");
+          console.warn(this.fusionAbilityIndex);
+          this.fusionAbilityIndex = 0;
         }
       }
       this.compatibleTms.splice(0, this.compatibleTms.length);

@@ -2,7 +2,7 @@ import { BerryType } from "#app/enums/berry-type";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import { Button } from "#app/enums/buttons";
-import overrides from "#app/overrides";
+import Overrides from "#app/overrides";
 import {
   BattleEndPhase,
   SelectModifierPhase
@@ -33,17 +33,17 @@ describe("UI - Transfer Items", () => {
 
   beforeEach(async () => {
     game = new GameManager(phaserGame);
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
-    vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(1);
-    vi.spyOn(overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([
+    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
+    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(1);
+    vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([
       { name: "BERRY", count: 1, type: BerryType.SITRUS },
       { name: "BERRY", count: 2, type: BerryType.APICOT },
       { name: "BERRY", count: 2, type: BerryType.LUM },
     ]);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.DRAGON_CLAW]);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH]);
+    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.DRAGON_CLAW]);
+    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
+    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH]);
 
     await game.startBattle([Species.RAYQUAZA, Species.RAYQUAZA, Species.RAYQUAZA]);
 

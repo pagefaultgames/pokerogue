@@ -1,7 +1,7 @@
 import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
 import { BattleEndPhase, MoveEndPhase, MovePhase, NewBattlePhase, PartyStatusCurePhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../phases";
 import { BattleStat, getBattleStatName } from "./battle-stat";
-import { EncoreTag, HelpingHandTag, SemiInvulnerableTag, TypeBoostTag } from "./battler-tags";
+import { EncoreTag, HelpingHandTag, SemiInvulnerableTag, StockpilingTag, TypeBoostTag } from "./battler-tags";
 import { getPokemonMessage, getPokemonNameWithAffix } from "../messages";
 import Pokemon, { AttackMoveResult, EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../field/pokemon";
 import { StatusEffect, getStatusEffectHealText, isNonVolatileStatusEffect, getNonVolatileStatusEffects} from "./status-effect";
@@ -955,9 +955,9 @@ export class MoveEffectAttr extends MoveAttr {
    * @param selfEffect {@linkcode Boolean} if move targets user.
    * @returns Move chance value.
    */
-  getMoveChance(user: Pokemon, target: Pokemon, move: Move, selfEffect?: Boolean): integer {
+  getMoveChance(user: Pokemon, target: Pokemon, move: Move, selfEffect?: Boolean, showAbility?: Boolean): integer {
     const moveChance = new Utils.NumberHolder(move.chance);
-    applyAbAttrs(MoveEffectChanceMultiplierAbAttr, user, null, moveChance, move, target, selfEffect);
+    applyAbAttrs(MoveEffectChanceMultiplierAbAttr, user, null, moveChance, move, target, selfEffect, showAbility);
     applyPreDefendAbAttrs(IgnoreMoveEffectsAbAttr,target,user,null,null, moveChance);
     return moveChance.value;
   }
@@ -1614,11 +1614,11 @@ export class HitHealAttr extends MoveEffectAttr {
     if (this.healStat) {
       // Strength Sap formula
       healAmount = target.getBattleStat(this.healStat);
-      message = i18next.t("battle:drainMessage", {pokemonName: target.name});
+      message = i18next.t("battle:drainMessage", {pokemonName: getPokemonNameWithAffix(target)});
     } else {
       // Default healing formula used by draining moves like Absorb, Draining Kiss, Bitter Blade, etc.
       healAmount = Math.max(Math.floor(user.turnData.currDamageDealt * this.healRatio), 1);
-      message = i18next.t("battle:regainHealth", {pokemonName: user.name});
+      message = i18next.t("battle:regainHealth", {pokemonName: getPokemonNameWithAffix(user)});
     }
     if (reverseDrain) {
       user.turnData.damageTaken += healAmount;
@@ -1805,7 +1805,7 @@ export class StatusEffectAttr extends MoveEffectAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const moveChance = this.getMoveChance(user,target,move,this.selfTarget);
+    const moveChance = this.getMoveChance(user, target, move, this.selfTarget, true);
     const statusCheck = moveChance < 0 || moveChance === 100 || user.randSeedInt(100) < moveChance;
     if (statusCheck) {
       const pokemon = this.selfTarget ? user : target;
@@ -1826,7 +1826,7 @@ export class StatusEffectAttr extends MoveEffectAttr {
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    const moveChance = this.getMoveChance(user,target,move,this.selfTarget);
+    const moveChance = this.getMoveChance(user, target, move, this.selfTarget, false);
     return !(this.selfTarget ? user : target).status && (this.selfTarget ? user : target).canSetStatus(this.effect, true, false, user) ? Math.floor(moveChance * -0.1) : 0;
   }
 }
@@ -1846,7 +1846,7 @@ export class MultiStatusEffectAttr extends StatusEffectAttr {
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    const moveChance = this.getMoveChance(user,target,move,this.selfTarget);
+    const moveChance = this.getMoveChance(user, target, move, this.selfTarget, false);
     return !(this.selfTarget ? user : target).status && (this.selfTarget ? user : target).canSetStatus(this.effect, true, false, user) ? Math.floor(moveChance * -0.1) : 0;
   }
 }
@@ -2416,7 +2416,7 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
       if (args.length < 2 || !args[1]) {
         new MoveChargeAnim(this.chargeAnim, move.id, user).play(user.scene, () => {
           (args[0] as Utils.BooleanHolder).value = true;
-          user.scene.queueMessage(getPokemonMessage(user, ` ${this.chargeText.replace("{TARGET}", target.name)}`));
+          user.scene.queueMessage(getPokemonMessage(user, ` ${this.chargeText.replace("{TARGET}", getPokemonNameWithAffix(target))}`));
           user.pushMoveHistory({ move: move.id, targets: [ target.getBattlerIndex() ], result: MoveResult.OTHER });
           user.scene.arena.addTag(this.tagType, 3, move.id, user.id, ArenaTagSide.BOTH, false, target.getBattlerIndex());
 
@@ -2450,7 +2450,7 @@ export class StatChangeAttr extends MoveEffectAttr {
       return false;
     }
 
-    const moveChance = this.getMoveChance(user,target,move,this.selfTarget);
+    const moveChance = this.getMoveChance(user, target, move, this.selfTarget, true);
     if (moveChance < 0 || moveChance === 100 || user.randSeedInt(100) < moveChance) {
       const levels = this.getLevels(user);
       user.scene.unshiftPhase(new StatChangePhase(user.scene, (this.selfTarget ? user : target).getBattlerIndex(), this.selfTarget, this.stats, levels, this.showMessage));
@@ -3296,6 +3296,62 @@ export class WaterShurikenPowerAttr extends VariablePowerAttr {
 }
 
 /**
+ * Attribute used to calculate the power of attacks that scale with Stockpile stacks (i.e. Spit Up).
+ */
+export class SpitUpPowerAttr extends VariablePowerAttr {
+  private multiplier: number = 0;
+
+  constructor(multiplier: number) {
+    super();
+    this.multiplier = multiplier;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const stockpilingTag = user.getTag(StockpilingTag);
+
+    if (stockpilingTag?.stockpiledCount > 0) {
+      const power = args[0] as Utils.IntegerHolder;
+      power.value = this.multiplier * stockpilingTag.stockpiledCount;
+      return true;
+    }
+
+    return false;
+  }
+}
+
+/**
+ * Attribute used to apply Swallow's healing, which scales with Stockpile stacks.
+ * Does NOT remove stockpiled stacks.
+ */
+export class SwallowHealAttr extends HealAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const stockpilingTag = user.getTag(StockpilingTag);
+
+    if (stockpilingTag?.stockpiledCount > 0) {
+      const stockpiled = stockpilingTag.stockpiledCount;
+      let healRatio: number;
+
+      if (stockpiled === 1) {
+        healRatio = 0.25;
+      } else if (stockpiled === 2) {
+        healRatio = 0.50;
+      } else { // stockpiled >= 3
+        healRatio = 1.00;
+      }
+
+      if (healRatio) {
+        this.addHealPhase(user, healRatio);
+        return true;
+      }
+    }
+
+    return false;
+  }
+}
+
+const hasStockpileStacksCondition: MoveConditionFunc = (user) => user.getTag(StockpilingTag)?.stockpiledCount > 0;
+
+/**
  * Attribute used for multi-hit moves that increase power in increments of the
  * move's base power for each hit, namely Triple Kick and Triple Axel.
  * @extends VariablePowerAttr
@@ -4045,7 +4101,7 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
       return false;
     }
 
-    const moveChance = this.getMoveChance(user,target,move,this.selfTarget);
+    const moveChance = this.getMoveChance(user, target, move, this.selfTarget, true);
     if (moveChance < 0 || moveChance === 100 || user.randSeedInt(100) < moveChance) {
       return (this.selfTarget ? user : target).addTag(this.tagType,  user.randSeedInt(this.turnCountMax - this.turnCountMin, this.turnCountMin), move.id, user.id);
     }
@@ -4104,7 +4160,7 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
-    let moveChance = this.getMoveChance(user,target,move,this.selfTarget);
+    let moveChance = this.getMoveChance(user,target,move,this.selfTarget, false);
     if (moveChance < 0) {
       moveChance = 100;
     }
@@ -4125,7 +4181,7 @@ export class CurseAttr extends MoveEffectAttr {
       user.scene.queueMessage(
         i18next.t("battle:battlerTagsCursedOnAdd", {
           pokemonNameWithAffix: getPokemonNameWithAffix(user),
-          pokemonName: target.name
+          pokemonName: getPokemonNameWithAffix(target)
         })
       );
 
@@ -4413,7 +4469,7 @@ export class AddArenaTrapTagHitAttr extends AddArenaTagAttr {
    * @param move {@linkcode Move} being used
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const moveChance = this.getMoveChance(user,target,move,this.selfTarget);
+    const moveChance = this.getMoveChance(user,target,move,this.selfTarget, true);
     const side = (this.selfSideTarget ? user : target).isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
     const tag = user.scene.arena.getTagOnSide(this.tagType, side) as ArenaTrapTag;
     if ((moveChance < 0 || moveChance === 100 || user.randSeedInt(100) < moveChance)) {
@@ -4533,7 +4589,7 @@ export class SwapArenaTagsAttr extends MoveEffectAttr {
     }
 
 
-    user.scene.queueMessage( `${user.name} swapped the battle effects affecting each side of the field!`);
+    user.scene.queueMessage( `${getPokemonNameWithAffix(user)} swapped the battle effects affecting each side of the field!`);
     return true;
   }
 }
@@ -4574,7 +4630,7 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
         const slotIndex = user.scene.getEnemyParty().findIndex(p => pokemon.id === p.id);
         pokemon.resetStatus();
         pokemon.heal(Math.min(Math.max(Math.ceil(Math.floor(0.5 * pokemon.getMaxHp())), 1), pokemon.getMaxHp()));
-        user.scene.queueMessage(`${pokemon.name} was revived!`,0,true);
+        user.scene.queueMessage(`${getPokemonNameWithAffix(pokemon)} was revived!`,0,true);
 
         if (user.scene.currentBattle.double && user.scene.getEnemyParty().length > 1) {
           const allyPokemon = user.getAlly();
@@ -4765,7 +4821,7 @@ export class CopyTypeAttr extends MoveEffectAttr {
     user.summonData.types = target.getTypes(true);
     user.updateInfo();
 
-    user.scene.queueMessage(getPokemonMessage(user, `'s type\nchanged to match ${target.name}'s!`));
+    user.scene.queueMessage(getPokemonMessage(user, `'s type\nchanged to match ${getPokemonNameWithAffix(target)}'s!`));
 
     return true;
   }
@@ -5147,7 +5203,7 @@ export class ReducePpMoveAttr extends MoveEffectAttr {
     const lastPpUsed = movesetMove.ppUsed;
     movesetMove.ppUsed = Math.min(movesetMove.ppUsed + this.reduction, movesetMove.getMovePp());
 
-    const message = i18next.t("battle:ppReduced", {targetName: target.name, moveName: movesetMove.getName(), reduction: movesetMove.ppUsed - lastPpUsed});
+    const message = i18next.t("battle:ppReduced", {targetName: getPokemonNameWithAffix(target), moveName: movesetMove.getName(), reduction: movesetMove.ppUsed - lastPpUsed});
 
     user.scene.queueMessage(message);
 
@@ -6310,6 +6366,7 @@ export function initMoves() {
       .attr(ResistLastMoveTypeAttr)
       .partial(), // Checks the move's original typing and not if its type is changed through some other means
     new AttackMove(Moves.AEROBLAST, Type.FLYING, MoveCategory.SPECIAL, 100, 95, 5, -1, 0, 2)
+      .windMove()
       .attr(HighCritAttr),
     new StatusMove(Moves.COTTON_SPORE, Type.GRASS, 100, 40, -1, 0, 2)
       .attr(StatChangeAttr, BattleStat.SPD, -2)
@@ -6535,12 +6592,17 @@ export function initMoves() {
       .target(MoveTarget.RANDOM_NEAR_ENEMY)
       .partial(),
     new SelfStatusMove(Moves.STOCKPILE, Type.NORMAL, -1, 20, -1, 0, 3)
-      .unimplemented(),
-    new AttackMove(Moves.SPIT_UP, Type.NORMAL, MoveCategory.SPECIAL, -1, 100, 10, -1, 0, 3)
-      .unimplemented(),
+      .condition(user => (user.getTag(StockpilingTag)?.stockpiledCount ?? 0) < 3)
+      .attr(AddBattlerTagAttr, BattlerTagType.STOCKPILING, true),
+    new AttackMove(Moves.SPIT_UP, Type.NORMAL, MoveCategory.SPECIAL, -1, -1, 10, -1, 0, 3)
+      .condition(hasStockpileStacksCondition)
+      .attr(SpitUpPowerAttr, 100)
+      .attr(RemoveBattlerTagAttr, [BattlerTagType.STOCKPILING], true),
     new SelfStatusMove(Moves.SWALLOW, Type.NORMAL, -1, 10, -1, 0, 3)
-      .triageMove()
-      .unimplemented(),
+      .condition(hasStockpileStacksCondition)
+      .attr(SwallowHealAttr)
+      .attr(RemoveBattlerTagAttr, [BattlerTagType.STOCKPILING], true)
+      .triageMove(),
     new AttackMove(Moves.HEAT_WAVE, Type.FIRE, MoveCategory.SPECIAL, 95, 90, 10, 10, 0, 3)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
       .attr(StatusEffectAttr, StatusEffect.BURN)
@@ -7531,6 +7593,7 @@ export function initMoves() {
       .attr(NeutralDamageAgainstFlyingTypeMultiplierAttr)
       .attr(AddBattlerTagAttr, BattlerTagType.IGNORE_FLYING, false, false, 1, 1, true)
       .attr(HitsTagAttr, BattlerTagType.FLYING, false)
+      .attr(HitsTagAttr, BattlerTagType.MAGNET_RISEN, false)
       .attr(AddBattlerTagAttr, BattlerTagType.INTERRUPTED)
       .attr(RemoveBattlerTagAttr, [BattlerTagType.FLYING, BattlerTagType.MAGNET_RISEN])
       .makesContact(false)
@@ -7945,7 +8008,7 @@ export function initMoves() {
       .attr(EatBerryAttr)
       .attr(StatChangeAttr, BattleStat.DEF, 2, true)
       .condition((user) => {
-        const userBerries = user.scene.findModifiers(m => m instanceof BerryModifier);
+        const userBerries = user.scene.findModifiers(m => m instanceof BerryModifier, user.isPlayer());
         return userBerries.length > 0;
       })
       .partial(),
@@ -8168,8 +8231,9 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.BURN),
     new StatusMove(Moves.JUNGLE_HEALING, Type.GRASS, -1, 10, -1, 0, 8)
       .attr(HealAttr, 0.25, true, false)
-      .target(MoveTarget.USER_AND_ALLIES)
-      .partial(),
+      .attr(HealStatusEffectAttr, true, StatusEffect.PARALYSIS, StatusEffect.POISON, StatusEffect.TOXIC, StatusEffect.BURN, StatusEffect.SLEEP)
+      .attr(HealStatusEffectAttr, false, StatusEffect.PARALYSIS, StatusEffect.POISON, StatusEffect.TOXIC, StatusEffect.BURN, StatusEffect.SLEEP)
+      .target(MoveTarget.USER_AND_ALLIES),
     new AttackMove(Moves.WICKED_BLOW, Type.DARK, MoveCategory.PHYSICAL, 75, 100, 5, -1, 0, 8)
       .attr(CritOnlyAttr)
       .punchingMove(),
@@ -8272,9 +8336,10 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new StatusMove(Moves.LUNAR_BLESSING, Type.PSYCHIC, -1, 5, -1, 0, 8)
       .attr(HealAttr, 0.25)
+      .attr(HealStatusEffectAttr, true, StatusEffect.PARALYSIS, StatusEffect.POISON, StatusEffect.TOXIC, StatusEffect.BURN, StatusEffect.SLEEP)
+      .attr(HealStatusEffectAttr, false, StatusEffect.PARALYSIS, StatusEffect.POISON, StatusEffect.TOXIC, StatusEffect.BURN, StatusEffect.SLEEP)
       .target(MoveTarget.USER_AND_ALLIES)
-      .triageMove()
-      .partial(),
+      .triageMove(),
     new SelfStatusMove(Moves.TAKE_HEART, Type.PSYCHIC, -1, 10, -1, 0, 8)
       .attr(StatChangeAttr, [ BattleStat.SPATK, BattleStat.SPDEF ], 1, true)
       .attr(HealStatusEffectAttr, true, StatusEffect.PARALYSIS, StatusEffect.POISON, StatusEffect.TOXIC, StatusEffect.BURN, StatusEffect.SLEEP),
