@@ -2,7 +2,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
 import Overrides from "#app/overrides";
-import { DamagePhase, MoveEffectPhase } from "#app/phases";
+import { DamagePhase, TurnEndPhase } from "#app/phases";
 import { Moves } from "#enums/moves";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
@@ -63,22 +63,28 @@ describe("Moves - Fissure", () => {
   });
 
   it("ignores accuracy stat", async () => {
-    const fissurePokemonMove = partyPokemon.getMoveset()[getMovePosition(game.scene, 0, Moves.FISSURE)];
-    const moveEffectPhase = new MoveEffectPhase(game.scene, partyPokemon.getFieldIndex(), [enemyPokemon.getFieldIndex()], fissurePokemonMove);
+    vi.spyOn(partyPokemon, "getAccuracyMultiplier");
 
-    partyPokemon.summonData.battleStats[BattleStat.ACC] = 6;
-    const accuracyMultiplier = partyPokemon.getAccuracyMultiplier(enemyPokemon, moveEffectPhase.move.getMove());
+    enemyPokemon.summonData.battleStats[BattleStat.EVA] = 6;
 
-    expect(accuracyMultiplier).toBe(1);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.FISSURE));
+
+    // wait for TurnEndPhase instead of DamagePhase as fissure might not actually inflict damage
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    expect(partyPokemon.getAccuracyMultiplier).toHaveReturnedWith(1);
   });
 
   it("ignores evasion stat", async () => {
-    const fissurePokemonMove = partyPokemon.getMoveset()[getMovePosition(game.scene, 0, Moves.FISSURE)];
-    const moveEffectPhase = new MoveEffectPhase(game.scene, partyPokemon.getFieldIndex(), [enemyPokemon.getFieldIndex()], fissurePokemonMove);
+    vi.spyOn(partyPokemon, "getAccuracyMultiplier");
 
     enemyPokemon.summonData.battleStats[BattleStat.EVA] = 6;
-    const accuracyMultiplier = partyPokemon.getAccuracyMultiplier(enemyPokemon, moveEffectPhase.move.getMove());
 
-    expect(accuracyMultiplier).toBe(1);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.FISSURE));
+
+    // wait for TurnEndPhase instead of DamagePhase as fissure might not actually inflict damage
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    expect(partyPokemon.getAccuracyMultiplier).toHaveReturnedWith(1);
   });
 });
