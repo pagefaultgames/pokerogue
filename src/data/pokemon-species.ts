@@ -177,12 +177,40 @@ export abstract class PokemonSpeciesForm {
     return this.type1 === type || (this.type2 !== null && this.type2 === type);
   }
 
+  /**
+   * Method to get the total number of abilities a Pokemon species has.
+   * @returns Number of abilities
+   */
   getAbilityCount(): integer {
-    return this.ability2 ? this.abilityHidden ? 3 : 2 : this.abilityHidden ? 2 : 1;
+    let count = 1;
+    if (this.ability2 !== Abilities.NONE) {
+      count += 1;
+    }
+    if (this.abilityHidden !== Abilities.NONE) {
+      count += 1;
+    }
+    return count;
   }
 
+  /**
+   * Method to get the ability of a Pokemon species.
+   * @param abilityIndex Which ability to get (should only be 0-2)
+   * @returns The id of the Ability
+   */
   getAbility(abilityIndex: integer): Abilities {
-    return !abilityIndex ? this.ability1 : abilityIndex === 1 && this.ability2 ? this.ability2 : this.abilityHidden;
+    let ret: Abilities;
+    if (abilityIndex === 0) {
+      ret = this.ability1;
+    } else if (abilityIndex === 1) {
+      if (this.ability2 !== Abilities.NONE) {
+        ret = this.ability2;
+      } else {
+        ret = this.abilityHidden;
+      }
+    } else {
+      ret = this.abilityHidden;
+    }
+    return ret;
   }
 
   getLevelMoves(): LevelMoves {

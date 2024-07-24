@@ -1,7 +1,7 @@
 import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
-import overrides from "#app/overrides";
+import Overrides from "#app/overrides";
 import { Abilities } from "#enums/abilities";
 import {applyAbAttrs ,applyPreDefendAbAttrs,IgnoreMoveEffectsAbAttr,MoveEffectChanceMultiplierAbAttr} from "#app/data/ability";
 import {Species} from "#enums/species";
@@ -34,12 +34,12 @@ describe("Abilities - Shield Dust", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     const movesToUse = [Moves.AIR_SLASH];
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.ONIX);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.SHIELD_DUST);
-    vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue(movesToUse);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
+    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
+    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.ONIX);
+    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.SHIELD_DUST);
+    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue(movesToUse);
+    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
   });
 
   it("Shield Dust", async() => {

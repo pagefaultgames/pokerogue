@@ -5,7 +5,7 @@ import { IntegerHolder, NumberHolder } from "#app/utils.js";
 import { TurnHeldItemTransferModifier } from "#app/modifier/modifier.js";
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
-import overrides from "#app/overrides";
+import Overrides from "#app/overrides";
 
 describe("check some Achievement related stuff", () => {
   it ("should check Achievement creation", () => {
@@ -103,14 +103,12 @@ describe("RibbonAchv", () => {
   });
 
   beforeEach(() => {
-    vi.spyOn(overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(0);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(0);
-    vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(0);
-    vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(0);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([]);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([]);
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(false);
-    vi.spyOn(overrides, "DOUBLE_BATTLE_OVERRIDE", "get").mockReturnValue(false);
+    vi.spyOn(Overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(0);
+    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(0);
+    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(0);
+    vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(0);
+    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([]);
+    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([]);
     game = new GameManager(phaserGame);
     scene = game.scene;
   });

@@ -1,5 +1,5 @@
 import { CommonAnim, CommonBattleAnim } from "./battle-anims";
-import { CommonAnimPhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
+import { CommonAnimPhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangeCallback, StatChangePhase } from "../phases";
 import { getPokemonNameWithAffix } from "../messages";
 import Pokemon, { MoveResult, HitResult } from "../field/pokemon";
 import { Stat, getStatName } from "./pokemon-stat";
@@ -92,25 +92,29 @@ export interface TerrainBattlerTag {
   terrainTypes: TerrainType[];
 }
 
+/**
+ * BattlerTag that represents the "recharge" effects of moves like Hyper Beam.
+ */
 export class RechargingTag extends BattlerTag {
   constructor(sourceMove: Moves) {
-    super(BattlerTagType.RECHARGING, BattlerTagLapseType.PRE_MOVE, 1, sourceMove);
+    super(BattlerTagType.RECHARGING, [ BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END ], 2, sourceMove);
   }
 
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
+    // Queue a placeholder move for the Pokemon to "use" next turn
     pokemon.getMoveQueue().push({ move: Moves.NONE, targets: [] });
   }
 
+  /** Cancels the source's move this turn and queues a "__ must recharge!" message */
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    super.lapse(pokemon, lapseType);
-
-    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsRechargingLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
-    (pokemon.scene.getCurrentPhase() as MovePhase).cancel();
-    pokemon.getMoveQueue().shift();
-
-    return true;
+    if (lapseType === BattlerTagLapseType.PRE_MOVE) {
+      pokemon.scene.queueMessage(i18next.t("battle:battlerTagsRechargingLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+      (pokemon.scene.getCurrentPhase() as MovePhase).cancel();
+      pokemon.getMoveQueue().shift();
+    }
+    return super.lapse(pokemon, lapseType);
   }
 }
 
@@ -1583,6 +1587,94 @@ export class IceFaceTag extends BattlerTag {
   }
 }
 
+/**
+ * Battler tag enabling the Stockpile mechanic. This tag handles:
+ * - Stack tracking, including max limit enforcement (which is replicated in Stockpile for redundancy).
+ *
+ * - Stat changes on adding a stack. Adding a stockpile stack attempts to raise the pokemon's DEF and SPDEF by +1.
+ *
+ * - Stat changes on removal of (all) stacks.
+ *   - Removing stacks decreases DEF and SPDEF, independently, by one stage for each stack that successfully changed
+ *     the stat when added.
+ */
+export class StockpilingTag extends BattlerTag {
+  public stockpiledCount: number = 0;
+  public statChangeCounts: { [BattleStat.DEF]: number; [BattleStat.SPDEF]: number } = {
+    [BattleStat.DEF]: 0,
+    [BattleStat.SPDEF]: 0
+  };
+
+  constructor(sourceMove: Moves = Moves.NONE) {
+    super(BattlerTagType.STOCKPILING, BattlerTagLapseType.CUSTOM, 1, sourceMove);
+  }
+
+  private onStatsChanged: StatChangeCallback = (_, statsChanged, statChanges) => {
+    const defChange = statChanges[statsChanged.indexOf(BattleStat.DEF)] ?? 0;
+    const spDefChange = statChanges[statsChanged.indexOf(BattleStat.SPDEF)] ?? 0;
+
+    if (defChange) {
+      this.statChangeCounts[BattleStat.DEF]++;
+    }
+
+    if (spDefChange) {
+      this.statChangeCounts[BattleStat.SPDEF]++;
+    }
+  };
+
+  loadTag(source: BattlerTag | any): void {
+    super.loadTag(source);
+    this.stockpiledCount = source.stockpiledCount || 0;
+    this.statChangeCounts = {
+      [BattleStat.DEF]: source.statChangeCounts?.[BattleStat.DEF] || 0,
+      [BattleStat.SPDEF]: source.statChangeCounts?.[BattleStat.SPDEF] || 0,
+    };
+  }
+
+  /**
+   * Adds a stockpile stack to a pokemon, up to a maximum of 3 stacks. Note that onOverlap defers to this method.
+   *
+   * If a stack is added, a message is displayed and the pokemon's DEF and SPDEF are increased by 1.
+   * For each stat, an internal counter is incremented (by 1) if the stat was successfully changed.
+   */
+  onAdd(pokemon: Pokemon): void {
+    if (this.stockpiledCount < 3) {
+      this.stockpiledCount++;
+
+      pokemon.scene.queueMessage(i18next.t("battle:battlerTagsStockpilingOnAdd", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+        stockpiledCount: this.stockpiledCount
+      }));
+
+      // Attempt to increase DEF and SPDEF by one stage, keeping track of successful changes.
+      pokemon.scene.unshiftPhase(new StatChangePhase(
+        pokemon.scene, pokemon.getBattlerIndex(), true,
+        [BattleStat.SPDEF, BattleStat.DEF], 1, true, false, true, this.onStatsChanged
+      ));
+    }
+  }
+
+  onOverlap(pokemon: Pokemon): void {
+    this.onAdd(pokemon);
+  }
+
+  /**
+   * Removing the tag removes all stacks, and the pokemon's DEF and SPDEF are decreased by
+   * one stage for each stack which had successfully changed that particular stat during onAdd.
+   */
+  onRemove(pokemon: Pokemon): void {
+    const defChange = this.statChangeCounts[BattleStat.DEF];
+    const spDefChange = this.statChangeCounts[BattleStat.SPDEF];
+
+    if (defChange) {
+      pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.DEF], -defChange, true, false, true));
+    }
+
+    if (spDefChange) {
+      pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.SPDEF], -spDefChange, true, false, true));
+    }
+  }
+}
+
 export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourceMove: Moves, sourceId: integer): BattlerTag {
   switch (tagType) {
   case BattlerTagType.RECHARGING:
@@ -1704,6 +1796,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
     return new DestinyBondTag(sourceMove, sourceId);
   case BattlerTagType.ICE_FACE:
     return new IceFaceTag(sourceMove);
+  case BattlerTagType.STOCKPILING:
+    return new StockpilingTag(sourceMove);
   case BattlerTagType.OCTOLOCK:
     return new OctolockTag(sourceId);
   case BattlerTagType.NONE:

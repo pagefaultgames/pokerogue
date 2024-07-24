@@ -2,7 +2,7 @@ import BattleScene from "../battle-scene";
 import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "./pokemon-species";
 import { VariantTier } from "../enums/variant-tiers";
 import * as Utils from "../utils";
-import Overrides from "../overrides";
+import Overrides from "#app/overrides";
 import { pokemonPrevolutions } from "./pokemon-evolutions";
 import { PlayerPokemon } from "#app/field/pokemon";
 import i18next from "i18next";
