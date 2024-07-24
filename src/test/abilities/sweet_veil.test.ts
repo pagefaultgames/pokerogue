@@ -31,7 +31,7 @@ describe("Abilities - Sweet Veil", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(overrides, "DOUBLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    vi.spyOn(overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
     vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.REST]);
     vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
     vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
