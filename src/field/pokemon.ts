@@ -2287,7 +2287,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const tags = this.summonData.tags;
     const tag = tags.find(t => t.tagType === tagType);
     if (tag) {
-      tag.turnCount = 0;
       tag.onRemove(this);
       tags.splice(tags.indexOf(tag), 1);
     }

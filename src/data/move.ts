@@ -4060,19 +4060,16 @@ export class FrenzyAttr extends MoveEffectAttr {
       return false;
     }
 
-    if (!user.getMoveQueue().length) {
-      if (!user.getTag(BattlerTagType.FRENZY)) {
-        const turnCount = user.randSeedIntRange(1, 2);
-        new Array(turnCount).fill(null).map(() => user.getMoveQueue().push({ move: move.id, targets: [ target.getBattlerIndex() ], ignorePP: true }));
-        user.addTag(BattlerTagType.FRENZY, 1, move.id, user.id);
-      } else {
-        applyMoveAttrs(AddBattlerTagAttr, user, target, move, args);
-        user.lapseTag(BattlerTagType.FRENZY);
-      }
-      return true;
+    if (!user.getTag(BattlerTagType.FRENZY) && !user.getMoveQueue().length) {
+      const turnCount = user.randSeedIntRange(1, 2);
+      new Array(turnCount).fill(null).map(() => user.getMoveQueue().push({ move: move.id, targets: [ target.getBattlerIndex() ], ignorePP: true }));
+      user.addTag(BattlerTagType.FRENZY, turnCount, move.id, user.id);
+    } else {
+      applyMoveAttrs(AddBattlerTagAttr, user, target, move, args);
+      user.lapseTag(BattlerTagType.FRENZY); // if FRENZY is already in effect (moveQueue.length > 0), lapse the tag
     }
 
-    return false;
+    return true;
   }
 }
 
@@ -4080,7 +4077,7 @@ export const frenzyMissFunc: UserMoveConditionFunc = (user: Pokemon, move: Move)
   while (user.getMoveQueue().length && user.getMoveQueue()[0].move === move.id) {
     user.getMoveQueue().shift();
   }
-  user.lapseTag(BattlerTagType.FRENZY);
+  user.removeTag(BattlerTagType.FRENZY); // FRENZY tag should be disrupted on miss/no effect
 
   return true;
 };
@@ -5980,6 +5977,7 @@ export function initMoves() {
     new AttackMove(Moves.THRASH, Type.NORMAL, MoveCategory.PHYSICAL, 120, 100, 10, -1, 0, 1)
       .attr(FrenzyAttr)
       .attr(MissEffectAttr, frenzyMissFunc)
+      .attr(NoEffectAttr, frenzyMissFunc)
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
     new AttackMove(Moves.DOUBLE_EDGE, Type.NORMAL, MoveCategory.PHYSICAL, 120, 100, 15, -1, 0, 1)
       .attr(RecoilAttr, false, 0.33)
@@ -6098,6 +6096,7 @@ export function initMoves() {
     new AttackMove(Moves.PETAL_DANCE, Type.GRASS, MoveCategory.SPECIAL, 120, 100, 10, -1, 0, 1)
       .attr(FrenzyAttr)
       .attr(MissEffectAttr, frenzyMissFunc)
+      .attr(NoEffectAttr, frenzyMissFunc)
       .makesContact()
       .danceMove()
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
@@ -6431,6 +6430,7 @@ export function initMoves() {
     new AttackMove(Moves.OUTRAGE, Type.DRAGON, MoveCategory.PHYSICAL, 120, 100, 10, -1, 0, 2)
       .attr(FrenzyAttr)
       .attr(MissEffectAttr, frenzyMissFunc)
+      .attr(NoEffectAttr, frenzyMissFunc)
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
     new StatusMove(Moves.SANDSTORM, Type.ROCK, -1, 10, -1, 0, 2)
       .attr(WeatherChangeAttr, WeatherType.SANDSTORM)
@@ -8281,6 +8281,7 @@ export function initMoves() {
       .makesContact(false)
       .attr(FrenzyAttr)
       .attr(MissEffectAttr, frenzyMissFunc)
+      .attr(NoEffectAttr, frenzyMissFunc)
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
     new AttackMove(Moves.WAVE_CRASH, Type.WATER, MoveCategory.PHYSICAL, 120, 100, 10, -1, 0, 8)
       .attr(RecoilAttr, false, 0.33)
