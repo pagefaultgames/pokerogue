@@ -4976,7 +4976,6 @@ export class AttemptCapturePhase extends PokemonPhase {
     this.scene.pokemonInfoContainer.show(pokemon, true);
 
     this.scene.gameData.updateSpeciesDexIvs(pokemon.species.getRootSpeciesId(true), pokemon.ivs);
-    this.scene.gameData.setPokemonCaught(pokemon);
 
     this.scene.ui.showText(i18next.t("battle:pokemonCaught", { pokemonName: getPokemonNameWithAffix(pokemon) }), null, () => {
       const end = () => {
@@ -5009,7 +5008,7 @@ export class AttemptCapturePhase extends PokemonPhase {
           }
         });
       };
-      Promise.all([pokemon.hideInfo()]).then(() => {
+      Promise.all([pokemon.hideInfo(), this.scene.gameData.setPokemonCaught(pokemon)]).then(() => {
         if (this.scene.getParty().length === 6) {
           const promptRelease = () => {
             this.scene.ui.showText(i18next.t("battle:partyFull", { pokemonName: getPokemonNameWithAffix(pokemon) }), null, () => {
