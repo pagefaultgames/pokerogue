@@ -703,7 +703,6 @@ export class TitlePhase extends Phase {
       handler: () => {
         this.scene.biomeChangeMode = false
         //return this.logRenameMenu()
-        //
         this.scene.ui.setOverlayMode(Mode.LOG_HANDLER,
           (k: string) => {
             if (k === undefined) {
@@ -715,7 +714,6 @@ export class TitlePhase extends Phase {
             this.showOptions();
           });
         return true;
-        //
       }
     })
     options.push({
