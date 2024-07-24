@@ -36,8 +36,6 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
   private cursorObj: Phaser.GameObjects.Image;
 
-  private tO: ModifierTypeOption[];
-
   constructor(scene: BattleScene) {
     super(scene, Mode.CONFIRM);
 
@@ -160,9 +158,8 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.updateRerollCostText();
 
     const typeOptions = args[1] as ModifierTypeOption[];
-    this.tO = typeOptions
     const shopTypeOptions = !this.scene.gameMode.hasNoShop
-      ? getPlayerShopModifierTypeOptionsForWave(this.scene, this.scene.currentBattle.waveIndex, this.scene.getWaveMoneyAmount(1))
+      ? getPlayerShopModifierTypeOptionsForWave(this.scene.currentBattle.waveIndex, this.scene.getWaveMoneyAmount(1))
       : [];
     const optionsYOffset = shopTypeOptions.length >= SHOP_OPTIONS_ROW_LIMIT ? -8 : -24;
 

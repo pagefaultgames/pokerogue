@@ -11,7 +11,7 @@ import * as Utils from "../utils";
 import { TempBattleStat, getTempBattleStatBoosterItemName, getTempBattleStatName } from "../data/temp-battle-stat";
 import { getBerryEffectDescription, getBerryName } from "../data/berry";
 import { Unlockables } from "../system/unlockables";
-import { Status, StatusEffect, getStatusEffectDescriptor } from "../data/status-effect";
+import { StatusEffect, getStatusEffectDescriptor } from "../data/status-effect";
 import { SpeciesFormKey } from "../data/pokemon-species";
 import BattleScene from "../battle-scene";
 import { VoucherType, getVoucherTypeIcon, getVoucherTypeName } from "../system/voucher";
@@ -1978,115 +1978,40 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
   return options;
 }
 
-export function getPlayerShopModifierTypeOptionsForWave(scene: BattleScene, waveIndex: integer, baseCost: integer): ModifierTypeOption[] {
+export function getPlayerShopModifierTypeOptionsForWave(waveIndex: integer, baseCost: integer): ModifierTypeOption[] {
   if (!(waveIndex % 10)) {
     return [];
   }
 
-  var maxdmg = 0
-  var maxdmg_percent = 0
-  var hasStatus = false // A member of the party has a status condition (Full Heal, Full Restore)
-  var hasFainted = false // A member of the party has zero health (Revive, Max Revive)
-  var multiFainted = false // At least two Pokemon have zero health (Sacred Ash)
-  var hasPPUsed = false // At least one Pokemon has used at least 1 PP (Ether)
-  var hasPPUsedOver10 = false // At least one Pokemon has used more than 10 PP on a single move (Max Ether, Max Elexir)
-  var hasPPUsedMulti = false // At least one Pokemon has used at least 1 PP on multiple moves (Elexir, Max Elexir)
-  var party = scene.getParty()
-  party.forEach(p => {
-    maxdmg = Math.max(maxdmg, p.getMaxHp() - p.hp)
-    maxdmg_percent = Math.max(maxdmg_percent, 1 - (p.hp/p.getMaxHp()))
-    if (p.status)
-      switch (p.status.effect) {
-        case StatusEffect.NONE:
-          break; // No status effect
-        case StatusEffect.POISON:
-        case StatusEffect.TOXIC:
-        case StatusEffect.PARALYSIS:
-        case StatusEffect.SLEEP:
-        case StatusEffect.FREEZE:
-        case StatusEffect.BURN:
-          hasStatus = true;
-          break;
-        case StatusEffect.FAINT:
-          if (hasFainted)
-            multiFainted = true;
-          hasFainted = true;
-          break;
-      }
-    p.moveset.forEach(m => {
-      if (m.ppUsed > 0 && hasPPUsed) 
-        hasPPUsedMulti = true
-      if (m.ppUsed > 0) 
-        hasPPUsed = true
-      if (m.ppUsed >= 10) 
-        hasPPUsedOver10 = true
-    })
-  })
-
   const options = [
-    [ // 0
-      //new ModifierTypeOption(modifierTypes.POTION(), 0, baseCost * 0.2),
-      //new ModifierTypeOption(modifierTypes.ETHER(), 0, baseCost * 0.4),
-      //new ModifierTypeOption(modifierTypes.REVIVE(), 0, baseCost * 2)
+    [
+      new ModifierTypeOption(modifierTypes.POTION(), 0, baseCost * 0.2),
+      new ModifierTypeOption(modifierTypes.ETHER(), 0, baseCost * 0.4),
+      new ModifierTypeOption(modifierTypes.REVIVE(), 0, baseCost * 2)
     ],
-    [ // 1
-      //new ModifierTypeOption(modifierTypes.SUPER_POTION(), 0, baseCost * 0.45),
-      //new ModifierTypeOption(modifierTypes.FULL_HEAL(), 0, baseCost),
+    [
+      new ModifierTypeOption(modifierTypes.SUPER_POTION(), 0, baseCost * 0.45),
+      new ModifierTypeOption(modifierTypes.FULL_HEAL(), 0, baseCost),
     ],
-    [ // 2
-      //new ModifierTypeOption(modifierTypes.ELIXIR(), 0, baseCost),
-      //new ModifierTypeOption(modifierTypes.MAX_ETHER(), 0, baseCost)
+    [
+      new ModifierTypeOption(modifierTypes.ELIXIR(), 0, baseCost),
+      new ModifierTypeOption(modifierTypes.MAX_ETHER(), 0, baseCost)
     ],
-    [ // 3
-      //new ModifierTypeOption(modifierTypes.HYPER_POTION(), 0, baseCost * 0.8),
-      //new ModifierTypeOption(modifierTypes.MAX_REVIVE(), 0, baseCost * 2.75)
+    [
+      new ModifierTypeOption(modifierTypes.HYPER_POTION(), 0, baseCost * 0.8),
+      new ModifierTypeOption(modifierTypes.MAX_REVIVE(), 0, baseCost * 2.75)
     ],
-    [ // 4
-      //new ModifierTypeOption(modifierTypes.MAX_POTION(), 0, baseCost * 1.5),
-      //new ModifierTypeOption(modifierTypes.MAX_ELIXIR(), 0, baseCost * 2.5)
+    [
+      new ModifierTypeOption(modifierTypes.MAX_POTION(), 0, baseCost * 1.5),
+      new ModifierTypeOption(modifierTypes.MAX_ELIXIR(), 0, baseCost * 2.5)
     ],
-    [ // 5
-      //new ModifierTypeOption(modifierTypes.FULL_RESTORE(), 0, baseCost * 2.25)
+    [
+      new ModifierTypeOption(modifierTypes.FULL_RESTORE(), 0, baseCost * 2.25)
     ],
-    [ // 6
-      //new ModifierTypeOption(modifierTypes.SACRED_ASH(), 0, baseCost * 10)
+    [
+      new ModifierTypeOption(modifierTypes.SACRED_ASH(), 0, baseCost * 10)
     ]
   ];
-  // Assemble the shop by removing items that would just be a waste of money
-
-  // HP Restore
-  if (maxdmg > 0) // If any Pokemon has taken any damage, add Potion
-    options[0].push(new ModifierTypeOption(modifierTypes.POTION(), 0, baseCost * 0.2))
-  if (maxdmg >= 20 || maxdmg_percent >= 0.1) // If Potion isn't enough, add Super Potion
-    options[1].push(new ModifierTypeOption(modifierTypes.SUPER_POTION(), 0, baseCost * 0.45))
-  if (maxdmg >= 50 || maxdmg_percent >= 0.2) // If Super Potion isn't enough, add Hyper Potion
-    options[3].push(new ModifierTypeOption(modifierTypes.HYPER_POTION(), 0, baseCost * 0.8))
-  if (maxdmg >= 200 || maxdmg_percent >= 0.5) // If Hyper Potion isn't enough, add Max Potion
-    options[4].push(new ModifierTypeOption(modifierTypes.MAX_POTION(), 0, baseCost * 1.5))
-  
-  // Status Restore
-  if ((maxdmg >= 200 || maxdmg_percent >= 0.5) && hasStatus) // If Hyper Potion isn't enough, and you have a status condition, add Full Restore
-    options[5].push(new ModifierTypeOption(modifierTypes.FULL_RESTORE(), 0, baseCost * 2.25))
-  if (hasStatus) // If you have a status condition, add Full Heal
-    options[1].push(new ModifierTypeOption(modifierTypes.FULL_HEAL(), 0, baseCost))
-  
-  // PP Restore
-  if (hasPPUsed) // If you have used any PP (you probably have), add Ether
-    options[0].push(new ModifierTypeOption(modifierTypes.ETHER(), 0, baseCost * 0.4))
-  if (hasPPUsedOver10) // If you used at least 10 PP, add Max Ether
-    options[2].push(new ModifierTypeOption(modifierTypes.MAX_ETHER(), 0, baseCost))
-  if (hasPPUsedMulti) // If you have used PP from multiple moves, add Elexir
-    options[2].push(new ModifierTypeOption(modifierTypes.ELIXIR(), 0, baseCost))
-  if (hasPPUsedOver10 && hasPPUsedMulti) // If you have used multiple moves' PP, and have used more than 10 in at least one, add Max Elexir
-    options[4].push(new ModifierTypeOption(modifierTypes.MAX_ELIXIR(), 0, baseCost * 2.5))
-  
-  // Revives
-  if (hasFainted) { // If a Pokemon has fainted, add Revive and Max Revive
-    options[0].push(new ModifierTypeOption(modifierTypes.REVIVE(), 0, baseCost * 2))
-    options[3].push(new ModifierTypeOption(modifierTypes.MAX_REVIVE(), 0, baseCost * 2.75))
-  }
-  if (multiFainted) // If multiple Pokemon are fainted, add Sacred Ash
-    options[6].push(new ModifierTypeOption(modifierTypes.SACRED_ASH(), 0, baseCost * 10))
   return options.slice(0, Math.ceil(Math.max(waveIndex + 10, 0) / 30)).flat();
 }
 

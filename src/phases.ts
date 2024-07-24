@@ -49,7 +49,7 @@ import { OptionSelectConfig, OptionSelectItem } from "./ui/abstact-option-select
 import { SaveSlotUiMode } from "./ui/save-slot-select-ui-handler";
 import { fetchDailyRunSeed, getDailyRunStarters } from "./data/daily-run";
 import { GameMode, GameModes, getGameMode } from "./game-mode";
-import PokemonSpecies, { allSpecies, getPokemonSpecies, getPokemonSpeciesForm, speciesStarters } from "./data/pokemon-species";
+import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "./data/pokemon-species";
 import i18next from "./plugins/i18n";
 import * as Overrides from "./overrides";
 import { TextStyle, addTextObject } from "./ui/text";
@@ -613,7 +613,7 @@ export class TitlePhase extends Phase {
           }
         })
         break;
-      case (this.scene.quickloadDisplayMode == "Both" || this.scene.quickloadDisplayMode == "On") && ls2 != undefined:
+      case this.scene.quickloadDisplayMode == "Both" && ls2 != undefined:
         ls2.forEach(lastsave2 => {
           options.push({
             label: (lastsave2.description ? lastsave2.description : "[???]"),
@@ -703,6 +703,7 @@ export class TitlePhase extends Phase {
       handler: () => {
         this.scene.biomeChangeMode = false
         //return this.logRenameMenu()
+        //
         this.scene.ui.setOverlayMode(Mode.LOG_HANDLER,
           (k: string) => {
             if (k === undefined) {
@@ -714,6 +715,7 @@ export class TitlePhase extends Phase {
             this.showOptions();
           });
         return true;
+        //
       }
     })
     options.push({
@@ -1396,40 +1398,11 @@ export class EncounterPhase extends BattlePhase {
           battle.enemyParty[e] = battle.trainer.genPartyMember(e);
         } else {
           LoggerTools.rarityslot[0] = e
-          var enemySpecies = this.scene.randomSpecies(battle.waveIndex, level, true);
-          if (this.scene.chaosmode) {
-            enemySpecies = getPokemonSpecies(allSpecies.map(p => p.speciesId))
-            if (enemySpecies.forms.length > 0) {
-              enemySpecies.formIndex = Math.max(0, Math.floor(Math.random() * (enemySpecies.forms.length + 0)) - 0)
-            }
-            switch (this.scene.gameMode.modeId) {
-              case GameModes.CLASSIC:
-              case GameModes.CHALLENGE:
-                if (this.scene.currentBattle.waveIndex == 200) {
-                  enemySpecies = getPokemonSpecies(Species.ETERNATUS)
-                  enemySpecies.formIndex = 0
-                }
-                break;
-              case GameModes.ENDLESS:
-              case GameModes.SPLICED_ENDLESS:
-                if (this.scene.currentBattle.waveIndex % 250 == 0) {
-                  enemySpecies = getPokemonSpecies(Species.ETERNATUS)
-                  enemySpecies.formIndex = 0
-                  if (this.scene.currentBattle.waveIndex % 1000 == 0) {
-                    enemySpecies.formIndex = 1
-                  }
-                }
-                break;
-              case GameModes.DAILY:
-                // idk
-                break;
-            }
-          }
+          const enemySpecies = this.scene.randomSpecies(battle.waveIndex, level, true);
           battle.enemyParty[e] = this.scene.addEnemyPokemon(enemySpecies, level, TrainerSlot.NONE, !!this.scene.getEncounterBossSegments(battle.waveIndex, level, enemySpecies));
           if (this.scene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
             battle.enemyParty[e].ivs = new Array(6).fill(31);
           }
-          //battle.enemyParty[e].formIndex = enemySpecies.formIndex
           this.scene.getParty().slice(0, !battle.double ? 1 : 2).reverse().forEach(playerPokemon => {
             applyAbAttrs(SyncEncounterNatureAbAttr, playerPokemon, null, battle.enemyParty[e]);
           });
@@ -6514,7 +6487,7 @@ export class SelectModifierPhase extends BattlePhase {
         modifierType = typeOptions[cursor].type;
         break;
       default:
-        const shopOptions = getPlayerShopModifierTypeOptionsForWave(this.scene, this.scene.currentBattle.waveIndex, this.scene.getWaveMoneyAmount(1));
+        const shopOptions = getPlayerShopModifierTypeOptionsForWave(this.scene.currentBattle.waveIndex, this.scene.getWaveMoneyAmount(1));
         const shopOption = shopOptions[rowCursor > 2 || shopOptions.length <= SHOP_OPTIONS_ROW_LIMIT ? cursor : cursor + SHOP_OPTIONS_ROW_LIMIT];
         modifierType = shopOption.type;
         cost = shopOption.cost;

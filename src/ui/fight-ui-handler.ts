@@ -671,15 +671,6 @@ export default class FightUiHandler extends UiHandler {
     }
     dmgLow = out[0] * minHits
     dmgHigh = out[1] * maxHits
-    var qSuffix = ""
-    if (target.isBoss()) {
-      var bossSegs = (target as EnemyPokemon).bossSegments
-      //dmgLow /= bossSegs
-      //dmgHigh /= bossSegs
-      //qSuffix = "?"
-    }
-    var dmgLowP = Math.round((dmgLow)/target.getBattleStat(Stat.HP)*100)
-    var dmgHighP = Math.round((dmgHigh)/target.getBattleStat(Stat.HP)*100)
     /*
     if (user.hasAbility(Abilities.PARENTAL_BOND)) {
       // Second hit deals 0.25x damage
@@ -698,11 +689,13 @@ export default class FightUiHandler extends UiHandler {
       return "---"
     }
     if (scene.damageDisplay == "Value")
-      return target.getMoveEffectiveness(user, move) + "x - " + (Math.round(dmgLow) == Math.round(dmgHigh) ? Math.round(dmgLow).toString() + qSuffix : Math.round(dmgLow) + "-" + Math.round(dmgHigh) + qSuffix) + koText
+      return target.getMoveEffectiveness(user, move) + "x - " + (Math.round(dmgLow) == Math.round(dmgHigh) ? Math.round(dmgLow).toString() : Math.round(dmgLow) + "-" + Math.round(dmgHigh)) + koText
+    dmgLow = Math.round((dmgLow)/target.getBattleStat(Stat.HP)*100)
+    dmgHigh = Math.round((dmgHigh)/target.getBattleStat(Stat.HP)*100)
     if (scene.damageDisplay == "Percent")
-      return target.getMoveEffectiveness(user, move) + "x - " + (dmgLowP == dmgHighP ? dmgLowP + "%" + qSuffix : dmgLowP + "%-" + dmgHighP + "%" + qSuffix) + koText
+      return target.getMoveEffectiveness(user, move) + "x - " + (dmgLow == dmgHigh ? dmgLow + "%" : dmgLow + "%-" + dmgHigh + "%") + koText
     if (scene.damageDisplay == "Off")
-      return target.getMoveEffectiveness(user, move) + "x" + ((Math.floor(dmgLow) >= target.hp) ? " (KO)" : "")
+      return target.getMoveEffectiveness(user, move) + "x"
   }
 
   setCursor(cursor: integer): boolean {

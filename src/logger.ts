@@ -759,10 +759,7 @@ export function getWave(drpd: DRPD, floor: integer, scene: BattleScene): Wave {
     }
   }
   if (wv == undefined) {
-    if (scene.gameMode.modeId != GameModes.DAILY || true) {
-      if (scene.gameMode.modeId == GameModes.DAILY) {
-        console.log(";-;")
-      }
+    if (scene.gameMode.modeId != GameModes.DAILY) {
       drpd.waves.push({
         id: floor,
         reload: false,
