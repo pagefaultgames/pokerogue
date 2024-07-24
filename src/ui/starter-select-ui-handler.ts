@@ -1075,8 +1075,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         break;
       case Button.DOWN:
         this.startCursorObj.setVisible(false);
-        this.starterIconsCursorIndex = 0;
-        this.moveStarterIconsCursor(this.starterIconsCursorIndex);
+        if (this.starterSpecies.length > 0) {
+          this.starterIconsCursorIndex = 0;
+          this.moveStarterIconsCursor(this.starterIconsCursorIndex);
+        } else {
+          this.setFilterMode(true);
+        }
         success = true;
         break;
       case Button.LEFT:
