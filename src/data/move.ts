@@ -4867,20 +4867,37 @@ export class FirstMoveTypeAttr extends MoveEffectAttr {
   }
 }
 
-
+/**
+ * Attribute used to call a random move
+ * Used for {@linkcode Moves.METRONOME}
+ * @see {@linkcode apply} for move selection and move call
+ * @extends OverrideMoveEffectAttr
+ */
 export class RandomMoveAttr extends OverrideMoveEffectAttr {
-  protected moveId: number;
-  constructor() {
+  protected invalidMoves: Moves[];
+  constructor(invalidMoves: Moves[]) {
     super();
+    this.invalidMoves = invalidMoves;
   }
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
-    return new Promise(resolve => {
-      if (!this.moveId) {
-        const moveIds = Utils.getEnumValues(Moves).filter(m => !allMoves[m].hasFlag(MoveFlags.IGNORE_VIRTUAL) && !allMoves[m].name.endsWith(" (N)"));
-        this.moveId = moveIds[user.randSeedInt(moveIds.length)];
-      }
 
-      const moveTargets = getMoveTargets(user, this.moveId);
+  /**
+   * User calls a random moveId
+   * @param {Pokemon} user Pokemon that used the move and will call a random move
+   * @param {Pokemon} target Pokemon that will be targeted by the random move (if single target)
+   * @param {Move} move Move being used
+   * @param {any[]} args Unused
+   * @returns {Promise<boolean>}
+   * Invalid moves are indicated by what is passed in to invalidMoves: @constant {invalidMetronomeMoves}
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
+    const moveIds = Utils.getEnumValues(Moves).filter(m => !this.invalidMoves.includes(m) && !allMoves[m].name.endsWith(" (N)"));
+    const moveId = moveIds[user.randSeedInt(moveIds.length)];
+    return this.callMove(user, target, moveId);
+  }
+
+  callMove(user: Pokemon, target: Pokemon, moveId: number): Promise<boolean> {
+    return new Promise(resolve => {
+      const moveTargets = getMoveTargets(user, moveId);
       if (!moveTargets.targets.length) {
         resolve(false);
         return;
@@ -4890,47 +4907,207 @@ export class RandomMoveAttr extends OverrideMoveEffectAttr {
         : moveTargets.targets.indexOf(target.getBattlerIndex()) > -1
           ? [ target.getBattlerIndex() ]
           : [ moveTargets.targets[user.randSeedInt(moveTargets.targets.length)] ];
-      user.getMoveQueue().push({ move: this.moveId, targets: targets, ignorePP: true });
-      user.scene.unshiftPhase(new MovePhase(user.scene, user, targets, new PokemonMove(this.moveId, 0, 0, true), true));
-      initMoveAnim(user.scene, this.moveId).then(() => {
-        loadMoveAnimAssets(user.scene, [ this.moveId ], true)
+      user.getMoveQueue().push({ move: moveId, targets: targets, ignorePP: true });
+      user.scene.unshiftPhase(new MovePhase(user.scene, user, targets, new PokemonMove(moveId, 0, 0, true), true));
+      initMoveAnim(user.scene, moveId).then(() => {
+        loadMoveAnimAssets(user.scene, [ moveId ], true)
           .then(() => resolve(true));
       });
     });
   }
 }
 
+/**
+ * Attribute used to call a random move in the user or party's moveset
+ * Used for {@linkcode Moves.ASSIST} and {@linkcode Moves.SLEEP_TALK}
+ * @extends RandomMoveAttr to use the callMove function on a moveId
+ * @see {@linkcode getCondition} for move selection
+ * Fails if the user has no callable moves
+ * Invalid moves are indicated by what is passed in to invalidMoves: {@constant invalidAssistMoves} or {@constant invalidSleepTalkMoves}
+ */
 export class RandomMovesetMoveAttr extends RandomMoveAttr {
   private includeParty: boolean;
-  private invalidMoves: Moves[];
+  private moveId: number;
   constructor(invalidMoves: Moves[], includeParty?: boolean) {
-    super();
-    this.invalidMoves = invalidMoves;
+    super(invalidMoves);
     this.includeParty = includeParty;
   }
 
+  /**
+   * User calls a random moveId selected in {@linkcode getCondition}
+   * @param {Pokemon} user Pokemon that used the move and will call a random move
+   * @param {Pokemon} target Pokemon that will be targeted by the random move (if single target)
+   * @param {Move} move Move being used
+   * @param {any[]} args Unused
+   * @returns {Promise<boolean>}
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
-    // includeParty will be true for Assist, false for Sleep Talk
-    let allies: Pokemon[];
-    if (this.includeParty) {
-      allies = user.isPlayer() ? user.scene.getParty() : user.scene.getEnemyParty();
-    } else {
-      allies = [user];
-    }
+    return this.callMove(user, target, this.moveId);
+  }
 
-    return new Promise(resolve => {
+  getCondition(): MoveConditionFunc {
+    return (user, target, move) => {
+      // includeParty will be true for Assist, false for Sleep Talk
+      let allies: Pokemon[];
+      if (this.includeParty) {
+        allies = user.isPlayer() ? user.scene.getParty() : user.scene.getEnemyParty();
+      } else {
+        allies = [user];
+      }
       const partyMoveset = allies.map(p => p.moveset).flat();
       const moves = partyMoveset.filter(m => !this.invalidMoves.includes(m.moveId) && !m.getMove().name.endsWith(" (N)"));
-
       if (!moves.length) {
-        resolve(false);
-        return;
+        return false;
       }
+
       this.moveId = moves[user.randSeedInt(moves.length)].moveId;
-      super.apply(user, target, move, args).then(result => resolve(result));
-    });
+      return true;
+    };
   }
 }
+
+const invalidMetronomeMoves: Moves[] = [
+  Moves.AFTER_YOU,
+  Moves.APPLE_ACID,
+  Moves.ARMOR_CANNON,
+  // Moves.ASSIST,
+  Moves.ASTRAL_BARRAGE,
+  Moves.AURA_WHEEL,
+  Moves.BANEFUL_BUNKER,
+  Moves.BEAK_BLAST,
+  Moves.BEHEMOTH_BASH,
+  Moves.BEHEMOTH_BLADE,
+  Moves.BELCH,
+  // Moves.BESTOW,
+  Moves.BLAZING_TORQUE,
+  Moves.BODY_PRESS,
+  Moves.BRANCH_POKE,
+  Moves.BREAKING_SWIPE,
+  Moves.CELEBRATE,
+  // Moves.CHATTER,
+  Moves.CHILLING_WATER,
+  Moves.CHILLY_RECEPTION,
+  Moves.CLANGOROUS_SOUL,
+  Moves.COLLISION_COURSE,
+  Moves.COMBAT_TORQUE,
+  Moves.COMEUPPANCE,
+  Moves.COPYCAT,
+  Moves.COUNTER,
+  Moves.COVET,
+  // Moves.CRAFTY_SHIELD,
+  Moves.DECORATE,
+  Moves.DESTINY_BOND,
+  Moves.DETECT,
+  Moves.DIAMOND_STORM,
+  Moves.DOODLE,
+  // Moves.DOUBLE_IRON_BASH,
+  Moves.DOUBLE_SHOCK,
+  Moves.DRAGON_ASCENT,
+  Moves.DRAGON_ENERGY,
+  Moves.DRUM_BEATING,
+  Moves.DYNAMAX_CANNON,
+  Moves.ELECTRO_DRIFT,
+  Moves.ENDURE,
+  // Moves.ETERNABEAM,
+  Moves.FALSE_SURRENDER,
+  Moves.FEINT,
+  Moves.FIERY_WRATH,
+  Moves.FILLET_AWAY,
+  Moves.FLEUR_CANNON,
+  Moves.FOCUS_PUNCH,
+  Moves.FOLLOW_ME,
+  Moves.FREEZE_SHOCK,
+  Moves.FREEZING_GLARE,
+  Moves.GLACIAL_LANCE,
+  Moves.GRAV_APPLE,
+  Moves.HELPING_HAND,
+  Moves.HOLD_HANDS,
+  Moves.HYPER_DRILL,
+  Moves.HYPERSPACE_FURY,
+  Moves.HYPERSPACE_HOLE,
+  Moves.ICE_BURN,
+  Moves.INSTRUCT,
+  Moves.JET_PUNCH,
+  Moves.JUNGLE_HEALING,
+  // Moves.KINGS_SHIELD,
+  Moves.LIFE_DEW,
+  // Moves.LIGHT_OF_RUIN,
+  Moves.MAKE_IT_RAIN,
+  Moves.MAGICAL_TORQUE,
+  // Moves.MAT_BLOCK,
+  // Moves.ME_FIRST,
+  // Moves.METEOR_ASSAULT,
+  Moves.METRONOME,
+  Moves.MIMIC,
+  // Moves.MIND_BLOWN,
+  Moves.MIRROR_COAT,
+  // Moves.MIRROR_MOVE,
+  Moves.MOONGEIST_BEAM,
+  // Moves.NATURE_POWER,
+  // Moves.NATURES_MADNESS,
+  Moves.NOXIOUS_TORQUE,
+  // Moves.OBSTRUCT,
+  Moves.ORDER_UP,
+  Moves.ORIGIN_PULSE,
+  Moves.OVERDRIVE,
+  Moves.PHOTON_GEYSER,
+  // Moves.PLASMA_FISTS,
+  Moves.POPULATION_BOMB,
+  Moves.POUNCE,
+  Moves.POWER_SHIFT,
+  Moves.PRECIPICE_BLADES,
+  Moves.PROTECT,
+  Moves.PYRO_BALL,
+  Moves.QUASH,
+  Moves.QUICK_GUARD,
+  Moves.RAGE_FIST,
+  Moves.RAGE_POWDER,
+  Moves.RAGING_BULL,
+  Moves.RAGING_FURY,
+  Moves.RELIC_SONG,
+  Moves.REVIVAL_BLESSING,
+  Moves.RUINATION,
+  Moves.SALT_CURE,
+  Moves.SECRET_SWORD,
+  Moves.SHED_TAIL,
+  // Moves.SHELL_TRAP,
+  Moves.SILK_TRAP,
+  Moves.SKETCH,
+  Moves.SLEEP_TALK,
+  // Moves.SNAP_TRAP,
+  Moves.SNARL,
+  // Moves.SNATCH,
+  Moves.SNORE,
+  Moves.SNOWSCAPE,
+  // Moves.SPECTRAL_THIEF,
+  Moves.SPICY_EXTRACT,
+  Moves.SPIKY_SHIELD,
+  Moves.SPIRIT_BREAK,
+  // Moves.SPOTLIGHT,
+  Moves.STEAM_ERUPTION,
+  Moves.STEEL_BEAM,
+  Moves.STRANGE_STEAM,
+  Moves.STRUGGLE,
+  Moves.SUNSTEEL_STRIKE,
+  Moves.SURGING_STRIKES,
+  Moves.SWITCHEROO,
+  // Moves.TECHNO_BLAST,
+  Moves.TERA_STARSTORM,
+  Moves.THIEF,
+  // Moves.THOUSAND_ARROWS,
+  // Moves.THOUSAND_WAVES,
+  Moves.THUNDER_CAGE,
+  Moves.THUNDEROUS_KICK,
+  Moves.TIDY_UP,
+  Moves.TRAILBLAZE,
+  Moves.TRANSFORM,
+  Moves.TRICK,
+  Moves.TWIN_BEAM,
+  Moves.V_CREATE,
+  Moves.WICKED_BLOW,
+  Moves.WICKED_TORQUE,
+  Moves.WIDE_GUARD
+];
 
 const invalidAssistMoves: Moves[] = [
   Moves.ASSIST,
@@ -5013,6 +5190,7 @@ const invalidSleepTalkMoves: Moves[] = [
   Moves.SKULL_BASH,
   Moves.SKY_ATTACK,
   // Moves.SKY_DROP,
+  Moves.SLEEP_TALK,
   Moves.SOLAR_BLADE,
   Moves.SOLAR_BEAM,
   Moves.STRUGGLE,
@@ -6220,7 +6398,7 @@ export function initMoves() {
       .target(MoveTarget.USER)
       .unimplemented(),
     new SelfStatusMove(Moves.METRONOME, Type.NORMAL, -1, 10, -1, 0, 1)
-      .attr(RandomMoveAttr)
+      .attr(RandomMoveAttr, invalidMetronomeMoves)
       .ignoresVirtual(),
     new StatusMove(Moves.MIRROR_MOVE, Type.FLYING, -1, 20, -1, 0, 1)
       .attr(CopyMoveAttr)
