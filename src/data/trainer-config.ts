@@ -1230,14 +1230,14 @@ export const trainerConfigs: TrainerConfigs = {
     }),
   [TrainerType.AETHER_GRUNT]: new TrainerConfig(++t).setHasGenders("Aether Grunt Female").setHasDouble("Aether Foundation Employees").setMoneyMultiplier(1.0).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm("battle_plasma_grunt").setMixedBattleBgm("battle_aether_grunt").setVictoryBgm("victory_team_plasma").setPartyTemplateFunc(scene => getEvilGruntPartyTemplate(scene))
     .setSpeciesPools({
-      [TrainerPoolTier.COMMON]: [ Species.PIKIPEK, Species.ROCKRUFF, Species.ALOLA_DIGLETT, Species.YUNGOOS, Species.CORSOLA, Species.ALOLA_GEODUDE, Species.BOUNSWEET, Species.GROWLITHE, Species.KOMALA, Species.ORICORIO],
-      [TrainerPoolTier.UNCOMMON]: [ Species.POLIWAG, Species.STUFFUL, Species.ALOLA_EXEGGUTOR, Species.BRUXISH, Species.TURTONATOR, Species.COMFEY, Species.ALOLA_RAICHU],
+      [TrainerPoolTier.COMMON]: [ Species.PIKIPEK, Species.ROCKRUFF, Species.ALOLA_DIGLETT, Species.YUNGOOS, Species.CORSOLA, Species.ALOLA_GEODUDE, Species.BOUNSWEET, Species.GROWLITHE, Species.KOMALA],
+      [TrainerPoolTier.UNCOMMON]: [ Species.POLIWAG, Species.STUFFUL, Species.ALOLA_EXEGGUTOR, Species.BRUXISH, Species.TURTONATOR, Species.COMFEY, Species.ALOLA_RAICHU, Species.ORICORIO],
       [TrainerPoolTier.RARE]: [ Species.ORANGURU, Species.PORYGON, Species.PASSIMIAN, Species.GALAR_CORSOLA, Species.ALOLA_SANDSHREW, Species.ALOLA_VULPIX],
       [TrainerPoolTier.SUPER_RARE]: [Species.JANGMO_O, Species.BAGON]
     }),
   [TrainerType.SKULL_GRUNT]: new TrainerConfig(++t).setHasGenders("Skull Grunt Female").setHasDouble("Team Skull Grunts").setMoneyMultiplier(1.0).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm("battle_plasma_grunt").setMixedBattleBgm("battle_skull_grunt").setVictoryBgm("victory_team_plasma").setPartyTemplateFunc(scene => getEvilGruntPartyTemplate(scene))
     .setSpeciesPools({
-      [TrainerPoolTier.COMMON]: [ Species.SALANDIT, Species.ALOLA_RATTATA, Species.ALOLA_MEOWTH Species.SCRAGGY, Species.KOFFING, Species.ALOLA_GRIMER, Species.MAREANIE, Species.YUNGOOS, Species.SPINARAK, Species.WEEDLE],
+      [TrainerPoolTier.COMMON]: [ Species.SALANDIT, Species.ALOLA_RATTATA, Species.ALOLA_MEOWTH, Species.SCRAGGY, Species.KOFFING, Species.ALOLA_GRIMER, Species.MAREANIE, Species.YUNGOOS, Species.SPINARAK, Species.WEEDLE],
       [TrainerPoolTier.UNCOMMON]: [ Species.FOMANTIS, Species.SABLEYE, Species.SANDILE, Species.ZUBAT, Species.HOUNDOUR, Species.MURKROW, Species.TRUBBISH, Species.DROWZEE, Species.DEWPIDER, Species.VENIPEDE],
       [TrainerPoolTier.RARE]: [Species.ALOLA_MAROWAK, Species.SANDYGAST, Species.PAWNIARD, Species.MIMIKYU, Species.DHELMISE, Species.GASTLY, Species.WISHIWASHI, Species.PANCHAM, Species.GRUBBIN],
       [TrainerPoolTier.SUPER_RARE]: [Species.HERACROSS, Species.PINSIR, Species.GALAR_SLOWPOKE]
