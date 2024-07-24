@@ -804,6 +804,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.setNature(nature);
   }
 
+  isFullHp(): boolean {
+    return this.hp >= this.getMaxHp();
+  }
+
   getMaxHp(): integer {
     return this.getStat(Stat.HP);
   }
@@ -2051,7 +2055,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         const destinyTag = this.getTag(BattlerTagType.DESTINY_BOND);
 
         if (damage.value) {
-          if (this.getHpRatio() === 1) {
+          if (this.isFullHp()) {
             applyPreDefendAbAttrs(PreDefendFullHpEndureAbAttr, this, source, move, cancelled, damage);
           } else if (!this.isPlayer() && damage.value >= this.hp) {
             this.scene.applyModifiers(EnemyEndureChanceModifier, false, this);
@@ -2076,7 +2080,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           source.turnData.damageDealt += damage.value;
           source.turnData.currDamageDealt = damage.value;
           this.battleData.hitCount++;
-          const attackResult = { move: move.id, result: result as DamageResult, damage: damage.value, critical: isCritical, sourceId: source.id };
+          const attackResult = { move: move.id, result: result as DamageResult, damage: damage.value, critical: isCritical, sourceId: source.id, attackingPosition: source.getBattlerIndex() };
           this.turnData.attacksReceived.unshift(attackResult);
           if (source.isPlayer() && !this.isPlayer()) {
             this.scene.applyModifiers(DamageMoneyRewardModifier, true, source, damage);
@@ -2288,7 +2292,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const tags = this.summonData.tags;
     const tag = tags.find(t => t.tagType === tagType);
     if (tag) {
-      tag.turnCount = 0;
       tag.onRemove(this);
       tags.splice(tags.indexOf(tag), 1);
     }
@@ -3992,6 +3995,7 @@ export interface AttackMoveResult {
   damage: integer;
   critical: boolean;
   sourceId: integer;
+  attackingPosition: BattlerIndex;
 }
 
 export class PokemonSummonData {
