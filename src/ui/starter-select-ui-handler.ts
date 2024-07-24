@@ -296,7 +296,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.shinyOverlay.setVisible(false);
     this.starterSelectContainer.add(this.shinyOverlay);
 
-    const starterContainerWindow = addWindow(this.scene, 110, 19, 178, 178);
+    const starterContainerWindow = addWindow(this.scene, 109, 18, 175, 161);
     const starterContainerBg = this.scene.add.image(110, 19, "starter_container_bg");
     starterContainerBg.setOrigin(0, 0);
     this.starterSelectContainer.add(starterContainerBg);
