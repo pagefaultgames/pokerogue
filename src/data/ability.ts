@@ -4224,7 +4224,8 @@ export function initAbilities() {
       .attr(IntimidateImmunityAbAttr)
       .ignorable(),
     new Ability(Abilities.CLOUD_NINE, 3)
-      .attr(SuppressWeatherEffectAbAttr, true),
+      .attr(SuppressWeatherEffectAbAttr, true)
+      .attr(PostSummonUnnamedMessageAbAttr, "The effects of the weather disappeared."),
     new Ability(Abilities.COMPOUND_EYES, 3)
       .attr(BattleStatMultiplierAbAttr, BattleStat.ACC, 1.3),
     new Ability(Abilities.INSOMNIA, 3)
