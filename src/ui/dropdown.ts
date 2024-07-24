@@ -176,6 +176,8 @@ export class DropDown extends Phaser.GameObjects.Container {
           this.options[0].setOptionState(DropDownState.OFF);
         } else if (this.checkForAllOn()) {
           this.options[0].setOptionState(DropDownState.ON);
+        } else {
+          this.options[0].setOptionState(DropDownState.OFF);
         }
       }
     } else {
