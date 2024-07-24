@@ -4,7 +4,8 @@ import processor, { KoreanPostpositionProcessor } from "i18next-korean-postposit
 
 import { deConfig } from "#app/locales/de/config.js";
 import { enConfig } from "#app/locales/en/config.js";
-import { esConfig } from "#app/locales/es/config.js";
+import { esEsConfig } from "#app/locales/es_ES/config.js";
+import { esMxConfig } from "#app/locales/es_MX/config.js";
 import { frConfig } from "#app/locales/fr/config.js";
 import { itConfig } from "#app/locales/it/config.js";
 import { koConfig } from "#app/locales/ko/config.js";
@@ -108,8 +109,11 @@ export async function initI18n(): Promise<void> {
       en: {
         ...enConfig
       },
-      es: {
-        ...esConfig
+      "es-ES": {
+        ...esEsConfig
+      },
+      "es-MX": {
+        ...esMxConfig
       },
       fr: {
         ...frConfig
