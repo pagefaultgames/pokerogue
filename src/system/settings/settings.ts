@@ -106,8 +106,7 @@ export const SettingKeys = {
   ShowAutosaves: "SHOW_AUTOSAVES",
   TitleScreenContinueMode: "TITLE_SCREEN_QUICKLOAD",
   BiomePanels: "BIOME_PANELS",
-  DailyShinyLuck: "DAILY_LUCK",
-  SimpleShop: "SIMPLE_SHOP"
+  DailyShinyLuck: "DAILY_LUCK"
 };
 
 /**
@@ -217,13 +216,6 @@ export const Setting: Array<Setting> = [
     }],
     default: 1,
     type: SettingType.GENERAL,
-  },
-  {
-    key: SettingKeys.SimpleShop,
-    label: "Simple Shop",
-    options: OFF_ON,
-    default: 0,
-    type: SettingType.GENERAL
   },
   {
     key: SettingKeys.DailyShinyLuck,
@@ -752,9 +744,6 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     scene.disableDailyShinies = Setting[index].options[value].value == "Off"
   case SettingKeys.TitleScreenContinueMode:
     scene.quickloadDisplayMode  = Setting[index].options[value].value;
-  case SettingKeys.SimpleShop:
-    scene.simpleShop  = Setting[index].options[value].value == "On";
-    break;
   case SettingKeys.Skip_Seen_Dialogues:
     scene.skipSeenDialogues = Setting[index].options[value].value === "On";
     break;
