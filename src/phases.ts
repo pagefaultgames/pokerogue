@@ -1655,6 +1655,11 @@ export class SwitchSummonPhase extends SummonPhase {
             pokemonName: getPokemonNameWithAffix(this.getPokemon())
           })
         );
+        // Ensure improperly persisted summon data (such as tags) is cleared upon switching
+        if (!this.batonPass) {
+          party[this.fieldIndex].resetBattleData();
+          party[this.fieldIndex].resetSummonData();
+        }
         this.summon();
       };
       if (this.player) {
