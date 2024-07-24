@@ -65,7 +65,7 @@ describe("Moves - Fissure", () => {
   it("ignores accuracy stat", async () => {
     vi.spyOn(partyPokemon, "getAccuracyMultiplier");
 
-    enemyPokemon.summonData.battleStats[BattleStat.EVA] = 6;
+    enemyPokemon.summonData.battleStats[BattleStat.ACC] = -6;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.FISSURE));
 
