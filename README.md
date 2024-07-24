@@ -18,7 +18,7 @@ This program is for Windows - it does not have installers for Mac or Linux right
 # Instructions
 ### Installation
 - Make sure you have the app (download v1.3.1 [here](https://github.com/Admiral-Billy/Pokerogue-App/releases) - v2.0.0 and up will not work!)
-- Look on the `record-path` channel for the modified installer that allows downloading different versions
+- Look on the `Pathing Tool` forum in the `daily-projects` channel for the modified installer that allows downloading different versions
 - Replace `resources/update-game.js` in the offline version's files with the modified installer
 - Run the installer, typing `y` and pressing enter to confirm you want to install offline mode
 - Select Pokerogue-Projects/Pathing-Tool (option 2 by default) and press enter again
