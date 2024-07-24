@@ -2593,13 +2593,15 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           }) as StarterMoveset;
 
         const speciesForm = getPokemonSpeciesForm(species.speciesId, formIndex);
+        const formText = Utils.capitalizeString(species?.forms[formIndex]?.formKey, "_", false, false);
 
-        const formText = species?.forms[formIndex]?.formKey.split("-");
-        for (let i = 0; i < formText?.length; i++) {
-          formText[i] = formText[i].charAt(0).toUpperCase() + formText[i].substring(1);
+        const speciesName = Utils.capitalizeString(Species[species.speciesId], "_", true, false);
+
+        if (species.speciesId === Species.ARCEUS) {
+          this.pokemonFormText.setText(i18next.t(`pokemonInfo:Type.${formText.toUpperCase()}`));
+        } else {
+          this.pokemonFormText.setText(formText ? i18next.t(`pokemonForm:${speciesName}${formText}`) : "");
         }
-
-        this.pokemonFormText.setText(formText?.join(" "));
 
         this.setTypeIcons(speciesForm.type1, speciesForm.type2);
       } else {
