@@ -29,9 +29,7 @@ const namespace = "mysteryEncounter:mysteriousChallengers";
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
 export const MysteriousChallengersEncounter: IMysteryEncounter =
-  MysteryEncounterBuilder.withEncounterType(
-    MysteryEncounterType.MYSTERIOUS_CHALLENGERS
-  )
+  MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.MYSTERIOUS_CHALLENGERS)
     .withEncounterTier(MysteryEncounterTier.GREAT)
     .withSceneWaveRangeRequirement(10, 180) // waves 10 to 180
     .withIntroSpriteConfigs([]) // These are set in onInit()

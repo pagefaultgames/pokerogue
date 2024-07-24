@@ -12,5 +12,6 @@ export enum MysteryEncounterType {
   LOST_AT_SEA, //might be generalized later on
   FIERY_FALLOUT,
   THE_STRONG_STUFF,
-  POKEMON_SALESMAN
+  POKEMON_SALESMAN,
+  OFFER_YOU_CANT_REFUSE
 }

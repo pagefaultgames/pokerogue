@@ -3,7 +3,7 @@ import { EncounterOptionMode, MysteryEncounterOptionBuilder } from "#app/data/my
 import {
   EnemyPartyConfig,
   initBattleWithEnemyConfig,
-  leaveEncounterWithoutBattle,
+  leaveEncounterWithoutBattle, setEncounterExp,
   setEncounterRewards
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { STEALING_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
@@ -38,9 +38,7 @@ const namespace = "mysteryEncounter:fightOrFlight";
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
 export const FightOrFlightEncounter: IMysteryEncounter =
-  MysteryEncounterBuilder.withEncounterType(
-    MysteryEncounterType.FIGHT_OR_FLIGHT
-  )
+  MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.FIGHT_OR_FLIGHT)
     .withEncounterTier(MysteryEncounterTier.COMMON)
     .withSceneWaveRangeRequirement(10, 180) // waves 10 to 180
     .withCatchAllowed(true)
@@ -151,6 +149,7 @@ export const FightOrFlightEncounter: IMysteryEncounter =
           if (primaryPokemon) {
             // Use primaryPokemon to execute the thievery
             await showEncounterText(scene, `${namespace}:option:2:special_result`);
+            setEncounterExp(scene, primaryPokemon.id, encounter.enemyPartyConfigs[0].pokemonConfigs[0].species.baseExp, true);
             leaveEncounterWithoutBattle(scene);
             return;
           }

@@ -21,9 +21,7 @@ const namespace = "mysteryEncounter:shadyVitaminDealer";
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
 export const ShadyVitaminDealerEncounter: IMysteryEncounter =
-  MysteryEncounterBuilder.withEncounterType(
-    MysteryEncounterType.SHADY_VITAMIN_DEALER
-  )
+  MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.SHADY_VITAMIN_DEALER)
     .withEncounterTier(MysteryEncounterTier.COMMON)
     .withSceneWaveRangeRequirement(10, 180)
     .withPrimaryPokemonStatusEffectRequirement([StatusEffect.NONE]) // Pokemon must not have status
@@ -230,6 +228,12 @@ export const ShadyVitaminDealerEncounter: IMysteryEncounter =
       {
         buttonLabel: `${namespace}:option:3:label`,
         buttonTooltip: `${namespace}:option:3:tooltip`,
+        selected: [
+          {
+            text: `${namespace}:option:3:selected`,
+            speaker: `${namespace}:speaker`
+          }
+        ]
       },
       async (scene: BattleScene) => {
         // Leave encounter with no rewards or exp

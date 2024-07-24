@@ -24,9 +24,7 @@ const namespace = "mysteryEncounter:slumberingSnorlax";
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
 export const SlumberingSnorlaxEncounter: IMysteryEncounter =
-  MysteryEncounterBuilder.withEncounterType(
-    MysteryEncounterType.SLUMBERING_SNORLAX
-  )
+  MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.SLUMBERING_SNORLAX)
     .withEncounterTier(MysteryEncounterTier.GREAT)
     .withSceneWaveRangeRequirement(10, 180) // waves 10 to 180
     .withCatchAllowed(true)

@@ -4,8 +4,7 @@ import { isNullOrUndefined, randSeedInt } from "#app/utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
 import BattleScene from "../../../battle-scene";
-import { AddPokeballModifierType } from "#app/modifier/modifier-type";
-import { PokeballType } from "../../pokeball";
+import { modifierTypes } from "#app/modifier/modifier-type";
 import { getPokemonSpecies } from "../../pokemon-species";
 import IMysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier, } from "../mystery-encounter";
 import { EncounterOptionMode, MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
@@ -138,7 +137,7 @@ export const DarkDealEncounter: IMysteryEncounter =
         })
         .withOptionPhase(async (scene: BattleScene) => {
           // Give the player 5 Rogue Balls
-          scene.unshiftPhase(new ModifierRewardPhase(scene, () => new AddPokeballModifierType("rb", PokeballType.ROGUE_BALL, 5)));
+          scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.ROGUE_BALL));
 
           // Start encounter with random legendary (7-10 starter strength) that has level additive
           const bossTypes = scene.currentBattle.mysteryEncounter.misc as Type[];

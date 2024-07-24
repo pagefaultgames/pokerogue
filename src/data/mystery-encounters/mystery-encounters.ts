@@ -15,6 +15,7 @@ import { SafariZoneEncounter } from "#app/data/mystery-encounters/encounters/saf
 import { FieryFalloutEncounter } from "#app/data/mystery-encounters/encounters/fiery-fallout-encounter";
 import { TheStrongStuffEncounter } from "#app/data/mystery-encounters/encounters/the-strong-stuff-encounter";
 import { PokemonSalesmanEncounter } from "#app/data/mystery-encounters/encounters/pokemon-salesman-encounter";
+import { OfferYouCantRefuseEncounter } from "#app/data/mystery-encounters/encounters/offer-you-cant-refuse-encounter";
 
 // Spawn chance: (BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT + WIGHT_INCREMENT_ON_SPAWN_MISS * <number of missed spawns>) / 256
 export const BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT = 1;
@@ -134,7 +135,8 @@ const nonExtremeBiomeEncounters: MysteryEncounterType[] = [
 const humanTransitableBiomeEncounters: MysteryEncounterType[] = [
   MysteryEncounterType.MYSTERIOUS_CHALLENGERS,
   MysteryEncounterType.SHADY_VITAMIN_DEALER,
-  MysteryEncounterType.POKEMON_SALESMAN
+  MysteryEncounterType.POKEMON_SALESMAN,
+  MysteryEncounterType.OFFER_YOU_CANT_REFUSE
 ];
 
 const civilizationBiomeEncounters: MysteryEncounterType[] = [
@@ -227,6 +229,7 @@ export function initMysteryEncounters() {
   allMysteryEncounters[MysteryEncounterType.FIERY_FALLOUT] = FieryFalloutEncounter;
   allMysteryEncounters[MysteryEncounterType.THE_STRONG_STUFF] = TheStrongStuffEncounter;
   allMysteryEncounters[MysteryEncounterType.POKEMON_SALESMAN] = PokemonSalesmanEncounter;
+  allMysteryEncounters[MysteryEncounterType.OFFER_YOU_CANT_REFUSE] = OfferYouCantRefuseEncounter;
 
   // Add extreme encounters to biome map
   extremeBiomeEncounters.forEach(encounter => {
