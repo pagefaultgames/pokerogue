@@ -98,13 +98,14 @@ In addition to the base score from `Move.getTargetBenefitScore()`, attack moves 
 More specifically, the following steps are taken to compute the move's `attackScore`:
 1. Compute a multiplier based on the move's type effectiveness: 
 
-   $\text{typeMult}=\begin{cases} 2 && \text{if move is super effective (or better)}\\ -2 && \text{otherwise} \end{cases}$
+   $$\text{typeMult}=\begin{cases} 2 && \text{if move is super effective (or better)}\\ -2 && \text{otherwise} \end{cases}$$
 2. Compute a multiplier based on the move's category and the user's offensive stats:
-   1. Compute 
-      $\text{statRatio}=\begin{cases} \frac{\text{userSpAtk}}{\text{userAtk}} && \text{if move is physical}\\ \frac{\text{userAtk}}{\text{userSpAtk}} && \text{otherwise} \end{cases}$
+   1. Compute the user's offensive stat ratio:
+      
+      $$\text{statRatio}=\begin{cases} \frac{\text{userSpAtk}}{\text{userAtk}} && \text{if move is physical}\\ \frac{\text{userAtk}}{\text{userSpAtk}} && \text{otherwise} \end{cases}$$
    2. Compute the stat-based multiplier:
 
-      $\text{statMult}=\begin{cases} 2 && \text{if statRatio}\le 0.75\\ 1.5 && \text{if }0.75 < \text{statRatio}\le 0.875\\ 1 && \text{otherwise} \end{cases}$
+      $$\text{statMult}=\begin{cases} 2 && \text{if statRatio}\le 0.75\\ 1.5 && \text{if }0.75 < \text{statRatio}\le 0.875\\ 1 && \text{otherwise} \end{cases}$$
 3. Calculate the move's `attackScore`:
 
    $\text{attackScore} = (\text{typeMult}\times \text{statMult})+\lfloor \frac{\text{power}}{5} \rfloor$
@@ -130,7 +131,7 @@ Once the TSS is calculated for each target, the target is selected as follows:
 1. Sort the targets (indexes) in decreasing order of their target selection scores (or weights). Let $t_i$ be the index of the *i*-th target in the sorted list, and let $w_i$ be that target's corresponding TSS.
 2. Normalize the weights. Let $w_n$ be the lowest-weighted target in the sorted list, then:
    
-   $W_i=\begin{cases} w_i + |w_n| && \text{if } w_n \text{ is negative}\\ w_i && \text{otherwise} \end{cases}$
+   $$W_i=\begin{cases} w_i + |w_n| && \text{if } w_n \text{ is negative}\\ w_i && \text{otherwise} \end{cases}$$
 3. Remove all weights from the list such that $W_i < \frac{W_0}{2}$
 4. Generate a random integer $R=\text{rand}(0, W_{\text{total}})$ where $W_{\text{total}}$ is the sum of all the remaining weights after Step 3.
 5. For each target $(t_i, W_i)$,
@@ -204,7 +205,7 @@ Now that the enemy Pokémon with the best matchup score is on the field (assumin
 
   $\text{TS}=-\text{TBS}=13$
 
-  This move is neutral against Dachsbun and isn't boosted by STAB from Excadrill, so the final score for this move is **13**.
+  This move is neutral against Dachsbun and isn't boosted by STAB from Excadrill, so we don't need to apply any extra multipliers. The final score for this move is **13**.
 
 We now have a sorted move pool in decreasing order of move scores:
 1. Iron Head (**75**)
