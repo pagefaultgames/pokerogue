@@ -1155,9 +1155,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         if (!this.speciesStarterDexEntry?.caughtAttr) {
           error = true;
         } else if (this.starterSpecies.length < 6) { // checks to see you have less than 6 pokemon in your party
-          
+
           let species;
-          
+
           // this gets the correct generation and pokemon cursor depending on whether you're in the starter screen or the party icons
           if (!this.starterIconsCursorObj.visible) {
             species = this.filteredStarterContainers[this.cursor].species;
