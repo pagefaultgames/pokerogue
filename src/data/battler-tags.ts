@@ -1678,7 +1678,7 @@ export class StockpilingTag extends BattlerTag {
   }
 }
 
-export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourceMove: Moves, sourceId: integer): BattlerTag {
+export function getBattlerTag(tagType: BattlerTagType, turnCount: number, sourceMove: Moves, sourceId: number): BattlerTag {
   switch (tagType) {
   case BattlerTagType.RECHARGING:
     return new RechargingTag(sourceMove);
