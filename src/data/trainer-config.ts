@@ -1230,24 +1230,24 @@ export const trainerConfigs: TrainerConfigs = {
     }),
   [TrainerType.AETHER_GRUNT]: new TrainerConfig(++t).setHasGenders("Aether Grunt Female").setHasDouble("Aether Foundation Employees").setMoneyMultiplier(1.0).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm("battle_plasma_grunt").setMixedBattleBgm("battle_aether_grunt").setVictoryBgm("victory_team_plasma").setPartyTemplateFunc(scene => getEvilGruntPartyTemplate(scene))
     .setSpeciesPools({
-      [TrainerPoolTier.COMMON]: [ Species.PIKIPEK, Species.POLIWAG, Species.ROCKRUFF, Species.MAREANIE, Species.ALOLA_DIGLETT, Species.YUNGOOS, Species.STARYU, Species.CORSOLA, Species.BRUXISH],
-      [TrainerPoolTier.UNCOMMON]: [ Species.ALOLA_SANDSHREW, Species.ALOLA_VULPIX, Species.ORICORIO, Species.STUFFUL, Species.BOUNSWEET, Species.MINIOR, Species.ALOLA_GEODUDE, Species.TURTONATOR, Species.COMFEY],
-      [TrainerPoolTier.RARE]: [ Species.ALOLA_EXEGGUTOR, Species.ORANGURU, Species.PORYGON, Species.ALOLA_RAICHU, Species.PASSIMIAN, Species.GALAR_CORSOLA, Species.MORELULL],
+      [TrainerPoolTier.COMMON]: [ Species.PIKIPEK, Species.ROCKRUFF, Species.ALOLA_DIGLETT, Species.YUNGOOS, Species.CORSOLA, Species.ALOLA_GEODUDE, Species.BOUNSWEET, Species.GROWLITHE, Species.KOMALA, Species.ORICORIO],
+      [TrainerPoolTier.UNCOMMON]: [ Species.POLIWAG, Species.STUFFUL, Species.ALOLA_EXEGGUTOR, Species.BRUXISH, Species.TURTONATOR, Species.COMFEY, Species.ALOLA_RAICHU],
+      [TrainerPoolTier.RARE]: [ Species.ORANGURU, Species.PORYGON, Species.PASSIMIAN, Species.GALAR_CORSOLA, Species.ALOLA_SANDSHREW, Species.ALOLA_VULPIX],
       [TrainerPoolTier.SUPER_RARE]: [Species.JANGMO_O, Species.BAGON]
     }),
   [TrainerType.SKULL_GRUNT]: new TrainerConfig(++t).setHasGenders("Skull Grunt Female").setHasDouble("Team Skull Grunts").setMoneyMultiplier(1.0).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm("battle_plasma_grunt").setMixedBattleBgm("battle_skull_grunt").setVictoryBgm("victory_team_plasma").setPartyTemplateFunc(scene => getEvilGruntPartyTemplate(scene))
     .setSpeciesPools({
-      [TrainerPoolTier.COMMON]: [ Species.SALANDIT, Species.ALOLA_RATTATA, Species.SCRAGGY, Species.KOFFING, Species.ALOLA_GRIMER, Species.MAREANIE, Species.YUNGOOS, Species.SPINARAK, Species.PARAS],
-      [TrainerPoolTier.UNCOMMON]: [ Species.FOMANTIS, Species.SABLEYE, Species.SANDILE, Species.ZUBAT, Species.HOUNDOUR, Species.MURKROW, Species.TRUBBISH, Species.ALOLA_MEOWTH, Species.DROWZEE, Species.DEWPIDER],
+      [TrainerPoolTier.COMMON]: [ Species.SALANDIT, Species.ALOLA_RATTATA, Species.ALOLA_MEOWTH Species.SCRAGGY, Species.KOFFING, Species.ALOLA_GRIMER, Species.MAREANIE, Species.YUNGOOS, Species.SPINARAK, Species.WEEDLE],
+      [TrainerPoolTier.UNCOMMON]: [ Species.FOMANTIS, Species.SABLEYE, Species.SANDILE, Species.ZUBAT, Species.HOUNDOUR, Species.MURKROW, Species.TRUBBISH, Species.DROWZEE, Species.DEWPIDER, Species.VENIPEDE],
       [TrainerPoolTier.RARE]: [Species.ALOLA_MAROWAK, Species.SANDYGAST, Species.PAWNIARD, Species.MIMIKYU, Species.DHELMISE, Species.GASTLY, Species.WISHIWASHI, Species.PANCHAM, Species.GRUBBIN],
-      [TrainerPoolTier.SUPER_RARE]: [Species.GALAR_SLOWPOKE, Species.MANKEY]
+      [TrainerPoolTier.SUPER_RARE]: [Species.HERACROSS, Species.PINSIR, Species.GALAR_SLOWPOKE]
     }),
   [TrainerType.MACRO_GRUNT]: new TrainerConfig(++t).setHasGenders("Macro Grunt Female").setHasDouble("Macro Cosmos Trainers").setMoneyMultiplier(1.0).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm("battle_plasma_grunt").setMixedBattleBgm("battle_macro_grunt").setVictoryBgm("victory_team_plasma").setPartyTemplateFunc(scene => getEvilGruntPartyTemplate(scene))
     .setSpeciesPools({
-      [TrainerPoolTier.COMMON]: [ Species.CUFANT, Species.GALAR_MEOWTH, Species.GALAR_STUNFISK, Species.KLINK, Species.ROOKIDEE, Species.MAGNEMITE],
-      [TrainerPoolTier.UNCOMMON]: [ Species.DRILBUR, Species.FERROSEED, Species.MAWILE, Species.BRONZOR, Species.FORRETRESS, Species.DURANT, Species.SKARMORY, Species.STEELIX],
-      [TrainerPoolTier.RARE]: [Species.PROBOPASS, Species.TINKATINK, Species.ORTHWORM, Species.ARON, Species.VAROOM, Species.HONEDGE, Species.LUCARIO],
-      [TrainerPoolTier.SUPER_RARE]: [Species.DURALUDON, Species.SCIZOR]
+      [TrainerPoolTier.COMMON]: [ Species.CUFANT, Species.GALAR_MEOWTH, Species.KLINK, Species.ROOKIDEE, Species.MAGNEMITE, Species.GALAR_ZIGZAGOON, Species.SKWOVET, Species.STEELIX, Species.GALAR_PONYTA],
+      [TrainerPoolTier.UNCOMMON]: [ Species.DRILBUR, Species.FERROSEED, Species.MAWILE, Species.TINKATINK, Species.ROLYCOLY, Species.HATENNA, Species.SKARMORY, Species.LUCARIO, Species.GALAR_STUNFISK, Species.GALAR_YAMASK],
+      [TrainerPoolTier.RARE]: [Species.FALINKS, Species.BELDUM, Species.ORTHWORM, Species.ARON, Species.VAROOM, Species.HONEDGE, Species.DURALUDON, Species.DURANT],
+      [TrainerPoolTier.SUPER_RARE]: [Species.DRACOVISH, Species.DRACOZOLT, Species.SCIZOR]
     }),
   [TrainerType.BROCK]: new TrainerConfig((t = TrainerType.BROCK)).initForGymLeader(signatureSpecies["BROCK"],true, Type.ROCK).setBattleBgm("battle_kanto_gym").setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.MISTY]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["MISTY"],false, Type.WATER).setBattleBgm("battle_kanto_gym").setMixedBattleBgm("battle_kanto_gym"),
