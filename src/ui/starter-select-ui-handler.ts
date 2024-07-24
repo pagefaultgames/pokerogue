@@ -2020,7 +2020,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.starterSelectScrollBar.setPage(this.scrollCursor);
 
     let pokerusCursorIndex = 0;
-    let starterCursorIndex = 0;
     this.filteredStarterContainers.forEach((container, i) => {
       const pos = calcStarterPosition(i, this.scrollCursor);
       container.setPosition(pos.x, pos.y);
@@ -2033,14 +2032,23 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
       if (this.pokerusSpecies.includes(container.species)) {
         this.pokerusCursorObjs[pokerusCursorIndex].setPosition(pos.x - 1, pos.y + 1);
-        this.pokerusCursorObjs[pokerusCursorIndex].setVisible(true);
+
+        if (i < (maxRows + this.scrollCursor) * perRow && i >= this.scrollCursor * perRow) {
+          this.pokerusCursorObjs[pokerusCursorIndex].setVisible(true);
+        } else {
+          this.pokerusCursorObjs[pokerusCursorIndex].setVisible(false);
+        }
         pokerusCursorIndex++;
       }
 
       if (this.starterSpecies.includes(container.species)) {
-        this.starterCursorObjs[starterCursorIndex].setPosition(pos.x - 1, pos.y + 1);
-        this.starterCursorObjs[starterCursorIndex].setVisible(true);
-        starterCursorIndex++;
+        this.starterCursorObjs[this.starterSpecies.indexOf(container.species)].setPosition(pos.x - 1, pos.y + 1);
+
+        if (i < (maxRows + this.scrollCursor) * perRow && i >= this.scrollCursor * perRow) {
+          this.starterCursorObjs[this.starterSpecies.indexOf(container.species)].setVisible(true);
+        } else {
+          this.starterCursorObjs[this.starterSpecies.indexOf(container.species)].setVisible(false);
+        }
       }
 
       const speciesId = container.species.speciesId;
