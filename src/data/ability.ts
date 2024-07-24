@@ -2165,10 +2165,10 @@ export class PostSummonUserFieldRemoveStatusEffectAbAttr extends PostSummonAbAtt
   }
 
   /**
-   * Applies the post-summon ability.
+   * Removes supplied status effect from the user's field when user of the ability is summoned.
    *
    * @param pokemon - The Pokémon that triggered the ability.
-   * @param passive - Whether the ability is applied passively.
+   * @param passive - Whether the ability is passive.
    * @param args - Additional arguments for the ability.
    * @returns A boolean or a promise that resolves to a boolean indicating the result of the ability application.
    */
