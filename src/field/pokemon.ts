@@ -3031,8 +3031,8 @@ export class PlayerPokemon extends Pokemon {
       this.generateAndPopulateMoveset();
     }
     this.generateCompatibleTms();
-    this.generatePossibleEvolutionItems();
-    this.generatePossibleFormChangeItems();
+    this.evolutionItems = this.generatePossibleEvolutionItems();
+    this.formChangeItems = this.generatePossibleFormChangeItems();
   }
 
   initBattleInfo(): void {
@@ -3091,28 +3091,28 @@ export class PlayerPokemon extends Pokemon {
    * Sets evolutionItems to be all possible evolutionary items for the Pokemon.
    * Based on EvolutionItemModifierTypeGenerator from modifier-types.ts
    */
-  generatePossibleEvolutionItems(): void {
+  generatePossibleEvolutionItems(): EvolutionItem[] {
     this.evolutionItems = [];
     let speciesFormEvolutions = [];
+    let evolutions = [];
 
     if (pokemonEvolutions.hasOwnProperty(this.species.speciesId)) {
-      const evolutions = pokemonEvolutions[this.species.speciesId];
-      speciesFormEvolutions = evolutions.filter(e => e.item !== EvolutionItem.NONE && (e.evoFormKey === null || (e.preFormKey || "") === this.getFormKey()) && (!e.condition || e.condition.predicate(this)));
+      evolutions = pokemonEvolutions[this.species.speciesId];
     }
-    if (this.isFusion() && pokemonEvolutions.hasOwnProperty(this.fusionSpecies.speciesId)) {
-      const evolutions = pokemonEvolutions[this.fusionSpecies.speciesId];
-      speciesFormEvolutions.concat(evolutions.filter(e => e.item !== EvolutionItem.NONE && (e.evoFormKey === null || (e.preFormKey || "") === this.getFusionFormKey()) && (!e.condition || e.condition.predicate(this))));
+    if (this.isFusion() && this.fusionSpecies.speciesId in pokemonEvolutions) {
+      evolutions = evolutions.concat(pokemonEvolutions[this.fusionSpecies.speciesId]);
     }
 
+    speciesFormEvolutions = evolutions.filter(e => e.item !== EvolutionItem.NONE && (e.evoFormKey === null || (e.preFormKey || "") === this.getFormKey()) && (!e.condition || e.condition.predicate(this)));
     const possibleEvolutionItems = speciesFormEvolutions.flat().flatMap(e => e.item);
-    this.evolutionItems = possibleEvolutionItems;
+    return possibleEvolutionItems;
   }
 
   /**
    * Sets formChangeItems to be all possible form change items for the Pokemon.
    * Based on FormChangeItemModifierTypeGenerator from modifier-types.ts
    */
-  generatePossibleFormChangeItems(): void {
+  generatePossibleFormChangeItems(): FormChangeItem[] {
     this.formChangeItems = [];
     let possibleFormItems = [];
 
@@ -3123,7 +3123,7 @@ export class PlayerPokemon extends Pokemon {
         .flat().flatMap(fc => fc.item);
     }
 
-    this.formChangeItems = possibleFormItems;
+    return possibleFormItems;
   }
 
   tryPopulateMoveset(moveset: StarterMoveset): boolean {
@@ -3280,8 +3280,8 @@ export class PlayerPokemon extends Pokemon {
           this.fusionAbilityIndex = abilityCount - 1;
         }
       }
-      this.generatePossibleEvolutionItems();
-      this.generatePossibleFormChangeItems();
+      this.evolutionItems = this.generatePossibleEvolutionItems();
+      this.formChangeItems = this.generatePossibleFormChangeItems();
       this.compatibleTms.splice(0, this.compatibleTms.length);
       this.generateCompatibleTms();
       const updateAndResolve = () => {
@@ -3373,8 +3373,8 @@ export class PlayerPokemon extends Pokemon {
   clearFusionSpecies(): void {
     super.clearFusionSpecies();
     this.generateCompatibleTms();
-    this.generatePossibleEvolutionItems();
-    this.generatePossibleFormChangeItems();
+    this.evolutionItems = this.generatePossibleEvolutionItems();
+    this.formChangeItems = this.generatePossibleFormChangeItems();
   }
 
   /**
@@ -3412,8 +3412,8 @@ export class PlayerPokemon extends Pokemon {
         this.status = pokemon.status; // Inherit the other Pokemon's status
       }
       this.generateCompatibleTms();
-      this.generatePossibleEvolutionItems();
-      this.generatePossibleFormChangeItems();
+      this.evolutionItems = this.generatePossibleEvolutionItems();
+      this.formChangeItems = this.generatePossibleFormChangeItems();
       this.updateInfo(true);
       const fusedPartyMemberIndex = this.scene.getParty().indexOf(pokemon);
       let partyMemberIndex = this.scene.getParty().indexOf(this);
