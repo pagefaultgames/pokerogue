@@ -999,14 +999,14 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const isEggAvailable = this.isSameSpeciesEggAvailable(species.speciesId);
     // 'Passives First' mode
     if (this.scene.candyUpgradeNotification === 1) {
-      this.candyUpgradeIcon[index].setVisible(slotVisible && (isPassiveAvailable || (isPassiveUnlocked && isValueReductionAvailable) || (isPassiveUnlocked && isValueReductionMaxed && isEggAvailable)));
-      this.candyUpgradeOverlayIcon[index].setVisible(slotVisible && this.candyUpgradeIcon[index].visible);
+      starter.candyUpgradeIcon.setVisible(slotVisible && (isPassiveAvailable || (isPassiveUnlocked && isValueReductionAvailable) || (isPassiveUnlocked && isValueReductionMaxed && isEggAvailable)));
+      starter.candyUpgradeOverlayIcon.setVisible(slotVisible && starter.candyUpgradeIcon.visible);
 
       // 'On' mode
     } else if (this.scene.candyUpgradeNotification === 2) {
-      this.candyUpgradeIcon[index].setVisible(
-        slotVisible && (isPassiveAvailable || isValueReductionAvailable || isEggAvailable));
-      this.candyUpgradeOverlayIcon[index].setVisible(slotVisible && this.candyUpgradeIcon[index].visible);
+      starter.candyUpgradeIcon.setVisible(
+        slotVisible && (isPassiveAvailable || this.isValueReductionAvailable(species.speciesId) || isEggAvailable));
+      starter.candyUpgradeOverlayIcon.setVisible(slotVisible && starter.candyUpgradeIcon.visible);
     }
   }
 
