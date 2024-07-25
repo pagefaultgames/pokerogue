@@ -635,7 +635,7 @@ class StealthRockTag extends ArenaTrapTag {
 
     if (damageHpRatio) {
       const damage = Math.ceil(pokemon.getMaxHp() * damageHpRatio);
-      pokemon.scene.queueMessage(i18next.t("arenaTags:stealthRockActivateTrap", { pokemonName: getPokemonNameWithAffix(pokemon) }));
+      pokemon.scene.queueMessage(i18next.t("arenaTags:stealthRockActivateTrap", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
       pokemon.damageAndUpdate(damage, HitResult.OTHER);
       if (pokemon.turnData) {
         pokemon.turnData.damageTaken += damage;
@@ -674,7 +674,7 @@ class StickyWebTag extends ArenaTrapTag {
       const cancelled = new Utils.BooleanHolder(false);
       applyAbAttrs(ProtectStatAbAttr, pokemon, cancelled);
       if (!cancelled.value) {
-        pokemon.scene.queueMessage(i18next.t("arenaTags:stickyWebActivateTrap", { pokemonName: getPokemonNameWithAffix(pokemon) }));
+        pokemon.scene.queueMessage(i18next.t("arenaTags:stickyWebActivateTrap", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
         const statLevels = new Utils.NumberHolder(-1);
         pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), false, [BattleStat.SPD], statLevels.value));
       }
