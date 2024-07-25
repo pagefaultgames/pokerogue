@@ -5,6 +5,7 @@ import { Moves } from "#app/enums/moves.js";
 import { Species } from "#app/enums/species.js";
 import * as GameMode from "#app/game-mode";
 import { GameModes, getGameMode } from "#app/game-mode";
+import { ModifierOverride } from "#app/modifier/modifier-type.js";
 import Overrides from "#app/overrides";
 import GameManager from "#test/utils/gameManager";
 import { vi } from "vitest";
@@ -49,6 +50,17 @@ export class OverridesHelper {
   startingLevel(level: Species | number): this {
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(level);
     this.log(`Player Pokemon starting level set to ${level}!`);
+    return this;
+  }
+
+  /**
+   * Override the player (pokemon) starting held items
+   * @param items the items to hold
+   * @returns this
+   */
+  startingHeldItems(items: ModifierOverride[]) {
+    vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue(items);
+    this.log("Player Pokemon starting held items set to:", items);
     return this;
   }
 
