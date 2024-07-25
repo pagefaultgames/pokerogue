@@ -1,15 +1,14 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import overrides from "#app/overrides";
-import { CommandPhase, TurnInitPhase } from "#app/phases";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { BattleStat } from "#app/data/battle-stat";
+import { StockpilingTag } from "#app/data/battler-tags.js";
+import { MoveResult, TurnMove } from "#app/field/pokemon.js";
+import { CommandPhase, TurnInitPhase } from "#app/phases";
+import GameManager from "#app/test/utils/gameManager";
+import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { StockpilingTag } from "#app/data/battler-tags.js";
-import { MoveResult, TurnMove } from "#app/field/pokemon.js";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Moves - Stockpile", () => {
@@ -34,7 +33,7 @@ describe("Moves - Stockpile", () => {
       game.override.enemyMoveset(SPLASH_ONLY);
       game.override.enemyAbility(Abilities.NONE);
 
-      vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
+      game.override.startingLevel(2000);
       game.override.moveset([Moves.STOCKPILE, Moves.SPLASH]);
       game.override.ability(Abilities.NONE);
     });
