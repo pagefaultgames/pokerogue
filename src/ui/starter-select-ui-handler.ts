@@ -1182,14 +1182,14 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
           const currentPartyValue = this.starterSpecies.map(s => s.generation).reduce((total: number, gen: number, i: number) => total += this.scene.gameData.getSpeciesStarterValue(this.starterSpecies[i].speciesId), 0);
           const newCost = this.scene.gameData.getSpeciesStarterValue(species.speciesId);
-          if ((!isDupe || allowDuplicateSpecies.value) && isValidForChallenge.value && currentPartyValue + newCost <= this.getValueLimit()) { // this checks to make sure the pokemon doesn't exist in your party, it's valid for the challenge and that it won't go over the cost limit; if it meets all these criteria it will add it to your party
+          if (!isDupe && isValidForChallenge.value && currentPartyValue + newCost <= this.getValueLimit()) { // this checks to make sure the pokemon doesn't exist in your party, it's valid for the challenge and that it won't go over the cost limit; if it meets all these criteria it will add it to your party
             options = [
               {
                 label: i18next.t("starterSelectUiHandler:addToParty"),
                 handler: () => {
                   ui.setMode(Mode.STARTER_SELECT);
 
-                  if (!isDupe && isValidForChallenge.value && this.tryUpdateValue(this.scene.gameData.getSpeciesStarterValue(species.speciesId), true)) {
+                  if ((!isDupe || allowDuplicateSpecies.value) && isValidForChallenge.value && this.tryUpdateValue(this.scene.gameData.getSpeciesStarterValue(species.speciesId), true)) {
                     this.addToParty(species);
                     ui.playSelect();
                   } else {
