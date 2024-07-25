@@ -1,16 +1,15 @@
+import { BattleStat } from "#app/data/battle-stat.js";
+import { StatusEffect } from "#app/data/status-effect.js";
+import { Type } from "#app/data/type.js";
+import { BattlerTagType } from "#app/enums/battler-tag-type.js";
+import { BerryPhase, CommandPhase, DamagePhase, MoveEffectPhase, MoveEndPhase, TurnEndPhase } from "#app/phases.js";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import GameManager from "../utils/gameManager";
-import Overrides from "#app/overrides";
-import { Species } from "#enums/species";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
 import { getMovePosition } from "../utils/gameManagerUtils";
-import { BerryPhase, CommandPhase, DamagePhase, MoveEffectPhase, MoveEndPhase, TurnEndPhase } from "#app/phases.js";
-import { BattleStat } from "#app/data/battle-stat.js";
-import { Type } from "#app/data/type.js";
-import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import { StatusEffect } from "#app/data/status-effect.js";
 import { SPLASH_ONLY } from "../utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
@@ -539,8 +538,7 @@ describe("Abilities - Parental Bond", () => {
   test(
     "Wake-Up Slap boosted by this ability should only wake up the target after the second hit",
     async () => {
-      game.override.moveset([Moves.WAKE_UP_SLAP]);
-      vi.spyOn(Overrides, "OPP_STATUS_OVERRIDE", "get").mockReturnValue(StatusEffect.SLEEP);
+      game.override.moveset([Moves.WAKE_UP_SLAP]).enemyStatusEffect(StatusEffect.SLEEP);
 
       await game.startBattle([Species.CHARIZARD]);
 
