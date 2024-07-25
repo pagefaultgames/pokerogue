@@ -72,7 +72,7 @@ describe("Abilities - DISGUISE", () => {
         bustedForm = 1;
 
       game.override.enemyMoveset([Moves.DARK_PULSE, Moves.DARK_PULSE, Moves.DARK_PULSE, Moves.DARK_PULSE]);
-      vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(20);
+      game.override.startingLevel(20);
       vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(20);
       game.override.enemySpecies(Species.MAGIKARP);
       vi.spyOn(Overrides, "STARTER_FORM_OVERRIDES", "get").mockReturnValue({

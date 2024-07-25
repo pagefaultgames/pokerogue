@@ -105,7 +105,7 @@ describe("Moves - Spikes", () => {
 
   it("trainer - wild - force switch by himself opponent - should take damage", async() => {
     game.override.startingWave(5);
-    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(5000);
+    game.override.startingLevel(5000);
     game.override.enemySpecies(0);
     // turn 1: player set spikes, opponent do splash
     // turn 2: player do splash, opponent switch pokemon

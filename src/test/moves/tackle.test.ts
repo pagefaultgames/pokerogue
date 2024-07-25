@@ -33,7 +33,7 @@ describe("Moves - Tackle", () => {
     const moveToUse = Moves.TACKLE;
     game.override.battleType("single");
     game.override.enemySpecies(Species.MAGIKARP);
-    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(1);
+    game.override.startingLevel(1);
     game.override.startingWave(97);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
     game.override.enemyMoveset([Moves.GROWTH,Moves.GROWTH,Moves.GROWTH,Moves.GROWTH]);

@@ -32,7 +32,7 @@ describe("Moves - Purify", () => {
     game.override.battleType("single");
 
     game.override.starterSpecies(Species.PYUKUMUKU);
-    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(10);
+    game.override.startingLevel(10);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.PURIFY, Moves.SIZZLY_SLIDE]);
 
     game.override.enemySpecies(Species.MAGIKARP);

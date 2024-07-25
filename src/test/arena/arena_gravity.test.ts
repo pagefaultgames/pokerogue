@@ -58,7 +58,7 @@ describe("Arena - Gravity", () => {
   });
 
   it("OHKO move accuracy is not affected", async () => {
-    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(5);
+    game.override.startingLevel(5);
     vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(5);
 
     /** See Fissure {@link https://bulbapedia.bulbagarden.net/wiki/Fissure_(move)} */

@@ -33,7 +33,7 @@ describe("Abilities - Sand Veil", () => {
     game.override.enemySpecies(Species.MEOWSCARADA);
     game.override.enemyAbility(Abilities.INSOMNIA);
     game.override.enemyMoveset([Moves.TWISTER, Moves.TWISTER, Moves.TWISTER, Moves.TWISTER]);
-    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    game.override.startingLevel(100);
     vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
     game.override
       .weather(WeatherType.SANDSTORM)
