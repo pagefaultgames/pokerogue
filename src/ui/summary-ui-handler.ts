@@ -853,7 +853,7 @@ export default class SummaryUiHandler extends UiHandler {
       });
 
       const itemModifiers = (this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-          && m.pokemonId === this.pokemon.id, true) as PokemonHeldItemModifier[])
+          && m.pokemonId === this.pokemon.id, this.pokemon.battleInfo.player) as PokemonHeldItemModifier[])
         .sort(modifierSortFunc);
 
       itemModifiers.forEach((item, i) => {
