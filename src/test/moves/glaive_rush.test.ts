@@ -1,13 +1,12 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
+import { allMoves } from "#app/data/move.js";
+import { Abilities } from "#app/enums/abilities.js";
 import { DamagePhase, TurnEndPhase } from "#app/phases";
+import GameManager from "#app/test/utils/gameManager";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { Abilities } from "#app/enums/abilities.js";
-import { allMoves } from "#app/data/move.js";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 
 describe("Moves - Glaive Rush", () => {
@@ -66,7 +65,7 @@ describe("Moves - Glaive Rush", () => {
   }, 20000);
 
   it("interacts properly with multi-lens", async() => {
-    vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "MULTI_LENS", count: 2}]);
+    game.override.startingHeldItems([{name: "MULTI_LENS", count: 2}]);
     game.override.enemyMoveset(Array(4).fill(Moves.AVALANCHE));
     await game.startBattle();
     const player = game.scene.getPlayerPokemon();

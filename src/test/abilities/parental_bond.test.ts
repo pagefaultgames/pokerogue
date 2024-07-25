@@ -339,7 +339,7 @@ describe("Abilities - Parental Bond", () => {
     "Moves boosted by this ability and Multi-Lens should strike 4 times",
     async () => {
       game.override.moveset([Moves.TACKLE]);
-      vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "MULTI_LENS", count: 1}]);
+      game.override.startingHeldItems([{name: "MULTI_LENS", count: 1}]);
 
       await game.startBattle([Species.CHARIZARD]);
 
@@ -361,7 +361,7 @@ describe("Abilities - Parental Bond", () => {
     "Super Fang boosted by this ability and Multi-Lens should strike twice",
     async () => {
       game.override.moveset([Moves.SUPER_FANG]);
-      vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "MULTI_LENS", count: 1}]);
+      game.override.startingHeldItems([{name: "MULTI_LENS", count: 1}]);
 
       await game.startBattle([Species.CHARIZARD]);
 
@@ -392,7 +392,7 @@ describe("Abilities - Parental Bond", () => {
     "Seismic Toss boosted by this ability and Multi-Lens should strike twice",
     async () => {
       game.override.moveset([Moves.SEISMIC_TOSS]);
-      vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "MULTI_LENS", count: 1}]);
+      game.override.startingHeldItems([{name: "MULTI_LENS", count: 1}]);
 
       await game.startBattle([Species.CHARIZARD]);
 
@@ -615,7 +615,7 @@ describe("Abilities - Parental Bond", () => {
     async () => {
       game.override.battleType("double");
       game.override.moveset([Moves.EARTHQUAKE, Moves.SPLASH]);
-      vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "MULTI_LENS", count: 1}]);
+      game.override.startingHeldItems([{name: "MULTI_LENS", count: 1}]);
 
       await game.startBattle([Species.CHARIZARD, Species.PIDGEOT]);
 

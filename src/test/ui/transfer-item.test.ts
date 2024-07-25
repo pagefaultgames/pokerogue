@@ -1,8 +1,7 @@
 import { BerryType } from "#app/enums/berry-type";
+import { Button } from "#app/enums/buttons";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
-import { Button } from "#app/enums/buttons";
-import Overrides from "#app/overrides";
 import {
   BattleEndPhase,
   SelectModifierPhase
@@ -13,7 +12,7 @@ import PartyUiHandler, { PartyUiMode } from "#app/ui/party-ui-handler";
 import { Mode } from "#app/ui/ui";
 import Phaser from "phaser";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { getMovePosition } from "../utils/gameManagerUtils";
 
 
@@ -36,7 +35,7 @@ describe("UI - Transfer Items", () => {
     game.override.battleType("single");
     game.override.startingLevel(100);
     game.override.startingWave(1);
-    vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([
+    game.override.startingHeldItems([
       { name: "BERRY", count: 1, type: BerryType.SITRUS },
       { name: "BERRY", count: 2, type: BerryType.APICOT },
       { name: "BERRY", count: 2, type: BerryType.LUM },
