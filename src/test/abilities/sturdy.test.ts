@@ -32,7 +32,7 @@ describe("Abilities - Sturdy", () => {
     game = new GameManager(phaserGame);
     game.override.battleType("single");
 
-    vi.spyOn(Overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.LUCARIO);
+    game.override.starterSpecies(Species.LUCARIO);
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.CLOSE_COMBAT, Moves.FISSURE]);
 

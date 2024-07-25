@@ -31,7 +31,7 @@ describe("Moves - Purify", () => {
     game = new GameManager(phaserGame);
     game.override.battleType("single");
 
-    vi.spyOn(Overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.PYUKUMUKU);
+    game.override.starterSpecies(Species.PYUKUMUKU);
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(10);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.PURIFY, Moves.SIZZLY_SLIDE]);
 

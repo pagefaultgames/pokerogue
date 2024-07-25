@@ -31,7 +31,7 @@ describe("Abilities - Dry Skin", () => {
     game.override.enemyMoveset(SPLASH_ONLY);
     game.override.enemySpecies(Species.CHARMANDER);
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.UNNERVE);
-    vi.spyOn(Overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.CHANDELURE);
+    game.override.starterSpecies(Species.CHANDELURE);
   });
 
   it("during sunlight, lose 1/8 of maximum health at the end of each turn", async () => {

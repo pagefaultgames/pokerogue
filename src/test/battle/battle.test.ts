@@ -90,7 +90,7 @@ describe("Test Battle Phase", () => {
   }, 20000);
 
   it("do attack wave 3 - single battle - regular - OHKO", async() => {
-    vi.spyOn(Overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MEWTWO);
+    game.override.starterSpecies(Species.MEWTWO);
     game.override.enemySpecies(Species.RATTATA);
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
     game.override
@@ -111,7 +111,7 @@ describe("Test Battle Phase", () => {
   }, 20000);
 
   it("do attack wave 3 - single battle - regular - NO OHKO with opponent using non damage attack", async() => {
-    vi.spyOn(Overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MEWTWO);
+    game.override.starterSpecies(Species.MEWTWO);
     game.override.enemySpecies(Species.RATTATA);
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(5);
     game.override.startingWave(3);
@@ -262,7 +262,7 @@ describe("Test Battle Phase", () => {
   it("kill opponent pokemon", async() => {
     const moveToUse = Moves.SPLASH;
     game.override.battleType("single");
-    vi.spyOn(Overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MEWTWO);
+    game.override.starterSpecies(Species.MEWTWO);
     game.override.enemySpecies(Species.RATTATA);
     game.override.enemyAbility(Abilities.HYDRATION);
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.ZEN_MODE);
@@ -291,7 +291,7 @@ describe("Test Battle Phase", () => {
   it("to next turn", async() => {
     const moveToUse = Moves.SPLASH;
     game.override.battleType("single");
-    vi.spyOn(Overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MEWTWO);
+    game.override.starterSpecies(Species.MEWTWO);
     game.override.enemySpecies(Species.RATTATA);
     game.override.enemyAbility(Abilities.HYDRATION);
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.ZEN_MODE);
@@ -309,7 +309,7 @@ describe("Test Battle Phase", () => {
   it("to next wave with pokemon killed, single", async() => {
     const moveToUse = Moves.SPLASH;
     game.override.battleType("single");
-    vi.spyOn(Overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MEWTWO);
+    game.override.starterSpecies(Species.MEWTWO);
     game.override.enemySpecies(Species.RATTATA);
     game.override.enemyAbility(Abilities.HYDRATION);
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.ZEN_MODE);

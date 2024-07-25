@@ -28,7 +28,7 @@ describe("Moves - Rollout", () => {
     game = new GameManager(phaserGame);
     vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
     game.override.battleType("single");
-    vi.spyOn(Overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
+    game.override.starterSpecies(Species.RATTATA);
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
     game.override.enemySpecies(Species.BIDOOF);
     game.override.enemyAbility(Abilities.NONE);
