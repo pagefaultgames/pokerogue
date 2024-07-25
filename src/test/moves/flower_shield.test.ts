@@ -38,7 +38,7 @@ describe("Moves - Flower Shield", () => {
   });
 
   it("increases defense of all Grass-type Pokemon on the field by one stage - single battle", async () => {
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.CHERRIM);
+    game.override.enemySpecies(Species.CHERRIM);
 
     await game.startBattle([Species.MAGIKARP]);
     const cherrim = game.scene.getEnemyPokemon();
@@ -55,7 +55,7 @@ describe("Moves - Flower Shield", () => {
   });
 
   it("increases defense of all Grass-type Pokemon on the field by one stage - double battle", async () => {
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
+    game.override.enemySpecies(Species.MAGIKARP);
     vi.spyOn(Overrides, "STARTING_BIOME_OVERRIDE", "get").mockReturnValue(Biome.GRASS);
     game.override.battleType("double");
 
@@ -80,7 +80,7 @@ describe("Moves - Flower Shield", () => {
    * See semi-vulnerable state tags. {@linkcode SemiInvulnerableTag}
   */
   it("does not increase defense of a pokemon in semi-vulnerable state", async () => {
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.PARAS);
+    game.override.enemySpecies(Species.PARAS);
     vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.DIG, Moves.DIG, Moves.DIG, Moves.DIG]);
     vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(50);
 
@@ -101,7 +101,7 @@ describe("Moves - Flower Shield", () => {
   });
 
   it("does nothing if there are no Grass-type pokemon on the field", async () => {
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
+    game.override.enemySpecies(Species.MAGIKARP);
 
     await game.startBattle([Species.MAGIKARP]);
     const enemy = game.scene.getEnemyPokemon();

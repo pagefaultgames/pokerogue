@@ -171,7 +171,7 @@ function beforeTrial(phaserGame: Phaser.Game, single: boolean = false) {
   vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
   vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(50);
   vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(40);
-  vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.EEVEE);
+  game.override.enemySpecies(Species.EEVEE);
   return game;
 }
 

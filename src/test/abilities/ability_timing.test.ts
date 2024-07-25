@@ -28,7 +28,7 @@ describe("Ability Timing", () => {
     game = new GameManager(phaserGame);
     game.override.battleType("single");
 
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.PIDGEY);
+    game.override.enemySpecies(Species.PIDGEY);
     vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INTIMIDATE);
     vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(Array(4).fill(Moves.SPLASH));
 

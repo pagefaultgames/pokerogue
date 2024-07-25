@@ -35,7 +35,7 @@ describe("Abilities - Shield Dust", () => {
     game = new GameManager(phaserGame);
     const movesToUse = [Moves.AIR_SLASH];
     game.override.battleType("single");
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.ONIX);
+    game.override.enemySpecies(Species.ONIX);
     vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.SHIELD_DUST);
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue(movesToUse);

@@ -74,7 +74,7 @@ describe("Abilities - DISGUISE", () => {
       vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.DARK_PULSE, Moves.DARK_PULSE, Moves.DARK_PULSE, Moves.DARK_PULSE]);
       vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(20);
       vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(20);
-      vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
+      game.override.enemySpecies(Species.MAGIKARP);
       vi.spyOn(Overrides, "STARTER_FORM_OVERRIDES", "get").mockReturnValue({
         [Species.MIMIKYU]: baseForm,
       });
