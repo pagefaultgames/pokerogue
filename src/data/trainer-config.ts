@@ -16,6 +16,7 @@ import { Moves } from "#enums/moves";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
+import {EnemyPokemon, PokemonMove} from "../field/pokemon";
 
 export enum TrainerPoolTier {
   COMMON,
@@ -1198,7 +1199,7 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.COMMON]: [Species.SLUGMA, Species.POOCHYENA, Species.NUMEL, Species.ZIGZAGOON, Species.DIGLETT, Species.MAGBY, Species.TORKOAL, Species.BALTOY, Species.BARBOACH],
       [TrainerPoolTier.UNCOMMON]: [Species.SOLROCK, Species.HIPPOPOTAS, Species.SANDACONDA, Species.PHANPY, Species.SWINUB, Species.GLIGAR],
       [TrainerPoolTier.RARE]: [Species.TRAPINCH, Species.HEATMOR],
-      [TrainerPoolTier.SUPER_RARE]: [Species.SCOVILLAIN, Species.CHARCADET]
+      [TrainerPoolTier.SUPER_RARE]: [Species.CAPSAKID, Species.CHARCADET]
     }),
   [TrainerType.AQUA_GRUNT]: new TrainerConfig(++t).setHasGenders("Aqua Grunt Female").setHasDouble("Aqua Grunts").setMoneyMultiplier(1.0).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm("battle_plasma_grunt").setMixedBattleBgm("battle_aqua_magma_grunt").setVictoryBgm("victory_team_plasma").setPartyTemplateFunc(scene => getEvilGruntPartyTemplate(scene))
     .setSpeciesPools({
@@ -1230,15 +1231,15 @@ export const trainerConfigs: TrainerConfigs = {
     }),
   [TrainerType.AETHER_GRUNT]: new TrainerConfig(++t).setHasGenders("Aether Grunt Female").setHasDouble("Aether Foundation Employees").setMoneyMultiplier(1.0).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm("battle_plasma_grunt").setMixedBattleBgm("battle_aether_grunt").setVictoryBgm("victory_team_plasma").setPartyTemplateFunc(scene => getEvilGruntPartyTemplate(scene))
     .setSpeciesPools({
-      [TrainerPoolTier.COMMON]: [ Species.PIKIPEK, Species.ROCKRUFF, Species.ALOLA_DIGLETT, Species.YUNGOOS, Species.CORSOLA, Species.ALOLA_GEODUDE, Species.BOUNSWEET, Species.GROWLITHE, Species.KOMALA],
-      [TrainerPoolTier.UNCOMMON]: [ Species.POLIWAG, Species.STUFFUL, Species.ALOLA_EXEGGUTOR, Species.BRUXISH, Species.TURTONATOR, Species.COMFEY, Species.ALOLA_RAICHU, Species.ORICORIO],
+      [TrainerPoolTier.COMMON]: [ Species.PIKIPEK, Species.ROCKRUFF, Species.ALOLA_DIGLETT, Species.YUNGOOS, Species.CORSOLA, Species.ALOLA_GEODUDE, Species.BOUNSWEET, Species.GROWLITHE, Species.KOMALA, Species.MUDBRAY],
+      [TrainerPoolTier.UNCOMMON]: [ Species.POLIWAG, Species.STUFFUL, Species.ALOLA_EXEGGUTOR, Species.BRUXISH, Species.TURTONATOR, Species.COMFEY, Species.ALOLA_RAICHU, Species.ORICORIO, Species.SEWADDLE],
       [TrainerPoolTier.RARE]: [ Species.ORANGURU, Species.PORYGON, Species.PASSIMIAN, Species.GALAR_CORSOLA, Species.ALOLA_SANDSHREW, Species.ALOLA_VULPIX],
       [TrainerPoolTier.SUPER_RARE]: [Species.JANGMO_O, Species.BAGON]
     }),
   [TrainerType.SKULL_GRUNT]: new TrainerConfig(++t).setHasGenders("Skull Grunt Female").setHasDouble("Team Skull Grunts").setMoneyMultiplier(1.0).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm("battle_plasma_grunt").setMixedBattleBgm("battle_skull_grunt").setVictoryBgm("victory_team_plasma").setPartyTemplateFunc(scene => getEvilGruntPartyTemplate(scene))
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [ Species.SALANDIT, Species.ALOLA_RATTATA, Species.ALOLA_MEOWTH, Species.SCRAGGY, Species.KOFFING, Species.ALOLA_GRIMER, Species.MAREANIE, Species.YUNGOOS, Species.SPINARAK, Species.WEEDLE],
-      [TrainerPoolTier.UNCOMMON]: [ Species.FOMANTIS, Species.SABLEYE, Species.SANDILE, Species.ZUBAT, Species.HOUNDOUR, Species.MURKROW, Species.TRUBBISH, Species.DROWZEE, Species.DEWPIDER, Species.VENIPEDE],
+      [TrainerPoolTier.UNCOMMON]: [ Species.FOMANTIS, Species.SABLEYE, Species.SANDILE, Species.ZUBAT, Species.HOUNDOUR, Species.VULLABY, Species.TRUBBISH, Species.DROWZEE, Species.DEWPIDER, Species.VENIPEDE],
       [TrainerPoolTier.RARE]: [Species.ALOLA_MAROWAK, Species.SANDYGAST, Species.PAWNIARD, Species.MIMIKYU, Species.DHELMISE, Species.GASTLY, Species.WISHIWASHI, Species.PANCHAM, Species.GRUBBIN],
       [TrainerPoolTier.SUPER_RARE]: [Species.HERACROSS, Species.PINSIR, Species.GALAR_SLOWPOKE]
     }),
@@ -1246,8 +1247,8 @@ export const trainerConfigs: TrainerConfigs = {
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [ Species.CUFANT, Species.GALAR_MEOWTH, Species.KLINK, Species.ROOKIDEE, Species.MAGNEMITE, Species.GALAR_ZIGZAGOON, Species.SKWOVET, Species.STEELIX, Species.GALAR_PONYTA],
       [TrainerPoolTier.UNCOMMON]: [ Species.DRILBUR, Species.FERROSEED, Species.MAWILE, Species.TINKATINK, Species.ROLYCOLY, Species.HATENNA, Species.SKARMORY, Species.LUCARIO, Species.GALAR_STUNFISK, Species.GALAR_YAMASK],
-      [TrainerPoolTier.RARE]: [Species.FALINKS, Species.BELDUM, Species.ORTHWORM, Species.ARON, Species.VAROOM, Species.HONEDGE, Species.DURALUDON, Species.DURANT],
-      [TrainerPoolTier.SUPER_RARE]: [Species.DRACOVISH, Species.DRACOZOLT, Species.SCIZOR]
+      [TrainerPoolTier.RARE]: [Species.FALINKS, Species.BELDUM, Species.ORTHWORM, Species.ARON, Species.VAROOM, Species.HONEDGE, Species.DURALUDON, Species.DURANT, Species.SCIZOR],
+      [TrainerPoolTier.SUPER_RARE]: [Species.DRACOVISH, Species.DRACOZOLT, Species.GALAR_DARUMAKA]
     }),
   [TrainerType.BROCK]: new TrainerConfig((t = TrainerType.BROCK)).initForGymLeader(signatureSpecies["BROCK"],true, Type.ROCK).setBattleBgm("battle_kanto_gym").setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.MISTY]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["MISTY"],false, Type.WATER).setBattleBgm("battle_kanto_gym").setMixedBattleBgm("battle_kanto_gym"),
@@ -1717,8 +1718,10 @@ export const trainerConfigs: TrainerConfigs = {
       p.setBoss(true, 2);
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.MASTER_BALL;
-      p.formIndex = 4;
-      p.shiny = true;
+      p.formIndex = Utils.randSeedInt(5);
+      if (!p.moveset.some(move => move.moveId === Moves.TECHNO_BLAST)) {
+        p.moveset[0] = new PokemonMove(Moves.TECHNO_BLAST);
+      }
     }))
     .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.KYUREM ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
@@ -1736,11 +1739,10 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.ULTRA_BALL;
       p.formIndex = 1;
-      p.shiny = true;
       p.generateName();
     })),
   [TrainerType.LYSANDRE_2]: new TrainerConfig(++t).setName("Lysandre").initForEvilTeamLeader("Flare Boss",[], true).setMixedBattleBgm("battle_flare_boss").setVictoryBgm("victory_team_plasma")
-    .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.ETERNAL_FLOETTE ], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.SCREAM_TAIL, Species.FLUTTER_MANE ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.MASTER_BALL;
@@ -1753,7 +1755,6 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.ULTRA_BALL;
       p.formIndex = 1;
-      p.shiny = true;
       p.generateName();
     }))
     .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.YVELTAL ], TrainerSlot.TRAINER, true, p => {
@@ -1762,37 +1763,38 @@ export const trainerConfigs: TrainerConfigs = {
       p.pokeball = PokeballType.MASTER_BALL;
     })),
   [TrainerType.LUSAMINE]: new TrainerConfig(++t).setName("Lusamine").initForEvilTeamLeader("Aether Boss",[]).setMixedBattleBgm("battle_aether_boss").setVictoryBgm("victory_team_plasma")
-    .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.CLEFABLE ]))
+    .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.MILOTIC, Species.PRIMARINA ]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.LILLIGANT, Species.HISUI_LILLIGANT ]))
-    .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.MILOTIC, Species.PRIMARINA ]))
+    .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.CLEFABLE ], TrainerSlot.TRAINER, true, p => {
+	  p.generateAndPopulateMoveset
+	  p.abilityIndex = 2; //Unaware
+	}))
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.ESPATHRA ]))
-    .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.LOPUNNY ], TrainerSlot.TRAINER, true, p => {
-      p.generateAndPopulateMoveset();
-      p.formIndex = 1;
-      p.generateName();
-    }))
-    .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.MISMAGIUS, Species.WIGGLYTUFF ], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.LOPUNNY, Species.BEWEAR ]))
+    .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.NIHILEGO ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
       p.generateAndPopulateMoveset();
     })),
   [TrainerType.LUSAMINE_2]: new TrainerConfig(++t).setName("Lusamine").initForEvilTeamLeader("Aether Boss",[], true).setMixedBattleBgm("battle_aether_boss").setVictoryBgm("victory_team_plasma")
-    .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.FLUTTER_MANE, Species.SCREAM_TAIL ], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.NIHILEGO ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
       p.generateAndPopulateMoveset();
     }))
-    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.REUNICLUS, Species.GOTHITELLE ]))
-    .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.CLEFABLE ]))
-    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.LOPUNNY ], TrainerSlot.TRAINER, true, p => {
-      p.generateAndPopulateMoveset();
-      p.formIndex = 1;
-      p.generateName();
-    }))
-    .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.MAGEARNA ], TrainerSlot.TRAINER, true, p => {
-      p.setBoss(true, 2);
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.MILOTIC, Species.PRIMARINA ]))
+    .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.CLEFABLE ], TrainerSlot.TRAINER, true, p => {
+	  p.generateAndPopulateMoveset
+	  p.abilityIndex = 2; //Unaware
+	}))
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.STAKATAKA, Species.CELESTEELA ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.MASTER_BALL;
     }))
-    .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.NIHILEGO ], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.PHEROMOSA ], TrainerSlot.TRAINER, true, p => {
+	  p.setBoss(true, 2);
+      p.generateAndPopulateMoveset();
+      p.pokeball = PokeballType.MASTER_BALL;
+    }))
+    .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.NECROZMA ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.MASTER_BALL;
@@ -1802,13 +1804,15 @@ export const trainerConfigs: TrainerConfigs = {
       p.setBoss(true, 2);
       p.generateAndPopulateMoveset();
     }))
-    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.MASQUERAIN, Species.ARIADOS ]))
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.LOKIX, Species.YANMEGA ], TrainerSlot.TRAINER, true, p => {
+	  p.generateAndPopulateMoveset
+	  p.abilityIndex = 1; //Tinted Lens
+	}))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.HERACROSS ]))
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.SCIZOR, Species.KLEAVOR ]))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.GALVANTULA, Species.VIKAVOLT]))
     .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.PINSIR ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
-      p.pokeball = PokeballType.ULTRA_BALL;
       p.formIndex = 1;
       p.generateName();
     })),
@@ -1816,29 +1820,33 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.GOLISOPOD ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
       p.generateAndPopulateMoveset();
+	  p.abilityIndex = 1; //Anticipation
     }))
-    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.LOKIX , Species.YANMEGA ]))
-    .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.BUZZWOLE ], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.BUZZWOLE ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.MASTER_BALL;
     }))
-    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.XURKITREE ], TrainerSlot.TRAINER, true, p => {
+	.setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.HISUI_SAMUROTT ], TrainerSlot.TRAINER, true, p => {
+	  p.setBoss(true, 1);
+      p.generateAndPopulateMoveset();
+      p.abilityIndex = 1; //Sharpness
+	}))
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.SCIZOR, Species.KLEAVOR ]))
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.PINSIR ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
       p.generateAndPopulateMoveset();
-      p.pokeball = PokeballType.MASTER_BALL;
-    }))
-    .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.SCIZOR, Species.KLEAVOR ]))
-    .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.PINSIR ], TrainerSlot.TRAINER, true, p => {
-      p.setBoss(true, 2);
-      p.generateAndPopulateMoveset();
-      p.pokeball = PokeballType.ULTRA_BALL;
       p.formIndex = 1;
       p.generateName();
-    })),
+    }))
+	.setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.XURKITREE ], TrainerSlot.TRAINER, true, p => {
+      p.setBoss(true, 2);
+      p.generateAndPopulateMoveset();
+      p.pokeball = PokeballType.MASTER_BALL;
+	})),
   [TrainerType.ROSE]: new TrainerConfig(++t).setName("Rose").initForEvilTeamLeader("Macro Boss",[]).setMixedBattleBgm("battle_macro_boss").setVictoryBgm("victory_team_plasma")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.ARCHALUDON ]))
-    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.FERROTHORN ]))
-    .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.TINKATON, Species.MAWILE ]))
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.FERROTHORN, Species.ESCAVALIER ]))
+    .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.TINKATON ]))
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.CORVIKNIGHT, Species.SKARMORY ]))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.PERRSERKER, Species.KLINKLANG ]))
     .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.COPPERAJAH ], TrainerSlot.TRAINER, true, p => {
@@ -1859,8 +1867,6 @@ export const trainerConfigs: TrainerConfigs = {
       p.setBoss(true, 2);
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.MASTER_BALL;
-      p.formIndex = 1;
-      p.generateName();
     }))
     .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.COPPERAJAH ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
