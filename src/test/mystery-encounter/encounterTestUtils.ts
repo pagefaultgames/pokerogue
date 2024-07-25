@@ -42,17 +42,6 @@ export async function runMysteryEncounterToEnd(game: GameManager, optionNo: numb
     uiHandler.processInput(Button.ACTION);
   });
 
-  // Handle modifier reward dialogue
-  game.onNextPrompt("ModifierRewardPhase", Mode.MESSAGE, () => {
-    const uiHandler = game.scene.ui.getHandler<MessageUiHandler>();
-    uiHandler.processInput(Button.ACTION);
-  });
-
-  game.onNextPrompt("SelectModifier", Mode.MODIFIER_SELECT, () => {
-    const uiHandler = game.scene.ui.getHandler<MessageUiHandler>();
-    uiHandler.processInput(Button.ACTION);
-  });
-
   if (isBattle) {
     await game.phaseInterceptor.to(CommandPhase);
   } else {
