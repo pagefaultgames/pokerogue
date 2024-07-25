@@ -75,6 +75,18 @@ export class OverridesHelper {
   }
 
   /**
+   * Override the player (pokemon) {@linkcode Moves | moves}set
+   * @param moveset the {@linkcode Moves | moves}set to set
+   * @returns this
+   */
+  moveset(moveset: Moves[]): this {
+    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue(moveset);
+    const movesetStr = moveset.map((moveId) => Moves[moveId]).join(", ");
+    this.log(`Player Pokemon moveset set to ${movesetStr} (=[${moveset.join(", ")}])!`);
+    return this;
+  }
+
+  /**
    * Override each wave to have or not have standard trainer battles
    * @returns this
    * @param disable true
