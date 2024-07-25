@@ -2970,6 +2970,10 @@ export class MoveEffectPhase extends PokemonPhase {
             this.scene.triggerPokemonFormChange(user, SpeciesFormChangePostMoveTrigger);
           }
 
+          // if hit result is no_effect don't bother applying any attributes of the move
+          if (hitResult === HitResult.NO_EFFECT) {
+            continue;
+          }
           applyAttrs.push(new Promise(resolve => {
             applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && attr.trigger === MoveEffectTrigger.PRE_APPLY && (!attr.firstHitOnly || firstHit) && (!attr.lastHitOnly || lastHit),
               user, target, move).then(() => {
