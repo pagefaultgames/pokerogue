@@ -16,6 +16,7 @@ export const partyUiHandler: SimpleTranslationEntries = {
   "PASS_BATON": "배턴터치한다",
   "UNPAUSE_EVOLUTION": "진화 재개",
   "REVIVE": "되살린다",
+  "RENAME": "닉네임 바꾸기",
 
   "choosePokemon": "포켓몬을 선택하세요.",
   "doWhatWithThisPokemon": "포켓몬을 어떻게 하겠습니까?",
