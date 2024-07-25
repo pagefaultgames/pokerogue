@@ -254,6 +254,17 @@ export class OverridesHelper {
     return this;
   }
 
+  /**
+   * Override the enemy (pokemon) held items
+   * @param items the items to hold
+   * @returns this
+   */
+  enemyHeldItems(items: ModifierOverride[]) {
+    vi.spyOn(Overrides, "OPP_HELD_ITEMS_OVERRIDE", "get").mockReturnValue(items);
+    this.log("Enemy Pokemon held items set to:", items);
+    return this;
+  }
+
   private log(...params: any[]) {
     console.log("Overrides:", ...params);
   }
