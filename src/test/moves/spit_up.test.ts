@@ -1,16 +1,15 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import overrides from "#app/overrides";
-import { MovePhase, TurnInitPhase } from "#app/phases";
 import { BattleStat } from "#app/data/battle-stat";
+import { StockpilingTag } from "#app/data/battler-tags.js";
+import { allMoves } from "#app/data/move.js";
+import { BattlerTagType } from "#app/enums/battler-tag-type.js";
+import { MoveResult, TurnMove } from "#app/field/pokemon.js";
+import { MovePhase, TurnInitPhase } from "#app/phases";
+import GameManager from "#app/test/utils/gameManager";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { StockpilingTag } from "#app/data/battler-tags.js";
-import { MoveResult, TurnMove } from "#app/field/pokemon.js";
-import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import { allMoves } from "#app/data/move.js";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Moves - Spit Up", () => {
@@ -36,7 +35,7 @@ describe("Moves - Spit Up", () => {
     game.override.enemyLevel(2000);
 
     game.override.moveset([Moves.SPIT_UP, Moves.SPIT_UP, Moves.SPIT_UP, Moves.SPIT_UP]);
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
+    game.override.ability(Abilities.NONE);
   });
 
   describe("consumes all stockpile stacks to deal damage (scaling with stacks)", () => {
