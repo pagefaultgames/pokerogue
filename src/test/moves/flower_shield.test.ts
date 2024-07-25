@@ -55,7 +55,7 @@ describe("Moves - Flower Shield", () => {
   });
 
   it("increases defense of all Grass-type Pokemon on the field by one stage - double battle", async () => {
-    game.override.enemySpecies(Species.MAGIKARP).startingBiome(Biome.GRASS);
+    game.override.enemySpecies(Species.MAGIKARP).startingBiome(Biome.GRASS).battleType("double");
 
     await game.startBattle([Species.CHERRIM, Species.MAGIKARP]);
     const field = game.scene.getField(true);
