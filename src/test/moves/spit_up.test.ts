@@ -33,7 +33,7 @@ describe("Moves - Spit Up", () => {
     game.override.enemySpecies(Species.RATTATA);
     game.override.enemyMoveset(SPLASH_ONLY);
     game.override.enemyAbility(Abilities.NONE);
-    vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
+    game.override.enemyLevel(2000);
 
     game.override.moveset([Moves.SPIT_UP, Moves.SPIT_UP, Moves.SPIT_UP, Moves.SPIT_UP]);
     vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);

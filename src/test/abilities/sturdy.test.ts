@@ -1,16 +1,15 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, test, vi} from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
+import { EnemyPokemon } from "#app/field/pokemon.js";
 import {
   DamagePhase,
   MoveEndPhase,
 } from "#app/phases";
-import {getMovePosition} from "#app/test/utils/gameManagerUtils";
+import GameManager from "#app/test/utils/gameManager";
+import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { EnemyPokemon } from "#app/field/pokemon.js";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 const TIMEOUT = 20 * 1000;
 
@@ -37,7 +36,7 @@ describe("Abilities - Sturdy", () => {
     game.override.moveset([Moves.CLOSE_COMBAT, Moves.FISSURE]);
 
     game.override.enemySpecies(Species.ARON);
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(5);
+    game.override.enemyLevel(5);
     game.override.enemyAbility(Abilities.STURDY);
   });
 

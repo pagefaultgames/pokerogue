@@ -1,15 +1,14 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import GameManager from "../utils/gameManager";
+import { BattlerIndex } from "#app/battle.js";
+import { Stat } from "#app/data/pokemon-stat.js";
+import { Abilities } from "#app/enums/abilities.js";
 import {
   Moves
 } from "#app/enums/moves.js";
-import Overrides from "#app/overrides";
-import { Abilities } from "#app/enums/abilities.js";
-import { BattlerIndex } from "#app/battle.js";
-import { getMovePosition } from "../utils/gameManagerUtils";
-import { MoveResult } from "#app/field/pokemon.js";
-import { Stat } from "#app/data/pokemon-stat.js";
 import { Species } from "#app/enums/species.js";
+import { MoveResult } from "#app/field/pokemon.js";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import GameManager from "../utils/gameManager";
+import { getMovePosition } from "../utils/gameManagerUtils";
 import { SPLASH_ONLY } from "../utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
@@ -32,7 +31,7 @@ describe("Moves - Gastro Acid", () => {
     game = new GameManager(phaserGame);
     game.override.battleType("double");
     game.override.startingLevel(1);
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    game.override.enemyLevel(100);
     game.override.ability(Abilities.NONE);
     game.override.moveset([Moves.GASTRO_ACID, Moves.WATER_GUN, Moves.SPLASH, Moves.CORE_ENFORCER]);
     game.override.enemySpecies(Species.BIDOOF);

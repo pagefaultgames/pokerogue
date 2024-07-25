@@ -83,7 +83,7 @@ describe("Moves - Flower Shield", () => {
   it("does not increase defense of a pokemon in semi-vulnerable state", async () => {
     game.override.enemySpecies(Species.PARAS);
     game.override.enemyMoveset([Moves.DIG, Moves.DIG, Moves.DIG, Moves.DIG]);
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(50);
+    game.override.enemyLevel(50);
 
     await game.startBattle([Species.CHERRIM]);
     const paras = game.scene.getEnemyPokemon();

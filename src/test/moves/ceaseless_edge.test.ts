@@ -37,7 +37,7 @@ describe("Moves - Ceaseless Edge", () => {
     game.override.enemyAbility(Abilities.RUN_AWAY);
     vi.spyOn(Overrides, "OPP_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.RUN_AWAY);
     game.override.startingLevel(100);
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    game.override.enemyLevel(100);
     game.override.moveset([ Moves.CEASELESS_EDGE, Moves.SPLASH, Moves.ROAR ]);
     game.override.enemyMoveset([Moves.SPLASH,Moves.SPLASH,Moves.SPLASH,Moves.SPLASH]);
     vi.spyOn(allMoves[Moves.CEASELESS_EDGE], "accuracy", "get").mockReturnValue(100);

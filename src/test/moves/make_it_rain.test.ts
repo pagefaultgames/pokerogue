@@ -1,17 +1,16 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
-import { Species } from "#enums/species";
+import { BattleStat } from "#app/data/battle-stat.js";
 import {
   CommandPhase,
   MoveEndPhase,
   StatChangePhase,
 } from "#app/phases";
-import { Moves } from "#enums/moves";
+import GameManager from "#app/test/utils/gameManager";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
-import { BattleStat } from "#app/data/battle-stat.js";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { SPLASH_ONLY } from "../utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
@@ -38,7 +37,7 @@ describe("Moves - Make It Rain", () => {
     game.override.enemyAbility(Abilities.INSOMNIA);
     game.override.enemyMoveset(SPLASH_ONLY);
     game.override.startingLevel(100);
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    game.override.enemyLevel(100);
   });
 
   it("should only reduce Sp. Atk. once in a double battle", async () => {
@@ -63,7 +62,7 @@ describe("Moves - Make It Rain", () => {
   }, TIMEOUT);
 
   it("should apply effects even if the target faints", async () => {
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(1); // ensures the enemy will faint
+    game.override.enemyLevel(1); // ensures the enemy will faint
     game.override.battleType("single");
 
     await game.startBattle([Species.CHARIZARD]);
@@ -83,7 +82,7 @@ describe("Moves - Make It Rain", () => {
   }, TIMEOUT);
 
   it("should reduce Sp. Atk. once after KOing two enemies", async () => {
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(1); // ensures the enemy will faint
+    game.override.enemyLevel(1); // ensures the enemy will faint
 
     await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 

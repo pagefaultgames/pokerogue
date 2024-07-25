@@ -1,16 +1,15 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
+import { Abilities } from "#app/enums/abilities.js";
+import { BattlerTagType } from "#app/enums/battler-tag-type.js";
 import {
   BerryPhase,
   MoveEffectPhase
 } from "#app/phases";
-import {getMovePosition} from "#app/test/utils/gameManagerUtils";
+import GameManager from "#app/test/utils/gameManager";
+import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import { Abilities } from "#app/enums/abilities.js";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 const TIMEOUT = 20 * 1000;
 
@@ -33,7 +32,7 @@ describe("Moves - Thousand Arrows", () => {
     game.override.battleType("single");
     game.override.enemySpecies(Species.TOGETIC);
     game.override.startingLevel(100);
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    game.override.enemyLevel(100);
     game.override.moveset([ Moves.THOUSAND_ARROWS ]);
     game.override.enemyMoveset([Moves.SPLASH,Moves.SPLASH,Moves.SPLASH,Moves.SPLASH]);
   });

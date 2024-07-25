@@ -1,13 +1,12 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { Status, StatusEffect } from "#app/data/status-effect.js";
+import { QuietFormChangePhase } from "#app/form-change-phase.js";
+import { TurnEndPhase } from "#app/phases.js";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
-import Overrides from "#app/overrides";
-import { Moves } from "#enums/moves";
-import { Abilities } from "#enums/abilities";
-import { Species } from "#enums/species";
-import { Status, StatusEffect } from "#app/data/status-effect.js";
-import { TurnEndPhase } from "#app/phases.js";
-import { QuietFormChangePhase } from "#app/form-change-phase.js";
+import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 const TIMEOUT = 20 * 1000;
 
@@ -73,7 +72,7 @@ describe("Abilities - DISGUISE", () => {
 
       game.override.enemyMoveset([Moves.DARK_PULSE, Moves.DARK_PULSE, Moves.DARK_PULSE, Moves.DARK_PULSE]);
       game.override.startingLevel(20);
-      vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(20);
+      game.override.enemyLevel(20);
       game.override.enemySpecies(Species.MAGIKARP);
       game.override.starterForms({
         [Species.MIMIKYU]: baseForm,

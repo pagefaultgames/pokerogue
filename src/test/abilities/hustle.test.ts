@@ -31,7 +31,7 @@ describe("Abilities - Hustle", () => {
     game.override.moveset([Moves.TACKLE, Moves.GIGA_DRAIN, Moves.FISSURE]);
     vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(5);
     vi.spyOn(overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(5);
+    game.override.enemyLevel(5);
     game.override.enemyMoveset(SPLASH_ONLY);
     game.override.enemySpecies(Species.SHUCKLE);
     game.override.enemyAbility(Abilities.BALL_FETCH);
@@ -81,7 +81,7 @@ describe("Abilities - Hustle", () => {
 
   it("does not affect OHKO moves", async () => {
     vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
-    vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(30);
+    game.override.enemyLevel(30);
 
     await game.startBattle([Species.PIKACHU]);
     const pikachu = game.scene.getPlayerPokemon();
