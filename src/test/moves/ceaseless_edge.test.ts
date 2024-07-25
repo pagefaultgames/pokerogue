@@ -105,7 +105,7 @@ describe("Moves - Ceaseless Edge", () => {
     "trainer - move should hit twice, apply two layers of spikes, force switch opponent - opponent takes damage",
     async () => {
       vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "MULTI_LENS"}]);
-      vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(5);
+      game.override.startingWave(5);
 
       await game.startBattle([ Species.ILLUMISE ]);
 
