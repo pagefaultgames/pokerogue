@@ -31,7 +31,7 @@ describe("Moves - Glaive Rush", () => {
     game.override.enemySpecies(Species.MAGIKARP);
     game.override.enemyAbility(Abilities.BALL_FETCH);
     game.override.enemyMoveset(Array(4).fill(Moves.GLAIVE_RUSH));
-    vi.spyOn(Overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.KLINK);
+    game.override.starterSpecies(Species.KLINK);
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.UNNERVE);
     vi.spyOn(Overrides, "PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.FUR_COAT);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SHADOW_SNEAK, Moves.AVALANCHE, Moves.SPLASH, Moves.GLAIVE_RUSH]);
@@ -111,7 +111,7 @@ describe("Moves - Glaive Rush", () => {
 
   it("secondary effects are removed upon switching", async() => {
     game.override.enemyMoveset(Array(4).fill(Moves.SHADOW_SNEAK));
-    vi.spyOn(Overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(0);
+    game.override.starterSpecies(0);
     await game.startBattle([Species.KLINK, Species.FEEBAS]);
     const player = game.scene.getPlayerPokemon();
     const enemy = game.scene.getEnemyPokemon();
