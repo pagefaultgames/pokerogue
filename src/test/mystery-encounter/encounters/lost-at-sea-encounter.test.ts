@@ -8,11 +8,12 @@ import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
 import { Species } from "#app/enums/species";
 import GameManager from "#app/test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { runMysteryEncounterToEnd } from "../encounterTestUtils";
+import { runMysteryEncounterToEnd, runSelectMysteryEncounterOption } from "../encounterTestUtils";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { initSceneWithoutEncounterPhase } from "#test/utils/gameManagerUtils";
 import BattleScene from "#app/battle-scene";
+import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 
 const namespace = "mysteryEncounter:lostAtSea";
 /** Blastoise for surf. Pidgeot for fly. Abra for none. */
@@ -145,7 +146,17 @@ describe("Lost at Sea - Mystery Encounter", () => {
     });
 
     it("should be disabled if no surfable PKM is in party", async () => {
-      // TODO
+      await game.runToMysteryEncounter(MysteryEncounterType.LOST_AT_SEA, [Species.ARCANINE]);
+      await game.phaseInterceptor.to(MysteryEncounterPhase, false);
+
+      const encounterPhase = scene.getCurrentPhase();
+      expect(encounterPhase.constructor.name).toBe(MysteryEncounterPhase.name);
+      const continueEncounterSpy = vi.spyOn((encounterPhase as MysteryEncounterPhase), "continueEncounter");
+
+      await runSelectMysteryEncounterOption(game, 1);
+
+      expect(scene.getCurrentPhase().constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(continueEncounterSpy).not.toHaveBeenCalled();
     });
   });
 
@@ -194,7 +205,17 @@ describe("Lost at Sea - Mystery Encounter", () => {
     });
 
     it("should be disabled if no flyable PKM is in party", async () => {
-      // TODO
+      await game.runToMysteryEncounter(MysteryEncounterType.LOST_AT_SEA, [Species.ARCANINE]);
+      await game.phaseInterceptor.to(MysteryEncounterPhase, false);
+
+      const encounterPhase = scene.getCurrentPhase();
+      expect(encounterPhase.constructor.name).toBe(MysteryEncounterPhase.name);
+      const continueEncounterSpy = vi.spyOn((encounterPhase as MysteryEncounterPhase), "continueEncounter");
+
+      await runSelectMysteryEncounterOption(game, 1);
+
+      expect(scene.getCurrentPhase().constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(continueEncounterSpy).not.toHaveBeenCalled();
     });
   });
 
