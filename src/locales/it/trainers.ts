@@ -127,7 +127,7 @@ export const trainerClasses: SimpleTranslationEntries = {
   "worker": "Operaio",
   "worker_female": "Lavoratrice",
   "workers": "Lavoratori",
-  "youngster": "Bullo"
+  "youngster": "Bullo",
   "rocket_grunt": "Rocket Grunt",
   "rocket_grunt_female": "Rocket Grunt",
   "magma_grunt": "Magma Grunt",

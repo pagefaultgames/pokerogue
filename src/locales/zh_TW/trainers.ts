@@ -127,7 +127,7 @@ export const trainerClasses: SimpleTranslationEntries = {
   "worker": "工人",
   "worker_female": "工人",
   "workers": "工人組合",
-  "youngster": "短褲小子"
+  "youngster": "短褲小子",
   "rocket_grunt": "Rocket Grunt",
   "rocket_grunt_female": "Rocket Grunt",
   "magma_grunt": "Magma Grunt",
@@ -330,7 +330,7 @@ export const trainerNames: SimpleTranslationEntries = {
   // 勁敵 Rival
   "rival": "芬恩",
   "rival_female": "艾薇",
-  
+
   // Bosses
   "maxie": "Maxie",
   "archie": "Archie",

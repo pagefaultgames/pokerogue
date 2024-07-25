@@ -86,11 +86,10 @@ export const bgmName: SimpleTranslationEntries = {
   "battle_aqua_magma_boss": "ORAS Vs. Team Aqua & Magma Boss",
   "battle_galactic_boss": "BDSP Vs. Zyrus",
   "battle_plasma_boss": "S2W2 Vs. G-Cis",
-  "battle_flare_boss": "XY Vs. Flordelis"
+  "battle_flare_boss": "XY Vs. Flordelis",
   "battle_aether_boss": "SM Vs. Samantha",
   "battle_skull_boss": "SM Vs. Bromley",
   "battle_macro_boss": "SWSH Vs. Rose",
-  "battle_flare_boss": "XY Vs. Flordelis",
 
   // Biome Music
   "abyss": "PMD Erkundungsteam Himmel Dunkelkrater",
