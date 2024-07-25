@@ -186,6 +186,17 @@ export class OverridesHelper {
   }
 
   /**
+   * Override the enemy (pokemon) **passive** {@linkcode Abilities | ability}
+   * @param passiveAbility the (pokemon) **passive** {@linkcode Abilities | ability} to set
+   * @returns this
+   */
+  enemyPassiveAbility(passiveAbility: Abilities): this {
+    vi.spyOn(Overrides, "OPP_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(passiveAbility);
+    this.log(`Enemy Pokemon PASSIVE ability set to ${Abilities[passiveAbility]} (=${passiveAbility})!`);
+    return this;
+  }
+
+  /**
    * Override the enemy (pokemon) {@linkcode Moves | moves}set
    * @param moveset the {@linkcode Moves | moves}set to set
    * @returns this
