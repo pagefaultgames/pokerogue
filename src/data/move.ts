@@ -2702,15 +2702,19 @@ export class ResetStatsAttr extends MoveEffectAttr {
       return false;
     }
 
-    for (let s = 0; s < target.summonData.battleStats.length; s++) {
-      target.summonData.battleStats[s] = 0;
-    }
-    target.updateInfo();
-    user.updateInfo();
+    const activePokemon = user.scene.getField(true);
+    activePokemon.forEach(p => this.resetStats(p));
 
     target.scene.queueMessage(i18next.t("moveTriggers:resetStats", {pokemonName: getPokemonNameWithAffix(target)}));
 
     return true;
+  }
+
+  resetStats(pokemon: Pokemon) {
+    for (let s = 0; s < pokemon.summonData.battleStats.length; s++) {
+      pokemon.summonData.battleStats[s] = 0;
+    }
+    pokemon.updateInfo();
   }
 }
 
@@ -6251,8 +6255,7 @@ export function initMoves() {
     new StatusMove(Moves.LIGHT_SCREEN, Type.PSYCHIC, -1, 30, -1, 0, 1)
       .attr(AddArenaTagAttr, ArenaTagType.LIGHT_SCREEN, 5, true)
       .target(MoveTarget.USER_SIDE),
-    new StatusMove(Moves.HAZE, Type.ICE, -1, 30, -1, 0, 1)
-      .target(MoveTarget.BOTH_SIDES)
+    new SelfStatusMove(Moves.HAZE, Type.ICE, -1, 30, -1, 0, 1)
       .attr(ResetStatsAttr),
     new StatusMove(Moves.REFLECT, Type.PSYCHIC, -1, 20, -1, 0, 1)
       .attr(AddArenaTagAttr, ArenaTagType.REFLECT, 5, true)

@@ -89,6 +89,7 @@ export const battle: SimpleTranslationEntries = {
   "statSeverelyFell_other": "{{pokemonNameWithAffix}}'s {{stats}} severely fell!",
   "statWontGoAnyLower_one": "{{pokemonNameWithAffix}}'s {{stats}} won't go any lower!",
   "statWontGoAnyLower_other": "{{pokemonNameWithAffix}}'s {{stats}} won't go any lower!",
+  "statEliminated": "All stat changes were eliminated!",
   "transformedIntoType": "{{pokemonName}} transformed\ninto the {{type}} type!",
   "retryBattle": "Would you like to retry from the start of the battle?",
   "unlockedSomething": "{{unlockedThing}}\nhas been unlocked.",
