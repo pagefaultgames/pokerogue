@@ -101,18 +101,27 @@ export class OverridesHelper {
   }
 
   /**
-   * Override each wave to have or not have standard trainer battles
+   * Override each wave to not have standard trainer battles
    * @returns this
-   * @param disable true
    */
-  disableTrainerWaves(disable: boolean): this {
+  disableTrainerWaves(): this {
     const realFn = getGameMode;
     vi.spyOn(GameMode, "getGameMode").mockImplementation((gameMode: GameModes) => {
       const mode = realFn(gameMode);
-      mode.hasTrainers = !disable;
+      mode.hasTrainers = false;
       return mode;
     });
-    this.log(`Standard trainer waves are ${disable ? "disabled" : "enabled"}!`);
+    this.log("Standard trainer waves are disabled!");
+    return this;
+  }
+
+  /**
+   * Override each wave to not have critical hits
+   * @returns this
+   */
+  disableCrits() {
+    vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
+    this.log("Critical hits are disabled!");
     return this;
   }
 
