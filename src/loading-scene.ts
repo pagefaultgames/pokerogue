@@ -39,7 +39,7 @@ export class LoadingScene extends SceneBase {
 
     this.loadImage("loading_bg", "arenas");
     this.loadImage("logo", "");
-    this.loadImage("pride-update", "events");
+    // this.loadImage("pride-update", "events");
 
     // Load menu images
     this.loadAtlas("bg", "ui");
@@ -146,6 +146,9 @@ export class LoadingScene extends SceneBase {
       this.loadImage(`summary_tabs_${t}`, "ui");
     }
 
+    this.loadImage("scroll_bar", "ui");
+    this.loadImage("scroll_bar_handle", "ui");
+    this.loadImage("starter_container_bg", "ui");
     this.loadImage("starter_select_bg", "ui");
     this.loadImage("select_cursor", "ui");
     this.loadImage("select_cursor_highlight", "ui");
