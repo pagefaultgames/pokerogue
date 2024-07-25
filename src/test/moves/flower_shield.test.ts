@@ -1,18 +1,17 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
-import { Species } from "#enums/species";
+import { BattleStat } from "#app/data/battle-stat.js";
+import { SemiInvulnerableTag } from "#app/data/battler-tags.js";
+import { Type } from "#app/data/type.js";
+import { Biome } from "#app/enums/biome.js";
 import {
   TurnEndPhase,
 } from "#app/phases";
-import { Moves } from "#enums/moves";
+import GameManager from "#app/test/utils/gameManager";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
-import { BattleStat } from "#app/data/battle-stat.js";
-import { Biome } from "#app/enums/biome.js";
-import { Type } from "#app/data/type.js";
-import { SemiInvulnerableTag } from "#app/data/battler-tags.js";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Moves - Flower Shield", () => {
@@ -56,9 +55,7 @@ describe("Moves - Flower Shield", () => {
   });
 
   it("increases defense of all Grass-type Pokemon on the field by one stage - double battle", async () => {
-    game.override.enemySpecies(Species.MAGIKARP);
-    vi.spyOn(Overrides, "STARTING_BIOME_OVERRIDE", "get").mockReturnValue(Biome.GRASS);
-    game.override.battleType("double");
+    game.override.enemySpecies(Species.MAGIKARP).startingBiome(Biome.GRASS);
 
     await game.startBattle([Species.CHERRIM, Species.MAGIKARP]);
     const field = game.scene.getField(true);
