@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
-import overrides from "#app/overrides";
+import Overrides from "#app/overrides";
 import { TurnEndPhase } from "#app/phases";
 import { Moves } from "#enums/moves";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
@@ -24,17 +24,17 @@ describe("Abilities - Dry Skin", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.DRY_SKIN);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.CHARMANDER);
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.UNNERVE);
-    vi.spyOn(overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.CHANDELURE);
+    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
+    vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
+    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.DRY_SKIN);
+    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.CHARMANDER);
+    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.UNNERVE);
+    vi.spyOn(Overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.CHANDELURE);
   });
 
   it("during sunlight, lose 1/8 of maximum health at the end of each turn", async () => {
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SUNNY_DAY, Moves.SPLASH]);
+    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SUNNY_DAY, Moves.SPLASH]);
 
     await game.startBattle();
 
@@ -55,7 +55,7 @@ describe("Abilities - Dry Skin", () => {
   });
 
   it("during rain, gain 1/8 of maximum health at the end of each turn", async () => {
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.RAIN_DANCE, Moves.SPLASH]);
+    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.RAIN_DANCE, Moves.SPLASH]);
 
     await game.startBattle();
 
@@ -78,7 +78,7 @@ describe("Abilities - Dry Skin", () => {
   });
 
   it("opposing fire attacks do 25% more damage", async () => {
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.FLAMETHROWER]);
+    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.FLAMETHROWER]);
 
     await game.startBattle();
 
@@ -94,7 +94,7 @@ describe("Abilities - Dry Skin", () => {
 
     expect(enemy.hp > 0);
     enemy.hp = initialHP;
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
+    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
 
     // second turn
     game.doAttack(getMovePosition(game.scene, 0, Moves.FLAMETHROWER));
@@ -105,7 +105,7 @@ describe("Abilities - Dry Skin", () => {
   });
 
   it("opposing water attacks heal 1/4 of maximum health and deal no damage", async () => {
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.WATER_GUN]);
+    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.WATER_GUN]);
 
     await game.startBattle();
 
@@ -120,7 +120,7 @@ describe("Abilities - Dry Skin", () => {
   });
 
   it("opposing water attacks do not heal if they were protected from", async () => {
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.WATER_GUN]);
+    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.WATER_GUN]);
 
     await game.startBattle();
 
@@ -128,7 +128,7 @@ describe("Abilities - Dry Skin", () => {
     expect(enemy).not.toBe(undefined);
 
     enemy.hp = 1;
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.PROTECT, Moves.PROTECT, Moves.PROTECT, Moves.PROTECT]);
+    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.PROTECT, Moves.PROTECT, Moves.PROTECT, Moves.PROTECT]);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.WATER_GUN));
     await game.phaseInterceptor.to(TurnEndPhase);
@@ -136,7 +136,7 @@ describe("Abilities - Dry Skin", () => {
   });
 
   it("multi-strike water attacks only heal once", async () => {
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.WATER_GUN, Moves.WATER_SHURIKEN]);
+    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.WATER_GUN, Moves.WATER_SHURIKEN]);
 
     await game.startBattle();
 

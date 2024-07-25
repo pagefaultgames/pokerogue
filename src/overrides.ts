@@ -45,8 +45,7 @@ class DefaultOverrides {
   /** a specific seed (default: a random string of 24 characters) */
   readonly SEED_OVERRIDE: string = "";
   readonly WEATHER_OVERRIDE: WeatherType = WeatherType.NONE;
-  readonly DOUBLE_BATTLE_OVERRIDE: boolean = false;
-  readonly SINGLE_BATTLE_OVERRIDE: boolean = false;
+  readonly BATTLE_TYPE_OVERRIDE: "double" | "single" | null = null;
   readonly STARTING_WAVE_OVERRIDE: integer = 0;
   readonly STARTING_BIOME_OVERRIDE: Biome = Biome.TOWN;
   readonly ARENA_TINT_OVERRIDE: TimeOfDay = null;

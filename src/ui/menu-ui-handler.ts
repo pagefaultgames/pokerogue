@@ -395,7 +395,7 @@ export default class MenuUiHandler extends MessageUiHandler {
                   const token = Utils.getCookie(Utils.sessionIdKey);
                   const redirectUri = encodeURIComponent(`${import.meta.env.VITE_SERVER_URL}/auth/discord/callback`);
                   const discordId = import.meta.env.VITE_DISCORD_CLIENT_ID;
-                  const discordUrl = `https://discord.com/api/oauth2/authorize?client_id=${discordId}&redirect_uri=${redirectUri}&response_type=code&scope=identify&state=${token}`;
+                  const discordUrl = `https://discord.com/api/oauth2/authorize?client_id=${discordId}&redirect_uri=${redirectUri}&response_type=code&scope=identify&state=${token}&prompt=none`;
                   window.open(discordUrl, "_self");
                   return true;
                 } else {
@@ -462,7 +462,7 @@ export default class MenuUiHandler extends MessageUiHandler {
             if (!res.ok) {
               console.error(`Log out failed (${res.status}: ${res.statusText})`);
             }
-            Utils.setCookie(Utils.sessionIdKey, "");
+            Utils.removeCookie(Utils.sessionIdKey);
             updateUserInfo().then(() => this.scene.reset(true, true));
           });
         };
