@@ -31,7 +31,7 @@ describe("Moves - Hard Press", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleType("single");
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
+    game.override.ability(Abilities.BALL_FETCH);
     game.override.enemySpecies(Species.MUNCHLAX);
     game.override.enemyAbility(Abilities.BALL_FETCH);
     game.override.enemyMoveset(SPLASH_ONLY);

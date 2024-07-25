@@ -101,7 +101,7 @@ describe("Moves - Follow Me", () => {
   test(
     "move effect should be bypassed by Stalwart",
     async () => {
-      vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.STALWART);
+      game.override.ability(Abilities.STALWART);
       vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.QUICK_ATTACK ]);
       game.override.enemyMoveset([ Moves.FOLLOW_ME, Moves.FOLLOW_ME, Moves.FOLLOW_ME, Moves.FOLLOW_ME ]);
 

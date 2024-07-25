@@ -31,7 +31,7 @@ describe("Moves - Spikes", () => {
     game.override.enemySpecies(Species.RATTATA);
     game.override.enemyAbility(Abilities.HYDRATION);
     vi.spyOn(Overrides, "OPP_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
+    game.override.ability(Abilities.HYDRATION);
     vi.spyOn(Overrides, "PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
     game.override.startingWave(3);
     game.override.enemyMoveset([Moves.SPLASH,Moves.SPLASH,Moves.SPLASH,Moves.SPLASH]);

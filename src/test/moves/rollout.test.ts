@@ -29,7 +29,7 @@ describe("Moves - Rollout", () => {
     vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
     game.override.battleType("single");
     game.override.starterSpecies(Species.RATTATA);
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
+    game.override.ability(Abilities.NONE);
     game.override.enemySpecies(Species.BIDOOF);
     game.override.enemyAbility(Abilities.NONE);
     game.override.startingLevel(100);

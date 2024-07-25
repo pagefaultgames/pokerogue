@@ -31,7 +31,7 @@ describe("Moves - Flower Shield", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
+    game.override.ability(Abilities.NONE);
     game.override.enemyAbility(Abilities.NONE);
     game.override.battleType("single");
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.FLOWER_SHIELD, Moves.SPLASH]);

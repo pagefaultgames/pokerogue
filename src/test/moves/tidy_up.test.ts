@@ -33,7 +33,7 @@ describe("Moves - Tidy Up", () => {
     game.override.enemyAbility(Abilities.BALL_FETCH);
     game.override.enemyMoveset(SPLASH_ONLY);
     game.override.starterSpecies(Species.FEEBAS);
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
+    game.override.ability(Abilities.BALL_FETCH);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TIDY_UP]);
     game.override.startingLevel(50);
   });

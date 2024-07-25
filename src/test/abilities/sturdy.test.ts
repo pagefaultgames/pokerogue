@@ -85,7 +85,7 @@ describe("Abilities - Sturdy", () => {
   test(
     "Sturdy is ignored by pokemon with `Abilities.MOLD_BREAKER`",
     async () => {
-      vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.MOLD_BREAKER);
+      game.override.ability(Abilities.MOLD_BREAKER);
 
       await game.startBattle();
       game.doAttack(getMovePosition(game.scene, 0, Moves.CLOSE_COMBAT));

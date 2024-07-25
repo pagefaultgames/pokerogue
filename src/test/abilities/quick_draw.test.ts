@@ -28,7 +28,7 @@ describe("Abilities - Quick Draw", () => {
     game.override.battleType("single");
 
     game.override.starterSpecies(Species.MAGIKARP);
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.QUICK_DRAW);
+    game.override.ability(Abilities.QUICK_DRAW);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.TAIL_WHIP]);
 
     vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);

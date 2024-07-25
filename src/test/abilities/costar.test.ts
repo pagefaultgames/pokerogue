@@ -29,7 +29,7 @@ describe("Abilities - COSTAR", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleType("double");
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.COSTAR);
+    game.override.ability(Abilities.COSTAR);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.NASTY_PLOT]);
     game.override.enemyMoveset(SPLASH_ONLY);
   });

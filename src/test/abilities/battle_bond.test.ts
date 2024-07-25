@@ -29,7 +29,7 @@ describe("Abilities - BATTLE BOND", () => {
     game = new GameManager(phaserGame);
     const moveToUse = Moves.SPLASH;
     game.override.battleType("single");
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BATTLE_BOND);
+    game.override.ability(Abilities.BATTLE_BOND);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
     game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
   });
