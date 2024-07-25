@@ -7,7 +7,7 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
  */
 export const starterSelectUiHandler: SimpleTranslationEntries = {
   "confirmStartTeam": "이 포켓몬들로 시작하시겠습니까?",
-  "invalidParty": "This is not a valid starting party!",
+  "invalidParty": "스타팅 포켓몬 파티에 적합하지 않습니다!",
   "gen1": "1세대",
   "gen2": "2세대",
   "gen3": "3세대",
@@ -24,7 +24,6 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "eggMoves": "알 기술",
   "addToParty": "파티에 추가",
   "removeFromParty": "파티에서 제외",
-  "invalidParty": "스타팅 포켓몬 파티에 적합하지 않습니다!",
   "toggleIVs": "개체값 토글",
   "manageMoves": "기술 관리",
   "manageNature": "성격 관리",
