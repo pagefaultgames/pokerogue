@@ -13,6 +13,15 @@ export const titles: SimpleTranslationEntries = {
   "rival": "Rivale",
   "professor": "Professore",
   "frontier_brain": "Asso lotta",
+  "rocket_boss": "Team Rocket Boss",
+  "magma_boss": "Team Magma Boss",
+  "aqua_boss": "Team Aqua Boss",
+  "galactic_boss": "Team Galactic Boss",
+  "plasma_boss": "Team Plasma Boss",
+  "flare_boss": "Team Flare Boss",
+  "aether_boss": "Aether President",
+  "skull_boss": "Team Skull Boss",
+  "macro_boss": "Macro Cosmos President",
   // Maybe if we add the evil teams we can add "Team Rocket" and "Team Aqua" etc. here as well as "Team Rocket Boss" and "Team Aqua Admin" etc.
 } as const;
 
@@ -119,6 +128,24 @@ export const trainerClasses: SimpleTranslationEntries = {
   "worker_female": "Lavoratrice",
   "workers": "Lavoratori",
   "youngster": "Bullo"
+  "rocket_grunt": "Rocket Grunt",
+  "rocket_grunt_female": "Rocket Grunt",
+  "magma_grunt": "Magma Grunt",
+  "magma_grunt_female": "Magma Grunt",
+  "aqua_grunt": "Aqua Grunt",
+  "aqua_grunt_female": "Aqua Grunt",
+  "galactic_grunt": "Galactic Grunt",
+  "galactic_grunt_female": "Galactic Grunt",
+  "plasma_grunt": "Plasma Grunt",
+  "plasma_grunt_female": "Plasma Grunt",
+  "flare_grunt": "Flare Grunt",
+  "flare_grunt_female": "Flare Grunt",
+  "aether_grunt": "Aether Foundation Employee",
+  "aether_grunt_female": "Aether Foundation Employee",
+  "skull_grunt": "Team Skull Grunt",
+  "skull_grunt_female": "Team Skull Grunt",
+  "macro_grunt": "Macro Cosmos Trainer",
+  "macro_grunt_female": "Macro Cosmos Trainer",
 } as const;
 
 // Names of special trainers like gym leaders, elite four, and the champion
@@ -247,7 +274,14 @@ export const trainerNames: SimpleTranslationEntries = {
   "leon": "Dandel",
   "rival": "Finn",
   "rival_female": "Ivy",
-
+  "maxie": "Maxie",
+  "archie": "Archie",
+  "cyrus": "Cyrus",
+  "ghetsis": "Ghetsis",
+  "lysandre": "Lysandre",
+  "lusamine": "Lusamine",
+  "guzma": "Guzma",
+  "rose": "Rose",
 
   // Double Names
   "blue_red_double": "Blu & Rosso",
