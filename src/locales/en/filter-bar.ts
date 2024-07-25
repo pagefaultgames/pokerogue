@@ -15,7 +15,7 @@ export const filterBar: SimpleTranslationEntries = {
   "hasNotWon": "Has not won yet",
   "sortByNumber": "No.",
   "sortByCost": "Cost",
-  "sortByCandies": "# Candies",
+  "sortByCandies": "Candy Count",
   "sortByIVs": "IVs",
   "sortByName": "Name",
 };
