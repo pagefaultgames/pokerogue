@@ -153,6 +153,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "REVIVER_SEED": { name: "부활의씨앗", description: "포켓몬이 공격을 받고 쓰러지려 할 때 HP를 절반 회복한다." },
 
+    "WHITE_HERB": { name: "White Herb", description: "An item to be held by a Pokémon. It will restore any lowered stat in battle." },
+
     "ETHER": { name: "PP에이드" },
     "MAX_ETHER": { name: "PP회복" },
 
