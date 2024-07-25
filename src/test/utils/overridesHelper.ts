@@ -1,4 +1,5 @@
 import { Weather, WeatherType } from "#app/data/weather";
+import { Abilities } from "#app/enums/abilities.js";
 import { Biome } from "#app/enums/biome";
 import { Species } from "#app/enums/species.js";
 import * as GameMode from "#app/game-mode";
@@ -56,8 +57,8 @@ export class OverridesHelper {
   }
 
   /**
-   * Override the weather (type)
-   * @param type weather type to set
+   * Override the {@linkcode WeatherType | weather (type)}
+   * @param type {@linkcode WeatherType | weather type} to set
    * @returns this
    */
   weather(type: WeatherType): this {
@@ -94,13 +95,24 @@ export class OverridesHelper {
   }
 
   /**
-   * Override the enemy (pokemon) species
-   * @param species the (pokemon) species to set
+   * Override the enemy (pokemon) {@linkcode Species | species}
+   * @param species the (pokemon) {@linkcode Species | species} to set
    * @returns this
    */
   enemySpecies(species: Species | number): this {
     vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(species);
     this.log(`Enemy Pokemon species set to ${Species[species]} (=${species})!`);
+    return this;
+  }
+
+  /**
+   * Override the enemy (pokemon) {@linkcode Abilities | ability}
+   * @param ability the (pokemon) {@linkcode Abilities | ability} to set
+   * @returns this
+   */
+  enemyAbility(ability: Abilities): this {
+    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(ability);
+    this.log(`Enemy Pokemon species set to ${Abilities[ability]} (=${ability})!`);
     return this;
   }
 
