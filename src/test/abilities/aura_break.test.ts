@@ -8,6 +8,7 @@ import { Moves } from "#enums/moves";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { allMoves } from "#app/data/move.js";
+import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Abilities - Aura Break", () => {
   let phaserGame: Phaser.Game;
@@ -29,7 +30,7 @@ describe("Abilities - Aura Break", () => {
     game = new GameManager(phaserGame);
     game.override.battleType("single");
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.MOONBLAST, Moves.DARK_PULSE, Moves.MOONBLAST, Moves.DARK_PULSE]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    game.override.enemyMoveset(SPLASH_ONLY);
     game.override.enemyAbility(Abilities.AURA_BREAK);
     game.override.enemySpecies(Species.SHUCKLE);
   });

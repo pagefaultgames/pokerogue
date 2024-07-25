@@ -9,6 +9,7 @@ import { DamagePhase, MoveEffectPhase } from "#app/phases.js";
 import { Abilities } from "#app/enums/abilities.js";
 import { Stat } from "#app/enums/stat.js";
 import { allMoves } from "#app/data/move.js";
+import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Abilities - Hustle", () => {
   let phaserGame: Phaser.Game;
@@ -31,7 +32,7 @@ describe("Abilities - Hustle", () => {
     vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(5);
     vi.spyOn(overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
     vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(5);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    game.override.enemyMoveset(SPLASH_ONLY);
     game.override.enemySpecies(Species.SHUCKLE);
     game.override.enemyAbility(Abilities.BALL_FETCH);
   });

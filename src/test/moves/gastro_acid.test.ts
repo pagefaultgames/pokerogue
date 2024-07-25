@@ -10,6 +10,7 @@ import { getMovePosition } from "../utils/gameManagerUtils";
 import { MoveResult } from "#app/field/pokemon.js";
 import { Stat } from "#app/data/pokemon-stat.js";
 import { Species } from "#app/enums/species.js";
+import { SPLASH_ONLY } from "../utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -35,7 +36,7 @@ describe("Moves - Gastro Acid", () => {
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.GASTRO_ACID, Moves.WATER_GUN, Moves.SPLASH, Moves.CORE_ENFORCER]);
     game.override.enemySpecies(Species.BIDOOF);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    game.override.enemyMoveset(SPLASH_ONLY);
     game.override.enemyAbility(Abilities.WATER_ABSORB);
   });
 

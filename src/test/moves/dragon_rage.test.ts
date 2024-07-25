@@ -12,6 +12,7 @@ import { BattleStat } from "#app/data/battle-stat";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import { modifierTypes } from "#app/modifier/modifier-type";
+import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Moves - Dragon Rage", () => {
   let phaserGame: Phaser.Game;
@@ -44,7 +45,7 @@ describe("Moves - Dragon Rage", () => {
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
 
     game.override.enemySpecies(Species.SNORLAX);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    game.override.enemyMoveset(SPLASH_ONLY);
     game.override.enemyAbility(Abilities.BALL_FETCH);
     vi.spyOn(Overrides, "OPP_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
     vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);

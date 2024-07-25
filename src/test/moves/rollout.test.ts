@@ -34,7 +34,7 @@ describe("Moves - Rollout", () => {
     game.override.enemyAbility(Abilities.NONE);
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
     vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(SPLASH_ONLY);
+    game.override.enemyMoveset(SPLASH_ONLY);
   });
 
   it("should double it's dmg on sequential uses but reset after 5", async () => {

@@ -42,7 +42,7 @@ describe("Items - Toxic orb", () => {
     game.override.enemyAbility(Abilities.INSOMNIA);
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([oppMoveToUse, oppMoveToUse, oppMoveToUse, oppMoveToUse]);
+    game.override.enemyMoveset([oppMoveToUse, oppMoveToUse, oppMoveToUse, oppMoveToUse]);
     vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{
       name: "TOXIC_ORB",
     }]);

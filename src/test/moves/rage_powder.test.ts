@@ -37,13 +37,13 @@ describe("Moves - Rage Powder", () => {
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
     vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.FOLLOW_ME, Moves.RAGE_POWDER, Moves.SPOTLIGHT, Moves.QUICK_ATTACK ]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
+    game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
   });
 
   test(
     "move effect should be bypassed by Grass type",
     async () => {
-      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.RAGE_POWDER, Moves.RAGE_POWDER, Moves.RAGE_POWDER, Moves.RAGE_POWDER ]);
+      game.override.enemyMoveset([ Moves.RAGE_POWDER, Moves.RAGE_POWDER, Moves.RAGE_POWDER, Moves.RAGE_POWDER ]);
 
       await game.startBattle([ Species.AMOONGUSS, Species.VENUSAUR ]);
 
@@ -77,7 +77,7 @@ describe("Moves - Rage Powder", () => {
     "move effect should be bypassed by Overcoat",
     async () => {
       vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.OVERCOAT);
-      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.RAGE_POWDER, Moves.RAGE_POWDER, Moves.RAGE_POWDER, Moves.RAGE_POWDER ]);
+      game.override.enemyMoveset([ Moves.RAGE_POWDER, Moves.RAGE_POWDER, Moves.RAGE_POWDER, Moves.RAGE_POWDER ]);
 
       // Test with two non-Grass type player Pokemon
       await game.startBattle([ Species.BLASTOISE, Species.CHARIZARD ]);

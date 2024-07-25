@@ -30,7 +30,7 @@ describe("Moves - Glaive Rush", () => {
     vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
     game.override.enemySpecies(Species.MAGIKARP);
     game.override.enemyAbility(Abilities.BALL_FETCH);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(Array(4).fill(Moves.GLAIVE_RUSH));
+    game.override.enemyMoveset(Array(4).fill(Moves.GLAIVE_RUSH));
     vi.spyOn(Overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.KLINK);
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.UNNERVE);
     vi.spyOn(Overrides, "PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.FUR_COAT);
@@ -67,7 +67,7 @@ describe("Moves - Glaive Rush", () => {
 
   it("interacts properly with multi-lens", async() => {
     vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "MULTI_LENS", count: 2}]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(Array(4).fill(Moves.AVALANCHE));
+    game.override.enemyMoveset(Array(4).fill(Moves.AVALANCHE));
     await game.startBattle();
     const player = game.scene.getPlayerPokemon();
     const enemy = game.scene.getEnemyPokemon();
@@ -86,7 +86,7 @@ describe("Moves - Glaive Rush", () => {
   }, 20000);
 
   it("secondary effects only last until next move", async() => {
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(Array(4).fill(Moves.SHADOW_SNEAK));
+    game.override.enemyMoveset(Array(4).fill(Moves.SHADOW_SNEAK));
     await game.startBattle();
     const player = game.scene.getPlayerPokemon();
     const enemy = game.scene.getEnemyPokemon();
@@ -110,7 +110,7 @@ describe("Moves - Glaive Rush", () => {
   }, 20000);
 
   it("secondary effects are removed upon switching", async() => {
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(Array(4).fill(Moves.SHADOW_SNEAK));
+    game.override.enemyMoveset(Array(4).fill(Moves.SHADOW_SNEAK));
     vi.spyOn(Overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(0);
     await game.startBattle([Species.KLINK, Species.FEEBAS]);
     const player = game.scene.getPlayerPokemon();

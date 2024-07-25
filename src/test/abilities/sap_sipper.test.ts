@@ -39,7 +39,7 @@ describe("Abilities - Sap Sipper", () => {
     const enemyAbility = Abilities.SAP_SIPPER;
 
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
+    game.override.enemyMoveset([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
     game.override.enemySpecies(Species.DUSKULL);
     game.override.enemyAbility(enemyAbility);
 
@@ -60,7 +60,7 @@ describe("Abilities - Sap Sipper", () => {
     const enemyAbility = Abilities.SAP_SIPPER;
 
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
+    game.override.enemyMoveset([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
     game.override.enemySpecies(Species.RATTATA);
     game.override.enemyAbility(enemyAbility);
 
@@ -79,7 +79,7 @@ describe("Abilities - Sap Sipper", () => {
     const enemyAbility = Abilities.SAP_SIPPER;
 
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
+    game.override.enemyMoveset([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
     game.override.enemySpecies(Species.RATTATA);
     game.override.enemyAbility(enemyAbility);
 
@@ -99,7 +99,7 @@ describe("Abilities - Sap Sipper", () => {
     const enemyAbility = Abilities.SAP_SIPPER;
 
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
+    game.override.enemyMoveset([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
     game.override.enemySpecies(Species.RATTATA);
     game.override.enemyAbility(enemyAbility);
 
@@ -121,7 +121,7 @@ describe("Abilities - Sap Sipper", () => {
 
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(ability);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
+    game.override.enemyMoveset([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
     game.override.enemySpecies(Species.RATTATA);
     game.override.enemyAbility(Abilities.NONE);
 
@@ -146,7 +146,7 @@ describe("Abilities - Sap Sipper", () => {
     const enemyAbility = Abilities.SAP_SIPPER;
 
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
+    game.override.enemyMoveset([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
     game.override.enemySpecies(Species.RATTATA);
     game.override.enemyAbility(enemyAbility);
 

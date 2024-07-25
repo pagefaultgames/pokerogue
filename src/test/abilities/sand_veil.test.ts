@@ -32,7 +32,7 @@ describe("Abilities - Sand Veil", () => {
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH]);
     game.override.enemySpecies(Species.MEOWSCARADA);
     game.override.enemyAbility(Abilities.INSOMNIA);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TWISTER, Moves.TWISTER, Moves.TWISTER, Moves.TWISTER]);
+    game.override.enemyMoveset([Moves.TWISTER, Moves.TWISTER, Moves.TWISTER, Moves.TWISTER]);
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
     vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
     game.override

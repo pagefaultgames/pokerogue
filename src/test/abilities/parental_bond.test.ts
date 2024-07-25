@@ -11,6 +11,7 @@ import { BattleStat } from "#app/data/battle-stat.js";
 import { Type } from "#app/data/type.js";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
 import { StatusEffect } from "#app/data/status-effect.js";
+import { SPLASH_ONLY } from "../utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -35,7 +36,7 @@ describe("Abilities - Parental Bond", () => {
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.PARENTAL_BOND);
     game.override.enemySpecies(Species.SNORLAX);
     game.override.enemyAbility(Abilities.INSOMNIA);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    game.override.enemyMoveset(SPLASH_ONLY);
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
     vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
   });
@@ -211,7 +212,7 @@ describe("Abilities - Parental Bond", () => {
     "ability should not apply multiplier to counter moves",
     async () => {
       vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.COUNTER]);
-      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
+      game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
 
       await game.startBattle([Species.CHARIZARD]);
 
@@ -569,7 +570,7 @@ describe("Abilities - Parental Bond", () => {
     "ability should not cause user to hit into King's Shield more than once",
     async () => {
       vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
-      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.KINGS_SHIELD,Moves.KINGS_SHIELD,Moves.KINGS_SHIELD,Moves.KINGS_SHIELD]);
+      game.override.enemyMoveset([Moves.KINGS_SHIELD,Moves.KINGS_SHIELD,Moves.KINGS_SHIELD,Moves.KINGS_SHIELD]);
 
       await game.startBattle([Species.CHARIZARD]);
 

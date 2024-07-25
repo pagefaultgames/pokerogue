@@ -105,9 +105,9 @@ describe("RibbonAchv", () => {
   beforeEach(() => {
     vi.spyOn(Overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(0);
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(0);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([]);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([]);
     game = new GameManager(phaserGame);
+    game.override.enemyMoveset([]);
     game.override.enemySpecies(0);
     game.override.startingWave(0);
     scene = game.scene;

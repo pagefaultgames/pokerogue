@@ -10,6 +10,7 @@ import { Moves } from "#enums/moves";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { BattleStat } from "#app/data/battle-stat.js";
+import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Abilities - Wind Rider", () => {
   let phaserGame: Phaser.Game;
@@ -31,7 +32,7 @@ describe("Abilities - Wind Rider", () => {
     game.override.enemySpecies(Species.SHIFTRY);
     game.override.enemyAbility(Abilities.WIND_RIDER);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TAILWIND, Moves.SPLASH, Moves.PETAL_BLIZZARD, Moves.SANDSTORM]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    game.override.enemyMoveset(SPLASH_ONLY);
   });
 
   it("takes no damage from wind moves and its Attack is increased by one stage when hit by one", async () => {

@@ -38,7 +38,7 @@ describe("Moves - Follow Me", () => {
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
     vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.FOLLOW_ME, Moves.RAGE_POWDER, Moves.SPOTLIGHT, Moves.QUICK_ATTACK ]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
+    game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
   });
 
   test(
@@ -103,7 +103,7 @@ describe("Moves - Follow Me", () => {
     async () => {
       vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.STALWART);
       vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.QUICK_ATTACK ]);
-      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.FOLLOW_ME, Moves.FOLLOW_ME, Moves.FOLLOW_ME, Moves.FOLLOW_ME ]);
+      game.override.enemyMoveset([ Moves.FOLLOW_ME, Moves.FOLLOW_ME, Moves.FOLLOW_ME, Moves.FOLLOW_ME ]);
 
       await game.startBattle([ Species.AMOONGUSS, Species.CHARIZARD ]);
 
@@ -137,7 +137,7 @@ describe("Moves - Follow Me", () => {
     "move effect should be bypassed by Snipe Shot",
     async () => {
       vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.SNIPE_SHOT ]);
-      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.FOLLOW_ME, Moves.FOLLOW_ME, Moves.FOLLOW_ME, Moves.FOLLOW_ME ]);
+      game.override.enemyMoveset([ Moves.FOLLOW_ME, Moves.FOLLOW_ME, Moves.FOLLOW_ME, Moves.FOLLOW_ME ]);
 
       await game.startBattle([ Species.AMOONGUSS, Species.CHARIZARD ]);
 

@@ -9,6 +9,7 @@ import { allMoves } from "#app/data/move.js";
 import { allAbilities } from "#app/data/ability.js";
 import { Abilities } from "#app/enums/abilities.js";
 import { MoveEffectPhase, SelectTargetPhase } from "#app/phases.js";
+import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Abilities - Steely Spirit", () => {
   let phaserGame: Phaser.Game;
@@ -33,7 +34,7 @@ describe("Abilities - Steely Spirit", () => {
     game.override.enemySpecies(Species.SHUCKLE);
     game.override.enemyAbility(Abilities.BALL_FETCH);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.IRON_HEAD, Moves.SPLASH]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    game.override.enemyMoveset(SPLASH_ONLY);
     vi.spyOn(allMoves[moveToCheck], "calculateBattlePower");
   });
 

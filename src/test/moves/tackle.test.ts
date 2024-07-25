@@ -36,7 +36,7 @@ describe("Moves - Tackle", () => {
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(1);
     game.override.startingWave(97);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.GROWTH,Moves.GROWTH,Moves.GROWTH,Moves.GROWTH]);
+    game.override.enemyMoveset([Moves.GROWTH,Moves.GROWTH,Moves.GROWTH,Moves.GROWTH]);
     vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
   });
 

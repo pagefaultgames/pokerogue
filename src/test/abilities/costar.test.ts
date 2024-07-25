@@ -8,6 +8,7 @@ import { getMovePosition } from "../utils/gameManagerUtils";
 import { Abilities } from "#app/enums/abilities.js";
 import { Moves } from "#app/enums/moves.js";
 import { Species } from "#app/enums/species.js";
+import { SPLASH_ONLY } from "../utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -30,7 +31,7 @@ describe("Abilities - COSTAR", () => {
     game.override.battleType("double");
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.COSTAR);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.NASTY_PLOT]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    game.override.enemyMoveset(SPLASH_ONLY);
   });
 
 

@@ -13,6 +13,7 @@ import { BattleStat } from "#app/data/battle-stat.js";
 import { Biome } from "#app/enums/biome.js";
 import { Type } from "#app/data/type.js";
 import { SemiInvulnerableTag } from "#app/data/battler-tags.js";
+import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Moves - Flower Shield", () => {
   let phaserGame: Phaser.Game;
@@ -34,7 +35,7 @@ describe("Moves - Flower Shield", () => {
     game.override.enemyAbility(Abilities.NONE);
     game.override.battleType("single");
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.FLOWER_SHIELD, Moves.SPLASH]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    game.override.enemyMoveset(SPLASH_ONLY);
   });
 
   it("increases defense of all Grass-type Pokemon on the field by one stage - single battle", async () => {
@@ -81,7 +82,7 @@ describe("Moves - Flower Shield", () => {
   */
   it("does not increase defense of a pokemon in semi-vulnerable state", async () => {
     game.override.enemySpecies(Species.PARAS);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.DIG, Moves.DIG, Moves.DIG, Moves.DIG]);
+    game.override.enemyMoveset([Moves.DIG, Moves.DIG, Moves.DIG, Moves.DIG]);
     vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(50);
 
     await game.startBattle([Species.CHERRIM]);

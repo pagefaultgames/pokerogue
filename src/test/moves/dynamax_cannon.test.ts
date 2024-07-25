@@ -37,7 +37,7 @@ describe("Moves - Dynamax Cannon", () => {
     vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
 
     game.override.enemySpecies(Species.MAGIKARP);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH ]);
+    game.override.enemyMoveset([ Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH ]);
 
     vi.spyOn(dynamaxCannon, "calculateBattlePower");
   });
