@@ -29,7 +29,7 @@ describe("Abilities - Hustle", () => {
     game = new GameManager(phaserGame);
     game.override.ability(Abilities.HUSTLE);
     game.override.moveset([Moves.TACKLE, Moves.GIGA_DRAIN, Moves.FISSURE]);
-    vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(5);
+    game.override.startingLevel(5);
     vi.spyOn(overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
     game.override.enemyLevel(5);
     game.override.enemyMoveset(SPLASH_ONLY);
@@ -80,7 +80,7 @@ describe("Abilities - Hustle", () => {
   });
 
   it("does not affect OHKO moves", async () => {
-    vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    game.override.startingLevel(100);
     game.override.enemyLevel(30);
 
     await game.startBattle([Species.PIKACHU]);
