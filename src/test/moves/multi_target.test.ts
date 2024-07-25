@@ -171,7 +171,7 @@ function beforeTrial(phaserGame: Phaser.Game, single: boolean = false) {
   game.override.enemyMoveset(SPLASH_ONLY);
   vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
   game.override.startingLevel(50);
-  vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(40);
+  game.override.enemyLevel(40);
   game.override.enemySpecies(Species.EEVEE);
   return game;
 }

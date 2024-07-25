@@ -1,17 +1,16 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
-import { Species } from "#enums/species";
+import { allMoves } from "#app/data/move.js";
+import { Abilities } from "#app/enums/abilities.js";
+import { ArenaTagType } from "#app/enums/arena-tag-type.js";
 import {
   MoveEffectPhase,
   TurnEndPhase,
 } from "#app/phases";
-import { Moves } from "#enums/moves";
+import GameManager from "#app/test/utils/gameManager";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
-import { allMoves } from "#app/data/move.js";
-import { ArenaTagType } from "#app/enums/arena-tag-type.js";
-import { Abilities } from "#app/enums/abilities.js";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Arena - Gravity", () => {
   let phaserGame: Phaser.Game;
@@ -59,7 +58,7 @@ describe("Arena - Gravity", () => {
 
   it("OHKO move accuracy is not affected", async () => {
     game.override.startingLevel(5);
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(5);
+    game.override.enemyLevel(5);
 
     /** See Fissure {@link https://bulbapedia.bulbagarden.net/wiki/Fissure_(move)} */
     const moveToCheck = allMoves[Moves.FISSURE];

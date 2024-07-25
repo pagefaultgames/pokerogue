@@ -1,14 +1,13 @@
+import { allMoves } from "#app/data/move.js";
+import { BattlerTagType } from "#app/enums/battler-tag-type.js";
+import { BerryPhase, CommandPhase, MoveEndPhase, TurnEndPhase } from "#app/phases.js";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import GameManager from "../utils/gameManager";
-import Overrides from "#app/overrides";
-import { Species } from "#enums/species";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
 import { getMovePosition } from "../utils/gameManagerUtils";
-import { BerryPhase, CommandPhase, MoveEndPhase, TurnEndPhase } from "#app/phases.js";
-import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import { allMoves } from "#app/data/move.js";
 
 const TIMEOUT = 20 * 1000;
 
@@ -34,7 +33,7 @@ describe("Moves - Astonish", () => {
     game.override.enemyAbility(Abilities.INSOMNIA);
     game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
     game.override.startingLevel(100);
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    game.override.enemyLevel(100);
 
     vi.spyOn(allMoves[Moves.ASTONISH], "chance", "get").mockReturnValue(100);
   });

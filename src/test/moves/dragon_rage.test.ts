@@ -48,7 +48,7 @@ describe("Moves - Dragon Rage", () => {
     game.override.enemyMoveset(SPLASH_ONLY);
     game.override.enemyAbility(Abilities.BALL_FETCH);
     vi.spyOn(Overrides, "OPP_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    game.override.enemyLevel(100);
 
     await game.startBattle();
 

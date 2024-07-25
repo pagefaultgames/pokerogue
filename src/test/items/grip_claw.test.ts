@@ -41,7 +41,7 @@ describe("Items - Grip Claw", () => {
       {name: "BERRY", type: BerryType.LUM, count: 2}
     ]);
     game.override.startingLevel(100);
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    game.override.enemyLevel(100);
 
     vi.spyOn(allMoves[Moves.POPULATION_BOMB], "accuracy", "get").mockReturnValue(100);
   });

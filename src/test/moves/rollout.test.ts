@@ -33,7 +33,7 @@ describe("Moves - Rollout", () => {
     game.override.enemySpecies(Species.BIDOOF);
     game.override.enemyAbility(Abilities.NONE);
     game.override.startingLevel(100);
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    game.override.enemyLevel(100);
     game.override.enemyMoveset(SPLASH_ONLY);
   });
 

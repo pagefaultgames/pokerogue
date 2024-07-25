@@ -31,7 +31,7 @@ describe("Abilities - Unseen Fist", () => {
     game.override.enemySpecies(Species.SNORLAX);
     game.override.enemyMoveset([Moves.PROTECT, Moves.PROTECT, Moves.PROTECT, Moves.PROTECT]);
     game.override.startingLevel(100);
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    game.override.enemyLevel(100);
   });
 
   test(

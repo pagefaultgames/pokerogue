@@ -32,7 +32,7 @@ describe("Moves - Swallow", () => {
     game.override.enemySpecies(Species.RATTATA);
     game.override.enemyMoveset(SPLASH_ONLY);
     game.override.enemyAbility(Abilities.NONE);
-    vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
+    game.override.enemyLevel(2000);
 
     game.override.moveset([Moves.SWALLOW, Moves.SWALLOW, Moves.SWALLOW, Moves.SWALLOW]);
     vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);

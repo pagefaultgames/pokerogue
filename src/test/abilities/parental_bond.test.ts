@@ -38,7 +38,7 @@ describe("Abilities - Parental Bond", () => {
     game.override.enemyAbility(Abilities.INSOMNIA);
     game.override.enemyMoveset(SPLASH_ONLY);
     game.override.startingLevel(100);
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    game.override.enemyLevel(100);
   });
 
   test(

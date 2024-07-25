@@ -1,19 +1,18 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
-import { Species } from "#enums/species";
+import { QuietFormChangePhase } from "#app/form-change-phase";
 import {
   MoveEffectPhase,
   MoveEndPhase,
   TurnEndPhase,
   TurnInitPhase,
 } from "#app/phases";
-import { Moves } from "#enums/moves";
+import GameManager from "#app/test/utils/gameManager";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { QuietFormChangePhase } from "#app/form-change-phase";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - Ice Face", () => {
   let phaserGame: Phaser.Game;
@@ -55,7 +54,7 @@ describe("Abilities - Ice Face", () => {
 
   it("takes no damage from the first hit of multihit physical move and transforms to Noice", async () => {
     game.override.moveset([Moves.SURGING_STRIKES]);
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(1);
+    game.override.enemyLevel(1);
     await game.startBattle([Species.HITMONLEE]);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.SURGING_STRIKES));

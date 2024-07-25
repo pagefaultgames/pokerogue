@@ -1,15 +1,14 @@
+import { BattleStatMultiplierAbAttr, allAbilities } from "#app/data/ability.js";
+import { BattleStat } from "#app/data/battle-stat.js";
+import { WeatherType } from "#app/data/weather.js";
+import { CommandPhase, MoveEffectPhase, MoveEndPhase } from "#app/phases.js";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import GameManager from "../utils/gameManager";
-import Overrides from "#app/overrides";
-import { Species } from "#enums/species";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
 import { getMovePosition } from "../utils/gameManagerUtils";
-import { CommandPhase, MoveEffectPhase, MoveEndPhase } from "#app/phases.js";
-import { BattleStat } from "#app/data/battle-stat.js";
-import { WeatherType } from "#app/data/weather.js";
-import { BattleStatMultiplierAbAttr, allAbilities } from "#app/data/ability.js";
 
 const TIMEOUT = 20 * 1000;
 
@@ -34,7 +33,7 @@ describe("Abilities - Sand Veil", () => {
     game.override.enemyAbility(Abilities.INSOMNIA);
     game.override.enemyMoveset([Moves.TWISTER, Moves.TWISTER, Moves.TWISTER, Moves.TWISTER]);
     game.override.startingLevel(100);
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    game.override.enemyLevel(100);
     game.override
       .weather(WeatherType.SANDSTORM)
       .battleType("double");

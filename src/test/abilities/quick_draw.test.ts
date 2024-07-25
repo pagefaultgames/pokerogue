@@ -1,12 +1,11 @@
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
-import { Abilities } from "#enums/abilities";
-import { Species } from "#enums/species";
-import { FaintPhase } from "#app/phases";
-import { Moves } from "#enums/moves";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { allAbilities, BypassSpeedChanceAbAttr } from "#app/data/ability";
+import { FaintPhase } from "#app/phases";
+import GameManager from "#app/test/utils/gameManager";
+import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("Abilities - Quick Draw", () => {
@@ -31,7 +30,7 @@ describe("Abilities - Quick Draw", () => {
     game.override.ability(Abilities.QUICK_DRAW);
     game.override.moveset([Moves.TACKLE, Moves.TAIL_WHIP]);
 
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    game.override.enemyLevel(100);
     game.override.enemySpecies(Species.MAGIKARP);
     game.override.enemyAbility(Abilities.BALL_FETCH);
     game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));

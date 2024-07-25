@@ -1,18 +1,17 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, test, vi} from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
+import { BattlerIndex } from "#app/battle.js";
+import { Stat } from "#app/data/pokemon-stat";
+import { Abilities } from "#app/enums/abilities.js";
 import {
   CommandPhase,
   SelectTargetPhase,
   TurnEndPhase,
 } from "#app/phases";
-import {Stat} from "#app/data/pokemon-stat";
-import {getMovePosition} from "#app/test/utils/gameManagerUtils";
+import GameManager from "#app/test/utils/gameManager";
+import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { BattlerIndex } from "#app/battle.js";
-import { Abilities } from "#app/enums/abilities.js";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 const TIMEOUT = 20 * 1000;
 
@@ -36,7 +35,7 @@ describe("Moves - Follow Me", () => {
     game.override.starterSpecies(Species.AMOONGUSS);
     game.override.enemySpecies(Species.SNORLAX);
     game.override.startingLevel(100);
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    game.override.enemyLevel(100);
     game.override.moveset([ Moves.FOLLOW_ME, Moves.RAGE_POWDER, Moves.SPOTLIGHT, Moves.QUICK_ATTACK ]);
     game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
   });
