@@ -71,7 +71,7 @@ export default class GameInfoUiHandler extends UiHandler {
 
     this.runInfoContainer = this.scene.add.container(0, 24);
 
-    this.partyContainer = this.scene.add.container(this.statsBgWidth-10, 24);
+    this.partyContainer = this.scene.add.container(this.statsBgWidth-10, 23);
 
     this.setCursor(0);
 
@@ -354,48 +354,29 @@ export default class GameInfoUiHandler extends UiHandler {
       //pokemonSpriteWindow.setOrigin(-0.3, -0.25);
       const icon = this.scene.addPokemonIcon(pokemon, 0, 0, 0, 0);
       icon.setScale(0.75);
-      icon.setPosition(-100, 0);
+      icon.setPosition(-99, 1);
       //const spriteAnimKey = icon.list[0].anims.key;
       typeColor = types[1] ? getTypeRgb(types[1]) : null;
       const type2Color = typeColor ? new Phaser.Display.Color(typeColor[0], typeColor[1], typeColor[2]) : null;
       type2Color ? pokemonInfoWindow.setStrokeStyle(1, type2Color.color, 0.95) : pokemonInfoWindow.setStrokeStyle(1, type1Color.color, 0.95);
-      const sprite1 = icon.list[0] as Phaser.GameObjects.Sprite;
-      const sprite2 = (icon.list.length > 1) ? icon.list[1] as Phaser.GameObjects.Sprite : null;
-      if (type2Color && !pokemon.fusionSpecies) {
-        sprite1.preFX.addShadow(-1, -1, 0.1, 1, type1Color.color);
-        sprite1.preFX.addGlow(type2Color.color);
-        //pokemonSpriteWindow.setFillStyle(type2Color.color, 0.7);
-      } else if (type2Color && pokemon.fusionSpecies) {
-        sprite1.preFX.addShadow(-1, -1, 0.1, 1, type2Color.color);
-        sprite1.preFX.addGlow(type1Color.color);
-        sprite2.preFX.addShadow(-1, -1, 0.1, 1, type1Color.color);
-        sprite2.preFX.addGlow(type2Color.color);
-      } else {
-        sprite1.preFX.addShadow(-1, -1, 0.1, 1, type1Color.darken(10).color);
-        sprite1.preFX.addGlow(type1Color.color);
-        if (pokemon.fusionSpecies) {
-          sprite2.preFX.addShadow(-1, -1, 0.1, 1, type1Color.color);
-          sprite2.preFX.addGlow(type1Color.color);
-        }
-      }
       //pokemonSpriteWindow.setPosition(-2,1.5);
       //icon.add(pokemonSpriteWindow);
       this.getUi().bringToTop(icon);
 
-      const pokeInfoTextContainer = this.scene.add.container(-88, 3.5);
+      const pokeInfoTextContainer = this.scene.add.container(-85, 3.5);
       const textContainerFontSize = "34px";
       const pSpecies = pokemon.species;
       const pNature = getNatureName(pokemon.nature);
       const pName = pokemon.fusionSpecies ? pokemon.name : pSpecies.name;
-      const pPassiveInfo = pokemon.passive ? `${i18next.t("starterSelectUiHandler:passive")+" "+allAbilities[starterPassiveAbilities[pSpecies.speciesId]].name}` : "";
-      const pAbilityInfo = i18next.t("starterSelectUiHandler:ability")+" "+ pokemon.getAbility().name;
+      const pPassiveInfo = pokemon.passive ? `${i18next.t("starterSelectUiHandler:passive").charAt(0)+": "+allAbilities[starterPassiveAbilities[pSpecies.speciesId]].name}` : "";
+      const pAbilityInfo = i18next.t("starterSelectUiHandler:ability").charAt(0)+": "+ pokemon.getAbility().name;
       const pokeInfoText = addBBCodeTextObject(this.scene, 0, 0, pName, TextStyle.SUMMARY, {fontSize: textContainerFontSize, lineSpacing:3});
       pokeInfoText.appendText(`${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatFancyLargeNumber(pokemon.level, 1)} - ${pNature}`);
       pokeInfoText.appendText(pAbilityInfo);
       pokeInfoText.appendText(pPassiveInfo);
       pokeInfoTextContainer.add(pokeInfoText);
 
-      const pokeStatTextContainer = this.scene.add.container(-35, 6.5);
+      const pokeStatTextContainer = this.scene.add.container(-35, 6);
       const pStats = [];
       pokemon.stats.forEach((element) => pStats.push(Utils.formatFancyLargeNumber(element,1)));
       const currentLanguage = i18next.resolvedLanguage;
@@ -411,10 +392,10 @@ export default class GameInfoUiHandler extends UiHandler {
       const spatk = i18next.t("pokemonInfo:Stat.SPATKshortened")+": "+pStats[3];
       const spdef = i18next.t("pokemonInfo:Stat.SPDEFshortened")+": "+pStats[4];
       const speedLabel = (currentLanguage==="es"||currentLanguage==="pt_BR") ? i18next.t("runHistory:SPDshortened") : i18next.t("pokemonInfo:Stat.SPDshortened");
-      const speed = speedLabel+": "+pStats[5]+alignClose;
+      const speed = speedLabel+": "+pStats[5];
 
       //Column 1: HP Atk Def
-      const pokeStatText1 = addBBCodeTextObject(this.scene, 0, 0, hp, TextStyle.SUMMARY, {fontSize: textContainerFontSize, lineSpacing:3});
+      const pokeStatText1 = addBBCodeTextObject(this.scene, -5, 0, hp, TextStyle.SUMMARY, {fontSize: textContainerFontSize, lineSpacing:3});
       pokeStatText1.appendText(atk);
       pokeStatText1.appendText(def);
       pokeStatTextContainer.add(pokeStatText1);
@@ -428,7 +409,7 @@ export default class GameInfoUiHandler extends UiHandler {
         const splicedIcon = this.scene.add.image(0, 0, "icon_spliced");
         splicedIcon.setScale(0.35);
         splicedIcon.setOrigin(0, 0);
-        pokemon.shiny ? splicedIcon.setPositionRelative(textContainer, 121, 32) : splicedIcon.setPositionRelative(textContainer, 127, 32);
+        pokemon.shiny ? splicedIcon.setPositionRelative(pokeInfoTextContainer, 35, 0) : splicedIcon.setPositionRelative(pokeInfoTextContainer, 28, 0);
         iconContainer.add(splicedIcon);
         this.getUi().bringToTop(splicedIcon);
       }
@@ -439,7 +420,7 @@ export default class GameInfoUiHandler extends UiHandler {
         const shinyStar = this.scene.add.image(0, 0, `shiny_star_small${doubleShiny ? "_1" : ""}`);
         shinyStar.setOrigin(0, 0);
         shinyStar.setScale(0.65);
-        shinyStar.setPositionRelative(textContainer, 127, 32);
+        shinyStar.setPositionRelative(pokeInfoTextContainer, 28, 0);
         shinyStar.setTint(getVariantTint(!doubleShiny ? pokemon.getVariant() : pokemon.variant));
         iconContainer.add(shinyStar);
         this.getUi().bringToTop(shinyStar);
