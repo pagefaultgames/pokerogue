@@ -188,6 +188,17 @@ export class OverridesHelper {
     return this;
   }
 
+  /**
+   * Override the enemy (pokemon) level
+   * @param level the level to set
+   * @returns this
+   */
+  enemyLevel(level: number): this {
+    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(level);
+    this.log(`Enemy Pokemon level set to ${level}!`);
+    return this;
+  }
+
   private log(...params: any[]) {
     console.log("Overrides:", ...params);
   }
