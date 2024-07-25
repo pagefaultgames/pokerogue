@@ -589,7 +589,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "aether_boss_lusamine_1": {
     "encounter": {
-      1: "It looks like I'll need to silence you first."
+      1: "You're going to startle my sweet beast! It looks like I'll need to silence you first."
     },
     "victory": {
       1: "How.. how can you be so awful!"
@@ -600,13 +600,11 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "aether_boss_lusamine_2": {
     "encounter": {
-      1: `The world of my Ultra Beasts...
-          $A world where the only thing that exists is the love between Nihilego and myself.
-          $With Nihilego's power, I will show you how wrong you were to come here!`
+      1: `Why must you continue to pester me?! I am sick of you. Sick through and through!
+          $Enough with this useless talk.. with Nihilego's power I will show you how wrong you were to come here!`
     },
     "victory": {
-      1: `You hateful little Trainer! How dare you intrude upon this world that was meant for Nihilego and me?
-          $Aaauuuughhhh!!`
+      1: "Aaauuuggghhhhhhhhh!!!"
     },
     "defeat": {
       1: "All that I want is my precious beast! I don't care about any of the rest of you!"
