@@ -33,7 +33,7 @@ describe("Moves - Double Team", () => {
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
     game.override.enemySpecies(Species.SHUCKLE);
     game.override.enemyAbility(Abilities.BALL_FETCH);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
   });
 
   it("increases the user's evasion by one stage.", async () => {

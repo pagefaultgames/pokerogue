@@ -98,7 +98,7 @@ describe("Test Battle Phase", () => {
       .battleType("single");
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
     game.override.enemyAbility(Abilities.HYDRATION);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
     await game.startBattle();
     game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
       game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
@@ -117,7 +117,7 @@ describe("Test Battle Phase", () => {
     game.override.startingWave(3);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
     game.override.enemyAbility(Abilities.HYDRATION);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TAIL_WHIP, Moves.TAIL_WHIP, Moves.TAIL_WHIP, Moves.TAIL_WHIP]);
+    game.override.enemyMoveset([Moves.TAIL_WHIP, Moves.TAIL_WHIP, Moves.TAIL_WHIP, Moves.TAIL_WHIP]);
     game.override.battleType("single");
     await game.startBattle();
     game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
@@ -269,7 +269,7 @@ describe("Test Battle Phase", () => {
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
     game.override.startingWave(3);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
+    game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
     await game.startBattle([
       Species.DARMANITAN,
       Species.CHARIZARD,
@@ -298,7 +298,7 @@ describe("Test Battle Phase", () => {
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
     game.override.startingWave(3);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
+    game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
     await game.startBattle();
     const turn = game.scene.currentBattle.turn;
     game.doAttack(0);
@@ -316,7 +316,7 @@ describe("Test Battle Phase", () => {
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
     game.override.startingWave(3);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
+    game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
     await game.startBattle();
     const waveIndex = game.scene.currentBattle.waveIndex;
     game.doAttack(0);

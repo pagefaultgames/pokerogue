@@ -8,6 +8,7 @@ import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { allMoves } from "#app/data/move.js";
 import { MoveEffectPhase, TurnEndPhase } from "#app/phases.js";
 import { Abilities } from "#app/enums/abilities.js";
+import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Abilities - Power Spot", () => {
   let phaserGame: Phaser.Game;
@@ -29,7 +30,7 @@ describe("Abilities - Power Spot", () => {
     game = new GameManager(phaserGame);
     game.override.battleType("double");
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.BREAKING_SWIPE, Moves.SPLASH, Moves.DAZZLING_GLEAM]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    game.override.enemyMoveset(SPLASH_ONLY);
     game.override.enemySpecies(Species.SHUCKLE);
     game.override.enemyAbility(Abilities.BALL_FETCH);
   });

@@ -31,7 +31,7 @@ describe("Abilities - DISGUISE", () => {
     game.override.battleType("single");
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.DISGUISE);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
   });
 
   test(
@@ -71,7 +71,7 @@ describe("Abilities - DISGUISE", () => {
       const baseForm = 0,
         bustedForm = 1;
 
-      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.DARK_PULSE, Moves.DARK_PULSE, Moves.DARK_PULSE, Moves.DARK_PULSE]);
+      game.override.enemyMoveset([Moves.DARK_PULSE, Moves.DARK_PULSE, Moves.DARK_PULSE, Moves.DARK_PULSE]);
       vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(20);
       vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(20);
       game.override.enemySpecies(Species.MAGIKARP);

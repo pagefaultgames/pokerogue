@@ -11,6 +11,7 @@ import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Stat } from "#app/data/pokemon-stat.js";
 import { ArenaTagType } from "#app/enums/arena-tag-type.js";
 import { ArenaTagSide } from "#app/data/arena-tag.js";
+import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Abilities - Wind Rider", () => {
   let phaserGame: Phaser.Game;
@@ -30,7 +31,7 @@ describe("Abilities - Wind Rider", () => {
     game = new GameManager(phaserGame);
     game.override.battleType("double");
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TAILWIND, Moves.SPLASH, Moves.PETAL_BLIZZARD, Moves.SANDSTORM]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    game.override.enemyMoveset(SPLASH_ONLY);
   });
 
   it("doubles the Speed stat of the Pokemons on its side", async () => {

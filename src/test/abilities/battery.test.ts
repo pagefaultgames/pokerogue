@@ -8,6 +8,7 @@ import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { allMoves } from "#app/data/move.js";
 import { Abilities } from "#app/enums/abilities.js";
 import { MoveEffectPhase, TurnEndPhase } from "#app/phases.js";
+import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Abilities - Battery", () => {
   let phaserGame: Phaser.Game;
@@ -31,7 +32,7 @@ describe("Abilities - Battery", () => {
     game.override.enemySpecies(Species.SHUCKLE);
     game.override.enemyAbility(Abilities.BALL_FETCH);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.BREAKING_SWIPE, Moves.SPLASH, Moves.DAZZLING_GLEAM]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    game.override.enemyMoveset(SPLASH_ONLY);
   });
 
   it("raises the power of allies' special moves by 30%", async () => {

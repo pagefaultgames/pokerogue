@@ -7,6 +7,7 @@ import { Moves } from "#enums/moves";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { Species } from "#app/enums/species.js";
+import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Abilities - Dry Skin", () => {
   let phaserGame: Phaser.Game;
@@ -27,7 +28,7 @@ describe("Abilities - Dry Skin", () => {
     game.override.battleType("single");
     vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
     game.override.enemyAbility(Abilities.DRY_SKIN);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    game.override.enemyMoveset(SPLASH_ONLY);
     game.override.enemySpecies(Species.CHARMANDER);
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.UNNERVE);
     vi.spyOn(Overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.CHANDELURE);
@@ -128,7 +129,7 @@ describe("Abilities - Dry Skin", () => {
     expect(enemy).not.toBe(undefined);
 
     enemy.hp = 1;
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.PROTECT, Moves.PROTECT, Moves.PROTECT, Moves.PROTECT]);
+    game.override.enemyMoveset([Moves.PROTECT, Moves.PROTECT, Moves.PROTECT, Moves.PROTECT]);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.WATER_GUN));
     await game.phaseInterceptor.to(TurnEndPhase);

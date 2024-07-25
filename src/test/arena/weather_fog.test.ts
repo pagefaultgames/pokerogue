@@ -35,7 +35,7 @@ describe("Weather - Fog", () => {
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
     game.override.enemyAbility(Abilities.BALL_FETCH);
     game.override.enemySpecies(Species.MAGIKARP);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(new Array(4).fill(Moves.SPLASH));
+    game.override.enemyMoveset(new Array(4).fill(Moves.SPLASH));
   });
 
   it("move accuracy is multiplied by 90%", async () => {

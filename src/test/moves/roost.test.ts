@@ -33,7 +33,7 @@ describe("Moves - Roost", () => {
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
     vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.STOMPING_TANTRUM ]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.ROOST,Moves.ROOST,Moves.ROOST,Moves.ROOST]);
+    game.override.enemyMoveset([Moves.ROOST,Moves.ROOST,Moves.ROOST,Moves.ROOST]);
   });
 
   test(

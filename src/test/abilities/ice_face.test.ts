@@ -110,7 +110,7 @@ describe("Abilities - Ice Face", () => {
 
   it("transforms to Ice Face when Hail or Snow starts", async () => {
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.QUICK_ATTACK]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.HAIL, Moves.HAIL, Moves.HAIL, Moves.HAIL]);
+    game.override.enemyMoveset([Moves.HAIL, Moves.HAIL, Moves.HAIL, Moves.HAIL]);
 
     await game.startBattle([Species.MAGIKARP]);
 
@@ -131,7 +131,7 @@ describe("Abilities - Ice Face", () => {
   });
 
   it("transforms to Ice Face when summoned on arena with active Snow or Hail", async () => {
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SNOWSCAPE]);
 
     await game.startBattle([Species.EISCUE, Species.NINJASK]);
@@ -159,7 +159,7 @@ describe("Abilities - Ice Face", () => {
 
   it("will not revert to its Ice Face if there is already Hail when it changes into Noice", async () => {
     game.override.enemySpecies(Species.SHUCKLE);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
 
     await game.startBattle([Species.EISCUE]);
 
@@ -178,7 +178,7 @@ describe("Abilities - Ice Face", () => {
   });
 
   it("persists form change when switched out", async () => {
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.QUICK_ATTACK, Moves.QUICK_ATTACK, Moves.QUICK_ATTACK, Moves.QUICK_ATTACK]);
+    game.override.enemyMoveset([Moves.QUICK_ATTACK, Moves.QUICK_ATTACK, Moves.QUICK_ATTACK, Moves.QUICK_ATTACK]);
 
     await game.startBattle([Species.EISCUE, Species.MAGIKARP]);
 

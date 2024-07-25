@@ -34,7 +34,7 @@ describe("Arena - Gravity", () => {
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.UNNERVE);
     game.override.enemyAbility(Abilities.BALL_FETCH);
     game.override.enemySpecies(Species.SHUCKLE);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(new Array(4).fill(Moves.SPLASH));
+    game.override.enemyMoveset(new Array(4).fill(Moves.SPLASH));
   });
 
   it("non-OHKO move accuracy is multiplied by 1.67", async () => {

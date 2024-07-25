@@ -8,6 +8,7 @@ import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import i18next, { initI18n } from "#app/plugins/i18n";
+import { SPLASH_ONLY } from "../utils/testUtils";
 
 
 describe("Ability Timing", () => {
@@ -30,7 +31,7 @@ describe("Ability Timing", () => {
 
     game.override.enemySpecies(Species.PIDGEY);
     game.override.enemyAbility(Abilities.INTIMIDATE);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(Array(4).fill(Moves.SPLASH));
+    game.override.enemyMoveset(SPLASH_ONLY);
 
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.ICE_BEAM]);

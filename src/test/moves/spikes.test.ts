@@ -34,7 +34,7 @@ describe("Moves - Spikes", () => {
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
     vi.spyOn(Overrides, "PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
     game.override.startingWave(3);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH,Moves.SPLASH,Moves.SPLASH,Moves.SPLASH]);
+    game.override.enemyMoveset([Moves.SPLASH,Moves.SPLASH,Moves.SPLASH,Moves.SPLASH]);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPIKES,Moves.SPLASH, Moves.ROAR]);
   });
 

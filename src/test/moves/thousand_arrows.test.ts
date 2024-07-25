@@ -35,7 +35,7 @@ describe("Moves - Thousand Arrows", () => {
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
     vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.THOUSAND_ARROWS ]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH,Moves.SPLASH,Moves.SPLASH,Moves.SPLASH]);
+    game.override.enemyMoveset([Moves.SPLASH,Moves.SPLASH,Moves.SPLASH,Moves.SPLASH]);
   });
 
   it(

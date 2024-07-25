@@ -12,6 +12,7 @@ import { Moves } from "#enums/moves";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { BattleStat } from "#app/data/battle-stat.js";
+import { SPLASH_ONLY } from "../utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -35,7 +36,7 @@ describe("Moves - Make It Rain", () => {
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.MAKE_IT_RAIN, Moves.SPLASH]);
     game.override.enemySpecies(Species.SNORLAX);
     game.override.enemyAbility(Abilities.INSOMNIA);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    game.override.enemyMoveset(SPLASH_ONLY);
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
     vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
   });

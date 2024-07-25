@@ -9,6 +9,7 @@ import { Abilities } from "#enums/abilities";
 import { Species } from "#app/enums/species.js";
 import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import { BattleStat } from "#app/data/battle-stat";
+import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Moves - Fissure", () => {
   let phaserGame: Phaser.Game;
@@ -38,7 +39,7 @@ describe("Moves - Fissure", () => {
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
 
     game.override.enemySpecies(Species.SNORLAX);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    game.override.enemyMoveset(SPLASH_ONLY);
     vi.spyOn(Overrides, "OPP_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
     vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
 

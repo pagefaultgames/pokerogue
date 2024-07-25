@@ -33,7 +33,7 @@ describe("Moves - Hyper Beam", () => {
     vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
     game.override.enemySpecies(Species.SNORLAX);
     game.override.enemyAbility(Abilities.BALL_FETCH);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(Array(4).fill(Moves.SPLASH));
+    game.override.enemyMoveset(Array(4).fill(Moves.SPLASH));
 
     vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.HYPER_BEAM, Moves.TACKLE]);
     vi.spyOn(allMoves[Moves.HYPER_BEAM], "accuracy", "get").mockReturnValue(100);

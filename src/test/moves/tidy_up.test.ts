@@ -9,6 +9,7 @@ import { Species } from "#enums/species";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { ArenaTagType } from "#app/enums/arena-tag-type.js";
 import { BattleStat } from "#app/data/battle-stat.js";
+import { SPLASH_ONLY } from "../utils/testUtils";
 
 
 describe("Moves - Tidy Up", () => {
@@ -30,7 +31,7 @@ describe("Moves - Tidy Up", () => {
     game.override.battleType("single");
     game.override.enemySpecies(Species.MAGIKARP);
     game.override.enemyAbility(Abilities.BALL_FETCH);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    game.override.enemyMoveset(SPLASH_ONLY);
     vi.spyOn(Overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.FEEBAS);
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TIDY_UP]);
@@ -39,7 +40,7 @@ describe("Moves - Tidy Up", () => {
 
   it("spikes are cleared", async() => {
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPIKES, Moves.TIDY_UP]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPIKES, Moves.SPIKES, Moves.SPIKES, Moves.SPIKES]);
+    game.override.enemyMoveset([Moves.SPIKES, Moves.SPIKES, Moves.SPIKES, Moves.SPIKES]);
     await game.startBattle();
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.SPIKES));
@@ -52,7 +53,7 @@ describe("Moves - Tidy Up", () => {
 
   it("stealth rocks are cleared", async() => {
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.STEALTH_ROCK, Moves.TIDY_UP]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.STEALTH_ROCK, Moves.STEALTH_ROCK, Moves.STEALTH_ROCK, Moves.STEALTH_ROCK]);
+    game.override.enemyMoveset([Moves.STEALTH_ROCK, Moves.STEALTH_ROCK, Moves.STEALTH_ROCK, Moves.STEALTH_ROCK]);
     await game.startBattle();
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.STEALTH_ROCK));
@@ -65,7 +66,7 @@ describe("Moves - Tidy Up", () => {
 
   it("toxic spikes are cleared", async() => {
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TOXIC_SPIKES, Moves.TIDY_UP]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TOXIC_SPIKES, Moves.TOXIC_SPIKES, Moves.TOXIC_SPIKES, Moves.TOXIC_SPIKES]);
+    game.override.enemyMoveset([Moves.TOXIC_SPIKES, Moves.TOXIC_SPIKES, Moves.TOXIC_SPIKES, Moves.TOXIC_SPIKES]);
     await game.startBattle();
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.TOXIC_SPIKES));
@@ -78,7 +79,7 @@ describe("Moves - Tidy Up", () => {
 
   it("sticky webs are cleared", async() => {
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.STICKY_WEB, Moves.TIDY_UP]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.STICKY_WEB, Moves.STICKY_WEB, Moves.STICKY_WEB, Moves.STICKY_WEB]);
+    game.override.enemyMoveset([Moves.STICKY_WEB, Moves.STICKY_WEB, Moves.STICKY_WEB, Moves.STICKY_WEB]);
 
     await game.startBattle();
 
@@ -92,7 +93,7 @@ describe("Moves - Tidy Up", () => {
 
   it.skip("substitutes are cleared", async() => {
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SUBSTITUTE, Moves.TIDY_UP]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SUBSTITUTE, Moves.SUBSTITUTE, Moves.SUBSTITUTE, Moves.SUBSTITUTE]);
+    game.override.enemyMoveset([Moves.SUBSTITUTE, Moves.SUBSTITUTE, Moves.SUBSTITUTE, Moves.SUBSTITUTE]);
 
     await game.startBattle();
 

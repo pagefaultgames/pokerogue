@@ -10,6 +10,7 @@ import { Moves } from "#enums/moves";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
+import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Abilities - Wind Power", () => {
   let phaserGame: Phaser.Game;
@@ -31,7 +32,7 @@ describe("Abilities - Wind Power", () => {
     game.override.enemySpecies(Species.SHIFTRY);
     game.override.enemyAbility(Abilities.WIND_POWER);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TAILWIND, Moves.SPLASH, Moves.PETAL_BLIZZARD, Moves.SANDSTORM]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    game.override.enemyMoveset(SPLASH_ONLY);
   });
 
   it("it becomes charged when hit by wind moves", async () => {

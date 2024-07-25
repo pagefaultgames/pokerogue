@@ -8,6 +8,7 @@ import { Abilities } from "#app/enums/abilities.js";
 import { Species } from "#app/enums/species.js";
 import { getMovePosition } from "../utils/gameManagerUtils";
 import { TurnEndPhase } from "#app/phases.js";
+import { SPLASH_ONLY } from "../utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -167,7 +168,7 @@ function beforeTrial(phaserGame: Phaser.Game, single: boolean = false) {
   game.override.battleType("double");
   vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.EARTHQUAKE, Moves.HYPER_VOICE, Moves.SURF, Moves.SPLASH]);
   vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
-  vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+  game.override.enemyMoveset(SPLASH_ONLY);
   vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
   vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(50);
   vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(40);

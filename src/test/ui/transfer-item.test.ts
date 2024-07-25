@@ -43,7 +43,7 @@ describe("UI - Transfer Items", () => {
     ]);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.DRAGON_CLAW]);
     game.override.enemySpecies(Species.MAGIKARP);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH]);
+    game.override.enemyMoveset([Moves.SPLASH]);
 
     await game.startBattle([Species.RAYQUAZA, Species.RAYQUAZA, Species.RAYQUAZA]);
 

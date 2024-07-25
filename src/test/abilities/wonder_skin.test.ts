@@ -9,6 +9,7 @@ import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { allMoves } from "#app/data/move.js";
 import { allAbilities } from "#app/data/ability.js";
+import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Abilities - Wonder Skin", () => {
   let phaserGame: Phaser.Game;
@@ -31,7 +32,7 @@ describe("Abilities - Wonder Skin", () => {
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
     game.override.enemySpecies(Species.SHUCKLE);
     game.override.enemyAbility(Abilities.WONDER_SKIN);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    game.override.enemyMoveset(SPLASH_ONLY);
   });
 
   it("lowers accuracy of status moves to 50%", async () => {

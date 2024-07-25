@@ -13,6 +13,7 @@ import { Weather, WeatherType } from "#app/data/weather.js";
 import { Type } from "#app/data/type.js";
 import { Biome } from "#enums/biome";
 import { PlayerPokemon } from "#app/field/pokemon.js";
+import { SPLASH_ONLY } from "../utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -36,7 +37,7 @@ describe("Abilities - Protean", () => {
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.LIBERO);
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
     game.override.enemySpecies(Species.RATTATA);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.ENDURE, Moves.ENDURE, Moves.ENDURE, Moves.ENDURE]);
+    game.override.enemyMoveset([Moves.ENDURE, Moves.ENDURE, Moves.ENDURE, Moves.ENDURE]);
   });
 
   test(
@@ -184,7 +185,7 @@ describe("Abilities - Protean", () => {
     "ability applies correctly even if the pokemon's move misses",
     async () => {
       vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
-      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+      game.override.enemyMoveset(SPLASH_ONLY);
 
       await game.startBattle([Species.MAGIKARP]);
 
@@ -207,7 +208,7 @@ describe("Abilities - Protean", () => {
     "ability applies correctly even if the pokemon's move is protected against",
     async () => {
       vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
-      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.PROTECT, Moves.PROTECT, Moves.PROTECT, Moves.PROTECT]);
+      game.override.enemyMoveset([Moves.PROTECT, Moves.PROTECT, Moves.PROTECT, Moves.PROTECT]);
 
       await game.startBattle([Species.MAGIKARP]);
 

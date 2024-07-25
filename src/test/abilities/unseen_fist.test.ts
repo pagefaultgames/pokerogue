@@ -29,7 +29,7 @@ describe("Abilities - Unseen Fist", () => {
     game.override.battleType("single");
     vi.spyOn(Overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.URSHIFU);
     game.override.enemySpecies(Species.SNORLAX);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.PROTECT, Moves.PROTECT, Moves.PROTECT, Moves.PROTECT]);
+    game.override.enemyMoveset([Moves.PROTECT, Moves.PROTECT, Moves.PROTECT, Moves.PROTECT]);
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
     vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
   });
@@ -69,7 +69,7 @@ describe("Abilities - Unseen Fist", () => {
 
 async function testUnseenFistHitResult(game: GameManager, attackMove: Moves, protectMove: Moves, shouldSucceed: boolean = true): Promise<void> {
   vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([attackMove]);
-  vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([protectMove, protectMove, protectMove, protectMove]);
+  game.override.enemyMoveset([protectMove, protectMove, protectMove, protectMove]);
 
   await game.startBattle();
 

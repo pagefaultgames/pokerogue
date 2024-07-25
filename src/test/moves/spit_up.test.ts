@@ -11,6 +11,7 @@ import { StockpilingTag } from "#app/data/battler-tags.js";
 import { MoveResult, TurnMove } from "#app/field/pokemon.js";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
 import { allMoves } from "#app/data/move.js";
+import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Moves - Spit Up", () => {
   let phaserGame: Phaser.Game;
@@ -30,7 +31,7 @@ describe("Moves - Spit Up", () => {
     game.override.battleType("single");
 
     game.override.enemySpecies(Species.RATTATA);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    game.override.enemyMoveset(SPLASH_ONLY);
     game.override.enemyAbility(Abilities.NONE);
     vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
 
