@@ -78,13 +78,13 @@ describe("Abilities - Hustle", () => {
     expect(pikachu.getAccuracyMultiplier).toHaveReturnedWith(1);
   });
 
-  // Skip until OHKO moves are fixed - it should not be affected by accuracy and evasion stats
   it("does not affect OHKO moves", async () => {
     vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
     vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(30);
 
     await game.startBattle([Species.PIKACHU]);
     const pikachu = game.scene.getPlayerPokemon();
+    const enemyPokemon = game.scene.getEnemyPokemon();
 
     vi.spyOn(pikachu, "getAccuracyMultiplier");
     vi.spyOn(allMoves[Moves.FISSURE], "calculateBattleAccuracy");
@@ -92,8 +92,8 @@ describe("Abilities - Hustle", () => {
     game.doAttack(getMovePosition(game.scene, 0, Moves.FISSURE));
     await game.phaseInterceptor.to(DamagePhase);
 
-    expect(game.scene.getEnemyPokemon().turnData.damageTaken).toBe(game.scene.getEnemyPokemon().hp);
+    expect(enemyPokemon.turnData.damageTaken).toBe(enemyPokemon.getMaxHp());
     expect(pikachu.getAccuracyMultiplier).toHaveReturnedWith(1);
     expect(allMoves[Moves.FISSURE].calculateBattleAccuracy).toHaveReturnedWith(100);
-  }, { skip: true });
+  });
 });

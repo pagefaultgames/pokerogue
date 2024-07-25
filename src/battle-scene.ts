@@ -2056,8 +2056,8 @@ export default class BattleScene extends SceneBase {
       const conditionalPhase = this.conditionalQueue.shift();
       // Evaluate the condition associated with the phase
       if (conditionalPhase[0]()) {
-        // If the condition is met, add the phase to the front of the phase queue
-        this.unshiftPhase(conditionalPhase[1]);
+        // If the condition is met, add the phase to the phase queue
+        this.pushPhase(conditionalPhase[1]);
       } else {
         // If the condition is not met, re-add the phase back to the front of the conditional queue
         this.conditionalQueue.unshift(conditionalPhase);

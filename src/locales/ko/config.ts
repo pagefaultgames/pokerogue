@@ -1,3 +1,4 @@
+import { pokemonForm } from "./pokemon-form";
 import { ability } from "./ability";
 import { abilityTriggers } from "./ability-trigger";
 import { arenaFlyout } from "./arena-flyout";
@@ -87,6 +88,7 @@ export const koConfig = {
   nature: nature,
   pokeball: pokeball,
   pokemon: pokemon,
+  pokemonForm: pokemonForm,
   pokemonInfo: pokemonInfo,
   pokemonInfoContainer: pokemonInfoContainer,
   pokemonSummary: pokemonSummary,

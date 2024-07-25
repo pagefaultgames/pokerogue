@@ -1,7 +1,7 @@
 import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
 import { BattleEndPhase, MoveEndPhase, MovePhase, NewBattlePhase, PartyStatusCurePhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../phases";
 import { BattleStat, getBattleStatName } from "./battle-stat";
-import { EncoreTag, HelpingHandTag, SemiInvulnerableTag, TypeBoostTag } from "./battler-tags";
+import { EncoreTag, HelpingHandTag, SemiInvulnerableTag, StockpilingTag, TypeBoostTag } from "./battler-tags";
 import { getPokemonMessage, getPokemonNameWithAffix } from "../messages";
 import Pokemon, { AttackMoveResult, EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../field/pokemon";
 import { StatusEffect, getStatusEffectHealText, isNonVolatileStatusEffect, getNonVolatileStatusEffects} from "./status-effect";
@@ -92,6 +92,10 @@ export enum MoveFlags {
    * Enables all hits of a multi-hit move to be accuracy checked individually
    */
   CHECK_ALL_HITS   = 1 << 17,
+  /**
+   * Indicates a move is able to be redirected to allies in a double battle if the attacker faints
+   */
+  REDIRECT_COUNTER = 1 << 18,
 }
 
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
@@ -546,6 +550,17 @@ export default class Move implements Localizable {
    */
   checkAllHits(checkAllHits?: boolean): this {
     this.setFlag(MoveFlags.CHECK_ALL_HITS, checkAllHits);
+    return this;
+  }
+
+  /**
+   * Sets the {@linkcode MoveFlags.REDIRECT_COUNTER} flag for the calling Move
+   * @param redirectCounter The value (boolean) to set the flag to
+   * example: @see {@linkcode Moves.METAL_BURST}
+   * @returns The {@linkcode Move} that called this function
+   */
+  redirectCounter(redirectCounter?: boolean): this {
+    this.setFlag(MoveFlags.REDIRECT_COUNTER, redirectCounter);
     return this;
   }
 
@@ -1719,6 +1734,7 @@ export class MultiHitAttr extends MoveAttr {
     } else {
       const hitType = new Utils.IntegerHolder(this.multiHitType);
       applyMoveAttrs(ChangeMultiHitTypeAttr, user, target, move, hitType);
+      this.multiHitType = hitType.value;
       hitTimes = this.getHitCount(user, target);
     }
 
@@ -3296,6 +3312,62 @@ export class WaterShurikenPowerAttr extends VariablePowerAttr {
 }
 
 /**
+ * Attribute used to calculate the power of attacks that scale with Stockpile stacks (i.e. Spit Up).
+ */
+export class SpitUpPowerAttr extends VariablePowerAttr {
+  private multiplier: number = 0;
+
+  constructor(multiplier: number) {
+    super();
+    this.multiplier = multiplier;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const stockpilingTag = user.getTag(StockpilingTag);
+
+    if (stockpilingTag?.stockpiledCount > 0) {
+      const power = args[0] as Utils.IntegerHolder;
+      power.value = this.multiplier * stockpilingTag.stockpiledCount;
+      return true;
+    }
+
+    return false;
+  }
+}
+
+/**
+ * Attribute used to apply Swallow's healing, which scales with Stockpile stacks.
+ * Does NOT remove stockpiled stacks.
+ */
+export class SwallowHealAttr extends HealAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const stockpilingTag = user.getTag(StockpilingTag);
+
+    if (stockpilingTag?.stockpiledCount > 0) {
+      const stockpiled = stockpilingTag.stockpiledCount;
+      let healRatio: number;
+
+      if (stockpiled === 1) {
+        healRatio = 0.25;
+      } else if (stockpiled === 2) {
+        healRatio = 0.50;
+      } else { // stockpiled >= 3
+        healRatio = 1.00;
+      }
+
+      if (healRatio) {
+        this.addHealPhase(user, healRatio);
+        return true;
+      }
+    }
+
+    return false;
+  }
+}
+
+const hasStockpileStacksCondition: MoveConditionFunc = (user) => user.getTag(StockpilingTag)?.stockpiledCount > 0;
+
+/**
  * Attribute used for multi-hit moves that increase power in increments of the
  * move's base power for each hit, namely Triple Kick and Triple Axel.
  * @extends VariablePowerAttr
@@ -4003,19 +4075,16 @@ export class FrenzyAttr extends MoveEffectAttr {
       return false;
     }
 
-    if (!user.getMoveQueue().length) {
-      if (!user.getTag(BattlerTagType.FRENZY)) {
-        const turnCount = user.randSeedIntRange(1, 2);
-        new Array(turnCount).fill(null).map(() => user.getMoveQueue().push({ move: move.id, targets: [ target.getBattlerIndex() ], ignorePP: true }));
-        user.addTag(BattlerTagType.FRENZY, 1, move.id, user.id);
-      } else {
-        applyMoveAttrs(AddBattlerTagAttr, user, target, move, args);
-        user.lapseTag(BattlerTagType.FRENZY);
-      }
-      return true;
+    if (!user.getTag(BattlerTagType.FRENZY) && !user.getMoveQueue().length) {
+      const turnCount = user.randSeedIntRange(1, 2);
+      new Array(turnCount).fill(null).map(() => user.getMoveQueue().push({ move: move.id, targets: [ target.getBattlerIndex() ], ignorePP: true }));
+      user.addTag(BattlerTagType.FRENZY, turnCount, move.id, user.id);
+    } else {
+      applyMoveAttrs(AddBattlerTagAttr, user, target, move, args);
+      user.lapseTag(BattlerTagType.FRENZY); // if FRENZY is already in effect (moveQueue.length > 0), lapse the tag
     }
 
-    return false;
+    return true;
   }
 }
 
@@ -4023,7 +4092,7 @@ export const frenzyMissFunc: UserMoveConditionFunc = (user: Pokemon, move: Move)
   while (user.getMoveQueue().length && user.getMoveQueue()[0].move === move.id) {
     user.getMoveQueue().shift();
   }
-  user.lapseTag(BattlerTagType.FRENZY);
+  user.removeTag(BattlerTagType.FRENZY); // FRENZY tag should be disrupted on miss/no effect
 
   return true;
 };
@@ -5923,6 +5992,7 @@ export function initMoves() {
     new AttackMove(Moves.THRASH, Type.NORMAL, MoveCategory.PHYSICAL, 120, 100, 10, -1, 0, 1)
       .attr(FrenzyAttr)
       .attr(MissEffectAttr, frenzyMissFunc)
+      .attr(NoEffectAttr, frenzyMissFunc)
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
     new AttackMove(Moves.DOUBLE_EDGE, Type.NORMAL, MoveCategory.PHYSICAL, 120, 100, 15, -1, 0, 1)
       .attr(RecoilAttr, false, 0.33)
@@ -6041,6 +6111,7 @@ export function initMoves() {
     new AttackMove(Moves.PETAL_DANCE, Type.GRASS, MoveCategory.SPECIAL, 120, 100, 10, -1, 0, 1)
       .attr(FrenzyAttr)
       .attr(MissEffectAttr, frenzyMissFunc)
+      .attr(NoEffectAttr, frenzyMissFunc)
       .makesContact()
       .danceMove()
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
@@ -6249,7 +6320,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.REST, Type.PSYCHIC, -1, 5, -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.SLEEP, true, 3, true)
       .attr(HealAttr, 1, true)
-      .condition((user, target, move) => user.getHpRatio() < 1 && user.canSetStatus(StatusEffect.SLEEP, true, true))
+      .condition((user, target, move) => !user.isFullHp() && user.canSetStatus(StatusEffect.SLEEP, true, true))
       .triageMove(),
     new AttackMove(Moves.ROCK_SLIDE, Type.ROCK, MoveCategory.PHYSICAL, 75, 90, 10, 30, 0, 1)
       .attr(FlinchAttr)
@@ -6374,6 +6445,7 @@ export function initMoves() {
     new AttackMove(Moves.OUTRAGE, Type.DRAGON, MoveCategory.PHYSICAL, 120, 100, 10, -1, 0, 2)
       .attr(FrenzyAttr)
       .attr(MissEffectAttr, frenzyMissFunc)
+      .attr(NoEffectAttr, frenzyMissFunc)
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
     new StatusMove(Moves.SANDSTORM, Type.ROCK, -1, 10, -1, 0, 2)
       .attr(WeatherChangeAttr, WeatherType.SANDSTORM)
@@ -6536,12 +6608,17 @@ export function initMoves() {
       .target(MoveTarget.RANDOM_NEAR_ENEMY)
       .partial(),
     new SelfStatusMove(Moves.STOCKPILE, Type.NORMAL, -1, 20, -1, 0, 3)
-      .unimplemented(),
-    new AttackMove(Moves.SPIT_UP, Type.NORMAL, MoveCategory.SPECIAL, -1, 100, 10, -1, 0, 3)
-      .unimplemented(),
+      .condition(user => (user.getTag(StockpilingTag)?.stockpiledCount ?? 0) < 3)
+      .attr(AddBattlerTagAttr, BattlerTagType.STOCKPILING, true),
+    new AttackMove(Moves.SPIT_UP, Type.NORMAL, MoveCategory.SPECIAL, -1, -1, 10, -1, 0, 3)
+      .condition(hasStockpileStacksCondition)
+      .attr(SpitUpPowerAttr, 100)
+      .attr(RemoveBattlerTagAttr, [BattlerTagType.STOCKPILING], true),
     new SelfStatusMove(Moves.SWALLOW, Type.NORMAL, -1, 10, -1, 0, 3)
-      .triageMove()
-      .unimplemented(),
+      .condition(hasStockpileStacksCondition)
+      .attr(SwallowHealAttr)
+      .attr(RemoveBattlerTagAttr, [BattlerTagType.STOCKPILING], true)
+      .triageMove(),
     new AttackMove(Moves.HEAT_WAVE, Type.FIRE, MoveCategory.SPECIAL, 95, 90, 10, 10, 0, 3)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
       .attr(StatusEffectAttr, StatusEffect.BURN)
@@ -6845,6 +6922,7 @@ export function initMoves() {
       .target(MoveTarget.USER_OR_NEAR_ALLY),
     new AttackMove(Moves.METAL_BURST, Type.STEEL, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 4)
       .attr(CounterDamageAttr, (move: Move) => (move.category === MoveCategory.PHYSICAL || move.category === MoveCategory.SPECIAL), 1.5)
+      .redirectCounter()
       .makesContact(false)
       .target(MoveTarget.ATTACKER),
     new AttackMove(Moves.U_TURN, Type.BUG, MoveCategory.PHYSICAL, 70, 100, 20, -1, 0, 4)
@@ -8170,8 +8248,9 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.BURN),
     new StatusMove(Moves.JUNGLE_HEALING, Type.GRASS, -1, 10, -1, 0, 8)
       .attr(HealAttr, 0.25, true, false)
-      .target(MoveTarget.USER_AND_ALLIES)
-      .partial(),
+      .attr(HealStatusEffectAttr, true, StatusEffect.PARALYSIS, StatusEffect.POISON, StatusEffect.TOXIC, StatusEffect.BURN, StatusEffect.SLEEP)
+      .attr(HealStatusEffectAttr, false, StatusEffect.PARALYSIS, StatusEffect.POISON, StatusEffect.TOXIC, StatusEffect.BURN, StatusEffect.SLEEP)
+      .target(MoveTarget.USER_AND_ALLIES),
     new AttackMove(Moves.WICKED_BLOW, Type.DARK, MoveCategory.PHYSICAL, 75, 100, 5, -1, 0, 8)
       .attr(CritOnlyAttr)
       .punchingMove(),
@@ -8218,6 +8297,7 @@ export function initMoves() {
       .makesContact(false)
       .attr(FrenzyAttr)
       .attr(MissEffectAttr, frenzyMissFunc)
+      .attr(NoEffectAttr, frenzyMissFunc)
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
     new AttackMove(Moves.WAVE_CRASH, Type.WATER, MoveCategory.PHYSICAL, 120, 100, 10, -1, 0, 8)
       .attr(RecoilAttr, false, 0.33)
@@ -8273,9 +8353,10 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new StatusMove(Moves.LUNAR_BLESSING, Type.PSYCHIC, -1, 5, -1, 0, 8)
       .attr(HealAttr, 0.25)
+      .attr(HealStatusEffectAttr, true, StatusEffect.PARALYSIS, StatusEffect.POISON, StatusEffect.TOXIC, StatusEffect.BURN, StatusEffect.SLEEP)
+      .attr(HealStatusEffectAttr, false, StatusEffect.PARALYSIS, StatusEffect.POISON, StatusEffect.TOXIC, StatusEffect.BURN, StatusEffect.SLEEP)
       .target(MoveTarget.USER_AND_ALLIES)
-      .triageMove()
-      .partial(),
+      .triageMove(),
     new SelfStatusMove(Moves.TAKE_HEART, Type.PSYCHIC, -1, 10, -1, 0, 8)
       .attr(StatChangeAttr, [ BattleStat.SPATK, BattleStat.SPDEF ], 1, true)
       .attr(HealStatusEffectAttr, true, StatusEffect.PARALYSIS, StatusEffect.POISON, StatusEffect.TOXIC, StatusEffect.BURN, StatusEffect.SLEEP),
@@ -8522,6 +8603,7 @@ export function initMoves() {
       }), // TODO Add Instruct/Encore interaction
     new AttackMove(Moves.COMEUPPANCE, Type.DARK, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 9)
       .attr(CounterDamageAttr, (move: Move) => (move.category === MoveCategory.PHYSICAL || move.category === MoveCategory.SPECIAL), 1.5)
+      .redirectCounter()
       .target(MoveTarget.ATTACKER),
     new AttackMove(Moves.AQUA_CUTTER, Type.WATER, MoveCategory.PHYSICAL, 70, 100, 20, -1, 0, 9)
       .attr(HighCritAttr)

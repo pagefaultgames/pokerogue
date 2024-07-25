@@ -197,7 +197,7 @@ describe("Abilities - Protean", () => {
       await game.phaseInterceptor.to(TurnEndPhase);
 
       const enemyPokemon = game.scene.getEnemyPokemon();
-      expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+      expect(enemyPokemon.isFullHp()).toBe(true);
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.TACKLE);
     },
     TIMEOUT,

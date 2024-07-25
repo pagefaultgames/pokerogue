@@ -34,6 +34,7 @@ import { move } from "./move";
 import { nature } from "./nature";
 import { pokeball } from "./pokeball";
 import { pokemon } from "./pokemon";
+import { pokemonForm } from "./pokemon-form";
 import { pokemonInfo } from "./pokemon-info";
 import { pokemonInfoContainer } from "./pokemon-info-container";
 import { pokemonSummary } from "./pokemon-summary";
@@ -87,6 +88,7 @@ export const zhCnConfig = {
   nature: nature,
   pokeball: pokeball,
   pokemon: pokemon,
+  pokemonForm: pokemonForm,
   pokemonInfo: pokemonInfo,
   pokemonInfoContainer: pokemonInfoContainer,
   pokemonSummary: pokemonSummary,
