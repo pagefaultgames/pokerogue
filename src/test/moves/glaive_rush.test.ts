@@ -34,7 +34,7 @@ describe("Moves - Glaive Rush", () => {
     game.override.starterSpecies(Species.KLINK);
     game.override.ability(Abilities.UNNERVE);
     vi.spyOn(Overrides, "PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.FUR_COAT);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SHADOW_SNEAK, Moves.AVALANCHE, Moves.SPLASH, Moves.GLAIVE_RUSH]);
+    game.override.moveset([Moves.SHADOW_SNEAK, Moves.AVALANCHE, Moves.SPLASH, Moves.GLAIVE_RUSH]);
   });
 
   it("takes double damage from attacks", async() => {

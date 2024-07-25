@@ -1,14 +1,13 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
+import { BattleStat } from "#app/data/battle-stat";
+import { TrappedTag } from "#app/data/battler-tags.js";
 import { CommandPhase, MoveEndPhase, TurnInitPhase } from "#app/phases";
-import {getMovePosition} from "#app/test/utils/gameManagerUtils";
-import {BattleStat} from "#app/data/battle-stat";
+import GameManager from "#app/test/utils/gameManager";
+import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { TrappedTag } from "#app/data/battler-tags.js";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Moves - Octolock", () => {
@@ -36,7 +35,7 @@ describe("Moves - Octolock", () => {
       game.override.enemyAbility(Abilities.NONE);
 
       game.override.startingLevel(2000);
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.OCTOLOCK, Moves.SPLASH]);
+      game.override.moveset([Moves.OCTOLOCK, Moves.SPLASH]);
       game.override.ability(Abilities.NONE);
     });
 

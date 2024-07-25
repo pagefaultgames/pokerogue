@@ -36,7 +36,7 @@ describe("Items - Scope Lens", () => {
 
   it("SCOPE_LENS activates in battle correctly", async() => {
     vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{ name: "SCOPE_LENS" }]);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.POUND ]);
+    game.override.moveset([ Moves.POUND ]);
     const consoleSpy = vi.spyOn(console, "log");
     await game.startBattle([
       Species.GASTLY

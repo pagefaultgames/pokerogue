@@ -28,7 +28,7 @@ describe("Moves - Double Team", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleType("single");
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.DOUBLE_TEAM]);
+    game.override.moveset([Moves.DOUBLE_TEAM]);
     vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
     game.override.ability(Abilities.BALL_FETCH);
     game.override.enemySpecies(Species.SHUCKLE);

@@ -38,7 +38,7 @@ describe("Moves - Rollout", () => {
   });
 
   it("should double it's dmg on sequential uses but reset after 5", async () => {
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.ROLLOUT]);
+    game.override.moveset([Moves.ROLLOUT]);
     vi.spyOn(allMoves[Moves.ROLLOUT], "accuracy", "get").mockReturnValue(100); //always hit
 
     const variance = 5;

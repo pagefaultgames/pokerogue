@@ -36,7 +36,7 @@ describe("Abilities - Ice Face", () => {
     game.override.battleType("single");
     game.override.enemySpecies(Species.EISCUE);
     game.override.enemyAbility(Abilities.ICE_FACE);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.ICE_BEAM, Moves.TOXIC_THREAD, Moves.HAIL]);
+    game.override.moveset([Moves.TACKLE, Moves.ICE_BEAM, Moves.TOXIC_THREAD, Moves.HAIL]);
   });
 
   it("takes no damage from physical move and transforms to Noice", async () => {
@@ -54,7 +54,7 @@ describe("Abilities - Ice Face", () => {
   });
 
   it("takes no damage from the first hit of multihit physical move and transforms to Noice", async () => {
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SURGING_STRIKES]);
+    game.override.moveset([Moves.SURGING_STRIKES]);
     vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(1);
     await game.startBattle([Species.HITMONLEE]);
 
@@ -109,7 +109,7 @@ describe("Abilities - Ice Face", () => {
   });
 
   it("transforms to Ice Face when Hail or Snow starts", async () => {
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.QUICK_ATTACK]);
+    game.override.moveset([Moves.QUICK_ATTACK]);
     game.override.enemyMoveset([Moves.HAIL, Moves.HAIL, Moves.HAIL, Moves.HAIL]);
 
     await game.startBattle([Species.MAGIKARP]);
@@ -132,7 +132,7 @@ describe("Abilities - Ice Face", () => {
 
   it("transforms to Ice Face when summoned on arena with active Snow or Hail", async () => {
     game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SNOWSCAPE]);
+    game.override.moveset([Moves.SNOWSCAPE]);
 
     await game.startBattle([Species.EISCUE, Species.NINJASK]);
 
@@ -227,7 +227,7 @@ describe("Abilities - Ice Face", () => {
   });
 
   it("cannot be suppressed", async () => {
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.GASTRO_ACID]);
+    game.override.moveset([Moves.GASTRO_ACID]);
 
     await game.startBattle([Species.MAGIKARP]);
 
@@ -243,7 +243,7 @@ describe("Abilities - Ice Face", () => {
   });
 
   it("cannot be swapped with another ability", async () => {
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SKILL_SWAP]);
+    game.override.moveset([Moves.SKILL_SWAP]);
 
     await game.startBattle([Species.MAGIKARP]);
 

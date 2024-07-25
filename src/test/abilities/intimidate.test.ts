@@ -198,7 +198,7 @@ describe("Abilities - Intimidate", () => {
 
   it("single - wild next wave opp triger once, us: none", async() => {
     game.override.startingWave(2);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.AERIAL_ACE]);
+    game.override.moveset([Moves.AERIAL_ACE]);
     await game.startBattle([
       Species.MIGHTYENA,
       Species.POOCHYENA,
@@ -227,7 +227,7 @@ describe("Abilities - Intimidate", () => {
 
   it("single - wild next turn - no retrigger on next turn", async() => {
     game.override.startingWave(2);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH]);
+    game.override.moveset([Moves.SPLASH]);
     await game.startBattle([
       Species.MIGHTYENA,
       Species.POOCHYENA,
@@ -253,7 +253,7 @@ describe("Abilities - Intimidate", () => {
   }, 20000);
 
   it("single - trainer should only trigger once and each time he switch", async() => {
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH]);
+    game.override.moveset([Moves.SPLASH]);
     game.override.enemyMoveset([Moves.VOLT_SWITCH,Moves.VOLT_SWITCH,Moves.VOLT_SWITCH,Moves.VOLT_SWITCH]);
     game.override.startingWave(5);
     await game.startBattle([
@@ -296,7 +296,7 @@ describe("Abilities - Intimidate", () => {
   }, 200000);
 
   it("single - trainer should only trigger once whatever turn we are", async() => {
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH]);
+    game.override.moveset([Moves.SPLASH]);
     game.override.enemyMoveset([Moves.SPLASH,Moves.SPLASH,Moves.SPLASH,Moves.SPLASH]);
     game.override.startingWave(5);
     await game.startBattle([

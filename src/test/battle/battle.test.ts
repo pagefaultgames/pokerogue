@@ -1,9 +1,6 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
-import {generateStarter, getMovePosition,} from "#app/test/utils/gameManagerUtils";
-import {Mode} from "#app/ui/ui";
-import {GameModes} from "#app/game-mode";
-import Overrides from "#app/overrides";
-import {Command} from "#app/ui/command-ui-handler";
+import { allSpecies } from "#app/data/pokemon-species";
+import { GameModes } from "#app/game-mode";
+import { getGameMode } from "#app/game-mode.js";
 import {
   CommandPhase, DamagePhase,
   EncounterPhase,
@@ -17,13 +14,15 @@ import {
   TurnInitPhase, VictoryPhase,
 } from "#app/phases";
 import GameManager from "#app/test/utils/gameManager";
-import Phaser from "phaser";
-import {allSpecies} from "#app/data/pokemon-species";
-import { getGameMode } from "#app/game-mode.js";
+import { generateStarter, getMovePosition, } from "#app/test/utils/gameManagerUtils";
+import { Command } from "#app/ui/command-ui-handler";
+import { Mode } from "#app/ui/ui";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Test Battle Phase", () => {
   let phaserGame: Phaser.Game;
@@ -96,7 +95,7 @@ describe("Test Battle Phase", () => {
     game.override
       .startingWave(3)
       .battleType("single");
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
+    game.override.moveset([Moves.TACKLE]);
     game.override.enemyAbility(Abilities.HYDRATION);
     game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
     await game.startBattle();
@@ -115,7 +114,7 @@ describe("Test Battle Phase", () => {
     game.override.enemySpecies(Species.RATTATA);
     game.override.startingLevel(5);
     game.override.startingWave(3);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
+    game.override.moveset([Moves.TACKLE]);
     game.override.enemyAbility(Abilities.HYDRATION);
     game.override.enemyMoveset([Moves.TAIL_WHIP, Moves.TAIL_WHIP, Moves.TAIL_WHIP, Moves.TAIL_WHIP]);
     game.override.battleType("single");
@@ -268,7 +267,7 @@ describe("Test Battle Phase", () => {
     game.override.ability(Abilities.ZEN_MODE);
     game.override.startingLevel(2000);
     game.override.startingWave(3);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
+    game.override.moveset([moveToUse]);
     game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
     await game.startBattle([
       Species.DARMANITAN,
@@ -297,7 +296,7 @@ describe("Test Battle Phase", () => {
     game.override.ability(Abilities.ZEN_MODE);
     game.override.startingLevel(2000);
     game.override.startingWave(3);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
+    game.override.moveset([moveToUse]);
     game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
     await game.startBattle();
     const turn = game.scene.currentBattle.turn;
@@ -315,7 +314,7 @@ describe("Test Battle Phase", () => {
     game.override.ability(Abilities.ZEN_MODE);
     game.override.startingLevel(2000);
     game.override.startingWave(3);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
+    game.override.moveset([moveToUse]);
     game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
     await game.startBattle();
     const waveIndex = game.scene.currentBattle.waveIndex;

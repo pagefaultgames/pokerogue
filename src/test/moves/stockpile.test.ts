@@ -35,7 +35,7 @@ describe("Moves - Stockpile", () => {
       game.override.enemyAbility(Abilities.NONE);
 
       vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
-      vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.STOCKPILE, Moves.SPLASH]);
+      game.override.moveset([Moves.STOCKPILE, Moves.SPLASH]);
       vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
     });
 

@@ -1,10 +1,9 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
 import GameManager from "#app/test/utils/gameManager";
-import Phaser from "phaser";
-import Overrides from "#app/overrides";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Test Battle Phase", () => {
   let phaserGame: Phaser.Game;
@@ -31,7 +30,7 @@ describe("Test Battle Phase", () => {
     game.override.enemyAbility(Abilities.HYDRATION);
     game.override.ability(Abilities.ZEN_MODE);
     game.override.startingLevel(2000);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
+    game.override.moveset([moveToUse]);
     game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
   });
 

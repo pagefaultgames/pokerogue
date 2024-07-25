@@ -31,7 +31,7 @@ describe("Items - Grip Claw", () => {
     game = new GameManager(phaserGame);
 
     game.override.battleType("double");
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.POPULATION_BOMB, Moves.SPLASH ]);
+    game.override.moveset([ Moves.POPULATION_BOMB, Moves.SPLASH ]);
     vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "GRIP_CLAW", count: 5}, {name: "MULTI_LENS", count: 3}]);
     game.override.enemySpecies(Species.SNORLAX);
     game.override.ability(Abilities.KLUTZ);

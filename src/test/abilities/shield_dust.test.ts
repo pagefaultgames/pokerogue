@@ -1,20 +1,19 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
-import { Abilities } from "#enums/abilities";
-import {applyAbAttrs ,applyPreDefendAbAttrs,IgnoreMoveEffectsAbAttr,MoveEffectChanceMultiplierAbAttr} from "#app/data/ability";
-import {Species} from "#enums/species";
+import { applyAbAttrs, applyPreDefendAbAttrs, IgnoreMoveEffectsAbAttr, MoveEffectChanceMultiplierAbAttr } from "#app/data/ability";
+import { Stat } from "#app/data/pokemon-stat";
 import {
   CommandPhase,
   MoveEffectPhase,
 } from "#app/phases";
-import {Mode} from "#app/ui/ui";
-import {Stat} from "#app/data/pokemon-stat";
-import {Moves} from "#enums/moves";
-import {getMovePosition} from "#app/test/utils/gameManagerUtils";
-import {Command} from "#app/ui/command-ui-handler";
+import GameManager from "#app/test/utils/gameManager";
+import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { Command } from "#app/ui/command-ui-handler";
+import { Mode } from "#app/ui/ui";
 import * as Utils from "#app/utils";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 
 describe("Abilities - Shield Dust", () => {
@@ -38,7 +37,7 @@ describe("Abilities - Shield Dust", () => {
     game.override.enemySpecies(Species.ONIX);
     game.override.enemyAbility(Abilities.SHIELD_DUST);
     game.override.startingLevel(100);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue(movesToUse);
+    game.override.moveset(movesToUse);
     game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
   });
 

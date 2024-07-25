@@ -1,14 +1,13 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
-import { Species } from "#enums/species";
+import { allAbilities } from "#app/data/ability.js";
+import { allMoves } from "#app/data/move.js";
 import { MoveEffectPhase } from "#app/phases";
-import { Moves } from "#enums/moves";
+import GameManager from "#app/test/utils/gameManager";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
-import { allMoves } from "#app/data/move.js";
-import { allAbilities } from "#app/data/ability.js";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Abilities - Wonder Skin", () => {
@@ -28,7 +27,7 @@ describe("Abilities - Wonder Skin", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleType("single");
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.CHARM]);
+    game.override.moveset([Moves.TACKLE, Moves.CHARM]);
     game.override.ability(Abilities.BALL_FETCH);
     game.override.enemySpecies(Species.SHUCKLE);
     game.override.enemyAbility(Abilities.WONDER_SKIN);

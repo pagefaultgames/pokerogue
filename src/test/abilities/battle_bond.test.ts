@@ -30,7 +30,7 @@ describe("Abilities - BATTLE BOND", () => {
     const moveToUse = Moves.SPLASH;
     game.override.battleType("single");
     game.override.ability(Abilities.BATTLE_BOND);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
+    game.override.moveset([moveToUse]);
     game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
   });
 

@@ -68,7 +68,7 @@ describe("Abilities - Unseen Fist", () => {
 });
 
 async function testUnseenFistHitResult(game: GameManager, attackMove: Moves, protectMove: Moves, shouldSucceed: boolean = true): Promise<void> {
-  vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([attackMove]);
+  game.override.moveset([attackMove]);
   game.override.enemyMoveset([protectMove, protectMove, protectMove, protectMove]);
 
   await game.startBattle();

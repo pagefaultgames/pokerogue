@@ -34,7 +34,7 @@ describe("Moves - Swallow", () => {
     game.override.enemyAbility(Abilities.NONE);
     vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
 
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SWALLOW, Moves.SWALLOW, Moves.SWALLOW, Moves.SWALLOW]);
+    game.override.moveset([Moves.SWALLOW, Moves.SWALLOW, Moves.SWALLOW, Moves.SWALLOW]);
     vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
   });
 
