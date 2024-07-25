@@ -40,7 +40,7 @@ describe("Abilities - DISGUISE", () => {
       const baseForm = 0,
         bustedForm = 1;
       game.override.startingWave(4);
-      vi.spyOn(Overrides, "STARTER_FORM_OVERRIDES", "get").mockReturnValue({
+      game.override.starterForms({
         [Species.MIMIKYU]: bustedForm,
       });
 
@@ -75,7 +75,7 @@ describe("Abilities - DISGUISE", () => {
       game.override.startingLevel(20);
       vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(20);
       game.override.enemySpecies(Species.MAGIKARP);
-      vi.spyOn(Overrides, "STARTER_FORM_OVERRIDES", "get").mockReturnValue({
+      game.override.starterForms({
         [Species.MIMIKYU]: baseForm,
       });
 

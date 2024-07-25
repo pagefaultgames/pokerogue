@@ -1,13 +1,12 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { Status, StatusEffect } from "#app/data/status-effect.js";
+import { QuietFormChangePhase } from "#app/form-change-phase.js";
+import { TurnEndPhase } from "#app/phases.js";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
-import Overrides from "#app/overrides";
-import { Moves } from "#enums/moves";
-import { Abilities } from "#enums/abilities";
-import { Species } from "#enums/species";
-import { Status, StatusEffect } from "#app/data/status-effect.js";
-import { TurnEndPhase } from "#app/phases.js";
-import { QuietFormChangePhase } from "#app/form-change-phase.js";
+import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 const TIMEOUT = 20 * 1000;
 
@@ -40,7 +39,7 @@ describe("Abilities - POWER CONSTRUCT", () => {
       const baseForm = 2,
         completeForm = 4;
       game.override.startingWave(4);
-      vi.spyOn(Overrides, "STARTER_FORM_OVERRIDES", "get").mockReturnValue({
+      game.override.starterForms({
         [Species.ZYGARDE]: completeForm,
       });
 

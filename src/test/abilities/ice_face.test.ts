@@ -205,7 +205,7 @@ describe("Abilities - Ice Face", () => {
     game.override.startingWave(4);
     game.override.startingLevel(4);
     game.override.enemySpecies(Species.MAGIKARP);
-    vi.spyOn(Overrides, "STARTER_FORM_OVERRIDES", "get").mockReturnValue({
+    game.override.starterForms({
       [Species.EISCUE]: noiceForm,
     });
 
