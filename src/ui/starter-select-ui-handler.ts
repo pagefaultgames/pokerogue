@@ -2621,7 +2621,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           }) as StarterMoveset;
 
         const speciesForm = getPokemonSpeciesForm(species.speciesId, formIndex);
-        const formText = Utils.capitalizeString(species?.forms[formIndex]?.formKey, "_", false, false);
+        const formText = Utils.capitalizeString(species?.forms[formIndex]?.formKey, "-", false, false);
 
         const speciesName = Utils.capitalizeString(Species[species.speciesId], "_", true, false);
 
