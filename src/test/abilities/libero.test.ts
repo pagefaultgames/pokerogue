@@ -32,7 +32,7 @@ describe("Abilities - Protean", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(Overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.LIBERO);
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
     vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
@@ -197,7 +197,7 @@ describe("Abilities - Protean", () => {
       await game.phaseInterceptor.to(TurnEndPhase);
 
       const enemyPokemon = game.scene.getEnemyPokemon();
-      expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+      expect(enemyPokemon.isFullHp()).toBe(true);
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.TACKLE);
     },
     TIMEOUT,

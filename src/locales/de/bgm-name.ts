@@ -74,9 +74,9 @@ export const bgmName: SimpleTranslationEntries = {
   "battle_wild": "SW Vs. Wilde Pokémon",
   "battle_wild_strong": "SW Vs. Starke Wilde Pokémon",
   "end_summit": "PMDDX Gipfel des Himmelturms",
-  "battle_rocket_grunt": "HGSS Team Rocket Battle",
-  "battle_aqua_magma_grunt": "ORAS Team Aqua & Magma Battle",
-  "battle_galactic_grunt": "BDSP Team Galactic Battle",
+  "battle_rocket_grunt": "HGSS Vs. Team Rocket Rüpel",
+  "battle_aqua_magma_grunt": "ORAS Vs. Team Aqua & Magma",
+  "battle_galactic_grunt": "BDSP Vs. Team Galaktik Rüpel",
   "battle_plasma_grunt": "SW Vs. Team Plasma Rüpel",
   "battle_flare_grunt": "XY Vs. Team Flare Rüpel",
   "battle_aether_grunt": "SM Vs. Æther Foundation",
@@ -90,6 +90,7 @@ export const bgmName: SimpleTranslationEntries = {
   "battle_aether_boss": "SM Vs. Samantha",
   "battle_skull_boss": "SM Vs. Bromley",
   "battle_macro_boss": "SWSH Vs. Rose",
+  "battle_flare_boss": "XY Vs. Flordelis",
 
   // Biome Music
   "abyss": "PMD Erkundungsteam Himmel Dunkelkrater",
