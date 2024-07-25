@@ -1,6 +1,8 @@
 import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const arenaTag: SimpleTranslationEntries = {
+  "yourTeam": "your team",
+  "opposingTeam": "the opposing team",
   "arenaOnRemove": "{{moveName}}的效果消失了！",
   "arenaOnRemovePlayer": "{{moveName}}在我方的效果消失了！",
   "arenaOnRemoveEnemy": "{{moveName}}在敌方的效果消失了！",
