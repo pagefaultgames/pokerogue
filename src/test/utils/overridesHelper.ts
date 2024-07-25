@@ -98,7 +98,7 @@ export class OverridesHelper {
    * @param species the (pokemon) species to set
    * @returns this
    */
-  enemySpecies(species: Species): this {
+  enemySpecies(species: Species | number): this {
     vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(species);
     this.log(`Enemy Pokemon species set to ${Species[species]} (=${species})!`);
     return this;
