@@ -1,19 +1,18 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
+import { ArenaTagSide } from "#app/data/arena-tag.js";
+import Move, { allMoves } from "#app/data/move.js";
+import { Abilities } from "#app/enums/abilities.js";
+import { ArenaTagType } from "#app/enums/arena-tag-type.js";
+import Pokemon from "#app/field/pokemon.js";
 import {
   TurnEndPhase,
 } from "#app/phases";
-import {getMovePosition} from "#app/test/utils/gameManagerUtils";
+import GameManager from "#app/test/utils/gameManager";
+import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { NumberHolder } from "#app/utils.js";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { Abilities } from "#app/enums/abilities.js";
-import Pokemon from "#app/field/pokemon.js";
-import Move, { allMoves } from "#app/data/move.js";
-import { NumberHolder } from "#app/utils.js";
-import { ArenaTagSide } from "#app/data/arena-tag.js";
-import { ArenaTagType } from "#app/enums/arena-tag-type.js";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 
 describe("Moves - Reflect", () => {
@@ -40,7 +39,7 @@ describe("Moves - Reflect", () => {
     game.override.enemyLevel(100);
     game.override.enemySpecies(Species.MAGIKARP);
     game.override.enemyMoveset([Moves.REFLECT, Moves.REFLECT, Moves.REFLECT, Moves.REFLECT]);
-    vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
+    game.override.disableCrits();
   });
 
   it("reduces damage of physical attacks by half in a single battle", async() => {

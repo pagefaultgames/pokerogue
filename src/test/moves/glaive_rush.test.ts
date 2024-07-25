@@ -27,7 +27,7 @@ describe("Moves - Glaive Rush", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleType("single");
-    vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
+    game.override.disableCrits();
     game.override.enemySpecies(Species.MAGIKARP);
     game.override.enemyAbility(Abilities.BALL_FETCH);
     game.override.enemyMoveset(Array(4).fill(Moves.GLAIVE_RUSH));

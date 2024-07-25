@@ -1,13 +1,12 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
-import { MoveEffectPhase, DamagePhase, TurnStartPhase } from "#app/phases";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { BattlerIndex } from "#app/battle";
 import { allMoves } from "#app/data/move";
+import { DamagePhase, MoveEffectPhase, TurnStartPhase } from "#app/phases";
+import GameManager from "#app/test/utils/gameManager";
+import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { BattlerIndex } from "#app/battle";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Dynamax Cannon", () => {
   let phaserGame: Phaser.Game;
@@ -34,7 +33,7 @@ describe("Moves - Dynamax Cannon", () => {
     // Note that, for Waves 1-10, the level cap is 10
     game.override.startingWave(1);
     game.override.battleType("single");
-    vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
+    game.override.disableCrits();
 
     game.override.enemySpecies(Species.MAGIKARP);
     game.override.enemyMoveset([ Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH ]);

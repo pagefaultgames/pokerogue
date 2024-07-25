@@ -1,10 +1,9 @@
-import {beforeAll, afterEach, beforeEach, describe, vi, it, expect} from "vitest";
-import Phaser from "phaser";
+import { CommandPhase, TurnEndPhase } from "#app/phases.js";
 import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
-import {Moves} from "#enums/moves";
-import {Species} from "#enums/species";
-import {CommandPhase, TurnEndPhase} from "#app/phases.js";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Magnet Rise", () => {
   let phaserGame: Phaser.Game;
@@ -27,7 +26,7 @@ describe("Moves - Magnet Rise", () => {
     game.override.starterSpecies(Species.MAGNEZONE);
     game.override.enemySpecies(Species.RATTATA);
     game.override.enemyMoveset([Moves.DRILL_RUN, Moves.DRILL_RUN, Moves.DRILL_RUN, Moves.DRILL_RUN]);
-    vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
+    game.override.disableCrits();
     game.override.enemyLevel(1);
     game.override.moveset([moveToUse, Moves.SPLASH, Moves.GRAVITY, Moves.BATON_PASS]);
   });

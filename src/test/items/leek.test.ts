@@ -29,7 +29,7 @@ describe("Items - Leek", () => {
 
     game.override.enemySpecies(Species.MAGIKARP);
     game.override.enemyMoveset([ Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH ]);
-    vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
+    game.override.disableCrits();
 
     game.override.battleType("single");
   });

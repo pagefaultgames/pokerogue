@@ -1,17 +1,16 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
+import { Stat } from "#app/data/pokemon-stat";
 import {
   CommandPhase,
   EnemyCommandPhase, TurnEndPhase,
 } from "#app/phases";
-import {Mode} from "#app/ui/ui";
-import {getMovePosition} from "#app/test/utils/gameManagerUtils";
-import {Command} from "#app/ui/command-ui-handler";
-import {Stat} from "#app/data/pokemon-stat";
+import GameManager from "#app/test/utils/gameManager";
+import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { Command } from "#app/ui/command-ui-handler";
+import { Mode } from "#app/ui/ui";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 
 describe("Moves - Tackle", () => {
@@ -37,7 +36,7 @@ describe("Moves - Tackle", () => {
     game.override.startingWave(97);
     game.override.moveset([moveToUse]);
     game.override.enemyMoveset([Moves.GROWTH,Moves.GROWTH,Moves.GROWTH,Moves.GROWTH]);
-    vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
+    game.override.disableCrits();
   });
 
   it("TACKLE against ghost", async() => {

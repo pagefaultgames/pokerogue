@@ -1,5 +1,4 @@
 import { allMoves } from "#app/data/move.js";
-import Overrides from "#app/overrides";
 import { CommandPhase } from "#app/phases";
 import GameManager from "#app/test/utils/gameManager";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
@@ -26,7 +25,7 @@ describe("Moves - Rollout", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
+    game.override.disableCrits();
     game.override.battleType("single");
     game.override.starterSpecies(Species.RATTATA);
     game.override.ability(Abilities.NONE);

@@ -1,17 +1,16 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
+import { BattleStat } from "#app/data/battle-stat.js";
+import { TerrainType } from "#app/data/terrain.js";
 import {
   MoveEndPhase, TurnEndPhase,
 } from "#app/phases";
-import {getMovePosition} from "#app/test/utils/gameManagerUtils";
-import { BattleStat } from "#app/data/battle-stat.js";
-import { TerrainType } from "#app/data/terrain.js";
+import GameManager from "#app/test/utils/gameManager";
+import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 // See also: TypeImmunityAbAttr
 describe("Abilities - Sap Sipper", () => {
@@ -31,7 +30,7 @@ describe("Abilities - Sap Sipper", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleType("single");
-    vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
+    game.override.disableCrits();
   });
 
   it("raise attack 1 level and block effects when activated against a grass attack", async() => {
