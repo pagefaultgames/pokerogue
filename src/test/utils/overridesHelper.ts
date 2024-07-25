@@ -64,6 +64,17 @@ export class OverridesHelper {
   }
 
   /**
+   * Override the player (pokemon) {@linkcode Abilities | ability}
+   * @param ability the (pokemon) {@linkcode Abilities | ability} to set
+   * @returns this
+   */
+  ability(ability: Abilities): this {
+    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(ability);
+    this.log(`Player Pokemon ability set to ${Abilities[ability]} (=${ability})!`);
+    return this;
+  }
+
+  /**
    * Override each wave to have or not have standard trainer battles
    * @returns this
    * @param disable true
