@@ -1,17 +1,16 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
-import { TurnEndPhase } from "#app/phases";
-import { Moves } from "#enums/moves";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
-import { Abilities } from "#enums/abilities";
-import { Species } from "#app/enums/species.js";
-import { Type } from "#app/data/type";
 import { BattleStat } from "#app/data/battle-stat";
-import { BattlerTagType } from "#enums/battler-tag-type";
+import { Type } from "#app/data/type";
+import { Species } from "#app/enums/species.js";
 import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import { modifierTypes } from "#app/modifier/modifier-type";
+import { TurnEndPhase } from "#app/phases";
+import GameManager from "#app/test/utils/gameManager";
+import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { Abilities } from "#enums/abilities";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { Moves } from "#enums/moves";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Moves - Dragon Rage", () => {
@@ -41,7 +40,7 @@ describe("Moves - Dragon Rage", () => {
     game.override.starterSpecies(Species.SNORLAX);
     game.override.moveset([Moves.DRAGON_RAGE]);
     game.override.ability(Abilities.BALL_FETCH);
-    vi.spyOn(Overrides, "PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
+    game.override.passiveAbility(Abilities.BALL_FETCH);
     game.override.startingLevel(100);
 
     game.override.enemySpecies(Species.SNORLAX);

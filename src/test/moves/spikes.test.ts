@@ -1,13 +1,12 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
 import {
   CommandPhase
 } from "#app/phases";
+import GameManager from "#app/test/utils/gameManager";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 
 describe("Moves - Spikes", () => {
@@ -32,7 +31,7 @@ describe("Moves - Spikes", () => {
     game.override.enemyAbility(Abilities.HYDRATION);
     game.override.enemyPassiveAbility(Abilities.HYDRATION);
     game.override.ability(Abilities.HYDRATION);
-    vi.spyOn(Overrides, "PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
+    game.override.passiveAbility(Abilities.HYDRATION);
     game.override.startingWave(3);
     game.override.enemyMoveset([Moves.SPLASH,Moves.SPLASH,Moves.SPLASH,Moves.SPLASH]);
     game.override.moveset([Moves.SPIKES,Moves.SPLASH, Moves.ROAR]);

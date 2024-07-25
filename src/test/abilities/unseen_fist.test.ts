@@ -1,12 +1,11 @@
-import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-import GameManager from "../utils/gameManager";
-import Overrides from "#app/overrides";
-import { Species } from "#enums/species";
+import { TurnEndPhase } from "#app/phases.js";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
+import GameManager from "../utils/gameManager";
 import { getMovePosition } from "../utils/gameManagerUtils";
-import { TurnEndPhase } from "#app/phases.js";
 
 const TIMEOUT = 20 * 1000;
 
@@ -49,7 +48,7 @@ describe("Abilities - Unseen Fist", () => {
   test(
     "ability does not apply if the source has Long Reach",
     () => {
-      vi.spyOn(Overrides, "PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.LONG_REACH);
+      game.override.passiveAbility(Abilities.LONG_REACH);
       testUnseenFistHitResult(game, Moves.QUICK_ATTACK, Moves.PROTECT, false);
     }, TIMEOUT
   );
