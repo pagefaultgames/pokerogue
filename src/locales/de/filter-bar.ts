@@ -18,4 +18,4 @@ export const filterBar: SimpleTranslationEntries = {
   "sortByCandies": "# Candies",
   "sortByIVs": "IVs",
   "sortByName": "Name",
-}
+};
