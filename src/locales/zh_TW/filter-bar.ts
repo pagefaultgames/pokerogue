@@ -14,8 +14,8 @@ export const filterBar: SimpleTranslationEntries = {
   "hasWon": "已通關",
   "hasNotWon": "未通關",
   "sortByNumber": "編號",
-  "sortByCost": "費用",
+  "sortByCost": "花費",
   "sortByCandies": "糖果",
-  "sortByIVs": "個體",
+  "sortByIVs": "個體值",
   "sortByName": "名稱",
 };
