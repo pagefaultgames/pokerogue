@@ -1,14 +1,13 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
-import { DamagePhase, TurnEndPhase } from "#app/phases";
-import { Moves } from "#enums/moves";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
-import { Abilities } from "#enums/abilities";
+import { BattleStat } from "#app/data/battle-stat";
 import { Species } from "#app/enums/species.js";
 import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
-import { BattleStat } from "#app/data/battle-stat";
+import { DamagePhase, TurnEndPhase } from "#app/phases";
+import GameManager from "#app/test/utils/gameManager";
+import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Moves - Fissure", () => {
@@ -35,7 +34,7 @@ describe("Moves - Fissure", () => {
 
     game.override.starterSpecies(Species.SNORLAX);
     game.override.moveset([Moves.FISSURE]);
-    vi.spyOn(Overrides, "PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
+    game.override.passiveAbility(Abilities.BALL_FETCH);
     game.override.startingLevel(100);
 
     game.override.enemySpecies(Species.SNORLAX);

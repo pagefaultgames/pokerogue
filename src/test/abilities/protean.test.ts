@@ -1,18 +1,17 @@
+import { allMoves } from "#app/data/move.js";
+import { Type } from "#app/data/type.js";
+import { Weather, WeatherType } from "#app/data/weather.js";
+import { PlayerPokemon } from "#app/field/pokemon.js";
+import { MoveEffectPhase, TurnEndPhase } from "#app/phases.js";
+import { Abilities } from "#enums/abilities";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { Biome } from "#enums/biome";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import GameManager from "../utils/gameManager";
-import Overrides from "#app/overrides";
-import { Species } from "#enums/species";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
 import { getMovePosition } from "../utils/gameManagerUtils";
-import { MoveEffectPhase, TurnEndPhase } from "#app/phases.js";
-import { allMoves } from "#app/data/move.js";
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { Weather, WeatherType } from "#app/data/weather.js";
-import { Type } from "#app/data/type.js";
-import { Biome } from "#enums/biome";
-import { PlayerPokemon } from "#app/field/pokemon.js";
 import { SPLASH_ONLY } from "../utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
@@ -125,7 +124,7 @@ describe("Abilities - Protean", () => {
     "ability applies correctly even if the type has changed by another ability",
     async () => {
       game.override.moveset([Moves.TACKLE]);
-      vi.spyOn(Overrides, "PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.REFRIGERATE);
+      game.override.passiveAbility(Abilities.REFRIGERATE);
 
       await game.startBattle([Species.MAGIKARP]);
 
