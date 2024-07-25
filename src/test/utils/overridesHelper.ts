@@ -1,5 +1,6 @@
 import { Weather, WeatherType } from "#app/data/weather";
 import { Biome } from "#app/enums/biome";
+import { Species } from "#app/enums/species.js";
 import * as GameMode from "#app/game-mode";
 import { GameModes, getGameMode } from "#app/game-mode";
 import Overrides from "#app/overrides";
@@ -89,6 +90,17 @@ export class OverridesHelper {
   battleType(battleType: "single" | "double"): this {
     vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue(battleType);
     this.log(`Battle type set to ${battleType} only!`);
+    return this;
+  }
+
+  /**
+   * Override the enemy (pokemon) species
+   * @param species the (pokemon) species to set
+   * @returns this
+   */
+  enemySpecies(species: Species): this {
+    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(species);
+    this.log(`Enemy Pokemon species set to ${Species[species]} (=${species})!`);
     return this;
   }
 
