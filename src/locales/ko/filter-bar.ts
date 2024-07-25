@@ -7,7 +7,7 @@ export const filterBar: SimpleTranslationEntries = {
   "winFilter": "클리어",
   "sortFilter": "정렬",
   "all": "전체",
-  "normal": "일반",
+  "normal": "기본",
   "uncaught": "미포획",
   "passiveUnlocked": "패시브 해금",
   "passiveLocked": "패시브 잠김",
