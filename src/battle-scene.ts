@@ -1079,11 +1079,11 @@ export default class BattleScene extends SceneBase {
       newDouble = !!double;
     }
 
-    if (Overrides.DOUBLE_BATTLE_OVERRIDE) {
+    if (Overrides.BATTLE_TYPE_OVERRIDE === "double") {
       newDouble = true;
     }
     /* Override battles into single only if not fighting with trainers */
-    if (newBattleType !== BattleType.TRAINER && Overrides.SINGLE_BATTLE_OVERRIDE) {
+    if (newBattleType !== BattleType.TRAINER && Overrides.BATTLE_TYPE_OVERRIDE === "single") {
       newDouble = false;
     }
 
@@ -2057,8 +2057,8 @@ export default class BattleScene extends SceneBase {
       const conditionalPhase = this.conditionalQueue.shift();
       // Evaluate the condition associated with the phase
       if (conditionalPhase[0]()) {
-        // If the condition is met, add the phase to the front of the phase queue
-        this.unshiftPhase(conditionalPhase[1]);
+        // If the condition is met, add the phase to the phase queue
+        this.pushPhase(conditionalPhase[1]);
       } else {
         // If the condition is not met, re-add the phase back to the front of the conditional queue
         this.conditionalQueue.unshift(conditionalPhase);
