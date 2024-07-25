@@ -94,6 +94,7 @@ export default class SummaryUiHandler extends UiHandler {
 
   private pokemon: PlayerPokemon;
   private playerParty: boolean;
+  /**This is set to false when checking the summary of a freshly caught Pokemon as it is not part of a player's party yet but still needs to display its items**/
   private newMove: Move;
   private moveSelectFunction: Function;
   private transitioning: boolean;
@@ -271,6 +272,13 @@ export default class SummaryUiHandler extends UiHandler {
   show(args: any[]): boolean {
     super.show(args);
 
+    /* args[] information
+    * args[0] : the Pokemon displayed in the Summary-UI
+    * args[1] : the summaryUiMode (defaults to 0)
+    * args[2] : the start page (defaults to Page.PROFILE)
+    * args[3] : contains the function executed when the user exits out of Summary UI
+    * args[4] : optional boolean used to determine if the Pokemon is part of the player's party or not (defaults to true, necessary for PR #2921 to display all relevant information)
+    */
     this.pokemon = args[0] as PlayerPokemon;
     this.summaryUiMode = args.length > 1 ? args[1] as SummaryUiMode : SummaryUiMode.DEFAULT;
     this.playerParty = args[4] ?? true;
