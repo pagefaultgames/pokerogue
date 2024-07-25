@@ -48,7 +48,6 @@ import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { terrain, weather } from "./weather";
-import { partyUiHandler } from "./party-ui-handler";
 import { settings } from "./settings.js";
 import { common } from "./common.js";
 import { modifierSelectUiHandler } from "./modifier-select-ui-handler";
