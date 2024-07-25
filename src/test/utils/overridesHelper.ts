@@ -42,6 +42,17 @@ export class OverridesHelper {
   }
 
   /**
+   * Override the player (pokemon) starting level
+   * @param level the (pokemon) level to set
+   * @returns this
+   */
+  startingLevel(level: Species | number): this {
+    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(level);
+    this.log(`Player Pokemon starting level set to ${level}!`);
+    return this;
+  }
+
+  /**
    * Override the player (pokemon) {@linkcode Species | species}
    * @param species the (pokemon) {@linkcode Species | species} to set
    * @returns this
