@@ -2,9 +2,12 @@ import { common } from "./common.js";
 import { settings } from "./settings.js";
 import { ability } from "./ability";
 import { abilityTriggers } from "./ability-trigger";
+import { arenaFlyout } from "./arena-flyout";
 import { PGFachv, PGMachv } from "./achv";
 import { battle } from "./battle";
+import { battleInfo } from "./battle-info";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
+import { battlerTags } from "./battler-tags";
 import { berry } from "./berry";
 import { bgmName } from "./bgm-name";
 import { biome } from "./biome";
@@ -34,8 +37,10 @@ import { nature } from "./nature";
 import { partyUiHandler } from "./party-ui-handler";
 import { pokeball } from "./pokeball";
 import { pokemon } from "./pokemon";
+import { pokemonForm } from "./pokemon-form";
 import { pokemonInfo } from "./pokemon-info";
 import { pokemonInfoContainer } from "./pokemon-info-container";
+import { pokemonSummary } from "./pokemon-summary";
 import { saveSlotSelectUiHandler } from "./save-slot-select-ui-handler";
 import { splashMessages } from "./splash-messages";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
@@ -49,8 +54,11 @@ import { modifierSelectUiHandler } from "./modifier-select-ui-handler";
 export const enConfig = {
   ability: ability,
   abilityTriggers: abilityTriggers,
+  arenaFlyout: arenaFlyout,
   battle: battle,
+  battleInfo: battleInfo,
   battleMessageUiHandler: battleMessageUiHandler,
+  battlerTags: battlerTags,
   berry: berry,
   bgmName: bgmName,
   biome: biome,
@@ -80,8 +88,10 @@ export const enConfig = {
   nature: nature,
   pokeball: pokeball,
   pokemon: pokemon,
+  pokemonForm: pokemonForm,
   pokemonInfo: pokemonInfo,
   pokemonInfoContainer: pokemonInfoContainer,
+  pokemonSummary: pokemonSummary,
   saveSlotSelectUiHandler: saveSlotSelectUiHandler,
   settings: settings,
   splashMessages: splashMessages,

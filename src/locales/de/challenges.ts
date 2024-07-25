@@ -28,5 +28,11 @@ export const challenges: TranslationEntries = {
   "eeveeOnly": {
     "name": "Nur-Evoli",
     "desc": "Du kannst nur Evoli und dessen Entwicklungen in dieser Herausforderung verwenden.",
+  },
+  "freshStart": {
+    "name": "Neuanfang",
+    "desc": "Du kannst nur die ursprünglichen Starter verwenden, genau so, als hättest du gerade erst mit Pokérogue begonnen.",
+    "value.0": "Aus",
+    "value.1": "An",
   }
 } as const;

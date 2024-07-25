@@ -53,7 +53,7 @@ jobs:
         working-directory: ${{env.api-dir}}
         run: |
           cd pokerogue_docs
-          npx typedoc --out /tmp/docs --githubPages false --entryPoints ./src/
+          npm run docs -- --out /tmp/docs --githubPages false --entryPoints ./src/
 
       - name: Commit & Push docs
         if: github.event_name == 'push'

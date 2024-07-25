@@ -58,10 +58,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "一只宝可梦的{{moveType}}系招式威力提升20%。",
     },
     "PokemonLevelIncrementModifierType": {
-      description: "一只宝可梦等级提升1级。",
+      description: "使一只宝可梦的等级提升{{levels}}级。",
     },
     "AllPokemonLevelIncrementModifierType": {
-      description: "所有成员宝可梦等级提升1级。",
+      description: "使一只寶可夢的等級提升{{levels}}級。",
     },
     "PokemonBaseStatBoosterModifierType": {
       description: "增加10%持有者的{{statName}}，\n个体值越高堆叠上限越高。",
@@ -181,6 +181,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "GOLDEN_EGG": { name: "金蛋" },
 
     "SOOTHE_BELL": { name: "安抚之铃" },
+
+    "SCOPE_LENS": { name: "焦点镜", description: "能看见弱点的镜片。携带它的宝可梦的招式 会变得容易击中要害。" },
+    "LEEK": { name: "大葱", description: "非常长且坚硬的茎。让大葱鸭携带后，\n招式会变得容易击中要害。" },
 
     "EVIOLITE": { name: "进化奇石", description: "携带后，还能进化的宝可梦的\n防御和特防就会提高。" },
 

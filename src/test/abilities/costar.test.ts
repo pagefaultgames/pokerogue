@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import GameManager from "../utils/gameManager";
 import Phaser from "phaser";
-import * as Overrides from "#app/overrides";
+import Overrides from "#app/overrides";
 import { BattleStat } from "#app/data/battle-stat.js";
 import { CommandPhase, MessagePhase } from "#app/phases.js";
 import { getMovePosition } from "../utils/gameManagerUtils";
@@ -27,7 +27,7 @@ describe("Abilities - COSTAR", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(Overrides, "DOUBLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.COSTAR);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.NASTY_PLOT]);
     vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
