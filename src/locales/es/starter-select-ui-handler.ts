@@ -22,7 +22,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "passive": "Pasiva:",
   "nature": "Natur:",
   "eggMoves": "Mov. Huevo",
-  "addToParty": "Añadir a Equipo",
+  "addToParty": "Añadir al Equipo",
   "removeFromParty": "Excluir del Equipo",
   "toggleIVs": "Mostrar IVs",
   "manageMoves": "Cambiar movs.",
