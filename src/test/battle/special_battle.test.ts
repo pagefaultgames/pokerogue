@@ -35,8 +35,9 @@ describe("Test Battle Phase", () => {
   });
 
   it("startBattle 2vs1 boss", async() => {
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
-    game.override.startingWave(10);
+    game.override
+      .battleType("single")
+      .startingWave(10);
     await game.startBattle([
       Species.BLASTOISE,
       Species.CHARIZARD,
@@ -46,8 +47,9 @@ describe("Test Battle Phase", () => {
   }, 20000);
 
   it("startBattle 2vs2 boss", async() => {
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
-    game.override.startingWave(10);
+    game.override
+      .battleType("double")
+      .startingWave(10);
     await game.startBattle([
       Species.BLASTOISE,
       Species.CHARIZARD,
@@ -57,8 +59,9 @@ describe("Test Battle Phase", () => {
   }, 20000);
 
   it("startBattle 2vs2 trainer", async() => {
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
-    game.override.startingWave(5);
+    game.override
+      .battleType("double")
+      .startingWave(5);
     await game.startBattle([
       Species.BLASTOISE,
       Species.CHARIZARD,
@@ -68,8 +71,9 @@ describe("Test Battle Phase", () => {
   }, 20000);
 
   it("startBattle 2vs1 trainer", async() => {
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
-    game.override.startingWave(5);
+    game.override
+      .battleType("single")
+      .startingWave(5);
     await game.startBattle([
       Species.BLASTOISE,
       Species.CHARIZARD,
@@ -79,8 +83,9 @@ describe("Test Battle Phase", () => {
   }, 20000);
 
   it("startBattle 2vs1 rival", async() => {
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
-    game.override.startingWave(8);
+    game.override
+      .battleType("single")
+      .startingWave(8);
     await game.startBattle([
       Species.BLASTOISE,
       Species.CHARIZARD,
@@ -90,8 +95,9 @@ describe("Test Battle Phase", () => {
   }, 20000);
 
   it("startBattle 2vs2 rival", async() => {
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
-    game.override.startingWave(8);
+    game.override
+      .battleType("double")
+      .startingWave(8);
     await game.startBattle([
       Species.BLASTOISE,
       Species.CHARIZARD,
@@ -101,8 +107,9 @@ describe("Test Battle Phase", () => {
   }, 20000);
 
   it("startBattle 1vs1 trainer", async() => {
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
-    game.override.startingWave(5);
+    game.override
+      .battleType("single")
+      .startingWave(5);
     await game.startBattle([
       Species.BLASTOISE,
     ]);
@@ -111,8 +118,9 @@ describe("Test Battle Phase", () => {
   }, 20000);
 
   it("startBattle 2vs2 trainer", async() => {
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
-    game.override.startingWave(5);
+    game.override
+      .battleType("double")
+      .startingWave(5);
     await game.startBattle([
       Species.BLASTOISE,
       Species.CHARIZARD,
@@ -122,8 +130,9 @@ describe("Test Battle Phase", () => {
   }, 20000);
 
   it("startBattle 4vs2 trainer", async() => {
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
-    game.override.startingWave(5);
+    game.override
+      .battleType("double")
+      .startingWave(5);
     await game.startBattle([
       Species.BLASTOISE,
       Species.CHARIZARD,

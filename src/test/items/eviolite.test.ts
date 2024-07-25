@@ -26,7 +26,7 @@ describe("Items - Eviolite", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
+    game.override.battleType("single");
   });
 
   it("EVIOLITE activates in battle correctly", async() => {

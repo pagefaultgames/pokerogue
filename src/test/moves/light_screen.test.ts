@@ -34,7 +34,7 @@ describe("Moves - Light Screen", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
+    game.override.battleType("single");
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.ABSORB, Moves.DAZZLING_GLEAM, Moves.TACKLE]);
     vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
@@ -57,7 +57,7 @@ describe("Moves - Light Screen", () => {
   });
 
   it("reduces damage of special attacks by a third in a double battle", async() => {
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
+    game.override.battleType("double");
 
     const moveToUse = Moves.DAZZLING_GLEAM;
     await game.startBattle([Species.SHUCKLE, Species.SHUCKLE]);

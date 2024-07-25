@@ -34,7 +34,7 @@ describe("Abilities - Intimidate", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
+    game.override.battleType("single");
     vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
     vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INTIMIDATE);
     vi.spyOn(Overrides, "OPP_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
@@ -125,7 +125,7 @@ describe("Abilities - Intimidate", () => {
   }, 200000);
 
   it("double - trainer should only trigger once per pokemon", async() => {
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
+    game.override.battleType("double");
     game.override.startingWave(5);
     await game.runToSummon([
       Species.MIGHTYENA,
@@ -149,7 +149,7 @@ describe("Abilities - Intimidate", () => {
   }, 20000);
 
   it("double - wild: should only trigger once per pokemon", async() => {
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
+    game.override.battleType("double");
     game.override.startingWave(3);
     await game.runToSummon([
       Species.MIGHTYENA,
@@ -173,7 +173,7 @@ describe("Abilities - Intimidate", () => {
   }, 20000);
 
   it("double - boss: should only trigger once per pokemon", async() => {
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
+    game.override.battleType("double");
     game.override.startingWave(10);
     await game.runToSummon([
       Species.MIGHTYENA,
@@ -339,7 +339,7 @@ describe("Abilities - Intimidate", () => {
   }, 20000);
 
   it("double - wild vs only 1 on player side", async() => {
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
+    game.override.battleType("double");
     game.override.startingWave(3);
     await game.runToSummon([
       Species.MIGHTYENA,
@@ -355,7 +355,7 @@ describe("Abilities - Intimidate", () => {
   }, 20000);
 
   it("double - wild vs only 1 alive on player side", async() => {
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
+    game.override.battleType("double");
     game.override.startingWave(3);
     await game.runToTitle();
 

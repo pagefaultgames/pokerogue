@@ -30,7 +30,7 @@ describe("Abilities - Parental Bond", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
+    game.override.battleType("single");
     vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.PARENTAL_BOND);
     vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SNORLAX);
@@ -238,7 +238,7 @@ describe("Abilities - Parental Bond", () => {
   test(
     "ability should not apply to multi-target moves",
     async () => {
-      vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
+      game.override.battleType("double");
       vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.EARTHQUAKE]);
 
       await game.startBattle([Species.CHARIZARD, Species.PIDGEOT]);
@@ -612,7 +612,7 @@ describe("Abilities - Parental Bond", () => {
   test(
     "ability should not apply to multi-target moves with Multi-Lens",
     async () => {
-      vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
+      game.override.battleType("double");
       vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.EARTHQUAKE, Moves.SPLASH]);
       vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "MULTI_LENS", count: 1}]);
 

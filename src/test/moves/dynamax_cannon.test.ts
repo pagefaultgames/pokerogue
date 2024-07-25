@@ -33,7 +33,7 @@ describe("Moves - Dynamax Cannon", () => {
 
     // Note that, for Waves 1-10, the level cap is 10
     game.override.startingWave(1);
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
+    game.override.battleType("single");
     vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
 
     vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);

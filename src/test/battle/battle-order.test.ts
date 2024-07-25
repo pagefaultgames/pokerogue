@@ -33,7 +33,7 @@ describe("Battle order", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
+    game.override.battleType("single");
     vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MEWTWO);
     vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INSOMNIA);
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INSOMNIA);
@@ -83,7 +83,7 @@ describe("Battle order", () => {
   }, 20000);
 
   it("double - both opponents faster than player 50/50 vs 150/150", async() => {
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
+    game.override.battleType("double");
     await game.startBattle([
       Species.BULBASAUR,
       Species.BLASTOISE,
@@ -125,7 +125,7 @@ describe("Battle order", () => {
   }, 20000);
 
   it("double - speed tie except 1 - 100/100 vs 100/150", async() => {
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
+    game.override.battleType("double");
     await game.startBattle([
       Species.BULBASAUR,
       Species.BLASTOISE,
@@ -166,7 +166,7 @@ describe("Battle order", () => {
   }, 20000);
 
   it("double - speed tie 100/150 vs 100/150", async() => {
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
+    game.override.battleType("double");
     await game.startBattle([
       Species.BULBASAUR,
       Species.BLASTOISE,

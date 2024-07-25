@@ -31,7 +31,7 @@ describe("Moves - Tackle", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     const moveToUse = Moves.TACKLE;
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
+    game.override.battleType("single");
     vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(1);
     game.override.startingWave(97);

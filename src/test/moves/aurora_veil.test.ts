@@ -35,7 +35,7 @@ describe("Moves - Aurora Veil", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
+    game.override.battleType("single");
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.ABSORB, Moves.ROCK_SLIDE, Moves.TACKLE]);
     vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
@@ -58,7 +58,7 @@ describe("Moves - Aurora Veil", () => {
   });
 
   it("reduces damage of physical attacks by a third in a double battle", async() => {
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
+    game.override.battleType("double");
 
     const moveToUse = Moves.ROCK_SLIDE;
     await game.startBattle([Species.SHUCKLE, Species.SHUCKLE]);
@@ -86,7 +86,7 @@ describe("Moves - Aurora Veil", () => {
   });
 
   it("reduces damage of special attacks by a third in a double battle", async() => {
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
+    game.override.battleType("double");
 
     const moveToUse = Moves.DAZZLING_GLEAM;
     await game.startBattle([Species.SHUCKLE, Species.SHUCKLE]);
