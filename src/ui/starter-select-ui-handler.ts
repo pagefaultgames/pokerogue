@@ -322,7 +322,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       new DropDownOption(this.scene, 8, i18next.t("starterSelectUiHandler:gen8"), null, DropDownState.ON),
       new DropDownOption(this.scene, 9, i18next.t("starterSelectUiHandler:gen9"), null, DropDownState.ON),
     ];
-    this.filterBar.addFilter("Gen", new DropDown(this.scene, 0, 0, genOptions, this.updateStarters, DropDownType.MULTI));
+    this.filterBar.addFilter(i18next.t("filterBar:genFilter"), new DropDown(this.scene, 0, 0, genOptions, this.updateStarters, DropDownType.MULTI));
     this.filterBar.defaultGenVals = this.filterBar.getVals(DropDownColumn.GEN);
     // set gen filter to all off except for the I GEN
     for (const option of genOptions) {
@@ -343,7 +343,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       typeSprite.setFrame(type.toLowerCase());
       typeOptions.push(new DropDownOption(this.scene, index, null, typeSprite));
     });
-    this.filterBar.addFilter("Type", new DropDown(this.scene, 0, 0, typeOptions, this.updateStarters, DropDownType.MULTI, 0.5));
+    this.filterBar.addFilter(i18next.t("filterBar:typeFilter"), new DropDown(this.scene, 0, 0, typeOptions, this.updateStarters, DropDownType.MULTI, 0.5));
     this.filterBar.defaultTypeVals = this.filterBar.getVals(DropDownColumn.TYPES);
 
     // Unlocks filter
@@ -358,29 +358,29 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       new DropDownOption(this.scene, "SHINY3", null, shiny3Sprite),
       new DropDownOption(this.scene, "SHINY2", null, shiny2Sprite),
       new DropDownOption(this.scene, "SHINY", null, shiny1Sprite),
-      new DropDownOption(this.scene, "NORMAL", "Normal"),
-      new DropDownOption(this.scene, "UNCAUGHT", "Not Caught"),
-      new DropDownOption(this.scene, "PASSIVEUNLOCKED", "Passive Unlocked"),
-      new DropDownOption(this.scene, "PASSIVELOCKED", "Passive Locked"),];
+      new DropDownOption(this.scene, "NORMAL", i18next.t("filterBar:normal")),
+      new DropDownOption(this.scene, "UNCAUGHT", i18next.t("filterBar:uncaught")),
+      new DropDownOption(this.scene, "PASSIVEUNLOCKED", i18next.t("filterBar:passiveUnlocked")),
+      new DropDownOption(this.scene, "PASSIVELOCKED", i18next.t("filterBar:passiveLocked"))];
 
-    this.filterBar.addFilter("Unlocks", new DropDown(this.scene, 0, 0, unlocksOptions, this.updateStarters, DropDownType.MULTI));
+    this.filterBar.addFilter(i18next.t("filterBar:unlocksFilter"), new DropDown(this.scene, 0, 0, unlocksOptions, this.updateStarters, DropDownType.MULTI));
     this.filterBar.defaultUnlockVals = this.filterBar.getVals(DropDownColumn.UNLOCKS);
 
     // win filter
     const winOptions = [
-      new DropDownOption(this.scene, "WIN", "has won"),
-      new DropDownOption(this.scene, "NOTWIN", "hasn't won yet")];
-    this.filterBar.addFilter("Win", new DropDown(this.scene, 0, 0, winOptions, this.updateStarters, DropDownType.MULTI));
+      new DropDownOption(this.scene, "WIN", i18next.t("filterBar:hasWon")),
+      new DropDownOption(this.scene, "NOTWIN", i18next.t("filterBar:hasNotWon"))];
+    this.filterBar.addFilter(i18next.t("filterBar:winFilter"), new DropDown(this.scene, 0, 0, winOptions, this.updateStarters, DropDownType.MULTI));
     this.filterBar.defaultWinVals = this.filterBar.getVals(DropDownColumn.WIN);
 
     // sort filter
     const sortOptions = [
-      new DropDownOption(this.scene, 0, "No."),
-      new DropDownOption(this.scene, 1, "Cost", null, DropDownState.OFF),
-      new DropDownOption(this.scene, 2, "# Candies", null, DropDownState.OFF),
-      new DropDownOption(this.scene, 3, "IVs", null, DropDownState.OFF),
-      new DropDownOption(this.scene, 4, "Name", null, DropDownState.OFF)];
-    this.filterBar.addFilter("Sort", new DropDown(this.scene, 0, 0, sortOptions, this.updateStarters, DropDownType.SINGLE));
+      new DropDownOption(this.scene, 0, i18next.t("filterBar:sortByNumber")),
+      new DropDownOption(this.scene, 1, i18next.t("filterBar:sortByCost"), null, DropDownState.OFF),
+      new DropDownOption(this.scene, 2, i18next.t("filterBar:sortByCandies"), null, DropDownState.OFF),
+      new DropDownOption(this.scene, 3, i18next.t("filterBar:sortByIVs"), null, DropDownState.OFF),
+      new DropDownOption(this.scene, 4, i18next.t("filterBar:sortByName"), null, DropDownState.OFF)];
+    this.filterBar.addFilter(i18next.t("filterBar:sortFilter"), new DropDown(this.scene, 0, 0, sortOptions, this.updateStarters, DropDownType.SINGLE));
     this.filterBarContainer.add(this.filterBar);
     this.filterBar.defaultSortVals = this.filterBar.getVals(DropDownColumn.SORT);
 
