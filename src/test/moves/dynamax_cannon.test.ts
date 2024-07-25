@@ -29,7 +29,7 @@ describe("Moves - Dynamax Cannon", () => {
     game = new GameManager(phaserGame);
 
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([ dynamaxCannon.id ]);
-    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(200);
+    game.override.startingLevel(200);
 
     // Note that, for Waves 1-10, the level cap is 10
     game.override.startingWave(1);

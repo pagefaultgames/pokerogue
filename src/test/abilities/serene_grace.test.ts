@@ -36,7 +36,7 @@ describe("Abilities - Serene Grace", () => {
     const movesToUse = [Moves.AIR_SLASH, Moves.TACKLE];
     game.override.battleType("single");
     game.override.enemySpecies(Species.ONIX);
-    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    game.override.startingLevel(100);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue(movesToUse);
     game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
   });

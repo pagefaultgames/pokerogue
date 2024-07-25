@@ -33,7 +33,7 @@ describe("Abilities - Sturdy", () => {
     game.override.battleType("single");
 
     game.override.starterSpecies(Species.LUCARIO);
-    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    game.override.startingLevel(100);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.CLOSE_COMBAT, Moves.FISSURE]);
 
     game.override.enemySpecies(Species.ARON);

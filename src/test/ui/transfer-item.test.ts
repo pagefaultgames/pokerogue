@@ -34,7 +34,7 @@ describe("UI - Transfer Items", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     game.override.battleType("single");
-    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    game.override.startingLevel(100);
     game.override.startingWave(1);
     vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([
       { name: "BERRY", count: 1, type: BerryType.SITRUS },

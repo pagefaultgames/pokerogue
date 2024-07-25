@@ -32,7 +32,7 @@ describe("Moves - Rollout", () => {
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
     game.override.enemySpecies(Species.BIDOOF);
     game.override.enemyAbility(Abilities.NONE);
-    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    game.override.startingLevel(100);
     vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
     game.override.enemyMoveset(SPLASH_ONLY);
   });

@@ -35,7 +35,7 @@ describe("Moves - Tidy Up", () => {
     game.override.starterSpecies(Species.FEEBAS);
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TIDY_UP]);
-    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(50);
+    game.override.startingLevel(50);
   });
 
   it("spikes are cleared", async() => {

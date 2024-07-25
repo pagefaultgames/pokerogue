@@ -35,7 +35,7 @@ describe("Moves - Octolock", () => {
       game.override.enemyMoveset(SPLASH_ONLY);
       game.override.enemyAbility(Abilities.NONE);
 
-      vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
+      game.override.startingLevel(2000);
       vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.OCTOLOCK, Moves.SPLASH]);
       vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
     });
