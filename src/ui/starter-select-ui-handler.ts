@@ -1075,8 +1075,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         break;
       case Button.DOWN:
         this.startCursorObj.setVisible(false);
-        this.starterIconsCursorIndex = 0;
-        this.moveStarterIconsCursor(this.starterIconsCursorIndex);
+        if (this.starterSpecies.length > 0) {
+          this.starterIconsCursorIndex = 0;
+          this.moveStarterIconsCursor(this.starterIconsCursorIndex);
+        } else {
+          this.setFilterMode(true);
+        }
         success = true;
         break;
       case Button.LEFT:
@@ -1150,66 +1154,61 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       if (button === Button.ACTION) {
         if (!this.speciesStarterDexEntry?.caughtAttr) {
           error = true;
-        } else if (this.starterSpecies.length < 6) {
-          const options = [
-            {
-              label: i18next.t("starterSelectUiHandler:addToParty"),
+        } else if (this.starterSpecies.length < 6) { // checks to see you have less than 6 pokemon in your party
+
+          let species;
+
+          // this gets the correct generation and pokemon cursor depending on whether you're in the starter screen or the party icons
+          if (!this.starterIconsCursorObj.visible) {
+            species = this.filteredStarterContainers[this.cursor].species;
+          } else {
+            species = this.starterSpecies[this.starterIconsCursorIndex];
+          }
+          const ui = this.getUi();
+          let options = [];
+
+          const [isDupe, removeIndex]: [boolean, number] = this.isInParty(species); // checks to see if the pokemon is a duplicate; if it is, returns the index that will be removed
+
+
+          const isPartyValid = this.isPartyValid();
+          const isValidForChallenge = new Utils.BooleanHolder(true);
+          if (isPartyValid) {
+            Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true)), !!(this.starterSpecies.length));
+          } else {
+            Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true)), !!(this.starterSpecies.length), false, false);
+          }
+
+          const currentPartyValue = this.starterSpecies.map(s => s.generation).reduce((total: number, gen: number, i: number) => total += this.scene.gameData.getSpeciesStarterValue(this.starterSpecies[i].speciesId), 0);
+          const newCost = this.scene.gameData.getSpeciesStarterValue(species.speciesId);
+          if (!isDupe && isValidForChallenge.value && currentPartyValue + newCost <= this.getValueLimit()) { // this checks to make sure the pokemon doesn't exist in your party, it's valid for the challenge and that it won't go over the cost limit; if it meets all these criteria it will add it to your party
+            options = [
+              {
+                label: i18next.t("starterSelectUiHandler:addToParty"),
+                handler: () => {
+                  ui.setMode(Mode.STARTER_SELECT);
+
+                  if (!isDupe && isValidForChallenge.value && this.tryUpdateValue(this.scene.gameData.getSpeciesStarterValue(species.speciesId), true)) {
+                    this.addToParty(species);
+                    ui.playSelect();
+                  } else {
+                    ui.playError(); // this should be redundant as there is now a trigger for when a pokemon can't be added to party
+                  }
+                  return true;
+                },
+                overrideSound: true
+              }];
+          } else if (isDupe) { // if it already exists in your party, it will give you the option to remove from your party
+            options = [{
+              label: i18next.t("starterSelectUiHandler:removeFromParty"),
               handler: () => {
+                this.popStarter(removeIndex);
                 ui.setMode(Mode.STARTER_SELECT);
-                let isDupe = false;
-
-                const species = this.filteredStarterContainers[this.cursor].species;
-                for (let s = 0; s < this.starterSpecies.length; s++) {
-                  if (species === this.starterSpecies[s]) {
-                    isDupe = true;
-                    break;
-                  }
-                }
-
-                const isValidForChallenge = new Utils.BooleanHolder(true);
-                Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor), !!this.starterSpecies.length);
-
-
-                if (!isDupe && isValidForChallenge.value && this.tryUpdateValue(this.scene.gameData.getSpeciesStarterValue(species.speciesId))) {
-                  const cursorObj = this.starterCursorObjs[this.starterSpecies.length];
-                  cursorObj.setVisible(true);
-                  cursorObj.setPosition(this.cursorObj.x, this.cursorObj.y);
-                  const props = this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor);
-                  this.starterIcons[this.starterSpecies.length].setTexture(species.getIconAtlasKey(props.formIndex, props.shiny, props.variant));
-                  this.starterIcons[this.starterSpecies.length].setFrame(species.getIconId(props.female, props.formIndex, props.shiny, props.variant));
-                  this.checkIconId(this.starterIcons[this.starterSpecies.length], species, props.female, props.formIndex, props.shiny, props.variant);
-                  this.starterSpecies.push(species);
-                  this.starterAttr.push(this.dexAttrCursor);
-                  this.starterAbilityIndexes.push(this.abilityCursor);
-                  this.starterNatures.push(this.natureCursor as unknown as Nature);
-                  this.starterMovesets.push(this.starterMoveset.slice(0) as StarterMoveset);
-                  if (this.speciesLoaded.get(species.speciesId)) {
-                    getPokemonSpeciesForm(species.speciesId, props.formIndex).cry(this.scene);
-                  }
-                  if (this.starterSpecies.length === 6 || this.value === this.getValueLimit()) {
-                    this.cursorObj.setVisible(false);
-                    this.setSpecies(null);
-                    this.startCursorObj.setVisible(true);
-                    this.tryStart();
-                  }
-                  this.updateInstructions();
-
-                  /**
-                   * If the user can't select a pokemon anymore,
-                   * go to start button.
-                   */
-                  if (!this.canAddParty) {
-                    this.startCursorObj.setVisible(true);
-                  }
-
-                  ui.playSelect();
-                } else {
-                  ui.playError();
-                }
                 return true;
-              },
-              overrideSound: true
-            },
+              }
+            }];
+          }
+
+          options.push( // this shows the IVs for the pokemon
             {
               label: i18next.t("starterSelectUiHandler:toggleIVs"),
               handler: () => {
@@ -1217,8 +1216,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 ui.setMode(Mode.STARTER_SELECT);
                 return true;
               }
-            }
-          ];
+            });
           if (this.speciesStarterMoves.length > 1) { // this lets you change the pokemon moves
             const showSwapOptions = (moveset: StarterMoveset) => {
               ui.setMode(Mode.STARTER_SELECT).then(() => {
@@ -1767,6 +1765,25 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     return [isDupe, removeIndex];
   }
 
+  addToParty(species: PokemonSpecies) {
+    const cursorObj = this.starterCursorObjs[this.starterSpecies.length];
+    cursorObj.setVisible(true);
+    cursorObj.setPosition(this.cursorObj.x, this.cursorObj.y);
+    const props = this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor);
+    this.starterIcons[this.starterSpecies.length].setTexture(species.getIconAtlasKey(props.formIndex, props.shiny, props.variant));
+    this.starterIcons[this.starterSpecies.length].setFrame(species.getIconId(props.female, props.formIndex, props.shiny, props.variant));
+    this.checkIconId(this.starterIcons[this.starterSpecies.length], species, props.female, props.formIndex, props.shiny, props.variant);
+    this.starterSpecies.push(species);
+    this.starterAttr.push(this.dexAttrCursor);
+    this.starterAbilityIndexes.push(this.abilityCursor);
+    this.starterNatures.push(this.natureCursor as unknown as Nature);
+    this.starterMovesets.push(this.starterMoveset.slice(0) as StarterMoveset);
+    if (this.speciesLoaded.get(species.speciesId)) {
+      getPokemonSpeciesForm(species.speciesId, props.formIndex).cry(this.scene);
+    }
+    this.updateInstructions();
+  }
+
   switchMoveHandler(i: number, newMove: Moves, move: Moves) {
     const speciesId = this.lastSpecies.speciesId;
     const existingMoveIndex = this.starterMoveset.indexOf(newMove);
@@ -2003,7 +2020,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.starterSelectScrollBar.setPage(this.scrollCursor);
 
     let pokerusCursorIndex = 0;
-    let starterCursorIndex = 0;
     this.filteredStarterContainers.forEach((container, i) => {
       const pos = calcStarterPosition(i, this.scrollCursor);
       container.setPosition(pos.x, pos.y);
@@ -2016,14 +2032,23 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
       if (this.pokerusSpecies.includes(container.species)) {
         this.pokerusCursorObjs[pokerusCursorIndex].setPosition(pos.x - 1, pos.y + 1);
-        this.pokerusCursorObjs[pokerusCursorIndex].setVisible(true);
+
+        if (i < (maxRows + this.scrollCursor) * perRow && i >= this.scrollCursor * perRow) {
+          this.pokerusCursorObjs[pokerusCursorIndex].setVisible(true);
+        } else {
+          this.pokerusCursorObjs[pokerusCursorIndex].setVisible(false);
+        }
         pokerusCursorIndex++;
       }
 
       if (this.starterSpecies.includes(container.species)) {
-        this.starterCursorObjs[starterCursorIndex].setPosition(pos.x - 1, pos.y + 1);
-        this.starterCursorObjs[starterCursorIndex].setVisible(true);
-        starterCursorIndex++;
+        this.starterCursorObjs[this.starterSpecies.indexOf(container.species)].setPosition(pos.x - 1, pos.y + 1);
+
+        if (i < (maxRows + this.scrollCursor) * perRow && i >= this.scrollCursor * perRow) {
+          this.starterCursorObjs[this.starterSpecies.indexOf(container.species)].setVisible(true);
+        } else {
+          this.starterCursorObjs[this.starterSpecies.indexOf(container.species)].setVisible(false);
+        }
       }
 
       const speciesId = container.species.speciesId;
@@ -2747,10 +2772,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.scene.time.delayedCall(Utils.fixedInt(500), () => this.tryUpdateValue());
       return false;
     }
+    let isPartyValid: boolean = this.isPartyValid(); // this checks to see if the party is valid
     if (addingToParty) { // this does a check to see if the pokemon being added is valid; if so, it will update the isPartyValid boolean
       const isNewPokemonValid = new Utils.BooleanHolder(true);
       const species = this.filteredStarterContainers[this.cursor].species;
-      Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isNewPokemonValid, this.scene.gameData.getSpeciesDexAttrProps(species, this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true)), !!(this.starterSpecies.length + (add ? 1 : 0)));
+      Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isNewPokemonValid, this.scene.gameData.getSpeciesDexAttrProps(species, this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true)), !!(this.starterSpecies.length), false, false);
+      isPartyValid = isPartyValid || isNewPokemonValid.value;
     }
 
     /**
@@ -2778,7 +2805,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
        * we change to can AddParty value to true since the user has enough cost to choose this pokemon and this pokemon registered too.
        */
       const isValidForChallenge = new Utils.BooleanHolder(true);
-      Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, this.allSpecies[s], isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(this.allSpecies[s], this.scene.gameData.getSpeciesDefaultDexAttr(this.allSpecies[s], false, true)), !!(this.starterSpecies.length + (add ? 1 : 0)));
+      if (isPartyValid) { // we have two checks here - one for the party being valid and one for not. This comes from mono type challenges - if the party is valid it will check pokemon's evolutions and forms, and if it's not valid it won't check their evolutions and forms
+        Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, this.allSpecies[s], isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(this.allSpecies[s], this.scene.gameData.getSpeciesDefaultDexAttr(this.allSpecies[s], false, true)), !!(this.starterSpecies.length + (add ? 1 : 0)));
+      } else {
+        Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, this.allSpecies[s], isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(this.allSpecies[s], this.scene.gameData.getSpeciesDefaultDexAttr(this.allSpecies[s], false, true)), !!(this.starterSpecies.length + (add ? 1 : 0)), false, false);
+      }
 
       const canBeChosen = remainValue >= speciesStarterValue && isValidForChallenge.value;
 
@@ -2867,7 +2898,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     for (let s = 0; s < this.starterSpecies.length; s++) {
       const isValidForChallenge = new Utils.BooleanHolder(true);
       const species = this.starterSpecies[s];
-      Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor), !!this.starterSpecies.length);
+      Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor), !!(this.starterSpecies.length), false, false);
       canStart = canStart || isValidForChallenge.value;
     }
     return canStart;
