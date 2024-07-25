@@ -2,13 +2,17 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
 import Overrides from "#app/overrides";
-import { CommandPhase, DamagePhase, EncounterPhase, EnemyCommandPhase, SelectStarterPhase, TurnInitPhase } from "#app/phases";
 import { Mode } from "#app/ui/ui";
 import { BattleStat } from "#app/data/battle-stat";
 import { generateStarter, getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Command } from "#app/ui/command-ui-handler";
 import { Status, StatusEffect } from "#app/data/status-effect";
 import { GameModes, getGameMode } from "#app/game-mode";
+import {
+  CommandPhase, DamagePhase, EncounterPhase,
+  EnemyCommandPhase, SelectStarterPhase,
+  TurnInitPhase,
+} from "#app/phases";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -32,7 +36,7 @@ describe("Abilities - Intimidate", () => {
     game.override.battleType("single");
     game.override.enemySpecies(Species.RATTATA);
     game.override.enemyAbility(Abilities.INTIMIDATE);
-    vi.spyOn(Overrides, "OPP_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
+    game.override.enemyPassiveAbility(Abilities.HYDRATION);
     game.override.ability(Abilities.INTIMIDATE);
     game.override.startingWave(3);
     game.override.enemyMoveset([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);

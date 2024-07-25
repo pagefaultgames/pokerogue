@@ -35,7 +35,7 @@ describe("Moves - Ceaseless Edge", () => {
     game.override.battleType("single");
     game.override.enemySpecies(Species.RATTATA);
     game.override.enemyAbility(Abilities.RUN_AWAY);
-    vi.spyOn(Overrides, "OPP_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.RUN_AWAY);
+    game.override.enemyPassiveAbility(Abilities.RUN_AWAY);
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
     game.override.moveset([ Moves.CEASELESS_EDGE, Moves.SPLASH, Moves.ROAR ]);
