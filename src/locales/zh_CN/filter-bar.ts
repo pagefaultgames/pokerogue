@@ -7,7 +7,7 @@ export const filterBar: SimpleTranslationEntries = {
   "winFilter": "通关",
   "sortFilter": "排序",
   "all": "全部",
-  "normal": "通常",
+  "normal": "无闪光",
   "uncaught": "未捕获",
   "passiveUnlocked": "被动解锁",
   "passiveLocked": "被动未解锁",
