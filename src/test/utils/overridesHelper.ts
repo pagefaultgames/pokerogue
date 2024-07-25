@@ -42,6 +42,17 @@ export class OverridesHelper {
   }
 
   /**
+   * Override the player (pokemon) {@linkcode Species | species}
+   * @param species the (pokemon) {@linkcode Species | species} to set
+   * @returns this
+   */
+  starterSpecies(species: Species | number): this {
+    vi.spyOn(Overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(species);
+    this.log(`Player Pokemon species set to ${Species[species]} (=${species})!`);
+    return this;
+  }
+
+  /**
    * Override each wave to have or not have standard trainer battles
    * @returns this
    * @param disable true
