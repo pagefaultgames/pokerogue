@@ -1,3 +1,4 @@
+import { StatusEffect } from "#app/data/status-effect.js";
 import { Weather, WeatherType } from "#app/data/weather";
 import { Abilities } from "#app/enums/abilities.js";
 import { Biome } from "#app/enums/biome";
@@ -239,6 +240,17 @@ export class OverridesHelper {
   enemyLevel(level: number): this {
     vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(level);
     this.log(`Enemy Pokemon level set to ${level}!`);
+    return this;
+  }
+
+  /**
+   * Override the enemy (pokemon) {@linkcode StatusEffect | status-effect}
+   * @param statusEffect the {@linkcode StatusEffect | status-effect} to set
+   * @returns
+   */
+  enemyStatusEffect(statusEffect: StatusEffect): this {
+    vi.spyOn(Overrides, "OPP_STATUS_OVERRIDE", "get").mockReturnValue(statusEffect);
+    this.log(`Enemy Pokemon status-effect set to ${StatusEffect[statusEffect]} (=${statusEffect})!`);
     return this;
   }
 
