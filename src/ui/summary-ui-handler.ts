@@ -93,6 +93,7 @@ export default class SummaryUiHandler extends UiHandler {
   private moveCursorBlinkTimer: Phaser.Time.TimerEvent;
 
   private pokemon: PlayerPokemon;
+  private playerParty: boolean;
   private newMove: Move;
   private moveSelectFunction: Function;
   private transitioning: boolean;
@@ -272,7 +273,7 @@ export default class SummaryUiHandler extends UiHandler {
 
     this.pokemon = args[0] as PlayerPokemon;
     this.summaryUiMode = args.length > 1 ? args[1] as SummaryUiMode : SummaryUiMode.DEFAULT;
-
+    this.playerParty = args[4] ?? true;
     this.scene.ui.bringToTop(this.summaryContainer);
 
     this.summaryContainer.setVisible(true);
@@ -853,7 +854,7 @@ export default class SummaryUiHandler extends UiHandler {
       });
 
       const itemModifiers = (this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-          && m.pokemonId === this.pokemon.id, this.pokemon.battleInfo.player) as PokemonHeldItemModifier[])
+          && m.pokemonId === this.pokemon.id, this.playerParty) as PokemonHeldItemModifier[])
         .sort(modifierSortFunc);
 
       itemModifiers.forEach((item, i) => {
