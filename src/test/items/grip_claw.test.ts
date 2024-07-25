@@ -1,15 +1,14 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phase from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
-import { Moves } from "#app/enums/moves.js";
-import { Species } from "#app/enums/species.js";
-import { BerryType } from "#app/enums/berry-type.js";
-import { Abilities } from "#app/enums/abilities.js";
-import { getMovePosition } from "../utils/gameManagerUtils";
-import { CommandPhase, MoveEndPhase, SelectTargetPhase } from "#app/phases.js";
 import { BattlerIndex } from "#app/battle.js";
 import { allMoves } from "#app/data/move.js";
+import { Abilities } from "#app/enums/abilities.js";
+import { BerryType } from "#app/enums/berry-type.js";
+import { Moves } from "#app/enums/moves.js";
+import { Species } from "#app/enums/species.js";
+import { CommandPhase, MoveEndPhase, SelectTargetPhase } from "#app/phases.js";
+import GameManager from "#app/test/utils/gameManager";
+import Phase from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { getMovePosition } from "../utils/gameManagerUtils";
 
 const TIMEOUT = 20 * 1000; // 20 seconds
 
@@ -30,18 +29,22 @@ describe("Items - Grip Claw", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleType("double");
-    game.override.moveset([ Moves.POPULATION_BOMB, Moves.SPLASH ]);
-    game.override.startingHeldItems([{name: "GRIP_CLAW", count: 5}, {name: "MULTI_LENS", count: 3}]);
-    game.override.enemySpecies(Species.SNORLAX);
-    game.override.ability(Abilities.KLUTZ);
-    game.override.enemyMoveset([ Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH ]);
-    vi.spyOn(Overrides, "OPP_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([
-      {name: "BERRY", type: BerryType.SITRUS, count: 2},
-      {name: "BERRY", type: BerryType.LUM, count: 2}
-    ]);
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
+    game.override
+      .battleType("double")
+      .moveset([Moves.POPULATION_BOMB, Moves.SPLASH])
+      .startingHeldItems([
+        { name: "GRIP_CLAW", count: 5 },
+        { name: "MULTI_LENS", count: 3 },
+      ])
+      .enemySpecies(Species.SNORLAX)
+      .ability(Abilities.KLUTZ)
+      .enemyMoveset([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH])
+      .enemyHeldItems([
+        { name: "BERRY", type: BerryType.SITRUS, count: 2 },
+        { name: "BERRY", type: BerryType.LUM, count: 2 },
+      ])
+      .startingLevel(100)
+      .enemyLevel(100);
 
     vi.spyOn(allMoves[Moves.POPULATION_BOMB], "accuracy", "get").mockReturnValue(100);
   });
