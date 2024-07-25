@@ -30,7 +30,7 @@ export class OverridesHelper {
   /**
    * Override the starting wave (index)
    * @param wave the wave (index) to set. Classic: `1`-`200`
-   * @returns spy instance
+   * @returns this
    */
   startingWave(wave: number): this {
     vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(wave);
@@ -40,8 +40,8 @@ export class OverridesHelper {
 
   /**
    * Override each wave to have or not have standard trainer battles
-   * @returns spy instance
-   * @param disable - true
+   * @returns this
+   * @param disable true
    */
   disableTrainerWaves(disable: boolean): this {
     const realFn = getGameMode;
@@ -57,7 +57,7 @@ export class OverridesHelper {
   /**
    * Override the weather (type)
    * @param type weather type to set
-   * @returns spy instance
+   * @returns this
    */
   weather(type: WeatherType): this {
     vi.spyOn(Overrides, "WEATHER_OVERRIDE", "get").mockReturnValue(type);
@@ -68,7 +68,7 @@ export class OverridesHelper {
   /**
    * Override the seed
    * @param seed the seed to set
-   * @returns spy instance
+   * @returns this
    */
   seed(seed: string): this {
     vi.spyOn(this.game.scene, "resetSeed").mockImplementation(() => {
@@ -78,6 +78,17 @@ export class OverridesHelper {
     });
     this.game.scene.resetSeed();
     this.log(`Seed set to "${seed}"!`);
+    return this;
+  }
+
+  /**
+   * Override the battle type (single or double)
+   * @param battleType battle type to set
+   * @returns this
+   */
+  battleType(battleType: "single" | "double"): this {
+    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue(battleType);
+    this.log(`Battle type set to ${battleType} only!`);
     return this;
   }
 
