@@ -5,7 +5,7 @@ export const filterBar: SimpleTranslationEntries = {
   "typeFilter": "屬性",
   "unlocksFilter": "解鎖",
   "winFilter": "通關",
-  "sortFilter": "排序", 
+  "sortFilter": "排序",
   "all": "全部",
   "normal": "通常",
   "uncaught": "未捕獲",
