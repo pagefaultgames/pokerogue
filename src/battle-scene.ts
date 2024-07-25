@@ -787,8 +787,8 @@ export default class BattleScene extends SceneBase {
     return findInParty(this.getParty()) || findInParty(this.getEnemyParty());
   }
 
-  addPlayerPokemon(species: PokemonSpecies, level: integer, abilityIndex: integer, formIndex: integer, gender?: Gender, shiny?: boolean, variant?: Variant, ivs?: integer[], nature?: Nature, dataSource?: Pokemon | PokemonData, postProcess?: (playerPokemon: PlayerPokemon) => void): PlayerPokemon {
-    const pokemon = new PlayerPokemon(this, species, level, abilityIndex, formIndex, gender, shiny, variant, ivs, nature, dataSource);
+  addPlayerPokemon(species: PokemonSpecies, level: integer, abilityIndex: integer, formIndex: integer, gender?: Gender, shiny?: boolean, variant?: Variant, ivs?: integer[], nature?: Nature,  dataSource?: Pokemon | PokemonData, postProcess?: (playerPokemon: PlayerPokemon) => void, heldItems?: PersistentModifierData[]): PlayerPokemon {
+    const pokemon = new PlayerPokemon(this, species, level, abilityIndex, formIndex, gender, shiny, variant, ivs, nature, dataSource, heldItems);
     if (postProcess) {
       postProcess(pokemon);
     }
@@ -2440,6 +2440,14 @@ export default class BattleScene extends SceneBase {
     if (player === undefined) {
       player = true;
     }
+
+    const tempParty = player ? this.getParty() : this.getEnemyParty();
+    if (tempParty.length) {
+      for (const p in tempParty) {
+        tempParty[p].heldItems.length = 0;
+      }
+    }
+    
     return new Promise(resolve => {
       const modifiers = player ? this.modifiers : this.enemyModifiers as PersistentModifier[];
       for (let m = 0; m < modifiers.length; m++) {
@@ -2447,13 +2455,16 @@ export default class BattleScene extends SceneBase {
         if (modifier instanceof PokemonHeldItemModifier && !this.getPokemonById((modifier as PokemonHeldItemModifier).pokemonId)) {
           modifiers.splice(m--, 1);
         }
+        if (modifier instanceof PokemonHeldItemModifier) {
+          const tempPoke = this.getPokemonById(modifier.pokemonId);
+          tempPoke.heldItems.push(modifier);
+        }
       }
       for (const modifier of modifiers) {
         if (modifier instanceof PersistentModifier) {
           (modifier as PersistentModifier).virtualStackCount = 0;
         }
       }
-
       const modifiersClone = modifiers.slice(0);
       for (const modifier of modifiersClone) {
         if (!modifier.getStackCount()) {

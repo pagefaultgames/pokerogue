@@ -25,6 +25,7 @@ export default class PokemonData {
   public variant: Variant;
   public pokeball: PokeballType;
   public level: integer;
+  public heldItems: PersistentModifierData[];
   public exp: integer;
   public levelExp: integer;
   public gender: Gender;
@@ -78,6 +79,7 @@ export default class PokemonData {
     }
     this.stats = source.stats;
     this.ivs = source.ivs;
+    this.heldItems = source.heldItems ?? [];
     this.nature = source.nature !== undefined ? source.nature : 0 as Nature;
     this.natureOverride = source.natureOverride !== undefined ? source.natureOverride : -1;
     this.friendship = source.friendship !== undefined ? source.friendship : getPokemonSpecies(this.species).baseFriendship;
@@ -147,7 +149,7 @@ export default class PokemonData {
         if (this.nickname) {
           playerPokemon.nickname = this.nickname;
         }
-      })
+      }, this.heldItems)
       : scene.addEnemyPokemon(species, this.level, battleType === BattleType.TRAINER ? !double || !(partyMemberIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER : TrainerSlot.NONE, this.boss, this);
     if (this.summonData) {
       ret.primeSummonData(this.summonData);

@@ -69,6 +69,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public shiny: boolean;
   public variant: Variant;
   public pokeball: PokeballType;
+  public heldItems: PersistentModifierData[];
   protected battleInfo: BattleInfo;
   public level: integer;
   public exp: integer;
@@ -110,7 +111,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   private shinySparkle: Phaser.GameObjects.Sprite;
 
-  constructor(scene: BattleScene, x: number, y: number, species: PokemonSpecies, level: integer, abilityIndex?: integer, formIndex?: integer, gender?: Gender, shiny?: boolean, variant?: Variant, ivs?: integer[], nature?: Nature, dataSource?: Pokemon | PokemonData) {
+  constructor(scene: BattleScene, x: number, y: number, species: PokemonSpecies, level: integer, abilityIndex?: integer, formIndex?: integer, gender?: Gender, shiny?: boolean, variant?: Variant, ivs?: integer[], nature?: Nature, dataSource?: Pokemon | PokemonData, heldItems?: PersistentModifierData[]) {
     super(scene, x, y);
 
     if (!species.isObtainable() && this.isPlayer()) {
@@ -128,6 +129,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.species = species;
     this.pokeball = dataSource?.pokeball || PokeballType.POKEBALL;
     this.level = level;
+    this.heldItems = heldItems ?? (dataSource ? dataSource.heldItems : []);
     // Determine the ability index
     if (abilityIndex !== undefined) {
       this.abilityIndex = abilityIndex; // Use the provided ability index if it is defined
@@ -4007,7 +4009,7 @@ export class EnemyPokemon extends Pokemon {
       this.pokeball = pokeballType;
       this.metLevel = this.level;
       this.metBiome = this.scene.arena.biomeType;
-      const newPokemon = this.scene.addPlayerPokemon(this.species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.variant, this.ivs, this.nature, this);
+      const newPokemon = this.scene.addPlayerPokemon(this.species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.variant, this.ivs, this.nature, this, null, this.heldItems);
       party.push(newPokemon);
       ret = newPokemon;
       this.scene.triggerPokemonFormChange(newPokemon, SpeciesFormChangeActiveTrigger, true);
