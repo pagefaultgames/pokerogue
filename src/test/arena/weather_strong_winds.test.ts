@@ -30,7 +30,7 @@ describe("Weather - Strong Winds", () => {
     game.override.battleType("single");
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(10);
     game.override.enemySpecies(Species.TAILLOW);
-    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.DELTA_STREAM);
+    game.override.enemyAbility(Abilities.DELTA_STREAM);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.THUNDERBOLT, Moves.ICE_BEAM, Moves.ROCK_SLIDE]);
   });
 

@@ -45,7 +45,7 @@ describe("Moves - Dragon Rage", () => {
 
     game.override.enemySpecies(Species.SNORLAX);
     vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
-    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
+    game.override.enemyAbility(Abilities.BALL_FETCH);
     vi.spyOn(Overrides, "OPP_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
     vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
 
@@ -111,7 +111,7 @@ describe("Moves - Dragon Rage", () => {
   });
 
   it("ignores damage modification from abilities such as ice scales", async () => {
-    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.ICE_SCALES);
+    game.override.enemyAbility(Abilities.ICE_SCALES);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_RAGE));
     await game.phaseInterceptor.to(TurnEndPhase);

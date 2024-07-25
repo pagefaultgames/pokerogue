@@ -160,7 +160,7 @@ describe("Abilities - Sheer Force", () => {
 
   it("Sheer Force Disabling Specific Abilities", async() => {
     const moveToUse = Moves.CRUSH_CLAW;
-    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.COLOR_CHANGE);
+    game.override.enemyAbility(Abilities.COLOR_CHANGE);
     vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "KINGS_ROCK", count: 1}]);
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.SHEER_FORCE);
     await game.startBattle([

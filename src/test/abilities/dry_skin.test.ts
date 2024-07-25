@@ -26,7 +26,7 @@ describe("Abilities - Dry Skin", () => {
     game = new GameManager(phaserGame);
     game.override.battleType("single");
     vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.DRY_SKIN);
+    game.override.enemyAbility(Abilities.DRY_SKIN);
     vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
     game.override.enemySpecies(Species.CHARMANDER);
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.UNNERVE);
@@ -94,7 +94,7 @@ describe("Abilities - Dry Skin", () => {
 
     expect(enemy.hp > 0);
     enemy.hp = initialHP;
-    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
+    game.override.enemyAbility(Abilities.NONE);
 
     // second turn
     game.doAttack(getMovePosition(game.scene, 0, Moves.FLAMETHROWER));

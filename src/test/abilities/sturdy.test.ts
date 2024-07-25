@@ -38,7 +38,7 @@ describe("Abilities - Sturdy", () => {
 
     game.override.enemySpecies(Species.ARON);
     vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(5);
-    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.STURDY);
+    game.override.enemyAbility(Abilities.STURDY);
   });
 
   test(

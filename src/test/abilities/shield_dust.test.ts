@@ -36,7 +36,7 @@ describe("Abilities - Shield Dust", () => {
     const movesToUse = [Moves.AIR_SLASH];
     game.override.battleType("single");
     game.override.enemySpecies(Species.ONIX);
-    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.SHIELD_DUST);
+    game.override.enemyAbility(Abilities.SHIELD_DUST);
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue(movesToUse);
     vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
