@@ -1,18 +1,17 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, test, vi} from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
+import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
+import { allMoves } from "#app/data/move";
+import { Abilities } from "#app/enums/abilities";
+import { ArenaTagType } from "#app/enums/arena-tag-type";
 import {
   MoveEffectPhase,
   TurnEndPhase
 } from "#app/phases";
-import {getMovePosition} from "#app/test/utils/gameManagerUtils";
+import GameManager from "#app/test/utils/gameManager";
+import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { ArenaTagType } from "#app/enums/arena-tag-type";
-import { allMoves } from "#app/data/move";
-import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
-import { Abilities } from "#app/enums/abilities";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 const TIMEOUT = 20 * 1000;
 
@@ -75,7 +74,7 @@ describe("Moves - Ceaseless Edge", () => {
   test(
     "move should hit twice with multi lens and apply two layers of spikes",
     async () => {
-      vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "MULTI_LENS"}]);
+      game.override.startingHeldItems([{name: "MULTI_LENS"}]);
       await game.startBattle([ Species.ILLUMISE ]);
 
       const leadPokemon = game.scene.getPlayerPokemon();
@@ -104,7 +103,7 @@ describe("Moves - Ceaseless Edge", () => {
   test(
     "trainer - move should hit twice, apply two layers of spikes, force switch opponent - opponent takes damage",
     async () => {
-      vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "MULTI_LENS"}]);
+      game.override.startingHeldItems([{name: "MULTI_LENS"}]);
       game.override.startingWave(5);
 
       await game.startBattle([ Species.ILLUMISE ]);

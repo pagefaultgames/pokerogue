@@ -1,20 +1,19 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
-import {Abilities} from "#enums/abilities";
-import {applyAbAttrs ,applyPreAttackAbAttrs,applyPostDefendAbAttrs, MoveEffectChanceMultiplierAbAttr, MovePowerBoostAbAttr, PostDefendTypeChangeAbAttr} from "#app/data/ability";
-import {Species} from "#enums/species";
+import { applyAbAttrs, applyPostDefendAbAttrs, applyPreAttackAbAttrs, MoveEffectChanceMultiplierAbAttr, MovePowerBoostAbAttr, PostDefendTypeChangeAbAttr } from "#app/data/ability";
+import { Stat } from "#app/data/pokemon-stat";
 import {
   CommandPhase,
   MoveEffectPhase,
 } from "#app/phases";
-import {Mode} from "#app/ui/ui";
-import {Stat} from "#app/data/pokemon-stat";
-import {Moves} from "#enums/moves";
-import {getMovePosition} from "#app/test/utils/gameManagerUtils";
-import {Command} from "#app/ui/command-ui-handler";
+import GameManager from "#app/test/utils/gameManager";
+import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { Command } from "#app/ui/command-ui-handler";
+import { Mode } from "#app/ui/ui";
 import * as Utils from "#app/utils";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 
 describe("Abilities - Sheer Force", () => {
@@ -161,7 +160,7 @@ describe("Abilities - Sheer Force", () => {
   it("Sheer Force Disabling Specific Abilities", async() => {
     const moveToUse = Moves.CRUSH_CLAW;
     game.override.enemyAbility(Abilities.COLOR_CHANGE);
-    vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "KINGS_ROCK", count: 1}]);
+    game.override.startingHeldItems([{name: "KINGS_ROCK", count: 1}]);
     game.override.ability(Abilities.SHEER_FORCE);
     await game.startBattle([
       Species.PIDGEOT

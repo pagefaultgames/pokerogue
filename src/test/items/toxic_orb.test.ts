@@ -1,21 +1,20 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
+import { StatusEffect } from "#app/data/status-effect";
 import {
   CommandPhase,
   EnemyCommandPhase,
   MessagePhase,
   TurnEndPhase,
 } from "#app/phases";
-import {Mode} from "#app/ui/ui";
-import {getMovePosition} from "#app/test/utils/gameManagerUtils";
-import {Command} from "#app/ui/command-ui-handler";
-import {StatusEffect} from "#app/data/status-effect";
+import i18next, { initI18n } from "#app/plugins/i18n";
+import GameManager from "#app/test/utils/gameManager";
+import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { Command } from "#app/ui/command-ui-handler";
+import { Mode } from "#app/ui/ui";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import i18next, { initI18n } from "#app/plugins/i18n";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 
 describe("Items - Toxic orb", () => {
@@ -43,7 +42,7 @@ describe("Items - Toxic orb", () => {
     game.override.startingLevel(2000);
     game.override.moveset([moveToUse]);
     game.override.enemyMoveset([oppMoveToUse, oppMoveToUse, oppMoveToUse, oppMoveToUse]);
-    vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{
+    game.override.startingHeldItems([{
       name: "TOXIC_ORB",
     }]);
   });

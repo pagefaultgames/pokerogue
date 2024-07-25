@@ -1,10 +1,9 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phase from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
 import { Abilities } from "#app/enums/abilities.js";
 import { PokemonExpBoosterModifier } from "#app/modifier/modifier.js";
+import GameManager from "#app/test/utils/gameManager";
 import * as Utils from "#app/utils";
+import Phase from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("EXP Modifier Items", () => {
   let phaserGame: Phaser.Game;
@@ -29,7 +28,7 @@ describe("EXP Modifier Items", () => {
   });
 
   it("EXP booster items stack additively", async() => {
-    vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "LUCKY_EGG"}, {name: "GOLDEN_EGG"}]);
+    game.override.startingHeldItems([{name: "LUCKY_EGG"}, {name: "GOLDEN_EGG"}]);
     await game.startBattle();
 
     const partyMember = game.scene.getPlayerPokemon();
