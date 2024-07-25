@@ -1,12 +1,11 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
+import { Species } from "#app/enums/species.js";
 import { TurnEndPhase } from "#app/phases";
-import { Moves } from "#enums/moves";
+import GameManager from "#app/test/utils/gameManager";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
-import { Species } from "#app/enums/species.js";
+import { Moves } from "#enums/moves";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Abilities - Dry Skin", () => {
@@ -26,7 +25,7 @@ describe("Abilities - Dry Skin", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleType("single");
-    vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
+    game.override.disableCrits();
     game.override.enemyAbility(Abilities.DRY_SKIN);
     game.override.enemyMoveset(SPLASH_ONLY);
     game.override.enemySpecies(Species.CHARMANDER);

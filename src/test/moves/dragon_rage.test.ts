@@ -36,7 +36,7 @@ describe("Moves - Dragon Rage", () => {
     game = new GameManager(phaserGame);
 
     game.override.battleType("single");
-    vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
+    game.override.disableCrits();
 
     game.override.starterSpecies(Species.SNORLAX);
     game.override.moveset([Moves.DRAGON_RAGE]);

@@ -1,13 +1,12 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
-import { Moves } from "#enums/moves";
 import { getMoveTargets } from "#app/data/move.js";
 import { Abilities } from "#app/enums/abilities.js";
 import { Species } from "#app/enums/species.js";
-import { getMovePosition } from "../utils/gameManagerUtils";
 import { TurnEndPhase } from "#app/phases.js";
+import GameManager from "#app/test/utils/gameManager";
+import { Moves } from "#enums/moves";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { getMovePosition } from "../utils/gameManagerUtils";
 import { SPLASH_ONLY } from "../utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
@@ -169,7 +168,7 @@ function beforeTrial(phaserGame: Phaser.Game, single: boolean = false) {
   game.override.moveset([Moves.EARTHQUAKE, Moves.HYPER_VOICE, Moves.SURF, Moves.SPLASH]);
   game.override.ability(Abilities.BALL_FETCH);
   game.override.enemyMoveset(SPLASH_ONLY);
-  vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
+  game.override.disableCrits();
   game.override.startingLevel(50);
   game.override.enemyLevel(40);
   game.override.enemySpecies(Species.EEVEE);

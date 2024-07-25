@@ -1,14 +1,13 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import overrides from "#app/overrides";
-import { Species } from "#enums/species";
-import { Moves } from "#enums/moves";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
-import { DamagePhase, MoveEffectPhase } from "#app/phases.js";
+import { allMoves } from "#app/data/move.js";
 import { Abilities } from "#app/enums/abilities.js";
 import { Stat } from "#app/enums/stat.js";
-import { allMoves } from "#app/data/move.js";
+import { DamagePhase, MoveEffectPhase } from "#app/phases.js";
+import GameManager from "#app/test/utils/gameManager";
+import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Abilities - Hustle", () => {
@@ -30,7 +29,7 @@ describe("Abilities - Hustle", () => {
     game.override.ability(Abilities.HUSTLE);
     game.override.moveset([Moves.TACKLE, Moves.GIGA_DRAIN, Moves.FISSURE]);
     game.override.startingLevel(5);
-    vi.spyOn(overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
+    game.override.disableCrits();
     game.override.enemyLevel(5);
     game.override.enemyMoveset(SPLASH_ONLY);
     game.override.enemySpecies(Species.SHUCKLE);
