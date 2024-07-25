@@ -107,6 +107,5 @@ export const koConfig = {
   tutorial: tutorial,
   voucher: voucher,
   weather: weather,
-  partyUiHandler: partyUiHandler,
   modifierSelectUiHandler: modifierSelectUiHandler
 };
