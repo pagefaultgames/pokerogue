@@ -1,6 +1,7 @@
 import { Weather, WeatherType } from "#app/data/weather";
 import { Abilities } from "#app/enums/abilities.js";
 import { Biome } from "#app/enums/biome";
+import { Moves } from "#app/enums/moves.js";
 import { Species } from "#app/enums/species.js";
 import * as GameMode from "#app/game-mode";
 import { GameModes, getGameMode } from "#app/game-mode";
@@ -112,7 +113,19 @@ export class OverridesHelper {
    */
   enemyAbility(ability: Abilities): this {
     vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(ability);
-    this.log(`Enemy Pokemon species set to ${Abilities[ability]} (=${ability})!`);
+    this.log(`Enemy Pokemon ability set to ${Abilities[ability]} (=${ability})!`);
+    return this;
+  }
+
+  /**
+   * Override the enemy (pokemon) {@linkcode Moves | moves}set
+   * @param moveset the {@linkcode Moves | moves}set to set
+   * @returns this
+   */
+  enemyMoveset(moveset: Moves[]): this {
+    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(moveset);
+    const movesetStr = moveset.map((moveId) => Moves[moveId]).join(", ");
+    this.log(`Enemy Pokemon moveset set to ${movesetStr} (=[${moveset.join(", ")}])!`);
     return this;
   }
 
