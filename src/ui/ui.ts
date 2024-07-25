@@ -47,6 +47,7 @@ import SettingsAudioUiHandler from "./settings/settings-audio-ui-handler";
 import { PlayerGender } from "#enums/player-gender";
 import BgmBar from "#app/ui/bgm-bar";
 import LogNameFormUiHandler from "./log-name-form-ui-handler";
+import LogSelectUiHandler from "./log-select-ui-handler";
 
 export enum Mode {
   MESSAGE,
@@ -187,7 +188,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new OutdatedModalUiHandler(scene),
       new GameChallengesUiHandler(scene),
       new LogNameFormUiHandler(scene),
-      new TargetSelectUiHandler(scene)
+      new LogSelectUiHandler(scene)
     ];
   }
 
