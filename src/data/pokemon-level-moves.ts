@@ -4074,10 +4074,16 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 55, Moves.DOUBLE_EDGE ],
   ],
   [Species.SMEARGLE]: [
-    [ 1, Moves.SKETCH ],
-    [ 1, Moves.SKETCH ],
-    [ 1, Moves.SKETCH ],
-    [ 1, Moves.SKETCH ],
+    [ 1, Moves.SKETCH ], //Gen 2-8 Learnset
+    [ 11, Moves.SKETCH ],
+    [ 21, Moves.SKETCH ],
+    [ 31, Moves.SKETCH ],
+    [ 41, Moves.SKETCH ],
+    [ 51, Moves.SKETCH ],
+    [ 61, Moves.SKETCH ],
+    [ 71, Moves.SKETCH ],
+    [ 81, Moves.SKETCH ],
+    [ 91, Moves.SKETCH ],
   ],
   [Species.TYROGUE]: [
     [ 1, Moves.TACKLE ],
