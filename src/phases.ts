@@ -65,11 +65,11 @@ import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
-import { MysteryEncounterVariant } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { doTrainerExclamation, handleMysteryEncounterBattleStartEffects, handleMysteryEncounterVictory } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import ModifierSelectUiHandler, { SHOP_OPTIONS_ROW_LIMIT } from "#app/ui/modifier-select-ui-handler";
 import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 
 const { t } = i18next;
 
@@ -866,7 +866,7 @@ export class EncounterPhase extends BattlePhase {
       }
 
       if (!this.loaded) {
-        this.scene.gameData.setPokemonSeen(enemyPokemon, true, battle.battleType === BattleType.TRAINER || battle?.mysteryEncounter?.encounterVariant === MysteryEncounterVariant.TRAINER_BATTLE);
+        this.scene.gameData.setPokemonSeen(enemyPokemon, true, battle.battleType === BattleType.TRAINER || battle?.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE);
       }
 
       if (enemyPokemon.species.speciesId === Species.ETERNATUS) {
@@ -1550,7 +1550,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
         onComplete: () => this.scene.trainer.setVisible(false)
       });
       this.scene.time.delayedCall(750, () => this.summon());
-    } else if (this.scene.currentBattle.battleType === BattleType.TRAINER || this.scene?.currentBattle?.mysteryEncounter?.encounterVariant === MysteryEncounterVariant.TRAINER_BATTLE) {
+    } else if (this.scene.currentBattle.battleType === BattleType.TRAINER || this.scene?.currentBattle?.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE) {
       const trainerName = this.scene.currentBattle.trainer.getName(!(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER);
       const pokemonName = this.getPokemon().name;
       const message = i18next.t("battle:trainerSendOut", { trainerName, pokemonName });

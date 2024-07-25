@@ -4,8 +4,8 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
 import BattleScene from "#app/battle-scene";
 import { StatusEffect } from "#app/data/status-effect";
-import IMysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier, } from "../mystery-encounter";
-import { EncounterOptionMode, MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
+import IMysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import { MoveRequirement } from "../mystery-encounter-requirements";
 import { EnemyPartyConfig, EnemyPokemonConfig, initBattleWithEnemyConfig, initCustomMovesForEncounter, leaveEncounterWithoutBattle, setEncounterExp, setEncounterRewards, } from "../utils/encounter-phase-utils";
 import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
@@ -14,6 +14,8 @@ import { BattlerIndex } from "#app/battle";
 import { PokemonMove } from "#app/field/pokemon";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { PartyHealPhase } from "#app/phases";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 
 /** i18n namespace for the encounter */
 const namespace = "mysteryEncounter:slumberingSnorlax";
@@ -24,9 +26,7 @@ const namespace = "mysteryEncounter:slumberingSnorlax";
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
 export const SlumberingSnorlaxEncounter: IMysteryEncounter =
-  MysteryEncounterBuilder.withEncounterType(
-    MysteryEncounterType.SLUMBERING_SNORLAX
-  )
+  MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.SLUMBERING_SNORLAX)
     .withEncounterTier(MysteryEncounterTier.GREAT)
     .withSceneWaveRangeRequirement(10, 180) // waves 10 to 180
     .withCatchAllowed(true)
@@ -123,7 +123,7 @@ export const SlumberingSnorlaxEncounter: IMysteryEncounter =
     )
     .withOption(
       new MysteryEncounterOptionBuilder()
-        .withOptionMode(EncounterOptionMode.DISABLED_OR_SPECIAL)
+        .withOptionMode(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
         .withPrimaryPokemonRequirement(new MoveRequirement(STEALING_MOVES))
         .withDialogue({
           buttonLabel: `${namespace}:option:3:label`,

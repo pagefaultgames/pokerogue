@@ -1,8 +1,8 @@
 import { EnemyPartyConfig, generateModifierTypeOption, initBattleWithEnemyConfig, initCustomMovesForEncounter, leaveEncounterWithoutBattle, setEncounterRewards, transitionMysteryEncounterIntroVisuals } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { modifierTypes, PokemonHeldItemModifierType, } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import BattleScene from "../../../battle-scene";
-import IMysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier, } from "../mystery-encounter";
+import BattleScene from "#app/battle-scene";
+import IMysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Species } from "#enums/species";
 import { Nature } from "#app/data/nature";
@@ -15,6 +15,7 @@ import { StatChangePhase } from "#app/phases";
 import { BattleStat } from "#app/data/battle-stat";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:theStrongStuff";

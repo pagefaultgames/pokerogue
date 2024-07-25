@@ -1,22 +1,15 @@
 import { MoveCategory } from "#app/data/move";
-import { EncounterOptionMode, MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
-import {
-  generateModifierTypeOption,
-  leaveEncounterWithoutBattle,
-  selectPokemonForOption,
-  setEncounterExp,
-  setEncounterRewards,
-} from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
+import { generateModifierTypeOption, leaveEncounterWithoutBattle, selectPokemonForOption, setEncounterExp, setEncounterRewards } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { TempBattleStat } from "#app/data/temp-battle-stat";
 import { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import BattleScene from "../../../battle-scene";
-import IMysteryEncounter, {
-  MysteryEncounterBuilder,
-  MysteryEncounterTier,
-} from "../mystery-encounter";
+import BattleScene from "#app/battle-scene";
+import IMysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 
 /** i18n namespace for the encounter */
 const namespace = "mysteryEncounter:fieldTrip";
@@ -62,7 +55,7 @@ export const FieldTripEncounter: IMysteryEncounter =
     .withQuery(`${namespace}:query`)
     .withOption(
       new MysteryEncounterOptionBuilder()
-        .withOptionMode(EncounterOptionMode.DEFAULT)
+        .withOptionMode(MysteryEncounterOptionMode.DEFAULT)
         .withDialogue({
           buttonLabel: `${namespace}:option:1:label`,
           buttonTooltip: `${namespace}:option:1:tooltip`,
@@ -88,7 +81,7 @@ export const FieldTripEncounter: IMysteryEncounter =
                     encounter.options[0].dialogue.selected = [
                       {
                         text: `${namespace}:option:incorrect`,
-                        speaker: `${namespace}:option:speaker`,
+                        speaker: `${namespace}:speaker`,
                       },
                       {
                         text: `${namespace}:option:lesson_learned`,
@@ -148,7 +141,7 @@ export const FieldTripEncounter: IMysteryEncounter =
     )
     .withOption(
       new MysteryEncounterOptionBuilder()
-        .withOptionMode(EncounterOptionMode.DEFAULT)
+        .withOptionMode(MysteryEncounterOptionMode.DEFAULT)
         .withDialogue({
           buttonLabel: `${namespace}:option:2:label`,
           buttonTooltip: `${namespace}:option:2:tooltip`,
@@ -174,7 +167,7 @@ export const FieldTripEncounter: IMysteryEncounter =
                     encounter.options[1].dialogue.selected = [
                       {
                         text: `${namespace}:option:incorrect`,
-                        speaker: `${namespace}:option:speaker`,
+                        speaker: `${namespace}:speaker`,
                       },
                       {
                         text: `${namespace}:option:lesson_learned`,
@@ -240,7 +233,7 @@ export const FieldTripEncounter: IMysteryEncounter =
     )
     .withOption(
       new MysteryEncounterOptionBuilder()
-        .withOptionMode(EncounterOptionMode.DEFAULT)
+        .withOptionMode(MysteryEncounterOptionMode.DEFAULT)
         .withDialogue({
           buttonLabel: `${namespace}:option:3:label`,
           buttonTooltip: `${namespace}:option:3:tooltip`,
@@ -266,7 +259,7 @@ export const FieldTripEncounter: IMysteryEncounter =
                     encounter.options[2].dialogue.selected = [
                       {
                         text: `${namespace}:option:incorrect`,
-                        speaker: `${namespace}:option:speaker`,
+                        speaker: `${namespace}:speaker`,
                       },
                       {
                         text: `${namespace}:option:lesson_learned`,

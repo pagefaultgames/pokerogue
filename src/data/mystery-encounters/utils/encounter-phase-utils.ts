@@ -18,17 +18,17 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { Biome } from "#enums/biome";
 import { TrainerType } from "#enums/trainer-type";
 import i18next from "i18next";
-import BattleScene from "../../../battle-scene";
-import Trainer, { TrainerVariant } from "../../../field/trainer";
-import * as Utils from "../../../utils";
-import PokemonSpecies from "../../pokemon-species";
-import { Status, StatusEffect } from "../../status-effect";
-import { TrainerConfig, trainerConfigs, TrainerSlot } from "../../trainer-config";
-import { MysteryEncounterVariant } from "../mystery-encounter";
+import BattleScene from "#app/battle-scene";
+import Trainer, { TrainerVariant } from "#app/field/trainer";
+import * as Utils from "#app/utils";
 import { Gender } from "#app/data/gender";
 import { Nature } from "#app/data/nature";
 import { Moves } from "#enums/moves";
 import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
+import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
+import { Status, StatusEffect } from "#app/data/status-effect";
+import { TrainerConfig, trainerConfigs, TrainerSlot } from "#app/data/trainer-config";
+import PokemonSpecies from "#app/data/pokemon-species";
 
 /**
  * Animates exclamation sprite over trainer's head at start of encounter
@@ -107,7 +107,7 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
   const trainerType = partyConfig?.trainerType;
   let trainerConfig = partyConfig?.trainerConfig;
   if (trainerType || trainerConfig) {
-    scene.currentBattle.mysteryEncounter.encounterVariant = MysteryEncounterVariant.TRAINER_BATTLE;
+    scene.currentBattle.mysteryEncounter.encounterMode = MysteryEncounterMode.TRAINER_BATTLE;
     if (scene.currentBattle.trainer) {
       scene.currentBattle.trainer.setVisible(false);
       scene.currentBattle.trainer.destroy();
@@ -128,7 +128,7 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
     battle.enemyLevels = scene.currentBattle.trainer.getPartyLevels(scene.currentBattle.waveIndex);
   } else {
     // Wild
-    scene.currentBattle.mysteryEncounter.encounterVariant = MysteryEncounterVariant.WILD_BATTLE;
+    scene.currentBattle.mysteryEncounter.encounterMode = MysteryEncounterMode.WILD_BATTLE;
     battle.enemyLevels = new Array(partyConfig?.pokemonConfigs?.length > 0 ? partyConfig?.pokemonConfigs?.length : doubleBattle ? 2 : 1).fill(null).map(() => scene.currentBattle.getLevelForWave());
   }
 
@@ -160,7 +160,7 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
           enemySpecies = config.species;
           isBoss = config.isBoss;
           if (isBoss) {
-            scene.currentBattle.mysteryEncounter.encounterVariant = MysteryEncounterVariant.BOSS_BATTLE;
+            scene.currentBattle.mysteryEncounter.encounterMode = MysteryEncounterMode.BOSS_BATTLE;
           }
         } else {
           enemySpecies = scene.randomSpecies(battle.waveIndex, level, true);
@@ -508,7 +508,7 @@ export function setEncounterExp(scene: BattleScene, participantId: integer | int
     let expValue = Math.floor(baseExpValue * (useWaveIndex ? scene.currentBattle.waveIndex : 1) / 5 + 1);
 
     if (participantIds?.length > 0) {
-      if (scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.TRAINER_BATTLE) {
+      if (scene.currentBattle.mysteryEncounter.encounterMode === MysteryEncounterMode.TRAINER_BATTLE) {
         expValue = Math.floor(expValue * 1.5);
       }
       for (const partyMember of nonFaintedPartyMembers) {
@@ -609,7 +609,7 @@ export function initSubsequentOptionSelect(scene: BattleScene, optionSelectSetti
  * @param addHealPhase - when true, will add a shop phase to end of encounter with 0 rewards but healing items are available
  */
 export function leaveEncounterWithoutBattle(scene: BattleScene, addHealPhase: boolean = false) {
-  scene.currentBattle.mysteryEncounter.encounterVariant = MysteryEncounterVariant.NO_BATTLE;
+  scene.currentBattle.mysteryEncounter.encounterMode = MysteryEncounterMode.NO_BATTLE;
   scene.clearPhaseQueue();
   scene.clearPhaseQueueSplice();
   handleMysteryEncounterVictory(scene, addHealPhase);
@@ -626,14 +626,14 @@ export function handleMysteryEncounterVictory(scene: BattleScene, addHealPhase: 
 
   // If in repeated encounter variant, do nothing
   // Variant must eventually be swapped in order to handle "true" end of the encounter
-  if (scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.CONTINUOUS_ENCOUNTER) {
+  if (scene.currentBattle.mysteryEncounter.encounterMode === MysteryEncounterMode.CONTINUOUS_ENCOUNTER) {
     return;
-  } else if (scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.NO_BATTLE) {
+  } else if (scene.currentBattle.mysteryEncounter.encounterMode === MysteryEncounterMode.NO_BATTLE) {
     scene.pushPhase(new EggLapsePhase(scene));
     scene.pushPhase(new MysteryEncounterRewardsPhase(scene, addHealPhase));
-  } else if (!scene.getEnemyParty().find(p => scene.currentBattle.mysteryEncounter.encounterVariant !== MysteryEncounterVariant.TRAINER_BATTLE ? p.isOnField() : !p?.isFainted(true))) {
+  } else if (!scene.getEnemyParty().find(p => scene.currentBattle.mysteryEncounter.encounterMode !== MysteryEncounterMode.TRAINER_BATTLE ? p.isOnField() : !p?.isFainted(true))) {
     scene.pushPhase(new BattleEndPhase(scene));
-    if (scene.currentBattle.mysteryEncounter.encounterVariant === MysteryEncounterVariant.TRAINER_BATTLE) {
+    if (scene.currentBattle.mysteryEncounter.encounterMode === MysteryEncounterMode.TRAINER_BATTLE) {
       scene.pushPhase(new TrainerVictoryPhase(scene));
     }
     if (scene.gameMode.isEndless || !scene.gameMode.isWaveFinal(scene.currentBattle.waveIndex)) {
@@ -693,7 +693,7 @@ export function transitionMysteryEncounterIntroVisuals(scene: BattleScene, hide:
  */
 export function handleMysteryEncounterBattleStartEffects(scene: BattleScene) {
   const encounter = scene.currentBattle?.mysteryEncounter;
-  if (scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER && encounter.encounterVariant !== MysteryEncounterVariant.NO_BATTLE && !encounter.startOfBattleEffectsComplete) {
+  if (scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER && encounter.encounterMode !== MysteryEncounterMode.NO_BATTLE && !encounter.startOfBattleEffectsComplete) {
     const effects = encounter.startOfBattleEffects;
     effects.forEach(effect => {
       let source;

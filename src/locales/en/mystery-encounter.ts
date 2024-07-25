@@ -12,6 +12,7 @@ import { slumberingSnorlaxDialogue } from "#app/locales/en/mystery-encounters/sl
 import { trainingSessionDialogue } from "#app/locales/en/mystery-encounters/training-session-dialogue";
 import { theStrongStuffDialogue } from "#app/locales/en/mystery-encounters/the-strong-stuff-dialogue";
 import { pokemonSalesmanDialogue } from "#app/locales/en/mystery-encounters/pokemon-salesman-dialogue";
+import { offerYouCantRefuseDialogue } from "#app/locales/en/mystery-encounters/offer-you-cant-refuse-dialogue";
 
 /**
  * Patterns that can be used:
@@ -48,5 +49,6 @@ export const mysteryEncounter = {
   lostAtSea: lostAtSeaDialogue,
   fieryFallout: fieryFalloutDialogue,
   theStrongStuff: theStrongStuffDialogue,
-  pokemonSalesman: pokemonSalesmanDialogue
+  pokemonSalesman: pokemonSalesmanDialogue,
+  offerYouCantRefuse: offerYouCantRefuseDialogue
 } as const;

@@ -5,12 +5,14 @@ import { modifierTypes } from "#app/modifier/modifier-type";
 import { randSeedInt } from "#app/utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
-import BattleScene from "../../../battle-scene";
-import IMysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier, } from "../mystery-encounter";
-import { EncounterOptionMode, MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
+import BattleScene from "#app/battle-scene";
+import IMysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import { MoneyRequirement } from "../mystery-encounter-requirements";
 import { getEncounterText, queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { applyDamageToPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounter:shadyVitaminDealer";
@@ -21,9 +23,7 @@ const namespace = "mysteryEncounter:shadyVitaminDealer";
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
 export const ShadyVitaminDealerEncounter: IMysteryEncounter =
-  MysteryEncounterBuilder.withEncounterType(
-    MysteryEncounterType.SHADY_VITAMIN_DEALER
-  )
+  MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.SHADY_VITAMIN_DEALER)
     .withEncounterTier(MysteryEncounterTier.COMMON)
     .withSceneWaveRangeRequirement(10, 180)
     .withPrimaryPokemonStatusEffectRequirement([StatusEffect.NONE]) // Pokemon must not have status
@@ -61,7 +61,7 @@ export const ShadyVitaminDealerEncounter: IMysteryEncounter =
     .withQuery(`${namespace}:query`)
     .withOption(
       new MysteryEncounterOptionBuilder()
-        .withOptionMode(EncounterOptionMode.DISABLED_OR_DEFAULT)
+        .withOptionMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
         .withSceneMoneyRequirement(0, 2) // Wave scaling money multiplier of 2
         .withDialogue({
           buttonLabel: `${namespace}:option:1:label`,
@@ -146,7 +146,7 @@ export const ShadyVitaminDealerEncounter: IMysteryEncounter =
     )
     .withOption(
       new MysteryEncounterOptionBuilder()
-        .withOptionMode(EncounterOptionMode.DISABLED_OR_DEFAULT)
+        .withOptionMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
         .withSceneMoneyRequirement(0, 5) // Wave scaling money multiplier of 5
         .withDialogue({
           buttonLabel: `${namespace}:option:2:label`,
@@ -230,6 +230,12 @@ export const ShadyVitaminDealerEncounter: IMysteryEncounter =
       {
         buttonLabel: `${namespace}:option:3:label`,
         buttonTooltip: `${namespace}:option:3:tooltip`,
+        selected: [
+          {
+            text: `${namespace}:option:3:selected`,
+            speaker: `${namespace}:speaker`
+          }
+        ]
       },
       async (scene: BattleScene) => {
         // Leave encounter with no rewards or exp

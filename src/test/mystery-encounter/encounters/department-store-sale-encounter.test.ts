@@ -5,15 +5,15 @@ import { Species } from "#app/enums/species";
 import GameManager from "#app/test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { EncounterOptionMode } from "#app/data/mystery-encounters/mystery-encounter-option";
-import { runSelectMysteryEncounterOption } from "#test/mystery-encounter/encounterTestUtils";
+import { runMysteryEncounterToEnd } from "#test/mystery-encounter/encounterTestUtils";
 import { SelectModifierPhase } from "#app/phases";
 import BattleScene from "#app/battle-scene";
-import { MysteryEncounterTier } from "#app/data/mystery-encounters/mystery-encounter";
 import { Mode } from "#app/ui/ui";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { DepartmentStoreSaleEncounter } from "#app/data/mystery-encounters/encounters/department-store-sale-encounter";
 import { CIVILIZATION_ENCOUNTER_BIOMES } from "#app/data/mystery-encounters/mystery-encounters";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 
 const namespace = "mysteryEncounter:departmentStoreSale";
 const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
@@ -98,7 +98,7 @@ describe("Department Store Sale - Mystery Encounter", () => {
   describe("Option 1 - TM Shop", () => {
     it("should have the correct properties", () => {
       const option = DepartmentStoreSaleEncounter.options[0];
-      expect(option.optionMode).toBe(EncounterOptionMode.DEFAULT);
+      expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option:1:label`,
@@ -108,7 +108,7 @@ describe("Department Store Sale - Mystery Encounter", () => {
 
     it("should have shop with only TMs", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.DEPARTMENT_STORE_SALE, defaultParty);
-      await runSelectMysteryEncounterOption(game, 1);
+      await runMysteryEncounterToEnd(game, 1);
       expect(scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);
       await game.phaseInterceptor.run(SelectModifierPhase);
 
@@ -124,7 +124,7 @@ describe("Department Store Sale - Mystery Encounter", () => {
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
 
       await game.runToMysteryEncounter(MysteryEncounterType.DEPARTMENT_STORE_SALE, defaultParty);
-      await runSelectMysteryEncounterOption(game, 1);
+      await runMysteryEncounterToEnd(game, 1);
 
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();
     });
@@ -133,7 +133,7 @@ describe("Department Store Sale - Mystery Encounter", () => {
   describe("Option 2 - Vitamin Shop", () => {
     it("should have the correct properties", () => {
       const option = DepartmentStoreSaleEncounter.options[1];
-      expect(option.optionMode).toBe(EncounterOptionMode.DEFAULT);
+      expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option:2:label`,
@@ -143,7 +143,7 @@ describe("Department Store Sale - Mystery Encounter", () => {
 
     it("should have shop with only Vitamins", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.DEPARTMENT_STORE_SALE, defaultParty);
-      await runSelectMysteryEncounterOption(game, 2);
+      await runMysteryEncounterToEnd(game, 2);
       expect(scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);
       await game.phaseInterceptor.run(SelectModifierPhase);
 
@@ -160,7 +160,7 @@ describe("Department Store Sale - Mystery Encounter", () => {
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
 
       await game.runToMysteryEncounter(MysteryEncounterType.DEPARTMENT_STORE_SALE, defaultParty);
-      await runSelectMysteryEncounterOption(game, 2);
+      await runMysteryEncounterToEnd(game, 2);
 
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();
     });
@@ -169,7 +169,7 @@ describe("Department Store Sale - Mystery Encounter", () => {
   describe("Option 3 - X Item Shop", () => {
     it("should have the correct properties", () => {
       const option = DepartmentStoreSaleEncounter.options[2];
-      expect(option.optionMode).toBe(EncounterOptionMode.DEFAULT);
+      expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option:3:label`,
@@ -179,7 +179,7 @@ describe("Department Store Sale - Mystery Encounter", () => {
 
     it("should have shop with only X Items", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.DEPARTMENT_STORE_SALE, defaultParty);
-      await runSelectMysteryEncounterOption(game, 3);
+      await runMysteryEncounterToEnd(game, 3);
       expect(scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);
       await game.phaseInterceptor.run(SelectModifierPhase);
 
@@ -196,7 +196,7 @@ describe("Department Store Sale - Mystery Encounter", () => {
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
 
       await game.runToMysteryEncounter(MysteryEncounterType.DEPARTMENT_STORE_SALE, defaultParty);
-      await runSelectMysteryEncounterOption(game, 3);
+      await runMysteryEncounterToEnd(game, 3);
 
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();
     });
@@ -205,7 +205,7 @@ describe("Department Store Sale - Mystery Encounter", () => {
   describe("Option 4 - Pokeball Shop", () => {
     it("should have the correct properties", () => {
       const option = DepartmentStoreSaleEncounter.options[3];
-      expect(option.optionMode).toBe(EncounterOptionMode.DEFAULT);
+      expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option:4:label`,
@@ -215,7 +215,7 @@ describe("Department Store Sale - Mystery Encounter", () => {
 
     it("should have shop with only Pokeballs", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.DEPARTMENT_STORE_SALE, defaultParty);
-      await runSelectMysteryEncounterOption(game, 4);
+      await runMysteryEncounterToEnd(game, 4);
       expect(scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);
       await game.phaseInterceptor.run(SelectModifierPhase);
 
@@ -231,7 +231,7 @@ describe("Department Store Sale - Mystery Encounter", () => {
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
 
       await game.runToMysteryEncounter(MysteryEncounterType.DEPARTMENT_STORE_SALE, defaultParty);
-      await runSelectMysteryEncounterOption(game, 4);
+      await runMysteryEncounterToEnd(game, 4);
 
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();
     });

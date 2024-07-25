@@ -96,6 +96,27 @@ export function getLowestLevelPlayerPokemon(scene: BattleScene, unfainted: boole
 }
 
 /**
+ * Ties are broken by whatever mon is closer to the front of the party
+ * @param scene
+ * @param unfainted - default false. If true, only picks from unfainted mons.
+ * @returns
+ */
+export function getHighestStatTotalPlayerPokemon(scene: BattleScene, unfainted: boolean = false): PlayerPokemon {
+  const party = scene.getParty();
+  let pokemon: PlayerPokemon;
+  party.every(p => {
+    if (unfainted && p.isFainted()) {
+      return true;
+    }
+
+    pokemon = pokemon ? pokemon?.stats.reduce((a, b) => a + b) < p?.stats.reduce((a, b) => a + b) ? p : pokemon : p;
+    return true;
+  });
+
+  return pokemon;
+}
+
+/**
  *
  * NOTE: This returns ANY random species, including those locked behind eggs, etc.
  * @param starterTiers

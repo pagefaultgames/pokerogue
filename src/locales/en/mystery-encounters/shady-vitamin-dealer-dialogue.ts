@@ -24,8 +24,7 @@ export const shadyVitaminDealerDialogue = {
     3: {
       label: "Leave",
       tooltip: "(-) No Rewards",
-      selected: `You float about in the boat, steering without direction until you finally spot a landmark you remember.
-        $You and your Pokémon are fatigued from the whole ordeal.`,
+      selected: "Heh, wouldn't have figured you for a coward.",
     },
     selected: `The man hands you two bottles and quickly disappears.
     \${{selectedPokemon}} gained {{boost1}} and {{boost2}} boosts!`

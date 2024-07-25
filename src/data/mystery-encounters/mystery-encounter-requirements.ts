@@ -1,6 +1,6 @@
 import { PlayerPokemon } from "#app/field/pokemon";
 import { ModifierType, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
-import BattleScene from "../../battle-scene";
+import BattleScene from "#app/battle-scene";
 import { isNullOrUndefined } from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
@@ -21,12 +21,35 @@ export interface EncounterRequirement {
 }
 
 export abstract class EncounterSceneRequirement implements EncounterRequirement {
+  abstract meetsRequirement(scene: BattleScene): boolean;
+  abstract getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string];
+}
+
+export class CombinationSceneRequirement extends EncounterSceneRequirement {
+  orRequirements: EncounterSceneRequirement[];
+
+  constructor(... orRequirements: EncounterSceneRequirement[]) {
+    super();
+    this.orRequirements = orRequirements;
+  }
+
   meetsRequirement(scene: BattleScene): boolean {
-    throw new Error("Method not implemented.");
+    for (const req of this.orRequirements) {
+      if (req.meetsRequirement(scene)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
-    return ["", ""];
+    for (const req of this.orRequirements) {
+      if (req.meetsRequirement(scene)) {
+        return req.getDialogueToken(scene, pokemon);
+      }
+    }
+
+    return null;
   }
 }
 
@@ -40,12 +63,49 @@ export abstract class EncounterPokemonRequirement implements EncounterRequiremen
    * Returns all party members that are compatible with this requirement. For non pokemon related requirements, the entire party is returned.
    * @param partyPokemon
    */
+  abstract queryParty(partyPokemon: PlayerPokemon[]): PlayerPokemon[];
+
+  abstract getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string];
+}
+
+export class CombinationPokemonRequirement extends EncounterPokemonRequirement {
+  orRequirements: EncounterPokemonRequirement[];
+
+  constructor(...orRequirements: EncounterPokemonRequirement[]) {
+    super();
+    this.invertQuery = false;
+    this.minNumberOfPokemon = 1;
+    this.orRequirements = orRequirements;
+  }
+
+  meetsRequirement(scene: BattleScene): boolean {
+    for (const req of this.orRequirements) {
+      if (req.meetsRequirement(scene)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   queryParty(partyPokemon: PlayerPokemon[]): PlayerPokemon[] {
+    for (const req of this.orRequirements) {
+      const result = req.queryParty(partyPokemon);
+      if (result?.length > 0) {
+        return result;
+      }
+    }
+
     return [];
   }
 
   getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
-    return ["", ""];
+    for (const req of this.orRequirements) {
+      if (req.meetsRequirement(scene)) {
+        return req.getDialogueToken(scene, pokemon);
+      }
+    }
+
+    return null;
   }
 }
 
@@ -56,7 +116,7 @@ export class PreviousEncounterRequirement extends EncounterSceneRequirement {
    * Used for specifying an encounter that must be seen before this encounter can spawn
    * @param previousEncounterRequirement
    */
-  constructor(previousEncounterRequirement) {
+  constructor(previousEncounterRequirement: MysteryEncounterType) {
     super();
     this.previousEncounterRequirement = previousEncounterRequirement;
   }
@@ -497,19 +557,16 @@ export class AbilityRequirement extends EncounterPokemonRequirement {
 
   queryParty(partyPokemon: PlayerPokemon[]): PlayerPokemon[] {
     if (!this.invertQuery) {
-      return partyPokemon.filter((pokemon) => this.requiredAbilities.filter((abilities) => pokemon.hasAbility(abilities)).length > 0);
+      return partyPokemon.filter((pokemon) => this.requiredAbilities.some((ability) => pokemon.getAbility().id === ability));
     } else {
       // for an inverted query, we only want to get the pokemon that don't have ANY of the listed abilitiess
-      return partyPokemon.filter((pokemon) => this.requiredAbilities.filter((abilities) => pokemon.hasAbility(abilities)).length === 0);
+      return partyPokemon.filter((pokemon) => this.requiredAbilities.filter((ability) => pokemon.getAbility().id === ability).length === 0);
     }
   }
 
   getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
-    const reqAbilities = this.requiredAbilities.filter((a) => {
-      pokemon.hasAbility(a);
-    });
-    if (reqAbilities.length > 0) {
-      return ["ability", Abilities[reqAbilities[0]]];
+    if (this.requiredAbilities.some(a => pokemon.getAbility().id === a)) {
+      return ["ability", pokemon.getAbility().name];
     }
     return null;
   }

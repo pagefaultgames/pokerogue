@@ -1,4 +1,5 @@
 import { Moves } from "#enums/moves";
+import { Abilities } from "#enums/abilities";
 
 export const STEALING_MOVES = [
   Moves.PLUCK,
@@ -38,4 +39,35 @@ export const PROTECTING_MOVES = [
   Moves.SPIKY_SHIELD,
   Moves.OBSTRUCT,
   Moves.DETECT
+];
+
+export const EXTORTION_MOVES = [
+  Moves.BIND,
+  Moves.CLAMP,
+  Moves.INFESTATION,
+  Moves.SAND_TOMB,
+  Moves.SNAP_TRAP,
+  Moves.THUNDER_CAGE,
+  Moves.WRAP,
+  Moves.SPIRIT_SHACKLE,
+  Moves.MEAN_LOOK,
+  Moves.JAW_LOCK,
+  Moves.BLOCK,
+  Moves.SPIDER_WEB,
+  Moves.ANCHOR_SHOT,
+  Moves.OCTOLOCK,
+  Moves.PURSUIT,
+  Moves.CONSTRICT,
+  Moves.BEAT_UP,
+  Moves.COIL,
+  Moves.WRING_OUT,
+  Moves.STRING_SHOT,
+];
+
+export const EXTORTION_ABILITIES = [
+  Abilities.INTIMIDATE,
+  Abilities.ARENA_TRAP,
+  Abilities.SHADOW_TAG,
+  Abilities.SUCTION_CUPS,
+  Abilities.STICKY_HOLD
 ];

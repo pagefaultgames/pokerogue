@@ -13,12 +13,10 @@ import { ModifierTier } from "#app/modifier/modifier-tier";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
-import BattleScene from "../../../battle-scene";
-import * as Utils from "../../../utils";
-import IMysteryEncounter, {
-  MysteryEncounterBuilder,
-  MysteryEncounterTier,
-} from "../mystery-encounter";
+import BattleScene from "#app/battle-scene";
+import * as Utils from "#app/utils";
+import IMysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:mysteriousChallengers";
@@ -29,9 +27,7 @@ const namespace = "mysteryEncounter:mysteriousChallengers";
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
 export const MysteriousChallengersEncounter: IMysteryEncounter =
-  MysteryEncounterBuilder.withEncounterType(
-    MysteryEncounterType.MYSTERIOUS_CHALLENGERS
-  )
+  MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.MYSTERIOUS_CHALLENGERS)
     .withEncounterTier(MysteryEncounterTier.GREAT)
     .withSceneWaveRangeRequirement(10, 180) // waves 10 to 180
     .withIntroSpriteConfigs([]) // These are set in onInit()

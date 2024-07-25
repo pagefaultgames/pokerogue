@@ -6,14 +6,15 @@ import { Button } from "#enums/buttons";
 import { addWindow, WindowVariant } from "./ui-theme";
 import { MysteryEncounterPhase } from "../phases/mystery-encounter-phases";
 import { PartyUiMode } from "./party-ui-handler";
-import MysteryEncounterOption, { EncounterOptionMode } from "../data/mystery-encounters/mystery-encounter-option";
+import MysteryEncounterOption from "../data/mystery-encounters/mystery-encounter-option";
 import * as Utils from "../utils";
 import { isNullOrUndefined } from "../utils";
 import { getPokeballAtlasKey } from "../data/pokeball";
 import { OptionSelectSettings } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import { MysteryEncounterTier } from "#app/data/mystery-encounters/mystery-encounter";
 import i18next from "i18next";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 
 export default class MysteryEncounterUiHandler extends UiHandler {
   private cursorContainer: Phaser.GameObjects.Container;
@@ -146,7 +147,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
               this.unblockInput();
             }, 300);
           });
-        } else if (this.blockInput || (!this.optionsMeetsReqs[cursor] && (selected.optionMode === EncounterOptionMode.DISABLED_OR_DEFAULT || selected.optionMode === EncounterOptionMode.DISABLED_OR_SPECIAL))) {
+        } else if (this.blockInput || (!this.optionsMeetsReqs[cursor] && (selected.optionMode === MysteryEncounterOptionMode.DISABLED_OR_DEFAULT || selected.optionMode === MysteryEncounterOptionMode.DISABLED_OR_SPECIAL))) {
           success = false;
         } else {
           if ((this.scene.getCurrentPhase() as MysteryEncounterPhase).handleOptionSelect(selected, cursor)) {
@@ -290,7 +291,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
       this.blockInput = false;
       for (let i = 0; i < this.optionsContainer.length - 1; i++) {
         const optionMode = this.encounterOptions[i].optionMode;
-        if (!this.optionsMeetsReqs[i] && (optionMode === EncounterOptionMode.DISABLED_OR_DEFAULT || optionMode === EncounterOptionMode.DISABLED_OR_SPECIAL)) {
+        if (!this.optionsMeetsReqs[i] && (optionMode === MysteryEncounterOptionMode.DISABLED_OR_DEFAULT || optionMode === MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)) {
           continue;
         }
         (this.optionsContainer.getAt(i) as Phaser.GameObjects.Text).setAlpha(1);
@@ -363,7 +364,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
       const optionDialogue = option.dialogue;
       const label = !this.optionsMeetsReqs[i] && optionDialogue.disabledButtonLabel ? optionDialogue.disabledButtonLabel : optionDialogue.buttonLabel;
       let text: string;
-      if (option.hasRequirements() && this.optionsMeetsReqs[i] && (option.optionMode === EncounterOptionMode.DEFAULT_OR_SPECIAL || option.optionMode === EncounterOptionMode.DISABLED_OR_SPECIAL)) {
+      if (option.hasRequirements() && this.optionsMeetsReqs[i] && (option.optionMode === MysteryEncounterOptionMode.DEFAULT_OR_SPECIAL || option.optionMode === MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)) {
         // Options with special requirements that are met are automatically colored green
         text = getEncounterText(this.scene, label, TextStyle.SUMMARY_GREEN);
       } else {
@@ -374,7 +375,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
         optionText.setText(text);
       }
 
-      if (!this.optionsMeetsReqs[i] && (option.optionMode === EncounterOptionMode.DISABLED_OR_DEFAULT || option.optionMode === EncounterOptionMode.DISABLED_OR_SPECIAL)) {
+      if (!this.optionsMeetsReqs[i] && (option.optionMode === MysteryEncounterOptionMode.DISABLED_OR_DEFAULT || option.optionMode === MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)) {
         optionText.setAlpha(0.5);
       }
       if (this.blockInput) {
@@ -468,7 +469,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     let text: string;
     const cursorOption = this.encounterOptions[cursor];
     const optionDialogue = cursorOption.dialogue;
-    if (!this.optionsMeetsReqs[cursor] && (cursorOption.optionMode === EncounterOptionMode.DISABLED_OR_DEFAULT || cursorOption.optionMode === EncounterOptionMode.DISABLED_OR_SPECIAL) && optionDialogue.disabledButtonTooltip) {
+    if (!this.optionsMeetsReqs[cursor] && (cursorOption.optionMode === MysteryEncounterOptionMode.DISABLED_OR_DEFAULT || cursorOption.optionMode === MysteryEncounterOptionMode.DISABLED_OR_SPECIAL) && optionDialogue.disabledButtonTooltip) {
       text = getEncounterText(this.scene, optionDialogue.disabledButtonTooltip, TextStyle.TOOLTIP_CONTENT);
     } else {
       text = getEncounterText(this.scene, optionDialogue.buttonTooltip, TextStyle.TOOLTIP_CONTENT);
