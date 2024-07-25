@@ -40,7 +40,7 @@ describe("Moves - Fissure", () => {
 
     game.override.enemySpecies(Species.SNORLAX);
     game.override.enemyMoveset(SPLASH_ONLY);
-    vi.spyOn(Overrides, "OPP_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
+    game.override.enemyPassiveAbility(Abilities.BALL_FETCH);
     game.override.enemyLevel(100);
 
     await game.startBattle();
