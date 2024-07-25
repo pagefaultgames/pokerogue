@@ -7,7 +7,7 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
  */
 export const starterSelectUiHandler: SimpleTranslationEntries = {
   "confirmStartTeam": "使用這些寶可夢開始嗎?",
-  "invalidParty": "This is not a valid starting party!",
+  "invalidParty": "此為無效隊伍!",
   "gen1": "I",
   "gen2": "II",
   "gen3": "III",
@@ -24,7 +24,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "eggMoves": "孵化招式",
   "start": "開始",
   "addToParty": "加入隊伍",
-  "removeFromParty": "Remove from Party",
+  "removeFromParty": "移出隊伍",
   "toggleIVs": "查看個體值",
   "manageMoves": "管理技能",
   "manageNature": "管理性格",
