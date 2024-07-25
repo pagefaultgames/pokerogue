@@ -33,7 +33,7 @@ describe("Abilities - Hustle", () => {
     vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(5);
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
     game.override.enemySpecies(Species.SHUCKLE);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
+    game.override.enemyAbility(Abilities.BALL_FETCH);
   });
 
   it("increases the user's Attack stat by 50%", async () => {

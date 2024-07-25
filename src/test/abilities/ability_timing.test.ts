@@ -29,7 +29,7 @@ describe("Ability Timing", () => {
     game.override.battleType("single");
 
     game.override.enemySpecies(Species.PIDGEY);
-    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INTIMIDATE);
+    game.override.enemyAbility(Abilities.INTIMIDATE);
     vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(Array(4).fill(Moves.SPLASH));
 
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);

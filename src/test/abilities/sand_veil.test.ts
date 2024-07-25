@@ -31,7 +31,7 @@ describe("Abilities - Sand Veil", () => {
     game = new GameManager(phaserGame);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH]);
     game.override.enemySpecies(Species.MEOWSCARADA);
-    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INSOMNIA);
+    game.override.enemyAbility(Abilities.INSOMNIA);
     vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TWISTER, Moves.TWISTER, Moves.TWISTER, Moves.TWISTER]);
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
     vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);

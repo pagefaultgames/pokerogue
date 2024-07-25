@@ -27,7 +27,7 @@ describe("Evolution", () => {
     game.override.battleType("single");
 
     game.override.enemySpecies(Species.MAGIKARP);
-    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
+    game.override.enemyAbility(Abilities.BALL_FETCH);
 
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(60);
   });

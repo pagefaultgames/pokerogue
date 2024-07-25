@@ -36,7 +36,7 @@ describe("Moves - Growth", () => {
     const moveToUse = Moves.GROWTH;
     game.override.battleType("single");
     game.override.enemySpecies(Species.RATTATA);
-    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.MOXIE);
+    game.override.enemyAbility(Abilities.MOXIE);
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INSOMNIA);
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);

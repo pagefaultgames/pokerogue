@@ -62,7 +62,7 @@ describe("Moves - Thousand Arrows", () => {
     "move should hit and ground targets with Levitate",
     async () => {
       game.override.enemySpecies(Species.SNORLAX);
-      vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.LEVITATE);
+      game.override.enemyAbility(Abilities.LEVITATE);
 
       await game.startBattle([ Species.ILLUMISE ]);
 

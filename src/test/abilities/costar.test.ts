@@ -37,7 +37,7 @@ describe("Abilities - COSTAR", () => {
   test(
     "ability copies positive stat changes",
     async () => {
-      vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
+      game.override.enemyAbility(Abilities.BALL_FETCH);
 
       await game.startBattle([Species.MAGIKARP, Species.MAGIKARP, Species.FLAMIGO]);
 
@@ -68,7 +68,7 @@ describe("Abilities - COSTAR", () => {
   test(
     "ability copies negative stat changes",
     async () => {
-      vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INTIMIDATE);
+      game.override.enemyAbility(Abilities.INTIMIDATE);
 
       await game.startBattle([Species.MAGIKARP, Species.MAGIKARP, Species.FLAMIGO]);
 

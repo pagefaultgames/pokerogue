@@ -35,7 +35,7 @@ describe("Abilities - Ice Face", () => {
     game = new GameManager(phaserGame);
     game.override.battleType("single");
     game.override.enemySpecies(Species.EISCUE);
-    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.ICE_FACE);
+    game.override.enemyAbility(Abilities.ICE_FACE);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.ICE_BEAM, Moves.TOXIC_THREAD, Moves.HAIL]);
   });
 
