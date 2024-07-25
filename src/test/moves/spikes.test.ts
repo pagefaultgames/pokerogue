@@ -33,7 +33,7 @@ describe("Moves - Spikes", () => {
     vi.spyOn(Overrides, "OPP_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
     vi.spyOn(Overrides, "PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
-    vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(3);
+    game.override.startingWave(3);
     vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH,Moves.SPLASH,Moves.SPLASH,Moves.SPLASH]);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPIKES,Moves.SPLASH, Moves.ROAR]);
   });
@@ -86,7 +86,7 @@ describe("Moves - Spikes", () => {
   }, 20000);
 
   it("trainer - wild - force switch opponent - should take damage", async() => {
-    vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(5);
+    game.override.startingWave(5);
     // player set spikes on the field and do splash for 3 turns
     // opponent do splash for 4 turns
     // nobody should take damage
@@ -104,7 +104,7 @@ describe("Moves - Spikes", () => {
   }, 20000);
 
   it("trainer - wild - force switch by himself opponent - should take damage", async() => {
-    vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(5);
+    game.override.startingWave(5);
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(5000);
     vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(0);
     // turn 1: player set spikes, opponent do splash

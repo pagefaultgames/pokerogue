@@ -32,7 +32,7 @@ describe("Moves - Dynamax Cannon", () => {
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(200);
 
     // Note that, for Waves 1-10, the level cap is 10
-    vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(1);
+    game.override.startingWave(1);
     vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
     vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
 

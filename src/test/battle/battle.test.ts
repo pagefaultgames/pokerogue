@@ -93,7 +93,7 @@ describe("Test Battle Phase", () => {
     vi.spyOn(Overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MEWTWO);
     vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
-    vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(3);
+    game.override.startingWave(3);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
     vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
     vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
@@ -113,7 +113,7 @@ describe("Test Battle Phase", () => {
     vi.spyOn(Overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MEWTWO);
     vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(5);
-    vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(3);
+    game.override.startingWave(3);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
     vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
     vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TAIL_WHIP, Moves.TAIL_WHIP, Moves.TAIL_WHIP, Moves.TAIL_WHIP]);
@@ -233,7 +233,7 @@ describe("Test Battle Phase", () => {
     vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MIGHTYENA);
     vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
-    vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(3);
+    game.override.startingWave(3);
     await game.startBattle([
       Species.BLASTOISE,
       Species.CHARIZARD,
@@ -247,7 +247,7 @@ describe("Test Battle Phase", () => {
     vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MIGHTYENA);
     vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
-    vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(3);
+    game.override.startingWave(3);
     await game.startBattle([
       Species.BLASTOISE,
       Species.CHARIZARD,
@@ -266,7 +266,7 @@ describe("Test Battle Phase", () => {
     vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.ZEN_MODE);
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
-    vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(3);
+    game.override.startingWave(3);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
     vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
     await game.startBattle([
@@ -295,7 +295,7 @@ describe("Test Battle Phase", () => {
     vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.ZEN_MODE);
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
-    vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(3);
+    game.override.startingWave(3);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
     vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
     await game.startBattle();
@@ -313,7 +313,7 @@ describe("Test Battle Phase", () => {
     vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.ZEN_MODE);
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
-    vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(3);
+    game.override.startingWave(3);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
     vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
     await game.startBattle();

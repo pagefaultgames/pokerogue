@@ -202,7 +202,7 @@ describe("Abilities - Ice Face", () => {
   });
 
   it("reverts to Ice Face on arena reset", async () => {
-    vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(4);
+    game.override.startingWave(4);
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(4);
     vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
     vi.spyOn(Overrides, "STARTER_FORM_OVERRIDES", "get").mockReturnValue({

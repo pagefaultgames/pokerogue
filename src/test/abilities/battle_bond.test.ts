@@ -39,7 +39,7 @@ describe("Abilities - BATTLE BOND", () => {
     async () => {
       const baseForm = 1,
         ashForm = 2;
-      vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(4);
+      game.override.startingWave(4);
       vi.spyOn(Overrides, "STARTER_FORM_OVERRIDES", "get").mockReturnValue({
         [Species.GRENINJA]: ashForm,
       });

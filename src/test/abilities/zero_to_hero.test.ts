@@ -39,7 +39,7 @@ describe("Abilities - ZERO TO HERO", () => {
     async () => {
       const baseForm = 0,
         heroForm = 1;
-      vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(4);
+      game.override.startingWave(4);
       vi.spyOn(Overrides, "STARTER_FORM_OVERRIDES", "get").mockReturnValue({
         [Species.PALAFIN]: heroForm,
       });
