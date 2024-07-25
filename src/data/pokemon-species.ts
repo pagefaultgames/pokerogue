@@ -147,7 +147,7 @@ export abstract class PokemonSpeciesForm {
     this.height = height;
     this.weight = weight;
     this.ability1 = ability1;
-    this.ability2 = ability2;
+    this.ability2 = ability2 === Abilities.NONE ? ability1 : ability2;
     this.abilityHidden = abilityHidden;
     this.baseTotal = baseTotal;
     this.baseStats = [ baseHp, baseAtk, baseDef, baseSpatk, baseSpdef, baseSpd ];
@@ -625,19 +625,23 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
   getName(formIndex?: integer): string {
     if (formIndex !== undefined && this.forms.length) {
       const form = this.forms[formIndex];
+      let key: string;
       switch (form.formKey) {
       case SpeciesFormKey.MEGA:
       case SpeciesFormKey.PRIMAL:
       case SpeciesFormKey.ETERNAMAX:
-        return `${form.formName} ${this.name}`;
       case SpeciesFormKey.MEGA_X:
-        return `Mega ${this.name} X`;
       case SpeciesFormKey.MEGA_Y:
-        return `Mega ${this.name} Y`;
+        key = form.formKey;
+        break;
       default:
         if (form.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1) {
-          return `G-Max ${this.name}`;
+          key = "gigantamax";
         }
+      }
+
+      if (key) {
+        return i18next.t(`pokemonForm:${key}`, {pokemonName: this.name});
       }
     }
     return this.name;
