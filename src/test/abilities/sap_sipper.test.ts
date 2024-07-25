@@ -120,7 +120,7 @@ describe("Abilities - Sap Sipper", () => {
     const ability = Abilities.SAP_SIPPER;
 
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(ability);
+    game.override.ability(ability);
     game.override.enemyMoveset([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
     game.override.enemySpecies(Species.RATTATA);
     game.override.enemyAbility(Abilities.NONE);

@@ -43,7 +43,7 @@ describe("Abilities - Sheer Force", () => {
 
   it("Sheer Force", async() => {
     const moveToUse = Moves.AIR_SLASH;
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.SHEER_FORCE);
+    game.override.ability(Abilities.SHEER_FORCE);
     await game.startBattle([
       Species.PIDGEOT
     ]);
@@ -82,7 +82,7 @@ describe("Abilities - Sheer Force", () => {
 
   it("Sheer Force with exceptions including binding moves", async() => {
     const moveToUse = Moves.BIND;
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.SHEER_FORCE);
+    game.override.ability(Abilities.SHEER_FORCE);
     await game.startBattle([
       Species.PIDGEOT
     ]);
@@ -121,7 +121,7 @@ describe("Abilities - Sheer Force", () => {
 
   it("Sheer Force with moves with no secondary effect", async() => {
     const moveToUse = Moves.TACKLE;
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.SHEER_FORCE);
+    game.override.ability(Abilities.SHEER_FORCE);
     await game.startBattle([
       Species.PIDGEOT
     ]);
@@ -162,7 +162,7 @@ describe("Abilities - Sheer Force", () => {
     const moveToUse = Moves.CRUSH_CLAW;
     game.override.enemyAbility(Abilities.COLOR_CHANGE);
     vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "KINGS_ROCK", count: 1}]);
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.SHEER_FORCE);
+    game.override.ability(Abilities.SHEER_FORCE);
     await game.startBattle([
       Species.PIDGEOT
     ]);

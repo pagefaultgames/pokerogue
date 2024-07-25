@@ -30,7 +30,7 @@ describe("Abilities - Dry Skin", () => {
     game.override.enemyAbility(Abilities.DRY_SKIN);
     game.override.enemyMoveset(SPLASH_ONLY);
     game.override.enemySpecies(Species.CHARMANDER);
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.UNNERVE);
+    game.override.ability(Abilities.UNNERVE);
     game.override.starterSpecies(Species.CHANDELURE);
   });
 

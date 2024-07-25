@@ -259,7 +259,7 @@ describe("Abilities - Ice Face", () => {
   });
 
   it("cannot be copied", async () => {
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.TRACE);
+    game.override.ability(Abilities.TRACE);
 
     await game.startBattle([Species.MAGIKARP]);
 

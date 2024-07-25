@@ -48,7 +48,7 @@ describe("Abilities - Wind Power", () => {
   });
 
   it("it becomes charged when Tailwind takes effect on its side", async () => {
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.WIND_POWER);
+    game.override.ability(Abilities.WIND_POWER);
     game.override.enemySpecies(Species.MAGIKARP);
 
     await game.startBattle([Species.SHIFTRY]);
@@ -64,7 +64,7 @@ describe("Abilities - Wind Power", () => {
 
   it("does not become charged when Tailwind takes effect on opposing side", async () => {
     game.override.enemySpecies(Species.MAGIKARP);
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.WIND_POWER);
+    game.override.ability(Abilities.WIND_POWER);
 
     await game.startBattle([Species.SHIFTRY]);
     const magikarp = game.scene.getEnemyPokemon();

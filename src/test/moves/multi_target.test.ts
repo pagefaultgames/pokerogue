@@ -167,7 +167,7 @@ function beforeTrial(phaserGame: Phaser.Game, single: boolean = false) {
   const game = new GameManager(phaserGame);
   game.override.battleType("double");
   vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.EARTHQUAKE, Moves.HYPER_VOICE, Moves.SURF, Moves.SPLASH]);
-  vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
+  game.override.ability(Abilities.BALL_FETCH);
   game.override.enemyMoveset(SPLASH_ONLY);
   vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
   game.override.startingLevel(50);

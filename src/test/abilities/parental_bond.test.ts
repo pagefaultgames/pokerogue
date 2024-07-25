@@ -33,7 +33,7 @@ describe("Abilities - Parental Bond", () => {
     game = new GameManager(phaserGame);
     game.override.battleType("single");
     vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.PARENTAL_BOND);
+    game.override.ability(Abilities.PARENTAL_BOND);
     game.override.enemySpecies(Species.SNORLAX);
     game.override.enemyAbility(Abilities.INSOMNIA);
     game.override.enemyMoveset(SPLASH_ONLY);

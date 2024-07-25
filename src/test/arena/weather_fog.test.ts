@@ -32,7 +32,7 @@ describe("Weather - Fog", () => {
       .weather(WeatherType.FOG)
       .battleType("single");
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
+    game.override.ability(Abilities.BALL_FETCH);
     game.override.enemyAbility(Abilities.BALL_FETCH);
     game.override.enemySpecies(Species.MAGIKARP);
     game.override.enemyMoveset(new Array(4).fill(Moves.SPLASH));

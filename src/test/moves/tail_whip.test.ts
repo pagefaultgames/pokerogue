@@ -36,7 +36,7 @@ describe("Moves - Tail whip", () => {
     game.override.battleType("single");
     game.override.enemySpecies(Species.RATTATA);
     game.override.enemyAbility(Abilities.INSOMNIA);
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INSOMNIA);
+    game.override.ability(Abilities.INSOMNIA);
     game.override.startingLevel(2000);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
     game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);

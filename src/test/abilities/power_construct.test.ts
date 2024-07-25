@@ -29,7 +29,7 @@ describe("Abilities - POWER CONSTRUCT", () => {
     game = new GameManager(phaserGame);
     const moveToUse = Moves.SPLASH;
     game.override.battleType("single");
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.POWER_CONSTRUCT);
+    game.override.ability(Abilities.POWER_CONSTRUCT);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
     game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
   });

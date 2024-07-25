@@ -29,7 +29,7 @@ describe("Abilities - DISGUISE", () => {
     game = new GameManager(phaserGame);
     const moveToUse = Moves.SPLASH;
     game.override.battleType("single");
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.DISGUISE);
+    game.override.ability(Abilities.DISGUISE);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
     game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
   });

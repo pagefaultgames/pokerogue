@@ -54,7 +54,7 @@ describe("Moves - Fissure", () => {
   });
 
   it("ignores damage modification from abilities such as fur coat", async () => {
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NO_GUARD);
+    game.override.ability(Abilities.NO_GUARD);
     game.override.enemyAbility(Abilities.FUR_COAT);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.FISSURE));

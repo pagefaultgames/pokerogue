@@ -76,7 +76,7 @@ describe("Moves - Rage Powder", () => {
   test(
     "move effect should be bypassed by Overcoat",
     async () => {
-      vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.OVERCOAT);
+      game.override.ability(Abilities.OVERCOAT);
       game.override.enemyMoveset([ Moves.RAGE_POWDER, Moves.RAGE_POWDER, Moves.RAGE_POWDER, Moves.RAGE_POWDER ]);
 
       // Test with two non-Grass type player Pokemon

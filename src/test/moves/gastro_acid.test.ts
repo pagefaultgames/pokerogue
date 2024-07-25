@@ -33,7 +33,7 @@ describe("Moves - Gastro Acid", () => {
     game.override.battleType("double");
     game.override.startingLevel(1);
     vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
+    game.override.ability(Abilities.NONE);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.GASTRO_ACID, Moves.WATER_GUN, Moves.SPLASH, Moves.CORE_ENFORCER]);
     game.override.enemySpecies(Species.BIDOOF);
     game.override.enemyMoveset(SPLASH_ONLY);

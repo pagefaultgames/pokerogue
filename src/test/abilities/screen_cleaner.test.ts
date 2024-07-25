@@ -26,7 +26,7 @@ describe("Abilities - Screen Cleaner", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleType("single");
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.SCREEN_CLEANER);
+    game.override.ability(Abilities.SCREEN_CLEANER);
     game.override.enemySpecies(Species.SHUCKLE);
   });
 

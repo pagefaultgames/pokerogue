@@ -29,7 +29,7 @@ describe("Abilities - Wonder Skin", () => {
     game = new GameManager(phaserGame);
     game.override.battleType("single");
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.CHARM]);
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
+    game.override.ability(Abilities.BALL_FETCH);
     game.override.enemySpecies(Species.SHUCKLE);
     game.override.enemyAbility(Abilities.WONDER_SKIN);
     game.override.enemyMoveset(SPLASH_ONLY);
@@ -65,7 +65,7 @@ describe("Abilities - Wonder Skin", () => {
     it(`does not affect pokemon with ${allAbilities[ability].name}`, async () => {
       const moveToCheck = allMoves[Moves.CHARM];
 
-      vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(ability);
+      game.override.ability(ability);
       vi.spyOn(moveToCheck, "calculateBattleAccuracy");
 
       await game.startBattle([Species.PIKACHU]);

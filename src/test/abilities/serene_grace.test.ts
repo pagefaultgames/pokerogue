@@ -76,7 +76,7 @@ describe("Abilities - Serene Grace", () => {
 
   it("Move chance with Serene Grace", async() => {
     const moveToUse = Moves.AIR_SLASH;
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.SERENE_GRACE);
+    game.override.ability(Abilities.SERENE_GRACE);
     await game.startBattle([
       Species.TOGEKISS
     ]);

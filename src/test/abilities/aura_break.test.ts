@@ -39,7 +39,7 @@ describe("Abilities - Aura Break", () => {
     const moveToCheck = allMoves[Moves.MOONBLAST];
     const basePower = moveToCheck.power;
 
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.FAIRY_AURA);
+    game.override.ability(Abilities.FAIRY_AURA);
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
     await game.startBattle([Species.PIKACHU]);
@@ -53,7 +53,7 @@ describe("Abilities - Aura Break", () => {
     const moveToCheck = allMoves[Moves.DARK_PULSE];
     const basePower = moveToCheck.power;
 
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.DARK_AURA);
+    game.override.ability(Abilities.DARK_AURA);
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
     await game.startBattle([Species.PIKACHU]);

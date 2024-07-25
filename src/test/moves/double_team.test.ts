@@ -30,7 +30,7 @@ describe("Moves - Double Team", () => {
     game.override.battleType("single");
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.DOUBLE_TEAM]);
     vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
+    game.override.ability(Abilities.BALL_FETCH);
     game.override.enemySpecies(Species.SHUCKLE);
     game.override.enemyAbility(Abilities.BALL_FETCH);
     game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);

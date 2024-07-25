@@ -38,7 +38,7 @@ describe("Abilities - Volt Absorb", () => {
     const ability = Abilities.VOLT_ABSORB;
 
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(ability);
+    game.override.ability(ability);
     game.override.enemyMoveset([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
     game.override.enemySpecies(Species.DUSKULL);
     game.override.enemyAbility(Abilities.BALL_FETCH);

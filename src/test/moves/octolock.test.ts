@@ -37,7 +37,7 @@ describe("Moves - Octolock", () => {
 
       game.override.startingLevel(2000);
       vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.OCTOLOCK, Moves.SPLASH]);
-      vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
+      game.override.ability(Abilities.NONE);
     });
 
     it("Reduces DEf and SPDEF by 1 each turn", { timeout: 10000 }, async () => {

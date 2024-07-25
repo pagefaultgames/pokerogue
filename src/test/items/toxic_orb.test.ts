@@ -38,7 +38,7 @@ describe("Items - Toxic orb", () => {
     const oppMoveToUse = Moves.TACKLE;
     game.override.battleType("single");
     game.override.enemySpecies(Species.RATTATA);
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INSOMNIA);
+    game.override.ability(Abilities.INSOMNIA);
     game.override.enemyAbility(Abilities.INSOMNIA);
     game.override.startingLevel(2000);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);

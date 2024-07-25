@@ -36,7 +36,7 @@ describe("Battle order", () => {
     game.override.battleType("single");
     game.override.enemySpecies(Species.MEWTWO);
     game.override.enemyAbility(Abilities.INSOMNIA);
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INSOMNIA);
+    game.override.ability(Abilities.INSOMNIA);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
   });
 

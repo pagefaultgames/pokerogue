@@ -34,7 +34,7 @@ describe("Items - Grip Claw", () => {
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.POPULATION_BOMB, Moves.SPLASH ]);
     vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "GRIP_CLAW", count: 5}, {name: "MULTI_LENS", count: 3}]);
     game.override.enemySpecies(Species.SNORLAX);
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.KLUTZ);
+    game.override.ability(Abilities.KLUTZ);
     game.override.enemyMoveset([ Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH ]);
     vi.spyOn(Overrides, "OPP_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([
       {name: "BERRY", type: BerryType.SITRUS, count: 2},

@@ -29,7 +29,7 @@ describe("Abilities - SCHOOLING", () => {
     game = new GameManager(phaserGame);
     const moveToUse = Moves.SPLASH;
     game.override.battleType("single");
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.SCHOOLING);
+    game.override.ability(Abilities.SCHOOLING);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
     game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
   });

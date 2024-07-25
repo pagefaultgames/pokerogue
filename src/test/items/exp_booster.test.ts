@@ -24,7 +24,7 @@ describe("EXP Modifier Items", () => {
     game = new GameManager(phaserGame);
 
     game.override.enemyAbility(Abilities.BALL_FETCH);
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
+    game.override.ability(Abilities.BALL_FETCH);
     game.override.battleType("single");
   });
 

@@ -36,7 +36,7 @@ describe("Moves - Aurora Veil", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleType("single");
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
+    game.override.ability(Abilities.NONE);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.ABSORB, Moves.ROCK_SLIDE, Moves.TACKLE]);
     vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
     game.override.enemySpecies(Species.MAGIKARP);

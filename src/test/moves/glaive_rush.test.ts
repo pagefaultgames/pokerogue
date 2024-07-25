@@ -32,7 +32,7 @@ describe("Moves - Glaive Rush", () => {
     game.override.enemyAbility(Abilities.BALL_FETCH);
     game.override.enemyMoveset(Array(4).fill(Moves.GLAIVE_RUSH));
     game.override.starterSpecies(Species.KLINK);
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.UNNERVE);
+    game.override.ability(Abilities.UNNERVE);
     vi.spyOn(Overrides, "PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.FUR_COAT);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SHADOW_SNEAK, Moves.AVALANCHE, Moves.SPLASH, Moves.GLAIVE_RUSH]);
   });

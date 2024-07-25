@@ -33,7 +33,7 @@ describe("Ability Timing", () => {
     game.override.enemyAbility(Abilities.INTIMIDATE);
     game.override.enemyMoveset(SPLASH_ONLY);
 
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
+    game.override.ability(Abilities.BALL_FETCH);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.ICE_BEAM]);
   });
 

@@ -50,7 +50,7 @@ describe("Abilities - Wind Rider", () => {
   });
 
   it("Attack is increased by one stage when Tailwind is present on its side", async () => {
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.WIND_RIDER);
+    game.override.ability(Abilities.WIND_RIDER);
     game.override.enemySpecies(Species.MAGIKARP);
 
     await game.startBattle([Species.SHIFTRY]);
@@ -66,7 +66,7 @@ describe("Abilities - Wind Rider", () => {
   });
 
   it("does not increase Attack when Tailwind is present on opposing side", async () => {
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.WIND_RIDER);
+    game.override.ability(Abilities.WIND_RIDER);
     game.override.enemySpecies(Species.MAGIKARP);
 
     await game.startBattle([Species.SHIFTRY]);

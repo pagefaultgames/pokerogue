@@ -46,7 +46,7 @@ describe("Abilities - ZEN MODE", () => {
     game.override.battleType("single");
     game.override.enemySpecies(Species.RATTATA);
     game.override.enemyAbility(Abilities.HYDRATION);
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.ZEN_MODE);
+    game.override.ability(Abilities.ZEN_MODE);
     game.override.startingLevel(100);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
     game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);

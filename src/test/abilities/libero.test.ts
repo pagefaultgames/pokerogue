@@ -34,7 +34,7 @@ describe("Abilities - Protean", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleType("single");
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.LIBERO);
+    game.override.ability(Abilities.LIBERO);
     game.override.startingLevel(100);
     game.override.enemySpecies(Species.RATTATA);
     game.override.enemyMoveset([Moves.ENDURE, Moves.ENDURE, Moves.ENDURE, Moves.ENDURE]);
