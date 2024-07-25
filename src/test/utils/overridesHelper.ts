@@ -64,6 +64,20 @@ export class OverridesHelper {
   }
 
   /**
+   * Override the player (pokemons) forms
+   * @param forms the (pokemon) forms to set
+   * @returns this
+   */
+  starterForms(forms: Partial<Record<Species, number>>): this {
+    vi.spyOn(Overrides, "STARTER_FORM_OVERRIDES", "get").mockReturnValue(forms);
+    const formsStr = Object.entries(forms)
+      .map(([speciesId, formIndex]) => `${Species[speciesId]}=${formIndex}`)
+      .join(", ");
+    this.log(`Player Pokemon form set to: ${formsStr}!`);
+    return this;
+  }
+
+  /**
    * Override the player (pokemon) {@linkcode Abilities | ability}
    * @param ability the (pokemon) {@linkcode Abilities | ability} to set
    * @returns this
