@@ -11,13 +11,15 @@ import {
   LearnMovePhase,
   LoginPhase,
   MessagePhase,
+  ModifierRewardPhase,
   MoveEffectPhase,
   MoveEndPhase,
   MovePhase,
   NewBattlePhase,
   NextEncounterPhase,
   PostSummonPhase,
-  SelectGenderPhase, SelectModifierPhase,
+  SelectGenderPhase,
+  SelectModifierPhase,
   SelectStarterPhase,
   SelectTargetPhase,
   ShinySparklePhase,
@@ -105,6 +107,7 @@ export default class PhaseInterceptor {
     [MysteryEncounterRewardsPhase, this.startPhase],
     [PostMysteryEncounterPhase, this.startPhase],
     [LearnMovePhase, this.startPhase],
+    [ModifierRewardPhase, this.startPhase],
     // [CommonAnimPhase, this.startPhase]
   ];
 

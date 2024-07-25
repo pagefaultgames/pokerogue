@@ -2,14 +2,14 @@ import { EnemyPartyConfig } from "#app/data/mystery-encounters/utils/encounter-p
 import Pokemon, { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { isNullOrUndefined } from "#app/utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import BattleScene from "../../battle-scene";
-import MysteryEncounterIntroVisuals, { MysteryEncounterSpriteConfig } from "../../field/mystery-encounter-intro";
-import * as Utils from "../../utils";
+import BattleScene from "#app/battle-scene";
+import MysteryEncounterIntroVisuals, { MysteryEncounterSpriteConfig } from "#app/field/mystery-encounter-intro";
+import * as Utils from "#app/utils";
 import { StatusEffect } from "../status-effect";
 import MysteryEncounterDialogue, {
   OptionTextDisplay
 } from "./mystery-encounter-dialogue";
-import MysteryEncounterOption, { EncounterOptionMode, MysteryEncounterOptionBuilder, OptionPhaseCallback } from "./mystery-encounter-option";
+import MysteryEncounterOption, { MysteryEncounterOptionBuilder, OptionPhaseCallback } from "./mystery-encounter-option";
 import {
   EncounterPokemonRequirement,
   EncounterSceneRequirement,
@@ -20,27 +20,9 @@ import {
 } from "./mystery-encounter-requirements";
 import { BattlerIndex } from "#app/battle";
 import { EncounterAnim } from "#app/data/battle-anims";
-
-export enum MysteryEncounterVariant {
-  DEFAULT,
-  TRAINER_BATTLE,
-  WILD_BATTLE,
-  BOSS_BATTLE,
-  NO_BATTLE,
-  /** For spawning new encounter queries instead of continuing to next wave */
-  CONTINUOUS_ENCOUNTER
-}
-
-/**
- * Enum values are base spawn weights of each tier
- */
-export enum MysteryEncounterTier {
-  COMMON = 64,
-  GREAT = 40,
-  ULTRA = 21,
-  ROGUE = 3,
-  MASTER = 0 // Not currently used
-}
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 
 export interface StartOfBattleEffect {
   sourcePokemon?: Pokemon;
@@ -130,7 +112,7 @@ export default interface IMysteryEncounter {
    * For example, if there is no battle as part of the encounter/selected option, should be set to NO_BATTLE
    * Defaults to DEFAULT
    */
-  encounterVariant?: MysteryEncounterVariant;
+  encounterMode?: MysteryEncounterMode;
   /**
    * Flag for checking if it's the first time a shop is being shown for an encounter.
    * Defaults to true so that the first shop does not override the specified rewards.
@@ -181,7 +163,7 @@ export default class IMysteryEncounter implements IMysteryEncounter {
     this.dialogue = this.dialogue ?? {};
     // Default max is 1 for ROGUE encounters, 3 for others
     this.maxAllowedEncounters = this.maxAllowedEncounters ?? this.encounterTier === MysteryEncounterTier.ROGUE ? 1 : 3;
-    this.encounterVariant = MysteryEncounterVariant.DEFAULT;
+    this.encounterMode = MysteryEncounterMode.DEFAULT;
     this.requirements = this.requirements ? this.requirements : [];
     this.hideBattleIntroMessage = !isNullOrUndefined(this.hideBattleIntroMessage) ? this.hideBattleIntroMessage : false;
     this.autoHideIntroVisuals = !isNullOrUndefined(this.autoHideIntroVisuals) ? this.autoHideIntroVisuals : true;
@@ -314,7 +296,9 @@ export default class IMysteryEncounter implements IMysteryEncounter {
     if (this.requirements?.length > 0) {
       for (const req of this.requirements) {
         const dialogueToken = req.getDialogueToken(scene);
-        this.setDialogueToken(...dialogueToken);
+        if (dialogueToken?.length === 2) {
+          this.setDialogueToken(...dialogueToken);
+        }
       }
     }
     if (this.primaryPokemon?.length > 0) {
@@ -322,7 +306,9 @@ export default class IMysteryEncounter implements IMysteryEncounter {
       for (const req of this.primaryPokemonRequirements) {
         if (!req.invertQuery) {
           const value = req.getDialogueToken(scene, this.primaryPokemon);
-          this.setDialogueToken("primary" + this.capitalizeFirstLetter(value[0]), value[1]);
+          if (value?.length === 2) {
+            this.setDialogueToken("primary" + this.capitalizeFirstLetter(value[0]), value[1]);
+          }
         }
       }
     }
@@ -331,6 +317,9 @@ export default class IMysteryEncounter implements IMysteryEncounter {
       for (const req of this.secondaryPokemonRequirements) {
         if (!req.invertQuery) {
           const value = req.getDialogueToken(scene, this.secondaryPokemon[0]);
+          if (value?.length === 2) {
+            this.setDialogueToken("primary" + this.capitalizeFirstLetter(value[0]), value[1]);
+          }
           this.setDialogueToken("secondary" + this.capitalizeFirstLetter(value[0]), value[1]);
         }
       }
@@ -344,7 +333,9 @@ export default class IMysteryEncounter implements IMysteryEncounter {
       if (opt.requirements?.length > 0) {
         for (const req of opt.requirements) {
           const dialogueToken = req.getDialogueToken(scene);
-          this.setDialogueToken("option" + j + this.capitalizeFirstLetter(dialogueToken[0]), dialogueToken[1]);
+          if (dialogueToken?.length === 2) {
+            this.setDialogueToken("option" + j + this.capitalizeFirstLetter(dialogueToken[0]), dialogueToken[1]);
+          }
         }
       }
       if (opt.primaryPokemonRequirements?.length > 0 && opt.primaryPokemon?.length > 0) {
@@ -352,7 +343,9 @@ export default class IMysteryEncounter implements IMysteryEncounter {
         for (const req of opt.primaryPokemonRequirements) {
           if (!req.invertQuery) {
             const value = req.getDialogueToken(scene, opt.primaryPokemon);
-            this.setDialogueToken("option" + j + "Primary" + this.capitalizeFirstLetter(value[0]), value[1]);
+            if (value?.length === 2) {
+              this.setDialogueToken("option" + j + "Primary" + this.capitalizeFirstLetter(value[0]), value[1]);
+            }
           }
         }
       }
@@ -361,7 +354,9 @@ export default class IMysteryEncounter implements IMysteryEncounter {
         for (const req of opt.secondaryPokemonRequirements) {
           if (!req.invertQuery) {
             const value = req.getDialogueToken(scene, opt.secondaryPokemon[0]);
-            this.setDialogueToken("option" + j + "Secondary" + this.capitalizeFirstLetter(value[0]), value[1]);
+            if (value?.length === 2) {
+              this.setDialogueToken("option" + j + "Secondary" + this.capitalizeFirstLetter(value[0]), value[1]);
+            }
           }
         }
       }
@@ -373,7 +368,7 @@ export default class IMysteryEncounter implements IMysteryEncounter {
   }
 
   /**
-   * If an encounter uses {@link MysteryEncounterVariant.CONTINUOUS_ENCOUNTER},
+   * If an encounter uses {@link MysteryEncounterMode.CONTINUOUS_ENCOUNTER},
    * should rely on this value for seed offset instead of wave index.
    *
    * This offset is incremented for each new {@link MysteryEncounterPhase} that occurs,
@@ -466,7 +461,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * @returns
    */
   withSimpleOption(dialogue: OptionTextDisplay, callback: OptionPhaseCallback): this & Pick<IMysteryEncounter, "options"> {
-    return this.withOption(new MysteryEncounterOptionBuilder().withOptionMode(EncounterOptionMode.DEFAULT).withDialogue(dialogue).withOptionPhase(callback).build());
+    return this.withOption(new MysteryEncounterOptionBuilder().withOptionMode(MysteryEncounterOptionMode.DEFAULT).withDialogue(dialogue).withOptionPhase(callback).build());
   }
 
   /**
@@ -481,7 +476,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    */
   withSimpleDexProgressOption(dialogue: OptionTextDisplay, callback: OptionPhaseCallback): this & Pick<IMysteryEncounter, "options"> {
     return this.withOption(new MysteryEncounterOptionBuilder()
-      .withOptionMode(EncounterOptionMode.DEFAULT)
+      .withOptionMode(MysteryEncounterOptionMode.DEFAULT)
       .withHasDexProgress(true)
       .withDialogue(dialogue)
       .withOptionPhase(callback).build());
@@ -592,6 +587,10 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * @returns
    */
   withPrimaryPokemonRequirement(requirement: EncounterPokemonRequirement): this & Required<Pick<IMysteryEncounter, "primaryPokemonRequirements">> {
+    if (requirement instanceof EncounterSceneRequirement) {
+      Error("Incorrectly added scene requirement as pokemon requirement.");
+    }
+
     this.primaryPokemonRequirements.push(requirement);
     return Object.assign(this, { primaryPokemonRequirements: this.primaryPokemonRequirements });
   }
@@ -624,6 +623,10 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   // ex. if your only grass type pokemon, a snivy, is chosen as primary, if the support pokemon requires a grass type, the event won't trigger because
   // it's already been
   withSecondaryPokemonRequirement(requirement: EncounterPokemonRequirement, excludePrimaryFromSecondaryRequirements: boolean = false): this & Required<Pick<IMysteryEncounter, "secondaryPokemonRequirements">> {
+    if (requirement instanceof EncounterSceneRequirement) {
+      Error("Incorrectly added scene requirement as pokemon requirement.");
+    }
+
     this.secondaryPokemonRequirements.push(requirement);
     this.excludePrimaryFromSupportRequirements = excludePrimaryFromSecondaryRequirements;
     return Object.assign(this, { excludePrimaryFromSecondaryRequirements: this.excludePrimaryFromSupportRequirements, secondaryPokemonRequirements: this.secondaryPokemonRequirements });

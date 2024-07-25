@@ -1,10 +1,10 @@
 export const offerYouCantRefuseDialogue = {
   intro: "You're stopped by a rich looking boy.",
-  speaker: "Rich Kid",
+  speaker: "Rich Boy",
   intro_dialogue: `Good day to you.
     $I can't help but notice that your\n{{strongestPokemon}} looks positively divine!
     $I've always wanted to have a pet like that!
-    $I'd pay you handsomely, and\nI'll even give you this old bauble!`,
+    $I'd pay you handsomely,\nand also give you this old bauble!`,
   title: "An Offer You Can't Refuse",
   description: "You're being offered a @[TOOLTIP_TITLE]{Shiny Charm} and {{price, money}} for your {{strongestPokemon}}!\n\nIt's is an extremely good deal, but can you really bear to part with such a strong team member?",
   query: "What will you do?",
@@ -18,11 +18,10 @@ export const offerYouCantRefuseDialogue = {
     },
     2: {
       label: "Extort the Kid",
-      tooltip: "(+) Gain {{price, money}}",
+      tooltip: "(+) {{option2PrimaryName}} uses {{moveOrAbility}}\n(+) Gain {{price, money}}",
       tooltip_disabled: "Your Pokémon need to have certain moves or abilities to choose this",
       selected: `My word, we're being robbed, Liepard!
-       $How wonderful!
-       $Now I'll have an amazing\nstory for the yacht club!`,
+       $You'll be hearing from my lawyers for this!`,
     },
     3: {
       label: "Leave",

@@ -2,11 +2,13 @@ import { getPokemonSpecies } from "#app/data/pokemon-species.js";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species.js";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import BattleScene from "../../../battle-scene";
-import MysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier } from "../mystery-encounter";
-import { EncounterOptionMode, MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
+import BattleScene from "#app/battle-scene";
+import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import { leaveEncounterWithoutBattle, setEncounterExp } from "../utils/encounter-phase-utils";
 import { applyDamageToPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 
 const OPTION_1_REQUIRED_MOVE = Moves.SURF;
 const OPTION_2_REQUIRED_MOVE = Moves.FLY;
@@ -53,7 +55,7 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
     // Option 1: Use a (non fainted) pokemon that can learn Surf to guide you back/
     new MysteryEncounterOptionBuilder()
       .withPokemonCanLearnMoveRequirement(OPTION_1_REQUIRED_MOVE)
-      .withOptionMode(EncounterOptionMode.DISABLED_OR_DEFAULT)
+      .withOptionMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
       .withDialogue({
         buttonLabel: `${namespace}:option:1:label`,
         disabledButtonLabel: `${namespace}:option:1:label_disabled`,
@@ -72,7 +74,7 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
     //Option 2: Use a (non fainted) pokemon that can learn fly to guide you back.
     new MysteryEncounterOptionBuilder()
       .withPokemonCanLearnMoveRequirement(OPTION_2_REQUIRED_MOVE)
-      .withOptionMode(EncounterOptionMode.DISABLED_OR_DEFAULT)
+      .withOptionMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
       .withDialogue({
         buttonLabel: `${namespace}:option:2:label`,
         disabledButtonLabel: `${namespace}:option:2:label_disabled`,

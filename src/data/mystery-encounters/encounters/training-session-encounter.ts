@@ -13,10 +13,12 @@ import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import { randSeedShuffle } from "#app/utils";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import BattleScene from "../../../battle-scene";
-import IMysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier, } from "../mystery-encounter";
-import { EncounterOptionMode, MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
+import BattleScene from "#app/battle-scene";
+import IMysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import { getEncounterText, queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 
 /** The i18n namespace for the encounter */
 const namespace = "mysteryEncounter:trainingSession";
@@ -52,7 +54,7 @@ export const TrainingSessionEncounter: IMysteryEncounter =
     .withQuery(`${namespace}:query`)
     .withOption(
       new MysteryEncounterOptionBuilder()
-        .withOptionMode(EncounterOptionMode.DEFAULT)
+        .withOptionMode(MysteryEncounterOptionMode.DEFAULT)
         .withHasDexProgress(true)
         .withDialogue({
           buttonLabel: `${namespace}:option:1:label`,
@@ -196,7 +198,7 @@ export const TrainingSessionEncounter: IMysteryEncounter =
     )
     .withOption(
       new MysteryEncounterOptionBuilder()
-        .withOptionMode(EncounterOptionMode.DEFAULT)
+        .withOptionMode(MysteryEncounterOptionMode.DEFAULT)
         .withHasDexProgress(true)
         .withDialogue({
           buttonLabel: `${namespace}:option:2:label`,
@@ -289,7 +291,7 @@ export const TrainingSessionEncounter: IMysteryEncounter =
     )
     .withOption(
       new MysteryEncounterOptionBuilder()
-        .withOptionMode(EncounterOptionMode.DEFAULT)
+        .withOptionMode(MysteryEncounterOptionMode.DEFAULT)
         .withHasDexProgress(true)
         .withDialogue({
           buttonLabel: `${namespace}:option:3:label`,

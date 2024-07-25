@@ -5,9 +5,9 @@ import { MockInstance, vi } from "vitest";
 import GameManager from "#test/utils/gameManager";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import * as overrides from "#app/overrides";
-import { MysteryEncounterTier } from "#app/data/mystery-encounters/mystery-encounter";
 import * as GameMode from "#app/game-mode";
 import { GameModes, getGameMode } from "#app/game-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 
 /**
  * Helper to handle overrides in tests

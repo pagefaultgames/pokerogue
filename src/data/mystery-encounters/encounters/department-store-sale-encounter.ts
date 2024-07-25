@@ -6,11 +6,11 @@ import { modifierTypes } from "#app/modifier/modifier-type";
 import { randSeedInt } from "#app/utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
-import BattleScene from "../../../battle-scene";
+import BattleScene from "#app/battle-scene";
 import IMysteryEncounter, {
   MysteryEncounterBuilder,
-  MysteryEncounterTier,
 } from "../mystery-encounter";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounter:departmentStoreSale";

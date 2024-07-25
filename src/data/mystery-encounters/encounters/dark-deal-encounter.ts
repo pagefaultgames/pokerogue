@@ -3,13 +3,15 @@ import { ModifierRewardPhase } from "#app/phases";
 import { isNullOrUndefined, randSeedInt } from "#app/utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
-import BattleScene from "../../../battle-scene";
+import BattleScene from "#app/battle-scene";
 import { modifierTypes } from "#app/modifier/modifier-type";
-import { getPokemonSpecies } from "../../pokemon-species";
-import IMysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier, } from "../mystery-encounter";
-import { EncounterOptionMode, MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
+import { getPokemonSpecies } from "#app/data/pokemon-species";
+import IMysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import { EnemyPartyConfig, EnemyPokemonConfig, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, } from "../utils/encounter-phase-utils";
 import { getRandomPlayerPokemon, getRandomSpeciesByStarterTier } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounter:darkDeal";
@@ -105,7 +107,7 @@ export const DarkDealEncounter: IMysteryEncounter =
     .withQuery(`${namespace}:query`)
     .withOption(
       new MysteryEncounterOptionBuilder()
-        .withOptionMode(EncounterOptionMode.DEFAULT)
+        .withOptionMode(MysteryEncounterOptionMode.DEFAULT)
         .withDialogue({
           buttonLabel: `${namespace}:option:1:label`,
           buttonTooltip: `${namespace}:option:1:tooltip`,

@@ -13,12 +13,10 @@ import { ModifierTier } from "#app/modifier/modifier-tier";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
-import BattleScene from "../../../battle-scene";
-import * as Utils from "../../../utils";
-import IMysteryEncounter, {
-  MysteryEncounterBuilder,
-  MysteryEncounterTier,
-} from "../mystery-encounter";
+import BattleScene from "#app/battle-scene";
+import * as Utils from "#app/utils";
+import IMysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:mysteriousChallengers";

@@ -14,7 +14,8 @@ import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 import i18next from "#app/plugins/i18n";
-import IMysteryEncounter, { MysteryEncounterVariant } from "./data/mystery-encounters/mystery-encounter";
+import IMysteryEncounter from "./data/mystery-encounters/mystery-encounter";
+import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 
 export enum BattleType {
   WILD,
@@ -205,7 +206,7 @@ export default class Battle {
 
   getBgmOverride(scene: BattleScene): string {
     const battlers = this.enemyParty.slice(0, this.getBattlerCount());
-    if (this.battleType === BattleType.TRAINER || this.mysteryEncounter?.encounterVariant === MysteryEncounterVariant.TRAINER_BATTLE) {
+    if (this.battleType === BattleType.TRAINER || this.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE) {
       if (!this.started && this.trainer.config.encounterBgm && this.trainer.getEncounterMessages().length) {
         return `encounter_${this.trainer.getEncounterBgm()}`;
       }

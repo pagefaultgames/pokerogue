@@ -7,8 +7,8 @@ import {Mode} from "#app/ui/ui";
 import {Button} from "#enums/buttons";
 import MysteryEncounterUiHandler from "#app/ui/mystery-encounter-ui-handler";
 import {MysteryEncounterType} from "#enums/mystery-encounter-type";
-import {MysteryEncounterTier} from "#app/data/mystery-encounters/mystery-encounter";
 import MessageUiHandler from "#app/ui/message-ui-handler";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 
 describe("Mystery Encounter Phases", () => {
   let phaserGame: Phaser.Game;

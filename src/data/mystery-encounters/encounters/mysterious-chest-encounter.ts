@@ -4,9 +4,11 @@ import { getHighestLevelPlayerPokemon, koPlayerPokemon } from "#app/data/mystery
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { randSeedInt } from "#app/utils.js";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import BattleScene from "../../../battle-scene";
-import IMysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier, } from "../mystery-encounter";
-import { EncounterOptionMode, MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
+import BattleScene from "#app/battle-scene";
+import IMysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounter:mysteriousChest";
@@ -42,7 +44,7 @@ export const MysteriousChestEncounter: IMysteryEncounter =
     .withQuery(`${namespace}:query`)
     .withOption(
       new MysteryEncounterOptionBuilder()
-        .withOptionMode(EncounterOptionMode.DEFAULT)
+        .withOptionMode(MysteryEncounterOptionMode.DEFAULT)
         .withDialogue({
           buttonLabel: `${namespace}:option:1:label`,
           buttonTooltip: `${namespace}:option:1:tooltip`,

@@ -61,7 +61,7 @@ export const EXTORTION_MOVES = [
   Moves.BEAT_UP,
   Moves.COIL,
   Moves.WRING_OUT,
-  Moves.STRING_SHOT
+  Moves.STRING_SHOT,
 ];
 
 export const EXTORTION_ABILITIES = [
@@ -69,5 +69,5 @@ export const EXTORTION_ABILITIES = [
   Abilities.ARENA_TRAP,
   Abilities.SHADOW_TAG,
   Abilities.SUCTION_CUPS,
-  Abilities.STICKY_HOLD,
+  Abilities.STICKY_HOLD
 ];

@@ -1,8 +1,8 @@
 import { initSubsequentOptionSelect, leaveEncounterWithoutBattle, updatePlayerMoney, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import BattleScene from "../../../battle-scene";
-import IMysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier, MysteryEncounterVariant } from "../mystery-encounter";
-import MysteryEncounterOption, { EncounterOptionMode, MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
+import BattleScene from "#app/battle-scene";
+import IMysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import MysteryEncounterOption, { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { TrainerSlot } from "#app/data/trainer-config";
 import { ScanIvsPhase, SummonPhase, VictoryPhase } from "#app/phases";
 import { HiddenAbilityRateBoosterModifier, IvScannerModifier } from "#app/modifier/modifier";
@@ -15,6 +15,9 @@ import { MoneyRequirement } from "#app/data/mystery-encounters/mystery-encounter
 import { doPlayerFlee, doPokemonFlee, getRandomSpeciesByStarterTier, trainerThrowPokeball } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { getEncounterText, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { getPokemonNameWithAffix } from "#app/messages";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:safariZone";
@@ -50,7 +53,7 @@ export const SafariZoneEncounter: IMysteryEncounter =
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)
     .withOption(new MysteryEncounterOptionBuilder()
-      .withOptionMode(EncounterOptionMode.DISABLED_OR_DEFAULT)
+      .withOptionMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
       .withSceneRequirement(new MoneyRequirement(0, 2.75)) // Cost equal to 1 Max Revive
       .withDialogue({
         buttonLabel: `${namespace}:option:1:label`,
@@ -64,7 +67,7 @@ export const SafariZoneEncounter: IMysteryEncounter =
       .withOptionPhase(async (scene: BattleScene) => {
         // Start safari encounter
         const encounter = scene.currentBattle.mysteryEncounter;
-        encounter.encounterVariant = MysteryEncounterVariant.CONTINUOUS_ENCOUNTER;
+        encounter.encounterMode = MysteryEncounterMode.CONTINUOUS_ENCOUNTER;
         encounter.misc = {
           safariPokemonRemaining: 3
         };
@@ -116,7 +119,7 @@ export const SafariZoneEncounter: IMysteryEncounter =
  */
 const safariZoneGameOptions: MysteryEncounterOption[] = [
   new MysteryEncounterOptionBuilder()
-    .withOptionMode(EncounterOptionMode.DEFAULT)
+    .withOptionMode(MysteryEncounterOptionMode.DEFAULT)
     .withDialogue({
       buttonLabel: `${namespace}:safari:1:label`,
       buttonTooltip: `${namespace}:safari:1:tooltip`,
@@ -150,7 +153,7 @@ const safariZoneGameOptions: MysteryEncounterOption[] = [
     })
     .build(),
   new MysteryEncounterOptionBuilder()
-    .withOptionMode(EncounterOptionMode.DEFAULT)
+    .withOptionMode(MysteryEncounterOptionMode.DEFAULT)
     .withDialogue({
       buttonLabel: `${namespace}:safari:2:label`,
       buttonTooltip: `${namespace}:safari:2:tooltip`,
@@ -180,7 +183,7 @@ const safariZoneGameOptions: MysteryEncounterOption[] = [
     })
     .build(),
   new MysteryEncounterOptionBuilder()
-    .withOptionMode(EncounterOptionMode.DEFAULT)
+    .withOptionMode(MysteryEncounterOptionMode.DEFAULT)
     .withDialogue({
       buttonLabel: `${namespace}:safari:3:label`,
       buttonTooltip: `${namespace}:safari:3:tooltip`,
@@ -209,7 +212,7 @@ const safariZoneGameOptions: MysteryEncounterOption[] = [
     })
     .build(),
   new MysteryEncounterOptionBuilder()
-    .withOptionMode(EncounterOptionMode.DEFAULT)
+    .withOptionMode(MysteryEncounterOptionMode.DEFAULT)
     .withDialogue({
       buttonLabel: `${namespace}:safari:4:label`,
       buttonTooltip: `${namespace}:safari:4:tooltip`,

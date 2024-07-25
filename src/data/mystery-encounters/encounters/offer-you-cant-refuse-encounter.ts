@@ -2,14 +2,16 @@ import { leaveEncounterWithoutBattle, setEncounterExp, updatePlayerMoney, } from
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
-import BattleScene from "../../../battle-scene";
-import IMysteryEncounter, { MysteryEncounterBuilder, MysteryEncounterTier, } from "../mystery-encounter";
-import { EncounterOptionMode, MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
-import { MoveRequirement } from "../mystery-encounter-requirements";
+import BattleScene from "#app/battle-scene";
+import IMysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
+import { AbilityRequirement, CombinationPokemonRequirement, MoveRequirement } from "../mystery-encounter-requirements";
 import { getHighestStatTotalPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { ModifierRewardPhase } from "#app/phases";
-import { EXTORTION_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
+import { EXTORTION_ABILITIES, EXTORTION_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounter:offerYouCantRefuse";
@@ -56,22 +58,36 @@ export const OfferYouCantRefuseEncounter: IMysteryEncounter =
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)
     .withOnInit((scene: BattleScene) => {
+      const encounter = scene.currentBattle.mysteryEncounter;
       const pokemon = getHighestStatTotalPlayerPokemon(scene, false);
       const price = scene.getWaveMoneyAmount(10);
 
-      scene.currentBattle.mysteryEncounter.setDialogueToken("strongestPokemon", pokemon.name);
-      scene.currentBattle.mysteryEncounter.setDialogueToken("price", price.toString());
+      encounter.setDialogueToken("strongestPokemon", pokemon.name);
+      encounter.setDialogueToken("price", price.toString());
 
       // Store pokemon and price
-      scene.currentBattle.mysteryEncounter.misc = {
+      encounter.misc = {
         pokemon: pokemon,
         price: price
       };
+
+      // If player meets the combo OR requirements for option 2, populate the token
+      const opt2Req = encounter.options[1].primaryPokemonRequirements[0];
+      if (opt2Req.meetsRequirement(scene)) {
+        const abilityToken = encounter.dialogueTokens["option2PrimaryAbility"];
+        const moveToken = encounter.dialogueTokens["option2PrimaryMove"];
+        if (abilityToken) {
+          encounter.setDialogueToken("moveOrAbility", abilityToken);
+        } else if (moveToken) {
+          encounter.setDialogueToken("moveOrAbility", moveToken);
+        }
+      }
+
       return true;
     })
     .withOption(
       new MysteryEncounterOptionBuilder()
-        .withOptionMode(EncounterOptionMode.DEFAULT)
+        .withOptionMode(MysteryEncounterOptionMode.DEFAULT)
         .withDialogue({
           buttonLabel: `${namespace}:option:1:label`,
           buttonTooltip: `${namespace}:option:1:tooltip`,
@@ -98,14 +114,18 @@ export const OfferYouCantRefuseEncounter: IMysteryEncounter =
     )
     .withOption(
       new MysteryEncounterOptionBuilder()
-        .withOptionMode(EncounterOptionMode.DISABLED_OR_DEFAULT)
-        .withPrimaryPokemonRequirement(new MoveRequirement(EXTORTION_MOVES))
+        .withOptionMode(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
+        .withPrimaryPokemonRequirement(new CombinationPokemonRequirement(
+          new MoveRequirement(EXTORTION_MOVES),
+          new AbilityRequirement(EXTORTION_ABILITIES))
+        )
         .withDialogue({
           buttonLabel: `${namespace}:option:2:label`,
           buttonTooltip: `${namespace}:option:2:tooltip`,
           disabledButtonTooltip: `${namespace}:option:2:tooltip_disabled`,
           selected: [
             {
+              speaker: `${namespace}:speaker`,
               text: `${namespace}:option:2:selected`,
             },
           ],
@@ -129,7 +149,7 @@ export const OfferYouCantRefuseEncounter: IMysteryEncounter =
         selected: [
           {
             speaker: `${namespace}:speaker`,
-            text: `${namespace}:option:2:selected`,
+            text: `${namespace}:option:3:selected`,
           },
         ],
       },

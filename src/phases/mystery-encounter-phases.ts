@@ -5,7 +5,6 @@ import { Mode } from "../ui/ui";
 import { transitionMysteryEncounterIntroVisuals, OptionSelectSettings } from "../data/mystery-encounters/utils/encounter-phase-utils";
 import { CheckSwitchPhase, NewBattlePhase, ReturnPhase, ScanIvsPhase, SelectModifierPhase, SummonPhase, ToggleDoublePositionPhase } from "../phases";
 import MysteryEncounterOption, { OptionPhaseCallback } from "../data/mystery-encounters/mystery-encounter-option";
-import { MysteryEncounterVariant } from "../data/mystery-encounters/mystery-encounter";
 import { getCharVariantFromDialogue } from "../data/dialogue";
 import { TrainerSlot } from "../data/trainer-config";
 import { BattleSpec } from "#enums/battle-spec";
@@ -15,6 +14,7 @@ import * as Utils from "../utils";
 import { isNullOrUndefined } from "../utils";
 import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { BattlerTagLapseType } from "#app/data/battler-tags";
+import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 
 /**
  * Will handle (in order):
@@ -210,13 +210,13 @@ export class MysteryEncounterBattlePhase extends Phase {
 
   getBattleMessage(scene: BattleScene): string {
     const enemyField = scene.getEnemyField();
-    const encounterVariant = scene.currentBattle.mysteryEncounter.encounterVariant;
+    const encounterMode = scene.currentBattle.mysteryEncounter.encounterMode;
 
     if (scene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
       return i18next.t("battle:bossAppeared", { bossName: enemyField[0].name });
     }
 
-    if (encounterVariant === MysteryEncounterVariant.TRAINER_BATTLE) {
+    if (encounterMode === MysteryEncounterMode.TRAINER_BATTLE) {
       if (scene.currentBattle.double) {
         return i18next.t("battle:trainerAppearedDouble", { trainerName: scene.currentBattle.trainer.getName(TrainerSlot.NONE, true) });
 
@@ -231,10 +231,10 @@ export class MysteryEncounterBattlePhase extends Phase {
   }
 
   doMysteryEncounterBattle(scene: BattleScene) {
-    const encounterVariant = scene.currentBattle.mysteryEncounter.encounterVariant;
-    if (encounterVariant === MysteryEncounterVariant.WILD_BATTLE || encounterVariant === MysteryEncounterVariant.BOSS_BATTLE) {
+    const encounterMode = scene.currentBattle.mysteryEncounter.encounterMode;
+    if (encounterMode === MysteryEncounterMode.WILD_BATTLE || encounterMode === MysteryEncounterMode.BOSS_BATTLE) {
       // Summons the wild/boss Pokemon
-      if (encounterVariant === MysteryEncounterVariant.BOSS_BATTLE) {
+      if (encounterMode === MysteryEncounterMode.BOSS_BATTLE) {
         scene.playBgm(undefined);
       }
       const availablePartyMembers = scene.getEnemyParty().filter(p => !p.isFainted()).length;
@@ -248,7 +248,7 @@ export class MysteryEncounterBattlePhase extends Phase {
       } else {
         this.endBattleSetup(scene);
       }
-    } else if (encounterVariant === MysteryEncounterVariant.TRAINER_BATTLE) {
+    } else if (encounterMode === MysteryEncounterMode.TRAINER_BATTLE) {
       this.showEnemyTrainer();
       const doSummon = () => {
         scene.currentBattle.started = true;
@@ -296,11 +296,11 @@ export class MysteryEncounterBattlePhase extends Phase {
 
   endBattleSetup(scene: BattleScene) {
     const enemyField = scene.getEnemyField();
-    const encounterVariant = scene.currentBattle.mysteryEncounter.encounterVariant;
+    const encounterMode = scene.currentBattle.mysteryEncounter.encounterMode;
 
     // PostSummon and ShinySparkle phases are handled by SummonPhase
 
-    if (encounterVariant !== MysteryEncounterVariant.TRAINER_BATTLE) {
+    if (encounterMode !== MysteryEncounterMode.TRAINER_BATTLE) {
       const ivScannerModifier = this.scene.findModifier(m => m instanceof IvScannerModifier);
       if (ivScannerModifier) {
         enemyField.map(p => this.scene.pushPhase(new ScanIvsPhase(this.scene, p.getBattlerIndex(), Math.min(ivScannerModifier.getStackCount() * 2, 6))));
@@ -327,7 +327,7 @@ export class MysteryEncounterBattlePhase extends Phase {
       scene.pushPhase(new ToggleDoublePositionPhase(scene, false));
     }
 
-    if (encounterVariant !== MysteryEncounterVariant.TRAINER_BATTLE && !this.disableSwitch) {
+    if (encounterMode !== MysteryEncounterMode.TRAINER_BATTLE && !this.disableSwitch) {
       const minPartySize = scene.currentBattle.double ? 2 : 1;
       if (availablePartyMembers.length > minPartySize) {
         scene.pushPhase(new CheckSwitchPhase(scene, 0, scene.currentBattle.double));

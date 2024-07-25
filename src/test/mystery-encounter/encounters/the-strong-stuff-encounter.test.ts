@@ -4,17 +4,14 @@ import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
 import { Species } from "#app/enums/species";
 import GameManager from "#app/test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Battle from "#app/battle";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import * as BattleAnims from "#app/data/battle-anims";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { EncounterOptionMode } from "#app/data/mystery-encounters/mystery-encounter-option";
-import { runSelectMysteryEncounterOption, skipBattleRunMysteryEncounterRewardsPhase } from "#test/mystery-encounter/encounterTestUtils";
+import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } from "#test/mystery-encounter/encounterTestUtils";
 import { CommandPhase, MovePhase, SelectModifierPhase } from "#app/phases";
 import { Moves } from "#enums/moves";
 import BattleScene from "#app/battle-scene";
 import * as Modifiers from "#app/modifier/modifier";
-import { MysteryEncounterTier } from "#app/data/mystery-encounters/mystery-encounter";
 import { TheStrongStuffEncounter } from "#app/data/mystery-encounters/encounters/the-strong-stuff-encounter";
 import { Nature } from "#app/data/nature";
 import { BerryType } from "#enums/berry-type";
@@ -23,6 +20,9 @@ import { PokemonMove } from "#app/field/pokemon";
 import { Mode } from "#app/ui/ui";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { PokemonBaseStatTotalModifier } from "#app/modifier/modifier";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { initSceneWithoutEncounterPhase } from "#test/utils/gameManagerUtils";
 
 const namespace = "mysteryEncounter:theStrongStuff";
 const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
@@ -97,7 +97,8 @@ describe("The Strong Stuff - Mystery Encounter", () => {
   });
 
   it("should initialize fully ", async () => {
-    vi.spyOn(scene, "currentBattle", "get").mockReturnValue({ mysteryEncounter: TheStrongStuffEncounter } as Battle);
+    initSceneWithoutEncounterPhase(scene, defaultParty);
+    scene.currentBattle.mysteryEncounter = TheStrongStuffEncounter;
     const moveInitSpy = vi.spyOn(BattleAnims, "loadMoveAnimAssets");
     const moveLoadSpy = vi.spyOn(BattleAnims, "loadMoveAnimAssets");
 
@@ -105,6 +106,7 @@ describe("The Strong Stuff - Mystery Encounter", () => {
 
     expect(TheStrongStuffEncounter.onInit).toBeDefined();
 
+    TheStrongStuffEncounter.populateDialogueTokensFromRequirements(scene);
     const onInitResult = onInit(scene);
 
     expect(TheStrongStuffEncounter.enemyPartyConfigs).toEqual([
@@ -134,7 +136,7 @@ describe("The Strong Stuff - Mystery Encounter", () => {
   describe("Option 1 - Power Swap BSTs", () => {
     it("should have the correct properties", () => {
       const option1 = TheStrongStuffEncounter.options[0];
-      expect(option1.optionMode).toBe(EncounterOptionMode.DEFAULT);
+      expect(option1.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option1.dialogue).toBeDefined();
       expect(option1.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option:1:label`,
@@ -151,7 +153,7 @@ describe("The Strong Stuff - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.THE_STRONG_STUFF, defaultParty);
 
       const bstsPrior = scene.getParty().map(p => p.getSpeciesForm().getBaseStatTotal());
-      await runSelectMysteryEncounterOption(game, 1);
+      await runMysteryEncounterToEnd(game, 1);
 
       const bstsAfter = scene.getParty().map(p => {
         const baseStats = p.getSpeciesForm().baseStats.slice(0);
@@ -168,7 +170,7 @@ describe("The Strong Stuff - Mystery Encounter", () => {
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
 
       await game.runToMysteryEncounter(MysteryEncounterType.THE_STRONG_STUFF, defaultParty);
-      await runSelectMysteryEncounterOption(game, 1);
+      await runMysteryEncounterToEnd(game, 1);
 
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();
     });
@@ -177,7 +179,7 @@ describe("The Strong Stuff - Mystery Encounter", () => {
   describe("Option 2 - battle the Shuckle", () => {
     it("should have the correct properties", () => {
       const option1 = TheStrongStuffEncounter.options[1];
-      expect(option1.optionMode).toBe(EncounterOptionMode.DEFAULT);
+      expect(option1.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option1.dialogue).toBeDefined();
       expect(option1.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option:2:label`,
@@ -194,7 +196,7 @@ describe("The Strong Stuff - Mystery Encounter", () => {
       const phaseSpy = vi.spyOn(scene, "pushPhase");
 
       await game.runToMysteryEncounter(MysteryEncounterType.THE_STRONG_STUFF, defaultParty);
-      await runSelectMysteryEncounterOption(game, 2, true);
+      await runMysteryEncounterToEnd(game, 2, true);
 
       const enemyField = scene.getEnemyField();
       expect(scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
@@ -218,7 +220,7 @@ describe("The Strong Stuff - Mystery Encounter", () => {
 
     it("should have Soul Dew in rewards", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.THE_STRONG_STUFF, defaultParty);
-      await runSelectMysteryEncounterOption(game, 2, true);
+      await runMysteryEncounterToEnd(game, 2, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
       expect(scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);

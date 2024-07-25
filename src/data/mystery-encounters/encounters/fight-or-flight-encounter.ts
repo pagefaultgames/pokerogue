@@ -1,5 +1,5 @@
 import { BattleStat } from "#app/data/battle-stat";
-import { EncounterOptionMode, MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
+import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import {
   EnemyPartyConfig,
   initBattleWithEnemyConfig,
@@ -20,14 +20,13 @@ import { StatChangePhase } from "#app/phases";
 import { randSeedInt } from "#app/utils";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import BattleScene from "../../../battle-scene";
-import IMysteryEncounter, {
-  MysteryEncounterBuilder,
-  MysteryEncounterTier,
-} from "../mystery-encounter";
+import BattleScene from "#app/battle-scene";
+import IMysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
 import { MoveRequirement } from "../mystery-encounter-requirements";
 import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { getPokemonNameWithAffix } from "#app/messages";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:fightOrFlight";
@@ -132,7 +131,7 @@ export const FightOrFlightEncounter: IMysteryEncounter =
     )
     .withOption(
       new MysteryEncounterOptionBuilder()
-        .withOptionMode(EncounterOptionMode.DEFAULT_OR_SPECIAL)
+        .withOptionMode(MysteryEncounterOptionMode.DEFAULT_OR_SPECIAL)
         .withPrimaryPokemonRequirement(new MoveRequirement(STEALING_MOVES)) // Will set option2PrimaryName and option2PrimaryMove dialogue tokens automatically
         .withDialogue({
           buttonLabel: `${namespace}:option:2:label`,

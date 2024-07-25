@@ -5,20 +5,21 @@ import { Species } from "#app/enums/species";
 import GameManager from "#app/test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { FieryFalloutEncounter } from "#app/data/mystery-encounters/encounters/fiery-fallout-encounter";
-import Battle from "#app/battle";
 import { Gender } from "#app/data/gender";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import * as BattleAnims from "#app/data/battle-anims";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { EncounterOptionMode } from "#app/data/mystery-encounters/mystery-encounter-option";
-import { runSelectMysteryEncounterOption, skipBattleRunMysteryEncounterRewardsPhase } from "#test/mystery-encounter/encounterTestUtils";
+import { runMysteryEncounterToEnd, runSelectMysteryEncounterOption, skipBattleRunMysteryEncounterRewardsPhase } from "#test/mystery-encounter/encounterTestUtils";
 import { CommandPhase, MovePhase, SelectModifierPhase } from "#app/phases";
 import { Moves } from "#enums/moves";
 import BattleScene from "#app/battle-scene";
 import { PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { Type } from "#app/data/type";
 import { Status, StatusEffect } from "#app/data/status-effect";
-import { MysteryEncounterTier } from "#app/data/mystery-encounters/mystery-encounter";
+import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { initSceneWithoutEncounterPhase } from "#test/utils/gameManagerUtils";
 
 const namespace = "mysteryEncounter:fieryFallout";
 /** Arcanine and Ninetails for 2 Fire types. Lapras, Gengar, Abra for burnable mon. */
@@ -94,7 +95,8 @@ describe("Fiery Fallout - Mystery Encounter", () => {
   });
 
   it("should initialize fully ", async () => {
-    vi.spyOn(scene, "currentBattle", "get").mockReturnValue({ mysteryEncounter: FieryFalloutEncounter } as Battle);
+    initSceneWithoutEncounterPhase(scene, defaultParty);
+    scene.currentBattle.mysteryEncounter = FieryFalloutEncounter;
     const weatherSpy = vi.spyOn(scene.arena, "trySetWeather").mockReturnValue(true);
     const moveInitSpy = vi.spyOn(BattleAnims, "initMoveAnim");
     const moveLoadSpy = vi.spyOn(BattleAnims, "loadMoveAnimAssets");
@@ -103,6 +105,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
 
     expect(FieryFalloutEncounter.onInit).toBeDefined();
 
+    FieryFalloutEncounter.populateDialogueTokensFromRequirements(scene);
     const onInitResult = onInit(scene);
 
     expect(FieryFalloutEncounter.enemyPartyConfigs).toEqual([
@@ -132,7 +135,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
   describe("Option 1 - Fight 2 Volcarona", () => {
     it("should have the correct properties", () => {
       const option1 = FieryFalloutEncounter.options[0];
-      expect(option1.optionMode).toBe(EncounterOptionMode.DEFAULT);
+      expect(option1.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option1.dialogue).toBeDefined();
       expect(option1.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option:1:label`,
@@ -149,7 +152,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
       const phaseSpy = vi.spyOn(scene, "pushPhase");
 
       await game.runToMysteryEncounter(MysteryEncounterType.FIERY_FALLOUT, defaultParty);
-      await runSelectMysteryEncounterOption(game, 1, true);
+      await runMysteryEncounterToEnd(game, 1, true);
 
       const enemyField = scene.getEnemyField();
       expect(scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
@@ -166,7 +169,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
 
     it("should give charcoal to lead pokemon", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIERY_FALLOUT, defaultParty);
-      await runSelectMysteryEncounterOption(game, 1, true);
+      await runMysteryEncounterToEnd(game, 1, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
       expect(scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);
@@ -182,7 +185,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
   describe("Option 2 - Suffer the weather", () => {
     it("should have the correct properties", () => {
       const option1 = FieryFalloutEncounter.options[1];
-      expect(option1.optionMode).toBe(EncounterOptionMode.DEFAULT);
+      expect(option1.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option1.dialogue).toBeDefined();
       expect(option1.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option:2:label`,
@@ -204,7 +207,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
       const abra = party.find((pkm) => pkm.species.speciesId === Species.ABRA);
       vi.spyOn(abra, "isAllowedInBattle").mockReturnValue(false);
 
-      await runSelectMysteryEncounterOption(game, 2);
+      await runMysteryEncounterToEnd(game, 2);
 
       const burnablePokemon = party.filter((pkm) => pkm.isAllowedInBattle() && !pkm.getTypes().includes(Type.FIRE));
       const notBurnablePokemon = party.filter((pkm) => !pkm.isAllowedInBattle() || pkm.getTypes().includes(Type.FIRE));
@@ -220,7 +223,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
 
       await game.runToMysteryEncounter(MysteryEncounterType.FIERY_FALLOUT, defaultParty);
-      await runSelectMysteryEncounterOption(game, 2);
+      await runMysteryEncounterToEnd(game, 2);
 
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();
     });
@@ -229,7 +232,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
   describe("Option 3 - use FIRE types", () => {
     it("should have the correct properties", () => {
       const option1 = FieryFalloutEncounter.options[2];
-      expect(option1.optionMode).toBe(EncounterOptionMode.DISABLED_OR_SPECIAL);
+      expect(option1.optionMode).toBe(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL);
       expect(option1.dialogue).toBeDefined();
       expect(option1.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option:3:label`,
@@ -245,7 +248,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
 
     it("should give charcoal to lead pokemon", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIERY_FALLOUT, defaultParty);
-      await runSelectMysteryEncounterOption(game, 3);
+      await runMysteryEncounterToEnd(game, 3);
       // await skipBattleRunMysteryEncounterRewardsPhase(game);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
       expect(scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);
@@ -261,9 +264,23 @@ describe("Fiery Fallout - Mystery Encounter", () => {
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
 
       await game.runToMysteryEncounter(MysteryEncounterType.FIERY_FALLOUT, defaultParty);
-      await runSelectMysteryEncounterOption(game, 3);
+      await runMysteryEncounterToEnd(game, 3);
 
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();
+    });
+
+    it("should be disabled if not enough FIRE types are in party", async () => {
+      await game.runToMysteryEncounter(MysteryEncounterType.FIERY_FALLOUT, [Species.MAGIKARP, Species.ARCANINE]);
+      await game.phaseInterceptor.to(MysteryEncounterPhase, false);
+
+      const encounterPhase = scene.getCurrentPhase();
+      expect(encounterPhase.constructor.name).toBe(MysteryEncounterPhase.name);
+      const continueEncounterSpy = vi.spyOn((encounterPhase as MysteryEncounterPhase), "continueEncounter");
+
+      await runSelectMysteryEncounterOption(game, 3);
+
+      expect(scene.getCurrentPhase().constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(continueEncounterSpy).not.toHaveBeenCalled();
     });
   });
 });

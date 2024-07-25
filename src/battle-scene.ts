@@ -66,10 +66,12 @@ import { Species } from "#enums/species";
 import { UiTheme } from "#enums/ui-theme";
 import { TimedEventManager } from "#app/timed-event-manager.js";
 import i18next from "i18next";
-import IMysteryEncounter, { MysteryEncounterTier, MysteryEncounterVariant } from "./data/mystery-encounters/mystery-encounter";
+import IMysteryEncounter from "./data/mystery-encounters/mystery-encounter";
 import { allMysteryEncounters, AVERAGE_ENCOUNTERS_PER_RUN_TARGET, BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT, mysteryEncountersByBiome, WEIGHT_INCREMENT_ON_SPAWN_MISS } from "./data/mystery-encounters/mystery-encounters";
 import { MysteryEncounterData } from "#app/data/mystery-encounters/mystery-encounter-data";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -1184,7 +1186,7 @@ export default class BattleScene extends SceneBase {
         this.arena.removeAllTags();
 
         // If last battle was mystery encounter and no battle occurred, skip return phases
-        if (lastBattle?.mysteryEncounter?.encounterVariant !== MysteryEncounterVariant.NO_BATTLE) {
+        if (lastBattle?.mysteryEncounter?.encounterMode !== MysteryEncounterMode.NO_BATTLE) {
           playerField.forEach((_, p) => this.unshiftPhase(new ReturnPhase(this, p)));
 
           for (const pokemon of this.getParty()) {
