@@ -29,7 +29,7 @@ describe("Moves - Astonish", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleType("single");
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.ASTONISH, Moves.SPLASH]);
+    game.override.moveset([Moves.ASTONISH, Moves.SPLASH]);
     game.override.enemySpecies(Species.BLASTOISE);
     game.override.enemyAbility(Abilities.INSOMNIA);
     game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);

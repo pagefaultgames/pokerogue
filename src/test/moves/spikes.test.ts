@@ -35,7 +35,7 @@ describe("Moves - Spikes", () => {
     vi.spyOn(Overrides, "PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
     game.override.startingWave(3);
     game.override.enemyMoveset([Moves.SPLASH,Moves.SPLASH,Moves.SPLASH,Moves.SPLASH]);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPIKES,Moves.SPLASH, Moves.ROAR]);
+    game.override.moveset([Moves.SPIKES,Moves.SPLASH, Moves.ROAR]);
   });
 
   it("single - wild - stay on field - no damage", async() => {

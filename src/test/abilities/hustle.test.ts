@@ -28,7 +28,7 @@ describe("Abilities - Hustle", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HUSTLE);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.GIGA_DRAIN, Moves.FISSURE]);
+    game.override.moveset([Moves.TACKLE, Moves.GIGA_DRAIN, Moves.FISSURE]);
     vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(5);
     vi.spyOn(overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
     vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(5);

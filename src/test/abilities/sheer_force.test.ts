@@ -37,7 +37,7 @@ describe("Abilities - Sheer Force", () => {
     game.override.battleType("single");
     game.override.enemySpecies(Species.ONIX);
     game.override.startingLevel(100);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue(movesToUse);
+    game.override.moveset(movesToUse);
     game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
   });
 

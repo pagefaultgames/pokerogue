@@ -1,19 +1,18 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
+import { BattleStat } from "#app/data/battle-stat";
 import {
   CommandPhase,
   EnemyCommandPhase,
   TurnInitPhase,
 } from "#app/phases";
-import {Mode} from "#app/ui/ui";
-import {getMovePosition} from "#app/test/utils/gameManagerUtils";
-import {Command} from "#app/ui/command-ui-handler";
-import {BattleStat} from "#app/data/battle-stat";
+import GameManager from "#app/test/utils/gameManager";
+import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { Command } from "#app/ui/command-ui-handler";
+import { Mode } from "#app/ui/ui";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 
 describe("Moves - Tail whip", () => {
@@ -38,7 +37,7 @@ describe("Moves - Tail whip", () => {
     game.override.enemyAbility(Abilities.INSOMNIA);
     game.override.ability(Abilities.INSOMNIA);
     game.override.startingLevel(2000);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
+    game.override.moveset([moveToUse]);
     game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
   });
 

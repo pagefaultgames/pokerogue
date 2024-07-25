@@ -1,13 +1,12 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-import GameManager from "../utils/gameManager";
-import Phaser from "phaser";
-import Overrides from "#app/overrides";
 import { BattleStat } from "#app/data/battle-stat.js";
-import { CommandPhase, MessagePhase } from "#app/phases.js";
-import { getMovePosition } from "../utils/gameManagerUtils";
 import { Abilities } from "#app/enums/abilities.js";
 import { Moves } from "#app/enums/moves.js";
 import { Species } from "#app/enums/species.js";
+import { CommandPhase, MessagePhase } from "#app/phases.js";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
+import GameManager from "../utils/gameManager";
+import { getMovePosition } from "../utils/gameManagerUtils";
 import { SPLASH_ONLY } from "../utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
@@ -30,7 +29,7 @@ describe("Abilities - COSTAR", () => {
     game = new GameManager(phaserGame);
     game.override.battleType("double");
     game.override.ability(Abilities.COSTAR);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.NASTY_PLOT]);
+    game.override.moveset([Moves.SPLASH, Moves.NASTY_PLOT]);
     game.override.enemyMoveset(SPLASH_ONLY);
   });
 

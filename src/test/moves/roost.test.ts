@@ -32,7 +32,7 @@ describe("Moves - Roost", () => {
     game.override.enemyAbility(Abilities.INSOMNIA);
     game.override.startingLevel(100);
     vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.STOMPING_TANTRUM ]);
+    game.override.moveset([ Moves.STOMPING_TANTRUM ]);
     game.override.enemyMoveset([Moves.ROOST,Moves.ROOST,Moves.ROOST,Moves.ROOST]);
   });
 

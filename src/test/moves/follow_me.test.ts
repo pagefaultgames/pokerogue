@@ -37,7 +37,7 @@ describe("Moves - Follow Me", () => {
     game.override.enemySpecies(Species.SNORLAX);
     game.override.startingLevel(100);
     vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.FOLLOW_ME, Moves.RAGE_POWDER, Moves.SPOTLIGHT, Moves.QUICK_ATTACK ]);
+    game.override.moveset([ Moves.FOLLOW_ME, Moves.RAGE_POWDER, Moves.SPOTLIGHT, Moves.QUICK_ATTACK ]);
     game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
   });
 
@@ -102,7 +102,7 @@ describe("Moves - Follow Me", () => {
     "move effect should be bypassed by Stalwart",
     async () => {
       game.override.ability(Abilities.STALWART);
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.QUICK_ATTACK ]);
+      game.override.moveset([ Moves.QUICK_ATTACK ]);
       game.override.enemyMoveset([ Moves.FOLLOW_ME, Moves.FOLLOW_ME, Moves.FOLLOW_ME, Moves.FOLLOW_ME ]);
 
       await game.startBattle([ Species.AMOONGUSS, Species.CHARIZARD ]);
@@ -136,7 +136,7 @@ describe("Moves - Follow Me", () => {
   test(
     "move effect should be bypassed by Snipe Shot",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.SNIPE_SHOT ]);
+      game.override.moveset([ Moves.SNIPE_SHOT ]);
       game.override.enemyMoveset([ Moves.FOLLOW_ME, Moves.FOLLOW_ME, Moves.FOLLOW_ME, Moves.FOLLOW_ME ]);
 
       await game.startBattle([ Species.AMOONGUSS, Species.CHARIZARD ]);

@@ -29,7 +29,7 @@ describe("Abilities - Sand Veil", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH]);
+    game.override.moveset([Moves.SPLASH]);
     game.override.enemySpecies(Species.MEOWSCARADA);
     game.override.enemyAbility(Abilities.INSOMNIA);
     game.override.enemyMoveset([Moves.TWISTER, Moves.TWISTER, Moves.TWISTER, Moves.TWISTER]);

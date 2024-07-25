@@ -1,15 +1,14 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
-import { Species } from "#enums/species";
+import { allMoves } from "#app/data/move.js";
 import {
   MoveEffectPhase
 } from "#app/phases";
-import { Moves } from "#enums/moves";
+import GameManager from "#app/test/utils/gameManager";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
-import { allMoves } from "#app/data/move.js";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Moves - Hard Press", () => {
@@ -35,7 +34,7 @@ describe("Moves - Hard Press", () => {
     game.override.enemySpecies(Species.MUNCHLAX);
     game.override.enemyAbility(Abilities.BALL_FETCH);
     game.override.enemyMoveset(SPLASH_ONLY);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.HARD_PRESS]);
+    game.override.moveset([Moves.HARD_PRESS]);
     vi.spyOn(moveToCheck, "calculateBattlePower");
   });
 

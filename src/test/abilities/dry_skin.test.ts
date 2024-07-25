@@ -35,7 +35,7 @@ describe("Abilities - Dry Skin", () => {
   });
 
   it("during sunlight, lose 1/8 of maximum health at the end of each turn", async () => {
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SUNNY_DAY, Moves.SPLASH]);
+    game.override.moveset([Moves.SUNNY_DAY, Moves.SPLASH]);
 
     await game.startBattle();
 
@@ -56,7 +56,7 @@ describe("Abilities - Dry Skin", () => {
   });
 
   it("during rain, gain 1/8 of maximum health at the end of each turn", async () => {
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.RAIN_DANCE, Moves.SPLASH]);
+    game.override.moveset([Moves.RAIN_DANCE, Moves.SPLASH]);
 
     await game.startBattle();
 
@@ -79,7 +79,7 @@ describe("Abilities - Dry Skin", () => {
   });
 
   it("opposing fire attacks do 25% more damage", async () => {
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.FLAMETHROWER]);
+    game.override.moveset([Moves.FLAMETHROWER]);
 
     await game.startBattle();
 
@@ -106,7 +106,7 @@ describe("Abilities - Dry Skin", () => {
   });
 
   it("opposing water attacks heal 1/4 of maximum health and deal no damage", async () => {
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.WATER_GUN]);
+    game.override.moveset([Moves.WATER_GUN]);
 
     await game.startBattle();
 
@@ -121,7 +121,7 @@ describe("Abilities - Dry Skin", () => {
   });
 
   it("opposing water attacks do not heal if they were protected from", async () => {
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.WATER_GUN]);
+    game.override.moveset([Moves.WATER_GUN]);
 
     await game.startBattle();
 
@@ -137,7 +137,7 @@ describe("Abilities - Dry Skin", () => {
   });
 
   it("multi-strike water attacks only heal once", async () => {
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.WATER_GUN, Moves.WATER_SHURIKEN]);
+    game.override.moveset([Moves.WATER_GUN, Moves.WATER_SHURIKEN]);
 
     await game.startBattle();
 

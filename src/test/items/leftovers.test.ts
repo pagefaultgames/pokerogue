@@ -28,7 +28,7 @@ describe("Items - Leftovers", () => {
     game.override.battleType("single");
     vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
     vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.UNNERVE);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH]);
+    game.override.moveset([Moves.SPLASH]);
     game.override.enemySpecies(Species.SHUCKLE);
     game.override.enemyAbility(Abilities.UNNERVE);
     game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);

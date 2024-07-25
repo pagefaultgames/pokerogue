@@ -44,7 +44,7 @@ describe("Abilities - Parental Bond", () => {
   test(
     "ability should add second strike to attack move",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
+      game.override.moveset([Moves.TACKLE]);
 
       await game.startBattle([Species.CHARIZARD]);
 
@@ -76,7 +76,7 @@ describe("Abilities - Parental Bond", () => {
   test(
     "ability should apply secondary effects to both strikes",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.POWER_UP_PUNCH]);
+      game.override.moveset([Moves.POWER_UP_PUNCH]);
       game.override.enemySpecies(Species.AMOONGUSS);
 
       await game.startBattle([Species.CHARIZARD]);
@@ -99,7 +99,7 @@ describe("Abilities - Parental Bond", () => {
   test(
     "ability should not apply to Status moves",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.BABY_DOLL_EYES]);
+      game.override.moveset([Moves.BABY_DOLL_EYES]);
 
       await game.startBattle([Species.CHARIZARD]);
 
@@ -119,7 +119,7 @@ describe("Abilities - Parental Bond", () => {
   test(
     "ability should not apply to multi-hit moves",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.DOUBLE_HIT]);
+      game.override.moveset([Moves.DOUBLE_HIT]);
 
       await game.startBattle([Species.CHARIZARD]);
 
@@ -144,7 +144,7 @@ describe("Abilities - Parental Bond", () => {
   test(
     "ability should not apply to self-sacrifice moves",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SELF_DESTRUCT]);
+      game.override.moveset([Moves.SELF_DESTRUCT]);
 
       await game.startBattle([Species.CHARIZARD]);
 
@@ -165,7 +165,7 @@ describe("Abilities - Parental Bond", () => {
   test(
     "ability should not apply to Rollout",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.ROLLOUT]);
+      game.override.moveset([Moves.ROLLOUT]);
 
       await game.startBattle([Species.CHARIZARD]);
 
@@ -189,7 +189,7 @@ describe("Abilities - Parental Bond", () => {
   test(
     "ability should not apply multiplier to fixed-damage moves",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.DRAGON_RAGE]);
+      game.override.moveset([Moves.DRAGON_RAGE]);
 
       await game.startBattle([Species.CHARIZARD]);
 
@@ -211,7 +211,7 @@ describe("Abilities - Parental Bond", () => {
   test(
     "ability should not apply multiplier to counter moves",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.COUNTER]);
+      game.override.moveset([Moves.COUNTER]);
       game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
 
       await game.startBattle([Species.CHARIZARD]);
@@ -240,7 +240,7 @@ describe("Abilities - Parental Bond", () => {
     "ability should not apply to multi-target moves",
     async () => {
       game.override.battleType("double");
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.EARTHQUAKE]);
+      game.override.moveset([Moves.EARTHQUAKE]);
 
       await game.startBattle([Species.CHARIZARD, Species.PIDGEOT]);
 
@@ -265,7 +265,7 @@ describe("Abilities - Parental Bond", () => {
   test(
     "ability should apply to multi-target moves when hitting only one target",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.EARTHQUAKE]);
+      game.override.moveset([Moves.EARTHQUAKE]);
 
       await game.startBattle([Species.CHARIZARD]);
 
@@ -285,7 +285,7 @@ describe("Abilities - Parental Bond", () => {
   test(
     "ability should only trigger post-target move effects once",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.MIND_BLOWN]);
+      game.override.moveset([Moves.MIND_BLOWN]);
 
       await game.startBattle([Species.PIDGEOT]);
 
@@ -311,7 +311,7 @@ describe("Abilities - Parental Bond", () => {
   test(
     "Burn Up only removes type after second strike with this ability",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.BURN_UP]);
+      game.override.moveset([Moves.BURN_UP]);
 
       await game.startBattle([Species.CHARIZARD]);
 
@@ -338,7 +338,7 @@ describe("Abilities - Parental Bond", () => {
   test(
     "Moves boosted by this ability and Multi-Lens should strike 4 times",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
+      game.override.moveset([Moves.TACKLE]);
       vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "MULTI_LENS", count: 1}]);
 
       await game.startBattle([Species.CHARIZARD]);
@@ -360,7 +360,7 @@ describe("Abilities - Parental Bond", () => {
   test(
     "Super Fang boosted by this ability and Multi-Lens should strike twice",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SUPER_FANG]);
+      game.override.moveset([Moves.SUPER_FANG]);
       vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "MULTI_LENS", count: 1}]);
 
       await game.startBattle([Species.CHARIZARD]);
@@ -391,7 +391,7 @@ describe("Abilities - Parental Bond", () => {
   test(
     "Seismic Toss boosted by this ability and Multi-Lens should strike twice",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SEISMIC_TOSS]);
+      game.override.moveset([Moves.SEISMIC_TOSS]);
       vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "MULTI_LENS", count: 1}]);
 
       await game.startBattle([Species.CHARIZARD]);
@@ -422,7 +422,7 @@ describe("Abilities - Parental Bond", () => {
   test(
     "Hyper Beam boosted by this ability should strike twice, then recharge",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.HYPER_BEAM]);
+      game.override.moveset([Moves.HYPER_BEAM]);
 
       await game.startBattle([Species.CHARIZARD]);
 
@@ -452,7 +452,7 @@ describe("Abilities - Parental Bond", () => {
   test(
     "Anchor Shot boosted by this ability should only trap the target after the second hit",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.ANCHOR_SHOT]);
+      game.override.moveset([Moves.ANCHOR_SHOT]);
 
       await game.startBattle([Species.CHARIZARD]);
 
@@ -484,7 +484,7 @@ describe("Abilities - Parental Bond", () => {
   test(
     "Smack Down boosted by this ability should only ground the target after the second hit",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SMACK_DOWN]);
+      game.override.moveset([Moves.SMACK_DOWN]);
 
       await game.startBattle([Species.CHARIZARD]);
 
@@ -513,7 +513,7 @@ describe("Abilities - Parental Bond", () => {
   test(
     "U-turn boosted by this ability should strike twice before forcing a switch",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.U_TURN]);
+      game.override.moveset([Moves.U_TURN]);
 
       await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
@@ -539,7 +539,7 @@ describe("Abilities - Parental Bond", () => {
   test(
     "Wake-Up Slap boosted by this ability should only wake up the target after the second hit",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.WAKE_UP_SLAP]);
+      game.override.moveset([Moves.WAKE_UP_SLAP]);
       vi.spyOn(Overrides, "OPP_STATUS_OVERRIDE", "get").mockReturnValue(StatusEffect.SLEEP);
 
       await game.startBattle([Species.CHARIZARD]);
@@ -569,7 +569,7 @@ describe("Abilities - Parental Bond", () => {
   test(
     "ability should not cause user to hit into King's Shield more than once",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
+      game.override.moveset([Moves.TACKLE]);
       game.override.enemyMoveset([Moves.KINGS_SHIELD,Moves.KINGS_SHIELD,Moves.KINGS_SHIELD,Moves.KINGS_SHIELD]);
 
       await game.startBattle([Species.CHARIZARD]);
@@ -591,7 +591,7 @@ describe("Abilities - Parental Bond", () => {
   test(
     "ability should not cause user to hit into Storm Drain more than once",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.WATER_GUN]);
+      game.override.moveset([Moves.WATER_GUN]);
       game.override.enemyAbility(Abilities.STORM_DRAIN);
 
       await game.startBattle([Species.CHARIZARD]);
@@ -614,7 +614,7 @@ describe("Abilities - Parental Bond", () => {
     "ability should not apply to multi-target moves with Multi-Lens",
     async () => {
       game.override.battleType("double");
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.EARTHQUAKE, Moves.SPLASH]);
+      game.override.moveset([Moves.EARTHQUAKE, Moves.SPLASH]);
       vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "MULTI_LENS", count: 1}]);
 
       await game.startBattle([Species.CHARIZARD, Species.PIDGEOT]);

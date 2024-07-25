@@ -30,7 +30,7 @@ describe("Arena - Gravity", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleType("single");
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.GRAVITY, Moves.FISSURE]);
+    game.override.moveset([Moves.TACKLE, Moves.GRAVITY, Moves.FISSURE]);
     game.override.ability(Abilities.UNNERVE);
     game.override.enemyAbility(Abilities.BALL_FETCH);
     game.override.enemySpecies(Species.SHUCKLE);

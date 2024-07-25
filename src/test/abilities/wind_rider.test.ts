@@ -1,15 +1,14 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
-import { Species } from "#enums/species";
+import { BattleStat } from "#app/data/battle-stat.js";
 import {
   TurnEndPhase,
 } from "#app/phases";
-import { Moves } from "#enums/moves";
+import GameManager from "#app/test/utils/gameManager";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
-import { BattleStat } from "#app/data/battle-stat.js";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Abilities - Wind Rider", () => {
@@ -31,7 +30,7 @@ describe("Abilities - Wind Rider", () => {
     game.override.battleType("single");
     game.override.enemySpecies(Species.SHIFTRY);
     game.override.enemyAbility(Abilities.WIND_RIDER);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TAILWIND, Moves.SPLASH, Moves.PETAL_BLIZZARD, Moves.SANDSTORM]);
+    game.override.moveset([Moves.TAILWIND, Moves.SPLASH, Moves.PETAL_BLIZZARD, Moves.SANDSTORM]);
     game.override.enemyMoveset(SPLASH_ONLY);
   });
 

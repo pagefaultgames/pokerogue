@@ -1,20 +1,19 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
+import { Stat } from "#app/data/pokemon-stat";
 import {
   CommandPhase, EnemyCommandPhase, SelectTargetPhase,
   TurnStartPhase
 } from "#app/phases";
-import {Mode} from "#app/ui/ui";
-import {getMovePosition} from "#app/test/utils/gameManagerUtils";
-import {Command} from "#app/ui/command-ui-handler";
-import {Stat} from "#app/data/pokemon-stat";
+import GameManager from "#app/test/utils/gameManager";
+import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { Command } from "#app/ui/command-ui-handler";
 import TargetSelectUiHandler from "#app/ui/target-select-ui-handler";
+import { Mode } from "#app/ui/ui";
 import { Abilities } from "#enums/abilities";
+import { Button } from "#enums/buttons";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import {Button} from "#enums/buttons";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 
 describe("Battle order", () => {
@@ -37,7 +36,7 @@ describe("Battle order", () => {
     game.override.enemySpecies(Species.MEWTWO);
     game.override.enemyAbility(Abilities.INSOMNIA);
     game.override.ability(Abilities.INSOMNIA);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
+    game.override.moveset([Moves.TACKLE]);
   });
 
   it("opponent faster than player 50 vs 150", async() => {

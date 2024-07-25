@@ -1,16 +1,15 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
-import { Species } from "#enums/species";
+import { ArenaTagSide } from "#app/data/arena-tag.js";
+import { Stat } from "#app/data/pokemon-stat.js";
+import { ArenaTagType } from "#app/enums/arena-tag-type.js";
 import {
   TurnEndPhase,
 } from "#app/phases";
-import { Moves } from "#enums/moves";
+import GameManager from "#app/test/utils/gameManager";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
-import { Stat } from "#app/data/pokemon-stat.js";
-import { ArenaTagType } from "#app/enums/arena-tag-type.js";
-import { ArenaTagSide } from "#app/data/arena-tag.js";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Abilities - Wind Rider", () => {
@@ -30,7 +29,7 @@ describe("Abilities - Wind Rider", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleType("double");
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TAILWIND, Moves.SPLASH, Moves.PETAL_BLIZZARD, Moves.SANDSTORM]);
+    game.override.moveset([Moves.TAILWIND, Moves.SPLASH, Moves.PETAL_BLIZZARD, Moves.SANDSTORM]);
     game.override.enemyMoveset(SPLASH_ONLY);
   });
 

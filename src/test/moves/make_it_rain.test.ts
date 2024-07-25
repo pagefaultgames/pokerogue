@@ -33,7 +33,7 @@ describe("Moves - Make It Rain", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleType("double");
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.MAKE_IT_RAIN, Moves.SPLASH]);
+    game.override.moveset([Moves.MAKE_IT_RAIN, Moves.SPLASH]);
     game.override.enemySpecies(Species.SNORLAX);
     game.override.enemyAbility(Abilities.INSOMNIA);
     game.override.enemyMoveset(SPLASH_ONLY);

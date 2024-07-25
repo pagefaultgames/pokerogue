@@ -29,7 +29,7 @@ describe("Moves - Magnet Rise", () => {
     game.override.enemyMoveset([Moves.DRILL_RUN, Moves.DRILL_RUN, Moves.DRILL_RUN, Moves.DRILL_RUN]);
     vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
     vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(1);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse, Moves.SPLASH, Moves.GRAVITY, Moves.BATON_PASS]);
+    game.override.moveset([moveToUse, Moves.SPLASH, Moves.GRAVITY, Moves.BATON_PASS]);
   });
 
   it("MAGNET RISE", async () => {

@@ -1,15 +1,14 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
-import { Species } from "#enums/species";
+import { allMoves } from "#app/data/move.js";
 import {
   TurnStartPhase,
 } from "#app/phases";
-import { Moves } from "#enums/moves";
+import GameManager from "#app/test/utils/gameManager";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
-import { allMoves } from "#app/data/move.js";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Weather - Strong Winds", () => {
   let phaserGame: Phaser.Game;
@@ -31,7 +30,7 @@ describe("Weather - Strong Winds", () => {
     game.override.startingLevel(10);
     game.override.enemySpecies(Species.TAILLOW);
     game.override.enemyAbility(Abilities.DELTA_STREAM);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.THUNDERBOLT, Moves.ICE_BEAM, Moves.ROCK_SLIDE]);
+    game.override.moveset([Moves.THUNDERBOLT, Moves.ICE_BEAM, Moves.ROCK_SLIDE]);
   });
 
   it("electric type move is not very effective on Rayquaza", async () => {

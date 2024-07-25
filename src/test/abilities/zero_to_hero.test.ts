@@ -30,7 +30,7 @@ describe("Abilities - ZERO TO HERO", () => {
     const moveToUse = Moves.SPLASH;
     game.override.battleType("single");
     game.override.ability(Abilities.ZERO_TO_HERO);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
+    game.override.moveset([moveToUse]);
     game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
   });
 

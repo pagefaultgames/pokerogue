@@ -34,7 +34,7 @@ describe("Moves - Flower Shield", () => {
     game.override.ability(Abilities.NONE);
     game.override.enemyAbility(Abilities.NONE);
     game.override.battleType("single");
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.FLOWER_SHIELD, Moves.SPLASH]);
+    game.override.moveset([Moves.FLOWER_SHIELD, Moves.SPLASH]);
     game.override.enemyMoveset(SPLASH_ONLY);
   });
 

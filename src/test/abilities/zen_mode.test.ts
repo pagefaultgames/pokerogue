@@ -48,7 +48,7 @@ describe("Abilities - ZEN MODE", () => {
     game.override.enemyAbility(Abilities.HYDRATION);
     game.override.ability(Abilities.ZEN_MODE);
     game.override.startingLevel(100);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
+    game.override.moveset([moveToUse]);
     game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
   });
 
