@@ -5039,7 +5039,7 @@ export class AttemptCapturePhase extends PokemonPhase {
                   this.scene.ui.setMode(Mode.MESSAGE).then(() => {
                     promptRelease();
                   });
-                });
+                }, false);
               }, () => {
                 this.scene.ui.setMode(Mode.PARTY, PartyUiMode.RELEASE, this.fieldIndex, (slotIndex: integer, _option: PartyOption) => {
                   this.scene.ui.setMode(Mode.MESSAGE).then(() => {
