@@ -12,7 +12,7 @@ export const filterBar: SimpleTranslationEntries = {
   "passiveUnlocked": "被动解锁",
   "passiveLocked": "被动未解锁",
   "hasWon": "已通关",
-  "hasNotWon": "尚未通关",
+  "hasNotWon": "未通关",
   "sortByNumber": "编号",
   "sortByCost": "费用",
   "sortByCandies": "糖果",
