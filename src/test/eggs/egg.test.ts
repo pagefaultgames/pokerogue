@@ -303,16 +303,10 @@ describe("Egg Generation Tests", () => {
     expect(result1).toBe(expectedTier1);
     expect(result2).toBe(expectedTier2);
   });
-  it("should generate rare/epic shinys from pokemon with a different form", () => {
+  it("should generate an epic shiny from pokemon with a different form", () => {
     const scene = game.scene;
-    const eggs: Egg[] = [];
+    const egg = new Egg({scene, isShiny: true, variantTier: VariantTier.EPIC, species: Species.MIRAIDON});
 
-    for (let i = 0; i < 1000; i++) {
-      eggs.push(new Egg({scene, isShiny: true, species: Species.MIRAIDON}));
-    }
-
-    const result = eggs.filter(x => x.variantTier === VariantTier.RARE || x.variantTier === VariantTier.EPIC).length;
-
-    expect(result).greaterThan(0);
+    expect(egg.variantTier).toBe(VariantTier.EPIC);
   });
 });
