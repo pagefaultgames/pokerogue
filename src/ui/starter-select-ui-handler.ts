@@ -1574,9 +1574,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                   break;
                 }
               } else if (newAbilityIndex === 1) {
-                if (abilityAttr & (this.lastSpecies.ability2 ? AbilityAttr.ABILITY_2 : AbilityAttr.ABILITY_HIDDEN)) {
-                  break;
+                if (this.lastSpecies.ability1 === this.lastSpecies.ability2) {
+                  newAbilityIndex = (newAbilityIndex + 1) % abilityCount;
                 }
+                break;
               } else {
                 if (abilityAttr & AbilityAttr.ABILITY_HIDDEN) {
                   break;
@@ -1949,7 +1950,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
       const fitsGen =   this.filterBar.getVals(DropDownColumn.GEN).includes(container.species.generation);
       const fitsType =  this.filterBar.getVals(DropDownColumn.TYPES).some(type => container.species.isOfType((type as number) - 1));
-      const fitsUnlocks = this.filterBar.getVals(DropDownColumn.UNLOCKS).some(variant => {
+      const fitsShiny = this.filterBar.getVals(DropDownColumn.UNLOCKS).some(variant => {
         if (variant === "SHINY3") {
           return isVariant3Caught;
         } else if (variant === "SHINY2") {
@@ -1960,7 +1961,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           return isCaught && !isVariantCaught && !isVariant2Caught && !isVariant3Caught;
         } else if (variant === "UNCAUGHT") {
           return isUncaught;
-        } else if (variant === "PASSIVEUNLOCKED") {
+        }
+      });
+      const fitsPassive = this.filterBar.getVals(DropDownColumn.UNLOCKS).some(variant => {
+        if (variant === "PASSIVEUNLOCKED") {
           return isPassiveUnlocked;
         } else if (variant === "PASSIVELOCKED") {
           return !isPassiveUnlocked;
@@ -1978,7 +1982,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
       });
 
-      if (fitsGen && fitsType && fitsUnlocks && fitsWin) {
+      if (fitsGen && fitsType && fitsShiny && fitsPassive && fitsWin) {
         this.filteredStarterContainers.push(container);
       }
     });
@@ -2618,7 +2622,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           }) as StarterMoveset;
 
         const speciesForm = getPokemonSpeciesForm(species.speciesId, formIndex);
-        const formText = Utils.capitalizeString(species?.forms[formIndex]?.formKey, "_", false, false);
+        const formText = Utils.capitalizeString(species?.forms[formIndex]?.formKey, "-", false, false);
 
         const speciesName = Utils.capitalizeString(Species[species.speciesId], "_", true, false);
 

@@ -153,6 +153,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "REVIVER_SEED": { name: "Résugraine", description: "Réanime et restaure la moitié des PV de son porteur s’il est mis K.O. par une capacité directe." },
 
+    "WHITE_HERB": { name: "White Herb", description: "An item to be held by a Pokémon. It will restore any lowered stat in battle." },
+
     "ETHER": { name: "Huile" },
     "MAX_ETHER": { name: "Huile Max" },
 

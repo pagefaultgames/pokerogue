@@ -147,7 +147,7 @@ export abstract class PokemonSpeciesForm {
     this.height = height;
     this.weight = weight;
     this.ability1 = ability1;
-    this.ability2 = ability2;
+    this.ability2 = ability2 === Abilities.NONE ? ability1 : ability2;
     this.abilityHidden = abilityHidden;
     this.baseTotal = baseTotal;
     this.baseStats = [ baseHp, baseAtk, baseDef, baseSpatk, baseSpdef, baseSpd ];
