@@ -1949,7 +1949,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
       const fitsGen =   this.filterBar.getVals(DropDownColumn.GEN).includes(container.species.generation);
       const fitsType =  this.filterBar.getVals(DropDownColumn.TYPES).some(type => container.species.isOfType((type as number) - 1));
-      const fitsUnlocks = this.filterBar.getVals(DropDownColumn.UNLOCKS).some(variant => {
+      const fitsShiny = this.filterBar.getVals(DropDownColumn.UNLOCKS).some(variant => {
         if (variant === "SHINY3") {
           return isVariant3Caught;
         } else if (variant === "SHINY2") {
@@ -1960,7 +1960,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           return isCaught && !isVariantCaught && !isVariant2Caught && !isVariant3Caught;
         } else if (variant === "UNCAUGHT") {
           return isUncaught;
-        } else if (variant === "PASSIVEUNLOCKED") {
+        }
+      });
+      const fitsPassive = this.filterBar.getVals(DropDownColumn.UNLOCKS).some(variant => {
+        if (variant === "PASSIVEUNLOCKED") {
           return isPassiveUnlocked;
         } else if (variant === "PASSIVELOCKED") {
           return !isPassiveUnlocked;
@@ -1978,7 +1981,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
       });
 
-      if (fitsGen && fitsType && fitsUnlocks && fitsWin) {
+      if (fitsGen && fitsType && fitsShiny && fitsPassive && fitsWin) {
         this.filteredStarterContainers.push(container);
       }
     });
