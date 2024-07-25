@@ -129,12 +129,40 @@ export abstract class PokemonSpeciesForm {
     return this.type1 === type || (this.type2 !== null && this.type2 === type);
   }
 
+  /**
+   * Method to get the total number of abilities a Pokemon species has.
+   * @returns Number of abilities
+   */
   getAbilityCount(): integer {
-    return this.ability2 ? this.abilityHidden ? 3 : 2 : this.abilityHidden ? 2 : 1;
+    let count = 1;
+    if (this.ability2 !== Abilities.NONE) {
+      count += 1;
+    }
+    if (this.abilityHidden !== Abilities.NONE) {
+      count += 1;
+    }
+    return count;
   }
 
+  /**
+   * Method to get the ability of a Pokemon species.
+   * @param abilityIndex Which ability to get (should only be 0-2)
+   * @returns The id of the Ability
+   */
   getAbility(abilityIndex: integer): Abilities {
-    return !abilityIndex ? this.ability1 : abilityIndex === 1 && this.ability2 ? this.ability2 : this.abilityHidden;
+    let ret: Abilities;
+    if (abilityIndex === 0) {
+      ret = this.ability1;
+    } else if (abilityIndex === 1) {
+      if (this.ability2 !== Abilities.NONE) {
+        ret = this.ability2;
+      } else {
+        ret = this.abilityHidden;
+      }
+    } else {
+      ret = this.abilityHidden;
+    }
+    return ret;
   }
 
   getLevelMoves(): LevelMoves {
@@ -549,19 +577,23 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
   getName(formIndex?: integer): string {
     if (formIndex !== undefined && this.forms.length) {
       const form = this.forms[formIndex];
+      let key: string;
       switch (form.formKey) {
       case SpeciesFormKey.MEGA:
       case SpeciesFormKey.PRIMAL:
       case SpeciesFormKey.ETERNAMAX:
-        return `${form.formName} ${this.name}`;
       case SpeciesFormKey.MEGA_X:
-        return `Mega ${this.name} X`;
       case SpeciesFormKey.MEGA_Y:
-        return `Mega ${this.name} Y`;
+        key = form.formKey;
+        break;
       default:
         if (form.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1) {
-          return `G-Max ${this.name}`;
+          key = "gigantamax";
         }
+      }
+
+      if (key) {
+        return i18next.t(`pokemonForm:${key}`, {pokemonName: this.name});
       }
     }
     return this.name;
