@@ -5,7 +5,7 @@ export const filterBar: SimpleTranslationEntries = {
   "typeFilter": "Typ",
   "unlocksFilter": "Freisch.",
   "winFilter": "Abschluss",
-  "sortFilter": "Sortierung",
+  "sortFilter": "Sort.",
   "all": "Alle",
   "normal": "Normal",
   "uncaught": "Nicht gefangen",
