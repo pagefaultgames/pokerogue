@@ -2,6 +2,7 @@ import { Arena } from "../field/arena";
 import { Type } from "./type";
 import * as Utils from "../utils";
 import { MoveCategory, allMoves, MoveTarget } from "./move";
+import { getPokemonNameWithAffix } from "../messages";
 import Pokemon, { HitResult, PokemonMove } from "../field/pokemon";
 import { MoveEffectPhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
 import { StatusEffect } from "./status-effect";
@@ -76,7 +77,7 @@ export class MistTag extends ArenaTag {
 
     const source = arena.scene.getPokemonById(this.sourceId);
     if (!quiet) {
-      arena.scene.queueMessage(i18next.t("arenaTags:mistOnAdd", { pokemonNameWithAffix: source }));
+      arena.scene.queueMessage(i18next.t("arenaTags:mistOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(source) }));
     }
   }
 
@@ -222,7 +223,7 @@ abstract class ConditionalProtectTag extends ArenaTag {
          && this.protectConditionFunc(...args.slice(2))) {
       (args[0] as Utils.BooleanHolder).value = true;
       new CommonBattleAnim(CommonAnim.PROTECT, target).play(arena.scene);
-      arena.scene.queueMessage(i18next.t("arenaTags:conditionalProtectApply", { moveName: super.getMoveName(), pokemonNameWithAffix: target }));
+      arena.scene.queueMessage(i18next.t("arenaTags:conditionalProtectApply", { moveName: super.getMoveName(), pokemonNameWithAffix: getPokemonNameWithAffix(target) }));
       return true;
     }
     return false;
@@ -280,7 +281,7 @@ class MatBlockTag extends ConditionalProtectTag {
 
   onAdd(arena: Arena) {
     const source = arena.scene.getPokemonById(this.sourceId);
-    arena.scene.queueMessage(i18next.t("arenaTags:matBlockOnAdd", { pokemonNameWithAffix: source }));
+    arena.scene.queueMessage(i18next.t("arenaTags:matBlockOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(source) }));
   }
 }
 
@@ -318,7 +319,7 @@ class WishTag extends ArenaTag {
   onAdd(arena: Arena): void {
     const user = arena.scene.getPokemonById(this.sourceId);
     this.battlerIndex = user.getBattlerIndex();
-    this.triggerMessage = i18next.t("arenaTags:wishTagOnAdd", { pokemonNameWithAffix: user });
+    this.triggerMessage = i18next.t("arenaTags:wishTagOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(user) });
     this.healHp = Math.max(Math.floor(user.getMaxHp() / 2), 1);
   }
 
@@ -475,7 +476,7 @@ class SpikesTag extends ArenaTrapTag {
         const damageHpRatio = 1 / (10 - 2 * this.layers);
         const damage = Math.ceil(pokemon.getMaxHp() * damageHpRatio);
 
-        pokemon.scene.queueMessage(i18next.t("arenaTags:spikesActivateTrap", { pokemonNameWithAffix: pokemon }));
+        pokemon.scene.queueMessage(i18next.t("arenaTags:spikesActivateTrap", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
         pokemon.damageAndUpdate(damage, HitResult.OTHER);
         if (pokemon.turnData) {
           pokemon.turnData.damageTaken += damage;
@@ -522,7 +523,7 @@ class ToxicSpikesTag extends ArenaTrapTag {
       if (pokemon.isOfType(Type.POISON)) {
         this.neutralized = true;
         if (pokemon.scene.arena.removeTag(this.tagType)) {
-          pokemon.scene.queueMessage(i18next.t("arenaTags:toxicSpikesActivateTrapPoison", { pokemonNameWithAffix: pokemon, moveName: this.getMoveName() }));
+          pokemon.scene.queueMessage(i18next.t("arenaTags:toxicSpikesActivateTrapPoison", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: this.getMoveName() }));
           return true;
         }
       } else if (!pokemon.status) {
@@ -634,7 +635,7 @@ class StealthRockTag extends ArenaTrapTag {
 
     if (damageHpRatio) {
       const damage = Math.ceil(pokemon.getMaxHp() * damageHpRatio);
-      pokemon.scene.queueMessage(i18next.t("arenaTags:stealthRockActivateTrap", { pokemonName: pokemon.name }));
+      pokemon.scene.queueMessage(i18next.t("arenaTags:stealthRockActivateTrap", { pokemonName: getPokemonNameWithAffix(pokemon) }));
       pokemon.damageAndUpdate(damage, HitResult.OTHER);
       if (pokemon.turnData) {
         pokemon.turnData.damageTaken += damage;
@@ -673,7 +674,7 @@ class StickyWebTag extends ArenaTrapTag {
       const cancelled = new Utils.BooleanHolder(false);
       applyAbAttrs(ProtectStatAbAttr, pokemon, cancelled);
       if (!cancelled.value) {
-        pokemon.scene.queueMessage(i18next.t("arenaTags:stickyWebActivateTrap", { pokemonName: pokemon.name }));
+        pokemon.scene.queueMessage(i18next.t("arenaTags:stickyWebActivateTrap", { pokemonName: getPokemonNameWithAffix(pokemon) }));
         const statLevels = new Utils.NumberHolder(-1);
         pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), false, [BattleStat.SPD], statLevels.value));
       }
@@ -701,7 +702,7 @@ export class TrickRoomTag extends ArenaTag {
   }
 
   onAdd(arena: Arena): void {
-    arena.scene.queueMessage(i18next.t("arenaTags:trickRoomOnAdd", { pokemonNameWithAffix: arena.scene.getPokemonById(this.sourceId) }));
+    arena.scene.queueMessage(i18next.t("arenaTags:trickRoomOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(arena.scene.getPokemonById(this.sourceId)) }));
   }
 
   onRemove(arena: Arena): void {
@@ -755,7 +756,7 @@ class TailwindTag extends ArenaTag {
       // Apply the CHARGED tag to party members with the WIND_POWER ability
       if (pokemon.hasAbility(Abilities.WIND_POWER) && !pokemon.getTag(BattlerTagType.CHARGED)) {
         pokemon.addTag(BattlerTagType.CHARGED);
-        pokemon.scene.queueMessage(i18next.t("abilityTriggers:windPowerCharged", { pokemonName: pokemon.name, moveName: this.getMoveName() }));
+        pokemon.scene.queueMessage(i18next.t("abilityTriggers:windPowerCharged", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: this.getMoveName() }));
       }
       // Raise attack by one stage if party member has WIND_RIDER ability
       if (pokemon.hasAbility(Abilities.WIND_RIDER)) {

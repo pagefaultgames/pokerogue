@@ -74,16 +74,16 @@ export const bgmName: SimpleTranslationEntries = {
   "battle_wild": "SW Vs. Wilde Pokémon",
   "battle_wild_strong": "SW Vs. Starke Wilde Pokémon",
   "end_summit": "PMDDX Gipfel des Himmelturms",
-  "battle_rocket_grunt": "HGSS Team Rocket Battle",
-  "battle_aqua_magma_grunt": "ORAS Team Aqua & Magma Battle",
-  "battle_galactic_grunt": "BDSP Team Galactic Battle",
+  "battle_rocket_grunt": "HGSS Vs. Team Rocket Rüpel",
+  "battle_aqua_magma_grunt": "ORAS Vs. Team Aqua & Magma",
+  "battle_galactic_grunt": "BDSP Vs. Team Galaktik Rüpel",
   "battle_plasma_grunt": "SW Vs. Team Plasma Rüpel",
-  "battle_flare_grunt": "XY Team Flare Battle",
-  "battle_rocket_boss": "USUM Giovanni Battle",
-  "battle_aqua_magma_boss": "ORAS Archie & Maxie Battle",
-  "battle_galactic_boss": "BDSP Cyrus Battle",
-  "battle_plasma_boss": "B2W2 Ghetsis Battle",
-  "battle_flare_boss": "XY Lysandre Battle",
+  "battle_flare_grunt": "XY Vs. Team Flare Rüpel",
+  "battle_rocket_boss": "USUM Vs. Giovanni",
+  "battle_aqua_magma_boss": "ORAS Vs. Team Aqua & Magma Boss",
+  "battle_galactic_boss": "BDSP Vs. Zyrus",
+  "battle_plasma_boss": "S2W2 Vs. G-Cis",
+  "battle_flare_boss": "XY Vs. Flordelis",
 
   // Biome Music
   "abyss": "PMD Erkundungsteam Himmel Dunkelkrater",
@@ -110,9 +110,9 @@ export const bgmName: SimpleTranslationEntries = {
   "plains": "PMD Erkundungsteam Himmel Himmelsgipfel-Prärie",
   "power_plant": "PMD Erkundungsteam Himmel Weite Ampere-Ebene",
   "ruins": "PMD Erkundungsteam Himmel Tiefes Ruinenverlies",
-  "sea": "PMD Erkundungsteam Himmel Salzwasserhöhle",
+  "sea": "Andr06 - Marine Mystique", // Name defined by the composer
   "seabed": "Firel - Seabed", // The composer thinks about a more creative name
-  "slum": "PMD Erkundungsteam Himmel Himmelsgipfel-Küste",
+  "slum": "Andr06 - Sneaky Snom", // Name defined by the composer
   "snowy_forest": "PMD Erkundungsteam Himmel Himmelsgipfel-Schneefeld",
   "space": "Firel - Aether",
   "swamp": "PMD Erkundungsteam Himmel Ringmeer",
