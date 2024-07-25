@@ -36,7 +36,7 @@ describe("Moves - Stockpile", () => {
 
       vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
       game.override.moveset([Moves.STOCKPILE, Moves.SPLASH]);
-      vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
+      game.override.ability(Abilities.NONE);
     });
 
     it("Gains a stockpile stack and increases DEF and SPDEF by 1 on each use, fails at max stacks (3)", { timeout: 10000 }, async () => {

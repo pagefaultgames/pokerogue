@@ -1,15 +1,14 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import overrides from "#app/overrides";
-import { MovePhase, TurnInitPhase } from "#app/phases";
 import { BattleStat } from "#app/data/battle-stat";
+import { StockpilingTag } from "#app/data/battler-tags.js";
+import { BattlerTagType } from "#app/enums/battler-tag-type.js";
+import { MoveResult, TurnMove } from "#app/field/pokemon.js";
+import { MovePhase, TurnInitPhase } from "#app/phases";
+import GameManager from "#app/test/utils/gameManager";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { StockpilingTag } from "#app/data/battler-tags.js";
-import { MoveResult, TurnMove } from "#app/field/pokemon.js";
-import { BattlerTagType } from "#app/enums/battler-tag-type.js";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Moves - Swallow", () => {
@@ -35,7 +34,7 @@ describe("Moves - Swallow", () => {
     game.override.enemyLevel(2000);
 
     game.override.moveset([Moves.SWALLOW, Moves.SWALLOW, Moves.SWALLOW, Moves.SWALLOW]);
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
+    game.override.ability(Abilities.NONE);
   });
 
   describe("consumes all stockpile stacks to heal (scaling with stacks)", () => {
