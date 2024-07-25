@@ -3,7 +3,7 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
 export const moveTriggers: SimpleTranslationEntries = {
   "hitWithRecoil" : "{{pokemonName}} ha subito il contraccolpo!",
   "cutHpPowerUpMove": "{{pokemonName}} riduce i suoi PS per potenziare la sua mossa!",
-  "absorbedElectricity": "{{pokemonName}} aassorbe elettricità!",
+  "absorbedElectricity": "{{pokemonName}} assorbe elettricità!",
   "switchedStatChanges": "{{pokemonName}} scambia con il bersaglio le modifiche alle statistiche!",
   "goingAllOutForAttack": "{{pokemonName}} fa sul serio!",
   "regainedHealth": "{{pokemonName}} s'è\nripreso!",
