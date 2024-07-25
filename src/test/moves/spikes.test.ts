@@ -28,7 +28,7 @@ describe("Moves - Spikes", () => {
     game = new GameManager(phaserGame);
     game.scene.battleStyle = 1;
     game.override.battleType("single");
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
+    game.override.enemySpecies(Species.RATTATA);
     vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
     vi.spyOn(Overrides, "OPP_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
@@ -106,7 +106,7 @@ describe("Moves - Spikes", () => {
   it("trainer - wild - force switch by himself opponent - should take damage", async() => {
     game.override.startingWave(5);
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(5000);
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(0);
+    game.override.enemySpecies(0);
     // turn 1: player set spikes, opponent do splash
     // turn 2: player do splash, opponent switch pokemon
     // opponent pokemon should trigger spikes and lose HP

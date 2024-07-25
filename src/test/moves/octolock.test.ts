@@ -30,7 +30,7 @@ describe("Moves - Octolock", () => {
 
       game.override.battleType("single");
 
-      vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
+      game.override.enemySpecies(Species.RATTATA);
       vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
       vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
 

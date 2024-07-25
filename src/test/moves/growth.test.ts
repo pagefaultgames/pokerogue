@@ -35,7 +35,7 @@ describe("Moves - Growth", () => {
     game = new GameManager(phaserGame);
     const moveToUse = Moves.GROWTH;
     game.override.battleType("single");
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
+    game.override.enemySpecies(Species.RATTATA);
     vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.MOXIE);
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INSOMNIA);
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(2000);

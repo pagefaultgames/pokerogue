@@ -91,7 +91,7 @@ describe("Test Battle Phase", () => {
 
   it("do attack wave 3 - single battle - regular - OHKO", async() => {
     vi.spyOn(Overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MEWTWO);
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
+    game.override.enemySpecies(Species.RATTATA);
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
     game.override
       .startingWave(3)
@@ -112,7 +112,7 @@ describe("Test Battle Phase", () => {
 
   it("do attack wave 3 - single battle - regular - NO OHKO with opponent using non damage attack", async() => {
     vi.spyOn(Overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MEWTWO);
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
+    game.override.enemySpecies(Species.RATTATA);
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(5);
     game.override.startingWave(3);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
@@ -206,7 +206,7 @@ describe("Test Battle Phase", () => {
 
   it("2vs1", async() => {
     game.override.battleType("single");
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MIGHTYENA);
+    game.override.enemySpecies(Species.MIGHTYENA);
     vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
     await game.startBattle([
@@ -219,7 +219,7 @@ describe("Test Battle Phase", () => {
 
   it("1vs1", async() => {
     game.override.battleType("single");
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MIGHTYENA);
+    game.override.enemySpecies(Species.MIGHTYENA);
     vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
     await game.startBattle([
@@ -231,7 +231,7 @@ describe("Test Battle Phase", () => {
 
   it("2vs2", async() => {
     game.override.battleType("double");
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MIGHTYENA);
+    game.override.enemySpecies(Species.MIGHTYENA);
     vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
     game.override.startingWave(3);
@@ -245,7 +245,7 @@ describe("Test Battle Phase", () => {
 
   it("4vs2", async() => {
     game.override.battleType("double");
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MIGHTYENA);
+    game.override.enemySpecies(Species.MIGHTYENA);
     vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
     game.override.startingWave(3);
@@ -263,7 +263,7 @@ describe("Test Battle Phase", () => {
     const moveToUse = Moves.SPLASH;
     game.override.battleType("single");
     vi.spyOn(Overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MEWTWO);
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
+    game.override.enemySpecies(Species.RATTATA);
     vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.ZEN_MODE);
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
@@ -292,7 +292,7 @@ describe("Test Battle Phase", () => {
     const moveToUse = Moves.SPLASH;
     game.override.battleType("single");
     vi.spyOn(Overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MEWTWO);
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
+    game.override.enemySpecies(Species.RATTATA);
     vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.ZEN_MODE);
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
@@ -310,7 +310,7 @@ describe("Test Battle Phase", () => {
     const moveToUse = Moves.SPLASH;
     game.override.battleType("single");
     vi.spyOn(Overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MEWTWO);
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
+    game.override.enemySpecies(Species.RATTATA);
     vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.ZEN_MODE);
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(2000);

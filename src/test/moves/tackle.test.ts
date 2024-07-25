@@ -32,7 +32,7 @@ describe("Moves - Tackle", () => {
     game = new GameManager(phaserGame);
     const moveToUse = Moves.TACKLE;
     game.override.battleType("single");
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
+    game.override.enemySpecies(Species.MAGIKARP);
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(1);
     game.override.startingWave(97);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
@@ -42,7 +42,7 @@ describe("Moves - Tackle", () => {
 
   it("TACKLE against ghost", async() => {
     const moveToUse = Moves.TACKLE;
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.GENGAR);
+    game.override.enemySpecies(Species.GENGAR);
     await game.startBattle([
       Species.MIGHTYENA,
     ]);

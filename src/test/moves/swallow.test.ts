@@ -28,7 +28,7 @@ describe("Moves - Swallow", () => {
 
     game.override.battleType("single");
 
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
+    game.override.enemySpecies(Species.RATTATA);
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
     vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
     vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(2000);

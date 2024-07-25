@@ -35,7 +35,7 @@ describe("Abilities - Protean", () => {
     game.override.battleType("single");
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.PROTEAN);
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
+    game.override.enemySpecies(Species.RATTATA);
     vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.ENDURE, Moves.ENDURE, Moves.ENDURE, Moves.ENDURE]);
   });
 
@@ -226,7 +226,7 @@ describe("Abilities - Protean", () => {
     "ability applies correctly even if the pokemon's move fails because of type immunity",
     async () => {
       vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
-      vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.GASTLY);
+      game.override.enemySpecies(Species.GASTLY);
 
       await game.startBattle([Species.MAGIKARP]);
 
@@ -320,7 +320,7 @@ describe("Abilities - Protean", () => {
     "ability applies correctly even if the pokemon's Trick-or-Treat fails",
     async () => {
       vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TRICK_OR_TREAT]);
-      vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.GASTLY);
+      game.override.enemySpecies(Species.GASTLY);
 
       await game.startBattle([Species.MAGIKARP]);
 

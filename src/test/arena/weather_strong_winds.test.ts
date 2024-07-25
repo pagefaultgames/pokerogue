@@ -29,13 +29,13 @@ describe("Weather - Strong Winds", () => {
     game = new GameManager(phaserGame);
     game.override.battleType("single");
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(10);
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.TAILLOW);
+    game.override.enemySpecies(Species.TAILLOW);
     vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.DELTA_STREAM);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.THUNDERBOLT, Moves.ICE_BEAM, Moves.ROCK_SLIDE]);
   });
 
   it("electric type move is not very effective on Rayquaza", async () => {
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RAYQUAZA);
+    game.override.enemySpecies(Species.RAYQUAZA);
 
     await game.startBattle([Species.PIKACHU]);
     const pikachu = game.scene.getPlayerPokemon();

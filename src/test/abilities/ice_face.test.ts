@@ -34,7 +34,7 @@ describe("Abilities - Ice Face", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleType("single");
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.EISCUE);
+    game.override.enemySpecies(Species.EISCUE);
     vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.ICE_FACE);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.ICE_BEAM, Moves.TOXIC_THREAD, Moves.HAIL]);
   });
@@ -158,7 +158,7 @@ describe("Abilities - Ice Face", () => {
   });
 
   it("will not revert to its Ice Face if there is already Hail when it changes into Noice", async () => {
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SHUCKLE);
+    game.override.enemySpecies(Species.SHUCKLE);
     vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
 
     await game.startBattle([Species.EISCUE]);
@@ -204,7 +204,7 @@ describe("Abilities - Ice Face", () => {
   it("reverts to Ice Face on arena reset", async () => {
     game.override.startingWave(4);
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(4);
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
+    game.override.enemySpecies(Species.MAGIKARP);
     vi.spyOn(Overrides, "STARTER_FORM_OVERRIDES", "get").mockReturnValue({
       [Species.EISCUE]: noiceForm,
     });

@@ -28,7 +28,7 @@ describe("Abilities - Wind Rider", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleType("single");
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SHIFTRY);
+    game.override.enemySpecies(Species.SHIFTRY);
     vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.WIND_RIDER);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TAILWIND, Moves.SPLASH, Moves.PETAL_BLIZZARD, Moves.SANDSTORM]);
     vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
@@ -50,7 +50,7 @@ describe("Abilities - Wind Rider", () => {
 
   it("Attack is increased by one stage when Tailwind is present on its side", async () => {
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.WIND_RIDER);
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
+    game.override.enemySpecies(Species.MAGIKARP);
 
     await game.startBattle([Species.SHIFTRY]);
     const shiftry = game.scene.getPlayerPokemon();
@@ -66,7 +66,7 @@ describe("Abilities - Wind Rider", () => {
 
   it("does not increase Attack when Tailwind is present on opposing side", async () => {
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.WIND_RIDER);
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
+    game.override.enemySpecies(Species.MAGIKARP);
 
     await game.startBattle([Species.SHIFTRY]);
     const magikarp = game.scene.getEnemyPokemon();
@@ -84,7 +84,7 @@ describe("Abilities - Wind Rider", () => {
   });
 
   it("does not increase Attack when Tailwind is present on opposing side", async () => {
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
+    game.override.enemySpecies(Species.MAGIKARP);
 
     await game.startBattle([Species.SHIFTRY]);
     const magikarp = game.scene.getEnemyPokemon();
@@ -102,7 +102,7 @@ describe("Abilities - Wind Rider", () => {
   });
 
   it("does not interact with Sandstorm", async () => {
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
+    game.override.enemySpecies(Species.MAGIKARP);
 
     await game.startBattle([Species.SHIFTRY]);
     const shiftry = game.scene.getPlayerPokemon();

@@ -28,7 +28,7 @@ describe("Abilities - Wind Power", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleType("single");
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SHIFTRY);
+    game.override.enemySpecies(Species.SHIFTRY);
     vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.WIND_POWER);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TAILWIND, Moves.SPLASH, Moves.PETAL_BLIZZARD, Moves.SANDSTORM]);
     vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
@@ -48,7 +48,7 @@ describe("Abilities - Wind Power", () => {
 
   it("it becomes charged when Tailwind takes effect on its side", async () => {
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.WIND_POWER);
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
+    game.override.enemySpecies(Species.MAGIKARP);
 
     await game.startBattle([Species.SHIFTRY]);
     const shiftry = game.scene.getPlayerPokemon();
@@ -62,7 +62,7 @@ describe("Abilities - Wind Power", () => {
   });
 
   it("does not become charged when Tailwind takes effect on opposing side", async () => {
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
+    game.override.enemySpecies(Species.MAGIKARP);
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.WIND_POWER);
 
     await game.startBattle([Species.SHIFTRY]);
@@ -81,7 +81,7 @@ describe("Abilities - Wind Power", () => {
   });
 
   it("does not interact with Sandstorm", async () => {
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
+    game.override.enemySpecies(Species.MAGIKARP);
 
     await game.startBattle([Species.SHIFTRY]);
     const shiftry = game.scene.getPlayerPokemon();

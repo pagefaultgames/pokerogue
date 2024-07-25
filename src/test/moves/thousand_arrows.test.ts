@@ -31,7 +31,7 @@ describe("Moves - Thousand Arrows", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleType("single");
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.TOGETIC);
+    game.override.enemySpecies(Species.TOGETIC);
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
     vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.THOUSAND_ARROWS ]);
@@ -61,7 +61,7 @@ describe("Moves - Thousand Arrows", () => {
   it(
     "move should hit and ground targets with Levitate",
     async () => {
-      vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SNORLAX);
+      game.override.enemySpecies(Species.SNORLAX);
       vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.LEVITATE);
 
       await game.startBattle([ Species.ILLUMISE ]);
@@ -84,7 +84,7 @@ describe("Moves - Thousand Arrows", () => {
   it(
     "move should hit and ground targets under the effects of Magnet Rise",
     async () => {
-      vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SNORLAX);
+      game.override.enemySpecies(Species.SNORLAX);
 
       await game.startBattle([ Species.ILLUMISE ]);
 
