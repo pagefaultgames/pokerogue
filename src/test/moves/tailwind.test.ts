@@ -28,7 +28,7 @@ describe("Abilities - Wind Rider", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
+    game.override.battleType("double");
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TAILWIND, Moves.SPLASH, Moves.PETAL_BLIZZARD, Moves.SANDSTORM]);
     vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
   });
@@ -55,7 +55,7 @@ describe("Abilities - Wind Rider", () => {
   });
 
   it("lasts for 4 turns", async () => {
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
+    game.override.battleType("single");
 
     await game.startBattle([Species.MAGIKARP]);
 
@@ -78,7 +78,7 @@ describe("Abilities - Wind Rider", () => {
   });
 
   it("does not affect the opposing side", async () => {
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
+    game.override.battleType("single");
 
     await game.startBattle([Species.MAGIKARP]);
 

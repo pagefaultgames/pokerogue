@@ -25,7 +25,7 @@ describe("Items - Leftovers", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
+    game.override.battleType("single");
     vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
     vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.UNNERVE);
     vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH]);

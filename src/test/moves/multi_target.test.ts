@@ -164,7 +164,7 @@ function leaveOneEnemyPokemon(game: GameManager) {
 
 function beforeTrial(phaserGame: Phaser.Game, single: boolean = false) {
   const game = new GameManager(phaserGame);
-  vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
+  game.override.battleType("double");
   vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.EARTHQUAKE, Moves.HYPER_VOICE, Moves.SURF, Moves.SPLASH]);
   vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
   vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);

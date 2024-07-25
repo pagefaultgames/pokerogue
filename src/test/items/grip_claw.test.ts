@@ -30,7 +30,7 @@ describe("Items - Grip Claw", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
+    game.override.battleType("double");
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.POPULATION_BOMB, Moves.SPLASH ]);
     vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "GRIP_CLAW", count: 5}, {name: "MULTI_LENS", count: 3}]);
     vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SNORLAX);

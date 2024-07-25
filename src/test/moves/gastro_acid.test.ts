@@ -29,7 +29,7 @@ describe("Moves - Gastro Acid", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
+    game.override.battleType("double");
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(1);
     vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
@@ -72,7 +72,7 @@ describe("Moves - Gastro Acid", () => {
   }, TIMEOUT);
 
   it("fails if used on an enemy with an already-suppressed ability", async () => {
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue(null);
+    game.override.battleType(null);
 
     await game.startBattle();
 

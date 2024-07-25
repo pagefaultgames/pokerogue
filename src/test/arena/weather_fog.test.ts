@@ -28,8 +28,9 @@ describe("Weather - Fog", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.weather(WeatherType.FOG);
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
+    game.override
+      .weather(WeatherType.FOG)
+      .battleType("single");
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
     vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
