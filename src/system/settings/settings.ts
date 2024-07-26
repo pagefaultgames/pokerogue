@@ -364,7 +364,20 @@ export const Setting: Array<Setting> = [
   {
     key: SettingKeys.Reroll_Target,
     label: "Reroll Target",
-    options: ["Reroll", "Items", "Shop"],
+    options: [
+      {
+        value:"Reroll",
+        label: i18next.t("settings:Reroll")
+      },
+      {
+        value:"Items",
+        label: i18next.t("settings:Items")
+      },
+      {
+        value:"Shop",
+        label: i18next.t("settings:Shop")
+      }
+    ],
     default: 1,
     type: SettingType.DISPLAY
   },
