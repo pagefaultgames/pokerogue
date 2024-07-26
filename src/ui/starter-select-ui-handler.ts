@@ -1574,9 +1574,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                   break;
                 }
               } else if (newAbilityIndex === 1) {
-                if (abilityAttr & (this.lastSpecies.ability2 ? AbilityAttr.ABILITY_2 : AbilityAttr.ABILITY_HIDDEN)) {
-                  break;
+                if (this.lastSpecies.ability1 === this.lastSpecies.ability2) {
+                  newAbilityIndex = (newAbilityIndex + 1) % abilityCount;
                 }
+                break;
               } else {
                 if (abilityAttr & AbilityAttr.ABILITY_HIDDEN) {
                   break;
@@ -2621,7 +2622,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           }) as StarterMoveset;
 
         const speciesForm = getPokemonSpeciesForm(species.speciesId, formIndex);
-        const formText = Utils.capitalizeString(species?.forms[formIndex]?.formKey, "_", false, false);
+        const formText = Utils.capitalizeString(species?.forms[formIndex]?.formKey, "-", false, false);
 
         const speciesName = Utils.capitalizeString(Species[species.speciesId], "_", true, false);
 

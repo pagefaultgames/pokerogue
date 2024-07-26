@@ -153,6 +153,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "REVIVER_SEED": { name: "Reviver Seed", description: "Revives the holder for 1/2 HP upon fainting from a direct hit." },
 
+    "WHITE_HERB": { name: "White Herb", description: "An item to be held by a Pokémon. It will restore any lowered stat in battle." },
+
     "ETHER": { name: "Ether" },
     "MAX_ETHER": { name: "Max Ether" },
 
