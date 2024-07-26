@@ -23,6 +23,7 @@
 		"@eslint/js": "^9.3.0",
 		"@hpcc-js/wasm": "^2.18.0",
 		"@stylistic/eslint-plugin-ts": "^2.6.0-beta.0",
+		"@types/jsdom": "^21.1.7",
 		"@types/node": "^20.12.13",
 		"@typescript-eslint/eslint-plugin": "^8.0.0-alpha.54",
 		"@typescript-eslint/parser": "^8.0.0-alpha.54",
@@ -42,7 +43,6 @@
 	},
 	"dependencies": {
 		"@material/material-color-utilities": "^0.2.7",
-		"@types/jsdom": "^21.1.7",
 		"crypto-js": "^4.2.0",
 		"i18next": "^23.11.1",
 		"i18next-browser-languagedetector": "^7.2.1",
