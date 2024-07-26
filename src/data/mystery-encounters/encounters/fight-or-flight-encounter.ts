@@ -160,7 +160,7 @@ export const FightOrFlightEncounter: IMysteryEncounter =
             config.pokemonConfigs[0].tags = [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON];
             config.pokemonConfigs[0].mysteryEncounterBattleEffects = (pokemon: Pokemon) => {
               pokemon.scene.currentBattle.mysteryEncounter.setDialogueToken("enemyPokemon", getPokemonNameWithAffix(pokemon));
-              queueEncounterMessage(pokemon.scene, `${namespace}:boss_enraged`);
+              queueEncounterMessage(pokemon.scene, `${namespace}option:2:boss_enraged`);
               pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD], 1));
             };
             await showEncounterText(scene, `${namespace}:option:2:bad_result`);

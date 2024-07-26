@@ -159,7 +159,7 @@ export default class IMysteryEncounter implements IMysteryEncounter {
     if (!isNullOrUndefined(encounter)) {
       Object.assign(this, encounter);
     }
-    this.encounterTier = this.encounterTier ? this.encounterTier : MysteryEncounterTier.COMMON;
+    this.encounterTier = !isNullOrUndefined(this.encounterTier) ? this.encounterTier : MysteryEncounterTier.COMMON;
     this.dialogue = this.dialogue ?? {};
     // Default max is 1 for ROGUE encounters, 3 for others
     this.maxAllowedEncounters = this.maxAllowedEncounters ?? this.encounterTier === MysteryEncounterTier.ROGUE ? 1 : 3;

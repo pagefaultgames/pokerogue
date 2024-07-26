@@ -5,20 +5,20 @@ export const fieryFalloutDialogue = {
   query: "What will you do?",
   option: {
     1: {
-      label: "Find the source",
+      label: "Find the Source",
       tooltip: "(?) Discover the source\n(-) Hard Battle",
       selected: `You push through the storm, and find two Volcarona in the middle of a mating dance!
         $They don't take kindly to the interruption and attack!`
     },
     2: {
-      label: "Hunker down",
+      label: "Hunker Down",
       tooltip: "(-) Suffer the effects of the weather",
       selected: `The weather effects cause significant\nharm as you struggle to find shelter!
         $Your party takes 20% Max HP damage!`,
       target_burned: "Your {{burnedPokemon}} also became burned!"
     },
     3: {
-      label: "Your Fire types help",
+      label: "Your Fire Types Help",
       tooltip: "(+) End the conditions\n(+) Gain a Charcoal",
       disabled_tooltip: "You need at least 2 Fire Type Pokémon to choose this",
       selected: `Your {{option3PrimaryName}} and {{option3SecondaryName}} guide you to where two Volcarona are in the middle of a mating dance!

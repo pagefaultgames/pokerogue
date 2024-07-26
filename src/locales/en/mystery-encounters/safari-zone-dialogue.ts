@@ -22,12 +22,12 @@ export const safariZoneDialogue = {
       selected: "You throw a Pokéball!",
     },
     2: {
-      label: "Throw bait",
+      label: "Throw Bait",
       tooltip: "(+) Increases Capture Rate\n(-) Chance to Increase Flee Rate",
       selected: "You throw some bait!",
     },
     3: {
-      label: "Throw mud",
+      label: "Throw Mud",
       tooltip: "(+) Decreases Flee Rate\n(-) Chance to Decrease Capture Rate",
       selected: "You throw some mud!",
     },

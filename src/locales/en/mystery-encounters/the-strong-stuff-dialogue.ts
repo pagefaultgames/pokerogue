@@ -5,7 +5,7 @@ export const theStrongStuffDialogue = {
   query: "What will you do?",
   option: {
     1: {
-      label: "Let it touch you",
+      label: "Let It Touch You",
       tooltip: "(?) Something awful or amazing might happen",
       selected: "You black out.",
       selected_2: `@f{150}When you awaken, the Shuckle is gone\nand juice stash completely drained.

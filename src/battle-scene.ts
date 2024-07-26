@@ -2684,18 +2684,22 @@ export default class BattleScene extends SceneBase {
     while (availableEncounters.length === 0 && tier >= 0) {
       availableEncounters = biomeMysteryEncounters
         .filter((encounterType) => {
-          if (allMysteryEncounters[encounterType].encounterTier !== tier) { // Encounter is in tier
+          const encounterCandidate = allMysteryEncounters[encounterType];
+          if (!encounterCandidate) {
             return false;
           }
-          if (!allMysteryEncounters[encounterType]?.meetsRequirements(this)) { // Meets encounter requirements
+          if (encounterCandidate.encounterTier !== tier) { // Encounter is in tier
+            return false;
+          }
+          if (!encounterCandidate.meetsRequirements(this)) { // Meets encounter requirements
             return false;
           }
           if (!isNullOrUndefined(previousEncounter) && encounterType === previousEncounter) { // Previous encounter was not this one
             return false;
           }
           if (this.mysteryEncounterData.encounteredEvents?.length > 0 && // Encounter has not exceeded max allowed encounters
-            allMysteryEncounters[encounterType].maxAllowedEncounters > 0
-            && this.mysteryEncounterData.encounteredEvents.filter(e => e[0] === encounterType).length >= allMysteryEncounters[encounterType].maxAllowedEncounters) {
+            encounterCandidate.maxAllowedEncounters > 0
+            && this.mysteryEncounterData.encounteredEvents.filter(e => e[0] === encounterType).length >= encounterCandidate.maxAllowedEncounters) {
             return false;
           }
           return true;

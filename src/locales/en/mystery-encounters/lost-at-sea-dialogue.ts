@@ -5,7 +5,7 @@ export const lostAtSeaDialogue = {
   query: "What will you do?",
   option: {
     1: {
-      label: "{{option1PrimaryName}} can help",
+      label: "{{option1PrimaryName}} Might Help",
       label_disabled: "Can't {{option1RequiredMove}}",
       tooltip: "(+) {{option1PrimaryName}} saves you\n(+) {{option1PrimaryName}} gains some EXP",
       tooltip_disabled: "You have no Pokémon to {{option1RequiredMove}} on",
@@ -13,7 +13,7 @@ export const lostAtSeaDialogue = {
         \${{option1PrimaryName}} seems to also have gotten stronger in this time of need!`,
     },
     2: {
-      label: "{{option2PrimaryName}} can help",
+      label: "{{option2PrimaryName}} Might Help",
       label_disabled: "Can't {{option2RequiredMove}}",
       tooltip: "(+) {{option2PrimaryName}} saves you\n(+) {{option2PrimaryName}} gains some EXP",
       tooltip_disabled: "You have no Pokémon to {{option2RequiredMove}} with",
@@ -21,7 +21,7 @@ export const lostAtSeaDialogue = {
         \${{option2PrimaryName}} seems to also have gotten stronger in this time of need!`,
     },
     3: {
-      label: "Wander aimlessly",
+      label: "Wander Aimlessly",
       tooltip: "(-) Each of your Pokémon lose {{damagePercentage}}% of their total HP",
       selected: `You float about in the boat, steering without direction until you finally spot a landmark you remember.
         $You and your Pokémon are fatigued from the whole ordeal.`,

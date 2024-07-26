@@ -6,19 +6,19 @@ export const slumberingSnorlaxDialogue = {
   query: "What will you do?",
   option: {
     1: {
-      label: "Battle it",
+      label: "Battle It",
       tooltip: "(-) Fight Sleeping Snorlax\n(+) Special Reward",
       selected: "You approach the\nPokémon without fear.",
     },
     2: {
-      label: "Wait for it to move",
+      label: "Wait for It to Move",
       tooltip: "(-) Wait a Long Time\n(+) Recover Party",
       selected: `.@d{32}.@d{32}.@d{32}
         $You wait for a time, but the Snorlax's yawns make your party sleepy...`,
       rest_result: "When you all awaken, the Snorlax is no where to be found -\nbut your Pokémon are all healed!",
     },
     3: {
-      label: "Steal its item",
+      label: "Steal Its Item",
       tooltip: "(+) {{option3PrimaryName}} uses {{option3PrimaryMove}}\n(+) Special Reward",
       disabled_tooltip: "Your Pokémon need to know certain moves to choose this",
       selected: `Your {{option3PrimaryName}} uses {{option3PrimaryMove}}!

@@ -5,7 +5,7 @@ export const mysteriousChestDialogue = {
   query: "Will you open it?",
   option: {
     1: {
-      label: "Open it",
+      label: "Open It",
       tooltip: "@[SUMMARY_BLUE]{(35%) Something terrible}\n@[SUMMARY_GREEN]{(40%) Okay Rewards}\n@[SUMMARY_GREEN]{(20%) Good Rewards}\n@[SUMMARY_GREEN]{(4%) Great Rewards}\n@[SUMMARY_GREEN]{(1%) Amazing Rewards}",
       selected: "You open the chest to find...",
       normal: "Just some normal tools and items.",
@@ -16,7 +16,7 @@ export const mysteriousChestDialogue = {
         $Your {{pokeName}} jumps in front of you\nbut is KOed in the process.`,
     },
     2: {
-      label: "It's too risky, leave",
+      label: "Too Risky, Leave",
       tooltip: "(-) No Rewards",
       selected: "You hurry along your way,\nwith a slight feeling of regret.",
     },
