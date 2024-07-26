@@ -28,7 +28,6 @@
 		"@vitest/coverage-istanbul": "^2.0.4",
 		"eslint": "^9.7.0",
 		"jsdom": "^24.0.0",
-		"json-beautify": "^1.1.1",
 		"lefthook": "^1.6.12",
 		"typedoc": "^0.26.4",
 		"typescript": "^5.5.3",
