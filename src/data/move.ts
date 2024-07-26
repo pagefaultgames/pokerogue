@@ -4327,34 +4327,6 @@ export class IgnoreAccuracyAttr extends AddBattlerTagAttr {
   }
 }
 
-export class AlwaysGetHitAttr extends AddBattlerTagAttr {
-  constructor() {
-    super(BattlerTagType.ALWAYS_GET_HIT, true, false, 0, 0, true);
-  }
-
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!super.apply(user, target, move, args)) {
-      return false;
-    }
-
-    return true;
-  }
-}
-
-export class ReceiveDoubleDamageAttr extends AddBattlerTagAttr {
-  constructor() {
-    super(BattlerTagType.RECEIVE_DOUBLE_DAMAGE, true, false, 0, 0, true);
-  }
-
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!super.apply(user, target, move, args)) {
-      return false;
-    }
-
-    return true;
-  }
-}
-
 export class FaintCountdownAttr extends AddBattlerTagAttr {
   constructor() {
     super(BattlerTagType.PERISH_SONG, false, true, 4);
@@ -8495,8 +8467,8 @@ export function initMoves() {
     new AttackMove(Moves.ICE_SPINNER, Type.ICE, MoveCategory.PHYSICAL, 80, 100, 15, -1, 0, 9)
       .attr(ClearTerrainAttr),
     new AttackMove(Moves.GLAIVE_RUSH, Type.DRAGON, MoveCategory.PHYSICAL, 120, 100, 5, -1, 0, 9)
-      .attr(AlwaysGetHitAttr)
-      .attr(ReceiveDoubleDamageAttr),
+      .attr(AddBattlerTagAttr, BattlerTagType.ALWAYS_GET_HIT, true, false, 0, 0, true)
+      .attr(AddBattlerTagAttr, BattlerTagType.RECEIVE_DOUBLE_DAMAGE, true, false, 0, 0, true),
     new StatusMove(Moves.REVIVAL_BLESSING, Type.NORMAL, -1, 1, -1, 0, 9)
       .triageMove()
       .attr(RevivalBlessingAttr)
