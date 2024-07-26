@@ -37,7 +37,6 @@
 		"typescript": "^5.5.3",
 		"typescript-eslint": "^8.0.0-alpha.54",
 		"vite": "^4.5.0",
-		"vite-plugin-fs": "^0.4.4",
 		"vite-tsconfig-paths": "^4.3.2",
 		"vitest": "^2.0.4",
 		"vitest-canvas-mock": "^0.3.3"
