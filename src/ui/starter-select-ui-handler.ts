@@ -2130,31 +2130,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     return changed;
   }
 
-  getGenCursorWithScroll(): integer {
-    return undefined;
-    // return this.genCursor !== undefined
-    //   ? this.genCursor + this.genScrollCursor
-    //   : undefined;
-  }
-
-  updateGenOptions(): void {
-    // let text = "";
-    // for (let g = this.genScrollCursor; g <= this.genScrollCursor + 2; g++) {
-    //   let optionText = "";
-    //   if (g === this.genScrollCursor && this.genScrollCursor) {
-    //     optionText = "↑";
-    //   } else if (g === this.genScrollCursor + 2 && this.genScrollCursor < gens.length - 3) {
-    //     optionText = "↓";
-    //   } else {
-    //     optionText = i18next.t(`starterSelectUiHandler:gen${g + 1}`);
-    //   }
-    //   text += `${text ? "\n" : ""}${optionText}`;
-    // }
-    // this.genOptionsText.setText(text);
-  }
-
   setFilterMode(filterMode: boolean): boolean {
-    // this.genCursorObj.setVisible(!filterMode);
     this.cursorObj.setVisible(!filterMode);
     this.filterBar.cursorObj.setVisible(filterMode);
 
@@ -2370,8 +2346,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         // Initiates the small up and down idle animation
         this.iconAnimHandler.addOrUpdate(icon, PokemonIconAnimMode.PASSIVE);
 
-        let starterIndex = -1;
-        starterIndex = this.starterSpecies.indexOf(species);
+        const starterIndex = this.starterSpecies.indexOf(species);
 
         let props: DexAttrProps;
 
@@ -2524,8 +2499,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.pokemonNumberText.setShadowColor(this.getTextColor(shiny ? TextStyle.SUMMARY_GOLD : TextStyle.SUMMARY, true));
 
       if (forSeen ? this.speciesStarterDexEntry?.seenAttr : this.speciesStarterDexEntry?.caughtAttr) {
-        let starterIndex = -1;
-        starterIndex = this.starterSpecies.indexOf(species);
+        const starterIndex = this.starterSpecies.indexOf(species);
 
         if (starterIndex > -1) {
           this.starterAttr[starterIndex] = this.dexAttrCursor;
