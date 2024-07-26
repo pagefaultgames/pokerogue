@@ -1444,7 +1444,10 @@ export class FlameBurstAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
     const targetAlly = target.getAlly();
 
-    if (!targetAlly) {
+    const cancelled = new Utils.BooleanHolder(false);
+    applyAbAttrs(BlockNonDirectDamageAbAttr, user, cancelled);
+
+    if (!targetAlly || cancelled.value) {
       return false;
     }
 
