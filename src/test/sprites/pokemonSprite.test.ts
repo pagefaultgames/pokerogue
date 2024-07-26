@@ -38,7 +38,7 @@ describe("check if every variant's sprite are correctly set", () => {
     const errors = [];
     const trimmedDirpath = `variant${path.sep}${dirpath.split(rootDir)[1]}`;
     if (fs.existsSync(dirpath)) {
-      const files = fs.readdirSync(dirpath);
+      const files = fs.readdirSync(dirpath).filter((filename) => filename.startsWith("."));
       for (const filename of files) {
         const filePath = `${dirpath}${filename}`;
         const trimmedFilePath = `${trimmedDirpath}${filename}`;
