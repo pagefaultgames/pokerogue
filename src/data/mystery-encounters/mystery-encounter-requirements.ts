@@ -1,5 +1,5 @@
 import { PlayerPokemon } from "#app/field/pokemon";
-import { ModifierType, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
+import { ModifierType } from "#app/modifier/modifier-type";
 import BattleScene from "#app/battle-scene";
 import { isNullOrUndefined } from "#app/utils";
 import { Abilities } from "#enums/abilities";
@@ -744,20 +744,20 @@ export class CanEvolveWithItemRequirement extends EncounterPokemonRequirement {
 }
 
 export class HeldItemRequirement extends EncounterPokemonRequirement {
-  requiredHeldItemModifier: PokemonHeldItemModifierType[];
+  requiredHeldItemModifiers: string[];
   minNumberOfPokemon: number;
   invertQuery: boolean;
 
-  constructor(heldItem: PokemonHeldItemModifierType | PokemonHeldItemModifierType[], minNumberOfPokemon: number = 1, invertQuery: boolean = false) {
+  constructor(heldItem: string | string[], minNumberOfPokemon: number = 1, invertQuery: boolean = false) {
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
-    this.requiredHeldItemModifier = Array.isArray(heldItem) ? heldItem : [heldItem];
+    this.requiredHeldItemModifiers = Array.isArray(heldItem) ? heldItem : [heldItem];
   }
 
   meetsRequirement(scene: BattleScene): boolean {
     const partyPokemon = scene.getParty();
-    if (isNullOrUndefined(partyPokemon) || this?.requiredHeldItemModifier?.length < 0) {
+    if (isNullOrUndefined(partyPokemon) || this?.requiredHeldItemModifiers?.length < 0) {
       return false;
     }
     return this.queryParty(partyPokemon).length >= this.minNumberOfPokemon;
@@ -765,19 +765,26 @@ export class HeldItemRequirement extends EncounterPokemonRequirement {
 
   queryParty(partyPokemon: PlayerPokemon[]): PlayerPokemon[] {
     if (!this.invertQuery) {
-      return partyPokemon.filter((pokemon) => this.requiredHeldItemModifier.filter((heldItem) => pokemon.getHeldItems().filter((it) => it.type.id === heldItem.id).length > 0).length > 0);
+      return partyPokemon.filter((pokemon) => this.requiredHeldItemModifiers.some((heldItem) => {
+        return pokemon.getHeldItems().some((it) => {
+          return it.constructor.name === heldItem;
+        });
+      }));
     } else {
-      // for an inverted query, we only want to get the pokemon that don't have ANY of the listed heldItems
-      return partyPokemon.filter((pokemon) => this.requiredHeldItemModifier.filter((heldItem) => pokemon.getHeldItems().filter((it) => it.type.id === heldItem.id).length === 0).length === 0);
+      // for an inverted query, we only want to get the pokemon that have any held items that are NOT in requiredHeldItemModifiers
+      // E.g. functions as a blacklist
+      return partyPokemon.filter((pokemon) => pokemon.getHeldItems().filter((it) => {
+        return !this.requiredHeldItemModifiers.some(heldItem => it.constructor.name === heldItem);
+      }).length > 0);
     }
   }
 
   getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
-    const requiredItems = this.requiredHeldItemModifier.filter((a) => {
-      pokemon.getHeldItems().filter((it) => it.type.id === a.id).length > 0;
+    const requiredItems = pokemon.getHeldItems().filter((it) => {
+      return this.requiredHeldItemModifiers.some(heldItem => it.constructor.name === heldItem);
     });
     if (requiredItems.length > 0) {
-      return ["heldItem", requiredItems[0].name];
+      return ["heldItem", requiredItems[0].type.name];
     }
     return null;
   }

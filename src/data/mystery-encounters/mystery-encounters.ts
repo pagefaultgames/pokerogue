@@ -16,6 +16,7 @@ import { FieryFalloutEncounter } from "#app/data/mystery-encounters/encounters/f
 import { TheStrongStuffEncounter } from "#app/data/mystery-encounters/encounters/the-strong-stuff-encounter";
 import { PokemonSalesmanEncounter } from "#app/data/mystery-encounters/encounters/pokemon-salesman-encounter";
 import { OfferYouCantRefuseEncounter } from "#app/data/mystery-encounters/encounters/offer-you-cant-refuse-encounter";
+import { DelibirdyEncounter } from "#app/data/mystery-encounters/encounters/delibirdy-encounter";
 
 // Spawn chance: (BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT + WIGHT_INCREMENT_ON_SPAWN_MISS * <number of missed spawns>) / 256
 export const BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT = 1;
@@ -150,7 +151,8 @@ const anyBiomeEncounters: MysteryEncounterType[] = [
   MysteryEncounterType.FIGHT_OR_FLIGHT,
   MysteryEncounterType.DARK_DEAL,
   MysteryEncounterType.MYSTERIOUS_CHEST,
-  MysteryEncounterType.TRAINING_SESSION
+  MysteryEncounterType.TRAINING_SESSION,
+  MysteryEncounterType.DELIBIRDY,
 ];
 
 /**
@@ -163,15 +165,20 @@ const anyBiomeEncounters: MysteryEncounterType[] = [
 export const mysteryEncountersByBiome = new Map<Biome, MysteryEncounterType[]>([
   [Biome.TOWN, []],
   [Biome.PLAINS, [
-    MysteryEncounterType.SLUMBERING_SNORLAX
+    MysteryEncounterType.SLUMBERING_SNORLAX,
+    MysteryEncounterType.ABSOLUTE_AVARICE
   ]],
   [Biome.GRASS, [
     MysteryEncounterType.SLUMBERING_SNORLAX,
+    MysteryEncounterType.ABSOLUTE_AVARICE
   ]],
-  [Biome.TALL_GRASS, []],
+  [Biome.TALL_GRASS, [
+    MysteryEncounterType.ABSOLUTE_AVARICE
+  ]],
   [Biome.METROPOLIS, []],
   [Biome.FOREST, [
-    MysteryEncounterType.SAFARI_ZONE
+    MysteryEncounterType.SAFARI_ZONE,
+    MysteryEncounterType.ABSOLUTE_AVARICE
   ]],
 
   [Biome.SEA, [
@@ -230,6 +237,8 @@ export function initMysteryEncounters() {
   allMysteryEncounters[MysteryEncounterType.THE_STRONG_STUFF] = TheStrongStuffEncounter;
   allMysteryEncounters[MysteryEncounterType.POKEMON_SALESMAN] = PokemonSalesmanEncounter;
   allMysteryEncounters[MysteryEncounterType.OFFER_YOU_CANT_REFUSE] = OfferYouCantRefuseEncounter;
+  allMysteryEncounters[MysteryEncounterType.DELIBIRDY] = DelibirdyEncounter;
+  // allMysteryEncounters[MysteryEncounterType.ABSOLUTE_AVARICE] = Abs;
 
   // Add extreme encounters to biome map
   extremeBiomeEncounters.forEach(encounter => {

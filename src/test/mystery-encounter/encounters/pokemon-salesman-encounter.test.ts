@@ -5,7 +5,7 @@ import { Species } from "#app/enums/species";
 import GameManager from "#app/test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { runMysteryEncounterToEnd } from "#test/mystery-encounter/encounterTestUtils";
+import { runMysteryEncounterToEnd, runSelectMysteryEncounterOption } from "#test/mystery-encounter/encounterTestUtils";
 import BattleScene from "#app/battle-scene";
 import { PlayerPokemon } from "#app/field/pokemon";
 import { HUMAN_TRANSITABLE_BIOMES } from "#app/data/mystery-encounters/mystery-encounters";
@@ -13,6 +13,7 @@ import { PokemonSalesmanEncounter } from "#app/data/mystery-encounters/encounter
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { initSceneWithoutEncounterPhase } from "#test/utils/gameManagerUtils";
+import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 
 const namespace = "mysteryEncounter:pokemonSalesman";
 const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
@@ -108,12 +109,20 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
     expect(onInitResult).toBe(true);
   });
 
+  it("should not spawn if player does not have enough money", async () => {
+    scene.money = 0;
+
+    await game.runToMysteryEncounter();
+
+    expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.POKEMON_SALESMAN);
+  });
+
   describe("Option 1 - Purchase the pokemon", () => {
     it("should have the correct properties", () => {
-      const option1 = PokemonSalesmanEncounter.options[0];
-      expect(option1.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT_OR_SPECIAL);
-      expect(option1.dialogue).toBeDefined();
-      expect(option1.dialogue).toStrictEqual({
+      const option = PokemonSalesmanEncounter.options[0];
+      expect(option.optionMode).toBe(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT);
+      expect(option.dialogue).toBeDefined();
+      expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option:1:label`,
         buttonTooltip: `${namespace}:option:1:tooltip`,
         selected: [
@@ -139,6 +148,7 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
     });
 
     it("Should add the Pokemon to the party", async () => {
+      scene.money = 20000;
       await game.runToMysteryEncounter(MysteryEncounterType.POKEMON_SALESMAN, defaultParty);
 
       const initialPartySize = scene.getParty().length;
@@ -150,7 +160,28 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
       expect(scene.getParty().find(p => p.name === pokemonName) instanceof PlayerPokemon).toBeTruthy();
     });
 
+    it("should be disabled if player does not have enough money", async () => {
+      scene.money = 0;
+      await game.runToMysteryEncounter(MysteryEncounterType.POKEMON_SALESMAN, defaultParty);
+      await game.phaseInterceptor.to(MysteryEncounterPhase, false);
+
+      const encounterPhase = scene.getCurrentPhase();
+      expect(encounterPhase.constructor.name).toBe(MysteryEncounterPhase.name);
+      const mysteryEncounterPhase = encounterPhase as MysteryEncounterPhase;
+      vi.spyOn(mysteryEncounterPhase, "continueEncounter");
+      vi.spyOn(mysteryEncounterPhase, "handleOptionSelect");
+      vi.spyOn(scene.ui, "playError");
+
+      await runSelectMysteryEncounterOption(game, 1);
+
+      expect(scene.getCurrentPhase().constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(scene.ui.playError).not.toHaveBeenCalled(); // No error sfx, option is disabled
+      expect(mysteryEncounterPhase.handleOptionSelect).not.toHaveBeenCalled();
+      expect(mysteryEncounterPhase.continueEncounter).not.toHaveBeenCalled();
+    });
+
     it("should leave encounter without battle", async () => {
+      scene.money = 20000;
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
 
       await game.runToMysteryEncounter(MysteryEncounterType.POKEMON_SALESMAN, defaultParty);

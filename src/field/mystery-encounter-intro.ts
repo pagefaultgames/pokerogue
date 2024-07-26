@@ -39,6 +39,8 @@ export class MysteryEncounterSpriteConfig {
   disableAnimation?: boolean = false;
   /** Repeat the animation. Defaults to `false` */
   repeat?: boolean = false;
+  /** What frame of the animation to start on. Defaults to 0 */
+  startFrame?: number = 0;
   /** Hidden at start of encounter. Defaults to `false` */
   hidden?: boolean = false;
   /** Tint color. `0` - `1`. Higher means darker tint. */
@@ -279,7 +281,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
         const trainerAnimConfig = {
           key: config.spriteKey,
           repeat: config?.repeat ? -1 : 0,
-          startFrame: 0
+          startFrame: config?.startFrame ?? 0
         };
 
         this.tryPlaySprite(sprites[i], tintSprites[i], trainerAnimConfig);

@@ -12,14 +12,10 @@ export const shadyVitaminDealerDialogue = {
     1: {
       label: "The Cheap Deal",
       tooltip: "(-) Pay {{option1Money, money}}\n(-) Side Effects?\n(+) Chosen Pokémon Gains 2 Random Vitamins",
-      selected: `{{option1PrimaryName}} swims ahead, guiding you back on track.
-        \${{option1PrimaryName}} seems to also have gotten stronger in this time of need!`,
     },
     2: {
       label: "The Pricey Deal",
       tooltip: "(-) Pay {{option2Money, money}}\n(-) Side Effects?\n(+) Chosen Pokémon Gains 2 Random Vitamins",
-      selected: `{{option2PrimaryName}} flies ahead of your boat, guiding you back on track.
-        \${{option2PrimaryName}} seems to also have gotten stronger in this time of need!`,
     },
     3: {
       label: "Leave",
