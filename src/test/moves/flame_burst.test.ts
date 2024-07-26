@@ -52,7 +52,6 @@ describe("Moves - Flame Burst", () => {
   it("inflicts damage to the target's ally equal to 1/16 of its max HP", async () => {
     await game.startBattle([Species.PIKACHU, Species.PIKACHU]);
     const [ leftEnemy, rightEnemy ] = game.scene.getEnemyField();
-    rightEnemy.hp = 12;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.FLAME_BURST));
     await game.phaseInterceptor.to(SelectTargetPhase, false);
