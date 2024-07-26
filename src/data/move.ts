@@ -1445,9 +1445,12 @@ export class FlameBurstAttr extends MoveEffectAttr {
     const targetAlly = target.getAlly();
 
     const cancelled = new Utils.BooleanHolder(false);
-    applyAbAttrs(BlockNonDirectDamageAbAttr, targetAlly, cancelled);
 
-    if (!targetAlly || cancelled.value) {
+    if (targetAlly) {
+      applyAbAttrs(BlockNonDirectDamageAbAttr, targetAlly, cancelled);
+    }
+
+    if (cancelled.value || !targetAlly) {
       return false;
     }
 
