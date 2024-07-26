@@ -297,10 +297,20 @@ export const isBeta = import.meta.env.MODE === "beta"; // this checks to see if 
 export function setCookie(cName: string, cValue: string): void {
   const expiration = new Date();
   expiration.setTime(new Date().getTime() + 3600000 * 24 * 30 * 3/*7*/);
-  document.cookie = `${cName}=${cValue};Secure;SameSite=Strict;Path=/;Expires=${expiration.toUTCString()}`;
+  document.cookie = `${cName}=${cValue};Secure;SameSite=Strict;Domain=${window.location.hostname};Path=/;Expires=${expiration.toUTCString()}`;
+}
+
+export function removeCookie(cName: string): void {
+  document.cookie = `${cName}=;Secure;SameSite=Strict;Domain=${window.location.hostname};Path=/;Max-Age=-1`;
+  document.cookie = `${cName}=;Secure;SameSite=Strict;Path=/;Max-Age=-1`; // legacy cookie without domain, for older cookies to prevent a login loop
 }
 
 export function getCookie(cName: string): string {
+  // check if there are multiple cookies with the same name and delete them
+  if (document.cookie.split(";").filter(c => c.includes(cName)).length > 1) {
+    removeCookie(cName);
+    return "";
+  }
   const name = `${cName}=`;
   const ca = document.cookie.split(";");
   for (let i = 0; i < ca.length; i++) {
@@ -536,4 +546,24 @@ export function reverseValueToKeySetting(input) {
   return capitalizedWords.join("_");
 }
 
+/**
+ * Capitalize a string.
+ *
+ * @param str - The string to be capitalized.
+ * @param sep - The separator between the words of the string.
+ * @param lowerFirstChar - Whether the first character of the string should be lowercase or not.
+ * @param returnWithSpaces - Whether the returned string should have spaces between the words or not.
+ * @returns The capitalized string.
+ */
+export function capitalizeString(str: string, sep: string, lowerFirstChar: boolean = true, returnWithSpaces: boolean = false) {
+  if (str) {
+    const splitedStr = str.toLowerCase().split(sep);
 
+    for (let i = +lowerFirstChar; i < splitedStr?.length; i++) {
+      splitedStr[i] = splitedStr[i].charAt(0).toUpperCase() + splitedStr[i].substring(1);
+    }
+
+    return returnWithSpaces ? splitedStr.join(" ") : splitedStr.join("");
+  }
+  return null;
+}

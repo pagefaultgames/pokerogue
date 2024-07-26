@@ -1,10 +1,10 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, test, vi} from "vitest";
+import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
-import overrides from "#app/overrides";
+import Overrides from "#app/overrides";
 import {
-  MoveEffectPhase,
-  TurnEndPhase
+  BerryPhase,
+  MoveEffectPhase
 } from "#app/phases";
 import {getMovePosition} from "#app/test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
@@ -30,26 +30,20 @@ describe("Moves - Thousand Arrows", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.TOGETIC);
-    vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
-    vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.THOUSAND_ARROWS ]);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH,Moves.SPLASH,Moves.SPLASH,Moves.SPLASH]);
+    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
+    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.TOGETIC);
+    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.THOUSAND_ARROWS ]);
+    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH,Moves.SPLASH,Moves.SPLASH,Moves.SPLASH]);
   });
 
-  test(
+  it(
     "move should hit and ground Flying-type targets",
     async () => {
       await game.startBattle([ Species.ILLUMISE ]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
-      expect(leadPokemon).toBeDefined();
-
       const enemyPokemon = game.scene.getEnemyPokemon();
-      expect(enemyPokemon).toBeDefined();
-
-      const enemyStartingHp = enemyPokemon.hp;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.THOUSAND_ARROWS));
 
@@ -57,28 +51,22 @@ describe("Moves - Thousand Arrows", () => {
       // Enemy should not be grounded before move effect is applied
       expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeUndefined();
 
-      await game.phaseInterceptor.to(TurnEndPhase);
+      await game.phaseInterceptor.to(BerryPhase, false);
 
       expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeDefined();
-      expect(enemyPokemon.hp).toBeLessThan(enemyStartingHp);
+      expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
     }, TIMEOUT
   );
 
-  test(
+  it(
     "move should hit and ground targets with Levitate",
     async () => {
-      vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SNORLAX);
-      vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.LEVITATE);
+      vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SNORLAX);
+      vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.LEVITATE);
 
       await game.startBattle([ Species.ILLUMISE ]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
-      expect(leadPokemon).toBeDefined();
-
       const enemyPokemon = game.scene.getEnemyPokemon();
-      expect(enemyPokemon).toBeDefined();
-
-      const enemyStartingHp = enemyPokemon.hp;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.THOUSAND_ARROWS));
 
@@ -86,10 +74,31 @@ describe("Moves - Thousand Arrows", () => {
       // Enemy should not be grounded before move effect is applied
       expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeUndefined();
 
-      await game.phaseInterceptor.to(TurnEndPhase, false);
+      await game.phaseInterceptor.to(BerryPhase, false);
 
       expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeDefined();
-      expect(enemyPokemon.hp).toBeLessThan(enemyStartingHp);
+      expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
     }, TIMEOUT
+  );
+
+  it(
+    "move should hit and ground targets under the effects of Magnet Rise",
+    async () => {
+      vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SNORLAX);
+
+      await game.startBattle([ Species.ILLUMISE ]);
+
+      const enemyPokemon = game.scene.getEnemyPokemon();
+
+      enemyPokemon.addTag(BattlerTagType.MAGNET_RISEN, null, Moves.MAGNET_RISE);
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.THOUSAND_ARROWS));
+
+      await game.phaseInterceptor.to(BerryPhase, false);
+
+      expect(enemyPokemon.getTag(BattlerTagType.MAGNET_RISEN)).toBeUndefined();
+      expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeDefined();
+      expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+    }
   );
 });

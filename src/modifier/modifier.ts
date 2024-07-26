@@ -20,7 +20,7 @@ import { achvs } from "../system/achv";
 import { VoucherType } from "../system/voucher";
 import { FormChangeItem, SpeciesFormChangeItemTrigger } from "../data/pokemon-forms";
 import { Nature } from "#app/data/nature";
-import Overrides from "../overrides";
+import Overrides from "#app/overrides";
 import { ModifierType, modifierTypes } from "./modifier-type";
 import { Command } from "#app/ui/command-ui-handler.js";
 import { Species } from "#enums/species";
@@ -875,6 +875,97 @@ export class SpeciesStatBoosterModifier extends StatBoosterModifier {
 }
 
 /**
+ * Modifier used for held items that apply critical-hit stage boost(s).
+ * @extends PokemonHeldItemModifier
+ * @see {@linkcode apply}
+ */
+export class CritBoosterModifier extends PokemonHeldItemModifier {
+  /** The amount of stages by which the held item increases the current critical-hit stage value */
+  protected stageIncrement: number;
+
+  constructor(type: ModifierType, pokemonId: integer, stageIncrement: number, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+
+    this.stageIncrement = stageIncrement;
+  }
+
+  clone() {
+    return new CritBoosterModifier(this.type, this.pokemonId, this.stageIncrement, this.stackCount);
+  }
+
+  getArgs(): any[] {
+    return super.getArgs().concat(this.stageIncrement);
+  }
+
+  matchType(modifier: Modifier): boolean {
+    if (modifier instanceof CritBoosterModifier) {
+      return (modifier as CritBoosterModifier).stageIncrement === this.stageIncrement;
+    }
+
+    return false;
+  }
+
+  /**
+   * Increases the current critical-hit stage value by {@linkcode stageIncrement}.
+   * @param args [0] {@linkcode Pokemon} N/A
+   *             [1] {@linkcode Utils.IntegerHolder} that holds the resulting critical-hit level
+   * @returns true if the critical-hit stage boost applies successfully, false otherwise
+   */
+  apply(args: any[]): boolean {
+    const critStage = args[1] as Utils.NumberHolder;
+
+    critStage.value += this.stageIncrement;
+    return true;
+  }
+
+  getMaxHeldItemCount(_pokemon: Pokemon): number {
+    return 1;
+  }
+}
+
+/**
+ * Modifier used for held items that apply critical-hit stage boost(s)
+ * if the holder is of a specific {@linkcode Species}.
+ * @extends CritBoosterModifier
+ * @see {@linkcode shouldApply}
+ */
+export class SpeciesCritBoosterModifier extends CritBoosterModifier {
+  /** The species that the held item's critical-hit stage boost applies to */
+  private species: Species[];
+
+  constructor(type: ModifierType, pokemonId: integer, stageIncrement: number, species: Species[], stackCount?: integer) {
+    super(type, pokemonId, stageIncrement, stackCount);
+
+    this.species = species;
+  }
+
+  clone() {
+    return new SpeciesCritBoosterModifier(this.type, this.pokemonId, this.stageIncrement, this.species, this.stackCount);
+  }
+
+  getArgs(): any[] {
+    return [ ...super.getArgs(), this.species ];
+  }
+
+  matchType(modifier: Modifier): boolean {
+    return modifier instanceof SpeciesCritBoosterModifier;
+  }
+
+  /**
+   * Checks if the holder's {@linkcode Species} (or its fused species) is listed
+   * in {@linkcode species}.
+   * @param args [0] {@linkcode Pokemon} that holds the held item
+   *             [1] {@linkcode Utils.IntegerHolder} N/A
+   * @returns true if the critical-hit level can be incremented, false otherwise
+   */
+  shouldApply(args: any[]) {
+    const holder = args[0] as Pokemon;
+
+    return super.shouldApply(args) && (this.species.includes(holder.getSpeciesForm(true).speciesId) || (holder.isFusion() && this.species.includes(holder.getFusionSpeciesForm(true).speciesId)));
+  }
+}
+
+/**
  * Applies Specific Type item boosts (e.g., Magnet)
  */
 export class AttackTypeBoosterModifier extends PokemonHeldItemModifier {
@@ -1060,7 +1151,7 @@ export class TurnHealModifier extends PokemonHeldItemModifier {
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
 
-    if (pokemon.getHpRatio() < 1) {
+    if (!pokemon.isFullHp()) {
       const scene = pokemon.scene;
       scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.getBattlerIndex(),
         Math.max(Math.floor(pokemon.getMaxHp() / 16) * this.stackCount, 1), i18next.t("modifier:turnHealApply", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), typeName: this.type.name }), true));
@@ -1151,7 +1242,7 @@ export class HitHealModifier extends PokemonHeldItemModifier {
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
 
-    if (pokemon.turnData.damageDealt && pokemon.getHpRatio() < 1) {
+    if (pokemon.turnData.damageDealt && !pokemon.isFullHp()) {
       const scene = pokemon.scene;
       scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.getBattlerIndex(),
         Math.max(Math.floor(pokemon.turnData.damageDealt / 8) * this.stackCount, 1), i18next.t("modifier:hitHealApply", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), typeName: this.type.name }), true));
@@ -1297,6 +1388,47 @@ export class PokemonInstantReviveModifier extends PokemonHeldItemModifier {
 
   getMaxHeldItemCount(pokemon: Pokemon): integer {
     return 1;
+  }
+}
+
+/**
+ * Modifier used for White Herb, which resets negative {@linkcode Stat} changes
+ * @extends PokemonHeldItemModifier
+ * @see {@linkcode apply}
+ */
+export class PokemonResetNegativeStatStageModifier extends PokemonHeldItemModifier {
+  constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+  }
+
+  matchType(modifier: Modifier) {
+    return modifier instanceof PokemonResetNegativeStatStageModifier;
+  }
+
+  clone() {
+    return new PokemonResetNegativeStatStageModifier(this.type, this.pokemonId, this.stackCount);
+  }
+
+  /**
+   * Restores any negative stat stages of the mon to 0
+   * @param args args[0] is the {@linkcode Pokemon} whose stat stages are being checked
+   * @returns true if any stat changes were applied (item was used), false otherwise
+   */
+  apply(args: any[]): boolean {
+    const pokemon = args[0] as Pokemon;
+    const loweredStats = pokemon.summonData.battleStats.filter(s => s < 0);
+    if (loweredStats.length) {
+      for (let s = 0; s < pokemon.summonData.battleStats.length; s++) {
+        pokemon.summonData.battleStats[s] = Math.max(0, pokemon.summonData.battleStats[s]);
+      }
+      pokemon.scene.queueMessage(i18next.t("modifier:pokemonResetNegativeStatStageApply", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), typeName: this.type.name }));
+      return true;
+    }
+    return false;
+  }
+
+  getMaxHeldItemCount(pokemon: Pokemon): integer {
+    return 2;
   }
 }
 
@@ -1683,7 +1815,7 @@ export class PokemonExpBoosterModifier extends PokemonHeldItemModifier {
   }
 
   apply(args: any[]): boolean {
-    (args[1] as Utils.NumberHolder).value = Math.floor((args[1] as Utils.NumberHolder).value * (1 + (this.getStackCount() * this.boostMultiplier)));
+    (args[1] as Utils.NumberHolder).value += (this.getStackCount() * this.boostMultiplier);
 
     return true;
   }
@@ -2429,7 +2561,7 @@ export class EnemyTurnHealModifier extends EnemyPersistentModifier {
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
 
-    if (pokemon.getHpRatio() < 1) {
+    if (!pokemon.isFullHp()) {
       const scene = pokemon.scene;
       scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.getBattlerIndex(),
         Math.max(Math.floor(pokemon.getMaxHp() / (100 / this.healPercent)) * this.stackCount, 1), i18next.t("modifier:enemyTurnHealApply", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), true, false, false, false, true));

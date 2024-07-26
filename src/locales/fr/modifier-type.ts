@@ -153,6 +153,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "REVIVER_SEED": { name: "Résugraine", description: "Réanime et restaure la moitié des PV de son porteur s’il est mis K.O. par une capacité directe." },
 
+    "WHITE_HERB": { name: "White Herb", description: "An item to be held by a Pokémon. It will restore any lowered stat in battle." },
+
     "ETHER": { name: "Huile" },
     "MAX_ETHER": { name: "Huile Max" },
 
@@ -181,6 +183,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "GOLDEN_EGG": { name: "Œuf d’Or" },
 
     "SOOTHE_BELL": { name: "Grelot Zen" },
+
+    "SCOPE_LENS": { name: "Lentilscope", description: "Une lentille qui augmente le taux de critiques du porteur." },
+    "LEEK": { name: "Poireau", description: "Objet à faire tenir à Canarticho. Un poireau très long et solide qui augmente son taux de critiques." },
 
     "EVIOLITE": { name: "Évoluroc", description: "Un étrange concentré d’évolution qui augmente la Défense et la Défense Spéciale d’un Pokémon pouvant évoluer." },
 
