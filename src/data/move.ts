@@ -1,5 +1,5 @@
 import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
-import { BattleEndPhase, MoveEndPhase, MovePhase, NewBattlePhase, PartyStatusCurePhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../phases";
+import { BattleEndPhase, MoveEndPhase, MovePhase, NewBattlePhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../phases";
 import { BattleStat, getBattleStatName } from "./battle-stat";
 import { EncoreTag, HelpingHandTag, SemiInvulnerableTag, StockpilingTag, TypeBoostTag } from "./battler-tags";
 import { getPokemonMessage, getPokemonNameWithAffix } from "../messages";
@@ -1421,11 +1421,27 @@ export class PartyStatusCureAttr extends MoveEffectAttr {
     if (!this.canApply(user, target, move, args)) {
       return false;
     }
-    this.addPartyCurePhase(user);
+    const partyPokemon = user.isPlayer() ? user.scene.getParty() : user.scene.getEnemyParty();
+    partyPokemon.forEach(p => this.cureStatus(p));
+
+    if (this.message) {
+      user.scene.queueMessage(this.message);
+    }
+
+    return true;
   }
 
-  addPartyCurePhase(user: Pokemon) {
-    user.scene.unshiftPhase(new PartyStatusCurePhase(user.scene, user, this.message, this.abilityCondition));
+  cureStatus(pokemon: Pokemon) {
+    if (!pokemon.isOnField()) {
+      pokemon.resetStatus(false);
+      pokemon.updateInfo();
+    } else if (!pokemon.hasAbility(this.abilityCondition)) {
+      pokemon.resetStatus();
+      pokemon.updateInfo();
+    }
+    // else {
+    //   pokemon.scene.unshiftPhase(new ShowAbilityPhase(pokemon.scene, pokemon.id, pokemon.getPassiveAbility()?.id === this.abilityCondition));
+    // }
   }
 }
 
