@@ -23,7 +23,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "nature": "Natureza:",
   "eggMoves": "Mov. de Ovo",
   "addToParty": "Adicionar à equipe",
-  "removeFromParty": "Remove from Party",
+  "removeFromParty": "Remover da Equipe",
   "toggleIVs": "Mostrar IVs",
   "manageMoves": "Mudar Movimentos",
   "manageNature": "Mudar Natureza",
