@@ -363,7 +363,7 @@ export const Setting: Array<Setting> = [
   },
   {
     key: SettingKeys.Reroll_Target,
-    label: "Reroll Target",
+    label: i18next.t("settings:Reroll Target"),
     options: [
       {
         value:"Reroll",
