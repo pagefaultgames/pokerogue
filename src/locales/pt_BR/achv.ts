@@ -227,7 +227,7 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "Comendo Poeira",
   },
   "MONO_ROCK": {
-    name: "Duro Como Pedra",
+    name: "...Tanto Bate Até que Fura",
   },
   "MONO_BUG": {
     name: "Vida de Inseto",
