@@ -1429,6 +1429,37 @@ export class PartyStatusCureAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * Applies damage to the target's ally equal to 1/16 of that ally's max HP.
+ * @extends MoveEffectAttr
+ */
+export class FlameBurstAttr extends MoveEffectAttr {
+  /**
+   * @param user - The Pokémon using the move.
+   * @param target - The target Pokémon.
+   * @param move - The move being used.
+   * @param args - Additional arguments.
+   * @returns A boolean indicating whether the effect was successfully applied.
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
+    const targetAlly = target.getAlly();
+
+    const cancelled = new Utils.BooleanHolder(false);
+    applyAbAttrs(BlockNonDirectDamageAbAttr, user, cancelled);
+
+    if (!targetAlly || cancelled.value) {
+      return false;
+    }
+
+    targetAlly.damageAndUpdate(Math.floor(1/16 * targetAlly.getMaxHp()), HitResult.OTHER);
+    return true;
+  }
+
+  getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
+    return target.getAlly() ? -5 : 0;
+  }
+}
+
 export class SacrificialFullRestoreAttr extends SacrificialAttr {
   constructor() {
     super();
