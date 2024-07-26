@@ -1,6 +1,6 @@
 import tseslint from '@typescript-eslint/eslint-plugin';
 import parser from '@typescript-eslint/parser';
-import imports from 'eslint-plugin-import';
+// import imports from 'eslint-plugin-import'; // Disabled due to not being compatible with eslint v9
 
 export default [ 
     {
@@ -10,7 +10,7 @@ export default [
             parser: parser
         },
         plugins: {
-            imports: imports.configs.recommended,
+            // imports: imports.configs.recommended // Disabled due to not being compatible with eslint v9
             '@typescript-eslint': tseslint
         },
         rules: {
