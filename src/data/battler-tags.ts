@@ -497,12 +497,6 @@ export class FrenzyTag extends BattlerTag {
   }
 }
 
-export class ChargingTag extends BattlerTag {
-  constructor(sourceMove: Moves, sourceId: number) {
-    super(BattlerTagType.CHARGING, BattlerTagLapseType.CUSTOM, 1, sourceMove, sourceId);
-  }
-}
-
 export class EncoreTag extends BattlerTag {
   public moveId: Moves;
 
@@ -1696,7 +1690,7 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
   case BattlerTagType.FRENZY:
     return new FrenzyTag(turnCount, sourceMove, sourceId);
   case BattlerTagType.CHARGING:
-    return new ChargingTag(sourceMove, sourceId);
+    return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, 1, sourceMove, sourceId);
   case BattlerTagType.ENCORE:
     return new EncoreTag(sourceId);
   case BattlerTagType.HELPING_HAND:
