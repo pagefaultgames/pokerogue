@@ -151,12 +151,17 @@ describe("Lost at Sea - Mystery Encounter", () => {
 
       const encounterPhase = scene.getCurrentPhase();
       expect(encounterPhase.constructor.name).toBe(MysteryEncounterPhase.name);
-      const continueEncounterSpy = vi.spyOn((encounterPhase as MysteryEncounterPhase), "continueEncounter");
+      const mysteryEncounterPhase = encounterPhase as MysteryEncounterPhase;
+      vi.spyOn(mysteryEncounterPhase, "continueEncounter");
+      vi.spyOn(mysteryEncounterPhase, "handleOptionSelect");
+      vi.spyOn(scene.ui, "playError");
 
       await runSelectMysteryEncounterOption(game, 1);
 
       expect(scene.getCurrentPhase().constructor.name).toBe(MysteryEncounterPhase.name);
-      expect(continueEncounterSpy).not.toHaveBeenCalled();
+      expect(scene.ui.playError).not.toHaveBeenCalled(); // No error sfx, option is disabled
+      expect(mysteryEncounterPhase.handleOptionSelect).not.toHaveBeenCalled();
+      expect(mysteryEncounterPhase.continueEncounter).not.toHaveBeenCalled();
     });
   });
 
@@ -210,12 +215,17 @@ describe("Lost at Sea - Mystery Encounter", () => {
 
       const encounterPhase = scene.getCurrentPhase();
       expect(encounterPhase.constructor.name).toBe(MysteryEncounterPhase.name);
-      const continueEncounterSpy = vi.spyOn((encounterPhase as MysteryEncounterPhase), "continueEncounter");
+      const mysteryEncounterPhase = encounterPhase as MysteryEncounterPhase;
+      vi.spyOn(mysteryEncounterPhase, "continueEncounter");
+      vi.spyOn(mysteryEncounterPhase, "handleOptionSelect");
+      vi.spyOn(scene.ui, "playError");
 
-      await runSelectMysteryEncounterOption(game, 1);
+      await runSelectMysteryEncounterOption(game, 2);
 
       expect(scene.getCurrentPhase().constructor.name).toBe(MysteryEncounterPhase.name);
-      expect(continueEncounterSpy).not.toHaveBeenCalled();
+      expect(scene.ui.playError).not.toHaveBeenCalled(); // No error sfx, option is disabled
+      expect(mysteryEncounterPhase.handleOptionSelect).not.toHaveBeenCalled();
+      expect(mysteryEncounterPhase.continueEncounter).not.toHaveBeenCalled();
     });
   });
 

@@ -196,7 +196,7 @@ describe("The Strong Stuff - Mystery Encounter", () => {
       const phaseSpy = vi.spyOn(scene, "pushPhase");
 
       await game.runToMysteryEncounter(MysteryEncounterType.THE_STRONG_STUFF, defaultParty);
-      await runMysteryEncounterToEnd(game, 2, true);
+      await runMysteryEncounterToEnd(game, 2, null, true);
 
       const enemyField = scene.getEnemyField();
       expect(scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
@@ -220,7 +220,7 @@ describe("The Strong Stuff - Mystery Encounter", () => {
 
     it("should have Soul Dew in rewards", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.THE_STRONG_STUFF, defaultParty);
-      await runMysteryEncounterToEnd(game, 2, true);
+      await runMysteryEncounterToEnd(game, 2, null, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
       expect(scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);

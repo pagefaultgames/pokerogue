@@ -152,7 +152,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
       const phaseSpy = vi.spyOn(scene, "pushPhase");
 
       await game.runToMysteryEncounter(MysteryEncounterType.FIERY_FALLOUT, defaultParty);
-      await runMysteryEncounterToEnd(game, 1, true);
+      await runMysteryEncounterToEnd(game, 1, null, true);
 
       const enemyField = scene.getEnemyField();
       expect(scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
@@ -169,7 +169,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
 
     it("should give charcoal to lead pokemon", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIERY_FALLOUT, defaultParty);
-      await runMysteryEncounterToEnd(game, 1, true);
+      await runMysteryEncounterToEnd(game, 1, null, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
       expect(scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);

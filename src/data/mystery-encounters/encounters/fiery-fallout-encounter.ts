@@ -80,7 +80,8 @@ export const FieryFalloutEncounter: IMysteryEncounter =
           repeat: true,
           hidden: true,
           hasShadow: true,
-          x: -20
+          x: -20,
+          startFrame: 20
         },
         {
           spriteKey: volcaronaSpecies.getSpriteId(true ),
