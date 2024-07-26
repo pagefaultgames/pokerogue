@@ -106,7 +106,7 @@ export const PokemonSalesmanEncounter: IMysteryEncounter =
     })
     .withOption(
       new MysteryEncounterOptionBuilder()
-        .withOptionMode(MysteryEncounterOptionMode.DEFAULT_OR_SPECIAL)
+        .withOptionMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
         .withHasDexProgress(true)
         .withSceneMoneyRequirement(null, MAX_POKEMON_PRICE_MULTIPLIER) // Wave scaling money multiplier of 2
         .withDialogue({

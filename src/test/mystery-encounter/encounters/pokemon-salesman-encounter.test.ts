@@ -148,6 +148,7 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
     });
 
     it("Should add the Pokemon to the party", async () => {
+      scene.money = 20000;
       await game.runToMysteryEncounter(MysteryEncounterType.POKEMON_SALESMAN, defaultParty);
 
       const initialPartySize = scene.getParty().length;
@@ -161,7 +162,7 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
 
     it("should be disabled if player does not have enough money", async () => {
       scene.money = 0;
-      await game.runToMysteryEncounter(MysteryEncounterType.POKEMON_SALESMAN, [Species.ARCANINE]);
+      await game.runToMysteryEncounter(MysteryEncounterType.POKEMON_SALESMAN, defaultParty);
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
       const encounterPhase = scene.getCurrentPhase();
@@ -180,6 +181,7 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
     });
 
     it("should leave encounter without battle", async () => {
+      scene.money = 20000;
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
 
       await game.runToMysteryEncounter(MysteryEncounterType.POKEMON_SALESMAN, defaultParty);
