@@ -353,6 +353,7 @@ export default class MenuUiHandler extends MessageUiHandler {
           break;
         }
       }
+      this.showText(null, 0);
       switch (adjustedCursor) {
       case MenuOptions.GAME_SETTINGS:
         ui.setOverlayMode(Mode.SETTINGS);
@@ -441,15 +442,25 @@ export default class MenuUiHandler extends MessageUiHandler {
       case MenuOptions.SAVE_AND_QUIT:
         if (this.scene.currentBattle) {
           success = true;
+          const doSaveQuit = () => {
+            ui.setMode(Mode.LOADING, { buttonActions: [] });
+            this.scene.gameData.saveAll(this.scene, true, true, true, true).then(() => {
+              this.scene.reset(true);
+            });
+          };
           if (this.scene.currentBattle.turn > 1) {
             ui.showText(i18next.t("menuUiHandler:losingProgressionWarning"), null, () => {
-              ui.setOverlayMode(Mode.CONFIRM, () => this.scene.gameData.saveAll(this.scene, true, true, true, true).then(() => this.scene.reset(true)), () => {
+              if (!this.active) {
+                this.showText(null, 0);
+                return;
+              }
+              ui.setOverlayMode(Mode.CONFIRM, doSaveQuit, () => {
                 ui.revertMode();
-                ui.showText(null, 0);
+                this.showText(null, 0);
               }, false, -98);
             });
           } else {
-            this.scene.gameData.saveAll(this.scene, true, true, true, true).then(() => this.scene.reset(true));
+            doSaveQuit();
           }
         } else {
           error = true;
@@ -458,6 +469,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       case MenuOptions.LOG_OUT:
         success = true;
         const doLogout = () => {
+          ui.setMode(Mode.LOADING, { buttonActions: [] });
           Utils.apiFetch("account/logout", true).then(res => {
             if (!res.ok) {
               console.error(`Log out failed (${res.status}: ${res.statusText})`);
@@ -468,9 +480,13 @@ export default class MenuUiHandler extends MessageUiHandler {
         };
         if (this.scene.currentBattle) {
           ui.showText(i18next.t("menuUiHandler:losingProgressionWarning"), null, () => {
+            if (!this.active) {
+              this.showText(null, 0);
+              return;
+            }
             ui.setOverlayMode(Mode.CONFIRM, doLogout, () => {
               ui.revertMode();
-              ui.showText(null, 0);
+              this.showText(null, 0);
             }, false, -98);
           });
         } else {
