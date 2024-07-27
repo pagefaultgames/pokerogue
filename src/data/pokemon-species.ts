@@ -182,14 +182,7 @@ export abstract class PokemonSpeciesForm {
    * @returns Number of abilities
    */
   getAbilityCount(): integer {
-    let count = 1;
-    if (this.ability2 !== Abilities.NONE) {
-      count += 1;
-    }
-    if (this.abilityHidden !== Abilities.NONE) {
-      count += 1;
-    }
-    return count;
+    return this.abilityHidden !== Abilities.NONE ? 3 : 2;
   }
 
   /**
@@ -202,11 +195,7 @@ export abstract class PokemonSpeciesForm {
     if (abilityIndex === 0) {
       ret = this.ability1;
     } else if (abilityIndex === 1) {
-      if (this.ability2 !== Abilities.NONE) {
-        ret = this.ability2;
-      } else {
-        ret = this.abilityHidden;
-      }
+      ret = this.ability2;
     } else {
       ret = this.abilityHidden;
     }
