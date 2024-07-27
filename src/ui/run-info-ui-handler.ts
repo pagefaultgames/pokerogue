@@ -41,8 +41,10 @@ export default class GameInfoUiHandler extends UiHandler {
   private gameStatsContainer: Phaser.GameObjects.Container;
   private statsContainer: Phaser.GameObjects.Container;
 
+  private runResultContainer: Phaser.GameObjects.Container;
   private runInfoContainer: Phaser.GameObjects.Container;
   private partyContainer: Phaser.GameObjects.Container;
+  private partyModifierContainer: Phaser.GameObjects.Container;
   private statsBgWidth: integer;
   private partyContainerHeight: integer;
   private partyContainerWidth: integer;
@@ -67,17 +69,9 @@ export default class GameInfoUiHandler extends UiHandler {
  	show(args: any[]): boolean {
  		super.show(args);
 
-    this.statsBgWidth = ((this.scene.game.canvas.width / 6) - 2) / 3;
-
-    this.runInfoContainer = this.scene.add.container(0, 24);
-
-    this.partyContainer = this.scene.add.container(this.statsBgWidth-10, 23);
-
-    this.setCursor(0);
-
-    const runInfoBg = this.scene.add.rectangle(0, 0, this.scene.game.canvas.width, this.scene.game.canvas.height, 0x006860);
-    runInfoBg.setOrigin(0, 0);
-    this.gameStatsContainer.add(runInfoBg);
+    const gameStatsBg = this.scene.add.rectangle(0, 0, this.scene.game.canvas.width, this.scene.game.canvas.height, 0x006860);
+    gameStatsBg.setOrigin(0, 0);
+    this.gameStatsContainer.add(gameStatsBg);
 
     const headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6) - 2, 24);
     headerBg.setOrigin(0, 0);
@@ -88,27 +82,28 @@ export default class GameInfoUiHandler extends UiHandler {
     this.gameStatsContainer.add(headerBg);
     this.gameStatsContainer.add(headerText);
 
-
-    this.partyContainerWidth = (this.statsBgWidth*2)+10;
-    this.partyContainerHeight = (this.scene.game.canvas.height / 6) - 25;
-    //const partyInfoWindow = addWindow(this.scene, 0, 0, (this.statsBgWidth*2)+10, (this.scene.game.canvas.height / 6) - 25);
-    //partyInfoWindow.setOrigin(0,0);
-
-    //this.partyContainer.add(partyInfoWindow);
-
-    const runInfoWindow = addWindow(this.scene, 0, 0, this.statsBgWidth-10, (this.scene.game.canvas.height / 6) - 25);
-    runInfoWindow.setOrigin(0, 0);
-    this.runInfoContainer.add(runInfoWindow);
-
- 		const run = args[0];
- 		const runHistoryOrigin = args[1] ? true : false;
-
- 		this.runInfo = this.scene.gameData.parseSessionData(JSON.stringify(run.entry));
+    const run = args[0];
+    this.runInfo = this.scene.gameData.parseSessionData(JSON.stringify(run.entry));
     this.victory = run.victory;
 
- 		this.parseRunInfo(this.runInfo, runHistoryOrigin, run.victory);
+    this.statsBgWidth = ((this.scene.game.canvas.width / 6) - 2) / 3;
 
-    const partyData = runHistoryOrigin ? this.runInfo.party : {};
+    this.runResultContainer = this.scene.add.container(0, 24);
+    const runResultWindow = addWindow(this.scene, 0, 0, this.statsBgWidth-11, 65);
+    runResultWindow.setOrigin(0, 0);
+    this.runResultContainer.add(runResultWindow);
+    this.parseRunResult(this.runInfo, this.victory);
+
+    this.partyContainer = this.scene.add.container(this.statsBgWidth-10, 23);
+
+    this.setCursor(0);
+
+    this.runInfoContainer = this.scene.add.container(0, 89);
+    const runInfoWindow = addWindow(this.scene, 0, 0, this.statsBgWidth-11, 90);
+    this.runInfoContainer.add(runInfoWindow);
+ 		this.parseRunInfo(this.runInfo, this.victory);
+
+    const partyData = this.runInfo.party;
     this.parsePartyInfo(partyData);
 
     this.gameStatsContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
@@ -126,89 +121,58 @@ export default class GameInfoUiHandler extends UiHandler {
     return true;
  	}
 
- 	async parseRunInfo(runData:any, runHistoryOrigin: boolean, runResult: boolean = false) {
- 		const genInfoText = addBBCodeTextObject(this.scene, 6, 18, "", TextStyle.WINDOW, {fontSize : "55px"});
- 		if (runHistoryOrigin) {
- 				const runResultText = addTextObject(this.scene, 6, 3, `${(runResult ? i18next.t("runHistory:victory") : i18next.t("runHistory:defeated")+" - Wave "+runData.waveIndex)}`, TextStyle.WINDOW, {fontSize : "65px"});
- 				runResultText.appendText(new Date(runData.timestamp).toLocaleString());
- 				this.runInfoContainer.add(runResultText);
- 		}
- 		genInfoText.appendText(i18next.t("runHistory:mode")+": ");
- 		switch (runData.gameMode) {
-    		case GameModes.DAILY:
-    			genInfoText.appendText(`${i18next.t("gameMode:dailyRun")}`, false);
-    			break;
-    		case GameModes.SPLICED_ENDLESS:
-    			genInfoText.appendText(`${i18next.t("gameMode:endlessSpliced")}`, false);
-    			break;
-    		case GameModes.CHALLENGE:
-    			genInfoText.appendText(`${i18next.t("gameMode:challenge")}`, false);
-    			genInfoText.appendText(`\t\t${i18next.t("runHistory:challengeRules")}: `);
-      const runChallenges = runData.challenges;
-      const rules = [];
-      for (let i = 0; i < runChallenges.length; i++) {
-        if (runChallenges[i].id === Challenges.SINGLE_GENERATION && runChallenges[i].value !== 0) {
-          rules.push(i18next.t(`runHistory:challengeMonoGen${runChallenges[i].value}` as const));
-        } else if (runChallenges[i].id === Challenges.SINGLE_TYPE && runChallenges[i].value !== 0) {
-          rules.push(i18next.t(`pokemonInfo:Type.${Type[runChallenges[i].value-1]}` as const));
-        }
-      }
-      if (rules) {
-        for (let i = 0; i < rules.length; i++) {
-          if (i > 0) {
-            genInfoText.appendText(" + ", false);
-          }
-          genInfoText.appendText(rules[i], false);
-        }
-      }
-    			break;
-    		case GameModes.ENDLESS:
-      genInfoText.appendText(`${i18next.t("gameMode:endless")}`, false);
-      break;
-    		case GameModes.CLASSIC:
-      genInfoText.appendText(`${i18next.t("gameMode:classic")}`, false);
-    			break;
-    	}
+  async parseRunResult(runData: any, runResult: boolean) {
+    const runResultText = addBBCodeTextObject(this.scene, 6, 4, `${(runResult ? i18next.t("runHistory:victory") : i18next.t("runHistory:defeated")+" - Wave "+runData.waveIndex)}`, TextStyle.WINDOW, {fontSize : "65px", lineSpacing: 0.1});
+    this.runResultContainer.add(runResultText);
 
+    if (!runResult) {
+      const enemyContainer = this.scene.add.container(0, 0);
 
-
-    genInfoText.appendText(`${i18next.t("runHistory:money")}: ${Utils.formatLargeNumber(runData.money, 1000)}`);
-
-    const luckValue = Phaser.Math.Clamp(runData.party.map(p => p.toPokemon(this.scene).getLuck()).reduce((total: integer, value: integer) => total += value, 0), 0, 14);
-    if (luckValue < 14) {
-      const luckTextTint = "[color=#"+(getLuckTextTint(luckValue)).toString(16)+"]";
-      genInfoText.appendText(`${luckTextTint}${i18next.t("runHistory:luck")}: ${getLuckString(luckValue)}[/color]`);
-    } else {
-      const sssLuckText = addTextObject(this.scene, 0, 0, `${i18next.t("runHistory:luck")}: ${getLuckString(luckValue)}`, TextStyle.WINDOW, {fontSize: "55px"});
-      sssLuckText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
-      sssLuckText.setPosition(6, 67);
-      this.runInfoContainer.add(sssLuckText);
-    }
-
-    	if (runHistoryOrigin && !runResult) {
-    		const enemyContainer = this.scene.add.container(2, -42);
-    		//Wild - Single and Doubles
-    		if (runData.battleType === BattleType.WILD) {
-    			runData.enemyParty.forEach((enemyData, e) => {
-          const enemyIconContainer = this.scene.add.container(8+(e*24),63);
-          enemyIconContainer.setScale(0.75);
+      //Wild - Single and Doubles
+      if (runData.battleType === BattleType.WILD) {
+        switch (runData.enemyParty.length) {
+        case 1:
+          //Wild - Singles
+          const enemyIconContainer = this.scene.add.container(0, 0);
+          const enemyData = runData.enemyParty[0];
           const bossStatus = enemyData.boss;
           enemyData.boss = false;
+          //addPokemonIcon() throws an error if the Pokemon used is a boss
           const enemy = enemyData.toPokemon(this.scene);
           const enemyIcon = this.scene.addPokemonIcon(enemy, 0, 0, 0, 0);
-          const enemyLevel = addTextObject(this.scene, 32, 24, `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`, bossStatus ? TextStyle.PARTY_RED : TextStyle.PARTY, { fontSize: "44px", color: "#f8f8f8" });
+          const enemyLevel = addTextObject(this.scene, 36, 26, `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`, bossStatus ? TextStyle.PARTY_RED : TextStyle.PARTY, { fontSize: "44px", color: "#f8f8f8" });
           enemyLevel.setShadow(0, 0, null);
           enemyLevel.setStroke("#424242", 14);
           enemyLevel.setOrigin(1, 0);
           enemyIconContainer.add(enemyIcon);
           enemyIconContainer.add(enemyLevel);
           enemyContainer.add(enemyIconContainer);
-         	  enemy.destroy();
-       		});
-        genInfoText.setPosition(6,38);
-    		//Trainer - Single and Double
-    		} else if (runData.battleType === BattleType.TRAINER) {
-    		  const tObj = runData.trainer.toTrainer(this.scene);
+          enemyContainer.setPosition(27, 10);
+          enemy.destroy();
+          break;
+        case 2:
+          runData.enemyParty.forEach((enemyData, e) => {
+            const enemyIconContainer = this.scene.add.container(0, 0);
+            const bossStatus = enemyData.boss;
+            enemyData.boss = false;
+            const enemy = enemyData.toPokemon(this.scene);
+            const enemyIcon = this.scene.addPokemonIcon(enemy, 0, 0, 0, 0);
+            const enemyLevel = addTextObject(this.scene, 36, 26, `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`, bossStatus ? TextStyle.PARTY_RED : TextStyle.PARTY, { fontSize: "44px", color: "#f8f8f8" });
+            enemyLevel.setShadow(0, 0, null);
+            enemyLevel.setStroke("#424242", 14);
+            enemyLevel.setOrigin(1, 0);
+            enemyIconContainer.add(enemyIcon);
+            enemyIconContainer.add(enemyLevel);
+            enemyIconContainer.setPosition(e*35, 0);
+            enemyContainer.add(enemyIconContainer);
+            enemy.destroy();
+          });
+          enemyContainer.setPosition(8, 14);
+          break;
+        }
+      //Trainer - Single and Double
+      } else if (runData.battleType === BattleType.TRAINER) {
+        const tObj = runData.trainer.toTrainer(this.scene);
         const tObjSpriteKey = tObj.config.getSpriteKey(runData.trainer.variant === TrainerVariant.FEMALE, false);
         const tObjSprite = this.scene.add.sprite(3, 75, tObjSpriteKey);
         if (runData.trainer.variant === TrainerVariant.DOUBLE) {
@@ -261,33 +225,88 @@ export default class GameInfoUiHandler extends UiHandler {
           enemyIconContainer.add(enemyIcon);
           enemyIconContainer.add(enemyLevel);
           enemyContainer.add(enemyIconContainer);
-         	  enemy.destroy();
-       	  });
+          enemy.destroy();
+        });
+      }
+      this.runResultContainer.add(enemyContainer);
+    }
+    this.gameStatsContainer.add(this.runResultContainer);
+  }
 
-        if (runData.enemyParty.length > 3) {
-          genInfoText.setPosition(6,52);
-        } else {
-          genInfoText.setPosition(6,40);
+  async parseRunInfo(runData:any) {
+    const modeText = addBBCodeTextObject(this.scene, 7, 0, "", TextStyle.WINDOW, {fontSize : "50px", lineSpacing:3});
+    modeText.setPosition(7, 5);
+    modeText.appendText(i18next.t("runHistory:mode")+": ", false);
+    switch (runData.gameMode) {
+    case GameModes.DAILY:
+      modeText.appendText(`${i18next.t("gameMode:dailyRun")}`, false);
+      break;
+    case GameModes.SPLICED_ENDLESS:
+      modeText.appendText(`${i18next.t("gameMode:endlessSpliced")}`, false);
+      if (runData.waveIndex === gameData.gameStats.highestEndlessWave) {
+        modeText.appendText(` [${i18next.t("runHistory:personalBest")}]`, false);
+        modeText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
+      }
+      break;
+    case GameModes.CHALLENGE:
+      modeText.appendText(`${i18next.t("gameMode:challenge")}`, false);
+      modeText.appendText(`\t\t${i18next.t("runHistory:challengeRules")}: `);
+      const runChallenges = runData.challenges;
+      const rules = [];
+      for (let i = 0; i < runChallenges.length; i++) {
+        if (runChallenges[i].id === Challenges.SINGLE_GENERATION && runChallenges[i].value !== 0) {
+          rules.push(i18next.t(`runHistory:challengeMonoGen${runChallenges[i].value}` as const));
+        } else if (runChallenges[i].id === Challenges.SINGLE_TYPE && runChallenges[i].value !== 0) {
+          rules.push(i18next.t(`pokemonInfo:Type.${Type[runChallenges[i].value-1]}` as const));
         }
-    	  }
-    	  this.runInfoContainer.add(enemyContainer);
+      }
+      if (rules) {
+        for (let i = 0; i < rules.length; i++) {
+          if (i > 0) {
+            modeText.appendText(" + ", false);
+          }
+          modeText.appendText(rules[i], false);
+        }
+      }
+      break;
+    case GameModes.ENDLESS:
+      modeText.appendText(`${i18next.t("gameMode:endless")}`, false);
+      if (runData.waveIndex === this.scene.gameData.gameStats.highestEndlessWave) {
+        modeText.appendText(` [${i18next.t("runHistory:personalBest")}]`, false);
+        modeText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
+      }
+      break;
+    case GameModes.CLASSIC:
+      modeText.appendText(`${i18next.t("gameMode:classic")}`, false);
+      break;
     }
 
-
-    if (luckValue >= 14) {
-      genInfoText.appendText("\n", false);
+    const runInfoTextContainer = this.scene.add.container(0, 0);
+    const runInfoText = addBBCodeTextObject(this.scene, 7, 0, "", TextStyle.WINDOW, {fontSize : "50px", lineSpacing:3});
+    const runTime = Utils.getPlayTimeString(runData.playTime);
+    runInfoText.appendText(`${i18next.t("runHistory:runLength")}: ${runTime}`, false);
+    runInfoText.appendText(`[color=#e8e8a8]\u20BD${Utils.formatLargeNumber(runData.money, 1000)}[/color]`);
+    const luckText = addBBCodeTextObject(this.scene, 0, 0, "", TextStyle.WINDOW, {fontSize: "55px"});
+    const luckValue = Phaser.Math.Clamp(runData.party.map(p => p.toPokemon(this.scene).getLuck()).reduce((total: integer, value: integer) => total += value, 0), 0, 14);
+    let luckInfo = i18next.t("runHistory:luck")+": "+getLuckString(luckValue);
+    if (luckValue < 14) {
+      luckInfo = "[color=#"+(getLuckTextTint(luckValue)).toString(16)+"]"+luckInfo+"[/color]";
+    } else {
+      luckText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
     }
+    luckText.appendText("[align=right]"+luckInfo+"[/align]", false);
+    runInfoText.setPosition(7, 70);
+    luckText.setPosition(62,77);
+    runInfoTextContainer.add(runInfoText);
+    runInfoTextContainer.add(luckText);
 
-    const runLength = Utils.getPlayTimeString(runData.playTime);
-    genInfoText.appendText(`${i18next.t("runHistory:runLength")}: ${runLength}`);
 
-    	if (runData.modifiers.length) {
-      genInfoText.appendText(i18next.t("runHistory:playerItems")+": ");
+    if (runData.modifiers.length) {
       const modifiersModule = await import("../modifier/modifier");
 
       let visibleModifierIndex = 0;
 
-      const modifierIconsContainer = this.scene.add.container(8, 65);
+      const modifierIconsContainer = this.scene.add.container(8, (runData.gameMode === GameModes.CHALLENGE) ? 20 : 15);
       modifierIconsContainer.setScale(0.45);
       for (const m of runData.modifiers) {
         const modifier = m.toModifier(this.scene, modifiersModule[m.className]);
@@ -318,22 +337,17 @@ export default class GameInfoUiHandler extends UiHandler {
           break;
         }
       }
-      if (runData.gameMode === GameModes.CHALLENGE) {
-        modifierIconsContainer.setPositionRelative(genInfoText, 2, 65);
-      } else {
-        modifierIconsContainer.setPositionRelative(genInfoText, 2, 55);
-      }
-
       this.runInfoContainer.add(modifierIconsContainer);
     }
 
- 		this.runInfoContainer.add(genInfoText);
+    this.runInfoContainer.add(modeText);
+    this.runInfoContainer.add(runInfoTextContainer);
     this.gameStatsContainer.add(this.runInfoContainer);
-
- 	}
+  }
 
  	parsePartyInfo(party: any) {
 
+    const currentLanguage = i18next.resolvedLanguage;
  		const windowHeight = ((this.scene.game.canvas.height / 6) - 23)/6;
 
  		party.forEach((p: PokemonData, i: integer) => {
@@ -348,19 +362,15 @@ export default class GameInfoUiHandler extends UiHandler {
 
  			const bgColor = type1Color.clone().darken(45);
       pokemonInfoWindow.setFillStyle(bgColor.color);
-      //pokemonInfoWindow.setBlendMode(Phaser.BlendModes.MULTIPLY);
 
       const iconContainer = this.scene.add.container(0, 0);
-      //pokemonSpriteWindow.setOrigin(-0.3, -0.25);
       const icon = this.scene.addPokemonIcon(pokemon, 0, 0, 0, 0);
       icon.setScale(0.75);
       icon.setPosition(-99, 1);
-      //const spriteAnimKey = icon.list[0].anims.key;
       typeColor = types[1] ? getTypeRgb(types[1]) : null;
       const type2Color = typeColor ? new Phaser.Display.Color(typeColor[0], typeColor[1], typeColor[2]) : null;
       type2Color ? pokemonInfoWindow.setStrokeStyle(1, type2Color.color, 0.95) : pokemonInfoWindow.setStrokeStyle(1, type1Color.color, 0.95);
-      //pokemonSpriteWindow.setPosition(-2,1.5);
-      //icon.add(pokemonSpriteWindow);
+
       this.getUi().bringToTop(icon);
 
       const pokeInfoTextContainer = this.scene.add.container(-85, 3.5);
@@ -368,8 +378,10 @@ export default class GameInfoUiHandler extends UiHandler {
       const pSpecies = pokemon.species;
       const pNature = getNatureName(pokemon.nature);
       const pName = pokemon.fusionSpecies ? pokemon.name : pSpecies.name;
-      const pPassiveInfo = pokemon.passive ? `${i18next.t("starterSelectUiHandler:passive").charAt(0)+": "+allAbilities[starterPassiveAbilities[pSpecies.speciesId]].name}` : "";
-      const pAbilityInfo = i18next.t("starterSelectUiHandler:ability").charAt(0)+": "+ pokemon.getAbility().name;
+      const passiveLabel = (currentLanguage==="ko"||currentLanguage==="zh_CN"||currentLanguage==="zh_TW") ? i18next.t("starterSelectUiHandler:passive") : i18next.t("starterSelectUiHandler:passive").charAt(0);
+      const abilityLabel = (currentLanguage==="ko"||currentLanguage==="zh_CN"||currentLanguage==="zh_TW") ? i18next.t("starterSelectUiHandler:ability") : i18next.t("starterSelectUiHandler:ability").charAt(0);
+      const pPassiveInfo = pokemon.passive ? `${passiveLabel+": "+allAbilities[starterPassiveAbilities[pSpecies.speciesId]].name}` : "";
+      const pAbilityInfo = abilityLabel + ": " + pokemon.getAbility().name;
       const pokeInfoText = addBBCodeTextObject(this.scene, 0, 0, pName, TextStyle.SUMMARY, {fontSize: textContainerFontSize, lineSpacing:3});
       pokeInfoText.appendText(`${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatFancyLargeNumber(pokemon.level, 1)} - ${pNature}`);
       pokeInfoText.appendText(pAbilityInfo);
@@ -379,7 +391,7 @@ export default class GameInfoUiHandler extends UiHandler {
       const pokeStatTextContainer = this.scene.add.container(-35, 6);
       const pStats = [];
       pokemon.stats.forEach((element) => pStats.push(Utils.formatFancyLargeNumber(element,1)));
-      const currentLanguage = i18next.resolvedLanguage;
+
       for (let i = 0; i < pStats.length; i++) {
         const isMult = getNatureStatMultiplier(pokemon.nature, i);
         pStats[i] = (isMult < 1) ? pStats[i] + "[color=#40c8f8]↓[/color]" : pStats[i];
@@ -487,6 +499,7 @@ export default class GameInfoUiHandler extends UiHandler {
     if (button === Button.CANCEL) {
       success = true;
       this.runInfoContainer.removeAll(true);
+      this.runResultContainer.removeAll(true);
       this.partyContainer.removeAll(true);
       this.gameStatsContainer.removeAll(true);
       super.clear();
@@ -499,7 +512,13 @@ export default class GameInfoUiHandler extends UiHandler {
         break;
       }
     }
-
+    if (button === Button.STATS) {
+      if (this.partyContainer.visible) {
+        this.partyContainer.setVisible(false);
+      } else {
+        this.partyContainer.setVisible(true);
+      }
+    }
     if (success) {
       ui.playSelect();
     } else if (error) {
