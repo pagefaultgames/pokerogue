@@ -29,7 +29,7 @@ describe("Abilities - COSTAR", () => {
     game = new GameManager(phaserGame);
     vi.spyOn(Overrides, "DOUBLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.COSTAR);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.NASTY_PLOT, Moves.CURSE]);
+    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.NASTY_PLOT]);
     vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
   });
 
@@ -37,15 +37,17 @@ describe("Abilities - COSTAR", () => {
   test(
     "ability copies positive stat changes",
     async () => {
+      vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
+
       await game.startBattle([Species.MAGIKARP, Species.MAGIKARP, Species.FLAMIGO]);
 
       let [leftPokemon, rightPokemon] = game.scene.getPlayerField();
-      expect(leftPokemon).not.toBe(undefined);
-      expect(rightPokemon).not.toBe(undefined);
+      expect(leftPokemon).toBeDefined();
+      expect(rightPokemon).toBeDefined();
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.NASTY_PLOT));
       await game.phaseInterceptor.to(CommandPhase);
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
       await game.toNextTurn();
 
       expect(leftPokemon.summonData.battleStats[BattleStat.SPATK]).toBe(+2);
@@ -71,8 +73,8 @@ describe("Abilities - COSTAR", () => {
       await game.startBattle([Species.MAGIKARP, Species.MAGIKARP, Species.FLAMIGO]);
 
       let [leftPokemon, rightPokemon] = game.scene.getPlayerField();
-      expect(leftPokemon).not.toBe(undefined);
-      expect(rightPokemon).not.toBe(undefined);
+      expect(leftPokemon).toBeDefined();
+      expect(rightPokemon).toBeDefined();
 
       expect(leftPokemon.summonData.battleStats[BattleStat.ATK]).toBe(-2);
       expect(leftPokemon.summonData.battleStats[BattleStat.ATK]).toBe(-2);

@@ -1296,6 +1296,7 @@ export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
     const multiplier = args[2] as Utils.NumberHolder;
 
     if (this.canApplyPreAttack(move, numTargets)) {
+      this.showAbility = !!hitCount?.value;
       if (!!hitCount?.value) {
         hitCount.value *= 2;
       }

@@ -151,7 +151,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SACRED_ASH": { name: "Cinza Sagrada" },
 
-    "REVIVER_SEED": { name: "Semente Reanimadora", description: "Após desmaiar, reanima com 50% de PS." },
+    "REVIVER_SEED": { name: "Semente Reanimadora", description: "Após desmaiar por um ataque direto, reanima com 50% de PS." },
 
     "ETHER": { name: "Éter" },
     "MAX_ETHER": { name: "Éter Máximo" },

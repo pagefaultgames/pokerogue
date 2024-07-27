@@ -384,6 +384,10 @@ export class Arena {
     return weatherMultiplier * terrainMultiplier;
   }
 
+  /**
+   * Gets the denominator for the chance for a trainer spawn
+   * @returns n where 1/n is the chance of a trainer battle
+   */
   getTrainerChance(): integer {
     switch (this.biomeType) {
     case Biome.METROPOLIS:

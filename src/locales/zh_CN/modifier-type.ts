@@ -151,7 +151,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SACRED_ASH": { name: "圣灰" },
 
-    "REVIVER_SEED": { name: "复活种子", description: "恢复1只濒死宝可梦的HP至1/2。" },
+    "REVIVER_SEED": { name: "复活种子", description: "受到技能攻击伤害濒死时，\n恢复该宝可梦的HP至1/2。" },
 
     "ETHER": { name: "PP单项小补剂" },
     "MAX_ETHER": { name: "PP单项全补剂" },
