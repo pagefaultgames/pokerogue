@@ -167,13 +167,13 @@ export default class IMysteryEncounter implements IMysteryEncounter {
     this.requirements = this.requirements ? this.requirements : [];
     this.hideBattleIntroMessage = !isNullOrUndefined(this.hideBattleIntroMessage) ? this.hideBattleIntroMessage : false;
     this.autoHideIntroVisuals = !isNullOrUndefined(this.autoHideIntroVisuals) ? this.autoHideIntroVisuals : true;
-    this.startOfBattleEffects = this.startOfBattleEffects ?? [];
 
     // Reset any dirty flags or encounter data
     this.startOfBattleEffectsComplete = false;
     this.lockEncounterRewardTiers = true;
     this.dialogueTokens = {};
     this.enemyPartyConfigs = [];
+    this.startOfBattleEffects = [];
     this.introVisuals = null;
     this.misc = null;
     this.expMultiplier = 1;

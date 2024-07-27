@@ -1,6 +1,6 @@
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { EnemyPartyConfig, generateModifierTypeOption, initBattleWithEnemyConfig, initCustomMovesForEncounter, leaveEncounterWithoutBattle, setEncounterExp, setEncounterRewards, transitionMysteryEncounterIntroVisuals } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { modifierTypes, } from "#app/modifier/modifier-type";
+import { AttackTypeBoosterModifierType, modifierTypes, } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
 import IMysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
@@ -17,7 +17,7 @@ import { WeatherType } from "#app/data/weather";
 import { isNullOrUndefined, randSeedInt } from "#app/utils";
 import { StatusEffect } from "#app/data/status-effect";
 import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import { applyDamageToPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import { applyDamageToPokemon, applyModifierTypeToPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 
@@ -246,9 +246,8 @@ function giveLeadPokemonCharcoal(scene: BattleScene) {
   // Give first party pokemon Charcoal for free at end of battle
   const leadPokemon = scene.getParty()?.[0];
   if (leadPokemon) {
-    const charcoal = generateModifierTypeOption(scene, modifierTypes.ATTACK_TYPE_BOOSTER, [Type.FIRE]);
-    scene.addModifier(charcoal.type.newModifier(leadPokemon), true);
-    scene.updateModifiers();
+    const charcoal = generateModifierTypeOption(scene, modifierTypes.ATTACK_TYPE_BOOSTER, [Type.FIRE]).type as AttackTypeBoosterModifierType;
+    applyModifierTypeToPlayerPokemon(scene, leadPokemon, charcoal);
     scene.currentBattle.mysteryEncounter.setDialogueToken("leadPokemon", leadPokemon.name);
     queueEncounterMessage(scene, `${namespace}:found_charcoal`);
   }

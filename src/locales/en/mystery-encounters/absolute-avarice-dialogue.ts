@@ -7,7 +7,10 @@ export const absoluteAvariceDialogue = {
     1: {
       label: "Battle It",
       tooltip: "(-) Tough Battle\n(+) Rewards from its Berry Hoard",
-      selected: "You'll show this Greedent what\nhappens to those who steal from you!",
+      selected: "The Greedent stuffs its cheeks\nand prepares for battle!",
+      boss_enraged: "Greedent's fierce love for food has it incensed!",
+      food_stash: `It looks like the Greedent was guarding an enormous stash of food!
+        $@s{item_fanfare}Each Pokémon in your party gains 1x Reviver Seed!`
     },
     2: {
       label: "Reason with It",
@@ -18,10 +21,10 @@ export const absoluteAvariceDialogue = {
     3: {
       label: "Let It Have the Food",
       tooltip: "(-) Lose All Berries\n(?) The Greedent Will Like You",
-      selected: `The Greedent devours the entire stash of berries in a flash!
-        $Patting its stomach, it looks at you appreciatively.
-        $Perhaps you could feed it more berries on your adventure...
-        $The Greedent wants to join your party!`,
+      selected: `The Greedent devours the entire\nstash of berries in a flash!
+        $Patting its stomach,\nit looks at you appreciatively.
+        $Perhaps you could feed it\nmore berries on your adventure...
+        $@s{level_up_fanfare}The Greedent wants to join your party!`,
     },
   }
 };

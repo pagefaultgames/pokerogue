@@ -17,7 +17,7 @@ import { Type } from "#app/data/type";
 import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "#app/data/pokemon-species";
 import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { modifierTypes } from "#app/modifier/modifier-type";
+import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 
 export interface MysteryEncounterPokemonData {
   spriteScale?: number
@@ -234,6 +234,36 @@ export async function modifyPlayerPokemonBST(pokemon: PlayerPokemon, value: numb
 }
 
 /**
+ * Will attempt to add a new modifier to a Pokemon.
+ * If the Pokemon already has max stacks of that item, it will instead apply 'fallbackModifierType', if specified.
+ * @param scene
+ * @param pokemon
+ * @param modType
+ * @param fallbackModifierType
+ */
+export async function applyModifierTypeToPlayerPokemon(scene: BattleScene, pokemon: PlayerPokemon, modType: PokemonHeldItemModifierType, fallbackModifierType?: PokemonHeldItemModifierType) {
+  // Check if the Pokemon has max stacks of that item already
+  const existing = scene.findModifier(m => (
+    m instanceof PokemonHeldItemModifier &&
+    m.type.id === modType.id &&
+    m.pokemonId === pokemon.id
+  )) as PokemonHeldItemModifier;
+
+  // At max stacks
+  if (existing && existing.getStackCount() >= existing.getMaxStackCount(scene)) {
+    if (!fallbackModifierType) {
+      return;
+    }
+
+    // Apply fallback
+    return applyModifierTypeToPlayerPokemon(scene, pokemon, fallbackModifierType);
+  }
+
+  const modifier = modType.newModifier(pokemon);
+  await scene.addModifier(modifier, false, false, false, true);
+}
+
+/**
  * Alternative to using AttemptCapturePhase
  * Assumes player sprite is visible on the screen (this is intended for non-combat uses)
  *
@@ -407,7 +437,7 @@ function failCatch(scene: BattleScene, pokemon: EnemyPokemon, originalY: number,
   });
 }
 
-export async function catchPokemon(scene: BattleScene, pokemon: EnemyPokemon, pokeball: Phaser.GameObjects.Sprite, pokeballType: PokeballType, isObtain: boolean = false): Promise<void> {
+export async function catchPokemon(scene: BattleScene, pokemon: EnemyPokemon, pokeball: Phaser.GameObjects.Sprite, pokeballType: PokeballType, showCatchObtainMessage: boolean = true, isObtain: boolean = false): Promise<void> {
   scene.unshiftPhase(new VictoryPhase(scene, BattlerIndex.ENEMY));
 
   const speciesForm = !pokemon.fusionSpecies ? pokemon.getSpeciesForm() : pokemon.getFusionSpeciesForm();
@@ -433,7 +463,7 @@ export async function catchPokemon(scene: BattleScene, pokemon: EnemyPokemon, po
   scene.gameData.updateSpeciesDexIvs(pokemon.species.getRootSpeciesId(true), pokemon.ivs);
 
   return new Promise(resolve => {
-    scene.ui.showText(i18next.t(isObtain ? "battle:pokemonObtained" : "battle:pokemonCaught", { pokemonName: pokemon.name }), null, () => {
+    const doPokemonCatchMenu = () => {
       const end = () => {
         scene.pokemonInfoContainer.hide();
         removePb(scene, pokeball);
@@ -488,7 +518,13 @@ export async function catchPokemon(scene: BattleScene, pokemon: EnemyPokemon, po
           addToParty();
         }
       });
-    }, 0, true);
+    };
+
+    if (showCatchObtainMessage) {
+      scene.ui.showText(i18next.t(isObtain ? "battle:pokemonObtained" : "battle:pokemonCaught", { pokemonName: pokemon.name }), null, doPokemonCatchMenu, 0, true);
+    } else {
+      doPokemonCatchMenu();
+    }
   });
 }
 

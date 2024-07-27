@@ -133,7 +133,7 @@ export const PokemonSalesmanEncounter: IMysteryEncounter =
           // "Catch" purchased pokemon
           const data = new PokemonData(purchasedPokemon);
           data.player = false;
-          await catchPokemon(scene, data.toPokemon(scene) as EnemyPokemon, null, PokeballType.POKEBALL, true);
+          await catchPokemon(scene, data.toPokemon(scene) as EnemyPokemon, null, PokeballType.POKEBALL, true, true);
 
           leaveEncounterWithoutBattle(scene, true);
         })
