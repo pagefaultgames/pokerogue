@@ -994,7 +994,9 @@ export class EncounterPhase extends BattlePhase {
     if (this.scene.currentBattle.battleType === BattleType.WILD) {
       enemyField.forEach(enemyPokemon => {
         enemyPokemon.untint(100, "Sine.easeOut");
-        enemyPokemon.cry();
+        if (this.scene.pokemonCries) {
+          enemyPokemon.cry();
+        }
         enemyPokemon.showInfo();
         if (enemyPokemon.isShiny()) {
           this.scene.validateAchv(achvs.SEE_SHINY);
@@ -1511,7 +1513,9 @@ export class SummonPhase extends PartyMemberPokemonPhase {
               ease: "Sine.easeIn",
               scale: pokemon.getSpriteScale(),
               onComplete: () => {
-                pokemon.cry(pokemon.getHpRatio() > 0.25 ? undefined : { rate: 0.85 });
+                if (this.scene.pokemonCries) {
+                  pokemon.cry(pokemon.getHpRatio() > 0.25 ? undefined : { rate: 0.85 });
+                }
                 pokemon.getSprite().clearTint();
                 pokemon.resetSummonData();
                 this.scene.time.delayedCall(1000, () => this.end());
@@ -3833,7 +3837,7 @@ export class FaintPhase extends PokemonPhase {
     pokemon.lapseTags(BattlerTagLapseType.FAINT);
     this.scene.getField(true).filter(p => p !== pokemon).forEach(p => p.removeTagsBySourceId(pokemon.id));
 
-    pokemon.faintCry(() => {
+    const faintCryCallback = () => {
       if (pokemon instanceof PlayerPokemon) {
         pokemon.addFriendship(-10);
       }
@@ -3858,7 +3862,13 @@ export class FaintPhase extends PokemonPhase {
           this.end();
         }
       });
-    });
+    };
+
+    if (this.scene.pokemonCries) {
+      faintCryCallback();
+    } else {
+      pokemon.faintCry(faintCryCallback);
+    }
   }
 
   tryOverrideForBattleSpec(): boolean {
@@ -4949,7 +4959,7 @@ export class AttemptCapturePhase extends PokemonPhase {
 
     this.scene.playSound("pb_rel");
     pokemon.setY(this.originalY);
-    if (pokemon.status?.effect !== StatusEffect.SLEEP) {
+    if (pokemon.status?.effect !== StatusEffect.SLEEP && this.scene.pokemonCries) {
       pokemon.cry(pokemon.getHpRatio() > 0.25 ? undefined : { rate: 0.85 });
     }
     pokemon.tint(getPokeballTintColor(this.pokeballType));

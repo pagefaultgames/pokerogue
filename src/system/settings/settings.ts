@@ -105,6 +105,7 @@ export const SettingKeys = {
   SE_Volume: "SE_VOLUME",
   Music_Preference: "MUSIC_PREFERENCE",
   Show_BGM_Bar: "SHOW_BGM_BAR",
+  Pokemon_Cries: "POKEMON_CRIES",
   Shop_Overlay_Opacity: "SHOP_OVERLAY_OPACITY"
 };
 
@@ -543,13 +544,20 @@ export const Setting: Array<Setting> = [
     requireReload: true
   },
   {
+    key: SettingKeys.Pokemon_Cries,
+    label: i18next.t("settings:pokemonCries"),
+    options: OFF_ON,
+    default: 1,
+    type: SettingType.AUDIO
+  },
+  {
     key: SettingKeys.Shop_Overlay_Opacity,
     label: i18next.t("settings:shopOverlayOpacity"),
     options: SHOP_OVERLAY_OPACITY_OPTIONS,
     default: 7,
     type: SettingType.DISPLAY,
     requireReload: false
-  },
+  }
 ];
 
 /**
@@ -599,6 +607,9 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     break;
   case SettingKeys.Music_Preference:
     scene.musicPreference = value;
+    break;
+  case SettingKeys.Pokemon_Cries:
+    scene.pokemonCries = Setting[index].options[value].value === "On";
     break;
   case SettingKeys.Damage_Numbers:
     scene.damageNumbersMode = value;
