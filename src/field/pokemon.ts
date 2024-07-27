@@ -1855,6 +1855,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.scene.arena.applyTagsForSide(ArenaTagType.CRAFTY_SHIELD, defendingSide, cancelled, this, move.category, move.moveTarget);
     }
 
+    // Apply exceptional condition of Crafty Shield if the move used is Curse
+    if (move.id === Moves.CURSE) {
+      const defendingSide = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
+      this.scene.arena.applyTagsForSide(ArenaTagType.CRAFTY_SHIELD, defendingSide, cancelled, this, move.category, move.moveTarget);
+    }
+
     switch (moveCategory) {
     case MoveCategory.PHYSICAL:
     case MoveCategory.SPECIAL:
