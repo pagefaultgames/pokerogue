@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import GameManager from "../utils/gameManager";
-import * as Overrides from "#app/overrides";
+import Overrides from "#app/overrides";
 import { Species } from "#enums/species";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
@@ -30,7 +30,8 @@ describe("Abilities - Parental Bond", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(Overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
+    vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.PARENTAL_BOND);
     vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SNORLAX);
     vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INSOMNIA);
@@ -57,7 +58,6 @@ describe("Abilities - Parental Bond", () => {
       game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
 
       await game.phaseInterceptor.to(MoveEffectPhase, false);
-      vi.spyOn(game.scene, "randBattleSeedInt").mockReturnValue(15);
 
       await game.phaseInterceptor.to(DamagePhase);
       const firstStrikeDamage = enemyStartingHp - enemyPokemon.hp;
@@ -238,8 +238,7 @@ describe("Abilities - Parental Bond", () => {
   test(
     "ability should not apply to multi-target moves",
     async () => {
-      vi.spyOn(Overrides, "DOUBLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
-      vi.spyOn(Overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(false);
+      vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
       vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.EARTHQUAKE]);
 
       await game.startBattle([Species.CHARIZARD, Species.PIDGEOT]);
@@ -449,7 +448,7 @@ describe("Abilities - Parental Bond", () => {
   );
 
   /** TODO: Fix TRAPPED tag lapsing incorrectly, then run this test */
-  test.skip(
+  test(
     "Anchor Shot boosted by this ability should only trap the target after the second hit",
     async () => {
       vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.ANCHOR_SHOT]);
@@ -613,8 +612,7 @@ describe("Abilities - Parental Bond", () => {
   test(
     "ability should not apply to multi-target moves with Multi-Lens",
     async () => {
-      vi.spyOn(Overrides, "DOUBLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
-      vi.spyOn(Overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(false);
+      vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
       vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.EARTHQUAKE, Moves.SPLASH]);
       vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "MULTI_LENS", count: 1}]);
 
@@ -636,7 +634,6 @@ describe("Abilities - Parental Bond", () => {
       game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
       await game.phaseInterceptor.to(MoveEffectPhase, false);
-      vi.spyOn(game.scene, "randBattleSeedInt").mockReturnValue(15);
 
       await game.phaseInterceptor.to(DamagePhase);
       const enemyFirstHitDamage = enemyStartingHp.map((hp, i) => hp - enemyPokemon[i].hp);
