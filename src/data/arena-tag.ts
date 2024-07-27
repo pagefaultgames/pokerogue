@@ -217,8 +217,10 @@ export class ConditionalProtectTag extends ArenaTag {
   apply(arena: Arena, args: any[]): boolean {
     const [ cancelled, user, target, moveId ] = args;
 
-    if (cancelled instanceof Utils.BooleanHolder && user instanceof Pokemon
-        && target instanceof Pokemon && typeof moveId === "number") {
+    if (cancelled instanceof Utils.BooleanHolder
+        && user instanceof Pokemon
+        && target instanceof Pokemon
+        && typeof moveId === "number") {
 
       if (cancelled.value) {
         return false;
