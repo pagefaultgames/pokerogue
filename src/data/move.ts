@@ -974,7 +974,7 @@ export class MoveEffectAttr extends MoveAttr {
     const moveChance = new Utils.NumberHolder(move.chance);
     applyAbAttrs(MoveEffectChanceMultiplierAbAttr, user, null, moveChance, move, target, selfEffect, showAbility);
     if (!selfEffect) {
-      applyPreDefendAbAttrs(IgnoreMoveEffectsAbAttr,target,user,null,null, moveChance);
+      applyPreDefendAbAttrs(IgnoreMoveEffectsAbAttr, target, user, null, null, moveChance);
     }
     return moveChance.value;
   }
