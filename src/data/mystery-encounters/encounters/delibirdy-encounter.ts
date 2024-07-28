@@ -10,7 +10,7 @@ import { CombinationPokemonRequirement, HeldItemRequirement, MoneyRequirement } 
 import { getEncounterText, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { BerryModifier, HealingBoosterModifier, HiddenAbilityRateBoosterModifier, LevelIncrementBoosterModifier, PokemonBaseStatModifier, PokemonBaseStatTotalModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, PreserveBerryModifier, TerastallizeModifier } from "#app/modifier/modifier";
+import { HealingBoosterModifier, HiddenAbilityRateBoosterModifier, LevelIncrementBoosterModifier, PokemonHeldItemModifier, PreserveBerryModifier } from "#app/modifier/modifier";
 import { ModifierRewardPhase } from "#app/phases";
 import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import { applyModifierTypeToPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
@@ -20,15 +20,15 @@ import i18next from "#app/plugins/i18n";
 const namespace = "mysteryEncounter:delibirdy";
 
 /** Berries only */
-const OPTION_2_ALLOWED_MODIFIERS = [BerryModifier.name, PokemonInstantReviveModifier.name];
+const OPTION_2_ALLOWED_MODIFIERS = ["BerryModifier", "PokemonInstantReviveModifier"];
 
 /** Disallowed items are berries, Reviver Seeds, and Vitamins (form change items and fusion items are not PokemonHeldItemModifiers) */
 const OPTION_3_DISALLOWED_MODIFIERS = [
-  BerryModifier.name,
-  PokemonInstantReviveModifier.name,
-  TerastallizeModifier.name,
-  PokemonBaseStatModifier.name,
-  PokemonBaseStatTotalModifier.name
+  "BerryModifier",
+  "PokemonInstantReviveModifier",
+  "TerastallizeModifier",
+  "PokemonBaseStatModifier",
+  "PokemonBaseStatTotalModifier"
 ];
 
 /**

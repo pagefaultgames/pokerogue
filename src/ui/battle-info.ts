@@ -118,7 +118,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       this.championRibbon.setName("icon_champion_ribbon");
       this.championRibbon.setVisible(false);
       this.championRibbon.setOrigin(0, 0);
-      this.championRibbon.setPositionRelative(this.nameText, 11.75, 11.75);
+      this.championRibbon.setPositionRelative(this.nameText, 8, 11.75);
       this.add(this.championRibbon);
     }
 
@@ -278,8 +278,8 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.updateNameText(pokemon);
     const nameTextWidth = this.nameText.displayWidth;
 
-    this.name = pokemon.name;
-    this.box.name = pokemon.name;
+    this.name = pokemon.getNameToRender();
+    this.box.name = pokemon.getNameToRender();
 
     this.flyoutMenu?.initInfo(pokemon);
 
@@ -329,6 +329,11 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     }
 
     if (!this.player) {
+      if (this.nameText.visible) {
+        this.nameText.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, i18next.t("battleInfo:generation", { generation: i18next.t(`starterSelectUiHandler:gen${pokemon.species.generation}`) })));
+        this.nameText.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
+      }
+
       const dexEntry = pokemon.scene.gameData.dexData[pokemon.species.speciesId];
       this.ownedIcon.setVisible(!!dexEntry.caughtAttr);
       const opponentPokemonDexAttr = pokemon.getDexAttr();
@@ -341,18 +346,21 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       // Check if Player owns all genders and forms of the Pokemon
       const missingDexAttrs = ((dexEntry.caughtAttr & opponentPokemonDexAttr) < opponentPokemonDexAttr);
 
-      /**
-       * If the opposing Pokemon only has 1 normal ability and is using the hidden ability it should have the same behavior
-       * if it had 2 normal abilities. This code checks if that is the case and uses the correct opponent Pokemon abilityIndex (2)
-       * for calculations so it aligns with where the hidden ability is stored in the starter data's abilityAttr (4)
-       */
-      const opponentPokemonOneNormalAbility = (pokemon.species.getAbilityCount() === 2);
-      const opponentPokemonAbilityIndex = (opponentPokemonOneNormalAbility && pokemon.abilityIndex === 1) ? 2 : pokemon.abilityIndex;
-      const opponentPokemonAbilityAttr = Math.pow(2, opponentPokemonAbilityIndex);
+      const ownedAbilityAttrs = pokemon.scene.gameData.starterData[pokemon.species.getRootSpeciesId()].abilityAttr;
 
-      const rootFormHasHiddenAbility = pokemon.scene.gameData.starterData[pokemon.species.getRootSpeciesId()].abilityAttr & opponentPokemonAbilityAttr;
+      let playerOwnsThisAbility = false;
+      // Check if the player owns ability for the root form
+      if ((ownedAbilityAttrs & 1) > 0 && pokemon.hasSameAbilityInRootForm(0)) {
+        playerOwnsThisAbility = true;
+      }
+      if ((ownedAbilityAttrs & 2) > 0 && pokemon.hasSameAbilityInRootForm(1)) {
+        playerOwnsThisAbility = true;
+      }
+      if ((ownedAbilityAttrs & 4) > 0 && pokemon.hasSameAbilityInRootForm(2)) {
+        playerOwnsThisAbility = true;
+      }
 
-      if (missingDexAttrs || !rootFormHasHiddenAbility) {
+      if (missingDexAttrs || !playerOwnsThisAbility) {
         this.ownedIcon.setTint(0x808080);
       }
 
@@ -502,7 +510,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         return resolve();
       }
 
-      const nameUpdated = this.lastName !== pokemon.name;
+      const nameUpdated = this.lastName !== pokemon.getNameToRender();
 
       if (nameUpdated) {
         this.updateNameText(pokemon);
@@ -533,11 +541,11 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         if (this.lastStatus !== StatusEffect.NONE) {
           this.statusIndicator.setFrame(StatusEffect[this.lastStatus].toLowerCase());
         }
-        this.statusIndicator.setVisible(!!this.lastStatus);
 
-        if (!this.player && this.ownedIcon.visible) {
-          this.ownedIcon.setAlpha(this.statusIndicator.visible ? 0 : 1);
-        }
+        const offsetX = !this.player ? (this.ownedIcon.visible ? 8 : 0) + (this.championRibbon.visible ? 8 : 0) : 0;
+        this.statusIndicator.setPositionRelative(this.nameText, offsetX, 11.5);
+
+        this.statusIndicator.setVisible(!!this.lastStatus);
       }
 
       const types = pokemon.getTypes(true);
@@ -629,7 +637,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   }
 
   updateNameText(pokemon: Pokemon): void {
-    let displayName = pokemon.name.replace(/[♂♀]/g, "");
+    let displayName = pokemon.getNameToRender().replace(/[♂♀]/g, "");
     let nameTextWidth: number;
 
     const nameSizeTest = addTextObject(this.scene, 0, 0, displayName, TextStyle.BATTLE_INFO);
@@ -644,7 +652,11 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     nameSizeTest.destroy();
 
     this.nameText.setText(displayName);
-    this.lastName = pokemon.name;
+    this.lastName = pokemon.getNameToRender();
+
+    if (this.nameText.visible) {
+      this.nameText.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.nameText.width, this.nameText.height), Phaser.Geom.Rectangle.Contains);
+    }
   }
 
   updatePokemonExp(pokemon: Pokemon, instant?: boolean, levelDurationMultiplier: number = 1): Promise<void> {

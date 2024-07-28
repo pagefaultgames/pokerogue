@@ -5,6 +5,7 @@ export const modifier: SimpleTranslationEntries = {
   "turnHealApply": "{{pokemonNameWithAffix}}用{{typeName}}\n回復了體力！",
   "hitHealApply": "{{pokemonNameWithAffix}}用{{typeName}}\n回復了體力！",
   "pokemonInstantReviveApply": "{{pokemonNameWithAffix}}用{{typeName}}\n回復了活力！",
+  "pokemonResetNegativeStatStageApply": "{{pokemonNameWithAffix}}'s lowered stats were restored\nby its {{typeName}}!",
   "moneyInterestApply": "用{{typeName}}\n獲得了 ₽{{moneyAmount}} 利息！",
   "turnHeldItemTransferApply": "{{pokemonNameWithAffix}}的{{itemName}}被\n{{pokemonName}}的{{typeName}}吸收了！",
   "contactHeldItemTransferApply": "{{pokemonNameWithAffix}}的{{itemName}}被\n{{pokemonName}}的{{typeName}}奪取了！",

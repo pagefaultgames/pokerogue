@@ -6,7 +6,6 @@ import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-
 import Pokemon, { FieldPosition, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { ExpBalanceModifier, ExpShareModifier, MultipleParticipantExpBonusModifier, PokemonExpBoosterModifier } from "#app/modifier/modifier";
 import { CustomModifierSettings, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeGenerator, ModifierTypeOption, modifierTypes, PokemonHeldItemModifierType, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
-import * as Overrides from "#app/overrides";
 import { BattleEndPhase, EggLapsePhase, ExpPhase, GameOverPhase, ModifierRewardPhase, MovePhase, SelectModifierPhase, ShowPartyExpBarPhase, TrainerVictoryPhase } from "#app/phases";
 import { MysteryEncounterBattlePhase, MysteryEncounterBattleStartCleanupPhase, MysteryEncounterPhase, MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phases";
 import PokemonData from "#app/system/pokemon-data";
@@ -29,6 +28,7 @@ import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { Status, StatusEffect } from "#app/data/status-effect";
 import { TrainerConfig, trainerConfigs, TrainerSlot } from "#app/data/trainer-config";
 import PokemonSpecies from "#app/data/pokemon-species";
+import Overrides from "#app/overrides";
 
 /**
  * Animates exclamation sprite over trainer's head at start of encounter
@@ -605,7 +605,13 @@ export function leaveEncounterWithoutBattle(scene: BattleScene, addHealPhase: bo
   handleMysteryEncounterVictory(scene, addHealPhase);
 }
 
-export function handleMysteryEncounterVictory(scene: BattleScene, addHealPhase: boolean = false) {
+/**
+ *
+ * @param scene
+ * @param addHealPhase - Adds an empty shop phase to allow player to purchase healing items
+ * @param doNotContinue - default `false`. If set to true, will not end the battle and continue to next wave
+ */
+export function handleMysteryEncounterVictory(scene: BattleScene, addHealPhase: boolean = false, doNotContinue: boolean = false) {
   const allowedPkm = scene.getParty().filter((pkm) => pkm.isAllowedInBattle());
 
   if (allowedPkm.length === 0) {
@@ -616,7 +622,7 @@ export function handleMysteryEncounterVictory(scene: BattleScene, addHealPhase: 
 
   // If in repeated encounter variant, do nothing
   // Variant must eventually be swapped in order to handle "true" end of the encounter
-  if (scene.currentBattle.mysteryEncounter.encounterMode === MysteryEncounterMode.CONTINUOUS_ENCOUNTER) {
+  if (scene.currentBattle.mysteryEncounter.encounterMode === MysteryEncounterMode.CONTINUOUS_ENCOUNTER || doNotContinue) {
     return;
   } else if (scene.currentBattle.mysteryEncounter.encounterMode === MysteryEncounterMode.NO_BATTLE) {
     scene.pushPhase(new EggLapsePhase(scene));

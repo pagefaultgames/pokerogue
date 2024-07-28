@@ -34,7 +34,7 @@ export const AbsoluteAvariceEncounter: IMysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.ABSOLUTE_AVARICE)
     .withEncounterTier(MysteryEncounterTier.GREAT)
     .withSceneWaveRangeRequirement(10, 180)
-    .withSceneRequirement(new PersistentModifierRequirement(BerryModifier.name, 4)) // Must have at least 4 berries to spawn
+    .withSceneRequirement(new PersistentModifierRequirement("BerryModifier", 4)) // Must have at least 4 berries to spawn
     .withIntroSpriteConfigs([
       {
         spriteKey: Species.GREEDENT.toString(),
@@ -301,6 +301,7 @@ export const AbsoluteAvariceEncounter: IMysteryEncounter =
             }
           });
 
+          transitionMysteryEncounterIntroVisuals(scene, true, true, 500);
           leaveEncounterWithoutBattle(scene, true);
         })
         .build()
@@ -331,6 +332,7 @@ export const AbsoluteAvariceEncounter: IMysteryEncounter =
           greedent.moveset = [new PokemonMove(Moves.THRASH), new PokemonMove(Moves.BODY_PRESS), new PokemonMove(Moves.STUFF_CHEEKS), new PokemonMove(Moves.SLACK_OFF)];
           greedent.passive = true;
 
+          transitionMysteryEncounterIntroVisuals(scene, true, true, 500);
           await catchPokemon(scene, greedent, null, PokeballType.POKEBALL, false);
           leaveEncounterWithoutBattle(scene, true);
         })

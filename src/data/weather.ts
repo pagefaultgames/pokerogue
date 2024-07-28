@@ -1,4 +1,5 @@
 import { Biome } from "#enums/biome";
+import { WeatherType } from "#enums/weather-type";
 import { getPokemonNameWithAffix } from "../messages";
 import Pokemon from "../field/pokemon";
 import { Type } from "./type";
@@ -9,19 +10,7 @@ import { SuppressWeatherEffectAbAttr } from "./ability";
 import { TerrainType, getTerrainName } from "./terrain";
 import i18next from "i18next";
 
-export enum WeatherType {
-  NONE,
-  SUNNY,
-  RAIN,
-  SANDSTORM,
-  HAIL,
-  SNOW,
-  FOG,
-  HEAVY_RAIN,
-  HARSH_SUN,
-  STRONG_WINDS
-}
-
+export { WeatherType };
 export class Weather {
   public weatherType: WeatherType;
   public turnsLeft: integer;

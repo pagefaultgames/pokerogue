@@ -1,14 +1,13 @@
 import { Weather, WeatherType } from "#app/data/weather";
 import { Biome } from "#app/enums/biome";
-import * as Overrides from "#app/overrides";
 import { MockInstance, vi } from "vitest";
 import GameManager from "#test/utils/gameManager";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import * as overrides from "#app/overrides";
 import * as GameMode from "#app/game-mode";
 import { GameModes, getGameMode } from "#app/game-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { ModifierOverride } from "#app/overrides";
+import Overrides from "#app/overrides";
+import { ModifierOverride } from "#app/modifier/modifier-type";
 
 /**
  * Helper to handle overrides in tests
@@ -49,7 +48,7 @@ export class OverridesHelper {
    * @returns spy instance
    */
   mysteryEncounter(encounterType: MysteryEncounterType) {
-    const spy = vi.spyOn(overrides, "MYSTERY_ENCOUNTER_OVERRIDE", "get").mockReturnValue(encounterType);
+    const spy = vi.spyOn(Overrides, "MYSTERY_ENCOUNTER_OVERRIDE", "get").mockReturnValue(encounterType);
     this.log(`Mystery encounter override set to ${encounterType}!`);
     return spy;
   }

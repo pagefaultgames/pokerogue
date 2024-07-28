@@ -21,6 +21,7 @@ import MoveInfoOverlay from "./move-info-overlay";
 import i18next from "i18next";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { Moves } from "#enums/moves";
+import { getPokemonNameWithAffix } from "#app/messages.js";
 
 const defaultMessage = i18next.t("partyUiHandler:choosePokemon");
 
@@ -53,6 +54,7 @@ export enum PartyOption {
   SPLICE,
   UNSPLICE,
   RELEASE,
+  RENAME,
   SELECT,
   SCROLL_UP = 1000,
   SCROLL_DOWN = 1001,
@@ -61,7 +63,7 @@ export enum PartyOption {
   MOVE_2,
   MOVE_3,
   MOVE_4,
-  ALL = 4000
+  ALL = 4000,
 }
 
 export type PartySelectCallback = (cursor: integer, option: PartyOption) => void;
@@ -117,14 +119,14 @@ export default class PartyUiHandler extends MessageUiHandler {
 
   public static FilterNonFainted = (pokemon: PlayerPokemon) => {
     if (pokemon.isFainted()) {
-      return i18next.t("partyUiHandler:noEnergy", { pokemonName: pokemon.name });
+      return i18next.t("partyUiHandler:noEnergy", { pokemonName: getPokemonNameWithAffix(pokemon) });
     }
     return null;
   };
 
   public static FilterFainted = (pokemon: PlayerPokemon) => {
     if (!pokemon.isFainted()) {
-      return i18next.t("partyUiHandler:hasEnergy", { pokemonName: pokemon.name });
+      return i18next.t("partyUiHandler:hasEnergy", { pokemonName: getPokemonNameWithAffix(pokemon) });
     }
     return null;
   };
@@ -138,7 +140,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     const challengeAllowed = new Utils.BooleanHolder(true);
     applyChallenges(this.scene.gameMode, ChallengeType.POKEMON_IN_BATTLE, pokemon, challengeAllowed);
     if (!challengeAllowed.value) {
-      return i18next.t("partyUiHandler:cantBeUsed", { pokemonName: pokemon.name });
+      return i18next.t("partyUiHandler:cantBeUsed", { pokemonName: getPokemonNameWithAffix(pokemon) });
     }
     return null;
   };
@@ -148,14 +150,14 @@ export default class PartyUiHandler extends MessageUiHandler {
   public static FilterItemMaxStacks = (pokemon: PlayerPokemon, modifier: PokemonHeldItemModifier) => {
     const matchingModifier = pokemon.scene.findModifier(m => m instanceof PokemonHeldItemModifier && m.pokemonId === pokemon.id && m.matchType(modifier)) as PokemonHeldItemModifier;
     if (matchingModifier && matchingModifier.stackCount === matchingModifier.getMaxStackCount(pokemon.scene)) {
-      return i18next.t("partyUiHandler:tooManyItems", { pokemonName: pokemon.name });
+      return i18next.t("partyUiHandler:tooManyItems", { pokemonName: getPokemonNameWithAffix(pokemon) });
     }
     return null;
   };
 
   public static NoEffectMessage = i18next.t("partyUiHandler:anyEffect");
 
-  private localizedOptions = [PartyOption.SEND_OUT, PartyOption.SUMMARY, PartyOption.CANCEL, PartyOption.APPLY, PartyOption.RELEASE, PartyOption.TEACH, PartyOption.SPLICE, PartyOption.UNSPLICE, PartyOption.REVIVE, PartyOption.TRANSFER, PartyOption.UNPAUSE_EVOLUTION, PartyOption.PASS_BATON, PartyOption.SELECT];
+  private localizedOptions = [PartyOption.SEND_OUT, PartyOption.SUMMARY, PartyOption.CANCEL, PartyOption.APPLY, PartyOption.RELEASE, PartyOption.TEACH, PartyOption.SPLICE, PartyOption.UNSPLICE, PartyOption.REVIVE, PartyOption.TRANSFER, PartyOption.UNPAUSE_EVOLUTION, PartyOption.PASS_BATON, PartyOption.RENAME, PartyOption.SELECT];
 
   constructor(scene: BattleScene) {
     super(scene, Mode.PARTY);
@@ -304,11 +306,11 @@ export default class PartyUiHandler extends MessageUiHandler {
           }
           ui.playSelect();
           return true;
-        } else if ((option !== PartyOption.SUMMARY && option !== PartyOption.UNPAUSE_EVOLUTION && option !== PartyOption.UNSPLICE && option !== PartyOption.RELEASE && option !== PartyOption.CANCEL)
+        } else if ((option !== PartyOption.SUMMARY && option !== PartyOption.UNPAUSE_EVOLUTION && option !== PartyOption.UNSPLICE && option !== PartyOption.RELEASE && option !== PartyOption.CANCEL && option !== PartyOption.RENAME)
           || (option === PartyOption.RELEASE && this.partyUiMode === PartyUiMode.RELEASE)) {
           let filterResult: string;
           const getTransferrableItemsFromPokemon = (pokemon: PlayerPokemon) =>
-            this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && (m as PokemonHeldItemModifier).getTransferrable(true) && (m as PokemonHeldItemModifier).pokemonId === pokemon.id) as PokemonHeldItemModifier[];
+            this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && m.isTransferrable && m.pokemonId === pokemon.id) as PokemonHeldItemModifier[];
           if (option !== PartyOption.TRANSFER && option !== PartyOption.SPLICE) {
             filterResult = (this.selectFilter as PokemonSelectFilter)(pokemon);
             if (filterResult === null && (option === PartyOption.SEND_OUT || option === PartyOption.PASS_BATON)) {
@@ -380,7 +382,7 @@ export default class PartyUiHandler extends MessageUiHandler {
           this.clearOptions();
           ui.playSelect();
           pokemon.pauseEvolutions = false;
-          this.showText(i18next.t("partyUiHandler:unpausedEvolutions", { pokemonName: pokemon.name }), null, () => this.showText(null, 0), null, true);
+          this.showText(i18next.t("partyUiHandler:unpausedEvolutions", { pokemonName: getPokemonNameWithAffix(pokemon) }), null, () => this.showText(null, 0), null, true);
         } else if (option === PartyOption.UNSPLICE) {
           this.clearOptions();
           ui.playSelect();
@@ -405,7 +407,7 @@ export default class PartyUiHandler extends MessageUiHandler {
           this.clearOptions();
           ui.playSelect();
           if (this.cursor >= this.scene.currentBattle.getBattlerCount() || !pokemon.isAllowedInBattle()) {
-            this.showText(i18next.t("partyUiHandler:releaseConfirmation", { pokemonName: pokemon.name }), null, () => {
+            this.showText(i18next.t("partyUiHandler:releaseConfirmation", { pokemonName: getPokemonNameWithAffix(pokemon) }), null, () => {
               ui.setModeWithoutClear(Mode.CONFIRM, () => {
                 ui.setMode(Mode.PARTY);
                 this.doRelease(this.cursor);
@@ -417,6 +419,25 @@ export default class PartyUiHandler extends MessageUiHandler {
           } else {
             this.showText(i18next.t("partyUiHandler:releaseInBattle"), null, () => this.showText(null, 0), null, true);
           }
+          return true;
+        } else if (option === PartyOption.RENAME) {
+          this.clearOptions();
+          ui.playSelect();
+          ui.setModeWithoutClear(Mode.RENAME_POKEMON, {
+            buttonActions: [
+              (nickname: string) => {
+                ui.playSelect();
+                pokemon.nickname = nickname;
+                pokemon.updateInfo();
+                this.clearPartySlots();
+                this.populatePartySlots();
+                ui.setMode(Mode.PARTY);
+              },
+              () => {
+                ui.setMode(Mode.PARTY);
+              }
+            ]
+          }, pokemon);
           return true;
         } else if (option === PartyOption.CANCEL) {
           return this.processInput(Button.CANCEL);
@@ -488,7 +509,7 @@ export default class PartyUiHandler extends MessageUiHandler {
           if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER && !this.transferMode) {
             /** Initialize item quantities for the selected Pokemon */
             const itemModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-              && (m as PokemonHeldItemModifier).getTransferrable(true) && (m as PokemonHeldItemModifier).pokemonId === this.scene.getParty()[this.cursor].id) as PokemonHeldItemModifier[];
+              && m.isTransferrable && m.pokemonId === this.scene.getParty()[this.cursor].id) as PokemonHeldItemModifier[];
             this.transferQuantities = itemModifiers.map(item => item.getStackCount());
             this.transferQuantitiesMax = itemModifiers.map(item => item.getStackCount());
           }
@@ -705,7 +726,7 @@ export default class PartyUiHandler extends MessageUiHandler {
 
     const itemModifiers = this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER
       ? this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-        && (m as PokemonHeldItemModifier).getTransferrable(true) && (m as PokemonHeldItemModifier).pokemonId === pokemon.id) as PokemonHeldItemModifier[]
+        && m.isTransferrable && m.pokemonId === pokemon.id) as PokemonHeldItemModifier[]
       : null;
 
     if (this.options.length) {
@@ -771,6 +792,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       }
 
       this.options.push(PartyOption.SUMMARY);
+      this.options.push(PartyOption.RENAME);
 
       if (pokemon.pauseEvolutions && pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId)) {
         this.options.push(PartyOption.UNPAUSE_EVOLUTION);
@@ -937,7 +959,7 @@ export default class PartyUiHandler extends MessageUiHandler {
   }
 
   doRelease(slotIndex: integer): void {
-    this.showText(this.getReleaseMessage(this.scene.getParty()[slotIndex].name), null, () => {
+    this.showText(this.getReleaseMessage(getPokemonNameWithAffix(this.scene.getParty()[slotIndex])), null, () => {
       this.clearPartySlots();
       this.scene.removePartyMemberModifiers(slotIndex);
       const releasedPokemon = this.scene.getParty().splice(slotIndex, 1)[0];
@@ -1068,7 +1090,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     const slotInfoContainer = this.scene.add.container(0, 0);
     this.add(slotInfoContainer);
 
-    let displayName = this.pokemon.name;
+    let displayName = this.pokemon.getNameToRender();
     let nameTextWidth: number;
 
     const nameSizeTest = addTextObject(this.scene, 0, 0, displayName, TextStyle.PARTY);

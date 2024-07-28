@@ -25,6 +25,7 @@
 <!-- Do the reviewer need to do something special in order to test your change? -->
 
 ## Checklist
+- [ ] **I'm using `beta` as my base branch**
 - [ ] There is no overlap with another PR?
 - [ ] The PR is self-contained and cannot be split into smaller PRs?
 - [ ] Have I provided a clear explanation of the changes?
