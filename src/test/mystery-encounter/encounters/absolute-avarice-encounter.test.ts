@@ -84,7 +84,7 @@ describe("Absolute Avarice - Mystery Encounter", () => {
     game.override.startingBiome(Biome.VOLCANO);
     await game.runToMysteryEncounter();
 
-    expect(game.scene.currentBattle.mysteryEncounter.encounterType).not.toBe(MysteryEncounterType.ABSOLUTE_AVARICE);
+    expect(game.scene.currentBattle.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.ABSOLUTE_AVARICE);
   });
 
   it("should not spawn if player does not have enough berries", async () => {
