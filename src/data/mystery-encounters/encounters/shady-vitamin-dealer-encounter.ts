@@ -10,7 +10,7 @@ import IMysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter
 import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import { MoneyRequirement } from "../mystery-encounter-requirements";
 import { getEncounterText, queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import { applyDamageToPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import { applyDamageToPokemon, applyModifierTypeToPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 
@@ -110,10 +110,8 @@ export const ShadyVitaminDealerEncounter: IMysteryEncounter =
           const modifiers = encounter.misc.modifiers;
 
           for (const modType of modifiers) {
-            const modifier = modType.newModifier(chosenPokemon);
-            await scene.addModifier(modifier, true, false, false, true);
+            await applyModifierTypeToPlayerPokemon(scene, chosenPokemon, modType);
           }
-          scene.updateModifiers(true);
 
           leaveEncounterWithoutBattle(scene);
         })
@@ -195,10 +193,8 @@ export const ShadyVitaminDealerEncounter: IMysteryEncounter =
           const modifiers = encounter.misc.modifiers;
 
           for (const modType of modifiers) {
-            const modifier = modType.newModifier(chosenPokemon);
-            await scene.addModifier(modifier, true, false, false, true);
+            await applyModifierTypeToPlayerPokemon(scene, chosenPokemon, modType);
           }
-          scene.updateModifiers(true);
 
           leaveEncounterWithoutBattle(scene);
         })

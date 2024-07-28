@@ -5,15 +5,15 @@ export const mysteriousChallengersDialogue = {
   query: "Who will you battle?",
   option: {
     1: {
-      label: "A clever, mindful foe",
+      label: "A Clever, Mindful Foe",
       tooltip: "(-) Standard Battle\n(+) Move Item Rewards",
     },
     2: {
-      label: "A strong foe",
+      label: "A Strong Foe",
       tooltip: "(-) Hard Battle\n(+) Good Rewards",
     },
     3: {
-      label: "The mightiest foe",
+      label: "The Mightiest Foe",
       tooltip: "(-) Brutal Battle\n(+) Great Rewards",
     },
     selected: "The trainer steps forward...",

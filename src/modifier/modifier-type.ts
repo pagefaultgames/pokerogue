@@ -109,8 +109,32 @@ export class ModifierType {
     return null;
   }
 
+  /**
+   * Populates item id for ModifierType instance
+   * @param func
+   */
   withIdFromFunc(func: ModifierTypeFunc): ModifierType {
     this.id = Object.keys(modifierTypes).find(k => modifierTypes[k] === func);
+    return this;
+  }
+
+  /**
+   * Populates item tier for ModifierType instance
+   * Tier is a necessary field for items that appear in player shop (determines the Pokeball visual they use)
+   * To find the tier, this function performs a reverse lookup of the item type in modifier pools
+   * @param poolType - Default 'ModifierPoolType.PLAYER'. Which pool to lookup item tier from
+   */
+  withTierFromPool(poolType: ModifierPoolType = ModifierPoolType.PLAYER): ModifierType {
+    const modifierPool = getModifierPoolForType(poolType);
+    Object.values(modifierPool).every(weightedModifiers => {
+      weightedModifiers.every(m => {
+        if (m.modifierType.id === this.id) {
+          this.tier = m.modifierType.tier;
+          return false; // Early lookup return if tier found
+        }
+      });
+      return !this.tier; // Early lookup return if tier found
+    });
     return this;
   }
 
@@ -1841,6 +1865,21 @@ export function getModifierTypeFuncById(id: string): ModifierTypeFunc {
   return modifierTypes[id];
 }
 
+/**
+ * Generates modifier options for a SelectModifierPhase
+ * @param count - Determines the number of items to generate
+ * @param party - Party is required for generating proper modifier pools
+ * @param modifierTiers - (Optional) If specified, rolls items in the specified tiers. Commonly used for tier-locking with Lock Capsule.
+ * @param customModifierSettings - (Optional) If specified, can customize the item shop rewards further.
+ *  - `guaranteedModifierTypeOptions?: ModifierTypeOption[]` - If specified, will override the first X items to be specific modifier options (these should be pre-genned).
+ *  - `guaranteedModifierTypeFuncs?: ModifierTypeFunc[]` - If specified, will override the next X items to be auto-generated from specific modifier functions (these don't have to be pre-genned).
+ *  - `guaranteedModifierTiers?: ModifierTier[]` - If specified, will override the next X items to be the specified tier. These can upgrade with luck.
+ *  - `fillRemaining?: boolean` - Default 'false'. If set to true, will fill the remainder of shop items that were not overridden by the 3 options above, up to the 'count' param value.
+ *    - Example: `count = 4`, `customModifierSettings = { guaranteedModifierTiers: [ModifierTier.GREAT], fillRemaining: true }`,
+ *    - The first item in the shop will be `GREAT` tier, and the remaining 3 items will be generated normally.
+ *    - If `fillRemaining = false` in the same scenario, only 1 `GREAT` tier item will appear in the shop (regardless of `count` value).
+ *  - `rerollMultiplier?: number` - If specified, can adjust the amount of money required for a shop reroll. If set to 0, the shop will not allow rerolls at all.
+ */
 export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemon[], modifierTiers?: ModifierTier[], customModifierSettings?: CustomModifierSettings): ModifierTypeOption[] {
   const options: ModifierTypeOption[] = [];
   const retryCount = Math.min(count * 5, 50);
@@ -1849,32 +1888,21 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
       options.push(getModifierTypeOptionWithRetry(options, retryCount, party, modifierTiers?.length > i ? modifierTiers[i] : undefined));
     });
   } else {
-    // Guaranteed mods first
-    if (customModifierSettings?.guaranteedModifierTypeOptions?.length) {
-      customModifierSettings?.guaranteedModifierTypeOptions.forEach((option) => {
-        options.push(option);
-      });
+    // Guaranteed mod options first
+    if (customModifierSettings?.guaranteedModifierTypeOptions?.length > 0) {
+      options.push(...customModifierSettings.guaranteedModifierTypeOptions);
     }
 
-    // Guaranteed mod funcs second
-    if (customModifierSettings?.guaranteedModifierTypeFuncs?.length) {
+    // Guaranteed mod functions second
+    if (customModifierSettings?.guaranteedModifierTypeFuncs?.length > 0) {
       customModifierSettings?.guaranteedModifierTypeFuncs.forEach((mod, i) => {
         const modifierId = Object.keys(modifierTypes).find(k => modifierTypes[k] === mod);
         let guaranteedMod: ModifierType = modifierTypes[modifierId]?.();
 
-        // Gets tier of item by checking player item pool
-        Object.keys(modifierPool).every(modifierTier => {
-          const modType = modifierPool[modifierTier].find(m => {
-            if (m.modifierType.id === modifierId) {
-              return m;
-            }
-          });
-          if (modType) {
-            guaranteedMod = modType.modifierType;
-            return false;
-          }
-          return true;
-        });
+        // Populates item id and tier
+        guaranteedMod = guaranteedMod
+          .withIdFromFunc(modifierTypes[modifierId])
+          .withTierFromPool();
 
         const modType = guaranteedMod instanceof ModifierTypeGenerator ? guaranteedMod.generateType(party) : guaranteedMod;
         const option = new ModifierTypeOption(modType, 0);
@@ -1883,7 +1911,7 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
     }
 
     // Guaranteed tiers third
-    if (customModifierSettings?.guaranteedModifierTiers?.length) {
+    if (customModifierSettings?.guaranteedModifierTiers?.length > 0) {
       customModifierSettings?.guaranteedModifierTiers.forEach((tier) => {
         options.push(getModifierTypeOptionWithRetry(options, retryCount, party, tier));
       });
@@ -1900,8 +1928,12 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
   // OVERRIDE IF NECESSARY
   if (Overrides.ITEM_REWARD_OVERRIDE?.length) {
     options.forEach((mod, i) => {
-      // @ts-ignore: keeps throwing don't use string as index error in typedoc run
-      const override = modifierTypes[Overrides.ITEM_REWARD_OVERRIDE[i]]?.();
+      let override = modifierTypes[Overrides.ITEM_REWARD_OVERRIDE[i]]?.();
+      // Populates item id and tier
+      override = override
+        .withIdFromFunc(modifierTypes[Overrides.ITEM_REWARD_OVERRIDE[i]])
+        .withTierFromPool();
+
       mod.type = (override instanceof ModifierTypeGenerator ? override.generateType(party) : override) || mod.type;
     });
   }

@@ -1,11 +1,11 @@
 import { BattlerIndex, BattleType } from "#app/battle";
-import { biomeLinks } from "#app/data/biomes";
+import { biomeLinks, BiomePoolTier } from "#app/data/biomes";
 import MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
 import { WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
 import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import Pokemon, { FieldPosition, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { ExpBalanceModifier, ExpShareModifier, MultipleParticipantExpBonusModifier, PokemonExpBoosterModifier } from "#app/modifier/modifier";
-import { CustomModifierSettings, getModifierPoolForType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeGenerator, ModifierTypeOption, modifierTypes, PokemonHeldItemModifierType, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
+import { CustomModifierSettings, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeGenerator, ModifierTypeOption, modifierTypes, PokemonHeldItemModifierType, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
 import * as Overrides from "#app/overrides";
 import { BattleEndPhase, EggLapsePhase, ExpPhase, GameOverPhase, ModifierRewardPhase, MovePhase, SelectModifierPhase, ShowPartyExpBarPhase, TrainerVictoryPhase } from "#app/phases";
 import { MysteryEncounterBattlePhase, MysteryEncounterBattleStartCleanupPhase, MysteryEncounterPhase, MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phases";
@@ -54,7 +54,7 @@ export function doTrainerExclamation(scene: BattleScene) {
     }
   });
 
-  scene.playSound("GEN8- Exclaim.wav", { volume: 0.7 });
+  scene.playSound("GEN8- Exclaim", { volume: 0.7 });
 }
 
 export interface EnemyPokemonConfig {
@@ -344,20 +344,10 @@ export function generateModifierTypeOption(scene: BattleScene, modifier: () => M
   const modifierId = Object.keys(modifierTypes).find(k => modifierTypes[k] === modifier);
   let result: ModifierType = modifierTypes[modifierId]?.();
 
-  // Gets tier of item by checking player item pool
-  const modifierPool = getModifierPoolForType(ModifierPoolType.PLAYER);
-  Object.keys(modifierPool).every(modifierTier => {
-    const modType = modifierPool[modifierTier].find(m => {
-      if (m.modifierType.id === modifierId) {
-        return m;
-      }
-    });
-    if (modType) {
-      result = modType.modifierType;
-      return false;
-    }
-    return true;
-  });
+  // Populates item id and tier (order matters)
+  result = result
+    .withIdFromFunc(modifierTypes[modifierId])
+    .withTierFromPool();
 
   result = result instanceof ModifierTypeGenerator ? result.generateType(scene.getParty(), pregenArgs) : result;
   return new ModifierTypeOption(result, 0);
@@ -878,6 +868,75 @@ export function calculateMEAggregateStats(scene: BattleScene, baseSpawnWeight: n
 
   const meanEncountersPerRunPerBiomeSorted = [...meanEncountersPerRunPerBiome.entries()].sort((e1, e2) => e2[1] - e1[1]);
   meanEncountersPerRunPerBiomeSorted.forEach(value => stats = stats + `${value[0]}: avg valid floors ${meanMEFloorsPerRunPerBiome.get(value[0])}, avg MEs ${value[1]},\n`);
+
+  console.log(stats);
+}
+
+
+/**
+ * TODO: remove once encounter spawn rate is finalized
+ * Just a helper function to calculate aggregate stats for MEs in a Classic run
+ * @param scene
+ * @param luckValue - 0 to 14
+ */
+export function calculateRareSpawnAggregateStats(scene: BattleScene, luckValue: number) {
+  const numRuns = 1000;
+  let run = 0;
+
+  const calculateNumRareEncounters = (): any[] => {
+    const bossEncountersByRarity = [0, 0, 0, 0];
+    scene.setSeed(Utils.randomString(24));
+    scene.resetSeed();
+    // There are 12 wild boss floors
+    for (let i = 0; i < 12; i++) {
+      // Roll boss tier
+      // luck influences encounter rarity
+      let luckModifier = 0;
+      if (!isNaN(luckValue)) {
+        luckModifier = luckValue * 0.5;
+      }
+      const tierValue = Utils.randSeedInt(64 - luckModifier);
+      const tier = tierValue >= 20 ? BiomePoolTier.BOSS : tierValue >= 6 ? BiomePoolTier.BOSS_RARE : tierValue >= 1 ? BiomePoolTier.BOSS_SUPER_RARE : BiomePoolTier.BOSS_ULTRA_RARE;
+
+      switch (tier) {
+      default:
+      case BiomePoolTier.BOSS:
+        ++bossEncountersByRarity[0];
+        break;
+      case BiomePoolTier.BOSS_RARE:
+        ++bossEncountersByRarity[1];
+        break;
+      case BiomePoolTier.BOSS_SUPER_RARE:
+        ++bossEncountersByRarity[2];
+        break;
+      case BiomePoolTier.BOSS_ULTRA_RARE:
+        ++bossEncountersByRarity[3];
+        break;
+      }
+    }
+
+    return bossEncountersByRarity;
+  };
+
+  const encounterRuns: number[][] = [];
+  while (run < numRuns) {
+    scene.executeWithSeedOffset(() => {
+      const bossEncountersByRarity = calculateNumRareEncounters();
+      encounterRuns.push(bossEncountersByRarity);
+    }, 1000 * run);
+    run++;
+  }
+
+  const n = encounterRuns.length;
+  // const totalEncountersInRun = encounterRuns.map(run => run.reduce((a, b) => a + b));
+  // const totalMean = totalEncountersInRun.reduce((a, b) => a + b) / n;
+  // const totalStd = Math.sqrt(totalEncountersInRun.map(x => Math.pow(x - totalMean, 2)).reduce((a, b) => a + b) / n);
+  const commonMean = encounterRuns.reduce((a, b) => a + b[0], 0) / n;
+  const rareMean = encounterRuns.reduce((a, b) => a + b[1], 0) / n;
+  const superRareMean = encounterRuns.reduce((a, b) => a + b[2], 0) / n;
+  const ultraRareMean = encounterRuns.reduce((a, b) => a + b[3], 0) / n;
+
+  const stats = `Avg Commons: ${commonMean}\nAvg Rare: ${rareMean}\nAvg Super Rare: ${superRareMean}\nAvg Ultra Rare: ${ultraRareMean}\n`;
 
   console.log(stats);
 }

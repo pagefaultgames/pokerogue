@@ -137,7 +137,7 @@ export const MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType = null;
  * - BerryType is for BERRY
  * - SpeciesStatBoosterItem is for SPECIES_STAT_BOOSTER
  */
-interface ModifierOverride {
+export interface ModifierOverride {
     name: keyof typeof modifierTypes & string,
     count?: integer
     type?: TempBattleStat|Stat|Nature|Type|BerryType|SpeciesStatBoosterItem
@@ -155,4 +155,4 @@ export const NEVER_CRIT_OVERRIDE: boolean = false;
  * If less items are listed than rolled, only some items will be replaced
  * If more items are listed than rolled, only the first X items will be shown, where X is the number of items rolled.
  */
-export const ITEM_REWARD_OVERRIDE: Array<String> = [];
+export const ITEM_REWARD_OVERRIDE: Array<keyof typeof modifierTypes & string> = [];

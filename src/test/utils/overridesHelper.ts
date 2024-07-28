@@ -8,6 +8,7 @@ import * as overrides from "#app/overrides";
 import * as GameMode from "#app/game-mode";
 import { GameModes, getGameMode } from "#app/game-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { ModifierOverride } from "#app/overrides";
 
 /**
  * Helper to handle overrides in tests
@@ -114,6 +115,12 @@ export class OverridesHelper {
     });
     this.game.scene.resetSeed();
     this.log(`Seed set to "${seed}"!`);
+    return spy;
+  }
+
+  starterHeldItems(modifiers: ModifierOverride[]) {
+    const spy = vi.spyOn(Overrides, "STARTING_MODIFIER_OVERRIDE", "get").mockReturnValue(modifiers);
+    this.log(`Starting modifiers set to ${modifiers.map(m => JSON.stringify(m)).join(", ")}!`);
     return spy;
   }
 

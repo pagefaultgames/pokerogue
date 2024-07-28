@@ -17,6 +17,7 @@ import { TheStrongStuffEncounter } from "#app/data/mystery-encounters/encounters
 import { PokemonSalesmanEncounter } from "#app/data/mystery-encounters/encounters/pokemon-salesman-encounter";
 import { OfferYouCantRefuseEncounter } from "#app/data/mystery-encounters/encounters/offer-you-cant-refuse-encounter";
 import { DelibirdyEncounter } from "#app/data/mystery-encounters/encounters/delibirdy-encounter";
+import { AbsoluteAvariceEncounter } from "#app/data/mystery-encounters/encounters/absolute-avarice-encounter";
 
 // Spawn chance: (BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT + WIGHT_INCREMENT_ON_SPAWN_MISS * <number of missed spawns>) / 256
 export const BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT = 1;
@@ -238,7 +239,7 @@ export function initMysteryEncounters() {
   allMysteryEncounters[MysteryEncounterType.POKEMON_SALESMAN] = PokemonSalesmanEncounter;
   allMysteryEncounters[MysteryEncounterType.OFFER_YOU_CANT_REFUSE] = OfferYouCantRefuseEncounter;
   allMysteryEncounters[MysteryEncounterType.DELIBIRDY] = DelibirdyEncounter;
-  // allMysteryEncounters[MysteryEncounterType.ABSOLUTE_AVARICE] = Abs;
+  allMysteryEncounters[MysteryEncounterType.ABSOLUTE_AVARICE] = AbsoluteAvariceEncounter;
 
   // Add extreme encounters to biome map
   extremeBiomeEncounters.forEach(encounter => {

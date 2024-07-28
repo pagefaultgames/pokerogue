@@ -21,7 +21,7 @@ import { VoucherType } from "../system/voucher";
 import { FormChangeItem, SpeciesFormChangeItemTrigger } from "../data/pokemon-forms";
 import { Nature } from "#app/data/nature";
 import * as Overrides from "../overrides";
-import { ModifierType, modifierTypes } from "./modifier-type";
+import { ModifierType, ModifierTypeGenerator, modifierTypes } from "./modifier-type";
 import { Command } from "#app/ui/command-ui-handler.js";
 import { Species } from "#enums/species";
 import i18next from "i18next";
@@ -2683,8 +2683,12 @@ export function overrideModifiers(scene: BattleScene, player: boolean = true): v
     if (!modifierTypes.hasOwnProperty(modifierName)) {
       return;
     } // if the modifier does not exist, we skip it
-    const modifierType: ModifierType = modifierTypes[modifierName]();
-    const modifier: PersistentModifier = modifierType.withIdFromFunc(modifierTypes[modifierName]).newModifier() as PersistentModifier;
+    let modifierType: ModifierType = modifierTypes[modifierName]();
+    if (modifierType instanceof ModifierTypeGenerator) {
+      modifierType = (modifierType as ModifierTypeGenerator).generateType(scene.getParty(), [item.type]);
+    }
+    modifierType = modifierType.withIdFromFunc(modifierTypes[modifierName]);
+    const modifier: PersistentModifier = modifierType.newModifier(scene.getParty()[0]) as PersistentModifier;
     modifier.stackCount = qty;
     if (player) {
       scene.addModifier(modifier, true, false, false, true);

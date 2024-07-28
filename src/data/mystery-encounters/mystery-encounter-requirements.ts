@@ -1,5 +1,4 @@
 import { PlayerPokemon } from "#app/field/pokemon";
-import { ModifierType } from "#app/modifier/modifier-type";
 import BattleScene from "#app/battle-scene";
 import { isNullOrUndefined } from "#app/utils";
 import { Abilities } from "#enums/abilities";
@@ -235,28 +234,36 @@ export class PartySizeRequirement extends EncounterSceneRequirement {
 }
 
 export class PersistentModifierRequirement extends EncounterSceneRequirement {
-  requiredItems?: ModifierType[]; // TODO: not implemented
-  constructor(item: ModifierType | ModifierType[]) {
+  requiredHeldItemModifiers: string[];
+  minNumberOfItems: number;
+
+  constructor(heldItem: string | string[], minNumberOfItems: number = 1) {
     super();
-    this.requiredItems = Array.isArray(item) ? item : [item];
+    this.minNumberOfItems = minNumberOfItems;
+    this.requiredHeldItemModifiers = Array.isArray(heldItem) ? heldItem : [heldItem];
   }
 
   meetsRequirement(scene: BattleScene): boolean {
-    const items = scene.modifiers;
-
-    if (!isNullOrUndefined(items) && this?.requiredItems.length > 0 && this.requiredItems.filter((searchingMod) =>
-      items.filter((itemInScene) => itemInScene.type.id === searchingMod.id).length > 0).length === 0) {
+    const partyPokemon = scene.getParty();
+    if (isNullOrUndefined(partyPokemon) || this?.requiredHeldItemModifiers?.length < 0) {
       return false;
     }
-    return true;
+    let modifierCount = 0;
+    this.requiredHeldItemModifiers.forEach(modifier => {
+      const matchingMods = scene.findModifiers(m => m.constructor.name === modifier);
+      if (matchingMods?.length > 0) {
+        matchingMods.forEach(matchingMod => {
+          modifierCount += matchingMod.stackCount;
+        });
+      }
+    });
+
+    return modifierCount >= this.minNumberOfItems;
   }
 
   getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
-    const requiredItemsInInventory = this.requiredItems.filter((a) => {
-      scene.modifiers.filter((itemInScene) => itemInScene.type.id === a.id).length > 0;
-    });
-    if (requiredItemsInInventory.length > 0) {
-      return ["requiredItem", requiredItemsInInventory[0].name];
+    if (this.requiredHeldItemModifiers.length > 0) {
+      return ["requiredItem", this.requiredHeldItemModifiers[0]];
     }
     return null;
   }

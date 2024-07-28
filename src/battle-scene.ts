@@ -1072,12 +1072,14 @@ export default class BattleScene extends SceneBase {
         this.field.add(newTrainer);
       }
 
-      // TODO: remove this once spawn rates are finalized
+      // TODO: remove these once ME spawn rates are finalized
       // let testStartingWeight = 0;
       // while (testStartingWeight < 3) {
       //   calculateMEAggregateStats(this, testStartingWeight);
       //   testStartingWeight += 2;
       // }
+      // calculateRareSpawnAggregateStats(this, 14);
+
       // Check for mystery encounter
       // Can only occur in place of a standard wild battle, waves 10-180
       if (this.gameMode.hasMysteryEncounters && newBattleType === BattleType.WILD && !this.gameMode.isBoss(newWaveIndex) && newWaveIndex < 180 && newWaveIndex > 10) {
@@ -2684,18 +2686,22 @@ export default class BattleScene extends SceneBase {
     while (availableEncounters.length === 0 && tier >= 0) {
       availableEncounters = biomeMysteryEncounters
         .filter((encounterType) => {
-          if (allMysteryEncounters[encounterType].encounterTier !== tier) { // Encounter is in tier
+          const encounterCandidate = allMysteryEncounters[encounterType];
+          if (!encounterCandidate) {
             return false;
           }
-          if (!allMysteryEncounters[encounterType]?.meetsRequirements(this)) { // Meets encounter requirements
+          if (encounterCandidate.encounterTier !== tier) { // Encounter is in tier
+            return false;
+          }
+          if (!encounterCandidate.meetsRequirements(this)) { // Meets encounter requirements
             return false;
           }
           if (!isNullOrUndefined(previousEncounter) && encounterType === previousEncounter) { // Previous encounter was not this one
             return false;
           }
           if (this.mysteryEncounterData.encounteredEvents?.length > 0 && // Encounter has not exceeded max allowed encounters
-            allMysteryEncounters[encounterType].maxAllowedEncounters > 0
-            && this.mysteryEncounterData.encounteredEvents.filter(e => e[0] === encounterType).length >= allMysteryEncounters[encounterType].maxAllowedEncounters) {
+            encounterCandidate.maxAllowedEncounters > 0
+            && this.mysteryEncounterData.encounteredEvents.filter(e => e[0] === encounterType).length >= encounterCandidate.maxAllowedEncounters) {
             return false;
           }
           return true;

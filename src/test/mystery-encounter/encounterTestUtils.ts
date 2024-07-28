@@ -1,6 +1,6 @@
 import { Button } from "#app/enums/buttons";
 import { CommandPhase, MessagePhase, VictoryPhase } from "#app/phases";
-import { MysteryEncounterPhase, MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phases";
+import { MysteryEncounterBattlePhase, MysteryEncounterOptionSelectedPhase, MysteryEncounterPhase, MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phases";
 import MysteryEncounterUiHandler from "#app/ui/mystery-encounter-ui-handler";
 import { Mode } from "#app/ui/ui";
 import GameManager from "../utils/gameManager";
@@ -26,29 +26,39 @@ export async function runMysteryEncounterToEnd(game: GameManager, optionNo: numb
   game.onNextPrompt("MysteryEncounterOptionSelectedPhase", Mode.MESSAGE, () => {
     const uiHandler = game.scene.ui.getHandler<MysteryEncounterUiHandler>();
     uiHandler.processInput(Button.ACTION);
-  });
-
-  // If a battle is started, fast forward to end of the battle
-  game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-    game.scene.clearPhaseQueue();
-    game.scene.clearPhaseQueueSplice();
-    game.scene.unshiftPhase(new VictoryPhase(game.scene, 0));
-    game.endPhase();
-  });
-
-  // Handle end of battle trainer messages
-  game.onNextPrompt("TrainerVictoryPhase", Mode.MESSAGE, () => {
-    const uiHandler = game.scene.ui.getHandler<MessageUiHandler>();
-    uiHandler.processInput(Button.ACTION);
-  });
-
-  // Handle egg hatch dialogue
-  game.onNextPrompt("EggLapsePhase", Mode.MESSAGE, () => {
-    const uiHandler = game.scene.ui.getHandler<MessageUiHandler>();
-    uiHandler.processInput(Button.ACTION);
-  });
+  }, () => game.isCurrentPhase(MysteryEncounterBattlePhase) || game.isCurrentPhase(MysteryEncounterRewardsPhase));
 
   if (isBattle) {
+    game.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
+      game.setMode(Mode.MESSAGE);
+      game.endPhase();
+    }, () => game.isCurrentPhase(CommandPhase));
+
+    game.onNextPrompt("CheckSwitchPhase", Mode.MESSAGE, () => {
+      game.setMode(Mode.MESSAGE);
+      game.endPhase();
+    }, () => game.isCurrentPhase(CommandPhase));
+
+    // If a battle is started, fast forward to end of the battle
+    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
+      game.scene.clearPhaseQueue();
+      game.scene.clearPhaseQueueSplice();
+      game.scene.unshiftPhase(new VictoryPhase(game.scene, 0));
+      game.endPhase();
+    });
+
+    // Handle end of battle trainer messages
+    game.onNextPrompt("TrainerVictoryPhase", Mode.MESSAGE, () => {
+      const uiHandler = game.scene.ui.getHandler<MessageUiHandler>();
+      uiHandler.processInput(Button.ACTION);
+    });
+
+    // Handle egg hatch dialogue
+    game.onNextPrompt("EggLapsePhase", Mode.MESSAGE, () => {
+      const uiHandler = game.scene.ui.getHandler<MessageUiHandler>();
+      uiHandler.processInput(Button.ACTION);
+    });
+
     await game.phaseInterceptor.to(CommandPhase);
   } else {
     await game.phaseInterceptor.to(MysteryEncounterRewardsPhase);
@@ -60,7 +70,7 @@ export async function runSelectMysteryEncounterOption(game: GameManager, optionN
   game.onNextPrompt("MessagePhase", Mode.MESSAGE, () => {
     const uiHandler = game.scene.ui.getHandler<MessageUiHandler>();
     uiHandler.processInput(Button.ACTION);
-  });
+  }, () => game.isCurrentPhase(MysteryEncounterOptionSelectedPhase));
 
   if (game.isCurrentPhase(MessagePhase)) {
     await game.phaseInterceptor.run(MessagePhase);
@@ -70,7 +80,7 @@ export async function runSelectMysteryEncounterOption(game: GameManager, optionN
   game.onNextPrompt("MysteryEncounterPhase", Mode.MESSAGE, () => {
     const uiHandler = game.scene.ui.getHandler<MysteryEncounterUiHandler>();
     uiHandler.processInput(Button.ACTION);
-  });
+  }, () => game.isCurrentPhase(MysteryEncounterOptionSelectedPhase));
 
   await game.phaseInterceptor.to(MysteryEncounterPhase, true);
 

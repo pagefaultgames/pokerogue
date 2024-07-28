@@ -1,18 +1,20 @@
-import { leaveEncounterWithoutBattle, selectPokemonForOption, updatePlayerMoney, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { generateModifierTypeOption, leaveEncounterWithoutBattle, selectPokemonForOption, updatePlayerMoney, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import Pokemon, { PlayerPokemon } from "#app/field/pokemon";
-import { modifierTypes } from "#app/modifier/modifier-type";
+import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
 import BattleScene from "#app/battle-scene";
 import IMysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
-import { HeldItemRequirement, MoneyRequirement } from "../mystery-encounter-requirements";
-import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { CombinationPokemonRequirement, HeldItemRequirement, MoneyRequirement } from "../mystery-encounter-requirements";
+import { getEncounterText, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { BerryModifier, PokemonBaseStatModifier, PokemonBaseStatTotalModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, TerastallizeModifier } from "#app/modifier/modifier";
+import { BerryModifier, HealingBoosterModifier, HiddenAbilityRateBoosterModifier, LevelIncrementBoosterModifier, PokemonBaseStatModifier, PokemonBaseStatTotalModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, PreserveBerryModifier, TerastallizeModifier } from "#app/modifier/modifier";
 import { ModifierRewardPhase } from "#app/phases";
 import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
+import { applyModifierTypeToPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import i18next from "#app/plugins/i18n";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounter:delibirdy";
@@ -39,6 +41,10 @@ export const DelibirdyEncounter: IMysteryEncounter =
     .withEncounterTier(MysteryEncounterTier.GREAT)
     .withSceneWaveRangeRequirement(10, 180)
     .withSceneRequirement(new MoneyRequirement(0, 2.75)) // Must have enough money for it to spawn at the very least
+    .withPrimaryPokemonRequirement(new CombinationPokemonRequirement( // Must also have either option 2 or 3 available to spawn
+      new HeldItemRequirement(OPTION_2_ALLOWED_MODIFIERS),
+      new HeldItemRequirement(OPTION_3_DISALLOWED_MODIFIERS, 1, true)
+    ))
     .withIntroSpriteConfigs([
       {
         spriteKey: Species.DELIBIRD.toString(),
@@ -82,7 +88,7 @@ export const DelibirdyEncounter: IMysteryEncounter =
     .withOption(
       new MysteryEncounterOptionBuilder()
         .withOptionMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
-        .withSceneMoneyRequirement(0, 2.75)
+        .withSceneMoneyRequirement(0, 2.75) // Must have money to spawn
         .withDialogue({
           buttonLabel: `${namespace}:option:1:label`,
           buttonTooltip: `${namespace}:option:1:tooltip`,
@@ -99,7 +105,19 @@ export const DelibirdyEncounter: IMysteryEncounter =
         })
         .withOptionPhase(async (scene: BattleScene) => {
           // Give the player an Ability Charm
-          scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.ABILITY_CHARM));
+          // Check if the player has max stacks of that item already
+          const existing = scene.findModifier(m => m instanceof HiddenAbilityRateBoosterModifier) as HiddenAbilityRateBoosterModifier;
+
+          if (existing && existing.getStackCount() >= existing.getMaxStackCount(scene)) {
+            // At max stacks, give the first party pokemon a Shell Bell instead
+            const shellBell = generateModifierTypeOption(scene, modifierTypes.SHELL_BELL).type as PokemonHeldItemModifierType;
+            await applyModifierTypeToPlayerPokemon(scene, scene.getParty()[0], shellBell);
+            scene.playSound("item_fanfare");
+            await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: shellBell.name }), null, true);
+          } else {
+            scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.ABILITY_CHARM));
+          }
+
           leaveEncounterWithoutBattle(scene, true);
         })
         .build()
@@ -159,11 +177,34 @@ export const DelibirdyEncounter: IMysteryEncounter =
         .withOptionPhase(async (scene: BattleScene) => {
           const encounter = scene.currentBattle.mysteryEncounter;
           const modifier = encounter.misc.chosenModifier;
+
           // Give the player a Candy Jar if they gave a Berry, and a Healing Charm for Reviver Seed
           if (modifier.type.name.includes("Berry")) {
-            scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.CANDY_JAR));
+            // Check if the player has max stacks of that Candy Jar already
+            const existing = scene.findModifier(m => m instanceof LevelIncrementBoosterModifier) as LevelIncrementBoosterModifier;
+
+            if (existing && existing.getStackCount() >= existing.getMaxStackCount(scene)) {
+              // At max stacks, give the first party pokemon a Shell Bell instead
+              const shellBell = generateModifierTypeOption(scene, modifierTypes.SHELL_BELL).type as PokemonHeldItemModifierType;
+              await applyModifierTypeToPlayerPokemon(scene, scene.getParty()[0], shellBell);
+              scene.playSound("item_fanfare");
+              await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: shellBell.name }), null, true);
+            } else {
+              scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.CANDY_JAR));
+            }
           } else {
-            scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.HEALING_CHARM));
+            // Check if the player has max stacks of that Healing Charm already
+            const existing = scene.findModifier(m => m instanceof HealingBoosterModifier) as HealingBoosterModifier;
+
+            if (existing && existing.getStackCount() >= existing.getMaxStackCount(scene)) {
+              // At max stacks, give the first party pokemon a Shell Bell instead
+              const shellBell = generateModifierTypeOption(scene, modifierTypes.SHELL_BELL).type as PokemonHeldItemModifierType;
+              await applyModifierTypeToPlayerPokemon(scene, scene.getParty()[0], shellBell);
+              scene.playSound("item_fanfare");
+              await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: shellBell.name }), null, true);
+            } else {
+              scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.HEALING_CHARM));
+            }
           }
 
           // Remove the modifier if its stacks go to 0
@@ -231,8 +272,19 @@ export const DelibirdyEncounter: IMysteryEncounter =
         .withOptionPhase(async (scene: BattleScene) => {
           const encounter = scene.currentBattle.mysteryEncounter;
           const modifier = encounter.misc.chosenModifier;
-          // Give the player a Berry Pouch
-          scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.BERRY_POUCH));
+
+          // Check if the player has max stacks of Berry Pouch already
+          const existing = scene.findModifier(m => m instanceof PreserveBerryModifier) as PreserveBerryModifier;
+
+          if (existing && existing.getStackCount() >= existing.getMaxStackCount(scene)) {
+            // At max stacks, give the first party pokemon a Shell Bell instead
+            const shellBell = generateModifierTypeOption(scene, modifierTypes.SHELL_BELL).type as PokemonHeldItemModifierType;
+            await applyModifierTypeToPlayerPokemon(scene, scene.getParty()[0], shellBell);
+            scene.playSound("item_fanfare");
+            await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: shellBell.name }), null, true);
+          } else {
+            scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.BERRY_POUCH));
+          }
 
           // Remove the modifier if its stacks go to 0
           modifier.stackCount -= 1;

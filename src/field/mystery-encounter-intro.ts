@@ -149,7 +149,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
         }
       }
 
-      if (alpha) {
+      if (!isNaN(alpha)) {
         sprite.setAlpha(alpha);
         tintSprite.setAlpha(alpha);
       }
@@ -287,6 +287,22 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
         this.tryPlaySprite(sprites[i], tintSprites[i], trainerAnimConfig);
       }
     });
+  }
+
+  /**
+   * Returns a Sprite/TintSprite pair
+   * @param index
+   */
+  getSpriteAtIndex(index: number): Phaser.GameObjects.Sprite[] {
+    if (!this.spriteConfigs) {
+      return;
+    }
+
+    const ret: Phaser.GameObjects.Sprite[] = [];
+    ret.push(this.getAt(index * 2)); // Sprite
+    ret.push(this.getAt(index * 2 + 1)); // Tint Sprite
+
+    return ret;
   }
 
   getSprites(): Phaser.GameObjects.Sprite[] {
