@@ -1,8 +1,8 @@
 import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const arenaTag: SimpleTranslationEntries = {
-  "yourTeam": "your team",
-  "opposingTeam": "the opposing team",
+  "yourTeam": "votre équipe",
+  "opposingTeam": "l’équipe adverse",
   "arenaOnRemove": "L’effet de la capacité {{moveName}}\ns’est dissipé !",
   "arenaOnRemovePlayer": "L’effet de la capacité {{moveName}}\ns’est dissipé sur votre équipe !",
   "arenaOnRemoveEnemy": "L’effet de la capacité {{moveName}}\ns’est dissipé sur l’équipe ennemie !",
