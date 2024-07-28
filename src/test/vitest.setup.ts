@@ -14,7 +14,17 @@ import { initAchievements } from "#app/system/achv";
 import { initStatsKeys } from "#app/ui/game-stats-ui-handler";
 import { initMysteryEncounters } from "#app/data/mystery-encounters/mystery-encounters";
 import { beforeAll, beforeEach, vi } from "vitest";
-import * as overrides from "#app/overrides";
+import Overrides from "#app/overrides";
+
+/** Mock the override import to always return default values, ignoring any custom overrides. */
+vi.mock("#app/overrides", async (importOriginal) => {
+  const { defaultOverrides } = await importOriginal<typeof import("#app/overrides")>();
+
+  return {
+    default: defaultOverrides,
+    defaultOverrides
+  } satisfies typeof import("#app/overrides");
+});
 
 initVouchers();
 initAchievements();
@@ -42,5 +52,5 @@ beforeAll(() => {
 
 // Disables Mystery Encounters on all tests (can be overridden at test level)
 beforeEach( () => {
-  vi.spyOn(overrides, "MYSTERY_ENCOUNTER_RATE_OVERRIDE", "get").mockReturnValue(0);
+  vi.spyOn(Overrides, "MYSTERY_ENCOUNTER_RATE_OVERRIDE", "get").mockReturnValue(0);
 });

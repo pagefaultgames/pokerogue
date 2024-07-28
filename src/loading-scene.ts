@@ -40,7 +40,7 @@ export class LoadingScene extends SceneBase {
 
     this.loadImage("loading_bg", "arenas");
     this.loadImage("logo", "");
-    this.loadImage("pride-update", "events");
+    // this.loadImage("pride-update", "events");
 
     // Load menu images
     this.loadAtlas("bg", "ui");
@@ -92,6 +92,7 @@ export class LoadingScene extends SceneBase {
     this.loadImage("shiny_star_small", "ui", "shiny_small.png");
     this.loadImage("shiny_star_small_1", "ui", "shiny_small_1.png");
     this.loadImage("shiny_star_small_2", "ui", "shiny_small_2.png");
+    this.loadImage("passive_bg", "ui", "passive_bg.png");
     this.loadAtlas("shiny_icons", "ui");
     this.loadImage("ha_capsule", "ui", "ha_capsule.png");
     this.loadImage("champion_ribbon", "ui", "champion_ribbon.png");
@@ -146,6 +147,9 @@ export class LoadingScene extends SceneBase {
       this.loadImage(`summary_tabs_${t}`, "ui");
     }
 
+    this.loadImage("scroll_bar", "ui");
+    this.loadImage("scroll_bar_handle", "ui");
+    this.loadImage("starter_container_bg", "ui");
     this.loadImage("starter_select_bg", "ui");
     this.loadImage("select_cursor", "ui");
     this.loadImage("select_cursor_highlight", "ui");
@@ -155,6 +159,8 @@ export class LoadingScene extends SceneBase {
     this.loadImage("select_gen_cursor_highlight", "ui");
 
     this.loadImage("saving_icon", "ui");
+    this.loadImage("discord", "ui");
+    this.loadImage("google", "ui");
 
     this.loadImage("default_bg", "arenas");
     // Load arena images

@@ -91,6 +91,10 @@ export default class MockSprite {
     return this.phaserSprite.setPosition(x, y);
   }
 
+  setRotation(radians) {
+    return this.phaserSprite.setRotation(radians);
+  }
+
   stop() {
     return this.phaserSprite.stop();
   }

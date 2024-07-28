@@ -34,7 +34,7 @@ export const AbsoluteAvariceEncounter: IMysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.ABSOLUTE_AVARICE)
     .withEncounterTier(MysteryEncounterTier.GREAT)
     .withSceneWaveRangeRequirement(10, 180)
-    .withSceneRequirement(new PersistentModifierRequirement(BerryModifier.name, 4)) // Must have at least 4 berries to spawn
+    .withSceneRequirement(new PersistentModifierRequirement("BerryModifier", 4)) // Must have at least 4 berries to spawn
     .withIntroSpriteConfigs([
       {
         spriteKey: Species.GREEDENT.toString(),

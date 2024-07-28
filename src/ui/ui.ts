@@ -46,6 +46,7 @@ import SettingsDisplayUiHandler from "./settings/settings-display-ui-handler";
 import SettingsAudioUiHandler from "./settings/settings-audio-ui-handler";
 import { PlayerGender } from "#enums/player-gender";
 import BgmBar from "#app/ui/bgm-bar";
+import RenameFormUiHandler from "./rename-form-ui-handler";
 import MysteryEncounterUiHandler from "./mystery-encounter-ui-handler";
 
 export enum Mode {
@@ -85,6 +86,7 @@ export enum Mode {
   UNAVAILABLE,
   OUTDATED,
   CHALLENGE_SELECT,
+  RENAME_POKEMON,
   MYSTERY_ENCOUNTER
 }
 
@@ -121,7 +123,8 @@ const noTransitionModes = [
   Mode.LOADING,
   Mode.SESSION_RELOAD,
   Mode.UNAVAILABLE,
-  Mode.OUTDATED
+  Mode.OUTDATED,
+  Mode.RENAME_POKEMON
 ];
 
 export default class UI extends Phaser.GameObjects.Container {
@@ -183,6 +186,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new UnavailableModalUiHandler(scene),
       new OutdatedModalUiHandler(scene),
       new GameChallengesUiHandler(scene),
+      new RenameFormUiHandler(scene),
       new MysteryEncounterUiHandler(scene)
     ];
   }
