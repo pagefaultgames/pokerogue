@@ -14,6 +14,8 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
   private splashMessageText: Phaser.GameObjects.Text;
   private eventDisplay: TimedEventDisplay;
 
+  private featureFlagPocText: Phaser.GameObjects.Text;
+
   private titleStatsTimer: NodeJS.Timeout;
 
   constructor(scene: BattleScene, mode: Mode = Mode.TITLE) {
@@ -58,6 +60,13 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
       loop: -1,
       yoyo: true,
     });
+
+    // TODO: GET flag value from server
+    const isFlagEnabled = true;
+    this.featureFlagPocText = addTextObject(this.scene, logo.x + 15, logo.y + 165, "Test Feature Flag POC", TextStyle.TOOLTIP_TITLE, { fontSize: "72px" });
+    this.featureFlagPocText.setOrigin(0.5, 0.5);
+    this.featureFlagPocText.setVisible(isFlagEnabled);
+    this.titleContainer.add(this.featureFlagPocText);
   }
 
   updateTitleStats(): void {
