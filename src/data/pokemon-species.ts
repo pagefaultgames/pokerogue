@@ -147,7 +147,7 @@ export abstract class PokemonSpeciesForm {
     this.height = height;
     this.weight = weight;
     this.ability1 = ability1;
-    this.ability2 = ability2;
+    this.ability2 = ability2 === Abilities.NONE ? ability1 : ability2;
     this.abilityHidden = abilityHidden;
     this.baseTotal = baseTotal;
     this.baseStats = [ baseHp, baseAtk, baseDef, baseSpatk, baseSpdef, baseSpd ];
@@ -177,12 +177,29 @@ export abstract class PokemonSpeciesForm {
     return this.type1 === type || (this.type2 !== null && this.type2 === type);
   }
 
+  /**
+   * Method to get the total number of abilities a Pokemon species has.
+   * @returns Number of abilities
+   */
   getAbilityCount(): integer {
-    return this.ability2 ? this.abilityHidden ? 3 : 2 : this.abilityHidden ? 2 : 1;
+    return this.abilityHidden !== Abilities.NONE ? 3 : 2;
   }
 
+  /**
+   * Method to get the ability of a Pokemon species.
+   * @param abilityIndex Which ability to get (should only be 0-2)
+   * @returns The id of the Ability
+   */
   getAbility(abilityIndex: integer): Abilities {
-    return !abilityIndex ? this.ability1 : abilityIndex === 1 && this.ability2 ? this.ability2 : this.abilityHidden;
+    let ret: Abilities;
+    if (abilityIndex === 0) {
+      ret = this.ability1;
+    } else if (abilityIndex === 1) {
+      ret = this.ability2;
+    } else {
+      ret = this.abilityHidden;
+    }
+    return ret;
   }
 
   getLevelMoves(): LevelMoves {
@@ -319,6 +336,7 @@ export abstract class PokemonSpeciesForm {
     case Species.UNFEZANT:
     case Species.FRILLISH:
     case Species.JELLICENT:
+    case Species.PYROAR:
       ret += female ? "-f" : "";
       break;
     }
@@ -596,19 +614,23 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
   getName(formIndex?: integer): string {
     if (formIndex !== undefined && this.forms.length) {
       const form = this.forms[formIndex];
+      let key: string;
       switch (form.formKey) {
       case SpeciesFormKey.MEGA:
       case SpeciesFormKey.PRIMAL:
       case SpeciesFormKey.ETERNAMAX:
-        return `${form.formName} ${this.name}`;
       case SpeciesFormKey.MEGA_X:
-        return `Mega ${this.name} X`;
       case SpeciesFormKey.MEGA_Y:
-        return `Mega ${this.name} Y`;
+        key = form.formKey;
+        break;
       default:
         if (form.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1) {
-          return `G-Max ${this.name}`;
+          key = "gigantamax";
         }
+      }
+
+      if (key) {
+        return i18next.t(`pokemonForm:${key}`, {pokemonName: this.name});
       }
     }
     return this.name;
@@ -778,7 +800,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
   }
 
   // This could definitely be written better and more accurate to the getSpeciesForLevel logic, but it is only for generating movesets for evolved Pokemon
-  getSimulatedEvolutionChain(currentLevel: integer, forTrainer: boolean = false, isBoss: boolean = false, player: boolean = false) {
+  getSimulatedEvolutionChain(currentLevel: integer, forTrainer: boolean = false, isBoss: boolean = false, player: boolean = false): [Species, integer][] {
     const ret = [];
     if (pokemonPrevolutions.hasOwnProperty(this.speciesId)) {
       const prevolutionLevels = this.getPrevolutionLevels().reverse();
@@ -820,7 +842,14 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
   }
 
   hasVariants() {
-    return variantData.hasOwnProperty(this.speciesId);
+    let variantDataIndex: string | number = this.speciesId;
+    if (this.forms.length > 0) {
+      const formKey = this.forms[this.formIndex]?.formKey;
+      if (formKey) {
+        variantDataIndex = `${variantDataIndex}-${formKey}`;
+      }
+    }
+    return variantData.hasOwnProperty(variantDataIndex) || variantData.hasOwnProperty(this.speciesId);
   }
 
   getFormSpriteKey(formIndex?: integer) {
@@ -2157,7 +2186,7 @@ export function initSpecies() {
     new PokemonSpecies(Species.TURTONATOR, 7, false, false, false, "Blast Turtle Pokémon", Type.FIRE, Type.DRAGON, 2, 212, Abilities.SHELL_ARMOR, Abilities.NONE, Abilities.NONE, 485, 60, 78, 135, 91, 85, 36, 70, 50, 170, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.TOGEDEMARU, 7, false, false, false, "Roly-Poly Pokémon", Type.ELECTRIC, Type.STEEL, 0.3, 3.3, Abilities.IRON_BARBS, Abilities.LIGHTNING_ROD, Abilities.STURDY, 435, 65, 98, 63, 40, 73, 96, 180, 50, 152, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.MIMIKYU, 7, false, false, false, "Disguise Pokémon", Type.GHOST, Type.FAIRY, 0.2, 0.7, Abilities.DISGUISE, Abilities.NONE, Abilities.NONE, 476, 55, 90, 80, 50, 105, 96, 45, 50, 167, GrowthRate.MEDIUM_FAST, 50, false, false,
-      new PokemonForm("Disguised Form", "disguised", Type.GHOST, Type.FAIRY, 0.2, 0.7, Abilities.DISGUISE, Abilities.NONE, Abilities.NONE, 476, 55, 90, 80, 50, 105, 96, 45, 50, 167, false, "", true),
+      new PokemonForm("Disguised Form", "disguised", Type.GHOST, Type.FAIRY, 0.2, 0.7, Abilities.DISGUISE, Abilities.NONE, Abilities.NONE, 476, 55, 90, 80, 50, 105, 96, 45, 50, 167, false, null, true),
       new PokemonForm("Busted Form", "busted", Type.GHOST, Type.FAIRY, 0.2, 0.7, Abilities.DISGUISE, Abilities.NONE, Abilities.NONE, 476, 55, 90, 80, 50, 105, 96, 45, 50, 167),
     ),
     new PokemonSpecies(Species.BRUXISH, 7, false, false, false, "Gnash Teeth Pokémon", Type.WATER, Type.PSYCHIC, 0.9, 19, Abilities.DAZZLING, Abilities.STRONG_JAW, Abilities.WONDER_SKIN, 475, 68, 105, 70, 70, 70, 92, 80, 70, 166, GrowthRate.MEDIUM_FAST, 50, false),

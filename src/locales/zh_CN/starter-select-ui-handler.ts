@@ -6,7 +6,8 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
  * account interactions, descriptive text, etc.
  */
 export const starterSelectUiHandler: SimpleTranslationEntries = {
-  "confirmStartTeam":"使用这些宝可梦开始游戏吗？",
+  "confirmStartTeam": "使用这些宝可梦开始游戏吗？",
+  "invalidParty": "This is not a valid starting party!",
   "gen1": "I",
   "gen2": "II",
   "gen3": "III",
@@ -22,7 +23,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "nature": "性格：",
   "eggMoves": "蛋招式",
   "addToParty": "加入队伍",
-  "toggleIVs": "切换个体值",
+  "toggleIVs": "显示个体",
   "manageMoves": "管理招式",
   "manageNature": "管理性格",
   "useCandies": "使用糖果",

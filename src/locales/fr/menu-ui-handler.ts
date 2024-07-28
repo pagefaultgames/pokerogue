@@ -18,7 +18,11 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "exportSlotSelect": "Sélectionnez l’emplacement depuis lequel exporter les données.",
   "importData": "Importer données",
   "exportData": "Exporter données",
+  "linkDiscord": "Link Discord",
+  "unlinkDiscord": "Unlink Discord",
+  "linkGoogle": "Link Google",
+  "unlinkGoogle": "Unlink Google",
   "cancel": "Retour",
   "losingProgressionWarning": "Vous allez perdre votre progression depuis le début du combat. Continuer ?",
-  "noEggs": "You are not hatching\nany eggs at the moment!"
+  "noEggs": "Vous ne faites actuellement\néclore aucun Œuf !"
 } as const;

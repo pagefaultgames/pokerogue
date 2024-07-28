@@ -1,0 +1,83 @@
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import Phaser from "phaser";
+import GameManager from "#app/test/utils/gameManager";
+import Overrides from "#app/overrides";
+import { Species } from "#enums/species";
+import {
+  MoveEffectPhase,
+  TurnEndPhase,
+} from "#app/phases";
+import { Moves } from "#enums/moves";
+import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { allMoves } from "#app/data/move.js";
+import { ArenaTagType } from "#app/enums/arena-tag-type.js";
+import { Abilities } from "#app/enums/abilities.js";
+
+describe("Arena - Gravity", () => {
+  let phaserGame: Phaser.Game;
+  let game: GameManager;
+
+  beforeAll(() => {
+    phaserGame = new Phaser.Game({
+      type: Phaser.HEADLESS,
+    });
+  });
+
+  afterEach(() => {
+    game.phaseInterceptor.restoreOg();
+  });
+
+  beforeEach(() => {
+    game = new GameManager(phaserGame);
+    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
+    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.GRAVITY, Moves.FISSURE]);
+    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.UNNERVE);
+    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
+    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SHUCKLE);
+    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(new Array(4).fill(Moves.SPLASH));
+  });
+
+  it("non-OHKO move accuracy is multiplied by 1.67", async () => {
+    const moveToCheck = allMoves[Moves.TACKLE];
+
+    vi.spyOn(moveToCheck, "calculateBattleAccuracy");
+
+    // Setup Gravity on first turn
+    await game.startBattle([Species.PIKACHU]);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.GRAVITY));
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    expect(game.scene.arena.getTag(ArenaTagType.GRAVITY)).toBeDefined();
+
+    // Use non-OHKO move on second turn
+    await game.toNextTurn();
+    game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+    await game.phaseInterceptor.to(MoveEffectPhase);
+
+    expect(moveToCheck.calculateBattleAccuracy).toHaveReturnedWith(100 * 1.67);
+  });
+
+  it("OHKO move accuracy is not affected", async () => {
+    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(5);
+    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(5);
+
+    /** See Fissure {@link https://bulbapedia.bulbagarden.net/wiki/Fissure_(move)} */
+    const moveToCheck = allMoves[Moves.FISSURE];
+
+    vi.spyOn(moveToCheck, "calculateBattleAccuracy");
+
+    // Setup Gravity on first turn
+    await game.startBattle([Species.PIKACHU]);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.GRAVITY));
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    expect(game.scene.arena.getTag(ArenaTagType.GRAVITY)).toBeDefined();
+
+    // Use OHKO move on second turn
+    await game.toNextTurn();
+    game.doAttack(getMovePosition(game.scene, 0, Moves.FISSURE));
+    await game.phaseInterceptor.to(MoveEffectPhase);
+
+    expect(moveToCheck.calculateBattleAccuracy).toHaveReturnedWith(30);
+  });
+});

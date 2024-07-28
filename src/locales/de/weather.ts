@@ -40,5 +40,27 @@ export const weather: SimpleTranslationEntries = {
 
   "strongWindsStartMessage": "Alle Flug-Pokémon werden von rätselhaften Luftströmungen geschützt!",
   "strongWindsLapseMessage": "Die rätselhafte Luftströmung hält an.",
+  "strongWindsEffectMessage": "Rätselhafte Luftströmungen haben den Angriff abgeschwächt!",
   "strongWindsClearMessage": "Die rätselhafte Luftströmung hat sich wieder geleget.",
+};
+
+export const terrain: SimpleTranslationEntries = {
+  "misty": "Nebelfeld",
+  "mistyStartMessage": "Am Boden breitet sich dichter Nebel aus!",
+  "mistyClearMessage": "Das Nebelfeld ist wieder verschwunden!",
+  "mistyBlockMessage": "{{pokemonNameWithAffix}} wird vom Nebelfeld geschützt!",
+
+  "electric": "Elektrofeld",
+  "electricStartMessage": "Elektrische Energie fließt durch den Boden!",
+  "electricClearMessage": "Das Elektrofeld ist wieder verschwunden!",
+
+  "grassy": "Grasfeld",
+  "grassyStartMessage": "Dichtes Gras schießt aus dem Boden!",
+  "grassyClearMessage": "Das Grasfeld ist wieder verschwunden!",
+
+  "psychic": "Psychofeld",
+  "psychicStartMessage": "Der Boden fühlt sich seltsam an!",
+  "psychicClearMessage": "Das Psychofeld ist wieder verschwunden!",
+
+  "defaultBlockMessage": "{{pokemonNameWithAffix}} wird vom {{terrainName}} geschützt!"
 };

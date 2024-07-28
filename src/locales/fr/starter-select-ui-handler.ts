@@ -6,7 +6,8 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
  * account interactions, descriptive text, etc.
  */
 export const starterSelectUiHandler: SimpleTranslationEntries = {
-  "confirmStartTeam":"Commencer avec ces Pokémon ?",
+  "confirmStartTeam": "Commencer avec ces Pokémon ?",
+  "invalidParty": "This is not a valid starting party!",
   "gen1": "1G",
   "gen2": "2G",
   "gen3": "3G",
@@ -31,7 +32,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "selectMoveSwapWith": "Sélectionnez laquelle échanger avec",
   "unlockPassive": "Débloquer Passif",
   "reduceCost": "Diminuer le cout",
-  "sameSpeciesEgg": "Buy an Egg",
+  "sameSpeciesEgg": "Acheter un Œuf",
   "cycleShiny": ": » Chromatiques",
   "cycleForm": ": » Formes",
   "cycleGender": ": » Sexes",

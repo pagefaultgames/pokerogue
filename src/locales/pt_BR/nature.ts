@@ -10,7 +10,7 @@ export const nature: SimpleTranslationEntries = {
   "Docile": "Dócil",
   "Relaxed": "Relaxada",
   "Impish": "Inquieta",
-  "Lax": "Relaxada",
+  "Lax": "Frouxa",
   "Timid": "Tímida",
   "Hasty": "Apressada",
   "Serious": "Séria",
