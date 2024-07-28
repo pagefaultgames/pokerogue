@@ -34,7 +34,7 @@ export const arenaTag: SimpleTranslationEntries = {
   "stealthRockOnAdd": "Des pierres pointues lévitent\nautour de {{opponentDesc}} !",
   "stealthRockActivateTrap": "Des pierres pointues\ntranspercent {{pokemonNameWithAffix}} !",
   "stickyWebOnAdd": "Le terrain est couvert d’une {{moveName}}\ndu côté de l’équipe ennemie !",
-  "stickyWebActivateTrap": "{{pokemonNameWithAffix}} ennemi\nest pris dans la toile gluante !",
+  "stickyWebActivateTrap": "{{pokemonName}} ennemi\nest pris dans la toile gluante !",
   "trickRoomOnAdd": "{{pokemonNameWithAffix}}\nfausse les dimensions !",
   "trickRoomOnRemove": "Les dimensions faussées\nreviennent à la normale !",
   "gravityOnAdd": "La gravité s’intensifie !",

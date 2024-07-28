@@ -34,7 +34,7 @@ export const arenaTag: SimpleTranslationEntries = {
   "stealthRockOnAdd": "{{opponentDesc}}周围\n开始浮现出尖锐的岩石！",
   "stealthRockActivateTrap": "尖锐的岩石扎进了\n{{pokemonNameWithAffix}}的体内！",
   "stickyWebOnAdd": "对方的脚下\n延伸出了{{moveName}}！",
-  "stickyWebActivateTrap": "{{pokemonNameWithAffix}}\n被黏黏网粘住了！",
+  "stickyWebActivateTrap": "{{pokemonName}}\n被黏黏网粘住了！",
   "trickRoomOnAdd": "{{pokemonNameWithAffix}}\n扭曲了时空！",
   "trickRoomOnRemove": "扭曲的时空复原了！",
   "gravityOnAdd": "重力变强了！",

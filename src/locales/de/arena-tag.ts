@@ -34,7 +34,7 @@ export const arenaTag: SimpleTranslationEntries = {
   "stealthRockOnAdd": "Um die {{opponentDesc}} schweben spitze Steine!",
   "stealthRockActivateTrap": "{{pokemonNameWithAffix}} wird von spitzen Steinen getroffen!!",
   "stickyWebOnAdd": "Am Boden um die {{opponentDesc}} entspinnt sich ein {{moveName}}!",
-  "stickyWebActivateTrap": "{{pokemonNameWithAffix}} ist im Klebenetz gefangen!",
+  "stickyWebActivateTrap": "{{pokemonName}} ist im Klebenetz gefangen!",
   "trickRoomOnAdd": "{{pokemonNameWithAffix}} hat die Dimensionen verdreht!",
   "trickRoomOnRemove": "Die verdrehte Dimension ist wieder normal!",
   "gravityOnAdd": "Die Erdanziehung wurde verstärkt!",

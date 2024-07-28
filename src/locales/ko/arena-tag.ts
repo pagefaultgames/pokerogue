@@ -34,7 +34,7 @@ export const arenaTag: SimpleTranslationEntries = {
   "stealthRockOnAdd": "{{opponentDesc}} 주변에\n뾰족한 바위가 떠다니기 시작했다!!",
   "stealthRockActivateTrap": "{{pokemonNameWithAffix}}에게\n뾰족한 바위가 박혔다!",
   "stickyWebOnAdd": "{{opponentDesc}} 발밑에\n{{moveName}}[[가]] 펼쳐졌다!",
-  "stickyWebActivateTrap": "{{pokemonNameWithAffix}}[[는]]\n끈적끈적네트에 걸렸다!",
+  "stickyWebActivateTrap": "{{pokemonName}}[[는]]\n끈적끈적네트에 걸렸다!",
   "trickRoomOnAdd": "{{pokemonNameWithAffix}}[[는]]\n시공을 뒤틀었다!",
   "trickRoomOnRemove": "뒤틀린 시공이 원래대로 되돌아왔다!",
   "gravityOnAdd": "중력이 강해졌다!",

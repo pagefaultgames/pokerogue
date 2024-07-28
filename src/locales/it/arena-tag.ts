@@ -34,7 +34,7 @@ export const arenaTag: SimpleTranslationEntries = {
   "stealthRockOnAdd": "Pointed stones float in the air\naround {{opponentDesc}}!",
   "stealthRockActivateTrap": "Pointed stones dug into\n{{pokemonNameWithAffix}}!",
   "stickyWebOnAdd": "A {{moveName}} has been laid out on the ground around the opposing team!",
-  "stickyWebActivateTrap": "The opposing {{pokemonNameWithAffix}} was caught in a sticky web!",
+  "stickyWebActivateTrap": "The opposing {{pokemonName}} was caught in a sticky web!",
   "trickRoomOnAdd": "{{pokemonNameWithAffix}} twisted\nthe dimensions!",
   "trickRoomOnRemove": "The twisted dimensions\nreturned to normal!",
   "gravityOnAdd": "Gravity intensified!",
