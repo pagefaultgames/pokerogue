@@ -11,6 +11,7 @@ import { BattleStat } from "#app/data/battle-stat";
 import BattleFlyout from "./battle-flyout";
 import { WindowVariant, addWindow } from "./ui-theme";
 import i18next from "i18next";
+import { AbilityAttr } from "#app/system/game-data.js";
 
 const battleStatOrder = [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.ACC, BattleStat.EVA, BattleStat.SPD ];
 
@@ -349,11 +350,14 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       const ownedAbilityAttrs = pokemon.scene.gameData.starterData[pokemon.species.getRootSpeciesId()].abilityAttr;
 
       let playerOwnsThisAbility = false;
-      // Check if the player owns the ability
-      if ((ownedAbilityAttrs & 1) > 0 && pokemon.hasSameAbilityInRootForm(0)) {
+      // Check if the player owns ability for the root form
+      if ((ownedAbilityAttrs & AbilityAttr.ABILITY_1) > 0 && pokemon.hasSameAbilityInRootForm(0)) {
         playerOwnsThisAbility = true;
       }
-      if ((ownedAbilityAttrs & 2) > 0 && pokemon.hasSameAbilityInRootForm(1)) {
+      if ((ownedAbilityAttrs & AbilityAttr.ABILITY_2) > 0 && pokemon.hasSameAbilityInRootForm(1)) {
+        playerOwnsThisAbility = true;
+      }
+      if ((ownedAbilityAttrs & AbilityAttr.ABILITY_HIDDEN) > 0 && pokemon.hasSameAbilityInRootForm(2)) {
         playerOwnsThisAbility = true;
       }
 
