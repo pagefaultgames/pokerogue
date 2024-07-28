@@ -854,9 +854,8 @@ export class GameData {
           const sessionData = this.parseSessionData(sessionDataStr);
           for (let i = 0; i <= 5; i++) {
             if (sessionData.party[i]?.abilityIndex === 1) {
-              if (allSpecies[sessionData.party[i].species].ability1 === allSpecies[sessionData.party[i].species].ability2 &&
-              allSpecies[sessionData.party[i].species].abilityHidden !== Abilities.NONE &&
-              allSpecies[sessionData.party[i].species].abilityHidden !== allSpecies[sessionData.party[i].species].ability1) {
+              const speciesToCheck = allSpecies[sessionData.party[i].species - 1];
+              if (speciesToCheck.ability1 === speciesToCheck.ability2 && speciesToCheck.abilityHidden !== Abilities.NONE && speciesToCheck.abilityHidden !== speciesToCheck.ability1) {
                 sessionData.party[i].abilityIndex = 2;
               }
             }
