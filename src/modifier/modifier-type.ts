@@ -855,7 +855,7 @@ export class FusePokemonModifierType extends PokemonModifierType {
 class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
   constructor() {
     super((party: Pokemon[], pregenArgs?: any[]) => {
-      if (pregenArgs) {
+      if (pregenArgs && (pregenArgs.length === 1) && (pregenArgs[0] in Type)) {
         return new AttackTypeBoosterModifierType(pregenArgs[0] as Type, 20);
       }
 
@@ -919,12 +919,13 @@ class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
 
   constructor() {
     super((party: Pokemon[], pregenArgs?: any[]) => {
-      if (pregenArgs) {
+      const items = SpeciesStatBoosterModifierTypeGenerator.items;
+      if (pregenArgs && (pregenArgs.length === 1) && (pregenArgs[0] in items)) {
         return new SpeciesStatBoosterModifierType(pregenArgs[0] as SpeciesStatBoosterItem);
       }
 
-      const values = Object.values(SpeciesStatBoosterModifierTypeGenerator.items);
-      const keys = Object.keys(SpeciesStatBoosterModifierTypeGenerator.items);
+      const values = Object.values(items);
+      const keys = Object.keys(items);
       const weights = keys.map(() => 0);
 
       for (const p of party) {
@@ -979,7 +980,10 @@ class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
 
 class TmModifierTypeGenerator extends ModifierTypeGenerator {
   constructor(tier: ModifierTier) {
-    super((party: Pokemon[]) => {
+    super((party: Pokemon[], pregenArgs?: any[]) => {
+      if (pregenArgs && (pregenArgs.length === 1) && (pregenArgs[0] in Moves)) {
+        return new TmModifierType(pregenArgs[0] as Moves);
+      }
       const partyMemberCompatibleTms = party.map(p => (p as PlayerPokemon).compatibleTms.filter(tm => !p.moveset.find(m => m.moveId === tm)));
       const tierUniqueCompatibleTms = partyMemberCompatibleTms.flat().filter(tm => tmPoolTiers[tm] === tier).filter(tm => !allMoves[tm].name.endsWith(" (N)")).filter((tm, i, array) => array.indexOf(tm) === i);
       if (!tierUniqueCompatibleTms.length) {
@@ -994,7 +998,7 @@ class TmModifierTypeGenerator extends ModifierTypeGenerator {
 class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
   constructor(rare: boolean) {
     super((party: Pokemon[], pregenArgs?: any[]) => {
-      if (pregenArgs) {
+      if (pregenArgs && (pregenArgs.length === 1) && (pregenArgs[0] in EvolutionItem)) {
         return new EvolutionItemModifierType(pregenArgs[0] as EvolutionItem);
       }
 
@@ -1021,7 +1025,7 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
 class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
   constructor() {
     super((party: Pokemon[], pregenArgs?: any[]) => {
-      if (pregenArgs) {
+      if (pregenArgs && (pregenArgs.length === 1) && (pregenArgs[0] in FormChangeItem)) {
         return new FormChangeItemModifierType(pregenArgs[0] as FormChangeItem);
       }
 
@@ -1274,7 +1278,7 @@ export const modifierTypes = {
   SPECIES_STAT_BOOSTER: () => new SpeciesStatBoosterModifierTypeGenerator(),
 
   TEMP_STAT_BOOSTER: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
-    if (pregenArgs) {
+    if (pregenArgs && (pregenArgs.length === 1) && (pregenArgs[0] in TempBattleStat)) {
       return new TempBattleStatBoosterModifierType(pregenArgs[0] as TempBattleStat);
     }
     const randTempBattleStat = Utils.randSeedInt(6) as TempBattleStat;
@@ -1283,7 +1287,7 @@ export const modifierTypes = {
   DIRE_HIT: () => new TempBattleStatBoosterModifierType(TempBattleStat.CRIT),
 
   BASE_STAT_BOOSTER: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
-    if (pregenArgs) {
+    if (pregenArgs && (pregenArgs.length === 1) && (pregenArgs[0] in Stat)) {
       const stat = pregenArgs[0] as Stat;
       return new PokemonBaseStatBoosterModifierType(getBaseStatBoosterItemName(stat), stat);
     }
@@ -1294,14 +1298,14 @@ export const modifierTypes = {
   ATTACK_TYPE_BOOSTER: () => new AttackTypeBoosterModifierTypeGenerator(),
 
   MINT: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
-    if (pregenArgs) {
+    if (pregenArgs && (pregenArgs.length === 1) && (pregenArgs[0] in Nature)) {
       return new PokemonNatureChangeModifierType(pregenArgs[0] as Nature);
     }
     return new PokemonNatureChangeModifierType(Utils.randSeedInt(Utils.getEnumValues(Nature).length) as Nature);
   }),
 
   TERA_SHARD: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
-    if (pregenArgs) {
+    if (pregenArgs && (pregenArgs.length === 1) && (pregenArgs[0] in Type)) {
       return new TerastallizeModifierType(pregenArgs[0] as Type);
     }
     if (!party[0].scene.getModifiers(Modifiers.TerastallizeAccessModifier).length) {
@@ -1318,7 +1322,7 @@ export const modifierTypes = {
   }),
 
   BERRY: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
-    if (pregenArgs) {
+    if (pregenArgs && (pregenArgs.length === 1) && (pregenArgs[0] in BerryType)) {
       return new BerryModifierType(pregenArgs[0] as BerryType);
     }
     const berryTypes = Utils.getEnumValues(BerryType);
@@ -1901,13 +1905,34 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
     options.push(candidate);
   });
 
-  // OVERRIDE IF NECESSARY
-  Overrides.ITEM_REWARD_OVERRIDE.forEach((item, i) => {
-    const override = modifierTypes[item]();
-    options[i].type = override instanceof ModifierTypeGenerator ? override.generateType(party) : override;
-  });
+  overridePlayerModifierTypeOptions(options, party);
 
   return options;
+}
+
+/**
+ * Replaces the {@linkcode ModifierType} of the entries within {@linkcode options} with any
+ * {@linkcode ModifierOverride} entries listed in {@linkcode Overrides.ITEM_REWARD_OVERRIDE}
+ * up to the smallest amount of entries between {@linkcode options} and the override array.
+ * @param options Array of naturally rolled {@linkcode ModifierTypeOption}s
+ * @param party Array of the player's current party
+ */
+export function overridePlayerModifierTypeOptions(options: ModifierTypeOption[], party: PlayerPokemon[]) {
+  const minLength = Math.min(options.length, Overrides.ITEM_REWARD_OVERRIDE.length);
+  for (let i = 0; i < minLength; i++) {
+    const override: ModifierOverride = Overrides.ITEM_REWARD_OVERRIDE[i];
+    const modifierFunc = modifierTypes[override.name];
+    let modifierType = modifierFunc();
+
+    if (modifierType instanceof ModifierTypeGenerator) {
+      const pregenArgs = ("type" in override) && (override.type !== null) ? [override.type] : null;
+      modifierType = modifierType.generateType(party, pregenArgs);
+    }
+
+    if (modifierType) {
+      options[i].type = modifierType.withIdFromFunc(modifierFunc);
+    }
+  }
 }
 
 export function getPlayerShopModifierTypeOptionsForWave(waveIndex: integer, baseCost: integer): ModifierTypeOption[] {
@@ -1948,7 +1973,19 @@ export function getPlayerShopModifierTypeOptionsForWave(waveIndex: integer, base
 }
 
 export function getEnemyBuffModifierForWave(tier: ModifierTier, enemyModifiers: Modifiers.PersistentModifier[], scene: BattleScene): Modifiers.EnemyPersistentModifier {
-  const tierStackCount = tier === ModifierTier.ULTRA ? 5 : tier === ModifierTier.GREAT ? 3 : 1;
+  let tierStackCount: number;
+  switch (tier) {
+  case ModifierTier.ULTRA:
+    tierStackCount = 5;
+    break;
+  case ModifierTier.GREAT:
+    tierStackCount = 3;
+    break;
+  default:
+    tierStackCount = 1;
+    break;
+  }
+
   const retryCount = 50;
   let candidate = getNewModifierTypeOption(null, ModifierPoolType.ENEMY_BUFF, tier);
   let r = 0;
@@ -1976,7 +2013,20 @@ export function getDailyRunStarterModifiers(party: PlayerPokemon[]): Modifiers.P
   for (const p of party) {
     for (let m = 0; m < 3; m++) {
       const tierValue = Utils.randSeedInt(64);
-      const tier = tierValue > 25 ? ModifierTier.COMMON : tierValue > 12 ? ModifierTier.GREAT : tierValue > 4 ? ModifierTier.ULTRA : tierValue ? ModifierTier.ROGUE : ModifierTier.MASTER;
+
+      let tier: ModifierTier;
+      if (tierValue > 25) {
+        tier = ModifierTier.COMMON;
+      } else if (tierValue > 12) {
+        tier = ModifierTier.GREAT;
+      } else if (tierValue > 4) {
+        tier = ModifierTier.ULTRA;
+      } else if (tierValue) {
+        tier = ModifierTier.ROGUE;
+      } else {
+        tier = ModifierTier.MASTER;
+      }
+
       const modifier = getNewModifierTypeOption(party, ModifierPoolType.DAILY_STARTER, tier).type.newModifier(p) as Modifiers.PokemonHeldItemModifier;
       ret.push(modifier);
     }
@@ -2022,7 +2072,19 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
         }
       } while (upgraded);
     }
-    tier = tierValue > 255 ? ModifierTier.COMMON : tierValue > 60 ? ModifierTier.GREAT : tierValue > 12 ? ModifierTier.ULTRA : tierValue ? ModifierTier.ROGUE : ModifierTier.MASTER;
+
+    if (tierValue > 255) {
+      tier = ModifierTier.COMMON;
+    } else if (tierValue > 60) {
+      tier = ModifierTier.GREAT;
+    } else if (tierValue > 12) {
+      tier = ModifierTier.ULTRA;
+    } else if (tierValue) {
+      tier = ModifierTier.ROGUE;
+    } else {
+      tier = ModifierTier.MASTER;
+    }
+
     // Does this actually do anything?
     if (!upgradeCount) {
       upgradeCount = Math.min(upgradeCount, ModifierTier.MASTER - tier);
@@ -2119,6 +2181,19 @@ export function getLuckString(luckValue: integer): string {
 }
 
 export function getLuckTextTint(luckValue: integer): integer {
-  const modifierTier = luckValue ? luckValue > 2 ? luckValue > 5 ? luckValue > 9 ? luckValue > 11 ? ModifierTier.LUXURY : ModifierTier.MASTER : ModifierTier.ROGUE : ModifierTier.ULTRA : ModifierTier.GREAT : ModifierTier.COMMON;
+  let modifierTier: ModifierTier;
+  if (luckValue > 11) {
+    modifierTier = ModifierTier.LUXURY;
+  } else if (luckValue > 9) {
+    modifierTier = ModifierTier.MASTER;
+  } else if (luckValue > 5) {
+    modifierTier = ModifierTier.ROGUE;
+  } else if (luckValue > 2) {
+    modifierTier = ModifierTier.ULTRA;
+  } else if (luckValue) {
+    modifierTier = ModifierTier.GREAT;
+  } else {
+    modifierTier = ModifierTier.COMMON;
+  }
   return getModifierTierTextTint(modifierTier);
 }
