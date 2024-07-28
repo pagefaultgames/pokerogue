@@ -3097,6 +3097,17 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   getBattleInfo(): BattleInfo {
     return this.battleInfo;
   }
+
+  /**
+   * Checks whether or not the Pokemon's root form has the same ability
+   * @param abilityIndex the given ability index we are checking
+   * @returns true if the abilities are the same
+   */
+  hasSameAbilityInRootForm(abilityIndex: number): boolean {
+    const currentAbilityIndex = this.abilityIndex;
+    const rootForm = getPokemonSpecies(this.species.getRootSpeciesId());
+    return rootForm.getAbility(abilityIndex) === rootForm.getAbility(currentAbilityIndex);
+  }
 }
 
 export default interface Pokemon {
