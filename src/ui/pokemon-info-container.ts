@@ -259,18 +259,21 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
       this.pokemonAbilityText.setColor(getTextColor(abilityTextStyle, false, this.scene.uiTheme));
       this.pokemonAbilityText.setShadowColor(getTextColor(abilityTextStyle, true, this.scene.uiTheme));
 
-      /**
-       * If the opposing Pokemon only has 1 normal ability and is using the hidden ability it should have the same behavior
-       * if it had 2 normal abilities. This code checks if that is the case and uses the correct opponent Pokemon abilityIndex (2)
-       * for calculations so it aligns with where the hidden ability is stored in the starter data's abilityAttr (4)
-       */
-      const opponentPokemonOneNormalAbility = (pokemon.species.getAbilityCount() === 2);
-      const opponentPokemonAbilityIndex = (opponentPokemonOneNormalAbility && pokemon.abilityIndex === 1) ? 2 : pokemon.abilityIndex;
-      const opponentPokemonAbilityAttr = Math.pow(2, opponentPokemonAbilityIndex);
+      const ownedAbilityAttrs = pokemon.scene.gameData.starterData[pokemon.species.getRootSpeciesId()].abilityAttr;
 
-      const rootFormHasHiddenAbility = pokemon.scene.gameData.starterData[pokemon.species.getRootSpeciesId()].abilityAttr & opponentPokemonAbilityAttr;
+      let playerOwnsThisAbility = false;
+      // Check if the player owns ability for the root form
+      if ((ownedAbilityAttrs & 1) > 0 && pokemon.hasSameAbilityInRootForm(0)) {
+        playerOwnsThisAbility = true;
+      }
+      if ((ownedAbilityAttrs & 2) > 0 && pokemon.hasSameAbilityInRootForm(1)) {
+        playerOwnsThisAbility = true;
+      }
+      if ((ownedAbilityAttrs & 4) > 0 && pokemon.hasSameAbilityInRootForm(2)) {
+        playerOwnsThisAbility = true;
+      }
 
-      if (!rootFormHasHiddenAbility) {
+      if (!playerOwnsThisAbility) {
         this.pokemonAbilityLabelText.setColor(getTextColor(TextStyle.SUMMARY_BLUE, false, this.scene.uiTheme));
         this.pokemonAbilityLabelText.setShadowColor(getTextColor(TextStyle.SUMMARY_BLUE, true, this.scene.uiTheme));
       } else {
