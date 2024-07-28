@@ -2149,6 +2149,11 @@ export class HealStatusEffectAttr extends MoveEffectAttr {
       return false;
     }
 
+    const moveTargets = getMoveTargets(user, move.id);
+    if (target.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr) && move.id === Moves.SPARKLING_ARIA && moveTargets.targets.length === 1) {
+      return false;
+    }
+
     const pokemon = this.selfTarget ? user : target;
     if (pokemon.status && this.effects.includes(pokemon.status.effect)) {
       pokemon.scene.queueMessage(getStatusEffectHealText(pokemon.status.effect, getPokemonNameWithAffix(pokemon)));
