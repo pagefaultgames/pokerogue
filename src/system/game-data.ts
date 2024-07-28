@@ -41,6 +41,7 @@ import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { applyChallenges, ChallengeType } from "#app/data/challenge.js";
+import { Abilities } from "#app/enums/abilities.js";
 
 export const defaultStarterSpecies: Species[] = [
   Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE,
@@ -851,6 +852,15 @@ export class GameData {
       const handleSessionData = async (sessionDataStr: string) => {
         try {
           const sessionData = this.parseSessionData(sessionDataStr);
+          for (let i = 0; i <= 5; i++) {
+            if (sessionData.party[i]?.abilityIndex === 1) {
+              if (allSpecies[sessionData.party[i].species].ability1 === allSpecies[sessionData.party[i].species].ability2 &&
+              allSpecies[sessionData.party[i].species].abilityHidden !== Abilities.NONE &&
+              allSpecies[sessionData.party[i].species].abilityHidden !== allSpecies[sessionData.party[i].species].ability1) {
+                sessionData.party[i].abilityIndex = 2;
+              }
+            }
+          }
           resolve(sessionData);
         } catch (err) {
           reject(err);
