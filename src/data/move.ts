@@ -5825,7 +5825,7 @@ export class ResistLastMoveTypeAttr extends MoveEffectAttr {
   getCondition(): MoveConditionFunc {
     return (user, target, move) => {
       const moveHistory = target.getLastXMoves();
-      return !!moveHistory.length;
+      return moveHistory.length !== 0;
     };
   }
 }
@@ -8691,8 +8691,8 @@ export function initMoves() {
     new AttackMove(Moves.MALIGNANT_CHAIN, Type.POISON, MoveCategory.SPECIAL, 100, 100, 5, 50, 0, 9)
       .attr(StatusEffectAttr, StatusEffect.TOXIC)
   );
-  allMoves.map(m=>{
-    if (m.getAttrs(StatChangeAttr).some(a=> a.selfTarget && a.levels < 0)) {
+  allMoves.map(m => {
+    if (m.getAttrs(StatChangeAttr).some(a => a.selfTarget && a.levels < 0)) {
       selfStatLowerMoves.push(m.id);
     }
   });

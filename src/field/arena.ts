@@ -638,7 +638,9 @@ export class Arena {
     }
   }
 
-  /** Clears terrain and arena tags when entering new biome or trainer battle. */
+  /**
+   * Clears terrain and arena tags when entering new biome or trainer battle.
+   */
   resetArenaEffects(): void {
     this.trySetTerrain(TerrainType.NONE, false, true);
     this.removeAllTags();

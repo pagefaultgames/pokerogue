@@ -286,7 +286,7 @@ export class BlockItemTheftAbAttr extends AbAttr {
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]) {
     return i18next.t("abilityTriggers:blockItemTheft", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      abilityName: abilityName,
+      abilityName
     });
   }
 }
@@ -405,7 +405,7 @@ export class TypeImmunityHealAbAttr extends TypeImmunityAbAttr {
         if (!simulated) {
           const abilityName = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name;
           pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.getBattlerIndex(),
-            Math.max(Math.floor(pokemon.getMaxHp() / 4), 1), i18next.t("abilityTriggers:typeImmunityHeal", {pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName: abilityName}), true));
+            Math.max(Math.floor(pokemon.getMaxHp() / 4), 1), i18next.t("abilityTriggers:typeImmunityHeal", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName }), true));
         }
       }
       return true;
@@ -485,7 +485,7 @@ export class NonSuperEffectiveImmunityAbAttr extends TypeImmunityAbAttr {
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
     return i18next.t("abilityTriggers:nonSuperEffectiveImmunity", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      abilityName: abilityName,
+      abilityName
     });
   }
 }
@@ -777,7 +777,7 @@ export class PostDefendTypeChangeAbAttr extends PostDefendAbAttr {
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
     return i18next.t("abilityTriggers:postDefendTypeChange", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      abilityName: abilityName,
+      abilityName,
       typeName: i18next.t(`pokemonInfo:Type.${Type[pokemon.getTypes(true)[0]]}`)
     });
   }
@@ -901,7 +901,7 @@ export class PostDefendContactDamageAbAttr extends PostDefendAbAttr {
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
     return i18next.t("abilityTriggers:postDefendContactDamage", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      abilityName: abilityName,
+      abilityName
     });
   }
 }
@@ -999,7 +999,7 @@ export class PostDefendAbilityGiveAbAttr extends PostDefendAbAttr {
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
     return i18next.t("abilityTriggers:postDefendAbilityGive", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      abilityName: abilityName,
+      abilityName
     });
   }
 }
@@ -1083,9 +1083,8 @@ export class MoveEffectChanceMultiplierAbAttr extends AbAttr {
    *             [1]: {@linkcode Moves } Move used by the ability user.
    */
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    //Disable showAbility during getTargetBenefitScore
-    const showAbility = args[4];
-    this.showAbility = showAbility;
+    // Disable showAbility during getTargetBenefitScore
+    this.showAbility = args[4];
     if ((args[0] as Utils.NumberHolder).value <= 0 || (args[1] as Move).id === Moves.ORDER_UP) {
       return false;
     }
@@ -1797,7 +1796,7 @@ export class IntimidateImmunityAbAttr extends AbAttr {
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
     return i18next.t("abilityTriggers:intimidateImmunity", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      abilityName: abilityName,
+      abilityName
     });
   }
 }
@@ -2354,8 +2353,8 @@ export class ProtectStatAbAttr extends PreStatChangeAbAttr {
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
     return i18next.t("abilityTriggers:protectStat", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      abilityName: abilityName,
-      statName: this.protectedStat !== undefined ? getBattleStatName(this.protectedStat) : "stats", // TODO : Change "stats" to i18next.t("battle:stats") after PR#2600 merged to 'main'
+      abilityName,
+      statName: this.protectedStat !== undefined ? getBattleStatName(this.protectedStat) : i18next.t("battle:stats")
     });
   }
 }
@@ -2421,12 +2420,12 @@ export class StatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
     return this.immuneEffects.length ?
       i18next.t("abilityTriggers:statusEffectImmunityWithName", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        abilityName: abilityName,
+        abilityName,
         statusEffectName: getStatusEffectDescriptor(args[0] as StatusEffect)
       }) :
       i18next.t("abilityTriggers:statusEffectImmunity", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        abilityName: abilityName,
+        abilityName
       });
   }
 }
@@ -2458,7 +2457,7 @@ export class BattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
     return i18next.t("abilityTriggers:battlerTagImmunity", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      abilityName: abilityName,
+      abilityName,
       battlerTagName: (args[0] as BattlerTag).getDescriptor()
     });
   }
@@ -2844,7 +2843,7 @@ export class PostWeatherLapseHealAbAttr extends PostWeatherLapseAbAttr {
       const scene = pokemon.scene;
       const abilityName = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name;
       scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.getBattlerIndex(),
-        Math.max(Math.floor(pokemon.getMaxHp() / (16 / this.healFactor)), 1), i18next.t("abilityTriggers:postWeatherLapseHeal", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName: abilityName }), true));
+        Math.max(Math.floor(pokemon.getMaxHp() / (16 / this.healFactor)), 1), i18next.t("abilityTriggers:postWeatherLapseHeal", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName }), true));
       return true;
     }
 
@@ -2864,7 +2863,7 @@ export class PostWeatherLapseDamageAbAttr extends PostWeatherLapseAbAttr {
   applyPostWeatherLapse(pokemon: Pokemon, passive: boolean, weather: Weather, args: any[]): boolean {
     const scene = pokemon.scene;
     const abilityName = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name;
-    scene.queueMessage(i18next.t("abilityTriggers:postWeatherLapseDamage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName: abilityName }));
+    scene.queueMessage(i18next.t("abilityTriggers:postWeatherLapseDamage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName }));
     pokemon.damageAndUpdate(Math.ceil(pokemon.getMaxHp() / (16 / this.damageFactor)), HitResult.OTHER);
     return true;
   }
@@ -2938,7 +2937,7 @@ export class PostTurnStatusHealAbAttr extends PostTurnAbAttr {
         const scene = pokemon.scene;
         const abilityName = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name;
         scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.getBattlerIndex(),
-          Math.max(Math.floor(pokemon.getMaxHp() / 8), 1), i18next.t("abilityTriggers:poisonHeal", { pokemonName: getPokemonNameWithAffix(pokemon), abilityName: abilityName}), true));
+          Math.max(Math.floor(pokemon.getMaxHp() / 8), 1), i18next.t("abilityTriggers:poisonHeal", { pokemonName: getPokemonNameWithAffix(pokemon), abilityName }), true));
         return true;
       }
     }
@@ -3031,10 +3030,11 @@ export class PostTurnLootAbAttr extends PostTurnAbAttr {
     ) as BerryModifier | undefined;
 
     if (!berryModifier) {
+      const newBerry = new BerryModifier(chosenBerry, pokemon.id, chosenBerryType, 1);
       if (pokemon.isPlayer()) {
-        pokemon.scene.addModifier(new BerryModifier(chosenBerry, pokemon.id, chosenBerryType, 1));
+        pokemon.scene.addModifier(newBerry);
       } else {
-        pokemon.scene.addEnemyModifier(new BerryModifier(chosenBerry, pokemon.id, chosenBerryType, 1));
+        pokemon.scene.addEnemyModifier(newBerry);
       }
     } else if (berryModifier.stackCount < berryModifier.getMaxHeldItemCount(pokemon)) {
       berryModifier.stackCount++;
@@ -3095,7 +3095,7 @@ export class PostTurnHealAbAttr extends PostTurnAbAttr {
       const scene = pokemon.scene;
       const abilityName = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name;
       scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.getBattlerIndex(),
-        Math.max(Math.floor(pokemon.getMaxHp() / 16), 1), i18next.t("abilityTriggers:postTurnHeal", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName: abilityName }), true));
+        Math.max(Math.floor(pokemon.getMaxHp() / 16), 1), i18next.t("abilityTriggers:postTurnHeal", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName }), true));
       return true;
     }
 
@@ -3347,7 +3347,7 @@ export class HealFromBerryUseAbAttr extends AbAttr {
         pokemon.scene,
         pokemon.getBattlerIndex(),
         Math.max(Math.floor(pokemon.getMaxHp() * this.healPercent), 1),
-        i18next.t("abilityTriggers:healFromBerryUse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName: abilityName }),
+        i18next.t("abilityTriggers:healFromBerryUse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName }),
         true
       )
     );
@@ -3422,7 +3422,7 @@ export class ArenaTrapAbAttr extends CheckTrappedAbAttr {
   }
 
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
-    return i18next.t("abilityTriggers:arenaTrap", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName: abilityName });
+    return i18next.t("abilityTriggers:arenaTrap", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName });
   }
 }
 
@@ -3540,7 +3540,7 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
   }
 
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
-    return i18next.t("abilityTriggers:postFaintContactDamage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName: abilityName });
+    return i18next.t("abilityTriggers:postFaintContactDamage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName });
   }
 }
 
@@ -3560,7 +3560,7 @@ export class PostFaintHPDamageAbAttr extends PostFaintAbAttr {
   }
 
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
-    return i18next.t("abilityTriggers:postFaintHpDamage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName: abilityName });
+    return i18next.t("abilityTriggers:postFaintHpDamage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName });
   }
 }
 
@@ -3918,7 +3918,7 @@ export class IceFaceBlockPhysicalAbAttr extends ReceivedMoveDamageMultiplierAbAt
    * @returns {string} - The trigger message.
    */
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
-    return i18next.t("abilityTriggers:iceFaceAvoidedDamage", { pokemonName: getPokemonNameWithAffix(pokemon), abilityName: abilityName });
+    return i18next.t("abilityTriggers:iceFaceAvoidedDamage", { pokemonName: getPokemonNameWithAffix(pokemon), abilityName });
   }
 }
 
@@ -3993,7 +3993,7 @@ async function applyAbAttrsInternal<TAttr extends AbAttr>(
       pokemon.scene.setPhaseQueueSplice();
 
       let result = applyFunc(attr, passive);
-      // TODO Remove this when promises get reworked PR#924
+      // TODO Remove this when promises get reworked
       if (result instanceof Promise) {
         result = await result;
       }
