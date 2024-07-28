@@ -182,14 +182,7 @@ export abstract class PokemonSpeciesForm {
    * @returns Number of abilities
    */
   getAbilityCount(): integer {
-    let count = 1;
-    if (this.ability2 !== Abilities.NONE) {
-      count += 1;
-    }
-    if (this.abilityHidden !== Abilities.NONE) {
-      count += 1;
-    }
-    return count;
+    return this.abilityHidden !== Abilities.NONE ? 3 : 2;
   }
 
   /**
@@ -202,11 +195,7 @@ export abstract class PokemonSpeciesForm {
     if (abilityIndex === 0) {
       ret = this.ability1;
     } else if (abilityIndex === 1) {
-      if (this.ability2 !== Abilities.NONE) {
-        ret = this.ability2;
-      } else {
-        ret = this.abilityHidden;
-      }
+      ret = this.ability2;
     } else {
       ret = this.abilityHidden;
     }
@@ -853,7 +842,14 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
   }
 
   hasVariants() {
-    return variantData.hasOwnProperty(this.speciesId);
+    let variantDataIndex: string | number = this.speciesId;
+    if (this.forms.length > 0) {
+      const formKey = this.forms[this.formIndex]?.formKey;
+      if (formKey) {
+        variantDataIndex = `${variantDataIndex}-${formKey}`;
+      }
+    }
+    return variantData.hasOwnProperty(variantDataIndex) || variantData.hasOwnProperty(this.speciesId);
   }
 
   getFormSpriteKey(formIndex?: integer) {
