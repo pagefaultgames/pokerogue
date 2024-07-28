@@ -655,6 +655,7 @@ export class FreshStartChallenge extends Challenge {
     pokemon.variant = 0; // Not shiny
     pokemon.gender = Gender.MALE; // Starters default to male
     pokemon.formIndex = 0; // Froakie should be base form
+    pokemon.ivs = [10, 10, 10, 10, 10, 10]; // Default IVs of 10 for all stats
     return true;
   }
 
