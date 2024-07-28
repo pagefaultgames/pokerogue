@@ -58,6 +58,8 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
       loop: -1,
       yoyo: true,
     });
+
+    // TODO: test new beta fork
   }
 
   updateTitleStats(): void {
