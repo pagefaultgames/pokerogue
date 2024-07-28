@@ -2671,7 +2671,8 @@ export class MovePhase extends BattlePhase {
         // counterattack will redirect to remaining ally if original attacker faints
         if (this.scene.currentBattle.double && this.move.getMove().hasFlag(MoveFlags.REDIRECT_COUNTER)) {
           if (this.scene.getField()[this.targets[0]].hp === 0) {
-            this.targets[0] = this.scene.getEnemyField().find(p => p.hp > 0)?.getBattlerIndex();
+            const opposingField = this.pokemon.isPlayer() ? this.scene.getEnemyField() : this.scene.getPlayerField();
+            this.targets[0] = opposingField.find(p => p.hp > 0)?.getBattlerIndex();
           }
         }
       }
