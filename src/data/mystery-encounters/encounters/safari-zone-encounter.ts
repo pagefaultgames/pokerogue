@@ -4,7 +4,7 @@ import BattleScene from "#app/battle-scene";
 import IMysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
 import MysteryEncounterOption, { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { TrainerSlot } from "#app/data/trainer-config";
-import { ScanIvsPhase, SummonPhase, VictoryPhase } from "#app/phases";
+import { ScanIvsPhase, SummonPhase } from "#app/phases";
 import { HiddenAbilityRateBoosterModifier, IvScannerModifier } from "#app/modifier/modifier";
 import { EnemyPokemon } from "#app/field/pokemon";
 import { PokeballType } from "#app/data/pokeball";
@@ -136,7 +136,6 @@ const safariZoneGameOptions: MysteryEncounterOption[] = [
 
       if (catchResult) {
         // You caught pokemon
-        scene.unshiftPhase(new VictoryPhase(scene, 0));
         // Check how many safari pokemon left
         if (scene.currentBattle.mysteryEncounter.misc.safariPokemonRemaining > 0) {
           await summonSafariPokemon(scene);

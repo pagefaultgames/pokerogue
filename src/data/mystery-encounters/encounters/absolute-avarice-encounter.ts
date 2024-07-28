@@ -301,6 +301,7 @@ export const AbsoluteAvariceEncounter: IMysteryEncounter =
             }
           });
 
+          transitionMysteryEncounterIntroVisuals(scene, true, true, 500);
           leaveEncounterWithoutBattle(scene, true);
         })
         .build()
@@ -331,6 +332,7 @@ export const AbsoluteAvariceEncounter: IMysteryEncounter =
           greedent.moveset = [new PokemonMove(Moves.THRASH), new PokemonMove(Moves.BODY_PRESS), new PokemonMove(Moves.STUFF_CHEEKS), new PokemonMove(Moves.SLACK_OFF)];
           greedent.passive = true;
 
+          transitionMysteryEncounterIntroVisuals(scene, true, true, 500);
           await catchPokemon(scene, greedent, null, PokeballType.POKEBALL, false);
           leaveEncounterWithoutBattle(scene, true);
         })

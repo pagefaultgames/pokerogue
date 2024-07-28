@@ -1787,9 +1787,9 @@ export class SwitchSummonPhase extends SummonPhase {
     }
 
     // TODO: maybe remove this? Not sure if still necessary
-    if (!pokemon.isActive() || !pokemon.isOnField()) {
-      this.switchAndSummon();
-    }
+    // if (!pokemon.isActive() || !pokemon.isOnField()) {
+    //   this.switchAndSummon();
+    // }
 
     this.scene.ui.showText(this.player ?
       i18next.t("battle:playerComeBack", { pokemonName: getPokemonNameWithAffix(pokemon) }) :
@@ -4081,8 +4081,13 @@ export class FaintPhase extends PokemonPhase {
 }
 
 export class VictoryPhase extends PokemonPhase {
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex) {
+  /** If true, indicates that the phase is intended for EXP purposes only, and not to continue a battle to next phase */
+  isExpOnly: boolean;
+
+  constructor(scene: BattleScene, battlerIndex: BattlerIndex, isExpOnly: boolean = false) {
     super(scene, battlerIndex);
+
+    this.isExpOnly = isExpOnly;
   }
 
   start() {
@@ -4176,7 +4181,7 @@ export class VictoryPhase extends PokemonPhase {
     }
 
     if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER) {
-      handleMysteryEncounterVictory(this.scene);
+      handleMysteryEncounterVictory(this.scene, false, this.isExpOnly);
       this.end();
       return;
     }

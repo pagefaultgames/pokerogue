@@ -605,7 +605,13 @@ export function leaveEncounterWithoutBattle(scene: BattleScene, addHealPhase: bo
   handleMysteryEncounterVictory(scene, addHealPhase);
 }
 
-export function handleMysteryEncounterVictory(scene: BattleScene, addHealPhase: boolean = false) {
+/**
+ *
+ * @param scene
+ * @param addHealPhase - Adds an empty shop phase to allow player to purchase healing items
+ * @param doNotContinue - default `false`. If set to true, will not end the battle and continue to next wave
+ */
+export function handleMysteryEncounterVictory(scene: BattleScene, addHealPhase: boolean = false, doNotContinue: boolean = false) {
   const allowedPkm = scene.getParty().filter((pkm) => pkm.isAllowedInBattle());
 
   if (allowedPkm.length === 0) {
@@ -616,7 +622,7 @@ export function handleMysteryEncounterVictory(scene: BattleScene, addHealPhase: 
 
   // If in repeated encounter variant, do nothing
   // Variant must eventually be swapped in order to handle "true" end of the encounter
-  if (scene.currentBattle.mysteryEncounter.encounterMode === MysteryEncounterMode.CONTINUOUS_ENCOUNTER) {
+  if (scene.currentBattle.mysteryEncounter.encounterMode === MysteryEncounterMode.CONTINUOUS_ENCOUNTER || doNotContinue) {
     return;
   } else if (scene.currentBattle.mysteryEncounter.encounterMode === MysteryEncounterMode.NO_BATTLE) {
     scene.pushPhase(new EggLapsePhase(scene));
