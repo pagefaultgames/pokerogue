@@ -117,9 +117,9 @@ export const EGG_GACHA_PULL_COUNT_OVERRIDE: number = 0;
  */
 
 // 1 to 256, set to null to ignore
-export const MYSTERY_ENCOUNTER_RATE_OVERRIDE: number = 256;
+export const MYSTERY_ENCOUNTER_RATE_OVERRIDE: number = null;
 export const MYSTERY_ENCOUNTER_TIER_OVERRIDE: MysteryEncounterTier = null;
-export const MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType = MysteryEncounterType.ABSOLUTE_AVARICE;
+export const MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType = null;
 
 /**
  * MODIFIER / ITEM OVERRIDES
@@ -137,7 +137,7 @@ export const MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType = MysteryEncounter
  * - BerryType is for BERRY
  * - SpeciesStatBoosterItem is for SPECIES_STAT_BOOSTER
  */
-interface ModifierOverride {
+export interface ModifierOverride {
     name: keyof typeof modifierTypes & string,
     count?: integer
     type?: TempBattleStat|Stat|Nature|Type|BerryType|SpeciesStatBoosterItem
@@ -155,4 +155,4 @@ export const NEVER_CRIT_OVERRIDE: boolean = false;
  * If less items are listed than rolled, only some items will be replaced
  * If more items are listed than rolled, only the first X items will be shown, where X is the number of items rolled.
  */
-export const ITEM_REWARD_OVERRIDE: Array<String> = [];
+export const ITEM_REWARD_OVERRIDE: Array<keyof typeof modifierTypes & string> = [];

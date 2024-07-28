@@ -1072,12 +1072,14 @@ export default class BattleScene extends SceneBase {
         this.field.add(newTrainer);
       }
 
-      // TODO: remove this once spawn rates are finalized
+      // TODO: remove these once ME spawn rates are finalized
       // let testStartingWeight = 0;
       // while (testStartingWeight < 3) {
       //   calculateMEAggregateStats(this, testStartingWeight);
       //   testStartingWeight += 2;
       // }
+      // calculateRareSpawnAggregateStats(this, 14);
+
       // Check for mystery encounter
       // Can only occur in place of a standard wild battle, waves 10-180
       if (this.gameMode.hasMysteryEncounters && newBattleType === BattleType.WILD && !this.gameMode.isBoss(newWaveIndex) && newWaveIndex < 180 && newWaveIndex > 10) {

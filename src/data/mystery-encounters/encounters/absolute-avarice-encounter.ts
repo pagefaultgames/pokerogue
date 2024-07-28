@@ -168,11 +168,6 @@ export const AbsoluteAvariceEncounter: IMysteryEncounter =
     .withTitle(`${namespace}:title`)
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)
-    .withOutroDialogue([
-      {
-        text: `${namespace}:outro`,
-      }
-    ])
     .withOnInit((scene: BattleScene) => {
       const encounter = scene.currentBattle.mysteryEncounter;
 
@@ -423,8 +418,6 @@ function doGreedentSpriteSteal(scene: BattleScene) {
 
 function doGreedentEatBerries(scene: BattleScene) {
   const greedentSprites = scene.currentBattle.mysteryEncounter.introVisuals.getSpriteAtIndex(0);
-
-  // scene.playSound("Follow Me");
   let index = 1;
   scene.tweens.add({
     targets: greedentSprites,

@@ -48,6 +48,14 @@ import {
   PostMysteryEncounterPhase
 } from "#app/phases/mystery-encounter-phases";
 
+export interface PromptHandler {
+  phaseTarget?;
+  mode?;
+  callback?;
+  expireFn?;
+  awaitingActionInput?;
+}
+
 export default class PhaseInterceptor {
   public scene;
   public phases = {};
@@ -56,7 +64,7 @@ export default class PhaseInterceptor {
   private interval;
   private promptInterval;
   private intervalRun;
-  private prompts;
+  private prompts: PromptHandler[];
   private phaseFrom;
   private inProgress;
   private originalSetMode;
@@ -337,6 +345,7 @@ export default class PhaseInterceptor {
    * @param mode - The mode of the UI.
    * @param callback - The callback function to execute.
    * @param expireFn - The function to determine if the prompt has expired.
+   * @param awaitingActionInput
    */
   addToNextPrompt(phaseTarget: string, mode: Mode, callback: () => void, expireFn: () => void, awaitingActionInput: boolean = false) {
     this.prompts.push({
