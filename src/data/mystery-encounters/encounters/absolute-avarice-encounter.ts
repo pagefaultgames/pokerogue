@@ -26,7 +26,7 @@ import { PokeballType } from "#app/data/pokeball";
 const namespace = "mysteryEncounter:absoluteAvarice";
 
 /**
- * Delibird-y encounter.
+ * Absolute Avarice encounter.
  * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/58 | GitHub Issue #58}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
@@ -209,7 +209,6 @@ export const AbsoluteAvariceEncounter: IMysteryEncounter =
             species: getPokemonSpecies(Species.GREEDENT),
             isBoss: true,
             bossSegments: 3,
-            // nature: Nature.BOLD,
             moveSet: [Moves.THRASH, Moves.BODY_PRESS, Moves.STUFF_CHEEKS, Moves.SLACK_OFF],
             modifierTypes: bossModifierTypes,
             tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
@@ -327,7 +326,7 @@ export const AbsoluteAvariceEncounter: IMysteryEncounter =
         .withOptionPhase(async (scene: BattleScene) => {
           // Let it have the food
           // Greedent joins the team, level equal to 2 below highest party member
-          const level = getHighestLevelPlayerPokemon(scene).level;
+          const level = getHighestLevelPlayerPokemon(scene).level - 2;
           const greedent = scene.addEnemyPokemon(getPokemonSpecies(Species.GREEDENT), level, TrainerSlot.NONE, false);
           greedent.moveset = [new PokemonMove(Moves.THRASH), new PokemonMove(Moves.BODY_PRESS), new PokemonMove(Moves.STUFF_CHEEKS), new PokemonMove(Moves.SLACK_OFF)];
           greedent.passive = true;
