@@ -265,6 +265,10 @@ export const PGMachv: AchievementTranslationEntries = {
   "MONO_FAIRY": {
     name: "Clube das Winx",
   },
+  "FRESH_START": {
+    name: "De Primeira!",
+    description: "Complete o desafio de novo começo."
+  },
 } as const;
 
 // Achievement translations for the when the player character is female
@@ -531,5 +535,9 @@ export const PGFachv: AchievementTranslationEntries = {
   },
   "MONO_FAIRY": {
     name: "Clube das Winx",
+  },
+  "FRESH_START": {
+    name: "De Primeira!",
+    description: "Complete o desafio de novo começo."
   },
 } as const;
