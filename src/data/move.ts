@@ -2857,7 +2857,7 @@ export class BeatUpAttr extends VariablePowerAttr {
 
     const party = user.isPlayer() ? user.scene.getParty() : user.scene.getEnemyParty();
     const allyCount = party.filter(pokemon => {
-      return pokemon.id === user.id || pokemon.status?.effect === undefined || pokemon.status?.effect === StatusEffect.NONE;
+      return pokemon.id === user.id || !pokemon.status?.effect;
     }).length;
     const allyIndex = (user.turnData.hitCount - user.turnData.hitsLeft) % allyCount;
     power.value = beatUpFunc(user, allyIndex);
