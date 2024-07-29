@@ -1,6 +1,7 @@
 import { ability } from "./ability";
 import { abilityTriggers } from "./ability-trigger";
 import { arenaFlyout } from "./arena-flyout";
+import { arenaTag } from "./arena-tag";
 import { PGFachv, PGMachv } from "./achv";
 import { battle } from "./battle";
 import { battleInfo } from "./battle-info";
@@ -55,6 +56,7 @@ export const zhCnConfig = {
   ability: ability,
   abilityTriggers: abilityTriggers,
   arenaFlyout: arenaFlyout,
+  arenaTag: arenaTag,
   battle: battle,
   battleInfo: battleInfo,
   battleMessageUiHandler: battleMessageUiHandler,

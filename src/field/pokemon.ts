@@ -1772,7 +1772,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (opponents.length === 1) {
       return opponents[0].name;
     }
-    return this.isPlayer() ? "the opposing team" : "your team";
+    return this.isPlayer() ? i18next.t("arenaTag:opposingTeam") : i18next.t("arenaTag:yourTeam");
   }
 
   getAlly(): Pokemon {
@@ -4062,6 +4062,7 @@ export class PokemonTurnData {
   public currDamageDealt: integer = 0;
   public damageTaken: integer = 0;
   public attacksReceived: AttackMoveResult[] = [];
+  public order: number;
 }
 
 export enum AiType {
