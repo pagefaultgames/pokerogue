@@ -12,6 +12,7 @@ import { GameModes, getGameMode } from "#app/game-mode";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { removeEnemyHeldItems } from "../utils/testUtils";
 
 describe("Abilities - Intimidate", () => {
   let phaserGame: Phaser.Game;
@@ -40,6 +41,7 @@ describe("Abilities - Intimidate", () => {
 
   it("single - wild with switch", async () => {
     await game.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
+    removeEnemyHeldItems(game.scene);
     game.onNextPrompt(
       "CheckSwitchPhase",
       Mode.CONFIRM,
@@ -70,6 +72,7 @@ describe("Abilities - Intimidate", () => {
   it("single - boss should only trigger once then switch", async () => {
     vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(10);
     await game.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
+    removeEnemyHeldItems(game.scene);
     game.onNextPrompt(
       "CheckSwitchPhase",
       Mode.CONFIRM,
@@ -99,6 +102,7 @@ describe("Abilities - Intimidate", () => {
   it("single - trainer should only trigger once with switch", async () => {
     vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(5);
     await game.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
+    removeEnemyHeldItems(game.scene);
     game.onNextPrompt(
       "CheckSwitchPhase",
       Mode.CONFIRM,
@@ -129,6 +133,7 @@ describe("Abilities - Intimidate", () => {
     vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
     vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(5);
     await game.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
+    removeEnemyHeldItems(game.scene);
     game.onNextPrompt(
       "CheckSwitchPhase",
       Mode.CONFIRM,
@@ -155,6 +160,7 @@ describe("Abilities - Intimidate", () => {
     vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
     vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(3);
     await game.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
+    removeEnemyHeldItems(game.scene);
     game.onNextPrompt(
       "CheckSwitchPhase",
       Mode.CONFIRM,
@@ -181,6 +187,7 @@ describe("Abilities - Intimidate", () => {
     vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
     vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(10);
     await game.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
+    removeEnemyHeldItems(game.scene);
     game.onNextPrompt(
       "CheckSwitchPhase",
       Mode.CONFIRM,
@@ -207,6 +214,7 @@ describe("Abilities - Intimidate", () => {
     vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(2);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.AERIAL_ACE]);
     await game.startBattle([Species.MIGHTYENA, Species.POOCHYENA]);
+    removeEnemyHeldItems(game.scene);
     let battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
     expect(battleStatsOpponent[BattleStat.ATK]).toBe(-1);
     let battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
@@ -233,6 +241,7 @@ describe("Abilities - Intimidate", () => {
     vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(2);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH]);
     await game.startBattle([Species.MIGHTYENA, Species.POOCHYENA]);
+    removeEnemyHeldItems(game.scene);
     let battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
     expect(battleStatsOpponent[BattleStat.ATK]).toBe(-1);
     let battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
@@ -258,6 +267,7 @@ describe("Abilities - Intimidate", () => {
     vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.VOLT_SWITCH, Moves.VOLT_SWITCH, Moves.VOLT_SWITCH, Moves.VOLT_SWITCH]);
     vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(5);
     await game.startBattle([Species.MIGHTYENA, Species.POOCHYENA]);
+    removeEnemyHeldItems(game.scene);
     let battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
     expect(battleStatsOpponent[BattleStat.ATK]).toBe(-1);
     let battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
@@ -297,6 +307,7 @@ describe("Abilities - Intimidate", () => {
     vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
     vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(5);
     await game.startBattle([Species.MIGHTYENA, Species.POOCHYENA]);
+    removeEnemyHeldItems(game.scene);
     let battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
     expect(battleStatsOpponent[BattleStat.ATK]).toBe(-1);
     let battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
@@ -336,9 +347,7 @@ describe("Abilities - Intimidate", () => {
     vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(3);
     vi.spyOn(Overrides, "OPP_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{ name: "COIN_CASE" }]);
     await game.runToSummon([Species.MIGHTYENA]);
-    // Get rid of any modifiers that may alter power
-    game.scene.clearEnemyHeldItemModifiers();
-    game.scene.clearEnemyModifiers();
+    removeEnemyHeldItems(game.scene);
     await game.phaseInterceptor.to(CommandPhase, false);
     const battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
     expect(battleStatsOpponent[BattleStat.ATK]).toBe(-1);
@@ -365,6 +374,7 @@ describe("Abilities - Intimidate", () => {
     });
 
     await game.phaseInterceptor.run(EncounterPhase);
+    removeEnemyHeldItems(game.scene);
 
     await game.phaseInterceptor.to(CommandPhase, false);
     const battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
