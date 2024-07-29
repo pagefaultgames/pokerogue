@@ -73,7 +73,7 @@ describe("Items - Toxic orb", () => {
     // Toxic orb should trigger here
     await game.phaseInterceptor.run(MessagePhase);
     const message = game.textInterceptor.getLatestMessage();
-    expect(message).toContain("was badly poisoned by Toxic Orb");
+    expect(message).toContain("was badly poisoned by the Toxic Orb");
     await game.phaseInterceptor.run(MessagePhase);
     const message2 = game.textInterceptor.getLatestMessage();
     expect(message2).toContain("is hurt");
