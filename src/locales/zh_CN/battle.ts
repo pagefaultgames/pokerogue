@@ -4,10 +4,10 @@ export const battle: SimpleTranslationEntries = {
   "bossAppeared": "{{bossName}} 出现了。",
   "trainerAppeared": "{{trainerName}}\n想要和你对战！",
   "trainerAppearedDouble": "{{trainerName}}\n想要和你对战！",
-  "trainerSendOut": "{{trainerName}}派出了\n{{pokemonName}}!",
+  "trainerSendOut": "{{trainerName}}派出了\n{{pokemonName}}！",
   "singleWildAppeared": "一只野生的{{pokemonName}}出现了！",
   "multiWildAppeared": "野生的{{pokemonName1}}\n和{{pokemonName2}}出现了！",
-  "playerComeBack": "回来吧,{{pokemonName}}！",
+  "playerComeBack": "回来吧，{{pokemonName}}！",
   "trainerComeBack": "{{trainerName}}收回了{{pokemonName}}！",
   "playerGo": "去吧！{{pokemonName}}！",
   "trainerGo": "{{trainerName}}派出了\n{{pokemonName}}！",
@@ -61,7 +61,7 @@ export const battle: SimpleTranslationEntries = {
   "hpIsFull": "{{pokemonName}}的体力已满！",
   "skipItemQuestion": "你确定要跳过拾取道具吗？",
   "eggHatching": "咦？",
-  "stealEatBerry": "{{pokemonName}} stole and ate\n{{targetName}}'s {{berryName}}!",
+  "stealEatBerry": "{{pokemonName}}夺取并吃掉了\n{{targetName}}的{{berryName}}！",
   "ppHealBerry": "{{pokemonNameWithAffix}}用{{berryName}}\n回复了{{moveName}}的PP！",
   "hpHealBerry": "{{pokemonNameWithAffix}}用{{berryName}}\n回复了体力！",
   "ivScannerUseQuestion": "对{{pokemonName}}使用个体值扫描仪？",
@@ -81,7 +81,7 @@ export const battle: SimpleTranslationEntries = {
   "statHarshlyFell_other": "{{pokemonNameWithAffix}}的 {{stats}}大幅降低了！",
   "statSeverelyFell_other": "{{pokemonNameWithAffix}}的 {{stats}}极大幅降低了！",
   "statWontGoAnyLower_other": "{{pokemonNameWithAffix}}的 {{stats}}已经无法再降低了！",
-  "transformedIntoType": "{{pokemonName}} transformed\ninto the {{type}} type!",
+  "transformedIntoType": "{{pokemonName}}变成了\n{{type}}属性！",
   "ppReduced": "降低了{{targetName}}的\n{{moveName}}的PP{{reduction}}点！",
   "retryBattle": "你要从对战开始时重试么？",
   "unlockedSomething": "{{unlockedThing}}\n已解锁。",
@@ -147,5 +147,5 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsSaltCuredLapse": "{{pokemonNameWithAffix}}\n受到了{{moveName}}的伤害！",
   "battlerTagsCursedOnAdd": "{{pokemonNameWithAffix}}削减了自己的体力，\n并诅咒了{{pokemonName}}！",
   "battlerTagsCursedLapse": "{{pokemonNameWithAffix}}\n正受到诅咒！",
-  "battlerTagsStockpilingOnAdd": "{{pokemonNameWithAffix}} stockpiled {{stockpiledCount}}!"
+  "battlerTagsStockpilingOnAdd": "{{pokemonNameWithAffix}}蓄力了{{stockpiledCount}}次！"
 } as const;
