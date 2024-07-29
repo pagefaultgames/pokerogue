@@ -1723,6 +1723,7 @@ export class ReturnPhase extends SwitchSummonPhase {
     pokemon.resetSummonData();
 
     this.scene.updateFieldScale();
+    applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, pokemon);
 
     this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger);
   }
