@@ -46,7 +46,7 @@ import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleSpec } from "#enums/battle-spec";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { BerryType } from "#enums/berry-type";
+import { yyType } from "#enums/berry-type";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -3096,6 +3096,17 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   getBattleInfo(): BattleInfo {
     return this.battleInfo;
+  }
+
+  /**
+   * Checks whether or not the Pokemon's root form has the same ability
+   * @param abilityIndex the given ability index we are checking
+   * @returns true if the abilities are the same
+   */
+  hasSameAbilityInRootForm(abilityIndex: number): boolean {
+    const currentAbilityIndex = this.abilityIndex;
+    const rootForm = getPokemonSpecies(this.species.getRootSpeciesId());
+    return rootForm.getAbility(abilityIndex) === rootForm.getAbility(currentAbilityIndex);
   }
 }
 
