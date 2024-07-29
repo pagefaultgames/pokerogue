@@ -3406,6 +3406,72 @@ export class MultiHitPowerIncrementAttr extends VariablePowerAttr {
   }
 }
 
+/**
+ * Attribute used for moves that double in power if the given move immediately
+ * preceded the move applying the attribute, namely Fusion Flare and
+ * Fusion Bolt.
+ * @extends VariablePowerAttr
+ * @see {@linkcode apply}
+ */
+export class LastMoveDoublePowerAttr extends VariablePowerAttr {
+  /** The move that must precede the current move */
+  private move: Moves;
+
+  constructor(move: Moves) {
+    super();
+
+    this.move = move;
+  }
+
+  /**
+   * Doubles power of move if the given move is found to precede the current
+   * move with no other moves being executed in between, only ignoring failed
+   * moves if any.
+   * @param user {@linkcode Pokemon} that used the move
+   * @param target N/A
+   * @param move N/A
+   * @param args [0] {@linkcode Utils.NumberHolder} that holds the resulting power of the move
+   * @returns true if attribute application succeeds, false otherwise
+   */
+  apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
+    const power = args[0] as Utils.NumberHolder;
+    const enemy = user.getOpponent(0);
+    const pokemonActed: Pokemon[] = [];
+
+    if (enemy.turnData.acted) {
+      pokemonActed.push(enemy);
+    }
+
+    if (user.scene.currentBattle.double) {
+      const userAlly = user.getAlly();
+      const enemyAlly = enemy.getAlly();
+
+      if (userAlly && userAlly.turnData.acted) {
+        pokemonActed.push(userAlly);
+      }
+      if (enemyAlly && enemyAlly.turnData.acted) {
+        pokemonActed.push(enemyAlly);
+      }
+    }
+
+    pokemonActed.sort((a, b) => b.turnData.order - a.turnData.order);
+
+    for (const p of pokemonActed) {
+      const [ lastMove ] = p.getLastXMoves(1);
+      if (lastMove.result !== MoveResult.FAIL) {
+        if ((lastMove.result === MoveResult.SUCCESS) && (lastMove.move === this.move)) {
+          power.value *= 2;
+          return true;
+        } else {
+          break;
+        }
+      }
+    }
+
+    return false;
+  }
+}
+
 export class VariableAtkAttr extends MoveAttr {
   constructor() {
     super();
@@ -7419,10 +7485,10 @@ export function initMoves() {
       .attr(StatChangeAttr, [ BattleStat.DEF, BattleStat.SPDEF, BattleStat.SPD ], -1, true),
     new AttackMove(Moves.FUSION_FLARE, Type.FIRE, MoveCategory.SPECIAL, 100, 100, 5, -1, 0, 5)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
-      .partial(),
+      .attr(LastMoveDoublePowerAttr, Moves.FUSION_BOLT),
     new AttackMove(Moves.FUSION_BOLT, Type.ELECTRIC, MoveCategory.PHYSICAL, 100, 100, 5, -1, 0, 5)
-      .makesContact(false)
-      .partial(),
+      .attr(LastMoveDoublePowerAttr, Moves.FUSION_FLARE)
+      .makesContact(false),
     new AttackMove(Moves.FLYING_PRESS, Type.FIGHTING, MoveCategory.PHYSICAL, 100, 95, 10, -1, 0, 6)
       .attr(MinimizeAccuracyAttr)
       .attr(FlyingTypeMultiplierAttr)
