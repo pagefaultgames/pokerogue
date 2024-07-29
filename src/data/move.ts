@@ -3839,18 +3839,17 @@ export class HiddenPowerTypeAttr extends VariableMoveTypeAttr {
  * This class handles the power for the Natural Gift move in the game.
  */
 export class NaturalGiftPowerAttr extends VariablePowerAttr {
-
   /**
    * Applies the Natural Gift power to the move.
    * @param user - The Pokémon using the move.
    * @param target - The target Pokémon.
    * @param move - The move being used.
-   * @param args - Additional arguments for the move. The first element is expected to be a Utils.NumberHolder which holds the power of the move.
+   * @param args - n/a
    * @returns A boolean indicating whether the power was successfully applied.
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const power = args[0] as Utils.NumberHolder;
-    power.value = user.scene.naturalGiftBerryModifier.getNaturalGiftPower();
+    const power = args[0];
+    power.value = user.turnData.naturalGiftBerryModifier.getNaturalGiftPower();
     return true;
   }
 }
@@ -3877,32 +3876,12 @@ class NaturalGiftTypeAttr extends VariableMoveTypeAttr {
   }
 
   /**
-   * Retrieves the failure text for the Natural Gift move, indicating why it failed.
-   * @param user - The Pokémon using the move.
-   * @param target - The target Pokémon.
-   * @param move - The move being used.
-   * @param cancelled - A boolean holder indicating if the move was cancelled.
-   * @returns The failure message or null if the move does not fail.
-   */
-  getFailedText(user: Pokemon, target: Pokemon, move: Move, cancelled: Utils.BooleanHolder): string | null {
-    const userBerries = user.scene.findModifiers(
-      m => m instanceof BerryModifier && m.pokemonId === user.id,
-      user.isPlayer()
-    ) as BerryModifier[];
-
-    if (userBerries.length === 0) {
-      return "But it failed!";
-    }
-    return null;
-  }
-
-  /**
    * Applies the Natural Gift move logic to the given user and target Pokémon.
    * Determines the berry to be used, sets the move type, and removes the berry.
    * @param user - The Pokémon using the move.
    * @param target - The target Pokémon.
    * @param move - The move being used.
-   * @param args - Additional arguments for the move.
+   * @param args - n/a
    * @returns A boolean indicating whether the move was successfully applied.
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -3910,15 +3889,8 @@ class NaturalGiftTypeAttr extends VariableMoveTypeAttr {
       m => m instanceof BerryModifier && m.pokemonId === user.id,
       user.isPlayer()
     ) as BerryModifier[];
-
-    if (userBerries.length === 0) {
-      const failedText = this.getFailedText(user, target, move, new Utils.BooleanHolder(true));
-      user.scene.queueMessage(failedText);
-      return false;
-    }
-
     const randomBerry = userBerries[user.randSeedInt(userBerries.length)];
-    user.scene.naturalGiftBerryModifier = randomBerry;
+    user.turnData.naturalGiftBerryModifier = randomBerry;
 
     move.type = randomBerry.getMoveTypeForBerry();
     user.scene.removeModifier(randomBerry, !user.isPlayer());

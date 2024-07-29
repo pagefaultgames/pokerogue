@@ -10,7 +10,7 @@ import * as Utils from "../utils";
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from "../data/type";
 import { getLevelTotalExp } from "../data/exp";
 import { Stat } from "../data/pokemon-stat";
-import { DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, PokemonBaseStatModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempBattleStatBoosterModifier, StatBoosterModifier, CritBoosterModifier, TerastallizeModifier } from "../modifier/modifier";
+import { DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, PokemonBaseStatModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempBattleStatBoosterModifier, StatBoosterModifier, CritBoosterModifier, TerastallizeModifier, BerryModifier } from "../modifier/modifier";
 import { PokeballType } from "../data/pokeball";
 import { Gender } from "../data/gender";
 import { initMoveAnim, loadMoveAnimAssets } from "../data/battle-anims";
@@ -4053,6 +4053,7 @@ export class PokemonTurnData {
   public currDamageDealt: integer = 0;
   public damageTaken: integer = 0;
   public attacksReceived: AttackMoveResult[] = [];
+  public naturalGiftBerryModifier: BerryModifier;
 }
 
 export enum AiType {
