@@ -347,11 +347,20 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.filterBar.defaultTypeVals = this.filterBar.getVals(DropDownColumn.TYPES);
 
     // Unlocks filter
-    const shiny1Sprite = this.scene.add.sprite(0, 0, "shiny_star_small");
+    const shiny1Sprite = this.scene.add.sprite(0, 0, "shiny_icons");
+    shiny1Sprite.setOrigin(0.15, 0.2);
+    shiny1Sprite.setScale(0.6);
+    shiny1Sprite.setFrame(getVariantIcon(0));
     shiny1Sprite.setTint(getVariantTint(0));
-    const shiny2Sprite = this.scene.add.sprite(0, 0, "shiny_star_small");
+    const shiny2Sprite = this.scene.add.sprite(0, 0, "shiny_icons");
+    shiny2Sprite.setOrigin(0.15, 0.2);
+    shiny2Sprite.setScale(0.6);
+    shiny2Sprite.setFrame(getVariantIcon(1));
     shiny2Sprite.setTint(getVariantTint(1));
-    const shiny3Sprite = this.scene.add.sprite(0, 0, "shiny_star_small");
+    const shiny3Sprite = this.scene.add.sprite(0, 0, "shiny_icons");
+    shiny3Sprite.setOrigin(0.15, 0.2);
+    shiny3Sprite.setScale(0.6);
+    shiny3Sprite.setFrame(getVariantIcon(2));
     shiny3Sprite.setTint(getVariantTint(2));
 
     const unlocksOptions = [
