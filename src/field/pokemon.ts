@@ -161,7 +161,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.metLevel = dataSource.metLevel || 5;
       this.luck = dataSource.luck;
       this.metBiome = dataSource.metBiome;
-      this.metSpecies = dataSource.metSpecies || (this.metBiome !== -1 ? this.species.speciesId : this.species.getRootSpeciesId(true));
+      this.metSpecies = dataSource.metSpecies ?? (this.metBiome !== -1 ? this.species.speciesId : this.species.getRootSpeciesId(true));
       this.pauseEvolutions = dataSource.pauseEvolutions;
       this.pokerus = !!dataSource.pokerus;
       this.fusionSpecies = dataSource.fusionSpecies instanceof PokemonSpecies ? dataSource.fusionSpecies : getPokemonSpecies(dataSource.fusionSpecies);
