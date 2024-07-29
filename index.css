@@ -209,7 +209,7 @@ input:-internal-autofill-selected {
 #tnc-links {
   font-size: larger;
   position: relative;
-  bottom: calc(95vh - 100vw / 16 * 9);
+  bottom: calc(92vh - 100vw / 16 * 9);
 }
 
 a {
