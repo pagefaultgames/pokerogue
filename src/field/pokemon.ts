@@ -1241,14 +1241,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     const immuneTags = this.findTags(tag => tag instanceof TypeImmuneTag && tag.immuneType === moveType);
-    immuneTags.forEach(tag => {
-      if (move !== undefined) {
-        const hitsTagAttrs = move.getAttrs(HitsTagAttr).filter(attr => attr.tagType === tag.tagType);
-        if (hitsTagAttrs.length === 0) {
-          multiplier = 0;
-        }
+    for (const tag of immuneTags) {
+      if (move && !move.getAttrs(HitsTagAttr).some(attr => attr.tagType === tag.tagType)) {
+        multiplier = 0;
+        break;
       }
-    });
+    }
 
     return multiplier;
   }
@@ -1949,7 +1947,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         }
 
         const targetCount = getMoveTargets(source, move.id).targets.length;
-        const targetMultiplier = targetCount > 1 ? 0.75 : 1;
+        const targetMultiplier = targetCount > 1 ? 0.75 : 1; // 25% damage debuff on multi-target hits (even if it's immune)
 
         applyMoveAttrs(VariableAtkAttr, source, this, move, sourceAtk);
         applyMoveAttrs(VariableDefAttr, source, this, move, targetDef);
@@ -2282,7 +2280,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   lapseTags(lapseType: BattlerTagLapseType): void {
     const tags = this.summonData.tags;
-    tags.filter(t => lapseType === BattlerTagLapseType.FAINT || ((t.lapseType.some(lType => lType === lapseType)) && !(t.lapse(this, lapseType)))).forEach(t => {
+    tags.filter(t => lapseType === BattlerTagLapseType.FAINT || ((t.lapseTypes.some(lType => lType === lapseType)) && !(t.lapse(this, lapseType)))).forEach(t => {
       t.onRemove(this);
       tags.splice(tags.indexOf(t), 1);
     });

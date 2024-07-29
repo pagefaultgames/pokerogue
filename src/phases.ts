@@ -1588,8 +1588,6 @@ export class SwitchSummonPhase extends SummonPhase {
       }
     }
 
-    // if doReturn === False OR slotIndex !== -1 (slotIndex is valid) and the pokemon doesn't exist/is false
-    // then switchAndSummon(), manually pick pokemon to switch into
     if (!this.doReturn || (this.slotIndex !== -1 && !(this.player ? this.scene.getParty() : this.scene.getEnemyParty())[this.slotIndex])) {
       if (this.player) {
         return this.switchAndSummon();
@@ -3321,7 +3319,7 @@ export class StatChangePhase extends PokemonPhase {
 
       applyPostStatChangeAbAttrs(PostStatChangeAbAttr, pokemon, filteredStats, this.levels, this.selfTarget);
 
-      //Look for any other stat change phases; if this is the last one, do White Herb check
+      // Look for any other stat change phases; if this is the last one, do White Herb check
       const existingPhase = this.scene.findPhase(p => p instanceof StatChangePhase && p.battlerIndex === this.battlerIndex);
       if (!(existingPhase instanceof StatChangePhase)) {
         // Apply White Herb if needed

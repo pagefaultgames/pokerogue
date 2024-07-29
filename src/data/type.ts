@@ -505,7 +505,7 @@ export function getTypeDamageMultiplier(attackType: integer, defType: integer): 
  * Retrieve the types resisting a given type
  * @returns An array populated with Types, or an empty array if no resistances exist (Unknown or Stellar type)
  */
-export function getTypeResistances(type: integer): Type[] {
+export function getTypeResistances(type: number): Type[] {
   switch (type) {
   case Type.NORMAL:
     return [Type.ROCK, Type.STEEL, Type.GHOST];

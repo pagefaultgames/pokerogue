@@ -138,7 +138,7 @@ export class SpeciesFormChange {
   public formKey: string;
   public trigger: SpeciesFormChangeTrigger;
   public quiet: boolean;
-  public conditions: SpeciesFormChangeCondition[];
+  public readonly conditions: SpeciesFormChangeCondition[];
 
   constructor(speciesId: Species, preFormKey: string, evoFormKey: string, trigger: SpeciesFormChangeTrigger, quiet: boolean = false, ...conditions: SpeciesFormChangeCondition[]) {
     this.speciesId = speciesId;
@@ -378,7 +378,7 @@ export function getSpeciesFormChangeMessage(pokemon: Pokemon, formChange: Specie
 /**
  * Gives a condition for form changing checking if a species is registered as caught in the player's dex data.
  * Used for fusion forms such as Kyurem and Necrozma.
- * @param species
+ * @param species {@linkcode Species}
  * @returns A {@linkcode SpeciesFormChangeCondition} checking if that species is registered as caught
  */
 function getSpeciesDependentFormChangeCondition(species: Species): SpeciesFormChangeCondition {
