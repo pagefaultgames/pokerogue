@@ -116,22 +116,22 @@ export class ModifierType {
   }
 
   /**
-   * Populates item tier for ModifierType instance
-   * Tier is a necessary field for items that appear in player shop (determines the Pokeball visual they use)
-   * To find the tier, this function performs a reverse lookup of the item type in modifier pools
-   * @param poolType - Default 'ModifierPoolType.PLAYER'. Which pool to lookup item tier from
+   * Populates the tier field by performing a reverse lookup on the modifier pool specified by {@linkcode poolType} using the
+   * {@linkcode ModifierType}'s id.
+   * @param poolType the {@linkcode ModifierPoolType} to look into to derive the item's tier; defaults to {@linkcode ModifierPoolType.PLAYER}
    */
   withTierFromPool(poolType: ModifierPoolType = ModifierPoolType.PLAYER): ModifierType {
-    const modifierPool = getModifierPoolForType(poolType);
-    Object.values(modifierPool).every(weightedModifiers => {
-      weightedModifiers.every(m => {
-        if (m.modifierType.id === this.id) {
-          this.tier = m.modifierType.tier;
-          return false; // Early lookup return if tier found
+    for (const tier of Object.values(getModifierPoolForType(poolType))) {
+      for (const modifier of tier) {
+        if (this.id === modifier.modifierType.id) {
+          this.tier = modifier.modifierType.tier;
+          break;
         }
-      });
-      return !this.tier; // Early lookup return if tier found
-    });
+      }
+      if (this.tier) {
+        break;
+      }
+    }
     return this;
   }
 
