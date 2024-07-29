@@ -2,20 +2,20 @@ import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
 import Overrides from "#app/overrides";
-import { Species } from "#app/enums/species.js";
-import { Abilities } from "#app/enums/abilities.js";
-import { Moves } from "#app/enums/moves.js";
+import { Species } from "#app/enums/species";
+import { Abilities } from "#app/enums/abilities";
+import { Moves } from "#app/enums/moves";
 import { getMovePosition } from "../utils/gameManagerUtils";
-import { BerryPhase, MoveEffectPhase, MoveEndPhase } from "#app/phases.js";
-import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import { BattleStat } from "#app/data/battle-stat.js";
-import { allMoves, StealHeldItemChanceAttr } from "#app/data/move.js";
-import { SubstituteTag, TrappedTag } from "#app/data/battler-tags.js";
-import { StatusEffect } from "#app/data/status-effect.js";
-import { BerryType } from "#app/enums/berry-type.js";
-import { Mode } from "#app/ui/ui.js";
-import PartyUiHandler from "#app/ui/party-ui-handler.js";
-import { Button } from "#app/enums/buttons.js";
+import { BerryPhase, MoveEffectPhase, MoveEndPhase } from "#app/phases";
+import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { BattleStat } from "#app/data/battle-stat";
+import { allMoves, StealHeldItemChanceAttr } from "#app/data/move";
+import { SubstituteTag, TrappedTag } from "#app/data/battler-tags";
+import { StatusEffect } from "#app/data/status-effect";
+import { BerryType } from "#app/enums/berry-type";
+import { Mode } from "#app/ui/ui";
+import PartyUiHandler from "#app/ui/party-ui-handler";
+import { Button } from "#app/enums/buttons";
 
 const TIMEOUT = 20 * 1000; // 20 sec timeout
 
