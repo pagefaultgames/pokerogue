@@ -6,7 +6,7 @@ export const filterBar: SimpleTranslationEntries = {
   "unlocksFilter": "Outros",
   "winFilter": "Vit.",
   "sortFilter": "Ordem",
-  "all": "Todos",
+  "all": "Tudo",
   "normal": "Normal",
   "uncaught": "Não Capturado",
   "passiveUnlocked": "Passiva Desbloq.",
