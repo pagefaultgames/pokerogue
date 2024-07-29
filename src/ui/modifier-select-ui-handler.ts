@@ -10,7 +10,9 @@ import {Button} from "#enums/buttons";
 import MoveInfoOverlay from "./move-info-overlay";
 import { allMoves } from "../data/move";
 import * as Utils from "./../utils";
+import { SelectModifierPhase } from "#app/phases.js";
 import i18next from "i18next";
+
 
 export const SHOP_OPTIONS_ROW_LIMIT = 6;
 
@@ -246,7 +248,8 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       });
 
       this.setCursor(0);
-      this.setRowCursor(1);
+      const phase = this.scene.getCurrentPhase() as SelectModifierPhase;
+      phase.getRerollCount() > 0 ? this.setRowCursor(this.scene.rerollTarget) : this.setRowCursor(1);
 
       handleTutorial(this.scene, Tutorial.Select_Item).then(() => {
         this.setCursor(0);

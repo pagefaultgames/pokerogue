@@ -5131,7 +5131,6 @@ export class SelectModifierPhase extends BattlePhase {
 
   constructor(scene: BattleScene, rerollCount: integer = 0, modifierTiers?: ModifierTier[]) {
     super(scene);
-
     this.rerollCount = rerollCount;
     this.modifierTiers = modifierTiers;
   }
@@ -5310,6 +5309,10 @@ export class SelectModifierPhase extends BattlePhase {
 
   isPlayer(): boolean {
     return true;
+  }
+
+  getRerollCount(): integer {
+    return this.rerollCount;
   }
 
   getRerollCost(typeOptions: ModifierTypeOption[], lockRarities: boolean): integer {
