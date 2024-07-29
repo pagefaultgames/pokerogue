@@ -567,22 +567,3 @@ export function capitalizeString(str: string, sep: string, lowerFirstChar: boole
   }
   return null;
 }
-
-/**
- * Sets the visibility of Terms and Conditions links
- * These are always displayed by default on load of the page, but will be toggled off when navigating off the Title screen
- * They will be toggled back on when returning to the Title screen or Login for any reason
- * @param visible
- */
-export function setTNCsVisible(visible: boolean): void {
-  const links = document.getElementById("tnc-links");
-  if (!links) {
-    return;
-  }
-
-  if (!visible) {
-    links.style.display = "none";
-  } else {
-    links.style.display = "";
-  }
-}
