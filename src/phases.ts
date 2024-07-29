@@ -402,7 +402,14 @@ export class TitlePhase extends Phase {
     });
   }
 
+  hideTNCs(): void {
+    const links = document.getElementById("tnc-links");
+    links.style.display = "none";
+  }
+
   end(): void {
+    this.hideTNCs();
+
     if (!this.loaded && !this.scene.gameMode.isDaily) {
       this.scene.arena.preloadBgm();
       this.scene.gameMode = getGameMode(this.gameMode);
