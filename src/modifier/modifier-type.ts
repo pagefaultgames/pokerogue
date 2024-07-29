@@ -1950,9 +1950,7 @@ export function overridePlayerModifierTypeOptions(options: ModifierTypeOption[],
     }
 
     if (modifierType) {
-      options[i].type = modifierType
-        .withIdFromFunc(modifierFunc)
-        .withTierFromPool();
+      options[i].type = modifierType.withIdFromFunc(modifierFunc).withTierFromPool();
     }
   }
 }
