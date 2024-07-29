@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "safarizone.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 105,
+				"h": 83
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "safarizone.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 103,
+						"h": 81
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 103,
+						"h": 81
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 103,
+						"h": 81
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:f07e2d44900011048b658765e193a86c:3d91036b9c3943256dd1e4712042ec59:d467a15bea042bd0d310f1cce7d9791f$"
+	}
+}

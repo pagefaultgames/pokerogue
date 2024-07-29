@@ -47,6 +47,7 @@ export default interface IMysteryEncounter {
   encounterAnimations?: EncounterAnim[];
   hideBattleIntroMessage?: boolean;
   autoHideIntroVisuals?: boolean;
+  enterIntroVisualsFromRight?: boolean;
   catchAllowed?: boolean;
   maxAllowedEncounters?: number;
 
@@ -159,14 +160,15 @@ export default class IMysteryEncounter implements IMysteryEncounter {
     if (!isNullOrUndefined(encounter)) {
       Object.assign(this, encounter);
     }
-    this.encounterTier = !isNullOrUndefined(this.encounterTier) ? this.encounterTier : MysteryEncounterTier.COMMON;
+    this.encounterTier = this.encounterTier ?? MysteryEncounterTier.COMMON;
     this.dialogue = this.dialogue ?? {};
     // Default max is 1 for ROGUE encounters, 3 for others
     this.maxAllowedEncounters = this.maxAllowedEncounters ?? this.encounterTier === MysteryEncounterTier.ROGUE ? 1 : 3;
     this.encounterMode = MysteryEncounterMode.DEFAULT;
     this.requirements = this.requirements ? this.requirements : [];
-    this.hideBattleIntroMessage = !isNullOrUndefined(this.hideBattleIntroMessage) ? this.hideBattleIntroMessage : false;
-    this.autoHideIntroVisuals = !isNullOrUndefined(this.autoHideIntroVisuals) ? this.autoHideIntroVisuals : true;
+    this.hideBattleIntroMessage = this.hideBattleIntroMessage ?? false;
+    this.autoHideIntroVisuals = this.autoHideIntroVisuals ?? true;
+    this.enterIntroVisualsFromRight = this.enterIntroVisualsFromRight ?? false;
 
     // Reset any dirty flags or encounter data
     this.startOfBattleEffectsComplete = false;
@@ -414,6 +416,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
 
   hideBattleIntroMessage?: boolean;
   hideIntroVisuals?: boolean;
+  enterIntroVisualsFromRight?: boolean;
   enemyPartyConfigs?: EnemyPartyConfig[] = [];
 
   /**
@@ -715,6 +718,15 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    */
   withAutoHideIntroVisuals(autoHideIntroVisuals: boolean): this & Required<Pick<IMysteryEncounter, "autoHideIntroVisuals">> {
     return Object.assign(this, { autoHideIntroVisuals: autoHideIntroVisuals });
+  }
+
+  /**
+   * @param enterIntroVisualsFromRight - If true, will slide in intro visuals from the right side of the screen. If false, slides in from left, as normal
+   * Default false
+   * @returns
+   */
+  withEnterIntroVisualsFromRight(enterIntroVisualsFromRight: boolean): this & Required<Pick<IMysteryEncounter, "enterIntroVisualsFromRight">> {
+    return Object.assign(this, { enterIntroVisualsFromRight: enterIntroVisualsFromRight });
   }
 
   /**

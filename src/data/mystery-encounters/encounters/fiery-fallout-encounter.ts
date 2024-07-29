@@ -1,5 +1,5 @@
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
-import { EnemyPartyConfig, generateModifierTypeOption, initBattleWithEnemyConfig, initCustomMovesForEncounter, leaveEncounterWithoutBattle, setEncounterExp, setEncounterRewards, transitionMysteryEncounterIntroVisuals } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { EnemyPartyConfig, generateModifierTypeOption, initBattleWithEnemyConfig, loadCustomMovesForEncounter, leaveEncounterWithoutBattle, setEncounterExp, setEncounterRewards, transitionMysteryEncounterIntroVisuals } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { AttackTypeBoosterModifierType, modifierTypes, } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
@@ -75,8 +75,9 @@ export const FieryFalloutEncounter: IMysteryEncounter =
       // Load hidden Volcarona sprites
       encounter.spriteConfigs = [
         {
-          spriteKey: volcaronaSpecies.getSpriteId(false),
-          fileRoot: "pokemon",
+          spriteKey: null,
+          fileRoot: null,
+          species: Species.VOLCARONA,
           repeat: true,
           hidden: true,
           hasShadow: true,
@@ -84,8 +85,9 @@ export const FieryFalloutEncounter: IMysteryEncounter =
           startFrame: 20
         },
         {
-          spriteKey: volcaronaSpecies.getSpriteId(true ),
-          fileRoot: "pokemon",
+          spriteKey: null,
+          fileRoot: null,
+          species: Species.VOLCARONA,
           repeat: true,
           hidden: true,
           hasShadow: true,
@@ -94,7 +96,7 @@ export const FieryFalloutEncounter: IMysteryEncounter =
       ];
 
       // Load animations/sfx for Volcarona moves
-      initCustomMovesForEncounter(scene, [Moves.FIRE_SPIN, Moves.QUIVER_DANCE]);
+      loadCustomMovesForEncounter(scene, [Moves.FIRE_SPIN, Moves.QUIVER_DANCE]);
 
       scene.arena.trySetWeather(WeatherType.SUNNY, true);
 

@@ -70,6 +70,11 @@ export enum TrainerType {
   GHETSIS_2,
   LYSANDRE,
   LYSANDRE_2,
+  BUCK,
+  CHERYL,
+  MARLEY,
+  MIRA,
+  RILEY,
 
   BROCK = 200,
   MISTY,

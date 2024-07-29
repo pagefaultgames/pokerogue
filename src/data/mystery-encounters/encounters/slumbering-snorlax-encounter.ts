@@ -7,7 +7,7 @@ import { StatusEffect } from "#app/data/status-effect";
 import IMysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import { MoveRequirement } from "../mystery-encounter-requirements";
-import { EnemyPartyConfig, EnemyPokemonConfig, initBattleWithEnemyConfig, initCustomMovesForEncounter, leaveEncounterWithoutBattle, setEncounterExp, setEncounterRewards, } from "../utils/encounter-phase-utils";
+import { EnemyPartyConfig, EnemyPokemonConfig, initBattleWithEnemyConfig, loadCustomMovesForEncounter, leaveEncounterWithoutBattle, setEncounterExp, setEncounterRewards, } from "../utils/encounter-phase-utils";
 import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { Moves } from "#enums/moves";
 import { BattlerIndex } from "#app/battle";
@@ -66,7 +66,7 @@ export const SlumberingSnorlaxEncounter: IMysteryEncounter =
       encounter.enemyPartyConfigs = [config];
 
       // Load animations/sfx for Snorlax fight start moves
-      initCustomMovesForEncounter(scene, [Moves.SNORE]);
+      loadCustomMovesForEncounter(scene, [Moves.SNORE]);
 
       return true;
     })

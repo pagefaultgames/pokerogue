@@ -4,7 +4,7 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
 import IMysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
 import { MoneyRequirement } from "../mystery-encounter-requirements";
-import { catchPokemon, getRandomSpeciesByStarterTier } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import { catchPokemon, getRandomSpeciesByStarterTier, getSpriteKeysFromPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { getPokemonSpecies, speciesStarters } from "#app/data/pokemon-species";
 import { Species } from "#enums/species";
 import { PokeballType } from "#app/data/pokeball";
@@ -66,17 +66,16 @@ export const PokemonSalesmanEncounter: IMysteryEncounter =
         // If no HA mon found or you roll 1%, give shiny Magikarp
         species = getPokemonSpecies(Species.MAGIKARP);
         const hiddenIndex = species.ability2 ? 2 : 1;
-        pokemon = scene.addPlayerPokemon(species, 5, hiddenIndex, species.formIndex, null, true);
+        pokemon = new PlayerPokemon(scene, species, 5, hiddenIndex, species.formIndex, null, true, null, null, null, null);
       } else {
         const hiddenIndex = species.ability2 ? 2 : 1;
-        pokemon = scene.addPlayerPokemon(species, 5, hiddenIndex, species.formIndex);
+        pokemon = new PlayerPokemon(scene, species, 5, hiddenIndex, species.formIndex, null, null, null, null, null, null);
       }
 
-      const spriteKey = pokemon.getSpriteId();
-      const spriteRoot = pokemon.getSpriteAtlasPath();
+      const { spriteKey, fileRoot } = getSpriteKeysFromPokemon(pokemon);
       encounter.spriteConfigs.push({
         spriteKey: spriteKey,
-        fileRoot: spriteRoot,
+        fileRoot: fileRoot,
         hasShadow: true,
         repeat: true,
         isPokemon: true

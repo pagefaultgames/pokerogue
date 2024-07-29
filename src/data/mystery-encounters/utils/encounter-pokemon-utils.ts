@@ -3,7 +3,7 @@ import i18next from "i18next";
 import { isNullOrUndefined, randSeedInt } from "#app/utils";
 import { PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { VictoryPhase } from "#app/phases";
-import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
+import Pokemon, { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "#app/data/pokeball";
 import { PlayerGender } from "#enums/player-gender";
 import { addPokeballCaptureStars, addPokeballOpenParticles } from "#app/field/anims";
@@ -18,9 +18,23 @@ import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "#app/data/po
 import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
+import { Gender } from "#app/data/gender";
 
 export interface MysteryEncounterPokemonData {
   spriteScale?: number
+}
+
+export function getSpriteKeysFromSpecies(species: Species, female?: boolean, formIndex?: integer, shiny?: boolean, variant?: integer): { spriteKey: string, fileRoot: string } {
+  const spriteKey = getPokemonSpecies(species).getSpriteKey(female ?? false, formIndex ?? 0, shiny ?? false, variant ?? 0);
+  const fileRoot = getPokemonSpecies(species).getSpriteAtlasPath(female ?? false, formIndex ?? 0, shiny ?? false, variant ?? 0);
+  return { spriteKey, fileRoot };
+}
+
+export function getSpriteKeysFromPokemon(pokemon: Pokemon): { spriteKey: string, fileRoot: string } {
+  const spriteKey = pokemon.getSpeciesForm().getSpriteKey(pokemon.getGender() === Gender.FEMALE, pokemon.formIndex, pokemon.shiny, pokemon.variant);
+  const fileRoot = pokemon.getSpeciesForm().getSpriteAtlasPath(pokemon.getGender() === Gender.FEMALE, pokemon.formIndex, pokemon.shiny, pokemon.variant);
+
+  return { spriteKey, fileRoot };
 }
 
 /**

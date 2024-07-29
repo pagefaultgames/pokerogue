@@ -305,7 +305,7 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
  * @param scene
  * @param moves
  */
-export function initCustomMovesForEncounter(scene: BattleScene, moves: Moves | Moves[]) {
+export function loadCustomMovesForEncounter(scene: BattleScene, moves: Moves | Moves[]) {
   moves = Array.isArray(moves) ? moves : [moves];
   return Promise.all(moves.map(move => initMoveAnim(scene, move)))
     .then(() => loadMoveAnimAssets(scene, moves));

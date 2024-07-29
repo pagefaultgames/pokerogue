@@ -32,8 +32,9 @@ export const DepartmentStoreSaleEncounter: IMysteryEncounter =
         x: -20,
       },
       {
-        spriteKey: Species.FURFROU.toString(),
-        fileRoot: "pokemon",
+        spriteKey: null,
+        fileRoot: null,
+        species: Species.FURFROU,
         hasShadow: true,
         repeat: true,
         x: 30,

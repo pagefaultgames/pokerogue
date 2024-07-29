@@ -270,6 +270,11 @@ export const trainerNames: SimpleTranslationEntries = {
   "cyrus": "Cyrus",
   "ghetsis": "Ghetsis",
   "lysandre": "Lysandre",
+  "buck": "Buck",
+  "cheryl": "Cheryl",
+  "marley": "Marley",
+  "mira": "Mira",
+  "riley": "Riley",
 
   // Double Names
   "blue_red_double": "Blue & Red",

@@ -7,7 +7,7 @@ import {
   setEncounterRewards
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { STEALING_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
-import Pokemon from "#app/field/pokemon";
+import Pokemon, { EnemyPokemon } from "#app/field/pokemon";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import {
   getPartyLuckValue,
@@ -27,6 +27,9 @@ import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-enco
 import { getPokemonNameWithAffix } from "#app/messages";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { TrainerSlot } from "#app/data/trainer-config";
+import { getSpriteKeysFromPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import PokemonData from "#app/system/pokemon-data";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:fightOrFlight";
@@ -53,9 +56,14 @@ export const FightOrFlightEncounter: IMysteryEncounter =
 
       // Calculate boss mon
       const bossSpecies = scene.arena.randomSpecies(scene.currentBattle.waveIndex, scene.currentBattle.waveIndex, 0, getPartyLuckValue(scene.getParty()), true);
+      const bossPokemon = new EnemyPokemon(scene, bossSpecies, scene.currentBattle.waveIndex, TrainerSlot.NONE, true, null);
       const config: EnemyPartyConfig = {
         levelAdditiveMultiplier: 1,
-        pokemonConfigs: [{ species: bossSpecies, isBoss: true }],
+        pokemonConfigs: [{
+          species: bossSpecies,
+          dataSource: new PokemonData(bossPokemon),
+          isBoss: true
+        }],
       };
       encounter.enemyPartyConfigs = [config];
 
@@ -74,7 +82,7 @@ export const FightOrFlightEncounter: IMysteryEncounter =
       encounter.setDialogueToken("itemName", item.type.name);
       encounter.misc = item;
 
-      const bossSpriteKey = bossSpecies.getSpriteId(false, bossSpecies.forms ? 0 : null, false, bossSpecies.hasVariants() ? 0 : null);
+      const { spriteKey, fileRoot } = getSpriteKeysFromPokemon(bossPokemon);
       encounter.spriteConfigs = [
         {
           spriteKey: item.type.iconImage,
@@ -87,12 +95,13 @@ export const FightOrFlightEncounter: IMysteryEncounter =
           disableAnimation: true
         },
         {
-          spriteKey: bossSpriteKey,
-          fileRoot: "pokemon",
+          spriteKey: spriteKey,
+          fileRoot: fileRoot,
           hasShadow: true,
           tint: 0.25,
           x: -5,
           repeat: true,
+          isPokemon: true
         },
       ];
 

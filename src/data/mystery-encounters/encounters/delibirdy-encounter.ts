@@ -47,23 +47,26 @@ export const DelibirdyEncounter: IMysteryEncounter =
     ))
     .withIntroSpriteConfigs([
       {
-        spriteKey: Species.DELIBIRD.toString(),
-        fileRoot: "pokemon",
+        spriteKey: null,
+        fileRoot: null,
+        species: Species.DELIBIRD,
         hasShadow: true,
         repeat: true,
         startFrame: 38,
         scale: 0.94
       },
       {
-        spriteKey: Species.DELIBIRD.toString(),
-        fileRoot: "pokemon",
+        spriteKey: null,
+        fileRoot: null,
+        species: Species.DELIBIRD,
         hasShadow: true,
         repeat: true,
         scale: 1.06
       },
       {
-        spriteKey: Species.DELIBIRD.toString(),
-        fileRoot: "pokemon",
+        spriteKey: null,
+        fileRoot: null,
+        species: Species.DELIBIRD,
         hasShadow: true,
         repeat: true,
         startFrame: 65,

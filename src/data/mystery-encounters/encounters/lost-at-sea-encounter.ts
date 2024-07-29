@@ -31,8 +31,8 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
   .withSceneWaveRangeRequirement(11, 179)
   .withIntroSpriteConfigs([
     {
-      fileRoot: "mystery-encounters",
       spriteKey: "buoy",
+      fileRoot: "mystery-encounters",
       hasShadow: false,
       x: 20,
       y: 3,

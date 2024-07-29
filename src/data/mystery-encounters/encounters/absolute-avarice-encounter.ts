@@ -1,5 +1,5 @@
 import { EnemyPartyConfig, generateModifierTypeOption, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, setEncounterRewards, transitionMysteryEncounterIntroVisuals, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import Pokemon, { PokemonMove } from "#app/field/pokemon";
+import Pokemon, { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
 import { BerryModifierType, modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
@@ -37,18 +37,20 @@ export const AbsoluteAvariceEncounter: IMysteryEncounter =
     .withSceneRequirement(new PersistentModifierRequirement("BerryModifier", 4)) // Must have at least 4 berries to spawn
     .withIntroSpriteConfigs([
       {
-        spriteKey: Species.GREEDENT.toString(),
-        fileRoot: "pokemon",
-        hasShadow: false,
+        // This sprite has the shadow
+        spriteKey: null,
+        fileRoot: null,
+        species: Species.GREEDENT,
+        hasShadow: true,
+        alpha: 0.001,
         repeat: true,
         x: -5
       },
       {
-        // This sprite has the shadow
-        spriteKey: Species.GREEDENT.toString(),
-        fileRoot: "pokemon",
-        hasShadow: true,
-        alpha: 0.001,
+        spriteKey: null,
+        fileRoot: null,
+        species: Species.GREEDENT,
+        hasShadow: false,
         repeat: true,
         x: -5
       },
@@ -328,7 +330,7 @@ export const AbsoluteAvariceEncounter: IMysteryEncounter =
           // Let it have the food
           // Greedent joins the team, level equal to 2 below highest party member
           const level = getHighestLevelPlayerPokemon(scene).level - 2;
-          const greedent = scene.addEnemyPokemon(getPokemonSpecies(Species.GREEDENT), level, TrainerSlot.NONE, false);
+          const greedent = new EnemyPokemon(scene, getPokemonSpecies(Species.GREEDENT), level, TrainerSlot.NONE, false, null);
           greedent.moveset = [new PokemonMove(Moves.THRASH), new PokemonMove(Moves.BODY_PRESS), new PokemonMove(Moves.STUFF_CHEEKS), new PokemonMove(Moves.SLACK_OFF)];
           greedent.passive = true;
 
@@ -344,7 +346,7 @@ function doGreedentSpriteSteal(scene: BattleScene) {
   const shakeDelay = 50;
   const slideDelay = 500;
 
-  const greedentSprites = scene.currentBattle.mysteryEncounter.introVisuals.getSpriteAtIndex(0);
+  const greedentSprites = scene.currentBattle.mysteryEncounter.introVisuals.getSpriteAtIndex(1);
 
   scene.playSound("Follow Me");
   scene.tweens.chain({
@@ -418,7 +420,7 @@ function doGreedentSpriteSteal(scene: BattleScene) {
 }
 
 function doGreedentEatBerries(scene: BattleScene) {
-  const greedentSprites = scene.currentBattle.mysteryEncounter.introVisuals.getSpriteAtIndex(0);
+  const greedentSprites = scene.currentBattle.mysteryEncounter.introVisuals.getSpriteAtIndex(1);
   let index = 1;
   scene.tweens.add({
     targets: greedentSprites,
@@ -452,7 +454,7 @@ function doBerrySpritePile(scene: BattleScene, isEat: boolean = false) {
   }
   const encounter = scene.currentBattle.mysteryEncounter;
   animationOrder.forEach((berry, i) => {
-    const introVisualsIndex = encounter.spriteConfigs.findIndex(config => config.spriteKey.includes(berry));
+    const introVisualsIndex = encounter.spriteConfigs.findIndex(config => config.spriteKey?.includes(berry));
     const [ sprite, tintSprite ] = encounter.introVisuals.getSpriteAtIndex(introVisualsIndex);
     scene.time.delayedCall(berryAddDelay * i + 400, () => {
       if (sprite) {

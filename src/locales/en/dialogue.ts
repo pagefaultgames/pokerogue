@@ -566,6 +566,67 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "Fools with no vision will continue to befoul this beautiful world."
     }
   },
+  "stat_trainer_buck": {
+    "encounter": {
+      1: "...I'm telling you right now. I'm seriously tough. Act surprised!",
+      2: "I can feel my Pokémon shivering inside their Pokéballs!"
+    },
+    "victory": {
+      1: "Heeheehee!\nSo hot, you!"
+    },
+    "defeat": {
+      1: "Whoa! You're all out of gas, I guess."
+    }
+  },
+  "stat_trainer_cheryl": {
+    "encounter": {
+      1: "My Pokémon have been itching for a battle.",
+      2: "I should warn you, my Pokémon can be quite rambunctious."
+    },
+    "victory": {
+      1: "Striking the right balance of offense and defense... It's not easy to do."
+    },
+    "defeat": {
+      1: "Do your Pokémon need any healing?"
+    }
+  },
+  "stat_trainer_marley": {
+    "encounter": {
+      1: "... OK.\nI'll do my best.",
+      2: "... OK.\nI... won't lose...!"
+    },
+    "victory": {
+      1: "... Awww."
+    },
+    "defeat": {
+      1: "... Goodbye."
+    }
+  },
+  "stat_trainer_mira": {
+    "encounter": {
+      1: "You will be shocked by Mira!",
+      2: "Mira will show you that Mira doesn't get lost anymore!"
+    },
+    "victory": {
+      1: "Mira wonders if she can get very far in this land."
+    },
+    "defeat": {
+      1: "Mira knew she would win!"
+    }
+  },
+  "stat_trainer_riley": {
+    "encounter": {
+      1: "Battling is our way of greeting!",
+      2: "We're pulling out all the stops to put your Pokémon down.",
+    },
+    "victory": {
+      1: `At times we battle, and sometimes we team up...
+        $It's great how Trainers can interact.`
+    },
+    "defeat": {
+      1: "You put up quite the display.\nBetter luck next time."
+    }
+  },
   "brock": {
     "encounter": {
       1: "My expertise on Rock-type Pokémon will take you down! Come on!",

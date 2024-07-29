@@ -36,12 +36,11 @@ export const SafariZoneEncounter: IMysteryEncounter =
     .withSceneRequirement(new MoneyRequirement(0, 2.75)) // Cost equal to 1 Max Revive
     .withIntroSpriteConfigs([
       {
-        spriteKey: "chest_blue",
+        spriteKey: "safari_zone",
         fileRoot: "mystery-encounters",
-        hasShadow: true,
+        hasShadow: false,
         x: 4,
-        y: 10,
-        yShadow: 3
+        y: 6
       },
     ])
     .withIntroDialogue([
@@ -52,6 +51,11 @@ export const SafariZoneEncounter: IMysteryEncounter =
     .withTitle(`${namespace}:title`)
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)
+    // .withEnterIntroVisualsFromRight(true)
+    // .withOnVisualsStart((scene: BattleScene) => {
+    //   scene.setFieldScale(0.9);
+    //   return true;
+    // })
     .withOption(new MysteryEncounterOptionBuilder()
       .withOptionMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
       .withSceneRequirement(new MoneyRequirement(0, 2.75)) // Cost equal to 1 Max Revive
