@@ -53,6 +53,10 @@ class DefaultOverrides {
   readonly XP_MULTIPLIER_OVERRIDE: number = null;
   /** default 1000 */
   readonly STARTING_MONEY_OVERRIDE: integer = 0;
+  /** Sets all shop item prices to 0 */
+  readonly WAIVE_SHOP_FEES_OVERRIDE: boolean = false;
+  /** Sets reroll price to 0 */
+  readonly WAIVE_ROLL_FEE_OVERRIDE: boolean = false;
   readonly FREE_CANDY_UPGRADE_OVERRIDE: boolean = false;
   readonly POKEBALL_OVERRIDE: { active: boolean; pokeballs: PokeballCounts } = {
     active: false,
