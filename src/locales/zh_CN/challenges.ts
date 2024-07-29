@@ -27,4 +27,5 @@ export const challenges: TranslationEntries = {
     "desc": "你只能使用御三家，就像是你第一次玩宝可梦肉鸽一样。",
     "value.0": "关闭",
     "value.1": "开启",
+  },
 } as const;
